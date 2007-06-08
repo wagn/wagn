@@ -1,0 +1,13 @@
+--- 
+roles_001: 
+  id: "1"
+  codename: anon
+  tasks: 
+roles_002: 
+  id: "2"
+  codename: auth
+  tasks: 
+roles_003: 
+  id: "3"
+  codename: admin
+  tasks: 

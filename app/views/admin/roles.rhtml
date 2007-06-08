@@ -1,0 +1,20 @@
+<h1>Role Administration</h1>
+
+<%= render :partial=>'block/options' %>
+
+<span id='create-button'>
+  <% if System.ok? :edit_cards %>
+    <%= link_to 'Create New Role', { :controller=>'card', :action=>'new', 'option[cardtype]'=>'Role'} %> 
+  <% end %>
+</span>
+
+<div id="roles-list" class="card-list"></div>
+
+<script>
+  function init_lister() {
+    lister = new Wagn.Lister('roles-list');
+    lister.cardtype('Role');
+    return lister;
+  }
+</script>
+

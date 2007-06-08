@@ -1,0 +1,23 @@
+<div id="new-connection">
+<%= form_remote_tag :update=>{ :success=>'connections-workspace', :failure=>'alerts' },
+      :url=>{ :action=>'create_form', :id=>@trunk}, :html=>{ :name=>'connect'} %>
+  <div id="new-connection-intro">
+	  Users have connected these cards to other <%= link_to_page @trunk.cardtype.name %> cards.  Click on one to connect it to "<%= link_to_page @trunk.name %>." 
+	</div>
+	<br/>
+  <div>
+    <%= render :partial=>'block/tag_cloud',:locals=>{
+          :link_to=>'connect',
+          :cards => load_cards(:card=>@trunk,:query=>'common_tags')
+      }
+      %>
+  </div>
+  <br/>
+  <div id="add-form">
+    <%= text_field :tag, :name, { :size=>30 }  %>
+    <%= submit_tag('Add') %>
+    <%= link_to_function "Cancel", "$('connections-workspace').innerHTML=''" %>
+  </div>
+  
+<%= end_form_tag %>
+</div>

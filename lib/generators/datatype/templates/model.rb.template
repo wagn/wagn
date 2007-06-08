@@ -1,0 +1,10 @@
+class <%= class_name %>Datatype < Datatype::Base
+  
+  register "<%= class_name %>"
+  editor_type "PlainText"
+  
+  description %{
+    Describe <%= datatype_name %> datatype here.
+  }
+  
+end

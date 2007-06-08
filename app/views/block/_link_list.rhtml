@@ -1,0 +1,5 @@
+<%-
+  cards ||= []
+%>
+<%= cards.map{ |c| link_to_page c.name_in_context(card), c.name }.join(', ')%> 
+

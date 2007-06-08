@@ -1,0 +1,24 @@
+acts_as_authenticated generator
+====
+
+This is a basic authentication generator for rails, very much in the spirit of xal's original Login Generator.
+
+To use:
+
+  ./script/generate authenticated user account
+
+This generates a basic user model, a controller, some basic views, and tests.  Extra functionality can be unlocked by
+removing the comments for them.  I have a few examples such as user activation and reversible encrypted passwords.
+
+Two more generators are provided...
+
+Generate your mailer:
+
+  ./script/generate authenticated_mailer user
+
+Generate a new migration for the user model:
+
+  ./script/generate authenticated_migration add_authenticated_table
+
+Consult the Acts As Authenticated wiki for more: http://technoweenie.stikipad.com/plugins/show/Acts+as+Authenticated
+   

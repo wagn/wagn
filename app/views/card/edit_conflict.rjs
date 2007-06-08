@@ -1,0 +1,4 @@
+page.wagn.messenger.log( "<b>Conflict</b> #{@card.title} was not saved" )
+page.wagn.messenger.alert("<b>Not Saved</b> Another user has been editing this file.  Please examine the changes below, make all necessary adjustments, and save again.")
+page.wagn.card.dehighlight_all( @card.id )
+page.wagn.card.editConflict(@card.id, @card.current_revision.id, @changes);

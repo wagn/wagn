@@ -1,0 +1,27 @@
+<%
+  cards   ||= []
+  context ||= 'recentchanges'
+  element ||= ''
+  title   ||= 'Recent Changes'
+%>
+<%
+  cards_by_day = Hash.new { |h, day| h[day] = [] }
+  cards.each do |card| 
+    day = Date.new(card.revised_at.year, card.revised_at.month, card.revised_at.day)
+    cards_by_day[day] << card
+  end
+%>
+
+<% cards_by_day.keys.sort.reverse.each do |day| %>
+  <h2><%= format_date(day, include_time = false) %></h2>
+  <% for card in cards_by_day[day] %>
+    <%= render :partial=>'card/card_slot', 
+          :locals=>{ :div_id=>get_div_id( card, context, element), 
+                     :card  =>card, 
+                     :context=>context, 
+                     :partial=>get_partial( card, context, element )  } %>
+  <% end %>
+<% end %>
+<%= paging( cards ) %>
+
+  

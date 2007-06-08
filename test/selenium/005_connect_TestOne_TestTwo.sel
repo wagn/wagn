@@ -1,0 +1,10 @@
+|open|/wiki/TestOne||
+|click|new-connection-button||
+|pause|500||
+|type|tag_name|TestTwo|
+|click|document.connect.commit||
+|pause|800||
+|type|connection-body-content-field|ConnectOneTwoContent|
+|click|//input[@name='commit' and @value='Save' and @type='submit' and @onclick="$('connection-body').card().save(); return false;"]||
+|pause|800||
+|verifyTextPresent|ConnectOneTwoContent||

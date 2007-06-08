@@ -1,0 +1,17 @@
+This content comes from the card <%= @card.formal_title %> </br>
+
+Changes to this content will take effect on all these pages:
+<ul>
+<% @card.transcluders.uniq.map do |t| %>
+  <li><%= link_to_page t.formal_title, t.name %>
+<% end. join ', ' %>
+</ul>
+
+<p>
+Do you still want to edit this content? </br>
+<%= button_to_function "Yes", "Wagn.Card.editInPopup(#{@card.id})" %>
+
+
+<%= button_to_function "No", "Windows.close('popup')" %>
+</p>
+

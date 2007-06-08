@@ -1,0 +1,3 @@
+<%- roles = Role.find_configurables.sort{ |a,b| a.cardname <=> b.cardname } %>
+
+<%= collection_select :a, :b, roles, :codename, :cardname,{}, :multiple=>true, :id=>"#{div_id}-role-select"  %>

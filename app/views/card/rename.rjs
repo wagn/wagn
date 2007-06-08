@@ -1,0 +1,2 @@
+page.wagn.messenger.note("renamed to #{@card.name}.  redirecting to #{@card.name}...")
+page.redirect_to url_for_page(@card.name)

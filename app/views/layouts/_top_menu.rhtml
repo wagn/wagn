@@ -1,0 +1,36 @@
+<div id="top-menu">
+    
+  <span>
+    <%= link_to('Home', '/') %>
+    <%= link_to( 'Recent', :controller => 'block', :action=>'recent' ) %>
+	  <%=  render :partial=>'layouts/search_box' %>
+  </span>
+  
+  <% if u = current_user %>
+    <span>
+      <%= link_to('New Card', :controller=>'card', :action=>'new' ) %>
+    </span>
+  <% end %>
+  
+  
+  <span id="logging">
+    <% if u = current_user %>
+      <% if System.ok? :invite_users %>
+	      <%= link_to 'Invite a Friend', :controller=>'account', :action=>'invite' %>
+      <% end %>   
+      <%= link_to( 'Sign out', :controller=>'account', :action=>'logout' ) %>
+    <% else %>
+      <%= link_to( 'Sign in', :controller=>'account', :action=>'login') %>
+    <% end %>
+  </span>
+
+</div>
+
+<%= render :partial=>'layouts/logo' %>
+
+
+<% if u = current_user and u.card %>
+  <div id="current-user-card">
+    <%= link_to_page( "My Card: #{u.card.name}", u.card.name ) %>
+  </div>
+<% end %>

@@ -1,0 +1,5 @@
+|open|/block/recent||
+|pause|5000||
+|verifyTextPresent|TestOneNewContent||
+|verifyTextPresent|ConnectOneTwoContent||
+|verifyTextPresent| TestTwoContent||

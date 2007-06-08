@@ -1,0 +1,72 @@
+<%- context ||= 'connections'  # || query_card || search
+  # Not sure context is actually getting fed into this.... 
+%>
+
+<span id="options-toggle">
+	<%= link_to_options( 'linker-options' ) %>
+</span>
+
+<div></div><%# this div keeps the floated stuff from overlapping in IE%>
+
+<div id="linker-options" style="display: none;">
+  <table>
+    <tr>
+      <td>                                  
+    <!--			
+        <div class="option">&raquo; sort by 
+          <%= link_to_connector_update( 'name', 'sort_by', 'sort_by', 'name') %>|
+          <%= link_to_connector_update( 'creation', 'sort_by', 'sort_by', 'creation') %>|
+          <%= link_to_connector_update( 'last change', 'sort_by', 'sort_by', 'last change') %>
+          &nbsp;&nbsp;
+          <%= link_to_connector_update( '&darr;', 'sortdir', 'sortdir', 'desc') %>|
+          <%= link_to_connector_update( '&uarr;', 'sortdir', 'sortdir', 'asc') %>										
+        </div>
+        <div class="option">&raquo; view cards as 
+          <%= link_to_connector_update( 'cloud', 'view_as', 'view_as', 'cloud') %>|
+          <%= link_to_connector_update( 'list', 'view_as', 'view_as', 'list') %>										
+        </div>
+  -->
+        <div class="option">&raquo; 
+          <%= link_to_function 'open', connector_function( :open_all )   %> |
+          <%= link_to_function 'close', connector_function( :close_all ) %> all cards      
+        </div>
+  
+        <div class="option">&raquo;
+          <%= link_to_connector_update( 'show', 'hide_duplicates', 'hide_duplicates', '') %>|
+          <%= link_to_connector_update( 'hide', 'hide_duplicates', 'hide_duplicates', 'true') %> duplicates 									
+        </div>
+  
+        <div class="option">&raquo; 
+          <%= link_to_connector_update( '10', 'pagesize', 'pagesize', '10') %> |
+          <%= link_to_connector_update( '25', 'pagesize', 'pagesize', '25') %> |
+          <%= link_to_connector_update( '50', 'pagesize', 'pagesize', '50') %> cards per page
+        </div>
+      </td>
+      <td>
+				<strong>Filter these cards by:</strong>
+        <div>cardtype: 
+          <%= select_tag( :cardtype, 
+              options_from_collection_for_select([['','Any']]+cardtype_options, :first, :last, (card ? card.cardtype : nil)),
+              :class=>'search-field',
+              :id=>'connection-cardtype-field',
+              :onchange=>'Wagn.lister().cardtype($F(this)).update()'
+            ) 
+          %>
+        </div>
+        <div>keyword:  
+          <%= text_field_tag("keyword", 'filter',
+                :onclick=>'if (this.value == "filter") {this.value="" }',
+                :class=>'search-field',
+                :id=>'connection-keyword-field',
+                :onchange=>'Wagn.lister().keyword($F(this)).update()'
+          ) %>
+        </div>
+      </td>
+    </td>
+    
+  </table>
+</div>
+
+<span id="paging-links-copy" class="paging-links"></span>
+
+

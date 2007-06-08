@@ -1,0 +1,30 @@
+<div id="connections-workspace"></div>
+
+<span id="related-toggle">
+	<%= link_to_options('related', {
+	    :show_text => "&raquo; show cards related to <em>#{@card.name}</em>",
+	    :hide_text => "&laquo; hide cards related to <em>#{@card.name}</em>",
+	    :mode => 'hide'
+	  }) %>
+</span>
+
+<h1 id="related-title">Related Cards</h1>
+
+<div id="related">
+  <div id="related-header">
+
+		<%= select_tag "query-select", query_options(@card), { :onchange=>'Wagn.lister().query(Form.Element.getValue(this)).update()'} %>
+		<%= render :partial=>'block/options' %>
+		<div id="related-button">&nbsp;</div>
+
+	</div>
+	<div id="related-list" class="card-list"></div>
+</div>
+
+<script>
+  function init_lister() {
+    lister = new Wagn.Lister('related-list', {query: Form.Element.getValue($('query-select') ) } );
+    return lister;
+  }
+</script>
+

@@ -1,0 +1,17 @@
+<div id="sign-in">
+  <h1>Sign In</h1>
+
+  <p>Currently membership is by invitation. </p>
+  <p>
+    If you'd like to request an invitation, please email 
+    <a href="mailto:<%= System.invitation_request_email %>"><%= System.invitation_request_email %></a>.
+  </p>
+
+  <%= form_tag %>
+  <p><label for="login">Email</label><br/><%= text_field_tag 'login' %></p>
+  <p><label for="password">Password</label><br/><%= password_field_tag 'password' %></p>
+  <p><%= submit_tag 'Sign in' %></p>
+  <%= end_form_tag %>
+
+  <%= link_to 'forgot password?', :action=>'forgot_password' %>
+</div>

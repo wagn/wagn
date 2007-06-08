@@ -1,0 +1,17 @@
+<!--<h2>Actions</h2>-->
+<div class="admin-nav">
+  <%# FIXME -- need to overhaul permissions here. %>
+  <% if System.ok? :manage_permissions %>
+    <p>manage
+      <% if System.ok? :manage_permissions %>
+        <%= link_to 'users', :controller=>'admin', :action=>'users' %> |
+      <% end %>
+      <% if System.ok? :manage_permissions %>
+        <%= link_to 'roles', :controller=>'admin', :action=>'roles' %> |
+      <% end %>
+      <% if System.ok? :manage_permissions %>
+        <%= link_to 'permissions', :controller=>'admin', :action=>'tasks' %>
+      <% end %>
+    </p>
+  <% end %>
+</div>

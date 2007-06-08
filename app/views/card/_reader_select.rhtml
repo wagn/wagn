@@ -1,0 +1,4 @@
+<%= collection_select :card, :reader_id, reader_options_for( @card ), :first, :last, {}, 
+   :onChange=>card_function( params[:element], :update_reader, "{ 'card[reader_id]': Form.Element.getValue(this) }" ) 
+%>
+

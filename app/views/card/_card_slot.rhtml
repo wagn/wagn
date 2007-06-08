@@ -1,0 +1,23 @@
+<%
+  card    or raise( "Card slot gotta have a card" )
+  div_id  or raise( "Card slot gotta have a div_id")
+  context ||= 'default'
+  partial ||= 'line'
+  load_editor ||= false
+%>
+<div id="<%= div_id %>" class="<%= card.id %> <%= context || '' %> <%= partial %> card-slot">
+	<%# FIXME: this is a temporary hack to break cacheing for non-cacheable datatypes.
+	    it will pollute the cache with garbage %>
+	<%- cache_break = card.cacheable? ? '' : rand.to_s -%>
+	<% cache("card/view/#{card.id}#{cache_break}") do %>
+		<%= render :partial=>'card/card', :locals=>{ :card=>card, :element=>div_id } %>
+	<% end %>
+  <span id="<%= div_id %>-editor" class="editor" style="display: none">     
+	  <% if load_editor %>
+	    <%= render :partial=>'card/editor', :locals=>{ :card=>card, :div_id=>div_id } %>
+		<% end %>
+  </span>
+</div>
+
+
+                                                       

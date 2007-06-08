@@ -1,0 +1,8 @@
+div_id = get_div_id(@connection, 'related')
+page.replace_html 'connections-workspace', ''
+page.hide 'empty-card-list'
+page.insert_html :top, 'related-list', :partial=>'card/card_slot', 
+  :locals=>{ :div_id=>div_id, :card=>@connection, :partial=>'line' }
+page.wagn.card.init("#{div_id}")
+page.visual_effect :highlight, div_id
+

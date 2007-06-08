@@ -1,0 +1,17 @@
+<% if Card::Cardtype===@card and @card.cards_of_this_type.length > 0 %>
+  <p>Sorry, Can't remove Cardtype <%= @card.name %> because cards of that type still exists</p>
+<% else %>
+  <p>Really remove <%= link_to_page @card.formal_title, @card.name %>?</p>
+  <% if dependents = @card.dependents and !dependents.empty? %>
+    <p>That would mean removing all these cards, too:</p>
+    <ul>
+      <% dependents.map do |dep| %>
+        <li><%= link_to_page dep.formal_title, dep.name %>
+      <% end. join ', ' %>
+    </ul>
+  <% end %>
+  <p>
+    <%= link_to_function "Cancel", card_function( params[:element], :cancel ), :class=>'cancel' %>
+    <%= submit_tag 'Yes, get rid of it', :onClick=>card_function( params[:element], :remove ), :class=>'save' %> 
+  </p>
+<% end %>

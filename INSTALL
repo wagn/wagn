@@ -1,0 +1,27 @@
+See http://wagn.org/wiki/Wagn_Installation for the latest version of these instructions.
+
+New Installation
+
+   1. Download Wagn from rubyforge, or checkout the source from svn
+   2. untar or unzip the package
+   3. copy `config/sample-database.yml` to `config/database.yml` and `config/sample-wagn.rb` to `config/wagn.rb`
+   4. create databases (dev,test,prod). edit `config/database.yml` accordingly.
+   5. edit `config/wagn.rb`  -- set System.base_url and System.site_name
+   6. `rake db:migrate`        this will set up the database.
+   7. start the server `./script/server`. make sure the user youre running the server as has write access to the `tmp/` and `log/` directories
+   8. point your browser to http://myhost:3000/
+      this should give you a form to update the account information for the admin user and log you in as admin.
+   9. Click the 'permissions' link on the sidebar and setup the permissions for anonymous and signed-in users.
+  10.  you can start wagging as admin, but its recommended to send an invitation to yourself to set up a new user.
+
+Upgrade
+
+   1. untar or unzip the new package
+   2. copy the following files from the old installation into the new one:
+          * config/database.yml
+          * config/wagn.rb
+          * image/*    [if you've uploaded any images]
+          * file/*        [if you've uploaded any other files]
+          * public/stylesheets/local.css   [if you've made any local css changes]
+   3. in the new directory run:  rake db:migrate
+   4. start the server in the new directory

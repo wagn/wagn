@@ -1,0 +1,46 @@
+<%# ------- Title -------------%>
+
+<title> <%= System.site_name %>: 
+  <% if @title then %>
+    <%= @title %>
+  <% else %>
+    <%= controller.controller_name %> - <%= controller.action_name %>
+  <% end %>
+</title>
+
+<%# ------- Stylesheets -------------%>
+
+<%= 
+  %w{ 
+	  defaults page_and_block card wikiwyg window_themes/default.css window_themes/mac_os_x.css
+  }.collect do |sheet|
+	  stylesheet_link_tag sheet
+  end.join("\n")	
+%>
+<% if File.exists?("#{RAILS_ROOT}/public/stylesheets/local.css") %>
+  <%= stylesheet_link_tag 'local' %>
+<% end %>
+
+
+<%# ------- Javascript -------------%>
+
+<% if ENV['RAILS_ENV'] == 'development' %>
+	<%=	JAVASCRIPT_FILES.collect do |file|
+        javascript_include_tag file
+			end.join("\n")	
+	%>
+<% else %>    
+  <%= javascript_include_tag COMPRESSED_JS %>
+<% end %>
+
+
+<%# ------- Inline variables -------------%>
+
+<span style="display:none">
+  <% if current_user and current_user.card %>
+    <div id="user"> <%= current_user.card.name %></div>
+  <% end %>
+  <div id="edit_html"><%=System.ok? 'edit_html' %></div>
+  <div id="edit_cards"><%=System.ok? 'edit_cards' %></div>
+  <div id="popup">false</div>
+</span>

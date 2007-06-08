@@ -1,0 +1,343 @@
+/*---- page layout */
+
+#page-left {
+  width: 63%;
+  padding: 0% 1%;
+}
+#page-right {
+  position: absolute;  
+  top: 50px;
+  right: 0px;
+  width: 33%;
+  padding: 0% 1%;
+  z-index: 0;
+}
+
+/* top-menu -------------*/
+
+#top-menu {
+  background: url(/images/top-bar.png);
+  padding: 1px;
+  margin-bottom: 10px;
+}
+#top-menu a {
+  position: relative;
+  z-index: 10;
+  color: white;
+  padding: 0px 4px;
+}
+#top-menu input {
+  font-size: 9;
+  padding: 0px 3px;
+  border: 1px solid #aaa;
+  border-top: 0px;
+  border-left: 0px;
+  margin: 0px 8px;
+  -moz-border-radius: 0px 0px 0px 0px;
+}
+#logging {  /* signing in and out */
+  position: absolute;
+  right: 36%;
+}
+#current-user-card {
+  text-align: right;
+  padding: 0px;
+  margin-top: -10px;
+}
+#current-user-card a {
+  position: relative;
+  right: 36%;
+  background: white;
+  border: 2px solid #999;
+  border-left: 1px solid #ccc;
+  border-top: 0px;
+  -moz-border-radius: 0px 0px 6px 6px;
+  padding: 1px 7px;
+  font-weight: normal;
+  color: #777;
+}
+
+
+/* -------  logo --------- */
+
+.logo {
+  background: white;
+  font-weight:bold;
+  font-size:25;
+  letter-spacing: -2px;
+  padding: 7px;
+  border: 2px solid #999; 
+  border-top: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+ -moz-border-radius: 6px;
+  position: absolute;
+  top: 2px;
+  right: 25px;
+}
+.logo a, 
+.logo a:link,
+.logo a:visited { 
+  color: #448; 
+  text-decoration: none;
+}
+
+/*---- main card ------*/
+
+#main-body {
+  margin: 5px 0px;
+}
+
+
+/* ---- related cards -----------*/
+
+#related {
+  margin-top: 5px;  
+}
+#related-header {
+  margin: 5px;
+}
+#related-title {
+  padding: 5px;
+}
+#related-toggle {
+  float: right;
+  margin: 10px 5px;
+}
+#related input,
+#related select {
+  font-size: 11px;
+}
+#query-select {
+  margin-left: 10px;
+  color: #777;
+  width: 60%;
+}
+#related-button {
+  margin: 3px 10px;
+}
+#related #paging-links-copy {
+  margin-right: 10px;
+  margin-top: 5px;
+}
+
+/*--- all card lists ---*/
+
+.card-list {
+  margin: 3px 0px;
+}
+#card-list-label {
+  display: block;
+  margin: 3px;
+}
+#options-toggle {
+  float: right;
+  margin: -15px 10px;
+}
+.paging-links {
+  float:right;
+  margin-right: 15px
+}
+
+
+/*--- query options box ---*/
+
+
+
+#linker-options {
+  padding: 3px;
+  margin: 5px;
+  border:  1px solid #ccc;
+  border-right: 2px solid #aaa;
+  border-bottom: 2px solid #aaa;
+  background: #eee;
+  -moz-border-radius: 6px;
+  font-size: 12px;
+}
+#linker-options input, 
+#linker-options select {
+  -moz-border-radius: 0px;
+  padding: 0px;
+  margin: 2px;
+  width: 60%;
+  font-size: 10px;
+}
+#linker-options table {
+  width: 100%;
+}
+#linker-options td {
+  width: 50%;
+}
+.option {
+  padding: 0px 10px; 
+}
+
+
+/*--- new connections --*/
+
+#new-connection {
+  display: block;
+  padding: 8px;
+  background: white;
+  margin: 4px 0px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-bottom: 2px solid #bbb;
+  border-right: 2px solid #bbb;
+  -moz-border-radius: 8px;
+}
+#new-connection div {
+  margin-bottom: 15px
+}
+#new-connection-intro {
+  font-style: italic
+}
+#connections-workspace .cancel,
+#connections-workspace .save {
+  margin: 0px 15px;
+}
+
+/*----- alerts ----------*/
+
+#alerts {
+  padding: 2px 9px;
+  margin: 5px 0px;
+  -moz-border-radius: 8px;
+  color: #555;
+  font-weight: bold;
+  z-index: 4;
+}
+html>body #alerts { /* not in IE  (won't do fixed position) */
+  margin: 0px;
+  width: 33%;
+  position: fixed !important;
+  bottom: 0px;
+  right: 0px;
+  z-index:  !important;
+  background: #eee;
+  -moz-border-radius: 8px 0px 0px 0px;
+  border: 1px solid #ccc;
+  border-bottom: 0px;
+  border-right: 0px;
+  display: block;
+
+}
+#alerts div {
+  display: none;
+}
+
+
+/*----- fieldset tables --------*/
+
+.fieldset { 
+  width: 100%; 
+}
+.fieldset td     { 
+  padding: 5px 3px 5px 3px; 
+  border-bottom: 1px solid #ddd; 
+}
+.fieldset .label { 
+  text-align: right;  
+}
+.fieldset .field { 
+  text-align: left;  
+}
+.fieldset .help { 
+  padding-left: 6px;
+  font-style: italic;
+  text-align: left; 
+  background: #eee 
+}
+/*
+.query {
+  display: inline;
+  color: #338;
+}
+*/
+
+
+
+/* --  miscellaneous --- */
+
+#maincontent { /* FIXME -- unhelpful name; what does this do?? */
+  padding: 0px 8px 10px 8px;
+}
+#create-advanced { 
+  border: 1px solid #ccc;
+  -moz-border-radius: 4px; 
+}
+.admin-nav {
+  margin: 10px 10px 30px 10px;
+}
+
+/* -----bottom menu ------*/
+
+#bottom-menu {
+  margin-top: 200px;
+}
+#credit {
+  width: 75%;
+  text-align: center;
+  color: #999;
+}
+
+
+
+/*-------- Special Pages --------*/
+
+
+/*-- sign in page --*/
+
+#sign-in p {
+  margin: 5px;
+}
+#sign-in input[type=text],
+#sign-in input[type=password] {
+  width: 50%;
+}
+
+
+/*-- new card page ---*/
+
+#new-editor {
+  margin-top: 10px;
+}
+#new-card-cardtype {
+  position: relative;
+  top: 15px;
+}
+
+
+/*---- recent changes page ----*/
+
+#recent-list h2 {
+  margin: 8px 16px;
+}
+
+
+/* -- permissions page -----*/
+
+#role_task {
+  margin-bottom: 2em;
+  padding: 3px;
+}
+.role {
+  text-align: center;
+  padding: 2px 8px;
+}
+.task {
+  padding: 2px;
+}
+
+
+/*------- HACK FIXME------------*/
+
+/*-- options toggle was looking funky in safari.  the pound makes safari ignore it.  MUST be at end of file, or else safari will ignore everything else */
+#related #options-toggle { margin: 0px 10px;}
+#related #options-toggle { margin: -15px 10px;#}
+
+
+
+
+
+
+

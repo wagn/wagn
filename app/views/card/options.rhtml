@@ -1,0 +1,17 @@
+<%#= form_for_card :action=>'update' %>
+  <div id="<%= params[:element] %>-options-workspace">
+  <div id="create-advanced"  >
+    <table class="fieldset">
+      <%= render :partial=>'option_fields', :locals=>{:context=>'options'} %>
+      <%= renderer.extra_options %>
+
+      <% if System.ok?(:remove_cards) and !(card.tag.datatype_key=='User') %>
+         <tr>
+            <td class="label"> </td>
+            <td class="field"><%= link_to_remote "Delete this card", :url=>{ :action=>'remove_form', :id=>params[:id], :params=>{:element=>params[:element]} }, :update=>"#{params[:element]}-options-workspace" %></td>
+            <td class="help"></td>
+          </tr>
+      <% end %>
+    </table>
+  </div>
+<%#= end_form_tag %>

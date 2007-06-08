@@ -1,0 +1,232 @@
+--- 
+cards_002: 
+  reader_type: 
+  name: Basic
+  updated_at: 2007-06-06 18:09:58.91454
+  created_by: 
+  current_revision_id: "3"
+  priority: "0"
+  extension_type: Cardtype
+  type: Cardtype
+  tag_id: "3"
+  reader_id: 
+  plus_sidebar: f
+  updated_by: 
+  id: "3"
+  writer_type: 
+  value: 
+  trunk_id: 
+  writer_id: 
+  extension_id: "1"
+  sealed: f
+  created_at: 2007-06-06 18:09:58.885041
+cards_003: 
+  reader_type: 
+  name: Connection
+  updated_at: 2007-06-06 18:09:58.963194
+  created_by: 
+  current_revision_id: "4"
+  priority: "0"
+  extension_type: Cardtype
+  type: Cardtype
+  tag_id: "4"
+  reader_id: 
+  plus_sidebar: f
+  updated_by: 
+  id: "4"
+  writer_type: 
+  value: 
+  trunk_id: 
+  writer_id: 
+  extension_id: "2"
+  sealed: f
+  created_at: 2007-06-06 18:09:58.940237
+cards_004: 
+  reader_type: 
+  name: User
+  updated_at: 2007-06-06 18:09:59.01253
+  created_by: 
+  current_revision_id: "5"
+  priority: "0"
+  extension_type: Cardtype
+  type: Cardtype
+  tag_id: "5"
+  reader_id: 
+  plus_sidebar: f
+  updated_by: 
+  id: "5"
+  writer_type: 
+  value: 
+  trunk_id: 
+  writer_id: 
+  extension_id: "3"
+  sealed: f
+  created_at: 2007-06-06 18:09:58.989936
+cards_005: 
+  reader_type: 
+  name: Cardtype
+  updated_at: 2007-06-06 18:09:59.062485
+  created_by: 
+  current_revision_id: "6"
+  priority: "0"
+  extension_type: Cardtype
+  type: Cardtype
+  tag_id: "6"
+  reader_id: 
+  plus_sidebar: f
+  updated_by: 
+  id: "6"
+  writer_type: 
+  value: 
+  trunk_id: 
+  writer_id: 
+  extension_id: "4"
+  sealed: f
+  created_at: 2007-06-06 18:09:59.038443
+cards_006: 
+  reader_type: 
+  name: Role
+  updated_at: 2007-06-06 18:09:59.239184
+  created_by: 
+  current_revision_id: "8"
+  priority: "0"
+  extension_type: Cardtype
+  type: Cardtype
+  tag_id: "8"
+  reader_id: 
+  plus_sidebar: f
+  updated_by: 
+  id: "8"
+  writer_type: 
+  value: 
+  trunk_id: 
+  writer_id: 
+  extension_id: "6"
+  sealed: f
+  created_at: 2007-06-06 18:09:59.140569
+cards_007: 
+  reader_type: 
+  name: Administrative User
+  updated_at: 2007-06-06 18:09:59.398843
+  created_by: 
+  current_revision_id: "11"
+  priority: "0"
+  extension_type: Role
+  type: Role
+  tag_id: "11"
+  reader_id: 
+  plus_sidebar: f
+  updated_by: 
+  id: "11"
+  writer_type: 
+  value: 
+  trunk_id: 
+  writer_id: 
+  extension_id: "3"
+  sealed: f
+  created_at: 2007-06-06 18:09:59.376066
+cards_008: 
+  reader_type: 
+  name: Wagn
+  updated_at: 2007-06-06 18:09:59.454478
+  created_by: 
+  current_revision_id: "12"
+  priority: "0"
+  extension_type: 
+  type: Basic
+  tag_id: "12"
+  reader_id: 
+  plus_sidebar: f
+  updated_by: 
+  id: "12"
+  writer_type: 
+  value: 
+  trunk_id: 
+  writer_id: 
+  extension_id: 
+  sealed: f
+  created_at: 2007-06-06 18:09:59.440178
+cards_009: 
+  reader_type: 
+  name: Anyone
+  updated_at: 2007-06-06 18:10:00.118266
+  created_by: 
+  current_revision_id: "9"
+  priority: "0"
+  extension_type: Role
+  type: Role
+  tag_id: "9"
+  reader_id: 
+  plus_sidebar: f
+  updated_by: "1"
+  id: "9"
+  writer_type: 
+  value: 
+  trunk_id: 
+  writer_id: 
+  extension_id: "1"
+  sealed: f
+  created_at: 2007-06-06 18:09:59.266381
+cards_010: 
+  reader_type: 
+  name: Anyone signed in
+  updated_at: 2007-06-06 18:10:00.202868
+  created_by: 
+  current_revision_id: "10"
+  priority: "0"
+  extension_type: Role
+  type: Role
+  tag_id: "10"
+  reader_id: 
+  plus_sidebar: f
+  updated_by: "1"
+  id: "10"
+  writer_type: 
+  value: 
+  trunk_id: 
+  writer_id: 
+  extension_id: "2"
+  sealed: f
+  created_at: 2007-06-06 18:09:59.326623
+cards_011: 
+  reader_type: 
+  name: Wagn Bot
+  updated_at: 2007-06-06 18:10:00.360653
+  created_by: 
+  current_revision_id: "1"
+  priority: "0"
+  extension_type: User
+  type: User
+  tag_id: "1"
+  reader_id: 
+  plus_sidebar: f
+  updated_by: "1"
+  id: "1"
+  writer_type: 
+  value: 
+  trunk_id: 
+  writer_id: 
+  extension_id: "2"
+  sealed: f
+  created_at: 2007-06-06 18:09:58.791777
+cards_001: 
+  reader_type: 
+  name: Admin
+  updated_at: 2007-06-06 18:09:58.863769
+  created_by: 
+  current_revision_id: "2"
+  priority: "0"
+  extension_type: User
+  type: User
+  tag_id: "2"
+  reader_id: 
+  plus_sidebar: f
+  updated_by: 
+  id: "2"
+  writer_type: 
+  value: 
+  trunk_id: 
+  writer_id: 
+  extension_id: "1"
+  sealed: f
+  created_at: 2007-06-06 18:09:58.846377

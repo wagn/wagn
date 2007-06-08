@@ -1,0 +1,7 @@
+first_post:
+  id: 1
+  name: Post One
+
+second_post:
+  id: 2
+  name: Post Two

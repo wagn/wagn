@@ -1,0 +1,4 @@
+<%= collection_select :card, :writer_id, writer_options_for( @card ), :first, :last, {}, 
+ :onChange=>card_function( params[:element], :update_writer, "{ 'card[writer_id]': Form.Element.getValue(this) }" ) 
+%>
+

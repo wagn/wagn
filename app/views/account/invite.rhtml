@@ -1,0 +1,81 @@
+<%- 
+user = User.new       
+div_id = "main-body"
+context = 'invitation'
+-%>  
+<span style="display:none;" class="editor_context"><%= context %></span>
+<iframe id="iframe-<%= div_id %>" height="0" width="0" frameborder="0"></iframe>
+
+<% form_remote_for( :user, user, :url=>{ :controller=>'account', :action=>'create' }, 
+		:html=>{:id=>"#{div_id}-user-update-form"} ) do |f| %>
+		
+  <%= hidden_field_tag 'element', "#{div_id}"  %>
+  <%#= hidden_field_tag 'card[name]', '', {:id => "user-card-name-field"} %>
+  <%#= hidden_field_tag 'card[content]', '', {:id => "user-card-content-field"} %>
+
+
+	<h1>Invite A Friend</h1>
+
+	<table class="fieldset">   
+    <tr>
+      <td class="label"><label for="email">Email</label></td>
+      <td class="field" colspan="2"><%= f.text_field :email %></td>
+      <!--<td class="help"></td>-->
+    </tr>
+	  
+	  <tr>
+      <td class="label"><label for="name">Name</label></td>
+      <td class="field">
+				<%= text_field( :card, :name, {:class=>'new-card-name', :id=>"new-card-name-field"} )%>
+			</td>
+      <td class="help">Usually a full name: the title of the new user's card.  Signed in users can change their card titles any time.</td>
+		</tr>
+
+	  <% if System.always_ok? %>
+	    <tr>
+	      <td class="label"><label for="password">Password</label></td>
+	      <td class="field"><%= f.password_field :password %></td>
+	      <td class="help" rowspan="2">
+					As Admin, you may optionally set an initial password for
+					this new user.  If left blank, a random password will be generated  
+	      </td>
+	    </tr>  
+
+	    <tr>
+	      <td class="label"><label for="password_confirmation">Confirm password</label></td>
+	      <td class="field"><%= f.password_field :password_confirmation %></td>
+	    </tr>
+	  <% end %>           
+
+		
+
+
+		<tr>
+		  <td class="label"><label for="subject">Subject</label></td>
+		  <td class="field"  colspan="2">
+				<%= text_field_tag 'email[subject]', System.setting( 'invitation email subject' ),  :size=>45  %>
+			</td>
+		</tr>                  
+		
+		<tr>
+		  <td class="label"><label for="message">Message</label></td>
+		  <td class="field" colspan="2">
+				<%= text_area_tag 'email[message]', 
+						System.setting( 'invitation email body' ).substitute!( 
+							:invitor => current_user.card.name + " <#{current_user.email}>" 
+						), :rows=>15, :cols => 60  %>
+			</td>             			
+		</tr>
+		                  
+		<tr>
+			<td></td>
+			<td colspan="2">
+		  	<%= submit_tag 'Submit' %>
+		  	<!--FIXME with css?-->&nbsp;&nbsp;
+		  	<%= link_to_page 'Cancel', previous_page  %>
+		  </td>
+		</tr>
+		
+	</table>    
+
+<% end %>     

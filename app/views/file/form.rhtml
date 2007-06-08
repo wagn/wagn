@@ -1,0 +1,10 @@
+<h1>UploadPlay#form</h1>
+
+<%= form_tag( { :action=>'upload' }, :multipart=>true, :target=>'frame' ) %>
+  <%= file_field_tag 'card[file]'  %><br/><br/>
+  <%= submit_tag 'Upload' %>
+<%= end_form_tag %>
+
+<iframe id='frame' name="frame" style="display: none"></iframe>
+
+<div id="form-result"></div>

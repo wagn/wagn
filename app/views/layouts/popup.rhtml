@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <title> <%= System.site_name %>: 
+      <% if @title then %>
+        <%= @title %>
+      <% else %>
+        <%= controller.controller_name %>#<%= controller.action_name %>
+      <% end %>
+    </title>
+    <%= render :partial=>'layouts/includes' %>
+  </head>
+  
+  <body id="wagn">
+    <div id="alerts" class="section">
+       <% if flash[:notice] %> <div id="notice"><%= flash[:notice] %></div><% end %>
+       <% if flash[:error] %> <div id="error"><%= flash[:error] %></div> <% end %>
+     </div>
+
+     <div id="edit_html" style="display:none"><%=System.ok? 'edit_html' %></div>
+     <div id="popup" style="display:none">true</div>
+     <div id="main" class="section">
+        <%= yield %>
+      </div>
+    </div>
+    <div id="messages"> </div>
+    <%= javascript_tag "new Wagn.OnLoad.Item(function(){$('main-body').card().edit()})"%>
+  </body>
+</html>
+

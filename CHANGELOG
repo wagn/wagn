@@ -1,0 +1,65 @@
+=== 0.5.3 (May 26, 2007)
+* update install, remove debugging code &amp; unused file
+* fix search in mysql
+* merge -r563:564 from branches/lhoffman: fix remove bug
+* merge -r564:567 from branches/lhoffman: version
+* merged -r553:561 from branches/lhoffman:  rename
+* fixed &lt;p&gt; css
+* fixed overflow bug and showed cardtype on line view
+* replace obsolete INSTALL instructions with link to wagn.org
+
+
+=== 0.5.3 (May 14, 2007)
+  * workspace spacing, table of contents css, and card lists
+	* fix sidebar bug
+	* add discussion datatype
+	* allow hr
+	* fix table of contents
+	* fix save update for same card twice on page. (sidebar card in main slot)
+	* unbreak table of contents
+	* latest compile of js
+	* fix tag cloud css
+	* fix url on search/recent changes requests
+	* fix incomplete thought in permission test
+	* browser detection, link fixes
+	* more instructions on connection cards.
+	* bug fixes, including auth permission
+	* cardtype cards give valid ruby class, cardtype creation gives more attractive name.
+	* misc small fixes
+	* lots of small bugs -- sidebar issues, transclusion titles, etc...
+	* swipe at little bugs on 0.5.3 list 
+	* fixed new wagn text and transclusion typo for nonexistent cards.
+	* fix edit NOT ok js message? 
+	* link to images
+	* css fix for wadget
+	* quick hack for non-word characters in search.  fix js alert
+	* fix cardtype dropdown, error on cardtype update
+	* fixing absolute/relative urls in wadget, make open/close work, refactor, etc.
+	* forgot to commit js
+	* undo some wadget changes, fix css
+	* adding wadget.js
+	* remove wadget symlink
+	* merge -r471:512 from branches/wadget
+	* data touchups
+	* reset test fixtures to new install.  fix tests accordingly
+	* fix transclusion editing (broken by delayed editor load) via terrible hack
+	* merge -r503:505 from branches/lhoffman: delayed edit optimization
+	* merge -r500:502 from branches/lhoffman : import-export hack
+	* make search case insensitive in Postgresql, refactor adapter specific matching
+	* generic defaults
+	* selenium test updates
+	* yast (yet another stylesheet tweak)
+	* better test name
+	* new selenium tests
+	* css tweak for lists
+	* additional css tweaks for header spacing
+	* line-height tweak
+
+=== 0.3.2	(July 28, 2006)
+  * unit/functional tests running again
+  * handle invalid activation code on activation landing page
+  * handle invalid emails on invitation page
+  * better Exception handling defaults in sample_wagn.rb
+
+=== 0.3.1	(July 06, 2006)
+  * First real release

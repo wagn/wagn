@@ -1,0 +1,21 @@
+--- 
+cardtypes_001: 
+  class_name: Basic
+  system: 
+  id: "1"
+cardtypes_002: 
+  class_name: Connection
+  system: 
+  id: "2"
+cardtypes_003: 
+  class_name: User
+  system: 
+  id: "3"
+cardtypes_004: 
+  class_name: Cardtype
+  system: 
+  id: "4"
+cardtypes_005: 
+  class_name: Role
+  system: 
+  id: "6"

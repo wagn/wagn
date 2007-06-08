@@ -1,0 +1,8 @@
+|open|/selenium/setup?fixtures=all||
+|open|/wiki/Wagn||
+|clickAndWait|link=Sign in||
+|type|login|webmaster@grasscommons.org|
+|type|password|w8gn8t0r|
+|clickAndWait|commit||
+|verifyTextPresent|Welcome to Wagn||
+|verifyTextPresent|Sign out||

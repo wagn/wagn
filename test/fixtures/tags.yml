@@ -1,0 +1,122 @@
+--- 
+tags_008: 
+  created_by: 
+  current_revision_id: "2"
+  datatype_key: User
+  card_count: "0"
+  updated_by: "2"
+  id: "2"
+  datatype: string
+  plus_template: 
+  plus_datatype_key: RichText
+  label: f
+tags_009: 
+  created_by: 
+  current_revision_id: "13"
+  datatype_key: RichText
+  card_count: "0"
+  updated_by: "1"
+  id: "9"
+  datatype: string
+  plus_template: 
+  plus_datatype_key: RichText
+  label: f
+tags_010: 
+  created_by: 
+  current_revision_id: "14"
+  datatype_key: RichText
+  card_count: "0"
+  updated_by: "1"
+  id: "10"
+  datatype: string
+  plus_template: 
+  plus_datatype_key: RichText
+  label: f
+tags_011: 
+  created_by: 
+  current_revision_id: "15"
+  datatype_key: User
+  card_count: "0"
+  updated_by: "1"
+  id: "1"
+  datatype: string
+  plus_template: 
+  plus_datatype_key: RichText
+  label: f
+tags_001: 
+  created_by: 
+  current_revision_id: "3"
+  datatype_key: RichText
+  card_count: "0"
+  updated_by: "2"
+  id: "3"
+  datatype: string
+  plus_template: 
+  plus_datatype_key: RichText
+  label: f
+tags_002: 
+  created_by: 
+  current_revision_id: "4"
+  datatype_key: RichText
+  card_count: "0"
+  updated_by: "2"
+  id: "4"
+  datatype: string
+  plus_template: 
+  plus_datatype_key: RichText
+  label: f
+tags_003: 
+  created_by: 
+  current_revision_id: "5"
+  datatype_key: RichText
+  card_count: "0"
+  updated_by: "2"
+  id: "5"
+  datatype: string
+  plus_template: 
+  plus_datatype_key: RichText
+  label: f
+tags_004: 
+  created_by: 
+  current_revision_id: "6"
+  datatype_key: RichText
+  card_count: "0"
+  updated_by: "2"
+  id: "6"
+  datatype: string
+  plus_template: 
+  plus_datatype_key: RichText
+  label: f
+tags_005: 
+  created_by: 
+  current_revision_id: "8"
+  datatype_key: RichText
+  card_count: "0"
+  updated_by: "2"
+  id: "8"
+  datatype: string
+  plus_template: 
+  plus_datatype_key: RichText
+  label: f
+tags_006: 
+  created_by: 
+  current_revision_id: "11"
+  datatype_key: RichText
+  card_count: "0"
+  updated_by: "2"
+  id: "11"
+  datatype: string
+  plus_template: 
+  plus_datatype_key: RichText
+  label: f
+tags_007: 
+  created_by: 
+  current_revision_id: "12"
+  datatype_key: RichText
+  card_count: "0"
+  updated_by: "2"
+  id: "12"
+  datatype: string
+  plus_template: 
+  plus_datatype_key: RichText
+  label: f

@@ -1,0 +1,166 @@
+body.wagn {
+  background: url(/images/body-bg.bmp) repeat-x #cdb;
+}
+body, .reset{
+  color: #444;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 11px;
+}
+
+body, p, ol, ul, td, th {
+  font-family: verdana, arial, helvetica, sans-serif;
+  font-size:   11px;
+  font-weight: normal;
+  line-height: 15px;
+}
+body {
+  margin: 0px;
+}
+body, .reset{
+  color: #444;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 11px;
+}
+pre {
+ white-space: pre-wrap;       /* css-3 */
+ white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+ white-space: -pre-wrap;      /* Opera 4-6 */
+ white-space: -o-pre-wrap;    /* Opera 7 */
+ word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+form { 
+  margin: 0px; 
+  padding: 0px;
+  display: inline;
+}
+p { 
+  margin: 0px; 
+}     
+a, 
+a:link, 
+a:visited { 
+	color: #484; 
+	text-decoration: none;
+}
+a:hover, 
+a:focus {
+  text-decoration: underline;
+}
+
+
+a.wanted-card { 
+  color: #900 
+}
+a.external-link { 
+	color: #979 
+}
+a.email-link { 
+  color: #979 
+}
+
+
+h1 {
+  font-size: 15px; 
+}
+h2 {
+  font-size: 13px; 
+}
+/* headers outside of cards */
+body.wagn h1, 
+body.wagn h2 { 
+  color: #55b; 
+  font-weight: normal; 
+  margin: 5px 0px 10px 0px;
+}
+
+/* headers within cards */
+h1, h2,
+body.wagn .card-slot h1,
+body.wagn .card-slot h2 {
+  color:#644;
+  font-weight: bold;
+  margin: 0px;
+}
+
+b { display: inline;
+  font-size: 11px; font-weight: normal;
+  color: red;
+  font-weight: bold;
+}
+i {
+  display: inline;
+  font-size: 11px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #ffff6d;
+  color: #444;
+  -moz-border-radius : 8px;
+  padding: 0px 6px;
+}
+
+label {
+  color: #777;
+}
+pre {
+  background-color: #eef;
+  padding: 10px;
+  font-size: 11px;
+}
+table {
+  border-collapse: collapse;
+  padding: 0;
+}
+th {
+  color: #666;
+  font-weight: normal;
+  font-style: italic;
+}
+
+td, th {
+  vertical-align: top;
+  padding: 0px;
+}
+
+.table-row-odd {
+  background: #cce;
+}
+input[type=text], 
+input[type=password],
+select {
+  padding-left: 3px;
+  border: 1px solid #aaa;
+  border-top: 2px solid #666;
+  border-left: 2px solid #666;
+  font-size: 12px;
+  color: #555;
+  background: #ffd;
+}
+
+input {
+  padding: 0px;
+}
+input[type=submit], 
+input[type=button] {
+  background: #99a;
+  color: #ffd;
+  border: 2px solid #bbb;
+  border-right: 2px solid #666;
+  border-bottom: 2px solid #666;
+}
+textarea {
+  width: 100%;    
+}
+img {
+  border: 0px;
+  vertical-align: middle;
+}  
+.cancel {
+  float: right; 
+}
+
+li {
+  margin-bottom: 2px;
+}
+

@@ -1,0 +1,72 @@
+Userstamp Plugin (v 1.0)
+========================
+
+Overview
+--------
+The Userstamp Plugin extends ActiveRecord::Base(http://api.rubyonrails.com/classes/ActiveRecord/Base.html) to add automatic updating of created_by and updated_by attributes of your models in much the same way that the ActiveRecord::Timestamp(http://api.rubyonrails.com/classes/ActiveRecord/Timestamp.html) module updates created_(at/on) and updated_(at/on) attributes.
+
+The module requires that your application's user object (User by default) contains an accessor called current_user be set with an instance of the currently logged in user (typically using a before_filter(http://api.rubyonrails.com/classes/ActionController/Filters/ClassMethods.html#M000127). This module can also be turned off on a case by case basis by setting the record_userstamps attribute of your ActiveRecord object to false.
+
+Installation
+------------
+To install the Userstamp plugin into a current Rails application run the script/plugin script from the root of your application passing it the url of http://www.delynnberry.com/svn/code/rails/plugins/userstamp/. For example:
+
+     script/plugin install http://www.delynnberry.com/svn/code/rails/plugins/userstamp
+
+Once installed you will need to restart your webserver for the plugin to be loaded into the Rails environment.
+
+Usage
+-----
+Here is a simple example for how to use the Userstamp plugin. First, create a User model object (either using the generator or manually creating the file). Adjust your model to include the current_user accessor like so:
+
+     class User < ActiveRecord::Base
+         cattr_accessor :current_user
+     end
+
+Second, create another table and model that will use the Userstamp functionality (I'm using Post for this example). Be sure to add the created_by and updated_by columns to your table definition and also create a belongs_to relationship. For example:
+
+     class Post < ActiveRecord::Base
+         belongs_to :created_by, :class_name => "User", :foreign_key => "created_by"
+         belongs_to :updated_by, :class_name => "User", :foreign_key => "updated_by"
+     end
+
+Then in your ApplicationController create a before_filter to automatically set the current_user:
+
+     class ApplicationController < ActionController::Base
+         before_filter do |c|
+            User.current_user = User.find(c.session[:user].id) unless c.session[:user].nil?
+         end
+     end
+
+
+Uninstall
+---------
+Uninstalling is simply a matter of running script/plugin from the root of your Rails application. Except this time you pass the uninstall parameter:
+
+     script/plugin remove userstamp
+
+Documentation
+-------------
+RDoc has been run on the plugin directory and is available in the download.
+
+Running Unit Tests
+------------------
+There are extensive unit tests in the "test" directory of the plugin. Currently, only MySQL is supported, but
+you should be able to easily fix this by looking at "connection.rb". You'll need to create a
+database for the tests and put the connection information into "connection.rb" as well as import the schema file
+for MySQL that can be found at "test/fixtures/mysql.sql".
+
+To run the test simply execute the follow from the test directory inside the Userstamp plugin directory:
+
+     ruby userstamp_test.rb
+
+Bugs & Feedback
+---------------
+Bug reports and feedback are always welcome. Please send them to
+delynn@gmail.com with [Userstamp] in the subject line.
+You can also visit (http://www.delynnberry.com/articles/category/userstamp/) and post a comment on any of the posts.
+
+Credits and Special Thanks
+--------------------------
+The original idea for this plugin came from the Rails Wiki article entitled "Extending ActiveRecord" (http://wiki.rubyonrails.com/rails/pages/ExtendingActiveRecordExample).
+Special Thanks to Ben Reubenstein (benr75@gmail.com) for helping me stress test this plugin.

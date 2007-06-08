@@ -1,0 +1,19 @@
+<style>
+.line .title-<%= css_name(@card.name) %>, .line .link-<%= css_name(@card.name) %> { display: none; }
+.paragraph .title-<%= css_name(@card.name) %>, .paragraph .link-<%= css_name(@card.name) %> { font-weight: normal; }
+</style>
+
+<div>
+  <% @title = @card.title %>
+
+	<%= render( :partial=>'card/card_slot', :locals=>{ 
+		:card => @card,
+		:context => 'main',
+		:partial => 'full',
+		:div_id=>'main-body'
+		}) 
+  %>
+
+</div>
+
+

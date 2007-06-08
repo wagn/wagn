@@ -1,0 +1,11 @@
+first_entry:
+  id: 1
+  name: Entry One
+  created_by: 1
+  updated_by: 1
+
+second_entry:
+  id: 2
+  name: Entry Two
+  created_by: 2
+  updated_by: 2

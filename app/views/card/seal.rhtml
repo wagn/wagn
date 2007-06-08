@@ -1,0 +1,9 @@
+<%= form_for_card :action=>'update' %>
+  <%= hidden_field_tag 'save',1 %>
+  <div class="seal">
+     Seal this card? <%= check_box :card, :sealed %> 
+  </div>
+  
+  <%= submit_tag %>
+    <%= link_to_function "Cancel", "Wagn.mainCard().view()" %>
+<%= end_form_tag %>

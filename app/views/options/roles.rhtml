@@ -1,0 +1,17 @@
+<%= form_remote_tag( 
+      :url=>{ :controller=>'options', :action=>'update_roles', :id=>@card.id },
+      :params=>{ :element=>params['element'] } 
+)%>
+  <%= hidden_field_tag 'save',1 %>
+  <div class="user_roles">
+    <% for role in @roles %>
+      <div>
+        <%= check_box_tag "user_roles[%s]" % role.id, 1,
+          @user.roles.member?(role) ? true : false %>
+        <%= link_to_page role.card.name %> 
+      </div>
+    <% end %>
+  </div>
+  
+  <%= submit_tag %>  <%= link_to_function "Cancel", "Wagn.mainCard().view()" %>
+<%= end_form_tag %>

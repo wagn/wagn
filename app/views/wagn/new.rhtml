@@ -1,0 +1,22 @@
+<h2> Welcome To <%= site_name %></h2>
+
+<%= error_messages_for 'user' %>
+<%= error_messages_for 'system' %>
+
+<p>To get started, you need to setup the administrative account. </p>
+
+<%= start_form_tag :id=>params[:id], :action => "create" %>
+
+<!--[form:user]-->
+
+<p><label for="user_email">Email</label><br/>
+<%= text_field 'user', 'email'  %></p>
+
+<p><label for="user_password">Password</label><br/>
+<%= password_field_tag 'user[password]', '' %></p>
+
+<p><label for="user_password_confirmation">Confirm Password</label><br/>
+<%= password_field_tag 'user[password_confirmation]', '' %></p>
+
+  <%= submit_tag 'Create' %>
+<%= end_form_tag %>

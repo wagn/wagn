@@ -1,4 +1,26 @@
-=== 0.5.3 (May 26, 2007)
+=== 0.6.0 (June 7, 2007)
+* fix 500 on User cards without extensions
+* fix fixtures take 2
+* update fixtures
+* deleting templated cards -- bug fix
+* deleting templated cards, lower right css
+* wagn footer css fix
+* test &amp; touchups from container template change
+* fix footer images for wadget
+* cardtype on new card and *template
+* fix breakage on extensions that don't respond to codename
+* fixed wikiwyg toolbar css bug
+* minor css edits
+* dissallow | in new card names
+* fix hide_duplicates breaking on non-card based searches
+* invite wording / tiny fieldset css tweaks
+* more css cleanup
+* cancel button working
+* look and feel / cross-browser stuff
+* merge -r562:578 from branches/ethan/wagn-0.6-related: related interface
+
+
+=== 0.5.4 (May 26, 2007)
 * update install, remove debugging code &amp; unused file
 * fix search in mysql
 * merge -r563:564 from branches/lhoffman: fix remove bug
@@ -54,12 +76,3 @@
 	* css tweak for lists
 	* additional css tweaks for header spacing
 	* line-height tweak
-
-=== 0.3.2	(July 28, 2006)
-  * unit/functional tests running again
-  * handle invalid activation code on activation landing page
-  * handle invalid emails on invitation page
-  * better Exception handling defaults in sample_wagn.rb
-
-=== 0.3.1	(July 06, 2006)
-  * First real release

@@ -6565,7 +6565,7 @@ self.onFailure();
 dojo.io.bind(this._dojo_args);
 },onFailure:function(){
 err_msg="Sorry, "+this.url+" didn't return valid wadget data";
-Element.replace(this._element,err_msg);
+Element.insert(this._element,err_msg);
 },onLoadCard:function(data){
 Element.replace(this._element,data);
 Wagn.Card.setupAll("widget");

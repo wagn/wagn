@@ -190,13 +190,13 @@ module WagnHelper
   # Common image tags
   
   def pieces_icon( card, prefix='' )
-    image_tag "#{System.base_url}/images/#{prefix}pieces_icon.png", :title=>"cards that comprise \"#{card.name}\""
+    image_tag "/images/#{prefix}pieces_icon.png", :title=>"cards that comprise \"#{card.name}\""
   end
   def connect_icon( card, prefix='' )
-    image_tag "#{System.base_url}/images/#{prefix}connect_icon.png", :title=>"plus cards that include \"#{card.name}\""
+    image_tag "/images/#{prefix}connect_icon.png", :title=>"plus cards that include \"#{card.name}\""
   end
   def connected_icon( card, prefix='' )
-    image_tag "#{System.base_url}/images/#{prefix}connected_icon.png", :title=>"cards connected to \"#{card.name}\""
+    image_tag "/images/#{prefix}connected_icon.png", :title=>"cards connected to \"#{card.name}\""
   end
   
   # Other snippets -------------------------------------------------------------

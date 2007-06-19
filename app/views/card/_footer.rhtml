@@ -12,7 +12,7 @@
       </div>
     <% end %>
     <span id="<%= div_id + "-links" %>" class="link-list">
-      <%= card.pieces.map{ |c| link_to_page c.name_in_context(card), c.name, :include_domain=>true }.join(', ') %> 
+      <%= card.pieces.map{ |c| link_to_page c.name_in_context(card), c.name }.join(', ') %> 
 			<%#= render :partial=>'block/link_list', :locals=>{ 
             :card=>card,
             :cards=>load_cards( :id=>card.id, :query=>"pieces")

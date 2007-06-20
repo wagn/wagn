@@ -1,31 +1,43 @@
 --- 
 users_001: 
+  status: active
   salt: c420fa40c65a38186deb25ba859edacd9bf7d8f8
-  activated_at: 2007-06-06 18:09:58.728761
-  updated_at: 2007-06-06 18:09:58.729962
+  updated_at: 2007-06-19 11:17:49.525346
   cards_per_page: "25"
   crypted_password: 13d124f96e2953fea135c13df097fb3d754588be
-  activation_code: 
   blocked: f
   password_reset_code: 
   id: "2"
-  hide_duplicates: t
   invited_by: "1"
+  hide_duplicates: t
   login: hoozebot
-  created_at: 2007-06-06 18:09:58.729962
+  created_at: 2007-06-19 11:17:49.525346
   email: hoozebot@grasscommons.org
 users_002: 
+  status: active
   salt: bf2a748b23e6fc6fa64d5acb99df8e72e308c58c
-  activated_at: 
-  updated_at: 2007-06-06 18:10:00.475147
+  updated_at: 2007-06-19 11:17:51.25234
   cards_per_page: "25"
   crypted_password: 610bb7b564d468ad896e0fe4c3c5c919ea5cf16c
-  activation_code: 
   blocked: f
   password_reset_code: 
   id: "1"
-  hide_duplicates: t
   invited_by: "1"
+  hide_duplicates: t
   login: admin
-  created_at: 2007-06-06 18:09:58.635326
+  created_at: 2007-06-19 11:17:49.511954
   email: webmaster@grasscommons.org
+users_003: 
+  status: active
+  salt: ed9b6aec0c4c2808917a2931be1e6d1fe41eb09b
+  updated_at: 2007-06-19 11:17:54.251438
+  cards_per_page: "25"
+  crypted_password: b8e0cae45947c5a8a0223033c61a8c9fd23835b1
+  blocked: f
+  password_reset_code: 
+  id: "3"
+  invited_by: 
+  hide_duplicates: t
+  login: joe
+  created_at: 2007-06-19 11:17:54.251438
+  email: joe@test.org

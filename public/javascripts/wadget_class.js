@@ -36,9 +36,9 @@ Object.extend(Wadget.prototype, {
     Element.replace( this._element.firstChild, data );
     Wagn.Card.setupAll('widget');  
     warn('base_href: ' + this.base_href); 
-    var self = this;
-    // Convert images and links to absolute urls
+    var self = this;                            
     
+    // Convert images and links to absolute urls    
     $A(this._element.getElementsByTagName('a')).each(function(e) {
       e.href = self.absolutize_url( e.getAttribute('href') );
     });

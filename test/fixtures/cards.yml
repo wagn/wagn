@@ -2,7 +2,7 @@
 cards_002: 
   reader_type: 
   name: Basic
-  updated_at: 2007-06-06 18:09:58.91454
+  updated_at: 2007-06-19 11:17:49.719194
   created_by: 
   current_revision_id: "3"
   priority: "0"
@@ -10,7 +10,7 @@ cards_002:
   type: Cardtype
   tag_id: "3"
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: 
   updated_by: 
   id: "3"
   writer_type: 
@@ -19,11 +19,11 @@ cards_002:
   writer_id: 
   extension_id: "1"
   sealed: f
-  created_at: 2007-06-06 18:09:58.885041
+  created_at: 2007-06-19 11:17:49.68752
 cards_003: 
   reader_type: 
   name: Connection
-  updated_at: 2007-06-06 18:09:58.963194
+  updated_at: 2007-06-19 11:17:49.769769
   created_by: 
   current_revision_id: "4"
   priority: "0"
@@ -31,7 +31,7 @@ cards_003:
   type: Cardtype
   tag_id: "4"
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: 
   updated_by: 
   id: "4"
   writer_type: 
@@ -40,11 +40,11 @@ cards_003:
   writer_id: 
   extension_id: "2"
   sealed: f
-  created_at: 2007-06-06 18:09:58.940237
+  created_at: 2007-06-19 11:17:49.745832
 cards_004: 
   reader_type: 
   name: User
-  updated_at: 2007-06-06 18:09:59.01253
+  updated_at: 2007-06-19 11:17:49.821743
   created_by: 
   current_revision_id: "5"
   priority: "0"
@@ -52,7 +52,7 @@ cards_004:
   type: Cardtype
   tag_id: "5"
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: 
   updated_by: 
   id: "5"
   writer_type: 
@@ -61,11 +61,11 @@ cards_004:
   writer_id: 
   extension_id: "3"
   sealed: f
-  created_at: 2007-06-06 18:09:58.989936
+  created_at: 2007-06-19 11:17:49.797648
 cards_005: 
   reader_type: 
   name: Cardtype
-  updated_at: 2007-06-06 18:09:59.062485
+  updated_at: 2007-06-19 11:17:49.940851
   created_by: 
   current_revision_id: "6"
   priority: "0"
@@ -73,7 +73,7 @@ cards_005:
   type: Cardtype
   tag_id: "6"
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: 
   updated_by: 
   id: "6"
   writer_type: 
@@ -82,11 +82,11 @@ cards_005:
   writer_id: 
   extension_id: "4"
   sealed: f
-  created_at: 2007-06-06 18:09:59.038443
+  created_at: 2007-06-19 11:17:49.846901
 cards_006: 
   reader_type: 
   name: Role
-  updated_at: 2007-06-06 18:09:59.239184
+  updated_at: 2007-06-19 11:17:50.025851
   created_by: 
   current_revision_id: "8"
   priority: "0"
@@ -94,7 +94,7 @@ cards_006:
   type: Cardtype
   tag_id: "8"
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: 
   updated_by: 
   id: "8"
   writer_type: 
@@ -103,11 +103,11 @@ cards_006:
   writer_id: 
   extension_id: "6"
   sealed: f
-  created_at: 2007-06-06 18:09:59.140569
+  created_at: 2007-06-19 11:17:50.007115
 cards_007: 
   reader_type: 
   name: Administrative User
-  updated_at: 2007-06-06 18:09:59.398843
+  updated_at: 2007-06-19 11:17:50.173129
   created_by: 
   current_revision_id: "11"
   priority: "0"
@@ -115,7 +115,7 @@ cards_007:
   type: Role
   tag_id: "11"
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: 
   updated_by: 
   id: "11"
   writer_type: 
@@ -124,11 +124,11 @@ cards_007:
   writer_id: 
   extension_id: "3"
   sealed: f
-  created_at: 2007-06-06 18:09:59.376066
+  created_at: 2007-06-19 11:17:50.149734
 cards_008: 
   reader_type: 
   name: Wagn
-  updated_at: 2007-06-06 18:09:59.454478
+  updated_at: 2007-06-19 11:17:50.229828
   created_by: 
   current_revision_id: "12"
   priority: "0"
@@ -136,7 +136,7 @@ cards_008:
   type: Basic
   tag_id: "12"
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: 
   updated_by: 
   id: "12"
   writer_type: 
@@ -145,11 +145,11 @@ cards_008:
   writer_id: 
   extension_id: 
   sealed: f
-  created_at: 2007-06-06 18:09:59.440178
+  created_at: 2007-06-19 11:17:50.215706
 cards_009: 
   reader_type: 
   name: Anyone
-  updated_at: 2007-06-06 18:10:00.118266
+  updated_at: 2007-06-19 11:17:50.837287
   created_by: 
   current_revision_id: "9"
   priority: "0"
@@ -157,7 +157,7 @@ cards_009:
   type: Role
   tag_id: "9"
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: 
   updated_by: "1"
   id: "9"
   writer_type: 
@@ -166,11 +166,11 @@ cards_009:
   writer_id: 
   extension_id: "1"
   sealed: f
-  created_at: 2007-06-06 18:09:59.266381
+  created_at: 2007-06-19 11:17:50.047151
 cards_010: 
   reader_type: 
   name: Anyone signed in
-  updated_at: 2007-06-06 18:10:00.202868
+  updated_at: 2007-06-19 11:17:50.913673
   created_by: 
   current_revision_id: "10"
   priority: "0"
@@ -178,7 +178,7 @@ cards_010:
   type: Role
   tag_id: "10"
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: 
   updated_by: "1"
   id: "10"
   writer_type: 
@@ -187,11 +187,11 @@ cards_010:
   writer_id: 
   extension_id: "2"
   sealed: f
-  created_at: 2007-06-06 18:09:59.326623
+  created_at: 2007-06-19 11:17:50.100236
 cards_011: 
   reader_type: 
   name: Wagn Bot
-  updated_at: 2007-06-06 18:10:00.360653
+  updated_at: 2007-06-19 11:17:51.136403
   created_by: 
   current_revision_id: "1"
   priority: "0"
@@ -199,7 +199,7 @@ cards_011:
   type: User
   tag_id: "1"
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: 
   updated_by: "1"
   id: "1"
   writer_type: 
@@ -208,11 +208,32 @@ cards_011:
   writer_id: 
   extension_id: "2"
   sealed: f
-  created_at: 2007-06-06 18:09:58.791777
+  created_at: 2007-06-19 11:17:49.589896
+cards_012: 
+  reader_type: 
+  name: Joe User
+  updated_at: 2007-06-19 11:17:54.530043
+  created_by: "1"
+  current_revision_id: "13"
+  priority: "0"
+  extension_type: User
+  type: User
+  tag_id: "13"
+  reader_id: 
+  plus_sidebar: f
+  updated_by: "1"
+  id: "13"
+  writer_type: 
+  value: 
+  trunk_id: 
+  writer_id: 
+  extension_id: "3"
+  sealed: f
+  created_at: 2007-06-19 11:17:54.269386
 cards_001: 
   reader_type: 
   name: Admin
-  updated_at: 2007-06-06 18:09:58.863769
+  updated_at: 2007-06-19 11:17:49.661263
   created_by: 
   current_revision_id: "2"
   priority: "0"
@@ -220,7 +241,7 @@ cards_001:
   type: User
   tag_id: "2"
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: 
   updated_by: 
   id: "2"
   writer_type: 
@@ -229,4 +250,4 @@ cards_001:
   writer_id: 
   extension_id: "1"
   sealed: f
-  created_at: 2007-06-06 18:09:58.846377
+  created_at: 2007-06-19 11:17:49.644068

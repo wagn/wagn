@@ -1,7 +1,7 @@
 require 'lib/util/card_builder.rb'      
  
 
-task :populate_template_database => :environment do
+task :populate_test_data => :environment do
   # setup test data here
   # admin and hoozebot are created in the migration
      
@@ -27,7 +27,7 @@ task :generate_fixtures => :environment do
   # I spent waay to long trying to do this in a less hacky way--  
   # Basically initial database setup/migration breaks your models and you really 
   # need to start rails over to get things going again I tried ActiveRecord::Base.reset_subclasses etc. to no avail. -LWH
-  puts `rake populate_template_database --trace`      
+  puts `rake populate_test_data --trace`      
   puts `rake extract_fixtures`
   set_database olddb
 end

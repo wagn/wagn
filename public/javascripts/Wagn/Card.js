@@ -77,9 +77,11 @@ Object.extend(Wagn.Card.prototype, {
       this.editor = eval(jscript);
     } else {
       if (this.slot.chunk('edit')) {
-        this.slot.chunk('edit').onClick="";
+        this.slot.chunk('edit').onClick=function(){};
         if (! Wagn.user()) {
           this.slot.chunk('edit').href=this.login_url;
+          this.slot.chunk('options').onclick=function(){};
+          this.slot.chunk('options').href=this.login_url;
         } else {                                               
           this.slot.chunk('edit').href='#';
           this.slot.chunk('edit').innerHTML="<em>locked</em>"; 

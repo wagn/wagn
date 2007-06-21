@@ -23,7 +23,7 @@
   </tr>
 <% end %>       
 
-<% if context !='cardtype' %> 
+<% if context !='cardtype' and @card.edit_ok? %> 
   <tr>
     <td class="label"><label for="cardtype">Cardtype</label></td>
     <td class="field">

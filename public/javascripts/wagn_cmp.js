@@ -7024,9 +7024,13 @@ warn(this.slot.id+": "+_677);
 this.editor=eval(_677);
 }else{
 if(this.slot.chunk("edit")){
-this.slot.chunk("edit").onClick="";
+this.slot.chunk("edit").onClick=function(){
+};
 if(!Wagn.user()){
 this.slot.chunk("edit").href=this.login_url;
+this.slot.chunk("options").onclick=function(){
+};
+this.slot.chunk("options").href=this.login_url;
 }else{
 this.slot.chunk("edit").href="#";
 this.slot.chunk("edit").innerHTML="<em>locked</em>";
@@ -7761,8 +7765,10 @@ card.raw(card.raw().gsub(/\[\[([^\]]+)\]\]/,generate_anchor));
 card.raw(card.raw().gsub(/\[([^\]]+)\]\[([^\]]+)\]/,generate_anchor));
 },before_save:function(_6e1){
 $A(_6e1.card.slot.chunk("raw").getElementsByTagName("a")).each(function(e){
+if(e.attributes["href"]){
 Wagn.Link.new_from_link(e).update_bound();
 Element.replace(e,"["+e.innerHTML+"]["+e.attributes["href"].value+"]");
+}
 });
 return false;
 }});

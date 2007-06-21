@@ -57,8 +57,10 @@ Object.extend(Wagn.LinkEditor, {
   },    
   before_save: function( editor ){
     $A(editor.card.slot.chunk('raw').getElementsByTagName('a')).each(function(e) {   
-      Wagn.Link.new_from_link(e).update_bound();
-      Element.replace(e, '[' + e.innerHTML + '][' + e.attributes['href'].value + ']');
+      if (e.attributes['href']) {
+        Wagn.Link.new_from_link(e).update_bound();
+        Element.replace(e, '[' + e.innerHTML + '][' + e.attributes['href'].value + ']');
+      }
     });
     return false; 
   }

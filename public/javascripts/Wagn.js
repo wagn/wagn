@@ -172,6 +172,7 @@ onload = function() {
   //lister_element = document.getElementsByClassName('lister')[0];
   // currently only one lister per page...
   //Wagn._lister = new Wagn.Lister(lister_element.id);
+  getNewWindowLinks();
   if (typeof(init_lister) != 'undefined') {
     Wagn._lister = init_lister();
     Wagn._lister.update();

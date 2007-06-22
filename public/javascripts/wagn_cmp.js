@@ -6950,6 +6950,7 @@ onload=function(){
 Wagn.Card.setupAll();
 Wagn.Messenger.flash();
 setTimeout("Wagn.OnLoad.Queue.run()",100);
+getNewWindowLinks();
 if(typeof (init_lister)!="undefined"){
 Wagn._lister=init_lister();
 Wagn._lister.update();
@@ -7363,6 +7364,7 @@ if(!s.chunk("wikiwyg_toolbar")){
 c=new Wagn.Card(s,_6ad);
 }
 });
+getNewWindowLinks();
 },getTranscludingCardId:function(_6af){
 if(_6af.hasAttribute("cardId")){
 return _6af.attributes["cardId"].value;

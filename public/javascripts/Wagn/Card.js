@@ -479,6 +479,7 @@ Object.extend(Wagn.Card, {
         c = new Wagn.Card( s, in_wadget );
       }
     });
+    getNewWindowLinks();
   },
   getTranscludingCardId: function(element) {
     if (element.hasAttribute('cardId')) {

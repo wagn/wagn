@@ -153,14 +153,16 @@ Object.extend(Wagn.LinkEditor.prototype, {
     }
   },
   open_popup: function() {
-    if (!Wagn.linkwin) {
+    if (Wagn.linkwin) { 
+      Wagn.linkwin.setLocation(30+window.scrollY, 30);
+    } else {
       Wagn.linkwin = new Window('linkwin', {
          className: "mac_os_x", title: "Link Editor",
-         top:30, left:30, width:550, height:108,
+         top:30+window.scrollY, left:30, width:550, height:108,
          showEffectOptions: { duration: 0.2 },
          hideEffectOptions: { duration: 0.2 }
       });
-    }                    
+    }
     $('linkwin_content').innerHTML = '<div id="link-editor">' +
       '<div><label>reads&nbsp;as:&nbsp;</label><input type="text" size="30" id="reads_as" /></div>' +
       '<div><label>links&nbsp;to:&nbsp;</label><input type="text" size="45" id="links_to" /></div>' +

@@ -45,5 +45,9 @@ class String
       self.gsub!(/\{(#{var})\}/) {|x| hash[var.to_sym]}
     end
     self
+  end   
+  
+  def to_codename
+    self.gsub(/\s+/,'_').underscore
   end
 end

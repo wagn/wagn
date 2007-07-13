@@ -305,7 +305,14 @@ module WagnHelper
     end
     %{<span id="paging-links" class="paging-links">#{links}</span>}
   end
-  
+
+  def partial_for_card_and_action( card, action )                              
+    if file_exists? "/card/#{card.class_name.underscore}/_#{action}"
+      "/card/#{card.class_name.underscore}/#{action}" 
+    else
+      "/card/basic/#{action}"
+    end
+  end  
 
 end
 

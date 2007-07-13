@@ -4,13 +4,22 @@ class Card::BaseTest < Test::Unit::TestCase
   def setup
     setup_default_user
   end
-  
+
+  def test_should_create_connection_card
+    Card::Basic.create!(
+      :trunk => Card.find_by_name('Joe User'),
+      :tag => Card.find_by_name('color').tag,
+      :content=>'green'
+     )
+     assert_instance_of Card::Basic, Card.find_by_name("Joe User+color")
+  end
+
   def test_connect
     alpha, beta = newcard('alpha'),newcard('beta')
     alpha_beta = alpha.connect beta
     assert_equal "alpha"+JOINT+"beta", alpha_beta.name
   end
-  
+        
   def test_attribute_card
     alpha, beta = newcard('alpha'),newcard('beta')
     assert_nil alpha.attribute_card('beta')

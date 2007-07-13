@@ -1,13 +1,29 @@
 --- 
+roles_004: 
+  id: "4"
+  codename: r1
+  tasks: 
+roles_005: 
+  id: "5"
+  codename: r2
+  tasks: 
+roles_006: 
+  id: "6"
+  codename: r3
+  tasks: 
+roles_007: 
+  id: "7"
+  codename: r4
+  tasks: 
 roles_001: 
   id: "1"
   codename: anon
   tasks: 
 roles_002: 
-  id: "2"
-  codename: auth
-  tasks: 
-roles_003: 
   id: "3"
   codename: admin
   tasks: 
+roles_003: 
+  id: "2"
+  codename: auth
+  tasks: edit_html,invite_users,rename_cards,edit_cards,set_datatypes,remove_cards,edit_cardtypes,edit_sealed_cards

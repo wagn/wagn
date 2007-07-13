@@ -5,7 +5,12 @@ class UserTest < Test::Unit::TestCase
   # Then, you can remove it from this and the functional test.
   include AuthenticatedTestHelper
   #fixtures :users
-
+ 
+  def test_should_reset_password
+    User.find_by_email('joe@user.com').update_attributes(:password => 'new password', :password_confirmation => 'new password')
+    assert_equal User.find_by_email('joe@user.com'), User.authenticate('joe@user.com', 'new password')
+  end
+  
   def test_should_create_user
     assert_difference User, :count do
       assert create_user.valid?
@@ -33,28 +38,22 @@ class UserTest < Test::Unit::TestCase
     end
   end
 
-  def test_should_reset_password
-    create_user
-    User.find_by_email('quire@example.com').update_attributes(:password => 'new password', :password_confirmation => 'new password')
-    assert_equal User.find_by_email('quire@example.com'), User.authenticate('quire@example.com', 'new password')
-  end
+
 
   def test_should_not_rehash_password
-    create_user
-    User.find_by_email('quire@example.com').update_attributes(:email => 'quire2@example.com')
-    assert_equal User.find_by_email('quire2@example.com'), User.authenticate('quire2@example.com', 'quire')
+    User.find_by_email('joe@user.com').update_attributes!(:email => 'joe2@user.com')
+    assert_equal User.find_by_email('joe2@user.com'), User.authenticate('joe2@user.com', 'joe_pass')
   end
 
   def test_should_authenticate_user
-    create_user
-    assert_equal User.find_by_email('quire@example.com'), User.authenticate('quire@example.com', 'quire')
+    assert_equal User.find_by_email('joe@user.com'), User.authenticate('joe@user.com', 'joe_pass')
   end
   
   protected
   def create_user(options = {})
     User.create({ :login => 'quire', :email => 'quire@example.com', 
       :password => 'quire', :password_confirmation => 'quire',
-      :invited_by=>1
+      :invite_sender_id=>1
     }.merge(options))
   end
 end

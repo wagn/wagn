@@ -8,14 +8,17 @@ require 'card_controller'
 
 class CardControllerTest < Test::Unit::TestCase
   common_fixtures
+  include AuthenticatedTestHelper
 
   def setup
     @controller = CardController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new                                
-    User.as_admin
-    @simple_card, @combo_card = create_cards %w{ SmartEngine SmartEngine+FirstPage} 
+    User.as_admin do
+      @simple_card, @combo_card = create_cards %w{ SmartEngine SmartEngine+FirstPage} 
+    end
     setup_default_user
+    login_as :admin
   end
 
   def test_first_steps
@@ -24,7 +27,14 @@ class CardControllerTest < Test::Unit::TestCase
       test_card_action( action )
     end
   end
+     
 
+  def test_create
+    post :create, :tag=>{:name=>"NewCardFoo"}, :cardtype=>"Basic", :card=>{:content=>"Bananas"}
+    assert_response :success
+    assert_instance_of Card::Basic, Card.find_by_name("NewCardFoo")
+    assert_equal "Bananas", Card.find_by_name("NewCardFoo").content
+  end
 =begin FIXME
   def test_edit
     post :edit, { :id=>@simple_card.id, :card=>{:old_revision_id=>@simple_card.current_revision.id, :content=>'brand new content' }}, { :user=>@user.id }

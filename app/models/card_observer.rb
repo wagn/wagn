@@ -1,29 +1,6 @@
 class CardObserver < ActiveRecord::Observer
   observe Card::Base
 
-  def before_create(card)
-    if card.simple? and !card.tag
-      t = Tag.new( :name=>card.send(:initial_name) )
-      t.save! #or raise "Failed to create tag with name '#{card.send(:initial_name)}''"
-      card.tag_id = t.id
-    elsif card.trunk
-      card.name = card.trunk.name + JOINT + card.tag.name
-    end
-    
-    card.name = card.tag.name if card.tag and card.name.nil?
-    card.content = "" if card.content.nil?
-    card.datatype.validate( card.content )
-    card.content = card.datatype.before_save( card.content )
-
-    card.priority = 0 if card.priority.nil?
-                                                                                       
-    # FIXME there should probably be a validation of some checking in the api 
-    # that doesn't let this situation happen: where the id is set but not the type.
-    # This is kindof a hacky one-off fix to the fact that the ids and not the types are sent from
-    # the interface on create.  blech
-    if (card.reader_id and !card.reader_type) then card.reader = Role.find( card.reader_id ) end
-    if (card.writer_id and !card.writer_type) then card.writer = Role.find( card.writer_id ) end
-  end
   
   def after_create(card)
     card.current_revision = Revision.create!( :card_id=>card.id, :content=>card.content)

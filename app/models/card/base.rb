@@ -3,9 +3,13 @@ require_dependency 'advanced_delegation'
 module Card
   class Base < ActiveRecord::Base
     set_table_name 'cards'
-
+          
     cattr_accessor :debug    
     Card::Base.debug = false
+          
+    
+    validates_presence_of :name
+    validates_uniqueness_of :name
     
    # Relationships -------------------------------------------------------------
     
@@ -60,6 +64,39 @@ module Card
     
     class_inheritable_accessor :wiki_joint_formal
     self.wiki_joint_formal=" <span class=\"wiki-joint\">#{JOINT}</span> "
+    
+
+
+   # Callbacks
+   before_validation_on_create :setup_card
+     
+   def setup_card
+     #warn "BEFORE CREATE: #{self.name}"
+
+     if self.simple? and !self.tag
+       t = Tag.create( :name=>self.send(:initial_name) )
+       t.errors.each do |attr,msg| self.errors.add(attr,msg) end 
+       #t.save! #or raise "Failed to create tag with name '#{self.send(:initial_name)}''"
+       self.tag_id = t.id
+     elsif self.trunk
+       self.name = self.trunk.name + JOINT + self.tag.name
+     end
+
+     self.name = self.tag.name if self.tag and self.name.nil?
+     self.content = "" if self.content.nil?
+     self.datatype.validate( self.content )
+     self.content = self.datatype.before_save( self.content )
+
+     self.priority = 0 if self.priority.nil?
+
+     # FIXME there should probably be a validation of some checking in the api 
+     # that doesn't let this situation happen: where the id is set but not the type.
+     # This is kindof a hacky one-off fix to the fact that the ids and not the types are sent from
+     # the interface on create.  blech
+     if (self.reader_id and !self.reader_type) then self.reader = Role.find( self.reader_id ) end
+     if (self.writer_id and !self.writer_type) then self.writer = Role.find( self.writer_id ) end
+   end
+   
 
    # Object properties ---------------------------------------------------------
     
@@ -99,16 +136,20 @@ module Card
       else       
         # move the current card out of the way, in case the new name will require
         # re-creating a card with the current name, ie.  A -> A+B
-        self.trunk = nil
-        update_attribute(:trunk_id, nil)
-        update_attribute(:name, '')
-         
+        self.trunk = nil; self.name = ''; save(false)  # skip validations
+                
         puts "trunk: #{self.trunk}" if self.class.debug 
 
-        self.trunk = Card.find_or_create(newname.parent_name) unless newname.simple?
-        self.tag = Card.find_or_create(newname.tag_name).tag
-        self.name = title_tag_names.join(JOINT)
-        save
+        if newname.simple?
+          self.tag = Tag.create(:name=>newname)
+          self.name = newname
+        else
+          self.trunk = Card.find_or_create(newname.parent_name)
+          self.tag = Card.find_or_create(newname.tag_name).tag
+          self.name = title_tag_names.join(JOINT)
+        end
+
+        save!
       end    
          
       # update the name cache all down the tree
@@ -269,19 +310,32 @@ module Card
     end
 
    # Permissions --------------------------------------------------------------
-        
+    def permit_destroy?
+      edit_ok? and System.ok?(:remove_cards) 
+    end
     
+    def permit_edit?
+      edit_ok?
+    end  
+        
     def update_attributes_with_permissions(*args)       
       raise(Wagn::PermissionDenied,"edit this card") unless edit_ok?( refresh_role = true )
       update_attributes_without_permissions(*args)
     end                        
     
-    def destroy_with_permissions(*args)    
+    def destroy_with_permissions(*args) 
+      if permit_destroy?
+         destroy_without_permissions(*args)
+       else
+         raise Wagn::PermissionDenied, "You don't have permission to destroy #{self.class_name} cards"
+       end
+    end
+    
+    def check_destroy_permission
       edit_ok! false, false #should be able to delete templated cards if otherwise permitted
       raise(Wagn::PermissionDenied,"remove this card") unless System.ok?(:remove_cards)
-      destroy_without_permissions(*args)
-    end
-      
+    end 
+     
     def reader_with_permissions=( reader )
       assign_role_with_permissions( "reader", reader )
     end
@@ -505,8 +559,7 @@ module Card
         :reader=>new_reader,
         :writer=>new_writer
       }
-      
-      dry_run ? Card::Basic.new( options ) : Card::Basic.create( options )
+      if dry_run then  Card::Basic.new( options ) else Card::Basic.create( options ) end
     end
   
     def clear_drafts
@@ -564,6 +617,11 @@ module Card
       self.trunk = old_tag_card
       self.name = nil # trigger name generation
       self.save
+    end    
+    
+    
+    def landing_name
+      self.name
     end
     
    private 
@@ -596,11 +654,16 @@ module Card
       end
       alias_method_chain :create, :wagn_api
       
-      def create_with_permissions(*args)
-        raise(Wagn::PermissionDenied,"create cards") unless System.ok?(:edit_cards)
-        create_without_permissions(*args)
+      def create_with_permissions(*args)    
+        if permit_create?
+          create_without_permissions(*args)
+        else
+          raise Wagn::PermissionDenied, "You don't have permission to create #{self.class_name} cards"
+        end
       end
       alias_method_chain :create,  :permissions           
+              
+      def permit_create?()   System.ok?(:edit_cards)   end
 
        def find_connection( name1, name2 )
         self.find_by_name(name1 + JOINT + name2) or

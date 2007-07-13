@@ -36,7 +36,14 @@ module WagnTestHelper
   def assert_no_difference(object, method, &block)
     assert_difference object, method, 0, &block
   end
- 
+  
+  def post_invite(options = {})
+    post :create, 
+      :user => { :email => 'new@user.com' }.merge(options[:user]||{}),
+      :card => { :name => "New User" }.merge(options[:card]||{}),
+      :email => { :subject => "mailit",  :message => "baby"  }
+  end
+  
 end
 
 module Test

@@ -40,7 +40,7 @@ module CardBuilderMethods
         :email=>"#{username.gsub(/\s+/,'')}@grasscommons.org",
         :login=>username, 
         :blocked => true,
-        :invited_by=>ADMIN_ID  
+        :invite_sender_id=>ADMIN_ID  
       )
 
       if c = Card.find_by_name(username)

@@ -92,7 +92,7 @@ module AuthenticatedSystem
   # simply close itself.
   def access_denied
     #redirect_to :controller => '/account', :action => 'login'
-    login_url = System.base_url + "/account/login"
+    login_url = System.base_url + "account/login"
     render :inline=>%{ <%= javascript_tag "document.location.href='#{login_url}'" %>}
   end  
 

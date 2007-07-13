@@ -2,8 +2,9 @@ class System < ActiveRecord::Base
   set_table_name 'system'
   cattr_accessor :admin_user_defaults, :base_url, :site_name, :node_types, 
     :invitation_email_body,  :invitation_email_subject, :invitation_request_email,
-    :forgotinvitation_email_body, :forgotinvitation_email_subject,
-    :role_tasks, :pagesize,
+    :forgotinvitation_email_body, :forgotinvitation_email_subject, 
+    :invite_request_alert_email, 
+    :role_tasks, :pagesize,                 
     :enable_ruby_cards,
     :enable_server_cards,
     :request, :debug_wql
@@ -11,7 +12,6 @@ class System < ActiveRecord::Base
   self.pagesize = 20
 
   class << self
-            
     def base_url
       if (request and request.env['HTTP_HOST'] and !@@base_url)
         'http://' + request.env['HTTP_HOST']
@@ -19,6 +19,12 @@ class System < ActiveRecord::Base
         @@base_url
       end
     end
+   
+    def host
+      # FIXME: hacking this so users don't have to update config.  will want to fix later 
+      System.base_url.gsub(/^http:\/\//,'').gsub(/\/$/,'')
+    end
+      
     
     def setting(setting_name)
       template = Card.find_by_name( 'system setting' + JOINT + setting_name )
@@ -28,80 +34,6 @@ class System < ActiveRecord::Base
     
     def admin_user
       User.find_by_login('admin')
-    end
-    
-    def setup( clear=false )
-      self.clear! if clear
-      #setup_default_web
-      setup_admin_user
-      setup_default_home_card
-      setup_hoozebot_user
-    end
-
-    def clear!()
-      %w[nodes tag_revisions revisions wiki_references cards tags users].each do |table|
-        ::User.connection.delete %{ delete from "#{table}" }
-      end
-    end
-
-    def default_web_exists?() Web.find(:first).is_a?(Web) end
-    def admin_user_exists?() ::User.find_by_name("Admin").is_a?(User) end
-    def hoozebot_user_exists?() ::User.find_by_name("Hooze Bot").is_a?(User) end
-    def homecard_exists?() Card.find_by_name( System.site_name ).is_a?(Card) end
-    
-    def setup_admin_user
-      return if admin_user_exists?
-      if u = ::User.find_by_login('admin')
-        ::User.current_user ||= admin
-        Card::User.create(:name=>'Admin',:content=>'administrative user',:user=>u)
-      else
-        u = ::User.new( admin_user_defaults.merge({
-          :name => 'Admin', :invited_by=>1, :activated_at=>Time.now(),
-          :revised_at => Time.now()
-        }))
-        # building the tag & card will require a current_user
-        raise "Coudn't create admin User #{u.errors.plot(:to_s)}" unless u.save
-        ::User.current_user = u
-        u.build_tag_with_proxy_attributes.save
-      end
-      raise "Failed to created admin user" unless admin_user_exists?
-    end
-    
-    def setup_default_home_card 
-      return if homecard_exists?
-      
-      home = Card::Basic.create(:name=> System.site_name, :content=>"Welcome to [[#{System.site_name}]]")
-      if home.errors.length > 0
-        raise "Couldn't create Home Card: #{u.errors.plot(:to_s)}"
-      end
-      raise "Failed to create home card" unless homecard_exists?
-    end
-    
-    def setup_hoozebot_user
-      return if hoozebot_user_exists?
-      
-      # don't worry-- even though login in and passwd are set here,
-      # users can't login in as hooze-bot because the account isn't
-      # activated.
-      admin = ::User.find_by_name('Admin') || raise( "Couldn't get admin user")
-      ::User.current_user ||= admin
-      if u = ::User.find_by_login('hoozebot')
-        Card::User.create(:name=>'Hooze Bot',:content=>'', :user=>u)
-      else
-        u = ::User.new( :name=>'Hooze Bot', 
-          :invited_by=>1, 
-          :activated_at=>nil,
-          :revised_at => Time.now(),
-          :password => 'h88ze',
-          :password_confirmation => 'h88ze',
-          :login => 'hoozebot',
-          :email => 'hoozebot@grasscommons.org',
-          :created_by=>admin
-        )
-        u.build_tag_with_proxy_attributes
-        raise "Coudn't create hoozeBot User #{u.errors.plot(:to_s)}" unless u.save
-      end
-      raise "Failed to create hoozebot user" unless hoozebot_user_exists?
     end
     
     def ok?(task)
@@ -117,9 +49,9 @@ class System < ActiveRecord::Base
     # FIXME stick this in session? cache it somehow??
     def ok_hash
       usr = User.current_user
-      roles = usr ? 
-        usr.roles + [Role.find_by_codename('anon'), Role.find_by_codename('auth')] : 
-        [Role.find_by_codename('anon')]
+      roles = (!usr || usr.login=='anon') ? [Role.find_by_codename('anon')] :
+        usr.roles + [Role.find_by_codename('anon'), Role.find_by_codename('auth')]
+        
       ok = {}
       ok[:role_ids] = {}
       roles.each do |role|
@@ -135,7 +67,7 @@ class System < ActiveRecord::Base
       return false      
       #lots of pseudo-code here...  may be a case for "case", but I'm not
       #sure how we're going to do the not web user thing...
-=begin
+=begin                                
       return session[:always_ok] if session.key?(:always_ok) 
 
       usr = User.current_user
@@ -159,6 +91,7 @@ class System < ActiveRecord::Base
     set_datatypes
     invite_users        
     edit_server_cards
+    deny_invitation_requests
   }
   
 end

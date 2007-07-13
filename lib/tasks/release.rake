@@ -3,6 +3,7 @@ require 'rake/testtask'
 require 'rake/rdoctask'
 require 'rake/gempackagetask'
 require 'lib/wagn'
+require 'lib/wagn/version'
 
 PKG_NAME = 'wagn'
 PKG_VERSION = Wagn::Version.to_s

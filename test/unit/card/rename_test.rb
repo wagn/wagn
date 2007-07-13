@@ -11,9 +11,13 @@ class Card::RenameTest < Test::Unit::TestCase
     @ab = @a.connect(@b, "AlphaBeta")
     # references
     @x = newcard("X", "[[A]] [[A+B]] [[T]]")
-    @y = newcard("Y", "{{B}} {{A+B}} {{A}} {{T}}")
+    @y = newcard("Y", "{{B}} {{A+B}} {{A}} {{T}}")   
   end
 
+  def test_junction_to_simple   
+    assert_rename @ab, "F" 
+  end
+   
   def test_used_as_tag
     assert_raises(Wagn::Oops) { @b.rename('A+D') }
   end
@@ -34,9 +38,7 @@ class Card::RenameTest < Test::Unit::TestCase
     assert_rename @t, "C+J"
   end
   
-  def test_junction_to_simple
-    assert_rename @ab, "F" 
-  end
+ 
 
   def test_subdivision
     assert_rename @ab, "A+B+T"  # re-uses the parent card: A+B

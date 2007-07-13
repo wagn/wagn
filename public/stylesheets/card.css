@@ -358,7 +358,9 @@ a.current, a:link.current {
   padding-left: 25px 
 }
 
-
+.card-slot .invite-button {
+  font-size: 11px;
+}
 
 /* tag cloud --------------------------------------------------------------*/
 

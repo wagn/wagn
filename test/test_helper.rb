@@ -25,7 +25,7 @@ unless defined? TEST_ROOT
   require TEST_ROOT + '/helpers/chunk_test_helper'  # FIXME-- should only be in certain tests
   
   class Test::Unit::TestCase
-    #include AuthenticatedTestHelper
+    include AuthenticatedTestHelper
     # Transactional fixtures accelerate your tests by wrapping each test method
     # in a transaction that's rolled back on completion.  This ensures that the
     # test database remains unchanged so your fixtures don't have to be reloaded
@@ -49,7 +49,8 @@ unless defined? TEST_ROOT
   
     def self.common_fixtures
       #fixtures :system, :users, :tags, :tag_revisions, :cards, :revisions, :roles, :cardtypes
-      fixtures :cards, :cardtypes, :revisions, :roles, :roles_users, :system, :tag_revisions, :tags, :users
+      # FIXME: this burns me every time we add a table the tests break and I dunno why...
+      fixtures :cards, :cardtypes, :revisions, :roles, :roles_users, :system, :tag_revisions, :tags, :users, :settings
     end
     
     include WagnTestHelper

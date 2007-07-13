@@ -5,12 +5,21 @@ class PermissionTest < Test::Unit::TestCase
   
   def setup
     setup_default_user 
-    as(@admin) do
-      @u1, @u2, @u3 = create_users %w( u1 u2 u3 ) 
-      @r1, @r2, @r3 = create_roles %w( r1 r2 r3 )
-      @c1, @c2, @c3 = create_cards %w( c1 c2 c3 )
+    @u1, @u2, @u3 = %w( u1 u2 u3 ).map do |x| ::User.find_by_login(x) end
+    @r1, @r2, @r3 = %w( r1 r2 r3 ).map do |x| ::Role.find_by_codename(x) end
+    @c1, @c2, @c3 = %w( c1 c2 c3 ).map do |x| Card.find_by_name(x) end
+  end
+          
+  def test_anon_user_should_exist
+    assert_instance_of User, User.find_by_login('anon')
+  end
+          
+  def test_anon_should_not_get_authenticated_permissions
+    User.as(User.find_by_login('anon')) do
+      assert !System.ok?(:edit_cards)
     end
   end
+
 
   def test_role_wql
     @r1.users = [ @u1 ]
@@ -54,6 +63,9 @@ class PermissionTest < Test::Unit::TestCase
      end
   end
   
+
+  # test that you can't change group on a card that you can't get it back from.
+  # for each user, for each group, try assigning each card to that group and then changing back.
   def test_cant_put_yourself_in_a_corner
     @r2.tasks='manage_roles,edit_cards'; @r2.save
     @r1.users = [ @u1, @u2, @u3 ]
@@ -226,7 +238,6 @@ class PermissionTest < Test::Unit::TestCase
     assert_raises(Wagn::PermissionDenied) { a.writer = @r1; a.save }
   end  
 
-                             
   def permission_matrix
                       
     # TODO
@@ -235,7 +246,7 @@ class PermissionTest < Test::Unit::TestCase
     # given a card with reader in group X, can Y view it?
     # given c card with group anon, can Y change the reader/writer to X
     %{
-  A V C J C
+  A V C J G
 A * * * * *
 V * * . * .
 C * * * . .

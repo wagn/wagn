@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
-require 'user_notifier'
+require 'notifier'
 
-class UserNotifierTest < Test::Unit::TestCase
+class NotifierTest < Test::Unit::TestCase
   FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
   CHARSET = "utf-8"
 

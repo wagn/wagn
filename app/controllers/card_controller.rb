@@ -116,12 +116,13 @@ class CardController < ApplicationController
   def create         
     params[:tag][:name].strip!
     @tag = Tag.new params[:tag]
-    @card = Card.const_get(params[:cardtype] || 'Basic' ).create!( params[:card].merge(:tag=>@tag) )
+    @card = Card.const_get(params[:cardtype] || 'Basic' ).create!( params[:card].merge(:tag=>@tag, :name=>params[:tag][:name]) )
     
     # prevent infinite redirect loop
     if !Card.find_by_name(params[:tag][:name])
       fail "Card creation failed" 
     end
+    #redirect_to url_for_page(@card.landing_name)
   end 
 
   def flip

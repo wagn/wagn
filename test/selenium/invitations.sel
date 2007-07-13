@@ -1,0 +1,2 @@
+|open|/selenium/setup?fixtures=all||    
+|includePartial|login|name=Joe User|password=joe_pass|

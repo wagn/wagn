@@ -3,7 +3,7 @@ unless defined? Wagn::Version
     module Version
       Major = '0'
       Minor = '6'
-      Tiny  = '0'
+      Tiny  = '1'
     
       class << self
         def to_s

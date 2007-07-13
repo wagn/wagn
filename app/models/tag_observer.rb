@@ -7,8 +7,10 @@ class TagObserver < ActiveRecord::Observer
   end
   
   def after_create(tag)
-    tag.current_revision = TagRevision.create!( :tag_id=>tag.id, :name=>tag.name)
-    tag.save!    
+    tag.current_revision = TagRevision.create!( :tag_id=>tag.id, :name=>tag.name )
+    tag.current_revision.errors.each do |attr,msg| tag.errors.add(attr,msg) end 
+    #return false unless tag.valid?
+    tag.save!
   end
   
   def before_destroy(tag)    

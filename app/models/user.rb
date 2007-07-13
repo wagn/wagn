@@ -5,28 +5,41 @@ class User < ActiveRecord::Base
   # Virtual attribute for the unencrypted password
   attr_accessor :password
   cattr_accessor :current_user
-  has_and_belongs_to_many :roles
-  acts_as_card_extension
   
- 
+  #attr_protected :invite_sender, :status    
+  
+  has_and_belongs_to_many :roles
+  belongs_to :invite_sender, :class_name=>'User', :foreign_key=>'invite_sender_id'
+  has_many :invite_recipients, :class_name=>'User', :foreign_key=>'invite_sender_id'
+
+  acts_as_card_extension
+   
   validates_presence_of     :email
   validates_format_of       :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
+  validates_length_of       :email, :within => 3..100
+  validates_uniqueness_of   :email 
   validates_presence_of     :password,                   :if => :password_required?
   validates_presence_of     :password_confirmation,      :if => :password_required?
   validates_length_of       :password, :within => 5..40, :if => :password_required?
   validates_confirmation_of :password,                   :if => :password_required?
-  validates_length_of       :email,    :within => 3..100
-  validates_uniqueness_of   :email 
+  validates_presence_of     :invite_sender,              :if => :active?
   
   before_save :encrypt_password
   
   class << self
     def active_users
-      self.find(:all) #, :conditions=>"activated_at is not null")
+      self.find(:all, :conditions=>"status='active'")
     end 
-                        
-    def as_admin
-      self.current_user = User.find_by_login('admin')
+    
+    def as_admin(&block)
+      self.as(User.find_by_login('admin'), &block)
+    end
+    
+    def as(given_user)
+      tmp_user = self.current_user
+      self.current_user = given_user
+      yield
+      self.current_user = tmp_user
     end
     
     # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
@@ -41,8 +54,12 @@ class User < ActiveRecord::Base
     end    
   end 
 
-  def authenticated?(password)
-    crypted_password == encrypt(password) and !blocked
+  def active?
+    status == 'active'
+  end
+
+  def authenticated?(password) 
+    crypted_password == encrypt(password) and active?
   end
 
   def generate_password
@@ -66,7 +83,7 @@ class User < ActiveRecord::Base
 
   def password_required?
     crypted_password.blank? or not password.blank?
-  end
+  end   
   
 end
 

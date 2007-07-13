@@ -141,7 +141,7 @@ class ApplicationController < ActionController::Base
     end
     
     def note_current_user
-      User.current_user = current_user
+      User.current_user = current_user || User.find_by_login('anon')   
     end
 
     def remember_card( card )

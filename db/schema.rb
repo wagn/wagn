@@ -2,7 +2,7 @@
 # migrations feature of ActiveRecord to incrementally modify your database, and
 # then regenerate this schema definition.
 
-ActiveRecord::Schema.define(:version => 68) do
+ActiveRecord::Schema.define(:version => 76) do
 
   create_table "cards", :force => true do |t|
     t.column "tag_id",              :integer,                     :null => false
@@ -89,6 +89,10 @@ ActiveRecord::Schema.define(:version => 68) do
 
   add_index "sessions", ["session_id"], :name => "sessions_session_id_index"
 
+  create_table "settings", :force => true do |t|
+    t.column "codename", :string
+  end
+
   create_table "system", :force => true do |t|
     t.column "name", :string
   end
@@ -125,7 +129,7 @@ ActiveRecord::Schema.define(:version => 68) do
     t.column "cards_per_page",      :integer,                 :default => 25,        :null => false
     t.column "hide_duplicates",     :boolean,                 :default => true,      :null => false
     t.column "status",              :string,                  :default => "request"
-    t.column "invited_by",          :integer
+    t.column "invite_sender_id",    :integer
   end
 
   create_table "wiki_files", :force => true do |t|

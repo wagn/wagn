@@ -20,7 +20,8 @@
       <% end %>   
       <%= link_to( 'Sign out', :controller=>'account', :action=>'logout' ) %>
     <% else %>
-      <%= link_to( 'Sign in', :controller=>'account', :action=>'login') %>
+    	 <%= link_to 'Request an Invitation', :controller=>'account', :action=>'invitation_request' %> 
+       <%= link_to( 'Sign in', :controller=>'account', :action=>'login') %>
     <% end %>
   </span>
 

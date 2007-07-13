@@ -2,11 +2,32 @@ class InvitationError < StandardError; end
 
 class AccountController < ApplicationController
   layout 'application'
-  before_filter :login_required, :only => [ :invite, :create, :update ] 
+  before_filter :login_required, :only => [ :create, :invite, :update ] 
   #observer :card_observer, :tag_observer
   helper :wagn
                                                      
-  def invite
+  def invite     
+    if params[:name] && @card = Card.find_by_name(params[:name])
+      @user = @card.extension
+    else
+      @card = Card.new
+      @user = User.new
+    end    
+    @email={}
+    @email[:subject] = System.setting( 'invitation email subject' )
+    @email[:message] = System.setting( 'invitation email body' )
+    @email[:message].substitute! :invitor => current_user.card.name + " <#{current_user.email}>" 
+    @email[:message].gsub!(/Hello,/, "Hello #{@card.name},") if @card.name
+
+  end
+  
+  def invitation_request
+    # FIXME: this should be handled by card/new  (respond with different templates for different cardegories)
+  end       
+  
+  def create_invitation_request
+    # FIXME: this should be handled by card/create
+#    if Card::InvitationRequest.create params
   end
   
   def login
@@ -35,7 +56,7 @@ class AccountController < ApplicationController
       subject = "Password Reset"
       message = "You have been give a new temporary password.  " +
          "Please update your password once you've logged in. "
-      UserNotifier.deliver_account_info(@user, subject, message)
+      Notifier.deliver_account_info(@user, subject, message)
       flash[:notice] = "A new temporary password has been set on your account and sent to your email address" 
       return_to_rememberd_page
     else
@@ -46,20 +67,45 @@ class AccountController < ApplicationController
   def create
     return unless request.post? 
     # FIXME: not hardcode user cardtype??
-    @tag = Tag.new( :datatype_key => 'User', :name=>params[:card][:name] )
-    @card = Card::User.new( {:tag=>@tag}.merge(params[:card]))
-    @user = User.new( params[:user].merge( :invited_by=>current_user.id ))  
-    if @user.password.blank?
-      @user.generate_password
+    @card_name = params[:card][:name]
+    @card = Card.find_by_name(@card_name) || Card::User.new( {
+        :tag=>Tag.new( :datatype_key => 'User', :name=>@card_name )  
+    }.merge(params[:card]) )
+      
+    if @card.class_name == 'InvitationRequest' 
+      @user = @card.extension or raise "Blam.  InvitationRequest should've been connected to a user"    
+      @card.type = 'User'
+      @user.status='active'
+      @user.invite_sender = ::User.current_user
+    elsif @card.class_name=='User' and !@card.extension
+      @user = User.new( params[:user].merge( :invite_sender_id=>current_user.id )) 
+    else
+      @card.errors.add(:name, "has already been taken")
+      raise ActiveRecord::RecordInvalid.new(@card)
     end
-    @user.save!
-    @card.extension = @user
-    @card.save!    
+    @user.generate_password if @user.password.blank?
+
+    User.transaction do 
+      @card.extension = @user
+      @user.save!
+      @card.save!
+            
+      raise(Wagn::Oops, "Invitation Email subject is required") unless (params[:email] and params[:email][:subject])
+      raise(Wagn::Oops, "Invitation Email message is required") unless (params[:email] and params[:email][:message])
+      Notifier.deliver_account_info(@user, params[:email][:subject], params[:email][:message])
+    end
+    render :update do |page|
+      page.wagn.messenger.note( "Successfully invited #{@card.name}.  Redirecting to #{previous_page}...")
+      page.redirect_to url_for_page(previous_page)
+    end
+  end
+
+=begin
     raise(Wagn::Oops, "Failed to connect card to user") unless (User.find_by_email(params[:user][:email]).card)
     raise(Wagn::Oops, "Failed to set datatype for user") unless (User.find_by_email(params[:user][:email]).card.tag.datatype_key=='User')
     raise(Wagn::Oops, "Invitation Email subject is required") unless (params[:email] and params[:email][:subject])
     raise(Wagn::Oops, "Invitation Email message is required") unless (params[:email] and params[:email][:message])
-    UserNotifier.deliver_account_info(@user, params[:email][:subject], params[:email][:message])
+    Notifier.deliver_account_info(@user, params[:email][:subject], params[:email][:message])
     flash[:notice] = "User #{@card.name} has been created"
   rescue Exception=>e
     # if anything went wrong, don't leave any junk lying around
@@ -70,7 +116,8 @@ class AccountController < ApplicationController
     @card.destroy_without_permissions if @card && !@card.new_record?
     raise Wagn::Oops, e.message
   end
-                                                            
+=end
+
   def update
     load_card
     @user = @card.extension or raise("extension gotta be a user")        
@@ -89,5 +136,5 @@ class AccountController < ApplicationController
         
       end
     end    
-  end
+  end          
 end

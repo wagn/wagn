@@ -8,17 +8,10 @@ class RoleTest < Test::Unit::TestCase
     @anon = Role.find_by_codename("anon")
     @auth = Role.find_by_codename("auth")
     @admin_r = Role.find_by_codename("admin")
-    
-    as(@admin) do
-      @u1, @u2, @u3 = create_users %w( u1 u2 u3 ) 
-      @r1, @r2, @r3, @r4 = create_roles %w( r1 r2 r3 r4 )
-      @c1, @c2, @c3 = create_cards %w( c1 c2 c3 )
-    end
-    
-    @r1.users = [ @u1, @u2, @u3 ]
-    @r2.users = [ @u1, @u2 ]
-    @r3.users = [ @u1 ]
-    @r4.users = [ @u3, @u2 ]
+
+    @u1, @u2, @u3 = %w( u1 u2 u3 ).map do |x| ::User.find_by_login(x) end
+    @r1, @r2, @r3, @r4 = %w( r1 r2 r3 r4).map do |x| ::Role.find_by_codename(x) end
+    @c1, @c2, @c3 = %w( c1 c2 c3 ).map do |x| Card.find_by_name(x) end
   end
 
   def test_users_with_special_roles

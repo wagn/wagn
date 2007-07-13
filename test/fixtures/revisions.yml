@@ -1,85 +1,176 @@
 --- 
+revisions_024: 
+  updated_at: 2007-07-13 14:58:47.894301
+  created_by: "1"
+  card_id: "26"
+  id: "26"
+  content: ""
+  created_at: 2007-07-13 14:58:47.894301
+revisions_013: 
+  updated_at: 2007-07-13 14:58:42.28263
+  created_by: "1"
+  card_id: "15"
+  id: "15"
+  content: Your request has been received.  Please note that invitation requests are answered by volunteers,so it may take a bit longer an automated system, but you should get a response within a few days.
+  created_at: 2007-07-13 14:58:42.28263
 revisions_002: 
-  updated_at: 2007-06-19 11:17:50.974327
+  updated_at: 2007-07-13 14:58:41.416595
   created_by: "2"
   card_id: "2"
   id: "2"
   content: ""
-  created_at: 2007-06-19 11:17:49.651771
+  created_at: 2007-07-13 14:58:40.002287
+revisions_025: 
+  updated_at: 2007-07-13 14:58:48.048058
+  created_by: "1"
+  card_id: "27"
+  id: "27"
+  content: ""
+  created_at: 2007-07-13 14:58:48.048058
+revisions_014: 
+  updated_at: 2007-07-13 14:58:46.784928
+  created_by: "1"
+  card_id: "16"
+  id: "16"
+  content: ""
+  created_at: 2007-07-13 14:58:46.784928
 revisions_003: 
-  updated_at: 2007-06-19 11:17:50.977638
+  updated_at: 2007-07-13 14:58:41.419982
   created_by: "2"
   card_id: "3"
   id: "3"
   content: ""
-  created_at: 2007-06-19 11:17:49.697224
-revisions_004: 
-  updated_at: 2007-06-19 11:17:50.98085
-  created_by: "2"
-  card_id: "4"
-  id: "4"
+  created_at: 2007-07-13 14:58:40.053185
+revisions_015: 
+  updated_at: 2007-07-13 14:58:46.918297
+  created_by: "1"
+  card_id: "17"
+  id: "17"
   content: ""
-  created_at: 2007-06-19 11:17:49.75596
-revisions_005: 
-  updated_at: 2007-06-19 11:17:50.984084
+  created_at: 2007-07-13 14:58:46.918297
+revisions_004: 
+  updated_at: 2007-07-13 14:58:41.42644
   created_by: "2"
   card_id: "5"
   id: "5"
   content: ""
-  created_at: 2007-06-19 11:17:49.808017
-revisions_006: 
-  updated_at: 2007-06-19 11:17:50.987295
+  created_at: 2007-07-13 14:58:40.240745
+revisions_016: 
+  updated_at: 2007-07-13 14:58:47.062001
+  created_by: "1"
+  card_id: "18"
+  id: "18"
+  content: ""
+  created_at: 2007-07-13 14:58:47.062001
+revisions_005: 
+  updated_at: 2007-07-13 14:58:41.429739
   created_by: "2"
   card_id: "6"
   id: "6"
   content: ""
-  created_at: 2007-06-19 11:17:49.855137
-revisions_007: 
-  updated_at: 2007-06-19 11:17:50.993954
+  created_at: 2007-07-13 14:58:40.285595
+revisions_017: 
+  updated_at: 2007-07-13 14:58:47.153568
+  created_by: "1"
+  card_id: "19"
+  id: "19"
+  content: ""
+  created_at: 2007-07-13 14:58:47.153568
+revisions_006: 
+  updated_at: 2007-07-13 14:58:41.436304
   created_by: "2"
   card_id: "8"
   id: "8"
   content: ""
-  created_at: 2007-06-19 11:17:50.014997
-revisions_008: 
-  updated_at: 2007-06-19 11:17:50.997266
+  created_at: 2007-07-13 14:58:40.365863
+revisions_018: 
+  updated_at: 2007-07-13 14:58:47.225024
+  created_by: "1"
+  card_id: "20"
+  id: "20"
+  content: I got not account
+  created_at: 2007-07-13 14:58:47.225024
+revisions_007: 
+  updated_at: 2007-07-13 14:58:41.439536
   created_by: "2"
   card_id: "11"
   id: "11"
   content: ""
-  created_at: 2007-06-19 11:17:50.160092
-revisions_009: 
-  updated_at: 2007-06-19 11:17:51.000605
+  created_at: 2007-07-13 14:58:40.523927
+revisions_019: 
+  updated_at: 2007-07-13 14:58:47.336338
+  created_by: "1"
+  card_id: "21"
+  id: "21"
+  content: ""
+  created_at: 2007-07-13 14:58:47.336338
+revisions_008: 
+  updated_at: 2007-07-13 14:58:41.442813
   created_by: "2"
   card_id: "12"
   id: "12"
   content: To get started, you need to <a href="/wagn/new">activate the admin account</a>.  After that, you'll want to edit this frontpage card
-  created_at: 2007-06-19 11:17:50.225357
-revisions_010: 
-  updated_at: 2007-06-19 11:17:51.004155
+  created_at: 2007-07-13 14:58:40.665033
+revisions_020: 
+  updated_at: 2007-07-13 14:58:47.434709
+  created_by: "1"
+  card_id: "22"
+  id: "22"
+  content: ""
+  created_at: 2007-07-13 14:58:47.434709
+revisions_009: 
+  updated_at: 2007-07-13 14:58:41.446212
   created_by: "2"
   card_id: "9"
   id: "9"
   content: ""
-  created_at: 2007-06-19 11:17:50.055068
-revisions_011: 
-  updated_at: 2007-06-19 11:17:51.007343
+  created_at: 2007-07-13 14:58:40.413412
+revisions_021: 
+  updated_at: 2007-07-13 14:58:47.59993
+  created_by: "1"
+  card_id: "23"
+  id: "23"
+  content: ""
+  created_at: 2007-07-13 14:58:47.59993
+revisions_010: 
+  updated_at: 2007-07-13 14:58:41.449607
   created_by: "2"
   card_id: "10"
   id: "10"
   content: ""
-  created_at: 2007-06-19 11:17:50.109913
-revisions_012: 
-  updated_at: 2007-06-19 11:17:54.471579
+  created_at: 2007-07-13 14:58:40.471483
+revisions_022: 
+  updated_at: 2007-07-13 14:58:47.681771
+  created_by: "1"
+  card_id: "24"
+  id: "24"
+  content: ""
+  created_at: 2007-07-13 14:58:47.681771
+revisions_011: 
+  updated_at: 2007-07-13 14:58:41.887396
   created_by: "1"
   card_id: "13"
   id: "13"
   content: ""
-  created_at: 2007-06-19 11:17:54.471579
+  created_at: 2007-07-13 14:58:41.887396
+revisions_023: 
+  updated_at: 2007-07-13 14:58:47.819885
+  created_by: "1"
+  card_id: "25"
+  id: "25"
+  content: ""
+  created_at: 2007-07-13 14:58:47.819885
+revisions_012: 
+  updated_at: 2007-07-13 14:58:42.182795
+  created_by: "1"
+  card_id: "14"
+  id: "14"
+  content: ""
+  created_at: 2007-07-13 14:58:42.182795
 revisions_001: 
-  updated_at: 2007-06-19 11:17:50.970401
+  updated_at: 2007-07-13 14:58:41.412777
   created_by: "2"
   card_id: "1"
   id: "1"
   content: ""
-  created_at: 2007-06-19 11:17:49.606514
+  created_at: 2007-07-13 14:58:39.94296

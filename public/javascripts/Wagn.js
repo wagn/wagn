@@ -177,6 +177,7 @@ onload = function() {
     Wagn._lister = init_lister();
     Wagn._lister.update();
   }
+  if ($('main-body')) {  $('main-body').card().loadEditor() }
 }
 
 

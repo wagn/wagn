@@ -34,9 +34,10 @@ Object.extend(Wagn.Card.prototype, {
       if (Element.hasClassName(this.slot, 'new-card')) {
         warn("setting up new card");
         this.setupEditor();
-      } else if (Element.hasClassName(this.slot, 'full')) { 
+/*      } else if (Element.hasClassName(this.slot, 'full')) { 
         warn("about to load editor");
         this.loadEditor(); 
+        */
       }                              
     }
     Wagn.CardTable[ slot.id ] = this;

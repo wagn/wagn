@@ -11,11 +11,7 @@
 <%# ------- Stylesheets -------------%>
 
 <%= 
-  %w{ 
-	  defaults page_and_block card wikiwyg window_themes/default.css window_themes/mac_os_x.css
-  }.collect do |sheet|
-	  stylesheet_link_tag sheet
-  end.join("\n")	
+  stylesheet_link_tag "defaults","page_and_block","card","wikiwyg","window_themes/default","window_themes/mac_os_x", :cache=>'all'
 %>
 <% if File.exists?("#{RAILS_ROOT}/public/stylesheets/local.css") %>
   <%= stylesheet_link_tag 'local' %>

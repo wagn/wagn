@@ -2,7 +2,7 @@
 cards_024: 
   reader_type: 
   name: c2
-  updated_at: 2007-07-13 14:58:47.927336
+  updated_at: 2007-07-17 15:27:57.743138
   created_by: "1"
   current_revision_id: "26"
   priority: "0"
@@ -19,11 +19,11 @@ cards_024:
   writer_id: 
   extension_id: 
   sealed: f
-  created_at: 2007-07-13 14:58:47.888587
+  created_at: 2007-07-17 15:27:57.703409
 cards_013: 
   reader_type: 
   name: Thank You
-  updated_at: 2007-07-13 14:58:42.345925
+  updated_at: 2007-07-17 15:27:52.291815
   created_by: "1"
   current_revision_id: "15"
   priority: "0"
@@ -40,11 +40,11 @@ cards_013:
   writer_id: 
   extension_id: "1"
   sealed: f
-  created_at: 2007-07-13 14:58:42.272027
+  created_at: 2007-07-17 15:27:52.142874
 cards_002: 
   reader_type: 
   name: Basic
-  updated_at: 2007-07-13 14:58:40.153254
+  updated_at: 2007-07-17 15:27:49.362623
   created_by: 
   current_revision_id: "3"
   priority: "0"
@@ -61,11 +61,11 @@ cards_002:
   writer_id: 
   extension_id: "1"
   sealed: f
-  created_at: 2007-07-13 14:58:40.04283
+  created_at: 2007-07-17 15:27:49.333222
 cards_025: 
   reader_type: 
   name: c3
-  updated_at: 2007-07-13 14:58:48.075983
+  updated_at: 2007-07-17 15:27:57.836451
   created_by: "1"
   current_revision_id: "27"
   priority: "0"
@@ -82,11 +82,11 @@ cards_025:
   writer_id: 
   extension_id: 
   sealed: f
-  created_at: 2007-07-13 14:58:48.042159
+  created_at: 2007-07-17 15:27:57.791275
 cards_014: 
   reader_type: 
   name: Joe User
-  updated_at: 2007-07-13 14:58:46.84693
+  updated_at: 2007-07-17 15:27:56.464587
   created_by: "1"
   current_revision_id: "16"
   priority: "0"
@@ -103,11 +103,11 @@ cards_014:
   writer_id: 
   extension_id: "4"
   sealed: f
-  created_at: 2007-07-13 14:58:46.767061
+  created_at: 2007-07-17 15:27:56.378689
 cards_003: 
   reader_type: 
   name: User
-  updated_at: 2007-07-13 14:58:40.253713
+  updated_at: 2007-07-17 15:27:49.468887
   created_by: 
   current_revision_id: "5"
   priority: "0"
@@ -124,11 +124,11 @@ cards_003:
   writer_id: 
   extension_id: "3"
   sealed: f
-  created_at: 2007-07-13 14:58:40.230901
+  created_at: 2007-07-17 15:27:49.444504
 cards_015: 
   reader_type: 
   name: color
-  updated_at: 2007-07-13 14:58:46.949753
+  updated_at: 2007-07-17 15:27:56.587195
   created_by: "1"
   current_revision_id: "17"
   priority: "0"
@@ -145,11 +145,11 @@ cards_015:
   writer_id: 
   extension_id: 
   sealed: f
-  created_at: 2007-07-13 14:58:46.906813
+  created_at: 2007-07-17 15:27:56.54555
 cards_004: 
   reader_type: 
   name: Cardtype
-  updated_at: 2007-07-13 14:58:40.296583
+  updated_at: 2007-07-17 15:27:49.658803
   created_by: 
   current_revision_id: "6"
   priority: "0"
@@ -166,11 +166,11 @@ cards_004:
   writer_id: 
   extension_id: "4"
   sealed: f
-  created_at: 2007-07-13 14:58:40.27773
+  created_at: 2007-07-17 15:27:49.630079
 cards_016: 
   reader_type: 
   name: basic card
-  updated_at: 2007-07-13 14:58:47.08905
+  updated_at: 2007-07-17 15:27:56.679477
   created_by: "1"
   current_revision_id: "18"
   priority: "0"
@@ -187,11 +187,11 @@ cards_016:
   writer_id: 
   extension_id: 
   sealed: f
-  created_at: 2007-07-13 14:58:46.988935
+  created_at: 2007-07-17 15:27:56.641673
 cards_005: 
   reader_type: 
   name: Role
-  updated_at: 2007-07-13 14:58:40.377063
+  updated_at: 2007-07-17 15:27:49.777718
   created_by: 
   current_revision_id: "8"
   priority: "0"
@@ -208,11 +208,11 @@ cards_005:
   writer_id: 
   extension_id: "6"
   sealed: f
-  created_at: 2007-07-13 14:58:40.358137
+  created_at: 2007-07-17 15:27:49.751646
 cards_017: 
   reader_type: 
   name: Ron Request
-  updated_at: 2007-07-13 14:58:47.182042
+  updated_at: 2007-07-17 15:27:56.802307
   created_by: "1"
   current_revision_id: "19"
   priority: "0"
@@ -229,11 +229,11 @@ cards_017:
   writer_id: 
   extension_id: "5"
   sealed: f
-  created_at: 2007-07-13 14:58:47.144153
+  created_at: 2007-07-17 15:27:56.758094
 cards_006: 
   reader_type: 
   name: Administrative User
-  updated_at: 2007-07-13 14:58:40.615685
+  updated_at: 2007-07-17 15:27:49.940047
   created_by: 
   current_revision_id: "11"
   priority: "0"
@@ -250,11 +250,11 @@ cards_006:
   writer_id: 
   extension_id: "3"
   sealed: f
-  created_at: 2007-07-13 14:58:40.513712
+  created_at: 2007-07-17 15:27:49.916901
 cards_018: 
   reader_type: 
   name: No Count
-  updated_at: 2007-07-13 14:58:47.254648
+  updated_at: 2007-07-17 15:27:56.951285
   created_by: "1"
   current_revision_id: "20"
   priority: "0"
@@ -271,11 +271,11 @@ cards_018:
   writer_id: 
   extension_id: 
   sealed: f
-  created_at: 2007-07-13 14:58:47.219499
+  created_at: 2007-07-17 15:27:56.916958
 cards_007: 
   reader_type: 
   name: Wagn
-  updated_at: 2007-07-13 14:58:40.66947
+  updated_at: 2007-07-17 15:27:49.99719
   created_by: 
   current_revision_id: "12"
   priority: "0"
@@ -292,11 +292,11 @@ cards_007:
   writer_id: 
   extension_id: 
   sealed: f
-  created_at: 2007-07-13 14:58:40.656162
+  created_at: 2007-07-17 15:27:49.982972
 cards_019: 
   reader_type: 
   name: r1
-  updated_at: 2007-07-13 14:58:47.400019
+  updated_at: 2007-07-17 15:27:57.159265
   created_by: "1"
   current_revision_id: "21"
   priority: "0"
@@ -313,11 +313,11 @@ cards_019:
   writer_id: 
   extension_id: "4"
   sealed: f
-  created_at: 2007-07-13 14:58:47.326639
+  created_at: 2007-07-17 15:27:57.08115
 cards_008: 
   reader_type: 
   name: Anyone
-  updated_at: 2007-07-13 14:58:41.200682
+  updated_at: 2007-07-17 15:27:50.983004
   created_by: 
   current_revision_id: "9"
   priority: "0"
@@ -334,11 +334,11 @@ cards_008:
   writer_id: 
   extension_id: "1"
   sealed: f
-  created_at: 2007-07-13 14:58:40.403682
+  created_at: 2007-07-17 15:27:49.808301
 cards_020: 
   reader_type: 
   name: r2
-  updated_at: 2007-07-13 14:58:47.565096
+  updated_at: 2007-07-17 15:27:57.251062
   created_by: "1"
   current_revision_id: "22"
   priority: "0"
@@ -355,11 +355,11 @@ cards_020:
   writer_id: 
   extension_id: "5"
   sealed: f
-  created_at: 2007-07-13 14:58:47.428817
+  created_at: 2007-07-17 15:27:57.191527
 cards_009: 
   reader_type: 
   name: Anyone signed in
-  updated_at: 2007-07-13 14:58:41.355649
+  updated_at: 2007-07-17 15:27:51.072476
   created_by: 
   current_revision_id: "10"
   priority: "0"
@@ -376,11 +376,11 @@ cards_009:
   writer_id: 
   extension_id: "2"
   sealed: f
-  created_at: 2007-07-13 14:58:40.46214
+  created_at: 2007-07-17 15:27:49.865158
 cards_021: 
   reader_type: 
   name: r3
-  updated_at: 2007-07-13 14:58:47.648956
+  updated_at: 2007-07-17 15:27:57.345995
   created_by: "1"
   current_revision_id: "23"
   priority: "0"
@@ -397,11 +397,11 @@ cards_021:
   writer_id: 
   extension_id: "6"
   sealed: f
-  created_at: 2007-07-13 14:58:47.594255
+  created_at: 2007-07-17 15:27:57.283492
 cards_010: 
   reader_type: 
   name: Wagn Bot
-  updated_at: 2007-07-13 14:58:41.500275
+  updated_at: 2007-07-17 15:27:51.309274
   created_by: 
   current_revision_id: "1"
   priority: "0"
@@ -418,11 +418,11 @@ cards_010:
   writer_id: 
   extension_id: "2"
   sealed: f
-  created_at: 2007-07-13 14:58:39.921037
+  created_at: 2007-07-17 15:27:49.221434
 cards_022: 
   reader_type: 
   name: r4
-  updated_at: 2007-07-13 14:58:47.733775
+  updated_at: 2007-07-17 15:27:57.507365
   created_by: "1"
   current_revision_id: "24"
   priority: "0"
@@ -439,11 +439,11 @@ cards_022:
   writer_id: 
   extension_id: "7"
   sealed: f
-  created_at: 2007-07-13 14:58:47.676193
+  created_at: 2007-07-17 15:27:57.448049
 cards_011: 
   reader_type: 
   name: InvitationRequest
-  updated_at: 2007-07-13 14:58:41.968624
+  updated_at: 2007-07-17 15:27:51.895924
   created_by: "1"
   current_revision_id: "13"
   priority: "0"
@@ -460,11 +460,11 @@ cards_011:
   writer_id: 
   extension_id: "7"
   sealed: f
-  created_at: 2007-07-13 14:58:41.876493
+  created_at: 2007-07-17 15:27:51.797453
 cards_023: 
   reader_type: 
   name: c1
-  updated_at: 2007-07-13 14:58:47.851256
+  updated_at: 2007-07-17 15:27:57.658549
   created_by: "1"
   current_revision_id: "25"
   priority: "0"
@@ -481,11 +481,11 @@ cards_023:
   writer_id: 
   extension_id: 
   sealed: f
-  created_at: 2007-07-13 14:58:47.814002
+  created_at: 2007-07-17 15:27:57.623371
 cards_012: 
   reader_type: 
   name: Setting
-  updated_at: 2007-07-13 14:58:42.236081
+  updated_at: 2007-07-17 15:27:52.090769
   created_by: "1"
   current_revision_id: "14"
   priority: "0"
@@ -502,11 +502,11 @@ cards_012:
   writer_id: 
   extension_id: "8"
   sealed: f
-  created_at: 2007-07-13 14:58:42.175182
+  created_at: 2007-07-17 15:27:52.028194
 cards_001: 
   reader_type: 
   name: Admin
-  updated_at: 2007-07-13 14:58:40.014733
+  updated_at: 2007-07-17 15:27:49.306281
   created_by: 
   current_revision_id: "2"
   priority: "0"
@@ -523,4 +523,4 @@ cards_001:
   writer_id: 
   extension_id: "1"
   sealed: f
-  created_at: 2007-07-13 14:58:39.99187
+  created_at: 2007-07-17 15:27:49.28463

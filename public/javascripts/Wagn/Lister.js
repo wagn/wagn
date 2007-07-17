@@ -169,7 +169,7 @@ Object.extend(Wagn.Lister.prototype, {
       }
     });
     return { 
-      asynchronous:true, 
+      asynchronous: false, 
       evalScripts: true,  
       method: 'get',
       onComplete: function(request){ Wagn.lister().after_update() },

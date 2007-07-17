@@ -176,7 +176,7 @@ Object.extend(Wagn.Card.prototype, {
       if (typeof(el.attributes['inPopup'])!='undefined' && el.attributes['inPopup'].value=='true') {
         el.ondblclick=function(event) {                   
           if (card_id = Wagn.Card.getTranscludingCardId(Event.element(event))) {
-            Wagn.Card.editTransclusion(card_id); 
+            self.editTransclusion();
             Event.stop(event);
           }
         }
@@ -187,6 +187,26 @@ Object.extend(Wagn.Card.prototype, {
         }
       }
     });
+  },
+  editTransclusion: function() {   
+    var self = this;
+    
+    if (Wagn.win) { 
+      Wagn.win.setLocation(30+window.scrollY, 30);
+      //Wagn.win.setSize(550, 50+self.slot.viewHeight);
+    } else {
+      Wagn.win = new Window('popup', {
+        className: "mac_os_x", title: "Transclusion Editor",
+        top:30+window.scrollY, left:30, width:550, height:50+self.slot.viewHeight,
+        showEffectOptions: { duration: 0.2 },
+        hideEffectOptions: { duration: 0.2 }
+      });
+    }    
+    $('popup_content').innerHTML = '<div id="popup_target"></div>';
+    $('popup_target').innerHTML = "loading...";
+    Wagn.win.show();
+    //Wagn.Card.openPopup();
+    new Ajax.Updater( 'popup_target', '/card/edit_transclusion/' + card_id );    
   },
   view: function() {
     this.highlight_tab('view');
@@ -223,7 +243,7 @@ Object.extend(Wagn.Card.prototype, {
       this.slot.addClassName('editing');
       this.editor.edit();   
     } else { 
-      document.location.href=this.login_url;
+      alert("Sorry, you can't edit this card-  it could be that you do not have permission, or that the card is templated");
     }
   },
   changes: function() {
@@ -442,27 +462,8 @@ Object.extend(Wagn.Card, {
   },
   editConflict: function( card_id, revision_id, changes) {
     Wagn.Card.find_all_by_class( card_id ).each( function( card ) {
-      card.editConflict(revision_id, changes);   
-    });     
-  },
-  openPopup: function() {
-    if (!Wagn.win) {
-      Wagn.win = new Window('popup', {
-         className: "mac_os_x", title: "Transclusion Editor",
-         top:30, left:30, width:550, height:400,
-         showEffectOptions: { duration: 0.2 },
-         hideEffectOptions: { duration: 0.2 }
-      });
-    }    
-    $('popup_content').innerHTML = '<div id="popup_target"></div>';
-    if (arguments[0]) {
-      $('popup_target').innerHTML = arguments[0];
-    }
-    Wagn.win.show();
-  },
-  editTransclusion: function( card_id ) {
-    Wagn.Card.openPopup("loading...");
-    new Ajax.Updater( 'popup_target', '/card/edit_transclusion/' + card_id );    
+      card.editConflict(revision_id, changes);     
+    });
   },
   editInPopup: function( card_id ) {
     new Ajax.Updater( 'popup_target', '/card/edit_form/' + card_id, {

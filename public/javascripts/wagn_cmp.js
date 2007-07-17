@@ -6955,6 +6955,9 @@ if(typeof (init_lister)!="undefined"){
 Wagn._lister=init_lister();
 Wagn._lister.update();
 }
+if($("main-body")){
+$("main-body").card().loadEditor();
+}
 };
 Wagn.CardSlot={init:function(_66f){
 return Object.extend($(_66f),Wagn.CardSlot.prototype);
@@ -6984,11 +6987,6 @@ this.setupDoubleClickToEdit();
 if(Element.hasClassName(this.slot,"new-card")){
 warn("setting up new card");
 this.setupEditor();
-}else{
-if(Element.hasClassName(this.slot,"full")){
-warn("about to load editor");
-this.loadEditor();
-}
 }
 }
 Wagn.CardTable[slot.id]=this;
@@ -7123,7 +7121,7 @@ Element.getElementsByClassName(this.slot,"editOnDoubleClick").each(function(el){
 if(typeof (el.attributes["inPopup"])!="undefined"&&el.attributes["inPopup"].value=="true"){
 el.ondblclick=function(_67d){
 if(card_id=Wagn.Card.getTranscludingCardId(Event.element(_67d))){
-Wagn.Card.editTransclusion(card_id);
+self.editTransclusion();
 Event.stop(_67d);
 }
 };
@@ -7134,6 +7132,17 @@ self.loadEditor(false,true);
 };
 }
 });
+},editTransclusion:function(){
+var self=this;
+if(Wagn.win){
+Wagn.win.setLocation(30+window.scrollY,30);
+}else{
+Wagn.win=new Window("popup",{className:"mac_os_x",title:"Transclusion Editor",top:30+window.scrollY,left:30,width:550,height:50+self.slot.viewHeight,showEffectOptions:{duration:0.2},hideEffectOptions:{duration:0.2}});
+}
+$("popup_content").innerHTML="<div id=\"popup_target\"></div>";
+$("popup_target").innerHTML="loading...";
+Wagn.win.show();
+new Ajax.Updater("popup_target","/card/edit_transclusion/"+card_id);
 },view:function(){
 this.highlight_tab("view");
 this._viewmode="view";
@@ -7166,7 +7175,7 @@ this.slot.chunk("editor").show();
 this.slot.addClassName("editing");
 this.editor.edit();
 }else{
-document.location.href=this.login_url;
+alert("Sorry, you can't edit this card-  it could be that you do not have permission, or that the card is templated");
 }
 },changes:function(){
 this.update_workspace("revision",{rev:arguments[0]||"",mode:arguments[1]||""});
@@ -7214,57 +7223,57 @@ if(new_content!=original_content){
 Wagn.Messenger.log("saving draft of "+this.name()+"...");
 new Ajax.Request("/card/save_draft/"+this.id(),{method:"post",parameters:"card[content]="+encodeURIComponent(new_content)});
 }
-},after_edit:function(_67f,_680,raw){
-this.set_revision_id(_67f);
+},after_edit:function(_680,_681,raw){
+this.set_revision_id(_680);
 this.setSlot("editor-message","");
-this.setSlot("cooked",_680);
+this.setSlot("cooked",_681);
 this.setSlot("raw",raw);
 var self=this;
 document.getElementsByClassName("transcludedContent").each(function(el){
 if(el.attributes["cardId"].value==self.id()){
-el.innerHTML=_680;
+el.innerHTML=_681;
 }
 });
 getNewWindowLinks();
 this.setupDoubleClickToEdit();
-},editConflict:function(_684,_685){
-this.setSlot("editor-message",_685);
-this.set_revision_id(_684);
-},setSlot:function(_686,_687){
-if(this.slot.chunk(_686)){
-this.slot.chunk(_686).innerHTML=_687;
+},editConflict:function(_685,_686){
+this.setSlot("editor-message",_686);
+this.set_revision_id(_685);
+},setSlot:function(_687,_688){
+if(this.slot.chunk(_687)){
+this.slot.chunk(_687).innerHTML=_688;
 }
 },rename_form:function(name){
 this.update_workspace("rename_form",{"card[name]":$(this.slot.id+"-name-field").value});
-},update_workspace:function(_689){
+},update_workspace:function(_68a){
 params=this._ajax_parameters(arguments[1]);
 params["method"]="get";
-new Ajax.Updater(this.workspace,"/card/"+_689+"/"+this.id(),params);
+new Ajax.Updater(this.workspace,"/card/"+_68a+"/"+this.id(),params);
 },remove:function(){
 this.standard_update("remove",{});
-},rollback:function(_68a){
-this.standard_update("rollback",{rev:_68a});
-},update:function(_68b){
-this.standard_update("update",_68b);
-},update_writer:function(_68c){
-this.standard_update("update_writer",_68c);
-},update_reader:function(_68d){
-this.standard_update("update_reader",_68d);
-},standard_update:function(_68e,_68f){
-new Ajax.Request("/card/"+_68e+"/"+this.id(),this._ajax_parameters(_68f));
-},update_attribute:function(_690,_691){
+},rollback:function(_68b){
+this.standard_update("rollback",{rev:_68b});
+},update:function(_68c){
+this.standard_update("update",_68c);
+},update_writer:function(_68d){
+this.standard_update("update_writer",_68d);
+},update_reader:function(_68e){
+this.standard_update("update_reader",_68e);
+},standard_update:function(_68f,_690){
+new Ajax.Request("/card/"+_68f+"/"+this.id(),this._ajax_parameters(_690));
+},update_attribute:function(_691,_692){
 var self=this;
-var _690=_690;
-new Ajax.Request($A(["/card/attribute",this.id(),_690]).join("/"),{parameters:this._common_parameters({value:_691}),onSuccess:function(_693){
-Wagn.messenger().note(self.name()+" "+_690+" updated: "+_693.responseText);
-if(_690=="datatype"){
+var _691=_691;
+new Ajax.Request($A(["/card/attribute",this.id(),_691]).join("/"),{parameters:this._common_parameters({value:_692}),onSuccess:function(_694){
+Wagn.messenger().note(self.name()+" "+_691+" updated: "+_694.responseText);
+if(_691=="datatype"){
 self.loadEditor(true);
 }
-},onFailure:function(_694){
-Wagn.messenger().alert(self.name()+" "+_690+" update failed:"+_694.responseText);
+},onFailure:function(_695){
+Wagn.messenger().alert(self.name()+" "+_691+" update failed:"+_695.responseText);
 }});
-},update_private:function(_695){
-if(_695=="edit"){
+},update_private:function(_696){
+if(_696=="edit"){
 Element.addClassName(this.slot.chunk("private-edit"),"current");
 Element.removeClassName(this.slot.chunk("private-view"),"current");
 this.update({"card[private]":false});
@@ -7305,53 +7314,41 @@ Element.addClassName(this.slot.chunk(tab),"current");
 }});
 Object.extend(Wagn.Card,{table:function(){
 return Wagn.CardTable;
-},find:function(_698){
-return $(_698).card();
-},findFirstById:function(_699){
-return Wagn.Card.find_all_by_class(_699).first();
-},findByElement:function(_69a){
-return $(_69a).card();
+},find:function(_699){
+return $(_699).card();
+},findFirstById:function(_69a){
+return Wagn.Card.find_all_by_class(_69a).first();
+},findByElement:function(_69b){
+return $(_69b).card();
 },find_all_by_class:function(){
 card_id=arguments[0]?arguments[0]:"card-slot";
 return Wagn.CardSlot.find_all_by_class(card_id).collect(function(s){
 return s.card();
 });
-},init:function(_69c){
-if(Wagn.CardTable[_69c]){
-card=Wagn.CardTable[_69c];
+},init:function(_69d){
+if(Wagn.CardTable[_69d]){
+card=Wagn.CardTable[_69d];
 return card;
 }else{
-slot=Wagn.CardSlot.init(_69c);
+slot=Wagn.CardSlot.init(_69d);
 return new Wagn.Card(slot);
 }
-},update:function(_69d,_69e,_69f,raw){
-Wagn.Card.find_all_by_class(_69d).each(function(card){
-card.after_edit(_69e,_69f,raw);
+},update:function(_69e,_69f,_6a0,raw){
+Wagn.Card.find_all_by_class(_69e).each(function(card){
+card.after_edit(_69f,_6a0,raw);
 });
-},dehighlightAll:function(_6a2){
-Wagn.Card.find_all_by_class(_6a2).each(function(card){
+},dehighlightAll:function(_6a3){
+Wagn.Card.find_all_by_class(_6a3).each(function(card){
 card.dehighlight();
 });
-},view:function(_6a4){
-Wagn.Card.find_all_by_class(_6a4).each(function(card){
+},view:function(_6a5){
+Wagn.Card.find_all_by_class(_6a5).each(function(card){
 card.view();
 });
-},editConflict:function(_6a6,_6a7,_6a8){
-Wagn.Card.find_all_by_class(_6a6).each(function(card){
-card.editConflict(_6a7,_6a8);
+},editConflict:function(_6a7,_6a8,_6a9){
+Wagn.Card.find_all_by_class(_6a7).each(function(card){
+card.editConflict(_6a8,_6a9);
 });
-},openPopup:function(){
-if(!Wagn.win){
-Wagn.win=new Window("popup",{className:"mac_os_x",title:"Transclusion Editor",top:30,left:30,width:550,height:400,showEffectOptions:{duration:0.2},hideEffectOptions:{duration:0.2}});
-}
-$("popup_content").innerHTML="<div id=\"popup_target\"></div>";
-if(arguments[0]){
-$("popup_target").innerHTML=arguments[0];
-}
-Wagn.win.show();
-},editTransclusion:function(_6aa){
-Wagn.Card.openPopup("loading...");
-new Ajax.Updater("popup_target","/card/edit_transclusion/"+_6aa);
 },editInPopup:function(_6ab){
 new Ajax.Updater("popup_target","/card/edit_form/"+_6ab,{asynchronous:true,evalScripts:true,onComplete:function(_6ac){
 c=new Wagn.Card(Wagn.CardSlot.init("popup_cardslot"));
@@ -7727,7 +7724,7 @@ if(pair.value&&pair.value!=""){
 param_list.push(pair.key+"="+encodeURIComponent(pair.value));
 }
 });
-return {asynchronous:true,evalScripts:true,method:"get",onComplete:function(_6dc){
+return {asynchronous:false,evalScripts:true,method:"get",onComplete:function(_6dc){
 Wagn.lister().after_update();
 },parameters:param_list.join("&")};
 }});
@@ -7769,7 +7766,11 @@ card.raw(card.raw().gsub(/\[([^\]]+)\]\[([^\]]+)\]/,generate_anchor));
 $A(_6e1.card.slot.chunk("raw").getElementsByTagName("a")).each(function(e){
 if(e.attributes["href"]){
 Wagn.Link.new_from_link(e).update_bound();
+if(e.innerHTML==""){
+Element.replace(e,"");
+}else{
 Element.replace(e,"["+e.innerHTML+"]["+e.attributes["href"].value+"]");
+}
 }
 });
 return false;

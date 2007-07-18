@@ -21,7 +21,7 @@ module Card
       ::Setting.find_by_codename('invitation_request_landing').card.name
     end
 
-    def cacheable
+    def cacheable?
       false
     end
     

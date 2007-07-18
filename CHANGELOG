@@ -1,3 +1,24 @@
+=== 0.6.1 (July 18, 2007)
+* setup stylesheets to use css cacheing-- doesn't work tho :-(
+* add name dump for cache pre-population
+* ordering of ajax calls
+* merge -r5:27 from branches/invitation_requests
+* fix wadget
+* local.css shouldn't be in repo
+* open external links in new window/tab
+* fix linkEditor popup position
+* fix js error on anchors w/o hrefs
+* options takes you to login if not logged in, cardtype dropdown not availbe unless logged in
+* recompress wadget; tweak test_data task
+* fixture generation task
+* add selenium-on-rails, which got missed in repository switchover
+* fixture updates + javascript compression
+* wadget absolute url fix
+* more svn ignore configs
+* set svn:ignore(s)
+* initial copy from 'wagon' project
+
+
 === 0.6.0 (June 7, 2007)
 * fix 500 on User cards without extensions
 * fix fixtures take 2

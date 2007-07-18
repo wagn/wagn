@@ -20,7 +20,10 @@ module Card
     def landing_name
       ::Setting.find_by_codename('invitation_request_landing').card.name
     end
-      
+
+    def cacheable
+      false
+    end
     
     class << self
       # override permissions, since anonymous users must be able to create cards

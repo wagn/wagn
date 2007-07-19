@@ -31,21 +31,17 @@ Object.extend(Wagn.Card.prototype, {
     this._viewmode = 'view';  
     if (!this._in_wadget) {
       this.setupDoubleClickToEdit(); 
-      if (Element.hasClassName(this.slot, 'new-card')) {
-        warn("setting up new card");
-        this.setupEditor();
-/*      } else if (Element.hasClassName(this.slot, 'full')) { 
-        warn("about to load editor");
-        this.loadEditor(); 
-        */
-      }                              
     }
     Wagn.CardTable[ slot.id ] = this;
   },
   loadEditor: function() {  
-    if (this._in_wadget) { 
+    if (this._in_wadget) { /* FIXME not sure this is necessary any more since we moved loadEditor out to the onload */
       warn("bailing cuzof wadget");
       return true; 
+    } else if (Element.hasClassName(this.slot, 'new-card')) { /* FIXME not sure this belongs within loadEditor */
+      warn("setting up new card");
+      this.setupEditor();
+      return true;
     }
     force_reload = arguments[0];
     edit_on_load = arguments[1];

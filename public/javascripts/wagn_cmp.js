@@ -6984,16 +6984,18 @@ this._editor_loaded=false;
 this._viewmode="view";
 if(!this._in_wadget){
 this.setupDoubleClickToEdit();
-if(Element.hasClassName(this.slot,"new-card")){
-warn("setting up new card");
-this.setupEditor();
-}
 }
 Wagn.CardTable[slot.id]=this;
 },loadEditor:function(){
 if(this._in_wadget){
 warn("bailing cuzof wadget");
 return true;
+}else{
+if(Element.hasClassName(this.slot,"new-card")){
+warn("setting up new card");
+this.setupEditor();
+return true;
+}
 }
 force_reload=arguments[0];
 edit_on_load=arguments[1];

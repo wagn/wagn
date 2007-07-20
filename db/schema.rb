@@ -2,7 +2,7 @@
 # migrations feature of ActiveRecord to incrementally modify your database, and
 # then regenerate this schema definition.
 
-ActiveRecord::Schema.define(:version => 76) do
+ActiveRecord::Schema.define(:version => 77) do
 
   create_table "cards", :force => true do |t|
     t.column "tag_id",              :integer,                     :null => false
@@ -121,7 +121,7 @@ ActiveRecord::Schema.define(:version => 76) do
     t.column "login",               :string,   :limit => 40
     t.column "email",               :string,   :limit => 100
     t.column "crypted_password",    :string,   :limit => 40
-    t.column "salt",                :string,   :limit => 40
+    t.column "salt",                :string,   :limit => 42
     t.column "created_at",          :datetime
     t.column "updated_at",          :datetime
     t.column "password_reset_code", :string,   :limit => 40

@@ -74,7 +74,7 @@ module CardCreator
   end
   
   def default_web_id
-    MWeb.find(:first).id
+    #MWeb.find(:first).id
   end
   
   def create_card( type, name, content="" )
@@ -98,7 +98,6 @@ module CardCreator
       card = MCard.create(
         :type=>type,
         :tag_id=>tag.id,
-        :web_id=>default_web_id,
         :name => name
       )
       revision = MRevision.create(

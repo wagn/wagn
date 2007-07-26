@@ -79,6 +79,7 @@ class AccountController < ApplicationController
       @user.invite_sender = ::User.current_user
     elsif @card.class_name=='User' and !@card.extension
       @user = User.new( params[:user].merge( :invite_sender_id=>current_user.id )) 
+      @user.status='active'
     else
       @card.errors.add(:name, "has already been taken")
       raise ActiveRecord::RecordInvalid.new(@card)

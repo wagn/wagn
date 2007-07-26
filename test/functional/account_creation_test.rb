@@ -30,6 +30,7 @@ class AccountCreationTest < Test::Unit::TestCase
     email = ActionMailer::Base.deliveries[-1]      
     # emails should be 'from' inviting user
     assert_equal User.current_user.email, email.from[0]
+    assert_equal 'active', User.find_by_email('new@user.com').status
   end
   
   def test_should_create_account_from_existing_user  

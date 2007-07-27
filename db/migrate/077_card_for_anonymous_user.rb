@@ -1,8 +1,6 @@
 class CardForAnonymousUser < ActiveRecord::Migration  
   class << self
-    User.as_admin do
-      include CardCreator
-    end
+    include CardCreator
   end
   
   def self.up
@@ -21,7 +19,9 @@ class CardForAnonymousUser < ActiveRecord::Migration
     MTagRevision.reset_column_information
     MRevision.reset_column_information
     MTag.reset_column_information
-    create_user_card 'Anonymous', 'anon'
+    User.as(:admin) do
+     create_user_card 'Anonymous', 'anon'
+    end
   end
 
   def self.down

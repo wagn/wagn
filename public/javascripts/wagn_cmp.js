@@ -7354,7 +7354,7 @@ card.editConflict(_6a8,_6a9);
 },editInPopup:function(_6ab){
 new Ajax.Updater("popup_target","/card/edit_form/"+_6ab,{asynchronous:true,evalScripts:true,onComplete:function(_6ac){
 c=new Wagn.Card(Wagn.CardSlot.init("popup_cardslot"));
-setTimeout("Wagn.Card.find( 'popup_cardslot' ).edit()",100);
+setTimeout("Wagn.Card.find( 'popup_cardslot' ).setupEditor(); Wagn.Card.find( 'popup_cardslot' ).edit()",100);
 }});
 },setupAll:function(){
 var _6ad=arguments[0];

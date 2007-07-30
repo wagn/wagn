@@ -465,7 +465,7 @@ Object.extend(Wagn.Card, {
     new Ajax.Updater( 'popup_target', '/card/edit_form/' + card_id, {
       asynchronous:true, evalScripts:true, onComplete:function(request){
         c = new Wagn.Card( Wagn.CardSlot.init('popup_cardslot') );
-        setTimeout("Wagn.Card.find( 'popup_cardslot' ).edit()", 100);
+        setTimeout("Wagn.Card.find( 'popup_cardslot' ).setupEditor(); Wagn.Card.find( 'popup_cardslot' ).edit()", 100);
       } 
     });
   },

@@ -202,7 +202,8 @@ Object.extend(Wagn.Card.prototype, {
     $('popup_target').innerHTML = "loading...";
     Wagn.win.show();
     //Wagn.Card.openPopup();
-    new Ajax.Updater( 'popup_target', '/card/edit_transclusion/' + card_id );    
+    //new Ajax.Updater( 'popup_target', '/card/edit_transclusion/' + card_id );    
+    Wagn.Card.editInPopup(card_id);
   },
   view: function() {
     this.highlight_tab('view');

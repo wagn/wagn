@@ -7144,7 +7144,7 @@ Wagn.win=new Window("popup",{className:"mac_os_x",title:"Transclusion Editor",to
 $("popup_content").innerHTML="<div id=\"popup_target\"></div>";
 $("popup_target").innerHTML="loading...";
 Wagn.win.show();
-new Ajax.Updater("popup_target","/card/edit_transclusion/"+card_id);
+Wagn.Card.editInPopup(card_id);
 },view:function(){
 this.highlight_tab("view");
 this._viewmode="view";

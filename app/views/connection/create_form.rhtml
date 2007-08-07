@@ -3,16 +3,15 @@
   :html => { :id=>'new-card-form' }
   ) %>
    <%= hidden_field_tag :id, @trunk.id %>  
-  <%= hidden_field :tag, :name, :id=>"new-card-name-field" %>
+  <%= hidden_field_tag 'card[name]', @tag.name, :id=>"new-card-name-field" %>
   <input type="hidden" name="connection[content]" id="new-card-content-field">
   
-  <div id="added-tag" class="line card-slot <%= @tag_card.id %>">
-    <%#= render_card :card=>@tag_card,  :partial=> 'line', :context=> 'added-tag', :element=>'added-tag' %>
-    <%= render :partial=>'card/card', :locals=>{ :card=>@tag_card, :element=>'added-tag'} %>
+  <div id="added-tag" class="line card-slot <%= @tag.id %>">
+    <%= render :partial=>'card/card', :locals=>{ :card=>@tag, :element=>'added-tag'} %>
   </div>
    
   <p><em> Here's where you can explain how <%= link_to_page @tag.name %> relates 
-      to  <%= link_to_page( @trunk.formal_title, @trunk.name ) %>.  </em>
+      to  <%= link_to_page( formal_title(@trunk), @trunk.name ) %>.  </em>
   </p>
   <% if Card::User===@trunk and @trunk.extension==User.current_user %>
     <%= check_box_tag 'personal_sidebar' %>Make this a personal note card.</br>
@@ -23,11 +22,11 @@
     <span class="connection"></span>
    <div> <%# make right number of containing divs for wikiwyg parentNode references %>
     <div class="title">
-      <%= fancy_title_from_tag_names([@trunk.title_tag_names, @tag.name].flatten) %>
+      <%= fancy_title_from_tag_names([title_tag_names(@trunk), @tag.name].flatten) %>
     </div>
     <div class="blank"> &nbsp; </div>
     <%= render :partial=>'card/new_editor', :locals=>{ :slot_id=>'connection-body',
-          :datatype_key=>@connection.datatype_key, :card=>@connection 
+        :card=>@connection 
     } %>
     </div>
   </div>
@@ -39,5 +38,3 @@
 
 
 <%= javascript_tag "slot = Wagn.CardSlot.init('connection-body'); card = new Wagn.Card( slot ); card.slowEdit();" %>
-
-                                             

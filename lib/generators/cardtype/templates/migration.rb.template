@@ -1,0 +1,12 @@
+require_dependency 'db/migration_helper'
+
+class Add<%= class_name.underscore.camelize %>Cardtype < ActiveRecord::Migration
+	include MigrationHelper
+
+  def self.up 
+  	add_cardtype "<%= class_name %>"
+  end
+
+  def self.down
+  end
+end

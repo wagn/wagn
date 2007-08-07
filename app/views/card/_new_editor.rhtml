@@ -8,11 +8,10 @@
   <span class="new"></span>
   <span class="cooked"></span><span class="raw nosave"></span>
   <span class="edit-ok"></span>
-  <span class="datatype"><%= card.datatype_key %></span>
   <span class="editor-type"><%= card.editor_type %></span>
   <span class="editor">
     <%= render :partial=>"/editor/#{card.editor_type.underscore}", 
-          :locals=>{ :datatype_key=>datatype_key, :card=>card, :div_id=>slot_id }
+          :locals=>{ :card=>card, :div_id=>slot_id }
     %>  
   </span>
   <div class="card-links"></div>

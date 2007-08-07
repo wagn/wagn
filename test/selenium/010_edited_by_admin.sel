@@ -1,7 +1,0 @@
-|open|/wiki/TestOne||
-|clickAndWait|link=My Card: Admin||
-|select|query-select|value=revised_by|
-|pause|3000||
-|verifyTextPresent|TestOneNewContent||
-|verifyTextPresent|ConnectOneTwoContent||
-|verifyTextPresent|TestTwoContent||

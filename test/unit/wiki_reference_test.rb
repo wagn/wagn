@@ -2,59 +2,105 @@ require File.dirname(__FILE__) + '/../test_helper'
 class WikiReferenceTest < Test::Unit::TestCase
   common_fixtures
   def setup
-    setup_default_user
+    setup_default_user  
+    Renderer.instance.rescue_errors = false
   end
 
+
   def test_container_transclusion
-    bob,city = newcard('bob'), newcard('city')
-    bob_city = bob.connect city, "sparta" 
-    address = newcard 'address', "Don't see me"
-    tmpl = newcard('*template')
-    address.connect(tmpl, "{{#{JOINT}city|base:parent}}")
-    bob_address = bob.connect address
+    bob_city = Card.create :name=>'bob+city' 
+    Card.create :name=>'address+*template',:content=>"{{#{JOINT}city|base:parent}}"
+    bob_address = Card.create :name=>'bob+address'
     
     assert_equal ["bob#{JOINT}city"], bob_address.transcludees.plot(:name) 
     assert_equal ["bob#{JOINT}address"], bob_city.transcluders.plot(:name) 
   end
 
-  def test_simple_transclusion
-    alpha = newcard('alpha')
-    beta = newcard('beta', "I transclude to {{alpha}}")
-    assert_equal ['alpha'], beta.transcludees.plot(:name)
-    assert_equal ['beta'], alpha.transcluders.plot(:name)
+  def test_pickup_new_links_on_rename
+    @l = newcard("L", "[[Ethan]]")  # no Ethan card yet...
+    @e = newcard("Earthman")
+    @e.update_attributes! :name => "Ethan"  # NOW there is an Ethan card
+    assert @e.referencers.plot(:name).include?("L")
   end
 
+  def test_update_references_on_rename
+     watermelon = newcard('watermelon', 'mmmm')
+     seeds = newcard('seeds')
+     watermelon_seeds = watermelon.connect seeds, 'black'
+     lew = newcard('Lew', "likes [[watermelon]] and [seeds][watermelon#{JOINT}seeds]")
+
+     watermelon.on_rename_skip_reference_updates=false
+     watermelon.name="grapefruit"
+     watermelon.save
+     assert_equal "likes [[grapefruit]] and [seeds][grapefruit#{JOINT}seeds]", lew.reload.content
+
+     watermelon.on_rename_skip_reference_updates=true
+     watermelon.name='bananas'
+     watermelon.save
+     assert_equal "likes [[grapefruit]] and [seeds][grapefruit#{JOINT}seeds]", lew.reload.content 
+     w = ReferenceTypes::WANTED_LINK
+     assert_equal [w,w], lew.out_references.plot(:link_type), "links should be Wanted"
+   end
+
+   def test_update_referencing_content_on_rename_junction_card
+     @ab = Card.find_by_name("A+B") #linked to from X, transcluded by Y
+     @ab.update_attributes! :name=>'Peanut+Butter'
+     @x = Card.find_by_name('X')
+     assert_equal "[[A]] [[Peanut+Butter]] [[T]]", @x.content
+   end
+
+   def test_update_referencing_content_on_rename_junction_card
+     @ab = Card.find_by_name("A+B") #linked to from X, transcluded by Y
+     @ab.update_attributes! :name=>'Peanut+Butter', :on_rename_skip_reference_updates=>true
+     @x = Card.find_by_name('X')
+     assert_equal "[[A]] [[A+B]] [[T]]", @x.content
+   end
+    
   def test_template_transclusion
-    cardtype = Card::Cardtype.create :name=>"Color", :content=>""
-    template = newcard '*template'
-    cardtype.connect template, "{{#{JOINT}rgb}}"
-    blue = Card::Color.create :name=>"blue"
+    cardtype = Card::Cardtype.create! :name=>"ColorType", :content=>""
+    template = Card.create! :name=>'*template'
+    Card.create! :trunk=>cardtype, :tag=>template, :content=>"{{#{JOINT}rgb}}"
+    blue = Card::ColorType.create! :name=>"blue"
     rgb = newcard 'rgb'
-    blue_rgb = blue.connect rgb, "#OOOOFF"
+    blue_rgb = Card.create! :trunk=>blue, :tag=>rgb, :content=>"#OOOOFF"
     
     assert_equal ["blue#{JOINT}rgb"], blue.reload.transcludees.plot(:name)
     assert_equal ['blue'], blue_rgb.reload.transcluders.plot(:name)
   end
 
   def test_simple_link
-    alpha = newcard('alpha')
-    beta = newcard('beta', "I link to [[alpha]]")
+    alpha = Card.create :name=>'alpha'
+    beta = Card.create :name=>'beta', :content=>"I link to [[alpha]]"
     assert_equal ['alpha'], beta.referencees.plot(:name)
     assert_equal ['beta'], alpha.referencers.plot(:name)
   end
 
+
+  def test_simple_transclusion
+    alpha = Card.create :name=>'alpha'
+    beta = Card.create :name=>'beta', :content=>"I transclude to {{alpha}}"
+    assert_equal ['alpha'], beta.transcludees.plot(:name)
+    assert_equal ['beta'], alpha.transcluders.plot(:name)
+  end
+
   def test_non_simple_link
-    alpha = newcard('alpha')
-    beta = newcard('beta', "I link to [ALPHA][alpha]")
+    alpha = Card.create :name=>'alpha'
+    beta = Card.create :name=>'beta', :content=>"I link to [ALPHA][alpha]"
     assert_equal ['alpha'], beta.referencees.plot(:name)
     assert_equal ['beta'], alpha.referencers.plot(:name)
   end
   
   def test_link_with_spaces
-    alpha = newcard('alpha card')
-    beta = newcard('beta card', "I link to [ALPHA CARD][alpha_card]")
+    alpha = Card.create :name=>'alpha card'
+    beta =  Card.create :name=>'beta card', :content=>"I link to [ALPHA CARD][alpha_card]"
     assert_equal ['alpha card'], beta.referencees.plot(:name)
     assert_equal ['beta card'], alpha.referencers.plot(:name)
+  end
+
+  def test_pickup_new_links_on_create
+    @l = newcard("woof", "[[Lewdog]]")  # no Lewdog card yet...
+    @e = newcard("Lewdog")              # now there is
+    assert @e.referencers.plot(:name).include?("woof")
   end
   
 =begin  

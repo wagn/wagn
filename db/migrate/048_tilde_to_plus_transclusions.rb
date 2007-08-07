@@ -1,6 +1,10 @@
 class TildeToPlusTransclusions < ActiveRecord::Migration
   def self.up
     User.current_user = WagBot.instance
+    # No existing wagns should still need this, and new wagns shouldn't have anything that
+    # applies
+    return
+=begin    
     Card.find_by_wql("cards with content ~ '\\{\\{'").each do |card|
       revised_content = card.content.gsub( /\{\{((\~)?[^\}]+)\}\}(\**)/ ) do
         card_name = $~[1].strip
@@ -13,6 +17,7 @@ class TildeToPlusTransclusions < ActiveRecord::Migration
         puts "Revised #{card.name}"
       end
     end
+=end    
   end
 
   def self.down

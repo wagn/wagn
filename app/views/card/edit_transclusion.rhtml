@@ -1,9 +1,9 @@
-This content comes from the card <%= @card.formal_title %> </br>
+This content comes from the card <%= formal_title(@card) %> </br>
 
 Changes to this content will take effect on all these pages:
 <ul>
 <% @card.transcluders.uniq.map do |t| %>
-  <li><%= link_to_page t.formal_title, t.name %>
+  <li><%= link_to_page formal_title(t), t.name %>
 <% end. join ', ' %>
 </ul>
 

@@ -41,11 +41,11 @@ class WikiReference < ActiveRecord::Base
       update_all("link_type = '#{TRANSCLUSION}', referenced_card_id=#{card.id}",  ['referenced_name = ? and link_type=?', card.name, WANTED_TRANSCLUSION])
     end
     
-    def update_on_destroy( card )   
-      logger.info("UPDATING ON DESTROY: #{card.id}")
+    def update_on_destroy( card, name=nil )   
+      name ||= card.name
       delete_all ['card_id = ?', card.id]
-      update_all("link_type = '#{WANTED_LINK}',referenced_card_id=NULL",  ['(referenced_name = ? or referenced_card_id = ?) and link_type=?', card.name, card.id, LINK])
-      update_all("link_type = '#{WANTED_TRANSCLUSION}',referenced_card_id=NULL",  ['(referenced_name = ? or referenced_card_id = ?) and link_type=?', card.name, card.id, TRANSCLUSION])
+      update_all("link_type = '#{WANTED_LINK}',referenced_card_id=NULL",  ['(referenced_name = ? or referenced_card_id = ?) and link_type=?', name, card.id, LINK])
+      update_all("link_type = '#{WANTED_TRANSCLUSION}',referenced_card_id=NULL",  ['(referenced_name = ? or referenced_card_id = ?) and link_type=?', name, card.id, TRANSCLUSION])
     end
   end
   

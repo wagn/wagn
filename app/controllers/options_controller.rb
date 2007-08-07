@@ -9,7 +9,7 @@ class OptionsController < ApplicationController
   
   def roles
     raise Wagn::Oops unless @card.class_name=='User'
-    @card = Card.find params[:id]
+   # @card = Card.find params[:id]
     @user = @card.extension
     @roles = Role.find :all, :conditions=>"codename not in ('auth','anon')"
   end

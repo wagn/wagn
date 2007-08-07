@@ -1,12 +1,12 @@
 <%= form_remote_tag :url=>{:action=>'rename', :id=>@card.id} %>
 
-  Change <%= link_to_page @card.formal_title, @card.name %> to <%= text_field_tag 'tag[name]', params[:card][:name], :size=>30 %>
+  Change <%= link_to_page formal_title(@card), @card.name %> to <%= text_field_tag 'card[name]', params[:card][:name], :size=>30 %>
 
   <% if dependents = @card.dependents and !dependents.empty? %>
     <p>This will change the names of these cards, too:</p>
     <ul>
       <% dependents.map do |dep| %>
-        <li><%= link_to_page dep.formal_title, dep.name %>
+        <li><%= link_to_page formal_title(dep), dep.name %>
       <% end. join ', ' %>
     </ul>
   <% end %>
@@ -15,7 +15,7 @@
     <p>These cards are linked to from the following cards:</p>
     <ul>
       <% children.map do |child| %>
-        <li><%= link_to_page child.formal_title, child.name %>
+        <li><%= link_to_page formal_title(child), child.name %>
       <% end. join ', ' %>
     </ul>
     Would you like to 

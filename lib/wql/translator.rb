@@ -59,28 +59,29 @@ module Wql
           cuid = User.current_user.id
           statement.tables << root_table + " left join roles_users ru on ru.user_id=#{cuid} and ru.role_id=#{root_alias}.reader_id" 
           add_to_statement %{ (
-             {r}.reader_id IS NULL  
+             {r}.reader_id IS NULL 
              OR ({r}.reader_type='Role' and {r}.reader_id IN (#{ANON_ROLE_ID}, #{AUTH_ROLE_ID}))
              OR ({r}.reader_type='User' and {r}.reader_id=#{cuid})
              OR ({r}.reader_type='Role' and ru.user_id is not null)
           ) }.substitute!( :r =>root_alias )
         end
 
-        statement.fields << "#{root_alias}.*"
+        statement.fields << "#{root_alias}.*"  
+        add_to_statement not_trash(root_alias)
       else                           
         #warn "DEFINIG ADDITIONAL JOINS"        
         # define additional join tables
         case current_relation
             
           when /tags are/
-            join_cards "({c}.trunk_id IS NULL AND {c}.tag_id = {m}.tag_id AND {c}.id <> {m}.id)" 
+            join_cards "({c}.id = {m}.tag_id)" 
           
           when /trunks are/
             join_cards "{m}.trunk_id = {c}.id"
             
           when /plus/
             join_cards "{m}.trunk_id = {c}.id OR " +  # me + X
-              "({c}.trunk_id IS NULL AND {c}.tag_id = {m}.tag_id AND {c}.id <> {m}.id)" # X + me 
+              "({c}.id = {m}.tag_id)" # X + me 
 
           when /trunk connections are/
             join_cards "{c}.trunk_id={m}.id"
@@ -93,11 +94,14 @@ module Wql
 
           when /tagged by/
             join_cards "{c}.trunk_id = {m}.id"
+            # FIXME - this next_alias thing is confusing:
+            # after the next statement {c} will refer to a new table, 
+            # while {combo_alias} refers to the table previously referred to by {c}.
             combo_alias,self.current_alias = self.current_alias, statement.next_alias
-            join_cards "{c}.trunk_id IS NULL AND {c}.tag_id=#{combo_alias}.tag_id"
+            join_cards "{c}.id=#{combo_alias}.tag_id"
             
           when /tagging/
-            join_cards "{c}.tag_id = {m}.tag_id AND {c}.id <> {m}.id AND {m}.trunk_id IS NULL"
+            join_cards "{c}.tag_id = {m}.id"
             combo_alias,self.current_alias = self.current_alias, statement.next_alias 
             join_cards "#{combo_alias}.trunk_id= {c}.id"
  
@@ -258,11 +262,15 @@ module Wql
     
     private 
       def q(value)
-        System.connection.quote(value)
+        ActiveRecord::Base.connection.quote(value)
+      end
+      
+      def not_trash(table)
+        ActiveRecord::Base.send :sanitize_sql, ["#{table}.trash=?",false]
       end
       
       def join_cards( sql )
-        join( "cards {c} ON #{sql}" )
+        join( "cards {c} ON #{sql} AND " + not_trash('{c}') )
       end
     
       def left_join( sql )
@@ -305,10 +313,10 @@ module Wql
               x.gsub!( /(\*|\+|\(|\))/ ) do
                 '\\\\' + $~[1]
               end
-              "replace(#{field}, '#{JOINT}',' ') #{System.connection.match(q("[[:<:]]" + x + "[[:>:]]"))}"
+              "replace(#{field}, '#{JOINT}',' ') #{ActiveRecord::Base.connection.match(q("[[:<:]]" + x + "[[:>:]]"))}"
             end.join(" AND ")
           when '~'
-            sql = "#{field} #{System.connection.match(value)}"
+            sql = "#{field} #{ActiveRecord::Base.connection.match(value)}"
           when 'include'
             sql = "#{field} = #{value}"
           else

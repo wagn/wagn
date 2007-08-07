@@ -7,7 +7,7 @@ class FileController < ApplicationController
   def upload
     #content_type = file.content_type
     file = params[:file]
-    dir = params[:datatype_key].underscore
+    dir = params[:card][:type].underscore
     card_name = params[:card][:name]
     ext = file.original_filename.gsub(/.*\.(\w+)$/, '\1')
     

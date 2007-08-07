@@ -45,7 +45,7 @@
       <td>
 				<strong>Filter these cards by:</strong>
         <div>cardtype: 
-          <%= select_tag( :cardtype, 
+          <%= select_tag( :type, 
               options_from_collection_for_select([['','Any']]+cardtype_options, :first, :last, (card ? card.cardtype : nil)),
               :class=>'search-field',
               :id=>'connection-cardtype-field',

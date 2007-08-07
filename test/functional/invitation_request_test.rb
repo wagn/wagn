@@ -20,16 +20,24 @@ class InvitationRequestTest < Test::Unit::TestCase
   def test_should_send_notification    
     System.invite_request_alert_email = 'test@user.com' if System.invite_request_alert_email.blank?
     assert_difference ActionMailer::Base.deliveries, :size do
-      post :create, :cardtype=>"InvitationRequest", :tag=>{:name=>"Word Third"},
-           :card=>{:email=>"jamaster@jay.net", :content=>"Let me in!"}     
+      post :create, :card => {
+        :type=>"InvitationRequest", 
+        :name=>"Word Third",
+        :email=>"jamaster@jay.net", 
+        :content=>"Let me in!"
+      }  
     end     
     url = ActionMailer::Base.deliveries[-1].body.match(/visit (http:\S+)/)[1]
     assert_equal @controller.url_for_page("Word Third", :host=>System.host), url
   end
   
   def test_should_redirect_to_invitation_request_landing_card 
-    post :create, :cardtype=>"InvitationRequest", :tag=>{:name=>"Word Third"},
-         :card=>{:email=>"jamaster@jay.net", :content=>"Let me in!"}  
+    post :create, :card=>{
+      :type=>"InvitationRequest",
+      :name=>"Word Third",
+      :email=>"jamaster@jay.net",
+      :content=>"Let me in!"
+    }  
     # FIXME: the form submits via ajax, so we can't do a regular redirect-- it does javascript
     #  instead.. how do we test that?     
     assert_response :success
@@ -38,8 +46,12 @@ class InvitationRequestTest < Test::Unit::TestCase
   
   
   def test_should_create_invitation_request  
-    post :create, :cardtype=>"InvitationRequest", :tag=>{:name=>"Word Third"},
-         :card=>{:email=>"jamaster@jay.net", :content=>"Let me in!"}  
+    post :create, :card=>{
+      :type=>"InvitationRequest", 
+      :name=>"Word Third", 
+      :email=>"jamaster@jay.net", 
+      :content=>"Let me in!"
+    }  
 
     @card =  Card.find_by_name("Word Third")   
     @user = @card.extension
@@ -53,9 +65,8 @@ class InvitationRequestTest < Test::Unit::TestCase
   
   def test_should_destroy_and_block_user  
     # FIXME: should test agains mocks here, instead of re-testing the model...
-    assert_difference Card::InvitationRequest, :count, -1 do
-      post :remove, :id=>Card.find_by_name('Ron Request').id
-    end
+    post :remove, :id=>Card.find_by_name('Ron Request').id
+    assert_equal nil, Card.find_by_name('Ron Request')
     assert_equal 'blocked', ::User.find_by_email('ron@request.com').status
 
   end

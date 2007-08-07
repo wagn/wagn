@@ -1,7 +1,0 @@
-|open|/wiki/TestOne||
-|pause|250||
-|click|link=Edit||
-|pause|500||
-|type|main-body-content-field|TestOneNewContent|
-|click|//input[@name='commit' and @value='Save']||
-|verifyTextPresent|TestOneNewContent||

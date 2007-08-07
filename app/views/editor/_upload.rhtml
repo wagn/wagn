@@ -1,7 +1,7 @@
-<em><%= Datatype[datatype_key].description %></em><br/>
+<em><%= card.class.description %></em><br/>
 
-<%= form_tag( { :controller=>'file', :action=>'upload' }, :multipart=>true, :target=>"iframe-#{div_id}", :id=>"#{div_id}-upload-form") %>
-  <%= hidden_field_tag 'datatype_key', datatype_key %>
+<%= form_tag( { :controller=>'file', :action=>'upload' }, :multipart=>true, :target=>"iframe-#{div_id}", :id=>"#{div_id}-upload-form") %>    
+  <%= hidden_field_tag 'card[type]', card.type %>
   <%= hidden_field_tag 'element', "#{div_id}"  %>
   <%= hidden_field_tag 'card[name]', '',  :id=>"#{div_id}-card-name" %>
   <%= file_field_tag 'file', :onchange=>"Wagn.Card.find('#{div_id}').set_blank_name_to($F(this).split('/').last());"  %><br/><br/>

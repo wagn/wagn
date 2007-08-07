@@ -10,18 +10,11 @@ class RendererTest < Test::Unit::TestCase
     @template = Renderer::StubTemplate.new
     @renderer = Renderer.instance
   end
-  
-  def test_renderer_class_for_card
-    @renderer = Renderer.new( @template, Card::Base.new )
-    assert_instance_of Renderer::Base, @renderer
 
-    @renderer = Renderer.new( @template, Card::Cardtype.new )
-    assert_instance_of CardtypeRenderer, @renderer
-    
-    @renderer = Renderer.new( @template, Card::Basic.new )
-    assert_instance_of Renderer::Base, @renderer
+  def test_render_given_content
+    @c = Card.find_by_name('revtest')
+    assert_equal 'first', @renderer.render(@c,@c.revisions[0].content)
   end
-  
   
   def test_link_changing
     apple = newcard('apple','foobar [[banana]]')
@@ -35,4 +28,5 @@ class RendererTest < Test::Unit::TestCase
     assert_equal 'foobar [[orange]]', content
     assert_equal ['orange'], apple.out_references(refresh=true).plot(:referenced_name)
   end
+  
 end

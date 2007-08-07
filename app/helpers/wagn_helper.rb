@@ -2,6 +2,19 @@ module WagnHelper
   require_dependency 'wiki_content'
 
   Droplet = Struct.new(:name, :link_options)
+
+
+  def formal_joint
+    " <span class=\"wiki-joint\">#{JOINT}</span> "
+  end
+  
+  def formal_title(card)
+    card.name.split(JOINT).join(formal_joint)
+  end
+  
+  def title_tag_names(card)
+    card.name.split(JOINT)
+  end
   
   # Urls -----------------------------------------------------------------------
   
@@ -84,6 +97,10 @@ module WagnHelper
       show_link + hide_link 
   end
   
+  def name_in_context(card, context_card)
+    context_card == card ? card.name : card.name.gsub(context_card.name, '')
+  end
+  
   def fancy_title(card) fancy_title_from_tag_names(card.name.split( JOINT ))  end
   
   def query_title(query, card_name)
@@ -109,7 +126,7 @@ module WagnHelper
       tag_link = link_to tag_name, url_for_page( tag_name ), :class=>"link-#{css_name(tag_name)}"
       if title 
         title = [title, tag_name].join(%{<span class="joint">#{JOINT}</span>})
-        joint_link = link_to Card.wiki_joint_formal, url_for_page(title), 
+        joint_link = link_to formal_joint, url_for_page(title), 
           :onmouseover=>"Wagn.title_mouseover('title-#{css_name(title)} card')",
           :onmouseout=>"Wagn.title_mouseout('title-#{css_name(title)} card-highlight')"
         title_link = "<span class='title-#{css_name(title)} card' >\n%s %s %s\n</span>" % [title_link, joint_link, tag_link]
@@ -136,7 +153,7 @@ module WagnHelper
   end
   
   def inner_card_function( name, *args )
-    "Wagn.CardTable[ this.parentNode.parentNode.parentNode.id ].#{name.to_s}(#{args.join(',')})"
+    "Wagn.CardTable[ this.parentNode.parentNode.parentNode.parentNode.id ].#{name.to_s}(#{args.join(',')})"
   end
   
   def connector_function( name, *args )
@@ -235,7 +252,7 @@ module WagnHelper
     ext = context
     if context=='sidebar' 
       if  ( card.template.attribute_card('*open') or 
-         (!card.simple? and card.tag.root_card.plus_sidebar and card.tag.root_card.attribute_card('*open')))
+         (!card.simple? and card.tag.plus_sidebar and card.tag.attribute_card('*open')))
         basic = "paragraph"
       end
     end
@@ -271,7 +288,7 @@ module WagnHelper
     Cardtype.find(:all, :order=>'class_name').map do |cardtype|
       case cardtype.class_name
         when 'Connection'; next
-        when 'User';       next unless System.ok? :invite_users
+        when 'User';       next #unless System.ok? :invite_users
         when 'Role';       next unless System.ok? :manage_permissions
         when 'Cardtype';   next unless System.ok? :edit_cardtypes
         else  #warn "Adding #{cardtype.class_name}"

@@ -6,6 +6,11 @@ module Wagn
   end
   
   class PermissionDenied < StandardError
+    attr_reader :card
+    def initialize(card)
+      @card = card
+      super("Permission denied: #{@card.errors.full_messages.join(", ")}")
+    end
   end
   
   class Oops < StandardError

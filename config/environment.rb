@@ -18,7 +18,7 @@ Rails::Initializer.run do |config|
 
   # Add additional load paths for your own custom dirs
   # config.load_paths += %W( #{RAILS_ROOT}/extras )
-  config.load_paths += ["#{RAILS_ROOT}/lib/imports"]
+  config.load_paths += ["#{RAILS_ROOT}/lib/imports", "#{RAILS_ROOT}"]
 
   # Force all environments to use the same logger level 
   # (by default production uses :info, the others :debug)
@@ -37,7 +37,7 @@ Rails::Initializer.run do |config|
   
   # FIXME observers weren't working right last time I tried -LWH 
   # hmm card observer seems to work... but not user_observer
-  config.active_record.observers = :card_observer, :tag_observer, :invitation_request_observer
+  config.active_record.observers = :invitation_request_observer
   
   # Make Active Record use UTC-base instead of local time
   # config.active_record.default_timezone = :utc
@@ -48,9 +48,12 @@ end
 # Add new inflection rules using the following format 
 Inflector.inflections do |inflect|
   inflect.irregular 'grave', 'graveyard'
+  inflect.irregular 'this', 'this'     
+  inflect.irregular 'anonymous', 'anonymous'
 end
    
 # Define a regexp function so the ~ WQL operator works with SQLite.
+=begin
 if ActiveRecord::Base.connection.adapter_name == "SQLite"
   ActiveRecord::Base.connection.raw_connection.create_function("regexp", 2) do |func, expr, arg|
     if arg.to_s =~ Regexp.new(expr.to_s)
@@ -60,7 +63,9 @@ if ActiveRecord::Base.connection.adapter_name == "SQLite"
     end
   end
 end
+=end
 
+  
 # configure session store
 Session = CGI::Session::ActiveRecordStore.session_class
 

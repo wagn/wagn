@@ -5,23 +5,19 @@
   <%= link_to_function 'Changes', inner_card_function('changes') ,{:class=>"changes"} %>
   <%= link_to_function 'Options', inner_card_function('options') ,{:class=>"options"} %>
   </div>
-  
+ 
   <div class="title">
     <% arrows = %{<img class="close-arrow" src="/images/arrow_down.png"><img class="open-arrow" src="/images/arrow_right.png">} %>
     <%= link_to_function arrows + less_fancy_title(card), inner_card_function('swap_line_and_paragraph') %>
   </div>
-  
+ 
   <% if !['Basic','Connection'].include?(card.class_name) %>
     <span class="cardtype">
       <%= link_to_page( card.cardtype.name ) %>
     </span>
   <% end %>
-  
-  <% if card.simple? and revs=card.tag.recent_revisions('7 day') and !revs.empty? %>
-    <span class="name-history full-only">
-      formerly known as <%= revs.map {|r| "<em>#{r.name}</em>"}.join(', formerly ') %>
-    </span>
-  <% end %>
+   
+  <!-- FIXME: name history was here -->
 </div>
 
 <div class="blank"> &nbsp; </div>
@@ -30,15 +26,16 @@
 <%= render :partial=>partial_for_card_and_action( card, 'content' ), :locals=>{:card=>card, :element=>element} %>
 </span>
 
-<span class="raw hidden-variables"><%= card.content %></span>
 <%# FIXME?  do we want to keep doing variables through html? %>
 <span class="hidden-variables">
   <span class="name"><%= card.name %></span>
-  <span class="datatype"><%= card.datatype_key %></span>
   <span class="editor-type"><%= card.editor_type %></span>
   <span class="revision-id"><%= card.current_revision ? card.current_revision.id : '' %></span>
   <span class="codename"><%= card.codename %></span>
 </span>
 
-   
+  
 <%= render :partial=>'card/footer', :locals=>{ :card=>card, :div_id=>card.id.to_s } %>
+      
+<span id="<%= element %>-editor" class="editor" style="display: none"></span> 
+                                  

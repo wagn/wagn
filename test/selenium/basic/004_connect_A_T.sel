@@ -1,0 +1,12 @@
+|open|/wiki/A||
+|click|new-connection-button||
+|pause|800||
+|type|id=card_name|T|
+|click|document.connect.commit||
+|pause|800||
+|selectFrame|iframe-connection-body|
+|type|css=body|content: A and T|
+|selectFrame|relative=top|
+|click|//input[@name='commit' and @value='Save' and @type='submit' and @onclick="$('connection-body').card().save(); return false;"]||
+|pause|800||
+|verifyTextPresent|content: A and T||

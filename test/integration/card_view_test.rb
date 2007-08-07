@@ -10,6 +10,7 @@ class CardViewTest < ActionController::IntegrationTest
   def test_user_roles
     card = Card::User.find :first
     get "/options/roles/#{card.id}"
+    warn "/options/roles/#{card.id}"
     assert_response :success
   end
   

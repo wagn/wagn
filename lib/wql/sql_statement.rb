@@ -46,7 +46,7 @@ module Wql
     end
     
     def q(value)
-      System.connection.quote(value)
+      ActiveRecord::Base.connection.quote(value)
     end
   end
   

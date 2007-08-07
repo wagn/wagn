@@ -5,8 +5,7 @@
       <%= render :partial=>'option_fields', :locals=>{:context=>'options'} %>
       <%= renderer.extra_options %>
 
-      <% if card.permit_destroy? %>
-         <%#System.ok?(:remove_cards) and !(card.tag.datatype_key=='User') %>
+      <% if card.ok? :destroy %>
          <tr>
             <td class="label"> </td>
             <td class="field"><%= link_to_remote "Delete this card", :url=>{ :action=>'remove_form', :id=>params[:id], :params=>{:element=>params[:element]} }, :update=>"#{params[:element]}-options-workspace" %></td>

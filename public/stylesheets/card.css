@@ -395,5 +395,6 @@ a.current, a:link.current {
 }
 .discussion { 
     background: #e6e6e6;
-    padding: 4px;
+    padding: 8px;
+  margin: 10px;
 }

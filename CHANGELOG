@@ -1,3 +1,8 @@
+=== 0.6.2 (July 24, 2007)
+* new card editor bug fix
+* new card editor bug fix
+* add card for anonymous user
+
 === 0.6.1 (July 18, 2007)
 * setup stylesheets to use css cacheing-- doesn't work tho :-(
 * add name dump for cache pre-population

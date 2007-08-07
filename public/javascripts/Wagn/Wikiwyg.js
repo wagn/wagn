@@ -283,7 +283,7 @@ Object.extend(Wikiwyg.Mode.prototype, {
   get_edit_height: function() {
     var base_height = this.wikiwyg.divHeight;
     if (base_height == '0') {
-      base_height = this.wikiwyg.div.parentNode.viewHeight - 40;
+      base_height = this.wikiwyg.div.parentNode.parentNode.parentNode.viewHeight - 40;
     }
     var height = parseInt( base_height * this.config.editHeightAdjustment );
     var min = this.config.editHeightMinimum;

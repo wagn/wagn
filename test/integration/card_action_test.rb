@@ -2,8 +2,6 @@ require File.dirname(__FILE__) + '/../test_helper'
 #require 'ruby-prof'
 
 
-JOINT=Card.wiki_joint
-
 class CardActionTest < ActionController::IntegrationTest
   common_fixtures
   def setup
@@ -35,20 +33,14 @@ class CardActionTest < ActionController::IntegrationTest
   end
 
   def test_create_role_card
-    post( 'card/create',
-      :cardtype=>'Role',
-      :tag=>{"name"=>"Editor", "datatype"=>"rich text"},
-      :card=>{"content"=>"test", "sealed"=>"0"})
+    post( 'card/create', :card=>{:content=>"test", :type=>'Role', :name=>"Editor"})
     assert_response :success
     assert_instance_of Card::Role, Card.find_by_name('Editor')
     assert_instance_of Role, Role.find_by_codename('Editor')
   end
 
   def test_create_cardtype_card
-    post( 'card/create',
-      :cardtype=>'Cardtype',
-      :tag=>{"name"=>"Editor", "datatype"=>"rich text"},
-      :card=>{"content"=>"test", "sealed"=>"0"})
+    post( 'card/create',:card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"} )
     assert_response :success
     assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
     assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor')
@@ -72,9 +64,9 @@ class CardActionTest < ActionController::IntegrationTest
     
     
     def newcard( name, content="" )
-      post( 'card/create', :cardtype=>'Basic', 
-        :tag=>{"name"=>name, "datatype"=>"rich text" },
-        :card=>{"content"=>content, "sealed"=>"0"})
+      post( 'card/create', 
+#        :tag=>{"name"=>name, "datatype"=>"rich text" },
+        :card=>{"content"=>content, :type=>'Basic', :name=>name})
       assert_response :success
       Card.find_by_name(name)
     end
@@ -83,7 +75,7 @@ class CardActionTest < ActionController::IntegrationTest
       assert tag_card.simple?
       post( 'connection/create', 
         :id => trunk.id,
-        :tag => { :name=>tag_card.name },
+        :card => { :name=>tag_card.name },
         :connection => { :content=>content })
       assert_response :success
       Card.find_by_name( trunk.name + JOINT + tag_card.name )

@@ -1,4 +1,4 @@
-<%-
+ <%-
   context ||= 'options'   # new|options|cardtype
   option  ||= {} 
 -%>
@@ -27,33 +27,11 @@
   <tr>
     <td class="label"><label for="cardtype">Cardtype</label></td>
     <td class="field">
-      <%= select_tag :cardtype, cardtype_options_for_select(option[:cardtype] || @card.class_name || 'Basic'),
-						:onChange => (context=='new' ? "$('new-card-cardtype').innerHTML = Form.Element.getValue(this)" : card_attribute_function('cardtype'))
+      <%= select_tag 'card[type]', cardtype_options_for_select(@card.type),
+						:onChange => (context=='new' ? "$('new-card-cardtype').innerHTML = Form.Element.getValue(this); this.form.onsubmit()" : card_attribute_function('cardtype'))
       %> 
     </td>
     <td class="help">category for layout, templates, etc.</td>
-  </tr>
-<% end %>
-
-<% if @card.simple? and System.ok? :set_datatypes %>
-  <tr>
-    <td class="label"><label for="tag_datatype">Datatype</label></td>
-    <td class="field">                                               
-      <%= collection_select :tag, :datatype_key, datatype_options, 
-         		:first, :last, {}, 
-						:onChange=>( context == 'new' ? 'this.form.onsubmit()' : card_attribute_function('datatype'))
-			%>
-		</td>
-    <td class="help">this card</td>
-  </tr>
-  <tr>
-    <td class="label"><label for="tag_plus_datatype">Plus Datatype</td>
-    <td class="field">
-      <%= collection_select :tag, :plus_datatype_key, datatype_options, :first, :last, {},
-   					:onChange=>( context=='new' ? '' : card_attribute_function('plus_datatype'))
-      %>
-    </td>                                                
-    <td class="help">other card + this card</td>
   </tr>
 <% end %>
 
@@ -62,7 +40,7 @@
      <td class="label">Viewers</td>
      <td class="field">
        <span id="<%= params[:element] %>-reader-select">
-         <%= render :partial=>'reader_select' %>
+         <%= render :partial=>'card/reader_select' %>
        </span>
     </td>
     <td class="help">Only users in this group can view this card</td>
@@ -71,11 +49,21 @@
      <td class="label">Editors</td>
      <td class="field">
        <span id="<%= params[:element] %>-writer-select">
-         <%= render :partial=>'writer_select' %>
+         <%= render :partial=>'card/writer_select' %>
        </span>
     </td>
     <td class="help">Only users in this group can edit this card</td>
   </tr>
+  <tr>
+    <td class="label">Commenters</td>
+    <td class="field">
+      <span id="<%= params[:element] %>-appender-select">
+        <%= render :partial=>'card/appender_select' %>
+      </span>
+   </td>
+   <td class="help">Who can add comments to this card?</td>
+  </tr>
+
 <% end %>
 
                

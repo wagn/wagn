@@ -213,6 +213,8 @@ Object.extend(Wagn.Card.prototype, {
       this.slot.chunk('editor').hide();
     }
     this.slot.chunk('card-links').show();
+    if (discussion = this.slot.chunk('discussion'))
+      discussion.show();
     this.slot.chunk('cooked').style.display = ''; //show w/o overriding block vs. inline
     this.slot.removeClassName('editing');
     if (this.slot.oldClass == 'line') {
@@ -242,7 +244,7 @@ Object.extend(Wagn.Card.prototype, {
     } else { 
       alert("Sorry, you can't edit this card-  it could be that you do not have permission, or that the card is templated");
     }
-  },
+  },    
   changes: function() {
     this.update_workspace('revision', {
       rev: arguments[0] || '',
@@ -258,6 +260,15 @@ Object.extend(Wagn.Card.prototype, {
     this.highlight_tab('options');
     this.workspace.show();
   },
+  reload: function() {              
+   new Ajax.Updater(this.slot.id + '-card', '/card/view/' + this.id(),
+    { asynchronous: false, 
+      parameters: this._common_parameters()  
+    });
+   warn("LOADING EDITOR");
+   $(this.slot.id+'-comment').value='';
+   new Wagn.Card( this.slot );
+  },
   cancel: function() {
     this.highlight();
     this.view();
@@ -266,13 +277,10 @@ Object.extend(Wagn.Card.prototype, {
     }
     this.dehighlight();
     Windows.close('popup');
-    
   },
   save: function() {
-    if (this.editor.before_save) { 
-      if (this.editor.before_save()) {
-        this.continueSave();
-      }
+    if (this.editor.before_save && this.editor.before_save()) {
+      this.continueSave();
     }
   }, 
   continueSave: function() {
@@ -351,6 +359,7 @@ Object.extend(Wagn.Card.prototype, {
   update:        function( attributes ) { this.standard_update('update', attributes );        },
   update_writer: function( attributes ) { this.standard_update('update_writer',attributes);   },
   update_reader: function( attributes ) { this.standard_update('update_reader',attributes);   }, 
+  update_appender: function( attributes ) { this.standard_update('update_appender',attributes); }, 
   standard_update: function( method, attributes ) {
     new Ajax.Request( '/card/' + method + '/' + this.id(), this._ajax_parameters(attributes));
   },
@@ -400,6 +409,8 @@ Object.extend(Wagn.Card.prototype, {
     this.workspace.hide()
     this.slot.chunk('cooked').hide();
     this.slot.chunk('card-links').hide();
+    if (discussion = this.slot.chunk('discussion'))
+      discussion.hide();
     if (this.is_edit_ok()) {
       this.slot.chunk('editor').hide();
     }
@@ -454,7 +465,12 @@ Object.extend(Wagn.Card, {
   },
   view: function( card_id ) {
     Wagn.Card.find_all_by_class( card_id ).each( function( card ) {
-      card.view();   
+      card.view();  
+    });
+  },      
+  reload: function(card_id) {
+    Wagn.Card.find_all_by_class( card_id ).each( function( card ) {
+      card.reload();   
     });
   },
   editConflict: function( card_id, revision_id, changes) {

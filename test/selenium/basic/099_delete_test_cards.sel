@@ -1,0 +1,15 @@
+|open|/card/new||
+|type|new-card-name-field|Short-Lived|
+|selectFrame|iframe-main-body||
+|type|css=body|I will die soon|
+|selectFrame|relative=top||
+|clickAndWait|commit||
+|open|/||
+|open|/wiki/Short-Lived||
+|click|link=Options||
+|pause|500||
+|click|link=Delete this card||
+|pause|500||
+|clickAndWait|commit||
+|verifyTextPresent|To get started||
+

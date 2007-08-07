@@ -26,7 +26,19 @@ class Role < ActiveRecord::Base
   end
   
   def subset_of?( role )
-    users.detect {|u| !role.users.include?(u) }.nil?
+    case 
+    when role.codename=='anon'; true  
+    when self.codename=='anon'; false 
+    when role.codename=='auth'; true
+    when self.codename=='auth'; false
+    else ::User.find_by_sql(%{
+      select * from users u1 
+      join roles_users ru1 on ru1.user_id=u1.id and ru1.role_id=#{self.id} 
+      left join roles_users ru2 on ru2.user_id=u1.id and ru2.role_id=#{role.id} 
+      where ru2.user_id is null
+    }).length == 0
+    end
+    #users.detect {|u| !role.users.include?(u) }.nil?
   end
   
   def subset_roles

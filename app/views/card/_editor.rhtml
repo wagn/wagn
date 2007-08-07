@@ -1,11 +1,12 @@
 <%
   card    or raise( "Card editor gotta have a card" )
   div_id  or raise( "Card editor gotta have a div_id")
-%>
+%>            
 <% if card.edit_ok? %>
-	<span class="edit-ok"></span>
+	<span class="edit-ok"></span>  
+	<span class="raw hidden-variables"><%= card.content %></span>
 	<%= render :partial=>"/editor/#{card.editor_type.underscore}", 
-		:locals=>{ :datatype_key=>card.datatype_key, :card=>card, :div_id=>div_id }
+		:locals=>{ :card=>card, :div_id=>div_id }
 	%>
 	<%= submit_tag "Cancel", { :onClick=>card_function(div_id, :cancel), :class=>'cancel' } %>
 	<%= submit_tag "Save",   { :onClick=>card_function(div_id, :save),  :class=>'save'   } %>

@@ -6,7 +6,7 @@ class DatatypeSetup < ActiveRecord::Migration
     add_column :tags, :datatype_key, :string
     add_column :tags, :plus_datatype_key, :string           
     
-    Tag.find(:all).each do |tag|
+    MTag.find(:all).each do |tag|
       tag.datatype_key = "RichText"
       tag.plus_datatype_key = "RichText"
       tag.save

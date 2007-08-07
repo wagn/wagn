@@ -1,5 +1,5 @@
 warn "EDIT.RJS:"
-page.wagn.messenger.log( "saved #{@card.title}" )
+page.wagn.messenger.log( "saved #{@card.name}" )
 page.wagn.card.view( @card.id )
 page.wagn.card.update(@card.id, @card.current_revision.id, Renderer.instance.render(@card), @card.content) 
 page.wagn.card.dehighlight_all( @card.id )

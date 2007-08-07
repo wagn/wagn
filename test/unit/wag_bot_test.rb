@@ -14,7 +14,6 @@ class WagBotTest < Test::Unit::TestCase
     WagBot.instance.revise_card( brownie, 'damn good' )
     brownie.reload
     assert_equal 'damn good', brownie.content
-    assert_equal WagBot.instance, brownie.updated_by, "card updated by wagbot"
     assert_equal WagBot.instance, brownie.current_revision.created_by, "revision created by wagbot"
   end
   

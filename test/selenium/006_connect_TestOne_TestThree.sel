@@ -1,8 +1,0 @@
-|open|/wiki/TestOne||
-|click|new-connection-button||
-|pause|500||
-|type|tag_name|TestThree|
-|click|document.connect.commit||
-|pause|1000||
-|click|//input[@name='commit' and @value='Save' and @type='submit' and @onclick="$('connection-body').card().save(); return false;"]||
-|verifyTextPresent|TestThree||

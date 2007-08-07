@@ -4,20 +4,15 @@ class Card::RemoveTest < Test::Unit::TestCase
 
   def setup
     setup_default_user
-    @z = newcard("Z", "I'm here to be referenced to")
-    @a = newcard("A", "Alpha [[Z]]")
-    @b = newcard("B", "Beta {{Z}}")        
-    @t = newcard("T", "Theta")
-    @ab = @a.connect(@b, "AlphaBeta")
-    # references
-    @x = newcard("X", "[[A]] [[A+B]] [[T]]")
-    @y = newcard("Y", "{{B}} {{A+B}} {{A}} {{T}}")
+    @a = Card.find_by_name("A")
   end
 
-
+     
+  # I believe this is here to test a bug where cards with certain kinds of references
+  # would fail to delete.  probably less of an issue now that delete is done through
+  # trash.  
   def test_remove
-    assert @a.referencers.plot(:name).include?("X")
-    assert @a.destroy
+    assert @a.destroy, "card should be destroyable"
   end
 
 end

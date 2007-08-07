@@ -151,7 +151,7 @@ Object.extend(Wagn.Lister.prototype, {
 				button = '<input type="button" id="new-connection-button" value="join it to another card" onClick="Wagn.lister().new_connection ()">';	 
 			} else if	(query == 'cardtype_cards') {
 			  cardtype = $('main-body').card().codename();
-				button = '<input type="button" value="create new one" onClick="document.location.href=\'/card/new?option[cardtype]=' + cardtype + '\'">';
+				button = '<input type="button" value="create new one" onClick="document.location.href=\'/card/new?card[type]=' + cardtype + '\'">';
 			}
 		}
 	  $('related-button').innerHTML = button; 

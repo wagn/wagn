@@ -3,7 +3,7 @@
 
 class ApplicationController < ActionController::Base
   require_dependency 'exception_system' 
-  require_dependency 'datatype'
+#  require_dependency 'datatype'
   include AuthenticatedSystem
   include ExceptionNotifiable
   include ExceptionSystem
@@ -64,7 +64,7 @@ class ApplicationController < ActionController::Base
         when 'plussed_cards';  options[:connected]={ :id=>card_id }
         when 'recent_changes'; options[:sort_by]='updated_at'; options[:sortdir]='desc'
         when 'search';
-        when 'cardtype_cards'; options[:cardtype]=@card.extension.class_name
+        when 'cardtype_cards'; options[:type]=@card.extension.class_name
         when 'pieces';         options[:pieces]=true; options[:id]=card_id
         when 'backlinks';      options[:backlink]={ :id=>card_id }
         when 'revised_by';     options[:editors]=(@card.extension ? @card.extension.id : nil)

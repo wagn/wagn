@@ -1,11 +1,2 @@
---- 
-graveyard_001: 
-  name: Company
-  id: "1"
-  content: ""
-  created_at: 2007-07-17 15:27:51.40532
-graveyard_002: 
-  name: Connection
-  id: "2"
-  content: ""
-  created_at: 2007-07-17 15:27:51.940965
+--- {}
+

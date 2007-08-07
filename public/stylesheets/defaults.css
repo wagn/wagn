@@ -54,7 +54,9 @@ a.wanted-card {
   color: #900 
 }
 a.external-link { 
-	color: #979 
+	color: #979; 
+  background: url(/images/external_link.png) center right no-repeat;
+  padding-right: 13px;
 }
 a.email-link { 
   color: #979 
@@ -84,21 +86,6 @@ body.wagn .card-slot h2 {
   margin: 0px;
 }
 
-b { display: inline;
-  font-size: 11px; font-weight: normal;
-  color: red;
-  font-weight: bold;
-}
-i {
-  display: inline;
-  font-size: 11px;
-  font-weight: normal;
-  font-style: normal;
-  background-color: #ffff6d;
-  color: #444;
-  -moz-border-radius : 8px;
-  padding: 0px 6px;
-}
 
 label {
   color: #777;

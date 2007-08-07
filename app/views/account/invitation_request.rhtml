@@ -9,7 +9,7 @@ context = 'invitation'
 		:html=>{:id=>"#{div_id}-user-update-form"} ) do |f| %>
 		
   <%= hidden_field_tag 'element', "#{div_id}"  %>
-  <%= hidden_field_tag 'cardtype', "InvitationRequest"  %>
+  <%= f.hidden_field 'cardtype', "InvitationRequest"  %>
   <%#= hidden_field_tag 'card[name]', '', {:id => "user-card-name-field"} %>
   <%#= hidden_field_tag 'card[content]', '', {:id => "user-card-content-field"} %>
 
@@ -26,7 +26,7 @@ context = 'invitation'
 	  <tr>
       <td class="label"><label for="name">Name</label></td>
       <td class="field" colspan="2">
-				<%= text_field_tag 'tag[name]', '', {:class=>'new-card-name', :id=>"new-card-name-field"} %>
+				<%= f.text_field :name, '', {:class=>'new-card-name', :id=>"new-card-name-field"} %>
 			</td>
       <!--<td class="help"></td>-->
 		</tr>

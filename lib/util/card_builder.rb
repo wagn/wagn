@@ -3,7 +3,7 @@ module CardBuilderMethods
   ADMIN_ID = 1
 
   def newcard(name, content="")
-    ::Card::Basic.create(:name=>name, :content=>content)
+    ::Card::Basic.create! :name=>name, :content=>content
   end
   
   def card_content( cardname )
@@ -11,11 +11,7 @@ module CardBuilderMethods
   end      
 
   def create_cards( card_names )
-    card_names.collect {|name| create_compound( name ) }
-  end
-  
-  def create_compound( name )
-    create_compound_from_list( name.split('+').reverse )
+    card_names.collect {|name| Card::Basic.create :name=>name }
   end
 
   def create_users( user_names )
@@ -58,7 +54,6 @@ module CardBuilderMethods
     end
   end      
     
-   
   def admin
     User.find(ADMIN_ID)
   end
@@ -68,25 +63,6 @@ module CardBuilderMethods
     yield
     User.current_user = tmpuser
   end
-
-  private
-
-  def create_compound_from_list( list )
-    tag = find_or_create_by_name( list.shift )
-    return tag if list.empty?
-    trunk = create_compound_from_list( list )
-    combo = find_or_connect( trunk, tag )
-  end
-  
-  def find_or_connect( trunk, tag )
-    (c = Card.find_by_name( "#{trunk.name}+#{tag.name}" )) ? c : trunk.connect!(tag)
-  end
-  
-  def find_or_create_by_name( name )
-    (c = Card.find_by_name( name )) ? c : ::Card::Basic.create(:name=>name, :content=>"")
-  end
-  
-  
 end
 
 

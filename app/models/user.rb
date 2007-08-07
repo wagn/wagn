@@ -27,19 +27,27 @@ class User < ActiveRecord::Base
   before_save :encrypt_password
   
   class << self
+    
+    def current_user
+      System.current_user
+    end
+    
+    def current_user=(user)
+      System.current_user = user
+    end
+    
     def active_users
       self.find(:all, :conditions=>"status='active'")
     end 
     
-    def as_admin(&block)
-      self.as(User.find_by_login('admin'), &block)
-    end
-    
     def as(given_user)
       tmp_user = self.current_user
-      self.current_user = given_user
-      yield
-      self.current_user = tmp_user
+      self.current_user = given_user.class==User ? given_user : User.find_by_login(given_user.to_s)
+      if block_given?
+        value = yield
+        self.current_user = tmp_user
+        return value
+      end
     end
     
     # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.

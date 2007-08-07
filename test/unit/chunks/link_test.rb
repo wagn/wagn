@@ -37,7 +37,7 @@ class LinkTest < Test::Unit::TestCase
   
   def test_relative_link
     dude,job = newcard('Harvey',"[[#{JOINT}business]]"), newcard('business')
-    card = dude.add_tag( job.tag, "icepicker" )
+    card = dude.connect job, "icepicker" 
     assert_equal("<a class=\"known-card\" href=\"/wiki/Harvey#{JOINT}business\">#{JOINT}business</a>", render(dude) )
   end
   

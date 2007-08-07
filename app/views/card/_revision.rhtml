@@ -23,7 +23,7 @@
   <%= revision_menu %>
 </div>
 
-<div class="revision">
+<div class="revision">                       
   <% if @show_diff and @previous_revision %>
     <%= renderer.render_diff( @card, @previous_revision.content, @revision.content ) %>
   <% else %>

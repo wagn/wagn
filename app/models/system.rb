@@ -1,6 +1,11 @@
 class System < ActiveRecord::Base
+  
   set_table_name 'system'
-  cattr_accessor :admin_user_defaults, :base_url, :site_name, :node_types, 
+
+  cattr_writer :current_user
+
+  
+  cattr_accessor :admin_user_defaults, :base_url, :site_name,
     :invitation_email_body,  :invitation_email_subject, :invitation_request_email,
     :forgotinvitation_email_body, :forgotinvitation_email_subject, 
     :invite_request_alert_email, 
@@ -12,6 +17,10 @@ class System < ActiveRecord::Base
   self.pagesize = 20
 
   class << self
+    def current_user
+      @@current_user ||= ::User.find_by_login('anon')
+    end
+    
     def base_url
       if (request and request.env['HTTP_HOST'] and !@@base_url)
         'http://' + request.env['HTTP_HOST']
@@ -62,7 +71,7 @@ class System < ActiveRecord::Base
     end
     
     def always_ok?   
-      return false unless usr = User.current_user
+      return false unless usr = current_user
       usr.roles.each { |r| return true if r.codename == 'admin' }
       return false      
       #lots of pseudo-code here...  may be a case for "case", but I'm not

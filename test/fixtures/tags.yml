@@ -1,276 +1,177 @@
 --- 
-tags_019: 
-  created_by: "1"
-  current_revision_id: "24"
-  datatype_key: RichText
-  card_count: "0"
-  updated_by: "1"
-  id: "21"
-  datatype: RichText
-  plus_template: 
-  plus_datatype_key: RichText
-  label: f
 tags_008: 
   created_by: 
-  current_revision_id: "13"
-  datatype_key: RichText
+  current_revision_id: "8"
+  datatype_key: 
   card_count: "0"
-  updated_by: "1"
-  id: "9"
+  updated_by: 
+  id: "8"
   datatype: string
   plus_template: 
-  plus_datatype_key: RichText
-  label: f
-tags_020: 
-  created_by: "1"
-  current_revision_id: "25"
-  datatype_key: RichText
-  card_count: "0"
-  updated_by: "1"
-  id: "22"
-  datatype: RichText
-  plus_template: 
-  plus_datatype_key: RichText
+  plus_datatype_key: 
   label: f
 tags_009: 
   created_by: 
-  current_revision_id: "14"
-  datatype_key: RichText
+  current_revision_id: "9"
+  datatype_key: 
   card_count: "0"
-  updated_by: "1"
-  id: "10"
+  updated_by: 
+  id: "9"
   datatype: string
   plus_template: 
-  plus_datatype_key: RichText
-  label: f
-tags_021: 
-  created_by: "1"
-  current_revision_id: "26"
-  datatype_key: RichText
-  card_count: "0"
-  updated_by: "1"
-  id: "23"
-  datatype: RichText
-  plus_template: 
-  plus_datatype_key: RichText
+  plus_datatype_key: 
   label: f
 tags_010: 
   created_by: 
-  current_revision_id: "15"
-  datatype_key: User
+  current_revision_id: "10"
+  datatype_key: 
   card_count: "0"
-  updated_by: "1"
-  id: "1"
+  updated_by: 
+  id: "10"
   datatype: string
   plus_template: 
-  plus_datatype_key: RichText
-  label: f
-tags_022: 
-  created_by: "1"
-  current_revision_id: "27"
-  datatype_key: RichText
-  card_count: "0"
-  updated_by: "1"
-  id: "24"
-  datatype: RichText
-  plus_template: 
-  plus_datatype_key: RichText
+  plus_datatype_key: 
   label: f
 tags_011: 
-  created_by: "1"
-  current_revision_id: "16"
-  datatype_key: RichText
+  created_by: 
+  current_revision_id: "11"
+  datatype_key: 
   card_count: "0"
-  updated_by: "1"
-  id: "13"
-  datatype: RichText
+  updated_by: 
+  id: "11"
+  datatype: string
   plus_template: 
-  plus_datatype_key: RichText
-  label: f
-tags_023: 
-  created_by: "1"
-  current_revision_id: "28"
-  datatype_key: RichText
-  card_count: "0"
-  updated_by: "1"
-  id: "25"
-  datatype: RichText
-  plus_template: 
-  plus_datatype_key: RichText
+  plus_datatype_key: 
   label: f
 tags_012: 
-  created_by: "1"
-  current_revision_id: "17"
-  datatype_key: RichText
+  created_by: 
+  current_revision_id: "12"
+  datatype_key: 
   card_count: "0"
-  updated_by: "1"
-  id: "14"
-  datatype: RichText
+  updated_by: 
+  id: "12"
+  datatype: string
   plus_template: 
-  plus_datatype_key: RichText
+  plus_datatype_key: 
   label: f
 tags_001: 
   created_by: 
-  current_revision_id: "3"
+  current_revision_id: "1"
+  datatype_key: 
+  card_count: "0"
+  updated_by: 
+  id: "1"
+  datatype: string
+  plus_template: 
+  plus_datatype_key: 
+  label: f
+tags_013: 
+  created_by: "2"
+  current_revision_id: "13"
   datatype_key: RichText
   card_count: "0"
   updated_by: "2"
-  id: "3"
+  id: "13"
   datatype: string
-  plus_template: 
-  plus_datatype_key: RichText
-  label: f
-tags_024: 
-  created_by: "1"
-  current_revision_id: "29"
-  datatype_key: RichText
-  card_count: "0"
-  updated_by: "1"
-  id: "26"
-  datatype: RichText
-  plus_template: 
-  plus_datatype_key: RichText
-  label: f
-tags_013: 
-  created_by: "1"
-  current_revision_id: "18"
-  datatype_key: RichText
-  card_count: "0"
-  updated_by: "1"
-  id: "15"
-  datatype: RichText
   plus_template: 
   plus_datatype_key: RichText
   label: f
 tags_002: 
   created_by: 
-  current_revision_id: "5"
-  datatype_key: RichText
+  current_revision_id: "2"
+  datatype_key: 
   card_count: "0"
-  updated_by: "2"
-  id: "5"
+  updated_by: 
+  id: "2"
   datatype: string
   plus_template: 
-  plus_datatype_key: RichText
-  label: f
-tags_025: 
-  created_by: "1"
-  current_revision_id: "30"
-  datatype_key: RichText
-  card_count: "0"
-  updated_by: "1"
-  id: "27"
-  datatype: RichText
-  plus_template: 
-  plus_datatype_key: RichText
+  plus_datatype_key: 
   label: f
 tags_014: 
   created_by: "1"
-  current_revision_id: "19"
+  current_revision_id: "14"
   datatype_key: RichText
   card_count: "0"
   updated_by: "1"
-  id: "16"
-  datatype: RichText
+  id: "14"
+  datatype: string
   plus_template: 
   plus_datatype_key: RichText
   label: f
 tags_003: 
   created_by: 
-  current_revision_id: "6"
-  datatype_key: RichText
+  current_revision_id: "3"
+  datatype_key: 
   card_count: "0"
-  updated_by: "2"
-  id: "6"
+  updated_by: 
+  id: "3"
   datatype: string
   plus_template: 
-  plus_datatype_key: RichText
+  plus_datatype_key: 
   label: f
 tags_015: 
   created_by: "1"
-  current_revision_id: "20"
+  current_revision_id: "15"
   datatype_key: RichText
   card_count: "0"
   updated_by: "1"
-  id: "17"
-  datatype: RichText
+  id: "15"
+  datatype: string
   plus_template: 
   plus_datatype_key: RichText
   label: f
 tags_004: 
   created_by: 
-  current_revision_id: "8"
-  datatype_key: RichText
+  current_revision_id: "4"
+  datatype_key: 
   card_count: "0"
-  updated_by: "2"
-  id: "8"
+  updated_by: 
+  id: "4"
   datatype: string
   plus_template: 
-  plus_datatype_key: RichText
+  plus_datatype_key: 
   label: f
 tags_016: 
   created_by: "1"
-  current_revision_id: "21"
+  current_revision_id: "16"
   datatype_key: RichText
   card_count: "0"
   updated_by: "1"
-  id: "18"
-  datatype: RichText
+  id: "16"
+  datatype: string
   plus_template: 
   plus_datatype_key: RichText
   label: f
 tags_005: 
   created_by: 
-  current_revision_id: "11"
-  datatype_key: RichText
+  current_revision_id: "5"
+  datatype_key: 
   card_count: "0"
-  updated_by: "2"
-  id: "11"
+  updated_by: 
+  id: "5"
   datatype: string
   plus_template: 
-  plus_datatype_key: RichText
-  label: f
-tags_017: 
-  created_by: "1"
-  current_revision_id: "22"
-  datatype_key: RichText
-  card_count: "0"
-  updated_by: "1"
-  id: "19"
-  datatype: RichText
-  plus_template: 
-  plus_datatype_key: RichText
+  plus_datatype_key: 
   label: f
 tags_006: 
   created_by: 
-  current_revision_id: "12"
-  datatype_key: RichText
+  current_revision_id: "6"
+  datatype_key: 
   card_count: "0"
-  updated_by: "2"
-  id: "12"
+  updated_by: 
+  id: "6"
   datatype: string
   plus_template: 
-  plus_datatype_key: RichText
-  label: f
-tags_018: 
-  created_by: "1"
-  current_revision_id: "23"
-  datatype_key: RichText
-  card_count: "0"
-  updated_by: "1"
-  id: "20"
-  datatype: RichText
-  plus_template: 
-  plus_datatype_key: RichText
+  plus_datatype_key: 
   label: f
 tags_007: 
   created_by: 
-  current_revision_id: "2"
-  datatype_key: User
+  current_revision_id: "7"
+  datatype_key: 
   card_count: "0"
-  updated_by: "2"
-  id: "2"
+  updated_by: 
+  id: "7"
   datatype: string
   plus_template: 
-  plus_datatype_key: RichText
+  plus_datatype_key: 
   label: f

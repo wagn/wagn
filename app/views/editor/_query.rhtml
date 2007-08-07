@@ -10,8 +10,8 @@
   <tr>
     <td>
       <div>cardtype: 
-        <%= select_tag( :cardtype, 
-            options_from_collection_for_select([['','Any']]+cardtype_options, :first, :last, args[:cardtype]),
+        <%= select_tag( :type, 
+            options_from_collection_for_select([['','Any']]+cardtype_options, :first, :last, args[:type]),
             {:class=>'search-field'}
           ) 
         %>

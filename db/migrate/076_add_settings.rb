@@ -1,9 +1,14 @@
+
 class AddSettings < ActiveRecord::Migration
+  class << self
+    include CardCreator
+  end
+  
   def self.up         
-    User.as_admin do
-      Card::Cardtype.create :name=>"Setting"
-      Card::Setting.create :name=>'Thank You', :codename=>'invitation_request_landing', 
-        :content=>"Your request has been received.  Please note that invitation requests are answered by volunteers," +
+    User.as(:admin) do
+      create_cardtype_card 'Setting'
+      create_setting_card 'Thank You', 'invitation_request_landing', 
+        "Your request has been received.  Please note that invitation requests are answered by volunteers," +
             "so it may take a bit longer an automated system, but you should get a response within a few days."
     end
   end

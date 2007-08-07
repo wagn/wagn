@@ -21,6 +21,21 @@ class AccountCreationTest < Test::Unit::TestCase
     login_as :joe_user
   end
 
+  def test_should_create_account_from_invitation_request               
+    assert_difference Card::InvitationRequest, :count, -1 do
+      assert_difference Card::User, :count, 1 do
+        post_invite :card=>{ :name=>"Ron Request"}
+      end
+    end
+    assert_equal "active", User.find_by_email("ron@request.com").status
+  end
+
+  def test_should_require_valid_cardname
+    assert_raises(ActiveRecord::RecordInvalid) do  
+      post_invite :card => { :name => "Joe+User/" }
+    end
+  end
+
   def test_should_create_account_from_scratch
     assert_difference ActionMailer::Base.deliveries, :size do 
       assert_new_account do 
@@ -29,7 +44,8 @@ class AccountCreationTest < Test::Unit::TestCase
     end
     email = ActionMailer::Base.deliveries[-1]      
     # emails should be 'from' inviting user
-    assert_equal User.current_user.email, email.from[0]
+    assert_equal User.current_user.email, email.from[0]  
+    assert_equal 'active', User.find_by_email('new@user.com').status
     assert_equal 'active', User.find_by_email('new@user.com').status
   end
   
@@ -39,15 +55,6 @@ class AccountCreationTest < Test::Unit::TestCase
         post_invite :card=>{ :name=>"No Count" }, :user=>{ :email=>"no@count.com" }
       end
     end
-  end
-  
-  def test_should_create_account_from_invitation_request               
-    assert_difference Card::InvitationRequest, :count, -1 do
-      assert_difference Card::User, :count do
-        post_invite :card=>{ :name=>"Ron Request"}
-      end
-    end
-    assert_equal "active", User.find_by_email("ron@request.com").status
   end
   
   
@@ -88,11 +95,6 @@ class AccountCreationTest < Test::Unit::TestCase
     #end
   end
     
-  def test_should_require_valid_cardname
-    assert_raises(ActiveRecord::RecordInvalid) do  
-      post_invite :card => { :name => "Joe+User/" }
-    end
-  end
     
   def test_should_require_unique_email
     assert_raises(ActiveRecord::RecordInvalid) do

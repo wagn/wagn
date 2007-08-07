@@ -1,7 +1,6 @@
 class CardController < ApplicationController
   helper :wagn, :card 
   layout :ajax_or_not
-  observer :card_observer, :tag_observer
   cache_sweeper :card_sweeper
   before_filter :load_card, :except => [ :new, :create, :show, :index  ]
   
@@ -14,11 +13,11 @@ class CardController < ApplicationController
   def show
     @card_name = Cardname.unescape(params['id'] || '')
     if @card_name.nil? or @card_name.empty?
-      return redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_name)
+      return redirect_to( :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_name))
     end             
     
     if (@card = Card.find_by_name( @card_name )) 
-      @card.read_ok!
+      @card.ok! :read
       remember_card @card
       load_context
       load_renderer                                 
@@ -34,7 +33,7 @@ class CardController < ApplicationController
         }
       end
     elsif User.current_user
-      redirect_to :controller=>'card', :action=>'new', :params=>{ 'tag[name]'=>@card_name }
+      redirect_to :controller=>'card', :action=>'new', :params=>{ 'card[name]'=>@card_name }
     else
       # FIXME this logic is not right.  We should first check whether 
       # the user has permission to create a card.  If not, then we should 
@@ -53,16 +52,12 @@ class CardController < ApplicationController
   end
 
   def new
-    @tag = Tag.new({
-      'datatype_key'=>Card.default_datatype_key,
-      'plus_datatype_key'=>Card.default_plus_datatype_key
-    }.merge(params[:tag]||{}))  
-    @card = Card.const_get( params[:cardtype] || "Basic" ).new(
-     {:name=>""}.merge( params[:card] || {} ).merge( :tag=>@tag )
-    )
-    #warn "TAG DATATYPE KEY: #{@tag.datatype_key}"
+    @card = Card.new params[:card] 
+    if @card.type == 'User'
+      redirect_to :controller=>'account', :action=>'invite'
+    end
     if request.post?
-      render :partial=>'new_editor', :locals=>{:datatype_key=>@tag.datatype_key } 
+      render :partial=>'new_editor'
     end
   end
 
@@ -71,12 +66,6 @@ class CardController < ApplicationController
   def rename_form; end
   def edit_form;  end
   def edit_transclusion; end
-
-=begin
-  def change_cardtype_form; end
-  def change_datatype_form; end
-  def change_plus_datatype_form; end
-=end
 
   
   def editor 
@@ -109,41 +98,25 @@ class CardController < ApplicationController
   def save_draft
     @card.save_draft( params[:card][:content] )
     render(:update) do |page|
-      page.wagn.messenger.log("saved draft of #{@card.title}")
+      page.wagn.messenger.log("saved draft of #{@card.name}")
     end
   end
   
   def create         
-    params[:tag][:name].strip!
-    @tag = Tag.new params[:tag]
-    @card = Card.const_get(params[:cardtype] || 'Basic' ).create!( params[:card].merge(:tag=>@tag, :name=>params[:tag][:name]) )
-    
+    @card = Card.create! params[:card]
     # prevent infinite redirect loop
-    if !Card.find_by_name(params[:tag][:name])
-      fail "Card creation failed" 
-    end
-    #redirect_to url_for_page(@card.landing_name)
+    fail "Card creation failed"  unless Card.find_by_name( @card.name )
+    # FIXME: it would make the tests nicer if we did a real redirect instead of rjs
   end 
 
-  def flip
-    @card.flip_trunk_and_tag
-    render :action=>'update'
-  end
-  
-#  def update
-#    @tag.update_attributes( params[:tag] ) if params[:tag]
-#    @card.update_attributes( params[:card] ) if params[:card]
-#  end
-  
   def rename
-    @card.rename( params[:tag][:name], params[:change_links]=='yes' )
+    @card.name = params[:card][:name]
+    @card.on_rename_skip_reference_updates = (params[:change_links]!='yes')
+    @card.save!
   end
   
   def remove
-    if @card.simple? and User===@card
-      oops "Can't remove Users"
-    end
-    @card.destroy
+    @card.destroy!
   end
 
   def rollback
@@ -158,6 +131,7 @@ class CardController < ApplicationController
     @card.save!
     render(:update) do |page|
       page.replace_html "#{params[:element]}-writer-select", :partial=>'writer_select'
+      page.replace_html "#{params[:element]}-appender-select", :partial=>'appender_select'
       page.wagn.messenger.note "#{@card.name} #{params[:message] || 'updated'}"
     end
   end
@@ -170,44 +144,33 @@ class CardController < ApplicationController
       page.replace_html "#{params[:element]}-reader-select", :partial=>'reader_select'
       page.wagn.messenger.note "#{@card.name} #{params[:message] || 'updated'}"
     end
-  end
-   
-  def update
-    @updated_attributes = params[:card].keys
-    if !@card.update_attributes( params[:card] )
-      render(:update) do |page|
-        page << "$('#{params[:element]}').card().reset()"
-      end
+  end   
+  
+  def update_appender    
+    if params[:card] && !params[:card][:appender_id].blank?
+      @new_appender = Role.find( params[:card][:appender_id] )
+      @card.appender = @new_appender
+    else
+      @card.appender = nil
+    end
+    @card.save!
+    render(:update) do |page|
+      page.replace_html "#{params[:element]}-reader-select", :partial=>'reader_select'
+      page.wagn.messenger.note "#{@card.name} #{params[:message] || 'updated'}"
     end
   end
-                                     
-  def attribute
-    @attr = params[:attribute]
-    id = @card.id
-    if request.post? 
-      method = case @attr
-                when 'cardtype'; 'type'
-                when 'datatype'; 'datatype_key'
-                when 'plus_datatype'; 'plus_datatype_key' 
-                else @attr
-               end
-               
-      @card.send("#{method}=", params[:value])
-      @card.save
-    end                           
-    @card = Card::Base.find(id)
-    result = 
-      case @attr
-      when 'cardtype'          
-        @card.cardtype.name
-      when 'datatype'    
-        @card.tag.datatype_key
-      when 'plus_datatype'
-        @card.tag.plus_datatype_key
-      else
-        @card.send(@attr)
-      end
-    render :text => result
+  
+  def comment
+    @comment = params[:card][:comment]        
+    # FIXME this should only let the name be specified if user is anonymous. no faking! 
+    @author = params[:card][:comment_author] || User.current_user.card.name
+    @card.comment = "<hr>#{@comment}<br>--#{@author}.....#{Time.now}<br>"
+    @card.save!
+  end 
+  
+  def update    
+    @card = Card.find params[:id]
+    @card.update_attributes! params[:card]
   end
 
 end

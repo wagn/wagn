@@ -1,8 +1,9 @@
 class RenameHoozeBot < ActiveRecord::Migration
   def self.up
-    User.as_admin do
-      if card = Card::User.find_by_name("Hooze Bot")
-        card.rename("Wagn Bot")
+    User.as(:admin) do
+      if card = MCard.find_by_name("Hooze Bot")
+        tag = MTag.find( card.tag_id ) 
+        tag.current_revision.update_attribute(:name, "Wagn Bot")
       end
     end
   end

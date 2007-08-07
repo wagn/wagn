@@ -19,8 +19,8 @@ class CardForAnonymousUser < ActiveRecord::Migration
     MTagRevision.reset_column_information
     MRevision.reset_column_information
     MTag.reset_column_information
-    User.as(:admin) do
-     create_user_card 'Anonymous', 'anon'
+    User.as(:admin) do 
+      create_user_card 'Anonymous', 'anon'
     end
   end
 

@@ -26,4 +26,4 @@ roles_002:
 roles_003: 
   id: "2"
   codename: auth
-  tasks: edit_html,invite_users,rename_cards,edit_cards,set_datatypes,remove_cards,edit_cardtypes,edit_sealed_cards
+  tasks: edit_html,invite_users,rename_cards,edit_cards,set_datatypes,remove_cards,edit_cardtypes,edit_sealed_cards,create_cards

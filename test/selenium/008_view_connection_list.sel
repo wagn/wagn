@@ -1,7 +1,0 @@
-|open|/wiki/TestOne||
-|select|query-select|value=plussed_cards|
-|pause|1000||
-|verifyTextPresent|TestTwoContent||
-|select|query-select|value=plus_cards|
-|pause|1000||
-|verifyTextPresent|ConnectOneTwoContent||

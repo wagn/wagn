@@ -194,7 +194,7 @@ class JumpToVersion38 < ActiveRecord::Migration
     end
 
     #password w8gn8t0r    
-    MUser.create( 
+    MUser.create!( 
       :login => 'admin',
       :crypted_password => '6e18b8a0b17799cb6d4a10b6dd1e870b073051b1',
       :salt => 'bf2a748b23e6fc6fa64d5acb99df8e72e308c58c',
@@ -203,7 +203,7 @@ class JumpToVersion38 < ActiveRecord::Migration
       :activated_at=>nil
     )
     
-    MUser.create( 
+    MUser.create!( 
       :login => 'hoozebot',
       :crypted_password => '13d124f96e2953fea135c13df097fb3d754588be',
       :salt => 'c420fa40c65a38186deb25ba859edacd9bf7d8f8',
@@ -212,7 +212,7 @@ class JumpToVersion38 < ActiveRecord::Migration
       :invited_by=>1
     )
 
-    MWeb.create(
+    MWeb.create!(
       :name => 'wiki',
       :address => 'wiki'
     )

@@ -68,13 +68,12 @@ class AccountController < ApplicationController
     return unless request.post? 
     # FIXME: not hardcode user cardtype??
     @card_name = params[:card][:name]
-    @card = Card.find_by_name(@card_name) || Card::User.new( {
-        :tag=>Tag.new( :datatype_key => 'User', :name=>@card_name )  
-    }.merge(params[:card]) )
+    @card = Card.find_by_name(@card_name) || Card::User.new( params[:card] )
       
     if @card.class_name == 'InvitationRequest' 
       @user = @card.extension or raise "Blam.  InvitationRequest should've been connected to a user"    
-      @card.type = 'User'
+      @card.type = 'User'  # change from Invite Request -> User
+      @card.save!
       @user.status='active'
       @user.invite_sender = ::User.current_user
     elsif @card.class_name=='User' and !@card.extension
@@ -85,7 +84,7 @@ class AccountController < ApplicationController
       raise ActiveRecord::RecordInvalid.new(@card)
     end
     @user.generate_password if @user.password.blank?
-
+    
     User.transaction do 
       @card.extension = @user
       @user.save!
@@ -99,25 +98,7 @@ class AccountController < ApplicationController
       page.wagn.messenger.note( "Successfully invited #{@card.name}.  Redirecting to #{previous_page}...")
       page.redirect_to url_for_page(previous_page)
     end
-  end
-
-=begin
-    raise(Wagn::Oops, "Failed to connect card to user") unless (User.find_by_email(params[:user][:email]).card)
-    raise(Wagn::Oops, "Failed to set datatype for user") unless (User.find_by_email(params[:user][:email]).card.tag.datatype_key=='User')
-    raise(Wagn::Oops, "Invitation Email subject is required") unless (params[:email] and params[:email][:subject])
-    raise(Wagn::Oops, "Invitation Email message is required") unless (params[:email] and params[:email][:message])
-    Notifier.deliver_account_info(@user, params[:email][:subject], params[:email][:message])
-    flash[:notice] = "User #{@card.name} has been created"
-  rescue Exception=>e
-    # if anything went wrong, don't leave any junk lying around
-    # FIXME: this code has caused a lot of bug chasing-- would be cleaner and
-    # more robust to have the card & extension creation together in a database transaction
-    # at the model level.
-    @user.destroy if @user && !@user.new_record?
-    @card.destroy_without_permissions if @card && !@card.new_record?
-    raise Wagn::Oops, e.message
-  end
-=end
+  end 
 
   def update
     load_card

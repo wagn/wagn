@@ -7153,6 +7153,9 @@ this.editor.view();
 this.slot.chunk("editor").hide();
 }
 this.slot.chunk("card-links").show();
+if(discussion=this.slot.chunk("discussion")){
+discussion.show();
+}
 this.slot.chunk("cooked").style.display="";
 this.slot.removeClassName("editing");
 if(this.slot.oldClass=="line"){
@@ -7189,6 +7192,11 @@ this._viewmode="options";
 this.update_workspace("options");
 this.highlight_tab("options");
 this.workspace.show();
+},reload:function(){
+new Ajax.Updater(this.slot.id+"-card","/card/view/"+this.id(),{asynchronous:false,parameters:this._common_parameters()});
+warn("LOADING EDITOR");
+$(this.slot.id+"-comment").value="";
+new Wagn.Card(this.slot);
 },cancel:function(){
 this.highlight();
 this.view();
@@ -7198,10 +7206,8 @@ this.loadEditor(true);
 this.dehighlight();
 Windows.close("popup");
 },save:function(){
-if(this.editor.before_save){
-if(this.editor.before_save()){
+if(this.editor.before_save&&this.editor.before_save()){
 this.continueSave();
-}
 }
 },continueSave:function(){
 card_content=this.content();
@@ -7261,21 +7267,23 @@ this.standard_update("update",_68c);
 this.standard_update("update_writer",_68d);
 },update_reader:function(_68e){
 this.standard_update("update_reader",_68e);
-},standard_update:function(_68f,_690){
-new Ajax.Request("/card/"+_68f+"/"+this.id(),this._ajax_parameters(_690));
-},update_attribute:function(_691,_692){
+},update_appender:function(_68f){
+this.standard_update("update_appender",_68f);
+},standard_update:function(_690,_691){
+new Ajax.Request("/card/"+_690+"/"+this.id(),this._ajax_parameters(_691));
+},update_attribute:function(_692,_693){
 var self=this;
-var _691=_691;
-new Ajax.Request($A(["/card/attribute",this.id(),_691]).join("/"),{parameters:this._common_parameters({value:_692}),onSuccess:function(_694){
-Wagn.messenger().note(self.name()+" "+_691+" updated: "+_694.responseText);
-if(_691=="datatype"){
+var _692=_692;
+new Ajax.Request($A(["/card/attribute",this.id(),_692]).join("/"),{parameters:this._common_parameters({value:_693}),onSuccess:function(_695){
+Wagn.messenger().note(self.name()+" "+_692+" updated: "+_695.responseText);
+if(_692=="datatype"){
 self.loadEditor(true);
 }
-},onFailure:function(_695){
-Wagn.messenger().alert(self.name()+" "+_691+" update failed:"+_695.responseText);
+},onFailure:function(_696){
+Wagn.messenger().alert(self.name()+" "+_692+" update failed:"+_696.responseText);
 }});
-},update_private:function(_696){
-if(_696=="edit"){
+},update_private:function(_697){
+if(_697=="edit"){
 Element.addClassName(this.slot.chunk("private-edit"),"current");
 Element.removeClassName(this.slot.chunk("private-view"),"current");
 this.update({"card[private]":false});
@@ -7300,6 +7308,9 @@ this.editor.view();
 this.workspace.hide();
 this.slot.chunk("cooked").hide();
 this.slot.chunk("card-links").hide();
+if(discussion=this.slot.chunk("discussion")){
+discussion.hide();
+}
 if(this.is_edit_ok()){
 this.slot.chunk("editor").hide();
 }
@@ -7316,89 +7327,93 @@ Element.addClassName(this.slot.chunk(tab),"current");
 }});
 Object.extend(Wagn.Card,{table:function(){
 return Wagn.CardTable;
-},find:function(_699){
-return $(_699).card();
-},findFirstById:function(_69a){
-return Wagn.Card.find_all_by_class(_69a).first();
-},findByElement:function(_69b){
-return $(_69b).card();
+},find:function(_69a){
+return $(_69a).card();
+},findFirstById:function(_69b){
+return Wagn.Card.find_all_by_class(_69b).first();
+},findByElement:function(_69c){
+return $(_69c).card();
 },find_all_by_class:function(){
 card_id=arguments[0]?arguments[0]:"card-slot";
 return Wagn.CardSlot.find_all_by_class(card_id).collect(function(s){
 return s.card();
 });
-},init:function(_69d){
-if(Wagn.CardTable[_69d]){
-card=Wagn.CardTable[_69d];
+},init:function(_69e){
+if(Wagn.CardTable[_69e]){
+card=Wagn.CardTable[_69e];
 return card;
 }else{
-slot=Wagn.CardSlot.init(_69d);
+slot=Wagn.CardSlot.init(_69e);
 return new Wagn.Card(slot);
 }
-},update:function(_69e,_69f,_6a0,raw){
-Wagn.Card.find_all_by_class(_69e).each(function(card){
-card.after_edit(_69f,_6a0,raw);
+},update:function(_69f,_6a0,_6a1,raw){
+Wagn.Card.find_all_by_class(_69f).each(function(card){
+card.after_edit(_6a0,_6a1,raw);
 });
-},dehighlightAll:function(_6a3){
-Wagn.Card.find_all_by_class(_6a3).each(function(card){
+},dehighlightAll:function(_6a4){
+Wagn.Card.find_all_by_class(_6a4).each(function(card){
 card.dehighlight();
 });
-},view:function(_6a5){
-Wagn.Card.find_all_by_class(_6a5).each(function(card){
+},view:function(_6a6){
+Wagn.Card.find_all_by_class(_6a6).each(function(card){
 card.view();
 });
-},editConflict:function(_6a7,_6a8,_6a9){
-Wagn.Card.find_all_by_class(_6a7).each(function(card){
-card.editConflict(_6a8,_6a9);
+},reload:function(_6a8){
+Wagn.Card.find_all_by_class(_6a8).each(function(card){
+card.reload();
 });
-},editInPopup:function(_6ab){
-new Ajax.Updater("popup_target","/card/edit_form/"+_6ab,{asynchronous:true,evalScripts:true,onComplete:function(_6ac){
+},editConflict:function(_6aa,_6ab,_6ac){
+Wagn.Card.find_all_by_class(_6aa).each(function(card){
+card.editConflict(_6ab,_6ac);
+});
+},editInPopup:function(_6ae){
+new Ajax.Updater("popup_target","/card/edit_form/"+_6ae,{asynchronous:true,evalScripts:true,onComplete:function(_6af){
 c=new Wagn.Card(Wagn.CardSlot.init("popup_cardslot"));
 setTimeout("Wagn.Card.find( 'popup_cardslot' ).setupEditor(); Wagn.Card.find( 'popup_cardslot' ).edit()",100);
 }});
 },setupAll:function(){
-var _6ad=arguments[0];
+var _6b0=arguments[0];
 Wagn.CardSlot.find_all_by_class("all").each(function(s){
 if(!s.chunk("wikiwyg_toolbar")){
-c=new Wagn.Card(s,_6ad);
+c=new Wagn.Card(s,_6b0);
 }
 });
 getNewWindowLinks();
-},getTranscludingCardId:function(_6af){
-if(_6af.hasAttribute("cardId")){
-return _6af.attributes["cardId"].value;
+},getTranscludingCardId:function(_6b2){
+if(_6b2.hasAttribute("cardId")){
+return _6b2.attributes["cardId"].value;
 }else{
-if(_6af.parentNode){
-return this.getTranscludingCardId(_6af.parentNode);
+if(_6b2.parentNode){
+return this.getTranscludingCardId(_6b2.parentNode);
 }else{
 return false;
 }
 }
 }});
 proto=new Subclass("Wagn.Wikiwyg","Wikiwyg");
-Object.extend(Wagn.Wikiwyg,{wikiwyg_divs:[],default_config:{imagesLocation:"../../images/wikiwyg/",doubleClickToEdit:false,modeClasses:["Wikiwyg.Wysiwyg"],controlLayout:["selector","bold","italic","ordered","unordered","indent","outdent"],styleSelector:["label","h1","h2","p"],controlLabels:Object.extend(Wikiwyg.Toolbar.prototype.config,{spotlight:"Spotlight",highlight:"Highlight",h1:"Header",h2:"Subheader",link:"Create/Edit link"})},addEventToWindow:function(_6b0,name,func){
-if(_6b0.addEventListener){
+Object.extend(Wagn.Wikiwyg,{wikiwyg_divs:[],default_config:{imagesLocation:"../../images/wikiwyg/",doubleClickToEdit:false,modeClasses:["Wikiwyg.Wysiwyg"],controlLayout:["selector","bold","italic","ordered","unordered","indent","outdent"],styleSelector:["label","h1","h2","p"],controlLabels:Object.extend(Wikiwyg.Toolbar.prototype.config,{spotlight:"Spotlight",highlight:"Highlight",h1:"Header",h2:"Subheader",link:"Create/Edit link"})},addEventToWindow:function(_6b3,name,func){
+if(_6b3.addEventListener){
 name=name.replace(/^on/,"");
-_6b0.addEventListener(name,func,false);
+_6b3.addEventListener(name,func,false);
 }else{
-if(_6b0.attachEvent){
-_6b0.attachEvent(name,func);
+if(_6b3.attachEvent){
+_6b3.attachEvent(name,func);
 }
 }
 },getClipboardHTML:function(){
-var _6b3=document.getElementById("___WWHiddenFrame");
-if(!_6b3){
-_6b3=document.createElement("iframe");
-_6b3.id="___WWHiddenFrame";
-document.body.appendChild(_6b3);
-_6b3.contentDocument.designMode="on";
+var _6b6=document.getElementById("___WWHiddenFrame");
+if(!_6b6){
+_6b6=document.createElement("iframe");
+_6b6.id="___WWHiddenFrame";
+document.body.appendChild(_6b6);
+_6b6.contentDocument.designMode="on";
 }
-pdoc=_6b3.contentDocument;
+pdoc=_6b6.contentDocument;
 pdoc.innerHTML="";
 pdoc.execCommand("paste",false,null);
-var _6b4=pdoc.innerHTML;
+var _6b7=pdoc.innerHTML;
 pdoc.innerHTML="";
-return _6b4;
+return _6b7;
 }});
 Object.extend(Wagn.Wikiwyg.prototype,{card:function(){
 return this._card;
@@ -7421,42 +7436,42 @@ this.card().cancel();
 dom=this.current_mode.get_edit_document();
 $A(dom.getElementsByTagName("span")).reverse().each(function(elem){
 warn("  SPAN "+elem);
-var _6b8=(elem.style["fontWeight"]=="bold");
+var _6bb=(elem.style["fontWeight"]=="bold");
 var em=(elem.style["fontStyle"]=="italic");
-if(em||_6b8){
-var _6ba="";
-if(em&&_6b8){
-_6ba=Wikiwyg.createElementWithAttrs("strong",{});
-_6ba.innerHTML="<em>"+elem.innerHTML+"</em>";
+if(em||_6bb){
+var _6bd="";
+if(em&&_6bb){
+_6bd=Wikiwyg.createElementWithAttrs("strong",{});
+_6bd.innerHTML="<em>"+elem.innerHTML+"</em>";
 }else{
-_6ba=Wikiwyg.createElementWithAttrs((em?"em":"strong"),{});
-_6ba.innerHTML=elem.innerHTML;
+_6bd=Wikiwyg.createElementWithAttrs((em?"em":"strong"),{});
+_6bd.innerHTML=elem.innerHTML;
 }
-elem.parentNode.replaceChild(_6ba,elem);
+elem.parentNode.replaceChild(_6bd,elem);
 }
 });
 },do_link:function(){
 alert("creating link");
-var _6bb=this.get_link_selection_text();
-if(!_6bb){
+var _6be=this.get_link_selection_text();
+if(!_6be){
 return;
 }
 var url;
-var _6bd=_6bb.match(/(.*?)\b((?:http|https|ftp|irc|file):\/\/\S+)(.*)/);
-if(_6bd){
-if(_6bd[1]||_6bd[3]){
+var _6c0=_6be.match(/(.*?)\b((?:http|https|ftp|irc|file):\/\/\S+)(.*)/);
+if(_6c0){
+if(_6c0[1]||_6c0[3]){
 return null;
 }
-url=_6bd[2];
+url=_6c0[2];
 }else{
-url=escape(_6bb);
+url=escape(_6be);
 }
 this.exec_command("createlink",url);
 },displayMode:function(){
 for(var i=0;i<this.config.modeClasses.length;i++){
-var _6bf=this.config.modeClasses[i];
-var _6c0=this.modeByName(_6bf);
-_6c0.disableThis();
+var _6c2=this.config.modeClasses[i];
+var _6c3=this.modeByName(_6c2);
+_6c3.disableThis();
 }
 this.toolbarObject.disableThis();
 this.div.style.display="";
@@ -7464,18 +7479,18 @@ this.divHeight=this.div.offsetHeight;
 },initial_config:function(){
 return {imagesLocation:"../../images/wikiwyg/",doubleClickToEdit:false,modeClasses:["Wikiwyg.HTML"],controlLayout:["selector","bold","italic","ordered","unordered","indent","outdent"],styleSelector:["label","h1","h2","p"],controlLabels:Object.extend(Wikiwyg.Toolbar.prototype.config,{spotlight:"Spotlight",highlight:"Highlight",h1:"Header",h2:"Subheader"})};
 },setup:function(slot){
-var _6c2=new Wagn.Wikiwyg();
+var _6c5=new Wagn.Wikiwyg();
 var conf=this.initial_config();
 if(!conf.wysiwyg){
 conf.wysiwyg={};
 }
 conf.wysiwyg.iframeId="iframe-"+slot.id;
-_6c2.createWikiwygArea(slot.chunk("raw"),conf);
-Wagn.Wikiwyg.wikiwyg_divs.push(_6c2);
+_6c5.createWikiwygArea(slot.chunk("raw"),conf);
+Wagn.Wikiwyg.wikiwyg_divs.push(_6c5);
 slot.chunk("cooked").ondblclick=function(){
 slot.card().edit();
 };
-return _6c2;
+return _6c5;
 }});
 Object.extend(Wikiwyg.Wysiwyg.prototype,{get_selection:function(){
 return this.edit_iframe.contentWindow.getSelection();
@@ -7533,17 +7548,17 @@ html=Wagn.Wikiwyg.getClipboardHTML();
 },createKeyPressHandler:function(){
 var self=this;
 return function(e){
-var _6c8=false;
+var _6cb=false;
 if(e.ctrlKey&&!e.shiftKey&&!e.altKey){
 switch(e.which){
 case 86:
 case 118:
-_6c8=true;
+_6cb=true;
 self.pasteWithFilter();
 break;
 }
 }
-if(_6c8){
+if(_6cb){
 e.preventDefault();
 e.stopPropagation();
 }
@@ -7551,13 +7566,13 @@ e.stopPropagation();
 }});
 Wikiwyg.Wysiwyg.prototype.config["editHeightAdjustment"]=1.1;
 Object.extend(Wikiwyg.Mode.prototype,{get_edit_height:function(){
-var _6c9=this.wikiwyg.divHeight;
-if(_6c9=="0"){
-_6c9=this.wikiwyg.div.parentNode.viewHeight-40;
+var _6cc=this.wikiwyg.divHeight;
+if(_6cc=="0"){
+_6cc=this.wikiwyg.div.parentNode.parentNode.parentNode.viewHeight-40;
 }
-var _6ca=parseInt(_6c9*this.config.editHeightAdjustment);
+var _6cd=parseInt(_6cc*this.config.editHeightAdjustment);
 var min=this.config.editHeightMinimum;
-h=_6ca<min?min:_6ca;
+h=_6cd<min?min:_6cd;
 max=window.innerHeight-100;
 h=h>max?max:h;
 return h;
@@ -7594,7 +7609,7 @@ this.view();
 return false;
 }};
 Wagn.Lister=Class.create();
-Object.extend(Wagn.Lister.prototype,{initialize:function(_6cf,args){
+Object.extend(Wagn.Lister.prototype,{initialize:function(_6d2,args){
 per_card=true;
 this._arguments=$H(args);
 this.user_id=this.make_accessor("user_id");
@@ -7605,7 +7620,7 @@ this.sort_by=this.make_accessor("sort_by",{reset_paging:true});
 this.sortdir=this.make_accessor("sortdir",{reset_paging:true});
 this.hide_duplicates=this.make_cookie_accessor("hide_duplicates","");
 this.pagesize=this.make_cookie_accessor("pagesize","25");
-this.div_id=_6cf;
+this.div_id=_6d2;
 Object.extend(this._arguments,{query:this.query(),pagesize:this.pagesize(),cardtype:this.cardtype(),keyword:this.keyword(),sort_by:this.sort_by(),sortdir:this.sortdir()});
 Wagn.highlight("sortdir",this.sortdir());
 Wagn.highlight("sort_by",this.sort_by());
@@ -7654,40 +7669,40 @@ return this._arguments[field];
 return null;
 }
 }
-},make_cookie_accessor:function(_6d4,_6d5){
+},make_cookie_accessor:function(_6d7,_6d8){
 var self=this;
-var _6d7=arguments[1]?this.card_id():"";
-var _6d5=_6d5;
+var _6da=arguments[1]?this.card_id():"";
+var _6d8=_6d8;
 return function(){
 if(arguments[0]!=null){
-Cookie.set(_6d7+_6d4,arguments[0]);
-self._arguments[_6d4]=arguments[0];
+Cookie.set(_6da+_6d7,arguments[0]);
+self._arguments[_6d7]=arguments[0];
 return self;
 }else{
-if(self._arguments.keys().include(_6d4)){
-return self._arguments[_6d4];
+if(self._arguments.keys().include(_6d7)){
+return self._arguments[_6d7];
 }else{
-if(val=Cookie.get(_6d7+_6d4)){
+if(val=Cookie.get(_6da+_6d7)){
 return val;
 }else{
-return _6d5;
+return _6d8;
 }
 }
 }
 };
-},make_accessor:function(_6d8){
+},make_accessor:function(_6db){
 options=Object.extend($H({reset_paging:false}),arguments[1]);
 var self=this;
-var _6da=options["reset_paging"];
+var _6dd=options["reset_paging"];
 return function(){
 if(arguments[0]!=null){
-self._arguments[_6d8]=arguments[0];
-if(_6da){
+self._arguments[_6db]=arguments[0];
+if(_6dd){
 self.page("1");
 }
 return self;
 }else{
-return self._arguments[_6d8];
+return self._arguments[_6db];
 }
 };
 },update:function(){
@@ -7710,7 +7725,7 @@ button="<input type=\"button\" id=\"new-connection-button\" value=\"join it to a
 }else{
 if(query=="cardtype_cards"){
 cardtype=$("main-body").card().codename();
-button="<input type=\"button\" value=\"create new one\" onClick=\"document.location.href='/card/new?option[cardtype]="+cardtype+"'\">";
+button="<input type=\"button\" value=\"create new one\" onClick=\"document.location.href='/card/new?card[type]="+cardtype+"'\">";
 }
 }
 }
@@ -7726,7 +7741,7 @@ if(pair.value&&pair.value!=""){
 param_list.push(pair.key+"="+encodeURIComponent(pair.value));
 }
 });
-return {asynchronous:false,evalScripts:true,method:"get",onComplete:function(_6dc){
+return {asynchronous:false,evalScripts:true,method:"get",onComplete:function(_6df){
 Wagn.lister().after_update();
 },parameters:param_list.join("&")};
 }});
@@ -7753,19 +7768,19 @@ return this.gsub(/\s/,"_").gsub(/\%20/,"_");
 return this.gsub(/_/," ").gsub(/\/wiki\//,"");
 }});
 Wagn.LinkEditor=Class.create();
-Object.extend(Wagn.LinkEditor,{before_edit:function(_6df){
-card=_6df.card;
-generate_anchor=function(_6e0){
-reads_as=_6e0[1];
-links_to=(_6e0[2]?_6e0[2]:reads_as).linkify();
+Object.extend(Wagn.LinkEditor,{before_edit:function(_6e2){
+card=_6e2.card;
+generate_anchor=function(_6e3){
+reads_as=_6e3[1];
+links_to=(_6e3[2]?_6e3[2]:reads_as).linkify();
 bound=reads_as.linkify()==links_to?true:false;
 t="<a bound=\"#{bound}\" href=\"#{links_to}\">#{reads_as}</a>";
 return new Template(t).evaluate({bound:bound,reads_as:reads_as,links_to:links_to});
 };
 card.raw(card.raw().gsub(/\[\[([^\]]+)\]\]/,generate_anchor));
 card.raw(card.raw().gsub(/\[([^\]]+)\]\[([^\]]+)\]/,generate_anchor));
-},before_save:function(_6e1){
-$A(_6e1.card.slot.chunk("raw").getElementsByTagName("a")).each(function(e){
+},before_save:function(_6e4){
+$A(_6e4.card.slot.chunk("raw").getElementsByTagName("a")).each(function(e){
 if(e.attributes["href"]){
 Wagn.Link.new_from_link(e).update_bound();
 if(e.innerHTML==""){
@@ -7777,8 +7792,8 @@ Element.replace(e,"["+e.innerHTML+"]["+e.attributes["href"].value+"]");
 });
 return false;
 }});
-Object.extend(Wagn.LinkEditor.prototype,{initialize:function(_6e3){
-this.wysiwyg=_6e3;
+Object.extend(Wagn.LinkEditor.prototype,{initialize:function(_6e6){
+this.wysiwyg=_6e6;
 this.selection=this.get_selection();
 Wagn.linkEditor=this;
 },get_selection:function(){
@@ -7826,21 +7841,21 @@ return false;
 r=this.get_selection().getRangeAt(0);
 r.deleteContents();
 r.insertNode(node);
-},save:function(_6e7,_6e8){
-if(_6e7.linkify()==_6e8.linkify()){
+},save:function(_6ea,_6eb){
+if(_6ea.linkify()==_6eb.linkify()){
 this.link.setAttribute("bound",true);
 }else{
 this.link.setAttribute("bound",false);
 }
-this.link.attributes["href"].value=_6e8.linkify();
-this.link.innerHTML=_6e7;
+this.link.attributes["href"].value=_6eb.linkify();
+this.link.innerHTML=_6ea;
 if(this.new_link){
 this.replace_selection_with(link);
 }
 Windows.close("linkwin");
-},unlink:function(_6e9){
+},unlink:function(_6ec){
 if(!this.new_link){
-Element.replace(this.link,_6e9);
+Element.replace(this.link,_6ec);
 }
 Windows.close("linkwin");
 },cancel:function(){
@@ -7946,8 +7961,8 @@ this.card.content(Form.Element.getValue(this.select_box()).join(","));
 return true;
 },select_box:function(){
 return $(this.slot.id+"-role-select");
-},set_values:function(_6ea){
-values=_6ea.split(",");
+},set_values:function(_6ed){
+values=_6ed.split(",");
 element=this.select_box();
 for(var i=0;i<element.length;i++){
 var opt=element.options[i];

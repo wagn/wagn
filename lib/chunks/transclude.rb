@@ -5,12 +5,13 @@ module Chunk
       
       #  {{+name|attr:val;attr:val;attr:val}}
 
-      TRANSCLUDE_PATTERN = /\{\{((#{'\\'+JOINT})?[^\|]+?)\s*(\|([^\}]+?))?\}\}/
+    TRANSCLUDE_PATTERN = /\{\{((#{'\\'+JOINT})?[^\|]+?)\s*(\|([^\}]+?))?\}\}/
     end
     def self.pattern() TRANSCLUDE_PATTERN end
   
     def initialize(match_data, content)
-      super
+      super   
+#      warn "TC #{match_data} #{content}"
       @card_name = match_data[1].strip
       @relative = match_data[2]
       @options = {
@@ -78,7 +79,7 @@ module Chunk
         open_content = %{<span class="transcludedContent" cardId="#{refcard.id}">}
         close_content = "</span>"
       end
-      
+     
       transcluded_content = @renderer.render( refcard )
       @content.merge_chunks(transcluded_content)
       str = transcluded_content.pre_rendered

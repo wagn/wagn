@@ -1,0 +1,9 @@
+|open|/wiki/B||
+|pause|250||
+|click|link=Edit||
+|pause|500||
+|selectFrame|iframe-main-body|
+|type|css=body|Beta Tester|
+|selectFrame|relative=top|
+|click|//input[@name='commit' and @value='Save']||
+|verifyTextPresent|Beta Tester||

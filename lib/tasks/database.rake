@@ -14,10 +14,10 @@ namespace :db do
 
           begin
             ActiveRecord::Base.establish_connection(config.merge({'database' => nil}))
-            ActiveRecord::Base.connection.create_database(config['database'], {:charset => @charset, :collation => @collation})
+            ActiveRecord::Base.connection.create_database(config['database']) #, {:charset => @charset, :collation => @collation})
             ActiveRecord::Base.establish_connection(config)
-          rescue
-            $stderr.puts "Couldn't create database for #{config.inspect}"
+    #      rescue
+     #       $stderr.puts "Couldn't create database for #{config.inspect}"
           end
         when 'postgresql'
           `createdb "#{config['database']}" -E utf8`  

@@ -1,12 +1,29 @@
 class MCard < ActiveRecord::Base
   set_table_name 'cards'
   set_inheritance_column nil
+  belongs_to :tag, :class_name=>'MTag', :foreign_key=>"tag_id"
+  belongs_to :extension, :polymorphic=>true    
+  belongs_to :current_revision, :class_name => 'MRevision', :foreign_key=>'current_revision_id'
+  has_many   :revisions, :class_name=>'MRevision', :order => 'id', :foreign_key=>'card_id', :dependent=>:destroy
+
+  def simple?() self.trunk_id.nil? end
+
+
+  def before_destroy
+    self.update_attribute('current_revision_id', nil)
+  end
+  
+  def datatype_key 
+    simple? ? tag.datatype_key : tag.plus_datatype_key
+  end
 end
 
 class MTag < ActiveRecord::Base
   set_table_name 'tags'
   has_one :root_card, :class_name=>'MCard', :foreign_key=>"tag_id",:conditions => "trunk_id IS NULL"
-  has_many :cards, :class_name=>'MCard', :foreign_key=>"tag_id", :conditions=>"parent_id IS NOT NULL", :dependent=>:destroy
+  has_many :cards, :class_name=>'MCard', :foreign_key=>"tag_id", :conditions=>"trunk_id IS NOT NULL", :dependent=>:destroy
+  belongs_to :current_revision, :class_name=>'MTagRevision', :foreign_key=>'current_revision_id'
+  
 end
 
 class MRevision < ActiveRecord::Base
@@ -17,6 +34,10 @@ class MRole < ActiveRecord::Base
   set_table_name 'roles'
   has_and_belongs_to_many :m_users, :join_table=>'roles_users', 
     :foreign_key=>'role_id', :association_foreign_key=>'user_id'
+end     
+
+class MSetting < ActiveRecord::Base
+  set_table_name 'settings'
 end
 
 class MTagRevision < ActiveRecord::Base
@@ -27,7 +48,8 @@ class MWeb < ActiveRecord::Base
   set_table_name 'webs'
 end
 
-class MUser < ActiveRecord::Base
+class MUser < ActiveRecord::Base  
+  has_one :card, :class_name=>'MCard', :as=>:extension
   set_table_name 'users'
 end
 
@@ -39,6 +61,7 @@ class MWikiReference < ActiveRecord::Base
   set_table_name 'wiki_references'
 end
 
+=begin
 class System < ActiveRecord::Base
   cattr_accessor :admin_user_defaults, :base_url, :site_name, :node_types, 
     :invitation_email_body,  :invitation_email_subject,
@@ -55,6 +78,7 @@ class System < ActiveRecord::Base
     end
   end
 end
+=end
 
 require_dependency "#{RAILS_ROOT}/config/sample_wagn.rb"
 require_dependency "#{RAILS_ROOT}/config/wagn.rb"
@@ -137,6 +161,16 @@ module CardCreator
       role = MRole.create( :codename=>codename )
       card.extension_type = 'Role'
       card.extension_id = role.id
+      card.save
+      card
+    end
+  end
+
+  def create_setting_card( name, codename=nil, content="")
+    if card = create_card( 'Setting', name, content )
+      setting = MSetting.create( :codename=>codename )
+      card.extension_type = 'Setting'
+      card.extension_id = setting.id
       card.save
       card
     end

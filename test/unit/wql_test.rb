@@ -21,11 +21,11 @@ class WqlTest < Test::Unit::TestCase
   end
   
   def test_card_queries
-    assert_card_wql( "cousins", "cards tags are cards with id={id} order by name" ) {|c| c.cousins_for_test }
-    assert_card_wql( "children", "cards trunks are cards with id={id} order by name") {|c| c.children_for_test }
-    assert_card_wql( "relatives", "cards plus cards with id={id} order by name") {|c| c.relatives_for_test }
+    assert_card_wql( "cousins", "cards tags are cards with id={id} order by name" ) {|c| c.left_junctions_for_test }
+    assert_card_wql( "children", "cards trunks are cards with id={id} order by name") {|c| c.right_junctions_for_test }
+    assert_card_wql( "relatives", "cards plus cards with id={id} order by name") {|c| c.junctions_for_test }
     assert_card_wql( "pieces", "pieces of cards with id={id}") {|c| c.pieces_for_test }
-  end
+  end                                 
   
   def test_type_queries
     assert_wql( "basic cards", "cards with type='Basic' order by name" ) { Card::Basic.find(:all, :order=>'name') }
@@ -40,33 +40,31 @@ class WqlTest < Test::Unit::TestCase
   end
   
   def test_find_by_wql_options
-    assert Card.find_by_wql_options( :cardtype=>'Cardtype' )
+    assert Card.find_by_wql_options( :type=>'Cardtype' )
     assert Card.find_by_wql_options( :keyword=>'foo' )
-    assert Card.find_by_wql_options( :cardtype=>'Cardtype', :keyword=>'foo' )
-    assert Card.find_by_wql_options( :cardtype=>'Cardtype', :keyword=>'' )
-    assert Card.find_by_wql_options( :cardtype=>'', :keyword=>'foo' )
+    assert Card.find_by_wql_options( :type=>'Cardtype', :keyword=>'foo' )
+    assert Card.find_by_wql_options( :type=>'Cardtype', :keyword=>'' )
+    assert Card.find_by_wql_options( :type=>'', :keyword=>'foo' )
   end
     
   def test_tagging
-    create_cards( %w(A+B A+C A+D A+E ) )
     assert_equal %w(B C D E), Card.find_by_wql("cards tagging cards where name='A' order by name").plot(:name)    
   end
   
   def test_tagged_by
-    create_cards( %w(B+A C+A D+A E+A ) )
-    assert_equal %w(B C D E), Card.find_by_wql("cards tagged by cards where name='A' order by name").plot(:name)    
+    assert_equal %w(C D F), Card.find_by_wql("cards tagged by cards where name='A' order by name").plot(:name)    
   end
 
   def test_connected_to
-    create_cards( %w(A+B C+A A+D E+A A+F) )
     assert_equal %w(B C D E F), Card.find_by_wql("cards connected to cards where name='A' order by name").plot(:name)
     # make sure it works with or without a closing order or limit    
     assert_equal %w(B C D E F), Card.find_by_wql("cards connected to cards where name='A'").plot(:name).sort    
   end
         
   def test_options  
-    # FIXME: need better data to test against
-    assert_equal %w(), Card.find_by_wql_options({:tagging=>{:type=>"Basic"}}).plot(:name).sort
+    assert_equal %w(A B C D E Five One Three Two), Card.find_by_wql_options({:tagging=>{:type=>"Basic"}}).plot(:name).sort
+    %w( A B C ).each do |c|  Card.find_by_name(c).destroy! end
+    assert_equal %w( Five One Three Two), Card.find_by_wql_options({:tagging=>{:type=>"Basic"}}).plot(:name).sort
   end
 
   private

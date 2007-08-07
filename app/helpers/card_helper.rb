@@ -6,9 +6,14 @@ module CardHelper
   end
 
   def writer_options_for( card )
-    card.reader ?  options_from_roles( card.reader.subset_roles ) :
+    card.reader ?  options_from_roles( (card.reader||Role.find_by_codename('anon')).subset_roles ) :
       [['','-- Select -- ']] + options_from_roles( Role.find_configurables )
-  end
+  end                                
+  
+  def appender_options_for( card )
+     [['','Nobody']] + (card.appender ?  options_from_roles( (card.reader||Role.find_by_codename('anon')).subset_roles ) :
+      options_from_roles( Role.find_configurables ))
+  end                                
   
   def options_from_roles( roles )
     return [] unless user=User.current_user
@@ -17,7 +22,7 @@ module CardHelper
     end.collect {|c| [c.id, c.cardname] }.sort {|a,b| a.last<=>b.last}
   end
   
-  
+=begin  
   def datatype_options
     Datatype.find_all.reject do |s|
       (s.registered_id == 'Ruby' and !System.enable_ruby_cards) or
@@ -26,10 +31,10 @@ module CardHelper
     end.map { |s| [s.registered_id, s.label] } 
   end
   
-  
   def datatype_select
     collection_select( :tag, :datatype_key, datatype_options, :first, :last, {}, :onChange=>'this.form.onsubmit()')
-  end
+  end 
+=end  
   
   # navigation for revisions -
   # --------------------------------------------------

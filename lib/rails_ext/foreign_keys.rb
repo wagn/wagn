@@ -40,7 +40,7 @@ module ActiveRecord
       end
       
       def drop_foreign_key(table_name, column_name, foreign_table_name="")
-        drop_constraint(table_name, column_name, 'fkey')
+        drop_constraint(table_name, [table_name, column_name, 'fkey'].join('_'))
       end
       
       def add_unique_index(table_name, *column_names)
@@ -49,7 +49,7 @@ module ActiveRecord
       end
       
       def drop_unique_index(table_name, *column_names)
-        drop_constraint(table_name, column_name.join('_'), 'uniq')
+        drop_constraint(table_name, [table_name, column_names.join('_'), 'uniq'].join('_'))
       end
       
       def add_constraint(table_name, name, type, constraint)
@@ -57,8 +57,7 @@ module ActiveRecord
         execute "ALTER TABLE #{table_name} ADD CONSTRAINT #{constraint_name} #{constraint}"
       end
       
-      def drop_constraint(table_name, name, type, constraint="")
-        constraint_name = [table_name, name, type].join('_')
+      def drop_constraint(table_name, constraint_name)
         execute "ALTER TABLE #{table_name} DROP CONSTRAINT #{constraint_name} "
       end
       

@@ -5,6 +5,10 @@ context = edit_user_context(card)  # admin|user|public
 <span style="display:none;" class="editor_context"><%= context %></span>
 <iframe id="iframe-<%= div_id %>" height="0" width="0" frameborder="0"></iframe>
 
+
+<%- if !user -%>
+
+<%- else -%>
 <% form_remote_for( :user, user, :url=>{ :controller=>'account', :action=>'update' }, 
 	:html=>{:id=>"#{div_id}-user-update-form"} ) do |f| %>
   <%= hidden_field_tag 'element', "#{div_id}"  %>
@@ -39,7 +43,7 @@ context = edit_user_context(card)  # admin|user|public
     </tr>
   <% end %>           
 
-  <% if context=='admin' %>
+  <% if context=='admin'  %>
 	  <tr>
 	    <td class="label"><label for="block">Block</label></td>
 	    <td class="field"><%= f.check_box :blocked %></td>
@@ -49,3 +53,4 @@ context = edit_user_context(card)  # admin|user|public
 
 </table>  
 <% end %>     
+<%- end -%>

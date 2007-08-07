@@ -1,20 +1,20 @@
 <% @title = "New Card" %>   
 <% show_options = params[:option] && params[:option][:show_options] ? true : false %>
 <div id="main-body" class="new-card <%= @context %> full card-slot">
-  <%= form_remote_tag( 
+  <% form_remote_tag( 
         :url=>{:action=>'new'},
         :html=>{ :id=>'new-card-form' },
         :update=>'new-editor',
         :complete =>"Wagn.Card.init('main-body').slowEdit('Reloading Editor')"
-  ) %>
+  ) do %>
     <%= hidden_field_tag :create_url, url_for(:action=>'create'), :id=>'create-card-url' %>
     <p class="header">
       <div id="new-card-name">
         <label for="new-card-name">card name</label><br/>
-        <%= text_field( :tag, :name, {:class=>'new-card-name', :id=>"new-card-name-field"} )%><br/>
+        <%= text_field( :card, :name, {:class=>'new-card-name', :id=>"new-card-name-field"} )%><br/>
       </div>
       <a id="new-card-cardtype" class="cardtype" href="javascript:void()">
-        <%= params[:option] ? params[:option][:cardtype] : 'Basic'%>
+        <%= params[:card] ? params[:card][:type] : 'Basic'%>
       </a>
       
       <br /><br /><br />
@@ -32,11 +32,11 @@
       </div>
     </div>
     <input type="hidden" name="card[content]" id="new-card-content-field">
-  <%= end_form_tag %>
+  <% end %>
    
     <p>
       <div id="new-editor">
-        <%= render :partial=>'new_editor',:locals=>{:datatype_key=> @tag.datatype_key } %>
+        <%= render :partial=>'new_editor',:locals=>{ } %>
       </div> 
     </p>
         

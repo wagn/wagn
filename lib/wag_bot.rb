@@ -19,11 +19,14 @@ module WagBot
         chunk.link_text = chunk.card_name if link_bound
       end
     end
-    
+
     revise_card( card, content_with_revised_links )
+  rescue
+    warn "Error revising card '#{card.name}'"
   end
   
   def revise_card( card, content="" )
+    warn "revising #{card.name} to '#{content}'"
     User.as(self) do 
       card.content = content
       card.save!

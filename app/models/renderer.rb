@@ -55,7 +55,16 @@ module Renderer
     def process( card, content=nil, update_references=true, &process_block )
       wiki_content = common_processing(card, content, update_references, &process_block)
       # wow, this doesnt' work: chunks.each { |c| c.revert }
+
+      # FIXME: there is case here, I think when reverting links in content transcluded
+      # from another card, that the @content reference held in the chunks doesn't match
+      # the 'wiki_content' here, which causes the while loop below go forever.
+      if wiki_content.chunks.find {|c| c.instance_variable_get('@content')!=wiki_content }
+        raise "can't revert transcluded content when processing card '#{card.name}'; "
+      end
+      
       while wiki_content.chunks.length > 0
+        warn "chunkc length #{wiki_content.chunks.length}"
         wiki_content.chunks[0].revert
       end
       wiki_content

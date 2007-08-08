@@ -41,7 +41,7 @@ module Cardname
   
   def to_key
     split(JOINT).map do |name| 
-      name.underscore.split(/[^\w]+/).plot(:singularize).reject {|x| x==""}.join("_")
+      name.underscore.split(/[^\w\*]+/).plot(:singularize).reject {|x| x==""}.join("_")
     end.join(JOINT)
   end  
 

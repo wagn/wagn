@@ -48,7 +48,7 @@ class CardController < ApplicationController
   end
 
   def view
-    render :partial=>"card/card", :locals=>{ :card=>@card, :element=>params[:element] } 
+    render :partial=>"card/card", :locals=>{ :card=>@card, :div_id=>params[:element] } 
   end
 
   def new
@@ -95,25 +95,12 @@ class CardController < ApplicationController
     #end
   end
   
-  def save_draft
-    @card.save_draft( params[:card][:content] )
-    render(:update) do |page|
-      page.wagn.messenger.log("saved draft of #{@card.name}")
-    end
-  end
-  
   def create         
     @card = Card.create! params[:card]
     # prevent infinite redirect loop
     fail "Card creation failed"  unless Card.find_by_name( @card.name )
     # FIXME: it would make the tests nicer if we did a real redirect instead of rjs
   end 
-
-  def rename
-    @card.name = params[:card][:name]
-    @card.on_rename_skip_reference_updates = (params[:change_links]!='yes')
-    @card.save!
-  end
   
   def remove
     @card.destroy!
@@ -124,6 +111,33 @@ class CardController < ApplicationController
     @card.revise @revision.content
     render :action=>'edit'
   end  
+
+  def comment
+    @comment = params[:card][:comment]        
+    # FIXME this should only let the name be specified if user is anonymous. no faking! 
+    @author = params[:card][:comment_author] || User.current_user.card.name
+    @card.comment = "<hr>#{@comment}<br>--#{@author}.....#{Time.now}<br>"
+    @card.save!
+  end 
+  
+  def save_draft
+    @card.save_draft( params[:card][:content] )
+    render(:update) do |page|
+      page.wagn.messenger.log("saved draft of #{@card.name}")
+    end
+  end  
+
+  def update    
+    @card = Card.find params[:id]
+    @card.update_attributes! params[:card]
+  end
+
+
+  def rename
+    @card.name = params[:card][:name]
+    @card.on_rename_skip_reference_updates = (params[:change_links]!='yes')
+    @card.save!
+  end
   
   def update_reader
     @new_reader = Role.find( params[:card][:reader_id] )
@@ -160,17 +174,5 @@ class CardController < ApplicationController
     end
   end
   
-  def comment
-    @comment = params[:card][:comment]        
-    # FIXME this should only let the name be specified if user is anonymous. no faking! 
-    @author = params[:card][:comment_author] || User.current_user.card.name
-    @card.comment = "<hr>#{@comment}<br>--#{@author}.....#{Time.now}<br>"
-    @card.save!
-  end 
-  
-  def update    
-    @card = Card.find params[:id]
-    @card.update_attributes! params[:card]
-  end
 
 end

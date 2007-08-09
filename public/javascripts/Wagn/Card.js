@@ -122,7 +122,6 @@ Object.extend(Wagn.Card.prototype, {
       return this.slot.chunk('raw').innerHTML;
     }
   },
-  datatype:    function() { return this.slot.chunk('datatype').innerHTML;  },
   editor_type: function() { return this.slot.chunk('editor-type').innerHTML; },
   codename:    function() { return this.slot.chunk('codename').innerHTML; },  
   revision_id: function() { return this.slot.chunk('revision-id').innerHTML; },
@@ -482,7 +481,7 @@ Object.extend(Wagn.Card, {
     new Ajax.Updater( 'popup_target', '/card/edit_form/' + card_id, {
       asynchronous:true, evalScripts:true, onComplete:function(request){
         c = new Wagn.Card( Wagn.CardSlot.init('popup_cardslot') );
-        setTimeout("Wagn.Card.find( 'popup_cardslot' ).setupEditor(); Wagn.Card.find( 'popup_cardslot' ).edit()", 100);
+        Wagn.Card.find( 'popup_cardslot' ).loadEditor(false, true);
       } 
     });
   },

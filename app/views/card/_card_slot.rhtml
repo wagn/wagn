@@ -10,10 +10,11 @@
 	    it will pollute the cache with garbage %>
 	<%- cache_break = card.cacheable? ? '' : rand.to_s -%>
   <span id="<%= div_id %>-card">
-	<% cache("card/view/#{card.id}#{cache_break}") do %>
-		<%= render :partial=>'card/card', :locals=>{ :card=>card, :element=>div_id } %>
-	<% end %> 
+ 	  <% cache("card/view/#{card.id}#{cache_break}") do %>
+			<%= render :partial=>'card/card', :locals=>{ :card=>card, :div_id=>div_id } %>
+		<% end %> 
 	</span>              
+	<span id="<%= div_id %>-editor" class="editor" style="display: none"></span>        
 	
 	<% if card.appender_id && System.role_ok?(card.appender_id) %>
     <div class="discussion">

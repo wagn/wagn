@@ -1,9 +1,9 @@
-<% @title = @card.title %>
+<% @title = @card.name %>
 
 <%= render( :partial=>'card/card_slot', :locals=>{ 
       :card => @card,
       :context => 'main',
-      :partial => 'full new-card',
+      :partial => 'full',
       :div_id=>'popup_cardslot',
 			:load_editor=>true
     })

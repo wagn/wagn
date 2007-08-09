@@ -23,7 +23,7 @@
 <div class="blank"> &nbsp; </div>
 <span class="workspace"></span>
 <span class="content cooked editOnDoubleClick" cardId="<%= card.id %>" inPopup="false">
-<%= render :partial=>partial_for_card_and_action( card, 'content' ), :locals=>{:card=>card, :element=>element} %>
+<%= render :partial=>partial_for_card_and_action( card, 'content' ), :locals=>{:card=>card, :div_id=>div_id} %>
 </span>
 
 <%# FIXME?  do we want to keep doing variables through html? %>
@@ -37,5 +37,4 @@
   
 <%= render :partial=>'card/footer', :locals=>{ :card=>card, :div_id=>card.id.to_s } %>
       
-<span id="<%= element %>-editor" class="editor" style="display: none"></span> 
                                   

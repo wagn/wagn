@@ -174,5 +174,35 @@ class CardController < ApplicationController
     end
   end
   
+  # FIXME: when we fix the options tab to be a regular form and call update,
+  # this can go away.
+  def attribute
+     @attr = params[:attribute]
+     id = @card.id
+     if request.post? 
+       method = case @attr
+                 when 'cardtype'; 'type'
+                 when 'datatype'; 'datatype_key'
+                 when 'plus_datatype'; 'plus_datatype_key' 
+                 else @attr
+                end
+
+       @card.send("#{method}=", params[:value])
+       @card.save
+     end                           
+     @card = Card::Base.find(id)
+     result = 
+       case @attr
+       when 'cardtype'          
+         @card.cardtype.name
+       when 'datatype'    
+         @card.tag.datatype_key
+       when 'plus_datatype'
+         @card.tag.plus_datatype_key
+       else
+         @card.send(@attr)
+       end
+     render :text => result
+   end  
 
 end

@@ -44,7 +44,9 @@
 .card-slot .editor {
   padding: 0px 5px;
   display: block;
-
+}
+.card-slot.new-card .editor {
+  padding: 0px;
 }
 #new-card-name, 
 .card-slot .options-links {
@@ -394,7 +396,7 @@ a.current, a:link.current {
   font-size: 12px;
 }
 .discussion { 
-    background: #e6e6e6;
+    background: #cce;
     padding: 8px;
-  margin: 10px;
+    margin: 0px;
 }

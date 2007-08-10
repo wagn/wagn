@@ -264,9 +264,9 @@ Object.extend(Wagn.Card.prototype, {
     { asynchronous: false, 
       parameters: this._common_parameters()  
     });
-   warn("LOADING EDITOR");
    $(this.slot.id+'-comment').value='';
-   new Wagn.Card( this.slot );
+   c = new Wagn.Card( this.slot );
+   c.loadEditor();
   },
   cancel: function() {
     this.highlight();

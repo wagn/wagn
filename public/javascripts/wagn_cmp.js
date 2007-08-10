@@ -7192,9 +7192,9 @@ this.highlight_tab("options");
 this.workspace.show();
 },reload:function(){
 new Ajax.Updater(this.slot.id+"-card","/card/view/"+this.id(),{asynchronous:false,parameters:this._common_parameters()});
-warn("LOADING EDITOR");
 $(this.slot.id+"-comment").value="";
-new Wagn.Card(this.slot);
+c=new Wagn.Card(this.slot);
+c.loadEditor();
 },cancel:function(){
 this.highlight();
 this.view();
@@ -7566,7 +7566,7 @@ Wikiwyg.Wysiwyg.prototype.config["editHeightAdjustment"]=1.1;
 Object.extend(Wikiwyg.Mode.prototype,{get_edit_height:function(){
 var _6cc=this.wikiwyg.divHeight;
 if(_6cc=="0"){
-_6cc=this.wikiwyg.div.parentNode.parentNode.parentNode.viewHeight-40;
+_6cc=this.wikiwyg.div.parentNode.parentNode.viewHeight-40;
 }
 var _6cd=parseInt(_6cc*this.config.editHeightAdjustment);
 var min=this.config.editHeightMinimum;

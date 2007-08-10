@@ -54,6 +54,16 @@ class CardActionTest < ActionController::IntegrationTest
     assert_nil Card.find_by_name("Boo")
   end
   
+  # FIXME: there should be a test for card comments here.  I keep getting 403
+=begin  
+  def test_comment
+    @a = Card.find_by_name("A")  
+    @a.appender = Role.find_by_codename('anon')
+    @a.save
+    post "card/comment/#{@a.id}", :card => { :comment=>"how come" }
+    assert_response :success
+  end 
+=end  
   
   private
     def login

@@ -105,9 +105,11 @@ module Card
         c = find_or_new(args); c.save; c
       end
       
-      def find_or_new(args) 
+      def find_or_new(args)  
+        # FIXME -- this finds cards in or out of the trash-- we need that for
+        # renaming card in the trash, but may cause other problems.
         raise "Must specify :name to find_or_create" if args[:name].blank?
-        (c = Card::Base.find_by_name(args[:name])) ? c : default_class.new(args)
+        (c = Card::Base.find_by_key(args[:name].to_key)) ? c : default_class.new(args)
       end                      
                                   
       # sorry, I know the next two aren't DRY, I couldn't figure out how else to do it.
@@ -313,7 +315,8 @@ module Card
       end
       
       def find_by_wql( wql, options={})
-        warn "find_by_wql: #{wql} " if System.debug_wql
+        warn "find_by_wql: #{wql} " if System.debug_wql 
+        ActiveRecord::Base.logger.info("WQL #{wql}")
         statement = Wql::Parser.new.parse( wql )
         cards = self.find_by_sql statement.to_s
         statement.post_sql.each do |step|
@@ -369,8 +372,8 @@ module Card
         rec.errors.add :name, "#{value} in use as a tag" if (value.junction? and rec.simple? and rec.left_junctions.size>0)
 
         # validate uniqueness of name
-        condition_sql = "cards.key = ?"
-        condition_params = [ value.to_key ]   
+        condition_sql = "cards.key = ? and trash=?"
+        condition_params = [ value.to_key, false ]   
         unless rec.new_record?
           condition_sql << " AND cards.id <> ?" 
           condition_params << rec.id

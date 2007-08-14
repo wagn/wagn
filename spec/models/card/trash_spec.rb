@@ -1,6 +1,25 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
 
+describe Card, "rename to trashed name" do
+  before do
+    User.as :admin
+    @a = Card.find_by_name("A")
+    @b = Card.find_by_name("B")
+    @a.destroy!  #trash
+    @b.update_attributes! :name=>"A"
+  end
+  
+  it "should rename b to a" do
+    @b.name.should == 'A'
+  end
+  
+  it "should rename a to a*trash" do
+    @a.name.should == 'A*trash'
+  end
+end
+
+=begin
 
 describe Card, "sending to trash" do
   before do
@@ -72,4 +91,6 @@ describe Card, "junction revival" do
   it "should have a new revision" do
     @c.content.should == 'revived content'
   end
-end
+end 
+     
+=end

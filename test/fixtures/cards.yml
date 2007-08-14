@@ -3,7 +3,7 @@ cards_017:
   reader_type: 
   name: Date
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.640854
+  updated_at: 2007-08-10 16:49:54.651888
   created_by: "1"
   current_revision_id: "18"
   tag_id: 
@@ -24,12 +24,12 @@ cards_017:
   key: date
   extension_id: "10"
   sealed: f
-  created_at: 2007-08-08 16:18:15.640854
+  created_at: 2007-08-10 16:49:54.651888
 cards_038: 
   reader_type: 
   name: c3
   appender_id: 
-  updated_at: 2007-08-08 16:18:20.899509
+  updated_at: 2007-08-10 16:49:59.90991
   created_by: "1"
   current_revision_id: "39"
   tag_id: 
@@ -50,12 +50,12 @@ cards_038:
   key: c3
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:20.899509
+  created_at: 2007-08-10 16:49:59.90991
 cards_060: 
   reader_type: 
   name: A+E
   appender_id: 
-  updated_at: 2007-08-08 16:18:23.369033
+  updated_at: 2007-08-10 16:50:02.320211
   created_by: "1"
   current_revision_id: "61"
   tag_id: "60"
@@ -76,12 +76,12 @@ cards_060:
   key: a+e
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:23.369033
+  created_at: 2007-08-10 16:50:02.320211
 cards_059: 
   reader_type: 
   name: E
   appender_id: 
-  updated_at: 2007-08-08 16:18:23.338261
+  updated_at: 2007-08-10 16:50:02.290041
   created_by: "1"
   current_revision_id: "60"
   tag_id: 
@@ -102,12 +102,12 @@ cards_059:
   key: e
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:23.338261
+  created_at: 2007-08-10 16:50:02.290041
 cards_018: 
   reader_type: 
   name: File
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.71608
+  updated_at: 2007-08-10 16:49:54.729507
   created_by: "1"
   current_revision_id: "19"
   tag_id: 
@@ -128,12 +128,12 @@ cards_018:
   key: file
   extension_id: "11"
   sealed: f
-  created_at: 2007-08-08 16:18:15.71608
+  created_at: 2007-08-10 16:49:54.729507
 cards_040: 
   reader_type: 
   name: A
   appender_id: 
-  updated_at: 2007-08-08 16:18:21.024622
+  updated_at: 2007-08-10 16:50:00.033779
   created_by: "1"
   current_revision_id: "41"
   tag_id: 
@@ -154,12 +154,12 @@ cards_040:
   key: a
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:21.024622
+  created_at: 2007-08-10 16:50:00.033779
 cards_039: 
   reader_type: 
   name: Z
   appender_id: 
-  updated_at: 2007-08-08 16:18:20.958253
+  updated_at: 2007-08-10 16:49:59.970527
   created_by: "1"
   current_revision_id: "40"
   tag_id: 
@@ -180,12 +180,12 @@ cards_039:
   key: z
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:20.958253
+  created_at: 2007-08-10 16:49:59.970527
 cards_061: 
   reader_type: 
   name: C+A
   appender_id: 
-  updated_at: 2007-08-08 16:18:23.449053
+  updated_at: 2007-08-10 16:50:02.397504
   created_by: "1"
   current_revision_id: "62"
   tag_id: "41"
@@ -206,12 +206,12 @@ cards_061:
   key: c+a
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:23.449053
+  created_at: 2007-08-10 16:50:02.397504
 cards_020: 
   reader_type: 
   name: Number
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.884289
+  updated_at: 2007-08-10 16:49:54.890815
   created_by: "1"
   current_revision_id: "21"
   tag_id: 
@@ -232,12 +232,12 @@ cards_020:
   key: number
   extension_id: "13"
   sealed: f
-  created_at: 2007-08-08 16:18:15.884289
+  created_at: 2007-08-10 16:49:54.890815
 cards_019: 
   reader_type: 
   name: Image
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.792447
+  updated_at: 2007-08-10 16:49:54.808929
   created_by: "1"
   current_revision_id: "20"
   tag_id: 
@@ -258,12 +258,12 @@ cards_019:
   key: image
   extension_id: "12"
   sealed: f
-  created_at: 2007-08-08 16:18:15.792447
+  created_at: 2007-08-10 16:49:54.808929
 cards_041: 
   reader_type: 
   name: B
   appender_id: 
-  updated_at: 2007-08-08 16:18:21.137926
+  updated_at: 2007-08-10 16:50:00.144069
   created_by: "1"
   current_revision_id: "42"
   tag_id: 
@@ -284,12 +284,12 @@ cards_041:
   key: b
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:21.137926
+  created_at: 2007-08-10 16:50:00.144069
 cards_062: 
   reader_type: 
   name: D+A
   appender_id: 
-  updated_at: 2007-08-08 16:18:23.529833
+  updated_at: 2007-08-10 16:50:02.47713
   created_by: "1"
   current_revision_id: "63"
   tag_id: "41"
@@ -310,12 +310,12 @@ cards_062:
   key: d+a
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:23.529833
+  created_at: 2007-08-10 16:50:02.47713
 cards_021: 
   reader_type: 
   name: Percentage
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.979406
+  updated_at: 2007-08-10 16:49:54.978452
   created_by: "1"
   current_revision_id: "22"
   tag_id: 
@@ -336,12 +336,12 @@ cards_021:
   key: percentage
   extension_id: "14"
   sealed: f
-  created_at: 2007-08-08 16:18:15.979406
+  created_at: 2007-08-10 16:49:54.978452
 cards_042: 
   reader_type: 
   name: T
   appender_id: 
-  updated_at: 2007-08-08 16:18:21.303296
+  updated_at: 2007-08-10 16:50:00.304331
   created_by: "1"
   current_revision_id: "43"
   tag_id: 
@@ -362,12 +362,12 @@ cards_042:
   key: t
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:21.303296
+  created_at: 2007-08-10 16:50:00.304331
 cards_063: 
   reader_type: 
   name: F
   appender_id: 
-  updated_at: 2007-08-08 16:18:23.66645
+  updated_at: 2007-08-10 16:50:02.606749
   created_by: "1"
   current_revision_id: "64"
   tag_id: 
@@ -388,12 +388,12 @@ cards_063:
   key: f
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:23.66645
+  created_at: 2007-08-10 16:50:02.606749
 cards_001: 
   reader_type: 
   name: Hooze Bot
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.219497
+  updated_at: 2007-08-10 16:49:54.240177
   created_by: 
   current_revision_id: "1"
   tag_id: 
@@ -414,12 +414,12 @@ cards_001:
   key: hooze_bot
   extension_id: "2"
   sealed: f
-  created_at: 2007-08-08 16:18:12.65296
+  created_at: 2007-08-10 16:49:51.937817
 cards_022: 
   reader_type: 
   name: PlainText
   appender_id: 
-  updated_at: 2007-08-08 16:18:16.067354
+  updated_at: 2007-08-10 16:49:55.064216
   created_by: "1"
   current_revision_id: "23"
   tag_id: 
@@ -440,12 +440,12 @@ cards_022:
   key: plain_text
   extension_id: "15"
   sealed: f
-  created_at: 2007-08-08 16:18:16.067354
+  created_at: 2007-08-10 16:49:55.064216
 cards_043: 
   reader_type: 
   name: X
   appender_id: 
-  updated_at: 2007-08-08 16:18:21.367401
+  updated_at: 2007-08-10 16:50:00.367036
   created_by: "1"
   current_revision_id: "44"
   tag_id: 
@@ -466,12 +466,12 @@ cards_043:
   key: x
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:21.367401
+  created_at: 2007-08-10 16:50:00.367036
 cards_064: 
   reader_type: 
   name: F+A
   appender_id: 
-  updated_at: 2007-08-08 16:18:23.701096
+  updated_at: 2007-08-10 16:50:02.642793
   created_by: "1"
   current_revision_id: "65"
   tag_id: "41"
@@ -492,12 +492,12 @@ cards_064:
   key: f+a
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:23.701096
+  created_at: 2007-08-10 16:50:02.642793
 cards_023: 
   reader_type: 
   name: Query
   appender_id: 
-  updated_at: 2007-08-08 16:18:16.216687
+  updated_at: 2007-08-10 16:49:55.214763
   created_by: "1"
   current_revision_id: "24"
   tag_id: 
@@ -518,12 +518,12 @@ cards_023:
   key: query
   extension_id: "16"
   sealed: f
-  created_at: 2007-08-08 16:18:16.216687
+  created_at: 2007-08-10 16:49:55.214763
 cards_044: 
   reader_type: 
   name: Y
   appender_id: 
-  updated_at: 2007-08-08 16:18:21.583369
+  updated_at: 2007-08-10 16:50:00.578634
   created_by: "1"
   current_revision_id: "45"
   tag_id: 
@@ -544,12 +544,12 @@ cards_044:
   key: y
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:21.583369
+  created_at: 2007-08-10 16:50:00.578634
 cards_065: 
   reader_type: 
   name: A+B+C
   appender_id: 
-  updated_at: 2007-08-08 16:18:23.796783
+  updated_at: 2007-08-10 16:50:02.736113
   created_by: "1"
   current_revision_id: "66"
   tag_id: "56"
@@ -570,12 +570,12 @@ cards_065:
   key: a+b+c
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:23.796783
+  created_at: 2007-08-10 16:50:02.736113
 cards_002: 
   reader_type: 
   name: Admin
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.227168
+  updated_at: 2007-08-10 16:49:54.247599
   created_by: 
   current_revision_id: "2"
   tag_id: 
@@ -596,12 +596,12 @@ cards_002:
   key: admin
   extension_id: "1"
   sealed: f
-  created_at: 2007-08-08 16:18:12.747922
+  created_at: 2007-08-10 16:49:52.009611
 cards_045: 
   reader_type: 
   name: A+B
   appender_id: 
-  updated_at: 2007-08-08 16:18:21.818145
+  updated_at: 2007-08-10 16:50:00.811879
   created_by: "1"
   current_revision_id: "46"
   tag_id: "42"
@@ -622,12 +622,12 @@ cards_045:
   key: a+b
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:21.818145
+  created_at: 2007-08-10 16:50:00.811879
 cards_066: 
   reader_type: 
   name: Cardtype A
   appender_id: 
-  updated_at: 2007-08-08 16:18:23.948174
+  updated_at: 2007-08-10 16:50:02.884174
   created_by: "1"
   current_revision_id: "67"
   tag_id: 
@@ -648,12 +648,12 @@ cards_066:
   key: cardtype_a
   extension_id: "20"
   sealed: f
-  created_at: 2007-08-08 16:18:23.948174
+  created_at: 2007-08-10 16:50:02.884174
 cards_003: 
   reader_type: 
   name: Basic
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.235435
+  updated_at: 2007-08-10 16:49:54.254615
   created_by: 
   current_revision_id: "3"
   tag_id: 
@@ -674,12 +674,12 @@ cards_003:
   key: basic
   extension_id: "1"
   sealed: f
-  created_at: 2007-08-08 16:18:12.815355
+  created_at: 2007-08-10 16:49:52.064395
 cards_024: 
   reader_type: 
   name: Ruby
   appender_id: 
-  updated_at: 2007-08-08 16:18:16.300463
+  updated_at: 2007-08-10 16:49:55.292386
   created_by: "1"
   current_revision_id: "25"
   tag_id: 
@@ -700,12 +700,12 @@ cards_024:
   key: ruby
   extension_id: "17"
   sealed: f
-  created_at: 2007-08-08 16:18:16.300463
+  created_at: 2007-08-10 16:49:55.292386
 cards_067: 
   reader_type: 
   name: Cardtype B
   appender_id: 
-  updated_at: 2007-08-08 16:18:24.022672
+  updated_at: 2007-08-10 16:50:02.95232
   created_by: "1"
   current_revision_id: "68"
   tag_id: 
@@ -726,12 +726,12 @@ cards_067:
   key: cardtype_b
   extension_id: "21"
   sealed: f
-  created_at: 2007-08-08 16:18:24.022672
+  created_at: 2007-08-10 16:50:02.95232
 cards_004: 
   reader_type: 
   name: User
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.243164
+  updated_at: 2007-08-10 16:49:54.261415
   created_by: 
   current_revision_id: "5"
   tag_id: 
@@ -752,12 +752,12 @@ cards_004:
   key: user
   extension_id: "3"
   sealed: f
-  created_at: 2007-08-08 16:18:13.040925
+  created_at: 2007-08-10 16:49:52.270564
 cards_025: 
   reader_type: 
   name: Script
   appender_id: 
-  updated_at: 2007-08-08 16:18:16.377575
+  updated_at: 2007-08-10 16:49:55.373055
   created_by: "1"
   current_revision_id: "26"
   tag_id: 
@@ -778,12 +778,12 @@ cards_025:
   key: script
   extension_id: "18"
   sealed: f
-  created_at: 2007-08-08 16:18:16.377575
+  created_at: 2007-08-10 16:49:55.373055
 cards_046: 
   reader_type: 
   name: One
   appender_id: 
-  updated_at: 2007-08-08 16:18:22.163325
+  updated_at: 2007-08-10 16:50:01.142074
   created_by: "1"
   current_revision_id: "47"
   tag_id: 
@@ -804,12 +804,12 @@ cards_046:
   key: one
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:22.163325
+  created_at: 2007-08-10 16:50:01.142074
 cards_068: 
   reader_type: 
   name: Cardtype C
   appender_id: 
-  updated_at: 2007-08-08 16:18:24.099439
+  updated_at: 2007-08-10 16:50:03.021179
   created_by: "1"
   current_revision_id: "69"
   tag_id: 
@@ -830,12 +830,12 @@ cards_068:
   key: cardtype_c
   extension_id: "22"
   sealed: f
-  created_at: 2007-08-08 16:18:24.099439
+  created_at: 2007-08-10 16:50:03.021179
 cards_005: 
   reader_type: 
   name: Cardtype
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.251579
+  updated_at: 2007-08-10 16:49:54.26899
   created_by: 
   current_revision_id: "6"
   tag_id: 
@@ -856,12 +856,12 @@ cards_005:
   key: cardtype
   extension_id: "4"
   sealed: f
-  created_at: 2007-08-08 16:18:13.107483
+  created_at: 2007-08-10 16:49:52.336082
 cards_026: 
   reader_type: 
   name: RichText
   appender_id: 
-  updated_at: 2007-08-08 16:18:16.464883
+  updated_at: 2007-08-10 16:49:55.46026
   created_by: "1"
   current_revision_id: "27"
   tag_id: 
@@ -882,12 +882,12 @@ cards_026:
   key: rich_text
   extension_id: "19"
   sealed: f
-  created_at: 2007-08-08 16:18:16.464883
+  created_at: 2007-08-10 16:49:55.46026
 cards_047: 
   reader_type: 
   name: Two
   appender_id: 
-  updated_at: 2007-08-08 16:18:22.216892
+  updated_at: 2007-08-10 16:50:01.19471
   created_by: "1"
   current_revision_id: "48"
   tag_id: 
@@ -908,12 +908,12 @@ cards_047:
   key: two
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:22.216892
+  created_at: 2007-08-10 16:50:01.19471
 cards_070: 
   reader_type: 
   name: Cardtype E
   appender_id: 
-  updated_at: 2007-08-08 16:18:24.2492
+  updated_at: 2007-08-10 16:50:03.168788
   created_by: "1"
   current_revision_id: "71"
   tag_id: 
@@ -934,12 +934,12 @@ cards_070:
   key: cardtype_e
   extension_id: "24"
   sealed: f
-  created_at: 2007-08-08 16:18:24.2492
+  created_at: 2007-08-10 16:50:03.168788
 cards_069: 
   reader_type: 
   name: Cardtype D
   appender_id: 
-  updated_at: 2007-08-08 16:18:24.173609
+  updated_at: 2007-08-10 16:50:03.095638
   created_by: "1"
   current_revision_id: "70"
   tag_id: 
@@ -960,12 +960,12 @@ cards_069:
   key: cardtype_d
   extension_id: "23"
   sealed: f
-  created_at: 2007-08-08 16:18:24.173609
+  created_at: 2007-08-10 16:50:03.095638
 cards_006: 
   reader_type: 
   name: Company
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.258247
+  updated_at: 2007-08-10 16:49:54.275331
   created_by: 
   current_revision_id: "7"
   tag_id: 
@@ -986,12 +986,12 @@ cards_006:
   key: company
   extension_id: "5"
   sealed: f
-  created_at: 2007-08-08 16:18:13.177219
+  created_at: 2007-08-10 16:49:52.400447
 cards_027: 
   reader_type: 
   name: Joe User
   appender_id: 
-  updated_at: 2007-08-08 16:18:19.958969
+  updated_at: 2007-08-10 16:49:58.974625
   created_by: "1"
   current_revision_id: "28"
   tag_id: 
@@ -1012,12 +1012,12 @@ cards_027:
   key: joe_user
   extension_id: "4"
   sealed: f
-  created_at: 2007-08-08 16:18:19.958969
+  created_at: 2007-08-10 16:49:58.974625
 cards_048: 
   reader_type: 
   name: One+Two
   appender_id: 
-  updated_at: 2007-08-08 16:18:22.250358
+  updated_at: 2007-08-10 16:50:01.227948
   created_by: "1"
   current_revision_id: "49"
   tag_id: "48"
@@ -1038,12 +1038,12 @@ cards_048:
   key: one+two
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:22.250358
+  created_at: 2007-08-10 16:50:01.227948
 cards_071: 
   reader_type: 
   name: Cardtype F
   appender_id: 
-  updated_at: 2007-08-08 16:18:24.324315
+  updated_at: 2007-08-10 16:50:03.244504
   created_by: "1"
   current_revision_id: "72"
   tag_id: 
@@ -1064,12 +1064,12 @@ cards_071:
   key: cardtype_f
   extension_id: "25"
   sealed: f
-  created_at: 2007-08-08 16:18:24.324315
+  created_at: 2007-08-10 16:50:03.244504
 cards_007: 
   reader_type: 
   name: Role
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.264756
+  updated_at: 2007-08-10 16:49:54.281918
   created_by: 
   current_revision_id: "8"
   tag_id: 
@@ -1090,12 +1090,12 @@ cards_007:
   key: role
   extension_id: "6"
   sealed: f
-  created_at: 2007-08-08 16:18:13.246249
+  created_at: 2007-08-10 16:49:52.465354
 cards_028: 
   reader_type: 
   name: color
   appender_id: 
-  updated_at: 2007-08-08 16:18:20.053586
+  updated_at: 2007-08-10 16:49:59.06276
   created_by: "1"
   current_revision_id: "29"
   tag_id: 
@@ -1116,12 +1116,12 @@ cards_028:
   key: color
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:20.053586
+  created_at: 2007-08-10 16:49:59.06276
 cards_050: 
   reader_type: 
   name: One+Two+Three
   appender_id: 
-  updated_at: 2007-08-08 16:18:22.337737
+  updated_at: 2007-08-10 16:50:01.314804
   created_by: "1"
   current_revision_id: "51"
   tag_id: "50"
@@ -1142,12 +1142,12 @@ cards_050:
   key: one+two+three
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:22.337737
+  created_at: 2007-08-10 16:50:01.314804
 cards_049: 
   reader_type: 
   name: Three
   appender_id: 
-  updated_at: 2007-08-08 16:18:22.304415
+  updated_at: 2007-08-10 16:50:01.282136
   created_by: "1"
   current_revision_id: "50"
   tag_id: 
@@ -1168,12 +1168,12 @@ cards_049:
   key: three
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:22.304415
+  created_at: 2007-08-10 16:50:01.282136
 cards_072: 
   reader_type: 
   name: basicname
   appender_id: 
-  updated_at: 2007-08-08 16:18:24.387343
+  updated_at: 2007-08-10 16:50:03.307089
   created_by: "1"
   current_revision_id: "73"
   tag_id: 
@@ -1194,12 +1194,12 @@ cards_072:
   key: basicname
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:24.387343
+  created_at: 2007-08-10 16:50:03.307089
 cards_008: 
   reader_type: 
   name: Anonymous User
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.271917
+  updated_at: 2007-08-10 16:49:54.28856
   created_by: 
   current_revision_id: "9"
   tag_id: 
@@ -1220,12 +1220,12 @@ cards_008:
   key: anonymous_user
   extension_id: "1"
   sealed: f
-  created_at: 2007-08-08 16:18:13.393705
+  created_at: 2007-08-10 16:49:52.60684
 cards_030: 
   reader_type: 
   name: Ron Request
   appender_id: 
-  updated_at: 2007-08-08 16:18:20.204089
+  updated_at: 2007-08-10 16:49:59.215264
   created_by: "1"
   current_revision_id: "31"
   tag_id: 
@@ -1246,12 +1246,12 @@ cards_030:
   key: ron_request
   extension_id: "5"
   sealed: f
-  created_at: 2007-08-08 16:18:20.204089
+  created_at: 2007-08-10 16:49:59.215264
 cards_029: 
   reader_type: 
   name: basic card
   appender_id: 
-  updated_at: 2007-08-08 16:18:20.120947
+  updated_at: 2007-08-10 16:49:59.13402
   created_by: "1"
   current_revision_id: "30"
   tag_id: 
@@ -1272,12 +1272,12 @@ cards_029:
   key: basic_card
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:20.120947
+  created_at: 2007-08-10 16:49:59.13402
 cards_051: 
   reader_type: 
   name: Four
   appender_id: 
-  updated_at: 2007-08-08 16:18:22.653601
+  updated_at: 2007-08-10 16:50:01.626585
   created_by: "1"
   current_revision_id: "52"
   tag_id: 
@@ -1298,12 +1298,12 @@ cards_051:
   key: four
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:22.653601
+  created_at: 2007-08-10 16:50:01.626585
 cards_073: 
   reader_type: 
   name: type-a-card
   appender_id: 
-  updated_at: 2007-08-08 16:18:24.461707
+  updated_at: 2007-08-10 16:50:03.381137
   created_by: "1"
   current_revision_id: "74"
   tag_id: 
@@ -1324,12 +1324,12 @@ cards_073:
   key: type_a_card
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:24.461707
+  created_at: 2007-08-10 16:50:03.381137
 cards_010: 
   reader_type: 
   name: Administrative User
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.285558
+  updated_at: 2007-08-10 16:49:54.301969
   created_by: 
   current_revision_id: "11"
   tag_id: 
@@ -1350,12 +1350,12 @@ cards_010:
   key: administrative_user
   extension_id: "3"
   sealed: f
-  created_at: 2007-08-08 16:18:13.533281
+  created_at: 2007-08-10 16:49:52.748949
 cards_009: 
   reader_type: 
   name: Authenticated User
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.27879
+  updated_at: 2007-08-10 16:49:54.295348
   created_by: 
   current_revision_id: "10"
   tag_id: 
@@ -1376,12 +1376,12 @@ cards_009:
   key: authenticated_user
   extension_id: "2"
   sealed: f
-  created_at: 2007-08-08 16:18:13.462421
+  created_at: 2007-08-10 16:49:52.680323
 cards_031: 
   reader_type: 
   name: No Count
   appender_id: 
-  updated_at: 2007-08-08 16:18:20.268648
+  updated_at: 2007-08-10 16:49:59.280931
   created_by: "1"
   current_revision_id: "32"
   tag_id: 
@@ -1402,12 +1402,12 @@ cards_031:
   key: no_count
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:20.268648
+  created_at: 2007-08-10 16:49:59.280931
 cards_052: 
   reader_type: 
   name: Four+One
   appender_id: 
-  updated_at: 2007-08-08 16:18:22.68512
+  updated_at: 2007-08-10 16:50:01.657367
   created_by: "1"
   current_revision_id: "53"
   tag_id: "47"
@@ -1428,12 +1428,12 @@ cards_052:
   key: four+one
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:22.68512
+  created_at: 2007-08-10 16:50:01.657367
 cards_074: 
   reader_type: 
   name: type-b-card
   appender_id: 
-  updated_at: 2007-08-08 16:18:24.610213
+  updated_at: 2007-08-10 16:50:03.528117
   created_by: "1"
   current_revision_id: "75"
   tag_id: 
@@ -1454,12 +1454,12 @@ cards_074:
   key: type_b_card
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:24.610213
+  created_at: 2007-08-10 16:50:03.528117
 cards_011: 
   reader_type: 
   name: Wagn
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.292684
+  updated_at: 2007-08-10 16:49:54.308562
   created_by: 
   current_revision_id: "12"
   tag_id: 
@@ -1480,12 +1480,12 @@ cards_011:
   key: wagn
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:13.619317
+  created_at: 2007-08-10 16:49:52.835347
 cards_032: 
   reader_type: 
   name: r1
   appender_id: 
-  updated_at: 2007-08-08 16:18:20.371483
+  updated_at: 2007-08-10 16:49:59.393197
   created_by: "1"
   current_revision_id: "33"
   tag_id: 
@@ -1506,12 +1506,12 @@ cards_032:
   key: r1
   extension_id: "4"
   sealed: f
-  created_at: 2007-08-08 16:18:20.371483
+  created_at: 2007-08-10 16:49:59.393197
 cards_053: 
   reader_type: 
   name: Five
   appender_id: 
-  updated_at: 2007-08-08 16:18:22.733758
+  updated_at: 2007-08-10 16:50:01.705185
   created_by: "1"
   current_revision_id: "54"
   tag_id: 
@@ -1532,12 +1532,12 @@ cards_053:
   key: five
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:22.733758
+  created_at: 2007-08-10 16:50:01.705185
 cards_075: 
   reader_type: 
   name: type-c-card
   appender_id: 
-  updated_at: 2007-08-08 16:18:24.682854
+  updated_at: 2007-08-10 16:50:03.598632
   created_by: "1"
   current_revision_id: "76"
   tag_id: 
@@ -1558,12 +1558,12 @@ cards_075:
   key: type_c_card
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:24.682854
+  created_at: 2007-08-10 16:50:03.598632
 cards_012: 
   reader_type: 
   name: InvitationRequest
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.299765
+  updated_at: 2007-08-10 16:49:54.315396
   created_by: "2"
   current_revision_id: "13"
   tag_id: 
@@ -1584,12 +1584,12 @@ cards_012:
   key: invitation_request
   extension_id: "7"
   sealed: f
-  created_at: 2007-08-08 16:18:14.541012
+  created_at: 2007-08-10 16:49:53.646329
 cards_033: 
   reader_type: 
   name: r2
   appender_id: 
-  updated_at: 2007-08-08 16:18:20.451534
+  updated_at: 2007-08-10 16:49:59.47538
   created_by: "1"
   current_revision_id: "34"
   tag_id: 
@@ -1610,12 +1610,12 @@ cards_033:
   key: r2
   extension_id: "5"
   sealed: f
-  created_at: 2007-08-08 16:18:20.451534
+  created_at: 2007-08-10 16:49:59.47538
 cards_054: 
   reader_type: 
   name: Four+One+Five
   appender_id: 
-  updated_at: 2007-08-08 16:18:22.764177
+  updated_at: 2007-08-10 16:50:01.734864
   created_by: "1"
   current_revision_id: "55"
   tag_id: "54"
@@ -1636,12 +1636,12 @@ cards_054:
   key: four+one+five
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:22.764177
+  created_at: 2007-08-10 16:50:01.734864
 cards_076: 
   reader_type: 
   name: type-d-card
   appender_id: 
-  updated_at: 2007-08-08 16:18:24.748622
+  updated_at: 2007-08-10 16:50:03.689238
   created_by: "1"
   current_revision_id: "77"
   tag_id: 
@@ -1662,12 +1662,12 @@ cards_076:
   key: type_d_card
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:24.748622
+  created_at: 2007-08-10 16:50:03.689238
 cards_034: 
   reader_type: 
   name: r3
   appender_id: 
-  updated_at: 2007-08-08 16:18:20.59474
+  updated_at: 2007-08-10 16:49:59.615202
   created_by: "1"
   current_revision_id: "35"
   tag_id: 
@@ -1688,12 +1688,12 @@ cards_034:
   key: r3
   extension_id: "6"
   sealed: f
-  created_at: 2007-08-08 16:18:20.59474
+  created_at: 2007-08-10 16:49:59.615202
 cards_055: 
   reader_type: 
   name: C
   appender_id: 
-  updated_at: 2007-08-08 16:18:22.937008
+  updated_at: 2007-08-10 16:50:01.901693
   created_by: "1"
   current_revision_id: "56"
   tag_id: 
@@ -1714,12 +1714,12 @@ cards_055:
   key: c
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:22.937008
+  created_at: 2007-08-10 16:50:01.901693
 cards_013: 
   reader_type: 
   name: Setting
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.30731
+  updated_at: 2007-08-10 16:49:54.322267
   created_by: "1"
   current_revision_id: "14"
   tag_id: 
@@ -1740,12 +1740,12 @@ cards_013:
   key: setting
   extension_id: "8"
   sealed: f
-  created_at: 2007-08-08 16:18:14.806671
+  created_at: 2007-08-10 16:49:53.841019
 cards_077: 
   reader_type: 
   name: type-e-card
   appender_id: 
-  updated_at: 2007-08-08 16:18:24.818875
+  updated_at: 2007-08-10 16:50:03.765594
   created_by: "1"
   current_revision_id: "78"
   tag_id: 
@@ -1766,12 +1766,12 @@ cards_077:
   key: type_e_card
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:24.818875
+  created_at: 2007-08-10 16:50:03.765594
 cards_056: 
   reader_type: 
   name: A+C
   appender_id: 
-  updated_at: 2007-08-08 16:18:22.970417
+  updated_at: 2007-08-10 16:50:01.934274
   created_by: "1"
   current_revision_id: "57"
   tag_id: "56"
@@ -1792,12 +1792,12 @@ cards_056:
   key: a+c
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:22.970417
+  created_at: 2007-08-10 16:50:01.934274
 cards_014: 
   reader_type: 
   name: Thank You
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.314393
+  updated_at: 2007-08-10 16:49:54.329991
   created_by: "1"
   current_revision_id: "15"
   tag_id: 
@@ -1818,12 +1818,12 @@ cards_014:
   key: thank_you
   extension_id: "1"
   sealed: f
-  created_at: 2007-08-08 16:18:14.864937
+  created_at: 2007-08-10 16:49:53.891591
 cards_035: 
   reader_type: 
   name: r4
   appender_id: 
-  updated_at: 2007-08-08 16:18:20.655283
+  updated_at: 2007-08-10 16:49:59.679493
   created_by: "1"
   current_revision_id: "36"
   tag_id: 
@@ -1844,12 +1844,12 @@ cards_035:
   key: r4
   extension_id: "7"
   sealed: f
-  created_at: 2007-08-08 16:18:20.655283
+  created_at: 2007-08-10 16:49:59.679493
 cards_078: 
   reader_type: 
   name: type-f-card
   appender_id: 
-  updated_at: 2007-08-08 16:18:24.892815
+  updated_at: 2007-08-10 16:50:03.841095
   created_by: "1"
   current_revision_id: "79"
   tag_id: 
@@ -1870,12 +1870,12 @@ cards_078:
   key: type_f_card
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:24.892815
+  created_at: 2007-08-10 16:50:03.841095
 cards_015: 
   reader_type: 
   name: Anonymous
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.32217
+  updated_at: 2007-08-10 16:49:54.338366
   created_by: "1"
   current_revision_id: "16"
   tag_id: 
@@ -1896,12 +1896,12 @@ cards_015:
   key: anonymous
   extension_id: "3"
   sealed: f
-  created_at: 2007-08-08 16:18:14.94713
+  created_at: 2007-08-10 16:49:53.969968
 cards_036: 
   reader_type: 
   name: c1
   appender_id: 
-  updated_at: 2007-08-08 16:18:20.764381
+  updated_at: 2007-08-10 16:49:59.779934
   created_by: "1"
   current_revision_id: "37"
   tag_id: 
@@ -1922,12 +1922,12 @@ cards_036:
   key: c1
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:20.764381
+  created_at: 2007-08-10 16:49:59.779934
 cards_057: 
   reader_type: 
   name: D
   appender_id: 
-  updated_at: 2007-08-08 16:18:23.103597
+  updated_at: 2007-08-10 16:50:02.068663
   created_by: "1"
   current_revision_id: "58"
   tag_id: 
@@ -1948,12 +1948,12 @@ cards_057:
   key: d
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:23.103597
+  created_at: 2007-08-10 16:50:02.068663
 cards_079: 
   reader_type: 
   name: revtest
   appender_id: 
-  updated_at: 2007-08-08 16:18:25.101226
+  updated_at: 2007-08-10 16:50:04.050505
   created_by: "1"
   current_revision_id: "82"
   tag_id: 
@@ -1974,12 +1974,12 @@ cards_079:
   key: revtest
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:24.959451
+  created_at: 2007-08-10 16:50:03.906956
 cards_016: 
   reader_type: 
   name: Currency
   appender_id: 
-  updated_at: 2007-08-08 16:18:15.481638
+  updated_at: 2007-08-10 16:49:54.493888
   created_by: "1"
   current_revision_id: "17"
   tag_id: 
@@ -2000,12 +2000,12 @@ cards_016:
   key: currency
   extension_id: "9"
   sealed: f
-  created_at: 2007-08-08 16:18:15.481638
+  created_at: 2007-08-10 16:49:54.493888
 cards_037: 
   reader_type: 
   name: c2
   appender_id: 
-  updated_at: 2007-08-08 16:18:20.832438
+  updated_at: 2007-08-10 16:49:59.84476
   created_by: "1"
   current_revision_id: "38"
   tag_id: 
@@ -2026,12 +2026,12 @@ cards_037:
   key: c2
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:20.832438
+  created_at: 2007-08-10 16:49:59.84476
 cards_058: 
   reader_type: 
   name: A+D
   appender_id: 
-  updated_at: 2007-08-08 16:18:23.138705
+  updated_at: 2007-08-10 16:50:02.103282
   created_by: "1"
   current_revision_id: "59"
   tag_id: "58"
@@ -2052,4 +2052,4 @@ cards_058:
   key: a+d
   extension_id: 
   sealed: f
-  created_at: 2007-08-08 16:18:23.138705
+  created_at: 2007-08-10 16:50:02.103282

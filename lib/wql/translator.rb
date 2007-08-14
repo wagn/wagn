@@ -17,6 +17,10 @@ module Wql
     def main_alias
       @stack.last=='' ?  @stack[-2] : @stack.last
     end
+      
+    def card_fields(table)
+      Card::Base.columns.plot(:name).map{|x| "#{table}.#{x}" }.join(", ")
+    end
     
     def relation( v )                  
       #warn "MAIN ALIAS2 #{main_alias}"      
@@ -202,10 +206,14 @@ module Wql
       #warn "FIELD #{v} current_alias #{current_alias}"
       @current_field = v
       case v
-        when "cards_tagged": join_for_field 'tags', '{c}.id={r}.tag_id', 'card_count'
+        when "cards_tagged": 
+          # FIXME: this is a totallly brittle hack for the tag cloud that will
+          # only work for one query
+          statement.group = card_fields(main_alias) + ", t2.type"
+          @current_field= "count(*)"
         when "content":      join_for_field 'revisions', '{c}.id={m}.current_revision_id'
         when "revised_at":   join_for_field 'revisions', '{c}.id={m}.current_revision_id'
-        when "datatype":     join_for_field 'tags', '{c}.id={m}.tag_id AND {m}.trunk_id IS NULL'
+#        when "datatype":     join_for_field 'tags', '{c}.id={m}.tag_id AND {m}.trunk_id IS NULL'
         when "editors":      join_for_field('revisions', '{c}.card_id={m}.id', 'created_by') do |ca|
           #statement.fields << "#{ca}.created_at as edit_time"
         end 

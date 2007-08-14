@@ -18,7 +18,7 @@
 	
 	<% if card.appender_id && System.role_ok?(card.appender_id) %>
     <div class="discussion">
-    <% form_remote_for :card, card, :url=>{ :action=>'comment',:id=>card.id }, :params=>{:id=>card.id} do |f| %>
+    <% form_remote_for :card, card, :url=>{ :controller=>'card',:action=>'comment',:id=>card.id }, :params=>{:id=>card.id} do |f| %>
       <label>Comment:</label><br/> 
       <%= f.text_area :comment, :rows=>3, :id=>div_id+'-comment' %><br/>
 		  <% unless current_user %>

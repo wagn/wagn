@@ -1,6 +1,7 @@
 module Wql
   class SqlStatement
-    attr_accessor :fields, :first_alias, :aliases, :tables, :joins, :where, :order, :limit, :post_sql, :condition_set_stack
+    attr_accessor :fields, :first_alias, :aliases, :tables, 
+      :joins, :where, :group, :order, :limit, :post_sql, :condition_set_stack
     def initialize
       self.aliases=[]
       self.tables=[]
@@ -10,6 +11,7 @@ module Wql
       self.condition_set_stack=[SqlConditionSet.new]
       self.order=""
       self.limit=""
+      self.group=""
       self.post_sql=[]
     end
     
@@ -34,11 +36,18 @@ module Wql
     end
     
     def to_s
-      string = "SELECT DISTINCT #{fields.join(", ")} FROM #{tables.join(", ")} "
+      string = "SELECT"
+      string << " DISTINCT " if group.blank?
+      string << " #{fields.join(", ")} FROM #{tables.join(", ")} "
       string << joins.join(" ")  unless joins.empty?   
       
-      where = condition_set_stack.first.to_s 
-      string << " WHERE #{where}"  unless where.strip.empty? 
+      where = condition_set_stack.first.to_s     
+      unless group.blank?
+        string << " GROUP BY #{group}"
+        string << " HAVING #{where}" unless where.strip.empty?  
+      else
+        string << " WHERE #{where}"  unless where.strip.empty? 
+      end
         
       string << " ORDER BY " + order unless order.strip.empty?
       string << " LIMIT "    + limit.gsub(", ", " OFFSET ") unless limit.strip.empty?

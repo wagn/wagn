@@ -12,11 +12,21 @@ module Card
      
     def set_name(newname)
       oldname = self.name_without_tracking
-      #puts("\nrename #{oldname} => #{newname} ") if self.class.debug   
+      #puts("\nrename #{oldname} => #{newname} ")
       self.name_without_tracking = newname 
       self.key = newname.to_key 
       return if new_record?
       return if oldname==newname
+          
+                                           
+      if trash = Card.find_by_key(newname.to_key)
+        if trash.trash  
+          puts trash.inspect
+          trash.update_attributes! :name=>trash.name+"*trash"
+        else
+          raise "How did this pass the validation?"
+        end
+      end
             
       if newname.junction?
         # move the current card out of the way, in case the new name will require

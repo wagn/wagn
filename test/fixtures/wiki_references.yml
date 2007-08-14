@@ -1,89 +1,89 @@
 --- 
 wiki_references_003: 
-  updated_at: 2007-08-08 16:18:21.39573
+  updated_at: 2007-08-10 16:50:00.394365
   link_type: L
   card_id: "44"
   id: "3"
   referenced_card_id: "41"
   referenced_name: A
-  created_at: 2007-08-08 16:18:21.39573
+  created_at: 2007-08-10 16:50:00.394365
 wiki_references_004: 
-  updated_at: 2007-08-08 16:18:21.410514
+  updated_at: 2007-08-10 16:50:00.4087
   link_type: L
   card_id: "44"
   id: "5"
   referenced_card_id: "43"
   referenced_name: T
-  created_at: 2007-08-08 16:18:21.410514
+  created_at: 2007-08-10 16:50:00.4087
 wiki_references_005: 
-  updated_at: 2007-08-08 16:18:21.754628
+  updated_at: 2007-08-10 16:50:00.74691
   link_type: T
   card_id: "45"
   id: "6"
   referenced_card_id: "40"
   referenced_name: Z
-  created_at: 2007-08-08 16:18:21.754628
+  created_at: 2007-08-10 16:50:00.74691
 wiki_references_006: 
-  updated_at: 2007-08-08 16:18:21.757674
+  updated_at: 2007-08-10 16:50:00.749846
   link_type: T
   card_id: "45"
   id: "7"
   referenced_card_id: "42"
   referenced_name: B
-  created_at: 2007-08-08 16:18:21.757674
+  created_at: 2007-08-10 16:50:00.749846
 wiki_references_007: 
-  updated_at: 2007-08-08 16:18:21.768988
+  updated_at: 2007-08-10 16:50:00.760788
   link_type: L
   card_id: "45"
   id: "9"
   referenced_card_id: "40"
   referenced_name: Z
-  created_at: 2007-08-08 16:18:21.768988
+  created_at: 2007-08-10 16:50:00.760788
 wiki_references_008: 
-  updated_at: 2007-08-08 16:18:21.77189
+  updated_at: 2007-08-10 16:50:00.763503
   link_type: T
   card_id: "45"
   id: "10"
   referenced_card_id: "41"
   referenced_name: A
-  created_at: 2007-08-08 16:18:21.77189
+  created_at: 2007-08-10 16:50:00.763503
 wiki_references_009: 
-  updated_at: 2007-08-08 16:18:21.774818
+  updated_at: 2007-08-10 16:50:00.766247
   link_type: T
   card_id: "45"
   id: "11"
   referenced_card_id: "43"
   referenced_name: T
-  created_at: 2007-08-08 16:18:21.774818
+  created_at: 2007-08-10 16:50:00.766247
 wiki_references_010: 
-  updated_at: 2007-08-08 16:18:21.404218
+  updated_at: 2007-08-10 16:50:00.4028
   link_type: L
   card_id: "44"
   id: "4"
   referenced_card_id: "46"
   referenced_name: A+B
-  created_at: 2007-08-08 16:18:21.404218
+  created_at: 2007-08-10 16:50:00.4028
 wiki_references_011: 
-  updated_at: 2007-08-08 16:18:21.766034
+  updated_at: 2007-08-10 16:50:00.757852
   link_type: T
   card_id: "45"
   id: "8"
   referenced_card_id: "46"
   referenced_name: A+B
-  created_at: 2007-08-08 16:18:21.766034
+  created_at: 2007-08-10 16:50:00.757852
 wiki_references_001: 
-  updated_at: 2007-08-08 16:18:21.059322
+  updated_at: 2007-08-10 16:50:00.067719
   link_type: L
   card_id: "41"
   id: "1"
   referenced_card_id: "40"
   referenced_name: Z
-  created_at: 2007-08-08 16:18:21.059322
+  created_at: 2007-08-10 16:50:00.067719
 wiki_references_002: 
-  updated_at: 2007-08-08 16:18:21.268927
+  updated_at: 2007-08-10 16:50:00.272246
   link_type: T
   card_id: "42"
   id: "2"
   referenced_card_id: "40"
   referenced_name: Z
-  created_at: 2007-08-08 16:18:21.268927
+  created_at: 2007-08-10 16:50:00.272246

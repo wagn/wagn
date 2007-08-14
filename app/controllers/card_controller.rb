@@ -108,7 +108,7 @@ class CardController < ApplicationController
 
   def rollback
     load_card_and_revision
-    @card.revise @revision.content
+    @card.update_attributes! :content=>@revision.content
     render :action=>'edit'
   end  
 

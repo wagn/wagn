@@ -17,10 +17,6 @@ module Wql
     def main_alias
       @stack.last=='' ?  @stack[-2] : @stack.last
     end
-      
-    def card_fields(table)
-      Card::Base.columns.plot(:name).map{|x| "#{table}.#{x}" }.join(", ")
-    end
     
     def relation( v )                  
       #warn "MAIN ALIAS2 #{main_alias}"      
@@ -68,6 +64,7 @@ module Wql
              OR ({r}.reader_type='User' and {r}.reader_id=#{cuid})
              OR ({r}.reader_type='Role' and ru.user_id is not null)
           ) }.substitute!( :r =>root_alias )
+          statement.pending_group << "ru.user_id"
         end
 
         statement.fields << "#{root_alias}.*"  
@@ -209,7 +206,7 @@ module Wql
         when "cards_tagged": 
           # FIXME: this is a totallly brittle hack for the tag cloud that will
           # only work for one query
-          statement.group = card_fields(main_alias) + ", t2.type"
+          statement.group += Card::Base.columns.plot(:name).map{|x| "#{main_alias}.#{x}" } + ["t2.type"]
           @current_field= "count(*)"
         when "content":      join_for_field 'revisions', '{c}.id={m}.current_revision_id'
         when "revised_at":   join_for_field 'revisions', '{c}.id={m}.current_revision_id'

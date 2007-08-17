@@ -1,7 +1,7 @@
 module Wql
   class SqlStatement
     attr_accessor :fields, :first_alias, :aliases, :tables, 
-      :joins, :where, :group, :order, :limit, :post_sql, :condition_set_stack
+      :joins, :where, :group, :order, :limit, :post_sql, :condition_set_stack, :pending_group
     def initialize
       self.aliases=[]
       self.tables=[]
@@ -11,7 +11,8 @@ module Wql
       self.condition_set_stack=[SqlConditionSet.new]
       self.order=""
       self.limit=""
-      self.group=""
+      self.group=[]
+      self.pending_group=[]
       self.post_sql=[]
     end
     
@@ -42,8 +43,8 @@ module Wql
       string << joins.join(" ")  unless joins.empty?   
       
       where = condition_set_stack.first.to_s     
-      unless group.blank?
-        string << " GROUP BY #{group}"
+      unless group.empty?
+        string << " GROUP BY #{(group+pending_group).join(", ")}"
         string << " HAVING #{where}" unless where.strip.empty?  
       else
         string << " WHERE #{where}"  unless where.strip.empty? 

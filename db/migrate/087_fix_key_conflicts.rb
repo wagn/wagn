@@ -21,13 +21,13 @@ class FixKeyConflicts < ActiveRecord::Migration
        elsif (c2.type == 'Basic' and c1.type != 'Basic') or c1.type=='Cardtype'
          print "updating c2 #{c2.name} copy"
          c2.update_attributes(:name=> c2.name + " copy") or
-           c2.update_attributes(:name=> c2.name + " copy2") or
-           c2.update_attributes!(:name=> c2.name + " copy3")
+           c2.update_attributes(:name=> c2.name + " copy 2") or
+           c2.update_attributes!(:name=> c2.name + " copy 3")
        else
          print "updating c1 #{c1.name} copy"
          c1.update_attributes(:name=> c1.name + " copy") or
-          c1.update_attributes(:name=> c1.name + " copy2") or
-          c1.update_attributes!(:name=> c1.name + " copy3")
+          c1.update_attributes(:name=> c1.name + " copy 2") or
+          c1.update_attributes!(:name=> c1.name + " copy 3")
        end  
        puts  "..fixed"
      end  

@@ -2,9 +2,8 @@
 
 <%- 
   # assumes we have a card with datatype query...
-  args = card.datatype.options_from_content
+  args = card.options_from_content
 -%>
-
   <%#= render :partial=>'block/options', :locals=>{:context=>"query_card", :card=>card} %>
 <table>
   <tr>

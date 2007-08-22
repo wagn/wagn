@@ -8,6 +8,9 @@ module Card
       ::Setting.find_by_codename('invitation_request_landing').card.name
     end
       
+    def cacheable?
+      false
+    end
 
     private
     def create_user
@@ -34,8 +37,5 @@ module Card
       false
     end         
     
-    def cacheable?
-      false
-    end
   end
 end

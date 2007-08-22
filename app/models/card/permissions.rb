@@ -99,9 +99,9 @@ module Card
         deny_because "editing is restricted to user #{writer.cardname}"
       end
 
-      if templatee?
-        deny_because "templates can't be edited"
-      end
+      #if templatee?
+      #  deny_because "templates can't be edited"
+      #end
             
       # FIXME - this should move to Script cardtype
       if class_name=='Server' and !System.ok?( :edit_server_cards )

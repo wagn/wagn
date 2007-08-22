@@ -21,7 +21,7 @@ end
 
 describe User, "Anonymous User" do
   before do
-    @u = ::User['anon']
+    User.current_user = ::User['anon']
   end
   
   it "should ok anon role" do System.role_ok?(Role['anon'].id).should be_true end
@@ -30,7 +30,7 @@ end
 
 describe User, "Authenticated User" do
   before do
-    @u = ::User.find_by_login('joe_user')
+    User.current_user = ::User.find_by_login('joe_user')
   end
   it "should ok anon role" do System.role_ok?(Role['anon'].id).should be_true end
   it "should ok auth role" do System.role_ok?(Role['auth'].id).should be_true end
@@ -39,7 +39,7 @@ end
 
 describe User, "Admin User" do
   before do
-    @u = ::User.find_by_login('admin')
+    User.current_user = ::User.find_by_login('admin')
   end
   it "should ok admin role" do System.role_ok?(Role['admin'].id).should be_true end
 end

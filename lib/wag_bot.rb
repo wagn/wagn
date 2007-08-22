@@ -26,7 +26,7 @@ module WagBot
   end
   
   def revise_card( card, content="" )
-    warn "revising #{card.name} to '#{content}'"
+    #warn "revising #{card.name} to '#{content}'"
     User.as(self) do 
       card.content = content
       card.save!

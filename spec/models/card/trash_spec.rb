@@ -15,12 +15,11 @@ describe Card, "rename to trashed name" do
   end
   
   it "should rename a to a*trash" do
-    @a.name.should == 'A*trash'
+    @a.reload.name.should == 'A*trash'
   end
 end
 
 =begin
-
 describe Card, "sending to trash" do
   before do
     User.as :admin

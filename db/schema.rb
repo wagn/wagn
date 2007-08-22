@@ -2,7 +2,7 @@
 # migrations feature of ActiveRecord to incrementally modify your database, and
 # then regenerate this schema definition.
 
-ActiveRecord::Schema.define(:version => 86) do
+ActiveRecord::Schema.define(:version => 88) do
 
   create_table "cards", :force => true do |t|
     t.column "trunk_id",            :integer
@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(:version => 86) do
     t.column "appender_id",         :integer
   end
 
+  add_index "cards", ["key"], :name => "cards_key_uniq", :unique => true
   add_index "cards", ["name"], :name => "cards_name_index"
   add_index "cards", ["trunk_id"], :name => "index_cards_on_trunk_id"
 
@@ -97,7 +98,7 @@ ActiveRecord::Schema.define(:version => 86) do
   end
 
   create_table "system", :force => true do |t|
-    t.column "name", :string
+    t.column "name", :string, :default => ""
   end
 
   create_table "tag_revisions", :force => true do |t|
@@ -110,13 +111,13 @@ ActiveRecord::Schema.define(:version => 86) do
 
   create_table "tags", :force => true do |t|
     t.column "current_revision_id", :integer
-    t.column "datatype",            :string,  :default => "string", :null => false
+    t.column "datatype",            :string,  :default => "string",   :null => false
     t.column "label",               :boolean, :default => false
-    t.column "card_count",          :integer, :default => 0,        :null => false
+    t.column "card_count",          :integer, :default => 0,          :null => false
     t.column "created_by",          :integer
     t.column "updated_by",          :integer
-    t.column "datatype_key",        :string
-    t.column "plus_datatype_key",   :string
+    t.column "datatype_key",        :string,  :default => "RichText"
+    t.column "plus_datatype_key",   :string,  :default => "RichText"
     t.column "plus_template",       :boolean
   end
 
@@ -143,12 +144,12 @@ ActiveRecord::Schema.define(:version => 86) do
   end
 
   create_table "wiki_references", :force => true do |t|
-    t.column "created_at",         :datetime,                                :null => false
-    t.column "updated_at",         :datetime,                                :null => false
-    t.column "card_id",            :integer,                 :default => 0,  :null => false
-    t.column "referenced_name",    :string,   :limit => nil, :default => "", :null => false
+    t.column "created_at",         :datetime,                              :null => false
+    t.column "updated_at",         :datetime,                              :null => false
+    t.column "card_id",            :integer,               :default => 0,  :null => false
+    t.column "referenced_name",    :string,                :default => "", :null => false
     t.column "referenced_card_id", :integer
-    t.column "link_type",          :string,   :limit => 1,   :default => "", :null => false
+    t.column "link_type",          :string,   :limit => 1, :default => "", :null => false
   end
 
 end

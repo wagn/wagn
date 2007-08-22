@@ -31,7 +31,8 @@ class PermissionTest < Test::Unit::TestCase
     @u1, @u2, @u3 = %w( u1 u2 u3 ).map do |x| ::User.find_by_login(x) end
     @r1, @r2, @r3 = %w( r1 r2 r3 ).map do |x| ::Role.find_by_codename(x) end
     @c1, @c2, @c3 = %w( c1 c2 c3 ).map do |x| Card.find_by_name(x) end
-  end   
+  end      
+  
   # test that you can't change group on a card that you can't get it back from.
    # for each user, for each group, try assigning each card to that group and then changing back.
    def test_cant_put_yourself_in_a_corner

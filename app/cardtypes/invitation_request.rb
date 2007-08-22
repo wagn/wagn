@@ -32,7 +32,10 @@ module Card
     
     def approve_edit
       false
+    end         
+    
+    def cacheable?
+      false
     end
-                                
   end
 end

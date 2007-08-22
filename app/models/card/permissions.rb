@@ -77,7 +77,10 @@ module Card
     end
          
     def approve_create
-      require_permission :create_cards
+      if ::User.current_user.login == 'anon'
+        deny_because "only authenticated users can create cards"
+      end
+      #require_permission :create_cards
     end
 
     def approve_read 
@@ -95,7 +98,6 @@ module Card
       if writer and writer_type=='User' and ::User.current_user.id!=writer_id
         deny_because "editing is restricted to user #{writer.cardname}"
       end
-      require_permission :edit_cards
 
       if templatee?
         deny_because "templates can't be edited"

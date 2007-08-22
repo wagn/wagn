@@ -58,10 +58,12 @@ class System < ActiveRecord::Base
     # FIXME stick this in session? cache it somehow??
     def ok_hash
       usr = User.current_user
+      roles = (!usr || usr.login=='anon') ? [Role.find_by_codename('anon')] :
+           usr.roles + [Role.find_by_codename('anon'), Role.find_by_codename('auth')]
         
       ok = {}
       ok[:role_ids] = {}
-      usr.roles.each do |role|
+      roles.each do |role|
         ok[:role_ids][role.id] = true
         role.task_list.each { |t| ok[t] = 1 }
       end

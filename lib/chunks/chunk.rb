@@ -60,7 +60,7 @@ module Chunk
     def revert
       @content.sub!(mask, @text)
       # unregister     
-      warn "deleteing chunk: #{self} from #{@content}"
+      #warn "deleteing chunk: #{self} from #{@content}"
       @content.delete_chunk(self)
     end
 

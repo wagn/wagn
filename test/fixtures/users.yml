@@ -1,78 +1,78 @@
 --- 
 users_004: 
   status: active
-  salt: 4168939f809b3e545c6314face79bcac7a5ada91
-  updated_at: 2007-08-10 16:49:58.778332
+  salt: 6ef6dbccbe030c74a5b8d15393bd5ea6c8ce783b
+  updated_at: 2007-08-21 10:08:39.016229
   cards_per_page: "25"
-  crypted_password: 288eeeae87822650dc3fcc816e842845cad496c2
+  crypted_password: 9d1fe9040dd1d938a8316deb6e51a90da1c4a0fe
   invite_sender_id: "1"
   blocked: f
   password_reset_code: 
   id: "4"
   hide_duplicates: t
   login: joe_user
-  created_at: 2007-08-10 16:49:58.778332
+  created_at: 2007-08-21 10:08:39.016229
   email: joe@user.com
 users_005: 
   status: request
-  salt: a52efb9267ca50a787b0c39adc1c9863e74fec81
-  updated_at: 2007-08-10 16:49:59.177933
+  salt: 9b9a6a73111f94f91a0844e67eaf9695a781d9f7
+  updated_at: 2007-08-21 10:08:39.410701
   cards_per_page: "25"
-  crypted_password: a38b8c71d6932db34e9bb139581c154b3d7e64d8
+  crypted_password: cca7ce22e6359c6f72a73f39eb3a27726f8f311a
   invite_sender_id: 
   blocked: f
   password_reset_code: 
   id: "5"
   hide_duplicates: t
   login: 
-  created_at: 2007-08-10 16:49:59.177933
+  created_at: 2007-08-21 10:08:39.410701
   email: ron@request.com
 users_006: 
   status: active
-  salt: 56d10817015b8b40323e89b05bd1564740bb63e2
-  updated_at: 2007-08-10 16:49:59.318789
+  salt: f4d04c8b67c67f70ab04b6d15afd45133f4c72e3
+  updated_at: 2007-08-21 10:08:39.546325
   cards_per_page: "25"
-  crypted_password: f3bf2ca1352337ca9d939c660e82472cdfe1ddfe
+  crypted_password: e5dd206671ef025958a98f06e1b14321487ec057
   invite_sender_id: "1"
   blocked: f
   password_reset_code: 
   id: "6"
   hide_duplicates: t
   login: u1
-  created_at: 2007-08-10 16:49:59.318789
+  created_at: 2007-08-21 10:08:39.546325
   email: u1@user.com
 users_007: 
   status: active
-  salt: 2a6802c76a197fd87cb9c5b2cb75720824aff0c9
-  updated_at: 2007-08-10 16:49:59.329871
+  salt: 18477128f1f7f0130f04f5a3c3beea2d377ba0c6
+  updated_at: 2007-08-21 10:08:39.555158
   cards_per_page: "25"
-  crypted_password: 2dbd280ea7b6851bb67b56243621d72f71c7d418
+  crypted_password: 517d8c379a6470093a67ab4b69820d80d0f4a3d9
   invite_sender_id: "1"
   blocked: f
   password_reset_code: 
   id: "7"
   hide_duplicates: t
   login: u2
-  created_at: 2007-08-10 16:49:59.329871
+  created_at: 2007-08-21 10:08:39.555158
   email: u2@user.com
 users_008: 
   status: active
-  salt: 03bfb19411816268ea3e0938168137756d5e1d8a
-  updated_at: 2007-08-10 16:49:59.340845
+  salt: f0f8caa87de3b093815308010b7fb500128b7e5e
+  updated_at: 2007-08-21 10:08:39.564075
   cards_per_page: "25"
-  crypted_password: 946d963d584588b17a7e8e7acbdb6c56dcdbec0e
+  crypted_password: bc08679144d8dbdf86c20dd2698f4fef61c59a26
   invite_sender_id: "1"
   blocked: f
   password_reset_code: 
   id: "8"
   hide_duplicates: t
   login: u3
-  created_at: 2007-08-10 16:49:59.340845
+  created_at: 2007-08-21 10:08:39.564075
   email: u3@user.com
 users_001: 
   status: active
   salt: c420fa40c65a38186deb25ba859edacd9bf7d8f8
-  updated_at: 2007-08-10 16:49:51.868833
+  updated_at: 2007-08-21 10:08:32.286899
   cards_per_page: "25"
   crypted_password: 13d124f96e2953fea135c13df097fb3d754588be
   invite_sender_id: "1"
@@ -81,12 +81,12 @@ users_001:
   id: "2"
   hide_duplicates: t
   login: hoozebot
-  created_at: 2007-08-10 16:49:51.868833
+  created_at: 2007-08-21 10:08:32.286899
   email: hoozebot@grasscommons.org
 users_002: 
   status: active
   salt: bf2a748b23e6fc6fa64d5acb99df8e72e308c58c
-  updated_at: 2007-08-10 16:49:53.540502
+  updated_at: 2007-08-21 10:08:33.957871
   cards_per_page: "25"
   crypted_password: 610bb7b564d468ad896e0fe4c3c5c919ea5cf16c
   invite_sender_id: "1"
@@ -95,12 +95,12 @@ users_002:
   id: "1"
   hide_duplicates: t
   login: admin
-  created_at: 2007-08-10 16:49:51.85415
+  created_at: 2007-08-21 10:08:32.272782
   email: webmaster@grasscommons.org
 users_003: 
   status: system
   salt: c420fa40c65a38186deb25ba859edacd9bf7d8f8
-  updated_at: 2007-08-10 16:49:53.719266
+  updated_at: 2007-08-21 10:08:34.142184
   cards_per_page: "25"
   crypted_password: 13d124f96e2953fea135c13df097fb3d754588be
   invite_sender_id: "1"
@@ -109,5 +109,5 @@ users_003:
   id: "3"
   hide_duplicates: t
   login: anon
-  created_at: 2007-08-10 16:49:53.601349
+  created_at: 2007-08-21 10:08:34.018751
   email: anonymous@grasscommons.org

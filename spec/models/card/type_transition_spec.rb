@@ -122,7 +122,10 @@ end
 
 
 describe Card, "type transition destroy callback" do
-  before do @c = change_card_to_type("type-e-card", "Basic") end
+  before do
+    Card::CardtypeE.count = 2
+    @c = change_card_to_type("type-e-card", "Basic") 
+  end
   
   it "should decrement counter in before destroy" do
     Card::CardtypeE.count.should == 1
@@ -134,7 +137,10 @@ describe Card, "type transition destroy callback" do
 end
 
 describe Card, "type transition create callback" do
-  before do @c = change_card_to_type("basicname", 'CardtypeF') end
+  before do 
+    Card::CardtypeF.count = 2
+    @c = change_card_to_type("basicname", 'CardtypeF') 
+  end
     
   it "should increment counter"  do
     Card::CardtypeF.count.should == 3

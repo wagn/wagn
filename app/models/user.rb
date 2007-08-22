@@ -60,6 +60,10 @@ class User < ActiveRecord::Base
     def encrypt(password, salt)
       Digest::SHA1.hexdigest("#{salt}--#{password}--")
     end    
+    
+    def [](login)
+      User.find_by_login(login)
+    end
   end 
 
   def active?

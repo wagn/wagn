@@ -52,6 +52,10 @@ class Role < ActiveRecord::Base
   class << self
     def find_configurables
       @roles = Role.find :all, :conditions=>"codename <> 'admin'"
+    end  
+    
+    def [](codename)
+      Role.find_by_codename(codename)
     end
   end
   

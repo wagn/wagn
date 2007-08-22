@@ -1,3 +1,30 @@
+=== 0.7.0 (August 21, 2007)
+* fix users not activated on invitation
+* fix 'users does not exist' on migration
+* fix transclusion editing
+* ease transclusion editing; add attributer
+* remove user_renderer
+* merged -r29:50 from branches/model_review 
+* restore funked renderers
+* restore user-renderer
+* fix version # :-)
+* add missing user_renderer
+* migration to fix key conflicts
+* fix star card keys
+* fix transclusion editing
+* js for editing transclusion
+* fix invitatin requests
+* fix cardtype switching bug
+* add missing comment template
+* comments bugfix
+* comment look/feel and editor alignment
+* fix editor height
+* fix rollback, comments on non-card pages, tag cloud
+* update key conflict migration
+* fix tag cloud
+* fix bug in query cards
+
+
 === 0.6.2 (July 24, 2007)
 * new card editor bug fix
 * new card editor bug fix

@@ -21,7 +21,6 @@ module Card
                                            
       if trash = Card.find_by_key(newname.to_key)
         if trash.trash  
-          puts trash.inspect
           trash.update_attributes! :name=>trash.name+"*trash"
         else
           raise "How did this pass the validation?"

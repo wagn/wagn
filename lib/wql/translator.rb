@@ -48,7 +48,7 @@ module Wql
         root_table = "cards #{root_alias}"
         if System.always_ok?
           statement.tables << root_table
-        elsif !User.current_user
+        elsif User.current_user.login=='anon' 
           #FIXME: this shouldn't be hardcoded
           statement.tables << root_table
           add_to_statement %{ (

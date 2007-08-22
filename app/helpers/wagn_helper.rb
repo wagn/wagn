@@ -272,7 +272,7 @@ module WagnHelper
       when 'connect'
         link_to_function( name,
            "var form = window.document.forms['connect'];\n" +
-           "form.elements['tag[name]'].value='#{name}';\n" +
+           "form.elements['card[name]'].value='#{name}';\n" +
            "form.onsubmit();",
            options)
       when 'page'

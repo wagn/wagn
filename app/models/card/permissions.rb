@@ -98,10 +98,8 @@ module Card
       if writer and writer_type=='User' and ::User.current_user.id!=writer_id
         deny_because "editing is restricted to user #{writer.cardname}"
       end
-
-      #if templatee?
-      #  deny_because "templates can't be edited"
-      #end
+       
+      # 
             
       # FIXME - this should move to Script cardtype
       if class_name=='Server' and !System.ok?( :edit_server_cards )
@@ -129,6 +127,9 @@ module Card
     end
 
     def approve_content
+      if templatee?
+        deny_because "templates can't be edited"
+      end
       approve_edit unless new_record?
     end
      

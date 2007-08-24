@@ -59,7 +59,7 @@ class System < ActiveRecord::Base
     def ok_hash
       usr = User.current_user
       roles = (!usr || usr.login=='anon') ? [Role.find_by_codename('anon')] :
-           usr.roles + [Role.find_by_codename('anon'), Role.find_by_codename('auth')]
+        usr.roles + [Role.find_by_codename('anon'), Role.find_by_codename('auth')]
         
       ok = {}
       ok[:role_ids] = {}
@@ -92,14 +92,14 @@ class System < ActiveRecord::Base
   
   @@role_tasks = %w{  
     manage_permissions  
-    edit_cards     
+    create_cards
     rename_cards 
-    edit_cardtypes       
-    edit_html           
     remove_cards   
-    set_datatypes
-    invite_users        
+    edit_cards
+    edit_html           
+    edit_cardtypes       
     edit_server_cards
+    invite_users        
     deny_invitation_requests
   }
   

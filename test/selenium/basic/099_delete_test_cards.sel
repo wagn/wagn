@@ -1,6 +1,6 @@
 |open|/card/new||
 |type|new-card-name-field|Short-Lived|
-|selectFrame|iframe-main-body||
+|selectFrame|main-card-1-iframe||
 |type|css=body|I will die soon|
 |selectFrame|relative=top||
 |clickAndWait|commit||

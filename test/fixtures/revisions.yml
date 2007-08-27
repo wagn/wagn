@@ -1,1216 +1,1216 @@
 --- 
 revisions_070: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.394129
+  updated_at: 2007-08-27 15:59:00.164956
 =======
-  updated_at: 2007-08-16 13:16:21.115856
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "70"
   id: "70"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.394129
+  created_at: 2007-08-27 15:59:00.164956
 =======
-  created_at: 2007-08-16 13:16:21.115856
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 revisions_069: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.322571
+  updated_at: 2007-08-27 15:59:00.089416
 =======
-  updated_at: 2007-08-16 13:16:21.023338
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "69"
   id: "69"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.322571
+  created_at: 2007-08-27 15:59:00.089416
 =======
-  created_at: 2007-08-16 13:16:21.023338
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 revisions_006: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:33.902768
+  updated_at: 2007-08-27 15:58:50.014283
 =======
-  updated_at: 2007-08-16 13:16:10.955334
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
   created_by: "2"
   card_id: "6"
   id: "6"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:32.841848
+  created_at: 2007-08-27 15:58:49.023441
 =======
-  created_at: 2007-08-16 13:16:09.877524
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:36
+>>>>>>> .merge-right.r130
 revisions_027: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:39.24554
+  updated_at: 2007-08-27 15:58:55.847206
 =======
-  updated_at: 2007-08-16 13:16:16.609957
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:43
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "27"
   id: "27"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:39.24554
+  created_at: 2007-08-27 15:58:55.847206
 =======
-  created_at: 2007-08-16 13:16:16.609957
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:43
+>>>>>>> .merge-right.r130
 revisions_048: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:41.458422
+  updated_at: 2007-08-27 15:58:58.208
 =======
-  updated_at: 2007-08-16 13:16:19.050076
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "48"
   id: "48"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:41.458422
+  created_at: 2007-08-27 15:58:58.208
 =======
-  created_at: 2007-08-16 13:16:19.050076
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 revisions_071: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.467111
+  updated_at: 2007-08-27 15:59:00.243917
 =======
-  updated_at: 2007-08-16 13:16:21.210525
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "71"
   id: "71"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.467111
+  created_at: 2007-08-27 15:59:00.243917
 =======
-  created_at: 2007-08-16 13:16:21.210525
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 revisions_007: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:33.907218
+  updated_at: 2007-08-27 15:58:50.017484
 =======
-  updated_at: 2007-08-16 13:16:10.960135
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
   created_by: "2"
   card_id: "7"
   id: "7"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:32.897031
+  created_at: 2007-08-27 15:58:49.090935
 =======
-  created_at: 2007-08-16 13:16:09.948343
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:36
+>>>>>>> .merge-right.r130
 revisions_028: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:39.330753
+  updated_at: 2007-08-27 15:58:55.932573
 =======
-  updated_at: 2007-08-16 13:16:16.701921
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:43
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "28"
   id: "28"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:39.330753
+  created_at: 2007-08-27 15:58:55.932573
 =======
-  created_at: 2007-08-16 13:16:16.701921
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:43
+>>>>>>> .merge-right.r130
 revisions_050: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:41.562152
+  updated_at: 2007-08-27 15:58:58.297082
 =======
-  updated_at: 2007-08-16 13:16:19.139662
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "50"
   id: "50"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:41.562152
+  created_at: 2007-08-27 15:58:58.297082
 =======
-  created_at: 2007-08-16 13:16:19.139662
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 revisions_049: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:41.522726
+  updated_at: 2007-08-27 15:58:58.263887
 =======
-  updated_at: 2007-08-16 13:16:19.10565
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "49"
   id: "49"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:41.522726
+  created_at: 2007-08-27 15:58:58.263887
 =======
-  created_at: 2007-08-16 13:16:19.10565
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 revisions_072: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.527471
+  updated_at: 2007-08-27 15:59:00.322815
 =======
-  updated_at: 2007-08-16 13:16:21.367853
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "72"
   id: "72"
   content: basiccontent
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.527471
+  created_at: 2007-08-27 15:59:00.322815
 =======
-  created_at: 2007-08-16 13:16:21.367853
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
 revisions_008: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:33.910463
+  updated_at: 2007-08-27 15:58:50.020733
 =======
-  updated_at: 2007-08-16 13:16:10.965043
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
   created_by: "2"
   card_id: "8"
   id: "8"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:33.02763
+  created_at: 2007-08-27 15:58:49.160409
 =======
-  created_at: 2007-08-16 13:16:10.020017
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:36
+>>>>>>> .merge-right.r130
 revisions_030: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:39.47882
+  updated_at: 2007-08-27 15:58:56.080027
 =======
-  updated_at: 2007-08-16 13:16:16.874439
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:43
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "30"
   id: "30"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:39.47882
+  created_at: 2007-08-27 15:58:56.080027
 =======
-  created_at: 2007-08-16 13:16:16.874439
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:43
+>>>>>>> .merge-right.r130
 revisions_029: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:39.394239
+  updated_at: 2007-08-27 15:58:55.992531
 =======
-  updated_at: 2007-08-16 13:16:16.774468
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:43
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "29"
   id: "29"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:39.394239
+  created_at: 2007-08-27 15:58:55.992531
 =======
-  created_at: 2007-08-16 13:16:16.774468
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:43
+>>>>>>> .merge-right.r130
 revisions_051: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:41.868317
+  updated_at: 2007-08-27 15:58:58.595206
 =======
-  updated_at: 2007-08-16 13:16:19.434467
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "51"
   id: "51"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:41.868317
+  created_at: 2007-08-27 15:58:58.595206
 =======
-  created_at: 2007-08-16 13:16:19.434467
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 revisions_073: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.603254
+  updated_at: 2007-08-27 15:59:00.475728
 =======
-  updated_at: 2007-08-16 13:16:21.452375
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "73"
   id: "73"
   content: type_a_content
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.603254
+  created_at: 2007-08-27 15:59:00.475728
 =======
-  created_at: 2007-08-16 13:16:21.452375
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
 revisions_010: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:33.917023
+  updated_at: 2007-08-27 15:58:50.027301
 =======
-  updated_at: 2007-08-16 13:16:10.973394
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
   created_by: "2"
   card_id: "10"
   id: "10"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:33.145642
+  created_at: 2007-08-27 15:58:49.381568
 =======
-  created_at: 2007-08-16 13:16:10.248169
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:36
+>>>>>>> .merge-right.r130
 revisions_009: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:33.913762
+  updated_at: 2007-08-27 15:58:50.02391
 =======
-  updated_at: 2007-08-16 13:16:10.96919
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
   created_by: "2"
   card_id: "9"
   id: "9"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:33.09071
+  created_at: 2007-08-27 15:58:49.311861
 =======
-  created_at: 2007-08-16 13:16:10.175287
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:36
+>>>>>>> .merge-right.r130
 revisions_031: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:39.535825
+  updated_at: 2007-08-27 15:58:56.146755
 =======
-  updated_at: 2007-08-16 13:16:16.942401
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:43
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "31"
   id: "31"
   content: I got not account
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:39.535825
+  created_at: 2007-08-27 15:58:56.146755
 =======
-  created_at: 2007-08-16 13:16:16.942401
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:43
+>>>>>>> .merge-right.r130
 revisions_052: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:41.898345
+  updated_at: 2007-08-27 15:58:58.626534
 =======
-  updated_at: 2007-08-16 13:16:19.465779
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "52"
   id: "52"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:41.898345
+  created_at: 2007-08-27 15:58:58.626534
 =======
-  created_at: 2007-08-16 13:16:19.465779
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 revisions_074: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.773527
+  updated_at: 2007-08-27 15:59:00.554264
 =======
-  updated_at: 2007-08-16 13:16:21.519873
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "74"
   id: "74"
   content: type_b_content
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.773527
+  created_at: 2007-08-27 15:59:00.554264
 =======
-  created_at: 2007-08-16 13:16:21.519873
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
 revisions_011: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:33.920306
+  updated_at: 2007-08-27 15:58:50.030551
 =======
-  updated_at: 2007-08-16 13:16:10.977158
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
   created_by: "2"
   card_id: "11"
   id: "11"
   content: To get started, you need to <a href="/wagn/new">activate the admin account</a>.  After that, you'll want to edit this frontpage card
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:33.214566
+  created_at: 2007-08-27 15:58:49.462426
 =======
-  created_at: 2007-08-16 13:16:10.333715
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:36
+>>>>>>> .merge-right.r130
 revisions_032: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:39.649407
+  updated_at: 2007-08-27 15:58:56.269721
 =======
-  updated_at: 2007-08-16 13:16:17.075897
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "32"
   id: "32"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:39.649407
+  created_at: 2007-08-27 15:58:56.269721
 =======
-  created_at: 2007-08-16 13:16:17.075897
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
 revisions_053: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:41.946595
+  updated_at: 2007-08-27 15:58:58.67624
 =======
-  updated_at: 2007-08-16 13:16:19.515263
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "53"
   id: "53"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:41.946595
+  created_at: 2007-08-27 15:58:58.67624
 =======
-  created_at: 2007-08-16 13:16:19.515263
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 revisions_075: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.844949
+  updated_at: 2007-08-27 15:59:00.640215
 =======
-  updated_at: 2007-08-16 13:16:21.593971
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "75"
   id: "75"
   content: type_c_content
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.844949
+  created_at: 2007-08-27 15:59:00.640215
 =======
-  created_at: 2007-08-16 13:16:21.593971
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
 revisions_012: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:34.078279
+  updated_at: 2007-08-27 15:58:50.209784
 =======
-  updated_at: 2007-08-16 13:16:11.172793
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
   created_by: "2"
   card_id: "12"
   id: "12"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:34.078279
+  created_at: 2007-08-27 15:58:50.209784
 =======
-  created_at: 2007-08-16 13:16:11.172793
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
 revisions_033: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:39.72197
+  updated_at: 2007-08-27 15:58:56.346535
 =======
-  updated_at: 2007-08-16 13:16:17.231824
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "33"
   id: "33"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:39.72197
+  created_at: 2007-08-27 15:58:56.346535
 =======
-  created_at: 2007-08-16 13:16:17.231824
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
 revisions_054: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:41.976034
+  updated_at: 2007-08-27 15:58:58.706342
 =======
-  updated_at: 2007-08-16 13:16:19.548463
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "54"
   id: "54"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:41.976034
+  created_at: 2007-08-27 15:58:58.706342
 =======
-  created_at: 2007-08-16 13:16:19.548463
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 revisions_076: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.91073
+  updated_at: 2007-08-27 15:59:00.722378
 =======
-  updated_at: 2007-08-16 13:16:21.66906
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "76"
   id: "76"
   content: type_d_content
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.91073
+  created_at: 2007-08-27 15:59:00.722378
 =======
-  created_at: 2007-08-16 13:16:21.66906
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
 revisions_034: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:39.852315
+  updated_at: 2007-08-27 15:58:56.486856
 =======
-  updated_at: 2007-08-16 13:16:17.318905
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "34"
   id: "34"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:39.852315
+  created_at: 2007-08-27 15:58:56.486856
 =======
-  created_at: 2007-08-16 13:16:17.318905
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
 revisions_055: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.144855
+  updated_at: 2007-08-27 15:58:58.882145
 =======
-  updated_at: 2007-08-16 13:16:19.728809
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "55"
   id: "55"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.144855
+  created_at: 2007-08-27 15:58:58.882145
 =======
-  created_at: 2007-08-16 13:16:19.728809
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 revisions_013: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:34.275732
+  updated_at: 2007-08-27 15:58:50.313704
 =======
-  updated_at: 2007-08-16 13:16:11.263396
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
   created_by: "2"
   card_id: "13"
   id: "13"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:34.275732
+  created_at: 2007-08-27 15:58:50.313704
 =======
-  created_at: 2007-08-16 13:16:11.263396
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
 revisions_077: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.9783
+  updated_at: 2007-08-27 15:59:00.805842
 =======
-  updated_at: 2007-08-16 13:16:21.745092
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "77"
   id: "77"
   content: type_e_content
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.9783
+  created_at: 2007-08-27 15:59:00.805842
 =======
-  created_at: 2007-08-16 13:16:21.745092
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
 revisions_056: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.177064
+  updated_at: 2007-08-27 15:58:58.915215
 =======
-  updated_at: 2007-08-16 13:16:19.763382
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "56"
   id: "56"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.177064
+  created_at: 2007-08-27 15:58:58.915215
 =======
-  created_at: 2007-08-16 13:16:19.763382
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 revisions_014: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:34.329259
+  updated_at: 2007-08-27 15:58:50.443449
 =======
-  updated_at: 2007-08-16 13:16:11.397223
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
   created_by: "2"
   card_id: "14"
   id: "14"
   content: Your request has been received.  Please note that invitation requests are answered by volunteers,so it may take a bit longer an automated system, but you should get a response within a few days.
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:34.329259
+  created_at: 2007-08-27 15:58:50.443449
 =======
-  created_at: 2007-08-16 13:16:11.397223
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
 revisions_035: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:39.912322
+  updated_at: 2007-08-27 15:58:56.547592
 =======
-  updated_at: 2007-08-16 13:16:17.399317
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "35"
   id: "35"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:39.912322
+  created_at: 2007-08-27 15:58:56.547592
 =======
-  created_at: 2007-08-16 13:16:17.399317
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
 revisions_078: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:44.0472
+  updated_at: 2007-08-27 15:59:00.892144
 =======
-  updated_at: 2007-08-16 13:16:21.819213
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "78"
   id: "78"
   content: type_f_content
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:44.0472
+  created_at: 2007-08-27 15:59:00.892144
 =======
-  created_at: 2007-08-16 13:16:21.819213
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
 revisions_015: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:34.409525
+  updated_at: 2007-08-27 15:58:50.523358
 =======
-  updated_at: 2007-08-16 13:16:11.487073
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
   created_by: "2"
   card_id: "15"
   id: "15"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:34.409525
+  created_at: 2007-08-27 15:58:50.523358
 =======
-  created_at: 2007-08-16 13:16:11.487073
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
 revisions_036: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:40.011594
+  updated_at: 2007-08-27 15:58:56.660983
 =======
-  updated_at: 2007-08-16 13:16:17.504654
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "36"
   id: "36"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:40.011594
+  created_at: 2007-08-27 15:58:56.660983
 =======
-  created_at: 2007-08-16 13:16:17.504654
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
 revisions_057: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.308994
+  updated_at: 2007-08-27 15:58:59.120435
 =======
-  updated_at: 2007-08-16 13:16:19.97005
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "57"
   id: "57"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.308994
+  created_at: 2007-08-27 15:58:59.120435
 =======
-  created_at: 2007-08-16 13:16:19.97005
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 revisions_080: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:44.158378
+  updated_at: 2007-08-27 15:59:01.020091
 =======
-  updated_at: 2007-08-16 13:16:21.957043
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "79"
   id: "80"
   content: second
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:44.158378
+  created_at: 2007-08-27 15:59:01.020091
 =======
-  created_at: 2007-08-16 13:16:21.957043
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
 revisions_079: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:44.103841
+  updated_at: 2007-08-27 15:59:00.964135
 =======
-  updated_at: 2007-08-16 13:16:21.894857
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "79"
   id: "79"
   content: first
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:44.103841
+  created_at: 2007-08-27 15:59:00.964135
 =======
-  created_at: 2007-08-16 13:16:21.894857
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
 revisions_016: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.101355
+  updated_at: 2007-08-27 15:58:51.06568
 =======
-  updated_at: 2007-08-16 13:16:12.069088
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "16"
   id: "16"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.101355
+  created_at: 2007-08-27 15:58:51.06568
 =======
-  created_at: 2007-08-16 13:16:12.069088
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
 revisions_037: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:40.07285
+  updated_at: 2007-08-27 15:58:56.730449
 =======
-  updated_at: 2007-08-16 13:16:17.576988
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "37"
   id: "37"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:40.07285
+  created_at: 2007-08-27 15:58:56.730449
 =======
-  created_at: 2007-08-16 13:16:17.576988
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
 revisions_058: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.409407
+  updated_at: 2007-08-27 15:58:59.149493
 =======
-  updated_at: 2007-08-16 13:16:19.999197
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "58"
   id: "58"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.409407
+  created_at: 2007-08-27 15:58:59.149493
 =======
-  created_at: 2007-08-16 13:16:19.999197
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 revisions_081: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:44.209055
+  updated_at: 2007-08-27 15:59:01.079175
 =======
-  updated_at: 2007-08-16 13:16:22.080811
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "79"
   id: "81"
   content: third
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:44.209055
+  created_at: 2007-08-27 15:59:01.079175
 =======
-  created_at: 2007-08-16 13:16:22.080811
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
 revisions_017: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.180737
+  updated_at: 2007-08-27 15:58:51.296212
 =======
-  updated_at: 2007-08-16 13:16:12.24415
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "17"
   id: "17"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.180737
+  created_at: 2007-08-27 15:58:51.296212
 =======
-  created_at: 2007-08-16 13:16:12.24415
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
 revisions_038: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:40.135934
+  updated_at: 2007-08-27 15:58:56.798658
 =======
-  updated_at: 2007-08-16 13:16:17.646836
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "38"
   id: "38"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:40.135934
+  created_at: 2007-08-27 15:58:56.798658
 =======
-  created_at: 2007-08-16 13:16:17.646836
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
 revisions_060: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.555289
+  updated_at: 2007-08-27 15:58:59.298949
 =======
-  updated_at: 2007-08-16 13:16:20.150894
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "60"
   id: "60"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.555289
+  created_at: 2007-08-27 15:58:59.298949
 =======
-  created_at: 2007-08-16 13:16:20.150894
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 revisions_059: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.525696
+  updated_at: 2007-08-27 15:58:59.268932
 =======
-  updated_at: 2007-08-16 13:16:20.119347
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "59"
   id: "59"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.525696
+  created_at: 2007-08-27 15:58:59.268932
 =======
-  created_at: 2007-08-16 13:16:20.119347
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 revisions_018: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.254854
+  updated_at: 2007-08-27 15:58:51.778399
 =======
-  updated_at: 2007-08-16 13:16:12.333957
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "18"
   id: "18"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.254854
+  created_at: 2007-08-27 15:58:51.778399
 =======
-  created_at: 2007-08-16 13:16:12.333957
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
 revisions_040: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:40.26912
+  updated_at: 2007-08-27 15:58:56.951829
 =======
-  updated_at: 2007-08-16 13:16:17.807832
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "40"
   id: "40"
   content: Alpha [[Z]]
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:40.26912
+  created_at: 2007-08-27 15:58:56.951829
 =======
-  created_at: 2007-08-16 13:16:17.807832
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
 revisions_039: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:40.193123
+  updated_at: 2007-08-27 15:58:56.868407
 =======
-  updated_at: 2007-08-16 13:16:17.713033
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "39"
   id: "39"
   content: I'm here to be referenced to
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:40.193123
+  created_at: 2007-08-27 15:58:56.868407
 =======
-  created_at: 2007-08-16 13:16:17.713033
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
 revisions_061: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.634461
+  updated_at: 2007-08-27 15:58:59.379109
 =======
-  updated_at: 2007-08-16 13:16:20.239746
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "61"
   id: "61"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.634461
+  created_at: 2007-08-27 15:58:59.379109
 =======
-  created_at: 2007-08-16 13:16:20.239746
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 revisions_020: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.41228
+  updated_at: 2007-08-27 15:58:52.029981
 =======
-  updated_at: 2007-08-16 13:16:12.530159
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "20"
   id: "20"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.41228
+  created_at: 2007-08-27 15:58:52.029981
 =======
-  created_at: 2007-08-16 13:16:12.530159
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
 revisions_019: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.333947
+  updated_at: 2007-08-27 15:58:51.958587
 =======
-  updated_at: 2007-08-16 13:16:12.428075
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "19"
   id: "19"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.333947
+  created_at: 2007-08-27 15:58:51.958587
 =======
-  created_at: 2007-08-16 13:16:12.428075
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
 revisions_041: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:40.481538
+  updated_at: 2007-08-27 15:58:57.172568
 =======
-  updated_at: 2007-08-16 13:16:18.010685
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:45
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "41"
   id: "41"
   content: Beta {{Z}}
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:40.481538
+  created_at: 2007-08-27 15:58:57.172568
 =======
-  created_at: 2007-08-16 13:16:18.010685
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:45
+>>>>>>> .merge-right.r130
 revisions_062: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.719729
+  updated_at: 2007-08-27 15:58:59.460858
 =======
-  updated_at: 2007-08-16 13:16:20.322567
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "62"
   id: "62"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.719729
+  created_at: 2007-08-27 15:58:59.460858
 =======
-  created_at: 2007-08-16 13:16:20.322567
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 revisions_021: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.493781
+  updated_at: 2007-08-27 15:58:52.103023
 =======
-  updated_at: 2007-08-16 13:16:12.636575
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "21"
   id: "21"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.493781
+  created_at: 2007-08-27 15:58:52.103023
 =======
-  created_at: 2007-08-16 13:16:12.636575
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
 revisions_042: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:40.531661
+  updated_at: 2007-08-27 15:58:57.233853
 =======
-  updated_at: 2007-08-16 13:16:18.063117
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:45
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "42"
   id: "42"
   content: Theta
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:40.531661
+  created_at: 2007-08-27 15:58:57.233853
 =======
-  created_at: 2007-08-16 13:16:18.063117
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:45
+>>>>>>> .merge-right.r130
 revisions_063: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.849701
+  updated_at: 2007-08-27 15:58:59.592012
 =======
-  updated_at: 2007-08-16 13:16:20.468572
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "63"
   id: "63"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.849701
+  created_at: 2007-08-27 15:58:59.592012
 =======
-  created_at: 2007-08-16 13:16:20.468572
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 revisions_001: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:33.880659
+  updated_at: 2007-08-27 15:58:49.994299
 =======
-  updated_at: 2007-08-16 13:16:10.936314
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
   created_by: "2"
   card_id: "1"
   id: "1"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:32.376271
+  created_at: 2007-08-27 15:58:48.599913
 =======
-  created_at: 2007-08-16 13:16:09.453166
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:35
+>>>>>>> .merge-right.r130
 revisions_022: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.646069
+  updated_at: 2007-08-27 15:58:52.183031
 =======
-  updated_at: 2007-08-16 13:16:12.745466
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "22"
   id: "22"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.646069
+  created_at: 2007-08-27 15:58:52.183031
 =======
-  created_at: 2007-08-16 13:16:12.745466
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
 revisions_043: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:40.616638
+  updated_at: 2007-08-27 15:58:57.330091
 =======
-  updated_at: 2007-08-16 13:16:18.167506
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:45
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "43"
   id: "43"
   content: "[[A]] [[A+B]] [[T]]"
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:40.616638
+  created_at: 2007-08-27 15:58:57.330091
 =======
-  created_at: 2007-08-16 13:16:18.167506
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:45
+>>>>>>> .merge-right.r130
 revisions_064: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.883345
+  updated_at: 2007-08-27 15:58:59.626235
 =======
-  updated_at: 2007-08-16 13:16:20.503185
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "64"
   id: "64"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.883345
+  created_at: 2007-08-27 15:58:59.626235
 =======
-  created_at: 2007-08-16 13:16:20.503185
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 revisions_023: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.719837
+  updated_at: 2007-08-27 15:58:52.267792
 =======
-  updated_at: 2007-08-16 13:16:12.910945
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:39
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "23"
   id: "23"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.719837
+  created_at: 2007-08-27 15:58:52.267792
 =======
-  created_at: 2007-08-16 13:16:12.910945
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:39
+>>>>>>> .merge-right.r130
 revisions_044: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:40.972523
+  updated_at: 2007-08-27 15:58:57.700454
 =======
-  updated_at: 2007-08-16 13:16:18.532937
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:45
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "44"
   id: "44"
   content: "{{B}} {{A+B}} {{A}} {{T}}"
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:40.972523
+  created_at: 2007-08-27 15:58:57.700454
 =======
-  created_at: 2007-08-16 13:16:18.532937
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:45
+>>>>>>> .merge-right.r130
 revisions_065: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.043831
+  updated_at: 2007-08-27 15:58:59.794281
 =======
-  updated_at: 2007-08-16 13:16:20.671553
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "65"
   id: "65"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.043831
+  created_at: 2007-08-27 15:58:59.794281
 =======
-  created_at: 2007-08-16 13:16:20.671553
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 revisions_002: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:33.884822
+  updated_at: 2007-08-27 15:58:49.998971
 =======
-  updated_at: 2007-08-16 13:16:10.940406
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
   created_by: "2"
   card_id: "2"
   id: "2"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:32.456953
+  created_at: 2007-08-27 15:58:48.667259
 =======
-  created_at: 2007-08-16 13:16:09.517783
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:35
+>>>>>>> .merge-right.r130
 revisions_045: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:41.111251
+  updated_at: 2007-08-27 15:58:57.847747
 =======
-  updated_at: 2007-08-16 13:16:18.684498
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:45
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "45"
   id: "45"
   content: AlphaBeta
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:41.111251
+  created_at: 2007-08-27 15:58:57.847747
 =======
-  created_at: 2007-08-16 13:16:18.684498
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:45
+>>>>>>> .merge-right.r130
 revisions_066: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.119055
+  updated_at: 2007-08-27 15:58:59.870838
 =======
-  updated_at: 2007-08-16 13:16:20.746186
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "66"
   id: "66"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.119055
+  created_at: 2007-08-27 15:58:59.870838
 =======
-  created_at: 2007-08-16 13:16:20.746186
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 revisions_003: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:33.888251
+  updated_at: 2007-08-27 15:58:50.003208
 =======
-  updated_at: 2007-08-16 13:16:10.944161
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
   created_by: "2"
   card_id: "3"
   id: "3"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:32.52472
+  created_at: 2007-08-27 15:58:48.812609
 =======
-  created_at: 2007-08-16 13:16:09.666616
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:35
+>>>>>>> .merge-right.r130
 revisions_024: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.794781
+  updated_at: 2007-08-27 15:58:52.351854
 =======
-  updated_at: 2007-08-16 13:16:13.004645
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:39
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "24"
   id: "24"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.794781
+  created_at: 2007-08-27 15:58:52.351854
 =======
-  created_at: 2007-08-16 13:16:13.004645
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:39
+>>>>>>> .merge-right.r130
 revisions_067: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.186318
+  updated_at: 2007-08-27 15:58:59.940005
 =======
-  updated_at: 2007-08-16 13:16:20.837369
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "67"
   id: "67"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.186318
+  created_at: 2007-08-27 15:58:59.940005
 =======
-  created_at: 2007-08-16 13:16:20.837369
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 revisions_004: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:33.895676
+  updated_at: 2007-08-27 15:58:50.007073
 =======
-  updated_at: 2007-08-16 13:16:10.947727
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
   created_by: "2"
   card_id: "4"
   id: "4"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:32.734625
+  created_at: 2007-08-27 15:58:48.886613
 =======
-  created_at: 2007-08-16 13:16:09.746729
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:35
+>>>>>>> .merge-right.r130
 revisions_025: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.871638
+  updated_at: 2007-08-27 15:58:52.500262
 =======
-  updated_at: 2007-08-16 13:16:13.116045
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:39
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "25"
   id: "25"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.871638
+  created_at: 2007-08-27 15:58:52.500262
 =======
-  created_at: 2007-08-16 13:16:13.116045
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:39
+>>>>>>> .merge-right.r130
 revisions_046: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:41.37251
+  updated_at: 2007-08-27 15:58:58.119248
 =======
-  updated_at: 2007-08-16 13:16:18.960897
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "46"
   id: "46"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:41.37251
+  created_at: 2007-08-27 15:58:58.119248
 =======
-  created_at: 2007-08-16 13:16:18.960897
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 revisions_068: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.253592
+  updated_at: 2007-08-27 15:59:00.013944
 =======
-  updated_at: 2007-08-16 13:16:20.92796
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "68"
   id: "68"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.253592
+  created_at: 2007-08-27 15:59:00.013944
 =======
-  created_at: 2007-08-16 13:16:20.92796
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 revisions_005: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:33.899474
+  updated_at: 2007-08-27 15:58:50.010851
 =======
-  updated_at: 2007-08-16 13:16:10.951066
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
   created_by: "2"
   card_id: "5"
   id: "5"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:32.788134
+  created_at: 2007-08-27 15:58:48.955766
 =======
-  created_at: 2007-08-16 13:16:09.810516
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:35
+>>>>>>> .merge-right.r130
 revisions_026: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:36.007771
+  updated_at: 2007-08-27 15:58:52.579362
 =======
-  updated_at: 2007-08-16 13:16:13.223565
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:39
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "26"
   id: "26"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:36.007771
+  created_at: 2007-08-27 15:58:52.579362
 =======
-  created_at: 2007-08-16 13:16:13.223565
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:39
+>>>>>>> .merge-right.r130
 revisions_047: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:41.425877
+  updated_at: 2007-08-27 15:58:58.174612
 =======
-  updated_at: 2007-08-16 13:16:19.016444
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   card_id: "47"
   id: "47"
   content: ""
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:41.425877
+  created_at: 2007-08-27 15:58:58.174612
 =======
-  created_at: 2007-08-16 13:16:19.016444
->>>>>>> .merge-right.r117
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130

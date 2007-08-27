@@ -87,18 +87,28 @@ class System < ActiveRecord::Base
     
   end 
   
-  @@role_tasks = %w{  
-    manage_permissions  
-    create_cards
-    rename_cards 
-    remove_cards   
-    edit_cards
+
+  @@role_tasks = %w{
+    set_global_permissions
+    set_card_permissions
+    set_personal_card_permissions
+    assign_user_roles
+    administrate_users
     edit_html           
-    edit_cardtypes       
-    edit_server_cards
-    invite_users        
-    deny_invitation_requests
   }
+
+=begin
+  manage_permissions  
+  edit_cards     
+  rename_cards 
+  edit_cardtypes       
+  remove_cards   
+  set_datatypes
+  invite_users        
+  edit_server_cards
+  deny_invitation_requests
+=end
+
   
 end
  

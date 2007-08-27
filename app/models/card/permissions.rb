@@ -130,8 +130,8 @@ module Card
     end
      
     def approve_destroy
-      approve_edit
-      require_permission :remove_cards
+      #approve_edit
+      #require_permission :remove_cards
     end
 
     def approve_name 

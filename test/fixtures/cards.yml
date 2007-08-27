@@ -4,10 +4,10 @@ cards_017:
   name: Date
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.155608
+  updated_at: 2007-08-27 15:58:51.127886
 =======
-  updated_at: 2007-08-16 13:16:12.147251
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "17"
   tag_id: 
@@ -15,10 +15,10 @@ cards_017:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "17"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -27,21 +27,22 @@ cards_017:
   writer_id: 
   key: date
   extension_id: "9"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.155608
+  sealed: f
+  created_at: 2007-08-27 15:58:51.127886
 =======
-  created_at: 2007-08-16 13:16:12.147251
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
 cards_038: 
   reader_type: 
   name: c3
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:40.109446
+  updated_at: 2007-08-27 15:58:56.772151
 =======
-  updated_at: 2007-08-16 13:16:17.619352
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "38"
   tag_id: 
@@ -49,10 +50,10 @@ cards_038:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "38"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -61,21 +62,22 @@ cards_038:
   writer_id: 
   key: c3
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:40.109446
+  sealed: f
+  created_at: 2007-08-27 15:58:56.772151
 =======
-  created_at: 2007-08-16 13:16:17.619352
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
 cards_060: 
   reader_type: 
   name: A+E
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.530358
+  updated_at: 2007-08-27 15:58:59.273749
 =======
-  updated_at: 2007-08-16 13:16:20.124084
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "60"
   tag_id: "59"
@@ -83,10 +85,10 @@ cards_060:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "60"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -95,21 +97,22 @@ cards_060:
   writer_id: 
   key: a+e
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.530358
+  sealed: f
+  created_at: 2007-08-27 15:58:59.273749
 =======
-  created_at: 2007-08-16 13:16:20.124084
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 cards_059: 
   reader_type: 
   name: E
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.500103
+  updated_at: 2007-08-27 15:58:59.24269
 =======
-  updated_at: 2007-08-16 13:16:20.093313
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "59"
   tag_id: 
@@ -117,10 +120,10 @@ cards_059:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "59"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -129,21 +132,22 @@ cards_059:
   writer_id: 
   key: e
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.500103
+  sealed: f
+  created_at: 2007-08-27 15:58:59.24269
 =======
-  created_at: 2007-08-16 13:16:20.093313
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 cards_018: 
   reader_type: 
   name: File
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.228936
+  updated_at: 2007-08-27 15:58:51.681507
 =======
-  updated_at: 2007-08-16 13:16:12.308233
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "18"
   tag_id: 
@@ -151,10 +155,10 @@ cards_018:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "18"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -163,21 +167,22 @@ cards_018:
   writer_id: 
   key: file
   extension_id: "10"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.228936
+  sealed: f
+  created_at: 2007-08-27 15:58:51.681507
 =======
-  created_at: 2007-08-16 13:16:12.308233
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
 cards_040: 
   reader_type: 
   name: A
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:40.227095
+  updated_at: 2007-08-27 15:58:56.909269
 =======
-  updated_at: 2007-08-16 13:16:17.757111
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "40"
   tag_id: 
@@ -185,10 +190,10 @@ cards_040:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "40"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -197,21 +202,22 @@ cards_040:
   writer_id: 
   key: a
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:40.227095
+  sealed: f
+  created_at: 2007-08-27 15:58:56.909269
 =======
-  created_at: 2007-08-16 13:16:17.757111
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
 cards_039: 
   reader_type: 
   name: Z
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:40.166197
+  updated_at: 2007-08-27 15:58:56.841097
 =======
-  updated_at: 2007-08-16 13:16:17.684921
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "39"
   tag_id: 
@@ -219,10 +225,10 @@ cards_039:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "39"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -231,21 +237,22 @@ cards_039:
   writer_id: 
   key: z
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:40.166197
+  sealed: f
+  created_at: 2007-08-27 15:58:56.841097
 =======
-  created_at: 2007-08-16 13:16:17.684921
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
 cards_061: 
   reader_type: 
   name: C+A
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.607688
+  updated_at: 2007-08-27 15:58:59.351924
 =======
-  updated_at: 2007-08-16 13:16:20.213077
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "61"
   tag_id: "40"
@@ -253,10 +260,10 @@ cards_061:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "61"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -265,21 +272,22 @@ cards_061:
   writer_id: 
   key: c+a
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.607688
+  sealed: f
+  created_at: 2007-08-27 15:58:59.351924
 =======
-  created_at: 2007-08-16 13:16:20.213077
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 cards_020: 
   reader_type: 
   name: Number
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.384226
+  updated_at: 2007-08-27 15:58:52.004372
 =======
-  updated_at: 2007-08-16 13:16:12.501679
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "20"
   tag_id: 
@@ -287,10 +295,10 @@ cards_020:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "20"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -299,21 +307,22 @@ cards_020:
   writer_id: 
   key: number
   extension_id: "12"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.384226
+  sealed: f
+  created_at: 2007-08-27 15:58:52.004372
 =======
-  created_at: 2007-08-16 13:16:12.501679
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
 cards_019: 
   reader_type: 
   name: Image
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.306537
+  updated_at: 2007-08-27 15:58:51.933561
 =======
-  updated_at: 2007-08-16 13:16:12.401516
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "19"
   tag_id: 
@@ -321,10 +330,10 @@ cards_019:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "19"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -333,21 +342,22 @@ cards_019:
   writer_id: 
   key: image
   extension_id: "11"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.306537
+  sealed: f
+  created_at: 2007-08-27 15:58:51.933561
 =======
-  created_at: 2007-08-16 13:16:12.401516
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
 cards_041: 
   reader_type: 
   name: B
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:40.336581
+  updated_at: 2007-08-27 15:58:57.036591
 =======
-  updated_at: 2007-08-16 13:16:17.881845
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:45
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "41"
   tag_id: 
@@ -355,10 +365,10 @@ cards_041:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "41"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -367,21 +377,22 @@ cards_041:
   writer_id: 
   key: b
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:40.336581
+  sealed: f
+  created_at: 2007-08-27 15:58:57.036591
 =======
-  created_at: 2007-08-16 13:16:17.881845
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:45
+>>>>>>> .merge-right.r130
 cards_062: 
   reader_type: 
   name: D+A
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.692748
+  updated_at: 2007-08-27 15:58:59.433176
 =======
-  updated_at: 2007-08-16 13:16:20.294652
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "62"
   tag_id: "40"
@@ -389,10 +400,10 @@ cards_062:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "62"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -401,21 +412,22 @@ cards_062:
   writer_id: 
   key: d+a
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.692748
+  sealed: f
+  created_at: 2007-08-27 15:58:59.433176
 =======
-  created_at: 2007-08-16 13:16:20.294652
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 cards_021: 
   reader_type: 
   name: Percentage
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.464524
+  updated_at: 2007-08-27 15:58:52.076175
 =======
-  updated_at: 2007-08-16 13:16:12.605843
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "21"
   tag_id: 
@@ -423,10 +435,10 @@ cards_021:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "21"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -435,21 +447,22 @@ cards_021:
   writer_id: 
   key: percentage
   extension_id: "13"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.464524
+  sealed: f
+  created_at: 2007-08-27 15:58:52.076175
 =======
-  created_at: 2007-08-16 13:16:12.605843
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
 cards_042: 
   reader_type: 
   name: T
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:40.507981
+  updated_at: 2007-08-27 15:58:57.209505
 =======
-  updated_at: 2007-08-16 13:16:18.038518
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:45
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "42"
   tag_id: 
@@ -457,10 +470,10 @@ cards_042:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "42"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -469,21 +482,22 @@ cards_042:
   writer_id: 
   key: t
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:40.507981
+  sealed: f
+  created_at: 2007-08-27 15:58:57.209505
 =======
-  created_at: 2007-08-16 13:16:18.038518
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:45
+>>>>>>> .merge-right.r130
 cards_063: 
   reader_type: 
   name: F
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.820235
+  updated_at: 2007-08-27 15:58:59.561968
 =======
-  updated_at: 2007-08-16 13:16:20.438529
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "63"
   tag_id: 
@@ -491,10 +505,10 @@ cards_063:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "63"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -503,21 +517,22 @@ cards_063:
   writer_id: 
   key: f
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.820235
+  sealed: f
+  created_at: 2007-08-27 15:58:59.561968
 =======
-  created_at: 2007-08-16 13:16:20.438529
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 cards_001: 
   reader_type: 
   name: Hooze Bot
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:34.665557
+  updated_at: 2007-08-27 15:58:50.706855
 =======
-  updated_at: 2007-08-16 13:16:11.678712
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: 
   current_revision_id: "1"
   tag_id: 
@@ -525,10 +540,10 @@ cards_001:
   extension_type: User
   type: User
   reader_id: 
-  plus_sidebar: 
+  plus_sidebar: "0"
   updated_by: "2"
   id: "1"
-  trash: f
+  trash: "0"
   old_tag_id: "1"
   writer_type: 
   value: 
@@ -537,21 +552,22 @@ cards_001:
   writer_id: 
   key: hooze_bot
   extension_id: "2"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:32.357873
+  sealed: f
+  created_at: 2007-08-27 15:58:48.574278
 =======
-  created_at: 2007-08-16 13:16:09.432534
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:35
+>>>>>>> .merge-right.r130
 cards_022: 
   reader_type: 
   name: PlainText
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.547515
+  updated_at: 2007-08-27 15:58:52.155278
 =======
-  updated_at: 2007-08-16 13:16:12.714485
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "22"
   tag_id: 
@@ -559,10 +575,10 @@ cards_022:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "22"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -571,21 +587,22 @@ cards_022:
   writer_id: 
   key: plain_text
   extension_id: "14"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.547515
+  sealed: f
+  created_at: 2007-08-27 15:58:52.155278
 =======
-  created_at: 2007-08-16 13:16:12.714485
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
 cards_043: 
   reader_type: 
   name: X
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:40.568216
+  updated_at: 2007-08-27 15:58:57.28119
 =======
-  updated_at: 2007-08-16 13:16:18.109654
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:45
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "43"
   tag_id: 
@@ -593,10 +610,10 @@ cards_043:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "43"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -605,21 +622,22 @@ cards_043:
   writer_id: 
   key: x
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:40.568216
+  sealed: f
+  created_at: 2007-08-27 15:58:57.28119
 =======
-  created_at: 2007-08-16 13:16:18.109654
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:45
+>>>>>>> .merge-right.r130
 cards_064: 
   reader_type: 
   name: F+A
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.854442
+  updated_at: 2007-08-27 15:58:59.59682
 =======
-  updated_at: 2007-08-16 13:16:20.473603
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "64"
   tag_id: "40"
@@ -627,10 +645,10 @@ cards_064:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "64"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -639,21 +657,22 @@ cards_064:
   writer_id: 
   key: f+a
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.854442
+  sealed: f
+  created_at: 2007-08-27 15:58:59.59682
 =======
-  created_at: 2007-08-16 13:16:20.473603
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 cards_023: 
   reader_type: 
   name: Query
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.694552
+  updated_at: 2007-08-27 15:58:52.235546
 =======
-  updated_at: 2007-08-16 13:16:12.885225
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:39
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "23"
   tag_id: 
@@ -661,10 +680,10 @@ cards_023:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "23"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -673,21 +692,22 @@ cards_023:
   writer_id: 
   key: query
   extension_id: "15"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.694552
+  sealed: f
+  created_at: 2007-08-27 15:58:52.235546
 =======
-  created_at: 2007-08-16 13:16:12.885225
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:39
+>>>>>>> .merge-right.r130
 cards_044: 
   reader_type: 
   name: Y
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:40.778936
+  updated_at: 2007-08-27 15:58:57.503785
 =======
-  updated_at: 2007-08-16 13:16:18.334431
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:45
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "44"
   tag_id: 
@@ -695,10 +715,10 @@ cards_044:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "44"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -707,21 +727,22 @@ cards_044:
   writer_id: 
   key: y
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:40.778936
+  sealed: f
+  created_at: 2007-08-27 15:58:57.503785
 =======
-  created_at: 2007-08-16 13:16:18.334431
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:45
+>>>>>>> .merge-right.r130
 cards_065: 
   reader_type: 
   name: A+B+C
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.946289
+  updated_at: 2007-08-27 15:58:59.770063
 =======
-  updated_at: 2007-08-16 13:16:20.647141
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "65"
   tag_id: "55"
@@ -729,10 +750,10 @@ cards_065:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "65"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -741,21 +762,22 @@ cards_065:
   writer_id: 
   key: a+b+c
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.946289
+  sealed: f
+  created_at: 2007-08-27 15:58:59.770063
 =======
-  created_at: 2007-08-16 13:16:20.647141
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 cards_002: 
   reader_type: 
   name: Admin
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:34.672849
+  updated_at: 2007-08-27 15:58:50.714015
 =======
-  updated_at: 2007-08-16 13:16:11.686729
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: 
   current_revision_id: "2"
   tag_id: 
@@ -763,10 +785,10 @@ cards_002:
   extension_type: User
   type: User
   reader_id: 
-  plus_sidebar: 
+  plus_sidebar: "0"
   updated_by: "2"
   id: "2"
-  trash: f
+  trash: "0"
   old_tag_id: "2"
   writer_type: 
   value: 
@@ -775,21 +797,22 @@ cards_002:
   writer_id: 
   key: admin
   extension_id: "1"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:32.444528
+  sealed: f
+  created_at: 2007-08-27 15:58:48.655913
 =======
-  created_at: 2007-08-16 13:16:09.506339
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:35
+>>>>>>> .merge-right.r130
 cards_045: 
   reader_type: 
   name: A+B
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:41.013216
+  updated_at: 2007-08-27 15:58:57.822743
 =======
-  updated_at: 2007-08-16 13:16:18.659702
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:45
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "45"
   tag_id: "41"
@@ -797,10 +820,10 @@ cards_045:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "45"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -809,21 +832,22 @@ cards_045:
   writer_id: 
   key: a+b
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:41.013216
+  sealed: f
+  created_at: 2007-08-27 15:58:57.822743
 =======
-  created_at: 2007-08-16 13:16:18.659702
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:45
+>>>>>>> .merge-right.r130
 cards_066: 
   reader_type: 
   name: Cardtype A
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.091521
+  updated_at: 2007-08-27 15:58:59.842985
 =======
-  updated_at: 2007-08-16 13:16:20.716875
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "66"
   tag_id: 
@@ -831,10 +855,10 @@ cards_066:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "66"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -843,21 +867,22 @@ cards_066:
   writer_id: 
   key: cardtype_a
   extension_id: "19"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.091521
+  sealed: f
+  created_at: 2007-08-27 15:58:59.842985
 =======
-  created_at: 2007-08-16 13:16:20.716875
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 cards_003: 
   reader_type: 
   name: Basic
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:34.680768
+  updated_at: 2007-08-27 15:58:50.720614
 =======
-  updated_at: 2007-08-16 13:16:11.693417
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: 
   current_revision_id: "3"
   tag_id: 
@@ -865,10 +890,10 @@ cards_003:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: 
+  plus_sidebar: "0"
   updated_by: "2"
   id: "3"
-  trash: f
+  trash: "0"
   old_tag_id: "3"
   writer_type: 
   value: 
@@ -877,21 +902,22 @@ cards_003:
   writer_id: 
   key: basic
   extension_id: "1"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:32.512974
+  sealed: f
+  created_at: 2007-08-27 15:58:48.723893
 =======
-  created_at: 2007-08-16 13:16:09.575691
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:35
+>>>>>>> .merge-right.r130
 cards_024: 
   reader_type: 
   name: Ruby
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.768834
+  updated_at: 2007-08-27 15:58:52.321953
 =======
-  updated_at: 2007-08-16 13:16:12.978221
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:39
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "24"
   tag_id: 
@@ -899,10 +925,10 @@ cards_024:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "24"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -911,21 +937,22 @@ cards_024:
   writer_id: 
   key: ruby
   extension_id: "16"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.768834
+  sealed: f
+  created_at: 2007-08-27 15:58:52.321953
 =======
-  created_at: 2007-08-16 13:16:12.978221
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:39
+>>>>>>> .merge-right.r130
 cards_067: 
   reader_type: 
   name: Cardtype B
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.161998
+  updated_at: 2007-08-27 15:58:59.915327
 =======
-  updated_at: 2007-08-16 13:16:20.810822
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "67"
   tag_id: 
@@ -933,10 +960,10 @@ cards_067:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "67"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -945,21 +972,22 @@ cards_067:
   writer_id: 
   key: cardtype_b
   extension_id: "20"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.161998
+  sealed: f
+  created_at: 2007-08-27 15:58:59.915327
 =======
-  created_at: 2007-08-16 13:16:20.810822
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 cards_004: 
   reader_type: 
   name: User
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:34.688663
+  updated_at: 2007-08-27 15:58:50.727273
 =======
-  updated_at: 2007-08-16 13:16:11.700845
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: 
   current_revision_id: "4"
   tag_id: 
@@ -967,10 +995,10 @@ cards_004:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: 
+  plus_sidebar: "0"
   updated_by: "2"
   id: "4"
-  trash: f
+  trash: "0"
   old_tag_id: "4"
   writer_type: 
   value: 
@@ -979,21 +1007,22 @@ cards_004:
   writer_id: 
   key: user
   extension_id: "2"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:32.725136
+  sealed: f
+  created_at: 2007-08-27 15:58:48.874491
 =======
-  created_at: 2007-08-16 13:16:09.73523
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:35
+>>>>>>> .merge-right.r130
 cards_025: 
   reader_type: 
   name: Script
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.844649
+  updated_at: 2007-08-27 15:58:52.475463
 =======
-  updated_at: 2007-08-16 13:16:13.079926
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:39
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "25"
   tag_id: 
@@ -1001,10 +1030,10 @@ cards_025:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "25"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1013,21 +1042,22 @@ cards_025:
   writer_id: 
   key: script
   extension_id: "17"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.844649
+  sealed: f
+  created_at: 2007-08-27 15:58:52.475463
 =======
-  created_at: 2007-08-16 13:16:13.079926
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:39
+>>>>>>> .merge-right.r130
 cards_046: 
   reader_type: 
   name: One
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:41.344631
+  updated_at: 2007-08-27 15:58:58.090469
 =======
-  updated_at: 2007-08-16 13:16:18.93213
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "46"
   tag_id: 
@@ -1035,10 +1065,10 @@ cards_046:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "46"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1047,21 +1077,22 @@ cards_046:
   writer_id: 
   key: one
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:41.344631
+  sealed: f
+  created_at: 2007-08-27 15:58:58.090469
 =======
-  created_at: 2007-08-16 13:16:18.93213
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 cards_068: 
   reader_type: 
   name: Cardtype C
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.228462
+  updated_at: 2007-08-27 15:58:59.988299
 =======
-  updated_at: 2007-08-16 13:16:20.901399
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "68"
   tag_id: 
@@ -1069,10 +1100,10 @@ cards_068:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "68"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1081,21 +1112,22 @@ cards_068:
   writer_id: 
   key: cardtype_c
   extension_id: "21"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.228462
+  sealed: f
+  created_at: 2007-08-27 15:58:59.988299
 =======
-  created_at: 2007-08-16 13:16:20.901399
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 cards_005: 
   reader_type: 
   name: Cardtype
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:34.69652
+  updated_at: 2007-08-27 15:58:50.733977
 =======
-  updated_at: 2007-08-16 13:16:11.707942
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: 
   current_revision_id: "5"
   tag_id: 
@@ -1103,10 +1135,10 @@ cards_005:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: 
+  plus_sidebar: "0"
   updated_by: "2"
   id: "5"
-  trash: f
+  trash: "0"
   old_tag_id: "5"
   writer_type: 
   value: 
@@ -1115,21 +1147,22 @@ cards_005:
   writer_id: 
   key: cardtype
   extension_id: "3"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:32.778521
+  sealed: f
+  created_at: 2007-08-27 15:58:48.943745
 =======
-  created_at: 2007-08-16 13:16:09.799489
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:35
+>>>>>>> .merge-right.r130
 cards_026: 
   reader_type: 
   name: RichText
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.97427
+  updated_at: 2007-08-27 15:58:52.552573
 =======
-  updated_at: 2007-08-16 13:16:13.192704
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:39
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "26"
   tag_id: 
@@ -1137,10 +1170,10 @@ cards_026:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "26"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1149,21 +1182,22 @@ cards_026:
   writer_id: 
   key: rich_text
   extension_id: "18"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.97427
+  sealed: f
+  created_at: 2007-08-27 15:58:52.552573
 =======
-  created_at: 2007-08-16 13:16:13.192704
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:39
+>>>>>>> .merge-right.r130
 cards_047: 
   reader_type: 
   name: Two
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:41.397643
+  updated_at: 2007-08-27 15:58:58.145341
 =======
-  updated_at: 2007-08-16 13:16:18.987146
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "47"
   tag_id: 
@@ -1171,10 +1205,10 @@ cards_047:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "47"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1183,21 +1217,22 @@ cards_047:
   writer_id: 
   key: two
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:41.397643
+  sealed: f
+  created_at: 2007-08-27 15:58:58.145341
 =======
-  created_at: 2007-08-16 13:16:18.987146
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 cards_070: 
   reader_type: 
   name: Cardtype E
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.367192
+  updated_at: 2007-08-27 15:59:00.137271
 =======
-  updated_at: 2007-08-16 13:16:21.086344
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "70"
   tag_id: 
@@ -1205,10 +1240,10 @@ cards_070:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "70"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1217,21 +1252,22 @@ cards_070:
   writer_id: 
   key: cardtype_e
   extension_id: "23"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.367192
+  sealed: f
+  created_at: 2007-08-27 15:59:00.137271
 =======
-  created_at: 2007-08-16 13:16:21.086344
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 cards_069: 
   reader_type: 
   name: Cardtype D
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.296603
+  updated_at: 2007-08-27 15:59:00.062885
 =======
-  updated_at: 2007-08-16 13:16:20.994705
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "69"
   tag_id: 
@@ -1239,10 +1275,10 @@ cards_069:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "69"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1251,21 +1287,22 @@ cards_069:
   writer_id: 
   key: cardtype_d
   extension_id: "22"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.296603
+  sealed: f
+  created_at: 2007-08-27 15:59:00.062885
 =======
-  created_at: 2007-08-16 13:16:20.994705
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 cards_006: 
   reader_type: 
   name: Company
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:34.703048
+  updated_at: 2007-08-27 15:58:50.740645
 =======
-  updated_at: 2007-08-16 13:16:11.714542
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: 
   current_revision_id: "6"
   tag_id: 
@@ -1273,10 +1310,10 @@ cards_006:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: 
+  plus_sidebar: "0"
   updated_by: "2"
   id: "6"
-  trash: f
+  trash: "0"
   old_tag_id: "6"
   writer_type: 
   value: 
@@ -1285,21 +1322,22 @@ cards_006:
   writer_id: 
   key: company
   extension_id: "4"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:32.832542
+  sealed: f
+  created_at: 2007-08-27 15:58:49.011957
 =======
-  created_at: 2007-08-16 13:16:09.864237
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:36
+>>>>>>> .merge-right.r130
 cards_027: 
   reader_type: 
   name: Joe User
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:39.20748
+  updated_at: 2007-08-27 15:58:55.746084
 =======
-  updated_at: 2007-08-16 13:16:16.566659
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:43
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "27"
   tag_id: 
@@ -1307,10 +1345,10 @@ cards_027:
   extension_type: User
   type: User
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "27"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1319,21 +1357,22 @@ cards_027:
   writer_id: 
   key: joe_user
   extension_id: "4"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:39.20748
+  sealed: f
+  created_at: 2007-08-27 15:58:55.746084
 =======
-  created_at: 2007-08-16 13:16:16.566659
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:43
+>>>>>>> .merge-right.r130
 cards_048: 
   reader_type: 
   name: One+Two
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:41.430646
+  updated_at: 2007-08-27 15:58:58.179337
 =======
-  updated_at: 2007-08-16 13:16:19.021402
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "48"
   tag_id: "47"
@@ -1341,10 +1380,10 @@ cards_048:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "48"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1353,21 +1392,22 @@ cards_048:
   writer_id: 
   key: one+two
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:41.430646
+  sealed: f
+  created_at: 2007-08-27 15:58:58.179337
 =======
-  created_at: 2007-08-16 13:16:19.021402
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 cards_071: 
   reader_type: 
   name: Cardtype F
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.439402
+  updated_at: 2007-08-27 15:59:00.215452
 =======
-  updated_at: 2007-08-16 13:16:21.17907
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "71"
   tag_id: 
@@ -1375,10 +1415,10 @@ cards_071:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "71"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1387,21 +1427,22 @@ cards_071:
   writer_id: 
   key: cardtype_f
   extension_id: "24"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.439402
+  sealed: f
+  created_at: 2007-08-27 15:59:00.215452
 =======
-  created_at: 2007-08-16 13:16:21.17907
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 cards_007: 
   reader_type: 
   name: Role
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:34.710551
+  updated_at: 2007-08-27 15:58:50.747104
 =======
-  updated_at: 2007-08-16 13:16:11.803535
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: 
   current_revision_id: "7"
   tag_id: 
@@ -1409,10 +1450,10 @@ cards_007:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: 
+  plus_sidebar: "0"
   updated_by: "2"
   id: "7"
-  trash: f
+  trash: "0"
   old_tag_id: "7"
   writer_type: 
   value: 
@@ -1421,21 +1462,22 @@ cards_007:
   writer_id: 
   key: role
   extension_id: "5"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:32.88705
+  sealed: f
+  created_at: 2007-08-27 15:58:49.078892
 =======
-  created_at: 2007-08-16 13:16:09.935985
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:36
+>>>>>>> .merge-right.r130
 cards_028: 
   reader_type: 
   name: color
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:39.298033
+  updated_at: 2007-08-27 15:58:55.90399
 =======
-  updated_at: 2007-08-16 13:16:16.669087
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:43
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "28"
   tag_id: 
@@ -1443,10 +1485,10 @@ cards_028:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "28"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1455,21 +1497,22 @@ cards_028:
   writer_id: 
   key: color
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:39.298033
+  sealed: f
+  created_at: 2007-08-27 15:58:55.90399
 =======
-  created_at: 2007-08-16 13:16:16.669087
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:43
+>>>>>>> .merge-right.r130
 cards_050: 
   reader_type: 
   name: One+Two+Three
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:41.528225
+  updated_at: 2007-08-27 15:58:58.268599
 =======
-  updated_at: 2007-08-16 13:16:19.110447
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "50"
   tag_id: "49"
@@ -1477,10 +1520,10 @@ cards_050:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "50"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1489,21 +1532,22 @@ cards_050:
   writer_id: 
   key: one+two+three
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:41.528225
+  sealed: f
+  created_at: 2007-08-27 15:58:58.268599
 =======
-  created_at: 2007-08-16 13:16:19.110447
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 cards_049: 
   reader_type: 
   name: Three
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:41.489249
+  updated_at: 2007-08-27 15:58:58.234644
 =======
-  updated_at: 2007-08-16 13:16:19.076631
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "49"
   tag_id: 
@@ -1511,10 +1555,10 @@ cards_049:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "49"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1523,21 +1567,22 @@ cards_049:
   writer_id: 
   key: three
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:41.489249
+  sealed: f
+  created_at: 2007-08-27 15:58:58.234644
 =======
-  created_at: 2007-08-16 13:16:19.076631
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 cards_072: 
   reader_type: 
   name: basicname
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.499009
+  updated_at: 2007-08-27 15:59:00.29333
 =======
-  updated_at: 2007-08-16 13:16:21.342752
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "72"
   tag_id: 
@@ -1545,10 +1590,10 @@ cards_072:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "72"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1557,21 +1602,22 @@ cards_072:
   writer_id: 
   key: basicname
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.499009
+  sealed: f
+  created_at: 2007-08-27 15:59:00.29333
 =======
-  created_at: 2007-08-16 13:16:21.342752
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:47
+>>>>>>> .merge-right.r130
 cards_008: 
   reader_type: 
   name: Anonymous User
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:34.716944
+  updated_at: 2007-08-27 15:58:50.831816
 =======
-  updated_at: 2007-08-16 13:16:11.811792
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: 
   current_revision_id: "8"
   tag_id: 
@@ -1579,10 +1625,10 @@ cards_008:
   extension_type: Role
   type: Role
   reader_id: 
-  plus_sidebar: 
+  plus_sidebar: "0"
   updated_by: "2"
   id: "8"
-  trash: f
+  trash: "0"
   old_tag_id: "8"
   writer_type: 
   value: 
@@ -1591,21 +1637,22 @@ cards_008:
   writer_id: 
   key: anonymous_user
   extension_id: "1"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:33.017932
+  sealed: f
+  created_at: 2007-08-27 15:58:49.148388
 =======
-  created_at: 2007-08-16 13:16:10.006987
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:36
+>>>>>>> .merge-right.r130
 cards_030: 
   reader_type: 
   name: Ron Request
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:39.448888
+  updated_at: 2007-08-27 15:58:56.050538
 =======
-  updated_at: 2007-08-16 13:16:16.839737
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:43
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "30"
   tag_id: 
@@ -1613,10 +1660,10 @@ cards_030:
   extension_type: User
   type: InvitationRequest
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "30"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1625,21 +1672,22 @@ cards_030:
   writer_id: 
   key: ron_request
   extension_id: "5"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:39.448888
+  sealed: f
+  created_at: 2007-08-27 15:58:56.050538
 =======
-  created_at: 2007-08-16 13:16:16.839737
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:43
+>>>>>>> .merge-right.r130
 cards_029: 
   reader_type: 
   name: basic card
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:39.368991
+  updated_at: 2007-08-27 15:58:55.967387
 =======
-  updated_at: 2007-08-16 13:16:16.745615
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:43
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "29"
   tag_id: 
@@ -1647,10 +1695,10 @@ cards_029:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "29"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1659,21 +1707,22 @@ cards_029:
   writer_id: 
   key: basic_card
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:39.368991
+  sealed: f
+  created_at: 2007-08-27 15:58:55.967387
 =======
-  created_at: 2007-08-16 13:16:16.745615
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:43
+>>>>>>> .merge-right.r130
 cards_051: 
   reader_type: 
   name: Four
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:41.842393
+  updated_at: 2007-08-27 15:58:58.568389
 =======
-  updated_at: 2007-08-16 13:16:19.407482
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "51"
   tag_id: 
@@ -1681,10 +1730,10 @@ cards_051:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "51"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1693,21 +1742,22 @@ cards_051:
   writer_id: 
   key: four
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:41.842393
+  sealed: f
+  created_at: 2007-08-27 15:58:58.568389
 =======
-  created_at: 2007-08-16 13:16:19.407482
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 cards_073: 
   reader_type: 
   name: type-a-card
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.570106
+  updated_at: 2007-08-27 15:59:00.448316
 =======
-  updated_at: 2007-08-16 13:16:21.415927
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "73"
   tag_id: 
@@ -1715,10 +1765,10 @@ cards_073:
   extension_type: 
   type: CardtypeA
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "73"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1727,21 +1777,22 @@ cards_073:
   writer_id: 
   key: type_a_card
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.570106
+  sealed: f
+  created_at: 2007-08-27 15:59:00.448316
 =======
-  created_at: 2007-08-16 13:16:21.415927
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
 cards_010: 
   reader_type: 
   name: Administrative User
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:34.7318
+  updated_at: 2007-08-27 15:58:50.848998
 =======
-  updated_at: 2007-08-16 13:16:11.828206
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: 
   current_revision_id: "10"
   tag_id: 
@@ -1749,10 +1800,10 @@ cards_010:
   extension_type: Role
   type: Role
   reader_id: 
-  plus_sidebar: 
+  plus_sidebar: "0"
   updated_by: "2"
   id: "10"
-  trash: f
+  trash: "0"
   old_tag_id: "10"
   writer_type: 
   value: 
@@ -1761,21 +1812,22 @@ cards_010:
   writer_id: 
   key: administrative_user
   extension_id: "3"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:33.136255
+  sealed: f
+  created_at: 2007-08-27 15:58:49.36922
 =======
-  created_at: 2007-08-16 13:16:10.235442
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:36
+>>>>>>> .merge-right.r130
 cards_009: 
   reader_type: 
   name: Authenticated User
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:34.724036
+  updated_at: 2007-08-27 15:58:50.840471
 =======
-  updated_at: 2007-08-16 13:16:11.820766
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: 
   current_revision_id: "9"
   tag_id: 
@@ -1783,10 +1835,10 @@ cards_009:
   extension_type: Role
   type: Role
   reader_id: 
-  plus_sidebar: 
+  plus_sidebar: "0"
   updated_by: "2"
   id: "9"
-  trash: f
+  trash: "0"
   old_tag_id: "9"
   writer_type: 
   value: 
@@ -1795,21 +1847,22 @@ cards_009:
   writer_id: 
   key: authenticated_user
   extension_id: "2"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:33.0812
+  sealed: f
+  created_at: 2007-08-27 15:58:49.299545
 =======
-  created_at: 2007-08-16 13:16:10.16248
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:36
+>>>>>>> .merge-right.r130
 cards_031: 
   reader_type: 
   name: No Count
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:39.509064
+  updated_at: 2007-08-27 15:58:56.120252
 =======
-  updated_at: 2007-08-16 13:16:16.909533
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:43
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "31"
   tag_id: 
@@ -1817,10 +1870,10 @@ cards_031:
   extension_type: 
   type: User
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "31"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1829,21 +1882,22 @@ cards_031:
   writer_id: 
   key: no_count
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:39.509064
+  sealed: f
+  created_at: 2007-08-27 15:58:56.120252
 =======
-  created_at: 2007-08-16 13:16:16.909533
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:43
+>>>>>>> .merge-right.r130
 cards_052: 
   reader_type: 
   name: Four+One
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:41.873366
+  updated_at: 2007-08-27 15:58:58.600506
 =======
-  updated_at: 2007-08-16 13:16:19.439797
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "52"
   tag_id: "46"
@@ -1851,10 +1905,10 @@ cards_052:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "52"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1863,21 +1917,22 @@ cards_052:
   writer_id: 
   key: four+one
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:41.873366
+  sealed: f
+  created_at: 2007-08-27 15:58:58.600506
 =======
-  created_at: 2007-08-16 13:16:19.439797
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 cards_074: 
   reader_type: 
   name: type-b-card
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.74246
+  updated_at: 2007-08-27 15:59:00.526006
 =======
-  updated_at: 2007-08-16 13:16:21.490885
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "74"
   tag_id: 
@@ -1885,10 +1940,10 @@ cards_074:
   extension_type: 
   type: CardtypeB
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "74"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1897,21 +1952,22 @@ cards_074:
   writer_id: 
   key: type_b_card
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.74246
+  sealed: f
+  created_at: 2007-08-27 15:59:00.526006
 =======
-  created_at: 2007-08-16 13:16:21.490885
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
 cards_011: 
   reader_type: 
   name: Wagn
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:34.738866
+  updated_at: 2007-08-27 15:58:50.857305
 =======
-  updated_at: 2007-08-16 13:16:11.835469
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: 
   current_revision_id: "11"
   tag_id: 
@@ -1919,10 +1975,10 @@ cards_011:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: 
+  plus_sidebar: "0"
   updated_by: "2"
   id: "11"
-  trash: f
+  trash: "0"
   old_tag_id: "11"
   writer_type: 
   value: 
@@ -1931,21 +1987,22 @@ cards_011:
   writer_id: 
   key: wagn
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:33.205218
+  sealed: f
+  created_at: 2007-08-27 15:58:49.450522
 =======
-  created_at: 2007-08-16 13:16:10.322831
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:36
+>>>>>>> .merge-right.r130
 cards_032: 
   reader_type: 
   name: r1
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:39.609982
+  updated_at: 2007-08-27 15:58:56.222946
 =======
-  updated_at: 2007-08-16 13:16:17.030306
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "32"
   tag_id: 
@@ -1953,10 +2010,10 @@ cards_032:
   extension_type: Role
   type: Role
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "32"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1965,21 +2022,22 @@ cards_032:
   writer_id: 
   key: r1
   extension_id: "4"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:39.609982
+  sealed: f
+  created_at: 2007-08-27 15:58:56.222946
 =======
-  created_at: 2007-08-16 13:16:17.030306
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
 cards_053: 
   reader_type: 
   name: Five
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:41.921294
+  updated_at: 2007-08-27 15:58:58.650237
 =======
-  updated_at: 2007-08-16 13:16:19.489604
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "53"
   tag_id: 
@@ -1987,10 +2045,10 @@ cards_053:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "53"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -1999,21 +2057,22 @@ cards_053:
   writer_id: 
   key: five
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:41.921294
+  sealed: f
+  created_at: 2007-08-27 15:58:58.650237
 =======
-  created_at: 2007-08-16 13:16:19.489604
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 cards_075: 
   reader_type: 
   name: type-c-card
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.816796
+  updated_at: 2007-08-27 15:59:00.61113
 =======
-  updated_at: 2007-08-16 13:16:21.563417
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "75"
   tag_id: 
@@ -2021,10 +2080,10 @@ cards_075:
   extension_type: 
   type: CardtypeC
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "75"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -2033,21 +2092,22 @@ cards_075:
   writer_id: 
   key: type_c_card
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.816796
+  sealed: f
+  created_at: 2007-08-27 15:59:00.61113
 =======
-  created_at: 2007-08-16 13:16:21.563417
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
 cards_012: 
   reader_type: 
   name: InvitationRequest
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:34.745446
+  updated_at: 2007-08-27 15:58:50.864298
 =======
-  updated_at: 2007-08-16 13:16:11.842457
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: "2"
   current_revision_id: "12"
   tag_id: 
@@ -2055,10 +2115,10 @@ cards_012:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "2"
   id: "12"
-  trash: f
+  trash: "0"
   old_tag_id: "12"
   writer_type: 
   value: 
@@ -2067,21 +2127,22 @@ cards_012:
   writer_id: 
   key: invitation_request
   extension_id: "6"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:34.065569
+  sealed: f
+  created_at: 2007-08-27 15:58:50.196662
 =======
-  created_at: 2007-08-16 13:16:11.135459
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
 cards_033: 
   reader_type: 
   name: r2
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:39.689919
+  updated_at: 2007-08-27 15:58:56.313259
 =======
-  updated_at: 2007-08-16 13:16:17.12406
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "33"
   tag_id: 
@@ -2089,10 +2150,10 @@ cards_033:
   extension_type: Role
   type: Role
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "33"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -2101,21 +2162,22 @@ cards_033:
   writer_id: 
   key: r2
   extension_id: "5"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:39.689919
+  sealed: f
+  created_at: 2007-08-27 15:58:56.313259
 =======
-  created_at: 2007-08-16 13:16:17.12406
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
 cards_054: 
   reader_type: 
   name: Four+One+Five
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:41.951353
+  updated_at: 2007-08-27 15:58:58.680855
 =======
-  updated_at: 2007-08-16 13:16:19.520199
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "54"
   tag_id: "53"
@@ -2123,10 +2185,10 @@ cards_054:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "54"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -2135,21 +2197,22 @@ cards_054:
   writer_id: 
   key: four+one+five
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:41.951353
+  sealed: f
+  created_at: 2007-08-27 15:58:58.680855
 =======
-  created_at: 2007-08-16 13:16:19.520199
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 cards_076: 
   reader_type: 
   name: type-d-card
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.882384
+  updated_at: 2007-08-27 15:59:00.692037
 =======
-  updated_at: 2007-08-16 13:16:21.637987
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "76"
   tag_id: 
@@ -2157,10 +2220,10 @@ cards_076:
   extension_type: 
   type: CardtypeD
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "76"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -2169,21 +2232,22 @@ cards_076:
   writer_id: 
   key: type_d_card
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.882384
+  sealed: f
+  created_at: 2007-08-27 15:59:00.692037
 =======
-  created_at: 2007-08-16 13:16:21.637987
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
 cards_034: 
   reader_type: 
   name: r3
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:39.827193
+  updated_at: 2007-08-27 15:58:56.38998
 =======
-  updated_at: 2007-08-16 13:16:17.279559
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "34"
   tag_id: 
@@ -2191,10 +2255,10 @@ cards_034:
   extension_type: Role
   type: Role
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "34"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -2203,21 +2267,22 @@ cards_034:
   writer_id: 
   key: r3
   extension_id: "6"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:39.827193
+  sealed: f
+  created_at: 2007-08-27 15:58:56.38998
 =======
-  created_at: 2007-08-16 13:16:17.279559
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
 cards_055: 
   reader_type: 
   name: C
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.116969
+  updated_at: 2007-08-27 15:58:58.853327
 =======
-  updated_at: 2007-08-16 13:16:19.700222
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "55"
   tag_id: 
@@ -2225,10 +2290,10 @@ cards_055:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "55"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -2237,21 +2302,22 @@ cards_055:
   writer_id: 
   key: c
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.116969
+  sealed: f
+  created_at: 2007-08-27 15:58:58.853327
 =======
-  created_at: 2007-08-16 13:16:19.700222
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 cards_013: 
   reader_type: 
   name: Setting
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:34.752505
+  updated_at: 2007-08-27 15:58:50.871332
 =======
-  updated_at: 2007-08-16 13:16:11.850222
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "13"
   tag_id: 
@@ -2259,10 +2325,10 @@ cards_013:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "2"
   id: "13"
-  trash: f
+  trash: "0"
   old_tag_id: "13"
   writer_type: 
   value: 
@@ -2271,21 +2337,22 @@ cards_013:
   writer_id: 
   key: setting
   extension_id: "7"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:34.264289
+  sealed: f
+  created_at: 2007-08-27 15:58:50.303742
 =======
-  created_at: 2007-08-16 13:16:11.252291
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
 cards_077: 
   reader_type: 
   name: type-e-card
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:43.948928
+  updated_at: 2007-08-27 15:59:00.774643
 =======
-  updated_at: 2007-08-16 13:16:21.713093
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "77"
   tag_id: 
@@ -2293,10 +2360,10 @@ cards_077:
   extension_type: 
   type: CardtypeE
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "77"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -2305,21 +2372,22 @@ cards_077:
   writer_id: 
   key: type_e_card
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:43.948928
+  sealed: f
+  created_at: 2007-08-27 15:59:00.774643
 =======
-  created_at: 2007-08-16 13:16:21.713093
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
 cards_056: 
   reader_type: 
   name: A+C
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.149586
+  updated_at: 2007-08-27 15:58:58.886891
 =======
-  updated_at: 2007-08-16 13:16:19.734579
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "56"
   tag_id: "55"
@@ -2327,10 +2395,10 @@ cards_056:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "56"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -2339,21 +2407,22 @@ cards_056:
   writer_id: 
   key: a+c
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.149586
+  sealed: f
+  created_at: 2007-08-27 15:58:58.886891
 =======
-  created_at: 2007-08-16 13:16:19.734579
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 cards_014: 
   reader_type: 
   name: Thank You
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:34.759914
+  updated_at: 2007-08-27 15:58:50.878443
 =======
-  updated_at: 2007-08-16 13:16:11.857618
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "14"
   tag_id: 
@@ -2361,10 +2430,10 @@ cards_014:
   extension_type: Setting
   type: Setting
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "2"
   id: "14"
-  trash: f
+  trash: "0"
   old_tag_id: "14"
   writer_type: 
   value: 
@@ -2373,21 +2442,22 @@ cards_014:
   writer_id: 
   key: thank_you
   extension_id: "1"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:34.319665
+  sealed: f
+  created_at: 2007-08-27 15:58:50.352149
 =======
-  created_at: 2007-08-16 13:16:11.308889
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
 cards_035: 
   reader_type: 
   name: r4
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:39.886735
+  updated_at: 2007-08-27 15:58:56.52175
 =======
-  updated_at: 2007-08-16 13:16:17.363466
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "35"
   tag_id: 
@@ -2395,10 +2465,10 @@ cards_035:
   extension_type: Role
   type: Role
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "35"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -2407,21 +2477,22 @@ cards_035:
   writer_id: 
   key: r4
   extension_id: "7"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:39.886735
+  sealed: f
+  created_at: 2007-08-27 15:58:56.52175
 =======
-  created_at: 2007-08-16 13:16:17.363466
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
 cards_078: 
   reader_type: 
   name: type-f-card
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:44.017214
+  updated_at: 2007-08-27 15:59:00.859814
 =======
-  updated_at: 2007-08-16 13:16:21.786687
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "78"
   tag_id: 
@@ -2429,10 +2500,10 @@ cards_078:
   extension_type: 
   type: CardtypeF
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "78"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -2441,21 +2512,22 @@ cards_078:
   writer_id: 
   key: type_f_card
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:44.017214
+  sealed: f
+  created_at: 2007-08-27 15:59:00.859814
 =======
-  created_at: 2007-08-16 13:16:21.786687
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
 cards_015: 
   reader_type: 
   name: Anonymous
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:34.767697
+  updated_at: 2007-08-27 15:58:50.886013
 =======
-  updated_at: 2007-08-16 13:16:11.864271
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "15"
   tag_id: 
@@ -2463,10 +2535,10 @@ cards_015:
   extension_type: User
   type: User
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "2"
   id: "15"
-  trash: f
+  trash: "0"
   old_tag_id: "15"
   writer_type: 
   value: 
@@ -2475,21 +2547,22 @@ cards_015:
   writer_id: 
   key: anonymous
   extension_id: "3"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:34.395308
+  sealed: f
+  created_at: 2007-08-27 15:58:50.509789
 =======
-  created_at: 2007-08-16 13:16:11.47348
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:37
+>>>>>>> .merge-right.r130
 cards_036: 
   reader_type: 
   name: c1
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:39.986618
+  updated_at: 2007-08-27 15:58:56.636003
 =======
-  updated_at: 2007-08-16 13:16:17.479135
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "36"
   tag_id: 
@@ -2497,10 +2570,10 @@ cards_036:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "36"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -2509,21 +2582,22 @@ cards_036:
   writer_id: 
   key: c1
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:39.986618
+  sealed: f
+  created_at: 2007-08-27 15:58:56.636003
 =======
-  created_at: 2007-08-16 13:16:17.479135
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
 cards_057: 
   reader_type: 
   name: D
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.279042
+  updated_at: 2007-08-27 15:58:59.022151
 =======
-  updated_at: 2007-08-16 13:16:19.87182
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "57"
   tag_id: 
@@ -2531,10 +2605,10 @@ cards_057:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "57"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -2543,21 +2617,22 @@ cards_057:
   writer_id: 
   key: d
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.279042
+  sealed: f
+  created_at: 2007-08-27 15:58:59.022151
 =======
-  created_at: 2007-08-16 13:16:19.87182
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
 cards_079: 
   reader_type: 
   name: revtest
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:44.21161
+  updated_at: 2007-08-27 15:59:01.084118
 =======
-  updated_at: 2007-08-16 13:16:22.083594
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "81"
   tag_id: 
@@ -2565,10 +2640,10 @@ cards_079:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "79"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -2577,21 +2652,22 @@ cards_079:
   writer_id: 
   key: revtest
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:44.077069
+  sealed: f
+  created_at: 2007-08-27 15:59:00.934925
 =======
-  created_at: 2007-08-16 13:16:21.859918
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:48
+>>>>>>> .merge-right.r130
 cards_016: 
   reader_type: 
   name: Currency
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:35.001316
+  updated_at: 2007-08-27 15:58:51.031737
 =======
-  updated_at: 2007-08-16 13:16:12.036258
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "16"
   tag_id: 
@@ -2599,10 +2675,10 @@ cards_016:
   extension_type: Cardtype
   type: Cardtype
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "16"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -2611,21 +2687,22 @@ cards_016:
   writer_id: 
   key: currency
   extension_id: "8"
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:35.001316
+  sealed: f
+  created_at: 2007-08-27 15:58:51.031737
 =======
-  created_at: 2007-08-16 13:16:12.036258
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:38
+>>>>>>> .merge-right.r130
 cards_037: 
   reader_type: 
   name: c2
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:40.047326
+  updated_at: 2007-08-27 15:58:56.704586
 =======
-  updated_at: 2007-08-16 13:16:17.548943
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "37"
   tag_id: 
@@ -2633,10 +2710,10 @@ cards_037:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "37"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -2645,21 +2722,22 @@ cards_037:
   writer_id: 
   key: c2
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:40.047326
+  sealed: f
+  created_at: 2007-08-27 15:58:56.704586
 =======
-  created_at: 2007-08-16 13:16:17.548943
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:44
+>>>>>>> .merge-right.r130
 cards_058: 
   reader_type: 
   name: A+D
   appender_id: 
 <<<<<<< .working
-  updated_at: 2007-08-21 10:08:42.313526
+  updated_at: 2007-08-27 15:58:59.125498
 =======
-  updated_at: 2007-08-16 13:16:19.975267
->>>>>>> .merge-right.r117
+  updated_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130
   created_by: "1"
   current_revision_id: "58"
   tag_id: "57"
@@ -2667,10 +2745,10 @@ cards_058:
   extension_type: 
   type: Basic
   reader_id: 
-  plus_sidebar: f
+  plus_sidebar: "0"
   updated_by: "1"
   id: "58"
-  trash: f
+  trash: "0"
   old_tag_id: 
   writer_type: 
   value: 
@@ -2679,9 +2757,10 @@ cards_058:
   writer_id: 
   key: a+d
   extension_id: 
-  sealed: f
 <<<<<<< .working
-  created_at: 2007-08-21 10:08:42.313526
+  sealed: f
+  created_at: 2007-08-27 15:58:59.125498
 =======
-  created_at: 2007-08-16 13:16:19.975267
->>>>>>> .merge-right.r117
+  sealed: "0"
+  created_at: 2007-08-27 15:09:46
+>>>>>>> .merge-right.r130

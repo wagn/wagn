@@ -344,8 +344,8 @@ module WagnHelper
       case cardtype.class_name
         when 'Connection'; next
         when 'User';       next #unless System.ok? :invite_users
-        when 'Role';       next unless System.ok? :manage_permissions
-        when 'Cardtype';   next unless System.ok? :edit_cardtypes
+#        when 'Role';       next unless System.ok? :manage_permissions
+#        when 'Cardtype';   next unless System.ok? :edit_cardtypes
         else  #warn "Adding #{cardtype.class_name}"
       end                           
       [cardtype.class_name, cardtype.card.name]    

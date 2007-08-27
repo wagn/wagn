@@ -1,7 +1,7 @@
 |open|/wiki/Wagn||
 |clickAndWait|link=New Card||
 |type|new-card-name-field|TestOne|
-|selectFrame|iframe-main-body|
+|selectFrame|main-card-1-iframe|
 |type|css=body|TestOneContent|
 |selectFrame|relative=top|
 |clickAndWait|commit||

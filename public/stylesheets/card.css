@@ -257,8 +257,6 @@ body.wagn .line h2,
 
 
 
-
-
 /* card menu and maincard-----------------------------------------------------*/
 
 #mid-menu {
@@ -399,4 +397,19 @@ a.current, a:link.current {
     background: #cce;
     padding: 8px;
     margin: 0px;
+}
+
+
+/* cards */
+
+.card-slot a.wanted-card { 
+  color: #900 
+}
+.card-slot a.external-link { 
+	color: #979; 
+  background: url(/images/external_link.png) center right no-repeat;
+  padding-right: 13px !important;
+}
+.card-slot a.email-link { 
+  color: #979 
 }

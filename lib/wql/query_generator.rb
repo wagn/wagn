@@ -11,6 +11,7 @@ module Wql
         
         case key.to_sym
         when :type;  @conditions << "type='#{value}'"
+        when :cardtype;  @conditions << "type='#{value}'"
         when :plus;      @joins << ["plus",         Condition.new(value)]
         when :tagging;   @joins << ["tagging",      Condition.new(value)]
         when :connected; @joins << ["connected to", Condition.new(value)]

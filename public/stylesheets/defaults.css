@@ -50,17 +50,6 @@ a:focus {
 }
 
 
-a.wanted-card { 
-  color: #900 
-}
-a.external-link { 
-	color: #979; 
-  background: url(/images/external_link.png) center right no-repeat;
-  padding-right: 13px;
-}
-a.email-link { 
-  color: #979 
-}
 
 
 h1 {
@@ -143,7 +132,7 @@ img {
   border: 0px;
   vertical-align: middle;
 }  
-.cancel {
+.cancel {  /* FIXME -- doesn't belong here */
   float: right; 
 }
 

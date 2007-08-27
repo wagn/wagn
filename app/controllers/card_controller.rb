@@ -107,69 +107,11 @@ class CardController < ApplicationController
     @card.save!
   end 
   
-
 =begin  
-  def editor 
-    render :partial=>"/card/editor", :locals=>{ :card=>@card, :div_id=>params[:element] }
-  end
-    def edit
-      old_rev_id = params[:card].delete(:old_revision_id)
-      warn "EDIT PARAMS: #{params[:card].inspect}"
-      if old_rev_id.to_i != @card.current_revision.id
-        revision  # FIXME -- this should probably be abstracted?
-        @changes = render_to_string :action=>'revision' 
-        render :action=>:edit_conflict
-      else
-        WikiContent.process_links!(params[:card][:content], url="http://#{request.host_with_port}")
-        @card.update_attributes( params[:card] )
-      end
-      #render_update do |page|
-      #end
-    end
-=end
-
-
-=begin  
-
   def rename
     @card.name = params[:card][:name]
     @card.on_rename_skip_reference_updates = (params[:change_links]!='yes')
     @card.save!
-  end
-
-  def update_reader
-    @new_reader = Role.find( params[:card][:reader_id] )
-    @card.reader = @new_reader
-    @card.save!
-    render(:update) do |page|
-      page.replace_html "#{params[:element]}-writer-select", :partial=>'writer_select'
-      page.replace_html "#{params[:element]}-appender-select", :partial=>'appender_select'
-      page.wagn.messenger.note "#{@card.name} #{params[:message] || 'updated'}"
-    end
-  end
-  
-  def update_writer
-    @new_writer = Role.find( params[:card][:writer_id] )
-    @card.writer = @new_writer
-    @card.save!
-    render(:update) do |page|
-      page.replace_html "#{params[:element]}-reader-select", :partial=>'reader_select'
-      page.wagn.messenger.note "#{@card.name} #{params[:message] || 'updated'}"
-    end
-  end   
-  
-  def update_appender    
-    if params[:card] && !params[:card][:appender_id].blank?
-      @new_appender = Role.find( params[:card][:appender_id] )
-      @card.appender = @new_appender
-    else
-      @card.appender = nil
-    end
-    @card.save!
-    render(:update) do |page|
-      page.replace_html "#{params[:element]}-reader-select", :partial=>'reader_select'
-      page.wagn.messenger.note "#{@card.name} #{params[:message] || 'updated'}"
-    end
   end
 
   # FOR in_place editor
@@ -184,38 +126,6 @@ class CardController < ApplicationController
     @card.update_attributes( :name => params[:value])
     render :text=> @card.name
   end
-  
-  
-  # FIXME: when we fix the options tab to be a regular form and call update,
-  # this can go away.
-  def attribute
-     @attr = params[:attribute]
-     id = @card.id
-     if request.post? 
-       method = case @attr
-                 when 'cardtype'; 'type'
-                 when 'datatype'; 'datatype_key'
-                 when 'plus_datatype'; 'plus_datatype_key' 
-                 else @attr
-                end
-
-       @card.send("#{method}=", params[:value])
-       @card.save
-     end                           
-     @card = Card::Base.find(id)
-     result = 
-       case @attr
-       when 'cardtype'          
-         @card.cardtype.name
-       when 'datatype'    
-         @card.tag.datatype_key
-       when 'plus_datatype'
-         @card.tag.plus_datatype_key
-       else
-         @card.send(@attr)
-       end
-     render :text => result
-   end  
 =end
 
 

@@ -29,7 +29,8 @@ module Card
       # any user should be able to create
     end       
  
-    def approve_destroy
+    def approve_destroy      
+      # FIXME: why the unless?
       require_permission(:deny_invitation_requests) unless self.type=='User'
     end
     

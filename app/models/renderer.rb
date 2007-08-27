@@ -8,10 +8,16 @@ class Renderer
   include ReferenceTypes
   #include Singleton
   attr_accessor :rescue_errors
+
+  class << self
+    def instance
+      Renderer.new
+    end
+  end
   
   def render_without_rescue(*args)
     self.rescue_errors = false
-    result = render(*args)
+    result = render(*args)               
     self.rescue_errors = true
     result
   end

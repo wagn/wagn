@@ -24,7 +24,7 @@ module WagnTestHelper
   end
   
   def render( card )
-    Renderer.new(Renderer::StubController.new).render(card)
+    Renderer.new().render(card)
   end 
   
   def assert_difference(object, method = nil, difference = 1)

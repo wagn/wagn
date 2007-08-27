@@ -54,7 +54,7 @@ module WagnHelper
   end
 
   def slot_link_to_menu_action(slot, to_action)
-    slot.link_to_action to_action.capitalize, to_action, 
+    slot.link_to_action to_action.capitalize, to_action, {},
       :class=> (slot.action==to_action ? 'current' : '')
   end
        
@@ -122,13 +122,6 @@ module WagnHelper
       return code
   end  
    
-=begin
-  def render_card_partial( name, card, slot=nil, args={})
-    render :partial=> partial_for_card_and_action(card, name), 
-      :locals => args.merge({:card=>card, :slot=>slot })
-  end
-=end
-  
   def conditional_cache(card, name, &block)
     card.cacheable? ? controller.cache_erb_fragment(block, name) : block.call
   end
@@ -287,49 +280,6 @@ module WagnHelper
   def connector_function( name, *args )
     "Wagn.lister().#{name.to_s}(#{args.join(',')});"
   end             
-  
-=begin  
-  # Forms --------------------------------------------------------
-  def form_for_block( options={}, form_options={} )
-    ajax = options.has_key?(:ajax) ? options[:ajax] : true
-    url_options = options_for_block( options )
-    element = url_options[:params][:element]
-    
-    if ajax
-      form_remote_tag(
-        { :url => url_options,
-          :html => { :name => 'block_form' },
-          :update => { :success=> element, :failure => element }
-        }.merge(form_options)
-      )
-    else
-      form_tag url_options.merge(form_options)
-    end
-  end
-
-  def options_for_ajax_or_page( params )
-    options = { :controller=>params.delete(:controller),
-        :action => params.delete(:action),
-        :id => params.delete(:id),
-        :params => params
-    }
-    options
-  end
-  
-  def options_for_block( options={} )
-    params = {
-      :controller => 'block',
-      :action => 'connection_list',
-      :ajax => true,
-      :card => @card
-    }.merge(options)
-    
-    params[:id] = params.delete(:card).id if params[:card]
-    options_for_ajax_or_page( params )
-  end
-
-  # Common image tags
-=end
   
   def pieces_icon( card, prefix='' )
     image_tag "/images/#{prefix}pieces_icon.png", :title=>"cards that comprise \"#{card.name}\""

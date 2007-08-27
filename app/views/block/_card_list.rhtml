@@ -2,29 +2,21 @@
   cards   ||= []
 	duplicates ||= []
   context ||= 'default'
-  element ||= ''
   title   ||= ''
-
 -%>
 <% if !title.empty? %>
   <label id="card-list-label"><%= title %></label>
 <% end %>
 
-<% if cards.empty? and context != 'sidebar' %>
+<% if cards.empty? %>
   <div id="empty-card-list" class="card-slot line none"> 0 cards </div>
 <% else %>
   <span id="empty-card-list"></span>
 <% end %>
-
+                 
 <% for card in cards %>
-  <%- div_id = get_div_id( card, context, element) -%>
-  <%= render :partial=>'card/card_slot', :locals=>{
-        :div_id=> div_id,
-        :card  => card, 
-        :context=>context, 
-        :partial=>get_partial( card, context, element )  
-      }
-  %>
+	<%= render :partial=>'card/line', 
+				:locals=>{:card=>card,:context=>context, :render_slot=>true} %>
 <% end %>     
 
 <% if duplicates.length > 0 %>
@@ -33,9 +25,7 @@
 	</div>
 <% end %>
 
+<%= paging( cards ) %>
 
-<% unless context == 'sidebar' %>
-  <%= paging( cards ) %>
-<% end %>
 
 

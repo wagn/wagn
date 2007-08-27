@@ -43,6 +43,21 @@ Object.extend(Wagn, {
     })
   },
   
+  grow_line: function(element) {
+    var elementDimensions = element.getDimensions();
+    new Effect.BlindDown( element, {
+      duration: 0.5,
+      scaleFrom: 100,
+      scaleMode: {originalHeight: elementDimensions.height*2, originalWidth: elementDimensions.width}
+    });
+//      afterSetup: function(effect) {
+//        effect.element.makeClipping();
+//        effect.element.setStyle({height: '0px'});
+//      }
+
+    
+  },
+  
   line_to_paragraph: function(element) {
 //    if (tt_n6) {
       var oldElementDimensions = element.getDimensions();
@@ -145,41 +160,24 @@ Object.extend(Wagn.Highlighter.prototype, {
 
 /* ------------------ OnLoad --------------------*/
 
-Wagn.OnLoad = new Object;
-
-Wagn.OnLoad.Queue = $A([]);
-Object.extend(Wagn.OnLoad.Queue, {
-  run: function() {
-    this.each( function(item) {
-      item.fn.call();  
-    });
+Wagn.runQueue = function(queue) {
+  if (typeof(queue)=='undefined') { return }
+  while (fn = queue.shift()) {
+    fn.call();
   }
-});
-
-Wagn.OnLoad.Item = Class.create();
-
-Wagn.OnLoad.Item.prototype = {
-  initialize: function(fn) {
-    this.fn = fn; 
-    Wagn.OnLoad.Queue.push(this);
-  }
-}
+};
+Wagn.onLoadQueue = $A([]);
+Wagn.onSaveQueue = $H({});
+Wagn.onCancelQueue = $H({});
+Wagn.editors = $H({});
 
 onload = function() {
-  Wagn.Card.setupAll();     
   Wagn.Messenger.flash();
-  setTimeout("Wagn.OnLoad.Queue.run()", 100);  // reduced this to 100 -- might cause issues?
-  //lister_element = document.getElementsByClassName('lister')[0];
-  // currently only one lister per page...
-  //Wagn._lister = new Wagn.Lister(lister_element.id);
-  
+  Wagn.runQueue(Wagn.onLoadQueue);
   getNewWindowLinks();
   if (typeof(init_lister) != 'undefined') {
     Wagn._lister = init_lister();
     Wagn._lister.update();
-  }
-  if ($('main-body')) {  
-    $('main-body').card().loadEditor();
   }
 }
 

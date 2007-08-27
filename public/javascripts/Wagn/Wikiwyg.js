@@ -2,9 +2,144 @@
 
 proto = new Subclass('Wagn.Wikiwyg', 'Wikiwyg');
 
+
+Object.extend(Wagn.Wikiwyg.prototype, {
+  setup: function(slot_id) {
+    var conf = this.initial_config(); 
+    /* if (!slot.chunk('nosave')) {
+      conf.controlLayout = $A(['save', 'cancel', conf.controlLayout]).flatten();
+    }
+    */
+
+    if (!conf.wysiwyg) { conf.wysiwyg = {} }
+    conf.wysiwyg.iframeId = slot_id + '-iframe'; // need this?
+    this.iframeID = slot_id + '-iframe';
+    this.createWikiwygArea( $(slot_id+"-raw-content"), conf );
+    Wagn.Wikiwyg.wikiwyg_divs.push( this );
+
+    //slot.chunk('cooked').ondblclick = function() { 
+    //   slot.card().edit();
+    //};
+    return this;
+  },
+  getContent: function() {
+    var self = this; 
+    this.clean_spans();
+    this.current_mode.toHtml( function(html) {
+      self.fromHtml(html) 
+    });
+    return this.div.innerHTML;
+  },
+  
+  
+  
+/*  card: function() {
+    return this._card; //this.div.parentNode.parentNode.parentNode.card(); // hmm... 
+  },
+  saveChanges: function() {
+    this.card().save();
+  },
+  innerSave: function() {
+    var self = this;
+    this.clean_spans();
+    this.current_mode.toHtml( function(html) {
+      self.fromHtml(html) 
+    });
+    if (arguments[0] == 'draft') {
+      return this.div.innerHTML;
+    } else {
+      this.card().content( this.div.innerHTML );
+    }
+  },
+  cancelEdit: function () {
+    this.card().cancel()
+  },
+*/  
+  clean_spans: function () {
+    // transform <span style="bold"> to <strong>, style:italice to <em>
+    dom = this.current_mode.get_edit_document();
+    //info("running tranfrom on " + dom);
+    //info("BEFORE" + dom.body.innerHTML);
+    $A(dom.getElementsByTagName("span")).reverse().each(function(elem) {
+      warn("  SPAN " + elem);
+      var strong = (elem.style["fontWeight"]=="bold") ;
+      var em = (elem.style["fontStyle"]=="italic");
+      if (em || strong) {
+        var new_el='';
+        if (em && strong) {
+          new_el = Wikiwyg.createElementWithAttrs("strong", {}); 
+          new_el.innerHTML="<em>" + elem.innerHTML + "</em>";
+        } else {
+          new_el = Wikiwyg.createElementWithAttrs( (em ? "em" : "strong"), {});
+          new_el.innerHTML=elem.innerHTML;
+        }
+        elem.parentNode.replaceChild(new_el,elem);
+      }
+    });
+    //info("AFTER" + dom.body.innerHTML);
+  },
+  
+/*  do_link: function() { 
+      alert("creating link");
+      var selection = this.get_link_selection_text();
+      if (! selection) return;
+      var url;
+      var match = selection.match(/(.*?)\b((?:http|https|ftp|irc|file):\/\/\S+)(.*)/);
+      if (match) {
+          if (match[1] || match[3]) return null;
+          url = match[2];
+      }
+      else {
+          url = escape(selection); 
+      }
+      this.exec_command('createlink', url);
+  },
+  displayMode: function() {
+      for (var i = 0; i < this.config.modeClasses.length; i++) {
+          var mode_class = this.config.modeClasses[i];
+          var mode_object = this.modeByName(mode_class);
+          mode_object.disableThis();
+      }
+      this.toolbarObject.disableThis();
+      this.div.style.display = '';
+      this.divHeight = this.div.offsetHeight;
+  },
+  
+*/  
+  initial_config: function() {
+    var conf = {
+      imagesLocation: '../../images/wikiwyg/',
+      doubleClickToEdit: false,
+      modeClasses: [
+         'Wikiwyg.Wysiwyg'
+      ],
+      controlLayout: [
+       'selector', 'bold', 'italic', 
+       'ordered', 'unordered','indent','outdent'
+      ],
+      styleSelector: [ 'label','h1','h2','p' ],
+      controlLabels: Object.extend(Wikiwyg.Toolbar.prototype.config, {
+        spotlight: 'Spotlight',
+        highlight: 'Highlight',
+        h1: 'Header',
+        h2: 'Subheader'
+      })
+    }
+    if (!Wikiwyg.is_ie) {
+      conf.controlLayout.push('link');
+    }
+    if ($('edit_html').innerHTML.match(/true/)) {
+      conf.modeClasses.push(  "Wikiwyg.HTML");
+      conf.controlLayout.push('mode_selector');
+    }    
+    return conf;
+  }
+});
+
+
 Object.extend(Wagn.Wikiwyg, {
   wikiwyg_divs: [],
-  default_config:  {
+/*  default_config:  {
       imagesLocation: '../../images/wikiwyg/',
       doubleClickToEdit: false,
       modeClasses: [
@@ -23,6 +158,7 @@ Object.extend(Wagn.Wikiwyg, {
       link: 'Create/Edit link'
     })
   },
+*/  
   addEventToWindow: function(window, name, func) {
     if (window.addEventListener) {
       name = name.replace(/^on/, '');
@@ -56,132 +192,6 @@ Object.extend(Wagn.Wikiwyg, {
     return sData ;    
   }
 })
-
-Object.extend(Wagn.Wikiwyg.prototype, {
-  card: function() {
-    return this._card; //this.div.parentNode.parentNode.parentNode.card(); // hmm... 
-  },
-  saveChanges: function() {
-    this.card().save();
-  },
-  innerSave: function() {
-    var self = this;
-    this.clean_spans();
-    this.current_mode.toHtml( function(html) {
-      self.fromHtml(html) 
-    });
-    if (arguments[0] == 'draft') {
-      return this.div.innerHTML;
-    } else {
-      this.card().content( this.div.innerHTML );
-    }
-  },
-  cancelEdit: function () {
-    this.card().cancel()
-  },
-  /*
-  getChanges: function() {
-    var self = this;
-    this.current_mode.toHtml( function(html) {
-      self.fromHtml(html) 
-    });
-    return this.div.innerHTML;
-  },
-  */
-  clean_spans: function () {
-    // transform <span style="bold"> to <strong>, style:italice to <em>
-    dom = this.current_mode.get_edit_document();
-    //info("running tranfrom on " + dom);
-    //info("BEFORE" + dom.body.innerHTML);
-    $A(dom.getElementsByTagName("span")).reverse().each(function(elem) {
-      warn("  SPAN " + elem);
-      var strong = (elem.style["fontWeight"]=="bold") ;
-      var em = (elem.style["fontStyle"]=="italic");
-      if (em || strong) {
-        var new_el='';
-        if (em && strong) {
-          new_el = Wikiwyg.createElementWithAttrs("strong", {}); 
-          new_el.innerHTML="<em>" + elem.innerHTML + "</em>";
-        } else {
-          new_el = Wikiwyg.createElementWithAttrs( (em ? "em" : "strong"), {});
-          new_el.innerHTML=elem.innerHTML;
-        }
-        elem.parentNode.replaceChild(new_el,elem);
-      }
-    });
-    //info("AFTER" + dom.body.innerHTML);
-  },
-  
-  do_link: function() { 
-      alert("creating link");
-      var selection = this.get_link_selection_text();
-      if (! selection) return;
-      var url;
-      var match = selection.match(/(.*?)\b((?:http|https|ftp|irc|file):\/\/\S+)(.*)/);
-      if (match) {
-          if (match[1] || match[3]) return null;
-          url = match[2];
-      }
-      else {
-          url = escape(selection); 
-      }
-      this.exec_command('createlink', url);
-  },
-  
-  
-  displayMode: function() {
-      for (var i = 0; i < this.config.modeClasses.length; i++) {
-          var mode_class = this.config.modeClasses[i];
-          var mode_object = this.modeByName(mode_class);
-          mode_object.disableThis();
-      }
-      this.toolbarObject.disableThis();
-      this.div.style.display = '';
-      this.divHeight = this.div.offsetHeight;
-  },
-  initial_config: function() {
-    return {
-      imagesLocation: '../../images/wikiwyg/',
-      doubleClickToEdit: false,
-      modeClasses: [
-          'Wikiwyg.HTML'
-      ],
-      controlLayout: [
-        'selector', 'bold', 'italic', 
-        'ordered', 'unordered','indent','outdent'
-      ],
-      styleSelector: [ 'label','h1','h2','p' ],
-      controlLabels: Object.extend(Wikiwyg.Toolbar.prototype.config, {
-        spotlight: 'Spotlight',
-        highlight: 'Highlight',
-        h1: 'Header',
-        h2: 'Subheader'
-      })
-    }
-  },
-  setup: function(slot) {
-    
-    var wikiwyg = new Wagn.Wikiwyg();
-    var conf = this.initial_config(); 
-  
-    /* if (!slot.chunk('nosave')) {
-      conf.controlLayout = $A(['save', 'cancel', conf.controlLayout]).flatten();
-    }
-    */
-    
-    if (!conf.wysiwyg)
-      conf.wysiwyg = {};
-    conf.wysiwyg.iframeId = 'iframe-' + slot.id;
-    wikiwyg.createWikiwygArea(slot.chunk('raw'), conf );
-    Wagn.Wikiwyg.wikiwyg_divs.push( wikiwyg );
-    
-    slot.chunk('cooked').ondblclick = function() { 
-      slot.card().edit();
-    };
-    
-    return wikiwyg;
-  }
-});
 
 
 Object.extend(Wikiwyg.Wysiwyg.prototype, {
@@ -277,7 +287,6 @@ Object.extend(Wikiwyg.Wysiwyg.prototype, {
 });
 
 Wikiwyg.Wysiwyg.prototype.config['editHeightAdjustment'] = 1.1;
-
   
 Object.extend(Wikiwyg.Mode.prototype, {
   get_edit_height: function() {
@@ -294,37 +303,9 @@ Object.extend(Wikiwyg.Mode.prototype, {
   }
 });
 
-   
+/*   
 rich_text_wikiwyg = new Subclass('Wagn.RichTextWikiwyg', 'Wagn.Wikiwyg');
 Object.extend(Wagn.RichTextWikiwyg.prototype, {
-  initial_config: function() {
-    var conf = {
-      imagesLocation: '../../images/wikiwyg/',
-      doubleClickToEdit: false,
-      modeClasses: [
-         'Wikiwyg.Wysiwyg'
-      ],
-      controlLayout: [
-       'selector', 'bold', 'italic', 
-       'ordered', 'unordered','indent','outdent'
-      ],
-      styleSelector: [ 'label','h1','h2','p' ],
-      controlLabels: Object.extend(Wikiwyg.Toolbar.prototype.config, {
-        spotlight: 'Spotlight',
-        highlight: 'Highlight',
-        h1: 'Header',
-        h2: 'Subheader'
-      })
-    }
-    if (!Wikiwyg.is_ie) {
-      conf.controlLayout.push('link');
-    }
-    if ($('edit_html').innerHTML.match(/true/)) {
-      conf.modeClasses.push(  "Wikiwyg.HTML");
-      conf.controlLayout.push('mode_selector');
-    }    
-    return conf;
-  }
 });
-              
+*/              
 

@@ -38,5 +38,16 @@
   <% end %>
   <div id="edit_html"><%=System.ok? 'edit_html' %></div>
   <div id="edit_cards"><%=System.ok? 'edit_cards' %></div>
-  <div id="popup">false</div>
+  <div id="popup">false</div> 
+	
+	<% if @card %>
+		<%= javascript_tag %{
+			Wagn.main_card = {
+				id: '#{@card.id}',
+				type: '#{@card.type}',
+				codename: '#{@card.codename}'
+			}; 
+		} %>
+	<% end %>
+
 </span>

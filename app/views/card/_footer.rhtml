@@ -1,23 +1,7 @@
-<%
-  card    or raise( "Card footer gotta have a card" )
-  div_id  or raise( "Card footer gotta have a div_id")
-%>
 <div class="card-footer">
   <div class="card-links">
-    <% if !card.junctions.empty? %>
-      <div class="link-menu">
-        <%= link_to_footer    pieces_icon(card, 'footer_'), div_id, card.id, 'pieces' %>
-        <%= link_to_footer   connect_icon(card, 'footer_'), div_id, card.id, 'plus_cards' %>
-        <%= link_to_footer connected_icon(card, 'footer_'), div_id, card.id, 'plussed_cards' %>
-      </div>
-    <% end %>
-    <span id="<%= div_id + "-links" %>" class="link-list">
-      <%= card.pieces.map{ |c| link_to_page name_in_context(c,card), c.name }.join(', ') %> 
-			<%#= render :partial=>'block/link_list', :locals=>{ 
-            :card=>card,
-            :cards=>load_cards( :id=>card.id, :query=>"pieces")
-          }
-      %>
+    <span id="<%= slot.id + "-links" %>" class="link-list">
+      <%= card.name.piece_names.map { |c| link_to_page c }.join(', ') %> 
     </span>
     &nbsp;
   </div>

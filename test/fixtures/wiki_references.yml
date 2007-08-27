@@ -1,89 +1,177 @@
 --- 
 wiki_references_003: 
+<<<<<<< .working
   updated_at: 2007-08-21 10:08:40.595758
+=======
+  updated_at: 2007-08-16 13:16:18.146562
+>>>>>>> .merge-right.r117
   link_type: L
-  card_id: "44"
+  card_id: "43"
   id: "3"
-  referenced_card_id: "41"
+  referenced_card_id: "40"
   referenced_name: A
+<<<<<<< .working
   created_at: 2007-08-21 10:08:40.595758
+=======
+  created_at: 2007-08-16 13:16:18.146562
+>>>>>>> .merge-right.r117
 wiki_references_004: 
+<<<<<<< .working
   updated_at: 2007-08-21 10:08:40.610577
+=======
+  updated_at: 2007-08-16 13:16:18.16136
+>>>>>>> .merge-right.r117
   link_type: L
-  card_id: "44"
+  card_id: "43"
   id: "5"
-  referenced_card_id: "43"
-  referenced_name: T
-  created_at: 2007-08-21 10:08:40.610577
-wiki_references_005: 
-  updated_at: 2007-08-21 10:08:40.949999
-  link_type: T
-  card_id: "45"
-  id: "6"
-  referenced_card_id: "40"
-  referenced_name: Z
-  created_at: 2007-08-21 10:08:40.949999
-wiki_references_006: 
-  updated_at: 2007-08-21 10:08:40.952957
-  link_type: T
-  card_id: "45"
-  id: "7"
   referenced_card_id: "42"
-  referenced_name: B
-  created_at: 2007-08-21 10:08:40.952957
-wiki_references_007: 
-  updated_at: 2007-08-21 10:08:40.964068
-  link_type: L
-  card_id: "45"
-  id: "9"
-  referenced_card_id: "40"
-  referenced_name: Z
-  created_at: 2007-08-21 10:08:40.964068
-wiki_references_008: 
-  updated_at: 2007-08-21 10:08:40.966831
-  link_type: T
-  card_id: "45"
-  id: "10"
-  referenced_card_id: "41"
-  referenced_name: A
-  created_at: 2007-08-21 10:08:40.966831
-wiki_references_009: 
-  updated_at: 2007-08-21 10:08:40.969622
-  link_type: T
-  card_id: "45"
-  id: "11"
-  referenced_card_id: "43"
   referenced_name: T
-  created_at: 2007-08-21 10:08:40.969622
-wiki_references_010: 
-  updated_at: 2007-08-21 10:08:40.604328
+<<<<<<< .working
+  created_at: 2007-08-21 10:08:40.610577
+=======
+  created_at: 2007-08-16 13:16:18.16136
+>>>>>>> .merge-right.r117
+wiki_references_005: 
+<<<<<<< .working
+  updated_at: 2007-08-21 10:08:40.949999
+=======
+  updated_at: 2007-08-16 13:16:18.508534
+>>>>>>> .merge-right.r117
+  link_type: T
+  card_id: "44"
+  id: "6"
+  referenced_card_id: "39"
+  referenced_name: Z
+<<<<<<< .working
+  created_at: 2007-08-21 10:08:40.949999
+=======
+  created_at: 2007-08-16 13:16:18.508534
+>>>>>>> .merge-right.r117
+wiki_references_006: 
+<<<<<<< .working
+  updated_at: 2007-08-21 10:08:40.952957
+=======
+  updated_at: 2007-08-16 13:16:18.511734
+>>>>>>> .merge-right.r117
+  link_type: T
+  card_id: "44"
+  id: "7"
+  referenced_card_id: "41"
+  referenced_name: B
+<<<<<<< .working
+  created_at: 2007-08-21 10:08:40.952957
+=======
+  created_at: 2007-08-16 13:16:18.511734
+>>>>>>> .merge-right.r117
+wiki_references_007: 
+<<<<<<< .working
+  updated_at: 2007-08-21 10:08:40.964068
+=======
+  updated_at: 2007-08-16 13:16:18.522742
+>>>>>>> .merge-right.r117
   link_type: L
   card_id: "44"
-  id: "4"
-  referenced_card_id: "46"
-  referenced_name: A+B
-  created_at: 2007-08-21 10:08:40.604328
-wiki_references_011: 
-  updated_at: 2007-08-21 10:08:40.96129
+  id: "9"
+  referenced_card_id: "39"
+  referenced_name: Z
+<<<<<<< .working
+  created_at: 2007-08-21 10:08:40.964068
+=======
+  created_at: 2007-08-16 13:16:18.522742
+>>>>>>> .merge-right.r117
+wiki_references_008: 
+<<<<<<< .working
+  updated_at: 2007-08-21 10:08:40.966831
+=======
+  updated_at: 2007-08-16 13:16:18.52596
+>>>>>>> .merge-right.r117
   link_type: T
-  card_id: "45"
-  id: "8"
-  referenced_card_id: "46"
-  referenced_name: A+B
-  created_at: 2007-08-21 10:08:40.96129
-wiki_references_001: 
-  updated_at: 2007-08-21 10:08:40.261366
+  card_id: "44"
+  id: "10"
+  referenced_card_id: "40"
+  referenced_name: A
+<<<<<<< .working
+  created_at: 2007-08-21 10:08:40.966831
+=======
+  created_at: 2007-08-16 13:16:18.52596
+>>>>>>> .merge-right.r117
+wiki_references_009: 
+<<<<<<< .working
+  updated_at: 2007-08-21 10:08:40.969622
+=======
+  updated_at: 2007-08-16 13:16:18.529857
+>>>>>>> .merge-right.r117
+  link_type: T
+  card_id: "44"
+  id: "11"
+  referenced_card_id: "42"
+  referenced_name: T
+<<<<<<< .working
+  created_at: 2007-08-21 10:08:40.969622
+=======
+  created_at: 2007-08-16 13:16:18.529857
+>>>>>>> .merge-right.r117
+wiki_references_010: 
+<<<<<<< .working
+  updated_at: 2007-08-21 10:08:40.604328
+=======
+  updated_at: 2007-08-16 13:16:18.155215
+>>>>>>> .merge-right.r117
   link_type: L
-  card_id: "41"
-  id: "1"
-  referenced_card_id: "40"
-  referenced_name: Z
-  created_at: 2007-08-21 10:08:40.261366
-wiki_references_002: 
-  updated_at: 2007-08-21 10:08:40.478169
+  card_id: "43"
+  id: "4"
+  referenced_card_id: "45"
+  referenced_name: A+B
+<<<<<<< .working
+  created_at: 2007-08-21 10:08:40.604328
+=======
+  created_at: 2007-08-16 13:16:18.155215
+>>>>>>> .merge-right.r117
+wiki_references_011: 
+<<<<<<< .working
+  updated_at: 2007-08-21 10:08:40.96129
+=======
+  updated_at: 2007-08-16 13:16:18.519869
+>>>>>>> .merge-right.r117
   link_type: T
-  card_id: "42"
-  id: "2"
-  referenced_card_id: "40"
+  card_id: "44"
+  id: "8"
+  referenced_card_id: "45"
+  referenced_name: A+B
+<<<<<<< .working
+  created_at: 2007-08-21 10:08:40.96129
+=======
+  created_at: 2007-08-16 13:16:18.519869
+>>>>>>> .merge-right.r117
+wiki_references_001: 
+<<<<<<< .working
+  updated_at: 2007-08-21 10:08:40.261366
+=======
+  updated_at: 2007-08-16 13:16:17.79976
+>>>>>>> .merge-right.r117
+  link_type: L
+  card_id: "40"
+  id: "1"
+  referenced_card_id: "39"
   referenced_name: Z
+<<<<<<< .working
+  created_at: 2007-08-21 10:08:40.261366
+=======
+  created_at: 2007-08-16 13:16:17.79976
+>>>>>>> .merge-right.r117
+wiki_references_002: 
+<<<<<<< .working
+  updated_at: 2007-08-21 10:08:40.478169
+=======
+  updated_at: 2007-08-16 13:16:18.007485
+>>>>>>> .merge-right.r117
+  link_type: T
+  card_id: "41"
+  id: "2"
+  referenced_card_id: "39"
+  referenced_name: Z
+<<<<<<< .working
   created_at: 2007-08-21 10:08:40.478169
+=======
+  created_at: 2007-08-16 13:16:18.007485
+>>>>>>> .merge-right.r117

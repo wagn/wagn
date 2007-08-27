@@ -221,7 +221,7 @@ class JumpToVersion38 < ActiveRecord::Migration
     create_user_card( 'Admin', 'admin' )
     
     create_cardtype_card 'Basic'
-    create_cardtype_card 'Connection'
+    #create_cardtype_card 'Connection'
     create_cardtype_card 'User'
     create_cardtype_card 'Cardtype'
     create_cardtype_card 'Company'

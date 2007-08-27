@@ -8,12 +8,11 @@ require File.dirname(__FILE__) + '/cardname'
 COMPRESSED_JS = 'wagn_cmp.js'
 JAVASCRIPT_FILES = %w{
   prototype.js
-  effects.js
+  effects.js 
+  controls.js
   application.js
-  window.js
-  builder.js
-  calendar.js
-  
+  Wagn.js
+
   Wikiwyg.js
   Wikiwyg/Toolbar.js
   Wikiwyg/Wysiwyg.js
@@ -22,16 +21,23 @@ JAVASCRIPT_FILES = %w{
   Wikiwyg/Util.js
   Wikiwyg/HTML.js
   Wikiwyg/Debug.js
-  
-  Wagn.js
-  Wagn/Card.js
   Wagn/Wikiwyg.js
-  Wagn/Editor.js
-  Wagn/Lister.js
   Wagn/LinkEditor.js
+  Wagn/Lister.js
+}
+
+
+CRAZY_FILES = %{
+  window.js
+  builder.js
+  calendar.js
+  
+  
+  Wagn/Card.js
+  Wagn/Editor.js
 }
 
 js_dir = "#{RAILS_ROOT}/public/javascripts"
 Dir["#{js_dir}/Wagn/*/*.js"].collect do |file|
-  JAVASCRIPT_FILES << 'Wagn/Editor/' + Pathname.new(file).basename.to_s
+  #JAVASCRIPT_FILES << 'Wagn/Editor/' + Pathname.new(file).basename.to_s
 end

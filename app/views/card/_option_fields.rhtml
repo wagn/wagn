@@ -2,8 +2,6 @@
   context ||= 'options'   # new|options|cardtype
   option  ||= {} 
 -%>
-
-
 <% if context=='options' and System.ok? :rename_cards %>
   <tr>
     <td class="label"><label for="name">Name</label></td>
@@ -12,9 +10,13 @@
 						:size=>40, 
 						:class=>'new-card-name',    
 						:id=>"#{params[:element]}-name-field" %>
-      <%= button_to_function "Rename", 
+
+
+      <%#= button_to_function "Rename", 
 					card_function(params[:element], :rename_form, "$F('#{params[:element]}-name-field')"), 							
-					:class=>'save' %>   
+					:class=>'save' %>
+					
+					   
 			<% if (@card.name.split("+").length == 2) %>
 				<%= button_to_function "Flip", "f=$('#{params[:element]}-name-field'); f.value = f.value.split('+').reverse().join('+')" %>
 		  <% end %>
@@ -27,9 +29,7 @@
   <tr>
     <td class="label"><label for="cardtype">Cardtype</label></td>
     <td class="field">
-      <%= select_tag 'card[type]', cardtype_options_for_select(@card.type),
-						:onChange => (context=='new' ? "$('new-card-cardtype').innerHTML = Form.Element.getValue(this); this.form.onsubmit()" : card_attribute_function('cardtype'))
-      %> 
+      <%= select_tag 'card[type]', cardtype_options_for_select(@card.type) %> 
     </td>
     <td class="help">category for layout, templates, etc.</td>
   </tr>
@@ -40,7 +40,7 @@
      <td class="label">Viewers</td>
      <td class="field">
        <span id="<%= params[:element] %>-reader-select">
-         <%= render :partial=>'card/reader_select' %>
+         <%=  collection_select :card, :reader_id, reader_options_for( @card ), :first, :last, {} %>
        </span>
     </td>
     <td class="help">Only users in this group can view this card</td>
@@ -49,7 +49,7 @@
      <td class="label">Editors</td>
      <td class="field">
        <span id="<%= params[:element] %>-writer-select">
-         <%= render :partial=>'card/writer_select' %>
+         <%=  collection_select :card, :reader_id, writer_options_for( @card ), :first, :last, {} %>
        </span>
     </td>
     <td class="help">Only users in this group can edit this card</td>
@@ -58,7 +58,7 @@
     <td class="label">Commenters</td>
     <td class="field">
       <span id="<%= params[:element] %>-appender-select">
-        <%= render :partial=>'card/appender_select' %>
+        <%=  collection_select :card, :reader_id, appender_options_for( @card ), :first, :last, {} %>
       </span>
    </td>
    <td class="help">Who can add comments to this card?</td>

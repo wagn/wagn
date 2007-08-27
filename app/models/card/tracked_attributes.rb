@@ -12,7 +12,6 @@ module Card
      
     def set_name(newname)
       oldname = self.name_without_tracking
-      #puts("\nrename #{oldname} => #{newname} ")
       self.name_without_tracking = newname 
       self.key = newname.to_key 
       return if new_record?
@@ -56,7 +55,7 @@ module Card
     def set_content(new_content)  
       return false unless self.id           
       new_content ||= ''
-      Renderer.instance.render(self, new_content, update_references=true)
+      rendered_content = Renderer.instance.render(self, new_content, update_references=true)
       clear_drafts if current_revision_id
       self.current_revision = Revision.create :card_id=>self.id, :content=>new_content
     end

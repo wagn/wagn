@@ -9,7 +9,7 @@ module Wagn
     attr_reader :card
     def initialize(card)
       @card = card
-      super("Permission denied: #{@card.errors.full_messages.join(", ")}")
+      super("for card #{@card.name}: #{@card.errors.on(:permission_denied)}")
     end
   end
   

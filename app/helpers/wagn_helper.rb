@@ -2,7 +2,156 @@ module WagnHelper
   require_dependency 'wiki_content'
 
   Droplet = Struct.new(:name, :link_options)
+  
+  class Slot
+    attr_reader :card, :context, :action, :id
+    attr_accessor :editor_id
+    def initialize(card, context, action, template, options, proc)
+      @card, @context, @action, @template, @options, @proc = card, context.to_s, action.to_s, template, options, proc
+      @id = @template.slot_id(@card, @context)
+    end
 
+    def method_missing(method_id, *args)
+      @template.send("slot_#{method_id}", self, *args)
+    end
+  end
+  
+  def slot_id(card, context) 
+    context=='main' ? 'main-card' : "#{context}-#{card.id}"
+  end
+
+  # FIXME: xhr? test isn't right-- could be called from a list view that IS xhr,
+  # but we do want the slots.
+  def slot_for( card, context, action, options={}, &proc )
+    options[:render_slot] = !request.xhr? if options[:render_slot].nil?            
+    slot = Slot.new(card, context, action, self, options, proc)
+    css_class = ''      
+    if slot.action=='line'  
+      css_class << 'line' 
+    else
+      css_class << 'paragraph'                     
+    end
+    css_class << ' full' if context=='main'
+    css_class <<  ' sidebar' if context=='sidebar'
+    concat(%{<div id="#{slot.id}" class="card-slot #{css_class}">}, proc.binding) if options[:render_slot]
+    yield slot
+    concat(%{</div>}, proc.binding) if options[:render_slot]
+  end 
+
+  def slot_header(slot)
+    render :partial=>'card/header', :locals=>{ :card=>slot.card, :slot=>slot }
+  end
+
+  def slot_footer(slot)
+    render :partial=>"card/footer", :locals=>{ :card=>slot.card, :slot=>slot }
+  end
+
+  def slot_link_to_action(slot, text, to_action, remote_opts={}, html_opts={})
+    link_to_remote text, remote_opts.merge(
+      :url=>"/card/#{to_action}/#{slot.card.id}" + (slot.context=='main' ? '' : "?context=#{slot.context}"),
+      :update => slot.id
+    ), html_opts
+  end
+
+  def slot_link_to_menu_action(slot, to_action)
+    slot.link_to_action to_action.capitalize, to_action, 
+      :class=> (slot.action==to_action ? 'current' : '')
+  end
+       
+  def slot_render_partial(slot, partial, args={})
+    # FIXME: this should look up the inheritance hierarchy, once we have one
+    render :partial=> partial_for_action(partial, slot.card), 
+      :locals => args.merge({ :card=>slot.card, :slot=>slot })
+  end
+
+  def slot_editor_hooks(slot,hooks)
+    # it seems as though code executed inline on ajax requests works fine
+    # to initialize the editor, but when loading a full page it fails-- so
+    # we run it in an onLoad queue.  the rest of this code we always run
+    # inline-- at least until that causes problems.
+    code = ""
+    if hooks[:setup]
+      code << "Wagn.onLoadQueue.push(function(){\n" unless request.xhr?
+      code << hooks[:setup]
+      code << "});\n" unless request.xhr?
+    end
+    if hooks[:save]
+      code << "if (typeof(Wagn.onSaveQueue['#{slot.id}'])=='undefined') {\n"
+      code << "  Wagn.onSaveQueue['#{slot.id}']=$A([]);\n"
+      code << "}\n"
+      code << "Wagn.onSaveQueue['#{slot.id}'].push(function(){\n"
+      code << hooks[:save]
+      code << "});\n"
+    end
+    if hooks[:cancel]
+      code << "if (typeof(Wagn.onCancelQueue['#{slot.id}'])=='undefined') {\n"
+      code << "  Wagn.onCancelQueue['#{slot.id}']=$A([]);\n"
+      code << "}\n"
+      code << "Wagn.onCancelQueue['#{slot.id}'].push(function(){\n"
+      code << hooks[:cancel]
+      code << "});\n"
+    end
+    javascript_tag code
+  end
+  
+  def truncatewords_with_closing_tags(input, words = 15, truncate_string = "...")
+    if input.nil? then return end
+    wordlist = input.to_s.split
+    l = words.to_i - 1
+    l = 0 if l < 0
+    wordstring = wordlist.length > l ? wordlist[0..l].join(" ") : input
+    h1 = {}
+    h2 = {}
+    wordstring.scan(/\<([^\>\s\/]+)[^\>\/]*?\>/).each { |t| h1[t[0]] ? h1[t[0]] += 1 : h1[t[0]] = 1 }
+    wordstring.scan(/\<\/([^\>\s\/]+)[^\>]*?\>/).each { |t| h2[t[0]] ? h2[t[0]] += 1 : h2[t[0]] = 1 }
+    h1.each {|k,v| wordstring += "</#{k}>" * (h1[k] - h2[k].to_i) if h2[k].to_i < v }
+    wordstring = wordstring + "..."
+  end
+
+  # You'd think we'd want to use this one but it sure doesn't seem to work as
+  # well as the truncatewords...
+  def truncate_with_closing_tags(input, chars, truncate_string = "...")
+    if input.nil? then return end
+      code = truncate(input, chars).to_s #.chop.chop.chop
+      h1 = {}
+      h2 = {}
+      code.scan(/\<([^\>\s\/]+)[^\>\/]*?\>/).each { |t| h1[t[0]] ? h1[t[0]] += 1 : h1[t[0]] = 1 }
+      code.scan(/\<\/([^\>\s\/]+)[^\>]*?\>/).each { |t| h2[t[0]] ? h2[t[0]] += 1 : h2[t[0]] = 1 }
+      h1.each {|k,v| code += "</#{k}>" * (h1[k] - h2[k].to_i) if h2[k].to_i < v }
+      code = code + truncate_string
+      return code
+  end  
+   
+=begin
+  def render_card_partial( name, card, slot=nil, args={})
+    render :partial=> partial_for_card_and_action(card, name), 
+      :locals => args.merge({:card=>card, :slot=>slot })
+  end
+=end
+  
+  def conditional_cache(card, name, &block)
+    card.cacheable? ? controller.cache_erb_fragment(block, name) : block.call
+  end
+  
+  def rendered_content( card )   
+    c, name = controller, "card/content/#{card.id}"
+    if c.perform_caching and card.cacheable? and content = c.read_fragment(name)
+      return content
+    end
+    content = render :partial=>partial_for_action("content", card), :locals=>{:card=>card}
+    if card.cacheable? and c.perform_caching
+      c.write_fragment(name, content)
+    end
+    content
+  end
+
+  def partial_for_action( name, card=nil )
+    # FIXME: this should look up the inheritance hierarchy, once we have one
+    cardtype = (card ? card.type : 'Basic').underscore
+    file_exists?("/cardtypes/#{cardtype}/_#{name}") ? 
+      "/cardtypes/#{cardtype}/#{name}" :
+      "/cardtypes/basic/#{name}"
+  end
 
   def formal_joint
     " <span class=\"wiki-joint\">#{JOINT}</span> "
@@ -18,13 +167,16 @@ module WagnHelper
   
   # Urls -----------------------------------------------------------------------
   
-  def url_for_page( title, opts={} )
-    url_for(opts.merge(
-      :action=>'show', 
-      :controller=>'card', 
-      :id=>Cardname.escape(title), 
-      :format => nil
-    ))
+  def url_for_page( title, opts={} )   
+    # shaved order of magnitude off footer rendering
+    # vs. url_for( :action=> .. )
+    "/wiki/#{Cardname.escape(title)}"
+    #url_for(opts.merge(
+    #  :action=>'show', 
+    #  :controller=>'card', 
+    #  :id=>Cardname.escape(title), 
+    #  :format => nil
+    #))
   end  
   
   def url_for_card( options={} )
@@ -42,21 +194,6 @@ module WagnHelper
     end
   end  
     
-  def link_to_footer( text, div_id, card_id, query )
-    link_to_remote( text,
-				  :update=>"#{div_id}-links",
-				  :url => {
-					  :controller=>'block', 
-					  :action=>'link_list',
-					  :id=>card_id,
-					  :query=> query 
-					},                      
-					:method => 'get'  
-    )
-  end   
-  
-  
-  
   def link_to_connector_update( text, highlight_group, connector_method, value, *method_value_pairs )
     #warn "method_value_pairs: #{method_value_pairs.inspect}"
     extra_calls = method_value_pairs.size > 0 ? ".#{method_value_pairs[0]}('#{method_value_pairs[1]}')" : ''
@@ -138,33 +275,20 @@ module WagnHelper
   end
 
   def less_fancy_title(card)
-    return card.name if card.simple?
-    trunk, tag = card.trunk.name, card.tag.name
-    card_title_span(trunk) + %{<span class="joint">#{JOINT}</span>} + card_title_span(tag)
+    name = card.name
+    return name if name.simple?
+    card_title_span(name.parent_name) + %{<span class="joint">#{JOINT}</span>} + card_title_span(name.tag_name)
   end
   
   def card_title_span( title )
     %{<span class="title-#{css_name(title)} card">#{title}</span>}
   end
   
-  def card_function( element, name, *args )
-    #quoted_args = args.collect {|arg| "'#{arg}'" }.join(',')
-    "$('#{element}').card().#{name.to_s}(#{args.join(',')}); return false;"
-  end
-  
-  def inner_card_function( name, *args )
-    "Wagn.CardTable[ this.parentNode.parentNode.parentNode.parentNode.id ].#{name.to_s}(#{args.join(',')})"
-  end
-  
   def connector_function( name, *args )
     "Wagn.lister().#{name.to_s}(#{args.join(',')});"
   end             
   
-  def card_attribute_function( attr_name )
-    card_function(params[:element], :update_attribute, "'#{attr_name}'", '$F(this)') 
-  end
-  
-  
+=begin  
   # Forms --------------------------------------------------------
   def form_for_block( options={}, form_options={} )
     ajax = options.has_key?(:ajax) ? options[:ajax] : true
@@ -205,6 +329,7 @@ module WagnHelper
   end
 
   # Common image tags
+=end
   
   def pieces_icon( card, prefix='' )
     image_tag "/images/#{prefix}pieces_icon.png", :title=>"cards that comprise \"#{card.name}\""
@@ -235,7 +360,7 @@ module WagnHelper
   end
   
   def sidebar
-	  render :partial=>'block/card_list', :locals=>{ :cards=>renderer.sidebar_cards(), :context=>'sidebar' }
+    render :partial=>partial_for_action('sidebar', @card)
   end
 
   def format_date(date, include_time = true)
@@ -245,26 +370,6 @@ module WagnHelper
     else
       DateTime.new(date.year, date.mon, date.day).strftime("%B %e, %Y")
     end
-  end
-  
-  def get_partial( card, context, element )
-    basic = 'line'
-    ext = context
-    if context=='sidebar' 
-      if  ( card.template.attribute_card('*open') or 
-         (!card.simple? and card.tag.plus_sidebar and card.tag.attribute_card('*open')))
-        basic = "paragraph"
-      end
-    end
-    "#{basic} #{ext}"
-  end
-  
-  def get_div_id( card, context, element="" )
-    div_id = element.clone
-    div_id << '-' unless div_id.empty?                              
-    # risk duplication within a context (we should check for that somehow)
-    # but enables cacheing (of footers in particular)
-    div_id << context + '-' + card.id.to_s # + '-' + rand(1000).to_s
   end
 
   def flexlink( linktype, name, options )
@@ -323,13 +428,6 @@ module WagnHelper
     %{<span id="paging-links" class="paging-links">#{links}</span>}
   end
 
-  def partial_for_card_and_action( card, action )                              
-    if file_exists? "/card/#{card.class_name.underscore}/_#{action}"
-      "/card/#{card.class_name.underscore}/#{action}" 
-    else
-      "/card/basic/#{action}"
-    end
-  end  
 
 end
 

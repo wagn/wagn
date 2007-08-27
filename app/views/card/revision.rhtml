@@ -1,2 +1,38 @@
-<%= render :partial=>'revision' %>
+<% slot_for(@card, @context, :changes) do |slot| %>
+	<%= slot.header %>
+	<div class="revision-header">
+	  <span class="revision-title"><%= @revision.title %></span> 
+	  posted by <%= link_to_page @revision.created_by.card.name %>
+	  on <%= format_date(@revision.created_at) %>
+	  <% if !@card.drafts.empty? %>
+	    <p class="autosave-alert">
+	      This card has an <%= autosave_revision %>
+	    </p>
+	  <% end %>  
+	  <% if @show_diff and @previous_revision %>
+	    <p class="revision-diff-header">  
+	      <small>  
+	        Showing changes from revision #<%= @revision_number - 1 %>:  
+	        <ins class="diffins">Added</ins> | <del class="diffmod">Removed</del>  
+	      </small>  
+	    </p>
+	  <% end %>
+  
+	</div>
 
+	<div class="revision-navigation">
+	  <%= revision_menu %>
+	</div>
+
+	<div class="revision">                       
+	  <% if @show_diff and @previous_revision %>
+	    <%= renderer.render_diff( @card, @previous_revision.content, @revision.content ) %>
+	  <% else %>
+	    <%= renderer.render(@card, @revision.content) %>
+	  <% end %>
+	</div>
+
+	<div class="revision-navigation card-footer">
+	  <%= revision_menu %>
+	</div>
+<% end %>

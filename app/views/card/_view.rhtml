@@ -1,0 +1,7 @@
+<% slot_for(card, context, action) do |slot| %>
+	<%= slot.header %>
+	<span class="content cooked editOnDoubleClick" cardId="<%= card.id %>" inPopup="false">
+		<%= rendered_content card %>
+	</span>
+  <%= slot.footer %>
+<% end %>

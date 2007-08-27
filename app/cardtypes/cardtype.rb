@@ -1,9 +1,11 @@
-module Card
+ module Card
   class Cardtype < Base
     ## FIXME -- needs to create constant-safe class name and validate its uniqueness 
     before_validation_on_create :create_extension
     before_destroy :ensure_not_in_use, :destroy_extension   # order is important!
-
+    after_create :reload_cardtypes
+    before_destroy :reload_cardtypes
+                                    
     def codename
       extension ? extension.class_name : nil
     end
@@ -34,6 +36,12 @@ module Card
 
 
     private
+    # FIXME -- the current system of caching cardtypes is not "thread safe":
+    # multiple running ruby servers could get out of sync re: available cardtypes  
+    def reload_cardtypes
+      Card.send(:load_cardtypes!)
+    end
+    
     def destroy_extension
       self.extension.destroy
     end

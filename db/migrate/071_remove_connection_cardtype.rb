@@ -4,6 +4,7 @@ class RemoveConnectionCardtype < ActiveRecord::Migration
       if MCard.find_all_by_type('Connection').length < 1
         card.update_attribute('current_revision_id', nil)
         card.destroy
+        #::Cardtype.find_by_class_name("Connection").destroy
       end
     end
   end

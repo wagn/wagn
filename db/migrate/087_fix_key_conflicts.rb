@@ -10,7 +10,7 @@ class FixKeyConflicts < ActiveRecord::Migration
       
      puts "gathered conflicts"
      conflicts_by_key.each_pair do |key,cards| 
-       c1, c2 = cards.sort{|a,b| a.in_references.length <=> b.in_references.length}
+       c1, c2, c3, c4 = cards.sort{|a,b| a.in_references.length <=> b.in_references.length}
        print  "fixing #{key} : #{c1.type}:#{c1.name}, #{c2.type}:#{c2.name} .."
        if c1.name  =~ /\*/ 
          print "updating c1 key"
@@ -33,6 +33,7 @@ class FixKeyConflicts < ActiveRecord::Migration
      end  
             
      add_unique_index 'cards', 'key'
+   rescue
   end
 
   def self.down

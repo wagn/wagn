@@ -12,12 +12,13 @@ class ConnectionController < ApplicationController
   
   def create_form
     # this is a terrible hack to force format==html in case we throw an oops.
-    # even though the Ajax is an update, it comes out requiesting js otherwise
+    # even though the Ajax is an update, it comes out requesting js otherwise
     request.env['HTTP_ACCEPT']='text/html'  
     
     @trunk = Card.find_by_id params[:id] 
     @tag = Card.find_or_new params[:card]
     @connection = Card::Basic.new :trunk=>@trunk, :tag=>@tag
+    @connection.send(:set_defaults)
   end
   
   def create
@@ -27,7 +28,6 @@ class ConnectionController < ApplicationController
     if params[:personal_sidebar]
       @connection.reader = User.current_user
       @connection.save!
-      #@connection.connect!( Card.find_by_name('*sidebar') )
       Card::Basic.create! :trunk=>@connection, :tag=>Card.find_by_name('*sidebar')
     end
   end

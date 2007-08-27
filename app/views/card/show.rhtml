@@ -6,11 +6,10 @@
 <div>
   <% @title = @card.name %>
 
-	<%= render( :partial=>'card/card_slot', :locals=>{ 
+	<%= render( :partial=>'card/view', :locals=>{ 
 		:card => @card,
 		:context => 'main',
-		:partial => 'full',
-		:div_id=>'main-body'
+		:action => 'view',
 		}) 
   %>
 

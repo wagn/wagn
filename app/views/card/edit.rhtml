@@ -1,0 +1,30 @@
+<% slot_for(card, context, 'edit') do |slot| %>  
+	<%= slot.header %>
+
+<%#
+  <div class="title"> 
+		<%= in_place_editor_field :card, :name, {},
+					:click_to_edit_text => "click to rename",
+					:save_text => "rename",
+					:cancel_text=>"cancel"
+		 % >
+  </div>
+
+  <div class="cardtype"> 
+		<%= in_place_editor_field :card, :type % >
+  </div>
+%>
+	<%# FANCY SHMANCY TEMPLATE STUFF GOES HERE %>
+	
+  <% form_remote_for :card, card, :url=>"/card/update/#{card.id}", :update=>slot.id do |form| %>
+		<%= slot.render_partial 'editor', :form=>form, :editor_id=>slot.id + "-1"  %>
+
+		<%= button_to_function "Save", %{
+					Wagn.runQueue(Wagn.onSaveQueue['#{slot.id}']); 
+					this.form.onsubmit();
+				}, :class=>'save' %>
+		<%= slot.link_to_action 'Cancel', 'view', {
+					:before=>"Wagn.runQueue(Wagn.onCancelQueue['#{slot.id}']);"
+				}, :class=>'cancel' %>
+	<% end %>
+<% end %>

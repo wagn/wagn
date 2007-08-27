@@ -2,7 +2,7 @@
 # migrations feature of ActiveRecord to incrementally modify your database, and
 # then regenerate this schema definition.
 
-ActiveRecord::Schema.define(:version => 88) do
+ActiveRecord::Schema.define(:version => 91) do
 
   create_table "cards", :force => true do |t|
     t.column "trunk_id",            :integer
@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(:version => 88) do
     t.column "appender_id",         :integer
   end
 
+  add_index "cards", ["extension_id", "extension_type"], :name => "cards_extension_index"
   add_index "cards", ["key"], :name => "cards_key_uniq", :unique => true
   add_index "cards", ["name"], :name => "cards_name_index"
   add_index "cards", ["trunk_id"], :name => "index_cards_on_trunk_id"

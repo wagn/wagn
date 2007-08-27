@@ -15,11 +15,8 @@
 <% cards_by_day.keys.sort.reverse.each do |day| %>
   <h2><%= format_date(day, include_time = false) %></h2>
   <% for card in cards_by_day[day] %>
-    <%= render :partial=>'card/card_slot', 
-          :locals=>{ :div_id=>get_div_id( card, context, element), 
-                     :card  =>card, 
-                     :context=>context, 
-                     :partial=>get_partial( card, context, element )  } %>
+	   <%= render :partial=>'card/line', :locals=>{:card=>card, :context=>context, :render_slot=>true} %>
+
   <% end %>
 <% end %>
 <%= paging( cards ) %>

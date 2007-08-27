@@ -1,50 +1,42 @@
-<% @title = "New Card" %>   
-<% show_options = params[:option] && params[:option][:show_options] ? true : false %>
-<div id="main-body" class="new-card <%= @context %> full card-slot">
-  <% form_remote_tag( 
-        :url=>{:action=>'new'},
-        :html=>{ :id=>'new-card-form' },
-        :update=>'new-editor',
-        :complete =>"Wagn.Card.init('main-body').slowEdit('Reloading Editor')"
-  ) do %>
-    <%= hidden_field_tag :create_url, url_for(:action=>'create'), :id=>'create-card-url' %>
-    <p class="header">
-      <div id="new-card-name">
-        <label for="new-card-name">card name</label><br/>
-        <%= text_field( :card, :name, {:class=>'new-card-name', :id=>"new-card-name-field"} )%><br/>
-      </div>
-      <a id="new-card-cardtype" class="cardtype" href="javascript:void()">
-        <%= params[:card] ? params[:card][:type] : 'Basic'%>
-      </a>
-      
-      <br /><br /><br />
-    </p>
+<% slot_for(@card, "new", "new") do |slot| %>
+	<% @title = "New Card" %>   
+	<% show_options = params[:option] && params[:option][:show_options] ? true : false %>
+
+  <% form_remote_for :card, card, :url=>{:action=>'create'}, :update=>slot.id do |form| %>
+	    <p class="header">
+	      <div id="new-card-name">
+	        <label for="new-card-name">card name</label><br/>
+	        <%= text_field( :card, :name, {:class=>'new-card-name', :id=>"new-card-name-field"} )%><br/>
+	      </div>
+	      <a id="new-card-cardtype" class="cardtype" href="javascript:void()">
+	        <%= params[:card] ? params[:card][:type] : 'Basic'%>
+	      </a>
+	      <br /><br /><br />
+	    </p>
     
-     <div>
-      <div class="options-links">
-        <%= link_to_options( 'create-advanced', :mode=>(show_options ? 'hide' : 'show')) %>
-      </div>
+	     <div>
+	      <div class="options-links">
+	        <%= link_to_options( 'create-advanced', :mode=>(show_options ? 'hide' : 'show')) %>
+	      </div>
       
-      <div id="create-advanced" style="<%= show_options ? '' : 'display:none' %>" >
-        <table class="fieldset">
-         <%= render :partial=>'option_fields', :locals=>{:context=>'new', :option=>(params[:option] || {})} %>
-        </table>
-      </div>
-    </div>
-    <input type="hidden" name="card[content]" id="new-card-content-field">
-  <% end %>
+	      <div id="create-advanced" style="<%= show_options ? '' : 'display:none' %>" >
+	        <table class="fieldset">
+	         <%= render :partial=>'option_fields', :locals=>{:context=>'new', :option=>(params[:option] || {})} %>
+	        </table>
+	      </div>
+	    </div>
    
-    <p>
-      <div id="new-editor">
-        <%= render :partial=>'new_editor',:locals=>{ } %>
-      </div> 
-    </p>
+	    <p>
+	      <div id="new-editor">
+	        <%= slot.render_partial( 'editor', :form=>form, :editor_id=>slot.id+"-1" ) %>
+	      </div> 
+	    </p>
         
-    <p>
-      <%= link_to_page 'Cancel', previous_page, :class=>'cancel'  %>
-      <%= submit_tag 'Create', :onClick=>card_function('main-body', :save), :class=>'save' %>
-    </p>
-    
-  </div>
-</div>
-<%= javascript_tag "new Wagn.OnLoad.Item(function() { #{card_function('main-body', :edit)} }); " %>
+	    <p>
+	      <%= submit_tag 'Create', :class=>'save' %>
+	      <%= link_to_page 'Cancel', previous_page, :class=>'cancel'  %>
+	    </p>
+
+  <% end %>
+<% end %>
+

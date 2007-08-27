@@ -22,26 +22,21 @@ module CardHelper
     end.collect {|c| [c.id, c.cardname] }.sort {|a,b| a.last<=>b.last}
   end
   
-=begin  
-  def datatype_options
-    Datatype.find_all.reject do |s|
-      (s.registered_id == 'Ruby' and !System.enable_ruby_cards) or
-      (s.registered_id == 'Server' and ! (System.enable_server_cards and System.ok?( :edit_server_cards ))) or
-      (s.registered_id == 'Discussion' and !System.always_ok?)
-    end.map { |s| [s.registered_id, s.label] } 
-  end
-  
-  def datatype_select
-    collection_select( :tag, :datatype_key, datatype_options, :first, :last, {}, :onChange=>'this.form.onsubmit()')
-  end 
-=end  
-  
   # navigation for revisions -
   # --------------------------------------------------
   def revision_link( text, revision, name, accesskey='', mode=nil )
-    link_to_function( text, card_function(params[:element], 'changes', revision, "'#{mode || params[:mode] || 'true'}'"))
+    link_to_remote text, 
+      :url=>{ :action=>'revision', :id=>@card.id, 
+        :rev=>revision, :context=>@context, :mode=>(mode || params[:mode] || true)
+      },
+     :update=>slot_id(@card, @context)
   end
-  
+
+  def rollback
+    link_to_remote 'Save as current', 
+      :url => { :action=>'rollback', :id=>@card.id, :rev=>@revision_number },
+      :update=>slot_id(@card, @context)
+  end
   
   def revision_menu
     revision_menu_items.flatten.map do |item|
@@ -52,9 +47,8 @@ module CardHelper
   def revision_menu_items
     menu = []
     menu << forward
-    menu << back_for_revision #if @revision_number > 1
-    #menu << current_revision
-    menu << see_or_hide_changes_for_revision #if @revision_number > 1
+    menu << back_for_revision
+    menu << see_or_hide_changes_for_revision 
     menu << rollback
     menu
   end
@@ -81,19 +75,10 @@ module CardHelper
     revision_link(@show_diff ? 'Hide changes' : 'Show changes', 
       @revision_number, 'see_changes', 'C', (@show_diff ? 'false' : 'true'))
   end
-
  
   def autosave_revision
      revision_link("Autosaved Draft", @card.revisions.count, 'to autosave')
   end
-  
-  def rollback
-    link_to_function( 'Save as current', card_function( params[:element], :rollback, @revision_number ) )
-    #link_to_card('Rollback', :action=>'rollback', :rev => @revision_number, 
-    #  :class => 'navlink', :name => 'rollback')
-  end
-  
-
   
 end
 

@@ -1,0 +1,22 @@
+<div class="card-header">
+  <div class="card-menu">
+	  <%= slot.link_to_menu_action 'view'  %>   
+	  <%= slot.link_to_menu_action 'edit'  %>   
+	  <%= slot.link_to_menu_action 'changes' %>   
+	  <%= slot.link_to_menu_action 'options' %>   
+  </div>
+
+  <div class="title"> 
+	  <% arrow = %{<img class="close-arrow" src="/images/arrow_down.png">} %>
+    <%= slot.link_to_action arrow + less_fancy_title(card), 'line', 
+					{:before => "Wagn.paragraph_to_line($('#{slot.id}'))" }, 
+					:id=>"#{slot.id}-line-link", :class=>"line-link" %> 
+  </div>
+
+  <% unless card.type=='Basic' %>
+    <span class="cardtype">
+      <%= link_to_page( Card.cardtypes[card.type] ) %>
+    </span>
+  <% end %>
+</div>
+<br>

@@ -83,29 +83,51 @@ module Card
       #require_permission :create_cards
     end
 
-    def approve_read 
-      # this one is mostly for testing
-      if Card.find_by_wql("cards where id=#{self.id}").length==0 
-        deny_because "wql can't find that card"  # FIXME this is a crappy explanation
+    def approve_read              
+      return if System.always_ok? # FIXME: is this right?  if not we need to fix wql as well..
+      if reader_id and reader_type=='Role' and !System.role_ok?(reader_id)
+        deny_because "read access restricted to group #{reader.cardname}"
+      end
+      
+      if reader_id and reader_type=='User' and ::User.current_user.id!=reader_id
+        deny_because "read access is restricted to user #{reader.cardname}"
       end
     end
- 
+    
     def approve_edit 
-      if writer and writer_type=='Role' and !System.role_ok?(writer_id)
+      return if System.always_ok?
+      if writer_id and writer_type=='Role' and !System.role_ok?(writer_id)
         deny_because "editing is restricted to group #{writer.cardname}"
       end
 
-      if writer and writer_type=='User' and ::User.current_user.id!=writer_id
+      if writer_id and writer_type=='User' and ::User.current_user.id!=writer_id
         deny_because "editing is restricted to user #{writer.cardname}"
       end
-       
-      # 
-            
+
       # FIXME - this should move to Script cardtype
       if class_name=='Server' and !System.ok?( :edit_server_cards )
         deny_because "editing requires 'edit server cards' permission"
       end
+
+      if writer_id and writer_type=='User' and ::User.current_user.id!=writer_id
+        deny_because "editing is restricted to user #{writer.cardname}"
+      end
     end  
+
+    def approve_comment 
+      if !appender_id
+        deny_because "noone may append to this card"
+      end
+      return if System.always_ok?
+
+      if appender_id and appender_type=='Role' and !System.role_ok?(appender_id)
+        deny_because "appending restricted to group #{appender.cardname}"
+      end
+
+      if appender_id and appender_type=='User' and ::User.current_user.id!=appender_id
+        deny_because "appending restricted to user #{appender.cardname}"
+      end
+    end
      
     def approve_destroy
       approve_edit
@@ -133,15 +155,6 @@ module Card
       approve_edit unless new_record?
     end
      
-    def approve_comment 
-      unless appender and System.role_ok?(appender_id)
-        if appender
-          deny_because "appending restricted to group #{appender.cardname}"
-        else
-          deny_because "noone may append to this card"
-        end
-      end
-    end
     
     def approve_reader
       approve_role_change(:reader, reader)

@@ -1,3 +1,0 @@
-<%= collection_select :card, :appender_id, appender_options_for( @card ), :first, :last, {}, 
- :onChange=>card_function( params[:element], :update_appender, "{ 'card[appender_id]': Form.Element.getValue(this) }" ) 
-%>

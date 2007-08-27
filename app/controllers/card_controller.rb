@@ -4,8 +4,6 @@ class CardController < ApplicationController
   cache_sweeper :card_sweeper
   before_filter :load_card, :except => [ :new, :create, :show, :index  ]
   
-  # views ---------------------------------------
-  
   def index
     redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_name)
   end
@@ -19,17 +17,12 @@ class CardController < ApplicationController
     if (@card = Card.find_by_name( @card_name )) 
       @card.ok! :read
       remember_card @card
-      load_context
-      load_renderer                                 
+      # FIXME: I'm sure this is broken now that i've refactored..                               
       respond_to do |format|
         format.html { render :action=>'show' }
         format.json {
-          render_jsonp :partial =>'card/card_slot', :locals=>{ 
-            :card                               => @card,
-            :context                            => 'wadget',
-            :partial                            => 'paragraph sidebar',
-            :div_id                             => 'main-body'
-          }
+          render_jsonp :partial =>'card/view', 
+            :locals=>{ :card=> @card, :context=>"main",:action=>"view"}
         }
       end
     elsif User.current_user
@@ -47,10 +40,6 @@ class CardController < ApplicationController
     end
   end
 
-  def view
-    render :partial=>"card/card", :locals=>{ :card=>@card, :div_id=>params[:element] } 
-  end
-
   def new
     @card = Card.new params[:card] 
     if @card.type == 'User'
@@ -61,15 +50,24 @@ class CardController < ApplicationController
     end
   end
 
-  def options; end
-  def remove_form; end
-  def rename_form; end
-  def edit_form;  end
-  def edit_transclusion; end
+  def update    
+    if @card.update_attributes params[:card]     
+      render :action=>'view'
+    else
+      render :action=>'edit'
+    end
+  end
 
-  
-  def editor 
-    render :partial=>"/card/editor", :locals=>{ :card=>@card, :div_id=>params[:element] }
+  def save_draft
+    @card.save_draft( params[:card][:content] )
+    render(:update) do |page|
+      page.wagn.messenger.log("saved draft of #{@card.name}")
+    end
+  end  
+
+  def changes
+    load_card_and_revision
+    render :action=>'revision'
   end
   
   def revision
@@ -78,23 +76,12 @@ class CardController < ApplicationController
     @previous_revision = @card.previous_revision(@revision)
   end
 
-  # actions ------------------------------------------------------
-  
-  def edit
-    old_rev_id = params[:card].delete(:old_revision_id)
-    warn "EDIT PARAMS: #{params[:card].inspect}"
-    if old_rev_id.to_i != @card.current_revision.id
-      revision  # FIXME -- this should probably be abstracted?
-      @changes = render_to_string :action=>'revision' 
-      render :action=>:edit_conflict
-    else
-      WikiContent.process_links!(params[:card][:content], url="http://#{request.host_with_port}")
-      @card.update_attributes( params[:card] )
-    end
-    #render_update do |page|
-    #end
-  end
-  
+  def rollback
+    load_card_and_revision
+    @card.update_attributes! :content=>@revision.content
+    render :action=>'view'
+  end  
+
   def create         
     @card = Card.create! params[:card]
     # prevent infinite redirect loop
@@ -120,25 +107,36 @@ class CardController < ApplicationController
     @card.save!
   end 
   
-  def save_draft
-    @card.save_draft( params[:card][:content] )
-    render(:update) do |page|
-      page.wagn.messenger.log("saved draft of #{@card.name}")
-    end
-  end  
 
-  def update    
-    @card = Card.find params[:id]
-    @card.update_attributes! params[:card]
+=begin  
+  def editor 
+    render :partial=>"/card/editor", :locals=>{ :card=>@card, :div_id=>params[:element] }
   end
+    def edit
+      old_rev_id = params[:card].delete(:old_revision_id)
+      warn "EDIT PARAMS: #{params[:card].inspect}"
+      if old_rev_id.to_i != @card.current_revision.id
+        revision  # FIXME -- this should probably be abstracted?
+        @changes = render_to_string :action=>'revision' 
+        render :action=>:edit_conflict
+      else
+        WikiContent.process_links!(params[:card][:content], url="http://#{request.host_with_port}")
+        @card.update_attributes( params[:card] )
+      end
+      #render_update do |page|
+      #end
+    end
+=end
 
+
+=begin  
 
   def rename
     @card.name = params[:card][:name]
     @card.on_rename_skip_reference_updates = (params[:change_links]!='yes')
     @card.save!
   end
-  
+
   def update_reader
     @new_reader = Role.find( params[:card][:reader_id] )
     @card.reader = @new_reader
@@ -173,6 +171,20 @@ class CardController < ApplicationController
       page.wagn.messenger.note "#{@card.name} #{params[:message] || 'updated'}"
     end
   end
+
+  # FOR in_place editor
+  def set_card_name
+    @card = Card.find(params[:id])
+    @card.update_attributes( :name => params[:value])
+    render :text=> @card.name
+  end
+  
+  def set_card_name
+    @card = Card.find(params[:id])
+    @card.update_attributes( :name => params[:value])
+    render :text=> @card.name
+  end
+  
   
   # FIXME: when we fix the options tab to be a regular form and call update,
   # this can go away.
@@ -204,5 +216,7 @@ class CardController < ApplicationController
        end
      render :text => result
    end  
+=end
+
 
 end

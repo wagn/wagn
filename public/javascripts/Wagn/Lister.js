@@ -33,13 +33,13 @@ Object.extend(Wagn.Lister.prototype, {
     // load cards
   },   
   open_all: function() {
-    this._cards().each(function(card){
-      card.to_paragraph();
+    $A(document.getElementsByClassName('open-link', $(this.div_id))).each(function(a) {
+      a.onclick();
     })
   },
   close_all: function() {
-    this._cards().each(function(card){
-      card.to_line();
+    $A(document.getElementsByClassName('line-link', $(this.div_id))).each(function(a) {
+      a.onclick();
     })
   },  
   cards_per_page: function() {
@@ -55,12 +55,7 @@ Object.extend(Wagn.Lister.prototype, {
     return document.getElementsByClassName('card-slot', $(this.div_id));
   },
   card_id: function() {
-    // ABSTRACT
-    if ($('main-body')) {
-      return $('main-body').card().id();
-    } else {
-      return '';
-    }
+    return (typeof(Wagn.main_card)=='undefined' ? '' : Wagn.main_card.id);
   },
   display_type: function() {
     if (arguments[0]!=null) {
@@ -150,14 +145,14 @@ Object.extend(Wagn.Lister.prototype, {
 			if ((query == 'plus_cards') || (query == 'plussed_cards')) {
 				button = '<input type="button" id="new-connection-button" value="join it to another card" onClick="Wagn.lister().new_connection ()">';	 
 			} else if	(query == 'cardtype_cards') {
-			  cardtype = $('main-body').card().codename();
+			  cardtype = Wagn.main_card.codename;
 				button = '<input type="button" value="create new one" onClick="document.location.href=\'/card/new?card[type]=' + cardtype + '\'">';
 			}
 		}
 	  $('related-button').innerHTML = button; 
   },
   after_update: function() {
-    Wagn.Card.setupAll();
+    //Wagn.Card.setupAll();
     $('paging-links-copy').innerHTML = $('paging-links').innerHTML;
   },                              
   _ajax_parameters: function() {

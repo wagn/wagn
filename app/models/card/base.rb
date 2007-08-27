@@ -49,7 +49,7 @@ module Card
     has_many :linkers, :through=>:in_links, :source=>:referencer
     has_many :linkees, :through=>:out_links, :source=>:referencee
    
-    before_validation_on_create :set_card_defaults
+    before_validation_on_create :set_defaults
     after_create :update_references_on_create
     before_destroy :update_references_on_destroy
     after_save :cache_priority
@@ -57,7 +57,7 @@ module Card
     attr_accessor :comment, :comment_author
     
     protected
-    def set_card_defaults 
+    def set_defaults 
       return unless new_record?  # because create callbacks are also called in type transitions 
       # FIXME: AccountCreationTest:test_should_require_valid_cardname
       # fails unless we add the  'and name.valid_cardname?'  below
@@ -143,6 +143,17 @@ module Card
       end
       alias_method_chain :create, :trash   
       
+             
+      # uncomment if we want to protect 'unreadable' cards from even
+      # being loaded.  thinking for now let them load and check when
+      # requesting content.
+      #
+      #def instantiate_with_permissions(record)
+      #  card = instantiate_without_permissions(record)
+      #  card.ok! :read
+      #  card
+      #end
+      #alias_method_chain :instantiate, :permissions
       
       def get_class_from_args(args)
         args ||= {}
@@ -247,7 +258,8 @@ module Card
     end
 
     # Dynamic Attributes ------------------------------------------------------        
-    def content
+    def content    
+      ok! :read   # currently only check read access here...
       current_revision ? current_revision.content : ""
     end   
     

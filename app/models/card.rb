@@ -62,15 +62,25 @@ module Card
     # FIXME -- the current system of caching cardtypes is not "thread safe":
     # multiple running ruby servers could get out of sync re: available cardtypes  
     def cardtypes
-      @cardtypes or load_cardtypes!
+      @cardtype || load_cardtypes!
     end
-  
+
+    def load_cardtypes!  
+      @cardtypes = Card::Base.connection.select_all(%{
+        select ct.class_name, c.name from cardtypes ct 
+        join cards c on c.extension_id=ct.id and c.type='Cardtype'
+      }).inject({}) do |hash,ct|
+        hash[ct['class_name']] = ct['name']; hash
+      end
+    end
+     
     def const_missing( class_id )
       super
-    rescue NameError => e
+    rescue NameError => e   
       if cardtypes.has_key?( class_id.to_s )
         newclass = Class.new( Card::Base )
         const_set class_id, newclass
+        # FIXME: is this necessary?
         if observers = Card::Base.instance_variable_get('@observer_peers')
           observers.each do |o|
             newclass.add_observer(o)
@@ -82,12 +92,5 @@ module Card
       end
     end
         
-    private
-      def load_cardtypes!
-        @cardtypes = ::Cardtype.find(:all).inject({}) do |hash,ct|
-          hash[ct.class_name] = true; hash
-        end
-      end
-    
   end
 end

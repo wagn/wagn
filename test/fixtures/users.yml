@@ -1,78 +1,147 @@
 --- 
 users_004: 
   status: active
+<<<<<<< .working
   salt: 6ef6dbccbe030c74a5b8d15393bd5ea6c8ce783b
   updated_at: 2007-08-21 10:08:39.016229
+=======
+  salt: b4a7c5ffbb0b7eda3d4f5e3126508f0a05e87c68
+  updated_at: 2007-08-16 13:16:16.297671
+>>>>>>> .merge-right.r117
   cards_per_page: "25"
+<<<<<<< .working
   crypted_password: 9d1fe9040dd1d938a8316deb6e51a90da1c4a0fe
+=======
+  crypted_password: aa7c9564b23ba2143fc64a1e2d83503e978a0a32
+>>>>>>> .merge-right.r117
   invite_sender_id: "1"
   blocked: f
   password_reset_code: 
   id: "4"
   hide_duplicates: t
   login: joe_user
+<<<<<<< .working
   created_at: 2007-08-21 10:08:39.016229
+=======
+  created_at: 2007-08-16 13:16:16.297671
+>>>>>>> .merge-right.r117
   email: joe@user.com
 users_005: 
   status: request
+<<<<<<< .working
   salt: 9b9a6a73111f94f91a0844e67eaf9695a781d9f7
   updated_at: 2007-08-21 10:08:39.410701
+=======
+  salt: 500e4a203ab9a85d4faf41ccb577c414650fb2c5
+  updated_at: 2007-08-16 13:16:16.79405
+>>>>>>> .merge-right.r117
   cards_per_page: "25"
+<<<<<<< .working
   crypted_password: cca7ce22e6359c6f72a73f39eb3a27726f8f311a
+=======
+  crypted_password: 1be22941dc82ce4b61459eb0f90bbb2762b5fa23
+>>>>>>> .merge-right.r117
   invite_sender_id: 
   blocked: f
   password_reset_code: 
   id: "5"
   hide_duplicates: t
   login: 
+<<<<<<< .working
   created_at: 2007-08-21 10:08:39.410701
+=======
+  created_at: 2007-08-16 13:16:16.79405
+>>>>>>> .merge-right.r117
   email: ron@request.com
 users_006: 
   status: active
+<<<<<<< .working
   salt: f4d04c8b67c67f70ab04b6d15afd45133f4c72e3
   updated_at: 2007-08-21 10:08:39.546325
+=======
+  salt: b4b246b691e8105a99d572025e796903d8a3572c
+  updated_at: 2007-08-16 13:16:16.954444
+>>>>>>> .merge-right.r117
   cards_per_page: "25"
+<<<<<<< .working
   crypted_password: e5dd206671ef025958a98f06e1b14321487ec057
+=======
+  crypted_password: b5ba9ef31ab078d533096da303e4de80c6682b88
+>>>>>>> .merge-right.r117
   invite_sender_id: "1"
   blocked: f
   password_reset_code: 
   id: "6"
   hide_duplicates: t
   login: u1
+<<<<<<< .working
   created_at: 2007-08-21 10:08:39.546325
+=======
+  created_at: 2007-08-16 13:16:16.954444
+>>>>>>> .merge-right.r117
   email: u1@user.com
 users_007: 
   status: active
+<<<<<<< .working
   salt: 18477128f1f7f0130f04f5a3c3beea2d377ba0c6
   updated_at: 2007-08-21 10:08:39.555158
+=======
+  salt: 08ff4fcf6b14d3f08bda831bb6a22717cf1c21a3
+  updated_at: 2007-08-16 13:16:16.965531
+>>>>>>> .merge-right.r117
   cards_per_page: "25"
+<<<<<<< .working
   crypted_password: 517d8c379a6470093a67ab4b69820d80d0f4a3d9
+=======
+  crypted_password: efc064facd4cffdffc054badb04a3fdeb4fbc0b5
+>>>>>>> .merge-right.r117
   invite_sender_id: "1"
   blocked: f
   password_reset_code: 
   id: "7"
   hide_duplicates: t
   login: u2
+<<<<<<< .working
   created_at: 2007-08-21 10:08:39.555158
+=======
+  created_at: 2007-08-16 13:16:16.965531
+>>>>>>> .merge-right.r117
   email: u2@user.com
 users_008: 
   status: active
+<<<<<<< .working
   salt: f0f8caa87de3b093815308010b7fb500128b7e5e
   updated_at: 2007-08-21 10:08:39.564075
+=======
+  salt: e31f16990330f2ee84dd3dbde079b4b1eeb6015c
+  updated_at: 2007-08-16 13:16:16.977139
+>>>>>>> .merge-right.r117
   cards_per_page: "25"
+<<<<<<< .working
   crypted_password: bc08679144d8dbdf86c20dd2698f4fef61c59a26
+=======
+  crypted_password: b8518e7b35e5a5e840f383c38b178099fddc564f
+>>>>>>> .merge-right.r117
   invite_sender_id: "1"
   blocked: f
   password_reset_code: 
   id: "8"
   hide_duplicates: t
   login: u3
+<<<<<<< .working
   created_at: 2007-08-21 10:08:39.564075
+=======
+  created_at: 2007-08-16 13:16:16.977139
+>>>>>>> .merge-right.r117
   email: u3@user.com
 users_001: 
   status: active
   salt: c420fa40c65a38186deb25ba859edacd9bf7d8f8
+<<<<<<< .working
   updated_at: 2007-08-21 10:08:32.286899
+=======
+  updated_at: 2007-08-16 13:16:09.358747
+>>>>>>> .merge-right.r117
   cards_per_page: "25"
   crypted_password: 13d124f96e2953fea135c13df097fb3d754588be
   invite_sender_id: "1"
@@ -81,12 +150,20 @@ users_001:
   id: "2"
   hide_duplicates: t
   login: hoozebot
+<<<<<<< .working
   created_at: 2007-08-21 10:08:32.286899
+=======
+  created_at: 2007-08-16 13:16:09.358747
+>>>>>>> .merge-right.r117
   email: hoozebot@grasscommons.org
 users_002: 
   status: active
   salt: bf2a748b23e6fc6fa64d5acb99df8e72e308c58c
+<<<<<<< .working
   updated_at: 2007-08-21 10:08:33.957871
+=======
+  updated_at: 2007-08-16 13:16:11.015402
+>>>>>>> .merge-right.r117
   cards_per_page: "25"
   crypted_password: 610bb7b564d468ad896e0fe4c3c5c919ea5cf16c
   invite_sender_id: "1"
@@ -95,12 +172,20 @@ users_002:
   id: "1"
   hide_duplicates: t
   login: admin
+<<<<<<< .working
   created_at: 2007-08-21 10:08:32.272782
+=======
+  created_at: 2007-08-16 13:16:09.34422
+>>>>>>> .merge-right.r117
   email: webmaster@grasscommons.org
 users_003: 
   status: system
   salt: c420fa40c65a38186deb25ba859edacd9bf7d8f8
+<<<<<<< .working
   updated_at: 2007-08-21 10:08:34.142184
+=======
+  updated_at: 2007-08-16 13:16:11.212163
+>>>>>>> .merge-right.r117
   cards_per_page: "25"
   crypted_password: 13d124f96e2953fea135c13df097fb3d754588be
   invite_sender_id: "1"
@@ -109,5 +194,9 @@ users_003:
   id: "3"
   hide_duplicates: t
   login: anon
+<<<<<<< .working
   created_at: 2007-08-21 10:08:34.018751
+=======
+  created_at: 2007-08-16 13:16:11.08594
+>>>>>>> .merge-right.r117
   email: anonymous@grasscommons.org

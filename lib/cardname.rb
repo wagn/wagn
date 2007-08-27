@@ -23,6 +23,10 @@ module Cardname
     return true
   end
   
+  def piece_names
+    simple? ? [self] : ([self] + parent_name.piece_names + tag_name.piece_names).uniq
+  end
+  
   def parent_name
     simple? ? nil : split(JOINT)[0..-2].join(JOINT)
   end

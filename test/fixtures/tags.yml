@@ -44,15 +44,15 @@ tags_011:
   plus_datatype_key: 
   label: f
 tags_012: 
-  created_by: 
+  created_by: "2"
   current_revision_id: "12"
-  datatype_key: 
+  datatype_key: RichText
   card_count: "0"
-  updated_by: 
+  updated_by: "2"
   id: "12"
   datatype: string
   plus_template: 
-  plus_datatype_key: 
+  plus_datatype_key: RichText
   label: f
 tags_001: 
   created_by: 
@@ -66,11 +66,11 @@ tags_001:
   plus_datatype_key: 
   label: f
 tags_013: 
-  created_by: "2"
+  created_by: "1"
   current_revision_id: "13"
   datatype_key: RichText
   card_count: "0"
-  updated_by: "2"
+  updated_by: "1"
   id: "13"
   datatype: string
   plus_template: 
@@ -130,17 +130,6 @@ tags_004:
   datatype: string
   plus_template: 
   plus_datatype_key: 
-  label: f
-tags_016: 
-  created_by: "1"
-  current_revision_id: "16"
-  datatype_key: RichText
-  card_count: "0"
-  updated_by: "1"
-  id: "16"
-  datatype: string
-  plus_template: 
-  plus_datatype_key: RichText
   label: f
 tags_005: 
   created_by: 

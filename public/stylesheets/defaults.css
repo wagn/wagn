@@ -132,9 +132,6 @@ img {
   border: 0px;
   vertical-align: middle;
 }  
-.cancel {  /* FIXME -- doesn't belong here */
-  float: right; 
-}
 
 li {
   margin-bottom: 2px;

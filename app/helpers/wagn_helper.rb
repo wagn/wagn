@@ -20,23 +20,46 @@ module WagnHelper
     context=='main' ? 'main-card' : "#{context}-#{card.id}"
   end
 
-  # FIXME: xhr? test isn't right-- could be called from a list view that IS xhr,
-  # but we do want the slots.
   def slot_for( card, context, action, options={}, &proc )
     options[:render_slot] = !request.xhr? if options[:render_slot].nil?            
     slot = Slot.new(card, context, action, self, options, proc)
-    css_class = ''      
-    if slot.action=='line'  
-      css_class << 'line' 
+    if options[:render_slot]
+      css_class = ''      
+      if slot.action=='line'  
+        css_class << 'line' 
+      else
+        css_class << 'paragraph'                     
+      end
+      css_class << ' full' if context=='main'
+      css_class << ' sidebar' if context=='sidebar'
+      concat(%{<div id="#{slot.id}" class="card-slot #{css_class}">}, proc.binding) 
+      yield slot
+      concat(%{</div>}, proc.binding)
     else
-      css_class << 'paragraph'                     
+      yield slot
     end
-    css_class << ' full' if context=='main'
-    css_class <<  ' sidebar' if context=='sidebar'
-    concat(%{<div id="#{slot.id}" class="card-slot #{css_class}">}, proc.binding) if options[:render_slot]
-    yield slot
-    concat(%{</div>}, proc.binding) if options[:render_slot]
   end 
+
+  def slot_name_area(slot)
+    slot.id + "-name"
+  end
+
+  def slot_cardtype_area(slot)
+    slot.id + "-cardtype"
+  end
+
+  def slot_url_for_action(slot,action)
+    "/card/#{action}/#{slot.card.id}" + slot.context_cgi
+  end
+
+  def slot_url_for_name_action(slot,action)
+    "/cardname/#{action}/#{slot.card.id}" + slot.context_cgi
+  end
+
+  def slot_url_for_cardtype_action(slot,action)
+    "/cardtype/#{action}/#{slot.card.id}" + slot.context_cgi
+  end
+
 
   def slot_header(slot)
     render :partial=>'card/header', :locals=>{ :card=>slot.card, :slot=>slot }
@@ -46,13 +69,25 @@ module WagnHelper
     render :partial=>"card/footer", :locals=>{ :card=>slot.card, :slot=>slot }
   end
 
+
   def slot_link_to_action(slot, text, to_action, remote_opts={}, html_opts={})
     link_to_remote text, remote_opts.merge(
-      :url=>"/card/#{to_action}/#{slot.card.id}" + (slot.context=='main' ? '' : "?context=#{slot.context}"),
+      :url=>slot.url_for_action(to_action),
       :update => slot.id
     ), html_opts
   end
 
+  def slot_button_to_action(slot, text, to_action, remote_opts={}, html_opts={})
+    button_to_remote text, remote_opts.merge(
+      :url=>slot.url_for_action(to_action),
+      :update => slot.id
+    ), html_opts
+  end
+  
+  def slot_context_cgi(slot)
+    slot.context=='main' ? '' : "?context=#{slot.context}"
+  end
+  
   def slot_link_to_menu_action(slot, to_action)
     slot.link_to_action to_action.capitalize, to_action, {},
       :class=> (slot.action==to_action ? 'current' : '')
@@ -378,7 +413,9 @@ module WagnHelper
     %{<span id="paging-links" class="paging-links">#{links}</span>}
   end
 
-
+  def button_to_remote(name,options={},html_options={})
+    button_to_function(name, remote_function(options), html_options)
+  end
 end
 
 

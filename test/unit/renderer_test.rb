@@ -7,7 +7,6 @@ class RendererTest < Test::Unit::TestCase
   
   def setup
     setup_default_user
-    @template = Renderer::StubTemplate.new
     @renderer = Renderer.instance
   end
 

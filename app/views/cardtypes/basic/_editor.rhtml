@@ -1,3 +1,4 @@
+<div class="richtext">
 <% eid = editor_id %>
 <div id="<%= eid %>-raw-content"><%= card.content %></div>
 <%= form.hidden_field :content, :id=>"#{eid}-hidden-content" %>
@@ -22,3 +23,4 @@
 		Wagn.wikiwygs['#{eid}']
 	}
 %>
+</div>

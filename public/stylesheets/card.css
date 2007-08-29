@@ -1,4 +1,4 @@
-.card-slot .new-card-name {
+.card-slot .card-name-field {
   background: #eef;
   font-weight: bold;
   color: #448;
@@ -293,9 +293,37 @@ a.current, a:link.current {
 
 
 /* card editing -------------------*/
-.card-slot .cancel,
-.card-slot .save {
-  margin: 5px 15px;
+
+.edit-area {
+  background: #ddd;
+  border: dashed 1px #aaa;
+  margin: 4px;
+  padding: 3px;
+}
+.edit .cardtype {
+  font-size: 14px;
+  margin-left: 20px;
+}
+.name-editor, .cardtype-editor {
+  width: 65%;
+}
+.edit-area p {
+  padding: 2px;
+}
+
+
+.edit-area input[type=submit], 
+.edit-area input[type=button] {
+  margin: 2px 2px;
+  font-size: 11px;
+  background: #ddd;
+  color: #333;
+  border: 1px solid #bbb;
+  border-right: 1px solid #666;
+  border-bottom: 1px solid #666;
+}
+.edit-area .richtext {
+  background: #fff;
 }
 
 /* card footer-------------------------------*/

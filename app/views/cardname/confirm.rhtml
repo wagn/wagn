@@ -1,0 +1,29 @@
+<%= form_remote_tag :url=>{:action=>'rename', :id=>@card.id} %>
+
+  Change <%= link_to_page formal_title(@card), @card.name %> to <%= text_field_tag 'card[name]', params[:card][:name], :size=>30 %>
+
+  <% if dependents = @card.dependents and !dependents.empty? %>
+    <p>This will change the names of these cards, too:</p>
+    <ul>
+      <% dependents.map do |dep| %>
+        <li><%= link_to_page formal_title(dep), dep.name %>
+      <% end. join ', ' %>
+    </ul>
+  <% end %>
+    
+  <% if children = (@card.dependents + [@card]).plot(:linkers).flatten.uniq and !children.empty? %>
+    <p>These cards are linked to from the following cards:</p>
+    <ul>
+      <% children.map do |child| %>
+        <li><%= link_to_page formal_title(child), child.name %>
+      <% end. join ', ' %>
+    </ul>
+    Would you like to 
+    <p><%= radio_button_tag 'change_links', 'yes', true %>Revise all these cards with the new link
+    <%= radio_button_tag 'change_links', 'no' %>Let the links be broken</p>
+  <% end %>
+
+    <%= submit_tag('save') %>
+    <%= link_to_function 'Cancel', card_function( params[:element], :cancel ) %>
+
+<%= end_form_tag %>

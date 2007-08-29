@@ -139,26 +139,7 @@ Object.extend(Wagn.Wikiwyg.prototype, {
 
 Object.extend(Wagn.Wikiwyg, {
   wikiwyg_divs: [],
-/*  default_config:  {
-      imagesLocation: '../../images/wikiwyg/',
-      doubleClickToEdit: false,
-      modeClasses: [
-          'Wikiwyg.Wysiwyg'
-      ],
-      controlLayout: [
-        'selector', 'bold', 'italic', 
-        'ordered', 'unordered','indent','outdent'
-    ],
-    styleSelector: [ 'label','h1','h2','p' ],
-    controlLabels: Object.extend(Wikiwyg.Toolbar.prototype.config, {
-      spotlight: 'Spotlight',
-      highlight: 'Highlight',
-      h1: 'Header',
-      h2: 'Subheader',
-      link: 'Create/Edit link'
-    })
-  },
-*/  
+
   addEventToWindow: function(window, name, func) {
     if (window.addEventListener) {
       name = name.replace(/^on/, '');
@@ -208,20 +189,6 @@ Object.extend(Wikiwyg.Wysiwyg.prototype, {
     l = new Wagn.LinkEditor( this );
     l.edit();
     return;
-    /*
-      var selection = this.get_link_selection_text();
-      if (! selection) return;
-      var url;
-      var match = selection.match(/(.*?)\b((?:http|https|ftp|irc|file):\/\/\S+)(.*)/);
-      if (match) {
-          if (match[1] || match[3]) return null;
-          url = match[2];
-      } else {
-          //url = '?' + escape(selection); 
-          url =  escape(selection); 
-      }
-      this.exec_command('createlink', url);
-    */
   },  
   do_bold: function() {
     this.exec_command('bold');
@@ -302,10 +269,4 @@ Object.extend(Wikiwyg.Mode.prototype, {
     return h;    
   }
 });
-
-/*   
-rich_text_wikiwyg = new Subclass('Wagn.RichTextWikiwyg', 'Wagn.Wikiwyg');
-Object.extend(Wagn.RichTextWikiwyg.prototype, {
-});
-*/              
 

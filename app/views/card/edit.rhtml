@@ -1,6 +1,32 @@
 <% slot_for(card, context, 'edit') do |slot| %>  
-	<%= slot.header %>
+	<%#= slot.header %>
+	<div class="card-header">
+	  <div class="card-menu">
+		  <%= slot.link_to_menu_action 'view'  %>   
+		  <%= slot.link_to_menu_action 'edit'  %>   
+		  <%= slot.link_to_menu_action 'changes' %>   
+		  <%= slot.link_to_menu_action 'options' %>   
+	  </div>
 
+	  <span id="<%= slot.name_area %>">
+		 	<span class="title"><%= less_fancy_title(card) %></span>
+			<%= link_to_remote '[edit name]', :url=>slot.url_for_name_action("edit"),
+						:update => slot.name_area %>
+	  </span> 
+		
+
+    <span id="<%= slot.cardtype_area %>" class="edit">
+			<span class="cardtype">
+	      <%= link_to_page( Card.cardtypes[card.type] ) %>
+			</span>
+			<%= link_to_remote '[edit cardtype]', :url=>slot.url_for_cardtype_action("edit"),
+						:update => slot.cardtype_area %>
+    </span>
+
+	</div>
+	<br>
+	
+	
 <%#
   <div class="title"> 
 		<%= in_place_editor_field :card, :name, {},
@@ -15,16 +41,23 @@
   </div>
 %>
 	<%# FANCY SHMANCY TEMPLATE STUFF GOES HERE %>
-	
-  <% form_remote_for :card, card, :url=>"/card/update/#{card.id}", :update=>slot.id do |form| %>
-		<%= slot.render_partial 'editor', :form=>form, :editor_id=>slot.id + "-1"  %>
 
-		<%= button_to_function "Save", %{
-					Wagn.runQueue(Wagn.onSaveQueue['#{slot.id}']); 
-					this.form.onsubmit();
-				}, :class=>'save' %>
-		<%= slot.link_to_action 'Cancel', 'view', {
-					:before=>"Wagn.runQueue(Wagn.onCancelQueue['#{slot.id}']);"
-				}, :class=>'cancel' %>
-	<% end %>
+	<% save = button_to_function "Save", %{
+				Wagn.runQueue(Wagn.onSaveQueue['#{slot.id}']); 
+				this.form.onsubmit();
+			}, :class=>'save' %>
+	<% cancel = slot.button_to_action 'Cancel', 'view', {
+				:before=>"Wagn.runQueue(Wagn.onCancelQueue['#{slot.id}']);"
+			}, :class=>'cancel' %>
+	
+    
+		<div class="editor edit-area">
+	  <% form_remote_for :card, card, :url=>slot.url_for_action("update"), :update=>slot.id,
+	 			:class=>'editor' do |form| %>
+			<%#= save + cancel %>
+			<%= slot.render_partial 'editor', :form=>form, :editor_id=>slot.id + "-1"  %>
+			<%= save + cancel %>
+
+		<% end %>
+		</div>
 <% end %>

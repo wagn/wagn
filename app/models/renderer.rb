@@ -60,7 +60,7 @@ class Renderer
     end
     
     while wiki_content.chunks.length > 0
-      warn "chunk length #{wiki_content.chunks.length}"
+      #warn "chunk length #{wiki_content.chunks.length}"
       wiki_content.chunks[0].revert
     end
     wiki_content

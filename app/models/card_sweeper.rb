@@ -18,7 +18,9 @@ class CardSweeper < ActionController::Caching::Sweeper
   
   private
   def expire_card(c)
-    expire_fragment("card/view/#{c.id}")   
+    #expire_fragment("card/view/#{c.id}")
+    expire_fragment("card/line/#{c.id}")   
+    expire_fragment("card/content/#{c.id}")   
   end
   
 end

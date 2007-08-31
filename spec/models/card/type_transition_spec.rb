@@ -2,8 +2,8 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 module Card  
   class CardtypeA < Base  
-    def approve_destroy   
-      deny_because "not allowed to destroy card a"
+    def approve_delete 
+      deny_because("not allowed to delete card a")
     end
   end
 
@@ -67,7 +67,7 @@ describe Card, "type transition approve destroy" do
   before do @a = change_card_to_type("type-a-card", "Basic") end
   
   it "should have errors" do
-    @a.errors.on(:permission_denied).should == "not allowed to destroy card a"   # FIXME: be more specific about what error?
+    @a.errors.on(:permission_denied).should == "not allowed to delete card a"   # FIXME: be more specific about what error?
   end
               
   it "should still be the original type" do

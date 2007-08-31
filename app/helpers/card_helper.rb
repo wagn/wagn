@@ -1,8 +1,9 @@
 module CardHelper
 
   def reader_options_for( card )
-    card.writer ?  options_from_roles( card.writer.superset_roles ) :
-      [['','-- Select -- ']] + options_from_roles( Role.find_configurables )
+#   fixme-perm card.permission
+#    card.writer ?  options_from_roles( card.writer.superset_roles ) :
+#      [['','-- Select -- ']] + options_from_roles( Role.find_configurables )
   end
 
   def writer_options_for( card )

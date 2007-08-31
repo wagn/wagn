@@ -27,10 +27,10 @@ module Card
 
     belongs_to :extension, :polymorphic=>true
 
-    belongs_to :reader, :polymorphic=>true
-    belongs_to :writer, :polymorphic=>true
-    belongs_to :appender, :polymorphic=>true
-    
+    has_many :permissions, :foreign_key=>'card_id', :dependent=>:delete_all
+
+    belongs_to :reader, :polymorphic=>true  
+        
     has_many :in_references, :class_name=>'WikiReference', :foreign_key=>'referenced_card_id'
     has_many :out_references,:class_name=>'WikiReference', :foreign_key=>'card_id', :dependent=>:destroy
     
@@ -71,11 +71,8 @@ module Card
       self.key = name.to_key if name
       self.priority = tag.priority if tag  # this might not be right for non-simple tags
 
-      
       {
-        :reader => junction? ? trunk.reader : nil,
-        :writer => nil,
-        :appender => nil,
+        :permissions => [:read,:edit,:comment,:delete].map{|t| Permission.new(:task=>t.to_s, :party=>::Role.find_by_codename('auth'))},
         :content => '',
       }.each_pair do |attr, default|  
         unless updates.for?(attr)
@@ -258,8 +255,8 @@ module Card
     end
 
     # Dynamic Attributes ------------------------------------------------------        
-    def content    
-      ok! :read   # currently only check read access here...
+    def content
+#     ok!(:read) # fixme-perm.  might need this, but it's breaking create...
       current_revision ? current_revision.content : ""
     end   
     
@@ -364,7 +361,7 @@ module Card
     # Because of the way it chains methods, 'tracks' needs to come after
     # all the basic method definitions, and validations have to come after
     # that because they depend on some of the tracking methods.
-    tracks :name, :content, :type, :reader, :writer, :appender, :comment
+    tracks :name, :content, :type, :comment, :permissions, :reader #, :reader, :writer, :appender
 
     validates_presence_of :name
 
@@ -373,9 +370,9 @@ module Card
     validates_associated :trunk
     validates_associated :tag  
     validates_associated :extension
-    validates_associated :reader
-    validates_associated :writer 
-    validates_associated :appender   
+  #  validates_associated :reader
+  #  validates_associated :writer 
+  #  validates_associated :appender   
 
     validates_each :name do |rec, attr, value|
       if rec.updates.for?(:name)

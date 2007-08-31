@@ -25,10 +25,10 @@ module PermissionTestHelper
   end
   
   def assert_locked( card, msg='' )
-    assert_equal false, card.edit_ok?, msg
+    assert_equal false, card.ok?(:edit), msg
   end
   
   def assert_not_locked( card, msg='' )
-    assert_equal true, card.edit_ok?, msg
+    assert_equal true, card.ok?(:edit), msg
   end
 end

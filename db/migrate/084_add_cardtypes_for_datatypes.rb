@@ -4,6 +4,15 @@ class AddCardtypesForDatatypes < ActiveRecord::Migration
   include MigrationHelper
   
   def self.up
+    ## FIXME -- holy hack!
+    create_table :permissions do |t|
+        t.column 'card_id', :integer
+        t.column 'task', :string
+        t.column 'party_type', :string
+        t.column 'party_id', :integer
+    end
+    
+    
     Card.reset_column_information
     Card::Cardtype.reset_column_information
     
@@ -17,6 +26,8 @@ class AddCardtypesForDatatypes < ActiveRecord::Migration
     add_cardtype "Query"      ,"Query"
     add_cardtype "Ruby"       ,"Ruby"
     add_cardtype "Script"     ,"Script"
+    
+    
   end
 
   def self.down

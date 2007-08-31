@@ -108,22 +108,4 @@ describe Card, "content change should create new revision" do
   end
 end    
 
-describe Card, "comment addition" do
-  before do
-    User.as :admin
-    @c = Card.find_by_name("basicname")
-    @c.comment = " and more"
-    @c.appender = Role.find(:first) 
-    @c.save!
-  end
-  
-  it "should combine content immediately" do
-    @c.content.should == "basiccontent and more"
-  end
-  
-  it "should combine content after save" do
-    Card.find_by_name("basicname").content.should == "basiccontent and more"
-  end
-end
-
 

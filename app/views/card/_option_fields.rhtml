@@ -2,7 +2,7 @@
   context ||= 'options'   # new|options|cardtype
   option  ||= {} 
 -%>
-<% if context=='options' and System.ok? :rename_cards %>
+<% if context=='options' and @card.ok? :edit %>
   <tr>
     <td class="label"><label for="name">Name</label></td>
     <td class="field" colspan="2">
@@ -25,7 +25,7 @@
   </tr>
 <% end %>       
 
-<% if context !='cardtype' and @card.edit_ok? %> 
+<% if context !='cardtype' and @card.ok?(:edit) %> 
   <tr>
     <td class="label"><label for="cardtype">Cardtype</label></td>
     <td class="field">
@@ -35,35 +35,46 @@
   </tr>
 <% end %>
 
-<% if System.ok?(:manage_permissions) and @card.reader_type!='User' and @card.writer_type!='User' %>
-   <tr>
-     <td class="label">Viewers</td>
-     <td class="field">
+ <tr>
+   <td class="label">Viewers</td>
+   <td class="field">
+     <% if card.ok? :permission_setting %>
        <span id="<%= params[:element] %>-reader-select">
          <%=  collection_select :card, :reader_id, reader_options_for( @card ), :first, :last, {} %>
        </span>
-    </td>
-    <td class="help">Only users in this group can view this card</td>
-   </tr>
-   <tr>
-     <td class="label">Editors</td>
-     <td class="field">
+     <% else %>
+       <%#= link_to_page card.reader.name %>
+     <% end %>
+  </td>
+  <td class="help">Only users in this group can view this card</td>
+ </tr>
+ <tr>
+   <td class="label">Editors</td>
+   <td class="field">
+     <% if card.ok? :permission_setting %>
        <span id="<%= params[:element] %>-writer-select">
          <%=  collection_select :card, :reader_id, writer_options_for( @card ), :first, :last, {} %>
        </span>
-    </td>
-    <td class="help">Only users in this group can edit this card</td>
-  </tr>
-  <tr>
-    <td class="label">Commenters</td>
-    <td class="field">
+     <% else %>
+       <%#= link_to_page card.writer.name %>
+     <% end %>
+  </td>
+  <td class="help">Only users in this group can edit this card</td>
+</tr>
+<tr>
+  <td class="label">Commenters</td>
+  <td class="field">
+    <% if card.ok? :permission_setting %>
       <span id="<%= params[:element] %>-appender-select">
         <%=  collection_select :card, :reader_id, appender_options_for( @card ), :first, :last, {} %>
       </span>
-   </td>
-   <td class="help">Who can add comments to this card?</td>
-  </tr>
+    <% else %>
+      <%#= link_to_page card.appender.name %>
+    <% end %>
+    
+ </td>
+ <td class="help">Who can add comments to this card?</td>
+</tr>
 
-<% end %>
 
                

@@ -1,6 +1,15 @@
 module Card
   module Permissions
     # Permissions --------------------------------------------------------------
+    
+    module ClassMethods 
+      def ok?(operation)
+        new.ok? operation
+      end
+      def ok!(operation)
+        new.ok! operation
+      end
+    end
 
     # ok? and ok! are public facing methods to approve one operation at a time
     def ok?(operation) 
@@ -8,19 +17,22 @@ module Card
       send("approve_#{operation}")     
       operation_approved
     end
-    
     def ok!(operation)
       if !ok?(operation)
         raise Wagn::PermissionDenied.new(self)
       end
     end
-
-    def edit_ok?
-      ok? :edit
-    end                    
+    
+    def permit(operation, party) #HACK -- outside of normal saving -- don't use in controllers yet
+      if approve_permissions
+        p = permissions.find_by_task(operation).party = party
+        #p.party = party
+        #p.save
+      end
+    end
 
     def destroy_with_permissions
-      if ok? :destroy
+      if ok? :delete
         destroy_without_permissions
       else
         false
@@ -28,7 +40,7 @@ module Card
     end
     
     def destroy_with_permissions!
-      if ok? :destroy
+      if ok? :delete
         destroy_without_permissions!
       else
         raise Wagn::PermissionDenied.new(self)
@@ -50,6 +62,11 @@ module Card
         raise Wagn::PermissionDenied.new(self)
       end
     end
+    
+    def permissions_with_reader=(perms)
+      permissions_without_reader = perms
+      reader = perms.find{|x|x.task=='reader'}
+    end
 
     def approved?  
       self.operation_approved = true
@@ -62,6 +79,8 @@ module Card
       operation_approved
     end
     
+     
+    
     protected
     def deny_because(why)    
       [why].flatten.each do |err|
@@ -70,69 +89,53 @@ module Card
       self.operation_approved = false
     end
      
+=begin  we may yet need this...
     def require_permission(operation)
       unless System.ok? operation
         deny_because "you don't have '#{operation}' permission"
       end
     end
-         
-    def approve_create
-      if ::User.current_user.login == 'anon'
-        deny_because "only authenticated users can create cards"
+=end
+
+    def party_that_can(operation)
+        permissions.each do |perm| 
+          return perm.party if perm.task == operation.to_s
+        end
+        return false
       end
-      #require_permission :create_cards
+  
+    def lets_user(operation)
+      return true if System.always_ok?
+      System.party_ok? party_that_can(operation)
     end
 
-    def approve_read              
-      return if System.always_ok? # FIXME: is this right?  if not we need to fix wql as well..
-      if reader_id and reader_type=='Role' and !System.role_ok?(reader_id)
-        deny_because "read access restricted to group #{reader.cardname}"
-      end
-      
-      if reader_id and reader_type=='User' and ::User.current_user.id!=reader_id
-        deny_because "read access is restricted to user #{reader.cardname}"
+    def approve_create
+      unless cardtype.lets_user :create
+        deny_because "Sorry, you don't have permission to create #{cardtype.name} cards"
       end
     end
     
-    def approve_edit 
-      return if System.always_ok?
-      if writer_id and writer_type=='Role' and !System.role_ok?(writer_id)
-        deny_because "editing is restricted to group #{writer.cardname}"
-      end
-
-      if writer_id and writer_type=='User' and ::User.current_user.id!=writer_id
-        deny_because "editing is restricted to user #{writer.cardname}"
-      end
-
-      # FIXME - this should move to Script cardtype
-      if class_name=='Server' and !System.ok?( :edit_server_cards )
-        deny_because "editing requires 'edit server cards' permission"
-      end
-
-      if writer_id and writer_type=='User' and ::User.current_user.id!=writer_id
-        deny_because "editing is restricted to user #{writer.cardname}"
-      end
-    end  
-
-    def approve_comment 
-      if !appender_id
-        deny_because "noone may append to this card"
-      end
-      return if System.always_ok?
-
-      if appender_id and appender_type=='Role' and !System.role_ok?(appender_id)
-        deny_because "appending restricted to group #{appender.cardname}"
-      end
-
-      if appender_id and appender_type=='User' and ::User.current_user.id!=appender_id
-        deny_because "appending restricted to user #{appender.cardname}"
+    def approve_read
+      approve_task(:read)
+    end
+    def approve_edit
+      approve_task(:edit)
+    end
+    def approve_comment
+      return false unless party_that_can(:comment)
+      approve_task(:comment, 'comment on')
+    end
+    def approve_delete
+      approve_task(:delete)
+    end
+    
+    def approve_task(operation, verb=nil) #read, edit, comment, delete
+      verb ||= operation.to_s
+      unless self.lets_user operation
+        deny_because "Sorry, you don't have permission to #{verb} this card"
       end
     end
-     
-    def approve_destroy
-      #approve_edit
-      #require_permission :remove_cards
-    end
+
 
     def approve_name 
       approve_edit unless new_record?
@@ -140,7 +143,7 @@ module Card
 
     def approve_type 
       approve_edit unless new_record?      
-      approve_destroy
+      approve_delete
       new_self = clone_to_type( type )
       new_self.send(:approve_create) 
       if err = new_self.errors.on(:permission_denied) 
@@ -150,46 +153,45 @@ module Card
 
     def approve_content
       if templatee?
-        deny_because "templates can't be edited"
+        deny_because "templated cards can't be edited directly"
       end
       approve_edit unless new_record?
     end
-     
     
-    def approve_reader
-      approve_role_change(:reader, reader)
-    end
-                  
-    def approve_writer
-      approve_role_change(:writer, writer)
-    end
-    
-    def approve_appender
-      approve_role_change(:appender, appender)
+    def approve_personal_card
+      if ::User.current_user.login == 'anon'
+        deny_because("Only signed in users can have personal cards")
+      end 
+      if simple? or #simple cards never user cards
+        !((tag.id == ::User.current_user.card.id) or
+         (tag.id === 'User' and System.ok? :administrate_users) or
+         (trunk.ok? :personal_card ))
+        deny_because('You can only make cards plussed to your user card personal') 
+      end  
     end
  
-    def approve_role_change( target, party )   
-      return if System.always_ok?  
-      approve_edit unless new_record?
-      
-      if party.class == ::User and System.current_user != party
-        deny_because "can't assign #{target} to user other than yourself"
+    def approve_permissions
+      return if System.always_ok?
+      unless System.ok? :set_card_permissions or 
+          (System.ok? :set_personal_card_permissions and approve_personal_card) or 
+          new_record? then #FIXME-perm.  on new cards we should check that permission has not been altered from default unless user can set permissions.
+          
+        deny_because "Sorry, you're not currently allowed to set permissions" 
       end
-
-      if party.class == ::Role && !System.role_ok?( party.id )
-        deny_because "can't assign #{target} to a group you're not in"
-      end
-    end   
+    end
     
     def self.included(base)   
       super
+      base.extend(ClassMethods)
       base.class_eval do  
         attr_accessor :operation_approved 
         alias_method_chain :destroy, :permissions  
         alias_method_chain :destroy!, :permissions  
         alias_method_chain :save, :permissions
         alias_method_chain :save!, :permissions
+        #alias_method_chain :permissions=, :reader
       end
+      
     end
     
   end

@@ -1,6 +1,6 @@
 module Card
   module TrackedAttributes 
-    protected 
+     
 
     def set_tracked_attributes  
       updates.each_pair do |attr, value| 
@@ -9,8 +9,24 @@ module Card
         end
       end
     end
-     
+    
+=begin    
+    def save_with_tracking
+      warn "SAVING WITH TRACKING"
+      set_tracked_attributes
+      save_without_tracking
+    end
+
+    def save_with_tracking!
+      warn "SAVING WITH TRACKING"
+      set_tracked_attributes
+      save_without_tracking!
+    end
+=end
+    
+    protected 
     def set_name(newname)
+    
       oldname = self.name_without_tracking
       self.name_without_tracking = newname 
       self.key = newname.to_key 
@@ -64,14 +80,21 @@ module Card
       set_content( content + new_comment )
     end
     
+    
+    def set_permissions(perms)
+      self.updates.clear(:permissions)
+      self.permissions_without_tracking = perms
+    end
+   
     def set_reader(party)   
       self.reader_without_tracking = party 
       junctions.each do |dep|
-        dep.set_reader party 
+        dep.set_reader party  
         dep.save
       end
     end
     
+=begin    
     def set_writer(party)
       self.writer_without_tracking = party
     end                                           
@@ -79,7 +102,7 @@ module Card
     def set_appender(party)
       self.appender_without_tracking = party
     end
-
+=end
     def set_initial_content  
       # set_content bails out if we call it on a new record because it needs the
       # card id to create the revision.  call it again now that we have the id.
@@ -122,15 +145,24 @@ module Card
       @name_changed = false
     end
    
+    
+   
     def self.append_features(base)
       super 
       base.after_create :set_initial_content 
-      base.before_save :set_tracked_attributes  
+      base.before_save.unshift :set_tracked_attributes
+      #puts "AFTER CREATE: #{base.after_create}"
+      #base.before_save = base.before_save
       base.after_save :cascade_name_changes   
       base.class_eval do 
         attr_accessor :on_create_skip_revision,
            :on_update_allow_duplicate_revisions,
            :on_rename_skip_reference_updates
+        #
+        #puts "CALLING ALIAS METHOD CHAIN"
+        #alias_method_chain :save, :tracking
+        #alias_method_chain :save!, :tracking
+        
       end
     end    
     

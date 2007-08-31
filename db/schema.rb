@@ -2,7 +2,7 @@
 # migrations feature of ActiveRecord to incrementally modify your database, and
 # then regenerate this schema definition.
 
-ActiveRecord::Schema.define(:version => 88) do
+ActiveRecord::Schema.define(:version => 93) do
 
   create_table "cards", :force => true do |t|
     t.column "trunk_id",            :integer
@@ -11,14 +11,14 @@ ActiveRecord::Schema.define(:version => 88) do
     t.column "updated_at",          :datetime,                    :null => false
     t.column "current_revision_id", :integer
     t.column "name",                :string
-    t.column "type",                :string,                      :null => false
+    t.column "type",                :string,   :default => "",    :null => false
     t.column "extension_id",        :integer
     t.column "extension_type",      :string
     t.column "sealed",              :boolean,  :default => false
     t.column "created_by",          :integer
     t.column "updated_by",          :integer
-    t.column "priority",            :integer,  :default => 0
-    t.column "plus_sidebar",        :boolean,  :default => false
+    t.column "priority",            :integer,  :default => 0,     :null => false
+    t.column "plus_sidebar",        :boolean,  :default => false, :null => false
     t.column "reader_id",           :integer
     t.column "writer_id",           :integer
     t.column "reader_type",         :string
@@ -31,9 +31,9 @@ ActiveRecord::Schema.define(:version => 88) do
     t.column "appender_id",         :integer
   end
 
-  add_index "cards", ["key"], :name => "cards_key_uniq", :unique => true
   add_index "cards", ["name"], :name => "cards_name_index"
   add_index "cards", ["trunk_id"], :name => "index_cards_on_trunk_id"
+  add_index "cards", ["extension_type", "extension_id"], :name => "cards_extension_index"
 
   create_table "cardtypes", :force => true do |t|
     t.column "class_name", :string
@@ -43,36 +43,43 @@ ActiveRecord::Schema.define(:version => 88) do
   add_index "cardtypes", ["class_name"], :name => "cardtypes_class_name_uniq", :unique => true
 
   create_table "graveyard", :force => true do |t|
-    t.column "name",       :string,   :null => false
+    t.column "name",       :string,   :default => "", :null => false
     t.column "content",    :text
-    t.column "created_at", :datetime, :null => false
+    t.column "created_at", :datetime,                 :null => false
+  end
+
+  create_table "permissions", :force => true do |t|
+    t.column "card_id",    :integer
+    t.column "task",       :string
+    t.column "party_type", :string
+    t.column "party_id",   :integer
   end
 
   create_table "recent_changes", :force => true do |t|
     t.column "card_id",    :integer
     t.column "name",       :string
-    t.column "action",     :string,   :null => false
-    t.column "editor_id",  :integer,  :null => false
+    t.column "action",     :string,   :default => "", :null => false
+    t.column "editor_id",  :integer,                  :null => false
     t.column "note",       :string
-    t.column "changed_at", :datetime, :null => false
+    t.column "changed_at", :datetime,                 :null => false
     t.column "grave_id",   :integer
   end
 
   create_table "recent_viewings", :force => true do |t|
-    t.column "url",       :string,   :null => false
+    t.column "url",       :string,   :default => "", :null => false
     t.column "card_id",   :integer
-    t.column "outcome",   :string,   :null => false
+    t.column "outcome",   :string,   :default => "", :null => false
     t.column "viewer_id", :integer
     t.column "viewer_ip", :string
-    t.column "viewed_at", :datetime, :null => false
+    t.column "viewed_at", :datetime,                 :null => false
   end
 
   create_table "revisions", :force => true do |t|
-    t.column "created_at", :datetime, :null => false
-    t.column "updated_at", :datetime, :null => false
-    t.column "card_id",    :integer,  :null => false
-    t.column "created_by", :integer,  :null => false
-    t.column "content",    :text,     :null => false
+    t.column "created_at", :datetime,                 :null => false
+    t.column "updated_at", :datetime,                 :null => false
+    t.column "card_id",    :integer,                  :null => false
+    t.column "created_by", :integer,                  :null => false
+    t.column "content",    :text,     :default => "", :null => false
   end
 
   create_table "roles", :force => true do |t|
@@ -102,11 +109,11 @@ ActiveRecord::Schema.define(:version => 88) do
   end
 
   create_table "tag_revisions", :force => true do |t|
-    t.column "created_at", :datetime, :null => false
-    t.column "tag_id",     :integer,  :null => false
-    t.column "created_by", :integer,  :null => false
-    t.column "name",       :string,   :null => false
-    t.column "updated_at", :datetime, :null => false
+    t.column "created_at", :datetime,                 :null => false
+    t.column "tag_id",     :integer,                  :null => false
+    t.column "created_by", :integer,                  :null => false
+    t.column "name",       :string,   :default => "", :null => false
+    t.column "updated_at", :datetime,                 :null => false
   end
 
   create_table "tags", :force => true do |t|
@@ -116,8 +123,8 @@ ActiveRecord::Schema.define(:version => 88) do
     t.column "card_count",          :integer, :default => 0,          :null => false
     t.column "created_by",          :integer
     t.column "updated_by",          :integer
-    t.column "datatype_key",        :string,  :default => "RichText"
-    t.column "plus_datatype_key",   :string,  :default => "RichText"
+    t.column "datatype_key",        :string,  :default => "RichText", :null => false
+    t.column "plus_datatype_key",   :string,  :default => "RichText", :null => false
     t.column "plus_template",       :boolean
   end
 
@@ -137,10 +144,10 @@ ActiveRecord::Schema.define(:version => 88) do
   end
 
   create_table "wiki_files", :force => true do |t|
-    t.column "created_at",  :datetime, :null => false
-    t.column "updated_at",  :datetime, :null => false
-    t.column "file_name",   :string,   :null => false
-    t.column "description", :string,   :null => false
+    t.column "created_at",  :datetime,                 :null => false
+    t.column "updated_at",  :datetime,                 :null => false
+    t.column "file_name",   :string,   :default => "", :null => false
+    t.column "description", :string,   :default => "", :null => false
   end
 
   create_table "wiki_references", :force => true do |t|

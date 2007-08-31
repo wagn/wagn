@@ -179,7 +179,7 @@ class ApplicationController < ActionController::Base
   end        
   
   def edit_user_context(card)
-    if System.ok?(:manage_permissions)
+    if System.ok?(:administrate_users)
     	'admin'
     elsif current_user == card.extension
     	'user'

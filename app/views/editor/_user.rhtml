@@ -16,7 +16,7 @@ context = edit_user_context(card)  # admin|user|public
 
 <table class="fieldset">   
 	
-  <% unless context=='public' %> 
+  <% unless context=='public' %>
     <tr>
       <td class="label"><label for="email">Email</label></td>
       <td class="field"><%= f.text_field :email %></td>

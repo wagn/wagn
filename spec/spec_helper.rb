@@ -12,7 +12,7 @@ Spec::Runner.configure do |config|
     raise_controller_errors
   end
   
-  config.global_fixtures = :cards, :revisions, :cardtypes, :roles, :roles_users, :system, :users, :settings
+  config.global_fixtures = :cards, :revisions, :cardtypes, :roles, :roles_users, :system, :users, :settings, :permissions
 
   # You can declare fixtures for each behaviour like this:
   #   describe "...." do

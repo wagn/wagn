@@ -3,7 +3,7 @@
 <%= render :partial=>'block/options' %>
 
 <span id='create-button'>
-  <% if System.ok? :edit_cards %>
+  <% if Card::User.ok? :create %>
     <%= link_to 'Invite a New User', :controller=>'account', :action=>'invite' %>
   <% end %>
 </span>

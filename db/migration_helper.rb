@@ -14,6 +14,7 @@ module MigrationHelper
         end
       end
     end
+    
   end
   
   def self.included(base)

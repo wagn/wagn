@@ -15,7 +15,7 @@
   
   <span id="logging">
     <% if u = current_user %>
-      <% if System.ok? :invite_users %>
+      <% if Card::User.ok? :create %>
 	      <%= link_to 'Invite a Friend', :controller=>'account', :action=>'invite' %>
       <% end %>   
       <%= link_to( 'Sign out', :controller=>'account', :action=>'logout' ) %>

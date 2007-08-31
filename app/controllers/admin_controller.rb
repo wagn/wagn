@@ -16,6 +16,7 @@ class AdminController < ApplicationController
   end
   
   def tasks
+    System.ok!(:set_global_permissions)
     @tasks = System.role_tasks
     @roles = Role.find_configurables
     @role_tasks = {}
@@ -23,7 +24,7 @@ class AdminController < ApplicationController
   end
   
   def save_tasks
-    
+    System.ok!(:set_global_permissions)    
     role_tasks = params[:role_task]
     Role.find( :all ).each  do |role|
       tasks = role_tasks[role.id.to_s] || {}

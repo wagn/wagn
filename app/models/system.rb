@@ -50,10 +50,26 @@ class System < ActiveRecord::Base
       ok_hash.key? task.to_s
     end
     
+    def ok!(task)
+      if !ok?(task)
+        #FIXME -- needs better error message handling
+        raise Wagn::PermissionDenied.new(self.new)
+      end
+    end
+    
     def role_ok?(role_id)
       return true if always_ok?
       ok_hash[:role_ids].key? role_id
     end
+    
+    def party_ok?(party)
+      return true if always_ok?
+      #warn party.inspect
+      party.class.name == 'Role' ? 
+         role_ok?(party.id) :
+          (party == User.current_user)      
+    end
+    
     
     # FIXME stick this in session? cache it somehow??
     def ok_hash

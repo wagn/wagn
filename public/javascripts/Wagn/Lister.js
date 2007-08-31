@@ -141,7 +141,7 @@ Object.extend(Wagn.Lister.prototype, {
 	  if (!($('related-button'))) return false;
 	  button = '&nbsp;'; // not '' so paging links don't float under cards...
 	  query = this.query();
-	  if ($('edit_cards').innerHTML == 'true') {
+	  if (1 == 1) {  //#  FIXME-perm.  we need to check whether the user can create these cards.
 			if ((query == 'plus_cards') || (query == 'plussed_cards')) {
 				button = '<input type="button" id="new-connection-button" value="join it to another card" onClick="Wagn.lister().new_connection ()">';	 
 			} else if	(query == 'cardtype_cards') {

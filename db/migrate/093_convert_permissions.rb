@@ -12,11 +12,11 @@ class ConvertPermissions < ActiveRecord::Migration
     auth = Role.find_by_codename 'auth'
     anon = Role.find_by_codename 'anon'
     MCard.find(:all).each do |c|
-      print "setting permission for #{c.name}"
+      #print "setting permission for #{c.name}"
       c.permissions= [
         {:task=>'delete', :party=>c.writer || auth},
         {:task=>'edit',   :party=>c.writer || auth},
-        {:task=>'view',   :party=>c.reader     || anon},
+        {:task=>'read',   :party=>c.reader     || anon},
         {:task=>'comment',:party=>c.appender},
         ].map { |hash| Permission.new(hash)}     
     end

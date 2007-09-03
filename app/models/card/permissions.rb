@@ -23,14 +23,6 @@ module Card
       end
     end
     
-    def permit(operation, party) #HACK -- outside of normal saving -- don't use in controllers yet
-      if approve_permissions
-        p = permissions.find_by_task(operation).party = party
-        #p.party = party
-        #p.save
-      end
-    end
-
     def destroy_with_permissions
       if ok? :delete
         destroy_without_permissions
@@ -79,7 +71,33 @@ module Card
       operation_approved
     end
     
+    def permit(operation, party) #assign permissions  ##3HACK -- outside of normal saving -- please don't use in controllers (unenforced)
+      if new_record? then raise Wagn::Oops, "can't call this on a new card" end
+      if ok? :permissions
+        #warn "permit called and approved"        
+        p = ::Permission.find_by_card_id_and_task(self.id, operation.to_s)
+        p.party = party
+        p.save
+        if operation == :read then
+         # warn "trying to set read party #{party.codename}" 
+          set_reader party 
+        end
+      end
+    end
      
+    def who_can(operation)
+      permissions.each do |perm| 
+        return perm.party if perm.task == operation.to_s
+      end
+      return false
+    end 
+    
+    def personal_user
+      return nil if simple?
+      warn "personal user tag: #{tag.extension}  #{tag.extension.class == ::User}"
+      return tag.extension if tag.extension.class == ::User 
+      return trunk.personal_user 
+    end
     
     protected
     def deny_because(why)    
@@ -97,16 +115,10 @@ module Card
     end
 =end
 
-    def party_that_can(operation)
-        permissions.each do |perm| 
-          return perm.party if perm.task == operation.to_s
-        end
-        return false
-      end
   
     def lets_user(operation)
       return true if System.always_ok?
-      System.party_ok? party_that_can(operation)
+      System.party_ok? who_can(operation)
     end
 
     def approve_create
@@ -118,13 +130,16 @@ module Card
     def approve_read
       approve_task(:read)
     end
+    
     def approve_edit
       approve_task(:edit)
     end
+    
     def approve_comment
-      return false unless party_that_can(:comment)
+      return false unless who_can(:comment)
       approve_task(:comment, 'comment on')
     end
+    
     def approve_delete
       approve_task(:delete)
     end
@@ -141,10 +156,12 @@ module Card
       approve_edit unless new_record?
     end
 
-    def approve_type 
-      approve_edit unless new_record?      
-      approve_delete
-      new_self = clone_to_type( type )
+    def approve_type
+      unless new_record?       
+        approve_edit 
+        approve_delete
+      end
+      new_self = clone_to_type( type ) # note: would rather do this through ok? api...
       new_self.send(:approve_create) 
       if err = new_self.errors.on(:permission_denied) 
         deny_because err
@@ -157,23 +174,24 @@ module Card
       end
       approve_edit unless new_record?
     end
-    
+
+=begin 
     def approve_personal_card
-      if ::User.current_user.login == 'anon'
-        deny_because("Only signed in users can have personal cards")
+      pu = personal_user
+      cu = ::User.current_user
+      if !pu
+        deny_because 'Only cards plussed to user cards can be personal'
+      end
+      if pu.login == 'anon'
+        deny_because "Only signed in users can have their own personal cards"
       end 
-      if simple? or #simple cards never user cards
-        !((tag.id == ::User.current_user.card.id) or
-         (tag.id === 'User' and System.ok? :administrate_users) or
-         (trunk.ok? :personal_card ))
-        deny_because('You can only make cards plussed to your user card personal') 
-      end  
     end
- 
+=end
+
     def approve_permissions
       return if System.always_ok?
       unless System.ok? :set_card_permissions or 
-          (System.ok? :set_personal_card_permissions and approve_personal_card) or 
+          (System.ok?(:set_personal_card_permissions) and (personal_user == ::User.current_user)) or 
           new_record? then #FIXME-perm.  on new cards we should check that permission has not been altered from default unless user can set permissions.
           
         deny_because "Sorry, you're not currently allowed to set permissions" 

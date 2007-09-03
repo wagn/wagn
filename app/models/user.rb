@@ -26,11 +26,10 @@ class User < ActiveRecord::Base
   
   before_save :encrypt_password
   
-  def roles_with_auto
+  def all_roles
     @cached_roles ||= (login=='anon' ? [Role.find_by_codename('anon')] : 
-      roles_without_auto + [Role.find_by_codename('anon'), Role.find_by_codename('auth')])
+      roles + [Role.find_by_codename('anon'), Role.find_by_codename('auth')])
   end  
-  alias_method_chain :roles, :auto
   
   class << self
     

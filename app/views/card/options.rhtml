@@ -1,21 +1,16 @@
 <% slot_for(@card, @context, :options) do |slot| %>
 	<%= slot.header %>
-<%#= form_for_card :action=>'update' %>
-  <div id="<%= params[:element] %>-options-workspace">
-	  <div id="create-advanced"  >
-	    <table class="fieldset">
-	      <%= render :partial=>'option_fields', :locals=>{:context=>'options'} %>
-	      <%= slot.render_partial 'extra_options' %>
+  <% form_remote_for :card, @card, :url=>{:controller=>'options', :action=>'update', :id=>@card.id},
+    :update => slot.id do |form| %>
+    <div id="<%= params[:element] %>-options-workspace">
+  	  <div id="create-advanced">
+  	    <table class="fieldset">
+  	      <%= render :partial=>'card/option_fields', :locals=>{:context=>'options'} %>
+  	      <%= slot.render_partial 'extra_options' %>
+  	    </table>
+  	  </div>
+  	</div>
 
-	      <% if card.ok? :destroy %>
-	         <tr>
-	            <td class="label"> </td>
-	            <td class="field"><%= link_to_remote "Delete this card", :url=>{ :action=>'remove_form', :id=>params[:id], :params=>{:element=>params[:element]} }, :update=>"#{params[:element]}-options-workspace" %></td>
-	            <td class="help"></td>
-	          </tr>
-	      <% end %>
-	    </table>
-	  </div>
-	</div>
-<%#= end_form_tag %>
+  <%= submit_tag 'Save Changes' %><!-- this shouldn't always show up.. -->
+  <% end %>
 <% end %>

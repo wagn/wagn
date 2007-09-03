@@ -18,11 +18,6 @@
 			
 			<div id="main">
 				<%= yield %>
-				<%# This is admittedly odd to access this from all pages and decide then whether we're looking at a card 
-            (and we may need a better test for that), but if we want users to be able to lay out the related cards,
-           without adding too much complexity to user-accessible templating, I think this may be the best way. %>
-        
-				<%= related %>
 			</div>
 		</div>
 

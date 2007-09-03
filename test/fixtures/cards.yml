@@ -1,16 +1,16 @@
 --- 
 cards_017: 
-  reader_type: 
+  reader_type: Role
   name: Date
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:23
   created_by: "1"
   current_revision_id: "17"
   tag_id: 
   priority: "0"
   extension_type: Cardtype
   type: Cardtype
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "17"
@@ -24,19 +24,19 @@ cards_017:
   key: date
   extension_id: "9"
   sealed: "0"
-  created_at: 2007-08-30 17:35:19
+  created_at: 2007-09-02 19:47:23
 cards_038: 
-  reader_type: 
+  reader_type: Role
   name: c3
   appender_id: 
-  updated_at: 2007-08-30 17:35:24
+  updated_at: 2007-09-02 19:47:28
   created_by: "1"
   current_revision_id: "38"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "38"
@@ -50,19 +50,19 @@ cards_038:
   key: c3
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:24
+  created_at: 2007-09-02 19:47:28
 cards_060: 
-  reader_type: 
+  reader_type: Role
   name: A+E
   appender_id: 
-  updated_at: 2007-08-30 17:35:27
+  updated_at: 2007-09-02 19:47:31
   created_by: "1"
   current_revision_id: "60"
   tag_id: "59"
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "60"
@@ -76,19 +76,19 @@ cards_060:
   key: a+e
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:27
+  created_at: 2007-09-02 19:47:31
 cards_059: 
-  reader_type: 
+  reader_type: Role
   name: E
   appender_id: 
-  updated_at: 2007-08-30 17:35:27
+  updated_at: 2007-09-02 19:47:31
   created_by: "1"
   current_revision_id: "59"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "59"
@@ -102,19 +102,19 @@ cards_059:
   key: e
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:27
+  created_at: 2007-09-02 19:47:31
 cards_018: 
-  reader_type: 
+  reader_type: Role
   name: File
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:23
   created_by: "1"
   current_revision_id: "18"
   tag_id: 
   priority: "0"
   extension_type: Cardtype
   type: Cardtype
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "18"
@@ -128,19 +128,19 @@ cards_018:
   key: file
   extension_id: "10"
   sealed: "0"
-  created_at: 2007-08-30 17:35:19
+  created_at: 2007-09-02 19:47:23
 cards_040: 
-  reader_type: 
+  reader_type: Role
   name: A
   appender_id: 
-  updated_at: 2007-08-30 17:35:24
+  updated_at: 2007-09-02 19:47:28
   created_by: "1"
   current_revision_id: "40"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "40"
@@ -154,19 +154,19 @@ cards_040:
   key: a
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:24
+  created_at: 2007-09-02 19:47:28
 cards_039: 
-  reader_type: 
+  reader_type: Role
   name: Z
   appender_id: 
-  updated_at: 2007-08-30 17:35:24
+  updated_at: 2007-09-02 19:47:28
   created_by: "1"
   current_revision_id: "39"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "39"
@@ -180,19 +180,19 @@ cards_039:
   key: z
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:24
+  created_at: 2007-09-02 19:47:28
 cards_061: 
-  reader_type: 
+  reader_type: Role
   name: C+A
   appender_id: 
-  updated_at: 2007-08-30 17:35:27
+  updated_at: 2007-09-02 19:47:31
   created_by: "1"
   current_revision_id: "61"
   tag_id: "40"
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "61"
@@ -206,19 +206,19 @@ cards_061:
   key: c+a
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:27
+  created_at: 2007-09-02 19:47:31
 cards_020: 
-  reader_type: 
+  reader_type: Role
   name: Number
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:23
   created_by: "1"
   current_revision_id: "20"
   tag_id: 
   priority: "0"
   extension_type: Cardtype
   type: Cardtype
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "20"
@@ -232,19 +232,19 @@ cards_020:
   key: number
   extension_id: "12"
   sealed: "0"
-  created_at: 2007-08-30 17:35:19
+  created_at: 2007-09-02 19:47:23
 cards_019: 
-  reader_type: 
+  reader_type: Role
   name: Image
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:23
   created_by: "1"
   current_revision_id: "19"
   tag_id: 
   priority: "0"
   extension_type: Cardtype
   type: Cardtype
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "19"
@@ -258,19 +258,19 @@ cards_019:
   key: image
   extension_id: "11"
   sealed: "0"
-  created_at: 2007-08-30 17:35:19
+  created_at: 2007-09-02 19:47:23
 cards_041: 
-  reader_type: 
+  reader_type: Role
   name: B
   appender_id: 
-  updated_at: 2007-08-30 17:35:25
+  updated_at: 2007-09-02 19:47:29
   created_by: "1"
   current_revision_id: "41"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "41"
@@ -284,19 +284,19 @@ cards_041:
   key: b
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:25
+  created_at: 2007-09-02 19:47:29
 cards_062: 
-  reader_type: 
+  reader_type: Role
   name: D+A
   appender_id: 
-  updated_at: 2007-08-30 17:35:27
+  updated_at: 2007-09-02 19:47:31
   created_by: "1"
   current_revision_id: "62"
   tag_id: "40"
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "62"
@@ -310,19 +310,19 @@ cards_062:
   key: d+a
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:27
+  created_at: 2007-09-02 19:47:31
 cards_021: 
-  reader_type: 
+  reader_type: Role
   name: Percentage
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:24
   created_by: "1"
   current_revision_id: "21"
   tag_id: 
   priority: "0"
   extension_type: Cardtype
   type: Cardtype
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "21"
@@ -336,19 +336,19 @@ cards_021:
   key: percentage
   extension_id: "13"
   sealed: "0"
-  created_at: 2007-08-30 17:35:19
+  created_at: 2007-09-02 19:47:24
 cards_042: 
-  reader_type: 
+  reader_type: Role
   name: T
   appender_id: 
-  updated_at: 2007-08-30 17:35:25
+  updated_at: 2007-09-02 19:47:29
   created_by: "1"
   current_revision_id: "42"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "42"
@@ -362,19 +362,19 @@ cards_042:
   key: t
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:25
+  created_at: 2007-09-02 19:47:29
 cards_063: 
-  reader_type: 
+  reader_type: Role
   name: F
   appender_id: 
-  updated_at: 2007-08-30 17:35:27
+  updated_at: 2007-09-02 19:47:31
   created_by: "1"
   current_revision_id: "63"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "63"
@@ -388,12 +388,12 @@ cards_063:
   key: f
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:27
+  created_at: 2007-09-02 19:47:31
 cards_001: 
   reader_type: 
   name: Hooze Bot
   appender_id: 
-  updated_at: 2007-08-30 17:35:18
+  updated_at: 2007-09-02 19:47:23
   created_by: 
   current_revision_id: "1"
   tag_id: 
@@ -414,19 +414,19 @@ cards_001:
   key: hooze_bot
   extension_id: "2"
   sealed: "0"
-  created_at: 2007-08-30 17:35:16
+  created_at: 2007-09-02 19:47:20
 cards_022: 
-  reader_type: 
+  reader_type: Role
   name: PlainText
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:24
   created_by: "1"
   current_revision_id: "22"
   tag_id: 
   priority: "0"
   extension_type: Cardtype
   type: Cardtype
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "22"
@@ -440,19 +440,19 @@ cards_022:
   key: plain_text
   extension_id: "14"
   sealed: "0"
-  created_at: 2007-08-30 17:35:19
+  created_at: 2007-09-02 19:47:24
 cards_043: 
-  reader_type: 
+  reader_type: Role
   name: X
   appender_id: 
-  updated_at: 2007-08-30 17:35:25
+  updated_at: 2007-09-02 19:47:29
   created_by: "1"
   current_revision_id: "43"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "43"
@@ -466,19 +466,19 @@ cards_043:
   key: x
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:25
+  created_at: 2007-09-02 19:47:29
 cards_064: 
-  reader_type: 
+  reader_type: Role
   name: F+A
   appender_id: 
-  updated_at: 2007-08-30 17:35:27
+  updated_at: 2007-09-02 19:47:31
   created_by: "1"
   current_revision_id: "64"
   tag_id: "40"
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "64"
@@ -492,19 +492,19 @@ cards_064:
   key: f+a
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:27
+  created_at: 2007-09-02 19:47:31
 cards_023: 
-  reader_type: 
+  reader_type: Role
   name: Query
   appender_id: 
-  updated_at: 2007-08-30 17:35:20
+  updated_at: 2007-09-02 19:47:24
   created_by: "1"
   current_revision_id: "23"
   tag_id: 
   priority: "0"
   extension_type: Cardtype
   type: Cardtype
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "23"
@@ -518,19 +518,19 @@ cards_023:
   key: query
   extension_id: "15"
   sealed: "0"
-  created_at: 2007-08-30 17:35:20
+  created_at: 2007-09-02 19:47:24
 cards_044: 
-  reader_type: 
+  reader_type: Role
   name: Y
   appender_id: 
-  updated_at: 2007-08-30 17:35:25
+  updated_at: 2007-09-02 19:47:29
   created_by: "1"
   current_revision_id: "44"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "44"
@@ -544,19 +544,19 @@ cards_044:
   key: y
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:25
+  created_at: 2007-09-02 19:47:29
 cards_065: 
-  reader_type: 
+  reader_type: Role
   name: A+B+C
   appender_id: 
-  updated_at: 2007-08-30 17:35:27
+  updated_at: 2007-09-02 19:47:31
   created_by: "1"
   current_revision_id: "65"
   tag_id: "55"
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "65"
@@ -570,12 +570,12 @@ cards_065:
   key: a+b+c
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:27
+  created_at: 2007-09-02 19:47:31
 cards_002: 
   reader_type: 
   name: Admin
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:23
   created_by: 
   current_revision_id: "2"
   tag_id: 
@@ -596,19 +596,19 @@ cards_002:
   key: admin
   extension_id: "1"
   sealed: "0"
-  created_at: 2007-08-30 17:35:16
+  created_at: 2007-09-02 19:47:20
 cards_045: 
-  reader_type: 
+  reader_type: Role
   name: A+B
   appender_id: 
-  updated_at: 2007-08-30 17:35:25
+  updated_at: 2007-09-02 19:47:29
   created_by: "1"
   current_revision_id: "45"
   tag_id: "41"
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "45"
@@ -622,19 +622,19 @@ cards_045:
   key: a+b
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:25
+  created_at: 2007-09-02 19:47:29
 cards_066: 
-  reader_type: 
+  reader_type: Role
   name: Cardtype A
   appender_id: 
-  updated_at: 2007-08-30 17:35:27
+  updated_at: 2007-09-02 19:47:31
   created_by: "1"
   current_revision_id: "66"
   tag_id: 
   priority: "0"
   extension_type: Cardtype
   type: Cardtype
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "66"
@@ -648,12 +648,12 @@ cards_066:
   key: cardtype_a
   extension_id: "19"
   sealed: "0"
-  created_at: 2007-08-30 17:35:27
+  created_at: 2007-09-02 19:47:31
 cards_003: 
   reader_type: 
   name: Basic
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:23
   created_by: 
   current_revision_id: "3"
   tag_id: 
@@ -674,19 +674,19 @@ cards_003:
   key: basic
   extension_id: "1"
   sealed: "0"
-  created_at: 2007-08-30 17:35:17
+  created_at: 2007-09-02 19:47:20
 cards_024: 
-  reader_type: 
+  reader_type: Role
   name: Ruby
   appender_id: 
-  updated_at: 2007-08-30 17:35:20
+  updated_at: 2007-09-02 19:47:24
   created_by: "1"
   current_revision_id: "24"
   tag_id: 
   priority: "0"
   extension_type: Cardtype
   type: Cardtype
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "24"
@@ -700,19 +700,19 @@ cards_024:
   key: ruby
   extension_id: "16"
   sealed: "0"
-  created_at: 2007-08-30 17:35:20
+  created_at: 2007-09-02 19:47:24
 cards_067: 
-  reader_type: 
+  reader_type: Role
   name: Cardtype B
   appender_id: 
-  updated_at: 2007-08-30 17:35:28
+  updated_at: 2007-09-02 19:47:32
   created_by: "1"
   current_revision_id: "67"
   tag_id: 
   priority: "0"
   extension_type: Cardtype
   type: Cardtype
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "67"
@@ -726,12 +726,12 @@ cards_067:
   key: cardtype_b
   extension_id: "20"
   sealed: "0"
-  created_at: 2007-08-30 17:35:28
+  created_at: 2007-09-02 19:47:32
 cards_004: 
   reader_type: 
   name: User
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:23
   created_by: 
   current_revision_id: "4"
   tag_id: 
@@ -752,19 +752,19 @@ cards_004:
   key: user
   extension_id: "2"
   sealed: "0"
-  created_at: 2007-08-30 17:35:17
+  created_at: 2007-09-02 19:47:21
 cards_025: 
-  reader_type: 
+  reader_type: Role
   name: Script
   appender_id: 
-  updated_at: 2007-08-30 17:35:20
+  updated_at: 2007-09-02 19:47:24
   created_by: "1"
   current_revision_id: "25"
   tag_id: 
   priority: "0"
   extension_type: Cardtype
   type: Cardtype
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "25"
@@ -778,19 +778,19 @@ cards_025:
   key: script
   extension_id: "17"
   sealed: "0"
-  created_at: 2007-08-30 17:35:20
+  created_at: 2007-09-02 19:47:24
 cards_046: 
-  reader_type: 
+  reader_type: Role
   name: One
   appender_id: 
-  updated_at: 2007-08-30 17:35:26
+  updated_at: 2007-09-02 19:47:30
   created_by: "1"
   current_revision_id: "46"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "46"
@@ -804,19 +804,19 @@ cards_046:
   key: one
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:26
+  created_at: 2007-09-02 19:47:30
 cards_068: 
-  reader_type: 
+  reader_type: Role
   name: Cardtype C
   appender_id: 
-  updated_at: 2007-08-30 17:35:28
+  updated_at: 2007-09-02 19:47:32
   created_by: "1"
   current_revision_id: "68"
   tag_id: 
   priority: "0"
   extension_type: Cardtype
   type: Cardtype
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "68"
@@ -830,12 +830,12 @@ cards_068:
   key: cardtype_c
   extension_id: "21"
   sealed: "0"
-  created_at: 2007-08-30 17:35:28
+  created_at: 2007-09-02 19:47:32
 cards_005: 
   reader_type: 
   name: Cardtype
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:23
   created_by: 
   current_revision_id: "5"
   tag_id: 
@@ -856,19 +856,19 @@ cards_005:
   key: cardtype
   extension_id: "3"
   sealed: "0"
-  created_at: 2007-08-30 17:35:17
+  created_at: 2007-09-02 19:47:21
 cards_026: 
-  reader_type: 
+  reader_type: Role
   name: RichText
   appender_id: 
-  updated_at: 2007-08-30 17:35:20
+  updated_at: 2007-09-02 19:47:24
   created_by: "1"
   current_revision_id: "26"
   tag_id: 
   priority: "0"
   extension_type: Cardtype
   type: Cardtype
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "26"
@@ -882,19 +882,19 @@ cards_026:
   key: rich_text
   extension_id: "18"
   sealed: "0"
-  created_at: 2007-08-30 17:35:20
+  created_at: 2007-09-02 19:47:24
 cards_047: 
-  reader_type: 
+  reader_type: Role
   name: Two
   appender_id: 
-  updated_at: 2007-08-30 17:35:26
+  updated_at: 2007-09-02 19:47:30
   created_by: "1"
   current_revision_id: "47"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "47"
@@ -908,19 +908,19 @@ cards_047:
   key: two
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:26
+  created_at: 2007-09-02 19:47:30
 cards_070: 
-  reader_type: 
+  reader_type: Role
   name: Cardtype E
   appender_id: 
-  updated_at: 2007-08-30 17:35:28
+  updated_at: 2007-09-02 19:47:32
   created_by: "1"
   current_revision_id: "70"
   tag_id: 
   priority: "0"
   extension_type: Cardtype
   type: Cardtype
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "70"
@@ -934,19 +934,19 @@ cards_070:
   key: cardtype_e
   extension_id: "23"
   sealed: "0"
-  created_at: 2007-08-30 17:35:28
+  created_at: 2007-09-02 19:47:32
 cards_069: 
-  reader_type: 
+  reader_type: Role
   name: Cardtype D
   appender_id: 
-  updated_at: 2007-08-30 17:35:28
+  updated_at: 2007-09-02 19:47:32
   created_by: "1"
   current_revision_id: "69"
   tag_id: 
   priority: "0"
   extension_type: Cardtype
   type: Cardtype
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "69"
@@ -960,12 +960,12 @@ cards_069:
   key: cardtype_d
   extension_id: "22"
   sealed: "0"
-  created_at: 2007-08-30 17:35:28
+  created_at: 2007-09-02 19:47:32
 cards_006: 
   reader_type: 
   name: Company
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:23
   created_by: 
   current_revision_id: "6"
   tag_id: 
@@ -986,19 +986,19 @@ cards_006:
   key: company
   extension_id: "4"
   sealed: "0"
-  created_at: 2007-08-30 17:35:17
+  created_at: 2007-09-02 19:47:21
 cards_027: 
-  reader_type: 
+  reader_type: Role
   name: Joe User
   appender_id: 
-  updated_at: 2007-08-30 17:35:23
+  updated_at: 2007-09-02 19:47:27
   created_by: "1"
   current_revision_id: "27"
   tag_id: 
   priority: "0"
   extension_type: User
   type: User
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "27"
@@ -1012,19 +1012,19 @@ cards_027:
   key: joe_user
   extension_id: "4"
   sealed: "0"
-  created_at: 2007-08-30 17:35:23
+  created_at: 2007-09-02 19:47:27
 cards_048: 
-  reader_type: 
+  reader_type: Role
   name: One+Two
   appender_id: 
-  updated_at: 2007-08-30 17:35:26
+  updated_at: 2007-09-02 19:47:30
   created_by: "1"
   current_revision_id: "48"
   tag_id: "47"
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "48"
@@ -1038,19 +1038,19 @@ cards_048:
   key: one+two
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:26
+  created_at: 2007-09-02 19:47:30
 cards_071: 
-  reader_type: 
+  reader_type: Role
   name: Cardtype F
   appender_id: 
-  updated_at: 2007-08-30 17:35:28
+  updated_at: 2007-09-02 19:47:32
   created_by: "1"
   current_revision_id: "71"
   tag_id: 
   priority: "0"
   extension_type: Cardtype
   type: Cardtype
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "71"
@@ -1064,12 +1064,12 @@ cards_071:
   key: cardtype_f
   extension_id: "24"
   sealed: "0"
-  created_at: 2007-08-30 17:35:28
+  created_at: 2007-09-02 19:47:32
 cards_007: 
   reader_type: 
   name: Role
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:23
   created_by: 
   current_revision_id: "7"
   tag_id: 
@@ -1090,19 +1090,19 @@ cards_007:
   key: role
   extension_id: "5"
   sealed: "0"
-  created_at: 2007-08-30 17:35:17
+  created_at: 2007-09-02 19:47:21
 cards_028: 
-  reader_type: 
+  reader_type: Role
   name: color
   appender_id: 
-  updated_at: 2007-08-30 17:35:23
+  updated_at: 2007-09-02 19:47:27
   created_by: "1"
   current_revision_id: "28"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "28"
@@ -1116,19 +1116,19 @@ cards_028:
   key: color
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:23
+  created_at: 2007-09-02 19:47:27
 cards_050: 
-  reader_type: 
+  reader_type: Role
   name: One+Two+Three
   appender_id: 
-  updated_at: 2007-08-30 17:35:26
+  updated_at: 2007-09-02 19:47:30
   created_by: "1"
   current_revision_id: "50"
   tag_id: "49"
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "50"
@@ -1142,19 +1142,19 @@ cards_050:
   key: one+two+three
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:26
+  created_at: 2007-09-02 19:47:30
 cards_049: 
-  reader_type: 
+  reader_type: Role
   name: Three
   appender_id: 
-  updated_at: 2007-08-30 17:35:26
+  updated_at: 2007-09-02 19:47:30
   created_by: "1"
   current_revision_id: "49"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "49"
@@ -1168,19 +1168,19 @@ cards_049:
   key: three
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:26
+  created_at: 2007-09-02 19:47:30
 cards_072: 
-  reader_type: 
+  reader_type: Role
   name: basicname
   appender_id: 
-  updated_at: 2007-08-30 17:35:28
+  updated_at: 2007-09-02 19:47:32
   created_by: "1"
   current_revision_id: "72"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "72"
@@ -1194,12 +1194,12 @@ cards_072:
   key: basicname
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:28
+  created_at: 2007-09-02 19:47:32
 cards_008: 
   reader_type: 
   name: Anonymous User
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:23
   created_by: 
   current_revision_id: "8"
   tag_id: 
@@ -1220,19 +1220,19 @@ cards_008:
   key: anonymous_user
   extension_id: "1"
   sealed: "0"
-  created_at: 2007-08-30 17:35:17
+  created_at: 2007-09-02 19:47:21
 cards_030: 
-  reader_type: 
+  reader_type: Role
   name: Ron Request
   appender_id: 
-  updated_at: 2007-08-30 17:35:23
+  updated_at: 2007-09-02 19:47:28
   created_by: "1"
   current_revision_id: "30"
   tag_id: 
   priority: "0"
   extension_type: User
   type: InvitationRequest
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "30"
@@ -1246,19 +1246,19 @@ cards_030:
   key: ron_request
   extension_id: "5"
   sealed: "0"
-  created_at: 2007-08-30 17:35:23
+  created_at: 2007-09-02 19:47:28
 cards_029: 
-  reader_type: 
+  reader_type: Role
   name: basic card
   appender_id: 
-  updated_at: 2007-08-30 17:35:23
+  updated_at: 2007-09-02 19:47:27
   created_by: "1"
   current_revision_id: "29"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "29"
@@ -1272,19 +1272,19 @@ cards_029:
   key: basic_card
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:23
+  created_at: 2007-09-02 19:47:27
 cards_051: 
-  reader_type: 
+  reader_type: Role
   name: Four
   appender_id: 
-  updated_at: 2007-08-30 17:35:26
+  updated_at: 2007-09-02 19:47:30
   created_by: "1"
   current_revision_id: "51"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "51"
@@ -1298,19 +1298,19 @@ cards_051:
   key: four
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:26
+  created_at: 2007-09-02 19:47:30
 cards_073: 
-  reader_type: 
+  reader_type: Role
   name: type-a-card
   appender_id: 
-  updated_at: 2007-08-30 17:35:28
+  updated_at: 2007-09-02 19:47:32
   created_by: "1"
   current_revision_id: "73"
   tag_id: 
   priority: "0"
   extension_type: 
   type: CardtypeA
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "73"
@@ -1324,12 +1324,12 @@ cards_073:
   key: type_a_card
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:28
+  created_at: 2007-09-02 19:47:32
 cards_010: 
   reader_type: 
   name: Administrative User
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:23
   created_by: 
   current_revision_id: "10"
   tag_id: 
@@ -1350,12 +1350,12 @@ cards_010:
   key: administrative_user
   extension_id: "3"
   sealed: "0"
-  created_at: 2007-08-30 17:35:17
+  created_at: 2007-09-02 19:47:21
 cards_009: 
   reader_type: 
   name: Authenticated User
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:23
   created_by: 
   current_revision_id: "9"
   tag_id: 
@@ -1376,19 +1376,19 @@ cards_009:
   key: authenticated_user
   extension_id: "2"
   sealed: "0"
-  created_at: 2007-08-30 17:35:17
+  created_at: 2007-09-02 19:47:21
 cards_031: 
-  reader_type: 
+  reader_type: Role
   name: No Count
   appender_id: 
-  updated_at: 2007-08-30 17:35:24
+  updated_at: 2007-09-02 19:47:28
   created_by: "1"
   current_revision_id: "31"
   tag_id: 
   priority: "0"
   extension_type: 
   type: User
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "31"
@@ -1402,19 +1402,19 @@ cards_031:
   key: no_count
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:24
+  created_at: 2007-09-02 19:47:28
 cards_052: 
-  reader_type: 
+  reader_type: Role
   name: Four+One
   appender_id: 
-  updated_at: 2007-08-30 17:35:26
+  updated_at: 2007-09-02 19:47:30
   created_by: "1"
   current_revision_id: "52"
   tag_id: "46"
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "52"
@@ -1428,19 +1428,19 @@ cards_052:
   key: four+one
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:26
+  created_at: 2007-09-02 19:47:30
 cards_074: 
-  reader_type: 
+  reader_type: Role
   name: type-b-card
   appender_id: 
-  updated_at: 2007-08-30 17:35:28
+  updated_at: 2007-09-02 19:47:32
   created_by: "1"
   current_revision_id: "74"
   tag_id: 
   priority: "0"
   extension_type: 
   type: CardtypeB
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "74"
@@ -1454,12 +1454,12 @@ cards_074:
   key: type_b_card
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:28
+  created_at: 2007-09-02 19:47:32
 cards_011: 
   reader_type: 
   name: Wagn
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:23
   created_by: 
   current_revision_id: "11"
   tag_id: 
@@ -1480,19 +1480,19 @@ cards_011:
   key: wagn
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:17
+  created_at: 2007-09-02 19:47:21
 cards_032: 
-  reader_type: 
+  reader_type: Role
   name: r1
   appender_id: 
-  updated_at: 2007-08-30 17:35:24
+  updated_at: 2007-09-02 19:47:28
   created_by: "1"
   current_revision_id: "32"
   tag_id: 
   priority: "0"
   extension_type: Role
   type: Role
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "32"
@@ -1506,19 +1506,19 @@ cards_032:
   key: r1
   extension_id: "4"
   sealed: "0"
-  created_at: 2007-08-30 17:35:24
+  created_at: 2007-09-02 19:47:28
 cards_053: 
-  reader_type: 
+  reader_type: Role
   name: Five
   appender_id: 
-  updated_at: 2007-08-30 17:35:26
+  updated_at: 2007-09-02 19:47:30
   created_by: "1"
   current_revision_id: "53"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "53"
@@ -1532,19 +1532,19 @@ cards_053:
   key: five
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:26
+  created_at: 2007-09-02 19:47:30
 cards_075: 
-  reader_type: 
+  reader_type: Role
   name: type-c-card
   appender_id: 
-  updated_at: 2007-08-30 17:35:28
+  updated_at: 2007-09-02 19:47:32
   created_by: "1"
   current_revision_id: "75"
   tag_id: 
   priority: "0"
   extension_type: 
   type: CardtypeC
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "75"
@@ -1558,12 +1558,12 @@ cards_075:
   key: type_c_card
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:28
+  created_at: 2007-09-02 19:47:32
 cards_012: 
   reader_type: 
   name: InvitationRequest
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:23
   created_by: "2"
   current_revision_id: "12"
   tag_id: 
@@ -1584,19 +1584,19 @@ cards_012:
   key: invitation_request
   extension_id: "6"
   sealed: "0"
-  created_at: 2007-08-30 17:35:18
+  created_at: 2007-09-02 19:47:22
 cards_033: 
-  reader_type: 
+  reader_type: Role
   name: r2
   appender_id: 
-  updated_at: 2007-08-30 17:35:24
+  updated_at: 2007-09-02 19:47:28
   created_by: "1"
   current_revision_id: "33"
   tag_id: 
   priority: "0"
   extension_type: Role
   type: Role
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "33"
@@ -1610,19 +1610,19 @@ cards_033:
   key: r2
   extension_id: "5"
   sealed: "0"
-  created_at: 2007-08-30 17:35:24
+  created_at: 2007-09-02 19:47:28
 cards_054: 
-  reader_type: 
+  reader_type: Role
   name: Four+One+Five
   appender_id: 
-  updated_at: 2007-08-30 17:35:26
+  updated_at: 2007-09-02 19:47:30
   created_by: "1"
   current_revision_id: "54"
   tag_id: "53"
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "54"
@@ -1636,19 +1636,19 @@ cards_054:
   key: four+one+five
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:26
+  created_at: 2007-09-02 19:47:30
 cards_076: 
-  reader_type: 
+  reader_type: Role
   name: type-d-card
   appender_id: 
-  updated_at: 2007-08-30 17:35:28
+  updated_at: 2007-09-02 19:47:32
   created_by: "1"
   current_revision_id: "76"
   tag_id: 
   priority: "0"
   extension_type: 
   type: CardtypeD
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "76"
@@ -1662,19 +1662,19 @@ cards_076:
   key: type_d_card
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:28
+  created_at: 2007-09-02 19:47:32
 cards_034: 
-  reader_type: 
+  reader_type: Role
   name: r3
   appender_id: 
-  updated_at: 2007-08-30 17:35:24
+  updated_at: 2007-09-02 19:47:28
   created_by: "1"
   current_revision_id: "34"
   tag_id: 
   priority: "0"
   extension_type: Role
   type: Role
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "34"
@@ -1688,19 +1688,19 @@ cards_034:
   key: r3
   extension_id: "6"
   sealed: "0"
-  created_at: 2007-08-30 17:35:24
+  created_at: 2007-09-02 19:47:28
 cards_055: 
-  reader_type: 
+  reader_type: Role
   name: C
   appender_id: 
-  updated_at: 2007-08-30 17:35:26
+  updated_at: 2007-09-02 19:47:30
   created_by: "1"
   current_revision_id: "55"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "55"
@@ -1714,12 +1714,12 @@ cards_055:
   key: c
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:26
+  created_at: 2007-09-02 19:47:30
 cards_013: 
   reader_type: 
   name: Setting
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:23
   created_by: "1"
   current_revision_id: "13"
   tag_id: 
@@ -1740,19 +1740,19 @@ cards_013:
   key: setting
   extension_id: "7"
   sealed: "0"
-  created_at: 2007-08-30 17:35:18
+  created_at: 2007-09-02 19:47:22
 cards_077: 
-  reader_type: 
+  reader_type: Role
   name: type-e-card
   appender_id: 
-  updated_at: 2007-08-30 17:35:28
+  updated_at: 2007-09-02 19:47:32
   created_by: "1"
   current_revision_id: "77"
   tag_id: 
   priority: "0"
   extension_type: 
   type: CardtypeE
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "77"
@@ -1766,19 +1766,19 @@ cards_077:
   key: type_e_card
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:28
+  created_at: 2007-09-02 19:47:32
 cards_056: 
-  reader_type: 
+  reader_type: Role
   name: A+C
   appender_id: 
-  updated_at: 2007-08-30 17:35:26
+  updated_at: 2007-09-02 19:47:30
   created_by: "1"
   current_revision_id: "56"
   tag_id: "55"
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "56"
@@ -1792,12 +1792,12 @@ cards_056:
   key: a+c
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:26
+  created_at: 2007-09-02 19:47:30
 cards_014: 
   reader_type: 
   name: Thank You
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:23
   created_by: "1"
   current_revision_id: "14"
   tag_id: 
@@ -1818,19 +1818,19 @@ cards_014:
   key: thank_you
   extension_id: "1"
   sealed: "0"
-  created_at: 2007-08-30 17:35:18
+  created_at: 2007-09-02 19:47:22
 cards_035: 
-  reader_type: 
+  reader_type: Role
   name: r4
   appender_id: 
-  updated_at: 2007-08-30 17:35:24
+  updated_at: 2007-09-02 19:47:28
   created_by: "1"
   current_revision_id: "35"
   tag_id: 
   priority: "0"
   extension_type: Role
   type: Role
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "35"
@@ -1844,19 +1844,19 @@ cards_035:
   key: r4
   extension_id: "7"
   sealed: "0"
-  created_at: 2007-08-30 17:35:24
+  created_at: 2007-09-02 19:47:28
 cards_078: 
-  reader_type: 
+  reader_type: Role
   name: type-f-card
   appender_id: 
-  updated_at: 2007-08-30 17:35:28
+  updated_at: 2007-09-02 19:47:33
   created_by: "1"
   current_revision_id: "78"
   tag_id: 
   priority: "0"
   extension_type: 
   type: CardtypeF
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "78"
@@ -1870,12 +1870,12 @@ cards_078:
   key: type_f_card
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:28
+  created_at: 2007-09-02 19:47:33
 cards_015: 
   reader_type: 
   name: Anonymous
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:23
   created_by: "1"
   current_revision_id: "15"
   tag_id: 
@@ -1896,19 +1896,19 @@ cards_015:
   key: anonymous
   extension_id: "3"
   sealed: "0"
-  created_at: 2007-08-30 17:35:18
+  created_at: 2007-09-02 19:47:23
 cards_036: 
-  reader_type: 
+  reader_type: Role
   name: c1
   appender_id: 
-  updated_at: 2007-08-30 17:35:24
+  updated_at: 2007-09-02 19:47:28
   created_by: "1"
   current_revision_id: "36"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "36"
@@ -1922,19 +1922,19 @@ cards_036:
   key: c1
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:24
+  created_at: 2007-09-02 19:47:28
 cards_057: 
-  reader_type: 
+  reader_type: Role
   name: D
   appender_id: 
-  updated_at: 2007-08-30 17:35:27
+  updated_at: 2007-09-02 19:47:31
   created_by: "1"
   current_revision_id: "57"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "57"
@@ -1948,19 +1948,19 @@ cards_057:
   key: d
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:27
+  created_at: 2007-09-02 19:47:31
 cards_079: 
-  reader_type: 
+  reader_type: Role
   name: revtest
   appender_id: 
-  updated_at: 2007-08-30 17:35:29
+  updated_at: 2007-09-02 19:47:33
   created_by: "1"
   current_revision_id: "81"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "79"
@@ -1974,19 +1974,19 @@ cards_079:
   key: revtest
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:29
+  created_at: 2007-09-02 19:47:33
 cards_016: 
-  reader_type: 
+  reader_type: Role
   name: Currency
   appender_id: 
-  updated_at: 2007-08-30 17:35:19
+  updated_at: 2007-09-02 19:47:23
   created_by: "1"
   current_revision_id: "16"
   tag_id: 
   priority: "0"
   extension_type: Cardtype
   type: Cardtype
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "16"
@@ -2000,19 +2000,19 @@ cards_016:
   key: currency
   extension_id: "8"
   sealed: "0"
-  created_at: 2007-08-30 17:35:19
+  created_at: 2007-09-02 19:47:23
 cards_037: 
-  reader_type: 
+  reader_type: Role
   name: c2
   appender_id: 
-  updated_at: 2007-08-30 17:35:24
+  updated_at: 2007-09-02 19:47:28
   created_by: "1"
   current_revision_id: "37"
   tag_id: 
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "37"
@@ -2026,19 +2026,19 @@ cards_037:
   key: c2
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:24
+  created_at: 2007-09-02 19:47:28
 cards_058: 
-  reader_type: 
+  reader_type: Role
   name: A+D
   appender_id: 
-  updated_at: 2007-08-30 17:35:27
+  updated_at: 2007-09-02 19:47:31
   created_by: "1"
   current_revision_id: "58"
   tag_id: "57"
   priority: "0"
   extension_type: 
   type: Basic
-  reader_id: 
+  reader_id: "2"
   plus_sidebar: "0"
   updated_by: "1"
   id: "58"
@@ -2052,4 +2052,4 @@ cards_058:
   key: a+d
   extension_id: 
   sealed: "0"
-  created_at: 2007-08-30 17:35:27
+  created_at: 2007-09-02 19:47:31

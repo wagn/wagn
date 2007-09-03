@@ -7,6 +7,24 @@ class OptionsController < ApplicationController
     @cardtype = @card.name
   end
   
+
+  def update
+    perms=params[:permissions]
+    @card.permissions=perms.keys.map do |task|
+      party = 
+        case perms[task]
+        when ''; nil
+        when 'personal'
+          @card.personal_user
+        else
+          Role.find(perms[task])          
+        end
+      Permission.new :task=>task, :party=>party
+    end
+    @card.save
+    render :template=>'card/options' #fixme-perm  should have some sort of success notification...
+  end
+  
   def roles
     raise Wagn::Oops unless @card.class_name=='User'
    # @card = Card.find params[:id]

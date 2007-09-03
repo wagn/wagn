@@ -76,7 +76,7 @@ class System < ActiveRecord::Base
       usr = User.current_user
       ok = {}
       ok[:role_ids] = {}
-      usr.roles.each do |role|
+      usr.all_roles.each do |role|
         ok[:role_ids][role.id] = true
         role.task_list.each { |t| ok[t] = 1 }
       end
@@ -84,23 +84,12 @@ class System < ActiveRecord::Base
     end
     
     def always_ok?   
-      return false unless usr = current_user
-      usr.roles.each { |r| return true if r.codename == 'admin' }
-      return false      
-      #lots of pseudo-code here...  may be a case for "case", but I'm not
-      #sure how we're going to do the not web user thing...
-=begin                                
-      return session[:always_ok] if session.key?(:always_ok) 
-
-      usr = User.current_user
-      if usr == :not_web_user then true 
-      elsif usr == :admin_user then true
-      elsif usr.roles.member?(:administrator) then true # by codename
-      else false
-      end
-=end      
+#      @@always_ok ||= do
+        return false unless usr = current_user
+        usr.roles.each { |r| return true if r.codename == 'admin' }
+        return false              
+#      end
     end
-    
   end 
   
 

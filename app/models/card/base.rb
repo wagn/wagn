@@ -29,7 +29,7 @@ module Card
 
     has_many :permissions, :foreign_key=>'card_id', :dependent=>:delete_all
 
-    belongs_to :reader, :polymorphic=>true  
+    belongs_to :reader, :polymorphic=>true  #fixme-perm  can we make this private?
         
     has_many :in_references, :class_name=>'WikiReference', :foreign_key=>'referenced_card_id'
     has_many :out_references,:class_name=>'WikiReference', :foreign_key=>'card_id', :dependent=>:destroy
@@ -55,7 +55,7 @@ module Card
     after_save :cache_priority
      
     attr_accessor :comment, :comment_author
-    
+  
     protected
     def set_defaults 
       return unless new_record?  # because create callbacks are also called in type transitions 
@@ -256,7 +256,7 @@ module Card
 
     # Dynamic Attributes ------------------------------------------------------        
     def content
-#     ok!(:read) # fixme-perm.  might need this, but it's breaking create...
+     ok!(:read) # fixme-perm.  might need this, but it's breaking create...
       current_revision ? current_revision.content : ""
     end   
     
@@ -361,7 +361,7 @@ module Card
     # Because of the way it chains methods, 'tracks' needs to come after
     # all the basic method definitions, and validations have to come after
     # that because they depend on some of the tracking methods.
-    tracks :name, :content, :type, :comment, :permissions, :reader #, :reader, :writer, :appender
+    tracks :name, :content, :type, :comment, :permissions#, :reader, :writer, :appender
 
     validates_presence_of :name
 
@@ -405,12 +405,16 @@ module Card
     end
 
     # private cards can't be connected to private cards with a different group
-    validates_each :reader do |rec, attr, value|
-      if rec.updates.for?(:reader)
-        (rec.dependents+(rec.junction? ? [rec.tag, rec.trunk] : [])).each do |d|     
-          if d.reader and d.reader!=value and d.reader!=rec.reader_without_tracking
-            rec.errors.add :reader, "group #{value.cardname} cannot be assigned because" +
-            "#{d.name} belongs to group #{d.reader.cardname}"
+    validates_each :permissions do |rec, attr, value|
+      if rec.updates.for?(:permissions)
+        rec.errors.add :permissions, 'Insufficient permissions specifications' if value.length < 4
+        reader = value.find{|p| p.task == 'read'}.party  #fixme-perm -- likely to break
+        (rec.dependents+(rec.junction? ? [rec.tag, rec.trunk] : [])).each do |d|   
+          d_reader = d.who_can :read
+          if d_reader and (d_reader!=reader) and !(d_reader.class == ::Role and d_reader.codename=='anon') 
+            # and d.reader!=reader
+            rec.errors.add :permissions, "group #{reader.cardname} cannot be assigned because " +
+            "#{d.name} belongs to group #{d_reader.cardname}"
           end
         end       
       end

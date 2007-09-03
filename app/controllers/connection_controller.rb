@@ -26,7 +26,7 @@ class ConnectionController < ApplicationController
     @tag  = Card.find_or_create params[:card]
     @connection = Card.create! params[:connection].merge(:trunk=>@trunk, :tag=>@tag)
     if params[:personal_sidebar]
-      @connection.reader = User.current_user
+      @connection.reader = User.current_user #fixme-perm  -- not how we should do this.
       @connection.save!
       Card::Basic.create! :trunk=>@connection, :tag=>Card.find_by_name('*sidebar')
     end

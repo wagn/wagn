@@ -79,7 +79,7 @@ class Card::RenameTest < Test::Unit::TestCase
   def name_invariant_attributes( card )
     {
       :content => card.content,
-      :writer => card.writer,
+#      :writer => card.writer,
       :revisions => card.revisions.length,
       :referencers => card.referencers.plot(:name).sort,
       :referencees => card.referencees.plot(:name).sort,

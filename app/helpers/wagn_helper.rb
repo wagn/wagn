@@ -337,10 +337,6 @@ module WagnHelper
   end
   
   def related
-    # FIXME?: some requests, like /options/roles (which would normally only be called as ajax)
-    # do have a card, but it's definitely weird to have a Related cards underneath.  but it's 
-    # weird to call those directly anyway, so not a big deal.
-    return '' unless @card and @card.id and controller.controller_name=='card'
     render :partial=> 'card/related'
   end
   

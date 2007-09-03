@@ -102,5 +102,4 @@ describe Card, "anonymous create permissions" do
 end
 
 
-
                        

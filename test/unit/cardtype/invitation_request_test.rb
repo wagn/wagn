@@ -28,6 +28,7 @@ class Card::InvitationRequestTest < Test::Unit::TestCase
     assert @card.errors.on(:name)
   end
 
+=begin # this is now going to be a configuration option
   def test_should_deny_destroy_permission
     ::User.as(:admin) do Role.find_by_codename('auth').update_attributes! :tasks=>'' end
     assert_raises Wagn::PermissionDenied do 
@@ -36,6 +37,7 @@ class Card::InvitationRequestTest < Test::Unit::TestCase
       end
     end
   end
+=end
             
   def test_should_block_user                      
     ::User.as(:admin) do Role.find_by_codename('auth').update_attributes! :tasks=>'deny_invitation_requests' end

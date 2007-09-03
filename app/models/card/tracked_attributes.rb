@@ -10,19 +10,6 @@ module Card
       end
     end
     
-=begin    
-    def save_with_tracking
-      warn "SAVING WITH TRACKING"
-      set_tracked_attributes
-      save_without_tracking
-    end
-
-    def save_with_tracking!
-      warn "SAVING WITH TRACKING"
-      set_tracked_attributes
-      save_without_tracking!
-    end
-=end
     
     protected 
     def set_name(newname)
@@ -83,26 +70,24 @@ module Card
     
     def set_permissions(perms)
       self.updates.clear(:permissions)
+     # if !new_record? and create_perm = ::Permission.find_by_card_id_and_task(self.id,'create')
+    #    perms<< create_perm  #probably a better way to do this.  makes sure create permissions don't get overridden on cardtype cards.
+     # end
       self.permissions_without_tracking = perms
+      perms.each do |p| 
+        if p.task == 'read' then set_reader( p.party ) end
+      end
     end
    
     def set_reader(party)   
-      self.reader_without_tracking = party 
+      #self.reader_without_tracking = party 
+      self.reader = party
       junctions.each do |dep|
         dep.set_reader party  
         dep.save
       end
     end
-    
-=begin    
-    def set_writer(party)
-      self.writer_without_tracking = party
-    end                                           
-    
-    def set_appender(party)
-      self.appender_without_tracking = party
-    end
-=end
+ 
     def set_initial_content  
       # set_content bails out if we call it on a new record because it needs the
       # card id to create the revision.  call it again now that we have the id.

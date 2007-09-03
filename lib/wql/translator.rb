@@ -207,6 +207,7 @@ module Wql
           # FIXME: this is a totallly brittle hack for the tag cloud that will
           # only work for one query
           statement.group += Card::Base.columns.plot(:name).map{|x| "#{main_alias}.#{x}" } + ["t2.type"]
+          statement.fields << 't2.type'
           @current_field= "count(*)"
         when "content":      join_for_field 'revisions', '{c}.id={m}.current_revision_id'
         when "revised_at":   join_for_field 'revisions', '{c}.id={m}.current_revision_id'

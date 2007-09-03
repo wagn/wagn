@@ -1,80 +1,20 @@
- <%-
-  context ||= 'options'   # new|options|cardtype
-  option  ||= {} 
--%>
-<% if context=='options' and @card.ok? :edit %>
-  <tr>
-    <td class="label"><label for="name">Name</label></td>
-    <td class="field" colspan="2">
-      <%= text_field :card, :name, 
-						:size=>40, 
-						:class=>'new-card-name',    
-						:id=>"#{params[:element]}-name-field" %>
 
 
-      <%#= button_to_function "Rename", 
-					card_function(params[:element], :rename_form, "$F('#{params[:element]}-name-field')"), 							
-					:class=>'save' %>
-					
-					   
-			<% if (@card.name.split("+").length == 2) %>
-				<%= button_to_function "Flip", "f=$('#{params[:element]}-name-field'); f.value = f.value.split('+').reverse().join('+')" %>
-		  <% end %>
-			</script>
-		</td>
-  </tr>
-<% end %>       
-
-<% if context !='cardtype' and @card.ok?(:edit) %> 
-  <tr>
-    <td class="label"><label for="cardtype">Cardtype</label></td>
-    <td class="field">
-      <%= select_tag 'card[type]', cardtype_options_for_select(@card.type) %> 
-    </td>
-    <td class="help">category for layout, templates, etc.</td>
-  </tr>
-<% end %>
-
+<% for task in [:read, :edit, :comment, :delete] %>
  <tr>
-   <td class="label">Viewers</td>
+   <td class="label">Who can <%= task %>?</td>
    <td class="field">
-     <% if card.ok? :permission_setting %>
-       <span id="<%= params[:element] %>-reader-select">
-         <%=  collection_select :card, :reader_id, reader_options_for( @card ), :first, :last, {} %>
+     <% if card.ok? :permissions %>
+       <span id="<%= params[:element] %>-<%= task %>-select">
+         <%= select_tag "permissions[#{task}]", permission_options_for( @card, task) %>
        </span>
      <% else %>
-       <%#= link_to_page card.reader.name %>
+       <%= link_to_page party_name(card.who_can(task)) %>
      <% end %>
   </td>
-  <td class="help">Only users in this group can view this card</td>
+  <td class="help">get this text from card?</td>
  </tr>
- <tr>
-   <td class="label">Editors</td>
-   <td class="field">
-     <% if card.ok? :permission_setting %>
-       <span id="<%= params[:element] %>-writer-select">
-         <%=  collection_select :card, :reader_id, writer_options_for( @card ), :first, :last, {} %>
-       </span>
-     <% else %>
-       <%#= link_to_page card.writer.name %>
-     <% end %>
-  </td>
-  <td class="help">Only users in this group can edit this card</td>
-</tr>
-<tr>
-  <td class="label">Commenters</td>
-  <td class="field">
-    <% if card.ok? :permission_setting %>
-      <span id="<%= params[:element] %>-appender-select">
-        <%=  collection_select :card, :reader_id, appender_options_for( @card ), :first, :last, {} %>
-      </span>
-    <% else %>
-      <%#= link_to_page card.appender.name %>
-    <% end %>
-    
- </td>
- <td class="help">Who can add comments to this card?</td>
-</tr>
-
+<% end %> 
+ 
 
                

@@ -34,50 +34,24 @@ class PermissionTest < Test::Unit::TestCase
   end      
 
 
+  def test_should_not_allowed_reader_change
+    a, ab, abc, ad = %w(A A+B A+B+C A+D ).collect do |name|  Card.find_by_name(name)  end
+      
+    abc.permit(:read, @r2); abc.save 
 
-=begin
-  
-  # test that you can't change group on a card that you can't get it back from.
-   # for each user, for each group, try assigning each card to that group and then changing back.
-   def test_cant_put_yourself_in_a_corner
-     #   not sure this is an issue any more.  We may want to identify the case of a user denying him/herself permissions and warn the user, but 
-     # I don't see why it shouldn't be possible.  
-     @r2.tasks='manage_roles,edit_cards'; @r2.save
-     @r1.users = [ @u1, @u2, @u3 ]
-     @r2.users = [ @u1, @u2 ]
-     @r3.users = [ @u1 ]
-     roles = Role.find(:all)
-     User.find(:all).reject{|u|u.login=='hoozebot' or u.login=='wagbot'}.each do |user|
-       User.as(@admin) do @c1.reader = @c1.writer = nil; @c1.save! end
-       User.as(user) do 
-         roles.each do |role|
-           begin 
-             @c1.reader = role  
-             @c1.save!
-             assert_not_hidden_from( user, @c1, "#{user.login} reader #{role.cardname}" )
-           rescue Wagn::PermissionDenied 
-           end
-
-           begin
-             @c1.permit(:edit, role)
-             @c1.save!
-             #warn "#{user.login} -> #{role.cardname} granted.  set to #{ @c1.writer ? @c1.writer.cardname : ''}" 
-             assert_not_locked_from( user, @c1, "#{user.login} writer #{@c1.writer ? @c1.writer.cardname : ''}" )
-           rescue Wagn::PermissionDenied => e
-             #warn "#{user.login} -> #{role.cardname} denied. #{e.message}"
-             #reset to #{ @c1.writer ? @c1.writer.cardname : ''}" 
-           end
-         end
-       end
-     end
-   end
-=end
+    # now try to change read permissions to a role that would result in conflict
+    a.permissions= [:read,:edit,:comment,:delete].map{|t| Permission.new(:task=>t.to_s, :party=>@r1)}
+    a.save
+    assert a.errors.on(:permissions)
+  end
 
   def test_create_connections
     a, b, c, d = create_cards %w( a b c d )
 
-    a.permit(:read, @r1); a.save
-    b.permit(:read, @r2); b.save
+    a.save; a=Card.find_by_name('a');a.permit(:read, @r1); 
+    b.save; b=Card.find_by_name('b');b.permit(:read, @r2); 
+    a.save; a=Card.find_by_name('a');
+    b.save; b=Card.find_by_name('b');
 
     #private cards can't be connected to private cards with a different group
     ab =  a.connect b
@@ -88,13 +62,33 @@ class PermissionTest < Test::Unit::TestCase
 
     #private cards connected to non-private are private with the same group    
     ac = a.connect c
+    ac = Card.find_by_name 'a+c'
     assert_equal a.reader, ac.reader
   end  
+     
+ 
+  def test_read_group_permissions
+    @u1.roles = [ @r1, @r2 ]; @u1.save;
+    @u2.roles = [ @r1, @r3 ]; @u2.save;
+
+    @c1.permit(:read, @r1); @c1.save
+    @c2.permit(:read, @r2); @c2.save
+    @c3.permit(:read, @r3); @c3.save
+
+    assert_not_hidden_from( @u1, @c1 )
+    assert_not_hidden_from( @u1, @c2 )
+    assert_hidden_from( @u1, @c3 )    
+    
+    assert_not_hidden_from( @u2, @c1 )
+    assert_hidden_from( @u2, @c2 )    
+    assert_not_hidden_from( @u2, @c3 )    
+  end
+  
 
   def test_write_group_permissions
-    @c1.permit(:write,@r1); @c1.save
-    @c2.permit(:write,@r2); @c2.save
-    @c3.permit(:write,@r3); @c3.save
+    @c1.permit(:edit,@r1); @c1.save
+    @c2.permit(:edit,@r2); @c2.save
+    @c3.permit(:edit,@r3); @c3.save
 
     %{        u1 u2 u3
       c1(r1)  T  T  T
@@ -111,6 +105,27 @@ class PermissionTest < Test::Unit::TestCase
     assert_equal false, @c3.writeable_by(@u2), "c3 writeable by u2" 
     assert_equal false, @c3.writeable_by(@u3), "c3 writeable by u3" 
   end
+
+  def test_read_user_permissions
+    @u1.roles = [ @r1, @r2 ]
+    @u2.roles = [ @r1, @r3 ]
+    @u3.roles = [ @r1, @r2, @r3 ]
+
+    as(@admin) { @c1.permit(:read, @u1); @c1.save }
+    as(@admin) { @c2.permit(:read, @u2); @c2.save }
+
+    assert_not_hidden_from( @u1, @c1 )
+    assert_hidden_from( @u2, @c1 )    
+    assert_hidden_from( @u3, @c1 )    
+    
+    assert_hidden_from( @u1, @c2 )
+    assert_not_hidden_from( @u2, @c2 )    
+    assert_hidden_from( @u3, @c2 )    
+  end
+
+
+
+
 
   def test_write_user_permissions
     @u1.roles = [ @r1, @r2 ]
@@ -139,14 +154,6 @@ class PermissionTest < Test::Unit::TestCase
   end
 
 
-  def test_should_not_allowed_reader_change
-    a, ab, abc, ad = %w(A A+B A+B+C A+D ).collect do |name|  Card.find_by_name(name)  end
-    abc.permit(:read, @r2); abc.save 
-    # now try to change role that would result in conflict
-    a.permit(:read, @r1)
-    a.save
-    assert a.errors.on(:reader)
-  end  
 
 
  
@@ -171,97 +178,51 @@ class PermissionTest < Test::Unit::TestCase
   def test_anon_user_should_exist
     assert_instance_of User, User.find_by_login('anon')
   end
-          
-=begin                    
-  def test_anon_should_not_get_authenticated_permissions
-    User.as(User.find_by_login('anon')) do
-      #  hrmm...I guess this should check that anon does not have "anyone signed in" role?  (spec already checks this...)
-      
-      # assert !System.ok?(:edit_cards)
-    end
+ 
+
+  def test_private_wql
+    # set up cards of type TestType, 2 with nil reader, 1 with role1 reader 
+     as(@admin) do 
+       [@c1,@c2,@c3].each do |c| 
+         c.update_attribute(:content, 'WeirdWord')
+         c.save
+         c.permit(:read, Role.find_by_codename('anon'))    #fixme -- this should be done by setting the cardtype perms
+       end
+       @c1.permit(:read,@u1); @c1.save
+     end
+  
+     as(@u1) do
+       assert_equal %w( c1 c2 c3 ), Card.find_by_wql_options(:keyword=>'WeirdWord').plot(:name).sort
+     end
+     as(@u2) do
+       assert_equal %w( c2 c3 ), Card.find_by_wql_options(:keyword=>'WeirdWord').plot(:name).sort
+     end
   end
-=end
+
 
   def test_role_wql
     @r1.users = [ @u1 ]
 
     # set up cards of type TestType, 2 with nil reader, 1 with role1 reader 
-    Card::Cardtype.create(:name=>'TestType')
     as(@admin) do 
       [@c1,@c2,@c3].each do |c| 
-        c.update_attribute(:type, 'TestType')
-        c.permit(:read, Role.find_by_codename('anon'))    
+        c.update_attribute(:content, 'WeirdWord')
         c.save
+        c.permit(:read, Role.find_by_codename('anon'))    
       end
       @c1.permit(:read, @r1); @c1.save
     end
 
     as(@u1) do
-      assert_equal %w( c1 c2 c3 ), Card.find_by_wql_options(:type=>'TestType').plot(:name).sort
+      assert_equal %w( c1 c2 c3 ), Card.find_by_wql_options(:keyword=>'WeirdWord').plot(:name).sort
     end
     as(@u2) do
-      assert_equal %w( c2 c3 ), Card.find_by_wql_options(:type=>'TestType').plot(:name).sort
+      assert_equal %w( c2 c3 ), Card.find_by_wql_options(:keyword=>'WeirdWord').plot(:name).sort
     end
   end  
-        
-  def test_private_wql
-    # set up cards of type TestType, 2 with nil reader, 1 with role1 reader 
-     Card::Cardtype.create(:name=>'TestType')
-     as(@admin) do 
-       [@c1,@c2,@c3].each do |c| 
-         c.update_attribute(:type, 'TestType')
-         c.permit(:read, Role.find_by_codename('anon'))    
-         c.save
-       end
-       @c1.permit(:read,@u1); @c1.save
-     end
-
-     as(@u1) do
-       assert_equal %w( c1 c2 c3 ), Card.find_by_wql_options(:type=>'TestType').plot(:name).sort
-     end
-     as(@u2) do
-       assert_equal %w( c2 c3 ), Card.find_by_wql_options(:type=>'TestType').plot(:name).sort
-     end
-  end
-  
-
+     
  
   
-  def test_read_group_permissions
-    @u1.roles = [ @r1, @r2 ]
-    @u2.roles = [ @r1, @r3 ]
-
-    @c1.permit(:read, @r1); @c1.save
-    @c2.permit(:read, @r2); @c2.save
-    @c3.permit(:read, @r3); @c3.save
-
-    assert_not_hidden_from( @u1, @c1 )
-    assert_not_hidden_from( @u1, @c2 )    
-    assert_hidden_from( @u1, @c3 )    
-    
-    assert_not_hidden_from( @u2, @c1 )
-    assert_hidden_from( @u2, @c2 )    
-    assert_not_hidden_from( @u2, @c3 )    
-  end
-
-  def test_read_user_permissions
-    @u1.roles = [ @r1, @r2 ]
-    @u2.roles = [ @r1, @r3 ]
-    @u3.roles = [ @r1, @r2, @r3 ]
-
-    as(@admin) { @c1.permit(:read, @u1); @c1.save }
-    as(@admin) { @c2.permit(:read, @u2); @c2.save }
-
-    assert_not_hidden_from( @u1, @c1 )
-    assert_hidden_from( @u2, @c1 )    
-    assert_hidden_from( @u3, @c1 )    
-    
-    assert_hidden_from( @u1, @c2 )
-    assert_not_hidden_from( @u2, @c2 )    
-    assert_hidden_from( @u3, @c2 )    
-  end
-
-    
 
 
 
@@ -286,6 +247,4 @@ G * . . . .
 }   
     
   end
-  
-  
 end

@@ -1,26 +1,46 @@
 module CardHelper
+  def party_name(party)
+    party ? party.card.name : 'Nobody'
+  end
+  
+  def permission_options_for(card,task)
+    container = []
+    container<< ['No one',''] if task == :comment
+    pu = card.personal_user
+    if pu and card.ok? :permissions
+      ptitle = (pu == User.current_user) ? "Me (#{pu.card.name})" : pu.card.name
+      container<<[ptitle,'personal']
+    end
+    possible_roles = System.ok?(:set_card_permissions) ? Role.find_configurables : User.current_user
+    container+= container_from_roles( possible_roles )
 
-  def reader_options_for( card )
-#   fixme-perm card.permission
-#    card.writer ?  options_from_roles( card.writer.superset_roles ) :
-#      [['','-- Select -- ']] + options_from_roles( Role.find_configurables )
+    party = card.who_can(task)
+
+    warn "party= #{party}; party class = #{party.class}"
+    selected = 
+      case party.class.to_s
+      when 'NilClass' ; ''
+      when 'User'     ; 'personal'
+      else            ; party.id
+      end
+      
+    warn "party class = #{party.class}; selected = #{selected}"
+
+    options_for_select container, selected
   end
 
-  def writer_options_for( card )
-    card.reader ?  options_from_roles( (card.reader||Role.find_by_codename('anon')).subset_roles ) :
-      [['','-- Select -- ']] + options_from_roles( Role.find_configurables )
-  end                                
-  
-  def appender_options_for( card )
-     [['','Nobody']] + (card.appender ?  options_from_roles( (card.reader||Role.find_by_codename('anon')).subset_roles ) :
-      options_from_roles( Role.find_configurables ))
-  end                                
-  
-  def options_from_roles( roles )
-    return [] unless user=User.current_user
-    roles.select do |r| 
-      r.users.include?(user) 
-    end.collect {|c| [c.id, c.cardname] }.sort {|a,b| a.last<=>b.last}
+def selected_from(party)
+  c = party.class
+  case c
+  when NilClass; ''
+  when User; 'personal'
+  else; party.id
+  end
+end
+
+  def container_from_roles( roles )
+    #user = User.current_user
+    roles.collect {|c| [c.cardname, c.id] }.sort {|a,b| a.last<=>b.last}
   end
   
   # navigation for revisions -

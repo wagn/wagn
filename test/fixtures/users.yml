@@ -1,78 +1,78 @@
 --- 
 users_004: 
   status: active
-  salt: d8e0fae9808bbf1d4654dc32f2f13a13d5f83754
-  updated_at: 2007-08-30 17:35:23
+  salt: be9036ac601e098c731c5cb854e23453be36aec1
+  updated_at: 2007-09-02 19:47:27
   cards_per_page: "25"
-  crypted_password: cc1bff1208375627444a3ebbd7f96290e2fbbebb
+  crypted_password: 577a9fe0308682acea8945b5d6023d97d580bb69
   invite_sender_id: "1"
   blocked: "0"
   password_reset_code: 
   id: "4"
   hide_duplicates: "1"
   login: joe_user
-  created_at: 2007-08-30 17:35:23
+  created_at: 2007-09-02 19:47:27
   email: joe@user.com
 users_005: 
   status: request
-  salt: 932cca9be21dd8673acf2226a4725a5982a243e1
-  updated_at: 2007-08-30 17:35:23
+  salt: 79e4603cd7b7b4c11de3a5be7ff91f37e65706ce
+  updated_at: 2007-09-02 19:47:27
   cards_per_page: "25"
-  crypted_password: c4e28ef8dc12f43e4d0a3a0f0e8ac3b12094452e
+  crypted_password: faa59aa8840dc34f9f1925632e6fddbb49bd0b4b
   invite_sender_id: 
   blocked: "0"
   password_reset_code: 
   id: "5"
   hide_duplicates: "1"
   login: 
-  created_at: 2007-08-30 17:35:23
+  created_at: 2007-09-02 19:47:27
   email: ron@request.com
 users_006: 
   status: active
-  salt: 8a80c1bfa01359d428955a17b720334a4e90cd9c
-  updated_at: 2007-08-30 17:35:24
+  salt: e811fd93e020039479c6028bde0debaeba6a1851
+  updated_at: 2007-09-02 19:47:28
   cards_per_page: "25"
-  crypted_password: b57e0e43bc1b05cffa4a349acc0fcfe9628448ca
+  crypted_password: 44f376fcf25e1696578cccf15ccb5d8eb390ae66
   invite_sender_id: "1"
   blocked: "0"
   password_reset_code: 
   id: "6"
   hide_duplicates: "1"
   login: u1
-  created_at: 2007-08-30 17:35:24
+  created_at: 2007-09-02 19:47:28
   email: u1@user.com
 users_007: 
   status: active
-  salt: cfe7af5d2c73190c2483a6a21fe4a1546559f1c7
-  updated_at: 2007-08-30 17:35:24
+  salt: 7c3c4cc57a92f62a00b9b3d5cefa72ce4460eecb
+  updated_at: 2007-09-02 19:47:28
   cards_per_page: "25"
-  crypted_password: 79263517591f62729da55e48556e1063c260622d
+  crypted_password: d93396c4bc7a191ca475244eacd5c434aecd7cb5
   invite_sender_id: "1"
   blocked: "0"
   password_reset_code: 
   id: "7"
   hide_duplicates: "1"
   login: u2
-  created_at: 2007-08-30 17:35:24
+  created_at: 2007-09-02 19:47:28
   email: u2@user.com
 users_008: 
   status: active
-  salt: 361585e0d2c99a848c108a3b1aa32c3845a4f905
-  updated_at: 2007-08-30 17:35:24
+  salt: cbd30d165efb57014015bf5b03272a86c3b72ec5
+  updated_at: 2007-09-02 19:47:28
   cards_per_page: "25"
-  crypted_password: d5062acee4abac60ab9ba602f8a600e11d4da774
+  crypted_password: dd3a5332581cf230b619a790a9eec91bb3d241ee
   invite_sender_id: "1"
   blocked: "0"
   password_reset_code: 
   id: "8"
   hide_duplicates: "1"
   login: u3
-  created_at: 2007-08-30 17:35:24
+  created_at: 2007-09-02 19:47:28
   email: u3@user.com
 users_001: 
   status: active
   salt: bf2a748b23e6fc6fa64d5acb99df8e72e308c58c
-  updated_at: 2007-08-30 17:35:18
+  updated_at: 2007-09-02 19:47:22
   cards_per_page: "25"
   crypted_password: 610bb7b564d468ad896e0fe4c3c5c919ea5cf16c
   invite_sender_id: "1"
@@ -81,12 +81,12 @@ users_001:
   id: "1"
   hide_duplicates: "1"
   login: admin
-  created_at: 2007-08-30 17:35:16
+  created_at: 2007-09-02 19:47:20
   email: webmaster@grasscommons.org
 users_002: 
   status: active
   salt: c420fa40c65a38186deb25ba859edacd9bf7d8f8
-  updated_at: 2007-08-30 17:35:16
+  updated_at: 2007-09-02 19:47:20
   cards_per_page: "25"
   crypted_password: 13d124f96e2953fea135c13df097fb3d754588be
   invite_sender_id: "1"
@@ -95,12 +95,12 @@ users_002:
   id: "2"
   hide_duplicates: "1"
   login: hoozebot
-  created_at: 2007-08-30 17:35:16
+  created_at: 2007-09-02 19:47:20
   email: hoozebot@grasscommons.org
 users_003: 
   status: system
   salt: c420fa40c65a38186deb25ba859edacd9bf7d8f8
-  updated_at: 2007-08-30 17:35:18
+  updated_at: 2007-09-02 19:47:22
   cards_per_page: "25"
   crypted_password: 13d124f96e2953fea135c13df097fb3d754588be
   invite_sender_id: "1"
@@ -109,5 +109,5 @@ users_003:
   id: "3"
   hide_duplicates: "1"
   login: anon
-  created_at: 2007-08-30 17:35:18
+  created_at: 2007-09-02 19:47:22
   email: anonymous@grasscommons.org

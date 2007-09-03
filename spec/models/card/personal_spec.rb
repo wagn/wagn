@@ -1,9 +1,12 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
 
-
-describe Card, "should recognize personal card candidates" do
+describe User, "Normal user" do
   before do
+    User.as :admin
+    r = Role.find_by_codename('auth')
+    r.tasks = 'set_personal_card_permissions'
+    r.save
     User.as :joe_user
     @u = User.current_user    
     @other_user = User.find_by_login('admin')
@@ -11,35 +14,52 @@ describe Card, "should recognize personal card candidates" do
     @xo = Card.create! :name=>'X+Admin User'
     @ux = Card.create! :name=>'Joe User+X'
     @xuy= Card.create! :name=>'X+Joe User+Y'
-    
   end
+
   
-  it "should not allow user cards to be personal cards" do
-    @u.card.ok?(:personal_card).should_not be_true
+  it "should be someone with permission to set personal card permissions" do
+    System.ok?(:set_personal_card_permissions).should be_true
   end
-  it "should allow (card)+(own user cards) to be personal" do
-    @xu.ok?(:personal_card).should be_true
+  it "should not be able to any card permissions" do
+    System.ok?(:set_card_permissions).should be_false
   end
-  it "should not allow (card)+(other user's card) to be personal" do
-    @xo.ok?(:personal_card).should_not be_true
+  it "should not be the personal user of its own user card (no personal user)" do
+    @u.card.personal_user.should== nil
   end
-  it "should not allow (own user card)+(card) to be personal" do
-    @ux.ok?(:personal_card).should_not be_true
+  it "should not be able to edit its card permissions" do
+    @u.card.ok?(:permissions).should be_false
   end
-  it "should allow (personal card)+(card) to be personal" do
-    @xuy.ok?(:personal_card).should be_true
+  it "should be the personal user of (card)+(user card)" do
+    @xu.personal_user.should== @u
   end
-  
+  it "should be able to edit personal cards where it is the personal user" do
+    @xu.ok?(:permissions).should be_true
+  end
+  it "should not be able to edit personal cards where other users are the personal user" do
+    @xo.ok?(:permissions).should_not be_true
+  end
+  it "should not be the personal user of (own user card)+(card)" do
+    @ux.personal_user.should== nil
+  end
+  it "should be the personal user of (own personal card)+(card)" do
+    @xuy.personal_user.should== @u
+  end
 end
 
-describe Card, "Anonymous User can't have personal cards" do
+describe Card, "User not allowed to set personal cards" do
   before do
-    User.as :anon
+    User.as :joe_user
     @u = User.current_user 
-    @xu = Card.create :name=>'X+Anonymous User'
+    @xu = Card.create! :name=>'X+Joe User User'
   end
-  
-  it "should not allow (card)+(anonymous user's card) to be personal" do
-    @xu.ok?(:personal_card).should_not be_true
+
+  it "should be someone without permission to set personal card permissions" do
+    System.ok?(:set_personal_card_permissions).should be_false
+  end
+  it "should not be able to any card permissions" do
+    System.ok?(:set_card_permissions).should be_false
+  end
+  it "should not allow (card)+(self card) to be personal" do
+    @xu.ok?(:permissions).should_not be_true
   end  
 end

@@ -1,63 +1,24 @@
 <% slot_for(card, context, 'edit') do |slot| %>  
-	<%#= slot.header %>
-	<div class="card-header">
-	  <div class="card-menu">
-		  <%= slot.link_to_menu_action 'view'  %>   
-		  <%= slot.link_to_menu_action 'edit'  %>   
-		  <%= slot.link_to_menu_action 'changes' %>   
-		  <%= slot.link_to_menu_action 'options' %>   
-	  </div>
+  <%= slot.menu %>
 
-	  <span id="<%= slot.name_area %>">
-		 	<span class="title"><%= less_fancy_title(card) %></span>
-			<%= link_to_remote '[edit name]', :url=>slot.url_for_name_action("edit"),
-						:update => slot.name_area %>
-	  </span> 
-		
+  <span id="<%= slot.name_area %>" class="name-area">
+	 	<span class="title"><%= less_fancy_title(card) %></span>
+		<%= link_to_remote '[edit name]', :url=>slot.url_for_name_action("edit"),
+					:update => slot.name_area %>
+  </span> 
 
-    <span id="<%= slot.cardtype_area %>" class="edit">
-			<span class="cardtype">
-	      <%= link_to_page( Card.cardtypes[card.type] ) %>
-			</span>
-			<%= link_to_remote '[edit cardtype]', :url=>slot.url_for_cardtype_action("edit"),
-						:update => slot.cardtype_area %>
-    </span>
-
-	</div>
-	<br>
-	
-	
-<%#
-  <div class="title"> 
-		<%= in_place_editor_field :card, :name, {},
-					:click_to_edit_text => "click to rename",
-					:save_text => "rename",
-					:cancel_text=>"cancel"
-		 % >
-  </div>
-
-  <div class="cardtype"> 
-		<%= in_place_editor_field :card, :type % >
-  </div>
-%>
-	<%# FANCY SHMANCY TEMPLATE STUFF GOES HERE %>
-
-	<% save = button_to_function "Save", %{
-				Wagn.runQueue(Wagn.onSaveQueue['#{slot.id}']); 
-				this.form.onsubmit();
-			}, :class=>'save' %>
-	<% cancel = slot.button_to_action 'Cancel', 'view', {
-				:before=>"Wagn.runQueue(Wagn.onCancelQueue['#{slot.id}']);"
-			}, :class=>'cancel' %>
-	
+  <span id="<%= slot.cardtype_area %>" class="cardtype-area">
+		<span class="cardtype"><%= Card.cardtypes[card.type] %></span>
+		<%= link_to_remote '[edit cardtype]', :url=>slot.url_for_cardtype_action("edit"),
+					:update => slot.cardtype_area %>
+  </span>
     
-		<div class="editor edit-area">
-	  <% form_remote_for :card, card, :url=>slot.url_for_action("update"), :update=>slot.id,
-	 			:class=>'editor' do |form| %>
-			<%#= save + cancel %>
-			<%= slot.render_partial 'editor', :form=>form, :editor_id=>slot.id + "-1"  %>
-			<%= save + cancel %>
-
+	<div class="editor edit-area">
+	  <% form_remote_for :card, card, :url=>slot.url_for_action("update"), 
+				 :update=>slot.id, :class=>'editor' do |form| %>
+			<%= slot.content_field(form) %>
+			<%= button_to_function "Save", slot.save_function %>
+			<%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function } %> 
 		<% end %>
-		</div>
+	</div>
 <% end %>

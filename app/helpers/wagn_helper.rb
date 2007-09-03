@@ -30,9 +30,10 @@ module WagnHelper
       else
         css_class << 'paragraph'                     
       end
-      css_class << ' full' if context=='main'
+      css_class << ' full' if (context=='main' or (action!='view' and action!='line'))
       css_class << ' sidebar' if context=='sidebar'
-      concat(%{<div id="#{slot.id}" class="card-slot #{css_class}">}, proc.binding) 
+      slot_head = %{<div id="#{slot.id}" class="card-slot #{css_class}">}
+      concat(slot_head, proc.binding) 
       yield slot
       concat(%{</div>}, proc.binding)
     else
@@ -63,6 +64,19 @@ module WagnHelper
 
   def slot_header(slot)
     render :partial=>'card/header', :locals=>{ :card=>slot.card, :slot=>slot }
+  end
+  
+  def slot_menu(slot)
+    menu = %{<div class="card-menu">\n}
+  	menu << slot.link_to_menu_action('view')
+  	if slot.card.ok?(:edit)
+    	menu << slot.link_to_menu_action('edit')
+  	else
+  	  menu << '<em>&nbsp;edit&nbsp;</em>'
+	  end
+  	menu << slot.link_to_menu_action('changes')
+  	menu << slot.link_to_menu_action('options')
+    menu << "</div>"
   end
 
   def slot_footer(slot)
@@ -98,6 +112,28 @@ module WagnHelper
     render :partial=> partial_for_action(partial, slot.card), 
       :locals => args.merge({ :card=>slot.card, :slot=>slot })
   end
+  
+  def slot_name_field(slot,form,options={})
+    text = %{<span class="label"> card name:</span>\n}
+    text << form.text_field( :name, options.merge(:size=>50, :class=>'field card-name-field'))
+  end
+  
+  def slot_cardtype_field(slot,form,options={})
+    text = %{<span class="label"> card type:</span>\n}
+    text << select_tag('card[type]', cardtype_options_for_select(slot.card.type), :class=>'field') 
+  end
+  
+  def slot_content_field(slot,form,options={})
+    slot.render_partial 'editor', :form=>form, :editor_id=>slot.id + "-1" 
+  end                          
+         
+  def slot_save_function(slot)
+    "Wagn.runQueue(Wagn.onSaveQueue['#{slot.id}']); this.form.onsubmit();"
+  end
+  
+  def slot_cancel_function(slot)
+    "Wagn.runQueue(Wagn.onCancelQueue['#{slot.id}']);"
+  end
 
   def slot_editor_hooks(slot,hooks)
     # it seems as though code executed inline on ajax requests works fine
@@ -127,6 +163,10 @@ module WagnHelper
       code << "});\n"
     end
     javascript_tag code
+  end
+   
+  def previous_page_function
+    "document.location.href='#{url_for_page(previous_page)}'"
   end
   
   def truncatewords_with_closing_tags(input, words = 15, truncate_string = "...")

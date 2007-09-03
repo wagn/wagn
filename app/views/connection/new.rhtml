@@ -1,23 +1,46 @@
-<div id="new-connection">
-<%= form_remote_tag :update=>{ :success=>'connections-workspace', :failure=>'alerts' },
-      :url=>{ :action=>'create_form', :id=>@trunk}, :html=>{ :name=>'connect'} %>
-  <div id="new-connection-intro">
-	  Users have connected these cards to other <%= link_to_page @trunk.cardtype.name %> cards.  Click on one to connect it to "<%= link_to_page @trunk.name %>." 
-	</div>
-	<br/>
-  <div>
-    <%= render :partial=>'block/tag_cloud',:locals=>{
-          :link_to=>'connect',
-          :cards => load_cards(:card=>@trunk,:query=>'common_tags')
-      }
-      %>
-  </div>
-  <br/>
-  <div id="add-form">
-    <%= text_field :card, :name, { :size=>30 }  %>
-    <%= submit_tag('Add') %>
-    <%= link_to_function "Cancel", "$('connections-workspace').innerHTML=''" %>
-  </div>
-  
-<%= end_form_tag %>
-</div>
+<br/>
+<%= render :partial=>'card/line', 
+			:locals=>{ :card=>@tag, :context=>'connection-tag', :render_slot=>true } %>
+
+<p><em> Here's where you can explain how <%= link_to_page @tag.name %> relates 
+  to  <%= link_to_page( formal_title(@trunk), @trunk.name ) %>.  </em>
+</p>
+
+<% slot_for(@connection, "connection", "connect", :render_slot=>true) do |slot| %>
+	<% form_remote_for :card, @connection, 
+		  :url=>{ :action=>'create', :id=>@trunk }, :update=>slot.id do |f| %>
+
+	  <%= hidden_field_tag :id, @trunk.id %>  
+	  <%= hidden_field_tag 'tag[name]', @tag.name, :id=>"new-card-name-field" %>
+
+	
+		<div class="edit-area">
+	 		<table>
+					<tr>
+						<td>
+					    <span class="title inline">
+						    <%= less_fancy_title(@connection) %>
+					  	</span>
+						</td>
+						<td>
+							<span class="cardtype inline">
+								<%# FIXME: if hard template don't give option %>
+						    <%= slot.cardtype_field(f) %>
+							</span>
+						</td>
+					</tr>
+				</table>
+
+		  <% if Card::User===@trunk and @trunk.extension==User.current_user %>
+		    <%= check_box_tag 'personal_sidebar' %>Make this a personal note card.</br>
+		  <% end %>
+
+			<span class="editor">
+				<%= slot.content_field(f) %>
+			</span>
+
+			<%= submit_tag 'Save' %>
+			<%= link_to_function "Cancel", "$('connections-workspace').innerHTML=''" %>
+		</div>
+	<% end %>
+<% end %>

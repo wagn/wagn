@@ -21,18 +21,35 @@ task :populate_template_database => :environment do
   # Admin               | User
      
   ::User.as(:admin) do 
+    # the original admin user will also be present for new installs, so we don't want
+    # that password discoverable.  reset password here so we know it for the tests.
+    admin = User.find_by_login('admin')
+    admin.update_attribute('crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c')
 
     # generic, shared user
     joe_user = ::User.create! :login=>"joe_user",:email=>'joe@user.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>User.find_by_login('admin')
     joe_card = Card::User.create! :name=>"Joe User", :extension=>joe_user    
+
                           
     # generic, shared attribute card
     color = Card::Basic.create! :name=>"color"
-    basic = Card::Basic.create! :name=>"basic card"  
+    basic = Card::Basic.create! :name=>"Basic Card"  
                                     
     # data for testing users and invitation requests 
     ron_request = Card::InvitationRequest.create! :name=>"Ron Request", :email=>"ron@request.com"  
     no_count = Card::User.create! :name=>"No Count", :content=>"I got not account"
+
+
+    # CREATE A CARD OF EACH TYPE
+    user_user = ::User.create! :login=>"sample_user",:email=>'sample@user.com', :status => 'active', :password=>'sample_pass', :password_confirmation=>'sample_pass', :invite_sender=>User.find_by_login('admin')
+    user_card = Card::User.create! :name=>"Sample User", :extension=>user_user    
+
+    request_card = Card::InvitationRequest.create! :name=>"Sample InvitationRequest", :email=>"invitation@request.com"  
+    Cardtype.find(:all).each do |ct|
+      next if ['User','InvitationRequest'].include? ct.codename
+      Card.create! :type=>ct.codename, :name=>"Sample #{ct.codename}"
+    end
+
 
     # data for role_test.rb
     u1 = ::User.create! :login=>"u1",:email=>'u1@user.com', :status => 'active', :password=>'u1_pass', :password_confirmation=>'u1_pass', :invite_sender=>User.find_by_login('admin')
@@ -52,6 +69,9 @@ task :populate_template_database => :environment do
     c1 = Card.create! :name=>'c1'
     c2 = Card.create! :name=>'c2'
     c3 = Card.create! :name=>'c3'   
+    
+    
+    
     
     # cards for rename_test
     # FIXME: could probably refactor these..

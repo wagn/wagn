@@ -19,7 +19,7 @@ describe Card, "rename to trashed name" do
   end
 end
 
-=begin
+
 describe Card, "sending to trash" do
   before do
     User.as :admin
@@ -91,5 +91,4 @@ describe Card, "junction revival" do
     @c.content.should == 'revived content'
   end
 end 
-     
-=end
+ 

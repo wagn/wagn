@@ -6,6 +6,9 @@
   padding: 1px 5px;
 }
 
+
+
+
 /* -------------------  intra-card classes --------------------------------- */
 
 .card-slot .card-header {
@@ -292,39 +295,7 @@ a.current, a:link.current {
 }
 
 
-/* card editing -------------------*/
 
-.edit-area {
-  background: #ddd;
-  border: dashed 1px #aaa;
-  margin: 4px;
-  padding: 3px;
-}
-.edit .cardtype {
-  font-size: 14px;
-  margin-left: 20px;
-}
-.name-editor, .cardtype-editor {
-  width: 65%;
-}
-.edit-area p {
-  padding: 2px;
-}
-
-
-.edit-area input[type=submit], 
-.edit-area input[type=button] {
-  margin: 2px 2px;
-  font-size: 11px;
-  background: #ddd;
-  color: #333;
-  border: 1px solid #bbb;
-  border-right: 1px solid #666;
-  border-bottom: 1px solid #666;
-}
-.edit-area .richtext {
-  background: #fff;
-}
 
 /* card footer-------------------------------*/
 
@@ -441,3 +412,60 @@ a.current, a:link.current {
 .card-slot a.email-link { 
   color: #979 
 }
+
+
+/* card editing -------------------*/
+
+.edit-area {
+  background: #ddd;
+  border: dashed 1px #aaa;
+  margin: 4px;
+  padding: 3px;
+}
+.cardtype-area .cardtype {
+  font-size: 14px;
+  margin-left: 20px;
+}
+.name-editor, .cardtype-editor {
+  width: 65%;
+}
+.edit-area p {
+  padding: 2px;
+}
+.name-area, .cardtype-area {
+  white-space: nowrap;
+}
+
+.edit-area input[type=submit], 
+.edit-area input[type=button] {
+  margin: 2px 2px;
+  font-size: 11px;
+  background: #ddd;
+  color: #444;
+  border: 1px solid #bbb;
+  border-right: 1px solid #666;
+  border-bottom: 1px solid #666;
+}
+.edit-area .richtext {
+  background: #fff;
+}
+.edit-area .label {
+  display: block;
+  margin: 2px;
+  font-size: 12px;
+}
+.edit-area .field {
+  display: block;
+  margin: 4px;
+}
+.edit-area table {
+  width: 100%;
+  margin-bottom: 5px;
+}
+.edit-area td {
+  vertical-align: middle;
+}
+.inline .field, .inline .label {
+  display: inline;
+  vertical-align: middle;
+}  

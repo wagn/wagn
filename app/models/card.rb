@@ -1,11 +1,29 @@
 require_dependency 'acts_as_card_extension'
 
+# FIXME: this is here because errors defined in permissions break without it? kinda dumb
+module Card    
+  class CardError < Wagn::Error   
+    attr_reader :card
+    def initialize(card)
+      @card = card
+      super build_message 
+    end    
+    
+    def build_message
+      "#{@card.name} has errors: #{@card.errors.full_messages.join(', ')}"
+    end
+  end
+end
+  
+
+
 require_dependency 'card/base' 
 require_dependency 'card/tracked_attributes'
 require_dependency 'card/templating'
 require_dependency 'card/defaults' 
 require_dependency 'card/permissions'
-  
+
+
 Card::Base.class_eval do       
   include Card::TrackedAttributes
   include Card::Templating
@@ -46,9 +64,9 @@ module ActiveRecord
   end
 end     
 
-module Card
-    mattr_reader :default_cardtype_key
-    @@default_cardtype_key = "Basic"
+module Card    
+  mattr_reader :default_cardtype_key
+  @@default_cardtype_key = "Basic"
 
   class << self
     def new(args={})

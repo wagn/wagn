@@ -1,9 +1,0 @@
-<h4> Default options for <%= @cardtype %> cards </h4>
-<%= form_remote_tag :action=>'update' %>
-  <div id="<%= params[:element] %>-options-workspace">
-  <div id="create-advanced"  >
-    <table class="fieldset">
-       <%= render :partial=>'card/option_fields', :locals=>{:context=>'cardtype'} %>
-    </table>
-  </div>
-<%= end_form_tag %>

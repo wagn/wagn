@@ -64,30 +64,24 @@ describe Card, "clone to type"  do
 end
                 
 describe Card, "type transition approve destroy" do
-  before do @a = change_card_to_type("type-a-card", "Basic") end
-  
   it "should have errors" do
-    @a.errors.on(:permission_denied).should == "not allowed to delete card a"   # FIXME: be more specific about what error?
+    lambda { change_card_to_type("type-a-card", "Basic") }.should raise_error(Wagn::PermissionDenied)
   end
               
   it "should still be the original type" do
-    Card.find_by_name("type_a_card").type.should == 'CardtypeA'
+    lambda { change_card_to_type("type-a-card", "Basic") }
+    Card.find_by_name("type-a-card").type.should == 'CardtypeA'
   end
 end
 
 
 describe Card, "type transition approve create" do
-  before do @b = change_card_to_type("basicname", "CardtypeB") end
-  
   it "should have errors" do
-    @b.errors.on(:permission_denied).join(', ').should == "not allowed to create card b, you stink"
+    lambda { change_card_to_type("basicname", "CardtypeB") }.should raise_error(Wagn::PermissionDenied)
   end     
 
-  it "should give us full_messages" do
-    @b.errors.full_messages.class.should == Array
-  end
-  
   it "should be the original type" do
+    lambda { change_card_to_type("basicname", "CardtypeB") }
     Card.find_by_name("basicname").type.should == 'Basic'
   end
 end

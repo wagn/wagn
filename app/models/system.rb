@@ -84,11 +84,11 @@ class System < ActiveRecord::Base
     end
     
     def always_ok?   
-#      @@always_ok ||= do
-        return false unless usr = current_user
-        usr.roles.each { |r| return true if r.codename == 'admin' }
-        return false              
-#      end
+      return false unless usr = current_user  
+      # FIXME: I think we want this case, but this doesn't seem very secure
+      return true if usr.login == 'admin'
+      usr.roles.each { |r| return true if r.codename == 'admin' }
+      return false      
     end
   end 
   

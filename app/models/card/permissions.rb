@@ -1,4 +1,16 @@
-module Card
+module Card                         
+  class PermissionDenied < Wagn::PermissionDenied
+    attr_reader :card
+    def initialize(card)
+      @card = card
+      super build_message 
+    end    
+    
+    def build_message
+      "for #{@card.name}, #{@card.errors.on(:permission_denied)}"
+    end
+  end
+  
   module Permissions
     # Permissions --------------------------------------------------------------
     
@@ -19,7 +31,7 @@ module Card
     end
     def ok!(operation)
       if !ok?(operation)
-        raise Wagn::PermissionDenied.new(self)
+        raise PermissionDenied.new(self)
       end
     end
     
@@ -35,7 +47,7 @@ module Card
       if ok? :delete
         destroy_without_permissions!
       else
-        raise Wagn::PermissionDenied.new(self)
+        raise PermissionDenied.new(self)
       end
     end
 
@@ -43,7 +55,9 @@ module Card
       if perform_checking && approved? || !perform_checking
         save_without_permissions(perform_checking)
       else
-        false
+        # Decided I want to raise errors more..
+        raise PermissionDenied.new(self)
+        #false
       end
     end 
     
@@ -51,7 +65,7 @@ module Card
       if approved?
         save_without_permissions!
       else
-        raise Wagn::PermissionDenied.new(self)
+        raise PermissionDenied.new(self)
       end
     end
     
@@ -150,7 +164,6 @@ module Card
         deny_because "Sorry, you don't have permission to #{verb} this card"
       end
     end
-
 
     def approve_name 
       approve_edit unless new_record?

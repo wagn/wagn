@@ -33,7 +33,6 @@ class PermissionTest < Test::Unit::TestCase
     @c1, @c2, @c3 = %w( c1 c2 c3 ).map do |x| Card.find_by_name(x) end
   end      
 
-
   def test_should_not_allowed_reader_change
     a, ab, abc, ad = %w(A A+B A+B+C A+D ).collect do |name|  Card.find_by_name(name)  end
       
@@ -41,7 +40,9 @@ class PermissionTest < Test::Unit::TestCase
 
     # now try to change read permissions to a role that would result in conflict
     a.permissions= [:read,:edit,:comment,:delete].map{|t| Permission.new(:task=>t.to_s, :party=>@r1)}
-    a.save
+    #assert_raises(Card::PermissionDenied) do
+      a.save
+    #end
     assert a.errors.on(:permissions)
   end
 
@@ -199,7 +200,6 @@ class PermissionTest < Test::Unit::TestCase
      end
   end
 
-
   def test_role_wql
     @r1.users = [ @u1 ]
 
@@ -220,10 +220,6 @@ class PermissionTest < Test::Unit::TestCase
       assert_equal %w( c2 c3 ), Card.find_by_wql_options(:keyword=>'WeirdWord').plot(:name).sort
     end
   end  
-     
- 
-  
-
 
 
   def permission_matrix

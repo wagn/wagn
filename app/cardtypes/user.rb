@@ -33,7 +33,7 @@ module Card
     end
     
     def validate_destroy
-      if Revisions.find_by_created_by( extension.id )
+      if extension and Revisions.find_by_created_by( extension.id )
         errors.add :destroy, "Edits have been made by this user"
       end
     end

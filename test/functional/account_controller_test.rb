@@ -18,8 +18,6 @@ class AccountControllerTest < Test::Unit::TestCase
     @controller = AccountController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
-    setup_default_user
-    login_as :admin
   end
 
   def test_create_successful  

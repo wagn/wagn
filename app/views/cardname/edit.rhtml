@@ -1,18 +1,13 @@
 <% slot_for(@card,@context,'name') do |slot| %>
-	<div class="name-editor edit-area">  
-	<p><span class="name-editor-help"> card name:</span></p>
-	<% form_remote_for :card, @card, :url=>slot.url_for_name_action('update'), 
-			:update=>slot.name_area do |f| %>
-		<p><%= f.text_field :name, :class=>'card-name-field', :id=>slot.name_area+'-field' %>
-		</p>
-		<% if !card.name.simple? %>
-	  	<%= button_to_function "Flip", "f=$('#{slot.name_area}-field'); f.value = f.value.split('+').reverse().join('+')", :class=>'cancel' %>
+ 	<div class="name-editor edit-area">  
+		<% form_remote_for :card, @card, :url=>slot.url_for_name_action('update'), 
+				:update=>slot.name_area do |f| %>
+			<%= slot.name_field(f, :id=>slot.name_area+'-field') %>
+			<% if @card.name and @card.name.junction? %>
+		  	<%= button_to_function "Flip", "f=$('#{slot.name_area}-field'); f.value = f.value.split('+').reverse().join('+')"  %>
+			<% end %>
+		 	<%= submit_tag 'Rename' %>
+		  <%= button_to_remote 'Cancel', :url=>slot.url_for_name_action('view'), :update=>slot.name_area %>
 		<% end %>
-		<p>
-	 	<%= submit_tag 'Rename', :class=>'save' %>
-	  <%= button_to_remote 'Cancel', {:url=>slot.url_for_name_action('view'),
-					:update=>slot.name_area }, :class=>'cancel' %>
-		</p>
-	<% end %>
 	</div>
 <% end %>

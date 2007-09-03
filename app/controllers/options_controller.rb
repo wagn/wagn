@@ -3,10 +3,6 @@ class OptionsController < ApplicationController
   layout :ajax_or_not
   before_filter :load_card
 
-  def cardtype
-    @cardtype = @card.name
-  end
-  
 
   def update
     perms=params[:permissions]

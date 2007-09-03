@@ -1,42 +1,31 @@
 <% slot_for(@card, "new", "new") do |slot| %>
 	<% @title = "New Card" %>   
-	<% show_options = params[:option] && params[:option][:show_options] ? true : false %>
-
-  <% form_remote_for :card, card, :url=>{:action=>'create'}, :update=>slot.id do |form| %>
-	    <p class="header">
-	      <div id="new-card-name">
-	        <label for="new-card-name">card name</label><br/>
-	        <%= text_field( :card, :name, {:class=>'new-card-name', :id=>"new-card-name-field"} )%><br/>
-	      </div>
-	      <a id="new-card-cardtype" class="cardtype" href="javascript:void()">
-	        <%= params[:card] ? params[:card][:type] : 'Basic'%>
-	      </a>
-	      <br /><br /><br />
-	    </p>
-    
-	     <div>
-	      <div class="options-links">
-	        <%= link_to_options( 'create-advanced', :mode=>(show_options ? 'hide' : 'show')) %>
-	      </div>
-      
-	      <div id="create-advanced" style="<%= show_options ? '' : 'display:none' %>" >
-	        <table class="fieldset">
-	         <%= render :partial=>'option_fields', :locals=>{:context=>'new', :option=>(params[:option] || {})} %>
-	        </table>
-	      </div>
-	    </div>
-   
-	    <p>
-	      <div id="new-editor">
-	        <%= slot.render_partial( 'editor', :form=>form, :editor_id=>slot.id+"-1" ) %>
-	      </div> 
-	    </p>
-        
-	    <p>
-	      <%= submit_tag 'Create', :class=>'save' %>
-	      <%= link_to_page 'Cancel', previous_page, :class=>'cancel'  %>
-	    </p>
-
-  <% end %>
+	<div class="edit-area">
+	  <% form_remote_for :card, @card, :url=>{:action=>'create'}, :update=>slot.id do |form| %>
+			<table>
+				<tr>
+					<td>
+						<span id="<%= slot.name_area %>" class="name-area">
+							<%= slot.name_field(form) %>
+					  </span> 
+					</td>
+					<td>
+					  <span id="<%= slot.cardtype_area %>" class="cardtype-area">
+						  <%= slot.cardtype_field(form) %>
+					  </span>
+					</td>
+				</tr>
+			</table>
+			<div class="editor">  
+				<%= slot.content_field(form) %>
+			</div>
+		  <br/>
+			<%= submit_tag 'Create' %>
+	    <%= button_to_function 'Cancel', previous_page_function %> 
+		<% end %>
+	</div>
 <% end %>
+
+
+   
 

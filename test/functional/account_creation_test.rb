@@ -17,8 +17,6 @@ class AccountCreationTest < Test::Unit::TestCase
     @controller = AccountController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
-    setup_default_user
-    login_as :joe_user
   end
 
   def test_should_create_account_from_invitation_request               

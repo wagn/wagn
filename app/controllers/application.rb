@@ -19,13 +19,36 @@ class ApplicationController < ActionController::Base
   include WagnHelper 
   
   protected  
+  def edit_ok
+    @card.ok! :edit
+  end
   
-  def load_card        
-    if params[:id]  =~ /^\d+$/
-      @card = Card.find(params[:id])
-    else
-      @card = Card.find_by_name(params[:id]) 
+  def create_ok
+    # FIXME
+    Card.ok! :create
+  end
+  
+  def remove_ok
+    @card.ok! :delete
+  end
+
+  def load_card!
+    load_card
+    if @card.new_record?
+      raise Wagn::NotFound, "#{request.env['REQUEST_URI']} requires a card id"
     end
+  end
+
+  def load_card        
+    if params[:id] && params[:id] =~ /^\d+$/
+      @card = Card.find(params[:id])
+    elsif params[:id]
+      @card = Card.find_by_name(params[:id]) 
+    else
+      @card = Card.new params[:card]
+      @card.send(:set_defaults)
+    end
+
     @card.ok! :read        
   end
 
@@ -61,7 +84,7 @@ class ApplicationController < ActionController::Base
       when 'connections';    options[:plus]={ :id=> card_id }
       when 'plus_cards';     options[:plus]={ :id=> card_id }
       when 'plussed_cards';  options[:connected]={ :id=>card_id }
-      when 'recent_changes'; options[:sort_by]='updated_at'; options[:sortdir]='desc'
+      when 'recent_changes'; options[:sort_by]='revised_at'; options[:sortdir]='desc'
       when 'search';
       when 'cardtype_cards'; options[:type]=@card.extension.class_name
       when 'pieces';         options[:pieces]=true; options[:id]=card_id
@@ -99,7 +122,7 @@ class ApplicationController < ActionController::Base
   def load_card_and_revision
     params[:rev] ||= @card.revisions.count - @card.drafts.length
     @revision_number = params[:rev].to_i
-    @revision = @card.revisions[@revision_number - 1]
+    @revision = @card.revisions[@revision_number - 1]      
   end  
   
   def load_context

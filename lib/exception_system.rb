@@ -1,41 +1,54 @@
 module ExceptionSystem
-  def oops( text )
-    raise Wagn::Oops, text
-  end
-  
   def rescue_action( exception )
     log_error(exception) if logger
     erase_results if performed?
-    
-    case exception
-      when Wagn::Oops; render_oops( exception.message )
-      when Wagn::PermissionDenied; render_denied( exception.message )
-      when Wagn::RecursiveTransclude; render_oops( exception.message )
-      when ActiveRecord::RecordInvalid; render_oops( exception.message )
-      else 
-        if consider_all_requests_local || local_request?
-          rescue_action_locally(exception)
-        else
-          rescue_action_in_public(exception)
-        end
+    status = exception_status(exception)
+    if status==500
+      if consider_all_requests_local || local_request?
+        rescue_action_locally(exception)
+      else
+        rescue_action_in_public(exception)
+      end
+    else        
+      render_exception(status)
     end
   end
+   
+  # these called by exception_notifier
+  def render_404()  render_exception(404); end
+  def render_500()  render_exception(500); end
+
+  def render_exception(status)
+    render :template => "/application/#{status}", :status => status, :layout=>ajax_or_not
+  end  
   
-  def render_404
-    #respond_to do |type|
-    #  type.html { render :file => "#{RAILS_ROOT}/public/404.html", :status => "404 Not Found" }
-    #  type.all  { render :nothing => true, :status => "404 Not Found" }
-    #end
-    render :template=> '/application/404', :status => '404 Not Found'
+  def exception_status(exception)
+    @exception = exception
+    case exception                                                        
+      when Wagn::Oops, Wagn::RecursiveTransclude, ActiveRecord::RecordInvalid
+        400
+      when Wagn::PermissionDenied, Card::PermissionDenied
+        403
+      when Wagn::NotFound, ActiveRecord::RecordNotFound, ActionController::UnknownController, ActionController::UnknownAction  
+        404
+      else 
+        500 
+      end
   end
 
-  def render_500
+=begin
     respond_to do |type|
-      type.html { render :template => '/application/500', :status => "500 Error", :layout=>'application' }
-      type.all  { render :nothing => true, :status => "500 Error" }
+      type.html { render :partial => "/application/e#{status}", :status => status, :layout=>ajax_or_not, :locals=>{} }
+      type.js do
+        render :update do |page| 
+          page.wagn.messenger.alert :partial=>"/application/e#{status}", :status=>status 
+        end
+      end
+      type.all  { render :nothing => true, :status => status }
     end
-  end
-  
+=end    
+
+=begin  
   def render_denied( text )
     @oops = text
     respond_to do |format|
@@ -45,7 +58,7 @@ module ExceptionSystem
       }
       format.js {
         render :update do |page|
-          page.wagn.messenger.alert "Sorry, you don't have permissions to #{@oops}" 
+          page.wagn.messenger.alert @oops 
         end
       }
     end
@@ -66,5 +79,7 @@ module ExceptionSystem
       }
     end
   end
+=end
+
       
 end

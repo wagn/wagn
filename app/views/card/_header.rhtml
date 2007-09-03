@@ -1,10 +1,5 @@
-<div class="card-header">
-  <div class="card-menu">
-	  <%= slot.link_to_menu_action 'view'  %>   
-	  <%= slot.link_to_menu_action 'edit'  %>   
-	  <%= slot.link_to_menu_action 'changes' %>   
-	  <%= slot.link_to_menu_action 'options' %>   
-  </div>
+<div class="card-header">   
+	<%= slot.menu %>
 
   <div class="title"> 
 	  <% arrow = %{<img class="close-arrow" src="/images/arrow_down.png">} %>

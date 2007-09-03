@@ -72,7 +72,8 @@ module Card
       self.priority = tag.priority if tag  # this might not be right for non-simple tags
 
       {
-        :permissions => [:read,:edit,:comment,:delete].map{|t| Permission.new(:task=>t.to_s, :party=>::Role.find_by_codename('auth'))},
+        :permissions => [Permission.new(:task=>'read',:party=>::Role[:anon])] + 
+          [:edit,:comment,:delete].map{|t| Permission.new(:task=>t.to_s, :party=>::Role[:auth])},
         :content => '',
       }.each_pair do |attr, default|  
         unless updates.for?(attr)

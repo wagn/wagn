@@ -57,7 +57,60 @@ unless defined? TEST_ROOT
     include WagnTestHelper
     include ChunkTestHelper
   
+    class RenderTest
+      attr_reader :title, :url, :cardtype, :user, :status, :card
+      def initialize(test_class,url,args={})
+        @test_class,@url = test_class,url
+        
+        args[:users] ||= { :anon=>200 }
+        args[:cardtypes] ||= ['Basic']
+        if args[:cardtypes]==:all
+          args[:cardtypes] = ::Cardtype.find(:all).plot(:class_name)
+        end
+
+        
+        args[:users].each_pair do |user,status|
+          @user = User.as( user )
+          @status = status
+          
+          args[:cardtypes].each do |cardtype|    
+            next if cardtype=~ /Cardtype/
+            # find by naming convention in test data:
+            @cardtype = cardtype
+            @card = Card.find_by_name("Sample #{cardtype}") or puts "ERROR finding 'Sample #{cardtype}'"
+
+            if url =~ /:id/
+              #FIXME: get real card_id
+              @title = url.gsub(/:id/,'').gsub(/\//,'_') + "_" + @card.type.underscore
+              @url = url.gsub(/:id/,@card.id.to_s)
+            else
+              @title = url.gsub(/\//,'_')
+            end
+            
+            login = @user.login=='anon' ? '' : "login_as '#{@user.login}'"
+                                  
+            test_def = %{
+              def test_render_#{@title}_#{@user.login}_#{@status} 
+                #{login}
+                get '#{@url}'
+                assert_response #{@status}, "#{@url} as #{@user.login} should have status #{@status}"
+              end
+            }
+            @test_class.class_eval test_def
+            puts test_def
+          end
+        end
+      end                     
+    end
+  
     class << self
+      
+      def test_render(url,*args)  
+        RenderTest.new(self,url,*args)
+      end
+      
+      
+      
       # Class method for test helpers
       def test_helper(*names)
         names.each do |name|

@@ -31,7 +31,7 @@ class Card::InvitationRequestTest < Test::Unit::TestCase
 =begin # this is now going to be a configuration option
   def test_should_deny_destroy_permission
     ::User.as(:admin) do Role.find_by_codename('auth').update_attributes! :tasks=>'' end
-    assert_raises Wagn::PermissionDenied do 
+    assert_raises Card::PermissionDenied do 
       ::User.as ::User.find_by_login('joe_user') do 
         Card.find_by_name('Ron Request').destroy!
       end

@@ -5,6 +5,30 @@ class Card::BaseTest < Test::Unit::TestCase
     setup_default_user
   end
 
+  def test_remove
+    forba = Card.create :name=>"Forba"
+    torga = Card.create :name=>"TorgA"
+    torgb = Card.create :name=>"TorgB"
+    torgc = Card.create :name=>"TorgC"
+    
+    forba_torga = Card.create :name=>"Forba#{JOINT}TorgA"
+    torgb_forba = Card.create :name=>"TorgB#{JOINT}Forba"
+    forba_torga_torgc = Card.create :name=>"Forba#{JOINT}TorgA#{JOINT}TorgC"
+    
+    forba.reload #hmmm
+    forba.destroy
+    assert_nil Card.find_by_name("Forba")
+    assert_nil Card.find_by_name("Forba#{JOINT}TorgA")
+    assert_nil Card.find_by_name("TorgB#{JOINT}Forba")
+    assert_nil Card.find_by_name("Forba#{JOINT}TorgA#{JOINT}TorgC")
+    
+    # FIXME: this is a pretty dumb test and it takes a loooooooong time
+    #while card = Card.find(:first,:conditions=>["type not in (?,?,?) and trash=?", 'InvitationRequest','User','Cardtype',false] )
+    #  card.destroy!
+    #end
+    #assert_equal 0, Card::Basic.find_all_by_trash(false).size
+  end
+
   def test_should_create_connection_card
     Card::Basic.create!(
       :trunk => Card.find_by_name('Joe User'),
@@ -28,28 +52,6 @@ class Card::BaseTest < Test::Unit::TestCase
     assert_stable(alpha)
   end
   
-  def test_remove
-    forba = Card.create :name=>"Forba"
-    torga = Card.create :name=>"TorgA"
-    torgb = Card.create :name=>"TorgB"
-    torgc = Card.create :name=>"TorgC"
-    
-    forba_torga = Card.create :name=>"Forba#{JOINT}TorgA"
-    torgb_forba = Card.create :name=>"TorgB#{JOINT}Forba"
-    forba_torga_torgc = Card.create :name=>"Forba#{JOINT}TorgA#{JOINT}TorgC"
-    
-    forba.reload #hmmm
-    forba.destroy
-    assert_nil Card.find_by_name("Forba")
-    assert_nil Card.find_by_name("Forba#{JOINT}TorgA")
-    assert_nil Card.find_by_name("TorgB#{JOINT}Forba")
-    assert_nil Card.find_by_name("Forba#{JOINT}TorgA#{JOINT}TorgC")
-    
-    while card = Card.find(:first,:conditions=>["type not in (?,?) and trash=?", 'User','Cardtype',false] )
-      card.destroy
-    end
-    assert_equal 0, Card::Basic.find_all_by_trash(false).size
-  end
   
   # just a sanity check that we don't have broken data to start with
   def test_fixtures

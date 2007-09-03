@@ -8,6 +8,7 @@ class RoleTest < Test::Unit::TestCase
     @anon = Role.find_by_codename("anon")
     @auth = Role.find_by_codename("auth")
     @admin_r = Role.find_by_codename("admin")
+    @sample = Role.find_by_codename("Sample Role")
 
     @u1, @u2, @u3 = %w( u1 u2 u3 ).map do |x| ::User.find_by_login(x) end
     @r1, @r2, @r3, @r4 = %w( r1 r2 r3 r4).map do |x| ::Role.find_by_codename(x) end
@@ -15,8 +16,16 @@ class RoleTest < Test::Unit::TestCase
   end
    
   def test_all_roles_for_timing
-     assert_equal( [["admin", "admin:true", "anon:false", "auth:false", "r1:false", "r2:false", "r3:false", "r4:false"], ["anon", "admin:true", "anon:true", "auth:true", "r1:true", "r2:true", "r3:true", "r4:true"], ["auth", "admin:true", "anon:false", "auth:true", "r1:true", "r2:true", "r3:true", "r4:true"], ["r1", "admin:false", "anon:false", "auth:false", "r1:true", "r2:true", "r3:true", "r4:true"], ["r2", "admin:false", "anon:false", "auth:false", "r1:false", "r2:true", "r3:true", "r4:false"], ["r3", "admin:false", "anon:false", "auth:false", "r1:false", "r2:false", "r3:true", "r4:false"], ["r4", "admin:false", "anon:false", "auth:false", "r1:false", "r2:false", "r3:false", "r4:true"]],
-         Role.find(:all, :order=>'codename').map do |r1| [r1.codename]+Role.find(:all,:order=>'codename').map do |r2| "#{r2.codename}:#{r2.subset_of?(r1)}" end; end, "")
+     assert_equal( [
+       ["Sample Role","Sample Role:true","admin:false","anon:false","auth:false", "r1:false","r2:false", "r3:false", "r4:false"],
+       ["admin", "Sample Role:true","admin:true", "anon:false", "auth:false", "r1:false", "r2:false", "r3:false", "r4:false"], 
+       ["anon","Sample Role:true", "admin:true", "anon:true", "auth:true", "r1:true", "r2:true", "r3:true", "r4:true"],
+       ["auth", "Sample Role:true","admin:true", "anon:false", "auth:true", "r1:true", "r2:true", "r3:true", "r4:true"], 
+       ["r1","Sample Role:true", "admin:false", "anon:false", "auth:false", "r1:true", "r2:true", "r3:true", "r4:true"],
+       ["r2","Sample Role:true", "admin:false", "anon:false", "auth:false", "r1:false", "r2:true", "r3:true", "r4:false"],
+       ["r3","Sample Role:true", "admin:false", "anon:false", "auth:false", "r1:false", "r2:false", "r3:true", "r4:false"], 
+       ["r4","Sample Role:true", "admin:false", "anon:false", "auth:false", "r1:false", "r2:false", "r3:false", "r4:true"]],
+       Role.find(:all, :order=>'codename').map do |r1| [r1.codename]+Role.find(:all,:order=>'codename').map do |r2| "#{r2.codename}:#{r2.subset_of?(r1)}" end; end, "")
   end
   
   def test_users_with_special_roles
@@ -42,10 +51,10 @@ class RoleTest < Test::Unit::TestCase
   end
   
   def test_subset_roles
-    assert_same_by :codename, [ @anon, @auth, @admin_r, @r1, @r2, @r3, @r4 ], @anon.subset_roles
-    assert_same_by :codename, [ @r1,  @r2, @r3, @r4 ], @r1.subset_roles
-    assert_same_by :codename, [ @r2, @r3 ], @r2.subset_roles
-    assert_same_by :codename, [ @r3 ], @r3.subset_roles
+    assert_same_by :codename, [ @sample, @anon, @auth, @admin_r, @r1, @r2, @r3, @r4 ], @anon.subset_roles
+    assert_same_by :codename, [ @sample, @r1,  @r2, @r3, @r4 ], @r1.subset_roles
+    assert_same_by :codename, [ @sample, @r2, @r3 ], @r2.subset_roles
+    assert_same_by :codename, [ @sample, @r3 ], @r3.subset_roles
   end
   
   def test_superset_roles

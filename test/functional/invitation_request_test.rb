@@ -13,8 +13,6 @@ class InvitationRequestTest < Test::Unit::TestCase
     @controller = CardController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
-    setup_default_user
-    login_as :admin
   end
   
   def test_should_send_notification    

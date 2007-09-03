@@ -55,7 +55,7 @@ class Role < ActiveRecord::Base
     end  
     
     def [](codename)
-      Role.find_by_codename(codename)
+      Role.find_by_codename(codename.to_s)
     end
   end
   

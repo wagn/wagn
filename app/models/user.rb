@@ -1,4 +1,4 @@
-require 'digest/sha1'
+ require 'digest/sha1'
 require_dependency "acts_as_card_extension"
 
 class User < ActiveRecord::Base
@@ -52,6 +52,8 @@ class User < ActiveRecord::Base
         value = yield
         self.current_user = tmp_user
         return value
+      else
+        current_user
       end
     end
     

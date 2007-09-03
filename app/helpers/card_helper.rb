@@ -47,7 +47,7 @@ end
   # --------------------------------------------------
   def revision_link( text, revision, name, accesskey='', mode=nil )
     link_to_remote text, 
-      :url=>{ :action=>'revision', :id=>@card.id, 
+      :url=>{ :action=>'changes', :id=>@card.id, 
         :rev=>revision, :context=>@context, :mode=>(mode || params[:mode] || true)
       },
      :update=>slot_id(@card, @context)

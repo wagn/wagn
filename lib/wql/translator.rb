@@ -211,7 +211,7 @@ module Wql
           @current_field= "count(*)"
         when "content":      join_for_field 'revisions', '{c}.id={m}.current_revision_id'
         when "revised_at":   join_for_field 'revisions', '{c}.id={m}.current_revision_id'
-#        when "datatype":     join_for_field 'tags', '{c}.id={m}.tag_id AND {m}.trunk_id IS NULL'
+        when "updated_at":   join_for_field 'revisions', '{c}.id={m}.current_revision_id'  
         when "editors":      join_for_field('revisions', '{c}.card_id={m}.id', 'created_by') do |ca|
           #statement.fields << "#{ca}.created_at as edit_time"
         end 

@@ -1,15 +1,21 @@
 class ConnectionController < ApplicationController
-  #before_filter :login_required, :except => [ :main, :view, :connections ]
   cache_sweeper :card_sweeper
   helper :card, :wagn
-  
-  #before_filter :load_connection, :except=>[:new, :create ]
+  before_filter :load_card
   layout :ajax_or_not
   
   def new
-    @trunk = Card.find_by_id params[:id]
+    if params[:card] and params[:card][:name]
+      @trunk = @card
+      @tag = Card.find_or_new params[:card]
+      @connection = Card::Basic.new :trunk=>@trunk, :tag=>@tag
+      @connection.send(:set_defaults)
+    else
+      render :action=>'tag_cloud'
+    end
   end
-  
+
+=begin  
   def create_form
     # this is a terrible hack to force format==html in case we throw an oops.
     # even though the Ajax is an update, it comes out requesting js otherwise
@@ -20,6 +26,7 @@ class ConnectionController < ApplicationController
     @connection = Card::Basic.new :trunk=>@trunk, :tag=>@tag
     @connection.send(:set_defaults)
   end
+=end
   
   def create
     @trunk = Card.find_by_id(params[:id])

@@ -1,28 +1,19 @@
 module Wagn
-  class ValidationError < StandardError
+  class Error < StandardError
   end
   
-  class InvalidCardRequest < StandardError
+  class NotFound < Error
   end
   
-  class PermissionDenied < StandardError
-    attr_reader :card
-    def initialize(card)
-      @card = card
-      super("for card #{@card.name}: #{@card.errors.on(:permission_denied)}")
-    end
+  class PermissionDenied < Error
   end
   
-  class Oops < StandardError
+  class Oops < Error
   end
 
-  class NoChange < Oops
-  end
-  
-  class RecursiveTransclude < Oops
+  class RecursiveTransclude < Error
   end     
   
-  class WqlError < StandardError
+  class WqlError < Error
   end
-  
 end

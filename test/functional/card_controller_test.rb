@@ -18,16 +18,14 @@ class CardControllerTest < Test::Unit::TestCase
       @simple_card = Card.find_by_name('basicname')
       @combo_card = Card.find_by_name('A+B')
     end
-    setup_default_user
-    login_as :admin
   end      
 
-  def test_revision
+  def test_changes
     id = Card.find_by_name('revtest').id
-    post :revision, :id=>id, :rev=>1
+    post :changes, :id=>id, :rev=>1
     assert_equal 'first', assigns['revision'].content, "revision 1 content==first"
 
-    post :revision, :id=>id, :rev=>2
+    post :changes, :id=>id, :rev=>2
     assert_equal 'second', assigns['revision'].content, "revision 2 content==second"
     assert_equal 'first', assigns['previous_revision'].content, 'prev content=="first"'
   end
@@ -56,14 +54,6 @@ class CardControllerTest < Test::Unit::TestCase
     assert_response :success, "response should succeed"                     
     assert_equal 'BananaBread', assigns['card'].name, "@card.name should == BananaBread"
   end        
-
-  def test_first_steps
-    actions = %w(view new revision)
-    actions.each do |action|
-      test_card_action( action )
-    end
-  end
-     
 
   def test_create
     post :create, :card => {
@@ -94,18 +84,6 @@ class CardControllerTest < Test::Unit::TestCase
   def test_new    
   end
 
-  def test_connect
-  end
-
-  def test_explain_combo
-  end
-
-  def test_save_combo
-  end
-  
-  def test_flip
-  end
-  
   def test_rename
   end
   
@@ -115,16 +93,7 @@ class CardControllerTest < Test::Unit::TestCase
   def test_rollback
   end
 =end 
-  private
-  
-  def test_card_action( action, options={} )
-    setup 
-    get action, { :id => @simple_card.name }.merge(options), {:user => @user.id }
-    assert_response :success, "#{action} simple card"
 
-    setup
-    get action, { :id => @combo_card.name }.merge(options), {:user => @user.id }
-    assert_response :success, "#{action} combo card"    
-  end
+  
 
 end

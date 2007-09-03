@@ -1,0 +1,7 @@
+<%#= text_field_tag "", "", :onClick=>"scwShow(this,this)", :id=>"#{div_id}-content-field" %>
+<%- id = div_id + "-content-field" -%>
+<input type=hidden id="<%= div_id + '-date-default' %>" value="<%= t=Time.now(); [t.year , t.mon, t.day].join('-') %>">
+<em><%#= card.class..description %></em><br/>
+<a href="#" id="<%= id %>" onClick="scwShow($('<%= id %>'), scwID('<%= id %>')); return false"></a>
+
+<br />

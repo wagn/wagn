@@ -6,8 +6,22 @@ class CardActionTest < ActionController::IntegrationTest
   common_fixtures
   def setup
     setup_default_user
-    login
+    login_as :joe_user
   end    
+
+  # Has Test
+  # ---------
+  # card/remove
+  # card/create
+  # connection/create
+  # card/comment 
+  # 
+  # FIXME: Needs Test
+  # -----------
+  # card/rollback
+  # card/save_draft
+  # connection/remove ??
+
   
   def test_card_removal2
     boo = newcard "Boo", "booya"
@@ -54,8 +68,6 @@ class CardActionTest < ActionController::IntegrationTest
     assert_nil Card.find_by_name("Boo")
   end
   
-  # FIXME: there should be a test for card comments here.  I keep getting 403
-=begin  
   def test_comment
     @a = Card.find_by_name("A")  
     @a.appender = Role.find_by_codename('anon')
@@ -63,20 +75,10 @@ class CardActionTest < ActionController::IntegrationTest
     post "card/comment/#{@a.id}", :card => { :comment=>"how come" }
     assert_response :success
   end 
-=end  
   
   private
-    def login
-      # just admin for now.  later should do each role..
-      post "/account/login", :login=>'webmaster@grasscommons.org', :password=>'w8gn8t0r'
-      assert_response :redirect
-    end
-    
-    
     def newcard( name, content="" )
-      post( 'card/create', 
-#        :tag=>{"name"=>name, "datatype"=>"rich text" },
-        :card=>{"content"=>content, :type=>'Basic', :name=>name})
+      post( 'card/create', :card=>{"content"=>content, :type=>'Basic', :name=>name})
       assert_response :success
       Card.find_by_name(name)
     end

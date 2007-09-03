@@ -19,8 +19,9 @@ module Card
         "No cards matched this query"
       else
         #warn "CARDS: #{cards.inspect}"
-        Renderer.instance.controller.send(:render_to_string, :partial=>'block/tag_cloud', 
-        :locals=>{ :card=>self, :cards => cards })
+        "FIXME: tag cloud should be here!"
+        #Renderer.instance.controller.send(:render_to_string, :partial=>'block/tag_cloud', 
+        #:locals=>{ :card=>self, :cards => cards })
       end
       #rescue Exception=>e
       #  return "Error processing query: #{e.message}"

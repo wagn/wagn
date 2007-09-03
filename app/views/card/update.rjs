@@ -1,2 +1,0 @@
-page.wagn.messenger.note "#{@card.name} #{params[:message] || 'updated'}"
-#page.wagn.main_card.view()

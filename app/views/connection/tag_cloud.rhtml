@@ -1,6 +1,6 @@
 <div id="new-connection">
-<%= form_remote_tag :update=>{ :success=>'connections-workspace', :failure=>'alerts' },
-      :url=>{ :action=>'new', :id=>@card}, :html=>{ :name=>'connect'} %>
+<% form_remote_for :update=>{ :success=>'connections-workspace', :failure=>'alerts' },
+      :url=>{ :action=>'new', :id=>@card}, :html=>{ :name=>'connect'} do |f| %>
   <div id="new-connection-intro">
 	  Users have connected these cards to other <%= link_to_page @card.cardtype.name %> cards.  Click on one to connect it to "<%= link_to_page @card.name %>." 
 	</div>
@@ -19,5 +19,5 @@
     <%= link_to_function "Cancel", "$('connections-workspace').innerHTML=''" %>
   </div>
   
-<%= end_form_tag %>
+<% end %>
 </div>

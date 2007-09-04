@@ -1,9 +1,7 @@
 <% slot_for(@card, @context, 'options') do |slot| %>
   <%= slot.header %> 
-	<%= form_remote_tag( 
-	      :url=>{ :controller=>'options', :action=>'update_roles', :id=>@card.id },
-	      :params=>{ :element=>params['element'] } 
-	)%>
+	<% form_remote_for :url=>{ :controller=>'options', :action=>'update_roles', :id=>@card.id },
+	      :params=>{ :element=>params['element'] } do |f| %>
 	  <%= hidden_field_tag 'save',1 %>
 	  <div class="user_roles">
 	    <% for role in @roles %>
@@ -16,5 +14,5 @@
 	  </div>
   
 	  <%= submit_tag %>  <%= link_to_function "Cancel", "Wagn.mainCard().view()" %>
-	<%= end_form_tag %>
+	<% end %>
 <% end %>

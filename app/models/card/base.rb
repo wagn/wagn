@@ -54,7 +54,8 @@ module Card
     before_destroy :update_references_on_destroy
     after_save :cache_priority
      
-    attr_accessor :comment, :comment_author
+    attr_accessor :comment, :comment_author, :confirm_rename, :confirm_delete, 
+      :change_links_on_rename
   
     protected
     def set_defaults 
@@ -257,7 +258,7 @@ module Card
 
     # Dynamic Attributes ------------------------------------------------------        
     def content
-     ok!(:read) # fixme-perm.  might need this, but it's breaking create...
+      ok!(:read) # fixme-perm.  might need this, but it's breaking create...
       current_revision ? current_revision.content : ""
     end   
     

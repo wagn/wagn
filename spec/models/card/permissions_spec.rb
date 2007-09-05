@@ -84,17 +84,12 @@ describe Card, "hacky permission api" do
   end
 end  
   
-  
-=begin
-describe Card, "permissions" do      
-  it "should let anonymous users view basic cards" do
-    User.as :anon
-    Card.find_by_name("Sample Basic").ok?(:read).should be_true
-  end
-  
-  it "should let joe view basic cards" do
-    User.as :joe_user
-    Card.find_by_name("Sample Basic").ok?(:read).should be_true
-  end
-end
-=end
+          
+# FIXME-perm
+
+# need test for
+# changing cardtypes gives you correct permissions (changing cardtype in general...)
+
+# permit() sets reader immediately
+
+# creation uses template settings.

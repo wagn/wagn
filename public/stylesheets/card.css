@@ -285,15 +285,19 @@ a.current, a:link.current {
   margin-right: 15px;
   float: left;
 }
-.card-slot .transcluded, 
-.card-slot .transcluded p, 
-.card-slot .transcluded span, 
-.card-slot .transcluded ul, 
-.card-slot .transcluded div {
+.card-slot span:hover.transcluded { 
   background-color: #e8e9cc;
   -moz-border-radius: 4px;
 }
-
+.card-slot .transcluded p, 
+.card-slot .transcluded span, 
+.card-slot .transcluded ul, 
+.card-slot .transcluded h1, 
+.card-slot .transcluded h2, 
+.card-slot .transcluded div {
+  background-color: inherit;
+  -moz-border-radius: inherit;
+}
 
 
 

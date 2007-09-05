@@ -4,6 +4,10 @@ class CardnameController < ApplicationController
   before_filter :load_card, :edit_ok    
   
   def confirm
-    @new_name = params[:card] ? params[:card][:name] : ""
+    @action = 'confirm'
+    if params[:card] and name=params[:card][:name]
+      @card.name = name
+    end
+    render :template=>'cardname/edit'
   end
 end

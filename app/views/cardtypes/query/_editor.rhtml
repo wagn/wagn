@@ -1,5 +1,3 @@
-<%= start_form_tag( {}, {:id=>"#{div_id}-query-form"}) %>
-
 <%- 
   # assumes we have a card with datatype query...
   args = card.options_from_content
@@ -11,14 +9,19 @@
       <div>cardtype: 
         <%= select_tag( :type, 
             options_from_collection_for_select([['','Any']]+cardtype_options, :first, :last, args[:type]),
-            {:class=>'search-field'}
+            {:class=>slot.editor_id('search-field')}
           ) 
         %>
       </div>
       <div>keyword: 
-        <%= text_field_tag("keyword", args[:keyword], :class=>'search-field') %>
+        <%= text_field_tag("keyword", args[:keyword], :class=>slot.editor_id('search-field')) %>
       </div>
     </td>
   </td>
 </table>
-<%= end_form_tag %>
+
+<%= slot.form.hidden_field :content, :id=>slot.editor_id(:content) %>
+<%= slot.editor_hooks :save=>%{
+	$('#{slot.editor_id(:content)}').value = Form.serializeElements(document.getElementsByClassName('#{slot.editor_id("search-field")}'));
+	return true;
+} %>

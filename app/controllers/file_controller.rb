@@ -1,28 +1,25 @@
 class FileController < ApplicationController
-  layout 'application' 
+  layout 'simple'
+  before_filter :load_card, :edit_ok
   
-  def form
-  end
-
   def upload
-    #content_type = file.content_type
     file = params[:file]
-    dir = params[:card][:type].underscore
-    card_name = params[:card][:name]
+    dir = @card.type.underscore
     ext = file.original_filename.gsub(/.*\.(\w+)$/, '\1')
-    
-    file_name = card_name + "." + ext
+    file_name = @card.name + "." + ext
     
     File.open("#{RAILS_ROOT}/public/#{dir}/#{file_name}", "wb") do |f|
       f.write( file.read )
     end
-    
-    element_id = params[:element]
+
+    slot = WagnHelper::Slot.new(@card,@context,'file')
     responds_to_parent do 
       render :update do |page|
-        page.wagn.card.find("#{element_id}").content("#{file_name}")
-        page.wagn.card.find("#{element_id}").continue_save()
+        page << "warn('submitting after file upload');"
+        page << "$('#{slot.id(:upload_content)}').value='#{file_name}'"
+        page[slot.id(:form)].onsubmit()
       end
     end
+    #render :action=>'view'
   end
 end

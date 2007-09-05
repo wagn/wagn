@@ -3,10 +3,10 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 class BasicRenderingTest < ActionController::IntegrationTest
   common_fixtures
 
+  test_render "card/changes/:id"        , :users=>{ :anon=>200, :joe_user=>200 }
   test_render "card/view/:id"           , :users=>{ :anon=>200, :joe_user=>200 }, :cardtypes=>:all
   test_render "card/line/:id"           , :users=>{ :anon=>200, :joe_user=>200 }, :cardtypes=>:all
   test_render "card/options/:id"        , :users=>{ :anon=>200, :joe_user=>200 }, :cardtypes=>:all
-  test_render "card/changes/:id"        , :users=>{ :anon=>200, :joe_user=>200 }, :cardtypes=>:all
   test_render "card/edit/:id"           , :users=>{ :anon=>403, :joe_user=>200 }, :cardtypes=>:all
   test_render "card/new"                , :users=>{ :anon=>403, :joe_user=>200 }
   test_render "card/confirm_remove/:id" , :users=>{ :anon=>403, :joe_user=>200 }

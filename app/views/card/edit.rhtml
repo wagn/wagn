@@ -1,21 +1,21 @@
 <% slot_for(card, context, 'edit') do |slot| %>  
   <%= slot.menu %>
 
-  <span id="<%= slot.name_area %>" class="name-area">
+  <span id="<%= slot.id :name %>" class="name-area">
 	 	<span class="title"><%= less_fancy_title(card) %></span>
-		<%= link_to_remote '[edit name]', :url=>slot.url_for_name_action("edit"),
-					:update => slot.name_area %>
+		<%= link_to_remote '[edit name]', :url=>slot.url_for("cardname/edit"),
+					:update => slot.id(:name) %>
   </span> 
 
-  <span id="<%= slot.cardtype_area %>" class="cardtype-area">
+  <span id="<%= slot.id :cardtype %>" class="cardtype-area">
 		<span class="cardtype"><%= Card.cardtypes[card.type] %></span>
-		<%= link_to_remote '[edit cardtype]', :url=>slot.url_for_cardtype_action("edit"),
-					:update => slot.cardtype_area %>
+		<%= link_to_remote '[edit cardtype]', :url=>slot.url_for("cardtype/edit"),
+					:update => slot.id(:cardtype) %>
   </span>
     
 	<div class="editor edit-area">
-	  <% form_remote_for :card, card, :url=>slot.url_for_action("update"), 
-				 :update=>slot.id, :class=>'editor' do |form| %>
+	  <% form_remote_for :card, card, :url=>slot.url_for("card/update"), 
+				:update=>slot.id, :html=>{ :id=>slot.id(:form), :class=>'editor' } do |form| %>
 			<%= slot.content_field(form) %>
 			<%= button_to_function "Save", slot.save_function %>
 			<%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function } %> 

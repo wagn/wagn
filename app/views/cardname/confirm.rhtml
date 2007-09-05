@@ -1,5 +1,6 @@
 <% slot_for(@card,@context,'name') do |slot| %>
-  <% form_remote_for :card, @card, :url=>{:action=>'rename', :id=>@card.id} do |f| %>
+<% form_remote_for :card, @card, :url=>slot.url_for('cardname/update'), 
+		:update=>slot.id(:name) do |f| %>
 
 	  <p>Change <%= link_to_page formal_title(@card), @card.name %> to 
 			 <%= text_field_tag 'card[name]', @new_name, :size=>30 %>

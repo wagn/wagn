@@ -1,7 +1,12 @@
-<%#= text_field_tag "", "", :onClick=>"scwShow(this,this)", :id=>"#{div_id}-content-field" %>
-<%- id = div_id + "-content-field" -%>
-<input type=hidden id="<%= div_id + '-date-default' %>" value="<%= t=Time.now(); [t.year , t.mon, t.day].join('-') %>">
-<em><%#= card.class..description %></em><br/>
-<a href="#" id="<%= id %>" onClick="scwShow($('<%= id %>'), scwID('<%= id %>')); return false"></a>
-
+<p><% date_id = slot.id + "-date" -%>
+<% link_text = card.content.blank? ? (t=Time.now(); [t.year , t.mon, t.day].join('-')) : card.content %>
+<%= link_to_function link_text, "scwShow($('#{date_id}'), scwID('#{date_id}'));", :id=>date_id %>
+</p>
 <br />
+
+<%= slot.form.hidden_field :content, :id=>"#{slot.editor_id}-content" %>
+<%= slot.editor_hooks :save=>%{
+	$('#{slot.editor_id}-content').value = $('#{date_id}').innerHTML; 
+	return true;
+} %>
+

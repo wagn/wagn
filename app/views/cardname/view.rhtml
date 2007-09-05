@@ -1,5 +1,5 @@
 <% slot_for(@card,@context,'name') do |slot| %>
 	<span class="title"><%= less_fancy_title(@card) %></span>
-	<%= link_to_remote '[edit name]', :url=>slot.url_for_name_action("edit"),
-				:update => slot.name_area %>
+	<%= link_to_remote '[edit name]', :url=>slot.url_for("cardname/edit"),
+				:update => slot.id(:name) %>
 <% end %>

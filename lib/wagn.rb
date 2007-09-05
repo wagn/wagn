@@ -24,13 +24,15 @@ JAVASCRIPT_FILES = %w{
   Wagn/Wikiwyg.js
   Wagn/LinkEditor.js
   Wagn/Lister.js
+
+  calendar.js
+
 }
 
 
 CRAZY_FILES = %{
   window.js
   builder.js
-  calendar.js
   
   
   Wagn/Card.js

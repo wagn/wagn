@@ -1,7 +1,7 @@
 <div class="richtext">
-<% eid = editor_id %>
+<% eid = slot.editor_id %>
 <div id="<%= eid %>-raw-content"><%= card.content %></div>
-<%= form.hidden_field :content, :id=>"#{eid}-hidden-content" %>
+<%= slot.form.hidden_field :content, :id=>"#{eid}-hidden-content" %>
 <iframe id="<%= eid %>-iframe" height="0" width="0" frameborder="0"></iframe>
 <%= slot.editor_hooks :setup=> %{
 		warn("setting up #{eid}");
@@ -17,6 +17,7 @@
 	:save=> %{
 		warn("saving #{eid}: content = " + Wagn.wikiwygs['#{eid}'].getContent());
 		$('#{eid}-hidden-content').value = Wagn.wikiwygs['#{eid}'].getContent();
+		return true;
 	},
 	:cancel=>%{
 		warn("cancelling #{eid}");

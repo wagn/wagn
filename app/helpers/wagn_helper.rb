@@ -4,11 +4,17 @@ module WagnHelper
   Droplet = Struct.new(:name, :link_options)
   
   class Slot
-    attr_reader :card, :context, :action, :id
-    attr_accessor :editor_id
-    def initialize(card, context, action, template, options, proc)
-      @card, @context, @action, @template, @options, @proc = card, context.to_s, action.to_s, template, options, proc
-      @id = @template.slot_id(@card, @context)
+    attr_reader :card, :context, :action
+    attr_accessor :form, :editor_count
+    def initialize(card, context, action, template=nil )
+      @card, @context, @action, @template, = card, context.to_s, action.to_s, template
+      @editor_count = 0
+    end
+
+    def id(area_name="") 
+      area_name = area_name.to_s
+      id = (context == 'main' ? 'main-card' : "#{context}-#{card.id}")
+      id << (area_name.blank? ? "" : "-#{area_name}")
     end
 
     def method_missing(method_id, *args)
@@ -16,13 +22,10 @@ module WagnHelper
     end
   end
   
-  def slot_id(card, context) 
-    context=='main' ? 'main-card' : "#{context}-#{card.id}"
-  end
 
   def slot_for( card, context, action, options={}, &proc )
     options[:render_slot] = !request.xhr? if options[:render_slot].nil?            
-    slot = Slot.new(card, context, action, self, options, proc)
+    slot = Slot.new(card, context, action, self)
     if options[:render_slot]
       css_class = ''      
       if slot.action=='line'  
@@ -41,6 +44,15 @@ module WagnHelper
     end
   end 
 
+  def slot_url_for(slot,url)
+    "/#{url}/#{slot.card.id}" + slot.context_cgi
+  end
+  
+  def slot_area_id(slot,name="")
+    slot.id + "-#{name}"
+  end
+
+
   def slot_name_area(slot)
     slot.id + "-name"
   end
@@ -49,6 +61,8 @@ module WagnHelper
     slot.id + "-cardtype"
   end
 
+
+=begin
   def slot_url_for_action(slot,action)
     "/card/#{action}/#{slot.card.id}" + slot.context_cgi
   end
@@ -60,7 +74,7 @@ module WagnHelper
   def slot_url_for_cardtype_action(slot,action)
     "/cardtype/#{action}/#{slot.card.id}" + slot.context_cgi
   end
-
+=end
 
   def slot_header(slot)
     render :partial=>'card/header', :locals=>{ :card=>slot.card, :slot=>slot }
@@ -86,14 +100,14 @@ module WagnHelper
 
   def slot_link_to_action(slot, text, to_action, remote_opts={}, html_opts={})
     link_to_remote text, remote_opts.merge(
-      :url=>slot.url_for_action(to_action),
+      :url=>slot.url_for("card/#{to_action}"),
       :update => slot.id
     ), html_opts
   end
 
   def slot_button_to_action(slot, text, to_action, remote_opts={}, html_opts={})
     button_to_remote text, remote_opts.merge(
-      :url=>slot.url_for_action(to_action),
+      :url=>slot.url_for("card/#{to_action}"),
       :update => slot.id
     ), html_opts
   end
@@ -123,12 +137,18 @@ module WagnHelper
     text << select_tag('card[type]', cardtype_options_for_select(slot.card.type), :class=>'field') 
   end
   
-  def slot_content_field(slot,form,options={})
-    slot.render_partial 'editor', :form=>form, :editor_id=>slot.id + "-1" 
+  def slot_editor_id(slot, name="")
+    "#{slot.id}-#{slot.editor_count}" + (name.to_s.blank? ? '' : "-#{name.to_s}")
+  end
+  
+  def slot_content_field(slot,form,options={})   
+    slot.editor_count += 1
+    slot.form = form
+    slot.render_partial 'editor'
   end                          
          
   def slot_save_function(slot)
-    "Wagn.runQueue(Wagn.onSaveQueue['#{slot.id}']); this.form.onsubmit();"
+    "if (Wagn.runQueue(Wagn.onSaveQueue['#{slot.id}'])) { this.form.onsubmit() }"
   end
   
   def slot_cancel_function(slot)

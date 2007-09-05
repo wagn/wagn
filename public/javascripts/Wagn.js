@@ -161,10 +161,14 @@ Object.extend(Wagn.Highlighter.prototype, {
 /* ------------------ OnLoad --------------------*/
 
 Wagn.runQueue = function(queue) {
-  if (typeof(queue)=='undefined') { return }
+  if (typeof(queue)=='undefined') { return true; }
+  result = true;
   while (fn = queue.shift()) {
-    fn.call();
+    if (!fn.call()) {
+      result = false;
+    }
   }
+  return result;
 };
 Wagn.onLoadQueue = $A([]);
 Wagn.onSaveQueue = $H({});

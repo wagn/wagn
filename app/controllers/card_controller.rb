@@ -98,7 +98,7 @@ class CardController < ApplicationController
     end
   end
 
-  def update    
+  def update 
     if @card.update_attributes params[:card]     
       render :action=>'view'
     else

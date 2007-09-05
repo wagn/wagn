@@ -1,11 +1,11 @@
 <% slot_for(@card,@context,'cardtype') do |slot| %>
 	<div class="cardtype-editor edit-area">  
-		<% form_remote_for :card, @card, :url=>slot.url_for_cardtype_action('update'), 
-				:update=>slot.cardtype_area do |f| %>
+		<% form_remote_for :card, @card, :url=>slot.url_for('cardtype/update'), 
+				:update=>slot.id(:cardtype) do |f| %>
 	    <%= slot.cardtype_field(f) %>
 		 	<%= submit_tag 'Change' %>
-		  <%= button_to_remote 'Cancel', 
-						:url=>slot.url_for_cardtype_action('view'), :update=>slot.cardtype_area %>
+		  <%= button_to_remote 'Cancel', :url=>slot.url_for('cardtype/view'),                         
+		        :update=>slot.id(:cardtype) %>
 		<% end %>
 	</div>
 <% end %>

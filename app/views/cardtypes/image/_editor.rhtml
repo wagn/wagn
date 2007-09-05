@@ -1,9 +1,9 @@
-<em><%= card.class.description %></em><br/>
+<p><iframe id="<%= slot.editor_id(:iframe) %>" name="<%= slot.editor_id(:iframe) %>" height="30" width="480" frameborder="0" src="<%= slot.url_for("file/edit") %>" scrolling="no">
+</iframe></p>
+<%= slot.form.hidden_field :content, :id=>slot.id(:upload_content) %>
 
-<%= form_tag( { :controller=>'file', :action=>'upload' }, :multipart=>true, :target=>"iframe-#{div_id}", :id=>"#{div_id}-upload-form") %>    
-  <%= hidden_field_tag 'card[type]', card.type %>
-  <%= hidden_field_tag 'element', "#{div_id}"  %>
-  <%= hidden_field_tag 'card[name]', '',  :id=>"#{div_id}-card-name" %>
-  <%= file_field_tag 'file', :onchange=>"Wagn.Card.find('#{div_id}').set_blank_name_to($F(this).split('/').last());"  %><br/><br/>
-<%= end_form_tag %>
-<iframe id="iframe-<%= div_id %>" name="iframe-<%= div_id %>" height="0" width="0" frameborder="0"></iframe>
+<%= slot.editor_hooks :save=>%{
+	doc=$('#{slot.editor_id(:iframe)}').contentDocument;
+	doc.getElementById('#{slot.id(:upload_form)}').submit(); 
+	return false;
+} %>

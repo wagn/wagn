@@ -1,7 +1,7 @@
 <% slot_for(card, context, 'remove') do |slot| %>  
 	<%= slot.header %>
 	
-	<% form_remote_for :card, card, :url=>slot.url_for_action("remove") do |f| %>
+	<% form_remote_for :card, card, :url=>slot.url_for("card/remove") do |f| %>
 	  <p>Really remove <%= link_to_page formal_title(@card), @card.name %>?</p>
 	  <% if dependents = @card.dependents and !dependents.empty? %>
 	    <p>That would mean removing all these cards, too:</p>

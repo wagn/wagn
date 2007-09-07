@@ -58,7 +58,7 @@ module Card
     after_save :cache_priority
      
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
-      :change_links_on_rename
+      :change_links_on_rename, :allow_type_change
   
     protected    
     
@@ -165,7 +165,7 @@ module Card
             given_type = default_type
           end
         else 
-          default_type = 'Basic'
+          default_type = default_class.to_s.demodulize
         end
         given_type ||= default_type
         Card.const_get(given_type)
@@ -185,7 +185,9 @@ module Card
       
       
       def [](name) 
-        self.cache[name.to_s] ||= self.find_by_name(name.to_s)
+        #self.cache[name.to_s] ||= 
+        
+        self.find_by_name(name.to_s)
         #self.find_by_name(name.to_s)
       end
              
@@ -317,7 +319,7 @@ module Card
     # Dynamic Attributes ------------------------------------------------------        
     def content
       ok!(:read) # fixme-perm.  might need this, but it's breaking create...
-      if tmpl = hard_content_template
+      if tmpl = hard_content_template and tmpl!=self
         tmpl.content
       else
         current_revision ? current_revision.content : ""
@@ -363,6 +365,8 @@ module Card
       Card.const_get(newtype).new do |record|
         record.send :instance_variable_set, '@attributes', attrs
         record.send :instance_variable_set, '@new_record', false
+        # FIXME: I don't really understand why it's running the validations on the new card?
+        record.allow_type_change = allow_type_change
       end
     end
     
@@ -495,6 +499,9 @@ module Card
     end
     
     validates_each :type do |rec, attr, value|  
+      if rec.tag_template and rec.tag_template.hard_template? and value!=rec.tag_template.type and !rec.allow_type_change
+        rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rec.tag_template.type}"
+      end
       if rec.updates.for?(:type)     
         rec.send :validate_destroy
         newcard = rec.send :clone_to_type, value

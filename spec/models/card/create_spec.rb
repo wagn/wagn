@@ -1,7 +1,16 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
+# FIXME this shouldn't be here
+describe Cardtype, "create with codename" do
+  before do
+    User.as :joe_user
+  end
+  it "should create cardtype with codename" do
+    Card::Cardtype.create!(:name=>"Foo Type", :codename=>"foo").type.should=='Cardtype'
+  end
+end
 
-
+=begin
 
 describe Card, "sets permissions correctly by default" do
   before do
@@ -102,6 +111,7 @@ describe Card, "anonymous create permissions" do
     Card::Base.ok?(:create).should_not be_true
   end
 end
-
+        
+=end
 
                        

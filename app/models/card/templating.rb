@@ -23,13 +23,10 @@ module Card
       end
     end
 
-
-
-
     def hard_templatees
       return [] unless template? and hard_template?  
-      @tees ||= Card.find_all_by_tag_id(trunk.id) + (trunk.class_name =='Cardtype' ? 
-          Card.const_get(trunk.codename).find(:all) : [])
+      @tees ||= (Card.find_all_by_tag_id(trunk.id) + (trunk.class_name =='Cardtype' ? 
+          Card.const_get(trunk.codename).find(:all) : [])).uniq
     end
 =begin
     

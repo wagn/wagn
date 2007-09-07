@@ -48,8 +48,9 @@ module Card
       return if new_record?    
       callback(:before_destroy)
       callback(:after_destroy)
-      if !hard_templatees.empty?
+      if !hard_templatees.empty?  
         hard_templatees.each do |tee|
+          tee.allow_type_change = "HELLS YEAH"  #FIXME? this is a hacky way around the standard validation
           tee.type = new_type
           tee.save!
         end

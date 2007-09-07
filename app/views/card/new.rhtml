@@ -1,7 +1,8 @@
-<% slot_for(@card, "new", "new") do |slot| %>
-	<% @title = "New Card" %>   
+<% slot_for(@card, "new", "new") do |slot| %>  
+	<% @title = "New Card" %>    
 	<div class="edit-area">
-	  <% form_remote_for :card, @card, :url=>{:action=>'create'}, :update=>slot.id do |form| %>
+	  <% form_remote_for :card, @card, :url=>slot.url_for('card/create'), 
+					:html=>{ :id=>slot.id(:form) } do |form| %>
 			<table>
 				<tr>
 					<td>
@@ -11,7 +12,10 @@
 					</td>
 					<td>
 					  <span id="<%= slot.id :cardtype %>" class="cardtype-area">
-						  <%= slot.cardtype_field(form) %>
+						  <%= slot.cardtype_field form, :onchange=>slot.update_cardtype_function(   
+						        :url=>slot.url_for('card/new'), :update=>slot.id, 			    
+						        :with=>"Form.serialize('#{slot.id(:form)}')" 
+						  ) %>
 					  </span>
 					</td>
 				</tr>
@@ -24,6 +28,7 @@
 	    <%= button_to_function 'Cancel', previous_page_function %> 
 		<% end %>
 	</div>
+	<%= slot.notice %>
 <% end %>
 
 

@@ -28,7 +28,8 @@ module Card
       self.operation_approved = true
       send("approve_#{operation}")     
       operation_approved
-    end
+    end  
+    
     def ok!(operation)
       if !ok?(operation)
         raise PermissionDenied.new(self)
@@ -36,19 +37,16 @@ module Card
     end
     
     def destroy_with_permissions
-      if ok? :delete
-        destroy_without_permissions
-      else
-        false
-      end
+      ok! :delete
+      # FIXME this is not tested and the error will be confusing
+      dependents.each do |dep| dep.ok! :delete end
+      destroy_without_permissions
     end
     
     def destroy_with_permissions!
-      if ok? :delete
-        destroy_without_permissions!
-      else
-        raise PermissionDenied.new(self)
-      end
+      ok! :delete
+      dependents.each do |dep| dep.ok! :delete end
+      destroy_without_permissions!
     end
 
     def save_with_permissions(perform_checking=true)
@@ -129,7 +127,6 @@ module Card
     end
 =end
 
-  
     def lets_user(operation)
       return true if System.always_ok?
       System.party_ok? who_can(operation)

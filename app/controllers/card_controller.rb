@@ -3,7 +3,6 @@ class CardController < ApplicationController
   layout :ajax_or_not
   cache_sweeper :card_sweeper
   before_filter :load_card!, :except => [ :new, :create, :show, :index  ]
-  before_filter :load_card, :only=>[ :new, :create ]
 
   before_filter :edit_ok,   :only=>[ :edit, :update, :save_draft, :rollback, :save_draft] 
   before_filter :create_ok, :only=>[ :new, :create ]
@@ -24,17 +23,39 @@ class CardController < ApplicationController
   end 
     
   def create         
-    @card = Card.create! params[:card]
-    # prevent infinite redirect loop
-    fail "Card creation failed"  unless Card.find_by_name( @card.name )
-    # FIXME: it would make the tests nicer if we did a real redirect instead of rjs
+    @card = Card.create params[:card]
+    if @card.errors.empty?
+      # double check to prevent infinite redirect loop
+      fail "Card creation failed"  unless Card.find_by_name( @card.name )
+      # FIXME: it would make the tests nicer if we did a real redirect instead of rjs
+      render :update do |page|
+        page.redirect_to url_for_page(@card.name)
+      end
+    else
+      render :update do |page|
+        page.replace_html slot.id(:notice), :partial=>'trouble'
+        page.visual_effect :highlight, slot.id(:notice)
+      end
+    end
   end 
+  
+  def edit
+    if updating_type?
+      @card.type=params[:card][:type]  
+      @card.save!
+      @card = Card.find(@card.id)
+      @card.content = params[:card][:content]
+    end
+  end
 
   def index
     redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_name)
   end
 
-  def new
+  def new  
+    @card = Card.new params[:card]
+    @card.send(:set_defaults)
+    
     if @card.type == 'User'
       redirect_to :controller=>'account', :action=>'invite'
     end
@@ -100,9 +121,14 @@ class CardController < ApplicationController
 
   def update 
     if @card.update_attributes params[:card]     
-      render :action=>'view'
+      render :update do |page|
+        # page.redirect_to slot.url_for('card/view')
+        page.replace_html slot.id, :partial=>'view', 
+          :locals=>{:card=>@card, :context=>@context, :action=>'view'}
+      end
+      #render :action=>'view'
     else
-      render :action=>'edit'
+      render :action=>'edit', :status=>422
     end
   end
 

@@ -23,7 +23,7 @@ module Card
                                            
       if trash = Card.find_by_key(newname.to_key)
         if trash.trash  
-          trash.update_attributes! :name=>trash.name+"*trash"
+          trash.update_attributes! :name=>trash.name+"*trash", :confirm_rename=>true
         else
           raise "How did this pass the validation?"
         end

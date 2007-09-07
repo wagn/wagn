@@ -80,7 +80,7 @@ module Card
     # FIXME -- the current system of caching cardtypes is not "thread safe":
     # multiple running ruby servers could get out of sync re: available cardtypes  
     def cardtypes
-      @cardtype || load_cardtypes!
+      @cardtypes || load_cardtypes!
     end
 
     def load_cardtypes!  

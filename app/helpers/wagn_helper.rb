@@ -11,17 +11,36 @@ module WagnHelper
       @editor_count = 0
     end
 
-    def id(area_name="") 
-      area_name = area_name.to_s
-      id = (context == 'main' ? 'main-card' : "#{context}-#{card.id}")
-      id << (area_name.blank? ? "" : "-#{area_name}")
+    def id(area="") 
+      area = area.to_s
+      id = (context == 'main' ? 'main-card' : "#{context}")
+      id << (card.id ? "-#{card.id}" : '')
+      id << (area.blank? ? "" : "-#{area}")
+    end
+
+    def editor_id(area="")
+      "#{id}-#{editor_count}" + (area.to_s.blank? ? '' : "-#{area.to_s}")
+    end
+
+    def url_for(url)
+      url = "/#{url}"
+      url << "/#{card.id}" if card.id
+      url << context_cgi
+    end
+
+    def context_cgi
+      context=='main' ? '' : "?context=#{context}"
     end
 
     def method_missing(method_id, *args)
       @template.send("slot_#{method_id}", self, *args)
     end
   end
-  
+
+  # For cases where you just need to grab a quick id or so..
+  def slot
+    Slot.new(@card,@context,@action)
+  end
 
   def slot_for( card, context, action, options={}, &proc )
     options[:render_slot] = !request.xhr? if options[:render_slot].nil?            
@@ -35,8 +54,9 @@ module WagnHelper
       end
       css_class << ' full' if (context=='main' or (action!='view' and action!='line'))
       css_class << ' sidebar' if context=='sidebar'
+      css_class << " #{options[:class]}" if options[:class]
       slot_head = %{<div id="#{slot.id}" class="card-slot #{css_class}">}
-      concat(slot_head, proc.binding) 
+      concat(slot_head, proc.binding)  
       yield slot
       concat(%{</div>}, proc.binding)
     else
@@ -44,37 +64,9 @@ module WagnHelper
     end
   end 
 
-  def slot_url_for(slot,url)
-    "/#{url}/#{slot.card.id}" + slot.context_cgi
+  def slot_notice(slot)
+    %{<span id="#{slot.id(:notice)}" class="notice">#{controller.notice}</span>}
   end
-  
-  def slot_area_id(slot,name="")
-    slot.id + "-#{name}"
-  end
-
-
-  def slot_name_area(slot)
-    slot.id + "-name"
-  end
-
-  def slot_cardtype_area(slot)
-    slot.id + "-cardtype"
-  end
-
-
-=begin
-  def slot_url_for_action(slot,action)
-    "/card/#{action}/#{slot.card.id}" + slot.context_cgi
-  end
-
-  def slot_url_for_name_action(slot,action)
-    "/cardname/#{action}/#{slot.card.id}" + slot.context_cgi
-  end
-
-  def slot_url_for_cardtype_action(slot,action)
-    "/cardtype/#{action}/#{slot.card.id}" + slot.context_cgi
-  end
-=end
 
   def slot_header(slot)
     render :partial=>'card/header', :locals=>{ :card=>slot.card, :slot=>slot }
@@ -86,7 +78,7 @@ module WagnHelper
   	if slot.card.ok?(:edit)
     	menu << slot.link_to_menu_action('edit')
   	else
-  	  menu << '<em>&nbsp;edit&nbsp;</em>'
+  	  menu << link_to_remote("Edit", :url=>'/account/login', :update=>slot.id)
 	  end
   	menu << slot.link_to_menu_action('changes')
   	menu << slot.link_to_menu_action('options')
@@ -96,7 +88,6 @@ module WagnHelper
   def slot_footer(slot)
     render :partial=>"card/footer", :locals=>{ :card=>slot.card, :slot=>slot }
   end
-
 
   def slot_link_to_action(slot, text, to_action, remote_opts={}, html_opts={})
     link_to_remote text, remote_opts.merge(
@@ -112,9 +103,6 @@ module WagnHelper
     ), html_opts
   end
   
-  def slot_context_cgi(slot)
-    slot.context=='main' ? '' : "?context=#{slot.context}"
-  end
   
   def slot_link_to_menu_action(slot, to_action)
     slot.link_to_action to_action.capitalize, to_action, {},
@@ -129,16 +117,23 @@ module WagnHelper
   
   def slot_name_field(slot,form,options={})
     text = %{<span class="label"> card name:</span>\n}
-    text << form.text_field( :name, options.merge(:size=>50, :class=>'field card-name-field'))
+    text << form.text_field( :name, options.merge(:size=>40, :class=>'field card-name-field'))
   end
   
   def slot_cardtype_field(slot,form,options={})
-    text = %{<span class="label"> card type:</span>\n}
-    text << select_tag('card[type]', cardtype_options_for_select(slot.card.type), :class=>'field') 
+    text = %{<span class="label"> card type:</span>\n} 
+    text << select_tag('card[type]', cardtype_options_for_select(slot.card.type), options.merge(:class=>'field')) 
   end
   
-  def slot_editor_id(slot, name="")
-    "#{slot.id}-#{slot.editor_count}" + (name.to_s.blank? ? '' : "-#{name.to_s}")
+  def slot_update_cardtype_function(slot,options={})
+    fn = ['File','Image'].include?(slot.card.type) ? 
+            "Wagn.onSaveQueue['#{slot.id}'].clear(); " :
+            "Wagn.runQueue(Wagn.onSaveQueue['#{slot.id}']); "
+    fn << remote_function( options )   
+  end
+       
+  def slot_js_content_element(slot)
+    "$('#{slot.id(:form)}').elements['card[content]']"
   end
   
   def slot_content_field(slot,form,options={})   
@@ -418,7 +413,7 @@ module WagnHelper
       when 'connect'
         link_to_function( name,
            "var form = window.document.forms['connect'];\n" +
-           "form.elements['card[name]'].value='#{name}';\n" +
+           "form.elements['name'].value='#{name}';\n" +
            "form.onsubmit();",
            options)
       when 'page'
@@ -439,7 +434,7 @@ module WagnHelper
 #        when 'Cardtype';   next unless System.ok? :edit_cardtypes
         else  #warn "Adding #{cardtype.class_name}"
       end                           
-      [cardtype.class_name, cardtype.card.name]    
+      [cardtype.class_name, Card.cardtypes[cardtype.class_name]]    
     end.compact
   end
 
@@ -471,7 +466,15 @@ module WagnHelper
 
   def button_to_remote(name,options={},html_options={})
     button_to_function(name, remote_function(options), html_options)
+  end          
+  
+  
+  def stylesheet_inline(name)
+    out = %{<style type="text/css" media="screen">\n}
+    out << File.read("#{RAILS_ROOT}/public/stylesheets/#{name}.css")
+    out << "</style>\n"
   end
+  
 end
 
 

@@ -61,7 +61,7 @@ end
 
 describe Card, "create junction" do
   before(:each) do
-    User.as :admin
+    User.as :joe_user
     @c = Card.create :name=>"Peach+Pear", :content=>"juicy"
   end
 

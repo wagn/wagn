@@ -1,0 +1,49 @@
+<br/>
+<%= render :partial=>'card/line', 
+			:locals=>{ :card=>@tag, :context=>'connection-tag', :render_slot=>true } %>
+
+<p><em> Here's where you can explain how <%= link_to_page @tag.name %> relates 
+  to  <%= link_to_page( formal_title(@trunk), @trunk.name ) %>.  </em>
+</p>
+
+<% slot_for(@card, "connection", "connect", :render_slot=>true) do |slot| %>
+	<% form_remote_for :card, @card, :url=>slot.url_for('connection/update') do |f| %>
+
+		<div class="edit-area">
+	 		<table>
+					<tr>
+						<td>
+					    <span class="title inline">
+						    <%= less_fancy_title(@card) %>
+					  	</span>
+						</td>
+						<td>
+							<span class="cardtype inline">
+								<%# FIXME: if hard template don't give option %>
+						    <%= slot.cardtype_field(f) %>
+							</span>
+						</td>
+					</tr>
+				</table>
+
+		  <% if Card::User===@trunk and @trunk.extension==User.current_user %>
+		    <%= check_box_tag 'personal_sidebar' %>Make this a personal note card.</br>
+		  <% end %>
+
+			<span class="editor">
+				<%= slot.content_field(f) %>
+			</span>
+
+			<%= submit_tag 'Save' %>
+			<%#= link_to_function "Cancel", "$('connections-workspace').innerHTML=''" %>
+		</div>  
+		
+		<div class="edit-area remove-buttons">
+			<%= button_to_remote "Remove #{@card.name}", :url=>slot.url_for("connection/remove")	%>
+			<% if @new_tag %>
+				<%= button_to_remote "Remove #{@card.name} and #{@card.tag.name}", 		
+						:url=>slot.url_for("connection/remove_tag")	%>
+			<% end %>
+		</div>
+	<% end %>
+<% end %>

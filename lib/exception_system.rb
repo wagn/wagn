@@ -26,7 +26,7 @@ module ExceptionSystem
     @exception = exception
     case exception                                                        
       when Wagn::Oops, Wagn::RecursiveTransclude, ActiveRecord::RecordInvalid
-        400
+        422
       when Wagn::PermissionDenied, Card::PermissionDenied
         403
       when Wagn::NotFound, ActiveRecord::RecordNotFound, ActionController::UnknownController, ActionController::UnknownAction  

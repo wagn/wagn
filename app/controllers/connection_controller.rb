@@ -4,48 +4,68 @@ class ConnectionController < ApplicationController
   before_filter :load_card, :edit_ok
   layout :ajax_or_not
   
-  def new
-    if params[:card] and params[:card][:name]
-      @trunk = @card
-      @tag = Card.find_or_new params[:card]
-      @connection = Card::Basic.new :trunk=>@trunk, :tag=>@tag
-      @connection.send(:set_defaults)
+  def create
+    # id will be for the trunk (card we're connecting to)
+    # @name 
+    if @tag = Card.find_by_name(params[:name])
     else
-      render :action=>'tag_cloud'
+      @new_tag = true
+      @tag = Card.create :name=>params[:name]
+    end
+    @connection = Card::Basic.create :trunk=>@card, :tag=>@tag
+                                      
+    if !@tag.errors.empty? or !@connection.errors.empty?
+      # FIXME oh god fixme
+      @notice = ""
+      @notice << "TAG: #{@tag.errors.full_messages.join(', ')}<br/>\n" unless @tag.errors.empty?
+      @notice << "CONNECTION: #{@connection.errors.full_messages.join(', ')}<br/>\n" unless @connection.errors.empty?
+      render :action=>'new'
+    else
+      # switch'm up so @card is the correct one for edit
+      @trunk, @card = @card, @connection
+      render :action=>'edit'
     end
   end
 
-=begin  
-  def create_form
-    # this is a terrible hack to force format==html in case we throw an oops.
-    # even though the Ajax is an update, it comes out requesting js otherwise
-    request.env['HTTP_ACCEPT']='text/html'  
-    
-    @trunk = Card.find_by_id params[:id] 
-    @tag = Card.find_or_new params[:card]
-    @connection = Card::Basic.new :trunk=>@trunk, :tag=>@tag
-    @connection.send(:set_defaults)
+  def edit      
+    @trunk,@tag = @card.trunk,@card.tag #helps with testing
   end
-=end
   
-  def create
-    @trunk = Card.find_by_id(params[:id])
-    @tag  = Card.find_or_create params[:card]
-    @connection = Card.create! params[:connection].merge(:trunk=>@trunk, :tag=>@tag)
-    if params[:personal_sidebar]
-      @connection.reader = User.current_user #fixme-perm  -- not how we should do this.
-      @connection.save!
-      Card::Basic.create! :trunk=>@connection, :tag=>Card.find_by_name('*sidebar')
+  def update
+    if @card.update_attributes params[:card]  
+      @context = 'related'
+      render :update do |page|
+        page.replace_html 'connections-workspace', ''
+        page.hide 'empty-card-list'
+        page.insert_html :top, 'related-list', :partial=>'card/line', 
+          :locals=>{ :card=>@card, :context=>@context, :render_slot=>true }
+        page.visual_effect :highlight, slot.id
+      end
+    else
+      render :update do |page|
+        page.replace_html slot.id(:notice), :partial=>'/card/trouble'
+      end
     end
   end
   
+  def remove_tag
+    @card = @card.tag 
+    remove
+  end
+  
   def remove
-    @connection = Card.find_by_id(params[:id])
-    @trunk = @connection.trunk
-    @tag = @connection.tag
-    @connection.destroy!
-    # FIXME if we somehow flagged that the tag_card was created specifically for this connection,
-    # we could remove it here
+    @card.confirm_destroy = true  
+    card_names = ([@card]+@card.dependents).plot(:name).join(' and ')
+    if @card.destroy 
+      render :update do |page|
+        page.replace_html 'connections-workspace', ''
+        page.replace_html 'alerts', "#{card_names} removed"
+      end
+    else
+      render :update do |page|
+        page.replace_html slot.id(:notice), :partial=>'/card/trouble'
+      end
+    end
   end
   
   private

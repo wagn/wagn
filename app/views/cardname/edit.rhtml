@@ -2,12 +2,15 @@
  	<div class="name-editor edit-area">  
 		<% form_remote_for :card, @card, :url=>slot.url_for('cardname/update'), 
 				:update=>slot.id(:name) do |f| %>
-			
+			 
+			<p>Change <%= link_to_page formal_title(@card), @card.name %> to   
+			 <%= slot.name_field(f, :id=>slot.id('name-field')) %>
+				<% if @card.name and @card.name.junction? %>
+			  	<%= button_to_function "Flip", "f=$('#{slot.name_area}-field'); f.value = f.value.split('+').reverse().join('+')"  %>
+				<% end %>
+				</p>
+							
 			<% if @action=='confirm' %>
-			  <p>Change <%= link_to_page formal_title(@card), @card.name %> to 
-					<%= slot.name_field(f, :id=>slot.name_area+'-field') %>
-					</p>
-
 			  <% if dependents = @card.dependents and !dependents.empty? %>
 			    <p>This will change the names of these cards, too:</p>
 			    <ul>
@@ -29,14 +32,6 @@
 			    <p><%= f.radio_button 'change_links_on_rename', 'yes', true %>Revise all these cards with the new link
 			    <%= f.radio_button 'change_links_on_rename', 'no' %>Let the links be broken</p>
 			  <% end %>
-
-			<% else %>
-
-				<%= slot.name_field(f, :id=>slot.name_area+'-field') %>
-				<% if @card.name and @card.name.junction? %>
-			  	<%= button_to_function "Flip", "f=$('#{slot.name_area}-field'); f.value = f.value.split('+').reverse().join('+')"  %>
-				<% end %>
-			  
 			<% end %>
 			
 		 	<%= submit_tag 'Rename' %>

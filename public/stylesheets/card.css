@@ -440,6 +440,11 @@ a.current, a:link.current {
   white-space: nowrap;
 }
 
+/* FIXME: this is crappy methinks */
+.cardtype-editor, .name-editor {
+  width: 95%;
+}
+
 .edit-area input[type=submit], 
 .edit-area input[type=button] {
   margin: 2px 2px;
@@ -473,3 +478,12 @@ a.current, a:link.current {
   display: inline;
   vertical-align: middle;
 }  
+.card-slot .notice {
+  background: #fff;
+  font-weight: bold;
+  font-style: italic;
+  text-align: center;
+  color: #009;
+  display: block;
+  margin: 0px 0px 4px 0px;
+}

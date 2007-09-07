@@ -37,7 +37,7 @@ class AccountControllerTest < Test::Unit::TestCase
 
   def test_should_fail_login_and_not_redirect
     logout
-    post :login, :login => 'webmaster@grasscommons.orgg', :password => 'bad password'
+    post :login, :login => 'webmaster@grasscommons.org', :password => 'bad password'
     assert_nil session[:user]
     assert_response :success
   end

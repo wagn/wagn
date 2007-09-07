@@ -9,10 +9,11 @@ class ApplicationController < ActionController::Base
   include ExceptionSystem
   
   layout :ajax_or_not
-  attr_reader :card, :cards, :renderer, :context 
-  before_filter :note_current_user, :load_context, :save_request 
+  attr_reader :card, :cards, :renderer, :context   
+  attr_accessor :notice
+  before_filter :note_current_user, :load_context, :reset_class_caches, :save_request 
   helper_method :card, :cards, :renderer, :context, :load_cards, :previous_page, 
-    :edit_user_context, :sidebar_cards
+    :edit_user_context, :sidebar_cards, :notice
   
   ## This is a hack, but lots of stuff seems to break without it
   helper :wagn
@@ -84,7 +85,7 @@ class ApplicationController < ActionController::Base
       when 'connections';    options[:plus]={ :id=> card_id }
       when 'plus_cards';     options[:plus]={ :id=> card_id }
       when 'plussed_cards';  options[:connected]={ :id=>card_id }
-      when 'recent_changes'; options[:sort_by]='revised_at'; options[:sortdir]='desc'
+      when 'recent_changes'; options[:sort_by]='updated_at'; options[:sortdir]='desc'
       when 'search';
       when 'cardtype_cards'; options[:type]=@card.extension.class_name
       when 'pieces';         options[:pieces]=true; options[:id]=card_id
@@ -127,7 +128,14 @@ class ApplicationController < ActionController::Base
   
   def load_context
     @context = params[:context] || 'main'
+    @action = params[:action]
+  end 
+  
+  def reset_class_caches
+    # FIXME: this is a bit of a kluge.. several things stores as cattrs in modules
+    # that need to be reset with every request (in addition to current user)
     Card.load_cardtypes!
+    Role.cache = {}
   end
   
   def sidebar_cards
@@ -154,6 +162,10 @@ class ApplicationController < ActionController::Base
       end
     end
     @sidebar_cards
+  end  
+  
+  def updating_type?
+    request.post? and params[:card] and params[:card][:type]
   end
   
   def ajax_or_not 

@@ -2,9 +2,9 @@ require File.dirname(__FILE__) + '/../test_helper'
 require 'card_controller'
 
 # Re-raise errors caught by the controller.
-#class CardController 
-#  def rescue_action(e) raise e end 
-#end
+class CardController 
+  def rescue_action(e) raise e end 
+end
 
 class CardControllerTest < Test::Unit::TestCase
   common_fixtures
@@ -19,6 +19,14 @@ class CardControllerTest < Test::Unit::TestCase
       @combo_card = Card.find_by_name('A+B')
     end
   end      
+      
+  def test_update_cardtype
+    User.as :joe_user
+    @c = Card['Sample Basic']
+    post :edit, {:id=>@c.id, :card=>{ :type=>"Currency", :content=>"blogbar" }},{:user=>User[:joe_user].id}
+    assert_equal "Currency", Card['Sample Basic'].type
+  end
+private
 
   def test_changes
     id = Card.find_by_name('revtest').id

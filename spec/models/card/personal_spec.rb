@@ -50,7 +50,7 @@ describe Card, "User not allowed to set personal cards" do
   before do
     User.as :joe_user
     @u = User.current_user 
-    @xu = Card.create! :name=>'X+Joe User User'
+    @xu = Card.create! :name=>'X+Joe User'
   end
 
   it "should be someone without permission to set personal card permissions" do

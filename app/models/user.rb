@@ -27,8 +27,8 @@ class User < ActiveRecord::Base
   before_save :encrypt_password
   
   def all_roles
-    @cached_roles ||= (login=='anon' ? [Role.find_by_codename('anon')] : 
-      roles + [Role.find_by_codename('anon'), Role.find_by_codename('auth')])
+    @cached_roles ||= (login=='anon' ? [Role[:anon]] : 
+      roles + [Role[:anon], Role[:auth]])
   end  
   
   class << self
@@ -69,7 +69,7 @@ class User < ActiveRecord::Base
     end    
     
     def [](login)
-      User.find_by_login(login)
+      User.find_by_login(login.to_s)
     end
   end 
 

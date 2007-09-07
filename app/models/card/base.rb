@@ -27,7 +27,7 @@ module Card
 
     belongs_to :extension, :polymorphic=>true
 
-    has_many :permissions, :foreign_key=>'card_id', :dependent=>:delete_all
+    has_many :permissions, :foreign_key=>'card_id'#, :dependent=>:delete_all
 
     belongs_to :reader, :polymorphic=>true  #fixme-perm  can we make this private?
         
@@ -54,7 +54,7 @@ module Card
     before_destroy :update_references_on_destroy
     after_save :cache_priority
      
-    attr_accessor :comment, :comment_author, :confirm_rename, :confirm_delete, 
+    attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
       :change_links_on_rename
   
     protected
@@ -165,6 +165,11 @@ module Card
         args.stringify_keys!    
         args['name'] || (args['trunk'] && args['tag']  ? args["trunk"].name + "+" + args["tag"].name : "")
       end      
+      
+      
+      def [](name)  
+        self.find_by_name(name.to_s)
+      end
     end
     
     def cache_priority
@@ -180,20 +185,41 @@ module Card
     end
         
     def destroy_with_trash(caller="")     
-      return false if callback(:before_destroy) == false
-      result = self.update_attribute(:trash, true) 
+      if callback(:before_destroy) == false
+        errors.add(:destroy, "before destroy back aborted destroy")
+        return false 
+      end         
+      
+      self.update_attribute(:trash, true) 
+
       self.dependents.each do |dep|
+        next if dep.trash
         #puts "#{caller} -> #{name} !! #{dep.name}"
+        dep.confirm_destroy = true
         dep.destroy_with_trash("#{caller} -> #{name}")
       end
-      callback(:after_destroy)
-      result
+
+      callback(:after_destroy) 
+      true
     end
     alias_method_chain :destroy, :trash
             
     def destroy_with_validation
-      errors.clear
+      errors.clear 
+      
       validate_destroy
+      
+      if !dependents.empty? && !confirm_destroy
+        errors.add(:confirmation_required, "because #{name} has #{dependents.size} dependents")
+      end
+      
+      dependents.each do |dep|    
+        dep.send :validate_destroy
+        if dep.errors.on(:destroy)  
+          errors.add(:destroy, "can't destroy dependent card #{dep.name}: #{dep.errors.on(:destroy)}")
+        end
+      end
+
       if errors.empty?
         destroy_without_validation
       else
@@ -203,7 +229,9 @@ module Card
     alias_method_chain :destroy, :validation
     
     def destroy!
-      destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(', ')}"
+      # FIXME: do we want to overide confirmation by setting confirm_destroy=true here?
+      self.confirm_destroy = true
+      destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
     end
      
     # Extended associations ----------------------------------------
@@ -392,6 +420,13 @@ module Card
         if c = Card.find(:first, :conditions=>[condition_sql, *condition_params])
           rec.errors.add :name, "a card named #{c.name} already exists"
         end
+        
+        # require confirmation for renaming multiple cards
+        if !rec.dependents.empty? and !rec.confirm_rename
+          rec.errors.add :confirmation_required, "#{rec.name} has #{rec.dependents.size} dependents"
+        end    
+        
+        #dependents
       end
     end
 
@@ -432,7 +467,7 @@ module Card
     end  
     
      
-    def validate_destroy        
+    def validate_destroy  
     end
     
     def validate_content( content )

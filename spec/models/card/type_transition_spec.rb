@@ -149,8 +149,9 @@ end
 def change_card_to_type(name, type)
   User.as :admin
   card = Card.find_by_name(name)
-  card.type = type
-  card.save
+  card.type = type;  card.save
+  # FIXME FIXME FIXME:  this doesn't work!  something about inheritance column?
+  # card.update_attributes :type=>type
   card
 end
 

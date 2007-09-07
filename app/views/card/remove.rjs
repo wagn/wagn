@@ -1,7 +1,0 @@
-if params[:element]=='main-body'
-  page.wagn.messenger.note( "#{@card.name} removed. Redirecting to #{previous_page}...")
-  page.redirect_to url_for_page(previous_page)
-else 
-  page.wagn.messenger.note( "#{@card.name} removed. ")  
-  page.wagn.lister.update()
-end

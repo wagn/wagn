@@ -20,7 +20,7 @@ class ConvertPermissions < ActiveRecord::Migration
         {:task=>'comment',:party=>c.appender},
         ].map { |hash| Permission.new(hash)}     
     end
-    MCard.find_by_key('basic').permissions << Permission.new({:task=>'create', :party=>auth})
+    MCard.find_by_key('basic').permissions << Permission.new({:task=>'create', :party=>auth}) 
   end
 
   def self.down

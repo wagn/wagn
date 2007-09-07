@@ -185,6 +185,8 @@ proto.append_inline_style_element = function(style_string, head) {
 }
 
 proto.should_link_stylesheet = function(style, head) {
+    // FIXME: LWH hack
+    return false;
         var media = style.media;
         var config = this.config;
         var media_text = media.mediaText ? media.mediaText : media;

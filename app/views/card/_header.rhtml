@@ -1,3 +1,4 @@
+<%= slot.notice %>
 <div class="card-header">   
 	<%= slot.menu %>
 
@@ -13,5 +14,8 @@
       <%= link_to_page( Card.cardtypes[card.type] ) %>
     </span>
   <% end %>
-</div>
-<br>
+</div>       
+
+ 
+<%# FIXME: this should be done with css i would think.. %>
+<br/ >

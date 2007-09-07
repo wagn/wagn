@@ -35,12 +35,11 @@ task :populate_template_database => :environment do
     color = Card::Basic.create! :name=>"color"
     basic = Card::Basic.create! :name=>"Basic Card"  
                                     
-    # data for testing users and invitation requests 
+    # for testing users and invitation requests 
     ron_request = Card::InvitationRequest.create! :name=>"Ron Request", :email=>"ron@request.com"  
     no_count = Card::User.create! :name=>"No Count", :content=>"I got not account"
 
-
-    # CREATE A CARD OF EACH TYPE
+    # card of each type for integraton testing
     user_user = ::User.create! :login=>"sample_user",:email=>'sample@user.com', :status => 'active', :password=>'sample_pass', :password_confirmation=>'sample_pass', :invite_sender=>User.find_by_login('admin')
     user_card = Card::User.create! :name=>"Sample User", :extension=>user_user    
 
@@ -49,7 +48,6 @@ task :populate_template_database => :environment do
       next if ['User','InvitationRequest'].include? ct.codename
       Card.create! :type=>ct.codename, :name=>"Sample #{ct.codename}"
     end
-
 
     # data for role_test.rb
     u1 = ::User.create! :login=>"u1",:email=>'u1@user.com', :status => 'active', :password=>'u1_pass', :password_confirmation=>'u1_pass', :invite_sender=>User.find_by_login('admin')
@@ -70,9 +68,6 @@ task :populate_template_database => :environment do
     c2 = Card.create! :name=>'c2'
     c3 = Card.create! :name=>'c3'   
     
-    
-    
-    
     # cards for rename_test
     # FIXME: could probably refactor these..
     z = Card.create! :name=>"Z", :content=>"I'm here to be referenced to"
@@ -87,8 +82,9 @@ task :populate_template_database => :environment do
     c12345 = Card.create:name=>"Four+One+Five"
 
     # for wql & permissions 
-    %w{ A+B A+C A+D A+E C+A D+A F+A A+B+C }.each do |name| Card.create :name=>name  end 
-      
+    %w{ A+C A+D A+E C+A D+A F+A A+B+C }.each do |name| Card.create! :name=>name  end 
+ 
+    # for cardtype transition tests
     Card::Cardtype.create! :name=>"Cardtype A", :codename=>"CardtypeA"
     Card::Cardtype.create! :name=>"Cardtype B", :codename=>"CardtypeB"
     Card::Cardtype.create! :name=>"Cardtype C", :codename=>"CardtypeC"
@@ -104,16 +100,12 @@ task :populate_template_database => :environment do
     Card::CardtypeE.create! :name=>"type-e-card", :content=>"type_e_content"
     Card::CardtypeF.create! :name=>"type-f-card", :content=>"type_f_content"
     
-
+    # for revision testing
     c = Card.create! :name=>'revtest', :content=>'first'
     c.update_attributes! :content=>'second'
     c.update_attributes! :content=>'third'
-    #Card::Cardtype.create! :name=>'*priority'
   end   
   
-  #::User.as( ::User.find_by_login('anonymous'))) do 
-  #  Card::InvitationRequest
-  #end
 end
 
 

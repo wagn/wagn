@@ -39,7 +39,7 @@ module Chunk
     end
 
     def get_unmask_text_avoiding_recursion_loops
-      if relative? and @card.template? or @card.plus_template? 
+      if relative? and @card.template? or @card.template_tsar? 
         return "#{@text}"
       end
       if !refcard

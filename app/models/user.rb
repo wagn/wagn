@@ -7,7 +7,9 @@ class User < ActiveRecord::Base
   cattr_accessor :current_user
   
   #attr_protected :invite_sender, :status    
-  
+  cattr_accessor :cache  
+  self.cache = {}
+ 
   has_and_belongs_to_many :roles
   belongs_to :invite_sender, :class_name=>'User', :foreign_key=>'invite_sender_id'
   has_many :invite_recipients, :class_name=>'User', :foreign_key=>'invite_sender_id'
@@ -69,7 +71,7 @@ class User < ActiveRecord::Base
     end    
     
     def [](login)
-      User.find_by_login(login.to_s)
+      self.cache[login.to_s] ||= User.find_by_login(login.to_s)
     end
   end 
 

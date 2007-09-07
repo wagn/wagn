@@ -136,6 +136,8 @@ class ApplicationController < ActionController::Base
     # that need to be reset with every request (in addition to current user)
     Card.load_cardtypes!
     Role.cache = {}
+    Card.cache = {}
+    User.cache = {}
   end
   
   def sidebar_cards
@@ -197,6 +199,7 @@ class ApplicationController < ActionController::Base
   end
   
   def previous_page
+    
     name = ''
     session[:return_stack] ||= []
     session[:return_stack].reverse.each do |id|

@@ -6,7 +6,7 @@ module Card
     before_save :clean_content
 
     def self.permission_dependents
-      Card::Cardtype.find(:all).reject { |c| c.plus_template? }
+      Card::Cardtype.find(:all).reject { |c| c.template_tsar? }
     end
 
     def post_render(content)

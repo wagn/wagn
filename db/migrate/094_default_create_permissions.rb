@@ -10,12 +10,23 @@ class DefaultCreatePermissions < ActiveRecord::Migration
       Permission.new :task=>key.to_s, :party=>def_perm[key]
     end
     t = Card.create! :name=>'*template', :permissions=> perm
+    
+    # CREATE A NEW LIST OF PERMISSIONS CUz the old ones just get their card_id reassigned
+    # if we dont
+    perm = def_perm.keys.map do |key|
+      Permission.new :task=>key.to_s, :party=>def_perm[key]
+    end
     bt = Card.create! :name=>'Basic+*template', :permissions=>perm
    # bt = Card.find_by_name 'Basic+*template'
   #  bt.permissions = perm
+
+
+    bt = Card.find_by_name 'Basic+*template'
+    fail "oh god BT #{bt.permissions.inspect}"  if bt.permissions.empty?
+
   #  bt.save!
-  #  bt = Card.find_by_name 'Basic+*template'
-  #  fail "oh god #{bt.permissions.inspect}"  if bt.permissions.empty?
+    t = Card.find_by_name '*template'
+    fail "oh god T #{t.permissions.inspect}"  if t.permissions.empty?
 
     
   end

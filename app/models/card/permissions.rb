@@ -174,9 +174,10 @@ module Card
     end
 
     def approve_content
-      if hard_templatee?
-        deny_because "templated cards can't be edited directly"
-      end
+      # FIXME - deny changes to hard templated cards?
+      #if templatee?
+      #  deny_because "templated cards can't be edited directly"
+      #end
       approve_edit unless new_record?
     end
 

@@ -24,11 +24,11 @@ class Card::RenameTest < Test::Unit::TestCase
   end
   
   def test_update_dependents
-    c1 = Card.find_by_name "One"
-    c12 = Card.find_by_name "One+Two"
-    c123 = Card.find_by_name "One+Two+Three"
-    c41 = Card.find_by_name "Four+One"
-    c415 = Card.find_by_name "Four+One+Five"
+    c1 =   Card["One"]
+    c12 =  Card["One+Two"]
+    c123 = Card["One+Two+Three"]
+    c41 =  Card["Four+One"]
+    c415 = Card["Four+One+Five"]
 
     assert_equal ["One#{JOINT}Two","One#{JOINT}Two#{JOINT}Three","Four#{JOINT}One","Four#{JOINT}One#{JOINT}Five"], [c12,c123,c41,c415].plot(:name)
     c1.name="Uno"

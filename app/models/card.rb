@@ -64,6 +64,16 @@ module ActiveRecord
   end
 end     
 
+class HardTemplate
+  def self.find(*args)
+  end
+end
+
+class SoftTemplate
+  def self.find(*args)
+  end
+end
+
 module Card    
   mattr_reader :default_cardtype_key
   @@default_cardtype_key = "Basic"

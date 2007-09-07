@@ -48,6 +48,12 @@ module Card
       return if new_record?    
       callback(:before_destroy)
       callback(:after_destroy)
+      if !hard_templatees.empty?
+        hard_templatees.each do |tee|
+          tee.type = new_type
+          tee.save!
+        end
+      end
       newcard = self.clone_to_type(new_type)
       newcard.send(:callback, :before_validation_on_create)
       newcard.send(:callback, :before_create)

@@ -15,7 +15,10 @@ module Card
     # FIXME:  this is ugly, but also useful sometimes... do in a more thoughtful way maybe?
     cattr_accessor :debug    
     Card::Base.debug = false
-    
+
+    cattr_accessor :cache  
+    self.cache = {}
+   
     belongs_to :trunk, :class_name=>'Card::Base', :foreign_key=>'trunk_id', :dependent=>:dependent
     has_many   :right_junctions, :class_name=>'Card::Base', :foreign_key=>'trunk_id', :dependent=>:destroy  
 
@@ -57,7 +60,8 @@ module Card
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
       :change_links_on_rename
   
-    protected
+    protected    
+    
     def set_defaults 
       return unless new_record?  # because create callbacks are also called in type transitions 
       # FIXME: AccountCreationTest:test_should_require_valid_cardname
@@ -71,8 +75,14 @@ module Card
       self.trash = false   
       self.key = name.to_key if name
       self.priority = tag.priority if tag  # this might not be right for non-simple tags
+       
+      #[Permission.new(:task=>'read',:party=>::Role[:anon])] + 
+      #  [:edit,:comment,:delete].map{|t| Permission.new(:task=>t.to_s, :party=>::Role[:auth])},
 
-      {:permissions => default_permissions, :content => ''}.each_pair do |attr, default|  
+      {
+        :permissions => default_permissions,
+        :content => defaults_template.content,
+      }.each_pair do |attr, default|  
         unless updates.for?(attr)
           send "#{attr}=", default
         end
@@ -80,8 +90,7 @@ module Card
     end
     
     def default_permissions
-      tmpl = template != self ? template : Card::Basic.new.template
-      perm = tmpl.permissions.reject { |p| p.task == 'create' unless type == 'Cardtype' }
+      perm = defaults_template.permissions.reject { |p| p.task == 'create' unless type == 'Cardtype' }
       perm.map {|p| Permission.new :task=>p.task, :party_id=>p.party_id, :party_type=>p.party_type}
     end
     
@@ -101,16 +110,17 @@ module Card
       def default_class
         self==Card::Base ? Card.const_get( Card.default_cardtype_key ) : self
       end
-
-      def find_or_create(args)
+      
+      def find_or_create(args={})
         c = find_or_new(args); c.save; c
       end
       
-      def find_or_new(args)  
+      def find_or_new(args={})  
+        args.stringify_keys!
         # FIXME -- this finds cards in or out of the trash-- we need that for
         # renaming card in the trash, but may cause other problems.
-        raise "Must specify :name to find_or_create" if args[:name].blank?
-        (c = Card::Base.find_by_key(args[:name].to_key)) ? c : default_class.new(args)
+        raise "Must specify :name to find_or_create" if args['name'].blank?
+        (c = Card::Base.find_by_key(args['name'].to_key)) ? c : default_class.new(args)
       end                      
                                   
       # sorry, I know the next two aren't DRY, I couldn't figure out how else to do it.
@@ -124,9 +134,10 @@ module Card
       end
       alias_method_chain :create, :type    
       
-      def create_with_trash!(args={})
+      def create_with_trash!(args={})     
+        args.stringify_keys!
         if c = Card.find_by_key_and_trash(get_name_from_args(args).to_key, true)
-          c.update_attributes! args.merge(:trash=>false)
+          c.update_attributes! args.merge('trash'=>false)
           c
         else
           create_without_trash! args
@@ -135,8 +146,9 @@ module Card
       alias_method_chain :create!, :trash
 
       def create_with_trash(args={})
+        args.stringify_keys!
         if c = Card.find_by_key_and_trash(get_name_from_args(args).to_key, true)
-          c.update_attributes args.merge(:trash=>false)  
+          c.update_attributes args.merge('trash'=>false)  
           c
         else
           create_without_trash args
@@ -144,6 +156,38 @@ module Card
       end
       alias_method_chain :create, :trash   
       
+      def get_class_from_args(args={})        
+        # FIXME: this passes the test but it sure is ugly
+        given_type = args.pull('type')
+        if tag_tmpl = tag_template(get_name_from_args(args))
+          default_type = tag_tmpl.type
+          if tag_tmpl.extension_type = 'HardTemplate'
+            given_type = default_type
+          end
+        else 
+          default_type = 'Basic'
+        end
+        given_type ||= default_type
+        Card.const_get(given_type)
+      end      
+
+=begin      
+      def get_class_from_args(args)
+        args ||= {}
+        args.stringify_keys!
+        ( v     = args.pull('type')) ? Card.const_get(v) : default_class   
+      end
+=end
+            
+      def get_name_from_args(args={})
+        args['name'] || (args['trunk'] && args['tag']  ? args["trunk"].name + "+" + args["tag"].name : "")
+      end      
+      
+      
+      def [](name) 
+        self.cache[name.to_s] ||= self.find_by_name(name.to_s)
+        #self.find_by_name(name.to_s)
+      end
              
       # uncomment if we want to protect 'unreadable' cards from even
       # being loaded.  thinking for now let them load and check when
@@ -156,22 +200,6 @@ module Card
       #end
       #alias_method_chain :instantiate, :permissions
       
-      def get_class_from_args(args)
-        args ||= {}
-        args.stringify_keys!
-        ( v = args.pull('type')) ? Card.const_get(v) : default_class   
-      end
-      
-      def get_name_from_args(args)
-        args ||= {}
-        args.stringify_keys!    
-        args['name'] || (args['trunk'] && args['tag']  ? args["trunk"].name + "+" + args["tag"].name : "")
-      end      
-      
-      
-      def [](name)  
-        self.find_by_name(name.to_s)
-      end
     end
     
     def cache_priority
@@ -251,8 +279,8 @@ module Card
 
     def cardtype
       @cardtype ||= ::Cardtype.find_by_class_name( class_name ).card
-    end
-
+    end  
+    
     def drafts
       revisions.find(:all, :conditions=>["id > ?", current_revision_id])
     end
@@ -289,7 +317,11 @@ module Card
     # Dynamic Attributes ------------------------------------------------------        
     def content
       ok!(:read) # fixme-perm.  might need this, but it's breaking create...
-      current_revision ? current_revision.content : ""
+      if tmpl = hard_content_template
+        tmpl.content
+      else
+        current_revision ? current_revision.content : ""
+      end
     end   
     
     def type

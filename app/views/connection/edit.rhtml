@@ -7,7 +7,8 @@
 </p>
 
 <% slot_for(@card, "connection", "connect", :render_slot=>true) do |slot| %>
-	<% form_remote_for :card, @card, :url=>slot.url_for('connection/update') do |f| %>
+	<% form_remote_for :card, @card, :url=>slot.url_for('connection/update'),
+	 		:html=>{ :id=>slot.id(:form) } do |f| %>
 
 		<div class="edit-area">
 	 		<table>
@@ -20,7 +21,10 @@
 						<td>
 							<span class="cardtype inline">
 								<%# FIXME: if hard template don't give option %>
-						    <%= slot.cardtype_field(f) %>
+								<%= slot.cardtype_field f, :onchange=>slot.update_cardtype_function(
+										  :url=>slot.url_for("connection/edit"), :update=>'connections-workspace',
+											:with=>"Form.serialize('#{slot.id(:form)}')" 
+								) %>
 							</span>
 						</td>
 					</tr>
@@ -31,7 +35,7 @@
 		  <% end %>
 
 			<span class="editor">
-				<%= slot.content_field(f) %>
+				<%= slot.content_field f %>
 			</span>
 
 			<%= submit_tag 'Save' %>

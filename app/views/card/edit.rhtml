@@ -26,6 +26,12 @@
 			<%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function } %> 
 		<% end %>
 	</div>
+	
+	<div id="<%= slot.id(:remove) %>" class="edit-area remove-buttons">
+		<%= button_to_remote "Remove #{@card.name}", :url=>slot.url_for("card/remove")	%>
+	</div>
+	
+	
 	<%= slot.notice %>
 
 <% end %>

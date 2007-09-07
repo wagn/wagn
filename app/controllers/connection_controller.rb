@@ -29,6 +29,12 @@ class ConnectionController < ApplicationController
 
   def edit      
     @trunk,@tag = @card.trunk,@card.tag #helps with testing
+    if updating_type?
+      @card.type=params[:card][:type]  
+      @card.save!
+      @card = Card.find(@card.id)
+      @card.content = params[:card][:content]
+    end
   end
   
   def update

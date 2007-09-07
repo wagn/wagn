@@ -487,3 +487,6 @@ a.current, a:link.current {
   display: block;
   margin: 0px 0px 4px 0px;
 }
+.remove-buttons {
+  text-align: right;
+}

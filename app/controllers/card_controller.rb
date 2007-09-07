@@ -70,8 +70,30 @@ class CardController < ApplicationController
     render :action=>'view'
   end  
   
-  def remove
-    @card.destroy!
+  def remove  
+    if params[:card]
+      @card.confirm_destroy = params[:card][:confirm_destroy]
+    end
+    if @card.destroy     
+      session[:return_stack].pop  #dirty hack so we dont redirect to ourself after delete
+      render :update do |page|
+        if @context=='main'
+          page['alerts'].replace "#{@card.name} removed. Redirecting to #{previous_page}..."
+          page.redirect_to url_for_page(previous_page)
+        else 
+          page.wagn.messenger.note( "#{@card.name} removed. ")  
+          page.wagn.lister.update()
+        end
+      end
+    elsif @card.errors.on(:confirmation_required)
+      render :update do |page|
+        page.replace_html slot.id(:remove), :partial=>'confirm_remove'
+      end     
+    else
+      render :update do |page|
+        page.replace_html slot.id(:notice), "#{@card.errors.full_messages.join(',')}"
+      end
+    end
   end
 
   def rollback

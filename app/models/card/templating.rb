@@ -21,7 +21,11 @@ module Card
     
     def template?
       tag and tag.name == '*template' 
-    end 
+    end
+    
+    def hard_templatee?
+      self.template != self and false #fixme!!
+    end
 
     def templatee?
       self.template != self

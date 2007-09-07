@@ -72,15 +72,17 @@ module Card
       self.key = name.to_key if name
       self.priority = tag.priority if tag  # this might not be right for non-simple tags
 
-      {
-        :permissions => [Permission.new(:task=>'read',:party=>::Role[:anon])] + 
-          [:edit,:comment,:delete].map{|t| Permission.new(:task=>t.to_s, :party=>::Role[:auth])},
-        :content => '',
-      }.each_pair do |attr, default|  
+      {:permissions => default_permissions, :content => ''}.each_pair do |attr, default|  
         unless updates.for?(attr)
           send "#{attr}=", default
         end
       end
+    end
+    
+    def default_permissions
+      tmpl = template != self ? template : Card::Basic.new.template
+      perm = tmpl.permissions.reject { |p| p.task == 'create' unless type == 'Cardtype' }
+      perm.map {|p| Permission.new :task=>p.task, :party_id=>p.party_id, :party_type=>p.party_type}
     end
     
     def update_references_on_create    
@@ -444,8 +446,11 @@ module Card
     # private cards can't be connected to private cards with a different group
     validates_each :permissions do |rec, attr, value|
       if rec.updates.for?(:permissions)
-        rec.errors.add :permissions, 'Insufficient permissions specifications' if value.length < 4
-        reader = value.find{|p| p.task == 'read'}.party  #fixme-perm -- likely to break
+       # rec.errors.add :permissions, 'Insufficient permissions specifications' if value.length < 4
+        reader = nil
+        value.each do |p|  #fixme-perm -- ugly - no alibi
+          if p.task == 'read' then reader = p.party end
+        end
         (rec.dependents+(rec.junction? ? [rec.tag, rec.trunk] : [])).each do |d|   
           d_reader = d.who_can :read
           if d_reader and (d_reader!=reader) and !(d_reader.class == ::Role and d_reader.codename=='anon') 

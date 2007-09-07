@@ -1,6 +1,7 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
 
+
 describe User, "Normal user" do
   before do
     User.as :admin
@@ -46,11 +47,21 @@ describe User, "Normal user" do
   end
 end
 
+
+## This is f'ed up.  Run either of these test sets on its own and it passes; together (in either order) and the second fails.
+## something's not getting reset.
+
 describe Card, "User not allowed to set personal cards" do
   before do
+    User.as :admin
+    r = Role.find_by_codename('auth')
+    r.tasks = ''
+    r.save
     User.as :joe_user
+
     @u = User.current_user 
     @xu = Card.create! :name=>'X+Joe User'
+
   end
 
   it "should be someone without permission to set personal card permissions" do
@@ -63,3 +74,4 @@ describe Card, "User not allowed to set personal cards" do
     @xu.ok?(:permissions).should_not be_true
   end  
 end
+

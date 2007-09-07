@@ -5,6 +5,10 @@ module Card
 
     before_save :clean_content
 
+    def self.permission_dependents
+      Card::Cardtype.find(:all).reject { |c| c.plus_template? }
+    end
+
     def post_render(content)
       #warn "CALLED POST RENDER: #{content}"
       table_of_contents(content) 
@@ -46,8 +50,7 @@ module Card
         content
       end
     end
-
-
+    
     private
     def clean_content
       self.content = WikiContent.clean_html!(content)

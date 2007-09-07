@@ -34,6 +34,7 @@ module Card
       if !ok?(operation)
         raise PermissionDenied.new(self)
       end
+      true
     end
     
     def destroy_with_permissions
@@ -83,30 +84,24 @@ module Card
       operation_approved
     end
     
-    def permit(operation, party) #assign permissions  ##3HACK -- outside of normal saving -- please don't use in controllers (unenforced)
-      if new_record? then raise Wagn::Oops, "can't call this on a new card" end
-      if ok? :permissions
-        #warn "permit called and approved"        
-        p = ::Permission.find_by_card_id_and_task(self.id, operation.to_s)
-        p.party = party
-        p.save
-        if operation == :read then
-         # warn "trying to set read party #{party.codename}" 
-          set_reader party 
-        end
-      end
+    def permit(task, party) #assign permissions
+      ok! :permissions unless new_record?# might need stronger checks on new records 
+      perms = self.permissions.reject { |p| p.task == task.to_s }
+      perms << Permission.new(:task=>task.to_s, :party=>party)
+      self.permissions= perms
     end
+    
      
     def who_can(operation)
       permissions.each do |perm| 
         return perm.party if perm.task == operation.to_s
       end
-      return false
+      return nil
     end 
     
     def personal_user
       return nil if simple?
-      warn "personal user tag: #{tag.extension}  #{tag.extension.class == ::User}"
+#      warn "personal user tag: #{tag.extension}  #{tag.extension.class == ::User}"
       return tag.extension if tag.extension.class == ::User 
       return trunk.personal_user 
     end
@@ -179,7 +174,7 @@ module Card
     end
 
     def approve_content
-      if templatee?
+      if hard_templatee?
         deny_because "templated cards can't be edited directly"
       end
       approve_edit unless new_record?

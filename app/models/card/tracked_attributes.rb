@@ -53,7 +53,7 @@ module Card
       newcard.send(:callback, :before_create)
       #newcard.send(:callback, :after_create)
       self.extension = newcard.extension
-    end    
+    end
     
     def set_content(new_content)  
       return false unless self.id           
@@ -70,13 +70,24 @@ module Card
     
     def set_permissions(perms)
       self.updates.clear(:permissions)
-     # if !new_record? and create_perm = ::Permission.find_by_card_id_and_task(self.id,'create')
-    #    perms<< create_perm  #probably a better way to do this.  makes sure create permissions don't get overridden on cardtype cards.
-     # end
+     #warn "set permissions is getting called: #{perms.plot :task}"
       self.permissions_without_tracking = perms
       perms.each do |p| 
-        if p.task == 'read' then set_reader( p.party ) end
+        set_reader( p.party ) if p.task == 'read'
       end
+#=begin
+      if template? and trunk.type == 'Cardtype' and create_party = who_can(:create)
+        trunk.permit(:create, create_party)
+        trunk.save!
+        if trunk.codename == 'Basic'
+          Card::Basic.permission_dependents.each do |ct|
+            #warn "updating cardtype: #{ct.name}"
+            ct.permit(:create, create_party)
+            ct.save
+          end
+        end
+      end
+#=end
     end
    
     def set_reader(party)   

@@ -4,10 +4,7 @@ class Role < ActiveRecord::Base
   acts_as_card_extension
   has_and_belongs_to_many :users
   @@anonymous_user = User.new(:login=>'anonymous')  
-  
-  cattr_accessor :cache  
-  self.cache = {}
-  
+
   alias_method :users_without_special_roles, :users
   def users_with_special_roles
     if codename=='auth'
@@ -57,8 +54,8 @@ class Role < ActiveRecord::Base
       @roles = Role.find :all, :conditions=>"codename <> 'admin'"
     end  
     
-    def [](codename) 
-      self.cache[codename.to_s] ||= Role.find_by_codename(codename.to_s)
+    def [](codename)
+      Role.find_by_codename(codename.to_s)
     end
   end
   

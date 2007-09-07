@@ -171,7 +171,7 @@ Object.extend(Wagn.LinkEditor.prototype, {
       '<div><label>reads&nbsp;as:&nbsp;</label><input type="text" size="30" id="reads_as" /></div>' +
       '<div><label>links&nbsp;to:&nbsp;</label><input type="text" size="45" id="links_to" /></div>' +
       '<div class="buttons">' +
-      '<input type="button" onclick="Wagn.linkEditor.save($F(\'reads_as\'), $F(\'links_to\'))" value="Save"/>' + 
+      '<input type="button" onclick="Wagn.linkEditor.save($F(\'reads_as\'), $F(\'links_to\'))" value="Update Link"/>' + 
       '<input type="button" onclick="Wagn.linkEditor.unlink($F(\'reads_as\'))" value="Delete Link"/>' + 
       '<input type="button" onclick="Wagn.linkEditor.cancel()" value="Cancel"/>' +
       '</div></div>';

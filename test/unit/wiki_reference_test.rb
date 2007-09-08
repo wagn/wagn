@@ -51,6 +51,7 @@ class WikiReferenceTest < Test::Unit::TestCase
 
    def test_update_referencing_content_on_rename_junction_card
      @ab = Card.find_by_name("A+B") #linked to from X, transcluded by Y
+     @ab.confirm_rename = true
      @ab.update_attributes! :name=>'Peanut+Butter', :on_rename_skip_reference_updates=>true
      @x = Card.find_by_name('X')
      assert_equal "[[A]] [[A+B]] [[T]]", @x.content
@@ -58,7 +59,7 @@ class WikiReferenceTest < Test::Unit::TestCase
     
   def test_template_transclusion
     cardtype = Card::Cardtype.create! :name=>"ColorType", :content=>""
-    template = Card.create! :name=>'*template'
+    template = Card['*template']
     Card.create! :trunk=>cardtype, :tag=>template, :content=>"{{#{JOINT}rgb}}"
     blue = Card::ColorType.create! :name=>"blue"
     rgb = newcard 'rgb'

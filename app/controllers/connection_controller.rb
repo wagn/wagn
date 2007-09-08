@@ -15,7 +15,7 @@ class ConnectionController < ApplicationController
     @connection = Card::Basic.create :trunk=>@card, :tag=>@tag
                                       
     if !@tag.errors.empty? or !@connection.errors.empty?
-      # FIXME oh god fixme
+      # FIXME oh god fix me please
       @notice = ""
       @notice << "TAG: #{@tag.errors.full_messages.join(', ')}<br/>\n" unless @tag.errors.empty?
       @notice << "CONNECTION: #{@connection.errors.full_messages.join(', ')}<br/>\n" unless @connection.errors.empty?

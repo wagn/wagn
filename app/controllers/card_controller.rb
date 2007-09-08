@@ -130,13 +130,13 @@ class CardController < ApplicationController
       redirect_to :controller=>'card', :action=>'new', :params=>{ 'card[name]'=>@card_name }
     else
       # FIXME this logic is not right.  We should first check whether 
-      # the user has permission to create a card.  If not, then we should 
-      # redirect anonymous users to the login page with some sort of message
-      # explaining why they're there.  And there should be a different way of 
-      # handling users who are logged in but lack permission to create cards 
-      # (it would be nice to catch them before they leave the referring page,
-      # but there needs to be a net anyway, and besides this is currently still
-      # just a theoretical case)
+      # the user has permission to create any cards (or, if specified, to create cards of this type)  If not, then we should 
+      # redirect unsigned in users to a page explaining that they've been linked to a card that doesn't
+      # exist and offering them the option to sign in or request an invitation.
+      # 
+      # Users who are logged in but lack permission to create cards under these conditions
+      # should have a similar explanation, but without the login options.
+      
       redirect_to :controller=>'account', :action=>'login'
     end
   end

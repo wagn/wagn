@@ -23,7 +23,6 @@ class OptionsController < ApplicationController
   
   def roles
     raise Wagn::Oops.new("roles method only applies to `user cards") unless @card.class_name=='User'
-   # @card = Card.find params[:id]
     @user = @card.extension
     @roles = Role.find :all, :conditions=>"codename not in ('auth','anon')"
   end
@@ -34,13 +33,14 @@ class OptionsController < ApplicationController
     @roles = Role.find :all, :conditions=>"codename not in ('auth','anon')"
     role_hash = params[:user_roles] || {}
     @user.roles = Role.find role_hash.keys
-    if false  #FIXME- catch if anything breaks??
-      render_update do |page|
-        page << "$('#{params[:element]}').card().reset()"
-      end
-    else
-      render :template=>'card/update'
-    end
+    render :template=>'card/update'
+
+#    if false  #FIXME- catch if anything breaks??
+#      render_update do |page|
+#        page << "$('#{params[:element]}').card().reset()"
+#      end
+#    else
+#    end
   end
 
 end

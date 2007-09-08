@@ -20,14 +20,14 @@ class DefaultCreatePermissions < ActiveRecord::Migration
    # bt = Card.find_by_name 'Basic+*template'
   #  bt.permissions = perm
 
-
+=begin
     bt = Card.find_by_name 'Basic+*template'
     fail "oh god BT #{bt.permissions.inspect}"  if bt.permissions.empty?
 
   #  bt.save!
     t = Card.find_by_name '*template'
     fail "oh god T #{t.permissions.inspect}"  if t.permissions.empty?
-
+=end
     
   end
 

@@ -3,7 +3,7 @@ module MigrationHelper
     def add_cardtype( cardname, codename=nil ) 
       codename ||= cardname 
       auth = Role.find_by_codename 'auth' 
-      default_permissions = [:this,:should,:not,:go_on].map {|p| Permission.create(:task=>p, :party=>auth)}
+      default_permissions = [:read,:edit,:comment,:delete].map {|p| Permission.create(:task=>p, :party=>auth)}
       User.as :admin do 
         if card = Card.find_by_name(cardname) and card.type=='Basic'
           card.type = 'Cardtype'

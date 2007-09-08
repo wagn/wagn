@@ -2,6 +2,25 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 
 
+       
+describe Card, "new permissions" do
+  User.as :joe_user
+  
+  it "should let joe view new cards" do
+    @c = Card.new
+    @c.send(:set_defaults)
+    @c.ok?(:read).should be_true
+  end
+
+  it "should let joe render content of new cards" do
+    @c = Card.new
+    @c.send(:set_defaults)
+    Renderer.instance.render(@c).should == ''
+  end
+
+end
+
+
 describe Card, "default permissions" do
   before do
     User.as :joe_user do
@@ -18,21 +37,6 @@ describe Card, "default permissions" do
     User.as :joe_user
     @c.ok?(:read).should be_true
   end
-end
-       
-describe Card, "new permissions" do
-  it "should let joe view new cards" do
-    @c = Card.new
-    @c.send(:set_defaults)
-    @c.ok?(:read).should be_true
-  end
-
-  it "should let joe render content of new cards" do
-    @c = Card.new
-    @c.send(:set_defaults)
-    Renderer.instance.render(@c).should == ''
-  end
-
 end
 
 describe Card, "updating permissions" do
@@ -51,7 +55,7 @@ describe Card, "updating permissions" do
   end
   
   it "should set the reader in the process" do
-    @c.reader.should== @anon
+    @c.who_can(:read).should== @anon
   end
   it "should retain these permissions after a hard reload" do
     @c = Card.find_by_name 'X'
@@ -80,11 +84,11 @@ describe Card, "Permit method on existing card" do
     @c.who_can(:read).should== @r2
   end
   it "should update reader" do
-    @c.reader == @r2
+    @c.who_can(:read) == @r2
   end
   it "should update reader -- even after reload" do
     @c = Card.find_by_name 'X'
-    @c.reader == @r2
+    @c.who_can(:read) == @r2
   end
 end  
 
@@ -108,10 +112,11 @@ describe Card, "Permit method on new card" do
     @c.who_can(:read).should== @r2
   end
   it "should update reader" do
-    @c.reader == @r2
+    @c.who_can(:read) == @r2
   end
 end
-  
+
+
           
 # FIXME-perm
 

@@ -31,8 +31,6 @@ module Card
     belongs_to :extension, :polymorphic=>true
 
     has_many :permissions, :foreign_key=>'card_id'#, :dependent=>:delete_all
-
-    belongs_to :reader, :polymorphic=>true  #fixme-perm  can we make this private?
         
     has_many :in_references, :class_name=>'WikiReference', :foreign_key=>'referenced_card_id'
     has_many :out_references,:class_name=>'WikiReference', :foreign_key=>'card_id', :dependent=>:destroy
@@ -60,6 +58,9 @@ module Card
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
       :change_links_on_rename, :allow_type_change
   
+    private
+      belongs_to :reader, :polymorphic=>true  
+      
     protected    
     
     def set_defaults 
@@ -482,9 +483,12 @@ module Card
     # private cards can't be connected to private cards with a different group
     validates_each :permissions do |rec, attr, value|
       if rec.updates.for?(:permissions)
-       # rec.errors.add :permissions, 'Insufficient permissions specifications' if value.length < 4
+        rec.errors.add :permissions, 'Insufficient permissions specifications' if value.length < 4
         reader = nil
         value.each do |p|  #fixme-perm -- ugly - no alibi
+          unless %w{ create read edit comment delete }.member?(p.task.to_s)
+            rec.errors.add :permissions, "No such permission: #{p.task}"
+          end
           if p.task == 'read' then reader = p.party end
         end
         (rec.dependents+(rec.junction? ? [rec.tag, rec.trunk] : [])).each do |d|   

@@ -17,14 +17,14 @@ class RoleTest < Test::Unit::TestCase
    
   def test_all_roles_for_timing
      assert_equal( [
-       ["Sample Role","Sample Role:true","admin:false","anon:false","auth:false", "r1:false","r2:false", "r3:false", "r4:false"],
-       ["admin", "Sample Role:true","admin:true", "anon:false", "auth:false", "r1:false", "r2:false", "r3:false", "r4:false"], 
-       ["anon","Sample Role:true", "admin:true", "anon:true", "auth:true", "r1:true", "r2:true", "r3:true", "r4:true"],
-       ["auth", "Sample Role:true","admin:true", "anon:false", "auth:true", "r1:true", "r2:true", "r3:true", "r4:true"], 
-       ["r1","Sample Role:true", "admin:false", "anon:false", "auth:false", "r1:true", "r2:true", "r3:true", "r4:true"],
-       ["r2","Sample Role:true", "admin:false", "anon:false", "auth:false", "r1:false", "r2:true", "r3:true", "r4:false"],
-       ["r3","Sample Role:true", "admin:false", "anon:false", "auth:false", "r1:false", "r2:false", "r3:true", "r4:false"], 
-       ["r4","Sample Role:true", "admin:false", "anon:false", "auth:false", "r1:false", "r2:false", "r3:false", "r4:true"]],
+       ["admin","admin:true", "anon:false", "auth:false", "r1:false", "r2:false", "r3:false", "r4:false", "Sample Role:true"], 
+       ["anon", "admin:true", "anon:true", "auth:true", "r1:true", "r2:true", "r3:true", "r4:true", "Sample Role:true"],
+       ["auth", "admin:true", "anon:false", "auth:true", "r1:true", "r2:true", "r3:true", "r4:true", "Sample Role:true"], 
+       ["r1", "admin:false", "anon:false", "auth:false", "r1:true", "r2:true", "r3:true", "r4:true", "Sample Role:true"],
+       ["r2", "admin:false", "anon:false", "auth:false", "r1:false", "r2:true", "r3:true", "r4:false", "Sample Role:true"],
+       ["r3", "admin:false", "anon:false", "auth:false", "r1:false", "r2:false", "r3:true", "r4:false", "Sample Role:true"], 
+       ["r4", "admin:false", "anon:false", "auth:false", "r1:false", "r2:false", "r3:false", "r4:true", "Sample Role:true"],
+       ["Sample Role","admin:false","anon:false","auth:false", "r1:false","r2:false", "r3:false", "r4:false", "Sample Role:true"]],
        Role.find(:all, :order=>'codename').map do |r1| [r1.codename]+Role.find(:all,:order=>'codename').map do |r2| "#{r2.codename}:#{r2.subset_of?(r1)}" end; end, "")
   end
   

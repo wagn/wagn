@@ -12,7 +12,8 @@ class Card::RemoveTest < Test::Unit::TestCase
   # would fail to delete.  probably less of an issue now that delete is done through
   # trash.  
   def test_remove
-    assert @a.destroy, "card should be destroyable"
+    assert @a.destroy!, "card should be destroyable"
+    assert_nil Card.find_by_name("A")
   end
 
 end

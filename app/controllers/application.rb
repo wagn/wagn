@@ -25,7 +25,7 @@ class ApplicationController < ActionController::Base
   end
   
   def create_ok
-    # FIXME
+    # FIXME (why?  what's wrong?)
     Card.ok! :create
   end
   

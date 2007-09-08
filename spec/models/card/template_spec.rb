@@ -6,7 +6,7 @@ describe Card, "with soft tag template" do
     User.as :admin do
       @bt = Card.create! :name=>"birthday+*template", :extension_type=>'SoftTemplate', 
               :type=>'Date', :content=>"Today!"
-      @bt.permit(:comment, Role['auth']);  @bt.permit(:destroy, Role['admin'])
+      @bt.permit(:comment, Role['auth']);  @bt.permit(:delete, Role['admin'])
       @bt.save!
     end
     User.as :joe_user

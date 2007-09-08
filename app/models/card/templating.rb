@@ -3,7 +3,7 @@ module Card
     
     module ClassMethods
       def tag_template(name)
-        return nil unless name.junction?
+        return nil unless name and name.junction?
         Card[name.tag_name+"+*template"] 
       end          
       
@@ -25,8 +25,8 @@ module Card
 
     def hard_templatees
       return [] unless template? and hard_template?  
-      @tees ||= (Card.find_all_by_tag_id(trunk.id) + (trunk.class_name =='Cardtype' ? 
-          Card.const_get(trunk.codename).find(:all) : [])).uniq
+      @tees ||= Card.find_all_by_tag_id(trunk.id) + 
+        (template_for_cardtype? ? Card.const_get(trunk.codename).find(:all) : []).uniq
     end
 =begin
     
@@ -46,6 +46,10 @@ module Card
 
     def template?
       tag and tag.name == '*template' 
+    end
+       
+    def template_for_cardtype?
+      template? and trunk.class_name == 'Cardtype'
     end
        
     def hard_template?

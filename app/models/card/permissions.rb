@@ -67,12 +67,7 @@ module Card
         raise PermissionDenied.new(self)
       end
     end
-    
-    def permissions_with_reader=(perms)
-      permissions_without_reader = perms
-      reader = perms.find{|x|x.task=='reader'}
-    end
-
+ 
     def approved?  
       self.operation_approved = true
       if new_record?
@@ -181,18 +176,6 @@ module Card
       approve_edit unless new_record?
     end
 
-=begin 
-    def approve_personal_card
-      pu = personal_user
-      cu = ::User.current_user
-      if !pu
-        deny_because 'Only cards plussed to user cards can be personal'
-      end
-      if pu.login == 'anon'
-        deny_because "Only signed in users can have their own personal cards"
-      end 
-    end
-=end
 
     def approve_permissions
       return if System.always_ok?
@@ -213,7 +196,6 @@ module Card
         alias_method_chain :destroy!, :permissions  
         alias_method_chain :save, :permissions
         alias_method_chain :save!, :permissions
-        #alias_method_chain :permissions=, :reader
       end
       
     end

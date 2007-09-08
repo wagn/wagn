@@ -1,6 +1,7 @@
 
-
-<% for task in [:read, :edit, :comment, :delete] %>
+<% tasks = [:read, :edit, :comment, :delete] %>
+<% tasks << :create if @card.template_for_cardtype? %>
+<% for task in tasks %>
  <tr>
    <td class="label">Who can <%= task %>?</td>
    <td class="field">

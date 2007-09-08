@@ -32,6 +32,7 @@ class Card::RenameTest < Test::Unit::TestCase
 
     assert_equal ["One#{JOINT}Two","One#{JOINT}Two#{JOINT}Three","Four#{JOINT}One","Four#{JOINT}One#{JOINT}Five"], [c12,c123,c41,c415].plot(:name)
     c1.name="Uno"
+    c1.confirm_rename = true
     c1.save!
     assert_equal ["Uno#{JOINT}Two","Uno#{JOINT}Two#{JOINT}Three","Four#{JOINT}Uno","Four#{JOINT}Uno#{JOINT}Five"], [c12,c123,c41,c415].plot(:reload).plot(:name)
   end     
@@ -91,7 +92,8 @@ class Card::RenameTest < Test::Unit::TestCase
   def assert_rename( card, new_name )
     attrs_before = name_invariant_attributes( card )
     card.name=new_name
-    card.save
+    card.confirm_rename = true
+    card.save!
     assert_equal attrs_before, name_invariant_attributes(card)
     assert_equal new_name, card.name
     assert Card.find_by_name(new_name)

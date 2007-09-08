@@ -16,7 +16,7 @@ class Card::BaseTest < Test::Unit::TestCase
     forba_torga_torgc = Card.create :name=>"Forba#{JOINT}TorgA#{JOINT}TorgC"
     
     forba.reload #hmmm
-    forba.destroy
+    forba.destroy!
     assert_nil Card.find_by_name("Forba")
     assert_nil Card.find_by_name("Forba#{JOINT}TorgA")
     assert_nil Card.find_by_name("TorgB#{JOINT}Forba")

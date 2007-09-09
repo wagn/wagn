@@ -1,7 +1,12 @@
 <% slot_for(card, context, action) do |slot| %>
 	<%= slot.header %>  
+	<%# This extra slot is dumb! fix the double slots around transclusion and we can fix this too %>
+	<span cardId="<%= card.id %>">
 	<span class="content cooked editOnDoubleClick" cardId="<%= card.id %>" inPopup="false">
 		<%= rendered_content card %>
-	</span>
+	</span></span>
   <%= slot.footer %>
 <% end %>
+
+<%# FIXME: this is duplicated effort in lots of cases %>
+<%= javascript_tag "setupCardViewStuff()" %>

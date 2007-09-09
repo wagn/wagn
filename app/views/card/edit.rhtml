@@ -18,7 +18,7 @@
 		</tr>
 	</table>
 	
-	<div class="editor edit-area">
+	<div class="editor edit-area" cardid="#{card.id}">
 	  <% form_remote_for :card, card, :url=>slot.url_for("card/update"), 
 				 :html=>{ :id=>slot.id(:form), :class=>'editor' } do |form| %>
 			<%= slot.content_field(form) %>

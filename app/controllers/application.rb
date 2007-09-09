@@ -242,5 +242,11 @@ class ApplicationController < ActionController::Base
     else
       redirect_to_url url 
     end    
+  end   
+  
+  def render_errors
+    render :update do |page|
+      page.replace_html slot.id(:notice), "#{@card.errors.full_messages.join(',')}"
+    end
   end
 end

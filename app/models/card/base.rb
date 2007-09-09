@@ -159,8 +159,9 @@ module Card
       
       def get_class_from_args(args={})        
         # FIXME: this passes the test but it sure is ugly
+        args ||={}  # huh?  why doesn't the method parameter do this?
         given_type = args.pull('type')
-        if tag_tmpl = tag_template(get_name_from_args(args))
+        if tag_tmpl = tag_template(get_name_from_args(args)||"")
           default_type = tag_tmpl.type
           if tag_tmpl.extension_type = 'HardTemplate'
             given_type = default_type
@@ -181,6 +182,7 @@ module Card
 =end
             
       def get_name_from_args(args={})
+        args ||= {}
         args['name'] || (args['trunk'] && args['tag']  ? args["trunk"].name + "+" + args["tag"].name : "")
       end      
       

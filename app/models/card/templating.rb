@@ -2,11 +2,11 @@ module Card
   module Templating  
     
     module ClassMethods
-      def tag_template(name)
+      def tag_template(name='')
+        name ||=""  # WTF GODDAMN IT:S SET TO A STRING IN 5 places
         return nil unless name and name.junction?
         Card[name.tag_name+"+*template"] 
       end          
-      
     end
     
     def defaults_template 

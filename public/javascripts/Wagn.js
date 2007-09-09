@@ -178,96 +178,62 @@ Wagn.editors = $H({});
 onload = function() {
   Wagn.Messenger.flash();
   Wagn.runQueue(Wagn.onLoadQueue);
+  setupCardViewStuff();
   getNewWindowLinks();
+  setupDoubleClickToEdit();
   if (typeof(init_lister) != 'undefined') {
     Wagn._lister = init_lister();
     Wagn._lister.update();
   }
 }
 
+setupCardViewStuff = function() {
+  getNewWindowLinks();
+  setupDoubleClickToEdit();
+}                  
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* ----------------THE REST IS JUNKYARD----------- */
-
-/* premature generalization??
-Wagn.Section = {
-  init: function( element ) {
-    return Object.extend($(element), Wagn.Section.prototype);
-  }
-};
-
-
-Wagn.Section.prototype = {
-  name: function() {
-    return this.id;
-  },
-  body: function() {
-    return $( this.name() + '-' + 'body' );
-  },
-  
-};
-
-
-Wagn.Connections = Class.create();
-
-Wagn.Connections.prototype = {
-  initialize: function() {
-  },
-  refresh: function() {
-  }
-}
-*/
-
-
-/*  this was in use with fckeditor I thinkg
-
-function wagn_htmlize_node( parent ) {
-  parent.innerHTML = wagn_htmlize_string( parent.innerHTML );
-}
-
-function wagn_htmlize_string( html ) {
-  return html.replace( /\[\[(.*)\]\]/gi, '<a href="$1" class="__wagn_link" id="$1">$1</a>' );
-}
-
-function wagn_unhtmlize_node( parent ) {
-  wiki_links = document.getElementsByClassName('__wagn_link', parent); 
-  wiki_links.each( function( w ) {
-    page_name = w.getAttribute('href');  
-    Element.replace( w, "[[" + page_name + "]]" );
+setupDoubleClickToEdit=function(container) {
+  Element.getElementsByClassName( document, "editOnDoubleClick" ).each(function(el){
+    el.ondblclick=function(event) {                   
+      element = Event.element(event);
+      if (card_id = getTranscludingCardId(element)) {
+        slot_id = getSlotId(element); 
+        css_selector = '#'+slot_id+' span[cardid='+card_id+'] .content';
+        elem_to_update = $$(css_selector)[0];
+        console.log("update " +css_selector);
+        new Ajax.Updater($$(css_selector)[0], '/content/edit/'+card_id, {asynchronous: true, evalScripts: true});
+        Event.stop(event);
+      }
+    }
   });
-  return parent;
 }
-
-
-*/
-
-
-/*  doesn't appear to be in use..>
-
-var section_loaded={};
-
-function toggle_ajax_section( targetId, url ) {
-  if (section_loaded[targetId]) {
-    Element.toggle( targetId )
+  
+getSlotId=function(element) {
+  if (Element.hasClassName(element, 'card-slot')) {
+    return element.attributes['id'].value;
+  } else if (element.parentNode) {
+    return getSlotId( element.parentNode );
   } else {
-    section_loaded[targetId] = true
-    new Ajax.Updater( targetId, url,
-     {asynchronous:true, evalScripts:true});
-  } 
+    warn("Failed to get Slot Id");
+    return false;
+  }
 }
-*/
 
+getTranscludingCardId= function(element) {
+  if (element.hasAttribute('cardId')) {
+    return element.attributes['cardId'].value;
+  } else if (element.parentNode) {
+    return this.getTranscludingCardId( element.parentNode );
+  } else {       
+    warn("Failed to get Transcluding Card Id");
+    return false;
+  }
+}
+
+
+
+
+
+
+
+   

@@ -76,7 +76,7 @@ module Chunk
       
       open_content, close_content = '',''
       unless header.empty? and open_shade.empty?
-        open_content = %{<span class="transcludedContent" cardId="#{refcard.id}">}
+        open_content = %{<span class="content transcludedContent" cardId="#{refcard.id}">}
         close_content = "</span>"
       end
      

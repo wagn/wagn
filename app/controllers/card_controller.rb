@@ -144,13 +144,11 @@ class CardController < ApplicationController
   def update 
     if @card.update_attributes params[:card]     
       render :update do |page|
-        # page.redirect_to slot.url_for('card/view')
         page.replace_html slot.id, :partial=>'view', 
           :locals=>{:card=>@card, :context=>@context, :action=>'view'}
       end
-      #render :action=>'view'
     else
-      render :action=>'edit', :status=>422
+      render_errors
     end
   end
 

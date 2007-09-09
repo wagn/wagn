@@ -38,7 +38,7 @@
 				<%= slot.content_field f %>
 			</span>
 
-			<%= submit_tag 'Save' %>
+			<%= button_to_function 'Save', slot.save_function %>
 			<%#= link_to_function "Cancel", "$('connections-workspace').innerHTML=''" %>
 		</div>  
 		

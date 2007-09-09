@@ -154,6 +154,7 @@ Object.extend(Wagn.Lister.prototype, {
   after_update: function() {
     //Wagn.Card.setupAll();
     $('paging-links-copy').innerHTML = $('paging-links').innerHTML;
+    setupDoubleClickToEdit();
   },                              
   _ajax_parameters: function() {
     param_hash = arguments[0] ? arguments[0] : {};

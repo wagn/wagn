@@ -121,7 +121,6 @@ Object.extend(Wagn.Lister.prototype, {
   },
   update: function() {
     //alert( Object.inspect( (this.card_id() == '')));
-    this.set_button();
     $('paging-links-copy').innerHTML = '<img src="/images/wait.gif">';
     $(this.div_id).innerHTML = '';
     card_part = (this.card_id()=='') ? '' : "/" + this.card_id();
@@ -129,6 +128,8 @@ Object.extend(Wagn.Lister.prototype, {
       '/block/' + this.display_type() + card_part + ".html",
       this._ajax_parameters( this._arguments )
     );
+    this.set_button();
+    
 //    if (this.div_id == 'related-list') this.set_title();
   },
 //  set_title: function() {
@@ -141,7 +142,7 @@ Object.extend(Wagn.Lister.prototype, {
 	  if (!($('related-button'))) return false;
 	  button = '&nbsp;'; // not '' so paging links don't float under cards...
 	  query = this.query();
-	  if (1 == 1) {  //#  FIXME-perm.  we need to check whether the user can create these cards.
+	  if (($('button-permission')) && ($('button-permission').innerHTML == 'true')) {  
 			if ((query == 'plus_cards') || (query == 'plussed_cards')) {
 				button = '<input type="button" id="new-connection-button" value="join it to another card" onClick="Wagn.lister().new_connection ()">';	 
 			} else if	(query == 'cardtype_cards') {

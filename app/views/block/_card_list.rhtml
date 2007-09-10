@@ -20,10 +20,12 @@
 <% end %>     
 
 <% if duplicates.length > 0 %>
-	<div style="color:grey">
+	<div style="color:grey"><%# FIXME-style%>
 			...and <%= duplicates.length %> duplicates: <%= duplicates.plot(:name).join(",") %>
 	</div>
 <% end %>
+
+<span id="button-permission" style="display:none"><%= @button_permission %></span><%# FIXME-style%>
 
 <%= paging( cards ) %>
 

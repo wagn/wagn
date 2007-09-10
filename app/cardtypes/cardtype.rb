@@ -25,9 +25,12 @@
       self.extension = ::Cardtype.create!( :class_name => class_name )
     end
     
+    def me_type
+      Card.const_get( self.extension.class_name )
+    end
+    
     def cards_of_this_type
-      cardtype = self.extension.class_name
-      Card.const_get(cardtype).find(:all)
+      me_type.find(:all)
     end
     
     def queries

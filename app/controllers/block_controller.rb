@@ -34,10 +34,12 @@ class BlockController < ApplicationController
   end
 
   def connection_list
-    query = params[:query].to_sym 
+    query = params[:query] ? params[:query.to_sym] : nil
     @button_permission = case #might later have this return the actual button
-      when ([:plus_cards, :plussed_cards].member? query and Card::Basic.ok? :create);  true
-      when (query == :cardtype_cards and @card.me_type.ok? :create)                 ;  true
+      when ([:plus_cards, :plussed_cards].member? query)
+        Card::Basic.ok? :create
+      when query == :cardtype_cards
+         @card.me_type.ok? :create
       end
     render_list :partial=>'block/card_list', :locals => {
       :context => 'connections'

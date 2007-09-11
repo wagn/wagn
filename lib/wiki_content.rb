@@ -3,6 +3,7 @@ require_dependency 'chunks/chunk'
 require_dependency 'chunk_manager'
 
 class WikiContent < String    
+  # FIXME: this is crap I already defined it in string
    class << self
    ## FIXME:  this is still not quite the right place for clean_html! and process_links!
    ##  but it's better than the general string extension library where it was before.

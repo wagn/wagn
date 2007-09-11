@@ -28,9 +28,8 @@ module Card
       @tees ||= Card.find_all_by_tag_id(trunk.id) + 
         (template_for_cardtype? ? trunk.me_type.find(:all) : []).uniq
     end
-=begin
-    
 
+=begin
     def hard_templatee?
       self.template != self and false #fixme!!
     end
@@ -38,8 +37,8 @@ module Card
     def templatee?
       self.template != self
     end  
-    
 =end      
+
     def template_tsar?
       attribute_card('*template') 
     end

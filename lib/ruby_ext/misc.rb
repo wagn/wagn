@@ -49,5 +49,11 @@ class String
   
   def to_codename
     self.gsub(/\s+/,'_').underscore
+  end  
+  
+  def wrap!(before, after)
+    self.insert(0,before)
+    self.insert(-1,after)
+    self
   end
 end

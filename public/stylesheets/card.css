@@ -458,12 +458,12 @@ a.current, a:link.current {
 .edit-area .richtext {
   background: #fff;
 }
-.edit-area .label {
+.edit-area .label not(.fieldset) {
   display: block;
   margin: 2px;
   font-size: 12px;
 }
-.edit-area .field {
+.edit-area .field not(.fieldset) {
   display: block;
   margin: 4px;
 }

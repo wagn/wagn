@@ -2,16 +2,24 @@ require 'diff'
 require_dependency 'models/wiki_reference'
 #require_dependency 'application_helper'
 #require_dependency 'card_helper'
+ 
+class StubSlot 
+  def render_transclusion(a,b)
+    "<stub transclusion>"
+  end
+end
+
 
 class Renderer                
   include HTMLDiff
   include ReferenceTypes
   #include Singleton
   attr_accessor :rescue_errors
+  attr_reader :slot
 
   class << self
     def instance
-      Renderer.new
+      Renderer.new( StubSlot.new )
     end
   end
   
@@ -22,7 +30,8 @@ class Renderer
     result
   end
   
-  def initialize
+  def initialize(slot)
+    @slot = slot
     @render_stack = [] 
     @rescue_errors = true
   end
@@ -79,7 +88,7 @@ class Renderer
     # stuff breaks
     content = content.blank? ? card.content_for_rendering  : content 
     
-    wiki_content = WikiContent.new(card, content, self)
+     wiki_content = WikiContent.new(card, content, self)
     yield wiki_content if block_given?
     update_references(card, wiki_content) if update_references
     @render_stack.pop

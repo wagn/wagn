@@ -40,12 +40,7 @@ class CardController < ApplicationController
   end 
   
   def edit
-    if updating_type?
-      @card.type=params[:card][:type]  
-      @card.save!
-      @card = Card.find(@card.id)
-      @card.content = params[:card][:content]
-    end
+    @card = handle_cardtype_update(@card)
   end
 
   def index
@@ -141,14 +136,25 @@ class CardController < ApplicationController
     end
   end
 
-  def update 
-    if @card.update_attributes params[:card]     
-      render :update do |page|
-        page.replace_html slot.id, :partial=>'view', 
-          :locals=>{:card=>@card, :context=>@context, :action=>'view'}
+  def update     
+    if @card.hard_content_template
+      errors = false
+      params[:cards].each_pair do |id, opts|
+        card = Card.find(id)
+        card.update_attributes(opts)
+        if !card.errors.empty?
+          card.errors.each do |field, err|
+            @card.errors.add card.name, err
+          end
+        end
       end
     else
-      render_errors
+      @card.update_attributes params[:card]     
+    end
+    return render_errors unless @card.errors.empty?
+    render :update do |page|
+      page.replace_html slot.id, :partial=>'view', 
+        :locals=>{:card=>@card, :context=>@context, :action=>'view'}
     end
   end
 

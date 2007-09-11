@@ -11,7 +11,7 @@ module Chunk
   
     def initialize(match_data, content)
       super   
-#      warn "TC #{match_data} #{content}"
+      warn "FOUND TRANSCLUDE #{match_data} #{content}"
       @card_name = match_data[1].strip
       @relative = match_data[2]
       @options = {
@@ -39,13 +39,23 @@ module Chunk
     end
 
     def get_unmask_text_avoiding_recursion_loops
-      if relative? and @card.template? or @card.template_tsar? 
+      # FIXME why not template_tsars? what is relative? about?
+      #if relative? and @card.template? #or @card.template_tsar? 
+      if @card.template?
         return "#{@text}"
       end
-      if !refcard
-        return "<span class='faint'>{{#{@card_name}}}</span>\n"
+#      if !refcard
+#        return "<span class='faint'>{{#{@card_name}}}</span>\n"
+#      end
+      
+      card = refcard ? refcard : Card.new( :name=>refcard_name )
+      result = @renderer.slot.render_transclusion(card, @options)
+      if WikiContent===result
+        @content.merge_chunks(result) 
+        result = result.pre_rendered
       end
-       
+      result
+=begin       
       header, footer = '',''
       case @options[:view]
       when 'content'; #nada
@@ -65,10 +75,12 @@ module Chunk
         invalid_option(:view)
       end
       
+      
+      action = refcard ? "editOnDoubleClick" : "createOnClick"
       open_shade, close_shade = '',''
       case @options[:shade] 
       when 'on'
-        open_shade = %{<span class="transcluded editOnDoubleClick" cardId="#{refcard.id}" inPopup="true">}
+        open_shade = %{<span class="transcluded">}
         close_shade = '</span>'
       when 'off';  #nada
       else invalid_option(:shade)
@@ -76,17 +88,24 @@ module Chunk
       
       open_content, close_content = '',''
       unless header.empty? and open_shade.empty?
-        open_content = %{<span class="content transcludedContent" cardId="#{refcard.id}">}
+        faint = refcard ? "" : "faint"
+        open_content = %{<span class="#{faint} content" cardId="#{refcard_id}">}
         close_content = "</span>"
       end
-     
-      transcluded_content = @renderer.render( refcard )
-      @content.merge_chunks(transcluded_content)
-      str = transcluded_content.pre_rendered
+       
+      transcluded_content = refcard ? @renderer.render( refcard ) : "Click to create #{@card_name}"
+      #transcluded_content = @renderer.render( refcard )
+      if refcard
+        @content.merge_chunks(transcluded_content) 
+        str = transcluded_content.pre_rendered
+      else
+        str = transcluded_content
+      end
       str.insert(0, open_shade + header + open_content)      
       str.insert(-1, close_content + footer + close_shade )
       #warn "STR: #{str}"
       str
+=end      
     end
   #rescue Exception=>e     
   #  return "Error rendering transcluded card #{@card.name}: #{e.message}"

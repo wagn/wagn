@@ -1,0 +1,63 @@
+<% slot_for(@card, @context, 'edit-template') do |slot| %>  
+  <%= slot.header %>		 
+ 
+	<h2>Editing Template</h2>
+	<p>This template will be used for 
+	<%= @card.type=='Cardtype' ? "all cards of type #{@card.name} and" : "" %>
+	all cards tagged by <%= @card.name %>
+	</p> 
+
+	<div class="editor edit-area">
+	  <% form_remote_for :card, @tmpl, :url=>slot.url_for("template/update"), 
+				 :html=>{ :id=>slot.id(:form), :class=>'editor' } do |form| %>
+
+ 	   <table>
+					<td>
+					  <span id="<%= slot.id :name %>" class="name-area">
+					    <span class="title"><%= less_fancy_title(@tmpl) %></span>
+					  </span> 
+					</td>
+					<td>
+		 			  <span id="<%= slot.id :cardtype %>" class="cardtype-area">
+							<% if @card.type=='Cardtype' %>
+								<span class="cardtype"><%= Card.cardtypes[@tmpl.type] %></span>
+							<% else %>
+							  <span id="<%= slot.id :cardtype %>" class="cardtype-area">
+								  <%= slot.cardtype_field form, :card=>@tmpl,
+												:onchange=>slot.update_cardtype_function(   
+								        	:url=>slot.url_for('template/edit'), :update=>slot.id, 			    
+								        	:with=>"Form.serialize('#{slot.id(:form)}')" 
+								  ) %>
+							  </span>
+							<% end %>
+					  </span>
+					</td>
+				</tr>
+			</table>
+	    
+	    <p>Hard template?<br/>
+    	<%= form.radio_button :extension_type, 'HardTemplate' %> 
+			Yes - Retains control over content and type
+			<br/>
+    	<%= form.radio_button :extension_type, 'SoftTemplate' %> 
+			No - supply initial content only
+	    </p>
+	
+			<%= slot.content_field(form, :card=>@tmpl) %>
+		
+			<table class="fieldset">
+				<%= render :partial=>'/card/permission_fields', :locals=>{:card=>@tmpl,:slot=>slot } %>
+			</table>
+		
+			<%= button_to_function "Save", slot.save_function %>
+			<%= slot.button_to_action 'Cancel', 'options', { :before=>slot.cancel_function } %> 
+
+		<% end %>     
+	</div>
+	
+	<div id="<%= slot.id(:remove) %>" class="edit-area remove-buttons">
+		<%= button_to_remote "Remove #{@tmpl.name}", :url=>slot.url_for("template/remove") %>
+	</div>
+	<%= slot.notice %>
+
+<% end %>

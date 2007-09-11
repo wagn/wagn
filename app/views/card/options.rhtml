@@ -5,12 +5,23 @@
     <div id="<%= params[:element] %>-options-workspace">
   	  <div id="create-advanced">
   	    <table class="fieldset">
-  	      <%= render :partial=>'card/option_fields', :locals=>{:context=>'options'} %>
+  	      <%= render :partial=>'card/permission_fields', :locals=>{:card=>@card, :slot=>slot} %>
   	      <%= slot.render_partial 'extra_options' %>
+					<% slot.option(:name=>'template', :editable=>false, :help=>"FIXME") do %>
+						<% if @card.template_tsar? %>
+							<%= button_to_remote 'Edit Template', :url=>slot.url_for('template/edit'),
+							 	:update=>slot.id %>
+						<% else %>
+						  <%= button_to_remote 'Create Template', :url=>slot.url_for('template/create') %>
+						<% end %>
+					<% end %>
   	    </table>
   	  </div>
   	</div>
 
-  <%= submit_tag 'Save Changes' %><!-- this shouldn't always show up.. -->
+		<% if slot.options_need_save %>
+		  <%= submit_tag 'Save Changes' %><!-- this shouldn't always show up.. -->
+		<% end %>
   <% end %>
+  <%= slot.notice %>
 <% end %>

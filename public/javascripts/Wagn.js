@@ -193,21 +193,47 @@ setupCardViewStuff = function() {
 }                  
 
 setupDoubleClickToEdit=function(container) {
+  Element.getElementsByClassName( document, "createOnClick" ).each(function(el){
+    el.onclick=function(event) {                   
+      element = Event.element(event);
+      
+      span = getTransclusionSpan(element)
+      slot_id = getSlotId(element);
+      position = span.hasAttribute('position') ? span.attributes['position'].value : false;
+      context = slot_id + (position ? ":" + position : "");
+ 
+      card_name = span.attributes['cardname'].value;
+
+      console.log("create  " +card_name);
+      new Ajax.Request('/transclusion/create?context='+context, {
+        asynchronous: true, evalScripts: true,
+        parameters: "card[name]="+encodeURIComponent(card_name)
+      });
+      Event.stop(event);
+    }
+  });
+                               
   Element.getElementsByClassName( document, "editOnDoubleClick" ).each(function(el){
     el.ondblclick=function(event) {                   
       element = Event.element(event);
-      if (card_id = getTranscludingCardId(element)) {
-        slot_id = getSlotId(element); 
-        css_selector = '#'+slot_id+' span[cardid='+card_id+'] .content';
-        elem_to_update = $$(css_selector)[0];
-        console.log("update " +css_selector);
-        new Ajax.Updater($$(css_selector)[0], '/content/edit/'+card_id, {asynchronous: true, evalScripts: true});
-        Event.stop(event);
-      }
+
+      // FIXME: for nested work, we should crawl up the stack and get all the positions
+      // this whole mess needs refactored
+      span = getTransclusionSpan(element)
+      slot_id = getSlotId(element);
+      position = span.hasAttribute('position') ? span.attributes['position'].value : false;
+      context = slot_id + (position ? ":" + position : "");
+
+      card_id = span.attributes['cardid'].value;
+
+      new Ajax.Request('/transclusion/edit/'+card_id+'?context='+context,
+         {asynchronous: true, evalScripts: true});
+      Event.stop(event);
     }
   });
 }
-  
+
+
 getSlotId=function(element) {
   if (Element.hasClassName(element, 'card-slot')) {
     return element.attributes['id'].value;
@@ -218,6 +244,20 @@ getSlotId=function(element) {
     return false;
   }
 }
+
+// we need to crawl up the dom because the event could be triggered inside some
+// html -- I think.  will the element always be the one the event handler is set on??
+getTransclusionSpan=function(element) {
+  if (element.hasAttribute('cardId')) {
+    return element;
+  } else if (element.parentNode) {
+    return getTransclusionSpan( element.parentNode );
+  } else {       
+    warn("Failed to get Transclusion Span");
+    return false;
+  }
+}
+
 
 getTranscludingCardId= function(element) {
   if (element.hasAttribute('cardId')) {

@@ -1,29 +1,64 @@
-module WagnHelper
+ module WagnHelper
   require_dependency 'wiki_content'
 
   Droplet = Struct.new(:name, :link_options)
-  
   class Slot
-    attr_reader :card, :context, :action
-    attr_accessor :form, :editor_count
-    def initialize(card, context, action, template=nil )
-      @card, @context, @action, @template, = card, context.to_s, action.to_s, template
-      @editor_count = 0
+    
+    attr_reader :card, :context, :action, :renderer
+    attr_accessor :form, :editor_count, :options_need_save, :transclusion_mode,
+      :transclusions, :position, :renderer, :form
+    def initialize(card, context, action, template=nil, renderer=nil )
+      @card, @context, @action, @template, @renderer= card, context.to_s, action.to_s, template,renderer
+      @position = nested_context? ? context.split(':').last : 0
+      @subslots = []  
+      @transclusion_mode = 'view'
+      @renderer ||= Renderer.new(self)
     end
 
     def id(area="") 
-      area = area.to_s
-      id = (context == 'main' ? 'main-card' : "#{context}")
-      id << (card.id ? "-#{card.id}" : '')
+      area, id = area.to_s, ""
+      if nested_context?
+        id << context.gsub(/\:.*$/,'')
+      else         
+        id << (context == 'main' ? 'main-card' : "#{context.gsub(/\:.*$/,'')}") 
+        # FIXME this is kindof a crude test-- don't want to add a card id if one is already there
+        unless id =~ /\d+/
+          id << (card.id ? "-#{card.id}" : '')
+        end
+      end
       id << (area.blank? ? "" : "-#{area}")
+    end
+       
+    def nested_context?
+      context =~ /\:/
+    end
+     
+    def selector
+      positions = context.split(':')
+      positions.shift # first one is id
+      selector = "#" + id
+      if positions.empty? 
+        selector << " span[cardid=#{card.id}]"
+      else
+        while pos = positions.shift
+          selector << " span[position=#{pos}]"
+        end   
+      end
+      selector
     end
 
     def editor_id(area="")
-      "#{id}-#{editor_count}" + (area.to_s.blank? ? '' : "-#{area.to_s}")
+      area, eid = area.to_s, ""
+      if nested_context?
+        eid << context
+      else     
+        eid << id + (position > 0 ? "-#{position}" : "")
+      end
+      eid << (area.blank? ? '' : "-#{area}")
     end
 
     def url_for(url)
-      url = "/#{url}"
+      url = "/#{url}" 
       url << "/#{card.id}" if card.id
       url << context_cgi
     end
@@ -32,11 +67,71 @@ module WagnHelper
       context=='main' ? '' : "?context=#{context}"
     end
 
-    def method_missing(method_id, *args)
-      @template.send("slot_#{method_id}", self, *args)
+    def method_missing(method_id, *args, &proc)
+      @template.send("slot_#{method_id}", self, *args, &proc)
+    end 
+    
+    def render( card, mode=:view, args={} )
+      oldmode, @transclusion_mode = @transclusion_mode, mode
+      result = @renderer.render( card, args.delete(:content) || "", update_refs=false)
+      @transclusion_mode = oldmode
+      result
     end
+
+    def subslot(card)
+      # Note that at this point the subslot context, and thus id, are
+      # somewhat meaningless-- the subslot is only really used for tracking position.
+      new_slot = Slot.new(card, id, @action, @template, @renderer)
+      @subslots << new_slot 
+                                     
+      # NOTE this code is largely copied out of rails fields_for
+      options = {} # do I need any? #args.last.is_a?(Hash) ? args.pop : {}
+      object_name = "cards[#{card.id}]"
+      object  = card 
+      block = Proc.new {}
+      
+      builder = options[:builder] || ActionView::Base.default_form_builder
+      fields_for = builder.new(object_name, object, @template, options, block)       
+      new_slot.form = fields_for
+      new_slot.position = @subslots.size
+      new_slot
+    end
+    
+    def render_transclusion( card, *args )    
+      subslot(card).send("render_transclusion_#{@transclusion_mode}", *args)
+    end   
+    
+    def render_transclusion_view( options={} )
+      if card.new_record? 
+        %{<span class="faint createOnClick" position="#{position}" cardid="" cardname="#{card.name}">}+
+          %{Click to create #{card.name}</span>}
+      else
+        # FIXME: there is lots of handling of options missing here.
+        # FIXME: this render could theoretically pull from the cache.
+        content = @renderer.render( card )
+        # Because the returned content is wikiContent, we use wrap!
+        # to add while keeping the original object
+        # WOW this pre_rendered thing is a hack... 
+        content.pre_rendered.wrap! %{<span class="editOnDoubleClick" position="#{position}" cardid="#{card.id}">}, "</span>"
+        content.pre_rendered.wrap!(%{<span class="transcluded">}, '</span>' ) if options[:shade]=='on'
+        content
+      end
+    end
+    
+    def render_transclusion_edit( options={} )
+      %{<div class="card-slot">} +
+        %{<span class="title">#{@template.less_fancy_title(card)}</span> } + 
+        content_field( form ) +
+        "</div>"
+    end
+        
+    def render_diff(card, *args)
+      @renderer.render_diff(card, *args)
+    end
+    
   end
 
+  
   # For cases where you just need to grab a quick id or so..
   def slot
     Slot.new(@card,@context,@action)
@@ -63,6 +158,7 @@ module WagnHelper
       yield slot
     end
   end 
+  
 
   def slot_notice(slot)
     %{<span id="#{slot.id(:notice)}" class="notice">#{controller.notice}</span>}
@@ -88,6 +184,22 @@ module WagnHelper
   def slot_footer(slot)
     render :partial=>"card/footer", :locals=>{ :card=>slot.card, :slot=>slot }
   end
+  
+  def slot_option(slot, args={}, &proc)
+    args[:label] ||= args[:name]
+    args[:editable]= true unless args.has_key?(:editable)
+    slot.options_need_save = true if args[:editable]
+    concat %{<tr>
+      <td class="inline label"><label for="#{args[:name]}">#{args[:label]}</label></td>
+      <td class="inline field">
+    }, proc.binding
+    yield
+    concat %{
+      </td>
+      <td class="help">#{args[:help]}</td>
+      </tr>
+    }, proc.binding
+  end
 
   def slot_link_to_action(slot, text, to_action, remote_opts={}, html_opts={})
     link_to_remote text, remote_opts.merge(
@@ -110,9 +222,10 @@ module WagnHelper
   end
        
   def slot_render_partial(slot, partial, args={})
-    # FIXME: this should look up the inheritance hierarchy, once we have one
-    render :partial=> partial_for_action(partial, slot.card), 
-      :locals => args.merge({ :card=>slot.card, :slot=>slot })
+    # FIXME: this should look up the inheritance hierarchy, once we have one      
+    args[:card] ||= slot.card
+    args[:slot] =slot
+    render :partial=> partial_for_action(partial, args[:card]), :locals => args
   end
   
   def slot_name_field(slot,form,options={})
@@ -121,8 +234,9 @@ module WagnHelper
   end
   
   def slot_cardtype_field(slot,form,options={})
+    card = options[:card] ? options[:card] : slot.card
     text = %{<span class="label"> card type:</span>\n} 
-    text << select_tag('card[type]', cardtype_options_for_select(slot.card.type), options.merge(:class=>'field')) 
+    text << select_tag('card[type]', cardtype_options_for_select(card.type), options.merge(:class=>'field')) 
   end
   
   def slot_update_cardtype_function(slot,options={})
@@ -137,13 +251,12 @@ module WagnHelper
   end
   
   def slot_content_field(slot,form,options={})   
-    slot.editor_count += 1
     slot.form = form
-    slot.render_partial 'editor'
+    slot.render_partial 'editor', options
   end                          
          
   def slot_save_function(slot)
-    "if (Wagn.runQueue(Wagn.onSaveQueue['#{slot.id}'])) { this.form.onsubmit() }"
+    "warn('runnint #{slot.id} queue'); if (Wagn.runQueue(Wagn.onSaveQueue['#{slot.id}'])) { this.form.onsubmit() }"
   end
   
   def slot_cancel_function(slot)
@@ -161,11 +274,13 @@ module WagnHelper
       code << hooks[:setup]
       code << "});\n" unless request.xhr?
     end
-    if hooks[:save]
+    if hooks[:save]  
+      code << "warn('adding to #{slot.id} save queue');"
       code << "if (typeof(Wagn.onSaveQueue['#{slot.id}'])=='undefined') {\n"
       code << "  Wagn.onSaveQueue['#{slot.id}']=$A([]);\n"
       code << "}\n"
       code << "Wagn.onSaveQueue['#{slot.id}'].push(function(){\n"
+      code << "warn('running #{slot.id} save hook');"
       code << hooks[:save]
       code << "});\n"
     end

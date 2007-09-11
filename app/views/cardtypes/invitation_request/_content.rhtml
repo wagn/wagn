@@ -1,7 +1,7 @@
 <div class="invite-request"><%= card.name %> asked on <%= format_date(card.created_at) %></div>
 <br/>
 
-<%= renderer.render(card) %>
+<%= slot.render(card) %>
 <br/>
                           
 <div class="invite-links">

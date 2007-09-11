@@ -12,11 +12,9 @@
     </span>
   <% end %>
 
- 	<%# This extra slot is dumb! fix the double slots around transclusion and we can fix this too %>
-	<span cardId="<%= card.id %>">
 	<span class="content cooked editOnDoubleClick" cardId="<%= card.id %>" inPopup="false">
 		<% conditional_cache(card, "card/line/#{card.id}") do %>
 			<%= truncatewords_with_closing_tags( rendered_content(card)) %>
 		<% end %>
-	</span></span>
+	</span>
 <% end %>

@@ -166,6 +166,16 @@ class ApplicationController < ActionController::Base
     @sidebar_cards
   end  
   
+  def handle_cardtype_update(card)
+    if updating_type?
+      card.type=params[:card][:type]  
+      card.save!
+      card = Card.find(card.id)
+      card.content = params[:card][:content]
+    end
+    card
+  end
+  
   def updating_type?
     request.post? and params[:card] and params[:card][:type]
   end
@@ -244,9 +254,10 @@ class ApplicationController < ActionController::Base
     end    
   end   
   
-  def render_errors
+  def render_errors(card=nil)
+    card ||= @card
     render :update do |page|
-      page.replace_html slot.id(:notice), "#{@card.errors.full_messages.join(',')}"
+      page.replace_html slot.id(:notice), "#{card.errors.full_messages.join(',')}"
     end
   end
 end

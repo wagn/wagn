@@ -1,5 +1,11 @@
 <% slot_for(card, context, 'edit') do |slot| %>  
 	<%= slot.menu %>
+	
+	<% if tmpl = card.hard_content_template %>
+	This card is controlled by a template: 
+		<%= link_to tmpl.name, "/template/edit/#{tmpl.trunk.id}" %>
+	<% end %>
+	
   <table>
 			<td>
 			  <span id="<%= slot.id :name %>" class="name-area">
@@ -21,7 +27,15 @@
 	<div class="editor edit-area" cardid="#{card.id}">
 	  <% form_remote_for :card, card, :url=>slot.url_for("card/update"), 
 				 :html=>{ :id=>slot.id(:form), :class=>'editor' } do |form| %>
-			<%= slot.content_field(form) %>
+				                             
+			<% if card.hard_content_template %>
+			  <% slot.form = form %>
+			  <%= slot.render( card, mode='edit' ) %>
+			<% else %>
+				<%= slot.content_field(form) %>
+			<% end %>
+			
+			
 			<%= button_to_function "Save", slot.save_function %>
 			<%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function } %> 
 		<% end %>
@@ -30,7 +44,6 @@
 	<div id="<%= slot.id(:remove) %>" class="edit-area remove-buttons">
 		<%= button_to_remote "Remove #{@card.name}", :url=>slot.url_for("card/remove")	%>
 	</div>
-	
 	
 	<%= slot.notice %>
 

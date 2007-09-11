@@ -5,8 +5,20 @@ class TransclusionTest < Test::Unit::TestCase
   common_fixtures
   def setup
     setup_default_user
+  end  
+
+  def test_missing_transclude
+    @a = Card.create :name=>'boo', :content=>"hey {{+there}}"
+    assert_equal "hey <span class='faint'>{{+there}}</span>\n", render(@a)
   end
- 
+private
+  
+  def test_absolute_transclude
+    alpha = newcard 'Alpha', "Pooey"
+    beta = newcard 'Beta', "{{Alpha}}"
+    assert_equal span(alpha, "Pooey"), render(beta)
+  end                                                                  
+
   def test_template_transclusion
      age, template = newcard('age'), Card['*template']
      specialtype = Card::Cardtype.create :name=>'SpecialType'
@@ -20,7 +32,6 @@ class TransclusionTest < Test::Unit::TestCase
      assert_equal ['Wooga'], wooga_age.transcluders.plot(:name)
    end
 
- 
  
   def test_circular_transclusion_should_be_invalid
      oak = Card.create! :name=>'Oak', :content=>'{{Quentin}}'
@@ -37,12 +48,6 @@ class TransclusionTest < Test::Unit::TestCase
     alpha_beta = alpha.connect beta, "Woot" 
     assert_equal span(alpha_beta, "Woot"), render(alpha)
   end           
-
-  def test_absolute_transclude
-    alpha = newcard 'Alpha', "Pooey"
-    beta = newcard 'Beta', "{{Alpha}}"
-    assert_equal span(alpha, "Pooey"), render(beta)
-  end                                                                  
 
   
   def test_shade_option
@@ -88,7 +93,7 @@ class TransclusionTest < Test::Unit::TestCase
   
   def span(card, text)
     %{<span class="transcluded editOnDoubleClick" cardId="#{card.id}" inPopup="true">} +
-      %{<span class="transcludedContent" cardId="#{card.id}">#{text}</span></span>}
+      %{<span class="content transcludedContent" cardId="#{card.id}">#{text}</span></span>}
   end
 
 end

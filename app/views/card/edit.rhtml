@@ -1,10 +1,6 @@
 <% slot_for(card, context, 'edit') do |slot| %>  
 	<%#= slot.menu %>
 	
-	<% if tmpl = card.hard_content_template %>
-	This card is controlled by a template: 
-		<%= link_to tmpl.name, "/template/edit/#{tmpl.trunk.id}" %>
-	<% end %>
 	
   <table>
 			<td>
@@ -23,6 +19,12 @@
 			</td>
 		</tr>
 	</table>
+
+	<% if tmpl = card.hard_content_template %>
+	This card is controlled by a template: 
+		<%= link_to tmpl.name, "/template/edit/#{tmpl.trunk.id}" %>
+	<% end %>
+
 	
 	<div class="editor edit-area" cardid="#{card.id}">
 	  <% form_remote_for :card, card, :url=>slot.url_for("card/update"), 

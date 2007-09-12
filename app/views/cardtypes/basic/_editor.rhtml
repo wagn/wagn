@@ -1,27 +1,33 @@
 <div class="richtext">
-<% eid = slot.editor_id %>
-<div id="<%= eid %>-raw-content"><%= card.content %></div>
+<% eid, raw_id = slot.editor_id, slot.editor_id+'-raw-content' %>
+<div id="<%= raw_id %>"><%= card.content %></div>
 <%= slot.form.hidden_field :content, :id=>"#{eid}-hidden-content" %>
 <iframe id="<%= eid %>-iframe" height="0" width="0" frameborder="0"></iframe>
 <%= slot.editor_hooks :setup=> %{
 		warn("setting up #{eid}");
-		e=$('#{eid}-raw-content'); 
+		e=$('#{raw_id}'); 
 		e.innerHTML = Wagn.LinkEditor.raw_to_editable(e.innerHTML);
 		
 		w = new Wagn.Wikiwyg();
-		w.setup('#{eid}');
+		w.setup('#{eid}', #{card.id ? "'"+card.id.to_s+"'" : 'false'}, '#{card.name}');
 		w.editMode();  
+		w.start_timer();
 		
 		// save the wikiwyg for access during cancel and save:
 		if (typeof(Wagn.wikiwygs)=='undefined') { Wagn.wikiwygs=$H({}) }
-		Wagn.wikiwygs['#{eid}'] = w;
+		Wagn.wikiwygs['#{eid}'] = w;       
+		
+		// FIXME: this sets the content in raw_id so that we don't do unecessary draft saves..
+		// it's ugly..
+		Wagn.LinkEditor.editable_to_raw(w.getContent(), $('#{raw_id}'));                       
 	},
 	:save=> %{
-		warn("saving #{eid}: content = " + Wagn.wikiwygs['#{eid}'].getContent());
-		e=$('#{eid}-hidden-content');
-		e.value = Wagn.wikiwygs['#{eid}'].getContent();
-		e.value = Wagn.LinkEditor.editable_to_raw( e.value, $('#{eid}-raw-content') );
+		w = Wagn.wikiwygs['#{eid}'];
+		w.stop_timer();
+		content = w.getContent();
+		warn("saving #{eid}: content = " + content);
 		
+		$('#{eid}-hidden-content').value = Wagn.LinkEditor.editable_to_raw(content, $('#{raw_id}'));
 		return true;
 	},
 	:cancel=>%{

@@ -17,16 +17,16 @@
     				<div id="error"><%= flash[:error] %></div>  
     			</div>
 			
-    			<div id="main">
+
+    			<div id="main" context="main">
     				<%= yield %>
     			</div>
     		</td>
-
     		<td id="page-right" class="top-bar">
     		  
     		  <%= render :partial=>'layouts/logo' %>
 
-    			<div id="sidebar">
+    			<div id="sidebar" context="sidebar">
     				<%= sidebar %>
     				<%= render :partial=>'admin/navigation' %><%# FIXME: move this into a card somehow? %>			  
     			</div>

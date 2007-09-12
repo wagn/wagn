@@ -4,22 +4,22 @@ proto = new Subclass('Wagn.Wikiwyg', 'Wikiwyg');
 
 
 Object.extend(Wagn.Wikiwyg.prototype, {
-  setup: function(slot_id) {
+  setup: function(slot_id, card_id, card_name) {
     var conf = this.initial_config(); 
     /* if (!slot.chunk('nosave')) {
       conf.controlLayout = $A(['save', 'cancel', conf.controlLayout]).flatten();
     }
     */
-
+    this._slot_id = slot_id; 
+    this._card_name = card_name;
+    this._raw_id = this._slot_id+'-raw-content';
+    this._card_id = card_id;
     if (!conf.wysiwyg) { conf.wysiwyg = {} }
     conf.wysiwyg.iframeId = slot_id + '-iframe'; // need this?
     this.iframeID = slot_id + '-iframe';
-    this.createWikiwygArea( $(slot_id+"-raw-content"), conf );
+    this.createWikiwygArea( $(this._raw_id), conf );
     Wagn.Wikiwyg.wikiwyg_divs.push( this );
-
-    //slot.chunk('cooked').ondblclick = function() { 
-    //   slot.card().edit();
-    //};
+    this._autosave_interval = 20 * 1000; // 20 seconds
     return this;
   },
   getContent: function() {
@@ -30,31 +30,37 @@ Object.extend(Wagn.Wikiwyg.prototype, {
     });
     return this.div.innerHTML;
   },
-  
-  
-  
-/*  card: function() {
-    return this._card; //this.div.parentNode.parentNode.parentNode.card(); // hmm... 
-  },
-  saveChanges: function() {
-    this.card().save();
-  },
-  innerSave: function() {
+  start_timer :function() {
+    this._interval = 0;
+    this._timer_running = true;
     var self = this;
-    this.clean_spans();
-    this.current_mode.toHtml( function(html) {
-      self.fromHtml(html) 
-    });
-    if (arguments[0] == 'draft') {
-      return this.div.innerHTML;
-    } else {
-      this.card().content( this.div.innerHTML );
+    setTimeout("Wagn.wikiwygs['"+this._slot_id+"'].run_timer();", this._autosave_interval);
+  },
+  stop_timer: function() {
+    this._timer_running = false;
+  },
+  run_timer: function() {
+    if (this._timer_running) {
+      this.on_interval();
+      setTimeout("Wagn.wikiwygs['"+this._slot_id+"'].run_timer();", this._autosave_interval);
     }
   },
-  cancelEdit: function () {
-    this.card().cancel()
+  on_interval: function() {
+    if (!this._timer_running) { return }
+    this._interval += 1;    
+    original_content = $(this._raw_id).innerHTML;
+    new_content = Wagn.LinkEditor.editable_to_raw(this.getContent(), $(this._raw_id));
+    if (this._card_id && new_content != original_content) {
+      Wagn.Messenger.log( "saving draft of " + this._card_name + "..." );
+      new Ajax.Request('/card/save_draft/' + this._card_id, {
+          method: 'post',
+          parameters: 'card[content]=' + encodeURIComponent(new_content)
+      });
+    }
   },
-*/  
+  get_draft: function() {
+    return this.wikiwyg.innerSave('draft');
+  },
   clean_spans: function () {
     // transform <span style="bold"> to <strong>, style:italice to <em>
     dom = this.current_mode.get_edit_document();
@@ -79,33 +85,7 @@ Object.extend(Wagn.Wikiwyg.prototype, {
     //info("AFTER" + dom.body.innerHTML);
   },
   
-/*  do_link: function() { 
-      alert("creating link");
-      var selection = this.get_link_selection_text();
-      if (! selection) return;
-      var url;
-      var match = selection.match(/(.*?)\b((?:http|https|ftp|irc|file):\/\/\S+)(.*)/);
-      if (match) {
-          if (match[1] || match[3]) return null;
-          url = match[2];
-      }
-      else {
-          url = escape(selection); 
-      }
-      this.exec_command('createlink', url);
-  },
-  displayMode: function() {
-      for (var i = 0; i < this.config.modeClasses.length; i++) {
-          var mode_class = this.config.modeClasses[i];
-          var mode_object = this.modeByName(mode_class);
-          mode_object.disableThis();
-      }
-      this.toolbarObject.disableThis();
-      this.div.style.display = '';
-      this.divHeight = this.div.offsetHeight;
-  },
-  
-*/  
+
   initial_config: function() {
     var conf = {
       imagesLocation: '../../images/wikiwyg/',

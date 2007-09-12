@@ -10,7 +10,7 @@
 
 <h1 id="related-title">Related Cards</h1>
 
-<div id="related">
+<div id="related" context="related">
   <div id="related-header">
 
 		<%= select_tag "query-select", query_options(@card), { :onchange=>'Wagn.lister().query(Form.Element.getValue(this)).update()'} %>

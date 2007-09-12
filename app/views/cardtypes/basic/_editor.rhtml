@@ -5,6 +5,8 @@
 <iframe id="<%= eid %>-iframe" height="0" width="0" frameborder="0"></iframe>
 <%= slot.editor_hooks :setup=> %{
 		warn("setting up #{eid}");
+		e=$('#{eid}-raw-content'); 
+		e.innerHTML = Wagn.LinkEditor.raw_to_editable(e.innerHTML);
 		
 		w = new Wagn.Wikiwyg();
 		w.setup('#{eid}');
@@ -16,7 +18,10 @@
 	},
 	:save=> %{
 		warn("saving #{eid}: content = " + Wagn.wikiwygs['#{eid}'].getContent());
-		$('#{eid}-hidden-content').value = Wagn.wikiwygs['#{eid}'].getContent();
+		e=$('#{eid}-hidden-content');
+		e.value = Wagn.wikiwygs['#{eid}'].getContent();
+		e.value = Wagn.LinkEditor.editable_to_raw( e.value, $('#{eid}-raw-content') );
+		
 		return true;
 	},
 	:cancel=>%{

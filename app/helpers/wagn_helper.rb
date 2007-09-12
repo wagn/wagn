@@ -310,7 +310,7 @@
     wordstring.scan(/\<([^\>\s\/]+)[^\>\/]*?\>/).each { |t| h1[t[0]] ? h1[t[0]] += 1 : h1[t[0]] = 1 }
     wordstring.scan(/\<\/([^\>\s\/]+)[^\>]*?\>/).each { |t| h2[t[0]] ? h2[t[0]] += 1 : h2[t[0]] = 1 }
     h1.each {|k,v| wordstring += "</#{k}>" * (h1[k] - h2[k].to_i) if h2[k].to_i < v }
-    wordstring = wordstring + "..."
+    wordstring = wordstring.empty? ? '' : wordstring + '<span style="color:grey"> ...</span'
   end
 
   # You'd think we'd want to use this one but it sure doesn't seem to work as

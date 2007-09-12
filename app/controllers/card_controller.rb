@@ -20,6 +20,10 @@ class CardController < ApplicationController
     @author = params[:card][:comment_author] || User.current_user.card.name
     @card.comment = "<hr>#{@comment}<br>--#{@author}.....#{Time.now}<br>"
     @card.save!
+    view=render_to_string( :action=>'view')
+    render :update do |page|
+      page.replace_html slot.id, view
+    end
   end 
     
   def create         

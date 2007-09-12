@@ -47,12 +47,13 @@ module WagnTestHelper
       else raise "Don't know email & password for #{user}"
     end
     unless user==:anon
-      post 'account/login', :login=>login, :password=>pass
+      # FIXME- does this controller option really work?
+      post 'login', :controller=>'account', :login=>login, :password=>pass
       assert_response :redirect
     end
     if block_given?
       yield
-      post "/account/logout"
+      post "logout",:controller=>'account'
     end
   end
   

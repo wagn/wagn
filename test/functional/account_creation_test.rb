@@ -17,7 +17,17 @@ class AccountCreationTest < Test::Unit::TestCase
     @controller = AccountController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
+    login_as :joe_user
   end
+  
+  def test_should_create_account_from_existing_user  
+      assert_difference ::User, :count do
+        assert_no_difference Card::User, :count do
+          post_invite :card=>{ :name=>"No Count" }, :user=>{ :email=>"no@count.com" }
+        end
+      end
+    end
+
 
   def test_should_create_account_from_invitation_request               
     assert_difference Card::InvitationRequest, :count, -1 do
@@ -38,6 +48,7 @@ class AccountCreationTest < Test::Unit::TestCase
     assert_difference ActionMailer::Base.deliveries, :size do 
       assert_new_account do 
         post_invite
+        assert_response 200
       end
     end
     email = ActionMailer::Base.deliveries[-1]      
@@ -47,15 +58,7 @@ class AccountCreationTest < Test::Unit::TestCase
     assert_equal 'active', User.find_by_email('new@user.com').status
   end
   
-  def test_should_create_account_from_existing_user  
-    assert_difference ::User, :count do
-      assert_no_difference Card::User, :count do
-        post_invite :card=>{ :name=>"No Count" }, :user=>{ :email=>"no@count.com" }
-      end
-    end
-  end
-  
-  
+ 
   # should work -- we generate a password if it's nil
   def test_should_generate_password_if_not_given
     assert_new_account do
@@ -84,6 +87,7 @@ class AccountCreationTest < Test::Unit::TestCase
   
   def test_create_permission_denied_if_not_logged_in
     logout
+     post "logout"
     # FIXME weird-- i think this should raise an error-- but at least is doesn't
     # seem to be actually creating the account.  hrmph.
     # assert_raises(Wagn::PermissionDenied) do
@@ -99,5 +103,4 @@ class AccountCreationTest < Test::Unit::TestCase
       post_invite :user=>{ :email=>'joe@user.com' }
     end
   end
-
 end

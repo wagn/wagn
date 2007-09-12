@@ -22,17 +22,18 @@ JAVASCRIPT_FILES = %w{
   Wikiwyg/HTML.js
   Wikiwyg/Debug.js
   Wagn/Wikiwyg.js
-  Wagn/LinkEditor.js
   Wagn/Lister.js
 
   calendar.js
+
+  Wagn/LinkEditor.js
+  builder.js
+  window.js
 
 }
 
 
 CRAZY_FILES = %{
-  window.js
-  builder.js
   
   
   Wagn/Card.js

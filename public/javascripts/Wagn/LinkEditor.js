@@ -41,8 +41,7 @@ Object.extend(String.prototype, {
 
 Wagn.LinkEditor = Class.create();
 Object.extend(Wagn.LinkEditor, {   
-  before_edit: function( editor ){
-    card = editor.card;
+  raw_to_editable: function( content ){
     generate_anchor = function(match) {
       reads_as = match[1];
       links_to = (match[2] ? match[2] : reads_as).linkify();
@@ -52,21 +51,28 @@ Object.extend(Wagn.LinkEditor, {
         bound: bound, reads_as: reads_as, links_to: links_to 
       });
     };
-    card.raw( card.raw().gsub(/\[\[([^\]]+)\]\]/, generate_anchor));    
-    card.raw( card.raw().gsub(/\[([^\]]+)\]\[([^\]]+)\]/,generate_anchor));
+    content = content.gsub(/\[\[([^\]]+)\]\]/, generate_anchor);    
+    content = content.gsub(/\[([^\]]+)\]\[([^\]]+)\]/,generate_anchor);
+    return content;
   },    
-  before_save: function( editor ){
-    $A(editor.card.slot.chunk('raw').getElementsByTagName('a')).each(function(e) {   
+  editable_to_raw: function( content, dom_node ){
+    dom_node.innerHTML = content;
+    $A(dom_node.getElementsByTagName('a')).each(function(e) {   
       if (e.attributes['href']) {
-        Wagn.Link.new_from_link(e).update_bound();  
+        link = Wagn.Link.new_from_link(e);
+        link.update_bound();  
         if (e.innerHTML=='') {
           Element.replace(e, '') ;
         } else {
-          Element.replace(e, '[' + e.innerHTML + '][' + e.attributes['href'].value + ']');
+          if (link.is_bound()) {
+            Element.replace(e, '[[' + e.innerHTML + ']]');            
+          } else {
+            Element.replace(e, '[' + e.innerHTML + '][' + e.attributes['href'].value + ']');            
+          }
         }
       }
-    });
-    return false; 
+    });    
+    return dom_node.innerHTML; 
   }
 });
 

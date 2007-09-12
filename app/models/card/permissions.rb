@@ -160,7 +160,6 @@ module Card
 
     def approve_type
       unless new_record?       
-        approve_edit 
         approve_delete
       end
       new_self = clone_to_type( type ) # note: would rather do this through ok? api...

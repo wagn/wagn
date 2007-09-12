@@ -24,12 +24,6 @@ module Card
     def block_user
       extension.update_attributes :status=>'blocked'
     end
-
-    def approve_create
-      # any user should be able to create
-    end       
- 
-
     
   end
 end

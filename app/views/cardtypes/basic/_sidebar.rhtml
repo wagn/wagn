@@ -1,6 +1,7 @@
 <% sidebar_cards.each do |card| %>
-	<% if ( card.template.attribute_card('*open') or 
-     (!card.simple? and card.tag.plus_sidebar and card.tag.attribute_card('*open'))) %>
+	<% if !card.attribute_card('*closed') %>
+
+<%# or     (!card.simple? and card.tag.plus_sidebar and card.tag.attribute_card('*open'))) %>
 		<%= render :partial=>"card/view", :locals=>{:card=>card,:context=>'sidebar', :action=>'view'} %>
 	<% else %>
 		<%= render :partial=>'card/line', :locals=>{:card=>card,:context=>'sidebar',:action=>'line' } %>

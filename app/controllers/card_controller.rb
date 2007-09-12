@@ -2,7 +2,7 @@ class CardController < ApplicationController
   helper :wagn, :card 
   layout :ajax_or_not
   cache_sweeper :card_sweeper
-  before_filter :load_card!, :except => [ :new, :create, :show, :index  ]
+  before_filter :load_card!, :except => [ :new, :create, :show, :index, :mine  ]
 
   before_filter :edit_ok,   :only=>[ :edit, :update, :save_draft, :rollback, :save_draft] 
   before_filter :create_ok, :only=>[ :new, :create ]
@@ -46,8 +46,12 @@ class CardController < ApplicationController
   def index
     redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_name)
   end
+  
+  def mine
+    redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(User.current_user.card.name)
+  end
 
-  def new  
+  def new
     @card = Card.new params[:card]
     @card.send(:set_defaults)
     
@@ -121,7 +125,7 @@ class CardController < ApplicationController
             :locals=>{ :card=> @card, :context=>"main",:action=>"view"}
         }
       end
-    elsif User.current_user
+    elsif User.current_user #isn't this always true?
       redirect_to :controller=>'card', :action=>'new', :params=>{ 'card[name]'=>@card_name }
     else
       # FIXME this logic is not right.  We should first check whether 

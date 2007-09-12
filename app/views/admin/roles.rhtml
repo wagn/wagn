@@ -4,7 +4,7 @@
 
 <span id='create-button'>
   <% if Card::Role.ok? :create %>
-    <%= link_to 'Create New Role', { :controller=>'card', :action=>'new', 'option[cardtype]'=>'Role'} %> 
+    <%= link_to 'Create New Role', { :controller=>'card', :action=>'new', 'card[type]'=>'Role'} %> 
   <% end %>
 </span>
 

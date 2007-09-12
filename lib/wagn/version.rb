@@ -2,7 +2,7 @@ unless defined? Wagn::Version
   module Wagn
     module Version
       Major = '0'
-      Minor = '7'
+      Minor = '8'
       Tiny  = '0'
     
       class << self

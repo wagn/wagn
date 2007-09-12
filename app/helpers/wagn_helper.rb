@@ -537,19 +537,17 @@
         raise "no linktype specified"
     end
   end
+  
+  def createable_cardtypes
+    session[:createable_cardtypes]
+  end
     
 
   ## ----- for Linkers ------------------  
   def cardtype_options
-    Cardtype.find(:all, :order=>'class_name').map do |cardtype|
-      case cardtype.class_name
-        when 'Connection'; next
-        when 'User';       next #unless System.ok? :invite_users
-#        when 'Role';       next unless System.ok? :manage_permissions
-#        when 'Cardtype';   next unless System.ok? :edit_cardtypes
-        else  #warn "Adding #{cardtype.class_name}"
-      end                           
-      [cardtype.class_name, Card.cardtypes[cardtype.class_name]]    
+    createable_cardtypes.map do |cardtype|
+      next if cardtype[:codename] == 'User' #or cardtype[:codename] == 'InvitationRequest'
+      [cardtype[:codename], cardtype[:name]]
     end.compact
   end
 

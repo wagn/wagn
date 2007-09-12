@@ -268,6 +268,9 @@ body.wagn .line h2,
 .card-slot .card-menu {
    float:right;
    white-space: nowrap;
+   background: #fff;
+   position: relative;
+   z-index: 1;
 }
 .card-slot .card-menu a { 
   padding: 3px;
@@ -436,10 +439,11 @@ a.current, a:link.current {
 .edit-area p {
   padding: 2px;
 }
+/*
 .name-area, .cardtype-area {
   white-space: nowrap;
 }
-
+*/
 /* FIXME: this is crappy methinks */
 .cardtype-editor, .name-editor {
   width: 95%;
@@ -474,10 +478,12 @@ a.current, a:link.current {
 .edit-area td {
   vertical-align: middle;
 }
-.inline .field, .inline .label {
-  display: inline;
+.card-slot .inline.field span {
+  display: block;
+  padding-right: 5px;
   vertical-align: middle;
-}  
+  text-align: right;
+}
 .card-slot .notice {
   background: #fff;
   font-weight: bold;

@@ -6,33 +6,38 @@
   <body class="wagn">
 	  <%# FIXME: the body has a css identifier because the wikiwyg editor has a different "body", currently sans identifier.  Kind of a hack, but it means that we can set defaults for wagn pages that are different from defaults for html within a card.  One shallow issue is that 'wagn' should be an id, not a class, but that will break lots of local.css files, so we should be deliberate about changing this. %>	
 	  
-		<%= render :partial=>'layouts/top_menu' %>
 		
-		<div id="page-left">
+		<table id="main-table">
+	    	<td id="page-left">
+  		    <%= render :partial=>'layouts/top_menu' %>
 	
-	<%# FIXME: should always be visible to user when/where error occurs.  It will also help us move towards a better generic templating system if we get this out of this central position.  (I don't think it should just be a snippet -- users shouldn't be able to exclude the alerts...) %>		
-			<div id="alerts">
-				<div id="notice"><%= flash[:notice] %></div>
-				<div id="error"><%= flash[:error] %></div>  
-			</div>
+    	<%# FIXME: should always be visible to user when/where error occurs.  It will also help us move towards a better generic templating system if we get this out of this central position.  (I don't think it should just be a snippet -- users shouldn't be able to exclude the alerts...) %>		
+    			<div id="alerts">
+    				<div id="notice"><%= flash[:notice] %></div>
+    				<div id="error"><%= flash[:error] %></div>  
+    			</div>
 			
-			<div id="main">
-				<%= yield %>
-			</div>
-		</div>
+    			<div id="main">
+    				<%= yield %>
+    			</div>
+    		</td>
 
-		<div id="page-right">
-			<div id="sidebar">
-				<%= sidebar %>
-				<%= render :partial=>'admin/navigation' %><%# FIXME: move this into a card somehow? %>			  
-			</div>
-		</div>
-    
+    		<td id="page-right" class="top-bar">
+    		  
+    		  <%= render :partial=>'layouts/logo' %>
+
+    			<div id="sidebar">
+    				<%= sidebar %>
+    				<%= render :partial=>'admin/navigation' %><%# FIXME: move this into a card somehow? %>			  
+    			</div>
+    		</td>
+      </tr>
+  </table>  
   <%# FIXME: this doesn't drop when the sidebar cards are opened, because page-right %>
     <div id="bottom-menu">
       <%= render :partial=>'layouts/bottom_menu' %>
     </div>
-    
+  
     
   </body>
 </html>

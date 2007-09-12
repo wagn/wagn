@@ -123,7 +123,8 @@ module Card
     end
 
     def approve_create
-      unless cardtype.lets_user :create
+      testee = class_name == 'Cardtype' ? self : cardtype
+      unless testee.lets_user :create
         deny_because "Sorry, you don't have permission to create #{cardtype.name} cards"
       end
     end
@@ -147,7 +148,8 @@ module Card
     
     def approve_task(operation, verb=nil) #read, edit, comment, delete
       verb ||= operation.to_s
-      unless self.lets_user operation
+      testee = template? ? trunk : self
+      unless testee.lets_user operation
         deny_because "Sorry, you don't have permission to #{verb} this card"
       end
     end

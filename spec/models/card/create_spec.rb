@@ -10,12 +10,12 @@ describe Cardtype, "create with codename" do
   end
 end
 
-=begin
+
 
 describe Card, "sets permissions correctly by default" do
   before do
     User.as :joe_user
-    @defaults = [:read,:edit,:comment,:delete].map{|t| Permission.new(:task=>t.to_s, :party=>::Role.find_by_codename('auth'))}
+    #@defaults = [:read,:edit,:comment,:delete].map{|t| Permission.new(:task=>t.to_s, :party=>::Role.find_by_codename('auth'))}
     @c = Card.create! :name=>"temp card"
   end
   
@@ -112,6 +112,74 @@ describe Card, "anonymous create permissions" do
   end
 end
         
-=end
+        
+describe Card, "Cardtype template" do
+  before do
+    User.as :admin
+    @ctt = Card.create! :name=> 'Cardtype E+*template'
+    @r1 = Role.find_by_codename 'r1'
+    @ctt.permit(:create, @r1)
+    #warn "permissions #{@ctt.permissions.plot :task}"
+    @ctt.save!
+    @ct = Card.find_by_name 'Cardtype E'
+  end
+  it "should update the template's create permission when a create permission is submitted" do
+    @ctt.who_can(:create).should== @r1
+  end
+  it "should update the cardtype's create permission when a create permission is submitted" do
+    @ct.who_can(:create).should== @r1
+  end
+  it "should not overwrite the cardtype's other permissions" do
+    @ct.permissions.length.should == 5
+  end
+end
+
+
+describe Card, "Basic Card template" do
+  before do
+    User.as :admin
+    Card.create! :name=> 'Cardtype E+*template'
+    @bt = Card.find_by_name 'Basic+*template'
+    @r1 = Role.find_by_codename 'r1'
+    @bt.permit(:create, @r1)
+    @bt.save!
+    @b = Card.find_by_name 'Basic'
+    @ctd = Card.find_by_name 'Cardtype D'
+    @cte = Card.find_by_name 'Cardtype E'
+  end
+  
+  it "should update the basic template's create permission when a create permission is submitted" do
+    @bt.who_can(:create).should== @r1
+  end
+  it "should update the basic cardtype's create permission when a create permission is submitted" do
+    @b.who_can(:create).should== @r1
+  end
+  it "should update other cardtypes' permissions" do
+    @ctd.who_can(:create).should== @r1
+  end
+  it "should not update other cardtypes' permissions if they have a template set" do
+    @cte.who_can(:create).should_not== @r1
+  end
+end
+
+describe Card, "New Basic Card" do
+  before do
+    User.as :admin
+    @bt= Card['Basic+*template']
+    @r1 = Role.find_by_codename 'r1'
+    @bt.permit(:edit, @r1)
+    @bt.save!
+    User.as :joe_user
+    @bc = Card.create! :name=> 'Plain Jane'
+  end
+  
+  it "should not r1 edit permissions because its template is set to that" do
+    @bc.who_can(:edit).should==@r1
+  end
+  it "should not have create permissions assigned directly to the card itself" do
+    @bc.who_can(:create).should== nil
+  end
+end
+
 
                        

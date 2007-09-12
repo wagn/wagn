@@ -1,5 +1,5 @@
 <div class="exception">
 	<h2>Do What?</h2>
-	<p><%= @exception.message %></p>
-	<em>404 Not Found</em>
+	<p><%= @exception ? @exception.message : "Well I'm one confused Wagn -- that web address doesn't mean anything to me?!" %></p>
+	<p><em>404 Not Found</em></p>
 </div>

@@ -34,7 +34,7 @@ class BlockController < ApplicationController
   end
 
   def connection_list
-    query = params[:query] ? params[:query.to_sym] : nil
+    query = params[:query] ? params[:query].to_sym : nil
     @button_permission = case #might later have this return the actual button
       when ([:plus_cards, :plussed_cards].member? query)
         Card::Basic.ok? :create

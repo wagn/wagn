@@ -14,7 +14,7 @@
 %>
 
 <%= stylesheet_inline 'defaults' %>
-<%= stylesheet_inline 'page_and_block' %>
+<%# stylesheet_inline 'page_and_block' %>
 <% if File.exists?("#{RAILS_ROOT}/public/stylesheets/local.css") %>
   <%= stylesheet_inline 'local' %>
 <% end %>

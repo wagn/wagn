@@ -1,9 +1,10 @@
 <div class="exception">
 	<h2>Denied!</h2>
-  <p><%= @exception.message %></p>
+  <p><%= @exception.message %>.</p>
 	<% if User.current_user.login=='anon' %>
-		<p>Maybe you need to <%= link_to 'Sign In', '/account/login' %>?</p>
+		<p>Maybe you need to <%= link_to 'sign in', '/account/login' %>?</p>
+		<p>...or to <%= link_to 'request an invitation', '/account/invitation_request'%>?</p>
 	<% end %>  
-	<em>403 Forbidden</em>
+	<p><em>403 Forbidden</em></p>
 </div>
 

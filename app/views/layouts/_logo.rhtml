@@ -1,10 +1,10 @@
-<span class="logo">
+<div id="logo" class="card-slot">
   <% if File.exists?("#{RAILS_ROOT}/public/images/logo.gif") %>
     <a href="/"><img border=0 src="/images/logo.gif"></a>
   <% else%>
     <a href="/"><%= site_name %></a>
   <% end %>
-</span>
+</div>
 
 <!--
 <span class="version">

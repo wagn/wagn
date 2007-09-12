@@ -7,14 +7,16 @@
   	    <table class="fieldset">
   	      <%= render :partial=>'card/permission_fields', :locals=>{:card=>@card, :slot=>slot} %>
   	      <%= slot.render_partial 'extra_options' %>
-					<% slot.option(:name=>'template', :editable=>false, :help=>"FIXME") do %>
-						<% if @card.template_tsar? %>
-							<%= button_to_remote 'Edit Template', :url=>slot.url_for('template/edit'),
-							 	:update=>slot.id %>
-						<% else %>
-						  <%= button_to_remote 'Create Template', :url=>slot.url_for('template/create') %>
-						<% end %>
-					<% end %>
+  	      <% if !@card.template? %>
+					  <% slot.option(:name=>'template', :editable=>false, :help=>"FIXME") do %>
+  						<% if @card.template_tsar? %>
+  							<%= button_to_remote 'Edit Template', :url=>slot.url_for('template/edit'),
+  							 	:update=>slot.id %>
+  						<% else %>
+  						  <%= button_to_remote 'Create Template', :url=>slot.url_for('template/create') %>
+  						<% end %>
+  					<% end %>
+  				<% end %>
   	    </table>
   	  </div>
   	</div>

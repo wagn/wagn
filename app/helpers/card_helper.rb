@@ -16,7 +16,7 @@ module CardHelper
 
     party = card.who_can(task)
 
-    warn "party= #{party}; party class = #{party.class}"
+#    warn "party= #{party}; party class = #{party.class}"
     selected = 
       case party.class.to_s
       when 'NilClass' ; ''

@@ -1,4 +1,4 @@
-<div id="top-menu">
+<div id="top-menu" class="top-bar">
     
   <span>
     <%= link_to('Home', '/') %>
@@ -6,7 +6,7 @@
 	  <%=  render :partial=>'layouts/search_box' %>
   </span>
   
-  <% if u = current_user %>
+  <% if !createable_cardtypes.empty? %>
     <span>
       <%= link_to('New Card', :controller=>'card', :action=>'new' ) %>
     </span>
@@ -14,24 +14,24 @@
   
   
   <span id="logging">
-    <% if u = current_user %>
+    <% if logged_in? %>
       <% if Card::User.ok? :create %>
 	      <%= link_to 'Invite a Friend', :controller=>'account', :action=>'invite' %>
       <% end %>   
-      <%= link_to( 'Sign out', :controller=>'account', :action=>'logout' ) %>
+      <%= link_to 'Sign out', :controller=>'account', :action=>'logout' %>
     <% else %>
+      <% if Card::InvitationRequest.ok? :create %>
     	 <%= link_to 'Request an Invitation', :controller=>'account', :action=>'invitation_request' %> 
-       <%= link_to( 'Sign in', :controller=>'account', :action=>'login') %>
+      <% end%>
+      <%= link_to 'Sign in', :controller=>'account', :action=>'login' %>
     <% end %>
   </span>
 
 </div>
 
-<%= render :partial=>'layouts/logo' %>
 
-
-<% if u = current_user and u.card %>
+<% if logged_in? %>
   <div id="current-user-card">
-    <%= link_to_page( "My Card: #{u.card.name}", u.card.name ) %>
+    <%= link_to "My Card: #{current_user.card.name}", :controller=>'card', :action=>'mine' %>
   </div>
 <% end %>

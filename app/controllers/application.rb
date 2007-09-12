@@ -25,8 +25,11 @@ class ApplicationController < ActionController::Base
   end
   
   def create_ok
-    # FIXME (why?  what's wrong?)
-    Card.ok! :create
+    if params[:card] and cardtype = params[:card][:type]
+      Cardtype.find_by_class_name(cardtype).card.me_type.ok! :create
+    elsif session[:createable_cardtypes].empty?
+      raise Wagn::PermissionDenied, "Sorry, you don't have permission to create new cards"
+    end  
   end
   
   def remove_ok
@@ -143,9 +146,10 @@ class ApplicationController < ActionController::Base
   def sidebar_cards
     unless @sidebar_cards 
       cards = Card.find_by_wql(%{
-        cards where plus_sidebar is not true and tagged by cards with name='*sidebar'
+        cards tagged by cards with name='*sidebar'
       })
 
+=begin
       # FIXME: are we using this?
       if @card && @card.id
         cards += Card.find_by_wql(%{
@@ -154,13 +158,9 @@ class ApplicationController < ActionController::Base
                   and tagged by cards with name='*sidebar')
         })
       end
-
+=end
      @sidebar_cards = cards.sort_by do |c| 
-        if c = Card.find_by_name(c.name + '+*sidebar') and c.ok?(:read)
-          c.content.to_i 
-        else
-          0
-        end
+        c = Card.find_by_name(c.name + '+*sidebar') ? c.content.to_i : 0
       end
     end
     @sidebar_cards
@@ -194,7 +194,8 @@ class ApplicationController < ActionController::Base
   end
   
   def note_current_user
-    User.current_user = current_user || User.find_by_login('anon')   
+    User.current_user = current_user || User.find_by_login('anon')
+    session[:createable_cardtypes] ||= User.current_user.createable_cardtypes
   end
 
   def remember_card( card )

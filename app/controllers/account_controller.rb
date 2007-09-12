@@ -37,6 +37,7 @@ class AccountController < ApplicationController
       flash[:notice] = "Welcome to #{System.site_name}"
       #render :text=>"woohoo you logged in: #{current_user.inspect} <br> session: #{session.inspect}"
       return_to_rememberd_page
+      session[:createable_cardtypes] = nil #probably want to generalize this...
     else
       flash[:notice] = "Login Failed"
     end
@@ -46,6 +47,7 @@ class AccountController < ApplicationController
     self.current_user = nil
     flash[:notice] = "You have been logged out."
     return_to_rememberd_page
+    session[:createable_cardtypes] = nil
   end
   
   def forgot_password

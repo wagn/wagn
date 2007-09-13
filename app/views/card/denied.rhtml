@@ -1,0 +1,21 @@
+<% slot_for(card, context, nil) do |slot| %>
+	<%= slot.header %>  
+	  <div id="denied" class="content">
+	    <p>Sorry, you don't have permission to edit this card (See the <%= slot.link_to_menu_action('options') %> tab to learn more).</p>
+	    <br/>
+	    
+	    <% if !logged_in? %>
+	      <p>If you have an account, now would be a lovely time to <%= link_to_remote("Sign In", :url=>'/account/login', :update=>slot.id)%>.</p>
+	      <br/>
+	      <p>If you don't but would like one, have a ponder at <%= link_to 'Requesting an Invitation', '/account/invitation_request' %>.</p>
+	    <% end %>
+	    
+	    
+	  </div>
+	
+	
+  <%= slot.footer %>
+<% end %>
+
+<%# FIXME: this is duplicated effort in lots of cases %>
+<%= javascript_tag "setupCardViewStuff()" %>

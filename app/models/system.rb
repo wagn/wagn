@@ -64,6 +64,7 @@ class System < ActiveRecord::Base
     
     def party_ok?(party)
       return true if always_ok?
+      return false if party.nil?
       #warn party.inspect
       party.class.name == 'Role' ? 
          role_ok?(party.id) :

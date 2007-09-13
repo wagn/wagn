@@ -109,17 +109,11 @@ module Card
       self.operation_approved = false
     end
      
-=begin  we may yet need this...
-    def require_permission(operation)
-      unless System.ok? operation
-        deny_because "you don't have '#{operation}' permission"
-      end
-    end
-=end
 
     def lets_user(operation)
+      party =  who_can(operation)
       return true if System.always_ok?
-      System.party_ok? who_can(operation)
+      System.party_ok? party
     end
 
     def approve_create
@@ -138,7 +132,6 @@ module Card
     end
     
     def approve_comment
-      return false unless who_can(:comment)
       approve_task(:comment, 'comment on')
     end
     

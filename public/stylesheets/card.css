@@ -235,7 +235,7 @@ body.wagn .line h2,
 }
 .line .open-arrow {
   display: inline;
-  margin: 0px 5px 0px 0px;
+  margin: 0px 6px 0px -3px;
 }
 .line .fancy-title {
   display: inline;
@@ -404,6 +404,10 @@ a.current, a:link.current {
     padding: 8px;
     margin: 0px;
 }
+.card-slot hr {
+  margin: 10px
+}
+
 
 
 /* cards */

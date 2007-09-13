@@ -1,5 +1,6 @@
 <% slot_for(card, context, action='line', :render_slot=>(render_slot||=nil)) do |slot| %>
 	<div class="title">
+		<%= page_icon(card) %>
 	  <% arrow = %{<img class="open-arrow" src="/images/arrow_right.png">} %>
 		<%= slot.link_to_action arrow+less_fancy_title(card), 'view',
 					{:complete => "Wagn.line_to_paragraph($('#{slot.id}'))" },	:class=>"open-link"

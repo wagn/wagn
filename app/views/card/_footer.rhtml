@@ -1,7 +1,7 @@
 <div class="card-footer">
   <div class="card-links">
     <span id="<%= slot.id + "-links" %>" class="link-list">
-      <%= card.name.piece_names.map { |c| link_to_page c }.join(', ') %> 
+      <span class="faint">Card Pages:</span> <%= card.name.piece_names.map { |c| link_to_page c }.join(', ') %> 
     </span>
     &nbsp;
   </div>

@@ -3,6 +3,7 @@
 	<%= slot.menu %>
 
   <div class="title"> 
+    <%= page_icon(card) %>
 	  <% arrow = %{<img class="close-arrow" src="/images/arrow_down.png">} %>
     <%= slot.link_to_action arrow + less_fancy_title(card), 'line', 
 					{:before => "Wagn.paragraph_to_line($('#{slot.id}'))" }, 

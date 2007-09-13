@@ -171,10 +171,10 @@
   def slot_menu(slot)
     menu = %{<div class="card-menu">\n}
   	menu << slot.link_to_menu_action('view')
-  	if slot.card.ok?(:edit)
+  	if slot.card.ok?(:edit) 
     	menu << slot.link_to_menu_action('edit')
   	else
-  	  menu << link_to_remote("Edit", :url=>'/account/login', :update=>slot.id)
+  	  menu << link_to_remote("Edit", :url=>slot.url_for('card/denied'), :update=>slot.id)
 	  end
   	menu << slot.link_to_menu_action('changes')
   	menu << slot.link_to_menu_action('options')
@@ -310,7 +310,7 @@
     wordstring.scan(/\<([^\>\s\/]+)[^\>\/]*?\>/).each { |t| h1[t[0]] ? h1[t[0]] += 1 : h1[t[0]] = 1 }
     wordstring.scan(/\<\/([^\>\s\/]+)[^\>]*?\>/).each { |t| h2[t[0]] ? h2[t[0]] += 1 : h2[t[0]] = 1 }
     h1.each {|k,v| wordstring += "</#{k}>" * (h1[k] - h2[k].to_i) if h2[k].to_i < v }
-    wordstring = wordstring.empty? ? '' : wordstring + '<span style="color:grey"> ...</span'
+    wordstring += wordlist.length > l ? '<span style="color:grey"> ...</span' : ''
   end
 
   # You'd think we'd want to use this one but it sure doesn't seem to work as
@@ -496,6 +496,9 @@
     image_tag "/images/#{prefix}connected_icon.png", :title=>"cards connected to \"#{card.name}\""
   end
   
+  def page_icon (card)
+    link_to_page image_tag('page.png', :title=>"Card Page for: #{card.name}"), card.name
+  end
   # Other snippets -------------------------------------------------------------
 
   def site_name

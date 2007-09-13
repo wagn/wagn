@@ -15,10 +15,15 @@ class CardController < ApplicationController
   end
   
   def comment
-    @comment = params[:card][:comment]        
-    # FIXME this should only let the name be specified if user is anonymous. no faking! 
-    @author = params[:card][:comment_author] || User.current_user.card.name
-    @card.comment = "<hr>#{@comment}<br>--#{@author}.....#{Time.now}<br>"
+    @comment = params[:card][:comment]
+    if User.current_user.login == 'anon'
+      @author = params[:card][:comment_author]
+      session[:comment_author] = @author
+      @author = "#{@author} (Not signed in)"
+    else
+      @author = User.current_user.card.name
+    end
+    @card.comment = "<hr>#{@comment}<br/><br/><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}<br/>"
     @card.save!
     view=render_to_string( :action=>'view')
     render :update do |page|
@@ -166,5 +171,6 @@ class CardController < ApplicationController
     end
   end
 
-
+  def denied
+  end
 end

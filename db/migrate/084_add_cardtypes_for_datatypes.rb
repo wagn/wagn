@@ -4,6 +4,8 @@ class AddCardtypesForDatatypes < ActiveRecord::Migration
   include MigrationHelper
   
   def self.up
+     User.as :admin
+    
     ## FIXME -- holy hack!
     create_table :permissions do |t|
         t.column 'card_id', :integer

@@ -17,9 +17,19 @@ class OptionsController < ApplicationController
           end
         Permission.new :task=>task, :party=>party
       end
-      @card.save
+      @card.save!
+    end
+    if params[:save_roles]
+      System.ok! :assign_user_roles
+      role_hash = params[:user_roles] || {}
+      @card.extension.roles = Role.find role_hash.keys
+    end
+    if params[:card] and ext_type = params[:card][:extension_type]
+      @card.extension_type = ext_type
+      @card.save!
     end
     if ext = @card.extension and ext_params = params[:extension]
+      #fixme.  should have something like @card.ok? :account that uses extension checks...
       ext.update_attributes!(ext_params)
       @extension = ext
     end
@@ -27,21 +37,5 @@ class OptionsController < ApplicationController
     render :template=>'card/options' #fixme-perm  should have some sort of success notification...
   end
   
-=begin
-   def roles
-    raise Wagn::Oops.new("roles method only applies to `user cards") unless @card.class_name=='User'
-    @user = @card.extension
-    @roles = Role.find :all, :conditions=>"codename not in ('auth','anon')"
-  end
-=end
-  
-  def update_roles    
-    #FIXME-perm -- need better permissions checks for this!
-    @extension = @card.extension
-    role_hash = params[:user_roles] || {}
-    @extension.roles = Role.find role_hash.keys
-    @notice = "Done.  You've updated the roles."
-    render :template=>'card/options'
-  end
 
 end

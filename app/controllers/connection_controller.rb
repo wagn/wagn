@@ -17,8 +17,8 @@ class ConnectionController < ApplicationController
     if !@tag.errors.empty? or !@connection.errors.empty?
       # FIXME oh god fix me please
       @notice = ""
-      @notice << "TAG: #{@tag.errors.full_messages.join(', ')}<br/>\n" unless @tag.errors.empty?
-      @notice << "CONNECTION: #{@connection.errors.full_messages.join(', ')}<br/>\n" unless @connection.errors.empty?
+      @notice << "JOINEE: #{@tag.errors.full_messages.join(', ')}<br/>\n" unless @tag.errors.empty?
+      @notice << "JUNCTION: #{@connection.errors.full_messages.join(', ')}<br/>\n" unless @connection.errors.empty?
       render :action=>'new'
     else
       # switch'm up so @card is the correct one for edit

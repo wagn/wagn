@@ -6,7 +6,7 @@ class CardController < ApplicationController
 
   before_filter :edit_ok,   :only=>[ :edit, :update, :save_draft, :rollback, :save_draft] 
   before_filter :create_ok, :only=>[ :new, :create ]
-  before_filter :remove_ok, :only=>[ :remove, :confirm_remove ]
+  before_filter :remove_ok, :only=>[ :remove ]
 
   def changes
     load_card_and_revision
@@ -85,18 +85,16 @@ class CardController < ApplicationController
     if @card.destroy     
       session[:return_stack].pop  #dirty hack so we dont redirect to ourself after delete
       render :update do |page|
+        page.replace slot.id ''
         if @context=='main'
-          page['alerts'].replace "#{@card.name} removed. Redirecting to #{previous_page}..."
+          page.wagn.messenger.note "#{@card.name} removed. Redirecting to #{previous_page}..."
           page.redirect_to url_for_page(previous_page)
         else 
           page.wagn.messenger.note( "#{@card.name} removed. ")  
-          page.wagn.lister.update()
         end
       end
     elsif @card.errors.on(:confirmation_required)
-      render :update do |page|
-        page.replace_html slot.id(:remove), :partial=>'confirm_remove'
-      end     
+      render :partial=>'confirm_remove'
     else
       render :update do |page|
         page.replace_html slot.id(:notice), "#{@card.errors.full_messages.join(',')}"

@@ -21,7 +21,7 @@
 	</table>
 
 	<% if tmpl = card.hard_content_template %>
-	This card is controlled by a template: 
+  	This card is controlled by a "hard" template: 
 		<%= link_to tmpl.name, "/template/edit/#{tmpl.trunk.id}" %>
 	<% end %>
 
@@ -37,15 +37,14 @@
 				<%= slot.content_field(form) %>
 			<% end %>
 			
-			
+			<%= button_to_remote "Remove #{@card.name}", { :url=>slot.url_for("card/remove"), :update=>slot.id }, :style=>'float:right'	%>			
 			<%= button_to_function "Save", slot.save_function %>
 			<%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function } %> 
+  		
 		<% end %>
 	</div>
 	
-	<div id="<%= slot.id(:remove) %>" class="edit-area remove-buttons">
-		<%= button_to_remote "Remove #{@card.name}", :url=>slot.url_for("card/remove")	%>
-	</div>
+
 	
 	<%= slot.notice %>
 

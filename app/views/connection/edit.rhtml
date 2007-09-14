@@ -20,11 +20,13 @@
 						</td>
 						<td>
 							<span class="cardtype inline">
-								<%# FIXME: if hard template don't give option %>
-								<%= slot.cardtype_field f, :onchange=>slot.update_cardtype_function(
-										  :url=>slot.url_for("connection/edit"), :update=>'connections-workspace',
-											:with=>"Form.serialize('#{slot.id(:form)}')" 
-								) %>
+							  <%# fixme - we should have this sending over new_record as a param -- otherwise we lose one remove button %>
+								<% if @card.ok? :type %>
+  								<%= slot.cardtype_field f, :onchange=>slot.update_cardtype_function(
+  										  :url=>slot.url_for("connection/edit"), :update=>'connections-workspace',
+  											:with=>"Form.serialize('#{slot.id(:form)}')" 
+  								) %>
+  							<% end %>
 							</span>
 						</td>
 					</tr>
@@ -37,17 +39,17 @@
 			<span class="editor">
 				<%= slot.content_field f %>
 			</span>
+  		<div style="float:right">
+  			<%= button_to_remote "Remove #{@card.name}", :url=>slot.url_for("connection/remove")	%>
+  			<% if @new_tag %>
+  				<%= button_to_remote "Remove both #{@card.tag.name} and #{@card.name}", 		
+  						:url=>slot.url_for("connection/remove_tag")	%>
+  			<% end %>
+  		</div>
 
 			<%= button_to_function 'Save', slot.save_function %>
 			<%#= link_to_function "Cancel", "$('connections-workspace').innerHTML=''" %>
 		</div>  
 		
-		<div class="edit-area remove-buttons">
-			<%= button_to_remote "Remove #{@card.name}", :url=>slot.url_for("connection/remove")	%>
-			<% if @new_tag %>
-				<%= button_to_remote "Remove #{@card.name} and #{@card.tag.name}", 		
-						:url=>slot.url_for("connection/remove_tag")	%>
-			<% end %>
-		</div>
 	<% end %>
 <% end %>

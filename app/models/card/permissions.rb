@@ -153,6 +153,9 @@ module Card
     def approve_type
       unless new_record?       
         approve_delete
+        if tag_template and tag_template.hard_template? 
+          deny_because "You can't change the type of this card -- it is hard templated by #{tag_template.name}"
+        end
       end
       new_self = clone_to_type( type ) # note: would rather do this through ok? api...
       new_self.send(:approve_create) 
@@ -162,11 +165,12 @@ module Card
     end
 
     def approve_content
-      # FIXME - deny changes to hard templated cards?
-      #if templatee?
-      #  deny_because "templated cards can't be edited directly"
-      #end
-      approve_edit unless new_record?
+      unless new_record?
+        approve_edit
+        if tmpl = hard_content_template 
+            deny_because "You can't change the content of this card -- it is hard templated by #{tmpl.name}"
+        end
+      end
     end
 
 
@@ -190,8 +194,6 @@ module Card
         alias_method_chain :save, :permissions
         alias_method_chain :save!, :permissions
       end
-      
     end
-    
   end
 end

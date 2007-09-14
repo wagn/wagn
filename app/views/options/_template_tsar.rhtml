@@ -5,7 +5,7 @@
 
   <% slot.option(
       :name=>"templatees", 
-  		:help=>"...#{ @card.template_tsar? ? 'will' : 'would' } use this template.",
+  		:help=>(@card.template_tsar? ? %{...will use the template below.  You can change the permissions settings and set it to be a hard or soft template in its "Options" tab. } : "...would use this card's template (#{@card.name}+*template)"),
   		:label=>"Templated Cards") do %>
   		Any
       <% if @card.type=='Cardtype' %>
@@ -19,7 +19,7 @@
       <% if !@card.template_tsar? %>
         <p><strong>Currently this card has no template.</strong></p>
         <% if @card.ok? :edit ##FIXME-perm we may want more restrictions than this on creating a template! %>
-          <p>But you should feel warmly welcomed to <a>create one now</a>.</p>
+          <p>But you should feel warmly welcomed to <%= link_to 'create one now', "/wiki/#{@card.name}+*template" %>.</p>
         <% end %>
       <% else %>
             (template card goes here)	

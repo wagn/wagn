@@ -1,23 +1,29 @@
 class OptionsController < ApplicationController
   helper :wagn, :card 
   layout :ajax_or_not
-  before_filter :load_card, :edit_ok
+  before_filter :load_card
 
 
   def update
-    perms=params[:permissions]
-    @card.permissions=perms.keys.map do |task|
-      party = 
-        case perms[task]
-        when ''; nil
-        when 'personal'
-          @card.personal_user
-        else
-          Role.find(perms[task])          
-        end
-      Permission.new :task=>task, :party=>party
+    if perms=params[:permissions] 
+      @card.permissions=perms.keys.map do |task|
+        party = 
+          case perms[task]
+          when ''; nil
+          when 'personal'
+            @card.personal_user
+          else
+            Role.find(perms[task])          
+          end
+        Permission.new :task=>task, :party=>party
+      end
+      @card.save
     end
-    @card.save
+    if ext = @card.extension and ext_params = params[:extension]
+      ext.update_attributes!(ext_params)
+      @extension = ext
+    end
+    @notice ||= "Got it!  Your changes have been saved."
     render :template=>'card/options' #fixme-perm  should have some sort of success notification...
   end
   

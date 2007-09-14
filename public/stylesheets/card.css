@@ -13,6 +13,7 @@
 
 .card-slot .card-header {
   padding-left: 2px;
+  margin-bottom: 5px;
 }
 .card-slot .cardtype { 
   font-style: italic;
@@ -496,7 +497,19 @@ a.current, a:link.current {
   color: #009;
   display: block;
   margin: 0px 0px 4px 0px;
+
 }
+.card-slot .small {
+  font-size: 10px;
+  display: block;
+  margin: 2px;
+  line-height: 13px
+}
+.card-slot .option-header h2 {
+  text-align: center;
+}
+
+
 .remove-buttons {
   text-align: right;
 }

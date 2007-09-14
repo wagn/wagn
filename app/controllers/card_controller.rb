@@ -171,6 +171,10 @@ class CardController < ApplicationController
     end
   end
 
+  def options
+    @extension = card.extension
+  end
+
   def denied
   end
 end

@@ -108,11 +108,10 @@ module Card
       end
       self.operation_approved = false
     end
-     
 
     def lets_user(operation)
       party =  who_can(operation)
-      return true if System.always_ok?
+      return true if (System.always_ok? and operation != :comment)
       System.party_ok? party
     end
 

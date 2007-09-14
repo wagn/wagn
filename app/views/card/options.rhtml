@@ -1,29 +1,25 @@
 <% slot_for(@card, @context, :options) do |slot| %>
 	<%= slot.header %>
-  <% form_remote_for :card, @card, :url=>{:controller=>'options', :action=>'update', :id=>@card.id},
-    :update => slot.id do |form| %>
-    <div id="<%= params[:element] %>-options-workspace">
-  	  <div id="create-advanced">
-  	    <table class="fieldset">
-  	      <%= render :partial=>'card/permission_fields', :locals=>{:card=>@card, :slot=>slot} %>
-  	      <%= slot.render_partial 'extra_options' %>
-  	      <% if !@card.template? %>
-					  <% slot.option(:name=>'template', :editable=>false, :help=>"FIXME") do %>
-  						<% if @card.template_tsar? %>
-  							<%= button_to_remote 'Edit Template', :url=>slot.url_for('template/edit'),
-  							 	:update=>slot.id %>
-  						<% else %>
-  						  <%= button_to_remote 'Create Template', :url=>slot.url_for('template/create') %>
-  						<% end %>
-  					<% end %>
-  				<% end %>
-  	    </table>
-  	  </div>
-  	</div>
+  <div  class="content">
+    <% form_remote_for :card, @card, :url=>{:controller=>'options', :action=>'update', :id=>@card.id},
+      :update => slot.id do |form| %>
+    	    <table class="fieldset">
+    	      <%= render :partial=>'options/permissions', :locals=>{:card=>@card, :slot=>slot} %>
+    	      <% if card.extension_type == 'User' %>
+    	        <%= render :partial=>'options/user', :locals=>{:card=>@card, :slot=>slot, :extension=>card.extension } %>
+    	      <% end %>
+    	      <% if @card.template? %>
+    	        <%= render :partial=>'options/template', :locals=>{:card=>@card, :slot=>slot, :form=>form} %>	      
+    	      <% end %>
+    	      <% if slot.options_need_save %>
+        		  <tr><td><%= submit_tag 'Save Changes' %><br><br></td><td colspan="2"><%= slot.notice %></td></tr>
+        		<% end %>
+    	      <% if !@card.template? %>
+    	        <%= render :partial=>'options/template_tsar', :locals=>{:card=>@card, :slot=>slot } %>	      
+    	      <% end %>
+    	    </table>
 
-		<% if slot.options_need_save %>
-		  <%= submit_tag 'Save Changes' %><!-- this shouldn't always show up.. -->
-		<% end %>
-  <% end %>
-  <%= slot.notice %>
+  		
+    <% end %>
+  </div>
 <% end %>

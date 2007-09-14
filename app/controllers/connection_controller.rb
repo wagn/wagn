@@ -1,7 +1,7 @@
 class ConnectionController < ApplicationController
   cache_sweeper :card_sweeper
   helper :card, :wagn
-  before_filter :load_card, :edit_ok
+  before_filter :load_card
   layout :ajax_or_not
   
   def create

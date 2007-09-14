@@ -1,0 +1,26 @@
+<%= slot_option_header 'Template' %>
+
+
+<% slot.option(
+    :name=>"templatees", 
+		:help=>"...#{ @card.template_tsar? ? 'will' : 'would' } use this template.",
+		:label=>"Templated Cards") do %>
+		Any
+    <% if @card.type=='Cardtype' %>
+      <em><%= @card.name %></em> card and any
+    <% end %>
+    card whose name ends in "<em>+<%= @card.name %></em>"
+<% end %>
+
+<tr>
+  <td colspan="3">
+    <% if !@card.template_tsar? %>
+      <p><strong>Currently this card has no template.</strong></p>
+      <% if @card.ok? :edit %><%#>#FIXME-perm we may want more restrictions than this on creating a template! %>
+        <p>But you should feel warmly welcomed to <a>create one now</a>.</p>
+      <% end %>
+    <% else %>
+          (template card goes here)	
+    <% end %>
+  </td>
+</tr>

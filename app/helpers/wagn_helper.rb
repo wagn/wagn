@@ -201,6 +201,11 @@
     }, proc.binding
   end
 
+  def slot_option_header(title)
+    %{<tr><td colspan="3" class="option-header"><h2>#{title}</h2></td></tr>}
+  end
+
+
   def slot_link_to_action(slot, text, to_action, remote_opts={}, html_opts={})
     link_to_remote text, remote_opts.merge(
       :url=>slot.url_for("card/#{to_action}"),

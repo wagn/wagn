@@ -1,0 +1,34 @@
+	
+<% if edit_user_context(card) == 'user' or System.ok? :administrate_users %>
+  <%= slot_option_header 'Account Details' %>
+  <% slot.option(
+      :name=>"email", 
+			:help=>"email address for this user",
+			:label=>"Email") do %>
+			<%= text_field :extension, :email %>
+   <% end %>
+   <% slot.option(
+       :name=>"password", 
+ 			:help=>"If left blank, password will remain the same",
+ 			:label=>"Password") do %>
+ 			<%= password_field :extension, :password %>
+   <% end %>
+   <% slot.option(
+       :name=>"password_confirm", 
+ 			:help=>"",
+ 			:label=>"Confirm password") do %>
+	  		<%= password_field :extension, :password_confirmation %>
+  <% end %>
+<% end %>           
+
+<% if System.ok? :administrate_users %>
+   <% slot.option(
+      :name=>"block_user", 
+ 			:help=>"Blocking a user will prevent them from logging in or making any changes to the system",
+ 			:label=>"Block") do %>
+    		<%= check_box :extension, :blocked %>
+   <% end %>
+<% end %>
+
+<%# end %>     
+<%# end -%>

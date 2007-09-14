@@ -233,6 +233,8 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
 }
 .fieldset .label { 
   text-align: right;  
+  white-space: nowrap;
+  padding-right: 6px;
 }
 .fieldset .field { 
   text-align: left;  
@@ -241,7 +243,8 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
   padding-left: 6px;
   font-style: italic;
   text-align: left; 
-  background: #eee 
+  background: #e9e9d5;
+  width: 50%;
 }
 
 

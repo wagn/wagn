@@ -235,18 +235,22 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
   text-align: right;  
   white-space: nowrap;
   padding-right: 6px;
+  vertical-align: middle;
 }
 .fieldset .field { 
-  text-align: left;  
+  width: 25%;
+  vertical-align: middle;
+  padding: 7px
 }
 .fieldset .help { 
   padding-left: 6px;
   font-style: italic;
-  text-align: left; 
   background: #e9e9d5;
   width: 50%;
 }
-
+.fieldset input[type=submit] {
+  margin: 6px
+}
 
 
 

@@ -506,6 +506,7 @@ a.current, a:link.current {
   line-height: 13px
 }
 .card-slot .option-header h2 {
+  padding: 6px ;
   text-align: center;
 }
 

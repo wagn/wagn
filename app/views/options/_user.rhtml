@@ -24,7 +24,7 @@
 <% if System.ok? :administrate_users %>
    <% slot.option(
       :name=>"block_user", 
- 			:help=>"Blocking a user will prevent them from logging in or making any changes to the system",
+ 			:help=>"Blocking a user prevents them from signing in",
  			:label=>"Block") do %>
     		<%= check_box :extension, :blocked %>
    <% end %>

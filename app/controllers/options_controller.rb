@@ -27,26 +27,21 @@ class OptionsController < ApplicationController
     render :template=>'card/options' #fixme-perm  should have some sort of success notification...
   end
   
-  def roles
+=begin
+   def roles
     raise Wagn::Oops.new("roles method only applies to `user cards") unless @card.class_name=='User'
     @user = @card.extension
     @roles = Role.find :all, :conditions=>"codename not in ('auth','anon')"
   end
+=end
   
   def update_roles    
-    @card = Card.find params[:id]
-    @user = @card.extension
-    @roles = Role.find :all, :conditions=>"codename not in ('auth','anon')"
+    #FIXME-perm -- need better permissions checks for this!
+    @extension = @card.extension
     role_hash = params[:user_roles] || {}
-    @user.roles = Role.find role_hash.keys
-    render :template=>'card/update'
-
-#    if false  #FIXME- catch if anything breaks??
-#      render_update do |page|
-#        page << "$('#{params[:element]}').card().reset()"
-#      end
-#    else
-#    end
+    @extension.roles = Role.find role_hash.keys
+    @notice = "Done.  You've updated the roles."
+    render :template=>'card/options'
   end
 
 end

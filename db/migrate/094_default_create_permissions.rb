@@ -6,10 +6,12 @@ class DefaultCreatePermissions < ActiveRecord::Migration
     anon = Role.find_by_codename 'anon'
     auth = Role.find_by_codename 'auth'
     def_perm = {:read=>anon, :edit=> auth, :comment=> nil, :delete=> auth, :create=> auth}
-    perm = def_perm.keys.map do |key|
-      Permission.new :task=>key.to_s, :party=>def_perm[key]
+    unless Card['*template']
+      perm = def_perm.keys.map do |key|
+        Permission.new :task=>key.to_s, :party=>def_perm[key]
+      end
+      t = Card.create! :name=>'*template', :permissions=> perm
     end
-    t = Card.create! :name=>'*template', :permissions=> perm
     
     # CREATE A NEW LIST OF PERMISSIONS CUz the old ones just get their card_id reassigned
     # if we dont

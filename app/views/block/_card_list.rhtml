@@ -14,9 +14,9 @@
   <span id="empty-card-list"></span>
 <% end %>
                  
-<% for card in cards %>
+<% cards.each_with_index do |card,index| %>
 	<%= render :partial=>'card/line', 
-				:locals=>{:card=>card,:context=>context, :render_slot=>true} %>
+				:locals=>{:card=>card,:context=>context+":#{index}", :render_slot=>true} %>
 <% end %>     
 
 <% if duplicates.length > 0 %>

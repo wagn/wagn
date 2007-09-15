@@ -1,70 +1,59 @@
- module WagnHelper
+module WagnHelper
   require_dependency 'wiki_content'
 
-  Droplet = Struct.new(:name, :link_options)
+  Droplet = Struct.new(:name, :link_options)     
+  
   class Slot
     
-    attr_reader :card, :context, :action, :renderer
+    attr_reader :card, :context, :action, :renderer, :template
     attr_accessor :form, :editor_count, :options_need_save, :transclusion_mode,
       :transclusions, :position, :renderer, :form
-    def initialize(card, context, action, template=nil, renderer=nil )
+    def initialize(card, context, action, template, renderer=nil )
       @card, @context, @action, @template, @renderer= card, context.to_s, action.to_s, template,renderer
-      @position = nested_context? ? context.split(':').last : 0
+      raise("context gotta include position") unless context =~ /\:/
+      @position = context.split(':').last
       @subslots = []  
       @transclusion_mode = 'view'
       @renderer ||= Renderer.new(self)
     end
 
     def id(area="") 
-      area, id = area.to_s, ""
-      if nested_context?
-        id << context.gsub(/\:.*$/,'')
-      else         
-        id << (context == 'main' ? 'main-card' : "#{context.gsub(/\:.*$/,'')}") 
-        # FIXME this is kindof a crude test-- don't want to add a card id if one is already there
-        unless id =~ /\d+/
-          id << (card.id ? "-#{card.id}" : '')
-        end
-      end
-      id << (area.blank? ? "" : "-#{area}")
+      area, id = area.to_s, ""  
+      id << "javascript:elem=#{get(area)}"
     end
-       
+            
+     
     def nested_context?
-      context =~ /\:/
+      context.split(':').length > 2
     end
      
-    def selector
+    def get(area="")
+      area.empty? ? "getSlotSpan(this)" : "getSlotElement(this, '#{area}')"
+    end
+     
+    def selector(area="")
       positions = context.split(':')
-      positions.shift # first one is id
-      selector = "#" + id
-      if positions.empty? 
-        selector << " span[cardid=#{card.id}]"
-      else
-        while pos = positions.shift
-          selector << " span[position=#{pos}]"
-        end   
+      outer_context = positions.shift # first one is id
+      selector = "#" + outer_context
+      while pos = positions.shift
+        selector << " span[position=#{pos}]"
+      end   
+      if !area.empty?
+        selector << " .#{area}"
       end
       selector
     end
 
     def editor_id(area="")
       area, eid = area.to_s, ""
-      if nested_context?
-        eid << context
-      else     
-        eid << id + (position > 0 ? "-#{position}" : "")
-      end
+      eid << context
       eid << (area.blank? ? '' : "-#{area}")
     end
 
     def url_for(url)
-      url = "/#{url}" 
+      url = "javascript:'/#{url}" 
       url << "/#{card.id}" if card.id
-      url << context_cgi
-    end
-
-    def context_cgi
-      context=='main' ? '' : "?context=#{context}"
+      url << "?context='+getSlotContext(this)"
     end
 
     def method_missing(method_id, *args, &proc)
@@ -78,10 +67,10 @@
       result
     end
 
-    def subslot(card)
+    def subslot(card, &proc)
       # Note that at this point the subslot context, and thus id, are
       # somewhat meaningless-- the subslot is only really used for tracking position.
-      new_slot = Slot.new(card, id, @action, @template, @renderer)
+      new_slot = Slot.new(card, context+":#{@subslots.size+1}", @action, @template, @renderer)
       @subslots << new_slot 
                                      
       # NOTE this code is largely copied out of rails fields_for
@@ -94,78 +83,135 @@
       fields_for = builder.new(object_name, object, @template, options, block)       
       new_slot.form = fields_for
       new_slot.position = @subslots.size
+ 
       new_slot
+#      old_slot, @template.controller.slot = @template.controller.slot, new_slot
+#      result = yield(new_slot)
+#      @template.controller.slot = old_slot
+#      result
     end
     
     def render_transclusion( card, *args )    
-      subslot(card).send("render_transclusion_#{@transclusion_mode}", *args)
+      new_slot = subslot(card)  
+      old_slot, @template.controller.slot = @template.controller.slot, new_slot  
+      result = new_slot.send("render_transclusion_#{@transclusion_mode}", *args)
+      @template.controller.slot = old_slot
+      result
     end   
     
-    def render_transclusion_view( options={} )
+    def render_transclusion_view( options={} )   
+      #return "TRANSCLUDING #{card.name}"
       if card.new_record? 
         %{<span class="faint createOnClick" position="#{position}" cardid="" cardname="#{card.name}">}+
           %{Click to create #{card.name}</span>}
-      else
-        # FIXME: there is lots of handling of options missing here.
-        # FIXME: this render could theoretically pull from the cache.
-        content = @renderer.render( card )
-        # Because the returned content is wikiContent, we use wrap!
-        # to add while keeping the original object
-        # WOW this pre_rendered thing is a hack... 
-        content.pre_rendered.wrap! %{<span class="editOnDoubleClick" position="#{position}" cardid="#{card.id}">}, "</span>"
-        content.pre_rendered.wrap!(%{<span class="transcluded">}, '</span>' ) if options[:shade]=='on'
-        content
-      end
+      elsif options[:view]=='raw'
+        card.content
+      elsif options[:view]=='card' 
+        @action = 'view'
+        @template.controller.send( :render_to_string, :partial=>'/card/view', :locals=>{ :card=>card,:render_slot=>true })
+      elsif options[:view]=='line'
+        @action = 'line'
+        @template.controller.send( :render_to_string, :partial=>'/card/line', :locals=>{ :card=>card, :render_slot=>true })
+      else #options['view']=='content' -- default case
+        @action='transclusion'
+        @template.controller.send( :render_to_string, :partial=>'/transclusion/view', :locals=>{ :card=>card, :render_slot=>true })
+      end   
     end
     
     def render_transclusion_edit( options={} )
       %{<div class="card-slot">} +
         %{<span class="title">#{@template.less_fancy_title(card)}</span> } + 
-        content_field( form ) +
+        content_field( form, :nested=>true ) +
         "</div>"
+    end
+          
+    def render_transclusion_line(options={})        
+      render_transclusion_view( :view=>'transclusion' )
     end
         
     def render_diff(card, *args)
       @renderer.render_diff(card, *args)
     end
+       
     
+    def head
+      css_class = 'card-slot '      
+      if action=='line'  
+        css_class << 'line' 
+      else
+        css_class << 'paragraph'                     
+      end
+      css_class << ' full' if (context=~/main/ or (action!='view' and action!='line'))
+      css_class << ' sidebar' if context=~/sidebar/
+      css_class = 'transcluded' if action=='transclusion'
+
+      head = %{<span cardId="#{card.id}" class="#{css_class}" position="#{position}" >}
+    end
+    
+    def foot
+      "</span>"
+    end
+    
+    def wrap(*args, &proc)
+      @template.concat(head, proc.binding)
+      yield(self)
+      @template.concat(foot, proc.binding)
+    end
+      
+    def content_head
+      %{<span class="content editOnDoubleClick">} 
+    end
+    def content_foot
+      %{</span>} 
+    end
+    
+    def wrap_content( content="" )
+      content_head + content + content_foot
+    end
   end
 
   
   # For cases where you just need to grab a quick id or so..
   def slot
-    Slot.new(@card,@context,@action)
+    controller.slot ||= Slot.new(@card,@context,@action,self)
   end
-
+  
+  def with_slot( card, context, action, options={}, &proc) 
+    new_slot = Slot.new(card,context,action,self)
+    old_slot, controller.slot = controller.slot, new_slot
+    yield new_slot #slot_for(card, context, action, options={}, &proc)
+    controller.slot = old_slot
+  end
+    
   def slot_for( card, context, action, options={}, &proc )
+    @action  = action
     options[:render_slot] = !request.xhr? if options[:render_slot].nil?            
-    slot = Slot.new(card, context, action, self)
-    if options[:render_slot]
-      css_class = ''      
-      if slot.action=='line'  
-        css_class << 'line' 
-      else
-        css_class << 'paragraph'                     
-      end
-      css_class << ' full' if (context=='main' or (action!='view' and action!='line'))
-      css_class << ' sidebar' if context=='sidebar'
-      css_class << " #{options[:class]}" if options[:class]
-      slot_head = %{<div id="#{slot.id}" class="card-slot #{css_class}">}
-      concat(slot_head, proc.binding)  
-      yield slot
-      concat(%{</div>}, proc.binding)
+    if options[:render_slot]    
+      slot.wrap(&proc)
     else
       yield slot
     end
   end 
   
+  def slot_rendered_content( slot, card )   
+    c, name = controller, "card/content/#{card.id}"
+    if c.perform_caching and card.cacheable? and content = c.read_fragment(name)
+      return content
+    end
+    content = render :partial=>partial_for_action("content", card),
+                :locals=>{:card=>card, :slot=>slot}
+    if card.cacheable? and c.perform_caching
+      c.write_fragment(name, content)
+    end
+    content
+  end
 
   def slot_notice(slot)
-    %{<span id="#{slot.id(:notice)}" class="notice">#{controller.notice}</span>}
+    %{<span class="notice">#{controller.notice}</span>}
   end
 
   def slot_header(slot)
-    render :partial=>'card/header', :locals=>{ :card=>slot.card, :slot=>slot }
+    controller.send :render_to_string, :partial=>'card/header', :locals=>{ :card=>slot.card, :slot=>slot }
   end
   
   def slot_menu(slot)
@@ -182,7 +228,7 @@
   end
 
   def slot_footer(slot)
-    render :partial=>"card/footer", :locals=>{ :card=>slot.card, :slot=>slot }
+    controller.send :render_to_string, :partial=>"card/footer", :locals=>{ :card=>slot.card, :slot=>slot }
   end
   
   def slot_option(slot, args={}, &proc)
@@ -246,33 +292,37 @@
   
   def slot_update_cardtype_function(slot,options={})
     fn = ['File','Image'].include?(slot.card.type) ? 
-            "Wagn.onSaveQueue['#{slot.id}'].clear(); " :
-            "Wagn.runQueue(Wagn.onSaveQueue['#{slot.id}']); "
+            "Wagn.onSaveQueue['#{slot.context}'].clear(); " :
+            "Wagn.runQueue(Wagn.onSaveQueue['#{slot.context}']); "
     fn << remote_function( options )   
   end
        
   def slot_js_content_element(slot)
-    "$('#{slot.id(:form)}').elements['card[content]']"
+    "getSlotElement('form').elements['card[content]']"
   end
   
   def slot_content_field(slot,form,options={})   
-    slot.form = form
+    slot.form = form              
+    @nested = options[:nested]
     slot.render_partial 'editor', options
   end                          
          
   def slot_save_function(slot)
-    "warn('runnint #{slot.id} queue'); if (Wagn.runQueue(Wagn.onSaveQueue['#{slot.id}'])) { this.form.onsubmit() }"
+    "warn('runnint #{slot.context} queue'); if (Wagn.runQueue(Wagn.onSaveQueue['#{slot.context}'])) { this.form.onsubmit() }"
   end
   
   def slot_cancel_function(slot)
-    "Wagn.runQueue(Wagn.onCancelQueue['#{slot.id}']);"
+    "Wagn.runQueue(Wagn.onCancelQueue['#{slot.context}']);"
   end
+  
 
   def slot_editor_hooks(slot,hooks)
     # it seems as though code executed inline on ajax requests works fine
     # to initialize the editor, but when loading a full page it fails-- so
     # we run it in an onLoad queue.  the rest of this code we always run
-    # inline-- at least until that causes problems.
+    # inline-- at least until that causes problems.     
+    hook_context = @nested ? slot.context.split(':')[0..-2].join(':') : slot.context
+    
     code = ""
     if hooks[:setup]
       code << "Wagn.onLoadQueue.push(function(){\n" unless request.xhr?
@@ -280,31 +330,72 @@
       code << "});\n" unless request.xhr?
     end
     if hooks[:save]  
-      code << "warn('adding to #{slot.id} save queue');"
-      code << "if (typeof(Wagn.onSaveQueue['#{slot.id}'])=='undefined') {\n"
-      code << "  Wagn.onSaveQueue['#{slot.id}']=$A([]);\n"
+      code << "warn('adding to #{hook_context} save queue');"
+      code << "if (typeof(Wagn.onSaveQueue['#{hook_context}'])=='undefined') {\n"
+      code << "  Wagn.onSaveQueue['#{hook_context}']=$A([]);\n"
       code << "}\n"
-      code << "Wagn.onSaveQueue['#{slot.id}'].push(function(){\n"
-      code << "warn('running #{slot.id} save hook');"
+      code << "Wagn.onSaveQueue['#{hook_context}'].push(function(){\n"
+      code << "warn('running #{hook_context} save hook');"
       code << hooks[:save]
       code << "});\n"
     end
     if hooks[:cancel]
-      code << "if (typeof(Wagn.onCancelQueue['#{slot.id}'])=='undefined') {\n"
-      code << "  Wagn.onCancelQueue['#{slot.id}']=$A([]);\n"
+      code << "if (typeof(Wagn.onCancelQueue['#{hook_context}'])=='undefined') {\n"
+      code << "  Wagn.onCancelQueue['#{hook_context}']=$A([]);\n"
       code << "}\n"
-      code << "Wagn.onCancelQueue['#{slot.id}'].push(function(){\n"
+      code << "Wagn.onCancelQueue['#{hook_context}'].push(function(){\n"
       code << hooks[:cancel]
       code << "});\n"
     end
     javascript_tag code
   end
+     
+  # This is a slight modification of the stock rails method to accomodate 
+  # bare javascript
+  def remote_function(options)
+    javascript_options = options_for_ajax(options)
+
+    update = ''
+    if options[:update] =~ /^javascript\:/
+      update << options[:update].gsub(/^javascript\:/,'')
+    elsif options[:update] && options[:update].is_a?(Hash)
+      update  = []
+      update << "success:'#{options[:update][:success]}'" if options[:update][:success]
+      update << "failure:'#{options[:update][:failure]}'" if options[:update][:failure]
+      update  = '{' + update.join(',') + '}'
+    elsif options[:update]
+      update << "'#{options[:update]}'"
+    end
+
+    function = update.empty? ? 
+      "new Ajax.Request(" :
+      "new Ajax.Updater(#{update}, "
+
+    if options[:url] =~ /^javascript\:/
+      function << options[:url].gsub(/^javascript\:/,'')
+    else
+      url_options = options[:url]
+      url_options = url_options.merge(:escape => false) if url_options.is_a?(Hash)
+      function << "'#{url_for(url_options)}'" 
+    end
+    
+    function << ", #{javascript_options})"
+
+    function = "#{options[:before]}; #{function}" if options[:before]
+    function = "#{function}; #{options[:after]}"  if options[:after]
+    function = "if (#{options[:condition]}) { #{function}; }" if options[:condition]
+    function = "if (confirm('#{escape_javascript(options[:confirm])}')) { #{function}; }" if options[:confirm]
+
+    return function
+  end
+
+
    
   def previous_page_function
     "document.location.href='#{url_for_page(previous_page)}'"
   end
   
-  def truncatewords_with_closing_tags(input, words = 15, truncate_string = "...")
+  def truncatewords_with_closing_tags(input, words = 95, truncate_string = "...")
     if input.nil? then return end
     wordlist = input.to_s.split
     l = words.to_i - 1
@@ -315,7 +406,8 @@
     wordstring.scan(/\<([^\>\s\/]+)[^\>\/]*?\>/).each { |t| h1[t[0]] ? h1[t[0]] += 1 : h1[t[0]] = 1 }
     wordstring.scan(/\<\/([^\>\s\/]+)[^\>]*?\>/).each { |t| h2[t[0]] ? h2[t[0]] += 1 : h2[t[0]] = 1 }
     h1.each {|k,v| wordstring += "</#{k}>" * (h1[k] - h2[k].to_i) if h2[k].to_i < v }
-    wordstring += wordlist.length > l ? '<span style="color:grey"> ...</span' : ''
+    wordstring = wordstring + '<span style="color:grey"> ...</span>' if wordlist.length > l    
+    wordstring
   end
 
   # You'd think we'd want to use this one but it sure doesn't seem to work as
@@ -336,17 +428,6 @@
     card.cacheable? ? controller.cache_erb_fragment(block, name) : block.call
   end
   
-  def rendered_content( card )   
-    c, name = controller, "card/content/#{card.id}"
-    if c.perform_caching and card.cacheable? and content = c.read_fragment(name)
-      return content
-    end
-    content = render :partial=>partial_for_action("content", card), :locals=>{:card=>card}
-    if card.cacheable? and c.perform_caching
-      c.write_fragment(name, content)
-    end
-    content
-  end
 
   def partial_for_action( name, card=nil )
     # FIXME: this should look up the inheritance hierarchy, once we have one

@@ -1,8 +1,6 @@
-<% slot_for(card, context, action) do |slot| %>
+<% slot_for(@card, @context, @action, :render_slot=>(render_slot||=nil)) do |slot| %>    
 	<%= slot.header %>  
-	<span class="content cooked editOnDoubleClick" cardid="<%= card.id %>" inPopup="false">
-		<%= rendered_content card %>
-	</span>
+	<%= slot.wrap_content( slot.rendered_content(card) ) %>
 	
 	<%= slot.notice %>	
 	<% if card.ok?(:comment) %>
@@ -19,8 +17,5 @@
 		<% end %>
     </div>
   <% end %>
-  <%= slot.footer %>
+	<%= slot.footer %>
 <% end %>
-
-<%# FIXME: this is duplicated effort in lots of cases %>
-<%= javascript_tag "setupCardViewStuff()" %>

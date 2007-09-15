@@ -1,4 +1,4 @@
-<p><% date_id = slot.id + "-date" -%>
+<p><% date_id = slot.context + "-date" -%>
 <% link_text = card.content.blank? ? (t=Time.now(); [t.year , t.mon, t.day].join('-')) : card.content %>
 <%= link_to_function link_text, "scwShow($('#{date_id}'), scwID('#{date_id}'));", :id=>date_id %>
 </p>

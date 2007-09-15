@@ -8,7 +8,7 @@
 
 <% slot_for(@card, "connection", "connect", :render_slot=>true) do |slot| %>
 	<% form_remote_for :card, @card, :url=>slot.url_for('connection/update'),
-	 		:html=>{ :id=>slot.id(:form) } do |f| %>
+	 		:html=>{ :class=>'form' } do |f| %>
 
 		<div class="edit-area">
 	 		<table>
@@ -24,7 +24,7 @@
 								<% if @card.ok? :type %>
   								<%= slot.cardtype_field f, :onchange=>slot.update_cardtype_function(
   										  :url=>slot.url_for("connection/edit"), :update=>'connections-workspace',
-  											:with=>"Form.serialize('#{slot.id(:form)}')" 
+  											:with=>"Form.serialize(getSlotElement(this,'form'))" 
   								) %>
   							<% end %>
 							</span>

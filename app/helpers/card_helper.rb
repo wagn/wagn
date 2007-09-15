@@ -50,13 +50,13 @@ end
       :url=>{ :action=>'changes', :id=>@card.id, 
         :rev=>revision, :context=>@context, :mode=>(mode || params[:mode] || true)
       },
-     :update=>WagnHelper::Slot.new(@card, @context,'changes').id
+     :update=>'javascript:getSlotSpan(this)'
   end
 
   def rollback
     link_to_remote 'Save as current', 
       :url => { :action=>'rollback', :id=>@card.id, :rev=>@revision_number },
-      :update=>WagnHelper::Slot.new(@card, @context,'changes').id 
+      :update=>'javascript:getSlotSpan(this)' 
   end
   
   def revision_menu

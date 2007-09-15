@@ -1,20 +1,18 @@
 <% slot_for(card, context, 'edit') do |slot| %>  
 	<%#= slot.menu %>
-	
-	
   <table>
 			<td>
-			  <span id="<%= slot.id :name %>" class="name-area">
+			  <span class="name-area">
 			    <span class="title"><%= less_fancy_title(card) %></span>
 					<%= link_to_remote '[edit name]', :url=>slot.url_for("cardname/edit"),
-								:update => slot.id(:name) %>
+								:update => slot.id('name-area') %>
 			  </span> 
 			</td>
 			<td>
- 			  <span id="<%= slot.id :cardtype %>" class="cardtype-area">
+ 			  <span class="cardtype-area">
 					<span class="cardtype"><%= Card.cardtypes[card.type] %></span>
 					<%= link_to_remote '[edit cardtype]', :url=>slot.url_for("cardtype/edit"),
-								:update => slot.id(:cardtype) %>
+								:update => slot.id('cardtype-area') %>
 			  </span>
 			</td>
 		</tr>
@@ -28,7 +26,7 @@
 	
 	<div class="editor edit-area" cardid="#{card.id}">
 	  <% form_remote_for :card, card, :url=>slot.url_for("card/update"), 
-				 :html=>{ :id=>slot.id(:form), :class=>'editor' } do |form| %>
+				:html=>{ :class=>'form editor' } do |form| %>
 				                             
 			<% if card.hard_content_template %>
 			  <% slot.form = form %>
@@ -43,9 +41,6 @@
   		
 		<% end %>
 	</div>
-	
-
-	
 	<%= slot.notice %>
 
 <% end %>

@@ -4,9 +4,9 @@
 				:update=>slot.id(:name) do |f| %>
 			 
 			<p>Change <%= link_to_page formal_title(@card), @card.name %> to   
-			 <%= slot.name_field(f, :id=>slot.id('name-field')) %>
+			 <%= slot.name_field(f, :class=>'name-field' %>
 				<% if @card.name and @card.name.junction? %>
-			  	<%= button_to_function "Flip", "f=$('#{slot.name_area}-field'); f.value = f.value.split('+').reverse().join('+')"  %>
+			  	<%= button_to_function "Flip", "f=getSlotElement('name-field'); f.value = f.value.split('+').reverse().join('+')"  %>
 				<% end %>
 				</p>
 							
@@ -35,7 +35,7 @@
 			<% end %>
 			
 		 	<%= submit_tag 'Rename' %>
-		  <%= button_to_remote 'Cancel', :url=>slot.url_for('cardname/view'), :update=>slot.id(:name) %>
+		  <%= button_to_remote 'Cancel', :url=>slot.url_for('cardname/view'), :update=>slot.id('name-area') %>
 		<% end %>
 	</div>
 <% end %>

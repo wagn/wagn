@@ -5,10 +5,9 @@
 
 <div>
   <% @title = @card.name %>
-
 	<%= render( :partial=>'card/view', :locals=>{ 
 		:card => @card,
-		:context => 'main',
+		:context => 'main:1',
 		:action => 'view',
 		}) 
   %>

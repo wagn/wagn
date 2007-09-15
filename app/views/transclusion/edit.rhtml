@@ -1,14 +1,19 @@
-<% slot_for(card, context, 'edit', :render_slot=>false) do |slot| %>  
+<% slot_for(card, context, 'edit') do |slot| %>  
 	<div class="editor edit-area">
-		<% if slot.nested_context? %>
-			<span class="title"><%= less_fancy_title(card) %></span>
-		<% end %>
+		<span class="title"><%= less_fancy_title(card) %></span>
 	  <% form_remote_for :card, card, :url=>slot.url_for("transclusion/update"), 
 				 :html=>{ :id=>slot.editor_id(:form), :class=>'editor' } do |form| %>
-			<%= slot.content_field(form) %>
+			
+			<% if card.hard_content_template %>
+			  <% slot.form = form %>
+			  <%= slot.render( card, mode='edit' ) %>
+			<% else %>
+				<%= slot.content_field(form) %>
+			<% end %>
+		
 			<%= button_to_function "Save", slot.save_function %>
 			<%= button_to_remote 'Cancel', :url=>slot.url_for('transclusion/view'),
-			 			:before=>slot.cancel_function %> 
+						:update=> slot.id(:content), :before=>slot.cancel_function %> 
 		<% end %>
 	</div>
 <% end %>         

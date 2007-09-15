@@ -17,6 +17,8 @@ class ApplicationController < ActionController::Base
   
   ## This is a hack, but lots of stuff seems to break without it
   helper :wagn
+  attr_accessor :slot
+
   include WagnHelper 
   
   protected  
@@ -130,7 +132,7 @@ class ApplicationController < ActionController::Base
   end  
   
   def load_context
-    @context = params[:context] || 'main'
+    @context = params[:context] || 'main:1'
     @action = params[:action]
   end 
   
@@ -256,9 +258,20 @@ class ApplicationController < ActionController::Base
   end   
   
   def render_errors(card=nil)
-    card ||= @card
+    card ||= @card    
+    render_update_slot_element 'notice', "#{card.errors.full_messages.join(',')}"
+  end  
+
+  def render_update_slot(stuff="", &proc )
+    render_update_slot_element(name="", stuff,&proc)                   
+  end
+  
+  def render_update_slot_element(name,stuff="")
     render :update do |page|
-      page.replace_html slot.id(:notice), "#{card.errors.full_messages.join(',')}"
+      page.select(slot.selector(name)).all() do |target,index|
+        target.update(stuff) unless stuff.empty?
+        yield(page, target) if block_given?
+      end
     end
   end
 end

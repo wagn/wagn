@@ -192,20 +192,14 @@ setupCardViewStuff = function() {
   setupDoubleClickToEdit();
 }                  
 
+
 setupDoubleClickToEdit=function(container) {
   Element.getElementsByClassName( document, "createOnClick" ).each(function(el){
     el.onclick=function(event) {                   
       element = Event.element(event);
-      
-      span = getTransclusionSpan(element)
-      slot_id = getSlotId(element);
-      position = span.hasAttribute('position') ? span.attributes['position'].value : false;
-      context = slot_id + (position ? ":" + position : "");
- 
-      card_name = span.attributes['cardname'].value;
-
+      card_name = getSlotSpan(element).attributes['cardname'].value;
       console.log("create  " +card_name);
-      new Ajax.Request('/transclusion/create?context='+context, {
+      new Ajax.Request('/transclusion/create?context='+getSlotContext(element), {
         asynchronous: true, evalScripts: true,
         parameters: "card[name]="+encodeURIComponent(card_name)
       });
@@ -216,59 +210,61 @@ setupDoubleClickToEdit=function(container) {
   Element.getElementsByClassName( document, "editOnDoubleClick" ).each(function(el){
     el.ondblclick=function(event) {                   
       element = Event.element(event);
-
-      // FIXME: for nested work, we should crawl up the stack and get all the positions
-      // this whole mess needs refactored
-      span = getTransclusionSpan(element)
-      slot_id = getSlotId(element);
-      position = span.hasAttribute('position') ? span.attributes['position'].value : false;
-      context = slot_id + (position ? ":" + position : "");
-
+      span = getSlotSpan(element);   
       card_id = span.attributes['cardid'].value;
-
-      new Ajax.Request('/transclusion/edit/'+card_id+'?context='+context,
-         {asynchronous: true, evalScripts: true});
-      Event.stop(event);
+      if (span.hasClassName('paragraph')) {
+        new Ajax.Updater(getSlotSpan(element), '/card/edit/'+card_id+'?context='+getSlotContext(element),
+           {asynchronous: true, evalScripts: true});
+        
+      } else {
+        new Ajax.Updater(getSlotElement(element,'content'), '/transclusion/edit/'+card_id+'?context='+getSlotContext(element),
+           {asynchronous: true, evalScripts: true});
+     }
+     Event.stop(event);
     }
   });
 }
 
-
-getSlotId=function(element) {
-  if (Element.hasClassName(element, 'card-slot')) {
-    return element.attributes['id'].value;
-  } else if (element.parentNode) {
-    return getSlotId( element.parentNode );
+getSlotElement=function(element, name){
+  span = getSlotSpan(element);
+  return $A(document.getElementsByClassName(name, span))[0];
+}
+ 
+getSlotContext=function(element) {
+  if (span = getSlotSpan(element)) {
+    var position = span.attributes['position'].value;
+    parentContext = getSlotContext(span.parentNode);
+    return parentContext + ':' + position;
   } else {
-    warn("Failed to get Slot Id");
-    return false;
+    return getOuterContext(element);
   }
 }
 
-// we need to crawl up the dom because the event could be triggered inside some
-// html -- I think.  will the element always be the one the event handler is set on??
-getTransclusionSpan=function(element) {
-  if (element.hasAttribute('cardId')) {
+getOuterContext=function(element) {
+  if (typeof(element.hasAttribute)!='undefined' && element.hasAttribute('context')) {
+    return element.attributes['context'].value;
+  } else if (element.parentNode){
+    return getOuterContext(element.parentNode);
+  } else {
+    warn("Failed to get Outer Context");
+    return 'page';
+  }
+}
+
+getSlotSpan=function(element) {
+  //warn("getSlotSpan: " + element)
+  if (typeof(element.hasAttribute)!='undefined' && element.hasAttribute('position')) {
+    //warn("found "+element);
     return element;
   } else if (element.parentNode) {
-    return getTransclusionSpan( element.parentNode );
-  } else {       
-    warn("Failed to get Transclusion Span");
+    return getSlotSpan( element.parentNode );
+  } else {   
+    //warn("Failed to get Slot Span");
+    //throw("YOU FOOL!");
     return false;
   }
 }
 
-
-getTranscludingCardId= function(element) {
-  if (element.hasAttribute('cardId')) {
-    return element.attributes['cardId'].value;
-  } else if (element.parentNode) {
-    return this.getTranscludingCardId( element.parentNode );
-  } else {       
-    warn("Failed to get Transcluding Card Id");
-    return false;
-  }
-}
 
 
 

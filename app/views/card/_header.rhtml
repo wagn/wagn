@@ -6,8 +6,8 @@
     <%= page_icon(card) %>
 	  <% arrow = %{<img class="close-arrow" src="/images/arrow_down.png">} %>
     <%= slot.link_to_action arrow + less_fancy_title(card), 'line', 
-					{:before => "Wagn.paragraph_to_line($('#{slot.id}'))" }, 
-					:id=>"#{slot.id}-line-link", :class=>"line-link" %> 
+					{:before => "Wagn.paragraph_to_line(getSlotSpan(this))" }, 
+					 :class=>"line-link" %> 
   </div>
 
   <% unless card.type=='Basic' %>

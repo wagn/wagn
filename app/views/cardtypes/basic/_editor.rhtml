@@ -1,5 +1,5 @@
 <div class="richtext">
-<% eid, raw_id = slot.editor_id, slot.editor_id+'-raw-content' %>
+<% eid, raw_id = slot.context, slot.context+'-raw-content' %>
 <div id="<%= raw_id %>"><%= card.content %></div>
 <%= slot.form.hidden_field :content, :id=>"#{eid}-hidden-content" %>
 <iframe id="<%= eid %>-iframe" height="0" width="0" frameborder="0"></iframe>

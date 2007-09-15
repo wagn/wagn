@@ -15,6 +15,7 @@ class FileController < ApplicationController
     slot = WagnHelper::Slot.new(@card,@context,'file')
     responds_to_parent do 
       render :update do |page|
+        # FIXME-slot
         page << "warn('submitting after file upload');"
         page << "$('#{slot.id(:upload_content)}').value='#{file_name}'"
         page[slot.id(:form)].onsubmit()

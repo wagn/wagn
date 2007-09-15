@@ -5,7 +5,12 @@
   -moz-border-radius: 6px;
   padding: 1px 5px;
 }
-
+          
+          
+.card-slot {
+  display: block;
+}          
+          
 
 
 

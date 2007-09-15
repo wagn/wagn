@@ -1,7 +1,7 @@
 <p><iframe id="<%= slot.editor_id(:iframe) %>" name="<%= slot.editor_id(:iframe) %>" height="30" width="480" frameborder="0" src="<%= slot.url_for("file/edit") %>" scrolling="no">
 </iframe></p>
 <%= slot.form.hidden_field :content, :id=>slot.id(:upload_content) %>
-
+<%# FIXME-slot %>
 <%= slot.editor_hooks :save=>%{
 	doc=$('#{slot.editor_id(:iframe)}').contentDocument;
 	doc.getElementById('#{slot.id(:upload_form)}').submit(); 

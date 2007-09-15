@@ -7,7 +7,7 @@ class CardController < ApplicationController
   before_filter :edit_ok,   :only=>[ :edit, :update, :save_draft, :rollback, :save_draft] 
   before_filter :create_ok, :only=>[ :new, :create ]
   before_filter :remove_ok, :only=>[ :remove ]
-
+                                                                
   def changes
     load_card_and_revision
     @show_diff = (params[:mode] != 'false')
@@ -33,18 +33,12 @@ class CardController < ApplicationController
     
   def create         
     @card = Card.create params[:card]
-    if @card.errors.empty?
-      # double check to prevent infinite redirect loop
-      fail "Card creation failed"  unless Card.find_by_name( @card.name )
-      # FIXME: it would make the tests nicer if we did a real redirect instead of rjs
-      render :update do |page|
-        page.redirect_to url_for_page(@card.name)
-      end
-    else
-      render :update do |page|
-        page.replace_html slot.id(:notice), :partial=>'trouble'
-        page.visual_effect :highlight, slot.id(:notice)
-      end
+    return render_errors unless @card.errors.empty?
+    # double check to prevent infinite redirect loop
+    fail "Card creation failed"  unless Card.find_by_name( @card.name )
+    # FIXME: it would make the tests nicer if we did a real redirect instead of rjs
+    render :update do |page|
+      page.redirect_to url_for_page(@card.name)
     end
   end 
   
@@ -84,9 +78,9 @@ class CardController < ApplicationController
     end
     if @card.destroy     
       session[:return_stack].pop  #dirty hack so we dont redirect to ourself after delete
-      render :update do |page|
-        page.replace slot.id ''
-        if @context=='main'
+      render_update_slot do |page,target|
+        if @context=~'main'
+          target.update ''
           page.wagn.messenger.note "#{@card.name} removed. Redirecting to #{previous_page}..."
           page.redirect_to url_for_page(previous_page)
         else 
@@ -94,11 +88,9 @@ class CardController < ApplicationController
         end
       end
     elsif @card.errors.on(:confirmation_required)
-      render :partial=>'confirm_remove'
+      render_update_slot_element 'remove', :partial=>'confirm_remove'
     else
-      render :update do |page|
-        page.replace_html slot.id(:notice), "#{@card.errors.full_messages.join(',')}"
-      end
+      render_errors
     end
   end
 
@@ -147,6 +139,13 @@ class CardController < ApplicationController
     end
   end
 
+  def to_view
+    render_update_slot do |page, target|
+      target.update render_to_string(:action=>'view')
+      page << "Wagn.line_to_paragraph($$('#{slot.selector}')[0])"
+    end
+  end
+
   def update     
     if @card.hard_content_template
       errors = false
@@ -163,10 +162,7 @@ class CardController < ApplicationController
       @card.update_attributes params[:card]     
     end
     return render_errors unless @card.errors.empty?
-    render :update do |page|
-      page.replace_html slot.id, :partial=>'view', 
-        :locals=>{:card=>@card, :context=>@context, :action=>'view'}
-    end
+    render_update_slot render_to_string(:action=>'view')
   end
 
   def options

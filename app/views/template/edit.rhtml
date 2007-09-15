@@ -3,36 +3,11 @@
  
   <div class="content">
   	<h2>Editing Template</h2>
+	<div class="editor edit-area" class="content">
+	  <% form_remote_for :card, @tmpl, :url=>slot.url_for("template/update"), 
+				 :html=>{ :class=>'form editor' } do |form| %>
 
-  	<div class="editor edit-area" class="content">
-  	  <% form_remote_for :card, @tmpl, :url=>slot.url_for("template/update"), 
-  				 :html=>{ :id=>slot.id(:form), :class=>'editor' } do |form| %>
-
-  <!-- 	   <table>
-  					<td>
-  					  <span id="<%#= slot.id :name %>" class="name-area">
-  					    <span class="title"><%#= less_fancy_title(@tmpl) %></span>
-  					  </span> 
-  					</td>
-  					<td>
-  		 			  <span id="<%#= slot.id :cardtype %>" class="cardtype-area">
-  							<%# if @card.type=='Cardtype' %>
-  								<span class="cardtype"><%#= Card.cardtypes[@tmpl.type] %></span>
-  							<%# else %>
-  							  <span id="<%#= slot.id :cardtype %>" class="cardtype-area">
-  								  <%#= slot.cardtype_field form, :card=>@tmpl,
-  												:onchange=>slot.update_cardtype_function(   
-  								        	:url=>slot.url_for('template/edit'), :update=>slot.id, 			    
-  								        	:with=>"Form.serialize('#{slot.id(:form)}')" 
-  								  ) %>
-  							  </span>
-  							<%# end %>
-  					  </span>
-  					</td>
-  				</tr>
-  			</table>
-  -->	    
-  	    <p class="question">What cards use this template?</p>
+   	    <p class="question">What cards use this template?</p>
   	    <p class="answer">
   	      This template applies
   	      <% if @card.type=='Cardtype' %>
@@ -51,7 +26,7 @@
 <br><div class="title"><%= less_fancy_title(@tmpl) %></div><br><br>
   
   			<%= slot.content_field(form, :card=>@tmpl) %>
-		
+
   			<table class="fieldset">
   				<%= render :partial=>'/card/permission_fields', :locals=>{:card=>@tmpl,:slot=>slot } %>
   			</table>
@@ -62,6 +37,7 @@
   		<% end %>     
   	</div>
 	
+
   	<div id="<%= slot.id(:remove) %>" class="edit-area remove-buttons">
   		<%= button_to_remote "Remove #{@tmpl.name}", :url=>slot.url_for("template/remove") %>
   	</div>

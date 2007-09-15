@@ -1,20 +1,20 @@
-<% slot_for(@card, "new", "new") do |slot| %>  
+<% slot_for(@card, @context, "new") do |slot| %>  
 	<% @title = "New Card" %>    
 	<div class="edit-area">
 	  <% form_remote_for :card, @card, :url=>slot.url_for('card/create'), 
-					:html=>{ :id=>slot.id(:form) } do |form| %>
+					:html=>{ :class=>'form' } do |form| %>
 			<table>
 				<tr>
 					<td>
-						<span id="<%= slot.id :name %>" class="name-area">
+						<span class="name-area">
 							<%= slot.name_field(form) %>
 					  </span> 
 					</td>
 					<td>
-					  <span id="<%= slot.id :cardtype %>" class="cardtype-area">
+					  <span class="cardtype-area">
 						  <%= slot.cardtype_field form, :onchange=>slot.update_cardtype_function(   
 						        :url=>slot.url_for('card/new'), :update=>slot.id, 			    
-						        :with=>"Form.serialize('#{slot.id(:form)}')" 
+						        :with=>"Form.serialize(getSlotElement(this,'form'))" 
 						  ) %>
 					  </span>
 					</td>

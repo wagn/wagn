@@ -4,7 +4,7 @@ class CardController < ApplicationController
   cache_sweeper :card_sweeper
   before_filter :load_card!, :except => [ :new, :create, :show, :index, :mine  ]
 
-  before_filter :edit_ok,   :only=>[ :edit, :update, :save_draft, :rollback, :save_draft] 
+  before_filter :edit_ok,   :only=>[ :update, :save_draft, :rollback, :save_draft] 
   before_filter :create_ok, :only=>[ :new, :create ]
   before_filter :remove_ok, :only=>[ :remove ]
                                                                 
@@ -42,8 +42,12 @@ class CardController < ApplicationController
     end
   end 
   
-  def edit
-    @card = handle_cardtype_update(@card)
+  def edit 
+    if @card.ok?(:edit) 
+      @card = handle_cardtype_update(@card)
+    else
+      render :action=>'denied'
+    end
   end
 
   def index

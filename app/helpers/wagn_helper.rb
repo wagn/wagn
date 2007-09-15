@@ -108,13 +108,13 @@ module WagnHelper
         card.content
       elsif options[:view]=='card' 
         @action = 'view'
-        @template.controller.send( :render_to_string, :partial=>'/card/view', :locals=>{ :card=>card,:render_slot=>true })
+        @template.render :partial=>'/card/view', :locals=>{ :card=>card,:render_slot=>true }
       elsif options[:view]=='line'
         @action = 'line'
-        @template.controller.send( :render_to_string, :partial=>'/card/line', :locals=>{ :card=>card, :render_slot=>true })
+        @template.render :partial=>'/card/line', :locals=>{ :card=>card, :render_slot=>true }
       else #options['view']=='content' -- default case
         @action='transclusion'
-        @template.controller.send( :render_to_string, :partial=>'/transclusion/view', :locals=>{ :card=>card, :render_slot=>true })
+        @template.render :partial=>'/transclusion/view', :locals=>{ :card=>card, :render_slot=>true }
       end   
     end
     
@@ -211,7 +211,7 @@ module WagnHelper
   end
 
   def slot_header(slot)
-    controller.send :render_to_string, :partial=>'card/header', :locals=>{ :card=>slot.card, :slot=>slot }
+    render :partial=>'card/header', :locals=>{ :card=>slot.card, :slot=>slot }
   end
   
   def slot_menu(slot)

@@ -1,5 +1,4 @@
 class BlockController < ApplicationController
-  layout 'application'
   helper :wagn, :card
   
   before_filter :load_cards_from_params
@@ -12,7 +11,9 @@ class BlockController < ApplicationController
   end
      
   def render_list( render_args )   
-    render_args[:locals].merge!( :cards=>@cards, :duplicates=>@duplicates, :layout=>'application' )
+    # FIXME: layout=>ajax_or_not doesn't seem to work here, although it does everywhere else-- wtf?
+    #  need it for looking at search results on their own page.
+    render_args[:locals].merge!( :cards=>@cards, :duplicates=>@duplicates, :layout=>ajax_or_not )
     respond_to do |format|    
       format.html { render render_args }
       format.json { render_args[:locals][:context] = "sidebar"; render_jsonp render_args }
@@ -41,7 +42,7 @@ class BlockController < ApplicationController
       when query == :cardtype_cards
          @card.me_type.ok? :create
       end
-    render_list :partial=>'block/card_list', :layout=>'application', :locals => {
+    render_list :partial=>'block/card_list', :locals => {
       :context => 'connections'
     }                                     
   end  

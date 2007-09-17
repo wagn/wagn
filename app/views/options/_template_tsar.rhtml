@@ -15,7 +15,7 @@
   <% end %>
 
   <tr>
-    <td colspan="3" style="text-align:center">
+    <td colspan="3" >
       <% if !@card.template_tsar? %>
         <p><strong>Currently this card has no template.</strong></p>
         <% if @card.ok? :edit ##FIXME-perm we may want more restrictions than this on creating a template! %>
@@ -23,8 +23,8 @@
         <% end %>
       <% else %>                         
 				<% @template = @card.attribute_card('*template') %>
-				<% with_slot(@template, 'template:0', 'edit') do |slot| %>
-				  <%= render :partial=>'/card/edit', :locals=>{ :card=>@template, :render_slot=>true} %>
+				<% with_slot(@template, 'template:0', 'view') do |slot| %>
+				  <%= render :partial=>'/card/view', :locals=>{ :card=>@template, :render_slot=>true} %>
 				<% end %>
       <% end %>
     </td>

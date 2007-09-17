@@ -71,7 +71,7 @@ Object.extend(Wagn, {
       var percent = 100 * oldElementDimensions.height / newElementDimensions.height;
       var elementDimensions = newElementDimensions;
       new Effect.BlindDown( element, {
-        duration: 0.5,
+        duration: 0.3,
         scaleFrom: percent,
         scaleMode: {originalHeight: elementDimensions.height, originalWidth: elementDimensions.width},
         afterSetup: function(effect) {
@@ -101,7 +101,7 @@ Object.extend(Wagn, {
       
       return new Effect.Scale(element, percent, 
         { 
-          duration: 0.5,
+          duration: 0.3,
           scaleContent: false, 
           scaleX: false,
           scaleFrom: 100,
@@ -212,12 +212,14 @@ setupDoubleClickToEdit=function(container) {
       element = Event.element(event);
       span = getSlotSpan(element);   
       card_id = span.attributes['cardid'].value;
-      if (span.hasClassName('paragraph')) {
-        new Ajax.Updater(getSlotSpan(element), '/card/edit/'+card_id+'?context='+getSlotContext(element),
+      if (span.hasClassName('line')) {
+        new Ajax.Request('/card/to_edit/'+card_id+'?context='+getSlotContext(element),
            {asynchronous: true, evalScripts: true});
-        
+      } else if (span.hasClassName('paragraph')) {
+        new Ajax.Updater(span, '/card/edit/'+card_id+'?context='+getSlotContext(element),
+           {asynchronous: true, evalScripts: true});
       } else {
-        new Ajax.Updater(getSlotElement(element,'content'), '/transclusion/edit/'+card_id+'?context='+getSlotContext(element),
+        new Ajax.Updater(span, '/transclusion/edit/'+card_id+'?context='+getSlotContext(element),
            {asynchronous: true, evalScripts: true});
      }
      Event.stop(event);

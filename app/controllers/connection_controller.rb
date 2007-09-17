@@ -19,6 +19,10 @@ class ConnectionController < ApplicationController
       @notice = ""
       @notice << "JOINEE: #{@tag.errors.full_messages.join(', ')}<br/>\n" unless @tag.errors.empty?
       @notice << "JUNCTION: #{@connection.errors.full_messages.join(', ')}<br/>\n" unless @connection.errors.empty?
+      #self.new()
+                           
+      # FIXME this is all copied in new
+      load_likely
       render :action=>'new'
     else
       # switch'm up so @card is the correct one for edit
@@ -64,14 +68,17 @@ class ConnectionController < ApplicationController
   end
   
   def new
-    @likely = load_cards :card=>@card,:query=>'common_tags'
-    @already = load_cards :card=>@card, :query=>'plussed_cards'
-    @already_ids = @already.plot :id
-    @likely.reject! {|c| @already_ids.member? c.id }
+    load_likely
   end
   
   private
     def load_connection
     end
   
+  def load_likely       
+    @likely = load_cards(:card=>@card,:query=>'common_tags') || []
+    @already = load_cards :card=>@card, :query=>'plussed_cards'
+    @already_ids = @already.plot :id
+    @likely.reject! {|c| @already_ids.member? c.id }
+  end  
 end

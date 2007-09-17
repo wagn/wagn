@@ -35,13 +35,16 @@ class ConnectionController < ApplicationController
   def update
     @card.update_attributes! params[:card]  
     # FIXME: !!!this is only gonna work the first time
-    @context = 'related:0'
+    # @context = 'related:0'
     render :update do |page|
       page.replace_html 'connections-workspace', ''
-      page.hide 'empty-card-list'
-      page.insert_html :top, 'related-list', :partial=>'card/line', 
-        :locals=>{ :card=>@card, :context=>@context, :render_slot=>true }
-      page.visual_effect :highlight, slot.id
+      page.hide 'empty-card-list' 
+      page.wagn.lister.update
+      page << %{new Effect.Highlight($$("span[cardid]=#{@card.id}")[0]);\n}
+      
+      # page.insert_html :top, 'related-list', :partial=>'card/line', 
+      #   :locals=>{ :card=>@card, :context=>@context, :render_slot=>true }
+      #page.visual_effect :highlight, slot.id
     end
   end
   

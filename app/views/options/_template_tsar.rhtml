@@ -21,8 +21,11 @@
         <% if @card.ok? :edit ##FIXME-perm we may want more restrictions than this on creating a template! %>
           <p>But you should feel warmly welcomed to <%= link_to 'create one now', "/wagn/#{@card.name}+*template" %>.</p>
         <% end %>
-      <% else %>
-            (template card goes here)	
+      <% else %>                         
+				<% @template = @card.attribute_card('*template') %>
+				<% with_slot(@template, 'template:0', 'edit') do |slot| %>
+				  <%= render :partial=>'/card/edit', :locals=>{ :card=>@template, :render_slot=>true} %>
+				<% end %>
       <% end %>
     </td>
   </tr>

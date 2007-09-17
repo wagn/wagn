@@ -1,4 +1,4 @@
-<% slot_for(card, context, 'edit') do |slot| %>  
+<% slot_for(card, context, 'transclusion') do |slot| %>  
 	<div class="editor edit-area">
 		<span class="title"><%= less_fancy_title(card) %></span>
 	  <% form_remote_for :card, card, :url=>slot.url_for("transclusion/update"), 
@@ -13,7 +13,8 @@
 		
 			<%= button_to_function "Save", slot.save_function %>
 			<%= button_to_remote 'Cancel', :url=>slot.url_for('transclusion/view'),
-						:update=> slot.id(:content), :before=>slot.cancel_function %> 
-		<% end %>
+						:update=> slot.id, :before=>slot.cancel_function %> 
+		<% end %> 
+		<%= slot.notice %>
 	</div>
 <% end %>         

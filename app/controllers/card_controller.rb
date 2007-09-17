@@ -84,10 +84,10 @@ class CardController < ApplicationController
       session[:return_stack].pop  #dirty hack so we dont redirect to ourself after delete
       render_update_slot do |page,target|
         if @context=~/main/
-          target.update ''
           page.wagn.messenger.note "#{@card.name} removed. Redirecting to #{previous_page}..."
           page.redirect_to url_for_page(previous_page)
         else 
+          target.replace ''
           page.wagn.messenger.note( "#{@card.name} removed. ")  
         end
       end
@@ -149,6 +149,15 @@ class CardController < ApplicationController
       page << "Wagn.line_to_paragraph($$('#{slot.selector}')[0])"
     end
   end
+             
+  # FIXME?  this seems 
+  def to_edit
+    render_update_slot do |page, target|
+      target.update render_to_string(:action=>'edit')
+      page << "Wagn.line_to_paragraph($$('#{slot.selector}')[0])"
+    end
+  end
+
 
   def update     
     if @card.hard_content_template

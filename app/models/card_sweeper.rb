@@ -6,7 +6,7 @@ class CardSweeper < ActionController::Caching::Sweeper
 
     # FIXME: this will need review when we do the new defaults/templating system
     if card.updates.for?(:content)
-      card.templatees.each {|c| expire_card(c) }     
+      card.hard_templatees.each {|c| expire_card(c) }     
       card.transcluders.each {|c| expire_card(c) }
     end
     

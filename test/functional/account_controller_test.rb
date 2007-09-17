@@ -39,7 +39,7 @@ class AccountControllerTest < Test::Unit::TestCase
     logout
     post :login, :login => 'webmaster@grasscommons.org', :password => 'bad password'
     assert_nil session[:user]
-    assert_response :success
+    assert_response 403
   end
   
   def test_should_logout

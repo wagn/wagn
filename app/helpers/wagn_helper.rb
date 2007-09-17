@@ -145,7 +145,8 @@ module WagnHelper
       css_class << ' sidebar' if context=~/sidebar/
       css_class = 'transcluded' if action=='transclusion'
 
-      head = %{<span cardId="#{card.id}" class="#{css_class}" position="#{position}" >}
+      id_attr = card ? %{cardId="#{card.id}"} : ''
+      head = %{<span #{id_attr} class="#{css_class}" position="#{position}" >}
     end
     
     def foot
@@ -395,7 +396,7 @@ module WagnHelper
     "document.location.href='#{url_for_page(previous_page)}'"
   end
   
-  def truncatewords_with_closing_tags(input, words = 95, truncate_string = "...")
+  def truncatewords_with_closing_tags(input, words = 15, truncate_string = "...")
     if input.nil? then return end
     wordlist = input.to_s.split
     l = words.to_i - 1
@@ -406,7 +407,8 @@ module WagnHelper
     wordstring.scan(/\<([^\>\s\/]+)[^\>\/]*?\>/).each { |t| h1[t[0]] ? h1[t[0]] += 1 : h1[t[0]] = 1 }
     wordstring.scan(/\<\/([^\>\s\/]+)[^\>]*?\>/).each { |t| h2[t[0]] ? h2[t[0]] += 1 : h2[t[0]] = 1 }
     h1.each {|k,v| wordstring += "</#{k}>" * (h1[k] - h2[k].to_i) if h2[k].to_i < v }
-    wordstring = wordstring + '<span style="color:grey"> ...</span>' if wordlist.length > l    
+#    wordstring +='<span style="color:grey"> ...</span>' if wordlist.length > l    
+#    wordstring += '...' if wordlist.length > l    
     wordstring
   end
 

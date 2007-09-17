@@ -12,7 +12,7 @@ class BlockController < ApplicationController
   end
      
   def render_list( render_args )   
-    render_args[:locals].merge!( :cards=>@cards, :duplicates=>@duplicates )
+    render_args[:locals].merge!( :cards=>@cards, :duplicates=>@duplicates, :layout=>'application' )
     respond_to do |format|    
       format.html { render render_args }
       format.json { render_args[:locals][:context] = "sidebar"; render_jsonp render_args }
@@ -41,7 +41,7 @@ class BlockController < ApplicationController
       when query == :cardtype_cards
          @card.me_type.ok? :create
       end
-    render_list :partial=>'block/card_list', :locals => {
+    render_list :partial=>'block/card_list', :layout=>'application', :locals => {
       :context => 'connections'
     }                                     
   end  

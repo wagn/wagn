@@ -15,8 +15,9 @@
 <% end %>
                  
 <% cards.each_with_index do |card,index| %>
-	<%= render :partial=>'card/line', 
-				:locals=>{:card=>card,:context=>context+":#{index}", :render_slot=>true} %>
+	<% with_slot(card, "#{context}:#{index}", "line") do |slot| %>  
+		<%= render :partial=>'card/line', :locals=>{:card=>card, :render_slot=>true} %>
+	<% end %>
 <% end %>     
 
 <% if duplicates.length > 0 %>

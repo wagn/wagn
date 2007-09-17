@@ -1,10 +1,10 @@
-<% sidebar_cards.each_with_index do |card,index| %>
-	<% if !card.attribute_card('*closed') %>
-
-<%# or     (!card.simple? and card.tag.plus_sidebar and card.tag.attribute_card('*open'))) %>
-		<%= render :partial=>"card/view", :locals=>{:card=>card,:context=>'sidebar', :action=>'view'} %>
-	<% else %>
-		<%= render :partial=>'card/line', :locals=>{
-					:card=>card,:context=>"sidebar:#{index}", :action=>'line' } %>
+<% sidebar_cards.each_with_index do |card,index| %>  
+	<% with_slot(card, "sidebar:#{index}", "line") do |slot| %>  
+		<% if !card.attribute_card('*closed') %>
+		<%# or     (!card.simple? and card.tag.plus_sidebar and card.tag.attribute_card('*open'))) %>
+			<%= render :partial=>"card/view", :locals=>{:card=>card,:render_slot=>true} %>
+		<% else %>
+			<%= render :partial=>'card/line', :locals=>{ :card=>card, :render_slot=>true } %>
+		<% end %>
 	<% end %>
 <% end %>

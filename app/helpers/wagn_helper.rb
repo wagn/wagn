@@ -401,10 +401,16 @@ module WagnHelper
     wordlist = input.to_s.split
     l = words.to_i - 1
     l = 0 if l < 0
-    wordstring = wordlist.length > l ? wordlist[0..l].join(" ") : input
+    wordstring = wordlist.length > l ? wordlist[0..l].join(" ") : input     
+    # nuke partial tags at end of snippet
+    wordstring.gsub!(/(<[^\>]+)$/,'')
     h1 = {}
-    h2 = {}
-    wordstring.scan(/\<([^\>\s\/]+)[^\>\/]*?\>/).each { |t| h1[t[0]] ? h1[t[0]] += 1 : h1[t[0]] = 1 }
+    h2 = {}        
+    # match tags with or without self closing (ie. <foo />)
+    wordstring.scan(/\<([^\>\s\/]+)[^\>]*?\>/).each { |t| h1[t[0]] ? h1[t[0]] += 1 : h1[t[0]] = 1 }
+    # match tags with self closing and mark them as closed
+    wordstring.scan(/\<([^\>\s\/]+)[^\>]*?\/\>/).each { |t| h2[t[0]] ? h2[t[0]] += 1 : h2[t[0]] = 1 }
+    # match close tags
     wordstring.scan(/\<\/([^\>\s\/]+)[^\>]*?\>/).each { |t| h2[t[0]] ? h2[t[0]] += 1 : h2[t[0]] = 1 }
     h1.each {|k,v| wordstring += "</#{k}>" * (h1[k] - h2[k].to_i) if h2[k].to_i < v }
 #    wordstring +='<span style="color:grey"> ...</span>' if wordlist.length > l    

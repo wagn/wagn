@@ -12,8 +12,9 @@ class BlockController < ApplicationController
      
   def render_list( render_args )   
     # FIXME: layout=>ajax_or_not doesn't seem to work here, although it does everywhere else-- wtf?
-    #  need it for looking at search results on their own page.
-    render_args[:locals].merge!( :cards=>@cards, :duplicates=>@duplicates, :layout=>ajax_or_not )
+    #  need it for looking at search results on their own page. 
+    render_args[:locals].merge!( :cards=>@cards, :duplicates=>@duplicates )
+    render_args.merge! :layout=>ajax_or_not
     respond_to do |format|    
       format.html { render render_args }
       format.json { render_args[:locals][:context] = "sidebar"; render_jsonp render_args }

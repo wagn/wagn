@@ -83,7 +83,7 @@ class CardController < ApplicationController
     if @card.destroy     
       session[:return_stack].pop  #dirty hack so we dont redirect to ourself after delete
       render_update_slot do |page,target|
-        if @context=~'main'
+        if @context=~/main/
           target.update ''
           page.wagn.messenger.note "#{@card.name} removed. Redirecting to #{previous_page}..."
           page.redirect_to url_for_page(previous_page)

@@ -41,7 +41,7 @@ module Chunk
           when /^https?:/; 'external-link'
           when /^mailto:/; 'email-link'
         else
-          href = '/wiki/' + CGI.escape(Cardname.escape(href))
+          href = '/wagn/' + CGI.escape(Cardname.escape(href))
           refcard ? 'known-card' : 'wanted-card'
         end
       %{<a class="#{klass}" href="#{href}">#{link_text}</a>}

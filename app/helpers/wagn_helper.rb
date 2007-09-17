@@ -462,7 +462,7 @@ module WagnHelper
   def url_for_page( title, opts={} )   
     # shaved order of magnitude off footer rendering
     # vs. url_for( :action=> .. )
-    "/wiki/#{Cardname.escape(title)}"
+    "/wagn/#{Cardname.escape(title)}"
     #url_for(opts.merge(
     #  :action=>'show', 
     #  :controller=>'card', 

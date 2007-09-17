@@ -31,7 +31,7 @@ module Chunk
       def card_link
         href = CGI.escape(Cardname.escape(refcard_name))
         klass = refcard ? 'known-card' : 'wanted-card'
-        %{<a class="#{klass}" href="/wiki/#{href}">#{link_text}</a>}
+        %{<a class="#{klass}" href="/wagn/#{href}">#{link_text}</a>}
       rescue Exception=>e
         return "error rendering link"
       end

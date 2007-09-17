@@ -1,25 +1,36 @@
-<% slot_for(@card,@context,@action, :render_slot=>true, :class=>'new-connection') do |slot| %>
-<%#= <div id="new-connection"> %>
-	<% form_remote_for :card, @card, :url=>{ :action=>'create', :id=>@card}, 
-			:update=>'connections-workspace', :html=>{ :name=>'connect'} do |f| %>
-	  <div id="new-connection-intro">
-		  Users have connected these cards to other <%= link_to_page @card.cardtype.name %> cards.  Click on one to connect it to "<%= link_to_page @card.name %>." 
-		</div>
-		<br/>
-	  <div>
-	    <%= render :partial=>'block/tag_cloud',:locals=>{
-	          :link_to=>'connect',
-	          :cards => load_cards(:card=>@card,:query=>'common_tags')
-	      }
-	    %>
-	  </div>
-	  <br/>
-	  <div id="add-form">
-	    <%= text_field_tag 'name', params[:name], { :size=>30 }  %>
-	    <%= submit_tag 'Add' %>
-	    <%= link_to_function "Cancel", "$('connections-workspace').innerHTML=''" %>
-	  </div>
+<div class="new-connection">
+  <% slot_for(@card,@context,@action, :render_slot=>true) do |slot| %>
+  	<% form_remote_for :card, @card, :url=>{ :action=>'create', :id=>@card}, 
+  			:update=>'connections-workspace', :html=>{ :name=>'connect'} do |f| %>
+
+  		<% if @likely.empty? %>
+  			<div class="intro">
+    		  Type in the name of a card below join it to <%= link_to_page @card.name %>.
+    		  <% if @already.empty? %>
+    		    (So far, no cards have been joined to any <%= link_to_page @card.cardtype.name %> cards.)
+    		  <% else %>
+    		    (All the cards joined to other  <%= link_to_page @card.cardtype.name %> cards have already been joined to <%= link_to_page @card.name %>.)
+    		  <% end %>
+    		</div>
+  		<% else%>
+  			<div class="intro">
+ 		      Users have joined these cards to other <%= link_to_page @card.cardtype.name %> cards.  Click on one to join it to "<%= link_to_page @card.name %>" ... 
+    		</div>
+    	  <div>
+	        <%= render :partial=>'block/tag_cloud',:locals=>{:link_to=>'connect', :cards =>@likely } %>
+	      </div>
+  			<div class="intro">
+          ... or, if you don't see the card you want to join to "<%= link_to_page @card.name %>" above, type in the card's name below. 
+    		</div>
+	    <% end%>
+	    
+  	  <div id="add-form">
+  	    <%= text_field_tag 'name', params[:name], { :size=>30 }  %>
+  	    <%= submit_tag 'Add' %>
+  	    <%= link_to_function "Cancel", "$('connections-workspace').innerHTML=''" %>
+  	  </div>
   
-	<% end %>         
-  <%= slot.notice %>
-<% end %>
+  	<% end %>         
+    <%= slot.notice %>
+  <% end %>
+</div>

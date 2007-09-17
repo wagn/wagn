@@ -77,7 +77,7 @@ class WikiContent < String
         string.gsub!( /<a\s+href="([^\"]*)">(.*?)<\/a>/ ) do
           href, text = $~[1],$~[2]
           href.gsub!(url_root,'') if url_root
-          if text == href or href=="/wiki/#{text}"
+          if text == href or href=="/wagn/#{text}"
             href.match( /^http:/ ) ? text : "[[#{text}]]"
           else
             "[#{text}][#{href}]"

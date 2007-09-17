@@ -95,7 +95,7 @@ class ApplicationController < ActionController::Base
       when 'cardtype_cards'; options[:type]=@card.extension.class_name
       when 'pieces';         options[:pieces]=true; options[:id]=card_id
       when 'backlinks';      options[:backlink]={ :id=>card_id }
-      when 'revised_by';     options[:editors]=(@card.extension ? @card.extension.id : nil)
+      when 'revised_by';     options[:editors]=(@card.extension ? @card.extension.id : nil); options[:sort_by]='updated_at'; options[:sortdir]='desc'
       end
     end
 

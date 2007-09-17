@@ -1402,7 +1402,7 @@ proto.COMMENT_NODE_TYPE = 8;
 proto.get_wiki_comment = function(element) {
     for (var node = element.firstChild; node; node = node.nextSibling) {
         if (node.nodeType == this.COMMENT_NODE_TYPE
-            && node.data.match(/^\s*wiki/))
+            && node.data.match(/^\s*wagn/))
             return node;
     }
     return null;

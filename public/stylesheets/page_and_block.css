@@ -171,20 +171,13 @@
 /*--- new connections --*/
 
 .new-connection {
-  display: block;
-  padding: 8px;
-  background: white;
-  margin: 4px 0px;
-  text-align: center;
-  border: 1px solid #ccc;
-  border-bottom: 2px solid #bbb;
-  border-right: 2px solid #bbb;
-  -moz-border-radius: 8px;
+  text-align: center; 
 }
 .new-connection div {
+  margin-top: 5px;
   margin-bottom: 15px
 }
-.new-connection-intro {
+.new-connection .intro {
   font-style: italic
 }
 #connections-workspace .cancel,

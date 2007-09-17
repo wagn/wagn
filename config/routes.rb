@@ -5,6 +5,10 @@ ActionController::Routing::Routes.draw do |map|
   #map.connect 'c/:controller/:action'
   #map.connect 'c/:controller', :action=>'index'
   
+  map.connect 'wagn/:id.:format', :controller => 'card', :action=>'show', :requirements=>{ :id=>/.*/, :format=>FORMAT_PATTERN }
+  map.connect 'wagn/:id', :controller => 'card', :action=>'show', :requirements=>{ :id=>/.*/}
+
+  #DEPRECATED
   map.connect 'wiki/:id.:format', :controller => 'card', :action=>'show', :requirements=>{ :id=>/.*/, :format=>FORMAT_PATTERN }
   map.connect 'wiki/:id', :controller => 'card', :action=>'show', :requirements=>{ :id=>/.*/}
 

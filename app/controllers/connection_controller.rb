@@ -33,9 +33,7 @@ class ConnectionController < ApplicationController
   end
   
   def update
-    @card.update_attributes params[:card]  
-    raise "FIXME-slot"
-    return render_errors unless @card.errors.empty?
+    @card.update_attributes! params[:card]  
     # FIXME: !!!this is only gonna work the first time
     @context = 'related:0'
     render :update do |page|
@@ -55,17 +53,18 @@ class ConnectionController < ApplicationController
   def remove
     @card.confirm_destroy = true  
     card_names = ([@card]+@card.dependents).plot(:name).join(' and ')
-    @card.destroy 
-    return render_errors unless @card.errors.empty?
-      render :update do |page|
-        page.replace_html 'connections-workspace', ''
-        page.replace_html 'alerts', "#{card_names} removed"
-      end
-    else
-      render :update do |page|
-        page.replace_html slot.id(:notice), :partial=>'/card/trouble'
-      end
+    @card.destroy!     
+    render :update do |page|
+      page.replace_html 'connections-workspace', ''
+      page.replace_html 'alerts', "#{card_names} removed"
     end
+  end
+  
+  def new
+    @likely = load_cards :card=>@card,:query=>'common_tags'
+    @already = load_cards :card=>@card, :query=>'plussed_cards'
+    @already_ids = @already.plot :id
+    @likely.reject! {|c| @already_ids.member? c.id }
   end
   
   private

@@ -28,7 +28,7 @@
 	  <% if @show_diff and @previous_revision %>
 	    <%= slot.render_diff( @card, @previous_revision.content, @revision.content ) %>
 	  <% else %>
-	    <%= slot.render(@card, @revision.content) %>
+	    <%= slot.render(@card, 'view', :content=>@revision.content) %>
 	  <% end %>
 	</div>
 

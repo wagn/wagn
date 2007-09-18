@@ -1,4 +1,3 @@
-
 class CardtypeController < ApplicationController
   helper :wagn, :card 
   cache_sweeper :card_sweeper

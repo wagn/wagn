@@ -15,11 +15,11 @@
   <% end %>
 
   <tr>
-    <td colspan="3" >
+    <td colspan="3" class="template">
       <% if !@card.template_tsar? %>
         <p><strong>Currently this card has no template.</strong></p>
         <% if @card.ok? :edit ##FIXME-perm we may want more restrictions than this on creating a template! %>
-          <p>But you should feel warmly welcomed to <%= link_to 'create one now', "/wagn/#{@card.name}+*template" %>.</p>
+          <p>But you should feel warmly welcomed to <%= link_to_remote 'create one now', :url=>slot.url_for('card/create_template') %>.</p>
         <% end %>
       <% else %>                         
 				<% @template = @card.attribute_card('*template') %>

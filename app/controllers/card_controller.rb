@@ -42,6 +42,13 @@ class CardController < ApplicationController
     end
   end 
   
+  def create_template
+    @card = Card.create! :name=>@card.name+"+*template"
+    render_update_slot_element 'template',  render_to_string( 
+      :partial=>'card/view', :locals=>{:card=>@card, :render_slot=>true}
+    ) 
+  end
+  
   def edit 
     if @card.ok?(:edit) 
       @card = handle_cardtype_update(@card)
@@ -81,7 +88,8 @@ class CardController < ApplicationController
       @card.confirm_destroy = params[:card][:confirm_destroy]
     end
     if @card.destroy     
-      session[:return_stack].pop  #dirty hack so we dont redirect to ourself after delete
+      #dirty hack so we dont redirect to ourself after delete
+      session[:return_stack].pop if session[:return_stack].last==@card.id
       render_update_slot do |page,target|
         if @context=~/main/
           page.wagn.messenger.note "#{@card.name} removed. Redirecting to #{previous_page}..."
@@ -92,7 +100,7 @@ class CardController < ApplicationController
         end
       end
     elsif @card.errors.on(:confirmation_required)
-      render_update_slot_element 'remove', :partial=>'confirm_remove'
+      render_update_slot render_to_string(:partial=>'confirm_remove')
     else
       render_errors
     end

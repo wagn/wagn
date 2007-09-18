@@ -93,7 +93,30 @@ module Card
     
     def default_permissions
       perm = defaults_template.permissions.reject { |p| p.task == 'create' unless type == 'Cardtype' }
-      perm.map {|p| Permission.new :task=>p.task, :party_id=>p.party_id, :party_type=>p.party_type}
+      
+      perm.map do |p|  
+        if p.task == 'read'
+          party = p.party
+          
+          if trunk and tag
+            trunk_reader = trunk.who_can(:read)
+            tag_reader = tag.who_can(:read)
+            if trunk_reader!=::Role[:anon] and tag_reader!=::Role[:anon] and trunk_reader!=tag_reader
+              errors.add(:permissions, "Can't create junction between cards in different restricted read groups:" + 
+                "#{trunk.name} belongs to #{trunk_reader.card.name}; " +
+                "#{tag.name} belongs to #{tag_reader.card.name}"
+              )
+            elsif trunk_reader!=::Role[:anon]
+              party = trunk_reader
+            elsif tag_reader!=::Role[:anon]
+              party = tag_reader
+            end
+          end
+          Permission.new :task=>p.task, :party=>party
+        else
+          Permission.new :task=>p.task, :party_id=>p.party_id, :party_type=>p.party_type
+        end
+      end
     end
     
     def update_references_on_create    

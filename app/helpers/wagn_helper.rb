@@ -20,8 +20,7 @@ module WagnHelper
     def id(area="") 
       area, id = area.to_s, ""  
       id << "javascript:elem=#{get(area)}"
-    end
-            
+    end                         
      
     def nested_context?
       context.split(':').length > 2
@@ -119,10 +118,15 @@ module WagnHelper
     end
     
     def render_transclusion_edit( options={} )
-      %{<div class="edit-area">} +
-        %{<span class="title">#{@template.less_fancy_title(card)}</span> } + 
-        content_field( form, :nested=>true ) +
-        "</div>"
+      if card.new_record?
+        %{<span class="faint" position="#{position}" cardid="" cardname="#{card.name}">}+
+          %{(#{card.name} would go here.)</span>}
+      else
+        %{<div class="edit-area">} +
+          %{<span class="title">#{@template.less_fancy_title(card)}</span> } + 
+          content_field( form, :nested=>true ) +
+          "</div>"
+      end
     end
           
     def render_transclusion_line(options={})        
@@ -289,7 +293,7 @@ module WagnHelper
   def slot_cardtype_field(slot,form,options={})
     card = options[:card] ? options[:card] : slot.card
     text = %{<span class="label"> card type:</span>\n} 
-    text << select_tag('card[type]', cardtype_options_for_select(card.type), options.merge(:class=>'field')) 
+    text << select_tag('card[type]', cardtype_options_for_select(card.type), options) 
   end
   
   def slot_update_cardtype_function(slot,options={})
@@ -300,7 +304,7 @@ module WagnHelper
   end
        
   def slot_js_content_element(slot)
-    "getSlotElement('form').elements['card[content]']"
+    "getSlotElement(this,'form').elements['card[content]']"
   end
   
   def slot_content_field(slot,form,options={})   

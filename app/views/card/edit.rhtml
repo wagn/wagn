@@ -8,8 +8,10 @@
 			<td>
 			  <span class="name-area">
 			    <span class="title"><%= less_fancy_title(card) %></span>
-					<%= link_to_remote '[edit name]', :url=>slot.url_for("cardname/edit"),
+			    <% unless card.template? %>
+						<%= link_to_remote '[edit name]', :url=>slot.url_for("cardname/edit"),
 								:update => slot.id('name-area') %>
+					<% end %>
 			  </span> 
 			</td>
 			<td>

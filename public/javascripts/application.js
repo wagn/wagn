@@ -90,11 +90,6 @@ Add the openInNewWindow function to the onclick event of links with a class name
 function getNewWindowLinks() {
   // Check that the browser is DOM compliant
   if (document.getElementById && document.createElement && document.appendChild) {
-  // Change this to the text you want to use to alert the user that a new window will be opened
-  ///* var strNewWindowAlert = " (opens in a new window)";
-  // // Find all links
-  // var objWarningText;
-  // var strWarningText;*/
     var link;
     var links = document.getElementsByTagName('a');
     for (var i = 0; i < links.length; i++) {
@@ -102,15 +97,249 @@ function getNewWindowLinks() {
       // Find all links with a class name of "non-html"
       //if (/\bnon\-html\b/.exec(link.className)) {
       if (/\bexternal\b/.exec(link.className)) {
-        // Create an em element containing the new window warning text and insert it after the link text
-       // /*objWarningText = document.createElement("em");
-       // strWarningText = document.createTextNode(strNewWindowAlert);
-       // objWarningText.appendChild(strWarningText);
-       // link.appendChild(objWarningText);*/
         link.onclick = openInNewWindow;
       }
     }
     objWarningText = null;
   }
 }
+
+var DEBUGGING = false;
+
+function copy_with_classes(element) {
+  copy = document.createElement('span');
+  copy.innerHTML = element.innerHTML;
+  Element.classNames( element ).each(function(className) {
+    Element.addClassName( copy, className );  
+  });
+  copy.hide();
+  element.parentNode.insertBefore( copy, element );
+  return copy;  
+}
+
+Object.extend(Wagn, {
+  user: function() { return $('user'); },
+  card: function(){ return Wagn.Card },
+  lister: function() { return Wagn._lister },
+  messenger: function(){ return Wagn.Messenger },
+  cardTable: function() { return Wagn.CardTable },
+  
+  title_mouseover: function( targetClass ) {
+    document.getElementsByClassName( targetClass ).each(function(elem) {
+      Element.addClassName( elem, 'card-highlight');
+      Element.removeClassName( elem, 'card');
+    })
+  },
+
+  title_mouseout: function( targetClass ) {
+    document.getElementsByClassName( targetClass ).each(function(elem) {
+      Element.removeClassName( elem, 'card-highlight');
+      Element.addClassName( elem, 'card');
+    })
+  },
+  
+  grow_line: function(element) {
+    var elementDimensions = element.getDimensions();
+    new Effect.BlindDown( element, {
+      duration: 0.5,
+      scaleFrom: 100,
+      scaleMode: {originalHeight: elementDimensions.height*2, originalWidth: elementDimensions.width}
+    });
+  },
+  
+  line_to_paragraph: function(element) {
+    var oldElementDimensions = element.getDimensions();
+    copy = copy_with_classes( element );
+    copy.removeClassName('line');
+    copy.addClassName('paragraph');
+    var newElementDimensions = copy.getDimensions();
+    copy.viewHeight = newElementDimensions.height;
+    copy.remove();
+    
+    var percent = 100 * oldElementDimensions.height / newElementDimensions.height;
+    var elementDimensions = newElementDimensions;
+    new Effect.BlindDown( element, {
+      duration: 0.3,
+      scaleFrom: percent,
+      scaleMode: {originalHeight: elementDimensions.height, originalWidth: elementDimensions.width},
+      afterSetup: function(effect) {
+        effect.element.makeClipping();
+        effect.element.setStyle({height: '0px'});
+        effect.element.show(); 
+        effect.element.removeClassName('line');
+        effect.element.addClassName('paragraph');     
+      }
+    });  
+  },
+  paragraph_to_line: function(element) {
+    var oldElementDimensions = element.getDimensions();
+    copy = copy_with_classes( element );
+    copy.removeClassName('paragraph');
+    copy.addClassName('line');
+    var newElementDimensions = copy.getDimensions();
+    copy.remove();  
+    
+    var percent = 100 * newElementDimensions.height / oldElementDimensions.height;
+    
+    return new Effect.Scale(element, percent, 
+      { 
+        duration: 0.3,
+        scaleContent: false, 
+        scaleX: false,
+        scaleFrom: 100,
+        scaleMode: {originalHeight: oldElementDimensions.height, originalWidth: oldElementDimensions.width},
+        restoreAfterFinish: true,
+        afterSetup: function(effect) {
+          effect.element.makeClipping();
+          effect.element.setStyle({height: '0px'});
+          effect.element.show(); 
+        },  
+        afterFinishInternal: function(effect) {
+          effect.element.undoClipping();
+          effect.element.removeClassName('paragraph');
+          effect.element.addClassName('line');
+        }
+      }); 
+  }
+
+});
+
+
+
+Wagn.highlight = function( group, id )  {  
+  document.getElementsByClassName( group ).each(function(elem) { 
+    Element.removeClassName( elem.id, 'current' );
+  });
+  Element.addClassName( group + '-' + id, 'current' );
+}
+
+/* ------------------ OnLoad --------------------*/
+
+Wagn.runQueue = function(queue) {
+  if (typeof(queue)=='undefined') { return true; }
+  result = true;
+  while (fn = queue.shift()) {
+    if (!fn.call()) {
+      result = false;
+    }
+  }
+  return result;
+};
+Wagn.onLoadQueue = $A([]);
+Wagn.onSaveQueue = $H({});
+Wagn.onCancelQueue = $H({});
+Wagn.editors = $H({});
+
+onload = function() {
+  Wagn.Messenger.flash();
+  Wagn.runQueue(Wagn.onLoadQueue);
+  setupCardViewStuff();
+  getNewWindowLinks();
+  setupDoubleClickToEdit();
+  if (typeof(init_lister) != 'undefined') {
+    Wagn._lister = init_lister();
+    Wagn._lister.update();
+  }
+}
+
+setupCardViewStuff = function() {
+  getNewWindowLinks();
+  setupDoubleClickToEdit();
+}                  
+
+
+setupDoubleClickToEdit=function(container) {
+  Element.getElementsByClassName( document, "createOnClick" ).each(function(el){
+    el.onclick=function(event) {                   
+      element = Event.element(event);
+      card_name = getSlotSpan(element).attributes['cardname'].value;
+      console.log("create  " +card_name);
+      new Ajax.Request('/transclusion/create?context='+getSlotContext(element), {
+        asynchronous: true, evalScripts: true,
+        parameters: "card[name]="+encodeURIComponent(card_name)
+      });
+      Event.stop(event);
+    }
+  });
+                               
+  Element.getElementsByClassName( document, "editOnDoubleClick" ).each(function(el){
+    el.ondblclick=function(event) {                   
+      element = Event.element(event);
+      span = getSlotSpan(element);   
+      card_id = span.attributes['cardid'].value;
+      if (span.hasClassName('line')) {
+        new Ajax.Request('/card/to_edit/'+card_id+'?context='+getSlotContext(element),
+           {asynchronous: true, evalScripts: true});
+      } else if (span.hasClassName('paragraph')) {
+        new Ajax.Updater(span, '/card/edit/'+card_id+'?context='+getSlotContext(element),
+           {asynchronous: true, evalScripts: true});
+      } else {
+        new Ajax.Updater(span, '/transclusion/edit/'+card_id+'?context='+getSlotContext(element),
+           {asynchronous: true, evalScripts: true});
+     }
+     Event.stop(event);
+    }
+  });
+}
+ 
+// FIXME: should be tested to not return content from nested slots.
+getSlotElement=function(element,name){
+  var span = getSlotSpan(element);
+  return $A(document.getElementsByClassName(name, span)).reject(function(x){
+    return getSlotSpan(x)!=span;
+  })[0];
+}
+
+// crawls up nested slots looking for one with a <span class="name"..
+getNextElement=function(element, name){
+  var span=null;
+  if (span = getSlotSpan(element)) {
+    if (e = $A(document.getElementsByClassName(name, span))[0]) {
+      return e;
+    } else {
+      return getNextElement(span.parentNode,name);
+    }
+  } else {
+    return null;
+  }
+}
+ 
+getSlotContext=function(element) {
+  var span=null;
+  if (span = getSlotSpan(element)) {
+    var position = span.attributes['position'].value;
+    parentContext = getSlotContext(span.parentNode);
+    return parentContext + ':' + position;
+  } else {
+    return getOuterContext(element);
+  }
+}
+
+getOuterContext=function(element) {
+  if (typeof(element.hasAttribute)!='undefined' && element.hasAttribute('context')) {
+    return element.attributes['context'].value;
+  } else if (element.parentNode){
+    return getOuterContext(element.parentNode);
+  } else {
+    warn("Failed to get Outer Context");
+    return 'page';
+  }
+}
+
+getSlotSpan=function(element) {
+  if (typeof(element.hasAttribute)!='undefined' && element.hasAttribute('position')) {
+    return element;
+  } else if (element.parentNode) {
+    return getSlotSpan( element.parentNode );
+  } else {   
+    return false;
+  }
+}
+
+
+
+
+
+
+
 

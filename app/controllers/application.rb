@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
   attr_accessor :slot
 
   include WagnHelper 
-  
+  include ActionView::Helpers::TextHelper #FIXME: do we have to do this? its for strip_tags() in edit()
   protected  
   def edit_ok
     @card.ok! :edit
@@ -169,11 +169,14 @@ class ApplicationController < ActionController::Base
   end  
   
   def handle_cardtype_update(card)
-    if updating_type?
+    if updating_type?  
+      old_type = card.type
       card.type=params[:card][:type]  
       card.save!
       card = Card.find(card.id)
-      card.content = params[:card][:content]
+      content = params[:card][:content]
+      content = strip_tags(content) if old_type=='Basic'
+      card.content = content
     end
     card
   end
@@ -259,13 +262,21 @@ class ApplicationController < ActionController::Base
   
   def render_errors(card=nil)
     card ||= @card    
-    render_update_slot_element 'notice', "#{card.errors.full_messages.join(',')}"
+    stuff = card.errors.full_messages.join(',')       
+    # getNextElement() will crawl up nested slots until it finds one with a notice div
+    render :update do |page|
+      page << %{notice = getNextElement($$("#{slot.selector}")[0],'notice');\n}
+      page << %{notice.update('#{escape_javascript(stuff)}')}
+    end
+    #render_update_slot_element 'notice', "#{card.errors.full_messages.join(',')}"
   end  
 
   def render_update_slot(stuff="", &proc )
     render_update_slot_element(name="", stuff,&proc)                   
   end
-  
+          
+  # FIXME: this should be fixed to use a call to getSlotElement() instead of default
+  # selectors, so that we can reject elements inside nested slots.
   def render_update_slot_element(name,stuff="")
     render :update do |page|
       page.select(slot.selector(name)).all() do |target,index|

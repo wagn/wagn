@@ -35,7 +35,7 @@ proto.config = {
     iframeId: null,
     iframeObject: null,
     disabledToolbarButtons: [],
-    editHeightMinimum: 150,
+    editHeightMinimum: 70,
     editHeightAdjustment: 1.3,
     clearRegex: null
 };

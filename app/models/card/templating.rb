@@ -42,7 +42,7 @@ module Card
     def template_tsar?
       attribute_card('*template') 
     end
-
+    
     def template?
       tag and tag.name == '*template' 
     end

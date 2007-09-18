@@ -172,7 +172,12 @@ module Card
         end
       end
     end
-
+   
+    def approve_template_tsar
+      deny_because "must be simple" unless simple? 
+      deny_because "can't be template"  if template?
+      
+    end
 
     def approve_permissions
       return if System.always_ok?

@@ -1,5 +1,9 @@
+<% hard_template = card.hard_content_template %>
+
 <% slot_for(card, context, 'edit') do |slot| %>  
 	<%#= slot.menu %>
+	<style><%= ".cardid-#{card.id} .edit-area .title-#{css_name(card.name)} { display: none; }" %></style>
+  
   <table>
 			<td>
 			  <span class="name-area">
@@ -18,13 +22,15 @@
 		</tr>
 	</table>
 
-	<% if tmpl = card.hard_content_template %>
-  	This card is controlled by a "hard" template: 
-		<%= link_to tmpl.name, "/template/edit/#{tmpl.trunk.id}" %>
+	<% if hard_template and hard_template.ok? :read %>
+  	<div class="content help">
+    	The format of this card (including any text in the grey area below) is controlled by a "hard" template: 
+  		<%= link_to_page hard_template.name %>.  
+  	</div>
 	<% end %>
 
 	
-	<div class="editor edit-area" cardid="#{card.id}">
+	<div class="editor edit-area <%= hard_template ? :templated : '' %>" cardid="#{card.id}">
 	  <% form_remote_for :card, card, :url=>slot.url_for("card/update"), 
 				:html=>{ :class=>'form editor' } do |form| %>
 				                             

@@ -17,7 +17,7 @@
     </table>
   <% end %>
 
-   <% if !@card.template? %>
+   <% if @card.ok? :template_tsar %>
      <%= render :partial=>'options/template_tsar', :locals=>{:card=>@card, :slot=>slot } %>	      
    <% end %>
 <% end %>

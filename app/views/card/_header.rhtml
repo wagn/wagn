@@ -15,4 +15,6 @@
       <%= link_to_page( Card.cardtypes[card.type] ) %>
     </span>
   <% end %>
+  
+  <style><%= ".cardid-#{card.id} .content .title-#{css_name(card.name)} { display: none; }" %></style>
 </div>       

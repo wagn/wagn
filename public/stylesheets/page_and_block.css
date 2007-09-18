@@ -237,14 +237,16 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
 }
 .fieldset .help { 
   padding-left: 6px;
-  font-style: italic;
-  background: #e9e9d5;
   width: 50%;
 }
 .fieldset input[type=submit] {
   margin: 6px
 }
 
+.help {
+  font-style: italic;
+  background: #e9e9d5;
+}
 
 
 /* --  miscellaneous --- */

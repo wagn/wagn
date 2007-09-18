@@ -4,7 +4,7 @@
 				:update=>slot.id(:name) do |f| %>
 			 
 			<p>Change <%= link_to_page formal_title(@card), @card.name %> to   
-			 <%= slot.name_field(f, :class=>'name-field' %>
+			 <%= slot.name_field(f, :class=>'name-field' ) %>
 				<% if @card.name and @card.name.junction? %>
 			  	<%= button_to_function "Flip", "f=getSlotElement('name-field'); f.value = f.value.split('+').reverse().join('+')"  %>
 				<% end %>

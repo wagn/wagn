@@ -298,16 +298,23 @@ a.current, a:link.current {
   background-color: #e8e9cc;
   -moz-border-radius: 4px;
 }
+
 .card-slot .transcluded p, 
 .card-slot .transcluded span, 
 .card-slot .transcluded ul, 
 .card-slot .transcluded h1, 
 .card-slot .transcluded h2, 
-.card-slot .transcluded div {
+.card-slot .transcluded div not(.editor){
   background-color: inherit;
   -moz-border-radius: inherit;
 }
 
+
+.transcluded .content {
+  display: inline;
+  padding: 0px;
+  margin: 0px;
+}
 
 
 /* card footer-------------------------------*/
@@ -433,12 +440,17 @@ a.current, a:link.current {
 
 /* card editing -------------------*/
 
-.edit-area {
+.edit-area  {
   background: #ddd;
   border: dashed 1px #aaa;
   margin: 4px;
   padding: 3px;
 }
+
+.templated.edit-area {
+  background: white;
+}
+
 .cardtype-area .cardtype {
   font-size: 14px;
   margin-left: 20px;
@@ -488,6 +500,12 @@ a.current, a:link.current {
 .edit-area td {
   vertical-align: middle;
 }
+.edit-area .title,
+.transcluded .edit-area .title {
+  display: block;
+  font-size: 11px;
+}
+
 .card-slot .inline.field span {
   display: block;
   padding-right: 5px;
@@ -515,6 +533,11 @@ a.current, a:link.current {
   text-align: center;
 }
 
+.card-slot .help.content {
+  padding: 10px;
+  margin-top: 5px;
+  color: #444;
+}
 
 .remove-buttons {
   text-align: right;

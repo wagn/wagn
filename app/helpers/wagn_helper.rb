@@ -119,7 +119,7 @@ module WagnHelper
     end
     
     def render_transclusion_edit( options={} )
-      %{<div class="card-slot">} +
+      %{<div class="edit-area">} +
         %{<span class="title">#{@template.less_fancy_title(card)}</span> } + 
         content_field( form, :nested=>true ) +
         "</div>"
@@ -144,6 +144,7 @@ module WagnHelper
       css_class << ' full' if (context=~/main/ or (action!='view' and action!='line'))
       css_class << ' sidebar' if context=~/sidebar/
       css_class = 'transcluded' if action=='transclusion'
+      css_class << " cardid-#{card.id}" if card
 
       id_attr = card ? %{cardId="#{card.id}"} : ''
       head = %{<span #{id_attr} class="#{css_class}" position="#{position}" >}

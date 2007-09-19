@@ -160,7 +160,7 @@ module Card
     def approve_type
       unless new_record?       
         approve_delete
-        if tag_template and tag_template.hard_template? 
+        if tag_template and tag_template.hard_template?  and !allow_type_change
           deny_because "You can't change the type of this card -- it is hard templated by #{tag_template.name}"
         end
       end

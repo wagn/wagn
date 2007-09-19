@@ -26,7 +26,7 @@ module WagnTestHelper
   end
   
   def render( card )
-    Renderer.new().render(card)
+    Renderer.new(card).render(card)
   end 
   
   def assert_difference(object, method = nil, difference = 1)
@@ -48,7 +48,7 @@ module WagnTestHelper
     end
     unless user==:anon
       # FIXME- does this controller option really work?
-      post 'login', :controller=>'account', :login=>login, :password=>pass
+      post '/account/login',  :login=>login, :password=>pass
       assert_response :redirect
     end
     if block_given?

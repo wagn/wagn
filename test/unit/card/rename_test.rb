@@ -22,6 +22,7 @@ class Card::RenameTest < Test::Unit::TestCase
     @b=card("B"); @b.name='A+D'; @b.save
     assert @b.errors.on(:name)
   end
+
   
   def test_update_dependents
     c1 =   Card["One"]
@@ -39,7 +40,7 @@ class Card::RenameTest < Test::Unit::TestCase
 
 
   def test_junction_to_simple   
-    assert_rename card("A+B"), "F" 
+    assert_rename card("A+B"), "K" 
   end
    
   
@@ -102,5 +103,6 @@ class Card::RenameTest < Test::Unit::TestCase
   def card(name)
     Card.find_by_name(name) or raise "Couldn't find card named #{name}"
   end                          
+
 end
 

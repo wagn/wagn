@@ -9,10 +9,10 @@ class LinkTest < Test::Unit::TestCase
   
   def test_basic
     card = newcard('Baines', '[[Nixon]]')
-    assert_equal('<a class="wanted-card" href="/wiki/Nixon">Nixon</a>', render(card) )
+    assert_equal('<a class="wanted-card" href="/wagn/Nixon">Nixon</a>', render(card) )
 
     card2 = newcard('Johnson', '[Lyndon][Baines]')
-    assert_equal('<a class="known-card" href="/wiki/Baines">Lyndon</a>', render(card2) )
+    assert_equal('<a class="known-card" href="/wagn/Baines">Lyndon</a>', render(card2) )
   end
      
   def test_semi_relative
@@ -27,7 +27,7 @@ class LinkTest < Test::Unit::TestCase
   
   def internal_needs_escaping    
     card5 = newcard('userlink', '[Marie][Marie "Mad Dog" Deatherage]')
-    assert_equal('<a class="wanted-card" href="/wiki/Marie_%22Mad_Dog%22_Deatherage">Marie</a>', render(card5) )
+    assert_equal('<a class="wanted-card" href="/wagn/Marie_%22Mad_Dog%22_Deatherage">Marie</a>', render(card5) )
   end
      
   def external_needs_not_escaped
@@ -38,7 +38,7 @@ class LinkTest < Test::Unit::TestCase
   def test_relative_link
     dude,job = newcard('Harvey',"[[#{JOINT}business]]"), newcard('business')
     card = dude.connect job, "icepicker" 
-    assert_equal("<a class=\"known-card\" href=\"/wiki/Harvey#{JOINT}business\">#{JOINT}business</a>", render(dude) )
+    assert_equal("<a class=\"known-card\" href=\"/wagn/Harvey#{JOINT}business\">#{JOINT}business</a>", render(dude) )
   end
   
   

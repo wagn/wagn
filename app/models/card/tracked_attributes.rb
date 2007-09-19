@@ -44,11 +44,13 @@ module Card
     end
 
     def set_type(new_type)
+      #warn "set type called on #{name} to #{new_type}"
       self.type_without_tracking = new_type 
       return if new_record?    
       callback(:before_destroy)
       callback(:after_destroy)
-      if !hard_templatees.empty?  
+      if !hard_templatees.empty?
+        #warn "going through hard templatees"  
         hard_templatees.each do |tee|
           tee.allow_type_change = "HELLS YEAH"  #FIXME? this is a hacky way around the standard validation
           tee.type = new_type
@@ -132,7 +134,8 @@ module Card
         dep_name = card.trunk.name + JOINT + card.tag.name
         #puts "  dep #{card.id} (#{card.name})= #{dep_name}"
         card.name = dep_name
-        card.save
+        card.confirm_rename = confirm_rename
+        card.save! #FIXME -- not sure this should be a ! (?), but probably needs handling if not...
       end
        
       # update references (unless we're asked not to)

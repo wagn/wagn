@@ -11,7 +11,7 @@ module Chunk
   
     def initialize(match_data, content)
       super   
-      warn "FOUND TRANSCLUDE #{match_data} #{content}"
+      #warn "FOUND TRANSCLUDE #{match_data} #{content}"
       @card_name = match_data[1].strip
       @relative = match_data[2]
       @options = {

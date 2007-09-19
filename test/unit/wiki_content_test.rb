@@ -14,7 +14,7 @@ class WikiContentTest < Test::Unit::TestCase
   def test_links
     assert_equal '[[ethan]]', WikiContent.process_links!('<a href="ethan">ethan</a>')
     assert_equal '[[ethan]] and [lewis][Lew]', WikiContent.process_links!('<a href="ethan">ethan</a> and <a href="Lew">lewis</a>')
-    assert_equal '[[ethan]]', WikiContent.process_links!('<a href="http://brahma:3033/wiki/ethan">ethan</a>', url_root='http://brahma:3033')
+    assert_equal '[[ethan]]', WikiContent.process_links!('<a href="http://brahma:3033/wagn/ethan">ethan</a>', url_root='http://brahma:3033')
     assert_equal '[[ethan]]', WikiContent.process_links!('[[ethan]]')
 
   end

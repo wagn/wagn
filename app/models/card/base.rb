@@ -76,6 +76,8 @@ module Card
       self.trash = false   
       self.key = name.to_key if name
       self.priority = tag.priority if tag  # this might not be right for non-simple tags
+
+      self.extension_type = 'SoftTemplate' if (template? and !self.extension_type)
        
       #[Permission.new(:task=>'read',:party=>::Role[:anon])] + 
       #  [:edit,:comment,:delete].map{|t| Permission.new(:task=>t.to_s, :party=>::Role[:auth])},
@@ -83,7 +85,6 @@ module Card
       { 
         :permissions => default_permissions,
         :content => defaults_template.content,
-        :extension_type => template? ? 'SoftTemplate' : nil,
       }.each_pair do |attr, default|  
         unless updates.for?(attr)
           send "#{attr}=", default

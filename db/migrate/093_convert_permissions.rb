@@ -16,7 +16,7 @@ class ConvertPermissions < ActiveRecord::Migration
       c.permissions= [
         {:task=>'delete', :party=>c.writer || auth},
         {:task=>'edit',   :party=>c.writer || auth},
-        {:task=>'read',   :party=>c.reader     || anon},
+        {:task=>'read',   :party=>c.reader || anon},
         {:task=>'comment',:party=>c.appender},
         ].map { |hash| Permission.new(hash)}     
     end

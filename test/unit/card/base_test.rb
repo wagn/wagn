@@ -11,16 +11,16 @@ class Card::BaseTest < Test::Unit::TestCase
     torgb = Card.create :name=>"TorgB"
     torgc = Card.create :name=>"TorgC"
     
-    forba_torga = Card.create :name=>"Forba#{JOINT}TorgA"
-    torgb_forba = Card.create :name=>"TorgB#{JOINT}Forba"
-    forba_torga_torgc = Card.create :name=>"Forba#{JOINT}TorgA#{JOINT}TorgC"
+    forba_torga = Card.create :name=>"Forba+TorgA";
+    torgb_forba = Card.create :name=>"TorgB+Forba";
+    forba_torga_torgc = Card.create :name=>"Forba+TorgA+TorgC";
     
     forba.reload #hmmm
     forba.destroy!
     assert_nil Card.find_by_name("Forba")
-    assert_nil Card.find_by_name("Forba#{JOINT}TorgA")
-    assert_nil Card.find_by_name("TorgB#{JOINT}Forba")
-    assert_nil Card.find_by_name("Forba#{JOINT}TorgA#{JOINT}TorgC")
+    assert_nil Card.find_by_name("Forba+TorgA")
+    assert_nil Card.find_by_name("TorgB+Forba")
+    assert_nil Card.find_by_name("Forba+TorgA+TorgC")
     
     # FIXME: this is a pretty dumb test and it takes a loooooooong time
     #while card = Card.find(:first,:conditions=>["type not in (?,?,?) and trash=?", 'InvitationRequest','User','Cardtype',false] )
@@ -67,8 +67,8 @@ class Card::BaseTest < Test::Unit::TestCase
  
   
   def test_find_nonexistent
-    assert !Card.find_by_name('no such card#{JOINT}no such tag')
-    assert !Card.find_by_name('HomeCard#{JOINT}no such tag')
+    assert !Card.find_by_name('no such card+no such tag')
+    assert !Card.find_by_name('HomeCard+no such tag')
   end
 
   private 

@@ -77,11 +77,11 @@ unless defined? TEST_ROOT
             next if cardtype=~ /Cardtype/
             # find by naming convention in test data:
             @cardtype = cardtype
-            @card = Card.find_by_name("Sample #{cardtype}") or puts "ERROR finding 'Sample #{cardtype}'"
+            @card = Card["Sample #{cardtype}"] or puts "ERROR finding 'Sample #{cardtype}'"
 
             if url =~ /:id/
               #FIXME: get real card_id
-              @title = url.gsub(/:id/,'').gsub(/\//,'_') + "_" + @card.type.underscore
+              @title = url.gsub(/:id/,'').gsub(/\//,'_') + "_" + (@card.type ? @card.type.to_s.underscore : '')
               @url = url.gsub(/:id/,@card.id.to_s)
             else
               @title = url.gsub(/\//,'_')

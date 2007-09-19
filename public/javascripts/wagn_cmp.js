@@ -3379,6 +3379,11 @@ new Effect.Highlight(this.element(),{startcolor:"#ffff00",endcolor:"#ffffaa",res
 },log:function(_367){
 this.element().innerHTML=_367;
 new Effect.Highlight(this.element(),{startcolor:"#dddddd",endcolor:"#ffffaa",restorecolor:"#ffffaa",duration:1});
+},flash:function(){
+flash=$("notice").innerHTML+$("error").innerHTML;
+if(flash!=""){
+this.alert(flash);
+}
 }};
 function openInNewWindow(){
 var _368=window.open(this.getAttribute("href"),"_blank");

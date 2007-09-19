@@ -145,7 +145,9 @@ module Card
         # FIXME -- this finds cards in or out of the trash-- we need that for
         # renaming card in the trash, but may cause other problems.
         raise "Must specify :name to find_or_create" if args['name'].blank?
-        (c = Card::Base.find_by_key(args['name'].to_key)) ? c : default_class.new(args)
+        c = (c = Card::Base.find_by_key(args['name'].to_key)) ? c : get_class_from_args(args).new(args)
+        c.send(:set_defaults) if c.new_record?
+        c
       end                      
                                   
       # sorry, I know the next two aren't DRY, I couldn't figure out how else to do it.
@@ -509,13 +511,16 @@ module Card
     # private cards can't be connected to private cards with a different group
     validates_each :permissions do |rec, attr, value|
       if rec.updates.for?(:permissions)
-        rec.errors.add :permissions, 'Insufficient permissions specifications' if value.length < 4
+        rec.errors.add :permissions, 'Insufficient permissions specifications' if value.length < 3
         reader = nil
         value.each do |p|  #fixme-perm -- ugly - no alibi
           unless %w{ create read edit comment delete }.member?(p.task.to_s)
             rec.errors.add :permissions, "No such permission: #{p.task}"
           end
           if p.task == 'read' then reader = p.party end
+          if p.party == nil and p.task!='comment'
+            rec.errors.add :permission, "#{p.task} party can't be set to nil"
+          end
         end
         (rec.dependents+(rec.junction? ? [rec.tag, rec.trunk] : [])).each do |d|   
           d_reader = d.who_can :read

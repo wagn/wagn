@@ -52,6 +52,11 @@ class BlockController < ApplicationController
     render_list :partial=>'block/link_list', :locals=>{
       :card => @card
     }
+  end  
+  
+  protected
+  def requesting_javascript?
+    false
   end
   
 end

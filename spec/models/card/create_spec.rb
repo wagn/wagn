@@ -20,11 +20,11 @@ describe Card, "sets permissions correctly by default" do
   end
   
   it "should set default permissions immediately upon creation" do
-    @c.permissions.length.should== 4
+    @c.permissions.length.should==3
   end
   
   it "should preserve permissions setting after reload" do
-    Card.find_by_name('temp card').permissions.length.should== 4
+    Card.find_by_name('temp card').permissions.length.should==3
   end
 end
 
@@ -73,7 +73,7 @@ end
 describe Card, "create junction" do
   before(:each) do
     User.as :joe_user
-    @c = Card.create :name=>"Peach+Pear", :content=>"juicy"
+    @c = Card.create! :name=>"Peach+Pear", :content=>"juicy"
   end
 
   it "should not have errors" do
@@ -159,6 +159,14 @@ describe Card, "Basic Card template" do
   end
   it "should not update other cardtypes' permissions if they have a template set" do
     @cte.who_can(:create).should_not== @r1
+  end  
+  
+  it "should keep create permission from template when updated directly" do
+    @ctd.permissions = %w{read edit delete comment}.collect {|t| 
+      Permission.new(:task=>t, :party=>::Role[:auth])
+    }
+    @ctd.save!
+    @ctd.who_can(:create).should== @r1
   end
 end
 
@@ -173,9 +181,10 @@ describe Card, "New Basic Card" do
     @bc = Card.create! :name=> 'Plain Jane'
   end
   
-  it "should not r1 edit permissions because its template is set to that" do
+  it "should have r1 edit permissions because its template is set to that" do
     @bc.who_can(:edit).should==@r1
-  end
+  end   
+  
   it "should not have create permissions assigned directly to the card itself" do
     @bc.who_can(:create).should== nil
   end

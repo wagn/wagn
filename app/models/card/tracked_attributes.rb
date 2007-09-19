@@ -74,11 +74,13 @@ module Card
       set_content( content + new_comment )
     end
     
-    
     def set_permissions(perms)
       self.updates.clear(:permissions)
-     #warn "set permissions is getting called: #{perms.plot :task}"
-      self.permissions_without_tracking = perms
+      if type=='Cardtype'
+        old_create_party = self.who_can(:create)
+        perms << Permission.new(:task=>'create', :party=>old_create_party)
+      end
+      self.permissions_without_tracking = perms.reject {|p| p.party==nil }
       perms.each do |p| 
         set_reader( p.party ) if p.task == 'read'
       end

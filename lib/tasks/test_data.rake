@@ -90,7 +90,7 @@ task :populate_template_database => :environment do
     c12345 = Card.create:name=>"Four+One+Five"
 
     # for wql & permissions 
-    %w{ A+B A+C A+D A+E C+A D+A F+A A+B+C }.each do |name| Card.create :name=>name  end 
+    %w{ A+C A+D A+E C+A D+A F+A A+B+C }.each do |name| Card.create! :name=>name  end 
       
     Card::Cardtype.create! :name=>"Cardtype A", :codename=>"CardtypeA"
     Card::Cardtype.create! :name=>"Cardtype B", :codename=>"CardtypeB"

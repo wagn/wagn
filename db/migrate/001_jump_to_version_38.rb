@@ -239,7 +239,7 @@ class JumpToVersion38 < ActiveRecord::Migration
     end
      
     create_card 'Basic', System.site_name, "To get started, you need to " +
-      "<a href=\"/wagn/new\">activate the admin account</a>.  After that, you'll want to edit " + 
+      "<a href=\"/admin/setup\">setup the admin account</a>.  After that, you'll want to edit " + 
       "this frontpage card"
     
   end

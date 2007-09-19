@@ -259,16 +259,29 @@ class ApplicationController < ActionController::Base
       redirect_to_url url 
     end    
   end   
+       
+  def requesting_javascript?
+    request.xhr?
+  end
+  
+  def requesting_ajax?
+    request.xhr?
+  end
   
   def render_errors(card=nil)
     card ||= @card    
-    stuff = card.errors.full_messages.join(',')       
+    stuff = %{Problem with card #{card.name}:<br>} + card.errors.full_messages.join(',')       
     # getNextElement() will crawl up nested slots until it finds one with a notice div
-    render :update do |page|
-      page << %{notice = getNextElement($$("#{slot.selector}")[0],'notice');\n}
-      page << %{notice.update('#{escape_javascript(stuff)}')}
+    if requesting_javascript?
+      render :update do |page|
+        page << %{notice = getNextElement($$("#{slot.selector}")[0],'notice');\n}
+        page << %{notice.update('#{escape_javascript(stuff)}')}
+      end
+    elsif requesting_ajax?
+      render :text=>stuff, :layout=>'application'
+    else
+      render :text=>stuff, :layout=>nil
     end
-    #render_update_slot_element 'notice', "#{card.errors.full_messages.join(',')}"
   end  
 
   def render_update_slot(stuff="", &proc )

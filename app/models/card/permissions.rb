@@ -88,10 +88,14 @@ module Card
     
      
     def who_can(operation)
-      permissions.each do |perm| 
-        return perm.party if perm.task == operation.to_s
-      end
-      return nil
+      perm = permissions.reject { |perm| perm.task != operation.to_s }.first   
+      perm && perm.party ? perm.party : nil
+      #  return perm.party
+      #elsif operation.to_s=='read'
+      #  ::Role[:anon]
+      #else
+      #  nil
+      #end
     end 
     
     def personal_user
@@ -114,9 +118,12 @@ module Card
       return true if (System.always_ok? and operation != :comment)
       System.party_ok? party
     end
-
-    def approve_create
-      testee = class_name == 'Cardtype' ? self : cardtype
+       
+    def approve_create                                    
+      # when creating a cartype card, check cardtype permissions
+      # otherwise when looking at cardtype card we're asking for permissions
+      # to create a card of that type
+      testee = (class_name == 'Cardtype' and !new_record?) ? self : cardtype
       unless testee.lets_user :create
         deny_because "Sorry, you don't have permission to create #{cardtype.name} cards"
       end

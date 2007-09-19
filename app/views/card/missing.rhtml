@@ -1,0 +1,26 @@
+<% cardname = params[:card][:name] %>
+<h1>Missing Card</h1>
+<% slot_for(Card.new , context, nil) do |slot| %>
+	  <div class="content instruction">
+      <h1 class="content">No card named "<%= cardname %>"...yet.</h2>
+        
+	    <p>You pioneer!  You've clicked on a card that nobody's created yet.	    
+	    <% if createable_cardtypes.empty? %>
+  	    Unfortunately, you don't currently have permission to create cards right now.
+	    <% end %>
+	    </p>
+	    
+	    <% if !logged_in? %>
+	      <h2>Sign in?</h2>
+	      <p>If you have an account, now would be a lovely time to 
+	         <%= link_to "Sign In", :controller=>'account', :action=>'login' %>.
+	      </p>
+	    
+	      <h2>Sign up?</h2>
+	      <p>If you don't have an account but would like one, have a ponder at <%= link_to 'Requesting an Invitation', '/account/invitation_request' %>.</p>
+	    <% end %>
+	    
+	    
+	  </div>
+<% end %>
+

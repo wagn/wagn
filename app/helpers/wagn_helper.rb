@@ -51,7 +51,7 @@ module WagnHelper
 
     def url_for(url)
       url = "javascript:'/#{url}" 
-      url << "/#{card.id}" if card.id
+      url << "/#{card.id}" if (card and card.id)
       url << "?context='+getSlotContext(this)"
     end
 
@@ -310,7 +310,8 @@ module WagnHelper
   def slot_content_field(slot,form,options={})   
     slot.form = form              
     @nested = options[:nested]
-    slot.render_partial 'editor', options
+    pre_content = (slot.card and !slot.card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
+    pre_content + slot.render_partial( 'editor', options )
   end                          
          
   def slot_save_function(slot)

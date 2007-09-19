@@ -1,5 +1,5 @@
 <% slot_for(@card, @context, :changes) do |slot| %>
-	<%= slot.header %>
+	<%= slot.header unless @no_changes_header %>
 	<div class="revision-header">
 	  <span class="revision-title"><%= @revision.title %></span> 
 	  posted by <%= link_to_page @revision.created_by.card.name %>

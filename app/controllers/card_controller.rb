@@ -2,7 +2,7 @@ class CardController < ApplicationController
   helper :wagn, :card 
   layout :ajax_or_not
   cache_sweeper :card_sweeper
-  before_filter :load_card!, :except => [ :new, :create, :show, :index, :mine  ]
+  before_filter :load_card!, :except => [ :new, :create, :show, :index, :mine, :missing ]
 
   before_filter :edit_ok,   :only=>[ :update, :save_draft, :rollback, :save_draft] 
   before_filter :create_ok, :only=>[ :new, :create ]
@@ -23,7 +23,7 @@ class CardController < ApplicationController
     else
       @author = User.current_user.card.name
     end
-    @card.comment = "<hr>#{@comment}<br/><br/><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}<br/>"
+    @card.comment = "<hr>#{@comment}<br/><p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</p>"
     @card.save!
     view=render_to_string( :action=>'view')
     render :update do |page|
@@ -53,7 +53,7 @@ class CardController < ApplicationController
     if @card.ok?(:edit) 
       @card = handle_cardtype_update(@card)
     else
-      render :action=>'denied'
+      render :action=>'denied', :status=>403
     end
   end
 
@@ -89,7 +89,7 @@ class CardController < ApplicationController
     end
     if @card.destroy     
       #dirty hack so we dont redirect to ourself after delete
-      session[:return_stack].pop if session[:return_stack].last==@card.id
+      session[:return_stack].pop if ( session[:return_stack] and session[:return_stack].last==@card.id )
       render_update_slot do |page,target|
         if @context=~/main/
           page.wagn.messenger.note "#{@card.name} removed. Redirecting to #{previous_page}..."
@@ -121,9 +121,7 @@ class CardController < ApplicationController
 
   def show
     @card_name = Cardname.unescape(params['id'] || '')
-    if @card_name.nil? or @card_name.empty?
-      return redirect_to( :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_name))
-    end             
+    if @card_name.nil? or @card_name.empty? then raise Wagn::NotFound "Ooh, sorry: no name, no card."end             
     
     if (@card = Card.find_by_name( @card_name )) 
       @card.ok! :read
@@ -136,9 +134,10 @@ class CardController < ApplicationController
             :locals=>{ :card=> @card, :context=>"main",:action=>"view"}
         }
       end
-    elsif User.current_user #isn't this always true?
-      redirect_to :controller=>'card', :action=>'new', :params=>{ 'card[name]'=>@card_name }
     else
+      action =  session[:createable_cardtypes].empty? ? :missing : :new
+      redirect_to :action=>action, :params=>{ 'card[name]'=>@card_name }
+    end
       # FIXME this logic is not right.  We should first check whether 
       # the user has permission to create any cards (or, if specified, to create cards of this type)  If not, then we should 
       # redirect unsigned in users to a page explaining that they've been linked to a card that doesn't
@@ -147,8 +146,6 @@ class CardController < ApplicationController
       # Users who are logged in but lack permission to create cards under these conditions
       # should have a similar explanation, but without the login options.
       
-      redirect_to :controller=>'account', :action=>'login'
-    end
   end
 
   def to_view
@@ -167,7 +164,15 @@ class CardController < ApplicationController
   end
 
 
-  def update     
+  def update 
+    old_rev_id = params[:card].delete(:current_revision_id)  
+    #warn "old rev id = #{old_rev_id}; current = #{@card.current_revision.id} "
+    if params[:card][:content] and (old_rev_id.to_i != @card.current_revision.id.to_i)
+      changes  # FIXME -- this should probably be abstracted?
+      @no_changes_header = true
+      @changes = render_to_string :action=>'changes' 
+      return render( :action=>:edit_conflict )
+    end  
     if @card.hard_content_template
       errors = false
       params[:cards].each_pair do |id, opts|
@@ -180,7 +185,7 @@ class CardController < ApplicationController
         end
       end
     else
-      @card.update_attributes params[:card]     
+      @card.update_attributes! params[:card]     
     end
     return render_errors unless @card.errors.empty?
     render_update_slot render_to_string(:action=>'view')
@@ -188,8 +193,5 @@ class CardController < ApplicationController
 
   def options
     @extension = card.extension
-  end
-
-  def denied
   end
 end

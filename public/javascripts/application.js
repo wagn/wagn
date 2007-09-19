@@ -64,7 +64,7 @@ Wagn.Messenger = {
   log: function( message ) {
     this.element().innerHTML = message; 
     new Effect.Highlight( this.element(), {startcolor:"#dddddd", endcolor:"#ffffaa", restorecolor:"#ffffaa", duration:1});
-  }
+  },
   flash: function() {
     flash = $('notice').innerHTML + $('error').innerHTML;
     if (flash != '') {

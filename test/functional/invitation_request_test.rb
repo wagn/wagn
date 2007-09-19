@@ -3,7 +3,6 @@ require 'card_controller'
 
 # Re-raise errors caught by the controller.
 class CardController; def rescue_action(e) raise e end; end
-
 class InvitationRequestTest < Test::Unit::TestCase    
   
   include AuthenticatedTestHelper
@@ -60,8 +59,9 @@ class InvitationRequestTest < Test::Unit::TestCase
     assert_equal 'request', @user.status
     
   end
-  
+ 
   def test_should_destroy_and_block_user  
+    login_as :joe_user
     # FIXME: should test agains mocks here, instead of re-testing the model...
     post :remove, :id=>Card.find_by_name('Ron Request').id
     assert_equal nil, Card.find_by_name('Ron Request')

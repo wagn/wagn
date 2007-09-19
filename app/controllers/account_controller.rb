@@ -35,9 +35,8 @@ class AccountController < ApplicationController
     self.current_user = User.authenticate(params[:login], params[:password])
     if current_user
       flash[:notice] = "Welcome to #{System.site_name}"
-      #render :text=>"woohoo you logged in: #{current_user.inspect} <br> session: #{session.inspect}"
-      return_to_rememberd_page
       session[:createable_cardtypes] = nil #probably want to generalize this...
+      return_to_remembered_page
     else
       flash[:notice] = "Login Failed"
       render :action=>'login', :status=>403
@@ -47,7 +46,7 @@ class AccountController < ApplicationController
   def logout
     self.current_user = nil
     flash[:notice] = "You have been logged out."
-    return_to_rememberd_page
+    return_to_remembered_page
     session[:createable_cardtypes] = nil
   end
   
@@ -61,9 +60,10 @@ class AccountController < ApplicationController
          "Please update your password once you've logged in. "
       Notifier.deliver_account_info(@user, subject, message)
       flash[:notice] = "A new temporary password has been set on your account and sent to your email address" 
-      return_to_rememberd_page
+      return_to_remembered_page
     else
       flash[:notice] = "Could not find a user with that email address" 
+      render :action=>'login', :status=>403
     end  
   end
         

@@ -210,7 +210,7 @@ class ApplicationController < ActionController::Base
     session[:return_stack].shift if session[:return_stack].length > 4 
   end
   
-  def return_to_rememberd_page( options={} )
+  def return_to_remembered_page( options={} )
     redirect_to_page url_for_previous_page, options
   end
   

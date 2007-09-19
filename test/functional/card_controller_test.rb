@@ -11,38 +11,56 @@ class CardControllerTest < Test::Unit::TestCase
   include AuthenticatedTestHelper
 
   def setup
-    @controller = CardController.new
+    User.as :joe_user
+    @user = User[:joe_user]
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new                                
-    User.as(:admin) do
-      @simple_card = Card.find_by_name('basicname')
-      @combo_card = Card.find_by_name('A+B')
-    end
-  end      
-      
+    @controller = CardController.new
+    @simple_card = Card['Sample Basic']
+    @combo_card = Card['A+B']
+    login_as(:joe_user)
+    
+  end     
+  
+  def test_show
+    get :show, {:id=>'Sample_Basic'}
+    assert_response :success
+    assert_equal assigns['card'].name, 'Sample Basic'
+  end
+  
+  def test_show_nonexistent_card
+    get :show, {:id=>'Sample_Fako'}
+    assert_redirected_to :action=>'new'
+  end
+
+  def test_show_nonexistent_card_no_create
+    login_as :anon
+    get :show, {:id=>'Sample_Fako'}
+    assert_redirected_to :action=>'missing'
+  end
+  
+  def test_update
+    post :update, { :id=>@simple_card.id, 
+      :card=>{:current_revision_id=>@simple_card.current_revision.id, :content=>'brand new content' }} #, {:user=>@user.id} 
+    assert_response :success, "edited card"
+    assert_equal 'brand new content', Card['Sample Basic'].content, "content was updated"
+  end
+  
   def test_update_cardtype
     User.as :joe_user
-    @c = Card['Sample Basic']
-    post :edit, {:id=>@c.id, :card=>{ :type=>"Currency", :content=>"blogbar" }},{:user=>User[:joe_user].id}
+    post :edit, {:id=>@simple_card.id, :card=>{ :type=>"Currency" }}
+    assert_response :success, "changed card type"
     assert_equal "Currency", Card['Sample Basic'].type
-  end
-private
-
+  end 
+   
   def test_changes
     id = Card.find_by_name('revtest').id
-    post :changes, :id=>id, :rev=>1
+    get :changes, :id=>id, :rev=>1
     assert_equal 'first', assigns['revision'].content, "revision 1 content==first"
 
-    post :changes, :id=>id, :rev=>2
+    get :changes, :id=>id, :rev=>2
     assert_equal 'second', assigns['revision'].content, "revision 2 content==second"
     assert_equal 'first', assigns['previous_revision'].content, 'prev content=="first"'
-  end
-
-  def test_assign_appender
-    r = Role.find(:first)
-    c = Card.find(:first)
-    post :update_appender, :id=>c.id, :card=>{:appender_id=>r.id}
-    assert_equal r, assigns['card'].appender
   end
 
   def test_new_without_cardtype
@@ -74,21 +92,16 @@ private
     assert_equal "Bananas", Card.find_by_name("NewCardFoo").content
   end
                                        
+
+
   
 =begin FIXME
-  def test_edit
-    post :edit, { :id=>@simple_card.id, :card=>{:old_revision_id=>@simple_card.current_revision.id, :content=>'brand new content' }}, { :user=>@user.id }
-    assert_response :success, "edited card"
-    @simple_card.reload
-    assert_equal 'brand new content', @simple_card.content, "content was updated"
-  end
-=end
+
             
   def test_remove
     
   end
   
-=begin  
   def test_new    
   end
 

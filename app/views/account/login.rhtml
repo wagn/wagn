@@ -1,20 +1,27 @@
-<div id="sign-in">
-	
+<div id="sign-in" class="content">
   <h1>Sign In</h1>
 	Currently membership is by invitation.
   New users may <%= link_to 'Request an Invitation', :action=>'invitation_request' %> 
 	
-  <% form_tag do %>
-  <p><label for="login">Email</label><br/><%= text_field_tag 'login' %></p>
-  <p><label for="password">Password</label><br/><%= password_field_tag 'password' %></p>
-  <p><%= submit_tag 'Sign in' %></p>
+  <% form_tag :action=>'login' do %>
+  <p><label for="login">Email</label></p>
+  <p><%= text_field_tag 'login', params[:login] %></p>
+  <p><label for="password">Password</label></p>
+  <p><%= password_field_tag 'password' %></p>
+  <p><%= submit_tag 'Sign me in' %></p>
   <% end %>
   <br/>
 	                                       
 	
   <h2>Forgot your password?</h2>
-	<%= link_to 'Request a new password', :action=>'forgot_password' %></h2>
-  <br/><br/>
+  <%= error_messages_for 'user' %>
+
+  <% form_tag :action=>'forgot_password' do %>
+  <p><label for="email">Email</label></p>
+  <p><%= text_field_tag 'email', params[:email] %></p>
+
+  <p><%= submit_tag 'Reset my password' %></p>
+  <% end %>
 
 
 

@@ -8,7 +8,7 @@
 }
 
 #main {
-  padding: 18px 10px;
+  padding: 4px 10px;
 }
 #sidebar {
   padding: 10px;
@@ -250,8 +250,14 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
   font-style: italic;
   background: #e9e9d5;
 }
-
-
+.instruction div, 
+.instruction p {
+  padding: 6px;
+}
+.instruction h1,
+.instruction h2 {
+  padding: 6px;
+}
 /* --  miscellaneous --- */
 
 #maincontent { /* FIXME -- unhelpful name; what does this do?? */

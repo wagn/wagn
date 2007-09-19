@@ -149,7 +149,7 @@ module Card
       verb ||= operation.to_s
       testee = template? ? trunk : self
       unless testee.lets_user operation
-        deny_because "Sorry, you don't have permission to #{verb} this card"
+        deny_because "Sorry #{::User.current_user.card.name}, you don't have permission to #{verb} this card"
       end
     end
 

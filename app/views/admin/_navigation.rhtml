@@ -1,11 +1,16 @@
-<div class="admin-nav">
-    <p>
-      <% if System.ok? :administrate_users %>
-        <%= link_to 'users', :controller=>'admin', :action=>'users' %> |
-        <%= link_to 'roles', :controller=>'admin', :action=>'roles' %>
-      <% end %>
-      <% if System.ok? :set_global_permissions %>
-        | <%= link_to 'global permissions', :controller=>'admin', :action=>'tasks' %>
-      <% end %>
-    </p>
-</div>
+<% if System.ok? :administrate_users or System.ok? :set_global_permissions %>
+  <div class="admin-nav card-slot">
+    <div class=" instruction content">
+      <h2>Admin links</h2>
+      <ul>
+        <% if System.ok? :administrate_users %>
+          <li><%= link_to 'users', :controller=>'admin', :action=>'users' %>
+          <li><%= link_to 'roles', :controller=>'admin', :action=>'roles' %>
+        <% end %>
+        <% if System.ok? :set_global_permissions %>
+          <li><%= link_to 'global permissions', :controller=>'admin', :action=>'tasks' %>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+<% end %>

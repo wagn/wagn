@@ -14,24 +14,22 @@
   
   
   <span id="logging">
-    <% if logged_in? %>
-      <% if Card::User.ok? :create %>
-	      <%= link_to 'Invite a Friend', :controller=>'account', :action=>'invite' %>
-      <% end %>   
-      <%= link_to 'Sign out', :controller=>'account', :action=>'logout' %>
-    <% else %>
-      <% if Card::InvitationRequest.ok? :create %>
-    	 <%= link_to 'Request an Invitation', :controller=>'account', :action=>'invitation_request' %> 
-      <% end%>
-      <%= link_to 'Sign in', :controller=>'account', :action=>'login' %>
+     <% if logged_in? %>
+        <%# page_icon current_user.card %>
+        <%= link_to "My Card: #{current_user.card.name}", { :controller=>'card', :action=>'mine' }, :id=>'my-card-link' %>
+        <% if Card::User.ok? :create %>
+  	      <%= link_to 'Invite a Friend', :controller=>'account', :action=>'invite' %>
+        <% end %>   
+        <%= link_to 'Sign out', :controller=>'account', :action=>'logout' %>
+      <% else %>
+        <% if Card::InvitationRequest.ok? :create %>
+      	 <%= link_to 'Request an Invitation', :controller=>'account', :action=>'invitation_request' %> 
+        <% end%>
+        <%= link_to 'Sign in', :controller=>'account', :action=>'login' %>
     <% end %>
+ 
   </span>
 
 </div>
 
 
-<% if logged_in? %>
-  <div id="current-user-card">
-    <%= link_to "My Card: #{current_user.card.name}", :controller=>'card', :action=>'mine' %>
-  </div>
-<% end %>

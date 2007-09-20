@@ -32,7 +32,7 @@ context = 'invitation'
   	  <tr>
         <td class="label"><label for="name">Name</label></td>
         <td class="field"><%= text_field( :card, :name, {:class=>'new-card-name', :id=>"new-card-name-field"} )%>	</td>
-        <td class="help">Usually a full name: the title of the new user's card.  Signed in users can change their card titles any time.</td>
+        <td class="help">Usually a full name: the title of the new user's card.  (Your friend can change it later)</td>
   		</tr>
 		<% end %>
 
@@ -54,16 +54,17 @@ context = 'invitation'
 
 		<tr>
 		  <td class="label"><label for="subject">Subject</label></td>
-		  <td class="field"><%= text_field_tag 'email[subject]', @email[:subject],  :size=>45  %></td>
-		  <td class="help">Email subject line</td>
+		  <td class="field" colspan="2"><%= text_field_tag 'email[subject]', @email[:subject],  :size=>60  %></td>
 		</tr>                  
 		
 		<tr>
 		  <td class="label"><label for="message">Message</label></td>
-		  <td class="field"><%= text_area_tag 'email[message]', @email[:message], :rows=>15, :cols => 60  %></td>
-		  <td class="help">A password and instructions will be appended to the end of the message.</td>             			
+		  <td class="field" colspan="2"><%= text_area_tag 'email[message]', @email[:message], :rows=>15, :cols => 60  %></td>
 		</tr>
-		                  
+		<tr>
+		  <td></td>
+		  <td class="help" colspan="2">A password and instructions will be appended to the end of the message.</td>             			
+		</tr>              
 		<tr>
 			<td></td>
 			<td colspan="2">

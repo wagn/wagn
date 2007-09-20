@@ -1,11 +1,9 @@
-<h1>&nbsp;</h1>
-
 <style>
 .line .title-<%= css_name(@card.name) %>, .line .link-<%= css_name(@card.name) %> { display: none; }
 .paragraph .title-<%= css_name(@card.name) %>, .paragraph .link-<%= css_name(@card.name) %> { font-weight: normal; }
 </style>
 
-<div>
+<div id="show-card">
   <% @title = @card.name %>
 	<%= render( :partial=>'card/view', :locals=>{ 
 		:card => @card,

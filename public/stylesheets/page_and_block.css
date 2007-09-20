@@ -4,25 +4,26 @@
   height: 95%;
   vertical-align: top;
 }
-body>#page-left { /* HACK FOR IE*/
+/*body>#page-left { /* HACK FOR IE*/
+#page-left {
   width: 63%;
 }
-#page-left {
-  width: 100%;
+/*  width: 100%;
 }
+*/
 #page-right {
+  /*
   float:right;
   width: 35%;
   padding: 1%;
-  /*
+  */
   position: absolute;
-  top: 15px;
-  right: 5px;
-  width: 37%;
+  right: 0.5%;
+  width: 35%;
   */
 }
 #main {
-  padding: 4px 10px;
+  padding: 5px 10px;
 }
 #sidebar {
   padding: 0px 10px;
@@ -32,7 +33,6 @@ body>#page-left { /* HACK FOR IE*/
 
 .top-bar {
   padding: 2px;
-  height: 15px;
   background: url(/images/top-bar.png) repeat-x;
 }
 #top-menu a {
@@ -50,32 +50,29 @@ body>#page-left { /* HACK FOR IE*/
 }
 #logging {  /* signing in and out */
   position: absolute;
-  right: 37%;
+  right: 0.5%;
 }
-#current-user-card {
-  position: absolute;
-  right: 40%;
-}
-#current-user-card a {
-  background: white;
-  border: 2px solid #999;
-  border-left: 1px solid #ccc;
-  border-top: 0px;
-  -moz-border-radius: 0px 0px 6px 6px;
-  padding: 1px 7px;
-  font-weight: normal;
-  color: #777;
-}
+/*
+#my-card {
+  text-align: center;
 
-
+  padding: 0px 10px;
+}
+#my-card .card-slot {
+  padding: 2px 0px;
+}
+*/
+#my-card-link {
+  font-weight: bold;
+}
 /* -------  logo --------- */
 #logo {
   text-align: center;
-  position: relative;
-  top: -20px;
-  padding: 0px 10px;
+/*  position: relative;
+  top: -10px; */
+  padding: 10px;
 }
-#logo-card {
+#logo .card-slot {
   font-weight: bold;
   font-size:25;
   letter-spacing: -2px;
@@ -95,8 +92,8 @@ body>#page-left { /* HACK FOR IE*/
 
 /*---- main card ------*/
 
-#main-body {
-  margin: 5px 0px;
+#show-card {
+  margin-top: 5px;
 }
 
 

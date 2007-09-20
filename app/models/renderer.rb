@@ -3,10 +3,40 @@ require_dependency 'models/wiki_reference'
 #require_dependency 'application_helper'
 #require_dependency 'card_helper'
  
-class StubSlot 
-  def render_transclusion(a,b)
-    "<stub transclusion>"
+class StubSlot < WagnHelper::Slot              
+  def slot
+    #controller.slot ||= Slot.new(@card,@context,@action,self)
   end
+
+  def render_transclusion( card, *args )    
+    new_slot = subslot(card)  
+    new_slot.renderer = @renderer
+    result = new_slot.send("render_transclusion_#{@transclusion_mode}", *args)
+    result
+  end   
+  
+  def render_transclusion_view( options={} )   
+    #return "TRANSCLUDING #{card.name}"
+    if card.new_record? 
+      %{<span class="faint createOnClick" position="#{position}" cardid="" cardname="#{card.name}">}+
+        %{Click to create #{card.name}</span>}
+    elsif options[:view]=='raw'
+      card.content
+    elsif options[:view]=='card' 
+      raise "Can't render card view in test"
+      #@action = 'view'
+      #@template.render :partial=>'/card/view', :locals=>{ :card=>card,:render_slot=>true }
+    elsif options[:view]=='line'
+      raise "Can't render line view in test"
+      #@action = 'line'
+      #@template.render :partial=>'/card/line', :locals=>{ :card=>card, :render_slot=>true }
+    else #options['view']=='content' -- default case
+      #@action='transclusion'
+      head + wrap_content( @renderer.render(card) ) + foot
+      #@template.render :partial=>'/transclusion/view', :locals=>{ :card=>card, :render_slot=>true }
+    end   
+  end
+  
 end
 
 
@@ -19,7 +49,7 @@ class Renderer
 
   class << self
     def instance
-      Renderer.new( StubSlot.new )
+      Renderer.new( StubSlot.new(Card.new, 'test:1', 'test', Object.new) )
     end
   end
   
@@ -31,7 +61,8 @@ class Renderer
   end
   
   def initialize(slot)
-    @slot = slot
+    @slot = slot 
+    slot.renderer = self
     @render_stack = [] 
     @rescue_errors = true
   end
@@ -88,7 +119,7 @@ class Renderer
     # stuff breaks
     content = content.blank? ? card.content_for_rendering  : content 
     
-     wiki_content = WikiContent.new(card, content, self)
+    wiki_content = WikiContent.new(card, content, self)
     yield wiki_content if block_given?
     update_references(card, wiki_content) if update_references
     @render_stack.pop

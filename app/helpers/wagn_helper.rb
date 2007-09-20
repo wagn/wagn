@@ -69,7 +69,7 @@ module WagnHelper
     def subslot(card, &proc)
       # Note that at this point the subslot context, and thus id, are
       # somewhat meaningless-- the subslot is only really used for tracking position.
-      new_slot = Slot.new(card, context+":#{@subslots.size+1}", @action, @template, @renderer)
+      new_slot = self.class.new(card, context+":#{@subslots.size+1}", @action, @template, @renderer)
       @subslots << new_slot 
                                      
       # NOTE this code is largely copied out of rails fields_for

@@ -154,7 +154,7 @@ Object.extend(Wagn, {
   },
   
   grow_line: function(element) {
-    var elementDimensions = element.getDimensions();
+    var elementDimensions = Element.getDimensions(element);
     new Effect.BlindDown( element, {
       duration: 0.5,
       scaleFrom: 100,
@@ -164,12 +164,12 @@ Object.extend(Wagn, {
   
   line_to_paragraph: function(element) {
   //  alert('line to paragraph');
-    if (tt_n6) {
-      var oldElementDimensions = element.getDimensions();
+    //if (tt_n6) {
+      var oldElementDimensions = Element.getDimensions(element);
       copy = copy_with_classes( element );
       copy.removeClassName('line');
       copy.addClassName('paragraph');
-      var newElementDimensions = copy.getDimensions();
+      var newElementDimensions = Element.getDimensions(copy);
       copy.viewHeight = newElementDimensions.height;
       copy.remove();
     
@@ -187,20 +187,20 @@ Object.extend(Wagn, {
           effect.element.addClassName('paragraph');     
         }
       }); 
-    } else {
-       Element.removeClassName(element,'line');
-       Element.addClassName(element,'paragraph');
-    }
+    //} else {
+    //   Element.removeClassName(element,'line');
+    //   Element.addClassName(element,'paragraph');
+    //}
   },
   paragraph_to_line: function(element) {
    //     alert('paragraph to line');
 
-    if (tt_n6) {
-      var oldElementDimensions = element.getDimensions();
+    //if (tt_n6) {
+      var oldElementDimensions = Element.getDimensions(element);
       copy = copy_with_classes( element );
       copy.removeClassName('paragraph');
       copy.addClassName('line');
-      var newElementDimensions = copy.getDimensions();
+      var newElementDimensions = Element.getDimensions(copy);
       copy.remove();  
     
       var percent = 100 * newElementDimensions.height / oldElementDimensions.height;
@@ -224,10 +224,10 @@ Object.extend(Wagn, {
             effect.element.addClassName('line');
           }
         }); 
-      } else {
-        Element.removeClassName(element, 'paragraph');
-        Element.addClassName(element, 'line');
-      }
+   //   } else {
+   //     Element.removeClassName(element, 'paragraph');
+   //     Element.addClassName(element, 'line');
+   //   }
   }
 
 });
@@ -324,7 +324,7 @@ getNextElement=function(element, name){
   if (span = getSlotSpan(element)) {
     if (e = $A(document.getElementsByClassName(name, span))[0]) {
       return e;
-    } else {
+    } else {                           
       return getNextElement(span.parentNode,name);
     }
   } else {
@@ -345,9 +345,10 @@ getSlotContext=function(element) {
 }
 
 getOuterContext=function(element) {
-   // alert('getting outer context');
-
-  if (typeof(element.hasAttribute)!='undefined' && element.hasAttribute('context')) {
+   //warn("Element: " + element);
+                                                                                
+  // JESUS javascript is a pain in the ass
+  if (typeof(element['attributes'])!='undefined' && element.attributes!=null && typeof(element.attributes['context'])!='undefined') {
     return element.attributes['context'].value;
   } else if (element.parentNode){
     return getOuterContext(element.parentNode);
@@ -358,8 +359,9 @@ getOuterContext=function(element) {
 }
 
 getSlotSpan=function(element) {
- // alert('getting slot span');
-  if (typeof(element.hasAttribute)!='undefined' && element.hasAttribute('position')) {
+  //warn("Element: " + element);
+
+  if (typeof(element['attributes'])!='undefined' && element.attributes!=null && typeof(element.attributes['position'])!='undefined') {
     return element;
   } else if (element.parentNode) {
     return getSlotSpan( element.parentNode );

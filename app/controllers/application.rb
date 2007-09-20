@@ -121,7 +121,7 @@ class ApplicationController < ActionController::Base
     else  
       @cards = cards
     end  
-    @cards.each {|c| c.ok! :read }
+    @cards = @cards.map {|c| c.ok?(:read) ? c : Card.new(:name=>"Error:#{c.name}", :content=>"Permission Denied") }
     @cards
   end
                 

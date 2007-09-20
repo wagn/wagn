@@ -1,7 +1,9 @@
 <div id="sign-in" class="content">
-  <h1>Sign In</h1>
-	Currently membership is by invitation.
-  New users may <%= link_to 'Request an Invitation', :action=>'invitation_request' %> 
+  <div class="instruction">
+    <h1>Sign In</h1>
+  	<p>Currently membership is by invitation.
+    New users may <%= link_to 'Request an Invitation', :action=>'invitation_request' %></p>
+  </div>
 	
   <% form_tag :action=>'login' do %>
   <p><label for="login">Email</label></p>

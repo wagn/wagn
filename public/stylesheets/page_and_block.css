@@ -254,8 +254,9 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
 .instruction p {
   padding: 6px;
 }
-.instruction h1,
-.instruction h2 {
+.card-slot .instruction h1,
+.card-slot .instruction h2 {
+  margin-top: 10px;
   padding: 6px;
 }
 /* --  miscellaneous --- */

@@ -421,6 +421,17 @@ a.current, a:link.current {
   margin: 10px
 }
 
+.card-slot .invite-links {
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #66b;
+}
+.card-slot .invite-links a {
+  font-style: normal;
+  font-weight: bold;
+  margin-right: 20px;
+}
+
 
 
 /* cards */

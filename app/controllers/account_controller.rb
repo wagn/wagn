@@ -76,6 +76,8 @@ class AccountController < ApplicationController
     if @card.class_name == 'InvitationRequest' 
       @user = @card.extension or raise "Blam.  InvitationRequest should've been connected to a user"    
       @card.type = 'User'  # change from Invite Request -> User
+      dummy = Card::User.new; dummy.send(:set_defaults)
+      @card.permit :edit, dummy.who_can(:edit)
       @card.save!
       @user.status='active'
       @user.invite_sender = ::User.current_user

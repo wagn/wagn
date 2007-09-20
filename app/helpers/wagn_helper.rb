@@ -426,6 +426,7 @@ module WagnHelper
 
   # You'd think we'd want to use this one but it sure doesn't seem to work as
   # well as the truncatewords...
+=begin
   def truncate_with_closing_tags(input, chars, truncate_string = "...")
     if input.nil? then return end
       code = truncate(input, chars).to_s #.chop.chop.chop
@@ -437,6 +438,7 @@ module WagnHelper
       code = code + truncate_string
       return code
   end  
+=end 
    
   def conditional_cache(card, name, &block)
     card.cacheable? ? controller.cache_erb_fragment(block, name) : block.call

@@ -264,6 +264,9 @@ body.wagn .line h2,
 }
 
 
+.card-slot .content .line {
+  border-bottom : 1px solid #ddd
+}
 
 
 /* card menu and maincard-----------------------------------------------------*/

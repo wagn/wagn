@@ -1,3 +1,18 @@
+
+var tt_db = (document.compatMode && document.compatMode != "BackCompat")? document.documentElement : document.body? document.body : null,
+tt_n = navigator.userAgent.toLowerCase();
+var tt_op = !!(window.opera && document.getElementById),
+tt_op6 = tt_op && !document.defaultView,
+tt_ie = tt_n.indexOf("msie") != -1 && document.all && tt_db && !tt_op,
+tt_n4 = (document.layers && typeof document.classes != "undefined"),
+tt_n6 = (!tt_op && document.defaultView && typeof document.defaultView.getComputedStyle != "undefined"),
+tt_w3c = !tt_ie && !tt_n6 && !tt_op && document.getElementById;
+tt_n = "";
+
+
+
+
+
 // Place your application-specific JavaScript functions and classes here
 // This file is automatically included by javascript_include_tag :defaults
 Wagn = new Object();
@@ -148,58 +163,71 @@ Object.extend(Wagn, {
   },
   
   line_to_paragraph: function(element) {
-    var oldElementDimensions = element.getDimensions();
-    copy = copy_with_classes( element );
-    copy.removeClassName('line');
-    copy.addClassName('paragraph');
-    var newElementDimensions = copy.getDimensions();
-    copy.viewHeight = newElementDimensions.height;
-    copy.remove();
+  //  alert('line to paragraph');
+    if (tt_n6) {
+      var oldElementDimensions = element.getDimensions();
+      copy = copy_with_classes( element );
+      copy.removeClassName('line');
+      copy.addClassName('paragraph');
+      var newElementDimensions = copy.getDimensions();
+      copy.viewHeight = newElementDimensions.height;
+      copy.remove();
     
-    var percent = 100 * oldElementDimensions.height / newElementDimensions.height;
-    var elementDimensions = newElementDimensions;
-    new Effect.BlindDown( element, {
-      duration: 0.3,
-      scaleFrom: percent,
-      scaleMode: {originalHeight: elementDimensions.height, originalWidth: elementDimensions.width},
-      afterSetup: function(effect) {
-        effect.element.makeClipping();
-        effect.element.setStyle({height: '0px'});
-        effect.element.show(); 
-        effect.element.removeClassName('line');
-        effect.element.addClassName('paragraph');     
-      }
-    });  
-  },
-  paragraph_to_line: function(element) {
-    var oldElementDimensions = element.getDimensions();
-    copy = copy_with_classes( element );
-    copy.removeClassName('paragraph');
-    copy.addClassName('line');
-    var newElementDimensions = copy.getDimensions();
-    copy.remove();  
-    
-    var percent = 100 * newElementDimensions.height / oldElementDimensions.height;
-    
-    return new Effect.Scale(element, percent, 
-      { 
+      var percent = 100 * oldElementDimensions.height / newElementDimensions.height;
+      var elementDimensions = newElementDimensions;
+      new Effect.BlindDown( element, {
         duration: 0.3,
-        scaleContent: false, 
-        scaleX: false,
-        scaleFrom: 100,
-        scaleMode: {originalHeight: oldElementDimensions.height, originalWidth: oldElementDimensions.width},
-        restoreAfterFinish: true,
+        scaleFrom: percent,
+        scaleMode: {originalHeight: elementDimensions.height, originalWidth: elementDimensions.width},
         afterSetup: function(effect) {
           effect.element.makeClipping();
           effect.element.setStyle({height: '0px'});
           effect.element.show(); 
-        },  
-        afterFinishInternal: function(effect) {
-          effect.element.undoClipping();
-          effect.element.removeClassName('paragraph');
-          effect.element.addClassName('line');
+          effect.element.removeClassName('line');
+          effect.element.addClassName('paragraph');     
         }
       }); 
+    } else {
+       Element.removeClassName(element,'line');
+       Element.addClassName(element,'paragraph');
+    }
+  },
+  paragraph_to_line: function(element) {
+   //     alert('paragraph to line');
+
+    if (tt_n6) {
+      var oldElementDimensions = element.getDimensions();
+      copy = copy_with_classes( element );
+      copy.removeClassName('paragraph');
+      copy.addClassName('line');
+      var newElementDimensions = copy.getDimensions();
+      copy.remove();  
+    
+      var percent = 100 * newElementDimensions.height / oldElementDimensions.height;
+    
+      return new Effect.Scale(element, percent, 
+        { 
+          duration: 0.3,
+          scaleContent: false, 
+          scaleX: false,
+          scaleFrom: 100,
+          scaleMode: {originalHeight: oldElementDimensions.height, originalWidth: oldElementDimensions.width},
+          restoreAfterFinish: true,
+          afterSetup: function(effect) {
+            effect.element.makeClipping();
+            effect.element.setStyle({height: '0px'});
+            effect.element.show(); 
+          },  
+          afterFinishInternal: function(effect) {
+            effect.element.undoClipping();
+            effect.element.removeClassName('paragraph');
+            effect.element.addClassName('line');
+          }
+        }); 
+      } else {
+        Element.removeClassName(element, 'paragraph');
+        Element.addClassName(element, 'line');
+      }
   }
 
 });
@@ -305,6 +333,7 @@ getNextElement=function(element, name){
 }
  
 getSlotContext=function(element) {
+  //alert('getting slot context');
   var span=null;
   if (span = getSlotSpan(element)) {
     var position = span.attributes['position'].value;
@@ -316,6 +345,8 @@ getSlotContext=function(element) {
 }
 
 getOuterContext=function(element) {
+   // alert('getting outer context');
+
   if (typeof(element.hasAttribute)!='undefined' && element.hasAttribute('context')) {
     return element.attributes['context'].value;
   } else if (element.parentNode){
@@ -327,6 +358,7 @@ getOuterContext=function(element) {
 }
 
 getSlotSpan=function(element) {
+ // alert('getting slot span');
   if (typeof(element.hasAttribute)!='undefined' && element.hasAttribute('position')) {
     return element;
   } else if (element.parentNode) {
@@ -335,11 +367,6 @@ getSlotSpan=function(element) {
     return false;
   }
 }
-
-
-
-
-
 
 
 

@@ -1,9 +1,9 @@
-|open|/wiki/B||
+|open|/wagn/B||
 |pause|250||
 |click|link=Edit||
 |pause|500||
-|selectFrame|main-card-1-iframe|
+|selectFrame|main:1-iframe||
 |type|css=body|Beta Tester|
-|selectFrame|relative=top|
-|click|//input[@name='commit' and @value='Save']||
+|selectFrame|relative=top||
+|click|//input[@class='save-card-button']||
 |verifyTextPresent|Beta Tester||

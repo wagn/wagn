@@ -2,5 +2,4 @@
 |select|query-select|value=revised_by|
 |pause|3000||
 |verifyTextPresent|A||
-|verifyTextPresent|AlphaBeta||
-|verifyTextPresent|basic card||
+|verifyTextPresent|type_f_content||

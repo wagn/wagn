@@ -1,14 +1,7 @@
-|open|/card/new||
-|type|new-card-name-field|Short-Lived|
-|selectFrame|main-card-1-iframe||
-|type|css=body|I will die soon|
-|selectFrame|relative=top||
-|clickAndWait|commit||
-|open|/||
-|open|/wiki/Short-Lived||
-|click|link=Options||
+|open|/wagn/D||
+|click|link=Edit||
 |pause|500||
-|click|link=Delete this card||
+|click|//input[@value='Remove D']||
 |pause|500||
 |clickAndWait|commit||
 |verifyTextPresent|To get started||

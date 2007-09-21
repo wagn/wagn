@@ -44,7 +44,7 @@
 			<% end %>
 			
 			<%= button_to_remote "Remove #{@card.name}", { :url=>slot.url_for("card/remove") }, :style=>'float:right'	%>			
-			<%= button_to_function "Save", slot.save_function %>
+			<%= button_to_function "Save", slot.save_function, :class=>'save-card-button' %>
 			<%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function } %> 
   		
 		<% end %>

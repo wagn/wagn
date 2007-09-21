@@ -109,8 +109,9 @@ a.current, a:link.current {
 .card-slot a.wanted-card { 
   color: #900 
 }
-.card-slot a.external-link { 
-	color: #979; 
+.card-slot a.external-link, 
+.card-slot.line a.external-link { 
+  color: #979; 
   background: url(/images/external_link.png) center right no-repeat;
   padding-right: 13px !important;
 }
@@ -129,11 +130,6 @@ a.current, a:link.current {
 .card-slot .transcluded div not(.editor){
   background-color: inherit;
   -moz-border-radius: inherit;
-}
-.card-slot .transcluded .content {
-  display: inline;
-  padding: 0px;
-  margin: 0px;
 }
 
 /* ---------- edit tab / new / inline editing--------*/
@@ -322,7 +318,7 @@ a.current, a:link.current {
 /*----- sidebar ----------------*/
 
 
-.sidebar .card-menu {
+.sidebar .card-slot .card-menu {
   display: none; 
 }
 .none {
@@ -344,6 +340,12 @@ a.current, a:link.current {
 }
 .card-slot.paragraph .content {
   display: block;
+}
+.card-slot .transcluded .content {
+  /* was busting when listed before .paragraph .content */
+  display: inline;
+  padding: 0px;
+  margin: 0px;
 }
 .card-slot.paragraph .close-arrow {
   display: inline;
@@ -416,7 +418,7 @@ body.wagn .card-slot.line h2,
 .card-slot.line .fancy-title {
   display: inline;
 }
-.card-slot.line .cooked img {
+.card-slot.line .content img {
   height: 16px;
 }
 .card-slot.line .card-menu {

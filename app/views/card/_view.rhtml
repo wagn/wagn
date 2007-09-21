@@ -4,7 +4,7 @@
 	
 	<%= slot.notice %>	
 	<% if card.ok?(:comment) %>
-    <div class="discussion">
+    <div class="comment-box">
     <% form_remote_for :card, card, :url=>slot.url_for('card/comment') do |f| %>
       <label>Comment:</label><br/> 
       <%= f.text_area :comment, :rows=>3 %><br/>

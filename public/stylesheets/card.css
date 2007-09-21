@@ -1,24 +1,30 @@
-.card-slot .card-name-field {
-  background: #eef;
-  font-weight: bold;
-  color: #448;
+.card-slot { 
+  width: 100%;
+  margin: 0px;
+  background: #fff;
+  overflow: hidden;  
   -moz-border-radius: 6px;
-  padding: 1px 5px;
-}
-          
-          
-.card-slot {
+  padding: 0px;
+  border: 1px solid #ccc;
+  border-bottom: 2px solid #bbb;
+  border-right: 2px solid #bbb;
   display: block;
-}          
-          
+}
 
+/*----- header ---------*/
 
-
-/* -------------------  intra-card classes --------------------------------- */
 
 .card-slot .card-header {
   padding-left: 2px;
   margin-bottom: 5px;
+}
+.card-slot .card-header img {
+  float: none;
+  padding: 0px;
+}
+.card-slot .open-arrow, 
+.card-slot .close-arrow {
+  display: none;
 }
 .card-slot .cardtype { 
   font-style: italic;
@@ -35,21 +41,104 @@
 .card-slot .title a:hover {
   color: #448 
 }
-
-.card-slot .name-history {  
- margin-left: 20px;
- color: #666;
- font-style: italic;
+.card-slot .card-menu {
+   float:right;
+   white-space: nowrap;
+   background: #fff;
+   position: relative;
+   right: 2px;
+   z-index: 1;
+}
+.card-slot .card-menu a { 
+  padding: 3px;
+  margin: 0px;
+  -moz-border-radius: 0px 0px 4px 4px;
+}
+.card-slot .current {
+  font-style: italic;
+  background: #dde;
+}
+a.current, a:link.current {
+  color: #777;
 }
 
-.card-slot p { margin: 0px; }     
 
-.card-slot .content,
-.card-slot .workspace,
-.card-slot .revision { 
+
+/* card footer-------------------------------*/
+
+.card-slot .card-footer,
+.card-slot .revision-navigation {
+   background: #eee;
+   padding: 0px 5px;
+}
+.card-slot .card-footer {
+   -moz-border-radius: 0px 0px 6px 6px;
+}
+.card-slot .card-links .link-list a, 
+.card-slot .card-links .link-list a:visited, 
+.card-slot .card-links .link-list a:focus, 
+.card-slot .card-links .link-list a:link {
+  color: #88c;
+}
+           
+
+/*-------------  TABS -------*/
+
+/* -------- view tab / content ----------------- */
+
+
+
+.card-slot p { 
+  margin: 0px; 
+}     
+.card-slot .faint {
+  color: #bbc;
+}
+.card-slot .editor-message {
+  display: none;
+}
+.card-slot .editor .editor-message {
   display: block;
-  padding: 0px 8px 10px 8px;
 }
+.card-slot .word .title { 
+  font-weight: normal 
+}
+.card-slot .joint { 
+  color: #960; 
+}
+.card-slot a.wanted-card { 
+  color: #900 
+}
+.card-slot a.external-link { 
+	color: #979; 
+  background: url(/images/external_link.png) center right no-repeat;
+  padding-right: 13px !important;
+}
+.card-slot a.email-link { 
+  color: #979 
+}
+.card-slot span:hover.transcluded { 
+  background-color: #e8e9cc;
+  -moz-border-radius: 4px;
+}
+.card-slot .transcluded p, 
+.card-slot .transcluded span, 
+.card-slot .transcluded ul, 
+.card-slot .transcluded h1, 
+.card-slot .transcluded h2, 
+.card-slot .transcluded div not(.editor){
+  background-color: inherit;
+  -moz-border-radius: inherit;
+}
+.card-slot .transcluded .content {
+  display: inline;
+  padding: 0px;
+  margin: 0px;
+}
+
+/* ---------- edit tab / new / inline editing--------*/
+
+
 .card-slot .editor {
   padding: 0px 5px;
   display: block;
@@ -57,23 +146,83 @@
 .card-slot.new-card .editor {
   padding: 0px;
 }
-#new-card-name, 
-.card-slot .options-links {
-  padding: 0px 5px;
+.card-slot .editor .revision-navigation,
+.card-slot .editor .autosave-alert {
+  display: none
 }
-.card-slot .blank { /* FIXME -- this shouldn't be necessary */
-  padding: 0px;  
-  height: 4px;
+.card-slot .card-name-field {
+  background: #eef;
+  font-weight: bold;
+  color: #448;
+  -moz-border-radius: 6px;
+  padding: 1px 5px;
 }
-.open-arrow, 
-.close-arrow {
-  display: none;
+.card-slot .edit-area  {
+  background: #ddd;
+  border: dashed 1px #aaa;
+  margin: 4px;
+  padding: 3px;
 }
-.card-slot .hidden-variables,
-.card-slot .editor-type,
-.card-slot .datatype {
-  display: none !important;
+.card-slot .templated.edit-area {
+  background: white;
 }
+.card-slot .cardtype-area .cardtype {
+  font-size: 14px;
+  margin-left: 20px;
+}
+.card-slot .name-editor, .cardtype-editor {
+  width: 65%;
+}
+.card-slot .edit-area p {
+  padding: 2px;
+}
+/* FIXME: this is crappy methinks */
+.card-slot .cardtype-editor, 
+.card-slot .name-editor {
+  width: 95%;
+}
+.card-slot .edit-area input[type=submit], 
+.card-slot .edit-area input[type=button] {
+  margin: 2px 2px;
+  font-size: 11px;
+  background: #ddd;
+  color: #444;
+  border: 1px solid #bbb;
+  border-right: 1px solid #666;
+  border-bottom: 1px solid #666;
+}
+.card-slot .edit-area .richtext {
+  background: #fff;
+}
+.card-slot .edit-area .label not(.fieldset) {
+  display: block;
+  margin: 2px;
+  font-size: 12px;
+}
+.card-slot .edit-area .field not(.fieldset) {
+  display: block;
+  margin: 4px;
+}
+.card-slot .edit-area table {
+  width: 100%;
+  margin-bottom: 5px;
+}
+.card-slot .edit-area td {
+  vertical-align: middle;
+}
+.card-slot .edit-area .title,
+.card-slot .transcluded .edit-area .title {
+  display: block;
+  font-size: 11px;
+}
+
+
+
+
+
+/* ---------- changes tab -------*/
+
+
 .card-slot .revision-header {
   background: #ddf;
   padding: 4px;
@@ -94,164 +243,84 @@
 .card-slot .autosave-alert {
   font-weight: bold;
 }
-ins.diffmod, .diffins {
-  background: #aea;
-}
-del.diffmod, .diffdel {
-  background: #eaa;
-}
 .card-slot .revision-navigation span {
    margin: 0px 10px
 }
-.card-slot .editor .revision-navigation,
-.card-slot .editor .autosave-alert {
-  display: none
+.card-slot ins.diffmod, 
+.card-slot .diffins {
+  background: #aea;
 }
-.card-slot .editor-message {
-  display: none;
+.card-slot del.diffmod, 
+.card-slot .diffdel {
+  background: #eaa;
 }
-.card-slot .editor .editor-message {
+
+/*-------options tab ------*/
+
+.card-slot .small {
+  font-size: 10px;
   display: block;
+  margin: 2px;
+  line-height: 13px
 }
-.card-slot .word .title { 
-  font-weight: normal 
+.card-slot .template,
+.card-slot .option-header h2 {
+  padding: 6px ;
+  text-align: center;
 }
-.card-slot .joint { 
-  color: #960; 
+.card-slot .template {
+  background: #bdd
 }
-.card-slot .update textarea {
-  margin: 10px;
-}
-.card-slot .faint {
-  color: #bbc;
+.card-slot .template .card-slot {
+  text-align: left;
 }
 
 
+/*------------- multiple tabs / misc -----*/
 
 
-
-/* card views -------------------------------*/
-.card-slot .card-header img {
-  float: none;
-  padding: 0px;
-}
-.card-slot { 
-  width: 100%;
-  margin: 0px;
+.card-slot .notice {
   background: #fff;
-  overflow: hidden;  
-  -moz-border-radius: 6px;
-  padding: 0px;
-  border: 1px solid #ccc;
-  border-bottom: 2px solid #bbb;
-  border-right: 2px solid #bbb;
+  font-weight: bold;
+  font-style: italic;
+  text-align: center;
+  color: #009;
+  display: block;
+  margin: 0px 0px 4px 0px;
+
 }
-#main-body, #added-tag {
-  -moz-border-radius: 6px;
+.card-slot .help.content {
+  padding: 10px;
+  margin-top: 5px;
+  color: #444;
 }
-.full .title {
+.card-slot .content,
+.card-slot .revision { 
+  display: block;
+  padding: 0px 8px 10px 8px;
+}
+
+
+
+
+/* -----   CONTEXTS  -------------------------------*/
+
+/*-------- main card ----*/
+
+#show-card .card-slot .card-header .title {
   font-size: 16px;
   display: inline;
   padding-left: 5px;
   position: relative;
   top: 1px;
 }
-.full-only { 
-  display: none; 
-}
-.full .full-only { 
-	display: inline; 
-}
-.full .open-arrow, 
-.full .close-arrow {
+#show-card .card-slot .open-arrow, 
+#show-card .card-slot .card-header .close-arrow {
   display: none !important;
 }
-.paragraph {
-  margin: 2px 0px;
-}
-.paragraph .title {
-  margin: 0px 5px;
-}
-.paragraph .content {
-  display: block;
-}
-.paragraph .close-arrow {
-  display: inline;
-  margin: 0px 5px 0px 0px;
-}
 
-/* line view */
+/*----- sidebar ----------------*/
 
-.line {
-  border: 1px solid #ccc;
-  white-space: nowrap;
-  padding: 2px 0px;
-  margin: 0px;
-}
-.line {
-  border-bottom: 0px;
-  -moz-border-radius: 6px 6px 0px 0px;
-}
-
-.line .open-arrow, 
-.line table, 
-.line tr, 
-.line td, 
-.line p,
-body.wagn .line h1, 
-body.wagn .line h2, 
-.line h3, 
-.line h4, 
-.line h5, 
-.line h6, 
-.line ul, 
-.line li,
-.line pre, 
-.line ol, 
-.line hr, 
-.line div, 
-.line span,
-.line .content,  
-.line .workspace,
-.line a,
-.line blockquote {
-  display: inline; 
-  margin: 0px 4px; 
-  padding: 0px !important;
-  border: 0px !important;
-  font-size: 11px !important;  
-  white-space: nowrap;      
-  float: none !important;
-}
-.line br,  
-.line .close, 
-.line .blank, 
-.line .card-footer,
-.line input,
-.line .discussion,
-.line textarea
-{
-  display: none;
-}
-.line .title span {
-  margin: 0px;
-}
-.line .title .joint {
-  margin: 0px 2px;
-}
-.line .open-arrow {
-  display: inline;
-  margin: 0px 6px 0px -3px;
-}
-.line .fancy-title {
-  display: inline;
-}
-.line .cooked img {
-  height: 16px;
-}
-.line .card-menu {
-  display: none;
-}
 
 .sidebar .card-menu {
   display: none; 
@@ -263,106 +332,107 @@ body.wagn .line h2,
   text-transform: uppercase;
 }
 
+/*-------------- STATES -----------*/
 
+/*-----------  open cards -------*/
+
+.card-slot.paragraph {
+  margin: 2px 0px;
+}
+.card-slot.paragraph .title {
+  margin: 0px 5px;
+}
+.card-slot.paragraph .content {
+  display: block;
+}
+.card-slot.paragraph .close-arrow {
+  display: inline;
+  margin: 0px 5px 0px 0px;
+}
+
+/*------------- closed cards -------*/
+
+.card-slot.line {
+  border: 1px solid #ccc;
+  white-space: nowrap;
+  padding: 2px 0px;
+  margin: 0px;
+}
+.card-slot.line {
+  border-bottom: 0px;
+  -moz-border-radius: 6px 6px 0px 0px;
+}
+
+.card-slot.line .open-arrow, 
+.card-slot.line table, 
+.card-slot.line tr, 
+.card-slot.line td, 
+.card-slot.line p,
+body.wagn .card-slot.line h1, 
+body.wagn .card-slot.line h2, 
+.card-slot.line h3, 
+.card-slot.line h4, 
+.card-slot.line h5, 
+.card-slot.line h6, 
+.card-slot.line ul, 
+.card-slot.line li,
+.card-slot.line pre, 
+.card-slot.line ol, 
+.card-slot.line hr, 
+.card-slot.line div, 
+.card-slot.line span,
+.card-slot.line .content,  
+.card-slot.line .workspace,
+.card-slot.line a,
+.card-slot.line blockquote {
+  display: inline; 
+  margin: 0px 4px; 
+  padding: 0px !important;
+  border: 0px !important;
+  font-size: 11px !important;  
+  white-space: nowrap;      
+  float: none !important;
+}
+.card-slot.line br,  
+.card-slot.line .close, 
+.card-slot.line .blank, 
+.card-slot.line .card-footer,
+.card-slot.line input,
+.card-slot.line .comment-box,
+.card-slot.line textarea,
+.card-slot.line .table-of-contents {
+  display: none;
+}
+.card-slot.line .title span {
+  margin: 0px;
+}
+.card-slot.line .title .joint {
+  margin: 0px 2px;
+}
+.card-slot.line .open-arrow {
+  display: inline;
+  margin: 0px 6px 0px -3px;
+}
+.card-slot.line .fancy-title {
+  display: inline;
+}
+.card-slot.line .cooked img {
+  height: 16px;
+}
+.card-slot.line .card-menu {
+  display: none;
+}
 .card-slot .content .line {
   border-bottom : 1px solid #ddd
 }
 
 
-/* card menu and maincard-----------------------------------------------------*/
 
-#mid-menu {
-  padding: 1px 10px;
-}
-.card-slot .card-menu {
-   float:right;
-   white-space: nowrap;
-   background: #fff;
-   position: relative;
-   z-index: 1;
-}
-.card-slot .card-menu a { 
-  padding: 3px;
-  margin: 0px;
-  -moz-border-radius: 0px 0px 4px 4px;
-}
-.card-slot .current {
-  font-style: italic;
-  background: #dde;
-}
-a.current, a:link.current {
-  color: #777;
-}
-#new-card-name {
-  margin-right: 15px;
-  float: left;
-}
-.card-slot span:hover.transcluded { 
-  background-color: #e8e9cc;
-  -moz-border-radius: 4px;
-}
-
-.card-slot .transcluded p, 
-.card-slot .transcluded span, 
-.card-slot .transcluded ul, 
-.card-slot .transcluded h1, 
-.card-slot .transcluded h2, 
-.card-slot .transcluded div not(.editor){
-  background-color: inherit;
-  -moz-border-radius: inherit;
-}
+/* CARDTYPE_SPECIFIC ------------------------------*/
 
 
-.transcluded .content {
-  display: inline;
-  padding: 0px;
-  margin: 0px;
-}
+/*---------- ( Richtext )-------------*/
 
-
-/* card footer-------------------------------*/
-
-.card-slot .card-footer,
-.card-slot .revision-navigation {
-   background: #eee;
-   padding: 0px 5px;
-}
-
-.card-slot .card-footer {
-   -moz-border-radius: 0px 0px 6px 6px;
-}
-.card-slot .card-links a, 
-.card-slot .card-links a:visited, 
-.card-slot .card-links a:focus, 
-.card-slot .card-links a:link {
-  color: grey;
-  border: 0px;
-  
-}
-.card-slot .card-links .link-menu {
-  float: right;
-}
-.card-slot .link-menu img {
-  float: none;
-  padding: 0px;
-  margin: 0px;
-}
-.card-slot .link-menu a {
-  margin-left: 4px;
-}
-.card-slot .card-links .link-list a, 
-.card-slot .card-links .link-list a:visited, 
-.card-slot .card-links .link-list a:focus, 
-.card-slot .card-links .link-list a:link {
-  color: #88c;
-}
-
-
-/* datatype-specific ------------------------------*/
-
-.line .table-of-contents {
-  display: none
-}
 .card-slot .table-of-contents {
   background: #eee;
   -moz-border-radius: 10px;
@@ -380,42 +450,19 @@ a.current, a:link.current {
   padding-left: 25px 
 }
 
-.card-slot .invite-button {
-  font-size: 11px;
-}
-
-/* tag cloud --------------------------------------------------------------*/
-
-.cloud a { 
-  white-space: nowrap; 
-  padding: 0px 3px !important;
-  background: #eef;
-  padding: 0px 4px;
-  -moz-border-radius: 8px;
-}
-.cloud-1 { font-size: 90% }
-.cloud-2 { font-size: 100% }
-.cloud-3 { font-size: 115% }
-.cloud-4 { font-size: 130% }
-.cloud-5 { font-size: 145% }
 
 
-/* popup stuff --------------------------------------------------------------*/
-#popup_target {
-  padding: 10px;
-}
+/* comment-box -------------------------------------- */
 
-
-/* discussion -------------------------------------- */
-.discussion textarea { 
+.card-slot .comment-box textarea { 
     width: 100%; 
     margin-bottom:5px;
 }   
-.discussion input {
+.card-slot .comment-box input {
   padding: 0px;
   font-size: 12px;
 }
-.discussion { 
+.card-slot .comment-box { 
     background: #cce;
     padding: 8px;
     margin: 0px;
@@ -423,6 +470,29 @@ a.current, a:link.current {
 .card-slot hr {
   margin: 10px
 }
+
+/*--------(Search) ---------*/
+
+/*------- tag cloud ----------------------------------*/
+
+.card-slot .cloud a { 
+  white-space: nowrap; 
+  padding: 0px 3px !important;
+  background: #eef;
+  padding: 0px 4px;
+  -moz-border-radius: 8px;
+}
+.card-slot .cloud-1 { font-size: 90% }
+.card-slot .cloud-2 { font-size: 100% }
+.card-slot .cloud-3 { font-size: 115% }
+.card-slot .cloud-4 { font-size: 130% }
+.card-slot .cloud-5 { font-size: 145% }
+
+
+
+
+/*----------- (Invitation Request)--------------*/
+
 
 .card-slot .invite-links {
   padding: 10px;
@@ -437,122 +507,18 @@ a.current, a:link.current {
 
 
 
-/* cards */
 
-.card-slot a.wanted-card { 
-  color: #900 
-}
-.card-slot a.external-link { 
-	color: #979; 
-  background: url(/images/external_link.png) center right no-repeat;
-  padding-right: 13px !important;
-}
-.card-slot a.email-link { 
-  color: #979 
+/* popup stuff --------------------------------------------------------------*/
+#popup_target {  /* IS THIS USED?  */
+  padding: 10px;
 }
 
 
-/* card editing -------------------*/
-
-.edit-area  {
-  background: #ddd;
-  border: dashed 1px #aaa;
-  margin: 4px;
-  padding: 3px;
-}
-
-.templated.edit-area {
-  background: white;
-}
-
-.cardtype-area .cardtype {
-  font-size: 14px;
-  margin-left: 20px;
-}
-.name-editor, .cardtype-editor {
-  width: 65%;
-}
-.edit-area p {
-  padding: 2px;
-}
-/*
-.name-area, .cardtype-area {
-  white-space: nowrap;
-}
-*/
-/* FIXME: this is crappy methinks */
-.cardtype-editor, .name-editor {
-  width: 95%;
-}
-
-.edit-area input[type=submit], 
-.edit-area input[type=button] {
-  margin: 2px 2px;
-  font-size: 11px;
-  background: #ddd;
-  color: #444;
-  border: 1px solid #bbb;
-  border-right: 1px solid #666;
-  border-bottom: 1px solid #666;
-}
-.edit-area .richtext {
-  background: #fff;
-}
-.edit-area .label not(.fieldset) {
-  display: block;
-  margin: 2px;
-  font-size: 12px;
-}
-.edit-area .field not(.fieldset) {
-  display: block;
-  margin: 4px;
-}
-.edit-area table {
-  width: 100%;
-  margin-bottom: 5px;
-}
-.edit-area td {
-  vertical-align: middle;
-}
-.edit-area .title,
-.transcluded .edit-area .title {
-  display: block;
-  font-size: 11px;
-}
-
+/*---I think is is actually a connection thing? --*/
 .card-slot .inline.field span {
   display: block;
   padding-right: 5px;
   vertical-align: middle;
   text-align: right;
 }
-.card-slot .notice {
-  background: #fff;
-  font-weight: bold;
-  font-style: italic;
-  text-align: center;
-  color: #009;
-  display: block;
-  margin: 0px 0px 4px 0px;
 
-}
-.card-slot .small {
-  font-size: 10px;
-  display: block;
-  margin: 2px;
-  line-height: 13px
-}
-.card-slot .option-header h2 {
-  padding: 6px ;
-  text-align: center;
-}
-
-.card-slot .help.content {
-  padding: 10px;
-  margin-top: 5px;
-  color: #444;
-}
-
-.remove-buttons {
-  text-align: right;
-}

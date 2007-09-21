@@ -29,9 +29,9 @@ JAVASCRIPT_FILES = %w{
   Wagn/LinkEditor.js
   builder.js
   window.js
-  
-  inline-console.js
-}
+}  
+#  inline-console.js
+#}
 
 
 CRAZY_FILES = %{

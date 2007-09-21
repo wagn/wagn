@@ -1,11 +1,11 @@
 <table class="fieldset">
 
-  <%= slot_option_header 'Template' %>
+  <%= slot_option_header 'Templating Other Cards' %>
 
 
   <% slot.option(
       :name=>"templatees", 
-  		:help=>(@card.template_tsar? ? %{...will use the template below.  You can change the permissions settings and set it to be a hard or soft template in its "Options" tab. } : "...would use this card's template (#{@card.name}+*template)"),
+  		:help=>(@card.template_tsar? ? %{...will use the template below.  You can change the permissions settings and set it to be a hard or soft template in its "Options" tab. } : "...would use this card's templating card (#{@card.name}+*template)"),
   		:label=>"Templated Cards") do %>
   		Any
       <% if @card.type=='Cardtype' %>
@@ -17,7 +17,7 @@
   <tr>
     <td colspan="3" class="template">
       <% if !@card.template_tsar? %>
-        <p><strong>Currently this card has no template.</strong></p>
+        <p><strong>Currently <%= @card.name %> has no templating card.</strong></p>
         <% if @card.ok? :edit ##FIXME-perm we may want more restrictions than this on creating a template! %>
           <p>But you should feel warmly welcomed to <%= link_to_remote 'create one now', :url=>slot.url_for('card/create_template') %>.</p>
         <% end %>

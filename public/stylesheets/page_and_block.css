@@ -4,23 +4,15 @@
   height: 95%;
   vertical-align: top;
 }
-/*body>#page-left { /* HACK FOR IE*/
 #page-left {
   width: 63%;
 }
-/*  width: 100%;
-}
-*/
+
 #page-right {
-  /*
-  float:right;
-  width: 35%;
-  padding: 1%;
-  */
+
   position: absolute;
   right: 0.5%;
   width: 35%;
-  */
 }
 #main {
   padding: 5px 10px;

@@ -470,8 +470,7 @@ module WagnHelper
   def less_fancy_title(card)
     name = card.name
     return name if name.simple?
-    name.gsub '+', %{<span class="joint">+</span>}
-#    card_title_span(name.parent_name) + %{<span class="joint">#{JOINT}</span>} + card_title_span(name.tag_name)
+    card_title_span(name.parent_name) + %{<span class="joint">#{JOINT}</span>} + card_title_span(name.tag_name)
   end
   
   def title_tag_names(card)

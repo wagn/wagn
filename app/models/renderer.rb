@@ -148,7 +148,7 @@ class Renderer
       #warn "  CREATING REFERNCE #{card.name}:#{card.id} --> #{chunk.refcard_name} #{reference_type}"
       WikiReference.create!(
         :card_id=>card.id,
-        :referenced_name=>chunk.refcard_name, 
+        :referenced_name=>chunk.refcard_name.to_key, 
         :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
         :link_type=>reference_type
       )

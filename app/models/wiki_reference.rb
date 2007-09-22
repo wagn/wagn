@@ -37,12 +37,12 @@ class WikiReference < ActiveRecord::Base
   class << self
     include ReferenceTypes
     def update_on_create( card )
-      update_all("link_type = '#{LINK}', referenced_card_id=#{card.id}",  ['referenced_name = ? and link_type=?', card.name, WANTED_LINK])
-      update_all("link_type = '#{TRANSCLUSION}', referenced_card_id=#{card.id}",  ['referenced_name = ? and link_type=?', card.name, WANTED_TRANSCLUSION])
+      update_all("link_type = '#{LINK}', referenced_card_id=#{card.id}",  ['referenced_name = ? and link_type=?', card.key, WANTED_LINK])
+      update_all("link_type = '#{TRANSCLUSION}', referenced_card_id=#{card.id}",  ['referenced_name = ? and link_type=?', card.key, WANTED_TRANSCLUSION])
     end
     
     def update_on_destroy( card, name=nil )   
-      name ||= card.name
+      name ||= card.key
       delete_all ['card_id = ?', card.id]
       update_all("link_type = '#{WANTED_LINK}',referenced_card_id=NULL",  ['(referenced_name = ? or referenced_card_id = ?) and link_type=?', name, card.id, LINK])
       update_all("link_type = '#{WANTED_TRANSCLUSION}',referenced_card_id=NULL",  ['(referenced_name = ? or referenced_card_id = ?) and link_type=?', name, card.id, TRANSCLUSION])

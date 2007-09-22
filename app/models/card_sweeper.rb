@@ -13,6 +13,8 @@ class CardSweeper < ActionController::Caching::Sweeper
     #if card.updates.for?(:name)
       card.dependents.each {|c| expire_card(c) }
       card.referencers.each {|c| expire_card(c) }
+      
+      card.name_references.plot(:referencer).each{|c| expire_card(c)}
     #end
   end
   

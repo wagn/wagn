@@ -32,7 +32,12 @@ module Card
 
     has_many :permissions, :foreign_key=>'card_id'#, :dependent=>:delete_all
         
-    has_many :in_references, :class_name=>'WikiReference', :foreign_key=>'referenced_card_id'
+    has_many :name_references, :class_name=>'WikiReference',
+      :finder_sql=>%q{SELECT * from wiki_references w where w.referenced_name=#{ActiveRecord::Base.connection.quote(key)}}
+#    has_many :name_referencers, :through=>:name_references, :source=>:referencer
+#       :finder_sql=>%q{SELECT cards.* FROM cards INNER JOIN wiki_references ON cards.id = wiki_references.card_id    WHERE ((wiki_references.referenced_name = #{ActiveRecord::Base.connection.quote(key)})) }
+
+    has_many :in_references,:class_name=>'WikiReference', :foreign_key=>'referenced_card_id'
     has_many :out_references,:class_name=>'WikiReference', :foreign_key=>'card_id', :dependent=>:destroy
     
     has_many :in_transclusions, :class_name=>'WikiReference', :foreign_key=>'referenced_card_id',:conditions=>["link_type=?",WikiReference::TRANSCLUSION]

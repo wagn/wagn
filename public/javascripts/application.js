@@ -265,7 +265,7 @@ setupDoubleClickToEdit=function(container) {
     el.onclick=function(event) {                   
       element = Event.element(event);
       card_name = getSlotSpan(element).attributes['cardname'].value;
-      console.log("create  " +card_name);
+      //console.log("create  " +card_name);
       new Ajax.Request('/transclusion/create?context='+getSlotContext(element), {
         asynchronous: true, evalScripts: true,
         parameters: "card[name]="+encodeURIComponent(card_name)

@@ -20,7 +20,7 @@ module Card
     self.cache = {}
    
     belongs_to :trunk, :class_name=>'Card::Base', :foreign_key=>'trunk_id', :dependent=>:dependent
-    has_many   :right_junctions, :class_name=>'Card::Base', :foreign_key=>'trunk_id', :dependent=>:destroy  
+    has_many   :right_junctions, :class_name=>'Card::Base', :foreign_key=>'trunk_id' , :dependent=>:destroy  
 
     belongs_to :tag, :class_name=>'Card::Base', :foreign_key=>'tag_id', :dependent=>:destroy
     has_many   :left_junctions, :class_name=>'Card::Base', :foreign_key=>'tag_id', :dependent=>:destroy
@@ -251,12 +251,10 @@ module Card
         errors.add(:destroy, "before destroy back aborted destroy")
         return false 
       end         
-      
       self.update_attribute(:trash, true) 
-
       self.dependents.each do |dep|
         next if dep.trash
-        #puts "#{caller} -> #{name} !! #{dep.name}"
+        #warn "DESTROY  #{caller} -> #{name} !! #{dep.name}"
         dep.confirm_destroy = true
         dep.destroy_with_trash("#{caller} -> #{name}")
       end

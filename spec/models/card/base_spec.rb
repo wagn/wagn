@@ -10,7 +10,7 @@ end
 describe Card, "new" do
   before do
     @c = Card.new :name=>"Ceee"
-    @d = Card.new :type=>'Date'
+    @d = Card::Date.new
   end
   
   it "c should have name before_typecast" do

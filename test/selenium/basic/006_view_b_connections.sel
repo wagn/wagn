@@ -1,4 +1,4 @@
-|open|/wiki/B||
+|open|/wagn/B||
 |select|query-select|value=plussed_cards|
 |pause|1000||
 |verifyTextPresent|Alpha||

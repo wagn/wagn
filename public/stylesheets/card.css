@@ -303,16 +303,21 @@ a.current, a:link.current {
 
 /*-------- main card ----*/
 
-#show-card .card-slot .card-header .title {
+#show-card .card-slot .title {
   font-size: 16px;
-  display: inline;
-  padding-left: 5px;
   position: relative;
-  top: 1px;
+  top: 2px;
 }
-#show-card .card-slot .open-arrow, 
-#show-card .card-slot .card-header .close-arrow {
-  display: none !important;
+#show-card .card-slot .content .title {
+  font-size: inherit;
+  position: static;
+  top: 2px;
+}
+#show-card .card-slot .close-arrow {
+  display: none;
+}
+#show-card .card-slot .content .close-arrow {
+  display: inline;
 }
 
 /*----- sidebar ----------------*/

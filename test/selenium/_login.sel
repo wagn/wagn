@@ -1,4 +1,4 @@
-|clickAndWait|link=Sign in||
-|type|login|webmaster@grasscommons.org|
-|type|password|w8gn8t0r|
+|open|/account/login||
+|type|login|email|
+|type|password|pass|
 |clickAndWait|commit||

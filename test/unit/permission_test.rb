@@ -33,6 +33,24 @@ class PermissionTest < Test::Unit::TestCase
     @c1, @c2, @c3 = %w( c1 c2 c3 ).map do |x| Card.find_by_name(x) end
   end      
 
+
+  def test_write_user_permissions
+    @u1.roles = [ @r1, @r2 ]
+    @u2.roles = [ @r1, @r3 ]
+    @u3.roles = [ @r1, @r2, @r3 ]
+
+    as(@admin) { @c1.permit(:edit, @u1); @c1.save }
+    as(@admin) { @c2.permit(:edit, @u2); @c2.save }
+ 
+    assert_not_locked_from( @u1, @c1 )
+    assert_locked_from( @u2, @c1 )    
+    assert_locked_from( @u3, @c1 )    
+    
+    assert_locked_from( @u1, @c2 )
+    assert_not_locked_from( @u2, @c2 )    
+    assert_locked_from( @u3, @c2 )    
+  end
+
   def test_should_not_allowed_reader_change
     a, ab, abc, ad = %w(A A+B A+B+C A+D ).collect do |name|  Card.find_by_name(name)  end
       
@@ -128,22 +146,6 @@ class PermissionTest < Test::Unit::TestCase
 
 
 
-  def test_write_user_permissions
-    @u1.roles = [ @r1, @r2 ]
-    @u2.roles = [ @r1, @r3 ]
-    @u3.roles = [ @r1, @r2, @r3 ]
-
-    as(@admin) { @c1.permit(:edit, @u1); @c1.save }
-    as(@admin) { @c2.permit(:edit, @u2); @c2.save }
- 
-    assert_not_locked_from( @u1, @c1 )
-    assert_locked_from( @u2, @c1 )    
-    assert_locked_from( @u3, @c1 )    
-    
-    assert_locked_from( @u1, @c2 )
-    assert_not_locked_from( @u2, @c2 )    
-    assert_locked_from( @u3, @c2 )    
-  end
  
           
   def test_should_cascade_reader_change 
@@ -243,4 +245,5 @@ G * . . . .
 }   
     
   end
+
 end

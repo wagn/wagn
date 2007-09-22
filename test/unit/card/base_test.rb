@@ -16,7 +16,7 @@ class Card::BaseTest < Test::Unit::TestCase
     forba_torga_torgc = Card.create! :name=>"Forba+TorgA+TorgC";
     
     forba.reload #hmmm
-    forba.destroy!
+    Card['Forba'].destroy!
     assert_nil Card.find_by_name("Forba")
     assert_nil Card.find_by_name("Forba+TorgA")
     assert_nil Card.find_by_name("TorgB+Forba")
@@ -28,7 +28,7 @@ class Card::BaseTest < Test::Unit::TestCase
     #end
     #assert_equal 0, Card::Basic.find_all_by_trash(false).size
   end
-
+=begin
   def test_should_create_connection_card
     Card::Basic.create!(
       :trunk => Card.find_by_name('Joe User'),
@@ -90,6 +90,6 @@ class Card::BaseTest < Test::Unit::TestCase
       assert_simple_card( card2 )
       assert_samecard( card1, card2 )
     end
-
+=end
 end
 

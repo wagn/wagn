@@ -421,8 +421,10 @@ module WagnHelper
     wordstring.scan(/\<([^\>\s\/]+)[^\>]*?\/\>/).each { |t| h2[t[0]] ? h2[t[0]] += 1 : h2[t[0]] = 1 }
     # match close tags
     wordstring.scan(/\<\/([^\>\s\/]+)[^\>]*?\>/).each { |t| h2[t[0]] ? h2[t[0]] += 1 : h2[t[0]] = 1 }
-    h1.each {|k,v| wordstring += "</#{k}>" * (h1[k] - h2[k].to_i) if h2[k].to_i < v }
-#    wordstring +='<span style="color:grey"> ...</span>' if wordlist.length > l    
+    h1.keys.reverse.each {|k| v=h1[k]; wordstring += "</#{k}>" * (h1[k] - h2[k].to_i) if h2[k].to_i < v }
+    ###  HAAAAAAAAACK.  FIXME NIXME or else you's can licks me.  Reversing the key order on a hash?  Am I shitting me? 
+    
+    wordstring +='<span style="color:#666"> ...</span>' if wordlist.length > l    
 #    wordstring += '...' if wordlist.length > l    
     wordstring
   end

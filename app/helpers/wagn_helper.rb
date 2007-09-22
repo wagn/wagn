@@ -299,12 +299,15 @@ module WagnHelper
   def slot_update_cardtype_function(slot,options={})
     fn = ['File','Image'].include?(slot.card.type) ? 
             "Wagn.onSaveQueue['#{slot.context}'].clear(); " :
-            "Wagn.runQueue(Wagn.onSaveQueue['#{slot.context}']); "
+            "Wagn.runQueue(Wagn.onSaveQueue['#{slot.context}']); "      
+    if @card.hard_content_template
+      #options.delete(:with)
+    end
     fn << remote_function( options )   
   end
        
   def slot_js_content_element(slot)
-    "getSlotElement(this,'form').elements['card[content]']"
+    @card.hard_content_template ? "" : ",getSlotElement(this,'form').elements['card[content]']" 
   end
   
   def slot_content_field(slot,form,options={})   

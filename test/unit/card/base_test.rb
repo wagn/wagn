@@ -6,14 +6,14 @@ class Card::BaseTest < Test::Unit::TestCase
   end
 
   def test_remove
-    forba = Card.create :name=>"Forba"
-    torga = Card.create :name=>"TorgA"
-    torgb = Card.create :name=>"TorgB"
-    torgc = Card.create :name=>"TorgC"
+    forba = Card.create! :name=>"Forba"
+    torga = Card.create! :name=>"TorgA"
+    torgb = Card.create! :name=>"TorgB"
+    torgc = Card.create! :name=>"TorgC"
     
-    forba_torga = Card.create :name=>"Forba+TorgA";
-    torgb_forba = Card.create :name=>"TorgB+Forba";
-    forba_torga_torgc = Card.create :name=>"Forba+TorgA+TorgC";
+    forba_torga = Card.create! :name=>"Forba+TorgA";
+    torgb_forba = Card.create! :name=>"TorgB+Forba";
+    forba_torga_torgc = Card.create! :name=>"Forba+TorgA+TorgC";
     
     forba.reload #hmmm
     forba.destroy!

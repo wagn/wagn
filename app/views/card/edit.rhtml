@@ -38,7 +38,7 @@
 				                             
 			<% if card.hard_content_template %>
 			  <% slot.form = form %>
-			  <%= slot.render( card, mode='edit' ) %>
+			  <%= slot.render( card, mode='edit' ) %><br/>
 			<% else %>
 				<%= slot.content_field(form) %>
 			<% end %>

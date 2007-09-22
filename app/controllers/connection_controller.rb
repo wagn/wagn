@@ -44,7 +44,7 @@ class ConnectionController < ApplicationController
       page.replace_html 'connections-workspace', ''
       page.hide 'empty-card-list' 
       page.wagn.lister.update
-      page << %{new Effect.Highlight($$("span[cardid]=#{@card.id}")[0]);\n}
+      page << %{new Effect.Highlight($$("span[cardid=#{@card.id}]")[0]);\n}
       
       # page.insert_html :top, 'related-list', :partial=>'card/line', 
       #   :locals=>{ :card=>@card, :context=>@context, :render_slot=>true }

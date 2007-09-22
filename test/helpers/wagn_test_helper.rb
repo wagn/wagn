@@ -39,8 +39,8 @@ module WagnTestHelper
     assert_difference object, method, 0, &block
   end
   
-=begin  
-  def login_as(user)
+
+  def integration_login_as(user)
     case user.to_s 
       when 'anon'; #do nothing
       when 'joe_user'; login='joe@user.com'; pass='joe_pass'
@@ -49,20 +49,19 @@ module WagnTestHelper
     end
     unless user==:anon
       # FIXME- does setting controller here break anything else?
-      tmp_controller = @controller
-      @controller = AccountController.new
+      #tmp_controller = @controller
+      #@controller = AccountController.new
       
-      post 'login', :login=>login, :password=>pass
+      post '/account/login', :login=>login, :password=>pass
       assert_response :redirect
       
-      @controller = tmp_controller
+      #@controller = tmp_controller
     end
     if block_given?
       yield
-      post "logout",:controller=>'account'
+      post "/account/logout",:controller=>'account'
     end
   end
-=end
   
   def post_invite(options = {})
     post :create, 

@@ -4,7 +4,7 @@
 				:update=>slot.id('cardtype-area') do |f| %>
 	    <%= slot.cardtype_field f, :onchange=>slot.update_cardtype_function(
 					  :url=>slot.url_for("card/edit"), :update=>slot.id,
-						:with=>"Form.serializeElements([this,#{slot.js_content_element}])"
+						:with=>"Form.serializeElements([this#{slot.js_content_element}])"
 			) %>
 		  <%= button_to_remote 'Cancel', :url=>slot.url_for('cardtype/view'),                         
 		        :update=>slot.id('cardtype-area') %>

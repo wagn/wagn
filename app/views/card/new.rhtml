@@ -1,13 +1,15 @@
-<h1>New <%= @card.type != 'Basic' ? @card.cardtype.name : '' %> Card</h1>
+<% if !request.post? %>
+	<h1>New <%= @card.type != 'Basic' ? @card.cardtype.name : '' %> Card</h1>
 
-<div class="instruction">
-  <% if @card.name %>
-    <p>Currently, there is no card named "<strong><%= @card.name %></strong>", but you are most welcome to create it, you <strong>pioneer</strong>.</p>
-  <% end %>
+	<div class="instruction">
+	  <% if !@card.name.blank? %>
+	    <p>Currently, there is no card named "<strong><%= @card.name %></strong>", but you are most welcome to create it, you <strong>pioneer</strong>.</p>
+	  <% end %>
   
-  <p>Creating a new card is easy: you just need a name, a type, and -- if you like -- some content.  Changing the cardtype will change the kind of content you can enter.</p>
+	  <p>Creating a new card is easy: you just need a name, a type, and -- if you like -- some content.  Changing the cardtype will change the kind of content you can enter.</p>
   
-</div>
+	</div>
+<% end %>
 
 <% slot_for(@card, @context, "new") do |slot| %>  
 	<% @title = "New Card" %>    

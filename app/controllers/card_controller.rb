@@ -165,7 +165,7 @@ class CardController < ApplicationController
 
 
   def update 
-    old_rev_id = params[:card].delete(:current_revision_id)  
+    old_rev_id = params[:card] ? params[:card].delete(:current_revision_id)  : nil
     #warn "old rev id = #{old_rev_id}; current = #{@card.current_revision.id} "
     if params[:card][:content] and (old_rev_id.to_i != @card.current_revision.id.to_i)
       changes  # FIXME -- this should probably be abstracted?

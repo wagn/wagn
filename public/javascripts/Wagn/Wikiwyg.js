@@ -16,7 +16,8 @@ Object.extend(Wagn.Wikiwyg.prototype, {
     this._card_id = card_id;
     if (!conf.wysiwyg) { conf.wysiwyg = {} }
     conf.wysiwyg.iframeId = slot_id + '-iframe'; // need this?
-    this.iframeID = slot_id + '-iframe';
+    conf.iframeId = slot_id + '-iframe'; // need this?
+    //this.iframeID = slot_id + '-iframe';
     this.createWikiwygArea( $(this._raw_id), conf );
     Wagn.Wikiwyg.wikiwyg_divs.push( this );
     this._autosave_interval = 20 * 1000; // 20 seconds

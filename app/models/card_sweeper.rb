@@ -1,19 +1,19 @@
 class CardSweeper < ActionController::Caching::Sweeper
   observe Card::Base
 
-  def before_save(card)               
+  def after_save(card)               
     expire_card(card)
 
     # FIXME: this will need review when we do the new defaults/templating system
-    if card.updates.for?(:content)
+    #if card.updates.for?(:content)
       card.hard_templatees.each {|c| expire_card(c) }     
       card.transcluders.each {|c| expire_card(c) }
-    end
+    #end
     
-    if card.updates.for?(:name)
+    #if card.updates.for?(:name)
       card.dependents.each {|c| expire_card(c) }
       card.referencers.each {|c| expire_card(c) }
-    end
+    #end
   end
   
   private

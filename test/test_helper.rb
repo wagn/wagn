@@ -87,7 +87,7 @@ unless defined? TEST_ROOT
               @title = url.gsub(/\//,'_')
             end
             
-            login = @user.login=='anon' ? '' : "login_as '#{@user.login}'"
+            login = @user.login=='anon' ? '' : "integration_login_as '#{@user.login}'"
                                   
             test_def = %{
               def test_render_#{@title}_#{@user.login}_#{@status} 

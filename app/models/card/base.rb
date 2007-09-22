@@ -32,7 +32,7 @@ module Card
 
     has_many :permissions, :foreign_key=>'card_id'#, :dependent=>:delete_all
         
-    has_many :in_references, :class_name=>'WikiReference', :foreign_key=>'referenced_card_id'
+    has_many :in_references, :class_name=>'WikiReference', :foreign_key=>'referenced_name'
     has_many :out_references,:class_name=>'WikiReference', :foreign_key=>'card_id', :dependent=>:destroy
     
     has_many :in_transclusions, :class_name=>'WikiReference', :foreign_key=>'referenced_card_id',:conditions=>["link_type=?",WikiReference::TRANSCLUSION]
@@ -348,6 +348,9 @@ module Card
 
     # Dynamic Attributes ------------------------------------------------------        
     def content
+      if !ok?(:read) 
+        return "#{name}: Sorry #{::User.current_user.card.name}, you don't have permission to view this card"
+      end
       ok!(:read) # fixme-perm.  might need this, but it's breaking create...
       if tmpl = hard_content_template and tmpl!=self
         tmpl.content

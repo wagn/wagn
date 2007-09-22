@@ -104,6 +104,13 @@ class WikiReferenceTest < Test::Unit::TestCase
     assert @e.referencers.plot(:name).include?("woof")
   end
   
+  def test_pickup_new_transclusions_on_create
+    @l = newcard("woof", "{{Lewdog}}")  # no Lewdog card yet...
+    @e = Card.new(:name=>"Lewdog", :content=>"grrr")              # now there is
+    assert @e.transcluders.plot(:name).include?("woof")
+  end
+
+
 =begin  
   def test_revise_changes_references_from_wanted_to_linked_for_new_cards
     new_card = Card::Basic.create(:name=>'NewCard')

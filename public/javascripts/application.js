@@ -1,18 +1,3 @@
-
-var tt_db = (document.compatMode && document.compatMode != "BackCompat")? document.documentElement : document.body? document.body : null,
-tt_n = navigator.userAgent.toLowerCase();
-var tt_op = !!(window.opera && document.getElementById),
-tt_op6 = tt_op && !document.defaultView,
-tt_ie = tt_n.indexOf("msie") != -1 && document.all && tt_db && !tt_op,
-tt_n4 = (document.layers && typeof document.classes != "undefined"),
-tt_n6 = (!tt_op && document.defaultView && typeof document.defaultView.getComputedStyle != "undefined"),
-tt_w3c = !tt_ie && !tt_n6 && !tt_op && document.getElementById;
-tt_n = "";
-
-
-
-
-
 // Place your application-specific JavaScript functions and classes here
 // This file is automatically included by javascript_include_tag :defaults
 Wagn = new Object();
@@ -164,7 +149,7 @@ Object.extend(Wagn, {
   
   line_to_paragraph: function(element) {
   //  alert('line to paragraph');
-    //if (tt_n6) {
+    if (!Prototype.Browser.WebKit) {
       var oldElementDimensions = Element.getDimensions(element);
       copy = copy_with_classes( element );
       copy.removeClassName('line');
@@ -187,15 +172,14 @@ Object.extend(Wagn, {
           effect.element.addClassName('paragraph');     
         }
       }); 
-    //} else {
-    //   Element.removeClassName(element,'line');
-    //   Element.addClassName(element,'paragraph');
-    //}
+    } else {
+       Element.removeClassName(element,'line');
+       Element.addClassName(element,'paragraph');
+    }
   },
   paragraph_to_line: function(element) {
-   //     alert('paragraph to line');
-
-    //if (tt_n6) {
+    // Fixme: Safari chokes on getStyle() in prototype: this is bullshit: prototype should work in safari.
+    if (!Prototype.Browser.WebKit) {
       var oldElementDimensions = Element.getDimensions(element);
       copy = copy_with_classes( element );
       copy.removeClassName('paragraph');
@@ -224,10 +208,10 @@ Object.extend(Wagn, {
             effect.element.addClassName('line');
           }
         }); 
-   //   } else {
-   //     Element.removeClassName(element, 'paragraph');
-   //     Element.addClassName(element, 'line');
-   //   }
+      } else {
+        Element.removeClassName(element, 'paragraph');
+        Element.addClassName(element, 'line');
+      }
   }
 
 });
@@ -299,16 +283,32 @@ setupDoubleClickToEdit=function(container) {
         new Ajax.Request('/card/to_edit/'+card_id+'?context='+getSlotContext(element),
            {asynchronous: true, evalScripts: true});
       } else if (span.hasClassName('paragraph')) {
-        new Ajax.Updater(span, '/card/edit/'+card_id+'?context='+getSlotContext(element),
+        new Ajax.Updater({success:span, failure:getNextElement(span,'notice')}, '/card/edit/'+card_id+'?context='+getSlotContext(element),
            {asynchronous: true, evalScripts: true});
       } else {
-        new Ajax.Updater(span, '/transclusion/edit/'+card_id+'?context='+getSlotContext(element),
-           {asynchronous: true, evalScripts: true});
+        new Ajax.Updater({success:span, failure:getNextElement(span,'notice')}, '/transclusion/edit/'+card_id+'?context='+getSlotContext(element),
+           { asynchronous: true, evalScripts: true});
      }
      Event.stop(event);
     }
   });
+}        
+
+
+getOuterSlot=function(element){
+  var span = getSlotSpan(element);
+  if (span) {
+    outer = getOuterSlot(span.parentNode);
+    if (outer){
+      return outer;
+    } else {
+      return span;
+    }
+  } else {
+    return null;
+  }
 }
+
  
 // FIXME: should be tested to not return content from nested slots.
 getSlotElement=function(element,name){

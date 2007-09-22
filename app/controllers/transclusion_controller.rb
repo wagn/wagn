@@ -1,7 +1,8 @@
 class TransclusionController < ApplicationController
   helper :wagn, :card 
   cache_sweeper :card_sweeper
-  before_filter :load_card, :edit_ok   
+  before_filter :load_card
+#  before_filter :edit_ok, :except=>[:edit]
   layout :ajax_or_not
    
   def view 
@@ -10,6 +11,15 @@ class TransclusionController < ApplicationController
   end
    
   def create  
+    if !Card.new(params[:card]).cardtype.ok?(:create)
+      @no_slot_header = true
+      msg = render_to_string( :template=>'/card/denied', :status=>403 )
+      render_update_slot do |page,target|
+        target.replace(slot.head + msg + slot.foot)
+      end
+      return
+    end
+
     @card = Card.create! params[:card]
     # FIXME: a ton of this is duplicated in edit
     @action='transclusion'  # get the right css in the slot
@@ -23,6 +33,15 @@ class TransclusionController < ApplicationController
       page.replace_html 'alerts', "CREATED #{params[:card][:name]}"
     end
   end
+  
+  def edit
+    #return render(:text=>"",:status=>403) unless @card.ok?(:edit)
+    if !@card.ok?(:edit)  
+      @no_slot_header = true
+      return render( :template=>'/card/denied')
+    end
+  end
+  
   
   def update 
     # FIXME: this code is same as card_controller

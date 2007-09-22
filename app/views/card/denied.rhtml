@@ -1,20 +1,28 @@
 <% slot_for(card, context, nil) do |slot| %>
-	<%= slot.header %>  
+	<%= slot.header unless @no_slot_header %>  
 	  <div id="denied" class="content">
-	    <p>Sorry, you don't have permission to edit this card (See the <%= slot.link_to_menu_action('options') %> tab to learn more).</p>
+	    <p>Sorry <%= User.current_user.cardname %>, you don't have permission to edit <%= less_fancy_title(@card) %> 
+		<% unless @no_slot_header %>
+			(See the <%= slot.link_to_menu_action('options') %> tab to learn more).
+		<% end %></p>
 	    <br/>
 	    
 	    <% if !logged_in? %>
-	      <p>If you have an account, now would be a lovely time to <%= link_to_remote("Sign In", :url=>'/account/login', :update=>slot.id)%>.</p>
+	      <p>If you have an account, now would be a lovely time to <%= link_to_remote("Sign In", :url=>'/account/login', :update=>'javascript:getOuterSlot(this)') %>.</p>
 	      <br/>
 	      <p>If you don't but would like one, have a ponder at <%= link_to 'Requesting an Invitation', '/account/invitation_request' %>.</p>
 	    <% end %>
-	    
-	    
-	  </div>
+
+
+		  <% if @no_slot_header %>	
+		    <br/>
+				<p><%= link_to_function 'Cancel', %{getSlotSpan(this).replace('')} %></p>
+			<% end %>
+
+	  </div>             
+
 	
-	
-  <%= slot.footer %>
+  <%= slot.footer unless @no_slot_header %>
 <% end %>
 
 <%# FIXME: this is duplicated effort in lots of cases %>

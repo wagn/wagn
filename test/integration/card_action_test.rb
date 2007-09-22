@@ -3,7 +3,9 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 
 class CardActionTest < ActionController::IntegrationTest
-  common_fixtures
+  common_fixtures 
+  warn "LOADING CARD ACTION TEST"
+  
   def setup
     setup_default_user
     login_as :joe_user

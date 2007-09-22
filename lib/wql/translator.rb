@@ -58,9 +58,8 @@ module Wql
         else
           cuid = User.current_user.id
           statement.tables << root_table + " left join roles_users ru on ru.user_id=#{cuid} and ru.role_id=#{root_alias}.reader_id" 
-          add_to_statement %{ (
-             {r}.reader_id IS NULL 
-             OR ({r}.reader_type='Role' and {r}.reader_id IN (#{ANON_ROLE_ID}, #{AUTH_ROLE_ID}))
+          add_to_statement %{ (             
+                ({r}.reader_type='Role' and {r}.reader_id IN (#{ANON_ROLE_ID}, #{AUTH_ROLE_ID}))
              OR ({r}.reader_type='User' and {r}.reader_id=#{cuid})
              OR ({r}.reader_type='Role' and ru.user_id is not null)
           ) }.substitute!( :r =>root_alias )

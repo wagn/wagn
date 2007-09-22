@@ -23,11 +23,11 @@ class StubSlot < WagnHelper::Slot
     elsif options[:view]=='raw'
       card.content
     elsif options[:view]=='card' 
-      raise "Can't render card view in test"
+      head + wrap_content( @renderer.render(card) ) + foot
       #@action = 'view'
       #@template.render :partial=>'/card/view', :locals=>{ :card=>card,:render_slot=>true }
     elsif options[:view]=='line'
-      raise "Can't render line view in test"
+      head + wrap_content( @renderer.render(card) ) + foot
       #@action = 'line'
       #@template.render :partial=>'/card/line', :locals=>{ :card=>card, :render_slot=>true }
     else #options['view']=='content' -- default case

@@ -31,6 +31,10 @@ module ActiveRecord
       def rename_table( name, new_name) 
         warn "rename_table not implemented for #{self.class} connection"
       end
+      
+      def set_not_null
+        warn "set_not_null not implemented for #{self.class} connection"
+      end
     end
     
     class PostgreSQLAdapter
@@ -59,6 +63,10 @@ module ActiveRecord
       
       def drop_constraint(table_name, constraint_name)
         execute "ALTER TABLE #{table_name} DROP CONSTRAINT #{constraint_name} "
+      end
+     
+      def set_not_null(table_name, column_name)
+        execute "Alter table #{table_name} alter column #{column_name} set not null"
       end
       
       def rename_table( name, new_name) 

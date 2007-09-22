@@ -35,7 +35,7 @@ class AccountController < ApplicationController
     self.current_user = User.authenticate(params[:login], params[:password])
     if current_user
       flash[:notice] = "Welcome to #{System.site_name}"
-      session[:createable_cardtypes] = nil #probably want to generalize this...
+      session[:createable_cardtypes] = nil #might soon want a broader reset mechanism?
       return_to_remembered_page
     else
       flash[:notice] = "Login Failed"
@@ -46,8 +46,8 @@ class AccountController < ApplicationController
   def logout
     self.current_user = nil
     flash[:notice] = "You have been logged out."
-    return_to_remembered_page
     session[:createable_cardtypes] = nil
+    return_to_remembered_page
   end
   
   def forgot_password

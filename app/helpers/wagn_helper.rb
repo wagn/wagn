@@ -426,6 +426,7 @@ module WagnHelper
     
     wordstring +='<span style="color:#666"> ...</span>' if wordlist.length > l    
 #    wordstring += '...' if wordlist.length > l    
+    wordstring.gsub! /<br[\s\/]*>/, ' ' ## Also a hack -- get rid of <br>'s -- they make line view ugly.
     wordstring
   end
 
@@ -655,7 +656,7 @@ module WagnHelper
 
   ## ----- for Linkers ------------------  
   def cardtype_options
-    createable_cardtypes.map do |cardtype|
+    User.current_user.createable_cardtypes.map do |cardtype|
       next if cardtype[:codename] == 'User' #or cardtype[:codename] == 'InvitationRequest'
       [cardtype[:codename], cardtype[:name]]
     end.compact

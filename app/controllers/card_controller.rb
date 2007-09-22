@@ -121,7 +121,7 @@ class CardController < ApplicationController
 
   def show
     @card_name = Cardname.unescape(params['id'] || '')
-    if @card_name.nil? or @card_name.empty? then raise Wagn::NotFound "Ooh, sorry: no name, no card."end             
+    if (@card_name.nil? or @card_name.empty?) then raise Wagn::NotFound "Ooh, sorry: no name, no card."end             
     
     if (@card = Card.find_by_name( @card_name )) 
       @card.ok! :read

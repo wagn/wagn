@@ -480,7 +480,7 @@ module Card
 
     validates_each :name do |rec, attr, value|
       if rec.updates.for?(:name)
-        rec.errors.add :name, "may not contain #{Cardname::CARDNAME_BANNED_CHARACTERS[1..-1]} " unless value.valid_cardname?
+        rec.errors.add :name, "may not contain any of the following characters: #{Cardname::CARDNAME_BANNED_CHARACTERS[1..-1].join ' '} " unless value.valid_cardname?
         # this is to protect against using a junction card as a tag-- although it is technically possible now.
         rec.errors.add :name, "#{value} in use as a tag" if (value.junction? and rec.simple? and rec.left_junctions.size>0)
 

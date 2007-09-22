@@ -51,10 +51,7 @@ module Wql
         elsif User.current_user.login=='anon'
           #FIXME: this shouldn't be hardcoded
           statement.tables << root_table
-          add_to_statement %{ (
-            {r}.reader_id IS NULL 
-            OR ({r}.reader_type='Role' and {r}.reader_id=#{ANON_ROLE_ID})
-          ) }.substitute!( :r =>root_alias )
+          add_to_statement %{ ({r}.reader_type='Role' and {r}.reader_id=#{ANON_ROLE_ID})}.substitute!( :r =>root_alias )
         else
           cuid = User.current_user.id
           statement.tables << root_table + " left join roles_users ru on ru.user_id=#{cuid} and ru.role_id=#{root_alias}.reader_id" 

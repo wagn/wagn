@@ -76,7 +76,8 @@ class User < ActiveRecord::Base
   end 
 
   def createable_cardtypes #returns cardtype card
-    @createables ||= Card::Cardtype.find(:all, :order=>'name').map do |ct| 
+    #@createables ||= Card::Cardtype.find(:all, :order=>'name').map do |ct| 
+    Card::Cardtype.find(:all, :order=>'name').map do |ct| 
       next if !ct.ok? :create
       next if ct.extension.class_name == 'InvitationRequest'
       { :codename=> ct.extension.class_name, :name=> ct.name }

@@ -308,7 +308,8 @@ a.current, a:link.current {
   position: relative;
   top: 2px;
 }
-#show-card .card-slot .content .title {
+#show-card .card-slot .content .title,
+#show-card .card-slot .edit-area .title {
   font-size: inherit;
   position: static;
   top: 2px;
@@ -319,6 +320,7 @@ a.current, a:link.current {
 #show-card .card-slot .content .close-arrow {
   display: inline;
 }
+
 
 /*----- sidebar ----------------*/
 

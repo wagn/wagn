@@ -90,6 +90,9 @@ a.current, a:link.current {
 
 .card-slot p { 
   margin: 0px; 
+}
+.card-slot hr {
+  margin: 10px
 }     
 .card-slot .faint {
   color: #bbc;
@@ -328,7 +331,7 @@ a.current, a:link.current {
 /*----- sidebar ----------------*/
 
 
-.sidebar .card-slot .card-menu {
+#sidebar .card-slot .card-menu {
   display: none; 
 }
 .none {
@@ -458,11 +461,7 @@ body.wagn .card-slot.line h2,
   list-style-type: upper-alpha;
   padding-left: 25px 
 }
-
-
-
-/* comment-box -------------------------------------- */
-
+/*---------- comment-box -------------------------------------- */
 .card-slot .comment-box textarea { 
     width: 100%; 
     margin-bottom:5px;
@@ -476,11 +475,8 @@ body.wagn .card-slot.line h2,
     padding: 8px;
     margin: 0px;
 }
-.card-slot hr {
-  margin: 10px
-}
 
-/*--------(Search) ---------*/
+/*--------(Search....also used when connecting...) ---------*/
 
 /*------- tag cloud ----------------------------------*/
 

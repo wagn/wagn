@@ -44,7 +44,6 @@
 .card-slot .card-menu {
    float:right;
    white-space: nowrap;
-   background: #fff;
    position: relative;
    right: 2px;
    z-index: 1;
@@ -132,6 +131,9 @@ a.current, a:link.current {
 .card-slot .transcluded h2 {
   background-color: inherit;
   -moz-border-radius: inherit;
+}
+.card-slot span:hover.transcluded .card-slot { 
+  background-color: #fff;
 }
 /* note:   ".card-slot .transcluded div not(.editor)" was not working properly and was breaking nested block elements.  
    without it nested divs in transcluded areas probably won't highlight  */
@@ -297,6 +299,7 @@ a.current, a:link.current {
   color: #444;
 }
 .card-slot .content,
+.card-slot .transcluded .content .card-slot .content,
 .card-slot .revision { 
   display: block;
   padding: 0px 8px 10px 8px;
@@ -347,6 +350,7 @@ a.current, a:link.current {
 
 .card-slot.paragraph {
   margin: 2px 0px;
+ -moz-border-radius: 6px !important;
 }
 .card-slot.paragraph .title {
   margin: 0px 5px;
@@ -358,7 +362,6 @@ a.current, a:link.current {
   /* was busting when listed before .paragraph .content */
   display: inline;
   padding: 0px;
-  margin: 0px;
 }
 .card-slot.paragraph .close-arrow {
   display: inline;
@@ -375,7 +378,7 @@ a.current, a:link.current {
 }
 .card-slot.line {
   border-bottom: 0px;
-  -moz-border-radius: 6px 6px 0px 0px;
+  -moz-border-radius: 6px 6px 0px 0px !important;
 }
 
 .card-slot.line .open-arrow, 
@@ -400,7 +403,7 @@ body.wagn .card-slot.line h2,
 .card-slot.line .workspace,
 .card-slot.line a,
 .card-slot.line blockquote {
-  display: inline; 
+  display: inline !important; 
   margin: 0px 4px; 
   padding: 0px !important;
   border: 0px !important;

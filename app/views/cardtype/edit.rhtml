@@ -1,13 +1,15 @@
 <% slot_for(@card,@context,'cardtype') do |slot| %>
-	<div class="cardtype-editor edit-area">  
+	<div class="cardtype-editor edit-area">
+	  <h2>Edit Cardtype</h2>
 		<% form_remote_for :card, @card, :url=>slot.url_for('cardtype/update'), 
 				:update=>slot.id('cardtype-area') do |f| %>
-	    <%= slot.cardtype_field f, :onchange=>slot.update_cardtype_function(
-					  :url=>slot.url_for("card/edit"), :update=>slot.id,
-						:with=>"Form.serializeElements([this#{slot.js_content_element}])"
-			) %>
-		  <%= button_to_remote 'Cancel', :url=>slot.url_for('cardtype/view'),                         
-		        :update=>slot.id('cardtype-area') %>
+	    <p>
+  	    <%= slot.cardtype_field f, :onchange=>slot.update_cardtype_function(
+  					  :url=>slot.url_for("card/edit"), :update=>slot.id,
+  						:with=>"Form.serializeElements([this#{slot.js_content_element}])"
+  			) %>
+  			<%= button_to_remote 'Cancel', :url=>slot.url_for('cardtype/view'), :update=>slot.id('cardtype-area') %>
+  		</p>
 		<% end %>
 	</div>
 <% end %>

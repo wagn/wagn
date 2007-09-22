@@ -3,11 +3,12 @@ class CardnameController < ApplicationController
   cache_sweeper :card_sweeper
   before_filter :load_card, :edit_ok    
   
-  def update  
+  def update
+    @old_card = @card.clone
     if @card.update_attributes params[:card]
       render :action=>'view'
     elsif @card.errors.on(:confirmation_required)
-      @action = 'confirm'
+      @confirm = true
       render :action=>'edit', :status=>422
     else
       render :action=>'edit', :status=>422

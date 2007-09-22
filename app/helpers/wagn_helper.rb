@@ -287,7 +287,7 @@ module WagnHelper
   
   def slot_name_field(slot,form,options={})
     text = %{<span class="label"> card name:</span>\n}
-    text << form.text_field( :name, options.merge(:size=>40, :class=>'field card-name-field'))
+    text << form.text_field( :name, {:size=>40, :class=>'field card-name-field'}.merge(options))
   end
   
   def slot_cardtype_field(slot,form,options={})
@@ -467,6 +467,13 @@ module WagnHelper
     card.name.split(JOINT).join(formal_joint)
   end
   
+  def less_fancy_title(card)
+    name = card.name
+    return name if name.simple?
+    name.gsub '+', %{<span class="joint">+</span>}
+#    card_title_span(name.parent_name) + %{<span class="joint">#{JOINT}</span>} + card_title_span(name.tag_name)
+  end
+  
   def title_tag_names(card)
     card.name.split(JOINT)
   end
@@ -544,7 +551,6 @@ module WagnHelper
     context_card == card ? card.name : card.name.gsub(context_card.name, '')
   end
   
-  def fancy_title(card) fancy_title_from_tag_names(card.name.split( JOINT ))  end
   
   def query_title(query, card_name)
     title = {
@@ -561,29 +567,6 @@ module WagnHelper
   
   def query_options(card)
     options_for_select card.queries.map{ |q| [query_title(q,card.name), q ] }
-  end
-  
-  def fancy_title_from_tag_names(tag_names)
-    tag_names.inject([nil,nil]) do |title_array, tag_name|
-      title, title_link = title_array
-      tag_link = link_to tag_name, url_for_page( tag_name ), :class=>"link-#{css_name(tag_name)}"
-      if title 
-        title = [title, tag_name].join(%{<span class="joint">#{JOINT}</span>})
-        joint_link = link_to formal_joint, url_for_page(title), 
-          :onmouseover=>"Wagn.title_mouseover('title-#{css_name(title)} card')",
-          :onmouseout=>"Wagn.title_mouseout('title-#{css_name(title)} card-highlight')"
-        title_link = "<span class='title-#{css_name(title)} card' >\n%s %s %s\n</span>" % [title_link, joint_link, tag_link]
-        [title, title_link]
-      else
-        [tag_name, %{<span class="title-#{css_name(tag_name)} card">#{tag_link}</span>\n}]
-      end
-    end[1]
-  end
-
-  def less_fancy_title(card)
-    name = card.name
-    return name if name.simple?
-    card_title_span(name.parent_name) + %{<span class="joint">#{JOINT}</span>} + card_title_span(name.tag_name)
   end
   
   def card_title_span( title )
@@ -698,6 +681,28 @@ module WagnHelper
     out << File.read("#{RAILS_ROOT}/public/stylesheets/#{name}.css")
     out << "</style>\n"
   end
+  
+=begin
+  ### NOT IN USE, but please don't delete yet.  
+  def fancy_title(card) fancy_title_from_tag_names(card.name.split( JOINT ))  end  
+  def fancy_title_from_tag_names(tag_names)
+    tag_names.inject([nil,nil]) do |title_array, tag_name|
+      title, title_link = title_array
+      tag_link = link_to tag_name, url_for_page( tag_name ), :class=>"link-#{css_name(tag_name)}"
+      if title 
+        title = [title, tag_name].join(%{<span class="joint">#{JOINT}</span>})
+        joint_link = link_to formal_joint, url_for_page(title), 
+          :onmouseover=>"Wagn.title_mouseover('title-#{css_name(title)} card')",
+          :onmouseout=>"Wagn.title_mouseout('title-#{css_name(title)} card-highlight')"
+        title_link = "<span class='title-#{css_name(title)} card' >\n%s %s %s\n</span>" % [title_link, joint_link, tag_link]
+        [title, title_link]
+      else
+        [tag_name, %{<span class="title-#{css_name(tag_name)} card">#{tag_link}</span>\n}]
+      end
+    end[1]
+  end
+
+=end
   
 end
 

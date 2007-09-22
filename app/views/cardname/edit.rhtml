@@ -1,16 +1,19 @@
+<% @old_card ||= @card %>
+
 <% slot_for(@card,@context,'name') do |slot| %>
- 	<div class="name-editor edit-area">  
+ 	<div class="name-editor edit-area">
+ 	  <h2>Edit Name</h2>  
 		<% form_remote_for :card, @card, :url=>slot.url_for('cardname/update'), 
-				:update=>slot.id(:name) do |f| %>
+				:update=>slot.id('name-area') do |f| %>
 			 
-			<p>Change <%= link_to_page formal_title(@card), @card.name %> to   
-			 <%= slot.name_field(f, :class=>'name-field' ) %>
-				<% if @card.name and @card.name.junction? %>
-			  	<%= button_to_function "Flip", "f=getSlotElement('name-field'); f.value = f.value.split('+').reverse().join('+')"  %>
-				<% end %>
-				</p>
+			<p>Change <%= link_to_page less_fancy_title(@old_card), @old_card.name %> to   
+  		    <%= slot.name_field(f) %>
+  				<% if @card.name and @card.name.junction? %>
+  			  	<%= button_to_function "Flip", "f=getSlotElement(this, 'card-name-field'); f.value = f.value.split('+').reverse().join('+')", :id=>'flipper'  %>
+				  <% end %>
+			</p>
 							
-			<% if @action=='confirm' %>
+			<% if @confirm==true %>
 			  <% if dependents = @card.dependents and !dependents.empty? %>
 			    <p>This will change the names of these cards, too:</p>
 			    <ul>

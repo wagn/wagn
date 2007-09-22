@@ -126,11 +126,13 @@ a.current, a:link.current {
 .card-slot .transcluded span, 
 .card-slot .transcluded ul, 
 .card-slot .transcluded h1, 
-.card-slot .transcluded h2, 
-.card-slot .transcluded div not(.editor){
+.card-slot .transcluded h2 {
   background-color: inherit;
   -moz-border-radius: inherit;
 }
+/* note:   ".card-slot .transcluded div not(.editor)" was not working properly and was breaking nested block elements.  
+   without it nested divs in transcluded areas probably won't highlight  */
+
 
 /* ---------- edit tab / new / inline editing--------*/
 
@@ -153,7 +155,16 @@ a.current, a:link.current {
   -moz-border-radius: 6px;
   padding: 1px 5px;
 }
-.card-slot .edit-area  {
+.card-slot .name-editor .label,
+.card-slot .cardtype-editor .label {
+  display: none
+}
+.card-slot .name-editor p,
+.card-slot .cardtype-editor p {
+  margin: 5px;
+}
+.card-slot .edit-area ,
+.card-slot span:hover.transcluded div.edit-area  {
   background: #ddd;
   border: dashed 1px #aaa;
   margin: 4px;
@@ -166,16 +177,8 @@ a.current, a:link.current {
   font-size: 14px;
   margin-left: 20px;
 }
-.card-slot .name-editor, .cardtype-editor {
-  width: 65%;
-}
 .card-slot .edit-area p {
   padding: 2px;
-}
-/* FIXME: this is crappy methinks */
-.card-slot .cardtype-editor, 
-.card-slot .name-editor {
-  width: 95%;
 }
 .card-slot .edit-area input[type=submit], 
 .card-slot .edit-area input[type=button] {
@@ -421,9 +424,6 @@ body.wagn .card-slot.line h2,
 .card-slot.line .open-arrow {
   display: inline;
   margin: 0px 6px 0px -3px;
-}
-.card-slot.line .fancy-title {
-  display: inline;
 }
 .card-slot.line .content img {
   height: 16px;

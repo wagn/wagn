@@ -32,7 +32,7 @@ module Card
 
     has_many :permissions, :foreign_key=>'card_id'#, :dependent=>:delete_all
         
-    has_many :in_references, :class_name=>'WikiReference', :foreign_key=>'referenced_name'
+    has_many :in_references, :class_name=>'WikiReference', :foreign_key=>'referenced_card_id'
     has_many :out_references,:class_name=>'WikiReference', :foreign_key=>'card_id', :dependent=>:destroy
     
     has_many :in_transclusions, :class_name=>'WikiReference', :foreign_key=>'referenced_card_id',:conditions=>["link_type=?",WikiReference::TRANSCLUSION]

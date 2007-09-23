@@ -78,6 +78,7 @@ class User < ActiveRecord::Base
   def createable_cardtypes #FIXME -- needs optimizing.  badly.
     #@createables ||= Card::Cardtype.find(:all, :order=>'name').map do |ct| 
     Card::Cardtype.find(:all, :order=>'name').map do |ct| 
+      next if ct.extension.nil? #bad data?
       next if !ct.ok? :create
       next if ct.extension.class_name == 'InvitationRequest'
       { :codename=> ct.extension.class_name, :name=> ct.name }

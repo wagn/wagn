@@ -75,7 +75,7 @@ class User < ActiveRecord::Base
     end
   end 
 
-  def createable_cardtypes #returns cardtype card
+  def createable_cardtypes #FIXME -- needs optimizing.  badly.
     #@createables ||= Card::Cardtype.find(:all, :order=>'name').map do |ct| 
     Card::Cardtype.find(:all, :order=>'name').map do |ct| 
       next if !ct.ok? :create
@@ -117,7 +117,3 @@ class User < ActiveRecord::Base
   
 end
 
-#hack for instiki integration
-unless defined? Author
-  Author=User
-end

@@ -7,7 +7,7 @@
 	  <% arrow = %{<img class="close-arrow" src="/images/arrow_down.png">} %>
     <%= slot.link_to_action arrow + less_fancy_title(card), 'line', 
 					{:before => "Wagn.paragraph_to_line(getSlotSpan(this))" }, 
-					 :class=>"line-link" %> 
+					 :class=>"line-link", :title=>"close #{card.name}" %> 
   </div>
 
   <% unless card.type=='Basic' %>

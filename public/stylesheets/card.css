@@ -120,6 +120,11 @@ a.current, a:link.current {
 .card-slot a.email-link { 
   color: #979 
 }
+.card-slot span:hover.createOnClick {
+  color: #069;
+  background: #ffc;
+  text-decoration: underline;
+}
 .card-slot span:hover.transcluded { 
   background-color: #e8e9cc;
   -moz-border-radius: 4px;

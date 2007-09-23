@@ -105,8 +105,8 @@ module Card
       #self.reader_without_tracking = party 
       self.reader = party
       junctions.each do |dep|
-        dep.set_reader party  
-        dep.save
+        dep.permit :read, party  
+        dep.save!
       end
     end
  

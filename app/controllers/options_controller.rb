@@ -34,7 +34,7 @@ class OptionsController < ApplicationController
       @extension = ext
     end
     @notice ||= "Got it!  Your changes have been saved."
-    render :template=>'card/options' #fixme-perm  should have some sort of success notification...
+    render_update_slot render_to_string(:template=>'card/options')
   end
   
 

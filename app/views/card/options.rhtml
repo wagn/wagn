@@ -1,7 +1,8 @@
 <% slot_for(@card, @context, :options) do |slot| %>
 	<%= slot.header %>
-  <% form_remote_for :card, @card, :url=>{:controller=>'options', :action=>'update', :id=>@card.id},
-      :update => slot.id do |form| %>
+	<%= slot.notice %>
+  <% form_remote_for :card, @card, :url=>slot.url_for('options/update') do |form| %>
+
     <table class="fieldset">
       <%= render :partial=>'options/permissions', :locals=>{:card=>@card, :slot=>slot} %>
       <% if card.extension_type == 'User' %>
@@ -12,7 +13,7 @@
         <%= render :partial=>'options/template', :locals=>{:card=>@card, :slot=>slot, :form=>form} %>	      
       <% end %>
       <% if slot.options_need_save %>
-  		  <tr><td><%= submit_tag 'Save Changes' %></td><td colspan="2"><%= slot.notice %></td></tr>
+  		  <tr><td colspan="3"><%= submit_tag 'Save Changes' %></td></tr>
   		<% end %>
     </table>
   <% end %>

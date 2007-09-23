@@ -473,7 +473,7 @@ module Card
     #  especially the polymorphic ones..
     validates_associated :trunk
     validates_associated :tag  
-    validates_associated :extension
+    validates_associated :extension #1/2 ans:  this one runs the user validations on user cards. 
   #  validates_associated :reader
   #  validates_associated :writer 
   #  validates_associated :appender   
@@ -531,10 +531,10 @@ module Card
         end
         (rec.dependents+(rec.junction? ? [rec.tag, rec.trunk] : [])).each do |d|   
           d_reader = d.who_can :read
-          if d_reader and (d_reader!=reader) and !(d_reader.class == ::Role and d_reader.codename=='anon') 
+          if (d_reader!=reader) and !(d_reader.class == ::Role and d_reader.codename=='anon') 
             # and d.reader!=reader
-            rec.errors.add :permissions, "group #{reader.cardname} cannot be assigned because " +
-            "#{d.name} belongs to group #{d_reader.cardname}"
+            rec.errors.add :permissions, "can't set read permissions to #{reader.cardname} because " +
+            "reading #{d.name} is restricted to #{d_reader.cardname}"
           end
         end       
       end

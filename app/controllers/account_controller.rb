@@ -54,7 +54,7 @@ class AccountController < ApplicationController
     return unless request.post?
     if @user = User.find_by_email(params[:email])
       @user.generate_password
-      @user.save                       
+      @user.save!                       
       subject = "Password Reset"
       message = "You have been give a new temporary password.  " +
          "Please update your password once you've logged in. "

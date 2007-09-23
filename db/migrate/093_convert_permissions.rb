@@ -14,6 +14,7 @@ class ConvertPermissions < ActiveRecord::Migration
     MCard.find(:all).each do |c|
       #print "setting permission for #{c.name}"
       c.reader ||= anon
+      c.save!
       c.permissions= [
         {:task=>'delete', :party=>c.writer || auth},
         {:task=>'edit',   :party=>c.writer || auth},

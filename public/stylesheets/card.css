@@ -403,13 +403,16 @@ body.wagn .card-slot.line h2,
 .card-slot.line .workspace,
 .card-slot.line a,
 .card-slot.line blockquote {
-  display: inline !important; 
+  display: inline; 
   margin: 0px 4px; 
   padding: 0px !important;
   border: 0px !important;
   font-size: 11px !important;  
   white-space: nowrap;      
   float: none !important;
+}
+.card-slot.line .content {
+  display: inline !important;
 }
 .card-slot.line br,  
 .card-slot.line .close, 

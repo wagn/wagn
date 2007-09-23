@@ -11,6 +11,7 @@ class ConvertPermissions < ActiveRecord::Migration
   def self.up
     auth = Role.find_by_codename 'auth'
     anon = Role.find_by_codename 'anon'
+    Card.reset_column_information
     Card.find(:all).each do |c|
       #print "setting permission for #{c.name}"
       c.permissions= [

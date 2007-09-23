@@ -632,7 +632,7 @@ module WagnHelper
   end
   
   def createable_cardtypes
-    session[:createable_cardtypes]
+    session[:createable_cardtypes] || []
   end
     
 

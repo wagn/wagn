@@ -71,7 +71,7 @@ module Card
     def approved?  
       self.operation_approved = true
       if new_record?
-        approve_create 
+         approve_create_me
       end
       updates.each_pair do |attr,value|
         send("approve_#{attr}")
@@ -118,14 +118,24 @@ module Card
       return true if (System.always_ok? and operation != :comment)
       System.party_ok? party
     end
-       
+    
+#    def approve_create_card_of_same_type
+#      cardtype.ok? :create
+#    end
+    def approve_create_me
+      ct = self.cardtype
+      unless ct.ok? :create
+        deny_because "Sorry, you don't have permission to create #{ct.name} cards"
+      end
+    end
+    
     def approve_create                                    
       # when creating a cartype card, check cardtype permissions
       # otherwise when looking at cardtype card we're asking for permissions
       # to create a card of that type
-      testee = (class_name == 'Cardtype' and !new_record?) ? self : cardtype
-      unless testee.lets_user :create
-        deny_because "Sorry, you don't have permission to create #{cardtype.name} cards"
+      raise "must be a cardtype card" unless self.type == 'Cardtype'
+      unless self.lets_user :create
+        deny_because "Sorry, you don't have permission to create #{self.name} cards"
       end
     end
     

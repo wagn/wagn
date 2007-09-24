@@ -171,7 +171,7 @@ class ApplicationController < ActionController::Base
   def handle_cardtype_update(card)
     if updating_type?  
       old_type = card.type
-      card.type=params[:card][:type]  
+      card.type=params[:card][:type]
       card.save!
       card = Card.find(card.id)
       content = params[:card][:content]

@@ -1,6 +1,26 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
 
+
+describe Card, "Normal card with junctions" do
+  before do
+    User.as :admin
+    @a = Card['a']
+  end
+  it "should confirm that it has junctions" do
+    @a.junctions.length.should > 0
+  end
+  it "should successfull have its type changed" do
+    @a.type = 'Currency'; @a.save!
+    Card['a'].type.should== 'Currency'
+  end
+  it "should still have its junctions after changing type" do
+    @a.type = 'CardtypeE'; @a.save!
+    Card['a'].junctions.length.should > 0
+  end
+end
+
+
 describe Card, "Recreated Card" do
   before do
     User.as :admin
@@ -15,24 +35,6 @@ describe Card, "Recreated Card" do
   
 end
 
-
-describe Card, "Normal card with junctions" do
-  before do
-    User.as :admin
-    @a = Card['a']
-  end
-  it "should confirm that it has junctions" do
-    @a.junctions.length.should > 0
-  end
-  it "should successfull have its type changed" do
-    @a.type = 'CardtypeE'; @a.save!
-    Card['a'].type.should== 'CardtypeE'
-  end
-  it "should still have its junctions after changing type" do
-    @a.type = 'CardtypeE'; @a.save!
-    Card['a'].junctions.length.should > 0
-  end
-end
 
 
 describe Card, "New Cardtype" do

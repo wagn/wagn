@@ -81,7 +81,7 @@ module Card
     def set_permissions(perms)
       self.updates.clear(:permissions)
       if type=='Cardtype'
-        old_create_party = self.who_can(:create) ||  Card::Basic.new.cardtype.who_can :create
+        old_create_party = self.who_can(:create) || Card::Basic.new.cardtype.who_can(:create)
         perms << Permission.new(:task=>'create', :party=>old_create_party)
       end
       perms.each do |p| 

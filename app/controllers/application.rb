@@ -175,7 +175,7 @@ class ApplicationController < ActionController::Base
       card.save!
       card = Card.find(card.id)
       content = params[:card][:content]
-      content = strip_tags(content) if old_type=='Basic'
+      content = strip_tags(content) unless (card.class.superclass.to_s=='Card::Basic' or card.type=='Basic')
       card.content = content
     end
     card

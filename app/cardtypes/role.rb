@@ -1,5 +1,5 @@
 module Card
-  class Role < Base
+  class Role < Basic
     before_create :create_extension
     
     def create_extension

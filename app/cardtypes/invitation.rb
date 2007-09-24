@@ -1,5 +1,5 @@
 module Card
-  class Invitation < Base
+  class Invitation < Basic
     after_create 
   end
 end

@@ -283,7 +283,7 @@ setupDoubleClickToEdit=function(container) {
         new Ajax.Request('/card/to_edit/'+card_id+'?context='+getSlotContext(element),
            {asynchronous: true, evalScripts: true});
       } else if (span.hasClassName('paragraph')) {
-        new Ajax.Updater({success:span, failure:getNextElement(span,'notice')}, '/card/edit/'+card_id+'?context='+getSlotContext(element),
+        new Ajax.Updater({success:span, failure:span}, '/card/edit/'+card_id+'?context='+getSlotContext(element),
            {asynchronous: true, evalScripts: true});
       } else {
         new Ajax.Updater({success:span, failure:getNextElement(span,'notice')}, '/transclusion/edit/'+card_id+'?context='+getSlotContext(element),

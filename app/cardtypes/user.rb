@@ -1,5 +1,5 @@
 module Card
-  class User < Base
+  class User < Basic
     attr_accessor :email
     before_destroy :destroy_extension
 

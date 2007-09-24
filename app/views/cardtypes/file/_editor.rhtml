@@ -1,6 +1,6 @@
-<p><iframe class="upload-iframe" name="upload-iframe" height="30" width="480" frameborder="0" src="<%= slot.url_for("file/edit") %>" scrolling="no">
+<p><iframe class="upload-iframe" name="upload-iframe" height="30" width="480" frameborder="0" src="<%= "/file/edit/#{card.id}" %>" scrolling="no">
 </iframe></p>
-<%= slot.form.hidden_field :content, :class=>'upload_content') %>
+<%= slot.form.hidden_field :content, :class=>'upload-content' %>
   
 <%#FIXME-slot %>
 <%= slot.editor_hooks :save=>%{
@@ -8,3 +8,4 @@
 	doc.getElementById(getSlotElement(this,'upload_form')).submit(); 
 	return false;
 } %>
+

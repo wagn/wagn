@@ -318,7 +318,7 @@ module WagnHelper
   end                          
          
   def slot_save_function(slot)
-    "warn('runnint #{slot.context} queue'); if (Wagn.runQueue(Wagn.onSaveQueue['#{slot.context}'])) { this.form.onsubmit() }"
+    "warn('running #{slot.context} queue'); if (Wagn.runQueue(Wagn.onSaveQueue['#{slot.context}'])) { this.form.onsubmit() }"
   end
   
   def slot_cancel_function(slot)
@@ -632,7 +632,8 @@ module WagnHelper
   end
   
   def createable_cardtypes
-    session[:createable_cardtypes] || []
+    User.current_user.createable_cardtypes
+    #session[:createable_cardtypes]
   end
     
 

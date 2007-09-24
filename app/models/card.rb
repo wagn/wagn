@@ -106,7 +106,7 @@ module Card
       super
     rescue NameError => e   
       if cardtypes.has_key?( class_id.to_s )
-        newclass = Class.new( Card::Base )
+        newclass = Class.new( Card::Basic )
         const_set class_id, newclass
         # FIXME: is this necessary?
         if observers = Card::Base.instance_variable_get('@observer_peers')

@@ -1,5 +1,5 @@
 module Card
-  class InvitationRequest < Base
+  class InvitationRequest < Basic
     attr_accessor :email
 
     before_validation_on_create :create_user

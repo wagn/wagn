@@ -17,8 +17,9 @@ class FileController < ApplicationController
       render :update do |page|
         # FIXME-slot
         page << "warn('submitting after file upload');"
-        page << "$('#{slot.id(:upload_content)}').value='#{file_name}'"
-        page[slot.id(:form)].onsubmit()
+        page << %{e = $$(".upload-content")[0]; }
+        page << %{e.value='#{file_name}';}
+        page << %{e.form.onsubmit()}
       end
     end
     #render :action=>'view'

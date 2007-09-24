@@ -1,6 +1,6 @@
 <% slot_for(@card, @context, "upload", :render_slot=>false) do |slot| %>
-	<% form_for :card, card, :url=>slot.url_for("file/upload"),
-			:html=>{ :id=>slot.id(:upload_form), :multipart=>true } do |f| %>    
+	<% form_for :card, card, :url=>"/file/upload/#{@card.id}",
+			:html=>{ :id=>'upload-form', :multipart=>true } do |f| %>    
 	  <%= f.hidden_field :type %>
 	  <%= f.hidden_field :name %>
 	  <%= file_field_tag :file, :onchange => %{ 				                                                                       

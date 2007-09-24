@@ -1,7 +1,9 @@
 class CardSweeper < ActionController::Caching::Sweeper
   observe Card::Base
 
-  def after_save(card)               
+  def after_save(card)   
+    File.open("/tmp/fucker", "a") {|f| f.write "RUNNING THE CARD FUCKING SWEEPER\n"}
+    
     expire_card(card)
 
     # FIXME: this will need review when we do the new defaults/templating system
@@ -13,9 +15,13 @@ class CardSweeper < ActionController::Caching::Sweeper
     #if card.updates.for?(:name)
       card.dependents.each {|c| expire_card(c) }
       card.referencers.each {|c| expire_card(c) }
-      
       card.name_references.plot(:referencer).each{|c| expire_card(c)}
     #end
+
+    
+    #if card.type=='Cardtype' 
+      session[:createable_cardtypes] = User.current_user.createable_cardtypes
+   # end
   end
   
   private

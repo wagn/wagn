@@ -35,33 +35,65 @@ class PermissionTest < Test::Unit::TestCase
 
 
   def test_create_connections
-    a, b, c, d = create_cards %w( a b c d )
-
-    a.save; a=Card.find_by_name('a');a.permit(:read, @r1); 
-    b.save; b=Card.find_by_name('b');b.permit(:read, @r2); 
-    a.save!; a=Card.find_by_name('a');
-    b.save!; b=Card.find_by_name('b');
+    a = Card.create! :name=>'a44'
+    a.permit(:read, @r1); a.save!
+    b = Card.create! :name=>'b44'
+    b.permit(:read, @r2); b.save! 
 
     #private cards can't be connected to private cards with a different group
-    ab =  a.connect b
-    assert ab.errors.on(:permissions), "a+b should have error on reader"
+    ab = Card.create :name=>'a44+b44'
+    ab.permit :read, ::Role[:anon]
+    ab.save
+    assert ab.errors.on(:permissions), "a44+b44 should have error on reader"
     
-    ba = b.connect a 
-    assert ba.errors.on(:permissions), "b+a should have error on reader"
+    ba = Card.create :name=>'b44+a44'
+    assert ba.errors.on(:permissions), "b44+a44 should have error on reader"
 
     #private cards connected to non-private are private with the same group    
-    ac = a.connect c
-    ac = Card.find_by_name 'a+c'
+    ac = Card.create :name=>'a44+c44'
+    assert_equal a.reader, ac.reader
+  end
+
+  def test_create_connections
+    a, b, c, d = create_cards %w( a33 b33 c33 d33 )
+
+    a.save; a=Card.find_by_name('a33');a.permit(:read, @r1); 
+    b.save; b=Card.find_by_name('b33');b.permit(:read, @r2); 
+    a.save; a=Card.find_by_name('a33');
+    b.save; b=Card.find_by_name('b33');
+
+    #private cards can't be connected to private cards with a different group
+    ab =  Card.create :name=>'a33+b33'
+    assert ab.errors.on(:permissions), "a33+b33 should have error on reader"
+
+    ba = b.connect a 
+    assert ba.errors.on(:permissions), "b33+a33 should have error on reader"
+
+    #private cards connected to non-private are private with the same group    
+    ac = Card.create :name=>'a33+c33'
     assert_equal ac.who_can(:read), ac.reader, "reader (#{ac.reader.codename}) and who can read (#{ac.who_can(:read).codename}) should be same for card #{ac.name}"
     assert_equal ac.reader, @r1, "a+c should be restricted to r1 too"
-    
-    warn "ac reader #{ac.reader.codename}"
-    c = Card['c']
+
+    c = Card['c33']
     c.permit :read, Role[:anon]
-    c.save!
+    c.save
     assert_equal c.reader.codename, 'anon', " c should still be set to Anyone"
-    
   end
+
+  def test_should_not_allowed_reader_change
+    a, ab, abc, ad = %w(A A+B A+B+C A+D ).collect do |name|  Card.find_by_name(name)  end
+      
+    abc.permit(:read, @r2); abc.save!
+
+    # now try to change read permissions to a role that would result in conflict
+    a.permissions= [:read,:edit,:comment,:delete].map{|t| Permission.new(:task=>t.to_s, :party=>@r1)}
+    #assert_raises(Card::PermissionDenied) do
+      a.save
+    #end
+    assert a.errors.on(:permissions)
+  end
+
+ 
   
   
   def test_reader_setting
@@ -70,7 +102,7 @@ class PermissionTest < Test::Unit::TestCase
     end
   end
 
-=begin
+
   def test_write_user_permissions
     @u1.roles = [ @r1, @r2 ]
     @u2.roles = [ @r1, @r3 ]
@@ -88,40 +120,8 @@ class PermissionTest < Test::Unit::TestCase
     assert_locked_from( @u3, @c2 )    
   end
 
-  def test_should_not_allowed_reader_change
-    a, ab, abc, ad = %w(A A+B A+B+C A+D ).collect do |name|  Card.find_by_name(name)  end
-      
-    abc.permit(:read, @r2); abc.save 
 
-    # now try to change read permissions to a role that would result in conflict
-    a.permissions= [:read,:edit,:comment,:delete].map{|t| Permission.new(:task=>t.to_s, :party=>@r1)}
-    #assert_raises(Card::PermissionDenied) do
-      a.save
-    #end
-    assert a.errors.on(:permissions)
-  end
-
-  def test_create_connections
-    a, b, c, d = create_cards %w( a b c d )
-
-    a.save; a=Card.find_by_name('a');a.permit(:read, @r1); 
-    b.save; b=Card.find_by_name('b');b.permit(:read, @r2); 
-    a.save; a=Card.find_by_name('a');
-    b.save; b=Card.find_by_name('b');
-
-    #private cards can't be connected to private cards with a different group
-    ab =  a.connect b
-    assert ab.errors.on(:permissions), "a+b should have error on reader"
-    
-    ba = b.connect a 
-    assert ba.errors.on(:permissions), "b+a should have error on reader"
-
-    #private cards connected to non-private are private with the same group    
-    ac = a.connect c
-    ac = Card.find_by_name 'a+c'
-    assert_equal a.reader, ac.reader
-  end  
-     
+  
  
   def test_read_group_permissions
     @u1.roles = [ @r1, @r2 ]; @u1.save;
@@ -282,5 +282,5 @@ G * . . . .
 }   
     
   end
-=end
+
 end

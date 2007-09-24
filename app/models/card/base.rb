@@ -105,17 +105,15 @@ module Card
           party = p.party
           
           if trunk and tag
-            trunk_reader = trunk.who_can(:read)
-            tag_reader = tag.who_can(:read)
-            if trunk_reader!=::Role[:anon] and tag_reader!=::Role[:anon] and trunk_reader!=tag_reader
-              errors.add(:permissions, "Can't create junction between cards in different restricted read groups:" + 
-                "#{trunk.name} belongs to #{trunk_reader.card.name}; " +
-                "#{tag.name} belongs to #{tag_reader.card.name}"
-              )
-            elsif trunk_reader!=::Role[:anon]
-              party = trunk_reader
-            elsif tag_reader!=::Role[:anon]
-              party = tag_reader
+            trunk_reader, tag_reader = trunk.who_can(:read), tag.who_can(:read)
+            if err=pieces_incompatible?(trunk,tag)
+              self.errors.add(:permissions, err)
+            elsif (!anonymous?(trunk_reader) or !anonymous?(tag_reader))
+              if anonymous?(trunk_reader) or (authenticated?(trunk_reader) and !anonymous(tag_reader))
+                party = tag_reader
+              else
+                party = trunk_reader
+              end
             end
           end
           Permission.new :task=>p.task, :party=>party
@@ -387,6 +385,38 @@ module Card
       Card.create :trunk=>self, :tag=>other_card, :content=>content
     end   
      
+    def anonymous?(party)
+      party==::Role[:anon]
+    end
+    
+    def authenticated?(party)
+      party==::Role[:auth]
+    end
+    
+    def pieces_incompatible?(left, right)
+      left_reader  = left.who_can(:read)
+      right_reader = right.who_can(:read)
+      #warn "pieces= #{left_reader.cardname} & #{right_reader.cardname}"
+      [left_reader, right_reader].each do |r|
+        return false if anonymous?(r)
+        return false if authenticated?(r)
+      end
+      if left_reader != right_reader
+        return "Can't join cards that only #{left_reader.cardname} can read with cards only #{right_reader.cardname} can read" 
+      end
+      return false
+    end
+    
+    def piece_and_junction_incompatible?(piece_reader, junction_reader, anon_junction_ok=false)
+      return false if anonymous?(piece_reader)
+      return false if (anon_junction_ok and anonymous?(junction_reader))
+      return false if authenticated?(piece_reader) and !anonymous?(junction_reader)
+      if piece_reader != junction_reader
+        return "can't restrict reading junction to #{junction_reader.cardname} when reading piece is restricted to #{piece_reader.cardname}"
+      end
+      return false
+    end
+    
     protected
     def clear_drafts
       connection.execute(%{
@@ -519,7 +549,7 @@ module Card
     validates_each :permissions do |rec, attr, value|
       if rec.updates.for?(:permissions)
         rec.errors.add :permissions, 'Insufficient permissions specifications' if value.length < 3
-        reader = nil
+        reader,err = nil, nil
         value.each do |p|  #fixme-perm -- ugly - no alibi
           unless %w{ create read edit comment delete }.member?(p.task.to_s)
             rec.errors.add :permissions, "No such permission: #{p.task}"
@@ -529,16 +559,21 @@ module Card
             rec.errors.add :permission, "#{p.task} party can't be set to nil"
           end
         end
-        (rec.dependents+(rec.junction? ? [rec.tag, rec.trunk] : [])).each do |d|   
+        if !rec.simple?
+          err ||= rec.pieces_incompatible?(rec.trunk,rec.tag)
+          err ||= rec.piece_and_junction_incompatible?( rec.trunk.who_can(:read), reader ) 
+          err ||= rec.piece_and_junction_incompatible?( rec.tag.who_can(:read),   reader )
+        end 
+        rec.dependents.each do |d|   
           d_reader = d.who_can :read
-          if (d_reader!=reader) and !(d_reader.class == ::Role and d_reader.codename=='anon') 
-            # and d.reader!=reader
-            rec.errors.add :permissions, "can't set read permissions on #{rec.name} to #{reader.cardname} because " +
-            "reading #{d.name} is restricted to #{d_reader.cardname}"
-          end
-        end       
+          err ||= rec.piece_and_junction_incompatible?(reader,d_reader, anon_junction_ok=true)  
+        end
+        if err
+          rec.errors.add :permissions, "can't set read permissions on #{rec.name} to #{reader.cardname} because #{err}"
+        end
       end
     end
+    
     
     validates_each :type do |rec, attr, value|  
       if rec.tag_template and rec.tag_template.hard_template? and value!=rec.tag_template.type and !rec.allow_type_change

@@ -104,10 +104,12 @@ module Card
 #=end
     end
    
-    def set_reader(party)   
-      junctions.each do |dep|
-        dep.permit :read, party  
-        dep.save!
+    def set_reader(party)
+      if !anonymous?(party)      
+        junctions.each do |dep|
+          dep.permit :read, party  
+          dep.save!
+        end
       end
       self.reader = party
     end

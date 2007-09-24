@@ -1,6 +1,20 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-=begin
+
+describe Card, "New Connection Card with two differently restricted pieces" do
+  before do
+    User.as :admin
+    c = Card['c']; c.permit :read, Role['r1']; c.save!    
+    d = Card['d']; d.permit :read, Role['r2']; d.save!    
+    @cd = Card.create :name=>'c+d'
+  end
+  
+  it "should not be allowed to make this restriction" do
+    @cd.errors.on(:permissions).should_not be_nil
+    #warn "errors: #{@cd.errors.inspect}"
+  end
+end
+
 describe Card, "New Connection Card with one restricted piece" do
   before do
     User.as :admin
@@ -32,25 +46,13 @@ describe Card, "Piece Card with new restriction" do
   end
 end
 
-describe Card, "New Connection Card with two differently restricted pieces" do
-  before do
-    User.as :admin
-    c = Card['c']; c.permit :read, Role['r1']; c.save!    
-    d = Card['d']; d.permit :read, Role['r2']; d.save!    
-    @cd = Card.create :name=>'c+d'
-  end
-  
-  it "should not be allowed to make this restriction" do
-    @cd.errors.on(:permissions).should_not be_nil
-    #warn "errors: #{@cd.errors.inspect}"
-  end
-end
-=end
+
 describe Card, "Piece of Connection Card with restriction" do
   before do
     User.as :admin
     @cd = Card.create :name=>'c+d'
     @cd.permit :read, Role['r2']
+    @cd.save!
     @c = Card['c']
   end
   
@@ -65,9 +67,9 @@ describe Card, "Piece of Connection Card with restriction" do
     @c.save
     @c.errors.on(:permissions).should == nil
   end
-  
 end
-=begin     
+
+    
 describe Card, "new permissions" do
   User.as :joe_user
   
@@ -180,7 +182,6 @@ describe Card, "Permit method on new card" do
     @c.who_can(:read) == @r2
   end
 end
-=end
 
 # FIXME-perm
 

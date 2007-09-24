@@ -1,7 +1,5 @@
 module Card
 	class Query < Base
-    set_editor_type "Query"
-    set_description "Describe Query datatype here."
     before_save :escape_content
 
     def escape_content

@@ -1,7 +1,6 @@
 class <%= class_name %>Datatype < Datatype::Base
   
   register "<%= class_name %>"
-  set_editor_type "PlainText"
   
   description %{
     Describe <%= datatype_name %> datatype here.

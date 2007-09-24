@@ -4,12 +4,12 @@ module Card
       super 
       base.extend(ClassMethods)   
       base.class_eval do
-        class_inheritable_accessor :editor_type, :description
-        set_editor_type "RichText"
+#        class_inheritable_accessor :editor_type, :description
+#        set_editor_type "RichText"
       end
     end      
-    
     module ClassMethods 
+=begin    
       def set_editor_type( type ) 
         self.editor_type = type
       end
@@ -17,8 +17,8 @@ module Card
       def set_description( description )
         self.description = description
       end
+=end    
     end
-    
     def queries
       if !@queries
         @queries = ['plus_cards', 'plussed_cards']
@@ -62,6 +62,7 @@ module Card
     end
     # --
 
+=begin
     def editor_type
       self.class.editor_type
     end
@@ -69,7 +70,7 @@ module Card
     def description
       self.class.description
     end
-    
+=end
     protected
     def backlinks
       @backlinks ||= Card.find_by_wql("cards that link to cards where id=#{id}")

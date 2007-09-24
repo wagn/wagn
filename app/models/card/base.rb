@@ -409,12 +409,17 @@ module Card
       return false
     end
     
-    def piece_and_junction_incompatible?(piece_reader, junction_reader, anon_junction_ok=false)
+    def piece_and_junction_incompatible?(piece, junction, override_weak_junction_ok=false)
+      piece_reader = piece.who_can :read
+      junction_reader = junction.who_can :read
       return false if anonymous?(piece_reader)
-      return false if (anon_junction_ok and anonymous?(junction_reader))
+      if override_weak_junction_ok
+        return false if (anonymous?(junction_reader) or authenticated?(junction_reader))
+      end
       return false if authenticated?(piece_reader) and !anonymous?(junction_reader)
       if piece_reader != junction_reader
-        return "can't restrict reading junction to #{junction_reader.cardname} when reading piece is restricted to #{piece_reader.cardname}"
+        #fixme need to get cardnames in here for better messages.
+        return "incompatible read permissions: #{junction_reader.cardname} on #{junction.name} and  #{piece_reader.cardname} on #{piece.name}"
       end
       return false
     end
@@ -562,13 +567,13 @@ module Card
           end
         end
         if !rec.simple?
-          err ||= rec.pieces_incompatible?(rec.trunk,rec.tag)
-          err ||= rec.piece_and_junction_incompatible?( rec.trunk.who_can(:read), reader ) 
-          err ||= rec.piece_and_junction_incompatible?( rec.tag.who_can(:read),   reader )
+          err ||= rec.pieces_incompatible?(rec.trunk,rec.tag) #is this necessary?  shouldn't get to this situation
+          err ||= rec.piece_and_junction_incompatible?( rec.trunk, rec ) 
+          err ||= rec.piece_and_junction_incompatible?( rec.tag,   rec )
         end 
-        rec.dependents.each do |d|   
-          d_reader = d.who_can :read
-          err ||= rec.piece_and_junction_incompatible?(reader,d_reader, anon_junction_ok=true)  
+        rec.dependents.each do |junction|   
+          err ||= rec.piece_and_junction_incompatible?(rec,junction, override_weak_junction_ok=true)  
+          #anon and auth are ok here because any change to this card's permissions can safely override them.
         end
         if err
           rec.errors.add :permissions, "can't set read permissions on #{rec.name} to #{reader.cardname} because #{err}"

@@ -88,13 +88,15 @@ module Card
       self.permissions_without_tracking = perms.reject {|p| p.party==nil }
 #=begin
       if template? and trunk.type == 'Cardtype' and create_party = who_can(:create)
-        trunk.permit(:create, create_party)
-        trunk.save!
-        if trunk.codename == 'Basic'
-          Card::Basic.permission_dependents.each do |ct|
-            #warn "updating cardtype: #{ct.name}"
-            ct.permit(:create, create_party)
-            ct.save
+        ::User.as :admin do
+          trunk.permit(:create, create_party)
+          trunk.save!
+          if trunk.codename == 'Basic'
+            Card::Basic.permission_dependent_cardtypes.each do |ct|
+              #warn "updating cardtype: #{ct.name}"
+              ct.permit(:create, create_party)
+              ct.save
+            end
           end
         end
       end
@@ -102,7 +104,7 @@ module Card
     end
    
     def set_reader(party)
-      if !anonymous?(party)      
+      if !anonymous?(party)  
         junctions.each do |dep|
           dep.permit :read, party  
           dep.save!

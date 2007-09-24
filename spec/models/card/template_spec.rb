@@ -1,6 +1,7 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
    
 
+
 describe Card, "with soft tag template" do
   before do 
     User.as :admin do
@@ -22,9 +23,32 @@ describe Card, "with soft tag template" do
   end
   
   it "should have default permissions" do
-    @jb.permissions.plot(:party).should == @bt.permissions.plot(:party)
+    [:read, :edit, :comment, :delete].each do |task| 
+      @jb.who_can(task).should== @bt.who_can(task)
+    end
   end
 end
+
+describe Card, "with hard type template and hard tag template" do
+  before do
+    User.as :joe_user
+    @bt = Card.create! :name=>"birthday+*template", :extension_type=>'HardTemplate',
+      :type=>'Date', :content=>"Today!"      
+    @dt = Card.create! :name=>"Date+*template", :extension_type=>'HardTemplate', :type=>'Date', :content=>'Tomorrow'
+    @jb =  Card.create! :name=>"Jim+birthday"
+  end       
+  
+  it "should have cardtype content" do
+    @jb.content.should == 'Tomorrow'
+  end
+  
+  it "should change content with cardtype" do
+    @dt.content = 'Yesterday'; @dt.save!
+    Card['Jim+birthday'].content.should== 'Yesterday'
+  end
+  
+end
+
 
 
 describe Card, "with hard tag template" do
@@ -67,25 +91,5 @@ end
 
 
 describe Card, "with soft type template" do
-  
-end
-
-describe Card, "with hard type template and hard tag template" do
-  before do
-    User.as :joe_user
-    @bt = Card.create! :name=>"birthday+*template", :extension_type=>'HardTemplate',
-      :type=>'Date', :content=>"Today!"      
-    @dt = Card.create! :name=>"Date+*template", :extension_type=>'HardTemplate', :type=>'Date', :content=>'Tomorrow'
-    @jb =  Card.create! :name=>"Jim+birthday"
-  end       
-  
-  it "should have cardtype content" do
-    @jb.content.should == 'Tomorrow'
-  end
-  
-  it "should change content with cardtype" do
-    @dt.content = 'Yesterday'; @dt.save!
-    Card['Jim+birthday'].content.should== 'Yesterday'
-  end
   
 end

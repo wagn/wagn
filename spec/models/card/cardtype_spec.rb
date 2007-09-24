@@ -117,18 +117,4 @@ describe Card, "Cardtype with Existing Cards" do
   end
 end
 
-## FIXME this one is so busted the error log is super long and you can't really even see the results.
-
-describe Card, "type" do
-  User.as :admin
-  
-  Cardtype.find(:all).plot(:class_name).each do |ct|
-    before do 
-      @new_card = Card.const_get(ct).create :name=>"new #{ct}"
-    end
-    it "new #{@ct} card should have editor_type" do
-      @new_card.editor_type.should_not be_nil
-    end
-  end
-end
 =end

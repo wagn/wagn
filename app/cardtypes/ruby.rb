@@ -1,11 +1,5 @@
 module Card
 	class Ruby < Base
-	  set_editor_type "PlainText"
-
-    set_description %{
-      Enter ruby code here.
-    }
-
     def post_render( content )
       return content.replace("Ruby card disabled") unless System.enable_ruby_cards
       s = Sandbox.new(4)

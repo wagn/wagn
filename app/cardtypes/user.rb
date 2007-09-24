@@ -1,7 +1,5 @@
 module Card
   class User < Base
-    set_editor_type "User"
-    
     attr_accessor :email
     before_destroy :destroy_extension
 

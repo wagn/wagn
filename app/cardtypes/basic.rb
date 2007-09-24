@@ -1,11 +1,8 @@
 module Card
   class Basic < Base
-    set_editor_type "RichText"
-    set_description ''
-
     before_save :clean_content
 
-    def self.permission_dependents
+    def self.permission_dependent_cardtypes
       Card::Cardtype.find(:all).reject { |c| c.template_tsar? }
     end
 
@@ -45,7 +42,7 @@ module Card
 
       if add_toc
         content.replace %{ <div class="table-of-contents"> <h5>Table of Contents</h5> } +
-        make_list(toc) + '</div>'+ content 
+        make_table_of_contents_list(toc) + '</div>'+ content 
       else
         content
       end
@@ -56,9 +53,9 @@ module Card
       self.content = WikiContent.clean_html!(content)
     end
 
-    def make_list(items)
+    def make_table_of_contents_list(items)
       list = items.collect do |i|
-        Array === i ? make_list(i) : %{<li><a href="##{i[:uri]}"> #{i[:value]}</a></li>}
+        Array === i ? make_table_of_contents_list(i) : %{<li><a href="##{i[:uri]}"> #{i[:value]}</a></li>}
       end.join("\n")
       "<ol>" + list + "</ol>"
     end

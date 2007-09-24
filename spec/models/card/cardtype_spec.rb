@@ -1,6 +1,39 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
 
+describe Card, "Recreated Card" do
+  before do
+    User.as :admin
+    @ct = Card::Cardtype.create! :name=>'Species'
+    @ct.destroy!
+    @ct = Card::Cardtype.create! :name=>'Species'
+  end
+  
+  it "should have a cardtype extension" do
+    @ct.extension.should_not be_nil
+  end
+  
+end
+
+
+describe Card, "Normal card with junctions" do
+  before do
+    User.as :admin
+    @a = Card['a']
+  end
+  it "should confirm that it has junctions" do
+    @a.junctions.length.should > 0
+  end
+  it "should successfull have its type changed" do
+    @a.type = 'CardtypeE'; @a.save!
+    Card['a'].type.should== 'CardtypeE'
+  end
+  it "should still have its junctions after changing type" do
+    @a.type = 'CardtypeE'; @a.save!
+    Card['a'].junctions.length.should > 0
+  end
+end
+
 
 describe Card, "New Cardtype" do
   before do
@@ -16,7 +49,7 @@ describe Card, "New Cardtype" do
   end
 end
 
-=begin
+
 
 
 describe Card, "Wannabe Cardtype Card" do
@@ -35,34 +68,6 @@ describe Card, "Wannabe Cardtype Card" do
   end
 end
 
-describe Card, "Cardtype with Existing Cards" do
-  before do
-    User.as :admin
-    @ct = Card['Basic']
-  end
-  it "should have existing cards of that type" do
-    @ct.me_type.find(:all).should_not be_empty
-  end
-  it "should raise an error when you try to delete it" do
-    @ct.destroy
-    @ct.errors.on(:type).should_not be_empty
-  end
-end
-
-## FIXME this one is so busted the error log is super long and you can't really even see the results.
-=begin  
-describe Card, "type" do
-  User.as :admin
-  
-  Cardtype.find(:all).plot(:class_name).each do |ct|
-    before do 
-      @new_card = Card.const_get(ct).create :name=>"new #{ct}"
-    end
-    it "new #{@ct} card should have editor_type" do
-      @new_card.editor_type.should_not be_nil
-    end
-  end
-end
 
 
 describe User, "Joe User" do
@@ -93,5 +98,37 @@ describe User, "Joe User" do
   end
   
 end
-=end  
 
+=begin  
+(These are actually busted)
+
+describe Card, "Cardtype with Existing Cards" do
+  before do
+    User.as :admin
+    @ct = Card['Basic']
+  end
+  it "should have existing cards of that type" do
+    @ct.me_type.find(:all).should_not be_empty
+  end
+  ##FIXME -- this doesn't work yet
+  it "should raise an error when you try to delete it" do
+    @ct.destroy
+    @ct.errors.on(:type).should_not be_empty
+  end
+end
+
+## FIXME this one is so busted the error log is super long and you can't really even see the results.
+
+describe Card, "type" do
+  User.as :admin
+  
+  Cardtype.find(:all).plot(:class_name).each do |ct|
+    before do 
+      @new_card = Card.const_get(ct).create :name=>"new #{ct}"
+    end
+    it "new #{@ct} card should have editor_type" do
+      @new_card.editor_type.should_not be_nil
+    end
+  end
+end
+=end

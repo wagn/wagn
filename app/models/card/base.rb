@@ -169,6 +169,7 @@ module Card
         args.stringify_keys!
         if c = Card.find_by_key_and_trash(get_name_from_args(args).to_key, true)
           c.update_attributes! args.merge('trash'=>false)
+          c.send(:callback, :before_validation_on_create)
           c
         else
           create_without_trash! args
@@ -179,7 +180,8 @@ module Card
       def create_with_trash(args={})
         args.stringify_keys!
         if c = Card.find_by_key_and_trash(get_name_from_args(args).to_key, true)
-          c.update_attributes args.merge('trash'=>false)  
+          c.update_attributes args.merge('trash'=>false) 
+          c.send(:callback, :before_validation_on_create)
           c
         else
           create_without_trash args

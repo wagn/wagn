@@ -31,8 +31,8 @@ task :populate_template_database => :environment do
     joe_user = ::User.create! :login=>"joe_user",:email=>'joe@user.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>User.find_by_login('admin')
     joe_card = Card::User.create! :name=>"Joe User", :extension=>joe_user    
 
-                 bt = Card.find_by_name 'Basic+*template'
-                 fail "oh god #{bt.permissions.inspect}" if bt.permissions.empty?
+    bt = Card.find_by_name 'Basic+*template'
+    fail "oh god #{bt.permissions.inspect}" if bt.permissions.empty?
          
     # generic, shared attribute card
     color = Card::Basic.create! :name=>"color"
@@ -111,7 +111,13 @@ task :populate_template_database => :environment do
     c = Card.create! :name=>'revtest', :content=>'first'
     c.update_attributes! :content=>'second'
     c.update_attributes! :content=>'third'
-    #Card::Cardtype.create! :name=>'*priority'
+    #Card::Cardtype.create! :name=>'*priority'      
+    
+    # for template stuff
+    Card::Cardtype.create! :name=> "UserForm"
+    Card.create! :name=>"UserForm+*template", :content=>"{{+name}} {{+age}} {{+description}}",
+      :extension_type=>"HardTemplate"
+    #Card::UserForm.create! :name=>"JoeForm"
   end   
   
   #::User.as( ::User.find_by_login('anonymous'))) do 

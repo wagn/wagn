@@ -182,7 +182,7 @@ class CardController < ApplicationController
             @card.errors.add card.name, err
           end
         end
-      end
+      end  
     else
       @card.update_attributes! params[:card]     
     end

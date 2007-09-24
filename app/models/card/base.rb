@@ -56,6 +56,7 @@ module Card
     has_many :linkees, :through=>:out_links, :source=>:referencee
    
     before_validation_on_create :set_defaults
+    #after_create :create_references_for_hard_templatees
     after_create :update_references_on_create
     before_destroy :update_references_on_destroy
     after_save :cache_priority
@@ -67,6 +68,10 @@ module Card
       belongs_to :reader, :polymorphic=>true  
       
     protected    
+    
+    def create_references_for_hard_templatees
+      #Renderer.instance.render(self, self.content, update_references=true)
+    end
     
     def set_defaults 
       return unless new_record?  # because create callbacks are also called in type transitions 

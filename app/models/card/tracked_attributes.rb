@@ -68,6 +68,8 @@ module Card
       return false unless self.id           
       new_content ||= ''
       rendered_content = Renderer.instance.render(self, new_content, update_references=true)
+      hard_templatees.each {|c| Renderer.instance.render(c, new_content, update_references=true) }
+        
       clear_drafts if current_revision_id
       self.current_revision = Revision.create :card_id=>self.id, :content=>new_content
     end

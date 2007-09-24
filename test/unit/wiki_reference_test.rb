@@ -5,6 +5,19 @@ class WikiReferenceTest < Test::Unit::TestCase
     setup_default_user  
     Renderer.instance.rescue_errors = false
   end
+  
+  def test_hard_template_reference_creation_on_tempalate_creation
+    Card::Cardtype.create! :name=>"SpecialForm"
+    Card::SpecialForm.create! :name=>"Form1", :content=>"foo"
+    Card.create! :name=>"SpecialForm+*template", :content=>"{{+bar}}", :extension_type=>"HardTemplate"
+    assert_equal ["form1+bar"], Card["Form1"].out_references.plot(:referenced_name)
+  end
+  
+  def test_hard_templated_card_should_insert_references_on_create
+    Card::UserForm.create! :name=>"JoeForm"
+    assert_equal ["joe_form+age", "joe_form+name", "joe_form+description"].sort,
+      Card["JoeForm"].out_references.plot(:referenced_name).sort
+  end   
 
   def test_container_transclusion
     bob_city = Card.create :name=>'bob+city' 
@@ -102,7 +115,8 @@ class WikiReferenceTest < Test::Unit::TestCase
     @e = newcard("Lewdog")              # now there is
     assert @e.referencers.plot(:name).include?("woof")
   end
-
+  
+  
 =begin  
   def test_pickup_new_transclusions_on_create
     @l = Card.create! :name=>"woof", :content=>"{{Lewdog}}"  # no Lewdog card yet...

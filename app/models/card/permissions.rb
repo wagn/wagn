@@ -16,10 +16,10 @@ module Card
     
     module ClassMethods 
       def ok?(operation)
-        new.ok? operation
+        new.cardtype.ok? operation
       end
       def ok!(operation)
-        new.ok! operation
+        new.cardtype.ok! operation
       end
     end
 

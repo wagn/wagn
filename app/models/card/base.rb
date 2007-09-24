@@ -19,11 +19,11 @@ module Card
     cattr_accessor :cache  
     self.cache = {}
    
-    belongs_to :trunk, :class_name=>'Card::Base', :foreign_key=>'trunk_id', :dependent=>:dependent
-    has_many   :right_junctions, :class_name=>'Card::Base', :foreign_key=>'trunk_id' , :dependent=>:destroy  
+    belongs_to :trunk, :class_name=>'Card::Base', :foreign_key=>'trunk_id' #, :dependent=>:dependent
+    has_many   :right_junctions, :class_name=>'Card::Base', :foreign_key=>'trunk_id' #, :dependent=>:destroy  
 
-    belongs_to :tag, :class_name=>'Card::Base', :foreign_key=>'tag_id', :dependent=>:destroy
-    has_many   :left_junctions, :class_name=>'Card::Base', :foreign_key=>'tag_id', :dependent=>:destroy
+    belongs_to :tag, :class_name=>'Card::Base', :foreign_key=>'tag_id' #, :dependent=>:destroy
+    has_many   :left_junctions, :class_name=>'Card::Base', :foreign_key=>'tag_id' #, :dependent=>:destroy
     
     belongs_to :current_revision, :class_name => 'Revision', :foreign_key=>'current_revision_id'
     has_many   :revisions, :order => 'id', :foreign_key=>'card_id'

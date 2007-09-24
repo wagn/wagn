@@ -5,21 +5,22 @@ class FileController < ApplicationController
   def upload
     file = params[:file]
     dir = @card.type.underscore
-    ext = file.original_filename.gsub(/.*\.(\w+)$/, '\1')
-    file_name = @card.name + "." + ext
-    
-    File.open("#{RAILS_ROOT}/public/#{dir}/#{file_name}", "wb") do |f|
+    x=file.original_filename.split('.')
+    ext, filename = x.pop, x.join('.')
+    name = @card.name.empty? ? filename : @card.name.gsub(/^(.*)\.\w+$/,'\1')
+    File.open("#{RAILS_ROOT}/public/#{dir}/#{name}.#{ext}", "wb") do |f|
       f.write( file.read )
     end
 
-    slot = WagnHelper::Slot.new(@card,@context,'file')
+#    slot = WagnHelper::Slot.new(@card,@context,'file')
     responds_to_parent do 
       render :update do |page|
         # FIXME-slot
         page << "warn('submitting after file upload');"
         page << %{e = $$(".upload-content")[0]; }
-        page << %{e.value='#{file_name}';}
+        page << %{e.value='#{name}.#{ext}';}
         page << %{e.form.onsubmit()}
+
       end
     end
     #render :action=>'view'

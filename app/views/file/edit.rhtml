@@ -1,10 +1,10 @@
 <% slot_for(@card, @context, "upload", :render_slot=>false) do |slot| %>
 	<% form_for :card, card, :url=>"/file/upload/#{@card.id}",
 			:html=>{ :id=>'upload-form', :multipart=>true } do |f| %>    
-	  <%= f.hidden_field :type %>
+	  <%= f.hidden_field :type %>     	
 	  <%= f.hidden_field :name %>
 	  <%= file_field_tag :file, :onchange => %{ 				                                                                       
-					/* Wagn.Card.find('#{slot.id}').set_blank_name_to($F(this).split('/').last()); */
+		 		window.parent.document.getElementById('card_name').value=$F(this).split('/').last();
 		}	%>
 	<% end %>     
 <% end %>

@@ -1,11 +1,16 @@
-<p><iframe class="upload-iframe" name="upload-iframe" height="30" width="480" frameborder="0" src="<%= "/file/edit/#{card.id}" %>" scrolling="no">
+<p><iframe id="upload-iframe" class="upload-iframe" name="upload-iframe" height="30" width="480" frameborder="0" src="<%= "/file/edit/#{card.id}" %>" scrolling="no">
 </iframe></p>
 <%= slot.form.hidden_field :content, :class=>'upload-content' %>
   
 <%#FIXME-slot %>
 <%= slot.editor_hooks :save=>%{
-	doc=getSlotElement(this, 'iframe').contentDocument;
-	doc.getElementById(getSlotElement(this,'upload_form')).submit(); 
+	doc=$$(".upload-iframe")[0].contentDocument;       	
+	innerForm = doc.getElementById('upload-form');
+  outerForm = $$('.upload-content')[0].form;
+	innerForm.elements['card[name]'].value = outerForm.elements['card[name]'].value;
+	warn("cardtype: " + outerForm.elements['card[type]'].value);
+	innerForm.elements['card[type]'].value = outerForm.elements['card[type]'].value;
+	innerForm.submit(); 
 	return false;
 } %>
 

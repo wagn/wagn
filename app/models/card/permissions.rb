@@ -176,7 +176,7 @@ module Card
         end
       end
       new_self = clone_to_type( type ) # note: would rather do this through ok? api...
-      new_self.send(:approve_create) 
+      new_self.send(:approve_create_me) 
       if err = new_self.errors.on(:permission_denied) 
         deny_because err
       end

@@ -47,8 +47,8 @@ module Card
       #warn "set type called on #{name} to #{new_type}"
       self.type_without_tracking = new_type 
       return if new_record?    
-      #callback(:before_destroy)
-      #callback(:after_destroy)
+      callback(:before_destroy)
+      callback(:after_destroy)
       if !hard_templatees.empty?
         #warn "going through hard templatees"  
         hard_templatees.each do |tee|

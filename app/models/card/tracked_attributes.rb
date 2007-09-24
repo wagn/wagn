@@ -104,13 +104,15 @@ module Card
     end
    
     def set_reader(party)
+      self.reader = party
       if !anonymous?(party)  
         junctions.each do |dep|
-          dep.permit :read, party  
-          dep.save!
+          unless authenticated?(party) and !anonymous?(dep.who_can(:read))
+            dep.permit :read, party  
+            dep.save!
+          end
         end
       end
-      self.reader = party
     end
  
     def set_initial_content  

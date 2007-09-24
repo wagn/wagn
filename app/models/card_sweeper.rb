@@ -2,8 +2,6 @@ class CardSweeper < ActionController::Caching::Sweeper
   observe Card::Base
 
   def after_save(card)   
-    File.open("/tmp/fucker", "a") {|f| f.write "RUNNING THE CARD FUCKING SWEEPER\n"}
-    
     expire_card(card)
 
     # FIXME: this will need review when we do the new defaults/templating system
@@ -20,8 +18,8 @@ class CardSweeper < ActionController::Caching::Sweeper
 
     
     #if card.type=='Cardtype' 
-      session[:createable_cardtypes] = User.current_user.createable_cardtypes
-   # end
+    #  session[:createable_cardtypes] = User.current_user.createable_cardtypes
+    #end
   end
   
   private

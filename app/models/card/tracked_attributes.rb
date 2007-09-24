@@ -46,6 +46,7 @@ module Card
     def set_type(new_type)
       #warn "set type called on #{name} to #{new_type}"
       self.type_without_tracking = new_type 
+      warn "SETTING TYPE"
       return if new_record?    
       callback(:before_destroy)
       callback(:after_destroy)
@@ -58,10 +59,12 @@ module Card
         end
       end
       newcard = self.clone_to_type(new_type)
+      warn "CREATING new card: #{newcard}"
       newcard.send(:callback, :before_validation_on_create)
       newcard.send(:callback, :before_create)
       #newcard.send(:callback, :after_create)
       self.extension = newcard.extension
+      warn "has extension id: #{self.extension_id}"  
     end
     
     def set_content(new_content)  
@@ -82,10 +85,10 @@ module Card
         old_create_party = self.who_can(:create)
         perms << Permission.new(:task=>'create', :party=>old_create_party)
       end
-      self.permissions_without_tracking = perms.reject {|p| p.party==nil }
       perms.each do |p| 
         set_reader( p.party ) if p.task == 'read'
       end
+      self.permissions_without_tracking = perms.reject {|p| p.party==nil }
 #=begin
       if template? and trunk.type == 'Cardtype' and create_party = who_can(:create)
         trunk.permit(:create, create_party)
@@ -102,12 +105,11 @@ module Card
     end
    
     def set_reader(party)   
-      #self.reader_without_tracking = party 
-      self.reader = party
       junctions.each do |dep|
         dep.permit :read, party  
         dep.save!
       end
+      self.reader = party
     end
  
     def set_initial_content  

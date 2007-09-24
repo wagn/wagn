@@ -98,7 +98,7 @@ module Card
     end
     
     def default_permissions
-      perm = defaults_template.permissions.reject { |p| p.task == 'create' unless type == 'Cardtype' }
+      perm = defaults_template.permissions.reject { |p| p.task == 'create' unless (type == 'Cardtype' or template?) }
       
       perm.map do |p|  
         if p.task == 'read'
@@ -533,7 +533,7 @@ module Card
           d_reader = d.who_can :read
           if (d_reader!=reader) and !(d_reader.class == ::Role and d_reader.codename=='anon') 
             # and d.reader!=reader
-            rec.errors.add :permissions, "can't set read permissions to #{reader.cardname} because " +
+            rec.errors.add :permissions, "can't set read permissions on #{rec.name} to #{reader.cardname} because " +
             "reading #{d.name} is restricted to #{d_reader.cardname}"
           end
         end       
@@ -544,6 +544,10 @@ module Card
       if rec.tag_template and rec.tag_template.hard_template? and value!=rec.tag_template.type and !rec.allow_type_change
         rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rec.tag_template.type}"
       end
+      #FIXME -- this validation would actually be good to have...
+    #  if rec.type == 'Cardtype' and rec.extension and !Card.find_by_type(rec.extension.codename)
+    #    rec.errors.add :type, "can't be changed because #{rec.name} is a Cardtype and many cards have this type"
+    #  end
       if rec.updates.for?(:type)     
         rec.send :validate_destroy
         newcard = rec.send :clone_to_type, value

@@ -5,6 +5,8 @@
     before_destroy :ensure_not_in_use, :destroy_extension   # order is important!
     after_create :reload_cardtypes
     before_destroy :reload_cardtypes
+    
+    #validates_presence_of :extension
                                     
     def codename
       extension ? extension.class_name : nil
@@ -21,6 +23,7 @@
 
     
     def create_extension
+      #warn "create extension called!!"
       class_name = name.gsub(/^\W+|\W+$/,'').gsub(/\W+/,'_').camelize
       self.extension = ::Cardtype.create!( :class_name => class_name )
     end

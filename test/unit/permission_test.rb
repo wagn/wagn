@@ -34,19 +34,13 @@ class PermissionTest < Test::Unit::TestCase
   end      
 
 
-  def test_reader_setting
-    Card.find(:all).each do |c|
-      assert_equal c.who_can(:read), c.reader, "reader (#{c.reader}) and who can read (#{c.who_can(:read)}) should be same for card #{c.name}"
-    end
-  end
-
   def test_create_connections
     a, b, c, d = create_cards %w( a b c d )
 
     a.save; a=Card.find_by_name('a');a.permit(:read, @r1); 
     b.save; b=Card.find_by_name('b');b.permit(:read, @r2); 
-    a.save; a=Card.find_by_name('a');
-    b.save; b=Card.find_by_name('b');
+    a.save!; a=Card.find_by_name('a');
+    b.save!; b=Card.find_by_name('b');
 
     #private cards can't be connected to private cards with a different group
     ab =  a.connect b
@@ -68,6 +62,14 @@ class PermissionTest < Test::Unit::TestCase
     assert_equal c.reader.codename, 'anon', " c should still be set to Anyone"
     
   end
+  
+  
+  def test_reader_setting
+    Card.find(:all).each do |c|
+      assert_equal c.who_can(:read), c.reader, "reader (#{c.reader}) and who can read (#{c.who_can(:read)}) should be same for card #{c.name}"
+    end
+  end
+
 =begin
   def test_write_user_permissions
     @u1.roles = [ @r1, @r2 ]

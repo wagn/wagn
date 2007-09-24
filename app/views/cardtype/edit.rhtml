@@ -1,15 +1,20 @@
 <% slot_for(@card,@context,'cardtype') do |slot| %>
 	<div class="cardtype-editor edit-area">
 	  <h2>Edit Cardtype</h2>
-		<% form_remote_for :card, @card, :url=>slot.url_for('cardtype/update'), 
-				:update=>slot.id('cardtype-area') do |f| %>
-	    <p>
-  	    <%= slot.cardtype_field f, :onchange=>slot.update_cardtype_function(
-  					  :url=>slot.url_for("card/edit"), :update=>slot.id,
-  						:with=>"Form.serializeElements([this#{slot.js_content_element}])"
-  			) %>
-  			<%= button_to_remote 'Cancel', :url=>slot.url_for('cardtype/view'), :update=>slot.id('cardtype-area') %>
-  		</p>
+   		<% form_remote_for :card, @card, :url=>slot.url_for('cardtype/update'), 
+   				:update=>slot.id('cardtype-area') do |f| %>
+   			<% if @card.type == 'Cardtype' and @card.extension and !Card.find_by_wql_options(:type=>@card.extension.codename).empty? %>
+    	    <p>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong><%= @card.name %></strong> cards.</p>
+    	  <% else %>
+      	  
+   	      <p>
+       	    <%= slot.cardtype_field f, :onchange=>slot.update_cardtype_function(
+       					  :url=>slot.url_for("card/edit"), :update=>slot.id,
+       						:with=>"Form.serializeElements([this#{slot.js_content_element}])"
+       			) %>
+      		</p>
+     	<% end%>
+ 			<p><%= button_to_remote 'Cancel', :url=>slot.url_for('cardtype/view'), :update=>slot.id('cardtype-area') %> </p>
 		<% end %>
 	</div>
 <% end %>

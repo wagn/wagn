@@ -2,6 +2,18 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 
 
+describe Card, "Card changed to become a Cardtype" do
+  before do
+    User.as :admin
+    @a = Card['a']
+    @a.type = 'Cardtype'
+    @a.save!
+  end
+  it "should have a create permission set" do
+    Card['a'].who_can(:create).should_not == nil
+  end
+end
+
 describe Card, "Normal card with junctions" do
   before do
     User.as :admin

@@ -171,7 +171,7 @@ class ApplicationController < ActionController::Base
   def handle_cardtype_update(card)
     if updating_type?  
       old_type = card.type
-      card.type=params[:card][:type]
+      card.type=params[:card][:type]  
       card.save!
       card = Card.find(card.id)
       content = params[:card][:content]
@@ -274,7 +274,7 @@ class ApplicationController < ActionController::Base
     # getNextElement() will crawl up nested slots until it finds one with a notice div
     if requesting_javascript?
       render :update do |page|
-        page << %{notice = getNextElement($$("#{slot.selector}")[0],'notice');\n}
+         page << %{notice = getNextElement(#{slot.selector})[0],'notice');\n}
         page << %{notice.update('#{escape_javascript(stuff)}')}
       end
     elsif requesting_ajax?
@@ -292,7 +292,8 @@ class ApplicationController < ActionController::Base
   # selectors, so that we can reject elements inside nested slots.
   def render_update_slot_element(name,stuff="")
     render :update do |page|
-      page.select(slot.selector(name)).all() do |target,index|
+      page.extend(WagnHelper::MyCrappyJavascriptHack)
+      page.select_slot("$A([getSlotFromContext('#{slot.context}')])").each() do |target,index|
         target.update(stuff) unless stuff.empty?
         yield(page, target) if block_given?
       end

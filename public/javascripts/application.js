@@ -308,7 +308,25 @@ getOuterSlot=function(element){
     return null;
   }
 }
+ 
 
+getSlotFromContext=function(context){
+  a = context.split(':');
+  outer_context=a.shift();
+  element = $(outer_context);
+   element = $(outer_context);
+  while(a.size() > 0) {
+    pos = a.shift();      
+    // FIXME: this is crazy.  must do better.
+    element =  $A(document.getElementsByClassName('card-slot', element).concat(
+                    document.getElementsByClassName('transcluded', element)
+                 )).find(function(x){
+      ss = getSlotSpan(x.parentNode);
+      return (!ss || ss==element) && x.attributes['position'].value==pos;
+    });
+  }
+  return element;
+}
  
 // FIXME: should be tested to not return content from nested slots.
 getSlotElement=function(element,name){

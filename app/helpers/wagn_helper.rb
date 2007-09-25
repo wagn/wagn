@@ -2,7 +2,13 @@ module WagnHelper
   require_dependency 'wiki_content'
 
   Droplet = Struct.new(:name, :link_options)     
-  
+       
+  module MyCrappyJavascriptHack
+    def select_slot(pattern)
+      ActionView::Helpers::JavaScriptCollectionProxy.new(self, pattern)
+    end
+  end 
+
   class Slot
     
     attr_reader :card, :context, :action, :renderer, :template
@@ -30,17 +36,19 @@ module WagnHelper
       area.empty? ? "getSlotSpan(this)" : "getSlotElement(this, '#{area}')"
     end
      
-    def selector(area="")
-      positions = context.split(':')
-      outer_context = positions.shift # first one is id
-      selector = "#" + outer_context
-      while pos = positions.shift
-        selector << " span[position=#{pos}]"
-      end   
-      if !area.empty?
-        selector << " .#{area}"
-      end
-      selector
+    def selector(area="")   
+      "getSlotFromContext('#{context}')";
+      
+      #positions = context.split(':')
+      #outer_context = positions.shift # first one is id
+      #selector = "#" + outer_context
+      #while pos = positions.shift
+      #  selector << " span[position=#{pos}]"
+      #end   
+      #if !area.empty?
+      #  selector << " .#{area}"
+      #end
+      #selector
     end
 
     def editor_id(area="")

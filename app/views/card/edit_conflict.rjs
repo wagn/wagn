@@ -1,6 +1,6 @@
 page.wagn.messenger.log( "<b>Conflict</b> #{@card.name} was not saved" )
 page << %{
-  slot = $$('#{slot.selector}')[0];
+  slot = #{slot.selector};
   notice = getNextElement(slot,'notice');
   Element.update(notice,"<b>Not Saved</b> Another user has been editing this file.  Please examine the changes, make all necessary adjustments, and save again." );
   new Insertion.After(notice, '#{escape_javascript(@changes)}');

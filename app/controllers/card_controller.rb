@@ -2,11 +2,16 @@ class CardController < ApplicationController
   helper :wagn, :card 
   layout :ajax_or_not
   cache_sweeper :card_sweeper
-  before_filter :load_card!, :except => [ :new, :create, :show, :index, :mine, :missing ]
+  before_filter :load_card!, :except => [ :test, :new, :create, :show, :index, :mine, :missing ]
 
   before_filter :edit_ok,   :only=>[ :update, :save_draft, :rollback, :save_draft] 
   before_filter :create_ok, :only=>[ :new, :create ]
   before_filter :remove_ok, :only=>[ :remove ]
+  
+   
+  def test
+    render_update_slot_element('notice', 'gooooood stuff')
+  end
                                                                 
   def changes
     load_card_and_revision
@@ -150,7 +155,7 @@ class CardController < ApplicationController
   def to_view
     render_update_slot do |page, target|
       target.update render_to_string(:action=>'view')
-      page << "Wagn.line_to_paragraph($$('#{slot.selector}')[0])"
+      page << "Wagn.line_to_paragraph(#{slot.selector})"
     end
   end
              
@@ -158,7 +163,7 @@ class CardController < ApplicationController
   def to_edit
     render_update_slot do |page, target|
       target.update render_to_string(:action=>'edit')
-      page << "Wagn.line_to_paragraph($$('#{slot.selector}')[0])"
+      page << "Wagn.line_to_paragraph(#{slot.selector})"
     end
   end
 

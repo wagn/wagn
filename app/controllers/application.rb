@@ -274,7 +274,7 @@ class ApplicationController < ActionController::Base
     # getNextElement() will crawl up nested slots until it finds one with a notice div
     if requesting_javascript?
       render :update do |page|
-         page << %{notice = getNextElement(#{slot.selector})[0],'notice');\n}
+         page << %{notice = getNextElement(#{slot.selector},'notice');\n}
         page << %{notice.update('#{escape_javascript(stuff)}')}
       end
     elsif requesting_ajax?

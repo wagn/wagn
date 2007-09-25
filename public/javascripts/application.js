@@ -319,8 +319,9 @@ getSlotFromContext=function(context){
     pos = a.shift();      
     // FIXME: this is crazy.  must do better.
     element =  $A(document.getElementsByClassName('card-slot', element).concat(
-                    document.getElementsByClassName('transcluded', element)
-                 )).find(function(x){
+                    document.getElementsByClassName('transcluded', element).concat(
+                      document.getElementsByClassName('createOnClick',element)
+                 ))).find(function(x){
       ss = getSlotSpan(x.parentNode);
       return (!ss || ss==element) && x.attributes['position'].value==pos;
     });

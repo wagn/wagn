@@ -162,7 +162,7 @@ class ApplicationController < ActionController::Base
       end
 =end
      @sidebar_cards = cards.sort_by do |c| 
-        c = Card.find_by_name(c.name + '+*sidebar') ? c.content.to_i : 0
+        (side = Card.find_by_name(c.name + '+*sidebar')) ? side.content.to_i : 0
       end
     end
     @sidebar_cards

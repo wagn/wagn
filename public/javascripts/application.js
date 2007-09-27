@@ -149,7 +149,7 @@ Object.extend(Wagn, {
   
   line_to_paragraph: function(element) {
   //  alert('line to paragraph');
-    if (!Prototype.Browser.WebKit) {
+   // if (!Prototype.Browser.WebKit) {
       var oldElementDimensions = Element.getDimensions(element);
       copy = copy_with_classes( element );
       copy.removeClassName('line');
@@ -172,14 +172,14 @@ Object.extend(Wagn, {
           effect.element.addClassName('paragraph');     
         }
       }); 
-    } else {
-       Element.removeClassName(element,'line');
-       Element.addClassName(element,'paragraph');
-    }
+   //} else {
+   //   Element.removeClassName(element,'line');
+   //   Element.addClassName(element,'paragraph');
+   //}
   },
   paragraph_to_line: function(element) {
     // Fixme: Safari chokes on getStyle() in prototype: this is bullshit: prototype should work in safari.
-    if (!Prototype.Browser.WebKit) {
+    //if (!Prototype.Browser.WebKit) {
       var oldElementDimensions = Element.getDimensions(element);
       copy = copy_with_classes( element );
       copy.removeClassName('paragraph');
@@ -208,10 +208,10 @@ Object.extend(Wagn, {
             effect.element.addClassName('line');
           }
         }); 
-      } else {
-        Element.removeClassName(element, 'paragraph');
-        Element.addClassName(element, 'line');
-      }
+     //} else {
+     //  Element.removeClassName(element, 'paragraph');
+     //  Element.addClassName(element, 'line');
+     //}
   }
 
 });
@@ -264,7 +264,7 @@ setupDoubleClickToEdit=function(container) {
   Element.getElementsByClassName( document, "createOnClick" ).each(function(el){
     el.onclick=function(event) {                   
       element = Event.element(event);
-      card_name = getSlotSpan(element).attributes['cardname'].value;
+      card_name = getSlotSpan(element).getAttributeNode('cardname').value;
       //console.log("create  " +card_name);
       new Ajax.Request('/transclusion/create?context='+getSlotContext(element), {
         asynchronous: true, evalScripts: true,
@@ -278,7 +278,7 @@ setupDoubleClickToEdit=function(container) {
     el.ondblclick=function(event) {                   
       element = Event.element(event);
       span = getSlotSpan(element);   
-      card_id = span.attributes['cardid'].value;
+      card_id = span.getAttributeNode('cardid').value;
       if (span.hasClassName('line')) {
         new Ajax.Request('/card/to_edit/'+card_id+'?context='+getSlotContext(element),
            {asynchronous: true, evalScripts: true});
@@ -323,7 +323,7 @@ getSlotFromContext=function(context){
                       document.getElementsByClassName('createOnClick',element)
                  ))).find(function(x){
       ss = getSlotSpan(x.parentNode);
-      return (!ss || ss==element) && x.attributes['position'].value==pos;
+      return (!ss || ss==element) && x.getAttributeNode('position').value==pos;
     });
   }
   return element;
@@ -355,7 +355,7 @@ getSlotContext=function(element) {
   //alert('getting slot context');
   var span=null;
   if (span = getSlotSpan(element)) {
-    var position = span.attributes['position'].value;
+    var position = span.getAttributeNode('position').value;
     parentContext = getSlotContext(span.parentNode);
     return parentContext + ':' + position;
   } else {
@@ -365,10 +365,8 @@ getSlotContext=function(element) {
 
 getOuterContext=function(element) {
    //warn("Element: " + element);
-                                                                                
-  // JESUS javascript is a pain in the ass
-  if (typeof(element['attributes'])!='undefined' && element.attributes!=null && typeof(element.attributes['context'])!='undefined') {
-    return element.attributes['context'].value;
+  if (typeof(element.getAttributeNode)!='undefined' && element.getAttributeNode("context")!=null) {
+    return element.getAttributeNode('context').value;
   } else if (element.parentNode){
     return getOuterContext(element.parentNode);
   } else {
@@ -379,8 +377,7 @@ getOuterContext=function(element) {
 
 getSlotSpan=function(element) {
   //warn("Element: " + element);
-
-  if (typeof(element['attributes'])!='undefined' && element.attributes!=null && typeof(element.attributes['position'])!='undefined') {
+  if (typeof(element.getAttributeNode)!='undefined' && element.getAttributeNode("position")!=null) {
     return element;
   } else if (element.parentNode) {
     return getSlotSpan( element.parentNode );

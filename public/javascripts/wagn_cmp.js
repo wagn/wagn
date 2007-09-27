@@ -4090,7 +4090,6 @@ Element.addClassName(elem,"card");
 var _4ad=Element.getDimensions(_4ac);
 new Effect.BlindDown(_4ac,{duration:0.5,scaleFrom:100,scaleMode:{originalHeight:_4ad.height*2,originalWidth:_4ad.width}});
 },line_to_paragraph:function(_4ae){
-if(!Prototype.Browser.WebKit){
 var _4af=Element.getDimensions(_4ae);
 copy=copy_with_classes(_4ae);
 copy.removeClassName("line");
@@ -4107,12 +4106,7 @@ _4b3.element.show();
 _4b3.element.removeClassName("line");
 _4b3.element.addClassName("paragraph");
 }});
-}else{
-Element.removeClassName(_4ae,"line");
-Element.addClassName(_4ae,"paragraph");
-}
 },paragraph_to_line:function(_4b4){
-if(!Prototype.Browser.WebKit){
 var _4b5=Element.getDimensions(_4b4);
 copy=copy_with_classes(_4b4);
 copy.removeClassName("paragraph");
@@ -4129,10 +4123,6 @@ _4b9.element.undoClipping();
 _4b9.element.removeClassName("paragraph");
 _4b9.element.addClassName("line");
 }});
-}else{
-Element.removeClassName(_4b4,"paragraph");
-Element.addClassName(_4b4,"line");
-}
 }});
 Wagn.highlight=function(_4ba,id){
 document.getElementsByClassName(_4ba).each(function(elem){
@@ -4175,7 +4165,7 @@ setupDoubleClickToEdit=function(_4be){
 Element.getElementsByClassName(document,"createOnClick").each(function(el){
 el.onclick=function(_4c0){
 element=Event.element(_4c0);
-card_name=getSlotSpan(element).attributes["cardname"].value;
+card_name=getSlotSpan(element).getAttributeNode("cardname").value;
 new Ajax.Request("/transclusion/create?context="+getSlotContext(element),{asynchronous:true,evalScripts:true,parameters:"card[name]="+encodeURIComponent(card_name)});
 Event.stop(_4c0);
 };
@@ -4184,7 +4174,7 @@ Element.getElementsByClassName(document,"editOnDoubleClick").each(function(el){
 el.ondblclick=function(_4c2){
 element=Event.element(_4c2);
 span=getSlotSpan(element);
-card_id=span.attributes["cardid"].value;
+card_id=span.getAttributeNode("cardid").value;
 if(span.hasClassName("line")){
 new Ajax.Request("/card/to_edit/"+card_id+"?context="+getSlotContext(element),{asynchronous:true,evalScripts:true});
 }else{
@@ -4220,7 +4210,7 @@ while(a.size()>0){
 pos=a.shift();
 element=$A(document.getElementsByClassName("card-slot",element).concat(document.getElementsByClassName("transcluded",element).concat(document.getElementsByClassName("createOnClick",element)))).find(function(x){
 ss=getSlotSpan(x.parentNode);
-return (!ss||ss==element)&&x.attributes["position"].value==pos;
+return (!ss||ss==element)&&x.getAttributeNode("position").value==pos;
 });
 }
 return element;
@@ -4246,7 +4236,7 @@ return null;
 getSlotContext=function(_4ce){
 var span=null;
 if(span=getSlotSpan(_4ce)){
-var _4d0=span.attributes["position"].value;
+var _4d0=span.getAttributeNode("position").value;
 parentContext=getSlotContext(span.parentNode);
 return parentContext+":"+_4d0;
 }else{
@@ -4254,8 +4244,8 @@ return getOuterContext(_4ce);
 }
 };
 getOuterContext=function(_4d1){
-if(typeof (_4d1["attributes"])!="undefined"&&_4d1.attributes!=null&&typeof (_4d1.attributes["context"])!="undefined"){
-return _4d1.attributes["context"].value;
+if(typeof (_4d1.getAttributeNode)!="undefined"&&_4d1.getAttributeNode("context")!=null){
+return _4d1.getAttributeNode("context").value;
 }else{
 if(_4d1.parentNode){
 return getOuterContext(_4d1.parentNode);
@@ -4266,7 +4256,7 @@ return "page";
 }
 };
 getSlotSpan=function(_4d2){
-if(typeof (_4d2["attributes"])!="undefined"&&_4d2.attributes!=null&&typeof (_4d2.attributes["position"])!="undefined"){
+if(typeof (_4d2.getAttributeNode)!="undefined"&&_4d2.getAttributeNode("position")!=null){
 return _4d2;
 }else{
 if(_4d2.parentNode){
@@ -8785,4 +8775,161 @@ end=dc.length;
 }
 return unescape(dc.substring(_843+_842.length,end));
 }};
+var InlineConsole={};
+InlineConsole.bindings={};
+InlineConsole.bindings.properties=function(_845){
+var ar=[];
+for(var i in _845){
+ar.push(i);
+}
+ar.sort();
+return ar;
+};
+InlineConsole.utils={};
+InlineConsole.utils.shallowCopy=function(_848){
+var copy=new Object;
+InlineConsole.utils.update(copy,_848);
+return copy;
+};
+InlineConsole.utils.update=function(_84a,_84b){
+for(var p in _84b){
+_84a[p]=_84b[p];
+}
+};
+InlineConsole.parseOptions=function(_84d){
+var _84e={};
+var m=_84d.match(/\/\/\s*(.*)\s*$/);
+if(!m){
+return _84e;
+}
+var _850=m[1].split(/\s*,\s*/);
+for(var i=0;i<_850.length;i++){
+var pair=_850[i].split("=",2);
+if(!pair){
+continue;
+}
+var key=pair[0],_854=pair[1];
+_84e[key]=Number(_854);
+}
+return _84e;
+};
+InlineConsole.readEvalPrint=function(_855){
+var _856;
+try{
+with(InlineConsole.bindings){
+_856=eval(_855);
+}
+}
+catch(e){
+error(e.message);
+return;
+}
+var _857=InlineConsole.parseOptions(_855);
+InlineConsole.display(_856,_857);
+};
+InlineConsole.display=function(_858,_859){
+var _85a=null;
+try{
+_85a=ReadableLogger.defaults;
+}
+catch(e){
+}
+try{
+if(_85a){
+var _85b=InlineConsole.utils.shallowCopy(_85a);
+InlineConsole.utils.update(_85b,_859);
+ReadableLogger.defaults=_85b;
+}
+info(_858);
+}
+finally{
+if(_85a){
+ReadableLogger.defaults=_85a;
+}
+}
+};
+InlineConsole.evalField=function(id){
+InlineConsole.readEvalPrint(document.getElementById(id).value);
+};
+InlineConsole.addConsole=function(){
+var e=document.getElementById("inline-console");
+var fv=document.getElementById("fvlogger");
+if(!e){
+e=document.createElement("div");
+(fv||document.body).appendChild(e);
+}
+e.innerHTML=InlineConsole.CONSOLE_HTML;
+if(!fv){
+e.appendChild(InlineConsole.log_element);
+}
+};
+InlineConsole.CONSOLE_HTML="<form id=\"debugger\" action=\"#\" method=\"get\" onsubmit=\"InlineConsole.evalField('eval'); return false\"><div><input type=\"button\" onclick=\"InlineConsole.evalField('eval'); return false;\" value=\"Eval\"/><input type=\"text\" size=\"80\" id=\"eval\" value=\"\" onkeyup=\"/*event.preventDefault(); */return false;\"/></div></form>";
+InlineConsole.log_element=null;
+InlineConsole.initializeLoggingFunctions=function(){
+try{
+var _85f=[info,warn,error,message];
+for(var i in _85f){
+if(typeof _85f[i]!="function"){
+throw "break";
+}
+}
+}
+catch(e){
+InlineConsole.log_element=document.createElement("div");
+var f=function(msg){
+var span=document.createElement("div");
+span.innerHTML=String(msg).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+InlineConsole.log_element.appendChild(span);
+};
+try{
+if(typeof debug!="function"){
+throw 0;
+}
+}
+catch(e){
+debug=f;
+}
+try{
+if(typeof error!="function"){
+throw 0;
+}
+}
+catch(e){
+error=f;
+}
+try{
+if(typeof info!="function"){
+throw 0;
+}
+}
+catch(e){
+info=f;
+}
+try{
+if(typeof warn!="function"){
+throw 0;
+}
+}
+catch(e){
+warn=f;
+}
+}
+};
+InlineConsole.initializeLoggingFunctions();
+if(window.addEventListener){
+window.addEventListener("load",InlineConsole.addConsole,false);
+}else{
+if(window.attachEvent){
+window.attachEvent("onload",InlineConsole.addConsole);
+}else{
+window.onload=(function(){
+var _864=window.onload||function(){
+};
+return function(){
+addConsole();
+_864();
+};
+})();
+}
+}
 

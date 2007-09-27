@@ -4,41 +4,45 @@
 <%= slot.form.hidden_field :content, :id=>"#{eid}-hidden-content" %>
 <iframe id="<%= eid %>-iframe" height="0" width="0" frameborder="0"></iframe>
 <%= slot.editor_hooks :setup=> %{
-		warn("setting up #{eid}");
-		e=$('#{raw_id}'); 
-		e.innerHTML = Wagn.LinkEditor.raw_to_editable(e.innerHTML);
+		warn("setting up #{eid}");    
+		if (Prototype.Browser.WebKit) {  
+			$('#{eid}-hidden-content').replace('#{slot.form.text_area(:content)}') ;
+			$('#{raw_id}').innerHTML="Sorry, Wagns richtext editor doesn't work in Safari yet. "; 
+			
+		} else {
+			e=$('#{raw_id}'); 
+			e.innerHTML = Wagn.LinkEditor.raw_to_editable(e.innerHTML);
 		
-		w = new Wagn.Wikiwyg();
-		w.setup('#{eid}', #{card.id ? "'"+card.id.to_s+"'" : 'false'}, '#{escape_javascript(card.name)}');
+			w = new Wagn.Wikiwyg();
+			w.setup('#{eid}', #{card.id ? "'"+card.id.to_s+"'" : 'false'}, '#{escape_javascript(card.name)}');
 
-		// save the wikiwyg for access during cancel and save:
-		if (typeof(Wagn.wikiwygs)=='undefined') { Wagn.wikiwygs=$H({}) }
-		Wagn.wikiwygs['#{eid}'] = w;       
-    
+			// save the wikiwyg for access during cancel and save:
+			if (typeof(Wagn.wikiwygs)=='undefined') { Wagn.wikiwygs=$H({}) }
+			Wagn.wikiwygs['#{eid}'] = w;       
 
-		timeout = (Wikiwyg.is_ie ? 100 : 1);
-		setTimeout( "w=Wagn.wikiwygs['#{eid}']; w.editMode();" +  
-		  "Wagn.LinkEditor.editable_to_raw(w.getContent(), $('#{raw_id}'));", timeout); 
+			// FIXME: the editable_to_raw() call here sets the content in raw_id 
+			// so that we don't do unecessary draft saves- it's ugly..
+			timeout = (Wikiwyg.is_ie ? 100 : 1);  
+			setTimeout( "w=Wagn.wikiwygs['#{eid}']; w.editMode();" +  
+			  "Wagn.LinkEditor.editable_to_raw(w.getContent(), $('#{raw_id}'));", timeout); 
 
-		w.start_timer();
-		
-		
-		// FIXME: this sets the content in raw_id so that we don't do unecessary draft saves..
-		// it's ugly..
-		                       
+			w.start_timer();
+		}
 	},
 	:save=> %{
-		w = Wagn.wikiwygs['#{eid}'];
-		w.stop_timer();
-		content = w.getContent();
-		warn("saving #{eid}: content = " + content);
-		
-		$('#{eid}-hidden-content').value = Wagn.LinkEditor.editable_to_raw(content, $('#{raw_id}'));
+		if (!Prototype.Browser.WebKit) {
+			w = Wagn.wikiwygs['#{eid}'];
+			w.stop_timer();
+			content = w.getContent();
+			warn("saving #{eid}: content = " + content);
+	
+			$('#{eid}-hidden-content').value = Wagn.LinkEditor.editable_to_raw(content, $('#{raw_id}'));
+		}
 		return true;
 	},
 	:cancel=>%{
-		warn("cancelling #{eid}");
-		Wagn.wikiwygs['#{eid}']
+		//warn("cancelling #{eid}");
+		//Wagn.wikiwygs['#{eid}']
 	}
 %>
 </div>

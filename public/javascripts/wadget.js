@@ -6936,6 +6936,12 @@ Element.replace(this._element.firstChild,err_msg);
 Element.replace(this._element.firstChild,data);
 warn("base_href: "+this.base_href);
 var self=this;
+$A(this._element.getElementsByTagName("a")).each(function(e){
+e.href=self.absolutize_url(e.getAttribute("href"));
+});
+$A(this._element.getElementsByTagName("img")).each(function(e){
+e.src=self.absolutize_url(e.getAttribute("src"));
+});
 },is_relative:function(url){
 return !url.match("^(http|ftp|https)://[^/]+");
 },absolutize_url:function(url){

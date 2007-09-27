@@ -37,7 +37,6 @@ Object.extend(Wadget.prototype, {
     //Wagn.Card.setupAll('widget');  
     warn('base_href: ' + this.base_href); 
     var self = this;                            
-    /*
     // Convert images and links to absolute urls    
     $A(this._element.getElementsByTagName('a')).each(function(e) {
       e.href = self.absolutize_url( e.getAttribute('href') );
@@ -45,7 +44,6 @@ Object.extend(Wadget.prototype, {
     $A(this._element.getElementsByTagName('img')).each(function(e) {
       e.src = self.absolutize_url( e.getAttribute('src') );
     });
-    */
   },
   is_relative: function( url ) {
     return !url.match('^(http|ftp|https)://[^\/]+');

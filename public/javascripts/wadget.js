@@ -6934,7 +6934,6 @@ err_msg="Sorry, "+this.url+" didn't return valid wadget data";
 Element.replace(this._element.firstChild,err_msg);
 },onLoadCard:function(data){
 Element.replace(this._element.firstChild,data);
-Wagn.Card.setupAll("widget");
 warn("base_href: "+this.base_href);
 var self=this;
 },is_relative:function(url){

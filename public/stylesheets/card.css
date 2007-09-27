@@ -111,7 +111,7 @@ a.current, a:link.current {
   color: #900 
 }
 .card-slot a.external-link, 
-.card-slot.line a.external-link { 
+.card-slot.line .content a.external-link { 
   color: #979; 
   background: url(/images/external_link.png) center right no-repeat;
   padding-right: 13px !important;
@@ -432,11 +432,9 @@ body.wagn .card-slot.line h2,
 .card-slot .card-slot {
   border: 0px;
   border-bottom: 1px solid #ccc;
-  
   -moz-border-radius: 0px;
   margin: 0px 6px;
 }
-.card-slot .card-slot .card-menu,
 .card-slot .card-slot .card-footer {
   display: none;
 }

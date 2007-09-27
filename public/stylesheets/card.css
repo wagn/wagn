@@ -15,26 +15,25 @@
 
 
 .card-slot .card-header {
-  padding-left: 2px;
-  margin-bottom: 5px;
+  padding: 0px 2px;
+  margin: 0px 5px 5px 5px;
 }
 .card-slot .card-header img {
   float: none;
-  padding: 0px;
 }
-.card-slot .open-arrow, 
-.card-slot .close-arrow {
-  display: none;
+.card-slot .title { 
+  margin: 0px 2px;
+  font-weight: bold; 
+  display: inline;
+}
+.card-slot .title img { 
+  margin-right: 5px;
 }
 .card-slot .cardtype { 
   font-style: italic;
   font-size: 10px;
 }
-.card-slot .title { 
-  font-weight: bold; 
-  font-size: 11px;
-  display: inline;
-}
+
 .card-slot .title a,
 .card-slot .title a:link,
 .card-slot .title a:visited,
@@ -140,6 +139,8 @@ a.current, a:link.current {
 .card-slot span:hover.transcluded .card-slot { 
   background-color: #fff;
 }
+
+
 /* note:   ".card-slot .transcluded div not(.editor)" was not working properly and was breaking nested block elements.  
    without it nested divs in transcluded areas probably won't highlight  */
 
@@ -319,14 +320,12 @@ a.current, a:link.current {
 
 #show-card .card-slot .title {
   font-size: 16px;
-  position: relative;
-  top: 2px;
+  line-height: 18px;
 }
 #show-card .card-slot .content .title,
 #show-card .card-slot .edit-area .title {
   font-size: inherit;
-  position: static;
-  top: 2px;
+  line-height: inherit;
 }
 #show-card .card-slot .close-arrow {
   display: none;
@@ -355,10 +354,7 @@ a.current, a:link.current {
 
 .card-slot.paragraph {
   margin: 2px 0px;
- -moz-border-radius: 6px !important;
-}
-.card-slot.paragraph .title {
-  margin: 0px 5px;
+ -moz-border-radius: 6px;
 }
 .card-slot.paragraph .content {
   display: block;
@@ -368,10 +364,6 @@ a.current, a:link.current {
   display: inline;
   padding: 0px;
 }
-.card-slot.paragraph .close-arrow {
-  display: inline;
-  margin: 0px 5px 0px 0px;
-}
 
 /*------------- closed cards -------*/
 
@@ -379,14 +371,10 @@ a.current, a:link.current {
   border: 1px solid #ccc;
   white-space: nowrap;
   padding: 2px 0px;
-  margin: 0px;
-}
-.card-slot.line {
   border-bottom: 0px;
-  -moz-border-radius: 6px 6px 0px 0px !important;
+  -moz-border-radius: 6px 6px 0px 0px;
 }
 
-.card-slot.line .open-arrow, 
 .card-slot.line table, 
 .card-slot.line tr, 
 .card-slot.line td, 
@@ -402,11 +390,11 @@ body.wagn .card-slot.line h2,
 .card-slot.line pre, 
 .card-slot.line ol, 
 .card-slot.line hr, 
-.card-slot.line div, 
-.card-slot.line span,
+.card-slot.line .content div, 
+.card-slot.line .content span,
 .card-slot.line .content,  
 .card-slot.line .workspace,
-.card-slot.line a,
+.card-slot.line .content a,
 .card-slot.line blockquote {
   display: inline; 
   margin: 0px 4px; 
@@ -419,35 +407,41 @@ body.wagn .card-slot.line h2,
 .card-slot.line .content {
   display: inline !important;
 }
-.card-slot.line br,  
-.card-slot.line .close, 
-.card-slot.line .blank, 
-.card-slot.line .card-footer,
-.card-slot.line input,
-.card-slot.line .comment-box,
-.card-slot.line textarea,
-.card-slot.line .table-of-contents {
-  display: none;
-}
-.card-slot.line .title span {
-  margin: 0px;
-}
-.card-slot.line .title .joint {
-  margin: 0px 2px;
-}
-.card-slot.line .open-arrow {
+.card-slot.line .card-header {
   display: inline;
-  margin: 0px 6px 0px -3px;
+}
+.card-slot.line .title img {
+  padding: 0px 2px;
 }
 .card-slot.line .content img {
   height: 16px;
 }
-.card-slot.line .card-menu {
+.card-slot.line br,  
+.card-slot.line .card-footer,
+.card-slot.line input,
+.card-slot.line .comment-box,
+.card-slot.line textarea,
+.card-slot.line .card-menu,
+.card-slot.line .table-of-contents {
+  display: none !important;
+}
+
+/*----------- Nested ---------*/
+
+.card-slot .card-slot.line,
+.card-slot .card-slot {
+  border: 0px;
+  border-bottom: 1px solid #ccc;
+  
+  -moz-border-radius: 0px;
+  margin: 0px 6px;
+}
+.card-slot .card-slot .card-menu,
+.card-slot .card-slot .card-footer {
   display: none;
 }
-.card-slot .content .line {
-  border-bottom : 1px solid #ddd
-}
+
+
 
 
 
@@ -522,8 +516,6 @@ body.wagn .card-slot.line h2,
 }
 
 
-
-
 /* popup stuff --------------------------------------------------------------*/
 #popup_target {  /* IS THIS USED?  */
   padding: 10px;
@@ -537,4 +529,7 @@ body.wagn .card-slot.line h2,
   vertical-align: middle;
   text-align: right;
 }
+
+
+
 

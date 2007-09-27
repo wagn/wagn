@@ -1,15 +1,17 @@
 <% slot_for(card, context, action='line', :render_slot=>(render_slot||=nil)) do |slot| %>
-	<div class="title">
-		<%= page_icon(card) %>
-	  <% arrow = %{<img class="open-arrow" src="/images/arrow_right.png" />} %>
-		<%= link_to_remote arrow+less_fancy_title(card), {:url=>slot.url_for("card/to_view")}, :title=>"open #{card.name}" %>
-	</div>
+  <div class="card-header">
+    <%= page_icon(card) %>		
+  	<div class="title">
+  	  <% arrow = %{<img class="open-arrow" src="/images/arrow_right.png" />} %>
+  		<%= link_to_remote arrow+less_fancy_title(card), {:url=>slot.url_for("card/to_view")}, :title=>"open #{card.name}" %>
+  	</div>
 
-	<% unless card.type=='Basic' %>
-	  <span class="cardtype">
-	    <%= link_to_page( Card.cardtypes[card.type] ) %>
-	  </span>
-	<% end %>
+  	<% unless card.type=='Basic' %>
+  	  <span class="cardtype">
+  	    <%= link_to_page( Card.cardtypes[card.type] ) %>
+  	  </span>
+  	<% end %>
+	</div>
  
 	<%= slot.content_head %>
 	<% conditional_cache(card, "card/line/#{card.id}") do %>

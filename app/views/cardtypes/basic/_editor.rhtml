@@ -10,16 +10,22 @@
 		
 		w = new Wagn.Wikiwyg();
 		w.setup('#{eid}', #{card.id ? "'"+card.id.to_s+"'" : 'false'}, '#{escape_javascript(card.name)}');
-		w.editMode();  
-		w.start_timer();
-		
+
 		// save the wikiwyg for access during cancel and save:
 		if (typeof(Wagn.wikiwygs)=='undefined') { Wagn.wikiwygs=$H({}) }
 		Wagn.wikiwygs['#{eid}'] = w;       
+    
+
+		timeout = (Wikiwyg.is_ie ? 100 : 1);
+		setTimeout( "w=Wagn.wikiwygs['#{eid}']; w.editMode();" +  
+		  "Wagn.LinkEditor.editable_to_raw(w.getContent(), $('#{raw_id}'));", timeout); 
+
+		w.start_timer();
+		
 		
 		// FIXME: this sets the content in raw_id so that we don't do unecessary draft saves..
 		// it's ugly..
-		Wagn.LinkEditor.editable_to_raw(w.getContent(), $('#{raw_id}'));                       
+		                       
 	},
 	:save=> %{
 		w = Wagn.wikiwygs['#{eid}'];

@@ -262,7 +262,8 @@ setupCardViewStuff = function() {
 
 setupDoubleClickToEdit=function(container) {
   Element.getElementsByClassName( document, "createOnClick" ).each(function(el){
-    el.onclick=function(event) {                   
+    el.onclick=function(event) { 
+      if (Prototype.Browser.IE) { event = window.event } // shouldn't prototype take card of this?              
       element = Event.element(event);
       card_name = getSlotSpan(element).getAttributeNode('cardname').value;
       //console.log("create  " +card_name);
@@ -275,14 +276,15 @@ setupDoubleClickToEdit=function(container) {
   });
                                
   Element.getElementsByClassName( document, "editOnDoubleClick" ).each(function(el){
-    el.ondblclick=function(event) {                   
+    el.ondblclick=function(event) {   
+      if (Prototype.Browser.IE) { event = window.event } // shouldn't prototype take card of this?              
       element = Event.element(event);
       span = getSlotSpan(element);   
       card_id = span.getAttributeNode('cardid').value;
-      if (span.hasClassName('line')) {
+      if (Element.hasClassName(span,'line')) {
         new Ajax.Request('/card/to_edit/'+card_id+'?context='+getSlotContext(element),
            {asynchronous: true, evalScripts: true});
-      } else if (span.hasClassName('paragraph')) {
+      } else if (Element.hasClassName(span,'paragraph')) {
         new Ajax.Updater({success:span, failure:span}, '/card/edit/'+card_id+'?context='+getSlotContext(element),
            {asynchronous: true, evalScripts: true});
       } else {

@@ -42,7 +42,7 @@
 	},
 	:cancel=>%{
 		//warn("cancelling #{eid}");
-		//Wagn.wikiwygs['#{eid}']
+		if (!Prototype.Browser.WebKit) { Wagn.wikiwygs['#{eid}'].stop_timer(); }
 	}
 %>
 </div>

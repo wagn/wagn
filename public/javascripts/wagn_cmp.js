@@ -4164,6 +4164,9 @@ setupDoubleClickToEdit();
 setupDoubleClickToEdit=function(_4be){
 Element.getElementsByClassName(document,"createOnClick").each(function(el){
 el.onclick=function(_4c0){
+if(Prototype.Browser.IE){
+_4c0=window.event;
+}
 element=Event.element(_4c0);
 card_name=getSlotSpan(element).getAttributeNode("cardname").value;
 new Ajax.Request("/transclusion/create?context="+getSlotContext(element),{asynchronous:true,evalScripts:true,parameters:"card[name]="+encodeURIComponent(card_name)});
@@ -4172,13 +4175,16 @@ Event.stop(_4c0);
 });
 Element.getElementsByClassName(document,"editOnDoubleClick").each(function(el){
 el.ondblclick=function(_4c2){
+if(Prototype.Browser.IE){
+_4c2=window.event;
+}
 element=Event.element(_4c2);
 span=getSlotSpan(element);
 card_id=span.getAttributeNode("cardid").value;
-if(span.hasClassName("line")){
+if(Element.hasClassName(span,"line")){
 new Ajax.Request("/card/to_edit/"+card_id+"?context="+getSlotContext(element),{asynchronous:true,evalScripts:true});
 }else{
-if(span.hasClassName("paragraph")){
+if(Element.hasClassName(span,"paragraph")){
 new Ajax.Updater({success:span,failure:span},"/card/edit/"+card_id+"?context="+getSlotContext(element),{asynchronous:true,evalScripts:true});
 }else{
 new Ajax.Updater({success:span,failure:getNextElement(span,"notice")},"/transclusion/edit/"+card_id+"?context="+getSlotContext(element),{asynchronous:true,evalScripts:true});
@@ -4919,7 +4925,9 @@ head.appendChild(_56f);
 }
 };
 proto.should_link_stylesheet=function(_571,head){
+if(!_571.href.match(/defaults|local/)){
 return false;
+}
 var _573=_571.media;
 var _574=this.config;
 var _575=_573.mediaText?_573.mediaText:_573;

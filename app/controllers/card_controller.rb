@@ -134,6 +134,7 @@ class CardController < ApplicationController
       respond_to do |format|
         format.html { render :action=>'show' }
         format.json {
+          @wadget = true
           render_jsonp :partial =>'card/view', 
             :locals=>{ :card=> @card, :context=>"main",:action=>"view"}
         }

@@ -1,5 +1,28 @@
 <% slot_for(@card, @context, @action, :render_slot=>(render_slot||=nil)) do |slot| %>    
-	<%= slot.header %>  
+	<% if @wadget %> 
+	  <%= "WADGETTTTTTTT" %>
+		<div class="title"> 
+	    <%= page_icon(card) %>
+		  <% arrow = %{<img class="close-arrow" src="/images/arrow_down.png">} %>
+	    <%= link_to_function arrow + less_fancy_title(card), 
+						"Wagn.paragraph_to_line(getSlotSpan(this))", :class=>"close-link" %> 
+
+		  <% arrow = %{<img class="open-arrow" src="/images/arrow_right.png" />} %>
+			<%= link_to_function arrow+less_fancy_title(card), 
+					  "Wagn.line_to_paragraph(getSlotSpan(this))", :class=>"open-link" %>
+	  </div>
+
+	  <% unless card.type=='Basic' %>
+	    <span class="cardtype">
+	      <%= link_to_page( Card.cardtypes[card.type] ) %>
+	    </span>
+	  <% end %>
+	<% else %>
+		<%= slot.header %>  
+	<% end %>
+	
+	
+	
 	<%= slot.wrap_content( slot.rendered_content(card) ) %>
 	
 	<%= slot.notice %>	

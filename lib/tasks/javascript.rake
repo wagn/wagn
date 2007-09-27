@@ -16,7 +16,7 @@ task :compress_wadget => :environment do
 				"ant -Dprofile=wadget clean release \n" +
 				"cd ../../; \n" +
 				"cp dojo/release/dojo/dojo.js ./wadget.js \n"
-  print `#{cmd}`
+  print "#{cmd}"
 end
 
 task :test => [ :compress_javascript ]

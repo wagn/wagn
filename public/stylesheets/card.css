@@ -21,6 +21,14 @@
 .card-slot .card-header img {
   float: none;
 }
+
+.card-slot .open-arrow, 
+.card-slot .close-arrow,
+.card-slot .open-link,
+.card-slot .close-link {
+  display: none;
+}
+
 .card-slot .title { 
   margin: 0px 2px;
   font-weight: bold; 
@@ -364,6 +372,11 @@ a.current, a:link.current {
   display: inline;
   padding: 0px;
 }
+.card-slot.paragraph .close-arrow,
+.card-slot.paragraph .close-link {
+  display: inline;
+  margin: 0px 5px 0px 0px;
+}
 
 /*------------- closed cards -------*/
 
@@ -375,7 +388,8 @@ a.current, a:link.current {
   -moz-border-radius: 6px 6px 0px 0px;
 }
 
-.card-slot.line table, 
+.card-slot.line .open-link,
+.card-slot.line .open-arrow,
 .card-slot.line tr, 
 .card-slot.line td, 
 .card-slot.line p,
@@ -422,7 +436,9 @@ body.wagn .card-slot.line h2,
 .card-slot.line .comment-box,
 .card-slot.line textarea,
 .card-slot.line .card-menu,
-.card-slot.line .table-of-contents {
+.card-slot.line .table-of-contents,
+.card-slot.line .card-menu,
+.card-slot.line .close-link {
   display: none !important;
 }
 

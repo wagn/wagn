@@ -6,7 +6,7 @@
 <%= slot.editor_hooks :setup=> %{
 		warn("setting up #{eid}");    
 		if (Prototype.Browser.WebKit) {  
-			$('#{eid}-hidden-content').replace('#{slot.form.text_area(:content)}') ;
+			$('#{eid}-hidden-content').replace('#{escape_javascript(slot.form.text_area(:content))}') ;
 			$('#{raw_id}').innerHTML="Sorry, Wagns richtext editor doesn't work in Safari yet. "; 
 			
 		} else {

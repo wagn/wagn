@@ -131,7 +131,7 @@ proto.apply_stylesheets = function() {
     var styles = document.styleSheets;
     var head   = this.get_edit_document().getElementsByTagName("head")[0];
 
-    for (var i = 0; i < styles.length; i++) {
+    for (var i = 0; i < styles.length; i++) {    
         var style = styles[i];
 
         if (style.href == location.href)
@@ -185,19 +185,20 @@ proto.append_inline_style_element = function(style_string, head) {
 }
 
 proto.should_link_stylesheet = function(style, head) {
-    // FIXME: LWH hack
-    return false;
-        var media = style.media;
-        var config = this.config;
-        var media_text = media.mediaText ? media.mediaText : media;
-        var use_parent =
-             ((!media_text || media_text == 'screen') &&
-             config.useParentStyles);
-        var use_style = (media_text && (media_text == config.useStyleMedia));
-        if (!use_parent && !use_style) // TODO: simplify
-            return false;
-        else
-            return true;
+    // FIXME: LWH hack - this skips all but a couple chose stylesheets
+    if (!style.href.match(/defaults|local/)) { return false; }
+
+    var media = style.media;
+    var config = this.config;
+    var media_text = media.mediaText ? media.mediaText : media;
+    var use_parent =
+         ((!media_text || media_text == 'screen') &&
+         config.useParentStyles);
+    var use_style = (media_text && (media_text == config.useStyleMedia));
+    if (!use_parent && !use_style) // TODO: simplify
+        return false;
+    else
+        return true;
 }
 
 proto.apply_linked_stylesheet = function(style, head) {

@@ -13,10 +13,11 @@
 <%= stylesheet_link_tag "page_and_block","card","wikiwyg","window_themes/default","window_themes/mac_os_x", :cache=>'all'
 %>
 
-<%= stylesheet_inline 'defaults' %>
+<%#= stylesheet_inline 'defaults' %>
 <%# stylesheet_inline 'page_and_block' %>
+<%= stylesheet_link_tag 'defaults' %>
 <% if File.exists?("#{RAILS_ROOT}/public/stylesheets/local.css") %>
-  <%= stylesheet_inline 'local' %>
+  <%= stylesheet_link_tag 'local' %>
 <% end %>
 
 

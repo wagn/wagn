@@ -1,8 +1,8 @@
 <% slot_for(@card, @context, @action, :render_slot=>(render_slot||=nil)) do |slot| %>    
 	<% if @wadget %> 
 	  <div class="card-header">
+	    <%= page_icon(card) %>  
   		<div class="title"> 
-  	    <%= page_icon(card) %>
   		  <% arrow = %{<img class="close-arrow" src="/images/arrow_down.png">} %>
   	    <%= link_to_function arrow + less_fancy_title(card), 
   						"Wagn.paragraph_to_line(getSlotSpan(this))", :class=>"close-link" %> 

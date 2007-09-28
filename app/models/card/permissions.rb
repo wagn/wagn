@@ -149,6 +149,12 @@ module Card
     
     def approve_comment
       approve_task(:comment, 'comment on')
+      if template?
+        deny_because "No comments allowed on template cards"
+      end
+      if hard_content_template
+        deny_because "No comments allowed on hard templated cards"
+      end
     end
     
     def approve_delete

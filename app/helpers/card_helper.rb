@@ -3,7 +3,7 @@ module CardHelper
     party ? party.card.name : 'Nobody'
   end
   
-  def permission_options_for(card,task)
+  def permission_options_for(card,task,party)
     container = []
     container<< ['No one',''] if task == :comment
     pu = card.personal_user
@@ -14,9 +14,6 @@ module CardHelper
     possible_roles = System.ok?(:set_card_permissions) ? Role.find_configurables : User.current_user
     container+= container_from_roles( possible_roles )
 
-    party = card.who_can(task)
-
-#    warn "party= #{party}; party class = #{party.class}"
     selected = 
       case party.class.to_s
       when 'NilClass' ; ''
@@ -24,7 +21,7 @@ module CardHelper
       else            ; party.id
       end
       
-    warn "party class = #{party.class}; selected = #{selected}"
+#    warn "party class = #{party.class}; selected = #{selected}"
 
     options_for_select container, selected
   end

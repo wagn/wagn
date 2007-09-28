@@ -22,6 +22,10 @@
   float: none;
   padding: 0px;
 }
+.card-slot .card-header a,
+.card-slot .card-footer a {
+  border: 0px !important;  /*-- for wadget --*/
+}
 
 .card-slot .open-arrow, 
 .card-slot .close-arrow,

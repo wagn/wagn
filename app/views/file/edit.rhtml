@@ -2,10 +2,8 @@
 	<% form_for :card, card, :url=>"/file/upload/#{@card.id}",
 			:html=>{ :id=>'upload-form', :multipart=>true } do |f| %>    
 	  <%= f.hidden_field :type %>     	
-	  <%= f.hidden_field :name %>
-	  <%= file_field_tag :file, :onchange => %{ 				                                                                       
-		 		window.parent.document.getElementById('card_name').value=$F(this).split('/').last();
-		}	%>
+	  <%= f.hidden_field :name %> 
+	  <%= file_field_tag :file, :onchange =>( card.new_record? ? %{window.parent.document.getElementById('card_name').value=$F(this).split('/').last(); } : '')	%>
 	<% end %>     
 <% end %>
 

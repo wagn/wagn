@@ -62,7 +62,8 @@ class TransclusionController < ApplicationController
     view_screen = render_to_string(:partial => "view", :locals=>{ :card=>@card }, :layout=>ajax_or_not )
     render_update_slot do |page,target|
       target.update view_screen
-      page << %{Wagn.lister().update( {onComplete: function(){
+      page << %{Wagn.lister().update( {onComplete: function(){  
+         Wagn.lister().after_update() 
          new Effect.Highlight($$("span[cardid=#{@card.id}]")[0]); }}) \n }
     end
   end

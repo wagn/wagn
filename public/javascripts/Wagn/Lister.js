@@ -169,7 +169,7 @@ Object.extend(Wagn.Lister.prototype, {
       asynchronous: false, 
       evalScripts: true,  
       method: 'get',
-      onSuccess: function(request){ Wagn.lister().after_update() },
+      onComplete: function(request){ Wagn.lister().after_update() },
       parameters: param_list.join('&') 
     };
   } 

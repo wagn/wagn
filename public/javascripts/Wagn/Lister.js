@@ -126,7 +126,7 @@ Object.extend(Wagn.Lister.prototype, {
     card_part = (this.card_id()=='') ? '' : "/" + this.card_id();
     new Ajax.Updater(this.div_id, 
       '/block/' + this.display_type() + card_part + ".html",
-      this._ajax_parameters( this._arguments )
+      $H(this._ajax_parameters( this._arguments )).merge( arguments[0] )
     );
     this.set_button();
     
@@ -169,7 +169,7 @@ Object.extend(Wagn.Lister.prototype, {
       asynchronous: false, 
       evalScripts: true,  
       method: 'get',
-      onComplete: function(request){ Wagn.lister().after_update() },
+      onSuccess: function(request){ Wagn.lister().after_update() },
       parameters: param_list.join('&') 
     };
   } 

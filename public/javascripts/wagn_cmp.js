@@ -7140,7 +7140,7 @@ return self._arguments[_755];
 $("paging-links-copy").innerHTML="<img src=\"/images/wait.gif\">";
 $(this.div_id).innerHTML="";
 card_part=(this.card_id()=="")?"":"/"+this.card_id();
-new Ajax.Updater(this.div_id,"/block/"+this.display_type()+card_part+".html",this._ajax_parameters(this._arguments));
+new Ajax.Updater(this.div_id,"/block/"+this.display_type()+card_part+".html",$H(this._ajax_parameters(this._arguments)).merge(arguments[0]));
 this.set_button();
 },new_connection:function(){
 new Ajax.Updater("connections-workspace","/connection/new/"+this.card_id()+"?query=plussed_cards");
@@ -7172,7 +7172,7 @@ if(pair.value&&pair.value!=""){
 param_list.push(pair.key+"="+encodeURIComponent(pair.value));
 }
 });
-return {asynchronous:false,evalScripts:true,method:"get",onComplete:function(_759){
+return {asynchronous:false,evalScripts:true,method:"get",onSuccess:function(_759){
 Wagn.lister().after_update();
 },parameters:param_list.join("&")};
 }});

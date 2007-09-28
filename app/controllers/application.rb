@@ -292,8 +292,12 @@ class ApplicationController < ActionController::Base
   # selectors, so that we can reject elements inside nested slots.
   def render_update_slot_element(name,stuff="")
     render :update do |page|
-      page.extend(WagnHelper::MyCrappyJavascriptHack)
-      page.select_slot("$A([getSlotFromContext('#{slot.context}')])").each() do |target,index|
+      page.extend(WagnHelper::MyCrappyJavascriptHack) 
+      elem_code = "getSlotFromContext('#{slot.context}')"
+      unless name.empty?
+        elem_code = "getSlotElement(#{elem_code}, '#{name}')"
+      end
+      page.select_slot("$A([#{elem_code}])").each() do |target,index|
         target.update(stuff) unless stuff.empty?
         yield(page, target) if block_given?
       end

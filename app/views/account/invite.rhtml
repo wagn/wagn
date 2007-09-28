@@ -2,6 +2,8 @@
 div_id = "main-body"
 context = 'invitation'
 -%>  
+
+<% slot_for(@card,@context,@action) do |slot| %>
 <span style="display:none;" class="editor_context"><%= context %></span>
 <iframe id="iframe-<%= div_id %>" height="0" width="0" frameborder="0"></iframe>
 
@@ -73,7 +75,9 @@ context = 'invitation'
 		  	<%= link_to_page 'Cancel', previous_page  %>
 		  </td>
 		</tr>
+		<tr><td></td><td colsapn="2"><%= slot.notice %></td></tr>
 		
 	</table>    
 
 <% end %>     
+<% end %>

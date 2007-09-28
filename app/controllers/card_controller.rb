@@ -36,8 +36,8 @@ class CardController < ApplicationController
   end 
     
   def create         
-    @card = Card.create params[:card]
-    return render_errors unless @card.errors.empty?
+    @card = Card.create! params[:card]
+    #return render_errors unless @card.errors.empty?
     # double check to prevent infinite redirect loop
     fail "Card creation failed"  unless Card.find_by_name( @card.name )
     # FIXME: it would make the tests nicer if we did a real redirect instead of rjs

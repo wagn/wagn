@@ -94,7 +94,14 @@ class AccountController < ApplicationController
     
     User.transaction do 
       @card.extension = @user
-      @user.save!
+      begin 
+        @user.save!
+      rescue ActiveRecord::RecordInvalid => err
+        err.record.errors.each do |key,err|
+          @card.errors.add key,err
+        end
+        raise ActiveRecord::RecordInvalid.new(@card)
+      end
       @card.save!
             
       raise(Wagn::Oops, "Invitation Email subject is required") unless (params[:email] and params[:email][:subject])

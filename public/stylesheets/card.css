@@ -20,6 +20,7 @@
 }
 .card-slot .card-header img {
   float: none;
+  padding: 0px;
 }
 
 .card-slot .open-arrow, 
@@ -316,7 +317,7 @@ a.current, a:link.current {
 .card-slot .transcluded .content .card-slot .content,
 .card-slot .revision { 
   display: block;
-  padding: 0px 8px 10px 8px;
+  padding: 0px 10px 10px 10px;
 }
 
 
@@ -449,7 +450,6 @@ body.wagn .card-slot.line h2,
   border: 0px;
   border-bottom: 1px solid #ccc;
   -moz-border-radius: 0px;
-  margin: 0px 6px;
 }
 .card-slot .card-slot .card-footer {
   display: none;

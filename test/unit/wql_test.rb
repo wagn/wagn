@@ -9,6 +9,10 @@ class WqlTest < Test::Unit::TestCase
     setup_default_user
   end
   
+  def test_type_queries
+    assert_wql( "basic cards", "cards with type='Basic' order by name" ) { Card.find_all_by_type_and_trash('Basic',false, :order=>'name') }
+  end
+
   def test_parser
     p = Wql::Parser.new
     assert p.parse( "cards" )
@@ -26,10 +30,6 @@ class WqlTest < Test::Unit::TestCase
     assert_card_wql( "relatives", "cards plus cards with id={id} order by name") {|c| c.junctions_for_test }
     assert_card_wql( "pieces", "pieces of cards with id={id}") {|c| c.pieces_for_test }
   end                                 
-  
-  def test_type_queries
-    assert_wql( "basic cards", "cards with type='Basic' order by name" ) { Card::Basic.find(:all, :order=>'name') }
-  end
   
   def test_common_cards
     assert_wql("common tags", "cards tagging cards with type='Basic' order by cards_tagged desc limit 25")
@@ -70,6 +70,7 @@ class WqlTest < Test::Unit::TestCase
   def test_tag_cloud
     assert_equal %w(A B C D E Five One Three Two), Card.find_by_wql("cards tagging cards where type='Basic' order by cards_tagged").plot(:name).sort
   end
+
 
   private
   

@@ -14,7 +14,12 @@ class RoleTest < Test::Unit::TestCase
     @r1, @r2, @r3, @r4 = %w( r1 r2 r3 r4).map do |x| ::Role.find_by_codename(x) end
     @c1, @c2, @c3 = %w( c1 c2 c3 ).map do |x| Card.find_by_name(x) end
   end
-   
+
+=begin 
+
+  # I think subset is adequately covered below.  if not, we should find specific cases that break, cuz this
+  # "test everything" one is too unwieldy to maintain.
+  
   def test_all_roles_for_timing
      assert_equal( [
        ["admin","admin:true", "anon:false", "auth:false", "r1:false", "r2:false", "r3:false", "r4:false", "Sample Role:true"], 
@@ -27,6 +32,8 @@ class RoleTest < Test::Unit::TestCase
        ["Sample Role","admin:false","anon:false","auth:false", "r1:false","r2:false", "r3:false", "r4:false", "Sample Role:true"]],
        Role.find(:all, :order=>'codename').map do |r1| [r1.codename]+Role.find(:all,:order=>'codename').map do |r2| "#{r2.codename}:#{r2.subset_of?(r1)}" end; end, "")
   end
+=end
+
   
   def test_users_with_special_roles
     assert_same_by :id, User.active_users, @auth.users

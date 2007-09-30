@@ -93,7 +93,7 @@ task :populate_template_database => :environment do
     %w{ A+C A+D A+E C+A D+A F+A A+B+C }.each do |name| Card.create! :name=>name  end 
       
     Card::Cardtype.create! :name=>"Cardtype A", :codename=>"CardtypeA"
-    Card::Cardtype.create! :name=>"Cardtype B", :codename=>"CardtypeB"
+    bt = Card::Cardtype.create! :name=>"Cardtype B", :codename=>"CardtypeB"
     Card::Cardtype.create! :name=>"Cardtype C", :codename=>"CardtypeC"
     Card::Cardtype.create! :name=>"Cardtype D", :codename=>"CardtypeD"
     Card::Cardtype.create! :name=>"Cardtype E", :codename=>"CardtypeE"
@@ -107,7 +107,7 @@ task :populate_template_database => :environment do
     Card::CardtypeE.create! :name=>"type-e-card", :content=>"type_e_content"
     Card::CardtypeF.create! :name=>"type-f-card", :content=>"type_f_content"
     
-
+    bt.permit(:create, Role['r1']); bt.save!  # set it so that Joe User can't create this type
     c = Card.create! :name=>'revtest', :content=>'first'
     c.update_attributes! :content=>'second'
     c.update_attributes! :content=>'third'

@@ -20,7 +20,13 @@ class CardControllerTest < Test::Unit::TestCase
     @combo_card = Card['A+B']
     login_as(:joe_user)
     
-  end     
+  end    
+   
+  def test_new_with_name
+    post :new, :card=>{:name=>"BananaBread"}
+    assert_response :success, "response should succeed"                     
+    assert_equal 'BananaBread', assigns['card'].name, "@card.name should == BananaBread"
+  end        
   
   def test_show
     get :show, {:id=>'Sample_Basic'}
@@ -75,12 +81,6 @@ class CardControllerTest < Test::Unit::TestCase
     assert_equal 'Date', assigns['card'].type, "@card type should == Date"
   end        
   
-  def test_new_with_name
-    post :new, :card=>{:name=>"BananaBread"}
-    assert_response :success, "response should succeed"                     
-    assert_equal 'BananaBread', assigns['card'].name, "@card.name should == BananaBread"
-  end        
-
   def test_create
     post :create, :card => {
       :name=>"NewCardFoo",

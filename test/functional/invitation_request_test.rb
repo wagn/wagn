@@ -25,9 +25,9 @@ class InvitationRequestTest < Test::Unit::TestCase
       }  
     end     
     url = ActionMailer::Base.deliveries[-1].body.match(/visit (http:\S+)/)[1]
-    assert_equal @controller.url_for_page("Word Third", :host=>System.host), url
+    assert_equal "http://#{System.host}#{@controller.url_for_page("Word Third")}", url
   end
-  
+
   def test_should_redirect_to_invitation_request_landing_card 
     post :create, :card=>{
       :type=>"InvitationRequest",
@@ -68,5 +68,4 @@ class InvitationRequestTest < Test::Unit::TestCase
     assert_equal 'blocked', ::User.find_by_email('ron@request.com').status
 
   end
-  
 end

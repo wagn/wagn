@@ -103,7 +103,8 @@ module Card
           end
         end
       end
-#=end
+#=end    
+      return true
     end
    
     def set_reader(party)

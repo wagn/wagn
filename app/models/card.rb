@@ -90,15 +90,31 @@ module Card
     # FIXME -- the current system of caching cardtypes is not "thread safe":
     # multiple running ruby servers could get out of sync re: available cardtypes  
     def cardtypes
-      @cardtypes || load_cardtypes!
+      load_cardtypes! unless @cardtypes
+      @cardtypes
+    end
+    
+    def cardtype_create_parties
+      load_cardtypes! unless @cardtype_create_parties
+      @cardtype_create_parties
     end
 
-    def load_cardtypes!  
-      @cardtypes = Card::Base.connection.select_all(%{
-        select ct.class_name, c.name from cardtypes ct 
-        join cards c on c.extension_id=ct.id and c.type='Cardtype'
-      }).inject({}) do |hash,ct|
-        hash[ct['class_name']] = ct['name']; hash
+    def load_cardtypes!    
+      @role_cache = {}
+      @cardtypes = {}
+      @cardtype_create_parties = {}
+      Card::Base.connection.select_all(%{
+        select distinct ct.class_name, c.name, p.party_type, p.party_id 
+        from cardtypes ct 
+        join cards c on c.extension_id=ct.id and c.type='Cardtype'    
+         join permissions p on p.card_id=c.id and p.task='create' 
+      }).each do |rec|
+        @cardtypes[rec['class_name']] = rec['name'];   
+        unless rec['party_type'] == 'Role'
+          raise "Bad Data: create permission for #{rec['class_name']} " +
+            "should have party_type 'Role' not '#{rec['party_type']}'"
+        end
+        @cardtype_create_parties[rec['class_name']] = rec['party_id']
       end
     end
      

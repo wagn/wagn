@@ -29,8 +29,8 @@ class ApplicationController < ActionController::Base
   def create_ok
     if params[:card] and cardtype = params[:card][:type]
       Cardtype.find_by_class_name(cardtype).card.me_type.ok! :create
-    elsif session[:createable_cardtypes].empty?
-      raise Wagn::PermissionDenied, "Sorry, you don't have permission to create new cards"
+    elsif User.current_user.createable_cardtypes.empty?
+      raise Wagn::PermissionDenied, "Sorry #{::User.current_user.cardname}\, you don't have permission to create new cards"
     end  
   end
   
@@ -200,7 +200,6 @@ class ApplicationController < ActionController::Base
   
   def note_current_user
     User.current_user = current_user || User.find_by_login('anon')
-    session[:createable_cardtypes] ||= User.current_user.createable_cardtypes
   end
 
   def remember_card( card )

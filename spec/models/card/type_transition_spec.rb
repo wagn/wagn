@@ -8,10 +8,7 @@ module Card
   end
 
   class CardtypeB < Base                              
-    def approve_create
-      deny_because "not allowed to create card b"
-      deny_because "you stink"
-    end
+    # create restricted in test_data
   end
   
   class CardtypeC < Base
@@ -40,8 +37,19 @@ module Card
     def increment_count() self.class.count += 1; end
   end
 
+end   
+
+describe Card, "type transition approve create" do
+  it "should have errors" do
+    lambda { change_card_to_type("basicname", "CardtypeB") }.should raise_error(Wagn::PermissionDenied)
+  end     
+
+  it "should be the original type" do
+    lambda { change_card_to_type("basicname", "CardtypeB") }
+    Card.find_by_name("basicname").type.should == 'Basic'
+  end
 end
-                                   
+
 describe Card, "clone to type"  do
   before do
     User.as :admin
@@ -75,18 +83,6 @@ describe Card, "type transition approve destroy" do
 end
 
 
-describe Card, "type transition approve create" do
-  it "should have errors" do
-    lambda { change_card_to_type("basicname", "CardtypeB") }.should raise_error(Wagn::PermissionDenied)
-  end     
-
-  it "should be the original type" do
-    lambda { change_card_to_type("basicname", "CardtypeB") }
-    Card.find_by_name("basicname").type.should == 'Basic'
-  end
-end
-
-
 describe Card, "type transition validate_destroy" do  
   before do @c = change_card_to_type("type-c-card", 'Basic') end
   
@@ -100,7 +96,6 @@ describe Card, "type transition validate_destroy" do
 end
 
 
-
 describe Card, "type transition validate_create" do
   before do @c = change_card_to_type("basicname", "CardtypeD") end
   
@@ -112,7 +107,6 @@ describe Card, "type transition validate_create" do
     Card.find_by_name("basicname").type.should == 'Basic'
   end
 end
-
 
 
 describe Card, "type transition destroy callback" do
@@ -145,9 +139,8 @@ describe Card, "type transition create callback" do
   end
 end                
 
-
 def change_card_to_type(name, type)
-  User.as :admin
+  User.as :joe_user
   card = Card.find_by_name(name)
   card.type = type;  card.save
   # FIXME FIXME FIXME:  this doesn't work!  something about inheritance column?

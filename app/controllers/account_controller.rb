@@ -2,7 +2,7 @@ class InvitationError < StandardError; end
 
 class AccountController < ApplicationController
   layout :ajax_or_not
-  before_filter :login_required, :only => [ :create, :invite, :update ] 
+  before_filter :login_required, :only => [ :invite, :update ] 
   #observer :card_observer, :tag_observer
   helper :wagn
                                                      
@@ -35,7 +35,6 @@ class AccountController < ApplicationController
     self.current_user = User.authenticate(params[:login], params[:password])
     if current_user
       flash[:notice] = "Welcome to #{System.site_name}"
-      session[:createable_cardtypes] = nil #might soon want a broader reset mechanism?
       return_to_remembered_page
     else
       flash[:notice] = "Login Failed"
@@ -84,7 +83,7 @@ class AccountController < ApplicationController
       @user.status='active'
       @user.invite_sender = ::User.current_user
     elsif @card.class_name=='User' and !@card.extension
-      @user = User.new( params[:user].merge( :invite_sender_id=>current_user.id )) 
+      @user = User.new( params[:user].merge( :invite_sender_id=>User.current_user.id )) 
       @user.status='active'
     else
       @card.errors.add(:name, "has already been taken")

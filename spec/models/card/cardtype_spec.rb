@@ -95,6 +95,7 @@ describe User, "Joe User" do
     User.as :joe_user
     @user = User[:joe_user]
     @ctf = Card['Cardtype F']
+    Card.load_cardtypes!
     @cardtype_names = @user.createable_cardtypes.map{ |ct| ct[:name] }
   end
 

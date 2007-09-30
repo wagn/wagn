@@ -7,7 +7,7 @@ module Card
     end    
     
     def build_message
-      "for #{@card.name}, #{@card.errors.on(:permission_denied)}"
+      "for card #{@card.name}: Sorry #{::User.current_user.cardname}, #{@card.errors.on(:permission_denied)}"
     end
   end
   
@@ -125,7 +125,7 @@ module Card
     def approve_create_me
       ct = self.cardtype
       unless ct.ok? :create
-        deny_because "Sorry, you don't have permission to create #{ct.name} cards"
+        deny_because "you don't have permission to create #{ct.name} cards"
       end
     end
     
@@ -135,7 +135,7 @@ module Card
       # to create a card of that type
       raise "must be a cardtype card" unless self.type == 'Cardtype'
       unless self.lets_user :create
-        deny_because "Sorry, you don't have permission to create #{self.name} cards"
+        deny_because "you don't have permission to create #{self.name} cards"
       end
     end
     
@@ -165,8 +165,8 @@ module Card
       verb ||= operation.to_s
       testee = template? ? trunk : self
       unless testee.lets_user operation
-#        warn "cuurent user: #{::User.current_user.login}"
-        deny_because "Sorry #{::User.current_user.cardname}, you don't have permission to #{verb} this card"
+         #   warn "cuurent user: #{::User.current_user.login}"
+        deny_because "you don't have permission to #{verb} this card"
       end
     end
 
@@ -181,10 +181,10 @@ module Card
           deny_because "You can't change the type of this card -- it is hard templated by #{tag_template.name}"
         end
       end
-      new_self = clone_to_type( type ) # note: would rather do this through ok? api...
-      new_self.send(:approve_create_me) 
-      if err = new_self.errors.on(:permission_denied) 
-        deny_because err
+      new_self = clone_to_type( type ) 
+      ct = new_self.cardtype
+      unless ct.ok? :create 
+        deny_because "you don't have permission to create #{new_self.cardtype.name} cards"
       end
     end
 

@@ -20,14 +20,16 @@ class AccountControllerTest < Test::Unit::TestCase
     @response   = ActionController::TestResponse.new
   end
 
-  def test_create_successful  
+  def test_create_successful   
+    login_as :joe_user
     assert_difference ActionMailer::Base.deliveries, :size do 
       assert_new_account do 
         post_invite
       end
     end
-  end
+  end  
   
+
   def test_should_login_and_redirect
     logout
     post :login, :login => 'webmaster@grasscommons.org', :password => 'w8gn8t0r'
@@ -53,5 +55,6 @@ class AccountControllerTest < Test::Unit::TestCase
    
   def test_forgot_password
     
-  end
+  end 
+
 end

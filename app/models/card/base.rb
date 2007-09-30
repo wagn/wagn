@@ -30,7 +30,7 @@ module Card
 
     belongs_to :extension, :polymorphic=>true
 
-    has_many :permissions, :foreign_key=>'card_id'#, :dependent=>:delete_all
+    has_many :permissions, :foreign_key=>'card_id' #, :dependent=>:delete_all
         
     has_many :name_references, :class_name=>'WikiReference',
       :finder_sql=>%q{SELECT * from wiki_references w where w.referenced_name=#{ActiveRecord::Base.connection.quote(key)}}
@@ -534,7 +534,7 @@ module Card
           condition_params << rec.id
         end
         if c = Card.find(:first, :conditions=>[condition_sql, *condition_params])
-          rec.errors.add :name, "a card named #{c.name} already exists"
+          rec.errors.add :name, "must be unique-- A card named '#{c.name}' already exists"
         end
         
         # require confirmation for renaming multiple cards

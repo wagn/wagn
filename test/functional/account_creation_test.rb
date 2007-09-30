@@ -87,14 +87,10 @@ class AccountCreationTest < Test::Unit::TestCase
   
   def test_create_permission_denied_if_not_logged_in
     logout
-     post "logout"
-    # FIXME weird-- i think this should raise an error-- but at least is doesn't
-    # seem to be actually creating the account.  hrmph.
-    # assert_raises(Wagn::PermissionDenied) do
-    assert_no_new_account do
+    post "logout"
+    assert_raises(Card::PermissionDenied) do
       post_invite
     end
-    #end
   end
     
     

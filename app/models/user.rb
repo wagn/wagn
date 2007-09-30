@@ -71,18 +71,25 @@ class User < ActiveRecord::Base
     end    
     
     def [](login)
-      self.cache[login.to_s] ||= User.find_by_login(login.to_s)
+      #self.cache[login.to_s] ||=
+      User.find_by_login(login.to_s)
     end
   end 
 
   def createable_cardtypes #FIXME -- needs optimizing.  badly.
     #@createables ||= Card::Cardtype.find(:all, :order=>'name').map do |ct| 
-    Card::Cardtype.find(:all, :order=>'name').map do |ct| 
-      next if ct.extension.nil? #bad data?
-      next if !ct.ok? :create
-      next if ct.extension.class_name == 'InvitationRequest'
-      { :codename=> ct.extension.class_name, :name=> ct.name }
-    end.compact
+    Card.cardtypes.collect do |class_name,card_name|
+      next if class_name == 'InvitationRequest'
+      next unless System.role_ok?(Card.cardtype_create_parties[class_name].to_i)
+      { :codename=>class_name, :name=>card_name }
+    end.compact.sort_by {|x| x[:name] }
+    
+    #Card::Cardtype.find(:all, :order=>'name').map do |ct| 
+    #  next if ct.extension.nil? #bad data?
+    #  next if !ct.ok? :create
+    #  next if ct.extension.class_name == 'InvitationRequest'
+    #  { :codename=> ct.extension.class_name, :name=> ct.name }
+    #end.compact
   end
 
   def active?

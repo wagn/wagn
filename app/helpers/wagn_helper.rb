@@ -641,7 +641,6 @@ module WagnHelper
   
   def createable_cardtypes
     User.current_user.createable_cardtypes
-    #session[:createable_cardtypes]
   end
     
 

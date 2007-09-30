@@ -140,7 +140,7 @@ class CardController < ApplicationController
         }
       end
     else
-      action =  User.createable_cardtypes.empty? ? :missing : :new
+      action =  User.current_user.createable_cardtypes.empty? ? :missing : :new
       redirect_to :action=>action, :params=>{ 'card[name]'=>@card_name }
     end
       # FIXME this logic is not right.  We should first check whether 

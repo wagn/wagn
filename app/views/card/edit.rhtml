@@ -26,8 +26,8 @@
 
 	<% if hard_template and hard_template.ok? :read %>
   	<div class="content help">
-    	The format of this card (including any text in the grey area below) is controlled by a "hard" template: 
-  		<%= link_to_page hard_template.name %>.  
+    	The format of this card (including any text that's not editable below) is governed by a "hard"  
+  		<%= link_to_page 'template', hard_template.name %> connected to the <%= link_to_page hard_template.trunk.name %> card.  
   	</div>
 	<% end %>
 

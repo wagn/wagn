@@ -3,13 +3,14 @@
   margin: 0px;
   background: #fff;
   overflow: hidden;  
-  -moz-border-radius: 6px;
   padding: 0px;
+  -moz-border-radius: 6px;
   border: 1px solid #ccc;
   border-bottom: 2px solid #bbb;
   border-right: 2px solid #bbb;
   display: block;
 }
+
 
 /*----- header ---------*/
 
@@ -390,7 +391,7 @@ a.current, a:link.current {
   white-space: nowrap;
   padding: 2px 0px;
   border-bottom: 0px;
-  -moz-border-radius: 6px 6px 0px 0px;
+  -moz-border-radius: 6px 6px 0px 0px !important;
 }
 
 .card-slot.line .open-link,
@@ -451,16 +452,23 @@ body.wagn .card-slot.line h2,
 
 .card-slot .card-slot.line,
 .card-slot .card-slot {
-  border: 0px;
+  border: 1px solid white;
   border-bottom: 1px solid #ccc;
   -moz-border-radius: 0px;
+  margin: 0px;
 }
-.card-slot .card-slot .card-footer {
+.card-slot .card-slot .card-footer,
+.card-slot .card-slot .card-menu {
   display: none;
 }
+.card-slot span:hover.card-slot {
+  border: 1px solid #ddd;
+  -moz-border-radius: 6px 6px 0 0;
+}
 
-
-
+.card-slot span:hover.card-slot .card-menu{
+  display: inline;
+}
 
 
 /* CARDTYPE_SPECIFIC ------------------------------*/

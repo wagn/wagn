@@ -64,36 +64,25 @@ unless defined? TEST_ROOT
         
         args[:users] ||= { :anon=>200 }
         args[:cardtypes] ||= ['Basic']
-        if args[:cardtypes]==:all
-          args[:cardtypes] = ::Cardtype.find(:all).plot(:class_name)
+        if args[:cardtypes]==:all                       
+          args[:cardtypes] = YAML.load_file('test/fixtures/cardtypes.yml').collect {|k,v| v['class_name']}
         end
 
-        
         args[:users].each_pair do |user,status|
-          @user = User.as( user )
-          @status = status
-          
-          args[:cardtypes].each do |cardtype|    
-            next if cardtype=~ /Cardtype/
-            # find by naming convention in test data:
-            @cardtype = cardtype
-            @card = Card["Sample #{cardtype}"] or puts "ERROR finding 'Sample #{cardtype}'"
+          user = user.to_s
 
-            if url =~ /:id/
-              #FIXME: get real card_id
-              @title = url.gsub(/:id/,'').gsub(/\//,'_') + "_" + (@card.type ? @card.type.to_s.underscore : '')
-              @url = url.gsub(/:id/,@card.id.to_s)
-            else
-              @title = url.gsub(/\//,'_')
-            end
-            
-            login = @user.login=='anon' ? '' : "integration_login_as '#{@user.login}'"
-                                  
+          args[:cardtypes].each do |cardtype|    
+            next if cardtype=~ /Cardtype|UserForm/
+
+            title = url.gsub(/:id/,'').gsub(/\//,'_') + "_#{cardtype}"
+            login = (user=='anon' ? '' : "integration_login_as '#{user}'")
             test_def = %{
-              def test_render_#{@title}_#{@user.login}_#{@status} 
+              def test_render_#{title}_#{user}_#{status} 
                 #{login}
-                get '#{@url}'
-                assert_response #{@status}, "#{@url} as #{@user.login} should have status #{@status}"
+                url = prepare_url('#{url}', '#{cardtype}')
+                #warn "GET \#\{url\}"
+                get url
+                assert_response #{status}, "\#\{url\} as #{user} should have status #{status}"
               end
             }
             @test_class.class_eval test_def
@@ -102,14 +91,21 @@ unless defined? TEST_ROOT
         end
       end                     
     end
+     
+    def prepare_url(url, cardtype)
+      if url =~ /:id/
+        # find by naming convention in test data:
+        card = Card["Sample #{cardtype}"] or puts "ERROR finding 'Sample #{cardtype}'"
+        url.gsub!(/:id/,card.id.to_s)
+      end
+      url
+    end
   
     class << self
       
       def test_render(url,*args)  
         RenderTest.new(self,url,*args)
       end
-      
-      
       
       # Class method for test helpers
       def test_helper(*names)

@@ -8,7 +8,7 @@ class CardActionTest < ActionController::IntegrationTest
   
   def setup
     setup_default_user
-    login_as :joe_user
+    integration_login_as :joe_user
   end    
 
   # Has Test

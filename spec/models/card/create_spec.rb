@@ -10,8 +10,6 @@ describe Cardtype, "create with codename" do
   end
 end
 
-
-
 describe Card, "sets permissions correctly by default" do
   before do
     User.as :joe_user
@@ -47,6 +45,30 @@ describe Card, "attribute tracking for new card" do
     @c.name.should == 'Old Card'
   end
 end
+
+describe Card, "Cardtype template" do
+  before do
+    User.as :admin
+    @ctt = Card.create! :name=> 'Cardtype E+*template'
+    @r1 = Role.find_by_codename 'r1'
+    @ctt.permit(:create, @r1)
+    #warn "permissions #{@ctt.permissions.plot :task}"
+    @ctt.save!
+    @ct = Card.find_by_name 'Cardtype E'
+  end
+  it "should update the template's create permission when a create permission is submitted" do
+    @ctt.who_can(:create).should== @r1
+  end
+  it "should update the cardtype's create permission when a create permission is submitted" do
+    @ct.who_can(:create).should== @r1
+  end
+  it "should not overwrite the cardtype's other permissions" do
+    # this used to say 5.  but comment permissions are not required now-- it looks
+    # those are the ones it doesn't have.  create;delete,read,edit are all there.
+    @ct.permissions.length.should == 4
+  end
+end                    
+
 
 describe Card, "basic create" do
   before(:each) do
@@ -112,28 +134,6 @@ describe Card, "anonymous create permissions" do
   end
 end
         
-        
-describe Card, "Cardtype template" do
-  before do
-    User.as :admin
-    @ctt = Card.create! :name=> 'Cardtype E+*template'
-    @r1 = Role.find_by_codename 'r1'
-    @ctt.permit(:create, @r1)
-    #warn "permissions #{@ctt.permissions.plot :task}"
-    @ctt.save!
-    @ct = Card.find_by_name 'Cardtype E'
-  end
-  it "should update the template's create permission when a create permission is submitted" do
-    @ctt.who_can(:create).should== @r1
-  end
-  it "should update the cardtype's create permission when a create permission is submitted" do
-    @ct.who_can(:create).should== @r1
-  end
-  it "should not overwrite the cardtype's other permissions" do
-    @ct.permissions.length.should == 5
-  end
-end
-
 
 describe Card, "Basic Card template" do
   before do
@@ -189,6 +189,4 @@ describe Card, "New Basic Card" do
     @bc.who_can(:create).should== nil
   end
 end
-
-
                        

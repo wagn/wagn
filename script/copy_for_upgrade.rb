@@ -12,5 +12,5 @@ from_dir, to_dir = ARGV
      path, src, dest = Pathname.new(path), Pathname.new(from_dir), Pathname.new(to_dir)
      cmd = "cp -r #{src+path} #{dest+path.dirname}"
      puts "#{cmd}"
-     puts `cmd`
+     puts `#{cmd}`
   end

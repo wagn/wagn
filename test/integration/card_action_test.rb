@@ -24,8 +24,17 @@ class CardActionTest < ActionController::IntegrationTest
   # card/save_draft
   # connection/remove ??
 
+  def test_comment      
+    User.as(:admin) do
+      @a = Card.find_by_name("A")  
+      @a.permit('comment', Role.find_by_codename('anon'))
+      @a.save!
+    end
+    post "card/comment/#{@a.id}", :card => { :comment=>"how come" }
+    assert_response :success
+  end      
   
-  def test_card_removal2
+  def test_card_removal2   
     boo = newcard "Boo", "booya"
     sidebar = newcard "*sidebar"
     open = newcard "*open"
@@ -35,8 +44,9 @@ class CardActionTest < ActionController::IntegrationTest
     post 'card/remove/' + boo_open.id.to_s
     assert_response :success
     assert_nil Card.find_by_name("Boo#{JOINT}*open")
-  end
+  end        
   
+
   def test_connect
     apple = newcard("Apple", "woot")
     orange = newcard("Orange", "wot")
@@ -70,14 +80,7 @@ class CardActionTest < ActionController::IntegrationTest
     assert_nil Card.find_by_name("Boo")
   end
   
-  def test_comment
-    @a = Card.find_by_name("A")  
-    @a.appender = Role.find_by_codename('anon')
-    @a.save
-    post "card/comment/#{@a.id}", :card => { :comment=>"how come" }
-    assert_response :success
-  end 
-  
+
   private
     def newcard( name, content="" )
       post( 'card/create', :card=>{"content"=>content, :type=>'Basic', :name=>name})
@@ -89,10 +92,9 @@ class CardActionTest < ActionController::IntegrationTest
       assert tag_card.simple?
       post( 'connection/create', 
         :id => trunk.id,
-        :card => { :name=>tag_card.name },
+        :name=>tag_card.name,
         :connection => { :content=>content })
       assert_response :success
       Card.find_by_name( trunk.name + JOINT + tag_card.name )
     end
- 
 end

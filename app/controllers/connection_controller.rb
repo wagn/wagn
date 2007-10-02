@@ -7,7 +7,7 @@ class ConnectionController < ApplicationController
   def create
     # id will be for the trunk (card we're connecting to)
     # @name 
-    if @tag = Card.find_by_name(params[:name])
+    if @tag = Card.find_by_name(params[:name]||'')
     else
       @new_tag = true
       @tag = Card.create :name=>params[:name]

@@ -22,7 +22,11 @@ module ExceptionSystem
   end
    
   # these called by exception_notifier
-  def render_404()  render_exception(404); end
+  def render_404() 
+    logger.error("render_404 invoked for request_uri=#{request.request_uri} and env=#{request.env.inspect}")
+    render_exception(404); 
+  end  
+  
   def render_500()  render_exception(500); end
 
   def render_exception(status)

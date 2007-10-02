@@ -27,7 +27,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':controller', :action=>'index'
   
   map.connect '', :controller=>'card', :action=>'index'
-  map.connect ':id', :controller=>'wagn', :action=>'render_404'
+  map.connect '*id', :controller=>'application', :action=>'render_404'
   
 end
                      

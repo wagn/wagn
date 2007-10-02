@@ -1,15 +1,14 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-
-
 describe User, "Normal user" do
   before do
-    User.as :admin
-    r = Role.find_by_codename('auth')
-    r.tasks = 'set_personal_card_permissions'
-    r.save
-    User.as :joe_user
-    @u = User.current_user    
+    User.as :admin do
+      ::Role.cache={}
+      r = Role.find_by_codename('auth')
+      r.tasks = 'set_personal_card_permissions'
+      r.save!        
+    end
+    @u = User.as :joe_user    
     @other_user = User.find_by_login('admin')
     @xu = Card.create! :name=>'X+Joe User'
     @xo = Card.create! :name=>'X+Admin User'
@@ -17,7 +16,6 @@ describe User, "Normal user" do
     @xuy= Card.create! :name=>'X+Joe User+Y'
   end
 
-  
   it "should be someone with permission to set personal card permissions" do
     System.ok?(:set_personal_card_permissions).should be_true
   end
@@ -44,29 +42,26 @@ describe User, "Normal user" do
   end
   it "should be the personal user of (own personal card)+(card)" do
     @xuy.personal_user.should== @u
-  end
+  end    
 end
 
 
-## This is f'ed up.  Run either of these test sets on its own and it passes; together (in either order) and the second fails.
-## something's not getting reset.
 
 describe Card, "User not allowed to set personal cards" do
   before do
-    User.as :admin
-    r = Role.find_by_codename('auth')
-    r.tasks = ''
-    r.save
-    User.as :joe_user
-
-    @u = User.current_user 
+    ::Role.cache={}
+    User.as :admin do
+      r = Role.find_by_codename('auth')
+      r.tasks = ''
+      r.save         
+    end
+    @u = User.as :joe_user
     @xu = Card.create! :name=>'X+Joe User'
-
   end
 
   it "should be someone without permission to set personal card permissions" do
     System.ok?(:set_personal_card_permissions).should be_false
-  end
+  end    
   it "should not be able to any card permissions" do
     System.ok?(:set_card_permissions).should be_false
   end

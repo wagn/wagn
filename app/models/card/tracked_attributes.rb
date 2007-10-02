@@ -63,7 +63,7 @@ module Card
       newcard.send(:callback, :before_create)
       #newcard.send(:callback, :after_create)
       self.extension = newcard.extension
-      self.set_permissions self.permissions
+      self.set_permissions self.permissions.collect{|x| x}
     end
     
     def set_content(new_content)  

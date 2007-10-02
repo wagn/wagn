@@ -144,6 +144,7 @@ a.current, a:link.current {
 }
 .card-slot .transcluded p, 
 .card-slot .transcluded span, 
+.card-slot .transcluded a, 
 .card-slot .transcluded ul, 
 .card-slot .transcluded ol, 
 .card-slot .transcluded h1, 

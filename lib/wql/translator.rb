@@ -105,7 +105,7 @@ module Wql
           when /link to/
             join "wiki_references {c} ON {c}.card_id={m}.id"
             wiki_ref_alias, self.current_alias = self.current_alias, statement.next_alias
-            join_cards "#{wiki_ref_alias}.referenced_name={c}.name"
+            join_cards "#{wiki_ref_alias}.referenced_card_id={c}.id"
             
           when /connected to/  
             #if statement.joins.length > 0 

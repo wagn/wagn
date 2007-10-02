@@ -39,6 +39,8 @@ task :populate_template_database => :environment do
     basic = Card::Basic.create! :name=>"Basic Card"  
                                     
     # data for testing users and invitation requests 
+    System.invite_request_alert_email = nil
+    
     ron_request = Card::InvitationRequest.create! :name=>"Ron Request", :email=>"ron@request.com"  
     no_count = Card::User.create! :name=>"No Count", :content=>"I got not account"
 
@@ -140,6 +142,7 @@ task :generate_fixtures => :environment do
   
   begin
     set_database 'wagn_test_template'
+    
     # I spent waay to long trying to do this in a less hacky way--  
     # Basically initial database setup/migration breaks your models and you really 
     # need to start rails over to get things going again I tried ActiveRecord::Base.reset_subclasses etc. to no avail. -LWH

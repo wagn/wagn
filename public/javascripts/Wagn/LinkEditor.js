@@ -178,7 +178,7 @@ Object.extend(Wagn.LinkEditor.prototype, {
       '<div><label>links&nbsp;to:&nbsp;</label><input type="text" size="45" id="links_to" /></div>' +
       '<div class="buttons">' +
       '<input type="button" onclick="Wagn.linkEditor.save($F(\'reads_as\'), $F(\'links_to\'))" value="Update Link"/>' + 
-      '<input type="button" onclick="Wagn.linkEditor.unlink($F(\'reads_as\'))" value="Delete Link"/>' + 
+      '<input type="button" onclick="Wagn.linkEditor.unlink($F(\'reads_as\'))" value="Unlink Text"/>' + 
       '<input type="button" onclick="Wagn.linkEditor.cancel()" value="Cancel"/>' +
       '</div></div>';
     Wagn.Link.new_from_link(this.link).update_bound();

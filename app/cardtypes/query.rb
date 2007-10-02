@@ -8,21 +8,8 @@ module Card
       #warn "UnEscaped #{content}"
     end
 
-    def post_render( content )
-      args = options_from_content( content )
-      #warn "Query #{content} args=#{args.inspect}"
-      cards = Card.find_by_wql_options( args )
-
-      if cards.length==0
-        "No cards matched this query"
-      else
-        #warn "CARDS: #{cards.inspect}"
-        "FIXME: tag cloud should be here!"
-        #Renderer.instance.controller.send(:render_to_string, :partial=>'block/tag_cloud', 
-        #:locals=>{ :card=>self, :cards => cards })
-      end
-      #rescue Exception=>e
-      #  return "Error processing query: #{e.message}"
+    def query_args
+      options_from_content( self.content )  
     end
 
     def options_from_content( content=nil )
@@ -38,7 +25,9 @@ module Card
       # nada -- other datatypes update references
     end
 
-  
+    def cacheable?
+      false
+    end
 
   end
 end

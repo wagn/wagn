@@ -145,6 +145,7 @@ a.current, a:link.current {
 .card-slot .transcluded p, 
 .card-slot .transcluded span, 
 .card-slot .transcluded ul, 
+.card-slot .transcluded ol, 
 .card-slot .transcluded h1, 
 .card-slot .transcluded h2 {
   background-color: inherit;

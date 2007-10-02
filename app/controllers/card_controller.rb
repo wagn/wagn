@@ -29,7 +29,7 @@ class CardController < ApplicationController
       @author = User.current_user.card.name
     end
     @comment.gsub! /\n/, '<br/>'
-    @card.comment = "<hr>#{@comment}<br/><p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</p>"
+    @card.comment = "<hr>#{@comment}<br/><p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
     @card.save!
     view=render_to_string( :action=>'view')
     render_update_slot render_to_string (:action=>'view')

@@ -16,7 +16,7 @@ module Cardname
     end
 
   end
-    def valid_cardname?
+  def valid_cardname?
     split(JOINT).each do |name|
       return false unless name.match(/^([^#{"\\"+CARDNAME_BANNED_CHARACTERS.join("\\")}])+$/)
     end

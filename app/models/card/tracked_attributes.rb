@@ -86,10 +86,10 @@ module Card
         old_create_party = self.who_can(:create) || Card::Basic.new.cardtype.who_can(:create) 
         perms << Permission.new(:task=>'create', :party=>old_create_party)
       end
+      self.permissions_without_tracking = perms.reject {|p| p.party==nil }
       perms.each do |p| 
         set_reader( p.party ) if p.task == 'read'
-      end
-      self.permissions_without_tracking = perms.reject {|p| p.party==nil }
+      end      
 #=begin
       if template? and trunk.type == 'Cardtype' and create_party = who_can(:create)
         ::User.as :admin do

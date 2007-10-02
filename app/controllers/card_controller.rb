@@ -70,7 +70,9 @@ class CardController < ApplicationController
   end
 
   def new
-    @card = Card.new params[:card]
+    @card = Card.new params[:card] 
+    @card.content = strip_tags(@card.content) unless (card.class.superclass.to_s=='Card::Basic' or card.type=='Basic')
+    
     @card.send(:set_defaults)
     
     if @card.type == 'User'

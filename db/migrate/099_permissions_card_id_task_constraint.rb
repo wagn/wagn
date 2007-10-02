@@ -1,6 +1,6 @@
 class PermissionsCardIdTaskConstraint < ActiveRecord::Migration
   def self.up 
-    User.as :admin
+    User.as :admin do
       Card::Cardtype.find(:all).each do |ct|
         ## this part is to get rid of duplicates
         ct.permit(:create, ct.who_can(:create))

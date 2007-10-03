@@ -8,11 +8,13 @@ class CardnameController < ApplicationController
     if @card.update_attributes params[:card]
       render :action=>'view'
     elsif @card.errors.on(:confirmation_required)
-      @confirm = true
+      @confirm = true   
+      @card.confirm_rename=true
       @card.update_link_ins = true
       render :action=>'edit', :status=>422
-    else
-      render :action=>'edit', :status=>422
+    else 
+      @request_type='html'
+      render_card_errors(@card)
     end
   end
 

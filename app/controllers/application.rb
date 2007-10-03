@@ -260,28 +260,13 @@ class ApplicationController < ActionController::Base
   end   
        
   def requesting_javascript?
-    request.xhr?
+    !@request_type=='html'
   end
   
   def requesting_ajax?
     request.xhr?
   end
   
-  def render_errors(card=nil)
-    card ||= @card    
-    stuff = %{Problem with card #{card.name}:<br>} + card.errors.full_messages.join(',')       
-    # getNextElement() will crawl up nested slots until it finds one with a notice div
-    if requesting_javascript?
-      render :update do |page|
-         page << %{notice = getNextElement(#{slot.selector},'notice');\n}
-        page << %{notice.update('#{escape_javascript(stuff)}')}
-      end
-    elsif requesting_ajax?
-      render :text=>stuff, :layout=>'application'
-    else
-      render :text=>stuff, :layout=>nil
-    end
-  end  
 
   def render_update_slot(stuff="", &proc )
     render_update_slot_element(name="", stuff,&proc)                   

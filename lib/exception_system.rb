@@ -5,9 +5,9 @@ module ExceptionSystem
     status = exception_status(exception)
     
     if exception.respond_to?(:card)
-      render_errors(exception.card)
+      render_card_errors(exception.card)
     elsif exception.respond_to?(:record)
-      render_errors(exception.record)
+      render_card_errors(exception.record)
     else
       if status==500
         if consider_all_requests_local || local_request?
@@ -46,5 +46,21 @@ module ExceptionSystem
       500 
     end
   end
+
+  def render_card_errors(card=nil)
+    card ||= @card    
+    stuff = %{Problem with card #{card.name}:<br>} + card.errors.full_messages.join(',')       
+    # getNextElement() will crawl up nested slots until it finds one with a notice div
+    if requesting_javascript?
+      render :update do |page|
+         page << %{notice = getNextElement(#{slot.selector},'notice');\n}
+        page << %{notice.update('#{escape_javascript(stuff)}')}
+      end
+    elsif requesting_ajax?
+      render :text=>stuff, :layout=>nil
+    else
+      render :text=>stuff, :layout=>'application'
+    end
+  end  
       
 end

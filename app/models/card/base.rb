@@ -20,10 +20,10 @@ module Card
     self.cache = {}
    
     belongs_to :trunk, :class_name=>'Card::Base', :foreign_key=>'trunk_id' #, :dependent=>:dependent
-    has_many   :right_junctions, :class_name=>'Card::Base', :foreign_key=>'trunk_id' #, :dependent=>:destroy  
+    has_many   :right_junctions, :class_name=>'Card::Base', :foreign_key=>'trunk_id'#, :dependent=>:destroy  
 
     belongs_to :tag, :class_name=>'Card::Base', :foreign_key=>'tag_id' #, :dependent=>:destroy
-    has_many   :left_junctions, :class_name=>'Card::Base', :foreign_key=>'tag_id' #, :dependent=>:destroy
+    has_many   :left_junctions, :class_name=>'Card::Base', :foreign_key=>'tag_id'  #, :dependent=>:destroy
     
     belongs_to :current_revision, :class_name => 'Revision', :foreign_key=>'current_revision_id'
     has_many   :revisions, :order => 'id', :foreign_key=>'card_id'
@@ -309,8 +309,10 @@ module Card
       simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq 
     end
 
-    def junctions(*args)
-      @junctions ||= right_junctions(:order=>'id', *args) + left_junctions(:order=>id, *args)
+    def junctions(args={})     
+      args[:conditions] = ["trash=?", false] unless args.has_key?(:conditions)
+      args[:order] = 'id' unless args.has_key?(:order)
+      right_junctions.find(:all, args) + left_junctions.find(:all, args)
     end
 
     def dependents(*args) 

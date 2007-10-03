@@ -9,6 +9,7 @@ class CardnameController < ApplicationController
       render :action=>'view'
     elsif @card.errors.on(:confirmation_required)
       @confirm = true
+      @card.update_link_ins = true
       render :action=>'edit', :status=>422
     else
       render :action=>'edit', :status=>422

@@ -62,7 +62,7 @@ module Card
     after_save :cache_priority
      
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
-      :change_links_on_rename, :allow_type_change
+      :update_link_ins, :allow_type_change
   
     private
       belongs_to :reader, :polymorphic=>true  
@@ -317,6 +317,10 @@ module Card
       junctions(*args).map { |r| [r ] + r.dependents(*args) }.flatten 
     end
 
+    def link_in_cards
+      (dependents + [self]).plot(:linkers).flatten.uniq
+    end
+
     def cardtype
       @cardtype ||= ::Cardtype.find_by_class_name( class_name ).card
     end  
@@ -540,9 +544,11 @@ module Card
         # require confirmation for renaming multiple cards
         if !rec.dependents.empty? and !rec.confirm_rename
           rec.errors.add :confirmation_required, "#{rec.name} has #{rec.dependents.size} dependents"
-        end    
+        end
         
-        #dependents
+        if !rec.link_in_cards.empty? and !rec.confirm_rename
+          rec.errors.add :confirmation_required, "#{rec.name} has #{rec.link_in_cards.size} links in"
+        end
       end
     end
 

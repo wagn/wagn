@@ -135,6 +135,29 @@ describe Card, "anonymous create permissions" do
 end
         
 
+        
+describe Card, "Cardtype template" do
+  before do
+    User.as :admin
+    @ctt = Card.create! :name=> 'Cardtype E+*template'
+    @r1 = Role.find_by_codename 'r1'
+    @ctt.permit(:create, @r1)
+    #warn "permissions #{@ctt.permissions.plot :task}"
+    @ctt.save!
+    @ct = Card.find_by_name 'Cardtype E'
+  end
+  it "should update the template's create permission when a create permission is submitted" do
+    @ctt.who_can(:create).should== @r1
+  end
+  it "should update the cardtype's create permission when a create permission is submitted" do
+    @ct.who_can(:create).should== @r1
+  end
+  it "should not overwrite the cardtype's other permissions" do
+    @ct.permissions.length.should == 4
+  end
+end
+
+
 describe Card, "Basic Card template" do
   before do
     User.as :admin

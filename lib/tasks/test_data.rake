@@ -40,7 +40,6 @@ task :populate_template_database => :environment do
                                     
     # data for testing users and invitation requests 
     System.invite_request_alert_email = nil
-    
     ron_request = Card::InvitationRequest.create! :name=>"Ron Request", :email=>"ron@request.com"  
     no_count = Card::User.create! :name=>"No Count", :content=>"I got not account"
 

@@ -24,7 +24,7 @@
 				  <%= hidden_field_tag 'card[confirm_rename]', 'true' %>
 			  <% end %>
 
-			  <% if children = (@card.dependents + [@card]).plot(:linkers).flatten.uniq and !children.empty? %>
+			  <% if children = @card.link_in_cards and !children.empty? %>
 			    <p>These cards are linked to from the following cards:</p>
 			    <ul>
 			      <% children.map do |child| %>
@@ -32,8 +32,8 @@
 			      <% end. join ', ' %>
 			    </ul>
 			    Would you like to 
-			    <p><%= f.radio_button 'change_links_on_rename', 'yes', true %>Revise all these cards with the new link
-			    <%= f.radio_button 'change_links_on_rename', 'no' %>Let the links be broken</p>
+			    <p><%= f.radio_button :update_link_ins, true %>Revise all these cards with the new link
+			    <%= f.radio_button :update_link_ins, false %>Let the links be broken</p>
 			  <% end %>
 			<% end %>
 			

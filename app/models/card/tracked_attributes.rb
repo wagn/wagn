@@ -20,12 +20,11 @@ module Card
       return if new_record?
       return if oldname==newname
           
-                                           
       if trash = Card.find_by_key(newname.to_key)
         if trash.trash  
           trash.update_attributes! :name=>trash.name+"*trash", :confirm_rename=>true
         else
-          raise "How did this pass the validation?"
+          # note -- this happens when changing to a name variant.  any special handling needed?
         end
       end
             
@@ -82,7 +81,7 @@ module Card
     
     def set_permissions(perms)
       self.updates.clear(:permissions)
-      if type=='Cardtype' and !perms.find{|p| p.task=='create'}
+      if type=='Cardtype' and !perms.detect{|p| p.task=='create'}
         old_create_party = self.who_can(:create) || Card::Basic.new.cardtype.who_can(:create) 
         perms << Permission.new(:task=>'create', :party=>old_create_party)
       end
@@ -135,24 +134,29 @@ module Card
       )
     end
     
-    def cascade_name_changes 
+    def cascade_name_changes
       # This happens after_save because of the way it references trunk.name and tag.name
       # which depend on the original card being saved.
       return unless @name_changed
       # update the name cache all down the tree
       junctions.each do |card|
         dep_name = card.trunk.name + JOINT + card.tag.name
-        #puts "  dep #{card.id} (#{card.name})= #{dep_name}"
+        warn "  dep #{card.id} (#{card.name})= #{dep_name}"
         card.name = dep_name
+        card.update_link_ins = update_link_ins
         card.confirm_rename = confirm_rename
         card.save! #FIXME -- not sure this should be a ! (?), but probably needs handling if not...
       end
+      
+      #warn "UPDATE LINK INS:  #{update_link_ins}  #{update_link_ins == false}  #{update_link_ins == 'false'}"
        
       # update references (unless we're asked not to)
-      if on_rename_skip_reference_updates
-        WikiReference.update_on_destroy(self, self.name_without_tracking) # FIXME: needs old name
+      if !update_link_ins or update_link_ins == 'false'  # FIXME -- doing the string check because the radio button is sending an actual "false" string
+        #warn "no updating.."
+        WikiReference.update_on_destroy(self, @old_name) 
       else
-        (dependents + [self]).plot(:linkers).flatten.uniq.each do |linker|
+        link_in_cards.each do |linker|
+          #warn "updating #{linker.name}"
           WagBot.instance.revise_card_links( linker, @old_name, name )
         end        
         # FIXME: do update transclusions as well?
@@ -174,8 +178,7 @@ module Card
       base.after_save :cascade_name_changes   
       base.class_eval do 
         attr_accessor :on_create_skip_revision,
-           :on_update_allow_duplicate_revisions,
-           :on_rename_skip_reference_updates
+           :on_update_allow_duplicate_revisions
         #
         #puts "CALLING ALIAS METHOD CHAIN"
         #alias_method_chain :save, :tracking

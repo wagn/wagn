@@ -260,9 +260,10 @@ module Card
       if callback(:before_destroy) == false
         errors.add(:destroy, "before destroy back aborted destroy")
         return false 
-      end         
+      end  
+      deps = self.dependents       
       self.update_attribute(:trash, true) 
-      self.dependents.each do |dep|
+      deps.each do |dep|
         next if dep.trash
         #warn "DESTROY  #{caller} -> #{name} !! #{dep.name}"
         dep.confirm_destroy = true
@@ -311,8 +312,9 @@ module Card
 
     def junctions(args={})     
       args[:conditions] = ["trash=?", false] unless args.has_key?(:conditions)
-      args[:order] = 'id' unless args.has_key?(:order)
-      right_junctions.find(:all, args) + left_junctions.find(:all, args)
+      args[:order] = 'id' unless args.has_key?(:order)    
+      # aparently find f***s up your args. if you don't clone them, the next find is busted.
+      left_junctions.find(:all, args.clone) + right_junctions.find(:all, args.clone)
     end
 
     def dependents(*args) 

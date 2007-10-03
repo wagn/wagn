@@ -141,7 +141,7 @@ module Card
       # update the name cache all down the tree
       junctions.each do |card|
         dep_name = card.trunk.name + JOINT + card.tag.name
-        warn "  dep #{card.id} (#{card.name})= #{dep_name}"
+        #warn "  dep #{card.id} (#{card.name})= #{dep_name}"
         card.name = dep_name
         card.update_link_ins = update_link_ins
         card.confirm_rename = confirm_rename

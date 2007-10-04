@@ -388,6 +388,10 @@ module Card
       name = self.class.to_s.gsub(/^Card::/,'')
       name == 'Base' ? 'Basic' : name
     end
+    
+    def name_from_parts
+      simple? ? name : (trunk.name_from_parts + '+' + tag.name_from_parts)
+    end
 
     def simple?() 
       self.trunk.nil? 

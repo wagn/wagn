@@ -7,11 +7,11 @@ class CardnameController < ApplicationController
     @old_card = @card.clone
     if @card.update_attributes params[:card]
       render :action=>'view'
-    elsif @card.errors.on(:confirmation_required)
+    elsif @card.errors.on(:confirmation_required) && @card.errors.map {|e,f| e}.uniq.length==1
       @confirm = true   
       @card.confirm_rename=true
       @card.update_link_ins = true
-      render :action=>'edit', :status=>422
+      render :action=>'edit', :status=>200
     else 
       @request_type='html'
       render_card_errors(@card)

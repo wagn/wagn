@@ -57,9 +57,9 @@ module ExceptionSystem
         page << %{notice.update('#{escape_javascript(stuff)}')}
       end
     elsif requesting_ajax?
-      render :text=>stuff, :layout=>nil
+      render :text=>stuff, :layout=>nil, :status=>422
     else
-      render :text=>stuff, :layout=>'application'
+      render :text=>stuff, :layout=>'application', :status=>422
     end
   end  
       

@@ -262,7 +262,7 @@ module WagnHelper
   end
 
   def slot_option_header(title)
-    %{<tr><td colspan="3" class="option-header"><h2>#{title}</h2></td></tr>}
+    %{<tr><td colspan="3" class="option-header"><closed>#{title}</closed></td></tr>}
   end
 
 
@@ -413,7 +413,20 @@ module WagnHelper
     "document.location.href='#{url_for_page(previous_page)}'"
   end
   
-  def truncatewords_with_closing_tags(input, words = 15, truncate_string = "...")
+  class TagSet
+    def initialize
+      @open = []
+    end
+    
+    def open(tag) 
+      @open.unshift(tag) 
+    end
+    
+    def close(tag) closed[tag] ? closed[tag]+=1 : closed[tag]=1; end
+      
+  end
+  
+  def truncatewords_with_closing_tags(input, words = 25, truncate_string = "...")
     if input.nil? then return end
     wordlist = input.to_s.split
     l = words.to_i - 1
@@ -421,15 +434,20 @@ module WagnHelper
     wordstring = wordlist.length > l ? wordlist[0..l].join(" ") : input     
     # nuke partial tags at end of snippet
     wordstring.gsub!(/(<[^\>]+)$/,'')
-    h1 = {}
-    h2 = {}        
+    
+    tags = []
+    
     # match tags with or without self closing (ie. <foo />)
-    wordstring.scan(/\<([^\>\s\/]+)[^\>]*?\>/).each { |t| h1[t[0]] ? h1[t[0]] += 1 : h1[t[0]] = 1 }
+    wordstring.scan(/\<([^\>\s\/]+)[^\>]*?\>/).each { |t| tags.unshift(t[0]) }
+
     # match tags with self closing and mark them as closed
-    wordstring.scan(/\<([^\>\s\/]+)[^\>]*?\/\>/).each { |t| h2[t[0]] ? h2[t[0]] += 1 : h2[t[0]] = 1 }
+    wordstring.scan(/\<([^\>\s\/]+)[^\>]*?\/\>/).each { |t| tags.slice!(tags.index(t[0])) }
+    
     # match close tags
-    wordstring.scan(/\<\/([^\>\s\/]+)[^\>]*?\>/).each { |t| h2[t[0]] ? h2[t[0]] += 1 : h2[t[0]] = 1 }
-    h1.keys.reverse.each {|k| v=h1[k]; wordstring += "</#{k}>" * (h1[k] - h2[k].to_i) if h2[k].to_i < v }
+    wordstring.scan(/\<\/([^\>\s\/]+)[^\>]*?\>/).each { |t| tags.slice!(tags.index(t[0])) }
+    
+    
+    tags.each {|t| wordstring += "</#{t}>" }
     ###  HAAAAAAAAACK.  FIXME NIXME or else you's can licks me.  Reversing the key order on a hash?  Am I shitting me? 
     
     wordstring +='<span style="color:#666"> ...</span>' if wordlist.length > l    
@@ -444,11 +462,11 @@ module WagnHelper
   def truncate_with_closing_tags(input, chars, truncate_string = "...")
     if input.nil? then return end
       code = truncate(input, chars).to_s #.chop.chop.chop
-      h1 = {}
-      h2 = {}
-      code.scan(/\<([^\>\s\/]+)[^\>\/]*?\>/).each { |t| h1[t[0]] ? h1[t[0]] += 1 : h1[t[0]] = 1 }
-      code.scan(/\<\/([^\>\s\/]+)[^\>]*?\>/).each { |t| h2[t[0]] ? h2[t[0]] += 1 : h2[t[0]] = 1 }
-      h1.each {|k,v| code += "</#{k}>" * (h1[k] - h2[k].to_i) if h2[k].to_i < v }
+      opened = {}
+      closed = {}
+      code.scan(/\<([^\>\s\/]+)[^\>\/]*?\>/).each { |t| opened[t[0]] ? opened[t[0]] += 1 : opened[t[0]] = 1 }
+      code.scan(/\<\/([^\>\s\/]+)[^\>]*?\>/).each { |t| closed[t[0]] ? closed[t[0]] += 1 : closed[t[0]] = 1 }
+      opened.each {|k,v| code += "</#{k}>" * (opened[k] - closed[k].to_i) if closed[k].to_i < v }
       code = code + truncate_string
       return code
   end  

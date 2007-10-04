@@ -9,17 +9,17 @@ describe Card, "with hard tag template" do
       :type=>'Date', :content=>"Today!"
     @jb =  Card.create! :name=>"Jim+birthday"
   end       
-
+  it "should change cardtype with template" do
+    # @bt.update_attributes!(:type => 'Basic'); @bt.save!
+    @bt.type = 'Basic'; @bt.save!;
+    
+    Card['Jim+birthday'].type.should == 'Basic'
+  end   
+  
   it "should have a hard tag template" do
     Card['birthday+*template'].extension_type.should=='HardTemplate'
   end
 
-  it "should change cardtype with template" do
-    # @bt.update_attributes!(:type => 'Basic'); @bt.save!
-    @bt.type = 'Basic'; @bt.save!
-    Card['Jim+birthday'].type.should == 'Basic'
-  end   
-  
 
 
   it "should have default cardtype" do
@@ -37,10 +37,9 @@ describe Card, "with hard tag template" do
   it "should not let you change the type" do
     @jb.ok?(:type).should_not be_true
   end
- 
+
 end
 
-=begin
 
 describe Card, "with soft tag template" do
   before do 
@@ -94,4 +93,3 @@ describe Card, "with soft type template" do
   
 end
 
-=end  

@@ -25,7 +25,7 @@ module WagnHelper
 
     def id(area="") 
       area, id = area.to_s, ""  
-      id << "javascript:elem=#{get(area)}"
+      id << "javascript:#{get(area)}"
     end                         
      
     def nested_context?
@@ -377,9 +377,13 @@ module WagnHelper
     if options[:update] =~ /^javascript\:/
       update << options[:update].gsub(/^javascript\:/,'')
     elsif options[:update] && options[:update].is_a?(Hash)
-      update  = []
-      update << "success:'#{options[:update][:success]}'" if options[:update][:success]
-      update << "failure:'#{options[:update][:failure]}'" if options[:update][:failure]
+      update  = [] 
+      if succ = options[:update][:success] 
+        update << "success:" + (succ.gsub!(/^javascript:/,'') ? succ : "'#{succ}'")
+      end
+      if fail = options[:update][:failure]   
+        update << "failure:" + (fail.gsub!(/^javascript:/,'') ? fail : "'#{succ}'")
+      end
       update  = '{' + update.join(',') + '}'
     elsif options[:update]
       update << "'#{options[:update]}'"
@@ -441,10 +445,10 @@ module WagnHelper
     wordstring.scan(/\<([^\>\s\/]+)[^\>]*?\>/).each { |t| tags.unshift(t[0]) }
 
     # match tags with self closing and mark them as closed
-    wordstring.scan(/\<([^\>\s\/]+)[^\>]*?\/\>/).each { |t| tags.slice!(tags.index(t[0])) }
+    wordstring.scan(/\<([^\>\s\/]+)[^\>]*?\/\>/).each { |t| if !(x=tags.index(t[0])).nil? then tags.slice!(x) end }
     
     # match close tags
-    wordstring.scan(/\<\/([^\>\s\/]+)[^\>]*?\>/).each { |t| tags.slice!(tags.index(t[0])) }
+    wordstring.scan(/\<\/([^\>\s\/]+)[^\>]*?\>/).each { |t|  if !(x=tags.index(t[0])).nil? then tags.slice!(x) end  }
     
     
     tags.each {|t| wordstring += "</#{t}>" }

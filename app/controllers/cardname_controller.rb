@@ -12,7 +12,9 @@ class CardnameController < ApplicationController
       @card.confirm_rename=true
       @card.update_link_ins = true
       render :action=>'edit', :status=>200
-    else 
+    else          
+      # don't report confirmation required as error in a case where the interface will let you fix it.
+      @card.errors.instance_variable_get('@errors').delete('confirmation_required')
       @request_type='html'
       render_card_errors(@card)
     end

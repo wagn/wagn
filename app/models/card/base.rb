@@ -525,12 +525,23 @@ module Card
 
     # FIXME what do these actually do?  is it expensive?  worth doing? 
     #  especially the polymorphic ones..
-    validates_associated :trunk
+    #validates_associated :trunk
     validates_associated :tag  
     validates_associated :extension #1/2 ans:  this one runs the user validations on user cards. 
   #  validates_associated :reader
   #  validates_associated :writer 
   #  validates_associated :appender   
+    
+    
+    # Freaky-- when enabled, this throws some Confirmation required errors on things that shouldn't be changing
+    # in the template_spec
+    #validates_each :trunk do |rec,attr,value|
+    #  if card = value
+    #    if !card.valid? 
+    #      rec.errors.add :trunk, card.errors.full_messages.join(',')
+    #    end
+    #  end
+    #end
 
     validates_each :name do |rec, attr, value|
       if rec.updates.for?(:name)

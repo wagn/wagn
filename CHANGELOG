@@ -1,3 +1,182 @@
+=== 0.8.1 (October 4, 2007)
+* fixed up cascading link changes upon renaming
+* commented dumb warn
+* junctions not return cards in trash by default
+* fix bug in junction change
+* switch migration order
+* cardname interface fix
+* add name_from_parts
+* improve line truncation; fix some tag misclosings
+* fix strange spec failure
+* restore all tests on template_spec
+* improve card rename error handling
+* handle closing un-opened tags in line truncations
+* one last rename error reporting tweak
+* bump minor version
+* add notes on pipe-to-dash migration
+* add console_notes file for misc console work
+* fix remembered typo
+
+=== 0.8.0 (October 2, 2007)
+* fix tag cloud bug 
+* fix faulty anon permissions 
+* fix permission tests, invitation request cacheing 
+* don't deny rename because a card is templated \n
+* dissallow content changes on templated cards, but allow other edits 
+* fix invite request cacheing fix 
+* edited role_tasks 
+* cardtype cards fix and css 
+* merge -r103:r117 from branches/js_refactor_test 
+* merge -r117:r127 from branches/js_refactor_test 
+* merged -r127:r130 from branches/js_refactor_test 
+* cardname and type editing 
+* lots of permission stuff 
+* permissions handling 
+* move fixtures out of svn. generate with rake generate_fixtures 
+* merged permissions with new interface work &amp; new integration testing 
+* fix basic_render tests for basic cardtype 
+* basic render test passing, fixed date,upload,query editors 
+* transclusion css and permission spec merger 
+* needed permissions spec (just comments added) 
+* interface work, cardtype changing, joining etc. 
+* removes somewhatley working 
+* create permissions 
+* start on templating 
+* restore role cache 
+* fix standard cardtype creation 
+* fixing up tests, adding create interface... 
+* transclusion editing mostly working 
+* permissions on related cards button 
+* fixes to permissions on related cards button 
+* monday demo. transclusions editing, template editing 
+* invitation requests, css changes, create options, etc 
+* link editor, comments, and invite tests working again 
+* fix autosave 
+* lots o touch-ups 
+* options tab stuff 
+* more options tab work, including roles 
+* connections, removing, more options clean-up... 
+* fix migration busting where 
+* template already exists 
+* compressed javascript 
+* merged -r156:167 from branches/nested_cards 
+* minor code cleanup; denied page on dbl-click 
+* line-view fixups, javascript update 
+* several small updates for a happier wagn. 
+* undo block layout dumbness 
+* improve line-view truncation 
+* wiki to wagn, connection fixes 
+* fix remove, unclosed links in line, create transclusions 
+* template editing 
+* fix exploding changes 
+* move _edit back to edit 
+* lots of css and intro text changes 
+* templates in options, handling missing transclusions in multi-edit, misc 
+* remove unused (i think) code: template controller, etc. 
+* don't save permissions with nil partys. 
+* test fixes, especially changing types 
+* are still using flash() after all 
+* handling missing cards 
+* compressed js 
+* missing template 
+* invitation requests and invites + some css 
+* working towards IE friendlihood 
+* fix line/paragraph in ie 
+* main layout changes 
+* css changes and a little template rewording 
+* fixed almost all selenium tests 
+* minor css fixes 
+* fixes for cardtype change on hard templates, cache behavior, etc 
+* undo wiki-reference breakage 
+* selenium tests, css fixes, weird line bug... 
+* expire cache on create 
+* createable cardtypes, css fixes, etc. 
+* fixed rename and name/cardtype editor l&amp;f 
+* fixed sidebar css 
+* more css, esp. for transclusions 
+* oops I broke contextual titles. fixed here? 
+* still unbreaking lines... 
+* more css + a little mouseover help 
+* compressed js 
+* fixing permissions migration 
+* still fixing permissions migration 
+* still fixing permissions migration 
+* still fixing permissions migration -- last time? 
+* still fixing permissions migration -- this one last time? 
+* createables patch 
+* another createables patch 
+* options submissions, a few controller fixes... 
+* permissions and cardtype stuff 
+* significant permissions fixes 
+* extensions created when cards re-created from trash 
+* cleaned up permissions handling a bit more, got rid of unused editor types and descriptions, and fixed a few spec tests 
+* only strip tags when changing to non-basic-derived cardtype 
+* another permissions bug 
+* image and file editors working again 
+* fix erroneous session access in sweeper 
+* escape card name in editor save hook 
+* update templatee references on template save 
+* create permissions fix 
+* fix create permission checking 
+* restore destroy callbacks so extensions are destroyed.. 
+* create permissions for new cardtypes 
+* syntax fix 
+* create permissions fix... again 
+* new system for selecting contextual slots 
+* sidebar tweak 
+* fix slot selection of clickToCreate slots 
+* fix notice updates on newcard 
+* fixed lining up of card headers 
+* more css tweaks 
+* fix richtext editor init in IE 
+* browser compatible attribute access- fix open/close in safari 
+* give textarea (editor alternative) in safari 
+* fix editor css import in IE 
+* fix editor css, dbl-click to edit IE 
+* compressed javascript 
+* fixup wadget 
+* wadget update take 2 
+* wadget fix take 3 
+* oops, wadget debugging left in. take 4 
+* fix IE js error after transclusion create 
+* wadget css fixes 
+* downgrade prototype.js to work with windows. updated windows but doesn't help 
+* fix image/file edit 
+* fix inifinitely spinning lister icon 
+* fixed permissions bugs re comments and default creates on templates 
+* fix render_update_slot_element ( for template creation) 
+* stopped lister reload upon transclusion edits of related cards 
+* improve error handling on invite &amp; invite_request 
+* changed migration-fixed copy names to "CardCopy" 
+* compressed javascript 
+* fix broken unit tests 
+* fix permission migration to no insert null parties 
+* improved createable_cardtypes, unit &amp; functionals all passing 
+* fix hard_template type changing test 
+* fix createable cardtypes bug on missing/new 
+* css tweaks 
+* trying to switch migration order 
+* just trying to get hooze live now 
+* integration tests working (not all passing yet) 
+* fix duplicate and missing create permissions entries 
+* add copy script 
+* tweak copy script 
+* tweak copy script 
+* tweak copy script 
+* small changes -- css, whitespace, etc. 
+* fix clicking to open the joinee replaces the main card 
+* fix &lt;br/&gt; and Date editor not working on new cards 
+* minor css and routing for recent 
+* fix query cards 
+* fix query cards missed a file 
+* fix migrations for duplicate creates 
+* fix migrations for duplicate creates ... again 
+* fix migrations for duplicate creates ... again ...damn 
+* fix backlinks 
+* fix several specs, ok?read checking, &amp; routing 
+* fix cardtype create spec
+
+
 === 0.7.0 (August 21, 2007)
 * fix users not activated on invitation
 * fix 'users does not exist' on migration

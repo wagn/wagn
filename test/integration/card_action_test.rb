@@ -80,7 +80,6 @@ class CardActionTest < ActionController::IntegrationTest
     assert_nil Card.find_by_name("Boo")
   end
   
-<<<<<<< .mine
   def test_comment
     @a = Card.find_by_name("A")  
     User.as :admin do
@@ -91,9 +90,7 @@ class CardActionTest < ActionController::IntegrationTest
     assert_response :success
   end 
   
-=======
 
->>>>>>> .r286
   private
     def newcard( name, content="" )
       post( 'card/create', :card=>{"content"=>content, :type=>'Basic', :name=>name})
@@ -105,13 +102,8 @@ class CardActionTest < ActionController::IntegrationTest
       assert tag_card.simple?
       post( 'connection/create', 
         :id => trunk.id,
-<<<<<<< .mine
         :name=>tag_card.name )
 #        :connection => { :content=>content })
-=======
-        :name=>tag_card.name,
-        :connection => { :content=>content })
->>>>>>> .r286
       assert_response :success
       Card.find_by_name( trunk.name + JOINT + tag_card.name )
     end

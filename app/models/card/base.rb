@@ -526,7 +526,7 @@ module Card
     # FIXME what do these actually do?  is it expensive?  worth doing? 
     #  especially the polymorphic ones..
     #validates_associated :trunk
-    validates_associated :tag  
+    #validates_associated :tag   #-- breaks priority spec
     validates_associated :extension #1/2 ans:  this one runs the user validations on user cards. 
   #  validates_associated :reader
   #  validates_associated :writer 

@@ -262,7 +262,7 @@ module WagnHelper
   end
 
   def slot_option_header(title)
-    %{<tr><td colspan="3" class="option-header"><closed>#{title}</closed></td></tr>}
+    %{<tr><td colspan="3" class="option-header"><h2>#{title}</h2></td></tr>}
   end
 
 

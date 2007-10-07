@@ -114,7 +114,7 @@ module Card
             if err=pieces_incompatible?(trunk,tag)
               self.errors.add(:permissions, err)
             elsif (!anonymous?(trunk_reader) or !anonymous?(tag_reader))
-              if anonymous?(trunk_reader) or (authenticated?(trunk_reader) and !anonymous(tag_reader))
+              if anonymous?(trunk_reader) or (authenticated?(trunk_reader) and !anonymous?(tag_reader))
                 party = tag_reader
               else
                 party = trunk_reader

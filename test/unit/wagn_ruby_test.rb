@@ -8,15 +8,7 @@ class WagnRubyTest < Test::Unit::TestCase
     assert_equal( {}, Hash.new_from_semicolon_attr_list(nil) )
     assert_equal( {:a=>'b', :c=>'4'}, Hash.new_from_semicolon_attr_list("a:b;c:4"))
   end       
-    
-  def test_valid_cardname
-    assert "this+THAT".valid_cardname?
-    assert !"Tho_se".valid_cardname?
-    assert !"Tes~sd".valid_cardname?
-    assert !"TEST/DDER".valid_cardname?
-    assert "THE*ONE*AND$!ONLY".valid_cardname?
-  end
-  
+      
   def test_pull
     assert_equal false, {:a=>'2'}.pull(:b)
 

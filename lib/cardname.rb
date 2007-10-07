@@ -1,7 +1,7 @@
 module Cardname   
 
   JOINT = '+'
-  CARDNAME_BANNED_CHARACTERS = [ JOINT, '_', '/', '~', '|']
+  CARDNAME_BANNED_CHARACTERS = [ JOINT, '/', '~', '|']
 
   FORMAL_JOINT = " <span class=\"wiki-joint\">#{JOINT}</span> "   
 

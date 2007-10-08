@@ -101,8 +101,9 @@ class AccountController < ApplicationController
         end
         raise ActiveRecord::RecordInvalid.new(@card)
       end
-      @card.save!
-            
+      User.as :admin do ## fixme was breaking on templated user card on permission to change content ? 
+        @card.save!
+      end    
       raise(Wagn::Oops, "Invitation Email subject is required") unless (params[:email] and params[:email][:subject])
       raise(Wagn::Oops, "Invitation Email message is required") unless (params[:email] and params[:email][:message])
       Notifier.deliver_account_info(@user, params[:email][:subject], params[:email][:message])

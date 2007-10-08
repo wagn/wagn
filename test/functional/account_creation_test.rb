@@ -58,6 +58,13 @@ class AccountCreationTest < Test::Unit::TestCase
     assert_equal 'active', User.find_by_email('new@user.com').status
   end
   
+  def test_should_create_account_when_user_cards_are_templated   ##FIXME -- I don't think this actually catches the bug I saw.
+    Card.create! :name=> 'User+*template', :extension_type=>'HardTemplate'
+    assert_new_account do 
+      post_invite
+      assert_response 200
+    end
+  end
  
   # should work -- we generate a password if it's nil
   def test_should_generate_password_if_not_given

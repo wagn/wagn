@@ -544,6 +544,22 @@ body.wagn .card-slot.line h2,
 }
 
 
+/*------------ (Website) ----------------*/
+
+
+.card-slot .website-editor input {
+  margin: 3px;
+  width: 100%;
+}
+.card-slot .website-link {
+  margin: 3px;
+}
+.card-slot iframe.website {
+  width: 100%;
+  height: 50%;
+  border: 1px solid #ddd;
+}
+
 /* popup stuff --------------------------------------------------------------*/
 #popup_target {  /* IS THIS USED?  */
   padding: 10px;

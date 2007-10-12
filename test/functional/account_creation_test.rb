@@ -18,7 +18,27 @@ class AccountCreationTest < Test::Unit::TestCase
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
     login_as :joe_user
+  end     
+    
+    
+  def test_should_create_account_from_invitation_request_when_user_hard_templated
+    Card.create :name=>'User+*template', :content=>"like this", :extension_type=>"HardTemplate"
+    assert_difference Card::InvitationRequest, :count, -1 do
+      assert_difference Card::User, :count, 1 do
+        post_invite :card=>{ :name=>"Ron Request"}
+      end
+    end
+    assert_equal "active", User.find_by_email("ron@request.com").status
   end
+
+  def test_create_permission_denied_if_not_logged_in
+    logout
+    post "logout"
+    assert_raises(Card::PermissionDenied) do
+      post_invite
+    end
+  end
+
   
   def test_should_create_account_from_existing_user  
       assert_difference ::User, :count do
@@ -37,6 +57,8 @@ class AccountCreationTest < Test::Unit::TestCase
     end
     assert_equal "active", User.find_by_email("ron@request.com").status
   end
+  
+
 
   def test_should_require_valid_cardname
     assert_raises(ActiveRecord::RecordInvalid) do  
@@ -92,18 +114,10 @@ class AccountCreationTest < Test::Unit::TestCase
     end
   end   
   
-  def test_create_permission_denied_if_not_logged_in
-    logout
-    post "logout"
-    assert_raises(Card::PermissionDenied) do
-      post_invite
-    end
-  end
-    
     
   def test_should_require_unique_email
     assert_raises(ActiveRecord::RecordInvalid) do
       post_invite :user=>{ :email=>'joe@user.com' }
     end
-  end
+  end    
 end

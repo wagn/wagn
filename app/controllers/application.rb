@@ -260,7 +260,7 @@ class ApplicationController < ActionController::Base
   end   
        
   def requesting_javascript?
-    !@request_type=='html'
+    @request_type!='html'
   end
   
   def requesting_ajax?

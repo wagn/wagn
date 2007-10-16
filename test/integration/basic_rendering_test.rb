@@ -13,12 +13,13 @@ class BasicRenderingTest < ActionController::IntegrationTest
   test_render "card/edit/:id"           , :users=>{ :anon=>403, :admin=>200 }, :cardtypes=>:all
   test_render "card/new"                , :users=>{ :anon=>403, :joe_user=>200 }
   test_render "connection/new/:id"      , :users=>{ :anon=>200, :joe_user=>200 }
-  test_render "cardtype/view"           , :users=>{ :anon=>422, :joe_user=>200 }
-  test_render "cardtype/edit"           , :users=>{ :anon=>422, :joe_user=>200 }
-  test_render "cardtype/view/:id"       , :users=>{ :anon=>422, :joe_user=>200 }
-  test_render "cardtype/edit/:id"       , :users=>{ :anon=>422, :joe_user=>200 }
-  test_render "cardname/view/:id"       , :users=>{ :anon=>422, :joe_user=>200 }
-  test_render "cardname/edit/:id"       , :users=>{ :anon=>422, :joe_user=>200 }
+  test_render "cardtype/view"           , :users=>{ :anon=>200, :joe_user=>200 }  
+  #FIXME:  should some of these be permission denied?
+  test_render "cardtype/edit"           , :users=>{ :anon=>200, :joe_user=>200 }
+  test_render "cardtype/view/:id"       , :users=>{ :anon=>200, :joe_user=>200 }
+  test_render "cardtype/edit/:id"       , :users=>{ :anon=>200, :joe_user=>200 }
+  test_render "cardname/view/:id"       , :users=>{ :anon=>200, :joe_user=>200 }
+  test_render "cardname/edit/:id"       , :users=>{ :anon=>200, :joe_user=>200 }
   
 =begin  
 

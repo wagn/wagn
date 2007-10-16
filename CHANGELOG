@@ -1,3 +1,21 @@
+=== 0.8.2 (October 16, 2007)
+* fix weird priority spec failure
+* update changelog
+* fix conflict in card action test
+* put h2 back in option header
+* migration fix -- permisions tweak
+* fixed migrations in mysql / sqlite
+* permissions fix
+* image fixes, sample wagn, and the readmission of underscores
+* account creation when user cards are templated
+* support for website cardtype (no migration)
+* support for website cardtype (no migration)
+* fix requesting_javascript? test
+* only clean content if it has been changed
+* add test ..create_account_from_invitation_request_when_user_hard_templated
+* rename website to iframe
+* bump version to 0.8.2
+
 === 0.8.1 (October 4, 2007)
 * fixed up cascading link changes upon renaming
 * commented dumb warn

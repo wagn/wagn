@@ -469,6 +469,9 @@ module Card
     # Find / Wql --------------------------------------------------------------   
             
     class << self 
+      def search( spec ) 
+        Card.find_by_sql(Wql2::CardSpec.new(spec).to_sql)
+      end
       
       def find_by_name( name ) 
         self.find_by_key_and_trash( name.to_key, false )

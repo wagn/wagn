@@ -9,6 +9,11 @@ unless defined? Wagn::Version
         def to_s
           [Major, Minor, Tiny].join('.')
         end
+        
+        def minor
+          [Major, Minor].join('.')
+        end
+        
         alias :to_str :to_s
       end
     end

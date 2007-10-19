@@ -51,7 +51,7 @@ module ExceptionSystem
     card ||= @card    
     stuff = %{Problem with card #{card.name}:<br>} + card.errors.full_messages.join(',')       
     # getNextElement() will crawl up nested slots until it finds one with a notice div
-    if requesting_javascript?
+    if requesting_javascript? && requesting_ajax?
       render :update do |page|
          page << %{notice = getNextElement(#{slot.selector},'notice');\n}
         page << %{notice.update('#{escape_javascript(stuff)}')}

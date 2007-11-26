@@ -70,7 +70,7 @@ end
 Session = CGI::Session::ActiveRecordStore.session_class
 
 # configure fragment store
-ActionController::Base.fragment_cache_store = :memory_store
+ActionController::Base.fragment_cache_store = :file_store, "#{RAILS_ROOT}/cache" #:memory_store
  
 # force loading of the system model. FIXME: this seems like a terrible way to do this
 System

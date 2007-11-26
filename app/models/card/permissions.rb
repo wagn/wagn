@@ -1,5 +1,5 @@
-module Card                         
-  class PermissionDenied < Wagn::PermissionDenied
+module CardLib                        
+  class ::Card::PermissionDenied < Wagn::PermissionDenied
     attr_reader :card
     def initialize(card)
       @card = card
@@ -32,7 +32,7 @@ module Card
     
     def ok!(operation)
       if !ok?(operation)
-        raise PermissionDenied.new(self)
+        raise ::Card::PermissionDenied.new(self)
       end
       true
     end
@@ -55,7 +55,7 @@ module Card
         save_without_permissions(perform_checking)
       else
         # Decided I want to raise errors more..
-        raise PermissionDenied.new(self)
+        raise ::Card::PermissionDenied.new(self)
         #false
       end
     end 
@@ -64,7 +64,7 @@ module Card
       if approved?
         save_without_permissions!
       else
-        raise PermissionDenied.new(self)
+        raise ::Card::PermissionDenied.new(self)
       end
     end
  
@@ -121,7 +121,8 @@ module Card
     
 #    def approve_create_card_of_same_type
 #      cardtype.ok? :create
-#    end
+#    end                                                    
+
     def approve_create_me
       ct = self.cardtype
       unless ct.ok? :create
@@ -134,7 +135,7 @@ module Card
       # otherwise when looking at cardtype card we're asking for permissions
       # to create a card of that type
       raise "must be a cardtype card" unless self.type == 'Cardtype'
-      unless self.lets_user :create
+      unless self.lets_user(:create)
         deny_because "you don't have permission to create #{self.name} cards"
       end
     end
@@ -164,8 +165,8 @@ module Card
     def approve_task(operation, verb=nil) #read, edit, comment, delete
       verb ||= operation.to_s
       testee = template? ? trunk : self
-      unless testee.lets_user operation
-         #   warn "cuurent user: #{::User.current_user.login}"
+      unless testee.lets_user( operation )
+         #   warn "curent user: #{::User.current_user.login}"
         deny_because "you don't have permission to #{verb} this card"
       end
     end
@@ -216,7 +217,7 @@ module Card
     def self.included(base)   
       super
       base.extend(ClassMethods)
-      base.class_eval do  
+      base.class_eval do           
         attr_accessor :operation_approved 
         alias_method_chain :destroy, :permissions  
         alias_method_chain :destroy!, :permissions  

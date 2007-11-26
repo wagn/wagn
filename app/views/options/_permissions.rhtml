@@ -2,7 +2,7 @@
 <% tasks << :comment unless card.hard_content_template %>
 <% tasks << :create if card.template_for_cardtype? %>
 
-<%= slot_option_header 'Permissions' %>
+<%= slot.option_header 'Permissions' %>
 
 <% for task in tasks %>
   <%# warn "task : #{task} for card #{card.name}"%>

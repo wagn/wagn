@@ -1,4 +1,4 @@
-<% slot_for(@card,@context,'cardtype') do |slot| %>
+<% get_slot.wrap('cardtype') do |slot| %>
 	<span class="cardtype">
 	  <%= link_to_page( Card.cardtypes[@card.type] ) %>
 	</span>

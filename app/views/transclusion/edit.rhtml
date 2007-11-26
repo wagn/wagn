@@ -1,17 +1,22 @@
-<% slot_for(card, context, 'transclusion') do |slot| %>  
+<% get_slot.wrap('transclusion', @wrap) do |slot| %>  
+
+  <% if inst = (card.new_record? ? card.new_instructions : card.edit_instructions) %>
+     <%= render( :partial=> '/card/instructions', :locals=>{ :instructions=> inst } ) %>
+   <% end %>
+
 	<div class="editor edit-area">
 		<span class="title"><%= less_fancy_title(card) %></span>
 	  <% form_remote_for :card, card, :url=>slot.url_for("transclusion/update"), 
 				 :html=>{ :id=>slot.editor_id(:form), :class=>'editor' } do |form| %>
 			
-			<% if card.hard_content_template %>
+			<% if card.hard_content_template %>  
 			  <% slot.form = form %>
-			  <%= slot.render( card, mode='edit' ) %>
+			  <%= slot.render :raw_content %>
 			<% else %>
 				<%= slot.content_field(form) %>
 			<% end %>
 		
-
+      <%= hidden_field_tag :requested_view, params[:requested_view] %>
 			<%= button_to_function "Save", slot.save_function %>
 			<%= button_to_remote 'Cancel', :url=>slot.url_for('transclusion/view'),
 						:update=> slot.id, :before=>slot.cancel_function %> 

@@ -1,7 +1,9 @@
-<span id="logo-card" class="card-slot">
-  <% if File.exists?("#{RAILS_ROOT}/public/images/logo.gif") %>
-    <a href="/"><img border=0 src="/images/logo.gif"></a>
-  <% else%>
-    <a href="/"><%= site_name %></a>
-  <% end %>
-</span>
+<div id="logo">
+  <span id="logo-card" class="card-slot">
+    <% if File.exists?("#{RAILS_ROOT}/public/images/logo.gif") %>
+      <a href="/"><img border=0 src="/images/logo.gif"></a>
+    <% else%>
+      <a href="/"><%= site_name %></a>
+    <% end %>
+  </span>
+</div>

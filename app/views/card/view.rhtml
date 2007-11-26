@@ -1,2 +1,1 @@
-<%= render :partial=>'card/view', :locals=>{ :card=>@card, :context=>@context, :action=>'view' } %>
-<%= javascript_tag "setupCardViewStuff()" %>
+<%= get_slot.render(:view, :wrap=>!request.xhr?, :add_javascript=>true ) %>

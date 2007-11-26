@@ -8,7 +8,7 @@ module Cardname
   class << self
     def escape(uri)
       #gsub(/\s+\+\s+/,'+')
-      uri.gsub(' ','_').gsub('+',' ')
+      uri.gsub(' ','_') #.gsub('+',' ')
     end
 
     def unescape(uri)

@@ -1,6 +1,6 @@
 <% hard_template = card.hard_content_template %>
 
-<% slot_for(card, context, 'edit') do |slot| %>  
+<% get_slot.wrap( 'edit') do |slot| %>  
 	<%#= slot.menu %>
 	<style><%= ".cardid-#{card.id} .edit-area .title-#{css_name(card.name)} { display: none; }" %></style>
   
@@ -24,8 +24,12 @@
 		</tr>
 	</table>
 
+  <% if inst = card.edit_instructions %>
+    <%= render( :partial=> 'instructions', :locals=>{ :instructions=> inst } ) %>
+  <% end %>
+
 	<% if hard_template and hard_template.ok? :read %>
-  	<div class="content help">
+  	<div class="content instructions">
     	The format of this card (including any text that's not editable below) is governed by a "hard"  
   		<%= link_to_page 'template', hard_template.name %> connected to the <%= link_to_page hard_template.trunk.name %> card.  
   	</div>
@@ -37,8 +41,8 @@
 				:html=>{ :class=>'form editor' } do |form| %>
 				                             
 			<% if card.hard_content_template %>
-			  <% slot.form = form %>
-			  <%= slot.render( card, mode='edit' ) %><br/>
+			  <% slot.form = form %> 
+			  <%= slot.render :edit, :add_javascript=>true %>
 			<% else %>
 				<%= slot.content_field(form) %>
 			<% end %>

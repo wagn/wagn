@@ -1,45 +1,41 @@
-<% slot_for(@card, @context, @action, :render_slot=>(render_slot||=nil)) do |slot| %>    
-	<% if @wadget %> 
-	  <div class="card-header">
-	    <%= page_icon(card) %>  
-  		<div class="title"> 
-  		  <% arrow = %{<img class="close-arrow" src="/images/arrow_down.png">} %>
-  	    <%= link_to_function arrow + less_fancy_title(card), 
-  						"Wagn.paragraph_to_line(getSlotSpan(this))", :class=>"close-link" %> 
+<% if @wadget %> 
+  <div class="card-header">
+    <%= page_icon(card) %>  
+ 		<div class="title"> 
+ 		  <% arrow = %{<img class="close-arrow" src="/images/arrow_down.png">} %>
+ 	    <%= link_to_function arrow + less_fancy_title(card), 
+ 						"Wagn.paragraph_to_line(getSlotSpan(this))", :class=>"close-link" %> 
 
-  		  <% arrow = %{<img class="open-arrow" src="/images/arrow_right.png" />} %>
-  			<%= link_to_function arrow+less_fancy_title(card), 
-  					  "Wagn.line_to_paragraph(getSlotSpan(this))", :class=>"open-link" %>
-  	  </div>
-  	</div>
+ 		  <% arrow = %{<img class="open-arrow" src="/images/arrow_right.png" />} %>
+ 			<%= link_to_function arrow+less_fancy_title(card), 
+ 					  "Wagn.line_to_paragraph(getSlotSpan(this))", :class=>"open-link" %>
+ 	  </div>
+ 	</div>
 
-	  <% unless card.type=='Basic' %>
-	    <span class="cardtype">
-	      <%= link_to_page( Card.cardtypes[card.type] ) %>
-	    </span>
-	  <% end %>
-	<% else %>
-		<%= slot.header %>  
-	<% end %>
-	
-	
-	
-	<%= slot.wrap_content( slot.rendered_content(card) ) %>
-	
-	<%= slot.notice %>	
-	<% if card.ok?(:comment) %>
-    <div class="comment-box">
-    <% form_remote_for :card, card, :url=>slot.url_for('card/comment') do |f| %>
-      <label>Comment:</label><br/> 
-      <%= f.text_area :comment, :rows=>3 %><br/>
-		  <% unless current_user %>
-			  <% card.comment_author=session[:comment_author] or card.comment_author = "Anonymous" %>
-		    <label>My Name is:</label>
-			  <%= f.text_field :comment_author, {'onClick'=>"this.value=''" } %> 
-		  <% end %>
-		  <input type="submit" value="Comment"/>
-		<% end %>
-    </div>
+  <% unless card.type=='Basic' %>
+    <span class="cardtype">
+      <%= link_to_page( Card.cardtypes[card.type] ) %>
+    </span>
   <% end %>
-	<%= slot.footer %>
+<% elsif slot.action!='nude' %><%# FIXME: variable from slot.rb?  %>
+	<%= slot.header %>  
 <% end %>
+
+<%= slot.wrap_content slot.render(:expanded_view_content) %>
+
+<%= slot.notice %>	
+<% if card.ok?(:comment) %>
+   <div class="comment-box">
+   <% form_remote_for :card, card, :url=>slot.url_for('card/comment') do |f| %>
+     <label>Comment:</label><br/> 
+     <%= f.text_area :comment, :rows=>3 %><br/>
+	  <% unless current_user %>
+		  <% card.comment_author=session[:comment_author] or card.comment_author = "Anonymous" %>
+	    <label>My Name is:</label>
+		  <%= f.text_field :comment_author, {'onClick'=>"this.value=''" } %> 
+	  <% end %>
+	  <input type="submit" value="Comment"/>
+	<% end %>
+   </div>
+ <% end %>
+<%= slot.action=='nude' ? "" : slot.footer %>

@@ -1,29 +1,35 @@
-<% slot_for(card, context, nil) do |slot| %>
+<% get_slot.wrap do |slot| %>
+
 	<%= slot.header unless @no_slot_header %>  
-	  <div id="denied" class="content">
-	    <p>Sorry <%= User.current_user.cardname %>, you don't have permission to edit <%= less_fancy_title(@card) %> 
-		<% unless @no_slot_header %>
-			(See the <%= slot.link_to_menu_action('options') %> tab to learn more).
-		<% end %></p>
-	    <br/>
-	    
-	    <% if !logged_in? %>
-	      <p>If you have an account, now would be a lovely time to <%= link_to_remote("Sign In", :url=>'/account/login', :update=>'javascript:getOuterSlot(this)') %>.</p>
-	      <br/>
-	      <p>If you don't but would like one, have a ponder at <%= link_to 'Requesting an Invitation', '/account/invitation_request' %>.</p>
-	    <% end %>
+    
+    <div class="headroom">
+      <h1>Regrettably...</h1>
+    </div>
+	  <div id="denied" class="instruction content">
+	    <p>
+  	    Sorry,
+        <% if User.current_user.anonymous? %>
+          anonymous (not signed in) users
+        <% else %>
+  	      <%= User.current_user.cardname %>, you 
+  	    <% end %>
+  	    don't have permission to edit <%= less_fancy_title(@card) %> 
+    		<% unless @no_slot_header %>
+    			(See the <%= slot.link_to_menu_action('options') %> tab to learn more).
+    		<% end %>
+    	</p>
+	  </div>
+    <%= render :partial=>'/account/sign_in_or_up', :locals=>{ :inplace=>true } %>
 
+	  <% if @no_slot_header %>	
+			<p><%= link_to_function 'Cancel', %{getSlotSpan(this).replace('')} %></p>
+		<% end %>
 
-		  <% if @no_slot_header %>	
-		    <br/>
-				<p><%= link_to_function 'Cancel', %{getSlotSpan(this).replace('')} %></p>
-			<% end %>
-
-	  </div>             
 
 	
   <%= slot.footer unless @no_slot_header %>
+
 <% end %>
 
 <%# FIXME: this is duplicated effort in lots of cases %>
-<%= javascript_tag "setupCardViewStuff()" %>
+<%= javascript_tag "setupLinksAndDoubleClicks()" %>

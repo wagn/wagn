@@ -13,7 +13,8 @@ module MigrationHelper
           card.extension.class_name=codename
           card.extension.permissions =  default_permissions
           card.extension.save!
-        else
+        else                            
+          Card.skip_index_updates = true
           ct = Card::Cardtype.create! :name=>cardname, :codename=>codename, :permissions=> default_permissions
         end
       end

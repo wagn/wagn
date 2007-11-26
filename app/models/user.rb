@@ -96,6 +96,10 @@ class User < ActiveRecord::Base
     status == 'active'
   end
 
+  def anonymous?
+    login == 'anon'
+  end
+
   def authenticated?(password) 
     crypted_password == encrypt(password) and active?
   end

@@ -1,0 +1,26 @@
+<%- inplace ||= false %>
+
+<% if !logged_in? %>
+  <div class="headroom">
+    <h2>Sign in?</h2>
+    <div class="instruction">
+      <p>
+        If you have an account, you can
+          <% if inplace %>
+             <%= link_to_remote("Sign In", :url=>'/account/login', :update=>'javascript:getOuterSlot(this)') %>.
+          <% else %>
+            <%= link_to "Sign In", '/account/login' %>.  
+          <% end %>
+        Maybe you have permission after all.
+      </p>
+    </div>
+
+    <h2>Sign up?</h2>
+    <div class="instruction">
+      <p>
+        If you don't have an account but would like one, you can 
+        <%= link_to 'Request an Invitation', '/account/invitation_request' %>.
+      </p>
+    </div>
+  </div>
+<% end %>

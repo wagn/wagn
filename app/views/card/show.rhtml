@@ -3,15 +3,9 @@
 .paragraph .title-<%= css_name(@card.name) %>, .paragraph .link-<%= css_name(@card.name) %> { font-weight: normal; }
 </style>
 
-<div id="show-card">
-  <% @title = @card.name %>
-	<%= render( :partial=>'card/view', :locals=>{ 
-		:card => @card,
-		:context => 'main:1',
-		:action => 'view',
-		}) 
-  %>
 
+<%= params[:view]=='content' ? '<div>' : '' %>
+  <% @title = @card.name %>  
+	<%= get_slot.render(:view, :wrap=>!request.xhr?, :add_javascript=>true ) %>
 </div>
 
-<%= related %>

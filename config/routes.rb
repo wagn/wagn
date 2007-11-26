@@ -11,8 +11,9 @@ ActionController::Routing::Routes.draw do |map|
   #DEPRECATED
   map.connect 'wiki/:id.:format', :controller => 'card', :action=>'show', :requirements=>{ :id=>/.*/, :format=>FORMAT_PATTERN }
   map.connect 'wiki/:id', :controller => 'card', :action=>'show', :requirements=>{ :id=>/.*/}
+  #/DEPRECATED   
 
-  map.connect 'recent', :controller => 'block', :action=>'recent'
+  map.connect 'recent', :controller => 'card', :action=>'show', :id=>'*recent_changes', :view=>'content'
 
   map.connect ':controller/:action/:id/:attribute' 
 

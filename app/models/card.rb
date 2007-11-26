@@ -16,19 +16,21 @@ module Card
 end
   
 
-
+require 'json'
 require_dependency 'card/base' 
 require_dependency 'card/tracked_attributes'
 require_dependency 'card/templating'
 require_dependency 'card/defaults' 
 require_dependency 'card/permissions'
+require_dependency 'card/search'
 
 
 Card::Base.class_eval do       
-  include Card::TrackedAttributes
-  include Card::Templating
-  include Card::Defaults
-  include Card::Permissions                               
+  include CardLib::TrackedAttributes
+  include CardLib::Templating
+  include CardLib::Defaults
+  include CardLib::Permissions                               
+  include CardLib::Search
 end
  
 
@@ -80,6 +82,7 @@ module Card
 
   class << self
     def new(args={})
+      args=args.stringify_keys unless args.nil?
       get_class_from_args(args).new(args)
     end
     

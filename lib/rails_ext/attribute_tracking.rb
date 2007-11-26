@@ -7,7 +7,16 @@ module ActiveRecord
         @base, @updates, @orig = base, {}, {}
       end
       
-      def add(attribute, new_value)
+      def add(attribute, new_value) 
+        #warn "ADD #{attribute} #{new_value}" 
+        attribute=attribute.to_s
+        if attribute=="content" && new_value=="balogna"
+          if @woop==1
+            raise("WOAH THERE CPWBODY")
+          else 
+            @woop ||= 1
+          end
+        end
         @updates[attribute.to_s] = new_value
       end
                    
@@ -23,13 +32,16 @@ module ActiveRecord
         if attr_names.empty?
           @updates = {}
         else
-          attr_names.each do |attr|
+          attr_names.each do |attr|    
+            #puts "DELETNG: #{attr}"
             @updates.delete(attr.to_s)
+            #puts "ATTRS AFTER DEL: #{@updates.inspect}"
           end
         end
       end
 
       def for?(attr)
+        #puts "ATTRS AT CHECK #{attr}: #{@updates.inspect}"
         @updates.has_key?(attr.to_s)
       end
        
@@ -69,6 +81,7 @@ module ActiveRecord
 
           class_eval %{
             def #{field}_with_tracking=(val)
+               return if (!self.new_record? && self.#{field} == val)
                updates.add :#{field}, val
             end
             alias_method_chain :#{field}=, :tracking

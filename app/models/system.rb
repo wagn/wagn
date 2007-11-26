@@ -12,6 +12,8 @@ class System < ActiveRecord::Base
     :role_tasks, :pagesize,                 
     :enable_ruby_cards,
     :enable_server_cards,
+    :enable_postgres_fulltext,
+    :postgres_src_dir,
     :request, :debug_wql
     
   self.pagesize = 20

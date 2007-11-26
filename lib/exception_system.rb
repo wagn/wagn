@@ -47,13 +47,22 @@ module ExceptionSystem
     end
   end
 
+  def requesting_javascript?
+    @request_type!='html'
+  end
+  
+  def requesting_ajax?
+    request.xhr?
+  end
+  
+
   def render_card_errors(card=nil)
     card ||= @card    
     stuff = %{Problem with card #{card.name}:<br>} + card.errors.full_messages.join(',')       
     # getNextElement() will crawl up nested slots until it finds one with a notice div
     if requesting_javascript? && requesting_ajax?
       render :update do |page|
-         page << %{notice = getNextElement(#{slot.selector},'notice');\n}
+        page << %{notice = getNextElement(#{get_slot.selector},'notice');\n}
         page << %{notice.update('#{escape_javascript(stuff)}')}
       end
     elsif requesting_ajax?

@@ -1,6 +1,4 @@
 <% sidebar_cards.each_with_index do |card,index| %>  
-  <% state = card.attribute_card('*closed') ? 'line' : 'view' %>
-	<% with_slot(card, "sidebar:#{index}", state) do |slot| %>  
-		<%= render :partial=>"card/#{state}", :locals=>{ :card=>card, :render_slot=>true } %>
-	<% end %>
+  <% state = card.attribute_card('*closed') ? :line : :view %>
+	<%= get_slot(card).render(state) %>
 <% end %>

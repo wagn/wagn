@@ -1,6 +1,6 @@
 	
 <% if edit_user_context(card) == 'user' or System.ok? :administrate_users %>
-  <%= slot_option_header 'Account Details' %>
+  <%= slot.option_header 'Account Details' %>
   <% slot.option(
       :name=>"email", 
 			:help=>"email address for this user",

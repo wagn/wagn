@@ -1,6 +1,6 @@
 
 
-<%= slot.render(card) %>
+<%= slot.render :raw_content %>
                           
 <div class="invite-links help instruction">
 <p><strong><%= card.name %></strong> asked for an invitation on <%= format_date(card.created_at) %></p>

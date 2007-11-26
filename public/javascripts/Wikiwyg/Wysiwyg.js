@@ -186,13 +186,16 @@ proto.append_inline_style_element = function(style_string, head) {
 
 proto.should_link_stylesheet = function(style, head) {
     // FIXME: LWH hack - this skips all but a couple chose stylesheets
-    if (!style.href.match(/defaults|local/)) { return false; }
+    if (!style.href.match(/defaults|local\./)) { 
+      return false; 
+    }
+    warn("applying "+style.href);
 
     var media = style.media;
     var config = this.config;
     var media_text = media.mediaText ? media.mediaText : media;
     var use_parent =
-         ((!media_text || media_text == 'screen') &&
+         ((!media_text || media_text == 'screen' || media_text=='all') &&
          config.useParentStyles);
     var use_style = (media_text && (media_text == config.useStyleMedia));
     if (!use_parent && !use_style) // TODO: simplify

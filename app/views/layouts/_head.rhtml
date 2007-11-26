@@ -1,55 +1,59 @@
-<%# ------- Title -------------%>
+<head>
+  <%# ------- Title -------------%>
 
-<title> <%= System.site_name %>: 
-  <% if @title then %>
-    <%= @title %>
-  <% else %>
-    <%= controller.controller_name %> - <%= controller.action_name %>
+  <title> <%= System.site_name %>: 
+    <% if @title then %>
+      <%= @title %>
+    <% else %>
+      <%= controller.controller_name %> - <%= controller.action_name %>
+    <% end %>
+  </title>
+
+  <%# ------- Stylesheets -------------%>
+
+  <%= stylesheet_link_tag "page_and_block","defaults", "card","wikiwyg","window_themes/default","window_themes/mac_os_x", :media=>'all'
+  %>
+
+  <%= stylesheet_link_tag 'print', :media=>'print' %>
+
+
+  <%#= stylesheet_inline 'defaults' %>
+  <% if File.exists?("#{RAILS_ROOT}/public/stylesheets/local.css") %>
+    <%= stylesheet_link_tag 'local', :media=>'all' %>
   <% end %>
-</title>
-
-<%# ------- Stylesheets -------------%>
-
-<%= stylesheet_link_tag "page_and_block","card","wikiwyg","window_themes/default","window_themes/mac_os_x", :cache=>'all'
-%>
-
-<%#= stylesheet_inline 'defaults' %>
-<%# stylesheet_inline 'page_and_block' %>
-<%= stylesheet_link_tag 'defaults' %>
-<% if File.exists?("#{RAILS_ROOT}/public/stylesheets/local.css") %>
-  <%= stylesheet_link_tag 'local' %>
-<% end %>
 
 
-<%# ------- Javascript -------------%>
+  <%# ------- Javascript -------------%>
 
-<% if ENV['RAILS_ENV'] == 'development' %>
-	<%=	JAVASCRIPT_FILES.collect do |file|
-        javascript_include_tag file
-			end.join("\n")	
-	%>
-<% else %>    
-  <%= javascript_include_tag COMPRESSED_JS %>
-<% end %>
-
-
-<%# ------- Inline variables -------------%>
-
-<span style="display:none">
-  <% if current_user and current_user.card %>
-    <div id="user"> <%= current_user.card.name %></div>
+  <% if ENV['RAILS_ENV'] == 'development' %>
+  	<%=	JAVASCRIPT_FILES.collect do |file|
+          javascript_include_tag file
+  			end.join("\n")	
+  	%>
+  <% else %>    
+    <%= javascript_include_tag COMPRESSED_JS %>
   <% end %>
-  <div id="edit_html"><%=System.ok? 'edit_html' %></div>
-  <div id="popup">false</div> 
+
+
+  <%# ------- Inline variables -------------%>
+
+  <span style="display:none">
+    <% if current_user and current_user.card %>
+      <div id="user"> <%= current_user.card.name %></div>
+    <% end %>
+    <div id="edit_html"><%=System.ok? 'edit_html' %></div>
+    <div id="popup">false</div> 
 	
-	<% if @card %>
-		<%= javascript_tag %{
-			Wagn.main_card = {
-				id: '#{@card.id}',
-				type: '#{@card.type}',
-				codename: '#{@card.codename}'
-			}; 
-		} %>
-	<% end %>
+  	<% if @card %>
+  	<%# this is for lister, so in theory we don't need it no mo. %>
+  		<%#= javascript_tag %{
+  			Wagn.main_card = {
+  				id: '#{@card.id}',
+  				type: '#{@card.type}',
+  				codename: '#{@card.codename}'
+  			}; 
+  		} %>
+  	<% end %>
 
-</span>
+  </span>
+</head>

@@ -22,7 +22,7 @@ module Chunk
       }.merge(Hash.new_from_semicolon_attr_list(match_data[4]))
       @renderer = @content.renderer
       @card = @content.card or raise "No Card in Transclude Chunk!!"
-      @unmask_text = get_unmask_text_avoiding_recursion_loops
+      @unmask_text = @text #get_unmask_text_avoiding_recursion_loops
     end
   
     private
@@ -49,7 +49,7 @@ module Chunk
 #      end
       
       card = refcard ? refcard : Card.new( :name=>refcard_name )
-      result = @renderer.slot.render_transclusion(card, @options)
+      result = @renderer.slot.process_transclusion(card, @options)
       if WikiContent===result
         @content.merge_chunks(result) 
         result = result.pre_rendered

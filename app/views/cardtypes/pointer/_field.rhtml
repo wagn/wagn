@@ -1,0 +1,3 @@
+<li id="<%= eid %>-pointer-li-<%= index %>" class="pointer-li">
+<%= text_field_tag "pointer[#{index}]", link, :class=>'pointer-text'  %>
+<%= link_to_function 'X', "$('#{eid}-pointer-li-#{index}').remove()", :class=>'delete' %>

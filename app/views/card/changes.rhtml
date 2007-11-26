@@ -1,4 +1,4 @@
-<% slot_for(@card, @context, :changes) do |slot| %>
+<% get_slot.wrap(:changes) do |slot| %>
 	<%= slot.header unless @no_changes_header %>
 	<div class="revision-header">
 	  <span class="revision-title"><%= @revision.title %></span> 
@@ -28,7 +28,7 @@
 	  <% if @show_diff and @previous_revision %>
 	    <%= slot.render_diff( @card, @previous_revision.content, @revision.content ) %>
 	  <% else %>
-	    <%= slot.render(@card, 'view', :content=>@revision.content) %>
+	    <%= slot.render :raw_content, :content=>@revision.content %>
 	  <% end %>
 	</div>
 

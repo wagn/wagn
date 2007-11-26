@@ -1,0 +1,18 @@
+<%- eid = slot.context %>
+<%= slot.form.hidden_field :content, :id=>"#{eid}-hidden-content" %>
+<ul id="<%=eid%>-ul" class="pointer">
+  <% card.pointees.each_with_index do |link, index| %>
+    <%= render :partial=>'/cardtypes/pointer/field', :locals=>{ :eid=>eid, :link=>link, :index=>index } %>
+  <% end %>
+  <li id="<%=eid%>-add">
+  <%= link_to_remote 'Add card', :url=>"javascript:urlForAddField('#{eid}')", :update=>"#{eid}-add", :position=>:before %>
+</ul>
+
+<%= slot.editor_hooks :save=>%{
+  slot = getSlotFromContext('#{eid}');
+  inputs = getSlotElements(slot, 'pointer-text');
+  $('#{eid}-hidden-content').value = inputs.map(
+    function(x){ return (x.value.strip() == '') ? '' : '[[' + x.value + ']]'}
+  ).join("\\n");
+  return true;
+} %>

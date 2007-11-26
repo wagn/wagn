@@ -51,7 +51,7 @@ unless defined? TEST_ROOT
     def self.common_fixtures
       #fixtures :system, :users, :tags, :tag_revisions, :cards, :revisions, :roles, :cardtypes
       # FIXME: this burns me every time we add a table the tests break and I dunno why...
-      fixtures :cards, :cardtypes, :revisions, :roles, :roles_users, :system, :tag_revisions, :tags, :users, :settings, :permissions
+      #fixtures :cards, :cardtypes, :revisions, :roles, :roles_users, :system, :tag_revisions, :tags, :users, :settings, :permissions
     end
     
     include WagnTestHelper

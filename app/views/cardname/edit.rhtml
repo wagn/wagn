@@ -1,6 +1,6 @@
 <% @old_card ||= @card %>
 
-<% slot_for(@card,@context,'name') do |slot| %>
+<% get_slot.wrap('name') do |slot| %>
  	<div class="name-editor edit-area">
  	  <h2>Edit Name</h2>  
 		<% form_remote_for :card, @card, :url=>slot.url_for('cardname/update'), 
@@ -14,25 +14,35 @@
 			</p>
 							
 			<% if @confirm==true %>
+			  
 			  <% if dependents = @card.dependents and !dependents.empty? %>
-			    <p>This will change the names of these cards, too:</p>
-			    <ul>
-			      <% dependents.map do |dep| %>
-			        <li><%= link_to_page formal_title(dep), dep.name %>
-			      <% end. join ', ' %>
-			    </ul>
+			    <div class="instruction">
+			      <p>This will change the names of these cards, too:</p>
+	  		    <ul>
+  			      <% dependents.map do |dep| %>
+  			        <li><%= link_to_page formal_title(dep), dep.name %>
+  			      <% end. join ', ' %>
+	  		    </ul>
+	  		  </div>
 			  <% end %>          
 
 			  <% if children = @card.link_in_cards and !children.empty? %>
-			    <p>These cards are linked to from the following cards:</p>
-			    <ul>
-			      <% children.map do |child| %>
-			        <li><%= link_to_page formal_title(child), child.name %>
-			      <% end. join ', ' %>
-			    </ul>
-			    Would you like to 
-			    <p><%= f.radio_button :update_link_ins, true %>Revise all these cards with the new link
-			    <%= f.radio_button :update_link_ins, false %>Let the links be broken</p>
+			    <div class="headroom">
+			      <h2>Links to <%= @old_card.name %></h2>
+			    </div>
+			    <div class="instruction">
+  			    <p>Renaming will break links on the following cards unless they're updated:</p>
+  			    <ul>
+  			      <% children.map do |child| %>
+  			        <li><%= link_to_page formal_title(child), child.name %>
+  			      <% end. join ', ' %>
+  			    </ul>
+  			    Would you like to 
+  			    <p>
+  			      <%= f.radio_button :update_link_ins, true %>Update links on all these cards with the new name
+  			      <%= f.radio_button :update_link_ins, false %>Let the links be broken (keep them as they are)
+  			    </p>
+  			  </div>
 			  <% end %>
 			  <%= f.hidden_field 'confirm_rename' %> 
 			<% end %>

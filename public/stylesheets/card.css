@@ -76,12 +76,14 @@ a.current, a:link.current {
 
 
 
+
 /* card footer-------------------------------*/
 
 .card-slot .card-footer,
 .card-slot .revision-navigation {
-   background: #eee;
-   padding: 0px 5px;
+  background: #eee;
+  padding: 0px 5px;
+  font-size: 9px;
 }
 .card-slot .card-footer {
    -moz-border-radius: 0px 0px 6px 6px;
@@ -326,7 +328,15 @@ a.current, a:link.current {
   display: block;
   padding: 0px 10px 10px 10px;
 }
-
+.card-slot .instruction {
+  border-left: 0px;
+  border-right: 0px;
+}
+.card-slot .headroom h1,
+.card-slot .headroom h2 {
+  margin-top: 10px;
+  padding: 6px;
+}
 
 
 
@@ -459,7 +469,9 @@ body.wagn .card-slot.line h2,
   -moz-border-radius: 0px;
   margin: 0px;
 }
-.card-slot .card-slot .card-footer,
+.card-slot .card-slot .card-footer {
+  -moz-border-radius: 0px;
+}
 .card-slot .card-slot .card-menu {
   display: none;
 }
@@ -494,6 +506,23 @@ body.wagn .card-slot.line h2,
   list-style-type: upper-alpha;
   padding-left: 25px 
 }
+
+/*-------------( Pointer )--------*/
+.card-slot .pointer input {
+  width: 60%;
+}
+.card-slot .pointer li {
+  list-style: none;
+}
+.card-slot .pointer .delete {
+  margin-left: 4px;
+  font-weight: bold;
+  color: #933;
+  font-size: 15px;
+}
+
+
+
 /*---------- comment-box -------------------------------------- */
 .card-slot .comment-box textarea { 
     width: 100%; 
@@ -574,6 +603,22 @@ body.wagn .card-slot.line h2,
   text-align: right;
 }
 
+/*--- connections --*/
 
-
-
+.new-connection {
+  text-align: center; 
+}
+.new-connection div {
+  margin-top: 5px;
+  margin-bottom: 15px
+}
+.card-slot .fat {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 10px 40px ;
+  display: block;
+  color: #600
+}
+.card-slot .add-form input {
+  margin: 1px 5px;
+}

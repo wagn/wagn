@@ -13,9 +13,6 @@ module WagBot
         warn "\nBEFORE chunk.card_name: #{chunk.card_name}  sub #{oldlink} -> #{newlink}" if Card::Base.debug
         chunk.card_name.gsub!(/#{Regexp.escape(oldlink)}/,newlink)
         warn "AFTER chunk.card_name: #{chunk.card_name} " if Card::Base.debug
-        #chunk.card_name = chunk.card_name.split(JOINT).plot(:strip).map do |name|
-        #  name == oldlink ? newlink : name
-        #end.join(JOINT)
         chunk.link_text = chunk.card_name if link_bound
       end
     end

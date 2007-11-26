@@ -1,7 +1,5 @@
 module Card
   class Basic < Base
-    before_save :clean_content
-
     def self.permission_dependent_cardtypes
       Card::Cardtype.find(:all).reject { |c| c.template_tsar? }
     end
@@ -49,9 +47,6 @@ module Card
     end
     
     private
-    def clean_content
-      self.content = WikiContent.clean_html!(content) if updates.for?(:content)
-    end
 
     def make_table_of_contents_list(items)
       list = items.collect do |i|

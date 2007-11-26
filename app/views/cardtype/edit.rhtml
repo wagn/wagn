@@ -1,4 +1,4 @@
-<% slot_for(@card,@context,'cardtype') do |slot| %>
+<% get_slot.wrap('cardtype') do |slot| %>
 	<div class="cardtype-editor edit-area">
 	  <h2>Edit Cardtype</h2>
    		<% form_remote_for :card, @card, :url=>slot.url_for('cardtype/update'), 

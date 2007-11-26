@@ -1,4 +1,4 @@
-<% slot_for(@card, @context, :options) do |slot| %>
+<% get_slot.wrap(:options) do |slot| %>
 	<%= slot.header %>
 	<%= slot.notice %>
   <% form_remote_for :card, @card, :url=>slot.url_for('options/update') do |form| %>
@@ -8,10 +8,18 @@
       <% if card.extension_type == 'User' %>
         <%= render :partial=>'options/user', :locals=>{:card=>@card, :slot=>slot, :extension=>card.extension } %>
         <%= render :partial=>'options/roles', :locals=>{:card=>@card, :slot=>slot, :extension=>card.extension } %>
-      <% end %>
+      <% end %>    
+
+			<%= slot.option_header 'Search' %>
+			<% if @card.type=='Search' %>
+				<% slot.option(:name=>"Auto Search", :help=>"should this card be made available as a connection with all cards?",
+				:editable=>true) do %>
+					<%= form.check_box :extension_type, {}, checked_value='SearchTemplate', unchecked_value='' %>
+				<% end %>
+			<% end %>
       <% if @card.template? %>
         <%= render :partial=>'options/template', :locals=>{:card=>@card, :slot=>slot, :form=>form} %>	      
-      <% end %>
+      <% end %> 
       <% if slot.options_need_save %>
   		  <tr><td colspan="3"><%= submit_tag 'Save Changes' %></td></tr>
   		<% end %>

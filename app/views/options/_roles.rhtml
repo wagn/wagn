@@ -8,7 +8,7 @@
 
 <%# form_remote_for :card, @card, :url=>{:controller=>'options', :action=>'update_roles', :id=>@card.id},
     :update => slot.id do |form| %>
-  <%= slot_option_header 'User Roles' %>
+  <%= slot.option_header 'User Roles' %>
     <% if System.ok? :assign_user_roles %>
       <% slot.option(option_args) do %>
         <%= hidden_field_tag :save_roles, true %>

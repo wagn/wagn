@@ -19,8 +19,9 @@ module Chunk
       (relative? and base_card) ? base_card.name + @card_name : @card_name
     end
     
-    def refcard
-      @refcard ||= Card.find_by_name( refcard_name.gsub(/_/,' ') )
+    def refcard 
+      name =  refcard_name.gsub(/_/,' ')   
+      @refcard ||= (Card.find_by_name( name ) || Card.find_phantom( name ))
     end
       
     def link_text 

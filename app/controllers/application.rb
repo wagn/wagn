@@ -13,14 +13,16 @@ class ApplicationController < ActionController::Base
   attr_accessor :notice
   before_filter :note_current_user, :load_context, :reset_class_caches, :save_request 
   helper_method :card, :cards, :renderer, :context, :load_cards, :previous_page, 
-    :edit_user_context, :sidebar_cards, :notice
+    :edit_user_context, :sidebar_cards, :notice, :slot, :url_for_page, :url_for_card
   
   ## This is a hack, but lots of stuff seems to break without it
+  #include WagnHelper 
+
   helper :wagn
   attr_accessor :slot
 
-  include WagnHelper 
   include ActionView::Helpers::TextHelper #FIXME: do we have to do this? its for strip_tags() in edit()
+   
   protected  
   def edit_ok
     @card.ok! :edit
@@ -40,22 +42,27 @@ class ApplicationController < ActionController::Base
 
   def load_card!
     load_card
-    if @card.new_record?
+    if @card.new_record? && !@card.phantom?
       raise Wagn::NotFound, "#{request.env['REQUEST_URI']} requires a card id"
     end
   end
 
-  def load_card        
+  def load_card_with_cache
+    load_card( cache=true )
+  end
+
+  def load_card( cache=false)                
     if params[:id] && params[:id] =~ /^\d+$/
       @card = Card.find(params[:id])
+      name = @card.name
     elsif params[:id]
-      @card = Card.find_by_name(params[:id]) 
-    else
-      @card = Card.new params[:card]
-      @card.send(:set_defaults)
+      name = Cardname.unescape( params[:id] )
+    else 
+      name=""
     end
-
-    @card.ok! :read        
+    # auto_load_card tells the cached card if any missing method is requested
+    # load the real card to respond.  
+    @card = CachedCard.get(name, @card, :cache=>cache, :card=>params[:card] )
   end
 
   def load_cards_from_params   
@@ -185,8 +192,14 @@ class ApplicationController < ActionController::Base
     request.post? and params[:card] and params[:card][:type]
   end
   
-  def ajax_or_not 
-    request.xhr? ? nil : 'application'
+  def ajax_or_not
+    request.xhr? ? nil : (
+      case params[:layout]
+        when nil; 'application'
+        when 'none'; nil
+        else params[:layout]
+      end
+    )
   end
   
   def log_viewing
@@ -213,12 +226,13 @@ class ApplicationController < ActionController::Base
     redirect_to_page url_for_previous_page, options
   end
   
-  def previous_page
-    
+  def previous_page    
+    # FIXME please
     name = ''
     session[:return_stack] ||= []
     session[:return_stack].reverse.each do |id|
-      if card = Card.find_by_id( id )
+      if ((id =~ /^\d+$/ && card = Card.find_by_id_and_trash( id, false )) || 
+            card=Card.find_by_key_and_trash( id, false ))
         name = card.name
         break
       end
@@ -259,14 +273,17 @@ class ApplicationController < ActionController::Base
     end    
   end   
        
-  def requesting_javascript?
-    @request_type!='html'
-  end
+  # Urls -----------------------------------------------------------------------
+  def url_for_page( title, opts={} )   
+    # shaved order of magnitude off footer rendering
+    # vs. url_for( :action=> .. )
+    "/wagn/#{Cardname.escape(title)}"
+  end  
   
-  def requesting_ajax?
-    request.xhr?
+  def url_for_card( options={} )
+    url_for options_for_card( options )
   end
-  
+
 
   def render_update_slot(stuff="", &proc )
     render_update_slot_element(name="", stuff,&proc)                   
@@ -277,11 +294,11 @@ class ApplicationController < ActionController::Base
   def render_update_slot_element(name,stuff="")
     render :update do |page|
       page.extend(WagnHelper::MyCrappyJavascriptHack) 
-      elem_code = "getSlotFromContext('#{slot.context}')"
+      elem_code = "getSlotFromContext('#{get_slot.context}')"
       unless name.empty?
         elem_code = "getSlotElement(#{elem_code}, '#{name}')"
       end
-      page.select_slot("$A([#{elem_code}])").each() do |target,index|
+      page.select_slot(elem_code).each() do |target,index|
         target.update(stuff) unless stuff.empty?
         yield(page, target) if block_given?
       end

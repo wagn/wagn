@@ -2,15 +2,20 @@ class CardController < ApplicationController
   helper :wagn, :card 
   layout :ajax_or_not
   cache_sweeper :card_sweeper
-  before_filter :load_card!, :except => [ :test, :new, :create, :show, :index, :mine, :missing ]
+  before_filter :load_card!, :except => [ :auto_complete_for_card_name, :line, :view, :to_view, :test, :new, :create, :show, :index, :mine, :missing, :add_field ]
+  before_filter :load_card_with_cache, :only => [:line, :view, :to_view ]
 
   before_filter :edit_ok,   :only=>[ :update, :save_draft, :rollback, :save_draft] 
   before_filter :create_ok, :only=>[ :new, :create ]
   before_filter :remove_ok, :only=>[ :remove ]
   
-   
+  def auto_complete_for_card_name
+    @items = Card.search( :complete=>params[:card][:name], :limit=>8, :sort=>'alpha' )
+    render :inline => "<%= auto_complete_result @items, 'name' %>"
+  end
+     
   def test
-    render_update_slot_element('notice', 'gooooood stuff')
+    #render_update_slot_element('notice', 'gooooood stuff')
   end
                                                                 
   def changes
@@ -30,9 +35,9 @@ class CardController < ApplicationController
     end
     @comment.gsub! /\n/, '<br/>'
     @card.comment = "<hr>#{@comment}<br/><p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
-    @card.save!
-    view=render_to_string( :action=>'view')
-    render_update_slot render_to_string (:action=>'view')
+    @card.save!   
+    view = render_to_string(:action=>'view')
+    render_update_slot view
   end 
     
   def create         
@@ -48,9 +53,8 @@ class CardController < ApplicationController
   
   def create_template
     @card = Card.create! :name=>@card.name+"+*template"
-    render_update_slot_element 'template',  render_to_string( 
-      :partial=>'card/view', :locals=>{:card=>@card, :render_slot=>true}
-    ) 
+    render_update_slot_element 'template',  
+      render_to_string( :inline=>%{<%= get_slot.render(:view, :wrap=>true, :add_javascript=>true ) %>})
   end
   
   def edit 
@@ -64,7 +68,7 @@ class CardController < ApplicationController
   def index
     redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_name)
   end
-  
+ 
   def mine
     redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(User.current_user.card.name)
   end
@@ -97,11 +101,12 @@ class CardController < ApplicationController
       #dirty hack so we dont redirect to ourself after delete
       session[:return_stack].pop if ( session[:return_stack] and session[:return_stack].last==@card.id )
       render_update_slot do |page,target|
-        if @context=~/main/
+        if @context=="main:1"
           page.wagn.messenger.note "#{@card.name} removed. Redirecting to #{previous_page}..."
           page.redirect_to url_for_page(previous_page)
+          flash[:notice] =  "#{@card.name} removed"
         else 
-          target.replace ''
+          target.replace %{<div class="faint">#{@card.name} was just removed</div>}
           page.wagn.messenger.note( "#{@card.name} removed. ")  
         end
       end
@@ -130,31 +135,22 @@ class CardController < ApplicationController
     if (@card_name.nil? or @card_name.empty?) then    
       @card_name = System.site_name
     end             
+    @card = CachedCard.get(@card_name)
     
-    if (@card = Card.find_by_name( @card_name )) 
-      @card.ok! :read
-      remember_card @card
-      # FIXME: I'm sure this is broken now that i've refactored..                               
-      respond_to do |format|
-        format.html { render :action=>'show' }
-        format.json {
-          @wadget = true
-          render_jsonp :partial =>'card/view', 
-            :locals=>{ :card=> @card, :context=>"main",:action=>"view"}
-        }
-      end
-    else
+    if @card.new_record? && ! @card.phantom?
       action =  User.current_user.createable_cardtypes.empty? ? :missing : :new
-      redirect_to :action=>action, :params=>{ 'card[name]'=>@card_name }
+      return redirect_to( :action=>action, :params=>{ 'card[name]'=>@card_name } )
+    end                                                                                  
+    remember_card @card
+    # FIXME: I'm sure this is broken now that i've refactored..                               
+    respond_to do |format|
+      format.html { render :action=>'show' }
+      format.json {
+        @wadget = true
+        render_jsonp :partial =>'card/view', 
+          :locals=>{ :card=> @card, :context=>"main",:action=>"view"}
+      }
     end
-      # FIXME this logic is not right.  We should first check whether 
-      # the user has permission to create any cards (or, if specified, to create cards of this type)  If not, then we should 
-      # redirect unsigned in users to a page explaining that they've been linked to a card that doesn't
-      # exist and offering them the option to sign in or request an invitation.
-      # 
-      # Users who are logged in but lack permission to create cards under these conditions
-      # should have a similar explanation, but without the login options.
-      
   end
 
   def to_view
@@ -199,7 +195,11 @@ class CardController < ApplicationController
     return render_errors unless @card.errors.empty?
     render_update_slot render_to_string(:action=>'view')
   end
-
+          
+  def add_field # for pointers only
+    render :partial=>'cardtypes/pointer/field', :locals=>params
+  end
+                                                    
   def options
     @extension = card.extension
   end

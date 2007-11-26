@@ -4,9 +4,13 @@
   context ||= 'default'
   title   ||= ''
 -%>
-<% if !title.empty? %>
-  <label id="card-list-label"><%= title %></label>
-<% end %>
+<% if !title.empty? %> 
+	<% @title=title %>
+  <h1><%= title %></h1>
+<% end %>       
+
+<%= render :partial=>'/block/paging', :locals=>{:card=>card} %>
+
 
 <% if cards.empty? %>
   <div id="empty-card-list" class="card-slot line none"> 0 cards </div>
@@ -14,10 +18,8 @@
   <span id="empty-card-list"></span>
 <% end %>
                  
-<% cards.each_with_index do |card,index| %>
-	<% with_slot(card, "#{context}:#{index}", "line") do |slot| %>  
-		<%= render :partial=>'card/line', :locals=>{:card=>card, :render_slot=>true} %>
-	<% end %>
+<% cards.each do |card| %>
+	<%= get_slot(card).render(:line) %>
 <% end %>     
 
 <% if duplicates.length > 0 %>
@@ -28,7 +30,7 @@
 
 <span id="button-permission" style="display:none"><%= @button_permission %></span><%# FIXME-style%>
 
-<%= paging( cards ) %>
+<%#= paging( cards ) %>
 
 
 

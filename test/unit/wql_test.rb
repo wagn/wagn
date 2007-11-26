@@ -62,13 +62,13 @@ class WqlTest < Test::Unit::TestCase
   end
         
   def test_options  
-    assert_equal %w(A B C D E Five One Three Two), Card.find_by_wql_options({:tagging=>{:type=>"Basic"}}).plot(:name).sort
+    assert_equal %w(*template A B C D E Five One Three Two), Card.find_by_wql_options({:tagging=>{:type=>"Basic"}}).plot(:name).sort
     %w( A B C ).each do |c|  Card.find_by_name(c).destroy! end
-    assert_equal %w( Five One Three Two), Card.find_by_wql_options({:tagging=>{:type=>"Basic"}}).plot(:name).sort
+    assert_equal %w(*template Five One Three Two), Card.find_by_wql_options({:tagging=>{:type=>"Basic"}}).plot(:name).sort
   end  
   
   def test_tag_cloud
-    assert_equal %w(A B C D E Five One Three Two), Card.find_by_wql("cards tagging cards where type='Basic' order by cards_tagged").plot(:name).sort
+    assert_equal %w(*template A B C D E Five One Three Two), Card.find_by_wql("cards tagging cards where type='Basic' order by cards_tagged").plot(:name).sort
   end
 
 

@@ -62,7 +62,14 @@ class Card::RenameTest < Test::Unit::TestCase
     assert_rename card("A+B"), "A+B+T"  # re-uses the parent card: A+B
   end
   
-   
+  def test_reset_key
+    c = Card["Basic Card"]
+    c.name="banana card"
+    c.save!
+    c.key.should=='banana_card'
+    Card["Banana Card"].should_not==nil
+  end
+  
   def test_update_permissions
     
   end

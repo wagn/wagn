@@ -1,4 +1,5 @@
 /*---- page layout */
+
 #main-table {
   width: 100%;
   height: 95%;
@@ -33,13 +34,14 @@
   padding: 0px 4px;
 }
 #top-menu input {
-  font-size: 9;
+  font-size: 10;
   padding: 0px 3px;
   border: 1px solid #aaa;
   border-top: 0px;
   border-left: 0px;
   margin: 0px 8px;
   -moz-border-radius: 0px 0px 0px 0px;
+  width: 120px;
 }
 #logging {  /* signing in and out */
   position: absolute;
@@ -174,22 +176,7 @@
 }
 
 
-/*--- new connections --*/
 
-.new-connection {
-  text-align: center; 
-}
-.new-connection div {
-  margin-top: 5px;
-  margin-bottom: 15px
-}
-.new-connection .intro {
-  font-style: italic
-}
-#connections-workspace .cancel,
-#connections-workspace .save {
-  margin: 0px 15px;
-}
 
 /*----- alerts ----------*/
 
@@ -249,19 +236,31 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
   margin: 6px
 }
 
-.help {
+
+/* -- instructions ---*/
+
+.instruction {
+  border: 1px dashed #660;
+  margin: 3px 0px;
+}
+.help, .instruction {
+  background: #eec;
+  color: #440;
   font-style: italic;
-  background: #e9e9d5;
+  text-align: center;
 }
 .instruction div, 
 .instruction p {
   padding: 6px;
 }
-.card-slot .instruction h1,
-.card-slot .instruction h2 {
-  margin-top: 10px;
-  padding: 6px;
+.edit-instruction {
+  margin: 8px 0px;
 }
+#new-card .instruction {
+  margin-bottom: 20px;
+}
+
+
 /* --  miscellaneous --- */
 
 #maincontent { /* FIXME -- unhelpful name; what does this do?? */
@@ -339,6 +338,7 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
 .exception p {
   margin: 15px;
 }
+
 
 /*------- HACK FIXME------------*/
 

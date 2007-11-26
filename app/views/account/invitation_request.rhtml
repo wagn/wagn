@@ -8,9 +8,9 @@ context = 'invitation'
 
 <h1>Request an Invitation</h1>
 
-<% slot_for(card, 'invitation-request', nil) do |slot| %>
-  <div class="instruction">
-    <h2 class="content">About You</h2>
+<% get_slot(card).wrap('invitation-request', nil) do |slot| %>
+  <div class="content headroom">
+    <h2>About You</h2>
   </div>
 
   <% form_remote_for( :card, card, :url=>slot.url_for("card/create"), 

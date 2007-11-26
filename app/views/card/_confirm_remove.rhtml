@@ -1,4 +1,4 @@
-<% slot_for(@card, @context, 'remove') do |slot| %>  
+<% get_slot.wrap('remove') do |slot| %>  
   <%= slot.header %>
 	<% form_remote_for :card, card, :url=>slot.url_for("card/remove") do |f| %>
 	  <div class="content">

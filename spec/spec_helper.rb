@@ -10,14 +10,15 @@ Spec::Runner.configure do |config|
   config.fixture_path = RAILS_ROOT + '/test/fixtures'
   config.before(:each, :behaviour_type => :controller) do
     raise_controller_errors
-  end
+  end 
+  config.mock_with :flexmock
   
-  config.global_fixtures = :cards, :revisions, :cardtypes, :roles, :roles_users, :system, :users, :settings, :permissions
+  #config.global_fixtures = :cards, :revisions, :cardtypes, :roles, :roles_users, :system, :users, :settings, :permissions
 
   # You can declare fixtures for each behaviour like this:
   #   describe "...." do
   #     fixtures :table_a, :table_b
-  #
+  #                  
   # Alternatively, if you prefer to declare them only once, you can
   # do so here, like so ...
   #

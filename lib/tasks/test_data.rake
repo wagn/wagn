@@ -29,7 +29,7 @@ task :populate_template_database => :environment do
     #fail(" user permissions #{::Card::User.new.cardtype.permissions}" )
     # generic, shared user
     joe_user = ::User.create! :login=>"joe_user",:email=>'joe@user.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>User.find_by_login('admin')
-    joe_card = Card::User.create! :name=>"Joe User", :extension=>joe_user    
+    joe_card = Card::User.create! :name=>"Joe User", :extension=>joe_user, :content => "I'm number two"    
 
     bt = Card.find_by_name 'Basic+*template'
     fail "oh god #{bt.permissions.inspect}" if bt.permissions.empty?
@@ -42,7 +42,6 @@ task :populate_template_database => :environment do
     System.invite_request_alert_email = nil
     ron_request = Card::InvitationRequest.create! :name=>"Ron Request", :email=>"ron@request.com"  
     no_count = Card::User.create! :name=>"No Count", :content=>"I got not account"
-
 
     # CREATE A CARD OF EACH TYPE
     user_user = ::User.create! :login=>"sample_user",:email=>'sample@user.com', :status => 'active', :password=>'sample_pass', :password_confirmation=>'sample_pass', :invite_sender=>User.find_by_login('admin')
@@ -73,10 +72,7 @@ task :populate_template_database => :environment do
     c1 = Card.create! :name=>'c1'
     c2 = Card.create! :name=>'c2'
     c3 = Card.create! :name=>'c3'   
-    
-    
-    
-    
+
     # cards for rename_test
     # FIXME: could probably refactor these..
     z = Card.create! :name=>"Z", :content=>"I'm here to be referenced to"
@@ -157,8 +153,6 @@ task :generate_fixtures => :environment do
   puts ">>preparing test database"
   # go ahead and load the fixtures into the test database
   Rake::Task['db:test:prepare'].invoke
-  puts ">>loading test fixtures"
-  puts `env RAILS_ENV=test rake db:fixtures:load` 
 end
 
 task :extract_fixtures => :environment do

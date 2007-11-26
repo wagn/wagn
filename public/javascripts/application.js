@@ -245,36 +245,34 @@ Wagn.editors = $H({});
 onload = function() {
   Wagn.Messenger.flash();
   Wagn.runQueue(Wagn.onLoadQueue);
-  setupCardViewStuff();
-  getNewWindowLinks();
-  setupDoubleClickToEdit();
-  if (typeof(init_lister) != 'undefined') {
-    Wagn._lister = init_lister();
-    Wagn._lister.update();
-  }
+  setupLinksAndDoubleClicks();
 }
 
-setupCardViewStuff = function() {
+setupLinksAndDoubleClicks = function() {
   getNewWindowLinks();
-  setupDoubleClickToEdit();
+  setupDoubleClickToEdit();  
+  setupCreateOnClick();
 }                  
 
 
-setupDoubleClickToEdit=function(container) {
+setupCreateOnClick=function(container) {
   Element.getElementsByClassName( document, "createOnClick" ).each(function(el){
     el.onclick=function(event) { 
       if (Prototype.Browser.IE) { event = window.event } // shouldn't prototype take card of this?              
       element = Event.element(event);
-      card_name = getSlotSpan(element).getAttributeNode('cardname').value;
+      slot_span = getSlotSpan(element);
+      card_name = slot_span.getAttributeNode('cardname').value;  
       //console.log("create  " +card_name);
       new Ajax.Request('/transclusion/create?context='+getSlotContext(element), {
         asynchronous: true, evalScripts: true,
-        parameters: "card[name]="+encodeURIComponent(card_name)
+        parameters: "card[name]="+encodeURIComponent(card_name)+"&requested_view="+slot_span.getAttributeNode('view').value
       });
       Event.stop(event);
     }
   });
-                               
+}                  
+
+setupDoubleClickToEdit=function(container) {                               
   Element.getElementsByClassName( document, "editOnDoubleClick" ).each(function(el){
     el.ondblclick=function(event) {   
       if (Prototype.Browser.IE) { event = window.event } // shouldn't prototype take card of this?              
@@ -295,7 +293,7 @@ setupDoubleClickToEdit=function(container) {
     }
   });
 }        
-
+                                    
 
 getOuterSlot=function(element){
   var span = getSlotSpan(element);
@@ -322,8 +320,9 @@ getSlotFromContext=function(context){
     // FIXME: this is crazy.  must do better.
     element =  $A(document.getElementsByClassName('card-slot', element).concat(
                     document.getElementsByClassName('transcluded', element).concat(
-                      document.getElementsByClassName('createOnClick',element)
-                 ))).find(function(x){
+                      document.getElementsByClassName('nude-slot', element).concat(
+                        document.getElementsByClassName('createOnClick',element)
+                 )))).find(function(x){
       ss = getSlotSpan(x.parentNode);
       return (!ss || ss==element) && x.getAttributeNode('position').value==pos;
     });
@@ -332,12 +331,17 @@ getSlotFromContext=function(context){
 }
  
 // FIXME: should be tested to not return content from nested slots.
-getSlotElement=function(element,name){
+getSlotElements=function(element,name){
   var span = getSlotSpan(element);
   return $A(document.getElementsByClassName(name, span)).reject(function(x){
     return getSlotSpan(x)!=span;
-  })[0];
+  });
 }
+
+getSlotElement=function(element,name){
+  return getSlotElements(element,name)[0];
+}
+
 
 // crawls up nested slots looking for one with a <span class="name"..
 getNextElement=function(element, name){
@@ -389,4 +393,9 @@ getSlotSpan=function(element) {
 }
 
 
+urlForAddField=function(eid) {
+  //return 'foo'
+  index = getSlotElements(getSlotFromContext(eid), 'pointer-li').length;
+  return ('/card/add_field?index=' + index + '&eid=' + eid);
+}
 

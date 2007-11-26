@@ -25,7 +25,7 @@ class InvitationRequestTest < Test::Unit::TestCase
       }  
     end     
     url = ActionMailer::Base.deliveries[-1].body.match(/visit (http:\S+)/)[1]
-    assert_equal "http://#{System.host}#{@controller.url_for_page("Word Third")}", url
+    assert_equal "http://#{System.host}#{@controller.send(:url_for_page, "Word Third")}", url
   end
 
   def test_should_redirect_to_invitation_request_landing_card 

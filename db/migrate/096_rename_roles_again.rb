@@ -4,13 +4,13 @@ class RenameRolesAgain < ActiveRecord::Migration
 
     if c=Card['Anonymous User']
       c.name = 'Anyone'
-      c.confirm_rename
+      c.confirm_rename=true
       c.save!
     end
 
     if c=Card['Authenticated User']
       c.name = 'Anyone Signed In'
-      c.confirm_rename
+      c.confirm_rename=true
       c.save!
     end
   end

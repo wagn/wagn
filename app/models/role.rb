@@ -52,6 +52,10 @@ class Role < ActiveRecord::Base
     Role.find(:all).select{|r| self.subset_of?(r) }
   end
   
+  def anonymous?
+    codename == 'anon'
+  end
+  
   class << self
     def find_configurables
       @roles = Role.find :all, :conditions=>"codename <> 'admin'"

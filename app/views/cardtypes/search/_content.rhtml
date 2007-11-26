@@ -1,0 +1,23 @@
+<%
+	s = params[:s] || {}
+	s[:offset] = s[:offset] ? s[:offset].to_i : 0
+	s[:limit] = s[:limit] ? s[:limit].to_i : (@context=='main:1' ? 25 : 10)
+	
+  begin
+		card.search( s )  
+	rescue Exception=>e
+		error = e
+	end
+%>   
+
+<% if card.results.nil? %>
+	<%= "#{error.type}: #{error.message}" %><br/>
+	<%= card.content %>
+<% elsif card.results.length==0 %>
+  <span class="faint">Search returned no results</span>
+<% else %>           	
+
+	<% partial = (card.name=='*recent changes') ? 'recent_changes' : 'card_list' %>
+	<%= render :partial=>"block/#{partial}", :locals=> { :card=>card, 
+		:cards=>card.results, :context=>@context, :title=>(card.name=='*search' ? 'Search Results' : '') } %>
+<% end %>

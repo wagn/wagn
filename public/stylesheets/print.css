@@ -1,0 +1,7 @@
+
+#page-right, #alerts, #top-menu {
+  display: none;
+}
+#page-left {
+  width: 100%
+}

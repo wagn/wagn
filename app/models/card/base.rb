@@ -59,7 +59,8 @@ module Card
     #after_create :create_references_for_hard_templatees
     after_create :update_references_on_create
     before_destroy :update_references_on_destroy
-    after_save :cache_priority
+    after_save :cache_priority #, CardCache
+    #after_destroy CardCache
      
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
       :update_link_ins, :allow_type_change
@@ -68,7 +69,7 @@ module Card
       belongs_to :reader, :polymorphic=>true  
       
     protected    
-    
+
     def create_references_for_hard_templatees
       #Renderer.instance.render(self, self.content, update_references=true)
     end
@@ -80,7 +81,7 @@ module Card
       # but I don't understand why. it should still throw the error
       if simple? and name and name.junction? and name.valid_cardname?
         self.trunk = Card::Base.find_or_new :name=>name.parent_name
-        self.tag =   Card::Base.find_or_new :name=>name.tag_name 
+        self.tag =   Card::Base.find_or_new :name=>name.tag_name
       end
       self.name = trunk.name + JOINT + tag.name if junction?
       self.trash = false   
@@ -113,8 +114,13 @@ module Card
             trunk_reader, tag_reader = trunk.who_can(:read), tag.who_can(:read)
             if err=pieces_incompatible?(trunk,tag)
               self.errors.add(:permissions, err)
-            elsif (!anonymous?(trunk_reader) or !anonymous?(tag_reader))
-              if anonymous?(trunk_reader) or (authenticated?(trunk_reader) and !anonymous?(tag_reader))
+#<<<<<<< .working
+#            elsif (!anonymous?(trunk_reader) or !anonymous?(tag_reader))
+#              if anonymous?(trunk_reader) or (authenticated?(trunk_reader) and !anonymous?(tag_reader))
+#=======
+            elsif (!trunk_reader.anonymous? or !tag_reader.anonymous?)
+              if trunk_reader.anonymous? or (authenticated?(trunk_reader) and !tag_reader.anonymous?)
+#>>>>>>> .merge-right.r375
                 party = tag_reader
               else
                 party = trunk_reader
@@ -226,8 +232,9 @@ module Card
       
       def [](name) 
         #self.cache[name.to_s] ||= 
-        
-        self.find_by_name(name.to_s)
+        # DONT do find_phantom here-- it ends up happening all over the place--
+        # call it explicitly if that's what you want
+        self.find_by_name(name.to_s) #|| self.find_phantom(name.to_s)
         #self.find_by_name(name.to_s)
       end
              
@@ -363,17 +370,34 @@ module Card
     end
 
     # Dynamic Attributes ------------------------------------------------------        
+    # FIXME: this is such a hack.. 
+    def phantom?
+      false
+    end
+    
     def content
-      if !ok?(:read) 
-        return "#{name}: Sorry #{::User.current_user.card.name}, you don't have permission to view this card"
-      end
-      ok!(:read) # fixme-perm.  might need this, but it's breaking create...
+      new_record? ? ok!(:create_me) : ok!(:read) # fixme-perm.  might need this, but it's breaking create...
       if tmpl = hard_content_template and tmpl!=self
         tmpl.content
       else
         current_revision ? current_revision.content : ""
       end
     end   
+    
+    def edit_instructions #returns card
+      (tag && tag.attribute_card('*edit')) || cardtype.attribute_card('*edit')
+    end
+    
+    def new_instructions
+      [tag, cardtype].each do |tsar|
+        %w{ *new *edit}.each do |attr_card|
+          if tsar and instructions = tsar.attribute_card(attr_card)
+            return instructions
+          end
+        end
+      end
+      return nil
+    end
     
     def type
       read_attribute :type
@@ -403,11 +427,7 @@ module Card
     def connect( other_card, content='')
       Card.create :trunk=>self, :tag=>other_card, :content=>content
     end   
-     
-    def anonymous?(party)
-      party==::Role[:anon]
-    end
-    
+        
     def authenticated?(party)
       party==::Role[:auth]
     end
@@ -417,7 +437,7 @@ module Card
       right_reader = right.who_can(:read)
       #warn "pieces= #{left_reader.cardname} & #{right_reader.cardname}"
       [left_reader, right_reader].each do |r|
-        return false if anonymous?(r)
+        return false if r.anonymous?
         return false if authenticated?(r)
       end
       if left_reader != right_reader
@@ -429,11 +449,11 @@ module Card
     def piece_and_junction_incompatible?(piece, junction, override_weak_junction_ok=false)
       piece_reader = piece.who_can :read
       junction_reader = junction.who_can :read
-      return false if anonymous?(piece_reader)
+      return false if piece_reader.anonymous?
       if override_weak_junction_ok
-        return false if (anonymous?(junction_reader) or authenticated?(junction_reader))
+        return false if (junction_reader.anonymous? or authenticated?(junction_reader))
       end
-      return false if authenticated?(piece_reader) and !anonymous?(junction_reader)
+      return false if authenticated?(piece_reader) and !junction_reader.anonymous?
       if piece_reader != junction_reader
         #fixme need to get cardnames in here for better messages.
         return "incompatible read permissions: #{junction_reader.cardname} on #{junction.name} and  #{piece_reader.cardname} on #{piece.name}"
@@ -465,59 +485,6 @@ module Card
         self.errors.add attr, err
       end
     end
-    
-    # Find / Wql --------------------------------------------------------------   
-            
-    class << self 
-      def search( spec ) 
-        Card.find_by_sql(Wql2::CardSpec.new(spec).to_sql)
-      end
-      
-      def find_by_name( name ) 
-        self.find_by_key_and_trash( name.to_key, false )
-      end
-        
-      def find_by_wql_options( options={} )
-        wql = Wql.generate_query( options ) 
-        self.find_by_wql( wql )
-#      rescue Exception=>e
-#        raise Wagn::WqlError, "Error from wql options: #{options.inspect}\n#{e.message}"
-      end
-      
-      def find_by_wql( wql, options={})
-        warn "find_by_wql: #{wql} " if System.debug_wql 
-        ActiveRecord::Base.logger.info("WQL #{wql}")
-        statement = Wql::Parser.new.parse( wql )
-        cards = self.find_by_sql statement.to_s
-        statement.post_sql.each do |step|
-          case step
-            when 'pieces'; cards = cards.map{|c| c.pieces}.flatten
-          end
-        end
-        cards.each do |card|
-          card.cards_tagged = card.attributes['cards_tagged'] if card.attributes.has_key?('cards_tagged')
-        end 
-        
-        cards
-        #raise "#{e.inspect}"
-      #rescue Exception=>e
-      #  raise "WQL broke: #{wql}\n" + e.message
-      rescue Exception=>e
-        raise Wagn::WqlError, "Error from wql: #{wql}\n#{e.message}"
-      end
-      
-      # FIXME Hack to keep dynamic classes from breaking after application reload in development..
-      def find_with_rescue(*args)
-        find_without_rescue(*args)
-      rescue ActiveRecord::SubclassNotFound => e
-        subclass_name = e.message.match( /subclass: '(\w+)'/ )[1]
-        Card.const_get(subclass_name)
-        # try one more time :-)
-        find_without_rescue(*args)
-      end
-      alias_method_chain :find, :rescue
-    end
-    
        
     # Because of the way it chains methods, 'tracks' needs to come after
     # all the basic method definitions, and validations have to come after

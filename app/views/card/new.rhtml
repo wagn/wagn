@@ -1,54 +1,63 @@
-<% if !request.post? %>
-	<h1>New <%= @card.type != 'Basic' ? @card.cardtype.name : '' %> Card</h1>
+<div id="new-card">
 
-	<div class="instruction">
-	  <% if !@card.name.blank? %>
-	    <p>Currently, there is no card named "<strong><%= @card.name %></strong>", but you are most welcome to create it, you <strong>pioneer</strong>.</p>
-	  <% end %>
+  <% if !request.post? %>
+  	<h1>New <%= @card.type != 'Basic' ? @card.cardtype.name : '' %> Card</h1>
+
+  	<div class="instruction">
+  	  <% if !@card.name.blank? %>
+  	    <p>Currently, there is no card named "<strong><%= @card.name %></strong>", but you are most welcome to create it.</p>
+  	  <% end %>
   
-	  <p>Creating a new card is easy: you just need a name, a type, and -- if you like -- some content.  Changing the cardtype will change the kind of content you can enter.</p>
+  	  <p>Creating a new card is easy: you just need a name.  Add some content if you like.  Or do that later.  Do what feels right.</p>
+  	  <p>You can also change the card's "type", which may change the kind of content you can enter.</p>
   
-	</div>
-<% end %>
+  	</div>
+  <% end %>
 
-<% slot_for(@card, @context, "new") do |slot| %>  
-	<% @title = "New Card" %>    
-	<div class="edit-area">
-	  <% form_remote_for :card, @card, :url=>slot.url_for('card/create'), 
-					:html=>{ :class=>'form' } do |form| %>
-			<table>
-				<tr>
-					<td>
-						<span class="name-area">
-							<%= slot.name_field(form) %>
-					  </span> 
-					</td>
-					<td>
-					  <span class="cardtype-area">
-						  <%= slot.cardtype_field form, :onchange=>slot.update_cardtype_function(   
-						        :url=>slot.url_for('card/new'), :update=>slot.id, 			    
-						        :with=>"Form.serialize(getSlotElement(this,'form'))" 
-						  ) %>
-					  </span>
-					</td>
-				</tr>
-			</table>
-			<div class="editor">  
-				<% if card.hard_content_template %>
-   		  	This card is controlled by a template: once you create it a form will be 
-					generated for editing.
-				<% else %>
-					<%= slot.content_field(form) %>
-				<% end %>
-			</div>
-		  <br/>
-			<%= button_to_function 'Create', slot.save_function, :id=>'create-button'  %>
-	    <%= button_to_function 'Cancel', previous_page_function %> 
-		<% end %>
-	</div>
-	<%= slot.notice %>
-<% end %>
+  <% get_slot.wrap("new") do |slot| %>   
+  	<% @title = "New Card" %>  
+  	
+    <% if inst = card.new_instructions %>
+      <%= render( :partial=> 'instructions', :locals=>{ :instructions=> inst } ) %>
+    <% end %>
+ 
+  	<div class="edit-area">
+  	  <% form_remote_for :card, @card, :url=>slot.url_for('card/create'), 
+  					:html=>{ :class=>'form' } do |form| %>
+  			<table>
+  				<tr>
+  					<td>
+  						<span class="name-area">
+  							<%= slot.name_field(form) %>
+  					  </span> 
+  					</td>
+  					<td>
+  					  <span class="cardtype-area">
+  						  <%= slot.cardtype_field form, :onchange=>slot.update_cardtype_function(   
+  						        :url=>slot.url_for('card/new'), :update=>slot.id, 			    
+  						        :with=>"Form.serialize(getSlotElement(this,'form'))" 
+  						  ) %>
+  					  </span>
+  					</td>
+  				</tr>
+  			</table>
+  			<div class="editor">  
+  				<% if card.hard_content_template %>
+     		  	This card is controlled by a template: once you create it a form will be 
+  					generated for editing.
+  				<% else %>
+  					<%= slot.content_field(form) %>
+  				<% end %>
+  			</div>
+  		  <br/>
+  			<%= button_to_function 'Create', slot.save_function, :id=>'create-button'  %>
+  	    <%= button_to_function 'Cancel', previous_page_function %> 
+  		<% end %>
+  	</div>
+  	<%= slot.notice %>
+  <% end %>
 
+</div>
    
 
 

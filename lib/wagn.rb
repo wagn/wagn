@@ -28,7 +28,7 @@ JAVASCRIPT_FILES = %w{
 
   Wagn/LinkEditor.js
   builder.js
-  window.js
+  window.js   
 }  
 #  inline-console.js
 #}

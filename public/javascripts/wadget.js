@@ -6784,7 +6784,7 @@ Wagn.editors=$H({});
 onload=function(){
 Wagn.Messenger.flash();
 Wagn.runQueue(Wagn.onLoadQueue);
-setupCardViewStuff();
+setupLinksAndDoubleClicks();
 getNewWindowLinks();
 setupDoubleClickToEdit();
 if(typeof (init_lister)!="undefined"){
@@ -6792,7 +6792,7 @@ Wagn._lister=init_lister();
 Wagn._lister.update();
 }
 };
-setupCardViewStuff=function(){
+setupLinksAndDoubleClicks=function(){
 getNewWindowLinks();
 setupDoubleClickToEdit();
 };

@@ -21,59 +21,49 @@ class ConnectionController < ApplicationController
       @notice << "JUNCTION: #{@connection.errors.full_messages.join(', ')}<br/>\n" unless @connection.errors.empty?
       #self.new()
                            
-      # FIXME this is all copied in new
       load_likely
       render :action=>'new'
     else
       # switch'm up so @card is the correct one for edit
-      @trunk, @card = @card, @connection
-      render :action=>'edit'
+      render :action=>'review'
     end
+  end
+  
+  def edit  
+    @card = handle_cardtype_update(@card)    
   end
 
-  def edit      
-    @trunk,@tag = @card.trunk,@card.tag #helps with testing
-    @card = handle_cardtype_update(@card)
-  end
-  
-  def update
-    @card.update_attributes! params[:card]  
-    # FIXME: !!!this is only gonna work the first time
-    # @context = 'related:0'
-    render :update do |page|
-      page.replace_html 'connections-workspace', ''
-      page.hide 'empty-card-list' 
-      page.wagn.lister.update
-      page << %{new Effect.Highlight($$("span[cardid=#{@card.id}]")[0]);\n}
-      
-      # page.insert_html :top, 'related-list', :partial=>'card/line', 
-      #   :locals=>{ :card=>@card, :context=>@context, :render_slot=>true }
-      #page.visual_effect :highlight, slot.id
-    end
-  end
-  
-  def remove_tag
-    @card = @card.tag 
-    remove
+  def new
+    load_likely
   end
   
   def remove
     @card.confirm_destroy = true  
     card_names = ([@card]+@card.dependents).plot(:name).join(' and ')
-    @card.destroy!     
-    render :update do |page|
-      page.replace_html 'connections-workspace', ''
-      page.replace_html 'alerts', "#{card_names} removed"
-    end
+    @card.destroy! 
+    return_to_related
   end
-  
-  def new
-    load_likely
+
+  def remove_tag
+    @card = @card.tag 
+    remove
   end
+
+  def review
+    name = params[:name]
+    @tag = Card.find_by_name(name) || raise(Wagn::Oops, "card named #{name} doesn't exist!")
+    @connection = Card.find_by_name("#{@card.name}+#{name}") || Card.find_by_name("#{name}+#{@card.name}")
+  end
+    
+  def update
+    @card.update_attributes! params[:card]
+    return_to_related
+  end
+
   
   private
-    def load_connection
-    end
+  def load_connection
+  end
   
   def load_likely       
     @likely = load_cards(:card=>@card,:query=>'common_tags') || []
@@ -81,4 +71,19 @@ class ConnectionController < ApplicationController
     @already_ids = @already.plot :id
     @likely.reject! {|c| @already_ids.member? c.id }
   end  
+
+  # FUN!  the connection-edit slot is inside the connection-review slot,
+  #  so after update & remove we have to resort to some funk to make it 
+  # update the parent slot with the right card
+  def return_to_related
+    @card = @card.trunk
+    related_screen = render_to_string( :template=>'/card/related')
+    render :update do |page|
+      page.extend(WagnHelper::MyCrappyJavascriptHack) 
+      page.select_slot(%{getSlotSpan(getSlotFromContext('#{@context}').parentNode)}).each() do |target,index|
+        target.update(related_screen)
+      end
+    end
+  end
+  
 end

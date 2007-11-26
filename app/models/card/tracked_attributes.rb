@@ -1,15 +1,23 @@
-module Card
+module CardLib
   module TrackedAttributes 
      
-
     def set_tracked_attributes  
       updates.each_pair do |attr, value| 
         if send("set_#{attr}", value )
           updates.clear attr
         end
+        #warn "SET CHANGED #{attr.to_sym.inspect}"    
+        @changed ||={}; @changed[attr.to_sym]=true 
       end
     end
     
+    def changed?(field) 
+      #return false
+      #if updates.emtpy?
+      @changed ||={}; 
+      #warn "GET CHAGNED #{field.inspect}"    
+      !!(@changed[field] && !updates.for?(field))
+    end
     
     protected 
     def set_name(newname)
@@ -38,8 +46,9 @@ module Card
         #puts "Set newname=#{newname}"
       end         
       #puts "write #{id} (#{name})= #{newname}"
-      @name_changed = true
+      @name_changed = true          
       @old_name = oldname
+      @search_content_changed=true
     end
 
     def set_type(new_type)
@@ -67,15 +76,20 @@ module Card
     
     def set_content(new_content)  
       return false unless self.id           
-      new_content ||= ''
+      new_content ||= '' 
+      
+      # FIXME?: this code written under influence. may require adjustment
+      new_content =  WikiContent.clean_html!(new_content)   
+      
       rendered_content = Renderer.instance.render(self, new_content, update_references=true)
       hard_templatees.each {|c| Renderer.instance.render(c, new_content, update_references=true) }
-        
+
       clear_drafts if current_revision_id
       self.current_revision = Revision.create :card_id=>self.id, :content=>new_content
+      @search_content_changed = true
     end
              
-    def set_comment(new_comment)
+    def set_comment(new_comment)    
       set_content( content + new_comment )
     end
     
@@ -109,9 +123,9 @@ module Card
    
     def set_reader(party)
       self.reader = party
-      if !anonymous?(party)  
+      if !party.anonymous?  
         junctions.each do |dep|
-          unless authenticated?(party) and !anonymous?(dep.who_can(:read))
+          unless authenticated?(party) and !dep.who_can(:read).anonymous?
             dep.permit :read, party  
             dep.save!
           end

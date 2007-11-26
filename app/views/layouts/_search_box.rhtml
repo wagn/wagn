@@ -1,9 +1,3 @@
 <%#=  form_tag :contro_block( {:ajax=>false, :action=>'search' }, { :method=>'get' } ) %>
 <%#= hidden_field_tag "block", "search" %>
-<%=  text_field_tag("keyword", 
-       params[:keyword] || 'Search', 
-       :onclick=>'if (this.value == "Search") {this.value="" }', 
-       :onchange => "document.location.href='/block/search?keyword='+encodeURIComponent($F(this))"
-     )
-%>
 

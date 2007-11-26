@@ -1,4 +1,4 @@
-module Card 
+module CardLib 
   module Templating  
     
     module ClassMethods

@@ -3497,7 +3497,7 @@ Wagn.editors=$H({});
 onload=function(){
 Wagn.Messenger.flash();
 Wagn.runQueue(Wagn.onLoadQueue);
-setupCardViewStuff();
+setupLinksAndDoubleClicks();
 getNewWindowLinks();
 setupDoubleClickToEdit();
 if(typeof (init_lister)!="undefined"){
@@ -3505,7 +3505,7 @@ Wagn._lister=init_lister();
 Wagn._lister.update();
 }
 };
-setupCardViewStuff=function(){
+setupLinksAndDoubleClicks=function(){
 getNewWindowLinks();
 setupDoubleClickToEdit();
 };
@@ -4273,13 +4273,14 @@ head.appendChild(_435);
 }
 };
 proto.should_link_stylesheet=function(_437,head){
-if(!_437.href.match(/defaults|local/)){
+if(!_437.href.match(/defaults|local\./)){
 return false;
 }
+warn("applying "+_437.href);
 var _439=_437.media;
 var _43a=this.config;
 var _43b=_439.mediaText?_439.mediaText:_439;
-var _43c=((!_43b||_43b=="screen")&&_43a.useParentStyles);
+var _43c=((!_43b||_43b=="screen"||_43b=="all")&&_43a.useParentStyles);
 var _43d=(_43b&&(_43b==_43a.useStyleMedia));
 if(!_43c&&!_43d){
 return false;

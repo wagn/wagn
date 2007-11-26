@@ -27,9 +27,7 @@ module Wql2
     :limit => nil,
     :offset => nil,
     :return => nil,
-    :join  => :and,
-    :sort => nil,
-    :dir => 'asc'
+    :join  => :and
   }
 
   class Spec 
@@ -55,7 +53,8 @@ module Wql2
   end
 
   class CardSpec < Spec 
-    attr_writer :need_revision   
+    attr_writer :need_revision
+    attr_accessor  :relevance   
     attr_reader :params
      
     def initialize(spec) 
@@ -204,7 +203,8 @@ module Wql2
         "update" => "desc",
         "create" => "asc",
         "alpha" => "asc",
-        "plusses" => "desc"
+        "plusses" => "desc",
+        "relevance" => "desc"
       }
       order = @mods[:sort].to_s;  order ='update' if order.blank?
       raise(Wagn::WqlError, "unknown sort key #{order}") unless default_dirs[order]    
@@ -215,7 +215,8 @@ module Wql2
         when "update"; "cards.updated_at"
         when "create"; "cards.created_at"
         when "alpha";  "cards.key"
-        when "plusses"; "..."
+        when "plusses"; "..."    
+        when "relevance";  self.relevance || "cards.updated_at"
       end
                                                                                                   
       ## Plan for plusses:  get the count with a subspec query something like the following:
@@ -335,8 +336,9 @@ module Wql2
         v = @cardspec.root.params[v] || raise(Wagn::WqlError, "expecting '#{v}' parameter")
       end
 
-      if op == '~' && System.enable_postgres_fulltext
-        "indexed_content @@ to_tsquery(#{sqlize(v)})"   
+      if op == '~' && System.enable_postgres_fulltext   
+        @cardspec.relevance = "rank(indexed_content, to_tsquery(#{sqlize(v)}))"
+        "indexed_content @@ to_tsquery(#{sqlize(v)})" 
       elsif op == '~'
         # FIXME: OMFG this is ugly
         @cardspec.need_revision=true

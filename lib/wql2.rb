@@ -54,7 +54,7 @@ module Wql2
 
   class CardSpec < Spec 
     attr_writer :need_revision
-    attr_accessor  :relevance   
+    attr_accessor :relevance   
     attr_reader :params
      
     def initialize(spec) 
@@ -209,7 +209,8 @@ module Wql2
       order = @mods[:sort].to_s;  order ='update' if order.blank?
       raise(Wagn::WqlError, "unknown sort key #{order}") unless default_dirs[order]    
       
-      dir = @mods[:dir].to_s || default_dirs[order]
+      dir = @mods[:dir].to_s 
+      dir = default_dirs[order] if dir.blank? #|| raise("No direction for order '#{order}'")
       
       sql = case order
         when "update"; "cards.updated_at"

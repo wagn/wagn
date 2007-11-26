@@ -11,7 +11,7 @@ module CardLib
           return c
         end
         if name=='*search'
-          c = Card::Search.new( :name=>"*search", :content=>%{{"match":"_keyword"}})
+          c = Card::Search.new( :name=>"*search", :content=>%{{"match":"_keyword", "sort":"relevance"}})
           c.send(:set_defaults)    
           c.phantom = true
           return c

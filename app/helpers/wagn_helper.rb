@@ -9,7 +9,7 @@ module WagnHelper
     slot = case 
       when controller.slot && card==@card; controller.slot
       when controller.slot;  controller.slot.subslot(card)  
-      else controller.slot = Slot.new(@card,@context,@action,self) 
+      else controller.slot = Slot.new(card,context,action,self) 
     end
   end
       

@@ -87,10 +87,10 @@ a.current, a:link.current {
 .card-slot .card-footer {
    -moz-border-radius: 0px 0px 6px 6px;
 }
-.card-slot .card-links .link-list a, 
-.card-slot .card-links .link-list a:visited, 
-.card-slot .card-links .link-list a:focus, 
-.card-slot .card-links .link-list a:link {
+.card-slot .card-footer a, 
+.card-slot .card-footer a:visited, 
+.card-slot .card-footer a:focus, 
+.card-slot .card-footer a:link {
   color: #88c;
 }
            

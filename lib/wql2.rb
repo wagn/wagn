@@ -217,7 +217,7 @@ module Wql2
         when "create"; "cards.created_at"
         when "alpha";  "cards.key"
         when "plusses"; "..."    
-        when "relevance";  self.relevance || "cards.updated_at"
+        when "relevance";  dir=""; self.relevance || "cards.updated_at desc"
       end
                                                                                                   
       ## Plan for plusses:  get the count with a subspec query something like the following:
@@ -339,7 +339,7 @@ module Wql2
 
       if op == '~' && System.enable_postgres_fulltext   
         v = v.strip.gsub(/\s+/, '&')
-        @cardspec.relevance = "rank(indexed_content, to_tsquery(#{sqlize(v)}))"
+        @cardspec.relevance = %{ rank(indexed_name, to_tsquery(#{sqlize(v)}), 1) desc, rank(indexed_content, to_tsquery(#{sqlize(v)}), 1) desc }
         "indexed_content @@ to_tsquery(#{sqlize(v)})" 
       elsif op == '~'
         # FIXME: OMFG this is ugly

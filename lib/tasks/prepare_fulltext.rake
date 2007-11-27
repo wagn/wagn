@@ -21,8 +21,15 @@ namespace :wagn do
       }     
       # choosing GIST for faster updates, at least for now.
       # see: http://www.postgresql.org/docs/8.3/static/textsearch-indexes.html
-      cxn.execute %{ CREATE INDEX name ON cards USING gist(indexed_content);  }    
+      cxn.execute %{ CREATE INDEX content_fti ON cards USING gist(indexed_content);  }    
       cxn.execute %{ vacuum full analyze }
+
+      cxn.execute %{ alter table cards add column indexed_name tsvector }
+      cxn.execute %{ update cards set indexed_name = to_tsvector( name ) }
+      cxn.execute %{ CREATE INDEX name_fti ON cards USING gist(indexed_name);  }    
+      cxn.execute %{ vacuum full analyze }
+
+
     else
       # FIXME: do whatever needs to happen for mysql? sqlite?
       #add_column :cards, :indexed_content, :text

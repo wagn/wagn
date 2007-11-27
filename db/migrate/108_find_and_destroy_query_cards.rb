@@ -1,6 +1,6 @@
 class FindAndDestroyQueryCards < ActiveRecord::Migration
   def self.up 
-    execute %q{ delete from recent changes }
+    execute %q{ delete from recent_changes }
     User.as :admin
     (Card::Query.find_all_by_trash(false)+[Card['Query']]).each do |x| 
       x.update_attributes :current_revision_id => nil

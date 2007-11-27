@@ -3,15 +3,14 @@
 <% offset, limit = s[:offset], s[:limit] %>
 <% first,last = offset+1,offset+card.results.length %>
 <% total = card.count( s ) %>
-
 <% if first > 1 %>
 	<%= link_to_remote image_tag('prev-page.png'), :update=>slot.id,
-				:url=>slot.url_for('card/view', 's[offset]'=>([offset-limit,0].max),'view'=>params[:view]) %>
+				:url=>slot.url_for('card/view', 's[offset]'=>([offset-limit,0].max),'view'=>params[:view], 's[_keyword]'=>s['_keyword']) %>
 <% end %>
 <span class="faint"><%= first %> to <%= last %> of <%= total %></span>
 <% if last < total %>
 	<%= link_to_remote image_tag('next-page.png'), :update=>slot.id,
-	 			:url=>slot.url_for('card/view', 's[offset]'=>(last), 'view'=>params[:view]), 's[_keyword]'=>s['_keyword'] %>
+	 			:url=>slot.url_for('card/view', 's[offset]'=>(last), 'view'=>params[:view], 's[_keyword]'=>s['_keyword']) %>
 <% end %>     
 <!-- /paging -->
 

@@ -30,3 +30,11 @@ namespace :wagn do
     
   end
 end
+
+# IF YOU GET:
+#ERROR:  could not find tsearch config by locale
+#
+#
+#  show lc_collate;
+#  select * from pg_ts_cfg;
+#  update pg_ts_cfg set locale = 'en_US.UTF-8' where ts_name = 'default';

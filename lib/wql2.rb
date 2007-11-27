@@ -338,6 +338,7 @@ module Wql2
       end
 
       if op == '~' && System.enable_postgres_fulltext   
+        v = v.strip.gsub(/\s+/, '&')
         @cardspec.relevance = "rank(indexed_content, to_tsquery(#{sqlize(v)}))"
         "indexed_content @@ to_tsquery(#{sqlize(v)})" 
       elsif op == '~'

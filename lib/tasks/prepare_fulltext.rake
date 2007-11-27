@@ -14,6 +14,8 @@ namespace :wagn do
        }
        `#{cmd}`
 
+       `echo "update pg_ts_cfg set locale = 'en_US' where ts_name = 'default'" | psql #{db}`   
+
       cxn.execute %{ alter table cards add column indexed_content tsvector }
       cxn.execute %{
         update cards set indexed_content = concat( setweight( to_tsvector( name ), 'A' ), 

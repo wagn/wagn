@@ -3554,7 +3554,7 @@ return null;
 }
 };
 getSlotFromContext=function(_38c){
-a=_38c.split(":");
+a=_38c.split("_");
 outer_context=a.shift();
 element=$(outer_context);
 element=$(outer_context);
@@ -3593,7 +3593,7 @@ var span=null;
 if(span=getSlotSpan(_397)){
 var _399=span.getAttributeNode("position").value;
 parentContext=getSlotContext(span.parentNode);
-return parentContext+":"+_399;
+return parentContext+"_"+_399;
 }else{
 return getOuterContext(_397);
 }

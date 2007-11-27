@@ -139,7 +139,7 @@ class ApplicationController < ActionController::Base
   end  
   
   def load_context
-    @context = params[:context] || 'main:1'
+    @context = params[:context] || 'main_1'
     @action = params[:action]
   end 
   

@@ -10,7 +10,14 @@ class CardController < ApplicationController
   before_filter :remove_ok, :only=>[ :remove ]
   
   def auto_complete_for_card_name
-    @items = Card.search( :complete=>params[:card][:name], :limit=>8, :sort=>'alpha' )
+    complete = ''
+    params.keys.each do |key|
+      complete = params[key] if key.to_s == 'name'
+      next unless key.to_s =~ /card|pointer/ 
+      complete = params[key].values[0]
+    end
+  
+    @items = Card.search( :complete=>complete, :limit=>8, :sort=>'alpha' )
     render :inline => "<%= auto_complete_result @items, 'name' %>"
   end
      
@@ -101,7 +108,7 @@ class CardController < ApplicationController
       #dirty hack so we dont redirect to ourself after delete
       session[:return_stack].pop if ( session[:return_stack] and session[:return_stack].last==@card.id )
       render_update_slot do |page,target|
-        if @context=="main:1"
+        if @context=="main_1"
           page.wagn.messenger.note "#{@card.name} removed. Redirecting to #{previous_page}..."
           page.redirect_to url_for_page(previous_page)
           flash[:notice] =  "#{@card.name} removed"

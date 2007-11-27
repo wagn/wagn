@@ -28,7 +28,8 @@
 	   <% end%>
    
 		  <div class="add-form">
-		    <%= text_field_tag 'name', params[:name], { :size=>30 }  %>
+		    <%= text_field_tag 'name', params[:name], :size=>30, :id=>"#{slot.context}_name" %>
+		    <%= cardname_auto_complete("#{slot.context}_name") %> 
 		    <%= submit_tag 'Add' %>
 		    <%= slot.link_to_action "Cancel", 'related' %>
 		  </div>

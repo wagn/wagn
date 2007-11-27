@@ -4,7 +4,7 @@
 |type|name|T|
 |click|document.connect.commit||
 |pause|800||
-|selectFrame|main:1-iframe||
+|selectFrame|main_1-iframe||
 |type|css=body|content: A and T|
 |selectFrame|relative=top||
 |click|save-connection||

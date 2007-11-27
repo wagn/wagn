@@ -311,7 +311,7 @@ getOuterSlot=function(element){
  
 
 getSlotFromContext=function(context){
-  a = context.split(':');
+  a = context.split('_');
   outer_context=a.shift();
   element = $(outer_context);
    element = $(outer_context);
@@ -363,7 +363,7 @@ getSlotContext=function(element) {
   if (span = getSlotSpan(element)) {
     var position = span.getAttributeNode('position').value;
     parentContext = getSlotContext(span.parentNode);
-    return parentContext + ':' + position;
+    return parentContext + '_' + position;
   } else {
     return getOuterContext(element);
   }

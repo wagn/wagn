@@ -49,7 +49,7 @@ class Renderer
 
   class << self
     def instance
-      Renderer.new( StubSlot.new(Card.new, 'test:1', 'test', Object.new) )
+      Renderer.new( StubSlot.new(Card.new, 'test_1', 'test', Object.new) )
     end
   end
   

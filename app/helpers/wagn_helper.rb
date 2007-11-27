@@ -226,7 +226,7 @@ module WagnHelper
   def page_icon(card)
     #link_to_remote( image_tag('page.png', :title=>"Card Page for: #{card.name}"),
     #  :url=>slot.url_for("card/view"),
-    #  :update => "javascript:getSlotFromContext('main:1')"
+    #  :update => "javascript:getSlotFromContext('main_1')"
     #)
     link_to_page image_tag('page.png', :title=>"Card Page for: #{card.name}"), card.name
   end
@@ -302,6 +302,11 @@ module WagnHelper
     out << "</style>\n"
   end
 
+  def cardname_auto_complete(fieldname)
+    content_tag("div", "", :id => "#{fieldname}_auto_complete", :class => "auto_complete") +
+    auto_complete_field(fieldname, { :url =>"/card/auto_complete_for_card_name" }.update({}))
+  end
+  
   
 end
 

@@ -1,7 +1,7 @@
 <%
 	s = params[:s] || {}
 	s[:offset] = s[:offset] ? s[:offset].to_i : 0
-	s[:limit] = s[:limit] ? s[:limit].to_i : (@context=='main:1' ? 25 : 10)
+	s[:limit] = s[:limit] ? s[:limit].to_i : (@context=='main_1' ? 25 : 10)
 	
   begin
 		card.search( s )  

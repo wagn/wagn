@@ -8,11 +8,11 @@ module WagnHelper
       :transclusions, :position, :renderer, :form     
     attr_writer :form 
      
-    def initialize(card, context="main:1", action="view", template=nil, renderer=nil )
+    def initialize(card, context="main_1", action="view", template=nil, renderer=nil )
       @card, @context, @action, @template, @renderer = card, context.to_s, action.to_s, (template||StubTemplate.new), renderer
       
-      raise("context gotta include position") unless context =~ /\:/
-      @position = context.split(':').last
+      raise("context gotta include position") unless context =~ /\_/
+      @position = context.split('_').last
       @subslots = []  
       @state = 'view'
       @renderer ||= Renderer.new(self)
@@ -21,7 +21,7 @@ module WagnHelper
     def subslot(card, &proc)
       # Note that at this point the subslot context, and thus id, are
       # somewhat meaningless-- the subslot is only really used for tracking position.
-      new_slot = self.class.new(card, context+":#{@subslots.size+1}", @action, @template, @renderer)
+      new_slot = self.class.new(card, context+"_#{@subslots.size+1}", @action, @template, @renderer)
       new_slot.state = @state
       @subslots << new_slot 
       new_slot.position = @subslots.size
@@ -99,7 +99,7 @@ module WagnHelper
         when :view;  
           @state = :view
           # FIXME: accessing params here is ugly-- breaks tests.
-          @action = (@template.params[:view]=='content' && context=="main:1") ? 'nude' : 'view'
+          @action = (@template.params[:view]=='content' && context=="main_1") ? 'nude' : 'view'
           wrap(@action, wrap, self.render_partial( 'card/view') )  # --> slot.wrap_content slot.render( :expanded_view_content ) 
         when :line;     @state = :line; wrap('line', wrap, self.render_partial( 'card/line') )  # --> slot.wrap_content slot.render( :expanded_line_content )   
         when :edit;     @state = :edit; slot.expand_transclusions( slot.render( :raw_content ))

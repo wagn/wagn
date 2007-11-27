@@ -1,8 +1,7 @@
 .card-slot { 
-  width: 100%;
+  width: auto;
   margin: 0px;
   background: #fff;
-  overflow: hidden;  
   padding: 0px;
   -moz-border-radius: 6px;
   border: 1px solid #ccc;
@@ -20,8 +19,8 @@
   margin: 0px 5px 5px 5px;
 }
 .card-slot .card-header img {
-  float: none;
-  padding: 0px;
+  float: none !important;
+  padding: 0px !important;
 }
 .card-slot .card-header a,
 .card-slot .card-footer a {
@@ -198,6 +197,7 @@ a.current, a:link.current {
   border: dashed 1px #aaa;
   margin: 4px;
   padding: 3px;
+  position: relative;
 }
 .card-slot .templated.edit-area {
   background: white;
@@ -337,6 +337,9 @@ a.current, a:link.current {
   margin-top: 10px;
   padding: 6px;
 }
+.card-slot.line hr {
+  display: none;
+}
 
 
 
@@ -385,6 +388,14 @@ a.current, a:link.current {
 .card-slot.paragraph .content {
   display: block;
 }
+.card-slot.paragraph .content img  {
+  float: right;
+  padding: 5px 0px 5px 10px;
+}
+.card-slot.paragraph .edit-area img  {
+  float: none;
+  padding: 0px;
+}
 .card-slot .transcluded .content {
   /* was busting when listed before .paragraph .content */
   display: inline;
@@ -399,6 +410,7 @@ a.current, a:link.current {
 /*------------- closed cards -------*/
 
 .card-slot.line {
+  overflow: hidden;
   border: 1px solid #ccc;
   white-space: nowrap;
   padding: 2px 0px;

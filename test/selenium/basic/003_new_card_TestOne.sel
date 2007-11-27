@@ -1,7 +1,7 @@
 |open|/wagn/Wagn||
 |clickAndWait|link=New Card||
 |type|card_name|TestOne|
-|selectFrame|main:1-iframe||
+|selectFrame|main_1-iframe||
 |type|css=body|TestOneContent|
 |selectFrame|relative=top||
 |clickAndWait|create-button||

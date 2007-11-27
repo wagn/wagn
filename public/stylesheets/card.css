@@ -57,11 +57,11 @@
    float:right;
    white-space: nowrap;
    position: relative;
-   right: 2px;
+   right: 0px;
    z-index: 1;
 }
 .card-slot .card-menu a { 
-  padding: 3px;
+  padding: 1px 3px;
   margin: 0px;
   -moz-border-radius: 0px 0px 4px 4px;
 }

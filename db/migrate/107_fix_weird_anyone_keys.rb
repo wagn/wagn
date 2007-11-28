@@ -10,7 +10,7 @@ class FixWeirdAnyoneKeys < ActiveRecord::Migration
         puts "Set #{name} to #{c.key}"
         c.save!   
       else
-        raise("Failed to update '#{name}'")
+        puts "Failed to update '#{name}'"
       end
     end
   end

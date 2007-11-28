@@ -1,20 +1,9 @@
 <h1>User Administration</h1>
 
-<%= render :partial=>'block/options' %>
-
-<span id='create-button'>
+<div id='create-button'>
   <% if Card::User.ok? :create %>
     <%= link_to 'Invite a New User', :controller=>'account', :action=>'invite' %>
   <% end %>
-</span>
+</div>
 
-<div id="users-list" class="card-list"></div>
-
-<script>
-  function init_lister() {
-    lister = new Wagn.Lister('users-list');
-    lister.cardtype('User');
-    return lister;
-  }
-</script>
-
+<%= get_slot(Card.find_phantom('User+*type cards')).render :content %>

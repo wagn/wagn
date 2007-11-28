@@ -1,20 +1,11 @@
 <h1>Role Administration</h1>
 
-<%= render :partial=>'block/options' %>
-
-<span id='create-button'>
+<div id='create-button'>
   <% if Card::Role.ok? :create %>
     <%= link_to 'Create New Role', { :controller=>'card', :action=>'new', 'card[type]'=>'Role'} %> 
   <% end %>
-</span>
+</div>
 
-<div id="roles-list" class="card-list"></div>
+<%= get_slot(Card.find_phantom('Roles+*type cards')).render :content %>
 
-<script>
-  function init_lister() {
-    lister = new Wagn.Lister('roles-list');
-    lister.cardtype('Role');
-    return lister;
-  }
-</script>
 

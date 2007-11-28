@@ -1,0 +1,7 @@
+<% if card.content && !card.content.empty? && File.exists?("#{RAILS_ROOT}/public/image/#{card.content}") %>
+  <div class="image-cardtype">
+    <a href="<%= card.src %>"><img title="<%= card.name %>" src="<%= card.src %>" /></a>
+  </div>
+<% else %>
+  <div class="faint">image file not found</div>
+<% end %>

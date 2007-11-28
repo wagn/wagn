@@ -387,6 +387,7 @@ a.current, a:link.current {
 }
 .card-slot.paragraph .content {
   display: block;
+  overflow: auto;
 }
 .card-slot.paragraph .content img  {
   float: right;
@@ -535,6 +536,14 @@ body.wagn .card-slot.line h2,
   font-size: 15px;
 }
 
+
+/*-----------( Image ) -----------*/
+.card-slot .image-cardtype {
+  text-align: center;
+}
+.card-slot .content .image-cardtype img {
+  float: none;
+}
 
 
 /*---------- comment-box -------------------------------------- */

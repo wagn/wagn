@@ -345,6 +345,9 @@ div.auto_complete {
   width: 350px;
   background: #fff;
   text-align: left;
+  position: relative;
+  overflow: visible;
+  z-index: 10
 }
 div.auto_complete ul {
   border:1px solid #888;

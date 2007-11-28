@@ -459,6 +459,8 @@ body.wagn .card-slot.line h2,
 }
 .card-slot.line .content img {
   height: 16px;
+  float: none;
+  padding: 0px;
 }
 .card-slot.line br,  
 .card-slot.line .card-footer,

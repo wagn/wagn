@@ -546,6 +546,15 @@ body.wagn .card-slot.line h2,
 }
 
 
+/*---------( Search ) ---------- */
+
+.card-slot .content .paging img {
+  float: none !important;
+  padding: 0px 3px;
+  margin: 0px;
+}
+
+
 /*---------- comment-box -------------------------------------- */
 .card-slot .comment-box textarea { 
     width: 100%; 

@@ -67,7 +67,7 @@ module CardLib
       # FIXME this should crawl up the hierarchy once we have one
       # FIXME the last case where we create a dummy defaults card should
       # ONLY come up during migration-- after that we should always have a type card
-      @type_template ||= Card[type+"+*template"] || Card['Basic+*template'] || 
+      @type_template ||= Card[cardtype.name+"+*template"] || Card['Basic+*template'] || 
         Card::Basic.new(:content=>"", 
           :permissions=>[Permission.new(:task=>'read',:party=>::Role[:anon])] + 
             [:edit,:comment,:delete].map{|t| Permission.new(:task=>t.to_s, :party=>::Role[:auth])}

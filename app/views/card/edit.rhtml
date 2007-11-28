@@ -29,9 +29,11 @@
   <% end %>
 
 	<% if hard_template and hard_template.ok? :read %>
-  	<div class="content instructions">
+  	<div class="content instruction">
+	   <p>
     	The format of this card (including any text that's not editable below) is governed by a "hard"  
-  		<%= link_to_page 'template', hard_template.name %> connected to the <%= link_to_page hard_template.trunk.name %> card.  
+  		<%= link_to_page 'template', hard_template.name %> connected to the <%= link_to_page hard_template.trunk.name %> card.   
+      </p>
   	</div>
 	<% end %>
 

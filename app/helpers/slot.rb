@@ -90,7 +90,11 @@ module WagnHelper
     end
 
     def render(action, args={})  
-      if action!=:denied && !card.ok?(:read)
+      if action==:denied
+        # pass
+      elsif card.new_record? 
+        # FIXME-- check if create.ok?
+      elsif !card.ok?(:read) 
         return render(:denied)
       end
       wrap = args.has_key?(:wrap) ? args[:wrap] : true  # default for these is wrap
@@ -132,7 +136,7 @@ module WagnHelper
           # FIMXE:  what's going on here?
         
         when :denied;
-          %{<span class="faint">Sorry #{::User.current_user.card.name}, you don't have permissions to view #{card.name}</span>}
+          %{<span class="faint">Sorry #{::User.current_user.card.name}, you need permissions to view #{card.name}</span>}
           
         when :create_transclusion
           %{<div class="faint createOnClick" view="#{args[:view]}" position="#{position}" cardid="" cardname="#{card.name}">}+

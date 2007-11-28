@@ -18,7 +18,7 @@ module SlotHelpers
   end                       
    
   def nested_context?
-    context.split(':').length > 2
+    context.split('_').length > 2
   end
    
   def get(area="")
@@ -159,7 +159,7 @@ module SlotHelpers
     # to initialize the editor, but when loading a full page it fails-- so
     # we run it in an onLoad queue.  the rest of this code we always run
     # inline-- at least until that causes problems.     
-    hook_context = @nested ? context.split(':')[0..-2].join(':') : context
+    hook_context = @nested ? context.split('_')[0..-2].join('_') : context
   
     code = ""
     if hooks[:setup]

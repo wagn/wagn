@@ -6,16 +6,16 @@ class CardSweeper < ActionController::Caching::Sweeper
     expire(card)
      
     # FIXME: this will need review when we do the new defaults/templating system
-    if card.changed?(:content)
+    #if card.changed?(:content)
       card.hard_templatees.each {|c| expire(c) }     
       card.transcluders.each {|c| expire(c) }
-    end
+    #end
     
-    if card.changed?(:name)      
+    #if card.changed?(:name)      
       card.dependents.each {|c| expire(c) }
       card.referencers.each {|c| expire(c) }
       card.name_references.plot(:referencer).each{|c| expire(c)}
-    end
+    #end
   end
   
   private  

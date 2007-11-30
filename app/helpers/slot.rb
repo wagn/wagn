@@ -89,7 +89,8 @@ module WagnHelper
       result
     end
 
-    def render(action, args={})  
+    def render(action, args={})      
+      #ActiveRecord::Base.logger.info("slot(#{card.name}, #{@state}).render(#{action})")
       if action==:denied
         # pass
       elsif card.new_record? 
@@ -164,11 +165,20 @@ module WagnHelper
       result ||= "" #FIMXE: wtf?
       result << javascript_tag("setupLinksAndDoubleClicks()") if args[:add_javascript]
       #warn "FINISH: #{action} card=#{card.name} result = #{result}" 
+      #ActiveRecord::Base.logger.info("slot(#{card.name}, #{@state}).render(#{action}, #{args})  ---> #{result.gsub(/\n/," ")}")
       result
     end
 
-    def expand_transclusions(content)   
-      return content if card.name =~ /\*template/
+    def expand_transclusions(content)     
+      #content="#{card.name}=~/*template/" + content
+      #return ("skip(#{card.name}):"+content) 
+      if card.name =~ /\*template/           
+        # KLUGILICIOIUS: if we leave the {{}} transclusions intact they may get processed by
+        #  an outer card expansion-- causing weird rendering oddities.  the bogus thing
+        #  seems to work ok for now.
+        return content.gsub(/\{\{/,'{<bogus />{').gsub(/\}\}/,'}<bogus />}')
+      end
+      #content = "noskip(#{card.name}):" + content
       content.gsub!(Chunk::Transclude::TRANSCLUDE_PATTERN) do 
         match = $~
         #warn "MATCH: #{match.inspect} #{match.to_a}"
@@ -199,7 +209,6 @@ module WagnHelper
       end  
       content 
     end
-
        
     def render_partial( partial, locals={} ) 
       if StubTemplate===@template
@@ -216,7 +225,8 @@ module WagnHelper
       # FIXME! need a different test here   
       new_card = card.new_record? && !card.phantom?
       
-      state, vmode = @state.to_sym, (options[:view] || :content).to_sym
+      state, vmode = @state.to_sym, (options[:view] || :content).to_sym      
+      #result = "state=#{state} vmode=#{vmode}"
       result = case
         when new_card && state==:line; subslot.render :missing_transclusion, options
         when new_card;     subslot.render( :create_transclusion, options )

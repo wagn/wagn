@@ -10,13 +10,6 @@
         <%= render :partial=>'options/roles', :locals=>{:card=>@card, :slot=>slot, :extension=>card.extension } %>
       <% end %>    
 
-			<%= slot.option_header 'Search' %>
-			<% if @card.type=='Search' %>
-				<% slot.option(:name=>"Auto Search", :help=>"should this card be made available as a connection with all cards?",
-				:editable=>true) do %>
-					<%= form.check_box :extension_type, {}, checked_value='SearchTemplate', unchecked_value='' %>
-				<% end %>
-			<% end %>
       <% if @card.template? %>
         <%= render :partial=>'options/template', :locals=>{:card=>@card, :slot=>slot, :form=>form} %>	      
       <% end %> 

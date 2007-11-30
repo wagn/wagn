@@ -118,14 +118,14 @@ module WagnHelper
             if content.nil?                                                       
               # we're working from a cachedCard, and it's a miss, load the real card for remaining processing
               @card = Card.find_by_key_and_trash(card.key, false) || raise("Oops! found cached card for #{card.key} but couln't find the real one")
-              ActiveRecord::Base.logger.info("CACHE MISS for #{card.type}:#{card.name}: #{action}")
+              #ActiveRecord::Base.logger.info("CACHE MISS for #{card.type}:#{card.name}: #{action}")
               content =  render("custom_#{method}".to_sym)
               cached_card.send("#{method}=",content)
             else
-              ActiveRecord::Base.logger.info("CACHE HIT for #{card.type}:#{card.name}: #{action}")
+              #ActiveRecord::Base.logger.info("CACHE HIT for #{card.type}:#{card.name}: #{action}")
             end
           else
-            ActiveRecord::Base.logger.info("CACHE SKIPPED for #{card.type}:#{card.name} #{action}")
+            #ActiveRecord::Base.logger.info("CACHE SKIPPED for #{card.type}:#{card.name} #{action}")
             content = render("custom_#{method}".to_sym)
           end
           expand_transclusions( content )

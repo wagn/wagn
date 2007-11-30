@@ -2,17 +2,17 @@ module CardLib
   module Search
     module ClassMethods 
       def find_phantom(name)     
-        ActiveRecord::Base.logger.info("CACHE in find_phantom #{name}")
+        #ActiveRecord::Base.logger.info("CACHE in find_phantom #{name}")
         
         if name=='*recent changes'
           c = Card::Search.new( :name=>"*recent changes", :content=>%{{"sort":"update", "dir":"desc"}})
-          c.send(:set_defaults)    
+          #c.send(:set_defaults)    
           c.phantom = true
           return c
         end
         if name=='*search'
           c = Card::Search.new( :name=>"*search", :content=>%{{"match":"_keyword", "sort":"relevance"}})
-          c.send(:set_defaults)    
+          #c.send(:set_defaults)    
           c.phantom = true
           return c
         end
@@ -22,7 +22,7 @@ module CardLib
         return nil unless template
         
         c = Card::Search.new :name=>name, :content=>template.content
-        c.send(:set_defaults)
+        #c.send(:set_defaults)
         if name.junction?
           c.self_card = c.trunk 
           #warn "setting search card #{c.trunk}"
@@ -37,6 +37,7 @@ module CardLib
       end
 
       def search(spec) 
+        ActiveRecord::Base.logger.info("  search #{spec.to_s}")
         Card.find_by_sql( Wql2::CardSpec.new(spec).to_sql )
       end
 

@@ -28,7 +28,7 @@ class CachedCard
         card_opts = opts[:card] ? opts[:card] : {}
         card_opts['name'] = name if name
         c = Card.new(card_opts)  # FIXME: set defaults?
-        c.send(:set_defaults)
+        #c.send(:set_defaults)
         c
       end  
     end
@@ -72,7 +72,7 @@ class CachedCard
     case task
       when :read; party_ok?(read_permission)
       when :comment; party_ok?(comment_permission)
-      else  card.ok?(task)
+      else card.ok?(task)
     end
   end
   
@@ -105,7 +105,7 @@ class CachedCard
   
   def card
     @card ||= (
-      ActiveRecord::Base.logger.info("loading: #{@keu}")
+      ActiveRecord::Base.logger.info("loading: #{@key}")
       Card.find_by_key_and_trash(@key, false)
     )
   end

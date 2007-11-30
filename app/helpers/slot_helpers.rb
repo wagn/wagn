@@ -57,11 +57,11 @@ module SlotHelpers
     end
     menu = %{<div class="card-menu">\n}
   	menu << link_to_menu_action('view')
-  	#if card.ok?(:edit) 
+  	if card.ok?(:edit) 
     	menu << link_to_menu_action('edit') 
-  	#else
-  	#  menu << link_to_remote("Edit", :url=>url_for('card/denied'), :update=>id)
-    #end
+  	else
+  	  menu << link_to_remote("Edit", :url=>url_for('card/denied'), :update=>id)
+    end
   	menu << link_to_menu_action('changes')
   	menu << link_to_menu_action('options') 
   	menu << link_to_menu_action('related') 

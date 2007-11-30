@@ -54,8 +54,8 @@ module Card
     private 
     def get_spec(params={})
       spec = JSON.parse( self.content )   
-      # FIXME: should unit test this    
-      self_card ||= ( self.trunk ? self.trunk : nil )
+      # FIXME: should unit test this  
+      self_card ||= ( name.junction? ? Card[name.parent_name] : nil )
       if spec.is_a?(Hash) && self_card
         spec[:_card] = self_card
       end

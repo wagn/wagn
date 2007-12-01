@@ -5,7 +5,7 @@ module WagnHelper
     
     attr_reader :card, :context, :action, :renderer, :template
     attr_accessor :editor_count, :options_need_save, :state,
-      :transclusions, :position, :renderer, :form     
+      :transclusions, :position, :renderer, :form, :superslot     
     attr_writer :form 
      
     def initialize(card, context="main_1", action="view", template=nil, renderer=nil )
@@ -24,6 +24,7 @@ module WagnHelper
       new_slot = self.class.new(card, context+"_#{@subslots.size+1}", @action, @template, @renderer)
       new_slot.state = @state
       @subslots << new_slot 
+      new_slot.superslot = self
       new_slot.position = @subslots.size
       new_slot
     end
@@ -124,10 +125,17 @@ module WagnHelper
             else
               #ActiveRecord::Base.logger.info("CACHE HIT for #{card.type}:#{card.name}: #{action}")
             end
+            # FIXME not dry
+            #if method=='view_content'
+            #  content = card.post_render( content )
+            #end
           else
             #ActiveRecord::Base.logger.info("CACHE SKIPPED for #{card.type}:#{card.name} #{action}")
             content = render("custom_#{method}".to_sym)
-          end
+            #if method=='view_content'
+            #  content = card.post_render( content )
+            #end
+          end  
           expand_transclusions( content )
         when :custom_line_content;  
           render_partial(custom_partial_for(:line))   # in basic case: --> truncate( slot.render( :custom_view_content ))

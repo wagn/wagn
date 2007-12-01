@@ -542,7 +542,7 @@ body.wagn .card-slot.line h2,
   text-align: center;
 }
 .card-slot .content .image-cardtype img {
-  float: none;
+/*  float: none;  */
 }
 
 

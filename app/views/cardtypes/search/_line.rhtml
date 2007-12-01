@@ -1,23 +1,34 @@
-<%
-
-# FIXME: so not DRY.  cut-n-paste from search/_content
-s = params[:s] || {}
-begin
-	query_results = card.search( s )  
-	total = card.count( s )
-rescue Exception=>e
-	error = e
-	query_results = nil
-end
-%>
-<% if query_results.nil? %>   
-	<%= "#{error.type}: #{error.message}" %><br/>
-	<%= card.content %>
-<% elsif query_results.length==0 %>
-  <span class="faint">(0)</span>
-<% else %>           
-	<div class="faint">(<%= card.count %>)</div>
-	<% query_results.each_with_index do |c,index| %>
-		<%= link_to_page( c.name ) %>
-	<% end %>     
+<% 
+	p, level= slot, 0
+	while  p = p.superslot #p.state=='line' &&
+		level +=1 
+	end
+%>   
+<% if level > 2 %>
+	...
+<% else %>
+   
+	<%
+	# FIXME: so not DRY.  cut-n-paste from search/_content
+	s = params[:s] || {}
+	begin
+		query_results = card.search( s )  
+		total = card.count( s )
+	rescue Exception=>e
+		error = e
+		query_results = nil
+	end
+	%>
+	<% if query_results.nil? %>   
+		<%= "#{error.type}: #{error.message}" %><br/>
+		<%= card.content %>
+	<% elsif query_results.length==0 %>
+	  <span class="faint">(0)</span>
+	<% else %>           
+		<div class="faint">(<%= card.count %>)</div>
+		<% query_results.each_with_index do |c,index| %>
+			<%= link_to_page( c.name ) %>
+		<% end %>     
+	<% end %>
+                              
 <% end %>

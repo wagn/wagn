@@ -1,3 +1,45 @@
+=== 0.9.0 (December 3, 2007)
+* working on getting images out of svn
+* fixes for ignores
+* fixing version stuff
+* fix error handling bug
+* merge -r310:375 from branches/search
+* recompress javascript
+* wql sort by relevance for fulltext
+* fix multiword fulltext search
+* improve relevance ranking
+* fix search paging?
+* merge -r375:384 from branches/search
+* compress javascript
+* one more route
+* want cache store to default to memory for now
+* menu css
+* footer fix -- add last editor
+* fix sidebar slot on pages without cards
+* fix last editor for phantom cards?
+* fix nested multi-edit
+* fixed role and user pages
+* fix bizarro migration failure
+* line image handling
+* don't raise err on fix-anyone-keys migration failure
+* type template bug
+* css and image fixes
+* fixed paging image
+* removed caching ifs
+* fix templates have transclusions syntax rendered by outer cards
+* remove unused Search stuff from options
+* use cached card for rendering in recent changes
+* don't call set_defaults on temporary cards
+* missed part of set_defaults fix
+* remove some logging
+* remove some logging
+* restore edit check in card menu
+* dont do searches more than 2 nested slots deep in line view
+* got rid of unuseful search option thing, fixed image css
+* other half of superslot fix
+* rework migration path for new installs
+
+
 === 0.8.2 (October 16, 2007)
 * fix weird priority spec failure
 * update changelog

@@ -148,12 +148,17 @@ Object.extend(Wagn, {
   },
   
   line_to_paragraph: function(element) {
-  //  alert('line to paragraph');
+    Element.removeClassName(element,'line');
+    Element.addClassName(element,'paragraph');
+
+   /*
+   //  alert('line to paragraph');
    // if (!Prototype.Browser.WebKit) {
-      var oldElementDimensions = Element.getDimensions(element);
+      //var oldElementDimensions = Element.getDimensions(element);
       copy = copy_with_classes( element );
       copy.removeClassName('line');
       copy.addClassName('paragraph');
+      
       var newElementDimensions = Element.getDimensions(copy);
       copy.viewHeight = newElementDimensions.height;
       copy.remove();
@@ -173,12 +178,15 @@ Object.extend(Wagn, {
         }
       }); 
    //} else {
-   //   Element.removeClassName(element,'line');
-   //   Element.addClassName(element,'paragraph');
    //}
+   */
+   
   },
   paragraph_to_line: function(element) {
+    Element.removeClassName(element, 'paragraph');
+    Element.addClassName(element, 'line');
     // Fixme: Safari chokes on getStyle() in prototype: this is bullshit: prototype should work in safari.
+    /*
     //if (!Prototype.Browser.WebKit) {
       var oldElementDimensions = Element.getDimensions(element);
       copy = copy_with_classes( element );
@@ -209,9 +217,10 @@ Object.extend(Wagn, {
           }
         }); 
      //} else {
-     //  Element.removeClassName(element, 'paragraph');
-     //  Element.addClassName(element, 'line');
      //}
+     */     
+     //warn(element)
+     //warn("paragraph --> line");
   }
 
 });

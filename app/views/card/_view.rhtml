@@ -21,7 +21,7 @@
 	<%= slot.header %>  
 <% end %>
 
-<%= slot.wrap_content slot.render(:expanded_view_content) %>
+<%= slot.wrap_content( slot.render(:expanded_view_content) ) %>
 
 <%= slot.notice %>	
 <% if card.ok?(:comment) %>

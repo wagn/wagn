@@ -176,7 +176,9 @@ class ApplicationController < ActionController::Base
         (side = Card.find_by_name(c.name + '+*sidebar')) ? side.content.to_i : 0
       end
     end
-    @sidebar_cards
+    @sidebar_cards.map do |card|
+      CachedCard.get(card.name, card) 
+    end
   end  
   
   def handle_cardtype_update(card)

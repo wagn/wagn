@@ -14,7 +14,7 @@ namespace :wagn do
        }
        `#{cmd}`
 
-       `echo "update pg_ts_cfg set locale = 'en_US' where ts_name = 'default'" | psql #{db}`   
+       #`echo "update pg_ts_cfg set locale = 'en_US' where ts_name = 'default'" | sudo -u postgres psql #{db}`   
 
       cxn.execute %{ alter table cards add column indexed_content tsvector }
       cxn.execute %{
@@ -39,6 +39,13 @@ namespace :wagn do
     
   end
 end
+        
+# IF YOU GET
+# could not access file "$libdir/tsearch2"
+#
+#  pg_config --pkglibdir
+# and move the tsearch2.so into that path
+
 
 # IF YOU GET:
 #ERROR:  could not find tsearch config by locale

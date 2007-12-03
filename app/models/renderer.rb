@@ -70,7 +70,8 @@ class Renderer
   def render( card=nil, content=nil, update_references=false, &process_block )
     wiki_content = common_processing(card, content, update_references, &process_block)
     #warn  "CALLNG POST_RENDER on #{card.class}:#{card.name}"
-    card.post_render( wiki_content.render! )
+    #card.post_render( ..  )
+    wiki_content.render! 
 =begin
   rescue Exception=>e 
     if @rescue_errors

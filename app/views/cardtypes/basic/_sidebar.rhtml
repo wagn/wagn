@@ -1,4 +1,5 @@
-<% sidebar_cards.each_with_index do |card,index| %>  
-  <% state = card.attribute_card('*closed') ? :line : :view %>
+<% sidebar_cards.each_with_index do |card,index| %> 
+  <% real_card = card.respond_to?(:card) ? card.card : card  %>
+  <% state = real_card.attribute_card('*closed') ? :line : :view %>
 	<%= get_slot(card).render(state) %>
 <% end %>

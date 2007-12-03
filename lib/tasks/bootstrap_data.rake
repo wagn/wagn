@@ -20,7 +20,13 @@ namespace :wagn do
     ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
     Dir.glob(File.join(RAILS_ROOT, 'db', 'bootstrap', '*.{yml,csv}')).each do |fixture_file|
       Fixtures.create_fixtures('db/bootstrap', File.basename(fixture_file, '.*'))
-    end
+    end 
+              
+    User.as :admin
+    home = Card['Wagn']
+    home.name = System.site_name
+    home.save!
+    
   end
 
 end

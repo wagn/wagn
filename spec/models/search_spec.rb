@@ -32,7 +32,7 @@ describe Wql2, "order" do
 =end  
 end
     
-=begin
+
 describe Wql2, "search count" do
   before { User.as :joe_user }
   it "should cound search" do
@@ -148,8 +148,8 @@ end
 describe Card, "find_phantom" do
   before { User.as :joe_user }
 
-  it "should find: *other parts" do
-    Card.find_phantom("A+*other parts").search.plot(:name).sort.should == A_JOINEES
+  it "should find: *plus parts" do
+    Card.find_phantom("A+*plus parts").search.plot(:name).sort.should == A_JOINEES
   end
 
   it "should find custom: testsearch" do
@@ -177,4 +177,4 @@ describe Wql2, "relative" do
   end
 end
 
-=end
+

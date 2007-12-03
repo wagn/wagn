@@ -31,14 +31,15 @@ module CardLib
         c
       end
 
-      def count_by_wql(spec)      
-        result = connection.select_one( Wql2::CardSpec.new(spec).merge(:return=>'count').to_sql.gsub(/^\s*\(/,'').gsub(/\)\s*$/,'') )
+      def count_by_wql(spec)       
+        #.gsub(/^\s*\(/,'').gsub(/\)\s*$/,'')
+        result = connection.select_one( Wql2::CardSpec.new(spec).merge(:return=>'count').to_sql )
         (result['count'] || result['count(*)']).to_i
       end
 
       def search(spec) 
         ActiveRecord::Base.logger.info("  search #{spec.to_s}")
-        Card.find_by_sql( Wql2::CardSpec.new(spec).to_sql.gsub(/^\s*\(/,'').gsub(/\)\s*$/,'') )
+        Card.find_by_sql( Wql2::CardSpec.new(spec).to_sql )
       end
 
       #def find_by_json(spec)

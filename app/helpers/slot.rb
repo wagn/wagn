@@ -121,20 +121,21 @@ module WagnHelper
               @card = Card.find_by_key_and_trash(card.key, false) || raise("Oops! found cached card for #{card.key} but couln't find the real one")
               #ActiveRecord::Base.logger.info("CACHE MISS for #{card.type}:#{card.name}: #{action}")
               content =  render("custom_#{method}".to_sym)
+              # FIXME not dry
+              if method=='view_content'
+                content = card.post_render( content )
+              end
               cached_card.send("#{method}=",content)
             else
               #ActiveRecord::Base.logger.info("CACHE HIT for #{card.type}:#{card.name}: #{action}")
             end
-            # FIXME not dry
-            #if method=='view_content'
-            #  content = card.post_render( content )
-            #end
+
           else
             #ActiveRecord::Base.logger.info("CACHE SKIPPED for #{card.type}:#{card.name} #{action}")
             content = render("custom_#{method}".to_sym)
-            #if method=='view_content'
-            #  content = card.post_render( content )
-            #end
+            if method=='view_content'
+              content = card.post_render( content )
+            end
           end  
           expand_transclusions( content )
         when :custom_line_content;  

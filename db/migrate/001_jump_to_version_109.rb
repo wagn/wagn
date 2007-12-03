@@ -123,7 +123,6 @@ class JumpToVersion109 < ActiveRecord::Migration
     end  
     
     `rake wagn:load_bootstrap_data`
-  
   end
   
   

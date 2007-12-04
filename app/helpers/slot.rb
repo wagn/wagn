@@ -3,16 +3,19 @@ module WagnHelper
   class Slot
     include SlotHelpers  
     
+    cattr_accessor :max_char_count
+    self.max_char_count = 200
     attr_reader :card, :context, :action, :renderer, :template
     attr_accessor :editor_count, :options_need_save, :state,
-      :transclusions, :position, :renderer, :form, :superslot     
+      :transclusions, :position, :renderer, :form, :superslot, :char_count     
     attr_writer :form 
      
     def initialize(card, context="main_1", action="view", template=nil, renderer=nil )
       @card, @context, @action, @template, @renderer = card, context.to_s, action.to_s, (template||StubTemplate.new), renderer
       
       raise("context gotta include position") unless context =~ /\_/
-      @position = context.split('_').last
+      @position = context.split('_').last    
+      @char_count = 0
       @subslots = []  
       @state = 'view'
       @renderer ||= Renderer.new(self)
@@ -188,33 +191,39 @@ module WagnHelper
         return content.gsub(/\{\{/,'{<bogus />{').gsub(/\}\}/,'}<bogus />}')
       end
       #content = "noskip(#{card.name}):" + content
-      content.gsub!(Chunk::Transclude::TRANSCLUDE_PATTERN) do 
-        match = $~
-        #warn "MATCH: #{match.inspect} #{match.to_a}"
-        text = match[0]
-        requested_name = match[1].strip
-        relative = match[2]
-        options = {
-          :requested_name=>requested_name,
-          :view  => 'content',
-          :base  => 'self',
-        }.merge(Hash.new_from_semicolon_attr_list(match[4]))  
-        options[:view]='edit' if @state == :edit
-                
-        # compute transcluded card name
-        if relative
-          transcluded_card_name = (options[:base]=='parent' ? card.name.parent_name : card.name) + requested_name
+      content.gsub!(Chunk::Transclude::TRANSCLUDE_PATTERN) do  
+        if @state==:line && slot.char_count > Slot.max_char_count
+          ""
         else
-          transcluded_card_name = requested_name
-        end
+          match = $~
+          #warn "MATCH: #{match.inspect} #{match.to_a}"
+          text = match[0]
+          requested_name = match[1].strip
+          relative = match[2]
+          options = {
+            :requested_name=>requested_name,
+            :view  => 'content',
+            :base  => 'self',
+          }.merge(Hash.new_from_semicolon_attr_list(match[4]))  
+          options[:view]='edit' if @state == :edit
+              
+          # compute transcluded card name
+          if relative
+            transcluded_card_name = (options[:base]=='parent' ? card.name.parent_name : card.name) + requested_name
+          else
+            transcluded_card_name = requested_name
+          end
 
-        card = if @state==:edit
-          Card.find_by_name(transcluded_card_name) || Card.new(:name=>transcluded_card_name)
-        else
-          CachedCard.get(transcluded_card_name)
+          card = if @state==:edit
+            Card.find_by_name(transcluded_card_name) || Card.new(:name=>transcluded_card_name)
+          else
+            CachedCard.get(transcluded_card_name)
+          end
+
+          transcluded_content = process_transclusion( card, options )
+          slot.char_count += transcluded_content.length
+          transcluded_content
         end
-        
-        process_transclusion( card, options )
       end  
       content 
     end
@@ -240,7 +249,7 @@ module WagnHelper
         when new_card && state==:line; subslot.render :missing_transclusion, options
         when new_card;     subslot.render( :create_transclusion, options )
         when state==:edit; subslot.render :edit_transclusion
-        when state==:line; subslot.render :expanded_line_content 
+        when state==:line; subslot.render(:expanded_line_content )
           
         # now we are in state==:view, switch on viewmode (from transclusion syntax)
         when vmode==:raw;     subslot.render :raw

@@ -18,14 +18,14 @@ class CachedCard
     def get(name, card=nil, opts={}) 
       cache = opts.has_key?(:cache) ? opts[:cache] : true
       key = name.to_key
-      if cache && perform_caching && (cached_card = self.find(key, opts))
+      if cache && perform_caching && (cached_card = self.find(key, card, opts))
         cached_card
       elsif card || (card=Card.find_by_key_and_trash(key, false))
         (cache && perform_caching && card.cacheable?) ? self.new(key, card, opts) : card
       elsif card=Card.find_phantom(name)
         card
       else   
-        card_opts = opts[:card] ? opts[:card] : {}
+        card_opts = opts[:card_params] ? opts[:card_params] : {}
         card_opts['name'] = name if name
         c = Card.new(card_opts)  # FIXME: set defaults?
         #c.send(:set_defaults)
@@ -33,14 +33,15 @@ class CachedCard
       end  
     end
     
-    def find(key, opts={})
-      cached_card = self.new(key, nil, opts)            
+    def find(key, card, opts={})
+      cached_card = self.new(key, card, opts)            
       cached_card.exists? ? cached_card : nil
     end     
   end
   
   def initialize(key, real_card=nil, opts={})
-    @auto_load = opts[:auto_load_card]
+    @auto_load = opts[:auto_load_card]   
+    #warn("Cache init: #{key}, #{real_card}")
     @card = real_card
     @key=key
   end
@@ -58,7 +59,7 @@ class CachedCard
   def type()  get('type') { card.type } end  
     
   def read_permission() 
-    get('read_permission') { p = card.who_can(:read); "#{p.class.to_s}:#{p.id}" }
+    get('read_permission') { p = card.who_can(:read);  "#{p.class.to_s}:#{p.id}" }
   end       
   
   def comment_permission() 

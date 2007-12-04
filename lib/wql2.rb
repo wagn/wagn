@@ -168,9 +168,9 @@ module Wql2
                 
     def to_sql(*args)
       field = case @return.to_sym
-        when :list; '*'
-        when :count; 'count(*)'
-        when :first; '*'
+        when :list; 'cards.*'
+        when :count; 'count(cards.*)'
+        when :first; 'cards.*'
         when :ids;   'id'            
         when :codename; 
           #FIXME: this is not generic codename-- only works for cardtypes

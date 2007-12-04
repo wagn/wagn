@@ -170,7 +170,7 @@ module Wql2
     def to_sql(*args)
       field = case @return.to_sym
         when :list; 'cards.*'
-        when :count; 'count(cards.*)'
+        when :count; 'count(*)'
         when :first; 'cards.*'
         when :ids;   'id'            
         when :codename; 

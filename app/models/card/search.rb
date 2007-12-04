@@ -12,6 +12,14 @@ module CardLib
             return create_phantom(name, '{"link_to":"_none"}')
         end
         
+        if name.tag_name.to_key == 'google_map' and !name.simple?
+          ## fixme -- do something other than return nil?
+          return nil unless gm = Card['Google Map'] and gm.type == 'Cardtype'
+          return nil unless trunk = Card.find_by_key_and_trash(name.parent_name.to_key, false)
+          c = Card::GoogleMap.new :name=>name
+          c.trunk = trunk
+          return c
+        end
         
         template_tsar_name = name.simple? ? name : name.tag_name
         template = Card.search( :type=>'Search', :name=>"#{template_tsar_name}+*template" )[0]

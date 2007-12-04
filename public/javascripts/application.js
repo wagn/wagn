@@ -1,5 +1,7 @@
 // Place your application-specific JavaScript functions and classes here
 // This file is automatically included by javascript_include_tag :defaults
+
+
 Wagn = new Object();
 
 function warn(stuff) {
@@ -63,7 +65,7 @@ Wagn.Messenger = {
   },
   log: function( message ) {
     this.element().innerHTML = message; 
-    new Effect.Highlight( this.element(), {startcolor:"#dddddd", endcolor:"#ffffaa", restorecolor:"#ffffaa", duration:1});
+    new Effect.Highlight( this.element(), {startcolor:"#eeeebb", endcolor:"#ffffaa", restorecolor:"#ffffaa", duration:1});
   },
   flash: function() {
     flash = $('notice').innerHTML + $('error').innerHTML;
@@ -72,6 +74,18 @@ Wagn.Messenger = {
     }
   }
 };
+
+Ajax.Responders.register({
+  createMessage: function() { return 'connecting to server...'},
+  onCreate: function(){
+    Wagn.Messenger.log( this.createMessage());
+  }, 
+  onComplete: function(){
+    if (Wagn.Messenger.element().innerHTML == this.createMessage()) {
+      Wagn.Messenger.log('done');
+    }
+  }
+});
 
 
 /*

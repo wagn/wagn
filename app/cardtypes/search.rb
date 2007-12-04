@@ -37,7 +37,7 @@ module Card
     end
      
     def count(params={})
-      params = params.symbolize_keys
+      params = params.symbolize_keys  
       [:offset, :limit].each {|x| params.delete(x) }
 #      spec = get_spec(params)
 #      warn "COUNT SPEC: #{spec.inspect}"
@@ -45,8 +45,9 @@ module Card
     end
                                 
     def search( params={} )  
-      self.search_opts = params
-      self.results = Card.search( get_spec(params.clone) ).map do |card|
+      self.search_opts = params  
+      ActiveRecord::Base.logger.info("Search: #{self.name}")
+      self.results = Card.search( get_spec(params.clone) ).map do |card|   
         CachedCard.get(card.name, card)
       end
     end

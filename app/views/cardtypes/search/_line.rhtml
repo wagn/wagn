@@ -25,7 +25,7 @@
 	<% elsif query_results.length==0 %>
 	  <span class="faint">(0)</span>
 	<% else %>           
-		<div class="faint">(<%= card.count %>)</div>
+		<div class="faint">(<%= total %>)</div>
 		<% query_results.each_with_index do |c,index| %>
 			<%= link_to_page( c.name ) %>
 		<% end %>     

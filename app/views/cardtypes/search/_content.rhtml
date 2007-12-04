@@ -7,8 +7,15 @@
 	  case
       when card.name=='*search'
         "Card matching keyword: <strong>#{params[:s][:_keyword]}</strong>"
-      when cue = card.attribute_card('*cue'); cue
+  #    when cue = card.attribute_card('*cue'); cue
       else; nil
+    end
+	
+	title =
+  	case card.name
+      when '*search'; 'Search Results'
+      when '*broken links'; 'Cards with Broken Links'
+      else; ''
     end
 	
   begin
@@ -30,5 +37,5 @@
 
 	<% partial = (card.name=='*recent changes') ? 'recent_changes' : 'card_list' %>
 	<%= render :partial=>"block/#{partial}", :locals=> { :card=>card,	:cards=>card.results, :context=>@context,
-	   :instruction=>instruction, :title=>(card.name=='*search' ? 'Search Results' : '') } %>
+	   :instruction=>instruction, :title=>title } %>
 <% end %>

@@ -82,6 +82,7 @@ module Wql2
         when "_self";  { :id => root.card.id }
         when "_left";  { :id => root.card.trunk.id }
         when "_right";  { :id => root.card.tag.id }
+    #   when "_none";  { }
         when String;   { :name => spec }
         when Integer;  { :id => spec   }  
         when Hash;     spec
@@ -252,6 +253,10 @@ module Wql2
     end 
    
     def refspec(key, cardspec)
+      if cardspec == '_none'
+        key = :link_to_missing
+        cardspec = 'blank'
+      end
       cardspec = CardSpec.new(:return=>'id', :_parent=>self).merge(cardspec)
       merge field(:id) => ValueSpec.new(['in',RefSpec.new([key,cardspec])], self)
     end
@@ -276,6 +281,7 @@ module Wql2
       @refspecs = {
         :refer_to => ['card_id','referenced_card_id',''],
         :link_to => ['card_id','referenced_card_id',"link_type='#{WikiReference::LINK}' AND"],
+        :link_to_missing => ['card_id', 'referenced_card_id', "link_type='#{WikiReference::WANTED_LINK}'"],
         :include => ['card_id','referenced_card_id',"link_type='#{WikiReference::TRANSCLUSION}' AND"],
         :referred_to_by=> ['referenced_card_id', 'card_id', ''],
         :linked_to_by => ['referenced_card_id','card_id',"link_type='#{WikiReference::LINK}' AND"],
@@ -285,7 +291,8 @@ module Wql2
     
     def to_sql(*args)
       f1, f2, where = @refspecs[@spec[0]]
-      %{(select #{f1} from wiki_references where #{where} #{f2} IN #{@spec[1].to_sql})}
+      and_where = (@spec[0] == :link_to_missing) ? '' : "#{f2} IN #{@spec[1].to_sql}"
+      %{(select #{f1} from wiki_references where #{where} #{and_where})}
     end
   end
   
@@ -299,6 +306,7 @@ module Wql2
         when Array;     spec
         when String;    ['=', spec]
         when Integer;   ['=', spec]
+  #      when nil;       ['is', 'null']
         else raise("Invalid Condition Spec #{spec.inspect}")
       end
       @spec[0] = @spec[0].to_s
@@ -332,7 +340,7 @@ module Wql2
     def to_sql(field)
       @cxn ||= ActiveRecord::Base.connection
       op,v = @spec
-      if (String===v &&  v.match(/^_\w+$/))
+      if (String===v &&  v.match(/^_\w+$/) )
         #puts "FOV: #{field} #{op} #{v} #{@cardspec.root.params.inspect}" 
         v = @cardspec.root.params[v] || raise(Wagn::WqlError, "expecting '#{v}' parameter")
       end

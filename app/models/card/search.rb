@@ -3,19 +3,15 @@ module CardLib
     module ClassMethods 
       def find_phantom(name)     
         #ActiveRecord::Base.logger.info("CACHE in find_phantom #{name}")
+        case name
+          when '*recent changes'
+            return create_phantom(name, %{{"sort":"update", "dir":"desc"}})
+          when '*search'
+            return create_phantom(name, %{{"match":"_keyword", "sort":"relevance"}})
+          when '*broken links'
+            return create_phantom(name, '{"link_to":"_none"}')
+        end
         
-        if name=='*recent changes'
-          c = Card::Search.new( :name=>"*recent changes", :content=>%{{"sort":"update", "dir":"desc"}})
-          #c.send(:set_defaults)    
-          c.phantom = true
-          return c
-        end
-        if name=='*search'
-          c = Card::Search.new( :name=>"*search", :content=>%{{"match":"_keyword", "sort":"relevance"}})
-          #c.send(:set_defaults)    
-          c.phantom = true
-          return c
-        end
         
         template_tsar_name = name.simple? ? name : name.tag_name
         template = Card.search( :type=>'Search', :name=>"#{template_tsar_name}+*template" )[0]
@@ -31,6 +27,12 @@ module CardLib
         c
       end
 
+      def create_phantom(name, json)
+        c=Card::Search.new(:name=>name, :content=>json)
+        c.phantom = true
+        c
+      end
+      
       def count_by_wql(spec)       
         #.gsub(/^\s*\(/,'').gsub(/\)\s*$/,'')
         result = connection.select_one( Wql2::CardSpec.new(spec).merge(:return=>'count').to_sql )

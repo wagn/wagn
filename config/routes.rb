@@ -4,6 +4,9 @@ ActionController::Routing::Routes.draw do |map|
   #map.connect 'c/:controller/:action/:id'
   #map.connect 'c/:controller/:action'
   #map.connect 'c/:controller', :action=>'index'
+
+  map.connect 'images/:foo', :controller=>'application', :action=>'render_fast_404'
+  map.connect 'images/:foo/:bar', :requirements=>{ :bar=>/.*/ }, :controller=>'application', :action=>'render_fast_404'
   
   map.connect 'wagn/:id.:format', :controller => 'card', :action=>'show', :requirements=>{ :id=>/.*/, :format=>FORMAT_PATTERN }
   map.connect 'wagn/:id', :controller => 'card', :action=>'show', :requirements=>{ :id=>/.*/}
@@ -14,7 +17,8 @@ ActionController::Routing::Routes.draw do |map|
   #/DEPRECATED   
 
   map.connect 'recent', :controller => 'card', :action=>'show', :id=>'*recent_changes', :view=>'content'
-
+ 
+ 
   map.connect ':controller/:action/:id/:attribute' 
 
   #map.connect '/card/new/:cardtype', :controller=>'card', :action=>'new'

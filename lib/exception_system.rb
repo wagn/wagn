@@ -21,7 +21,12 @@ module ExceptionSystem
     end
   end
    
-  # these called by exception_notifier
+  # these called by exception_notifier    
+  def render_fast_404()
+    render :text=>"404 not found", :layout=>nil, :status=>404
+  end
+  
+  
   def render_404() 
     logger.error("render_404 invoked for request_uri=#{request.request_uri} and env=#{request.env.inspect}")
     render_exception(404); 

@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   include ExceptionNotifiable
   include ExceptionSystem
   
-  layout :ajax_or_not
+  layout :ajax_or_not, :except=>[:render_fast_404]
   attr_reader :card, :cards, :renderer, :context   
   attr_accessor :notice
   before_filter :note_current_user, :load_context, :reset_class_caches, :save_request 
@@ -62,7 +62,7 @@ class ApplicationController < ActionController::Base
     end
     # auto_load_card tells the cached card if any missing method is requested
     # load the real card to respond.  
-    @card = CachedCard.get(name, @card, :cache=>cache, :card=>params[:card] )
+    @card = CachedCard.get(name, @card, :cache=>cache, :card_params=>params[:card] )
     if @card.new_record?
       @card.send(:set_defaults)
     end
@@ -158,10 +158,7 @@ class ApplicationController < ActionController::Base
   
   def sidebar_cards
     unless @sidebar_cards 
-      cards = Card.find_by_wql(%{
-        cards tagged by cards with name='*sidebar'
-      })
-
+      cards = Card.search( :plus=>'*sidebar')
 =begin
       # FIXME: are we using this?
       if @card && @card.id

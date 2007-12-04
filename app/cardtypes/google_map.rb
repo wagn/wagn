@@ -3,5 +3,11 @@ module Card
     def phantom?
       true
     end
+    
+    def cacheable?
+      false
+    end
+    
+    
   end
 end

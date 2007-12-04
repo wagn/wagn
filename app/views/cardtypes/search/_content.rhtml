@@ -3,6 +3,14 @@
 	s[:offset] = s[:offset] ? s[:offset].to_i : 0
 	s[:limit] = s[:limit] ? s[:limit].to_i : (@context=='main_1' ? 25 : 10)
 	
+	instruction =
+	  case
+      when card.name=='*search'
+        "Card matching keyword: <strong>#{params[:s][:_keyword]}</strong>"
+      when cue = card.attribute_card('*cue'); cue
+      else; nil
+    end
+	
   begin
 		card.search( s )  
 	rescue Exception=>e
@@ -10,14 +18,17 @@
 	end
 %>   
 
+
+
+
 <% if card.results.nil? %>
 	<%= "#{error.type}: #{error.message}" %><br/>
 	<%= card.content %>
-<% elsif card.results.length==0 %>
-  <span class="faint">Search returned no results</span>
+<%# elsif card.results.length==0 %>
+<!--  <span class="faint">Search returned no results</span> -->
 <% else %>           	
 
 	<% partial = (card.name=='*recent changes') ? 'recent_changes' : 'card_list' %>
-	<%= render :partial=>"block/#{partial}", :locals=> { :card=>card, 
-		:cards=>card.results, :context=>@context, :title=>(card.name=='*search' ? 'Search Results' : '') } %>
+	<%= render :partial=>"block/#{partial}", :locals=> { :card=>card,	:cards=>card.results, :context=>@context,
+	   :instruction=>instruction, :title=>(card.name=='*search' ? 'Search Results' : '') } %>
 <% end %>

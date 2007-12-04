@@ -7,18 +7,18 @@
 			<% if @likely.empty? %>
 				<div class="instruction">
 				  <p>
-	  		    Type in the name of a card below to join it to <%= link_to_page @card.name %>.
+	  		    Type in the name of a card below to connect it to <%= link_to_page @card.name %>.
   	  		  <% if @already.empty? %>
-  	  		    (So far, no cards have been joined to any <%= link_to_page @card.cardtype.name %> cards.)
+  	  		    (So far, no cards have been connected to any <%= link_to_page @card.cardtype.name %> cards.)
   	  		  <% else %>
-  	  		    (All the cards joined to other  <%= link_to_page @card.cardtype.name %> cards have already been joined to <%= link_to_page @card.name %>.)
+  	  		    (All the cards connected to other  <%= link_to_page @card.cardtype.name %> cards have already been connected to <%= link_to_page @card.name %>.)
 	  		  <% end %>
 	  		  </p>
 	  		</div>
 			<% else%>
 				<div class="instruction">
 				  <p>
-				  Other  <%= link_to_page @card.cardtype.name %>  cards have been joined to the cards listed below (larger ones more often). Click on one to join it to "<%= link_to_page @card.name %>", or just type the name of the card you want to join to in the text box.
+				  Other  <%= link_to_page @card.cardtype.name %>  cards have been connected to the cards listed below (larger ones more often). Click on one to connect it to "<%= link_to_page @card.name %>", or just type the name of the card you want to connect to in the text box.
 				  </p>
 	  		</div>
 	  	  <div>
@@ -30,7 +30,7 @@
 		  <div class="add-form">
 		    <%= text_field_tag 'name', params[:name], :size=>30, :id=>"#{slot.context}_name" %>
 		    <%= cardname_auto_complete("#{slot.context}_name") %> 
-		    <%= submit_tag 'Add' %>
+		    <%= submit_tag 'Connect' %>
 		    <%= slot.link_to_action "Cancel", 'related' %>
 		  </div>
 

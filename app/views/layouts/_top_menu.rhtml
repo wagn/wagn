@@ -4,7 +4,7 @@
     <%= link_to('Home', '/') %>
     <%= link_to( 'Recent', '/recent' ) %>
 	  <%=  text_field_tag("keyword", 
-		       params[:keyword] || 'Search cards', 
+		       (params[:s] && params[:s][:_keyword]) || 'Search cards', 
 		       :onclick=>'if (this.value == "Search cards") {this.value="" }', 
 		       :onchange => "document.location.href='/wagn/*search?view=content&s[_keyword]='+encodeURIComponent($F(this))" 		 
 		)	%>

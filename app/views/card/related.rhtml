@@ -1,7 +1,15 @@
 <% get_slot.wrap(:related) do |slot| %>
 	<%= slot.header %>
 	<%= slot.notice %>  
-	<div id="related" class="content headroom">
+	<div class="content related headroom">
+		<h2>Self</h2>
+		<% @card.pieces.each do |particle| %>
+		  <%= render_card particle, 'line' %>
+		<% end %>
+		<% unless @card.type == 'Basic' %>
+  		<h2>Type</h2>
+  		<%= render_card @card.cardtype, 'line' %>
+  	<% end %>
 	  <% if @card.type == 'Cardtype' %>
 	    <h2><%= @card.name %> Cards</h2>
 	    <%= render_card "#{@card.name}+*type cards", 'line' %>
@@ -13,19 +21,13 @@
     <%= render_card "#{@card.name}+*plus cards", 'line' %>
     <%= render_card "#{@card.name}+*plus parts", 'line' %>  
 		<% if !createable_cardtypes.empty? %>
-		  <%= button_to_remote "Join #{@card.name} to another card", :url=>slot.url_for("connection/new"), 
+		  <%= button_to_remote "Connect #{@card.name} to another card", :url=>slot.url_for("connection/new"), 
 						:update=>slot.id %>
 		<% end %>
 		<h2>References</h2>
 		<% ['linked to', 'linked from', 'included', 'that include'].each do |search| %>
       <%= render_card "#{@card.name}+*cards #{search}", 'line' %>
 		<% end %>	
-		<h2>Self</h2>
-		<% @card.pieces.each do |particle| %>
-		  <%= render_card particle, 'line' %>
-		<% end %>
-		<h2>Type</h2>
-		<%= render_card @card.cardtype, 'line' %>
 	</div>
 	
 <% end %>

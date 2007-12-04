@@ -3,19 +3,24 @@
 	duplicates ||= []
   context ||= 'default'
   title   ||= ''
+  instruction ||= nil
 -%>
 <% if !title.empty? %> 
 	<% @title=title %>
   <h1><%= title %></h1>
 <% end %>       
 
-<%= render :partial=>'/block/paging', :locals=>{:card=>card} %>
 
+<% if instruction %>
+  <div class="instruction">
+    <p><%= instruction %></p>
+  </div>
+<% end %>
 
 <% if cards.empty? %>
-  <div id="empty-card-list" class="card-slot line none"> 0 cards </div>
+  <div class="faint">Search returned no results</div>
 <% else %>
-  <span id="empty-card-list"></span>
+  <%= render :partial=>'/block/paging', :locals=>{:card=>card} %>
 <% end %>
                  
 <% cards.each do |card| %>

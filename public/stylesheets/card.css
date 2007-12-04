@@ -303,6 +303,13 @@ a.current, a:link.current {
   text-align: left;
 }
 
+/*-----------related tab ----------*/
+
+.card-slot .related.headroom h1,
+.card-slot .related.headroom h2 {
+  margin-top: 10px;
+}
+
 
 /*------------- multiple tabs / misc -----*/
 

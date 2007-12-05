@@ -148,10 +148,10 @@ module CardLib
       )
     end
     
-    def cascade_name_changes
+    def cascade_name_changes 
       # This happens after_save because of the way it references trunk.name and tag.name
       # which depend on the original card being saved.
-      return unless @name_changed
+      return true unless @name_changed
       # update the name cache all down the tree
       junctions.each do |card|
         dep_name = card.trunk.name + JOINT + card.tag.name
@@ -178,7 +178,8 @@ module CardLib
         # to the new card.
       end
       WikiReference.update_on_create( self )
-      @name_changed = false
+      @name_changed = false   
+      true
     end
    
     

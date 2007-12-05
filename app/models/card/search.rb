@@ -103,20 +103,20 @@ module CardLib
       #alias_method_chain :find, :rescue  
     end
     
-    def update_search_index
+    def update_search_index     
       return unless (@search_content_changed && 
           System.enable_postgres_fulltext && Card.columns.plot(:name).include?("indexed_content"))
       
       connection.execute %{
         update cards set indexed_content = concat( setweight( to_tsvector( name ), 'A' ), 
-        to_tsvector( (select content from revisions where id=cards.current_revision_id) ) ) 
-        where id=#{self.id}
+        to_tsvector( (select content from revisions where id=cards.current_revision_id) ) ),
+        indexed_name = to_tsvector( name ) where id=#{self.id}
       }
       @search_content_changed = false
       true
     end
 
-    def self.included(base)   
+    def self.append_features(base)   
       super
       base.extend(ClassMethods)    
       base.after_save :update_search_index

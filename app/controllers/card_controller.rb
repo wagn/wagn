@@ -16,8 +16,11 @@ class CardController < ApplicationController
       next unless key.to_s =~ /card|pointer/ 
       complete = params[key].values[0]
     end
-  
-    @items = Card.search( :complete=>complete, :limit=>8, :sort=>'alpha' )
+    if !params[:id].blank? && card = Card["#{params[:id].tag_name}+*options"]
+      @items = card.search( :complete=>complete, :limit=>8, :sort=>'alpha')
+    else
+      @items = Card.search( :complete=>complete, :limit=>8, :sort=>'alpha' )
+    end
     render :inline => "<%= auto_complete_result @items, 'name' %>"
   end
      

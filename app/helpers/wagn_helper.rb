@@ -302,9 +302,9 @@ module WagnHelper
     out << "</style>\n"
   end
 
-  def cardname_auto_complete(fieldname)
+  def cardname_auto_complete(fieldname, card_id='')
     content_tag("div", "", :id => "#{fieldname}_auto_complete", :class => "auto_complete") +
-    auto_complete_field(fieldname, { :url =>"/card/auto_complete_for_card_name" }.update({}))
+    auto_complete_field(fieldname, { :url =>"/card/auto_complete_for_card_name/#{card_id.to_s}" }.update({}))
   end
   
   

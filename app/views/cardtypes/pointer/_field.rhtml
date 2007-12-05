@@ -1,4 +1,4 @@
 <li id="<%= eid %>-pointer-li-<%= index %>" class="pointer-li">
 <%= text_field_tag "pointer[#{index}]", link, :id=>"#{eid}_pointer_text_#{index}", :class=>'pointer-text'  %>
-<%= cardname_auto_complete("#{eid}_pointer_text_#{index}") %>
+<%= cardname_auto_complete("#{eid}_pointer_text_#{index}", card.key) %>
 <%= link_to_function 'X', "$('#{eid}-pointer-li-#{index}').remove()", :class=>'delete' %>

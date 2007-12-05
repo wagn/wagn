@@ -2,7 +2,7 @@ module Card
 	class Pointer < Base
 	  
 	  def pointees
-	    links = out_references.plot :referenced_name
+	    links = content.split("\n").map{ |x| x.gsub(/\[\[|\]\]/,'')}
 	    links.empty? ? [''] : links
 	  end
 	  

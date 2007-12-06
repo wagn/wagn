@@ -152,8 +152,13 @@ module WagnHelper
           %{<span class="faint">Sorry #{::User.current_user.card.name}, you need permissions to view #{card.name}</span>}
           
         when :create_transclusion
-          %{<div class="faint createOnClick" view="#{args[:view]}" position="#{position}" cardid="" cardname="#{card.name}">}+
+          Card.find_phantom(card.name) ?
+          
+            %{<div class="faint"><em>#{args[:requested_name] || card.name} is an Auto card</em><div>} :
+
+            %{<div class="faint createOnClick" view="#{args[:view]}" position="#{position}" cardid="" cardname="#{card.name}">}+
             %{Add #{args[:requested_name] || card.name}</div>}
+            
             # + ((args[:view]=='edit' || parent.card.type == 'Pointer') ? "<br/>" : "")
 
         when :missing_transclusion

@@ -2,7 +2,7 @@ class CardController < ApplicationController
   helper :wagn, :card 
   layout :ajax_or_not
   cache_sweeper :card_sweeper
-  before_filter :load_card!, :except => [ :auto_complete_for_card_name, :line, :view, :to_view, :test, :new, :create, :show, :index, :mine, :missing, :add_field ]
+  before_filter :load_card!, :except => [ :auto_complete_for_card_name, :line, :view, :to_view, :test, :new, :create, :show, :index, :mine, :missing ]
   before_filter :load_card_with_cache, :only => [:line, :view, :to_view ]
 
   before_filter :edit_ok,   :only=>[ :update, :save_draft, :rollback, :save_draft] 
@@ -16,6 +16,7 @@ class CardController < ApplicationController
       next unless key.to_s =~ /card|pointer/ 
       complete = params[key].values[0]
     end
+
     if !params[:id].blank? && card = Card["#{params[:id].tag_name}+*options"]
       @items = card.search( :complete=>complete, :limit=>8, :sort=>'alpha')
     else
@@ -207,7 +208,7 @@ class CardController < ApplicationController
   end
           
   def add_field # for pointers only
-    render :partial=>'cardtypes/pointer/field', :locals=>params
+    render :partial=>'cardtypes/pointer/field', :locals=>params.merge({:card=>@card})
   end
                                                     
   def options

@@ -416,9 +416,9 @@ getSlotSpan=function(element) {
 }
 
 
-urlForAddField=function(eid) {
+urlForAddField=function(card_id, eid) {
   //return 'foo'
   index = getSlotElements(getSlotFromContext(eid), 'pointer-li').length;
-  return ('/card/add_field?index=' + index + '&eid=' + eid);
+  return ('/card/add_field/' + card_id + '?index=' + index + '&eid=' + eid);
 }
 

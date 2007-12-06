@@ -5,7 +5,7 @@
     <%= render :partial=>'/cardtypes/pointer/field', :locals=>{ :eid=>eid, :link=>link, :index=>index } %>
   <% end %>
   <li id="<%=eid%>-add">
-  <%= link_to_remote 'Add card', :url=>"javascript:urlForAddField('#{eid}')", :update=>"#{eid}-add", :position=>:before %>
+  <%= link_to_remote 'Add card', :url=>"javascript:urlForAddField('#{card.id}','#{eid}')", :update=>"#{eid}-add", :position=>:before %>
 </ul>
 
 <%= slot.editor_hooks :save=>%{

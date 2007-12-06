@@ -22,7 +22,8 @@ module CardLib
         end
         
         template_tsar_name = name.simple? ? name : name.tag_name
-        template = Card.search( :type=>'Search', :name=>"#{template_tsar_name}+*template" )[0]
+        template = Card.find_by_type_and_key_and_trash('Search', "#{template_tsar_name}+*template".to_key, false)
+        #template = Card.search( :type=>'Search', :name=>"#{template_tsar_name}+*template" )[0]
         return nil unless template
         
         c = Card::Search.new :name=>name, :content=>template.content

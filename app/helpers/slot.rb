@@ -225,8 +225,8 @@ module WagnHelper
             CachedCard.get(transcluded_card_name)
           end
 
-          transcluded_content = process_transclusion( card, options )
-          slot.char_count += transcluded_content.length
+          transcluded_content = process_transclusion( card, options ) 
+          slot.char_count += (transcluded_content ? transcluded_content.length : 0)
           transcluded_content
         end
       end  

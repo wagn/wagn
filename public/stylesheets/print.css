@@ -1,7 +1,10 @@
 
 #page-right, #alerts, #top-menu {
-  display: none;
+  display: none !important;
 }
 #page-left {
   width: 100%
+}
+.card-slot.paragraph .content {
+  overflow: visible !important;
 }

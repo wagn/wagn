@@ -1,0 +1,14 @@
+#!/bin/sh
+if [ "$1" = "" ]; then
+   echo "Usage: select_for_request <request_path>";
+   echo "Note: assumes mongrel running in dev mode on port 3000";
+   echo "will erase your development log";
+else 
+    echo "" | cat > log/development.log ; 
+    curl http://localhost:3000/$1 > /dev/null 2>&1   
+    echo -n "Total Time: "
+    cat log/development.log | awk '/SQL/{print $2;} /SELECT/{print $3}' | grep '(' | ruby -ne 'BEGIN{$n=0}; $n+=$_.gsub(/\((.*)\)/,%q{\1}).to_f; END{ print $n}'
+    echo -n "   Queries:"
+    cat log/development.log | grep 'SELECT' | wc -l  
+fi   
+             

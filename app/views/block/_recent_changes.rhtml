@@ -11,7 +11,7 @@
 	  #FIXME - tis UGLY, we're getting cached cards, so get the real card to call
 	  # revised_at on.  the cards should already be there from the search results.
 	  real_card = card.respond_to?(:card) ? card.card : card
-    day = Date.new(real_card.revised_at.year, real_card.revised_at.month, real_card.revised_at.day)
+    day = Date.new(real_card.updated_at.year, real_card.updated_at.month, real_card.updated_at.day)
     cards_by_day[day] << card
   end
 %>

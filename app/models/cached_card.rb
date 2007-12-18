@@ -18,6 +18,9 @@ class CachedCard
     def get(name, card=nil, opts={}) 
       key = name.to_key
       caching = (opts.has_key?(:cache) ? opts[:cache] : true) && perform_caching 
+      card_opts = opts[:card_params] ? opts[:card_params] : {}
+      card_opts['name'] = name if (name && !name.blank?)
+
       r = if caching && (cached_card = self.find(key, card, opts))
         ActiveRecord::Base.logger.info("<get(InCache) name=#{name}>")
         cached_card
@@ -25,6 +28,9 @@ class CachedCard
       elsif card 
         ActiveRecord::Base.logger.info("<get(PassedIn) name=#{name}>")
         self.new_cached_if_cacheable(card, opts)
+
+      elsif name.blank?
+        Card.new(card_opts)
       
       elsif card = Card.find_builtin(name)  
         ActiveRecord::Base.logger.info("<get(BuiltIn) name=#{name}>")
@@ -45,8 +51,6 @@ class CachedCard
         
       else   
         ActiveRecord::Base.logger.info("<get(New) name=#{name}>")
-        card_opts = opts[:card_params] ? opts[:card_params] : {}
-        card_opts['name'] = name if name
         Card.new(card_opts)
       end  
       ActiveRecord::Base.logger.info("</get res=#{r}>")

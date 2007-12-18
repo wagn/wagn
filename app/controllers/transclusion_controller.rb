@@ -64,20 +64,20 @@ class TransclusionController < ApplicationController
     else
       @card.update_attributes! params[:card]     
     end
-    @render_key = {
-      "card" => :view,
-      "line" => :line,
-      "content" => :content,
-      "edit"  => :edit_transclusion
-    }[params[:requested_view]] || :content
-    view_screen = render_to_string :inline=>%{<%= get_slot.render(@render_key, :wrap=>true, :add_javascript=>true) %>}
+    view_screen = render_view
     render_update_slot do |page,target|
       target.replace view_screen
     end
   end  
 
   private
-  def render_view  
-    render_to_string :inline=>%{<%= get_slot.render(:content, :wrap=>false, :add_javascript=>true) %>}
+  def render_view
+    @render_key = {
+      "card" => :view,
+      "line" => :line,
+      "content" => :content,
+      "edit"  => :edit_transclusion
+    }[params[:requested_view]] || :content
+    render_to_string :inline=>%{<%= get_slot.render(@render_key, :wrap=>false, :add_javascript=>true) %>}
   end
 end

@@ -6,7 +6,7 @@ module WagnHelper
     cattr_accessor :max_char_count
     self.max_char_count = 200
     attr_reader :card, :context, :action, :renderer, :template
-    attr_accessor :editor_count, :options_need_save, :state,
+    attr_accessor :editor_count, :options_need_save, :state, :requested_view,
       :transclusions, :position, :renderer, :form, :superslot, :char_count     
     attr_writer :form 
      
@@ -119,14 +119,17 @@ module WagnHelper
       card_and_slot = { :card=>self.card, :slot=>self }
       result = case action
         when :view;  
-          @state = :view
+          @state = :view; self.requested_view = 'card'
           # FIXME: accessing params here is ugly-- breaks tests.
           @action = (@template.params[:view]=='content' && context=="main_1") ? 'nude' : 'view'
           wrap(@action, wrap, self.render_partial( 'card/view') )  # --> slot.wrap_content slot.render( :expanded_view_content ) 
         when :line;     
-          @state = :line; wrap('line', wrap, self.render_partial( 'card/line') )  # --> slot.wrap_content slot.render( :expanded_line_content )   
+          @state = :line; self.requested_view = 'line'
+          wrap('line', wrap, self.render_partial( 'card/line') )  # --> slot.wrap_content slot.render( :expanded_line_content )   
         when :edit;     @state = :edit; expand_transclusions( self.render( :raw_content ))
-        when :content;  wrap('content',wrap, wrap_content( self.render( :expanded_view_content )))
+        when :content;  
+         self.requested_view = 'content'  
+          wrap('content',wrap, wrap_content( self.render( :expanded_view_content )))
         when :raw;                                          self.render( :expanded_view_content )  
         when :expanded_view_content
           expand_transclusions(  cache_action('view_content') {  card.post_render( render(:custom_view_content)) } )
@@ -241,6 +244,7 @@ module WagnHelper
       new_card = card.new_record? && !card.phantom?
       
       state, vmode = @state.to_sym, (options[:view] || :content).to_sym      
+      subslot.requested_view = vmode
       #result = "state=#{state} vmode=#{vmode}"
       result = case
         when new_card && state==:line; subslot.render :missing_transclusion, options

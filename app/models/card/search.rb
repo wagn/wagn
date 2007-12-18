@@ -1,43 +1,37 @@
 module CardLib
   module Search
     module ClassMethods 
-      def find_phantom(name)     
-        #ActiveRecord::Base.logger.info("CACHE in find_phantom #{name}")
+      def find_builtin(name)
         case name
-          when '*recent changes'
-            return create_phantom(name, %{{"sort":"update", "dir":"desc"}})
-          when '*search'
-            return create_phantom(name, %{{"match":"_keyword", "sort":"relevance"}})
-          when '*broken links'
-            return create_phantom(name, '{"link_to":"_none"}')
+          when '*recent changes';  create_phantom(name, %{{"sort":"update", "dir":"desc"}})
+          when '*search';          create_phantom(name, %{{"match":"_keyword", "sort":"relevance"}})
+          when '*broken links';    create_phantom(name, '{"link_to":"_none"}')
+          else
+            if name.tag_name.to_key == 'google_map' and !name.simple?
+              ## fixme -- do something other than return nil?
+              return nil unless gm = Card['Google Map'] and gm.type == 'Cardtype'
+              return nil unless trunk = Card.find_by_key_and_trash(name.parent_name.to_key, false)
+              c = Card::GoogleMap.new :name=>name
+              c.trunk = trunk
+              c
+            else
+              nil
+            end
         end
-        
-        if name.tag_name.to_key == 'google_map' and !name.simple?
-          ## fixme -- do something other than return nil?
-          return nil unless gm = Card['Google Map'] and gm.type == 'Cardtype'
-          return nil unless trunk = Card.find_by_key_and_trash(name.parent_name.to_key, false)
-          c = Card::GoogleMap.new :name=>name
-          c.trunk = trunk
-          return c
+      end
+      
+      def find_phantom(name)  
+        find_builtin(name) or begin
+          template_name = (name.simple? ? name : name.tag_name) + "+*template"
+          template = Card[template_name]
+          #ActiveRecord::Base.logger.info("<phantom name=#{template_name} use_cache=#{} res=#{template}>")
+          template ? create_phantom( name, template.content ) : nil
         end
-        
-        template_tsar_name = name.simple? ? name : name.tag_name
-        template = Card.find_by_type_and_key_and_trash('Search', "#{template_tsar_name}+*template".to_key, false)
-        #template = Card.search( :type=>'Search', :name=>"#{template_tsar_name}+*template" )[0]
-        return nil unless template
-        
-        c = Card::Search.new :name=>name, :content=>template.content
-        #c.send(:set_defaults)
-        if name.junction?
-          c.self_card = c.trunk 
-          #warn "setting search card #{c.trunk}"
-        end
-        c.phantom = true
-        c
       end
 
       def create_phantom(name, json)
         c=Card::Search.new(:name=>name, :content=>json)
+        c.self_card = c.trunk if name.junction?
         c.phantom = true
         c
       end

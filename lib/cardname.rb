@@ -22,7 +22,11 @@ module Cardname
     end
     return true
   end
-  
+      
+  def auto_template_name
+    (simple? ? self : self.tag_name) + "+*template"
+  end
+    
   def piece_names
     simple? ? [self] : ([self] + parent_name.piece_names + tag_name.piece_names).uniq
   end

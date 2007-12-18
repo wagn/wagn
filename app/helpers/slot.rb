@@ -92,6 +92,19 @@ module WagnHelper
       end    
       result
     end
+    
+    def cache_action(cc_method) 
+      if CachedCard===card 
+        card.send(cc_method) || begin
+          cached_card, @card = card, Card.find_by_key_and_trash(card.key, false) || raise("Oops! found cached card for #{card.key} but couln't find the real one") 
+          content = yield(@card)
+          cached_card.send("#{cc_method}=", content)  
+          content
+        end
+      else
+        yield(card)
+      end
+    end
 
     def render(action, args={})      
       #ActiveRecord::Base.logger.info("slot(#{card.name}, #{@state}).render(#{action})")
@@ -110,37 +123,17 @@ module WagnHelper
           # FIXME: accessing params here is ugly-- breaks tests.
           @action = (@template.params[:view]=='content' && context=="main_1") ? 'nude' : 'view'
           wrap(@action, wrap, self.render_partial( 'card/view') )  # --> slot.wrap_content slot.render( :expanded_view_content ) 
-        when :line;     @state = :line; wrap('line', wrap, self.render_partial( 'card/line') )  # --> slot.wrap_content slot.render( :expanded_line_content )   
-        when :edit;     @state = :edit; slot.expand_transclusions( slot.render( :raw_content ))
+        when :line;     
+          @state = :line; wrap('line', wrap, self.render_partial( 'card/line') )  # --> slot.wrap_content slot.render( :expanded_line_content )   
+        when :edit;     @state = :edit; expand_transclusions( self.render( :raw_content ))
         when :content;  wrap('content',wrap, wrap_content( self.render( :expanded_view_content )))
-        when :raw;                                          self.render( :expanded_view_content )
-        when :expanded_line_content, :expanded_view_content;  
-          method = (action == :expanded_view_content ? 'view_content' : 'line_content')
-          if CachedCard===card
-            cached_card = card
-            content = cached_card.send(method)                                              
-            if content.nil?                                                       
-              # we're working from a cachedCard, and it's a miss, load the real card for remaining processing
-              @card = Card.find_by_key_and_trash(card.key, false) || raise("Oops! found cached card for #{card.key} but couln't find the real one")
-              #ActiveRecord::Base.logger.info("CACHE MISS for #{card.type}:#{card.name}: #{action}")
-              content =  render("custom_#{method}".to_sym)
-              # FIXME not dry
-              if method=='view_content'
-                content = card.post_render( content )
-              end
-              cached_card.send("#{method}=",content)
-            else
-              #ActiveRecord::Base.logger.info("CACHE HIT for #{card.type}:#{card.name}: #{action}")
-            end
+        when :raw;                                          self.render( :expanded_view_content )  
+        when :expanded_view_content
+          expand_transclusions(  cache_action('view_content') {  card.post_render( render(:custom_view_content)) } )
 
-          else
-            #ActiveRecord::Base.logger.info("CACHE SKIPPED for #{card.type}:#{card.name} #{action}")
-            content = render("custom_#{method}".to_sym)
-            if method=='view_content'
-              content = card.post_render( content )
-            end
-          end  
-          expand_transclusions( content )
+        when :expanded_line_content
+          expand_transclusions( cache_action('line_content') { render(:custom_line_content) } )
+
         when :custom_line_content;  
           render_partial(custom_partial_for(:line))   # in basic case: --> truncate( slot.render( :custom_view_content ))
         when :custom_view_content;  
@@ -151,14 +144,12 @@ module WagnHelper
         when :denied;
           %{<span class="faint">Sorry #{::User.current_user.card.name}, you need permissions to view #{card.name}</span>}
           
-        when :create_transclusion
-          Card.find_phantom(card.name) ?
+        when :auto_card_notice
+          %{<div class="faint"><em>#{args[:requested_name] || card.name} is an Auto card</em><div>} 
           
-            %{<div class="faint"><em>#{args[:requested_name] || card.name} is an Auto card</em><div>} :
-
+        when :create_transclusion
             %{<div class="faint createOnClick" view="#{args[:view]}" position="#{position}" cardid="" cardname="#{card.name}">}+
             %{Add #{args[:requested_name] || card.name}</div>}
-            
             # + ((args[:view]=='edit' || parent.card.type == 'Pointer') ? "<br/>" : "")
 
         when :missing_transclusion
@@ -186,7 +177,7 @@ module WagnHelper
       result
     end
 
-    def expand_transclusions(content)     
+    def expand_transclusions(content) 
       #content="#{card.name}=~/*template/" + content
       #return ("skip(#{card.name}):"+content) 
       if card.name =~ /\*template/           
@@ -197,7 +188,7 @@ module WagnHelper
       end
       #content = "noskip(#{card.name}):" + content
       content.gsub!(Chunk::Transclude::TRANSCLUDE_PATTERN) do  
-        if @state==:line && slot.char_count > Slot.max_char_count
+        if @state==:line && self.char_count > Slot.max_char_count
           ""
         else
           match = $~
@@ -213,20 +204,21 @@ module WagnHelper
           options[:view]='edit' if @state == :edit
               
           # compute transcluded card name
-          if relative
-            transcluded_card_name = (options[:base]=='parent' ? card.name.parent_name : card.name) + requested_name
-          else
-            transcluded_card_name = requested_name
-          end
+          transcluded_card_name = relative ? 
+             (options[:base]=='parent' ? card.name.parent_name : card.name) + requested_name :
+             requested_name
 
-          card = if @state==:edit
-            Card.find_by_name(transcluded_card_name) || Card.new(:name=>transcluded_card_name)
-          else
-            CachedCard.get(transcluded_card_name)
+          card = case
+            when @state==:edit
+              (Card.find_by_name(transcluded_card_name) || 
+                Card.find_phantom(transcluded_card_name) ||
+                 Card.new(:name=>transcluded_card_name))
+            else
+              CachedCard.get(transcluded_card_name)
           end
-
+         
           transcluded_content = process_transclusion( card, options ) 
-          slot.char_count += (transcluded_content ? transcluded_content.length : 0)
+          self.char_count += (transcluded_content ? transcluded_content.length : 0)
           transcluded_content
         end
       end  
@@ -241,7 +233,7 @@ module WagnHelper
       end
     end
     
-    def process_transclusion( card, options={} )    
+    def process_transclusion( card, options={} )  
       subslot = subslot(card)  
       old_slot, @template.controller.slot = @template.controller.slot, subslot
 
@@ -252,8 +244,9 @@ module WagnHelper
       #result = "state=#{state} vmode=#{vmode}"
       result = case
         when new_card && state==:line; subslot.render :missing_transclusion, options
-        when new_card;     subslot.render( :create_transclusion, options )
-        when state==:edit; subslot.render :edit_transclusion
+        when new_card;     subslot.render( :create_transclusion, options ) 
+        when state==:edit && card.phantom?; subslot.render :auto_card_notice
+        when state==:edit;  subslot.render :edit_transclusion
         when state==:line; subslot.render(:expanded_line_content )
           
         # now we are in state==:view, switch on viewmode (from transclusion syntax)

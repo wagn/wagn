@@ -68,6 +68,11 @@ module Card
     private
       belongs_to :reader, :polymorphic=>true  
       
+      def log(msg)
+        ActiveRecord::Base.logger.info(msg)
+      end
+        
+      
     protected    
 
     def create_references_for_hard_templatees

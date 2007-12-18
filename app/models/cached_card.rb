@@ -16,24 +16,45 @@ class CachedCard
   
   class << self   
     def get(name, card=nil, opts={}) 
-      cache = opts.has_key?(:cache) ? opts[:cache] : true
       key = name.to_key
-      if cache && perform_caching && (cached_card = self.find(key, card, opts))
+      caching = (opts.has_key?(:cache) ? opts[:cache] : true) && perform_caching 
+      r = if caching && (cached_card = self.find(key, card, opts))
+        ActiveRecord::Base.logger.info("<get(InCache) name=#{name}>")
         cached_card
-      elsif card || (card=Card.find_by_key_and_trash(key, false))
-        (cache && perform_caching && card.cacheable?) ? self.new(key, card, opts) : card
-      elsif card=Card.find_phantom(name)
-        card
+
+      elsif card 
+        ActiveRecord::Base.logger.info("<get(PassedIn) name=#{name}>")
+        self.new_cached_if_cacheable(card, opts)
+        
+      elsif template = self.find( name.auto_template_name.to_key )
+        ActiveRecord::Base.logger.info("<get(CachedPhantom) name=#{name}>")
+        card = Card.create_phantom( name, template.content )
+
+      elsif card = Card[name] 
+        ActiveRecord::Base.logger.info("<get(DB) name=#{name}>")
+        self.new_cached_if_cacheable(card, opts)
+
+      elsif template = Card[ name.auto_template_name ]
+        ActiveRecord::Base.logger.info("<get(Phantom) name=#{name}>")
+        template = self.new_cached_if_cacheable(template, opts)
+        card = Card.create_phantom( name, template.content )
+        
       else   
+        ActiveRecord::Base.logger.info("<get(New) name=#{name}>")
         card_opts = opts[:card_params] ? opts[:card_params] : {}
         card_opts['name'] = name if name
-        c = Card.new(card_opts)  # FIXME: set defaults?
-        #c.send(:set_defaults)
-        c
+        Card.new(card_opts)
       end  
+      ActiveRecord::Base.logger.info("</get res=#{r}>")
+      r
     end
     
-    def find(key, card, opts={})
+    def new_cached_if_cacheable(card,opts={})
+      caching = (opts.has_key?(:cache) ? opts[:cache] : true) && perform_caching 
+      caching && card.cacheable? ? self.new( card.key, card, opts) : card
+    end
+    
+    def find(key, card=nil, opts={})
       cached_card = self.new(key, card, opts)            
       cached_card.exists? ? cached_card : nil
     end     
@@ -41,13 +62,13 @@ class CachedCard
   
   def initialize(key, real_card=nil, opts={})
     @auto_load = opts[:auto_load_card]   
-    #warn("Cache init: #{key}, #{real_card}")
+    #ActiveRecord::Base.logger.info("<Cache init: #{key}, #{real_card}>")
     @card = real_card
     @key=key
   end
   
   def exists?
-    !!read('name')
+    !!(read('name') || read('content'))
   end
   
   def phantom?() false end  # only cache non-phantom cards
@@ -56,7 +77,8 @@ class CachedCard
   def to_id() id end            
   def id()  id = get('id') { card.id.to_s }; id.to_i end
   def name()  get('name') { card.name } end
-  def type()  get('type') { card.type } end  
+  def type()  get('type') { card.type } end 
+  def content() get('content') { card.content } end
     
   def read_permission() 
     get('read_permission') { p = card.who_can(:read);  "#{p.class.to_s}:#{p.id}" }
@@ -82,31 +104,19 @@ class CachedCard
     party_class == 'Role' ? System.role_ok?(party_id) : (party_id==User.current_user.id)
   end
 
-  def line_content() 
-    #ActiveRecord::Base.logger.info("CACHE READING line_content")
-    res = read('line_content') || nil
-    #ActiveRecord::Base.logger.info("CACHE READ line_content: #{res}")
-    res
-  end
+  def line_content()   read('line_content') end
+  def line_content=(content)  write('line_content', content)  end      
   
-  def line_content=(content)  
-    write('line_content', content) 
-  end      
+  def view_content() read('view_content') end
+  def view_content=(content)  write('view_content', content) end
   
-  def view_content()
-    #ActiveRecord::Base.logger.info("CACHE READING view_content")
-    res = read('view_content') || nil
-    #ActiveRecord::Base.logger.info("CACHE READ view_content: #{res}")
-    res
-  end
+  def footer() read('footer') end
+  def footer=(content) write('footer', content) end
   
-  def view_content=(content)
-    write('view_content', content)
-  end
-  
+
   def card
     @card ||= (
-      ActiveRecord::Base.logger.info("loading: #{@key}")
+      ActiveRecord::Base.logger.info("<Loading: #{@key}>")
       Card.find_by_key_and_trash(@key, false)
     )
   end
@@ -117,7 +127,7 @@ class CachedCard
   
   def get(field)
     read(field) or begin
-      value = yield
+      value = yield  
       write(field, value)
       value
     end
@@ -135,7 +145,7 @@ class CachedCard
     # FIXME: easy place for bugs if using a key that's not here.    
     # why not regexp? rails docs say:
     # Regexp expiration is not supported on caches which can‘t iterate over all keys, such as memcached.
-    %w{id name type read_permission comment_permission line_content view_content }.each do |f|
+    %w{id name type content read_permission comment_permission line_content view_content footer }.each do |f|
       expire(f)
     end
   end 

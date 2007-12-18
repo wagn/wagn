@@ -57,11 +57,7 @@ module SlotHelpers
     end
     menu = %{<div class="card-menu">\n}
   	menu << link_to_menu_action('view')
-  	if card.ok?(:edit) 
-    	menu << link_to_menu_action('edit') 
-  	else
-  	  menu << link_to_remote("Edit", :url=>url_for('card/denied'), :update=>id)
-    end
+  	menu << link_to_menu_action('edit') 
   	menu << link_to_menu_action('changes')
   	menu << link_to_menu_action('options') 
   	menu << link_to_menu_action('related') 
@@ -69,7 +65,7 @@ module SlotHelpers
   end
 
   def footer 
-    controller.send :render_to_string, :partial=>"card/footer", :locals=>{ :card=>card, :slot=>self }
+     cache_action('footer') { render_partial( 'card/footer' ) }
   end
 
   def option( args={}, &proc)
@@ -92,6 +88,10 @@ module SlotHelpers
     %{<tr><td colspan="3" class="option-header"><h2>#{title}</h2></td></tr>}
   end
 
+  def link_to_menu_action( to_action)
+    link_to_action to_action.capitalize, to_action, {},
+      :class=> (action==to_action ? 'current' : '')
+  end
 
   def link_to_action( text, to_action, remote_opts={}, html_opts={})
     link_to_remote text, remote_opts.merge(
@@ -106,13 +106,6 @@ module SlotHelpers
       :update => id
     ), html_opts
   end
-
-
-  def link_to_menu_action( to_action)
-    link_to_action to_action.capitalize, to_action, {},
-      :class=> (action==to_action ? 'current' : '')
-  end
-     
 
   def name_field(form,options={})
     text = %{<span class="label"> card name:</span>\n}

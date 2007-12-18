@@ -33,7 +33,7 @@ module Card
     end
     
     def cacheable?
-      false
+      name.tag_name=='*template' ? true : false
     end
      
     def count(params={})
@@ -46,9 +46,11 @@ module Card
                                 
     def search( params={} )  
       self.search_opts = params  
-      ActiveRecord::Base.logger.info("Search: #{self.name}")
+      ActiveRecord::Base.logger.info("<Search name=#{self.name}>")
       self.results = Card.search( get_spec(params.clone) ).map do |card|   
-        CachedCard.get(card.name, card)
+        c = CachedCard.get(card.name, card)
+        ActiveRecord::Base.logger.info("<CachedCard.get name=#{name} card=#{card} res=#{c}>")
+        c
       end
     end
     

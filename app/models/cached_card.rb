@@ -25,6 +25,10 @@ class CachedCard
       elsif card 
         ActiveRecord::Base.logger.info("<get(PassedIn) name=#{name}>")
         self.new_cached_if_cacheable(card, opts)
+      
+      elsif card = Card.find_builtin(name)  
+        ActiveRecord::Base.logger.info("<get(BuiltIn) name=#{name}>")
+        card 
         
       elsif template = self.find( name.auto_template_name.to_key )
         ActiveRecord::Base.logger.info("<get(CachedPhantom) name=#{name}>")

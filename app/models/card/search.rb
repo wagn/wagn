@@ -21,11 +21,12 @@ module CardLib
       end
       
       def find_phantom(name)  
-        find_builtin(name) or begin
-          template_name = (name.simple? ? name : name.tag_name) + "+*template"
-          template = Card[template_name]
-          #ActiveRecord::Base.logger.info("<phantom name=#{template_name} use_cache=#{} res=#{template}>")
-          template ? create_phantom( name, template.content ) : nil
+        find_builtin(name) or begin    
+          User.as(:admin) do 
+            template_name = name.tag_name + "+*template"
+            template = Card[template_name]
+            template ? create_phantom( name, template.content ) : nil
+          end
         end
       end
 

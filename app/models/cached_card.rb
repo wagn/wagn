@@ -32,7 +32,7 @@ class CachedCard
         
       elsif template = self.find( name.auto_template_name.to_key )
         ActiveRecord::Base.logger.info("<get(CachedPhantom) name=#{name}>")
-        card = Card.create_phantom( name, template.content )
+        User.as(:admin){ Card.create_phantom( name, template.content ) }  # FIXME
 
       elsif card = Card[name] 
         ActiveRecord::Base.logger.info("<get(DB) name=#{name}>")
@@ -41,7 +41,7 @@ class CachedCard
       elsif template = Card[ name.auto_template_name ]
         ActiveRecord::Base.logger.info("<get(Phantom) name=#{name}>")
         template = self.new_cached_if_cacheable(template, opts)
-        card = Card.create_phantom( name, template.content )
+        User.as(:admin){ Card.create_phantom( name, template.content ) } # FIXME
         
       else   
         ActiveRecord::Base.logger.info("<get(New) name=#{name}>")

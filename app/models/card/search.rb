@@ -24,7 +24,7 @@ module CardLib
         find_builtin(name) or begin    
           User.as(:admin) do 
             template_name = name.tag_name + "+*template"
-            template = Card[template_name]
+            template = Card.find_by_type_and_key_and_trash('Search', template_name.to_key, false)
             template ? create_phantom( name, template.content ) : nil
           end
         end

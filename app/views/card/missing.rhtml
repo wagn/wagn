@@ -1,5 +1,5 @@
 
-<% cardname = params[:card][:name] %>
+<% cardname = (params[:card] ? params[:card][:name] : "") %>
 <h1>Missing Card</h1>
 
 <% get_slot(Card.new, context, nil).wrap do |slot| %>

@@ -1,27 +1,57 @@
 See http://wagn.org/wagn/Wagn_Installation for the latest version of these instructions.
 
-New Installation
+PREREQUISITES
+
+  To install Wagn you will need to have the following installed:
+
+   1. ruby 1.8.4
+   2. RubyOnRails
+   3. a supported database: Postgres, MySQL
+      (SQLite support is coming soon-- the install is fixed but some of the search queries are still broken.)
+   4. access to the 'json' library.   if you're using rubygems, this can be installed with
+       > sudo gem install json
+
+INSTALL
 
    1. Download Wagn from rubyforge, or checkout the source from svn
    2. untar or unzip the package
    3. copy `config/sample-database.yml` to `config/database.yml` and `config/sample-wagn.rb` to `config/wagn.rb`
-   4. create databases (dev,test,prod). edit `config/database.yml` accordingly.
+   4. create database(s) (dev,test,prod). edit `config/database.yml` accordingly.
    5. edit `config/wagn.rb`  -- set System.base_url and System.site_name
-   6. `rake db:migrate`        this will set up the database.
-   7. start the server `./script/server`. make sure the user youre running the server as has write access to the `tmp/` and `log/` directories
+   6. `rake db:migrate`       --this will set up the database.
+   7. start the server `./script/server`. make sure the user you're running the server as 
+        has write access to the `tmp/` and `log/` directories
    8. point your browser to http://myhost:3000/
       this should give you a form to update the account information for the admin user and log you in as admin.
    9. Click the 'permissions' link on the sidebar and setup the permissions for anonymous and signed-in users.
-  10.  you can start wagging as admin, but its recommended to send an invitation to yourself to set up a new user.
+  10.  you can start wagging as admin, but it's recommended to send an invitation to yourself to set up a new user.
 
-Upgrade
+UPGRADE
 
    1. untar or unzip the new package
    2. copy the following files from the old installation into the new one:
           * config/database.yml
           * config/wagn.rb
-          * image/*    [if you've uploaded any images]
-          * file/*        [if you've uploaded any other files]
+          * public/image/*    [if you've uploaded any images]
+          * public/file/*        [if you've uploaded any other files]
           * public/stylesheets/local.css   [if you've made any local css changes]
    3. in the new directory run:  rake db:migrate
    4. start the server in the new directory
+
+
+AFTER INSTALLATION
+
+Any wiki
+
+When you first set up Wagn, there's only one account, with the role of Administrative User. This user has such broad powers you shouldn't use it on a day-to-day basis. So...
+Click on "Invite a Friend" in the upper right corner and invite yourself, using your name (or handle or whatever) and e-mail address.
+Click on roles in the sidebar and create a new role, e.g. Superuser.
+Click on global permissions in the sidebar and check all the boxes under Superuser (or whatever name you chose for it).
+Go to your new card's Options tab and give it the Superuser role (but *not* the Administrative role).
+Log out and log back into your new account.
+
+Private wiki
+
+You'll want to think out permissions as early as possible, because the more infrastructure you create, the more cards you'll have to go around editing permissions on if you change your mind later.
+Most likely, you'll want to go to Basic+*template's Options tab and change "...can read this card" from "Anyone" to "Anyone Signed In"
+You may then also want to remind people that by default cards will only viewable by people who are signed in by writing something to that effect in Basic+*edit.

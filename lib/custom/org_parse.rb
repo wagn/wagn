@@ -1,6 +1,14 @@
-module OrgParse
+class OrgParse
   include ActionView::Helpers::TextHelper
+  attr_accessor :stream, :records, :current_record, :garbage
+  TYPE=0
+  VAL=1  
   
+  def initialize(stream)
+    self.garbage = {}
+    self.stream = stream.clone
+    self.records=[]
+  end
   
   def do_it
     cards = # get them all
@@ -138,6 +146,89 @@ module OrgParse
     }
   end
   
+  # parser toolset
+  def non_blank
+    %w{ phone web email address person name desc unknown author }.plot(:to_sym)
+  end                                                     
+  
+  
+
+  def expect( *types )
+    if accept( *types )
+      return true
+    end
+    raise "Parser error: wasn't expecting #{cursym}"      
+  end
+
+  def accept( *types )
+    if types.include?(cursym) 
+      add_to_record(cursym, curval)  
+      gone = stream.shift
+      #warn "-#{gone[TYPE]}: #{gone[VAL]}"
+      return cursym
+    end
+    return false
+  end                    
+  
+  def cursym() stream.first[TYPE]; end
+  def curval() stream.first[VAL]; end
+
+  def start_record
+    raise "start_record: current_record already exists" unless current_record.nil?
+    self.current_record = {}
+  end
+   
+  def add_to_record(type, val) 
+    return if [:author,:unknown,:blank].include?(type)
+    if current_record
+      current_record[type]||=""
+      if !current_record[type].blank?
+        current_record[type]+="<br>"
+      end
+      current_record[type]+=val
+    else
+      garbage[type]||=""
+      garbage[type]+=val
+    end
+  end
+     
+  def finish_record
+    raise "finish_record: current_record does not exist" unless current_record
+    records.push current_record
+    self.current_record = nil
+  end
+  
+  # parser states   
+  def get_records()
+    while cursym!=:eof
+      if cursym==:blank
+        accept(:blank)
+      elsif cursym==:name
+        get_record()
+      elsif non_blank.include?(cursym)
+        get_garbage()
+      else
+        raise "expected type #{cursym}"
+      end
+    end
+  end
+
+  def get_garbage
+    while accept( *non_blank ); end
+  end
+  
+  def get_record
+    start_record
+    accept(:name)
+    while accept( *non_blank ); end
+    
+    accept( :blank )
+    if accept( :web )
+      while accept( *non_blank ); end
+      accept( :blank )
+    end
+    finish_record
+  end    
   
   
 end

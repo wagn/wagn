@@ -1,31 +1,63 @@
+=begin
+  load 'lib/custom/org_parse.rb'; 
+   p = OrgParser.new
+   wkm = p.who_knows_cards; ''
+   p.do_cards( wkm[0..10], true )
+
+=end
+
+
 class OrgParser
   include ActionView::Helpers::TextHelper
-  attr_accessor :stream, :records, :current_record, :garbage
+  attr_accessor :stream, :records, :current_record, :garbage, :broken
   TYPE=0
   VAL=1  
-    
-  def do_all
-    User.as :admin
-    count = 0
-    get_cards.each do |card|
-      extract_records(card).each do |rec|
-        count += 1
-        print "#{count} "
-        create_org_card(rec)
-      end
-    end
+
+  def initialize
+    self.garbage = []
+    self.broken = []
+  end
+   
+  def who_knows_cards
+    Card.search( :part=>"who knows most", :sort=>"alpha" ).reject{|c| c.content.size < 12 }.sort_by{|x| x.name} 
   end
   
+  def resource_and_contacts_cards
+    Card.search( :part=>"Oregon Resources and Contacts", :sort=>"alpha" ).reject{|c| c.content.size < 12 }.sort_by{|x| x.name}  
+  end
+    
+  def do_cards(cards, who_knows_most=false)
+    User.as :admin
+    count = 0
+    cards.each do |card|
+      #begin 
+        names=""
+        topic = card.name.parent_name
+        extract_records(card).each do |rec|
+          names << "[[#{rec[:name]}]]\n"
+          rec[:topic]=topic
+          count += 1; print "#{count} "
+          c = create_org_card(rec)    
+          puts "#{topic}: #{rec[:name]}"
+        end                                                                                    
+        if who_knows_most
+          Card::Pointer.find_or_create!( :name=>"#{topic}+who knows most new", :content=>names )    
+          puts "   created #{topic}+who knows most new, #{names}"
+        end
+      #rescue Exception=>e
+      #  puts "BUSTED ON #{topic}: #{e.message}"   
+      #  self.broken << "#{topic}: #{e.message}"
+      #end
+    end
+    true
+  end
   
   def get_cards
     cs =  Card.search( :part=>"Oregon Resources and Contacts" ) + Card.search( :part=>"who knows most" )
-    cs.reject! {|c| c.content.size < 12 }
     cs
   end
 
-
   def parse(tokens)
-    self.garbage = {}
     self.stream = tokens.clone
     self.records=[]
     get_records
@@ -47,12 +79,11 @@ class OrgParser
     Card::PlainText.find_or_create!( :name=>"#{name}+main contact",     :content=>o[:person]  ) if o[:person]
     Card.find_or_create!( :name=>"#{name}+description",                 :content=>o[:desc]    ) if o[:desc]
     Card.find_or_create!( :name=>"#{name}+address",                     :content=>o[:address] ) if o[:address]
-    topic_pointer = Card::Pointer.find_or_create! :name=>"#{name}+topics of interest", :content=>""
-    topic_pointer.content += "\n[[#{o[:topic]}]]"
-    topic_pointer.save!
-    puts "#{o[:topic]}: #{name}"
-  rescue Exception=>e
-    puts "BUSTED ON #{name}: #{e.message}"
+    if o[:topic]
+      topic_pointer = Card::Pointer.find_or_create! :name=>"#{name}+topics of interest", :content=>""
+      topic_pointer.content += "\n[[#{o[:topic]}]]"
+      topic_pointer.save!
+    end
   end
 
   
@@ -83,7 +114,7 @@ class OrgParser
   
   # parser toolset
   def non_blank
-    %w{ phone web email address person name desc unknown author }.plot(:to_sym)
+    %w{ phone web email address person desc unknown author }.plot(:to_sym)
   end                                                     
   
   
@@ -110,6 +141,7 @@ class OrgParser
 
   def start_record
     raise "start_record: current_record already exists" unless current_record.nil?
+    self.garbage << {}
     self.current_record = {}
   end
    
@@ -122,8 +154,8 @@ class OrgParser
       end
       current_record[type]+=val
     else
-      garbage[type]||=""
-      garbage[type]+=val
+      garbage.last[type]||=""
+      garbage.last[type]+=val
     end
   end
      
@@ -143,7 +175,7 @@ class OrgParser
       elsif non_blank.include?(cursym)
         get_garbage()
       else
-        raise "expected type #{cursym}"
+        raise "parse error: expected type #{cursym}"
       end
     end
   end

@@ -221,6 +221,9 @@ class ApplicationController < ActionController::Base
   end
 
   def remember_card( card )
+    
+    warn "SESSION RETURN STACK:  #{session[:return_stack].inspect}"
+    
     return unless card
     session[:return_stack] ||= [] 
     session[:return_stack].push( card.id ) unless session[:return_stack].last == card.id
@@ -236,12 +239,14 @@ class ApplicationController < ActionController::Base
     name = ''
     session[:return_stack] ||= []
     session[:return_stack].reverse.each do |id|
-      if ((id =~ /^\d+$/ && card = Card.find_by_id_and_trash( id, false )) || 
+      warn "EXAMINING CARD ID: #{id}"
+      if ((Fixnum === id && card = Card.find_by_id_and_trash( id, false )) || 
             card=Card.find_by_key_and_trash( id, false ))
         name = card.name
         break
       end
     end
+    warn "RETURNING NAME: #{name}"
     name
   end
   

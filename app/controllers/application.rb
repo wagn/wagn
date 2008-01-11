@@ -62,7 +62,8 @@ class ApplicationController < ActionController::Base
     end
     # auto_load_card tells the cached card if any missing method is requested
     # load the real card to respond.  
-    @card = CachedCard.get(name, @card, :cache=>cache, :card_params=>params[:card] )
+    card_params = params[:card] ? params[:card].clone : nil
+    @card = CachedCard.get(name, @card, :cache=>cache, :card_params=>card_params )
     if @card.new_record?
       @card.send(:set_defaults)
     end

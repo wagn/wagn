@@ -156,6 +156,10 @@ module Card
         self==Card::Base ? Card.const_get( Card.default_cardtype_key ) : self
       end
       
+      def find_or_create!(args={})
+        c = find_or_new(args); c.save!; c
+      end
+      
       def find_or_create(args={})
         c = find_or_new(args); c.save; c
       end

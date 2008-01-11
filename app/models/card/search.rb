@@ -22,6 +22,7 @@ module CardLib
       
       def find_phantom(name)  
         find_builtin(name) or begin    
+          return nil if name.simple?
           User.as(:admin) do 
             template_name = name.tag_name + "+*template"
             template = Card.find_by_type_and_key_and_trash('Search', template_name.to_key, false)

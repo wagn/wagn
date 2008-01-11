@@ -36,7 +36,7 @@ class CachedCard
         ActiveRecord::Base.logger.info("<get(BuiltIn) name=#{name}>")
         card 
         
-      elsif (template = self.find( name.auto_template_name.to_key )) && template.type=='Search'
+      elsif name.junction? && (template = self.find( name.auto_template_name.to_key )) && template.type=='Search'
         ActiveRecord::Base.logger.info("<get(CachedPhantom) name=#{name}>")
         User.as(:admin){ Card.create_phantom( name, template.content ) }  # FIXME
 
@@ -44,7 +44,7 @@ class CachedCard
         ActiveRecord::Base.logger.info("<get(DB) name=#{name}>")
         self.new_cached_if_cacheable(card, opts)
 
-      elsif (template = Card[ name.auto_template_name ]) && template.type=='Search' 
+      elsif  name.junction? && (template = Card[ name.auto_template_name ]) && template.type=='Search' 
         ActiveRecord::Base.logger.info("<get(Phantom) name=#{name}>")
         template = self.new_cached_if_cacheable(template, opts)
         User.as(:admin){ Card.create_phantom( name, template.content ) } # FIXME

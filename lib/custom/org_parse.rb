@@ -30,7 +30,7 @@ class OrgParser
     User.as :admin
     count = 0
     cards.each do |card|
-      #begin 
+      begin 
         names=""
         topic = card.name.parent_name
         extract_records(card).each do |rec|
@@ -42,12 +42,12 @@ class OrgParser
         end                                                                                    
         if who_knows_most
           Card::Pointer.find_or_create!( :name=>"#{topic}+who knows most new", :content=>names )    
-          puts "   created #{topic}+who knows most new, #{names}"
+          #puts "   created #{topic}+who knows most new, #{names}"
         end
-      #rescue Exception=>e
-      #  puts "BUSTED ON #{topic}: #{e.message}"   
-      #  self.broken << "#{topic}: #{e.message}"
-      #end
+      rescue Exception=>e
+        puts "BUSTED ON #{topic}: #{e.message}"   
+        self.broken << "#{topic}: #{e.message}"
+      end
     end
     true
   end
@@ -74,8 +74,8 @@ class OrgParser
     name=o[:name]
     Card::Organization.find_or_create! :name=>name
     Card::PlainText.find_or_create!( :name=>"#{name}+phone",            :content=>o[:phone]   ) if o[:phone]  
-    Card::PlainText.find_or_create!( :name=>"#{name}+email",            :content=>o[:email]   ) if o[:email]
-    Card::PlainText.find_or_create!( :name=>"#{name}+website",          :content=>o[:website] ) if o[:website]
+    Card.find_or_create!( :name=>"#{name}+email",            :content=>o[:email]   ) if o[:email]
+    Card::PlainText.find_or_create!( :name=>"#{name}+website",          :content=>o[:web] ) if o[:web]
     Card::PlainText.find_or_create!( :name=>"#{name}+main contact",     :content=>o[:person]  ) if o[:person]
     Card.find_or_create!( :name=>"#{name}+description",                 :content=>o[:desc]    ) if o[:desc]
     Card.find_or_create!( :name=>"#{name}+address",                     :content=>o[:address] ) if o[:address]
@@ -93,7 +93,7 @@ class OrgParser
       type = case
         when stripped == 'Amy Ward';    'AUTHOR'         
         when stripped == '';            'BLANK' 
-        when stripped =~ /^[\d\.\-]+$/; 'PHONE'
+        when stripped =~ /^[\d\.\-\(\)\ ]+$/; 'PHONE'
         when stripped =~ /http/;        'WEB'
         when stripped =~ /^\S+\@\S+$/;  'EMAIL' 
         when stripped =~ /(^\d+|\d+$)/; 'ADDRESS'

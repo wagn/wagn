@@ -1,9 +1,7 @@
 =begin
-  load 'lib/custom/org_parse.rb'; 
+  load 'lib/custom/org_parse.rb'
    p = OrgParser.new
-   wkm = p.who_knows_cards; ''
-   p.do_cards( wkm[0..10], true )
-
+   p.do_cards( p.who_knows_cards, false );   p.do_cards( p.resource_and_contacts_cards, false ); ''
 =end
 
 
@@ -93,7 +91,7 @@ class OrgParser
       type = case
         when stripped == 'Amy Ward';    'AUTHOR'         
         when stripped == '';            'BLANK' 
-        when stripped =~ /^[\d\.\-\(\)\ ]+$/; 'PHONE'
+        when stripped =~ /^[\d\.\-\(\)\s]+$/; 'PHONE'
         when stripped =~ /http/;        'WEB'
         when stripped =~ /^\S+\@\S+$/;  'EMAIL' 
         when stripped =~ /(^\d+|\d+$)/; 'ADDRESS'

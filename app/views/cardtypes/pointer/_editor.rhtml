@@ -8,11 +8,12 @@
   <%= link_to_remote 'Add card', :url=>"javascript:urlForAddField('#{card.id}','#{eid}')", :update=>"#{eid}-add", :position=>:before %>
 </ul>
 
-<%= slot.editor_hooks :save=>%{
-  slot = getSlotFromContext('#{eid}');
-  inputs = getSlotElements(slot, 'pointer-text');
+<%= slot.editor_hooks :save=>%{              
+  //slot = getSlotFromContext('#{eid}');
+  //inputs = getSlotElements(slot, 'pointer-text');
+	inputs = document.getElementsByClassName("pointer-text", $('#{eid}-ul'));
   $('#{eid}-hidden-content').value = inputs.map(
     function(x){ return (x.value.strip() == '') ? '' : '[[' + x.value + ']]'}
-  ).join("\\n");
+  ).join("\\n");                                                     
   return true;
 } %>

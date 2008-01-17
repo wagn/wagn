@@ -123,14 +123,22 @@ module WagnHelper
           # FIXME: accessing params here is ugly-- breaks tests.
           @action = (@template.params[:view]=='content' && context=="main_1") ? 'nude' : 'view'
           wrap(@action, wrap, self.render_partial( 'card/view') )  # --> slot.wrap_content slot.render( :expanded_view_content ) 
+
         when :line;     
           @state = :line; self.requested_view = 'line'
           wrap('line', wrap, self.render_partial( 'card/line') )  # --> slot.wrap_content slot.render( :expanded_line_content )   
-        when :edit;     @state = :edit; expand_transclusions( self.render( :raw_content ))
+
+        when :edit;     
+          @state = :edit; expand_transclusions( self.render( :raw_content ))
+          
         when :content;  
-         self.requested_view = 'content'  
-          wrap('content',wrap, wrap_content( self.render( :expanded_view_content )))
-        when :raw;                                          self.render( :expanded_view_content )  
+          self.requested_view = 'content'  
+          c = self.render( :expanded_view_content )
+          wrap('content',wrap, wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c)))
+          
+        when :raw;    
+          self.render( :expanded_view_content )  
+          
         when :expanded_view_content
           expand_transclusions(  cache_action('view_content') {  card.post_render( render(:custom_view_content)) } )
 

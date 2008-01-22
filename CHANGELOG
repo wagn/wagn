@@ -1,3 +1,39 @@
+=== 0.9.1 (January 22, 2008)
+* more years in calendar dropdown
+* render -- for blank transcluded cards
+* fix pointer editor in multi-edit
+* fixed remembered page func
+* fixed rename
+* ensure auto card names are junctions
+* add find_or_create!
+* update INSTALL doc
+* add comment_author to cached_card
+* don't break if a name isn't specified
+* fix auto searches again
+* fix non-search templates being used as auto-cards
+* fix? default search limit?
+* fix image upload on new cards
+* fix search paging
+* hack around broken permissions on serch templates
+* fix builtin card omission in CachedCard.get changes
+* set version to 0.9.1
+* footer, template from cache, &amp; other optimizations
+* fix recent changes dates
+* tweak dump_data script
+* query counting script
+* postgres data dump script
+* fix script type
+* better paging print css
+* alternative suggestion for when migration 100 breaks
+* remove breaking google call
+* slot bug fix
+* pointer fixes / phantom handling
+* fixed pointer editing
+* add options for pointer type
+* fix indexed_name update
+* move fragment_store config to wagn.rb
+* skip transclusions beyond char limit in line mode
+
 === 0.9.0 (December 3, 2007)
 * working on getting images out of svn
 * fixes for ignores

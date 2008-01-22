@@ -173,7 +173,7 @@
 
     // How many years do want to be valid and to show in the drop-down list?
 
-    var scwDropDownYears   = 20;
+    var scwDropDownYears   = 110;
 
     // All language-dependent changes can be made here...
 

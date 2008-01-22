@@ -3603,7 +3603,7 @@ return false;
 }
 };
 urlForAddField=function(_392,eid){
-index=getSlotElements(getSlotFromContext(eid),"pointer-li").length;
+index=document.getElementsByClassName("pointer-text",$(eid+"-ul")).length;
 return ("/card/add_field/"+_392+"?index="+index+"&eid="+eid);
 };
 Subclass=function(_394,_395){
@@ -6512,8 +6512,8 @@ Wagn.lister().after_update();
 },parameters:param_list.join("&")};
 }});
 var scwDateNow=new Date(Date.parse(new Date().toDateString()));
-var scwBaseYear=scwDateNow.getFullYear()-10;
-var scwDropDownYears=20;
+var scwBaseYear=scwDateNow.getFullYear()-100;
+var scwDropDownYears=110;
 var scwLanguage;
 function scwSetDefaultLanguage(){
 try{

@@ -104,9 +104,11 @@ namespace 'wagn' do
   task :format_changelog do 
     require 'rexml/document'
     filename = "svnlog.xml"
+    elems = []
     REXML::Document.new(File.new(filename)).elements.each("//logentry") { |l|
-      puts("* #{l.elements['msg'].children[0]}") 
+      elems << "* #{l.elements['msg'].children[0]}"
     }
+    puts elems.reverse.join("\n")
   end
 
 end

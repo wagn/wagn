@@ -19,6 +19,38 @@ class OrgParser
     self.broken = []
   end
      
+
+  def get_counties
+    Card.search( :type=>"County" ).each_with_index do |card,index|
+      card.name = card.name + ", OR"
+      card.confirm_rename = true
+      card.save!
+      
+      Card::Pointer.create! :name=>"#{card.name}+in state", :content=>"[[Oregon]]"
+      
+      puts "#{index} #{card.name}"
+    end
+  end
+  
+  def get_cities
+    Card.search( :type=>"Community" ).each_with_index do |card,index|
+      county = Card.search( :type=>"County", :plus=>card.name ).first
+      cities = Card.search( :type=>"City", :plus=>card.name)
+      
+      incorporated = (card.name =~ /^Inc/) ? "yes" : "no"
+      
+      cities.each do |city|
+        city.name = city.name + ", OR"
+        city.confirm_rename = true
+        city.save!
+        
+        Card::Pointer.create! :name=>"#{city.name}+in county", :content=>"[[#{county.name}]]"
+        
+        Card::PlainText.create! :name=>"#{city.name}+incorporated", :content=>incorporated
+      end
+      puts "#{index} #{card.name}"
+    end
+  end
    
   def do_address_cards
     Card.search( :right=>"address", :left=>{:type=>"Organization"}).each_with_index do |card, index|
@@ -36,7 +68,7 @@ class OrgParser
       end.compact.join("<br>")
 
       Card::Pointer.create!( :name=>"#{orgname}+address city", :content=>"[[#{city}]]")  unless city.nil?
-      Card::PlainText.create!( :name=>"#{orgname}+address zip", :content=>zip  )  unless zip.nil?    
+      Card::PlainText.create!( :name=>"#{orgname}+zip", :content=>zip  )  unless zip.nil?    
       card.content = new_content
       card.save!
       

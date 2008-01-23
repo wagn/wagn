@@ -22,7 +22,8 @@ class OrgParser
    
   def do_address_cards
     Card.search( :right=>"address", :left=>{:type=>"Organization"}).each_with_index do |card, index|
-      orgname, city, zip = card.name.parent_name, nil, nil  
+      begin
+		 orgname, city, zip = card.name.parent_name, nil, nil  
       
       new_content = card.content.split("<br>").map {|x| x.gsub(/&nbsp;/,' ')}.map do |line|
         if line=~/^(.*)(\d{5}$|\d{5}-\d{4})$/
@@ -34,12 +35,15 @@ class OrgParser
         end
       end.compact.join("<br>")
 
-      Card::Pointer.create!( :name=>"#{orgname}+address_city", :content=>"[[#{city}]]")  unless city.nil?
-      Card.Plaintext.create!( :name=>"#{orgname}+address_zip", :content=>zip  )  unless zip.nil?    
+      Card::Pointer.create!( :name=>"#{orgname}+address city", :content=>"[[#{city}]]")  unless city.nil?
+      Card::PlainText.create!( :name=>"#{orgname}+address zip", :content=>zip  )  unless zip.nil?    
       card.content = new_content
       card.save!
       
       puts "#{index} #{orgname}"
+		rescue Exception=>e
+		  puts "#{index} #{orgname} **Error** #{e.message}"
+		end
     end
     ''
   end

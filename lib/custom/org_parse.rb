@@ -2,6 +2,9 @@
   load 'lib/custom/org_parse.rb'
    p = OrgParser.new
    p.do_cards( p.who_knows_cards, false );   p.do_cards( p.resource_and_contacts_cards, false ); ''
+   
+#  load 'lib/custom/org_parse.rb'
+  OrgParser.new.do_address_cards
 =end
 
 
@@ -15,6 +18,32 @@ class OrgParser
     self.garbage = []
     self.broken = []
   end
+     
+   
+  def do_address_cards
+    Card.search( :right=>"address", :left=>{:type=>"Organization"}).each_with_index do |card, index|
+      orgname, city, zip = card.name.parent_name, nil, nil  
+      
+      new_content = card.content.split("<br>").map {|x| x.gsub(/&nbsp;/,' ')}.map do |line|
+        if line=~/^(.*)(\d{5}$|\d{5}-\d{4})$/
+          zip = $2.strip
+          city = $1.strip.gsub(/Oregon/i,'OR').gsub(/D\.C\./,'DC')
+          nil
+        else 
+          line
+        end
+      end.compact.join("<br>")
+
+      Card::Pointer.create!( :name=>"#{orgname}+address_city", :content=>"[[#{city}]]")  unless city.nil?
+      Card.Plaintext.create!( :name=>"#{orgname}+address_zip", :content=>zip  )  unless zip.nil?    
+      card.content = new_content
+      card.save!
+      
+      puts "#{index} #{orgname}"
+    end
+    ''
+  end
+   
    
   def who_knows_cards
     Card.search( :part=>"who knows most", :sort=>"alpha" ).reject{|c| c.content.size < 12 }.sort_by{|x| x.name} 
@@ -23,7 +52,7 @@ class OrgParser
   def resource_and_contacts_cards
     Card.search( :part=>"Oregon Resources and Contacts", :sort=>"alpha" ).reject{|c| c.content.size < 12 }.sort_by{|x| x.name}  
   end
-    
+  
   def do_cards(cards, who_knows_most=false)
     User.as :admin
     count = 0
@@ -73,7 +102,7 @@ class OrgParser
     Card::Organization.find_or_create! :name=>name
     Card::PlainText.find_or_create!( :name=>"#{name}+phone",            :content=>o[:phone]   ) if o[:phone]  
     Card.find_or_create!( :name=>"#{name}+email",            :content=>o[:email]   ) if o[:email]
-    Card::PlainText.find_or_create!( :name=>"#{name}+website",          :content=>o[:web] ) if o[:web]
+    Card.find_or_create!( :name=>"#{name}+website",          :content=>o[:web]     ) if o[:web]
     Card::PlainText.find_or_create!( :name=>"#{name}+main contact",     :content=>o[:person]  ) if o[:person]
     Card.find_or_create!( :name=>"#{name}+description",                 :content=>o[:desc]    ) if o[:desc]
     Card.find_or_create!( :name=>"#{name}+address",                     :content=>o[:address] ) if o[:address]
@@ -91,7 +120,7 @@ class OrgParser
       type = case
         when stripped == 'Amy Ward';    'AUTHOR'         
         when stripped == '';            'BLANK' 
-        when stripped =~ /^[\d\.\-\(\)\s]+$/; 'PHONE'
+        when stripped =~ /^[x\d\.\-\(\)\s]+$/; 'PHONE'
         when stripped =~ /http/;        'WEB'
         when stripped =~ /^\S+\@\S+$/;  'EMAIL' 
         when stripped =~ /(^\d+|\d+$)/; 'ADDRESS'

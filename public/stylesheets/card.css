@@ -330,7 +330,7 @@ a.current, a:link.current {
   color: #444;
 }
 .card-slot .content,
-.card-slot .transcluded .content .card-slot .content,
+.card-slot .transcluded .content .card-slot.paragraph,
 .card-slot .revision { 
   display: block;
   padding: 0px 10px 10px 10px;

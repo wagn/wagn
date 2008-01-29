@@ -8,11 +8,11 @@
 require File.join(File.dirname(__FILE__), 'boot')
   
 # needs to be loaded for all files, before migrations, etc.
-require "lib/wagn"
-
+#require "lib/wagn"         
+                          
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence those specified here
-  
+  RAILS_GEM_VERSION = '1.2.4' unless defined? RAILS_GEM_VERSION  
   # Skip frameworks you're not going to use
   config.frameworks -= [ :action_web_service ]
 
@@ -74,5 +74,6 @@ Session = CGI::Session::ActiveRecordStore.session_class
  
 # force loading of the system model. FIXME: this seems like a terrible way to do this
 System
+
 
 

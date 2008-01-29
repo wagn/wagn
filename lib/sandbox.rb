@@ -7,8 +7,9 @@ class Sandbox
     :securityViolationText, :syntaxErrorDetected,
     :syntaxErrorText, :sandboxOutput 
     
-  def initialize(level = 2, maxRunTime = 10,
+  def initialize(level = 2, request=nil, maxRunTime = 10,
     maxThreadCount = 10, maxNewObjects = 10000)
+    @request = request
     @level = level
     @maxRunTime = maxRunTime
     @maxThreadCount = maxThreadCount
@@ -74,7 +75,8 @@ class Sandbox
   end
 
   def starteInDerSandbox(exeCmd)
-    begin
+    begin 
+      request = @request
       @sandboxOutput.value = eval(exeCmd, Object.module_eval("binding")) 
     rescue SecurityError => detail
       @securityViolationDetected = true
@@ -87,7 +89,8 @@ class Sandbox
 
   def fuehreAus(cmd)
     cmd.untaint 
-    exeCmd = cmd 
+    exeCmd = cmd  
+    
     exeCmd = "$SAFE = #{@level}\n" + exeCmd
     starteWaechterThread # this is our BIG BROTHER
     @sandboxThreadGroup.add(@sandboxThread =

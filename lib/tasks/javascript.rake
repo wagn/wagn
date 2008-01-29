@@ -1,8 +1,9 @@
+=begin
 task :compress_javascript => :environment do
   cmd = "cd #{RAILS_ROOT}/public/javascripts; " +
-        "cat #{JAVASCRIPT_FILES.join(" ")} > #{COMPRESSED_JS}.tmp; " +
-        "java -jar ../../lib/custom_rhino.jar -c #{COMPRESSED_JS}.tmp > #{COMPRESSED_JS}; " +
-        "rm #{COMPRESSED_JS}.tmp"
+        "cat #{Wagn.javascript_files.join(" ")} > #{Wagn.compressed_js}.tmp; " +
+        "java -jar ../../lib/custom_rhino.jar -c #{Wagn.compressed_js}.tmp > #{Wagn.compressed_js}; " +
+        "rm #{Wagn.compressed_js}.tmp"
   `#{cmd}`  
 end
 
@@ -20,3 +21,5 @@ task :compress_wadget => :environment do
 end
 
 task :test => [ :compress_javascript ]
+
+=end

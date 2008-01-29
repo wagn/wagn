@@ -27,12 +27,12 @@
   <%# ------- Javascript -------------%>
 
   <% if ENV['RAILS_ENV'] == 'development' %>
-  	<%=	JAVASCRIPT_FILES.collect do |file|
+  	<%=	System.javascript_files.collect do |file|
           javascript_include_tag file
   			end.join("\n")	
   	%>
   <% else %>    
-    <%= javascript_include_tag COMPRESSED_JS %>
+    <%= javascript_include_tag System.compressed_js %>
   <% end %>
 
 

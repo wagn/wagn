@@ -17,8 +17,38 @@ class System < ActiveRecord::Base
     :request, :debug_wql,
     :google_maps_api_key
     
-  self.pagesize = 20
+  self.pagesize = 20      
+  
+  def self.javascript_files
+    %w{
+      prototype.js
+      effects.js 
+      controls.js
+      application.js
+      Wagn.js
 
+      Wikiwyg.js
+      Wikiwyg/Toolbar.js
+      Wikiwyg/Wysiwyg.js
+      Wikiwyg/Wikitext.js
+      Wikiwyg/Preview.js
+      Wikiwyg/Util.js
+      Wikiwyg/HTML.js
+      Wikiwyg/Debug.js
+      Wagn/Wikiwyg.js
+      Wagn/Lister.js
+
+      calendar.js
+
+      Wagn/LinkEditor.js
+      builder.js
+      window.js   
+    }
+  end
+  
+  def self.compressed_js
+    'wagn_cmp.js' 
+  end
   class << self
     def current_user
       @@current_user ||= ::User.find_by_login('anon')

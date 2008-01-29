@@ -1,12 +1,8 @@
 =begin
   load 'lib/custom/org_parse.rb'
-   p = OrgParser.new
-   p.do_cards( p.who_knows_cards, false );   p.do_cards( p.resource_and_contacts_cards, false ); ''
-   
-#  load 'lib/custom/org_parse.rb'
-  OrgParser.new.do_address_cards
+#  load 'lib/custom/org_parse.rb' 
+   OrgParser.new.do_address_cards
 =end
-
 
 class OrgParser
   include ActionView::Helpers::TextHelper
@@ -14,13 +10,27 @@ class OrgParser
   TYPE=0
   VAL=1  
 
+  def self.do_all    
+    User.as :admin
+    p = OrgParser.new
+    p.do_cards( p.who_knows_cards, false ); ''
+    p.do_cards( p.resource_and_contacts_cards, false ); ''
+
+    p.do_address_cards
+    p.do_counties
+    p.do_cities
+
+    Card['who knows most'].update_attributes! :name=>'who knows most old', :confirm_rename=>true
+    Card['who knows most new'].update_attributes! :name=>'who knows most', :confirm_rename=>true
+  end
+
   def initialize
     self.garbage = []
     self.broken = []
   end
      
 
-  def get_counties
+  def do_counties
     Card.search( :type=>"County" ).each_with_index do |card,index|
       card.name = card.name + ", OR"
       card.confirm_rename = true
@@ -32,7 +42,7 @@ class OrgParser
     end
   end
   
-  def get_cities
+  def do_cities
     Card.search( :type=>"Community" ).each_with_index do |card,index|
       county = Card.search( :type=>"County", :plus=>card.name ).first
       cities = Card.search( :type=>"City", :plus=>card.name)
@@ -67,10 +77,10 @@ class OrgParser
         end
       end.compact.join("<br>")
 
-      Card::Pointer.create!( :name=>"#{orgname}+address city", :content=>"[[#{city}]]")  unless city.nil?
-      Card::PlainText.create!( :name=>"#{orgname}+zip", :content=>zip  )  unless zip.nil?    
-      card.content = new_content
-      card.save!
+      Card::Pointer.create!( :name=>"#{orgname}+location", :content=>"[[#{city}]]")  unless city.nil?
+      #Card::PlainText.create!( :name=>"#{orgname}+zip", :content=>zip  )  unless zip.nil?    
+      #card.content = new_content
+      #card.save!
       
       puts "#{index} #{orgname}"
 		rescue Exception=>e

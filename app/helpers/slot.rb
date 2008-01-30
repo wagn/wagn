@@ -212,6 +212,7 @@ module WagnHelper
           #warn "MATCH: #{match.inspect} #{match.to_a}"
           text = match[0]
           requested_name = match[1].strip
+          requested_name.gsub!(/_self/, card.name)
           relative = match[2]
           options = {
             :requested_name=>requested_name,
@@ -270,7 +271,9 @@ module WagnHelper
         # now we are in state==:view, switch on viewmode (from transclusion syntax)
         when vmode==:raw;     subslot.render :raw
         when vmode==:card;    subslot.render :view
-        when vmode==:line;    subslot.render :line
+        when vmode==:line;    subslot.render :line  
+        when vmode==:name;    subslot.render :name
+        when vmode==:link;    subslot.render :link
         when vmode==:content; subslot.render :content
       end
       @template.controller.slot = old_slot

@@ -1,4 +1,3 @@
-=begin
 task :compress_javascript => :environment do
   cmd = "cd #{RAILS_ROOT}/public/javascripts; " +
         "cat #{System.javascript_files.join(" ")} > #{System.compressed_js}.tmp; " +
@@ -22,4 +21,3 @@ end
 
 task :test => [ :compress_javascript ]
 
-=end

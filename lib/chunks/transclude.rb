@@ -12,16 +12,17 @@ module Chunk
     def initialize(match_data, content)
       super   
       #warn "FOUND TRANSCLUDE #{match_data} #{content}"
-      @card_name = match_data[1].strip
+      @card_name = match_data[1].strip    
       @relative = match_data[2]
       @options = {
         :view  => 'content',
-        :state => 'open',
         :base  => 'self',
-        :shade => 'on'
+        :state => 'open',      # deprecated
+        :shade => 'on'         # deprecated
       }.merge(Hash.new_from_semicolon_attr_list(match_data[4]))
       @renderer = @content.renderer
-      @card = @content.card or raise "No Card in Transclude Chunk!!"
+      @card = @content.card or raise "No Card in Transclude Chunk!!"     
+      @card_name.gsub!(/_self/,@card.name)
       @unmask_text = @text #get_unmask_text_avoiding_recursion_loops
     end
   
@@ -47,6 +48,7 @@ module Chunk
 #      if !refcard
 #        return "<span class='faint'>{{#{@card_name}}}</span>\n"
 #      end
+      ActiveRecord::Base.logger.info("damn: unmaskme")
       
       card = refcard ? refcard : Card.new( :name=>refcard_name )
       result = @renderer.slot.process_transclusion(card, @options)

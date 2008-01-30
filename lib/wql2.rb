@@ -7,18 +7,19 @@ module Wql2
     :basic=> %w{ name content id },
     :system => %w{ trunk_id tag_id },
     :semi_relational=> %w{ type editor member role },
-    :relational => %w{ part left right plus },  
+    :relational => %w{ part left right plus left_plus right_plus },  
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
     :special => %w{ or complete },
     :pass => %w{ cond }
   }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
   # put into form: { :content=>:basic, :left=>:relational, etc.. }
              
-  OPERATORS = %w{ = =~ < > in ~ }.inject({}) {|h,v| h[v]=nil; h }.merge({
+  OPERATORS = %w{ != = =~ < > in ~ }.inject({}) {|h,v| h[v]=nil; h }.merge({
     'eq' => '=',
     'gt' => '>',
     'lt' => '<',
     'match' => '~',
+    'ne' => '!='
   }.stringify_keys)
   
   MODIFIERS = {
@@ -157,7 +158,19 @@ module Wql2
     
     def part(val)
       merge :or => { :tag_id => subspec(val), :trunk_id => subspec(val) }
+    end  
+    
+    def right_plus(val) 
+      part_spec, connection_spec = val.is_a?(Array) ? val : [ val, {} ]
+      merge( field(:id) => subspec(connection_spec, :return=>'trunk_id', :tag_id=>subspec(part_spec)) )
+    end                                                                                                
+    
+    def left_plus(val)
+      part_spec, connection_spec = val.is_a?(Array) ? val : [ val, {} ]
+      merge( field(:id) => subspec(connection_spec, :return=>'tag_id', :trunk_id=>subspec(part_spec)))      
     end
+  
+    
 
     def plus(val)
       part_spec, connection_spec = val.is_a?(Array) ? val : [ val, {} ]

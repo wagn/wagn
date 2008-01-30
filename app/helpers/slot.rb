@@ -118,13 +118,13 @@ module WagnHelper
       wrap = args.has_key?(:wrap) ? args[:wrap] : true  # default for these is wrap
       card_and_slot = { :card=>self.card, :slot=>self }
       result = case action
-        when :view;  
+        when :open, :view;  
           @state = :view; self.requested_view = 'card'
           # FIXME: accessing params here is ugly-- breaks tests.
           @action = (@template.params[:view]=='content' && context=="main_1") ? 'nude' : 'view'
           wrap(@action, wrap, self.render_partial( 'card/view') )  # --> slot.wrap_content slot.render( :expanded_view_content ) 
 
-        when :line;     
+        when :closed, :line;     
           @state = :line; self.requested_view = 'line'
           wrap('line', wrap, self.render_partial( 'card/line') )  # --> slot.wrap_content slot.render( :expanded_line_content )   
 
@@ -135,6 +135,12 @@ module WagnHelper
           self.requested_view = 'content'  
           c = self.render( :expanded_view_content )
           wrap('content',wrap, wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c)))
+
+        when :link;   
+          link_to_page card.name, card.name, :class=>"cardname-link"
+        
+        when :name;
+          card.name
           
         when :raw;    
           self.render( :expanded_view_content )  

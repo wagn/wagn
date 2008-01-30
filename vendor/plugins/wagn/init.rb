@@ -17,6 +17,5 @@ Dir["#{js_dir}/Wagn/*/*.js"].collect do |file|
   #JAVASCRIPT_FILES << 'Wagn/Editor/' + Pathname.new(file).basename.to_s
 end
 
-class System
-
-end         
+module Wagn
+end    

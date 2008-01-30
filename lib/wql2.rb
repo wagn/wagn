@@ -27,7 +27,8 @@ module Wql2
     :limit => nil,
     :offset => nil,
     :return => nil,
-    :join  => :and
+    :join  => :and,
+    :view => nil    # handled in interface-- ignore here
   }
 
   class Spec 

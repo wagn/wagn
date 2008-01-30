@@ -3,13 +3,14 @@
 	duplicates ||= []
   context ||= 'default'
   title   ||= ''
-  instruction ||= nil
+  instruction ||= nil  
+	view  ||= :closed    
+	raise("invalid view") unless [:open, :closed, :content, :name, :link].include?(view)
 -%>
 <% if !title.empty? %> 
 	<% @title=title %>
   <h1><%= title %></h1>
 <% end %>       
-
 
 <% if instruction %>
   <div class="instruction">
@@ -19,23 +20,15 @@
 
 <% if cards.empty? %>
   <div class="faint">Search returned no results</div>
-<% else %>
-  <%= render :partial=>'/block/paging', :locals=>{:card=>card} %>
+<% else %>    
+	<span class="search-result-list">
+	  <%= render :partial=>'/block/paging', :locals=>{:card=>card} %>
+
+		<% cards.each do |card| %>     	
+			<%= get_slot(card).render(view) %>
+		<% end %>     
+	</span>
 <% end %>
-                 
-<% cards.each do |card| %>
-	<%= get_slot(card).render(:line) %>
-<% end %>     
-
-<% if duplicates.length > 0 %>
-	<div style="color:grey"><%# FIXME-style%>
-			...and <%= duplicates.length %> duplicates: <%= duplicates.plot(:name).join(",") %>
-	</div>
-<% end %>
-
-<span id="button-permission" style="display:none"><%= @button_permission %></span><%# FIXME-style%>
-
-<%#= paging( cards ) %>
 
 
 

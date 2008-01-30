@@ -35,7 +35,9 @@
 <!--  <span class="faint">Search returned no results</span> -->
 <% else %>           	
 
-	<% partial = (card.name=='*recent changes') ? 'recent_changes' : 'card_list' %>
-	<%= render :partial=>"block/#{partial}", :locals=> { :card=>card,	:cards=>card.results, :context=>@context,
+	<% partial = (card.name=='*recent changes') ? 'recent_changes' : 'card_list' %> 
+	<%#= card.spec.inspect %>
+	<% view = (card.spec["view"] ? card.spec["view"].to_sym : :closed)  %>
+	<%= render :partial=>"block/#{partial}", :locals=> { :view=>view, :card=>card,	:cards=>card.results, :context=>@context,
 	   :instruction=>instruction, :title=>title } %>
 <% end %>

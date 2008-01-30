@@ -1,6 +1,6 @@
 module Card
 	class Search < Base  
-	  attr_accessor :self_card, :results, :search_opts
+	  attr_accessor :self_card, :results, :search_opts, :spec
 	  attr_accessor :phantom
     before_save :escape_content
     
@@ -46,8 +46,9 @@ module Card
                                 
     def search( params={} )  
       self.search_opts = params  
-      ActiveRecord::Base.logger.info("<Search name=#{self.name}>")
-      self.results = Card.search( get_spec(params.clone) ).map do |card|   
+      ActiveRecord::Base.logger.info("<Search name=#{self.name}>")  
+      self.spec = get_spec(params.clone)
+      self.results = Card.search( self.spec ).map do |card|   
         c = CachedCard.get(card.name, card)
         ActiveRecord::Base.logger.info("<CachedCard.get name=#{name} card=#{card} res=#{c}>")
         c

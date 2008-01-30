@@ -99,8 +99,9 @@ a.current, a:link.current {
 
 /* -------- view tab / content ----------------- */
 
-
-
+.card-slot .search-result-list .cardname-link {
+  display: block;
+}
 .card-slot p { 
   margin: 0px; 
 }

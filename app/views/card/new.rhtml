@@ -23,7 +23,7 @@
  
   	<div class="edit-area">
   	  <% form_remote_for :card, @card, :url=>slot.url_for('card/create'), 
-  					:html=>{ :class=>'form' } do |form| %>
+  					:html=>{ :class=>'form',:onsubmit=>slot.save_function	 } do |form| %>
   			<table>
   				<tr>
   					<td>
@@ -50,7 +50,7 @@
   				<% end %>
   			</div>
   		  <br/>
-  			<%= button_to_function 'Create', slot.save_function, :id=>'create-button'  %>
+  			<%= button_to_function 'Create', "this.form.onsubmit()", :id=>'create-button'  %>
   	    <%= button_to_function 'Cancel', previous_page_function %> 
   		<% end %>
   	</div>

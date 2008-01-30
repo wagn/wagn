@@ -139,7 +139,7 @@ module SlotHelpers
   end                          
  
   def save_function 
-    "warn('running #{context} queue'); if (Wagn.runQueue(Wagn.onSaveQueue['#{context}'])) { this.form.onsubmit() }"
+    "warn('running #{context} queue'); if (Wagn.runQueue(Wagn.onSaveQueue['#{context}'])) { } else {return false}"
   end
 
   def cancel_function 

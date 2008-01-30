@@ -40,7 +40,7 @@
 	
 	<div class="editor edit-area <%= hard_template ? :templated : '' %>" cardid="#{card.id}">
 	  <% form_remote_for :card, card, :url=>slot.url_for("card/update"), 
-				:html=>{ :class=>'form editor' } do |form| %>
+				:html=>{ :class=>'form editor',:onsubmit=>slot.save_function	 } do |form| %>
 				                             
 			<% if card.hard_content_template %>
 			  <% slot.form = form %> 
@@ -50,7 +50,7 @@
 			<% end %>
 			
 			<%= button_to_remote "Remove #{@card.name}", { :url=>slot.url_for("card/remove") }, :style=>'float:right'	%>			
-			<%= button_to_function "Save", slot.save_function, :class=>'save-card-button' %>
+			<%= button_to_function "Save", "this.form.onsubmit()", :class=>'save-card-button' %>
 			<%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function } %> 
   		
 		<% end %>

@@ -165,76 +165,13 @@ Object.extend(Wagn, {
     Element.removeClassName(element,'line');
     Element.addClassName(element,'paragraph');
 
-   /*
-   //  alert('line to paragraph');
-   // if (!Prototype.Browser.WebKit) {
-      //var oldElementDimensions = Element.getDimensions(element);
-      copy = copy_with_classes( element );
-      copy.removeClassName('line');
-      copy.addClassName('paragraph');
-      
-      var newElementDimensions = Element.getDimensions(copy);
-      copy.viewHeight = newElementDimensions.height;
-      copy.remove();
-    
-      var percent = 100 * oldElementDimensions.height / newElementDimensions.height;
-      var elementDimensions = newElementDimensions;
-      new Effect.BlindDown( element, {
-        duration: 0.3,
-        scaleFrom: percent,
-        scaleMode: {originalHeight: elementDimensions.height, originalWidth: elementDimensions.width},
-        afterSetup: function(effect) {
-          effect.element.makeClipping();
-          effect.element.setStyle({height: '0px'});
-          effect.element.show(); 
-          effect.element.removeClassName('line');
-          effect.element.addClassName('paragraph');     
-        }
-      }); 
-   //} else {
-   //}
-   */
+ 
    
   },
   paragraph_to_line: function(element) {
     Element.removeClassName(element, 'paragraph');
     Element.addClassName(element, 'line');
-    // Fixme: Safari chokes on getStyle() in prototype: this is bullshit: prototype should work in safari.
-    /*
-    //if (!Prototype.Browser.WebKit) {
-      var oldElementDimensions = Element.getDimensions(element);
-      copy = copy_with_classes( element );
-      copy.removeClassName('paragraph');
-      copy.addClassName('line');
-      var newElementDimensions = Element.getDimensions(copy);
-      copy.remove();  
-    
-      var percent = 100 * newElementDimensions.height / oldElementDimensions.height;
-    
-      return new Effect.Scale(element, percent, 
-        { 
-          duration: 0.3,
-          scaleContent: false, 
-          scaleX: false,
-          scaleFrom: 100,
-          scaleMode: {originalHeight: oldElementDimensions.height, originalWidth: oldElementDimensions.width},
-          restoreAfterFinish: true,
-          afterSetup: function(effect) {
-            effect.element.makeClipping();
-            effect.element.setStyle({height: '0px'});
-            effect.element.show(); 
-          },  
-          afterFinishInternal: function(effect) {
-            effect.element.undoClipping();
-            effect.element.removeClassName('paragraph');
-            effect.element.addClassName('line');
-          }
-        }); 
-     //} else {
-     //}
-     */     
-     //warn(element)
-     //warn("paragraph --> line");
+  
   }
 
 });
@@ -299,24 +236,28 @@ setupDoubleClickToEdit=function(container) {
   Element.getElementsByClassName( document, "editOnDoubleClick" ).each(function(el){
     el.ondblclick=function(event) {   
       if (Prototype.Browser.IE) { event = window.event } // shouldn't prototype take card of this?              
-      element = Event.element(event);
-      span = getSlotSpan(element);   
-      card_id = span.getAttributeNode('cardid').value;
-      if (Element.hasClassName(span,'line')) {
-        new Ajax.Request('/card/to_edit/'+card_id+'?context='+getSlotContext(element),
-           {asynchronous: true, evalScripts: true});
-      } else if (Element.hasClassName(span,'paragraph')) {
-        new Ajax.Updater({success:span, failure:span}, '/card/edit/'+card_id+'?context='+getSlotContext(element),
-           {asynchronous: true, evalScripts: true});
-      } else {
-        new Ajax.Updater({success:span, failure:getNextElement(span,'notice')}, '/transclusion/edit/'+card_id+'?context='+getSlotContext(element),
-           { asynchronous: true, evalScripts: true});
-     }
-     Event.stop(event);
+      element = Event.element(event);   
+      editTransclusion(element);
+      Event.stop(event);
     }
   });
 }        
-                                    
+   
+   
+editTransclusion=function(element){
+     span = getSlotSpan(element);   
+     card_id = span.getAttributeNode('cardid').value;
+     if (Element.hasClassName(span,'line')) {
+       new Ajax.Request('/card/to_edit/'+card_id+'?context='+getSlotContext(element),
+          {asynchronous: true, evalScripts: true});
+     } else if (Element.hasClassName(span,'paragraph')) {
+       new Ajax.Updater({success:span, failure:span}, '/card/edit/'+card_id+'?context='+getSlotContext(element),
+          {asynchronous: true, evalScripts: true});
+     } else {
+       new Ajax.Updater({success:span, failure:getNextElement(span,'notice')}, '/transclusion/edit/'+card_id+'?context='+getSlotContext(element),
+          { asynchronous: true, evalScripts: true});  
+     }
+}
 
 getOuterSlot=function(element){
   var span = getSlotSpan(element);

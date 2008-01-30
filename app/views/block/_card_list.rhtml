@@ -19,7 +19,7 @@
 <% end %>
 
 <% if cards.empty? %>
-  <div class="faint">Search returned no results</div>
+  <div class="search-no-results faint">Search returned no results</div>
 <% else %>    
 	<span class="search-result-list">
 	  <%= render :partial=>'/block/paging', :locals=>{:card=>card} %>

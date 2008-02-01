@@ -122,7 +122,7 @@ class JumpToVersion109 < ActiveRecord::Migration
       t.column "link_type",          :string,   :limit => 1, :default => "", :null => false
     end  
     
-    #`rake wagn:load_bootstrap_data`
+    `rake wagn:load_bootstrap_data`
   end
   
   

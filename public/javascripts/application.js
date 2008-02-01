@@ -68,10 +68,12 @@ Wagn.Messenger = {
     new Effect.Highlight( this.element(), {startcolor:"#eeeebb", endcolor:"#ffffaa", restorecolor:"#ffffaa", duration:1});
   },
   flash: function() {
-    //flash = $('notice').innerHTML + $('error').innerHTML;
-    //if (flash != '') {
-    //  this.alert(flash);
-    //}
+    if ($('notice') && $('error')) {
+      flash = $('notice').innerHTML + $('error').innerHTML;
+      if (flash != '') {
+        this.alert(flash);
+      }
+    }
   }
 };
 

@@ -3380,6 +3380,12 @@ new Effect.Highlight(this.element(),{startcolor:"#ffff00",endcolor:"#ffffaa",res
 this.element().innerHTML=_367;
 new Effect.Highlight(this.element(),{startcolor:"#eeeebb",endcolor:"#ffffaa",restorecolor:"#ffffaa",duration:1});
 },flash:function(){
+if($("notice")&&$("error")){
+flash=$("notice").innerHTML+$("error").innerHTML;
+if(flash!=""){
+this.alert(flash);
+}
+}
 }};
 Ajax.Responders.register({createMessage:function(){
 return "connecting to server...";

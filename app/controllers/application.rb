@@ -77,8 +77,8 @@ class ApplicationController < ActionController::Base
   end
 
   def load_cards( options={} )
-    raise("Load Cards is Deprecated")   
-=begin    
+    #raise("Load Cards is Deprecated")   
+
     options.keys.each {|k| options[k.to_sym]=options[k] }
     options[:keyword].gsub!(/[^\w]/,' ') if options[:keyword]
     @title = options.delete(:title)
@@ -137,7 +137,7 @@ class ApplicationController < ActionController::Base
     end  
     #@cards = @cards.map {|c| c.ok?(:read) ? c : Card.new(:name=>"Error:#{c.name}", :content=>"Permission Denied") }
     @cards     
-=end    
+
   end
                 
   def load_card_and_revision

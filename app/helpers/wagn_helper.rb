@@ -16,7 +16,7 @@ module WagnHelper
   # FIMXE: this one's a hack...
   def render_card(card, mode)
     if String===card && name = card  
-      raise("Card #{name} not present") unless card=(Card[name] || Card.find_phantom(name))
+      raise("Card #{name} not present") unless card= CachedCard.get(name) || card=(Card[name] || Card.find_phantom(name))
     end
     controller.slot.subslot(card).render(mode.to_sym)
   end

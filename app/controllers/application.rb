@@ -249,7 +249,6 @@ class ApplicationController < ActionController::Base
         break
       end
     end
-    warn "RETURNING NAME: #{name}"
     name
   end
   

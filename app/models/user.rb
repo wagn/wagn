@@ -101,7 +101,8 @@ class User < ActiveRecord::Base
   end
 
   def authenticated?(password) 
-    crypted_password == encrypt(password) and active?
+    crypted_password == encrypt(password) and active?      
+    #true
   end
 
   def generate_password

@@ -3,6 +3,7 @@ task :compress_javascript => :environment do
         "cat #{System.javascript_files.join(" ")} > #{System.compressed_js}.tmp; " +
         "java -jar ../../lib/custom_rhino.jar -c #{System.compressed_js}.tmp > #{System.compressed_js}; " +
         "rm #{System.compressed_js}.tmp"
+  puts cmd        
   `#{cmd}`  
 end
 

@@ -9,9 +9,7 @@
   width: 63%;
   margin-bottom: 400px;
 }
-
 #page-right {
-
   position: absolute;
   right: 0.5%;
   width: 35%;
@@ -46,6 +44,7 @@
 #logging {  /* signing in and out */
   position: absolute;
   right: 0.5%;
+  top: 2px;
 }
 /*
 #my-card {

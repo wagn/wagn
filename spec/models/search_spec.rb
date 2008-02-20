@@ -36,7 +36,7 @@ end
 
 describe Wql2, "not" do 
   before { User.as :joe_user }
-  it "should exclude cards matching lack criteria" do
+  it "should exclude cards matching not criteria" do
     s = Card.search(:plus=>"A", :not=>{:plus=>"A+B"}).plot(:name).sort.should==%w{ B D E F }    
   end
 end
@@ -170,10 +170,13 @@ end
 
 describe Wql2, "relative" do
   before { User.as :joe_user }
+
+  it "should find connection cards" do
+    Card.search( :part=>"_self", :_card=>Card['A'] ).plot(:name).sort.should == ["A+B", "A+C", "A+D", "A+E", "C+A", "D+A", "F+A"]
+  end
     
   it "should find plus cards for _self" do
     Card.search( :plus=>"_self", :_card=>Card["A"] ).plot(:name).sort.should == A_JOINEES
-
   end
 
   it "should find plus cards for _left" do

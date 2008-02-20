@@ -32,6 +32,14 @@ describe Wql2, "order" do
 =end  
 end
     
+      
+
+describe Wql2, "not" do 
+  before { User.as :joe_user }
+  it "should exclude cards matching lack criteria" do
+    s = Card.search(:plus=>"A", :not=>{:plus=>"A+B"}).plot(:name).sort.should==%w{ B D E F }    
+  end
+end
 
 describe Wql2, "search count" do
   before { User.as :joe_user }

@@ -65,16 +65,21 @@ module Wql2
     attr_accessor :relevance, :negate   
     attr_reader :params
      
-    def initialize(spec) 
+    def initialize(spec)   
+      # NOTE:  when creating new specs, make sure to specify _parent *before*
+      #  any spec which could trigger another cardspec creation further down.
+      
+      #warn "#{self}.init()"
       @mods = { :join=> :and }
       @spec = {}  
       @params = {}   
       @card, @parent, @need_revision = nil
       @return = :list
-      merge(spec)
+      merge(spec) 
     end
     
     def root
+      #warn "#{self}.root()"
       @parent ? @parent.root : self
     end
     
@@ -84,7 +89,7 @@ module Wql2
     
     def merge(spec)
       # string or number shortcut    
-      #warn "Merging #{spec.inspect} into #{self}"
+      #warn "#{self}.merge(#{spec.inspect})"
       
       spec = case spec
         when "_self";  { :id => root.card.id }
@@ -155,7 +160,7 @@ module Wql2
     end
     
     def or(val)
-      merge :cond => CardSpec.new(val).merge(:join=>:or, :return=>:condition, :_parent=>self)
+      merge :cond => CardSpec.new(:join=>:or, :return=>:condition, :_parent=>self).merge(val)
     end
     
     def not(val)
@@ -293,6 +298,7 @@ module Wql2
     def subspec(spec, additions={ :return=>'id' })   
       additions = additions.merge(:_parent=>self)
       join = self.negate ? 'not in' : 'in'
+      #warn "#{self}.subspec(#{additions}, #{spec})"
       ValueSpec.new([join,CardSpec.new(additions).merge(spec)], self)
     end
     

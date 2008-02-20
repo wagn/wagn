@@ -3,35 +3,28 @@ require File.dirname(__FILE__) + '/../spec_helper'
 A_JOINEES = ["B", "C", "D", "E", "F"]
       
 CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User"].sort    
-   
-describe Wql2, "order" do
+
+
+describe Wql2, "relative" do
   before { User.as :joe_user }
 
-  
-  it "should sort by create" do  
-    # WACK!! this doesn't seem to be consistent across fixture generations :-/
-    Card.search( :sort=>"create", :dir=>"asc", :limit=>6).plot(:name).should == ["Hooze Bot", "Admin", "Basic", "User", "Cardtype", "Company"]
+  it "should find connection cards" do
+    Card.search( :part=>"_self", :_card=>Card['A'] ).plot(:name).sort.should == ["A+B", "A+C", "A+D", "A+E", "C+A", "D+A", "F+A"]
   end
-  
-=begin
 
-  it "should sort by update" do     
-    # do this on a restricted set so it won't change every time we add a card..
-    Card.search( :match=>"two", :sort=>"update", :dir=>"desc").plot(:name).should == ["One+Two+Three", "One+Two","Two","Joe User"]
-    Card["Two"].update_attributes! :content=>"new bar"
-    Card.search( :match=>"two", :sort=>"update", :dir=>"desc").plot(:name).should == ["Two","One+Two+Three", "One+Two","Joe User"]
-  end 
-
-  it "should sort by alhpa" do
-    Card.search( :sort=>"alpha", :dir=>"desc", :limit=>6 ).plot(:name).should ==  ["Z", "Y", "X", "Wagn", "UserForm+*template", "UserForm"]
+  it "should find plus cards for _self" do
+    Card.search( :plus=>"_self", :_card=>Card["A"] ).plot(:name).sort.should == A_JOINEES
   end
-  
-  #it "should sort by plusses" do
-  #  Card.search(  :sort=>"plusses", :dir=>"desc", :limit=>6 ).plot(:name).should ==  ["*template", "A", "LewTest", "D", "C", "One"]
-  #end
-=end  
+
+  it "should find plus cards for _left" do
+    Card.search( :plus=>"_left", :_card=>Card["A+B"] ).plot(:name).sort.should == A_JOINEES
+  end
+
+  it "should find plus cards for _right" do
+    Card.search( :plus=>"_right", :_card=>Card["C+A"] ).plot(:name).sort.should == A_JOINEES
+  end
 end
-    
+
       
 
 describe Wql2, "not" do 
@@ -40,6 +33,34 @@ describe Wql2, "not" do
     s = Card.search(:plus=>"A", :not=>{:plus=>"A+B"}).plot(:name).sort.should==%w{ B D E F }    
   end
 end
+
+describe Wql2, "order" do
+  before { User.as :joe_user }
+
+  
+  it "should sort by create" do  
+    # WACK!! this doesn't seem to be consistent across fixture generations :-/
+    Card.search( :sort=>"create", :dir=>"asc", :limit=>6).plot(:name).should == ["Hooze Bot", "Admin", "Basic", "User", "Cardtype", "Company"]
+  end  
+
+#  it "should sort by update" do     
+#    # do this on a restricted set so it won't change every time we add a card..
+#    Card.search( :match=>"two", :sort=>"update", :dir=>"desc").plot(:name).should == ["One+Two+Three", "One+Two","Two","Joe User"]
+#    Card["Two"].update_attributes! :content=>"new bar"
+#    Card.search( :match=>"two", :sort=>"update", :dir=>"desc").plot(:name).should == ["Two","One+Two+Three", "One+Two","Joe User"]
+#  end 
+#
+#  it "should sort by alhpa" do
+#    Card.search( :sort=>"alpha", :dir=>"desc", :limit=>6 ).plot(:name).should ==  ["Z", "Y", "X", "Wagn", "UserForm+*template", "UserForm"]
+#  end
+  
+  #it "should sort by plusses" do
+  #  Card.search(  :sort=>"plusses", :dir=>"desc", :limit=>6 ).plot(:name).should ==  ["*template", "A", "LewTest", "D", "C", "One"]
+  #end
+
+end
+    
+
 
 describe Wql2, "search count" do
   before { User.as :joe_user }
@@ -167,25 +188,4 @@ describe Card, "find_phantom" do
     Card.find_phantom("A+testsearch").search.plot(:name).sort.should == A_JOINEES
   end
 end
-
-describe Wql2, "relative" do
-  before { User.as :joe_user }
-
-  it "should find connection cards" do
-    Card.search( :part=>"_self", :_card=>Card['A'] ).plot(:name).sort.should == ["A+B", "A+C", "A+D", "A+E", "C+A", "D+A", "F+A"]
-  end
-    
-  it "should find plus cards for _self" do
-    Card.search( :plus=>"_self", :_card=>Card["A"] ).plot(:name).sort.should == A_JOINEES
-  end
-
-  it "should find plus cards for _left" do
-    Card.search( :plus=>"_left", :_card=>Card["A+B"] ).plot(:name).sort.should == A_JOINEES
-  end
-
-  it "should find plus cards for _right" do
-    Card.search( :plus=>"_right", :_card=>Card["C+A"] ).plot(:name).sort.should == A_JOINEES
-  end
-end
-
 

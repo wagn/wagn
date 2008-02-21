@@ -5,30 +5,65 @@ class OrgParser
   attr_accessor :stream, :records, :current_record, :garbage, :broken
   TYPE=0
   VAL=1  
+
+  FIELDNAMES={ 
+    :web=>'website',
+    :email=>'email',
+    :funding=>'funding focus',
+    :geog=>'geographic focus',
+    :address=>'address',
+    :desc => 'description',
+    :phone => 'phone',
+    :person => 'main contact'
+  }
    
   module ::Card
-    class Category < Base
+    module MeyerContainer
+      def subcategories
+        Card.search( :type=>"SubCategory", :left_plus=>"_self", :_card=>self )
+      end
+ 
       def topics
-        Card.search( :type=>"Topic", :plus=>"_self", :_card=>self )
+        (Card.search( :type=>"Topic", :plus=>"_self", :_card=>self ) +
+          subcategories.map(&:topics)).flatten
       end
     end
-
+    
     class Category < Base
-      def topics
-        Card.search( :type=>"Topic", :plus=>"_self", :_card=>self )
-      end
+      include MeyerContainer
+    end
+
+    class SubCategory < Base
+      include MeyerContainer
     end
   end
    
-  def self.do_foundations
-    Card.search( :type=>"Foundations", :limit=>20 ).each do |f|  
-      puts "#{f.name}"
-      Card.search( :type=>"Category", :plus=>"_self", :_card=>f).each do |cat|
-        puts "  cat: #{cat.name}"
-        cat.topics.each do |t|
-          puts "    t: #{t.name}"
+  def do_foundations
+    User.as :admin
+    Card.search( :type=>"Foundations" ).each_with_index do |f,i|  
+      puts "#{i}: #{f.name}"  
+      record = parse_foundation(lexify(chunk(f.current_revision.content)))[0] 
+      #y record
+
+      record.each do |k,v| 
+        #warn "V=#{v} dammit"
+        if v            
+          name = FIELDNAMES[k] ? FIELDNAMES[k] : k.to_s
+          #warn "creating #{f.name}+#{name} content=#{v}"
+          Card.find_or_create! :name=>"#{f.name}+#{name}", :content=>v
         end
       end
+
+      topic_pointer = Card::Pointer.find_or_create! :name=>"#{f.name}+topics of interest"
+      topic_pointer.content=""
+      ( Card.search( :type=>"SubCategory", :plus=>"_self", :_card=>f) +
+        Card.search( :type=>"Category", :plus=>"_self", :_card=>f)
+      ).each do |cat|
+        cat.topics.sort_by(&:name).each do |topic|
+          topic_pointer.content += "\n[[#{topic.name}]]"
+        end
+      end
+      topic_pointer.save!
     end
   end
 
@@ -50,7 +85,6 @@ class OrgParser
     self.garbage = []
     self.broken = []
   end
-     
 
   def do_counties
     Card.search( :type=>"County" ).each_with_index do |card,index|
@@ -180,6 +214,8 @@ class OrgParser
     chunks.map do |chunk|
       stripped = strip_tags(chunk).strip
       type = case
+        when stripped == 'Funding Focus:'; 'FUNDING'
+        when stripped == 'Geographic Focus:'; 'GEOG'
         when stripped == 'Amy Ward';    'AUTHOR'         
         when stripped == '';            'BLANK' 
         when stripped =~ /^[x\d\.\-\(\)\s]+$/; 'PHONE'
@@ -197,31 +233,49 @@ class OrgParser
   end
   
   def chunk(text)
-    text.split(/<br>/).map{ |x| x.strip.gsub(/\s+/, ' ') }.compact
+    text.split(/<br>|<\/li>|<\/ul>/).map{ |x| x.strip.gsub(/\s+/, ' ') }.compact
   end
                  
   ## foundation parser -------------------------------------------- ##
   def parse_foundation(tokens)
     self.stream = tokens.clone
     self.records=[]
-    get_foundations
+    get_foundation
     records
   end       
   
   def get_foundation()
     # FIXME: this is not done
-    start_record
-    while cursym!=:eof
-      if cursym==:blank
-        accept(:blank)
-      elsif cursym==:name
-        accept(:name)
-      elsif non_blank.include?(cursym)
-        get_garbage()
-      else
-        raise "parse error: expected type #{cursym}"
+    start_record 
+
+    if cursym==:name
+      accept(:name)
+    elsif cursym==:desc
+      accept(:desc)
+      accept(:blank)
+    end                     
+    while accept( *non_blank ); end    
+    while cursym!=:eof 
+      #warn "cursym:#{cursym}"
+      if take(:funding)
+        take(:blank)  #optional
+        while ![:geog,:eof].include?(cursym)
+          #warn "  adding #{curval}"
+          add_to_record(:funding, curval) 
+          stream.shift
+        end
       end
+      if take(:geog)
+        accept(:blank)  #opional
+        while ![:geog,:eof,:blank].include?(cursym)
+          #warn "  adding #{curval}"
+          add_to_record(:geog, curval)
+          stream.shift
+        end
+      end
+      accept(cursym) unless cursym==:eof 
     end
+
     finish_record
   end
 
@@ -255,9 +309,19 @@ class OrgParser
     if accept( *types )
       return true
     end
-    raise "Parser error: wasn't expecting #{cursym}"      
+    raise "Parser error: wasn't expecting #{g}"      
   end
-
+  
+  # FIXME: this is the non-recording version of accept.  this is crappy
+  def take( *types )
+    if types.include?(cursym) 
+      gone = stream.shift
+      #warn "-#{gone[TYPE]}: #{gone[VAL]}"
+      return cursym
+    end
+    return false
+  end
+  
   def accept( *types )
     if types.include?(cursym) 
       add_to_record(cursym, curval)  

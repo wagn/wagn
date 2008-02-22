@@ -4,27 +4,6 @@ A_JOINEES = ["B", "C", "D", "E", "F"]
       
 CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User"].sort    
 
-
-describe Wql2, "relative" do
-  before { User.as :joe_user }
-
-  it "should find connection cards" do
-    Card.search( :part=>"_self", :_card=>Card['A'] ).plot(:name).sort.should == ["A+B", "A+C", "A+D", "A+E", "C+A", "D+A", "F+A"]
-  end
-
-  it "should find plus cards for _self" do
-    Card.search( :plus=>"_self", :_card=>Card["A"] ).plot(:name).sort.should == A_JOINEES
-  end
-
-  it "should find plus cards for _left" do
-    Card.search( :plus=>"_left", :_card=>Card["A+B"] ).plot(:name).sort.should == A_JOINEES
-  end
-
-  it "should find plus cards for _right" do
-    Card.search( :plus=>"_right", :_card=>Card["C+A"] ).plot(:name).sort.should == A_JOINEES
-  end
-end
-
       
 
 describe Wql2, "not" do 
@@ -148,7 +127,16 @@ describe Wql2, "basics" do
   
   it "should find connection cards" do
     Card.search( :part=>"A" ).plot(:name).sort.should == ["A+B", "A+C", "A+D", "A+E", "C+A", "D+A", "F+A"]
+  end    
+  
+  it "should find left connection cards" do
+    Card.search( :left=>"A" ).plot(:name).sort.should == ["A+B", "A+C", "A+D", "A+E"]
   end
+
+  it "should find right connection cards" do
+    Card.search( :right=>"A" ).plot(:name).sort.should == ["C+A", "D+A", "F+A"]
+  end
+
   
   it "should return count" do
     Card.count_by_wql( :part=>"A" ).should == 7
@@ -159,6 +147,29 @@ describe Wql2, "basics" do
   end
 
 end
+
+
+
+describe Wql2, "relative" do
+  before { User.as :joe_user }
+
+  it "should find connection cards" do
+    Card.search( :part=>"_self", :_card=>Card['A'] ).plot(:name).sort.should == ["A+B", "A+C", "A+D", "A+E", "C+A", "D+A", "F+A"]
+  end
+
+  it "should find plus cards for _self" do
+    Card.search( :plus=>"_self", :_card=>Card["A"] ).plot(:name).sort.should == A_JOINEES
+  end
+
+  it "should find plus cards for _left" do
+    Card.search( :plus=>"_left", :_card=>Card["A+B"] ).plot(:name).sort.should == A_JOINEES
+  end
+
+  it "should find plus cards for _right" do
+    Card.search( :plus=>"_right", :_card=>Card["C+A"] ).plot(:name).sort.should == A_JOINEES
+  end
+end
+
 
 
 describe Wql2, "type" do  

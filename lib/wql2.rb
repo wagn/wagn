@@ -170,11 +170,11 @@ module Wql2
     end
 
     def left(val)
-      merge field(:trunk_id) => val
+      merge field(:trunk_id) => subspec(val)
     end
 
     def right(val)
-      merge field(:tag_id) => val
+      merge field(:tag_id) => subspec(val)
     end
     
     def part(val) 

@@ -1,6 +1,6 @@
 
 System.base_url = "http://localhost:3000"
-System.site_name = "NeWagN.wagn.org"
+System.site_name = "NeWagN"
 
 
 System.invitation_email_subject = "Join the {site_name} Community!"

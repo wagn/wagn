@@ -348,7 +348,9 @@ a.current, a:link.current {
 .card-slot.line hr {
   display: none;
 }
-
+.card-slot .denied {
+  display: none;
+}
 
 
 /* -----   CONTEXTS  -------------------------------*/

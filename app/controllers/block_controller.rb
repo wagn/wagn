@@ -35,6 +35,7 @@ class BlockController < ApplicationController
     }
   end
 
+=begin
   def connection_list
     query = params[:query] ? params[:query].to_sym : nil
     @button_permission = case #might later have this return the actual button
@@ -47,6 +48,8 @@ class BlockController < ApplicationController
       :context => 'connections'
     }                                     
   end  
+=end 
+
   
   def link_list
     render_list :partial=>'block/link_list', :locals=>{

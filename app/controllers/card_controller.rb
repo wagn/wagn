@@ -78,6 +78,7 @@ class CardController < ApplicationController
 
   def index
     redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_name)
+#    redirect_to :controller=>'card',:action=>'show', :id=>System.deck_name
   end
  
   def mine
@@ -145,6 +146,7 @@ class CardController < ApplicationController
     @card_name = Cardname.unescape(params['id'] || '')
     if (@card_name.nil? or @card_name.empty?) then    
       @card_name = System.site_name
+      #@card_name = System.deck_name
     end             
     @card = CachedCard.get(@card_name)
     

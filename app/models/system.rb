@@ -66,8 +66,15 @@ class System < ActiveRecord::Base
       # FIXME: hacking this so users don't have to update config.  will want to fix later 
       System.base_url.gsub(/^http:\/\//,'').gsub(/\/$/,'')
     end
-      
-    
+
+
+=begin
+# This was an attempt to begin the migration of the site_name setting away from wagn.rb      
+    def deck_name
+      Cardname.escape( Card['*home'] ? Card['*home'].content : System.site_name )
+    end
+=end
+
     def setting(setting_name)
       template = Card.find_by_name( 'system setting' + JOINT + setting_name )
       value = template ? template.content : System.send( setting_name.gsub(/\s/,"_") )

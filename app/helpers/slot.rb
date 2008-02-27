@@ -159,7 +159,7 @@ module WagnHelper
           # FIMXE:  what's going on here?
         
         when :denied;
-          %{<span class="faint">Sorry #{::User.current_user.card.name}, you need permissions to view #{card.name}</span>}
+          %{<span class="denied">Sorry #{::User.current_user.card.name}, you need permissions to view #{card.name}</span>}
           
         when :auto_card_notice
           %{<div class="faint"><em>#{args[:requested_name] || card.name} is an Auto card</em><div>} 

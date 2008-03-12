@@ -397,7 +397,9 @@ a.current, a:link.current {
 }
 .card-slot.paragraph .content {
   display: block;
+/* this was occasionally busting auto-completes on pointers:
   overflow: auto;
+*/
 }
 .card-slot.paragraph .content img  {
   float: right;

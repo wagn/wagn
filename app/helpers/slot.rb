@@ -107,7 +107,7 @@ module WagnHelper
     end
 
     def render(action, args={})      
-      #ActiveRecord::Base.logger.info("slot(#{card.name}, #{@state}).render(#{action})")
+      #logger.info("<render(#{card.name}, #{@state}).render(#{action})")
       if action==:denied
         # pass
       elsif card.new_record? 
@@ -195,6 +195,7 @@ module WagnHelper
     end
 
     def expand_transclusions(content) 
+      #logger.info("<expand_transclusions content=#{content}>")
       #content="#{card.name}=~/*template/" + content
       #return ("skip(#{card.name}):"+content) 
       if card.name =~ /\*template/           
@@ -252,6 +253,7 @@ module WagnHelper
     end
     
     def process_transclusion( card, options={} )  
+      #logger.info("<process_transclusion card=#{card.name} options=#{options}")
       subslot = subslot(card)  
       old_slot, @template.controller.slot = @template.controller.slot, subslot
 
@@ -260,19 +262,22 @@ module WagnHelper
       
       state, vmode = @state.to_sym, (options[:view] || :content).to_sym      
       subslot.requested_view = vmode
-      #result = "state=#{state} vmode=#{vmode}"
+      #logger.info("<transclusion_case: state=#{state} vmode=#{vmode}")
       result = case
         when new_card && state==:line; subslot.render :missing_transclusion, options
         when new_card;     subslot.render( :create_transclusion, options ) 
         when state==:edit && card.phantom?; subslot.render :auto_card_notice
         when state==:edit;  subslot.render :edit_transclusion
+
+        # this one takes precedence over state=view/line
+        when vmode==:name;    subslot.render :name
+
         when state==:line; subslot.render(:expanded_line_content )
           
         # now we are in state==:view, switch on viewmode (from transclusion syntax)
         when vmode==:raw;     subslot.render :raw
         when vmode==:card;    subslot.render :view
         when vmode==:line;    subslot.render :line  
-        when vmode==:name;    subslot.render :name
         when vmode==:link;    subslot.render :link
         when vmode==:content; subslot.render :content
       end

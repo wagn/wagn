@@ -14,6 +14,9 @@ class CachedCard
   self.cache = ActionController::Base.fragment_cache_store
   self.perform_caching = ActionController::Base.perform_caching  
   
+  cattr_accessor :card_names
+  self.card_names={}
+  
   class << self   
     def get(name, card=nil, opts={}) 
       key = name.to_key
@@ -26,34 +29,34 @@ class CachedCard
         cached_card
 
       elsif card 
-        ActiveRecord::Base.logger.info("<get(PassedIn) name=#{name}>")
+        #logger.info("<get(PassedIn) name=#{name}>")
         self.new_cached_if_cacheable(card, opts)
 
       elsif name.blank?
         Card.new(card_opts)
       
       elsif card = Card.find_builtin(name)  
-        ActiveRecord::Base.logger.info("<get(BuiltIn) name=#{name}>")
+        #logger.info("<get(BuiltIn) name=#{name}>")
         card 
         
       elsif name.junction? && (template = self.find( name.auto_template_name.to_key )) && template.type=='Search'
-        ActiveRecord::Base.logger.info("<get(CachedPhantom) name=#{name}>")
+        #logger.info("<get(CachedPhantom) name=#{name}>")
         User.as(:admin){ Card.create_phantom( name, template.content ) }  # FIXME
 
       elsif card = Card[name] 
-        ActiveRecord::Base.logger.info("<get(DB) name=#{name}>")
+        #logger.info("<get(DB) name=#{name}>")
         self.new_cached_if_cacheable(card, opts)
 
       elsif  name.junction? && (template = Card[ name.auto_template_name ]) && template.type=='Search' 
-        ActiveRecord::Base.logger.info("<get(Phantom) name=#{name}>")
+        #logger.info("<get(Phantom) name=#{name}>")
         template = self.new_cached_if_cacheable(template, opts)
         User.as(:admin){ Card.create_phantom( name, template.content ) } # FIXME
         
       else   
-        ActiveRecord::Base.logger.info("<get(New) name=#{name}>")
+        #logger.info("<get(New) name=#{name}>")
         Card.new(card_opts)
-      end  
-      ActiveRecord::Base.logger.info("</get res=#{r}>")
+      end 
+      #logger.info("</get res=#{r}>")
       r
     end
     

@@ -1,2 +1,2 @@
-<%= slot.card.content.gsub(/\[\[/,'{{').gsub(/\]\]/,'|view:line}}') %> 
+<%= slot.card.content.gsub(/\[\[/,'{{').gsub(/\]\]/,"|view:#{slot.item_format||'line'}}}") %> 
 <%= link_to_function 'add/edit', %{editTransclusion(this)} %>

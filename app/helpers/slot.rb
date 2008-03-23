@@ -6,8 +6,8 @@ module WagnHelper
     cattr_accessor :max_char_count
     self.max_char_count = 200
     attr_reader :card, :context, :action, :renderer, :template
-    attr_accessor :editor_count, :options_need_save, :state, :requested_view,
-      :transclusions, :position, :renderer, :form, :superslot, :char_count     
+    attr_accessor :editor_count, :options_need_save, :state, :requested_view, 
+      :transclusions, :position, :renderer, :form, :superslot, :char_count, :item_format      
     attr_writer :form 
      
     def initialize(card, context="main_1", action="view", template=nil, renderer=nil )
@@ -29,6 +29,7 @@ module WagnHelper
       @subslots << new_slot 
       new_slot.superslot = self
       new_slot.position = @subslots.size
+      new_slot.item_format = self.item_format
       new_slot
     end
 
@@ -219,8 +220,10 @@ module WagnHelper
             :requested_name=>requested_name,
             :view  => 'content',
             :base  => 'self',
+            :item  => nil
           }.merge(Hash.new_from_semicolon_attr_list(match[4]))  
           options[:view]='edit' if @state == :edit
+          self.item_format = options[:item] if options[:item]
               
           # compute transcluded card name
           transcluded_card_name = relative ? 

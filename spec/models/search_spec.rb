@@ -19,7 +19,7 @@ describe Wql2, "order" do
   
   it "should sort by create" do  
     # WACK!! this doesn't seem to be consistent across fixture generations :-/
-    Card.search( :sort=>"create", :dir=>"asc", :limit=>6).plot(:name).should == ["Hooze Bot", "Admin", "Basic", "User", "Cardtype", "Company"]
+    Card.search( :sort=>"create", :dir=>"asc", :limit=>6).plot(:name).should == ["Wagn Bot", "Admin", "Basic", "User", "Cardtype", "Company"]
   end  
 
 #  it "should sort by update" do     
@@ -175,11 +175,11 @@ end
 describe Wql2, "type" do  
   before { User.as :joe_user }
   it "should find cards of this type" do
-    Card.search( :type=>"_self", :_card=>Card['User']).plot(:name).sort.should == ["Joe User","No Count","Sample User","Hooze Bot","Admin","Anonymous"].sort
+    Card.search( :type=>"_self", :_card=>Card['User']).plot(:name).sort.should == ["Joe User","No Count","Sample User","Wagn Bot","Admin","Anonymous"].sort
   end
 
   it "should find cards of this type" do
-    Card.search( :type=>"User" ).plot(:name).sort.should == ["Joe User","No Count","Sample User","Hooze Bot","Admin","Anonymous"].sort
+    Card.search( :type=>"User" ).plot(:name).sort.should == ["Joe User","No Count","Sample User","Wagn Bot","Admin","Anonymous"].sort
   end
 
 end
@@ -198,5 +198,13 @@ describe Card, "find_phantom" do
       :content=>'{"plus":"_self"}'  
     Card.find_phantom("A+testsearch").search.plot(:name).sort.should == A_JOINEES
   end
+end     
+
+describe Wql2, "group tagging" do
+  it "should find frequent taggers of basic cards" do
+    Card.search( :group_tagging=>'Basic' ).map(&:name).should ==  ["*template", "A", "C", "B", "Two", "E", "One", "Three", "D", "Five"]
 end
+
+
+
 

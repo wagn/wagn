@@ -16,9 +16,9 @@ from cards t0 order by count desc limit 10;
   
 # this one works:
   
- select cards.id, cards.name, count(*) 
+ select id, trunk_id, created_at, value, updated_at, current_revision_id, name, type, extension_id, extension_type, sealed, created_by, updated_by, priority, plus_sidebar, reader_id, writer_id, reader_type, writer_type, old_tag_id, tag_id, key, trash, appender_type, appender_id, indexed_content, indexed_name, count(*) 
  from cards join cards c2 on c2.tag_id=cards.id 
- group by cards.id,cards.name 
+ group by cards.*
  order by count(*) desc limit 10;  
   
 =end
@@ -57,7 +57,8 @@ module Wql2
     :sort   => "",
     :dir    => "",
     :limit  => "",
-    :offset => "",
+    :offset => "",  
+    :group_tagging  => "",
     :return => :list,
     :join   => :and,
     :view   => nil    # handled in interface-- ignore here
@@ -84,7 +85,11 @@ module Wql2
       end
     end
     
-    def walk_spec() walk(@spec, :walk_spec); end
+    def walk_spec() walk(@spec, :walk_spec); end     
+    
+    def quote(v)
+      ActiveRecord::Base.connection.quote(v) 
+    end
   end
   
 
@@ -96,17 +101,17 @@ module Wql2
   
   class SqlStatement
     attr_accessor :fields, :joins, :conditions, :tables, :order, :limit, :offset,
-      :relevance_fields, :count_fields
+      :relevance_fields, :count_fields, :group
     
     def initialize
       self.fields, self.joins, self.conditions, self.count_fields, self.relevance_fields = [],[],[],[],[]
-      self.tables, self.order, self.limit, self.offset = "","","",""
+      self.tables, self.order, self.limit, self.group, self.offset = "","","","",""
     end
     
     def to_s
       "(select #{fields.reject(&:blank?).join(', ')} from #{tables} #{joins.join(' ')} " + 
-        "where #{conditions.reject(&:blank?).join(' and ')} #{order} #{limit} #{offset})"
-    end
+        "where #{conditions.reject(&:blank?).join(' and ')} #{group} #{order} #{limit} #{offset})"
+    end 
   end
 
   class CardSpec < Spec 
@@ -128,7 +133,7 @@ module Wql2
     
     def table_alias 
       case
-        when @mods[:return]==:condition;   @parent.table_alias
+        when @mods[:return]==:condition;   @parent ? @parent.table_alias : "t"
         when @parent; @parent.table_alias + "x" 
         else "t"  
       end
@@ -200,7 +205,7 @@ module Wql2
     
     def complete(val)
       no_plus_card = (val=~/\+/ ? '' : "and tag_id is null")  #FIXME -- this should really be more nuanced -- it breaks down after one plus
-      merge :cond => SqlCond.new(" lower(name) LIKE lower(#{ActiveRecord::Base.connection.quote(val+'%')}) #{no_plus_card}")
+      merge :cond => SqlCond.new(" lower(name) LIKE lower(#{quote(val+'%')}) #{no_plus_card}")
     end
 
     def field(name)
@@ -304,21 +309,38 @@ module Wql2
         else @mods[:return]
       end
       
-      # Permissions
+      # Permissions       
+      t = table_alias
       if System.always_ok?
         # noop
       elsif User.current_user.login.to_s=='anon'
-        sql.conditions << %{ (reader_type='Role' and reader_id=#{ANON_ROLE_ID}) }
+        sql.conditions << %{ (#{t}.reader_type='Role' and #{t}.reader_id=#{ANON_ROLE_ID}) }
       else
         cuid = User.current_user.id
-        sql.joins << "left join roles_users ru on ru.user_id=#{cuid} and ru.role_id=reader_id"
+        sql.joins << "left join roles_users ru on ru.user_id=#{cuid} and ru.role_id=#{t}.reader_id"
         sql.conditions << (
-          %{ ((reader_type='Role' and reader_id IN (#{ANON_ROLE_ID}, #{AUTH_ROLE_ID}))
-              OR (reader_type='User' and reader_id=#{cuid})
-              OR (reader_type='Role' and ru.user_id is not null)
+          %{ ((#{t}.reader_type='Role' and #{t}.reader_id IN (#{ANON_ROLE_ID}, #{AUTH_ROLE_ID}))
+              OR (#{t}.reader_type='User' and #{t}.reader_id=#{cuid})
+              OR (#{t}.reader_type='Role' and ru.user_id is not null)
              )})
       end
-
+      
+      if !@mods[:group_tagging].blank?
+        card_class = @mods[:group_tagging] 
+        fields = Card::Base.columns.map {|c| "#{table_alias}.#{c.name}"}.join(", ")
+                              
+        raise("too many existing fields") if sql.fields.length > 1
+        sql.fields[0] = fields
+        
+        join = " join cards c2 on c2.tag_id=#{table_alias}.id  " 
+        join += " join cards c3 on c2.trunk_id=c3.id and c3.type=#{quote(card_class)}"  unless card_class==:any
+        sql.joins << join
+        
+        sql.group = "GROUP BY #{fields}"
+        @mods[:sort] = 'count'
+        @mods[:dir] = 'desc'
+      end
+            
       # Order 
       unless @parent or @mods[:return]==:count
         order_key ||= @mods[:sort].blank? ? "update" : @mods[:sort]
@@ -327,18 +349,19 @@ module Wql2
         sql.order << case order_key
           when "update"; "#{table_alias}.updated_at #{dir}"
           when "create"; "#{table_alias}.created_at #{dir}"
-          when "alpha";  "#{table_alias}.key #{dir}"
+          when "alpha";  "#{table_alias}.key #{dir}"  
+          when "count";  "count(*) #{dir}"
           when "relevance";  
             if sql.relevance_fields 
               sql.fields << sql.relevance_fields
               "name_rank desc, content_rank desc" 
             else 
               "#{table_alias}.updated_at desc"
-            end
+            end     
           else 
             sql.fields << sql.count_fields if sql.count_fields
             "#{order_key} #{dir}" 
-        end
+        end 
       end
                              
       # Misc
@@ -410,7 +433,7 @@ module Wql2
       case v
         when CardSpec, RefSpec, SqlCond; v.to_sql
         when Array;    "(" + v.collect {|x| sqlize(x)}.join("','") + ")"
-        else ActiveRecord::Base.connection.quote(v)
+        else quote(v)
       end
     end
     

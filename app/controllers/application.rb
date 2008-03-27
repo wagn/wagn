@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   attr_reader :card, :cards, :renderer, :context   
   attr_accessor :notice
   before_filter :note_current_user, :load_context, :reset_class_caches, :save_request 
-  helper_method :card, :cards, :renderer, :context, :load_cards, :previous_page, 
+  helper_method :card, :cards, :renderer, :context, :previous_page, 
     :edit_user_context, :sidebar_cards, :notice, :slot, :url_for_page, :url_for_card
   
   ## This is a hack, but lots of stuff seems to break without it
@@ -68,76 +68,6 @@ class ApplicationController < ActionController::Base
       @card.send(:set_defaults)
     end
     @card
-  end
-
-  def load_cards_from_params    
-    options = params.clone   
-    %w{ action controller }.each {|key| options.delete(key) }
-    load_cards( options )
-  end
-
-  def load_cards( options={} )
-    #raise("Load Cards is Deprecated")   
-
-    options.keys.each {|k| options[k.to_sym]=options[k] }
-    options[:keyword].gsub!(/[^\w]/,' ') if options[:keyword]
-    @title = options.delete(:title)
-        
-    if options[:card]
-      @card = options.delete(:card)
-    elsif id = options.delete(:id) and !id.to_s.empty?
-      @card = Card.find(id)
-    else 
-      @card = nil
-    end
-    card_id = @card ? @card.id : nil
-       
-    @hide_duplicates = options.delete(:hide_duplicates)
-
-    @duplicate_count = 0
-    @duplicates = []
-    @cards = []
-    
-    if options[:query]  
-      case options.delete(:query)
-      when 'common_tags';    options[:tagging]={:type=>@card.class.to_s.gsub(/^Card::/,'') }; options[:sort_by]='cards_tagged'; options[:sortdir]="desc"
-      when 'connections';    options[:plus]={ :id=> card_id }
-      when 'plus_cards';     options[:plus]={ :id=> card_id }
-      when 'plussed_cards';  options[:connected]={ :id=>card_id }
-      when 'recent_changes'; options[:sort_by]='updated_at'; options[:sortdir]='desc'
-      when 'search';
-      when 'cardtype_cards'; options[:type]=@card.extension.class_name
-      when 'pieces';         options[:pieces]=true; options[:id]=card_id
-      when 'backlinks';      options[:backlink]={ :id=>card_id }
-      when 'revised_by';     options[:editors]=(@card.extension ? @card.extension.id : nil); options[:sort_by]='updated_at'; options[:sortdir]='desc'
-      end
-    end
-
-    warn "wql options: #{options.inspect}" if System.debug_wql
-    cards = Card.find_by_wql_options( options )
-
-    if @hide_duplicates
-      # for connections, we want to skip cards that have already been displayed     
-      included_names = []
-      included_names += @card.out_transclusions.plot(:referenced_name) if @card
-      included_names += cards.plot(:out_transclusions).flatten.plot(:referenced_name)
-      included_names += @card.sidebar_cards.plot(:name)
-      included_names.length
-
-      cards.each do |c|
-        if included_names.include?(c.name)  
-          @duplicates << c
-        else
-          @cards << c
-        end
-      end
-      @duplicate_count = @duplicates.length
-    else  
-      @cards = cards
-    end  
-    #@cards = @cards.map {|c| c.ok?(:read) ? c : Card.new(:name=>"Error:#{c.name}", :content=>"Permission Denied") }
-    @cards     
-
   end
                 
   def load_card_and_revision

@@ -232,10 +232,10 @@ class PermissionTest < Test::Unit::TestCase
      end
   
      as(@u1) do
-       assert_equal %w( c1 c2 c3 ), Card.find_by_wql_options(:keyword=>'WeirdWord').plot(:name).sort
+       assert_equal %w( c1 c2 c3 ), Card.search(:content=>'WeirdWord').plot(:name).sort
      end
      as(@u2) do
-       assert_equal %w( c2 c3 ), Card.find_by_wql_options(:keyword=>'WeirdWord').plot(:name).sort
+       assert_equal %w( c2 c3 ), Card.search(:content=>'WeirdWord').plot(:name).sort
      end
   end
 
@@ -253,10 +253,10 @@ class PermissionTest < Test::Unit::TestCase
     end
 
     as(@u1) do
-      assert_equal %w( c1 c2 c3 ), Card.find_by_wql_options(:keyword=>'WeirdWord').plot(:name).sort
+      assert_equal %w( c1 c2 c3 ), Card.search(:content=>'WeirdWord').plot(:name).sort
     end
     as(@u2) do
-      assert_equal %w( c2 c3 ), Card.find_by_wql_options(:keyword=>'WeirdWord').plot(:name).sort
+      assert_equal %w( c2 c3 ), Card.search(:content=>'WeirdWord').plot(:name).sort
     end
   end  
 

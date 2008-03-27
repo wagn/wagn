@@ -58,34 +58,13 @@ module CardLib
       end
 
       def find_by_wql_options( options={} )
-        wql = Wql.generate_query( options ) 
-        self.find_by_wql( wql )
-#      rescue Exception=>e
-#        raise Wagn::WqlError, "Error from wql options: #{options.inspect}\n#{e.message}"
+        raise("Deprecated: old wql")
       end
 
       def find_by_wql( wql, options={})
-        warn "find_by_wql: #{wql} " if System.debug_wql 
-        ActiveRecord::Base.logger.info("WQL #{wql}")
-        statement = Wql::Parser.new.parse( wql )
-        cards = self.find_by_sql statement.to_s
-        statement.post_sql.each do |step|
-          case step
-            when 'pieces'; cards = cards.map{|c| c.pieces}.flatten
-          end
-        end
-        cards.each do |card|
-          card.cards_tagged = card.attributes['cards_tagged'] if card.attributes.has_key?('cards_tagged')
-        end 
-
-        cards
-        #raise "#{e.inspect}"
-      #rescue Exception=>e
-      #  raise "WQL broke: #{wql}\n" + e.message
-      rescue Exception=>e
-        raise Wagn::WqlError, "Error from wql: #{wql}\n#{e.message}"
+        raise("Deprecated: old wql")
       end
-
+      
       # FIXME Hack to keep dynamic classes from breaking after application reload in development..
       def find_with_rescue(*args)
         find_without_rescue(*args)

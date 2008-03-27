@@ -18,6 +18,7 @@ class CachedCard
   self.card_names={}
   
   class << self   
+    # FIXME: opts[:no_new] is an ugly hack- interface needs work. 
     def get(name, card=nil, opts={}) 
       key = name.to_key
       caching = (opts.has_key?(:cache) ? opts[:cache] : true) && perform_caching 
@@ -33,7 +34,7 @@ class CachedCard
         self.new_cached_if_cacheable(card, opts)
 
       elsif name.blank?
-        Card.new(card_opts)
+        Card.new(card_opts) unless opts[:no_new]
       
       elsif card = Card.find_builtin(name)  
         #logger.info("<get(BuiltIn) name=#{name}>")
@@ -54,7 +55,7 @@ class CachedCard
         
       else   
         #logger.info("<get(New) name=#{name}>")
-        Card.new(card_opts)
+        Card.new(card_opts) unless opts[:no_new]  
       end 
       #logger.info("</get res=#{r}>")
       r

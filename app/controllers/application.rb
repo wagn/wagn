@@ -163,19 +163,10 @@ class ApplicationController < ActionController::Base
   def sidebar_cards
     unless @sidebar_cards 
       cards = Card.search( :plus=>'*sidebar')
-=begin
-      # FIXME: are we using this?
-      if @card && @card.id
-        cards += Card.find_by_wql(%{
-          cards where trunk_id=#{card.id}
-          and (tags are cards where plus_sidebar is true 
-                  and tagged by cards with name='*sidebar')
-        })
-      end
-=end
-     @sidebar_cards = cards.sort_by do |c| 
+      @sidebar_cards = cards.sort_by do |c| 
         #(side = Card.find_by_name(c.name + '+*sidebar')) ? side.content.to_i : 0
-        (side=CachedCard.get(c.name+'+*sidebar')) ? side.content.to_i : 0
+        # wow no_new is an ugly hack-- CachedCard interface needs work.
+        (side=CachedCard.get(c.name+'+*sidebar',nil,:no_new=>true)) ? side.content.to_i : 0
       end
     end
     @sidebar_cards.map do |card|

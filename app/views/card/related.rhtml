@@ -15,6 +15,7 @@
 	    <%= render_card "#{@card.name}+*type cards", 'line' %>
 	    <% if @card.me_type.ok? :create %>
 	      <%= button_to "Create new #{@card.name} card", "/card/new?card[type]=#{@card.codename}" %>
+				<%= link_to "Import Cards of this type", "/import?cardtype=#{@card.codename}" %>
 	    <% end %>
     <% end %>
 	  <h2>Connections</h2>

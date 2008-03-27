@@ -1,20 +1,6 @@
 --- 
-users_004: 
-  status: request
-  salt: dbd04ea352e01547438c1a43f748d675e7f202f5
-  updated_at: 2007-12-03 00:29:15.905742
-  cards_per_page: "25"
-  crypted_password: 689b0d973576a970a4c0b910183bb41004e99c2a
-  invite_sender_id: 
-  blocked: f
-  password_reset_code: 
-  id: "4"
-  hide_duplicates: t
-  login: 
-  created_at: 2007-12-03 00:29:15.905742
-  email: fake@fake.com
 users_001: 
-  status: active
+  status: system
   salt: c420fa40c65a38186deb25ba859edacd9bf7d8f8
   updated_at: 2007-12-03 00:29:07.787331
   cards_per_page: "25"
@@ -24,9 +10,9 @@ users_001:
   password_reset_code: 
   id: "2"
   hide_duplicates: t
-  login: hoozebot
+  login: wagbot
   created_at: 2007-12-03 00:29:07.787331
-  email: hoozebot@grasscommons.org
+  email: wagnbot@grasscommons.org
 users_002: 
   status: active
   salt: bf2a748b23e6fc6fa64d5acb99df8e72e308c58c

@@ -1171,7 +1171,7 @@ cards_012:
   created_at: 2007-12-03 00:29:08.305206
 cards_001: 
   reader_type: Role
-  name: Hooze Bot
+  name: Wagn Bot
   appender_id: 
   updated_at: 2007-12-03 00:29:13.738911
   created_by: 
@@ -1191,7 +1191,7 @@ cards_001:
   trunk_id: 
   appender_type: 
   writer_id: 
-  key: hooze_bot
+  key: wagn_bot
   extension_id: "2"
   sealed: f
   created_at: 2007-12-03 00:29:07.952542

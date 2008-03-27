@@ -89,7 +89,7 @@ module CardCreator
   end
   
   def default_user_id
-    if u = MUser.find_by_login('hoozebot') or u = MUser.find_by_login('wagnbot') or
+    if u = MUser.find_by_login('hoozebot') or u = MUser.find_by_login('wagbot') or
       u = MUser.find_by_login('admin')
       u.id
     else

@@ -123,7 +123,13 @@ class JumpToVersion109 < ActiveRecord::Migration
       t.column "link_type",          :string,   :limit => 1, :default => "", :null => false
     end  
     
-    `rake wagn:load_bootstrap_data`
+    # this env switch used by import scripts-- 
+    #  create structure with no data; then load data dumped from another wagn
+    if ENV['WAGN_SKIP_BOOTSTRAP_DATA']
+      puts "Skipping data load"
+    else
+      `rake wagn:load_bootstrap_data`
+    end
   end
   
   

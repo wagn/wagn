@@ -66,8 +66,8 @@ class ConnectionController < ApplicationController
   end
   
   def load_likely       
-    @likely = load_cards(:card=>@card,:query=>'common_tags') || []
-    @already = load_cards :card=>@card, :query=>'plussed_cards'
+    @likely = Card.search( :group_tagging=>@card.type )
+    @already = Card.search(:plus=>'_self', :_card=>@card )
     @already_ids = @already.plot :id
     @likely.reject! {|c| @already_ids.member? c.id }
   end  

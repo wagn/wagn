@@ -29,7 +29,7 @@
 
 
 <% if card.results.nil? %>
-	<%= "#{error.type}: #{error.message}" %><br/>
+	<%= "#{error.class.to_s}: #{error.message}" %><br/>
 	<%= card.content %>
 <%# elsif card.results.length==0 %>
 <!--  <span class="faint">Search returned no results</span> -->

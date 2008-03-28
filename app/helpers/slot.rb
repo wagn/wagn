@@ -46,6 +46,8 @@ module WagnHelper
     def wrap_content( content="" )
        %{<span class="content editOnDoubleClick">} + content.to_s + %{</span>}
     end    
+    
+
            
     # FIXME: passing a block seems to only work in the templates and not from
     # internal slot calls, so I added the option passing internal content which
@@ -73,8 +75,13 @@ module WagnHelper
         
         id_attr = card ? %{cardId="#{card.id}"} : ''
         slot_head = %{<span #{id_attr} class="#{css_class}" position="#{position}" >}
-        if block_given?
+        if block_given? 
+          # FIXME: the proc.binding call triggers lots and lots of:
+          # slot.rb:77: warning: tried to create Proc object without a block 
+          # which makes the test output unreadable.  should do a real fix instead of hiding the issue 
+          warn_level, $VERBOSE = $VERBOSE, nil;
           @template.concat(slot_head, proc.binding) 
+          $VERBOSE = warn_level
         else
           result << slot_head
         end
@@ -86,7 +93,9 @@ module WagnHelper
       end
       if render_slot
         if block_given?
+          warn_level, $VERBOSE = $VERBOSE, nil;
           @template.concat("</span>" , proc.binding)
+          $VERBOSE = warn_level
         else
           result << "</span>"
         end

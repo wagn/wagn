@@ -7,7 +7,7 @@ class TransclusionController < ApplicationController
    
   def view 
     @action='transclusion'
-    render_text render_view
+    render :text=>render_view
   end
    
   def create  

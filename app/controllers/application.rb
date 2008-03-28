@@ -22,6 +22,7 @@ class ApplicationController < ActionController::Base
   attr_accessor :slot
 
   include ActionView::Helpers::TextHelper #FIXME: do we have to do this? its for strip_tags() in edit()
+  include ActionView::Helpers::SanitizeHelper
    
   protected  
   def edit_ok
@@ -146,7 +147,7 @@ class ApplicationController < ActionController::Base
 
   def remember_card( card )
     
-    warn "SESSION RETURN STACK:  #{session[:return_stack].inspect}"
+    #warn "SESSION RETURN STACK:  #{session[:return_stack].inspect}"
     
     return unless card
     session[:return_stack] ||= [] 
@@ -163,7 +164,7 @@ class ApplicationController < ActionController::Base
     name = ''
     session[:return_stack] ||= []
     session[:return_stack].reverse.each do |id|
-      warn "EXAMINING CARD ID: #{id}"
+      #warn "EXAMINING CARD ID: #{id}"
       if ((Fixnum === id && card = Card.find_by_id_and_trash( id, false )) || 
             card=Card.find_by_key_and_trash( id, false ))
         name = card.name
@@ -202,7 +203,7 @@ class ApplicationController < ActionController::Base
     if options[:javascript] 
       render :inline=>%{<%= javascript_tag "document.location.href='#{url}'" %>Returning to previous card...}
     else
-      redirect_to_url url 
+      redirect_to url 
     end    
   end   
        

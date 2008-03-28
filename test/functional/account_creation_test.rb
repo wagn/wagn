@@ -13,7 +13,7 @@ class AccountCreationTest < Test::Unit::TestCase
   common_fixtures
 
   def setup
-    test_renderer
+    get_renderer
     @controller = AccountController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new

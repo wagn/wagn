@@ -66,8 +66,8 @@ class Card::RenameTest < Test::Unit::TestCase
     c = Card["Basic Card"]
     c.name="banana card"
     c.save!
-    c.key.should=='banana_card'
-    Card["Banana Card"].should_not==nil
+    assert_equal 'banana_card', c.key
+    assert Card["Banana Card"] != nil
   end
   
   def test_update_permissions

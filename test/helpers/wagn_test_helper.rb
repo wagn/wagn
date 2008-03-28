@@ -16,7 +16,7 @@ module WagnTestHelper
     #User.current_user = User.find_by_login('joe_user')
   end
  
-  def test_renderer()
+  def get_renderer()
     require 'renderer'
     Renderer.instance
   end

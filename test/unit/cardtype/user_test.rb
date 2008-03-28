@@ -1,3 +1,4 @@
+=begin
 require File.dirname(__FILE__) + '/../../test_helper'
 class Card::UserTest < Test::Unit::TestCase
   common_fixtures
@@ -5,7 +6,6 @@ class Card::UserTest < Test::Unit::TestCase
     setup_default_user
   end
 
-=begin
   def test_should_create_user
     assert_difference Card::User, :count do
       assert_difference ::User, :count do
@@ -40,6 +40,6 @@ class Card::UserTest < Test::Unit::TestCase
     Card::User.create( :name=>"Blogfly" )
     assert_instance_of ::User, Card.find_by_name("Blogfly").extension
   end
-=end  
   
 end
+=end  

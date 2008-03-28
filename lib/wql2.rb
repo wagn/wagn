@@ -350,7 +350,7 @@ module Wql2
           when "update"; "#{table_alias}.updated_at #{dir}"
           when "create"; "#{table_alias}.created_at #{dir}"
           when "alpha";  "#{table_alias}.key #{dir}"  
-          when "count";  "count(*) #{dir}"
+          when "count";  "count(*) #{dir}, #{table_alias}.name asc"
           when "relevance";  
             if sql.relevance_fields 
               sql.fields << sql.relevance_fields

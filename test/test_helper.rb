@@ -5,22 +5,6 @@ unless defined? TEST_ROOT
   require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
   #silence_warnings { RAILS_ENV = "test" }
   require 'test_help' 
-
-=begin  
-  ## COPY from rails/lib/test_help.rb --seems not to require right sometimes
-    require 'application'
-    require 'test/unit'
-    require 'active_record/fixtures'
-    require 'action_controller/test_process'
-    require 'action_controller/integration'
-    require 'action_web_service/test_invoke'
-    require 'breakpoint'
-    Test::Unit::TestCase.fixture_path = RAILS_ROOT + "/test/fixtures/"
-    def create_fixtures(*table_names)
-      Fixtures.create_fixtures(RAILS_ROOT + "/test/fixtures", table_names)
-    end
-  ## END COPY
-=end  
   
   require TEST_ROOT + '/helpers/wagn_test_helper'
   require TEST_ROOT + '/helpers/chunk_test_helper'  # FIXME-- should only be in certain tests

@@ -202,7 +202,8 @@ end
 
 describe Wql2, "group tagging" do
   it "should find frequent taggers of basic cards" do
-    Card.search( :group_tagging=>'Basic' ).map(&:name).should ==  ["*template", "A", "C", "B", "Two", "E", "One", "Three", "D", "Five"]
+    Card.search( :group_tagging=>'Basic' ).map(&:name).should ==   ["*template", "A", "C", "B", "D", "E", "Five", "One", "Three", "Two"]
+  end
 end
 
 

@@ -136,7 +136,7 @@ class WikiReferenceTest < Test::Unit::TestCase
   def test_revise_changes_references_from_wanted_to_linked_for_new_cards
     new_card = Card::Basic.create(:name=>'NewCard')
     new_card.revise('Reference to [[WantedCard]], and to [[WantedCard2]]', Time.now, User.find_by_login('quentin'), 
-        test_renderer)
+        get_renderer)
     
     references = new_card.wiki_references(true)
     assert_equal 2, references.size
@@ -146,7 +146,7 @@ class WikiReferenceTest < Test::Unit::TestCase
     assert_equal WikiReference::WANTED_PAGE, references[1].link_type
 
     wanted_card = Card::Basic.create(:name=>'WantedCard')
-    wanted_card.revise('And here it is!', Time.now, User.find_by_login('quentin'), test_renderer)
+    wanted_card.revise('And here it is!', Time.now, User.find_by_login('quentin'), get_renderer)
 
     # link type stored for NewCard -> WantedCard reference should change from WANTED to LINKED
     # reference NewCard -> WantedCard2 should remain the same

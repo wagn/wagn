@@ -4,5 +4,7 @@
 # the methods defined in the application_helper.rb, so I moved everything out
 # to wagn_helper.rb and include that explicitly in most of the controllers.  
 # someday might want to come back and tease that out.. -- LWH
-
+module ApplicationHelper
+  
+end
 

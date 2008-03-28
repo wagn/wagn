@@ -14,7 +14,7 @@ module Card
 
     def options_from_content( content=nil )
       content ||= self.content
-      args = CGIMethods.parse_query_parameters( content )
+      args = ActionController::AbstractRequest.parse_query_parameters( content )
       options = args.keys.inject({}) {|hash,key| hash[key.to_sym]=args[key]; hash }
       options.delete(:type) if options[:type]=='Any'
       options

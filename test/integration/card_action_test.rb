@@ -23,7 +23,7 @@ class CardActionTest < ActionController::IntegrationTest
   # card/rollback
   # card/save_draft
   # connection/remove ??
-
+  
   def test_comment      
     User.as(:admin) do
       @a = Card.find_by_name("A")  
@@ -44,8 +44,6 @@ class CardActionTest < ActionController::IntegrationTest
     assert_response :success
     assert_nil Card.find_by_name("Boo#{JOINT}*open")
   end        
-
-
 
   def test_connect
     apple = newcard("Apple", "woot")

@@ -1,0 +1,11 @@
+<% eid, raw_id = slot.context, slot.context+'-raw-content' %>
+<%= slot.form.hidden_field :content, :id=>"#{eid}-hidden-content" %>
+<%= text_area_tag :content_to_replace, card.content, :rows=>3, :id=>"#{eid}-tinymce" %>
+<%= slot.editor_hooks :setup=> %{	tinyMCE.execCommand('mceAddControl', false, '#{eid}-tinymce'); },
+	:save=> %{ 
+		t = tinyMCE.getInstanceById( '#{eid}-tinymce' ); 
+		$('#{eid}-hidden-content').value = t.getContent();
+		return true;
+	} %>
+                                     
+                                  

@@ -5,7 +5,7 @@
 
 <p>To get started, you need to setup the administrative account. </p>
 
-<%= start_form_tag :id=>params[:id], :action => "save_setup" %>
+<% form_tag :id=>params[:id], :action => "save_setup" do %>
 
 <!--[form:user]-->
 
@@ -19,4 +19,4 @@
 <%= password_field_tag 'user[password_confirmation]', '' %></p>
 
   <%= submit_tag 'Create' %>
-<%= end_form_tag %>
+<% end %>

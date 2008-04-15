@@ -366,7 +366,7 @@ module Wql2
                              
       # Misc
       sql.tables = "cards #{table_alias}"
-      sql.conditions << "1=1" #"#{table_alias}.trash='f'"
+      sql.conditions << "#{table_alias}.trash='f'"
       sql.limit = @mods[:limit].blank? ? "" : "LIMIT #{@mods[:limit].to_i}"
       sql.offset = @mods[:offset].blank? ? "" : "OFFSET #{@mods[:offset].to_i}"
       

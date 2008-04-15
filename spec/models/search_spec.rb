@@ -206,6 +206,14 @@ describe Wql2, "group tagging" do
   end
 end
 
+describe Wql2, "trash handling" do   
+  before { User.as :joe_user }
+  
+  it "should not find cards in the trash" do 
+    Card["A+B"].destroy!
+    Card.search( :left=>"A" ).plot(:name).sort.should == ["A+C", "A+D", "A+E"]
+  end
+end
 
 
 

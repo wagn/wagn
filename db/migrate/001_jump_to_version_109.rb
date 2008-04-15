@@ -103,7 +103,7 @@ class JumpToVersion109 < ActiveRecord::Migration
       t.column "login",               :string,   :limit => 40
       t.column "email",               :string,   :limit => 100
       t.column "crypted_password",    :string,   :limit => 40
-      t.column "salt",                :string,   :limit => 40
+      t.column "salt",                :string,   :limit => 42
       t.column "created_at",          :datetime
       t.column "updated_at",          :datetime
       t.column "password_reset_code", :string,   :limit => 40

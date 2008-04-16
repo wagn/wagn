@@ -8,11 +8,11 @@ class AdminController < ApplicationController
   end
   
   def users
-    @cards = Card.find_by_wql("cards with type= 'User'")
+    @cards = Card.search(:type=>"User", :sort=>'alpha')
   end
   
   def roles
-    @cards = Card.find_by_wql("cards with type= 'Role'")
+    @cards = Card.search(:type=>"Role", :sort=>'alpha')
   end
   
   def tasks

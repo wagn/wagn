@@ -311,7 +311,7 @@ module Wql2
       
       # Permissions       
       t = table_alias
-      if System.always_ok?
+      if User.current_user.login.to_s=='admin' #System.always_ok?
         # noop
       elsif User.current_user.login.to_s=='anon'
         sql.conditions << %{ (#{t}.reader_type='Role' and #{t}.reader_id=#{ANON_ROLE_ID}) }

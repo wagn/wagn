@@ -224,6 +224,8 @@ module WagnHelper
           text = match[0]
           requested_name = match[1].strip
           requested_name.gsub!(/_self/, card.name)
+          requested_name.gsub!(/_left/, card.trunk.name) if card.trunk
+          requested_name.gsub!(/_right/, card.tag.name) if card.tag
           relative = match[2]
           options = {
             :requested_name=>requested_name,

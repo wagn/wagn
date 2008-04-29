@@ -285,6 +285,7 @@ module WagnHelper
 
         # this one takes precedence over state=view/line
         when vmode==:name;    subslot.render :name
+        when vmode==:link;    subslot.render :link
 
         when state==:line; subslot.render(:expanded_line_content )
           
@@ -292,7 +293,6 @@ module WagnHelper
         when vmode==:raw;     subslot.render :raw
         when vmode==:card;    subslot.render :view
         when vmode==:line;    subslot.render :line  
-        when vmode==:link;    subslot.render :link
         when vmode==:content; subslot.render :content
       end
       @template.controller.slot = old_slot

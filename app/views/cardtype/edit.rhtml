@@ -3,7 +3,7 @@
 	  <h2>Edit Cardtype</h2>
    		<% form_remote_for :card, @card, :url=>slot.url_for('cardtype/update'), 
    				:update=>slot.id('cardtype-area') do |f| %>
-   			<% if @card.type == 'Cardtype' and @card.extension and !Card.find_by_wql_options(:type=>@card.extension.codename).empty? %>
+   			<% if @card.type == 'Cardtype' and @card.extension and !Card.search(:type=>@card.extension.codename).empty? %>
     	    <p>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong><%= @card.name %></strong> cards.</p>
     	  <% else %>
       	  

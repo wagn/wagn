@@ -56,11 +56,13 @@ class System < ActiveRecord::Base
     
     def favicon
       @@favicon ||= 
-        if card = Card::Image.find_by_name('*favicon') 
-          card.src
-        else 
-          '/images/favicon.ico'
-        end
+        (card = Card::Image['*favicon']) ? card.src : '/images/favicon.ico'
+    end
+    
+    def logo
+      @@logo ||= 
+        (card = Card::Image['*logo']) ? card.src :
+          File.exists?("#{RAILS_ROOT}/public/images/logo.gif") ? "/images/logo.gif" : nil
     end
     
     def base_url

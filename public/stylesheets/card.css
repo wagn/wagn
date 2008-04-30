@@ -401,14 +401,14 @@ a.current, a:link.current {
   overflow: auto;
 */
 }
+/* moving to transclusion handling
 .card-slot.paragraph .content img  {
-  float: right;
   padding: 5px 0px 5px 10px;
 }
 .card-slot.paragraph .edit-area img  {
-  float: none;
   padding: 0px;
 }
+*/
 .card-slot .transcluded .content {
   /* was busting when listed before .paragraph .content */
   display: inline;
@@ -552,10 +552,17 @@ body.wagn .card-slot.line h2,
 /*-----------( Image ) -----------*/
 .card-slot .image-cardtype {
   text-align: center;
+  display: block;
   overflow: auto;
 }
-.card-slot .content .image-cardtype img {
-/*  float: none;  */
+.card-slot .transcluded .image-cardtype {
+  float: right;
+}
+.card-slot.line .image-cardtype {
+  float: none;
+}
+.card-slot.paragraph .image-cardtype {
+  padding: 5px;
 }
 
 

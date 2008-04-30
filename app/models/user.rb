@@ -82,7 +82,7 @@ class User < ActiveRecord::Base
       next if class_name == 'InvitationRequest'
       next unless System.role_ok?(Card.cardtype_create_parties[class_name].to_i)
       { :codename=>class_name, :name=>card_name }
-    end.compact.sort_by {|x| x[:name] }
+    end.compact.sort_by {|x| x[:name].downcase }
     
     #Card::Cardtype.find(:all, :order=>'name').map do |ct| 
     #  next if ct.extension.nil? #bad data?

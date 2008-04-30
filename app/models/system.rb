@@ -54,6 +54,15 @@ class System < ActiveRecord::Base
       @@current_user ||= ::User.find_by_login('anon')
     end
     
+    def favicon
+      @@favicon ||= 
+        if card = Card::Image.find_by_name('*favicon') 
+          card.src
+        else 
+          '/images/favicon.ico'
+        end
+    end
+    
     def base_url
       if (request and request.env['HTTP_HOST'] and !@@base_url)
         'http://' + request.env['HTTP_HOST']

@@ -6,7 +6,8 @@ namespace :wagn do
        user = ActiveRecord::Base.configurations[RAILS_ENV]["username"]    
 
        # NOTE: this will only work if the user running the migration has sudo priveleges
-      `sudo -u postgres psql #{db} < #{System.postgres_src_dir}/contrib/tsearch2/tsearch2.sql`
+		 tsearch_dir = System.postgres_tsearch_dir ? System.postgres_tsearch_dir : "#{System.postgres_src_dir}/contrib/tsearch2"
+      `sudo -u postgres psql #{db} < #{tsearch_dir}/tsearch2.sql`
        cmd = %{ echo "alter table pg_ts_cfg owner to #{user}; } +
          %{ alter table pg_ts_cfgmap owner to #{user}; } + 
          %{ alter table pg_ts_dict owner to #{user}; } + 
@@ -14,7 +15,7 @@ namespace :wagn do
        }
        `#{cmd}`
 
-       #`echo "update pg_ts_cfg set locale = 'en_US' where ts_name = 'default'" | sudo -u postgres psql #{db}`   
+       `echo "update pg_ts_cfg set locale = 'en_US' where ts_name = 'default'" | psql -U herd #{db}`   
 
       cxn.execute %{ alter table cards add column indexed_content tsvector }
       cxn.execute %{

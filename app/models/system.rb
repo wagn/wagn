@@ -14,6 +14,7 @@ class System < ActiveRecord::Base
     :enable_server_cards,
     :enable_postgres_fulltext,
     :postgres_src_dir,
+	 :postgres_tsearch_dir,
     :request, :debug_wql,
     :google_maps_api_key
     

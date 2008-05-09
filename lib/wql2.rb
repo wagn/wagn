@@ -433,7 +433,7 @@ module Wql2
       case v
         when CardSpec, RefSpec, SqlCond; v.to_sql
         when Array;    "(" + v.collect {|x| sqlize(x)}.join("','") + ")"
-        else quote(v)
+        else quote(v.to_s)
       end
     end
     

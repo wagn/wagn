@@ -45,7 +45,7 @@ module SlotHelpers
       [[ :content,    'card/edit',          true                      ],
        [ :name,       'card/edit_name',     true                      ],
        [ :type,       'card/edit_type',     !card.type_template?      ],
-       [ :inclusions, 'card/edit',          (!card.out_transclusions.empty? && !template? && !card.hard_template),         {:inclusions=>true} ]
+       [ :inclusions, 'card/edit',          (!card.out_transclusions.empty? && !card.template? && !card.hard_template),         {:inclusions=>true} ]
        ].map do |key,partial,ok,args|
 
         link_to_remote( key, 

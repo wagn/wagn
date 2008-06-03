@@ -63,11 +63,13 @@ class PermissionTest < Test::Unit::TestCase
     b.save; b=Card.find_by_name('b33');
 
     #private cards can't be connected to private cards with a different group
+    # no longer true -- aren't requiring permission compatibility
+=begin
     ab =  Card.create :name=>'a33+b33'
     assert ab.errors.on(:permissions), "a33+b33 should have error on reader"
-
     ba = b.connect a 
     assert ba.errors.on(:permissions), "b33+a33 should have error on reader"
+=end
 
     #private cards connected to non-private are private with the same group    
     ac = Card.create :name=>'a33+c33'
@@ -80,7 +82,10 @@ class PermissionTest < Test::Unit::TestCase
     assert_equal c.reader.codename, 'anon', " c should still be set to Anyone"
   end
 
+=begin 
+  ## N/A -- no longer making this reader compatibility requirement
   def test_should_not_allowed_reader_change
+    
     a, ab, abc, ad = %w(A A+B A+B+C A+D ).collect do |name|  Card.find_by_name(name)  end
       
     abc.permit(:read, @r2); abc.save!
@@ -92,7 +97,7 @@ class PermissionTest < Test::Unit::TestCase
     #end
     assert a.errors.on(:permissions)
   end
-
+=end
  
   
   

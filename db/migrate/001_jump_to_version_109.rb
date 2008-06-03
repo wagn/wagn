@@ -127,7 +127,8 @@ class JumpToVersion109 < ActiveRecord::Migration
     #  create structure with no data; then load data dumped from another wagn
     if ENV['WAGN_SKIP_BOOTSTRAP_DATA']
       puts "Skipping data load"
-    else
+    else        
+      puts ">> loading bootstrap_data"
       `rake wagn:load_bootstrap_data`
     end
   end

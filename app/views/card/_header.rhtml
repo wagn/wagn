@@ -10,7 +10,7 @@
 
   <% unless card.type=='Basic' %>
     <span class="cardtype">
-      <%= link_to_page( Card.cardtypes[card.type] ) %>
+      <%= link_to_page( Cardtype.name_for(card.type) ) %>
     </span>
   <% end %>
   

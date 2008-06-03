@@ -153,29 +153,14 @@ Object.extend(Wagn, {
       Element.addClassName( elem, 'card');
     })
   },
-  
-  grow_line: function(element) {
-    var elementDimensions = Element.getDimensions(element);
-    new Effect.BlindDown( element, {
-      duration: 0.5,
-      scaleFrom: 100,
-      scaleMode: {originalHeight: elementDimensions.height*2, originalWidth: elementDimensions.width}
-    });
-  },
-  
   line_to_paragraph: function(element) {
     Element.removeClassName(element,'line');
     Element.addClassName(element,'paragraph');
-
- 
-   
   },
   paragraph_to_line: function(element) {
     Element.removeClassName(element, 'paragraph');
     Element.addClassName(element, 'line');
-  
   }
-
 });
 
 
@@ -252,13 +237,13 @@ editTransclusion=function(element){
      if (Element.hasClassName(span,'line')) {
        new Ajax.Request('/card/to_edit/'+card_id+'?context='+getSlotContext(element),
           {asynchronous: true, evalScripts: true});
-     } else if (Element.hasClassName(span,'paragraph')) {
+     } else { /*if (Element.hasClassName(span,'paragraph')) {*/
        new Ajax.Updater({success:span, failure:span}, '/card/edit/'+card_id+'?context='+getSlotContext(element),
           {asynchronous: true, evalScripts: true});
-     } else {
+     } /*else {
        new Ajax.Updater({success:span, failure:getNextElement(span,'notice')}, '/transclusion/edit/'+card_id+'?context='+getSlotContext(element),
           { asynchronous: true, evalScripts: true});  
-     }
+     }*/
 }
 
 getOuterSlot=function(element){
@@ -280,13 +265,13 @@ getSlotFromContext=function(context){
   a = context.split('_');
   outer_context=a.shift();
   element = $(outer_context);
-   element = $(outer_context);
+  element = $(outer_context);
   while(a.size() > 0) {
     pos = a.shift();      
     // FIXME: this is crazy.  must do better.
     element =  $A(document.getElementsByClassName('card-slot', element).concat(
                     document.getElementsByClassName('transcluded', element).concat(
-                      document.getElementsByClassName('nude-slot', element).concat(
+                      document.getElementsByClassName('nude-slot', element).concat( 
                         document.getElementsByClassName('createOnClick',element)
                  )))).find(function(x){
       ss = getSlotSpan(x.parentNode);
@@ -330,6 +315,7 @@ getSlotContext=function(element) {
     var position = span.getAttributeNode('position').value;
     parentContext = getSlotContext(span.parentNode);
     return parentContext + '_' + position;
+//    return parentContext + '_' + position + '&view=' + span.getAttributeNode('view').value;
   } else {
     return getOuterContext(element);
   }
@@ -358,11 +344,42 @@ getSlotSpan=function(element) {
   }
 }
 
-
+getSlotOptions=function(element){
+  var span=null;
+  if (span=getSlotSpan(element)) {   
+    var n=null;
+    if (n=span.getAttributeNode('view')) {view=n.value } else {view=''};
+    if (n=span.getAttributeNode('item')) {item=n.value } else {item=''};    
+    return 'view='+view+'&item='+item;
+  }
+  return '';
+}
+  
 urlForAddField=function(card_id, eid) {
   //return 'foo'
   //index = getSlotElements(getSlotFromContext(eid), 'pointer-li').length;
   index = document.getElementsByClassName("pointer-text", $(eid+'-ul')).length;
   return ('/card/add_field/' + card_id + '?index=' + index + '&eid=' + eid);
 }
+
+var loadScript = function(name) {
+  var d=document;
+  var s;
+  try{
+    s=d.standardCreateElement('script');
+  } catch(e){}
+
+  if(typeof(s)!='object') {
+    s=d.createElement('script');
+	}
+  try{
+    s.type='text/javascript';
+    s.src=name;
+    s.id='c_'+name+'_js';
+    h=d.getElementsByTagName('head')[0];
+    h.appendChild(s);
+  } catch(e){
+	   alert('js load ' + name + ' failed');
+  } 
+}   
 

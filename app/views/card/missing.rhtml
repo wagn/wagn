@@ -6,7 +6,7 @@
   <div class="headroom"><h1 class="content">No card named "<%= cardname %>" (yet)</h1></div>
   <div class="content instruction"> 
     <p>You're looking for a card that nobody's created yet.  How pioneering!</p>
-    <% if createable_cardtypes.empty? %>
+    <% if Cardtype.createable_cardtypes.empty? %>
   	  <p>Unfortunately, you don't currently have permission to create cards.</p>
     <% end %>
   </div> 

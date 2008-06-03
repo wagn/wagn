@@ -1,5 +1,6 @@
 <%- 
 card = Card::InvitationRequest.new
+card.name ||= ''
 card.send :set_defaults   
 div_id = "main-body"
 context = 'invitation'
@@ -8,55 +9,50 @@ context = 'invitation'
 
 <h1>Request an Invitation</h1>
 
-<% get_slot(card).wrap('invitation-request', nil) do |slot| %>
+<% get_slot(card).wrap('invitation-request') do |slot| %>
   <div class="content headroom">
-    <h2>About You</h2>
+    <h2>Account Details</h2>
   </div>
 
   <% form_remote_for( :card, card, :url=>slot.url_for("card/create"), 
-			 :html=>{ :id=>slot.id(:form) } ) do |f| %>
+			 :html=>{ :id=>slot.id(:form), :onsubmit=>slot.save_function } ) do |f| %>
 		
     <%= hidden_field_tag 'element', "#{div_id}"  %>
     <%= f.hidden_field 'type'  %>
-
-  <%#= hidden_field_tag 'card[name]', '', {:id => "user-card-name-field"} %>
-  <%#= hidden_field_tag 'card[content]', '', {:id => "user-card-content-field"} %>
-
-
+    <%- slot.form = f %>
 
   	<table class="fieldset">   
-      <tr>
-        <td class="label"><label for="email">Email</label></td>
-        <td class="field" colspan="2"><%= f.text_field :email %></td>
-        <td class="help">Used to verify your account, not to spam.</td>
-      </tr>
-	  
   	  <tr>
         <td class="label"><label for="name">Name</label></td>
-        <td class="field" colspan="2">
+        <td class="field">
   				<%= f.text_field :name, {:class=>'new-card-name', :id=>"new-card-name-field"} %>
   			</td>
-        <td class="help">This is how any work you do will be credited.</td>
+        <td class="help"><em>first name and last name</td>
   		</tr>
+  	  
+  	  
+      <tr>
+        <td class="label"><label for="email">Email</label></td>
+        <td class="field"><%= f.text_field :email %></td>
+        <td class="help">for notifications you request, not for spam.</td>
+      </tr>
+	  
               
-   		<tr>
-  		  <td class="label"><label for="message">Message</label></td>
-  		  <td class="field" colspan="2"><%= f.text_area :content, {:rows=>3} %></td>
-  			<td class="help">	A little about yourself and why you'd like to join. (optional)</td>
-				
-  		</tr>
-		                  
-  		<tr>
-  			<td></td>
-  			<td colspan="2">
-  		  	<%= submit_tag 'Submit' %>
-  		  	<!--FIXME with css?-->&nbsp;&nbsp;
-  		  	<%= link_to_page 'Cancel', previous_page  %>
-  		  </td>
-  		</tr>
-		
-  		<%= slot.notice %>
   	</table>    
+    <div class="content headroom">	
+  	  <h2 class="headroom">About You</h2>
+  	</div>
+  	<div class="content">
+    	<%= slot.render :edit %>
+    </div>
+  	<div>
+    	<%= submit_tag 'Submit' %>
+    	<%# link_to_page 'Cancel', previous_page  %>
+    </div>
+	
+		<%= slot.notice %>
+    
+  	
 	<% end %>
 
 <% end %>     

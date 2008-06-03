@@ -24,10 +24,12 @@ class OptionsController < ApplicationController
       role_hash = params[:user_roles] || {}
       @card.extension.roles = Role.find role_hash.keys
     end
+=begin    
     if params[:card] and ext_type = params[:card][:extension_type]
       @card.extension_type = ext_type
       @card.save!
     end
+=end
     if ext = @card.extension and ext_params = params[:extension]
       #fixme.  should have something like @card.ok? :account that uses extension checks...
       ext.update_attributes!(ext_params)

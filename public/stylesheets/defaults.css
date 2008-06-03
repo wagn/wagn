@@ -8,6 +8,10 @@ body, .reset{
   font-size: 11px;
 }
 
+body.mceContentBody {  
+  margin: 4px;
+}
+
 body, p, ol, ul, td, th {
   font-family: verdana, arial, helvetica, sans-serif;
   font-size:   11px;

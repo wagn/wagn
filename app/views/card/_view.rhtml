@@ -14,7 +14,7 @@
 
   <% unless card.type=='Basic' %>
     <span class="cardtype">
-      <%= link_to_page( Card.cardtypes[card.type] ) %>
+      <%= link_to_page( Cardtype.name_for(card.type) ) %>
     </span>
   <% end %>
 <% elsif slot.action!='nude' %><%# FIXME: variable from slot.rb?  %>
@@ -24,7 +24,7 @@
 <%= slot.wrap_content( slot.render(:expanded_view_content) ) %>
 
 <%= slot.notice %>	
-<% if card.ok?(:comment) %>
+<% if card.ok?(:comment) %> <%#and !card.hard_template %>
    <div class="comment-box">
    <% form_remote_for :card, card, :url=>slot.url_for('card/comment') do |f| %>
      <label>Comment:</label><br/> 

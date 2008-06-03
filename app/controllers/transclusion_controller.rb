@@ -25,7 +25,7 @@ class TransclusionController < ApplicationController
     @action='transclusion'  # get the right css in the slot
     @wrap = true  
     if params[:requested_view] == 'edit'
-      edit_screen = render_to_string( :inline=>%{<%= get_slot.render(:edit_transclusion) %>} )
+      edit_screen = render_to_string( :inline=>%{<%= get_slot.render(:edit_in_form) %>} )
     else
       edit_screen = render_to_string :action=>'edit'
     end
@@ -39,31 +39,14 @@ class TransclusionController < ApplicationController
     end
   end
   
-  def edit
-    #return render(:text=>"",:status=>403) unless @card.ok?(:edit)
-    if !@card.ok?(:edit)  
-      @no_slot_header = true
-      return render( :template=>'/card/denied')
-    end
-  end
-  
   
   def update 
-    # FIXME: this code is same as card_controller
-    if @card.hard_content_template
-      errors = false
-      params[:cards].each_pair do |id, opts|
-        card = Card.find(id)
-        card.update_attributes(opts)
-        if !card.errors.empty?
-          card.errors.each do |field, err|
-            @card.errors.add card.name, err
-          end
-        end
-      end
+    # FIXME: need to catch edit conflicts
+    if params[:multi_edit]
+      @card.multi_update(params[:cards])
     else
       @card.update_attributes! params[:card]     
-    end
+    end    
     view_screen = render_view
     render_update_slot do |page,target|
       target.replace view_screen
@@ -76,7 +59,7 @@ class TransclusionController < ApplicationController
       "card" => :view,
       "line" => :line,
       "content" => :content,
-      "edit"  => :edit_transclusion
+      "edit"  => :edit_in_form
     }[params[:requested_view]] || :content
     render_to_string :inline=>%{<%= get_slot.render(@render_key, :wrap=>false, :add_javascript=>true) %>}
   end

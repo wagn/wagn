@@ -2,38 +2,41 @@ module CardLib
   module Search
     module ClassMethods 
       def find_builtin(name)
-        case name
-          when '*recent changes';  create_phantom(name, %{{"sort":"update", "dir":"desc"}})
-          when '*search';          create_phantom(name, %{{"match":"_keyword", "sort":"relevance"}})
-          when '*broken links';    create_phantom(name, '{"link_to":"_none"}')
-          else
-            if name.tag_name.to_key == 'google_map' and !name.simple?
-              ## fixme -- do something other than return nil?
-              return nil unless gm = Card['Google Map'] and gm.type == 'Cardtype'
-              return nil unless trunk = Card.find_by_key_and_trash(name.parent_name.to_key, false)
-              c = Card::GoogleMap.new :name=>name
-              c.trunk = trunk
-              c
-            else
-              nil
-            end
+        searches =  
+          { '*recent changes' => %{ {"sort":"update", "dir":"desc"}          },
+            '*search'         => %{ {"match":"_keyword", "sort":"relevance"} },
+            '*broken links'   => %{ {"link_to":"_none"}                      },
+          }
+        if searches[name]
+          create_phantom(name, searches[name], 'Search')
         end
       end
       
       def find_phantom(name)  
-        find_builtin(name) or begin    
-          return nil if name.simple?
-          User.as(:admin) do 
-            template_name = name.tag_name + "+*template"
-            template = Card.find_by_type_and_key_and_trash('Search', template_name.to_key, false)
-            template ? create_phantom( name, template.content ) : nil
-          end
-        end
+        find_builtin(name) or begin 
+          auto_card(name)
+        end   
       end
 
-      def create_phantom(name, json)
-        c=Card::Search.new(:name=>name, :content=>json)
-        c.self_card = c.trunk if name.junction?
+      def auto_card(name)
+        return nil if name.simple?
+        template = (Card.right_template(name) || Card.multi_type_template(name))
+
+        ActiveRecord::Base.logger.info "<FOUND TEMPLATE: #{template.inspect}>"
+
+        return nil unless template and template.hard_template?
+
+        ActiveRecord::Base.logger.info "<CREATING: #{template.content}!>"
+
+        User.as(:admin){ 
+          Card.create_phantom name, template.content #, template.type, template.reader  want these??
+        }
+      end
+
+
+      def create_phantom(name, content, type='Basic', reader=Role[:anon])
+        c=Card.new(:name=>name, :content=>content, :type=>type ,:reader=>reader)
+#        c.self_card = c.trunk if name.junction?
         c.phantom = true
         c
       end
@@ -53,8 +56,8 @@ module CardLib
       #  Card.find_by_sql( Wql2::CardSpec.new( JSON.parse(spec) ).to_sql )
       #end
 
-      def find_by_name( name ) 
-        self.find_by_key_and_trash( name.to_key, false )
+      def find_by_name( name, opts={} ) 
+        self.find_by_key_and_trash( name.to_key, false, opts )
       end
 
       def find_by_wql_options( options={} )

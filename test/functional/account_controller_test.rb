@@ -54,7 +54,8 @@ class AccountControllerTest < Test::Unit::TestCase
   end                        
    
   def test_forgot_password
-    
   end 
+
+
 
 end

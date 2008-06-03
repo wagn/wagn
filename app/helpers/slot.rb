@@ -2,12 +2,12 @@ require_dependency 'slot_helpers'
 module WagnHelper 
   class Slot
     include SlotHelpers  
-    
+    MAX_RENDERS = 5
     cattr_accessor :max_char_count
     self.max_char_count = 200
     attr_reader :card, :context, :action, :renderer, :template
-    attr_accessor :editor_count, :options_need_save, :state, :requested_view, 
-      :transclusions, :position, :renderer, :form, :superslot, :char_count, :item_format      
+    attr_accessor :editor_count, :options_need_save, :state, :requested_view, :js_queue_initialized,  
+      :transclusions, :position, :renderer, :form, :superslot, :char_count, :item_format, :renders, :start_time      
     attr_writer :form 
      
     def initialize(card, context="main_1", action="view", template=nil, renderer=nil )
@@ -18,6 +18,7 @@ module WagnHelper
       @char_count = 0
       @subslots = []  
       @state = 'view'
+      @renders = {}
       @renderer ||= Renderer.new(self)
     end
 
@@ -32,6 +33,10 @@ module WagnHelper
       new_slot.item_format = self.item_format
       new_slot
     end
+    
+    def root
+      superslot ? superslot.root : self
+    end
 
     def form
       @form ||= begin
@@ -39,7 +44,8 @@ module WagnHelper
         options = {} # do I need any? #args.last.is_a?(Hash) ? args.pop : {}
         block = Proc.new {}
         builder = options[:builder] || ActionView::Base.default_form_builder
-        fields_for = builder.new("cards[#{card.id}]", card, @template, options, block)       
+        card.name.gsub!(/^#{root.card.name}\+/, '+') if root.card.new_record?  ##FIXME -- need to match other relative inclusions.
+        fields_for = builder.new("cards[#{card.name.pre_cgi}]", card, @template, options, block)       
       end
     end
 
@@ -52,29 +58,37 @@ module WagnHelper
     # FIXME: passing a block seems to only work in the templates and not from
     # internal slot calls, so I added the option passing internal content which
     # makes all the ugly block_given? ifs..                                                 
-    def wrap(action="", render_slot=nil, content="") 
-      render_slot = render_slot.nil? ? !request.xhr? : render_slot 
+    def wrap(action="", args={}) 
+      render_slot = args.key?(:slot?) ? args.delete(:slot?) : !request.xhr? 
+      content = args.delete(:content)
+
       result = ""
       if render_slot
-        case action
+        case action.to_s
           when 'content';    css_class = 'transcluded'  
-          when 'nude';   css_class = 'nude-slot'
+#          when 'nude'   ;   css_class = 'nude-slot'
           else begin
             css_class = 'card-slot '      
-            if action=='line'  
-              css_class << 'line' 
-            else
-              css_class << 'paragraph'                     
-            end
-            css_class << ' full' if (context=~/main/ or (action!='view' and action!='line'))
+            css_class << (action=='closed' ? 'line' : 'paragraph')
+            css_class << ' full' if (context=~/main/ or (action!='view' and action!='closed'))
             css_class << ' sidebar' if context=~/sidebar/
           end
         end       
         
-        css_class << " cardid-#{card.id}" if card
+        css_class << " wrapper cardid-#{card.id} type-#{card.type}" if card
         
-        id_attr = card ? %{cardId="#{card.id}"} : ''
-        slot_head = %{<span #{id_attr} class="#{css_class}" position="#{position}" >}
+        attributes = { 
+          :cardId   => (card && card.id),
+          :style    => args[:style],
+          :view     => args[:view],
+          :item     => args[:item],
+          :base     => args[:base], # deprecated
+          :class    => css_class,
+          :position => position
+        }
+        
+        slot_head = %{<span #{attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join } >}
+        slot_head 
         if block_given? 
           # FIXME: the proc.binding call triggers lots and lots of:
           # slot.rb:77: warning: tried to create Proc object without a block 
@@ -115,100 +129,107 @@ module WagnHelper
         yield(card)
       end
     end
+    
+    def deny_render?(action)
+      case
+        when [:deny_view, :edit_auto, :open_missing, :closed_missing].member?(action);
+          false
+        when card.new_record?
+          false # need create check...
+        when [:edit, :edit_in_form, :multi_edit].member?(action)
+          !card.ok?(:edit) and :deny_view #should be deny_edit
+        else
+          !card.ok?(:read) and :deny_view
+      end
+    end
 
     def render(action, args={})      
-      #logger.info("<render(#{card.name}, #{@state}).render(#{action})")
-      if action==:denied
-        # pass
-      elsif card.new_record? 
-        # FIXME-- check if create.ok?
-      elsif !card.ok?(:read) 
-        return render(:denied)
+      warn "<render(#{card.name}, #{@state}).render(#{action}, item=>#{args[:item]})"
+      
+      rkey = self.card.name + ":" + action.to_s
+      root.renders[rkey] ||= 1; root.renders[rkey] += 1
+      root.start_time ||= Time.now.to_f
+
+      ok_action = case
+        when root.renders[rkey] > MAX_RENDERS                           ; :too_many_renders
+        when (Time.now.to_f - root.start_time) > System.max_render_time ; :too_slow
+        when denial = deny_render?(action)                              ; denial
+        else                                                            ; action
       end
-      wrap = args.has_key?(:wrap) ? args[:wrap] : true  # default for these is wrap
-      card_and_slot = { :card=>self.card, :slot=>self }
-      result = case action
-        when :open, :view;  
+
+      w_content = nil
+      result = case ok_action
+
+      ###-----------( FULL )
+        when :open, :view, :card
           @state = :view; self.requested_view = 'card'
           # FIXME: accessing params here is ugly-- breaks tests.
-          @action = (@template.params[:view]=='content' && context=="main_1") ? 'nude' : 'view'
-          wrap(@action, wrap, self.render_partial( 'card/view') )  # --> slot.wrap_content slot.render( :expanded_view_content ) 
+          #w_action = (@template.params[:view]=='content' && context=="main_1") ? 'nude' : 'open'
+          w_action = 'open'
+          w_content = render_partial('card/view')
 
-        when :closed, :line;     
-          @state = :line; self.requested_view = 'line'
-          wrap('line', wrap, self.render_partial( 'card/line') )  # --> slot.wrap_content slot.render( :expanded_line_content )   
-
-        when :edit;     
-          @state = :edit; expand_transclusions( self.render( :raw_content ))
+        when :closed, :line    
+          @state = :line; w_action='closed'; self.requested_view = 'line'
+          w_content = render_partial('card/line')  # --> slot.wrap_content slot.render( :expanded_line_content )   
           
+      ###----------------( NAME)
+      
+        when :link;   link_to_page card.name, card.name, :class=>"cardname-link #{card.new_record? ? 'wanted-card' : 'known-card'}"
+        when :name;   card.name
+        when :linkname;  Cardname.escape(card.name)
+
+      ###---(  CONTENT VARIATIONS ) 
+        #-----( without transclusions processed )
         when :content;  
-          self.requested_view = 'content'  
-          c = self.render( :expanded_view_content )
-          wrap('content',wrap, wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c)))
+          w_action = self.requested_view = 'content'  
+          c = self.render( :expanded_view_content)
+          w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c))
 
-        when :link;   
-          link_to_page card.name, card.name, :class=>"cardname-link"
-        
-        when :name;
-          card.name
+        when :closed_content;   render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
+        when :open_content;     render_card_partial(:content)  # FIXME?: 'content' is inconsistent
+        when :raw_content;      @renderer.render( card, args.delete(:content) || "", update_refs=false)
           
-        when :raw;    
-          self.render( :expanded_view_content )  
-          
-        when :expanded_view_content
-          expand_transclusions(  cache_action('view_content') {  card.post_render( render(:custom_view_content)) } )
-
+        #-----( with transclusions processed )
+        when :expanded_view_content, :raw
+          expand_transclusions(  cache_action('view_content') {  card.post_render( render(:open_content)) } )
         when :expanded_line_content
-          expand_transclusions( cache_action('line_content') { render(:custom_line_content) } )
+          expand_transclusions(  cache_action('line_content') { render(:closed_content) } )
 
-        when :custom_line_content;  
-          render_partial(custom_partial_for(:line))   # in basic case: --> truncate( slot.render( :custom_view_content ))
-        when :custom_view_content;  
-          render_partial(custom_partial_for(:content))  # FIXME?: 'content' is inconsistent
-        when :edit_connection; 
-          # FIMXE:  what's going on here?
+      ###---(  EDIT VIEWS ) 
+
+        when :edit;  @state=:edit;  card.hard_template ? render(:multi_edit) : content_field(slot.form)
+          
+        when :multi_edit;
+          @state=:edit 
+          args[:add_javascript]=true
+          hidden_field_tag( :multi_edit, true) +
+          expand_transclusions( render(:raw_content) )
+
+        when :edit_in_form
+          render_partial('card/edit_in_form', args.merge(:form=>form))
+            
+        ###---(  EXCEPTIONS ) 
         
-        when :denied;
-          %{<span class="denied">Sorry #{::User.current_user.card.name}, you need permissions to view #{card.name}</span>}
-          
-        when :auto_card_notice
-          %{<div class="faint"><em>#{args[:requested_name] || card.name} is an Auto card</em><div>} 
-          
-        when :create_transclusion
-            %{<div class="faint createOnClick" view="#{args[:view]}" position="#{position}" cardid="" cardname="#{card.name}">}+
-            %{Add #{args[:requested_name] || card.name}</div>}
-            # + ((args[:view]=='edit' || parent.card.type == 'Pointer') ? "<br/>" : "")
+          when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
+            render_partial("card/#{ok_action}", args)
 
-        when :missing_transclusion
-          %{<span class="faint" position="#{position}" cardid="" cardname="#{card.name}">}+
-            %{#{args[:requested_name] || card.name}</span>}
-
-        when :edit_transclusion
-          ((inst = card.edit_instructions) ?
-            @template.render( :partial=> 'instructions', :locals=>{ :instructions=> inst } ) : '' ) +           
-          %{<div class="edit-area">} +
-              %{<span class="title">} +
-                link_to_page(@template.less_fancy_title(card), card.name) + 
-              "</span>" +
-              content_field( form, :nested=>true ) +
-            "</div>"
-        when :raw_content; 
-          @renderer.render( card, args.delete(:content) || "", update_refs=false)
-
-        else raise("Unknown slot render action '#{action}'")
-      end   
-      result ||= "" #FIMXE: wtf?
+  
+        else raise("Unknown slot render action '#{ok_action}'")
+      end
+      if w_content
+        args[:slot?]=true unless args.key?(:slot?)
+        result = wrap(w_action, { :content=>w_content }.merge(args))
+      end
+      
+#      result ||= "" #FIMXE: wtf?
       result << javascript_tag("setupLinksAndDoubleClicks()") if args[:add_javascript]
-      #warn "FINISH: #{action} card=#{card.name} result = #{result}" 
-      #ActiveRecord::Base.logger.info("slot(#{card.name}, #{@state}).render(#{action}, #{args})  ---> #{result.gsub(/\n/," ")}")
       result
     end
 
     def expand_transclusions(content) 
       #logger.info("<expand_transclusions content=#{content}>")
-      #content="#{card.name}=~/*template/" + content
       #return ("skip(#{card.name}):"+content) 
-      if card.name =~ /\*template/           
+      if card.name.template_name?          
         # KLUGILICIOIUS: if we leave the {{}} transclusions intact they may get processed by
         #  an outer card expansion-- causing weird rendering oddities.  the bogus thing
         #  seems to work ok for now.
@@ -220,54 +241,50 @@ module WagnHelper
           ""
         else
           match = $~
-          #warn "MATCH: #{match.inspect} #{match.to_a}"
-          text = match[0]
-          requested_name = match[1].strip
-          requested_name.gsub!(/_self/, card.name)
-          requested_name.gsub!(/_left/, card.name.parent_name) if card.name.junction?
-          requested_name.gsub!(/_right/, card.name.tag_name) if card.name.junction?
-          relative = match[2]
-          options = {
-            :requested_name=>requested_name,
-            :view  => 'content',
-            :base  => 'self',
-            :item  => nil
-          }.merge(Hash.new_from_semicolon_attr_list(match[4]))  
-          options[:view]='edit' if @state == :edit
-          self.item_format = options[:item] if options[:item]
-              
-          # compute transcluded card name
-          transcluded_card_name = relative ? 
-             (options[:base]=='parent' ? card.name.parent_name : card.name) + requested_name :
-             requested_name
+          tname, options = Chunk::Transclude.parse(match)
+          fullname = tname+'' #weird.  have to do this or the tname gets busted in the options hash!!
+          #warn "options for #{tname}: #{options.inspect}"
+          fullname.to_absolute(options[:base]=='parent' ? card.name.parent_name : card.name)
+          #logger.info("absolutized tname and now have these transclusion options: #{options.inspect}")
 
-          card = case
+#          options[:view]='edit' if @state == :edit
+          self.item_format = options[:item] if options[:item]  ##seems like this should be handled just by options...
+
+          tcard = case
             when @state==:edit
-              (Card.find_by_name(transcluded_card_name) || 
-                Card.find_phantom(transcluded_card_name) ||
-                 Card.new(:name=>transcluded_card_name))
+              ( Card.find_by_name( fullname ) || 
+                Card.find_phantom( fullname ) || 
+                Card.new( :name=>  fullname ) )
             else
-              CachedCard.get(transcluded_card_name)
-          end
+              CachedCard.get fullname
+            end
+          
+          #warn("sending these options for processing: #{options.inspect}")
          
-          transcluded_content = process_transclusion( card, options ) 
-          self.char_count += (transcluded_content ? transcluded_content.length : 0)
-          transcluded_content
+          tcontent = process_transclusion( tcard, options ) 
+          self.char_count += (tcontent ? tcontent.length : 0)
+          tcontent
         end
       end  
       content 
     end
        
-    def render_partial( partial, locals={} ) 
-      if StubTemplate===@template
-        render_stub(partial, { :card=>card, :slot=>self }.merge(locals) )
-      else 
-        @template.render :partial=>partial, :locals=>{ :card=>card, :slot=>self }.merge(locals)
-      end
+    def render_partial( partial, locals={} )
+      locals =  { :card=>card, :slot=>self }.merge(locals)
+      StubTemplate===@template ? render_stub(partial, locals) : @template.render(:partial=>partial, :locals=>locals)
+    end
+
+    def card_partial(action) 
+      # FIXME: I like this method name better- maybe other calls should resolve here instead
+      @template.partial_for_action(action, card)
+    end
+    
+    def render_card_partial(action, locals={})
+       render_partial card_partial(action), locals
     end
     
     def process_transclusion( card, options={} )  
-      #logger.info("<process_transclusion card=#{card.name} options=#{options}")
+      #logger.info("<process_transclusion card=#{card.name} options=#{options.inspect}")
       subslot = subslot(card)  
       old_slot, @template.controller.slot = @template.controller.slot, subslot
 
@@ -276,25 +293,27 @@ module WagnHelper
       
       state, vmode = @state.to_sym, (options[:view] || :content).to_sym      
       subslot.requested_view = vmode
-      #logger.info("<transclusion_case: state=#{state} vmode=#{vmode}")
-      result = case
-        when new_card && state==:line; subslot.render :missing_transclusion, options
-        when new_card;     subslot.render( :create_transclusion, options ) 
-        when state==:edit && card.phantom?; subslot.render :auto_card_notice
-        when state==:edit;  subslot.render :edit_transclusion
-
-        # this one takes precedence over state=view/line
-        when vmode==:name;    subslot.render :name
-        when vmode==:link;    subslot.render :link
-
-        when state==:line; subslot.render(:expanded_line_content )
-          
-        # now we are in state==:view, switch on viewmode (from transclusion syntax)
-        when vmode==:raw;     subslot.render :raw
-        when vmode==:card;    subslot.render :view
-        when vmode==:line;    subslot.render :line  
-        when vmode==:content; subslot.render :content
+      action = case
+        when [:name, :link].member?(vmode)  ; vmode
+        when state==:edit                   ; card.phantom? ? :edit_auto : :edit_in_form   
+        when new_card                       ; state==:line  ? :closed_missing : :open_missing
+        when state==:line                   ; :expanded_line_content
+        else                                ; vmode
       end
+=begin      
+       # these take precedence over state=view/line
+        else
+          case state
+          when :edit   ; card.phantom? ? :edit_auto : :edit_in_form                           
+          when :line   ; :expanded_line_content           
+          # now we are in state==:view, switch on viewmode (from transclusion syntax)
+          else         ; vmode
+          end
+        end
+=end
+      #logger.info("<transclusion_case: state=#{state} vmode=#{vmode} --> Action=#{action}, Option=#{options.inspect}")
+
+      result = subslot.render action, options
       @template.controller.slot = old_slot
       result
     end   
@@ -303,10 +322,6 @@ module WagnHelper
       @template.send(method_id, *args, &proc)
     end
 
-    def custom_partial_for(action) 
-      # FIXME: I like this method name better- maybe other calls should resolve here instead
-      @template.partial_for_action(action, card)
-    end
     
     def render_stub(partial, locals={})
       raise("Invalid partial") if partial.blank? 

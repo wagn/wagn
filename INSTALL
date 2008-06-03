@@ -53,5 +53,5 @@ Log out and log back into your new account.
 Private wiki
 
 You'll want to think out permissions as early as possible, because the more infrastructure you create, the more cards you'll have to go around editing permissions on if you change your mind later.
-Most likely, you'll want to go to Basic+*template's Options tab and change "...can read this card" from "Anyone" to "Anyone Signed In"
+Most likely, you'll want to go to Basic+*tform's Options tab and change "...can read this card" from "Anyone" to "Anyone Signed In"
 You may then also want to remind people that by default cards will only viewable by people who are signed in by writing something to that effect in Basic+*edit.

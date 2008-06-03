@@ -1,7 +1,7 @@
 <h1>User Administration</h1>
 
 <div id='create-button'>
-  <% if Card::User.ok? :create %>
+  <% if Card::User.create_ok? %>
     <%= link_to 'Invite a New User', :controller=>'account', :action=>'invite' %>
   <% end %>
 </div>

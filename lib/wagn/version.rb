@@ -2,8 +2,8 @@ unless defined? Wagn::Version
   module Wagn
     module Version
       Major = '0'
-      Minor = '9'
-      Tiny  = '1'
+      Minor = '10'
+      Tiny  = '0'
     
       class << self
         def to_s
@@ -12,6 +12,10 @@ unless defined? Wagn::Version
         
         def minor
           [Major, Minor].join('.')
+        end
+        
+        def to_i
+          Major.to_i*10000+Minor.to_i*100+Tiny.to_i
         end
         
         alias :to_str :to_s

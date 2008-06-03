@@ -1,0 +1,24 @@
+<% get_slot.wrap('cardtype') do |slot| %>
+  <%= slot.edit_submenu :type %>
+
+	<div class="cardtype-editor edit-area">
+	  <h2>Edit Type</h2>
+   		<% form_remote_for :card, @card, :url=>slot.url_for('card/edit'), :update=>slot.id do |f| %>
+   			<% if @card.type == 'Cardtype' and @card.extension and !Card.search(:type=>@card.extension.codename).empty? %>
+    	    <p>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong><%= @card.name %></strong> cards.</p>
+    	  <% else %>
+      	  
+   	      <p>
+       	    <%= slot.cardtype_field f,
+       	           :onchange=>'this.form.onsubmit();' 
+       	          #:onchange=>slot.update_cardtype_function(
+       					  #:url=>slot.url_for("card/edit"), :update=>slot.id,
+       						#:with=>"Form.serializeElements([this#{slot.js_content_element}])"
+       			      #) 
+       			%>
+      		</p>
+     	<% end%>
+ 			<p><%= button_to_remote 'Cancel', :url=>slot.url_for('card/edit'), :update=>slot.id %> </p>
+		<% end %>
+	</div>
+<% end %>

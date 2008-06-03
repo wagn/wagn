@@ -29,9 +29,9 @@ module Wql2
   AUTH_ROLE_ID = 2 unless defined?(AUTH_ROLE_ID)
   
   ATTRIBUTES = {
-    :basic=> %w{ name content id },
+    :basic=> %w{ name type content id key },
     :system => %w{ trunk_id tag_id },
-    :semi_relational=> %w{ type editor member role },
+    :semi_relational=> %w{ editor member role },
     :relational => %w{ part left right plus left_plus right_plus },  
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
     :special => %w{ or complete not count },
@@ -156,13 +156,14 @@ module Wql2
         when "_left";  { :id => root.card.trunk.id }
         when "_right";  { :id => root.card.tag.id }
     #   when "_none";  { }
-        when String;   { :name => spec }
+        when String;   { :key => spec.to_key }
         when Integer;  { :id => spec   }  
         when Hash;     spec
         else raise("Invalid cardspec args #{spec.inspect}")
       end
       
       spec = spec.symbolize_keys
+      #spec = spec.each_pair { |k,v| spec.delete(k); spec[k.to_s.to_key.to_sym]=v }
 
       # non-attribute filters shortcut
       spec.each do |key,val|     
@@ -213,9 +214,9 @@ module Wql2
       "#{name}:#{@fields[name]}"
     end
 
-    def type(val)
-      merge field(:type) => subspec(val, { :return=>:codename })
-    end
+    #def type(val)
+    #  merge field(:type) => subspec(val, { :return=>:codename })
+    #end
     
     def cond(val); #noop      
     end
@@ -311,18 +312,14 @@ module Wql2
       
       # Permissions       
       t = table_alias
-      if User.current_user.login.to_s=='admin' #System.always_ok?
-        # noop
-      elsif User.current_user.login.to_s=='anon'
-        sql.conditions << %{ (#{t}.reader_type='Role' and #{t}.reader_id=#{ANON_ROLE_ID}) }
-      else
-        cuid = User.current_user.id
-        sql.joins << "left join roles_users ru on ru.user_id=#{cuid} and ru.role_id=#{t}.reader_id"
-        sql.conditions << (
-          %{ ((#{t}.reader_type='Role' and #{t}.reader_id IN (#{ANON_ROLE_ID}, #{AUTH_ROLE_ID}))
-              OR (#{t}.reader_type='User' and #{t}.reader_id=#{cuid})
-              OR (#{t}.reader_type='Role' and ru.user_id is not null)
-             )})
+      unless User.current_user.login.to_s=='admin' #System.always_ok?
+        user_roles = [ANON_ROLE_ID]
+        unless User.current_user.login.to_s=='anon'
+          user_roles += [AUTH_ROLE_ID] + User.current_user.roles.map(&:id)
+        end                                                                
+        user_roles = user_roles.map(&:to_s).join(',')
+        # type!=User is about 6x faster than type='Role'...
+        sql.conditions << %{ (#{t}.reader_type!='User' and #{t}.reader_id IN (#{user_roles})) }
       end
       
       if !@mods[:group_tagging].blank?
@@ -352,7 +349,7 @@ module Wql2
           when "alpha";  "#{table_alias}.key #{dir}"  
           when "count";  "count(*) #{dir}, #{table_alias}.name asc"
           when "relevance";  
-            if sql.relevance_fields 
+            if !sql.relevance_fields.empty?
               sql.fields << sql.relevance_fields
               "name_rank desc, content_rank desc" 
             else 
@@ -440,10 +437,8 @@ module Wql2
     def to_sql(field)
       @cxn ||= ActiveRecord::Base.connection
       op,v = @spec
-      if (String===v &&  v.match(/^_\w+$/) )
-        #puts "FOV: #{field} #{op} #{v} #{@cardspec.root.params.inspect}" 
-        v = @cardspec.root.params[v] || raise(Wagn::WqlError, "expecting '#{v}' parameter")
-      end
+      v=@cardspec.card if v=='_self'
+      v=@cardspec.root.params['_keyword'] if v=='_keyword'
 
       if op == '~' && System.enable_postgres_fulltext   
         v = v.strip.gsub(/\s+/, '&')
@@ -464,6 +459,9 @@ module Wql2
         "revisions.content #{op} #{sqlize(v)}"
       elsif field=="cond" 
         "(#{sqlize(v)})"
+      elsif field=="type"
+        t = Cardtype.class_name_for(  v.is_a?(Card::Base) ? v.name : v )
+        "#{field} = #{sqlize(t)}"
       else   
         field = "#{@cardspec.table_alias}.#{field}"
         "#{field} #{op} #{sqlize(v)}"

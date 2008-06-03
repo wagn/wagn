@@ -1,13 +1,12 @@
 <%
-	s = params[:s] || {}
-	s[:offset] = s[:offset] ? s[:offset].to_i : 0
-	s[:limit] = s[:limit] ? s[:limit].to_i : (slot.context=='main_1' ? 25 : 10)
+	s = slot.paging_params	
 	
 	instruction =
 	  case
       when card.name=='*search'
-        "Card matching keyword: <strong>#{params[:s][:_keyword]}</strong>"
-  #    when cue = card.attribute_card('*cue'); cue
+        s[:_keyword] ||= params[:_keyword]
+        "Card matching keyword: <strong>#{params[:_keyword]}</strong>"
+  			# when cue = card.attribute_card('*cue'); cue
       else; nil
     end
 	
@@ -25,15 +24,14 @@
 	end
 %>   
 
-
-
+<%# s.inspect %>
 
 <% if card.results.nil? %>
 	<%= "#{error.class.to_s}: #{error.message}" %><br/>
 	<%= card.content %>
 <%# elsif card.results.length==0 %>
 <!--  <span class="faint">Search returned no results</span> -->
-<% else %>           	
+<% else  %>           	
 
 	<% partial = (card.name=='*recent changes') ? 'recent_changes' : 'card_list' %> 
 	<%#= card.spec.inspect %>

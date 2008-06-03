@@ -1,12 +1,16 @@
 <% @old_card ||= @card %>
 
+
 <% get_slot.wrap('name') do |slot| %>
- 	<div class="name-editor edit-area">
+  
+  <%= slot.edit_submenu :name %>
+      
+  <% div(:class=>'edit-area' ) do %>  
  	  <h2>Edit Name</h2>  
-		<% form_remote_for :card, @card, :url=>slot.url_for('cardname/update'), 
-				:update=>{:success=>slot.id('name-area'), :failure=>"javascript:getNextElement(this,'notice')" }do |f| %>
+		<% form_remote_for :card, @card, :url=>slot.url_for('card/edit_name'), 
+				:update=>{:success=>slot.id('card-body'), :failure=>"javascript:getNextElement(this,'notice')" }do |f| %>
 			 
-			<p>Change <%= link_to_page less_fancy_title(@old_card), @old_card.name %> to   
+			<p>Change from <%= link_to_page less_fancy_title(@old_card), @old_card.name %> to this   
   		    <%= slot.name_field(f) %>
   				<% if @card.name and @card.name.junction? %>
   			  	<%= button_to_function "Flip", "f=getSlotElement(this, 'card-name-field'); f.value = f.value.split('+').reverse().join('+')", :id=>'flipper'  %>
@@ -48,7 +52,7 @@
 			<% end %>
 			
 		 	<%= submit_tag 'Rename' %>
-		  <%= button_to_remote 'Cancel', :url=>slot.url_for('cardname/view'), :update=>slot.id('name-area') %>
+		  <%= button_to_remote 'Cancel', :url=>slot.url_for('card/edit'), :update=>slot.id() %>
 		<% end %>
-	</div>
+	<% end %>
 <% end %>

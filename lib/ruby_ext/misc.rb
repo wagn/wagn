@@ -8,7 +8,8 @@ class Hash
     def new_from_semicolon_attr_list(attr_string)
       return {} if attr_string.blank?
       attr_string.split(';').inject({}) do |result, pair|
-        key, value = pair.split(':') 
+        value, key = pair.split(':').reverse
+        key ||= 'view'
         key.strip!; value.strip!
         result[key.to_sym] = value
         result

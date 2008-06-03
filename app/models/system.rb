@@ -1,9 +1,6 @@
 class System < ActiveRecord::Base
   
   set_table_name 'system'
-
-  cattr_writer :current_user
-
   
   cattr_accessor :admin_user_defaults, :base_url, :site_name,
     :invitation_email_body,  :invitation_email_subject, :invitation_request_email,
@@ -14,20 +11,15 @@ class System < ActiveRecord::Base
     :enable_server_cards,
     :enable_postgres_fulltext,
     :postgres_src_dir,
-	 :postgres_tsearch_dir,
+	  :postgres_tsearch_dir,
     :request, :debug_wql,
-    :google_maps_api_key
+    :google_maps_api_key,
+    :time, :max_render_time
     
   self.pagesize = 20      
   
   def self.javascript_files
-    %w{
-      prototype.js
-      effects.js 
-      controls.js
-      application.js
-      Wagn.js
-
+    no_more = %{
       Wikiwyg.js
       Wikiwyg/Toolbar.js
       Wikiwyg/Wysiwyg.js
@@ -38,32 +30,42 @@ class System < ActiveRecord::Base
       Wikiwyg/Debug.js
       Wagn/Wikiwyg.js
       Wagn/Lister.js
-
-      calendar.js
-
-      Wagn/LinkEditor.js
+      Wagn/LinkEditor.js      
       builder.js
       window.js   
+    } 
+    
+    # FIXME: on_demand isn't built yet.
+    #  calendar should go here.
+    on_demand = %w{
+      transport.js  
+      calendar.js             
+    }
+
+    always = %w{
+      prototype.js
+      effects.js 
+      controls.js
+      application.js  
     }
   end
   
   def self.compressed_js
     'wagn_cmp.js' 
-  end
+  end  
+  
   class << self
-    def current_user
-      @@current_user ||= ::User.find_by_login('anon')
-    end
-    
     def favicon
-      @@favicon ||= 
-        (card = Card::Image['*favicon']) ? card.src : '/images/favicon.ico'
+      User.as :admin do
+        (card = CachedCard.get_real('*favicon')) ? "/image/#{card.content}" : '/images/favicon.ico'
+      end
     end
     
     def logo
-      @@logo ||= 
-        (card = Card::Image['*logo']) ? card.src :
+      User.as :admin do
+        (card = CachedCard.get_real('*logo')) ? "/image/#{card.content}"  :
           File.exists?("#{RAILS_ROOT}/public/images/logo.gif") ? "/images/logo.gif" : nil
+      end
     end
     
     def base_url
@@ -137,7 +139,7 @@ class System < ActiveRecord::Base
     end
     
     def always_ok?   
-      return false unless usr = current_user  
+      return false unless usr = User.current_user  
       # FIXME: I think we want this case, but this doesn't seem very secure
       return true if usr.login == 'admin'
       usr.roles.each { |r| return true if r.codename == 'admin' }

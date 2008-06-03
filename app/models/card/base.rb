@@ -40,8 +40,8 @@ module Card
     has_many :in_references,:class_name=>'WikiReference', :foreign_key=>'referenced_card_id'
     has_many :out_references,:class_name=>'WikiReference', :foreign_key=>'card_id', :dependent=>:destroy
     
-    has_many :in_transclusions, :class_name=>'WikiReference', :foreign_key=>'referenced_card_id',:conditions=>["link_type=?",WikiReference::TRANSCLUSION]
-    has_many :out_transclusions,:class_name=>'WikiReference', :foreign_key=>'card_id',:conditions=>["link_type=?",WikiReference::TRANSCLUSION]
+    has_many :in_transclusions, :class_name=>'WikiReference', :foreign_key=>'referenced_card_id',:conditions=>["link_type in (?,?)",WikiReference::TRANSCLUSION, WikiReference::WANTED_TRANSCLUSION]
+    has_many :out_transclusions,:class_name=>'WikiReference', :foreign_key=>'card_id',           :conditions=>["link_type in (?,?)",WikiReference::TRANSCLUSION, WikiReference::WANTED_TRANSCLUSION]
 
     has_many :in_links, :class_name=>'WikiReference', :foreign_key=>'referenced_card_id',:conditions=>["link_type=?",WikiReference::LINK]
     has_many :out_links,:class_name=>'WikiReference', :foreign_key=>'card_id',:conditions=>["link_type=?",WikiReference::LINK]
@@ -56,14 +56,15 @@ module Card
     has_many :linkees, :through=>:out_links, :source=>:referencee
    
     before_validation_on_create :set_defaults
-    #after_create :create_references_for_hard_templatees
+
     after_create :update_references_on_create
     before_destroy :update_references_on_destroy
-    after_save :cache_priority #, CardCache
+
+    #after_save :cache_priority #, CardCache
     #after_destroy CardCache
      
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
-      :update_link_ins, :allow_type_change
+      :update_link_ins, :allow_type_change, :phantom
   
     private
       belongs_to :reader, :polymorphic=>true  
@@ -91,8 +92,8 @@ module Card
       self.name = trunk.name + JOINT + tag.name if junction?
       self.trash = false   
       self.key = name.to_key if name
-      self.priority = tag.priority if tag  # this might not be right for non-simple tags
-
+      #self.priority = tag.priority if tag  # this might not be right for non-simple tags
+      
       self.extension_type = 'SoftTemplate' if (template? and !self.extension_type)
        
       #[Permission.new(:task=>'read',:party=>::Role[:anon])] + 
@@ -100,7 +101,7 @@ module Card
 
       { 
         :permissions => default_permissions,
-        :content => defaults_template.content,
+        :content => template.content,
       }.each_pair do |attr, default|  
         unless updates.for?(attr)
           send "#{attr}=", default
@@ -109,7 +110,7 @@ module Card
     end
     
     def default_permissions
-      perm = defaults_template.permissions.reject { |p| p.task == 'create' unless (type == 'Cardtype' or template?) }
+      perm = template.real_card.permissions.reject { |p| p.task == 'create' unless (type == 'Cardtype' or template?) }
       
       perm.map do |p|  
         if p.task == 'read'
@@ -117,20 +118,15 @@ module Card
           
           if trunk and tag
             trunk_reader, tag_reader = trunk.who_can(:read), tag.who_can(:read)
-            if err=pieces_incompatible?(trunk,tag)
-              self.errors.add(:permissions, err)
-#<<<<<<< .working
-#            elsif (!anonymous?(trunk_reader) or !anonymous?(tag_reader))
-#              if anonymous?(trunk_reader) or (authenticated?(trunk_reader) and !anonymous?(tag_reader))
-#=======
-            elsif (!trunk_reader.anonymous? or !tag_reader.anonymous?)
+#            if err=pieces_incompatible?(trunk,tag)
+#              self.errors.add(:permissions, err)
+#            elsif (!trunk_reader.anonymous? or !tag_reader.anonymous?)
               if trunk_reader.anonymous? or (authenticated?(trunk_reader) and !tag_reader.anonymous?)
-#>>>>>>> .merge-right.r375
                 party = tag_reader
               else
                 party = trunk_reader
               end
-            end
+ #           end
           end
           Permission.new :task=>p.task, :party=>party
         else
@@ -213,9 +209,9 @@ module Card
         # FIXME: this passes the test but it sure is ugly
         args ||={}  # huh?  why doesn't the method parameter do this?
         given_type = args.pull('type')
-        if tag_tmpl = tag_template(get_name_from_args(args)||"")
+        if tag_tmpl = right_template(get_name_from_args(args)||"")
           default_type = tag_tmpl.type
-          if tag_tmpl.extension_type = 'HardTemplate'
+          if tag_tmpl.extension_type == 'HardTemplate'
             given_type = default_type
           end
         else 
@@ -223,27 +219,22 @@ module Card
         end
         given_type ||= default_type
         Card.const_get(given_type)
-      end      
-
-=begin      
-      def get_class_from_args(args)
-        args ||= {}
-        args.stringify_keys!
-        ( v     = args.pull('type')) ? Card.const_get(v) : default_class   
       end
-=end
+      
             
       def get_name_from_args(args={})
         args ||= {}
         args['name'] || (args['trunk'] && args['tag']  ? args["trunk"].name + "+" + args["tag"].name : "")
       end      
       
+      def reset_cache
+        self.cache={}
+      end
       
       def [](name) 
-        #self.cache[name.to_s] ||= 
         # DONT do find_phantom here-- it ends up happening all over the place--
         # call it explicitly if that's what you want
-        self.find_by_name(name.to_s) #|| self.find_phantom(name.to_s)
+        self.cache[name.to_s] ||= self.find_by_name(name.to_s, :include=>:current_revision) #|| self.find_phantom(name.to_s)
         #self.find_by_name(name.to_s)
       end
              
@@ -260,18 +251,24 @@ module Card
       
     end
     
-    def cache_priority
-      if !simple? and tag.name == '*priority'
-        value = content.to_i  #FIXME if we could trust priority to be a number could use value..
-        #warn "#{name} UPDATING PRIORITY #{value} on #{trunk.name}"
-        trunk.left_junctions.each do |c|
-          #warn "#{name} UPDATING JUNCTION #{c.name}"
-          c.update_attributes!(:priority=>value) unless c.attribute_card('*priority')
+    def multi_update(cards)
+      cards.each_pair do |name, opts|
+        name = name.post_cgi.to_absolute(self.name)
+        logger.info "multi update working on #{name}: #{opts.inspect}"
+        if card = Card[name]
+          card.update_attributes(opts)
+        elsif !opts[:content].strip.blank?  #fixme -- need full-on strip that gets rid of blank html tags.
+          opts[:name] = name
+          card = Card.create(opts)
         end
-        trunk.update_attribute(:priority, value)
-      end
+        if card and !card.errors.empty?
+          card.errors.each do |field, err|
+            self.errors.add card.name, err
+          end
+        end
+      end  
     end
-        
+
     def destroy_with_trash(caller="")     
       if callback(:before_destroy) == false
         errors.add(:destroy, "before destroy back aborted destroy")
@@ -325,6 +322,10 @@ module Card
     def pieces
       simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq 
     end
+    
+    def particles
+      name.particle_names.map{|name| Card[name]} ##FIXME -- inefficient (though scarcely used...)    
+    end
 
     def junctions(args={})     
       args[:conditions] = ["trash=?", false] unless args.has_key?(:conditions)
@@ -342,7 +343,7 @@ module Card
     end
 
     def cardtype
-      @cardtype ||= ::Cardtype.find_by_class_name( class_name ).card
+      @cardtype ||= ::Cardtype.find_by_class_name( self.type ).card
     end  
     
     def drafts
@@ -379,14 +380,17 @@ module Card
     end
 
     # Dynamic Attributes ------------------------------------------------------        
-    # FIXME: this is such a hack.. 
     def phantom?
-      false
+      @phantom ||= phantom
+    end
+    
+    def clean_html?
+      true
     end
     
     def content
       new_record? ? ok!(:create_me) : ok!(:read) # fixme-perm.  might need this, but it's breaking create...
-      if tmpl = hard_content_template and tmpl!=self
+      if tmpl = hard_template and tmpl!=self
         tmpl.content
       else
         current_revision ? current_revision.content : ""
@@ -418,8 +422,7 @@ module Card
     end
 
     def class_name
-      name = self.class.to_s.gsub(/^Card::/,'')
-      name == 'Base' ? 'Basic' : name
+      raise "class_name is Deprecated. use type instead"
     end
     
     def name_from_parts
@@ -441,6 +444,7 @@ module Card
       party==::Role[:auth]
     end
     
+=begin
     def pieces_incompatible?(left, right)
       left_reader  = left.who_can(:read)
       right_reader = right.who_can(:read)
@@ -469,6 +473,7 @@ module Card
       end
       return false
     end
+=end
     
     protected
     def clear_drafts
@@ -575,6 +580,8 @@ module Card
             rec.errors.add :permission, "#{p.task} party can't be set to nil"
           end
         end
+
+=begin
         if !rec.simple?
           err ||= rec.pieces_incompatible?(rec.trunk,rec.tag) #is this necessary?  shouldn't get to this situation
           err ||= rec.piece_and_junction_incompatible?( rec.trunk, rec ) 
@@ -584,6 +591,7 @@ module Card
           err ||= rec.piece_and_junction_incompatible?(rec,junction, override_weak_junction_ok=true)  
           #anon and auth are ok here because any change to this card's permissions can safely override them.
         end
+=end
         if err
           rec.errors.add :permissions, "can't set read permissions on #{rec.name} to #{reader.cardname} because #{err}"
         end
@@ -592,8 +600,8 @@ module Card
     
     
     validates_each :type do |rec, attr, value|  
-      if rec.tag_template and rec.tag_template.hard_template? and value!=rec.tag_template.type and !rec.allow_type_change
-        rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rec.tag_template.type}"
+      if rec.right_template and rec.right_template.hard_template? and value!=rec.right_template.type and !rec.allow_type_change
+        rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rec.right_template.type}"
       end
       #FIXME -- this validation would actually be good to have...
     #  if rec.type == 'Cardtype' and rec.extension and !Card.find_by_type(rec.extension.codename)

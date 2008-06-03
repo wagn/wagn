@@ -17,59 +17,78 @@ class CachedCard
   cattr_accessor :card_names
   self.card_names={}
   
-  class << self   
-    # FIXME: opts[:no_new] is an ugly hack- interface needs work. 
+  class << self       
+    
+    # get_real is for when you want to use the cache, but don't want any builtins, auto,
+    # card_creation, or any type of shenanigans.  give me the card if it's there, otherwise nil.
+    # called by templating system
+    def get_real(name)
+      key = name.to_key
+      if perform_caching && (card = self.find(key)) 
+        card
+      elsif card = self.load_card(name)
+        self.cache_me_if_you_can(card)
+      end
+    end
+    
     def get(name, card=nil, opts={}) 
       key = name.to_key
       caching = (opts.has_key?(:cache) ? opts[:cache] : true) && perform_caching 
       card_opts = opts[:card_params] ? opts[:card_params] : {}
       card_opts['name'] = name if (name && !name.blank?)
 
-      r = if caching && (cached_card = self.find(key, card, opts))
-        ActiveRecord::Base.logger.info("<get(InCache) name=#{name}>")
-        cached_card
-
-      elsif card 
-        #logger.info("<get(PassedIn) name=#{name}>")
-        self.new_cached_if_cacheable(card, opts)
-
-      elsif name.blank?
-        Card.new(card_opts) unless opts[:no_new]
-      
-      elsif card = Card.find_builtin(name)  
-        #logger.info("<get(BuiltIn) name=#{name}>")
-        card 
+      todo = 
+        case
+          when caching && (card = self.find(key, card, opts)) ; [ :got_it     , 'found in cache'   ] 
+          when card                                           ; [ :cache_it   , 'called with card' ]
+          when name.blank?                                    ; [ :make_it    , 'blank name'       ]
+          when card = Card.find_builtin(name)                 ; [ :got_it     , 'built-in'         ]
+          when card = self.load_card(name)                    ; [ :cache_it   , 'found by name'    ]
+          when card = Card.auto_card(name)                    ; [ :got_it     , 'auto card'        ]
+          else                                                ; [ :make_it    , 'scratch'          ]
+        end 
         
-      elsif name.junction? && (template = self.find( name.auto_template_name.to_key )) && template.type=='Search'
-        #logger.info("<get(CachedPhantom) name=#{name}>")
-        User.as(:admin){ Card.create_phantom( name, template.content ) }  # FIXME
+      ActiveRecord::Base.logger.info "<get card: #{name} :: #{todo.last}>"
 
-      elsif card = Card[name] 
-        #logger.info("<get(DB) name=#{name}>")
-        self.new_cached_if_cacheable(card, opts)
-
-      elsif  name.junction? && (template = Card[ name.auto_template_name ]) && template.type=='Search' 
-        #logger.info("<get(Phantom) name=#{name}>")
-        template = self.new_cached_if_cacheable(template, opts)
-        User.as(:admin){ Card.create_phantom( name, template.content ) } # FIXME
-        
-      else   
-        #logger.info("<get(New) name=#{name}>")
-        Card.new(card_opts) unless opts[:no_new]  
-      end 
-      #logger.info("</get res=#{r}>")
-      r
+      case todo.first
+        when :got_it   ;    card
+        when :cache_it ;    self.cache_me_if_you_can(card, opts)       
+        when :make_it  ;    Card.new(card_opts) unless opts[:no_new]    # FIXME: opts[:no_new] is an ugly hack- interface needs work.     
+          
+          ## opts[:no_new] is here for cases when you want to look for a card in the cache and do something else
+          ## if it's not there-- particularly builtin cards such as *favicon.  If an anonymous user tries to
+          ## get one of these cards, it's not there, and we try to create it, it blows up on permissions,
+          ## which is a weird error to the user because they were just trying to view.
+      end
     end
     
-    def new_cached_if_cacheable(card,opts={})
+    def load_card(name)
+      cached_card = self.new(name.to_key)
+      return nil if cached_card.read('missing')
+      if card = Card[name]
+        card
+      else
+        # make a note that we didn't find it
+        cached_card.write('missing','true')
+        nil
+      end
+    end
+    
+    def cache_me_if_you_can(card,opts={})
       caching = (opts.has_key?(:cache) ? opts[:cache] : true) && perform_caching 
       caching && card.cacheable? ? self.new( card.key, card, opts) : card
     end
     
     def find(key, card=nil, opts={})
+      return false unless perform_caching
       cached_card = self.new(key, card, opts)            
       cached_card.exists? ? cached_card : nil
-    end     
+    end
+    
+    def [](name)
+      find(name.to_key) || Card[name]
+    end
+         
   end
   
   def initialize(key, real_card=nil, opts={})
@@ -83,15 +102,29 @@ class CachedCard
     !!(read('name') || read('content'))
   end
   
-  def phantom?() false end  # only cache non-phantom cards
+  def phantom?() false end  # only cache non-phantom cards -- not sure this should be the case.
   def new_record?() false end  # only cache existing cards
+
+
+  # FIXME -- these methods cut and pasted from templating-- need a standard place to 
+  #  mix in methods that will work with both basic cards and cached_cards
+  def hard_template?
+    extension_type =='HardTemplate'
+  end
+
+  def soft_template?
+    extension_type =='SoftTemplate'
+  end
+  # /FIXME    
+  
+  
    
   def to_id() id end            
   def id()  id = get('id') { card.id.to_s }; id.to_i end
   def name()  get('name') { card.name } end
   def type()  get('type') { card.type } end 
   def content() get('content') { card.content } end
-    
+  def extension_type() get('extension_type') { card.extension_type } end
   def read_permission() 
     get('read_permission') { p = card.who_can(:read);  "#{p.class.to_s}:#{p.id}" }
   end       
@@ -125,7 +158,10 @@ class CachedCard
   def footer() read('footer') end
   def footer=(content) write('footer', content) end
   
-
+  def real_card
+    card
+  end
+  
   def card
     @card ||= (
       ActiveRecord::Base.logger.info("<Loading: #{@key}>")
@@ -134,7 +170,7 @@ class CachedCard
   end
 
   def method_missing(method_id,*args)
-    (@card || @auto_load) ? card.send(method_id, *args) : raise("Unknown method: #{method_id}")
+    (@card || @auto_load) ? card.send(method_id, *args) : raise("Unknown method: #{method_id} for CachedCard")
   end
   
   def get(field)
@@ -157,7 +193,7 @@ class CachedCard
     # FIXME: easy place for bugs if using a key that's not here.    
     # why not regexp? rails docs say:
     # Regexp expiration is not supported on caches which can‘t iterate over all keys, such as memcached.
-    %w{id name type content read_permission comment_permission line_content view_content footer }.each do |f|
+    %w{id missing extension_type name type content read_permission comment_permission line_content view_content footer }.each do |f|
       expire(f)
     end
   end 

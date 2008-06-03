@@ -1,19 +1,34 @@
+
+<%- 
+ s = card.search_opts
+ offset, limit = s[:offset], s[:limit]
+ first,last = offset+1,offset+card.results.length 
+# shared_params = shared_params.symbolize_keys
+ total = card.count( s ) 
+ 
+ s[:requested_view] = slot.requested_view 
+ 
+%>
+
 <!-- paging -->
-<span class="paging">
-  <% s = card.search_opts %>
-  <% offset, limit = s[:offset], s[:limit] %>
-  <% first,last = offset+1,offset+card.results.length %>
-  <% total = card.count( s ) %>
-  <% if first > 1 %>
-  	<%= link_to_remote image_tag('prev-page.png'), :update=>slot.id,
-  				:url=>slot.url_for('transclusion/view', params.merge('s[offset]'=>([offset-limit,0].max), 'requested_view'=>slot.requested_view )) %>
-  <% end %>
-  <span class="faint"><%= first %> to <%= last %> of <%= total %></span>
-  <% if last < total %>
-  	<%= link_to_remote image_tag('next-page.png'), :update=>slot.id,
-  	 			:url=>slot.url_for('transclusion/view', params.merge('s[offset]'=>(last),
-							'requested_view'=>slot.requested_view)) %>
-  <% end %>     
-</span>
+<% if total > limit %>
+  <span class="paging">
+  
+    <% if first > 1 %>
+      <%- s[:offset]= [offset-limit,0].max %>
+    	<%= link_to_remote image_tag('prev-page.png'), :update=>slot.id,
+    				:url=>slot.url_for('transclusion/view', params.merge(s)) 
+    	%>
+    <% end %>
+    
+    <span class="faint"><%= first %> to <%= last %> of <%= total %></span>
+    <% if last < total %>
+      <%- s[:offset]= last %>
+    	<%= link_to_remote image_tag('next-page.png'), :update=>slot.id,
+    	 			:url=>slot.url_for('transclusion/view', params.merge(s))
+    	 %>
+    <% end %>     
+  </span>
+<% end %>
 <!-- /paging -->
 

@@ -30,22 +30,18 @@ class AccountController < ApplicationController
 #    if Card::InvitationRequest.create params
   end
   
+  
   def login
-    return unless request.post?
-    self.current_user = User.authenticate(params[:login], params[:password])
-    if current_user
-      flash[:notice] = "Welcome to #{System.site_name}"
-      return_to_remembered_page
-    else
-      flash[:notice] = "Login Failed"
-      render :action=>'login', :status=>403
+    if false and using_open_id?
+      open_id_authentication
+    elsif params[:login]
+      password_authentication(params[:login], params[:password])
     end
   end
 
   def logout
     self.current_user = nil
     flash[:notice] = "You have been logged out."
-    session[:createable_cardtypes] = nil
     return_to_remembered_page
   end
   
@@ -68,46 +64,10 @@ class AccountController < ApplicationController
         
   def create
     return unless request.post? 
-    # FIXME: not hardcode user cardtype??
-    @card_name = params[:card][:name]
-    @card = Card.find_by_name(@card_name) || Card::User.new( params[:card] )
-      
-    if @card.class_name == 'InvitationRequest' 
-      @user = @card.extension or raise "Blam.  InvitationRequest should've been connected to a user"    
-      User.as :admin do
-        @card.type = 'User'  # change from Invite Request -> User
-        dummy = Card::User.new; dummy.send(:set_defaults)
-        @card.permit :edit, dummy.who_can(:edit)
-        @card.save!
-      end
-      @user.status='active'
-      @user.invite_sender = ::User.current_user
-    elsif @card.class_name=='User' and !@card.extension
-      @user = User.new( params[:user].merge( :invite_sender_id=>User.current_user.id )) 
-      @user.status='active'
-    else
-      @card.errors.add(:name, "has already been taken")
-      raise ActiveRecord::RecordInvalid.new(@card)
-    end
-    @user.generate_password if @user.password.blank?
+    # FIXME: not hardcode user cardtype??  
+    @user = User.create_with_card( params[:card] )
+    @card = @user.card
     
-    User.transaction do 
-      @card.extension = @user
-      begin 
-        @user.save!
-      rescue ActiveRecord::RecordInvalid => err
-        err.record.errors.each do |key,err|
-          @card.errors.add key,err
-        end
-        raise ActiveRecord::RecordInvalid.new(@card)
-      end
-      #User.as :admin do ## fixme was breaking on templated user card on permission to change content ? 
-        @card.save!
-      #end    
-      raise(Wagn::Oops, "Invitation Email subject is required") unless (params[:email] and params[:email][:subject])
-      raise(Wagn::Oops, "Invitation Email message is required") unless (params[:email] and params[:email][:message])
-      Notifier.deliver_account_info(@user, params[:email][:subject], params[:email][:message])
-    end
     render :update do |page|
       page.wagn.messenger.note( "Successfully invited #{@card.name}.  Redirecting to #{previous_page}...")
       page.redirect_to url_for_page(previous_page)
@@ -132,5 +92,57 @@ class AccountController < ApplicationController
         
       end
     end    
-  end          
+  end  
+    
+  protected
+  def password_authentication(login, password)
+    if self.current_user = User.authenticate(params[:login], params[:password])
+      successful_login
+    else
+      failed_login("Invalid email or password")
+    end
+  end
+
+  def open_id_authentication
+    warn "FAILED TPO FIND USER W/ IDENTEIY #{params[:openid_url]}"
+    unless params[:openid_url] &&   user = User.find_by_identity_url(params[:openid_url])
+      failed_login("Sorry, no user by that identity URL exists (#{params[:openid_url] })" +
+        "You need to have an account on Wagn already and set the OpenId in your options")
+      return
+    end
+       
+    warn "GOING TO SERVER"
+    authenticate_with_open_id do |result, identity_url|
+      if result.successful?
+        self.current_user = user
+        successful_login
+      else
+        failed_login result.message
+      end
+    end
+  end   
+  
+  def authenticate_with_open_id(identity_url = params[:openid_url], options = {}, &block) #:doc:
+    if params[:open_id_complete].nil?
+      begin_open_id_authentication(normalize_url(identity_url), options, &block)
+    else
+      complete_open_id_authentication(&block)
+    end
+  end
+  
+
+  private  
+
+    def successful_login
+      flash[:notice] = "Welcome to #{System.site_name}"
+      return_to_remembered_page
+    end
+
+    def failed_login(message)
+      flash[:warning] = message
+      #render :action=>'login', :status=>403
+      #warn   "Setting Flash = #{message}"
+      redirect_to(:action => 'login')
+    end
+        
 end

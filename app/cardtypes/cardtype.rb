@@ -45,7 +45,7 @@
     # FIXME -- the current system of caching cardtypes is not "thread safe":
     # multiple running ruby servers could get out of sync re: available cardtypes  
     def reload_cardtypes
-      Card.send(:load_cardtypes!)
+      ::Cardtype.send(:load_cache)
     end
     
     def destroy_extension

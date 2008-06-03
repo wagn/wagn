@@ -8,6 +8,7 @@ module Card
       File.exists?("#{RAILS_ROOT}/public/image/#{content}")
       return "#{RAILS_ROOT}/public/image/#{content}"
     end
+
 =begin
     def content_for_rendering
       src = "/image/#{content}?#{updated_at.to_i}"

@@ -57,6 +57,10 @@ class Role < ActiveRecord::Base
   end
   
   class << self
+    def reset_cache
+      self.cache = {}
+    end
+    
     def find_configurables
       @roles = Role.find :all, :conditions=>"codename <> 'admin'"
     end  

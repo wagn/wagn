@@ -4,8 +4,23 @@ A_JOINEES = ["B", "C", "D", "E", "F"]
       
 CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User"].sort    
 
-      
 
+describe Card, "find_phantom" do
+  before { User.as :joe_user }
+
+  it "should find: *plus parts" do
+    Card.find_phantom("A+*plus parts").search.plot(:name).sort.should == A_JOINEES
+  end
+
+  it "should find custom: testsearch" do
+    Card::Search.create! :name=>"testsearch+*rform", 
+      :extension_type=>"HardTemplate",
+      :content=>'{"plus":"_self"}'  
+    Card.find_phantom("A+testsearch").search.plot(:name).sort.should == A_JOINEES
+  end
+end
+
+   
 describe Wql2, "not" do 
   before { User.as :joe_user }
   it "should exclude cards matching not criteria" do
@@ -185,24 +200,9 @@ describe Wql2, "type" do
 end
 
 
-describe Card, "find_phantom" do
-  before { User.as :joe_user }
-
-  it "should find: *plus parts" do
-    Card.find_phantom("A+*plus parts").search.plot(:name).sort.should == A_JOINEES
-  end
-
-  it "should find custom: testsearch" do
-    Card::Search.create! :name=>"testsearch+*template", 
-      :extension_type=>"HardTemplate",
-      :content=>'{"plus":"_self"}'  
-    Card.find_phantom("A+testsearch").search.plot(:name).sort.should == A_JOINEES
-  end
-end     
-
 describe Wql2, "group tagging" do
   it "should find frequent taggers of basic cards" do
-    Card.search( :group_tagging=>'Basic' ).map(&:name).should ==   ["*template", "A", "C", "B", "D", "E", "Five", "One", "Three", "Two"]
+    Card.search( :group_tagging=>'Basic' ).map(&:name).sort().should ==   ["*rform", "A", "C", "B", "D", "E", "Five", "One", "Three", "Two"].sort()
   end
 end
 

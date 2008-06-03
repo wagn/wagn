@@ -1,60 +1,13 @@
-<% hard_template = card.hard_content_template %>
+<% hard_template = card.hard_template %>
 
 <% get_slot.wrap( 'edit') do |slot| %>  
-	<%#= slot.menu %>
+	<%= slot.header %>
 	<style><%= ".cardid-#{card.id} .edit-area .title-#{css_name(card.name)} { display: none; }" %></style>
-  
-  <table>
-			<td>
-			  <span class="name-area">
-			    <span class="title"><%= less_fancy_title(card) %></span>
-			    <% unless card.template? %>
-						<%= link_to_remote '[edit name]', :url=>slot.url_for("cardname/edit"),
-								:update => slot.id('name-area') %>
-					<% end %>
-			  </span> 
-			</td>
-			<td>
- 			  <span class="cardtype-area">
-					<span class="cardtype"><%= Card.cardtypes[card.type] %></span>
-					<%= link_to_remote '[edit cardtype]', :url=>slot.url_for("cardtype/edit"),
-								:update => slot.id('cardtype-area') %>
-			  </span>
-			</td>
-		</tr>
-	</table>
 
-  <% if inst = card.edit_instructions %>
-    <%= render( :partial=> 'instructions', :locals=>{ :instructions=> inst } ) %>
+  <% div( :id=>slot.id('card-body'), :class=>'card-body') do %>  
+    <%= slot.render_partial 'edit_content' %>
   <% end %>
-
-	<% if hard_template and hard_template.ok? :read %>
-  	<div class="content instruction">
-	   <p>
-    	The format of this card (including any text that's not editable below) is governed by a "hard"  
-  		<%= link_to_page 'template', hard_template.name %> connected to the <%= link_to_page hard_template.trunk.name %> card.   
-      </p>
-  	</div>
-	<% end %>
-
 	
-	<div class="editor edit-area <%= hard_template ? :templated : '' %>" cardid="#{card.id}">
-	  <% form_remote_for :card, card, :url=>slot.url_for("card/update"), 
-				:html=>{ :class=>'form editor',:onsubmit=>slot.save_function	 } do |form| %>
-				                             
-			<% if card.hard_content_template %>
-			  <% slot.form = form %> 
-			  <%= slot.render :edit, :add_javascript=>true %>
-			<% else %>
-				<%= slot.content_field(form) %>
-			<% end %>
-			
-			<%= button_to_remote "Remove #{@card.name}", { :url=>slot.url_for("card/remove") }, :style=>'float:right'	%>			
-			<%= button_to_function "Save", "this.form.onsubmit()", :class=>'save-card-button' %>
-			<%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function } %> 
-  		
-		<% end %>
-	</div>
 	<%= slot.notice %>
 
 <% end %>

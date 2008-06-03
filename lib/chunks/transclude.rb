@@ -2,7 +2,6 @@ module Chunk
   class Transclude < Reference
     attr_reader :stars
     unless defined? TRANSCLUDE_PATTERN
-      
       #  {{+name|attr:val;attr:val;attr:val}}
 
     TRANSCLUDE_PATTERN = /\{\{((#{'\\'+JOINT})?[^\|]+?)\s*(\|([^\}]+?))?\}\}/
@@ -12,20 +11,38 @@ module Chunk
     def initialize(match_data, content)
       super   
       #warn "FOUND TRANSCLUDE #{match_data} #{content}"
-      @card_name = match_data[1].strip    
-      @relative = match_data[2]
-      @options = {
-        :view  => 'content',
-        :base  => 'self',
-        :state => 'open',      # deprecated
-        :shade => 'on'         # deprecated
-      }.merge(Hash.new_from_semicolon_attr_list(match_data[4]))
+      @card_name, @options = self.class.parse(match_data)
+      @relative = @options[:relative]
       @renderer = @content.renderer
       @card = @content.card or raise "No Card in Transclude Chunk!!"     
       @card_name.gsub!(/_self/,@card.name)
       @unmask_text = @text #get_unmask_text_avoiding_recursion_loops
     end
   
+    def self.parse(match)
+#      text = match[0]
+      name = match[1].strip
+      relative = match[2]
+      options = {
+        :tname   =>name,
+        :relative=>relative,
+        :view  => 'content',
+        :base  => 'self',
+        :item  => nil,
+      }
+      style = {}
+      configs = Hash.new_from_semicolon_attr_list match[4]
+      configs.each_pair do |key, value|
+        if options.key? key.to_sym
+          options[key.to_sym] = value
+        else
+          style[key] = value
+        end
+      end
+      options[:style] = style.map{|k,v| "#{k}:#{v};"}.join
+      [name, options]  
+    end
+    
     private
     def base_card 
       case @options[:base]

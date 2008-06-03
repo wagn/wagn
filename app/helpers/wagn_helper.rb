@@ -16,7 +16,7 @@ module WagnHelper
   # FIMXE: this one's a hack...
   def render_card(card, mode)
     if String===card && name = card  
-      raise("Card #{name} not present") unless card= CachedCard.get(name) || card=(Card[name] || Card.find_phantom(name))
+      raise("Card #{name} not present") unless card= (CachedCard.get(name) || Card[name] || Card.find_phantom(name))
     end
     controller.slot.subslot(card).render(mode.to_sym)
   end
@@ -112,6 +112,11 @@ module WagnHelper
       "/cardtypes/#{cardtype}/#{name}" :
       "/cardtypes/basic/#{name}"
   end
+  
+  def render_arg(param)
+    val = params[param]
+    (val && !val.empty?) ? val.to_sym : nil
+  end
 
   def formal_joint
     " <span class=\"wiki-joint\">#{JOINT}</span> "
@@ -122,7 +127,7 @@ module WagnHelper
   end
   
   def less_fancy_title(card)
-    name = card.name
+    name = (String===card ? card : card.name)
     return name if name.simple?
     card_title_span(name.parent_name) + %{<span class="joint">#{JOINT}</span>} + card_title_span(name.tag_name)
   end
@@ -272,14 +277,9 @@ module WagnHelper
     end
   end
   
-  def createable_cardtypes
-    User.current_user.createable_cardtypes
-  end
-    
-
   ## ----- for Linkers ------------------  
   def cardtype_options
-    User.current_user.createable_cardtypes.map do |cardtype|
+    Cardtype.createable_cardtypes.map do |cardtype|
       next(nil) if cardtype[:codename] == 'User' #or cardtype[:codename] == 'InvitationRequest'
       [cardtype[:codename], cardtype[:name]]
     end.compact
@@ -307,6 +307,8 @@ module WagnHelper
     auto_complete_field(fieldname, { :url =>"/card/auto_complete_for_card_name/#{card_id.to_s}" }.update({}))
   end
   
+  def span(*args, &block)  content_tag(:span, *args, &block);  end
+  def div(*args, &block)   content_tag(:div, *args, &block);  end
   
 end
 

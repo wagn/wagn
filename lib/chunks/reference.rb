@@ -2,21 +2,25 @@ module Chunk
   class Reference < Abstract
     attr_reader :card_name, :card
     # the referenced card
+        
     def initialize(matchtext, content)
       super
       @card = content.card
     end
     
+=begin
     def relative?
       @relative
     end
+=end
     
     def base_card
       @card
     end
     
     def refcard_name
-      (relative? and base_card) ? base_card.name + @card_name : @card_name
+      @card_name.to_absolute(base_card.name)
+#      (relative? and base_card) ? base_card.name + @card_name : @card_name
     end
     
     def refcard 

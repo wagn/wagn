@@ -11,7 +11,13 @@
   <p><label for="login">Email</label></p>
   <p><%= text_field_tag 'login', params[:login] %></p>
   <p><label for="password">Password</label></p>
-  <p><%= password_field_tag 'password' %></p>
+  <p><%= password_field_tag 'password' %></p>     
+        
+  <!--
+	<p><label for="openid_url">OpenID:</label></p>
+  <p><%#= text_field_tag "openid_url" %></p>
+	-->
+	
   <p><%= submit_tag 'Sign me in' %></p>
   <% end %>
   <br/>

@@ -1,48 +1,17 @@
-<div class="richtext">
+<%#= javascript_include_tag "/tinymce/jscripts/tiny_mce/tiny_mce.js" %> 
 <% eid, raw_id = slot.context, slot.context+'-raw-content' %>
-<div id="<%= raw_id %>"><%= card.content %></div>
 <%= slot.form.hidden_field :content, :id=>"#{eid}-hidden-content" %>
-<iframe id="<%= eid %>-iframe" height="0" width="0" frameborder="0"></iframe>
-<%= slot.editor_hooks :setup=> %{
-		warn("setting up #{eid}");    
-		if (Prototype.Browser.WebKit) {  
-			$('#{eid}-hidden-content').replace('#{escape_javascript(slot.form.text_area(:content))}') ;
-			$('#{raw_id}').innerHTML="Sorry, Wagns richtext editor doesn't work in Safari yet. "; 
-			
-		} else {
-			e=$('#{raw_id}'); 
-			e.innerHTML = Wagn.LinkEditor.raw_to_editable(e.innerHTML);
-		
-			w = new Wagn.Wikiwyg();
-			w.setup('#{eid}', #{card.id ? "'"+card.id.to_s+"'" : 'false'}, '#{escape_javascript(card.name)}');
-
-			// save the wikiwyg for access during cancel and save:
-			if (typeof(Wagn.wikiwygs)=='undefined') { Wagn.wikiwygs=$H({}) }
-			Wagn.wikiwygs['#{eid}'] = w;       
-
-			// FIXME: the editable_to_raw() call here sets the content in raw_id 
-			// so that we don't do unecessary draft saves- it's ugly..
-			timeout = (Wikiwyg.is_ie ? 100 : 1);  
-			setTimeout( "w=Wagn.wikiwygs['#{eid}']; w.editMode();" +  
-			  "Wagn.LinkEditor.editable_to_raw(w.getContent(), $('#{raw_id}'));", timeout); 
-
-			w.start_timer();
-		}
-	},
-	:save=> %{
-		if (!Prototype.Browser.WebKit) {
-			w = Wagn.wikiwygs['#{eid}'];
-			w.stop_timer();
-			content = w.getContent();
-			warn("saving #{eid}: content = " + content);
-	
-			$('#{eid}-hidden-content').value = Wagn.LinkEditor.editable_to_raw(content, $('#{raw_id}'));
-		}
-		return true;
-	},
-	:cancel=>%{
-		//warn("cancelling #{eid}");
-		if (!Prototype.Browser.WebKit) { Wagn.wikiwygs['#{eid}'].stop_timer(); }
-	}
+<%= text_area_tag :content_to_replace, card.content, :rows=>3, :id=>"#{eid}-tinymce" %>
+<% tinymceconfig = ""
+	 User.as(:admin) { tinymceconfig = (card = CachedCard.get_real('*tiny mce')) ? card.content : '' }
 %>
-</div>
+<%= slot.editor_hooks :setup=> %{ 
+	  tinyMCE.init({ #{tinymceconfig} }); 
+	  tinyMCE.execCommand('mceAddControl', false, '#{eid}-tinymce'); 
+	},
+	:save=> %{ 
+		t = tinyMCE.getInstanceById( '#{eid}-tinymce' ); 
+		$('#{eid}-hidden-content').value = t.getContent();
+		return true;
+	} 
+%>                                                                                              

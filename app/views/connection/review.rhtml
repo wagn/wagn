@@ -9,6 +9,6 @@
 	  to  <%= link_to_page( formal_title(@card), @card.name ) %>.  </em>
 	</p>
 -->
-  <%= render :partial=>"edit", :locals=>{ :card=>@connection,:render_slot=>true } %>
+  <%= render :partial=>"edit", :locals=>{ :card=>@connection,:slot? =>true } %>
 	<%= slot.notice %>
 <% end %>

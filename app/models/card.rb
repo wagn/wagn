@@ -23,14 +23,15 @@ require_dependency 'card/templating'
 require_dependency 'card/defaults' 
 require_dependency 'card/permissions'
 require_dependency 'card/search'
-
+require_dependency 'card/caching'
 
 Card::Base.class_eval do       
   include CardLib::TrackedAttributes
   include CardLib::Templating
   include CardLib::Defaults
   include CardLib::Permissions                               
-  include CardLib::Search
+  include CardLib::Search 
+  #include CardLib::Caching 
 end
  
 
@@ -88,43 +89,13 @@ module Card
     
     def method_missing( method_id, *args )
       Card::Base.send(method_id, *args)
-    end
+    end  
     
-    # FIXME -- the current system of caching cardtypes is not "thread safe":
-    # multiple running ruby servers could get out of sync re: available cardtypes  
-    def cardtypes
-      load_cardtypes! unless @cardtypes
-      @cardtypes
-    end
-    
-    def cardtype_create_parties
-      load_cardtypes! unless @cardtype_create_parties
-      @cardtype_create_parties
-    end
-
-    def load_cardtypes!    
-      @role_cache = {}
-      @cardtypes = {}
-      @cardtype_create_parties = {}
-      Card::Base.connection.select_all(%{
-        select distinct ct.class_name, c.name, p.party_type, p.party_id 
-        from cardtypes ct 
-        join cards c on c.extension_id=ct.id and c.type='Cardtype'    
-         join permissions p on p.card_id=c.id and p.task='create' 
-      }).each do |rec|
-        @cardtypes[rec['class_name']] = rec['name'];   
-        unless rec['party_type'] == 'Role'
-          raise "Bad Data: create permission for #{rec['class_name']} " +
-            "should have party_type 'Role' not '#{rec['party_type']}'"
-        end
-        @cardtype_create_parties[rec['class_name']] = rec['party_id']
-      end
-    end
-     
     def const_missing( class_id )
       super
     rescue NameError => e   
-      if cardtypes.has_key?( class_id.to_s )
+      ::Cardtype.load_cache if ::Cardtype.cache.empty?
+      if ::Cardtype.cache[:card_names].has_key?( class_id.to_s )
         newclass = Class.new( Card::Basic )
         const_set class_id, newclass
         # FIXME: is this necessary?

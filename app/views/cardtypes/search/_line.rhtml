@@ -10,7 +10,7 @@
    
 	<%
 	# FIXME: so not DRY.  cut-n-paste from search/_content
-	s = params[:s] || {}
+	s = slot.paging_params #params[:s] || {}
 	begin
 		query_results = card.search( s )  
 		total = card.count( s )

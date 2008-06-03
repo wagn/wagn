@@ -13,26 +13,47 @@ module Cardname
 
     def unescape(uri)
       uri.gsub(' ','+').gsub('_',' ')
-    end
-
+    end    
   end
+  
   def valid_cardname?
     split(JOINT).each do |name|
       return false unless name.match(/^([^#{"\\"+CARDNAME_BANNED_CHARACTERS.join("\\")}])+$/)
     end
     return true
   end
-      
+  
+  def template_name?
+    tag_name.=~ /\*.form$/
+  end
+=begin      
   def auto_template_name
     (simple? ? self : self.tag_name) + "+*template"
+  end
+=end
+
+  def pre_cgi
+    gsub('+','~plus~')
+  end
+  
+  def post_cgi
+    gsub('~plus~','+')
   end
     
   def piece_names
     simple? ? [self] : ([self] + parent_name.piece_names + tag_name.piece_names).uniq
   end
   
+  def particle_names
+    split(JOINT)
+  end
+  
   def parent_name
-    simple? ? nil : split(JOINT)[0..-2].join(JOINT)
+    simple? ? nil : trunk_name
+  end
+
+  def trunk_name
+    split(JOINT)[0..-2].join(JOINT)
   end
 
   def tag_name  
@@ -52,6 +73,21 @@ module Cardname
       name.underscore.split(/[^\w\*]+/).plot(:singularize).reject {|x| x==""}.join("_")
     end.join(JOINT)
   end  
+
+  def to_absolute(context_name)
+    name = self
+    name.gsub! /_self|_whole/  , context_name
+    name.gsub! /\s*\+$/        , '+'+context_name 
+    name.gsub! /^\+\s*/        , context_name+'+' 
+    if context_name.junction?  
+      name.gsub! /_left/       , context_name.parent_name
+      name.gsub! /_right/      , context_name.tag_name
+#      name.sub!  /_(\-?\d+)/ , context_name.particle_names[$~[1].to_i]  #fixme -- this would break on multiple nums
+    else
+      name.gsub! /_left|_right/, context_name
+    end
+    name
+  end
 
 end    
                

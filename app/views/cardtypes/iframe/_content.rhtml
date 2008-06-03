@@ -1,2 +1,2 @@
-  <p class="website-link"><%= slot.render card %></p>
-  <iframe class="website" src="<%= card.content %>"></iframe>
+<p class="website-link"><%= slot.render :raw_content %></p>
+<iframe class="website" src="<%= card.content %>"></iframe>

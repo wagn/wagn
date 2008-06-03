@@ -10,16 +10,16 @@
         <%= render :partial=>'options/roles', :locals=>{:card=>@card, :slot=>slot, :extension=>card.extension } %>
       <% end %>    
 
-      <% if @card.template? %>
-        <%= render :partial=>'options/template', :locals=>{:card=>@card, :slot=>slot, :form=>form} %>	      
-      <% end %> 
+      <%# if @card.template? %>
+        <%# render :partial=>'options/template', :locals=>{:card=>@card, :slot=>slot, :form=>form} %>	      
+      <%# end %> 
       <% if slot.options_need_save %>
   		  <tr><td colspan="3"><%= submit_tag 'Save Changes' %></td></tr>
   		<% end %>
     </table>
   <% end %>
 
-   <% if @card.ok? :template_tsar %>
-     <%= render :partial=>'options/template_tsar', :locals=>{:card=>@card, :slot=>slot } %>	      
-   <% end %>
+   <%# if @card.ok? :template_tsar %>
+     <%#= render :partial=>'options/template_tsar', :locals=>{:card=>@card, :slot=>slot } %>	      
+   <%# end %>
 <% end %>

@@ -6,27 +6,28 @@ class WikiReferenceTest < Test::Unit::TestCase
     Renderer.instance.rescue_errors = false
   end
 
-  def test_hard_template_reference_creation_on_tempalate_creation
-    Card::Cardtype.create! :name=>"SpecialForm"
-    Card::SpecialForm.create! :name=>"Form1", :content=>"foo"
-    Card.create! :name=>"SpecialForm+*template", :content=>"{{+bar}}", :extension_type=>"HardTemplate"
-    assert_equal ["form1+bar"], Card["Form1"].out_references.plot(:referenced_name)
-  end
-  
-  def test_hard_templated_card_should_insert_references_on_create
+    def test_hard_templated_card_should_insert_references_on_create
     Card::UserForm.create! :name=>"JoeForm"
     assert_equal ["joe_form+age", "joe_form+name", "joe_form+description"].sort,
-      Card["JoeForm"].out_references.plot(:referenced_name).sort
-  end   
+      Card["JoeForm"].out_references.plot(:referenced_name).sort     
+  end                                                                
+=begin
+  def test_hard_template_reference_creation_on_template_creation
+    Card::Cardtype.create! :name=>"SpecialForm"
+    Card::SpecialForm.create! :name=>"Form1", :content=>"foo"
+    Card.create! :name=>"SpecialForm+*tform", :content=>"{{+bar}}", :extension_type=>"HardTemplate"
+    assert_equal ["form1+bar"], Card["Form1"].out_references.plot(:referenced_name)
+  end
 
   def test_container_transclusion
     bob_city = Card.create :name=>'bob+city' 
-    Card.create :name=>'address+*template',:content=>"{{#{JOINT}city|base:parent}}"
+    Card.create :name=>'address+*rform',:content=>"{{#{JOINT}city|base:parent}}"
     bob_address = Card.create :name=>'bob+address'
     
     assert_equal ["bob#{JOINT}city"], bob_address.transcludees.plot(:name) 
     assert_equal ["bob#{JOINT}address"], bob_city.transcluders.plot(:name) 
   end
+
 
   def test_pickup_new_links_on_rename
     @l = newcard("L", "[[Ethan]]")  # no Ethan card yet...
@@ -76,7 +77,7 @@ class WikiReferenceTest < Test::Unit::TestCase
     
   def test_template_transclusion
     cardtype = Card::Cardtype.create! :name=>"ColorType", :content=>""
-    template = Card['*template']
+    template = Card['*tform']
     Card.create! :trunk=>cardtype, :tag=>template, :content=>"{{#{JOINT}rgb}}"
     blue = Card::ColorType.create! :name=>"blue"
     rgb = newcard 'rgb'

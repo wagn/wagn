@@ -1,0 +1,151 @@
+--- 
+users_004: 
+  status: active
+  salt: dcda9efac86ee06fed0b8bd6d03210a00d6c5546
+  updated_at: 2008-05-31 17:21:35.308049
+  cards_per_page: "25"
+  crypted_password: d49b98478e2427113c923ad88216385bf320b07a
+  invite_sender_id: "1"
+  blocked: f
+  password_reset_code: 
+  id: "4"
+  identity_url: 
+  hide_duplicates: t
+  login: joe_user
+  created_at: 2008-05-31 17:21:35.308049
+  email: joe@user.com
+users_005: 
+  status: request
+  salt: d5952992381c4255de86f5aa4c7b887509dcde8e
+  updated_at: 2008-05-31 17:21:35.838243
+  cards_per_page: "25"
+  crypted_password: eee72ce2015645a725aa21b3c5051eeda8cb2a57
+  invite_sender_id: 
+  blocked: f
+  password_reset_code: 
+  id: "5"
+  identity_url: 
+  hide_duplicates: t
+  login: 
+  created_at: 2008-05-31 17:21:35.838243
+  email: ron@request.com
+users_006: 
+  status: active
+  salt: 5bb91d7ae99b9bc74b569769ce6b7ab2f1b0b9a5
+  updated_at: 2008-05-31 17:21:36.007655
+  cards_per_page: "25"
+  crypted_password: fe07b32840cc010eee5c1b7a83bfe54998f3c300
+  invite_sender_id: "1"
+  blocked: f
+  password_reset_code: 
+  id: "6"
+  identity_url: 
+  hide_duplicates: t
+  login: sample_user
+  created_at: 2008-05-31 17:21:36.007655
+  email: sample@user.com
+users_007: 
+  status: request
+  salt: b89519ab9b8f836d2d5a9b7aea690f483528479e
+  updated_at: 2008-05-31 17:21:36.109078
+  cards_per_page: "25"
+  crypted_password: d6f5f15986dc6e838291bff68fcb282bf3afa3aa
+  invite_sender_id: 
+  blocked: f
+  password_reset_code: 
+  id: "7"
+  identity_url: 
+  hide_duplicates: t
+  login: 
+  created_at: 2008-05-31 17:21:36.109078
+  email: invitation@request.com
+users_008: 
+  status: active
+  salt: 6d1927243dc6c8df85b1af8bf4bc5037eec107ec
+  updated_at: 2008-05-31 17:21:38.135339
+  cards_per_page: "25"
+  crypted_password: e28fb92bdcad17a6753ddd821da8cbb3da92328d
+  invite_sender_id: "1"
+  blocked: f
+  password_reset_code: 
+  id: "8"
+  identity_url: 
+  hide_duplicates: t
+  login: u1
+  created_at: 2008-05-31 17:21:38.135339
+  email: u1@user.com
+users_010: 
+  status: active
+  salt: c12e6afd964b51cc8f2ae4eab3028b9bfb71e822
+  updated_at: 2008-05-31 17:21:38.159233
+  cards_per_page: "25"
+  crypted_password: 104fec487f442fd7268f03ade2270e1fc8b53f01
+  invite_sender_id: "1"
+  blocked: f
+  password_reset_code: 
+  id: "10"
+  identity_url: 
+  hide_duplicates: t
+  login: u3
+  created_at: 2008-05-31 17:21:38.159233
+  email: u3@user.com
+users_009: 
+  status: active
+  salt: c88ebffe65d41063c5ca641f12fa880dc74d2149
+  updated_at: 2008-05-31 17:21:38.146898
+  cards_per_page: "25"
+  crypted_password: e721e97deb3953fe966c1a47b3bb27f0f001dc21
+  invite_sender_id: "1"
+  blocked: f
+  password_reset_code: 
+  id: "9"
+  identity_url: 
+  hide_duplicates: t
+  login: u2
+  created_at: 2008-05-31 17:21:38.146898
+  email: u2@user.com
+users_001: 
+  status: system
+  salt: c420fa40c65a38186deb25ba859edacd9bf7d8f8
+  updated_at: 2007-12-03 00:29:07.787331
+  cards_per_page: "25"
+  crypted_password: 13d124f96e2953fea135c13df097fb3d754588be
+  invite_sender_id: "1"
+  blocked: f
+  password_reset_code: 
+  id: "2"
+  identity_url: 
+  hide_duplicates: t
+  login: wagbot
+  created_at: 2007-12-03 00:29:07.787331
+  email: wagnbot@grasscommons.org
+users_002: 
+  status: system
+  salt: c420fa40c65a38186deb25ba859edacd9bf7d8f8
+  updated_at: 2007-12-03 00:29:09.753286
+  cards_per_page: "25"
+  crypted_password: 13d124f96e2953fea135c13df097fb3d754588be
+  invite_sender_id: "1"
+  blocked: f
+  password_reset_code: 
+  id: "3"
+  identity_url: 
+  hide_duplicates: t
+  login: anon
+  created_at: 2007-12-03 00:29:09.622298
+  email: anonymous@grasscommons.org
+users_003: 
+  status: active
+  salt: bf2a748b23e6fc6fa64d5acb99df8e72e308c58c
+  updated_at: 2008-05-31 17:21:35.296948
+  cards_per_page: "25"
+  crypted_password: 610bb7b564d468ad896e0fe4c3c5c919ea5cf16c
+  invite_sender_id: "1"
+  blocked: f
+  password_reset_code: 
+  id: "1"
+  identity_url: 
+  hide_duplicates: t
+  login: admin
+  created_at: 2007-12-03 00:29:07.770414
+  email: webmaster@grasscommons.org

@@ -3,8 +3,8 @@ module Chunk
     attr_accessor :link_text, :link_type, :card_name
     
 #    unless defined? WIKI_LINK 
-      word = /\s*((#{"\\"+JOINT})?[^\]]+)\s*/
-      WIKI_LINK = /\[\[#{word}\]\]|\[#{word}\]\[#{word}\]/
+      word = /\s*([^\]\|]+)\s*/
+      WIKI_LINK = /\[\[#{word}(\|#{word})?\]\]|\[#{word}\]\[#{word}\]/
 #    end    
 
     def self.pattern() WIKI_LINK end
@@ -12,16 +12,16 @@ module Chunk
     def initialize(match_data, content)
       super
       @link_type = :show
-      if match_data[1] 
+      if @card_name = match_data[1] 
         # matched the [[..]]  case
-        @link_text = @card_name = match_data[1] #.gsub(/_/,' ')
+        @link_text = match_data[  match_data[2] ? 3 : 1 ]
       else
         # matched [..][..] case, 3=first slot, 5=second
-        @link_text = match_data[3]
+        @link_text = match_data[4]
         @card_name = match_data[5]  #.gsub(/_/,' ')
-      end       
+      end
       # FIXME
-      @relative = match_data[2] || match_data[6] || false
+      #@relative = match_data[2] || match_data[6] || false
     end
 
     def unmask_text
@@ -29,7 +29,7 @@ module Chunk
     end
     
     def revert
-      @text = @card_name == @link_text ? "[[#{@card_name}]]" : "[#{@link_text}][#{@card_name}]"
+      @text = @card_name == @link_text ? "[[#{@card_name}]]" : "[[#{@card_name}|#{@link_text}]]"
       super
     end
 

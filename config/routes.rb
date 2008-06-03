@@ -16,8 +16,10 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'wiki/:id', :controller => 'card', :action=>'show', :requirements=>{ :id=>/.*/}
   #/DEPRECATED   
 
-  map.connect 'recent', :controller => 'card', :action=>'show', :id=>'*recent_changes', :view=>'content'
- 
+  map.connect 'recent',           :controller => 'card', :action=>'show', :id=>'*recent_changes', :view=>'content'
+  map.connect 'search/:_keyword', :controller => 'card', :action=>'show', :id=>'*search',         :view=>'content'
+  map.connect 'new/:type',        :controller => 'card', :action=>'new_of_type'
+  map.connect 'me',               :controller => 'card', :action=>'mine'
  
   map.connect ':controller/:action/:id/:attribute' 
 

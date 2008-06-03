@@ -1,7 +1,7 @@
 module Card
   class Basic < Base
     def self.permission_dependent_cardtypes
-      Card::Cardtype.find(:all).reject { |c| c.template_tsar? }
+      Card::Cardtype.find(:all).reject { |c| c.type_templator? }
     end
 
     def post_render(content)
@@ -14,6 +14,7 @@ module Card
       current_depth = 1
       content.gsub!( /<(h1)>(.*?)<\/h1>|<(h2)>(.*?)<\/h2>/i ) do
         tag, value = $~[1] ? $~[1,2] : $~[3,2]
+        next if value.strip.empty?
         item = { :value => value, :uri => URI.escape(value) }
         case tag
         when 'h1'

@@ -9,6 +9,11 @@
   border-right: 2px solid #bbb;
   display: block;
 }
+.card-slot,
+.card-slot .wrapper,
+.card-slot .wrapper {
+  overflow: hidden;
+}
 
 
 /*----- header ---------*/
@@ -73,6 +78,20 @@ a.current, a:link.current {
   color: #777;
 }
 
+.card-slot .submenu {
+  background: #676;
+  padding: 0px 10px;
+  color: #fff;
+}
+.card-slot .submenu a {
+  color: #fff;
+  padding: 0px 2%;
+}
+.card-slot .submenu a.on {
+  background: #9a9;
+  font-style: italic;
+}
+
 
 
 
@@ -85,7 +104,8 @@ a.current, a:link.current {
   font-size: 9px;
 }
 .card-slot .card-footer {
-   -moz-border-radius: 0px 0px 6px 6px;
+  clear: both;
+  -moz-border-radius: 0px 0px 6px 6px;
 }
 .card-slot .card-footer a, 
 .card-slot .card-footer a:visited, 
@@ -93,15 +113,21 @@ a.current, a:link.current {
 .card-slot .card-footer a:link {
   color: #88c;
 }
+#sidebar .card-slot .card-footer {
+  display: none;
+}
            
 
 /*-------------  TABS -------*/
 
 /* -------- view tab / content ----------------- */
 
+
 .card-slot .search-result-list .cardname-link {
   display: block;
 }
+
+
 .card-slot p { 
   margin: 0px; 
 }
@@ -184,6 +210,7 @@ a.current, a:link.current {
   -moz-border-radius: 6px;
   padding: 1px 5px;
 }
+/*
 .card-slot .name-editor .label,
 .card-slot .cardtype-editor .label {
   display: none
@@ -192,6 +219,9 @@ a.current, a:link.current {
 .card-slot .cardtype-editor p {
   margin: 5px;
 }
+*/
+
+
 .card-slot .edit-area ,
 .card-slot span:hover.transcluded div.edit-area  {
   background: #ddd;
@@ -202,6 +232,7 @@ a.current, a:link.current {
 }
 .card-slot .templated.edit-area {
   background: white;
+  border: 0px;
 }
 .card-slot .cardtype-area .cardtype {
   font-size: 14px;
@@ -245,8 +276,24 @@ a.current, a:link.current {
   font-size: 11px;
 }
 
+.card-slot .label-in-multi {
+  float: left;
+  width: 25%;
+  padding: 0.5%;
+}
+.card-slot .field-in-multi {
+  float: right;
+  width: 72%;
+  padding: 0.5%;
+}
 
-
+.in-multi .instruction,
+.in-multi .instruction p{
+  border: 0px;
+  background: inherit;
+  text-align: left;
+  padding: 0px 5px;
+}
 
 
 /* ---------- changes tab -------*/
@@ -550,18 +597,11 @@ body.wagn .card-slot.line h2,
 
 
 /*-----------( Image ) -----------*/
-.card-slot .image-cardtype {
-  text-align: center;
-  display: block;
-  overflow: auto;
-}
-.card-slot .transcluded .image-cardtype {
-  float: right;
-}
-.card-slot.line .image-cardtype {
-  float: none;
-}
-.card-slot.paragraph .image-cardtype {
+
+
+/*.card-slot.paragraph.type-Image, */
+.card-slot.paragraph .type-Image {
+/*  overflow: auto;  */
   padding: 5px;
 }
 

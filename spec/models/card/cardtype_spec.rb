@@ -88,15 +88,15 @@ describe User, "Joe User" do
   before do
     User.as :admin
     @r3 = Role[:r3]
-    @ctf_t = Card.create! :name=>'Cardtype F+*template'
+    @ctf_t = Card.create! :name=>'Cardtype F+*tform'
     @ctf_t.permit(:create, @r3)
     @ctf_t.save!
 
     User.as :joe_user
     @user = User[:joe_user]
     @ctf = Card['Cardtype F']
-    Card.load_cardtypes!
-    @cardtype_names = @user.createable_cardtypes.map{ |ct| ct[:name] }
+    Cardtype.reset_cache
+    @cardtype_names = Cardtype.createable_cardtypes.map{ |ct| ct[:name] }
   end
 
   it "should not have r3 permissions" do

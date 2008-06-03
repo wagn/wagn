@@ -1,57 +1,35 @@
-module Card
+module Card      
+  module SearchMethods
+     def test
+       "" =~ /plus\"\:\[\"([^\"]+)\"\W*refer_to\W*_self/ 
+     end
+  end
+  
 	class Search < Base  
+	  include SearchMethods
 	  attr_accessor :self_card, :results, :search_opts, :spec
-	  attr_accessor :phantom
     before_save :escape_content
-    
 
     def escape_content
-      #warn "Escaped #{content}"
       self.content = CGI::unescapeHTML( URI.unescape(content) )
-      #warn "UnEscaped #{content}"
-    end
-
-    def query_args
-      options_from_content( self.content )  
-    end
-
-    def options_from_content( content=nil )
-      content ||= self.content
-      args = ActionController::AbstractRequest.parse_query_parameters( content )
-      options = args.keys.inject({}) {|hash,key| hash[key.to_sym]=args[key]; hash }
-      options.delete(:type) if options[:type]=='Any'
-      options
-    end
-
-    def on_revise(content)
-      # FIXME- dont' think on_revise is called now.  that mean something broken?
-      # nada -- other datatypes update references
-    end
-    
-    def phantom?
-      @phantom
     end
     
     def cacheable?
-      name.tag_name=='*template' ? true : false
+      name.template_name? 
     end
      
     def count(params={})
       params = params.symbolize_keys  
       [:offset, :limit].each {|x| params.delete(x) }
-#      spec = get_spec(params)
-#      warn "COUNT SPEC: #{spec.inspect}"
       Card.count_by_wql( get_spec(params) )
     end
                                 
     def search( params={} )  
       self.search_opts = params  
-      ActiveRecord::Base.logger.info("<Search name=#{self.name}>")  
-      self.spec = get_spec(params.clone)
+      self.spec = get_spec(params.clone) 
+      raise("OH NO.. no limit") unless self.spec[:limit]
       self.results = Card.search( self.spec ).map do |card|   
         c = CachedCard.get(card.name, card)
-        ActiveRecord::Base.logger.info("<CachedCard.get name=#{name} card=#{card} res=#{c}>")
-        c
       end
     end
     
@@ -66,6 +44,5 @@ module Card
       spec.merge! params
       spec
     end
-
   end
 end

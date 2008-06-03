@@ -1,6 +1,6 @@
 <% tasks = [:read, :edit, :delete] %>
-<% tasks << :comment unless card.hard_content_template %>
-<% tasks << :create if card.template_for_cardtype? %>
+<% tasks << :comment unless card.hard_template %>
+<% tasks << :create if card.type_template? %>
 
 <%= slot.option_header 'Permissions' %>
 

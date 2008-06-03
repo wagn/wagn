@@ -5,7 +5,7 @@
 <div class="invite-links help instruction">
 <p><strong><%= card.name %></strong> asked for an invitation on <%= format_date(card.created_at) %></p>
 <p>
-  <% if logged_in? and Card::User.ok? :create %>
+  <% if logged_in? and Card::User.create_ok? %>
     <%= link_to "Invite #{card.name}", {:controller=>'account', :action=>'invite', :name=>card.name }  %>         
   <% end %> 
   <% if card.ok?(:delete) %>

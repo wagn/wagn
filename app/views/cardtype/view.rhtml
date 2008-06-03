@@ -1,7 +1,0 @@
-<% get_slot.wrap('cardtype') do |slot| %>
-	<span class="cardtype">
-	  <%= link_to_page( Card.cardtypes[@card.type] ) %>
-	</span>
-	<%= link_to_remote '[edit cardtype]', :url=>slot.url_for("cardtype/edit"),
-				:update => slot.id('cardtype-area') %>
-<% end %>

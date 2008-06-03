@@ -4,9 +4,9 @@
     <%= link_to('Home', '/') %>
     <%= link_to( 'Recent', '/recent' ) %>
 	  <%=  text_field_tag("keyword", 
-		       (params[:s] && params[:s][:_keyword]) || 'Search cards', 
+		       (params[:_keyword]) || 'Search cards', 
 		       :onclick=>'if (this.value == "Search cards") {this.value="" }', 
-		       :onchange => "document.location.href='/wagn/*search?view=content&s[_keyword]='+encodeURIComponent($F(this))" 		 
+		       :onchange => "document.location.href='/search/'+encodeURIComponent($F(this))" 		 
 		)	%>
 		<%#= 		 %>
 		   
@@ -18,7 +18,7 @@
 
   </span>
   
-  <% if !createable_cardtypes.empty? %>
+  <% if !Cardtype.createable_cardtypes.empty? %>
     <span>
       <%= link_to('New Card', :controller=>'card', :action=>'new') %>
     </span>
@@ -28,13 +28,13 @@
   <span id="logging">
      <% if logged_in? %>
         <%# page_icon current_user.card %>
-        <%= link_to "My Card: #{current_user.card.name}", { :controller=>'card', :action=>'mine' }, :id=>'my-card-link' %>
-        <% if Card::User.ok? :create %>
+        <%= link_to "My Card: #{current_user.card.name}", '/me', :id=>'my-card-link' %>
+        <% if Card::User.create_ok? %>
   	      <%= link_to 'Invite a Friend', :controller=>'account', :action=>'invite' %>
         <% end %>   
         <%= link_to 'Sign out', :controller=>'account', :action=>'logout' %>
       <% else %>
-        <% if Card::InvitationRequest.ok? :create %>
+        <% if Card::InvitationRequest.create_ok? %>
       	 <%= link_to 'Request an Invitation', :controller=>'account', :action=>'invitation_request' %> 
         <% end%>
         <%= link_to 'Sign in', :controller=>'account', :action=>'login' %>

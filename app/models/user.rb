@@ -3,28 +3,25 @@ require_dependency "acts_as_card_extension"
 
 class User < ActiveRecord::Base
   # Virtual attribute for the unencrypted password
-  attr_accessor :password
+  attr_accessor :password, :name
   cattr_accessor :current_user
   
-  #attr_protected :invite_sender, :status    
-  cattr_accessor :cache  
-  self.cache = {}
- 
   has_and_belongs_to_many :roles
   belongs_to :invite_sender, :class_name=>'User', :foreign_key=>'invite_sender_id'
   has_many :invite_recipients, :class_name=>'User', :foreign_key=>'invite_sender_id'
 
   acts_as_card_extension
    
-  validates_presence_of     :email
-  validates_format_of       :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
-  validates_length_of       :email, :within => 3..100
-  validates_uniqueness_of   :email 
+  validates_presence_of     :email, :if => :not_openid?
+  validates_format_of       :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i, :if => :not_openid?
+  validates_length_of       :email, :within => 3..100,   :if => :not_openid?
+  validates_uniqueness_of   :email,                      :if => :not_openid?  
   validates_presence_of     :password,                   :if => :password_required?
   validates_presence_of     :password_confirmation,      :if => :password_required?
   validates_length_of       :password, :within => 5..40, :if => :password_required?
   validates_confirmation_of :password,                   :if => :password_required?
   validates_presence_of     :invite_sender,              :if => :active?
+  validates_uniqueness_of   :salt, :allow_nil => true
   
   before_save :encrypt_password
   
@@ -34,13 +31,67 @@ class User < ActiveRecord::Base
   end  
   
   class << self
+    def find_or_create_by_identity_url(url)
+      if u= self.find_by_identity_url(url)
+        u
+      else
+        User.create_with_card(:identity_url=>url)
+      end
+    end
+    
+    def create_with_card(args={})
+      ## CREATE CARD FOR THE NEW USER
+      @card_name = args[:name]
+      @card = ::Card.find_by_name(@card_name) || ::Card::User.new( args )
+      
+      if @card.type == 'InvitationRequest' 
+        @user = @card.extension or raise "Blam.  InvitationRequest should've been connected to a user"    
+        User.as :admin do
+          @card.type = 'User'  # change from Invite Request -> User
+          dummy = Card::User.new; dummy.send(:set_defaults)
+          @card.permit :edit, dummy.who_can(:edit)
+          @card.save!
+        end
+        @user.status='active'
+        @user.invite_sender = ::User.current_user
+      elsif @card.type=='User' and !@card.extension
+        @user = User.new( params[:user].merge( :invite_sender_id=>User.current_user.id )) 
+        @user.status='active'
+      else
+        @card.errors.add(:name, "has already been taken")
+        raise ActiveRecord::RecordInvalid.new(@card)
+      end
+      @user.generate_password if @user.password.blank?
+      
+      ## ADD USER
+      User.transaction do 
+        @card.extension = @user
+        begin 
+          @user.save!
+        rescue ActiveRecord::RecordInvalid => err
+          err.record.errors.each do |key,err|
+            @card.errors.add key,err
+          end
+          raise ActiveRecord::RecordInvalid.new(@card)
+        end
+        #User.as :admin do ## fixme was breaking on templated user card on permission to change content ? 
+          @card.save!
+        #end    
+        raise(Wagn::Oops, "Invitation Email subject is required") unless (params[:email] and params[:email][:subject])
+        raise(Wagn::Oops, "Invitation Email message is required") unless (params[:email] and params[:email][:message])
+        Notifier.deliver_account_info(@user, params[:email][:subject], params[:email][:message])
+      end  
+      @user
+    end
+    #alias_method_chain :create, :card
+    
     
     def current_user
-      System.current_user
+      @@current_user ||= find_by_login('anon')  
     end
     
     def current_user=(user)
-      System.current_user = user
+      @@current_user = user
     end
     
     def active_users
@@ -71,26 +122,9 @@ class User < ActiveRecord::Base
     end    
     
     def [](login)
-      #self.cache[login.to_s] ||=
       User.find_by_login(login.to_s)
     end
   end 
-
-  def createable_cardtypes #FIXME -- needs optimizing.  badly.
-    #@createables ||= Card::Cardtype.find(:all, :order=>'name').map do |ct| 
-    Card.cardtypes.collect do |class_name,card_name|
-      next if class_name == 'InvitationRequest'
-      next unless System.role_ok?(Card.cardtype_create_parties[class_name].to_i)
-      { :codename=>class_name, :name=>card_name }
-    end.compact.sort_by {|x| x[:name].downcase }
-    
-    #Card::Cardtype.find(:all, :order=>'name').map do |ct| 
-    #  next if ct.extension.nil? #bad data?
-    #  next if !ct.ok? :create
-    #  next if ct.extension.class_name == 'InvitationRequest'
-    #  { :codename=> ct.extension.class_name, :name=> ct.name }
-    #end.compact
-  end
 
   def active?
     status == 'active'
@@ -125,8 +159,12 @@ class User < ActiveRecord::Base
   end
 
   def password_required?
-    crypted_password.blank? or not password.blank?
-  end   
-  
+    not_openid? && (crypted_password.blank? or not password.blank?)
+  end
+ 
+  def not_openid?
+    identity_url.blank?
+  end
+
 end
 

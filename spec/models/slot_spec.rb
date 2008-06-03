@@ -22,7 +22,9 @@ describe WagnHelper::Slot, "" do
     @a = Card.new(:name=>'weird_t', :content=>"{{A}}")
     @a.send(:set_defaults)
     Slot.new(@a).render(:view).should ==  "<span cardId=\"\" class=\"card-slot paragraph full cardid-\" position=\"1\" >\n<div class=\"view\">\n<span class=\"content editOnDoubleClick\"><span cardId=\"80\" class=\"transcluded cardid-80\" position=\"1\" ><span class=\"content editOnDoubleClick\">Alpha <a class=\"known-card\" href=\"/wagn/Z\">Z</a></span></span></span>\n</div>\n</span>" 
-  end
+  end    
+  
+  
 
 end
 

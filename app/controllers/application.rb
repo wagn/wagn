@@ -11,7 +11,8 @@ class ApplicationController < ActionController::Base
   layout :ajax_or_not, :except=>[:render_fast_404]
   attr_reader :card, :cards, :renderer, :context   
   attr_accessor :notice
-  before_filter :note_current_user, :load_context, :reset_class_caches, :save_request 
+  before_filter :per_request_setup
+    #:note_current_user, :load_context, :reset_class_caches, :save_request, :note_time 
   helper_method :card, :cards, :renderer, :context, :previous_page, 
     :edit_user_context, :sidebar_cards, :notice, :slot, :url_for_page, :url_for_card
   
@@ -24,16 +25,35 @@ class ApplicationController < ActionController::Base
   include ActionView::Helpers::TextHelper #FIXME: do we have to do this? its for strip_tags() in edit()
   include ActionView::Helpers::SanitizeHelper
    
-  protected  
+  protected
+  
+  def per_request_setup
+    User.current_user = current_user || User.find_by_login('anon')
+    
+    @context = params[:context] || 'main_1'
+    @action = params[:action]
+    
+    # reset class caches
+    # FIXME: this is a bit of a kluge.. several things stores as cattrs in modules
+    # that need to be reset with every request (in addition to current user)
+    Card.reset_cache
+    Cardtype.reset_cache
+    Role.reset_cache
+    
+    System.request = request 
+    System.time = Time.now.to_f
+
+  end
+  
   def edit_ok
     @card.ok! :edit
   end
   
   def create_ok
-    if params[:card] and cardtype = params[:card][:type]
-      Cardtype.find_by_class_name(cardtype).card.me_type.ok! :create
-    elsif User.current_user.createable_cardtypes.empty?
-      raise Wagn::PermissionDenied, "Sorry #{::User.current_user.cardname}\, you don't have permission to create new cards"
+    if params[:card] and cardtype = params[:card][:type]  
+      Card.const_get(cardtype).create_ok!
+    elsif Cardtype.createable_cardtypes.empty?
+      raise Wagn::PermissionDenied, "Sorry, you don't have permission to create new cards"
     end  
   end
   
@@ -77,37 +97,11 @@ class ApplicationController < ActionController::Base
     @revision = @card.revisions[@revision_number - 1]      
   end  
   
-  def load_context
-    @context = params[:context] || 'main_1'
-    @action = params[:action]
-  end 
-  
-  def reset_class_caches
-    # FIXME: this is a bit of a kluge.. several things stores as cattrs in modules
-    # that need to be reset with every request (in addition to current user)
-    Card.load_cardtypes!
-    Role.cache = {}
-    Card.cache = {}
-    User.cache = {}
-  end
-  
-  def sidebar_cards
-    unless @sidebar_cards 
-      cards = Card.search( :plus=>'*sidebar')
-      @sidebar_cards = cards.sort_by do |c| 
-        #(side = Card.find_by_name(c.name + '+*sidebar')) ? side.content.to_i : 0
-        # wow no_new is an ugly hack-- CachedCard interface needs work.
-        (side=CachedCard.get(c.name+'+*sidebar',nil,:no_new=>true)) ? side.content.to_i : 0
-      end
-    end
-    @sidebar_cards.map do |card|
-      CachedCard.get(card.name, card) 
-    end
-  end  
-  
+
   def handle_cardtype_update(card)
+    #FIXME -- only used in connection controller.  should be phased out.
     if updating_type?  
-      old_type = card.type
+#      old_type = card.type
       card.type=params[:card][:type]  
       card.save!
       card = Card.find(card.id)
@@ -132,19 +126,11 @@ class ApplicationController < ActionController::Base
     )
   end
   
-  def log_viewing
-    RecentViewing.log( self ) if ajax_or_not
-  end  
-  
   def render_jsonp( args )
     str = render_to_string args
     render :json=>( params[:callback] || "wadget") + '(' + str.to_json + ')'
   end
   
-  def note_current_user
-    User.current_user = current_user || User.find_by_login('anon')
-  end
-
   def remember_card( card )
     
     #warn "SESSION RETURN STACK:  #{session[:return_stack].inspect}"
@@ -189,10 +175,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def save_request
-    System.request = request 
-  end
-  
   def renderer
     Renderer.new
   end

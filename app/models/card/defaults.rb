@@ -9,15 +9,7 @@ module CardLib
       end
     end      
     module ClassMethods 
-=begin    
-      def set_editor_type( type ) 
-        self.editor_type = type
-      end
-      
-      def set_description( description )
-        self.description = description
-      end
-=end    
+
     end
     def queries
       if !@queries
@@ -62,15 +54,6 @@ module CardLib
     end
     # --
 
-=begin
-    def editor_type
-      self.class.editor_type
-    end
-    
-    def description
-      self.class.description
-    end
-=end
     protected
     def backlinks
       @backlinks ||= Card.find_by_wql("cards that link to cards where id=#{id}")

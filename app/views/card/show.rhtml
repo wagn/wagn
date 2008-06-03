@@ -4,8 +4,5 @@
 </style>
 
 
-<%= params[:view]=='content' ? '<div>' : '' %>
-  <% @title = @card.name %>  
-	<%= get_slot.render(:view, :wrap=>!request.xhr?, :add_javascript=>true ) %>
-</div>
-
+<% @title = @card.name %>  
+<%= get_slot.render((render_arg(:view) || :open), :wrap=>!request.xhr?, :add_javascript=>true ) %>

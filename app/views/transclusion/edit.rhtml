@@ -1,4 +1,4 @@
-<% get_slot.wrap('transclusion', @wrap) do |slot| %>  
+<% get_slot.wrap('transclusion', :slot? =>@wrap) do |slot| %>  
 
   <% if inst = (card.new_record? ? card.new_instructions : card.edit_instructions) %>
      <%= render( :partial=> '/card/instructions', :locals=>{ :instructions=> inst } ) %>
@@ -9,7 +9,7 @@
 	  <% form_remote_for :card, card, :url=>slot.url_for("transclusion/update"), 
 				 :html=>{ :id=>slot.editor_id(:form), :class=>'editor', :onsubmit=>slot.save_function					 } do |form| %>
 			
-			<% if card.hard_content_template %>  
+			<% if card.hard_template %>  
 			  <% slot.form = form %>
 			  <%= slot.render :raw_content %>
 			<% else %>

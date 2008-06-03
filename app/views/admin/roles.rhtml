@@ -1,7 +1,7 @@
 <h1>Role Administration</h1>
 
 <div id='create-button'>
-  <% if Card::Role.ok? :create %>
+  <% if Card::Role.create_ok? %>
     <%= link_to 'Create New Role', { :controller=>'card', :action=>'new', 'card[type]'=>'Role'} %> 
   <% end %>
 </div>

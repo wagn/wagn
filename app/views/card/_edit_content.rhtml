@@ -1,0 +1,41 @@
+<%= get_slot.edit_submenu(params[:inclusions] ? :inclusions : :content) %>
+
+<% if card.template? %>
+	<div class="template-type-form instruction">
+	  <% form_remote_for :card, card, :url=>slot.url_for("card/quick_update") do %>
+	    <span class="title">Form Rules:</span>
+	    <%- define={ :Soft=>'set card defaults', :Hard=>'manage card formatting'} %>
+	    <%- card.extension_type ||= 'SoftTemplate' %>
+	    <% [:Soft, :Hard ].each do |type| %>
+	      <%= radio_button :card, :extension_type, "#{type}Template", :onchange=>'this.form.onsubmit()' %> 
+	      <label><%= type.to_s.upcase %></label> - <%= define[type] %>
+	    <% end %>
+	  <% end %>
+	</div>
+<% end %>
+
+
+<% if inst = card.edit_instructions %>
+  <%= render( :partial=> 'card/instructions', :locals=>{ :instructions=> inst } ) %>
+<% end %>
+
+<% if card.hard_template and card.hard_template.ok? :read %>
+	<div class="instruction">
+   Formatted by a <%= link_to_page 'form card', card.hard_template.name %>.
+	</div>
+<% end %>
+
+
+<% div( :id=>slot.id('edit-area'), :class=>"editor edit-area #{card.hard_template ? :templated : ''}" ) do %>
+  <% form_remote_for :card, card, :url=>slot.url_for("card/update"), 
+			:html=>{ :class=>'form editor',:onsubmit=>slot.save_function	 } do |form| %>
+		<div>
+		  <% slot.form = form %> 
+		  <%= slot.render (params[:inclusions] ? :multi_edit : :edit ) %>
+		</div>
+		<%= button_to_remote "Delete #{card.name}", { :url=>slot.url_for("card/remove") }, :style=>'float:right'	%>			
+		<%= button_to_function "Save", "this.form.onsubmit()", :class=>'save-card-button' %>
+		<%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function } %> 
+		
+	<% end %>
+<% end %>

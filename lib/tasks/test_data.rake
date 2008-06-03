@@ -64,7 +64,7 @@ task :populate_template_database => :environment do
     joe_user = ::User.create! :login=>"joe_user",:email=>'joe@user.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>User.find_by_login('admin')
     joe_card = Card::User.create! :name=>"Joe User", :extension=>joe_user, :content => "I'm number two"    
 
-    bt = Card.find_by_name 'Basic+*template'
+    bt = Card.find_by_name 'Basic+*tform'
     fail "oh god #{bt.permissions.inspect}" if bt.permissions.empty?
          
     # generic, shared attribute card
@@ -145,7 +145,7 @@ task :populate_template_database => :environment do
     
     # for template stuff
     Card::Cardtype.create! :name=> "UserForm"
-    Card.create! :name=>"UserForm+*template", :content=>"{{+name}} {{+age}} {{+description}}",
+    Card.create! :name=>"UserForm+*tform", :content=>"{{+name}} {{+age}} {{+description}}",
       :extension_type=>"HardTemplate"
     #Card::UserForm.create! :name=>"JoeForm"
   end   
@@ -167,7 +167,8 @@ task :generate_fixtures => :environment do
   puts ">>migrating template database"
   System.site_name = 'Wagn'
   Rake::Task['db:migrate'].invoke  
-  
+
+#=begin  
   begin
     set_database 'wagn_test_template'
     
@@ -186,6 +187,7 @@ task :generate_fixtures => :environment do
   puts ">>preparing test database"
   # go ahead and load the fixtures into the test database
   Rake::Task['db:test:prepare'].invoke
+#=end
 end
 
 task :extract_fixtures => :environment do

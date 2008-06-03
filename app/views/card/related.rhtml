@@ -4,16 +4,16 @@
 	<div class="content related headroom">
 		<h2>Self</h2>
 		<% @card.pieces.each do |particle| %>
-		  <%= render_card particle, 'line' %>
+		  <%= render_card particle, :closed %>
 		<% end %>
 		<% unless @card.type == 'Basic' %>
   		<h2>Type</h2>
-  		<%= render_card @card.cardtype, 'line' %>
+  		<%= render_card @card.cardtype, :closed %>
   	<% end %>
 	  <% if @card.type == 'Cardtype' %>
 	    <h2><%= @card.name %> Cards</h2>
 	    <%= render_card "#{@card.name}+*type cards", 'line' %>
-	    <% if @card.me_type.ok? :create %>
+	    <% if Cardtype.create_ok?(@card.type) %>
 	      <%= button_to "Create new #{@card.name} card", "/card/new?card[type]=#{@card.codename}" %>
 				<%= link_to "Import Cards of this type", "/import?cardtype=#{@card.codename}" %>
 	    <% end %>
@@ -21,7 +21,7 @@
 	  <h2>Connections</h2>
     <%= render_card "#{@card.name}+*plus cards", 'line' %>
     <%= render_card "#{@card.name}+*plus parts", 'line' %>  
-		<% if !createable_cardtypes.empty? %>
+		<% if !Cardtype.createable_cardtypes.empty? %>
 		  <%= button_to_remote "Connect #{@card.name} to another card", :url=>slot.url_for("connection/new"), 
 						:update=>slot.id %>
 		<% end %>

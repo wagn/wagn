@@ -1,4 +1,5 @@
 module CardHelper
+  
   def party_name(party)
     party ? party.card.name : 'Nobody'
   end
@@ -11,7 +12,7 @@ module CardHelper
       ptitle = (pu == User.current_user) ? "Me (#{pu.card.name})" : pu.card.name
       container<<[ptitle,'personal']
     end
-    possible_roles = System.ok?(:set_card_permissions) ? Role.find_configurables : User.current_user
+    possible_roles = System.ok?(:set_card_permissions) ? Role.find_configurables : [] #User.current_user
     container+= container_from_roles( possible_roles )
 
     selected = 
@@ -26,14 +27,14 @@ module CardHelper
     options_for_select container, selected
   end
 
-def selected_from(party)
-  c = party.class
-  case c
-  when NilClass; ''
-  when User; 'personal'
-  else; party.id
+  def selected_from(party)
+    c = party.class
+    case c
+    when NilClass; ''
+    when User; 'personal'
+    else; party.id
+    end
   end
-end
 
   def container_from_roles( roles )
     #user = User.current_user

@@ -1,6 +1,7 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-
+=begin
+# WE STOPPED ENFORCING THIS RULE!
 describe Card, "New Connection Card with two differently restricted pieces" do
   before do
     User.as :admin
@@ -14,6 +15,8 @@ describe Card, "New Connection Card with two differently restricted pieces" do
     #warn "errors: #{@cd.errors.inspect}"
   end
 end
+=end
+
 
 describe Card, "New Connection Card with one restricted piece" do
   before do

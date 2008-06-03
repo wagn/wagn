@@ -1,0 +1,12 @@
+<% command = slot.expand_transclusions( card.content ) %>
+<%= 
+	begin
+	  if System.enable_server_cards
+	    Shellbox.new.run( command )
+	  else  
+	    'sorry, server cards are not enabled'
+	  end
+	rescue Exception=>e
+	  e.message
+	end
+%>

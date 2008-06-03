@@ -22,7 +22,7 @@ class AccountCreationTest < Test::Unit::TestCase
     
     
   def test_should_create_account_from_invitation_request_when_user_hard_templated
-    Card.create :name=>'User+*template', :content=>"like this", :extension_type=>"HardTemplate"
+    Card.create :name=>'User+*tform', :content=>"like this", :extension_type=>"HardTemplate"
     assert_difference Card::InvitationRequest, :count, -1 do
       assert_difference Card::User, :count, 1 do
         post_invite :card=>{ :name=>"Ron Request"}
@@ -81,7 +81,7 @@ class AccountCreationTest < Test::Unit::TestCase
   end
   
   def test_should_create_account_when_user_cards_are_templated   ##FIXME -- I don't think this actually catches the bug I saw.
-    Card.create! :name=> 'User+*template', :extension_type=>'HardTemplate'
+    Card.create! :name=> 'User+*tform', :extension_type=>'HardTemplate'
     assert_new_account do 
       post_invite
       assert_response 200

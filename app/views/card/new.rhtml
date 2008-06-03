@@ -5,21 +5,21 @@
 
   	<div class="instruction">
   	  <% if !@card.name.blank? %>
-  	    <p>Currently, there is no card named "<strong><%= @card.name %></strong>", but you are most welcome to create it.</p>
+  	    <p>Currently, there is no card named "<strong><%= @card.name %></strong>", but you are welcomed to create it.</p>
   	  <% end %>
-  
-  	  <p>Creating a new card is easy: you just need a name.  Add some content if you like.  Or do that later.  Do what feels right.</p>
-  	  <p>You can also change the card's "type", which may change the kind of content you can enter.</p>
-  
+      <p> 
+        <% if card.new_instructions %>
+          <%= card.new_instructions %>
+        <% else%>
+          Creating a new card is easy; you just need a unique name.
+        <% end %>
+      </p>
   	</div>
   <% end %>
 
-  <% get_slot.wrap("new") do |slot| %>   
+  <% get_slot(@card).wrap("new") do |slot| %>   
   	<% @title = "New Card" %>  
   	
-    <% if inst = card.new_instructions %>
-      <%= render( :partial=> 'instructions', :locals=>{ :instructions=> inst } ) %>
-    <% end %>
  
   	<div class="edit-area">
   	  <% form_remote_for :card, @card, :url=>slot.url_for('card/create'), 
@@ -31,20 +31,25 @@
   							<%= slot.name_field(form) %>
   					  </span> 
   					</td>
-  					<td>
-  					  <span class="cardtype-area">
-  						  <%= slot.cardtype_field form, :onchange=>slot.update_cardtype_function(   
-  						        :url=>slot.url_for('card/new'), :update=>slot.id, 			    
-  						        :with=>"Form.serialize(getSlotElement(this,'form'))" 
-  						  ) %>
-  					  </span>
-  					</td>
+					  <% if !request.xhr? and params[:card] and cardtype = params[:card][:type] %>
+					    <%= form.hidden_field :type %>
+					  <% else %>
+    					<td>
+    					  <span class="cardtype-area">
+    						  <%= slot.cardtype_field form, :onchange=>slot.update_cardtype_function(   
+    						        :url=>slot.url_for('card/new'), :update=>slot.id, 			    
+    						        :with=>"Form.serialize(getSlotElement(this,'form'))" 
+    						  ) %>
+    					  </span>
+    					</td>
+    				<% end %>
   				</tr>
   			</table>
-  			<div class="editor">  
-  				<% if card.hard_content_template %>
-     		  	This card is controlled by a template: once you create it a form will be 
-  					generated for editing.
+  			<div class="editor">
+  			    
+  				<% if card.hard_template %>
+  				  <%- slot.form = form %>
+    			  <%= slot.render(:multi_edit)%>
   				<% else %>
   					<%= slot.content_field(form) %>
   				<% end %>

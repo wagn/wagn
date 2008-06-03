@@ -39,10 +39,48 @@ module SlotHelpers
     eid << (area.blank? ? '' : "-#{area}")
   end
 
+  def edit_submenu(on)
+    div(:class=>'submenu') do
+      'EDIT:' +
+      [[ :content,    'card/edit',          true                      ],
+       [ :name,       'card/edit_name',     true                      ],
+       [ :type,       'card/edit_type',     !card.type_template?      ],
+       [ :inclusions, 'card/edit',          (!card.out_transclusions.empty? && !template? && !card.hard_template),         {:inclusions=>true} ]
+       ].map do |key,partial,ok,args|
+
+        link_to_remote( key, 
+          { :url=>url_for(partial, args), :update => ([:name,:type].member?(key) ? id('card-body') : id) }, 
+          :class=>(key==on ? 'on' : '') 
+        ) if ok
+      end.compact.join       
+     end  
+  end
+=begin 
+  <% div(:class=>'submenu') do %>
+
+
+    <%= link_to_remote 'content', :url=>slot.url_for("card/edit_content"), :update => slot.id('card-body') %>
+    <%= link_to_remote 'name', :url=>slot.url_for("cardname/edit"), :update => slot.id('card-body') %>
+    <% unless card.type_template? %>
+      <%= link_to_remote 'type', :url=>slot.url_for("cardtype/edit"), :update => slot.id('card-body') %>
+  	<% end %>
+  <% end %>
+=end
+
+  def paging_params
+    s = {}
+    [:offset,:limit].each{|key| s[key] = params[key]}
+    s[:offset] = s[:offset] ? s[:offset].to_i : 0
+  	s[:limit]  = s[:limit]  ? s[:limit].to_i  : (context=='main_1' ? 50 : 20)
+	  s
+  end
+
+
   def url_for(url, args=nil)
     url = "javascript:'/#{url}" 
     url << "/#{card_id}" if (card and card_id)
     url << "?context='+getSlotContext(this)"
+    url << "+'&' + getSlotOptions(this)"
     url << ("+'"+ args.map{|k,v| "&#{k}=#{v}"}.join('') + "'") if args
     url
   end
@@ -112,6 +150,7 @@ module SlotHelpers
     text << form.text_field( :name, {:size=>40, :class=>'field card-name-field'}.merge(options))
   end
 
+
   def cardtype_field(form,options={})
     text = %{<span class="label"> card type:</span>\n} 
     text << @template.select_tag('card[type]', cardtype_options_for_select(card.type), options) 
@@ -121,21 +160,21 @@ module SlotHelpers
     fn = ['File','Image'].include?(card.type) ? 
             "Wagn.onSaveQueue['#{context}'].clear(); " :
             "Wagn.runQueue(Wagn.onSaveQueue['#{context}']); "      
-    if @card.hard_content_template
+    if @card.hard_template
       #options.delete(:with)
     end
     fn << remote_function( options )   
   end
      
   def js_content_element 
-    @card.hard_content_template ? "" : ",getSlotElement(this,'form').elements['card[content]']" 
+    @card.hard_template ? "" : ",getSlotElement(this,'form').elements['card[content]']" 
   end
 
   def content_field(form,options={})   
     self.form = form              
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
-    pre_content + self.render_partial( custom_partial_for('editor'), options )
+    pre_content + self.render_partial( card_partial('editor'), options )
   end                          
  
   def save_function 
@@ -151,29 +190,43 @@ module SlotHelpers
     # it seems as though code executed inline on ajax requests works fine
     # to initialize the editor, but when loading a full page it fails-- so
     # we run it in an onLoad queue.  the rest of this code we always run
-    # inline-- at least until that causes problems.     
+    # inline-- at least until that causes problems.    
+    
+    #FIXME: this looks like it won't work for arbitraritly nested forms.  1-level only
     hook_context = @nested ? context.split('_')[0..-2].join('_') : context
   
-    code = ""
+    code = "" 
     if hooks[:setup]
       code << "Wagn.onLoadQueue.push(function(){\n" unless request.xhr?
       code << hooks[:setup]
       code << "});\n" unless request.xhr?
     end
+    root.js_queue_initialized||={}
+    unless root.js_queue_initialized.has_key?(hook_context) 
+      code << "warn('initializing #{hook_context} save & cancel queues');"
+      code << "Wagn.onSaveQueue['#{hook_context}']=$A([]);\n"
+      code << "Wagn.onCancelQueue['#{hook_context}']=$A([]);\n"
+      root.js_queue_initialized[hook_context]=true
+    end
     if hooks[:save]  
-      code << "warn('adding to #{hook_context} save queue');"
-      code << "if (typeof(Wagn.onSaveQueue['#{hook_context}'])=='undefined') {\n"
-      code << "  Wagn.onSaveQueue['#{hook_context}']=$A([]);\n"
-      code << "}\n"
+      #code << "if (typeof(Wagn.onSaveQueue['#{hook_context}'])=='undefined') {\n"
+      #code << "  Wagn.onSaveQueue['#{hook_context}']=$A([]);\n"
+      #code << "}\n"  
+      #warn("root= #{root}  self=#{self}")
+      #if root == self
+      #  code << "Wagn.onSaveQueue['#{hook_context}'].clear();"
+      #  code << "warn('clearing #{hook_context} save queue');" 
+      #end
       code << "Wagn.onSaveQueue['#{hook_context}'].push(function(){\n"
       code << "warn('running #{hook_context} save hook');"
       code << hooks[:save]
       code << "});\n"
+      code << "warn('added to #{hook_context} save queue');"
     end
     if hooks[:cancel]
-      code << "if (typeof(Wagn.onCancelQueue['#{hook_context}'])=='undefined') {\n"
-      code << "  Wagn.onCancelQueue['#{hook_context}']=$A([]);\n"
-      code << "}\n"
+      #code << "if (typeof(Wagn.onCancelQueue['#{hook_context}'])=='undefined') {\n"
+      #code << "  Wagn.onCancelQueue['#{hook_context}']=$A([]);\n"
+      #code << "}\n"
       code << "Wagn.onCancelQueue['#{hook_context}'].push(function(){\n"
       code << hooks[:cancel]
       code << "});\n"

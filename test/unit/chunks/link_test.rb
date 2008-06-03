@@ -11,13 +11,30 @@ class LinkTest < Test::Unit::TestCase
     card = newcard('Baines', '[[Nixon]]')
     assert_equal('<a class="wanted-card" href="/wagn/Nixon">Nixon</a>', render(card) )
 
+
+    lbj_link = '<a class="known-card" href="/wagn/Baines">Lyndon</a>'
+    
     card2 = newcard('Johnson', '[Lyndon][Baines]')
-    assert_equal('<a class="known-card" href="/wagn/Baines">Lyndon</a>', render(card2) )
+    assert_equal(lbj_link, render(card2) )
+    
+    card2.content = '[[Baines|Lyndon]]'; card2.save
+    assert_equal(lbj_link, render(card2) )
+    
   end
+
+  def test_relative_card
+    cardA = newcard('Kennedy', '[[+Monroe]]')
+    assert_equal('<a class="wanted-card" href="/wagn/Kennedy%2BMonroe">+Monroe</a>', render(cardA) )
+
+    cardB = newcard('Clinton', '[[Lewinsky+]]')
+    assert_equal('<a class="wanted-card" href="/wagn/Lewinsky%2BClinton">Lewinsky+</a>', render(cardB) )
+  end
+
+
      
-  def test_semi_relative
+  def test_relative_url
     card3 = newcard('recent changes', '[[/recent]]')
-    assert_equal('<a class="internal-link" href="/recent">/recent</a>', render(card3), "internal link-- KNOWN TO BE BROKEN" )
+    assert_equal('<a class="internal-link" href="/recent">/recent</a>', render(card3) )
   end
   
   def test_external

@@ -148,11 +148,11 @@ module WagnHelper
       
       rkey = self.card.name + ":" + action.to_s
       root.renders[rkey] ||= 1; root.renders[rkey] += 1
-      root.start_time ||= Time.now.to_f
+      #root.start_time ||= Time.now.to_f
 
       ok_action = case
         when root.renders[rkey] > MAX_RENDERS                           ; :too_many_renders
-        when (Time.now.to_f - root.start_time) > System.max_render_time ; :too_slow
+        #when (Time.now.to_f - root.start_time) > System.max_render_time ; :too_slow
         when denial = deny_render?(action)                              ; denial
         else                                                            ; action
       end

@@ -7,6 +7,15 @@ class WikiReferenceTest < Test::Unit::TestCase
     Renderer.instance.rescue_errors = false
   end
 
+  def test_in_references_should_survive_cardtype_change
+    newcard("Banana","[[Yellow]]")
+    newcard("Submarine","[[Yellow]]")
+    newcard("Sun","[[Yellow]]")
+    newcard("Yellow")
+    assert_equal %w{ Banana Submarine Sun }, Card["Yellow"].referencers.plot(:name).sort
+    y=Card["Yellow"];  y.type="UserForm"; y.save!
+    assert_equal %w{ Banana Submarine Sun }, Card["Yellow"].referencers.plot(:name).sort
+  end
 
   def test_hard_templated_card_should_update_references_on_template_update
     Card::UserForm.create! :name=>"JoeForm"

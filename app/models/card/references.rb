@@ -16,7 +16,7 @@ module CardLib
     end
     
     def update_references_on_update
-      Renderer.instance.render(self, self.content, update_references=true)
+      Renderer.instance.render(self, self.content, update_references=true) 
       expire_templatee_references
       #hard_templatees.each {|c| Renderer.instance.render(c, self.content, update_references=true) }
     end
@@ -56,7 +56,7 @@ module CardLib
         
         
         after_create :update_references_on_create
-        before_destroy :update_references_on_destroy
+        after_destroy :update_references_on_destroy
         after_update :update_references_on_update
       end
     end

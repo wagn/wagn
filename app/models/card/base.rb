@@ -31,37 +31,8 @@ module Card
     belongs_to :extension, :polymorphic=>true
 
     has_many :permissions, :foreign_key=>'card_id' #, :dependent=>:delete_all
-        
-    has_many :name_references, :class_name=>'WikiReference',
-      :finder_sql=>%q{SELECT * from wiki_references w where w.referenced_name=#{ActiveRecord::Base.connection.quote(key)}}
-#    has_many :name_referencers, :through=>:name_references, :source=>:referencer
-#       :finder_sql=>%q{SELECT cards.* FROM cards INNER JOIN wiki_references ON cards.id = wiki_references.card_id    WHERE ((wiki_references.referenced_name = #{ActiveRecord::Base.connection.quote(key)})) }
-
-    has_many :in_references,:class_name=>'WikiReference', :foreign_key=>'referenced_card_id'
-    has_many :out_references,:class_name=>'WikiReference', :foreign_key=>'card_id', :dependent=>:destroy
-    
-    has_many :in_transclusions, :class_name=>'WikiReference', :foreign_key=>'referenced_card_id',:conditions=>["link_type in (?,?)",WikiReference::TRANSCLUSION, WikiReference::WANTED_TRANSCLUSION]
-    has_many :out_transclusions,:class_name=>'WikiReference', :foreign_key=>'card_id',           :conditions=>["link_type in (?,?)",WikiReference::TRANSCLUSION, WikiReference::WANTED_TRANSCLUSION]
-
-    has_many :in_links, :class_name=>'WikiReference', :foreign_key=>'referenced_card_id',:conditions=>["link_type=?",WikiReference::LINK]
-    has_many :out_links,:class_name=>'WikiReference', :foreign_key=>'card_id',:conditions=>["link_type=?",WikiReference::LINK]
-
-    has_many :referencers, :through=>:in_references
-    has_many :referencees, :through=>:out_references
-    
-    has_many :transcluders, :through=>:in_transclusions, :source=>:referencer
-    has_many :transcludees, :through=>:out_transclusions, :source=>:referencee
-
-    has_many :linkers, :through=>:in_links, :source=>:referencer
-    has_many :linkees, :through=>:out_links, :source=>:referencee
-   
+           
     before_validation_on_create :set_defaults
-
-    after_create :update_references_on_create
-    before_destroy :update_references_on_destroy
-
-    #after_save :cache_priority #, CardCache
-    #after_destroy CardCache
      
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
       :update_link_ins, :allow_type_change, :phantom
@@ -75,11 +46,6 @@ module Card
         
       
     protected    
-
-    def create_references_for_hard_templatees
-      #Renderer.instance.render(self, self.content, update_references=true)
-    end
-    
     def set_defaults 
       return unless new_record?  # because create callbacks are also called in type transitions 
       # FIXME: AccountCreationTest:test_should_require_valid_cardname
@@ -98,6 +64,7 @@ module Card
        
       #[Permission.new(:task=>'read',:party=>::Role[:anon])] + 
       #  [:edit,:comment,:delete].map{|t| Permission.new(:task=>t.to_s, :party=>::Role[:auth])},
+      
 
       { 
         :permissions => default_permissions,
@@ -133,14 +100,6 @@ module Card
           Permission.new :task=>p.task, :party_id=>p.party_id, :party_type=>p.party_type
         end
       end
-    end
-    
-    def update_references_on_create    
-      WikiReference.update_on_create(self)
-    end
-    
-    def update_references_on_destroy
-      WikiReference.update_on_destroy(self)
     end
     
     public
@@ -234,7 +193,8 @@ module Card
       def [](name) 
         # DONT do find_phantom here-- it ends up happening all over the place--
         # call it explicitly if that's what you want
-        self.cache[name.to_s] ||= self.find_by_name(name.to_s, :include=>:current_revision) #|| self.find_phantom(name.to_s)
+        #self.cache[name.to_s] ||= 
+        self.find_by_name(name.to_s, :include=>:current_revision) #|| self.find_phantom(name.to_s)
         #self.find_by_name(name.to_s)
       end
              

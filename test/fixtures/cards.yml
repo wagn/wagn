@@ -1021,7 +1021,7 @@ cards_038:
   created_at: 2007-12-03 00:29:08.093768
 cards_122: 
   reader_type: Role
-  name: UserForm+*template
+  name: UserForm+*tform
   appender_id: 
   updated_at: 2008-05-31 17:21:44.433092
   current_revision_id: "125"
@@ -1033,7 +1033,7 @@ cards_122:
   trash: f
   trunk_id: "122"
   appender_type: 
-  key: user_form+*template
+  key: user_form+*tform
   extension_id: 
   created_at: 2008-05-31 17:21:44.433092
 cards_095: 
@@ -1257,23 +1257,6 @@ cards_040:
   key: basic+*tform
   extension_id: 
   created_at: 2007-12-03 00:29:15.756391
-cards_013: 
-  reader_type: Role
-  name: "*template"
-  appender_id: 
-  updated_at: 2007-12-03 00:29:14.475213
-  current_revision_id: "27"
-  tag_id: 
-  extension_type: 
-  type: Basic
-  reader_id: "1"
-  id: "27"
-  trash: f
-  trunk_id: 
-  appender_type: 
-  key: "*template"
-  extension_id: 
-  created_at: 2007-12-03 00:29:14.475213
 cards_041: 
   reader_type: Role
   name: "*cards+*rform"

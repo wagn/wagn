@@ -11,7 +11,11 @@ class TransclusionTest < Test::Unit::TestCase
   def setup
     setup_default_user
   end  
-
+              
+  def test_truth
+    assert true
+  end
+  
 =begin
 
 

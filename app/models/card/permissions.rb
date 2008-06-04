@@ -127,8 +127,8 @@ module CardLib
       end
     end
        
-    def approve_create_me
-      deny_because you_cant("create cards of this type") unless Cardtype.create_ok?(self.type)
+    def approve_create_me  
+      deny_because you_cant("create #{self.type} cards") unless Cardtype.create_ok?(self.type)
     end
 
     def approve_edit
@@ -143,8 +143,9 @@ module CardLib
       approve_task(:edit) unless new_record?     
     end
     
-    def approve_create
-      deny_because you_cant("create #{ct.name} cards") unless Cardtype.create_ok?(self.type)    
+    def approve_create     
+      raise "must be a cardtype card" unless self.type == 'Cardtype'
+      deny_because you_cant("create #{self.name} cards") unless Cardtype.create_ok?(Cardtype.class_name_for(self.name))    
     end
                                     
     def approve_comment
@@ -163,12 +164,12 @@ module CardLib
       unless new_record?       
         approve_delete
         if right_template and right_template.hard_template?  and !allow_type_change
-          deny_because you_cant "change the type of this card -- it is hard templated by #{right_template.name}"
+          deny_because you_cant( "change the type of this card -- it is hard templated by #{right_template.name}")
         end
       end
       new_self = clone_to_type( type ) 
       unless Cardtype.create_ok?(new_self.type)
-        deny_because you_cant "create #{new_self.cardtype.name} cards"
+        deny_because you_cant("create #{new_self.cardtype.name} cards")
       end
     end
 
@@ -176,7 +177,7 @@ module CardLib
       unless new_record?
         approve_edit
         if tmpl = hard_template 
-          deny_because you_cant "change the content of this card -- it is hard templated by #{tmpl.name}"
+          deny_because you_cant("change the content of this card -- it is hard templated by #{tmpl.name}")
         end
       end
     end
@@ -192,7 +193,7 @@ module CardLib
           (System.ok?(:set_personal_card_permissions) and (personal_user == ::User.current_user)) or 
           new_record? then #FIXME-perm.  on new cards we should check that permission has not been altered from default unless user can set permissions.
           
-        deny_because you_cant "set permissions" 
+        deny_because you_cant("set permissions" )
       end
     end
     

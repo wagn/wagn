@@ -9,14 +9,14 @@ describe Card, "find_phantom" do
   before { User.as :joe_user }
 
   it "should find: *plus parts" do
-    Card.find_phantom("A+*plus parts").search.plot(:name).sort.should == A_JOINEES
+    Card.find_phantom("A+*plus parts").search(:limit=>100).plot(:name).sort.should == A_JOINEES
   end
 
   it "should find custom: testsearch" do
     Card::Search.create! :name=>"testsearch+*rform", 
       :extension_type=>"HardTemplate",
       :content=>'{"plus":"_self"}'  
-    Card.find_phantom("A+testsearch").search.plot(:name).sort.should == A_JOINEES
+    Card.find_phantom("A+testsearch").search(:limit=>100).plot(:name).sort.should == A_JOINEES
   end
 end
 

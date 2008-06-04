@@ -34,10 +34,10 @@ class WagBotTest < Test::Unit::TestCase
   end
   
   def test_revise_separate_links()
-    apple = newcard('apple', 'foobar [boots][banana]')
+    apple = newcard('apple', 'foobar [[banana|boots]]')
     assert_equal ['banana'], apple.out_references.plot(:referenced_name)
     WagBot.instance.revise_card_links( apple, 'banana', 'orange')
-    assert_equal 'foobar [boots][orange]', apple.reload.content
+    assert_equal 'foobar [[orange|boots]]', apple.reload.content
     assert_equal ['orange'], apple.out_references(refresh=true).plot(:referenced_name)    
   end
   

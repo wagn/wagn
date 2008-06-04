@@ -23,6 +23,7 @@ require_dependency 'card/templating'
 require_dependency 'card/defaults' 
 require_dependency 'card/permissions'
 require_dependency 'card/search'
+require_dependency 'card/references'
 require_dependency 'card/caching'
 
 Card::Base.class_eval do       
@@ -31,6 +32,7 @@ Card::Base.class_eval do
   include CardLib::Defaults
   include CardLib::Permissions                               
   include CardLib::Search 
+  include CardLib::References
   #include CardLib::Caching 
 end
  

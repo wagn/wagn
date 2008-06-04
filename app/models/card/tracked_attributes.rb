@@ -81,9 +81,6 @@ module CardLib
       # FIXME?: this code written under influence. may require adjustment
       new_content =  WikiContent.clean_html!(new_content) if clean_html?
       
-      rendered_content = Renderer.instance.render(self, new_content, update_references=true)
-      hard_templatees.each {|c| Renderer.instance.render(c, new_content, update_references=true) }
-
       clear_drafts if current_revision_id
       self.current_revision = Revision.create :card_id=>self.id, :content=>new_content
       @search_content_changed = true

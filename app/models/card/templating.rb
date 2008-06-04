@@ -106,11 +106,13 @@ module CardLib
     end
        
     def type_template?
-      tag and tag.name == '*tform'
+      name.tag_name == '*tform'
+      #tag and tag.name == '*tform'
     end
 
     def right_template?
-      tag and tag.name == '*rform'
+      name.tag_name == '*rform'
+      #tag and tag.name == '*rform'
     end
        
     def hard_template?
@@ -137,10 +139,10 @@ module CardLib
           trunk.simple? ? {:right=>trunk.id} : {:left=>{:type=>trunk.trunk.name},:right=>trunk.tag.id}
         when type_template?
           trunk.simple? ? {:type=>trunk.name} : {:left=>{:type=>trunk.trunk.name},:right=>{:type=>trunk.tag.name}}
-        end
-      User.as :admin
-      Card.search(wql) if wql  
-
+        else nil
+        end    
+      warn  "ht wql: #{wql}"
+      wql ?  User.as(:admin) { Card.search(wql) } : []
     end    
     
     def real_card

@@ -6,12 +6,21 @@ class WikiReferenceTest < Test::Unit::TestCase
     Renderer.instance.rescue_errors = false
   end
 
-    def test_hard_templated_card_should_insert_references_on_create
+
+  def test_hard_templated_card_should_update_references_on_template_update
+    Card::UserForm.create! :name=>"JoeForm"
+    tmpl = Card["UserForm+*tform"]
+    tmpl.content = "{{+monkey}} {{+banana}} {{+fruit}}"; tmpl.save!
+    assert_equal ["joe_form+monkey", "joe_form+banana", "joe_form+fruit"].sort,
+      Card["JoeForm"].out_references.plot(:referenced_name).sort     
+  end                                                         
+  
+  def test_hard_templated_card_should_insert_references_on_create
     Card::UserForm.create! :name=>"JoeForm"
     assert_equal ["joe_form+age", "joe_form+name", "joe_form+description"].sort,
       Card["JoeForm"].out_references.plot(:referenced_name).sort     
-  end                                                                
-=begin
+  end         
+
   def test_hard_template_reference_creation_on_template_creation
     Card::Cardtype.create! :name=>"SpecialForm"
     Card::SpecialForm.create! :name=>"Form1", :content=>"foo"
@@ -40,14 +49,14 @@ class WikiReferenceTest < Test::Unit::TestCase
      watermelon = newcard('watermelon', 'mmmm')
      seeds = newcard('seeds')
      watermelon_seeds = watermelon.connect seeds, 'black'
-     lew = newcard('Lew', "likes [[watermelon]] and [seeds][watermelon#{JOINT}seeds]")
+     lew = newcard('Lew', "likes [[watermelon]] and [[watermelon#{JOINT}seeds|seeds]]")
 
      watermelon = Card['watermelon']
      watermelon.update_link_ins = true
      watermelon.confirm_rename = true
      watermelon.name="grapefruit"
      watermelon.save!
-     assert_equal "likes [[grapefruit]] and [seeds][grapefruit#{JOINT}seeds]", lew.reload.content
+     assert_equal "likes [[grapefruit]] and [[grapefruit#{JOINT}seeds|seeds]]", lew.reload.content
 
 
      watermelon = Card['grapefruit']
@@ -55,7 +64,7 @@ class WikiReferenceTest < Test::Unit::TestCase
      watermelon.confirm_rename = true
      watermelon.name='bananas'
      watermelon.save!
-     assert_equal "likes [[grapefruit]] and [seeds][grapefruit#{JOINT}seeds]", lew.reload.content 
+     assert_equal "likes [[grapefruit]] and [[grapefruit#{JOINT}seeds|seeds]]", lew.reload.content 
      w = ReferenceTypes::WANTED_LINK
      assert_equal [w,w], lew.out_references.plot(:link_type), "links should be Wanted"
    end
@@ -104,14 +113,14 @@ class WikiReferenceTest < Test::Unit::TestCase
 
   def test_non_simple_link
     alpha = Card.create :name=>'alpha'
-    beta = Card.create :name=>'beta', :content=>"I link to [ALPHA][alpha]"
+    beta = Card.create :name=>'beta', :content=>"I link to [[alpha|ALPHA]]"
     assert_equal ['alpha'], beta.referencees.plot(:name)
     assert_equal ['beta'], alpha.referencers.plot(:name)
   end
   
   def test_link_with_spaces
     alpha = Card.create :name=>'alpha card'
-    beta =  Card.create :name=>'beta card', :content=>"I link to [ALPHA CARD][alpha_card]"
+    beta =  Card.create :name=>'beta card', :content=>"I link to [[alpha_card|ALPHA CARD]]"
     assert_equal ['alpha card'], beta.referencees.plot(:name)
     assert_equal ['beta card'], alpha.referencers.plot(:name)
   end
@@ -123,7 +132,12 @@ class WikiReferenceTest < Test::Unit::TestCase
   end
   
   
-=begin  
+=begin   
+  # this test is about the time between when a card is first created and the time that
+  # references pointing to the cards name are updated and given an id;  
+  # these 'name_references' are used in the cache_sweeper, but i'm not sure i understand
+  # the scenario where they're needed. LWH
+  
   def test_pickup_new_transclusions_on_create
     @l = Card.create! :name=>"woof", :content=>"{{Lewdog}}"  # no Lewdog card yet...
     @e = Card.new(:name=>"Lewdog", :content=>"grrr")              # now there is
@@ -134,6 +148,8 @@ class WikiReferenceTest < Test::Unit::TestCase
 =end
 
 =begin  
+
+  # This test doesn't make much sense to me... LWH
   def test_revise_changes_references_from_wanted_to_linked_for_new_cards
     new_card = Card::Basic.create(:name=>'NewCard')
     new_card.revise('Reference to [[WantedCard]], and to [[WantedCard2]]', Time.now, User.find_by_login('quentin'), 

@@ -8,7 +8,9 @@
 <%= slot.editor_hooks :setup=> %{ 
 	  tinyMCE.init({ #{tinymceconfig} }); 
 	  tinyMCE.execCommand('mceAddControl', false, '#{eid}-tinymce'); 
-    $('#{eid}-tinymce_path_row').insert({bottom: "<span class='syntax-tips'>link: [[name]] / [[name|text]]  or include: {{name}} / {{name|view}}</span>"});
+    Try.these(function() {
+			$('#{eid}-tinymce_path_row').insert({bottom: "<span class='syntax-tips'>link: [[name]] / [[name|text]]  or include: {{name}} / {{name|view}}</span>"});
+		 });
 	},
 	:save=> %{ 
 		t = tinyMCE.getInstanceById( '#{eid}-tinymce' ); 

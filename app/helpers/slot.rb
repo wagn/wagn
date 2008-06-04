@@ -195,7 +195,8 @@ module WagnHelper
 
         when :closed_content;   render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
         when :open_content;     render_card_partial(:content)  # FIXME?: 'content' is inconsistent
-        when :raw_content; 
+        when :raw_content;    
+          #warn "rendering #{card.name} refs=#{card.references_expired} card.content=#{card.content}"
           @renderer.render( card, args.delete(:content) || "", update_refs=card.references_expired)
           
       ###---(  EDIT VIEWS ) 

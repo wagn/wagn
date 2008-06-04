@@ -1,13 +1,15 @@
+# I don't trust this sweeper stuff.  do it myself.  for now, it's in references, which is weird.
+#  will move to caching.
 class CardSweeper < ActionController::Caching::Sweeper
+=begin
   observe Card::Base
-
   def after_save(card) 
-    return if card.nil?  #FIXME: this happens on create-- why???  
+    #return if card.nil?  #FIXME: this happens on create-- why???  
     expire(card)
      
     # FIXME: this will need review when we do the new defaults/templating system
     #if card.changed?(:content)
-     card.hard_templatees.each {|c| expire(c) }     
+    card.hard_templatees.each {|c| expire(c) }     
     #card.transcluders.each {|c| expire(c) }
     #end
     
@@ -21,6 +23,10 @@ class CardSweeper < ActionController::Caching::Sweeper
   private  
   
   def expire(card)
+    warn "expiring #{card.name}"
     CachedCard.new(card.key).expire_all
   end
+=begin
+=end
+
 end

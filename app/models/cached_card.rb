@@ -7,6 +7,8 @@
   
 =end     
 
+class CacheError < StandardError; end
+
 class CachedCard 
   cattr_accessor :cache, :perform_caching
   attr_reader :key
@@ -22,9 +24,10 @@ class CachedCard
     # get_real is for when you want to use the cache, but don't want any builtins, auto,
     # card_creation, or any type of shenanigans.  give me the card if it's there, otherwise nil.
     # called by templating system
-    def get_real(name)
+    def get_real(name)  
+      return Card[name] unless perform_caching
       key = name.to_key
-      if perform_caching && (card = self.find(key)) 
+      if card = self.find(key)
         card
       elsif card = self.load_card(name)
         self.cache_me_if_you_can(card)
@@ -159,7 +162,10 @@ class CachedCard
   def footer=(content) write('footer', content) end
   
   def real_card
-    card
+    card || begin
+      expire_all
+      raise(CacheError, "cached card #{@key} found but it's not in database")
+    end
   end
   
   def card

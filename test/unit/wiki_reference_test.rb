@@ -7,6 +7,23 @@ class WikiReferenceTest < Test::Unit::TestCase
     Renderer.instance.rescue_errors = false
   end
 
+  def test_hard_templated_card_should_insert_references_on_create
+    Card::UserForm.create! :name=>"JoeForm"
+    WagnHelper::Slot.new(Card["JoeForm"]).render(:raw_content)
+    assert_equal ["joe_form+age", "joe_form+name", "joe_form+description"].sort,
+      Card["JoeForm"].out_references.plot(:referenced_name).sort     
+    assert !Card["JoeForm"].references_expired      
+  end         
+
+  def test_hard_template_reference_creation_on_template_creation
+    Card::Cardtype.create! :name=>"SpecialForm"
+    Card::SpecialForm.create! :name=>"Form1", :content=>"foo"
+    Card.create! :name=>"SpecialForm+*tform", :content=>"{{+bar}}", :extension_type=>"HardTemplate"
+    WagnHelper::Slot.new(Card["Form1"]).render(:raw_content)
+    assert !Card["Form1"].references_expired      
+    assert_equal ["form1+bar"], Card["Form1"].out_references.plot(:referenced_name)
+  end
+  
   def test_in_references_should_survive_cardtype_change
     newcard("Banana","[[Yellow]]")
     newcard("Submarine","[[Yellow]]")
@@ -27,24 +44,6 @@ class WikiReferenceTest < Test::Unit::TestCase
     assert !Card["JoeForm"].references_expired
   end                                                         
   
-  def test_hard_templated_card_should_insert_references_on_create
-    Card::UserForm.create! :name=>"JoeForm"
-    WagnHelper::Slot.new(Card["JoeForm"]).render(:raw_content)
-    assert_equal ["joe_form+age", "joe_form+name", "joe_form+description"].sort,
-      Card["JoeForm"].out_references.plot(:referenced_name).sort     
-    assert !Card["JoeForm"].references_expired      
-  end         
-
-  def test_hard_template_reference_creation_on_template_creation
-    Card::Cardtype.create! :name=>"SpecialForm"
-    Card::SpecialForm.create! :name=>"Form1", :content=>"foo"
-    Card.create! :name=>"SpecialForm+*tform", :content=>"{{+bar}}", :extension_type=>"HardTemplate"
-    WagnHelper::Slot.new(Card["Form1"]).render(:raw_content)
-    assert !Card["Form1"].references_expired      
-    
-    assert_equal ["form1+bar"], Card["Form1"].out_references.plot(:referenced_name)
-  end
-
   def test_container_transclusion
     bob_city = Card.create :name=>'bob+city' 
     Card.create :name=>'address+*rform',:content=>"{{#{JOINT}city|base:parent}}"
@@ -116,31 +115,32 @@ class WikiReferenceTest < Test::Unit::TestCase
   def test_simple_link
     alpha = Card.create :name=>'alpha'
     beta = Card.create :name=>'beta', :content=>"I link to [[alpha]]"
-    assert_equal ['alpha'], beta.referencees.plot(:name)
-    assert_equal ['beta'], alpha.referencers.plot(:name)
+    assert_equal ['alpha'], Card['beta'].referencees.plot(:name)
+    assert_equal ['beta'], Card['alpha'].referencers.plot(:name)
+  end
+
+  def test_link_with_spaces
+    alpha = Card.create! :name=>'alpha card'
+    beta =  Card.create! :name=>'beta card', :content=>"I link to [[alpha_card|ALPHA CARD]]"
+    assert_equal ['alpha card'], Card['beta card'].referencees.plot(:name)
+    assert_equal ['beta card'], Card['alpha card'].referencers.plot(:name)
   end
 
 
   def test_simple_transclusion
     alpha = Card.create :name=>'alpha'
     beta = Card.create :name=>'beta', :content=>"I transclude to {{alpha}}"
-    assert_equal ['alpha'], beta.transcludees.plot(:name)
-    assert_equal ['beta'], alpha.transcluders.plot(:name)
+    assert_equal ['alpha'], Card['beta'].transcludees.plot(:name)
+    assert_equal ['beta'], Card['alpha'].transcluders.plot(:name)
   end
 
   def test_non_simple_link
     alpha = Card.create :name=>'alpha'
     beta = Card.create :name=>'beta', :content=>"I link to [[alpha|ALPHA]]"
-    assert_equal ['alpha'], beta.referencees.plot(:name)
-    assert_equal ['beta'], alpha.referencers.plot(:name)
+    assert_equal ['alpha'], Card['beta'].referencees.plot(:name)
+    assert_equal ['beta'], Card['alpha'].referencers.plot(:name)
   end
   
-  def test_link_with_spaces
-    alpha = Card.create :name=>'alpha card'
-    beta =  Card.create :name=>'beta card', :content=>"I link to [[alpha_card|ALPHA CARD]]"
-    assert_equal ['alpha card'], beta.referencees.plot(:name)
-    assert_equal ['beta card'], alpha.referencers.plot(:name)
-  end
 
   def test_pickup_new_links_on_create
     @l = newcard("woof", "[[Lewdog]]")  # no Lewdog card yet...

@@ -3,28 +3,41 @@ module CardLib
     module ClassMethods 
     end
 
-    protected 
+    protected   
+    
     def update_references_on_create   
+      WikiReference.update_on_create(self)  
+
       # FIXME: bogus blank default content is set on hard_templated cards...
       content = self.template ? self.template.content : self.content
-      #warn "RUNNING UPDATE ON CREATE type = #{self.type} template = #{template.name} "
-      
-      WikiReference.update_on_create(self)  
       Renderer.instance.render(self, content, update_references=true)   
-      expire_templatee_references
-      #hard_templatees.each {|c| Renderer.instance.render(c, self.content, update_references=true) }
+      expire_templatee_references 
     end
     
     def update_references_on_update
       Renderer.instance.render(self, self.content, update_references=true) 
       expire_templatee_references
-      #hard_templatees.each {|c| Renderer.instance.render(c, self.content, update_references=true) }
     end
 
     def update_references_on_destroy
       WikiReference.update_on_destroy(self)
       expire_templatee_references
-      #hard_templatees.each {|c| Renderer.instance.render(c, c.content, update_references=true) }
+    end     
+    
+    def expire_cache
+      expire(self)
+      # FIXME: this will need review when we do the new defaults/templating system
+      #if card.changed?(:content)
+
+      self.hard_templatees.each {|c| expire(c) }     
+      self.dependents.each {|c| expire(c) }
+      self.referencers.each {|c| expire(c) }
+      self.name_references.plot(:referencer).each{|c| expire(c)}
+    end
+    
+    def expire(card)  
+      #warn "expiring #{card.name}"
+      CachedCard.new(card.key).expire_all
     end
     
     def self.included(base)   
@@ -58,6 +71,8 @@ module CardLib
         after_create :update_references_on_create
         after_destroy :update_references_on_destroy
         after_update :update_references_on_update
+        
+        after_save :expire_cache
       end
     end
   end

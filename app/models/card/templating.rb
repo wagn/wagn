@@ -40,7 +40,7 @@ module CardLib
       end
       
       def find_template(name)
-        Card[name]  
+        CachedCard.get_real(name) #  
       end
       
       def default_template

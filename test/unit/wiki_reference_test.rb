@@ -1,4 +1,5 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + '/../test_helper' 
+
 class WikiReferenceTest < Test::Unit::TestCase
   common_fixtures
   def setup
@@ -11,20 +12,27 @@ class WikiReferenceTest < Test::Unit::TestCase
     Card::UserForm.create! :name=>"JoeForm"
     tmpl = Card["UserForm+*tform"]
     tmpl.content = "{{+monkey}} {{+banana}} {{+fruit}}"; tmpl.save!
+    WagnHelper::Slot.new(Card["JoeForm"]).render(:raw_content)
     assert_equal ["joe_form+monkey", "joe_form+banana", "joe_form+fruit"].sort,
       Card["JoeForm"].out_references.plot(:referenced_name).sort     
+    assert !Card["JoeForm"].references_expired
   end                                                         
   
   def test_hard_templated_card_should_insert_references_on_create
     Card::UserForm.create! :name=>"JoeForm"
+    WagnHelper::Slot.new(Card["JoeForm"]).render(:raw_content)
     assert_equal ["joe_form+age", "joe_form+name", "joe_form+description"].sort,
       Card["JoeForm"].out_references.plot(:referenced_name).sort     
+    assert !Card["JoeForm"].references_expired      
   end         
 
   def test_hard_template_reference_creation_on_template_creation
     Card::Cardtype.create! :name=>"SpecialForm"
     Card::SpecialForm.create! :name=>"Form1", :content=>"foo"
     Card.create! :name=>"SpecialForm+*tform", :content=>"{{+bar}}", :extension_type=>"HardTemplate"
+    WagnHelper::Slot.new(Card["Form1"]).render(:raw_content)
+    assert !Card["Form1"].references_expired      
+    
     assert_equal ["form1+bar"], Card["Form1"].out_references.plot(:referenced_name)
   end
 

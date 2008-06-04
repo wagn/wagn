@@ -10,17 +10,20 @@ module CardLib
       #warn "RUNNING UPDATE ON CREATE type = #{self.type} template = #{template.name} "
       
       WikiReference.update_on_create(self)  
-      Renderer.instance.render(self, content, update_references=true)
+      Renderer.instance.render(self, content, update_references=true)   
+      expire_templatee_references
       #hard_templatees.each {|c| Renderer.instance.render(c, self.content, update_references=true) }
     end
     
     def update_references_on_update
       Renderer.instance.render(self, self.content, update_references=true)
+      expire_templatee_references
       #hard_templatees.each {|c| Renderer.instance.render(c, self.content, update_references=true) }
     end
 
     def update_references_on_destroy
       WikiReference.update_on_destroy(self)
+      expire_templatee_references
       #hard_templatees.each {|c| Renderer.instance.render(c, c.content, update_references=true) }
     end
     

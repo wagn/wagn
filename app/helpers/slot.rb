@@ -144,7 +144,7 @@ module WagnHelper
     end
 
     def render(action, args={})      
-      warn "<render(#{card.name}, #{@state}).render(#{action}, item=>#{args[:item]})"
+      #warn "<render(#{card.name}, #{@state}).render(#{action}, item=>#{args[:item]})"
       
       rkey = self.card.name + ":" + action.to_s
       root.renders[rkey] ||= 1; root.renders[rkey] += 1
@@ -179,22 +179,26 @@ module WagnHelper
         when :linkname;  Cardname.escape(card.name)
 
       ###---(  CONTENT VARIATIONS ) 
-        #-----( without transclusions processed )
+        #-----( with transclusions processed )
         when :content;  
           w_action = self.requested_view = 'content'  
           c = self.render( :expanded_view_content)
           w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c))
 
-        when :closed_content;   render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
-        when :open_content;     render_card_partial(:content)  # FIXME?: 'content' is inconsistent
-        when :raw_content;      @renderer.render( card, args.delete(:content) || "", update_refs=false)
-          
-        #-----( with transclusions processed )
         when :expanded_view_content, :raw
           expand_transclusions(  cache_action('view_content') {  card.post_render( render(:open_content)) } )
+
         when :expanded_line_content
           expand_transclusions(  cache_action('line_content') { render(:closed_content) } )
 
+
+        #-----( without transclusions processed )
+
+        when :closed_content;   render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
+        when :open_content;     render_card_partial(:content)  # FIXME?: 'content' is inconsistent
+        when :raw_content; 
+          @renderer.render( card, args.delete(:content) || "", update_refs=card.references_expired)
+          
       ###---(  EDIT VIEWS ) 
 
         when :edit;  @state=:edit;  card.hard_template ? render(:multi_edit) : content_field(slot.form)

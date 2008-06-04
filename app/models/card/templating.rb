@@ -131,22 +131,35 @@ module CardLib
     
     #-----( ... and I govern these cards )
     
+    def real_card
+      self
+    end   
+    
     def hard_templatees
-      return [] unless template? and hard_template?
+      if wql=hard_templatee_wql
+        User.as(:admin) {  Card.search(wql)  }
+      else
+        []
+      end
+    end    
+    
+    def expire_templatee_references
+      if wql=hard_templatee_wql
+        condition = User.as(:admin){ Wql2::CardSpec.new(wql.merge(:return=>"condition")).to_sql }
+        connection.execute "update cards t set references_expired=1 where #{condition}"
+      end
+    end
+    
+    private
+    def hard_templatee_wql
+      return nil unless template? and hard_template?
       wql =
         case
         when right_template?
           trunk.simple? ? {:right=>trunk.id} : {:left=>{:type=>trunk.trunk.name},:right=>trunk.tag.id}
         when type_template?
           trunk.simple? ? {:type=>trunk.name} : {:left=>{:type=>trunk.trunk.name},:right=>{:type=>trunk.tag.name}}
-        else nil
-        end    
-      warn  "ht wql: #{wql}"
-      wql ?  User.as(:admin) { Card.search(wql) } : []
-    end    
-    
-    def real_card
-      self
+        end
     end
       
   end

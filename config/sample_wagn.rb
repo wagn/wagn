@@ -3,6 +3,7 @@ System.base_url = "http://localhost:3000"
 System.site_name = "NeWagN"
 
 System.max_render_time = 4.0
+System.max_renders = 8
 
 System.invitation_email_subject = "Join the {site_name} Community!"
 System.invitation_email_body = "\nHello,\n{invitor} has invited you to join the {site_name} community.\n"

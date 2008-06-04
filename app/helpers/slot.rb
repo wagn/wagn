@@ -2,7 +2,6 @@ require_dependency 'slot_helpers'
 module WagnHelper 
   class Slot
     include SlotHelpers  
-    MAX_RENDERS = 5
     cattr_accessor :max_char_count
     self.max_char_count = 200
     attr_reader :card, :context, :action, :renderer, :template
@@ -151,7 +150,7 @@ module WagnHelper
       #root.start_time ||= Time.now.to_f
 
       ok_action = case
-        when root.renders[rkey] > MAX_RENDERS                           ; :too_many_renders
+        when root.renders[rkey] > System.max_renders                    ; :too_many_renders
         #when (Time.now.to_f - root.start_time) > System.max_render_time ; :too_slow
         when denial = deny_render?(action)                              ; denial
         else                                                            ; action

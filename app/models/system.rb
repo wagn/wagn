@@ -14,7 +14,7 @@ class System < ActiveRecord::Base
 	  :postgres_tsearch_dir,
     :request, :debug_wql,
     :google_maps_api_key,
-    :time, :max_render_time
+    :time, :max_render_time, :max_renders
     
   self.pagesize = 20      
   
@@ -85,7 +85,7 @@ class System < ActiveRecord::Base
 =begin
 # This was an attempt to begin the migration of the site_name setting away from wagn.rb      
     def deck_name
-      Cardname.escape( Card['*home'] ? Card['*home'].content : System.site_name )
+      Cardname.escape( card = CachedCard.get_real['*home'] ? card.content : System.site_name )
     end
 =end
 

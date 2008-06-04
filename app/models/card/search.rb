@@ -2,13 +2,15 @@ module CardLib
   module Search
     module ClassMethods 
       def find_builtin(name)
+        key=name.to_key
         searches =  
-          { '*recent changes' => %{ {"sort":"update", "dir":"desc"}          },
-            '*search'         => %{ {"match":"_keyword", "sort":"relevance"} },
-            '*broken links'   => %{ {"link_to":"_none"}                      },
+          { '*recent_change' => %{ {"sort":"update", "dir":"desc"}          },
+            '*search'        => %{ {"match":"_keyword", "sort":"relevance"} },
+            '*broken_link'   => %{ {"link_to":"_none"}                      },
           }
-        if searches[name]
-          create_phantom(name, searches[name], 'Search')
+        case 
+          when searches[key];
+            create_phantom(name, searches[key], 'Search')
         end
       end
       

@@ -13,8 +13,11 @@ class CardController < ApplicationController
   #----------( Special cards )
   
   def index
-    redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_name)
-#    redirect_to :controller=>'card',:action=>'show', :id=>System.deck_name
+    if card = CachedCard.get_real('*home')
+      redirect_to '/'+ card.content
+    else
+      redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_name)
+    end
   end
 
   def mine
@@ -52,6 +55,7 @@ class CardController < ApplicationController
     warn params.inspect         
     @card = Card.create! params[:card]
     if params[:multi_edit]
+      User.as(:admin) if @card.type == 'InvitationRequest'
       @card.multi_update(params[:cards])
     end  
     return render_card_errors(@card) unless @card.errors.empty?

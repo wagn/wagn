@@ -22,6 +22,7 @@ class AccountController < ApplicationController
   end
   
   def invitation_request
+    User.as :admin
     # FIXME: this should be handled by card/new  (respond with different templates for different cardegories)
   end       
   

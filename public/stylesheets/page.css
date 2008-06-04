@@ -246,8 +246,9 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
 /* -----bottom menu ------*/
 
 #bottom-menu {
-  margin: 20px;
-  
+  padding: 40px 0px 10px 0px;
+  width: 100%;
+  clear: both;
 }
 
 #credit {

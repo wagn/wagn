@@ -231,7 +231,6 @@ module WagnHelper
     end
 
     def expand_transclusions(content) 
-      #logger.info("<expand_transclusions content=#{content}>")
       #return ("skip(#{card.name}):"+content) 
       if card.name.template_name?          
         # KLUGILICIOIUS: if we leave the {{}} transclusions intact they may get processed by
@@ -243,34 +242,38 @@ module WagnHelper
       content.gsub!(Chunk::Transclude::TRANSCLUDE_PATTERN) do  
         if @state==:line && self.char_count > Slot.max_char_count
           ""
-        else
-          match = $~
-          tname, options = Chunk::Transclude.parse(match)
-          fullname = tname+'' #weird.  have to do this or the tname gets busted in the options hash!!
-          #warn "options for #{tname}: #{options.inspect}"
-          fullname.to_absolute(options[:base]=='parent' ? card.name.parent_name : card.name)
-          #logger.info("absolutized tname and now have these transclusion options: #{options.inspect}")
+        else 
+          begin
+            match = $~
+            tname, options = Chunk::Transclude.parse(match)
+            fullname = tname+'' #weird.  have to do this or the tname gets busted in the options hash!!
+            #warn "options for #{tname}: #{options.inspect}"
+            fullname.to_absolute(options[:base]=='parent' ? card.name.parent_name : card.name)
+            #logger.info("absolutized tname and now have these transclusion options: #{options.inspect}")
 
-#          options[:view]='edit' if @state == :edit
-          self.item_format = options[:item] if options[:item]  ##seems like this should be handled just by options...
+  #          options[:view]='edit' if @state == :edit
+            self.item_format = options[:item] if options[:item]  ##seems like this should be handled just by options...
 
-          tcard = case
-            when @state==:edit
-              ( Card.find_by_name( fullname ) || 
-                Card.find_phantom( fullname ) || 
-                Card.new( :name=>  fullname ) )
-            else
-              CachedCard.get fullname
-            end
+            tcard = case
+              when @state==:edit
+                ( Card.find_by_name( fullname ) || 
+                  Card.find_phantom( fullname ) || 
+                  Card.new( :name=>  fullname ) )
+              else
+                CachedCard.get fullname
+              end
           
-          #warn("sending these options for processing: #{options.inspect}")
+            #warn("sending these options for processing: #{options.inspect}")
          
-          tcontent = process_transclusion( tcard, options ) 
-          self.char_count += (tcontent ? tcontent.length : 0)
-          tcontent
+            tcontent = process_transclusion( tcard, options ) 
+            self.char_count += (tcontent ? tcontent.length : 0)
+            tcontent   
+          rescue Card::PermissionDenied
+            ""
+          end
         end
       end  
-      content 
+      content     
     end
        
     def render_partial( partial, locals={} )
@@ -288,7 +291,7 @@ module WagnHelper
     end
     
     def process_transclusion( card, options={} )  
-      #logger.info("<process_transclusion card=#{card.name} options=#{options.inspect}")
+      warn("<process_transclusion card=#{card.name} options=#{options.inspect}")
       subslot = subslot(card)  
       old_slot, @template.controller.slot = @template.controller.slot, subslot
 

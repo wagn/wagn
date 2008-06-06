@@ -15,9 +15,11 @@ class Notifier < ActionMailer::Base
   
   def invitation_request_alert(invite_request)  
     subject "#{System.site_name}: Invitation Requested by #{invite_request.name}"
-    from        "Wagnbot <#{::User.find_by_login('admin').email}>" 
+    from        "#{System.site_name}Bot <#{::User.find_by_login('admin').email}>" 
     recipients  System.invite_request_alert_email
+    content_type 'text/html'
     body  :site => System.site_name,
+          :card => invite_request,
           :email => invite_request.extension.email,
           :name => invite_request.name,
           :content => invite_request.content,

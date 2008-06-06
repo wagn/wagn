@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
   validates_length_of       :password, :within => 5..40, :if => :password_required?
   validates_confirmation_of :password,                   :if => :password_required?
   validates_presence_of     :invite_sender,              :if => :active?
-  validates_uniqueness_of   :salt, :allow_nil => true
+#  validates_uniqueness_of   :salt, :allow_nil => true
   
   before_save :encrypt_password
   

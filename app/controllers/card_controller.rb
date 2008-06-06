@@ -19,8 +19,18 @@ class CardController < ApplicationController
     key = url_for(options).split('://').last + "/#{roles_key}" + "/#{global_serial}" + 
       "/#{ajax_or_not}"
   end
-  
-  public
+       
+
+  public    
+  # weird that this is public
+  def cache_action?(action_name)
+    if !flash[:notice].blank? || !flash[:warning].blank? || !flash[:error].blank?
+      warn "flash present"
+      return false 
+    else 
+      true
+    end
+ 	end
    
 
   #----------( Special cards )

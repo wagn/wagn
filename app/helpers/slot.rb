@@ -291,7 +291,7 @@ module WagnHelper
     end
     
     def process_transclusion( card, options={} )  
-      warn("<process_transclusion card=#{card.name} options=#{options.inspect}")
+      #warn("<process_transclusion card=#{card.name} options=#{options.inspect}")
       subslot = subslot(card)  
       old_slot, @template.controller.slot = @template.controller.slot, subslot
 

@@ -2,13 +2,26 @@ class CardController < ApplicationController
   helper :wagn, :card 
   layout :ajax_or_not
   cache_sweeper :card_sweeper
-  before_filter :load_card!, :except => [ :auto_complete_for_card_name, :line, :view, :to_view, :test, :new, :create, :show, :index, :mine, :missing, :new_of_type ]
+  before_filter :load_card!, :except => [ :auto_complete_for_card_name, :line, :view, :to_view, :test, :new, :create, 
+    :show, :index, :mine, :missing, :new_of_type, :my_name ]
   before_filter :load_card_with_cache, :only => [:line, :view, :to_view ]
 
   before_filter :edit_ok,   :only=>[ :update, :save_draft, :rollback, :save_draft] 
   before_filter :create_ok, :only=>[ :new, :create ]
   before_filter :remove_ok, :only=>[ :remove ]
   
+  caches_action :show, :view
+
+  protected
+  def action_fragment_key(options)
+    roles_key = User.current_user.all_roles.map(&:id).join('-')
+    global_serial = Cache.get('GlobalSerial') #Time.now.to_f }
+    key = url_for(options).split('://').last + "/#{roles_key}" + "/#{global_serial}" + 
+      "/#{ajax_or_not}"
+  end
+  
+  public
+   
 
   #----------( Special cards )
   
@@ -24,6 +37,11 @@ class CardController < ApplicationController
     redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(User.current_user.card.name)
   end
 
+  def my_name                                              
+    self.class.layout nil
+    render :text=>User.current_user.card.name
+    self.class.layout :ajax_or_not
+  end
 
   #----------------( MODIFYING CARDS )
   

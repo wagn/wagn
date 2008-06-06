@@ -76,4 +76,11 @@ Session = CGI::Session::ActiveRecordStore.session_class
 System
 
 
+# cached-model
+require_dependency 'lib/cached_model'
+CACHE = MemCache.new 'localhost:11211', :namespace => 'my_rails_app'
+require_dependency 'lib/cache'                                      
+CachedModel::use_local_cache=true
+
+
 

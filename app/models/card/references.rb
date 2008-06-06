@@ -32,7 +32,9 @@ module CardLib
       self.hard_templatees.each {|c| expire(c) }     
       self.dependents.each {|c| expire(c) }
       self.referencers.each {|c| expire(c) }
-      self.name_references.plot(:referencer).each{|c| expire(c)}
+      self.name_references.plot(:referencer).each{|c| expire(c)}  
+      
+      Cache.put('GlobalSerial', Time.now.to_f)
     end
     
     def expire(card)  

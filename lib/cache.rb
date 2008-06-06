@@ -1,4 +1,13 @@
 module CacheMethods 
+  def cache(key)
+    result = Cache.get(key)
+    if result.nil?
+      result = yield
+      Cache.put(key, result)
+    end
+    result
+  end
+  
   def cache_key_prefix
     "/test/"
   end
@@ -34,13 +43,22 @@ module CacheMethods
   def increment_serial_for(object_key)
     serial_key = system_key(object_key, serial)
     write(serial_key, ((read(serial_key)||0).to_i + 1).to_s)
+  end       
+  
+  # FIXME: why am i using these?
+  def read(*args)
+    ActionController::Base.fragment_cache_store.read(*args)
+  end
+  
+  def write(*args)
+    ActionController::Base.fragment_cache_store.write(*args)
   end
 end
 
-Cache = ActionController::Base.fragment_cache_store 
-Cache.instance_eval
+#Cache = ActionController::Base.fragment_cache_store 
+Cache.instance_eval do
   extend CacheMethods
-  alias_method_chain :read, :prefix
-  alias_method_chain :write, :prefix
+  #alias_method_chain :read, :prefix
+  #alias_method_chain :write, :prefix
 end
                          

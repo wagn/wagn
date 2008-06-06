@@ -1,4 +1,4 @@
-module CachedModel
+module CachedObject
   class Base
     include Cacheable
     attr_accessor :key
@@ -17,15 +17,15 @@ module CachedModel
   end
 end
 
-class CachedPage < CachedModel::Base
+class CachedPage < CachedObject::Base
   cache_accessor :content
 end
 
-class CachedView < CachedModel::Base
+class CachedView < CachedObject::Base
   cache_accessor :content
 end
 
-class GlobalSerial < CachedModel::Base
+class GlobalSerial < CachedObject::Base
   include Singleton      
   
   def self.bump_dependants
@@ -38,7 +38,7 @@ class GlobalSerial < CachedModel::Base
 end
 
 ### FILTERS
-class TypeFilter < CachedModel::Base
+class TypeFilter < CachedObject::Base
   class << self
     def bump_dependants_for(card)
       CachedTypeFilter.new(self.type).bump_dependants
@@ -46,7 +46,7 @@ class TypeFilter < CachedModel::Base
   end
 end
 
-class NameFilter < CachedModel::Base 
+class NameFilter < CachedObject::Base 
   class << self
     def create(key)
       f = self.new(key); f.save; f

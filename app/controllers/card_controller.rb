@@ -10,7 +10,7 @@ class CardController < ApplicationController
   before_filter :create_ok, :only=>[ :new, :create ]
   before_filter :remove_ok, :only=>[ :remove ]
   
-  caches_action :show, :view
+  caches_action :show, :view, :to_view
 
   protected
   def action_fragment_key(options)

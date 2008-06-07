@@ -82,7 +82,7 @@ class CardController < ApplicationController
   def create
     warn params.inspect         
     @card = Card.create! params[:card]
-    if params[:multi_edit]
+    if params[:multi_edit] and params[:cards]
       User.as(:admin) if @card.type == 'InvitationRequest'
       @card.multi_update(params[:cards])
     end  

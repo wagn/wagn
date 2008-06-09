@@ -100,7 +100,8 @@ module WagnHelper
     
     wordstring +='<span style="color:#666"> ...</span>' if wordlist.length > l    
 #    wordstring += '...' if wordlist.length > l    
-    wordstring.gsub! /<br[\s\/]*>/, ' ' ## Also a hack -- get rid of <br>'s -- they make line view ugly.
+    wordstring.gsub! /<[\/]?br[\s\/]*>/, ' ' ## Also a hack -- get rid of <br>'s -- they make line view ugly.
+    wordstring.gsub! /<[\/]?p[^>]*>/, ' ' ## Also a hack -- get rid of <br>'s -- they make line view ugly.
     wordstring
   end
   

@@ -32,11 +32,15 @@ module Card
       add_toc = false
       toc_card_content = '' 
       if length > 0 
-        toc_card = self.attribute_card("*table of contents")
-        toc_card_content = toc_card ? toc_card.content : ''
-        if  !toc_card_content.match('off') and (toc_card_content.match('on') or length > 3)
-          add_toc = true
-        end
+		  toc_card=nil
+        ::User.as(:admin) do
+		  	 toc_card = self.attribute_card("*table of contents")
+		  
+       	 toc_card_content = toc_card ? toc_card.content : ''
+        	if  !toc_card_content.match('off') and (toc_card_content.match('on') or length > 3)
+        	  add_toc = true
+        	end
+		  end
       end
 
       if add_toc

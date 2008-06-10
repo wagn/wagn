@@ -12,7 +12,7 @@
 	  <%= render :partial=>'layouts/logo' %>
 
 		<div id="sidebar" context="sidebar">
-			<%= get_slot(CachedCard.get("*sidebar"), "sidebar_1").render(:raw) %>
+			<%= WagnHelper::Slot.new(CachedCard.get("*sidebar"), "sidebar_1").render(:raw) %>
 			<%= render :partial=>'admin/navigation' %><%# FIXME: move this into a card somehow? %>			  
 		</div>
 		

@@ -13,7 +13,7 @@
         <% else %>
   	      <%= User.current_user.cardname %>, you 
   	    <% end %>
-  	    don't have permission to edit <%= less_fancy_title(@card) %> 
+  	    don't have permission to edit <%= @card.name ? less_fancy_title(@card) : 'this card' %> 
     		<% unless @no_slot_header %>
     			(See the <%= slot.link_to_menu_action('options') %> tab to learn more).
     		<% end %>

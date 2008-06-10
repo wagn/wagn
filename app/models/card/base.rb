@@ -358,7 +358,7 @@ module Card
     end   
     
     def edit_instructions #returns card
-      (tag && tag.attribute_card('*edit')) || cardtype.attribute_card('*edit')
+      ((tag or (name and tag=Card[name.tag_name])) && tag.attribute_card('*edit')) || cardtype.attribute_card('*edit')
     end
     
     def new_instructions

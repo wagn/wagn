@@ -3,7 +3,7 @@ class CardController < ApplicationController
   layout :ajax_or_not
   cache_sweeper :card_sweeper
   before_filter :load_card!, :except => [ :auto_complete_for_card_name, :line, :view, :to_view, :test, :new, :create, 
-    :show, :index, :mine, :missing, :new_of_type, :my_name ]
+    :show, :index, :mine, :missing, :new_of_type, :my_name, :add_field ]
   before_filter :load_card_with_cache, :only => [:line, :view, :to_view ]
 
   before_filter :edit_ok,   :only=>[ :update, :save_draft, :rollback, :save_draft] 
@@ -287,6 +287,7 @@ class CardController < ApplicationController
   
   # doesn't really seem to fit here.  may want to add new controller if methods accrue?        
   def add_field # for pointers only
+    load_card! if params[:id]
     render :partial=>'cardtypes/pointer/field', :locals=>params.merge({:card=>@card})
   end
                                                     

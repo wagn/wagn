@@ -210,6 +210,9 @@ a.current, a:link.current {
   -moz-border-radius: 6px;
   padding: 1px 5px;
 }
+.card-slot .syntax-tips {
+  color: #888;
+}
 /*
 .card-slot .name-editor .label,
 .card-slot .cardtype-editor .label {

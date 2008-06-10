@@ -66,7 +66,7 @@ class AccountController < ApplicationController
   def create
     return unless request.post? 
     # FIXME: not hardcode user cardtype??  
-    @user = User.create_with_card( params[:card] )
+    @user = User.create_with_card( params )
     @card = @user.card
     
     render :update do |page|

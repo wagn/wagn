@@ -39,10 +39,11 @@ class User < ActiveRecord::Base
       end
     end
     
+    # FIXME: args=params.  should be less coupled..
     def create_with_card(args={})
       ## CREATE CARD FOR THE NEW USER
-      @card_name = args[:name]
-      @card = ::Card.find_by_name(@card_name) || ::Card::User.new( args )
+      @card_name = args[:card][:name]
+      @card = ::Card.find_by_name(@card_name) || ::Card::User.new( args[:card] )
       
       if @card.type == 'InvitationRequest' 
         @user = @card.extension or raise "Blam.  InvitationRequest should've been connected to a user"    
@@ -55,7 +56,7 @@ class User < ActiveRecord::Base
         @user.status='active'
         @user.invite_sender = ::User.current_user
       elsif @card.type=='User' and !@card.extension
-        @user = User.new( params[:user].merge( :invite_sender_id=>User.current_user.id )) 
+        @user = User.new( args[:user].merge( :invite_sender_id=>User.current_user.id )) 
         @user.status='active'
       else
         @card.errors.add(:name, "has already been taken")
@@ -77,9 +78,9 @@ class User < ActiveRecord::Base
         #User.as :admin do ## fixme was breaking on templated user card on permission to change content ? 
           @card.save!
         #end    
-        raise(Wagn::Oops, "Invitation Email subject is required") unless (params[:email] and params[:email][:subject])
-        raise(Wagn::Oops, "Invitation Email message is required") unless (params[:email] and params[:email][:message])
-        Notifier.deliver_account_info(@user, params[:email][:subject], params[:email][:message])
+        raise(Wagn::Oops, "Invitation Email subject is required") unless (args[:email] and args[:email][:subject])
+        raise(Wagn::Oops, "Invitation Email message is required") unless (args[:email] and args[:email][:message])
+        Notifier.deliver_account_info(@user, args[:email][:subject], args[:email][:message])
       end  
       @user
     end

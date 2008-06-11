@@ -440,6 +440,9 @@ module Wql2
       v=@cardspec.card if v=='_self'
       v=@cardspec.root.params['_keyword'] if v=='_keyword'
 
+      v=v.gsub(/\W/,' ') if op == '~'
+
+
       if op == '~' && System.enable_postgres_fulltext   
         v = v.strip.gsub(/\s+/, '&')
         @cardspec.sql.relevance_fields << "rank(indexed_name, to_tsquery(#{sqlize(v)}), 1) AS name_rank"

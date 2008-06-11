@@ -55,6 +55,12 @@ describe Wql2, "order" do
 end
     
 
+describe Wql2, "keyword" do
+  before { User.as :joe_user }
+  it "should escape nonword characters" do
+    Card.search( :match=>"two :(!").map(&:name).sort.should==["Joe User","One+Two","One+Two+Three","Two"]
+  end
+end
 
 describe Wql2, "search count" do
   before { User.as :joe_user }

@@ -33,7 +33,7 @@ module Card
     has_many :permissions, :foreign_key=>'card_id' #, :dependent=>:delete_all
            
     before_validation_on_create :set_defaults
-     
+    
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
       :update_link_ins, :allow_type_change, :phantom
   
@@ -348,8 +348,11 @@ module Card
       true
     end
     
-    def content
-      new_record? ? ok!(:create_me) : ok!(:read) # fixme-perm.  might need this, but it's breaking create...
+    def content   
+      # FIXME: we keep having permissions break when looking up system cards- this isn't great but better than error.
+      unless name=~/^\*/  
+        new_record? ? ok!(:create_me) : ok!(:read) # fixme-perm.  might need this, but it's breaking create...
+      end
       if tmpl = hard_template and tmpl!=self
         tmpl.content
       else

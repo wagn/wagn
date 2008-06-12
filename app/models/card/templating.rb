@@ -142,6 +142,7 @@ module CardLib
     end    
     
     def expire_templatee_references
+	   return unless respond_to?('references_expired')
       if wql=hard_templatee_wql
         condition = User.as(:admin){ Wql2::CardSpec.new(wql.merge(:return=>"condition")).to_sql }
         connection.execute "update cards t set references_expired=1 where #{condition}"

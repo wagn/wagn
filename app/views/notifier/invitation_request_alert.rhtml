@@ -6,7 +6,7 @@
 
 <div>
   <% if !@card.hard_template %>
-    <%= content %>
+    <%= @content %>
   <% end %>
   <%# slot =  WagnHelper::Slot.new(@card, 'bogus_1', 'view', self) %>
   <%#- a = slot.expand_transclusions(slot.render(:raw_content)) %>

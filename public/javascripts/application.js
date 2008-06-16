@@ -141,14 +141,14 @@ Object.extend(Wagn, {
   cardTable: function() { return Wagn.CardTable },
   
   title_mouseover: function( targetClass ) {
-    document.getElementsByClassName( targetClass ).each(function(elem) {
+    $$( '.'+targetClass ).each(function(elem) {
       Element.addClassName( elem, 'card-highlight');
       Element.removeClassName( elem, 'card');
     })
   },
 
   title_mouseout: function( targetClass ) {
-    document.getElementsByClassName( targetClass ).each(function(elem) {
+    $$( '.'+targetClass ).each(function(elem) {
       Element.removeClassName( elem, 'card-highlight');
       Element.addClassName( elem, 'card');
     })
@@ -166,7 +166,7 @@ Object.extend(Wagn, {
 
 
 Wagn.highlight = function( group, id )  {  
-  document.getElementsByClassName( group ).each(function(elem) { 
+  $$( '.'+group ).each(function(elem) { 
     Element.removeClassName( elem.id, 'current' );
   });
   Element.addClassName( group + '-' + id, 'current' );
@@ -203,7 +203,7 @@ setupLinksAndDoubleClicks = function() {
 
 
 setupCreateOnClick=function(container) {
-  Element.getElementsByClassName( document, "createOnClick" ).each(function(el){
+  $$( ".createOnClick" ).each(function(el){
     el.onclick=function(event) { 
       if (Prototype.Browser.IE) { event = window.event } // shouldn't prototype take card of this?              
       element = Event.element(event);
@@ -220,7 +220,7 @@ setupCreateOnClick=function(container) {
 }                  
 
 setupDoubleClickToEdit=function(container) {                               
-  Element.getElementsByClassName( document, "editOnDoubleClick" ).each(function(el){
+  $$( ".editOnDoubleClick" ).each(function(el){
     el.ondblclick=function(event) {   
       if (Prototype.Browser.IE) { event = window.event } // shouldn't prototype take card of this?              
       element = Event.element(event);   
@@ -269,10 +269,10 @@ getSlotFromContext=function(context){
   while(a.size() > 0) {
     pos = a.shift();      
     // FIXME: this is crazy.  must do better.
-    element =  $A(document.getElementsByClassName('card-slot', element).concat(
-                    document.getElementsByClassName('transcluded', element).concat(
-                      document.getElementsByClassName('nude-slot', element).concat( 
-                        document.getElementsByClassName('createOnClick',element)
+    element =  $A(Element.select(element, '.card-slot').concat(
+                    Element.select(element, '.transcluded').concat(
+                      Element.select(element, '.nude-slot').concat( 
+                        Element.select(element, '.createOnClick')
                  )))).find(function(x){
       ss = getSlotSpan(x.parentNode);
       return (!ss || ss==element) && x.getAttributeNode('position').value==pos;
@@ -284,7 +284,7 @@ getSlotFromContext=function(context){
 // FIXME: should be tested to not return content from nested slots.
 getSlotElements=function(element,name){
   var span = getSlotSpan(element);
-  return $A(document.getElementsByClassName(name, span)).reject(function(x){
+  return Element.select(span, '.'+name).reject(function(x){
     return getSlotSpan(x)!=span;
   });
 }
@@ -298,7 +298,7 @@ getSlotElement=function(element,name){
 getNextElement=function(element, name){
   var span=null;
   if (span = getSlotSpan(element)) {
-    if (e = $A(document.getElementsByClassName(name, span))[0]) {
+    if (e = Element.select(span, '.'+name)[0]) {
       return e;
     } else {                           
       return getNextElement(span.parentNode,name);
@@ -358,7 +358,7 @@ getSlotOptions=function(element){
 urlForAddField=function(card_id, eid) {
   //return 'foo'
   //index = getSlotElements(getSlotFromContext(eid), 'pointer-li').length;
-  index = document.getElementsByClassName("pointer-text", $(eid+'-ul')).length;
+  index = Element.select($(eid+'-ul'), ".pointer-text").length;
   return ('/card/add_field/' + card_id + '?index=' + index + '&eid=' + eid);
 }
 

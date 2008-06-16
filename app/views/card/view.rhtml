@@ -6,7 +6,7 @@ if item = render_arg(:item)
 end
 %>
 
-<%= get_slot.render(view, :slot? => !request.xhr?, :add_javascript=>true ) %>
+<%= get_slot.render(view, :is_slot => !request.xhr?, :add_javascript=>true ) %>
 
 <%# GOD THIS IS NASTY%>
 

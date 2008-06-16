@@ -1,6 +1,7 @@
-<%# FIXME: this one's prolly busted %>
+<%# FIXME: this one's prolly busted %>   
+<% render_slot ||= nil %>
 <%# get_slot(card)tname('related', render_slot.nil? ? !request.xhr? : render_slot ) do |slot| %>
-<% get_slot(card).tname('related', :slot? =>render_slot) do |slot| %>
+<% get_slot(card).wrap('related', :is_slot =>(render_slot.nil? ? !request.xhr? : render_slot )) do |slot| %>
 	<% form_remote_for :card, card, :url=>slot.url_for('connection/update'),
 	 		:html=>{ :class=>'form',:onsubmit=>slot.save_function	 } do |f| %>
 

@@ -1,4 +1,4 @@
-<% get_slot.wrap(@action, :slot? =>true) do |slot|  %>
+<% get_slot.wrap(@action, :is_slot =>true) do |slot|  %>
 	<%= slot.header %>
 	<div class="new-connection">
 		<% form_remote_for :card, @card, :url=>{ :action=>'create', :id=>@card.id}, 

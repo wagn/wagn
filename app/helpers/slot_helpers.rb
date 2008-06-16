@@ -216,7 +216,8 @@ module SlotHelpers
       #if root == self
       #  code << "Wagn.onSaveQueue['#{hook_context}'].clear();"
       #  code << "warn('clearing #{hook_context} save queue');" 
-      #end
+      #end    
+      warn("Save hook: #{hooks[:save]}")
       code << "Wagn.onSaveQueue['#{hook_context}'].push(function(){\n"
       code << "warn('running #{hook_context} save hook');"
       code << hooks[:save]

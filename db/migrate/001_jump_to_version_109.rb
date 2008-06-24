@@ -4,26 +4,40 @@
 # then regenerate this schema definition.
 require_dependency 'db/card_creator.rb'
 
-module ActiveRecord
-  class Migrator 
-    cattr_accessor :migration_kluge
-    self.migration_kluge = []
+JUMP_TO_VERSION=109
 
-    def migrated
-      sm_table = self.class.schema_migrations_table_name
-      (self.migration_kluge + 
-        Base.connection.select_values("SELECT version FROM #{sm_table}").map(&:to_i)).sort
+# hoo boy this is all a big mess :-(
+module ActiveRecord
+  class Migrator  
+    if Rails::VERSION::MAJOR >= 2 && Rails::VERSION::MINOR >= 1
+      #cattr_accessor :migration_kluge
+      #self.migration_kluge = []
+
+      def migrated
+        sm_table = self.class.schema_migrations_table_name
+        #(self.migration_kluge + 
+        m = Base.connection.select_values("SELECT version FROM #{sm_table}").map(&:to_i).sort
+        if m.max && m.max >= JUMP_TO_VERSION
+          m = m + (38..JUMP_TO_VERSION).to_a
+        end 
+        m.sort
+      end
+    else
+      alias_method :ar_set_schema_version, :set_schema_version
+      def set_schema_version(version)
+        self.send(:ar_set_schema_version, version.to_i == 1 ? JUMP_TO_VERSION : version )
+      end
     end
   end
 end
 
 
 class JumpToVersion109 < ActiveRecord::Migration
-  def self.up      
-    sm_table = ActiveRecord::Migrator.schema_migrations_table_name
-    version = 109
-    ActiveRecord::Base.connection.insert("INSERT INTO #{sm_table} (version) VALUES ('#{version}')")
-    ActiveRecord::Migrator.migration_kluge = (38..version).to_a
+  def self.up       
+    if Rails::VERSION::MAJOR >= 2 && Rails::VERSION::MINOR >= 1         
+      sm_table = ActiveRecord::Migrator.schema_migrations_table_name
+      ActiveRecord::Base.connection.insert("INSERT INTO #{sm_table} (version) VALUES ('#{JUMP_TO_VERSION}')")
+    end
     
     create_table "cards", :force => true do |t|
       t.column "trunk_id",            :integer

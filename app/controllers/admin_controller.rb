@@ -54,7 +54,8 @@ class AdminController < ApplicationController
       flash[:notice] = "Your administrative account has been activated. " + "Welcome!" 
       return_to_remembered_page
     else
-      render :string=>"Durn, setup went awry..."
+      flash[:notice] = "Durn, setup went awry..."
+      render :action=>'setup'
     end
   end
  

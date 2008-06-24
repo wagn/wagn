@@ -109,7 +109,7 @@ module WagnHelper
   def partial_for_action( name, card=nil )
     # FIXME: this should look up the inheritance hierarchy, once we have one
     cardtype = (card ? card.type : 'Basic').underscore
-    file_exists?("/cardtypes/#{cardtype}/_#{name}") ? 
+    finder.file_exists?("/cardtypes/#{cardtype}/_#{name}") ? 
       "/cardtypes/#{cardtype}/#{name}" :
       "/cardtypes/basic/#{name}"
   end

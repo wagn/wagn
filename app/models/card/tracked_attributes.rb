@@ -11,6 +11,10 @@ module CardLib
       end
     end
     
+    
+    # this method conflicts with ActiveRecord since Rails 2.1.0
+    # the only references I see are in cache_spec, so removing for now
+=begin    
     def changed?(field) 
       #return false
       #if updates.emtpy?
@@ -18,6 +22,7 @@ module CardLib
       #warn "GET CHAGNED #{field.inspect}"    
       !!(@changed[field] && !updates.for?(field))
     end
+=end
     
     protected 
     def set_name(newname)
@@ -184,9 +189,9 @@ module CardLib
     def self.append_features(base)
       super 
       base.after_create :set_initial_content 
-      base.before_save.unshift :set_tracked_attributes
+      base.before_save.unshift Proc.new{|rec| rec.set_tracked_attributes }
       #puts "AFTER CREATE: #{base.after_create}"
-      #base.before_save = base.before_save
+      #base.before_save = base.before_save                           
       base.after_save :cascade_name_changes   
       base.class_eval do 
         attr_accessor :on_create_skip_revision,

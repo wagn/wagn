@@ -5,17 +5,26 @@
 require_dependency 'db/card_creator.rb'
 
 module ActiveRecord
-  class Migrator
-    alias_method :ar_set_schema_version, :set_schema_version
-    def set_schema_version(version)
-      self.send(:ar_set_schema_version, version.to_i == 1 ? 109 : version )
+  class Migrator 
+    cattr_accessor :migration_kluge
+    self.migration_kluge = []
+
+    def migrated
+      sm_table = self.class.schema_migrations_table_name
+      (self.migration_kluge + 
+        Base.connection.select_values("SELECT version FROM #{sm_table}").map(&:to_i)).sort
     end
   end
 end
 
 
 class JumpToVersion109 < ActiveRecord::Migration
-  def self.up 
+  def self.up      
+    sm_table = ActiveRecord::Migrator.schema_migrations_table_name
+    version = 109
+    ActiveRecord::Base.connection.insert("INSERT INTO #{sm_table} (version) VALUES ('#{version}')")
+    ActiveRecord::Migrator.migration_kluge = (38..version).to_a
+    
     create_table "cards", :force => true do |t|
       t.column "trunk_id",            :integer
       t.column "created_at",          :datetime,                    :null => false

@@ -6,14 +6,13 @@
 <%= slot.editor_hooks :save=>%{
 	doc=$$(".upload-iframe")[0].contentDocument;       	
 	innerForm = doc.getElementById('upload-form');
-
-  //outerForm = $$('.upload-content')[0].form;
-  //if (outerForm.elements['card[name]']) {
-	//	innerForm.elements['card[name]'].value = outerForm.elements['card[name]'].value;
-	//	warn("cardtype: " + outerForm.elements['card[type]'].value);
-	//	innerForm.elements['card[type]'].value = outerForm.elements['card[type]'].value;
-	//}
-	innerForm.submit(); 
-	return false;
+  fileField = doc.getElementById('file');
+	if (fileField.value=='') {
+		// if the user hasn't uploaded a file, just continue.
+		return true;
+	} else {
+		innerForm.submit(); 
+		return false;
+	}
 } %>
 

@@ -1,4 +1,8 @@
 --- 
+cardtypes_028: 
+  class_name: CardtypeE
+  system: 
+  id: "29"
 cardtypes_017: 
   class_name: Ruby
   system: 
@@ -7,6 +11,14 @@ cardtypes_006:
   class_name: Pointer
   system: 
   id: "20"
+cardtypes_030: 
+  class_name: UserForm
+  system: 
+  id: "31"
+cardtypes_029: 
+  class_name: CardtypeF
+  system: 
+  id: "30"
 cardtypes_018: 
   class_name: Role
   system: 
@@ -16,7 +28,7 @@ cardtypes_007:
   system: 
   id: "9"
 cardtypes_020: 
-  class_name: SampleCardtype
+  class_name: HTML
   system: 
   id: "21"
 cardtypes_019: 
@@ -28,7 +40,7 @@ cardtypes_008:
   system: 
   id: "10"
 cardtypes_021: 
-  class_name: CardtypeA
+  class_name: Toggle
   system: 
   id: "22"
 cardtypes_010: 
@@ -40,7 +52,7 @@ cardtypes_009:
   system: 
   id: "11"
 cardtypes_022: 
-  class_name: CardtypeB
+  class_name: Phrase
   system: 
   id: "23"
 cardtypes_011: 
@@ -48,7 +60,7 @@ cardtypes_011:
   system: 
   id: "12"
 cardtypes_023: 
-  class_name: CardtypeC
+  class_name: SampleCardtype
   system: 
   id: "24"
 cardtypes_012: 
@@ -60,7 +72,7 @@ cardtypes_001:
   system: 
   id: "6"
 cardtypes_024: 
-  class_name: CardtypeD
+  class_name: CardtypeA
   system: 
   id: "25"
 cardtypes_013: 
@@ -72,7 +84,7 @@ cardtypes_002:
   system: 
   id: "18"
 cardtypes_025: 
-  class_name: CardtypeE
+  class_name: CardtypeB
   system: 
   id: "26"
 cardtypes_014: 
@@ -84,7 +96,7 @@ cardtypes_003:
   system: 
   id: "7"
 cardtypes_026: 
-  class_name: CardtypeF
+  class_name: CardtypeC
   system: 
   id: "27"
 cardtypes_015: 
@@ -96,7 +108,7 @@ cardtypes_004:
   system: 
   id: "19"
 cardtypes_027: 
-  class_name: UserForm
+  class_name: CardtypeD
   system: 
   id: "28"
 cardtypes_016: 

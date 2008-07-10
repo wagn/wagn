@@ -1,5 +1,6 @@
 namespace :wagn do
-  task :dump_bootstrap_data => :environment do
+  desc "dump current db to bootstrap fixtures"
+  task :dump_bootstrap_data => :environment do     
     sql = "SELECT * FROM %s"
     skip_tables = ["schema_info"]
     ActiveRecord::Base.establish_connection
@@ -15,6 +16,7 @@ namespace :wagn do
     end
   end
   
+  desc "load bootstrap fixtures into db"
   task :load_bootstrap_data => :environment do
     require 'active_record/fixtures'
     ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)

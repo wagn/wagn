@@ -1,4 +1,5 @@
 namespace :wagn do
+  "setup tsearch in postgres"
   task :prepare_fulltext => :environment do
     cxn = ActiveRecord::Base.connection
     if System.enable_postgres_fulltext and cxn.class.to_s.split('::').last == 'PostgreSQLAdapter' and !Card.columns.plot(:name).include?('indexed_content')

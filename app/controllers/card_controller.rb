@@ -6,7 +6,7 @@ class CardController < ApplicationController
     :show, :index, :mine, :missing, :new_of_type, :my_name, :add_field ]
   before_filter :load_card_with_cache, :only => [:line, :view, :to_view ]
 
-  before_filter :edit_ok,   :only=>[ :update, :save_draft, :rollback, :save_draft] 
+  before_filter :edit_ok,   :only=>[ :edit, :edit_name, :edit_type, :update, :save_draft, :rollback, :save_draft] 
   before_filter :create_ok, :only=>[ :new, :create ]
   before_filter :remove_ok, :only=>[ :remove ]
   
@@ -98,13 +98,9 @@ class CardController < ApplicationController
   #--------------( editing )
   
   def edit 
-    if @card.ok?(:edit)
-      if params[:card] and @card.type=params[:card][:type]  
-        @card.save!
-        @card = Card.find(card.id)
-      end
-    else
-      render :action=>'denied', :status=>403
+    if params[:card] and @card.type=params[:card][:type]  
+      @card.save!
+      @card = Card.find(card.id)
     end
   end
   

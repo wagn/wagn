@@ -46,7 +46,10 @@ class ApplicationController < ActionController::Base
   end
   
   def edit_ok
-    @card.ok! :edit
+    unless @card.ok? :edit
+      render :action=>'denied', :status=>403
+      return false
+    end
   end
   
   def create_ok

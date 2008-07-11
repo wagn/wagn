@@ -24,8 +24,11 @@ class InvitationRequestTest < Test::Unit::TestCase
         :content=>"Let me in!"
       }  
     end     
-    url = ActionMailer::Base.deliveries[-1].body.match(/visit (http:\S+)/)[1]
-    assert_equal "http://#{System.host}#{@controller.send(:url_for_page, "Word Third")}", url
+    mail = ActionMailer::Base.deliveries[-1]
+    pattern = /(http:[^\"]+)/
+    assert_match pattern, mail.body
+    mail.body =~ pattern
+    assert_equal "http://#{System.host}#{@controller.send(:url_for_page, "Word Third")}", $~[0]
   end
 
   def test_should_redirect_to_invitation_request_landing_card 

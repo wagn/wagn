@@ -21,8 +21,13 @@ module CardLib
       def create_ok?()   
         ::Cardtype.create_ok?(  self.name.gsub(/.*::/,'') )
       end
-      def create_ok!()
-        raise ::Card::PermissionDenied.new(self) unless self.create_ok?
+      def create_ok!()   
+        user, type = ::User.current_user.cardname, self.name.gsub(/.*::/,'')
+
+        unless self.create_ok?        
+          msg = "Sorry #{user}, you don't have permission to create #{type} cards" 
+          raise Wagn::PermissionDenied.new(msg) 
+        end
       end
     end
 

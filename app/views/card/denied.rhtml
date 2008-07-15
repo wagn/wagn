@@ -12,8 +12,15 @@
           anonymous (not signed in) users
         <% else %>
   	      <%= User.current_user.cardname %>, you 
-  	    <% end %>
-  	    don't have permission to edit <%= @card.name ? less_fancy_title(@card) : 'this card' %> 
+  	    <% end %>                      
+  	    don't have permission to 
+        
+				<% if @card %>
+					edit <%= @card.name ? less_fancy_title(@card) : 'this card' %> 
+				<% elsif @type %>					
+					create <%= @type %> cards
+				<% end %>
+					
     		<% unless @no_slot_header %>
     			(See the <%= slot.link_to_menu_action('options') %> tab to learn more).
     		<% end %>
@@ -21,7 +28,7 @@
 	  </div>
     <%= render :partial=>'/account/sign_in_or_up', :locals=>{ :inplace=>true } %>
 
-	  <% if @no_slot_header %>	
+	  <% if @no_slot_header && !@type %>	
 			<p><%= link_to_function 'Cancel', %{getSlotSpan(this).replace('')} %></p>
 		<% end %>
 

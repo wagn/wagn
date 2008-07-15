@@ -2,12 +2,14 @@ class CardController < ApplicationController
   helper :wagn, :card 
   layout :ajax_or_not
   cache_sweeper :card_sweeper
+
+  before_filter :create_ok, :only=>[ :new, :create, :new_of_type ]
+
   before_filter :load_card!, :except => [ :auto_complete_for_card_name, :line, :view, :to_view, :test, :new, :create, 
     :show, :index, :mine, :missing, :new_of_type, :my_name, :add_field ]
   before_filter :load_card_with_cache, :only => [:line, :view, :to_view ]
 
   before_filter :edit_ok,   :only=>[ :edit, :edit_name, :edit_type, :update, :save_draft, :rollback, :save_draft] 
-  before_filter :create_ok, :only=>[ :new, :create ]
   before_filter :remove_ok, :only=>[ :remove ]
   
   #caches_action :show, :view, :to_view
@@ -25,7 +27,7 @@ class CardController < ApplicationController
   # weird that this is public
   def cache_action?(action_name)
     if !flash[:notice].blank? || !flash[:warning].blank? || !flash[:error].blank?
-      warn "flash present"
+      #warn "flash present"
       return false 
     else 
       true
@@ -80,7 +82,7 @@ class CardController < ApplicationController
   end
       
   def create
-    warn params.inspect         
+    #warn params.inspect         
     @card = Card.create! params[:card]
     if params[:multi_edit] and params[:cards]
       User.as(:admin) if @card.type == 'InvitationRequest'

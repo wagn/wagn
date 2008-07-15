@@ -219,13 +219,13 @@ class CardController < ApplicationController
       #@card_name = System.deck_name
     end             
     @card = CachedCard.get(@card_name)
-    
-    return unless view_ok
         
     if @card.new_record? && ! @card.phantom?
       action =  Cardtype.createable_cardtypes.empty? ? :missing : :new
       return redirect_to( :action=>action, :params=>{ 'card[name]'=>@card_name } )
     end                                                                                  
+    return unless view_ok
+    
     remember_card @card
     # FIXME: I'm sure this is broken now that i've refactored..                               
     respond_to do |format|

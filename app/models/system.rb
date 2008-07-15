@@ -154,10 +154,10 @@ class System < ActiveRecord::Base
     set_personal_card_permissions
     assign_user_roles
     administrate_users
-    edit_html           
   }
 
 =begin
+  edit_html           
   manage_permissions  
   edit_cards     
   rename_cards 

@@ -31,7 +31,7 @@
 	<%= javascript_include_tag "/javascripts/application.js" %>	
 	
 	<%# FIXME:
-	    Goddamm I tried and tried to get this to load on edit, but i think tinymce uses the page 
+	    Grr I tried and tried to get this to load on edit, but i think tinymce uses the page 
 			onload to load further dependencies, so you can't load it from scratch on an ajax call.
 			want to fix this later.  At the very least for connectipedia we could 
 		  load it only if user is likely to be able to edit anything--aka anonymous users probably not,
@@ -45,7 +45,8 @@
     <% if current_user and current_user.card %>
       <div id="user"> <%= current_user.card.name %></div>
     <% end %>
-    <div id="edit_html"><%=System.ok? 'edit_html' %></div>
+    <!-->edit_html permission removed at 0.10 
+			<div id="edit_html"><%=System.ok? 'edit_html' %></div><-->
     <div id="popup">false</div> 
   </span>
 </head>

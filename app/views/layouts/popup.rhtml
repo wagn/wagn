@@ -16,7 +16,8 @@
        <% if flash[:error] %> <div id="error"><%= flash[:error] %></div> <% end %>
      </div>
 
-     <div id="edit_html" style="display:none"><%=System.ok? 'edit_html' %></div>
+     <!--this permission removed for now as of 0.10
+				<div id="edit_html" style="display:none"><%=System.ok? 'edit_html' %></div>-->
      <div id="popup" style="display:none">true</div>
      <div id="main" class="section">
         <%= yield %>

@@ -44,6 +44,15 @@ class ApplicationController < ActionController::Base
     System.time = Time.now.to_f
 
   end
+
+  # ------------------( permission filters ) -------
+  def view_ok
+    unless @card.ok? :read
+      @deny = 'view'
+      render :action=>'denied', :status=>403
+      return false
+    end
+  end    
   
   def edit_ok
     unless @card.ok? :edit
@@ -54,8 +63,8 @@ class ApplicationController < ActionController::Base
   
   def create_ok
     @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
+    @skip_slot_header = true
     unless Card.const_get(@type).create_ok?                  
-      @no_slot_header = true
       render :action=>'denied', :status=>403
       return false
     end
@@ -73,7 +82,7 @@ class ApplicationController < ActionController::Base
   end
 
   def load_card_with_cache
-    load_card( cache=true )
+    return load_card( cache=true )
   end
 
   def load_card( cache=false)                
@@ -93,6 +102,8 @@ class ApplicationController < ActionController::Base
       @card.send(:set_defaults)
     end
     @card
+    
+    return view_ok
   end
                 
   def load_card_and_revision

@@ -1,7 +1,12 @@
-<% get_slot.wrap do |slot| %>
+<%                                
+	# these are member variables because you can't pass locals to an action, only to partials
+  @type   ||= 'Basic'   # only really need for create
+	@deny   ||= (@card ? 'edit' : 'create')  
+  @skip_slot_header ||= false
+%>
 
-	<%= slot.header unless @no_slot_header %>  
-    
+<% get_slot.wrap do |slot| %>
+	<%= slot.header unless @skip_slot_header %>  
     <div class="headroom">
       <h1>Regrettably...</h1>
     </div>
@@ -14,28 +19,24 @@
   	      <%= User.current_user.cardname %>, you 
   	    <% end %>                      
   	    don't have permission to 
-        
-				<% if @card %>
-					edit <%= @card.name ? less_fancy_title(@card) : 'this card' %> 
-				<% elsif @type %>					
-					create <%= @type %> cards
-				<% end %>
+
+				<%= case @deny
+					when 'view', 'edit'  ; @deny+ " " + (card.name ? less_fancy_title(card) : 'this card')
+					when 'create'; "create #{@type} cards"
+					end 
+				%>
 					
-    		<% unless @no_slot_header %>
+    		<% unless @skip_slot_header or @deny=='view' %>
     			(See the <%= slot.link_to_menu_action('options') %> tab to learn more).
     		<% end %>
     	</p>
 	  </div>
     <%= render :partial=>'/account/sign_in_or_up', :locals=>{ :inplace=>true } %>
 
-	  <% if @no_slot_header && !@type %>	
+	  <% if @skip_slot_header && !@type %>	
 			<p><%= link_to_function 'Cancel', %{getSlotSpan(this).replace('')} %></p>
 		<% end %>
-
-
-	
-  <%= slot.footer unless @no_slot_header %>
-
+  <%= slot.footer unless @skip_slot_header %>
 <% end %>
 
 <%# FIXME: this is duplicated effort in lots of cases %>

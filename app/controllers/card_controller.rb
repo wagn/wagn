@@ -5,10 +5,14 @@ class CardController < ApplicationController
 
   before_filter :create_ok, :only=>[ :new, :create, :new_of_type ]
 
-  before_filter :load_card!, :except => [ :auto_complete_for_card_name, :line, :view, :to_view, :test, :new, :create, 
+  before_filter :load_card!, :except => [ 
+    :auto_complete_for_card_name, 
+    :line, :view, :to_view, :test, :new, :create, 
     :show, :index, :mine, :missing, :new_of_type, :my_name, :add_field ]
-  before_filter :load_card_with_cache, :only => [:line, :view, :to_view ]
 
+  before_filter :load_card_with_cache, :only => [:line, :view, :to_view ]
+  
+  #before_filter :view_ok,   :only=>[ :line, :view, :show ]
   before_filter :edit_ok,   :only=>[ :edit, :edit_name, :edit_type, :update, :save_draft, :rollback, :save_draft] 
   before_filter :remove_ok, :only=>[ :remove ]
   
@@ -215,6 +219,8 @@ class CardController < ApplicationController
       #@card_name = System.deck_name
     end             
     @card = CachedCard.get(@card_name)
+    
+    return unless view_ok
         
     if @card.new_record? && ! @card.phantom?
       action =  Cardtype.createable_cardtypes.empty? ? :missing : :new

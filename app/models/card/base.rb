@@ -350,9 +350,9 @@ module Card
     
     def content   
       # FIXME: we keep having permissions break when looking up system cards- this isn't great but better than error.
-      unless name=~/^\*|\+\*/  
+      #unless name=~/^\*|\+\*/  
         new_record? ? ok!(:create_me) : ok!(:read) # fixme-perm.  might need this, but it's breaking create...
-      end
+      #end
       if tmpl = hard_template and tmpl!=self
         tmpl.content
       else

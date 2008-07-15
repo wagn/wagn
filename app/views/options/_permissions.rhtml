@@ -1,16 +1,15 @@
 <% tasks = [:read, :edit, :delete] %>
 <% tasks << :comment unless card.hard_template %>
-<% tasks << :create if card.type_template? %>
+<% tasks << :create if card.type == "Cardtype" %>
 
 <%= slot.option_header 'Permissions' %>
 
 <% for task in tasks %>
-  <%# warn "task : #{task} for card #{card.name}"%>
   <% editable = card.ok? :permissions  %>
   <% slot.option(:name=>task.to_s+"er", 
-			:help=>"...can #{task == :comment ? 'comment on' : task} this card",
+			:help=>"...can #{task == :comment ? 'comment on' : task} #{task == :create ? card.name+' cards' : 'this card'}",
 			:label=>"", :editable=>editable) do %>
-		 <% who_can = (task == :create) ? card.trunk.who_can(task) : card.who_can(task) %>
+		 <% who_can = card.who_can(task) %>
      <% if editable %>
        <span id="<%= params[:element] %>-<%= task %>-select">
          <%= select_tag "permissions[#{task}]", permission_options_for( card, task, who_can) %>

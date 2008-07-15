@@ -53,11 +53,12 @@ class ApplicationController < ActionController::Base
   end
   
   def create_ok
-    if params[:card] and cardtype = params[:card][:type]  
-      Card.const_get(cardtype).create_ok!
-    elsif Cardtype.createable_cardtypes.empty?
-      raise Wagn::PermissionDenied, "Sorry, you don't have permission to create new cards"
-    end  
+    @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
+    unless Card.const_get(@type).create_ok?                  
+      @no_slot_header = true
+      render :action=>'denied', :status=>403
+      return false
+    end
   end
   
   def remove_ok

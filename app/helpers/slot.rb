@@ -29,7 +29,6 @@ module WagnHelper
       @subslots << new_slot 
       new_slot.superslot = self
       new_slot.position = @subslots.size
-      new_slot.item_format = self.item_format
       new_slot
     end
     
@@ -252,7 +251,6 @@ module WagnHelper
             #logger.info("absolutized tname and now have these transclusion options: #{options.inspect}")
 
   #          options[:view]='edit' if @state == :edit
-            self.item_format = options[:item] if options[:item]  ##seems like this should be handled just by options...
 
             tcard = case
               when @state==:edit
@@ -295,6 +293,9 @@ module WagnHelper
       subslot = subslot(card)  
       old_slot, @template.controller.slot = @template.controller.slot, subslot
 
+      # set item_format;  search cards access this variable when rendering their content.
+      subslot.item_format = options[:item] if options[:item]                             
+      
       # FIXME! need a different test here   
       new_card = card.new_record? && !card.phantom?
       

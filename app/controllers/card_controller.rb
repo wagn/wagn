@@ -110,7 +110,8 @@ class CardController < ApplicationController
     end
   end
   
-  def edit_name
+  def edit_name             
+    if cc=CachedCard.find(@card.key) then cc.expire_all end  # clear cache of old name.
     @old_card = @card.clone
     if !params[:card]
     elsif @card.update_attributes params[:card]

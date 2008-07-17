@@ -15,7 +15,7 @@ class TransclusionController < ApplicationController
       @skip_slot_header = true
       msg = render_to_string( :template=>'/card/denied', :status=>403 )
       render_update_slot do |page,target|
-        target.replace(slot.head + msg + slot.foot)
+        target.replace(slot.wrap("", :content=>msg))
       end
       return
     end

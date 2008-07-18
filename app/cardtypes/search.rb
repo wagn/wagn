@@ -38,8 +38,7 @@ module Card
       spec = JSON.parse( self.content )   
       # FIXME: should unit test this 
       
-      # CachedCard.get below because self_card needs to pick up auto_cards:
-      self_card ||= ( name.junction? ? CachedCard.get(name.parent_name) : nil )  
+      self_card ||= ( name.junction? ? Card[name.parent_name]||Card.auto_card(name.parent_name) : nil )  
       
       if spec.is_a?(Hash) && self_card
         spec[:_card] = self_card

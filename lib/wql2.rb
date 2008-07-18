@@ -122,11 +122,10 @@ module Wql2
       # NOTE:  when creating new specs, make sure to specify _parent *before*
       #  any spec which could trigger another cardspec creation further down.
       
-      #warn "#{self}.init()"
       @mods = MODIFIERS.clone
       @spec = {}  
       @params = {}   
-      @card, @parent = nil
+      @card, @parent = nil, nil
       @sql = SqlStatement.new
       merge(spec) 
     end
@@ -152,9 +151,9 @@ module Wql2
       #warn "#{self}.merge(#{spec.inspect})"
       
       spec = case spec
-        when "_self";  { :id => root.card.id }
-        when "_left";  { :id => root.card.trunk.id }
-        when "_right";  { :id => root.card.tag.id }
+        when "_self";  { :id => root.card.id }                                   
+        when "_left";  { :id => CachedCard.get(root.card.name.parent_name).id }  # use name not .trunk() for auto_cards
+        when "_right";  { :id => CachedCard.get(root.card.name.tag_name).id }
     #   when "_none";  { }
         when String;   { :key => spec.to_key }
         when Integer;  { :id => spec   }  

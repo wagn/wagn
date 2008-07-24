@@ -2,7 +2,7 @@ class SidebarToTransclusion < ActiveRecord::Migration
   def self.up
     User.as(:admin) do
       if s = Card['*sidebar']   
-        s.content = Card.search( :plus=>"*sidebar" ).map{|c| "{{#{c.name|open}}}" }.join("\n")
+        s.content = Card.search( :plus=>"*sidebar" ).map{|c| "{{#{c.name}|open}}" }.join("\n")
         s.save!
       end
     end

@@ -1,3 +1,152 @@
+=== 0.10.0 (July 26, 2008)
+* add db:references:update_all rake task
+* fix that on rename cache expiration of old name failed on cascaded renames
+* fix number on tinymce config migration
+* change sidebar migration to use inclusions not search
+* install default TinyMCE settings 
+* fix that previous search/wql change broke *type cards in some cases
+* fix that in searches/wql _left,_self,_right break on auto_cards
+* fix persisting of item_format which could cause hang on circular transclusions
+* fix link changing on template migration
+* fix stale cache entry persisting on card rename
+* fix transclusion/create breaking when permission denied
+* fix typo in transclusion/create
+* fix bug/test-failure introduced in permission message work (oops)
+* document &amp; comment out references to global edit_html permission
+* remove unused compressed js file
+* remove edit html from global permissions. permission is checked through 
+* standardize read permission denied messages
+* replace visible text on inclusions of no-permissions cards
+* moved create permission interface to cardtype from form
+* update create_ok filter (and usage) for better permission reporting on card create operations - missed file
+* update create_ok filter (and usage) for better permission reporting on card create operations
+* fix error generating permission failure message on cardtypes
+* fix error to anon users when *sidebar not present. (don't try create card)
+* fix that *card read permissions weren't checked properly
+* sync render tests w/ recent refactoring, standardize &amp; improve permission denied handling.
+* remove annoying warning
+* update notification test to match new email
+* fix test which says should not redirect on failed login
+* removing a failing test.
+* "fix" a failing test. do we need new links to be picked up before card reload?
+* comments on wagnbot &amp; link revising
+* the most significant test here was the link_changing test.  it was nearly a duplicate of one in wagbot_test..
+* selenium-on-rails seems to break tests under rails2.1; take it out for now since we're not currently using it
+* update test fixtures
+* add descriptions to rake tasks
+* fix migration skipping for tests under rails 2.1
+* skip image editor submission if no file has been selected.
+* skip dumping sessions table
+* make file_exists call work with all rails versions
+* remove deprecated template_extesions config
+* disable action cacheing for now; plugin breaks on rails 2.1
+* fix error handling on admin account setup
+* update calls for rails 2.1
+* fix migration skipping for old/new rails versions
+* unbreak migration skipping for rails 2.1
+* change slot? to is_slot (toward fixing related-&gt;connect)
+* fix content access in invite_request_notification
+* update js to work with ff3
+* make sure sidebar slot gets access to actionview template
+* fix migration to work from scratch with pruned card table
+* test for new card field so it won't break old migrations
+* fix unsafe &lt;p&gt;'s in instructions
+* fix to invitation request bug
+* finish previous permission check fix
+* skip content-reading permission check on system cards
+* remove non-word characters from search terms (w/test)
+* edit instructions breaking on attribute card
+* fix user creation (invitations, etc)
+* fixes to new account notification
+* fix sidebar showing up in edit mode (new slot state)
+* fixed new card cues
+* fixed adding new pointer item bug
+* take &lt;p&gt;'s out of line to fix rendering
+* attempted to fix item formatting on searches
+* fix error on toc permissions
+* fix create bug when multi-update has no cards
+* invitation notices
+* dont cache when flash is present
+* also action cache to_view
+* add simple action caching
+* catch permissions errors in rendering layer
+* noside layout with id
+* fix javascript breaking edit
+* fixed sidebar
+* try template cacheing again
+* toggles and phrases
+* home cards and invitation request fixes
+* fix disappearing links on cardtype change
+* add migration for reference-expiration
+* move referencing processing of hard templates to render-time
+* test changes and reference bugfix
+* add tips
+* fix edit breaking typo
+* bail on timeout
+* merged -r 541:613 from branches/alpha10
+* fix assume all values from wql are strings for now
+* better tsearch config variable
+* logos and image css
+* favicons
+* don't include experimental javascripts
+* use new wql in cardtype-removal check
+* fix specific recursion problem rendering links
+* cache-safe name retrieval for _left and _right transclusion
+* add _left and _right transclusion
+* include permission checks in wql for users w/ administrator role (hide private cards)
+* fix broken admin pages
+* restore trash condition to wql, and add test
+* accomodate legacy salts in new user table (fix for pulling dbs to debug)
+* rails 2.0 update
+* tinymce spike tweaks
+* experimental tinymce type
+* updates &amp; fixes for rails 2.0
+* fix warnings showing up in tests
+* add autocomplete plugin
+* remove old wql and related code
+* switch tag cloud to use new wql
+* add :group_tagged option to wql
+* fix: sidebar tries to create card when looking for order, hits permissions denied
+* tweaks to initial/bootstrap data; hoozebot-&gt;wagnbot
+* data loading env option for pull_wagn_db script
+* import
+* add item: control to transclusion syntax
+* fix infinite recursion on {{_self|view:name}}
+* get rid of overflow:auto to fix autocompletes
+* fix 500 on invalid comment args.
+* bugfix for pointer autocomplete failing to use *options in multi-edit
+* not showing permission denied on transcludes
+* don't put wagn.org in default homepage
+* test and bugfix for wql :right and :left
+* add some missing indices
+* meyer foundation processing
+* fix part=&gt;_self breakage
+* start on foundation import for meyer
+* add :part=&gt;_self test
+* :not for wql.
+* recompress javascript
+* fixing login spacing
+* in render_card helper, check cache for cardname first
+* fix test/fixture preperation
+* fix connection tag cloud
+* restore notices
+* restore initial data import
+* text change on link
+* one click edit link for pointer cards
+* make enter on forms with one field run necessary js
+* ethan uploading card list
+* add right_plus and left_plus to wql
+* impelemented _self, view:name, and view:link for inclusion
+* fix javscript error
+* view name and link for search
+* fix wagn init and javascript file list
+* move wagn ruby/rails extensions to plugin
+* update address handling
+* spacing fix for trancluded cards
+* add get_cities and get_counties to custom orgparse
+* org parse tweaks
+* custom address parsing
+
 === 0.9.1 (January 22, 2008)
 * more years in calendar dropdown
 * render -- for blank transcluded cards

@@ -145,7 +145,10 @@ module CardLib
 	   return unless respond_to?('references_expired')
       if wql=hard_templatee_wql
         condition = User.as(:admin){ Wql2::CardSpec.new(wql.merge(:return=>"condition")).to_sql }
-        connection.execute "update cards t set references_expired=1 where #{condition}"
+        card_ids_to_update = connection.select_rows("select id from cards t where #{condition}").map(&:first)
+        card_ids_to_update.each_slice(100) do |id_batch|
+          connection.execute "update cards set references_expired=1 where id in (#{id_batch.join(',')})"
+        end
       end
     end
     

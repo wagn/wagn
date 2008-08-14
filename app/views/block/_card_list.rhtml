@@ -21,9 +21,8 @@
 <% if cards.empty? %>
   <div class="search-no-results faint">Search returned no results</div>
 <% else %>    
-	<span class="search-result-list">
-	  <%= render :partial=>'/block/paging', :locals=>{:card=>card} %>
-
+	<span class="search-result-list">                            
+	  <%= render :partial=>'/block/paging', :locals=>{:card=>card, :slot=>slot} %>
 		<% cards.each do |card| %>     	
 			<%= get_slot(card).render(view) %>
 		<% end %>     

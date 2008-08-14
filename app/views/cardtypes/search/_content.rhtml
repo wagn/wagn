@@ -36,6 +36,6 @@
 	<% partial = (card.name=='*recent changes') ? 'recent_changes' : 'card_list' %> 
 	<%#= card.spec.inspect %>
 	<% view = (slot.item_format || card.spec["view"] || :closed).to_sym  %>
-	<%= render :partial=>"block/#{partial}", :locals=> { :view=>view, :card=>card,	:cards=>card.results, :context=>@context,
+	<%= render :partial=>"block/#{partial}", :locals=> { :view=>view, :card=>card,	:cards=>card.results, :context=>@context, :slot=>slot,
 	   :instruction=>instruction, :title=>title } %>
 <% end %>

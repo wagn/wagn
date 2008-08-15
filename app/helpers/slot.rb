@@ -142,7 +142,7 @@ module WagnHelper
     end
 
     def render(action, args={})      
-      #warn "<render(#{card.name}, #{@state}).render(#{action}, item=>#{args[:item]})"
+      warn "<render(#{card.name}, #{@state}).render(#{action}, item=>#{args[:item]})"
       
       rkey = self.card.name + ":" + action.to_s
       root.renders[rkey] ||= 1; root.renders[rkey] += 1
@@ -250,22 +250,27 @@ module WagnHelper
             fullname.to_absolute(options[:base]=='parent' ? card.name.parent_name : card.name)
             #logger.info("absolutized tname and now have these transclusion options: #{options.inspect}")
 
-  #          options[:view]='edit' if @state == :edit
+            if fullname.blank?  
+               # process_transclusion blows up if name is nil
+              "{<bogus/>{#{fullname}}}" 
+            else
+    #          options[:view]='edit' if @state == :edit
 
-            tcard = case
-              when @state==:edit
-                ( Card.find_by_name( fullname ) || 
-                  Card.find_phantom( fullname ) || 
-                  Card.new( :name=>  fullname ) )
-              else
-                CachedCard.get fullname
-              end
+              tcard = case
+                when @state==:edit
+                  ( Card.find_by_name( fullname ) || 
+                    Card.find_phantom( fullname ) || 
+                    Card.new( :name=>  fullname ) )
+                else
+                  CachedCard.get fullname
+                end
           
-            #warn("sending these options for processing: #{options.inspect}")
+              #warn("sending these options for processing: #{options.inspect}")
          
-            tcontent = process_transclusion( tcard, options ) 
-            self.char_count += (tcontent ? tcontent.length : 0)
-            tcontent   
+              tcontent = process_transclusion( tcard, options ) 
+              self.char_count += (tcontent ? tcontent.length : 0)
+              tcontent   
+            end
           rescue Card::PermissionDenied
             ""
           end

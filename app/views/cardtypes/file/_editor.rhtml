@@ -10,7 +10,14 @@
 	if (fileField.value=='') {
 		// if the user hasn't uploaded a file, just continue.
 		return true;
-	} else {
+	} else {                       
+		// In the case where the card name is set or changed after loading the 
+		// file editor, we need to copy the name into the inner form.
+		// FIXME: this is some damn ugly code.                      
+		card_name = document.getElementById('card_name').value;
+		name_field = doc.getElementById('file_name');
+		name_field.value = card_name;
+		
 		innerForm.submit(); 
 		return false;
 	}

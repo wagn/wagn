@@ -1,5 +1,5 @@
 /**
- * $Id: editor_plugin_src.js 766 2008-04-03 20:37:06Z spocke $
+ * $Id: editor_plugin_src.js 898 2008-07-12 15:01:39Z spocke $
  *
  * @author Moxiecode
  * @copyright Copyright © 2004-2008, Moxiecode Systems AB, All rights reserved.
@@ -160,8 +160,12 @@
 			DOM.setStyles(id, {top : f.top, left : f.left, width : f.width + dw, height : f.height + dh});
 
 			u = f.url || f.file;
-			if (u && tinymce.relaxedDomain)
-				u += (u.indexOf('?') == -1 ? '?' : '&') + 'mce_rdomain=' + tinymce.relaxedDomain;
+			if (u) {
+				if (tinymce.relaxedDomain)
+					u += (u.indexOf('?') == -1 ? '?' : '&') + 'mce_rdomain=' + tinymce.relaxedDomain;
+
+				u = tinymce._addVer(u);
+			}
 
 			if (!f.type) {
 				DOM.add(id + '_content', 'iframe', {id : id + '_ifr', src : 'javascript:""', frameBorder : 0, style : 'border:0;width:10px;height:10px'});
@@ -250,7 +254,7 @@
 			});
 
 			// Setup blocker
-			if (t.count == 0 && t.editor.getParam('dialog_type') == 'modal') {
+			if (t.count == 0 && t.editor.getParam('dialog_type', 'modal') == 'modal') {
 				DOM.add(DOM.doc.body, 'div', {
 					id : 'mceModalBlocker',
 					'class' : (t.editor.settings.inlinepopups_skin || 'clearlooks2') + '_modalBlocker',
@@ -260,6 +264,9 @@
 				DOM.show('mceModalBlocker'); // Reduces flicker in IE
 			} else
 				DOM.setStyle('mceModalBlocker', 'z-index', t.zIndex - 1);
+
+			if (tinymce.isIE6 || (tinymce.isIE && !DOM.boxModel))
+				DOM.setStyles('mceModalBlocker', {position : 'absolute', width : vp.w - 2, height : vp.h - 2});
 
 			t.focus(id);
 			t._fixIELayout(id, 1);
@@ -347,6 +354,10 @@
 					'class' : 'mceEventBlocker ' + (t.editor.settings.inlinepopups_skin || 'clearlooks2'),
 					style : {left : vp.x, top : vp.y, zIndex : t.zIndex + 1}
 				});
+
+				if (tinymce.isIE6 || (tinymce.isIE && !DOM.boxModel))
+					DOM.setStyles('mceEventBlocker', {position : 'absolute', width : vp.w - 2, height : vp.h - 2});
+
 				eb = new Element('mceEventBlocker');
 				eb.update();
 
@@ -462,7 +473,9 @@
 		},
 
 		close : function(win, id) {
-			var t = this, w, d = DOM.doc, ix = 0, fw;
+			var t = this, w, d = DOM.doc, ix = 0, fw, id;
+
+			id = t._findId(id || win);
 
 			t.count--;
 
@@ -499,10 +512,12 @@
 			}
 		},
 
-		setTitle : function(ti, id) {
+		setTitle : function(w, ti) {
 			var e;
 
-			if (e = DOM.get(id + '_title'))
+			w = this._findId(w);
+
+			if (e = DOM.get(w + '_title'))
 				e.innerHTML = DOM.encode(ti);
 		},
 
@@ -545,6 +560,24 @@
 		},
 
 		// Internal functions
+
+		_findId : function(w) {
+			var t = this;
+
+			if (typeof(w) == 'string')
+				return w;
+
+			each(t.windows, function(wo) {
+				var ifr = DOM.get(wo.id + '_ifr');
+
+				if (ifr && w == ifr.contentWindow) {
+					w = wo.id;
+					return false;
+				}
+			});
+
+			return w;
+		},
 
 		_fixIELayout : function(id, s) {
 			var w, img;

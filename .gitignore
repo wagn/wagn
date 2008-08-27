@@ -1,0 +1,4 @@
+config/database.yml
+config/wagn.rb
+log/*
+tmp/*

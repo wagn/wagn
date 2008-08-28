@@ -24,7 +24,6 @@ var TemplateDialog = {
 			sel.options[sel.options.length] = new Option(tsrc[x].title, tinyMCEPopup.editor.documentBaseURI.toAbsolute(tsrc[x].src));
 
 		this.resize();
-		this.tsrc = tsrc;
 	},
 
 	resize : function() {
@@ -54,18 +53,13 @@ var TemplateDialog = {
 		});
 	},
 
-	selectTemplate : function(u, ti) {
-		var d = window.frames['templatesrc'].document, x, tsrc = this.tsrc;
+	selectTemplate : function(u) {
+		var d = window.frames['templatesrc'].document;
 
 		if (!u)
 			return;
 
 		d.body.innerHTML = this.templateHTML = this.getFileContents(u);
-
-		for (x=0; x<tsrc.length; x++) {
-			if (tsrc[x].title == ti)
-				document.getElementById('tmpldesc').innerHTML = tsrc[x].description || '';
-		}
 	},
 
  	insert : function() {

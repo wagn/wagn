@@ -6,7 +6,7 @@ function init() {
 	tinyMCEPopup.resizeToInnerSize();
 
 	f.numcols.value = tinyMCEPopup.getWindowArg('numcols', 1);
-	f.numrows.value = tinyMCEPopup.getWindowArg('numrows', 1);
+	f.numrows.value = tinyMCEPopup.getWindowArg('numcols', 1);
 }
 
 function mergeCells() {
@@ -15,7 +15,7 @@ function mergeCells() {
 	tinyMCEPopup.restoreSelection();
 
 	if (!AutoValidator.validate(f)) {
-		tinyMCEPopup.alert(tinyMCEPopup.getLang('invalid_data'));
+		alert(tinyMCEPopup.getLang('invalid_data'));
 		return false;
 	}
 

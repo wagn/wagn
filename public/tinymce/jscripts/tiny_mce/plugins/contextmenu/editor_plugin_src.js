@@ -1,5 +1,5 @@
 /**
- * $Id: editor_plugin_src.js 848 2008-05-15 11:54:40Z spocke $
+ * $Id: editor_plugin_src.js 755 2008-03-29 19:14:42Z spocke $
  *
  * @author Moxiecode
  * @copyright Copyright © 2004-2008, Moxiecode Systems AB, All rights reserved.
@@ -18,7 +18,7 @@
 			ed.onContextMenu.add(function(ed, e) {
 				if (!e.ctrlKey) {
 					t._getMenu(ed).showMenu(e.clientX, e.clientY);
-					Event.add(ed.getDoc(), 'click', hide);
+					Event.add(document, 'click', hide);
 					Event.cancel(e);
 				}
 			});
@@ -27,7 +27,7 @@
 				if (t._menu) {
 					t._menu.removeAll();
 					t._menu.destroy();
-					Event.remove(ed.getDoc(), 'click', hide);
+					Event.remove(document, 'click', hide);
 				}
 			};
 
@@ -57,8 +57,10 @@
 			p2 = DOM.getPos(ed.getContainer());
 
 			m = ed.controlManager.createDropMenu('contextmenu', {
-				offset_x : p1.x + ed.getParam('contextmenu_offset_x', 0),
-				offset_y : p1.y + ed.getParam('contextmenu_offset_y', 0),
+				offset_x : p1.x,
+				offset_y : p1.y,
+/*				vp_offset_x : p2.x,
+				vp_offset_y : p2.y,*/
 				constrain : 1
 			});
 

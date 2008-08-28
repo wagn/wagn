@@ -1,5 +1,5 @@
 /**
- * $Id: editor_template_src.js 901 2008-08-18 11:44:21Z spocke $
+ * $Id: editor_template_src.js 766 2008-04-03 20:37:06Z spocke $
  *
  * @author Moxiecode
  * @copyright Copyright © 2004-2008, Moxiecode Systems AB, All rights reserved.
@@ -75,8 +75,7 @@
 				theme_advanced_more_colors : 1,
 				theme_advanced_row_height : 23,
 				theme_advanced_resize_horizontal : 1,
-				theme_advanced_resizing_use_cookie : 1,
-				readonly : ed.settings.readonly
+				theme_advanced_resizing_use_cookie : 1
 			}, ed.settings);
 
 			if ((v = s.theme_advanced_path_location) && v != 'none')
@@ -159,7 +158,7 @@
 			return false;
 		},
 
-		_importClasses : function(e) {
+		_importClasses : function() {
 			var ed = this.editor, c = ed.controlManager.get('styleselect');
 
 			if (c.getLength() == 0) {
@@ -189,8 +188,8 @@
 				});
 
 				c.onPostRender.add(function(ed, n) {
-					Event.add(n.id + '_text', 'focus', t._importClasses, t);
-					Event.add(n.id + '_text', 'mousedown', t._importClasses, t);
+					Event.add(n, 'focus', t._importClasses, t);
+					Event.add(n, 'mousedown', t._importClasses, t);
 				});
 			}
 
@@ -211,7 +210,7 @@
 		},
 
 		_createFontSizeSelect : function() {
-			var t = this, ed = t.editor, c, lo = [
+			var c, t = this, lo = [
 				"1 (8 pt)",
 				"2 (10 pt)",
 				"3 (12 pt)",
@@ -221,10 +220,10 @@
 				"7 (36 pt)"
 			], fz = [8, 10, 12, 14, 18, 24, 36];
 
-			c = ed.controlManager.createListBox('fontsizeselect', {title : 'advanced.font_size', cmd : 'FontSize'});
+			c = t.editor.controlManager.createListBox('fontsizeselect', {title : 'advanced.font_size', cmd : 'FontSize'});
 			if (c) {
-				each(ed.getParam('theme_advanced_font_sizes', t.settings.theme_advanced_font_sizes, 'hash'), function(v, k) {
-					c.add(k != v ? k : lo[parseInt(v) - 1], v, {'style' : 'font-size:' + fz[v - 1] + 'pt', 'class' : 'mceFontSize' + v});
+				each(explode(t.settings.theme_advanced_font_sizes), function(v) {
+					c.add(lo[parseInt(v) - 1], v, {'style' : 'font-size:' + fz[v - 1] + 'pt', 'class' : 'mceFontSize' + v});
 				});
 			}
 
@@ -448,12 +447,6 @@
 		_simpleLayout : function(s, tb, o, p) {
 			var t = this, ed = t.editor, lo = s.theme_advanced_toolbar_location, sl = s.theme_advanced_statusbar_location, n, ic, etb, c;
 
-			if (s.readonly) {
-				n = DOM.add(tb, 'tr');
-				n = ic = DOM.add(n, 'td', {'class' : 'mceIframeContainer'});
-				return ic;
-			}
-
 			// Create toolbar container at top
 			if (lo == 'top')
 				t._addToolbars(tb, o);
@@ -526,7 +519,7 @@
 			each(explode(s.theme_advanced_containers || ''), function(c, i) {
 				var v = s['theme_advanced_container_' + c] || '';
 
-				switch (v.toLowerCase()) {
+				switch (c.toLowerCase()) {
 					case 'mceeditor':
 						n = DOM.add(tb, 'tr');
 						n = ic = DOM.add(n, 'td', {'class' : 'mceIframeContainer'});
@@ -537,7 +530,7 @@
 						break;
 
 					default:
-						a = (s['theme_advanced_container_' + c + '_align'] || da).toLowerCase();
+						a = s['theme_advanced_container_' + c + '_align'].toLowerCase();
 						a = 'mce' + t._ufirst(a);
 
 						n = DOM.add(DOM.add(tb, 'tr'), 'td', {
@@ -750,9 +743,6 @@
 		_nodeChanged : function(ed, cm, n, co) {
 			var t = this, p, de = 0, v, c, s = t.settings;
 
-			if (s.readonly)
-				return;
-
 			tinymce.each(t.stateControls, function(c) {
 				cm.setActive(c, ed.queryCommandState(t.controls[c][1]));
 			});
@@ -807,7 +797,7 @@
 				c.select(ed.queryCommandValue('FontName'));
 
 			if (c = cm.get('fontsizeselect'))
-				c.select('' + ed.queryCommandValue('FontSize'));
+				c.select(ed.queryCommandValue('FontSize'));
 
 			if (s.theme_advanced_path && s.theme_advanced_statusbar_location) {
 				p = DOM.get(ed.id + '_path') || DOM.add(ed.id + '_path_row', 'span', {id : ed.id + '_path'});
@@ -1033,9 +1023,7 @@
 			var t = this;
 
 			this._mceColorPicker(0, {
-				color: t.fgColor,
 				func : function(co) {
-					t.fgColor = co;
 					t.editor.execCommand('ForeColor', false, co);
 				}
 			});
@@ -1045,9 +1033,7 @@
 			var t = this;
 
 			this._mceColorPicker(0, {
-				color: t.bgColor,
 				func : function(co) {
-					t.bgColor = co;
 					t.editor.execCommand('HiliteColor', false, co);
 				}
 			});

@@ -73,21 +73,14 @@ function updateAction() {
 			var celltype = getSelectValue(formObj, 'celltype');
 			var scope = getSelectValue(formObj, 'scope');
 
-			if (ed.getParam("accessibility_warnings", 1)) {
-				if (celltype == "th" && scope == "") {
-					tinyMCEPopup.confirm(ed.getLang('table_dlg.missing_scope', '', true), function(s) {
-						if (s) {
-							updateCell(tdElm);
+			if (ed.getParam("accessibility_warnings")) {
+				if (celltype == "th" && scope == "")
+					var answer = confirm(ed.getLang('table_dlg.missing_scope', '', true));
+				else
+					var answer = true;
 
-							ed.addVisual();
-							ed.nodeChanged();
-							inst.execCommand('mceEndUndoLevel');
-							tinyMCEPopup.close();
-						}
-					});
-				}
-
-				return;
+				if (!answer)
+					return;
 			}
 
 			updateCell(tdElm);

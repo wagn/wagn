@@ -20,17 +20,10 @@
 			t.webKitFontSizes = ['x-small', 'small', 'medium', 'large', 'x-large', 'xx-large', '-webkit-xxx-large'];
 			t.namedFontSizes = ['xx-small', 'x-small','small','medium','large','x-large', 'xx-large'];
 
-			// Safari CreateLink command will not work correctly on images that is aligned
-			ed.addCommand('CreateLink', function(u, v) {
-				var n = ed.selection.getNode(), dom = ed.dom, a;
-
-				if (n && (/^(left|right)$/i.test(dom.getStyle(n, 'float', 1)) || /^(left|right)$/i.test(dom.getAttrib(n, 'align')))) {
-					a = dom.create('a', {href : v}, n.cloneNode());
-					n.parentNode.replaceChild(a, n);
-					ed.selection.select(a);
-				} else
-					ed.getDoc().execCommand("CreateLink", false, v);
-			});
+			// Safari will crash if the build in createlink command is used
+/*			ed.addCommand('CreateLink', function(u, v) {
+				ed.execCommand("mceInsertContent", false, '<a href="' + dom.encode(v) + '">' + ed.selection.getContent() + '</a>');
+			});*/
 
 			ed.onPaste.add(function(ed, e) {
 				function removeStyles(e) {

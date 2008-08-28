@@ -1,5 +1,5 @@
 /**
- * $Id: editable_selects.js 867 2008-06-09 20:33:40Z spocke $
+ * $Id: editable_selects.js 520 2008-01-07 16:30:32Z spocke $
  *
  * Makes select boxes editable.
  *
@@ -39,7 +39,6 @@ var TinyMCE_EditableSelects = {
 			se.style.display = 'none';
 			ne.focus();
 			ne.onblur = TinyMCE_EditableSelects.onBlurEditableSelectInput;
-			ne.onkeydown = TinyMCE_EditableSelects.onKeyDown;
 			TinyMCE_EditableSelects.editSelectElm = se;
 		}
 	},
@@ -58,12 +57,5 @@ var TinyMCE_EditableSelects = {
 			se.parentNode.removeChild(se.previousSibling);
 			TinyMCE_EditableSelects.editSelectElm = null;
 		}
-	},
-
-	onKeyDown : function(e) {
-		e = e || window.event;
-
-		if (e.keyCode == 13)
-			TinyMCE_EditableSelects.onBlurEditableSelectInput();
 	}
 };

@@ -21,11 +21,10 @@ tinyMCEPopup = {
 		tinyMCE = w.tinyMCE;
 		t.editor = tinymce.EditorManager.activeEditor;
 		t.params = t.editor.windowManager.params;
-		t.features = t.editor.windowManager.features;
 
 		// Setup local DOM
 		t.dom = t.editor.windowManager.createInstance('tinymce.dom.DOMUtils', document);
-		t.dom.loadCSS(t.features.popup_css || t.editor.settings.popup_css);
+		t.dom.loadCSS(t.editor.settings.popup_css);
 
 		// Setup on init listeners
 		t.listeners = [];
@@ -102,7 +101,7 @@ tinyMCEPopup = {
 			u += '/langs/' + this.editor.settings.language + '_dlg.js';
 
 			if (!tinymce.ScriptLoader.isDone(u)) {
-				document.write('<script type="text/javascript" src="' + tinymce._addVer(u) + '"></script>');
+				document.write('<script type="text/javascript" src="' + u + '"></script>');
 				tinymce.ScriptLoader.markDone(u);
 			}
 		}
@@ -128,20 +127,12 @@ tinyMCEPopup = {
 		this.editor.execCallback('file_browser_callback', element_id, document.getElementById(element_id).value, type, window);
 	},
 
-	confirm : function(t, cb, s) {
-		this.editor.windowManager.confirm(t, cb, s, window);
-	},
-
-	alert : function(tx, cb, s) {
-		this.editor.windowManager.alert(tx, cb, s, window);
-	},
-
 	close : function() {
 		var t = this;
 
 		// To avoid domain relaxing issue in Opera
 		function close() {
-			t.editor.windowManager.close(window);
+			t.editor.windowManager.close(window, t.id);
 			tinymce = tinyMCE = t.editor = t.params = t.dom = t.dom.doc = null; // Cleanup
 		};
 
@@ -192,7 +183,7 @@ tinyMCEPopup = {
 
 		// Set inline title
 		if (!t.isWindow)
-			t.editor.windowManager.setTitle(window, ti);
+			t.editor.windowManager.setTitle(ti, t.id);
 		else
 			window.focus();
 

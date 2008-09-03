@@ -6,7 +6,7 @@
 <%= slot.editor_hooks :save=>%{
 	doc=$$(".upload-iframe")[0].contentDocument;       	
 	innerForm = doc.getElementById('upload-form');
-  fileField = doc.getElementById('file');
+   fileField = doc.getElementById('file');
 	if (fileField.value=='') {
 		// if the user hasn't uploaded a file, just continue.
 		return true;
@@ -14,10 +14,11 @@
 		// In the case where the card name is set or changed after loading the 
 		// file editor, we need to copy the name into the inner form.
 		// FIXME: this is some damn ugly code.                      
-		card_name = document.getElementById('card_name').value;
-		name_field = doc.getElementById('file_name');
-		name_field.value = card_name;
-		
+		if (document.getElementById('card_name')) {
+		  card_name = document.getElementById('card_name').value;
+		  name_field = doc.getElementById('file_name');
+		  name_field.value = card_name;
+	   }	
 		innerForm.submit(); 
 		return false;
 	}

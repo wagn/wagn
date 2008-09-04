@@ -223,14 +223,17 @@ class CachedCard
     # FIXME: easy place for bugs if using a key that's not here.    
     # why not regexp? rails docs say:
     # Regexp expiration is not supported on caches which can‘t iterate over all keys, such as memcached.
-    %w{id missing extension_type name type content read_permission comment_permission line_content view_content footer }.each do |f|
-      expire(f)
-    end
+    #%w{id missing extension_type name type content read_permission comment_permission line_content view_content footer }.each do |f|
+    #  expire(f)
+    #end
+    self.class.cache.write("/card/#{@key}/attrs", nil)
+    @attrs = nil
   end 
   
-  def expire(field)   
+  def expire(field) 
+    expire_all 
     #warn "EXPIRE /card/#{@key}/#{field}"
-    self.class.cache.delete("/card/#{@key}/#{field}", nil)
+    #self.class.cache.delete("/card/#{@key}/#{field}", nil)
   end
 end        
 

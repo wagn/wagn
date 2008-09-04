@@ -103,7 +103,8 @@ class CachedCard
   def initialize(key, real_card=nil, opts={})
     @auto_load = opts[:auto_load_card]   
     #ActiveRecord::Base.logger.info("<Cache init: #{key}, #{real_card}>")
-    @card = real_card   
+    @card = real_card  
+    @attrs = nil 
     @key=key
   end
   

@@ -142,7 +142,7 @@ module WagnHelper
     end
 
     def render(action, args={})      
-      warn "<render(#{card.name}, #{@state}).render(#{action}, item=>#{args[:item]})"
+      #warn "<render(#{card.name}, #{@state}).render(#{action}, item=>#{args[:item]})"
       
       rkey = self.card.name + ":" + action.to_s
       root.renders[rkey] ||= 1; root.renders[rkey] += 1

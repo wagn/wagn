@@ -13,7 +13,7 @@ class CachedCard
   cattr_accessor :cache, :perform_caching
   attr_reader :key
   attr_accessor :comment, :comment_author
-  self.cache = ActionController::Base.fragment_cache_store
+  self.cache = ActionController::Base.cache_store
   self.perform_caching = ActionController::Base.perform_caching  
   
   cattr_accessor :card_names
@@ -30,7 +30,7 @@ class CachedCard
       if card = self.find(key)
         card
       elsif card = self.load_card(name)
-        self.cache_me_if_you_can(card)
+        self.cache_me_if_you_can(card, :cache=>true)
       end
     end
     
@@ -65,9 +65,9 @@ class CachedCard
       end
     end
     
-    def load_card(name)
+    def load_card(name)  
       cached_card = self.new(name.to_key)
-      return nil if cached_card.read('missing')
+      return nil if cached_card.read('missing')  
       if card = Card[name]
         card
       else
@@ -79,7 +79,13 @@ class CachedCard
     
     def cache_me_if_you_can(card,opts={})
       caching = (opts.has_key?(:cache) ? opts[:cache] : true) && perform_caching 
-      caching && card.cacheable? ? self.new( card.key, card, opts) : card
+      if caching && card.cacheable? 
+        cc = self.new( card.key, card, opts)
+        cc.name  # trigger a write to the cache, so it will be found next time.
+        cc
+      else 
+        card
+      end
     end
     
     def find(key, card=nil, opts={})
@@ -97,7 +103,7 @@ class CachedCard
   def initialize(key, real_card=nil, opts={})
     @auto_load = opts[:auto_load_card]   
     #ActiveRecord::Base.logger.info("<Cache init: #{key}, #{real_card}>")
-    @card = real_card
+    @card = real_card   
     @key=key
   end
   

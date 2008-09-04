@@ -193,13 +193,31 @@ class CachedCard
     end
   end
   
-  def read(field)
-    self.class.cache.read("/card/#{@key}/#{field}")
+  def read(field)   
+    #self.class.cache.read("/card/#{@key}/#{field}")      
+    self.attrs[field]
   end
   
   def write(field, value)
-    self.class.cache.write("/card/#{@key}/#{field}", value) 
-  end    
+    #self.class.cache.write("/card/#{@key}/#{field}", value) 
+    self.attrs[field] = value
+    self.save
+  end          
+  
+  def attrs
+    @attrs ||= begin
+      if str = self.class.cache.read("/card/#{@key}/attrs")  
+        Marshal.load( str )
+      else
+        {}
+      end
+    end
+  end  
+  
+  def save
+    str = Marshal.dump @attrs
+    self.class.cache.write("/card/#{@key}/attrs", str)  
+  end
   
   def expire_all  
     # FIXME: easy place for bugs if using a key that's not here.    

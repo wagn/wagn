@@ -68,7 +68,6 @@ class CachedCard
     def load_card(name)  
       cached_card = self.new(name.to_key)
       return nil if cached_card.read('missing')  
-      warn " no record #{name}"
       if card = Card[name]
         card
       else

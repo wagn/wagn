@@ -206,7 +206,8 @@ class CachedCard
   end          
   
   def attrs
-    @attrs ||= begin
+    @attrs ||= begin 
+      warn "retrieving #{@key}"
       if str = self.class.cache.read("/card/#{@key}/attrs")  
         Marshal.load( str )
       else

@@ -116,16 +116,16 @@ module WagnHelper
     end
     
     def cache_action(cc_method) 
-      if CachedCard===card 
+      (if CachedCard===card 
         card.send(cc_method) || begin
           cached_card, @card = card, Card.find_by_key_and_trash(card.key, false) || raise("Oops! found cached card for #{card.key} but couln't find the real one") 
           content = yield(@card)
-          cached_card.send("#{cc_method}=", content)  
+          cached_card.send("#{cc_method}=", content.clone)  
           content
         end
       else
         yield(card)
-      end
+      end).clone
     end
     
     def deny_render?(action)

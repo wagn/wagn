@@ -16,52 +16,75 @@ class CachedCard
   self.cache = ActionController::Base.fragment_cache_store
   self.perform_caching = ActionController::Base.perform_caching  
   
-  cattr_accessor :card_names
+  cattr_accessor :card_names, :local_cache
   self.card_names={}
   
   class << self       
+                               
+    def reset_cache
+      self.local_cache = {
+        :real => {},
+        :get => {}
+      }
+    end
     
     # get_real is for when you want to use the cache, but don't want any builtins, auto,
     # card_creation, or any type of shenanigans.  give me the card if it's there, otherwise nil.
     # called by templating system
     def get_real(name)  
-      return Card[name] unless perform_caching
-      key = name.to_key
-      if card = self.find(key)
-        card
-      elsif card = self.load_card(name)
-        self.cache_me_if_you_can(card, :cache=>true)
+      if self.local_cache[:real].has_key?(name)
+        return self.local_cache[:real][name]
+      else
+        self.local_cache[:real][name] = begin
+          if perform_caching
+            key = name.to_key             
+            if card = self.find(key)
+              card
+            elsif card = self.load_card(name)
+              self.cache_me_if_you_can(card, :cache=>true)
+            end
+          else
+            Card[name] 
+          end
+        end
       end
     end
     
-    def get(name, card=nil, opts={}) 
-      key = name.to_key
-      caching = (opts.has_key?(:cache) ? opts[:cache] : true) && perform_caching 
-      card_opts = opts[:card_params] ? opts[:card_params] : {}
-      card_opts['name'] = name if (name && !name.blank?)
+    def get(name, card=nil, opts={})   
+      if self.local_cache[:get].has_key?(name)
+        return self.local_cache[:get][name]
+      else
+        self.local_cache[:get][name] = begin
+      
+          key = name.to_key
+          caching = (opts.has_key?(:cache) ? opts[:cache] : true) && perform_caching 
+          card_opts = opts[:card_params] ? opts[:card_params] : {}
+          card_opts['name'] = name if (name && !name.blank?)
 
-      todo = 
-        case
-          when caching && (card = self.find(key, card, opts)) ; [ :got_it     , 'found in cache'   ] 
-          when card                                           ; [ :cache_it   , 'called with card' ]
-          when name.blank?                                    ; [ :make_it    , 'blank name'       ]
-          when card = Card.find_builtin(name)                 ; [ :got_it     , 'built-in'         ]
-          when card = self.load_card(name)                    ; [ :cache_it   , 'found by name'    ]
-          when card = Card.auto_card(name)                    ; [ :got_it     , 'auto card'        ]
-          else                                                ; [ :make_it    , 'scratch'          ]
-        end 
+          todo = 
+            case
+              when caching && (card = self.find(key, card, opts)) ; [ :got_it     , 'found in cache'   ] 
+              when card                                           ; [ :cache_it   , 'called with card' ]
+              when name.blank?                                    ; [ :make_it    , 'blank name'       ]
+              when card = Card.find_builtin(name)                 ; [ :got_it     , 'built-in'         ]
+              when card = self.load_card(name)                    ; [ :cache_it   , 'found by name'    ]
+              when card = Card.auto_card(name)                    ; [ :got_it     , 'auto card'        ]
+              else                                                ; [ :make_it    , 'scratch'          ]
+            end 
         
-      ActiveRecord::Base.logger.info "<get card: #{name} :: #{todo.last}>"
+          ActiveRecord::Base.logger.info "<get card: #{name} :: #{todo.last}>"
 
-      case todo.first
-        when :got_it   ;    card
-        when :cache_it ;    self.cache_me_if_you_can(card, opts)       
-        when :make_it  ;    Card.new(card_opts) unless opts[:no_new]    # FIXME: opts[:no_new] is an ugly hack- interface needs work.     
+          case todo.first
+            when :got_it   ;    card
+            when :cache_it ;    self.cache_me_if_you_can(card, opts)       
+            when :make_it  ;    Card.new(card_opts) unless opts[:no_new]    # FIXME: opts[:no_new] is an ugly hack- interface needs work.     
           
-          ## opts[:no_new] is here for cases when you want to look for a card in the cache and do something else
-          ## if it's not there-- particularly builtin cards such as *favicon.  If an anonymous user tries to
-          ## get one of these cards, it's not there, and we try to create it, it blows up on permissions,
-          ## which is a weird error to the user because they were just trying to view.
+              ## opts[:no_new] is here for cases when you want to look for a card in the cache and do something else
+              ## if it's not there-- particularly builtin cards such as *favicon.  If an anonymous user tries to
+              ## get one of these cards, it's not there, and we try to create it, it blows up on permissions,
+              ## which is a weird error to the user because they were just trying to view.
+          end
+        end
       end
     end
     

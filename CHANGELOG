@@ -1,3 +1,21 @@
+=== 0.10.1 (Sept, 2008)
+* in filter_html, allow span classes that start with w-
+* fix bug where re-editing sometimes failed to setup editor. (use standard init mode instead of calling mceAddControl.)
+* fix specs that use flexmock
+* fixup some deprecated fragment_cache_store calls
+* trigger a write to the cache for cards that were being looked up repeatedly
+* cache card keys in local hash
+* don't autolink images
+* fix image editor in edit mode (not create)
+* update tinymce to 3.1.1
+* add google analytics & include in all layouts  
+* add newrelic w/default config:  disabled
+* update rspec
+* update readme
+* fix file/image upload breaking when setting name after cardtype
+* fix that {{}} in content caused transclusion to break on nil cardname
+* don't show card name in hidden permissions denied messages
+
 === 0.10.0 (July 26, 2008)
 * add db:references:update_all rake task
 * fix that on rename cache expiration of old name failed on cascaded renames
@@ -552,4 +570,6 @@
 	* new selenium tests
 	* css tweak for lists
 	* additional css tweaks for header spacing
-	* line-height tweak
+	* line-height tweak        
+	
+	

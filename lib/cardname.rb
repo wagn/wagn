@@ -1,4 +1,5 @@
 module Cardname   
+  CARD_KEYS = {}
 
   JOINT = '+'
   CARDNAME_BANNED_CHARACTERS = [ JOINT, '/', '~', '|']
@@ -70,7 +71,7 @@ module Cardname
   
   def to_key
     split(JOINT).map do |name| 
-      name.underscore.split(/[^\w\*]+/).plot(:singularize).reject {|x| x==""}.join("_")
+      CARD_KEYS[name] ||= name.underscore.split(/[^\w\*]+/).plot(:singularize).reject {|x| x==""}.join("_")
     end.join(JOINT)
   end  
 

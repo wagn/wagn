@@ -13,7 +13,7 @@ class CachedCard
   cattr_accessor :cache, :perform_caching
   attr_reader :key
   attr_accessor :comment, :comment_author
-  self.cache = ActionController::Base.fragment_cache_store
+  self.cache = ActionController::Base.cache_store
   self.perform_caching = ActionController::Base.perform_caching  
   
   cattr_accessor :card_names

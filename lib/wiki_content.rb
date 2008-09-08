@@ -43,7 +43,7 @@ class WikiContent < String
        'h5' => nil,
        'h6' => nil,
        'blockquote' => ['cite'],
-       'span'=>['style']
+       'span'=>['style','class']
       }                                             
   
 
@@ -54,11 +54,16 @@ class WikiContent < String
           raw = $~
           tag = raw[2].downcase
           if tags.has_key? tag
-            pcs = [tag]
-            tags[tag].each do |prop|
+            pcs = [tag]  
+            tags[tag].each do |prop| 
               ['"', "'", ''].each do |q|
                 q2 = ( q != '' ? q : '\s' )
-                if raw[3] =~ /#{prop}\s*=\s*#{q}([^#{q2}]+)#{q}/i
+                if tag=='span' && prop=='class'
+                  if raw[3] =~ /#{prop}\s*=\s*#{q}(w-[^#{q2}]+)#{q}/i   
+                    pcs << "#{prop}=\"#{$1.gsub('"', '\\"')}\"" 
+                    break
+                  end
+                elsif raw[3] =~ /#{prop}\s*=\s*#{q}([^#{q2}]+)#{q}/i
                   pcs << "#{prop}=\"#{$1.gsub('"', '\\"')}\"" 
                   break
                 end

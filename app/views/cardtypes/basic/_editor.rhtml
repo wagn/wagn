@@ -6,12 +6,13 @@
 	 User.as(:admin) { tinymceconfig = (card = CachedCard.get_real('*tiny mce')) ? card.content : '' }
 %>
 <%= slot.editor_hooks :setup=> %{ 
-	  tinyMCE.init({ #{tinymceconfig} }); 
-	  tinyMCE.execCommand('mceAddControl', false, '#{eid}-tinymce'); 
-    Try.these(function() {
-			$('#{eid}-tinymce_path_row').insert({bottom: "<span class='syntax-tips'>link: [[name]] / [[name|text]]  or include: {{name}} / {{name|view}}</span>"});
-		 });
-	},
+	  tinyMCE.init({ 
+			mode: "exact",
+			elements: "#{eid}-tinymce",
+			#{tinymceconfig} 
+		}); 
+	},                     
+	
 	:save=> %{ 
 		t = tinyMCE.getInstanceById( '#{eid}-tinymce' ); 
 		$('#{eid}-hidden-content').value = t.getContent();

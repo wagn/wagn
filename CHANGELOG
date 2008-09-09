@@ -2,7 +2,6 @@
 * in filter_html, allow span classes that start with w-
 * fix bug where re-editing sometimes failed to setup editor. (use standard init mode instead of calling mceAddControl.)
 * fix specs that use flexmock
-* fixup some deprecated fragment_cache_store calls
 * trigger a write to the cache for cards that were being looked up repeatedly
 * cache card keys in local hash
 * don't autolink images

@@ -31,7 +31,7 @@
 			:html=>{ :class=>'form editor',:onsubmit=>slot.save_function	 } do |form| %>
 		<div>
 		  <% slot.form = form %> 
-		  <%= slot.render( params[:inclusions] ? :multi_edit : :edit ) %>
+		  <%= slot.render (params[:inclusions] ? :multi_edit : :edit ) %>
 		</div>
 		<%= button_to_remote "Delete #{card.name}", { :url=>slot.url_for("card/remove") }, :style=>'float:right'	%>			
 		<%= button_to_function "Save", "this.form.onsubmit()", :class=>'save-card-button' %>

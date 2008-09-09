@@ -47,15 +47,15 @@ module CacheMethods
   
   # FIXME: why am i using these?
   def read(*args)
-    ActionController::Base.cache_store.read(*args)
+    ActionController::Base.fragment_cache_store.read(*args)
   end
   
   def write(*args)
-    ActionController::Base.cache_store.write(*args)
+    ActionController::Base.fragment_cache_store.write(*args)
   end
 end
 
-#Cache = ActionController::Base.cache_store 
+#Cache = ActionController::Base.fragment_cache_store 
 Cache.instance_eval do
   extend CacheMethods
   #alias_method_chain :read, :prefix

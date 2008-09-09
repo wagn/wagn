@@ -20,6 +20,6 @@ ExceptionNotifier.sender_address = %("#{System.site_name} Error" <notifier@wagn.
 ExceptionNotifier.email_prefix = "[#{System.site_name}] "
 
 # select a store for the rails/card cache
-#ActionController::Base.cache_store = :mem_cache_store 
+#ActionController::Base.fragment_cache_store = :mem_cache_store 
 #                                              :memory_store 
 #                                              :file_store, "#{RAILS_ROOT}/../cache"

@@ -4,7 +4,7 @@ module CardCache
   
   class << self
     def instance
-      ActionController::Base.cache_store
+      ActionController::Base.fragment_cache_store
     end
       
     # supports 

@@ -9,7 +9,7 @@
   	  <% end %>
       <p> 
         <% if card.new_instructions %>
-          <%= card.new_instructions %>
+          <%= get_slot(card.new_instructions).render(:expanded_view_content) %>
         <% else%>
           Creating a new card is easy; you just need a unique name.
         <% end %>

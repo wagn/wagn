@@ -16,6 +16,11 @@ describe Card, "create these" do
     Card.create_these "testing_name" => "testing_content" 
     Card["testing_name"].content.should == "testing_content"
   end
+
+  it 'should return the cards it creates' do 
+    c = Card.create_these "testing_name" => "testing_content" 
+    c.first.content.should == "testing_content"
+  end
   
   it 'should create cards of a given type' do
     Card.create_these "Cardtype:Footype" => "" 

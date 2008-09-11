@@ -9,7 +9,20 @@ describe Cardtype, "create with codename" do
   it "should create cardtype with codename" do
     Card::Cardtype.create!(:name=>"Foo Type", :codename=>"foo").type.should=='Cardtype'
   end
+end            
+
+describe Card, "create these" do
+  it 'should create basic cards given name and content' do 
+    Card.create_these "testing_name" => "testing_content" 
+    Card["testing_name"].content.should == "testing_content"
+  end
+  
+  it 'should create cards of a given type' do
+    Card.create_these "Cardtype:Footype" => "" 
+    Card["Footype"].type.should == "Cardtype"
+  end
 end
+
 =begin
 describe Card, "sets permissions correctly by default" do
   before do
@@ -160,7 +173,9 @@ describe Card, "Cardtype template" do
   end
 end
 
-=end
+=end               
+
+
 describe Card, "Basic Card template" do
   before do
     User.as :admin

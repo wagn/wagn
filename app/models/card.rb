@@ -92,6 +92,13 @@ module Card
     def method_missing( method_id, *args )
       Card::Base.send(method_id, *args)
     end  
+         
+    def create_these( definitions ) 
+      definitions.each do |key, content|
+        type, name = (key =~ /\:/ ? key.split(':') : ['Basic',key])
+        Card.const_get(type).create! :name=>name, :content=>content
+      end
+    end
     
     def const_missing( class_id )
       super

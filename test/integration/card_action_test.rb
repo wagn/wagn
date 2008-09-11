@@ -94,6 +94,15 @@ class CardActionTest < ActionController::IntegrationTest
     assert_response :success
   end 
        
+  def test_edit_instructions_appear_on_newcard
+    given_cards(
+      "Cardtype:Foo" => '',
+      "Foo+*edit"    => 'instruct-me'
+    )
+    get 'card/new', :card => {:type=>'Foo'}
+    assert_tag :tag=>'div', :attributes=>{ :class=>"instruction" }, 
+      :child=>{ :tag=>'p',:content=>/instruct-me/ }
+  end
   
 
   private   

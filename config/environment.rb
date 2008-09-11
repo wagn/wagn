@@ -46,7 +46,7 @@ Rails::Initializer.run do |config|
 end
 
 # Add new inflection rules using the following format 
-Inflector.inflections do |inflect|
+ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'grave', 'graveyard'
   inflect.irregular 'this', 'this'     
   inflect.irregular 'anonymous', 'anonymous'

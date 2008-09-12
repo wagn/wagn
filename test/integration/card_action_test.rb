@@ -94,14 +94,24 @@ class CardActionTest < ActionController::IntegrationTest
     assert_response :success
   end 
        
-  def test_edit_instructions_appear_on_newcard
+  def test_newcard_shows_edit_instructions
     given_cards(
-      "Cardtype:Foo" => '',
-      "Foo+*edit"    => 'instruct-me'
+      "Cardtype:YFoo" => '',
+      "YFoo+*edit"    => 'instruct-me'
     )
-    get 'card/new', :card => {:type=>'Foo'}
+    get 'card/new', :card => {:type=>'YFoo'}
     assert_tag :tag=>'div', :attributes=>{ :class=>"instruction" }, 
       :child=>{ :tag=>'p',:content=>/instruct-me/ }
+  end
+  
+  def test_newcard_works_with_fuzzy_renamed_cardtype
+    given_cards "Cardtype:ZFoo" =>""
+    User.as(:joe_user) do
+      Card["ZFoo"].update_attributes! :name=>"ZFooRenamed"
+    end
+    
+    get 'card/new', :card => { :type=>'zfoorenamed' }
+    assert_response :success
   end
   
 

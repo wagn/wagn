@@ -1,12 +1,11 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
 # FIXME this shouldn't be here
-
 describe Cardtype, "create with codename" do
   before do
     User.as :joe_user
   end
-  it "should create cardtype with codename" do
+  it "should work" do
     Card::Cardtype.create!(:name=>"Foo Type", :codename=>"foo").type.should=='Cardtype'
   end
 end            
@@ -27,7 +26,8 @@ describe Card, "create these" do
     Card["Footype"].type.should == "Cardtype"
   end
 end
-  
+
+ 
 
 
 describe Card, "attribute tracking for new card" do
@@ -96,5 +96,46 @@ describe Card, "create junction" do
     Card.find_by_name("Pear").class.should == Card::Basic
   end
 end
+       
 
+
+
+
+describe Card, "types" do
+  before do
+    User.as :admin 
+    # NOTE: it looks like these tests aren't DRY- but you can pull the cardtype creation up here because:
+    #  creating cardtypes creates constants in the namespace, and those aren't removed 
+    #  when the db is rolled back, so you're not starting in the original state.
+    #  during use of the application the behavior probably won't create a problem, so we test around it here.
+  end
+  
+  it "should accept cardtype name and casespace variant as type" do
+    ct = Card::Cardtype.create! :name=>"AFoo"
+    ct.update_attributes! :name=>"FooRenamed"
+    Card.create!(:type=>"FooRenamed",:name=>"testy").class.should == Card::AFoo
+    Card.create!(:type=>"foo_renamed",:name=>"so testy").class.should == Card::AFoo
+  end
+
+  it "should accept classname as type" do
+    ct = Card::Cardtype.create! :name=>"BFoo"
+    ct.update_attributes! :name=>"BFooRenamed"
+    Card.create!(:type=>"BFoo",:name=>"testy").class.should == Card::BFoo
+  end
+  
+  it "should accept cardtype name first when both are present" do
+    ct = Card::Cardtype.create! :name=>"CFoo"
+    ct.update_attributes! :name=>"CFooRenamed"
+    Card::Cardtype.create! :name=>"CFoo"
+    Card.create!(:type=>"CFoo",:name=>"testy").class.should == Card::CFoo1
+  end
+  
+  it "should raise a validation error if a bogus type is given" do
+    ct = Card::Cardtype.create! :name=>"DFoo"
+    c = Card.new(:type=>"$d_foo#adfa",:name=>"more testy")
+    c.valid?.should be_false
+    c.errors_on(:type).should_not be_empty
+  end
+  
+end
              

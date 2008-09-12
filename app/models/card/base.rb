@@ -35,7 +35,7 @@ module Card
     before_validation_on_create :set_defaults
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
-      :update_link_ins, :allow_type_change, :phantom
+      :update_link_ins, :allow_type_change, :phantom, :broken_type
   
     private
       belongs_to :reader, :polymorphic=>true  
@@ -124,19 +124,24 @@ module Card
         # FIXME -- this finds cards in or out of the trash-- we need that for
         # renaming card in the trash, but may cause other problems.
         raise "Must specify :name to find_or_create" if args['name'].blank?
-        c = (c = Card::Base.find_by_key(args['name'].to_key)) ? c : get_class_from_args(args).new(args)
+        c = Card::Base.find_by_key(args['name'].to_key) || begin
+          p = Proc.new {|k| k.new(args)}
+          with_class_from_args(args, p)
+        end
         c.send(:set_defaults) if c.new_record?
         c
       end                      
                                   
       # sorry, I know the next two aren't DRY, I couldn't figure out how else to do it.
-      def create_with_type!(args={})
-        get_class_from_args(args).create_without_type!(args)
+      def create_with_type!(args={})  
+        p = Proc.new {|k| k.create_without_type!(args)}
+        with_class_from_args(args,p)
       end
       alias_method_chain :create!, :type    
 
       def create_with_type(args={})
-        get_class_from_args(args).create_without_type(args)
+        p = Proc.new {|k| k.create_without_type(args)}
+        with_class_from_args(args,p)
       end
       alias_method_chain :create, :type    
       
@@ -164,22 +169,42 @@ module Card
       end
       alias_method_chain :create, :trash   
       
-      def get_class_from_args(args={})        
-        # FIXME: this passes the test but it sure is ugly
+      def with_class_from_args(args, p)        
         args ||={}  # huh?  why doesn't the method parameter do this?
+
         given_type = args.pull('type')
-        if tag_tmpl = right_template(get_name_from_args(args)||"")
-          default_type = tag_tmpl.type
-          if tag_tmpl.extension_type == 'HardTemplate'
-            given_type = default_type
-          end
-        else 
-          default_type = default_class.to_s.demodulize
+        tag_template = right_template(get_name_from_args(args)||"")
+        
+        error = false
+        
+        classname = case
+          when tag_template && tag_template.hard_template?;   
+            tag_template.type 
+            
+          when given_type && ::Cardtype.name_for_key?( given_type.to_key );    
+            ::Cardtype.classname_for( ::Cardtype.name_for_key(given_type.to_key))
+            
+          when given_type && Card.valid_constant?( given_type )
+            given_type     
+            
+          when given_type
+            # this is a cheat- we have to return a type that works or everything just blows up.
+            # but then the validations won't catch the error, so we record it here.
+            error = true 
+            'Basic'
+            
+          when tag_template && tag_template.soft_template?; 
+            tag_template.type
+            
+          else default_class.to_s.demodulize
         end
-        given_type ||= default_type
-        Card.const_get(given_type)
+        
+        card = p.call( Card.const_get(classname) )
+        if error
+          card.broken_type = given_type
+        end
+        card
       end
-      
             
       def get_name_from_args(args={})
         args ||= {}
@@ -565,23 +590,47 @@ module Card
     
     
     validates_each :type do |rec, attr, value|  
-      if rec.right_template and rec.right_template.hard_template? and value!=rec.right_template.type and !rec.allow_type_change
-        rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rec.right_template.type}"
-      end
-      #FIXME -- this validation would actually be good to have...
-    #  if rec.type == 'Cardtype' and rec.extension and !Card.find_by_type(rec.extension.codename)
-    #    rec.errors.add :type, "can't be changed because #{rec.name} is a Cardtype and many cards have this type"
-    #  end
-      if rec.updates.for?(:type)     
+      # validate on update
+      if rec.updates.for?(:type) and !rec.new_record?
+        
+        # invalid to change type when cards of this type exists
+        if rec.type == 'Cardtype' and rec.extension and ::Card.find_by_type(rec.extension.codename)
+          rec.errors.add :type, "can't be changed to #{value} for #{rec.name} because #{rec.name} is a Cardtype and cards of this type still exist"
+        end
+    
+        # check that changing to the new type would not cause other errors
         rec.send :validate_destroy
         newcard = rec.send :clone_to_type, value
         newcard.valid?  # run all validations...
         rec.send :copy_errors_from, newcard
       end
+
+      # validate on update and create 
+      if rec.updates.for?(:type) or rec.new_record?
+        # invalid type recorded on create
+        if rec.broken_type
+          rec.errors.add :type, "won't work.  There's no cardtype named '#{rec.broken_type}'"
+        end
+        
+        # invalid to change type when type is hard_templated
+        if (rec.right_template and rec.right_template.hard_template? and 
+          value!=rec.right_template.type and !rec.allow_type_change)
+          rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rec.right_template.type}"
+        end        
+        
+        # must be cardtype name or constant name
+        unless !::Cardtype.name_for_key?( value.to_key ) or
+           (Card.valid_constant?( value ) and Card.const_get( value ))
+          rec.errors.add :type, "won't work.  There's no cardtype named '#{value}'"
+        end
+      end
     end  
     
      
     def validate_destroy  
+      if type == 'Cardtype'  and extension and ::Card.find_by_type(extension.codename) 
+        errors.add :type, "can't be destroyed because #{name} is a Cardtype and cards of this type still exist"
+      end
     end
     
     def validate_content( content )

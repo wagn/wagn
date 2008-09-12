@@ -1,6 +1,17 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
 
+describe Card, "codename_generation" do
+  it "should create valid classnames" do
+    Card.generate_codename_for("$SBJgg%%od").should == "SBJggOd"
+  end
+  
+  it "should create incremented classnames when first choice is taken" do
+    Card.generate_codename_for("User").should == "User1"
+  end
+end                  
+
+
 
 describe Card, "Card changed to become a Cardtype" do
   before do
@@ -114,8 +125,6 @@ describe User, "Joe User" do
   
 end
 
-=begin  
-(These are actually busted)
 
 describe Card, "Cardtype with Existing Cards" do
   before do
@@ -125,11 +134,11 @@ describe Card, "Cardtype with Existing Cards" do
   it "should have existing cards of that type" do
     @ct.me_type.find(:all).should_not be_empty
   end
-  ##FIXME -- this doesn't work yet
+
   it "should raise an error when you try to delete it" do
     @ct.destroy
     @ct.errors.on(:type).should_not be_empty
   end
 end
 
-=end
+

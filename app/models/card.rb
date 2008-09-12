@@ -85,8 +85,9 @@ module Card
 
   class << self
     def new(args={})
-      args=args.stringify_keys unless args.nil?
-      get_class_from_args(args).new(args)
+      args=args.stringify_keys unless args.nil?   
+      p = Proc.new {|k| k.new(args)}
+      with_class_from_args(args,p)
     end
     
     def method_missing( method_id, *args )
@@ -98,6 +99,15 @@ module Card
         type, name = (key =~ /\:/ ? key.split(':') : ['Basic',key])
         Card.const_get(type).create! :name=>name, :content=>content
       end
+    end
+    
+    def valid_constant?(candidate)
+      begin
+        Card.const_defined?( candidate )
+      rescue Exception => e
+        return false
+      end
+      true
     end
     
     def const_missing( class_id )
@@ -118,6 +128,19 @@ module Card
         raise e
       end
     end
-        
+       
+    def generate_codename_for(cardname)
+      class_name = cardname.gsub(/^\W+|\W+$/,'').gsub(/\W+/,'_').camelize   
+      # shoot me now  
+      if const_defined?(class_name)
+        class_name_base, i = class_name, 1
+        while const_defined?(class_name)  
+          class_name = class_name_base + i.to_s
+          i+=1
+        end
+      end
+      class_name
+    end
+     
   end
 end

@@ -97,7 +97,7 @@ module Card
     def create_these( definitions ) 
       definitions.map do |key, content|
         type, name = (key =~ /\:/ ? key.split(':') : ['Basic',key])
-        Card.const_get(type).create! :name=>name, :content=>content
+        Card.class_for(type).create! :name=>name, :content=>content
       end
     end
     

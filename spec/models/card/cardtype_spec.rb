@@ -12,6 +12,12 @@ describe Card, "codename_generation" do
 end                  
 
 
+describe Card, "class for" do
+  it "should find valid class" do
+    Card.class_for('basic').should == Card::Basic
+  end
+end
+
 
 describe Card, "Card changed to become a Cardtype" do
   before do

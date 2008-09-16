@@ -10,6 +10,8 @@ class CardActionTest < ActionController::IntegrationTest
     integration_login_as :joe_user
   end    
 
+=begin
+
   # Has Test
   # ---------
   # card/remove
@@ -93,6 +95,8 @@ class CardActionTest < ActionController::IntegrationTest
     post "card/comment/#{@a.id}", :card => { :comment=>"how come" }
     assert_response :success
   end 
+
+=end
        
   def test_newcard_shows_edit_instructions
     given_cards(
@@ -103,7 +107,8 @@ class CardActionTest < ActionController::IntegrationTest
     assert_tag :tag=>'div', :attributes=>{ :class=>"instruction" }, 
       :child=>{ :tag=>'p',:content=>/instruct-me/ }
   end
-  
+
+=begin  
   def test_newcard_works_with_fuzzy_renamed_cardtype
     given_cards "Cardtype:ZFoo" =>""
     User.as(:joe_user) do
@@ -113,7 +118,7 @@ class CardActionTest < ActionController::IntegrationTest
     get 'card/new', :card => { :type=>'zfoorenamed' }
     assert_response :success
   end
-  
+=end  
 
   private   
   

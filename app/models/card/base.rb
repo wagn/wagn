@@ -168,6 +168,13 @@ module Card
         end
       end
       alias_method_chain :create, :trash   
+
+      def class_for(given_type)
+        # FIXME:  this is kindof a bass-ackward way to get the type
+        p = Proc.new{|k| k.new }
+        c = with_class_from_args({:type=>given_type},p)
+        c.class
+      end
       
       def with_class_from_args(args, p)        
         args ||={}  # huh?  why doesn't the method parameter do this?
@@ -476,7 +483,7 @@ module Card
     def clone_to_type( newtype )
       attrs = self.attributes_before_type_cast
       attrs['type'] = newtype 
-      Card.const_get(newtype).new do |record|
+      Card.class_for(newtype).new do |record|
         record.send :instance_variable_set, '@attributes', attrs
         record.send :instance_variable_set, '@new_record', false
         # FIXME: I don't really understand why it's running the validations on the new card?

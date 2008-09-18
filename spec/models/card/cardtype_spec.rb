@@ -11,11 +11,37 @@ describe Card, "codename_generation" do
   end
 end                  
 
-
-describe Card, "class for" do
-  it "should find valid class" do
-    Card.class_for('basic').should == Card::Basic
+describe Card, "created without permission" do
+  before do
+    User.as :anonymous
   end
+   
+  # FIXME:  this one should pass.  unfortunately when I tried to fix it it started looking like the clean solution 
+  #  was to rewrite most of the permissions section as simple validations and i decided not to go down that rabbit hole.
+  #
+  #it "should not be valid" do
+  #  Card.new( :name=>'foo', :type=>'Cardtype').valid?.should_not be_true
+  #end        
+  
+  it "should not create a new cardtype until saved" do
+    lambda {
+      Card.new( :name=>'foo', :type=>'Cardtype')
+    }.should_not change(Cardtype, :count) 
+  end
+end
+
+
+describe Card, ".class_for" do
+  it "should find valid types" do
+    Card.class_for('basic').should == Card::Basic
+    Card.class_for('Cardtype').should == Card::Cardtype
+  end
+  
+  it "should return nil for invalid type" do
+    Card.class_for("mumbo-jumbo").should be_nil
+    Card.class_for('$d_foo#adfa').should be_nil
+  end
+ 
 end
 
 

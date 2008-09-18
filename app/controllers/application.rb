@@ -64,7 +64,7 @@ class ApplicationController < ActionController::Base
   def create_ok
     @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
     @skip_slot_header = true
-    unless Card.class_for(@type).create_ok?                  
+    unless t = Card.class_for(@type) and t.create_ok?                  
       render :action=>'denied', :status=>403
       return false
     end

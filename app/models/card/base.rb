@@ -170,10 +170,15 @@ module Card
       alias_method_chain :create, :trash   
 
       def class_for(given_type)
-        # FIXME:  this is kindof a bass-ackward way to get the type
-        p = Proc.new{|k| k.new }
-        c = with_class_from_args({:type=>given_type},p)
-        c.class
+        if ::Cardtype.name_for_key?( given_type.to_key )
+          given_type = ::Cardtype.classname_for( ::Cardtype.name_for_key( given_type.to_key ))
+        end
+        
+        begin 
+          Card.const_get(given_type)
+        rescue Exception=>e
+          nil
+        end
       end
       
       def with_class_from_args(args, p)        
@@ -181,35 +186,24 @@ module Card
 
         given_type = args.pull('type')
         tag_template = right_template(get_name_from_args(args)||"")
+
         
-        error = false
+        broken_type = nil
         
-        classname = case
-          when tag_template && tag_template.hard_template?;   
-            tag_template.type 
-            
-          when given_type && ::Cardtype.name_for_key?( given_type.to_key );    
-            ::Cardtype.classname_for( ::Cardtype.name_for_key(given_type.to_key))
-            
-          when given_type && Card.valid_constant?( given_type )
-            given_type     
-            
-          when given_type
-            # this is a cheat- we have to return a type that works or everything just blows up.
-            # but then the validations won't catch the error, so we record it here.
-            error = true 
-            'Basic'
-            
-          when tag_template && tag_template.soft_template?; 
-            tag_template.type
-            
-          else default_class.to_s.demodulize
+        requested_type = case
+          when tag_template && tag_template.hard_template?;   tag_template.type  
+          when given_type;                                    given_type
+          when tag_template && tag_template.soft_template?;   tag_template.type
+          else                                                default_class.to_s.demodulize  # depends on what class we're in
         end
-        
-        card = p.call( Card.const_get(classname) )
-        if error
-          card.broken_type = given_type
+
+        klass = Card.class_for( requested_type ) || begin
+          broken_type = requested_type
+          Card::Basic
         end
+     
+        card = p.call( klass )
+        card.broken_type = broken_type
         card
       end
             
@@ -470,8 +464,8 @@ module Card
       end
       return false
     end
-=end
-    
+=end       
+
     protected
     def clear_drafts
       connection.execute(%{
@@ -626,8 +620,7 @@ module Card
         end        
         
         # must be cardtype name or constant name
-        unless !::Cardtype.name_for_key?( value.to_key ) or
-           (Card.valid_constant?( value ) and Card.const_get( value ))
+        unless Card.class_for(value)
           rec.errors.add :type, "won't work.  There's no cardtype named '#{value}'"
         end
       end

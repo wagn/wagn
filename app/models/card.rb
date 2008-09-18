@@ -94,10 +94,15 @@ module Card
       Card::Base.send(method_id, *args)
     end  
          
-    def create_these( definitions ) 
-      definitions.map do |key, content|
-        type, name = (key =~ /\:/ ? key.split(':') : ['Basic',key])
-        Card.class_for(type).create! :name=>name, :content=>content
+    def create_these( *args )                                                                                  
+      definitions = args.size > 1 ? args : (args.first.inject([]) {|a,p| a.push({p.first=>p.last}); a })
+      definitions.map do |input|
+        final_args = {}
+        input.each do |key, content|
+          type, name = (key =~ /\:/ ? key.split(':') : ['Basic',key])   
+          final_args.merge! :name=>name, :type=>type, :content=>content
+        end         
+        Card.create! final_args
       end
     end
     

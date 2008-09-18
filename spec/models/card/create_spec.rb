@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
 # FIXME this shouldn't be here
-describe Cardtype, "create with codename" do
+describe Card::Cardtype, ".create with :codename" do
   before do
     User.as :joe_user
   end
@@ -10,7 +10,7 @@ describe Cardtype, "create with codename" do
   end
 end            
 
-describe Card, "create these" do
+describe Card, ".create_these" do
   it 'should create basic cards given name and content' do 
     Card.create_these "testing_name" => "testing_content" 
     Card["testing_name"].content.should == "testing_content"
@@ -24,27 +24,39 @@ describe Card, "create these" do
   it 'should create cards of a given type' do
     Card.create_these "Cardtype:Footype" => "" 
     Card["Footype"].type.should == "Cardtype"
+  end   
+  
+  it 'should take a hash of type:name=>content pairs' do
+    Card.create_these 'AA'=>'aa', 'BB'=>'bb'      
+    Card['AA'].content.should == 'aa'
+    Card['BB'].content.should == 'bb'
+  end
+  
+  it 'should take an array of {type:name=>content},{type:name=>content} hashes' do
+    Card.create_these( {'AA'=>'aa'}, {'AA+BB'=>'ab'} )
+    Card['AA'].content.should == 'aa'
+    Card['AA+BB'].content.should == 'ab'
   end
 end
 
  
 
 
-describe Card, "attribute tracking for new card" do
+describe Card, "created by Card.new " do
   before(:each) do     
     User.as :admin
     @c = Card::Basic.new :name=>"New Card", :content=>"Great Content"
   end
   
-  it "should have updates" do
+  it "should have attribute_tracking updates" do
     ActiveRecord::AttributeTracking::Updates.should === @c.updates
   end
   
-  it "should return original value" do
+  it "should return original value for name" do
     @c.name.should == 'New Card'
   end
   
-  it "should track changes" do
+  it "should track changes to name" do
     @c.name = 'Old Card'
     @c.name.should == 'Old Card'
   end
@@ -52,7 +64,7 @@ end
                   
 
 
-describe Card, "basic create" do
+describe Card, "created by Card.create with valid attributes" do
   before(:each) do
     User.as :admin
     @b = Card.create :name=>"New Card", :content=>"Great Content"

@@ -3,3 +3,4 @@ config/wagn.rb
 log/*
 tmp/*
 script/performance/*.session
+public/stylesheets/local.css

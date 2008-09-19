@@ -1,5 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
+require 'card_controller'
+
 class CardController 
   def rescue_action(e) raise e end 
 end
@@ -14,7 +16,7 @@ class CardActionTest < ActionController::IntegrationTest
   end    
 
   # Has Test
-  # ---------                                                                                   #
+  # ---------                                                                                   
   # card/remove
   # card/create
   # connection/create
@@ -25,7 +27,8 @@ class CardActionTest < ActionController::IntegrationTest
   # card/rollback
   # card/save_draft
   # connection/remove ??
-  
+
+
   def test_comment      
     User.as(:admin) do
       @a = Card.find_by_name("A")  
@@ -56,6 +59,20 @@ class CardActionTest < ActionController::IntegrationTest
     assert_instance_of Card::Basic, Card["Apple+Orange"]
   end
 
+  def test_create_role_card
+    post( 'card/create', :card=>{:content=>"test", :type=>'Role', :name=>"Editor"})
+    assert_response :success
+    assert_instance_of Card::Role, Card.find_by_name('Editor')
+    assert_instance_of Role, Role.find_by_codename('Editor')
+  end
+
+  def test_create_cardtype_card
+    post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"} )
+    assert_response :success
+    assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
+    assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor')
+  end
+
   def test_create                   
     post 'card/create', :card=>{
       :type=>'Basic', 
@@ -66,20 +83,6 @@ class CardActionTest < ActionController::IntegrationTest
     assert_equal "testcontent2", Card["Editor"].content
   end
 
-  def test_create_role_card
-    post( 'card/create', :card=>{:content=>"test", :type=>'Role', :name=>"Editor"})
-    assert_response :success
-    assert_instance_of Card::Role, Card.find_by_name('Editor')
-    assert_instance_of Role, Role.find_by_codename('Editor')
-  end
-
-  def test_create_cardtype_card
-    post( 'card/create',:card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"} )
-    assert_response :success
-    #assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
-    #assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor')
-  end
-  
   def test_card_removal
     c = given_cards("Boo"=>"booya").first
     post 'card/remove/' + c.id.to_s
@@ -108,17 +111,21 @@ class CardActionTest < ActionController::IntegrationTest
       :child=>{ :tag=>'p',:content=>/instruct-me/ }
   end
 
-
   def test_newcard_works_with_fuzzy_renamed_cardtype
-    given_cards "Cardtype:ZFoo" =>""
+    given_cards "Cardtype:ZFoo" => ""
     User.as(:joe_user) do
       Card["ZFoo"].update_attributes! :name=>"ZFooRenamed"
     end
     
-    get 'card/new', :card => { :type=>'zfoorenamed' }
+    get 'card/new', :card => { :type=>'z_foo_renamed' }       
     assert_response :success
+  end                                        
+  
+  def test_newcard_gives_reasonable_error_for_invalid_cardtype
+    get 'card/new', :card => { :type=>'bananamorph' }       
+    assert_response :success
+    assert_tag :tag=>'p', :content=>/No cardtype corresponds to/
   end
-
 
   private   
   

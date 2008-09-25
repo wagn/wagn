@@ -72,9 +72,6 @@ module WagnHelper
     return function
   end
 
-  def previous_page_function
-    "document.location.href='#{url_for_page(previous_page)}'"
-  end
     
   def truncatewords_with_closing_tags(input, words = 25, truncate_string = "...")
     if input.nil? then return end
@@ -139,104 +136,6 @@ module WagnHelper
   end
   
  
-  # Links ----------------------------------------------------------------------
- 
-  def link_to_page( text, title=nil, options={} )
-    title ||= text                              
-    if (options.delete(:include_domain)) 
-      link_to text, System.base_url.gsub(/\/$/,'') + url_for_page(title, :only_path=>true )
-    else
-      link_to text, url_for_page( title ), options
-    end
-  end  
-    
-  def link_to_connector_update( text, highlight_group, connector_method, value, *method_value_pairs )
-    #warn "method_value_pairs: #{method_value_pairs.inspect}"
-    extra_calls = method_value_pairs.size > 0 ? ".#{method_value_pairs[0]}('#{method_value_pairs[1]}')" : ''
-    link_to_function( text, 
-      "Wagn.highlight('#{highlight_group}', '#{value}'); " +
-      "Wagn.lister().#{connector_method}('#{value}')#{extra_calls}.update()",
-      :class => highlight_group,
-      :id => "#{highlight_group}-#{value}"
-    )
-  end
-  
-  def link_to_options( element_id, args={} )
-    args = {
-      :show_text => "&raquo;&nbsp;show&nbsp;options", 
-      :hide_text => "&laquo;&nbsp;hide&nbsp;options",
-      :mode      => 'show'
-    }.merge args
-    
-    off = 'display:none'
-    show_style, hide_style = (args[:mode] != 'show' ?  [off, ''] : ['', off])     
-    
-    show_link = link_to_function( args[:show_text], 
-        %{ Element.show("#{element_id}-hide");
-           Element.hide("#{element_id}-show");
-           Effect.BlindDown("#{element_id}", {duration:0.4})
-         },
-         :id=>"#{element_id}-show",
-         :style => show_style
-     )
-     hide_link = link_to_function( args[:hide_text],
-        %{ Element.hide("#{element_id}-hide"); 
-           Element.show("#{element_id}-show"); 
-           Effect.BlindUp("#{element_id}", {duration:0.4})
-        },
-        :id=>"#{element_id}-hide", 
-        :style=>hide_style
-      )
-      show_link + hide_link 
-  end
-  
-  def name_in_context(card, context_card)
-    context_card == card ? card.name : card.name.gsub(context_card.name, '')
-  end
-  
-  
-  def query_title(query, card_name)
-    title = {
-      :plus_cards => "Junctions: we join %s to other cards",
-      :plussed_cards => "Joinees: we're joined to %s",
-      :backlinks => 'Links In: we link to %s',
-      :linksout => "Links Out: %s links to us",
-      :cardtype_cards => card_name.pluralize + ': our cardtype is %s',
-      :pieces => 'Pieces: we join to form %s',
-      :revised_by => 'Edits: %s edited these cards'
-    }
-    title[query.to_sym] % ('"' + card_name + '"')
-  end
-  
-  def query_options(card)
-    options_for_select card.queries.map{ |q| [query_title(q,card.name), q ] }
-  end
-  
-  def card_title_span( title )
-    %{<span class="title-#{css_name(title)} card">#{title}</span>}
-  end
-  
-  def connector_function( name, *args )
-    "Wagn.lister().#{name.to_s}(#{args.join(',')});"
-  end             
-  
-  def pieces_icon( card, prefix='' )
-    image_tag "/images/#{prefix}pieces_icon.png", :title=>"cards that comprise \"#{card.name}\""
-  end
-  def connect_icon( card, prefix='' )
-    image_tag "/images/#{prefix}connect_icon.png", :title=>"plus cards that include \"#{card.name}\""
-  end
-  def connected_icon( card, prefix='' )
-    image_tag "/images/#{prefix}connected_icon.png", :title=>"cards connected to \"#{card.name}\""
-  end
-  
-  def page_icon(card)
-    #link_to_remote( image_tag('page.png', :title=>"Card Page for: #{card.name}"),
-    #  :url=>slot.url_for("card/view"),
-    #  :update => "javascript:getSlotFromContext('main_1')"
-    #)
-    link_to_page image_tag('page.png', :title=>"Card Page for: #{card.name}"), card.name
-  end
   # Other snippets -------------------------------------------------------------
 
   def site_name
@@ -261,21 +160,6 @@ module WagnHelper
       DateTime.new(date.year, date.mon, date.day, date.hour, date.min, date.sec).strftime("%B %e, %Y %H:%M:%S")
     else
       DateTime.new(date.year, date.mon, date.day).strftime("%B %e, %Y")
-    end
-  end
-
-  def flexlink( linktype, name, options )
-    case linktype
-      when 'connect'
-        link_to_function( name,
-           "var form = window.document.forms['connect'];\n" +
-           "form.elements['name'].value='#{name}';\n" +
-           "form.onsubmit();",
-           options)
-      when 'page'
-        link_to_page name, name, options
-      else
-        raise "no linktype specified"
     end
   end
   

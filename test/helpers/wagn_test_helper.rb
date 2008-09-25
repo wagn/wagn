@@ -27,6 +27,7 @@ module WagnTestHelper
     end
   end
 
+
   def card( name )
     ::Card.find_by_name(name)
   end

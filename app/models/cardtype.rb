@@ -1,7 +1,7 @@
 class Cardtype < ActiveRecord::Base
   acts_as_card_extension  
   cattr_reader :cache
-#  before_filter :load_cache_if_empty, :only=>[:name_for, :class_name_for, :create_party_for, :createable_cardtypes, :create_ok? ]
+  #  before_filter :load_cache_if_empty, :only=>[:name_for, :class_name_for, :create_party_for, :createable_cardtypes, :create_ok? ]
   
   @@cache={}
   
@@ -11,7 +11,8 @@ class Cardtype < ActiveRecord::Base
     end
     
     def load_cache
-      @@cache = {
+      @@cache = {   
+        :card_keys => {},
         :card_names => {},
         :class_names => {},
         :create_parties => {},
@@ -23,6 +24,7 @@ class Cardtype < ActiveRecord::Base
         join cards c on c.extension_id=ct.id and c.type='Cardtype'    
          join permissions p on p.card_id=c.id and p.task='create' 
       }).each do |rec|
+        @@cache[:card_keys][rec['name'].to_key] = rec['name']
         @@cache[:card_names][rec['class_name']] = rec['name'];   
         @@cache[:class_names][rec['name']] = rec['class_name']
         @@cache[:create_parties][rec['class_name']] = rec['party_id']
@@ -33,13 +35,23 @@ class Cardtype < ActiveRecord::Base
         end
       end
     end
+
+    def name_for_key?(key)
+      load_cache if @@cache.empty?      
+      @@cache[:card_keys].has_key?(key)
+    end
+
+    def name_for_key(key)
+      load_cache if @@cache.empty?
+      @@cache[:card_keys][key] || raise("No card name for key #{key}")
+    end
     
     def name_for(classname)
       load_cache if @@cache.empty?
       @@cache[:card_names][classname] || raise("No card name for class #{classname}") 
     end
-    
-    def class_name_for(card_name) 
+
+    def classname_for(card_name) 
       load_cache if @@cache.empty?
       @@cache[:class_names][card_name] || raise("No class name for cardtype name #{card_name}") 
     end
@@ -67,11 +79,5 @@ class Cardtype < ActiveRecord::Base
   def codename
     class_name
   end
-=begin  
-  private
-    def load_cache_if_empty
-      load_cache if @@cache.empty?
-    end
-=end
   
 end

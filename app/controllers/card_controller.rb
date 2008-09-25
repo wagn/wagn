@@ -71,7 +71,7 @@ class CardController < ApplicationController
         (card.class.superclass.to_s=='Card::Basic' or card.type=='Basic') ? content : strip_tags(content)
     end
     @card.name ||= ''
-    
+
     @card.send(:set_defaults)
     
     if @card.type == 'User'
@@ -86,7 +86,6 @@ class CardController < ApplicationController
   end
       
   def create
-    #warn params.inspect         
     @card = Card.create! params[:card]
     if params[:multi_edit] and params[:cards]
       User.as(:admin) if @card.type == 'InvitationRequest'

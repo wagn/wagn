@@ -7,7 +7,7 @@
     before_destroy :reload_cardtypes
     
     #validates_presence_of :extension
-                                    
+                                       
     def codename
       extension ? extension.class_name : nil
     end
@@ -19,13 +19,15 @@
 
     def approve_codename
     end
+    
     tracks :codename
 
-    
     def create_extension
-      #warn "create extension called!!"
-      class_name = name.gsub(/^\W+|\W+$/,'').gsub(/\W+/,'_').camelize
+      class_name = ::Card.generate_codename_for(name)
+      newclass = Class.new( ::Card::Basic )
+      ::Card.const_set class_name, newclass
       self.extension = ::Cardtype.create!( :class_name => class_name )
+      self.extension
     end
     
     def me_type

@@ -1,3 +1,6 @@
+* accepts fuzzy names as cardtypes
+* fix *edit display
+
 === 0.10.1 (Sept, 2008)
 * in filter_html, allow span classes that start with w-
 * fix bug where re-editing sometimes failed to setup editor. (use standard init mode instead of calling mceAddControl.)

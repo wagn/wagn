@@ -1,6 +1,6 @@
 class CardController < ApplicationController
   helper :wagn, :card 
-  layout :ajax_or_not
+  layout :default_layout
   cache_sweeper :card_sweeper
 
   before_filter :create_ok, :only=>[ :new, :create, :new_of_type ]
@@ -23,7 +23,7 @@ class CardController < ApplicationController
     roles_key = User.current_user.all_roles.map(&:id).join('-')
     global_serial = Cache.get('GlobalSerial') #Time.now.to_f }
     key = url_for(options).split('://').last + "/#{roles_key}" + "/#{global_serial}" + 
-      "/#{ajax_or_not}"
+      "/#{default_layout}"
   end
        
 
@@ -56,7 +56,7 @@ class CardController < ApplicationController
   def my_name                                              
     self.class.layout nil
     render :text=>User.current_user.card.name
-    self.class.layout :ajax_or_not
+    self.class.layout :default_layout
   end
 
   #----------------( MODIFYING CARDS )

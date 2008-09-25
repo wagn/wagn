@@ -129,10 +129,5 @@ class CardActionTest < ActionController::IntegrationTest
 
   private   
   
-  def given_cards( *definitions )   
-    User.as(:joe_user) do 
-      Card.create_these *definitions
-    end
-  end
 
 end

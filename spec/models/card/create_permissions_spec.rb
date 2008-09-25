@@ -25,7 +25,7 @@ describe Card, "normal user create permissions" do
     User.as :joe_user
   end
   it "should allow anyone signed in to create Basic Cards" do
-    Card::Base.create_ok?.should be_true
+    Card::Basic.create_ok?.should be_true
   end
 end
 

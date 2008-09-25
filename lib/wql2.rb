@@ -462,7 +462,7 @@ module Wql2
       elsif field=="cond" 
         "(#{sqlize(v)})"
       elsif field=="type"
-        t = Cardtype.class_name_for(  v.is_a?(Card::Base) ? v.name : v )
+        t = Cardtype.classname_for(  v.is_a?(Card::Base) ? v.name : v )
         "#{field} = #{sqlize(t)}"
       else   
         field = "#{@cardspec.table_alias}.#{field}"

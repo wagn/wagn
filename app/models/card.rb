@@ -85,13 +85,35 @@ module Card
 
   class << self
     def new(args={})
-      args=args.stringify_keys unless args.nil?
-      get_class_from_args(args).new(args)
+      args=args.stringify_keys unless args.nil?   
+      p = Proc.new {|k| k.new(args)}
+      with_class_from_args(args,p)
     end
     
     def method_missing( method_id, *args )
       Card::Base.send(method_id, *args)
     end  
+         
+    def create_these( *args )                                                                                  
+      definitions = args.size > 1 ? args : (args.first.inject([]) {|a,p| a.push({p.first=>p.last}); a })
+      definitions.map do |input|
+        final_args = {}
+        input.each do |key, content|
+          type, name = (key =~ /\:/ ? key.split(':') : ['Basic',key])   
+          final_args.merge! :name=>name, :type=>type, :content=>content
+        end         
+        Card.create! final_args
+      end
+    end
+    
+    def valid_constant?(candidate)
+      begin
+        Card.const_defined?( candidate )
+      rescue Exception => e
+        return false
+      end
+      true
+    end
     
     def const_missing( class_id )
       super
@@ -111,6 +133,19 @@ module Card
         raise e
       end
     end
-        
+       
+    def generate_codename_for(cardname)
+      class_name = cardname.gsub(/^\W+|\W+$/,'').gsub(/\W+/,'_').camelize   
+      # shoot me now  
+      if const_defined?(class_name)
+        class_name_base, i = class_name, 1
+        while const_defined?(class_name)  
+          class_name = class_name_base + i.to_s
+          i+=1
+        end
+      end
+      class_name
+    end
+     
   end
 end

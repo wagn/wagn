@@ -41,6 +41,10 @@ module CardLib
         end
       end
             
+      if type=='Cardtype'
+        ::Cardtype.reset_cache
+      end
+            
       if newname.junction?
         # move the current card out of the way, in case the new name will require
         # re-creating a card with the current name, ie.  A -> A+B

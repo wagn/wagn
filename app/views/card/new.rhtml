@@ -8,8 +8,10 @@
   	    <p>Currently, there is no card named "<strong><%= @card.name %></strong>", but you are welcomed to create it.</p>
   	  <% end %>
       <p> 
-        <% if card.new_instructions %>
-          <%= card.new_instructions %>
+				<% if @card.broken_type %>
+					Oops! No cardtype corresponds to <strong><%= @card.broken_type %></strong>.  Please select a type from the dropdown.
+        <% elsif card.new_instructions %>
+          <%= get_slot(card.new_instructions).render(:expanded_view_content) %>
         <% else%>
           Creating a new card is easy; you just need a unique name.
         <% end %>
@@ -31,7 +33,7 @@
   							<%= slot.name_field(form) %>
   					  </span> 
   					</td>
-					  <% if !request.xhr? and params[:card] and cardtype = params[:card][:type] %>
+					  <% if !request.xhr? and params[:card] and cardtype = params[:card][:type] and !@card.broken_type %>
 					    <%= form.hidden_field :type %>
 					  <% else %>
     					<td>

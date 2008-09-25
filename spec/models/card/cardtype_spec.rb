@@ -1,6 +1,49 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
 
+describe Card, "codename_generation" do
+  it "should create valid classnames" do
+    Card.generate_codename_for("$SBJgg%%od").should == "SBJggOd"
+  end
+  
+  it "should create incremented classnames when first choice is taken" do
+    Card.generate_codename_for("User").should == "User1"
+  end
+end                  
+
+describe Card, "created without permission" do
+  before do
+    User.as :anonymous
+  end
+   
+  # FIXME:  this one should pass.  unfortunately when I tried to fix it it started looking like the clean solution 
+  #  was to rewrite most of the permissions section as simple validations and i decided not to go down that rabbit hole.
+  #
+  #it "should not be valid" do
+  #  Card.new( :name=>'foo', :type=>'Cardtype').valid?.should_not be_true
+  #end        
+  
+  it "should not create a new cardtype until saved" do
+    lambda {
+      Card.new( :name=>'foo', :type=>'Cardtype')
+    }.should_not change(Cardtype, :count) 
+  end
+end
+
+
+describe Card, ".class_for" do
+  it "should find valid types" do
+    Card.class_for('basic').should == Card::Basic
+    Card.class_for('Cardtype').should == Card::Cardtype
+  end
+  
+  it "should return nil for invalid type" do
+    Card.class_for("mumbo-jumbo").should be_nil
+    Card.class_for('$d_foo#adfa').should be_nil
+  end
+ 
+end
+
 
 describe Card, "Card changed to become a Cardtype" do
   before do
@@ -114,8 +157,6 @@ describe User, "Joe User" do
   
 end
 
-=begin  
-(These are actually busted)
 
 describe Card, "Cardtype with Existing Cards" do
   before do
@@ -125,11 +166,11 @@ describe Card, "Cardtype with Existing Cards" do
   it "should have existing cards of that type" do
     @ct.me_type.find(:all).should_not be_empty
   end
-  ##FIXME -- this doesn't work yet
+
   it "should raise an error when you try to delete it" do
     @ct.destroy
     @ct.errors.on(:type).should_not be_empty
   end
 end
 
-=end
+

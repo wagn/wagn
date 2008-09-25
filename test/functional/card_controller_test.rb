@@ -21,6 +21,16 @@ class CardControllerTest < Test::Unit::TestCase
     login_as(:joe_user)
     
   end    
+
+
+  def test_create_cardtype_card
+    post :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
+    assert assigns['card']
+    assert_response :success
+    assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
+    assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor')
+  end
+
   
   def test_update_cardtype_with_stripping
     User.as :joe_user                                               
@@ -110,7 +120,6 @@ class CardControllerTest < Test::Unit::TestCase
     assert_equal "Bananas", Card.find_by_name("NewCardFoo").content
   end
                                        
-
 
   
 =begin FIXME

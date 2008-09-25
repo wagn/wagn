@@ -183,7 +183,8 @@ module WagnHelper
           c = self.render( :expanded_view_content)
           w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c))
 
-        when :expanded_view_content, :raw
+        when :expanded_view_content, :raw 
+          @state = 'view'
           expand_transclusions(  cache_action('view_content') {  card.post_render( render(:open_content)) } )
 
         when :expanded_line_content

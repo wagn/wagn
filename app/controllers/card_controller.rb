@@ -191,11 +191,11 @@ class CardController < ApplicationController
       @card.confirm_destroy = params[:card][:confirm_destroy]
     end
     if @card.destroy     
-      fix_return_list_on_remove(@card)
+      discard_locations_for(@card)
       render_update_slot do |page,target|
         if @context=="main_1"
-          page.wagn.messenger.note "#{@card.name} removed. Redirecting to #{previous_page}..."
-          page.redirect_to url_for_page(previous_page)
+          page.wagn.messenger.note "#{@card.name} removed."
+          page.redirect_to previous_location
           flash[:notice] =  "#{@card.name} removed"
         else 
           target.replace %{<div class="faint">#{@card.name} was just removed</div>}
@@ -225,7 +225,6 @@ class CardController < ApplicationController
     end                                                                                  
     return unless view_ok
     
-    remember_card @card
     # FIXME: I'm sure this is broken now that i've refactored..                               
     respond_to do |format|
       format.html { render :action=>'show' }

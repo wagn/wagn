@@ -39,8 +39,9 @@ class ApplicationController < ActionController::Base
     Role.reset_cache
     
     System.request = request 
-    System.time = Time.now.to_f
-
+    System.time = Time.now.to_f              
+    
+    location_history.push(request.request_uri) if request.get?
   end
 
   def default_layout

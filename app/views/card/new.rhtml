@@ -60,7 +60,7 @@
   			<%= button_to_function 'Create', 
 							"this.form.onsubmit()", :id=>'create-button'  %>
   	    <%= button_to_function 'Cancel',
- 							"document.location.href='#{url_for_page(previous_page)}'" %> 
+ 							"document.location.href='#{previous_location}'" %> 
   		<% end %>
   	</div>
   	<%= slot.notice %>

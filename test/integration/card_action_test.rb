@@ -28,6 +28,22 @@ class CardActionTest < ActionController::IntegrationTest
   # card/save_draft
   # connection/remove ??
 
+  def test_card_removal
+    c = given_cards("Boo"=>"booya").first
+    post 'card/remove/' + c.id.to_s
+    assert_response :redirect
+    assert_nil Card.find_by_name("Boo")
+  end
+
+  def test_card_removal2   
+    User.as :joe_user
+    Card.create! :name=>"Boo+*sidebar+200", :content=>"booya"
+    boo_open = Card.create! :name=>'Boo+*open'
+    
+    post 'card/remove/' + boo_open.id.to_s
+    assert_response :redirect
+    assert_nil Card.find_by_name("Boo#{JOINT}*open")
+  end        
 
   def test_comment      
     User.as(:admin) do
@@ -40,15 +56,6 @@ class CardActionTest < ActionController::IntegrationTest
   end      
   
 
-  def test_card_removal2   
-    User.as :joe_user
-    Card.create! :name=>"Boo+*sidebar+200", :content=>"booya"
-    boo_open = Card.create! :name=>'Boo+*open'
-    
-    post 'card/remove/' + boo_open.id.to_s
-    assert_response :success
-    assert_nil Card.find_by_name("Boo#{JOINT}*open")
-  end        
 
   def test_connect
     given_cards( "Apple"=>"woot", "Orange" => "wot" )
@@ -83,12 +90,6 @@ class CardActionTest < ActionController::IntegrationTest
     assert_equal "testcontent2", Card["Editor"].content
   end
 
-  def test_card_removal
-    c = given_cards("Boo"=>"booya").first
-    post 'card/remove/' + c.id.to_s
-    assert_response :success
-    assert_nil Card.find_by_name("Boo")
-  end
   
   def test_comment
     @a = Card.find_by_name("A")  
@@ -126,8 +127,5 @@ class CardActionTest < ActionController::IntegrationTest
     assert_response :success
     assert_tag :tag=>'p', :content=>/No cardtype corresponds to/
   end
-
-  private   
-  
 
 end

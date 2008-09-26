@@ -2,56 +2,36 @@
 #  note: i'm sure this isn't the optimal name..
 module LocationHelper 
   
-  # -----------( urls and redirects from application.rb) ----------------
-  
-  private
+  # the location_history mechanism replaces 
+  # store_location() & redirect_back_or_default() from the 
+  # authenticated helper.
+  #
+  # we keep a history stack so that in the case of card removal
+  # we can crawl back up to the last un-removed location
+  #
+  # a card may be on the location stack multiple times, especially if
+  # you had to confirm before removing.
+  #
   def location_history
     session[:history] ||= ['/']    
     session[:history].shift if session[:history].size > 5
     session[:history]
   end
      
-   def previous_location
-     location_history.last
-   end
+  def previous_location
+    location_history.last
+  end
                
-   def discard_locations_for(card)
-     while location_history.last =~ /#{card.id}|#{card.key}|#{card.name}/
-       location_history.pop
-     end
-   end
+  def discard_locations_for(card)  
+    # quoting necessary because cards have things like "+*" in the names..
+    pattern = /#{Regexp.quote(card.id.to_s)}|#{Regexp.quote(card.key)}|#{Regexp.quote(card.name)}/       
+    while location_history.last =~ pattern
+      location_history.pop
+    end
+  end
    
-=begin
-  def remember_card( card )
-    return unless card
-    session[:return_stack] ||= [] 
-    session[:return_stack].push( card.name ) unless session[:return_stack].last == card.name
-    session[:return_stack].shift if session[:return_stack].length > 4 
-  end
+   # -----------( urls and redirects from application.rb) ----------------
 
-  
-  def return_to_remembered_page( options={} )     
-    name = previous_page
-    url = name.empty? ? '/' : url_for_page( name )
-    if options[:javascript] 
-      render :inline=>%{<%= javascript_tag "document.location.href='#{url}'" %>Returning to previous card...}
-    else
-      redirect_to url 
-    end    
-  end
-  
-  def previous_page    
-    name = ''
-    session[:return_stack] ||= []
-    session[:return_stack].reverse.each do |candidate|
-      if CachedCard.find(candidate.to_key)
-        name = candidate
-        break
-      end
-    end                 
-    name
-  end
-=end
        
   def url_for_page( title, opts={} )   
     # shaved order of magnitude off footer rendering

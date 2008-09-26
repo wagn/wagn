@@ -19,9 +19,7 @@ class CardControllerTest < Test::Unit::TestCase
     @simple_card = Card['Sample Basic']
     @combo_card = Card['A+B']
     login_as(:joe_user)
-    
   end    
-
 
   def test_create_cardtype_card
     post :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
@@ -120,15 +118,15 @@ class CardControllerTest < Test::Unit::TestCase
     assert_equal "Bananas", Card.find_by_name("NewCardFoo").content
   end
                                        
+  def test_remove
+    c = given_cards("Boo"=>"booya").first
+    post :remove, :id=>c.id.to_s
+    assert_response :success
+    assert_nil Card.find_by_name("Boo")
+  end
 
   
 =begin FIXME
-
-            
-  def test_remove
-    
-  end
-  
   def test_new    
   end
 

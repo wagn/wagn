@@ -9,6 +9,7 @@ end
 
 class CardActionTest < ActionController::IntegrationTest
   common_fixtures 
+  include LocationHelper
   
   def setup
     setup_default_user
@@ -27,23 +28,6 @@ class CardActionTest < ActionController::IntegrationTest
   # card/rollback
   # card/save_draft
   # connection/remove ??
-
-  def test_card_removal
-    c = given_cards("Boo"=>"booya").first
-    post 'card/remove/' + c.id.to_s
-    assert_response :redirect
-    assert_nil Card.find_by_name("Boo")
-  end
-
-  def test_card_removal2   
-    User.as :joe_user
-    Card.create! :name=>"Boo+*sidebar+200", :content=>"booya"
-    boo_open = Card.create! :name=>'Boo+*open'
-    
-    post 'card/remove/' + boo_open.id.to_s
-    assert_response :redirect
-    assert_nil Card.find_by_name("Boo#{JOINT}*open")
-  end        
 
   def test_comment      
     User.as(:admin) do
@@ -127,5 +111,26 @@ class CardActionTest < ActionController::IntegrationTest
     assert_response :success
     assert_tag :tag=>'p', :content=>/No cardtype corresponds to/
   end
+
+
+  # FIXME: this should probably be files in the spot for a remove test
+  def test_removal_and_return_to_previous_undeleted_card_after_deletion
+    t1, t2 = given_cards( 
+      { "Testable1" => "hello" }, 
+      { "Testable1+*banana" => "world" } 
+    )
+    
+    get url_for_page( t1.name )
+    get url_for_page( t2.name )
+    
+    post 'card/remove/' + t2.id.to_s
+    assert_rjs_redirected_to url_for_page( t1.name )   
+    assert_nil Card.find_by_name( t2.name )
+    
+    post 'card/remove/' + t1.id.to_s
+    assert_rjs_redirected_to '/'
+    assert_nil Card.find_by_name( t1.name )
+  end
+
 
 end

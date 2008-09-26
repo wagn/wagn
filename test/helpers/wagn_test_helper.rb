@@ -85,8 +85,12 @@ module WagnTestHelper
   def test_action(url, args={})
     post url, *args
     assert_response :success
-  end
+  end     
   
+  def assert_rjs_redirected_to(url)
+    @response.body.match(/window\.location\.href = \"([^\"]+)\";/)
+    assert_equal $~[1], url
+  end
 end
 
 module Test

@@ -7,23 +7,21 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include ExceptionNotifiable
   include ExceptionSystem
-  
-  layout :default_layout, :except=>[:render_fast_404]
-  attr_reader :card, :cards, :renderer, :context   
-  attr_accessor :notice
-  before_filter :per_request_setup
-    #:note_current_user, :load_context, :reset_class_caches, :save_request, :note_time 
-  helper_method :card, :cards, :renderer, :context, :previous_page, 
-    :edit_user_context, :sidebar_cards, :notice, :slot, :url_for_page, :url_for_card
-  
-  ## This is a hack, but lots of stuff seems to break without it
-  #include WagnHelper 
 
-  helper :wagn
-  attr_accessor :slot
+  include LocationHelper
+  helper :all
+
+  attr_reader :card, :cards, :renderer, :context   
+  attr_accessor :notice, :slot
+  
+  helper_method :card, :cards, :renderer, :context, 
+    :edit_user_context, :sidebar_cards, :notice, :slot
 
   include ActionView::Helpers::TextHelper #FIXME: do we have to do this? its for strip_tags() in edit()
   include ActionView::Helpers::SanitizeHelper
+
+  before_filter :per_request_setup                                  
+  layout :default_layout, :except=>[:render_fast_404]
    
   protected
   
@@ -143,63 +141,6 @@ class ApplicationController < ActionController::Base
     @revision = @card.revisions[@revision_number - 1]      
   end  
   
-  # -----------( urls and redirects ) -----------------------------
-  def remember_card( card )
-    #warn "SESSION RETURN STACK:  #{session[:return_stack].inspect}"
-    return unless card
-    session[:return_stack] ||= [] 
-    session[:return_stack].push( card.id ) unless session[:return_stack].last == card.id
-    session[:return_stack].shift if session[:return_stack].length > 4 
-  end
-
-  
-  def return_to_remembered_page( options={} )
-    redirect_to_page url_for_previous_page, options
-  end
-  
-  def previous_page    
-    # FIXME please
-    name = ''
-    session[:return_stack] ||= []
-    session[:return_stack].reverse.each do |id|
-      #warn "EXAMINING CARD ID: #{id}"
-      if ((Fixnum === id && card = Card.find_by_id_and_trash( id, false )) || 
-            card=Card.find_by_key_and_trash( id, false ))
-        name = card.name
-        break
-      end
-    end                 
-    name
-  end
-  
-  def url_for_previous_page
-    name = previous_page
-    name.empty? ? '/' : url_for_page( name )
-  end        
-  
-  
-   ## FIXME should be using rjs for this...
-  def redirect_to_page( url, options={} )
-    #url = name.empty? ? '/' : url_for_page( name )
-    if options[:javascript] 
-      render :inline=>%{<%= javascript_tag "document.location.href='#{url}'" %>Returning to previous card...}
-    else
-      redirect_to url 
-    end    
-  end   
-       
-  def url_for_page( title, opts={} )   
-    # shaved order of magnitude off footer rendering
-    # vs. url_for( :action=> .. )
-    "/wagn/#{Cardname.escape(title)}"
-  end  
-  
-  def url_for_card( options={} )
-    url_for options_for_card( options )
-  end
-
-     
-
 
   # ----------( rendering methods ) -------------
 

@@ -1,4 +1,8 @@
 require File.dirname(__FILE__) + '/../spec_helper'
+require File.dirname(__FILE__) + '/../../test/helpers/wagn_test_helper'
+
+include WagnTestHelper
+
 
 A_JOINEES = ["B", "C", "D", "E", "F"]
       
@@ -33,8 +37,15 @@ describe Wql2, "order" do
 
   
   it "should sort by create" do  
+    given_cards(
+      { "Cardtype:Nudetype" => ""},
+      { "Nudetype:nfirst" => "a"},
+      { "Nudetype:nsecond" => "b"},
+      { "Nudetype:nthird"=> "c" }
+    )
     # WACK!! this doesn't seem to be consistent across fixture generations :-/
-    Card.search( :sort=>"create", :dir=>"asc", :limit=>6).plot(:name).should == ["Wagn Bot", "Admin", "Basic", "User", "Cardtype", "Company"]
+    Card.search( :type=>"Nudetype", :sort=>"create", :dir=>"asc").plot(:name).should ==
+      ["nfirst","nsecond","nthird"]
   end  
 
 #  it "should sort by update" do     

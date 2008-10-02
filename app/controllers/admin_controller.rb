@@ -52,7 +52,7 @@ class AdminController < ApplicationController
       #@user.activate( "Admin" )
       self.current_user = @user
       flash[:notice] = "Your administrative account has been activated. " + "Welcome!" 
-      return_to_remembered_page
+      redirect_to previous_location
     else
       flash[:notice] = "Durn, setup went awry..."
       render :action=>'setup'

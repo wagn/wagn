@@ -3,16 +3,29 @@
 module LocationHelper 
   
   # -----------( urls and redirects from application.rb) ----------------
-
-  def fix_return_list_on_remove(card)
-    session[:return_stack].pop if ( session[:return_stack] and session[:return_stack].last==card.id )
+  
+  private
+  def location_history
+    session[:history] ||= ['/']    
+    session[:history].shift if session[:history].size > 5
+    session[:history]
   end
-
+     
+   def previous_location
+     location_history.last
+   end
+               
+   def discard_locations_for(card)
+     while location_history.last =~ /#{card.id}|#{card.key}|#{card.name}/
+       location_history.pop
+     end
+   end
+   
+=begin
   def remember_card( card )
-    #warn "SESSION RETURN STACK:  #{session[:return_stack].inspect}"
     return unless card
     session[:return_stack] ||= [] 
-    session[:return_stack].push( card.id ) unless session[:return_stack].last == card.id
+    session[:return_stack].push( card.name ) unless session[:return_stack].last == card.name
     session[:return_stack].shift if session[:return_stack].length > 4 
   end
 
@@ -28,19 +41,17 @@ module LocationHelper
   end
   
   def previous_page    
-    # FIXME please
     name = ''
     session[:return_stack] ||= []
-    session[:return_stack].reverse.each do |id|
-      #warn "EXAMINING CARD ID: #{id}"
-      if ((Fixnum === id && card = Card.find_by_id_and_trash( id, false )) || 
-            card=Card.find_by_key_and_trash( id, false ))
-        name = card.name
+    session[:return_stack].reverse.each do |candidate|
+      if CachedCard.find(candidate.to_key)
+        name = candidate
         break
       end
     end                 
     name
   end
+=end
        
   def url_for_page( title, opts={} )   
     # shaved order of magnitude off footer rendering

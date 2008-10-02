@@ -15,7 +15,7 @@ class RedirectTest < ActionController::IntegrationTest
     assert_redirected_to '/'
   end
   
-  def test_return_to_previous_page_when_logging_in_after_visit
+  def test_return_to_special_url_when_logging_in_after_visit
     get '/recent'
     post '/account/login', :login=>'joe@user.com', :password=>'joe_pass'
     assert_redirected_to '/recent'

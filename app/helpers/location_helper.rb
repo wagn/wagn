@@ -56,8 +56,7 @@ module LocationHelper
   def url_for_card( options={} )
     url_for options_for_card( options )
   end
-
-     
+            
   def previous_page_function
     "document.location.href='#{url_for_page(previous_page)}'"
   end
@@ -85,54 +84,8 @@ module LocationHelper
     )
   end
   
-  def link_to_options( element_id, args={} )
-    args = {
-      :show_text => "&raquo;&nbsp;show&nbsp;options", 
-      :hide_text => "&laquo;&nbsp;hide&nbsp;options",
-      :mode      => 'show'
-    }.merge args
-    
-    off = 'display:none'
-    show_style, hide_style = (args[:mode] != 'show' ?  [off, ''] : ['', off])     
-    
-    show_link = link_to_function( args[:show_text], 
-        %{ Element.show("#{element_id}-hide");
-           Element.hide("#{element_id}-show");
-           Effect.BlindDown("#{element_id}", {duration:0.4})
-         },
-         :id=>"#{element_id}-show",
-         :style => show_style
-     )
-     hide_link = link_to_function( args[:hide_text],
-        %{ Element.hide("#{element_id}-hide"); 
-           Element.show("#{element_id}-show"); 
-           Effect.BlindUp("#{element_id}", {duration:0.4})
-        },
-        :id=>"#{element_id}-hide", 
-        :style=>hide_style
-      )
-      show_link + hide_link 
-  end
-  
   def name_in_context(card, context_card)
     context_card == card ? card.name : card.name.gsub(context_card.name, '')
-  end
-  
-  def query_title(query, card_name)
-    title = {
-      :plus_cards => "Junctions: we join %s to other cards",
-      :plussed_cards => "Joinees: we're joined to %s",
-      :backlinks => 'Links In: we link to %s',
-      :linksout => "Links Out: %s links to us",
-      :cardtype_cards => card_name.pluralize + ': our cardtype is %s',
-      :pieces => 'Pieces: we join to form %s',
-      :revised_by => 'Edits: %s edited these cards'
-    }
-    title[query.to_sym] % ('"' + card_name + '"')
-  end
-  
-  def query_options(card)
-    options_for_select card.queries.map{ |q| [query_title(q,card.name), q ] }
   end
   
   def card_title_span( title )

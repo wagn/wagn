@@ -1,6 +1,6 @@
 class OptionsController < ApplicationController
   helper :wagn, :card 
-  layout :ajax_or_not
+  layout :default_layout
   before_filter :load_card
 
 

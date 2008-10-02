@@ -20,6 +20,12 @@ module WagnTestHelper
     require 'renderer'
     Renderer.instance
   end
+  
+  def given_cards( *definitions )   
+    User.as(:joe_user) do 
+      Card.create_these *definitions
+    end
+  end
 
   def card( name )
     ::Card.find_by_name(name)

@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   include ExceptionNotifiable
   include ExceptionSystem
   
-  layout :ajax_or_not, :except=>[:render_fast_404]
+  layout :default_layout, :except=>[:render_fast_404]
   attr_reader :card, :cards, :renderer, :context   
   attr_accessor :notice
   before_filter :per_request_setup
@@ -45,6 +45,33 @@ class ApplicationController < ActionController::Base
 
   end
 
+  def default_layout
+    request.xhr? ? nil : (
+      case params[:layout]
+        when nil; 'application'
+        when 'none'; nil
+        else params[:layout]
+      end
+    )
+  end
+           
+
+  # ------------( helpers ) --------------
+  def edit_user_context(card)
+    if System.ok?(:administrate_users)
+    	'admin'
+    elsif current_user == card.extension
+    	'user'
+    else
+    	'public'
+    end
+  end
+
+  def renderer
+    Renderer.new
+  end
+  
+
   # ------------------( permission filters ) -------
   def view_ok
     unless @card.ok? :read
@@ -76,6 +103,8 @@ class ApplicationController < ActionController::Base
     @card.ok! :delete
   end
 
+
+  # --------------( card loading filters ) ----------
   def load_card!
     load_card
     if @card.new_record? && !@card.phantom?
@@ -114,49 +143,15 @@ class ApplicationController < ActionController::Base
     @revision = @card.revisions[@revision_number - 1]      
   end  
   
-
-  def handle_cardtype_update(card)
-    #FIXME -- only used in connection controller.  should be phased out.
-    if updating_type?  
-#      old_type = card.type
-      card.type=params[:card][:type]  
-      card.save!
-      card = Card.find(card.id)
-      content = params[:card][:content]
-      content = strip_tags(content) unless (card.class.superclass.to_s=='Card::Basic' or card.type=='Basic')
-      card.content = content
-    end
-    card
-  end
-  
-  def updating_type?
-    request.post? and params[:card] and params[:card][:type]
-  end
-  
-  def ajax_or_not
-    request.xhr? ? nil : (
-      case params[:layout]
-        when nil; 'application'
-        when 'none'; nil
-        else params[:layout]
-      end
-    )
-  end
-  
-  def render_jsonp( args )
-    str = render_to_string args
-    render :json=>( params[:callback] || "wadget") + '(' + str.to_json + ')'
-  end
-  
+  # -----------( urls and redirects ) -----------------------------
   def remember_card( card )
-    
     #warn "SESSION RETURN STACK:  #{session[:return_stack].inspect}"
-    
     return unless card
     session[:return_stack] ||= [] 
     session[:return_stack].push( card.id ) unless session[:return_stack].last == card.id
     session[:return_stack].shift if session[:return_stack].length > 4 
   end
+
   
   def return_to_remembered_page( options={} )
     redirect_to_page url_for_previous_page, options
@@ -173,7 +168,7 @@ class ApplicationController < ActionController::Base
         name = card.name
         break
       end
-    end
+    end                 
     name
   end
   
@@ -182,19 +177,6 @@ class ApplicationController < ActionController::Base
     name.empty? ? '/' : url_for_page( name )
   end        
   
-  def edit_user_context(card)
-    if System.ok?(:administrate_users)
-    	'admin'
-    elsif current_user == card.extension
-    	'user'
-    else
-    	'public'
-    end
-  end
-
-  def renderer
-    Renderer.new
-  end
   
    ## FIXME should be using rjs for this...
   def redirect_to_page( url, options={} )
@@ -206,7 +188,6 @@ class ApplicationController < ActionController::Base
     end    
   end   
        
-  # Urls -----------------------------------------------------------------------
   def url_for_page( title, opts={} )   
     # shaved order of magnitude off footer rendering
     # vs. url_for( :action=> .. )
@@ -217,6 +198,15 @@ class ApplicationController < ActionController::Base
     url_for options_for_card( options )
   end
 
+     
+
+
+  # ----------( rendering methods ) -------------
+
+  def render_jsonp( args )
+    str = render_to_string args
+    render :json=>( params[:callback] || "wadget") + '(' + str.to_json + ')'
+  end
 
   def render_update_slot(stuff="", &proc )
     render_update_slot_element(name="", stuff,&proc)                   

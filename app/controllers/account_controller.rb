@@ -1,7 +1,7 @@
 class InvitationError < StandardError; end
 
 class AccountController < ApplicationController
-  layout :ajax_or_not
+  layout :default_layout
   before_filter :login_required, :only => [ :invite, :update ] 
   #observer :card_observer, :tag_observer
   helper :wagn

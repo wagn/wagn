@@ -20,5 +20,5 @@ task :compress_wadget => :environment do
   print "#{cmd}"
 end
 
-task :test => [ :compress_javascript ]
+#task :test => [ :compress_javascript ]
 

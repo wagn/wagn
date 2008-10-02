@@ -1,4 +1,5 @@
 class CardController < ApplicationController
+
   helper :wagn, :card 
   layout :default_layout
   cache_sweeper :card_sweeper
@@ -190,8 +191,7 @@ class CardController < ApplicationController
       @card.confirm_destroy = params[:card][:confirm_destroy]
     end
     if @card.destroy     
-      #dirty hack so we dont redirect to ourself after delete
-      session[:return_stack].pop if ( session[:return_stack] and session[:return_stack].last==@card.id )
+      fix_return_list_on_remove(@card)
       render_update_slot do |page,target|
         if @context=="main_1"
           page.wagn.messenger.note "#{@card.name} removed. Redirecting to #{previous_page}..."

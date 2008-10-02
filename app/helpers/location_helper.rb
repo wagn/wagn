@@ -3,6 +3,11 @@
 module LocationHelper 
   
   # -----------( urls and redirects from application.rb) ----------------
+
+  def fix_return_list_on_remove(card)
+    session[:return_stack].pop if ( session[:return_stack] and session[:return_stack].last==card.id )
+  end
+
   def remember_card( card )
     #warn "SESSION RETURN STACK:  #{session[:return_stack].inspect}"
     return unless card
@@ -12,8 +17,14 @@ module LocationHelper
   end
 
   
-  def return_to_remembered_page( options={} )
-    redirect_to_page url_for_previous_page, options
+  def return_to_remembered_page( options={} )     
+    name = previous_page
+    url = name.empty? ? '/' : url_for_page( name )
+    if options[:javascript] 
+      render :inline=>%{<%= javascript_tag "document.location.href='#{url}'" %>Returning to previous card...}
+    else
+      redirect_to url 
+    end    
   end
   
   def previous_page    
@@ -30,22 +41,6 @@ module LocationHelper
     end                 
     name
   end
-  
-  def url_for_previous_page
-    name = previous_page
-    name.empty? ? '/' : url_for_page( name )
-  end        
-  
-  
-   ## FIXME should be using rjs for this...
-  def redirect_to_page( url, options={} )
-    #url = name.empty? ? '/' : url_for_page( name )
-    if options[:javascript] 
-      render :inline=>%{<%= javascript_tag "document.location.href='#{url}'" %>Returning to previous card...}
-    else
-      redirect_to url 
-    end    
-  end   
        
   def url_for_page( title, opts={} )   
     # shaved order of magnitude off footer rendering
@@ -57,11 +52,6 @@ module LocationHelper
     url_for options_for_card( options )
   end
             
-  def previous_page_function
-    "document.location.href='#{url_for_page(previous_page)}'"
-  end
-
-
   # Links ----------------------------------------------------------------------
  
   def link_to_page( text, title=nil, options={} )

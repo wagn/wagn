@@ -17,8 +17,11 @@ module WagnHelper
   def render_card(card, mode)
     if String===card && name = card  
       raise("Card #{name} not present") unless card= (CachedCard.get(name) || Card[name] || Card.find_phantom(name))
-    end
-    controller.slot.subslot(card).render(mode.to_sym)
+    end               
+    # FIXME: some cases we're called before controller.slot is initialized.
+    #  should we initialize here? or always do Slot.new? 
+    subslot = controller.slot ? controller.slot.subslot(card) : Slot.new(card)
+    subslot.render(mode.to_sym)
   end
   
   Droplet = Struct.new(:name, :link_options)     

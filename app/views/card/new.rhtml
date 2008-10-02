@@ -10,8 +10,8 @@
       <p> 
 				<% if @card.broken_type %>
 					Oops! No cardtype corresponds to <strong><%= @card.broken_type %></strong>.  Please select a type from the dropdown.
-        <% elsif card.new_instructions %>
-          <%= get_slot(card.new_instructions).render(:expanded_view_content) %>
+        <% elsif card.new_instructions %> 
+					<%= render_card card.new_instructions, :expanded_view_content %>
         <% else%>
           Creating a new card is easy; you just need a unique name.
         <% end %>
@@ -48,7 +48,6 @@
   				</tr>
   			</table>
   			<div class="editor">
-  			    
   				<% if card.hard_template %>
   				  <%- slot.form = form %>
     			  <%= slot.render(:multi_edit)%>

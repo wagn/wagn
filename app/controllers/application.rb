@@ -40,8 +40,6 @@ class ApplicationController < ActionController::Base
     
     System.request = request 
     System.time = Time.now.to_f              
-    
-    location_history.push(request.request_uri) if request.get?
   end
 
   def default_layout

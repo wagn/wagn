@@ -221,12 +221,10 @@ class CachedCard
   end
   
   def read(field)   
-    #self.class.cache.read("/card/#{@key}/#{field}")      
     self.attrs[field]
   end
   
   def write(field, value)
-    #self.class.cache.write("/card/#{@key}/#{field}", value) 
     self.attrs[field] = value
     self.save
   end          
@@ -249,12 +247,6 @@ class CachedCard
   end
   
   def expire_all  
-    # FIXME: easy place for bugs if using a key that's not here.    
-    # why not regexp? rails docs say:
-    # Regexp expiration is not supported on caches which can‘t iterate over all keys, such as memcached.
-    #%w{id missing extension_type name type content read_permission comment_permission line_content view_content footer }.each do |f|
-    #  expire(f)
-    #end
     self.class.cache.write("/card/#{@key}/attrs", nil)
     # need to expire local cache as well
     self.local_cache[:real].delete(@key) if self.local_cache[:real].has_key?(@key)
@@ -262,10 +254,8 @@ class CachedCard
     @attrs = nil
   end 
   
-  def expire(field) 
-    expire_all 
-    #warn "EXPIRE /card/#{@key}/#{field}"
-    #self.class.cache.delete("/card/#{@key}/#{field}", nil)
+  def expire(field)  
+    expire_all()  
   end
 end        
 

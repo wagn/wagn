@@ -94,7 +94,7 @@ module LocationHelper
     #  :url=>slot.url_for("card/view"),
     #  :update => "javascript:getSlotFromContext('main_1')"
     #)
-    link_to_page image_tag('page.png', :title=>"Card Page for: #{card.name}"), card.name
+    link_to_page image_tag('page.png', :title=>"Go to: #{card.name}"), card.name, :class=>'page-icon-link'
   end
 
   def flexlink( linktype, name, options )

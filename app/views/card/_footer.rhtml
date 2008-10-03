@@ -1,11 +1,11 @@
 <div class="card-footer">
   <div class="card-links">
     <span class="link-list">
-      <span class="faint">Pages:</span> <%= card.name.piece_names.map { |c| link_to_page c }.join(', ') %> 
+      <span>Pages:</span> <%= card.name.piece_names.map { |c| link_to_page c }.join(', ') %> 
     </span>                     
 		<% if card.current_revision %>
 	    <span class="last-editor">
-	      <span class="faint">Last Editor:</span> <%= link_to_page card.current_revision.created_by.card.name %> 
+	      <span>Last Editor:</span> <%= link_to_page card.current_revision.created_by.card.name %> 
 	    </span>
     <% end %>
     &nbsp;

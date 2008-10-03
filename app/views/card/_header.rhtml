@@ -1,7 +1,7 @@
 <%#= slot.notice %>
 <div class="card-header">   
-	<%= slot.menu %>
   <%= page_icon(card) %>
+	<%= slot.menu %>
   <div class="title"> 
 	  <% arrow = %{<img class="close-arrow" src="/images/arrow_down.png">} %>
     <%= slot.link_to_action arrow + less_fancy_title(card), 'line', 

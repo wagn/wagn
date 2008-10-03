@@ -15,7 +15,7 @@
   width: 35%;
 }
 #main {
-  padding: 5px 10px;
+  padding: 10px;
 }
 #sidebar {
   padding: 0px 10px;
@@ -25,8 +25,9 @@
 
 .top-bar {
   padding: 2px;
-  background: url(/images/top-bar.png) repeat-x;
+  background: #005800;
 }
+ 
 #top-menu a {
   color: white;
   padding: 0px 4px;

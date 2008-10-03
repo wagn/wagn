@@ -1,10 +1,15 @@
 require File.dirname(__FILE__) + '/../test_helper'
-#require 'ruby-prof'
+
+require 'card_controller'
+
+class CardController 
+  def rescue_action(e) raise e end 
+end
 
 
 class CardActionTest < ActionController::IntegrationTest
   common_fixtures 
-  warn "LOADING CARD ACTION TEST"
+  include LocationHelper
   
   def setup
     setup_default_user
@@ -12,7 +17,7 @@ class CardActionTest < ActionController::IntegrationTest
   end    
 
   # Has Test
-  # ---------
+  # ---------                                                                                   
   # card/remove
   # card/create
   # connection/create
@@ -23,7 +28,7 @@ class CardActionTest < ActionController::IntegrationTest
   # card/rollback
   # card/save_draft
   # connection/remove ??
-  
+
   def test_comment      
     User.as(:admin) do
       @a = Card.find_by_name("A")  
@@ -35,25 +40,14 @@ class CardActionTest < ActionController::IntegrationTest
   end      
   
 
-  def test_card_removal2   
-    User.as :joe_user
-    Card.create! :name=>"Boo+*sidebar+200", :content=>"booya"
-    boo_open = Card.create! :name=>'Boo+*open'
-    
-    post 'card/remove/' + boo_open.id.to_s
-    assert_response :success
-    assert_nil Card.find_by_name("Boo#{JOINT}*open")
-  end        
 
   def test_connect
-    apple = newcard("Apple", "woot")
-    orange = newcard("Orange", "wot")
-    assert_instance_of Card::Basic, connect( apple, orange  )
-    assert_instance_of Card::Basic, Card.find_by_name("Apple#{JOINT}Orange")
-  end
+    given_cards( "Apple"=>"woot", "Orange" => "wot" )
+    apple, orange = Card["Apple"], Card["Orange"]
 
-  def test_create
-    assert_instance_of Card::Basic, newcard("Editor", "testcontent and stuff")
+    post( 'connection/create', :id => apple.id, :name=>orange.name  )
+    assert_response :success
+    assert_instance_of Card::Basic, Card["Apple+Orange"]
   end
 
   def test_create_role_card
@@ -64,19 +58,22 @@ class CardActionTest < ActionController::IntegrationTest
   end
 
   def test_create_cardtype_card
-    post( 'card/create',:card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"} )
+    post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"} )
     assert_response :success
     assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
     assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor')
   end
-  
 
-  def test_card_removal
-    c = newcard "Boo", "booya"
-    post 'card/remove/' + c.id.to_s
+  def test_create                   
+    post 'card/create', :card=>{
+      :type=>'Basic', 
+      :name=>"Editor",
+      :content=>"testcontent2"
+    }
     assert_response :success
-    assert_nil Card.find_by_name("Boo")
+    assert_equal "testcontent2", Card["Editor"].content
   end
+
   
   def test_comment
     @a = Card.find_by_name("A")  
@@ -87,22 +84,53 @@ class CardActionTest < ActionController::IntegrationTest
     post "card/comment/#{@a.id}", :card => { :comment=>"how come" }
     assert_response :success
   end 
-  
 
-  private
-    def newcard( name, content="" )
-      post( 'card/create', :card=>{"content"=>content, :type=>'Basic', :name=>name})
-      assert_response :success
-      Card.find_by_name(name)
+
+  def test_newcard_shows_edit_instructions
+    given_cards( 
+      {"Cardtype:YFoo" => ""},
+      {"YFoo+*edit"  => "instruct-me"}
+    )
+    get 'card/new', :card => {:type=>'YFoo'}
+    assert_tag :tag=>'div', :attributes=>{ :class=>"instruction" }, 
+      :child=>{ :tag=>'p',:content=>/instruct-me/ }
+  end
+
+  def test_newcard_works_with_fuzzy_renamed_cardtype
+    given_cards "Cardtype:ZFoo" => ""
+    User.as(:joe_user) do
+      Card["ZFoo"].update_attributes! :name=>"ZFooRenamed"
     end
     
-    def connect( trunk, tag_card, content="" )
-      assert tag_card.simple?
-      post( 'connection/create', 
-        :id => trunk.id,
-        :name=>tag_card.name )
-#        :connection => { :content=>content })
-      assert_response :success
-      Card.find_by_name( trunk.name + JOINT + tag_card.name )
-    end
+    get 'card/new', :card => { :type=>'z_foo_renamed' }       
+    assert_response :success
+  end                                        
+  
+  def test_newcard_gives_reasonable_error_for_invalid_cardtype
+    get 'card/new', :card => { :type=>'bananamorph' }       
+    assert_response :success
+    assert_tag :tag=>'p', :content=>/No cardtype corresponds to/
+  end
+
+
+  # FIXME: this should probably be files in the spot for a remove test
+  def test_removal_and_return_to_previous_undeleted_card_after_deletion
+    t1, t2 = given_cards( 
+      { "Testable1" => "hello" }, 
+      { "Testable1+*banana" => "world" } 
+    )
+    
+    get url_for_page( t1.name )
+    get url_for_page( t2.name )
+    
+    post 'card/remove/' + t2.id.to_s
+    assert_rjs_redirected_to url_for_page( t1.name )   
+    assert_nil Card.find_by_name( t2.name )
+    
+    post 'card/remove/' + t1.id.to_s
+    assert_rjs_redirected_to '/'
+    assert_nil Card.find_by_name( t1.name )
+  end
+
+
 end

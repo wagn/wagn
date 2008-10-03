@@ -150,7 +150,7 @@ module CardLib
     
     def approve_create     
       raise "must be a cardtype card" unless self.type == 'Cardtype'
-      deny_because you_cant("create #{self.name} cards") unless Cardtype.create_ok?(Cardtype.class_name_for(self.name))    
+      deny_because you_cant("create #{self.name} cards") unless Cardtype.create_ok?(Cardtype.classname_for(self.name))    
     end
                                     
     def approve_comment

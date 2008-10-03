@@ -35,7 +35,7 @@ module Card
     before_validation_on_create :set_defaults
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
-      :update_link_ins, :allow_type_change, :phantom
+      :update_link_ins, :allow_type_change, :phantom, :broken_type
   
     private
       belongs_to :reader, :polymorphic=>true  
@@ -120,19 +120,24 @@ module Card
         # FIXME -- this finds cards in or out of the trash-- we need that for
         # renaming card in the trash, but may cause other problems.
         raise "Must specify :name to find_or_create" if args['name'].blank?
-        c = (c = Card::Base.find_by_key(args['name'].to_key)) ? c : get_class_from_args(args).new(args)
+        c = Card::Base.find_by_key(args['name'].to_key) || begin
+          p = Proc.new {|k| k.new(args)}
+          with_class_from_args(args, p)
+        end
         c.send(:set_defaults) if c.new_record?
         c
       end                      
                                   
       # sorry, I know the next two aren't DRY, I couldn't figure out how else to do it.
-      def create_with_type!(args={})
-        get_class_from_args(args).create_without_type!(args)
+      def create_with_type!(args={})  
+        p = Proc.new {|k| k.create_without_type!(args)}
+        with_class_from_args(args,p)
       end
       alias_method_chain :create!, :type    
 
       def create_with_type(args={})
-        get_class_from_args(args).create_without_type(args)
+        p = Proc.new {|k| k.create_without_type(args)}
+        with_class_from_args(args,p)
       end
       alias_method_chain :create, :type    
       
@@ -159,23 +164,44 @@ module Card
         end
       end
       alias_method_chain :create, :trash   
-      
-      def get_class_from_args(args={})        
-        # FIXME: this passes the test but it sure is ugly
-        args ||={}  # huh?  why doesn't the method parameter do this?
-        given_type = args.pull('type')
-        if tag_tmpl = right_template(get_name_from_args(args)||"")
-          default_type = tag_tmpl.type
-          if tag_tmpl.extension_type == 'HardTemplate'
-            given_type = default_type
-          end
-        else 
-          default_type = default_class.to_s.demodulize
+
+      def class_for(given_type)
+        if ::Cardtype.name_for_key?( given_type.to_key )
+          given_type = ::Cardtype.classname_for( ::Cardtype.name_for_key( given_type.to_key ))
         end
-        given_type ||= default_type
-        Card.const_get(given_type)
+        
+        begin 
+          Card.const_get(given_type)
+        rescue Exception=>e
+          nil
+        end
       end
       
+      def with_class_from_args(args, p)        
+        args ||={}  # huh?  why doesn't the method parameter do this?
+
+        given_type = args.pull('type')
+        tag_template = right_template(get_name_from_args(args)||"")
+
+        
+        broken_type = nil
+        
+        requested_type = case
+          when tag_template && tag_template.hard_template?;   tag_template.type  
+          when given_type;                                    given_type
+          when tag_template && tag_template.soft_template?;   tag_template.type
+          else                                                default_class.to_s.demodulize  # depends on what class we're in
+        end
+
+        klass = Card.class_for( requested_type ) || begin
+          broken_type = requested_type
+          Card::Basic
+        end
+     
+        card = p.call( klass )
+        card.broken_type = broken_type
+        card
+      end
             
       def get_name_from_args(args={})
         args ||= {}
@@ -434,8 +460,8 @@ module Card
       end
       return false
     end
-=end
-    
+=end       
+
     protected
     def clear_drafts
       connection.execute(%{
@@ -447,7 +473,7 @@ module Card
     def clone_to_type( newtype )
       attrs = self.attributes_before_type_cast
       attrs['type'] = newtype 
-      Card.const_get(newtype).new do |record|
+      Card.class_for(newtype).new do |record|
         record.send :instance_variable_set, '@attributes', attrs
         record.send :instance_variable_set, '@new_record', false
         # FIXME: I don't really understand why it's running the validations on the new card?
@@ -561,23 +587,46 @@ module Card
     
     
     validates_each :type do |rec, attr, value|  
-      if rec.right_template and rec.right_template.hard_template? and value!=rec.right_template.type and !rec.allow_type_change
-        rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rec.right_template.type}"
-      end
-      #FIXME -- this validation would actually be good to have...
-    #  if rec.type == 'Cardtype' and rec.extension and !Card.find_by_type(rec.extension.codename)
-    #    rec.errors.add :type, "can't be changed because #{rec.name} is a Cardtype and many cards have this type"
-    #  end
-      if rec.updates.for?(:type)     
+      # validate on update
+      if rec.updates.for?(:type) and !rec.new_record?
+        
+        # invalid to change type when cards of this type exists
+        if rec.type == 'Cardtype' and rec.extension and ::Card.find_by_type(rec.extension.codename)
+          rec.errors.add :type, "can't be changed to #{value} for #{rec.name} because #{rec.name} is a Cardtype and cards of this type still exist"
+        end
+    
+        # check that changing to the new type would not cause other errors
         rec.send :validate_destroy
         newcard = rec.send :clone_to_type, value
         newcard.valid?  # run all validations...
         rec.send :copy_errors_from, newcard
       end
+
+      # validate on update and create 
+      if rec.updates.for?(:type) or rec.new_record?
+        # invalid type recorded on create
+        if rec.broken_type
+          rec.errors.add :type, "won't work.  There's no cardtype named '#{rec.broken_type}'"
+        end
+        
+        # invalid to change type when type is hard_templated
+        if (rec.right_template and rec.right_template.hard_template? and 
+          value!=rec.right_template.type and !rec.allow_type_change)
+          rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rec.right_template.type}"
+        end        
+        
+        # must be cardtype name or constant name
+        unless Card.class_for(value)
+          rec.errors.add :type, "won't work.  There's no cardtype named '#{value}'"
+        end
+      end
     end  
     
      
     def validate_destroy  
+      if type == 'Cardtype'  and extension and ::Card.find_by_type(extension.codename) 
+        errors.add :type, "can't be destroyed because #{name} is a Cardtype and cards of this type still exist"
+      end
     end
     
     def validate_content( content )

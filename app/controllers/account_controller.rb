@@ -1,7 +1,7 @@
 class InvitationError < StandardError; end
 
 class AccountController < ApplicationController
-  layout :ajax_or_not
+  layout :default_layout
   before_filter :login_required, :only => [ :invite, :update ] 
   #observer :card_observer, :tag_observer
   helper :wagn
@@ -43,7 +43,7 @@ class AccountController < ApplicationController
   def logout
     self.current_user = nil
     flash[:notice] = "You have been logged out."
-    return_to_remembered_page
+    redirect_to '/'  # previous_location here can cause infinite loop.
   end
   
   def forgot_password
@@ -56,7 +56,7 @@ class AccountController < ApplicationController
          "Please update your password once you've logged in. "
       Notifier.deliver_account_info(@user, subject, message)
       flash[:notice] = "A new temporary password has been set on your account and sent to your email address" 
-      return_to_remembered_page
+      redirect_to previous_location
     else
       flash[:notice] = "Could not find a user with that email address" 
       render :action=>'login', :status=>403
@@ -70,8 +70,8 @@ class AccountController < ApplicationController
     @card = @user.card
     
     render :update do |page|
-      page.wagn.messenger.note( "Successfully invited #{@card.name}.  Redirecting to #{previous_page}...")
-      page.redirect_to url_for_page(previous_page)
+      page.wagn.messenger.note( "Successfully invited #{@card.name}" )
+      page.redirect_to previous_location
     end
   end 
 
@@ -136,7 +136,7 @@ class AccountController < ApplicationController
 
     def successful_login
       flash[:notice] = "Welcome to #{System.site_name}"
-      return_to_remembered_page
+      redirect_to previous_location
     end
 
     def failed_login(message)

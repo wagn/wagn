@@ -7,23 +7,21 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include ExceptionNotifiable
   include ExceptionSystem
-  
-  layout :ajax_or_not, :except=>[:render_fast_404]
-  attr_reader :card, :cards, :renderer, :context   
-  attr_accessor :notice
-  before_filter :per_request_setup
-    #:note_current_user, :load_context, :reset_class_caches, :save_request, :note_time 
-  helper_method :card, :cards, :renderer, :context, :previous_page, 
-    :edit_user_context, :sidebar_cards, :notice, :slot, :url_for_page, :url_for_card
-  
-  ## This is a hack, but lots of stuff seems to break without it
-  #include WagnHelper 
 
-  helper :wagn
-  attr_accessor :slot
+  include LocationHelper
+  helper :all
+
+  attr_reader :card, :cards, :renderer, :context   
+  attr_accessor :notice, :slot
+  
+  helper_method :card, :cards, :renderer, :context, 
+    :edit_user_context, :sidebar_cards, :notice, :slot
 
   include ActionView::Helpers::TextHelper #FIXME: do we have to do this? its for strip_tags() in edit()
   include ActionView::Helpers::SanitizeHelper
+
+  before_filter :per_request_setup                                  
+  layout :default_layout, :except=>[:render_fast_404]
    
   protected
   
@@ -41,9 +39,37 @@ class ApplicationController < ActionController::Base
     Role.reset_cache
     
     System.request = request 
-    System.time = Time.now.to_f
-
+    System.time = Time.now.to_f              
+    
+    location_history.push(request.request_uri) if request.get?
   end
+
+  def default_layout
+    request.xhr? ? nil : (
+      case params[:layout]
+        when nil; 'application'
+        when 'none'; nil
+        else params[:layout]
+      end
+    )
+  end
+           
+
+  # ------------( helpers ) --------------
+  def edit_user_context(card)
+    if System.ok?(:administrate_users)
+    	'admin'
+    elsif current_user == card.extension
+    	'user'
+    else
+    	'public'
+    end
+  end
+
+  def renderer
+    Renderer.new
+  end
+  
 
   # ------------------( permission filters ) -------
   def view_ok
@@ -64,7 +90,9 @@ class ApplicationController < ActionController::Base
   def create_ok
     @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
     @skip_slot_header = true
-    unless Card.const_get(@type).create_ok?                  
+    
+    t = Card.class_for(@type) || Card::Basic
+    unless t.create_ok?
       render :action=>'denied', :status=>403
       return false
     end
@@ -74,6 +102,8 @@ class ApplicationController < ActionController::Base
     @card.ok! :delete
   end
 
+
+  # --------------( card loading filters ) ----------
   def load_card!
     load_card
     if @card.new_record? && !@card.phantom?
@@ -113,108 +143,12 @@ class ApplicationController < ActionController::Base
   end  
   
 
-  def handle_cardtype_update(card)
-    #FIXME -- only used in connection controller.  should be phased out.
-    if updating_type?  
-#      old_type = card.type
-      card.type=params[:card][:type]  
-      card.save!
-      card = Card.find(card.id)
-      content = params[:card][:content]
-      content = strip_tags(content) unless (card.class.superclass.to_s=='Card::Basic' or card.type=='Basic')
-      card.content = content
-    end
-    card
-  end
-  
-  def updating_type?
-    request.post? and params[:card] and params[:card][:type]
-  end
-  
-  def ajax_or_not
-    request.xhr? ? nil : (
-      case params[:layout]
-        when nil; 'application'
-        when 'none'; nil
-        else params[:layout]
-      end
-    )
-  end
-  
+  # ----------( rendering methods ) -------------
+
   def render_jsonp( args )
     str = render_to_string args
     render :json=>( params[:callback] || "wadget") + '(' + str.to_json + ')'
   end
-  
-  def remember_card( card )
-    
-    #warn "SESSION RETURN STACK:  #{session[:return_stack].inspect}"
-    
-    return unless card
-    session[:return_stack] ||= [] 
-    session[:return_stack].push( card.id ) unless session[:return_stack].last == card.id
-    session[:return_stack].shift if session[:return_stack].length > 4 
-  end
-  
-  def return_to_remembered_page( options={} )
-    redirect_to_page url_for_previous_page, options
-  end
-  
-  def previous_page    
-    # FIXME please
-    name = ''
-    session[:return_stack] ||= []
-    session[:return_stack].reverse.each do |id|
-      #warn "EXAMINING CARD ID: #{id}"
-      if ((Fixnum === id && card = Card.find_by_id_and_trash( id, false )) || 
-            card=Card.find_by_key_and_trash( id, false ))
-        name = card.name
-        break
-      end
-    end
-    name
-  end
-  
-  def url_for_previous_page
-    name = previous_page
-    name.empty? ? '/' : url_for_page( name )
-  end        
-  
-  def edit_user_context(card)
-    if System.ok?(:administrate_users)
-    	'admin'
-    elsif current_user == card.extension
-    	'user'
-    else
-    	'public'
-    end
-  end
-
-  def renderer
-    Renderer.new
-  end
-  
-   ## FIXME should be using rjs for this...
-  def redirect_to_page( url, options={} )
-    #url = name.empty? ? '/' : url_for_page( name )
-    if options[:javascript] 
-      render :inline=>%{<%= javascript_tag "document.location.href='#{url}'" %>Returning to previous card...}
-    else
-      redirect_to url 
-    end    
-  end   
-       
-  # Urls -----------------------------------------------------------------------
-  def url_for_page( title, opts={} )   
-    # shaved order of magnitude off footer rendering
-    # vs. url_for( :action=> .. )
-    "/wagn/#{Cardname.escape(title)}"
-  end  
-  
-  def url_for_card( options={} )
-    url_for options_for_card( options )
-  end
-
 
   def render_update_slot(stuff="", &proc )
     render_update_slot_element(name="", stuff,&proc)                   

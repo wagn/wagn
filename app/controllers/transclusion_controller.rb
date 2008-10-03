@@ -3,7 +3,7 @@ class TransclusionController < ApplicationController
   cache_sweeper :card_sweeper
   before_filter :load_card, :except=>[:create]
 #  before_filter :edit_ok, :except=>[:edit]
-  layout :ajax_or_not
+  layout :default_layout
    
   def view 
     @action='transclusion'

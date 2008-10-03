@@ -41,6 +41,42 @@ unless defined? TEST_ROOT
     include WagnTestHelper
     include ChunkTestHelper
   
+    
+    def prepare_url(url, cardtype)
+      if url =~ /:id/
+        # find by naming convention in test data:
+        card = Card["Sample #{cardtype}"] or puts "ERROR finding 'Sample #{cardtype}'"
+        url.gsub!(/:id/,card.id.to_s)
+      end
+      url
+    end
+  
+    class << self      
+      def test_render(url,*args)  
+        RenderTest.new(self,url,*args)
+      end
+      
+      # Class method for test helpers
+      def test_helper(*names)
+        names.each do |name|
+          name = name.to_s
+          name = $1 if name =~ /^(.*?)_test_helper$/i
+          name = name.singularize
+          first_time = true
+          begin
+            constant = (name.camelize + 'TestHelper').constantize
+            self.class_eval { include constant }
+          rescue NameError
+            filename = File.expand_path(TEST_ROOT + '/helpers/' + name + '_test_helper.rb')
+            require filename if first_time
+            first_time = false
+            retry
+          end
+        end
+      end    
+      alias :test_helpers :test_helper
+    end
+    
     class RenderTest
       attr_reader :title, :url, :cardtype, :user, :status, :card
       def initialize(test_class,url,args={})
@@ -75,42 +111,7 @@ unless defined? TEST_ROOT
         end
       end                     
     end
-     
-    def prepare_url(url, cardtype)
-      if url =~ /:id/
-        # find by naming convention in test data:
-        card = Card["Sample #{cardtype}"] or puts "ERROR finding 'Sample #{cardtype}'"
-        url.gsub!(/:id/,card.id.to_s)
-      end
-      url
-    end
-  
-    class << self
-      
-      def test_render(url,*args)  
-        RenderTest.new(self,url,*args)
-      end
-      
-      # Class method for test helpers
-      def test_helper(*names)
-        names.each do |name|
-          name = name.to_s
-          name = $1 if name =~ /^(.*?)_test_helper$/i
-          name = name.singularize
-          first_time = true
-          begin
-            constant = (name.camelize + 'TestHelper').constantize
-            self.class_eval { include constant }
-          rescue NameError
-            filename = File.expand_path(TEST_ROOT + '/helpers/' + name + '_test_helper.rb')
-            require filename if first_time
-            first_time = false
-            retry
-          end
-        end
-      end    
-      alias :test_helpers :test_helper
-    end
+    
   end
 end  
 

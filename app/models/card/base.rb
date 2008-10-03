@@ -85,15 +85,11 @@ module Card
           
           if trunk and tag
             trunk_reader, tag_reader = trunk.who_can(:read), tag.who_can(:read)
-#            if err=pieces_incompatible?(trunk,tag)
-#              self.errors.add(:permissions, err)
-#            elsif (!trunk_reader.anonymous? or !tag_reader.anonymous?)
               if trunk_reader.anonymous? or (authenticated?(trunk_reader) and !tag_reader.anonymous?)
                 party = tag_reader
               else
                 party = trunk_reader
               end
- #           end
           end
           Permission.new :task=>p.task, :party=>party
         else

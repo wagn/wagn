@@ -33,15 +33,6 @@
 .card-slot .card-footer a {
   border: 0px !important;  /*-- for wadget --*/
 }
-.card-slot .page-icon-link {
-  float: right;
-  z-index: 3;
-  padding: 1px 3px;
-  -moz-border-radius: 4px;
-  background: inherit;
-  display: block;
-  position: relative;
-}
 
 /* --- what's this about?  --
 .card-slot .open-arrow, 
@@ -493,6 +484,7 @@
   white-space: nowrap;
   padding: 2px 0px;
   border-bottom: 0px;
+  border-color: #ccc;
   -moz-border-radius: 8px 8px 2px 2px !important;
 }
 

@@ -3,7 +3,7 @@
   margin: 0px;
   background: #fff;
   padding: 0px;
-  -moz-border-radius: 6px;
+  -moz-border-radius: 8px;
   border: 1px solid #777;
   border-bottom: 2px solid #888;
   border-right: 2px solid #888;
@@ -33,13 +33,24 @@
 .card-slot .card-footer a {
   border: 0px !important;  /*-- for wadget --*/
 }
+.card-slot .page-icon-link {
+  float: right;
+  z-index: 3;
+  padding: 1px 3px;
+  -moz-border-radius: 4px;
+  background: inherit;
+  display: block;
+  position: relative;
+}
 
+/* --- what's this about?  --
 .card-slot .open-arrow, 
 .card-slot .close-arrow,
 .card-slot .open-link,
 .card-slot .close-link {
   display: none;
 }
+*/
 
 .card-slot .title { 
   margin: 0px 2px;
@@ -73,31 +84,29 @@
    z-index: 1;
 }
 .card-slot .card-menu a { 
-  padding: 1px 3px;
+  padding: 1px 5px;
   margin: 0px;
   -moz-border-radius: 4px 4px 0 0;
 }
 .card-slot .current {
-  background: #fff;
-  padding-bottom: 8px !important;
-
-}
-a.current, a:link.current {
-  color: #005800;
+  background: #bbb;
+  padding-bottom: 7px !important;
 }
 
 .card-slot .submenu {
-  background: #676;
+  background: #bbb;
   padding: 0px 10px;
-  color: #fff;
+  text-align: right;
 }
 .card-slot .submenu a {
-  color: #fff;
-  padding: 0px 2%;
+  padding: 0px 5px;
+  color: #fff
 }
 .card-slot .submenu a.on {
-  background: #9a9;
-  font-style: italic;
+  background: #fff;
+  color: #005800;
+  padding-bottom: 3px;
+  -moz-border-radius: 4px 4px 0 0;
 }
 
 
@@ -107,7 +116,7 @@ a.current, a:link.current {
 
 .card-slot .card-footer,
 .card-slot .revision-navigation {
-  background: #eee;
+  background: #bbb;
   padding: 0px 5px;
   font-size: 9px;
 }
@@ -115,12 +124,7 @@ a.current, a:link.current {
   clear: both;
   -moz-border-radius: 0px 0px 6px 6px;
 }
-.card-slot .card-footer a, 
-.card-slot .card-footer a:visited, 
-.card-slot .card-footer a:focus, 
-.card-slot .card-footer a:link {
-  color: #88c;
-}
+
 #sidebar .card-slot .card-footer {
   display: none;
 }
@@ -201,7 +205,6 @@ a.current, a:link.current {
 
 
 .card-slot .editor {
-  padding: 0px 5px;
   display: block;
 }
 .card-slot.new-card .editor {
@@ -275,7 +278,7 @@ a.current, a:link.current {
   margin: 4px;
 }
 .card-slot .edit-area table {
-  width: 100%;
+  width: 98%;
   margin-bottom: 5px;
 }
 .card-slot .edit-area td {
@@ -455,7 +458,7 @@ a.current, a:link.current {
 .card-slot.paragraph {
   margin: 1px 0px;
   padding: 0px !important;
-  -moz-border-radius: 10px;
+  -moz-border-radius: 8px;
 }
 .card-slot.paragraph .content {
   display: block;
@@ -490,7 +493,7 @@ a.current, a:link.current {
   white-space: nowrap;
   padding: 2px 0px;
   border-bottom: 0px;
-  -moz-border-radius: 6px 6px 0px 0px !important;
+  -moz-border-radius: 8px 8px 2px 2px !important;
 }
 
 .card-slot.line .open-link,

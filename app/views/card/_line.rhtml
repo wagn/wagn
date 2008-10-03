@@ -1,8 +1,10 @@
+<%= page_icon(card) %>		
+
 <div class="card-header">
-  <%= page_icon(card) %>		
  	<div class="title">
  	  <% arrow = %{<img class="open-arrow" src="/images/arrow_right.png" />} %>
  		<%= link_to_remote arrow+less_fancy_title(card), {:url=>slot.url_for("card/to_view")}, :title=>"open #{card.name}" %>
  	</div>
+  
 </div>    
 <%= slot.wrap_content slot.render(:expanded_line_content) %>

@@ -41,7 +41,6 @@ module SlotHelpers
 
   def edit_submenu(on)
     div(:class=>'submenu') do
-      'EDIT:' +
       [[ :content,    'card/edit',          true                      ],
        [ :name,       'card/edit_name',     true                      ],
        [ :type,       'card/edit_type',     !card.type_template?      ],
@@ -99,6 +98,7 @@ module SlotHelpers
   	menu << link_to_menu_action('changes')
   	menu << link_to_menu_action('options') 
   	menu << link_to_menu_action('related') 
+    
     menu << "</div>"
   end
 

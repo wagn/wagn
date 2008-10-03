@@ -17,7 +17,8 @@ class CachedCard
   self.perform_caching = ActionController::Base.perform_caching  
   
   cattr_accessor :card_names, :local_cache
-  self.card_names={}
+  self.card_names={} 
+  self.local_cache={ :real=>{}, :get=>{} }
   
   class << self       
                                
@@ -31,13 +32,14 @@ class CachedCard
     # get_real is for when you want to use the cache, but don't want any builtins, auto,
     # card_creation, or any type of shenanigans.  give me the card if it's there, otherwise nil.
     # called by templating system
-    def get_real(name)  
-      if self.local_cache[:real].has_key?(name)
-        return self.local_cache[:real][name]
+    def get_real(name)     
+      key = name.to_key             
+      
+      if self.local_cache[:real].has_key?(key)
+        return self.local_cache[:real][key]
       else
-        self.local_cache[:real][name] = begin
+        self.local_cache[:real][key] = begin
           if perform_caching
-            key = name.to_key             
             if card = self.find(key)
               card
             elsif card = self.load_card(name)
@@ -51,12 +53,13 @@ class CachedCard
     end
     
     def get(name, card=nil, opts={})   
-      if self.local_cache[:get].has_key?(name)
-        return self.local_cache[:get][name]
+      key = name.to_key
+
+      if self.local_cache[:get].has_key?(key)
+        return self.local_cache[:get][key]
       else
-        self.local_cache[:get][name] = begin
+        self.local_cache[:get][key] = begin
       
-          key = name.to_key
           caching = (opts.has_key?(:cache) ? opts[:cache] : true) && perform_caching 
           card_opts = opts[:card_params] ? opts[:card_params] : {}
           card_opts['name'] = name if (name && !name.blank?)
@@ -231,11 +234,12 @@ class CachedCard
   def attrs
     @attrs ||= begin 
       warn "retrieving #{@key}"
-      if str = self.class.cache.read("/card/#{@key}/attrs")  
-        Marshal.load( str )
-      else
+      begin 
+        Marshal.load( self.class.cache.read("/card/#{@key}/attrs"))
+      rescue Exception=>e
         {}
-      end
+      end         
+      
     end
   end  
   
@@ -252,6 +256,9 @@ class CachedCard
     #  expire(f)
     #end
     self.class.cache.write("/card/#{@key}/attrs", nil)
+    # need to expire local cache as well
+    self.local_cache[:real].delete(@key) if self.local_cache[:real].has_key?(@key)
+    self.local_cache[:get].delete(@key) if self.local_cache[:get].has_key?(@key)      
     @attrs = nil
   end 
   

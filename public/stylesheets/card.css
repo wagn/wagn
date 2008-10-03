@@ -4,9 +4,9 @@
   background: #fff;
   padding: 0px;
   -moz-border-radius: 6px;
-  border: 1px solid #ccc;
-  border-bottom: 2px solid #bbb;
-  border-right: 2px solid #bbb;
+  border: 1px solid #777;
+  border-bottom: 2px solid #888;
+  border-right: 2px solid #888;
   display: block;
 }
 .card-slot,
@@ -20,8 +20,10 @@
 
 
 .card-slot .card-header {
-  padding: 0px 2px;
-  margin: 0px 5px 5px 5px;
+  background: #005800;
+  padding: 5px;
+  margin: 0px;
+  -moz-border-radius: 6px 6px 0 0;
 }
 .card-slot .card-header img {
   float: none !important;
@@ -51,13 +53,18 @@
   font-style: italic;
   font-size: 10px;
 }
-
+.card-slot .card-header a,
 .card-slot .title a,
 .card-slot .title a:link,
 .card-slot .title a:visited,
 .card-slot .title a:hover {
-  color: #448 
+  color: #fff 
 }
+.card-slot.line .title img {
+  padding: 0px !important;
+  margin: 0 5px 0 0 !important;
+}
+
 .card-slot .card-menu {
    float:right;
    white-space: nowrap;
@@ -68,14 +75,15 @@
 .card-slot .card-menu a { 
   padding: 1px 3px;
   margin: 0px;
-  -moz-border-radius: 0px 0px 4px 4px;
+  -moz-border-radius: 4px 4px 0 0;
 }
 .card-slot .current {
-  font-style: italic;
-  background: #dde;
+  background: #fff;
+  padding-bottom: 8px !important;
+
 }
 a.current, a:link.current {
-  color: #777;
+  color: #005800;
 }
 
 .card-slot .submenu {
@@ -381,10 +389,13 @@ a.current, a:link.current {
   color: #444;
 }
 .card-slot .content,
-.card-slot .transcluded .content .card-slot.paragraph,
 .card-slot .revision { 
   display: block;
-  padding: 0px 10px 10px 10px;
+  padding: 5px 15px 10px 15px;
+}
+.card-slot .transcluded .content .card-slot.paragraph {
+  display: block;
+  padding: 0;
 }
 .card-slot .instruction {
   border-left: 0px;
@@ -442,8 +453,9 @@ a.current, a:link.current {
 /*-----------  open cards -------*/
 
 .card-slot.paragraph {
-  margin: 2px 0px;
- -moz-border-radius: 6px;
+  margin: 1px 0px;
+  padding: 0px !important;
+  -moz-border-radius: 10px;
 }
 .card-slot.paragraph .content {
   display: block;
@@ -461,8 +473,9 @@ a.current, a:link.current {
 */
 .card-slot .transcluded .content {
   /* was busting when listed before .paragraph .content */
-  display: inline;
-  padding: 0px;
+ .card-slot .transcluded .content {
+  padding: 5px 10px;
+}
 }
 .card-slot.paragraph .close-arrow,
 .card-slot.paragraph .close-link {
@@ -474,7 +487,6 @@ a.current, a:link.current {
 
 .card-slot.line {
   overflow: hidden;
-  border: 1px solid #ccc;
   white-space: nowrap;
   padding: 2px 0px;
   border-bottom: 0px;

@@ -65,12 +65,12 @@ module Card
       #[Permission.new(:task=>'read',:party=>::Role[:anon])] + 
       #  [:edit,:comment,:delete].map{|t| Permission.new(:task=>t.to_s, :party=>::Role[:auth])},
       
-
+      
       { 
         :permissions => default_permissions,
         :content => template.content,
       }.each_pair do |attr, default|  
-        unless updates.for?(attr)
+        unless updates.for?(attr) 
           send "#{attr}=", default
         end
       end

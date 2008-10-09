@@ -87,7 +87,9 @@ module Card
     def new(args={})
       args=args.stringify_keys unless args.nil?   
       p = Proc.new {|k| k.new(args)}
-      with_class_from_args(args,p)
+      c=with_class_from_args(args,p) 
+      c.send(:set_defaults)
+      c
     end
     
     def method_missing( method_id, *args )

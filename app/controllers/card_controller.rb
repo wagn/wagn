@@ -65,16 +65,7 @@ class CardController < ApplicationController
   #----------------( creating)                                                               
   def new
     params[:card] ||= {}
-    content = params[:card].delete(:content)
     @card = Card.new params[:card]
-    if !card.hard_template 
-      @card.content = 
-        (card.class.superclass.to_s=='Card::Basic' or card.type=='Basic') ? content : strip_tags(content)
-    end
-    @card.name ||= ''
-
-    @card.send(:set_defaults)
-    
     if @card.type == 'User'
       redirect_to :controller=>'account', :action=>'invite'
     end

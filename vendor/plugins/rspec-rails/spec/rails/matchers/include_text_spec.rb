@@ -40,6 +40,7 @@ describe "include_text", :type => :controller do
         response.should include_text('text for this')
       end
 
+<<<<<<< HEAD:vendor/plugins/rspec-rails/spec/rails/matchers/include_text_spec.rb
       it "should fail with incorrect text" do
         post 'text_action'
         lambda {
@@ -57,6 +58,31 @@ describe "include_text", :type => :controller do
         lambda {
           response.should include_text("this is the text for this action")
         }.should fail_with(/expected to find \"this is the text for this action\"/)
+=======
+      it "should fail with matching text" do
+        post 'text_action'
+        lambda {
+          response.should include_text("this is NOT the text for this action")
+        }.should fail_with("expected to find \"this is NOT the text for this action\" in \"this is the text for this action\"")
+      end
+
+      it "should fail when a template is rendered" do
+        post 'some_action'
+        failure_message = case mode
+        when 'isolation'
+          /expected to find \"this is the text for this action\" in \"render_spec\/some_action\"/
+        when 'integration'
+          /expected to find \"this is the text for this action\" in \"\"/
+        end
+        lambda {
+          response.should include_text("this is the text for this action")
+        }.should fail_with(failure_message)
+      end
+
+      it "should pass using should_not with incorrect text" do
+        post 'text_action'
+        response.should_not include_text("the accordian guy")
+>>>>>>> add/update rspec:vendor/plugins/rspec-rails/spec/rails/matchers/include_text_spec.rb
       end
     end
   end

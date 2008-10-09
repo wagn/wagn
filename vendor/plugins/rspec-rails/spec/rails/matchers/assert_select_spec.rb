@@ -601,6 +601,12 @@ describe "have_rjs behaviour_type", :type => :controller do
       with_tag("div", 1)
       with_tag("#1")
     end
+<<<<<<< HEAD:vendor/plugins/rspec-rails/spec/rails/matchers/assert_select_spec.rb
+=======
+    lambda {
+      response.should have_rjs(:insert, :top, "test2")
+    }.should raise_error(SpecFailed)
+>>>>>>> add/update rspec:vendor/plugins/rspec-rails/spec/rails/matchers/assert_select_spec.rb
     response.should have_rjs(:insert, :bottom) {|rjs|
       with_tag("div", 1)
       with_tag("#2")
@@ -626,6 +632,7 @@ describe "have_rjs behaviour_type", :type => :controller do
       with_tag("#4")
     }
   end
+<<<<<<< HEAD:vendor/plugins/rspec-rails/spec/rails/matchers/assert_select_spec.rb
   
   it "should find rjs using :insert (positioned)" do
     pending("await fix for http://rails.lighthouseapp.com/projects/8994-ruby-on-rails/tickets/982")
@@ -637,6 +644,8 @@ describe "have_rjs behaviour_type", :type => :controller do
       response.should have_rjs(:insert, :top, "test2")
     }.should raise_error(SpecFailed)
   end
+=======
+>>>>>>> add/update rspec:vendor/plugins/rspec-rails/spec/rails/matchers/assert_select_spec.rb
 end
 
 describe "send_email behaviour_type", :type => :controller do

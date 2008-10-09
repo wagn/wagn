@@ -62,6 +62,10 @@ class ControllerSpecController < ActionController::Base
   end
 
   def action_setting_the_assigns_hash
+<<<<<<< HEAD:vendor/plugins/rspec-rails/spec_resources/controllers/controller_spec_controller.rb
+=======
+    assigns['direct_assigns_key'] = :direct_assigns_key_value
+>>>>>>> add/update rspec:vendor/plugins/rspec-rails/spec_resources/controllers/controller_spec_controller.rb
     @indirect_assigns_key = :indirect_assigns_key_value
   end
   

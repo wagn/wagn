@@ -143,6 +143,14 @@ require 'controller_spec_controller'
       assigns[:indirect_assigns_key].should == :indirect_assigns_key_value
     end
     
+<<<<<<< HEAD:vendor/plugins/rspec-rails/spec/rails/example/controller_spec_spec.rb
+=======
+    it "should expose the assigns hash directly" do
+      get 'action_setting_the_assigns_hash'
+      assigns[:direct_assigns_key].should == :direct_assigns_key_value
+    end
+    
+>>>>>>> add/update rspec:vendor/plugins/rspec-rails/spec/rails/example/controller_spec_spec.rb
     it "should complain when calling should_receive(:render) on the controller" do
       lambda {
         controller.should_receive(:render)

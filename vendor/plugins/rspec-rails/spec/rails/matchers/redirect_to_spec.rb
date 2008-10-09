@@ -6,7 +6,11 @@ require File.dirname(__FILE__) + '/../../spec_helper'
       integrate_views
     end
     controller_name :redirect_spec
+<<<<<<< HEAD:vendor/plugins/rspec-rails/spec/rails/matchers/redirect_to_spec.rb
     
+=======
+  
+>>>>>>> add/update rspec:vendor/plugins/rspec-rails/spec/rails/matchers/redirect_to_spec.rb
     it "redirected to another action" do
       get 'action_with_redirect_to_somewhere'
       response.should redirect_to(:action => 'somewhere')

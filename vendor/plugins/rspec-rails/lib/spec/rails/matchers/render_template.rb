@@ -10,6 +10,7 @@ module Spec
         end
       
         def matches?(response)
+<<<<<<< HEAD:vendor/plugins/rspec-rails/lib/spec/rails/matchers/render_template.rb
           
           if response.respond_to?(:rendered_file)
             @actual = response.rendered_file
@@ -20,6 +21,21 @@ module Spec
           given_controller_path, given_file = path_and_file(@actual)
           expected_controller_path, expected_file = path_and_file(@expected)
           given_controller_path == expected_controller_path && given_file.match(expected_file)
+=======
+          if response.respond_to?(:rendered_file)
+            @actual = response.rendered_file
+            full_path(@actual) == full_path(@expected)
+          else
+            @actual = response.rendered_template.to_s
+            if @expected =~ /\//
+              given_controller_path, given_file = path_and_file(@actual)
+              expected_controller_path, expected_file = path_and_file(@expected)
+              given_controller_path == expected_controller_path && given_file.match(expected_file)
+            else
+              current_controller_path == controller_path_from(@actual) && @actual.match(@expected)
+            end
+          end
+>>>>>>> add/update rspec:vendor/plugins/rspec-rails/lib/spec/rails/matchers/render_template.rb
         end
         
         def failure_message
@@ -38,8 +54,12 @@ module Spec
           def path_and_file(path)
             parts = path.split('/')
             file = parts.pop
+<<<<<<< HEAD:vendor/plugins/rspec-rails/lib/spec/rails/matchers/render_template.rb
             controller = parts.empty? ? current_controller_path : parts.join('/')
             return controller, file
+=======
+            return parts.join('/'), file
+>>>>>>> add/update rspec:vendor/plugins/rspec-rails/lib/spec/rails/matchers/render_template.rb
           end
         
           def controller_path_from(path)
@@ -48,6 +68,14 @@ module Spec
             parts.join('/')
           end
 
+<<<<<<< HEAD:vendor/plugins/rspec-rails/lib/spec/rails/matchers/render_template.rb
+=======
+          def full_path(path)
+            return nil if path.nil?
+            path.include?('/') ? path : "#{current_controller_path}/#{path}"
+          end
+        
+>>>>>>> add/update rspec:vendor/plugins/rspec-rails/lib/spec/rails/matchers/render_template.rb
           def current_controller_path
             @controller.class.to_s.underscore.gsub(/_controller$/,'')
           end

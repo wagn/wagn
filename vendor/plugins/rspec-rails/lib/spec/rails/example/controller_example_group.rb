@@ -158,9 +158,13 @@ module Spec
 
         protected
         def _assigns_hash_proxy
+<<<<<<< HEAD:vendor/plugins/rspec-rails/lib/spec/rails/example/controller_example_group.rb
           @_assigns_hash_proxy ||= AssignsHashProxy.new self do
             @response.template
           end
+=======
+          @_assigns_hash_proxy ||= AssignsHashProxy.new @controller
+>>>>>>> add/update rspec:vendor/plugins/rspec-rails/lib/spec/rails/example/controller_example_group.rb
         end
 
         private
@@ -185,15 +189,28 @@ module Spec
               unless integrate_views?
                 if @template.respond_to?(:finder)
                   (class << @template.finder; self; end).class_eval do
+<<<<<<< HEAD:vendor/plugins/rspec-rails/lib/spec/rails/example/controller_example_group.rb
                     define_method :file_exists? do; true; end
                   end
                 else
                   (class << @template; self; end).class_eval do
                     define_method :file_exists? do; true; end
+=======
+                    define_method :file_exists? do
+                      true
+                    end
+                  end
+                else
+                  (class << @template; self; end).class_eval do
+                    define_method :file_exists? do
+                      true
+                    end
+>>>>>>> add/update rspec:vendor/plugins/rspec-rails/lib/spec/rails/example/controller_example_group.rb
                   end
                 end
                 (class << @template; self; end).class_eval do
                   define_method :render_file do |*args|
+<<<<<<< HEAD:vendor/plugins/rspec-rails/lib/spec/rails/example/controller_example_group.rb
                     @first_render ||= args[0] unless args[0] =~ /^layouts/
                     @_first_render ||= args[0] unless args[0] =~ /^layouts/
                   end
@@ -201,6 +218,10 @@ module Spec
                   define_method :_pick_template do |*args|
                     @_first_render ||= args[0] unless args[0] =~ /^layouts/
                     PickedTemplate.new
+=======
+                    @first_render ||= args[0] # rails up 2.1.0
+                    @_first_render ||= args[0] # rails edge > 2.1.0
+>>>>>>> add/update rspec:vendor/plugins/rspec-rails/lib/spec/rails/example/controller_example_group.rb
                   end
                 end
               end
@@ -210,9 +231,13 @@ module Spec
               expect_render_mock_proxy.render(options, &block)
               @performed_render = true
             else
+<<<<<<< HEAD:vendor/plugins/rspec-rails/lib/spec/rails/example/controller_example_group.rb
               if matching_stub_exists(options)
                 @performed_render = true
               else
+=======
+              unless matching_stub_exists(options)
+>>>>>>> add/update rspec:vendor/plugins/rspec-rails/lib/spec/rails/example/controller_example_group.rb
                 super(options, deprecated_status_or_extra_options, &block)
               end
             end
@@ -272,11 +297,14 @@ module Spec
 
         Spec::Example::ExampleGroupFactory.register(:controller, self)
       end
+<<<<<<< HEAD:vendor/plugins/rspec-rails/lib/spec/rails/example/controller_example_group.rb
       
       class PickedTemplate
         def render_template(*ignore_args); end
         def render_partial(*ignore_args);  end
       end
+=======
+>>>>>>> add/update rspec:vendor/plugins/rspec-rails/lib/spec/rails/example/controller_example_group.rb
     end
   end
 end

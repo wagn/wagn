@@ -13,8 +13,12 @@ module Spec
         @steps.add(type, step)
       end
       
+<<<<<<< HEAD:vendor/plugins/rspec/lib/spec/story/step_mother.rb
       def find(type, unstripped_name)
         name = unstripped_name.strip
+=======
+      def find(type, name)
+>>>>>>> add/update rspec:vendor/plugins/rspec/lib/spec/story/step_mother.rb
         if @steps.find(type, name).nil?
           @steps.add(type,
           Step.new(name) do

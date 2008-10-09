@@ -42,6 +42,7 @@ module Spec
         end.should raise_error(Spec::Example::ExamplePendingError, /Unimplemented/)
       end
       
+<<<<<<< HEAD:vendor/plugins/rspec/spec/spec/story/step_mother_spec.rb
       it "should create a default step with it's name stripped" do
         # given
         step_mother = StepMother.new
@@ -54,6 +55,8 @@ module Spec
         step.name.should == "doesn't exist"
       end
       
+=======
+>>>>>>> add/update rspec:vendor/plugins/rspec/spec/spec/story/step_mother_spec.rb
       it 'should clear itself' do
         # given
         step_mother = StepMother.new

@@ -150,9 +150,13 @@ module Spec
 
         protected
         def _assigns_hash_proxy
+<<<<<<< HEAD:vendor/plugins/rspec-rails/lib/spec/rails/example/view_example_group.rb
           @_assigns_hash_proxy ||= AssignsHashProxy.new self do
             @response.template
           end
+=======
+          @_assigns_hash_proxy ||= AssignsHashProxy.new @controller
+>>>>>>> add/update rspec:vendor/plugins/rspec-rails/lib/spec/rails/example/view_example_group.rb
         end
       end
 
@@ -174,9 +178,12 @@ module Spec
             include helper_module
           end
         end
+<<<<<<< HEAD:vendor/plugins/rspec-rails/lib/spec/rails/example/view_example_group.rb
         
         def forget_variables_added_to_assigns
         end
+=======
+>>>>>>> add/update rspec:vendor/plugins/rspec-rails/lib/spec/rails/example/view_example_group.rb
       end
     end
   end

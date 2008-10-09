@@ -149,6 +149,7 @@ describe "A view that includes a partial using :collection and :spacer_template"
 
 end
 
+<<<<<<< HEAD:vendor/plugins/rspec-rails/spec/rails/example/view_spec_spec.rb
 if Rails::VERSION::MAJOR >= 2
   describe "A view that includes a partial using an array as partial_path", :type => :view do
     before(:each) do
@@ -162,6 +163,39 @@ if Rails::VERSION::MAJOR >= 2
       response.body.should match(/^Renderable Object$/)
     end
   end
+=======
+describe "A view that includes a partial using an array as partial_path", :type => :view do
+  before(:each) do
+    module ActionView::Partials
+      def render_template_with_partial_with_array_support(partial_path, local_assigns = nil, deprecated_local_assigns = nil)
+        if partial_path.is_a?(Array)
+          "Array Partial"
+        else
+          render_partial_without_array_support(partial_path, local_assigns, deprecated_local_assigns)
+        end
+      end
+
+      alias :render_partial_without_array_support :render_partial
+      alias :render_partial :render_template_with_partial_with_array_support
+    end
+
+    @array = ['Alice', 'Bob']
+    assigns[:array] = @array
+  end
+
+  after(:each) do
+    module ActionView::Partials
+      alias :render_template_with_partial_with_array_support :render_partial
+      alias :render_partial :render_partial_without_array_support
+      undef render_template_with_partial_with_array_support
+    end
+  end
+
+  it "should render have the array passed through to render_partial without modification" do
+    render "view_spec/template_with_partial_with_array" 
+    response.body.should match(/^Array Partial$/)
+  end
+>>>>>>> add/update rspec:vendor/plugins/rspec-rails/spec/rails/example/view_spec_spec.rb
 end
 
 describe "Different types of renders (not :template)", :type => :view do

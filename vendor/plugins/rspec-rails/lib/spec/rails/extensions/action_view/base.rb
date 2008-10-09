@@ -10,11 +10,15 @@ module ActionView #:nodoc:
           end
         end
       end
+<<<<<<< HEAD:vendor/plugins/rspec-rails/lib/spec/rails/extensions/action_view/base.rb
       begin
         super(partial_path, local_assigns, deprecated_local_assigns)
       rescue ArgumentError # edge rails > 2.1 changed render_partial to accept only one arg
         super(partial_path)
       end
+=======
+      super(partial_path, local_assigns, deprecated_local_assigns)
+>>>>>>> add/update rspec:vendor/plugins/rspec-rails/lib/spec/rails/extensions/action_view/base.rb
     end
 
     alias_method :orig_render, :render

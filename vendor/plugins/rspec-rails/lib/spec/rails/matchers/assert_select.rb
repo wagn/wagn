@@ -16,7 +16,10 @@ module Spec # :nodoc:
         def matches?(response_or_text, &block)
           if ActionController::TestResponse === response_or_text and
                    response_or_text.headers.key?('Content-Type') and
+<<<<<<< HEAD:vendor/plugins/rspec-rails/lib/spec/rails/matchers/assert_select.rb
                    !response_or_text.headers['Content-Type'].blank? and
+=======
+>>>>>>> add/update rspec:vendor/plugins/rspec-rails/lib/spec/rails/matchers/assert_select.rb
                    response_or_text.headers['Content-Type'].to_sym == :xml
             @args.unshift(HTML::Document.new(response_or_text.body, false, true).root)           
           elsif String === response_or_text

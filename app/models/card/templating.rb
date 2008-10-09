@@ -118,7 +118,7 @@ module CardLib
     end
 
     def soft_template?
-      extension_type=='SoftTemplate'
+      !hard_template?
     end
     
     def auto_template?

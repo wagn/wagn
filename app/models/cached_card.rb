@@ -122,7 +122,7 @@ class CachedCard
   end
 
   def soft_template?
-    extension_type =='SoftTemplate'
+    !hard_template?
   end
   # /FIXME    
   

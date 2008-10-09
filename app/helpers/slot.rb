@@ -197,7 +197,8 @@ module WagnHelper
         when :open_content;     render_card_partial(:content)  # FIXME?: 'content' is inconsistent
         when :raw_content;    
           #warn "rendering #{card.name} refs=#{card.references_expired} card.content=#{card.content}"
-          @renderer.render( card, args.delete(:content) || "", update_refs=card.references_expired)
+          rendered = @renderer.render( card, args.delete(:content) || "", update_refs=card.references_expired)
+          card.type == 'HTML' ? card.content : rendered
           
       ###---(  EDIT VIEWS ) 
 

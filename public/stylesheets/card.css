@@ -81,7 +81,7 @@
 }
 .card-slot .current {
   background: #bbb;
-  padding-bottom: 7px !important;
+  padding-bottom: 8px !important;
 }
 
 .card-slot .submenu {
@@ -91,11 +91,11 @@
 }
 .card-slot .submenu a {
   padding: 0px 5px;
-  color: #fff
+  color: #005800
 }
 .card-slot .submenu a.on {
   background: #fff;
-  color: #005800;
+  color: #777;
   padding-bottom: 3px;
   -moz-border-radius: 4px 4px 0 0;
 }
@@ -168,10 +168,6 @@
   color: #069;
   background: #ffc;
   text-decoration: underline;
-}
-.card-slot span:hover.transcluded { 
-  background-color: #e8e9cc;
-  -moz-border-radius: 4px;
 }
 .card-slot .transcluded p, 
 .card-slot .transcluded span, 
@@ -383,7 +379,8 @@
   color: #444;
 }
 .card-slot .content,
-.card-slot .revision { 
+.card-slot .revision,
+.card-slot .transcluded .paragraph .content  { 
   display: block;
   padding: 5px 15px 10px 15px;
 }
@@ -465,11 +462,10 @@
   padding: 0px;
 }
 */
-.card-slot .transcluded .content {
   /* was busting when listed before .paragraph .content */
- .card-slot .transcluded .content {
-  padding: 5px 10px;
-}
+.card-slot .transcluded .content {
+  display: inline;
+  padding: 0;
 }
 .card-slot.paragraph .close-arrow,
 .card-slot.paragraph .close-link {

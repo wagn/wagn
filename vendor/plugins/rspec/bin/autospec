@@ -1,7 +1,0 @@
-#!/usr/bin/env ruby
-ENV['RSPEC'] = 'true'
-<<<<<<< HEAD:vendor/plugins/rspec/bin/autospec
-system (["autotest"] << ARGV.dup).flatten.join(" ")
-=======
-system 'autotest'
->>>>>>> add/update rspec:vendor/plugins/rspec/bin/autospec

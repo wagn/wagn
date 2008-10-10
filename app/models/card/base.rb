@@ -74,6 +74,8 @@ module Card
           send "#{attr}=", default
         end
       end
+      
+      self.name='' if self.name.nil?
     end
     
     def default_permissions

@@ -606,7 +606,7 @@ body.wagn .card-slot.line h2,
 
 
 /*.card-slot.paragraph.type-Image, */
-.card-slot.paragraph .type-Image {
+.card-slot.paragraph .type-Image .content {
 /*  overflow: auto;  */
   padding: 5px;
 }

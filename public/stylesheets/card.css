@@ -56,16 +56,32 @@
   font-size: 10px;
 }
 .card-slot .card-header a,
-.card-slot .title a,
-.card-slot .title a:link,
-.card-slot .title a:visited,
-.card-slot .title a:hover {
+.card-slot .card-header .title a,
+.card-slot .card-header .title a:link,
+.card-slot .card-header .title a:visited,
+.card-slot .card-header .title a:hover {
   color: #fff 
 }
 .card-slot.line .title img {
   padding: 0px !important;
   margin: 0 5px 0 0 !important;
 }
+.card-slot .card-menu,
+.page-icon-link {
+  display: none;
+}
+.card-slot.line .card-header {
+  padding-right: 24px;
+}
+.card-slot.line div:hover.card-header {
+  padding-right: 2px;
+}
+
+div:hover.card-header .page-icon-link,
+div:hover.card-header .card-menu {
+  display: inline;
+}
+
 
 .card-slot .card-menu {
    float:right;
@@ -179,9 +195,7 @@
   background-color: inherit;
   -moz-border-radius: inherit;
 }
-.card-slot span:hover.transcluded .card-slot { 
-  background-color: #fff;
-}
+
 
 
 /* note:   ".card-slot .transcluded div not(.editor)" was not working properly and was breaking nested block elements.  
@@ -552,17 +566,11 @@ body.wagn .card-slot.line h2,
 .card-slot .card-slot .card-footer {
   -moz-border-radius: 0px;
 }
-.card-slot .card-slot .card-menu {
-  display: none;
-}
 .card-slot span:hover.card-slot {
   border: 1px solid #ddd;
-  -moz-border-radius: 6px 6px 0 0;
+  -moz-border-radius: 8px 8px 0 0;
 }
 
-.card-slot span:hover.card-slot .card-menu{
-  display: inline;
-}
 
 
 /* CARDTYPE_SPECIFIC ------------------------------*/

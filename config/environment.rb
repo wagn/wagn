@@ -44,7 +44,7 @@ Rails::Initializer.run do |config|
   
   # See Rails::Configuration for more options   
   
-  config.gem "rspec-rails", :lib => "spec" 
+  #config.gem "rspec-rails", :lib => "spec" 
   
 end
 

@@ -28,7 +28,21 @@ class CachedCard
         :get => {}
       }
     end
-    
+
+    def global_seq
+      @@seq ||= (cache.read("#{RAILS_ENV}/global_seq") || write_global_seq(1)).to_i
+    end
+
+    def bump_global_seq
+      write_global_seq( global_seq() + 1 )
+    end
+
+    def write_global_seq(val)
+      puts "val=#{val.inspect}"
+      cache.write("#{RAIlS_ENV}/global_seq", val.to_s) 
+      val
+    end
+
     # get_real is for when you want to use the cache, but don't want any builtins, auto,
     # card_creation, or any type of shenanigans.  give me the card if it's there, otherwise nil.
     # called by templating system
@@ -245,6 +259,7 @@ class CachedCard
     str = Marshal.dump @attrs
     self.class.cache.write("/card/#{@key}/attrs", str)  
   end
+    
   
   def expire_all  
     self.class.cache.write("/card/#{@key}/attrs", nil)

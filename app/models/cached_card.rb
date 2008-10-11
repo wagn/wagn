@@ -91,7 +91,7 @@ class CachedCard
               else                                                ; [ :make_it    , 'scratch'          ]
             end 
         
-          ActiveRecord::Base.logger.info "<get card: #{name} :: #{todo.last}>"
+          #ActiveRecord::Base.logger.info "<get card: #{name} :: #{todo.last}>"
 
           case todo.first
             when :got_it   ;    card
@@ -219,7 +219,7 @@ class CachedCard
   
   def card
     @card ||= (
-      ActiveRecord::Base.logger.info("<Loading: #{@key}>")
+      #ActiveRecord::Base.logger.info("<Loading: #{@key}>")
       Card.find_by_key_and_trash(@key, false)
     )
   end

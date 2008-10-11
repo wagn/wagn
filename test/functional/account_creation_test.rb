@@ -17,7 +17,8 @@ class AccountCreationTest < Test::Unit::TestCase
     @controller = AccountController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
-    login_as :joe_user
+    login_as :joe_user  
+    CachedCard.bump_global_seq
   end     
     
     

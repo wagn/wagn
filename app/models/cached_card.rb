@@ -10,27 +10,30 @@
 class CacheError < StandardError; end
 
 class CachedCard 
-  cattr_accessor :cache, :perform_caching
+  cattr_accessor :cache, :perform_caching, :cache_key_prefix, :seq_key
   attr_reader :key
   attr_accessor :comment, :comment_author
-  self.cache = ActionController::Base.fragment_cache_store
+  self.cache = ActionController::Base.cache_store
   self.perform_caching = ActionController::Base.perform_caching  
+  self.cache_key_prefix = "#{System.base_url.split('//').last}/#{RAILS_ENV}"
+  self.seq_key = self.cache_key_prefix + "/" + "global_seq"
   
   cattr_accessor :card_names, :local_cache
   self.card_names={} 
   self.local_cache={ :real=>{}, :get=>{} }
   
   class << self       
-                               
     def reset_cache
       self.local_cache = {
         :real => {},
-        :get => {}
-      }
+        :get => {},
+        :seq => nil
+      }  
     end
-
+    
     def global_seq
-      @@seq ||= (cache.read("#{RAILS_ENV}/global_seq") || write_global_seq(1)).to_i
+      r= cache.read(@@seq_key)
+      self.local_cache[:seq] ||= (cache.read(@@seq_key) || write_global_seq(1)).to_i
     end
 
     def bump_global_seq
@@ -38,8 +41,7 @@ class CachedCard
     end
 
     def write_global_seq(val)
-      puts "val=#{val.inspect}"
-      cache.write("#{RAIlS_ENV}/global_seq", val.to_s) 
+      cache.write(@@seq_key, val.to_s) 
       val
     end
 
@@ -245,9 +247,8 @@ class CachedCard
   
   def attrs
     @attrs ||= begin 
-      warn "retrieving #{@key}"
       begin 
-        Marshal.load( self.class.cache.read("/card/#{@key}/attrs"))
+        Marshal.load( self.class.cache.read(full_key))
       rescue Exception=>e
         {}
       end         
@@ -257,12 +258,15 @@ class CachedCard
   
   def save
     str = Marshal.dump @attrs
-    self.class.cache.write("/card/#{@key}/attrs", str)  
+    self.class.cache.write(full_key, str)  
   end
-    
+  
+  def full_key   
+    "#{@@cache_key_prefix}/set-#{self.class.global_seq}/#{@key}"
+  end
   
   def expire_all  
-    self.class.cache.write("/card/#{@key}/attrs", nil)
+    self.class.cache.write(full_key, nil)
     # need to expire local cache as well
     self.local_cache[:real].delete(@key) if self.local_cache[:real].has_key?(@key)
     self.local_cache[:get].delete(@key) if self.local_cache[:get].has_key?(@key)      

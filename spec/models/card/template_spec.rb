@@ -42,6 +42,7 @@ end
 describe Card, "with soft tag template" do
   before do 
     CachedCard.reset_cache
+    CachedCard.bump_global_seq
     User.as :admin do
       @bt = Card.create! :name=>"birthday+*rform", :extension_type=>'SoftTemplate', 
               :type=>'Date', :content=>"Today!"

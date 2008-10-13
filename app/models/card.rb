@@ -88,7 +88,7 @@ module Card
       args=args.stringify_keys unless args.nil?   
       p = Proc.new {|k| k.new(args)}
       c=with_class_from_args(args,p) 
-      c.send(:set_defaults)
+      c.send(:set_needed_defaults)
       c
     end
     

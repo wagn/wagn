@@ -32,10 +32,10 @@ module Card
 
     has_many :permissions, :foreign_key=>'card_id' #, :dependent=>:delete_all
            
-    before_validation_on_create :set_defaults
+    before_validation_on_create :set_needed_defaults
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
-      :update_link_ins, :allow_type_change, :phantom, :broken_type
+      :update_link_ins, :allow_type_change, :phantom, :broken_type, :skip_defaults
   
     private
       belongs_to :reader, :polymorphic=>true  
@@ -45,9 +45,18 @@ module Card
       end
         
       
-    protected    
+    protected        
+    
+    # FIXME:  instead of calling c.send(:set_needed_defaults)  in a bunch of places
+    #  couldn't we create initialize_with_defaults and chain it?
+    def set_needed_defaults
+      # new record check because create callbacks are also called in type transitions 
+      return if (!new_record? || skip_defaults? || phantom? || @defaults_already_set)  
+      @defaults_already_set = true
+      set_defaults
+    end
+    
     def set_defaults 
-      return unless new_record?  # because create callbacks are also called in type transitions 
       # FIXME: AccountCreationTest:test_should_require_valid_cardname
       # fails unless we add the  'and name.valid_cardname?'  below
       # but I don't understand why. it should still throw the error
@@ -126,7 +135,7 @@ module Card
           p = Proc.new {|k| k.new(args)}
           with_class_from_args(args, p)
         end
-        c.send(:set_defaults) if c.new_record?
+        c.send(:set_needed_defaults)
         c
       end                      
                                   
@@ -364,6 +373,12 @@ module Card
     end
 
     # Dynamic Attributes ------------------------------------------------------        
+    def skip_defaults?
+      # when Calling Card.new don't set defaults.  this is for performance reasons when loading
+      # missing cards. 
+      !!skip_defaults
+    end
+
     def phantom?
       @phantom ||= phantom
     end

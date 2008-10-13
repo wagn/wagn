@@ -126,9 +126,6 @@ class ApplicationController < ActionController::Base
     # load the real card to respond.  
     card_params = params[:card] ? params[:card].clone : nil
     @card = CachedCard.get(name, @card, :cache=>cache, :card_params=>card_params )
-    if @card.new_record?
-      @card.send(:set_defaults)
-    end
     @card
     
     return view_ok

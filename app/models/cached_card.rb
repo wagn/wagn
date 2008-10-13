@@ -20,7 +20,7 @@ class CachedCard
   
   cattr_accessor :card_names, :local_cache
   self.card_names={} 
-  self.local_cache={ :real=>{}, :get=>{} }
+  self.local_cache={ :real=>{}, :get=>{}, :seq=>nil }
   
   class << self       
     def reset_cache
@@ -32,7 +32,6 @@ class CachedCard
     end
     
     def global_seq
-      r= cache.read(@@seq_key)
       self.local_cache[:seq] ||= (cache.read(@@seq_key) || write_global_seq(1)).to_i
     end
 

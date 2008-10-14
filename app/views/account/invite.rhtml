@@ -17,7 +17,7 @@ context = 'invitation'
 	<h1>Invite A Friend</h1>
 
 	<table class="fieldset">
-	  <% if @card.name %>
+	  <% if !@card.name.blank? %>
   	  <tr><td colspan="3" style="text-align: center"> 
         Accept Invitation Request from: <strong><%= @card.name %></strong>
         <%= hidden_field( :card, :name ) %>
@@ -30,7 +30,7 @@ context = 'invitation'
       <td class="help">Used to verify account (not to spam)</td>
     </tr>
 	
-	  <% if !@card.name %>
+	  <% if @card.name.blank? %>
   	  <tr>
         <td class="label"><label for="name">Name</label></td>
         <td class="field"><%= text_field( :card, :name, {:class=>'new-card-name', :id=>"new-card-name-field"} )%>	</td>

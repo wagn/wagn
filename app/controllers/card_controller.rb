@@ -215,7 +215,9 @@ class CardController < ApplicationController
         
     if @card.new_record? && ! @card.phantom?
       action =  Cardtype.createable_cardtypes.empty? ? :missing : :new
-      return redirect_to( :action=>action, :params=>{ 'card[name]'=>@card_name } )
+      params[:card]={:name=>@card_name}
+      return render(:action=>action)
+      #return redirect_to( :action=>action, :params=>{ 'card[name]'=>@card_name } )
     end                                                                                  
     return unless view_ok
     

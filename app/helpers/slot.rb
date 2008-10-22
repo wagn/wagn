@@ -226,9 +226,10 @@ module WagnHelper
         result = wrap(w_action, { :content=>w_content }.merge(args))
       end
       
-#      result ||= "" #FIMXE: wtf?
       result << javascript_tag("setupLinksAndDoubleClicks()") if args[:add_javascript]
       result
+    rescue Card::PermissionDenied=>e
+      return "Permission error: #{e.message}"
     end
 
     def expand_transclusions(content) 

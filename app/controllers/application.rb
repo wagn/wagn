@@ -20,9 +20,12 @@ class ApplicationController < ActionController::Base
   include ActionView::Helpers::TextHelper #FIXME: do we have to do this? its for strip_tags() in edit()
   include ActionView::Helpers::SanitizeHelper
 
-  before_filter :per_request_setup                                  
+  before_filter :per_request_setup, :except=>[:render_fast_404]                  
+  
+  # OPTIMIZE: render_fast_404 still isn't that fast (?18reqs/sec) 
+  # can we turn sessions off for it and see if that helps?
   layout :default_layout, :except=>[:render_fast_404]
-   
+
   protected
   
   def per_request_setup
@@ -88,7 +91,6 @@ class ApplicationController < ActionController::Base
   def create_ok
     @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
     @skip_slot_header = true
-    
     t = Card.class_for(@type) || Card::Basic
     unless t.create_ok?
       render :action=>'denied', :status=>403

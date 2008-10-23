@@ -509,6 +509,13 @@ module Card
     # that because they depend on some of the tracking methods.
     tracks :name, :content, :type, :comment, :permissions#, :reader, :writer, :appender
 
+    def name_with_key_sync=(name)
+      self.key = name.to_key
+      self.name_without_key_sync = name
+    end
+    alias_method_chain :name=, :key_sync
+      
+
     validates_presence_of :name
 
     # FIXME what do these actually do?  is it expensive?  worth doing? 
@@ -638,7 +645,12 @@ module Card
         end
       end
     end  
-    
+  
+    validates_each :key do |rec, attr, value|
+      unless value == rec.name.to_key
+        rec.errors.add :key, "wrong key '#{value}' for name #{rec.name}"
+      end
+    end
      
     def validate_destroy  
       if type == 'Cardtype'  and extension and ::Card.find_by_type(extension.codename) 

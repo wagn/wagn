@@ -1,0 +1,15 @@
+--- 
+javascripts: 
+- base: 
+  - prototype
+  - effects
+  - controls
+  - application
+  - calendar
+  - tiny_mce
+stylesheets: 
+- base: 
+  - page
+  - defaults
+  - card
+  - print

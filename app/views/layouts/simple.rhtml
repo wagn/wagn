@@ -2,8 +2,9 @@
   <head>
 	  <%= render :partial=>'layouts/head' %>
   </head>
-  
+
+  <body>
 	  <%= yield %>     
-	  <%= google_analytics %>   
-	
+		<%= render :partial=>'layouts/foot' %>
+	</body>
 </html>

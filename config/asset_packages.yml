@@ -6,10 +6,9 @@ javascripts:
   - controls
   - application
   - calendar
-  - tiny_mce
 stylesheets: 
 - base: 
   - page
   - defaults
   - card
-  - print
+  - local

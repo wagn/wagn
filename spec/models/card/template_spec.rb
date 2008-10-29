@@ -88,13 +88,24 @@ describe Card, "with hard type template and hard tag template" do
     #@jb.content.should == 'Today!'
     @jb.content.should == 'Tomorrow'
   end
-  
+
   #it "should change content with cardtype" do
     #@bt.content = 'Yesterday'; @bt.save!
     #Card['Jim+birthday'].content.should== 'Yesterday'
     #Card['Jim+birthday'].content.should== 'Tomorrow'
   #end
   
+end
+
+describe Card, "with hard type template" do
+  before do
+    User.as :joe_user
+    @dt = Card.create! :name=>"Date+*tform", :extension_type=>'HardTemplate', :type=>'Basic', :content=>'Tomorrow'
+  end       
+  
+  it "should return templated content even if content is passed in" do
+    Card.new(:type=>'Date', :content=>'').content.should == 'Tomorrow'
+  end
 end
 
 describe Card, "with soft type template" do

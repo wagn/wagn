@@ -67,23 +67,17 @@ module Card
       self.name = trunk.name + JOINT + tag.name if junction?
       self.trash = false   
       self.key = name.to_key if name
-      #self.priority = tag.priority if tag  # this might not be right for non-simple tags
       
       self.extension_type = 'SoftTemplate' if (template? and !self.extension_type)
        
-      #[Permission.new(:task=>'read',:party=>::Role[:anon])] + 
-      #  [:edit,:comment,:delete].map{|t| Permission.new(:task=>t.to_s, :party=>::Role[:auth])},
-      
-      
-      { 
-        :permissions => default_permissions,
-        :content => template.content,
-      }.each_pair do |attr, default|  
-        unless updates.for?(attr) 
-          send "#{attr}=", default
-        end
+      unless updates.for?(:permissions)
+        self.permissions = default_permissions
       end
       
+      if template.hard_template? || !updates.for?(:content) 
+        self.content = template.content
+      end
+
       self.name='' if self.name.nil?
     end
     

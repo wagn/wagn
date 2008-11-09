@@ -1,3 +1,6 @@
+=== 0.10.3
+* public/stylesheets/local.css  is now required for the asset manager to compile css
+
 === 0.10.2 (Oct 28, 2008)
 * Look and feel updated.
 * significant cache access optimizations.  Seeing 2x improvement on live servers.    

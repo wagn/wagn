@@ -8,13 +8,13 @@
 		       :onchange => "document.location.href='/search/'+encodeURIComponent($F(this))" 		 
 		)	%>
 		<%#= 		 %>
-		<ins style="display:inline"> 
+		<object> 
 		<form action="" onsubmit="document.location.href='/wagn/'+encodeURIComponent($F('go_to_name').gsub(' ','_').gsub('\\\\+',' ')); return false">
 		  <%= text_field_tag("card[name]", 'Go to card', :id=>"go_to_name", :autocomplete=>"off",
    		  :onclick=>'if (this.value == "Go to card") {this.value="" }' )  %>
 		  <%= cardname_auto_complete('go_to_name') %>     
 		</form>
-    </ins>
+    </object>
   
   <% if !Cardtype.createable_cardtypes.empty? %>
     <span>

@@ -7,8 +7,12 @@ unless defined? Wagn::Version
       Eensie = 'pre1'
     
       class << self
-        def to_s
+        def full
           [Major, Minor, Tiny, Eensie].flatten.join('.')
+        end
+        
+        def to_s
+          [Major, Minor, Tiny].join('.')
         end
         
         def minor

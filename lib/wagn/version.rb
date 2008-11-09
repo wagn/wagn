@@ -3,11 +3,12 @@ unless defined? Wagn::Version
     module Version
       Major = '0'
       Minor = '10'
-      Tiny  = '2'
+      Tiny  = '3'
+      Eensie = 'pre1'
     
       class << self
         def to_s
-          [Major, Minor, Tiny].join('.')
+          [Major, Minor, Tiny, Eensie].flatten.join('.')
         end
         
         def minor

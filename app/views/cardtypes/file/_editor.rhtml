@@ -1,4 +1,4 @@
-<p><iframe id="upload-iframe" class="upload-iframe" name="upload-iframe" height="30" width="480" frameborder="0" src="<%= "/file/edit/#{card.id}?card[name]=#{card.name}&card[type]=#{card.type}" %>" scrolling="no">
+<p><iframe id="upload-iframe" class="upload-iframe" name="upload-iframe" height="30" width="480" frameborder="0" src="<%= "/file/#{card.new_record? ? 'new' : 'edit'}/#{card.id}?card[name]=#{card.name}&card[type]=#{card.type}" %>" scrolling="no">
 </iframe></p>
 <%= slot.form.hidden_field :content, :class=>'upload-content' %>
   

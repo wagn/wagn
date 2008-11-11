@@ -9,14 +9,14 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 121) do
+ActiveRecord::Schema.define(:version => 122) do
 
   create_table "cards", :force => true do |t|
     t.integer  "trunk_id"
     t.datetime "created_at",                             :null => false
     t.datetime "updated_at",                             :null => false
     t.integer  "current_revision_id"
-    t.string   "name"
+    t.string   "name",                                   :null => false
     t.string   "type",                                   :null => false
     t.integer  "extension_id"
     t.string   "extension_type"
@@ -25,7 +25,7 @@ ActiveRecord::Schema.define(:version => 121) do
     t.integer  "reader_id"
     t.string   "reader_type"
     t.integer  "tag_id"
-    t.string   "key"
+    t.string   "key",                                    :null => false
     t.boolean  "trash",               :default => false, :null => false
     t.string   "appender_type"
     t.integer  "appender_id"
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(:version => 121) do
   add_index "cards", ["extension_id", "extension_type"], :name => "cards_extension_index"
   add_index "cards", ["key"], :name => "cards_key_uniq", :unique => true
   add_index "cards", ["name"], :name => "cards_name_index"
+  add_index "cards", ["name"], :name => "cards_name_uniq", :unique => true
   add_index "cards", ["tag_id"], :name => "index_cards_on_tag_id"
   add_index "cards", ["trunk_id"], :name => "index_cards_on_trunk_id"
 

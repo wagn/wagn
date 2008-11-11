@@ -2,7 +2,7 @@
 <div class="card-header">   
 	<%= slot.menu %>
   <div class="title"> 
-	  <% arrow = %{<img class="close-arrow" src="/images/arrow_down.png">} %>
+	  <% arrow = %{<img class="close-arrow" alt="&darr;" src="/images/arrow_down.png" />} %>
     <%= slot.link_to_action arrow + less_fancy_title(card), 'line', 
 					{}, :class=>"line-link", :title=>"close #{card.name}" %> 
   </div>

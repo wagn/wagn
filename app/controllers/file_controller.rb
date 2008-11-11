@@ -1,6 +1,17 @@
 class FileController < ApplicationController
   layout 'simple'
-  before_filter :load_card, :edit_ok
+  before_filter :load_card
+  before_filter :edit_ok, :only=>[:edit]
+  before_filter :create_ok, :only=>[:new]
+
+  def new
+    render :action=>'edit'
+  end
+
+  def denied  
+    # FIXME: i think this may still error if parts of @card aren't defined
+    render :template=>'/card/denied'
+  end
   
   def upload
     raise "must have cardname" if @card.name.empty?
@@ -26,5 +37,9 @@ class FileController < ApplicationController
       end
     end
     #render :action=>'view'
+  end
+  
+  def load_card
+    @card = Card.new params[:card]
   end
 end

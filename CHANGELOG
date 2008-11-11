@@ -1,5 +1,14 @@
-* accepts fuzzy names as cardtypes
-* fix *edit display
+=== 0.10.3
+* public/stylesheets/local.css  is now required for the asset manager to compile css
+
+=== 0.10.2 (Oct 28, 2008)
+* Look and feel updated.
+* significant cache access optimizations.  Seeing 2x improvement on live servers.    
+* rake cache:kick to expire cache.                                                   
+* tests may now be run with or without caching enabled.
+* handle cardtype names wherever card type is needed.
+* many bugfixes- see git log.                                                       
+
 
 === 0.10.1 (Sept, 2008)
 * in filter_html, allow span classes that start with w-

@@ -67,23 +67,17 @@ module Card
       self.name = trunk.name + JOINT + tag.name if junction?
       self.trash = false   
       self.key = name.to_key if name
-      #self.priority = tag.priority if tag  # this might not be right for non-simple tags
       
       self.extension_type = 'SoftTemplate' if (template? and !self.extension_type)
        
-      #[Permission.new(:task=>'read',:party=>::Role[:anon])] + 
-      #  [:edit,:comment,:delete].map{|t| Permission.new(:task=>t.to_s, :party=>::Role[:auth])},
-      
-      
-      { 
-        :permissions => default_permissions,
-        :content => template.content,
-      }.each_pair do |attr, default|  
-        unless updates.for?(attr) 
-          send "#{attr}=", default
-        end
+      unless updates.for?(:permissions)
+        self.permissions = default_permissions
       end
       
+      if template.hard_template? || !updates.for?(:content) 
+        self.content = template.content
+      end
+
       self.name='' if self.name.nil?
     end
     
@@ -509,6 +503,13 @@ module Card
     # that because they depend on some of the tracking methods.
     tracks :name, :content, :type, :comment, :permissions#, :reader, :writer, :appender
 
+    def name_with_key_sync=(name)
+      self.key = name.to_key
+      self.name_without_key_sync = name
+    end
+    alias_method_chain :name=, :key_sync
+      
+
     validates_presence_of :name
 
     # FIXME what do these actually do?  is it expensive?  worth doing? 
@@ -638,7 +639,12 @@ module Card
         end
       end
     end  
-    
+  
+    validates_each :key do |rec, attr, value|
+      unless value == rec.name.to_key
+        rec.errors.add :key, "wrong key '#{value}' for name #{rec.name}"
+      end
+    end
      
     def validate_destroy  
       if type == 'Cardtype'  and extension and ::Card.find_by_type(extension.codename) 

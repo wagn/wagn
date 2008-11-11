@@ -20,5 +20,18 @@ describe Card, "validate name" do
     @c = Card.create :name=>"jasmin+ri/ce"
     Card.count.should == original_card_count
   end
+       
+  it "should not allow empty name" do
+    @c = Card.new :name=>""
+    @c.valid?.should == false
+    @c.errors.on(:name).should_not be_blank
+  end
   
+  it "should not allow mismatched name and key" do
+    @c = Card.new :name=>"Test"
+    @c.key="foo"  
+    @c.valid?.should == false
+    @c.errors.on(:key).should_not be_blank
+  end
+
 end

@@ -29,7 +29,6 @@ module CardLib
     
       oldname = self.name_without_tracking
       self.name_without_tracking = newname 
-      self.key = newname.to_key 
       return if new_record?
       return if oldname==newname
           
@@ -51,10 +50,7 @@ module CardLib
         connection.update %{update cards set #{quoted_comma_pair_list(connection, {:name=>"''",:key=>"''"})} where id=#{id}}
         self.trunk = Card.find_or_create :name=>newname.parent_name
         self.tag = Card.find_or_create :name=>newname.tag_name
-        newname = trunk.name + JOINT + tag.name
-        #puts "Set newname=#{newname}"
       end         
-      #puts "write #{id} (#{name})= #{newname}"
       @name_changed = true          
       @old_name = oldname
       @search_content_changed=true 

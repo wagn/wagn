@@ -2,7 +2,7 @@ class AddDefaultTinyMceConfig < ActiveRecord::Migration
   def self.up
     unless Card['*tinyMCE']
       User.as(:admin) do
-        Card::PlainText.create :name=>"*tinyMCE", :content=> <<-eos
+        Card::PlainText.create! :name=>"*tinyMCE", :content=> <<-eos
 width: '100%',
 auto_resize : true,
 relative_urls: false,
@@ -26,7 +26,10 @@ extended_valid_elements : "a[name|href|target|title|onclick],"
 + "font[face|size|color|style],span[class|align|style]"          
 eos
       end
-    end
+    end 
+  rescue Exception=>e
+    # this will fail when using pull_wagn_db, because the data for admin user isn't present yet.  
+    # it's ok to let it go in that case.
   end
 
   def self.down

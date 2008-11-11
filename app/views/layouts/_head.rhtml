@@ -1,7 +1,6 @@
 <head>
   <%# ------- Title -------------%>
-
-  <link rel="shortcut icon" href="<%= System.favicon %>">
+  <link rel="shortcut icon" href="<%= System.favicon %>" />
 
   <title> <%= System.site_name %>: 
     <% if @title then %>
@@ -10,44 +9,12 @@
       <%= controller.controller_name %> - <%= controller.action_name %>
     <% end %>
   </title>
+	<%= stylesheet_link_merged :base %> 
+  <%#= asset_manager can do alternate media but it has to be a separate call anyway %>
+	<%= stylesheet_link_tag 'print', :media=>'print' %>
 
-  <%# ------- Stylesheets -------------%>
+	<%# tried javascript at bottom, much breakage %>
+  <%= javascript_include_merged :base %>       
 
-  <%= stylesheet_link_tag "page","defaults", "card", :media=>'all' %>
-  <%= stylesheet_link_tag 'print', :media=>'print' %>
-  <%# auto_complete_stylesheet %>
-  <%#= stylesheet_inline 'defaults' %>
-
-  <% if File.exists?("#{RAILS_ROOT}/public/stylesheets/local.css") %>
-    <%= stylesheet_link_tag 'local', :media=>'all' %>
-  <% end %>
-
-  <%# ------- Javascript -------------%>
-	<%# - more javascript may be defined in individual editors or cardtypes %>  
-	<%# FIXME: should try compressed versions of these. %>
-	<%= javascript_include_tag "/javascripts/prototype.js" %>
-	<%= javascript_include_tag "/javascripts/effects.js" %>
-	<%= javascript_include_tag "/javascripts/controls.js" %>
-	<%= javascript_include_tag "/javascripts/application.js" %>	
-	<%= javascript_include_tag "/javascripts/calendar.js" %>	
-	
-	<%# FIXME:
-	    Grr I tried and tried to get this to load on edit, but i think tinymce uses the page 
-			onload to load further dependencies, so you can't load it from scratch on an ajax call.
-			want to fix this later.  At the very least for connectipedia we could 
-		  load it only if user is likely to be able to edit anything--aka anonymous users probably not,
-		  but that's not consistent across wagns.
-	%>
-	<%= javascript_include_tag "/tinymce/jscripts/tiny_mce/tiny_mce.js" %> 
-   
-
-  <%# ------- Inline variables -------------%>
-  <span style="display:none">
-    <% if current_user and current_user.card %>
-      <div id="user"> <%= current_user.card.name %></div>
-    <% end %>
-    <!-->edit_html permission removed at 0.10 
-			<div id="edit_html"><%=System.ok? 'edit_html' %></div><-->
-    <div id="popup">false</div> 
-  </span>
+	<%# tiny_mce seem finnicky about getting compressed, & it also accesses other files in it's directory %>
 </head>

@@ -69,13 +69,15 @@ class CardControllerTest < Test::Unit::TestCase
   
   def test_show_nonexistent_card
     get :show, {:id=>'Sample_Fako'}
-    assert_redirected_to :action=>'new'
+    assert_response :success   
+    assert_template 'new'
   end
 
   def test_show_nonexistent_card_no_create
     login_as :anon
     get :show, {:id=>'Sample_Fako'}
-    assert_redirected_to :action=>'missing'
+    assert_response :success   
+    assert_template 'missing'
   end
   
   def test_update

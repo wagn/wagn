@@ -85,7 +85,7 @@ module WagnHelper
           :position => position
         }
         
-        slot_head = %{<span #{attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join } >}
+        slot_head = %{<object #{attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join } >}
         slot_head 
         if block_given? 
           # FIXME: the proc.binding call triggers lots and lots of:
@@ -106,10 +106,10 @@ module WagnHelper
       if render_slot
         if block_given?
           warn_level, $VERBOSE = $VERBOSE, nil;
-          @template.concat("</span>" , proc.binding)
+          @template.concat("</object" , proc.binding)
           $VERBOSE = warn_level
         else
-          result << "</span>"
+          result << "</object>"
         end
       end    
       result

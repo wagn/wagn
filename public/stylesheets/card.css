@@ -21,7 +21,7 @@
 
 .card-slot .card-header {
   background: #005800;
-  padding: 5px;
+  padding: 5px; 
   margin: 0px;
   -moz-border-radius: 6px 6px 0 0;
 }
@@ -62,19 +62,15 @@
 .card-slot .card-header .title a:hover {
   color: #fff 
 }
-.card-slot.line .title img {
-  padding: 0px !important;
-  margin: 0 5px 0 0 !important;
-}
 .card-slot .card-menu,
 .page-icon-link {
   display: none;
 }
 .card-slot.line .card-header {
-  padding-right: 24px;
+  padding-right: 26px;
 }
 .card-slot.line div:hover.card-header {
-  padding-right: 2px;
+  padding-right: 4px;
 }
 
 div:hover.card-header .page-icon-link,
@@ -124,18 +120,22 @@ div:hover.card-header .card-menu {
 .card-slot .card-footer,
 .card-slot .revision-navigation {
   background: #bbb;
-  padding: 0px 5px;
+  padding: 0px 10px;
   font-size: 9px;
+  height: 18px;
 }
 .card-slot .card-footer {
   clear: both;
   -moz-border-radius: 0px 0px 6px 6px;
 }
-
-#sidebar .card-slot .card-footer {
+.card-slot .card-footer .card-links {
   display: none;
 }
-           
+div:hover.card-footer .card-links{
+
+  display: inline;
+} 
+       
 
 /*-------------  TABS -------*/
 
@@ -490,16 +490,16 @@ div:hover.card-header .card-menu {
 /*------------- closed cards -------*/
 
 .card-slot.line {
-  overflow: hidden;
+  overflow: hidden !important;
   white-space: nowrap;
-  padding: 2px 0px;
   border-bottom: 0px;
   border-color: #ccc;
   -moz-border-radius: 8px 8px 2px 2px !important;
+  line-height: 25px;
+  padding: 0px;
+  margin: 0px;
 }
 
-.card-slot.line .open-link,
-.card-slot.line .open-arrow,
 .card-slot.line tr, 
 .card-slot.line td, 
 .card-slot.line p,
@@ -529,13 +529,11 @@ body.wagn .card-slot.line h2,
   float: none !important;
 }
 .card-slot.line .content {
-  display: inline !important;
+  display: inline !important;  
 }
 .card-slot.line .card-header {
-  display: inline;
-}
-.card-slot.line .title img {
-  padding: 0px 2px;
+  float: left;
+  line-height: 15px;
 }
 .card-slot.line .content img {
   height: 16px;
@@ -678,27 +676,6 @@ body.wagn .card-slot.line h2,
   margin-right: 20px;
 }
 
-
-/*------------ (Website) ----------------*/
-
-
-.card-slot .website-editor input {
-  margin: 3px;
-  width: 100%;
-}
-.card-slot .website-link {
-  margin: 3px;
-}
-.card-slot iframe.website {
-  width: 100%;
-  height: 50%;
-  border: 1px solid #ddd;
-}
-
-/* popup stuff --------------------------------------------------------------*/
-#popup_target {  /* IS THIS USED?  */
-  padding: 10px;
-}
 
 
 /*---I think is is actually a connection thing? --*/

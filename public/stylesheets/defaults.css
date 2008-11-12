@@ -67,7 +67,7 @@ body.wagn h1,
 body.wagn h2 { 
   color: #22d; 
   font-weight: normal; 
-  margin: 5px 0px 10px 0px;
+  margin: 0 0 10px 0;
 }
 
 /* headers within cards */

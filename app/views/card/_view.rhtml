@@ -1,22 +1,24 @@
 <% if @wadget %> 
+  <!--
   <div class="card-header">
     <%#= page_icon(card) %>  
  		<div class="title"> 
- 		  <% arrow = %{<img class="close-arrow" src="/images/arrow_down.png">} %>
- 	    <%= link_to_function arrow + less_fancy_title(card), 
+ 		  <%# arrow = %{<img class="close-arrow" src="/images/arrow_down.png">} %>
+ 	    <%#= link_to_function arrow + less_fancy_title(card), 
  						"Wagn.paragraph_to_line(getSlotSpan(this))", :class=>"close-link" %> 
 
- 		  <% arrow = %{<img class="open-arrow" src="/images/arrow_right.png" />} %>
- 			<%= link_to_function arrow+less_fancy_title(card), 
+ 		  <%# arrow = %{<img class="open-arrow" src="/images/arrow_right.png" />} %>
+ 			<%#= link_to_function arrow+less_fancy_title(card), 
  					  "Wagn.line_to_paragraph(getSlotSpan(this))", :class=>"open-link" %>
  	  </div>
  	</div>
 
-  <% unless card.type=='Basic' %>
+  <%# unless card.type=='Basic' %>
     <span class="cardtype">
-      <%= link_to_page( Cardtype.name_for(card.type) ) %>
+      <%#= link_to_page( Cardtype.name_for(card.type) ) %>
     </span>
-  <% end %>
+  <%# end %>
+-->
 <% elsif slot.action!='nude' %><%# FIXME: variable from slot.rb?  %>
 	<%= slot.header %>  
 <% end %>

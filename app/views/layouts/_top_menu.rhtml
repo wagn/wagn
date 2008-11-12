@@ -1,4 +1,4 @@
-<div id="top-menu" class="top-bar">
+<div id="top-menu">
   
   <%= link_to('Home', '/') %>
   <%= link_to( 'Recent', '/recent' ) %>
@@ -7,17 +7,16 @@
 	       :onclick=>'if (this.value == "Search cards") {this.value="" }', 
 	       :onchange => "document.location.href='/search/'+encodeURIComponent($F(this))" 		 
 	)	%>
-	
-  <object>   
-		<form onsubmit="document.location.href='/wagn/'+encodeURIComponent($F('go_to_name').gsub(' ','_').gsub('\\\\+',' ')); return false">
-		  <%= text_field_tag("card[name]", 'Go to card', :id=>"go_to_name", :autocomplete=>"off",
-   		  :onclick=>'if (this.value == "Go to card") {this.value="" }' )  %>
-		  <%= cardname_auto_complete('go_to_name') %>     
-		</form>
-  </object>
+
+
+	<form onsubmit="document.location.href='/wagn/'+encodeURIComponent($F('go_to_name').gsub(' ','_').gsub('\\\\+',' ')); return false">
+	  <%= text_field_tag("card[name]", 'Go to card', :id=>"go_to_name", :autocomplete=>"off",
+ 		  :onclick=>'if (this.value == "Go to card") {this.value="" }' )  %>
+ 		  <%= cardname_auto_complete('go_to_name') %>     
+	</form>
   
   <% if !Cardtype.createable_cardtypes.empty? %>
-      <%= link_to('New Card', :controller=>'card', :action=>'new') %>
+      <%= link_to('New Card', {:controller=>'card', :action=>'new'}, :id=>'new-card-link') %>
   <% end %>
   
   

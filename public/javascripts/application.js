@@ -347,9 +347,9 @@ getSlotSpan=function(element) {
 getSlotOptions=function(element){
   var span=null;
   if (span=getSlotSpan(element)) {   
-    var n=null;
-    if (n=span.getAttributeNode('view')) {view=n.value } else {view=''};
-    if (n=span.getAttributeNode('item')) {item=n.value } else {item=''};    
+    var n=null; var item=''; var view='';
+    if (n=span.getAttributeNode('view')) {view=n.value };
+    if (n=span.getAttributeNode('item')) {item=n.value };    
     return 'view='+view+'&item='+item;
   }
   return '';

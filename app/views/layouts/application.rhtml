@@ -8,27 +8,31 @@
 	  		
 	  <%= render :partial=>'layouts/top_menu' %>
 
-	  <%# params.inspect %>
+    <div id="page">
 
-	  <div id="page-right">
-		  <%= render :partial=>'layouts/logo' %>
+  	  <div id="page-left">
+  			<div id="main" context="main"><%= yield %></div>
+  		</div>  
 
-			<div id="sidebar" context="sidebar">
-				<% if sidebar_card = CachedCard.get_real("*sidebar")  %>
-					<%= WagnHelper::Slot.new(sidebar_card, "sidebar_1", "view", self).render(:raw) %>
-				<% end %>
-				<%= render :partial=>'admin/navigation' %><%# FIXME: move this into a card somehow? %>			  
-			</div>
+  	  <div id="page-right">
+  		  <%= render :partial=>'layouts/logo' %>
+
+  			<div id="sidebar" context="sidebar">
+  				<% if sidebar_card = CachedCard.get_real("*sidebar")  %>
+  					<%= WagnHelper::Slot.new(sidebar_card, "sidebar_1", "view", self).render(:raw) %>
+  				<% end %>
+  				<%= render :partial=>'admin/navigation' %><%# FIXME: move this into a card somehow? %>			  
+  			</div>
 		
-	    <%= render :partial=>'layouts/bottom_menu' %>
-		</div>
+  	    <%= render :partial=>'layouts/bottom_menu' %>
+  	    <%= render :partial=>'layouts/alerts' %>
+    	  
+  		</div>
+  	</div>
 
-	  <div  id="page-left">
-	    <%= render :partial=>'layouts/alerts' %>
-			<div id="main" context="main"><%= yield %></div>
-		</div>  
+	  <%= render :partial=>'layouts/foot' %>
 
-		<%= render :partial=>'layouts/foot' %>
+
   </body>
 </html>
 

@@ -1,5 +1,5 @@
-.card-slot { 
-  width: auto;
+.card-slot {
+  width: 100%;  /*needed for ie6*/
   margin: 0px;
   background: #fff;
   padding: 0px;
@@ -29,19 +29,13 @@
   float: none !important;
   padding: 0px !important;
 }
+
 .card-slot .card-header a,
 .card-slot .card-footer a {
   border: 0px !important;  /*-- for wadget --*/
 }
 
-/* --- what's this about?  --
-.card-slot .open-arrow, 
-.card-slot .close-arrow,
-.card-slot .open-link,
-.card-slot .close-link {
-  display: none;
-}
-*/
+
 
 .card-slot .title { 
   margin: 0px 2px;
@@ -62,8 +56,8 @@
 .card-slot .card-header .title a:hover {
   color: #fff 
 }
-.card-slot .card-menu,
-.page-icon-link {
+html>body .card-menu,
+html>body .page-icon-link {
   display: none;
 }
 .card-slot.line .card-header {
@@ -77,7 +71,6 @@ div:hover.card-header .page-icon-link,
 div:hover.card-header .card-menu {
   display: inline;
 }
-
 
 .card-slot .card-menu {
    float:right;
@@ -128,11 +121,10 @@ div:hover.card-header .card-menu {
   clear: both;
   -moz-border-radius: 0px 0px 6px 6px;
 }
-.card-slot .card-footer .card-links {
+html>body  .card-footer .card-links {
   display: none;
 }
 div:hover.card-footer .card-links{
-
   display: inline;
 } 
        
@@ -411,9 +403,7 @@ div:hover.card-footer .card-links{
   margin-top: 10px;
   padding: 6px;
 }
-.card-slot.line hr {
-  display: none;
-}
+
 .card-slot .denied {
   display: none;
 }
@@ -423,22 +413,15 @@ div:hover.card-footer .card-links{
 
 /*-------- main card ----*/
 
-#show-card .card-slot .title {
+#main .card-slot.paragraph .title {
   font-size: 16px;
-  line-height: 18px;
+  line-height: 25px;
 }
-#show-card .card-slot .content .title,
-#show-card .card-slot .edit-area .title {
+#main .card-slot.paragraph .content .title,
+#main .card-slot .edit-area .title {
   font-size: inherit;
   line-height: inherit;
 }
-#show-card .card-slot .close-arrow {
-  display: none;
-}
-#show-card .card-slot .content .close-arrow {
-  display: inline;
-}
-
 
 /*----- sidebar ----------------*/
 
@@ -481,7 +464,7 @@ div:hover.card-footer .card-links{
   display: inline;
   padding: 0;
 }
-.card-slot.paragraph .close-arrow,
+.card-slot.paragraph .down-arrow,
 .card-slot.paragraph .close-link {
   display: inline;
   margin: 0px 5px 0px 0px;
@@ -490,14 +473,26 @@ div:hover.card-footer .card-links{
 /*------------- closed cards -------*/
 
 .card-slot.line {
-  overflow: hidden !important;
+  overflow: hidden;
   white-space: nowrap;
   border-bottom: 0px;
   border-color: #ccc;
   -moz-border-radius: 8px 8px 2px 2px !important;
-  line-height: 25px;
   padding: 0px;
   margin: 0px;
+  line-height: 25px;  
+  /* necessary for IE6 */
+  height: 25px;
+}
+
+.card-slot.line .content, 
+.card-slot.line .card-header {
+  display: inline;
+  float: left;
+  vertical-align: center;
+}
+.card-slot.line .card-header {
+  line-height: 15px;
 }
 
 .card-slot.line tr, 
@@ -528,26 +523,19 @@ body.wagn .card-slot.line h2,
   white-space: nowrap;      
   float: none !important;
 }
-.card-slot.line .content {
-  display: inline !important;  
-}
-.card-slot.line .card-header {
-  float: left;
-  line-height: 15px;
-}
 .card-slot.line .content img {
   height: 16px;
   float: none;
   padding: 0px;
 }
 .card-slot.line br,  
-.card-slot.line .card-footer,
+.card-slot.line hr,
 .card-slot.line input,
-.card-slot.line .comment-box,
 .card-slot.line textarea,
-.card-slot.line .card-menu,
+.card-slot.line .comment-box,
 .card-slot.line .table-of-contents,
 .card-slot.line .card-menu,
+.card-slot.line .card-footer,
 .card-slot.line .close-link {
   display: none !important;
 }

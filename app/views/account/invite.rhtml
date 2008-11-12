@@ -3,81 +3,88 @@ div_id = "main-body"
 context = 'invitation'
 -%>  
 
+<h1>Invite A Friend</h1>
+
+
 <% get_slot.wrap(@action) do |slot| %>
-<span style="display:none;" class="editor_context"><%= context %></span>
-<iframe id="iframe-<%= div_id %>" height="0" width="0" frameborder="0"></iframe>
 
-<style> .fieldset td.help { width: 30% ;} </style>
+  <span style="display:none;" class="editor_context"><%= context %></span>
+  <iframe id="iframe-<%= div_id %>" height="0" width="0" frameborder="0"></iframe>
 
-<% form_remote_for( :user, @user, :url=>{ :controller=>'account', :action=>'create' }, 
-		:html=>{:id=>"#{div_id}-user-update-form"} ) do |f| %>
+  <style> .fieldset td.help { width: 30% ;} </style>
+
+
+  <% form_remote_for( :user, @user, :url=>{ :controller=>'account', :action=>'create' }, 
+  		:html=>{:id=>"#{div_id}-user-update-form"} ) do |f| %>
 		
-  <%= hidden_field_tag 'element', "#{div_id}"  %>
+    <%= hidden_field_tag 'element', "#{div_id}"  %>
 
-	<h1>Invite A Friend</h1>
 
-	<table class="fieldset">
-	  <% if !@card.name.blank? %>
-  	  <tr><td colspan="3" style="text-align: center"> 
-        Accept Invitation Request from: <strong><%= @card.name %></strong>
-        <%= hidden_field( :card, :name ) %>
-      </td></tr>
-    <% end %>
+  	<table class="fieldset">
+  	  <% if !@card.name.blank? %>
+    	  <tr><td colspan="3" style="text-align: center"> 
+          Accept Invitation Request from: <strong><%= @card.name %></strong>
+          <%= hidden_field( :card, :name ) %>
+        </td></tr>
+      <% end %>
      
-    <tr>
-      <td class="label"><label for="email">Email</label></td>
-      <td class="field"><%= f.text_field :email %></td>
-      <td class="help">Used to verify account (not to spam)</td>
-    </tr>
+      <tr>
+        <td class="label"><label for="email">Email</label></td>
+        <td class="field"><%= f.text_field :email %></td>
+        <td class="help">Used to verify account (not to spam)</td>
+      </tr>
 	
-	  <% if @card.name.blank? %>
-  	  <tr>
-        <td class="label"><label for="name">Name</label></td>
-        <td class="field"><%= text_field( :card, :name, {:class=>'new-card-name', :id=>"new-card-name-field"} )%>	</td>
-        <td class="help">Usually a full name: the title of the new user's card.  (Your friend can change it later)</td>
+  	  <% if @card.name.blank? %>
+    	  <tr>
+          <td class="label"><label for="name">Name</label></td>
+          <td class="field"><%= text_field( :card, :name, {:class=>'new-card-name', :id=>"new-card-name-field"} )%>	</td>
+          <td class="help">Usually a full name: the title of the new user's card.  (Your friend can change it later)</td>
+    		</tr>
+  		<% end %>
+
+  	  <% if System.ok? :administrate_users %>
+  	    <tr>
+  	      <td class="label"><label for="password">Password</label></td>
+  	      <td class="field"><%= f.password_field :password %></td>
+  	      <td class="help" rowspan="2">
+  					As a User Administrator, you may optionally set an initial password for
+  					this new user.  If left blank, a random password will be generated  
+  	      </td>
+  	    </tr>  
+
+  	    <tr>
+  	      <td class="label"><label for="password_confirmation">Confirm password</label></td>
+  	      <td class="field" colspan="2"><%= f.password_field :password_confirmation %></td>
+  	    </tr>
+  	  <% end %>           
+
+  		<tr>
+  		  <td class="label"><label for="subject">Subject</label></td>
+  		  <td class="field" colspan="2"><%= text_field_tag 'email[subject]', @email[:subject],  :size=>60  %></td>
+  		</tr>                  
+		
+  		<tr>
+  		  <td class="label"><label for="message">Message</label></td>
+  		  <td class="field" colspan="2"><%= text_area_tag 'email[message]', @email[:message], :rows=>15, :cols => 60  %></td>
   		</tr>
-		<% end %>
-
-	  <% if System.ok? :administrate_users %>
-	    <tr>
-	      <td class="label"><label for="password">Password</label></td>
-	      <td class="field"><%= f.password_field :password %></td>
-	      <td class="help" rowspan="2">
-					As a User Administrator, you may optionally set an initial password for
-					this new user.  If left blank, a random password will be generated  
-	      </td>
-	    </tr>  
-
-	    <tr>
-	      <td class="label"><label for="password_confirmation">Confirm password</label></td>
-	      <td class="field"><%= f.password_field :password_confirmation %></td>
-	    </tr>
-	  <% end %>           
-
-		<tr>
-		  <td class="label"><label for="subject">Subject</label></td>
-		  <td class="field" colspan="2"><%= text_field_tag 'email[subject]', @email[:subject],  :size=>60  %></td>
-		</tr>                  
+  		
+  		<tr>
+  		  <td></td>
+  		  <td class="help" colspan="2">A password and instructions will be appended to the end of the message.</td>             			
+  		</tr>
+  		              
+  		<tr>
+  			<td></td>
+  			<td colspan="2">
+  		  	<%= submit_tag 'Invite' %>
+  		  	<!--FIXME with css?-->&nbsp;&nbsp;
+  		  	<%= link_to 'Cancel', previous_location  %>
+  		  </td>
+  		</tr>
+  		
+  		<tr><td></td><td colspan="2"><%= slot.notice %></td></tr>
 		
-		<tr>
-		  <td class="label"><label for="message">Message</label></td>
-		  <td class="field" colspan="2"><%= text_area_tag 'email[message]', @email[:message], :rows=>15, :cols => 60  %></td>
-		</tr>
-		<tr>
-		  <td></td>
-		  <td class="help" colspan="2">A password and instructions will be appended to the end of the message.</td>             			
-		</tr>              
-		<tr>
-			<td></td>
-			<td colspan="2">
-		  	<%= submit_tag 'Invite' %>
-		  	<!--FIXME with css?-->&nbsp;&nbsp;
-		  	<%= link_to 'Cancel', previous_location  %>
-		  </td>
-		</tr>
-		<tr><td></td><td colsapn="2"><%= slot.notice %></td></tr>
-		
-	</table>    
+  	</table>    
 
-<% end %>     
+  <% end %>
 <% end %>

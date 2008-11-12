@@ -1,45 +1,38 @@
 /*---- page layout */
 
-#main-table {
-  width: 100%;
-  height: 95%;
-  vertical-align: top;
+#page {
+  margin: 0 2% 0 2%;
 }
 #page-left {
-  width: 63%;
-  margin-bottom: 400px;
+  float: left;
+  width: 67%;
+  margin-bottom: 400px;  
 }
 #page-right {
-  position: absolute;
-  right: 0.5%;
-  width: 35%;
+  float: right;
+  width: 28%;
 }
-#main {
-  padding: 10px;
-}
-#sidebar {
-  padding: 0px 10px;
-}
+
 
 /* top-menu -------------*/
 
-.top-bar {
-  padding: 2px;
+#top-menu {
+  font-size: 14px;
   background: #005800;
-}
- 
+  margin-bottom: 20px;
+  padding: 2px;
+} 
 #top-menu a {
   color: white;
   padding: 0px 4px;
 }
+#top-menu div {
+  display: inline;
+}
 #top-menu input {
-  font-size: 10;
   padding: 0px 3px;
-  border: 1px solid #aaa;
-  border-top: 0px;
-  border-left: 0px;
   margin: 0px 8px;
-  -moz-border-radius: 0px 0px 0px 0px;
+  border: 0;
   width: 120px;
 }
 #logging {  /* signing in and out */
@@ -47,25 +40,14 @@
   right: 0.5%;
   top: 2px;
 }
-/*
-#my-card {
-  text-align: center;
-
-  padding: 0px 10px;
-}
-#my-card .card-slot {
-  padding: 2px 0px;
-}
-*/
 #my-card-link {
   font-weight: bold;
 }
+
+
 /* -------  logo --------- */
 #logo {
   text-align: center;
-/*  position: relative;
-  top: -10px; */
-  padding: 10px;
 }
 #logo .card-slot {
   font-weight: bold;
@@ -87,62 +69,9 @@
 
 /*---- main card ------*/
 
-#show-card {
-  margin-top: 5px;
-}
-
-
-
-
-/*--- all card lists ---*/
-
-.card-list {
-  margin: 3px 0px;
-}
-#card-list-label {
-  display: block;
-  margin: 3px;
-}
-#options-toggle {
-  float: right;
-  margin: -15px 10px;
-}
 .paging-links {
   float:right;
   margin-right: 15px
-}
-
-
-/*--- query options box ---*/
-
-
-
-#linker-options {
-  padding: 3px;
-  margin: 5px;
-  border:  1px solid #ccc;
-  border-right: 2px solid #aaa;
-  border-bottom: 2px solid #aaa;
-  background: #eee;
-  -moz-border-radius: 6px;
-  font-size: 12px;
-}
-#linker-options input, 
-#linker-options select {
-  -moz-border-radius: 0px;
-  padding: 0px;
-  margin: 2px;
-  width: 60%;
-  font-size: 10px;
-}
-#linker-options table {
-  width: 100%;
-}
-#linker-options td {
-  width: 50%;
-}
-.option {
-  padding: 0px 10px; 
 }
 
 
@@ -152,31 +81,26 @@
 
 #alerts {
   padding: 2px 9px;
-  margin: 5px 0px;
   -moz-border-radius: 8px;
   color: #555;
   font-weight: bold;
   z-index: 4;
 }
 html>body #alerts { /* not in IE  (won't do fixed position) */
-  margin: 0px;
-  width: 33%;
   position: fixed !important;
   bottom: 0px;
   right: 0px;
-  z-index:  !important;
+  display: block;
   background: #eee;
   -moz-border-radius: 8px 0px 0px 0px;
   border: 1px solid #ccc;
   border-bottom: 0px;
   border-right: 0px;
-  display: block;
 
 }
 #alerts div {
   display: none;
 }
-
 
 /*----- fieldset tables --------*/
 
@@ -232,14 +156,17 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
 
 
 /* --  miscellaneous --- */
-
-#maincontent { /* FIXME -- unhelpful name; what does this do?? */
+/*
+#maincontent { 
   padding: 0px 8px 10px 8px;
 }
+
 #create-advanced { 
   border: 1px solid #ccc;
   -moz-border-radius: 4px; 
 }
+*/
+
 .admin-nav {
   margin: 10px 10px 30px 10px;
 }

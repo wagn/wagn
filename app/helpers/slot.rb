@@ -85,7 +85,8 @@ module WagnHelper
           :position => position
         }
         
-        slot_head = %{<object #{attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join } >}
+        slot_head = '<!--[if !IE]><object><![endif]-->' +
+          %{<div #{attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join } >}
         slot_head 
         if block_given? 
           # FIXME: the proc.binding call triggers lots and lots of:
@@ -106,10 +107,10 @@ module WagnHelper
       if render_slot
         if block_given?
           warn_level, $VERBOSE = $VERBOSE, nil;
-          @template.concat("</object" , proc.binding)
+          @template.concat("</div></object>" , proc.binding)
           $VERBOSE = warn_level
         else
-          result << "</object>"
+          result << "</div></object>"
         end
       end    
       result
@@ -226,10 +227,12 @@ module WagnHelper
         result = wrap(w_action, { :content=>w_content }.merge(args))
       end
       
+#      result ||= "" #FIMXE: wtf?
       result << javascript_tag("setupLinksAndDoubleClicks()") if args[:add_javascript]
       result
     rescue Card::PermissionDenied=>e
       return "Permission error: #{e.message}"
+      
     end
 
     def expand_transclusions(content) 

@@ -6,13 +6,8 @@
 	 User.as(:admin) { tinymceconfig = (card = CachedCard.get_real('*tiny mce')) ? card.content : '' }
 %>
 <%= slot.editor_hooks :setup=> %{ 
-	  tinyMCE.init({ 
-			mode: "exact",
-			elements: "#{eid}-tinymce",
-			#{tinymceconfig} 
-		}); 
+		  setTimeout((function(){tinyMCE.init({mode: "exact",elements: "#{eid}-tinymce",#{tinymceconfig}})}),50); 
 	},                     
-	
 	:save=> %{ 
 		t = tinyMCE.getInstanceById( '#{eid}-tinymce' ); 
 		$('#{eid}-hidden-content').value = t.getContent();

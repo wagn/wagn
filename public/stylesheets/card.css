@@ -235,7 +235,7 @@ div:hover.card-footer .card-links{
   border: dashed 1px #aaa;
   margin: 4px;
   padding: 3px;
-  position: relative;
+/*  position: relative;*/
 }
 .card-slot .templated.edit-area {
   background: white;

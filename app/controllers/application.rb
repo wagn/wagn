@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
   protected
   
   def set_canonical_domain
-    requested_base =  "#{request.protocol}#{request.subdomains}.#{request.domain}#{request.port_string}"
+    requested_base =  "#{request.protocol}#{(request.subdomains.blank? ? '' : (request.subdomains.join('.') + '.'))}#{request.domain}#{request.port_string}"
     logger.info("*************************************************************")
     logger.info( "#{requested_base} == #{System.base_url}" )
 

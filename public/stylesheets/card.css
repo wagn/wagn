@@ -413,6 +413,7 @@ div:hover.card-footer .card-links{
 
 /*-------- main card ----*/
 
+/*-- makes things funny in IE
 #main .card-slot.paragraph .title {
   font-size: 16px;
   line-height: 25px;
@@ -422,6 +423,8 @@ div:hover.card-footer .card-links{
   font-size: inherit;
   line-height: inherit;
 }
+    
+--*/
 
 /*----- sidebar ----------------*/
 

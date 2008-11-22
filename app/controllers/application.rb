@@ -30,8 +30,12 @@ class ApplicationController < ActionController::Base
   protected
   
   def set_canonical_domain
-    if "#{request.protocol}#{request.subdomains}#{request.domain}#{request.port_string}/" != System.base_url
-      redirect_to "#{System.base_url.gsub(/\/$/,'')}#{request.path}" 
+    requested_base =  "#{request.protocol}#{request.subdomains}.#{request.domain}#{request.port_string}"
+    logger.info("*************************************************************")
+    logger.info( "#{requested_base} == #{System.base_url}" )
+
+    unless requested_base == System.base_url || (requested_base+'/') == System.base_url
+      redirect_to "#{System.base_url.gsub(/\/$/,'')}#{request.path}"    if "#{request.protocol}#{request.subdomains}#{request.domain}#{request.port_string}/" != System.base_url
     end
   end
                 
@@ -51,10 +55,7 @@ class ApplicationController < ActionController::Base
     CachedCard.reset_cache
     System.request = request 
     System.time = Time.now.to_f              
-    
-    # log for cookie debugging  
-    #logger.info("*************************************************************")
-    #logger.info( "'#{request.protocol}#{request.subdomains}#{request.domain}#{request.port_string}' == #{System.base_url}" ) 
+
   end
 
   def default_layout

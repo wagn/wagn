@@ -44,7 +44,12 @@ Rails::Initializer.run do |config|
   
   # See Rails::Configuration for more options   
   
-  #config.gem "rspec-rails", :lib => "spec" 
+  #config.gem "rspec-rails", :lib => "spec"          
+  
+  # FIXME: should we also set :secret ?
+  config.action_controller.session = {
+    :session_key => (RAILS_ROOT.split("/")[-2..-1]||'generic_wagn_key').join('-').gsub(/\./,'-')
+  }
   
 end
 

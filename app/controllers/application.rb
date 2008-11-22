@@ -21,12 +21,20 @@ class ApplicationController < ActionController::Base
   include ActionView::Helpers::SanitizeHelper
 
   before_filter :per_request_setup, :except=>[:render_fast_404]                  
+  before_filter :set_canonical_domain
   
   # OPTIMIZE: render_fast_404 still isn't that fast (?18reqs/sec) 
   # can we turn sessions off for it and see if that helps?
   layout :default_layout, :except=>[:render_fast_404]
 
   protected
+  
+  def set_canonical_domain
+    if "#{request.protocol}#{request.subdomains}#{request.domain}#{request.port_string}/" != System.base_url
+      redirect_to "#{System.base_url.gsub(/\/$/,'')}#{request.path}" 
+    end
+  end
+                
   
   def per_request_setup
     User.current_user = current_user || User.find_by_login('anon')
@@ -43,6 +51,10 @@ class ApplicationController < ActionController::Base
     CachedCard.reset_cache
     System.request = request 
     System.time = Time.now.to_f              
+    
+    # log for cookie debugging  
+    #logger.info("*************************************************************")
+    #logger.info( "'#{request.protocol}#{request.subdomains}#{request.domain}#{request.port_string}' == #{System.base_url}" ) 
   end
 
   def default_layout

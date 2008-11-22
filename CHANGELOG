@@ -1,4 +1,5 @@
 === 0.10.3
+* Wagn now redirects to canonical domain, set in System.base_url  (wagn.rb)
 * public/stylesheets/local.css  is now required for the asset manager to compile css
 
 === 0.10.2 (Oct 28, 2008)

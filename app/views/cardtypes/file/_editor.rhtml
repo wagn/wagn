@@ -4,9 +4,9 @@
   
 <%#FIXME-slot %>
 <%= slot.editor_hooks :save=>%{
-	doc=$$(".upload-iframe")[0].contentDocument;       	
-	innerForm = doc.getElementById('upload-form');
-   fileField = doc.getElementById('file');
+	doc=window.frames["upload-iframe"].document;       	
+	innerForm = doc.forms['fileupload'];
+  fileField = innerForm["file"];
 	if (fileField.value=='') {
 		// if the user hasn't uploaded a file, just continue.
 		return true;

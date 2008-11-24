@@ -31,11 +31,10 @@ class ApplicationController < ActionController::Base
   
   def set_canonical_domain
     requested_base =  "#{request.protocol}#{(request.subdomains.blank? ? '' : (request.subdomains.join('.') + '.'))}#{request.domain}#{request.port_string}"
-    logger.info("*************************************************************")
-    logger.info( "#{requested_base} == #{System.base_url}" )
-
     unless requested_base == System.base_url || (requested_base+'/') == System.base_url
-      redirect_to "#{System.base_url.gsub(/\/$/,'')}#{request.path}"    if "#{request.protocol}#{request.subdomains}#{request.domain}#{request.port_string}/" != System.base_url
+      unless RAILS_ENV=="development"
+        redirect_to "#{System.base_url.gsub(/\/$/,'')}#{request.path}"    if "#{request.protocol}#{request.subdomains}#{request.domain}#{request.port_string}/" != System.base_url
+      end
     end
   end
                 

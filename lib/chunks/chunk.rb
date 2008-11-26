@@ -20,12 +20,13 @@ module Chunk
     end
     
     #attr_reader :text, :unmask_text, :unmask_mode
-    attr_accessor :text, :unmask_text, :unmask_mode, :revision
+    attr_accessor :text, :unmask_text, :unmask_mode, :revision, :card
     
     def initialize(match_data, content) 
       @text = match_data[0] 
       @content = content
-      @unmask_mode = :normal
+      @unmask_mode = :normal  
+      @card = content.card
     end
 
     # Find all the chunks of the given type in content

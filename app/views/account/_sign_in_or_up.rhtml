@@ -1,6 +1,6 @@
 <%- inplace ||= false %>
 
-<% if !logged_in? %>
+<% if User.current_user.anonymous? %>
   <div class="headroom">
     <h2>Sign in?</h2>
     <div class="instruction">

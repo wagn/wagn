@@ -15,7 +15,11 @@ class TransclusionController < ApplicationController
       @skip_slot_header = true
       msg = render_to_string( :template=>'/card/denied', :status=>403 )
       render_update_slot do |page,target|
-        target.replace(slot.wrap("", :content=>msg))
+        if params[:ie]
+          target.replace("oops! you don't have permission to create this card.")
+        else
+          target.replace(slot.wrap("", :content=>msg))
+        end
       end
       return
     end
@@ -28,14 +32,22 @@ class TransclusionController < ApplicationController
       edit_screen = render_to_string( :inline=>%{<%= get_slot.render(:edit_in_form) %>} )
     else
       edit_screen = render_to_string :action=>'edit'
-    end
+    end           
+    
+    # DEBUGGING in ie
+    # logger.info("*************************************************************")
+    # logger.info( edit_screen  )
+                    
     render_update_slot do |page,target|
-      target.replace edit_screen
-      # FIXME: this probably needs to set more than just cardid
-      #page << %{value.attributes['cardid'].value = '#{@card.id}'}
-      
-      # FIXME: would be nice to have this alert closer to the edit location
-      page.replace_html 'alerts', "CREATED #{params[:card][:name]}"
+      if params[:ie]
+        target.replace render_to_string( :inline=>%{<%=card.name%>. (<%=link_to('edit', "/card/edit/#{card.name}")%>)})
+      else
+        target.replace edit_screen
+        # FIXME: this probably needs to set more than just cardid
+        #page << %{value.attributes['cardid'].value = '#{@card.id}'}
+        # FIXME: would be nice to have this alert closer to the edit location
+        page.replace_html 'alerts', "CREATED #{params[:card][:name]}"
+      end
     end
   end
   

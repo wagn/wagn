@@ -210,9 +210,10 @@ setupCreateOnClick=function(container) {
       slot_span = getSlotSpan(element);
       card_name = slot_span.getAttributeNode('cardname').value;  
       //console.log("create  " +card_name);
+      ie = (Prototype.Browser.IE ? '&ie=true' : '');
       new Ajax.Request('/transclusion/create?context='+getSlotContext(element), {
         asynchronous: true, evalScripts: true,
-        parameters: "card[name]="+encodeURIComponent(card_name)+"&requested_view="+slot_span.getAttributeNode('view').value
+        parameters: "card[name]="+encodeURIComponent(card_name)+"&requested_view="+slot_span.getAttributeNode('view').value+ie
       });
       Event.stop(event);
     }

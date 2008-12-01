@@ -9,7 +9,27 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 122) do
+ActiveRecord::Schema.define(:version => 20081201221123) do
+
+  create_table "card_files", :force => true do |t|
+    t.string   "filename"
+    t.string   "content_type"
+    t.integer  "size"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "card_images", :force => true do |t|
+    t.integer  "size"
+    t.string   "content_type"
+    t.string   "filename"
+    t.integer  "height"
+    t.integer  "width"
+    t.integer  "parent_id"
+    t.string   "thumbnail"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "cards", :force => true do |t|
     t.integer  "trunk_id"
@@ -32,15 +52,15 @@ ActiveRecord::Schema.define(:version => 122) do
     t.integer  "references_expired"
   end
 
-  add_index "cards", ["reader_id"], :name => "card_reader_id_index"
-  add_index "cards", ["reader_type"], :name => "card_reader_type_index"
-  add_index "cards", ["type"], :name => "card_type_index"
   add_index "cards", ["extension_id", "extension_type"], :name => "cards_extension_index"
   add_index "cards", ["key"], :name => "cards_key_uniq", :unique => true
   add_index "cards", ["name"], :name => "cards_name_index"
   add_index "cards", ["name"], :name => "cards_name_uniq", :unique => true
+  add_index "cards", ["reader_id"], :name => "card_reader_id_index"
+  add_index "cards", ["reader_type"], :name => "card_reader_type_index"
   add_index "cards", ["tag_id"], :name => "index_cards_on_tag_id"
   add_index "cards", ["trunk_id"], :name => "index_cards_on_trunk_id"
+  add_index "cards", ["type"], :name => "card_type_index"
 
   create_table "cardtypes", :force => true do |t|
     t.string  "class_name"

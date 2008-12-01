@@ -9,3 +9,5 @@ public/image
 public_scripts
 public/stylesheets/base*
 public/javascripts/base*
+public/card_image
+public/card_file

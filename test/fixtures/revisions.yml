@@ -1,111 +1,146 @@
 --- 
+revisions_133: 
+  updated_at: 2008-12-03 15:35:17.936145
+  created_by: "1"
+  card_id: "132"
+  id: "134"
+  content: ""
+  created_at: 2008-12-03 15:35:17.936145
 revisions_078: 
-  updated_at: 2008-09-18 15:56:15
+  updated_at: 2008-12-03 15:35:12.593786
   created_by: "1"
   card_id: "79"
   id: "79"
   content: ""
-  created_at: 2008-09-18 15:56:15
+  created_at: 2008-12-03 15:35:12.593786
 revisions_105: 
-  updated_at: 2008-09-18 15:56:20
+  updated_at: 2008-12-03 15:35:15.291644
   created_by: "1"
   card_id: "106"
   id: "106"
   content: ""
-  created_at: 2008-09-18 15:56:20
-revisions_020: 
-  updated_at: 2007-12-03 00:29:12
+  created_at: 2008-12-03 15:35:15.291644
+revisions_134: 
+  updated_at: 2008-12-03 15:35:18.066832
   created_by: "1"
-  card_id: "20"
-  id: "20"
+  card_id: "133"
+  id: "135"
+  content: "{{+name}} {{+age}} {{+description}}"
+  created_at: 2008-12-03 15:35:18.066832
+revisions_020: 
+  updated_at: 2007-12-03 00:29:16.050423
+  created_by: "1"
+  card_id: "29"
+  id: "29"
   content: ""
-  created_at: 2007-12-03 00:29:12
+  created_at: 2007-12-03 00:29:16.050423
 revisions_079: 
-  updated_at: 2008-09-18 15:56:16
+  updated_at: 2008-12-03 15:35:12.683972
   created_by: "1"
   card_id: "80"
   id: "80"
   content: ""
-  created_at: 2008-09-18 15:56:16
+  created_at: 2008-12-03 15:35:12.683972
 revisions_106: 
-  updated_at: 2008-09-18 15:56:20
+  updated_at: 2008-12-03 15:35:15.523706
   created_by: "1"
   card_id: "107"
   id: "107"
   content: ""
-  created_at: 2008-09-18 15:56:20
+  created_at: 2008-12-03 15:35:15.523706
+revisions_135: 
+  updated_at: 2008-12-03 15:35:18.189269
+  created_by: "4"
+  card_id: "134"
+  id: "136"
+  content: test
+  created_at: 2008-12-03 15:35:18.189269
 revisions_021: 
-  updated_at: 2007-12-03 00:29:12
+  updated_at: 2007-12-03 00:29:19.409207
   created_by: "1"
-  card_id: "21"
-  id: "21"
-  content: ""
-  created_at: 2007-12-03 00:29:12
+  card_id: "40"
+  id: "40"
+  content: "{\"link_to\":\"_self\"}"
+  created_at: 2007-12-03 00:29:19.409207
 revisions_107: 
-  updated_at: 2008-09-18 15:56:20
+  updated_at: 2008-12-03 15:35:15.563921
   created_by: "1"
   card_id: "108"
   id: "108"
   content: ""
-  created_at: 2008-09-18 15:56:20
+  created_at: 2008-12-03 15:35:15.563921
+revisions_136: 
+  updated_at: 2008-12-03 15:35:18.275907
+  created_by: "4"
+  card_id: "135"
+  id: "137"
+  content: test
+  created_at: 2008-12-03 15:35:18.275907
 revisions_022: 
-  updated_at: 2007-12-03 00:29:12
-  created_by: "1"
-  card_id: "22"
-  id: "22"
+  updated_at: 2007-12-03 00:29:09.451335
+  created_by: "2"
+  card_id: "7"
+  id: "7"
   content: ""
-  created_at: 2007-12-03 00:29:12
+  created_at: 2007-12-03 00:29:08.382075
 revisions_108: 
-  updated_at: 2008-09-18 15:56:20
+  updated_at: 2008-12-03 15:35:15.67618
   created_by: "1"
   card_id: "109"
   id: "109"
   content: ""
-  created_at: 2008-09-18 15:56:20
+  created_at: 2008-12-03 15:35:15.67618
 revisions_050: 
-  updated_at: 2008-09-18 15:56:07
+  updated_at: 2008-12-03 15:35:03.967786
   created_by: "1"
   card_id: "51"
   id: "51"
   content: ""
-  created_at: 2008-09-18 15:56:07
-revisions_023: 
-  updated_at: 2007-12-03 00:29:13
+  created_at: 2008-12-03 15:35:03.967786
+revisions_137: 
+  updated_at: 2008-12-03 15:35:18.360463
   created_by: "1"
-  card_id: "24"
-  id: "24"
+  card_id: "136"
+  id: "138"
+  content: test
+  created_at: 2008-12-03 15:35:18.360463
+revisions_023: 
+  updated_at: 2007-12-03 00:29:12.144513
+  created_by: "1"
+  card_id: "18"
+  id: "18"
   content: ""
-  created_at: 2007-12-03 00:29:13
+  created_at: 2007-12-03 00:29:12.144513
 revisions_109: 
-  updated_at: 2008-09-18 15:56:20
+  updated_at: 2008-12-03 15:35:15.716832
   created_by: "1"
   card_id: "110"
   id: "110"
   content: ""
-  created_at: 2008-09-18 15:56:20
+  created_at: 2008-12-03 15:35:15.716832
 revisions_051: 
-  updated_at: 2008-09-18 15:56:07
+  updated_at: 2008-12-03 15:35:04.063589
   created_by: "1"
   card_id: "52"
   id: "52"
   content: ""
-  created_at: 2008-09-18 15:56:07
+  created_at: 2008-12-03 15:35:04.063589
 revisions_024: 
-  updated_at: 2007-12-03 00:29:13
+  updated_at: 2007-12-03 00:29:17.664685
   created_by: "1"
-  card_id: "25"
-  id: "25"
+  card_id: "30"
+  id: "30"
   content: ""
-  created_at: 2007-12-03 00:29:13
+  created_at: 2007-12-03 00:29:17.664685
 revisions_080: 
-  updated_at: 2008-09-18 15:56:16
+  updated_at: 2008-12-03 15:35:12.784359
   created_by: "1"
   card_id: "81"
   id: "81"
   content: ""
-  created_at: 2008-09-18 15:56:16
+  created_at: 2008-12-03 15:35:12.784359
 revisions_052: 
-  updated_at: 2008-09-18 15:56:07
+  updated_at: 2008-12-03 15:35:04.374299
   created_by: "1"
   card_id: "53"
   id: "53"
@@ -132,809 +167,816 @@ revisions_052:
     + "align|onmouseover|onmouseout|name],hr[class|width|size|noshade],"
     + "font[face|size|color|style],span[class|align|style]"          
 
-  created_at: 2008-09-18 15:56:07
+  created_at: 2008-12-03 15:35:04.374299
 revisions_025: 
-  updated_at: 2007-12-03 00:29:13
-  created_by: "1"
-  card_id: "26"
-  id: "26"
-  content: ""
-  created_at: 2007-12-03 00:29:13
-revisions_081: 
-  updated_at: 2008-09-18 15:56:16
-  created_by: "1"
-  card_id: "82"
-  id: "82"
-  content: ""
-  created_at: 2008-09-18 15:56:16
-revisions_053: 
-  updated_at: 2008-09-18 15:56:13
-  created_by: "1"
-  card_id: "54"
-  id: "54"
-  content: I'm number two
-  created_at: 2008-09-18 15:56:13
-revisions_026: 
-  updated_at: 2007-12-03 00:29:14
-  created_by: "1"
-  card_id: "27"
-  id: "27"
-  content: ""
-  created_at: 2007-12-03 00:29:14
-revisions_082: 
-  updated_at: 2008-09-18 15:56:16
-  created_by: "1"
-  card_id: "83"
-  id: "83"
-  content: ""
-  created_at: 2008-09-18 15:56:16
-revisions_054: 
-  updated_at: 2008-09-18 15:56:13
-  created_by: "1"
-  card_id: "55"
-  id: "55"
-  content: ""
-  created_at: 2008-09-18 15:56:13
-revisions_083: 
-  updated_at: 2008-09-18 15:56:16
-  created_by: "1"
-  card_id: "84"
-  id: "84"
-  content: ""
-  created_at: 2008-09-18 15:56:16
-revisions_055: 
-  updated_at: 2008-09-18 15:56:13
-  created_by: "1"
-  card_id: "56"
-  id: "56"
-  content: ""
-  created_at: 2008-09-18 15:56:13
-revisions_110: 
-  updated_at: 2008-09-18 15:56:20
-  created_by: "1"
-  card_id: "111"
-  id: "111"
-  content: ""
-  created_at: 2008-09-18 15:56:20
-revisions_027: 
-  updated_at: 2007-12-03 00:29:15
-  created_by: "1"
-  card_id: "28"
-  id: "28"
-  content: ""
-  created_at: 2007-12-03 00:29:15
-revisions_084: 
-  updated_at: 2008-09-18 15:56:18
-  created_by: "1"
-  card_id: "85"
-  id: "85"
-  content: ""
-  created_at: 2008-09-18 15:56:18
-revisions_056: 
-  updated_at: 2008-09-18 15:56:13
-  created_by: "1"
-  card_id: "57"
-  id: "57"
-  content: ""
-  created_at: 2008-09-18 15:56:13
-revisions_111: 
-  updated_at: 2008-09-18 15:56:21
-  created_by: "1"
-  card_id: "112"
-  id: "112"
-  content: ""
-  created_at: 2008-09-18 15:56:21
-revisions_028: 
-  updated_at: 2007-12-03 00:29:16
-  created_by: "1"
-  card_id: "29"
-  id: "29"
-  content: ""
-  created_at: 2007-12-03 00:29:16
-revisions_085: 
-  updated_at: 2008-09-18 15:56:18
-  created_by: "1"
-  card_id: "86"
-  id: "86"
-  content: ""
-  created_at: 2008-09-18 15:56:18
-revisions_057: 
-  updated_at: 2008-09-18 15:56:13
-  created_by: "1"
-  card_id: "58"
-  id: "58"
-  content: I got not account
-  created_at: 2008-09-18 15:56:13
-revisions_112: 
-  updated_at: 2008-09-18 15:56:21
-  created_by: "1"
-  card_id: "113"
-  id: "113"
-  content: ""
-  created_at: 2008-09-18 15:56:21
-revisions_029: 
-  updated_at: 2007-12-03 00:29:17
-  created_by: "1"
-  card_id: "30"
-  id: "30"
-  content: ""
-  created_at: 2007-12-03 00:29:17
-revisions_086: 
-  updated_at: 2008-09-18 15:56:18
-  created_by: "1"
-  card_id: "87"
-  id: "87"
-  content: ""
-  created_at: 2008-09-18 15:56:18
-revisions_058: 
-  updated_at: 2008-09-18 15:56:13
-  created_by: "1"
-  card_id: "59"
-  id: "59"
-  content: ""
-  created_at: 2008-09-18 15:56:13
-revisions_113: 
-  updated_at: 2008-09-18 15:56:21
-  created_by: "1"
-  card_id: "114"
-  id: "114"
-  content: ""
-  created_at: 2008-09-18 15:56:21
-revisions_087: 
-  updated_at: 2008-09-18 15:56:18
-  created_by: "1"
-  card_id: "88"
-  id: "88"
-  content: I'm here to be referenced to
-  created_at: 2008-09-18 15:56:18
-revisions_059: 
-  updated_at: 2008-09-18 15:56:13
-  created_by: "1"
-  card_id: "60"
-  id: "60"
-  content: ""
-  created_at: 2008-09-18 15:56:13
-revisions_114: 
-  updated_at: 2008-09-18 15:56:21
-  created_by: "1"
-  card_id: "115"
-  id: "115"
-  content: ""
-  created_at: 2008-09-18 15:56:21
-revisions_115: 
-  updated_at: 2008-09-18 15:56:21
-  created_by: "1"
-  card_id: "116"
-  id: "116"
-  content: ""
-  created_at: 2008-09-18 15:56:21
-revisions_088: 
-  updated_at: 2008-09-18 15:56:18
-  created_by: "1"
-  card_id: "89"
-  id: "89"
-  content: Alpha [[Z]]
-  created_at: 2008-09-18 15:56:18
-revisions_001: 
-  updated_at: 2007-12-03 00:29:09
-  created_by: "2"
-  card_id: "1"
-  id: "1"
-  content: ""
-  created_at: 2007-12-03 00:29:07
-revisions_116: 
-  updated_at: 2008-09-18 15:56:21
-  created_by: "1"
-  card_id: "117"
-  id: "117"
-  content: ""
-  created_at: 2008-09-18 15:56:21
-revisions_089: 
-  updated_at: 2008-09-18 15:56:18
-  created_by: "1"
-  card_id: "90"
-  id: "90"
-  content: Beta {{Z}}
-  created_at: 2008-09-18 15:56:18
-revisions_002: 
-  updated_at: 2007-12-03 00:29:09
-  created_by: "2"
-  card_id: "2"
-  id: "2"
-  content: ""
-  created_at: 2007-12-03 00:29:08
-revisions_030: 
-  updated_at: 2007-12-03 00:29:17
-  created_by: "1"
-  card_id: "31"
-  id: "31"
-  content: ""
-  created_at: 2007-12-03 00:29:17
-revisions_117: 
-  updated_at: 2008-09-18 15:56:21
-  created_by: "1"
-  card_id: "118"
-  id: "118"
-  content: ""
-  created_at: 2008-09-18 15:56:21
-revisions_003: 
-  updated_at: 2007-12-03 00:29:09
-  created_by: "2"
-  card_id: "3"
-  id: "3"
-  content: ""
-  created_at: 2007-12-03 00:29:08
-revisions_031: 
-  updated_at: 2007-12-03 00:29:17
-  created_by: "1"
-  card_id: "32"
-  id: "32"
-  content: "{\"type\":\"_self\"}"
-  created_at: 2007-12-03 00:29:17
-revisions_118: 
-  updated_at: 2008-09-18 15:56:21
-  created_by: "1"
-  card_id: "119"
-  id: "119"
-  content: ""
-  created_at: 2008-09-18 15:56:21
-revisions_004: 
-  updated_at: 2007-12-03 00:29:09
-  created_by: "2"
-  card_id: "4"
-  id: "4"
-  content: ""
-  created_at: 2007-12-03 00:29:08
-revisions_060: 
-  updated_at: 2008-09-18 15:56:14
-  created_by: "1"
-  card_id: "61"
-  id: "61"
-  content: ""
-  created_at: 2008-09-18 15:56:14
-revisions_032: 
-  updated_at: 2007-12-03 00:29:18
-  created_by: "1"
-  card_id: "33"
-  id: "33"
-  content: ""
-  created_at: 2007-12-03 00:29:18
-revisions_119: 
-  updated_at: 2008-09-18 15:56:21
-  created_by: "1"
-  card_id: "120"
-  id: "120"
-  content: ""
-  created_at: 2008-09-18 15:56:21
-revisions_005: 
-  updated_at: 2007-12-03 00:29:09
-  created_by: "2"
-  card_id: "5"
-  id: "5"
-  content: ""
-  created_at: 2007-12-03 00:29:08
-revisions_061: 
-  updated_at: 2008-09-18 15:56:14
-  created_by: "1"
-  card_id: "62"
-  id: "62"
-  content: ""
-  created_at: 2008-09-18 15:56:14
-revisions_033: 
-  updated_at: 2007-12-03 00:29:18
-  created_by: "1"
-  card_id: "34"
-  id: "34"
-  content: "{\"part\":\"_self\"}"
-  created_at: 2007-12-03 00:29:18
-revisions_090: 
-  updated_at: 2008-09-18 15:56:18
-  created_by: "1"
-  card_id: "91"
-  id: "91"
-  content: Theta
-  created_at: 2008-09-18 15:56:18
-revisions_062: 
-  updated_at: 2008-09-18 15:56:14
-  created_by: "1"
-  card_id: "63"
-  id: "63"
-  content: ""
-  created_at: 2008-09-18 15:56:14
-revisions_034: 
-  updated_at: 2007-12-03 00:29:18
-  created_by: "1"
-  card_id: "35"
-  id: "35"
-  content: ""
-  created_at: 2007-12-03 00:29:18
-revisions_006: 
-  updated_at: 2007-12-03 00:29:09
-  created_by: "2"
-  card_id: "6"
-  id: "6"
-  content: ""
-  created_at: 2007-12-03 00:29:08
-revisions_063: 
-  updated_at: 2008-09-18 15:56:14
-  created_by: "1"
-  card_id: "64"
-  id: "64"
-  content: ""
-  created_at: 2008-09-18 15:56:14
-revisions_035: 
-  updated_at: 2007-12-03 00:29:18
-  created_by: "1"
-  card_id: "36"
-  id: "36"
-  content: "{\"plus\":\"_self\"}"
-  created_at: 2007-12-03 00:29:18
-revisions_007: 
-  updated_at: 2007-12-03 00:29:09
-  created_by: "2"
-  card_id: "7"
-  id: "7"
-  content: ""
-  created_at: 2007-12-03 00:29:08
-revisions_091: 
-  updated_at: 2008-09-18 15:56:18
-  created_by: "1"
-  card_id: "92"
-  id: "92"
-  content: "[[A]] [[A+B]] [[T]]"
-  created_at: 2008-09-18 15:56:18
-revisions_064: 
-  updated_at: 2008-09-18 15:56:14
-  created_by: "1"
-  card_id: "65"
-  id: "65"
-  content: ""
-  created_at: 2008-09-18 15:56:14
-revisions_036: 
-  updated_at: 2007-12-03 00:29:19
-  created_by: "1"
-  card_id: "37"
-  id: "37"
-  content: ""
-  created_at: 2007-12-03 00:29:19
-revisions_008: 
-  updated_at: 2007-12-03 00:29:09
-  created_by: "2"
-  card_id: "8"
-  id: "8"
-  content: ""
-  created_at: 2007-12-03 00:29:08
-revisions_092: 
-  updated_at: 2008-09-18 15:56:19
-  created_by: "1"
-  card_id: "93"
-  id: "93"
-  content: "{{B}} {{A+B}} {{A}} {{T}}"
-  created_at: 2008-09-18 15:56:19
-revisions_120: 
-  updated_at: 2008-09-18 15:56:21
-  created_by: "1"
-  card_id: "121"
-  id: "121"
-  content: basiccontent
-  created_at: 2008-09-18 15:56:21
-revisions_065: 
-  updated_at: 2008-09-18 15:56:14
-  created_by: "1"
-  card_id: "66"
-  id: "66"
-  content: ""
-  created_at: 2008-09-18 15:56:14
-revisions_037: 
-  updated_at: 2007-12-03 00:29:19
-  created_by: "1"
-  card_id: "38"
-  id: "38"
-  content: "{\"include\":\"_self\"}"
-  created_at: 2007-12-03 00:29:19
-revisions_009: 
-  updated_at: 2007-12-03 00:29:09
-  created_by: "2"
-  card_id: "9"
-  id: "9"
-  content: ""
-  created_at: 2007-12-03 00:29:08
-revisions_093: 
-  updated_at: 2008-09-18 15:56:19
-  created_by: "1"
-  card_id: "94"
-  id: "94"
-  content: AlphaBeta
-  created_at: 2008-09-18 15:56:19
-revisions_121: 
-  updated_at: 2008-09-18 15:56:21
-  created_by: "1"
-  card_id: "122"
-  id: "122"
-  content: type_a_content
-  created_at: 2008-09-18 15:56:21
-revisions_066: 
-  updated_at: 2008-09-18 15:56:14
-  created_by: "1"
-  card_id: "67"
-  id: "67"
-  content: ""
-  created_at: 2008-09-18 15:56:14
-revisions_038: 
-  updated_at: 2007-12-03 00:29:19
-  created_by: "1"
-  card_id: "39"
-  id: "39"
-  content: ""
-  created_at: 2007-12-03 00:29:19
-revisions_094: 
-  updated_at: 2008-09-18 15:56:19
-  created_by: "1"
-  card_id: "95"
-  id: "95"
-  content: ""
-  created_at: 2008-09-18 15:56:19
-revisions_122: 
-  updated_at: 2008-09-18 15:56:22
-  created_by: "1"
-  card_id: "123"
-  id: "123"
-  content: type_b_content
-  created_at: 2008-09-18 15:56:22
-revisions_067: 
-  updated_at: 2008-09-18 15:56:14
-  created_by: "1"
-  card_id: "68"
-  id: "68"
-  content: ""
-  created_at: 2008-09-18 15:56:14
-revisions_039: 
-  updated_at: 2007-12-03 00:29:19
-  created_by: "1"
-  card_id: "40"
-  id: "40"
-  content: "{\"link_to\":\"_self\"}"
-  created_at: 2007-12-03 00:29:19
-revisions_095: 
-  updated_at: 2008-09-18 15:56:19
-  created_by: "1"
-  card_id: "96"
-  id: "96"
-  content: ""
-  created_at: 2008-09-18 15:56:19
-revisions_123: 
-  updated_at: 2008-09-18 15:56:22
-  created_by: "1"
-  card_id: "124"
-  id: "124"
-  content: type_c_content
-  created_at: 2008-09-18 15:56:22
-revisions_068: 
-  updated_at: 2008-09-18 15:56:14
-  created_by: "1"
-  card_id: "69"
-  id: "69"
-  content: ""
-  created_at: 2008-09-18 15:56:14
-revisions_096: 
-  updated_at: 2008-09-18 15:56:19
-  created_by: "1"
-  card_id: "97"
-  id: "97"
-  content: ""
-  created_at: 2008-09-18 15:56:19
-revisions_124: 
-  updated_at: 2008-09-18 15:56:22
-  created_by: "1"
-  card_id: "125"
-  id: "125"
-  content: type_d_content
-  created_at: 2008-09-18 15:56:22
-revisions_097: 
-  updated_at: 2008-09-18 15:56:19
-  created_by: "1"
-  card_id: "98"
-  id: "98"
-  content: ""
-  created_at: 2008-09-18 15:56:19
-revisions_010: 
-  updated_at: 2007-12-03 00:29:09
-  created_by: "2"
-  card_id: "10"
-  id: "10"
-  content: ""
-  created_at: 2007-12-03 00:29:08
-revisions_069: 
-  updated_at: 2008-09-18 15:56:15
-  created_by: "1"
-  card_id: "70"
-  id: "70"
-  content: ""
-  created_at: 2008-09-18 15:56:15
-revisions_125: 
-  updated_at: 2008-09-18 15:56:22
-  created_by: "1"
-  card_id: "126"
-  id: "126"
-  content: type_e_content
-  created_at: 2008-09-18 15:56:22
-revisions_098: 
-  updated_at: 2008-09-18 15:56:19
-  created_by: "1"
-  card_id: "99"
-  id: "99"
-  content: ""
-  created_at: 2008-09-18 15:56:19
-revisions_011: 
-  updated_at: 2007-12-03 00:29:09
-  created_by: "2"
-  card_id: "11"
-  id: "11"
-  content: To get started, you need to <a href="/admin/setup">setup the admin account</a>.  After that, you'll want to edit this frontpage card
-  created_at: 2007-12-03 00:29:08
-revisions_126: 
-  updated_at: 2008-09-18 15:56:22
-  created_by: "1"
-  card_id: "127"
-  id: "127"
-  content: type_f_content
-  created_at: 2008-09-18 15:56:22
-revisions_040: 
-  updated_at: 2007-12-03 00:29:19
+  updated_at: 2007-12-03 00:29:19.758693
   created_by: "1"
   card_id: "41"
   id: "41"
   content: ""
-  created_at: 2007-12-03 00:29:19
-revisions_099: 
-  updated_at: 2008-09-18 15:56:19
+  created_at: 2007-12-03 00:29:19.758693
+revisions_081: 
+  updated_at: 2008-12-03 15:35:12.870194
   created_by: "1"
-  card_id: "100"
-  id: "100"
+  card_id: "82"
+  id: "82"
   content: ""
-  created_at: 2008-09-18 15:56:19
-revisions_012: 
-  updated_at: 2007-12-03 00:29:09
+  created_at: 2008-12-03 15:35:12.870194
+revisions_053: 
+  updated_at: 2008-12-03 15:35:10.15863
+  created_by: "1"
+  card_id: "54"
+  id: "54"
+  content: I'm number two
+  created_at: 2008-12-03 15:35:10.15863
+revisions_026: 
+  updated_at: 2007-12-03 00:29:09.455126
   created_by: "2"
-  card_id: "12"
-  id: "12"
+  card_id: "8"
+  id: "8"
   content: ""
-  created_at: 2007-12-03 00:29:09
-revisions_127: 
-  updated_at: 2008-09-18 15:56:23
+  created_at: 2007-12-03 00:29:08.547272
+revisions_082: 
+  updated_at: 2008-12-03 15:35:12.956017
   created_by: "1"
-  card_id: "128"
-  id: "128"
-  content: first
-  created_at: 2008-09-18 15:56:23
-revisions_041: 
-  updated_at: 2007-12-03 00:29:19
-  created_by: "1"
-  card_id: "42"
-  id: "42"
-  content: "{\"included_by\":\"_self\"}"
-  created_at: 2007-12-03 00:29:19
-revisions_013: 
-  updated_at: 2007-12-03 00:29:09
-  created_by: "2"
-  card_id: "13"
-  id: "13"
+  card_id: "83"
+  id: "83"
   content: ""
-  created_at: 2007-12-03 00:29:09
-revisions_128: 
-  updated_at: 2008-09-18 15:56:23
+  created_at: 2008-12-03 15:35:12.956017
+revisions_054: 
+  updated_at: 2008-12-03 15:35:10.246528
   created_by: "1"
-  card_id: "128"
-  id: "129"
-  content: second
-  created_at: 2008-09-18 15:56:23
-revisions_042: 
-  updated_at: 2007-12-03 00:29:20
-  created_by: "1"
-  card_id: "43"
-  id: "43"
+  card_id: "55"
+  id: "55"
   content: ""
-  created_at: 2007-12-03 00:29:20
-revisions_014: 
-  updated_at: 2007-12-03 00:29:09
-  created_by: "2"
-  card_id: "14"
-  id: "14"
-  content: Your request has been received.  Please note that invitation requests are answered by volunteers,so it may take a bit longer an automated system, but you should get a response within a few days.
-  created_at: 2007-12-03 00:29:09
-revisions_070: 
-  updated_at: 2008-09-18 15:56:15
+  created_at: 2008-12-03 15:35:10.246528
+revisions_083: 
+  updated_at: 2008-12-03 15:35:13.094972
   created_by: "1"
-  card_id: "71"
-  id: "71"
+  card_id: "84"
+  id: "84"
   content: ""
-  created_at: 2008-09-18 15:56:15
-revisions_129: 
-  updated_at: 2008-09-18 15:56:23
+  created_at: 2008-12-03 15:35:13.094972
+revisions_055: 
+  updated_at: 2008-12-03 15:35:10.320269
   created_by: "1"
-  card_id: "128"
-  id: "130"
-  content: third
-  created_at: 2008-09-18 15:56:23
-revisions_043: 
-  updated_at: 2007-12-03 00:29:20
-  created_by: "1"
-  card_id: "44"
-  id: "44"
-  content: "{\"linked_to_by\":\"_self\"}"
-  created_at: 2007-12-03 00:29:20
-revisions_015: 
-  updated_at: 2007-12-03 00:29:09
-  created_by: "2"
-  card_id: "15"
-  id: "15"
+  card_id: "56"
+  id: "56"
   content: ""
-  created_at: 2007-12-03 00:29:09
-revisions_071: 
-  updated_at: 2008-09-18 15:56:15
+  created_at: 2008-12-03 15:35:10.320269
+revisions_110: 
+  updated_at: 2008-12-03 15:35:15.830993
   created_by: "1"
-  card_id: "72"
-  id: "72"
+  card_id: "111"
+  id: "111"
   content: ""
-  created_at: 2008-09-18 15:56:15
-revisions_044: 
-  updated_at: 2007-12-03 00:29:20
-  created_by: "1"
-  card_id: "45"
-  id: "45"
-  content: ""
-  created_at: 2007-12-03 00:29:20
-revisions_016: 
-  updated_at: 2007-12-03 00:29:11
-  created_by: "1"
-  card_id: "16"
-  id: "16"
-  content: ""
-  created_at: 2007-12-03 00:29:11
-revisions_072: 
-  updated_at: 2008-09-18 15:56:15
-  created_by: "1"
-  card_id: "73"
-  id: "73"
-  content: ""
-  created_at: 2008-09-18 15:56:15
-revisions_045: 
-  updated_at: 2007-12-03 00:29:20
-  created_by: "1"
-  card_id: "46"
-  id: "46"
-  content: "{\"type\":\"_self\"}"
-  created_at: 2007-12-03 00:29:20
-revisions_100: 
-  updated_at: 2008-09-18 15:56:19
-  created_by: "1"
-  card_id: "101"
-  id: "101"
-  content: ""
-  created_at: 2008-09-18 15:56:19
-revisions_017: 
-  updated_at: 2007-12-03 00:29:11
-  created_by: "1"
-  card_id: "17"
-  id: "17"
-  content: ""
-  created_at: 2007-12-03 00:29:11
-revisions_073: 
-  updated_at: 2008-09-18 15:56:15
-  created_by: "1"
-  card_id: "74"
-  id: "74"
-  content: ""
-  created_at: 2008-09-18 15:56:15
-revisions_046: 
-  updated_at: 2007-12-03 00:29:20
-  created_by: "1"
-  card_id: "47"
-  id: "47"
-  content: ""
-  created_at: 2007-12-03 00:29:20
-revisions_101: 
-  updated_at: 2008-09-18 15:56:20
-  created_by: "1"
-  card_id: "102"
-  id: "102"
-  content: ""
-  created_at: 2008-09-18 15:56:20
-revisions_018: 
-  updated_at: 2007-12-03 00:29:12
-  created_by: "1"
-  card_id: "18"
-  id: "18"
-  content: ""
-  created_at: 2007-12-03 00:29:12
-revisions_074: 
-  updated_at: 2008-09-18 15:56:15
-  created_by: "1"
-  card_id: "75"
-  id: "75"
-  content: ""
-  created_at: 2008-09-18 15:56:15
-revisions_130: 
-  updated_at: 2008-09-18 15:56:23
-  created_by: "1"
-  card_id: "129"
-  id: "131"
-  content: ""
-  created_at: 2008-09-18 15:56:23
-revisions_047: 
-  updated_at: 2008-09-18 15:56:04
-  created_by: "1"
-  card_id: "48"
-  id: "48"
-  content: ""
-  created_at: 2008-09-18 15:56:04
-revisions_102: 
-  updated_at: 2008-09-18 15:56:20
-  created_by: "1"
-  card_id: "103"
-  id: "103"
-  content: ""
-  created_at: 2008-09-18 15:56:20
-revisions_019: 
-  updated_at: 2007-12-03 00:29:12
+  created_at: 2008-12-03 15:35:15.830993
+revisions_027: 
+  updated_at: 2007-12-03 00:29:12.298321
   created_by: "1"
   card_id: "19"
   id: "19"
   content: ""
-  created_at: 2007-12-03 00:29:12
+  created_at: 2007-12-03 00:29:12.298321
+revisions_084: 
+  updated_at: 2008-12-03 15:35:13.255166
+  created_by: "1"
+  card_id: "85"
+  id: "85"
+  content: ""
+  created_at: 2008-12-03 15:35:13.255166
+revisions_056: 
+  updated_at: 2008-12-03 15:35:10.413837
+  created_by: "1"
+  card_id: "57"
+  id: "57"
+  content: ""
+  created_at: 2008-12-03 15:35:10.413837
+revisions_111: 
+  updated_at: 2008-12-03 15:35:15.873218
+  created_by: "1"
+  card_id: "112"
+  id: "112"
+  content: ""
+  created_at: 2008-12-03 15:35:15.873218
+revisions_028: 
+  updated_at: 2007-12-03 00:29:17.942966
+  created_by: "1"
+  card_id: "31"
+  id: "31"
+  content: ""
+  created_at: 2007-12-03 00:29:17.942966
+revisions_085: 
+  updated_at: 2008-12-03 15:35:13.329835
+  created_by: "1"
+  card_id: "86"
+  id: "86"
+  content: ""
+  created_at: 2008-12-03 15:35:13.329835
+revisions_057: 
+  updated_at: 2008-12-03 15:35:10.490759
+  created_by: "1"
+  card_id: "58"
+  id: "58"
+  content: I got not account
+  created_at: 2008-12-03 15:35:10.490759
+revisions_112: 
+  updated_at: 2008-12-03 15:35:15.961349
+  created_by: "1"
+  card_id: "113"
+  id: "113"
+  content: ""
+  created_at: 2008-12-03 15:35:15.961349
+revisions_029: 
+  updated_at: 2007-12-03 00:29:19.809177
+  created_by: "1"
+  card_id: "42"
+  id: "42"
+  content: "{\"included_by\":\"_self\"}"
+  created_at: 2007-12-03 00:29:19.809177
+revisions_086: 
+  updated_at: 2008-12-03 15:35:13.404203
+  created_by: "1"
+  card_id: "87"
+  id: "87"
+  content: ""
+  created_at: 2008-12-03 15:35:13.404203
+revisions_058: 
+  updated_at: 2008-12-03 15:35:10.577981
+  created_by: "1"
+  card_id: "59"
+  id: "59"
+  content: ""
+  created_at: 2008-12-03 15:35:10.577981
+revisions_113: 
+  updated_at: 2008-12-03 15:35:16.048225
+  created_by: "1"
+  card_id: "114"
+  id: "114"
+  content: ""
+  created_at: 2008-12-03 15:35:16.048225
+revisions_087: 
+  updated_at: 2008-12-03 15:35:13.576835
+  created_by: "1"
+  card_id: "88"
+  id: "88"
+  content: ""
+  created_at: 2008-12-03 15:35:13.576835
+revisions_059: 
+  updated_at: 2008-12-03 15:35:10.666047
+  created_by: "1"
+  card_id: "60"
+  id: "60"
+  content: ""
+  created_at: 2008-12-03 15:35:10.666047
+revisions_114: 
+  updated_at: 2008-12-03 15:35:16.169658
+  created_by: "1"
+  card_id: "115"
+  id: "115"
+  content: ""
+  created_at: 2008-12-03 15:35:16.169658
+revisions_115: 
+  updated_at: 2008-12-03 15:35:16.214534
+  created_by: "1"
+  card_id: "116"
+  id: "116"
+  content: ""
+  created_at: 2008-12-03 15:35:16.214534
+revisions_088: 
+  updated_at: 2008-12-03 15:35:13.652657
+  created_by: "1"
+  card_id: "89"
+  id: "89"
+  content: ""
+  created_at: 2008-12-03 15:35:13.652657
+revisions_001: 
+  updated_at: 2007-12-03 00:29:09.434261
+  created_by: "2"
+  card_id: "2"
+  id: "2"
+  content: ""
+  created_at: 2007-12-03 00:29:08.047476
+revisions_116: 
+  updated_at: 2008-12-03 15:35:16.305851
+  created_by: "1"
+  card_id: "117"
+  id: "117"
+  content: ""
+  created_at: 2008-12-03 15:35:16.305851
+revisions_089: 
+  updated_at: 2008-12-03 15:35:13.729546
+  created_by: "1"
+  card_id: "90"
+  id: "90"
+  content: ""
+  created_at: 2008-12-03 15:35:13.729546
+revisions_002: 
+  updated_at: 2007-12-03 00:29:09.809952
+  created_by: "2"
+  card_id: "13"
+  id: "13"
+  content: ""
+  created_at: 2007-12-03 00:29:09.809952
+revisions_030: 
+  updated_at: 2007-12-03 00:29:09.458883
+  created_by: "2"
+  card_id: "9"
+  id: "9"
+  content: ""
+  created_at: 2007-12-03 00:29:08.627436
+revisions_117: 
+  updated_at: 2008-12-03 15:35:16.396244
+  created_by: "1"
+  card_id: "118"
+  id: "118"
+  content: ""
+  created_at: 2008-12-03 15:35:16.396244
+revisions_003: 
+  updated_at: 2007-12-03 00:29:13.406556
+  created_by: "1"
+  card_id: "25"
+  id: "25"
+  content: ""
+  created_at: 2007-12-03 00:29:13.406556
+revisions_031: 
+  updated_at: 2007-12-03 00:29:12.453124
+  created_by: "1"
+  card_id: "20"
+  id: "20"
+  content: ""
+  created_at: 2007-12-03 00:29:12.453124
+revisions_118: 
+  updated_at: 2008-12-03 15:35:16.575138
+  created_by: "1"
+  card_id: "119"
+  id: "119"
+  content: ""
+  created_at: 2008-12-03 15:35:16.575138
+revisions_004: 
+  updated_at: 2007-12-03 00:29:18.68201
+  created_by: "1"
+  card_id: "36"
+  id: "36"
+  content: "{\"plus\":\"_self\"}"
+  created_at: 2007-12-03 00:29:18.68201
+revisions_060: 
+  updated_at: 2008-12-03 15:35:10.763049
+  created_by: "1"
+  card_id: "61"
+  id: "61"
+  content: ""
+  created_at: 2008-12-03 15:35:10.763049
+revisions_032: 
+  updated_at: 2007-12-03 00:29:17.998101
+  created_by: "1"
+  card_id: "32"
+  id: "32"
+  content: "{\"type\":\"_self\"}"
+  created_at: 2007-12-03 00:29:17.998101
+revisions_119: 
+  updated_at: 2008-12-03 15:35:16.655973
+  created_by: "1"
+  card_id: "120"
+  id: "120"
+  content: ""
+  created_at: 2008-12-03 15:35:16.655973
+revisions_005: 
+  updated_at: 2007-12-03 00:29:20.672211
+  created_by: "1"
+  card_id: "47"
+  id: "47"
+  content: ""
+  created_at: 2007-12-03 00:29:20.672211
+revisions_061: 
+  updated_at: 2008-12-03 15:35:10.86248
+  created_by: "1"
+  card_id: "62"
+  id: "62"
+  content: ""
+  created_at: 2008-12-03 15:35:10.86248
+revisions_033: 
+  updated_at: 2007-12-03 00:29:20.050168
+  created_by: "1"
+  card_id: "43"
+  id: "43"
+  content: ""
+  created_at: 2007-12-03 00:29:20.050168
+revisions_090: 
+  updated_at: 2008-12-03 15:35:13.808487
+  created_by: "1"
+  card_id: "91"
+  id: "91"
+  content: I'm here to be referenced to
+  created_at: 2008-12-03 15:35:13.808487
+revisions_062: 
+  updated_at: 2008-12-03 15:35:11.078868
+  created_by: "1"
+  card_id: "63"
+  id: "63"
+  content: ""
+  created_at: 2008-12-03 15:35:11.078868
+revisions_034: 
+  updated_at: 2007-12-03 00:29:09.463939
+  created_by: "2"
+  card_id: "10"
+  id: "10"
+  content: ""
+  created_at: 2007-12-03 00:29:08.688735
+revisions_006: 
+  updated_at: 2007-12-03 00:29:09.438136
+  created_by: "2"
+  card_id: "3"
+  id: "3"
+  content: ""
+  created_at: 2007-12-03 00:29:08.102704
+revisions_063: 
+  updated_at: 2008-12-03 15:35:11.162542
+  created_by: "1"
+  card_id: "64"
+  id: "64"
+  content: ""
+  created_at: 2008-12-03 15:35:11.162542
+revisions_035: 
+  updated_at: 2007-12-03 00:29:12.696327
+  created_by: "1"
+  card_id: "21"
+  id: "21"
+  content: ""
+  created_at: 2007-12-03 00:29:12.696327
+revisions_007: 
+  updated_at: 2007-12-03 00:29:09.885073
+  created_by: "2"
+  card_id: "14"
+  id: "14"
+  content: Your request has been received.  Please note that invitation requests are answered by volunteers,so it may take a bit longer an automated system, but you should get a response within a few days.
+  created_at: 2007-12-03 00:29:09.885073
+revisions_091: 
+  updated_at: 2008-12-03 15:35:13.889558
+  created_by: "1"
+  card_id: "92"
+  id: "92"
+  content: Alpha [[Z]]
+  created_at: 2008-12-03 15:35:13.889558
+revisions_064: 
+  updated_at: 2008-12-03 15:35:11.248587
+  created_by: "1"
+  card_id: "65"
+  id: "65"
+  content: ""
+  created_at: 2008-12-03 15:35:11.248587
+revisions_036: 
+  updated_at: 2007-12-03 00:29:18.346487
+  created_by: "1"
+  card_id: "33"
+  id: "33"
+  content: ""
+  created_at: 2007-12-03 00:29:18.346487
+revisions_008: 
+  updated_at: 2007-12-03 00:29:13.561421
+  created_by: "1"
+  card_id: "26"
+  id: "26"
+  content: ""
+  created_at: 2007-12-03 00:29:13.561421
+revisions_092: 
+  updated_at: 2008-12-03 15:35:13.980403
+  created_by: "1"
+  card_id: "93"
+  id: "93"
+  content: Beta {{Z}}
+  created_at: 2008-12-03 15:35:13.980403
+revisions_120: 
+  updated_at: 2008-12-03 15:35:16.738491
+  created_by: "1"
+  card_id: "121"
+  id: "121"
+  content: ""
+  created_at: 2008-12-03 15:35:16.738491
+revisions_065: 
+  updated_at: 2008-12-03 15:35:11.336278
+  created_by: "1"
+  card_id: "66"
+  id: "66"
+  content: ""
+  created_at: 2008-12-03 15:35:11.336278
+revisions_037: 
+  updated_at: 2007-12-03 00:29:20.094545
+  created_by: "1"
+  card_id: "44"
+  id: "44"
+  content: "{\"linked_to_by\":\"_self\"}"
+  created_at: 2007-12-03 00:29:20.094545
+revisions_009: 
+  updated_at: 2007-12-03 00:29:19.062931
+  created_by: "1"
+  card_id: "37"
+  id: "37"
+  content: ""
+  created_at: 2007-12-03 00:29:19.062931
+revisions_093: 
+  updated_at: 2008-12-03 15:35:14.136556
+  created_by: "1"
+  card_id: "94"
+  id: "94"
+  content: Theta
+  created_at: 2008-12-03 15:35:14.136556
+revisions_121: 
+  updated_at: 2008-12-03 15:35:16.823594
+  created_by: "1"
+  card_id: "122"
+  id: "122"
+  content: ""
+  created_at: 2008-12-03 15:35:16.823594
+revisions_066: 
+  updated_at: 2008-12-03 15:35:11.42665
+  created_by: "1"
+  card_id: "67"
+  id: "67"
+  content: ""
+  created_at: 2008-12-03 15:35:11.42665
+revisions_038: 
+  updated_at: 2007-12-03 00:29:09.468141
+  created_by: "2"
+  card_id: "11"
+  id: "11"
+  content: To get started, you need to <a href="/admin/setup">setup the admin account</a>.  After that, you'll want to edit this frontpage card
+  created_at: 2007-12-03 00:29:08.773575
+revisions_094: 
+  updated_at: 2008-12-03 15:35:14.231399
+  created_by: "1"
+  card_id: "95"
+  id: "95"
+  content: "[[A]] [[A+B]] [[T]]"
+  created_at: 2008-12-03 15:35:14.231399
+revisions_122: 
+  updated_at: 2008-12-03 15:35:16.908575
+  created_by: "1"
+  card_id: "123"
+  id: "123"
+  content: ""
+  created_at: 2008-12-03 15:35:16.908575
+revisions_067: 
+  updated_at: 2008-12-03 15:35:11.518856
+  created_by: "1"
+  card_id: "68"
+  id: "68"
+  content: ""
+  created_at: 2008-12-03 15:35:11.518856
+revisions_039: 
+  updated_at: 2007-12-03 00:29:12.83965
+  created_by: "1"
+  card_id: "22"
+  id: "22"
+  content: ""
+  created_at: 2007-12-03 00:29:12.83965
+revisions_095: 
+  updated_at: 2008-12-03 15:35:14.412544
+  created_by: "1"
+  card_id: "96"
+  id: "96"
+  content: "{{B}} {{A+B}} {{A}} {{T}}"
+  created_at: 2008-12-03 15:35:14.412544
+revisions_123: 
+  updated_at: 2008-12-03 15:35:16.989563
+  created_by: "1"
+  card_id: "124"
+  id: "124"
+  content: basiccontent
+  created_at: 2008-12-03 15:35:16.989563
+revisions_068: 
+  updated_at: 2008-12-03 15:35:11.600546
+  created_by: "1"
+  card_id: "69"
+  id: "69"
+  content: ""
+  created_at: 2008-12-03 15:35:11.600546
+revisions_096: 
+  updated_at: 2008-12-03 15:35:14.514216
+  created_by: "1"
+  card_id: "97"
+  id: "97"
+  content: AlphaBeta
+  created_at: 2008-12-03 15:35:14.514216
+revisions_124: 
+  updated_at: 2008-12-03 15:35:17.076995
+  created_by: "1"
+  card_id: "125"
+  id: "125"
+  content: type_a_content
+  created_at: 2008-12-03 15:35:17.076995
+revisions_097: 
+  updated_at: 2008-12-03 15:35:14.694481
+  created_by: "1"
+  card_id: "98"
+  id: "98"
+  content: ""
+  created_at: 2008-12-03 15:35:14.694481
+revisions_010: 
+  updated_at: 2007-12-03 00:29:09.441672
+  created_by: "2"
+  card_id: "4"
+  id: "4"
+  content: ""
+  created_at: 2007-12-03 00:29:08.176765
+revisions_069: 
+  updated_at: 2008-12-03 15:35:11.693133
+  created_by: "1"
+  card_id: "70"
+  id: "70"
+  content: ""
+  created_at: 2008-12-03 15:35:11.693133
+revisions_125: 
+  updated_at: 2008-12-03 15:35:17.165645
+  created_by: "1"
+  card_id: "126"
+  id: "126"
+  content: type_b_content
+  created_at: 2008-12-03 15:35:17.165645
+revisions_098: 
+  updated_at: 2008-12-03 15:35:14.774502
+  created_by: "1"
+  card_id: "99"
+  id: "99"
+  content: ""
+  created_at: 2008-12-03 15:35:14.774502
+revisions_011: 
+  updated_at: 2007-12-03 00:29:09.987978
+  created_by: "2"
+  card_id: "15"
+  id: "15"
+  content: ""
+  created_at: 2007-12-03 00:29:09.987978
+revisions_126: 
+  updated_at: 2008-12-03 15:35:17.255028
+  created_by: "1"
+  card_id: "127"
+  id: "127"
+  content: type_c_content
+  created_at: 2008-12-03 15:35:17.255028
+revisions_040: 
+  updated_at: 2007-12-03 00:29:18.387675
+  created_by: "1"
+  card_id: "34"
+  id: "34"
+  content: "{\"part\":\"_self\"}"
+  created_at: 2007-12-03 00:29:18.387675
+revisions_099: 
+  updated_at: 2008-12-03 15:35:14.815931
+  created_by: "1"
+  card_id: "100"
+  id: "100"
+  content: ""
+  created_at: 2008-12-03 15:35:14.815931
+revisions_012: 
+  updated_at: 2007-12-03 00:29:14.524164
+  created_by: "1"
+  card_id: "27"
+  id: "27"
+  content: ""
+  created_at: 2007-12-03 00:29:14.524164
+revisions_127: 
+  updated_at: 2008-12-03 15:35:17.346938
+  created_by: "1"
+  card_id: "128"
+  id: "128"
+  content: type_d_content
+  created_at: 2008-12-03 15:35:17.346938
+revisions_041: 
+  updated_at: 2007-12-03 00:29:20.463338
+  created_by: "1"
+  card_id: "45"
+  id: "45"
+  content: ""
+  created_at: 2007-12-03 00:29:20.463338
+revisions_013: 
+  updated_at: 2007-12-03 00:29:19.111395
+  created_by: "1"
+  card_id: "38"
+  id: "38"
+  content: "{\"include\":\"_self\"}"
+  created_at: 2007-12-03 00:29:19.111395
+revisions_128: 
+  updated_at: 2008-12-03 15:35:17.440973
+  created_by: "1"
+  card_id: "129"
+  id: "129"
+  content: type_e_content
+  created_at: 2008-12-03 15:35:17.440973
+revisions_042: 
+  updated_at: 2007-12-03 00:29:09.429349
+  created_by: "2"
+  card_id: "1"
+  id: "1"
+  content: ""
+  created_at: 2007-12-03 00:29:07.974326
+revisions_014: 
+  updated_at: 2007-12-03 00:29:09.444939
+  created_by: "2"
+  card_id: "5"
+  id: "5"
+  content: ""
+  created_at: 2007-12-03 00:29:08.239921
+revisions_070: 
+  updated_at: 2008-12-03 15:35:11.787368
+  created_by: "1"
+  card_id: "71"
+  id: "71"
+  content: ""
+  created_at: 2008-12-03 15:35:11.787368
+revisions_129: 
+  updated_at: 2008-12-03 15:35:17.536104
+  created_by: "1"
+  card_id: "130"
+  id: "130"
+  content: type_f_content
+  created_at: 2008-12-03 15:35:17.536104
+revisions_043: 
+  updated_at: 2007-12-03 00:29:09.70239
+  created_by: "2"
+  card_id: "12"
+  id: "12"
+  content: ""
+  created_at: 2007-12-03 00:29:09.70239
+revisions_015: 
+  updated_at: 2007-12-03 00:29:11.76328
+  created_by: "1"
+  card_id: "16"
+  id: "16"
+  content: ""
+  created_at: 2007-12-03 00:29:11.76328
+revisions_071: 
+  updated_at: 2008-12-03 15:35:11.886288
+  created_by: "1"
+  card_id: "72"
+  id: "72"
+  content: ""
+  created_at: 2008-12-03 15:35:11.886288
+revisions_044: 
+  updated_at: 2007-12-03 00:29:13.152639
+  created_by: "1"
+  card_id: "24"
+  id: "24"
+  content: ""
+  created_at: 2007-12-03 00:29:13.152639
+revisions_016: 
+  updated_at: 2007-12-03 00:29:15.794407
+  created_by: "1"
+  card_id: "28"
+  id: "28"
+  content: ""
+  created_at: 2007-12-03 00:29:15.794407
+revisions_072: 
+  updated_at: 2008-12-03 15:35:12.073893
+  created_by: "1"
+  card_id: "73"
+  id: "73"
+  content: ""
+  created_at: 2008-12-03 15:35:12.073893
+revisions_045: 
+  updated_at: 2007-12-03 00:29:18.638153
+  created_by: "1"
+  card_id: "35"
+  id: "35"
+  content: ""
+  created_at: 2007-12-03 00:29:18.638153
+revisions_100: 
+  updated_at: 2008-12-03 15:35:14.888886
+  created_by: "1"
+  card_id: "101"
+  id: "101"
+  content: ""
+  created_at: 2008-12-03 15:35:14.888886
+revisions_017: 
+  updated_at: 2007-12-03 00:29:19.357096
+  created_by: "1"
+  card_id: "39"
+  id: "39"
+  content: ""
+  created_at: 2007-12-03 00:29:19.357096
+revisions_073: 
+  updated_at: 2008-12-03 15:35:12.156246
+  created_by: "1"
+  card_id: "74"
+  id: "74"
+  content: ""
+  created_at: 2008-12-03 15:35:12.156246
+revisions_046: 
+  updated_at: 2007-12-03 00:29:20.506042
+  created_by: "1"
+  card_id: "46"
+  id: "46"
+  content: "{\"type\":\"_self\"}"
+  created_at: 2007-12-03 00:29:20.506042
+revisions_101: 
+  updated_at: 2008-12-03 15:35:14.932098
+  created_by: "1"
+  card_id: "102"
+  id: "102"
+  content: ""
+  created_at: 2008-12-03 15:35:14.932098
+revisions_018: 
+  updated_at: 2007-12-03 00:29:09.447931
+  created_by: "2"
+  card_id: "6"
+  id: "6"
+  content: ""
+  created_at: 2007-12-03 00:29:08.313714
+revisions_074: 
+  updated_at: 2008-12-03 15:35:12.243046
+  created_by: "1"
+  card_id: "75"
+  id: "75"
+  content: ""
+  created_at: 2008-12-03 15:35:12.243046
+revisions_130: 
+  updated_at: 2008-12-03 15:35:17.735468
+  created_by: "1"
+  card_id: "131"
+  id: "131"
+  content: first
+  created_at: 2008-12-03 15:35:17.735468
+revisions_047: 
+  updated_at: 2008-12-03 15:35:01.186235
+  created_by: "1"
+  card_id: "48"
+  id: "48"
+  content: ""
+  created_at: 2008-12-03 15:35:01.186235
+revisions_102: 
+  updated_at: 2008-12-03 15:35:15.119223
+  created_by: "1"
+  card_id: "103"
+  id: "103"
+  content: ""
+  created_at: 2008-12-03 15:35:15.119223
+revisions_019: 
+  updated_at: 2007-12-03 00:29:11.998179
+  created_by: "1"
+  card_id: "17"
+  id: "17"
+  content: ""
+  created_at: 2007-12-03 00:29:11.998179
 revisions_075: 
-  updated_at: 2008-09-18 15:56:15
+  updated_at: 2008-12-03 15:35:12.33114
   created_by: "1"
   card_id: "76"
   id: "76"
   content: ""
-  created_at: 2008-09-18 15:56:15
+  created_at: 2008-12-03 15:35:12.33114
 revisions_131: 
-  updated_at: 2008-09-18 15:56:23
+  updated_at: 2008-12-03 15:35:17.79811
   created_by: "1"
-  card_id: "130"
+  card_id: "131"
   id: "132"
-  content: "{{+name}} {{+age}} {{+description}}"
-  created_at: 2008-09-18 15:56:23
+  content: second
+  created_at: 2008-12-03 15:35:17.79811
 revisions_103: 
-  updated_at: 2008-09-18 15:56:20
+  updated_at: 2008-12-03 15:35:15.164378
   created_by: "1"
   card_id: "104"
   id: "104"
   content: ""
-  created_at: 2008-09-18 15:56:20
+  created_at: 2008-12-03 15:35:15.164378
 revisions_076: 
-  updated_at: 2008-09-18 15:56:15
+  updated_at: 2008-12-03 15:35:12.418529
   created_by: "1"
   card_id: "77"
   id: "77"
   content: ""
-  created_at: 2008-09-18 15:56:15
+  created_at: 2008-12-03 15:35:12.418529
 revisions_048: 
-  updated_at: 2008-09-18 15:56:06
+  updated_at: 2008-12-03 15:35:02.531339
   created_by: "1"
   card_id: "49"
   id: "49"
   content: ""
-  created_at: 2008-09-18 15:56:06
+  created_at: 2008-12-03 15:35:02.531339
+revisions_132: 
+  updated_at: 2008-12-03 15:35:17.858377
+  created_by: "1"
+  card_id: "131"
+  id: "133"
+  content: third
+  created_at: 2008-12-03 15:35:17.858377
 revisions_104: 
-  updated_at: 2008-09-18 15:56:20
+  updated_at: 2008-12-03 15:35:15.246147
   created_by: "1"
   card_id: "105"
   id: "105"
   content: ""
-  created_at: 2008-09-18 15:56:20
+  created_at: 2008-12-03 15:35:15.246147
 revisions_077: 
-  updated_at: 2008-09-18 15:56:15
+  updated_at: 2008-12-03 15:35:12.505647
   created_by: "1"
   card_id: "78"
   id: "78"
   content: ""
-  created_at: 2008-09-18 15:56:15
+  created_at: 2008-12-03 15:35:12.505647
 revisions_049: 
-  updated_at: 2008-09-18 15:56:07
+  updated_at: 2008-12-03 15:35:03.449566
   created_by: "1"
   card_id: "50"
   id: "50"
   content: ""
-  created_at: 2008-09-18 15:56:07
+  created_at: 2008-12-03 15:35:03.449566

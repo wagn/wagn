@@ -1,9 +1,23 @@
 require 'lib/util/card_builder.rb'      
+
+
+def check_for_fulltext_schema
+  schema_error = ("Oops! Attempt to load a schema with a broken cards table.  Rails can't properly dump and restore a schema with fulltext index data (indexed_content). " +
+    "you'll need to connect to a database without these fields and rerun >rake db:schema:dump first.")
+  begin 
+    if Card.columns.map(&:name).include?('indexed_content')
+      raise(schema_error)
+    end
+  rescue
+    raise(schema_error)
+  end
+end
  
 namespace :db do
   namespace :test do
     desc 'Prepare the test database and load the schema'
-    task :prepare => :environment do
+    task :prepare => :environment do   
+      check_for_fulltext_schema        
       if defined?(ActiveRecord::Base) && !ActiveRecord::Base.configurations.blank?
         Rake::Task[{ :sql  => "db:test:clone_structure", :ruby => "db:test:clone" }[ActiveRecord::Base.schema_format]].invoke
       end 
@@ -149,7 +163,13 @@ namespace 'wagn' do
       Card::Cardtype.create! :name=> "UserForm"
       Card.create! :name=>"UserForm+*tform", :content=>"{{+name}} {{+age}} {{+description}}",
         :extension_type=>"HardTemplate"
-      #Card::UserForm.create! :name=>"JoeForm"
+      #Card::UserForm.create! :name=>"JoeForm"      
+      
+      
+      User.as(:joe_user) {  Card.create!( :name=>"JoeLater", :content=>"test") }
+      User.as(:joe_user) {  Card.create!( :name=>"JoeNow", :content=>"test") }
+      User.as(:admin) {  Card.create!(:name=>"AdminNow", :content=>"test") }
+      
     end   
 
     #::User.as( ::User.find_by_login('anonymous'))) do 
@@ -159,7 +179,12 @@ namespace 'wagn' do
 
 
   desc "recreate test fixtures from fresh db"
-  task :generate_fixtures => :environment do       
+  task :generate_fixtures => :environment do  
+
+    if System.enable_postgres_fulltext
+      raise("Oops!  you need to disable postgres_fulltext in wagn.rb before generating fixtures")
+    end
+         
     abcs = ActiveRecord::Base.configurations    
     config = RAILS_ENV || 'development'  
     olddb = abcs[config]["database"]
@@ -167,6 +192,8 @@ namespace 'wagn' do
 
     Rake::Task['db:drop'].invoke
     Rake::Task['db:create'].invoke
+    
+
     puts ">>migrating template database"
     System.site_name = 'Wagn'
     Rake::Task['db:migrate'].invoke  

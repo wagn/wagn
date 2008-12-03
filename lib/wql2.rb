@@ -31,7 +31,7 @@ module Wql2
   ATTRIBUTES = {
     :basic=> %w{ name type content id key },
     :system => %w{ trunk_id tag_id },
-    :semi_relational=> %w{ editor member role },
+    :semi_relational=> %w{ edited_by member role },
     :relational => %w{ part left right plus left_plus right_plus },  
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
     :special => %w{ or complete not count },
@@ -261,6 +261,12 @@ module Wql2
       }
       merge( self.negate ? inner_spec : { :or => inner_spec } )
     end          
+    
+    def edited_by(val)
+      user_id = ((c = Card::User[val]) ? c.extension_id : 0)
+      sql.joins << %{join (select distinct card_id from revisions r where created_by=#{user_id} ) ru 
+        on ru.card_id=#{table_alias}.id }
+    end
     
     def count(val)
       raise(Wagn::WqlError, "count works only on outermost spec") if @parent

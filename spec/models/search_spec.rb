@@ -9,6 +9,31 @@ A_JOINEES = ["B", "C", "D", "E", "F"]
 CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User"].sort    
 
 
+
+describe Wql2, "edited_by" do
+  before { 
+    User.as(:joe_user) {  Card.create!( :name=>"JoeLater", :content=>"test") }
+    User.as(:joe_user) {  Card.create!( :name=>"JoeNow", :content=>"test") }
+    User.as(:admin) {  Card.create!(:name=>"AdminNow", :content=>"test") }
+  }
+  it "should find card edited by joe" do
+    Card.search(:edited_by=>"Joe User", :sort=>"update", :limit=>1).should == [Card["JoeNow"]]
+  end     
+  it "should find card edited by joe" do
+    Card.search(:edited_by=>"Admin", :sort=>"update", :limit=>1).should == [Card["AdminNow"]]
+  end     
+  it "should fail gracefully if user isn't there" do
+    Card.search(:edited_by=>"Joe LUser", :sort=>"update", :limit=>1).should == []
+  end
+  
+  it "should not give duplicate results for multiple edits" do
+    User.as(:joe_user){ c=Card["JoeNow"]; c.content="testagagin"; c.save!; c.content="test3"; c.save! }
+    Card.search(:edited_by=>"Joe User", :sort=>"update", :limit=>2).map(&:name).should == ["JoeNow", "JoeLater"]
+  end
+end
+
+=begin
+
 describe Card, "find_phantom" do
   before { User.as :joe_user }
 
@@ -230,7 +255,10 @@ describe Wql2, "trash handling" do
     Card["A+B"].destroy!
     Card.search( :left=>"A" ).plot(:name).sort.should == ["A+C", "A+D", "A+E"]
   end
-end
+end      
+
+
+=end
 
 
 

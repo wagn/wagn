@@ -29,9 +29,9 @@ module Wql2
   AUTH_ROLE_ID = 2 unless defined?(AUTH_ROLE_ID)
   
   ATTRIBUTES = {
-    :basic=> %w{ name type content id key extension_type },
+    :basic=> %w{ name type content id key extension_type extension_id },
     :system => %w{ trunk_id tag_id },
-    :semi_relational=> %w{ edited_by member role },
+    :semi_relational=> %w{ edited_by edited member_of member role },
     :relational => %w{ part left right plus left_plus right_plus },  
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
     :special => %w{ or complete not count },
@@ -268,6 +268,35 @@ module Wql2
       sql.joins << "join (select distinct card_id from revisions r " +
         "where created_by in #{extension_select} ) ru on ru.card_id=#{table_alias}.id"
     end
+    
+    def edited(val)
+      inner_spec = CardSpec.new(:return=>'ru.created_by', :_parent=>self).merge(val)
+      inner_spec.sql.joins << "join (select distinct card_id, created_by from revisions r  ) ru on ru.card_id=#{inner_spec.table_alias}.id"
+      
+      merge({
+        :extension_id => ValueSpec.new(['in',inner_spec],self),
+        :extension_type => 'User'
+      })
+    end
+    
+    def member_of(val)
+      inner_spec = CardSpec.new(:return=>'ru.user_id', :extension_type=>'Role', :_parent=>self).merge(val)
+      inner_spec.sql.joins << "join roles_users ru on ru.role_id = #{inner_spec.table_alias}.extension_id"
+      merge({
+        :extension_id => ValueSpec.new(['in',inner_spec],self),
+        :extension_type => 'User'
+      })
+    end
+
+    def member(val)
+      inner_spec = CardSpec.new(:return=>'ru.role_id', :extension_type=>'User', :_parent=>self).merge(val)
+      inner_spec.sql.joins << "join roles_users ru on ru.user_id = #{inner_spec.table_alias}.extension_id"
+      merge({
+        :extension_id => ValueSpec.new(['in',inner_spec],self),
+        :extension_type => 'Role'
+      })
+    end
+
     
     def count(val)
       raise(Wagn::WqlError, "count works only on outermost spec") if @parent

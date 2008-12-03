@@ -107,6 +107,10 @@ namespace 'wagn' do
       u1 = ::User.create! :login=>"u1",:email=>'u1@user.com', :status => 'active', :password=>'u1_pass', :password_confirmation=>'u1_pass', :invite_sender=>User.find_by_login('admin')
       u2 = ::User.create! :login=>"u2",:email=>'u2@user.com', :status => 'active', :password=>'u2_pass', :password_confirmation=>'u2_pass', :invite_sender=>User.find_by_login('admin')
       u3 = ::User.create! :login=>"u3",:email=>'u3@user.com', :status => 'active', :password=>'u3_pass', :password_confirmation=>'u3_pass', :invite_sender=>User.find_by_login('admin')
+      
+      Card::User.create!(:name=>"u1", :extension=>u1)
+      Card::User.create!(:name=>"u2", :extension=>u2)
+      Card::User.create!(:name=>"u3", :extension=>u3)
 
       r1 = Card::Role.create!( :name=>'r1' ).extension
       r2 = Card::Role.create!( :name=>'r2' ).extension

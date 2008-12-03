@@ -19,7 +19,14 @@ describe Wql2, "member_of/member" do
 end
 
 
-=begin
+
+describe Wql2, "not" do 
+  before { User.as :joe_user }
+  it "should exclude cards matching not criteria" do
+    s = Card.search(:plus=>"A", :not=>{:plus=>"A+B"}).plot(:name).sort.should==%w{ B D E F }    
+  end
+end
+
 
 
 describe Wql2, "edited_by/edited" do
@@ -62,14 +69,6 @@ describe Card, "find_phantom" do
       :extension_type=>"HardTemplate",
       :content=>'{"plus":"_self"}'  
     Card.find_phantom("A+testsearch").search(:limit=>100).plot(:name).sort.should == A_JOINEES
-  end
-end
-
-   
-describe Wql2, "not" do 
-  before { User.as :joe_user }
-  it "should exclude cards matching not criteria" do
-    s = Card.search(:plus=>"A", :not=>{:plus=>"A+B"}).plot(:name).sort.should==%w{ B D E F }    
   end
 end
 
@@ -248,11 +247,11 @@ end
 describe Wql2, "type" do  
   before { User.as :joe_user }
   it "should find cards of this type" do
-    Card.search( :type=>"_self", :_card=>Card['User']).plot(:name).sort.should == ["Joe User","No Count","Sample User","Wagn Bot","Admin","Anonymous"].sort
+    Card.search( :type=>"_self", :_card=>Card['User']).plot(:name).sort.should == ["Joe User","No Count","Sample User","Wagn Bot","Admin","Anonymous","u1","u2","u3"].sort
   end
 
-  it "should find cards of this type" do
-    Card.search( :type=>"User" ).plot(:name).sort.should == ["Joe User","No Count","Sample User","Wagn Bot","Admin","Anonymous"].sort
+  it "should find User cards " do
+    Card.search( :type=>"User" ).plot(:name).sort.should == ["Joe User","No Count","Sample User","Wagn Bot","Admin","Anonymous","u1","u2","u3"].sort
   end
 
 end
@@ -273,8 +272,6 @@ describe Wql2, "trash handling" do
   end
 end      
 
-
-=end
 
 
 

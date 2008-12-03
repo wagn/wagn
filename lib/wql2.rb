@@ -115,7 +115,6 @@ module Wql2
   end
 
   class CardSpec < Spec 
-    attr_accessor :negate
     attr_reader :params, :sql
      
     def initialize(spec)   
@@ -188,7 +187,6 @@ module Wql2
 
       # process conditions
       spec.each do |key,val| 
-        raise("Can't use '#{key}' in not clause (yet)") if (self.negate and !NEGATABLE[key.to_s.gsub(/\:.*$/,'').to_sym])
         case ATTRIBUTES[key]
           when :basic; spec[key] = ValueSpec.new(val, self)
           when :system; spec[key] = val.is_a?(ValueSpec) ? val : subspec(val)
@@ -225,9 +223,7 @@ module Wql2
     end
     
     def not(val)
-      self.negate = true
-      merge val 
-      self.negate = false
+      merge field(:id) => subspec(val, { :return=>'id' }, negate=true)
     end
 
     def left(val)
@@ -239,8 +235,7 @@ module Wql2
     end
     
     def part(val) 
-      inner_spec =  { :tag_id => val, :trunk_id => val } 
-      merge( self.negate ? inner_spec : {:or => inner_spec} )
+      merge :or=>{ :tag_id => val, :trunk_id => val }
     end  
     
     def right_plus(val) 
@@ -255,11 +250,10 @@ module Wql2
 
     def plus(val)
       part_spec, connection_spec = val.is_a?(Array) ? val : [ val, {} ]
-      inner_spec = {
+      merge :or=>{
         field(:id) => subspec(connection_spec, :return=>'trunk_id', :tag_id=>part_spec),
         field(:id) => subspec(connection_spec, :return=>'tag_id', :trunk_id=>part_spec)
       }
-      merge( self.negate ? inner_spec : { :or => inner_spec } )
     end          
     
     def edited_by(val)
@@ -316,9 +310,9 @@ module Wql2
       merge field(:id) => ValueSpec.new(['in',RefSpec.new([key,cardspec])], self)
     end
     
-    def subspec(spec, additions={ :return=>'id' })   
+    def subspec(spec, additions={ :return=>'id' }, negate=false)   
       additions = additions.merge(:_parent=>self)
-      join = self.negate ? 'not in' : 'in'
+      join = negate ? 'not in' : 'in'
       #warn "#{self}.subspec(#{additions}, #{spec})"
       ValueSpec.new([join,CardSpec.new(additions).merge(spec)], self)
     end 

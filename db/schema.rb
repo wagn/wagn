@@ -9,38 +9,10 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 122) do
+ActiveRecord::Schema.define(:version => 20081203174431) do
 
-  create_table "cards", :force => true do |t|
-    t.integer  "trunk_id"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
-    t.integer  "current_revision_id"
-    t.string   "name",                                   :null => false
-    t.string   "type",                                   :null => false
-    t.integer  "extension_id"
-    t.string   "extension_type"
-    t.integer  "created_by"
-    t.integer  "updated_by"
-    t.integer  "reader_id"
-    t.string   "reader_type"
-    t.integer  "tag_id"
-    t.string   "key",                                    :null => false
-    t.boolean  "trash",               :default => false, :null => false
-    t.string   "appender_type"
-    t.integer  "appender_id"
-    t.integer  "references_expired"
-  end
-
-  add_index "cards", ["reader_id"], :name => "card_reader_id_index"
-  add_index "cards", ["reader_type"], :name => "card_reader_type_index"
-  add_index "cards", ["type"], :name => "card_type_index"
-  add_index "cards", ["extension_id", "extension_type"], :name => "cards_extension_index"
-  add_index "cards", ["key"], :name => "cards_key_uniq", :unique => true
-  add_index "cards", ["name"], :name => "cards_name_index"
-  add_index "cards", ["name"], :name => "cards_name_uniq", :unique => true
-  add_index "cards", ["tag_id"], :name => "index_cards_on_tag_id"
-  add_index "cards", ["trunk_id"], :name => "index_cards_on_trunk_id"
+# Could not dump table "cards" because of following StandardError
+#   Unknown type 'tsvector' for column 'indexed_content'
 
   create_table "cardtypes", :force => true do |t|
     t.string  "class_name"
@@ -74,6 +46,24 @@ ActiveRecord::Schema.define(:version => 122) do
   add_index "permissions", ["card_id", "task"], :name => "permissions_task_card_id_uniq", :unique => true
   add_index "permissions", ["task"], :name => "permissions_task_index"
 
+  create_table "pg_ts_cfg", :id => false, :force => true do |t|
+    t.text "ts_name",  :null => false
+    t.text "prs_name", :null => false
+    t.text "locale"
+  end
+
+  create_table "pg_ts_cfgmap", :id => false, :force => true do |t|
+    t.text   "ts_name",                  :null => false
+    t.text   "tok_alias",                :null => false
+    t.string "dict_name", :limit => nil
+  end
+
+# Could not dump table "pg_ts_dict" because of following StandardError
+#   Unknown type 'regprocedure' for column 'dict_init'
+
+# Could not dump table "pg_ts_parser" because of following StandardError
+#   Unknown type 'regprocedure' for column 'prs_start'
+
   create_table "revisions", :force => true do |t|
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
@@ -83,6 +73,7 @@ ActiveRecord::Schema.define(:version => 122) do
   end
 
   add_index "revisions", ["card_id"], :name => "revisions_card_id_index"
+  add_index "revisions", ["created_by"], :name => "revisions_created_by_index"
 
   create_table "roles", :force => true do |t|
     t.string "codename"

@@ -29,7 +29,7 @@ module Wql2
   AUTH_ROLE_ID = 2 unless defined?(AUTH_ROLE_ID)
   
   ATTRIBUTES = {
-    :basic=> %w{ name type content id key },
+    :basic=> %w{ name type content id key extension_type },
     :system => %w{ trunk_id tag_id },
     :semi_relational=> %w{ edited_by member role },
     :relational => %w{ part left right plus left_plus right_plus },  
@@ -263,9 +263,10 @@ module Wql2
     end          
     
     def edited_by(val)
-      user_id = ((c = Card::User[val]) ? c.extension_id : 0)
-      sql.joins << %{join (select distinct card_id from revisions r where created_by=#{user_id} ) ru 
-        on ru.card_id=#{table_alias}.id }
+      #user_id = ((c = Card::User[val]) ? c.extension_id : 0)
+      extension_select = CardSpec.new(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val).to_sql
+      sql.joins << "join (select distinct card_id from revisions r " +
+        "where created_by in #{extension_select} ) ru on ru.card_id=#{table_alias}.id"
     end
     
     def count(val)

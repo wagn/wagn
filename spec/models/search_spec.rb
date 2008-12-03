@@ -16,8 +16,8 @@ describe Wql2, "edited_by" do
     User.as(:joe_user) {  Card.create!( :name=>"JoeNow", :content=>"test") }
     User.as(:admin) {  Card.create!(:name=>"AdminNow", :content=>"test") }
   }
-  it "should find card edited by joe" do
-    Card.search(:edited_by=>"Joe User", :sort=>"update", :limit=>1).should == [Card["JoeNow"]]
+  it "should find card edited by joe using subspec" do
+    Card.search(:edited_by=>{:match=>"Joe User"}, :sort=>"update", :limit=>1).should == [Card["JoeNow"]]
   end     
   it "should find card edited by joe" do
     Card.search(:edited_by=>"Admin", :sort=>"update", :limit=>1).should == [Card["AdminNow"]]

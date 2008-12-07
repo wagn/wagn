@@ -20,6 +20,13 @@ module WagnTestHelper
     require 'renderer'
     Renderer.instance
   end
+  
+  def given_cards( *definitions )   
+    User.as(:joe_user) do 
+      Card.create_these *definitions
+    end
+  end
+
 
   def card( name )
     ::Card.find_by_name(name)
@@ -78,8 +85,12 @@ module WagnTestHelper
   def test_action(url, args={})
     post url, *args
     assert_response :success
-  end
+  end     
   
+  def assert_rjs_redirected_to(url)
+    @response.body.match(/window\.location\.href = \"([^\"]+)\";/)
+    assert_equal $~[1], url
+  end
 end
 
 module Test

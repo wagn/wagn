@@ -3,10 +3,10 @@ module Chunk
     attr_reader :card_name, :card
     # the referenced card
         
-    def initialize(matchtext, content)
-      super
-      @card = content.card
-    end
+#    def initialize(matchtext, content)
+#      super
+#      @card = content.card
+#    end
     
 =begin
     def relative?

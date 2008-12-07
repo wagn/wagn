@@ -78,13 +78,11 @@ describe Card, "new permissions" do
   
   it "should let joe view new cards" do
     @c = Card.new
-    @c.send(:set_defaults)
     @c.ok?(:read).should be_true
   end
 
   it "should let joe render content of new cards" do
     @c = Card.new
-    @c.send(:set_defaults)
     Renderer.instance.render(@c).should == ''
   end
 

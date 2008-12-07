@@ -4,10 +4,9 @@
   <body class="wagn">
 	  <%# FIXME: the body has a css identifier because the wikiwyg editor has a different "body", currently sans identifier.  Kind of a hack, but it means that we can set defaults for wagn pages that are different from defaults for html within a card.  One shallow issue is that 'wagn' should be an id, not a class, but that will break lots of local.css files, so we should be deliberate about changing this. %>			
 	  
-	<div id="main" context="main"><%= yield %></div>
+		<div id="main" context="main"><%= yield %></div>
 
-  <%= google_analytics %>   
-	  		
+		<%= render :partial=>'layouts/foot' %>
   </body>
 </html>
 

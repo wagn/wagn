@@ -1,12 +1,12 @@
-.card-slot { 
-  width: auto;
+.card-slot {
+  width: 100%;  /*needed for ie6*/
   margin: 0px;
   background: #fff;
   padding: 0px;
-  -moz-border-radius: 6px;
-  border: 1px solid #ccc;
-  border-bottom: 2px solid #bbb;
-  border-right: 2px solid #bbb;
+  -moz-border-radius: 8px;
+  border: 1px solid #777;
+  border-bottom: 2px solid #888;
+  border-right: 2px solid #888;
   display: block;
 }
 .card-slot,
@@ -20,24 +20,22 @@
 
 
 .card-slot .card-header {
-  padding: 0px 2px;
-  margin: 0px 5px 5px 5px;
+  background: #005800;
+  padding: 5px; 
+  margin: 0px;
+  -moz-border-radius: 6px 6px 0 0;
 }
 .card-slot .card-header img {
   float: none !important;
   padding: 0px !important;
 }
+
 .card-slot .card-header a,
 .card-slot .card-footer a {
   border: 0px !important;  /*-- for wadget --*/
 }
 
-.card-slot .open-arrow, 
-.card-slot .close-arrow,
-.card-slot .open-link,
-.card-slot .close-link {
-  display: none;
-}
+
 
 .card-slot .title { 
   margin: 0px 2px;
@@ -51,13 +49,29 @@
   font-style: italic;
   font-size: 10px;
 }
-
-.card-slot .title a,
-.card-slot .title a:link,
-.card-slot .title a:visited,
-.card-slot .title a:hover {
-  color: #448 
+.card-slot .card-header a,
+.card-slot .card-header .title a,
+.card-slot .card-header .title a:link,
+.card-slot .card-header .title a:visited,
+.card-slot .card-header .title a:hover {
+  color: #fff 
 }
+html>body .card-menu,
+html>body .page-icon-link {
+  display: none;
+}
+.card-slot.line .card-header {
+  padding-right: 26px;
+}
+.card-slot.line div:hover.card-header {
+  padding-right: 4px;
+}
+
+div:hover.card-header .page-icon-link,
+div:hover.card-header .card-menu {
+  display: inline;
+}
+
 .card-slot .card-menu {
    float:right;
    white-space: nowrap;
@@ -66,30 +80,29 @@
    z-index: 1;
 }
 .card-slot .card-menu a { 
-  padding: 1px 3px;
+  padding: 1px 5px;
   margin: 0px;
-  -moz-border-radius: 0px 0px 4px 4px;
+  -moz-border-radius: 4px 4px 0 0;
 }
 .card-slot .current {
-  font-style: italic;
-  background: #dde;
-}
-a.current, a:link.current {
-  color: #777;
+  background: #bbb;
+  padding-bottom: 8px !important;
 }
 
 .card-slot .submenu {
-  background: #676;
+  background: #bbb;
   padding: 0px 10px;
-  color: #fff;
+  text-align: right;
 }
 .card-slot .submenu a {
-  color: #fff;
-  padding: 0px 2%;
+  padding: 0px 5px;
+  color: #005800
 }
 .card-slot .submenu a.on {
-  background: #9a9;
-  font-style: italic;
+  background: #fff;
+  color: #777;
+  padding-bottom: 3px;
+  -moz-border-radius: 4px 4px 0 0;
 }
 
 
@@ -99,24 +112,22 @@ a.current, a:link.current {
 
 .card-slot .card-footer,
 .card-slot .revision-navigation {
-  background: #eee;
-  padding: 0px 5px;
+  background: #bbb;
+  padding: 0px 10px;
   font-size: 9px;
+  height: 18px;
 }
 .card-slot .card-footer {
   clear: both;
   -moz-border-radius: 0px 0px 6px 6px;
 }
-.card-slot .card-footer a, 
-.card-slot .card-footer a:visited, 
-.card-slot .card-footer a:focus, 
-.card-slot .card-footer a:link {
-  color: #88c;
-}
-#sidebar .card-slot .card-footer {
+html>body  .card-footer .card-links {
   display: none;
 }
-           
+div:hover.card-footer .card-links{
+  display: inline;
+} 
+       
 
 /*-------------  TABS -------*/
 
@@ -166,10 +177,6 @@ a.current, a:link.current {
   background: #ffc;
   text-decoration: underline;
 }
-.card-slot span:hover.transcluded { 
-  background-color: #e8e9cc;
-  -moz-border-radius: 4px;
-}
 .card-slot .transcluded p, 
 .card-slot .transcluded span, 
 .card-slot .transcluded a, 
@@ -180,9 +187,7 @@ a.current, a:link.current {
   background-color: inherit;
   -moz-border-radius: inherit;
 }
-.card-slot span:hover.transcluded .card-slot { 
-  background-color: #fff;
-}
+
 
 
 /* note:   ".card-slot .transcluded div not(.editor)" was not working properly and was breaking nested block elements.  
@@ -193,7 +198,6 @@ a.current, a:link.current {
 
 
 .card-slot .editor {
-  padding: 0px 5px;
   display: block;
 }
 .card-slot.new-card .editor {
@@ -231,7 +235,7 @@ a.current, a:link.current {
   border: dashed 1px #aaa;
   margin: 4px;
   padding: 3px;
-  position: relative;
+/*  position: relative;*/
 }
 .card-slot .templated.edit-area {
   background: white;
@@ -267,7 +271,7 @@ a.current, a:link.current {
   margin: 4px;
 }
 .card-slot .edit-area table {
-  width: 100%;
+  width: 98%;
   margin-bottom: 5px;
 }
 .card-slot .edit-area td {
@@ -381,10 +385,14 @@ a.current, a:link.current {
   color: #444;
 }
 .card-slot .content,
-.card-slot .transcluded .content .card-slot.paragraph,
-.card-slot .revision { 
+.card-slot .revision,
+.card-slot .transcluded .paragraph .content  { 
   display: block;
-  padding: 0px 10px 10px 10px;
+  padding: 5px 15px 10px 15px;
+}
+.card-slot .transcluded .content .card-slot.paragraph {
+  display: block;
+  padding: 0;
 }
 .card-slot .instruction {
   border-left: 0px;
@@ -395,9 +403,7 @@ a.current, a:link.current {
   margin-top: 10px;
   padding: 6px;
 }
-.card-slot.line hr {
-  display: none;
-}
+
 .card-slot .denied {
   display: none;
 }
@@ -407,22 +413,18 @@ a.current, a:link.current {
 
 /*-------- main card ----*/
 
-#show-card .card-slot .title {
+/*-- makes things funny in IE
+#main .card-slot.paragraph .title {
   font-size: 16px;
-  line-height: 18px;
+  line-height: 25px;
 }
-#show-card .card-slot .content .title,
-#show-card .card-slot .edit-area .title {
+#main .card-slot.paragraph .content .title,
+#main .card-slot .edit-area .title {
   font-size: inherit;
   line-height: inherit;
 }
-#show-card .card-slot .close-arrow {
-  display: none;
-}
-#show-card .card-slot .content .close-arrow {
-  display: inline;
-}
-
+    
+--*/
 
 /*----- sidebar ----------------*/
 
@@ -442,8 +444,9 @@ a.current, a:link.current {
 /*-----------  open cards -------*/
 
 .card-slot.paragraph {
-  margin: 2px 0px;
- -moz-border-radius: 6px;
+  margin: 1px 0px;
+  padding: 0px !important;
+  -moz-border-radius: 8px;
 }
 .card-slot.paragraph .content {
   display: block;
@@ -459,12 +462,12 @@ a.current, a:link.current {
   padding: 0px;
 }
 */
-.card-slot .transcluded .content {
   /* was busting when listed before .paragraph .content */
+.card-slot .transcluded .content {
   display: inline;
-  padding: 0px;
+  padding: 0;
 }
-.card-slot.paragraph .close-arrow,
+.card-slot.paragraph .down-arrow,
 .card-slot.paragraph .close-link {
   display: inline;
   margin: 0px 5px 0px 0px;
@@ -474,15 +477,27 @@ a.current, a:link.current {
 
 .card-slot.line {
   overflow: hidden;
-  border: 1px solid #ccc;
   white-space: nowrap;
-  padding: 2px 0px;
   border-bottom: 0px;
-  -moz-border-radius: 6px 6px 0px 0px !important;
+  border-color: #ccc;
+  -moz-border-radius: 8px 8px 2px 2px !important;
+  padding: 0px;
+  margin: 0px;
+  line-height: 25px;  
+  /* necessary for IE6 */
+  height: 25px;
 }
 
-.card-slot.line .open-link,
-.card-slot.line .open-arrow,
+.card-slot.line .content, 
+.card-slot.line .card-header {
+  display: inline;
+  float: left;
+  vertical-align: center;
+}
+.card-slot.line .card-header {
+  line-height: 15px;
+}
+
 .card-slot.line tr, 
 .card-slot.line td, 
 .card-slot.line p,
@@ -511,28 +526,19 @@ body.wagn .card-slot.line h2,
   white-space: nowrap;      
   float: none !important;
 }
-.card-slot.line .content {
-  display: inline !important;
-}
-.card-slot.line .card-header {
-  display: inline;
-}
-.card-slot.line .title img {
-  padding: 0px 2px;
-}
 .card-slot.line .content img {
   height: 16px;
   float: none;
   padding: 0px;
 }
 .card-slot.line br,  
-.card-slot.line .card-footer,
+.card-slot.line hr,
 .card-slot.line input,
-.card-slot.line .comment-box,
 .card-slot.line textarea,
-.card-slot.line .card-menu,
+.card-slot.line .comment-box,
 .card-slot.line .table-of-contents,
 .card-slot.line .card-menu,
+.card-slot.line .card-footer,
 .card-slot.line .close-link {
   display: none !important;
 }
@@ -549,17 +555,11 @@ body.wagn .card-slot.line h2,
 .card-slot .card-slot .card-footer {
   -moz-border-radius: 0px;
 }
-.card-slot .card-slot .card-menu {
-  display: none;
-}
 .card-slot span:hover.card-slot {
   border: 1px solid #ddd;
-  -moz-border-radius: 6px 6px 0 0;
+  -moz-border-radius: 8px 8px 0 0;
 }
 
-.card-slot span:hover.card-slot .card-menu{
-  display: inline;
-}
 
 
 /* CARDTYPE_SPECIFIC ------------------------------*/
@@ -603,7 +603,7 @@ body.wagn .card-slot.line h2,
 
 
 /*.card-slot.paragraph.type-Image, */
-.card-slot.paragraph .type-Image {
+.card-slot.paragraph .type-Image .content {
 /*  overflow: auto;  */
   padding: 5px;
 }
@@ -667,27 +667,6 @@ body.wagn .card-slot.line h2,
   margin-right: 20px;
 }
 
-
-/*------------ (Website) ----------------*/
-
-
-.card-slot .website-editor input {
-  margin: 3px;
-  width: 100%;
-}
-.card-slot .website-link {
-  margin: 3px;
-}
-.card-slot iframe.website {
-  width: 100%;
-  height: 50%;
-  border: 1px solid #ddd;
-}
-
-/* popup stuff --------------------------------------------------------------*/
-#popup_target {  /* IS THIS USED?  */
-  padding: 10px;
-}
 
 
 /*---I think is is actually a connection thing? --*/

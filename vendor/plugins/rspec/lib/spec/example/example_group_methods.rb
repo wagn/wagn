@@ -14,6 +14,7 @@ module Spec
       end
 
       attr_reader :description_text, :description_args, :description_options, :spec_path, :registration_binding_block
+      alias :options :description_options
 
       def inherited(klass)
         super
@@ -38,24 +39,30 @@ module Spec
       def describe(*args, &example_group_block)
         args << {} unless Hash === args.last
         if example_group_block
-          params = args.last
-          params[:spec_path] = eval("caller(0)[1]", example_group_block) unless params[:spec_path]
-          if params[:shared]
-            SharedExampleGroup.new(*args, &example_group_block)
+          options = args.last
+          options[:spec_path] = eval("caller(0)[1]", example_group_block) unless options[:spec_path]
+          if options[:shared]
+            create_shared_example_group(args, example_group_block)
           else
-            self.subclass("Subclass") do
-              describe(*args)
-              module_eval(&example_group_block)
-            end
+            create_nested_example_group(args, example_group_block)
           end
         else
           set_description(*args)
-          before_eval
-          self
         end
       end
       alias :context :describe
-
+      
+      def create_shared_example_group(args, example_group_block)
+        SharedExampleGroup.new(*args, &example_group_block)
+      end
+      
+      def create_nested_example_group(args, example_group_block)
+        self.subclass("Subclass") do
+          describe(*args)
+          module_eval(&example_group_block)
+        end
+      end
+      
       # Use this to pull in examples from shared example groups.
       # See Spec::Runner for information about shared example groups.
       def it_should_behave_like(shared_example_group)
@@ -103,21 +110,24 @@ module Spec
         @predicate_matchers ||= {:an_instance_of => :is_a?}
       end
 
-      # Creates an instance of Spec::Example::Example and adds
-      # it to a collection of examples of the current example group.
-      def it(description=nil, &implementation)
-        e = new(description, &implementation)
+      # Creates an instance of the current example group class and adds it to
+      # a collection of examples of the current example group.
+      def example(description=nil, options={}, &implementation)
+        e = new(description, options, &implementation)
         example_objects << e
         e
       end
 
-      alias_method :specify, :it
+      alias_method :it, :example
+      alias_method :specify, :example
 
       # Use this to temporarily disable an example.
-      def xit(description=nil, opts={}, &block)
+      def xexample(description=nil, opts={}, &block)
         Kernel.warn("Example disabled: #{description}")
       end
-      alias_method :xspecify, :xit
+      
+      alias_method :xit, :xexample
+      alias_method :xspecify, :xexample
 
       def run
         examples = examples_to_run
@@ -408,9 +418,6 @@ module Spec
         when :all; after_all_parts
         when :suite; Spec::Runner.options.after_suite_parts
         end
-      end
-
-      def before_eval
       end
 
       def add_method_examples(examples)

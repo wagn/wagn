@@ -210,9 +210,10 @@ setupCreateOnClick=function(container) {
       slot_span = getSlotSpan(element);
       card_name = slot_span.getAttributeNode('cardname').value;  
       //console.log("create  " +card_name);
+      ie = (Prototype.Browser.IE ? '&ie=true' : '');
       new Ajax.Request('/transclusion/create?context='+getSlotContext(element), {
         asynchronous: true, evalScripts: true,
-        parameters: "card[name]="+encodeURIComponent(card_name)+"&requested_view="+slot_span.getAttributeNode('view').value
+        parameters: "card[name]="+encodeURIComponent(card_name)+"&requested_view="+slot_span.getAttributeNode('view').value+ie
       });
       Event.stop(event);
     }
@@ -347,9 +348,9 @@ getSlotSpan=function(element) {
 getSlotOptions=function(element){
   var span=null;
   if (span=getSlotSpan(element)) {   
-    var n=null;
-    if (n=span.getAttributeNode('view')) {view=n.value } else {view=''};
-    if (n=span.getAttributeNode('item')) {item=n.value } else {item=''};    
+    var n=null; var item=''; var view='';
+    if (n=span.getAttributeNode('view')) {view=n.value };
+    if (n=span.getAttributeNode('item')) {item=n.value };    
     return 'view='+view+'&item='+item;
   }
   return '';

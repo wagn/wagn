@@ -160,7 +160,6 @@ class WikiReferenceTest < Test::Unit::TestCase
   def test_pickup_new_transclusions_on_create
     @l = Card.create! :name=>"woof", :content=>"{{Lewdog}}"  # no Lewdog card yet...
     @e = Card.new(:name=>"Lewdog", :content=>"grrr")              # now there is
-    @e.send(:set_defaults)
     warn @e.name_references.inspect
     assert @e.name_references.plot(:referencer).plot(:name).include?("woof")
   end

@@ -37,9 +37,7 @@ module CardLib
 
 
       def create_phantom(name, content, type='Basic', reader=Role[:anon])
-        c=Card.new(:name=>name, :content=>content, :type=>type ,:reader=>reader)
-#        c.self_card = c.trunk if name.junction?
-        c.phantom = true
+        c=Card.new(:name=>name, :content=>content, :type=>type ,:reader=>reader, :phantom=>true)
         c
       end
       

@@ -12,11 +12,10 @@
     </div>
 	  <div id="denied" class="instruction content">
 	    <p>
-  	    Sorry,
         <% if User.current_user.anonymous? %>
           anonymous (not signed in) users
         <% else %>
-  	      <%= User.current_user.cardname %>, you 
+					you
   	    <% end %>                      
   	    don't have permission to 
 

@@ -1,9 +1,38 @@
 require File.dirname(__FILE__) + '/../spec_helper'
+require File.dirname(__FILE__) + '/../../test/helpers/wagn_test_helper'
+
+include WagnTestHelper
+
 
 A_JOINEES = ["B", "C", "D", "E", "F"]
       
 CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User"].sort    
 
+
+
+describe Wql2, "edited_by" do
+  before { 
+    User.as(:joe_user) {  Card.create!( :name=>"JoeLater", :content=>"test") }
+    User.as(:joe_user) {  Card.create!( :name=>"JoeNow", :content=>"test") }
+    User.as(:admin) {  Card.create!(:name=>"AdminNow", :content=>"test") }
+  }
+  it "should find card edited by joe using subspec" do
+    Card.search(:edited_by=>{:match=>"Joe User"}, :sort=>"update", :limit=>1).should == [Card["JoeNow"]]
+  end     
+  it "should find card edited by joe" do
+    Card.search(:edited_by=>"Admin", :sort=>"update", :limit=>1).should == [Card["AdminNow"]]
+  end     
+  it "should fail gracefully if user isn't there" do
+    Card.search(:edited_by=>"Joe LUser", :sort=>"update", :limit=>1).should == []
+  end
+  
+  it "should not give duplicate results for multiple edits" do
+    User.as(:joe_user){ c=Card["JoeNow"]; c.content="testagagin"; c.save!; c.content="test3"; c.save! }
+    Card.search(:edited_by=>"Joe User", :sort=>"update", :limit=>2).map(&:name).should == ["JoeNow", "JoeLater"]
+  end
+end
+
+=begin
 
 describe Card, "find_phantom" do
   before { User.as :joe_user }
@@ -33,8 +62,15 @@ describe Wql2, "order" do
 
   
   it "should sort by create" do  
+    given_cards(
+      { "Cardtype:Nudetype" => ""},
+      { "Nudetype:nfirst" => "a"},
+      { "Nudetype:nsecond" => "b"},
+      { "Nudetype:nthird"=> "c" }
+    )
     # WACK!! this doesn't seem to be consistent across fixture generations :-/
-    Card.search( :sort=>"create", :dir=>"asc", :limit=>6).plot(:name).should == ["Wagn Bot", "Admin", "Basic", "User", "Cardtype", "Company"]
+    Card.search( :type=>"Nudetype", :sort=>"create", :dir=>"asc").plot(:name).should ==
+      ["nfirst","nsecond","nthird"]
   end  
 
 #  it "should sort by update" do     
@@ -219,7 +255,10 @@ describe Wql2, "trash handling" do
     Card["A+B"].destroy!
     Card.search( :left=>"A" ).plot(:name).sort.should == ["A+C", "A+D", "A+E"]
   end
-end
+end      
+
+
+=end
 
 
 

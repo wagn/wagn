@@ -35,7 +35,7 @@ module ExceptionSystem
   def render_500()  render_exception(500); end
 
   def render_exception(status)
-    render :template => "/application/#{status}", :status => status, :layout=>ajax_or_not
+    render :template => "/application/#{status}", :status => status, :layout=>default_layout
   end  
   
   def exception_status(exception)

@@ -85,7 +85,8 @@ module WagnHelper
           :position => position
         }
         
-        slot_head = %{<span #{attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join } >}
+        slot_head = '<!--[if !IE]><object><![endif]-->' +
+          %{<div #{attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join } >}
         slot_head 
         if block_given? 
           # FIXME: the proc.binding call triggers lots and lots of:
@@ -106,26 +107,26 @@ module WagnHelper
       if render_slot
         if block_given?
           warn_level, $VERBOSE = $VERBOSE, nil;
-          @template.concat("</span>" , proc.binding)
+          @template.concat("</div></object>" , proc.binding)
           $VERBOSE = warn_level
         else
-          result << "</span>"
+          result << "</div></object>"
         end
       end    
       result
     end
     
     def cache_action(cc_method) 
-      if CachedCard===card 
+      (if CachedCard===card 
         card.send(cc_method) || begin
           cached_card, @card = card, Card.find_by_key_and_trash(card.key, false) || raise("Oops! found cached card for #{card.key} but couln't find the real one") 
           content = yield(@card)
-          cached_card.send("#{cc_method}=", content)  
+          cached_card.send("#{cc_method}=", content.clone)  
           content
         end
       else
         yield(card)
-      end
+      end).clone
     end
     
     def deny_render?(action)
@@ -142,7 +143,7 @@ module WagnHelper
     end
 
     def render(action, args={})      
-      warn "<render(#{card.name}, #{@state}).render(#{action}, item=>#{args[:item]})"
+      #warn "<render(#{card.name}, #{@state}).render(#{action}, item=>#{args[:item]})"
       
       rkey = self.card.name + ":" + action.to_s
       root.renders[rkey] ||= 1; root.renders[rkey] += 1
@@ -183,7 +184,8 @@ module WagnHelper
           c = self.render( :expanded_view_content)
           w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c))
 
-        when :expanded_view_content, :raw
+        when :expanded_view_content, :raw 
+          @state = 'view'
           expand_transclusions(  cache_action('view_content') {  card.post_render( render(:open_content)) } )
 
         when :expanded_line_content
@@ -227,6 +229,9 @@ module WagnHelper
 #      result ||= "" #FIMXE: wtf?
       result << javascript_tag("setupLinksAndDoubleClicks()") if args[:add_javascript]
       result
+    rescue Card::PermissionDenied=>e
+      return "Permission error: #{e.message}"
+      
     end
 
     def expand_transclusions(content) 

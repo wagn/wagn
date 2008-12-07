@@ -2,7 +2,7 @@ class ConnectionController < ApplicationController
   cache_sweeper :card_sweeper
   helper :card, :wagn
   before_filter :load_card
-  layout :ajax_or_not
+  layout :default_layout
   
   def create
     # id will be for the trunk (card we're connecting to)
@@ -85,5 +85,23 @@ class ConnectionController < ApplicationController
       end
     end
   end
+
+  def handle_cardtype_update(card)
+    #FIXME -- only one call.  phase out?
+    if updating_type?  
+      #old_type = card.type
+      card.type=params[:card][:type]  
+      card.save!
+      card = Card.find(card.id)
+      content = params[:card][:content]
+      content = strip_tags(content) unless (card.class.superclass.to_s=='Card::Basic' or card.type=='Basic')
+      card.content = content
+    end
+    card
+  end
   
+  def updating_type?
+    request.post? and params[:card] and params[:card][:type]
+  end
+
 end

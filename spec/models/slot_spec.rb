@@ -8,13 +8,11 @@ describe WagnHelper::Slot, "" do
 
   it "should render content" do 
     @a = Card.new(:name=>'t', :content=>"[[A]]")
-    @a.send(:set_defaults)
     Slot.new(@a).render(:raw).should == "<a class=\"known-card\" href=\"/wagn/A\">A</a>"
   end 
 
   it "should not render transclusions in raw content" do
      @a = Card.new(:name=>'t', :content=>"{{A}}")
-     @a.send(:set_defaults)
     Slot.new(@a).render(:raw_content).should == "{{A}}"
   end                                                                                  
 

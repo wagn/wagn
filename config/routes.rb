@@ -5,7 +5,12 @@ ActionController::Routing::Routes.draw do |map|
   #map.connect 'c/:controller/:action'
   #map.connect 'c/:controller', :action=>'index'
 
-  map.connect 'images/:foo', :controller=>'application', :action=>'render_fast_404'
+  # these file requests should only get here if the file isn't present.
+  # if we get a request for a file we don't have, don't waste any time on it.
+  map.connect 'images/:foo.:format', :controller=>'application', :action=>'render_fast_404'
+  map.connect 'image/:foo.:format', :controller=>'application', :action=>'render_fast_404'
+  map.connect 'file/:foo.:format', :controller=>'application', :action=>'render_fast_404'
+
   map.connect 'images/:foo/:bar', :requirements=>{ :bar=>/.*/ }, :controller=>'application', :action=>'render_fast_404'
   
   map.connect 'wagn/:id.:format', :controller => 'card', :action=>'show', :requirements=>{ :id=>/.*/, :format=>FORMAT_PATTERN }

@@ -49,7 +49,7 @@ class User < ActiveRecord::Base
         @user = @card.extension or raise "Blam.  InvitationRequest should've been connected to a user"    
         User.as :admin do
           @card.type = 'User'  # change from Invite Request -> User
-          dummy = Card::User.new; dummy.send(:set_defaults)
+          dummy = Card.new(:type=>'User');
           @card.permit :edit, dummy.who_can(:edit)
           @card.save!
         end

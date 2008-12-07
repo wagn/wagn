@@ -3,6 +3,7 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 describe Card, "with hard tag template" do
   before do
+    CachedCard.reset_cache
     User.as :joe_user
     @bt = Card.create! :name=>"birthday+*rform", :extension_type=>'HardTemplate',
       :type=>'Date', :content=>"Today!"
@@ -40,14 +41,23 @@ end
 
 describe Card, "with soft tag template" do
   before do 
+    CachedCard.reset_cache
+    CachedCard.bump_global_seq
     User.as :admin do
-      @bt = Card.create! :name=>"birthday+*rform", :extension_type=>'SoftTemplate', 
-              :type=>'Date', :content=>"Today!"
+      @bt = Card.create! :name=>"birthday+*rform", :type=>'Date', :content=>"Today!"
       @bt.permit(:comment, Role['auth']);  @bt.permit(:delete, Role['admin'])
       @bt.save!
     end
-    User.as :joe_user
+    User.as :joe_user                                         
     @jb = Card.create! :name=>"Jim+birthday"
+  end
+               
+  it "should fail without extension" do
+    c = Card.create :type=>"Phrase", :name=>"status+*rform", :content=>"open"
+    c.extension_type=nil
+    c.save!
+    Card.new(:name=>"dt+status").type.should == 'Phrase'
+    Card.new(:name=>"dt+status").content.should == 'open'
   end
   
   it "should have default cardtype" do
@@ -78,13 +88,24 @@ describe Card, "with hard type template and hard tag template" do
     #@jb.content.should == 'Today!'
     @jb.content.should == 'Tomorrow'
   end
-  
+
   #it "should change content with cardtype" do
     #@bt.content = 'Yesterday'; @bt.save!
     #Card['Jim+birthday'].content.should== 'Yesterday'
     #Card['Jim+birthday'].content.should== 'Tomorrow'
   #end
   
+end
+
+describe Card, "with hard type template" do
+  before do
+    User.as :joe_user
+    @dt = Card.create! :name=>"Date+*tform", :extension_type=>'HardTemplate', :type=>'Basic', :content=>'Tomorrow'
+  end       
+  
+  it "should return templated content even if content is passed in" do
+    Card.new(:type=>'Date', :content=>'').content.should == 'Tomorrow'
+  end
 end
 
 describe Card, "with soft type template" do

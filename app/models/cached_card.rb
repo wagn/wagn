@@ -10,64 +10,107 @@
 class CacheError < StandardError; end
 
 class CachedCard 
-  cattr_accessor :cache, :perform_caching
+  cattr_accessor :cache, :perform_caching, :cache_key_prefix, :seq_key
   attr_reader :key
   attr_accessor :comment, :comment_author
-  self.cache = ActionController::Base.fragment_cache_store
+  self.cache = ActionController::Base.cache_store
   self.perform_caching = ActionController::Base.perform_caching  
+  self.cache_key_prefix = "#{System.base_url.split('//').last}/#{RAILS_ENV}"
+  self.seq_key = self.cache_key_prefix + "/" + "global_seq"
   
-  cattr_accessor :card_names
-  self.card_names={}
+  cattr_accessor :card_names, :local_cache
+  self.card_names={} 
+  self.local_cache={ :real=>{}, :get=>{}, :seq=>nil }
   
   class << self       
+    def reset_cache
+      self.local_cache = {
+        :real => {},
+        :get => {},
+        :seq => nil
+      }  
+    end
     
+    def global_seq
+      self.local_cache[:seq] ||= (cache.read(@@seq_key) || write_global_seq(1)).to_i
+    end
+
+    def bump_global_seq
+      write_global_seq( global_seq() + 1 )
+    end
+
+    def write_global_seq(val)
+      cache.write(@@seq_key, val.to_s) 
+      val
+    end
+
     # get_real is for when you want to use the cache, but don't want any builtins, auto,
     # card_creation, or any type of shenanigans.  give me the card if it's there, otherwise nil.
     # called by templating system
-    def get_real(name)  
-      return Card[name] unless perform_caching
-      key = name.to_key
-      if card = self.find(key)
-        card
-      elsif card = self.load_card(name)
-        self.cache_me_if_you_can(card)
+    def get_real(name)     
+      key = name.to_key             
+      
+      if self.local_cache[:real].has_key?(key)
+        return self.local_cache[:real][key]
+      else
+        self.local_cache[:real][key] = begin
+          if perform_caching
+            if card = self.find(key)
+              card
+            elsif card = self.load_card(name)
+              self.cache_me_if_you_can(card, :cache=>true)
+            end
+          else
+            Card[name] 
+          end
+        end
       end
     end
     
-    def get(name, card=nil, opts={}) 
+    def get(name, card=nil, opts={})   
       key = name.to_key
-      caching = (opts.has_key?(:cache) ? opts[:cache] : true) && perform_caching 
-      card_opts = opts[:card_params] ? opts[:card_params] : {}
-      card_opts['name'] = name if (name && !name.blank?)
 
-      todo = 
-        case
-          when caching && (card = self.find(key, card, opts)) ; [ :got_it     , 'found in cache'   ] 
-          when card                                           ; [ :cache_it   , 'called with card' ]
-          when name.blank?                                    ; [ :make_it    , 'blank name'       ]
-          when card = Card.find_builtin(name)                 ; [ :got_it     , 'built-in'         ]
-          when card = self.load_card(name)                    ; [ :cache_it   , 'found by name'    ]
-          when card = Card.auto_card(name)                    ; [ :got_it     , 'auto card'        ]
-          else                                                ; [ :make_it    , 'scratch'          ]
-        end 
+      if self.local_cache[:get].has_key?(key)
+        return self.local_cache[:get][key]
+      else
+        self.local_cache[:get][key] = begin
+      
+          caching = (opts.has_key?(:cache) ? opts[:cache] : true) && perform_caching 
+          card_opts = opts[:card_params] ? opts[:card_params] : {}
+          card_opts['name'] = name if (name && !name.blank?)
+
+          todo = 
+            case
+              when caching && (card = self.find(key, card, opts)) ; [ :got_it     , 'found in cache'   ] 
+              when card                                           ; [ :cache_it   , 'called with card' ]
+              when name.blank?                                    ; [ :make_it    , 'blank name'       ]
+              when card = Card.find_builtin(name)                 ; [ :got_it     , 'built-in'         ]
+              when card = self.load_card(name)                    ; [ :cache_it   , 'found by name'    ]
+              when card = Card.auto_card(name)                    ; [ :got_it     , 'auto card'        ]
+              else                                                ; [ :make_it    , 'scratch'          ]
+            end 
         
-      ActiveRecord::Base.logger.info "<get card: #{name} :: #{todo.last}>"
+          #ActiveRecord::Base.logger.info "<get card: #{name} :: #{todo.last}>"
 
-      case todo.first
-        when :got_it   ;    card
-        when :cache_it ;    self.cache_me_if_you_can(card, opts)       
-        when :make_it  ;    Card.new(card_opts) unless opts[:no_new]    # FIXME: opts[:no_new] is an ugly hack- interface needs work.     
+          case todo.first
+            when :got_it   ;    card
+            when :cache_it ;    self.cache_me_if_you_can(card, opts)       
+            when :make_it  ;    
+              ActiveRecord::Base.logger.info("*****Making Card: #{card_opts}")
+              Card.new(card_opts.merge(:skip_defaults=>true)) unless opts[:no_new]    # FIXME: opts[:no_new] is an ugly hack- interface needs work.     
           
-          ## opts[:no_new] is here for cases when you want to look for a card in the cache and do something else
-          ## if it's not there-- particularly builtin cards such as *favicon.  If an anonymous user tries to
-          ## get one of these cards, it's not there, and we try to create it, it blows up on permissions,
-          ## which is a weird error to the user because they were just trying to view.
+              ## opts[:no_new] is here for cases when you want to look for a card in the cache and do something else
+              ## if it's not there-- particularly builtin cards such as *favicon.  If an anonymous user tries to
+              ## get one of these cards, it's not there, and we try to create it, it blows up on permissions,
+              ## which is a weird error to the user because they were just trying to view.
+          end
+        end
       end
     end
     
-    def load_card(name)
+    def load_card(name)  
       cached_card = self.new(name.to_key)
-      return nil if cached_card.read('missing')
+      return nil if cached_card.read('missing')  
       if card = Card[name]
         card
       else
@@ -79,7 +122,13 @@ class CachedCard
     
     def cache_me_if_you_can(card,opts={})
       caching = (opts.has_key?(:cache) ? opts[:cache] : true) && perform_caching 
-      caching && card.cacheable? ? self.new( card.key, card, opts) : card
+      if caching && card.cacheable? 
+        cc = self.new( card.key, card, opts)
+        cc.name  # trigger a write to the cache, so it will be found next time.
+        cc
+      else 
+        card
+      end
     end
     
     def find(key, card=nil, opts={})
@@ -97,7 +146,8 @@ class CachedCard
   def initialize(key, real_card=nil, opts={})
     @auto_load = opts[:auto_load_card]   
     #ActiveRecord::Base.logger.info("<Cache init: #{key}, #{real_card}>")
-    @card = real_card
+    @card = real_card  
+    @attrs = nil 
     @key=key
   end
   
@@ -116,7 +166,7 @@ class CachedCard
   end
 
   def soft_template?
-    extension_type =='SoftTemplate'
+    !hard_template?
   end
   # /FIXME    
   
@@ -170,7 +220,7 @@ class CachedCard
   
   def card
     @card ||= (
-      ActiveRecord::Base.logger.info("<Loading: #{@key}>")
+      #ActiveRecord::Base.logger.info("<Loading: #{@key}>")
       Card.find_by_key_and_trash(@key, false)
     )
   end
@@ -187,26 +237,45 @@ class CachedCard
     end
   end
   
-  def read(field)
-    self.class.cache.read("/card/#{@key}/#{field}")
+  def read(field)   
+    self.attrs[field]
   end
   
   def write(field, value)
-    self.class.cache.write("/card/#{@key}/#{field}", value) 
-  end    
+    self.attrs[field] = value
+    self.save
+  end          
+  
+  def attrs
+    @attrs ||= begin 
+      begin 
+        Marshal.load( self.class.cache.read(full_key))
+      rescue Exception=>e
+        {}
+      end         
+      
+    end
+  end  
+  
+  def save
+    str = Marshal.dump @attrs
+    self.class.cache.write(full_key, str)  
+  end
+  
+  def full_key   
+    "#{@@cache_key_prefix}/set-#{self.class.global_seq}/#{@key}"
+  end
   
   def expire_all  
-    # FIXME: easy place for bugs if using a key that's not here.    
-    # why not regexp? rails docs say:
-    # Regexp expiration is not supported on caches which can‘t iterate over all keys, such as memcached.
-    %w{id missing extension_type name type content read_permission comment_permission line_content view_content footer }.each do |f|
-      expire(f)
-    end
+    self.class.cache.write(full_key, nil)
+    # need to expire local cache as well
+    self.local_cache[:real].delete(@key) if self.local_cache[:real].has_key?(@key)
+    self.local_cache[:get].delete(@key) if self.local_cache[:get].has_key?(@key)      
+    @attrs = nil
   end 
   
-  def expire(field)   
-    #warn "EXPIRE /card/#{@key}/#{field}"
-    self.class.cache.delete("/card/#{@key}/#{field}", nil)
+  def expire(field)  
+    expire_all()  
   end
 end        
 

@@ -1,6 +1,7 @@
 class CardController < ApplicationController
+
   helper :wagn, :card 
-  layout :ajax_or_not
+  layout :default_layout
   cache_sweeper :card_sweeper
 
   before_filter :create_ok, :only=>[ :new, :create, :new_of_type ]
@@ -23,7 +24,7 @@ class CardController < ApplicationController
     roles_key = User.current_user.all_roles.map(&:id).join('-')
     global_serial = Cache.get('GlobalSerial') #Time.now.to_f }
     key = url_for(options).split('://').last + "/#{roles_key}" + "/#{global_serial}" + 
-      "/#{ajax_or_not}"
+      "/#{default_layout}"
   end
        
 
@@ -56,7 +57,7 @@ class CardController < ApplicationController
   def my_name                                              
     self.class.layout nil
     render :text=>User.current_user.card.name
-    self.class.layout :ajax_or_not
+    self.class.layout :default_layout
   end
 
   #----------------( MODIFYING CARDS )
@@ -64,16 +65,7 @@ class CardController < ApplicationController
   #----------------( creating)                                                               
   def new
     params[:card] ||= {}
-    content = params[:card].delete(:content)
     @card = Card.new params[:card]
-    if !card.hard_template 
-      @card.content = 
-        (card.class.superclass.to_s=='Card::Basic' or card.type=='Basic') ? content : strip_tags(content)
-    end
-    @card.name ||= ''
-    
-    @card.send(:set_defaults)
-    
     if @card.type == 'User'
       redirect_to :controller=>'account', :action=>'invite'
     end
@@ -86,7 +78,6 @@ class CardController < ApplicationController
   end
       
   def create
-    #warn params.inspect         
     @card = Card.create! params[:card]
     if params[:multi_edit] and params[:cards]
       User.as(:admin) if @card.type == 'InvitationRequest'
@@ -191,12 +182,11 @@ class CardController < ApplicationController
       @card.confirm_destroy = params[:card][:confirm_destroy]
     end
     if @card.destroy     
-      #dirty hack so we dont redirect to ourself after delete
-      session[:return_stack].pop if ( session[:return_stack] and session[:return_stack].last==@card.id )
+      discard_locations_for(@card)
       render_update_slot do |page,target|
         if @context=="main_1"
-          page.wagn.messenger.note "#{@card.name} removed. Redirecting to #{previous_page}..."
-          page.redirect_to url_for_page(previous_page)
+          page.wagn.messenger.note "#{@card.name} removed."
+          page.redirect_to previous_location
           flash[:notice] =  "#{@card.name} removed"
         else 
           target.replace %{<div class="faint">#{@card.name} was just removed</div>}
@@ -213,6 +203,9 @@ class CardController < ApplicationController
   #---------( VIEWING CARDS )
 
   def show
+    # record this as a place to come back to.
+    location_history.push(request.request_uri) if request.get?
+    
     @card_name = Cardname.unescape(params['id'] || '')
     if (@card_name.nil? or @card_name.empty?) then    
       @card_name = System.site_name
@@ -222,11 +215,12 @@ class CardController < ApplicationController
         
     if @card.new_record? && ! @card.phantom?
       action =  Cardtype.createable_cardtypes.empty? ? :missing : :new
-      return redirect_to( :action=>action, :params=>{ 'card[name]'=>@card_name } )
+      params[:card]={:name=>@card_name}
+      return render(:action=>action)
+      #return redirect_to( :action=>action, :params=>{ 'card[name]'=>@card_name } )
     end                                                                                  
     return unless view_ok
     
-    remember_card @card
     # FIXME: I'm sure this is broken now that i've refactored..                               
     respond_to do |format|
       format.html { render :action=>'show' }

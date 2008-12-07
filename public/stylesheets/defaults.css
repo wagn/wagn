@@ -14,9 +14,9 @@ body.mceContentBody {
 
 body, p, ol, ul, td, th {
   font-family: verdana, arial, helvetica, sans-serif;
-  font-size:   11px;
+  font-size:   12px;
   font-weight: normal;
-  line-height: 15px;
+  line-height: 21px;
 }
 body {
   margin: 0px;
@@ -25,7 +25,7 @@ body, .reset{
   color: #444;
   font-style: normal;
   font-weight: normal;
-  font-size: 11px;
+  font-size: 12px;
 }
 pre {
  white-space: pre-wrap;       /* css-3 */
@@ -67,7 +67,7 @@ body.wagn h1,
 body.wagn h2 { 
   color: #22d; 
   font-weight: normal; 
-  margin: 5px 0px 10px 0px;
+  margin: 0 0 10px 0;
 }
 
 /* headers within cards */

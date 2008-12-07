@@ -7,7 +7,7 @@ module CardLib
     end    
     
     def build_message
-      "for card #{@card.name}: Sorry #{::User.current_user.cardname}, #{@card.errors.on(:permission_denied)}"
+      "for card #{@card.name}: #{@card.errors.on(:permission_denied)}"
     end
   end
        
@@ -25,7 +25,7 @@ module CardLib
         user, type = ::User.current_user.cardname, self.name.gsub(/.*::/,'')
 
         unless self.create_ok?        
-          msg = "Sorry #{user}, you don't have permission to create #{type} cards" 
+          msg = "You don't have permission to create #{type} cards" 
           raise Wagn::PermissionDenied.new(msg) 
         end
       end
@@ -150,7 +150,7 @@ module CardLib
     
     def approve_create     
       raise "must be a cardtype card" unless self.type == 'Cardtype'
-      deny_because you_cant("create #{self.name} cards") unless Cardtype.create_ok?(Cardtype.class_name_for(self.name))    
+      deny_because you_cant("create #{self.name} cards") unless Cardtype.create_ok?(Cardtype.classname_for(self.name))    
     end
                                     
     def approve_comment

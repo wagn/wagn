@@ -29,9 +29,9 @@ module Wql2
   AUTH_ROLE_ID = 2 unless defined?(AUTH_ROLE_ID)
   
   ATTRIBUTES = {
-    :basic=> %w{ name type content id key },
+    :basic=> %w{ name type content id key extension_type },
     :system => %w{ trunk_id tag_id },
-    :semi_relational=> %w{ editor member role },
+    :semi_relational=> %w{ edited_by member role },
     :relational => %w{ part left right plus left_plus right_plus },  
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
     :special => %w{ or complete not count },
@@ -262,6 +262,13 @@ module Wql2
       merge( self.negate ? inner_spec : { :or => inner_spec } )
     end          
     
+    def edited_by(val)
+      #user_id = ((c = Card::User[val]) ? c.extension_id : 0)
+      extension_select = CardSpec.new(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val).to_sql
+      sql.joins << "join (select distinct card_id from revisions r " +
+        "where created_by in #{extension_select} ) ru on ru.card_id=#{table_alias}.id"
+    end
+    
     def count(val)
       raise(Wagn::WqlError, "count works only on outermost spec") if @parent
       join_spec = { :id=>SqlCond.new("#{table_alias}.id") } 
@@ -462,7 +469,7 @@ module Wql2
       elsif field=="cond" 
         "(#{sqlize(v)})"
       elsif field=="type"
-        t = Cardtype.class_name_for(  v.is_a?(Card::Base) ? v.name : v )
+        t = Cardtype.classname_for(  v.is_a?(Card::Base) ? v.name : v )
         "#{field} = #{sqlize(t)}"
       else   
         field = "#{@cardspec.table_alias}.#{field}"

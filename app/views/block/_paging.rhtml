@@ -5,9 +5,8 @@
  first,last = offset+1,offset+card.results.length 
 # shared_params = shared_params.symbolize_keys
  total = card.count( s ) 
-
- # slot was coming up nil on connectipedia recent changes.  don't know why. 
- s[:requested_view] = (slot||controller.slot).requested_view 
+ 
+ s[:requested_view] = slot.requested_view 
  
 %>
 

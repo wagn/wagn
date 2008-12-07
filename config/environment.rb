@@ -42,11 +42,19 @@ Rails::Initializer.run do |config|
   # Make Active Record use UTC-base instead of local time
   # config.active_record.default_timezone = :utc
   
-  # See Rails::Configuration for more options
+  # See Rails::Configuration for more options   
+  
+  #config.gem "rspec-rails", :lib => "spec"          
+  
+  # FIXME: should we also set :secret ?
+  config.action_controller.session = {
+    :session_key => (RAILS_ROOT.split("/")[-2..-1]||'generic_wagn_key').join('-').gsub(/\./,'-')
+  }
+  
 end
 
 # Add new inflection rules using the following format 
-Inflector.inflections do |inflect|
+ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'grave', 'graveyard'
   inflect.irregular 'this', 'this'     
   inflect.irregular 'anonymous', 'anonymous'
@@ -70,7 +78,7 @@ end
 Session = CGI::Session::ActiveRecordStore.session_class
 
 # configure fragment store
-#ActionController::Base.fragment_cache_store = :mem_cache_store #:memory_store #:file_store, "#{RAILS_ROOT}/../cache"
+#ActionController::Base.cache_store = :mem_cache_store #:memory_store #:file_store, "#{RAILS_ROOT}/../cache"
  
 # force loading of the system model. FIXME: this seems like a terrible way to do this
 System

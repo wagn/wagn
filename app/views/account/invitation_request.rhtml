@@ -5,11 +5,11 @@ context = 'invitation'
 -%>
 <iframe id="iframe-<%= div_id %>" height="0" width="0" frameborder="0"></iframe>
 
-<h1>Request an Invitation</h1>
+<h1>Request Account</h1>
 
 <% get_slot(card).wrap('invitation-request') do |slot| %>
   <div class="content headroom">
-    <h2>Account Details</h2>
+    <h2>Details</h2>
   </div>
 
   <% form_remote_for( :card, card, :url=>slot.url_for("card/create"), 

@@ -7,11 +7,11 @@ class Notifier < ActionMailer::Base
     from       "#{from_name} <#{from_user.email}>"
     sent_on    Time.now
     subject    subject
-    body  :email    => (user.email    or raise Wagn::Oops.new("Oops didnn't have user email")),
+    body  :email    => (user.email    or raise Wagn::Oops.new("Oops didn't have user email")),
           :password => (user.password or raise Wagn::Oops.new("Oops didn't have user password")),
           
-          :card_url => "#{System.base_url}/wagn/#{Cardname.escape(user.card.name)}",
-          :pw_url   => "#{System.base_url}/card/options/#{Cardname.escape(user.card.name)}",
+          :card_url => "#{System.base_url}/wagn/#{user.card.key}",
+          :pw_url   => "#{System.base_url}/card/options/#{user.card.key}",
           
           :login_url=> "#{System.base_url}/account/login",
           :message  => message.clone
@@ -27,7 +27,7 @@ class Notifier < ActionMailer::Base
           :email => invite_request.extension.email,
           :name => invite_request.name,
           :content => invite_request.content,
-          :url =>  url_for(:host=>System.host, :controller=>'card', :action=>'show', :id=>Cardname.escape(invite_request.name))
+          :url =>  url_for(:host=>System.host, :controller=>'card', :action=>'show', :id=>invite_request.name.to_key)
   end
 
 end

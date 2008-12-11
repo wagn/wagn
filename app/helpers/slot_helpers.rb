@@ -90,7 +90,7 @@ module SlotHelpers
 
   def menu   
     if card.phantom?
-      return %{<div class="card-menu faint">Auto</div>\n}
+      return %{<div class="card-menu faint">Virtual</div>\n}
     end
     menu = %{<div class="card-menu">\n}
   	menu << link_to_menu_action('view')

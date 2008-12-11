@@ -1,7 +1,7 @@
 <div class="card-footer">
   <span class="card-links">
     <span class="link-list">
-      <span>Pages:</span> <%= card.name.piece_names.map { |c| link_to_page c }.join(', ') %> 
+      <span>Cards:</span> <%= card.name.piece_names.map { |c| link_to_page c }.join(', ') %> 
     </span>                     
 		<% if card.current_revision %>
 	    <span class="last-editor">

@@ -1,5 +1,6 @@
 <%- 
-view = (render_arg(:view) || :open) 
+view = render_arg(:view) 
+view = :open if [:closed, :line,:open,:card,:view, nil].member?(view)
 slot = get_slot
 if item = render_arg(:item)
   slot.item_format = item
@@ -10,8 +11,9 @@ end
 
 <%# GOD THIS IS NASTY%>
 
-<% if [:closed,:line].member?(view) %>
-  <%= javascript_tag("Wagn.paragraph_to_line(getSlotFromContext('#{@context}'))") %>
-<% elsif [:open,:card,:view].member?(view) %>
+<%# if [:closed,:line].member?(view) %>
+  <%#= javascript_tag("Wagn.paragraph_to_line(getSlotFromContext('#{@context}'))") %>
+<%# elsif [:open,:card,:view].member?(view) %>
+<% if view == :open %>
   <%= javascript_tag("Wagn.line_to_paragraph(getSlotFromContext('#{@context}'))") %>
 <% end %>

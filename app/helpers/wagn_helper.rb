@@ -199,7 +199,9 @@ module WagnHelper
   def span(*args, &block)  content_tag(:span, *args, &block);  end
   def div(*args, &block)   content_tag(:div, *args, &block);  end
   
-  
+  def pointer_item(content,view)
+    content.gsub(/\[\[/,'{{').gsub(/\]\]/,"|#{view}}}") 
+  end
   ## -----------
   
   def google_analytics   

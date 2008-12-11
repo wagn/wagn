@@ -160,7 +160,7 @@ class CardController < ApplicationController
       session[:comment_author] = @author
       @author = "#{@author} (Not signed in)"
     else
-      @author = User.current_user.card.name
+      @author = "[[#{User.current_user.card.name}]]"
     end
     @comment.gsub! /\n/, '<br/>'
     @card.comment = "<hr>#{@comment}<br/><p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"

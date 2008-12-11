@@ -480,7 +480,7 @@ div:hover.card-footer .card-links{
   white-space: nowrap;
   border-bottom: 0px;
   border-color: #ccc;
-  -moz-border-radius: 8px 8px 2px 2px !important;
+  -moz-border-radius: 2px 8px 2px 2px !important;
   padding: 0px;
   margin: 0px;
   line-height: 25px;  
@@ -496,6 +496,10 @@ div:hover.card-footer .card-links{
 }
 .card-slot.line .card-header {
   line-height: 15px;
+  -moz-border-radius: 0px 6px 6px 0px;
+  padding-top: 4px;
+  padding-bottom: 3px;
+  margin-right: 4px;
 }
 
 .card-slot.line tr, 
@@ -525,6 +529,9 @@ body.wagn .card-slot.line h2,
   font-size: 11px !important;  
   white-space: nowrap;      
   float: none !important;
+}
+.card-slot.line .content a {
+  margin: 0px;
 }
 .card-slot.line .content img {
   height: 16px;

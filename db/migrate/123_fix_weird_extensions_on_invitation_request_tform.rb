@@ -8,23 +8,27 @@ class FixWeirdExtensionsOnInvitationRequestTform < ActiveRecord::Migration
     end
     
     
-    irt = Card["InvitationRequest+*tform"]
-    if irt.extension_type == 'User' 
-      irt.type = 'Basic'
-      irt.extension_type='SoftTemplate';  
-      irt.extension_id=nil
-      irt.save!
+    if irt = Card["InvitationRequest+*tform"]
+      if irt.extension_type == 'User' 
+        irt.type = 'Basic'
+        irt.extension_type='SoftTemplate';  
+        irt.extension_id=nil
+        irt.save!
+      end
     end
     
-    c=Card["InvitationRequest"];
-    c.name = "Account Request"
-    c.confirm_rename = true
-    c.save!
-
+    if c=Card["InvitationRequest"];
+      c.name = "Account Request"
+      c.confirm_rename = true
+      c.save!
+    end
 
     
-    add_index "cards", ["extension_type","extension_id"], 
-      :name=>"cards_extension_type_id_index", :unique=>true
+    begin
+      add_index "cards", ["extension_type","extension_id"], 
+        :name=>"cards_extension_type_id_index", :unique=>true
+    rescue
+    end
   end
 
   def self.down

@@ -1,1 +1,1 @@
-<%= truncatewords_with_closing_tags( slot.render( :raw_content )) %>  
+<%= pointer_item(slot.card.content, (render_arg(:item)==:name ? 'name' : 'link')) %>

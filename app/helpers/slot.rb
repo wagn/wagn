@@ -253,6 +253,7 @@ module WagnHelper
             fullname = tname+'' #weird.  have to do this or the tname gets busted in the options hash!!
             #warn "options for #{tname}: #{options.inspect}"
             fullname.to_absolute(options[:base]=='parent' ? card.name.parent_name : card.name)
+            fullname.gsub!('_user', User.current_user.card.name)
             #logger.info("absolutized tname and now have these transclusion options: #{options.inspect}")
 
             if fullname.blank?  

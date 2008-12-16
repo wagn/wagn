@@ -20,5 +20,10 @@ describe Cardname, "to_key" do
   it "should retain * for star cards" do
     "*rform".to_key.should == "*rform"
   end
+  
+  it "should not singularize double s's" do
+    "grass".to_key.should == 'grass'    
+  end
+    
 end
 

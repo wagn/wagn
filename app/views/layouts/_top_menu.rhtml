@@ -32,7 +32,7 @@
         <%= link_to 'Sign out', :controller=>'account', :action=>'logout' %>
       <% else %>
         <% if Card::InvitationRequest.create_ok? %>
-      	 <%= link_to 'Request an Invitation', :controller=>'account', :action=>'invitation_request' %> 
+      	 <%= link_to 'Request an Account', :controller=>'account', :action=>'invitation_request' %> 
         <% end%>
         <%= link_to 'Sign in', :controller=>'account', :action=>'login' %>
     <% end %>

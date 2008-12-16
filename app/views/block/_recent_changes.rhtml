@@ -15,7 +15,7 @@
 	    day = Date.new(real_card.updated_at.year, real_card.updated_at.month, real_card.updated_at.day)
 	  rescue Exception=>e
 			day = Date.today  
-			card.content += "(error getting date)"
+			card.content = "(error getting date)"
 		end
     cards_by_day[day] << card
   end

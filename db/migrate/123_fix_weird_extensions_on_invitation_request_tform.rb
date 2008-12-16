@@ -11,6 +11,8 @@ class FixWeirdExtensionsOnInvitationRequestTform < ActiveRecord::Migration
     if irt = Card["InvitationRequest+*tform"]
       if irt.extension_type == 'User' 
         irt.type = 'Basic'
+        irt.save!
+        irt=Card["InvitationRequest+*tform"] 
         irt.extension_type='SoftTemplate';  
         irt.extension_id=nil
         irt.save!

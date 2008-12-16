@@ -57,7 +57,9 @@ end
 ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'grave', 'graveyard'
   inflect.irregular 'this', 'this'     
-  inflect.irregular 'anonymous', 'anonymous'
+  inflect.irregular 'anonymous', 'anonymous'   
+  inflect.singular(/^((.*)ss)$/i, '\1')
+  inflect.plural(/^((.*)ss)$/i, '\1')
 end
    
 # Define a regexp function so the ~ WQL operator works with SQLite.

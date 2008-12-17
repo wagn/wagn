@@ -4,10 +4,16 @@
   <%# this check should be unnecessary once we fix search result bug %>
     <span class="last-update">
       <span class="faint updated">
-        <%= card.updated_at==card.created_at ? 'added' : link_to('last edited', "/card/changes/#{card.name.to_key}", :class=>'last-edited') %> 
-        <%= time_ago_in_words rev.created_at %> ago by
+        <%=
+        case card.updated_at.to_s
+          when card.created_at.to_s; 'added'
+          when rev.created_at.to_s;  link_to('last edited', "/card/changes/#{card.name.to_key}", :class=>'last-edited')
+          else; 'updated'
+        end
+        %> 
+        <%= time_ago_in_words card.updated_at %> ago by
       </span> 
-      <%= link_to_page rev.created_by.card.name, nil, :class=>'last-editor' %>
+      <%= link_to_page card.updater.card.name, nil, :class=>'last-editor' %>
     </span>
   <% end %>
   <br style="clear:both"/>

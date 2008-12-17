@@ -4,9 +4,9 @@ module CardLib
       def find_builtin(name)
         key=name.to_key
         searches =  
-          { '*recent_change' => %{ {"sort":"update", "dir":"desc"}          },
-            '*search'        => %{ {"match":"_keyword", "sort":"relevance"} },
-            '*broken_link'   => %{ {"link_to":"_none"}                      },
+          { '*recent_change' => %{ {"sort":"update", "dir":"desc", "view":"change"} },
+            '*search'        => %{ {"match":"_keyword", "sort":"relevance"        } },
+            '*broken_link'   => %{ {"link_to":"_none"                             } },
           }
         case 
           when searches[key];

@@ -176,6 +176,9 @@ module WagnHelper
         when :link;   link_to_page card.name, card.name, :class=>"cardname-link #{card.new_record? ? 'wanted-card' : 'known-card'}"
         when :name;   card.name
         when :linkname;  Cardname.escape(card.name)
+        when :change;
+          w_action = self.requested_view = 'content'
+          w_content = render_partial('card/change')
 
       ###---(  CONTENT VARIATIONS ) 
         #-----( with transclusions processed )

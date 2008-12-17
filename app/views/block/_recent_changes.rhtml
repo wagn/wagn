@@ -1,31 +1,39 @@
 <%
   cards   ||= []
   title   = 'Recently Changed Cards'
+  view ||= :change
 %>  
-<h1><%= title %></h1> 
-<% @title = title %>
-<%= render :partial=>'/block/paging', :locals=>{:card=>card} %>
-<%
-  cards_by_day = Hash.new { |h, day| h[day] = [] }
-  cards.each do |card|  
-	  #FIXME - tis UGLY, we're getting cached cards, so get the real card to call
-	  # revised_at on.  the cards should already be there from the search results.
-	  real_card = card.respond_to?(:card) ? card.card : card
-	  begin
-	    day = Date.new(real_card.updated_at.year, real_card.updated_at.month, real_card.updated_at.day)
-	  rescue Exception=>e
-			day = Date.today  
-			card.content = "(error getting date)"
-		end
-    cards_by_day[day] << card
-  end
-%>
-<% cards_by_day.keys.sort.reverse.each do |day| %>
-  <h2><%= format_date(day, include_time = false) %></h2>
-  <% cards_by_day[day].each do |card| %>
-		<%= get_slot(card).render(:line) %>
-  <% end %>
-<% end %>
 
-
+  <h1><%= title %></h1> 
+  <% @title = title %>
+<div class="card-slot recent-changes">
+  <div class="content">
+  
+    <%= render :partial=>'/block/paging', :locals=>{:card=>card} %>
+    <%
+      cards_by_day = Hash.new { |h, day| h[day] = [] }
+      cards.each do |card|  
+    	  #FIXME - tis UGLY, we're getting cached cards, so get the real card to call
+    	  # revised_at on.  the cards should already be there from the search results.
+    	  real_card = card.respond_to?(:card) ? card.card : card
+    	  begin
+    	    day = Date.new(real_card.updated_at.year, real_card.updated_at.month, real_card.updated_at.day)
+    	  rescue Exception=>e
+    			day = Date.today  
+    			card.content = "(error getting date)"
+    		end
+        cards_by_day[day] << card
+      end
+    %>
+    <% cards_by_day.keys.sort.reverse.each do |day| %>
+      <h2><%= format_date(day, include_time = false) %></h2>
+      <div class="content">
+      
+        <% cards_by_day[day].each do |card| %>
+      		<%= get_slot(card).render(view) %>
+        <% end %>
+      </div>  
+    <% end %>
+  </div>
+</div>
   

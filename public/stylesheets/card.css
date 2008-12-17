@@ -56,7 +56,7 @@
 .card-slot .card-header .title a:hover {
   color: #fff 
 }
-html>body .card-menu,
+html>body .card-menu-left,
 html>body .page-icon-link {
   display: none;
 }
@@ -68,7 +68,7 @@ html>body .page-icon-link {
 }
 
 div:hover.card-header .page-icon-link,
-div:hover.card-header .card-menu {
+div:hover.card-header .card-menu-left {
   display: inline;
 }
 
@@ -439,6 +439,15 @@ div:hover.card-footer .card-links{
   text-transform: uppercase;
 }
 
+
+/*----------recent changes -----------*/
+
+body.wagn .card-slot.recent-changes h2 {
+  margin-top: 15px;
+}
+
+
+
 /*-------------- STATES -----------*/
 
 /*-----------  open cards -------*/
@@ -548,6 +557,26 @@ body.wagn .card-slot.line h2,
 .card-slot.line .card-footer,
 .card-slot.line .close-link {
   display: none !important;
+}
+/*----------- Change View ---------*/
+
+.card-slot .change-view {
+  padding: 5px 0px;
+  border-bottom: 1px dotted grey;
+  clear: both;
+}
+.card-slot .change-view .change-card{
+  font-weight: bold;
+  float: left;
+}
+.card-slot .change-view .last-update {
+  float:right;
+}
+.card-slot .change-view .last-edited {
+  color: #288;
+}
+.card-slot .change-view .last-editor {
+  color: #228;
 }
 
 /*----------- Nested ---------*/

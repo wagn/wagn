@@ -5,7 +5,7 @@
   title   ||= ''
   instruction ||= nil  
 	view  ||= :closed    
-	raise("invalid view") unless [:open, :closed, :content, :name, :link].include?(view)
+	raise("invalid view") unless [:open, :closed, :content, :name, :link, :change].include?(view)
 -%>
 <% if !title.empty? %> 
 	<% @title=title %>

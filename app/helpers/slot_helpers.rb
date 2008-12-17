@@ -93,11 +93,15 @@ module SlotHelpers
       return %{<div class="card-menu faint">Virtual</div>\n}
     end
     menu = %{<div class="card-menu">\n}
+    menu << %{<span class="card-menu-left">\n}
   	menu << link_to_menu_action('view')
-  	menu << link_to_menu_action('edit') 
   	menu << link_to_menu_action('changes')
   	menu << link_to_menu_action('options') 
-  	menu << link_to_menu_action('related') 
+  	menu << link_to_menu_action('related')
+  	menu << "</span>"
+    
+  	menu << link_to_menu_action('edit') 
+  	
     
     menu << "</div>"
   end
@@ -127,8 +131,9 @@ module SlotHelpers
   end
 
   def link_to_menu_action( to_action)
+    menu_action = (%w{ show update }.member?(action) ? 'view' : action)
     link_to_action to_action.capitalize, to_action, {},
-      :class=> (action==to_action ? 'current' : '')
+      :class=> (menu_action==to_action ? 'current' : '')
   end
 
   def link_to_action( text, to_action, remote_opts={}, html_opts={})

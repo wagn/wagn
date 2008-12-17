@@ -1,0 +1,14 @@
+<div class="change-view">
+  <%= link_to_page card.name, nil, :class=>'change-card' %> 
+  <% if rev = card.current_revision %>
+  <%# this check should be unnecessary once we fix search result bug %>
+    <span class="last-update">
+      <span class="faint updated">
+        <%= card.updated_at==card.created_at ? 'added' : link_to('last edited', "/card/changes/#{card.name.to_key}", :class=>'last-edited') %> 
+        <%= time_ago_in_words rev.created_at %> ago by
+      </span> 
+      <%= link_to_page rev.created_by.card.name, nil, :class=>'last-editor' %>
+    </span>
+  <% end %>
+  <br style="clear:both"/>
+</div>

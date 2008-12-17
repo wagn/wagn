@@ -30,6 +30,8 @@ module Card
 
     belongs_to :extension, :polymorphic=>true
 
+    belongs_to :updater, :class_name=>'::User', :foreign_key=>'updated_by'
+
     has_many :permissions, :foreign_key=>'card_id' #, :dependent=>:delete_all
            
     before_validation_on_create :set_needed_defaults

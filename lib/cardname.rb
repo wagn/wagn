@@ -75,10 +75,6 @@ module Cardname
     end.join(JOINT)
   end  
 
-  def singularize
-    self.match(/ss$/) ? self : super
-  end
-  
   def to_absolute(context_name)
     name = self
     name.gsub! /_self|_whole/  , context_name

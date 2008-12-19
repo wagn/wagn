@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
-
+=begin
 describe Card, "Case Variant" do
   before do
     User.as :joe_user
@@ -20,5 +20,22 @@ describe Cardname, "Underscores" do
   end
   it "should not impede pluralization checks" do
     'Mamas_and_Papas'.to_key.should == "Mamas and Papas".to_key
+  end
+end
+=end
+describe Cardname, "changing from plus card to simple" do
+  before do
+    User.as :joe_user
+    @c = Card.create! :name=>'four+five'
+    @c.name = 'nine'
+    @c.confirm_rename = true
+    @c.save
+  end
+    
+    
+  
+  it "should erase trunk and tag ids" do
+    @c.trunk_id.should== nil
+    @c.tag_id.should== nil
   end
 end

@@ -5,9 +5,7 @@ module WagnHelper
   
   def get_slot(card=nil, context=nil, action=nil)     
     card ||= @card; context||=@context; action||=@action
-    #FIMXE-- this isn't quite right for multiple cards in a toplevel context, like sidebar
     slot = case 
-      when controller.slot && card==@card; controller.slot
       when controller.slot;  controller.slot.subslot(card)  
       else controller.slot = Slot.new(card,context,action,self) 
     end

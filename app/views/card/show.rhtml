@@ -5,9 +5,6 @@ if item = render_arg(:item)
 end
 %>
 
-<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="/card/edit/<%= @card.key %>"/>
-
-
 <style type="text/css">
 .line .title-<%= css_name(@card.name) %>, .line .link-<%= css_name(@card.name) %> { display: none !important; }
 .paragraph .title-<%= css_name(@card.name) %>, .paragraph .link-<%= css_name(@card.name) %> { font-weight: normal; }

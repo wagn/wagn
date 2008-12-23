@@ -2,8 +2,12 @@
   <%# ------- Title -------------%>
   <link rel="shortcut icon" href="<%= System.favicon %>" />
 
+  <% if @card and !@card.new_record? and @card.ok? :edit %>
+    <link rel="alternate" type="application/x-wiki" title="Edit this page!" href="/card/edit/<%= @card.key %>"/>
+  <% end %>
+
   <title> <%= System.site_name %>: 
-    <% if @title then %>
+    <% if @title %>
       <%= @title %>
     <% else %>
       <%= controller.controller_name %> - <%= controller.action_name %>

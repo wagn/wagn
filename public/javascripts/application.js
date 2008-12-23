@@ -349,9 +349,10 @@ getSlotOptions=function(element){
   var span=null;
   if (span=getSlotSpan(element)) {   
     var n=null; var item=''; var view='';
-    if (n=span.getAttributeNode('view')) {view=n.value };
-    if (n=span.getAttributeNode('item')) {item=n.value };    
-    return 'view='+view+'&item='+item;
+    options = $A([]);
+    if (n=span.getAttributeNode('view')) {  if (n.value != '') { options.push("view="+n.value) }};
+    if (n=span.getAttributeNode('item')) {  if (n.value != '') { options.push("item="+n.value) }};
+    return options.join("&");
   }
   return '';
 }

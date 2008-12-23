@@ -64,15 +64,17 @@ class CardController < ApplicationController
   
   #----------------( creating)                                                               
   def new
-    params[:card] ||= {}
-    @card = Card.new params[:card]
+    args = (params[:card] ||= {})
+    args[:type] = (args[:type] && ct=CachedCard.get_real(args[:type])) ? ct.name : nil 
+      
+    @card = Card.new args
     if @card.type == 'User'
       redirect_to :controller=>'account', :action=>'invite'
     end
   end
   
   def new_of_type #so we could do /new/<type> shortcut
-    params[:card] = {:type => params[:type]}    #FIXME - should check to see if the type is right.
+    params[:card] = {:type => params[:type]}   
     new
     render :action=>'new'
   end
@@ -109,7 +111,7 @@ class CardController < ApplicationController
     elsif @card.errors.on(:confirmation_required) && @card.errors.map {|e,f| e}.uniq.length==1
       @confirm = true   
       @card.confirm_rename=true
-      @card.update_link_ins = true
+      @card.update_link_ins = (@card.update_link_ins=='true')
 #      render :action=>'edit', :status=>200
     else          
       # don't report confirmation required as error in a case where the interface will let you fix it.
@@ -215,7 +217,8 @@ class CardController < ApplicationController
         
     if @card.new_record? && ! @card.phantom?
       action =  Cardtype.createable_cardtypes.empty? ? :missing : :new
-      params[:card]={:name=>@card_name}
+      params[:card]={:name=>@card_name, :type=>params[:type]}
+      new
       return render(:action=>action)
       #return redirect_to( :action=>action, :params=>{ 'card[name]'=>@card_name } )
     end                                                                                  

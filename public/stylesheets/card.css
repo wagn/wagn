@@ -573,11 +573,9 @@ body.wagn .card-slot.line h2,
   float:right;
 }
 .card-slot .change-view .last-edited {
-  color: #288;
+  color: #7a7;
 }
-.card-slot .change-view .last-editor {
-  color: #228;
-}
+
 
 /*----------- Nested ---------*/
 

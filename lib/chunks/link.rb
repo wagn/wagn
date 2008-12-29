@@ -42,7 +42,7 @@ module Chunk
           when /^mailto:/; 'email-link'
           else
             if refcard
-              href = '/wagn/' + href.to_key
+              href = '/wagn/' + href.to_url_key
               'known-card'
             else
               href = '/wagn/' + CGI.escape(Cardname.escape(href))

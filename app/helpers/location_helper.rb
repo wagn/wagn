@@ -36,7 +36,7 @@ module LocationHelper
   def url_for_page( title, opts={} )   
     # shaved order of magnitude off footer rendering
     # vs. url_for( :action=> .. )
-    "/wagn/#{title.to_key}"
+    "/wagn/#{title.to_url_key}"
   end  
   
   def url_for_card( options={} )

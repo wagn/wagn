@@ -12,7 +12,7 @@ class LinkTest < Test::Unit::TestCase
     assert_equal('<a class="wanted-card" href="/wagn/Nixon">Nixon</a>', render(card) )
 
 
-    lbj_link = '<a class="known-card" href="/wagn/baine">Lyndon</a>'
+    lbj_link = '<a class="known-card" href="/wagn/Baines">Lyndon</a>'
     
     card2 = newcard('Johnson', '[Lyndon][Baines]')
     assert_equal(lbj_link, render(card2) )
@@ -55,7 +55,7 @@ class LinkTest < Test::Unit::TestCase
   def test_relative_link
     dude,job = newcard('Harvey',"[[#{JOINT}business]]"), newcard('business')
     card = dude.connect job, "icepicker" 
-    assert_equal("<a class=\"known-card\" href=\"/wagn/harvey+business\">#{JOINT}business</a>", render(dude) )
+    assert_equal("<a class=\"known-card\" href=\"/wagn/Harvey+business\">#{JOINT}business</a>", render(dude) )
   end
   
   

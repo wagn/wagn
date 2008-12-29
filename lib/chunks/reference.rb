@@ -1,18 +1,6 @@
 module Chunk
   class Reference < Abstract
     attr_reader :card_name, :card
-    # the referenced card
-        
-#    def initialize(matchtext, content)
-#      super
-#      @card = content.card
-#    end
-    
-=begin
-    def relative?
-      @relative
-    end
-=end
     
     def base_card
       @card
@@ -20,7 +8,6 @@ module Chunk
     
     def refcard_name
       @card_name.to_absolute(base_card.name)
-#      (relative? and base_card) ? base_card.name + @card_name : @card_name
     end
     
     def refcard 
@@ -31,7 +18,9 @@ module Chunk
     def link_text 
       refcard_name
     end
-    
+
+=begin  
+#I don't think this is begin used. 
     protected
       def card_link
         href = CGI.escape(Cardname.escape(refcard_name))
@@ -40,8 +29,10 @@ module Chunk
       rescue Exception=>e
         return "error rendering link"
       end
+=end
       
-  end    
+  end 
+   
 end 
 
 

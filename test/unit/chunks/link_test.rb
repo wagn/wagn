@@ -9,7 +9,7 @@ class LinkTest < Test::Unit::TestCase
   
   def test_basic
     card = newcard('Baines', '[[Nixon]]')
-    assert_equal('<a class="wanted-card" href="/wagn/nixon">Nixon</a>', render(card) )
+    assert_equal('<a class="wanted-card" href="/wagn/Nixon">Nixon</a>', render(card) )
 
 
     lbj_link = '<a class="known-card" href="/wagn/baine">Lyndon</a>'
@@ -24,10 +24,10 @@ class LinkTest < Test::Unit::TestCase
 
   def test_relative_card
     cardA = newcard('Kennedy', '[[+Monroe]]')
-    assert_equal('<a class="wanted-card" href="/wagn/kennedy+monroe">+Monroe</a>', render(cardA) )
+    assert_equal('<a class="wanted-card" href="/wagn/Kennedy%2BMonroe">+Monroe</a>', render(cardA) )
 
     cardB = newcard('Clinton', '[[Lewinsky+]]')
-    assert_equal('<a class="wanted-card" href="/wagn/lewinsky+clinton">Lewinsky+</a>', render(cardB) )
+    assert_equal('<a class="wanted-card" href="/wagn/Lewinsky%2BClinton">Lewinsky+</a>', render(cardB) )
   end
 
 

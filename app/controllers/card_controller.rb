@@ -65,7 +65,9 @@ class CardController < ApplicationController
   #----------------( creating)                                                               
   def new
     args = (params[:card] ||= {})
-    args[:type] = (args[:type] && ct=CachedCard.get_real(args[:type])) ? ct.name : nil 
+      if args[:type] && ct=CachedCard.get_real(args[:type])
+        args[:type] = ct.name 
+      end
       
     @card = Card.new args
     if @card.type == 'User'

@@ -45,10 +45,7 @@ Rails::Initializer.run do |config|
   # See Rails::Configuration for more options   
   
   #config.gem "rspec-rails", :lib => "spec"          
-  config.gem "cached_model"
-  config.gem "json_pure"
-  config.gem "ruby-openid"
-  
+
   # FIXME: should we also set :secret ?
   config.action_controller.session = {
     :session_key => (RAILS_ROOT.split("/")[-2..-1]||'generic_wagn_key').join('-').gsub(/\./,'-')

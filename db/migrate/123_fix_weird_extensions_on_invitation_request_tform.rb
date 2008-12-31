@@ -2,7 +2,7 @@ class FixWeirdExtensionsOnInvitationRequestTform < ActiveRecord::Migration
   def self.up   
     User.as(:admin) 
     ## in case there are broken keys
-    while c = Card.find_by_key('')
+    if c = Card.find_by_key('')
       c.key = c.name.to_key
       c.save!
     end

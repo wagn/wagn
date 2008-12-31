@@ -70,7 +70,7 @@ module Cardname
   end  
   
   def to_url_key
-    gsub(/[^\*\w\s\+]/,'').strip.gsub(/[\s\_]+/,'_')
+    gsub(/[^\*\w\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')
   end
   
   def to_key

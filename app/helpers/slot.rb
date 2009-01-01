@@ -6,7 +6,7 @@ module WagnHelper
     self.max_char_count = 200
     attr_reader :card, :context, :action, :renderer, :template
     attr_accessor :editor_count, :options_need_save, :state, :requested_view, :js_queue_initialized,  
-      :transclusions, :position, :renderer, :form, :superslot, :char_count, :item_format, :renders, :start_time      
+      :transclusions, :position, :renderer, :form, :superslot, :char_count, :item_format, :type, :renders, :start_time      
     attr_writer :form 
      
     def initialize(card, context="main_1", action="view", template=nil, renderer=nil )
@@ -173,7 +173,11 @@ module WagnHelper
           
       ###----------------( NAME)
       
-        when :link;   link_to_page card.name, card.name, :class=>"cardname-link #{card.new_record? ? 'wanted-card' : 'known-card'}"
+        #when :link;   link_to_page card.name, card.name, :class=>"cardname-link #{card.new_record? ? 'wanted-card' : 'known-card'}"
+        when :link;
+          opts = {:class=>"cardname-link #{(card.new_record? && !card.phantom?) ? 'wanted-card' : 'known-card'}"}
+          opts[:type] = slot.type if slot.type 
+          link_to_page card.name, card.name, opts
         when :name;   card.name
         when :linkname;  Cardname.escape(card.name)
         when :change;
@@ -308,7 +312,9 @@ module WagnHelper
       old_slot, @template.controller.slot = @template.controller.slot, subslot
 
       # set item_format;  search cards access this variable when rendering their content.
-      subslot.item_format = options[:item] if options[:item]                             
+      subslot.item_format = options[:item] if options[:item]
+      subslot.type = options[:type] if options[:type]
+                             
       
       # FIXME! need a different test here   
       new_card = card.new_record? && !card.phantom?

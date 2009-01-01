@@ -36,7 +36,14 @@ module LocationHelper
   def url_for_page( title, opts={} )   
     # shaved order of magnitude off footer rendering
     # vs. url_for( :action=> .. )
-    "/wagn/#{title.to_url_key}"
+    
+    vars = ''
+    if !opts.empty?
+      pairs = []
+      opts.each_pair{|k,v| pairs<< "#{k}=#{v}"}
+      vars = '?' + pairs.join('&')
+    end
+    "/wagn/#{title.to_url_key}#{vars}" 
   end  
   
   def url_for_card( options={} )
@@ -45,12 +52,13 @@ module LocationHelper
             
   # Links ----------------------------------------------------------------------
  
-  def link_to_page( text, title=nil, options={} )
-    title ||= text                              
+  def link_to_page( text, title=nil, options={})
+    title ||= text
+    url_options = (options[:type]) ? {:type=>options[:type]} : {}                              
     if (options.delete(:include_domain)) 
-      link_to text, System.base_url.gsub(/\/$/,'') + url_for_page(title, :only_path=>true )
+      link_to text, System.base_url.gsub(/\/$/,'') + url_for_page(title, url_options) #, :only_path=>true )
     else
-      link_to text, url_for_page( title ), options
+      link_to text, url_for_page( title, url_options ), options
     end
   end  
     

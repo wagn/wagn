@@ -24,8 +24,8 @@
 	<span class="search-result-list">
 	  <%= render :partial=>'/block/paging', :locals=>{:card=>card} %>
 
-		<% cards.each do |c| %>     	
-			<%= get_slot(c).render(view) %>
+		<% cards.each do |card| %>     	
+			<%= get_slot(card).render(view) %>
 		<% end %>     
 	</span>
 <% end %>

@@ -7,11 +7,7 @@
   <% end %>
 
   <title> <%= System.site_name %>: 
-    <% if @title %>
-      <%= @title %>
-    <% else %>
-      <%= controller.controller_name %> - <%= controller.action_name %>
-    <% end %>
+    <%= @title || "#{controller.controller_name} - #{controller.action_name}" %>
   </title>
 	<%= stylesheet_link_merged :base %> 
   <%#= asset_manager can do alternate media but it has to be a separate call anyway %>

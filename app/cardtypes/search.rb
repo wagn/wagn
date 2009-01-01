@@ -33,7 +33,6 @@ module Card
       end
     end
     
-    private 
     def get_spec(params={})
       spec = JSON.parse( self.content )   
       # FIXME: should unit test this 

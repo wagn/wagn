@@ -29,6 +29,7 @@ module Chunk
         :view  => 'content',
         :base  => 'self',
         :item  => nil,
+        :type  => nil
       }
       style = {}
       configs = Hash.new_from_semicolon_attr_list match[4]

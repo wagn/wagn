@@ -87,7 +87,7 @@ module WagnHelper
         
         slot_head = '<!--[if !IE]><object><![endif]-->' +
           %{<div #{attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join } >}
-        slot_head 
+        #slot_head 
         if block_given? 
           # FIXME: the proc.binding call triggers lots and lots of:
           # slot.rb:77: warning: tried to create Proc object without a block 

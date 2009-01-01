@@ -21,6 +21,26 @@ class URITest < Test::Unit::TestCase
 		:scheme =>'http', :host =>'www.example.com', :path => '/',
 		:link_text => 'http://www.example.com/'
 	)
+	# With trailing slash inside html tags
+    match(URIChunk, '<p>http://www.example.com/</p>',
+		:scheme =>'http', :host =>'www.example.com', :path => '/',
+		:link_text => 'http://www.example.com/'
+	)
+	# With trailing period
+    match(URIChunk, 'http://www.example.com/. ',
+		:scheme =>'http', :host =>'www.example.com', :path => '/',
+		:link_text => 'http://www.example.com/'
+	)
+	# With trailing period inside html tags
+    match(URIChunk, '<p>http://www.example.com/.</p>',
+		:scheme =>'http', :host =>'www.example.com', :path => '/',
+		:link_text => 'http://www.example.com/'
+	)
+	# With trailing &nbsp;
+    match(URIChunk, 'http://www.example.com/&nbsp;',
+		:scheme =>'http', :host =>'www.example.com', :path => '/',
+		:link_text => 'http://www.example.com/'
+	)
 	# Without http://
     match(URIChunk, 'www.example.com', 
 		:scheme =>'http', :host =>'www.example.com', :link_text => 'www.example.com'
@@ -73,7 +93,13 @@ class URITest < Test::Unit::TestCase
         :scheme =>'http', :host =>'www.example.com.tw', :port => '80', :path => '/HelpOnNavigation',
         :query => 'arg=val&arg2=val2',
         :link_text => 'http://www.example.com.tw:80/HelpOnNavigation?arg=val&arg2=val2')
-	# HTTPS
+  # with an anchor
+  match(URIChunk, 'irc://irc.freenode.net#recentchangescamp',
+        :scheme =>'irc', :host =>'irc.freenode.net', 
+        :fragment => '#recentchangescamp',
+        :link_text => 'irc://irc.freenode.net#recentchangescamp')
+	
+  # HTTPS
 	match(URIChunk, 'https://www.example.com',
         :scheme =>'https', :host =>'www.example.com', :port => nil, :path => nil, :query => nil,
         :link_text => 'https://www.example.com')

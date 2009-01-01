@@ -66,9 +66,8 @@ class URIChunk < Chunk::Abstract
         "(?::(#{PORT}))?" +           # Optional :port          (\4)
         "(#{ABS_PATH})?"  +           # Optional absolute path  (\5)
         "(?:\\?(#{QUERY}))?" +        # Optional ?query         (\6)
-        "(?:\\#(#{FRAGMENT}))?"  +    # Optional #fragment      (\7)
-        '(?=\.?(?:\s|\)|\b|\z))'         # ends only with optional dot + space or ")" 
-#        '(?=\.?(?:\s|\)|\z))'         # ends only with optional dot + space or ")" 
+        "(?:(\\##{FRAGMENT}))?"  +    # Optional #fragment      (\7)
+        '(?=\.?(?:\s|\)|\z|\<))'      # ends only with optional dot + space or ")" 
                                       # or end of the string
 
     SUSPICIOUS_PRECEDING_CHARACTER = '(!|\"\:|\"|\\\'|\]\()?'  # any of !, ":, ", ', ](
@@ -105,7 +104,7 @@ class URIChunk < Chunk::Abstract
     @original_scheme, @user, @host, @port, @path, @query, @fragment = match_data[2..-1]
     treat_trailing_character
     css_class = scheme=='mailto' ? 'email' : 'external'
-    @unmask_text = "<a class=\"#{css_class}-link\" href=\"#{uri}\">#{link_text}</a>"
+    @unmask_text = "<a class=\"#{css_class}-link\" href=\"#{uri}\">#{link_text}</a>#{@trailing_punctuation}"
   end
 
   def avoid_autolinking?
@@ -116,8 +115,11 @@ class URIChunk < Chunk::Abstract
     # If the last character matched by URI pattern is in ! or ), this may be part of the markup,
     # not a URL. We should handle it as such. It is possible to do it by a regexp, but 
     # much easier to do programmatically
+    
     last_char = @link_text[-1..-1]
-    if last_char == ')' or last_char == '!'
+    
+#    if last_char == ')' or last_char == '!'
+    if %w{ . ) ! ? : }.member?(last_char)
       @trailing_punctuation = last_char
       @link_text.chop!
       [@original_scheme, @user, @host, @port, @path, @query, @fragment].compact.last.chop!
@@ -148,7 +150,7 @@ class URIChunk < Chunk::Abstract
 
   def uri
     [scheme, scheme_delimiter, user, user_delimiter, host, port_delimiter, port, path, 
-      query_delimiter, query].compact.join
+      query_delimiter, query, fragment].compact.join
   end
 
 end
@@ -171,7 +173,7 @@ class LocalURIChunk < URIChunk
         "(#{ABS_PATH})?"  +           # Optional absolute path  (\5)
         "(?:\\?(#{QUERY}))?" +        # Optional ?query         (\6)
         "(?:\\#(#{FRAGMENT}))?" +     # Optional #fragment      (\7)
-        '(?=\.?(?:\s|\)|\z))'         # ends only with optional dot + space or ")" 
+        '(?=\.?(?:\s|\)|\z|\<))'         # ends only with optional dot + space or ")" 
                                       # or end of the string
   
     LOCAL_URI_REGEXP = Regexp.new(SUSPICIOUS_PRECEDING_CHARACTER + LOCAL_URI, Regexp::EXTENDED, 'N')

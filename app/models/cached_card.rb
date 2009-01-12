@@ -32,11 +32,11 @@ class CachedCard
     end
     
     def global_seq
-      self.local_cache[:seq] ||= (cache.read(@@seq_key) || write_global_seq(1)).to_i
+      self.local_cache[:seq] ||= (cache.read(@@seq_key) || bump_global_seq ).to_i
     end
 
     def bump_global_seq
-      write_global_seq( global_seq() + 1 )
+      write_global_seq(  Time.now.to_i )
     end
 
     def write_global_seq(val)

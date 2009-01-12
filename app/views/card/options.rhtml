@@ -1,25 +1,26 @@
 <% get_slot.wrap(:options) do |slot| %>
+  <%- locals = {:card=>@card, :slot=>slot, :extension=>card.extension } %>
 	<%= slot.header %>
 	<%= slot.notice %>
-  <% form_remote_for :card, @card, :url=>slot.url_for('options/update') do |form| %>
+	
+  <% div( :class=>'options-body') do %>   
+    <% form_remote_for :card, @card, :url=>slot.url_for('account/') do |form| %>
 
-    <table class="fieldset">
-      <%= render :partial=>'options/permissions', :locals=>{:card=>@card, :slot=>slot} %>
-      <% if card.extension_type == 'User' %>
-        <%= render :partial=>'options/user', :locals=>{:card=>@card, :slot=>slot, :extension=>card.extension } %>
-        <%= render :partial=>'options/roles', :locals=>{:card=>@card, :slot=>slot, :extension=>card.extension } %>
-      <% end %>    
+      <table class="fieldset">
+        <%= render :partial=>'options/permissions', :locals=>locals %>
+        <% if card.extension_type == 'User' %>
+          <%= render :partial=>'options/user',  :locals=>locals %>
+          <%= render :partial=>'options/roles', :locals=>locals %>
+        <% elsif !card.extension %>
+          <tr><td colspan="3">
+            <%= link_to_remote "Add a login account for #{@card.name}", :url=>"/options/new_account/#{@card.id}", :update=>slot.id('options-body') %>
+          </td></tr>
+        <% end %>    
 
-      <%# if @card.template? %>
-        <%# render :partial=>'options/template', :locals=>{:card=>@card, :slot=>slot, :form=>form} %>	      
-      <%# end %> 
-      <% if slot.options_need_save %>
-  		  <tr><td colspan="3"><%= submit_tag 'Save Changes' %></td></tr>
-  		<% end %>
-    </table>
+        <% if slot.options_need_save %>
+    		  <tr><td colspan="3"><%= submit_tag 'Save Changes' %></td></tr>
+    		<% end %>
+      </table>
+    <% end %>
   <% end %>
-
-   <%# if @card.ok? :template_tsar %>
-     <%#= render :partial=>'options/template_tsar', :locals=>{:card=>@card, :slot=>slot } %>	      
-   <%# end %>
 <% end %>

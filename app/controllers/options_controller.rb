@@ -39,5 +39,14 @@ class OptionsController < ApplicationController
     render_update_slot render_to_string(:template=>'card/options')
   end
   
+  def new_account
+  end
+  
+  def create_account
+    @user = User.create(params[:extension])
+    @card.extension = @user
+    @card.save
+    render_update_slot render_to_string(:template=>'card/options')        
+  end
 
 end

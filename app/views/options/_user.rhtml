@@ -3,13 +3,13 @@
   <%= slot.option_header 'Account Details' %>
   <% slot.option(
       :name=>"email", 
-			:help=>"email address for this user",
+			:help=>"email address for account",
 			:label=>"Email") do %>
 		<%= text_field :extension, :email %>
   <% end %>
   <% slot.option(
       :name=>"password", 
- 	    :help=>"If left blank, password will remain the same",
+ 	    :help=> card.extension ? "If left blank, password will remain the same" : '',
  	  	:label=>"Password") do %>
  		<%= password_field :extension, :password %>
   <% end %>
@@ -25,7 +25,7 @@
 	<%# end %>
 <% end %>           
 
-<% if System.ok? :administrate_users %>
+<% if card.extension and System.ok?(:administrate_users) %>
    <% slot.option(
       :name=>"block_user", 
  			:help=>"Blocking a user prevents them from signing in",
@@ -34,5 +34,3 @@
    <% end %>
 <% end %>
 
-<%# end %>     
-<%# end -%>

@@ -22,7 +22,9 @@ module Card
     end
     
     def block_user
-      extension.update_attributes :status=>'blocked'
+      if extension
+        extension.update_attributes :status=>'blocked'
+      end
     end
     
   end

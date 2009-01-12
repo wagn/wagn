@@ -56,7 +56,7 @@
 .card-slot .card-header .title a:hover {
   color: #fff 
 }
-html>body .card-menu,
+html>body .card-menu-left,
 html>body .page-icon-link {
   display: none;
 }
@@ -68,7 +68,7 @@ html>body .page-icon-link {
 }
 
 div:hover.card-header .page-icon-link,
-div:hover.card-header .card-menu {
+div:hover.card-header .card-menu-left {
   display: inline;
 }
 
@@ -439,6 +439,15 @@ div:hover.card-footer .card-links{
   text-transform: uppercase;
 }
 
+
+/*----------recent changes -----------*/
+
+body.wagn .card-slot.recent-changes h2 {
+  margin-top: 15px;
+}
+
+
+
 /*-------------- STATES -----------*/
 
 /*-----------  open cards -------*/
@@ -480,7 +489,7 @@ div:hover.card-footer .card-links{
   white-space: nowrap;
   border-bottom: 0px;
   border-color: #ccc;
-  -moz-border-radius: 8px 8px 2px 2px !important;
+  -moz-border-radius: 2px 8px 2px 2px !important;
   padding: 0px;
   margin: 0px;
   line-height: 25px;  
@@ -496,6 +505,10 @@ div:hover.card-footer .card-links{
 }
 .card-slot.line .card-header {
   line-height: 15px;
+  -moz-border-radius: 0px 6px 6px 0px;
+  padding-top: 4px;
+  padding-bottom: 3px;
+  margin-right: 4px;
 }
 
 .card-slot.line tr, 
@@ -526,6 +539,9 @@ body.wagn .card-slot.line h2,
   white-space: nowrap;      
   float: none !important;
 }
+.card-slot.line .content a {
+  margin: 0px;
+}
 .card-slot.line .content img {
   height: 16px;
   float: none;
@@ -542,6 +558,24 @@ body.wagn .card-slot.line h2,
 .card-slot.line .close-link {
   display: none !important;
 }
+/*----------- Change View ---------*/
+
+.card-slot .change-view {
+  padding: 5px 0px;
+  border-bottom: 1px dotted grey;
+  clear: both;
+}
+.card-slot .change-view .change-card{
+  font-weight: bold;
+  float: left;
+}
+.card-slot .change-view .last-update {
+  float:right;
+}
+.card-slot .change-view .last-edited {
+  color: #7a7;
+}
+
 
 /*----------- Nested ---------*/
 

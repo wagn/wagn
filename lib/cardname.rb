@@ -69,9 +69,13 @@ module Cardname
     include?(JOINT)
   end  
   
+  def to_url_key
+    gsub(/[^\*\w\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')
+  end
+  
   def to_key
     split(JOINT).map do |name| 
-      CARD_KEYS[name] ||= name.underscore.split(/[^\w\*]+/).plot(:singularize).reject {|x| x==""}.join("_")
+      CARD_KEYS[name] ||= name.underscore.split(/[^a-z0-9\*]+/).plot(:singularize).reject {|x| x==""}.join("_")
     end.join(JOINT)
   end  
 

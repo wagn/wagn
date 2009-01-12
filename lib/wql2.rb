@@ -29,9 +29,9 @@ module Wql2
   AUTH_ROLE_ID = 2 unless defined?(AUTH_ROLE_ID)
   
   ATTRIBUTES = {
-    :basic=> %w{ name type content id key },
+    :basic=> %w{ name type content id key extension_type extension_id },
     :system => %w{ trunk_id tag_id },
-    :semi_relational=> %w{ editor member role },
+    :semi_relational=> %w{ edited_by edited member_of member role },
     :relational => %w{ part left right plus left_plus right_plus },  
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
     :special => %w{ or complete not count },
@@ -115,7 +115,6 @@ module Wql2
   end
 
   class CardSpec < Spec 
-    attr_accessor :negate
     attr_reader :params, :sql
      
     def initialize(spec)   
@@ -188,7 +187,6 @@ module Wql2
 
       # process conditions
       spec.each do |key,val| 
-        raise("Can't use '#{key}' in not clause (yet)") if (self.negate and !NEGATABLE[key.to_s.gsub(/\:.*$/,'').to_sym])
         case ATTRIBUTES[key]
           when :basic; spec[key] = ValueSpec.new(val, self)
           when :system; spec[key] = val.is_a?(ValueSpec) ? val : subspec(val)
@@ -225,9 +223,7 @@ module Wql2
     end
     
     def not(val)
-      self.negate = true
-      merge val 
-      self.negate = false
+      merge field(:id) => subspec(val, { :return=>'id' }, negate=true)
     end
 
     def left(val)
@@ -239,8 +235,7 @@ module Wql2
     end
     
     def part(val) 
-      inner_spec =  { :tag_id => val, :trunk_id => val } 
-      merge( self.negate ? inner_spec : {:or => inner_spec} )
+      merge :or=>{ :tag_id => val, :trunk_id => val }
     end  
     
     def right_plus(val) 
@@ -255,12 +250,47 @@ module Wql2
 
     def plus(val)
       part_spec, connection_spec = val.is_a?(Array) ? val : [ val, {} ]
-      inner_spec = {
+      merge :or=>{
         field(:id) => subspec(connection_spec, :return=>'trunk_id', :tag_id=>part_spec),
         field(:id) => subspec(connection_spec, :return=>'tag_id', :trunk_id=>part_spec)
       }
-      merge( self.negate ? inner_spec : { :or => inner_spec } )
     end          
+    
+    def edited_by(val)
+      #user_id = ((c = Card::User[val]) ? c.extension_id : 0)
+      extension_select = CardSpec.new(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val).to_sql
+      sql.joins << "join (select distinct card_id from revisions r " +
+        "where created_by in #{extension_select} ) ru on ru.card_id=#{table_alias}.id"
+    end
+    
+    def edited(val)
+      inner_spec = CardSpec.new(:return=>'ru.created_by', :_parent=>self).merge(val)
+      inner_spec.sql.joins << "join (select distinct card_id, created_by from revisions r  ) ru on ru.card_id=#{inner_spec.table_alias}.id"
+      
+      merge({
+        :extension_id => ValueSpec.new(['in',inner_spec],self),
+        :extension_type => 'User'
+      })
+    end
+    
+    def member_of(val)
+      inner_spec = CardSpec.new(:return=>'ru.user_id', :extension_type=>'Role', :_parent=>self).merge(val)
+      inner_spec.sql.joins << "join roles_users ru on ru.role_id = #{inner_spec.table_alias}.extension_id"
+      merge({
+        :extension_id => ValueSpec.new(['in',inner_spec],self),
+        :extension_type => 'User'
+      })
+    end
+
+    def member(val)
+      inner_spec = CardSpec.new(:return=>'ru.role_id', :extension_type=>'User', :_parent=>self).merge(val)
+      inner_spec.sql.joins << "join roles_users ru on ru.user_id = #{inner_spec.table_alias}.extension_id"
+      merge({
+        :extension_id => ValueSpec.new(['in',inner_spec],self),
+        :extension_type => 'Role'
+      })
+    end
+
     
     def count(val)
       raise(Wagn::WqlError, "count works only on outermost spec") if @parent
@@ -280,9 +310,9 @@ module Wql2
       merge field(:id) => ValueSpec.new(['in',RefSpec.new([key,cardspec])], self)
     end
     
-    def subspec(spec, additions={ :return=>'id' })   
+    def subspec(spec, additions={ :return=>'id' }, negate=false)   
       additions = additions.merge(:_parent=>self)
-      join = self.negate ? 'not in' : 'in'
+      join = negate ? 'not in' : 'in'
       #warn "#{self}.subspec(#{additions}, #{spec})"
       ValueSpec.new([join,CardSpec.new(additions).merge(spec)], self)
     end 

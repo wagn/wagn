@@ -103,6 +103,7 @@ ActiveRecord::Schema.define(:version => 20081201221123) do
   end
 
   add_index "revisions", ["card_id"], :name => "revisions_card_id_index"
+  add_index "revisions", ["created_by"], :name => "revisions_created_by_index"
 
   create_table "roles", :force => true do |t|
     t.string "codename"

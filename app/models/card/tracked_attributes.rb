@@ -50,6 +50,8 @@ module CardLib
         connection.update %{update cards set #{quoted_comma_pair_list(connection, {:name=>"''",:key=>"''"})} where id=#{id}}
         self.trunk = Card.find_or_create :name=>newname.parent_name
         self.tag = Card.find_or_create :name=>newname.tag_name
+      else
+        self.trunk = self.tag = nil
       end         
       @name_changed = true          
       @old_name = oldname

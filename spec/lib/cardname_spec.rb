@@ -20,5 +20,20 @@ describe Cardname, "to_key" do
   it "should retain * for star cards" do
     "*rform".to_key.should == "*rform"
   end
+  
+  it "should not singularize double s's" do
+    "grass".to_key.should == 'grass'    
+  end
+  
+  
 end
 
+describe Cardname, "to_url_key" do
+  cardnames = ["GrassCommons.org", 'Oh you @##', "Alice's Restaurant!"]
+  
+  cardnames.each do |name| 
+    it "should have the same key as the name" do
+      name.to_key.should == name.to_url_key.to_key
+    end
+  end
+end

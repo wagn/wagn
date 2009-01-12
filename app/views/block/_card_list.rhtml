@@ -5,7 +5,7 @@
   title   ||= ''
   instruction ||= nil  
 	view  ||= :closed    
-	raise("invalid view") unless [:open, :closed, :content, :name, :link].include?(view)
+	raise("invalid view") unless [:open, :closed, :content, :name, :link, :change].include?(view)
 -%>
 <% if !title.empty? %> 
 	<% @title=title %>
@@ -24,8 +24,8 @@
 	<span class="search-result-list">
 	  <%= render :partial=>'/block/paging', :locals=>{:card=>card} %>
 
-		<% cards.each do |card| %>     	
-			<%= get_slot(card).render(view) %>
+		<% cards.each do |c| %>     	
+			<%= get_slot(c).render(view) %>
 		<% end %>     
 	</span>
 <% end %>

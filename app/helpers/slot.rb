@@ -176,6 +176,9 @@ module WagnHelper
         when :link;   link_to_page card.name, card.name, :class=>"cardname-link #{card.new_record? ? 'wanted-card' : 'known-card'}"
         when :name;   card.name
         when :linkname;  Cardname.escape(card.name)
+        when :change;
+          w_action = self.requested_view = 'content'
+          w_content = render_partial('card/change')
 
       ###---(  CONTENT VARIATIONS ) 
         #-----( with transclusions processed )
@@ -253,6 +256,7 @@ module WagnHelper
             fullname = tname+'' #weird.  have to do this or the tname gets busted in the options hash!!
             #warn "options for #{tname}: #{options.inspect}"
             fullname.to_absolute(options[:base]=='parent' ? card.name.parent_name : card.name)
+            fullname.gsub!('_user', User.current_user.card.name)
             #logger.info("absolutized tname and now have these transclusion options: #{options.inspect}")
 
             if fullname.blank?  

@@ -2,37 +2,36 @@ require_dependency 'slot'
 
 module WagnHelper
   require_dependency 'wiki_content'
-  
-  def get_slot(card=nil, context=nil, action=nil)     
+
+  def get_slot(card=nil, context=nil, action=nil)
+    nil_given = card.nil?
     card ||= @card; context||=@context; action||=@action
-    #FIMXE-- this isn't quite right for multiple cards in a toplevel context, like sidebar
-    slot = case 
-      when controller.slot && card==@card; controller.slot
-      when controller.slot;  controller.slot.subslot(card)  
-      else controller.slot = Slot.new(card,context,action,self) 
+    slot = case
+      when controller.slot;  nil_given ? controller.slot : controller.slot.subslot(card)
+      else controller.slot = Slot.new(card,context,action,self)
     end
   end
-      
+
   # FIMXE: this one's a hack...
   def render_card(card, mode)
-    if String===card && name = card  
+    if String===card && name = card
       raise("Card #{name} not present") unless card= (CachedCard.get(name) || Card[name] || Card.find_phantom(name))
-    end               
+    end
     # FIXME: some cases we're called before controller.slot is initialized.
-    #  should we initialize here? or always do Slot.new? 
+    #  should we initialize here? or always do Slot.new?
     subslot = controller.slot ? controller.slot.subslot(card) : Slot.new(card)
     subslot.render(mode.to_sym)
   end
-  
-  Droplet = Struct.new(:name, :link_options)     
-       
+
+  Droplet = Struct.new(:name, :link_options)
+
   module MyCrappyJavascriptHack
     def select_slot(pattern)
       ActionView::Helpers::JavaScriptCollectionProxy.new(self, "$A([#{pattern}])")
     end
-  end 
+  end
 
-  # This is a slight modification of the stock rails method to accomodate 
+  # This is a slight modification of the stock rails method to accomodate
   # bare javascript
   def remote_function(options)
     javascript_options = options_for_ajax(options)
@@ -41,11 +40,11 @@ module WagnHelper
     if options[:update] =~ /^javascript\:/
       update << options[:update].gsub(/^javascript\:/,'')
     elsif options[:update] && options[:update].is_a?(Hash)
-      update  = [] 
-      if succ = options[:update][:success] 
+      update  = []
+      if succ = options[:update][:success]
         update << "success:" + (succ.gsub!(/^javascript:/,'') ? succ : "'#{succ}'")
       end
-      if fail = options[:update][:failure]   
+      if fail = options[:update][:failure]
         update << "failure:" + (fail.gsub!(/^javascript:/,'') ? fail : "'#{succ}'")
       end
       update  = '{' + update.join(',') + '}'
@@ -53,7 +52,7 @@ module WagnHelper
       update << "'#{options[:update]}'"
     end
 
-    function = update.empty? ? 
+    function = update.empty? ?
       "new Ajax.Request(" :
       "new Ajax.Updater(#{update}, "
 
@@ -62,9 +61,9 @@ module WagnHelper
     else
       url_options = options[:url]
       url_options = url_options.merge(:escape => false) if url_options.is_a?(Hash)
-      function << "'#{url_for(url_options)}'" 
+      function << "'#{url_for(url_options)}'"
     end
-    
+
     function << ", #{javascript_options})"
 
     function = "#{options[:before]}; #{function}" if options[:before]
@@ -75,46 +74,51 @@ module WagnHelper
     return function
   end
 
-    
+
   def truncatewords_with_closing_tags(input, words = 25, truncate_string = "...")
     if input.nil? then return end
     wordlist = input.to_s.split
     l = words.to_i - 1
     l = 0 if l < 0
-    wordstring = wordlist.length > l ? wordlist[0..l].join(" ") : input     
+    wordstring = wordlist.length > l ? wordlist[0..l].join(" ") : input
     # nuke partial tags at end of snippet
     wordstring.gsub!(/(<[^\>]+)$/,'')
-    
+
     tags = []
-    
+
     # match tags with or without self closing (ie. <foo />)
     wordstring.scan(/\<([^\>\s\/]+)[^\>]*?\>/).each { |t| tags.unshift(t[0]) }
 
     # match tags with self closing and mark them as closed
     wordstring.scan(/\<([^\>\s\/]+)[^\>]*?\/\>/).each { |t| if !(x=tags.index(t[0])).nil? then tags.slice!(x) end }
-    
+
     # match close tags
     wordstring.scan(/\<\/([^\>\s\/]+)[^\>]*?\>/).each { |t|  if !(x=tags.index(t[0])).nil? then tags.slice!(x) end  }
-    
+
     tags.each {|t| wordstring += "</#{t}>" }
-    
-    wordstring +='<span style="color:#666"> ...</span>' if wordlist.length > l    
-#    wordstring += '...' if wordlist.length > l    
+
+    wordstring +='<span style="color:#666"> ...</span>' if wordlist.length > l
+#    wordstring += '...' if wordlist.length > l
     wordstring.gsub! /<[\/]?br[\s\/]*>/, ' ' ## Also a hack -- get rid of <br>'s -- they make line view ugly.
     wordstring.gsub! /<[\/]?p[^>]*>/, ' ' ## Also a hack -- get rid of <br>'s -- they make line view ugly.
     wordstring
   end
-  
+
 
   def partial_for_action( name, card=nil )
     # FIXME: this should look up the inheritance hierarchy, once we have one
     cardtype = (card ? card.type : 'Basic').underscore
-	 f=(Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >=1 ? finder : self)
-    f.file_exists?("/cardtypes/#{cardtype}/_#{name}") ? 
-      "/cardtypes/#{cardtype}/#{name}" :
-      "/cardtypes/basic/#{name}"
+    if Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR <=1
+      finder.file_exists?("/cardtypes/#{cardtype}/_#{name}") ?
+        "/cardtypes/#{cardtype}/#{name}" :
+        "/cardtypes/basic/#{name}"
+    else
+      self.view_paths.find { |template_path| template_path.paths.include?("cardtypes/#{cardtype}/_#{name}") } ?
+        "/cardtypes/#{cardtype}/#{name}" :
+        "/cardtypes/basic/#{name}"
+    end
   end
-  
+
   def render_arg(param)
     val = params[param]
     (val && !val.empty?) ? val.to_sym : nil
@@ -123,36 +127,36 @@ module WagnHelper
   def formal_joint
     " <span class=\"wiki-joint\">#{JOINT}</span> "
   end
-  
+
   def formal_title(card)
     card.name.split(JOINT).join(formal_joint)
   end
-  
+
   def less_fancy_title(card)
     name = (String===card ? card : card.name)
     return name if name.simple?
     card_title_span(name.parent_name) + %{<span class="joint">#{JOINT}</span>} + card_title_span(name.tag_name)
   end
-  
+
   def title_tag_names(card)
     card.name.split(JOINT)
   end
-  
- 
+
+
   # Other snippets -------------------------------------------------------------
 
   def site_name
     System.site_name
   end
-    
+
   def css_name( name )
     name.gsub(/#{'\\'+JOINT}/,'-').gsub(/[^\w-]+/,'_')
   end
-  
+
   #def related
   #  render :partial=> 'card/related'
   #end
-  
+
   def sidebar
     render :partial=>partial_for_action('sidebar', @card)
   end
@@ -165,8 +169,8 @@ module WagnHelper
       DateTime.new(date.year, date.mon, date.day).strftime("%B %e, %Y")
     end
   end
-  
-  ## ----- for Linkers ------------------  
+
+  ## ----- for Linkers ------------------
   def cardtype_options
     Cardtype.createable_cardtypes.map do |cardtype|
       next(nil) if cardtype[:codename] == 'User' #or cardtype[:codename] == 'InvitationRequest'
@@ -182,9 +186,9 @@ module WagnHelper
 
   def button_to_remote(name,options={},html_options={})
     button_to_function(name, remote_function(options), html_options)
-  end          
-  
-  
+  end
+
+
   def stylesheet_inline(name)
     out = %{<style type="text/css" media="screen">\n}
     out << File.read("#{RAILS_ROOT}/public/stylesheets/#{name}.css")
@@ -195,31 +199,33 @@ module WagnHelper
     content_tag("div", "", :id => "#{fieldname}_auto_complete", :class => "auto_complete") +
     auto_complete_field(fieldname, { :url =>"/card/auto_complete_for_card_name/#{card_id.to_s}" }.update({}))
   end
-  
+
   def span(*args, &block)  content_tag(:span, *args, &block);  end
   def div(*args, &block)   content_tag(:div, *args, &block);  end
-  
-  
+
+  def pointer_item(content,view)
+    content.gsub(/\[\[/,'{{').gsub(/\]\]/,"|#{view}}}")
+  end
   ## -----------
-  
-  def google_analytics   
-    User.as(:admin) do 
-      if ga_key_card = CachedCard.get_real("*google analytics key")   
+
+  def google_analytics
+    User.as(:admin) do
+      if ga_key_card = CachedCard.get_real("*google analytics key")
         key = ga_key_card.content
         %{
-      		<script type="text/javascript">
-      			var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-      			document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      		</script>
-      		<script type="text/javascript">
-      			var pageTracker = _gat._getTracker('#{key}');
-      			pageTracker._trackPageview();
-      		</script>
-    		}
+          <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            var pageTracker = _gat._getTracker('#{key}');
+            pageTracker._trackPageview();
+          </script>
+        }
       end
     end
   end
-  
+
 end
 
 

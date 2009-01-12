@@ -3,7 +3,7 @@
   <p><%= @exception.message %>.</p>
 	<% if User.current_user.login=='anon' %>
 		<p>Maybe you need to <%= link_to 'sign in', '/account/login' %>?</p>
-		<p>...or to <%= link_to 'request an invitation', '/account/invitation_request'%>?</p>
+		<p>...or to <%= link_to 'request an account', '/account/invitation_request'%>?</p>
 	<% end %>  
 	<p><em>403 Forbidden</em></p>
 </div>

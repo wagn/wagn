@@ -12,7 +12,7 @@ require File.join(File.dirname(__FILE__), 'boot')
                           
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence those specified here
-  #RAILS_GEM_VERSION = '1.2.4' unless defined? RAILS_GEM_VERSION  
+  #RAILS_GEM_VERSION = '2.1.2' unless defined? RAILS_GEM_VERSION  
   # Skip frameworks you're not going to use
   config.frameworks -= [ :action_web_service ]
 
@@ -45,7 +45,7 @@ Rails::Initializer.run do |config|
   # See Rails::Configuration for more options   
   
   #config.gem "rspec-rails", :lib => "spec"          
-  
+
   # FIXME: should we also set :secret ?
   config.action_controller.session = {
     :session_key => (RAILS_ROOT.split("/")[-2..-1]||'generic_wagn_key').join('-').gsub(/\./,'-')
@@ -57,7 +57,9 @@ end
 ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'grave', 'graveyard'
   inflect.irregular 'this', 'this'     
-  inflect.irregular 'anonymous', 'anonymous'
+  inflect.irregular 'anonymous', 'anonymous'   
+  inflect.singular(/(ss)$/i, '\1')
+  inflect.plural(/(ss)$/i, '\1')
 end
    
 # Define a regexp function so the ~ WQL operator works with SQLite.

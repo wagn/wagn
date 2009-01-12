@@ -1,6 +1,18 @@
-=== 0.10.3
+=== 0.11.0 (Dec 31, 2008)
+* new recent changes interface
+* added wql keywords: edited_by edited member_of member
+* modified wql not behavior
+* see git log for more details
+
+
+=== 0.10.3 (Dec 10, 2008)
+* more standard compliant HTML
+* Nearly fully functional Safari and IE6+!
 * Wagn now redirects to canonical domain, set in System.base_url  (wagn.rb)
 * public/stylesheets/local.css  is now required for the asset manager to compile css
+* using asset_packager to improve page download performance, YSlow score up to B
+* use >rake asset:packager:build_all to rebuild js & css
+* many bugfixes                   
 
 === 0.10.2 (Oct 28, 2008)
 * Look and feel updated.

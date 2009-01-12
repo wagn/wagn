@@ -2,13 +2,13 @@ unless defined? Wagn::Version
   module Wagn
     module Version
       Major = '0'
-      Minor = '10'
-      Tiny  = '3'
-      Eensie = 'rc2'
+      Minor = '11'
+      Tiny  = '0'
+      Eensie = nil
     
       class << self
         def full
-          [Major, Minor, Tiny, Eensie].flatten.join('.')
+          [Major, Minor, Tiny, Eensie].compact.join('.')
         end
         
         def to_s

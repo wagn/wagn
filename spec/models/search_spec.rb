@@ -9,6 +9,54 @@ A_JOINEES = ["B", "C", "D", "E", "F"]
 CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User"].sort    
 
 
+describe Wql2, "member_of/member" do
+  it "member_of should find members" do
+    Card.search( :member_of => "r1" ).map(&:name).sort.should == %w(u1 u2 u3)
+  end
+  it "member should find roles" do
+    Card.search( :member => {:match=>"u1"} ).map(&:name).sort.should == %w(r1 r2 r3)
+  end
+end
+
+
+
+describe Wql2, "not" do 
+  before { User.as :joe_user }
+  it "should exclude cards matching not criteria" do
+    s = Card.search(:plus=>"A", :not=>{:plus=>"A+B"}).plot(:name).sort.should==%w{ B D E F }    
+  end
+end
+
+
+
+describe Wql2, "edited_by/edited" do
+  before { 
+    # User.as(:joe_user) {  Card.create!( :name=>"JoeLater", :content=>"test") }
+    # User.as(:joe_user) {  Card.create!( :name=>"JoeNow", :content=>"test") }
+    # User.as(:admin) {  Card.create!(:name=>"AdminNow", :content=>"test") }
+  }
+  it "should find card edited by joe using subspec" do
+    Card.search(:edited_by=>{:match=>"Joe User"}, :sort=>"update", :limit=>1).should == [Card["JoeNow"]]
+  end     
+  it "should find card edited by joe" do
+    Card.search(:edited_by=>"Admin", :sort=>"update", :limit=>1).should == [Card["AdminNow"]]
+  end     
+  it "should fail gracefully if user isn't there" do
+    Card.search(:edited_by=>"Joe LUser", :sort=>"update", :limit=>1).should == []
+  end
+  
+  it "should not give duplicate results for multiple edits" do
+    User.as(:joe_user){ c=Card["JoeNow"]; c.content="testagagin"; c.save!; c.content="test3"; c.save! }
+    Card.search(:edited_by=>"Joe User", :sort=>"update", :limit=>2).map(&:name).should == ["JoeNow", "JoeLater"]
+  end
+  
+  it "should find joe user among card's editors" do
+    Card.search(:edited=>'JoeLater').map(&:name).should == ['Joe User']
+  end
+end
+
+
+
 describe Card, "find_phantom" do
   before { User.as :joe_user }
 
@@ -21,14 +69,6 @@ describe Card, "find_phantom" do
       :extension_type=>"HardTemplate",
       :content=>'{"plus":"_self"}'  
     Card.find_phantom("A+testsearch").search(:limit=>100).plot(:name).sort.should == A_JOINEES
-  end
-end
-
-   
-describe Wql2, "not" do 
-  before { User.as :joe_user }
-  it "should exclude cards matching not criteria" do
-    s = Card.search(:plus=>"A", :not=>{:plus=>"A+B"}).plot(:name).sort.should==%w{ B D E F }    
   end
 end
 
@@ -207,11 +247,11 @@ end
 describe Wql2, "type" do  
   before { User.as :joe_user }
   it "should find cards of this type" do
-    Card.search( :type=>"_self", :_card=>Card['User']).plot(:name).sort.should == ["Joe User","No Count","Sample User","Wagn Bot","Admin","Anonymous"].sort
+    Card.search( :type=>"_self", :_card=>Card['User']).plot(:name).sort.should == ["Joe User","No Count","Sample User","Wagn Bot","Admin","Anonymous","u1","u2","u3"].sort
   end
 
-  it "should find cards of this type" do
-    Card.search( :type=>"User" ).plot(:name).sort.should == ["Joe User","No Count","Sample User","Wagn Bot","Admin","Anonymous"].sort
+  it "should find User cards " do
+    Card.search( :type=>"User" ).plot(:name).sort.should == ["Joe User","No Count","Sample User","Wagn Bot","Admin","Anonymous","u1","u2","u3"].sort
   end
 
 end
@@ -230,7 +270,8 @@ describe Wql2, "trash handling" do
     Card["A+B"].destroy!
     Card.search( :left=>"A" ).plot(:name).sort.should == ["A+C", "A+D", "A+E"]
   end
-end
+end      
+
 
 
 

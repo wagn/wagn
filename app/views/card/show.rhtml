@@ -1,3 +1,10 @@
+<%-
+slot = get_slot
+if item = render_arg(:item)
+  slot.item_format = item
+end
+%>
+
 <style type="text/css">
 .line .title-<%= css_name(@card.name) %>, .line .link-<%= css_name(@card.name) %> { display: none !important; }
 .paragraph .title-<%= css_name(@card.name) %>, .paragraph .link-<%= css_name(@card.name) %> { font-weight: normal; }
@@ -5,4 +12,4 @@
 
 
 <% @title = @card.name %>  
-<%= get_slot.render((render_arg(:view) || :open), :wrap=>!request.xhr?, :add_javascript=>true ) %>
+<%= slot.render((render_arg(:view) || :open), :wrap=>!request.xhr?, :add_javascript=>true ) %>

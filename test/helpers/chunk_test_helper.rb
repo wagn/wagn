@@ -7,7 +7,11 @@ module ChunkTestHelper
     def initialize(str)
       super
       init_chunk_manager
+    end             
+    
+    def card
     end
+    
     def card_link(*); end
   end
 

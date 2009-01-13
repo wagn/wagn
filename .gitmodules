@@ -1,0 +1,3 @@
+[submodule "vendor/plugins/asset_packager"]
+	path = vendor/plugins/asset_packager
+	url = git://github.com/sbecker/asset_packager.git

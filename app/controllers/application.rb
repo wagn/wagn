@@ -88,7 +88,7 @@ class ApplicationController < ActionController::Base
   def view_ok
     unless @card.ok? :read
       @deny = 'view'
-      render :action=>'denied', :status=>403
+      render :controller=>'card', :action=>'denied', :status=>403
       return false
     end
   end    

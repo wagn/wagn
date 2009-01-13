@@ -8,17 +8,17 @@ class AdminController < ApplicationController
   end
   
   def users
-    @cards = Card.search(:type=>"User", :sort=>'alpha')
+    #@cards = Card.search(:extension_type=>"User", :sort=>'alpha')
   end
   
   def roles
-    @cards = Card.search(:type=>"Role", :sort=>'alpha')
+    @cards = Card.search(:extension_type=>"Role", :sort=>'alpha')
   end
   
   def tasks
     System.ok!(:set_global_permissions)
     @tasks = System.role_tasks
-    @roles = Role.find_configurables
+    @roles = Role.find_configurables.sort{|a,b| a.card.name <=> b.card.name }
     @role_tasks = {}
     @roles.each { |r| @role_tasks[r.id] = r.task_list }
   end

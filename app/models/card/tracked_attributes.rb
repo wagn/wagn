@@ -171,7 +171,7 @@ module CardLib
       #warn "UPDATE LINK INS:  #{update_link_ins}  #{update_link_ins == false}  #{update_link_ins == 'false'}"
        
       # update references (unless we're asked not to)
-      if !update_link_ins or update_link_ins == 'false'  # FIXME -- doing the string check because the radio button is sending an actual "false" string
+      if !update_link_ins or update_link_ins == 'false'  #  doing the string check because the radio button is sending an actual "false" string
         #warn "no updating.."
         WikiReference.update_on_destroy(self, @old_name) 
       else

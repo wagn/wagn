@@ -7,6 +7,7 @@ module CardLib
           { '*recent_change' => %{ {"sort":"update", "dir":"desc", "view":"change"} },
             '*search'        => %{ {"match":"_keyword", "sort":"relevance"        } },
             '*broken_link'   => %{ {"link_to":"_none"                             } },
+            '*user'          => %{ {"extension_type":"User"                       } }
           }
         case 
           when searches[key];

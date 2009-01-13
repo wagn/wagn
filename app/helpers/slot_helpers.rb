@@ -80,7 +80,7 @@ module SlotHelpers
     url << "/#{escape_javascript(URI.escape(card_id.to_s))}" if (card and card_id)
     url << "?context='+getSlotContext(this)"
     url << "+'&' + getSlotOptions(this)"
-    url << ("+'"+ args.map{|k,v| "&#{k}=#{escape_javascript(URI.escape(v))}"}.join('') + "'") if args
+    url << ("+'"+ args.map{|k,v| "&#{k}=#{escape_javascript(URI.escape(v.to_s))}"}.join('') + "'") if args
     url
   end
 

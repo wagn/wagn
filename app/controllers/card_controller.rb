@@ -70,9 +70,6 @@ class CardController < ApplicationController
       end
       
     @card = Card.new args
-    if @card.type == 'User'
-      redirect_to :controller=>'account', :action=>'invite'
-    end
   end
   
   def new_of_type #so we could do /new/<type> shortcut

@@ -34,10 +34,6 @@
       Card.const_get( self.extension.class_name )
     end
     
-    def cards_of_this_type
-      me_type.find(:all)
-    end
-    
     def queries
       super.unshift 'cardtype_cards'
     end
@@ -50,13 +46,10 @@
       ::Cardtype.send(:load_cache)
     end
     
-    def destroy_extension
-      self.extension.destroy
-    end
     
     def ensure_not_in_use
-      if cards_of_this_type.length > 0
-        errors.add :destroy, "Can't remove Cardtype #{self.extension.class_name}: cards of this type still exist"
+      if extension and Card.search(:type=>name).length > 0
+        errors.add :destroy, "Can't remove Cardtype #{name}: cards of this type still exist"
         return false
       end
     end

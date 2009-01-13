@@ -33,7 +33,9 @@ module Card
     belongs_to :updater, :class_name=>'::User', :foreign_key=>'updated_by'
 
     has_many :permissions, :foreign_key=>'card_id' #, :dependent=>:delete_all
-           
+
+    before_destroy :destroy_extension
+               
     before_validation_on_create :set_needed_defaults
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
@@ -649,9 +651,16 @@ module Card
     end
      
     def validate_destroy  
-      if type == 'Cardtype'  and extension and ::Card.find_by_type(extension.codename) 
+      if extension_type=='Cardtype' and extension and ::Card.find_by_type_and_trash ( extension.codename, false ) 
         errors.add :type, "can't be destroyed because #{name} is a Cardtype and cards of this type still exist"
       end
+      if extension_type=='User' and extension and Revision.find_by_created_by( extension.id )
+        errors.add :destroy, "Edits have been made with #{name}'s user account.<br>  Deleting this card would mess up our revision records."
+      end      
+    end
+    
+    def destroy_extension
+      extension.destroy if extension
     end
     
     def validate_content( content )

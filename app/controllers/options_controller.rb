@@ -39,5 +39,18 @@ class OptionsController < ApplicationController
     render_update_slot render_to_string(:template=>'card/options')
   end
   
+  def new_account
+    System.ok! :add_accounts_to_cards
+  end
+  
+  def create_account
+    System.ok! :add_accounts_to_cards
+    args = params[:extension].merge({:status=>'active', :invite_sender_id=>User.current_user.id})
+    @extension = User.create!(args)
+    @card.extension = @extension
+    @card.save!
+    @extension.password = @extension.password_confirmation = ''
+    render_update_slot render(:template=>'card/options')        
+  end
 
 end

@@ -20,11 +20,16 @@ module Card
       extension.errors.each do |attr,msg| self.errors.add(attr,msg) end
       return false unless extension.valid?
     end
-    
+
+   
     def block_user
       if extension
         extension.update_attributes :status=>'blocked'
       end
+    end
+    
+    def destroy_extension
+      #do nothing - we want to keep these accounts around to know they're blocked.
     end
     
   end

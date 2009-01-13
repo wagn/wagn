@@ -151,12 +151,13 @@ class System < ActiveRecord::Base
   @@role_tasks = %w{
     set_global_permissions
     set_card_permissions
-    set_personal_card_permissions
+    add_accounts_to_cards
     assign_user_roles
     administrate_users
   }
 
 =begin
+  set_personal_card_permissions
   edit_html           
   manage_permissions  
   edit_cards     

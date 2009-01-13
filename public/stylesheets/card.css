@@ -357,6 +357,9 @@ div:hover.card-footer .card-links{
 .card-slot .template .card-slot {
   text-align: left;
 }
+.card-slot .new-account-link {
+  text-align: center;
+}
 
 /*-----------related tab ----------*/
 

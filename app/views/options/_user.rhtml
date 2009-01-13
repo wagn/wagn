@@ -1,29 +1,27 @@
-	
-<% if edit_user_context(card) == 'user' or System.ok? :administrate_users %>
-  <%= slot.option_header 'Account Details' %>
-  <% slot.option(
-      :name=>"email", 
-			:help=>"email address for account",
-			:label=>"Email") do %>
-		<%= text_field :extension, :email %>
-  <% end %>
-  <% slot.option(
-      :name=>"password", 
- 	    :help=> card.extension ? "If left blank, password will remain the same" : '',
- 	  	:label=>"Password") do %>
- 		<%= password_field :extension, :password %>
-  <% end %>
-  <% slot.option(
-       :name=>"password_confirm", 
- 			:help=>"",
- 			:label=>"Confirm password") do %>
- 		<%= password_field :extension, :password_confirmation %>
-  <% end %>
-  
-  <%# slot.option(:name=>"identity_url", :label=>"Open Id", :help=>"Allows you to sign in with your OpenId")  do %>
-		<%#= text_field :extension, :identity_url %>
-	<%# end %>
-<% end %>           
+
+<%= slot.option_header 'Account Details' %>
+<% slot.option(
+    :name=>"email", 
+		:help=>"email address for account",
+		:label=>"Email") do %>
+	<%= text_field :extension, :email %>
+<% end %>
+<% slot.option(
+    :name=>"password", 
+	    :help=> card.extension ? "If left blank, password will remain the same" : '',
+	  	:label=>"Password") do %>
+		<%= password_field :extension, :password %>
+<% end %>
+<% slot.option(
+     :name=>"password_confirm", 
+			:help=>"",
+			:label=>"Confirm password") do %>
+		<%= password_field :extension, :password_confirmation %>
+<% end %>
+
+<%# slot.option(:name=>"identity_url", :label=>"Open Id", :help=>"Allows you to sign in with your OpenId")  do %>
+	<%#= text_field :extension, :identity_url %>
+<%# end %>
 
 <% if card.extension and System.ok?(:administrate_users) %>
    <% slot.option(

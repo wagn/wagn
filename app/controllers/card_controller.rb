@@ -146,7 +146,7 @@ class CardController < ApplicationController
 
   def quick_update
     @card.update_attributes! params[:card]
-    @card.errors.empty? ? render(:text=>'Success') : render_errors    
+    @card.errors.empty? ? render(:text=>'Success') : render_card_errors(@card)    
   end
 
   def save_draft
@@ -200,7 +200,7 @@ class CardController < ApplicationController
     elsif @card.errors.on(:confirmation_required)
       render_update_slot render_to_string(:partial=>'confirm_remove')
     else
-      render_errors
+      render_card_errors(@card)
     end
   end
 

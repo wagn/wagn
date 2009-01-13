@@ -16,10 +16,17 @@
 	<%= stylesheet_link_merged :base %> 
   <%#= asset_manager can do alternate media but it has to be a separate call anyway %>
 	<%= stylesheet_link_tag 'print', :media=>'print' %>
+  
+	<% if css_card = CachedCard.get_real("*css") %>
+		<style type="text/css">
+			<%= css_card.content %>
+		</style>              
+	<% end %>
 
 	<%# tried javascript at bottom, much breakage %>
   <%= javascript_include_merged :base %>       
-
+     
+  
 
 
 

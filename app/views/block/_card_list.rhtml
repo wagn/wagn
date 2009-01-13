@@ -25,7 +25,7 @@
 	  <%= render :partial=>'/block/paging', :locals=>{:card=>card} %>
 
 		<% cards.each do |c| %>     	
-			<%= get_slot(c).render(view) %>
+			<span class="item-<%= view %>"><%= get_slot(c).render(view) %></span>
 		<% end %>     
 	</span>
 <% end %>

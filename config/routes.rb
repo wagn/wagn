@@ -1,4 +1,4 @@
-FORMAT_PATTERN = /html|json|xml|rss/
+FORMAT_PATTERN = /html|json|xml|rss/ unless defined? FORMAT_PATTERN   
 
 ActionController::Routing::Routes.draw do |map|
   #map.connect 'c/:controller/:action/:id'

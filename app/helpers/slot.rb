@@ -119,7 +119,6 @@ module WagnHelper
       else
         return open_slot + content + close_slot
       end
-
     end
     
     def cache_action(cc_method) 

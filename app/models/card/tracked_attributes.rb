@@ -63,9 +63,8 @@ module CardLib
     def set_type(new_type)
       #warn "set type called on #{name} to #{new_type}"
       self.type_without_tracking = new_type 
-      return if new_record?    
-      callback(:before_destroy)  # before destroy takes out extensions, which are cardtype specific.
-      #callback(:after_destroy)  # after destroy takes out links, which we want to keep
+      return if new_record?
+      on_type_change # FIXME this should be a callback
       templatees = hard_templatees
       if !templatees.empty?
         #warn "going through hard templatees"  

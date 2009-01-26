@@ -2,9 +2,10 @@
   class Cardtype < Base
     ## FIXME -- needs to create constant-safe class name and validate its uniqueness 
     before_validation_on_create :create_extension
-    before_destroy :ensure_not_in_use, :destroy_extension   # order is important!
     after_create :reload_cardtypes
-    before_destroy :reload_cardtypes
+    
+    before_destroy :ensure_not_in_use, :destroy_extension   # order is important!
+    after_destroy :reload_cardtypes
     
     #validates_presence_of :extension
                                        
@@ -40,12 +41,19 @@
 
 
     private
+    
+    def on_type_change
+      ensure_not_in_use
+      destroy_extension
+      reload_cardtypes
+    end
+    
     # FIXME -- the current system of caching cardtypes is not "thread safe":
     # multiple running ruby servers could get out of sync re: available cardtypes  
     def reload_cardtypes
       ::Cardtype.send(:load_cache)
+    rescue
     end
-    
     
     def ensure_not_in_use
       if extension and Card.search(:type=>name).length > 0
@@ -53,5 +61,19 @@
         return false
       end
     end
+    
+    
+    def validate_type_change
+      validate_destroy
+    end
+    
+    def validate_destroy
+      if extension and ::Card.find_by_type_and_trash ( extension.codename, false ) 
+        errors.add :type, "can't be altered because #{name} is a Cardtype and cards of this type still exist"
+      end
+      super
+    end
+    
+    
   end
 end

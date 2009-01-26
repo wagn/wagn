@@ -49,8 +49,17 @@ class OptionsController < ApplicationController
     @extension = User.create!(args)
     @card.extension = @extension
     @card.save!
+    send_create_account_message(@extension)
     @extension.password = @extension.password_confirmation = ''
-    render_update_slot render(:template=>'card/options')        
+    @notice ||= "That worked.  This card now has a sign-in account."
+    render_update_slot render_to_string(:template=>'card/options')        
+  end
+
+  def send_create_account_message(user)
+    subject = "Your new #{System.site_name} account."
+    message = "Welcome!  You now have an account on #{System.site_name}."
+    Notifier.deliver_account_info(user,subject,message)
+  rescue
   end
 
 end

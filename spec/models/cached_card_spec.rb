@@ -9,16 +9,19 @@ describe "CachedCard" do
     @gs_key = System.base_url.split('//').last + '/test/global_seq'
   end    
 
-  it "bump_global_seq should incrememt global_seq" do
-    @mc.should_receive(:read).with(@gs_key).and_return(3)
-    @mc.should_receive(:write).with(@gs_key, "4").and_return(4)
-    CachedCard.bump_global_seq.should == 4
+  it "bump_global_seq should change global_seq" do
+    @mc.should_receive(:read).with(@gs_key)
+    @mc.should_receive(:read).with(@gs_key)
+    @mc.should_receive(:write)
+    initial = CachedCard.global_seq  
+    sleep(0.02)  # long enough for time counter to register new value.
+    CachedCard.bump_global_seq.to_i.should > initial.to_i
   end
   
-  it "global_seq should return 1 when no global_seq is cached" do
+  it "global_seq should return value when no global_seq is cached" do
     @mc.should_receive(:read).with(@gs_key).and_return(nil)
-    @mc.should_receive(:write).with(@gs_key, "1").and_return(1)
-    CachedCard.global_seq.should == 1
+    @mc.should_receive(:write)
+    CachedCard.global_seq.should_not be_nil
   end
   
   it  "global_seq should return cached value when present" do

@@ -15,6 +15,20 @@ describe WagnHelper::Slot, "" do
      @a = Card.new(:name=>'t', :content=>"{{A}}")
     Slot.new(@a).render(:raw_content).should == "{{A}}"
   end                                                                                  
+  
+  it "should use transclusion view overrides" do  
+    # FIXME love to have these in a scenario so they don't load every time.
+    t = Card.create! :name=>'t1', :content=>"{{t2|card}}"
+    Card.create! :name => "t2", :content => "{{t3|view}}" 
+    Card.create! :name => "t3", :content => "boo" 
+    
+    # a little weird that we need :expanded_view_content  to get the version without
+    # slot divs wrapped around it.
+    result = Slot.new(t, "main_1", "view", nil, :transclusion_view_overrides=>{ :open => :name } ).render :expanded_view_content
+    result.should == "t2"
+    result = Slot.new(t, "main_1", "view", nil, :transclusion_view_overrides=>{ :open => :expanded_view_content } ).render :expanded_view_content
+    result.should == "boo"
+  end
 
 =begin
   # FIXME: this test is very brittle-- based on specific html;

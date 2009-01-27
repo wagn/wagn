@@ -6,25 +6,32 @@ module WagnHelper
     self.max_char_count = 200
     attr_reader :card, :context, :action, :renderer, :template
     attr_accessor :editor_count, :options_need_save, :state, :requested_view, :js_queue_initialized,  
-      :transclusions, :position, :renderer, :form, :superslot, :char_count, :item_format, :renders, :start_time      
+      :transclusions, :position, :renderer, :form, :superslot, :char_count, :item_format, :renders, :start_time,
+      :transclusion_view_overrides
     attr_writer :form 
+
+    VIEW_ALIASES = { 
+      :view => :open,
+      :card => :open,
+      :line => :closed,
+    }
      
-    def initialize(card, context="main_1", action="view", template=nil, renderer=nil )
-      @card, @context, @action, @template, @renderer = card, context.to_s, action.to_s, (template||StubTemplate.new), renderer
-      
+    def initialize(card, context="main_1", action="view", template=nil, opts={} )
+      @card, @context, @action, @template, = card, context.to_s, action.to_s, (template||StubTemplate.new)
       raise("context gotta include position") unless context =~ /\_/
       @position = context.split('_').last    
       @char_count = 0
       @subslots = []  
       @state = 'view'
       @renders = {}
-      @renderer ||= Renderer.new(self)
+      @transclusion_view_overrides = opts[:transclusion_view_overrides] 
+      @renderer = opts[:renderer] || Renderer.new(self)
     end
 
     def subslot(card, &proc)
       # Note that at this point the subslot context, and thus id, are
       # somewhat meaningless-- the subslot is only really used for tracking position.
-      new_slot = self.class.new(card, context+"_#{@subslots.size+1}", @action, @template, @renderer)
+      new_slot = self.class.new(card, context+"_#{@subslots.size+1}", @action, @template, :renderer=>@renderer)
       new_slot.state = @state
       @subslots << new_slot 
       new_slot.superslot = self
@@ -59,6 +66,8 @@ module WagnHelper
     def wrap(action="", args={}) 
       render_slot = args.key?(:is_slot) ? args.delete(:is_slot) : !request.xhr? 
       content = args.delete(:content)
+       
+      open_slot, close_slot = "",""
 
       result = ""
       if render_slot
@@ -85,35 +94,22 @@ module WagnHelper
           :position => position
         }
         
-        slot_head = '<!--[if !IE]><object><![endif]-->' +
+        open_slot = '<!--[if !IE]><object><![endif]-->' +
           %{<div #{attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join } >}
-        slot_head 
-        if block_given? 
-          # FIXME: the proc.binding call triggers lots and lots of:
-          # slot.rb:77: warning: tried to create Proc object without a block 
-          # which makes the test output unreadable.  should do a real fix instead of hiding the issue 
-          warn_level, $VERBOSE = $VERBOSE, nil;
-          @template.concat(slot_head, proc.binding) 
-          $VERBOSE = warn_level
-        else
-          result << slot_head
-        end
-      end      
-      if block_given?
-        yield(self)
-      else
-        result << content
+          
+        close_slot = "</div><!--[if !IE]></object><![endif]-->"
       end
-      if render_slot
-        if block_given?
-          warn_level, $VERBOSE = $VERBOSE, nil;
-          @template.concat("</div></object>" , proc.binding)
-          $VERBOSE = warn_level
-        else
-          result << "</div></object>"
-        end
-      end    
-      result
+      
+      if block_given? 
+        args = ((Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >= 2)  ? nil : proc.binding )
+        @template.output_buffer ||= ''   # fixes error in CardControllerTest#test_changes
+        @template.concat open_slot, *args
+        yield(self)
+        @template.concat close_slot, *args
+        return ""
+      else
+        return open_slot + content + close_slot
+      end
     end
     
     def cache_action(cc_method) 
@@ -140,6 +136,11 @@ module WagnHelper
         else
           !card.ok?(:read) and :deny_view
       end
+    end
+
+    def canonicalize_view( view )
+      view = view.to_sym
+      VIEW_ALIASES[view.to_sym] || view
     end
 
     def render(action, args={})      
@@ -237,7 +238,7 @@ module WagnHelper
       
     end
 
-    def expand_transclusions(content) 
+    def expand_transclusions(content, args={}) 
       #return ("skip(#{card.name}):"+content) 
       if card.name.template_name?          
         # KLUGILICIOIUS: if we leave the {{}} transclusions intact they may get processed by
@@ -252,7 +253,12 @@ module WagnHelper
         else 
           begin
             match = $~
-            tname, options = Chunk::Transclude.parse(match)
+            tname, options = Chunk::Transclude.parse(match)     
+            if view_map = root.transclusion_view_overrides 
+              if translated_view = view_map[ canonicalize_view( options[:view] )]
+                options[:view] = translated_view
+              end
+            end
             fullname = tname+'' #weird.  have to do this or the tname gets busted in the options hash!!
             #warn "options for #{tname}: #{options.inspect}"
             fullname.to_absolute(options[:base]=='parent' ? card.name.parent_name : card.name)
@@ -341,7 +347,9 @@ module WagnHelper
     end   
     
     def method_missing(method_id, *args, &proc) 
-      @template.send(method_id, *args, &proc)
+      # silence Rails 2.2.2 warning about binding argument to concat.  tried detecting rails 2.2
+      # and removing the argument but it broken lots of integration tests.
+      ActiveSupport::Deprecation.silence { @template.send(method_id, *args, &proc) }
     end
 
     
@@ -364,10 +372,16 @@ module WagnHelper
   
   
   # For testing/console use of a slot w/o controllers etc.
-  class StubTemplate
+  class StubTemplate      
+    include ActionView::Helpers::SanitizeHelper
     attr_accessor :indent, :slot
     # for testing & commandline use  
     # not totally happy with this..    
+
+    def self.full_sanitizer
+      @full_sanitizer ||= HTML::FullSanitizer.new
+    end
+    
      
     def params
       return {}

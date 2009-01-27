@@ -134,11 +134,6 @@ div:hover.card-footer .card-links{
 /* -------- view tab / content ----------------- */
 
 
-.card-slot .search-result-list .cardname-link {
-  display: block;
-}
-
-
 .card-slot p { 
   margin: 0px; 
 }
@@ -636,6 +631,25 @@ body.wagn .card-slot.line h2,
 }
 
 
+
+/*---------( Search ) ---------- */
+
+.card-slot .content .paging img {
+  float: none !important;
+  padding: 0px 3px;
+  margin: 0px;
+}
+
+
+/*---------(Search & Pointer) --------*/
+
+.item-link,
+.item-name {
+  display: block;
+  text-indent: -15px;
+  padding-left: 15px;
+}
+
 /*-----------( Image ) -----------*/
 
 
@@ -646,13 +660,9 @@ body.wagn .card-slot.line h2,
 }
 
 
-/*---------( Search ) ---------- */
 
-.card-slot .content .paging img {
-  float: none !important;
-  padding: 0px 3px;
-  margin: 0px;
-}
+
+
 
 
 /*---------- comment-box -------------------------------------- */

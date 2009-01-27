@@ -36,7 +36,7 @@ class CachedCard
     end
 
     def bump_global_seq
-      write_global_seq(  Time.now.to_i )
+      write_global_seq(  (Time.now.to_f * 100).to_i )
     end
 
     def write_global_seq(val)

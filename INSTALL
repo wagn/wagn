@@ -39,8 +39,9 @@ CONFIGURE YOUR DATABASE
    2. In database.yml set
       adapter: ( mysql or postgresql )
       user: ( your db user. root often works for default mysql installs )
-   3. Create the database: rake db:create
-   4. set up the database: rake db:migrate
+   3. If you're running a public wagn, change the session_key and secret fields
+   4. Create the database: rake db:create
+   5. set up the database: rake db:migrate   
 
 If you have trouble with step 3 or 4 check out Installation+database details
 

@@ -16,6 +16,8 @@ development:
   username: root
   password: 
   host: localhost
+  session_key: wagn_development
+  secret: YrDOFOmYJyFg2tTZykCbZjWYQUbKBt
 
 # Warning: The database defined as 'test' will be erased and
 # re-generated from your development database when you run 'rake'.
@@ -26,6 +28,8 @@ test:
   username: root
   password: 
   host: localhost
+  session_key: wagn_test
+  secret: YrDOFOmYJyFg2tTZykCbZjWYQUbKBt
 
 production:
   adapter: mysql
@@ -33,3 +37,5 @@ production:
   username: root
   password: 
   host: localhost
+  session_key: wagn_production
+  secret: Pl8qJNFc8mo1yt1xtHOmfUGHOPEutu

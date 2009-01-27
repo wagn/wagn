@@ -18,33 +18,42 @@
 
 /*----- header ---------*/
 
-
 .card-slot .card-header {
   background: #005800;
   padding: 5px; 
   margin: 0px;
   -moz-border-radius: 6px 6px 0 0;
 }
-.card-slot .card-header img {
-  float: none !important;
-  padding: 0px !important;
+.card-slot.line .title-menu {
+  line-height: 18px;
 }
-
-.card-slot .card-header a,
-.card-slot .card-footer a {
-  border: 0px !important;  /*-- for wadget --*/
-}
-
-
-
 .card-slot .title { 
   margin: 0px 2px;
-  font-weight: bold; 
-  display: inline;
+  font-weight: bold;
+  font-size: 13px;
+  padding: 2px 0px 2px 25px;
 }
-.card-slot .title img { 
-  margin-right: 5px;
+
+.card-slot .right-arrow {
+  background: url(/images/arrow_right.gif) no-repeat left;
 }
+html>body .card-slot .right-arrow {
+  background-image: url(/images/arrow_right.png);
+}
+.card-slot .down-arrow {
+  background: url(/images/arrow_down.gif) no-repeat left;
+}
+html>body .card-slot .down-arrow {
+  background-image: url(/images/arrow_down.png);
+}
+.card-slot .page-icon {
+  padding: 2px 7px;
+  background: url(/images/page.gif) no-repeat right;
+}
+html>body .card-slot .page-icon {
+  background-image: url(/images/page.png);
+}
+
 .card-slot .cardtype { 
   font-style: italic;
   font-size: 10px;
@@ -57,19 +66,19 @@
   color: #fff 
 }
 html>body .card-menu-left,
-html>body .page-icon-link {
+html>body .page-icon {
   display: none;
 }
 .card-slot.line .card-header {
-  padding-right: 26px;
+  padding-right: 22px;
 }
 .card-slot.line div:hover.card-header {
-  padding-right: 4px;
+  padding-right: 0px;
 }
 
-div:hover.card-header .page-icon-link,
+div:hover.card-header .page-icon,
 div:hover.card-header .card-menu-left {
-  display: inline;
+  display:inline;
 }
 
 .card-slot .card-menu {
@@ -79,14 +88,14 @@ div:hover.card-header .card-menu-left {
    right: 0px;
    z-index: 1;
 }
-.card-slot .card-menu a { 
+.card-slot .card-menu li { 
   padding: 1px 5px;
   margin: 0px;
   -moz-border-radius: 4px 4px 0 0;
 }
 .card-slot .current {
   background: #bbb;
-  padding-bottom: 8px !important;
+  padding-bottom: 7px !important;
 }
 
 .card-slot .submenu {
@@ -109,22 +118,6 @@ div:hover.card-header .card-menu-left {
   display:inline;
 }
 
-
-.right-arrow {
-  padding: 11px;
-  background: url(/images/arrow_right.png) no-repeat center
-}
-
-.down-arrow {
-  padding: 11px;
-  background: url(/images/arrow_down.png) no-repeat center
-}
-
-
-.page-icon {
-  padding: 11px;
-  background: url(/images/page.png) no-repeat center
-}
 
 
 /* card footer-------------------------------*/
@@ -495,7 +488,6 @@ body.wagn .card-slot.recent-changes h2 {
 }
 .card-slot.paragraph .down-arrow,
 .card-slot.paragraph .close-link {
-  display: inline;
   margin: 0px 5px 0px 0px;
 }
 

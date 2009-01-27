@@ -89,43 +89,9 @@ module LocationHelper
     image_tag "/images/#{prefix}connected_icon.png", :title=>"cards connected to \"#{card.name}\""
   end
   
-  def down_arrow
-    %{
-       <!--[if lt IE 7]>
-         <img class="down-arrow" alt="&darr;" src="/images/arrow_down.gif" />     
-       <![endif]-->
-       <!--[if !lt IE 7]><![IGNORE[--><![IGNORE[]]>          
-         <img class="down-arrow" alt="&darr;" src="/images/arrow_down.png" />
-       <!--<![endif]-->
-     }   
-     %{<span class="down-arrow"></span>}
-  end
 
-  def right_arrow
-    %{
-       <!--[if lt IE 7]>
-         <img class="right-arrow" alt="&rarr;" src="/images/arrow_right.gif" />     
-       <![endif]-->
-       <!--[if !lt IE 7]><![IGNORE[--><![IGNORE[]]>          
-         <img class="right-arrow" alt="&rarr;" src="/images/arrow_right.png" />
-       <!--<![endif]-->
-     }
-     %{<span class="right-arrow"></span>}
-  end
-  
   def page_icon(card)
-    title = "Go to: #{card.name}"
-    args = [ card.name, {:class=>'page-icon-link'} ]
-    
-    %{
-       <!--[if lt IE 7]>
-         #{link_to_page image_tag('page.gif', :title=>title), *args }
-       <![endif]-->
-       <!--[if !lt IE 7]><![IGNORE[--><![IGNORE[]]>
-         #{link_to_page image_tag('page.png', :title=>title), *args }
-       <!--<![endif]-->
-     }
-     link_to_page %{<span class="page-icon"></span>}, *args
+    link_to_page '&nbsp;', card.name, {:class=>'page-icon', :title=>"Go to: #{card.name}"} 
   end
 
   def flexlink( linktype, name, options )

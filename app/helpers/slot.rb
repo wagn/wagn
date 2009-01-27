@@ -94,10 +94,13 @@ module WagnHelper
           :position => position
         }
         
-        open_slot = '<!--[if !IE]><object><![endif]-->' +
-          %{<div #{attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join } >}
-          
-        close_slot = "</div><!--[if !IE]></object><![endif]-->"
+
+        slot_attr = attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join
+        open_slot = %{<!--[if IE]> <div  #{slot_attr}>  <![endif]-->} +
+                    %{<![if !IE]> <object #{slot_attr}> <![endif]>} 
+        close_slot= %{<!--[if IE]> </div> <![endif]-->} +
+                    %{<![if !IE]> </object> <![endif]>} 
+
       end
       
       if block_given? 
@@ -110,6 +113,7 @@ module WagnHelper
       else
         return open_slot + content + close_slot
       end
+
     end
     
     def cache_action(cc_method) 

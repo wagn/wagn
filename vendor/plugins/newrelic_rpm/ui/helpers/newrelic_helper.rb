@@ -1,7 +1,7 @@
 require 'pathname'
-
+require 'new_relic/agent/collection_helper'
 module NewrelicHelper
-  
+  include NewRelic::Agent::CollectionHelper
   # return the host that serves static content (css, metric documentation, images, etc)
   # that supports the desktop edition.
   def server
@@ -21,6 +21,7 @@ module NewrelicHelper
   # return the highest level in the call stack for the trace that is not rails or 
   # newrelic agent code
   def application_caller(trace)
+    trace = strip_nr_from_backtrace(trace)
     trace.each do |trace_line|
       file = file_and_line(trace_line).first
       unless exclude_file_from_stack_trace?(file, false)
@@ -31,6 +32,7 @@ module NewrelicHelper
   end
   
   def application_stack_trace(trace, include_rails = false)
+    trace = strip_nr_from_backtrace(trace)
     trace.reject do |trace_line|
       file = file_and_line(trace_line).first
       exclude_file_from_stack_trace?(file, include_rails)
@@ -65,22 +67,44 @@ module NewrelicHelper
     end
   end
   
+  
+  def dev_name(metric_name)
+    @@metric_parser_available ||= defined? MetricParser
+    
+    (@@metric_parser_available) ? MetricParser.parse(metric_name).developer_name : metric_name
+  end
+  
+  # write the metric label for a segment metric in the detail view
   def write_segment_label(segment)
-    if segment[:backtrace] && (source_url = url_for_source(application_caller(segment[:backtrace])))
-      link_to segment.metric_name, source_url
+    if source_available && segment[:backtrace] && (source_url = url_for_source(application_caller(segment[:backtrace])))
+      link_to dev_name(segment.metric_name), source_url
     else
-      segment.metric_name
+      dev_name(segment.metric_name)
     end
   end
-
   
+  def source_available
+    true
+  end
+  
+  # write the metric label for a segment metric in the summary table of metrics
+  def write_summary_segment_label(segment)
+    dev_name(segment.metric_name)
+  end
+  
+  def write_stack_trace_line(trace_line)
+    link_to h(trace_line), url_for_source(trace_line)
+  end
+
+  # write a link to the source for a trace
   def link_to_source(trace)
     image_url = "#{server}/images/"
     image_url << (using_textmate? ? "textmate.png" : "file_icon.png")
     
-    link_to image_tag(image_url), url_for_source(application_caller(trace))
+    link_to image_tag(image_url, :alt => (title = 'View Source'), :title => title), url_for_source(application_caller(trace))
   end
   
+  # print the formatted timestamp for a segment
   def timestamp(segment)
     sprintf("%1.3f", segment.entry_timestamp)
   end
@@ -99,11 +123,11 @@ module NewrelicHelper
   end
   
   def expanded_image_path()
-    url_for(:controller => :newrelic, :action => :image, :file => '16-arrow-down.png')
+    url_for(:controller => :newrelic, :action => :image, :file => 'arrow-open.png')
   end
   
   def collapsed_image_path()
-    url_for(:controller => :newrelic, :action => :image, :file => '16-arrow-right.png')
+    url_for(:controller => :newrelic, :action => :image, :file => 'arrow-close.png')
   end
   
   def explain_sql_url(segment)
@@ -112,8 +136,12 @@ module NewrelicHelper
       :segment => segment.segment_id)
   end
   
+  def segment_duration_value(segment)
+    link_to "#{segment.duration.to_ms.with_delimiter} ms", explain_sql_url(segment)
+  end
+  
   def line_wrap_sql(sql)
-    sql.gsub(/\,/,', ').squeeze(' ')
+    sql.gsub(/\,/,', ').squeeze(' ') if sql
   end
   
   def render_sample_details(sample)
@@ -152,7 +180,7 @@ module NewrelicHelper
     pie_chart.color, pie_chart.width, pie_chart.height = '6688AA', width, height
     
     chart_data = sample.breakdown_data(6)
-    chart_data.each { |s| pie_chart.add_data_point s.metric_name, s.exclusive_time.to_ms }
+    chart_data.each { |s| pie_chart.add_data_point dev_name(s.metric_name), s.exclusive_time.to_ms }
     
     pie_chart.render
   end
@@ -181,14 +209,18 @@ module NewrelicHelper
     { :onmouseover => "sql_mouse_over(#{segment.segment_id})", :onmouseout => "sql_mouse_out(#{segment.segment_id})"}
   end
   
+  def explain_sql_link(segment, child_sql = false)
+    link_to 'SQL', explain_sql_url(segment), sql_link_mouseover_options(segment)
+  end
+  
   def explain_sql_links(segment)
     if segment[:sql_obfuscated] || segment[:sql]
-      link_to 'SQL', explain_sql_url(segment), sql_link_mouseover_options(segment)
+      explain_sql_link segment
     else
       links = []
       segment.called_segments.each do |child|
         if child[:sql_obfuscated] || child[:sql]
-          links << link_to('SQL', explain_sql_url(child), sql_link_mouseover_options(child))
+          links << explain_sql_link(child, true)
         end
       end
       links[0..1].join(', ') + (links.length > 2?', ...':'')
@@ -226,17 +258,29 @@ private
   end
     
   def exclude_file_from_stack_trace?(file, include_rails)
-    is_agent = file =~ /\/newrelic\/agent\//
-    return is_agent if include_rails
-    
-    is_agent ||
+    !include_rails && (
       file =~ /\/active(_)*record\// ||
       file =~ /\/action(_)*controller\// ||
       file =~ /\/activesupport\// ||
-      file =~ /\/actionpack\//
+      file =~ /\/lib\/mongrel/ ||
+      file =~ /\/actionpack\// ||
+      file =~ /\/passenger\// ||
+      file =~ /\/benchmark.rb/ ||
+      file !~ /\.rb/)                  # must be a .rb file, otherwise it's a script of something else...we could have gotten trickier and tried to see if this file exists...
   end
   
   def show_view_link(title, page_name)
     link_to_function("[#{title}]", "show_view('#{page_name}')");
+  end
+  def mime_type_from_extension(extension)
+    extension = extension[/[^.]*$/].downcase
+    case extension
+      when 'png': 'image/png'
+      when 'gif': 'image/gif'
+      when 'jpg': 'image/jpg'
+      when 'css': 'text/css'
+      when 'js': 'text/javascript'
+      else 'text/plain'
+    end
   end
 end

@@ -47,10 +47,12 @@ Rails::Initializer.run do |config|
   #config.gem "rspec-rails", :lib => "spec"          
 
   # FIXME: should we also set :secret ?
+  require 'yaml'
+  db = YAML.load_file('config/database.yml')
   config.action_controller.session = {
-    :session_key => (RAILS_ROOT.split("/")[-2..-1]||'generic_wagn_key').join('-').gsub(/\./,'-')
-  }
-  
+    :session_key => db[RAILS_ENV]['session_key'],
+    :secret      => db[RAILS_ENV]['secret']
+  }  
 end
 
 # Add new inflection rules using the following format 

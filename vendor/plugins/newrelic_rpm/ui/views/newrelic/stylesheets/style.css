@@ -1,3 +1,5 @@
+
+
 /*  
 Originally based on the theme credited below.
 Tweaks by Lew Cirne for Seldon
@@ -28,7 +30,7 @@ body{
 	width:76em;	
 }
 #content{
-	width: 984;
+	width: 984px;
 	margin: 10px auto;
 	text-align:left;
 }
@@ -223,17 +225,31 @@ div.flash.notice
 	margin-right: 15px;
 }
 
+.application_stack_trace, .full_stack_trace
+{	
+	font-family: monospace;
+	margin-top: 10px;
+	margin-left: 20px;
+	max-width: 950px;
+	overflow: auto;
+}
 
 #summary_table
 {
 }
 
-#sql_statement
+.sql_statement
 {
 	width: 800px;
 	overflow: auto;
 }
 
+.plan
+{
+    font-family: monospace;
+    font-size: 0.8em;
+    white-space: pre;
+}
 #page_nav
 {
 	height: 42px;
@@ -318,11 +334,11 @@ ul.tab_list li {
 	padding-left: 1em;	
 }
 .selected {
-	background: url(../images/16-arrow-right.png) no-repeat;
+	background: url(/newrelic/image?file=arrow-close.png) no-repeat;
 }
 
 .expand {
-	background-image:url(../images/16-arrow-down.png);
+	background-image:url(/newrelic/image?file=arrow-open.png);
 	width:16px;
 	background-position: top left;
 	padding-left: 20px;
@@ -331,7 +347,7 @@ ul.tab_list li {
 }
 
 .collapse {
-	background-image:url(../images/16-arrow-right.png);
+	background-image:url(/newrelic/image?file=arrow-close.png);
 	text-decoration: none;
 	width:16px;
 	padding-left: 20px;

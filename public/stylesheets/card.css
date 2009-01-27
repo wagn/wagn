@@ -105,7 +105,26 @@ div:hover.card-header .card-menu-left {
   -moz-border-radius: 4px 4px 0 0;
 }
 
+.card-slot .card-header li {
+  display:inline;
+}
 
+
+.right-arrow {
+  padding: 11px;
+  background: url(/images/arrow_right.png) no-repeat center
+}
+
+.down-arrow {
+  padding: 11px;
+  background: url(/images/arrow_down.png) no-repeat center
+}
+
+
+.page-icon {
+  padding: 11px;
+  background: url(/images/page.png) no-repeat center
+}
 
 
 /* card footer-------------------------------*/

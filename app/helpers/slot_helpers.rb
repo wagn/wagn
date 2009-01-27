@@ -132,8 +132,8 @@ module SlotHelpers
 
   def link_to_menu_action( to_action)
     menu_action = (%w{ show update }.member?(action) ? 'view' : action)
-    link_to_action to_action.capitalize, to_action, {},
-      :class=> (menu_action==to_action ? 'current' : '')
+    content_tag( :li, link_to_action( to_action.capitalize, to_action, {} ),
+      :class=> (menu_action==to_action ? 'current' : ''))
   end
 
   def link_to_action( text, to_action, remote_opts={}, html_opts={})

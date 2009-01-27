@@ -18,7 +18,8 @@ GET THE CODE
 To get the latest code, you will need to use git:
 
     git clone git://github.com/wagn/wagn.git
-
+    git submodule init
+    git submodule update
 
     NOTE: We have switched all new development to git - maintaining the sync with svn proved too much maintenance.  You can still download Wagn from RubyForge.org, but we will only be posting major releases there.  The last release posted was Wagn 0.10+1.
 

@@ -4,15 +4,15 @@
     
     <%= slot.link_to_action down_arrow + less_fancy_title(card), 'line', 
 					{}, :class=>"line-link", :title=>"close #{card.name}" %> 
-  </div>
 
-  <% unless card.type=='Basic' %>
-    <span class="cardtype">
-      <%= link_to_page( Cardtype.name_for(card.type) ) %>
-    </span>
-  <% end %>
+	  <% unless card.type=='Basic' %>
+	    <span class="cardtype">
+	      <%= link_to_page( Cardtype.name_for(card.type) ) %>
+	    </span>
+	  <% end %>
 
-  <%= page_icon(card) %>
+	  <%= page_icon(card) %>
+	</div>
 
   
   <style type="text/css"><%= ".cardid-#{card.id} .content .title-#{css_name(card.name)} { display: none; }" %></style>

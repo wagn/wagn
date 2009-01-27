@@ -97,7 +97,8 @@ module LocationHelper
        <!--[if !lt IE 7]><![IGNORE[--><![IGNORE[]]>          
          <img class="down-arrow" alt="&darr;" src="/images/arrow_down.png" />
        <!--<![endif]-->
-     }
+     }   
+     %{<span class="down-arrow"></span>}
   end
 
   def right_arrow
@@ -109,6 +110,7 @@ module LocationHelper
          <img class="right-arrow" alt="&rarr;" src="/images/arrow_right.png" />
        <!--<![endif]-->
      }
+     %{<span class="right-arrow"></span>}
   end
   
   def page_icon(card)
@@ -123,7 +125,7 @@ module LocationHelper
          #{link_to_page image_tag('page.png', :title=>title), *args }
        <!--<![endif]-->
      }
-    
+     link_to_page %{<span class="page-icon"></span>}, *args
   end
 
   def flexlink( linktype, name, options )

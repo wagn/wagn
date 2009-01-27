@@ -58,13 +58,19 @@ class ApplicationController < ActionController::Base
   end
 
   def default_layout
-    request.xhr? ? nil : (
-      case params[:layout]
-        when nil; 'application'
-        when 'none'; nil
-        else params[:layout]
-      end
-    )
+    layout = nil
+    respond_to do |format|
+      format.html {
+        unless request.xhr?
+          layout = case params[:layout]
+            when nil; 'application'
+            when 'none'; nil
+            else params[:layout]
+          end
+        end
+      }
+    end
+    layout
   end
            
 
@@ -86,32 +92,28 @@ class ApplicationController < ActionController::Base
 
   # ------------------( permission filters ) -------
   def view_ok
-    unless @card.ok? :read
-      @deny = 'view'
-      render :controller=>'card', :action=>'denied', :status=>403
-      return false
-    end
+    @card.ok?( :read ) || render_denied( 'view' )
   end    
   
   def edit_ok
-    unless @card.ok? :edit
-      render :action=>'denied', :status=>403
-      return false
-    end
+    @card.ok?( :edit ) || render_denied( 'edit' )
   end
   
   def create_ok
     @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
     @skip_slot_header = true
     t = Card.class_for(@type) || Card::Basic
-    unless t.create_ok?
-      render :action=>'denied', :status=>403
-      return false
-    end
+    t.create_ok? || render_denied( 'create' )
   end
   
   def remove_ok
-    @card.ok! :delete
+    @card.ok!( :delete ) || render_denied( 'delete' )
+  end
+         
+  def render_denied(action = '')
+    @deny = action
+    render :controller=>'card', :action=>'denied', :status=>403
+    return false
   end
 
 
@@ -154,6 +156,7 @@ class ApplicationController < ActionController::Base
 
   # ----------( rendering methods ) -------------
 
+  # dormant code.  
   def render_jsonp( args )
     str = render_to_string args
     render :json=>( params[:callback] || "wadget") + '(' + str.to_json + ')'

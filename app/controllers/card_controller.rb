@@ -202,7 +202,7 @@ class CardController < ApplicationController
   end
 
   #---------( VIEWING CARDS )
-
+  
   def show
     # record this as a place to come back to.
     location_history.push(request.request_uri) if request.get?
@@ -221,17 +221,15 @@ class CardController < ApplicationController
       return render(:action=>action)
       #return redirect_to( :action=>action, :params=>{ 'card[name]'=>@card_name } )
     end                                                                                  
-    return unless view_ok
+    return unless view_ok # if view is not ok, it will render denied. return so we dont' render twice
     
-    # FIXME: I'm sure this is broken now that i've refactored..                               
-    respond_to do |format|
-      format.html { render :action=>'show' }
-      format.json {
-        @wadget = true
-        render_jsonp :partial =>'card/view', 
-          :locals=>{ :card=> @card, :context=>"main",:action=>"view"}
-      }
-    end
+    # rss causes infinite memory suck in rails 2.1.2.  
+    unless Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >=2
+      respond_to do |format|
+        format.rss { raise("Sorry, RSS is broken in rails < 2.2") }
+        format.html {}
+      end
+    end 
   end
 
   #---------------( tabs )

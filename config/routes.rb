@@ -1,4 +1,4 @@
-FORMAT_PATTERN = /html|json/
+FORMAT_PATTERN = /html|json|xml|rss/
 
 ActionController::Routing::Routes.draw do |map|
   #map.connect 'c/:controller/:action/:id'
@@ -27,7 +27,6 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'me',               :controller => 'card', :action=>'mine'
  
   map.connect ':controller/:action/:id/:attribute' 
-
   #map.connect '/card/new/:cardtype', :controller=>'card', :action=>'new'
   
   map.connect ':controller/:action/:id.:format',  :requirements=>{ :id=>/.*/, :format=>FORMAT_PATTERN  }
@@ -39,7 +38,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':controller', :action=>'index'
   
   map.connect '', :controller=>'card', :action=>'index'
-#  map.connect ':id/:view', :controller=> 'card', :action=>'show', :requirements=>{ :id=>/.*/} 
+  map.connect ':id.:format', :controller=> 'card', :action=>'show', :requirements=>{ :id=>/.*/, :format=>FORMAT_PATTERN} 
   map.connect ':id', :controller=> 'card', :action=>'show', :requirements=>{ :id=>/.*/} 
   map.connect '*id', :controller=>'application', :action=>'render_404'
   

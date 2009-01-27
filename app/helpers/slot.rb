@@ -85,9 +85,12 @@ module WagnHelper
           :position => position
         }
         
-        slot_head = '<!--[if !IE]><object><![endif]-->' +
-          %{<span #{attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join } >}
-        slot_head 
+        slot_attr = attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join
+        slot_head = %{<!--[if IE]> <div  #{slot_attr}>  <![endif]-->} +
+                    %{<![if !IE]> <object #{slot_attr}> <![endif]>} 
+        slot_foot = %{<!--[if IE]> </div> <![endif]-->} +
+                    %{<![if !IE]> </object> <![endif]>} 
+        
         if block_given? 
           # FIXME: the proc.binding call triggers lots and lots of:
           # slot.rb:77: warning: tried to create Proc object without a block 
@@ -107,10 +110,10 @@ module WagnHelper
       if render_slot
         if block_given?
           warn_level, $VERBOSE = $VERBOSE, nil;
-          @template.concat("</span></object>" , proc.binding)
+          @template.concat(slot_foot , proc.binding)
           $VERBOSE = warn_level
         else
-          result << "</span></object>"
+          result << slot_foot
         end
       end    
       result

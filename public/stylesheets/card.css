@@ -646,6 +646,8 @@ body.wagn .card-slot.line h2,
 .item-link,
 .item-name {
   display: block;
+  text-indent: -15px;
+  padding-left: 15px;
 }
 
 /*-----------( Image ) -----------*/

@@ -1,2 +1,2 @@
-<%= pointer_item(slot.card.content, (slot.item_format||'line')) %>
+<%= pointer_item(slot.card.content, (slot.item_format||'line'), pointer_type(slot.card)) %>
 <%= link_to_function 'add/edit', %{editTransclusion(this)} %>

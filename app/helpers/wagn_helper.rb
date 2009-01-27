@@ -203,9 +203,16 @@ module WagnHelper
   def span(*args, &block)  content_tag(:span, *args, &block);  end
   def div(*args, &block)   content_tag(:div, *args, &block);  end
 
-  def pointer_item(content,view)
-    content.gsub(/\[\[/,"<span class=\"item-#{view}\">{{").gsub(/\]\]/,"|#{view}}}</span>")
+  def pointer_item(content,view,type=nil)
+    content.gsub(/\[\[/,"<span class=\"item-#{view}\">{{").gsub(/\]\]/,"|#{view}#{type ? ';type:'+ type : ''}}}</span>") 
   end
+  
+  def pointer_type(card)
+    if card.tag and (opts = CachedCard.get_real("#{card.tag.name}+*options")) and (opts.type == 'Search')
+      opts.get_spec['type']
+    end
+  end
+  
   ## -----------
 
   def google_analytics

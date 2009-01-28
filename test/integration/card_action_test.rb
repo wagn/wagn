@@ -41,15 +41,6 @@ class CardActionTest < ActionController::IntegrationTest
   
 
 
-  def test_connect
-    given_cards( "Apple"=>"woot", "Orange" => "wot" )
-    apple, orange = Card["Apple"], Card["Orange"]
-
-    post( 'connection/create', :id => apple.id, :name=>orange.name  )
-    assert_response :success
-    assert_instance_of Card::Basic, Card["Apple+Orange"]
-  end
-
   def test_create_role_card
     post( 'card/create', :card=>{:content=>"test", :type=>'Role', :name=>"Editor"})
     assert_response :success

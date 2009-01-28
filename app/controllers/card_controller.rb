@@ -69,7 +69,16 @@ class CardController < ApplicationController
         args[:type] = ct.name 
       end
       
-    @card = Card.new args
+    @card = Card.new args                   
+    if request.xhr?
+      render_update_slot do |page,target|
+        # ie
+        # permissions
+        target.replace render_to_string :partial => 'card/new', :locals=>{ :card=>@card, :transcluding=>true }
+      end 
+    else
+      render :action=> 'new'
+    end
   end
   
   def new_of_type #so we could do /new/<type> shortcut
@@ -286,7 +295,7 @@ class CardController < ApplicationController
   # doesn't really seem to fit here.  may want to add new controller if methods accrue?        
   def add_field # for pointers only
     load_card! if params[:id]
-    render :partial=>'cardtypes/pointer/field', :locals=>params.merge({:card=>@card})
+    render :partial=>'cardtypes/pointer/field', :locals=>params.merge({:link=>"",:card=>@card})
   end
                                                     
 end

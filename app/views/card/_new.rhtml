@@ -1,0 +1,45 @@
+<% get_slot(card).wrap("new") do |slot| %>   
+	<% @title = "New Card" %>  
+
+	<div class="edit-area">
+	  <% form_remote_for :card, card, :url=>slot.url_for('card/create'), 
+					:html=>{ :class=>'form',:onsubmit=>slot.save_function	 } do |form| %>
+			<table>
+				<tr>
+					<td>
+						<span class="name-area">
+							<%= slot.name_field(form) %>
+					  </span> 
+					</td>
+				  <% if !request.xhr? and params[:card] and cardtype = params[:card][:type] and !card.broken_type %>
+				    <%= form.hidden_field :type %>
+				  <% else %>
+  					<td>
+  					  <span class="cardtype-area">
+  						  <%= slot.cardtype_field form, :onchange=>slot.update_cardtype_function(   
+  						        :url=>slot.url_for('card/new'), :update=>slot.id, 			    
+  						        :with=>"Form.serialize(getSlotElement(this,'form'))" 
+  						  ) %>
+  					  </span>
+  					</td>
+  				<% end %>
+				</tr>
+			</table>
+			<div class="editor">
+				<% if card.hard_template %>
+				  <%- slot.form = form %>
+  			  <%= slot.render(:multi_edit)%>
+				<% else %>
+					<%= slot.content_field(form) %>
+				<% end %>
+			</div>
+		  <br/>
+			<%= button_to_function 'Create', 
+						"this.form.onsubmit()", :id=>'create-button'  %>
+	    <%= button_to_function 'Cancel',
+						"document.location.href='#{previous_location}'" %> 
+		<% end %>
+	</div>
+	<%= slot.notice %>
+<% end %>
+

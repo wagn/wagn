@@ -12,7 +12,7 @@ require File.join(File.dirname(__FILE__), 'boot')
                           
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence those specified here
-  #RAILS_GEM_VERSION = '2.1.2' unless defined? RAILS_GEM_VERSION  
+  RAILS_GEM_VERSION_VERSION = '2.1.2' unless defined? RAILS_GEM_VERSION  
   # Skip frameworks you're not going to use
   config.frameworks -= [ :action_web_service ]
 

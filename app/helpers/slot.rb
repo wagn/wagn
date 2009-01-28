@@ -104,8 +104,11 @@ module WagnHelper
       end
       
       if block_given? 
-        args = ((Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >= 2)  ? nil : proc.binding )
-        @template.output_buffer ||= ''   # fixes error in CardControllerTest#test_changes
+        args = proc.binding
+        if (Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >= 2)
+          args = nil
+          @template.output_buffer ||= ''   # fixes error in CardControllerTest#test_changes
+        end
         @template.concat open_slot, *args
         yield(self)
         @template.concat close_slot, *args

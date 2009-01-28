@@ -204,7 +204,7 @@ module WagnHelper
   def div(*args, &block)   content_tag(:div, *args, &block);  end
 
   def pointer_item(content,view)
-    content.gsub(/\[\[/,"<span class=\"item-#{view}\">{{").gsub(/\]\]/,"|#{view}}}</span>")
+    content.gsub(/\[\[/,"<li class=\"item-#{view}\">{{").gsub(/\]\]/,"|#{view}}}</li>")
   end
   ## -----------
 

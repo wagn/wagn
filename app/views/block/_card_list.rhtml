@@ -27,13 +27,14 @@
 <% if cards.empty? %>
   <div class="search-no-results faint">Search returned no results</div>
 <% else %>    
-	<span class="search-result-list">
-	  <%= paging %>
+  <%= paging %>
+	<ul class="search-result-list">
 		<% cards.each do |c| %>     	
-			<span class="item-<%= view %>"><%= get_slot(c).render(view) %></span>
+			<li class="item-<%= view %>"><%= get_slot(c).render(view) %></li>
 		<% end %>     
-	  <%= paging %>
-	</span>
+	</ul>
+	<%= paging %>
+  
 <% end %>
 
 

@@ -645,8 +645,20 @@ body.wagn .card-slot.line h2,
 
 /*---------(Search & Pointer) --------*/
 
-.item-link,
-.item-name {
+ul.pointer-list,
+ul.search-result-list {
+  list-style: none;
+  padding: 5px 10px;
+  margin: 0;
+}
+
+ul.pointer-list li,
+ul.search-result-list li {
+  margin: 0;
+}
+
+li.item-link,
+li.item-name {
   display: block;
   text-indent: -15px;
   padding-left: 15px;

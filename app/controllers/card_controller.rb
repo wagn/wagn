@@ -292,10 +292,3 @@ class CardController < ApplicationController
 end
 
 
-=begin  
-  def create_template
-    @card = Card.create! :name=>@card.name+"+*<>template"
-    render_update_slot_element 'template',  
-      render_to_string( :inline=>%{<%= get_slot.render(:view, :wrap=>true, :add_javascript=>true ) %>})
-  end
-=end

@@ -33,17 +33,18 @@ module LocationHelper
    # -----------( urls and redirects from application.rb) ----------------
 
        
+  # FIXME: missing test
   def url_for_page( title, opts={} )   
-    # shaved order of magnitude off footer rendering
-    # vs. url_for( :action=> .. )
-    
+    format = (opts[:format] ? "."+opts.delete(:format)  : "")
     vars = ''
     if !opts.empty?
       pairs = []
       opts.each_pair{|k,v| pairs<< "#{k}=#{v}"}
       vars = '?' + pairs.join('&')
     end
-    "/wagn/#{title.to_url_key}#{vars}" 
+    # shaved order of magnitude off footer rendering
+    # vs. url_for( :action=> .. )
+    "/wagn/#{title.to_url_key}#{format}#{vars}" 
   end  
   
   def url_for_card( options={} )

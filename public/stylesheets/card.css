@@ -32,6 +32,7 @@
   font-weight: bold;
   font-size: 13px;
   padding: 2px 0px 2px 25px;
+  white-space: nowrap;
 }
 
 .card-slot .right-arrow {
@@ -394,20 +395,19 @@ div:hover.card-footer .card-links{
   margin-top: 5px;
   color: #444;
 }
-.card-slot .content,
-.card-slot .revision,
-.card-slot .transcluded .paragraph .content  { 
+.card-slot .open-content, /* paragraph content */
+.card-slot .revision {
   display: block;
   padding: 5px 15px 10px 15px;
 }
-.card-slot .transcluded .content .card-slot.paragraph {
-  display: block;
-  padding: 0;
-}
+
 .card-slot .instruction {
   border-left: 0px;
   border-right: 0px;
 }
+
+.card-slot h1.headroom,
+.card-slot h2.headroom,
 .card-slot .headroom h1,
 .card-slot .headroom h2 {
   margin-top: 10px;
@@ -467,22 +467,13 @@ body.wagn .card-slot.recent-changes h2 {
   padding: 0px !important;
   -moz-border-radius: 8px;
 }
-.card-slot.paragraph .content {
-  display: block;
+
 /* this was occasionally busting auto-completes on pointers:
   overflow: auto;
 */
-}
-/* moving to transclusion handling
-.card-slot.paragraph .content img  {
-  padding: 5px 0px 5px 10px;
-}
-.card-slot.paragraph .edit-area img  {
-  padding: 0px;
-}
-*/
-  /* was busting when listed before .paragraph .content */
-.card-slot .transcluded .content {
+
+  /* means content view */
+.card-slot .content-content {
   display: inline;
   padding: 0;
 }
@@ -654,8 +645,20 @@ body.wagn .card-slot.line h2,
 
 /*---------(Search & Pointer) --------*/
 
-.item-link,
-.item-name {
+ul.pointer-list,
+ul.search-result-list {
+  list-style: none;
+  padding: 5px 10px;
+  margin: 0;
+}
+
+ul.pointer-list li,
+ul.search-result-list li {
+  margin: 0;
+}
+
+li.item-link,
+li.item-name {
   display: block;
   text-indent: -15px;
   padding-left: 15px;

@@ -55,7 +55,7 @@ module WagnHelper
     end
 
     def wrap_content( content="" )
-       %{<span class="content editOnDoubleClick">} + content.to_s + %{</span>}
+       %{<span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick">} + content.to_s + %{</span>}
     end    
     
 
@@ -103,8 +103,11 @@ module WagnHelper
       end
       
       if block_given? 
-        args = ((Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >= 2)  ? nil : proc.binding )
-        @template.output_buffer ||= ''   # fixes error in CardControllerTest#test_changes
+        args = proc.binding
+        if (Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >= 2)
+          args = nil
+          @template.output_buffer ||= ''   # fixes error in CardControllerTest#test_changes
+        end
         @template.concat open_slot, *args
         yield(self)
         @template.concat close_slot, *args
@@ -184,6 +187,17 @@ module WagnHelper
           link_to_page card.name, card.name, opts
         when :name;   card.name
         when :linkname;  Cardname.escape(card.name)
+        when :titled;
+          content_tag( :h1, less_fancy_title(card.name) ) + self.render( :content )
+          
+        when :rss_titled;                                                         
+          # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
+          content_tag( :h2, less_fancy_title(card.name) ) + self.render( :expanded_view_content )
+
+        when :rss_change
+          w_action = self.requested_view = 'content'
+          render_partial('card/change')
+          
         when :change;
           w_action = self.requested_view = 'content'
           w_content = render_partial('card/change')

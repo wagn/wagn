@@ -1,7 +1,7 @@
 <% get_slot.wrap(:related) do |slot| %>
 	<%= slot.header %>
 	<%= slot.notice %>  
-	<div class="content related headroom">
+	<div class="open-content related headroom">
 		<h2>Self</h2>
 		<% @card.pieces.each do |particle| %>
 		  <%= render_card particle, :closed %>

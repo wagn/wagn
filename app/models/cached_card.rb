@@ -178,6 +178,8 @@ class CachedCard
   def type()  get('type') { card.type } end 
   def content() get('content') { card.content } end
   def extension_type() get('extension_type') { card.extension_type } end
+  def created_at() get('created_at') { card.created_at } end
+  def updated_at() get('updated_at') { card.updated_at } end
   def read_permission() 
     get('read_permission') { p = card.who_can(:read);  "#{p.class.to_s}:#{p.id}" }
   end       

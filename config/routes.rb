@@ -22,6 +22,7 @@ ActionController::Routing::Routes.draw do |map|
   #/DEPRECATED   
 
   map.connect 'recent',           :controller => 'card', :action=>'show', :id=>'*recent_changes', :view=>'content'
+  map.connect 'recent.:format',   :controller => 'card', :action=>'show', :id=>'*recent_changes', :view=>'content', :requirements=>{ :format=>FORMAT_PATTERN }
   map.connect 'search/:_keyword', :controller => 'card', :action=>'show', :id=>'*search',         :view=>'content'
   map.connect 'new/:type',        :controller => 'card', :action=>'new_of_type'
   map.connect 'me',               :controller => 'card', :action=>'mine'

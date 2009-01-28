@@ -11,6 +11,7 @@ xml.rss :version => "2.0" do
     else 
       [@card]
     end
+    view_changes = (@card.name=='*recent changes')
     
     cards.each do |card|
       xml.item do 
@@ -19,9 +20,9 @@ xml.rss :version => "2.0" do
           :open => :rss_titled,
           :content => :expanded_view_content,
           :closed => :link
-        })
-        xml.description slot.render( :expanded_view_content )
-        xml.pubDate Time.now #card.created_at.to_s(:rfc822)
+        })                    
+        xml.description slot.render( view_changes ? :rss_change : :expanded_view_content )
+        xml.pubDate card.updated_at.to_s(:rfc822) 
         xml.link url_for_page(card.name)
       end
     end

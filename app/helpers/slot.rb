@@ -191,6 +191,10 @@ module WagnHelper
           # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
           content_tag( :h2, less_fancy_title(card.name) ) + self.render( :expanded_view_content )
 
+        when :rss_change
+          w_action = self.requested_view = 'content'
+          render_partial('card/change')
+          
         when :change;
           w_action = self.requested_view = 'content'
           w_content = render_partial('card/change')

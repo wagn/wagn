@@ -61,6 +61,6 @@ Now that your Wagn is running, read configuration to set up its home page, logos
 PRODUCTION
 
 
-To run Wagn in production, you need to provide a local.css placeholder, and compile your js and css assets. this is done as follows:
+To run Wagn in production, you need to compile your js and css assets. this is done as follows:
 
 rake RAILS_ENV=production asset:packager:build_all

@@ -405,6 +405,9 @@ div:hover.card-footer .card-links{
   border-left: 0px;
   border-right: 0px;
 }
+
+.card-slot h1.headroom,
+.card-slot h2.headroom,
 .card-slot .headroom h1,
 .card-slot .headroom h2 {
   margin-top: 10px;

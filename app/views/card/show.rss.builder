@@ -15,13 +15,12 @@ xml.rss :version => "2.0" do
     cards.each do |card|
       xml.item do 
         xml.title card.name
-
         slot = get_slot(card, "main_1", "view", :transclusion_view_overrides => {
-          :open => :content,
+          :open => :rss_titled,
+          :content => :expanded_view_content,
           :closed => :link
         })
-        xml.description slot.render(:content )
-        
+        xml.description slot.render( :expanded_view_content )
         xml.pubDate Time.now #card.created_at.to_s(:rfc822)
         xml.link url_for_page(card.name)
       end

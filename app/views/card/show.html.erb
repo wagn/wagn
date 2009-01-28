@@ -1,15 +1,15 @@
-<%-
+<%- 
+view = render_arg(:view) 
+view = :open if [:closed, :line,:open,:card,:view, nil].member?(view)
+
 slot = get_slot
 if item = render_arg(:item)
   slot.item_format = item
 end
 %>
 
-<style type="text/css">
-.line .title-<%= css_name(@card.name) %>, .line .link-<%= css_name(@card.name) %> { display: none !important; }
-.paragraph .title-<%= css_name(@card.name) %>, .paragraph .link-<%= css_name(@card.name) %> { font-weight: normal; }
-</style>
+<%= slot.render(view, :is_slot => !request.xhr?, :add_javascript=>true ) %>
 
-
-<% @title = @card.name %>  
-<%= slot.render((render_arg(:view) || :open), :wrap=>!request.xhr?, :add_javascript=>true ) %>
+<% if request.xhr? && view == :open %>
+  <%= javascript_tag("Wagn.line_to_paragraph(getSlotFromContext('#{@context}'))") %>
+<% end %>

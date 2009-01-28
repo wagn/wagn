@@ -74,7 +74,7 @@ class CardController < ApplicationController
       render_update_slot do |page,target|
         # ie
         # permissions
-        target.replace render_to_string :partial => 'card/new', :locals=>{ :card=>@card, :transcluding=>true }
+        target.replace render_to_string :partial => 'card/new', :locals=>{ :card=>@card }
       end 
     else
       render :action=> 'new'
@@ -147,7 +147,7 @@ class CardController < ApplicationController
     end
 
     return render_card_errors(@card) unless @card.errors.empty?
-    render_update_slot render_to_string(:action=>'view')
+    render_update_slot render_to_string(:action=>'show')
   end
 
   def quick_update
@@ -175,14 +175,14 @@ class CardController < ApplicationController
     @comment.gsub! /\n/, '<br/>'
     @card.comment = "<hr>#{@comment}<br/><p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
     @card.save!   
-    view = render_to_string(:action=>'view')
+    view = render_to_string(:action=>'show')
     render_update_slot view
   end
 
   def rollback
     load_card_and_revision
     @card.update_attributes! :content=>@revision.content
-    render :action=>'view'
+    render :action=>'show'
   end  
 
   #------------( deleting )
@@ -243,10 +243,14 @@ class CardController < ApplicationController
 
   #---------------( tabs )
 
+  def view
+    render :action=>'show'
+  end
+
   def to_view
     params[:view]='open'
     render_update_slot do |page, target|
-      target.update render_to_string(:action=>'view')
+      target.update render_to_string(:action=>'show')
 #      page << "Wagn.line_to_paragraph(#{slot.selector})"
     end
   end
@@ -297,14 +301,5 @@ class CardController < ApplicationController
     load_card! if params[:id]
     render :partial=>'cardtypes/pointer/field', :locals=>params.merge({:link=>"",:card=>@card})
   end
-                                                    
 end
 
-
-=begin  
-  def create_template
-    @card = Card.create! :name=>@card.name+"+*<>template"
-    render_update_slot_element 'template',  
-      render_to_string( :inline=>%{<%= get_slot.render(:view, :wrap=>true, :add_javascript=>true ) %>})
-  end
-=end

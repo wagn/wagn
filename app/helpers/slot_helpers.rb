@@ -43,8 +43,8 @@ module SlotHelpers
     div(:class=>'submenu') do
       [[ :content,    'card/edit',          true                      ],
        [ :name,       'card/edit_name',     true                      ],
-       [ :type,       'card/edit_type',     !card.type_template?      ],
-       [ :inclusions, 'card/edit',          (!card.out_transclusions.empty? && !card.template? && !card.hard_template),         {:inclusions=>true} ]
+       [ :type,       'card/edit_type',     !(card.type_template? || (card.type=='Cardtype' && !Card.search(:type=>card.name).empty?))            ],
+       [ :inclusions, 'card/edit',          !(card.out_transclusions.empty? || card.template? || card.hard_template),         {:inclusions=>true} ]
        ].map do |key,partial,ok,args|
 
         link_to_remote( key, 

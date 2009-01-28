@@ -18,7 +18,7 @@
     <% if first > 1 %>
       <%- s[:offset]= [offset-limit,0].max %>
     	<%= link_to_remote image_tag('prev-page.png'), :update=>slot.id,
-    				:url=>slot.url_for('transclusion/view', params.merge(s)) 
+    				:url=>slot.url_for('card/view', params.merge(s)) 
     	%>
     <% end %>
     
@@ -26,7 +26,7 @@
     <% if last < total %>
       <%- s[:offset]= last %>
     	<%= link_to_remote image_tag('next-page.png'), :update=>slot.id,
-    	 			:url=>slot.url_for('transclusion/view', params.merge(s))
+    	 			:url=>slot.url_for('card/view', params.merge(s))
     	 %>
     <% end %>     
   </span>

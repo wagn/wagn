@@ -55,7 +55,7 @@ module WagnHelper
     end
 
     def wrap_content( content="" )
-       %{<span class="content editOnDoubleClick">} + content.to_s + %{</span>}
+       %{<span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick">} + content.to_s + %{</span>}
     end    
     
 

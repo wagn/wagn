@@ -29,16 +29,6 @@ class CardController < ApplicationController
        
 
   public    
-  # weird that this is public
-  def cache_action?(action_name)
-    if !flash[:notice].blank? || !flash[:warning].blank? || !flash[:error].blank?
-      #warn "flash present"
-      return false 
-    else 
-      true
-    end
- 	end
-   
 
   #----------( Special cards )
   
@@ -54,10 +44,34 @@ class CardController < ApplicationController
     redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(User.current_user.card.name)
   end
 
-  def my_name                                              
-    self.class.layout nil
-    render :text=>User.current_user.card.name
-    self.class.layout :default_layout
+
+
+  #---------( VIEWING CARDS )
+  
+  def show
+    # record this as a place to come back to.
+    location_history.push(request.request_uri) if request.get?
+    
+    @card_name = Cardname.unescape(params['id'] || '')
+    if (@card_name.nil? or @card_name.empty?) then    
+      @card_name = System.site_name
+    end             
+    @card = CachedCard.get(@card_name)
+        
+    if @card.new_record? && ! @card.phantom?
+      action =  Cardtype.createable_cardtypes.empty? ? :missing : :new
+      params[:card]={:name=>@card_name, :type=>params[:type]}
+      return self.send(action) #return render(:action=>action)
+    end                                                                                  
+    return unless view_ok # if view is not ok, it will render denied. return so we dont' render twice
+    
+    # rss causes infinite memory suck in rails 2.1.2.  
+    unless Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >=2
+      respond_to do |format|
+        format.rss { raise("Sorry, RSS is broken in rails < 2.2") }
+        format.html {}
+      end
+    end 
   end
 
   #----------------( MODIFYING CARDS )
@@ -65,9 +79,7 @@ class CardController < ApplicationController
   #----------------( creating)                                                               
   def new
     args = (params[:card] ||= {})
-    if params[:cardtype]   # for card/new  shortcut
-      args[:type] ||= params[:cardtype]
-    end
+    args[:type] ||= params[:cardtype] # for card/new  shortcut
     if args[:type]
       if args[:type].blank?
         args.delete(:type) 
@@ -215,34 +227,7 @@ class CardController < ApplicationController
     end
   end
 
-  #---------( VIEWING CARDS )
-  
-  def show
-    # record this as a place to come back to.
-    location_history.push(request.request_uri) if request.get?
-    
-    @card_name = Cardname.unescape(params['id'] || '')
-    if (@card_name.nil? or @card_name.empty?) then    
-      @card_name = System.site_name
-      #@card_name = System.deck_name
-    end             
-    @card = CachedCard.get(@card_name)
-        
-    if @card.new_record? && ! @card.phantom?
-      action =  Cardtype.createable_cardtypes.empty? ? :missing : :new
-      params[:card]={:name=>@card_name, :type=>params[:type]}
-      return self.send(action) #return render(:action=>action)
-    end                                                                                  
-    return unless view_ok # if view is not ok, it will render denied. return so we dont' render twice
-    
-    # rss causes infinite memory suck in rails 2.1.2.  
-    unless Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >=2
-      respond_to do |format|
-        format.rss { raise("Sorry, RSS is broken in rails < 2.2") }
-        format.html {}
-      end
-    end 
-  end
+
 
   #---------------( tabs )
 
@@ -250,10 +235,6 @@ class CardController < ApplicationController
     render :action=>'show'
   end   
   
-  def open
-    render :action=>'show'
-  end
-
   def to_view
     params[:view]='open'
     render_update_slot do |page, target|
@@ -277,6 +258,14 @@ class CardController < ApplicationController
     load_card_and_revision
     @show_diff = (params[:mode] != 'false')
     @previous_revision = @card.previous_revision(@revision)
+  end
+
+
+
+  #------------------( views )
+
+  def open
+    render :action=>'show'
   end
     
   [:open_missing, :closed_missing].each do |method|

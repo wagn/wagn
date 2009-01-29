@@ -115,7 +115,9 @@ class URIChunk < Chunk::Abstract
     # If the last character matched by URI pattern is in ! or ), this may be part of the markup,
     # not a URL. We should handle it as such. It is possible to do it by a regexp, but 
     # much easier to do programmatically
-    
+    [@original_scheme, @user, @host, @port, @path, @query, @fragment, @link_text].compact.map do |section|
+      section.gsub! /(&nbsp;)*$/, ''
+    end    
     last_char = @link_text[-1..-1]
     
 #    if last_char == ')' or last_char == '!'

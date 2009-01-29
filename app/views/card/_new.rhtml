@@ -15,10 +15,10 @@
 
 	<div class="edit-area">
 	  <% form_remote_for :card, card, :url=>slot.url_for('card/create'), 
-					422 => "#{slot.selector}.update( request.responseText )",
-					302 => "document.location.href=request.responseText; Wagn.Messenger.alert('Successfully created card' )",
-					200 => "#{slot.selector}.update( request.responseText )", 
-					:html=>{ :class=>'form',:onsubmit=>slot.save_function	 } do |form| %>
+					422 => slot.js.update,
+					302 => slot.js.redirect( 'Successfully created card' ),
+					200 => slot.js.update, 
+					:html=>{ :class=>'form',:onsubmit=>slot.save_function	} do |form| %>
 			<table>
 				<tr>
 					<td>

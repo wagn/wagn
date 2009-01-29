@@ -58,7 +58,9 @@ module WagnHelper
        %{<span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick">} + content.to_s + %{</span>}
     end    
     
-
+    def js
+      @js ||= SlotJavascript.new(self)
+    end
            
     # FIXME: passing a block seems to only work in the templates and not from
     # internal slot calls, so I added the option passing internal content which

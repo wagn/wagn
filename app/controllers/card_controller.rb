@@ -4,7 +4,7 @@ class CardController < ApplicationController
   layout :default_layout
   cache_sweeper :card_sweeper
 
-  before_filter :create_ok, :only=>[ :new, :create, :new_of_type ]
+  before_filter :create_ok, :only=>[ :new, :create ]
 
   before_filter :load_card!, :only=>[
     :changes, :comment, :denied, :edit, :edit_conflict, :edit_name, 
@@ -14,7 +14,6 @@ class CardController < ApplicationController
 
   before_filter :load_card_with_cache, :only => [:line, :view, :to_view ]
   
-  #before_filter :view_ok,   :only=>[ :line, :view, :show ]
   before_filter :edit_ok,   :only=>[ :edit, :edit_name, :edit_type, :update, :rollback, :save_draft] 
   before_filter :remove_ok, :only=>[ :remove ]
   
@@ -66,11 +65,16 @@ class CardController < ApplicationController
   #----------------( creating)                                                               
   def new
     args = (params[:card] ||= {})
-      if (args[:type] && !args[:type].blank?) && ct=CachedCard.get_real(args[:type])
+    if params[:cardtype]   # for card/new  shortcut
+      args[:type] ||= params[:cardtype]
+    end
+    if args[:type]
+      if args[:type].blank?
+        args.delete(:type) 
+      elsif ct=CachedCard.get_real(args[:type])    
         args[:type] = ct.name 
-      else
-        args.delete(:type)
       end
+    end
       
     @card = Card.new args                   
     if request.xhr?
@@ -84,12 +88,6 @@ class CardController < ApplicationController
     end
   end
   
-  def new_of_type #so we could do /new/<type> shortcut
-    params[:card] = {:type => params[:type]}   
-    new
-    render :action=>'new'
-  end
-      
   def create
     @card = Card.create! params[:card]
     if params[:multi_edit] and params[:cards]
@@ -233,9 +231,7 @@ class CardController < ApplicationController
     if @card.new_record? && ! @card.phantom?
       action =  Cardtype.createable_cardtypes.empty? ? :missing : :new
       params[:card]={:name=>@card_name, :type=>params[:type]}
-      new
-      return render(:action=>action)
-      #return redirect_to( :action=>action, :params=>{ 'card[name]'=>@card_name } )
+      return self.send(action) #return render(:action=>action)
     end                                                                                  
     return unless view_ok # if view is not ok, it will render denied. return so we dont' render twice
     

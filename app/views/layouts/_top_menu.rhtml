@@ -23,8 +23,6 @@
   <span id="logging">
      <% if logged_in? %>
         <%= link_to "My Card: #{current_user.card.name}", '/me', :id=>'my-card-link' %>
-        <%# link_to "My Card: <span id=\"user_name\"></span>", '/me', :id=>'my-card-link' %>
-				<%# javascript_tag("new Ajax.Updater('user_name', '/card/my_name', {asynchronous:true, evalScripts:true});") %>
 
         <% if Card::User.create_ok? %>
   	      <%= link_to 'Invite a Friend', :controller=>'account', :action=>'invite' %>

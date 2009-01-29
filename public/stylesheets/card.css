@@ -34,6 +34,12 @@
   padding: 2px 0px 2px 25px;
   white-space: nowrap;
 }
+.card-slot .new-name .title {
+  padding-left: 2px;
+}
+.card-slot .new-type {
+  float: right;
+}
 
 .card-slot .right-arrow {
   background: url(/images/arrow_right.gif) no-repeat left;
@@ -59,6 +65,7 @@ html>body .card-slot .page-icon {
   font-style: italic;
   font-size: 10px;
 }
+.card-slot .card-header,
 .card-slot .card-header a,
 .card-slot .card-header .title a,
 .card-slot .card-header .title a:link,
@@ -249,9 +256,9 @@ div:hover.card-footer .card-links{
   background: white;
   border: 0px;
 }
-.card-slot .cardtype-area .cardtype {
+.card-slot .new-type .cardtype {
   font-size: 14px;
-  margin-left: 20px;
+  float:right;
 }
 .card-slot .edit-area p {
   padding: 2px;

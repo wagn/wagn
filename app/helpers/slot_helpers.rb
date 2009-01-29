@@ -153,13 +153,12 @@ module SlotHelpers
   end
 
   def name_field(form,options={})
-    text = %{<span class="label"> card name:</span>\n}
-    text << form.text_field( :name, {:size=>40, :class=>'field card-name-field'}.merge(options))
+    form.text_field( :name, {:size=>40, :class=>'field card-name-field'}.merge(options))
   end
 
 
   def cardtype_field(form,options={})
-    text = %{<span class="label"> card type:</span>\n} 
+    text = %{<span class="label"> type:</span>\n} 
     text << @template.select_tag('card[type]', cardtype_options_for_select(card.type), options) 
   end
 

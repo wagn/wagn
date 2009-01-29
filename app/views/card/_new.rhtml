@@ -1,50 +1,56 @@
 <% get_slot(nil).wrap("new", :is_slot=>true) do |slot| %>   
 	<% @title = "New Card" %>  
 
-	<div class="edit-area">
 	  <% form_remote_for :card, card, :url=>slot.url_for('card/create'), :update=>slot.id,
 					:html=>{ :class=>'form',:onsubmit=>slot.save_function	 } do |form| %>
-			<table>
-				<tr>
-					<td>
+			<div class="card-header">
+			  <% if !request.xhr? and params[:card] and cardtype = params[:card][:type] and !card.broken_type %>
+			    <%= form.hidden_field :type %>
+			  <% else %>
+  			  <span class="new-type">
+					  <%= slot.cardtype_field form, :onchange=>slot.update_cardtype_function(   
+					        :url=>slot.url_for('card/new'), :update=>slot.id, 			    
+					        :with=>"Form.serialize(getSlotElement(this,'form'))" 
+					  ) %>
+				  </span>
+				<% end %>
+			  
+			  <span class="new-name">
+				  <span class="label">name:</span>
+          
+				  <% if @card.name.blank? || Card[@card.name]%>
 						<span class="name-area">
 							<%= slot.name_field(form) %>
-					  </span> 
-					</td>
-				  <% if !request.xhr? and params[:card] and cardtype = params[:card][:type] and !card.broken_type %>
-				    <%= form.hidden_field :type %>
-				  <% else %>
-  					<td>
-  					  <span class="cardtype-area">
-  						  <%= slot.cardtype_field form, :onchange=>slot.update_cardtype_function(   
-  						        :url=>slot.url_for('card/new'), :update=>slot.id, 			    
-  						        :with=>"Form.serialize(getSlotElement(this,'form'))" 
-  						  ) %>
-  					  </span>
-  					</td>
-  				<% end %>
-				</tr>
-			</table>
-			<div class="editor">
-				<% if card.hard_template %>
-				  <%- slot.form = form %>
-  			  <%= slot.render(:multi_edit)%>
-				<% else %>
-					<%= slot.content_field(form) %>
-				<% end %>
+					  </span>
+					<% else %>
+					  <%= form.hidden_field :name %>
+					  <span class="title">
+  					  <%= less_fancy_title(@card.name) %>
+  					</span>
+					<% end %> 
+				</span>
 			</div>
-		  <br/>
-		  <%= hidden_field_tag :view, params[:requested_view] || :open %>
-			<%= button_to_function 'Create', 
-						"this.form.onsubmit()", :id=>'create-button'  %>
+			<div class="edit-area">
+  			<div class="editor">
+  				<% if card.hard_template %>
+  				  <%- slot.form = form %>
+    			  <%= slot.render(:multi_edit)%>
+  				<% else %>
+  					<%= slot.content_field(form) %>
+  				<% end %>
+  			</div>
+  		  <%= hidden_field_tag :view, params[:requested_view] || :open %>
+  			<%= button_to_function 'Create', 
+  						"this.form.onsubmit()", :id=>'create-button'  %>
 						
-      <% if request.xhr? %>						
-				<%= slot.button_to_action 'Cancel', :open_missing, { :before=>slot.cancel_function }  %> 
-			<% else %>
-		    <%= button_to_function 'Cancel',"document.location.href='#{previous_location}'" %> 
-			<% end %>
+        <% if request.xhr? %>						
+  				<%= slot.button_to_action 'Cancel', :open_missing, { :before=>slot.cancel_function }  %> 
+  			<% else %>
+  		    <%= button_to_function 'Cancel',"document.location.href='#{previous_location}'" %> 
+  			<% end %>
+  		</div>
 		<% end %>
-	</div>
+
 	<%= slot.notice %>
 <% end %>
 

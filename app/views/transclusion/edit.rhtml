@@ -1,4 +1,4 @@
-<% get_slot.wrap('transclusion', :is_slot =>@wrap) do |slot| %>  
+<% get_slot.wrap('transclusion', :add_slot =>@wrap) do |slot| %>  
 
   <% if inst = (card.new_record? ? card.new_instructions : card.edit_instructions) %>
      <%= render( :partial=> '/card/instructions', :locals=>{ :instructions=> inst } ) %>

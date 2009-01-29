@@ -88,7 +88,10 @@ class ApplicationController < ActionController::Base
   def renderer
     Renderer.new
   end
-  
+     
+  def main_card?
+    @context == 'main_1'
+  end    
 
   # ------------------( permission filters ) -------
   def view_ok

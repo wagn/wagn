@@ -44,27 +44,29 @@ class CardController < ApplicationController
     redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(User.current_user.card.name)
   end
 
-
-
   #---------( VIEWING CARDS )
-  
+    
   def show
     # record this as a place to come back to.
     location_history.push(request.request_uri) if request.get?
-    
+
     @card_name = Cardname.unescape(params['id'] || '')
     if (@card_name.nil? or @card_name.empty?) then    
       @card_name = System.site_name
+      #@card_name = System.deck_name
     end             
     @card = CachedCard.get(@card_name)
-        
+
     if @card.new_record? && ! @card.phantom?
-      action =  Cardtype.createable_cardtypes.empty? ? :missing : :new
       params[:card]={:name=>@card_name, :type=>params[:type]}
-      return self.send(action) #return render(:action=>action)
+      if Cardtype.createable_cardtypes.empty? 
+        return render :action=>'missing'
+      else
+        return self.new
+      end
     end                                                                                  
     return unless view_ok # if view is not ok, it will render denied. return so we dont' render twice
-    
+
     # rss causes infinite memory suck in rails 2.1.2.  
     unless Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >=2
       respond_to do |format|
@@ -79,7 +81,10 @@ class CardController < ApplicationController
   #----------------( creating)                                                               
   def new
     args = (params[:card] ||= {})
-    args[:type] ||= params[:cardtype] # for card/new  shortcut
+    args[:type] ||= params[:cardtype] # for /new/:cardtype shortcut in routes
+    
+    # don't pass a blank type as argument
+    # look up other types in case Cardtype name is given instead of ruby type
     if args[:type]
       if args[:type].blank?
         args.delete(:type) 
@@ -87,6 +92,16 @@ class CardController < ApplicationController
         args[:type] = ct.name 
       end
     end
+
+    # if given a name of a card that exists, got to edit instead
+    if args[:name] and card = CachedCard.get( args[:name] ) and !card.new_record?
+      if request.xhr?
+        return render_update_slot do |page,target|
+          target.replace "<span class=\"faint\">Oops, <strong>#{args[:name]}</strong> was recently created! try reloading the page to edit it</span>"
+        end
+      end
+    end
+
       
     @card = Card.new args                   
     if request.xhr?
@@ -100,28 +115,29 @@ class CardController < ApplicationController
     end
   end
   
-  def create
-    @card = Card.create! params[:card]
+  def create                 
+    @card = Card.create params[:card]
     if params[:multi_edit] and params[:cards]
       User.as(:admin) if @card.type == 'InvitationRequest'
       @card.multi_update(params[:cards])
-    end  
-    return render_card_errors(@card) unless @card.errors.empty?
+    end   
+
     # double check to prevent infinite redirect loop
     fail "Card creation failed"  unless Card.find_by_name( @card.name )
-    # FIXME: it would make the tests nicer if we did a real redirect instead of rjs
-    #render :update do |page|
-    #  page.redirect_to url_for_page(@card.name)
-    #end
-    # render_update_slot do |page, target|
-    #   target.replace render_to_string :action=>'show'
-    # end
-    render :action=>'show'
+    
+    if !@card.errors.empty?
+      render :action=>'new', :status => 422
+    elsif main_card?   
+      render :text=> url_for_page(@card.name), :status=>302
+    else
+      render :action=>'show'
+    end
   end 
   
   #--------------( editing )
   
   def edit 
+    @add_slot = nil
     if params[:card] and @card.type=params[:card][:type]  
       @card.save!
       @card = Card.find(card.id)
@@ -287,7 +303,6 @@ class CardController < ApplicationController
     
   #-------- ( MISFIT METHODS )  
     
-  ### FIXME -- seems like this should be in the cardname controller  
   def auto_complete_for_card_name
     complete = ''
     params.keys.each do |key|

@@ -10,7 +10,7 @@ end
 %>
 
 
-<%= slot.render(view, :is_slot => !request.xhr?, :add_javascript=>true, :view=>view, :tname=>nil ) %>
+<%= slot.render(view, :add_slot => !request.xhr?, :add_javascript=>true, :view=>view, :tname=>nil ) %>
 
 <% if request.xhr? && view == :open %>
   <%= javascript_tag("Wagn.line_to_paragraph(getSlotFromContext('#{@context}'))") %>

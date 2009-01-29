@@ -1,8 +1,9 @@
 module SlotHelpers  
+  
+  
   def render_diff(card, *args)
     @renderer.render_diff(card, *args)
   end
- 
   
   def notice 
     %{<span class="notice">#{controller.notice}</span>}
@@ -27,7 +28,7 @@ module SlotHelpers
    
   def selector(area="")   
     "getSlotFromContext('#{context}')";
-  end
+  end             
  
   def card_id
     (card.new_record? && card.name)  ? Cardname.escape(card.name) : card.id

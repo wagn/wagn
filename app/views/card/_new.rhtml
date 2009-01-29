@@ -1,8 +1,24 @@
-<% get_slot(nil).wrap("new", :is_slot=>true) do |slot| %>   
-	<% @title = "New Card" %>  
+<% 
 
-	  <% form_remote_for :card, card, :url=>slot.url_for('card/create'), :update=>slot.id,
-					:html=>{ :class=>'form',:onsubmit=>slot.save_function	 } do |form| %>
+   args=[];  
+   # when new is called from an "Add <Cardname>" transclusion, there is no existing slot,  
+   #  so we pass an argument to create one.  eventually, the "Add <Cardname>" view should have
+   #  a slot so that this isn't necessary
+	 args << { :add_slot=>params[:add_slot] } if params[:add_slot]
+	
+%>
+
+<% get_slot(nil).wrap("new", *args) do |slot| %>   
+	<% @title = "New Card" %>  
+	
+  	<%= error_messages_for :card %>
+
+    <% form_remote_for :card, card, :url=>slot.url_for('card/create'), 
+    			422 => slot.js.update,
+    			302 => slot.js.redirect( 'Successfully created card' ),
+    			200 => slot.js.update, 
+    			:html=>{ :class=>'form',:onsubmit=>slot.save_function	} do |form| %>
+
 			<div class="card-header">
 			  <% if !request.xhr? and params[:card] and cardtype = params[:card][:type] and !card.broken_type %>
 			    <%= form.hidden_field :type %>
@@ -17,7 +33,6 @@
 			  
 			  <span class="new-name">
 				  <span class="label">name:</span>
-          
 				  <% if @card.name.blank? || Card[@card.name]%>
 						<span class="name-area">
 							<%= slot.name_field(form) %>
@@ -30,6 +45,9 @@
 					<% end %> 
 				</span>
 			</div>
+			
+			
+			
 			<div class="edit-area">
   			<div class="editor">
   				<% if card.hard_template %>
@@ -39,6 +57,7 @@
   					<%= slot.content_field(form) %>
   				<% end %>
   			</div>
+  			
   		  <%= hidden_field_tag :view, params[:requested_view] || :open %>
   			<%= button_to_function 'Create', 
   						"this.form.onsubmit()", :id=>'create-button'  %>

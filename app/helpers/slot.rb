@@ -72,7 +72,8 @@ module WagnHelper
       result = ""
       if render_slot
         case action.to_s
-          when 'content';    css_class = 'transcluded'  
+          when 'content';    css_class = 'transcluded'
+          when 'exception';  css_class = 'exception'    
 #          when 'nude'   ;   css_class = 'nude-slot'
           else begin
             css_class = 'card-slot '      
@@ -103,10 +104,11 @@ module WagnHelper
       end
       
       if block_given? 
-        args = proc.binding
         if (Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >= 2)
           args = nil
           @template.output_buffer ||= ''   # fixes error in CardControllerTest#test_changes
+        else
+          args = proc.binding
         end
         @template.concat open_slot, *args
         yield(self)
@@ -167,15 +169,18 @@ module WagnHelper
       result = case ok_action
 
       ###-----------( FULL )
+        when :new
+          w_content = render_partial('card/new')
+          
         when :open, :view, :card
-          @state = :view; self.requested_view = 'card'
+          @state = :view; self.requested_view = 'open'
           # FIXME: accessing params here is ugly-- breaks tests.
           #w_action = (@template.params[:view]=='content' && context=="main_1") ? 'nude' : 'open'
           w_action = 'open'
-          w_content = render_partial('card/view')
+          w_content = render_partial('card/open')
 
         when :closed, :line    
-          @state = :line; w_action='closed'; self.requested_view = 'line'
+          @state = :line; w_action='closed'; self.requested_view = 'closed'
           w_content = render_partial('card/line')  # --> slot.wrap_content slot.render( :expanded_line_content )   
           
       ###----------------( NAME)
@@ -241,6 +246,8 @@ module WagnHelper
         ###---(  EXCEPTIONS ) 
         
           when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
+            #w_action = 'exception'
+            #w_content = 
             render_partial("card/#{ok_action}", args)
 
   

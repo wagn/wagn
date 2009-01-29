@@ -92,7 +92,11 @@ class ApplicationController < ActionController::Base
 
   # ------------------( permission filters ) -------
   def view_ok
-    @card.ok?( :read ) || render_denied( 'view' )
+    if (@card.new_record? && !@card.phantom?) || @card.ok?( :read )
+      true
+    else
+      render_denied( 'view' )
+    end
   end    
   
   def edit_ok
@@ -138,8 +142,6 @@ class ApplicationController < ActionController::Base
     else 
       name=""
     end
-    # auto_load_card tells the cached card if any missing method is requested
-    # load the real card to respond.  
     card_params = params[:card] ? params[:card].clone : nil
     @card = CachedCard.get(name, @card, :cache=>cache, :card_params=>card_params )
     @card

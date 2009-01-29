@@ -144,10 +144,12 @@ module SlotHelpers
   end
 
   def button_to_action( text, to_action, remote_opts={}, html_opts={})
-    button_to_remote text, remote_opts.merge(
-      :url=>url_for("card/#{to_action}"),
-      :update => id
-    ), html_opts
+    if remote_opts.delete(:replace)
+      r_opts =  { :url=>url_for("card/#{to_action}", :replace=>id ) }.merge(remote_opts)
+    else
+      r_opts =  { :url=>url_for("card/#{to_action}" ), :update => id }.merge(remote_opts)
+    end
+    button_to_remote( text, r_opts, html_opts )
   end
 
   def name_field(form,options={})

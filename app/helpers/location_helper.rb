@@ -35,7 +35,7 @@ module LocationHelper
        
   # FIXME: missing test
   def url_for_page( title, opts={} )   
-    format = (opts[:format] ? "."+opts.delete(:format)  : "")
+    format = (opts[:format] ? ".#{opts.delete(:format)}"  : "")
     vars = ''
     if !opts.empty?
       pairs = []

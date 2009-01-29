@@ -1,8 +1,8 @@
-<% get_slot(card).wrap("new") do |slot| %>   
+<% get_slot(card).wrap("new", :is_slot=>true) do |slot| %>   
 	<% @title = "New Card" %>  
 
 	<div class="edit-area">
-	  <% form_remote_for :card, card, :url=>slot.url_for('card/create'), 
+	  <% form_remote_for :card, card, :url=>slot.url_for('card/create'), :update=>slot.id,
 					:html=>{ :class=>'form',:onsubmit=>slot.save_function	 } do |form| %>
 			<table>
 				<tr>
@@ -36,7 +36,12 @@
 		  <br/>
 			<%= button_to_function 'Create', 
 						"this.form.onsubmit()", :id=>'create-button'  %>
-	    <%= button_to_function 'Cancel', (request.xhr? ? "" : "document.location.href='#{previous_location}'") %> 
+						
+      <% if request.xhr? %>						
+				<%= slot.button_to_action 'Cancel', :open_missing, { :before=>slot.cancel_function }  %> 
+			<% else %>
+		    <%= button_to_function 'Cancel',"document.location.href='#{previous_location}'" %> 
+			<% end %>
 		<% end %>
 	</div>
 	<%= slot.notice %>

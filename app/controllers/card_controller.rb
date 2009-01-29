@@ -6,15 +6,16 @@ class CardController < ApplicationController
 
   before_filter :create_ok, :only=>[ :new, :create, :new_of_type ]
 
-  before_filter :load_card!, :except => [ 
-    :auto_complete_for_card_name, 
-    :line, :view, :to_view, :test, :new, :create, 
-    :show, :index, :mine, :missing, :new_of_type, :my_name, :add_field ]
+  before_filter :load_card!, :only=>[
+    :changes, :comment, :denied, :edit, :edit_conflict, :edit_name, 
+    :edit_type, :options, :quick_update, :related, :remove, :rollback, 
+    :save_draft, :to_edit, :update
+  ]
 
   before_filter :load_card_with_cache, :only => [:line, :view, :to_view ]
   
   #before_filter :view_ok,   :only=>[ :line, :view, :show ]
-  before_filter :edit_ok,   :only=>[ :edit, :edit_name, :edit_type, :update, :save_draft, :rollback, :save_draft] 
+  before_filter :edit_ok,   :only=>[ :edit, :edit_name, :edit_type, :update, :rollback, :save_draft] 
   before_filter :remove_ok, :only=>[ :remove ]
   
   #caches_action :show, :view, :to_view
@@ -97,9 +98,13 @@ class CardController < ApplicationController
     # double check to prevent infinite redirect loop
     fail "Card creation failed"  unless Card.find_by_name( @card.name )
     # FIXME: it would make the tests nicer if we did a real redirect instead of rjs
-    render :update do |page|
-      page.redirect_to url_for_page(@card.name)
-    end
+    #render :update do |page|
+    #  page.redirect_to url_for_page(@card.name)
+    #end
+    # render_update_slot do |page, target|
+    #   target.replace render_to_string :action=>'show'
+    # end
+    render :action=>'show'
   end 
   
   #--------------( editing )
@@ -245,6 +250,10 @@ class CardController < ApplicationController
 
   def view
     render :action=>'show'
+  end   
+  
+  def open
+    render :action=>'show'
   end
 
   def to_view
@@ -272,8 +281,20 @@ class CardController < ApplicationController
     @previous_revision = @card.previous_revision(@revision)
   end
     
-    
-    
+  [:open_missing, :closed_missing].each do |method|
+    define_method( method ) do
+      load_card
+      params[:view] = method
+      if id = params[:replace]
+        render_update_slot do |page, target|
+          target.update render_to_string(:action=>'show')
+        end
+      else
+        render :action=>'show'
+      end
+    end
+  end
+
     
     
     

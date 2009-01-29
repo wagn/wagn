@@ -119,9 +119,9 @@ module WagnHelper
     end
   end
 
-  def render_arg(param)
+  def symbolize_param(param)
     val = params[param]
-    (val && !val.empty?) ? val.to_sym : nil
+    (val && !val.to_s.empty?) ? val.to_sym : nil
   end
 
   def formal_joint

@@ -18,7 +18,7 @@ module WagnHelper
      
     def initialize(card, context="main_1", action="view", template=nil, opts={} )
       @card, @context, @action, @template, = card, context.to_s, action.to_s, (template||StubTemplate.new)
-      raise("context gotta include position") unless context =~ /\_/
+      context = "main_1" unless context =~ /\_/
       @position = context.split('_').last    
       @char_count = 0
       @subslots = []  

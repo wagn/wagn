@@ -64,7 +64,7 @@ module WagnHelper
     # internal slot calls, so I added the option passing internal content which
     # makes all the ugly block_given? ifs..                                                 
     def wrap(action="", args={}) 
-      render_slot = args.key?(:is_slot) ? args.delete(:is_slot) : !request.xhr? 
+      render_slot = args.key?(:add_slot) ? args.delete(:add_slot) : !request.xhr? 
       content = args.delete(:content)
        
       open_slot, close_slot = "",""
@@ -254,7 +254,7 @@ module WagnHelper
         else raise("Unknown slot render action '#{ok_action}'")
       end
       if w_content
-        args[:is_slot] = true unless args.key?(:is_slot)
+        args[:add_slot] = true unless args.key?(:add_slot)
         result = wrap(w_action, { :content=>w_content }.merge(args))
       end
       

@@ -60,6 +60,12 @@ class CardControllerTest < Test::Unit::TestCase
     assert_response :success, "response should succeed"                     
     assert_equal 'BananaBread', assigns['card'].name, "@card.name should == BananaBread"
   end        
+                  
+  def test_new_with_existing_card
+    get :new, :card=>{:name=>"A"}
+    assert_response :success, "response should succeed"
+    assert_template 'edit', "should render edit template"
+  end
   
   def test_show
     get :show, {:id=>'Sample_Basic'}

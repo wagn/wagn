@@ -73,6 +73,6 @@ class TransclusionController < ApplicationController
       "content" => :content,
       "edit"  => :edit_in_form
     }[params[:requested_view]] || :content
-    render_to_string :inline=>%{<%= get_slot.render(@render_key, :is_slot=>false, :add_javascript=>true) %>}
+    render_to_string :inline=>%{<%= get_slot.render(@render_key, :add_slot=>false, :add_javascript=>true) %>}
   end
 end

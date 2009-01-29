@@ -1,8 +1,23 @@
-<% get_slot(nil).wrap("new", :is_slot=>true) do |slot| %>   
+<% 
+
+   args=[];  
+   # when new is called from an "Add <Cardname>" transclusion, there is no existing slot,  
+   #  so we pass an argument to create one.  eventually, the "Add <Cardname>" view should have
+   #  a slot so that this isn't necessary
+	 args << { :add_slot=>params[:add_slot] } if params[:add_slot]
+	
+%>
+
+<% get_slot(nil).wrap("new", *args) do |slot| %>   
 	<% @title = "New Card" %>  
 
+	<%= error_messages_for :card %>
+
 	<div class="edit-area">
-	  <% form_remote_for :card, card, :url=>slot.url_for('card/create'), :update=>slot.id,
+	  <% form_remote_for :card, card, :url=>slot.url_for('card/create'), 
+					422 => "#{slot.selector}.update( request.responseText )",
+					302 => "document.location.href=request.responseText; Wagn.Messenger.alert('Successfully created card' )",
+					200 => "#{slot.selector}.update( request.responseText )", 
 					:html=>{ :class=>'form',:onsubmit=>slot.save_function	 } do |form| %>
 			<table>
 				<tr>

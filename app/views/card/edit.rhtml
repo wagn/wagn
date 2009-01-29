@@ -1,6 +1,6 @@
 <% hard_template = card.hard_template %>
 
-<% get_slot.wrap( 'edit') do |slot| %>  
+<% get_slot.wrap( 'edit', :add_slot=>@add_slot) do |slot| %>  
 	<%= slot.header %>
 	<style><%= ".cardid-#{card.id} .edit-area .title-#{css_name(card.name)} { display: none; }" %></style>
 

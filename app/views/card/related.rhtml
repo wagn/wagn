@@ -21,10 +21,6 @@
 	  <h2>Connections</h2>
     <%= render_card "#{@card.name}+*plus cards", 'line' %>
     <%= render_card "#{@card.name}+*plus parts", 'line' %>  
-		<% if !Cardtype.createable_cardtypes.empty? %>
-		  <%= button_to_remote "Connect #{@card.name} to another card", :url=>slot.url_for("connection/new"), 
-						:update=>slot.id %>
-		<% end %>
 		<h2>References</h2>
 		<% ['linked to', 'linked from', 'included', 'that include'].each do |search| %>
       <%= render_card "#{@card.name}+*cards #{search}", 'line' %>

@@ -15,7 +15,8 @@
 
 	<div class="edit-area">
 	  <% form_remote_for :card, card, :url=>slot.url_for('card/create'), 
-					422 => slot.js.update,
+					422 => slot.js.update, 
+					403 => slot.js.update, 
 					302 => slot.js.redirect( 'Successfully created card' ),
 					200 => slot.js.update, 
 					:html=>{ :class=>'form',:onsubmit=>slot.save_function	} do |form| %>

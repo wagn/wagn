@@ -104,6 +104,11 @@ class CardController < ApplicationController
   end
   
   def create                 
+    if !Card.new(params[:card]).cardtype.ok?(:create)  
+      render :template => '/card/denied', :status => 403  
+      return
+    end
+    
     @card = Card.create params[:card]
     if params[:multi_edit] and params[:cards]
       User.as(:admin) if @card.type == 'InvitationRequest'
@@ -113,6 +118,7 @@ class CardController < ApplicationController
     # double check to prevent infinite redirect loop
     fail "Card creation failed"  unless Card.find_by_name( @card.name )
     
+      
     if !@card.errors.empty?
       render :action=>'new', :status => 422
     elsif main_card?   

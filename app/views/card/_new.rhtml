@@ -34,6 +34,7 @@
 				<% end %>
 			</div>
 		  <br/>
+		  <%= hidden_field_tag :view, params[:requested_view] || :open %>
 			<%= button_to_function 'Create', 
 						"this.form.onsubmit()", :id=>'create-button'  %>
 						

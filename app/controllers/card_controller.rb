@@ -9,10 +9,10 @@ class CardController < ApplicationController
   before_filter :load_card!, :only=>[
     :changes, :comment, :denied, :edit, :edit_conflict, :edit_name, 
     :edit_type, :options, :quick_update, :related, :remove, :rollback, 
-    :save_draft, :to_edit, :update
+    :save_draft, :update
   ]
 
-  before_filter :load_card_with_cache, :only => [:line, :view, :to_view ]
+  before_filter :load_card_with_cache, :only => [:line, :view, :open ]
   
   before_filter :edit_ok,   :only=>[ :edit, :edit_name, :edit_type, :update, :rollback, :save_draft] 
   before_filter :remove_ok, :only=>[ :remove ]
@@ -116,6 +116,11 @@ class CardController < ApplicationController
   end
   
   def create                 
+    if !Card.new(params[:card]).cardtype.ok?(:create)  
+      render :template => '/card/denied', :status => 403  
+      return
+    end
+    
     @card = Card.create params[:card]
     if params[:multi_edit] and params[:cards]
       User.as(:admin) if @card.type == 'InvitationRequest'
@@ -125,6 +130,7 @@ class CardController < ApplicationController
     # double check to prevent infinite redirect loop
     fail "Card creation failed"  unless Card.find_by_name( @card.name )
     
+      
     if !@card.errors.empty?
       render :action=>'new', :status => 422
     elsif main_card?   
@@ -251,19 +257,8 @@ class CardController < ApplicationController
     render :action=>'show'
   end   
   
-  def to_view
-    params[:view]='open'
-    render_update_slot do |page, target|
-      target.update render_to_string(:action=>'show')
-#      page << "Wagn.line_to_paragraph(#{slot.selector})"
-    end
-  end
-             
-  def to_edit
-    render_update_slot do |page, target|
-      target.update render_to_string(:action=>'edit')
-      page << "Wagn.line_to_paragraph(#{slot.selector})"
-    end
+  def open
+    render :action=>'show'
   end
 
   def options

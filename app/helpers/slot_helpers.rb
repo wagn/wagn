@@ -154,7 +154,7 @@ module SlotHelpers
   end
 
   def name_field(form,options={})
-    form.text_field( :name, {:size=>40, :class=>'field card-name-field'}.merge(options))
+    form.text_field( :name, { :class=>'field card-name-field'}.merge(options))
   end
 
 

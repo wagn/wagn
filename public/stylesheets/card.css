@@ -34,13 +34,6 @@
   padding: 2px 0px 2px 25px;
   white-space: nowrap;
 }
-.card-slot .new-name .title {
-  padding-left: 2px;
-}
-.card-slot .new-type {
-  float: right;
-}
-
 .card-slot .right-arrow {
   background: url(/images/arrow_right.gif) no-repeat left;
 }
@@ -211,7 +204,19 @@ div:hover.card-footer .card-links{
 
 /* ---------- edit tab / new / inline editing--------*/
 
-
+.card-slot .new-name,
+.card-slot .new-type {
+  white-space: nowrap;
+}
+.card-slot .new-name .title {
+  padding-left: 2px;
+}
+.card-slot .new-name .card-name-field {
+  width: 50%;
+}
+.card-slot .new-type {
+  float: right;
+}
 .card-slot .editor {
   display: block;
 }

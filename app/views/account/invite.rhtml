@@ -37,7 +37,9 @@ context = 'invitation'
   	  <% if @card.name.blank? %>
     	  <tr>
           <td class="label"><label for="name">Name</label></td>
-          <td class="field"><%= text_field( :card, :name, {:class=>'new-card-name', :id=>"new-card-name-field"} )%>	</td>
+          <td class="field">
+            <%= text_field( :card, :name, {:class=>'new-card-name', :id=>"new-card-name-field", :autocomplete=>'off'} )%>
+          </td>
           <td class="help">Usually a full name: the title of the new user's card.  (Your friend can change it later)</td>
     		</tr>
   		<% end %>

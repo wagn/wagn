@@ -4,7 +4,7 @@
 
 Wagn = new Object();
 
-function warn(stuff) {
+var warn = function(stuff) {
   if (typeof(console) != 'undefined')
     console.log( stuff );
 }
@@ -369,6 +369,59 @@ navboxAfterUpdate=function(text,li){
   if (!li.hasClassName('search')) {
     $('navbox_form').action = '/wagn';
   }
+}
+
+Event.KEY_SHIFT = 16;
+
+
+// override Autocompleter key handling
+Ajax.Autocompleter.prototype.onKeyPress = function(event){
+  //alert( 'key=' + event.keyCode );
+  if(this.active) 
+    switch(event.keyCode) {
+     case Event.KEY_TAB:
+       this.markNext();
+       this.element.value = '';
+       this.selectEntry();   
+       this.active = true;
+       this.render();
+       Event.stop(event);
+       return;
+     case Event.KEY_RETURN:
+       this.selectEntry();
+       return;                          
+     case Event.KEY_ESC:
+       this.hide();
+       this.active = false;
+       Event.stop(event);
+       return;
+     case Event.KEY_LEFT:
+     case Event.KEY_RIGHT:
+       return;
+     case Event.KEY_UP:
+       this.markPrevious();
+       this.render();
+       Event.stop(event);
+       return;
+     case Event.KEY_DOWN:
+       this.markNext();
+       this.render();
+       Event.stop(event);
+       return;
+     case Event.KEY_SHIFT:
+       //awesome if we could make shift-tab do KEY_UP
+       return;
+    }
+   else 
+     if(event.keyCode==Event.KEY_TAB || event.keyCode==Event.KEY_RETURN || 
+       (Prototype.Browser.WebKit > 0 && event.keyCode == 0)) return;
+
+  this.changed = true;
+  this.hasFocus = true;
+
+  if(this.observer) clearTimeout(this.observer);
+    this.observer = 
+      setTimeout(this.onObserverEvent.bind(this), this.options.frequency*1000);
 }
 
 var loadScript = function(name) {

@@ -258,15 +258,15 @@ module WagnHelper
       items << navbox_item( :new, "Add new card: ", stub )
     end
     items += entries.map do |entry| 
-      name = stub ? highlight(entry[field], stub) : h(entry[field])
-      navbox_item( :goto, "Go to: ", name )
+      navbox_item( :goto, "Go to: ", entry[field], stub )
     end
     content_tag("ul", items.uniq)
   end
             
-  def navbox_item( css_class, label, name )
+  def navbox_item( css_class, label, name, stub=nil )
+    stub ||= name
     content_tag('li', :class=>"#{css_class}" ) do
-      content_tag('span', label, :class=>"informal") + name
+      content_tag('span', label, :class=>"informal") + highlight(name, stub)
     end
   end
             

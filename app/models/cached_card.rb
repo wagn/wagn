@@ -107,7 +107,13 @@ class CachedCard
         end
       end
     end
-    
+
+    # FIXME: didn't write test because not sure how Cache testing interacts with test data
+    #  potential rabbit-hole.
+    def exists?(name)
+      card = self.get( name ) and !card.new_record? 
+    end
+
     def load_card(name)  
       cached_card = self.new(name.to_key)
       return nil if cached_card.read('missing')  

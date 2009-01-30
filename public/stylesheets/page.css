@@ -32,8 +32,9 @@
 #top-menu input {
   padding: 0px 3px;
   margin: 0px 8px;
-  border: 0;
-  width: 120px;
+  border: 0;   
+  height: 17px;
+  width: 200px;
 }
 #logging {  /* signing in and out */
   position: absolute;

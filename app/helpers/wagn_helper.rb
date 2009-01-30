@@ -200,6 +200,7 @@ module WagnHelper
     auto_complete_field(fieldname, { :url =>"/card/auto_complete_for_card_name/#{card_id.to_s}" }.update({}))
   end
 
+
   def span(*args, &block)  content_tag(:span, *args, &block);  end
   def div(*args, &block)   content_tag(:div, *args, &block);  end
 
@@ -232,6 +233,44 @@ module WagnHelper
       end
     end
   end
+
+  # ---------------( NAVBOX ) -----------------------------------    
+
+  def navbox
+    content_tag( :form, :id=>"navbox_form", :action=>"/search", :onsubmit=>"return navboxOnSubmit(this)" ) do         
+      text_field_tag("navbox", "", :id=>"navbox_field", :autocomplete=>"off") +
+  		   navbox_complete_field('navbox_field') 
+    end
+	end
+    
+  def navbox_complete_field(fieldname, card_id='')
+    content_tag("div", "", :id => "#{fieldname}_auto_complete", :class => "auto_complete") +
+    auto_complete_field(fieldname, { :url =>"/card/auto_complete_for_navbox/#{card_id.to_s}",
+      :after_update_element => "navboxAfterUpdate"
+     }.update({}))
+  end
+
+  def navbox_result(entries, field, stub)
+    return unless entries
+    items = []
+    items << navbox_item( :search, "Search for: ", stub )
+    if !Cardtype.createable_cardtypes.empty? && !CachedCard.exists?(stub)
+      items << navbox_item( :new, "Add new card: ", stub )
+    end
+    items += entries.map do |entry| 
+      name = stub ? highlight(entry[field], stub) : h(entry[field])
+      navbox_item( :goto, "Go to: ", name )
+    end
+    content_tag("ul", items.uniq)
+  end
+            
+  def navbox_item( css_class, label, name )
+    content_tag('li', :class=>"#{css_class}" ) do
+      content_tag('span', label, :class=>"informal") + name
+    end
+  end
+            
+
 
 end
 

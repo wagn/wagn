@@ -359,6 +359,18 @@ urlForAddField=function(card_id, eid) {
   return ('/card/add_field/' + card_id + '?index=' + index + '&eid=' + eid);
 }
 
+
+navboxOnSubmit=function(form){   
+  document.location.href= form.action + '/'+ encodeURIComponent($F('navbox_field').gsub(' ','_')); 
+  return false;
+}
+
+navboxAfterUpdate=function(text,li){
+  if (!li.hasClassName('search')) {
+    $('navbox_form').action = '/wagn';
+  }
+}
+
 var loadScript = function(name) {
   var d=document;
   var s;

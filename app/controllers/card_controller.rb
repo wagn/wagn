@@ -94,7 +94,7 @@ class CardController < ApplicationController
     end
 
     # if given a name of a card that exists, got to edit instead
-    if args[:name] and card = CachedCard.get( args[:name] ) and !card.new_record?
+    if args[:name] and CachedCard.exists?(args[:name])
       render :text => "<span class=\"faint\">Oops, <strong>#{args[:name]}</strong> was recently created! try reloading the page to edit it</span>"
       return
     end
@@ -289,9 +289,17 @@ class CardController < ApplicationController
     
     
   #-------- ( MISFIT METHODS )  
+  
+  def auto_complete_for_navbox
+    @stub = params['navbox']
+    @items = Card.search( :complete=>@stub, :limit=>8, :sort=>'alpha' ) 
+    render :inline => "<%= navbox_result @items, 'name', @stub %>"
+  end
     
   def auto_complete_for_card_name
-    complete = ''
+    complete = ''  
+    # from pointers, the partial text is from fields called  pointer[N]
+    # from the goto box, it is in card[name]
     params.keys.each do |key|
       complete = params[key] if key.to_s == 'name'
       next unless key.to_s =~ /card|pointer/ 
@@ -304,7 +312,8 @@ class CardController < ApplicationController
       @items = Card.search( :complete=>complete, :limit=>8, :sort=>'alpha' )
     end
     render :inline => "<%= auto_complete_result @items, 'name' %>"
-  end
+  end                                              
+  
   
   # doesn't really seem to fit here.  may want to add new controller if methods accrue?        
   def add_field # for pointers only

@@ -38,9 +38,7 @@ class InvitationRequestTest < Test::Unit::TestCase
       :email=>"jamaster@jay.net",
       :content=>"Let me in!"
     }  
-    # FIXME: the form submits via ajax, so we can't do a regular redirect-- it does javascript
-    #  instead.. how do we test that?     
-    assert_response :success
+    assert_response :redirect
     #assert_redirected_to @controller.url_for_page(::Setting.find_by_codename('invitation_request_landing').card.name)
   end
   

@@ -212,9 +212,8 @@ setupCreateOnClick=function(container) {
       card_type = slot_span.getAttributeNode('type').value;
       //console.log("create  " +card_name);
       ie = (Prototype.Browser.IE ? '&ie=true' : '');
-      new Ajax.Request('/card/new?add_slot=true&context='+getSlotContext(element), {
+      new Ajax.Updater(slot_span, '/card/new?add_slot=true&context='+getSlotContext(element), {
         asynchronous: true, evalScripts: true,     
-        on403: function(request){ slot_span.update( request.responseText )},
         parameters: "card[type]=" + encodeURIComponent(card_type) + "&card[name]="+encodeURIComponent(card_name)+"&requested_view="+slot_span.getAttributeNode('view').value+ie
       });
       Event.stop(event);

@@ -95,21 +95,13 @@ class CardController < ApplicationController
 
     # if given a name of a card that exists, got to edit instead
     if args[:name] and card = CachedCard.get( args[:name] ) and !card.new_record?
-      if request.xhr?
-        return render_update_slot do |page,target|
-          target.replace "<span class=\"faint\">Oops, <strong>#{args[:name]}</strong> was recently created! try reloading the page to edit it</span>"
-        end
-      end
+      render :text => "<span class=\"faint\">Oops, <strong>#{args[:name]}</strong> was recently created! try reloading the page to edit it</span>"
+      return
     end
 
-      
     @card = Card.new args                   
     if request.xhr?
-      render_update_slot do |page,target|
-        # ie
-        # permissions
-        target.replace render_to_string :partial => 'card/new', :locals=>{ :card=>@card }
-      end 
+      render :partial => 'card/new', :locals=>{ :card=>@card }
     else
       render :action=> 'new'
     end

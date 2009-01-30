@@ -1,4 +1,0 @@
-<% slot_for(@card, @context, @action, :add_slot =>(render_slot||=nil)) do |slot| %>    
-	<%= slot.wrap_content( slot.rendered_content(card) ) %>
-<% end %>
-<%= javascript_tag "setupCardViewStuff()" %>

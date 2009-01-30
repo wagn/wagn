@@ -214,7 +214,7 @@ setupCreateOnClick=function(container) {
       ie = (Prototype.Browser.IE ? '&ie=true' : '');
       new Ajax.Request('/card/new?add_slot=true&context='+getSlotContext(element), {
         asynchronous: true, evalScripts: true,     
-        on403: function(request){getSlotSpan( element ).update( request.responseText )},
+        on403: function(request){ slot_span.update( request.responseText )},
         parameters: "card[type]=" + encodeURIComponent(card_type) + "&card[name]="+encodeURIComponent(card_name)+"&requested_view="+slot_span.getAttributeNode('view').value+ie
       });
       Event.stop(event);
@@ -233,20 +233,14 @@ setupDoubleClickToEdit=function(container) {
   });
 }        
    
-   
 editTransclusion=function(element){
-     span = getSlotSpan(element);   
-     card_id = span.getAttributeNode('cardid').value;
-     if (Element.hasClassName(span,'line')) {
-       new Ajax.Request('/card/to_edit/'+card_id+'?context='+getSlotContext(element),
-          {asynchronous: true, evalScripts: true});
-     } else { /*if (Element.hasClassName(span,'paragraph')) {*/
-       new Ajax.Updater({success:span, failure:span}, '/card/edit/'+card_id+'?context='+getSlotContext(element),
-          {asynchronous: true, evalScripts: true});
-     } /*else {
-       new Ajax.Updater({success:span, failure:getNextElement(span,'notice')}, '/transclusion/edit/'+card_id+'?context='+getSlotContext(element),
-          { asynchronous: true, evalScripts: true});  
-     }*/
+   span = getSlotSpan(element);   
+   card_id = span.getAttributeNode('cardid').value;       
+   url =  '/card/edit/'+card_id+'?context='+getSlotContext(element) + '&' + getSlotOptions(element);
+   new Ajax.Updater(span, url, {
+     asynchronous: true, evalScripts: true, 
+     onSuccess: function(){  Wagn.line_to_paragraph(span) }
+   });
 }
 
 getOuterSlot=function(element){

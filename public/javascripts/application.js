@@ -189,11 +189,22 @@ Wagn.onSaveQueue = $H({});
 Wagn.onCancelQueue = $H({});
 Wagn.editors = $H({});
 
-onload = function() {
+
+wagnOnload = function() {
   Wagn.Messenger.flash();
   Wagn.runQueue(Wagn.onLoadQueue);
-  setupLinksAndDoubleClicks();
+  setupLinksAndDoubleClicks();  
+  $('navbox_field').focus();
+}                                                           
+       
+
+handleGlobalShortcuts=function(event){
+  if (event.keyCode == 76 && event.ctrlKey) {
+    $('navbox_field').focus();
+  }
 }
+
+
 
 setupLinksAndDoubleClicks = function() {
   getNewWindowLinks();
@@ -372,22 +383,39 @@ navboxAfterUpdate=function(text,li){
 }
 
 Event.KEY_SHIFT = 16;
-
+                                            
+// fixme better name?
+Ajax.Autocompleter.prototype.updateSelection = function() {
+  this.element.value = '';
+  this.updateElement(this.getCurrentEntry());
+  this.render();
+}
 
 // override Autocompleter key handling
 Ajax.Autocompleter.prototype.onKeyPress = function(event){
-  //alert( 'key=' + event.keyCode );
   if(this.active) 
     switch(event.keyCode) {
      case Event.KEY_TAB:
-       this.markNext();
-       this.element.value = '';
-       this.selectEntry();   
-       this.active = true;
-       this.render();
+       if (event.shiftKey){
+         this.markPrevious();
+       } else {
+         this.markNext();  
+       }   
+       this.updateSelection();
        Event.stop(event);
        return;
-     case Event.KEY_RETURN:
+     case Event.KEY_UP:
+       this.markPrevious();
+       this.updateSelection();
+       Event.stop(event);
+       return;
+     case Event.KEY_DOWN:
+       this.markNext();
+       this.updateSelection();
+       Event.stop(event);
+       return;
+     case Event.KEY_RETURN: 
+       this.element.value = '';
        this.selectEntry();
        return;                          
      case Event.KEY_ESC:
@@ -397,19 +425,7 @@ Ajax.Autocompleter.prototype.onKeyPress = function(event){
        return;
      case Event.KEY_LEFT:
      case Event.KEY_RIGHT:
-       return;
-     case Event.KEY_UP:
-       this.markPrevious();
-       this.render();
-       Event.stop(event);
-       return;
-     case Event.KEY_DOWN:
-       this.markNext();
-       this.render();
-       Event.stop(event);
-       return;
      case Event.KEY_SHIFT:
-       //awesome if we could make shift-tab do KEY_UP
        return;
     }
    else 
@@ -423,6 +439,15 @@ Ajax.Autocompleter.prototype.onKeyPress = function(event){
     this.observer = 
       setTimeout(this.onObserverEvent.bind(this), this.options.frequency*1000);
 }
+                                           
+//  changed scrollIntoView(true) to scrollIntoView(false) -- it was 
+//  causing lots of jerking around.
+Ajax.Autocompleter.prototype.markPrevious = function() {
+  if(this.index > 0) this.index--
+    else this.index = this.entryCount-1;
+  this.getEntry(this.index).scrollIntoView(false);
+}
+
 
 var loadScript = function(name) {
   var d=document;
@@ -445,3 +470,6 @@ var loadScript = function(name) {
   } 
 }   
 
+       
+Event.observe(window, 'load', wagnOnload);
+Event.observe(window, 'keydown', handleGlobalShortcuts );

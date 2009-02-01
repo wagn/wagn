@@ -46,11 +46,12 @@ html>body .card-slot .right-arrow {
 html>body .card-slot .down-arrow {
   background-image: url(/images/arrow_down.png);
 }
-.card-slot .page-icon {
+
+.page-icon {
   padding: 2px 7px;
   background: url(/images/page.gif) no-repeat right;
 }
-html>body .card-slot .page-icon {
+html>body .page-icon {
   background-image: url(/images/page.png);
 }
 

@@ -258,7 +258,7 @@ module WagnHelper
       items << navbox_item( :new, "Add new card: ", stub )
     end
     items += entries.map do |entry| 
-      navbox_item( :goto, "Go to: ", entry[field], stub )
+      navbox_item( :goto, %{<a class="page-icon">&nbsp;</a>Go to: }, entry[field], stub )
     end
     content_tag("ul", items.uniq)
   end

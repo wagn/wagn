@@ -29,13 +29,7 @@
 #top-menu div {
   display: inline;
 }
-#top-menu input {
-  padding: 0px 3px;
-  margin: 0px 8px;
-  border: 0;   
-  height: 17px;
-  width: 300px;
-}
+
 #logging {  /* signing in and out */
   position: absolute;
   right: 0.5%;
@@ -45,6 +39,38 @@
   font-weight: bold;
 }
 
+
+
+#navbox_field {
+  padding: 0 3px;
+  margin:  0 8px;
+  height: 18px;
+  width: 30%;
+  position: relative;
+  top: -2px;
+  z-index: 1;
+  font-size: 13px;
+  border: 2px solid #999;
+
+}
+#navbox_field:focus {
+  border: 2px solid #ffb;
+
+}
+#navbox_field_auto_complete {
+  background: #eee
+  width: auto;
+}
+#navbox_field_auto_complete .informal {
+  color: #777;
+  font-size: 10px;
+}
+#navbox_field_auto_complete .page-icon {
+  display: inline;
+  padding: 3px 8px;
+  margin-right: 4px;
+
+}
 
 /* -------  logo --------- */
 #logo {

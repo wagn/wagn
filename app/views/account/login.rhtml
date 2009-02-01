@@ -9,7 +9,7 @@
 	
   <% form_tag :action=>'login' do %>
   <p><label for="login">Email</label></p>
-  <p><%= text_field_tag 'login', params[:login] %></p>
+  <p><%= text_field_tag 'login', params[:login], :id=>'login_field' %></p>
   <p><label for="password">Password</label></p>
   <p><%= password_field_tag 'password' %></p>     
         
@@ -33,7 +33,7 @@
   <p><%= submit_tag 'Reset my password' %></p>
   <% end %>
 
-
+  <%= javascript_tag( "$('login_field').focus()" ) %>
 
 
 </div>

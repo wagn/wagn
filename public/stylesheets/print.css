@@ -8,3 +8,45 @@
 .card-slot.paragraph .content {
   overflow: visible !important;
 }
+body, .reset{
+  color: #444;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 11px;
+}
+body, p, ol, ul, td, th {
+  font-family: verdana, arial, helvetica, sans-serif;
+  font-size:   12px;
+  font-weight: normal;
+  line-height: 21px;
+}
+body, .reset{
+  color: #444;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+}
+p { 
+  margin: 0px; 
+}     
+a, 
+a:link, 
+a:visited { 
+	color: #484; 
+	text-decoration: none;
+}
+a:hover, 
+a:focus {
+  text-decoration: underline;
+}
+h1 {
+  font-size: 15px; 
+}
+h2 {
+  font-size: 13px; 
+}
+h1, h2 {
+  color:#644;
+  font-weight: bold;
+  margin: 0px;
+}

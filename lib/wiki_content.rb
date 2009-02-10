@@ -43,7 +43,7 @@ class WikiContent < String
        'h5' => nil,
        'h6' => nil,
        'blockquote' => ['cite'],
-       'span'=>['style','class']
+       'span'=>['class']
       }                                             
   
 

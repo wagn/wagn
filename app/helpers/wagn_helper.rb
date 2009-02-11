@@ -238,10 +238,12 @@ module WagnHelper
 
   def navbox
     content_tag( :form, :id=>"navbox_form", :action=>"/search", :onsubmit=>"return navboxOnSubmit(this)" ) do         
-      text_field_tag("navbox", "", :id=>"navbox_field", :autocomplete=>"off") +
-  		   navbox_complete_field('navbox_field') 
+      content_tag( :span, :id=>"navbox_background" ) do
+        %{<a id="navbox_image" title="Search" onClick="navboxOnSubmit($('navbox_form'))">&nbsp;</a>}  + text_field_tag("navbox", "", :id=>"navbox_field", :autocomplete=>"off") +
+  		    navbox_complete_field('navbox_field') 
+      end
     end
-	end
+	end                                      
     
   def navbox_complete_field(fieldname, card_id='')
     content_tag("div", "", :id => "#{fieldname}_auto_complete", :class => "auto_complete") +
@@ -253,9 +255,9 @@ module WagnHelper
   def navbox_result(entries, field, stub)
     return unless entries
     items = []
-    items << navbox_item( :search, "Search for: ", stub )
+    items << navbox_item( :search, %{<a class="search-icon">&nbsp;</a>Search for: }, stub )
     if !Cardtype.createable_cardtypes.empty? && !CachedCard.exists?(stub)
-      items << navbox_item( :new, "Add new card: ", stub )
+      items << navbox_item( :new, %{<a class="plus-icon">&nbsp;</a>Add new card: }, stub )
     end
     items += entries.map do |entry| 
       navbox_item( :goto, %{<a class="page-icon">&nbsp;</a>Go to: }, entry[field], stub )

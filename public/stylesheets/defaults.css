@@ -106,7 +106,7 @@ td, th {
 .table-row-odd {
   background: #cce;
 }
-input[type=text], 
+input[type=text], #navbox_background,
 input[type=password],
 select {
   padding-left: 3px;

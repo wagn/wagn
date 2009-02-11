@@ -189,6 +189,10 @@ div:hover.card-footer .card-links{
 .card-slot a.wanted-card { 
   color: #900 
 }
+.card-slot .open-missing {
+  color: #99b;
+  font-variant: small-caps;
+}
 .card-slot a.external-link, 
 .card-slot.line .content a.external-link { 
   color: #979; 

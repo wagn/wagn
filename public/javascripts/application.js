@@ -370,8 +370,10 @@ urlForAddField=function(card_id, eid) {
 }
 
 
-navboxOnSubmit=function(form){   
-  document.location.href= form.action + '/'+ encodeURIComponent($F('navbox_field').gsub(' ','_')); 
+navboxOnSubmit=function(form){
+  if($F('navbox_field') != '') {
+    document.location.href= form.action + '/'+ encodeURIComponent($F('navbox_field').gsub(' ','_')); 
+  }
   return false;
 }
 

@@ -41,22 +41,30 @@
 
 
 
+#navbox_background{
+  padding: 2px 0px;
+  margin:  0 8px;
+  background: #ffd;
+  margin-bottom: 2px;
+}     
+/* use both ids otherwise #top-menu a  overrides */            
+#navbox_background #navbox_image {
+  padding: 2px 8px;
+  background: url(/images/search.gif) no-repeat right;
+}
+html>body #navbox_background #navbox_image { 
+  background-image: url(/images/search.png);
+}
 #navbox_field {
   padding: 0 3px;
-  margin:  0 8px;
+  margin: 0px;
   height: 18px;
   width: 30%;
   position: relative;
-  top: -2px;
   z-index: 1;
   font-size: 13px;
-  border: 2px solid #999;
-
-}
-#navbox_field:focus {
-  border: 2px solid #ffb;
-
-}
+  border: 0px;
+}     
 #navbox_field_auto_complete {
   background: #eee
   width: auto;
@@ -65,7 +73,7 @@
   color: #777;
   font-size: 10px;
 }
-#navbox_field_auto_complete .page-icon {
+#navbox_field_auto_complete a {
   display: inline;
   padding: 3px 8px;
   margin-right: 4px;
@@ -276,6 +284,7 @@ div.auto_complete {
 }
 div.auto_complete ul {
   border:1px solid #888;
+  background: #fff;
   margin:0;
   padding:0;
   width:100%;
@@ -286,10 +295,10 @@ div.auto_complete ul li {
   padding:3px;
 }
 div.auto_complete ul li.selected { 
-  background-color: #ffb; 
+  background-color: #ffd; 
 }
 div.auto_complete ul strong.highlight { 
-  color: #800; 
+  color: #005800; 
   margin:0;
   padding:0;
 }

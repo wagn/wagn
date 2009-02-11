@@ -391,6 +391,16 @@ Ajax.Autocompleter.prototype.updateSelection = function() {
   this.render();
 }
 
+Ajax.Autocompleter.prototype.onClick = function(event){
+  var element = Event.findElement(event, 'LI');
+  this.index = element.autocompleteIndex;
+  this.selectEntry();
+  this.hide();
+  if (this.element.id == 'navbox_field') {
+    navboxOnSubmit($('navbox_form'));
+  }
+}
+
 // override Autocompleter key handling
 Ajax.Autocompleter.prototype.onKeyPress = function(event){
   if(this.active) 
@@ -415,8 +425,11 @@ Ajax.Autocompleter.prototype.onKeyPress = function(event){
        Event.stop(event);
        return;
      case Event.KEY_RETURN: 
-       this.element.value = '';
-       this.selectEntry();
+       if (!this.changed) {
+         this.element.value = '';   
+         this.selectEntry();
+         this.hide();
+       }
        return;                          
      case Event.KEY_ESC:
        this.hide();

@@ -295,10 +295,10 @@ div.auto_complete ul li {
   padding:3px;
 }
 div.auto_complete ul li.selected { 
-  background-color: #ffd; 
+  background-color: #ffb; 
 }
 div.auto_complete ul strong.highlight { 
-  color: #005800; 
+  color: #444; 
   margin:0;
   padding:0;
 }

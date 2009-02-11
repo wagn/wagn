@@ -98,10 +98,10 @@ module WagnHelper
         }
         
         slot_attr = attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join
-        open_slot = %{<!--[if IE]> <div  #{slot_attr}>  <![endif]-->} +
-                    %{<![if !IE]> <object #{slot_attr}> <![endif]>} 
-        close_slot= %{<!--[if IE]> </div> <![endif]-->} +
-                    %{<![if !IE]> </object> <![endif]>} 
+        open_slot = %{<!--[if IE]><div  #{slot_attr}><![endif]-->} +
+                    %{<![if !IE]><object #{slot_attr}><![endif]>} 
+        close_slot= %{<!--[if IE]></div><![endif]-->} +
+                    %{<![if !IE]></object><![endif]>} 
 
       end
       

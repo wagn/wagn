@@ -193,6 +193,10 @@ div:hover.card-footer .card-links{
   color: #99b;
   font-variant: small-caps;
 }
+.card-slot span:hover.open-missing {
+  color: #069;
+  background: #ffc;
+}
 .card-slot a.external-link, 
 .card-slot.line .content a.external-link { 
   color: #979; 
@@ -201,11 +205,6 @@ div:hover.card-footer .card-links{
 }
 .card-slot a.email-link { 
   color: #979 
-}
-.card-slot span:hover.createOnClick {
-  color: #069;
-  background: #ffc;
-  text-decoration: underline;
 }
 .card-slot .transcluded p, 
 .card-slot .transcluded span, 

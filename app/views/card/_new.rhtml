@@ -1,11 +1,9 @@
 <% 
-
    args=[];  
-   # when new is called from an "Add <Cardname>" transclusion, there is no existing slot,  
+   # when new is called from an "Add <Cardname>" inclusion, there is no existing slot,  
    #  so we pass an argument to create one.  eventually, the "Add <Cardname>" view should have
    #  a slot so that this isn't necessary
 	 args << { :add_slot=>params[:add_slot] } if params[:add_slot]
-	
 %>
 
 <% get_slot(nil).wrap("new", *args) do |slot| %>   
@@ -48,8 +46,6 @@
 				</span>
 			</div>
 			
-			
-			
 			<div class="edit-area">
   			<div class="editor">
   				<% if card.hard_template %>
@@ -60,9 +56,8 @@
   				<% end %>
   			</div>
   			
-  		  <%= hidden_field_tag :view, params[:requested_view] || :open %>
-  			<%= button_to_function 'Create', 
-  						"this.form.onsubmit()", :id=>'create-button'  %>
+  		  <%= hidden_field_tag :view, params[:requested_view] || params[:view] || :open %>
+  			<%= button_to_function 'Create', "this.form.onsubmit()", :id=>'create-button'  %>
 						
         <% if request.xhr? %>						
   				<%= slot.button_to_action 'Cancel', :open_missing, { :before=>slot.cancel_function }  %> 

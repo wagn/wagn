@@ -7,6 +7,7 @@ class StubSlot < WagnHelper::Slot
   def slot
     #controller.slot ||= Slot.new(@card,@context,@action,self)
   end
+=begin  Is any of this even in use?
 
   def render_transclusion( card, *args )    
     new_slot = subslot(card)  
@@ -14,7 +15,7 @@ class StubSlot < WagnHelper::Slot
     result = new_slot.send("render_transclusion_#{@transclusion_mode}", *args)
     result
   end   
-  
+
   def render_transclusion_view( options={} )   
     #return "TRANSCLUDING #{card.name}"
     if card.new_record? 
@@ -36,7 +37,7 @@ class StubSlot < WagnHelper::Slot
       #@template.render :partial=>'/transclusion/view', :locals=>{ :card=>card, :render_slot=>true }
     end   
   end
-  
+=end  
 end
 
 

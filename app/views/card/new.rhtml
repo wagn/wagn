@@ -3,18 +3,18 @@
   	<h1>New <%= @card.type != 'Basic' ? @card.cardtype.name : '' %> Card</h1>
 
   	<div class="instruction">
-  	  <% if !@card.name.blank? %>
-  	    <p>Currently, there is no card named "<strong><%= @card.name %></strong>", but you are welcomed to create it.</p>
-  	  <% end %>
-      <p> 
-				<% if @card.broken_type %>
-					Oops! No cardtype corresponds to <strong><%= @card.broken_type %></strong>.  Please select a type from the dropdown.
-        <% elsif card.new_instructions %> 
+			<% if @card.broken_type %>
+				<p class="error">Oops! There's no <strong>card type</strong> called "<strong><%= @card.broken_type %></strong>".</p>
+			<% end %>
+      <p>
+        <% if card.new_instructions %> 
 					<%= render_card card.new_instructions, :expanded_view_content %>
-        <% else%>
+    	  <% elsif !@card.name.blank? %>
+    	    Currently, there is no card named "<strong><%= @card.name %></strong>", but you are welcomed to create it.
+    	  <% else%>
           Creating a new card is easy; you just need a unique name.
-        <% end %>
-      </p>
+    	  <% end %>
+  	  </p>
   	</div>
   <% end %>
  

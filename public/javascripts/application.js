@@ -194,7 +194,6 @@ wagnOnload = function() {
   Wagn.Messenger.flash();
   Wagn.runQueue(Wagn.onLoadQueue);
   setupLinksAndDoubleClicks();  
-  $('navbox_field').focus();
 }                                                           
        
 

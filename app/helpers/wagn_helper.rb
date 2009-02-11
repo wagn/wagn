@@ -239,7 +239,7 @@ module WagnHelper
   def navbox
     content_tag( :form, :id=>"navbox_form", :action=>"/search", :onsubmit=>"return navboxOnSubmit(this)" ) do         
       content_tag( :span, :id=>"navbox_background" ) do
-        %{<a id="navbox_image" title="Search" onClick="navboxOnSubmit($('navbox_form'))">&nbsp;</a>}  + text_field_tag("navbox", "", :id=>"navbox_field", :autocomplete=>"off") +
+        %{<a id="navbox_image" title="Search" onClick="navboxOnSubmit($('navbox_form'))">&nbsp;</a>}  + text_field_tag("navbox", params[:_keyword] || '', :id=>"navbox_field", :autocomplete=>"off") +
   		    navbox_complete_field('navbox_field') 
       end
     end

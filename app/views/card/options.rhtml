@@ -11,7 +11,7 @@
       <table class="fieldset">
         <%= render :partial=>'options/permissions', :locals=>locals %>
         <% if card.extension_type == 'User' and (edit_user_context(card)=='user' or System.ok?(:administrate_users)) %>
-          <%= render :partial=>'options/user',  :locals=>locals %>
+          <%= render :partial=>'account/edit',  :locals=>locals %>
           <%= render :partial=>'options/roles', :locals=>locals %>
         <% elsif !card.extension and card.ok?(:edit) and System.ok?(:add_accounts_to_cards)%>
           <tr><td colspan="3" class="new-account-link">

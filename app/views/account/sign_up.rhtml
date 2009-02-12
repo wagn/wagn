@@ -3,9 +3,10 @@ card = Card.new(:type=>'InvitationRequest')
 div_id = "main-body"
 context = 'invitation'
 -%>
+<%# iframe for file / image uploads?? %>
 <iframe id="iframe-<%= div_id %>" height="0" width="0" frameborder="0"></iframe>
 
-<h1>Request Account</h1>
+<h1>Sign Up</h1>
 
 <% get_slot(card).wrap('account-request') do |slot| %>
   <h2 class="headroom">Details</h2>
@@ -27,12 +28,8 @@ context = 'invitation'
     		</tr>
   	  
   	  
-        <tr>
-          <td class="label"><label for="email">Email</label></td>
-          <td class="field"><%= f.text_field :email %></td>
-          <td class="help">for notifications you request, not for spam.</td>
-        </tr>
-	  
+  	    <%= render :partial=>'account/edit',  :locals=>{:card=>card, :slot=>slot, :extension=>User.new } %>
+      
               
   	  </table>    
   	</div>

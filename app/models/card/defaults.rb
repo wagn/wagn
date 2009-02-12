@@ -19,10 +19,6 @@ module CardLib
       end
       @queries
     end
-
-    def landing_name
-      self.name
-    end
     
     # -- called by the rendering pipeline-- defined in datatypes
     def allow_duplicate_revisions

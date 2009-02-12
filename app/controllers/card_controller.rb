@@ -113,14 +113,21 @@ class CardController < ApplicationController
       return
     end
     
-    @card = Card.create params[:card]
+    @card = Card.new params[:card]
+    if @card.type == 'InvitationRequest'
+      User.as(:admin)
+      @card.account = params[:extension]
+    end
+    @card.save
+
     if params[:multi_edit] and params[:cards]
-      User.as(:admin) if @card.type == 'InvitationRequest'
       @card.multi_update(params[:cards])
     end   
 
     # double check to prevent infinite redirect loop
-    fail "Card creation failed"  unless Card.find_by_name( @card.name )
+    # this was breaking all the error checking on card creation.  has to be a better way!
+    
+    # fail "Card creation failed"  unless Card.find_by_name( @card.name )
     
       
     if !@card.errors.empty?

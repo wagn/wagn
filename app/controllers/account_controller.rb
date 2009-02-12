@@ -21,16 +21,10 @@ class AccountController < ApplicationController
 
   end
   
-  def invitation_request
+  def sign_up
     User.as :admin
-    # FIXME: this should be handled by card/new  (respond with different templates for different cardegories)
   end       
-  
-  def create_invitation_request
-    # FIXME: this should be handled by card/create
-#    if Card::InvitationRequest.create params
-  end
-  
+
   
   def login
     if false and using_open_id?

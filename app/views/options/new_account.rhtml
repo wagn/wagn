@@ -2,7 +2,7 @@
   <% form_remote_for :card, @card, :url=>slot.url_for('options/create_account') do |form| %>
 
     <table class="fieldset">
-    <%= render :partial=>'user', :locals=>{:card=>@card, :slot=>slot, :extension=>card.extension } %>
+    <%= render :partial=>'account/user', :locals=>{:card=>@card, :slot=>slot, :extension=>card.extension } %>
     <tr><td colspan="3"><%= submit_tag 'Save Changes' %></td></tr>
 	  
     </table>

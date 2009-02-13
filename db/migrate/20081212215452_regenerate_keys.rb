@@ -1,7 +1,7 @@
 class RegenerateKeys < ActiveRecord::Migration
   def self.up 
-    User.as(:admin) 
-    MCard.find(:all).each do |card| 
+    ::User.as(:admin) 
+    ::Card.find(:all).each do |card| 
       if card.key != card.name.to_key
         card.key = card.name.to_key  
         old_date = card.updated_at

@@ -55,7 +55,11 @@ module WagnHelper
     end
 
     def wrap_content( content="" )
-       %{<span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick">} + content.to_s + %{</span>}
+      %{<![if !IE]><span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick"><![endif]>} +
+      %{<!--[if IE]><div class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick"><![endif]-->} +
+         content.to_s + 
+      %{<!--[if IE]></div><![endif]-->} + 
+      %{<![if !IE]></span><![endif]>} 
     end    
     
     def js
@@ -98,7 +102,7 @@ module WagnHelper
         }
         
         slot_attr = attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join
-        open_slot = %{<!--[if IE]><div  #{slot_attr}><![endif]-->} +
+        open_slot = %{<!--[if IE]><div #{slot_attr}><![endif]-->} +
                     %{<![if !IE]><object #{slot_attr}><![endif]>} 
         close_slot= %{<!--[if IE]></div><![endif]-->} +
                     %{<![if !IE]></object><![endif]>} 

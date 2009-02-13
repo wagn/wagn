@@ -2,22 +2,18 @@ class System < ActiveRecord::Base
   
   set_table_name 'system'
   
-  cattr_accessor :admin_user_defaults, :base_url, :site_name,
-    :invitation_email_body,  :invitation_email_subject, :invitation_request_email,
-    :forgotinvitation_email_body, :forgotinvitation_email_subject, 
-    :invite_request_alert_email, 
-    :role_tasks, :pagesize,                 
-    :enable_ruby_cards,
-    :enable_server_cards,
-    :enable_postgres_fulltext,
-    :postgres_src_dir,
-	  :postgres_tsearch_dir,
-    :request, :debug_wql,
-    :google_maps_api_key,
-    :time, :max_render_time, :max_renders
+  cattr_accessor :role_tasks, :request,                          
+    # Configuration Options 
+    :base_url, :max_render_time, :max_renders,   # Common; docs in sample_wagn.rb
+    :enable_ruby_cards, :enable_server_cards,    # Uncommon; Check Security risks before enabling these cardtypes (wagn.org ref url?)
+    :enable_postgres_fulltext, :postgres_src_dir, :postgres_tsearch_dir, # Optimize PostgreSQL performance
+    # In development / nonfunctional
+    :google_maps_api_key,                        
+    # Deprecated
+    :site_name, :invitation_email_body, :invitation_email_subject, :invitation_request_email, :invite_request_alert_email 
+    # Crap?  :admin_user_defaults, :debug_wql, :pagesize, :time, 
     
-  self.pagesize = 20      
-  
+    
   def self.javascript_files
     no_more = %{
       Wikiwyg.js
@@ -55,19 +51,6 @@ class System < ActiveRecord::Base
   end  
   
   class << self
-    def favicon
-      User.as :admin do
-        (card = CachedCard.get_real('*favicon')) ? "/image/#{card.content}" : '/images/favicon.ico'
-      end
-    end
-    
-    def logo
-      User.as :admin do
-        (card = CachedCard.get_real('*logo')) ? "/image/#{card.content}"  :
-          File.exists?("#{RAILS_ROOT}/public/images/logo.gif") ? "/images/logo.gif" : nil
-      end
-    end
-    
     def base_url
       if (request and request.env['HTTP_HOST'] and !@@base_url)
         'http://' + request.env['HTTP_HOST']
@@ -82,22 +65,34 @@ class System < ActiveRecord::Base
     end
 
 
-=begin
-# This was an attempt to begin the migration of the site_name setting away from wagn.rb      
-    def deck_name
-      Cardname.escape( card = CachedCard.get_real['*home'] ? card.content : System.site_name )
-    end
-=end
+    # CARD-BASED SETTINGS
 
-    def setting(setting_name)
-      template = Card.find_by_name( 'system setting' + JOINT + setting_name )
-      value = template ? template.content : System.send( setting_name.gsub(/\s/,"_") )
-      value.clone.substitute!( :site_name => System.site_name )
+    def setting(name)
+      User.as :admin do
+        card=CachedCard.get_real(name) and card.content
+      end
+    rescue
+      nil
+    end
+
+    def site_title
+      setting('*title') || 'Wagn'
     end
     
-    def admin_user
-      User.find_by_login('admin')
+    def favicon
+      img_name = setting('*favicon') ? "/image/#{img_name}" : '/images/favicon.ico'
     end
+    
+    def logo
+      img_name = setting('*logo') ? "/image/#{img_name}"  :
+          File.exists?("#{RAILS_ROOT}/public/images/logo.gif") ? "/images/logo.gif" : nil
+    end
+
+    #def admin_user
+    #  User.find_by_login('admin')
+    #end    
+    
+    # PERMISSIONS
     
     def ok?(task)
       return true if always_ok?
@@ -125,7 +120,6 @@ class System < ActiveRecord::Base
           (party == User.current_user)      
     end
     
-    
     # FIXME stick this in session? cache it somehow??
     def ok_hash
       usr = User.current_user
@@ -146,7 +140,6 @@ class System < ActiveRecord::Base
       return false      
     end
   end 
-  
 
   @@role_tasks = %w{
     set_global_permissions
@@ -155,21 +148,6 @@ class System < ActiveRecord::Base
     add_accounts_to_cards
     assign_user_roles
   }
-
-=begin
-  set_personal_card_permissions
-  edit_html           
-  manage_permissions  
-  edit_cards     
-  rename_cards 
-  edit_cardtypes       
-  remove_cards   
-  set_datatypes
-  invite_users        
-  edit_server_cards
-  deny_invitation_requests
-=end
-
   
 end
  

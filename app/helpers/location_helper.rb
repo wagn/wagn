@@ -50,7 +50,15 @@ module LocationHelper
   def url_for_card( options={} )
     url_for options_for_card( options )
   end
-            
+       
+  def card_path( card )
+    "/wagn/#{card.name.to_url_key}" 
+  end            
+  
+  def card_url( card )
+    "#{System.base_url.gsub(/\/$/,'')}#{request.port_string}" + card_path(card)
+  end
+  
   # Links ----------------------------------------------------------------------
  
   def link_to_page( text, title=nil, options={})

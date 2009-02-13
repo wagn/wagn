@@ -14,8 +14,11 @@ class InvitationRequestTest < Test::Unit::TestCase
     @response   = ActionController::TestResponse.new
   end
   
-  def test_should_send_notification    
-    System.invite_request_alert_email = 'test@user.com' if System.invite_request_alert_email.blank?
+  def test_should_send_notification
+    User.as :admin do
+      Card.create :name=>'*invite+*to', :content=> 'test@user.com'
+    end
+#    System.invite_request_alert_email = 'test@user.com' if System.invite_request_alert_email.blank?
     assert_difference ActionMailer::Base.deliveries, :size do
       post :create, :card => {
         :type=>"InvitationRequest", 

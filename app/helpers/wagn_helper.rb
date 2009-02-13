@@ -145,8 +145,8 @@ module WagnHelper
 
   # Other snippets -------------------------------------------------------------
 
-  def site_name
-    System.site_name
+  def site_title
+    System.site_title
   end
 
   def css_name( name )

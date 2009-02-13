@@ -53,7 +53,7 @@ class ApplicationController < ActionController::Base
     Role.reset_cache
     CachedCard.reset_cache
     System.request = request 
-    System.time = Time.now.to_f              
+    #System.time = Time.now.to_f              
 
   end
 

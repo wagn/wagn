@@ -199,7 +199,7 @@ namespace 'wagn' do
     
 
     puts ">>migrating template database"
-    System.site_name = 'Wagn'
+    System.site_title = 'Wagn'
     Rake::Task['db:migrate'].invoke  
 
   #=begin  

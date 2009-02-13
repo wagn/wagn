@@ -31,7 +31,7 @@ context = 'invitation'
       <tr>
         <td class="label"><label for="email">Email</label></td>
         <td class="field"><%= f.text_field :email %></td>
-        <td class="help">Used to verify account (not to spam)</td>
+        <td class="help"><strong>To verify account</strong><br/> Not to spam</td>
       </tr>
 	
   	  <% if @card.name.blank? %>
@@ -40,7 +40,7 @@ context = 'invitation'
           <td class="field">
             <%= text_field( :card, :name, {:class=>'new-card-name', :id=>"new-card-name-field", :autocomplete=>'off'} )%>
           </td>
-          <td class="help">Usually a full name: the title of the new user's card.  (Your friend can change it later)</td>
+          <td class="help"><strong>Title for user's card</strong><br/> Usually a full name.</td>
     		</tr>
   		<% end %>
 
@@ -49,8 +49,8 @@ context = 'invitation'
   	      <td class="label"><label for="password">Password</label></td>
   	      <td class="field"><%= f.password_field :password %></td>
   	      <td class="help" rowspan="2">
-  					As a User Administrator, you may optionally set an initial password for
-  					this new user.  If left blank, a random password will be generated  
+  	        <strong>Optional: Set Password</strong><br/>
+  					If blank, we'll make one up.
   	      </td>
   	    </tr>  
 
@@ -72,7 +72,7 @@ context = 'invitation'
   		
   		<tr>
   		  <td></td>
-  		  <td class="help" colspan="2">A password and instructions will be appended to the end of the message.</td>             			
+  		  <td class="help" colspan="2">We'll append the password and instructions to the email.</td>             			
   		</tr>
   		              
   		<tr>

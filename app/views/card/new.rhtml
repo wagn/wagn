@@ -4,7 +4,7 @@
 
   	<div class="instruction">
 			<% if @card.broken_type %>
-				<p class="error">Oops! There's no <strong>card type</strong> called "<strong><%= @card.broken_type %></strong>".</p>
+				<p class="error" id="no-cardtype-error">Oops! There's no <strong>card type</strong> called "<strong><%= @card.broken_type %></strong>".</p>
 			<% end %>
       <p>
         <% if card.new_instructions %> 

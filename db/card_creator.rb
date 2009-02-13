@@ -61,24 +61,6 @@ class MWikiReference < ActiveRecord::Base
   set_table_name 'wiki_references'
 end
 
-=begin
-class System < ActiveRecord::Base
-  cattr_accessor :admin_user_defaults, :base_url, :site_name, :node_types, 
-    :invitation_email_body,  :invitation_email_subject,
-    :forgotinvitation_email_body, :forgotinvitation_email_subject,
-    :role_tasks
-  @@role_tasks = %w{  
-    manage_roles       edit_cards     rename_cards 
-    edit_cardtypes     seal_cards     edit_sealed_cards
-  }
-  class << self                      
-    def site_name=(name)
-      ActiveRecord::Base.logger.error("SITE NAME= #{name}")
-      @@site_name=name
-    end
-  end
-end
-=end
 
 require_dependency "#{RAILS_ROOT}/config/sample_wagn.rb"
 require_dependency "#{RAILS_ROOT}/config/wagn.rb"

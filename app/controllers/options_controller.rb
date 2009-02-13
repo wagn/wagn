@@ -56,8 +56,8 @@ class OptionsController < ApplicationController
   end
 
   def send_create_account_message(user)
-    subject = "Your new #{System.site_name} account."
-    message = "Welcome!  You now have an account on #{System.site_name}."
+    subject = "Your new #{System.site_title} account."
+    message = "Welcome!  You now have an account on #{System.site_title}."
     Notifier.deliver_account_info(user,subject,message)
   rescue
   end

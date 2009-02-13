@@ -26,7 +26,7 @@ namespace :wagn do
               
     User.as :admin
     home = Card['Wagn']
-    home.name = System.site_name
+    home.name = System.site_title
     home.save!
     
   end

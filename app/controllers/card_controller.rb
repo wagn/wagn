@@ -36,7 +36,7 @@ class CardController < ApplicationController
     if card = CachedCard.get_real('*home')
       redirect_to '/'+ card.content
     else
-      redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_name)
+      redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_title)
     end
   end
 
@@ -52,7 +52,7 @@ class CardController < ApplicationController
 
     @card_name = Cardname.unescape(params['id'] || '')
     if (@card_name.nil? or @card_name.empty?) then    
-      @card_name = System.site_name
+      @card_name = System.site_title
       #@card_name = System.deck_name
     end             
     @card = CachedCard.get(@card_name)

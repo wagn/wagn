@@ -2,8 +2,8 @@ xml.instruct! :xml, :version => "1.0"
 xml.rss :version => "2.0" do
   xml.channel do
     xml.title  System.site_title + " : " + @card.name.gsub(/^\*/,'')
-    xml.decription ""
-    xml.link url_for_page(@card.name)
+    xml.description ""
+    xml.link card_url(@card)
     
     cards = if Card::Search === @card 
       @card.search( :limit => 10 )
@@ -23,9 +23,11 @@ xml.rss :version => "2.0" do
         })                    
         xml.description slot.render( view_changes ? :rss_change : :expanded_view_content )
         xml.pubDate card.updated_at.to_s(:rfc822) 
-        xml.link url_for_page(card.name)
+        xml.link card_url(card)
+        xml.guid card_url(card)
       end
-    end
+    end                                               
+    #xml.atom :link, :href=>card_url(@card), :rel=>"self", :type=>"application/rss+xml"
   end
 end
- 
+                         

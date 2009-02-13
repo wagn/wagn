@@ -9,22 +9,6 @@ var warn = function(stuff) {
     console.log( stuff );
 }
 
-Wagn.CardTable = $H({});
-Object.extend(Wagn.CardTable, {
-  get: function(key) {
-    return this[key]; 
-  }
-})
-
-
-Wagn.Dummy = Class.create();
-
-Wagn.Dummy.prototype = {
-  initialize: function( num ) {
-    this.number = num; 
-  }
-}
-    
 var Cookie = {
   set: function(name, value, daysToExpire) {
     var expire = '';
@@ -134,11 +118,7 @@ function copy_with_classes(element) {
 }
 
 Object.extend(Wagn, {
-  user: function() { return $('user'); },
-  card: function(){ return Wagn.Card },
-  lister: function() { return Wagn._lister },
   messenger: function(){ return Wagn.Messenger },
-  cardTable: function() { return Wagn.CardTable },
   
   title_mouseover: function( targetClass ) {
     $$( '.'+targetClass ).each(function(elem) {
@@ -171,6 +151,36 @@ Wagn.highlight = function( group, id )  {
   });
   Element.addClassName( group + '-' + id, 'current' );
 }
+                                                           
+/* ------------ Autosave -----------------------*/
+
+Wagn.auto_save_interval = 20; //seconds
+Wagn.draftSavers = $H({});
+          
+Wagn.setupAutosave=function(card_id, slot_id) {
+  var parameters = "";
+  save_draft_fn = function() {                                
+    form = $(slot_id + "-form") ;
+    if (!form) { return }
+
+    // run each item in the save queue to save data to form elements
+    Wagn.onSaveQueue[slot_id].each(function(item){ item.call() });
+
+    new_parameters = Form.serialize( form );  
+    if (new_parameters != parameters) {
+      parameters = new_parameters;
+    
+      // serialize form and submit to CardController#save_draft       
+      new Ajax.Request('/card/save_draft/' + card_id, {
+        asynchronous:true, evalScripts:true, method: 'post',
+        parameters: parameters
+      });
+    }
+  }
+  Wagn.draftSavers[slot_id] = new PeriodicalExecuter(save_draft_fn, Wagn.auto_save_interval);
+}
+
+
 
 /* ------------------ OnLoad --------------------*/
 

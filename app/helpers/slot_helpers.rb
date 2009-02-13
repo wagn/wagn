@@ -185,11 +185,11 @@ module SlotHelpers
   end                          
  
   def save_function 
-    "warn('running #{context} queue'); if (Wagn.runQueue(Wagn.onSaveQueue['#{context}'])) { } else {return false}"
+    "Wagn.draftSavers['#{context}'].stop(); if (Wagn.runQueue(Wagn.onSaveQueue['#{context}'])) { } else {return false}"
   end
 
   def cancel_function 
-    "Wagn.runQueue(Wagn.onCancelQueue['#{context}']);"
+    "Wagn.draftSavers['#{context}'].stop(); Wagn.runQueue(Wagn.onCancelQueue['#{context}']);"
   end
 
 
@@ -210,31 +210,21 @@ module SlotHelpers
     end
     root.js_queue_initialized||={}
     unless root.js_queue_initialized.has_key?(hook_context) 
-      code << "warn('initializing #{hook_context} save & cancel queues');"
+      #code << "warn('initializing #{hook_context} save & cancel queues');"
       code << "Wagn.onSaveQueue['#{hook_context}']=$A([]);\n"
       code << "Wagn.onCancelQueue['#{hook_context}']=$A([]);\n"
+      code << "Wagn.setupAutosave('#{card.id}', '#{hook_context}');\n" unless hooks[:skip_autosave]
       root.js_queue_initialized[hook_context]=true
     end
     if hooks[:save]  
-      #code << "if (typeof(Wagn.onSaveQueue['#{hook_context}'])=='undefined') {\n"
-      #code << "  Wagn.onSaveQueue['#{hook_context}']=$A([]);\n"
-      #code << "}\n"  
-      #warn("root= #{root}  self=#{self}")
-      #if root == self
-      #  code << "Wagn.onSaveQueue['#{hook_context}'].clear();"
-      #  code << "warn('clearing #{hook_context} save queue');" 
-      #end    
-      #warn("Save hook: #{hooks[:save]}")
       code << "Wagn.onSaveQueue['#{hook_context}'].push(function(){\n"
-      code << "warn('running #{hook_context} save hook');"
+      #code << "warn('running #{hook_context} save hook');"
       code << hooks[:save]
       code << "});\n"
-      code << "warn('added to #{hook_context} save queue');"
+      code << "warn('hook: fn(){ #{hooks[:save].gsub(/\'/,"|").gsub(/\n/,"; ")} }');"
+      #code << "added to #{hook_context} save queue');"
     end
     if hooks[:cancel]
-      #code << "if (typeof(Wagn.onCancelQueue['#{hook_context}'])=='undefined') {\n"
-      #code << "  Wagn.onCancelQueue['#{hook_context}']=$A([]);\n"
-      #code << "}\n"
       code << "Wagn.onCancelQueue['#{hook_context}'].push(function(){\n"
       code << hooks[:cancel]
       code << "});\n"

@@ -1,7 +1,7 @@
 <%- 
 view = symbolize_param(:view) 
 view = :open if [:closed, :line,:open,:card,:view, nil].member?(view)
-@title = System.site_name + ": " + @card.name
+@title = @card.name
 
 slot = get_slot
 if item = symbolize_param(:item)

@@ -14,11 +14,10 @@ class AccountController < ApplicationController
       @user = User.new
     end    
     @email={}
-    @email[:subject] = System.setting( 'invitation email subject' )
-    @email[:message] = System.setting( 'invitation email body' )
-    @email[:message].substitute! :invitor => current_user.card.name + " <#{current_user.email}>" 
-    @email[:message].gsub!(/Hello,/, "Hello #{@card.name},") if @card.name
-
+    @email[:subject] = System.setting('*invite+*subject') || ''
+    @email[:message] = System.setting('*invite+*message') || ''
+    @email[:message].substitute! :invitor => current_user.card.name + " (#{current_user.email})" 
+    @email[:message].gsub!(/Hello,/, "Hello #{@card.name},") if @card.name  #FIXME - this is not going to grow well.
   end
   
   def invitation_request
@@ -63,7 +62,7 @@ class AccountController < ApplicationController
     end  
   end
         
-  def create
+  def create #currently called upon invite only
     return unless request.post? 
     # FIXME: not hardcode user cardtype??  
     @user = User.create_with_card( params )
@@ -71,7 +70,7 @@ class AccountController < ApplicationController
     
     render :update do |page|
       page.wagn.messenger.note( "Successfully invited #{@card.name}" )
-      page.redirect_to previous_location
+      page.redirect_to (thx = System.setting('*invite+*thanks') ? '/wagn/*invite+*thanks?view=content' : previous_location)
     end
   end 
 
@@ -135,7 +134,7 @@ class AccountController < ApplicationController
   private  
 
     def successful_login
-      flash[:notice] = "Welcome to #{System.site_name}"
+      flash[:notice] = "Welcome to #{System.site_title}"
       redirect_to previous_location
     end
 

@@ -164,7 +164,9 @@ Wagn.setupAutosave=function(card_id, slot_id) {
     if (!form) { return }
 
     // run each item in the save queue to save data to form elements
-    Wagn.onSaveQueue[slot_id].each(function(item){ item.call() });
+    if (Wagn.onSaveQueue[slot_id]) {
+      Wagn.onSaveQueue[slot_id].each(function(item){ item.call() });
+    }
 
     new_parameters = Form.serialize( form );  
     if (new_parameters != parameters) {

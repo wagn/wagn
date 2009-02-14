@@ -181,7 +181,7 @@ module SlotHelpers
     self.form = form              
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
-    pre_content + self.render_partial( card_partial('editor'), options )
+    pre_content + self.render_partial( card_partial('editor'), options ) + setup_autosave
   end                          
  
   def save_function 
@@ -201,7 +201,6 @@ module SlotHelpers
     
     #FIXME: this looks like it won't work for arbitraritly nested forms.  1-level only
     hook_context = @nested ? context.split('_')[0..-2].join('_') : context
-  
     code = "" 
     if hooks[:setup]
       code << "Wagn.onLoadQueue.push(function(){\n" unless request.xhr?
@@ -213,7 +212,6 @@ module SlotHelpers
       #code << "warn('initializing #{hook_context} save & cancel queues');"
       code << "Wagn.onSaveQueue['#{hook_context}']=$A([]);\n"
       code << "Wagn.onCancelQueue['#{hook_context}']=$A([]);\n"
-      code << "Wagn.setupAutosave('#{card.id}', '#{hook_context}');\n" unless hooks[:skip_autosave]
       root.js_queue_initialized[hook_context]=true
     end
     if hooks[:save]  
@@ -230,5 +228,12 @@ module SlotHelpers
       code << "});\n"
     end
     javascript_tag code
+  end                   
+  
+  def setup_autosave
+    unless @nested or skip_autosave
+      javascript_tag "Wagn.setupAutosave('#{card.id}', '#{context}');\n"
+    end
   end
+  
 end  

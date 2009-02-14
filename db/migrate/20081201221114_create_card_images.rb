@@ -1,6 +1,7 @@
 class CreateCardImages < ActiveRecord::Migration
   def self.up
     create_table :card_images do |t|
+      t.string :card_id
       t.string :filename
       t.string :content_type
       t.integer :size

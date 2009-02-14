@@ -1,4 +1,5 @@
 class CardImage < ActiveRecord::Base
+  belongs_to :cards
   has_attachment :content_type => :image, 
                  :storage => :file_system,   
                  :size => (1..5.megabyte),   

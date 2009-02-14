@@ -10,5 +10,5 @@ public/file
 public_scripts
 public/stylesheets/base*
 public/javascripts/base*
-public/card_image
-public/card_file
+public/card_images
+public/card_files

@@ -63,6 +63,9 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.singular(/(ss)$/i, '\1')
   inflect.plural(/(ss)$/i, '\1')
 end
+
+
+require 'remote_uploads.rb'
    
 # Define a regexp function so the ~ WQL operator works with SQLite.
 =begin

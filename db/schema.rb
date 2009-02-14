@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20081219192549) do
+ActiveRecord::Schema.define(:version => 20090214171929) do
 
   create_table "card_files", :force => true do |t|
     t.string   "filename"
@@ -20,15 +20,16 @@ ActiveRecord::Schema.define(:version => 20081219192549) do
   end
 
   create_table "card_images", :force => true do |t|
-    t.integer  "size"
-    t.string   "content_type"
     t.string   "filename"
+    t.string   "content_type"
+    t.integer  "size"
     t.integer  "height"
     t.integer  "width"
     t.integer  "parent_id"
     t.string   "thumbnail"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "card_id"
   end
 
   create_table "cards", :force => true do |t|

@@ -1,8 +1,9 @@
 module SlotHelpers  
+  
+  
   def render_diff(card, *args)
     @renderer.render_diff(card, *args)
   end
- 
   
   def notice 
     %{<span class="notice">#{controller.notice}</span>}
@@ -27,7 +28,7 @@ module SlotHelpers
    
   def selector(area="")   
     "getSlotFromContext('#{context}')";
-  end
+  end             
  
   def card_id
     (card.new_record? && card.name)  ? Cardname.escape(card.name) : card.id
@@ -43,8 +44,8 @@ module SlotHelpers
     div(:class=>'submenu') do
       [[ :content,    'card/edit',          true                      ],
        [ :name,       'card/edit_name',     true                      ],
-       [ :type,       'card/edit_type',     !card.type_template?      ],
-       [ :inclusions, 'card/edit',          (!card.out_transclusions.empty? && !card.template? && !card.hard_template),         {:inclusions=>true} ]
+       [ :type,       'card/edit_type',     !(card.type_template? || (card.type=='Cardtype' && !Card.search(:type=>card.name).empty?))            ],
+       [ :inclusions, 'card/edit',          !(card.out_transclusions.empty? || card.template? || card.hard_template),         {:inclusions=>true} ]
        ].map do |key,partial,ok,args|
 
         link_to_remote( key, 
@@ -132,8 +133,8 @@ module SlotHelpers
 
   def link_to_menu_action( to_action)
     menu_action = (%w{ show update }.member?(action) ? 'view' : action)
-    link_to_action to_action.capitalize, to_action, {},
-      :class=> (menu_action==to_action ? 'current' : '')
+    content_tag( :li, link_to_action( to_action.capitalize, to_action, {} ),
+      :class=> (menu_action==to_action ? 'current' : ''))
   end
 
   def link_to_action( text, to_action, remote_opts={}, html_opts={})
@@ -144,20 +145,21 @@ module SlotHelpers
   end
 
   def button_to_action( text, to_action, remote_opts={}, html_opts={})
-    button_to_remote text, remote_opts.merge(
-      :url=>url_for("card/#{to_action}"),
-      :update => id
-    ), html_opts
+    if remote_opts.delete(:replace)
+      r_opts =  { :url=>url_for("card/#{to_action}", :replace=>id ) }.merge(remote_opts)
+    else
+      r_opts =  { :url=>url_for("card/#{to_action}" ), :update => id }.merge(remote_opts)
+    end
+    button_to_remote( text, r_opts, html_opts )
   end
 
   def name_field(form,options={})
-    text = %{<span class="label"> card name:</span>\n}
-    text << form.text_field( :name, {:size=>40, :class=>'field card-name-field'}.merge(options))
+    form.text_field( :name, { :class=>'field card-name-field'}.merge(options))
   end
 
 
   def cardtype_field(form,options={})
-    text = %{<span class="label"> card type:</span>\n} 
+    text = %{<span class="label"> type:</span>\n} 
     text << @template.select_tag('card[type]', cardtype_options_for_select(card.type), options) 
   end
 
@@ -183,11 +185,11 @@ module SlotHelpers
   end                          
  
   def save_function 
-    "warn('running #{context} queue'); if (Wagn.runQueue(Wagn.onSaveQueue['#{context}'])) { } else {return false}"
+    "Wagn.draftSavers['#{context}'].stop(); if (Wagn.runQueue(Wagn.onSaveQueue['#{context}'])) { } else {return false}"
   end
 
   def cancel_function 
-    "Wagn.runQueue(Wagn.onCancelQueue['#{context}']);"
+    "Wagn.draftSavers['#{context}'].stop(); Wagn.runQueue(Wagn.onCancelQueue['#{context}']);"
   end
 
 
@@ -208,31 +210,21 @@ module SlotHelpers
     end
     root.js_queue_initialized||={}
     unless root.js_queue_initialized.has_key?(hook_context) 
-      code << "warn('initializing #{hook_context} save & cancel queues');"
+      #code << "warn('initializing #{hook_context} save & cancel queues');"
       code << "Wagn.onSaveQueue['#{hook_context}']=$A([]);\n"
       code << "Wagn.onCancelQueue['#{hook_context}']=$A([]);\n"
+      code << "Wagn.setupAutosave('#{card.id}', '#{hook_context}');\n" unless hooks[:skip_autosave]
       root.js_queue_initialized[hook_context]=true
     end
     if hooks[:save]  
-      #code << "if (typeof(Wagn.onSaveQueue['#{hook_context}'])=='undefined') {\n"
-      #code << "  Wagn.onSaveQueue['#{hook_context}']=$A([]);\n"
-      #code << "}\n"  
-      #warn("root= #{root}  self=#{self}")
-      #if root == self
-      #  code << "Wagn.onSaveQueue['#{hook_context}'].clear();"
-      #  code << "warn('clearing #{hook_context} save queue');" 
-      #end    
-      #warn("Save hook: #{hooks[:save]}")
       code << "Wagn.onSaveQueue['#{hook_context}'].push(function(){\n"
-      code << "warn('running #{hook_context} save hook');"
+      #code << "warn('running #{hook_context} save hook');"
       code << hooks[:save]
       code << "});\n"
-      code << "warn('added to #{hook_context} save queue');"
+      code << "warn('hook: fn(){ #{hooks[:save].gsub(/\'/,"|").gsub(/\n/,"; ")} }');"
+      #code << "added to #{hook_context} save queue');"
     end
     if hooks[:cancel]
-      #code << "if (typeof(Wagn.onCancelQueue['#{hook_context}'])=='undefined') {\n"
-      #code << "  Wagn.onCancelQueue['#{hook_context}']=$A([]);\n"
-      #code << "}\n"
       code << "Wagn.onCancelQueue['#{hook_context}'].push(function(){\n"
       code << hooks[:cancel]
       code << "});\n"

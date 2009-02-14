@@ -6,6 +6,7 @@ script/performance/*.session
 public/stylesheets/local.css
 pkg
 public/image
+public/file
 public_scripts
 public/stylesheets/base*
 public/javascripts/base*

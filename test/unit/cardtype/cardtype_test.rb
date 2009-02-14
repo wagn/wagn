@@ -10,7 +10,7 @@ class Card::CardtypeTest < Test::Unit::TestCase
     city = Card::Cardtype.find_by_name('City')
     Card::City.create :name=>'Sparta'
     Card::City.create :name=>'Eugene'
-    assert_equal ['Eugene','Sparta'], city.cards_of_this_type.plot(:name).sort
+    assert_equal ['Eugene','Sparta'], Card.search(:type=>'City').plot(:name).sort
     assert_raises Wagn::Oops do
       city.destroy!
     end                             

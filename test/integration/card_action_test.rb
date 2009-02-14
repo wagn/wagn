@@ -41,25 +41,16 @@ class CardActionTest < ActionController::IntegrationTest
   
 
 
-  def test_connect
-    given_cards( "Apple"=>"woot", "Orange" => "wot" )
-    apple, orange = Card["Apple"], Card["Orange"]
-
-    post( 'connection/create', :id => apple.id, :name=>orange.name  )
-    assert_response :success
-    assert_instance_of Card::Basic, Card["Apple+Orange"]
-  end
-
   def test_create_role_card
     post( 'card/create', :card=>{:content=>"test", :type=>'Role', :name=>"Editor"})
-    assert_response :success
+    assert_response :redirect
     assert_instance_of Card::Role, Card.find_by_name('Editor')
     assert_instance_of Role, Role.find_by_codename('Editor')
   end
 
   def test_create_cardtype_card
     post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"} )
-    assert_response :success
+    assert_response :redirect
     assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
     assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor')
   end
@@ -70,7 +61,7 @@ class CardActionTest < ActionController::IntegrationTest
       :name=>"Editor",
       :content=>"testcontent2"
     }
-    assert_response :success
+    assert_response :redirect
     assert_equal "testcontent2", Card["Editor"].content
   end
 
@@ -109,7 +100,7 @@ class CardActionTest < ActionController::IntegrationTest
   def test_newcard_gives_reasonable_error_for_invalid_cardtype
     get 'card/new', :card => { :type=>'bananamorph' }       
     assert_response :success
-    assert_tag :tag=>'p', :content=>/No cardtype corresponds to/
+    assert_tag :tag=>'p', :attributes=>{:class=>'error', :id=>'no-cardtype-error'}
   end
 
 

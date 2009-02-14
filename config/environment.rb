@@ -12,7 +12,7 @@ require File.join(File.dirname(__FILE__), 'boot')
                           
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence those specified here
-  #RAILS_GEM_VERSION = '2.1.2' unless defined? RAILS_GEM_VERSION  
+  RAILS_GEM_VERSION_VERSION = '2.1.2' unless defined? RAILS_GEM_VERSION  
   # Skip frameworks you're not going to use
   config.frameworks -= [ :action_web_service ]
 
@@ -47,10 +47,12 @@ Rails::Initializer.run do |config|
   #config.gem "rspec-rails", :lib => "spec"          
 
   # FIXME: should we also set :secret ?
+  require 'yaml'
+  db = YAML.load_file('config/database.yml')
   config.action_controller.session = {
-    :session_key => (RAILS_ROOT.split("/")[-2..-1]||'generic_wagn_key').join('-').gsub(/\./,'-')
-  }
-  
+    :session_key => db[RAILS_ENV]['session_key'],
+    :secret      => db[RAILS_ENV]['secret']
+  }  
 end
 
 # Add new inflection rules using the following format 

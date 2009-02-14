@@ -4,27 +4,11 @@
 
 Wagn = new Object();
 
-function warn(stuff) {
+var warn = function(stuff) {
   if (typeof(console) != 'undefined')
     console.log( stuff );
 }
 
-Wagn.CardTable = $H({});
-Object.extend(Wagn.CardTable, {
-  get: function(key) {
-    return this[key]; 
-  }
-})
-
-
-Wagn.Dummy = Class.create();
-
-Wagn.Dummy.prototype = {
-  initialize: function( num ) {
-    this.number = num; 
-  }
-}
-    
 var Cookie = {
   set: function(name, value, daysToExpire) {
     var expire = '';
@@ -134,11 +118,7 @@ function copy_with_classes(element) {
 }
 
 Object.extend(Wagn, {
-  user: function() { return $('user'); },
-  card: function(){ return Wagn.Card },
-  lister: function() { return Wagn._lister },
   messenger: function(){ return Wagn.Messenger },
-  cardTable: function() { return Wagn.CardTable },
   
   title_mouseover: function( targetClass ) {
     $$( '.'+targetClass ).each(function(elem) {
@@ -171,6 +151,36 @@ Wagn.highlight = function( group, id )  {
   });
   Element.addClassName( group + '-' + id, 'current' );
 }
+                                                           
+/* ------------ Autosave -----------------------*/
+
+Wagn.auto_save_interval = 20; //seconds
+Wagn.draftSavers = $H({});
+          
+Wagn.setupAutosave=function(card_id, slot_id) {
+  var parameters = "";
+  save_draft_fn = function() {                                
+    form = $(slot_id + "-form") ;
+    if (!form) { return }
+
+    // run each item in the save queue to save data to form elements
+    Wagn.onSaveQueue[slot_id].each(function(item){ item.call() });
+
+    new_parameters = Form.serialize( form );  
+    if (new_parameters != parameters) {
+      parameters = new_parameters;
+    
+      // serialize form and submit to CardController#save_draft       
+      new Ajax.Request('/card/save_draft/' + card_id, {
+        asynchronous:true, evalScripts:true, method: 'post',
+        parameters: parameters
+      });
+    }
+  }
+  Wagn.draftSavers[slot_id] = new PeriodicalExecuter(save_draft_fn, Wagn.auto_save_interval);
+}
+
+
 
 /* ------------------ OnLoad --------------------*/
 
@@ -189,11 +199,21 @@ Wagn.onSaveQueue = $H({});
 Wagn.onCancelQueue = $H({});
 Wagn.editors = $H({});
 
-onload = function() {
+
+wagnOnload = function() {
   Wagn.Messenger.flash();
   Wagn.runQueue(Wagn.onLoadQueue);
-  setupLinksAndDoubleClicks();
+  setupLinksAndDoubleClicks();  
+}                                                           
+       
+
+handleGlobalShortcuts=function(event){
+  if (event.keyCode == 76 && event.ctrlKey) {
+    $('navbox_field').focus();
+  }
 }
+
+
 
 setupLinksAndDoubleClicks = function() {
   getNewWindowLinks();
@@ -209,11 +229,12 @@ setupCreateOnClick=function(container) {
       element = Event.element(event);
       slot_span = getSlotSpan(element);
       card_name = slot_span.getAttributeNode('cardname').value;  
+      card_type = slot_span.getAttributeNode('type').value;
       //console.log("create  " +card_name);
       ie = (Prototype.Browser.IE ? '&ie=true' : '');
-      new Ajax.Request('/transclusion/create?context='+getSlotContext(element), {
-        asynchronous: true, evalScripts: true,
-        parameters: "card[name]="+encodeURIComponent(card_name)+"&requested_view="+slot_span.getAttributeNode('view').value+ie
+      new Ajax.Updater(slot_span, '/card/new?add_slot=true&context='+getSlotContext(element), {
+        asynchronous: true, evalScripts: true,     
+        parameters: "card[type]=" + encodeURIComponent(card_type) + "&card[name]="+encodeURIComponent(card_name)+"&requested_view="+slot_span.getAttributeNode('view').value+ie
       });
       Event.stop(event);
     }
@@ -231,20 +252,14 @@ setupDoubleClickToEdit=function(container) {
   });
 }        
    
-   
 editTransclusion=function(element){
-     span = getSlotSpan(element);   
-     card_id = span.getAttributeNode('cardid').value;
-     if (Element.hasClassName(span,'line')) {
-       new Ajax.Request('/card/to_edit/'+card_id+'?context='+getSlotContext(element),
-          {asynchronous: true, evalScripts: true});
-     } else { /*if (Element.hasClassName(span,'paragraph')) {*/
-       new Ajax.Updater({success:span, failure:span}, '/card/edit/'+card_id+'?context='+getSlotContext(element),
-          {asynchronous: true, evalScripts: true});
-     } /*else {
-       new Ajax.Updater({success:span, failure:getNextElement(span,'notice')}, '/transclusion/edit/'+card_id+'?context='+getSlotContext(element),
-          { asynchronous: true, evalScripts: true});  
-     }*/
+   span = getSlotSpan(element);   
+   card_id = span.getAttributeNode('cardid').value;       
+   url =  '/card/edit/'+card_id+'?context='+getSlotContext(element) + '&' + getSlotOptions(element);
+   new Ajax.Updater(span, url, {
+     asynchronous: true, evalScripts: true, 
+     onSuccess: function(){  Wagn.line_to_paragraph(span) }
+   });
 }
 
 getOuterSlot=function(element){
@@ -364,6 +379,100 @@ urlForAddField=function(card_id, eid) {
   return ('/card/add_field/' + card_id + '?index=' + index + '&eid=' + eid);
 }
 
+
+navboxOnSubmit=function(form){
+  if($F('navbox_field') != '') {
+    document.location.href= form.action + '/'+ encodeURIComponent($F('navbox_field').gsub(' ','_')); 
+  }
+  return false;
+}
+
+navboxAfterUpdate=function(text,li){
+  if (!li.hasClassName('search')) {
+    $('navbox_form').action = '/wagn';
+  }
+}
+
+Event.KEY_SHIFT = 16;
+                                            
+// fixme better name?
+Ajax.Autocompleter.prototype.updateSelection = function() {
+  this.element.value = '';
+  this.updateElement(this.getCurrentEntry());
+  this.render();
+}
+
+Ajax.Autocompleter.prototype.onClick = function(event){
+  var element = Event.findElement(event, 'LI');
+  this.index = element.autocompleteIndex;
+  this.selectEntry();
+  this.hide();
+  if (this.element.id == 'navbox_field') {
+    navboxOnSubmit($('navbox_form'));
+  }
+}
+
+// override Autocompleter key handling
+Ajax.Autocompleter.prototype.onKeyPress = function(event){
+  if(this.active) 
+    switch(event.keyCode) {
+     case Event.KEY_TAB:
+       if (event.shiftKey){
+         this.markPrevious();
+       } else {
+         this.markNext();  
+       }   
+       this.updateSelection();
+       Event.stop(event);
+       return;
+     case Event.KEY_UP:
+       this.markPrevious();
+       this.updateSelection();
+       Event.stop(event);
+       return;
+     case Event.KEY_DOWN:
+       this.markNext();
+       this.updateSelection();
+       Event.stop(event);
+       return;
+     case Event.KEY_RETURN: 
+       if (!this.changed) {
+         this.element.value = '';   
+         this.selectEntry();
+         this.hide();
+       }
+       return;                          
+     case Event.KEY_ESC:
+       this.hide();
+       this.active = false;
+       Event.stop(event);
+       return;
+     case Event.KEY_LEFT:
+     case Event.KEY_RIGHT:
+     case Event.KEY_SHIFT:
+       return;
+    }
+   else 
+     if(event.keyCode==Event.KEY_TAB || event.keyCode==Event.KEY_RETURN || 
+       (Prototype.Browser.WebKit > 0 && event.keyCode == 0)) return;
+
+  this.changed = true;
+  this.hasFocus = true;
+
+  if(this.observer) clearTimeout(this.observer);
+    this.observer = 
+      setTimeout(this.onObserverEvent.bind(this), this.options.frequency*1000);
+}
+                                           
+//  changed scrollIntoView(true) to scrollIntoView(false) -- it was 
+//  causing lots of jerking around.
+Ajax.Autocompleter.prototype.markPrevious = function() {
+  if(this.index > 0) this.index--
+    else this.index = this.entryCount-1;
+  this.getEntry(this.index).scrollIntoView(false);
+}
+
+
 var loadScript = function(name) {
   var d=document;
   var s;
@@ -385,3 +494,6 @@ var loadScript = function(name) {
   } 
 }   
 
+       
+Event.observe(window, 'load', wagnOnload);
+Event.observe(window, 'keydown', handleGlobalShortcuts );

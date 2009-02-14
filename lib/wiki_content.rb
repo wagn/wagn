@@ -43,12 +43,15 @@ class WikiContent < String
        'h5' => nil,
        'h6' => nil,
        'blockquote' => ['cite'],
-       'span'=>['style','class']
+       'span'=>['class']
       }                                             
   
 
       ## Method which cleans the String of HTML tags
-      ## and attributes outside of the allowed list.
+      ## and attributes outside of the allowed list.          
+      
+      # this has been hacked for wagn to allow classes in spans if 
+      # the class begins with "w-"
       def clean_html!( string, tags = BASIC_TAGS )
         string.gsub!( /<(\/*)(\w+)([^>]*)>/ ) do
           raw = $~

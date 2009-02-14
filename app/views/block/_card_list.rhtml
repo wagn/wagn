@@ -6,7 +6,13 @@
   instruction ||= nil  
 	view  ||= :closed    
 	raise("invalid view") unless [:open, :closed, :content, :name, :link, :change].include?(view)
+	
 -%>
+
+<% paging = capture do %>
+  <%= render :partial=>'/block/paging', :locals=>{:card=>card} %>
+<% end %>
+
 <% if !title.empty? %> 
 	<% @title=title %>
   <h1><%= title %></h1>
@@ -21,13 +27,14 @@
 <% if cards.empty? %>
   <div class="search-no-results faint">Search returned no results</div>
 <% else %>    
-	<span class="search-result-list">
-	  <%= render :partial=>'/block/paging', :locals=>{:card=>card} %>
-
+  <%= paging %>
+	<ul class="search-result-list">
 		<% cards.each do |c| %>     	
-			<%= get_slot(c).render(view) %>
+			<li class="item-<%= view %>"><%= get_slot(c).render(view) %></li>
 		<% end %>     
-	</span>
+	</ul>
+	<%= paging %>
+  
 <% end %>
 
 

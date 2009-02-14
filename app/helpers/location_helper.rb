@@ -33,24 +33,41 @@ module LocationHelper
    # -----------( urls and redirects from application.rb) ----------------
 
        
+  # FIXME: missing test
   def url_for_page( title, opts={} )   
+    format = (opts[:format] ? ".#{opts.delete(:format)}"  : "")
+    vars = ''
+    if !opts.empty?
+      pairs = []
+      opts.each_pair{|k,v| pairs<< "#{k}=#{v}"}
+      vars = '?' + pairs.join('&')
+    end
     # shaved order of magnitude off footer rendering
     # vs. url_for( :action=> .. )
-    "/wagn/#{title.to_url_key}"
+    "/wagn/#{title.to_url_key}#{format}#{vars}" 
   end  
   
   def url_for_card( options={} )
     url_for options_for_card( options )
   end
-            
+       
+  def card_path( card )
+    "/wagn/#{card.name.to_url_key}" 
+  end            
+  
+  def card_url( card )
+    "#{System.base_url.gsub(/\/$/,'')}#{request.port_string}" + card_path(card)
+  end
+  
   # Links ----------------------------------------------------------------------
  
-  def link_to_page( text, title=nil, options={} )
-    title ||= text                              
+  def link_to_page( text, title=nil, options={})
+    title ||= text
+    url_options = (options[:type]) ? {:type=>options[:type]} : {}                              
     if (options.delete(:include_domain)) 
-      link_to text, System.base_url.gsub(/\/$/,'') + url_for_page(title, :only_path=>true )
+      link_to text, System.base_url.gsub(/\/$/,'') + url_for_page(title, url_options) #, :only_path=>true )
     else
-      link_to text, url_for_page( title ), options
+      link_to text, url_for_page( title, url_options ), options
     end
   end  
     
@@ -89,41 +106,9 @@ module LocationHelper
     image_tag "/images/#{prefix}connected_icon.png", :title=>"cards connected to \"#{card.name}\""
   end
   
-  def down_arrow
-    %{
-       <!--[if lt IE 7]>
-         <img class="down-arrow" alt="&darr;" src="/images/arrow_down.gif" />     
-       <![endif]-->
-       <!--[if !lt IE 7]><![IGNORE[--><![IGNORE[]]>          
-         <img class="down-arrow" alt="&darr;" src="/images/arrow_down.png" />
-       <!--<![endif]-->
-     }
-  end
 
-  def right_arrow
-    %{
-       <!--[if lt IE 7]>
-         <img class="right-arrow" alt="&rarr;" src="/images/arrow_right.gif" />     
-       <![endif]-->
-       <!--[if !lt IE 7]><![IGNORE[--><![IGNORE[]]>          
-         <img class="right-arrow" alt="&rarr;" src="/images/arrow_right.png" />
-       <!--<![endif]-->
-     }
-  end
-  
   def page_icon(card)
-    title = "Go to: #{card.name}"
-    args = [ card.name, {:class=>'page-icon-link'} ]
-    
-    %{
-       <!--[if lt IE 7]>
-         #{link_to_page image_tag('page.gif', :title=>title), *args }
-       <![endif]-->
-       <!--[if !lt IE 7]><![IGNORE[--><![IGNORE[]]>
-         #{link_to_page image_tag('page.png', :title=>title), *args }
-       <!--<![endif]-->
-     }
-    
+    link_to_page '&nbsp;', card.name, {:class=>'page-icon', :title=>"Go to: #{card.name}"} 
   end
 
   def flexlink( linktype, name, options )

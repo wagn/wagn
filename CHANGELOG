@@ -1,3 +1,5 @@
+* pull session key and secret from database.yml
+
 === 0.11.0 (Dec 31, 2008)
 * new recent changes interface
 * added wql keywords: edited_by edited member_of member
@@ -86,7 +88,7 @@
 * update calls for rails 2.1
 * fix migration skipping for old/new rails versions
 * unbreak migration skipping for rails 2.1
-* change slot? to is_slot (toward fixing related-&gt;connect)
+* change slot? to add_slot (toward fixing related-&gt;connect)
 * fix content access in invite_request_notification
 * update js to work with ff3
 * make sure sidebar slot gets access to actionview template

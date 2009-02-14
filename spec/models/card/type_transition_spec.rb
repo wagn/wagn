@@ -12,7 +12,7 @@ module Card
   end
   
   class CardtypeC < Base
-    def validate_destroy
+    def validate_type_change
       errors.add :destroy, "card c is indestructible"
     end
   end
@@ -26,7 +26,9 @@ module Card
   class CardtypeE < Base           
     cattr_accessor :count
     @@count = 2
-    before_destroy :decrement_count
+    def on_type_change
+      decrement_count
+    end
     def decrement_count() self.class.count -= 1; end
   end
   
@@ -39,6 +41,49 @@ module Card
 
 end   
 
+
+
+describe Card, "with role" do
+  before do
+    User.as :admin
+    @role = Card::Role.find(:first)
+  end
+  
+  it "should have a role extension" do
+    @role.extension_type.should=='Role'
+  end
+
+  it "should lose role extension upon changing type" do
+    @role.type = 'Basic'
+    @role.save
+    @role.extension.should == nil
+  end
+end
+
+
+
+describe Card, "with account" do
+  before do
+    User.as :admin
+    @joe = change_card_to_type('Joe User', 'Basic')
+  end
+  
+  it "should not have errors" do
+    @joe.errors.empty?.should == true
+  end
+
+  it "should allow type changes" do
+    @joe.type.should == 'Basic'
+  end
+
+
+  it "should not lose account on card change" do
+    @joe.extension.should_not == nil
+  end
+end
+
+
+
 describe Card, "type transition approve create" do
   it "should have errors" do
     lambda { change_card_to_type("basicname", "CardtypeB") }.should raise_error(Wagn::PermissionDenied)
@@ -49,6 +94,8 @@ describe Card, "type transition approve create" do
     Card.find_by_name("basicname").type.should == 'Basic'
   end
 end
+
+
 
 describe Card, "clone to type"  do
   before do
@@ -82,7 +129,6 @@ describe Card, "type transition approve destroy" do
   end
 end
 
-
 describe Card, "type transition validate_destroy" do  
   before do @c = change_card_to_type("type-c-card", 'Basic') end
   
@@ -95,7 +141,6 @@ describe Card, "type transition validate_destroy" do
   end
 end
 
-
 describe Card, "type transition validate_create" do
   before do @c = change_card_to_type("basicname", "CardtypeD") end
   
@@ -107,7 +152,6 @@ describe Card, "type transition validate_create" do
     Card.find_by_name("basicname").type.should == 'Basic'
   end
 end
-
 
 describe Card, "type transition destroy callback" do
   before do
@@ -139,6 +183,7 @@ describe Card, "type transition create callback" do
   end
 end                
 
+
 def change_card_to_type(name, type)
   User.as :joe_user
   card = Card.find_by_name(name)
@@ -147,5 +192,6 @@ def change_card_to_type(name, type)
   # card.update_attributes :type=>type
   card
 end
+
 
 

@@ -4,17 +4,17 @@ class CardController < ApplicationController
   layout :default_layout
   cache_sweeper :card_sweeper
 
-  before_filter :create_ok, :only=>[ :new, :create, :new_of_type ]
+  before_filter :create_ok, :only=>[ :new, :create ]
 
-  before_filter :load_card!, :except => [ 
-    :auto_complete_for_card_name, 
-    :line, :view, :to_view, :test, :new, :create, 
-    :show, :index, :mine, :missing, :new_of_type, :my_name, :add_field ]
+  before_filter :load_card!, :only=>[
+    :changes, :comment, :denied, :edit, :edit_conflict, :edit_name, 
+    :edit_type, :options, :quick_update, :related, :remove, :rollback, 
+    :save_draft, :update
+  ]
 
-  before_filter :load_card_with_cache, :only => [:line, :view, :to_view ]
+  before_filter :load_card_with_cache, :only => [:line, :view, :open ]
   
-  #before_filter :view_ok,   :only=>[ :line, :view, :show ]
-  before_filter :edit_ok,   :only=>[ :edit, :edit_name, :edit_type, :update, :save_draft, :rollback, :save_draft] 
+  before_filter :edit_ok,   :only=>[ :edit, :edit_name, :edit_type, :update, :rollback, :save_draft] 
   before_filter :remove_ok, :only=>[ :remove ]
   
   #caches_action :show, :view, :to_view
@@ -29,16 +29,6 @@ class CardController < ApplicationController
        
 
   public    
-  # weird that this is public
-  def cache_action?(action_name)
-    if !flash[:notice].blank? || !flash[:warning].blank? || !flash[:error].blank?
-      #warn "flash present"
-      return false 
-    else 
-      true
-    end
- 	end
-   
 
   #----------( Special cards )
   
@@ -46,7 +36,7 @@ class CardController < ApplicationController
     if card = CachedCard.get_real('*home')
       redirect_to '/'+ card.content
     else
-      redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_name)
+      redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_title)
     end
   end
 
@@ -54,10 +44,36 @@ class CardController < ApplicationController
     redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(User.current_user.card.name)
   end
 
-  def my_name                                              
-    self.class.layout nil
-    render :text=>User.current_user.card.name
-    self.class.layout :default_layout
+  #---------( VIEWING CARDS )
+    
+  def show
+    # record this as a place to come back to.
+    location_history.push(request.request_uri) if request.get?
+
+    @card_name = Cardname.unescape(params['id'] || '')
+    if (@card_name.nil? or @card_name.empty?) then    
+      @card_name = System.site_title
+      #@card_name = System.deck_name
+    end             
+    @card = CachedCard.get(@card_name)
+
+    if @card.new_record? && ! @card.phantom?
+      params[:card]={:name=>@card_name, :type=>params[:type]}
+      if Cardtype.createable_cardtypes.empty? 
+        return render :action=>'missing'
+      else
+        return self.new
+      end
+    end                                                                                  
+    return unless view_ok # if view is not ok, it will render denied. return so we dont' render twice
+
+    # rss causes infinite memory suck in rails 2.1.2.  
+    unless Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >=2
+      respond_to do |format|
+        format.rss { raise("Sorry, RSS is broken in rails < 2.2") }
+        format.html {}
+      end
+    end 
   end
 
   #----------------( MODIFYING CARDS )
@@ -65,40 +81,61 @@ class CardController < ApplicationController
   #----------------( creating)                                                               
   def new
     args = (params[:card] ||= {})
-      if args[:type] && ct=CachedCard.get_real(args[:type])
+    args[:type] ||= params[:cardtype] # for /new/:cardtype shortcut in routes
+    
+    # don't pass a blank type as argument
+    # look up other types in case Cardtype name is given instead of ruby type
+    if args[:type]
+      if args[:type].blank?
+        args.delete(:type) 
+      elsif ct=CachedCard.get_real(args[:type])    
         args[:type] = ct.name 
       end
-      
-    @card = Card.new args
-    if @card.type == 'User'
-      redirect_to :controller=>'account', :action=>'invite'
+    end
+
+    # if given a name of a card that exists, got to edit instead
+    if args[:name] and CachedCard.exists?(args[:name])
+      render :text => "<span class=\"faint\">Oops, <strong>#{args[:name]}</strong> was recently created! try reloading the page to edit it</span>"
+      return
+    end
+
+    @card = Card.new args                   
+    if request.xhr?
+      render :partial => 'card/new', :locals=>{ :card=>@card }
+    else
+      render :action=> 'new'
     end
   end
   
-  def new_of_type #so we could do /new/<type> shortcut
-    params[:card] = {:type => params[:type]}   
-    new
-    render :action=>'new'
-  end
-      
-  def create
-    @card = Card.create! params[:card]
+  def create                 
+    if !Card.new(params[:card]).cardtype.ok?(:create)  
+      render :template => '/card/denied', :status => 403  
+      return
+    end
+    
+    @card = Card.create params[:card]
     if params[:multi_edit] and params[:cards]
       User.as(:admin) if @card.type == 'InvitationRequest'
       @card.multi_update(params[:cards])
-    end  
-    return render_card_errors(@card) unless @card.errors.empty?
+    end   
+
     # double check to prevent infinite redirect loop
     fail "Card creation failed"  unless Card.find_by_name( @card.name )
-    # FIXME: it would make the tests nicer if we did a real redirect instead of rjs
-    render :update do |page|
-      page.redirect_to url_for_page(@card.name)
+    
+      
+    if !@card.errors.empty?
+      render :action=>'new', :status => 422
+    elsif main_card?   
+      render :text=> url_for_page(@card.name), :status=>302
+    else
+      render :action=>'show'
     end
   end 
   
   #--------------( editing )
   
   def edit 
+    @add_slot = nil
     if params[:card] and @card.type=params[:card][:type]  
       @card.save!
       @card = Card.find(card.id)
@@ -141,12 +178,12 @@ class CardController < ApplicationController
     end
 
     return render_card_errors(@card) unless @card.errors.empty?
-    render_update_slot render_to_string(:action=>'view')
+    render_update_slot render_to_string(:action=>'show')
   end
 
   def quick_update
     @card.update_attributes! params[:card]
-    @card.errors.empty? ? render(:text=>'Success') : render_errors    
+    @card.errors.empty? ? render(:text=>'Success') : render_card_errors(@card)    
   end
 
   def save_draft
@@ -169,14 +206,14 @@ class CardController < ApplicationController
     @comment.gsub! /\n/, '<br/>'
     @card.comment = "<hr>#{@comment}<br/><p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
     @card.save!   
-    view = render_to_string(:action=>'view')
+    view = render_to_string(:action=>'show')
     render_update_slot view
   end
 
   def rollback
     load_card_and_revision
     @card.update_attributes! :content=>@revision.content
-    render :action=>'view'
+    render :action=>'show'
   end  
 
   #------------( deleting )
@@ -200,58 +237,20 @@ class CardController < ApplicationController
     elsif @card.errors.on(:confirmation_required)
       render_update_slot render_to_string(:partial=>'confirm_remove')
     else
-      render_errors
+      render_card_errors(@card)
     end
   end
 
-  #---------( VIEWING CARDS )
 
-  def show
-    # record this as a place to come back to.
-    location_history.push(request.request_uri) if request.get?
-    
-    @card_name = Cardname.unescape(params['id'] || '')
-    if (@card_name.nil? or @card_name.empty?) then    
-      @card_name = System.site_name
-      #@card_name = System.deck_name
-    end             
-    @card = CachedCard.get(@card_name)
-        
-    if @card.new_record? && ! @card.phantom?
-      action =  Cardtype.createable_cardtypes.empty? ? :missing : :new
-      params[:card]={:name=>@card_name, :type=>params[:type]}
-      new
-      return render(:action=>action)
-      #return redirect_to( :action=>action, :params=>{ 'card[name]'=>@card_name } )
-    end                                                                                  
-    return unless view_ok
-    
-    # FIXME: I'm sure this is broken now that i've refactored..                               
-    respond_to do |format|
-      format.html { render :action=>'show' }
-      format.json {
-        @wadget = true
-        render_jsonp :partial =>'card/view', 
-          :locals=>{ :card=> @card, :context=>"main",:action=>"view"}
-      }
-    end
-  end
 
   #---------------( tabs )
 
-  def to_view
-    params[:view]='open'
-    render_update_slot do |page, target|
-      target.update render_to_string(:action=>'view')
-#      page << "Wagn.line_to_paragraph(#{slot.selector})"
-    end
-  end
-             
-  def to_edit
-    render_update_slot do |page, target|
-      target.update render_to_string(:action=>'edit')
-      page << "Wagn.line_to_paragraph(#{slot.selector})"
-    end
+  def view
+    render :action=>'show'
+  end   
+  
+  def open
+    render :action=>'show'
   end
 
   def options
@@ -263,17 +262,44 @@ class CardController < ApplicationController
     @show_diff = (params[:mode] != 'false')
     @previous_revision = @card.previous_revision(@revision)
   end
+
+
+
+  #------------------( views )
+
+  def open
+    render :action=>'show'
+  end
     
-    
-    
+  [:open_missing, :closed_missing].each do |method|
+    define_method( method ) do
+      load_card
+      params[:view] = method
+      if id = params[:replace]
+        render_update_slot do |page, target|
+          target.update render_to_string(:action=>'show')
+        end
+      else
+        render :action=>'show'
+      end
+    end
+  end
+
     
     
     
   #-------- ( MISFIT METHODS )  
+  
+  def auto_complete_for_navbox
+    @stub = params['navbox']
+    @items = Card.search( :complete=>@stub, :limit=>8, :sort=>'alpha' ) 
+    render :inline => "<%= navbox_result @items, 'name', @stub %>"
+  end
     
-  ### FIXME -- seems like this should be in the cardname controller  
   def auto_complete_for_card_name
-    complete = ''
+    complete = ''  
+    # from pointers, the partial text is from fields called  pointer[N]
+    # from the goto box, it is in card[name]
     params.keys.each do |key|
       complete = params[key] if key.to_s == 'name'
       next unless key.to_s =~ /card|pointer/ 
@@ -286,21 +312,13 @@ class CardController < ApplicationController
       @items = Card.search( :complete=>complete, :limit=>8, :sort=>'alpha' )
     end
     render :inline => "<%= auto_complete_result @items, 'name' %>"
-  end
+  end                                              
+  
   
   # doesn't really seem to fit here.  may want to add new controller if methods accrue?        
   def add_field # for pointers only
     load_card! if params[:id]
-    render :partial=>'cardtypes/pointer/field', :locals=>params.merge({:card=>@card})
+    render :partial=>'cardtypes/pointer/field', :locals=>params.merge({:link=>"",:card=>@card})
   end
-                                                    
 end
 
-
-=begin  
-  def create_template
-    @card = Card.create! :name=>@card.name+"+*<>template"
-    render_update_slot_element 'template',  
-      render_to_string( :inline=>%{<%= get_slot.render(:view, :wrap=>true, :add_javascript=>true ) %>})
-  end
-=end

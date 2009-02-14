@@ -32,11 +32,7 @@ class User < ActiveRecord::Base
   
   class << self
     def find_or_create_by_identity_url(url)
-      if u= self.find_by_identity_url(url)
-        u
-      else
-        User.create_with_card(:identity_url=>url)
-      end
+      self.find_by_identity_url(url) || User.create_with_card(:identity_url=>url)
     end
     
     # FIXME: args=params.  should be less coupled..

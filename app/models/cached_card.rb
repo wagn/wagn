@@ -36,7 +36,7 @@ class CachedCard
     end
 
     def bump_global_seq
-      write_global_seq(  Time.now.to_i )
+      write_global_seq(  (Time.now.to_f * 100).to_i )
     end
 
     def write_global_seq(val)
@@ -107,7 +107,13 @@ class CachedCard
         end
       end
     end
-    
+
+    # FIXME: didn't write test because not sure how Cache testing interacts with test data
+    #  potential rabbit-hole.
+    def exists?(name)
+      card = self.get( name ) and !card.new_record? 
+    end
+
     def load_card(name)  
       cached_card = self.new(name.to_key)
       return nil if cached_card.read('missing')  
@@ -178,6 +184,8 @@ class CachedCard
   def type()  get('type') { card.type } end 
   def content() get('content') { card.content } end
   def extension_type() get('extension_type') { card.extension_type } end
+  def created_at() get('created_at') { card.created_at } end
+  def updated_at() get('updated_at') { card.updated_at } end
   def read_permission() 
     get('read_permission') { p = card.who_can(:read);  "#{p.class.to_s}:#{p.id}" }
   end       

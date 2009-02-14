@@ -2,29 +2,12 @@
   
   <%= link_to('Home', '/') %>
   <%= link_to( 'Recent', '/recent' ) %>
-  <%=  text_field_tag("keyword", 
-	       (params[:_keyword]) || 'Search cards', 
-	       :onclick=>'if (this.value == "Search cards") {this.value="" }', 
-	       :onchange => "document.location.href='/search/'+encodeURIComponent($F(this))" 		 
-	)	%>
 
+	<%= navbox %>
 
-	<form onsubmit="document.location.href='/wagn/'+encodeURIComponent($F('go_to_name').gsub(' ','_').gsub('\\\\+',' ')); return false">
-	  <%= text_field_tag("card[name]", 'Go to card', :id=>"go_to_name", :autocomplete=>"off",
- 		  :onclick=>'if (this.value == "Go to card") {this.value="" }' )  %>
- 		  <%= cardname_auto_complete('go_to_name') %>     
-	</form>
-  
-  <% if !Cardtype.createable_cardtypes.empty? %>
-      <%= link_to('New Card', {:controller=>'card', :action=>'new'}, :id=>'new-card-link') %>
-  <% end %>
-  
-  
   <span id="logging">
      <% if logged_in? %>
-        <%#= link_to "My Card: #{current_user.card.name}", '/me', :id=>'my-card-link' %>
-        <%= link_to "My Card: <span id=\"user_name\"></span>", '/me', :id=>'my-card-link' %>
-				<%= javascript_tag("new Ajax.Updater('user_name', '/card/my_name', {asynchronous:true, evalScripts:true});") %>
+        <%= link_to "My Card: #{current_user.card.name}", '/me', :id=>'my-card-link' %>
 
         <% if Card::User.create_ok? %>
   	      <%= link_to 'Invite a Friend', :controller=>'account', :action=>'invite' %>

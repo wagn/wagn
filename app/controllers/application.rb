@@ -53,18 +53,24 @@ class ApplicationController < ActionController::Base
     Role.reset_cache
     CachedCard.reset_cache
     System.request = request 
-    System.time = Time.now.to_f              
+    #System.time = Time.now.to_f              
 
   end
 
   def default_layout
-    request.xhr? ? nil : (
-      case params[:layout]
-        when nil; 'application'
-        when 'none'; nil
-        else params[:layout]
-      end
-    )
+    layout = nil
+    respond_to do |format|
+      format.html {
+        unless request.xhr?
+          layout = case params[:layout]
+            when nil; 'application'
+            when 'none'; nil
+            else params[:layout]
+          end
+        end
+      }
+    end
+    layout
   end
            
 
@@ -82,36 +88,39 @@ class ApplicationController < ActionController::Base
   def renderer
     Renderer.new
   end
-  
+     
+  def main_card?
+    @context == 'main_1'
+  end    
 
   # ------------------( permission filters ) -------
   def view_ok
-    unless @card.ok? :read
-      @deny = 'view'
-      render :action=>'denied', :status=>403
-      return false
+    if (@card.new_record? && !@card.phantom?) || @card.ok?( :read )
+      true
+    else
+      render_denied( 'view' )
     end
   end    
   
   def edit_ok
-    unless @card.ok? :edit
-      render :action=>'denied', :status=>403
-      return false
-    end
+    @card.ok?( :edit ) || render_denied( 'edit' )
   end
   
   def create_ok
     @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
     @skip_slot_header = true
     t = Card.class_for(@type) || Card::Basic
-    unless t.create_ok?
-      render :action=>'denied', :status=>403
-      return false
-    end
+    t.create_ok? || render_denied( 'create' )
   end
   
   def remove_ok
-    @card.ok! :delete
+    @card.ok!( :delete ) || render_denied( 'delete' )
+  end
+         
+  def render_denied(action = '')
+    @deny = action
+    render :controller=>'card', :action=>'denied', :status=>403
+    return false
   end
 
 
@@ -136,8 +145,6 @@ class ApplicationController < ActionController::Base
     else 
       name=""
     end
-    # auto_load_card tells the cached card if any missing method is requested
-    # load the real card to respond.  
     card_params = params[:card] ? params[:card].clone : nil
     @card = CachedCard.get(name, @card, :cache=>cache, :card_params=>card_params )
     @card
@@ -154,6 +161,7 @@ class ApplicationController < ActionController::Base
 
   # ----------( rendering methods ) -------------
 
+  # dormant code.  
   def render_jsonp( args )
     str = render_to_string args
     render :json=>( params[:callback] || "wadget") + '(' + str.to_json + ')'

@@ -33,7 +33,9 @@ module Card
     belongs_to :updater, :class_name=>'::User', :foreign_key=>'updated_by'
 
     has_many :permissions, :foreign_key=>'card_id' #, :dependent=>:delete_all
-           
+
+    before_destroy :destroy_extension
+               
     before_validation_on_create :set_needed_defaults
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
@@ -45,7 +47,9 @@ module Card
       def log(msg)
         ActiveRecord::Base.logger.info(msg)
       end
-        
+      
+      def on_type_change
+      end  
       
     protected        
     
@@ -443,37 +447,7 @@ module Card
     def authenticated?(party)
       party==::Role[:auth]
     end
-    
-=begin
-    def pieces_incompatible?(left, right)
-      left_reader  = left.who_can(:read)
-      right_reader = right.who_can(:read)
-      #warn "pieces= #{left_reader.cardname} & #{right_reader.cardname}"
-      [left_reader, right_reader].each do |r|
-        return false if r.anonymous?
-        return false if authenticated?(r)
-      end
-      if left_reader != right_reader
-        return "Can't join cards that only #{left_reader.cardname} can read with cards only #{right_reader.cardname} can read" 
-      end
-      return false
-    end
-    
-    def piece_and_junction_incompatible?(piece, junction, override_weak_junction_ok=false)
-      piece_reader = piece.who_can :read
-      junction_reader = junction.who_can :read
-      return false if piece_reader.anonymous?
-      if override_weak_junction_ok
-        return false if (junction_reader.anonymous? or authenticated?(junction_reader))
-      end
-      return false if authenticated?(piece_reader) and !junction_reader.anonymous?
-      if piece_reader != junction_reader
-        #fixme need to get cardnames in here for better messages.
-        return "incompatible read permissions: #{junction_reader.cardname} on #{junction.name} and  #{piece_reader.cardname} on #{piece.name}"
-      end
-      return false
-    end
-=end       
+       
 
     protected
     def clear_drafts
@@ -615,8 +589,7 @@ module Card
           rec.errors.add :type, "can't be changed to #{value} for #{rec.name} because #{rec.name} is a Cardtype and cards of this type still exist"
         end
     
-        # check that changing to the new type would not cause other errors
-        rec.send :validate_destroy
+        rec.send :validate_type_change
         newcard = rec.send :clone_to_type, value
         newcard.valid?  # run all validations...
         rec.send :copy_errors_from, newcard
@@ -649,9 +622,16 @@ module Card
     end
      
     def validate_destroy  
-      if type == 'Cardtype'  and extension and ::Card.find_by_type(extension.codename) 
-        errors.add :type, "can't be destroyed because #{name} is a Cardtype and cards of this type still exist"
-      end
+      if extension_type=='User' and extension and Revision.find_by_created_by( extension.id )
+        errors.add :destroy, "Edits have been made with #{name}'s user account.<br>  Deleting this card would mess up our revision records."
+      end      
+    end
+
+    def validate_type_change  
+    end
+    
+    def destroy_extension
+      extension.destroy if extension
     end
     
     def validate_content( content )

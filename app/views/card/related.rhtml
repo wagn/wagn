@@ -1,7 +1,7 @@
 <% get_slot.wrap(:related) do |slot| %>
 	<%= slot.header %>
 	<%= slot.notice %>  
-	<div class="content related headroom">
+	<div class="open-content related headroom">
 		<h2>Self</h2>
 		<% @card.pieces.each do |particle| %>
 		  <%= render_card particle, :closed %>
@@ -21,10 +21,6 @@
 	  <h2>Connections</h2>
     <%= render_card "#{@card.name}+*plus cards", 'line' %>
     <%= render_card "#{@card.name}+*plus parts", 'line' %>  
-		<% if !Cardtype.createable_cardtypes.empty? %>
-		  <%= button_to_remote "Connect #{@card.name} to another card", :url=>slot.url_for("connection/new"), 
-						:update=>slot.id %>
-		<% end %>
 		<h2>References</h2>
 		<% ['linked to', 'linked from', 'included', 'that include'].each do |search| %>
       <%= render_card "#{@card.name}+*cards #{search}", 'line' %>

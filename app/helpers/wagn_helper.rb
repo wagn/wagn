@@ -3,12 +3,12 @@ require_dependency 'slot'
 module WagnHelper
   require_dependency 'wiki_content'
 
-  def get_slot(card=nil, context=nil, action=nil)
+  def get_slot(card=nil, context=nil, action=nil, opts={})
     nil_given = card.nil?
     card ||= @card; context||=@context; action||=@action
     slot = case
       when controller.slot;  nil_given ? controller.slot : controller.slot.subslot(card)
-      else controller.slot = Slot.new(card,context,action,self)
+      else controller.slot = Slot.new(card,context,action,self,opts)
     end
   end
 
@@ -119,9 +119,9 @@ module WagnHelper
     end
   end
 
-  def render_arg(param)
+  def symbolize_param(param)
     val = params[param]
-    (val && !val.empty?) ? val.to_sym : nil
+    (val && !val.to_s.empty?) ? val.to_sym : nil
   end
 
   def formal_joint
@@ -145,8 +145,8 @@ module WagnHelper
 
   # Other snippets -------------------------------------------------------------
 
-  def site_name
-    System.site_name
+  def site_title
+    System.site_title
   end
 
   def css_name( name )
@@ -173,7 +173,7 @@ module WagnHelper
   ## ----- for Linkers ------------------
   def cardtype_options
     Cardtype.createable_cardtypes.map do |cardtype|
-      next(nil) if cardtype[:codename] == 'User' #or cardtype[:codename] == 'InvitationRequest'
+      #next(nil) if cardtype[:codename] == 'User' #or cardtype[:codename] == 'InvitationRequest'
       [cardtype[:codename], cardtype[:name]]
     end.compact
   end
@@ -200,12 +200,20 @@ module WagnHelper
     auto_complete_field(fieldname, { :url =>"/card/auto_complete_for_card_name/#{card_id.to_s}" }.update({}))
   end
 
+
   def span(*args, &block)  content_tag(:span, *args, &block);  end
   def div(*args, &block)   content_tag(:div, *args, &block);  end
 
-  def pointer_item(content,view)
-    content.gsub(/\[\[/,'{{').gsub(/\]\]/,"|#{view}}}")
+  def pointer_item(content,view,type=nil)
+    content.gsub(/\[\[/,"<li class=\"item-#{view}\">{{").gsub(/\]\]/,"|#{view}#{type ? ';type:'+ type : ''}}}</li>") 
   end
+  
+  def pointer_type(card)
+    if card.tag and (opts = CachedCard.get_real("#{card.tag.name}+*options")) and (opts.type == 'Search')
+      opts.get_spec['type']
+    end
+  end
+  
   ## -----------
 
   def google_analytics
@@ -225,6 +233,46 @@ module WagnHelper
       end
     end
   end
+
+  # ---------------( NAVBOX ) -----------------------------------    
+
+  def navbox
+    content_tag( :form, :id=>"navbox_form", :action=>"/search", :onsubmit=>"return navboxOnSubmit(this)" ) do         
+      content_tag( :span, :id=>"navbox_background" ) do
+        %{<a id="navbox_image" title="Search" onClick="navboxOnSubmit($('navbox_form'))">&nbsp;</a>}  + text_field_tag("navbox", params[:_keyword] || '', :id=>"navbox_field", :autocomplete=>"off") +
+  		    navbox_complete_field('navbox_field') 
+      end
+    end
+	end                                      
+    
+  def navbox_complete_field(fieldname, card_id='')
+    content_tag("div", "", :id => "#{fieldname}_auto_complete", :class => "auto_complete") +
+    auto_complete_field(fieldname, { :url =>"/card/auto_complete_for_navbox/#{card_id.to_s}",
+      :after_update_element => "navboxAfterUpdate"
+     }.update({}))
+  end
+
+  def navbox_result(entries, field, stub)
+    return unless entries
+    items = []
+    items << navbox_item( :search, %{<a class="search-icon">&nbsp;</a>Search for: }, stub )
+    if !Cardtype.createable_cardtypes.empty? && !CachedCard.exists?(stub)
+      items << navbox_item( :new, %{<a class="plus-icon">&nbsp;</a>Add new card: }, stub )
+    end
+    items += entries.map do |entry| 
+      navbox_item( :goto, %{<a class="page-icon">&nbsp;</a>Go to: }, entry[field], stub )
+    end
+    content_tag("ul", items.uniq)
+  end
+            
+  def navbox_item( css_class, label, name, stub=nil )
+    stub ||= name
+    content_tag('li', :class=>"#{css_class}" ) do
+      content_tag('span', label, :class=>"informal") + highlight(name, stub)
+    end
+  end
+            
+
 
 end
 

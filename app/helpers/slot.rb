@@ -6,25 +6,32 @@ module WagnHelper
     self.max_char_count = 200
     attr_reader :card, :context, :action, :renderer, :template
     attr_accessor :editor_count, :options_need_save, :state, :requested_view, :js_queue_initialized,  
-      :transclusions, :position, :renderer, :form, :superslot, :char_count, :item_format, :renders, :start_time      
+      :transclusions, :position, :renderer, :form, :superslot, :char_count, :item_format, :type, :renders, :start_time,
+      :transclusion_view_overrides
     attr_writer :form 
+
+    VIEW_ALIASES = { 
+      :view => :open,
+      :card => :open,
+      :line => :closed,
+    }
      
-    def initialize(card, context="main_1", action="view", template=nil, renderer=nil )
-      @card, @context, @action, @template, @renderer = card, context.to_s, action.to_s, (template||StubTemplate.new), renderer
-      
-      raise("context gotta include position") unless context =~ /\_/
+    def initialize(card, context="main_1", action="view", template=nil, opts={} )
+      @card, @context, @action, @template, = card, context.to_s, action.to_s, (template||StubTemplate.new)
+      context = "main_1" unless context =~ /\_/
       @position = context.split('_').last    
       @char_count = 0
       @subslots = []  
       @state = 'view'
       @renders = {}
-      @renderer ||= Renderer.new(self)
+      @transclusion_view_overrides = opts[:transclusion_view_overrides] 
+      @renderer = opts[:renderer] || Renderer.new(self)
     end
 
     def subslot(card, &proc)
       # Note that at this point the subslot context, and thus id, are
       # somewhat meaningless-- the subslot is only really used for tracking position.
-      new_slot = self.class.new(card, context+"_#{@subslots.size+1}", @action, @template, @renderer)
+      new_slot = self.class.new(card, context+"_#{@subslots.size+1}", @action, @template, :renderer=>@renderer)
       new_slot.state = @state
       @subslots << new_slot 
       new_slot.superslot = self
@@ -48,22 +55,31 @@ module WagnHelper
     end
 
     def wrap_content( content="" )
-       %{<span class="content editOnDoubleClick">} + content.to_s + %{</span>}
+      %{<![if !IE]><span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick"><![endif]>} +
+      %{<!--[if IE]><div class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick"><![endif]-->} +
+         content.to_s + 
+      %{<!--[if IE]></div><![endif]-->} + 
+      %{<![if !IE]></span><![endif]>} 
     end    
     
-
+    def js
+      @js ||= SlotJavascript.new(self)
+    end
            
     # FIXME: passing a block seems to only work in the templates and not from
     # internal slot calls, so I added the option passing internal content which
     # makes all the ugly block_given? ifs..                                                 
     def wrap(action="", args={}) 
-      render_slot = args.key?(:is_slot) ? args.delete(:is_slot) : !request.xhr? 
+      render_slot = args.key?(:add_slot) ? args.delete(:add_slot) : !request.xhr? 
       content = args.delete(:content)
+       
+      open_slot, close_slot = "",""
 
       result = ""
       if render_slot
         case action.to_s
-          when 'content';    css_class = 'transcluded'  
+          when 'content';    css_class = 'transcluded'
+          when 'exception';  css_class = 'exception'    
 #          when 'nude'   ;   css_class = 'nude-slot'
           else begin
             css_class = 'card-slot '      
@@ -85,35 +101,28 @@ module WagnHelper
           :position => position
         }
         
-        slot_head = '<!--[if !IE]><object><![endif]-->' +
-          %{<div #{attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join } >}
-        slot_head 
-        if block_given? 
-          # FIXME: the proc.binding call triggers lots and lots of:
-          # slot.rb:77: warning: tried to create Proc object without a block 
-          # which makes the test output unreadable.  should do a real fix instead of hiding the issue 
-          warn_level, $VERBOSE = $VERBOSE, nil;
-          @template.concat(slot_head, proc.binding) 
-          $VERBOSE = warn_level
-        else
-          result << slot_head
-        end
-      end      
-      if block_given?
-        yield(self)
-      else
-        result << content
+        slot_attr = attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join
+        open_slot = %{<!--[if IE]><div #{slot_attr}><![endif]-->} +
+                    %{<![if !IE]><object #{slot_attr}><![endif]>} 
+        close_slot= %{<!--[if IE]></div><![endif]-->} +
+                    %{<![if !IE]></object><![endif]>} 
+
       end
-      if render_slot
-        if block_given?
-          warn_level, $VERBOSE = $VERBOSE, nil;
-          @template.concat("</div></object>" , proc.binding)
-          $VERBOSE = warn_level
+      
+      if block_given? 
+        if (Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >= 2)
+          args = nil
+          @template.output_buffer ||= ''   # fixes error in CardControllerTest#test_changes
         else
-          result << "</div></object>"
+          args = proc.binding
         end
-      end    
-      result
+        @template.concat open_slot, *args
+        yield(self)
+        @template.concat close_slot, *args
+        return ""
+      else
+        return open_slot + content + close_slot
+      end
     end
     
     def cache_action(cc_method) 
@@ -142,6 +151,11 @@ module WagnHelper
       end
     end
 
+    def canonicalize_view( view )
+      view = view.to_sym
+      VIEW_ALIASES[view.to_sym] || view
+    end
+
     def render(action, args={})      
       #warn "<render(#{card.name}, #{@state}).render(#{action}, item=>#{args[:item]})"
       
@@ -160,22 +174,40 @@ module WagnHelper
       result = case ok_action
 
       ###-----------( FULL )
+        when :new
+          w_content = render_partial('card/new')
+          
         when :open, :view, :card
-          @state = :view; self.requested_view = 'card'
+          @state = :view; self.requested_view = 'open'
           # FIXME: accessing params here is ugly-- breaks tests.
           #w_action = (@template.params[:view]=='content' && context=="main_1") ? 'nude' : 'open'
           w_action = 'open'
-          w_content = render_partial('card/view')
+          w_content = render_partial('card/open')
 
         when :closed, :line    
-          @state = :line; w_action='closed'; self.requested_view = 'line'
+          @state = :line; w_action='closed'; self.requested_view = 'closed'
           w_content = render_partial('card/line')  # --> slot.wrap_content slot.render( :expanded_line_content )   
           
       ###----------------( NAME)
       
-        when :link;   link_to_page card.name, card.name, :class=>"cardname-link #{card.new_record? ? 'wanted-card' : 'known-card'}"
+        #when :link;   link_to_page card.name, card.name, :class=>"cardname-link #{card.new_record? ? 'wanted-card' : 'known-card'}"
+        when :link;
+          opts = {:class=>"cardname-link #{(card.new_record? && !card.phantom?) ? 'wanted-card' : 'known-card'}"}
+          opts[:type] = slot.type if slot.type 
+          link_to_page card.name, card.name, opts
         when :name;   card.name
         when :linkname;  Cardname.escape(card.name)
+        when :titled;
+          content_tag( :h1, less_fancy_title(card.name) ) + self.render( :content )
+          
+        when :rss_titled;                                                         
+          # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
+          content_tag( :h2, less_fancy_title(card.name) ) + self.render( :expanded_view_content )
+
+        when :rss_change
+          w_action = self.requested_view = 'content'
+          render_partial('card/change')
+          
         when :change;
           w_action = self.requested_view = 'content'
           w_content = render_partial('card/change')
@@ -219,13 +251,15 @@ module WagnHelper
         ###---(  EXCEPTIONS ) 
         
           when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
+            #w_action = 'exception'
+            #w_content = 
             render_partial("card/#{ok_action}", args)
 
   
         else raise("Unknown slot render action '#{ok_action}'")
       end
       if w_content
-        args[:is_slot] = true unless args.key?(:is_slot)
+        args[:add_slot] = true unless args.key?(:add_slot)
         result = wrap(w_action, { :content=>w_content }.merge(args))
       end
       
@@ -237,7 +271,7 @@ module WagnHelper
       
     end
 
-    def expand_transclusions(content) 
+    def expand_transclusions(content, args={}) 
       #return ("skip(#{card.name}):"+content) 
       if card.name.template_name?          
         # KLUGILICIOIUS: if we leave the {{}} transclusions intact they may get processed by
@@ -252,7 +286,12 @@ module WagnHelper
         else 
           begin
             match = $~
-            tname, options = Chunk::Transclude.parse(match)
+            tname, options = Chunk::Transclude.parse(match)     
+            if view_map = root.transclusion_view_overrides 
+              if translated_view = view_map[ canonicalize_view( options[:view] )]
+                options[:view] = translated_view
+              end
+            end
             fullname = tname+'' #weird.  have to do this or the tname gets busted in the options hash!!
             #warn "options for #{tname}: #{options.inspect}"
             fullname.to_absolute(options[:base]=='parent' ? card.name.parent_name : card.name)
@@ -308,7 +347,9 @@ module WagnHelper
       old_slot, @template.controller.slot = @template.controller.slot, subslot
 
       # set item_format;  search cards access this variable when rendering their content.
-      subslot.item_format = options[:item] if options[:item]                             
+      subslot.item_format = options[:item] if options[:item]
+      subslot.type = options[:type] if options[:type]
+                             
       
       # FIXME! need a different test here   
       new_card = card.new_record? && !card.phantom?
@@ -341,7 +382,9 @@ module WagnHelper
     end   
     
     def method_missing(method_id, *args, &proc) 
-      @template.send(method_id, *args, &proc)
+      # silence Rails 2.2.2 warning about binding argument to concat.  tried detecting rails 2.2
+      # and removing the argument but it broken lots of integration tests.
+      ActiveSupport::Deprecation.silence { @template.send(method_id, *args, &proc) }
     end
 
     
@@ -364,10 +407,16 @@ module WagnHelper
   
   
   # For testing/console use of a slot w/o controllers etc.
-  class StubTemplate
+  class StubTemplate      
+    include ActionView::Helpers::SanitizeHelper
     attr_accessor :indent, :slot
     # for testing & commandline use  
     # not totally happy with this..    
+
+    def self.full_sanitizer
+      @full_sanitizer ||= HTML::FullSanitizer.new
+    end
+    
      
     def params
       return {}

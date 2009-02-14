@@ -1,0 +1,17 @@
+<%- 
+view = symbolize_param(:view) 
+view = :open if [:closed, :line,:open,:card,:view, nil].member?(view)
+@title = @card.name
+
+slot = get_slot
+if item = symbolize_param(:item)
+  slot.item_format = item
+end
+%>
+
+
+<%= slot.render(view, :add_slot => !request.xhr?, :add_javascript=>true, :view=>view, :tname=>nil ) %>
+
+<% if request.xhr? && view == :open %>
+  <%= javascript_tag("Wagn.line_to_paragraph(getSlotFromContext('#{@context}'))") %>
+<% end %>

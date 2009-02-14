@@ -18,37 +18,65 @@
 
 /*----- header ---------*/
 
-
 .card-slot .card-header {
   background: #005800;
   padding: 5px; 
   margin: 0px;
   -moz-border-radius: 6px 6px 0 0;
 }
-.card-slot .card-header img {
-  float: none !important;
-  padding: 0px !important;
+.card-slot.line .title-menu {
+  line-height: 18px;
 }
-
-.card-slot .card-header a,
-.card-slot .card-footer a {
-  border: 0px !important;  /*-- for wadget --*/
-}
-
-
-
 .card-slot .title { 
   margin: 0px 2px;
-  font-weight: bold; 
-  display: inline;
+  font-weight: bold;
+  font-size: 13px;
+  padding: 2px 0px 2px 25px;
+  white-space: nowrap;
 }
-.card-slot .title img { 
-  margin-right: 5px;
+.card-slot .right-arrow {
+  background: url(/images/arrow_right.gif) no-repeat left;
 }
+html>body .card-slot .right-arrow {
+  background-image: url(/images/arrow_right.png);
+}
+.card-slot .down-arrow {
+  background: url(/images/arrow_down.gif) no-repeat left;
+}
+html>body .card-slot .down-arrow {
+  background-image: url(/images/arrow_down.png);
+}
+.page-icon {
+  padding: 2px 7px;
+  background: url(/images/page.gif) no-repeat right;
+}
+html>body .page-icon {
+  background-image: url(/images/page.png);
+}
+
+.card-icon {
+  background: url(/images/card.gif) no-repeat right;
+}
+
+.plus-icon {
+  background: url(/images/plus.gif) no-repeat right;
+}
+
+.search-icon {
+  background: url(/images/search.gif) no-repeat right;
+}
+                                          
+/* FIXE: these need the IE gifs as well */
+html>body .card-icon{ background-image: url(/images/card.png); }
+html>body .plus-icon{ background-image: url(/images/plus.png); }
+html>body .search-icon{ background-image: url(/images/search.png); }
+
+
 .card-slot .cardtype { 
   font-style: italic;
   font-size: 10px;
 }
+.card-slot .card-header,
 .card-slot .card-header a,
 .card-slot .card-header .title a,
 .card-slot .card-header .title a:link,
@@ -57,19 +85,19 @@
   color: #fff 
 }
 html>body .card-menu-left,
-html>body .page-icon-link {
+html>body .page-icon {
   display: none;
 }
 .card-slot.line .card-header {
-  padding-right: 26px;
+  padding-right: 22px;
 }
 .card-slot.line div:hover.card-header {
-  padding-right: 4px;
+  padding-right: 0px;
 }
 
-div:hover.card-header .page-icon-link,
+div:hover.card-header .page-icon,
 div:hover.card-header .card-menu-left {
-  display: inline;
+  display:inline;
 }
 
 .card-slot .card-menu {
@@ -79,14 +107,14 @@ div:hover.card-header .card-menu-left {
    right: 0px;
    z-index: 1;
 }
-.card-slot .card-menu a { 
+.card-slot .card-menu li { 
   padding: 1px 5px;
   margin: 0px;
   -moz-border-radius: 4px 4px 0 0;
 }
 .card-slot .current {
   background: #bbb;
-  padding-bottom: 8px !important;
+  padding-bottom: 7px !important;
 }
 
 .card-slot .submenu {
@@ -105,6 +133,9 @@ div:hover.card-header .card-menu-left {
   -moz-border-radius: 4px 4px 0 0;
 }
 
+.card-slot .card-header li {
+  display:inline;
+}
 
 
 
@@ -134,11 +165,6 @@ div:hover.card-footer .card-links{
 /* -------- view tab / content ----------------- */
 
 
-.card-slot .search-result-list .cardname-link {
-  display: block;
-}
-
-
 .card-slot p { 
   margin: 0px; 
 }
@@ -163,6 +189,14 @@ div:hover.card-footer .card-links{
 .card-slot a.wanted-card { 
   color: #900 
 }
+.card-slot .open-missing {
+  color: #99b;
+  font-variant: small-caps;
+}
+.card-slot span:hover.open-missing {
+  color: #069;
+  background: #ffc;
+}
 .card-slot a.external-link, 
 .card-slot.line .content a.external-link { 
   color: #979; 
@@ -171,11 +205,6 @@ div:hover.card-footer .card-links{
 }
 .card-slot a.email-link { 
   color: #979 
-}
-.card-slot span:hover.createOnClick {
-  color: #069;
-  background: #ffc;
-  text-decoration: underline;
 }
 .card-slot .transcluded p, 
 .card-slot .transcluded span, 
@@ -196,7 +225,19 @@ div:hover.card-footer .card-links{
 
 /* ---------- edit tab / new / inline editing--------*/
 
-
+.card-slot .new-name,
+.card-slot .new-type {
+  white-space: nowrap;
+}
+.card-slot .new-name .title {
+  padding-left: 2px;
+}
+.card-slot .new-name .card-name-field {
+  width: 50%;
+}
+.card-slot .new-type {
+  float: right;
+}
 .card-slot .editor {
   display: block;
 }
@@ -241,9 +282,9 @@ div:hover.card-footer .card-links{
   background: white;
   border: 0px;
 }
-.card-slot .cardtype-area .cardtype {
+.card-slot .new-type .cardtype {
   font-size: 14px;
-  margin-left: 20px;
+  float:right;
 }
 .card-slot .edit-area p {
   padding: 2px;
@@ -301,8 +342,11 @@ div:hover.card-footer .card-links{
   text-align: left;
   padding: 0px 5px;
 }
-
-
+ 
+/* for IE */
+div.transcluded {
+  display: inline;
+}
 /* ---------- changes tab -------*/
 
 
@@ -357,6 +401,9 @@ div:hover.card-footer .card-links{
 .card-slot .template .card-slot {
   text-align: left;
 }
+.card-slot .new-account-link {
+  text-align: center;
+}
 
 /*-----------related tab ----------*/
 
@@ -384,20 +431,19 @@ div:hover.card-footer .card-links{
   margin-top: 5px;
   color: #444;
 }
-.card-slot .content,
-.card-slot .revision,
-.card-slot .transcluded .paragraph .content  { 
+.card-slot .open-content, /* paragraph content */
+.card-slot .revision {
   display: block;
   padding: 5px 15px 10px 15px;
 }
-.card-slot .transcluded .content .card-slot.paragraph {
-  display: block;
-  padding: 0;
-}
+
 .card-slot .instruction {
   border-left: 0px;
   border-right: 0px;
 }
+
+.card-slot h1.headroom,
+.card-slot h2.headroom,
 .card-slot .headroom h1,
 .card-slot .headroom h2 {
   margin-top: 10px;
@@ -457,28 +503,18 @@ body.wagn .card-slot.recent-changes h2 {
   padding: 0px !important;
   -moz-border-radius: 8px;
 }
-.card-slot.paragraph .content {
-  display: block;
+
 /* this was occasionally busting auto-completes on pointers:
   overflow: auto;
 */
-}
-/* moving to transclusion handling
-.card-slot.paragraph .content img  {
-  padding: 5px 0px 5px 10px;
-}
-.card-slot.paragraph .edit-area img  {
-  padding: 0px;
-}
-*/
-  /* was busting when listed before .paragraph .content */
-.card-slot .transcluded .content {
+
+  /* means content view */
+.card-slot .content-content {
   display: inline;
   padding: 0;
 }
 .card-slot.paragraph .down-arrow,
 .card-slot.paragraph .close-link {
-  display: inline;
   margin: 0px 5px 0px 0px;
 }
 
@@ -633,6 +669,37 @@ body.wagn .card-slot.line h2,
 }
 
 
+
+/*---------( Search ) ---------- */
+
+.card-slot .content .paging img {
+  float: none !important;
+  padding: 0px 3px;
+  margin: 0px;
+}
+
+
+/*---------(Search & Pointer) --------*/
+
+ul.pointer-list,
+ul.search-result-list {
+  list-style: none;
+  padding: 5px 10px;
+  margin: 0;
+}
+
+ul.pointer-list li,
+ul.search-result-list li {
+  margin: 0;
+}
+
+li.item-link,
+li.item-name {
+  display: block;
+  text-indent: -15px;
+  padding-left: 15px;
+}
+
 /*-----------( Image ) -----------*/
 
 
@@ -643,13 +710,9 @@ body.wagn .card-slot.line h2,
 }
 
 
-/*---------( Search ) ---------- */
 
-.card-slot .content .paging img {
-  float: none !important;
-  padding: 0px 3px;
-  margin: 0px;
-}
+
+
 
 
 /*---------- comment-box -------------------------------------- */

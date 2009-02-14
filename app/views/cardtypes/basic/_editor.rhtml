@@ -6,7 +6,10 @@
 	 User.as(:admin) { tinymceconfig = (card = CachedCard.get_real('*tiny mce')) ? card.content : '' }
 %>
 <%= slot.editor_hooks :setup=> %{ 
-		  setTimeout((function(){tinyMCE.init({mode: "exact",elements: "#{eid}-tinymce",#{tinymceconfig}})}),50); 
+		  setTimeout((function(){
+				tinyMCE.init({mode: "exact",elements: "#{eid}-tinymce",#{tinymceconfig}})
+				tinyMCE.execInstanceCommand( '#{eid}-tinymce', 'mceFocus' );
+		}),50); 
 	},                     
 	:save=> %{ 
 		t = tinyMCE.getInstanceById( '#{eid}-tinymce' ); 

@@ -1,15 +1,17 @@
 <%
+  @title   = 'Recently Changed Cards'
   cards   ||= []
-  title   = 'Recently Changed Cards'
   view ||= :change
 %>  
+<% paging = capture do %>
+  <%= render :partial=>'/block/paging', :locals=>{:card=>card} %>
+<% end %>
 
-  <h1><%= title %></h1> 
-  <% @title = title %>
+<h1><%= @title %></h1> 
 <div class="card-slot recent-changes">
-  <div class="content">
+  <div class="open-content">
   
-    <%= render :partial=>'/block/paging', :locals=>{:card=>card} %>
+    <%= paging %>
     <%
       cards_by_day = Hash.new { |h, day| h[day] = [] }
       cards.each do |card|  
@@ -27,13 +29,13 @@
     %>
     <% cards_by_day.keys.sort.reverse.each do |day| %>
       <h2><%= format_date(day, include_time = false) %></h2>
-      <div class="content">
-      
+      <ul class="search-result-list">
         <% cards_by_day[day].each do |card| %>
-      		<%= get_slot(card).render(view) %>
+      		<li class="item-<%= view %>"><%= get_slot(card).render(view) %>
         <% end %>
-      </div>  
+      </ul>  
     <% end %>
+    <%= paging %>
   </div>
 </div>
   

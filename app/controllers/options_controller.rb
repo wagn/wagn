@@ -39,5 +39,27 @@ class OptionsController < ApplicationController
     render_update_slot render_to_string(:template=>'card/options')
   end
   
+  def new_account
+    System.ok! :add_accounts_to_cards
+  end
+  
+  def create_account
+    System.ok! :add_accounts_to_cards
+    args = params[:extension].merge({:status=>'active', :invite_sender_id=>User.current_user.id})
+    @extension = User.create!(args)
+    @card.extension = @extension
+    @card.save!
+    send_create_account_message(@extension)
+    @extension.password = @extension.password_confirmation = ''
+    @notice ||= "That worked.  This card now has a sign-in account."
+    render_update_slot render_to_string(:template=>'card/options')        
+  end
+
+  def send_create_account_message(user)
+    subject = "Your new #{System.site_title} account."
+    message = "Welcome!  You now have an account on #{System.site_title}."
+    Notifier.deliver_account_info(user,subject,message)
+  rescue
+  end
 
 end

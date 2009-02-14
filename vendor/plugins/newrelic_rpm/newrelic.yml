@@ -3,14 +3,21 @@
 # applications with deep visibility and low overhead.  For more information, 
 # visit www.newrelic.com.
 #
-# #{generated_for_user}
+# <%= generated_for_user %>
 #
 # here are the settings that are common to all environments
 common: &default_settings
   # ============================== LICENSE KEY ===============================
   # You must specify the licence key associated with your New Relic account.
   # This key binds your Agent's data to your account in the New Relic RPM service.
-  license_key: '#{license_key}'
+  license_key: '<%= license_key %>'
+  
+  # Application Name
+  # Set this to be the name of your application as you'd like it show up in RPM.
+  # RPM will then auto-map instances of your application into a RPM "application"
+  # on your home dashboard page. This setting does not prevent you from manually
+  # defining applications.
+  app_name: My Application
 
   # the 'enabled' setting is used to turn on the NewRelic Agent.  When false,
   # your application is not instrumented and the Agent does not start up or
@@ -46,35 +53,49 @@ common: &default_settings
   # proxy_pass:
 
   
-  # Transaction tracer is a EARLY ACCESS feature that captures deep information about slow
+  # Tells transaction tracer and error collector (when enabled) whether or not to capture HTTP params. 
+  # When true, the RoR filter_parameters mechanism is used so that sensitive parameters are not recorded
+  capture_params: false
+
+
+  # Transaction tracer captures deep information about slow
   # transactions and sends this to the RPM service once a minute. Included in the
   # transaction is the exact call sequence of the transactions including any SQL statements
   # issued.
-  #
-  # Because this feature is EARLY ACCESS, only accounts that have been approved for
-  # early access features by New Relic will have this capability enabled
   transaction_tracer:
   
-    # The default for transaction tracer is false due to the sensitive nature of the SQL
-    # data we send to the RPM service. Get comfortable with the SQL obfuscator in development
-    # mode before enabling transaction tracer.
-    enabled: false
+    # Transaction tracer is enabled by default. Set this to false to turn it off. This feature
+    # is only available at the Silver and above product levels.
+    enabled: true
   
-    # When transaction tracer is on, only report the slowest trace every minute to RPM
-    # if the trace is slower than this value
-    transaction_threshold: 2.0
  
     # When transaction tracer is on, SQL statements can optionally be recorded. The recorder
     # has three modes, "off" which sends no SQL, "raw" which sends the SQL statement in its 
     # original form, and "obfuscated", which strips out numeric and string literals
     record_sql: obfuscated
     
-    # When transaction tracer is on, should show SQL statements be EXPLAINED
-    explain_enabled: true
-
-    # When EXPLAIN is enabled, only run it for SQL statements slower than this value 
-    explain_threshold: 0.50
+    # Threshold in seconds for when to collect stack trace for a SQL call. In other words, 
+    # when SQL statements exceed this threshold, then capture and send to RPM the current
+    # stack trace. This is helpful for pinpointing where long SQL calls originate from  
+    stack_trace_threshold: 0.500
+  
+  # Error collector captures information about uncaught exceptions and sends them to RPM for
+  # viewing
+  error_collector:
     
+    # Error collector is enabled by default. Set this to false to turn it off. This feature
+    # is only available at the Silver and above product levels
+    enabled: true
+    
+    # Tells error collector whether or not to capture a source snippet around the place of the
+    # error when errors are View related.
+    capture_source: true    
+    
+    # To stop specific errors from reporting to RPM, set this property to comma separated 
+    # values
+    #
+    #ignore_errors: ActionController::RoutingError, ...
+
 
 # override default settings based on your application's environment
 
@@ -113,3 +134,4 @@ production:
 staging:
   <<: *default_settings
   enabled: true
+  app_name: My Application (Staging)

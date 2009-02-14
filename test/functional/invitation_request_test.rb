@@ -14,8 +14,11 @@ class InvitationRequestTest < Test::Unit::TestCase
     @response   = ActionController::TestResponse.new
   end
   
-  def test_should_send_notification    
-    System.invite_request_alert_email = 'test@user.com' if System.invite_request_alert_email.blank?
+  def test_should_send_notification
+    User.as :admin do
+      Card.create :name=>'*invite+*to', :content=> 'test@user.com'
+    end
+#    System.invite_request_alert_email = 'test@user.com' if System.invite_request_alert_email.blank?
     assert_difference ActionMailer::Base.deliveries, :size do
       post :create, :card => {
         :type=>"InvitationRequest", 
@@ -38,9 +41,7 @@ class InvitationRequestTest < Test::Unit::TestCase
       :email=>"jamaster@jay.net",
       :content=>"Let me in!"
     }  
-    # FIXME: the form submits via ajax, so we can't do a regular redirect-- it does javascript
-    #  instead.. how do we test that?     
-    assert_response :success
+    assert_response :redirect
     #assert_redirected_to @controller.url_for_page(::Setting.find_by_codename('invitation_request_landing').card.name)
   end
   

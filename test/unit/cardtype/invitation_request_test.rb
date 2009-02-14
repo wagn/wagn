@@ -14,17 +14,17 @@ class Card::InvitationRequestTest < Test::Unit::TestCase
   end
 
   def test_should_require_name
-    @card = Card::InvitationRequest.create :email=>"bunny@hop.com"
+    @card = Card::InvitationRequest.create :account=>{ :email=>"bunny@hop.com" }
     assert @card.errors.on(:name)
   end
   
   def test_should_require_unique_email
-    @card = Card::InvitationRequest.create :name=>"Word Third", :email=>"joe@user.com", :content=>"Let me in!"
+    @card = Card::InvitationRequest.create :name=>"Word Third", :account=>{ :email=>"joe@user.com" }, :content=>"Let me in!"
     assert @card.errors.on(:email)
   end
 
   def test_should_require_unique_name
-    @card = Card::InvitationRequest.create :name=>"Joe User", :email=>"jamaster@jay.net", :content=>"Let me in!"
+    @card = Card::InvitationRequest.create :name=>"Joe User", :account=>{ :email=>"jamaster@jay.net" }, :content=>"Let me in!"
     assert @card.errors.on(:name)
   end
 
@@ -50,12 +50,12 @@ class Card::InvitationRequestTest < Test::Unit::TestCase
 
   def test_should_now_allow_blocked_user                      
     ::User.as(:admin) do Card.find_by_name('Ron Request').destroy end
-    @card = Card::InvitationRequest.create :name=>"Ron Re Request", :email=>'ron@request.com'
+    @card = Card::InvitationRequest.create :name=>"Ron Re Request", :account=>{ :email=>'ron@request.com' }
     assert @card.errors.on(:email)      
   end
 
   def test_should_create_card_and_user  
-    Card::InvitationRequest.create :name=>"Word Third", :email=>"jamaster@jay.net", :content=>"Let me in!"
+    Card::InvitationRequest.create :name=>"Word Third", :account=>{ :email=>"jamaster@jay.net" }, :content=>"Let me in!"
     @card =  Card.find_by_name("Word Third")   
     @user = @card.extension
     

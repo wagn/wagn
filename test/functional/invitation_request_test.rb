@@ -23,7 +23,7 @@ class InvitationRequestTest < Test::Unit::TestCase
       post :create, :card => {
         :type=>"InvitationRequest", 
         :name=>"Word Third",
-        :email=>"jamaster@jay.net", 
+        :account=>{:email=>"jamaster@jay.net"},
         :content=>"Let me in!"
       }  
     end     
@@ -38,7 +38,7 @@ class InvitationRequestTest < Test::Unit::TestCase
     post :create, :card=>{
       :type=>"InvitationRequest",
       :name=>"Word Third",
-      :email=>"jamaster@jay.net",
+      :account=>{:email=>"jamaster@jay.net"},
       :content=>"Let me in!"
     }  
     assert_response :redirect
@@ -50,7 +50,7 @@ class InvitationRequestTest < Test::Unit::TestCase
     post :create, :card=>{
       :type=>"InvitationRequest", 
       :name=>"Word Third", 
-      :email=>"jamaster@jay.net", 
+      :account=>{:email=>"jamaster@jay.net"},
       :content=>"Let me in!"
     }  
 

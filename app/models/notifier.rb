@@ -14,11 +14,11 @@ class Notifier < ActionMailer::Base
           :card_url => "#{System.base_url}/wagn/#{url_key}",
           :pw_url   => "#{System.base_url}/card/options/#{url_key}",
           
-          :login_url=> "#{System.base_url}/account/login",
+          :login_url=> "#{System.base_url}/account/signin",
           :message  => message.clone
   end                 
   
-  def invitation_request_alert(invite_request)  
+  def signup_alert(invite_request)  
     subject "#{invite_request.name} signed up for #{System.site_title}"
     from        System.setting('*signup+*from') || invite_request.extension.email
     recipients  System.setting('*signup+*to')

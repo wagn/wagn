@@ -5,10 +5,10 @@
 <div class="invite-links help instruction">
 <p><strong><%= card.name %></strong> asked for an invitation on <%= format_date(card.created_at) %></p>
 <p>
-  <% if logged_in? and Card::User.create_ok? %>
-    <%= link_to "Invite #{card.name}", {:controller=>'account', :action=>'invite', :name=>card.name }  %>         
+  <% if ::User.create_ok? %>
+    <%= link_to "Invite #{card.name}", {:controller=>'account', :action=>'approve', :card=>{:key=>card.key} }  %>         
   <% end %> 
-  <% if card.ok?(:delete) %>
+  <% if logged_in? and card.ok?(:delete) %>
    <%= link_to_remote "Deny #{card.name}", { :url=>slot.url_for("card/remove") } %>	
   <% end %>
 </p>

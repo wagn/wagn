@@ -2,7 +2,7 @@
 	<h2>Denied!</h2>
   <p><%= @exception.message %>.</p>
 	<% if User.current_user.login=='anon' %>
-		<p><%= link_to 'Sign in', '/account/login' %> or <%= link_to 'Sign up', '/account/sign_up'%>?</p>
+		<p><%= link_to 'Sign in', '/account/signin' %> or <%= link_to 'Sign up', '/account/signup'%>?</p>
 	<% end %>  
 	<p><em>403 Forbidden</em></p>
 </div>

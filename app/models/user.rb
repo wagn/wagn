@@ -2,6 +2,8 @@
 require_dependency "acts_as_card_extension"
 
 class User < ActiveRecord::Base
+  #FIXME: THIS WHOLE MODEL SHOULD BE CALLED ACCOUNT
+  
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :name
   cattr_accessor :current_user
@@ -13,9 +15,9 @@ class User < ActiveRecord::Base
   acts_as_card_extension
    
   validates_presence_of     :email, :if => :not_openid?
-  validates_format_of       :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i, :if => :not_openid?
-  validates_length_of       :email, :within => 3..100,   :if => :not_openid?
-  validates_uniqueness_of   :email,                      :if => :not_openid?  
+  validates_format_of       :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i  #, :if => :not_openid?
+  validates_length_of       :email, :within => 3..100    #,:if => :not_openid?
+  validates_uniqueness_of   :email                       #,:if => :not_openid?  
   validates_presence_of     :password,                   :if => :password_required?
   validates_presence_of     :password_confirmation,      :if => :password_required?
   validates_length_of       :password, :within => 5..40, :if => :password_required?
@@ -25,64 +27,8 @@ class User < ActiveRecord::Base
   
   before_save :encrypt_password
   
-  def all_roles
-    @cached_roles ||= (login=='anon' ? [Role[:anon]] : 
-      roles + [Role[:anon], Role[:auth]])
-  end  
-  
   class << self
-    def find_or_create_by_identity_url(url)
-      self.find_by_identity_url(url) || User.create_with_card(:identity_url=>url)
-    end
-    
-    # FIXME: args=params.  should be less coupled..
-    def create_with_card(args={})
-      ## CREATE CARD FOR THE NEW USER
-      @card_name = args[:card][:name]
-      @card = ::Card.find_by_name(@card_name) || ::Card::User.new( args[:card] )
-      
-      if @card.type == 'InvitationRequest' 
-        @user = @card.extension or raise "Blam.  InvitationRequest should've been connected to a user"    
-        User.as :admin do
-          @card.type = 'User'  # change from Invite Request -> User
-          dummy = Card.new(:type=>'User');
-          @card.permit :edit, dummy.who_can(:edit)
-          @card.save!
-        end
-        @user.status='active'
-        @user.invite_sender = ::User.current_user
-      elsif @card.type=='User' and !@card.extension
-        @user = User.new( args[:user].merge( :invite_sender_id=>User.current_user.id )) 
-        @user.status='active'
-      else
-        @card.errors.add(:name, "has already been taken")
-        raise ActiveRecord::RecordInvalid.new(@card)
-      end
-      @user.generate_password if @user.password.blank?
-      
-      ## ADD USER
-      User.transaction do 
-        @card.extension = @user
-        begin 
-          @user.save!
-        rescue ActiveRecord::RecordInvalid => err
-          err.record.errors.each do |key,err|
-            @card.errors.add key,err
-          end
-          raise ActiveRecord::RecordInvalid.new(@card)
-        end
-        #User.as :admin do ## fixme was breaking on templated user card on permission to change content ? 
-          @card.save!
-        #end    
-        raise(Wagn::Oops, "Invitation Email subject is required") unless (args[:email] and args[:email][:subject])
-        raise(Wagn::Oops, "Invitation Email message is required") unless (args[:email] and args[:email][:message])
-        Notifier.deliver_account_info(@user, args[:email][:subject], args[:email][:message])
-      end  
-      @user
-    end
-    #alias_method_chain :create, :card
-    
-    
+    # CURRENT USER
     def current_user
       @@current_user ||= find_by_login('anon')  
     end
@@ -90,11 +36,7 @@ class User < ActiveRecord::Base
     def current_user=(user)
       @@current_user = user
     end
-    
-    def active_users
-      self.find(:all, :conditions=>"status='active'")
-    end 
-    
+   
     def as(given_user)
       tmp_user = self.current_user
       self.current_user = given_user.class==User ? given_user : User.find_by_login(given_user.to_s)
@@ -106,6 +48,25 @@ class User < ActiveRecord::Base
         current_user
       end
     end
+    
+    
+    # FIXME: args=params.  should be less coupled..
+    def create_with_card(user_args, card_args, email_args={})
+      @card = Card::User.new card_args 
+      @user = User.new({:invite_sender=>User.current_user, :status=>'active'}.merge(user_args))
+      @user.generate_password if @user.password.blank?
+
+      @user.save_with_card!(@card)
+      [@user, @card]
+    end
+    
+    def create_ok?
+      Card::User.create_ok? && System.ok?(:add_accounts_to_cards)
+    end
+    
+    def active_users
+      self.find(:all, :conditions=>"status='active'")
+    end 
     
     # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
     def authenticate(email, password)
@@ -121,7 +82,53 @@ class User < ActiveRecord::Base
     def [](login)
       User.find_by_login(login.to_s)
     end
+
+    # OPENID - on hold
+    #def find_or_create_by_identity_url(url)
+    #  self.find_by_identity_url(url) || User.create_with_card(:identity_url=>url)
+    #end
   end 
+
+  ## INSTANCE METHODS
+
+  def save_with_card!(card)
+    User.transaction do 
+      card.extension = self
+      begin 
+        save!
+      rescue ActiveRecord::RecordInvalid => err
+        err.record.errors.each do |key,err|
+          card.errors.add key,err
+        end
+        raise ActiveRecord::RecordInvalid.new(card)
+      end
+      card.save!
+    end      
+  end
+  
+  def accept
+    User.as :admin do #what permissions does approver lack?  Should we check for them?
+      card.type = 'User'  # change from Invite Request -> User
+      card.permit :edit, Card.new(:type=>'User').who_can(:edit) #give default user permissions
+      card.save!
+    end
+    card.save #hack to make it so last editor is current user.
+    status='active'
+    invite_sender = ::User.current_user
+    save!
+  end
+
+  def send_account_email(args)
+    return if args[:no_email]
+    raise(Wagn::Oops, "subject is required") unless (args[:subject])
+    raise(Wagn::Oops, "message is required") unless (args[:message])
+    Notifier.deliver_account_info(self, args[:subject], args[:message])
+  end  
+
+  def all_roles
+    @cached_roles ||= (login=='anon' ? [Role[:anon]] : 
+      roles + [Role[:anon], Role[:auth]])
+  end  
 
   def active?
     status == 'active'
@@ -133,7 +140,6 @@ class User < ActiveRecord::Base
 
   def authenticated?(password) 
     crypted_password == encrypt(password) and active?      
-    #true
   end
 
   def generate_password
@@ -141,6 +147,7 @@ class User < ActiveRecord::Base
     self.password = pw 
     self.password_confirmation = self.password
   end
+
    
   protected
   # Encrypts the password with the user salt

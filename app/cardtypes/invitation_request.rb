@@ -4,20 +4,21 @@ module Card
 
     before_validation_on_create :create_user
     before_destroy :block_user
-    
       
-    def cacheable?
-      false
+    def cacheable?  
+      false # because users who can accept requests need to see different content.
     end
 
     private
+=begin    
     def create_user
       self.extension = ::User.new( self.account )
-      #extension.generate_password         
+      extension.generate_password         
       extension.save
       extension.errors.each do |attr,msg| self.errors.add(attr,msg) end
       return false unless extension.valid?
     end
+=end
    
     def block_user
       if extension

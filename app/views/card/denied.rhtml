@@ -12,7 +12,7 @@
       
 	    <p>
         <% if User.current_user.anonymous? %>
-          You have to <%= link_to "sign in", '/account/login' %> 
+          You have to <%= link_to "sign in", '/account/signin' %> 
         <% else %>
           You need permission
   	    <% end %>                      
@@ -28,7 +28,7 @@
     			<p>(See the <%= slot.link_to_action('options', 'options') %> tab to learn more.)</p>
     		<% end %>
     	
-    	<p><%= link_to 'Sign up for a new account', '/account/sign_up' %>.</p>
+    	<p><%= link_to 'Sign up for a new account', '/account/signup' %>.</p>
     </div>
 
 	  <% if @skip_slot_header && !@type %>	

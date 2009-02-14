@@ -68,7 +68,7 @@
     end
     
     def validate_destroy
-      if extension and ::Card.find_by_type_and_trash ( extension.codename, false ) 
+      if extension and ::Card.find_by_type_and_trash( extension.codename, false ) 
         errors.add :type, "can't be altered because #{name} is a Cardtype and cards of this type still exist"
       end
       super

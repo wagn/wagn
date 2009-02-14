@@ -5,30 +5,69 @@ class AccountController < ApplicationController
   before_filter :login_required, :only => [ :invite, :update ] 
   #observer :card_observer, :tag_observer
   helper :wagn
-                                                     
-  def invite     
-    if params[:name] && @card = Card.find_by_name(params[:name])
-      @user = @card.extension
-    else
-      @card = Card.new
-      @user = User.new
-    end    
-    @email={}
-    @email[:subject] = System.setting('*invite+*subject') || ''
-    @email[:message] = System.setting('*invite+*message') || ''
-    @email[:message].substitute! :invitor => current_user.card.name + " (#{current_user.email})" 
-    @email[:message].gsub!(/Hello,/, "Hello #{@card.name},") if @card.name  #FIXME - this is not going to grow well.
+
+  def signup
+    raise(Wagn::Oops, "You have to sign out before signing up for a new Account") if logged_in?
+    card_args = (params[:card]||{}).merge({:type=>'InvitationRequest'})
+    @user, @card = request.post? ?
+      User.create_with_card( params[:user], card_args ) :
+      User.new, Card.new( card_args )
+    if request.post? and @card.errors.empty?
+      @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards]  
+      ## fixme.  For now letting signup proceed even if there are errors on multi-update
+      flash[:notice] = System.setting('*signup+*thanks')
+      if User.create_ok? 
+        @user.accept
+        @user.send_account_info(signup_email_info)
+        redirect_to url_for_page @card.name
+      else
+        Notifier.deliver_signup_alert(record) if System.setting('*invite+*to')
+        redirect_to previous_location
+      end
+    end
+    render :action=>'signup'
   end
   
-  def sign_up
-    User.as :admin
-  end       
-
+  def signup_email_info
+    { :message => System.setting('*signup+*message') || "Thanks for signing up to #{System.site_title}!",
+      :subject => System.setting('*signup+*subject') || "Account info for #{System.site_title}!" }
+  end
   
-  def login
-    if false and using_open_id?
-      open_id_authentication
-    elsif params[:login]
+  def accept
+    @card = Card[params[:card][:key]] or raise(Wagn::NotFound, "Can't find this Account Request")
+    @user = @card.extension or raise(Wagn::Oops, "This card doesn't have an account to approve")
+    User.create_ok? or raise(Wagn::PermissionDenied, "You need permission to accept Account Requests")
+    
+    if request.post?
+      @user.accept
+      if @card.errors.empty? #SUCCESS
+        @user.send_account_info(params[:email])
+        #flash[:notice] = System.setting('*accept+*thanks')
+        redirect_to url_for_page(Card::InvitationRequest.new.cardtype.name)
+        return
+      end
+    end
+    render :action=>'invite'
+  end
+  
+  def invite
+    User.create_ok? or raise(Wagn::PermissionDenied, "You need permission to Invite New Users")
+    @user, @card = request.post? ? 
+      User.create_with_card( params[:user], params[:card] ) :
+      [User.new, Card.new]
+    if request.post? and @card.errors.empty?
+      @user.send_account_info(params[:email])
+      flash[:notice] = System.setting('*invite+*thanks')
+      redirect_to previous_location
+    end
+  end
+  
+
+  def signin
+    #if false and using_open_id?
+    #  open_id_authentication
+    #els
+    if params[:login]
       password_authentication(params[:login], params[:password])
     end
   end
@@ -36,7 +75,7 @@ class AccountController < ApplicationController
   def logout
     self.current_user = nil
     flash[:notice] = "You have been logged out."
-    redirect_to '/'  # previous_location here can cause infinite loop.
+    redirect_to '/'  # previous_location here can cause infinite loop.  ##  Really?  Shouldn't.  -efm
   end
   
   def forgot_password
@@ -56,17 +95,7 @@ class AccountController < ApplicationController
     end  
   end
         
-  def create #currently called upon invite only
-    return unless request.post? 
-    # FIXME: not hardcode user cardtype??  
-    @user = User.create_with_card( params )
-    @card = @user.card
-    
-    render :update do |page|
-      page.wagn.messenger.note( "Successfully invited #{@card.name}" )
-      page.redirect_to (thx = System.setting('*invite+*thanks') ? '/wagn/*invite+*thanks?view=content' : previous_location)
-    end
-  end 
+
 
   def update
     load_card
@@ -92,13 +121,16 @@ class AccountController < ApplicationController
   def password_authentication(login, password)
     if self.current_user = User.authenticate(params[:login], params[:password])
       successful_login
+    elsif User.find_by_email(params[:login])
+      failed_login("Wrong password for that email")
     else
-      failed_login("Invalid email or password")
+      failed_login("We don't recognize that email")
     end
   end
 
+=begin
   def open_id_authentication
-    warn "FAILED TPO FIND USER W/ IDENTEIY #{params[:openid_url]}"
+    warn "FAILED TPO FIND USER W/ IDENTITY #{params[:openid_url]}"
     unless params[:openid_url] &&   user = User.find_by_identity_url(params[:openid_url])
       failed_login("Sorry, no user by that identity URL exists (#{params[:openid_url] })" +
         "You need to have an account on Wagn already and set the OpenId in your options")
@@ -123,7 +155,7 @@ class AccountController < ApplicationController
       complete_open_id_authentication(&block)
     end
   end
-  
+=end  
 
   private  
 
@@ -134,9 +166,7 @@ class AccountController < ApplicationController
 
     def failed_login(message)
       flash[:warning] = message
-      render :action=>'login', :status=>403
-      #warn   "Setting Flash = #{message}"
-      #redirect_to(:action => 'login')
+      render :action=>'signin', :status=>403
     end
         
 end

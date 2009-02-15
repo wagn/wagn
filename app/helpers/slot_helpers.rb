@@ -231,7 +231,9 @@ module SlotHelpers
   end                   
   
   def setup_autosave
-    unless @nested or skip_autosave
+    if @nested or skip_autosave 
+      ""
+    else
       javascript_tag "Wagn.setupAutosave('#{card.id}', '#{context}');\n"
     end
   end

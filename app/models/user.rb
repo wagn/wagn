@@ -58,7 +58,7 @@ class User < ActiveRecord::Base
       @user.generate_password if @user.password.blank?
       
       @user.save_with_card(@card)
-      @user.send_account_info(email_args) if @card.errors.empty? && !email_args.empty? 
+      @user.send_account_info(email_args) if @user.errors.empty? && !email_args.empty? 
       [@user, @card]
     end
     
@@ -103,7 +103,7 @@ class User < ActiveRecord::Base
         next if key=='extension'
         self.errors.add key,err
       end 
-      raise ActiveRecord::RecordInvalid.new(card) if !card.errors.empty?
+      raise ActiveRecord::RecordInvalid.new(self) if !self.errors.empty?
     end
   rescue  
   end

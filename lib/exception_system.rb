@@ -63,7 +63,10 @@ module ExceptionSystem
 
   def render_card_errors(card=nil)
     card ||= @card
-    stuff = %{Rats. Issue with #{card.name && card.name.upcase} card:<br>} + card.errors.map{|attr,msg| "#{attr.upcase}: #{msg}" }.join(",<br> ")   
+    stuff = %{<div class="errorExplanation">
+      <h2>Rats. Issue with #{card.name && card.name.upcase} card:</h2><p>} + 
+      card.errors.map{|attr,msg| "#{attr.upcase}: #{msg}" }.join(",<br> ") +
+      '</p></div>'   
     #errors.each{|attr,msg| puts "#{attr} - #{msg}" }      
     # getNextElement() will crawl up nested slots until it finds one with a notice div
     if requesting_javascript? && requesting_ajax?

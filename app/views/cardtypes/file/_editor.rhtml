@@ -3,6 +3,7 @@
 <%= slot.form.hidden_field :content, :class=>'upload-content' %>
   
 <%#FIXME-slot %>
+<%- slot.skip_autosave = true %>
 <%= slot.editor_hooks :save=>%{
 	doc=window.frames["upload-iframe"].document;       	
 	innerForm = doc.forms['fileupload'];

@@ -99,38 +99,28 @@ class User < ActiveRecord::Base
       card.extension = self
       save
       card.save
-      self.errors.each do |key,err|
-        card.errors.add key,err
-        # drop the extension is invalid thing?
+      card.errors.each do |key,err|
+        next if key=='extension'
+        self.errors.add key,err
       end 
       raise ActiveRecord::RecordInvalid.new(card) if !card.errors.empty?
     end
+  rescue  
   end
       
-=begin      
-      begin 
-        save!
-      rescue ActiveRecord::RecordInvalid => err
-        err.record.errors.each do |key,err|
-          card.errors.add key,err
-        end
-        raise ActiveRecord::RecordInvalid.new(card)
-      end
-      card.save!
-=end      
+    
 
   def accept(email)
     User.as :admin do #what permissions does approver lack?  Should we check for them?
       card.type = 'User'  # change from Invite Request -> User
       card.permit :edit, Card.new(:type=>'User').who_can(:edit) #give default user permissions
-      card.save!
+      self.status='active'
+      self.invite_sender = ::User.current_user
+      generate_password
+      save_with_card(card)
     end
-    card.save #hack to make it so last editor is current user.
-    self.status='active'
-    self.invite_sender = ::User.current_user
-    generate_password
-    save!
-    self.send_account_info(email)
+    #card.save #hack to make it so last editor is current user.
+    self.send_account_info(email) if self.errors.empty?
   end
 
   def send_account_info(args)

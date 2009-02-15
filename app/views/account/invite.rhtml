@@ -3,7 +3,7 @@ email = params[:email] || {}
 subject = email[:subject] || System.setting('*invite+*subject') || ''
 message = email[:message] || System.setting('*invite+*message') || ''
 message.substitute!(
-  :invitor => current_user.card.name + " (#{current_user.email})",
+  :invitor => User.current_user.card.name + " (#{current_user.email})",
   :invitee => @card.name || ''
 )
 
@@ -26,6 +26,7 @@ context = 'invitation'
 		
     <%= hidden_field_tag 'element', "#{div_id}"  %>
 
+    <%= error_messages_for :user %>
 
   	<table class="fieldset">
   	  <% if @card.name.blank? %>

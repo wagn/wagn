@@ -35,11 +35,11 @@ class AccountCreationTest < Test::Unit::TestCase
 #    warn "%%%%%% current user: #{User.current_user.login}"
 #    warn "%%%%%% Create ok?: #{User.create_ok?}"
     
-    assert_raises(Wagn::PermissionDenied) do
+    assert_raises(Card::PermissionDenied) do
       post_invite
     end
   end
-#=begin
+  
   def test_should_create_account_from_invitation_request               
     assert_difference Card::InvitationRequest, :count, -1 do
       assert_difference Card::User, :count, 1 do

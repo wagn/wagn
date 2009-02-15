@@ -9,11 +9,12 @@ class AccountController < ApplicationController
   def signup
     raise(Wagn::Oops, "You have to sign out before signing up for a new Account") if logged_in?
     card_args = (params[:card]||{}).merge({:type=>'InvitationRequest'})
+    #fail "params.inspect: #{params.inspect}" if request.post?
     @user, @card = request.post? ?
       User.create_with_card( params[:user], card_args ) :
       [User.new, Card.new( card_args )]
       
-    if request.post? and @card.errors.empty?
+    if request.post? and @user.errors.empty?
       @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards]  ## fixme.  For now letting signup proceed even if there are errors on multi-update
       flash[:notice] = System.setting('*signup+*thanks')
       Notifier.deliver_signup_alert(record) if System.setting('*invite+*to')
@@ -21,8 +22,8 @@ class AccountController < ApplicationController
       if User.create_ok?              #complete the signup now
         email_args = { :message => System.setting('*signup+*message') || "Thanks for signing up to #{System.site_title}!",
                        :subject => System.setting('*signup+*subject') || "Account info for #{System.site_title}!" }
-        @user.accept(signup_email_info)
-        redirect_to url_for_page @card.name
+        @user.accept(email_args)
+        redirect_to :action=>'signin'
       else                            #subject to acceptance
         redirect_to previous_location
       end
@@ -33,11 +34,11 @@ class AccountController < ApplicationController
   def accept
     @card = Card[params[:card][:key]] or raise(Wagn::NotFound, "Can't find this Account Request")
     @user = @card.extension or raise(Wagn::Oops, "This card doesn't have an account to approve")
-    User.create_ok? or raise(Wagn::PermissionDenied, "You need permission to accept Account Requests")
+    User.create_ok? or raise(Card::PermissionDenied, "You need permission to accept Account Requests")
     
     if request.post?
       @user.accept(params[:email])
-      if @card.errors.empty? #SUCCESS
+      if @user.errors.empty? #SUCCESS
         flash[:notice] = System.setting('*invite+*thanks')
         redirect_to url_for_page(Card::InvitationRequest.new.cardtype.name)
         return
@@ -47,12 +48,12 @@ class AccountController < ApplicationController
   end
   
   def invite
-    User.create_ok? or raise(Wagn::PermissionDenied, "You need permission to Invite New Users")
+    User.create_ok? or raise(Card::PermissionDenied, "You need permission to Invite New Users")
     
     @user, @card = request.post? ? 
       User.create_with_card( params[:user], params[:card] ) :
       [User.new, Card.new]
-    if request.post? and @card.errors.empty?
+    if request.post? and @user.errors.empty?
       @user.send_account_info(params[:email])
       flash[:notice] = System.setting('*invite+*thanks')
       redirect_to previous_location

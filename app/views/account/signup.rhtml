@@ -5,22 +5,25 @@
 
   <h1>Sign Up</h1>
 
+
   <div class="instruction">
     <% if card.new_instructions %> 
   		<%= render_card card.new_instructions, :expanded_view_content %>
     <% elsif !User.create_ok? %>
       <p><strong>All Account Requests are subject to review.</strong></p>
     <% else %>
-      <p><strong>A password will be sent to your email</strong></p>
+      <p><strong>Send us the following, and we'll send you a password.</strong></p>
     <% end %>
   </div>
 
   <div class="content">
+    
     <% get_slot(card).wrap('account-request') do |slot| %>
-      <% form_for :card, @card, :action=>'signup' do |f| %>
+      <% form_for :card, @card, :action=>'signup', :onsubmit=>"Wagn.runQueue(Wagn.onSaveQueue['main_1']))" do |f| %>
         <%= hidden_field_tag 'element', "#{div_id}"  %>
         <%= f.hidden_field 'type'  %>
         <%- slot.form = f %>
+        <%= error_messages_for :user %>
 
       	<table class="fieldset">
       	  <%= slot.option_header 'Account Details' %>

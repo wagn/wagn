@@ -143,3 +143,13 @@ li {
   margin-bottom: 2px;
 }
 
+.errorExplanation {
+  margin: 10px;
+  padding: 10px;
+  border: 3px solid #966;
+  background: #ffa;
+  -moz-border-radius: 8px;
+  border: 1px solid #777;
+  border-bottom: 2px solid #888;
+  border-right: 2px solid #888;
+}

@@ -23,7 +23,7 @@ class OptionsControllerTest < Test::Unit::TestCase
 
   def test_should_create_account_from_scratch
     assert_difference ActionMailer::Base.deliveries, :size do 
-      post :create_account, :extension=>{:email=>'foo@bar.com', :password=>'p8ssw0rd', :password_confirmation=>'p8ssw0rd'}, :id=>'a'
+      post :create_account, :user=>{:email=>'foo@bar.com'}, :id=>'a'
       assert_response 200
     end
     email = ActionMailer::Base.deliveries[-1]      

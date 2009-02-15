@@ -36,21 +36,21 @@ context = 'invitation'
           </td>
           <td class="help"><strong>Title for user's card</strong><br/> Usually a full name.</td>
     		</tr>
+    		<tr>
+          <td class="label"><label for="email">Email</label></td>
+          <td class="field"><%= text_field :user,:email %></td>
+          <td class="help"><strong>To verify account</strong><br/> Not to spam</td>
+        </tr>
+        
   		<% else %>
-    	  <tr><td colspan="3" style="text-align: center"> 
-          Accept Account Request from: <strong><%= @card.name %></strong>
+    	  <tr><td colspan="3" class="accept-request-intro" style="text-align: center"> 
+          <em>Accept Account Request from:<em> <strong><%= link_to_page @card.name %></strong>
           <%= hidden_field( :card, :key ) %>
+          <%= hidden_field( :user, :email ) %>
+          
         </td></tr>
       <% end %>
      
-      <tr>
-        <td class="label"><label for="email">Email</label></td>
-        <td class="field"><%= text_field :user,:email %></td>
-        <td class="help"><strong>To verify account</strong><br/> Not to spam</td>
-      </tr>
-	
-
-
   		<tr>
   		  <td class="label"><label for="subject">Subject</label></td>
   		  <td class="field" colspan="2"><%= f.text_field :subject, :value=>subject,  :size=>60  %></td>

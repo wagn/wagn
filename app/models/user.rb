@@ -52,11 +52,13 @@ class User < ActiveRecord::Base
     
     # FIXME: args=params.  should be less coupled..
     def create_with_card(user_args, card_args, email_args={})
-      @card = Card::User.new card_args 
+      @card = (Hash===card_args ? Card.new({'type'=>'User'}.merge(card_args)) : card_args) 
+
       @user = User.new({:invite_sender=>User.current_user, :status=>'active'}.merge(user_args))
       @user.generate_password if @user.password.blank?
-
-      @user.save_with_card!(@card)
+      
+      @user.save_with_card(@card)
+      @user.send_account_info(email_args) if @card.errors.empty? && !email_args.empty? 
       [@user, @card]
     end
     
@@ -91,9 +93,21 @@ class User < ActiveRecord::Base
 
   ## INSTANCE METHODS
 
-  def save_with_card!(card)
+  def save_with_card(card)
+    #fail "save with card #{card.inspect}"
     User.transaction do 
       card.extension = self
+      save
+      card.save
+      self.errors.each do |key,err|
+        card.errors.add key,err
+        # drop the extension is invalid thing?
+      end 
+      raise ActiveRecord::RecordInvalid.new(card) if !card.errors.empty?
+    end
+  end
+      
+=begin      
       begin 
         save!
       rescue ActiveRecord::RecordInvalid => err
@@ -103,26 +117,30 @@ class User < ActiveRecord::Base
         raise ActiveRecord::RecordInvalid.new(card)
       end
       card.save!
-    end      
-  end
-  
-  def accept
+=end      
+
+  def accept(email)
     User.as :admin do #what permissions does approver lack?  Should we check for them?
       card.type = 'User'  # change from Invite Request -> User
       card.permit :edit, Card.new(:type=>'User').who_can(:edit) #give default user permissions
       card.save!
     end
     card.save #hack to make it so last editor is current user.
-    status='active'
-    invite_sender = ::User.current_user
+    self.status='active'
+    self.invite_sender = ::User.current_user
+    generate_password
     save!
+    self.send_account_info(email)
   end
 
-  def send_account_email(args)
-    return if args[:no_email]
+  def send_account_info(args)
+    #return if args[:no_email]
     raise(Wagn::Oops, "subject is required") unless (args[:subject])
     raise(Wagn::Oops, "message is required") unless (args[:message])
-    Notifier.deliver_account_info(self, args[:subject], args[:message])
+    begin
+      Notifier.deliver_account_info(self, args[:subject], args[:message])
+    rescue; warn("ACCOUNT INFO DELIVERY FAILED: \n #{args.inspect}")
+    end
   end  
 
   def all_roles

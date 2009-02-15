@@ -11,54 +11,53 @@ class AccountCreationTest < Test::Unit::TestCase
   include AuthenticatedTestHelper
 
   common_fixtures
+  
+  if !User.create_ok?
+    signed_in = Role[:auth]
+    signed_in.tasks += ',add_accounts_to_cards'
+    signed_in.save
+  end
 
   def setup
     get_renderer
     @controller = AccountController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
-    login_as :joe_user  
+    login_as :joe_user
     CachedCard.bump_global_seq
   end     
     
-    
-  def test_should_create_account_from_invitation_request_when_user_hard_templated
-    Card.create :name=>'User+*tform', :content=>"like this", :extension_type=>"HardTemplate"
-    assert_difference Card::InvitationRequest, :count, -1 do
-      assert_difference Card::User, :count, 1 do
-        post_invite :card=>{ :name=>"Ron Request"}
-      end
-    end
-    assert_equal "active", User.find_by_email("ron@request.com").status
-  end
+  
 
   def test_create_permission_denied_if_not_logged_in
     logout
     post "logout"
-    assert_raises(Card::PermissionDenied) do
+#    warn "%%%%%% current user: #{User.current_user.login}"
+#    warn "%%%%%% Create ok?: #{User.create_ok?}"
+    
+    assert_raises(Wagn::PermissionDenied) do
       post_invite
     end
   end
-
-  
-  def test_should_create_account_from_existing_user  
-      assert_difference ::User, :count do
-        assert_no_difference Card::User, :count do
-          post_invite :card=>{ :name=>"No Count" }, :user=>{ :email=>"no@count.com" }
-        end
-      end
-    end
-
-
+#=begin
   def test_should_create_account_from_invitation_request               
     assert_difference Card::InvitationRequest, :count, -1 do
       assert_difference Card::User, :count, 1 do
-        post_invite :card=>{ :name=>"Ron Request"}
+        post_invite :card=>{ :key=>"ron_request"}, :action=>:accept
       end
     end
     assert_equal "active", User.find_by_email("ron@request.com").status
   end
   
+  def test_should_create_account_from_invitation_request_when_user_hard_templated
+    Card.create :name=>'User+*tform', :content=>"like this", :extension_type=>"HardTemplate"
+    assert_difference Card::InvitationRequest, :count, -1 do
+      assert_difference Card::User, :count, 1 do
+        post_invite :card=>{ :key=>"ron_request"}, :action=>:accept
+      end
+    end
+    assert_equal "active", User.find_by_email("ron@request.com").status
+  end
 
 
   def test_should_require_valid_cardname
@@ -71,7 +70,7 @@ class AccountCreationTest < Test::Unit::TestCase
     assert_difference ActionMailer::Base.deliveries, :size do 
       assert_new_account do 
         post_invite
-        assert_response 200
+        assert_response 302
       end
     end
     email = ActionMailer::Base.deliveries[-1]      
@@ -80,12 +79,12 @@ class AccountCreationTest < Test::Unit::TestCase
     assert_equal 'active', User.find_by_email('new@user.com').status
     assert_equal 'active', User.find_by_email('new@user.com').status
   end
-  
+
   def test_should_create_account_when_user_cards_are_templated   ##FIXME -- I don't think this actually catches the bug I saw.
     Card.create! :name=> 'User+*tform', :extension_type=>'HardTemplate'
     assert_new_account do 
       post_invite
-      assert_response 200
+      assert_response 302
     end
   end
  
@@ -96,7 +95,7 @@ class AccountCreationTest < Test::Unit::TestCase
       assert !assigns(:user).password.blank?
     end
   end
-
+  
   def test_should_require_password_confirmation_if_password_given
     assert_no_new_account do
       assert_raises(ActiveRecord::RecordInvalid) do 
@@ -120,5 +119,14 @@ class AccountCreationTest < Test::Unit::TestCase
     assert_raises(ActiveRecord::RecordInvalid) do
       post_invite :user=>{ :email=>'joe@user.com' }
     end
-  end    
+  end
+=begin  We may want to support this eventually, but we don't yet.
+    def test_should_create_account_from_existing_user  
+        assert_difference ::User, :count do
+          assert_no_difference Card::User, :count do
+            post_invite :card=>{ :name=>"No Count" }, :user=>{ :email=>"no@count.com" }
+          end
+        end
+      end
+=end    
 end

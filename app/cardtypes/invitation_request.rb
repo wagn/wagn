@@ -2,7 +2,7 @@ module Card
   class InvitationRequest < Basic
     attr_accessor :account
 
-    before_validation_on_create :create_user
+    #before_validation_on_create :create_user
     before_destroy :block_user
       
     def cacheable?  

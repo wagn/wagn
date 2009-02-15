@@ -20,7 +20,7 @@ module ExceptionSystem
       end
     end
   end
-   
+     
   # these called by exception_notifier    
   def render_fast_404()
     render :text=>"404 not found", :layout=>nil, :status=>404

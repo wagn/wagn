@@ -19,7 +19,7 @@
   <div class="content">
     
     <% get_slot(card).wrap('account-request') do |slot| %>
-      <% form_for :card, @card, :action=>'signup', :onsubmit=>"Wagn.runQueue(Wagn.onSaveQueue['main_1']))" do |f| %>
+      <% form_for :card, @card, :action=>'signup', :html=>{ :onsubmit=>"Wagn.runQueue(Wagn.onSaveQueue['main_1'])"} do |f| %>
         <%= hidden_field_tag 'element', "#{div_id}"  %>
         <%= f.hidden_field 'type'  %>
         <%- slot.form = f %>

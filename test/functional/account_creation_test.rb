@@ -11,9 +11,10 @@ class AccountCreationTest < Test::Unit::TestCase
   include AuthenticatedTestHelper
 
   common_fixtures
-  
-  if !User.create_ok?
-    signed_in = Role[:auth]
+
+  #FIXME - couldn't get this stuff to work in setup, but that's where it belongs.
+  signed_in = Role[:auth]
+  if !signed_in.task_list.member?('add_accounts_to_cards')
     signed_in.tasks += ',add_accounts_to_cards'
     signed_in.save
   end
@@ -27,15 +28,20 @@ class AccountCreationTest < Test::Unit::TestCase
     CachedCard.bump_global_seq
   end     
     
-  
+
+  def test_should_require_valid_cardname
+#    assert_raises(ActiveRecord::RecordInvalid) do  
+    assert_no_new_account do
+
+      post_invite :card => { :name => "Joe+User/" }
+    end
+  end
 
   def test_create_permission_denied_if_not_logged_in
     logout
     post "logout"
-#    warn "%%%%%% current user: #{User.current_user.login}"
-#    warn "%%%%%% Create ok?: #{User.create_ok?}"
-    
-    assert_raises(Card::PermissionDenied) do
+    assert_no_new_account do
+#    assert_raises(Card::PermissionDenied) do
       post_invite
     end
   end
@@ -60,11 +66,7 @@ class AccountCreationTest < Test::Unit::TestCase
   end
 
 
-  def test_should_require_valid_cardname
-    assert_raises(ActiveRecord::RecordInvalid) do  
-      post_invite :card => { :name => "Joe+User/" }
-    end
-  end
+
 
   def test_should_create_account_from_scratch
     assert_difference ActionMailer::Base.deliveries, :size do 
@@ -87,7 +89,7 @@ class AccountCreationTest < Test::Unit::TestCase
       assert_response 302
     end
   end
- 
+
   # should work -- we generate a password if it's nil
   def test_should_generate_password_if_not_given
     assert_new_account do
@@ -98,25 +100,24 @@ class AccountCreationTest < Test::Unit::TestCase
   
   def test_should_require_password_confirmation_if_password_given
     assert_no_new_account do
-      assert_raises(ActiveRecord::RecordInvalid) do 
+    #  assert_raises(ActiveRecord::RecordInvalid) do 
         post_invite :user=>{ :password=>'tedpass' }
-      end
+    #  end
     end
   end
 
   def test_should_require_email
     assert_no_new_account do
-      assert_raises(ActiveRecord::RecordInvalid) do 
+#      assert_raises(ActiveRecord::RecordInvalid) do 
         post_invite :user=>{ :email => nil }
         #assert assigns(:user).errors.on(:email)
         #assert_response :success
-      end
+#      end
     end
   end   
   
-    
   def test_should_require_unique_email
-    assert_raises(ActiveRecord::RecordInvalid) do
+    assert_no_new_account do
       post_invite :user=>{ :email=>'joe@user.com' }
     end
   end

@@ -41,8 +41,9 @@ class OptionsController < ApplicationController
     System.ok!(:add_accounts_to_cards) && @card.ok?(:edit)
     email_args = { :subject => "Your new #{System.site_title} account.", 
                    :message => "Welcome!  You now have an account on #{System.site_title}." }
-    @extension, @card = User.create_with_card(params[:user],@card, email_args)
-    @extension.password = @extension.password_confirmation = ''
+    @user, @card = User.create_with_card(params[:user],@card, email_args)
+    raise ActiveRecord::RecordInvalid.new(@user) if !@user.errors.empty?
+    @user.password = @user.password_confirmation = ''
     @notice ||= "Done.  A password has been sent to that email."
     render_update_slot render_to_string(:template=>'card/options')        
   end

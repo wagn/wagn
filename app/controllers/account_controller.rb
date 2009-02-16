@@ -15,7 +15,9 @@ class AccountController < ApplicationController
       [User.new, Card.new( card_args )]
       
     if request.post? and @user.errors.empty?
-      @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards]  ## fixme.  For now letting signup proceed even if there are errors on multi-update
+      User.as :admin do ## in case user doesn't have permission for included cardtypes.  For now letting signup proceed even if there are errors on multi-update
+        @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards]  
+      end
       flash[:notice] = System.setting('*signup+*thanks')
       Notifier.deliver_signup_alert(record) if System.setting('*invite+*to')
       

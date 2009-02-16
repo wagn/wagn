@@ -131,7 +131,6 @@ class CardController < ApplicationController
   #--------------( editing )
   
   def edit 
-    @add_slot = nil
     if params[:card] and @card.type=params[:card][:type]  
       @card.save!
       @card = Card.find(card.id)

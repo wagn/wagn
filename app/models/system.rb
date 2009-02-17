@@ -69,7 +69,7 @@ class System < ActiveRecord::Base
 
     def setting(name)
       User.as :admin do
-        card=CachedCard.get_real(name) and card.content
+        card=CachedCard.get_real(name) && !card.content.strip!.empty? && card.content
       end
     rescue
       nil

@@ -14,8 +14,8 @@ class AccountCreationTest < Test::Unit::TestCase
 
   #FIXME - couldn't get this stuff to work in setup, but that's where it belongs.
   signed_in = Role[:auth]
-  if !signed_in.task_list.member?('add_accounts_to_cards')
-    signed_in.tasks += ',add_accounts_to_cards'
+  if !signed_in.task_list.member?('create_accounts')
+    signed_in.tasks += ',create_accounts'
     signed_in.save
   end
 

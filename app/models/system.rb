@@ -145,7 +145,7 @@ class System < ActiveRecord::Base
     set_global_permissions
     set_card_permissions
     administrate_users
-    add_accounts_to_cards
+    create_accounts
     assign_user_roles
   }
   

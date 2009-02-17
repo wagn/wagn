@@ -185,11 +185,11 @@ module SlotHelpers
   end                          
  
   def save_function 
-    "Wagn.draftSavers['#{context}'].stop(); if (Wagn.runQueue(Wagn.onSaveQueue['#{context}'])) { } else {return false}"
+    "if(ds=Wagn.draftSavers['#{context}']){ds.stop()}; if (Wagn.runQueue(Wagn.onSaveQueue['#{context}'])) { } else {return false}"
   end
 
   def cancel_function 
-    "Wagn.draftSavers['#{context}'].stop(); Wagn.runQueue(Wagn.onCancelQueue['#{context}']);"
+    "if(ds=Wagn.draftSavers['#{context}']){ds.stop()}; Wagn.runQueue(Wagn.onCancelQueue['#{context}']);"
   end
 
 

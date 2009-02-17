@@ -50,6 +50,8 @@ class CardController < ApplicationController
     # record this as a place to come back to.
     location_history.push(request.request_uri) if request.get?
 
+    params[:_keyword] && params[:_keyword].gsub!('_',' ') ## this will be unnecessary soon.
+
     @card_name = Cardname.unescape(params['id'] || '')
     if (@card_name.nil? or @card_name.empty?) then    
       @card_name = System.site_title

@@ -13,10 +13,7 @@
 
 
 	  <% form_remote_for :card, card, :url=>slot.url_for('card/create'), 
-					422 => slot.js.update, 
-					403 => slot.js.update, 
-					302 => slot.js.redirect( 'Successfully created card' ),
-					200 => slot.js.update, 
+					:update => slot.id,
 					:html=>{ :class=>'form',:onsubmit=>slot.save_function	} do |form| %>
 
 			<div class="card-header">

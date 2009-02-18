@@ -8,6 +8,7 @@ class AccountController < ApplicationController
 
   def signup
     raise(Wagn::Oops, "You have to sign out before signing up for a new Account") if logged_in?
+    raise(Card::PermissionDenied, "Sorry, no Signup allowed") unless Card::InvitationRequest.create_ok?
     card_args = (params[:card]||{}).merge({:type=>'InvitationRequest'})
     #fail "params.inspect: #{params.inspect}" if request.post?
     @user, @card = request.post? ?
@@ -21,7 +22,7 @@ class AccountController < ApplicationController
       flash[:notice] = System.setting('*signup+*thanks')
       Notifier.deliver_signup_alert(record) if System.setting('*invite+*to')
       
-      if User.create_ok?              #complete the signup now
+      if System.ok?(:create_accounts)             #complete the signup now
         email_args = { :message => System.setting('*signup+*message') || "Thanks for signing up to #{System.site_title}!",
                        :subject => System.setting('*signup+*subject') || "Account info for #{System.site_title}!" }
         @user.accept(email_args)
@@ -36,7 +37,7 @@ class AccountController < ApplicationController
   def accept
     @card = Card[params[:card][:key]] or raise(Wagn::NotFound, "Can't find this Account Request")
     @user = @card.extension or raise(Wagn::Oops, "This card doesn't have an account to approve")
-    User.create_ok? or raise(Card::PermissionDenied, "You need permission to accept Account Requests")
+    System.ok?(:create_accounts) or raise(Card::PermissionDenied, "You need permission to create accounts")
     
     if request.post?
       @user.accept(params[:email])
@@ -50,7 +51,7 @@ class AccountController < ApplicationController
   end
   
   def invite
-    User.create_ok? or raise(Card::PermissionDenied, "You need permission to Invite New Users")
+    System.ok?(:create_accounts) or raise(Card::PermissionDenied, "You need permission to create")
     
     @user, @card = request.post? ? 
       User.create_with_card( params[:user], params[:card] ) :

@@ -69,7 +69,7 @@ class System < ActiveRecord::Base
 
     def setting(name)
       User.as :admin do
-        card=CachedCard.get_real(name) and card.content
+        card=CachedCard.get_real(name) && !card.content.strip!.empty? && card.content
       end
     rescue
       nil
@@ -145,7 +145,7 @@ class System < ActiveRecord::Base
     set_global_permissions
     set_card_permissions
     administrate_users
-    add_accounts_to_cards
+    create_accounts
     assign_user_roles
   }
   

@@ -34,11 +34,11 @@ class OptionsController < ApplicationController
   end
   
   def new_account
-    System.ok!(:add_accounts_to_cards) && @card.ok?(:edit)
+    System.ok!(:create_accounts) && @card.ok?(:edit)
   end
   
   def create_account
-    System.ok!(:add_accounts_to_cards) && @card.ok?(:edit)
+    System.ok!(:create_accounts) && @card.ok?(:edit)
     email_args = { :subject => "Your new #{System.site_title} account.", 
                    :message => "Welcome!  You now have an account on #{System.site_title}." }
     @user, @card = User.create_with_card(params[:user],@card, email_args)

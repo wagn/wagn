@@ -61,10 +61,7 @@ class User < ActiveRecord::Base
       @user.send_account_info(email_args) if @user.errors.empty? && !email_args.empty? 
       [@user, @card]
     end
-    
-    def create_ok?
-      Card::User.create_ok? && System.ok?(:add_accounts_to_cards)
-    end
+
     
     def active_users
       self.find(:all, :conditions=>"status='active'")

@@ -118,12 +118,12 @@ class CardController < ApplicationController
     @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards]
 
     # double check to prevent infinite redirect loop was breaking all the error checking on card creation.  has to be a better way!
+    @redirect_path = main_card? ? url_for_page(@card.name) : nil
 
     render_args = 
       case
-        when !@card.errors.empty?; {:action=>'new', :status => 422}
-        when main_card?;           {:text=> url_for_page(@card.name), :status=>302}
-        else;                      {:action=>'show'}
+        when @card.errors.present?; {:action=>'new', :status => 422}
+        else;                       {:action=>'show'}
       end
     render render_args
   end

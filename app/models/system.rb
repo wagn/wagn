@@ -69,7 +69,8 @@ class System < ActiveRecord::Base
 
     def setting(name)
       User.as :admin do
-        card=CachedCard.get_real(name) && !card.content.strip!.empty? && card.content
+        card=CachedCard.get_real(name) and !card.content.strip.empty? and card.content
+        #card=CachedCard.get_real(name)  card.content
       end
     rescue
       nil
@@ -80,12 +81,13 @@ class System < ActiveRecord::Base
     end
     
     def favicon
-      img_name = setting('*favicon') ? "/image/#{img_name}" : '/images/favicon.ico'
+      img_name = setting('*favicon') 
+      img_name ? "/image/#{img_name}" : '/images/favicon.ico'
     end
     
     def logo
-      img_name = setting('*logo') ? "/image/#{img_name}"  :
-          File.exists?("#{RAILS_ROOT}/public/images/logo.gif") ? "/images/logo.gif" : nil
+      img_name = setting('*logo') 
+      img_name ? "/image/#{img_name}" : File.exists?("#{RAILS_ROOT}/public/images/logo.gif") ? "/images/logo.gif" : nil
     end
 
     #def admin_user

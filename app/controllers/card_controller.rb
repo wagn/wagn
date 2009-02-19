@@ -124,7 +124,7 @@ class CardController < ApplicationController
 
     render_args = 
       case
-        when @card.errors.present?; {:action=>'new', :status => 422}
+        when !@card.errors.empty?; {:action=>'new', :status => 422}
         else;                       {:action=>'show'}
       end
     render render_args

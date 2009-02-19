@@ -9,7 +9,7 @@
   <div class="instruction">
     <% if card.new_instructions %> 
   		<%= render_card card.new_instructions, :expanded_view_content %>
-    <% elsif !User.create_ok? %>
+    <% elsif !System.ok?(:create_accounts) %>
       <p><strong>All Account Requests are subject to review.</strong></p>
     <% else %>
       <p><strong>Send us the following, and we'll send you a password.</strong></p>

@@ -55,11 +55,9 @@ module WagnHelper
     end
 
     def wrap_content( content="" )
-      %{<![if !IE]><span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick"><![endif]>} +
-      %{<!--[if IE]><div class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick"><![endif]-->} +
+      %{<span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick">} +
          content.to_s + 
-      %{<!--[if IE]></div><![endif]-->} + 
-      %{<![if !IE]></span><![endif]>} 
+      %{</span><!--[if IE]>&nbsp;<![endif]-->} 
     end    
     
     def js

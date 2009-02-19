@@ -20,7 +20,7 @@ class AccountController < ApplicationController
         @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards]  
       end
       
-      Notifier.deliver_signup_alert(record) if System.setting('*invite+*to')
+      Notifier.deliver_signup_alert(record) if System.setting('*signup+*to')
       
       if System.ok?(:create_accounts)             #complete the signup now
         email_args = { :message => System.setting('*signup+*message') || "Thanks for signing up to #{System.site_title}!",

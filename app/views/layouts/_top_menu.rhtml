@@ -6,7 +6,7 @@
   <span id="logging">
      <% if logged_in? %>
         <%= link_to "My Card: #{current_user.card.name}", '/me', :id=>'my-card-link' %>
-        <% if Card::User.create_ok? %>
+        <% if System.ok?(:create_accounts) %>
   	      <%= link_to 'Invite a Friend', :controller=>'account', :action=>'invite' %>
         <% end %>   
         <%= link_to 'Sign out', :controller=>'account', :action=>'logout' %>

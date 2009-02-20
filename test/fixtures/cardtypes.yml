@@ -67,10 +67,10 @@ cardtypes_012:
   class_name: User
   system: 
   id: "2"
-#cardtypes_001: 
-#  class_name: InvitationRequest
-#  system: 
-#  id: "6"
+cardtypes_001: 
+  class_name: InvitationRequest
+  system: 
+  id: "6"
 cardtypes_024: 
   class_name: CardtypeA
   system: 

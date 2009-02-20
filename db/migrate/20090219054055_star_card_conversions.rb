@@ -22,7 +22,8 @@ class StarCardConversions < ActiveRecord::Migration
       
       # newly in use, but not vital 
       #*account+*from
-      #*signup+*from
+      #*request+*from
+      #*request+*to
       #*signup+*message
       #*signup+*subject
     end

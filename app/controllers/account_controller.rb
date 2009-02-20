@@ -28,7 +28,7 @@ class AccountController < ApplicationController
       else
         Notifier.deliver_signup_alert(@card) if System.setting('*signup+*to')
       end
-      redirect_to System.setting('*signup+*thanks') || previous_location
+      redirect_to '/' + (System.setting('*signup+*thanks') || '')
     end
   end
   
@@ -45,7 +45,7 @@ class AccountController < ApplicationController
     if request.post?
       @user.accept(params[:email])
       if @user.errors.empty? #SUCCESS
-        redirect_to System.setting('*invite+*thanks') || previous_location
+        redirect_to '/' + (System.setting('*invite+*thanks') || '')
         return
       end
     end
@@ -60,7 +60,7 @@ class AccountController < ApplicationController
       [User.new, Card.new]
     if request.post? and @user.errors.empty?
       @user.send_account_info(params[:email])
-      redirect_to  System.setting('*invite+*thanks') || previous_location
+      redirect_to '/' + (System.setting('*invite+*thanks') || '')
     end
   end
   

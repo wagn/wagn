@@ -1,22 +1,17 @@
 <%# self.extend WagnHelper %>
 
-<p><%= @name %> <<%= @email %>>  has requested an invitation to <%= @site %>, providing the following details:</p>
+<p><%= @name %> <<%= @email %>> has requested an account on <%= @site %></p>
 
-<p>~~~~~~~~~~~</p>
 
-<div>
-  <% if !@card.hard_template %>
-    <%= @content %>
-  <% end %>
+  <%# if !@card.hard_template %>
+    <%#= @content %>
+  <%# end %>
   <%# slot =  WagnHelper::Slot.new(@card, 'bogus_1', 'view', self) %>
   <%#- a = slot.expand_transclusions(slot.render(:raw_content)) %>
   <%# warn "email content: #{a}" %>
   <%#= a %>
-</div>
 
-<p>~~~~~~~~~~~</p>
-
-<div><%= link_to "confirm or deny request", @url %></div> 
+<div><%= link_to "See this request", @url %></div> 
 </div><%= link_to 'See all account requests', :host=>System.host, :controller=>'card', :action=>'show', :id=>"account_request" %></div>
 
 

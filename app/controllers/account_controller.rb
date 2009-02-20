@@ -26,7 +26,7 @@ class AccountController < ApplicationController
                        :subject => System.setting('*signup+*subject') || "Account info for #{System.site_title}!" }
         @user.accept(email_args)
       else
-        Notifier.deliver_signup_alert(@card) if System.setting('*signup+*to')
+        Notifier.deliver_signup_alert(@card) if System.setting('*request+*to')
       end
       redirect_to '/' + (System.setting('*signup+*thanks') || '')
     end

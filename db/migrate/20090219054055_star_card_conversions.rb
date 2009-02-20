@@ -11,7 +11,7 @@ class StarCardConversions < ActiveRecord::Migration
       migrate_to('*invite+*message', ((card=Card['system setting+invitation email body']) ? card.content : System.invitation_email_body), 'PlainText')
       migrate_to('*invite+*thanks', '/wagn/Invite_Success')
     
-      migrate_to('*signup+*to', System.invite_request_alert_email)
+      migrate_to('*request+*to', System.invite_request_alert_email)
       migrate_to('*signup+*thanks', '/wagn/Signup_Success')
 
 
@@ -21,7 +21,7 @@ class StarCardConversions < ActiveRecord::Migration
       ss=Card['system setting'] and ss.confirm_destroy=true and ss.destroy!
       
       # newly in use, but not vital 
-      #*invite+*from
+      #*account+*from
       #*signup+*from
       #*signup+*message
       #*signup+*subject

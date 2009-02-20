@@ -114,9 +114,9 @@ class CardController < ApplicationController
   end
   
   def create
-    @card = Card.new params[:card]
-    return denial if !@card.cardtype.ok?(:create)  
-    @card.save
+    #@card = Card.new params[:card]
+    #return denial if !@card.cardtype.ok?(:create)  
+    @card = Card.create params[:card]
     @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards]
 
     # double check to prevent infinite redirect loop was breaking all the error checking on card creation.  has to be a better way!

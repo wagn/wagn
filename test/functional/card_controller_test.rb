@@ -133,7 +133,19 @@ class CardControllerTest < Test::Unit::TestCase
     assert_response :success
     assert_nil Card.find_by_name("Boo")
   end
+        
 
+  def test_recreate_from_trash
+    @c = Card.create! :name=>"Problem", :content=>"boof"
+    @c.destroy!
+    post :create, :card=>{
+      "name"=>"Problem",
+      "type"=>"Phrase",
+      "content"=>"noof"
+    }
+    assert_response :success
+    assert_instance_of Card::Phrase, Card.find_by_name("Problem")
+  end
   
 =begin FIXME
   def test_new    

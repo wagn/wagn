@@ -19,20 +19,22 @@ class AccountController < ApplicationController
       User.as :admin do ## in case user doesn't have permission for included cardtypes.  For now letting signup proceed even if there are errors on multi-update
         @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards]  
       end
-      flash[:notice] = System.setting('*signup+*thanks')
-      Notifier.deliver_signup_alert(record) if System.setting('*invite+*to')
+      
+      Notifier.deliver_signup_alert(record) if System.setting('*signup+*to')
       
       if System.ok?(:create_accounts)             #complete the signup now
         email_args = { :message => System.setting('*signup+*message') || "Thanks for signing up to #{System.site_title}!",
                        :subject => System.setting('*signup+*subject') || "Account info for #{System.site_title}!" }
         @user.accept(email_args)
-        redirect_to :action=>'signin'
-      else                            #subject to acceptance
-        redirect_to previous_location
       end
+      redirect_to System.setting('*signup+*thanks') || previous_location
     end
   end
   
+  def thanks(card_name)
+    thanks = System.setting(card_name)
+    thanks
+  end
   
   def accept
     @card = Card[params[:card][:key]] or raise(Wagn::NotFound, "Can't find this Account Request")
@@ -42,8 +44,7 @@ class AccountController < ApplicationController
     if request.post?
       @user.accept(params[:email])
       if @user.errors.empty? #SUCCESS
-        flash[:notice] = System.setting('*invite+*thanks')
-        redirect_to url_for_page(Card::InvitationRequest.new.cardtype.name)
+        redirect_to System.setting('*invite+*thanks') || previous_location
         return
       end
     end
@@ -58,8 +59,7 @@ class AccountController < ApplicationController
       [User.new, Card.new]
     if request.post? and @user.errors.empty?
       @user.send_account_info(params[:email])
-      flash[:notice] = System.setting('*invite+*thanks')
-      redirect_to previous_location
+      redirect_to  System.setting('*invite+*thanks') || previous_location
     end
   end
   

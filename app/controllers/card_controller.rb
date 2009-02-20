@@ -123,7 +123,7 @@ class CardController < ApplicationController
  
     render_args = 
       case
-        when @card.errors.present?; {:action=>'new', :status => 422}
+        when !@card.errors.empty?; {:action=>'new', :status => 422}
         when main_card?;            {:action=>'new_redirect'}
         else;                       {:action=>'show'}
       end

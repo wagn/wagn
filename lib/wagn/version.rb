@@ -2,9 +2,9 @@ unless defined? Wagn::Version
   module Wagn
     module Version
       Major = '0'
-      Minor = '11'
+      Minor = '12'
       Tiny  = '0'
-      Eensie = nil
+      Eensie = 'rc1'
     
       class << self
         def full

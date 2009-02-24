@@ -9,10 +9,10 @@ class StarCardConversions < ActiveRecord::Migration
     
       migrate_to('*invite+*subject', ((card=Card['system setting+invitation email subject']) ? card.content : System.invitation_email_subject))
       migrate_to('*invite+*message', ((card=Card['system setting+invitation email body']) ? card.content : System.invitation_email_body), 'PlainText')
-      migrate_to('*invite+*thanks', '/wagn/Invite_Success')
+      migrate_to('*invite+*thanks', 'wagn/Invite_Success')
     
       migrate_to('*request+*to', System.invite_request_alert_email)
-      migrate_to('*signup+*thanks', '/wagn/Signup_Success')
+      migrate_to('*signup+*thanks', 'wagn/Signup_Success')
 
 
       Card.find_or_create(:name=>'Invite Success', :content=>'Your invitation has been sent')

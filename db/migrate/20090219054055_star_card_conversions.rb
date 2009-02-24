@@ -1,5 +1,6 @@
 class StarCardConversions < ActiveRecord::Migration
-  def self.up
+  def self.up   
+    ::Cardtype.reset_cache
     User.as :admin do
       f = "#{RAILS_ROOT}/public/stylesheets/local.css"
       css = File.exists?(f) ? File.read(f) : ""

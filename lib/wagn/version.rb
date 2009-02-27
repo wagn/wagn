@@ -4,7 +4,7 @@ unless defined? Wagn::Version
       Major = '0'
       Minor = '12'
       Tiny  = '0'
-      Eensie = 'rc1'
+      Eensie = 'rc2'
     
       class << self
         def full

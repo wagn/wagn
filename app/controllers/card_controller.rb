@@ -134,7 +134,8 @@ class CardController < ApplicationController
   
   def edit 
     if params[:card] and @card.type=params[:card][:type]  
-      @card.save!
+      @request_type='html'
+      @card.save!    
       @card = Card.find(card.id)
     end
   end

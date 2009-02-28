@@ -3,7 +3,7 @@
 
 	<div class="cardtype-editor edit-area">
 	  <h2>Edit Type</h2>
-   		<% form_remote_for :card, @card, :url=>slot.url_for('card/edit'), :update=>slot.id do |f| %>
+   		<% form_remote_for :card, @card, :url=>slot.url_for('card/update'), :update=>slot.id do |f| %>
    			<% if @card.type == 'Cardtype' and @card.extension and !Card.search(:type=>@card.extension.codename).empty? %>
     	    <p>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong><%= @card.name %></strong> cards.</p>
     	  <% else %>

@@ -7,14 +7,13 @@ class CardController < ApplicationController
   before_filter :create_ok, :only=>[ :new, :create ]
 
   before_filter :load_card!, :only=>[
-    :changes, :comment, :denied, :edit, :edit_conflict, :edit_name, 
-    :edit_type, :options, :quick_update, :related, :remove, :rollback, 
-    :save_draft, :update
+    :changes, :comment, :denied, :edit, :options, :quick_update, 
+    :related, :remove, :rollback, :save_draft, :update
   ]
 
   before_filter :load_card_with_cache, :only => [:line, :view, :open ]
   
-  before_filter :edit_ok,   :only=>[ :edit, :edit_name, :edit_type, :update, :rollback, :save_draft] 
+  before_filter :edit_ok,   :only=>[ :edit, :update, :rollback, :save_draft] 
   before_filter :remove_ok, :only=>[ :remove ]
   
   #caches_action :show, :view, :to_view
@@ -132,51 +131,66 @@ class CardController < ApplicationController
   
   #--------------( editing )
   
-  def edit 
+  def edit
+    render :partial=>"card/edit/#{params[:attribute]}" if ['name','type'].member?(params[:attribute])
+=begin
     if params[:card] and @card.type=params[:card][:type]  
       @card.save!
       @card = Card.find(card.id)
     end
+=end
   end
-  
-  def edit_name             
+
+=begin  
+  def edit_name
     @old_card = @card.clone
     if !params[:card]
     elsif @card.update_attributes params[:card]
       render_update_slot render_to_string(:action=>'edit')
     elsif @card.errors.on(:confirmation_required) && @card.errors.map {|e,f| e}.uniq.length==1
-      @confirm = true   
-      @card.confirm_rename=true
+      @confirm = @card.confirm_rename=true
       @card.update_link_ins = (@card.update_link_ins=='true')
 #      render :action=>'edit', :status=>200
     else          
       # don't report confirmation required as error in a case where the interface will let you fix it.
-      @card.errors.instance_variable_get('@errors').delete('confirmation_required')
-      @request_type='html'
+    #  @card.errors.instance_variable_get('@errors').delete('confirmation_required')
+      #@request_type='html'
       render_card_errors(@card)
     end
   end
+=end  
   
-  
-  def update     
-    old_rev_id = params[:card] ? params[:card].delete(:current_revision_id)  : nil
-    #warn "old rev id = #{old_rev_id}; current = #{@card.current_revision.id} "
-    ##FIXME -- this should be taken care of in transclusions, too.
-    if params[:card] and params[:card][:content] and (old_rev_id.to_i != @card.current_revision.id.to_i)
+  def update
+    fail "card params required" unless card_args=params[:card]
+    @old_card = @card.clone
+    @current_revision_id = @card.current_revision.id
+    old_revision_id = card_args.delete(:current_revision_id) || @current_revision_id
+    
+    
+    #REFACTOR!
+    if old_revision_id.to_i != @current_revision_id.to_i
       changes  # FIXME -- this should probably be abstracted?
       @no_changes_header = true
       @changes = render_to_string :action=>'changes' 
       return render( :action=>:edit_conflict )
     end 
-    if params[:multi_edit]
-      @card.multi_update(params[:cards])
-    else
-      @card.update_attributes! params[:card]     
-    end
+    
+    params[:multi_edit] ? @card.multi_update(params[:cards]) : @card.update_attributes(card_args)     
 
+    if @card.errors.on(:confirmation_required) && @card.errors.map {|e,f| e}.uniq.length==1
+      @confirm = @card.confirm_rename=true
+      @card.update_link_ins = (@card.update_link_ins=='true')
+      return render(:partial=>'card/edit/name', :status=>200)
+    end
+    #fail @card.inspect
+    #@request_type='html' if card_args[:name] || card_args[:type]
+    
     return render_card_errors(@card) unless @card.errors.empty?
+    @card = Card.find(card.id)
     render_update_slot render_to_string(:action=>'show')
   end
+
+
 
   def quick_update
     @card.update_attributes! params[:card]

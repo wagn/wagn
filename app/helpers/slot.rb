@@ -361,17 +361,7 @@ module WagnHelper
         when state==:line                   ; :expanded_line_content
         else                                ; vmode
       end
-=begin      
-       # these take precedence over state=view/line
-        else
-          case state
-          when :edit   ; card.phantom? ? :edit_auto : :edit_in_form                           
-          when :line   ; :expanded_line_content           
-          # now we are in state==:view, switch on viewmode (from transclusion syntax)
-          else         ; vmode
-          end
-        end
-=end
+
       #logger.info("<transclusion_case: state=#{state} vmode=#{vmode} --> Action=#{action}, Option=#{options.inspect}")
 
       result = subslot.render action, options

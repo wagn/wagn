@@ -7,7 +7,7 @@
       
   <% div(:class=>'edit-area' ) do %>  
  	  <h2>Edit Name</h2>  
-		<% form_remote_for :card, @card, :url=>slot.url_for('card/edit_name'), 
+		<% form_remote_for :card, @card, :url=>slot.url_for('card/update'), 
 				:update=>{:success=>slot.id('card-body'), :failure=>"javascript:getNextElement(this,'notice')" }do |f| %>
 			 
 			<p>Change from <%= link_to_page less_fancy_title(@old_card), @old_card.name %> to this   

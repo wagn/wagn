@@ -19,9 +19,9 @@
   <%#= asset_manager can do alternate media but it has to be a separate call anyway %>
 	<%= stylesheet_link_tag 'print', :media=>'print' %>
   
-	<% if css_card = CachedCard.get_real("*css") %>
+	<% if local_css = System.setting("*css") %>
 		<style type="text/css">
-			<%= css_card.content %>
+			<%= local_css %>
 		</style>              
 	<% end %>
 

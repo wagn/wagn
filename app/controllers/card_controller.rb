@@ -117,13 +117,16 @@ class CardController < ApplicationController
     #@card = Card.new params[:card]
     #return denial if !@card.cardtype.ok?(:create)  
     @card = Card.create params[:card]
-    @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards]
+    @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards] and !@card.errors
 
     # double check to prevent infinite redirect loop was breaking all the error checking on card creation.  has to be a better way!
  
     render_args = 
       case
-        when !@card.errors.empty?; {:action=>'new', :status => 422}
+        when !@card.errors.empty?;  {
+          :status => 422,
+          :inline=>"<%= error_messages_for :card %><%= javascript_tag 'scroll(0,0)' %>" 
+        }
         when main_card?;            {:action=>'new_redirect'}
         else;                       {:action=>'show'}
       end

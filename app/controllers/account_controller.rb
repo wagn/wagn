@@ -25,10 +25,11 @@ class AccountController < ApplicationController
         email_args = { :message => System.setting('*signup+*message') || "Thanks for signing up to #{System.site_title}!",
                        :subject => System.setting('*signup+*subject') || "Account info for #{System.site_title}!" }
         @user.accept(email_args)
+        redirect_to '/' + (System.setting('*signup+*thanks') || '')
       else
         Notifier.deliver_signup_alert(@card) if System.setting('*request+*to')
+        redirect_to '/' + (System.setting('*request+*thanks') || '')
       end
-      redirect_to '/' + (System.setting('*signup+*thanks') || '')
     end
   end
   

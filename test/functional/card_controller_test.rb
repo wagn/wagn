@@ -24,7 +24,7 @@ class CardControllerTest < Test::Unit::TestCase
   def test_create_cardtype_card
     post :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
     assert assigns['card']
-    assert_response :success
+    assert_response 418
     assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
     # this assertion fails under autotest when running the whole suite,
     # passes under rake test.
@@ -122,7 +122,7 @@ class CardControllerTest < Test::Unit::TestCase
       :type=>"Basic",
       :content=>"Bananas"
     }
-    assert_response :success
+    assert_response 418
     assert_instance_of Card::Basic, Card.find_by_name("NewCardFoo")
     assert_equal "Bananas", Card.find_by_name("NewCardFoo").content
   end
@@ -143,7 +143,7 @@ class CardControllerTest < Test::Unit::TestCase
       "type"=>"Phrase",
       "content"=>"noof"
     }
-    assert_response :success
+    assert_response 418
     assert_instance_of Card::Phrase, Card.find_by_name("Problem")
   end
   

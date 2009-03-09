@@ -23,7 +23,7 @@ class InvitationRequestTest < Test::Unit::TestCase
       :account=>{:email=>"jamaster@jay.net"},
       :content=>"Let me in!"
     }  
-    assert_response :success
+    assert_response 418
     #assert_redirected_to @controller.url_for_page(::Setting.find_by_codename('invitation_request_landing').card.name)
   end
   

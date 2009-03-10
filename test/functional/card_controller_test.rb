@@ -146,6 +146,28 @@ class CardControllerTest < Test::Unit::TestCase
     assert_response 418
     assert_instance_of Card::Phrase, Card.find_by_name("Problem")
   end
+
+  def test_multi_create_without_name
+    post :create, "card"=>{"name"=>"", "type"=>"Form"},
+     "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
+     "content_to_replace"=>"",
+     "context"=>"main_1", 
+     "multi_edit"=>"true", "view"=>"open"
+    assert_response 422
+  end
+
+        
+  def test_multi_create
+    post :create, "card"=>{"name"=>"sss", "type"=>"Form"},
+     "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
+     "content_to_replace"=>"",
+     "context"=>"main_1", 
+     "multi_edit"=>"true", "view"=>"open"
+    assert_response 418    
+    assert Card.find_by_name("sss")
+    assert Card.find_by_name("sss+text")
+  end
+  
   
 =begin FIXME
   def test_new    

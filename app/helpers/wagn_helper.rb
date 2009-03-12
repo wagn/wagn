@@ -218,7 +218,7 @@ module WagnHelper
 
   def google_analytics
     User.as(:admin) do
-      if ga_key_card = CachedCard.get_real("*google analytics key")
+      if ga_key_card = System.setting("*google analytics key")
         key = ga_key_card.content
         %{
           <script type="text/javascript">

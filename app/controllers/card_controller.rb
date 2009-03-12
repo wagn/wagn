@@ -117,14 +117,25 @@ class CardController < ApplicationController
     #@card = Card.new params[:card]
     #return denial if !@card.cardtype.ok?(:create)  
     @card = Card.create params[:card]
-    @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards]
+    @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards] and @card.errors.empty?
 
     # double check to prevent infinite redirect loop was breaking all the error checking on card creation.  has to be a better way!
  
     render_args = 
       case
-        when !@card.errors.empty?; {:action=>'new', :status => 422}
-        when main_card?;            {:action=>'new_redirect'}
+        when !@card.errors.empty?;  {
+          :status => 422,
+          :inline=>"<%= error_messages_for :card %><%= javascript_tag 'scroll(0,0)' %>" 
+        }
+        when main_card?;            
+          # according to rails / prototype docs:
+          # :success: [...] the HTTP status code is in the 2XX range.
+          # :failure: [...] the HTTP status code is not in the 2XX range.
+          
+          # however on 302 ie6 does not update the :failure area, rather it sets the :success area to blank..
+          # for now, to get the redirect notice to go in the failure slot where we want it, 
+          # we've chosen to render with the 'teapot' failure status: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+          {:action=>'new_redirect', :status=>418 }
         else;                       {:action=>'show'}
       end
     render render_args
@@ -134,7 +145,8 @@ class CardController < ApplicationController
   
   def edit 
     if params[:card] and @card.type=params[:card][:type]  
-      @card.save!
+      @request_type='html'
+      @card.save!    
       @card = Card.find(card.id)
     end
   end

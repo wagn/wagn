@@ -94,7 +94,7 @@ class AccountController < ApplicationController
       redirect_to previous_location
     else
       flash[:notice] = "Could not find a user with that email address" 
-      render :action=>'login', :status=>403
+      render :action=>'signin', :status=>403
     end  
   end
         

@@ -249,8 +249,6 @@ module WagnHelper
         ###---(  EXCEPTIONS ) 
         
           when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
-            #w_action = 'exception'
-            #w_content = 
             render_partial("card/#{ok_action}", args)
 
   
@@ -294,6 +292,8 @@ module WagnHelper
             #warn "options for #{tname}: #{options.inspect}"
             fullname.to_absolute(options[:base]=='parent' ? card.name.parent_name : card.name)
             fullname.gsub!('_user', User.current_user.card.name)
+            options[:fullname] = fullname
+            options[:showname] = tname.to_show(fullname)
             #logger.info("absolutized tname and now have these transclusion options: #{options.inspect}")
 
             if fullname.blank?  

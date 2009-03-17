@@ -14,5 +14,17 @@ class LiteralTest < Test::Unit::TestCase
     card2 = newcard('Double lit', '/*in*/ out /*in*/')
     assert_equal('<code>in</code> out <code>in</code>', render(card2) )
   end
+  
+  def test_escape_link
+    card = newcard('link howto', 'write this: \[[text]]')
+    assert_equal('write this: <code><span>[</span>[text]]</code>', render(card) )
+
+  end
+  
+  def test_escape_inclusion
+    card = newcard('inclusion howto', 'write this: \{{cardname}}')
+    assert_equal('write this: <code><span>{</span>{cardname}}</code>', render(card) )
+  end
+  
 end                                                                      
   

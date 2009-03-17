@@ -21,6 +21,17 @@ class CardControllerTest < Test::Unit::TestCase
     login_as(:joe_user)
   end    
 
+  def test_create_cardtype_card
+    post :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
+    assert assigns['card']
+    assert_response 418
+    assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
+    # this assertion fails under autotest when running the whole suite,
+    # passes under rake test.
+    # assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor')
+  end
+
+  
 
 =begin
   what's happening with this test is that when changing from Basic to CardtypeA it is 
@@ -39,25 +50,15 @@ class CardControllerTest < Test::Unit::TestCase
 
   def test_update_cardtype_with_stripping
     User.as :joe_user                                               
-    post :update, {:id=>@simple_card.id, :card=>{ :type=>"Date",:content=>"<br/>" } }
+    post :edit, {:id=>@simple_card.id, :card=>{ :type=>"Date",:content=>"<br/>" } }
     #assert_equal "boo", assigns['card'].content
     assert_response :success, "changed card type"   
     assert_equal "", assigns['card'].content  
     assert_equal "Date", Card['Sample Basic'].type
   end 
+
 =end 
 
-  def test_create_cardtype_card
-    post :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
-    assert assigns['card']
-    assert_response :success
-    assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
-    # this assertion fails under autotest when running the whole suite,
-    # passes under rake test.
-    # assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor')
-  end
-
-  
 
 
   def test_new_with_name
@@ -125,7 +126,7 @@ class CardControllerTest < Test::Unit::TestCase
       :type=>"Basic",
       :content=>"Bananas"
     }
-    assert_response :success
+    assert_response 418
     assert_instance_of Card::Basic, Card.find_by_name("NewCardFoo")
     assert_equal "Bananas", Card.find_by_name("NewCardFoo").content
   end
@@ -146,9 +147,31 @@ class CardControllerTest < Test::Unit::TestCase
       "type"=>"Phrase",
       "content"=>"noof"
     }
-    assert_response :success
+    assert_response 418
     assert_instance_of Card::Phrase, Card.find_by_name("Problem")
   end
+
+  def test_multi_create_without_name
+    post :create, "card"=>{"name"=>"", "type"=>"Form"},
+     "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
+     "content_to_replace"=>"",
+     "context"=>"main_1", 
+     "multi_edit"=>"true", "view"=>"open"
+    assert_response 422
+  end
+
+        
+  def test_multi_create
+    post :create, "card"=>{"name"=>"sss", "type"=>"Form"},
+     "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
+     "content_to_replace"=>"",
+     "context"=>"main_1", 
+     "multi_edit"=>"true", "view"=>"open"
+    assert_response 418    
+    assert Card.find_by_name("sss")
+    assert Card.find_by_name("sss+text")
+  end
+  
   
 =begin FIXME
   def test_new    

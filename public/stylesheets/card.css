@@ -1,5 +1,5 @@
 .card-slot {
-  width: 100%;  /*needed for ie6*/
+  width: 100%;  /*needed for ie6, or..?*/
   margin: 0px;
   background: #fff;
   padding: 0px;
@@ -8,6 +8,9 @@
   border-bottom: 2px solid #888;
   border-right: 2px solid #888;
   display: block;
+}
+html>body .card-slot {
+  width: auto;  /* so non-ie browsers do better with image floats */
 }
 .card-slot,
 .card-slot .wrapper,

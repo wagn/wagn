@@ -1,1 +1,1 @@
-<%=h(card.content).gsub /\n/,'<br/>' %>
+<%= slot.render(:raw_content).gsub(/\n/,'<br/>') %>

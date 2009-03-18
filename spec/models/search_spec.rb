@@ -9,6 +9,23 @@ A_JOINEES = ["B", "C", "D", "E", "F"]
 CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User"].sort    
 
 
+describe Wql2, "in" do
+  it "should work for content options" do
+    Card.search(:in=>['AlphaBeta', 'Theta']).map(&:name).should == %w(A+B T)
+  end
+
+  it "should find the same thing in full syntax" do
+    Card.search(:content=>[:in,'Theta','AlphaBeta']).map(&:name).sort.should == %w(A+B T)
+  end
+  
+  it "should work on types" do
+    Card.search(:type=>[:in,'Cardtype E', 'Cardtype F']).map(&:name).sort.should == %w(type-e-card type-f-card)
+  end
+    
+end
+
+
+
 describe Wql2, "member_of/member" do
   it "member_of should find members" do
     Card.search( :member_of => "r1" ).map(&:name).sort.should == %w(u1 u2 u3)
@@ -17,7 +34,6 @@ describe Wql2, "member_of/member" do
     Card.search( :member => {:match=>"u1"} ).map(&:name).sort.should == %w(r1 r2 r3)
   end
 end
-
 
 
 describe Wql2, "not" do 
@@ -271,7 +287,3 @@ describe Wql2, "trash handling" do
     Card.search( :left=>"A" ).plot(:name).sort.should == ["A+C", "A+D", "A+E"]
   end
 end      
-
-
-
-

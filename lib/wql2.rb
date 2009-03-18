@@ -446,7 +446,7 @@ module Wql2
       raise("Invalid Operator #{@spec[0]}") unless OPERATORS.has_key?(@spec[0])
 
       # handle IN
-      if @spec[0] == :in and !@spec[1].is_a?(CardSpec) and !@spec[1].is_a?(RefSpec)
+      if @spec[0]=='in' and !@spec[1].is_a?(CardSpec) and !@spec[1].is_a?(RefSpec)
         @spec = [@spec[0], @spec[1..-1]]
       end
     end
@@ -472,12 +472,13 @@ module Wql2
       v=v.gsub(/\W/,' ') if op == '~'
 
 
-      if op == '~' && System.enable_postgres_fulltext   
+      case op 
+      when '~' && System.enable_postgres_fulltext   
         v = v.strip.gsub(/\s+/, '&')
         @cardspec.sql.relevance_fields << "rank(indexed_name, to_tsquery(#{sqlize(v)}), 1) AS name_rank"
         @cardspec.sql.relevance_fields << "rank(indexed_content, to_tsquery(#{sqlize(v)}), 1) AS content_rank"
         "indexed_content @@ to_tsquery(#{sqlize(v)})" 
-      elsif op == '~'
+      when '~'
         # FIXME: OMFG this is ugly
         @cardspec.sql.joins << "join revisions on revisions.id=#{@cardspec.table_alias}.current_revision_id"
         '(' + ['key','name','content'].collect do |f|
@@ -486,18 +487,22 @@ module Wql2
             "replace(#{@cxn.quote_column_name(f)}, '#{JOINT}',' ') #{@cxn.match(sqlize("[[:<:]]" + x + "[[:>:]]"))}"
           end.join(" AND ")
         end.join(" OR ") + ')'
-      elsif field=="content"
-        @cardspec.sql.joins << "join revisions on revisions.id=#{@cardspec.table_alias}.current_revision_id"
-        "revisions.content #{op} #{sqlize(v)}"
-      elsif field=="cond" 
-        "(#{sqlize(v)})"
-      elsif field=="type"
-        t = Cardtype.classname_for(  v.is_a?(Card::Base) ? v.name : v )
-        "#{field} = #{sqlize(t)}"
-      else   
-        field = "#{@cardspec.table_alias}.#{field}"
-        "#{field} #{op} #{sqlize(v)}"
-      end          
+      else
+        case field
+          when "content"
+            @cardspec.sql.joins << "join revisions on revisions.id=#{@cardspec.table_alias}.current_revision_id"
+            field = 'revisions.content'
+          when "type"
+            v = [v].flatten.map do |val| 
+              Cardtype.classname_for(  val.is_a?(Card::Base) ? val.name : val  )
+            end
+            v = v[0] if v.length==1
+          else   
+            field = "#{@cardspec.table_alias}.#{field}"
+        end
+        value = Array===v ? "(#{v.flatten.map{|x| sqlize(x)}.join(',')})" : sqlize(v)
+        field == "cond" ? "(#{value})" : "#{field} #{op} #{value}"
+      end
     end
   end         
 end

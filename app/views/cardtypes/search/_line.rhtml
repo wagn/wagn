@@ -24,11 +24,13 @@
 		<%= card.content %>
 	<% elsif query_results.length==0 %>
 	  <span class="faint">(0)</span>
-	<% else %>           
-		<div class="faint">(<%= total %>)</div>
-		<% query_results.each_with_index do |c,index| %>
-			<%= link_to_page( c.name ) %>
-		<% end %>     
+	<% else %>
+		<span class="faint">(<%= total %>)</span>
+		<ul class="search-result-list">
+  		<% query_results.each_with_index do |c,index| %>
+  			<li><%='name' == slot.item_format || params[:item] ? c.name : link_to_page( c.name ) %>
+  		<% end %>
+		</ul>
 	<% end %>
                               
 <% end %>

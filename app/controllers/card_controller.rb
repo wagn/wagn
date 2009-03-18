@@ -32,8 +32,8 @@ class CardController < ApplicationController
   #----------( Special cards )
   
   def index
-    if card = CachedCard.get_real('*home')
-      redirect_to '/'+ card.content
+    if home = System.setting('*home')
+      redirect_to '/'+ home
     else
       redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_title)
     end

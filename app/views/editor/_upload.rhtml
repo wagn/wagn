@@ -1,9 +1,0 @@
-<em><%= card.class.description %></em><br/>
-
-<%= form_tag( { :controller=>'file', :action=>'upload' }, :multipart=>true, :target=>"iframe-#{div_id}", :id=>"#{div_id}-upload-form") %>    
-  <%= hidden_field_tag 'card[type]', card.type %>
-  <%= hidden_field_tag 'element', "#{div_id}"  %>
-  <%= hidden_field_tag 'card[name]', '',  :id=>"#{div_id}-card-name" %>
-  <%= file_field_tag 'file', :onchange=>"Wagn.Card.find('#{div_id}').set_blank_name_to($F(this).split('/').last());"  %><br/><br/>
-<%= end_form_tag %>
-<iframe id="iframe-<%= div_id %>" name="iframe-<%= div_id %>" height="0" width="0" frameborder="0"></iframe>

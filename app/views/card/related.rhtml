@@ -25,7 +25,7 @@
 	  <% if current=='config' %>
       <%= render_card "#{card.name}+*edit", :closed%>
 	  <% else %>
-   	  <%= render_card( "#{card.name}+#{current}", :content ) %>
+   	  <%= render_card( "#{card.name}+#{current}", :content, :add_javascript=>true ) %>
    	<% end %>
 	</div>
 

@@ -4,7 +4,7 @@
   view ||= :change
 %>  
 <% paging = capture do %>
-  <%= render :partial=>'/block/paging', :locals=>{:card=>card} %>
+  <%= render :partial=>'/types/search/paging', :locals=>{:card=>card} %>
 <% end %>
 
 <h1><%= @title %></h1> 

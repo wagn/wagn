@@ -16,11 +16,11 @@ class BasicRenderingTest < ActionController::IntegrationTest
   
 =begin  
 
-test_render "block/render_list/:id?query=recent_changes"
-test_render "block/recent_list/:id?query=recent_changes"
-test_render "block/search_list/:id?query=recent_changes"
-test_render "block/connection_list/:id?query=recent_changes"
-test_render "block/link_list/:id?query=recent_changes"
+test_render "types/search/render_list/:id?query=recent_changes"
+test_render "types/search/recent_list/:id?query=recent_changes"
+test_render "types/search/search_list/:id?query=recent_changes"
+test_render "types/search/connection_list/:id?query=recent_changes"
+test_render "types/search/link_list/:id?query=recent_changes"
 
   def test_should_do_some_action
     test_action "card/update"

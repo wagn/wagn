@@ -173,18 +173,18 @@ module WagnHelper
 
       ###-----------( FULL )
         when :new
-          w_content = render_partial('card/new')
+          w_content = render_partial('views/new')
           
         when :open, :view, :card
           @state = :view; self.requested_view = 'open'
           # FIXME: accessing params here is ugly-- breaks tests.
           #w_action = (@template.params[:view]=='content' && context=="main_1") ? 'nude' : 'open'
           w_action = 'open'
-          w_content = render_partial('card/open')
+          w_content = render_partial('views/open')
 
         when :closed, :line    
           @state = :line; w_action='closed'; self.requested_view = 'closed'
-          w_content = render_partial('card/line')  # --> slot.wrap_content slot.render( :expanded_line_content )   
+          w_content = render_partial('views/closed')  # --> slot.wrap_content slot.render( :expanded_line_content )   
           
       ###----------------( NAME)
       
@@ -204,11 +204,11 @@ module WagnHelper
 
         when :rss_change
           w_action = self.requested_view = 'content'
-          render_partial('card/change')
+          render_partial('views/change')
           
         when :change;
           w_action = self.requested_view = 'content'
-          w_content = render_partial('card/change')
+          w_content = render_partial('views/change')
 
       ###---(  CONTENT VARIATIONS ) 
         #-----( with transclusions processed )
@@ -244,12 +244,12 @@ module WagnHelper
           expand_transclusions( render(:raw_content) )
 
         when :edit_in_form
-          render_partial('card/edit_in_form', args.merge(:form=>form))
+          render_partial('views/edit_in_form', args.merge(:form=>form))
             
         ###---(  EXCEPTIONS ) 
         
           when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
-            render_partial("card/#{ok_action}", args)
+            render_partial("views/#{ok_action}", args)
 
   
         else raise("Unknown slot render action '#{ok_action}'")
@@ -260,7 +260,7 @@ module WagnHelper
       end
       
 #      result ||= "" #FIMXE: wtf?
-      result << javascript_tag("setupLinksAndDoubleClicks()") if args[:add_javascript]
+      result << javascript_tag("setupLinksAndDoubleClicks();setupCreateOnClick();") if args[:add_javascript]
       result
     rescue Card::PermissionDenied=>e
       return "Permission error: #{e.message}"

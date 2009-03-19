@@ -13,14 +13,14 @@ module WagnHelper
   end
 
   # FIMXE: this one's a hack...
-  def render_card(card, mode)
+  def render_card(card, mode, args={})
     if String===card && name = card
       raise("Card #{name} not present") unless card= (CachedCard.get(name) || Card[name] || Card.find_phantom(name))
     end
     # FIXME: some cases we're called before controller.slot is initialized.
     #  should we initialize here? or always do Slot.new?
     subslot = controller.slot ? controller.slot.subslot(card) : Slot.new(card)
-    subslot.render(mode.to_sym)
+    subslot.render(mode.to_sym, args)
   end
 
   Droplet = Struct.new(:name, :link_options)
@@ -109,13 +109,13 @@ module WagnHelper
     # FIXME: this should look up the inheritance hierarchy, once we have one
     cardtype = (card ? card.type : 'Basic').underscore
     if Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR <=1
-      finder.file_exists?("/cardtypes/#{cardtype}/_#{name}") ?
-        "/cardtypes/#{cardtype}/#{name}" :
-        "/cardtypes/basic/#{name}"
+      finder.file_exists?("/types/#{cardtype}/_#{name}") ?
+        "/types/#{cardtype}/#{name}" :
+        "/types/basic/#{name}"
     else
-      self.view_paths.find { |template_path| template_path.paths.include?("cardtypes/#{cardtype}/_#{name}") } ?
-        "/cardtypes/#{cardtype}/#{name}" :
-        "/cardtypes/basic/#{name}"
+      self.view_paths.find { |template_path| template_path.paths.include?("types/#{cardtype}/_#{name}") } ?
+        "/types/#{cardtype}/#{name}" :
+        "/types/basic/#{name}"
     end
   end
 

@@ -54,7 +54,6 @@ class CardController < ApplicationController
     @card_name = Cardname.unescape(params['id'] || '')
     if (@card_name.nil? or @card_name.empty?) then    
       @card_name = System.site_title
-      #@card_name = System.deck_name
     end             
     @card = CachedCard.get(@card_name)
 
@@ -102,7 +101,7 @@ class CardController < ApplicationController
 
     @card = Card.new args                   
     if request.xhr?
-      render :partial => 'card/new', :locals=>{ :card=>@card }
+      render :partial => 'views/new', :locals=>{ :card=>@card }
     else
       render :action=> 'new'
     end
@@ -126,7 +125,7 @@ class CardController < ApplicationController
           :status => 422,
           :inline=>"<%= error_messages_for :card %><%= javascript_tag 'scroll(0,0)' %>" 
         }
-        when main_card?;            
+        when main_card?;  {:action=>'new_redirect', :status=>418 }          
           # according to rails / prototype docs:
           # :success: [...] the HTTP status code is in the 2XX range.
           # :failure: [...] the HTTP status code is not in the 2XX range.
@@ -134,8 +133,8 @@ class CardController < ApplicationController
           # however on 302 ie6 does not update the :failure area, rather it sets the :success area to blank..
           # for now, to get the redirect notice to go in the failure slot where we want it, 
           # we've chosen to render with the 'teapot' failure status: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-          {:action=>'new_redirect', :status=>418 }
-        else;                       {:action=>'show'}
+          
+        else;              {:action=>'show'}
       end
     render render_args
   end
@@ -201,8 +200,6 @@ class CardController < ApplicationController
     @card = Card.find(card.id)
     render_update_slot render_to_string(:action=>'show')
   end
-
-
 
   def quick_update
     @card.update_attributes! params[:card]
@@ -341,7 +338,7 @@ class CardController < ApplicationController
   # doesn't really seem to fit here.  may want to add new controller if methods accrue?        
   def add_field # for pointers only
     load_card! if params[:id]
-    render :partial=>'cardtypes/pointer/field', :locals=>params.merge({:link=>"",:card=>@card})
+    render :partial=>'types/pointer/field', :locals=>params.merge({:link=>"",:card=>@card})
   end
 end
 

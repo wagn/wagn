@@ -2,7 +2,7 @@
 <%= slot.form.hidden_field :content, :id=>"#{eid}-hidden-content" %>
 <ul id="<%=eid%>-ul" class="pointer">
   <% card.pointees.each_with_index do |link, index| %>
-    <%= render :partial=>'/cardtypes/pointer/field', :locals=>{ :eid=>eid, :link=>link, :index=>index, :card=>card } %>
+    <%= render :partial=>'/types/pointer/field', :locals=>{ :eid=>eid, :link=>link, :index=>index, :card=>card } %>
   <% end %>
   <li id="<%=eid%>-add">
   <%= link_to_remote 'Add another', :url=>"javascript:urlForAddField('#{card.id}','#{eid}')", :update=>"#{eid}-add", :position=>:before %>

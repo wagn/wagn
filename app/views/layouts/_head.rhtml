@@ -14,8 +14,9 @@
 
 
 
-  <title> <%= System.site_title %>:
+  <title>
     <%= @title || "#{controller.controller_name} - #{controller.action_name}" %>
+    ++ <%= System.site_title %>
   </title>
 	<%= stylesheet_link_merged :base %> 
   <%#= asset_manager can do alternate media but it has to be a separate call anyway %>

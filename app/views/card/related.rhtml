@@ -23,10 +23,12 @@
 
 	<div class="open-content related headroom">
 	  <% if current=='config' %>
-      <%= render_card "#{card.name}+*edit", :closed%>
+	    <%= slot.expand_transclusions render(:partial=>'config') %>
 	  <% else %>
-   	  <%= render_card( "#{card.name}+#{current}", :content, :add_javascript=>true ) %>
+   	  <%= render_card( "#{card.name}+#{current}", :content ) %>
    	<% end %>
 	</div>
+	
+	<%= javascript_tag("setupLinksAndDoubleClicks();") %>
 
 <% end %>

@@ -260,7 +260,7 @@ module WagnHelper
       end
       
 #      result ||= "" #FIMXE: wtf?
-      result << javascript_tag("setupLinksAndDoubleClicks();setupCreateOnClick();") if args[:add_javascript]
+      result << javascript_tag("setupLinksAndDoubleClicks();") if args[:add_javascript]
       result
     rescue Card::PermissionDenied=>e
       return "Permission error: #{e.message}"

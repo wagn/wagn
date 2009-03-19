@@ -112,13 +112,9 @@ class CardController < ApplicationController
   end
   
   def create
-    #@card = Card.new params[:card]
-    #return denial if !@card.cardtype.ok?(:create)  
     @card = Card.create params[:card]
     @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards] and @card.errors.empty?
 
-    # double check to prevent infinite redirect loop was breaking all the error checking on card creation.  has to be a better way!
- 
     render_args = 
       case
         when !@card.errors.empty?;  {
@@ -143,40 +139,13 @@ class CardController < ApplicationController
   
   def edit
     render :partial=>"card/edit/#{params[:attribute]}" if ['name','type'].member?(params[:attribute])
-=begin
-    if params[:card] and @card.type=params[:card][:type]  
-      @request_type='html'
-      @card.save!    
-      @card = Card.find(card.id)
-    end
-=end
   end
 
-=begin  
-  def edit_name
-    @old_card = @card.clone
-    if !params[:card]
-    elsif @card.update_attributes params[:card]
-      render_update_slot render_to_string(:action=>'edit')
-    elsif @card.errors.on(:confirmation_required) && @card.errors.map {|e,f| e}.uniq.length==1
-      @confirm = @card.confirm_rename=true
-      @card.update_link_ins = (@card.update_link_ins=='true')
-#      render :action=>'edit', :status=>200
-    else          
-      # don't report confirmation required as error in a case where the interface will let you fix it.
-    #  @card.errors.instance_variable_get('@errors').delete('confirmation_required')
-      #@request_type='html'
-      render_card_errors(@card)
-    end
-  end
-=end  
-  
   def update
     fail "card params required" unless card_args=params[:card]
     @old_card = @card.clone
     @current_revision_id = @card.current_revision.id
     old_revision_id = card_args.delete(:current_revision_id) || @current_revision_id
-    
     
     #REFACTOR!
     if old_revision_id.to_i != @current_revision_id.to_i
@@ -186,15 +155,18 @@ class CardController < ApplicationController
       return render( :action=>:edit_conflict )
     end 
     
-    params[:multi_edit] ? @card.multi_update(params[:cards]) : @card.update_attributes(card_args)     
+    case
+    when params[:multi_edit]; @card.multi_update(params[:cards])
+    when card_args[:type];       @card[:type]=card_args[:type]; @card.save
+      #can't do this via update attributes: " Can't mass-assign these protected attributes: type"
+    else;                     @card.update_attributes(card_args)     
+    end  
 
     if @card.errors.on(:confirmation_required) && @card.errors.map {|e,f| e}.uniq.length==1
       @confirm = @card.confirm_rename=true
       @card.update_link_ins = (@card.update_link_ins=='true')
       return render(:partial=>'card/edit/name', :status=>200)
     end
-    #fail @card.inspect
-    #@request_type='html' if card_args[:name] || card_args[:type]
     
     return render_card_errors(@card) unless @card.errors.empty?
     @card = Card.find(card.id)
@@ -312,7 +284,7 @@ class CardController < ApplicationController
   
   def auto_complete_for_navbox
     @stub = params['navbox']
-    @items = Card.search( :complete=>@stub, :limit=>8, :sort=>'alpha' ) 
+    @items = Card.search( :complete=>@stub, :limit=>8, :sort=>'name' ) 
     render :inline => "<%= navbox_result @items, 'name', @stub %>"
   end
     
@@ -327,9 +299,9 @@ class CardController < ApplicationController
     end
 
     if !params[:id].blank? && (card = Card["#{params[:id].tag_name}+*options"]) && card.type=='Search'
-      @items = card.search( :complete=>complete, :limit=>8, :sort=>'alpha')
+      @items = card.search( :complete=>complete, :limit=>8, :sort=>'name')
     else
-      @items = Card.search( :complete=>complete, :limit=>8, :sort=>'alpha' )
+      @items = Card.search( :complete=>complete, :limit=>8, :sort=>'name' )
     end
     render :inline => "<%= auto_complete_result @items, 'name' %>"
   end                                              

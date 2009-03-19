@@ -31,7 +31,7 @@ module Wql2
   ATTRIBUTES = {
     :basic=> %w{ name type content id key extension_type extension_id },
     :system => %w{ trunk_id tag_id },
-    :semi_relational=> %w{ edited_by edited member_of member role },
+    :semi_relational=> %w{ edited_by edited member_of member role found_by },
     :relational => %w{ part left right plus left_plus right_plus },  
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
     :special => %w{ or match complete not count },
@@ -68,7 +68,9 @@ module Wql2
   DEFAULT_ORDER_DIRS =  {
     "update" => "desc",
     "create" => "asc",
-    "alpha" => "asc",
+    "alpha" => "asc", # DEPRECATED
+    "name" => "asc",
+    "content" => "asc",
     #"plusses" => "desc",
     "relevance" => "desc"
   }
@@ -95,7 +97,8 @@ module Wql2
     def match_prep(v,cardspec=self)
       cxn ||= ActiveRecord::Base.connection
       v=cardspec.root.params['_keyword'] if v=='_keyword'
-      v=v.gsub(/\W+/,' ')
+      v.gsub!(/\W+/,' ')
+      v.strip!
       [cxn, v]
     end
   end
@@ -153,15 +156,20 @@ module Wql2
       @card || raise(Wagn::WqlError, "_self referenced but no card is available")
     end
     
+    def to_card(relative_name)
+      case relative_name
+      when "_self";  root.card                                   
+      when "_left";  CachedCard.get(root.card.name.parent_name)
+      when "_right"; CachedCard.get(root.card.name.tag_name)
+      end
+    end
+    
     def merge(spec)
       # string or number shortcut    
       #warn "#{self}.merge(#{spec.inspect})"
       
       spec = case spec
-        when "_self";  { :id => root.card.id }                                   
-        when "_left";  { :id => CachedCard.get(root.card.name.parent_name).id }  # use name not .trunk() for auto_cards
-        when "_right";  { :id => CachedCard.get(root.card.name.tag_name).id }
-    #   when "_none";  { }
+        when /^_(self|left|right)$/;  { :id => to_card(spec).id }                                   
         when String;   { :key => spec.to_key }
         when Integer;  { :id => spec   }  
         when Hash;     spec
@@ -210,20 +218,28 @@ module Wql2
       self
     end          
     
+    def found_by(val)
+      cards = val=~/^_/ ? [to_card(val)] : Card.search(val)
+      cards.each do |c|
+        raise %{"found_by" value needs to be valid Search card} unless c && c.type=='Search'
+        merge field(:id) => subspec(c.get_spec)
+      end
+    end
+    
     def match(val)
       cxn, v = match_prep(val)
       
       cond =
         if System.enable_postgres_fulltext
           v = v.strip.gsub(/\s+/, '&')
-          self.sql.relevance_fields << "rank(indexed_name, to_tsquery(#{quote(v)}), 1) AS name_rank"
-          self.sql.relevance_fields << "rank(indexed_content, to_tsquery(#{quote(v)}), 1) AS content_rank"
+          sql.relevance_fields << "rank(indexed_name, to_tsquery(#{quote(v)}), 1) AS name_rank"
+          sql.relevance_fields << "rank(indexed_content, to_tsquery(#{quote(v)}), 1) AS content_rank"
           "indexed_content @@ to_tsquery(#{quote(v)})" 
         else
-          self.sql.joins << "join revisions on revisions.id=#{self.table_alias}.current_revision_id"
+          sql.joins << "join revisions r on r.id=#{self.table_alias}.current_revision_id"
           # FIXME: OMFG this is ugly
-          '(' + ["replace(name,'+',' ')",'content'].collect do |f|
-            sql = v.split(/\s+/).map{ |x| %{#{f} #{cxn.match(quote(x))}} }.join(" AND ")
+          '(' + ["replace(#{self.table_alias}.name,'+',' ')",'r.content'].collect do |f|
+            v.split(/\s+/).map{ |x| %{#{f} #{cxn.match(quote(x))}} }.join(" AND ")
           end.join(" OR ") + ')'
         end
       merge :cond=>SqlCond.new(cond)
@@ -403,8 +419,11 @@ module Wql2
         sql.order << case order_key
           when "update"; "#{table_alias}.updated_at #{dir}"
           when "create"; "#{table_alias}.created_at #{dir}"
-          when /alpha|name/;  "#{table_alias}.key #{dir}"  
+          when /^(name|alpha)$/;  "#{table_alias}.key #{dir}"  
           when "count";  "count(*) #{dir}, #{table_alias}.name asc"
+          when 'content'
+            sql.joins << "join revisions r2 on r2.id=#{self.table_alias}.current_revision_id"
+            "r2.content #{dir}"
           when "relevance";  
             if !sql.relevance_fields.empty?
               sql.fields << sql.relevance_fields
@@ -498,8 +517,8 @@ module Wql2
       
       case field
       when "content"
-        @cardspec.sql.joins << "join revisions on revisions.id=#{@cardspec.table_alias}.current_revision_id"
-        field = 'revisions.content'
+        @cardspec.sql.joins << "join revisions r on r.id=#{@cardspec.table_alias}.current_revision_id"
+        field = 'r.content'
       when "type"
         v = [v].flatten.map do |val| 
           Cardtype.classname_for(  val.is_a?(Card::Base) ? val.name : val  )

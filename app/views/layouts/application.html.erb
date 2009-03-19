@@ -20,7 +20,6 @@
   				<% if sidebar_card = CachedCard.get_real("*sidebar")  %>
   					<%= WagnHelper::Slot.new(sidebar_card, "sidebar_1", "view", self).render(:raw) %>
   				<% end %>
-  				<%= render :partial=>'admin/navigation' %><%# FIXME: move this into a card somehow? %>			  
   			</div>
 		
   	    <%= render :partial=>'layouts/bottom_menu' %>

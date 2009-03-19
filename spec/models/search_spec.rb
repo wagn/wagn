@@ -8,7 +8,6 @@ A_JOINEES = ["B", "C", "D", "E", "F"]
       
 CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User"].sort    
 
-
 describe Wql2, "in" do
   it "should work for content options" do
     Card.search(:in=>['AlphaBeta', 'Theta']).map(&:name).should == %w(A+B T)
@@ -120,6 +119,8 @@ describe Wql2, "order" do
   #end
 
 end
+
+
     
 
 describe Wql2, "keyword" do
@@ -131,7 +132,7 @@ end
 
 describe Wql2, "search count" do
   before { User.as :joe_user }
-  it "should cound search" do
+  it "should count search" do
     s = Card::Search.create! :name=>"ksearch", :content=>'{"match":"_keyword"}'
     s.count("_keyword"=>"two").should==CARDS_MATCHING_TWO.length
   end
@@ -140,26 +141,31 @@ end
     
 describe Wql2, "cgi_params" do
   before { User.as :joe_user }
-  it "should match content from cgi" do
-    Card.search( :content=>[:match, "_keyword"], :_keyword=>"two").plot(:name).sort.should==CARDS_MATCHING_TWO
-  end
+#  it "should match content from cgi with explicit content setting" do
+#    Card.search( :content=>[:match, "_keyword"], :_keyword=>"two").plot(:name).sort.should==CARDS_MATCHING_TWO
+#  end
 
   it "should match content from cgi" do
     Card.search( :match=>"_keyword", :_keyword=>"two").plot(:name).sort.should==CARDS_MATCHING_TWO
   end
 end
 
-
-
-describe Wql2, "fulltext" do 
+describe Wql2, "match" do 
   before { User.as :joe_user }
-  it "should match content explicity" do
-    Card.search( :content=>[:match, "two"] ).plot(:name).sort.should==CARDS_MATCHING_TWO
-  end
-  it "should match via shortcut" do
+  
+  it "should reach content and name via shortcut" do
     Card.search( :match=>"two").plot(:name).sort.should==CARDS_MATCHING_TWO
   end
+  
+  it "should get only content when content is explicit" do
+    Card.search( :content=>[:match, "two"] ).plot(:name).sort.should==["Joe User"]
+  end
+
+  it "should get only name when name is explicit" do
+    Card.search( :name=>[:match, "two"] ).plot(:name).sort.should==["One+Two","One+Two+Three","Two"]
+  end
 end
+
 
 describe Wql2, "content equality" do 
   before { User.as :joe_user }
@@ -259,15 +265,21 @@ describe Wql2, "relative" do
 end
 
 
-
 describe Wql2, "type" do  
   before { User.as :joe_user }
+  
+  user_cards = ["Joe User","No Count","Sample User","Wagn Bot","Admin","Anonymous","u1","u2","u3"].sort
+  
   it "should find cards of this type" do
-    Card.search( :type=>"_self", :_card=>Card['User']).plot(:name).sort.should == ["Joe User","No Count","Sample User","Wagn Bot","Admin","Anonymous","u1","u2","u3"].sort
+    Card.search( :type=>"_self", :_card=>Card['User']).plot(:name).sort.should == user_cards
   end
 
   it "should find User cards " do
-    Card.search( :type=>"User" ).plot(:name).sort.should == ["Joe User","No Count","Sample User","Wagn Bot","Admin","Anonymous","u1","u2","u3"].sort
+    Card.search( :type=>"User" ).plot(:name).sort.should == user_cards
+  end
+
+  it "should handle casespace variants" do
+    Card.search( :type=>"users" ).plot(:name).sort.should == user_cards
   end
 
 end

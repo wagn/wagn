@@ -19,14 +19,14 @@ class Cardtype < ActiveRecord::Base
       }
 
       Card::Base.connection.select_all(%{
-        select distinct ct.class_name, c.name, p.party_type, p.party_id 
+        select distinct ct.class_name, c.name, c.key, p.party_type, p.party_id 
         from cardtypes ct 
         join cards c on c.extension_id=ct.id and c.type='Cardtype'    
          join permissions p on p.card_id=c.id and p.task='create' 
       }).each do |rec|
-        @@cache[:card_keys][rec['name'].to_key] = rec['name']
+        @@cache[:card_keys][rec['key']] = rec['name']
         @@cache[:card_names][rec['class_name']] = rec['name'];   
-        @@cache[:class_names][rec['name']] = rec['class_name']
+        @@cache[:class_names][rec['key']] = rec['class_name']
         @@cache[:create_parties][rec['class_name']] = rec['party_id']
         ## error check
         unless rec['party_type'] == 'Role'
@@ -53,7 +53,7 @@ class Cardtype < ActiveRecord::Base
 
     def classname_for(card_name) 
       load_cache if @@cache.empty?
-      @@cache[:class_names][card_name] || raise("No class name for cardtype name #{card_name}") 
+      @@cache[:class_names][card_name.to_key] || raise("No class name for cardtype name #{card_name}") 
     end
     
     def create_party_for(class_name)

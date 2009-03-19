@@ -34,7 +34,7 @@ module Wql2
     :semi_relational=> %w{ edited_by edited member_of member role },
     :relational => %w{ part left right plus left_plus right_plus },  
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
-    :special => %w{ or complete not count },
+    :special => %w{ or match complete not count },
     :pass => %w{ cond }
   }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
   # put into form: { :content=>:basic, :left=>:relational, etc.. }
@@ -68,7 +68,7 @@ module Wql2
     "update" => "desc",
     "create" => "asc",
     "alpha" => "asc",
-    "plusses" => "desc",
+    #"plusses" => "desc",
     "relevance" => "desc"
   }
 
@@ -89,6 +89,13 @@ module Wql2
     
     def quote(v)
       ActiveRecord::Base.connection.quote(v) 
+    end
+    
+    def match_prep(v,cardspec=self)
+      @cxn ||= ActiveRecord::Base.connection
+      v=cardspec.root.params['_keyword'] if v=='_keyword'
+      v=v.gsub(/\W+/,' ')
+      [@cxn, v]
     end
   end
   
@@ -165,14 +172,14 @@ module Wql2
 
       # non-attribute filters shortcut
       spec.each do |key,val|     
-        if key==:_card       
+        if key== :_card       
           #warn "Assigning Card"      
           @card = spec.delete(key) 
-        elsif key==:_parent  
+        elsif key== :_parent  
           @parent = spec.delete(key) 
         elsif key.to_s.match(/^_\w+$/)
           @params[key.to_s]= spec.delete(key)
-        elsif OPERATORS.has_key?(key.to_s)
+        elsif OPERATORS.has_key?(key.to_s) && !ATTRIBUTES[key]
           spec.delete(key)
           spec[:content] = [key,val]
         elsif MODIFIERS.has_key?(key)
@@ -200,6 +207,25 @@ module Wql2
       @spec.merge! spec  
       self
     end          
+    
+    def match(val)
+      @cxn, v = match_prep(val)
+      
+      cond =
+        if System.enable_postgres_fulltext
+          v = v.strip.gsub(/\s+/, '&')
+          self.sql.relevance_fields << "rank(indexed_name, to_tsquery(#{quote(v)}), 1) AS name_rank"
+          self.sql.relevance_fields << "rank(indexed_content, to_tsquery(#{quote(v)}), 1) AS content_rank"
+          "indexed_content @@ to_tsquery(#{quote(v)})" 
+        else
+          self.sql.joins << "join revisions on revisions.id=#{self.table_alias}.current_revision_id"
+          # FIXME: OMFG this is ugly
+          '(' + ["replace(name,'+',' ')",'content'].collect do |f|
+            sql = v.split(/\s+/).map{ |x| %{#{f} #{@cxn.match(quote("[[:<:]]#{x}[[:>:]]"))}} }.join(" AND ")
+          end.join(" OR ") + ')'
+        end
+      merge :cond=>SqlCond.new(cond)
+    end
     
     def complete(val)
       no_plus_card = (val=~/\+/ ? '' : "and tag_id is null")  #FIXME -- this should really be more nuanced -- it breaks down after one plus
@@ -428,7 +454,7 @@ module Wql2
       
       # bare value shortcut
       @spec = case spec   
-        when ValueSpec; spec.instance_variable_get('@spec')  # FIXME whatta fucking hack
+        when ValueSpec; spec.instance_variable_get('@spec')  # FIXME whatta fucking hack (what's this for?)
         when Array;     spec
         when String;    ['=', spec]
         when Integer;   ['=', spec]
@@ -458,51 +484,40 @@ module Wql2
     def sqlize(v)
       case v
         when CardSpec, RefSpec, SqlCond; v.to_sql
-        when Array;    "(" + v.collect {|x| sqlize(x)}.join("','") + ")"
+        when Array;    "(" + v.flatten.collect {|x| sqlize(x)}.join(',') + ")"
         else quote(v.to_s)
       end
     end
     
     def to_sql(field)
-      @cxn ||= ActiveRecord::Base.connection
+      clause = nil
       op,v = @spec
       v=@cardspec.card if v=='_self'
-      v=@cardspec.root.params['_keyword'] if v=='_keyword'
-
-      v=v.gsub(/\W/,' ') if op == '~'
-
-
-      case op 
-      when '~' && System.enable_postgres_fulltext   
-        v = v.strip.gsub(/\s+/, '&')
-        @cardspec.sql.relevance_fields << "rank(indexed_name, to_tsquery(#{sqlize(v)}), 1) AS name_rank"
-        @cardspec.sql.relevance_fields << "rank(indexed_content, to_tsquery(#{sqlize(v)}), 1) AS content_rank"
-        "indexed_content @@ to_tsquery(#{sqlize(v)})" 
-      when '~'
-        # FIXME: OMFG this is ugly
+      
+      case field
+      when "content"
         @cardspec.sql.joins << "join revisions on revisions.id=#{@cardspec.table_alias}.current_revision_id"
-        '(' + ['key','name','content'].collect do |f|
-          sql = v.split(/\s+/).map do |x|
-            x.gsub!( /(\*|\+|\(|\))/ ) { '\\\\' + $~[1] }
-            "replace(#{@cxn.quote_column_name(f)}, '#{JOINT}',' ') #{@cxn.match(sqlize("[[:<:]]" + x + "[[:>:]]"))}"
-          end.join(" AND ")
-        end.join(" OR ") + ')'
-      else
-        case field
-          when "content"
-            @cardspec.sql.joins << "join revisions on revisions.id=#{@cardspec.table_alias}.current_revision_id"
-            field = 'revisions.content'
-          when "type"
-            v = [v].flatten.map do |val| 
-              Cardtype.classname_for(  val.is_a?(Card::Base) ? val.name : val  )
-            end
-            v = v[0] if v.length==1
-          else   
-            field = "#{@cardspec.table_alias}.#{field}"
+        field = 'revisions.content'
+      when "type"
+        v = [v].flatten.map do |val| 
+          Cardtype.classname_for(  val.is_a?(Card::Base) ? val.name : val  )
         end
-        value = Array===v ? "(#{v.flatten.map{|x| sqlize(x)}.join(',')})" : sqlize(v)
-        field == "cond" ? "(#{value})" : "#{field} #{op} #{value}"
+        v = v[0] if v.length==1
+      when "cond"
+        clause = "(#{sqlize(v)})"
+      else   
+        field = "#{@cardspec.table_alias}.#{field}"
       end
+      
+      
+      clause ||=
+        if op=='~'
+          @cxn, v = match_prep(v,@cardspec)
+          %{#{field} #{@cxn.match(sqlize("[[:<:]]#{v}[[:>:]]"))}}
+        else
+          "#{field} #{op} #{sqlize(v)}"
+        end
+      
     end
   end         
 end

@@ -50,7 +50,9 @@ module CardLib
 
       def search(spec) 
         #ActiveRecord::Base.logger.info("  search #{spec.to_s}")
-        Card.find_by_sql( Wql2::CardSpec.new(spec).to_sql )
+        sql = Wql2::CardSpec.new(spec).to_sql
+        #warn "SQL: #{sql}"
+        Card.find_by_sql( sql )
       end
 
       #def find_by_json(spec)

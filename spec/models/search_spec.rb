@@ -8,6 +8,7 @@ A_JOINEES = ["B", "C", "D", "E", "F"]
       
 CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User"].sort    
 
+
 describe Wql2, "in" do
   it "should work for content options" do
     Card.search(:in=>['AlphaBeta', 'Theta']).map(&:name).should == %w(A+B T)
@@ -265,6 +266,7 @@ describe Wql2, "relative" do
 end
 
 
+
 describe Wql2, "type" do  
   before { User.as :joe_user }
   
@@ -299,3 +301,15 @@ describe Wql2, "trash handling" do
     Card.search( :left=>"A" ).plot(:name).sort.should == ["A+C", "A+D", "A+E"]
   end
 end      
+
+
+
+describe Wql2, 'append' do
+  it "should find real cards" do
+    Card.search(:name=>[:in, 'C', 'D', 'F'], :append=>'A' ).plot(:name).sort.should == ["C+A", "D+A", "F+A"]
+  end
+
+  it "should find virtual cards" do
+    Card.search(:name=>[:in, 'C', 'D'], :append=>'*plus cards' ).plot(:name).sort.should == ["C+*plus cards", "D+*plus cards"]
+  end
+end

@@ -49,10 +49,14 @@ module CardLib
       end
 
       def search(spec) 
-        #ActiveRecord::Base.logger.info("  search #{spec.to_s}")
-        sql = Wql2::CardSpec.new(spec).to_sql
-        #warn "SQL: #{sql}"
-        Card.find_by_sql( sql )
+        results = Card.find_by_sql( sql = Wql2::CardSpec.new(spec).to_sql )
+        #warn "SPEC: #{spec.inspect}"
+        if spec[:prepend] || spec[:append]
+          results = results.map do |card|             
+            CachedCard.get [spec[:prepend], card.name, spec[:append]].compact.join('+')
+          end
+        end
+        results
       end
 
       #def find_by_json(spec)

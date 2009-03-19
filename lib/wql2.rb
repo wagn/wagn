@@ -35,6 +35,7 @@ module Wql2
     :relational => %w{ part left right plus left_plus right_plus },  
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
     :special => %w{ or match complete not count },
+    :ignore => %w{ prepend append },
     :pass => %w{ cond }
   }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
   # put into form: { :content=>:basic, :left=>:relational, etc.. }
@@ -127,7 +128,7 @@ module Wql2
     def initialize(spec)   
       # NOTE:  when creating new specs, make sure to specify _parent *before*
       #  any spec which could trigger another cardspec creation further down.
-      
+      spec = spec.clone
       @mods = MODIFIERS.clone
       @spec = {}  
       @params = {}   
@@ -199,6 +200,7 @@ module Wql2
           when :system; spec[key] = val.is_a?(ValueSpec) ? val : subspec(val)
           when :relational, :semi_relational, :plus, :special; self.send(key, spec.delete(key))    
           when :referential;  self.refspec(key, spec.delete(key))
+          when :ignore; spec.delete(key)
           when :pass; # for :cond  ie. raw sql condition to be ANDed
           else raise("Invalid attribute #{key}") unless key.to_s.match(/(type|id)\:\d+/)
         end                      
@@ -221,7 +223,7 @@ module Wql2
           self.sql.joins << "join revisions on revisions.id=#{self.table_alias}.current_revision_id"
           # FIXME: OMFG this is ugly
           '(' + ["replace(name,'+',' ')",'content'].collect do |f|
-            sql = v.split(/\s+/).map{ |x| %{#{f} #{cxn.match(quote("[[:<:]]#{x}[[:>:]]"))}} }.join(" AND ")
+            sql = v.split(/\s+/).map{ |x| %{#{f} #{cxn.match(quote(x))}} }.join(" AND ")
           end.join(" OR ") + ')'
         end
       merge :cond=>SqlCond.new(cond)
@@ -401,7 +403,7 @@ module Wql2
         sql.order << case order_key
           when "update"; "#{table_alias}.updated_at #{dir}"
           when "create"; "#{table_alias}.created_at #{dir}"
-          when "alpha";  "#{table_alias}.key #{dir}"  
+          when /alpha|name/;  "#{table_alias}.key #{dir}"  
           when "count";  "count(*) #{dir}, #{table_alias}.name asc"
           when "relevance";  
             if !sql.relevance_fields.empty?
@@ -513,7 +515,7 @@ module Wql2
       clause ||=
         if op=='~'
           cxn, v = match_prep(v,@cardspec)
-          %{#{field} #{cxn.match(sqlize("[[:<:]]#{v}[[:>:]]"))}}
+          %{#{field} #{cxn.match(sqlize(v))}}
         else
           "#{field} #{op} #{sqlize(v)}"
         end

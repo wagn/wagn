@@ -4,7 +4,8 @@
   items = sources.map do |root| 
     c = CachedCard[(root ? "#{root}+" : '') +'*context']
     c && c.type=='Pointer' && c.pointees
-  end.flatten.compact<<'config'
+  end.flatten.compact
+  items<<'config' if card.simple? || card.is_a?(Card::Basic)
   current = params[:attribute] || items.first.to_key
 
   get_slot.wrap(:related) do |slot| %>

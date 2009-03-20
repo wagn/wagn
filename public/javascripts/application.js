@@ -225,7 +225,7 @@ setupLinksAndDoubleClicks = function() {
 
 
 setupCreateOnClick=function(container) {
-  console.log("setting up creates");
+//  console.log("setting up creates");
   $$( ".createOnClick" ).each(function(el){
     el.onclick=function(event) { 
       if (Prototype.Browser.IE) { event = window.event } // shouldn't prototype take card of this?              

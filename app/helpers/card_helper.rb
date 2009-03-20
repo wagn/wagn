@@ -65,8 +65,8 @@ module CardHelper
   
   def revision_menu_items
     menu = []
-    menu << forward
     menu << back_for_revision
+    menu << forward
     menu << see_or_hide_changes_for_revision 
     menu << rollback
     menu

@@ -7,7 +7,7 @@ module WagnHelper
     attr_reader :card, :context, :action, :renderer, :template
     attr_accessor :editor_count, :options_need_save, :state, :requested_view, :js_queue_initialized,  
       :transclusions, :position, :renderer, :form, :superslot, :char_count, :item_format, :type, :renders, :start_time,
-      :transclusion_view_overrides
+      :transclusion_view_overrides, :skip_autosave
     attr_writer :form 
 
     VIEW_ALIASES = { 
@@ -55,11 +55,9 @@ module WagnHelper
     end
 
     def wrap_content( content="" )
-      %{<![if !IE]><span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick"><![endif]>} +
-      %{<!--[if IE]><div class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick"><![endif]-->} +
+      %{<span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick">} +
          content.to_s + 
-      %{<!--[if IE]></div><![endif]-->} + 
-      %{<![if !IE]></span><![endif]>} 
+      %{</span><!--[if IE]>&nbsp;<![endif]-->} 
     end    
     
     def js

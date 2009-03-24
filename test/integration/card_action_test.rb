@@ -43,14 +43,14 @@ class CardActionTest < ActionController::IntegrationTest
 
   def test_create_role_card
     post( 'card/create', :card=>{:content=>"test", :type=>'Role', :name=>"Editor"})
-    assert_response :redirect
+    assert_response 418
     assert_instance_of Card::Role, Card.find_by_name('Editor')
     assert_instance_of Role, Role.find_by_codename('Editor')
   end
 
   def test_create_cardtype_card
     post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"} )
-    assert_response :redirect
+    assert_response 418
     assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
     assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor')
   end
@@ -61,7 +61,7 @@ class CardActionTest < ActionController::IntegrationTest
       :name=>"Editor",
       :content=>"testcontent2"
     }
-    assert_response :redirect
+    assert_response 418
     assert_equal "testcontent2", Card["Editor"].content
   end
 

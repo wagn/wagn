@@ -5,7 +5,7 @@ class Notifier < ActionMailer::Base
     url_key = user.card.name.to_url_key
 
     recipients "#{user.email}"
-    from       (System.setting('*invite+*from') || "#{from_name} <#{from_user.email}>") #FIXME - might want different from settings for different emails?
+    from       (System.setting('*account+*from') || "#{from_name} <#{from_user.email}>") #FIXME - might want different from settings for different emails?
     sent_on    Time.now
     subject    subject
     body  :email    => (user.email    or raise Wagn::Oops.new("Oops didn't have user email")),
@@ -14,14 +14,14 @@ class Notifier < ActionMailer::Base
           :card_url => "#{System.base_url}/wagn/#{url_key}",
           :pw_url   => "#{System.base_url}/card/options/#{url_key}",
           
-          :login_url=> "#{System.base_url}/account/login",
+          :login_url=> "#{System.base_url}/account/signin",
           :message  => message.clone
   end                 
   
-  def invitation_request_alert(invite_request)  
+  def signup_alert(invite_request)  
     subject "#{invite_request.name} signed up for #{System.site_title}"
-    from        System.setting('*signup+*from') || invite_request.extension.email
-    recipients  System.setting('*signup+*to')
+    from        System.setting('*request+*from') || invite_request.extension.email
+    recipients  System.setting('*request+*to')
     content_type 'text/html'
     body  :site => System.site_title,
           :card => invite_request,

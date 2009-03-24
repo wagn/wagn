@@ -1,0 +1,29 @@
+<div id="sign-in" class="content">
+  <h1>Sign In</h1>
+	
+  <% form_tag :action=>'signin' do %>
+    <p><label for="login">Email</label></p>
+    <p><%= text_field_tag 'login', params[:login], :id=>'login_field' %></p>
+    <p><label for="password">Password</label></p>
+    <p><%= password_field_tag 'password' %></p>     
+    <p><%= submit_tag 'Sign me in' %></p>
+  <% end %>
+  <p>&nbsp;</p>                          
+	
+  <h2>Forgot your password?</h2>
+  <%= error_messages_for 'user' %>
+  <% form_tag :action=>'forgot_password' do %>
+    <p><label for="email">Email</label></p>
+    <p><%= text_field_tag 'email', params[:email] %></p>
+
+    <p><%= submit_tag 'Reset my password' %></p>
+  <% end %>
+  <p>&nbsp;</p>
+
+  <h2>Need an Account?</h2>
+	<p><%= link_to 'Sign Up!', :action=>'signup' %></p>
+	
+  <%= javascript_tag( "$('login_field').focus()" ) %>
+
+
+</div>

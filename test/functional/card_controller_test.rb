@@ -24,7 +24,7 @@ class CardControllerTest < Test::Unit::TestCase
   def test_create_cardtype_card
     post :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
     assert assigns['card']
-    assert_response :redirect
+    assert_response 418
     assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
     # this assertion fails under autotest when running the whole suite,
     # passes under rake test.
@@ -122,7 +122,7 @@ class CardControllerTest < Test::Unit::TestCase
       :type=>"Basic",
       :content=>"Bananas"
     }
-    assert_response :redirect
+    assert_response 418
     assert_instance_of Card::Basic, Card.find_by_name("NewCardFoo")
     assert_equal "Bananas", Card.find_by_name("NewCardFoo").content
   end
@@ -133,7 +133,41 @@ class CardControllerTest < Test::Unit::TestCase
     assert_response :success
     assert_nil Card.find_by_name("Boo")
   end
+        
 
+  def test_recreate_from_trash
+    @c = Card.create! :name=>"Problem", :content=>"boof"
+    @c.destroy!
+    post :create, :card=>{
+      "name"=>"Problem",
+      "type"=>"Phrase",
+      "content"=>"noof"
+    }
+    assert_response 418
+    assert_instance_of Card::Phrase, Card.find_by_name("Problem")
+  end
+
+  def test_multi_create_without_name
+    post :create, "card"=>{"name"=>"", "type"=>"Form"},
+     "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
+     "content_to_replace"=>"",
+     "context"=>"main_1", 
+     "multi_edit"=>"true", "view"=>"open"
+    assert_response 422
+  end
+
+        
+  def test_multi_create
+    post :create, "card"=>{"name"=>"sss", "type"=>"Form"},
+     "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
+     "content_to_replace"=>"",
+     "context"=>"main_1", 
+     "multi_edit"=>"true", "view"=>"open"
+    assert_response 418    
+    assert Card.find_by_name("sss")
+    assert Card.find_by_name("sss+text")
+  end
+  
   
 =begin FIXME
   def test_new    

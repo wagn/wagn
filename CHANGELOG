@@ -1,4 +1,15 @@
+=== 0.12.0 (March 10, 2009)
+* lots of settings migrated from wagn.rb to * cards in database
+* rss now available
+* local.css migrates to *css card
 * pull session key and secret from database.yml
+* integrated Search and Goto navigatin bar
+* RSS feeds on all searches, including Recent Changes.
+* accounts are no longer tied exclusively to User cards
+* administrators can now choose to let people sign up with or without invitation approval.
+* big improvements in adding new cards within cards
+* lists of items in Searches and Pointers look a lot better
+* cards created through a Pointer can default to a given cardtype (via *options)
 
 === 0.11.0 (Dec 31, 2008)
 * new recent changes interface

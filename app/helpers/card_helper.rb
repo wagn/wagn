@@ -12,7 +12,7 @@ module CardHelper
       ptitle = (pu == User.current_user) ? "Me (#{pu.card.name})" : pu.card.name
       container<<[ptitle,'personal']
     end
-    possible_roles = System.ok?(:set_card_permissions) ? Role.find_configurables : [] #User.current_user
+    possible_roles = System.ok?(:set_card_permissions) ? Role.find(:all) : [] #User.current_user
     container+= container_from_roles( possible_roles )
 
     selected = 

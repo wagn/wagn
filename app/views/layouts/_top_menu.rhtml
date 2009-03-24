@@ -1,27 +1,23 @@
 <div id="top-menu">
-  
   <%= link_to('Home', '/') %>
   <%= link_to( 'Recent', '/recent' ) %>
-
 	<%= navbox %>
 
   <span id="logging">
      <% if logged_in? %>
         <%= link_to "My Card: #{current_user.card.name}", '/me', :id=>'my-card-link' %>
-
-        <% if Card::User.create_ok? %>
+        <% if System.ok?(:create_accounts) %>
   	      <%= link_to 'Invite a Friend', :controller=>'account', :action=>'invite' %>
         <% end %>   
         <%= link_to 'Sign out', :controller=>'account', :action=>'logout' %>
+
       <% else %>
         <% if Card::InvitationRequest.create_ok? %>
-      	 <%= link_to 'Request an Account', :controller=>'account', :action=>'invitation_request' %> 
+      	  <%= link_to 'Sign up', :controller=>'account', :action=>'signup' %> 
         <% end%>
-        <%= link_to 'Sign in', :controller=>'account', :action=>'login' %>
+        <%= link_to 'Sign in', :controller=>'account', :action=>'signin' %>
     <% end %>
- 
   </span>
-
 </div>
 
 

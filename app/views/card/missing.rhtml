@@ -3,13 +3,9 @@
 <h1>Missing Card</h1>
 
 <% get_slot(Card.new, context, nil).wrap do |slot| %>
-  <div class="headroom"><h1 class="content">No card named "<%= cardname %>" (yet)</h1></div>
   <div class="content instruction"> 
-    <p>You're looking for a card that nobody's created yet.  How pioneering!</p>
-    <% if Cardtype.createable_cardtypes.empty? %>
-  	  <p>Unfortunately, you don't currently have permission to create cards.</p>
-    <% end %>
+    <p>There's no card named <strong><%= cardname %></strong>.</p>
+    <p><%= link_to "Sign In", '/account/signin' %> or <%= link_to 'Sign Up', '/account/signup' %> to create it.</p>
   </div> 
-  <%= render :partial=>'/account/sign_in_or_up' %>
 <% end %>
 

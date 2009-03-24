@@ -5,7 +5,7 @@
 	  case
       when card.name=='*search'
         s[:_keyword] ||= params[:_keyword]
-        %{Cards matching keyword: <strong class="keyword">#{params[:_keyword]}</strong>"}
+        %{Cards matching keyword: <strong class="keyword">#{params[:_keyword]}</strong>}
   			# when cue = card.attribute_card('*cue'); cue
       else; nil
     end

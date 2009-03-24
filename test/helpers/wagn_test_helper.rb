@@ -59,7 +59,7 @@ module WagnTestHelper
       #tmp_controller = @controller
       #@controller = AccountController.new
       
-      post '/account/login', :login=>login, :password=>pass
+      post '/account/signin', :login=>login, :password=>pass
       assert_response :redirect
       
       #@controller = tmp_controller
@@ -71,7 +71,8 @@ module WagnTestHelper
   end
   
   def post_invite(options = {})
-    post :create, 
+    action = options[:action] || :invite
+    post action, 
       :user => { :email => 'new@user.com' }.merge(options[:user]||{}),
       :card => { :name => "New User" }.merge(options[:card]||{}),
       :email => { :subject => "mailit",  :message => "baby"  }

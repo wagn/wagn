@@ -3,7 +3,9 @@ require_dependency "acts_as_card_extension"
 class Role < ActiveRecord::Base
   acts_as_card_extension
   has_and_belongs_to_many :users
-  @@anonymous_user = User.new(:login=>'anonymous')  
+  def self.anonymous_user
+    @@anonymous_user ||= User.new(:login=>'anonymous')  
+  end
   
   cattr_accessor :cache  
   self.cache = {}
@@ -13,7 +15,7 @@ class Role < ActiveRecord::Base
     if codename=='auth'
       User.active_users
     elsif codename=='anon'
-      User.active_users + [@@anonymous_user]
+      User.active_users + [self.class.anonymous_user]
     else
       users_without_special_roles
     end

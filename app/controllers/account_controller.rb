@@ -5,36 +5,72 @@ class AccountController < ApplicationController
   before_filter :login_required, :only => [ :invite, :update ] 
   #observer :card_observer, :tag_observer
   helper :wagn
-                                                     
-  def invite     
-    if params[:name] && @card = Card.find_by_name(params[:name])
-      @user = @card.extension
-    else
-      @card = Card.new
-      @user = User.new
-    end    
-    @email={}
-    @email[:subject] = System.setting('*invite+*subject') || ''
-    @email[:message] = System.setting('*invite+*message') || ''
-    @email[:message].substitute! :invitor => current_user.card.name + " (#{current_user.email})" 
-    @email[:message].gsub!(/Hello,/, "Hello #{@card.name},") if @card.name  #FIXME - this is not going to grow well.
+
+  def signup
+    raise(Wagn::Oops, "You have to sign out before signing up for a new Account") if logged_in?
+    raise(Card::PermissionDenied, "Sorry, no Signup allowed") unless Card::InvitationRequest.create_ok?
+    card_args = (params[:card]||{}).merge({:type=>'InvitationRequest'})
+    #fail "params.inspect: #{params.inspect}" if request.post?
+    @user, @card = request.post? ?
+      User.create_with_card( params[:user], card_args ) :
+      [User.new, Card.new( card_args )]
+      
+    if request.post? and @user.errors.empty?
+      User.as :admin do ## in case user doesn't have permission for included cardtypes.  For now letting signup proceed even if there are errors on multi-update
+        @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards]  
+      end
+      
+      
+      if System.ok?(:create_accounts)             #complete the signup now
+        email_args = { :message => System.setting('*signup+*message') || "Thanks for signing up to #{System.site_title}!",
+                       :subject => System.setting('*signup+*subject') || "Account info for #{System.site_title}!" }
+        @user.accept(email_args)
+        redirect_to '/' + (System.setting('*signup+*thanks') || '')
+      else
+        Notifier.deliver_signup_alert(@card) if System.setting('*request+*to')
+        redirect_to '/' + (System.setting('*request+*thanks') || '')
+      end
+    end
   end
   
-  def invitation_request
-    User.as :admin
-    # FIXME: this should be handled by card/new  (respond with different templates for different cardegories)
-  end       
-  
-  def create_invitation_request
-    # FIXME: this should be handled by card/create
-#    if Card::InvitationRequest.create params
+  def thanks(card_name)
+    thanks = System.setting(card_name)
+    thanks
   end
   
+  def accept
+    @card = Card[params[:card][:key]] or raise(Wagn::NotFound, "Can't find this Account Request")
+    @user = @card.extension or raise(Wagn::Oops, "This card doesn't have an account to approve")
+    System.ok?(:create_accounts) or raise(Card::PermissionDenied, "You need permission to create accounts")
+    
+    if request.post?
+      @user.accept(params[:email])
+      if @user.errors.empty? #SUCCESS
+        redirect_to '/' + (System.setting('*invite+*thanks') || '')
+        return
+      end
+    end
+    render :action=>'invite'
+  end
   
-  def login
-    if false and using_open_id?
-      open_id_authentication
-    elsif params[:login]
+  def invite
+    System.ok?(:create_accounts) or raise(Card::PermissionDenied, "You need permission to create")
+    
+    @user, @card = request.post? ? 
+      User.create_with_card( params[:user], params[:card] ) :
+      [User.new, Card.new]
+    if request.post? and @user.errors.empty?
+      @user.send_account_info(params[:email])
+      redirect_to '/' + (System.setting('*invite+*thanks') || '')
+    end
+  end
+  
+
+  def signin
+    #if false and using_open_id?
+    #  open_id_authentication
+    #els
+    if params[:login]
       password_authentication(params[:login], params[:password])
     end
   end
@@ -42,7 +78,7 @@ class AccountController < ApplicationController
   def logout
     self.current_user = nil
     flash[:notice] = "You have been logged out."
-    redirect_to '/'  # previous_location here can cause infinite loop.
+    redirect_to '/'  # previous_location here can cause infinite loop.  ##  Really?  Shouldn't.  -efm
   end
   
   def forgot_password
@@ -62,17 +98,7 @@ class AccountController < ApplicationController
     end  
   end
         
-  def create #currently called upon invite only
-    return unless request.post? 
-    # FIXME: not hardcode user cardtype??  
-    @user = User.create_with_card( params )
-    @card = @user.card
-    
-    render :update do |page|
-      page.wagn.messenger.note( "Successfully invited #{@card.name}" )
-      page.redirect_to (thx = System.setting('*invite+*thanks') ? '/wagn/*invite+*thanks?view=content' : previous_location)
-    end
-  end 
+
 
   def update
     load_card
@@ -98,13 +124,16 @@ class AccountController < ApplicationController
   def password_authentication(login, password)
     if self.current_user = User.authenticate(params[:login], params[:password])
       successful_login
+    elsif User.find_by_email(params[:login])
+      failed_login("Wrong password for that email")
     else
-      failed_login("Invalid email or password")
+      failed_login("We don't recognize that email")
     end
   end
 
+=begin
   def open_id_authentication
-    warn "FAILED TPO FIND USER W/ IDENTEIY #{params[:openid_url]}"
+    warn "FAILED TPO FIND USER W/ IDENTITY #{params[:openid_url]}"
     unless params[:openid_url] &&   user = User.find_by_identity_url(params[:openid_url])
       failed_login("Sorry, no user by that identity URL exists (#{params[:openid_url] })" +
         "You need to have an account on Wagn already and set the OpenId in your options")
@@ -129,7 +158,7 @@ class AccountController < ApplicationController
       complete_open_id_authentication(&block)
     end
   end
-  
+=end  
 
   private  
 
@@ -140,9 +169,7 @@ class AccountController < ApplicationController
 
     def failed_login(message)
       flash[:warning] = message
-      render :action=>'login', :status=>403
-      #warn   "Setting Flash = #{message}"
-      #redirect_to(:action => 'login')
+      render :action=>'signin', :status=>403
     end
         
 end

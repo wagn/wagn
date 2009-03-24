@@ -50,6 +50,8 @@ class CardController < ApplicationController
     # record this as a place to come back to.
     location_history.push(request.request_uri) if request.get?
 
+    params[:_keyword] && params[:_keyword].gsub!('_',' ') ## this will be unnecessary soon.
+
     @card_name = Cardname.unescape(params['id'] || '')
     if (@card_name.nil? or @card_name.empty?) then    
       @card_name = System.site_title
@@ -107,37 +109,44 @@ class CardController < ApplicationController
     end
   end
   
-  def create                 
-    if !Card.new(params[:card]).cardtype.ok?(:create)  
-      render :template => '/card/denied', :status => 403  
-      return
-    end
-    
+  def denial
+    render :template=>'/card/denied', :status => 403
+  end
+  
+  def create
+    #@card = Card.new params[:card]
+    #return denial if !@card.cardtype.ok?(:create)  
     @card = Card.create params[:card]
-    if params[:multi_edit] and params[:cards]
-      User.as(:admin) if @card.type == 'InvitationRequest'
-      @card.multi_update(params[:cards])
-    end   
+    @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards] and @card.errors.empty?
 
-    # double check to prevent infinite redirect loop
-    fail "Card creation failed"  unless Card.find_by_name( @card.name )
-    
-      
-    if !@card.errors.empty?
-      render :action=>'new', :status => 422
-    elsif main_card?   
-      render :text=> url_for_page(@card.name), :status=>302
-    else
-      render :action=>'show'
-    end
-  end 
+    # double check to prevent infinite redirect loop was breaking all the error checking on card creation.  has to be a better way!
+ 
+    render_args = 
+      case
+        when !@card.errors.empty?;  {
+          :status => 422,
+          :inline=>"<%= error_messages_for :card %><%= javascript_tag 'scroll(0,0)' %>" 
+        }
+        when main_card?;            
+          # according to rails / prototype docs:
+          # :success: [...] the HTTP status code is in the 2XX range.
+          # :failure: [...] the HTTP status code is not in the 2XX range.
+          
+          # however on 302 ie6 does not update the :failure area, rather it sets the :success area to blank..
+          # for now, to get the redirect notice to go in the failure slot where we want it, 
+          # we've chosen to render with the 'teapot' failure status: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+          {:action=>'new_redirect', :status=>418 }
+        else;                       {:action=>'show'}
+      end
+    render render_args
+  end
   
   #--------------( editing )
   
   def edit 
-    @add_slot = nil
     if params[:card] and @card.type=params[:card][:type]  
-      @card.save!
+      @request_type='html'
+      @card.save!    
       @card = Card.find(card.id)
     end
   end

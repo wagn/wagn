@@ -10,13 +10,12 @@
 	<% @title = "New Card" %>  
 	
   	<%= error_messages_for :card %>
-
-
+    <div class=cardnotice></div>
 	  <% form_remote_for :card, card, :url=>slot.url_for('card/create'), 
-					422 => slot.js.update, 
-					403 => slot.js.update, 
-					302 => slot.js.redirect( 'Successfully created card' ),
-					200 => slot.js.update, 
+					:update => {
+						:success => slot.id,   
+						:failure => slot.id(:cardnotice)
+					},
 					:html=>{ :class=>'form',:onsubmit=>slot.save_function	} do |form| %>
 
 			<div class="card-header">

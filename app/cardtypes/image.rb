@@ -1,14 +1,18 @@
 module Card
 	class Image < Base 
-    has_one :card_image, :foreign_key=>:card_id
-
 	  # hold image data passed from controller here until we send to to CardImage model
-	  attr_accessor :image_data                                                        
+	  attr_accessor :card_image_id
 	  
-	  after_create :create_image_attachment
+	  after_save :update_image_attachment
  
-    def create_image_attachment
-      create_card_image( :uploaded_data => image_data )
+    def update_image_attachment
+      if card_image_id
+        CardImage.find( card_image_id ).update_attribute :revision_id, current_revision_id
+      end
+    end
+
+    def card_image
+      CardImage.find_by_revision_id( current_revision_id )
     end
       
 	  def src

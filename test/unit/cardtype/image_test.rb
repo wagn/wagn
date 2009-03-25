@@ -13,9 +13,9 @@ class Card::ImageTest < Test::Unit::TestCase
   def test_image_creation
     path = "#{RAILS_ROOT}/test/fixtures/mao2.jpg"
     mimetype = "image/jpeg"
-
-    @c=Card::Image.create( :name=>'BananaMaster',
-     :image_data => ActionController::TestUploadedFile.new(path, mimetype) )
+      
+    card_image = CardImage.create :uploaded_data => ActionController::TestUploadedFile.new(path, mimetype) 
+    @c=Card::Image.create( :name => "Bananamaster", :card_image_id=>card_image.id )
 
     assert_instance_of Card::Image, @c
     assert_instance_of CardImage, @c.card_image

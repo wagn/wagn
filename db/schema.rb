@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090214171929) do
+ActiveRecord::Schema.define(:version => 20090324203459) do
 
   create_table "card_files", :force => true do |t|
     t.string   "filename"
@@ -17,6 +17,7 @@ ActiveRecord::Schema.define(:version => 20090214171929) do
     t.integer  "size"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "revision_id"
   end
 
   create_table "card_images", :force => true do |t|
@@ -30,6 +31,8 @@ ActiveRecord::Schema.define(:version => 20090214171929) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "card_id"
+    t.integer  "db_file_id"
+    t.integer  "revision_id"
   end
 
   create_table "cards", :force => true do |t|
@@ -70,6 +73,10 @@ ActiveRecord::Schema.define(:version => 20090214171929) do
   end
 
   add_index "cardtypes", ["class_name"], :name => "cardtypes_class_name_uniq", :unique => true
+
+  create_table "db_files", :force => true do |t|
+    t.binary "data"
+  end
 
   create_table "open_id_authentication_associations", :force => true do |t|
     t.integer "issued"

@@ -1,3 +1,5 @@
+<img src="<%= card.card_image.public_filename %>">
+
 <% if card.content && !card.content.empty? && File.exists?("#{RAILS_ROOT}/public/image/#{card.content}") %>
   <img title="<%= card.name %>" src="<%= card.src %>" />
 <% else %>

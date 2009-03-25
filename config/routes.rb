@@ -27,6 +27,9 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'search/:_keyword', :controller => 'card', :action=>'show', :id=>'*search',         :view=>'content'
   map.connect 'new/:cardtype',    :controller => 'card', :action=>'new'
   map.connect 'me',               :controller => 'card', :action=>'mine'
+
+  map.resource :card_images
+  map.resource :card_files
  
   map.connect ':controller/:action/:id/:attribute' 
   #map.connect '/card/new/:cardtype', :controller=>'card', :action=>'new'
@@ -43,6 +46,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':id.:format', :controller=> 'card', :action=>'show', :requirements=>{ :id=>/.*/, :format=>FORMAT_PATTERN} 
   map.connect ':id', :controller=> 'card', :action=>'show', :requirements=>{ :id=>/.*/} 
   map.connect '*id', :controller=>'application', :action=>'render_404'
-  
+ 
+ 
 end
                      

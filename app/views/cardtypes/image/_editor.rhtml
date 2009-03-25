@@ -1,1 +1,15 @@
-<%= render :partial=> 'cardtypes/file/editor', :locals=>{ :slot=>slot, :card=>card } %>
+<% attachment_model_name = "card_image" %>
+<% attachment_uuid = (0..29).to_a.map {|x| rand(10)} %>
+
+<p><iframe id="upload-iframe-<%= attachment_uuid %>" class="upload-iframe" name="upload-iframe" height="330" width="480" frameborder="0" src="<%= "/#{attachment_model_name.pluralize}/new?#{attachment_model_name}[attachment_uuid]=#{attachment_uuid}" %>" scrolling="no">
+</iframe></p>           
+
+<%= slot.form.text_field "#{attachment_model_name}_id", :id=>attachment_uuid %>
+
+<%- slot.skip_autosave = true %>
+<%= slot.editor_hooks :save=>%{
+	//FIXME: handle the case that the upload isn't finished.
+	
+	
+} %>
+

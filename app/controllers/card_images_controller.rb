@@ -1,0 +1,2 @@
+class CardImagesController < AttachmentsController
+end

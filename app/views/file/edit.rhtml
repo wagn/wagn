@@ -1,10 +1,8 @@
-<%# get_slot.wrap("upload", :render_slot=>false) do |slot| %>
-	<% form_for :card, card, :url=>"/file/upload/#{@card.id}",
-			:html=>{ :id=>'upload-form', :multipart=>true, :name=>'fileupload' } do |f| %>    
-	  <%= f.hidden_field :type %>     	
-	  <%= f.hidden_field :name, :id=>"file_name" %> 
-	  <%= file_field_tag :file, :onchange =>( card.new_record? ? %{n = window.parent.document.getElementById('card_name'); if (!n.value) { n.value=$F(this).match(/([^\\/]*)\\.\\w+$/)[1] } } : '')	%>
-	<% end %>     
-<%# end %>
+<% form_for :card, card, :url=>"/attachment/create",
+		:html=>{ :id=>'upload-form', :multipart=>true, :name=>'fileupload' } do |f| %>    
+  <%= f.hidden_field :type %>     	
+  <%= file_field_tag :uploaded_data, :onchange =>( card.new_record? ? %{n = window.parent.document.getElementById('card_name'); if (!n.value) { n.value=$F(this).match(/([^\\/]*)\\.\\w+$/)[1] }; this.form.submit() } : '')	%>
+<% end %>     
+
 
 

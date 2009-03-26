@@ -17,13 +17,13 @@ class LiteralTest < Test::Unit::TestCase
   
   def test_escape_link
     card = newcard('link howto', 'write this: \[[text]]')
-    assert_equal('write this: <code><span>[</span>[text]]</code>', render(card) )
+    assert_equal('write this: <span>[</span>[text]]', render(card) )
 
   end
   
   def test_escape_inclusion
     card = newcard('inclusion howto', 'write this: \{{cardname}}')
-    assert_equal('write this: <code><span>{</span>{cardname}}</code>', render(card) )
+    assert_equal('write this: <span>{</span>{cardname}}', render(card) )
   end
   
 end                                                                      

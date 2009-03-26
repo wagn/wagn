@@ -26,7 +26,7 @@ module Card
                                 
     def search( params={} )  
       self.search_opts = params  
-      self.spec = get_spec(params.clone).symbolize_keys
+      self.spec = get_spec(params.clone)
       raise("OH NO.. no limit") unless self.spec[:limit]
       self.results = Card.search( self.spec ).map do |card|   
         c = CachedCard.get(card.name, card)
@@ -43,6 +43,7 @@ module Card
         spec[:_card] = self_card
       end
       spec.merge! params
+      spec.symbolize_keys!
       spec
     end
   end

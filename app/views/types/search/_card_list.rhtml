@@ -5,7 +5,7 @@
   title   ||= ''
   instruction ||= nil  
 	view  ||= :closed    
-	raise("invalid view") unless [:open, :closed, :content, :name, :link, :change].include?(view)
+#	raise("invalid view") unless [:open, :closed, :content, :name, :link, :change].include?(view)
 	
 -%>
 
@@ -30,7 +30,7 @@
   <%= paging %>
 	<ul class="search-result-list">
 		<% cards.each do |c| %>     	
-			<li class="item-<%= view %>"><%= get_slot(c).render(view) %></li>
+			<li class="item-<%= view %>"><%= slot.process_transclusion(c, {:view=>view, :showname=>c.name }) %></li>
 		<% end %>     
 	</ul>
 	<%= paging %>

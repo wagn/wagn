@@ -21,7 +21,7 @@ module Literal
     def initialize(match_data, content)
       super
       first = match_data[2]
-      @unmask_text = "<code>#{match_data[1].sub(first, "<span>#{first}</span>")}</code>"
+      @unmask_text = "#{match_data[1].sub(first, "<span>#{first}</span>")}"
     end
   end
 

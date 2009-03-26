@@ -8,7 +8,8 @@ class System < ActiveRecord::Base
     :enable_ruby_cards, :enable_server_cards,    # Uncommon; Check Security risks before enabling these cardtypes (wagn.org ref url?)
     :enable_postgres_fulltext, :postgres_src_dir, :postgres_tsearch_dir, # Optimize PostgreSQL performance
     # In development / nonfunctional
-    :google_maps_api_key,                        
+    :google_maps_api_key,    
+                        
     # Deprecated
     :site_name, :invitation_email_body, :invitation_email_subject, :invitation_request_email, :invite_request_alert_email 
     # Crap?  :admin_user_defaults, :debug_wql, :pagesize, :time, 
@@ -81,8 +82,8 @@ class System < ActiveRecord::Base
     end
     
     def favicon
-      img_name = setting('*favicon') 
-      img_name ? "/image/#{img_name}" : '/images/favicon.ico'
+      img_name = setting('*favicon').match(/src=\"([^\"]+)/)[1]  #hmm.. 
+      img_name ? img_name : '/images/favicon.ico'
     end
     
     def logo

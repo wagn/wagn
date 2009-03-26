@@ -49,8 +49,10 @@ module CardLib
       end
 
       def search(spec) 
-        results = Card.find_by_sql( sql = Wql2::CardSpec.new(spec).to_sql )
-        #warn "SPEC: #{spec.inspect}"
+        sql = Wql2::CardSpec.new(spec).to_sql
+        results = Card.find_by_sql( sql )
+        #warn ">>>>>>>>SPEC: #{spec.inspect}"
+        #warn ">>>>>>>>SQL: #{sql.inspect}"
         if spec[:prepend] || spec[:append]
           results = results.map do |card|             
             CachedCard.get [spec[:prepend], card.name, spec[:append]].compact.join('+')
@@ -85,7 +87,7 @@ module CardLib
         find_without_rescue(*args)
       end
        
-      # FIXME: this is fucked up-- why does this break everything?
+      # FIXME: this is f'ed up-- why does this break everything?
       #alias_method_chain :find, :rescue  
     end
     

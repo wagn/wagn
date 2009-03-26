@@ -252,7 +252,7 @@ module WagnHelper
             render_partial("views/#{ok_action}", args)
 
   
-        else; "Unknown card view: '#{ok_action}'"
+        else; "<strong>#{card.name} - unknown card view: '#{ok_action}'</strong>"
       end
       if w_content
         args[:add_slot] = true unless args.key?(:add_slot)

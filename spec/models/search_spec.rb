@@ -8,7 +8,7 @@ A_JOINEES = ["B", "C", "D", "E", "F"]
       
 CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User"].sort    
 
- 
+#=begin 
 describe Wql2, "in" do
   it "should work for content options" do
     Card.search(:in=>['AlphaBeta', 'Theta']).map(&:name).should == %w(A+B T)
@@ -113,21 +113,7 @@ describe Wql2, "cgi_params" do
   end
 end
 
-describe Wql2, "match" do 
-  before { User.as :joe_user }
-  
-  it "should reach content and name via shortcut" do
-    Card.search( :match=>"two").plot(:name).sort.should==CARDS_MATCHING_TWO
-  end
-  
-  it "should get only content when content is explicit" do
-    Card.search( :content=>[:match, "two"] ).plot(:name).sort.should==["Joe User"]
-  end
 
-  it "should get only name when name is explicit" do
-    Card.search( :name=>[:match, "two"] ).plot(:name).sort.should==["One+Two","One+Two+Three","Two"]
-  end
-end
 
 describe Wql2, "content equality" do 
   before { User.as :joe_user }
@@ -329,4 +315,23 @@ describe Wql2, "found_by" do
     Card.search(:_card=>@simple_search, :left=>{:found_by=>'_self'}, :right=>'B').first.name.should=='A+B'
   end
   
+end
+
+
+#=end
+
+describe Wql2, "match" do 
+  before { User.as :joe_user }
+  
+  it "should reach content and name via shortcut" do
+    Card.search( :match=>"two").plot(:name).sort.should==CARDS_MATCHING_TWO
+  end
+  
+  it "should get only content when content is explicit" do
+    Card.search( :content=>[:match, "two"] ).plot(:name).sort.should==["Joe User"]
+  end
+
+  it "should get only name when name is explicit" do
+    Card.search( :name=>[:match, "two"] ).plot(:name).sort.should==["One+Two","One+Two+Three","Two"]
+  end
 end

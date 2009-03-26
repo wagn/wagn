@@ -97,7 +97,6 @@ module Wql2
     def match_prep(v,cardspec=self)
       cxn ||= ActiveRecord::Base.connection
       v=cardspec.root.params['_keyword'] if v=='_keyword'
-      v.gsub!(/\W+/,' ')
       v.strip!
       [cxn, v]
     end
@@ -228,6 +227,7 @@ module Wql2
     
     def match(val)
       cxn, v = match_prep(val)
+      v.gsub!(/\W+/,' ')
       
       cond =
         if System.enable_postgres_fulltext
@@ -239,7 +239,7 @@ module Wql2
           sql.joins << "join revisions r on r.id=#{self.table_alias}.current_revision_id"
           # FIXME: OMFG this is ugly
           '(' + ["replace(#{self.table_alias}.name,'+',' ')",'r.content'].collect do |f|
-            v.split(/\s+/).map{ |x| %{#{f} #{cxn.match(quote(x))}} }.join(" AND ")
+            v.split(/\s+/).map{ |x| %{#{f} #{cxn.match(quote("[[:<:]]#{x}[[:>:]]"))}} }.join(" AND ")
           end.join(" OR ") + ')'
         end
       merge :cond=>SqlCond.new(cond)

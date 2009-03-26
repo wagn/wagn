@@ -1,13 +1,19 @@
 namespace :wagn do
   desc "dump current db to bootstrap fixtures"
-  task :dump_bootstrap_data => :environment do     
-    sql = "SELECT * FROM %s"
-    skip_tables = ["schema_info"]
-    ActiveRecord::Base.establish_connection
-    (ActiveRecord::Base.connection.tables - skip_tables).each do |table_name|
+  #note: users, roles, and role_users have been manually edited
+  task :dump_bootstrap_data => :environment do
+    sql = {
+      :schema_migrations=> "select max(cast(version as float)) as version from %s",
+      :revisions => 'select r.id, r.card_id, r.content, 1 as created_by from %s r join cards c on c.current_revision_id = r.id',
+      :cardtypes => 'select * from %s',
+      :cards => 'select id, key, name, type, current_revision_id, trunk_id, tag_id, extension_type, extension_id, 1 as created_by, 1 as updated_by ' +
+        'from %s where trash is false'  #plus some other mechanism to eliminate unwanted cards
+      :wiki_references => 'select id, card_id, referenced_name, referenced_card_id, link_type from %s'      
+    }
+    sql.keys.each do |table_name|
       i = "000"
       File.open("#{RAILS_ROOT}/db/bootstrap/#{table_name}.yml", 'w') do |file|
-        data = ActiveRecord::Base.connection.select_all(sql % table_name)
+        data = ActiveRecord::Base.connection.select_all(sql[table_name] % table_name.to_s)
         file.write data.inject({}) { |hash, record|
           hash["#{table_name}_#{i.succ!}"] = record
           hash

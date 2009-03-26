@@ -7,9 +7,9 @@ class System < ActiveRecord::Base
     :base_url, :max_render_time, :max_renders,   # Common; docs in sample_wagn.rb
     :enable_ruby_cards, :enable_server_cards,    # Uncommon; Check Security risks before enabling these cardtypes (wagn.org ref url?)
     :enable_postgres_fulltext, :postgres_src_dir, :postgres_tsearch_dir, # Optimize PostgreSQL performance
+    :multihost,
     # In development / nonfunctional
     :google_maps_api_key,    
-                        
     # Deprecated
     :site_name, :invitation_email_body, :invitation_email_subject, :invitation_request_email, :invite_request_alert_email 
     # Crap?  :admin_user_defaults, :debug_wql, :pagesize, :time, 

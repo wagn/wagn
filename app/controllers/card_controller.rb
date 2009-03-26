@@ -142,27 +142,31 @@ class CardController < ApplicationController
   end
 
   def update
-    fail "card params required" unless card_args=params[:card]
+    card_args=params[:card] || {}
+    #fail "card params required" unless params[:card] or params[:cards]
+
+    # ~~~ REFACTOR! -- this conflict management handling is sloppy
     @old_card = @card.clone
     @current_revision_id = @card.current_revision.id
     old_revision_id = card_args.delete(:current_revision_id) || @current_revision_id
-    
-    #REFACTOR!
     if old_revision_id.to_i != @current_revision_id.to_i
       changes  # FIXME -- this should probably be abstracted?
       @no_changes_header = true
       @changes = render_to_string :action=>'changes' 
       return render( :action=>:edit_conflict )
     end 
+    # ~~~~~~  /REFACTOR ~~~~~ #
     
     case
     when params[:multi_edit]; @card.multi_update(params[:cards])
     when card_args[:type];       @card[:type]=card_args[:type]; @card.save
       #can't do this via update attributes: " Can't mass-assign these protected attributes: type"
+      #might be addressable via attr_accessors?
     else;                     @card.update_attributes(card_args)     
     end  
 
-    if @card.errors.on(:confirmation_required) && @card.errors.map {|e,f| e}.uniq.length==1
+    if @card.errors.on(:confirmation_required) && @card.errors.map {|e,f| e}.uniq.length==1  
+      ## I don't get the second condition.  pls document  
       @confirm = @card.confirm_rename=true
       @card.update_link_ins = (@card.update_link_ins=='true')
       return render(:partial=>'card/edit/name', :status=>200)

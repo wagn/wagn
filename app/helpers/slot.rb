@@ -248,7 +248,7 @@ module WagnHelper
             
         ###---(  EXCEPTIONS ) 
         
-          when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
+        when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
             render_partial("views/#{ok_action}", args)
 
   

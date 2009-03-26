@@ -24,7 +24,8 @@ require_dependency 'card/defaults'
 require_dependency 'card/permissions'
 require_dependency 'card/search'
 require_dependency 'card/references'
-require_dependency 'card/caching'
+require_dependency 'card/caching'     
+require_dependency 'lib/card_attachment'
 
 Card::Base.class_eval do       
   include CardLib::TrackedAttributes
@@ -33,7 +34,7 @@ Card::Base.class_eval do
   include CardLib::Permissions                               
   include CardLib::Search 
   include CardLib::References
-  #include CardLib::Caching 
+  extend Card::CardAttachment::ActMethods
 end
  
 

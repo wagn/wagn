@@ -500,4 +500,29 @@ var loadScript = function(name) {
 
        
 Event.observe(window, 'load', wagnOnload);
-Event.observe(window, 'keydown', handleGlobalShortcuts );
+Event.observe(window, 'keydown', handleGlobalShortcuts );      
+
+
+/* helpers for image setup */
+var deactivateSubmit = function(attachment_uuid) {  
+  button = findSubmit(attachment_uuid);
+  button.setStyle({ color: "#ccc", border: "1px solid #ccc" }); 
+  button.onclick = (function(){});
+}
+
+var activateSubmit = function(attachment_uuid) {
+  button = findSubmit(attachment_uuid);
+  button.setStyle({ color: "#444", border: "1px solid #666" });
+  /* FIXME */
+  /* "this.form.onsubmit()" is duplicated in this function on purpose.  */
+  /* when it was there once I had to click the button twice for it to work. */
+  /* totally lazy of me not to dig into it.  also, wtf? */
+  button.onclick = (function(){this.form.onsubmit(); this.form.onsubmit();});
+}
+    
+var findSubmit = function(element) {
+  form = $(element).up('form');
+  return form.down('.save-card-button') || form.down('#create-button');
+}
+
+

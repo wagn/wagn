@@ -315,7 +315,14 @@ module WagnHelper
          
               tcontent = process_transclusion( tcard, options ) 
               self.char_count += (tcontent ? tcontent.length : 0)
-              tcontent   
+                                      
+              if size = options[:size]
+                tcontent = tcontent.gsub(/(\.\w+\")/,"_#{size}"+'\1')
+              end
+              
+              tcontent
+              
+                 
             end
           rescue Card::PermissionDenied
             ""

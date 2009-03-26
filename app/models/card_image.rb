@@ -13,5 +13,9 @@ class CardImage < ActiveRecord::Base
                  } 
                  
   validates_as_attachment                 
+
+  def preview
+    "<img src=\"#{public_filename(:small)}\" />"
+	end
     
 end

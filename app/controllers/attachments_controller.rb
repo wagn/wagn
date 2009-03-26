@@ -15,10 +15,14 @@ class AttachmentsController < ApplicationController
       format.html {   
         respond_to_parent do 
           render :update do |page|
-            page << "warn('submitting after file upload');"
-            page << %{e = $("#{current_object.attachment_uuid}"); }
-            page << %{e.value='#{current_object.id}';}
-            page << %{e.form.onsubmit()}              
+            content = current_object.preview
+            page << %{  
+              warn('submitting after file upload');
+              $("#{current_object.attachment_uuid}").value = '#{current_object.id}';
+              $("#{current_object.attachment_uuid}-content").value='#{content}';
+              $("#{current_object.attachment_uuid}-preview").update('#{content}');
+              activateSubmit('#{current_object.attachment_uuid}');
+            }              
           end
         end
       } 

@@ -1,5 +1,12 @@
 class CardFile < ActiveRecord::Base
-  has_attachment :storage => :file_system
+  belongs_to :revisions         
+  attr_accessor :attachment_uuid
   
-  validates_as_attachment
+  has_attachment :storage => :s3
+  validates_as_attachment              
+  
+  def preview
+    "<a href=\"#{public_filename}\">#{public_filename}</a>"
+	end
+  
 end

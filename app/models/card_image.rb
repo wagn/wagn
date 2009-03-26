@@ -17,5 +17,9 @@ class CardImage < ActiveRecord::Base
   def preview
     "<img src=\"#{public_filename(:small)}\" />"
 	end
-    
+
+  def bucket_name
+    System.multihost_name ? "#{System.multihost_name}_wagn" :  s3_config[:bucket_name]
+  end
+
 end

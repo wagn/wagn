@@ -82,8 +82,8 @@ class System < ActiveRecord::Base
     end
     
     def favicon
-      img_name = setting('*favicon').match(/src=\"([^\"]+)/)[1]  #hmm.. 
-      img_name ? img_name : '/images/favicon.ico'
+      # bit of a kludge. 
+      (card_content = setting('*favicon')) ? card_content.match(/src=\"([^\"]+)/)[1] : '/images/favicon.ico'
     end
     
     def logo

@@ -217,7 +217,7 @@ module WagnHelper
   ## -----------
 
   def google_analytics
-    User.as(:admin) do
+    User.as(:wagbot)  do
       if ga_key = System.setting("*google analytics key")
         %{
           <script type="text/javascript">

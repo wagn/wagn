@@ -47,7 +47,7 @@ end
 
 describe Card, "Card changed to become a Cardtype" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @a = Card['a']
     @a.type = 'Cardtype'
     @a.save!
@@ -59,7 +59,7 @@ end
 
 describe Card, "Normal card with junctions" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @a = Card['a']
   end
   it "should confirm that it has junctions" do
@@ -78,7 +78,7 @@ end
 
 describe Card, "Recreated Card" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @ct = Card::Cardtype.create! :name=>'Species'
     @ct.destroy!
     @ct = Card::Cardtype.create! :name=>'Species'
@@ -94,7 +94,7 @@ end
 
 describe Card, "New Cardtype" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @ct = Card::Cardtype.create! :name=>'Animal'
   end
   
@@ -111,7 +111,7 @@ end
 
 describe Card, "Wannabe Cardtype Card" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @card = Card.create! :name=> 'convertible'
     @card.type='Cardtype'
     @card.save!
@@ -129,7 +129,7 @@ end
 
 describe User, "Joe User" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @r3 = Role[:r3]
     @ctf_t = Card.create! :name=>'Cardtype F+*tform'
     @ctf_t.permit(:create, @r3)
@@ -160,7 +160,7 @@ end
 
 describe Card, "Cardtype with Existing Cards" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @ct = Card['Basic']
   end
   it "should have existing cards of that type" do

@@ -69,15 +69,15 @@ namespace 'wagn' do
     # Wagn Bot            | User
     # Admin               | User
    
-    ::User.as(:admin) do 
+    ::User.as(:wagbot) do 
       # the original admin user will also be present for new installs, so we don't want
       # that password discoverable.  reset password here so we know it for the tests.
-      admin = User.find_by_login('admin')
+      admin = User[:wagbot]
       admin.update_attribute('crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c')
 
       #fail(" user permissions #{::Card::User.new.cardtype.permissions}" )
       # generic, shared user
-      joe_user = ::User.create! :login=>"joe_user",:email=>'joe@user.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>User.find_by_login('admin')
+      joe_user = ::User.create! :login=>"joe_user",:email=>'joe@user.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>User[:wagbot]
       joe_card = Card::User.create! :name=>"Joe User", :extension=>joe_user, :content => "I'm number two"    
 
       bt = Card.find_by_name 'Basic+*tform'
@@ -93,7 +93,8 @@ namespace 'wagn' do
       no_count = Card::User.create! :name=>"No Count", :content=>"I got not account"
 
       # CREATE A CARD OF EACH TYPE
-      user_user = ::User.create! :login=>"sample_user",:email=>'sample@user.com', :status => 'active', :password=>'sample_pass', :password_confirmation=>'sample_pass', :invite_sender=>User.find_by_login('admin')
+      user_user = ::User.create! :login=>"sample_user",:email=>'sample@user.com', :status => 'active', :password=>'sample_pass', :password_confirmation=>'sample_pass', :invite_sender=>User[:wagbot]
+
       user_card = Card::User.create! :name=>"Sample User", :extension=>user_user    
 
       request_card = Card::InvitationRequest.create! :name=>"Sample InvitationRequest", :email=>"invitation@request.com"  
@@ -104,9 +105,12 @@ namespace 'wagn' do
 
 
       # data for role_test.rb
-      u1 = ::User.create! :login=>"u1",:email=>'u1@user.com', :status => 'active', :password=>'u1_pass', :password_confirmation=>'u1_pass', :invite_sender=>User.find_by_login('admin')
-      u2 = ::User.create! :login=>"u2",:email=>'u2@user.com', :status => 'active', :password=>'u2_pass', :password_confirmation=>'u2_pass', :invite_sender=>User.find_by_login('admin')
-      u3 = ::User.create! :login=>"u3",:email=>'u3@user.com', :status => 'active', :password=>'u3_pass', :password_confirmation=>'u3_pass', :invite_sender=>User.find_by_login('admin')
+      u1 = ::User.create! :login=>"u1",:email=>'u1@user.com', :status => 'active', :password=>'u1_pass', :password_confirmation=>'u1_pass', :invite_sender=>User[:wagbot]
+
+      u2 = ::User.create! :login=>"u2",:email=>'u2@user.com', :status => 'active', :password=>'u2_pass', :password_confirmation=>'u2_pass', :invite_sender=>User[:wagbot]
+
+      u3 = ::User.create! :login=>"u3",:email=>'u3@user.com', :status => 'active', :password=>'u3_pass', :password_confirmation=>'u3_pass', :invite_sender=>User[:wagbot]
+
       
       Card::User.create!(:name=>"u1", :extension=>u1)
       Card::User.create!(:name=>"u2", :extension=>u2)
@@ -172,7 +176,7 @@ namespace 'wagn' do
       
       User.as(:joe_user) {  Card.create!( :name=>"JoeLater", :content=>"test") }
       User.as(:joe_user) {  Card.create!( :name=>"JoeNow", :content=>"test") }
-      User.as(:admin) {  Card.create!(:name=>"AdminNow", :content=>"test") }
+      User.as(:wagbot) {  Card.create!(:name=>"AdminNow", :content=>"test") }
       
     end   
 
@@ -196,11 +200,12 @@ namespace 'wagn' do
 
     Rake::Task['db:drop'].invoke
     Rake::Task['db:create'].invoke
-    
+    Rake::Task['db:schema:load'].invoke
+    Rake::Task['wagn:load_bootstrap_data'].invoke
 
-    puts ">>migrating template database"
-    System.site_title = 'Wagn'
-    Rake::Task['db:migrate'].invoke  
+#    puts ">>migrating template database"
+#    System.site_title = 'Wagn'
+#    Rake::Task['db:migrate'].invoke  
 
   #=begin  
     begin

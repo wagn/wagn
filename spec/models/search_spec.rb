@@ -47,13 +47,13 @@ describe Wql2, "edited_by/edited" do
   before { 
     # User.as(:joe_user) {  Card.create!( :name=>"JoeLater", :content=>"test") }
     # User.as(:joe_user) {  Card.create!( :name=>"JoeNow", :content=>"test") }
-    # User.as(:admin) {  Card.create!(:name=>"AdminNow", :content=>"test") }
+    # User.as(:wagbot)  {  Card.create!(:name=>"AdminNow", :content=>"test") }
   }
   it "should find card edited by joe using subspec" do
     Card.search(:edited_by=>{:match=>"Joe User"}, :sort=>"update", :limit=>1).should == [Card["JoeNow"]]
   end     
-  it "should find card edited by joe" do
-    Card.search(:edited_by=>"Admin", :sort=>"update", :limit=>1).should == [Card["AdminNow"]]
+  it "should find card edited by Wagn Bot" do
+    Card.search(:edited_by=>"Wagn Bot", :sort=>"update", :limit=>1).should == [Card["AdminNow"]]
   end     
   it "should fail gracefully if user isn't there" do
     Card.search(:edited_by=>"Joe LUser", :sort=>"update", :limit=>1).should == []
@@ -146,7 +146,7 @@ end
 
 describe Wql2, "permissions" do
   it "should not find cards not in group" do
-    User.as :admin do
+    User.as :wagbot  do
       c = Card['C']
       c.permit(:read, Role['r1'])
       c.save!
@@ -193,7 +193,7 @@ end
 describe Wql2, "type" do  
   before { User.as :joe_user }
   
-  user_cards = ["Joe User","No Count","Sample User","Wagn Bot","Admin","Anonymous","u1","u2","u3"].sort
+  user_cards = ["Joe User","No Count","Sample User","Wagn Bot","Anonymous","u1","u2","u3"].sort
   
   it "should find cards of this type" do
     Card.search( :type=>"_self", :_card=>Card['User']).plot(:name).sort.should == user_cards
@@ -301,7 +301,7 @@ end
 
 describe Wql2, "found_by" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @simple_search = Card.create(:name=>'Simple Search', :type=>'Search', :content=>'{"name":"A"}')
   end 
 

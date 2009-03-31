@@ -1,6 +1,6 @@
 class Notifier < ActionMailer::Base
   def account_info(user, subject, message)
-    from_user = User.current_user || User[:admin]
+    from_user = User.current_user || User[:wagbot]
     from_name = from_user.card ? from_user.card.name : ''
     url_key = user.card.name.to_url_key
 

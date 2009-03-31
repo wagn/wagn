@@ -16,7 +16,7 @@ class AccountController < ApplicationController
       [User.new, Card.new( card_args )]
       
     if request.post? and @user.errors.empty?
-      User.as :admin do ## in case user doesn't have permission for included cardtypes.  For now letting signup proceed even if there are errors on multi-update
+      User.as :wagbot  do ## in case user doesn't have permission for included cardtypes.  For now letting signup proceed even if there are errors on multi-update
         @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards]  
       end
       

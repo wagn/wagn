@@ -21,7 +21,8 @@ end
 
 describe User, "Admin User" do
   before do
-    User.current_user = ::User.find_by_login('admin')
+    User.current_user = ::User[:wagbot]
+
   end
   it "should ok admin role" do System.role_ok?(Role['admin'].id).should be_true end
 end

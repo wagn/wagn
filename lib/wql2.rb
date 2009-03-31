@@ -23,11 +23,7 @@ from cards t0 order by count desc limit 10;
   
 =end
 
-module Wql2  
-  # FIXME: this should not be hardcoded
-  ANON_ROLE_ID = 1 unless defined?(ANON_ROLE_ID)
-  AUTH_ROLE_ID = 2 unless defined?(AUTH_ROLE_ID)
-  
+module Wql2    
   ATTRIBUTES = {
     :basic=> %w{ name type content id key extension_type extension_id },
     :system => %w{ trunk_id tag_id },
@@ -385,10 +381,11 @@ module Wql2
       
       # Permissions       
       t = table_alias
-      unless User.current_user.login.to_s=='admin' #System.always_ok?
-        user_roles = [ANON_ROLE_ID]
+      #unless User.current_user.login.to_s=='wagbot' #
+      unless System.always_ok?
+        user_roles = [Role[:anon].id]
         unless User.current_user.login.to_s=='anon'
-          user_roles += [AUTH_ROLE_ID] + User.current_user.roles.map(&:id)
+          user_roles += [Role[:auth].id] + User.current_user.roles.map(&:id)
         end                                                                
         user_roles = user_roles.map(&:to_s).join(',')
         # type!=User is about 6x faster than type='Role'...

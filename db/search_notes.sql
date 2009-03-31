@@ -9,3 +9,6 @@ to_tsvector( (select content from revisions where id=cards.current_revision_id) 
 
 
 
+-- drop vector column
+alter table cards drop column indexed_content;
+alter table cards drop column indexed_name;

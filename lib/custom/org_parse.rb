@@ -39,7 +39,7 @@ class OrgParser
   end
    
   def do_foundations
-    User.as :admin
+    User.as :wagbot 
     Card.search( :type=>"Foundations" ).each_with_index do |f,i|  
       puts "#{i}: #{f.name}"  
       record = parse_foundation(lexify(chunk(f.current_revision.content)))[0] 
@@ -68,7 +68,7 @@ class OrgParser
   end
 
   def self.do_all    
-    User.as :admin
+    User.as :wagbot 
     p = OrgParser.new
     p.do_cards( p.who_knows_cards, false ); ''
     p.do_cards( p.resource_and_contacts_cards, false ); ''
@@ -156,7 +156,7 @@ class OrgParser
   end
   
   def do_cards(cards, who_knows_most=false)
-    User.as :admin
+    User.as :wagbot 
     count = 0
     cards.each do |card|
       begin 

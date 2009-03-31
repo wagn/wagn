@@ -33,7 +33,7 @@ module Card
       toc_card_content = '' 
       if length > 0 
 		  toc_card=nil
-        ::User.as(:admin) do
+        ::User.as(:wagbot)  do
 		  	 toc_card = self.attribute_card("*table of contents")
 		  
        	 toc_card_content = toc_card ? toc_card.content : ''

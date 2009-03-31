@@ -22,7 +22,7 @@ class Card::InvitationRequestTest < Test::Unit::TestCase
 
      
   def test_should_block_user                      
-    ::User.as(:admin) do Role.find_by_codename('auth').update_attributes! :tasks=>'deny_invitation_requests' end
+    ::User.as(:wagbot)  do Role.find_by_codename('auth').update_attributes! :tasks=>'deny_invitation_requests' end
     ::User.as ::User.find_by_login('joe_user') do
       Card.find_by_name('Ron Request').destroy!
     end

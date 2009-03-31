@@ -1,6 +1,6 @@
 class System < ActiveRecord::Base
   
-  set_table_name 'system'
+  #set_table_name 'system'
   
   cattr_accessor :role_tasks, :request,                          
     # Configuration Options 
@@ -68,7 +68,7 @@ class System < ActiveRecord::Base
     # CARD-BASED SETTINGS
 
     def setting(name)
-      User.as :admin do
+      User.as :wagbot  do
         card=CachedCard.get_real(name) and !card.content.strip.empty? and card.content
         #card=CachedCard.get_real(name)  card.content
       end
@@ -91,7 +91,8 @@ class System < ActiveRecord::Base
     end
 
     #def admin_user
-    #  User.find_by_login('admin')
+    #  User[:wagbot]
+
     #end    
     
     # PERMISSIONS
@@ -136,8 +137,6 @@ class System < ActiveRecord::Base
     
     def always_ok?   
       return false unless usr = User.current_user  
-      # FIXME: I think we want this case, but this doesn't seem very secure
-      return true if usr.login == 'admin'
       usr.roles.each { |r| return true if r.codename == 'admin' }
       return false      
     end

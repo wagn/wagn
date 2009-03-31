@@ -1,4 +1,5 @@
 ## These are copied from rails trunk-- so the definitions here can go away at some point
+=begin
 namespace :db do  
   desc 'Creates the databases defined in your config/database.yml (unless they already exist)'
   task :create => :environment do 
@@ -43,4 +44,8 @@ namespace :db do
       `dropdb "#{config['database']}"`   
     end
   end
+  
+  
 end
+
+=end

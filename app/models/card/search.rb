@@ -31,7 +31,7 @@ module CardLib
 
         ActiveRecord::Base.logger.info "<CREATING: #{template.content}!>"
 
-        User.as(:admin){ 
+        User.as(:wagbot) { 
           Card.create_phantom name, template.content #, template.type, template.reader  want these??
         }
       end

@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 describe Card, "New Basic Card" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @bt= Card['Basic+*tform']
     @r1 = Role.find_by_codename 'r1'
     @bt.permit(:edit, @r1)
@@ -23,7 +23,7 @@ end
      
 describe Card, "Cardtype template" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @ctt = Card.create! :name=> 'Cardtype E+*tform'
     @r1 = Role.find_by_codename 'r1'
     @ctt.permit(:create, @r1)
@@ -45,7 +45,7 @@ end
 
 describe Card, "Cardtype template" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @ctt = Card.create! :name=> 'Cardtype E+*tform'
     @r1 = Role.find_by_codename 'r1'
     @ctt.permit(:create, @r1)
@@ -68,7 +68,7 @@ end
 
 describe Card, "Basic Card template" do
   before do
-    User.as :admin
+    User.as :wagbot 
     Card.create! :name=> 'Cardtype E+*tform'
     @bt = Card.find_by_name 'Basic+*tform'
     @r1 = Role.find_by_codename 'r1'

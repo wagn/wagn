@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 describe Card, "test data" do
   it "should be findable by name" do
-    Card.find_by_name("Admin").class.should == Card::User
+    Card.find_by_name("Wagn Bot").class.should == Card::User
   end
 end  
 
@@ -28,7 +28,7 @@ end
                             
 describe Card, "creation" do
   before(:each) do           
-    User.as :admin
+    User.as :wagbot 
     @b = Card.create! :name=>"New Card", :content=>"Great Content"
     @c = Card.find(@b.id)
   end
@@ -51,7 +51,7 @@ end
 
 describe Card, "attribute tracking for new card" do
   before(:each) do
-    User.as :admin
+    User.as :wagbot 
     @c = Card::Basic.new :name=>"New Card", :content=>"Great Content"
   end
   
@@ -77,7 +77,7 @@ end
 
 describe Card, "content change should create new revision" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @c = Card.find_by_name('basicname')
     @c.update_attributes! :content=>'foo'
   end
@@ -94,7 +94,7 @@ end
 
 describe Card, "content change should create new revision" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @c = Card.find_by_name('basicname')
     @c.content = "foo"
     @c.save!

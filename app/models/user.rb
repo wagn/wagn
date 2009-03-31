@@ -108,7 +108,7 @@ class User < ActiveRecord::Base
     
 
   def accept(email)
-    User.as :admin do #what permissions does approver lack?  Should we check for them?
+    User.as :wagbot  do #what permissions does approver lack?  Should we check for them?
       card.type = 'User'  # change from Invite Request -> User
       card.permit :edit, Card.new(:type=>'User').who_can(:edit) #give default user permissions
       self.status='active'

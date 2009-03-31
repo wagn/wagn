@@ -1,6 +1,6 @@
 class FixWeirdExtensionsOnInvitationRequestTform < ActiveRecord::Migration
   def self.up   
-    User.as(:admin) 
+    User.as(:wagbot)  
     ## in case there are broken keys
     if c = Card.find_by_key('')
       c.key = c.name.to_key

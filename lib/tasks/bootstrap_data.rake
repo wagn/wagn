@@ -2,20 +2,21 @@ namespace :wagn do
   desc "dump current db to bootstrap fixtures"
   #note: users, roles, and role_users have been manually edited
   task :dump_bootstrap_data => :environment do
-    sql = {
-      :schema_migrations=> "select max(cast(version as float)) as version from %s",
-      :revisions => 'select r.id, r.card_id, r.content, 1 as created_by from %s r join cards c on c.current_revision_id = r.id',
-      :cardtypes => 'select * from %s',
-      :cards => 'select id, key, name, type, current_revision_id, trunk_id, tag_id, extension_type, extension_id, 1 as created_by, 1 as updated_by ' +
-        'from %s where trash is false'  #plus some other mechanism to eliminate unwanted cards
-      :wiki_references => 'select id, card_id, referenced_name, referenced_card_id, link_type from %s'      
-    }
-    sql.keys.each do |table_name|
+    %w{ cards revisions wiki_references cardtypes }.each do |table|
       i = "000"
-      File.open("#{RAILS_ROOT}/db/bootstrap/#{table_name}.yml", 'w') do |file|
-        data = ActiveRecord::Base.connection.select_all(sql[table_name] % table_name.to_s)
+      File.open("#{RAILS_ROOT}/db/bootstrap/#{table}.yml", 'w') do |file|
+        data = 
+          if table=='cards'
+            Card.search({:not=>{:referred_to_by=>'*ignore'}}).map &:attributes
+          else
+            sql = (table=='revisions' ?
+              'select r.*from %s r join cards c on c.current_revision_id = r.id' :
+              'select * from %s'
+            )
+            ActiveRecord::Base.connection.select_all( sql % table)
+          end
         file.write data.inject({}) { |hash, record|
-          hash["#{table_name}_#{i.succ!}"] = record
+          hash["#{table}_#{i.succ!}"] = record
           hash
         }.to_yaml
       end
@@ -29,139 +30,71 @@ namespace :wagn do
     Dir.glob(File.join(RAILS_ROOT, 'db', 'bootstrap', '*.{yml,csv}')).each do |fixture_file|
       Fixtures.create_fixtures('db/bootstrap', File.basename(fixture_file, '.*'))
     end 
-              
-    User.as :admin
-    home = Card['Wagn']
-    home.name = System.site_title
-    home.save!
     
+    extra_sql = { 
+      :cards    =>',created_by=1, updated_by=1',  
+      :revisions=>',created_by=1' 
+    }
+    %w{ users cards wiki_references revisions }.each do |table|
+      ActiveRecord::Base.connection.update("update #{table} set created_at=now(), updated_at=now() #{extra_sql[table.to_sym] || ''};")
+    end
+    
+
+    config_cards = %w{ *context *to *title account_request+*tform *invite+*thank *signup+*thank *from }
+    permset = :basic
+    permission = {
+      :basic=>{
+        :read=> {:default=>:anon, 'administrator_link'=> :admin},
+        :edit=> {:default=>:auth},
+        :delete=>{:default=>:auth},
+        :create=>{:default=>:auth, 'account_request'=>:anon},
+        :comment=>{:default=>nil, 'discussion+*rform'=>:anon}
+      }
+      
+    }
+    
+    role_ids = {}
+    Role.find(:all).each do |role|
+      role_ids[role.codename.to_sym] = role.id
+    end
+    
+    ActiveRecord::Base.connection.delete( 'delete from permissions')
+    ActiveRecord::Base.connection.select_all( 'select * from cards' ).each do |card|
+      key = card['key']
+      tasks = permission[:basic]
+      tasks.keys.each do |task|
+        perms = tasks[task]
+        next if !perms[:default] and !perms[key]
+        next if task== :create and card['type'] != 'Cardtype'
+        party_id = role_ids[perms[key] || perms[:default]]
+        ActiveRecord::Base.connection.update(
+          "INSERT into permissions (card_id, task, party_type, party_id) "+
+          "VALUES (#{card['id']}, '#{task}', 'Role', #{party_id} )"
+        )
+        if task== :read
+          ActiveRecord::Base.connection.update(
+            "UPDATE cards set reader_type='Role', reader_id=#{party_id}"
+          )
+        end
+      end
+    end
+         
+           
+=begin    #
+    # special cases:  
+    
+    discussion+*rform (comment)
+    Account Request (create - anon?)
+    HTML (create - anon) ??
+    *to / *from (delete)
+    *context, *to, *title, Account Request+*tform, *invite+*thanks, *signup+*thanks, *from (edit by admin)      
+    Administrator links        
+    # 
+
+=end    
   end
 
 end
 
 
 
-=begin
-
-      ### Create basic data
-
-      ## Start with users
-      admin_user = User.create!( 
-        :login => 'admin',
-        :crypted_password => '6e18b8a0b17799cb6d4a10b6dd1e870b073051b1',
-        :salt => 'bf2a748b23e6fc6fa64d5acb99df8e72e308c58c',
-        :email => 'webmaster@nowhere.org',
-        :invited_by=>nil 
-      )
-      User.login_as :admin
-
-      anonymous_user = ::User.create( 
-        :login => 'anonymous',
-        :crypted_password => '13d124f96e2953fea135c13df097fb3d754588be',
-        :salt => 'c420fa40c65a38186deb25ba859edacd9bf7d8f8',
-        :email => 'anonymous@nowhere.org',
-        :status => 'system',
-        :invited_by=>1
-      )   
-
-      wagn_bot_user = User.create!( 
-        :login => 'wagnbot',
-        :crypted_password => '13d124f96e2953fea135c13df097fb3d754588be',
-        :salt => 'c420fa40c65a38186deb25ba859edacd9bf7d8f8',
-        :email => 'hoozebot@nowhere.org',
-        :activated_at=>Time.now(),
-        :invited_by=>1
-      )
-
-
-      # then setup default card permissions
-
-    Card::User.create :name=>"Hooze Bot"
-    Card::User.create :name=>"Anonymous"
-    Card::User.create :name=>"Admin"   
-
-    # make sure that we get create permissions set on cardtypes   
-    Card::Cardtype.create :name=>"Cardtype"
-    Card::Cardtype.create :name=>"Role"
-    Card::Cardtype.create :name=>"Setting"
-    Card::Cardtype.create :name=>"Currency"
-    Card::Cardtype.create :name=>"Date"
-    Card::Cardtype.create :name=>"File"
-    Card::Cardtype.create :name=>"Image"
-    Card::Cardtype.create :name=>"Number"
-    Card::Cardtype.create :name=>"Percentage"
-    Card::Cardtype.create :name=>"PlainText"
-    Card::Cardtype.create :name=>"Ruby"
-    Card::Cardtype.create :name=>"Pointer"
-    Card::Cardtype.create :name=>"Script"
-    Card::Cardtype.create :name=>"RichText"
-    Card::Cardtype.create :name=>"InvitationRequest"
-    Card::Cardtype.create :name=>"Search"
-    Card::Cardtype.create :name=>"Company"
-    Card::Cardtype.create :name=>"User"   
-
-    Card::Role.create :name=>"Anyone Signed In"
-    Card::Role.create :name=>"Anyone"
-
-    Card::Cardtype.create :name=>"Basic"
-
-    def_perm = {:read=>anon, :edit=> auth, :comment=> nil, :delete=> auth, :create=> auth}
-    unless Card['*template']
-      perm = def_perm.keys.map do |key|
-        Permission.new :task=>key.to_s, :party=>def_perm[key]
-      end
-      t = Card.create! :name=>'*template', :permissions=> perm
-    end
-
-    # create a new list of permissions, otherwise the old ones just get their card_id reassigned
-    perm = def_perm.keys.map do |key|
-      Permission.new :task=>key.to_s, :party=>def_perm[key]
-    end
-    bt = Card.create! :name=>'Basic+*template', :permissions=>perm
-
-
-  
-
-
-      Card::Basic.create :name=>"*plus parts"
-      Card::Basic.create :name=>"*cards that include"
-      Card::Basic.create :name=>"Wagn"
-      Card::Basic.create :name=>"*type cards"
-      Card::Basic.create :name=>"*cards linked to"
-      Card::Basic.create :name=>"*template"
-      Card::Basic.create :name=>"Basic+*template"
-      Card::Basic.create :name=>"*cards"
-      Card::Basic.create :name=>"*cards included"
-      Card::Basic.create :name=>"*plus cards"
-      Card::Basic.create :name=>"*cards linked from"  
-
-
-
-
-     # Create search cards. FIXME? should these be in code instead of db?
-     {
-        "*plus cards" => { :part =>"_self" },
-        "*plus parts" => { :plus => "_self" },
-        "*type cards"    => { :type =>"_self" },
-        "*cards linked to"    => { :linked_to_by =>"_self" },
-        "*cards linked from"  => { :link_to => "_self" },
-        "*cards included"     => { :included_by =>"_self" },
-        "*cards that include" => { :include =>"_self" },
-      }.each do |name, spec|
-        Card::Search.create! :name=>"#{name}+*template", 
-          :content=>spec.to_json, :extension_type=>'HardTemplate'
-      end
-
-      Card::Setting.create :name=>"Thank You"                            
-
-      Card::InvitationRequest.create :name=>"InvitationRequest+*template"
-      # set special permissions for invitation request
-      def_perm = {:read=>anon, :edit=> Role[:admin], :comment=> nil, :delete=> auth, :create=> anon}  
-      perm = def_perm.keys.map do |key|
-        Permission.new :task=>key.to_s, :party=>def_perm[key]
-      end
-      temp = Card::InvitationRequest.create! :name=>'InvitationRequest+*template', :permissions=> perm, :email=>'fake@fake.com'
-    
-  end
-end          
-=end

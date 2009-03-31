@@ -206,6 +206,7 @@ class CachedCard
   end
   
   def party_ok?(party_str)
+    return true if System.always_ok?
     party_class, party_id = party_str.split(':'); party_id = party_id.to_i   
     party_class == 'Role' ? System.role_ok?(party_id) : (party_id==User.current_user.id)
   end

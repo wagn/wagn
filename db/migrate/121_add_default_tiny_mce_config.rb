@@ -1,7 +1,7 @@
 class AddDefaultTinyMceConfig < ActiveRecord::Migration
   def self.up
     unless Card['*tinyMCE']
-      User.as(:admin) do
+      User.as(:wagbot)  do
         Card::PlainText.create! :name=>"*tinyMCE", :content=> <<-eos
 width: '100%',
 auto_resize : true,

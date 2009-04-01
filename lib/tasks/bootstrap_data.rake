@@ -1,5 +1,6 @@
 namespace :wagn do
   desc "dump current db to bootstrap fixtures"
+  
   #note: users, roles, and role_users have been manually edited
   task :dump_bootstrap_data => :environment do
     %w{ cards revisions wiki_references cardtypes }.each do |table|
@@ -39,6 +40,10 @@ namespace :wagn do
       ActiveRecord::Base.connection.update("update #{table} set created_at=now(), updated_at=now() #{extra_sql[table.to_sym] || ''};")
     end
     
+    #CLEAN UP wiki references.  NOTE, this might bust in mysql?  test!
+    ActiveRecord::Base.connection.delete( "delete from wiki_references " +
+      "where referenced_card_id is not null and not exists (select * from cards where cards.id = wiki_references.referenced_card_id)"
+    )
 
     config_cards = %w{ *context *to *title account_request+*tform *invite+*thank *signup+*thank *from }
     permset = :basic

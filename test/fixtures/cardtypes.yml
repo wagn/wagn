@@ -1,121 +1,93 @@
 --- 
-cardtypes_028: 
-  class_name: CardtypeE
-  system: 
-  id: "29"
 cardtypes_017: 
-  class_name: Ruby
+  class_name: CardtypeA
   system: 
-  id: "16"
+  id: "25"
 cardtypes_006: 
   class_name: Pointer
   system: 
   id: "20"
-cardtypes_030: 
-  class_name: UserForm
-  system: 
-  id: "31"
-cardtypes_029: 
-  class_name: CardtypeF
-  system: 
-  id: "30"
 cardtypes_018: 
-  class_name: Role
+  class_name: CardtypeB
   system: 
-  id: "5"
+  id: "26"
 cardtypes_007: 
-  class_name: Date
-  system: 
-  id: "9"
-cardtypes_020: 
-  class_name: HTML1
-  system: 
-  id: "21"
-cardtypes_019: 
-  class_name: Script
-  system: 
-  id: "17"
-cardtypes_008: 
-  class_name: File
-  system: 
-  id: "10"
-cardtypes_021: 
-  class_name: Toggle
-  system: 
-  id: "22"
-cardtypes_010: 
-  class_name: Basic
-  system: 
-  id: "1"
-cardtypes_009: 
   class_name: Image
   system: 
   id: "11"
-cardtypes_022: 
+cardtypes_020: 
+  class_name: CardtypeD
+  system: 
+  id: "28"
+cardtypes_019: 
+  class_name: CardtypeC
+  system: 
+  id: "27"
+cardtypes_008: 
   class_name: Phrase
   system: 
   id: "23"
+cardtypes_021: 
+  class_name: CardtypeE
+  system: 
+  id: "29"
+cardtypes_010: 
+  class_name: Date
+  system: 
+  id: "9"
+cardtypes_009: 
+  class_name: Basic
+  system: 
+  id: "1"
+cardtypes_022: 
+  class_name: CardtypeF
+  system: 
+  id: "30"
 cardtypes_011: 
   class_name: Number
   system: 
   id: "12"
 cardtypes_023: 
-  class_name: SampleCardtype
+  class_name: UserForm
   system: 
-  id: "24"
+  id: "31"
 cardtypes_012: 
-  class_name: User
+  class_name: HTML
   system: 
-  id: "2"
+  id: "21"
 cardtypes_001: 
-  class_name: InvitationRequest
-  system: 
-  id: "6"
-cardtypes_024: 
-  class_name: CardtypeA
-  system: 
-  id: "25"
-cardtypes_013: 
-  class_name: Percentage
-  system: 
-  id: "13"
-cardtypes_002: 
-  class_name: RichText
-  system: 
-  id: "18"
-cardtypes_025: 
-  class_name: CardtypeB
-  system: 
-  id: "26"
-cardtypes_014: 
-  class_name: Cardtype
-  system: 
-  id: "3"
-cardtypes_003: 
-  class_name: Setting
-  system: 
-  id: "7"
-cardtypes_026: 
-  class_name: CardtypeC
-  system: 
-  id: "27"
-cardtypes_015: 
   class_name: PlainText
   system: 
   id: "14"
+cardtypes_013: 
+  class_name: User
+  system: 
+  id: "2"
+cardtypes_002: 
+  class_name: InvitationRequest
+  system: 
+  id: "6"
+cardtypes_014: 
+  class_name: File
+  system: 
+  id: "10"
+cardtypes_003: 
+  class_name: Role
+  system: 
+  id: "5"
+cardtypes_015: 
+  class_name: Cardtype
+  system: 
+  id: "3"
 cardtypes_004: 
   class_name: Search
   system: 
   id: "19"
-cardtypes_027: 
-  class_name: CardtypeD
-  system: 
-  id: "28"
 cardtypes_016: 
-  class_name: Company
+  class_name: SampleCardtype
   system: 
-  id: "4"
+  id: "24"
 cardtypes_005: 
-  class_name: Currency
+  class_name: Toggle
   system: 
-  id: "8"
+  id: "22"

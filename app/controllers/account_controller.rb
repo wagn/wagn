@@ -2,14 +2,18 @@ class InvitationError < StandardError; end
 
 class AccountController < ApplicationController
   layout :default_layout
+  
   before_filter :login_required, :only => [ :invite, :update ] 
   #observer :card_observer, :tag_observer
   helper :wagn
 
+
+  
   def signup
     raise(Wagn::Oops, "You have to sign out before signing up for a new Account") if logged_in?
     raise(Card::PermissionDenied, "Sorry, no Signup allowed") unless Card::InvitationRequest.create_ok?
     card_args = (params[:card]||{}).merge({:type=>'InvitationRequest'})
+
     #fail "params.inspect: #{params.inspect}" if request.post?
     @user, @card = request.post? ?
       User.create_with_card( params[:user], card_args ) :
@@ -21,7 +25,7 @@ class AccountController < ApplicationController
       end
       
       
-      if System.ok?(:create_accounts)             #complete the signup now
+      if System.ok?(:create_accounts)       #complete the signup now
         email_args = { :message => System.setting('*signup+*message') || "Thanks for signing up to #{System.site_title}!",
                        :subject => System.setting('*signup+*subject') || "Account info for #{System.site_title}!" }
         @user.accept(email_args)

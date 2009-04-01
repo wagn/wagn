@@ -53,7 +53,7 @@ module WagnTestHelper
     case user.to_s 
       when 'anon'; #do nothing
       when 'joe_user'; login='joe@user.com'; pass='joe_pass'
-      when 'admin';    login='webmaster@grasscommons.org'; pass='w8gn8t0r'
+      when 'admin';    login='u3@user.com'; pass='u3_pass'
       else raise "Don't know email & password for #{user}"
     end
     unless user==:anon

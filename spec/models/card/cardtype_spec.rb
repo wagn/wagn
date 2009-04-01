@@ -66,8 +66,8 @@ describe Card, "Normal card with junctions" do
     @a.junctions.length.should > 0
   end
   it "should successfull have its type changed" do
-    @a.type = 'Currency'; @a.save!
-    Card['a'].type.should== 'Currency'
+    @a.type = 'Number'; @a.save!
+    Card['a'].type.should== 'Number'
   end
   it "should still have its junctions after changing type" do
     @a.type = 'CardtypeE'; @a.save!

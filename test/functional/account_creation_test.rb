@@ -38,16 +38,7 @@ class AccountCreationTest < Test::Unit::TestCase
   end
 =end
 
-  def test_create_permission_denied_if_not_logged_in
-    logout
-    post "logout"
-    assert_no_new_account do
-#    assert_raises(Card::PermissionDenied) do
-      post_invite
-    end
-  end
-  
-  def test_should_create_account_from_invitation_request               
+  def test_should_create_account_from_invitation_request             
     assert_difference Card::InvitationRequest, :count, -1 do
       assert_difference Card::User, :count, 1 do
         post_invite :card=>{ :key=>"ron_request"}, :action=>:accept
@@ -66,6 +57,15 @@ class AccountCreationTest < Test::Unit::TestCase
     assert_equal "active", User.find_by_email("ron@request.com").status
   end
 
+
+  def test_create_permission_denied_if_not_logged_in
+    logout
+    post "logout"
+    assert_no_new_account do
+#    assert_raises(Card::PermissionDenied) do
+      post_invite
+    end
+  end
 
 
 

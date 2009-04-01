@@ -6,7 +6,7 @@ include WagnTestHelper
 
 A_JOINEES = ["B", "C", "D", "E", "F"]
       
-CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User"].sort    
+CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User","plusses+*rform"].sort    
 
 #=begin 
 describe Wql2, "in" do
@@ -89,7 +89,7 @@ end
 describe Wql2, "keyword" do
   before { User.as :joe_user }
   it "should escape nonword characters" do
-    Card.search( :match=>"two :(!").map(&:name).sort.should==["Joe User","One+Two","One+Two+Three","Two"]
+    Card.search( :match=>"two :(!").map(&:name).sort.should==CARDS_MATCHING_TWO
   end
 end
 
@@ -210,8 +210,8 @@ describe Wql2, "type" do
 end
 
 describe Wql2, "group tagging" do
-  it "should find frequent taggers of basic cards" do
-    Card.search( :group_tagging=>'Basic' ).map(&:name).sort().should ==   ["*rform", "A", "C", "B", "D", "E", "Five", "One", "Three", "Two"].sort()
+  it "should find frequent taggers of cardtype cards" do
+    Card.search( :group_tagging=>'Cardtype' ).map(&:name).sort().should == ["*context", "*rform", "*tform"].sort()
   end
 end
 
@@ -328,7 +328,7 @@ describe Wql2, "match" do
   end
   
   it "should get only content when content is explicit" do
-    Card.search( :content=>[:match, "two"] ).plot(:name).sort.should==["Joe User"]
+    Card.search( :content=>[:match, "two"] ).plot(:name).sort.should==["Joe User",'plusses+*rform']
   end
 
   it "should get only name when name is explicit" do

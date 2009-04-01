@@ -3,11 +3,11 @@ roles_001:
   id: "1"
   codename: admin
   tasks:     
-roles_003: 
+roles_002: 
   id: "2"
   codename: auth
   tasks: create_accounts
-roles_001: 
+roles_003: 
   id: "3"
   codename: anon
   tasks: 

@@ -32,11 +32,13 @@ class CardController < ApplicationController
   #----------( Special cards )
   
   def index
-    if home = System.setting('*home')
-      redirect_to '/'+ home
-    else
-      redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_title)
-    end
+    redirect_to(
+      case
+      when User.no_logins?;                 '/admin/setup'
+      when home = System.setting('*home');  '/'+ home
+      else { :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_title) }
+      end
+    )
   end
 
   def mine

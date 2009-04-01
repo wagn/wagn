@@ -82,16 +82,10 @@ ActiveRecord::Schema.define(:version => 20090309191654) do
   end
 
   create_table "pg_ts_cfgmap", :id => false, :force => true do |t|
-    t.text   "ts_name",                  :null => false
-    t.text   "tok_alias",                :null => false
-    t.string "dict_name", :limit => nil
+    t.text   "ts_name",   :null => false
+    t.text   "tok_alias", :null => false
+    t.string "dict_name"
   end
-
-# Could not dump table "pg_ts_dict" because of following StandardError
-#   Unknown type 'regprocedure' for column 'dict_init'
-
-# Could not dump table "pg_ts_parser" because of following StandardError
-#   Unknown type 'regprocedure' for column 'prs_start'
 
   create_table "revisions", :force => true do |t|
     t.datetime "created_at", :null => false

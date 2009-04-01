@@ -150,6 +150,9 @@ class PermissionTest < Test::Unit::TestCase
     @c1.permit(:edit,@r1); @c1.save
     @c2.permit(:edit,@r2); @c2.save
     @c3.permit(:edit,@r3); @c3.save
+    
+    @u3.roles = [ @r1 ]  #not :admin here
+    
 
     %{        u1 u2 u3
       c1(r1)  T  T  T

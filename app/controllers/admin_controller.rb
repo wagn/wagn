@@ -1,18 +1,24 @@
 class AdminController < ApplicationController
   layout 'application'
   
-  
-  def navigation
-    @ok = System.ok_hash
-    render :layout=>nil
-  end
-  
-  def users
-    #@cards = Card.search(:extension_type=>"User", :sort=>'alpha')
-  end
-  
-  def roles
-    @cards = Card.search(:extension_type=>"Role", :sort=>'alpha')
+  def setup
+    raise(Wagn::Oops, "Already setup") unless User.no_logins? && !User[:first]
+    if request.post?
+      User.as :wagbot do
+        @user, @card = User.create_with_card( params[:extension].merge({:login=>'first'}), params[:card] )
+      end
+      
+      if @user.errors.empty?
+        self.current_user = @user
+        flash[:notice] = "You're good to go!" 
+        redirect_to '/'
+      else
+        flash[:notice] = "Durn, setup went awry..."
+      end
+    else
+      @card = Card.new( params[:card] )
+      @user = User.new( params[:user] )
+    end
   end
   
   def tasks
@@ -35,13 +41,9 @@ class AdminController < ApplicationController
     flash[:notice] = 'permissions saved'
     redirect_to :action=>'tasks'
   end
-
-
-  def setup
-    ensure_new_system
-    @user = User.find_by_login('wagbot')
-  end
   
+=begin  
+
   
   def save_setup
     ensure_new_system
@@ -58,13 +60,21 @@ class AdminController < ApplicationController
       render :action=>'setup'
     end
   end
- 
-  private
-    def ensure_new_system
-      if System.count > 0
-        flash[:notice] = "This WagN has already been setup"
-        redirect_to '/'
-      end
-    end
+
+  def navigation
+    @ok = System.ok_hash
+    render :layout=>nil
+  end
+
+  def users
+    #@cards = Card.search(:extension_type=>"User", :sort=>'alpha')
+  end
+
+  def roles
+    @cards = Card.search(:extension_type=>"Role", :sort=>'alpha')
+  end
+=end  
+
+
   
 end

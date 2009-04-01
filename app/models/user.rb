@@ -27,6 +27,9 @@ class User < ActiveRecord::Base
   
   before_save :encrypt_password
   
+  cattr_accessor :cache  
+  self.cache = {}
+  
   class << self
     # CURRENT USER
     def current_user
@@ -39,7 +42,7 @@ class User < ActiveRecord::Base
    
     def as(given_user)
       tmp_user = self.current_user
-      self.current_user = given_user.class==User ? given_user : User.find_by_login(given_user.to_s)
+      self.current_user = given_user.class==User ? given_user : User[given_user]
       if block_given?
         value = yield
         self.current_user = tmp_user
@@ -58,7 +61,9 @@ class User < ActiveRecord::Base
       @user.generate_password if @user.password.blank?
       
       @user.save_with_card(@card)
-      @user.send_account_info(email_args) if @user.errors.empty? && !email_args.empty? 
+      begin
+        @user.send_account_info(email_args) if @user.errors.empty? && !email_args.empty?
+      end
       [@user, @card]
     end
 
@@ -79,7 +84,11 @@ class User < ActiveRecord::Base
     end    
     
     def [](login)
-      User.find_by_login(login.to_s)
+      self.cache[login.to_s] ||= User.find_by_login(login.to_s)
+    end
+
+    def no_logins?
+      self.cache[:no_logins] ||= User.count < 3
     end
 
     # OPENID - on hold
@@ -105,7 +114,6 @@ class User < ActiveRecord::Base
   rescue  
   end
       
-    
 
   def accept(email)
     User.as :wagbot  do #what permissions does approver lack?  Should we check for them?

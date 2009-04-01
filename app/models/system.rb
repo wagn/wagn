@@ -1,6 +1,6 @@
 class System < ActiveRecord::Base
-  
-  #set_table_name 'system'
+  #Why is this an ActiveRecord?
+  set_table_name 'system'
   
   cattr_accessor :role_tasks, :request,                          
     # Configuration Options 

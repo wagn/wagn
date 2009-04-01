@@ -106,11 +106,11 @@ module CardLib
     end
        
     def type_template?
-      name ? (name.tag_name == '*tform') : (tag and tag.name == '*tform')
+      name ? (name.junction? && name.tag_name == '*tform') : (tag and tag.name == '*tform')
     end
 
     def right_template?
-      name ? (name.tag_name == '*rform') : (tag and tag.name == '*rform')
+      name ? (name.junction? && name.tag_name == '*rform') : (tag and tag.name == '*rform')
     end
        
     def hard_template?

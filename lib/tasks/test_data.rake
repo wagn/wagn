@@ -52,31 +52,8 @@ namespace 'wagn' do
   desc "create sample data for testing"
   task :populate_template_database => :environment do   
     # setup test data here
-    # admin and hoozebot are created in the migration
-    # These are the cards that are present in basic installation before test data is added:
-    #
-    #        name         |   type   
-    #---------------------+----------
-    # Wagn                | Basic
-    # Basic               | Cardtype
-    # User                | Cardtype
-    # Cardtype            | Cardtype
-    # Role                | Cardtype
-    # InvitationRequest   | Cardtype
-    # Anyone              | Role    
-    # Administrative User | Role
-    # Anyone signed in    | Role
-    # Wagn Bot            | User
-    # Admin               | User
    
     ::User.as(:wagbot) do 
-      # the original admin user will also be present for new installs, so we don't want
-      # that password discoverable.  reset password here so we know it for the tests.
-      admin = User[:wagbot]
-      admin.update_attribute('crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c')
-
-      #fail(" user permissions #{::Card::User.new.cardtype.permissions}" )
-      # generic, shared user
       joe_user = ::User.create! :login=>"joe_user",:email=>'joe@user.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>User[:wagbot]
       joe_card = Card::User.create! :name=>"Joe User", :extension=>joe_user, :content => "I'm number two"    
 
@@ -89,28 +66,24 @@ namespace 'wagn' do
                                   
       # data for testing users and invitation requests 
       System.invite_request_alert_email = nil
-      ron_request = Card::InvitationRequest.create! :name=>"Ron Request", :email=>"ron@request.com"  
-      no_count = Card::User.create! :name=>"No Count", :content=>"I got not account"
+      ron_request = Card::InvitationRequest.create! :name=>"Ron Request"  #, :email=>"ron@request.com"
+      User.create_with_card({:email=>'ron@request.com', :password=>'ron_pass', :password_confirmation=>'ron_pass'}, ron_request)
+       
+      no_count = Card::User.create! :name=>"No Count", :content=>"I got no account"
 
       # CREATE A CARD OF EACH TYPE
       user_user = ::User.create! :login=>"sample_user",:email=>'sample@user.com', :status => 'active', :password=>'sample_pass', :password_confirmation=>'sample_pass', :invite_sender=>User[:wagbot]
-
       user_card = Card::User.create! :name=>"Sample User", :extension=>user_user    
 
-      request_card = Card::InvitationRequest.create! :name=>"Sample InvitationRequest", :email=>"invitation@request.com"  
+      request_card = Card::InvitationRequest.create! :name=>"Sample InvitationRequest" #, :email=>"invitation@request.com"  
       Cardtype.find(:all).each do |ct|
         next if ['User','InvitationRequest'].include? ct.codename
         Card.create! :type=>ct.codename, :name=>"Sample #{ct.codename}"
       end
-
-
       # data for role_test.rb
       u1 = ::User.create! :login=>"u1",:email=>'u1@user.com', :status => 'active', :password=>'u1_pass', :password_confirmation=>'u1_pass', :invite_sender=>User[:wagbot]
-
       u2 = ::User.create! :login=>"u2",:email=>'u2@user.com', :status => 'active', :password=>'u2_pass', :password_confirmation=>'u2_pass', :invite_sender=>User[:wagbot]
-
       u3 = ::User.create! :login=>"u3",:email=>'u3@user.com', :status => 'active', :password=>'u3_pass', :password_confirmation=>'u3_pass', :invite_sender=>User[:wagbot]
-
       
       Card::User.create!(:name=>"u1", :extension=>u1)
       Card::User.create!(:name=>"u2", :extension=>u2)
@@ -125,6 +98,8 @@ namespace 'wagn' do
       r2.users = [ u1, u2 ]
       r3.users = [ u1 ]
       r4.users = [ u3, u2 ]
+  
+      Role[:admin].users<< [ u3 ]
   
       c1 = Card.create! :name=>'c1'
       c2 = Card.create! :name=>'c2'
@@ -161,7 +136,8 @@ namespace 'wagn' do
       Card::CardtypeE.create! :name=>"type-e-card", :content=>"type_e_content"
       Card::CardtypeF.create! :name=>"type-f-card", :content=>"type_f_content"
   
-      bt.permit(:create, Role['r1']); bt.save!  # set it so that Joe User can't create this type
+#      warn "current user #{User.current_user.inspect}.  always ok?  #{System.always_ok?}" 
+  
       c = Card.create! :name=>'revtest', :content=>'first'
       c.update_attributes! :content=>'second'
       c.update_attributes! :content=>'third'
@@ -176,7 +152,10 @@ namespace 'wagn' do
       
       User.as(:joe_user) {  Card.create!( :name=>"JoeLater", :content=>"test") }
       User.as(:joe_user) {  Card.create!( :name=>"JoeNow", :content=>"test") }
-      User.as(:wagbot) {  Card.create!(:name=>"AdminNow", :content=>"test") }
+      User.as(:wagbot) {  
+        Card.create!(:name=>"AdminNow", :content=>"test") 
+        bt.permit(:create, Role['r1']); bt.save!  # set it so that Joe User can't create this type
+      }
       
     end   
 
@@ -198,10 +177,6 @@ namespace 'wagn' do
     olddb = abcs[config]["database"]
     abcs[config]["database"] = "wagn_test_template"
 
-    Rake::Task['db:drop'].invoke
-    Rake::Task['db:create'].invoke
-    Rake::Task['db:schema:load'].invoke
-    Rake::Task['wagn:load_bootstrap_data'].invoke
 
 #    puts ">>migrating template database"
 #    System.site_title = 'Wagn'
@@ -210,6 +185,13 @@ namespace 'wagn' do
   #=begin  
     begin
       set_database 'wagn_test_template'
+      
+      Rake::Task['db:drop'].invoke
+      Rake::Task['db:create'].invoke
+
+      Rake::Task['db:schema:load'].invoke
+      Rake::Task['wagn:load_bootstrap_data'].invoke
+
   
       # I spent waay to long trying to do this in a less hacky way--  
       # Basically initial database setup/migration breaks your models and you really 
@@ -225,7 +207,8 @@ namespace 'wagn' do
     end  
     puts ">>preparing test database"
     # go ahead and load the fixtures into the test database
-    Rake::Task['db:test:prepare'].invoke
+    puts `rake db:test:prepare RAILS_ENV=test`
+    #Rake::Task['db:test:prepare'].invoke
   #=end
   end
 

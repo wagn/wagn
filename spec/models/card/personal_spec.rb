@@ -1,5 +1,9 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
+# We're not supporting this any more, right?
+
+=begin
+
 describe User, "Normal user" do
   before do
     User.as :wagbot  do
@@ -70,4 +74,4 @@ describe Card, "User not allowed to set personal cards" do
     @xu.ok?(:permissions).should_not be_true
   end  
 end
-
+=end

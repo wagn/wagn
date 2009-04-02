@@ -30,6 +30,7 @@ end
 describe User, 'Joe User' do
   before do
     User.as :joe_user
+    User.cache.delete 'joe_user'
     @ju = User.current_user
     @r1 = Role.find_by_codename 'r1'
   end

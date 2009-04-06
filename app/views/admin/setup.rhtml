@@ -16,7 +16,7 @@
       		:label=>"Name") do %>
       	<%= text_field :card, :name %>
       <% end %>
-      <%= render_partial 'account/edit', :locals=>{:slot=>slot, :card=>@card} %>
+      <%= render :partial => 'account/edit', :locals=>{:slot=>slot, :card=>@card} %>
     </table>
       <%= submit_tag 'Create' %>
     <% end %>

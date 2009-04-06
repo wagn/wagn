@@ -62,7 +62,7 @@ class CardController < ApplicationController
     if @card.new_record? && ! @card.phantom?
       params[:card]={:name=>@card_name, :type=>params[:type]}
       if Cardtype.createable_cardtypes.empty? 
-        return render :action=>'missing'
+        return render(:action=>'missing')
       else
         return self.new
       end

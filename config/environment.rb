@@ -12,7 +12,7 @@ require File.join(File.dirname(__FILE__), 'boot')
                           
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence those specified here
-  RAILS_GEM_VERSION = '2.1.2' unless defined? RAILS_GEM_VERSION  
+  RAILS_GEM_VERSION = '2.2.2' unless defined? RAILS_GEM_VERSION  
   # Skip frameworks you're not going to use
   config.frameworks -= [ :action_web_service ]
 
@@ -80,9 +80,10 @@ end
   
 # configure session store
 Session = CGI::Session::ActiveRecordStore.session_class
+#Session = ActionController::Session::AbstractStore
 
 # configure fragment store
-#ActionController::Base.cache_store = :mem_cache_store #:memory_store #:file_store, "#{RAILS_ROOT}/../cache"
+ActionController::Base.cache_store = :mem_cache_store #:memory_store #:file_store, "#{RAILS_ROOT}/../cache"
  
 # force loading of the system model. FIXME: this seems like a terrible way to do this
 System

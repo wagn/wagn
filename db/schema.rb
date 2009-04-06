@@ -75,18 +75,6 @@ ActiveRecord::Schema.define(:version => 20090309191654) do
   add_index "permissions", ["card_id", "task"], :name => "permissions_task_card_id_uniq", :unique => true
   add_index "permissions", ["task"], :name => "permissions_task_index"
 
-  create_table "pg_ts_cfg", :id => false, :force => true do |t|
-    t.text "ts_name",  :null => false
-    t.text "prs_name", :null => false
-    t.text "locale"
-  end
-
-  create_table "pg_ts_cfgmap", :id => false, :force => true do |t|
-    t.text   "ts_name",   :null => false
-    t.text   "tok_alias", :null => false
-    t.string "dict_name"
-  end
-
   create_table "revisions", :force => true do |t|
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false

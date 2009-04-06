@@ -2,7 +2,7 @@
   class Cardtype < Base
     ## FIXME -- needs to create constant-safe class name and validate its uniqueness 
     before_validation_on_create :create_extension
-    after_create :reload_cardtypes
+    after_save :reload_cardtypes
     
     before_destroy :ensure_not_in_use, :destroy_extension   # order is important!
     after_destroy :reload_cardtypes

@@ -40,6 +40,12 @@ class ApplicationController < ActionController::Base
                 
   
   def per_request_setup
+    if System.multihost
+      System.multihost_name = request.subdomains[0] || "www"
+      System.base_url = "http://" + System.multihost_name + ".wagn.org"  
+      ActiveRecord::Base.connection.execute %{ set search_path to #{System.multihost_name} }
+      
+    end
     User.current_user = current_user || User.find_by_login('anon')
     
     @context = params[:context] || 'main_1'

@@ -1,27 +1,22 @@
-<p><iframe id="upload-iframe" class="upload-iframe" name="upload-iframe" height="30" width="480" frameborder="0" src="<%= "/file/#{card.new_record? ? 'new' : 'edit'}/#{card.id}?card[name]=#{card.name}&card[type]=#{card.type}" %>" scrolling="no">
-</iframe></p>
-<%= slot.form.hidden_field :content, :class=>'upload-content' %>
-  
-<%#FIXME-slot %>
+<% attachment_model_name = slot.card.class.attachment_model.name.underscore %>
+<% attachment_uuid = (0..29).to_a.map {|x| rand(10)} %>
+
+<div class="attachment-preview" id="<%= "#{attachment_uuid}-preview" %>">    
+	<%# WEIRD: when I didn't check for new_record?, create would come up with random old attachment previews %>
+	<% if !slot.card.new_record? and slot.card.attachment %>
+		<%= slot.card.attachment.preview %>
+	<% end %>
+</div>
+
+<p><iframe id="upload-iframe-<%= attachment_uuid %>" class="upload-iframe" name="upload-iframe" height="30" width="480" frameborder="0" src="<%= "/#{attachment_model_name.pluralize}/new?#{attachment_model_name}[attachment_uuid]=#{attachment_uuid}" %>" scrolling="no">
+</iframe></p>           
+
+	
+<%= slot.form.hidden_field "attachment_id", :id=>attachment_uuid %>
+<%= slot.form.hidden_field "content", :id=>"#{attachment_uuid}-content" %>
+
 <%- slot.skip_autosave = true %>
 <%= slot.editor_hooks :save=>%{
-	doc=window.frames["upload-iframe"].document;       	
-	innerForm = doc.forms['fileupload'];
-  fileField = innerForm["file"];
-	if (fileField.value=='') {
-		// if the user hasn't uploaded a file, just continue.
-		return true;
-	} else {                       
-		// In the case where the card name is set or changed after loading the 
-		// file editor, we need to copy the name into the inner form.
-		// FIXME: this is some damn ugly code.                      
-		if (document.getElementById('card_name')) {
-		  card_name = document.getElementById('card_name').value;
-		  name_field = doc.getElementById('file_name');
-		  name_field.value = card_name;
-	   }	
-		innerForm.submit(); 
-		return false;
-	}
+	//FIXME: handle the case that the upload isn't finished.
 } %>
 

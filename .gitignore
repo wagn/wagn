@@ -1,4 +1,5 @@
 config/database.yml
+config/amazon_s3.yml
 config/wagn.rb
 log/*
 tmp/*
@@ -10,3 +11,5 @@ public/file
 public_scripts
 public/stylesheets/base*
 public/javascripts/base*
+public/card_images
+public/card_files

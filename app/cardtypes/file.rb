@@ -1,7 +1,5 @@
 module Card
 	class File < Base
-    def content_for_rendering
-      %{<a href="/file/#{content}">#{content}</a>}
-    end
+	  card_attachment CardFile
 	end
 end

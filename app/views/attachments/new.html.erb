@@ -1,0 +1,21 @@
+<% parent_code = escape_javascript(%{
+	$('#{current_object.attachment_uuid}-preview').update('<img src=\"/images/wait_lg.gif\">  Uploading...');
+	deactivateSubmit('#{current_object.attachment_uuid}');
+}); %>
+
+<% javascript_tag do %>
+	var updateParent = function(attachment_uuid) {
+		with(window.parent) { window.eval('<%= parent_code %>') }
+	}
+<% end %>                                                                      
+
+<% form_for current_object, :url=>objects_path, :html=>{ 
+		:id=>'upload-form', :multipart=>true, :method=>:post, :name=>'fileupload' } do |f| %>    
+  <%= f.hidden_field :type %> 
+  <%= f.hidden_field :attachment_uuid %>    	
+  <%= f.file_field :uploaded_data, :onchange =>"updateParent(); this.form.submit()" %>
+	<% # js_name_updates_if_new_card = %{n = window.parent.document.getElementById('card_name'); if (!n.value) { n.value=$F(this).match(/([^\\/]*)\\.\\w+$/)[1] };  %>
+<% end %>
+
+
+

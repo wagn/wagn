@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090309191654) do
+ActiveRecord::Schema.define(:version => 20090407194130) do
 
   create_table "cards", :force => true do |t|
     t.integer  "trunk_id"
@@ -30,8 +30,8 @@ ActiveRecord::Schema.define(:version => 20090309191654) do
     t.string   "appender_type"
     t.integer  "appender_id"
     t.integer  "references_expired"
-    t.text  "indexed_name"
-    t.text  "indexed_content"
+    t.text     "indexed_name"
+    t.text     "indexed_content"
   end
 
   add_index "cards", ["reader_id"], :name => "card_reader_id_index"

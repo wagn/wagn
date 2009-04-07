@@ -1,210 +1,227 @@
 --- 
 revisions_161: 
-  updated_at: 2009-03-31 23:02:55.21412
+  updated_at: 2009-04-07 16:45:03.383122
   created_by: "1"
   card_id: "204"
-  id: "1785"
+  id: "1796"
   content: ""
-  created_at: 2009-03-31 23:02:55.21412
+  created_at: 2009-04-07 16:45:03.383122
 revisions_133: 
-  updated_at: 2009-03-31 23:02:52.447487
+  updated_at: 2009-04-07 16:45:00.265581
   created_by: "1"
   card_id: "176"
-  id: "1757"
+  id: "1768"
   content: ""
-  created_at: 2009-03-31 23:02:52.447487
+  created_at: 2009-04-07 16:45:00.265581
 revisions_078: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "3"
-  id: "3"
+  card_id: "45"
+  id: "45"
   content: ""
-  created_at: 2009-03-31 23:02:42.398851
+  created_at: 2009-04-07 16:44:50.11294
 revisions_105: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "111"
-  id: "1722"
+  card_id: "153"
+  id: "1746"
   content: |-
-    <p><em>Plus cards</em> have a plus (+) in their name <em>(e.g., "Menu+description")</em>. They are formed by plussing two cards together to make a third.</p>
-    <p>&nbsp;</p>
-    <h2>Plus Cards</h2>
-    <p><em>Cards of which <strong>{{_left|name}}</strong> is part</em></p>
-    <blockquote>
-    <p>{{_left+*plus cards}}</p>
-    </blockquote>
-    <h2><br></h2>
-    <h2>Parts<br></h2>
-    <p><em>Cards that form plus cards with <strong>{{_left|name}}</strong></em></p>
-    <blockquote>
-    <p>{{_left+*plus parts}}</p>
-    </blockquote>
-  created_at: 2009-03-31 23:02:42.398851
+    {"not": {"referred_to_by": "*ignore"},
+     "sort": "alpha",
+     "limit": 200
+    }
+  created_at: 2009-04-07 16:44:50.11294
+revisions_190: 
+  updated_at: 2009-04-07 16:45:06.430704
+  created_by: "1"
+  card_id: "231"
+  id: "1825"
+  content: test
+  created_at: 2009-04-07 16:45:06.430704
 revisions_162: 
-  updated_at: 2009-03-31 23:02:55.321439
+  updated_at: 2009-04-07 16:45:03.429958
   created_by: "1"
   card_id: "205"
-  id: "1786"
+  id: "1797"
   content: ""
-  created_at: 2009-03-31 23:02:55.321439
+  created_at: 2009-04-07 16:45:03.429958
 revisions_134: 
-  updated_at: 2009-03-31 23:02:52.528974
+  updated_at: 2009-04-07 16:45:00.343648
   created_by: "1"
   card_id: "177"
-  id: "1758"
+  id: "1769"
   content: ""
-  created_at: 2009-03-31 23:02:52.528974
+  created_at: 2009-04-07 16:45:00.343648
 revisions_020: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "18"
-  id: "18"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_079: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "5"
-  id: "1435"
+  card_id: "112"
+  id: "1269"
   content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <h1>{{_self|name}} Cards</h1>
-    <blockquote>
-    <p>{{+*instances}}</p>
-    </blockquote>
-  created_at: 2009-03-31 23:02:42.398851
-revisions_106: 
-  updated_at: 2009-03-31 23:02:49.257442
+    [[community]]
+    [[plusses]]
+    [[references]]
+  created_at: 2009-04-07 16:44:50.11294
+revisions_079: 
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "149"
-  id: "1730"
-  content: I'm number two
-  created_at: 2009-03-31 23:02:49.257442
+  card_id: "68"
+  id: "1738"
+  content: <p>Thanks!&nbsp; Your invitation is on its way.</p>
+  created_at: 2009-04-07 16:44:50.11294
+revisions_106: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "118"
+  id: "1710"
+  content: "[[account]]"
+  created_at: 2009-04-07 16:44:50.11294
 revisions_163: 
-  updated_at: 2009-03-31 23:02:55.515302
+  updated_at: 2009-04-07 16:45:03.650784
   created_by: "1"
   card_id: "206"
-  id: "1787"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <h2>{{_self|name}} Cards</h2>
-    <blockquote>
-    <p>{{+*instances}}</p>
-    </blockquote>
-  created_at: 2009-03-31 23:02:55.515302
+  id: "1798"
+  content: ""
+  created_at: 2009-04-07 16:45:03.650784
 revisions_135: 
-  updated_at: 2009-03-31 23:02:52.612908
+  updated_at: 2009-04-07 16:45:00.43027
   created_by: "1"
   card_id: "178"
-  id: "1759"
+  id: "1770"
   content: ""
-  created_at: 2009-03-31 23:02:52.612908
+  created_at: 2009-04-07 16:45:00.43027
 revisions_021: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "17"
-  id: "17"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
+  card_id: "145"
+  id: "1694"
+  content: |-
+    <h1>Accounts with the {{_left|name}} role<br></h1>
+    <blockquote>
+    <p>{{_left+*users}}</p>
+    </blockquote>
+  created_at: 2009-04-07 16:44:50.11294
 revisions_107: 
-  updated_at: 2009-03-31 23:02:49.361906
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "150"
-  id: "1731"
-  content: ""
-  created_at: 2009-03-31 23:02:49.361906
+  card_id: "90"
+  id: "982"
+  content: <p>use "off" or "on" to force a table setting.</p>
+  created_at: 2009-04-07 16:44:50.11294
 revisions_164: 
-  updated_at: 2009-03-31 23:02:55.633899
+  updated_at: 2009-04-07 16:45:03.692342
   created_by: "1"
   card_id: "207"
-  id: "1788"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <h2>{{_self|name}} Cards</h2>
-    <blockquote>
-    <p>{{+*instances}}</p>
-    </blockquote>
-  created_at: 2009-03-31 23:02:55.633899
+  id: "1799"
+  content: ""
+  created_at: 2009-04-07 16:45:03.692342
 revisions_136: 
-  updated_at: 2009-03-31 23:02:52.699199
+  updated_at: 2009-04-07 16:45:00.512262
   created_by: "1"
   card_id: "179"
-  id: "1760"
-  content: I'm here to be referenced to
-  created_at: 2009-03-31 23:02:52.699199
-revisions_022: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "48"
-  id: "48"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_108: 
-  updated_at: 2009-03-31 23:02:49.452951
-  created_by: "1"
-  card_id: "151"
-  id: "1732"
-  content: ""
-  created_at: 2009-03-31 23:02:49.452951
-revisions_050: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "85"
-  id: "937"
+  id: "1771"
   content: |-
-    <p>[[Config|Configure your wagn]]</p>
+    <p>{{+description}}</p>
     <p>&nbsp;</p>
-    <p>Double-click to edit this (or any) card.</p>
-  created_at: 2009-03-31 23:02:42.398851
+    <h1>Accounts with the {{_self|name}} role<br></h1>
+    <blockquote>
+    <p>{{+*users}}</p>
+    </blockquote>
+  created_at: 2009-04-07 16:45:00.512262
+revisions_022: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "62"
+  id: "98"
+  content: wagn/Invite_Success
+  created_at: 2009-04-07 16:44:50.11294
+revisions_108: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "1"
+  id: "1541"
+  content: <p>This is the account that makes any automated updates &mdash; cards created when someone signs up, link updates when renaming cards, etc.</p>
+  created_at: 2009-04-07 16:44:50.11294
+revisions_050: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "28"
+  id: "28"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
 revisions_165: 
-  updated_at: 2009-03-31 23:02:55.752687
+  updated_at: 2009-04-07 16:45:03.783855
   created_by: "1"
   card_id: "208"
-  id: "1789"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <h2>{{_self|name}} Cards</h2>
-    <blockquote>
-    <p>{{+*instances}}</p>
-    </blockquote>
-  created_at: 2009-03-31 23:02:55.752687
+  id: "1800"
+  content: ""
+  created_at: 2009-04-07 16:45:03.783855
 revisions_137: 
-  updated_at: 2009-03-31 23:02:52.786721
+  updated_at: 2009-04-07 16:45:00.616533
   created_by: "1"
   card_id: "180"
-  id: "1761"
-  content: Alpha [[Z]]
-  created_at: 2009-03-31 23:02:52.786721
+  id: "1772"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <h1>Accounts with the {{_self|name}} role<br></h1>
+    <blockquote>
+    <p>{{+*users}}</p>
+    </blockquote>
+  created_at: 2009-04-07 16:45:00.616533
 revisions_023: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "97"
-  id: "354"
-  content: "{\"member\": \"_self\"}"
-  created_at: 2009-03-31 23:02:42.398851
+  card_id: "61"
+  id: "62"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
 revisions_109: 
-  updated_at: 2009-03-31 23:02:49.55571
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "152"
-  id: "1733"
+  card_id: "15"
+  id: "15"
   content: ""
-  created_at: 2009-03-31 23:02:49.55571
+  created_at: 2009-04-07 16:44:50.11294
 revisions_051: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "33"
-  id: "33"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
+  card_id: "67"
+  id: "100"
+  content: wagn/Signup_Success
+  created_at: 2009-04-07 16:44:50.11294
 revisions_166: 
-  updated_at: 2009-03-31 23:02:55.895866
+  updated_at: 2009-04-07 16:45:03.877308
   created_by: "1"
   card_id: "209"
-  id: "1790"
+  id: "1801"
+  content: ""
+  created_at: 2009-04-07 16:45:03.877308
+revisions_138: 
+  updated_at: 2009-04-07 16:45:00.755901
+  created_by: "1"
+  card_id: "181"
+  id: "1773"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <h1>Accounts with the {{_self|name}} role<br></h1>
+    <blockquote>
+    <p>{{+*users}}</p>
+    </blockquote>
+  created_at: 2009-04-07 16:45:00.755901
+revisions_024: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "34"
+  id: "34"
+  content: "{\"part\":\"_self\"}"
+  created_at: 2009-04-07 16:44:50.11294
+revisions_080: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "88"
+  id: "1428"
   content: |-
     <p>{{+description}}</p>
     <p>&nbsp;</p>
@@ -212,23 +229,36 @@ revisions_166:
     <blockquote>
     <p>{{+*instances}}</p>
     </blockquote>
-  created_at: 2009-03-31 23:02:55.895866
-revisions_138: 
-  updated_at: 2009-03-31 23:02:52.877558
+  created_at: 2009-04-07 16:44:50.11294
+revisions_052: 
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "181"
-  id: "1762"
-  content: Beta {{Z}}
-  created_at: 2009-03-31 23:02:52.877558
-revisions_024: 
-  updated_at: 2009-03-31 23:02:42.398851
+  card_id: "40"
+  id: "40"
+  content: "{\"link_to\":\"_self\"}"
+  created_at: 2009-04-07 16:44:50.11294
+revisions_167: 
+  updated_at: 2009-04-07 16:45:04.000716
   created_by: "1"
-  card_id: "117"
-  id: "1270"
+  card_id: "210"
+  id: "1802"
   content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_080: 
-  updated_at: 2009-03-31 23:02:42.398851
+  created_at: 2009-04-07 16:45:04.000716
+revisions_139: 
+  updated_at: 2009-04-07 16:45:00.902531
+  created_by: "1"
+  card_id: "182"
+  id: "1774"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <h1>Accounts with the {{_self|name}} role<br></h1>
+    <blockquote>
+    <p>{{+*users}}</p>
+    </blockquote>
+  created_at: 2009-04-07 16:45:00.902531
+revisions_025: 
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
   card_id: "7"
   id: "1701"
@@ -239,168 +269,125 @@ revisions_080:
     <p>&nbsp;</p>
     <h1>Roles</h1>
     <p>{{+*instances}}</p>
-  created_at: 2009-03-31 23:02:42.398851
-revisions_052: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "64"
-  id: "66"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_167: 
-  updated_at: 2009-03-31 23:02:57.127679
-  created_by: "1"
-  card_id: "210"
-  id: "1791"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <h2>{{_self|name}} Cards</h2>
-    <blockquote>
-    <p>{{+*instances}}</p>
-    </blockquote>
-  created_at: 2009-03-31 23:02:57.127679
-revisions_139: 
-  updated_at: 2009-03-31 23:02:52.971289
-  created_by: "1"
-  card_id: "182"
-  id: "1763"
-  content: Theta
-  created_at: 2009-03-31 23:02:52.971289
-revisions_025: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "91"
-  id: "1573"
-  content: "off"
-  created_at: 2009-03-31 23:02:42.398851
+  created_at: 2009-04-07 16:44:50.11294
 revisions_081: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "4"
-  id: "4"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
+  card_id: "114"
+  id: "1631"
+  content: |-
+    <h1>Links</h1>
+    <p><em>Cards that <strong>{{_left|name}}</strong> links to:</em></p>
+    <blockquote>
+    <p>{{_left+links}}</p>
+    </blockquote>
+    <p><em>Cards that link to <strong>{{_left|name}}</strong>:</em></p>
+    <blockquote>
+    <p>{{_left+linkers}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h1>Inclusions</h1>
+    <p><em>Cards that <strong>{{_left|name}}</strong> includes:</em></p>
+    <blockquote>
+    <p>{{_left+inclusions}}</p>
+    </blockquote>
+    <p><em>Cards that include <strong>{{_left|name}}</strong>:</em></p>
+    <blockquote>
+    <p>{{_left+includers}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+  created_at: 2009-04-07 16:44:50.11294
 revisions_053: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "129"
-  id: "1408"
+  card_id: "117"
+  id: "1270"
   content: ""
-  created_at: 2009-03-31 23:02:42.398851
+  created_at: 2009-04-07 16:44:50.11294
 revisions_168: 
-  updated_at: 2009-03-31 23:02:57.249932
+  updated_at: 2009-04-07 16:45:04.045041
   created_by: "1"
   card_id: "211"
-  id: "1792"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <h2>{{_self|name}} Cards</h2>
-    <blockquote>
-    <p>{{+*instances}}</p>
-    </blockquote>
-  created_at: 2009-03-31 23:02:57.249932
-revisions_026: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "19"
-  id: "19"
+  id: "1803"
   content: ""
-  created_at: 2009-03-31 23:02:42.398851
+  created_at: 2009-04-07 16:45:04.045041
+revisions_026: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "137"
+  id: "1521"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
 revisions_082: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "100"
-  id: "1119"
+  card_id: "95"
+  id: "352"
   content: |-
-    <p>[[/account/invite|Invite a new user]]</p>
-    <p>&nbsp;</p>
-    <p>{{Cards with accounts|titled}}</p>
-  created_at: 2009-03-31 23:02:42.398851
+    {"edited_by": "_self",
+     "view": "change"}
+  created_at: 2009-04-07 16:44:50.11294
 revisions_054: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "69"
-  id: "958"
-  content: <p>Thank you for signing up with {{*title}}. Your new account information is on it's way to your emailbox now and should be there soon.</p>
-  created_at: 2009-03-31 23:02:42.398851
+  card_id: "52"
+  id: "52"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
 revisions_169: 
-  updated_at: 2009-03-31 23:02:57.387268
+  updated_at: 2009-04-07 16:45:04.139361
   created_by: "1"
   card_id: "212"
-  id: "1793"
-  content: basiccontent
-  created_at: 2009-03-31 23:02:57.387268
+  id: "1804"
+  content: ""
+  created_at: 2009-04-07 16:45:04.139361
 revisions_083: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "81"
-  id: "247"
-  content: |-
-    <p>&nbsp;</p>
-    <p>{{Menu|open}}</p>
-    <p>&nbsp;</p>
-    <p>{{Administrator links|open}}</p>
-  created_at: 2009-03-31 23:02:42.398851
+  card_id: "77"
+  id: "113"
+  content: Home
+  created_at: 2009-04-07 16:44:50.11294
 revisions_055: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "128"
-  id: "1407"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
+  card_id: "108"
+  id: "963"
+  content: wagn/Request_Sent
+  created_at: 2009-04-07 16:44:50.11294
 revisions_110: 
-  updated_at: 2009-03-31 23:02:49.795417
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "153"
-  id: "1734"
-  content: I got no account
-  created_at: 2009-03-31 23:02:49.795417
+  card_id: "144"
+  id: "1690"
+  content: "[[users]]"
+  created_at: 2009-04-07 16:44:50.11294
 revisions_027: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "49"
-  id: "49"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
+  card_id: "116"
+  id: "1572"
+  content: |-
+    <p>{{+tags|closed}}</p>
+    <p>&nbsp;</p>
+    <p>{{_left+*editors|closed}}</p>
+    <p>&nbsp;</p>
+    <p>{{+discussion|open}}</p>
+    <blockquote>
+    <p>&nbsp;</p>
+    </blockquote>
+  created_at: 2009-04-07 16:44:50.11294
 revisions_084: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "40"
-  id: "40"
-  content: "{\"link_to\":\"_self\"}"
-  created_at: 2009-03-31 23:02:42.398851
+  card_id: "83"
+  id: "978"
+  content: |-
+    <p>Contents will appear on right sidebar.</p>
+    <p>&nbsp;</p>
+  created_at: 2009-04-07 16:44:50.11294
 revisions_056: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "34"
-  id: "34"
-  content: "{\"part\":\"_self\"}"
-  created_at: 2009-03-31 23:02:42.398851
-revisions_111: 
-  updated_at: 2009-03-31 23:02:49.878678
-  created_by: "1"
-  card_id: "154"
-  id: "1735"
-  content: ""
-  created_at: 2009-03-31 23:02:49.878678
-revisions_028: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "98"
-  id: "355"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_140: 
-  updated_at: 2009-03-31 23:02:53.184738
-  created_by: "1"
-  card_id: "183"
-  id: "1764"
-  content: "[[A]] [[A+B]] [[T]]"
-  created_at: 2009-03-31 23:02:53.184738
-revisions_085: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
   card_id: "127"
   id: "1454"
@@ -455,37 +442,219 @@ revisions_085:
     <p>{{*logo|float:right}}{{DeleteMe|open}}</p>
     <p>&nbsp;</p>
     <p>{{*logo|float:left}}{{DeleteMe|closed}}</p>
-  created_at: 2009-03-31 23:02:42.398851
-revisions_057: 
-  updated_at: 2009-03-31 23:02:42.398851
+  created_at: 2009-04-07 16:44:50.11294
+revisions_111: 
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "62"
-  id: "98"
-  content: wagn/Invite_Success
-  created_at: 2009-03-31 23:02:42.398851
+  card_id: "51"
+  id: "51"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_028: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "22"
+  id: "22"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_140: 
+  updated_at: 2009-04-07 16:45:01.215645
+  created_by: "1"
+  card_id: "183"
+  id: "1775"
+  content: ""
+  created_at: 2009-04-07 16:45:01.215645
+revisions_085: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "89"
+  id: "311"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_057: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "44"
+  id: "44"
+  content: "{\"linked_to_by\":\"_self\"}"
+  created_at: 2009-04-07 16:44:50.11294
 revisions_112: 
-  updated_at: 2009-03-31 23:02:49.957091
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
   card_id: "155"
-  id: "1736"
+  id: "1747"
   content: ""
-  created_at: 2009-03-31 23:02:49.957091
+  created_at: 2009-04-07 16:44:50.11294
 revisions_029: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "120"
-  id: "1275"
-  content: "[[type]]"
-  created_at: 2009-03-31 23:02:42.398851
+  card_id: "33"
+  id: "33"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
 revisions_141: 
-  updated_at: 2009-03-31 23:02:53.28018
+  updated_at: 2009-04-07 16:45:01.329918
   created_by: "1"
   card_id: "184"
-  id: "1765"
-  content: "{{B}} {{A+B}} {{A}} {{T}}"
-  created_at: 2009-03-31 23:02:53.28018
+  id: "1776"
+  content: ""
+  created_at: 2009-04-07 16:45:01.329918
 revisions_086: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "20"
+  id: "20"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_058: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "131"
+  id: "1410"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_113: 
+  updated_at: 2009-04-07 16:44:57.961612
+  created_by: "1"
+  card_id: "156"
+  id: "1748"
+  content: I'm number two
+  created_at: 2009-04-07 16:44:57.961612
+revisions_170: 
+  updated_at: 2009-04-07 16:45:04.232947
+  created_by: "1"
+  card_id: "213"
+  id: "1805"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <h2>{{_self|name}} Cards</h2>
+    <blockquote>
+    <p>{{+*instances}}</p>
+    </blockquote>
+  created_at: 2009-04-07 16:45:04.232947
+revisions_142: 
+  updated_at: 2009-04-07 16:45:01.550206
+  created_by: "1"
+  card_id: "185"
+  id: "1777"
+  content: ""
+  created_at: 2009-04-07 16:45:01.550206
+revisions_087: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "152"
+  id: "1741"
+  content: |-
+    <p><strong><em><span>Cards and [[images]] in this Wagn are copied to new Wagns</span></em>. Exceptions should be added here:</strong></p>
+    <p>{{*ignore|closed}}</p>
+    <p>&nbsp;</p>
+    <p><strong>This one updates automatically:</strong></p>
+    <p>{{cards to copy to new Wagns|closed}}</p>
+    <p>&nbsp;</p>
+    <h1>What comprises those cards</h1>
+    <p>(There may be some duplicates, and you can ignore exceptions such as the Ethan, Lewis &amp; John cards.)</p>
+    <p>&nbsp;</p>
+    <h2>Account-related</h2>
+    <blockquote>
+    <p>[[*account]]</p>
+    <p>{{Role+*instances|closed}}</p>
+    <p>{{User+*instances|closed}}</p>
+    <p>[[*to]], [[*from]], [[*thanks]], [[Invite Success]], [[Signup Success]], [[Request Sent]]<br> {{*thanks+*plus cards|closed}}</p>
+    </blockquote>
+    <h2>Cardtypes and forms</h2>
+    <blockquote>
+    <p>{{Cardtype+*instances|closed}}</p>
+    <p>[[*tform]], [[*rform]]</p>
+    <p>{{*tform+*plus cards|closed}}</p>
+    <p>{{*rform+*plus cards|closed}}</p>
+    <p>(if any are deleted, you'll probably want to delete the left part as well)</p>
+    </blockquote>
+    <h2>Config and help text</h2>
+    <blockquote>
+    <p>[[Config]]</p>
+    <p>{{Config+inclusions|closed}}</p>
+    <p>{{*sidebar+inclusions|closed}}</p>
+    <p>[[*edit]]</p>
+    <p>{{*edit+*plus cards|closed}}</p>
+    </blockquote>
+    <h2>Related tab</h2>
+    <p>(Note that in these +*rform cards, _left returns the name of the card on which one is viewing the Related tab.)</p>
+    <p>&nbsp;</p>
+    <p>Available on every card, because they're in [[*context]]:</p>
+    <blockquote>
+    <p>{{universal Related tabs}}</p>
+    </blockquote>
+    <p>Available on [[Pointers]] (item), [[Cardtypes]] (type), and cards with an account extension (typically, [[User]] cards &mdash; Role). Because they're in [[*context+*plus cards]]:</p>
+    <blockquote>
+    <p>{{custom Related tabs}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <hr>
+    <p>&nbsp;</p>
+    <h1>Process</h1>
+    <ol>
+    <li>Everything that can be done within cards is happening here. Just do things, and watch what each other are doing on Recent, and there's space for discussion at the bottom of this page.</li>
+    <li>Everything that involves code is on [[http://wagn.org/wagn/implement_initial_setup_for_new_Wagn|the relevant ticket on wagn.org]] (everything there that was doable in cards has been done, or copied here).</li>
+    <li>Things that probably need work before the 1.0 launch are <strong>bold</strong>.</li>
+    </ol>
+    <p>&nbsp;</p>
+    <p>A lot of work happens on <strong>[[Config]]</strong>.</p>
+    <p>&nbsp;</p>
+    <p><strong>[[http://wagn.org/wagn/configuration|configuration]]</strong> needs work to reflect changes.</p>
+    <p>&nbsp;</p>
+    <p><strong>delete [[Setting]], [[Currency]], [[Percentage]], [[RichText]]</strong> - waiting on http://wagn.org/wagn/Can_t_remove_or_change_Cardtype_of_Cardtype_cards</p>
+    <p>&nbsp;</p>
+    <p><strong>[[Cardtype+*tform]] (when pretty stable, copy/adapt to other [[cardtypes]])</strong></p>
+    <p>&nbsp;</p>
+    <p><strong>[[Signup Success]], [[Invite Success]], [[Request Sent]]</strong> - fuller explanation?</p>
+    <p>&nbsp;</p>
+    <p>Documentation:</p>
+    <p>more links on [[Config]]</p>
+    <p>more +*edit on cardtypes?</p>
+    <p>??</p>
+    <p>&nbsp;</p>
+    <p>[[*logo]] - make sure re licensing</p>
+    <p>[[Home]] - link to /admin/setup and more welcome/explanatory text, ??</p>
+    <p>[[*css]] - useful comments; template content?</p>
+    <p>&nbsp;</p>
+    <p>Viewable only by Administrator:</p>
+    <p>[[Account Request+*tform]]</p>
+    <p>[[Administrator links]]</p>
+    <p>&nbsp;</p>
+    <p>Editable only by Administrator:</p>
+    <p>[[*context]]</p>
+    <p>[[*to]]</p>
+    <p>[[*from]]</p>
+    <p>?</p>
+    <p>&nbsp;</p>
+    <h2>Ongoing work<br></h2>
+    <p>Update http://wagn.org/wagn/star_cards</p>
+    <p>When documenting tickets that relate to [[http://wagn.org/wagn/Installation+tickets_for_item|installation]] or [[http://wagn.org/wagn/administration+tickets_for_item|administration]], make sure to update [[Config]].</p>
+    <p>Take a look at http://wagn.org/wagn/cards_to_include_by_default once in a while</p>
+    <p>&nbsp;</p>
+    <h1>Discussion<br></h1>
+    <hr>
+    <p>[[*instances+*rform]] is in default, last-edited order. Sort alpha?</p>
+    <p><em>&nbsp;&nbsp;--[[John Abbe]].....Mon Mar 02 08:10:02 -0800 2009</em></p>
+    <hr>
+    <p>I did a bunch of work on this today.  My focal points were:</p>
+    <ul>
+    <li>getting rid of text. I think we want as little text as possible in this thing, because every line of text is something that could later prove wrong or awkward, and it will be hard to update. I'd much rather link off to wagn.org (though I would hope that most users could avoid having to use much documentation).</li>
+    <li>trimming blank cards where possible. John and I may want to discuss. Before we wanted a lot of those blank cards there to have the right default type, but I'm now kind of inclined to take them off and let the default setting handle it.</li>
+    <li>I moved a lot of the (much trimmed) signup information into *signup, *request, and *invite. The paragraphs there seemed like overkill to me. I'd like to do even less.</li>
+    </ul>
+    <p><br>I took off the [[All cards]] card (for now) because the wql is rough, the name is confusing, and the use case is very fuzzy to me.<br><br>I'd like to propose removing Script and Ruby cards from the default setup.<br><br>I'm also seriously considering reopening the "redirect" card conversation, which might be really useful for handling the *thanks and *home cards more coherently (they're essentially redirects).<br><br>I left out the success cards for now thinking a good solution for how to include them might come out of the redirect conversation. If not they'll need to be more accessible from Config.<br><br>I can also see adding a link to documentation about open-edit wagns to the bottom of the Account Basics section on the Config card, but I wouldn't want those instructions inline, since that may be changing in a hurry.</p>
+    <p><em>&nbsp;&nbsp;--[[Ethan McCutchen]].....Fri Mar 13 14:18:52 -0700 2009</em></p>
+    <hr>
+    <p>I delete *google analytics keys and almost all of the email related cards.</p>
+    <p><em>&nbsp;&nbsp;--[[Ethan McCutchen]].....Fri Mar 13 18:49:13 -0700 2009</em></p>
+    <hr>
+    <p>I'd like to see us start working on the new Related Tab here this week.</p>
+    <p><em>&nbsp;&nbsp;--[[Ethan McCutchen]].....Fri Mar 13 18:59:12 -0700 2009</em></p>
+  created_at: 2009-04-07 16:44:50.11294
+revisions_059: 
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
   card_id: "105"
   id: "1703"
@@ -496,926 +665,50 @@ revisions_086:
     <blockquote>
     <p>{{+*users}}</p>
     </blockquote>
-  created_at: 2009-03-31 23:02:42.398851
-revisions_058: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "68"
-  id: "961"
-  content: <p>Your invitation is on its way to their emailbox now.</p>
-  created_at: 2009-03-31 23:02:42.398851
-revisions_113: 
-  updated_at: 2009-03-31 23:02:50.053986
-  created_by: "1"
-  card_id: "156"
-  id: "1737"
-  content: ""
-  created_at: 2009-03-31 23:02:50.053986
-revisions_170: 
-  updated_at: 2009-03-31 23:02:57.626437
-  created_by: "1"
-  card_id: "213"
-  id: "1794"
-  content: type_a_content
-  created_at: 2009-03-31 23:02:57.626437
-revisions_142: 
-  updated_at: 2009-03-31 23:02:53.380431
-  created_by: "1"
-  card_id: "185"
-  id: "1766"
-  content: AlphaBeta
-  created_at: 2009-03-31 23:02:53.380431
-revisions_087: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "41"
-  id: "41"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_059: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "130"
-  id: "1409"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
+  created_at: 2009-04-07 16:44:50.11294
 revisions_114: 
-  updated_at: 2009-03-31 23:02:50.15891
+  updated_at: 2009-04-07 16:44:58.065679
   created_by: "1"
   card_id: "157"
-  id: "1738"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <h1>Accounts with the {{_self|name}} role<br></h1>
-    <blockquote>
-    <p>{{+*users}}</p>
-    </blockquote>
-  created_at: 2009-03-31 23:02:50.15891
+  id: "1749"
+  content: ""
+  created_at: 2009-04-07 16:44:58.065679
 revisions_171: 
-  updated_at: 2009-03-31 23:02:57.719971
+  updated_at: 2009-04-07 16:45:04.351821
   created_by: "1"
   card_id: "214"
-  id: "1795"
-  content: type_b_content
-  created_at: 2009-03-31 23:02:57.719971
+  id: "1806"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <h2>{{_self|name}} Cards</h2>
+    <blockquote>
+    <p>{{+*instances}}</p>
+    </blockquote>
+  created_at: 2009-04-07 16:45:04.351821
 revisions_143: 
-  updated_at: 2009-03-31 23:02:53.558017
+  updated_at: 2009-04-07 16:45:01.64562
   created_by: "1"
   card_id: "186"
-  id: "1767"
-  content: ""
-  created_at: 2009-03-31 23:02:53.558017
+  id: "1778"
+  content: I'm here to be referenced to
+  created_at: 2009-04-07 16:45:01.64562
 revisions_115: 
-  updated_at: 2009-03-31 23:02:50.311402
+  updated_at: 2009-04-07 16:44:58.234193
   created_by: "1"
   card_id: "158"
-  id: "1739"
-  content: ""
-  created_at: 2009-03-31 23:02:50.311402
-revisions_088: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "8"
-  id: "8"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_001: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "55"
-  id: "1729"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_172: 
-  updated_at: 2009-03-31 23:02:57.810376
-  created_by: "1"
-  card_id: "215"
-  id: "1796"
-  content: type_c_content
-  created_at: 2009-03-31 23:02:57.810376
-revisions_144: 
-  updated_at: 2009-03-31 23:02:53.637676
-  created_by: "1"
-  card_id: "187"
-  id: "1768"
-  content: ""
-  created_at: 2009-03-31 23:02:53.637676
-revisions_116: 
-  updated_at: 2009-03-31 23:02:50.406251
-  created_by: "1"
-  card_id: "159"
-  id: "1740"
-  content: ""
-  created_at: 2009-03-31 23:02:50.406251
-revisions_089: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "56"
-  id: "1172"
-  content: |-
-    <p><em>Any signed-in user with the [[/admin/tasks|global permission]] to "create accounts" can invite new users via email.</em></p>
-    <p>&nbsp;</p>
-    <h2>Default subject</h2>
-    <blockquote>
-    <p>{{+*subject|type:Phrase}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h2>Default message</h2>
-    <blockquote>
-    <p>{{+*message|type:PlainText}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <p><strong>After sending an invitation, you're taken here:</strong><span><strong></strong></span></p>
-    <blockquote>
-    <p>&nbsp; <span>HTTP:// <em>(YOUR WAGN'S DOMAIN)</em></span><em> </em>/{{+*thanks}}</p>
-    </blockquote>
-  created_at: 2009-03-31 23:02:42.398851
-revisions_002: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "12"
-  id: "12"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_030: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "114"
-  id: "1631"
-  content: |-
-    <h1>Links</h1>
-    <p><em>Cards that <strong>{{_left|name}}</strong> links to:</em></p>
-    <blockquote>
-    <p>{{_left+links}}</p>
-    </blockquote>
-    <p><em>Cards that link to <strong>{{_left|name}}</strong>:</em></p>
-    <blockquote>
-    <p>{{_left+linkers}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h1>Inclusions</h1>
-    <p><em>Cards that <strong>{{_left|name}}</strong> includes:</em></p>
-    <blockquote>
-    <p>{{_left+inclusions}}</p>
-    </blockquote>
-    <p><em>Cards that include <strong>{{_left|name}}</strong>:</em></p>
-    <blockquote>
-    <p>{{_left+includers}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-  created_at: 2009-03-31 23:02:42.398851
-revisions_173: 
-  updated_at: 2009-03-31 23:02:57.915857
-  created_by: "1"
-  card_id: "216"
-  id: "1797"
-  content: type_d_content
-  created_at: 2009-03-31 23:02:57.915857
-revisions_145: 
-  updated_at: 2009-03-31 23:02:53.683843
-  created_by: "1"
-  card_id: "188"
-  id: "1769"
-  content: ""
-  created_at: 2009-03-31 23:02:53.683843
-revisions_117: 
-  updated_at: 2009-03-31 23:02:50.505892
-  created_by: "1"
-  card_id: "160"
-  id: "1741"
-  content: ""
-  created_at: 2009-03-31 23:02:50.505892
-revisions_003: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "44"
-  id: "44"
-  content: "{\"linked_to_by\":\"_self\"}"
-  created_at: 2009-03-31 23:02:42.398851
-revisions_031: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "20"
-  id: "20"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_174: 
-  updated_at: 2009-03-31 23:02:58.01203
-  created_by: "1"
-  card_id: "217"
-  id: "1798"
-  content: type_e_content
-  created_at: 2009-03-31 23:02:58.01203
-revisions_146: 
-  updated_at: 2009-03-31 23:02:53.765476
-  created_by: "1"
-  card_id: "189"
-  id: "1770"
-  content: ""
-  created_at: 2009-03-31 23:02:53.765476
-revisions_118: 
-  updated_at: 2009-03-31 23:02:50.608288
-  created_by: "1"
-  card_id: "161"
-  id: "1742"
-  content: ""
-  created_at: 2009-03-31 23:02:50.608288
-revisions_004: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "113"
-  id: "1242"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_060: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "109"
-  id: "959"
-  content: <p>Thank you for signing up with {{*title}}. Someone will receive your request for an account and approve it as soon as possible.</p>
-  created_at: 2009-03-31 23:02:42.398851
-revisions_032: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "50"
-  id: "50"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_175: 
-  updated_at: 2009-03-31 23:02:58.128694
-  created_by: "1"
-  card_id: "218"
-  id: "1799"
-  content: type_f_content
-  created_at: 2009-03-31 23:02:58.128694
-revisions_147: 
-  updated_at: 2009-03-31 23:02:53.813828
-  created_by: "1"
-  card_id: "190"
-  id: "1771"
-  content: ""
-  created_at: 2009-03-31 23:02:53.813828
-revisions_119: 
-  updated_at: 2009-03-31 23:02:50.712276
-  created_by: "1"
-  card_id: "162"
-  id: "1743"
-  content: ""
-  created_at: 2009-03-31 23:02:50.712276
-revisions_005: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "92"
-  id: "349"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_061: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "35"
-  id: "35"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_033: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "101"
-  id: "486"
-  content: "{\"extension_type\": \"User\"}"
-  created_at: 2009-03-31 23:02:42.398851
-revisions_176: 
-  updated_at: 2009-03-31 23:02:58.241228
-  created_by: "1"
-  card_id: "219"
-  id: "1800"
-  content: first
-  created_at: 2009-03-31 23:02:58.241228
-revisions_148: 
-  updated_at: 2009-03-31 23:02:54.01825
-  created_by: "1"
-  card_id: "191"
-  id: "1772"
-  content: ""
-  created_at: 2009-03-31 23:02:54.01825
-revisions_090: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "86"
-  id: "266"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_062: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "77"
-  id: "113"
-  content: Home
-  created_at: 2009-03-31 23:02:42.398851
-revisions_034: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "121"
-  id: "1276"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_006: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "119"
-  id: "1551"
-  content: |-
-    <h1>{{_left|name}}'s roles<br></h1>
-    <blockquote>
-    <p>{{_left+*roles|item:link}}</p>
-    </blockquote>
-    <h1>Cards {{_left|name}} has edited</h1>
-    <blockquote>
-    <p>{{_left +*editing}}</p>
-    </blockquote>
-  created_at: 2009-03-31 23:02:42.398851
-revisions_177: 
-  updated_at: 2009-03-31 23:02:58.325905
-  created_by: "1"
-  card_id: "219"
-  id: "1801"
-  content: second
-  created_at: 2009-03-31 23:02:58.325905
-revisions_149: 
-  updated_at: 2009-03-31 23:02:54.073248
-  created_by: "1"
-  card_id: "192"
-  id: "1773"
-  content: ""
-  created_at: 2009-03-31 23:02:54.073248
-revisions_063: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "67"
-  id: "100"
-  content: wagn/Signup_Success
-  created_at: 2009-03-31 23:02:42.398851
-revisions_035: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "144"
-  id: "1690"
-  content: "[[users]]"
-  created_at: 2009-03-31 23:02:42.398851
-revisions_007: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "110"
-  id: "1225"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_091: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "135"
-  id: "1455"
-  content: <p>{{DeleteMe|open}}</p>
-  created_at: 2009-03-31 23:02:42.398851
-revisions_178: 
-  updated_at: 2009-03-31 23:02:58.407359
-  created_by: "1"
-  card_id: "219"
-  id: "1802"
-  content: third
-  created_at: 2009-03-31 23:02:58.407359
-revisions_064: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "108"
-  id: "963"
-  content: wagn/Request_Sent
-  created_at: 2009-03-31 23:02:42.398851
-revisions_036: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "51"
-  id: "51"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_008: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "13"
-  id: "13"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_092: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "118"
-  id: "1710"
-  content: "[[account]]"
-  created_at: 2009-03-31 23:02:42.398851
-revisions_179: 
-  updated_at: 2009-03-31 23:02:58.509821
-  created_by: "1"
-  card_id: "220"
-  id: "1803"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <h2>{{_self|name}} Cards</h2>
-    <blockquote>
-    <p>{{+*instances}}</p>
-    </blockquote>
-  created_at: 2009-03-31 23:02:58.509821
-revisions_120: 
-  updated_at: 2009-03-31 23:02:50.902326
-  created_by: "1"
-  card_id: "163"
-  id: "1744"
-  content: ""
-  created_at: 2009-03-31 23:02:50.902326
-revisions_065: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "131"
-  id: "1410"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_037: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "103"
-  id: "500"
-  content: "*favicon.ico"
-  created_at: 2009-03-31 23:02:42.398851
-revisions_009: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "45"
-  id: "45"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_093: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "87"
-  id: "267"
-  content: "{}"
-  created_at: 2009-03-31 23:02:42.398851
-revisions_121: 
-  updated_at: 2009-03-31 23:02:50.992172
-  created_by: "1"
-  card_id: "164"
-  id: "1745"
-  content: ""
-  created_at: 2009-03-31 23:02:50.992172
-revisions_066: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "80"
-  id: "973"
-  content: |-
-    <h1>Welcome to your new Wagn!</h1>
-    <p>&nbsp;</p>
-    <p>To get started, [[Config|set some important configuration options]].</p>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <h2>Reference</h2>
-    <p>&nbsp;</p>
-    <p>[[http://wagn.org/wagn/configuration|Wagn Configuration]]</p>
-    <p>[[http://wagn.org/wagn/Documentation|Wagn Documentation]]</p>
-  created_at: 2009-03-31 23:02:42.398851
-revisions_038: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "123"
-  id: "1283"
-  content: "[[items]]"
-  created_at: 2009-03-31 23:02:42.398851
-revisions_094: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "42"
-  id: "42"
-  content: "{\"included_by\":\"_self\"}"
-  created_at: 2009-03-31 23:02:42.398851
-revisions_150: 
-  updated_at: 2009-03-31 23:02:54.165901
-  created_by: "1"
-  card_id: "193"
-  id: "1774"
-  content: ""
-  created_at: 2009-03-31 23:02:54.165901
-revisions_122: 
-  updated_at: 2009-03-31 23:02:51.084915
-  created_by: "1"
-  card_id: "165"
-  id: "1746"
-  content: ""
-  created_at: 2009-03-31 23:02:51.084915
-revisions_067: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "53"
-  id: "187"
-  content: |
-    width: '100%',
-    auto_resize : true,
-    relative_urls: false,
-    theme : "advanced",
-    theme_advanced_buttons1 : "formatselect,bold,italic,strikethrough,"
-    + "separator,blockquote,bullist,numlist,hr,separator,undo,redo,"
-    + "code",                         
-    theme_advanced_buttons2 : "",                         
-    theme_advanced_buttons3 : "",                         
-    theme_advanced_path : false,                         
-    theme_advanced_toolbar_location : "top",  
-    theme_advanced_toolbar_align : "left", 
-    theme_advanced_resizing : true,
-    theme_advanced_resize_horizontal : false,                      
-    theme_advanced_statusbar_location : "bottom",
-    theme_advanced_blockformats : "p,h1,h2",
-    content_css : '/stylesheets/defaults.css',
-    extended_valid_elements : "a[name|href|target|title|onclick],"
-    + "img[class|src|border=0|alt|title|hspace|vspace|width|height|"
-    + "align|onmouseover|onmouseout|name],hr[class|width|size|noshade],"
-    + "font[face|size|color|style],span[class|align|style]"          
-
-  created_at: 2009-03-31 23:02:42.398851
-revisions_039: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "145"
-  id: "1694"
-  content: |-
-    <h1>Accounts with the {{_left|name}} role<br></h1>
-    <blockquote>
-    <p>{{_left+*users}}</p>
-    </blockquote>
-  created_at: 2009-03-31 23:02:42.398851
-revisions_095: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "9"
-  id: "9"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_151: 
-  updated_at: 2009-03-31 23:02:54.308624
-  created_by: "1"
-  card_id: "194"
-  id: "1775"
-  content: ""
-  created_at: 2009-03-31 23:02:54.308624
-revisions_123: 
-  updated_at: 2009-03-31 23:02:51.172425
-  created_by: "1"
-  card_id: "166"
-  id: "1747"
-  content: ""
-  created_at: 2009-03-31 23:02:51.172425
-revisions_068: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "36"
-  id: "36"
-  content: "{\"plus\":\"_self\"}"
-  created_at: 2009-03-31 23:02:42.398851
-revisions_096: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "66"
-  id: "1176"
-  content: |-
-    <p>To let users sign up (with no approval process), [[*request|turn on account requests]], and give "Anybody" the [[/admin/tasks | global permission]] to create accounts.&nbsp; Newly registered users will be sent an email with a password and the following details:</p>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <h2>Email Subject.<br></h2>
-    <blockquote>
-    <p>{{*signup+*subject|type:Phrase}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h2>Email Message</h2>
-    <blockquote>
-    <p>{{*signup+*message|closed;type:PlainText}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <p>As the email is sent, the<strong> person signing up will be sent here</strong>:</p>
-    <blockquote>
-    <p><span>HTTP:// <em>(YOUR WAGN'S DOMAIN)</em></span><em> </em>/{{+*thanks}}</p>
-    </blockquote>
-  created_at: 2009-03-31 23:02:42.398851
-revisions_180: 
-  updated_at: 2009-03-31 23:02:58.664086
-  created_by: "1"
-  card_id: "221"
-  id: "1804"
-  content: "{{+name}} {{+age}} {{+description}}"
-  created_at: 2009-03-31 23:02:58.664086
-revisions_152: 
-  updated_at: 2009-03-31 23:02:54.430938
-  created_by: "1"
-  card_id: "195"
-  id: "1776"
-  content: ""
-  created_at: 2009-03-31 23:02:54.430938
-revisions_124: 
-  updated_at: 2009-03-31 23:02:51.266498
-  created_by: "1"
-  card_id: "167"
-  id: "1748"
-  content: ""
-  created_at: 2009-03-31 23:02:51.266498
-revisions_097: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "137"
-  id: "1521"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_010: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "95"
-  id: "352"
-  content: |-
-    {"edited_by": "_self",
-     "view": "change"}
-  created_at: 2009-03-31 23:02:42.398851
-revisions_069: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "37"
-  id: "37"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_181: 
-  updated_at: 2009-03-31 23:02:58.923484
-  created_by: "3"
-  card_id: "222"
-  id: "1805"
-  content: test
-  created_at: 2009-03-31 23:02:58.923484
-revisions_153: 
-  updated_at: 2009-03-31 23:02:54.477762
-  created_by: "1"
-  card_id: "196"
-  id: "1777"
-  content: ""
-  created_at: 2009-03-31 23:02:54.477762
-revisions_125: 
-  updated_at: 2009-03-31 23:02:51.37692
-  created_by: "1"
-  card_id: "168"
-  id: "1749"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <h2>{{_self|name}} Cards</h2>
-    <blockquote>
-    <p>{{+*instances}}</p>
-    </blockquote>
-  created_at: 2009-03-31 23:02:51.37692
-revisions_098: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "148"
-  id: "1711"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_011: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "115"
-  id: "1253"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_182: 
-  updated_at: 2009-03-31 23:02:59.021457
-  created_by: "3"
-  card_id: "223"
-  id: "1806"
-  content: test
-  created_at: 2009-03-31 23:02:59.021457
-revisions_154: 
-  updated_at: 2009-03-31 23:02:54.606129
-  created_by: "1"
-  card_id: "197"
-  id: "1778"
-  content: ""
-  created_at: 2009-03-31 23:02:54.606129
-revisions_126: 
-  updated_at: 2009-03-31 23:02:51.516838
-  created_by: "1"
-  card_id: "169"
   id: "1750"
   content: ""
-  created_at: 2009-03-31 23:02:51.516838
-revisions_040: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "22"
-  id: "22"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_099: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "89"
-  id: "311"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_012: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "93"
-  id: "350"
-  content: "{\"edited\": \"_self\"} "
-  created_at: 2009-03-31 23:02:42.398851
-revisions_183: 
-  updated_at: 2009-03-31 23:02:59.112611
-  created_by: "1"
-  card_id: "224"
-  id: "1807"
-  content: test
-  created_at: 2009-03-31 23:02:59.112611
-revisions_155: 
-  updated_at: 2009-03-31 23:02:54.652495
-  created_by: "1"
-  card_id: "198"
-  id: "1779"
-  content: ""
-  created_at: 2009-03-31 23:02:54.652495
-revisions_127: 
-  updated_at: 2009-03-31 23:02:51.606668
-  created_by: "1"
-  card_id: "170"
-  id: "1751"
-  content: ""
-  created_at: 2009-03-31 23:02:51.606668
-revisions_041: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "99"
-  id: "562"
-  content: "{\"member_of\": \"_self\", \"sort\":\"alpha\"}"
-  created_at: 2009-03-31 23:02:42.398851
-revisions_013: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "125"
-  id: "1563"
-  content: |-
-    <p>Adding a +*options Search card to a Pointer limits the auto-completion to the cards returned by the Search. And if it's a simple search for a cardtype, then cards created through the pointer will automatically be set to that type.</p>
-    <p>&nbsp;</p>
-    <p>{{_left+*options}}</p>
-  created_at: 2009-03-31 23:02:42.398851
-revisions_156: 
-  updated_at: 2009-03-31 23:02:54.781
-  created_by: "1"
-  card_id: "199"
-  id: "1780"
-  content: ""
-  created_at: 2009-03-31 23:02:54.781
-revisions_128: 
-  updated_at: 2009-03-31 23:02:51.696609
-  created_by: "1"
-  card_id: "171"
-  id: "1752"
-  content: ""
-  created_at: 2009-03-31 23:02:51.696609
-revisions_042: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "124"
-  id: "1284"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_014: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "15"
-  id: "15"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_070: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "88"
-  id: "1428"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <h2>{{_self|name}} Cards</h2>
-    <blockquote>
-    <p>{{+*instances}}</p>
-    </blockquote>
-  created_at: 2009-03-31 23:02:42.398851
-revisions_157: 
-  updated_at: 2009-03-31 23:02:54.826956
-  created_by: "1"
-  card_id: "200"
-  id: "1781"
-  content: ""
-  created_at: 2009-03-31 23:02:54.826956
-revisions_129: 
-  updated_at: 2009-03-31 23:02:51.789657
-  created_by: "1"
-  card_id: "172"
-  id: "1753"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <h1>Accounts with the {{_self|name}} role<br></h1>
-    <blockquote>
-    <p>{{+*users}}</p>
-    </blockquote>
-  created_at: 2009-03-31 23:02:51.789657
-revisions_043: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "146"
-  id: "1696"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_015: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "47"
-  id: "47"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_071: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "83"
-  id: "978"
-  content: |-
-    <p>Contents will appear on right sidebar.</p>
-    <p>&nbsp;</p>
-  created_at: 2009-03-31 23:02:42.398851
-revisions_158: 
-  updated_at: 2009-03-31 23:02:54.923763
-  created_by: "1"
-  card_id: "201"
-  id: "1782"
-  content: ""
-  created_at: 2009-03-31 23:02:54.923763
-revisions_044: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "28"
-  id: "28"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_016: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "46"
-  id: "46"
-  content: "{\"type\":\"_self\"}"
-  created_at: 2009-03-31 23:02:42.398851
-revisions_072: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "79"
-  id: "234"
-  content: "*logo.jpg"
-  created_at: 2009-03-31 23:02:42.398851
-revisions_159: 
-  updated_at: 2009-03-31 23:02:55.022537
-  created_by: "1"
-  card_id: "202"
-  id: "1783"
-  content: ""
-  created_at: 2009-03-31 23:02:55.022537
-revisions_045: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "52"
-  id: "52"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_100: 
-  updated_at: 2009-03-31 23:02:42.398851
+  created_at: 2009-04-07 16:44:58.234193
+revisions_088: 
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
   card_id: "43"
   id: "43"
   content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_017: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "96"
-  id: "353"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_073: 
-  updated_at: 2009-03-31 23:02:42.398851
-  created_by: "1"
-  card_id: "38"
-  id: "38"
-  content: "{\"include\":\"_self\"}"
-  created_at: 2009-03-31 23:02:42.398851
-revisions_046: 
-  updated_at: 2009-03-31 23:02:42.398851
+  created_at: 2009-04-07 16:44:50.11294
+revisions_001: 
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
   card_id: "73"
   id: "1309"
@@ -1483,26 +776,878 @@ revisions_046:
     <blockquote>
     <p><em></em></p>
     </blockquote>
-  created_at: 2009-03-31 23:02:42.398851
-revisions_101: 
-  updated_at: 2009-03-31 23:02:42.398851
+  created_at: 2009-04-07 16:44:50.11294
+revisions_172: 
+  updated_at: 2009-04-07 16:45:04.57316
+  created_by: "1"
+  card_id: "215"
+  id: "1807"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <h2>{{_self|name}} Cards</h2>
+    <blockquote>
+    <p>{{+*instances}}</p>
+    </blockquote>
+  created_at: 2009-04-07 16:45:04.57316
+revisions_144: 
+  updated_at: 2009-04-07 16:45:01.728289
+  created_by: "1"
+  card_id: "187"
+  id: "1779"
+  content: Alpha [[Z]]
+  created_at: 2009-04-07 16:45:01.728289
+revisions_116: 
+  updated_at: 2009-04-07 16:44:58.326393
+  created_by: "1"
+  card_id: "159"
+  id: "1751"
+  content: ""
+  created_at: 2009-04-07 16:44:58.326393
+revisions_089: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "115"
+  id: "1253"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_002: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "111"
+  id: "1722"
+  content: |-
+    <p><em>Plus cards</em> have a plus (+) in their name <em>(e.g., "Menu+description")</em>. They are formed by plussing two cards together to make a third.</p>
+    <p>&nbsp;</p>
+    <h2>Plus Cards</h2>
+    <p><em>Cards of which <strong>{{_left|name}}</strong> is part</em></p>
+    <blockquote>
+    <p>{{_left+*plus cards}}</p>
+    </blockquote>
+    <h2><br></h2>
+    <h2>Parts<br></h2>
+    <p><em>Cards that form plus cards with <strong>{{_left|name}}</strong></em></p>
+    <blockquote>
+    <p>{{_left+*plus parts}}</p>
+    </blockquote>
+  created_at: 2009-04-07 16:44:50.11294
+revisions_030: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "130"
+  id: "1409"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_173: 
+  updated_at: 2009-04-07 16:45:04.683177
+  created_by: "1"
+  card_id: "216"
+  id: "1808"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <h2>{{_self|name}} Cards</h2>
+    <blockquote>
+    <p>{{+*instances}}</p>
+    </blockquote>
+  created_at: 2009-04-07 16:45:04.683177
+revisions_145: 
+  updated_at: 2009-04-07 16:45:01.815599
+  created_by: "1"
+  card_id: "188"
+  id: "1780"
+  content: Beta {{Z}}
+  created_at: 2009-04-07 16:45:01.815599
+revisions_117: 
+  updated_at: 2009-04-07 16:44:58.447688
+  created_by: "1"
+  card_id: "160"
+  id: "1752"
+  content: I got no account
+  created_at: 2009-04-07 16:44:58.447688
+revisions_003: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "82"
+  id: "237"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_031: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "85"
+  id: "937"
+  content: |-
+    <p>[[Config|Configure your wagn]]</p>
+    <p>&nbsp;</p>
+    <p>Double-click to edit this (or any) card.</p>
+  created_at: 2009-04-07 16:44:50.11294
+revisions_174: 
+  updated_at: 2009-04-07 16:45:04.795781
+  created_by: "1"
+  card_id: "217"
+  id: "1809"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <h2>{{_self|name}} Cards</h2>
+    <blockquote>
+    <p>{{+*instances}}</p>
+    </blockquote>
+  created_at: 2009-04-07 16:45:04.795781
+revisions_146: 
+  updated_at: 2009-04-07 16:45:01.902041
+  created_by: "1"
+  card_id: "189"
+  id: "1781"
+  content: Theta
+  created_at: 2009-04-07 16:45:01.902041
+revisions_118: 
+  updated_at: 2009-04-07 16:44:58.534952
+  created_by: "1"
+  card_id: "161"
+  id: "1753"
+  content: ""
+  created_at: 2009-04-07 16:44:58.534952
+revisions_004: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "46"
+  id: "46"
+  content: "{\"type\":\"_self\"}"
+  created_at: 2009-04-07 16:44:50.11294
+revisions_060: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "19"
+  id: "19"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_032: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "4"
+  id: "4"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_175: 
+  updated_at: 2009-04-07 16:45:04.914273
+  created_by: "1"
+  card_id: "218"
+  id: "1810"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <h2>{{_self|name}} Cards</h2>
+    <blockquote>
+    <p>{{+*instances}}</p>
+    </blockquote>
+  created_at: 2009-04-07 16:45:04.914273
+revisions_147: 
+  updated_at: 2009-04-07 16:45:01.997124
+  created_by: "1"
+  card_id: "190"
+  id: "1782"
+  content: "[[A]] [[A+B]] [[T]]"
+  created_at: 2009-04-07 16:45:01.997124
+revisions_119: 
+  updated_at: 2009-04-07 16:44:58.616551
+  created_by: "1"
+  card_id: "162"
+  id: "1754"
+  content: ""
+  created_at: 2009-04-07 16:44:58.616551
+revisions_005: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "87"
+  id: "267"
+  content: "{}"
+  created_at: 2009-04-07 16:44:50.11294
+revisions_061: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "113"
+  id: "1242"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_033: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "148"
+  id: "1711"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_176: 
+  updated_at: 2009-04-07 16:45:05.021104
+  created_by: "1"
+  card_id: "219"
+  id: "1811"
+  content: basiccontent
+  created_at: 2009-04-07 16:45:05.021104
+revisions_148: 
+  updated_at: 2009-04-07 16:45:02.100018
+  created_by: "1"
+  card_id: "191"
+  id: "1783"
+  content: "{{B}} {{A+B}} {{A}} {{T}}"
+  created_at: 2009-04-07 16:45:02.100018
+revisions_090: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "56"
+  id: "1172"
+  content: |-
+    <p><em>Any signed-in user with the [[/admin/tasks|global permission]] to "create accounts" can invite new users via email.</em></p>
+    <p>&nbsp;</p>
+    <h2>Default subject</h2>
+    <blockquote>
+    <p>{{+*subject|type:Phrase}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h2>Default message</h2>
+    <blockquote>
+    <p>{{+*message|type:PlainText}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <p><strong>After sending an invitation, you're taken here:</strong><span><strong></strong></span></p>
+    <blockquote>
+    <p>&nbsp; <span>HTTP:// <em>(YOUR WAGN'S DOMAIN)</em></span><em> </em>/{{+*thanks}}</p>
+    </blockquote>
+  created_at: 2009-04-07 16:44:50.11294
+revisions_062: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "91"
+  id: "1573"
+  content: "off"
+  created_at: 2009-04-07 16:44:50.11294
+revisions_034: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "18"
+  id: "18"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_006: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "103"
+  id: "500"
+  content: "*favicon.ico"
+  created_at: 2009-04-07 16:44:50.11294
+revisions_177: 
+  updated_at: 2009-04-07 16:45:05.112358
+  created_by: "1"
+  card_id: "220"
+  id: "1812"
+  content: type_a_content
+  created_at: 2009-04-07 16:45:05.112358
+revisions_149: 
+  updated_at: 2009-04-07 16:45:02.203607
+  created_by: "1"
+  card_id: "192"
+  id: "1784"
+  content: AlphaBeta
+  created_at: 2009-04-07 16:45:02.203607
+revisions_063: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "92"
+  id: "349"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_035: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "99"
+  id: "562"
+  content: "{\"member_of\": \"_self\", \"sort\":\"alpha\"}"
+  created_at: 2009-04-07 16:44:50.11294
+revisions_007: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "47"
+  id: "47"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_091: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "79"
+  id: "234"
+  content: "*logo.jpg"
+  created_at: 2009-04-07 16:44:50.11294
+revisions_178: 
+  updated_at: 2009-04-07 16:45:05.209325
+  created_by: "1"
+  card_id: "221"
+  id: "1813"
+  content: type_b_content
+  created_at: 2009-04-07 16:45:05.209325
+revisions_064: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "80"
+  id: "973"
+  content: |-
+    <h1>Welcome to your new Wagn!</h1>
+    <p>&nbsp;</p>
+    <p>To get started, [[Config|set some important configuration options]].</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <h2>Reference</h2>
+    <p>&nbsp;</p>
+    <p>[[http://wagn.org/wagn/configuration|Wagn Configuration]]</p>
+    <p>[[http://wagn.org/wagn/Documentation|Wagn Documentation]]</p>
+  created_at: 2009-04-07 16:44:50.11294
+revisions_036: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "64"
+  id: "66"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_008: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "147"
+  id: "1697"
+  content: <p>Administrators automatically have all of the [[/admin/tasks|global permissions]].</p>
+  created_at: 2009-04-07 16:44:50.11294
+revisions_092: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "50"
+  id: "50"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_179: 
+  updated_at: 2009-04-07 16:45:05.308771
+  created_by: "1"
+  card_id: "222"
+  id: "1814"
+  content: type_c_content
+  created_at: 2009-04-07 16:45:05.308771
+revisions_120: 
+  updated_at: 2009-04-07 16:44:58.715818
+  created_by: "1"
+  card_id: "163"
+  id: "1755"
+  content: ""
+  created_at: 2009-04-07 16:44:58.715818
+revisions_065: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "41"
+  id: "41"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_037: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "109"
+  id: "959"
+  content: <p>Thank you for signing up with {{*title}}. Someone will receive your request for an account and approve it as soon as possible.</p>
+  created_at: 2009-04-07 16:44:50.11294
+revisions_009: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "69"
+  id: "958"
+  content: <p>Thank you for signing up with {{*title}}. Your new account information is on it's way to your emailbox now and should be there soon.</p>
+  created_at: 2009-04-07 16:44:50.11294
+revisions_093: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "151"
+  id: "1740"
+  content: |-
+    <p>[[*account|Accounts]]</p>
+    <p>[[Roles]]</p>
+    <p>[[/admin/tasks|Global permissions]]</p>
+  created_at: 2009-04-07 16:44:50.11294
+revisions_121: 
+  updated_at: 2009-04-07 16:44:58.811318
+  created_by: "1"
+  card_id: "164"
+  id: "1756"
+  content: ""
+  created_at: 2009-04-07 16:44:58.811318
+revisions_066: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "119"
+  id: "1551"
+  content: |-
+    <h1>{{_left|name}}'s roles<br></h1>
+    <blockquote>
+    <p>{{_left+*roles|item:link}}</p>
+    </blockquote>
+    <h1>Cards {{_left|name}} has edited</h1>
+    <blockquote>
+    <p>{{_left +*editing}}</p>
+    </blockquote>
+  created_at: 2009-04-07 16:44:50.11294
+revisions_038: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "100"
+  id: "1119"
+  content: |-
+    <p>[[/account/invite|Invite a new user]]</p>
+    <p>&nbsp;</p>
+    <p>{{Cards with accounts|titled}}</p>
+  created_at: 2009-04-07 16:44:50.11294
+revisions_094: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "38"
+  id: "38"
+  content: "{\"include\":\"_self\"}"
+  created_at: 2009-04-07 16:44:50.11294
+revisions_150: 
+  updated_at: 2009-04-07 16:45:02.392258
+  created_by: "1"
+  card_id: "193"
+  id: "1785"
+  content: ""
+  created_at: 2009-04-07 16:45:02.392258
+revisions_122: 
+  updated_at: 2009-04-07 16:44:58.90675
+  created_by: "1"
+  card_id: "165"
+  id: "1757"
+  content: ""
+  created_at: 2009-04-07 16:44:58.90675
+revisions_067: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "49"
+  id: "49"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_039: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "138"
+  id: "1550"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_095: 
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
   card_id: "10"
   id: "10"
   content: ""
-  created_at: 2009-03-31 23:02:42.398851
-revisions_018: 
-  updated_at: 2009-03-31 23:02:42.398851
+  created_at: 2009-04-07 16:44:50.11294
+revisions_151: 
+  updated_at: 2009-04-07 16:45:02.575833
   created_by: "1"
-  card_id: "112"
-  id: "1269"
+  card_id: "194"
+  id: "1786"
+  content: ""
+  created_at: 2009-04-07 16:45:02.575833
+revisions_123: 
+  updated_at: 2009-04-07 16:44:59.00129
+  created_by: "1"
+  card_id: "166"
+  id: "1758"
+  content: ""
+  created_at: 2009-04-07 16:44:59.00129
+revisions_068: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "110"
+  id: "1225"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_096: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "93"
+  id: "350"
+  content: "{\"edited\": \"_self\"} "
+  created_at: 2009-04-07 16:44:50.11294
+revisions_180: 
+  updated_at: 2009-04-07 16:45:05.507035
+  created_by: "1"
+  card_id: "223"
+  id: "1815"
+  content: type_d_content
+  created_at: 2009-04-07 16:45:05.507035
+revisions_152: 
+  updated_at: 2009-04-07 16:45:02.617803
+  created_by: "1"
+  card_id: "195"
+  id: "1787"
+  content: ""
+  created_at: 2009-04-07 16:45:02.617803
+revisions_124: 
+  updated_at: 2009-04-07 16:44:59.106447
+  created_by: "1"
+  card_id: "167"
+  id: "1759"
+  content: ""
+  created_at: 2009-04-07 16:44:59.106447
+revisions_097: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "86"
+  id: "266"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_010: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "39"
+  id: "39"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_069: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "8"
+  id: "8"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_181: 
+  updated_at: 2009-04-07 16:45:05.59576
+  created_by: "1"
+  card_id: "224"
+  id: "1816"
+  content: type_e_content
+  created_at: 2009-04-07 16:45:05.59576
+revisions_153: 
+  updated_at: 2009-04-07 16:45:02.693863
+  created_by: "1"
+  card_id: "196"
+  id: "1788"
+  content: ""
+  created_at: 2009-04-07 16:45:02.693863
+revisions_125: 
+  updated_at: 2009-04-07 16:44:59.307183
+  created_by: "1"
+  card_id: "168"
+  id: "1760"
+  content: ""
+  created_at: 2009-04-07 16:44:59.307183
+revisions_098: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "101"
+  id: "486"
+  content: "{\"extension_type\": \"User\"}"
+  created_at: 2009-04-07 16:44:50.11294
+revisions_011: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "9"
+  id: "9"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_182: 
+  updated_at: 2009-04-07 16:45:05.684149
+  created_by: "1"
+  card_id: "225"
+  id: "1817"
+  content: type_f_content
+  created_at: 2009-04-07 16:45:05.684149
+revisions_154: 
+  updated_at: 2009-04-07 16:45:02.736757
+  created_by: "1"
+  card_id: "197"
+  id: "1789"
+  content: ""
+  created_at: 2009-04-07 16:45:02.736757
+revisions_126: 
+  updated_at: 2009-04-07 16:44:59.400467
+  created_by: "1"
+  card_id: "169"
+  id: "1761"
+  content: ""
+  created_at: 2009-04-07 16:44:59.400467
+revisions_040: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "17"
+  id: "17"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_099: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "154"
+  id: "1745"
   content: |-
-    [[community]]
-    [[plusses]]
-    [[references]]
-  created_at: 2009-03-31 23:02:42.398851
-revisions_074: 
-  updated_at: 2009-03-31 23:02:42.398851
+    [[Ethan McCutchen]]
+    [[John Abbe]]
+    [[cards to copy to new Wagns]]
+    [[*ignore]]
+  created_at: 2009-04-07 16:44:50.11294
+revisions_012: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "96"
+  id: "353"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_183: 
+  updated_at: 2009-04-07 16:45:05.764223
+  created_by: "1"
+  card_id: "226"
+  id: "1818"
+  content: first
+  created_at: 2009-04-07 16:45:05.764223
+revisions_155: 
+  updated_at: 2009-04-07 16:45:02.907597
+  created_by: "1"
+  card_id: "198"
+  id: "1790"
+  content: ""
+  created_at: 2009-04-07 16:45:02.907597
+revisions_127: 
+  updated_at: 2009-04-07 16:44:59.4872
+  created_by: "1"
+  card_id: "170"
+  id: "1762"
+  content: ""
+  created_at: 2009-04-07 16:44:59.4872
+revisions_041: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "124"
+  id: "1284"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_013: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "42"
+  id: "42"
+  content: "{\"included_by\":\"_self\"}"
+  created_at: 2009-04-07 16:44:50.11294
+revisions_184: 
+  updated_at: 2009-04-07 16:45:05.832909
+  created_by: "1"
+  card_id: "226"
+  id: "1819"
+  content: second
+  created_at: 2009-04-07 16:45:05.832909
+revisions_156: 
+  updated_at: 2009-04-07 16:45:02.95164
+  created_by: "1"
+  card_id: "199"
+  id: "1791"
+  content: ""
+  created_at: 2009-04-07 16:45:02.95164
+revisions_128: 
+  updated_at: 2009-04-07 16:44:59.58784
+  created_by: "1"
+  card_id: "171"
+  id: "1763"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <h1>Accounts with the {{_self|name}} role<br></h1>
+    <blockquote>
+    <p>{{+*users}}</p>
+    </blockquote>
+  created_at: 2009-04-07 16:44:59.58784
+revisions_042: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "81"
+  id: "247"
+  content: |-
+    <p>&nbsp;</p>
+    <p>{{Menu|open}}</p>
+    <p>&nbsp;</p>
+    <p>{{Administrator links|open}}</p>
+  created_at: 2009-04-07 16:44:50.11294
+revisions_014: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "123"
+  id: "1283"
+  content: "[[items]]"
+  created_at: 2009-04-07 16:44:50.11294
+revisions_070: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "149"
+  id: "1730"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_185: 
+  updated_at: 2009-04-07 16:45:05.89873
+  created_by: "1"
+  card_id: "226"
+  id: "1820"
+  content: third
+  created_at: 2009-04-07 16:45:05.89873
+revisions_157: 
+  updated_at: 2009-04-07 16:45:03.028326
+  created_by: "1"
+  card_id: "200"
+  id: "1792"
+  content: ""
+  created_at: 2009-04-07 16:45:03.028326
+revisions_129: 
+  updated_at: 2009-04-07 16:44:59.748735
+  created_by: "1"
+  card_id: "172"
+  id: "1764"
+  content: ""
+  created_at: 2009-04-07 16:44:59.748735
+revisions_043: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "55"
+  id: "1729"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_015: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "30"
+  id: "30"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_071: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "53"
+  id: "187"
+  content: |
+    width: '100%',
+    auto_resize : true,
+    relative_urls: false,
+    theme : "advanced",
+    theme_advanced_buttons1 : "formatselect,bold,italic,strikethrough,"
+    + "separator,blockquote,bullist,numlist,hr,separator,undo,redo,"
+    + "code",                         
+    theme_advanced_buttons2 : "",                         
+    theme_advanced_buttons3 : "",                         
+    theme_advanced_path : false,                         
+    theme_advanced_toolbar_location : "top",  
+    theme_advanced_toolbar_align : "left", 
+    theme_advanced_resizing : true,
+    theme_advanced_resize_horizontal : false,                      
+    theme_advanced_statusbar_location : "bottom",
+    theme_advanced_blockformats : "p,h1,h2",
+    content_css : '/stylesheets/defaults.css',
+    extended_valid_elements : "a[name|href|target|title|onclick],"
+    + "img[class|src|border=0|alt|title|hspace|vspace|width|height|"
+    + "align|onmouseover|onmouseout|name],hr[class|width|size|noshade],"
+    + "font[face|size|color|style],span[class|align|style]"          
+
+  created_at: 2009-04-07 16:44:50.11294
+revisions_186: 
+  updated_at: 2009-04-07 16:45:05.986123
+  created_by: "1"
+  card_id: "227"
+  id: "1821"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <h2>{{_self|name}} Cards</h2>
+    <blockquote>
+    <p>{{+*instances}}</p>
+    </blockquote>
+  created_at: 2009-04-07 16:45:05.986123
+revisions_158: 
+  updated_at: 2009-04-07 16:45:03.073327
+  created_by: "1"
+  card_id: "201"
+  id: "1793"
+  content: ""
+  created_at: 2009-04-07 16:45:03.073327
+revisions_044: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "48"
+  id: "48"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_016: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "128"
+  id: "1407"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_072: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "98"
+  id: "355"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_187: 
+  updated_at: 2009-04-07 16:45:06.101778
+  created_by: "1"
+  card_id: "228"
+  id: "1822"
+  content: "{{+name}} {{+age}} {{+description}}"
+  created_at: 2009-04-07 16:45:06.101778
+revisions_159: 
+  updated_at: 2009-04-07 16:45:03.201594
+  created_by: "1"
+  card_id: "202"
+  id: "1794"
+  content: ""
+  created_at: 2009-04-07 16:45:03.201594
+revisions_045: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "146"
+  id: "1696"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_100: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "135"
+  id: "1455"
+  content: <p>{{DeleteMe|open}}</p>
+  created_at: 2009-04-07 16:44:50.11294
+revisions_017: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "5"
+  id: "1435"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <h1>{{_self|name}} Cards</h1>
+    <blockquote>
+    <p>{{+*instances}}</p>
+    </blockquote>
+  created_at: 2009-04-07 16:44:50.11294
+revisions_073: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "13"
+  id: "13"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_188: 
+  updated_at: 2009-04-07 16:45:06.233259
+  created_by: "3"
+  card_id: "229"
+  id: "1823"
+  content: test
+  created_at: 2009-04-07 16:45:06.233259
+revisions_046: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "129"
+  id: "1408"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_101: 
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
   card_id: "122"
   id: "1433"
@@ -1514,29 +1659,44 @@ revisions_074:
     <p>&nbsp;</p>
     <h1>{{_left|name}} cards</h1>
     <p>{{_left+*instances}}</p>
-  created_at: 2009-03-31 23:02:42.398851
+  created_at: 2009-04-07 16:44:50.11294
+revisions_018: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "3"
+  id: "3"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_074: 
+  updated_at: 2009-04-07 16:44:50.11294
+  created_by: "1"
+  card_id: "150"
+  id: "1731"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
+revisions_189: 
+  updated_at: 2009-04-07 16:45:06.33113
+  created_by: "3"
+  card_id: "230"
+  id: "1824"
+  content: test
+  created_at: 2009-04-07 16:45:06.33113
 revisions_130: 
-  updated_at: 2009-03-31 23:02:52.003653
+  updated_at: 2009-04-07 16:44:59.835713
   created_by: "1"
   card_id: "173"
-  id: "1754"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <h1>Accounts with the {{_self|name}} role<br></h1>
-    <blockquote>
-    <p>{{+*users}}</p>
-    </blockquote>
-  created_at: 2009-03-31 23:02:52.003653
+  id: "1765"
+  content: ""
+  created_at: 2009-04-07 16:44:59.835713
 revisions_047: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "147"
-  id: "1697"
-  content: <p>Administrators automatically have all of the [[/admin/tasks|global permissions]].</p>
-  created_at: 2009-03-31 23:02:42.398851
+  card_id: "35"
+  id: "35"
+  content: ""
+  created_at: 2009-04-07 16:44:50.11294
 revisions_102: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
   card_id: "63"
   id: "1177"
@@ -1550,101 +1710,107 @@ revisions_102:
     <p><strong>and the requester will be redirected here:</strong></p>
     <p>&nbsp;</p>
     <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span>HTTP:// <em>(YOUR WAGN'S DOMAIN)</em></span><em> </em>/{{+*thanks}}</p>
-  created_at: 2009-03-31 23:02:42.398851
+  created_at: 2009-04-07 16:44:50.11294
 revisions_019: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "116"
-  id: "1572"
+  card_id: "66"
+  id: "1176"
   content: |-
-    <p>{{+tags|closed}}</p>
+    <p>To let users sign up (with no approval process), [[*request|turn on account requests]], and give "Anybody" the [[/admin/tasks | global permission]] to create accounts.&nbsp; Newly registered users will be sent an email with a password and the following details:</p>
     <p>&nbsp;</p>
-    <p>{{_left+*editors|closed}}</p>
     <p>&nbsp;</p>
-    <p>{{+discussion|open}}</p>
+    <h2>Email Subject.<br></h2>
     <blockquote>
-    <p>&nbsp;</p>
+    <p>{{*signup+*subject|type:Phrase}}</p>
     </blockquote>
-  created_at: 2009-03-31 23:02:42.398851
+    <p>&nbsp;</p>
+    <h2>Email Message</h2>
+    <blockquote>
+    <p>{{*signup+*message|closed;type:PlainText}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <p>As the email is sent, the<strong> person signing up will be sent here</strong>:</p>
+    <blockquote>
+    <p><span>HTTP:// <em>(YOUR WAGN'S DOMAIN)</em></span><em> </em>/{{+*thanks}}</p>
+    </blockquote>
+  created_at: 2009-04-07 16:44:50.11294
 revisions_075: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "90"
-  id: "982"
-  content: <p>use "off" or "on" to force a table setting.</p>
-  created_at: 2009-03-31 23:02:42.398851
+  card_id: "36"
+  id: "36"
+  content: "{\"plus\":\"_self\"}"
+  created_at: 2009-04-07 16:44:50.11294
 revisions_131: 
-  updated_at: 2009-03-31 23:02:52.109371
+  updated_at: 2009-04-07 16:44:59.946458
   created_by: "1"
   card_id: "174"
-  id: "1755"
+  id: "1766"
   content: |-
     <p>{{+description}}</p>
     <p>&nbsp;</p>
-    <h1>Accounts with the {{_self|name}} role<br></h1>
+    <h2>{{_self|name}} Cards</h2>
     <blockquote>
-    <p>{{+*users}}</p>
+    <p>{{+*instances}}</p>
     </blockquote>
-  created_at: 2009-03-31 23:02:52.109371
+  created_at: 2009-04-07 16:44:59.946458
 revisions_103: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "1"
-  id: "1541"
-  content: <p>This is the account that makes any automated updates &mdash; cards created when someone signs up, link updates when renaming cards, etc.</p>
-  created_at: 2009-03-31 23:02:42.398851
+  card_id: "125"
+  id: "1563"
+  content: |-
+    <p>Adding a +*options Search card to a Pointer limits the auto-completion to the cards returned by the Search. And if it's a simple search for a cardtype, then cards created through the pointer will automatically be set to that type.</p>
+    <p>&nbsp;</p>
+    <p>{{_left+*options}}</p>
+  created_at: 2009-04-07 16:44:50.11294
 revisions_076: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "82"
-  id: "237"
+  card_id: "37"
+  id: "37"
   content: ""
-  created_at: 2009-03-31 23:02:42.398851
+  created_at: 2009-04-07 16:44:50.11294
 revisions_048: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "30"
-  id: "30"
+  card_id: "12"
+  id: "12"
   content: ""
-  created_at: 2009-03-31 23:02:42.398851
+  created_at: 2009-04-07 16:44:50.11294
 revisions_160: 
-  updated_at: 2009-03-31 23:02:55.162209
+  updated_at: 2009-04-07 16:45:03.247616
   created_by: "1"
   card_id: "203"
-  id: "1784"
+  id: "1795"
   content: ""
-  created_at: 2009-03-31 23:02:55.162209
+  created_at: 2009-04-07 16:45:03.247616
 revisions_132: 
-  updated_at: 2009-03-31 23:02:52.215647
+  updated_at: 2009-04-07 16:45:00.080697
   created_by: "1"
   card_id: "175"
-  id: "1756"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <h1>Accounts with the {{_self|name}} role<br></h1>
-    <blockquote>
-    <p>{{+*users}}</p>
-    </blockquote>
-  created_at: 2009-03-31 23:02:52.215647
+  id: "1767"
+  content: ""
+  created_at: 2009-04-07 16:45:00.080697
 revisions_104: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "138"
-  id: "1550"
+  card_id: "121"
+  id: "1276"
   content: ""
-  created_at: 2009-03-31 23:02:42.398851
+  created_at: 2009-04-07 16:44:50.11294
 revisions_077: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "39"
-  id: "39"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
+  card_id: "120"
+  id: "1275"
+  content: "[[type]]"
+  created_at: 2009-04-07 16:44:50.11294
 revisions_049: 
-  updated_at: 2009-03-31 23:02:42.398851
+  updated_at: 2009-04-07 16:44:50.11294
   created_by: "1"
-  card_id: "61"
-  id: "62"
-  content: ""
-  created_at: 2009-03-31 23:02:42.398851
+  card_id: "97"
+  id: "354"
+  content: "{\"member\": \"_self\"}"
+  created_at: 2009-04-07 16:44:50.11294

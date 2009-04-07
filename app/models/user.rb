@@ -90,6 +90,10 @@ class User < ActiveRecord::Base
     def no_logins?
       self.cache[:no_logins] ||= User.count < 3
     end
+    
+    def clear_cache
+      self.cache = {}
+    end
 
     # OPENID - on hold
     #def find_or_create_by_identity_url(url)
@@ -186,7 +190,6 @@ class User < ActiveRecord::Base
   def password_required?
      !built_in? && not_openid? && (crypted_password.blank? or not password.blank?)
   end
-
  
   def not_openid?
     identity_url.blank?

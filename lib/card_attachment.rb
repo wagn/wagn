@@ -18,7 +18,7 @@ module Card
 
     module InstanceMethods
       def update_attachment
-        if attachment_id
+        if attachment_id and !attachment_id.blank?
           attachment_model.find( attachment_id ).update_attribute :revision_id, current_revision_id
         end
       end

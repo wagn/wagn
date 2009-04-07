@@ -163,8 +163,12 @@ end
 # FIXME: this has to be here because System is both a config store and a model-- which means
 # in development mode it gets reloaded so we lose the config settings.  The whole config situation
 # needs an overhaul 
-require_dependency "#{RAILS_ROOT}/config/sample_wagn.rb"
-require_dependency "#{RAILS_ROOT}/config/wagn.rb"    
+if File.exists? "#{RAILS_ROOT}/config/sample_wagn.rb"
+  require_dependency "#{RAILS_ROOT}/config/sample_wagn.rb"
+end
+if File.exists? "#{RAILS_ROOT}/config/wagn.rb" 
+  require_dependency "#{RAILS_ROOT}/config/wagn.rb"    
+end
 
 # Configuration cleanup: Make sure System.base_url ends with a /. Breaks redirects if not.
 System.base_url += '/' if System.base_url && System.base_url[-1] != '/'

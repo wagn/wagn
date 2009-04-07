@@ -12,7 +12,7 @@ require File.join(File.dirname(__FILE__), 'boot')
                           
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence those specified here
-  RAILS_GEM_VERSION = '2.1.2' unless defined? RAILS_GEM_VERSION  
+  #RAILS_GEM_VERSION = '2.1.2' unless defined? RAILS_GEM_VERSION  
   # Skip frameworks you're not going to use
   config.frameworks -= [ :action_web_service ]
 
@@ -55,47 +55,27 @@ Rails::Initializer.run do |config|
   }  
 end
 
-# Add new inflection rules using the following format 
-ActiveSupport::Inflector.inflections do |inflect|
-  inflect.irregular 'grave', 'graveyard'
-  inflect.irregular 'this', 'this'     
-  inflect.irregular 'anonymous', 'anonymous'   
-  inflect.singular(/(ss)$/i, '\1')
-  inflect.plural(/(ss)$/i, '\1')
-end
-
 
 require 'remote_uploads.rb'
    
-# Define a regexp function so the ~ WQL operator works with SQLite.
-=begin
-if ActiveRecord::Base.connection.adapter_name == "SQLite"
-  ActiveRecord::Base.connection.raw_connection.create_function("regexp", 2) do |func, expr, arg|
-    if arg.to_s =~ Regexp.new(expr.to_s)
-      func.result = 1
-    else
-      func.result = 0
-    end
-  end
-end
-=end
-
-  
 # configure session store
 Session = CGI::Session::ActiveRecordStore.session_class
 
-# configure fragment store
-#ActionController::Base.cache_store = :mem_cache_store #:memory_store #:file_store, "#{RAILS_ROOT}/../cache"
- 
 # force loading of the system model. FIXME: this seems like a terrible way to do this
 System
 
+#ExceptionNotifier.exception_recipients = %w(someone@somewhere.org)
+#ExceptionNotifier.sender_address = %("#{System.site_name} Error" <notifier@wagn.org>)
+#ExceptionNotifier.email_prefix = "[#{System.site_name}] "
 
-# cached-model
-require_dependency 'lib/cached_model'
-CACHE = MemCache.new 'localhost:11211', :namespace => 'my_rails_app'
-require_dependency 'lib/cache'                                      
-CachedModel::use_local_cache=true
+#System.enable_postgres_fulltext = true
+#System.postgres_src_dir = "/usr/local/src/postgres/postgresql-8.2.1/"
 
+# select a store for the rails/card cache
+ActionController::Base.cache_store = :mem_cache_store # file_store, "#{RAILS_ROOT}/../cache"  
 
+#System.base_url = "http://localhost:3000"
+#System.site_name = "NeWagN"
+
+#System.multihost = true
 

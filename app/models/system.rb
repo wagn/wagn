@@ -78,8 +78,8 @@ class System < ActiveRecord::Base
     end
    
     def image_setting(name)
-      if content = setting(name)
-        content.match(/src=\"([^\"]+)/)[1]
+      if content = setting(name) and  content.match(/src=\"([^\"]+)/)
+        $~[1]
       end
     end
 

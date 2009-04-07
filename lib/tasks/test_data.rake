@@ -56,16 +56,22 @@ namespace :wagn do
       raise("Oops!  you need to disable postgres_fulltext in wagn.rb before generating fixtures")
     end
          
-#    abcs = ActiveRecord::Base.configurations    
-#    config = RAILS_ENV || 'development'  
-#    olddb = abcs[config]["database"]
-#    abcs[config]["database"] = "wagn_test_template"
+    abcs = ActiveRecord::Base.configurations    
+    config = RAILS_ENV || 'development'  
+    olddb = abcs[config]["database"]
+    abcs[config]["database"] = "wagn_test_template"
 
   #=begin  
     begin
       set_database 'wagn_test_template'
       
-      Rake::Task['wagn:create'].invoke
+      #Rake::Task['wagn:create'].invoke
+      Rake::Task['db:drop'].invoke
+      Rake::Task['db:create'].invoke
+
+      Rake::Task['db:schema:load'].invoke
+      Rake::Task['wagn:bootstrap:load'].invoke
+  
   
       # I spent waay to long trying to do this in a less hacky way--  
       # Basically initial database setup/migration breaks your models and you really 

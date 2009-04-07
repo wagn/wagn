@@ -14,10 +14,10 @@ class User < ActiveRecord::Base
 
   acts_as_card_extension
    
-  validates_presence_of     :email, :if => :not_openid?
-  validates_format_of       :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i  #, :if => :not_openid?
-  validates_length_of       :email, :within => 3..100    #,:if => :not_openid?
-  validates_uniqueness_of   :email                       #,:if => :not_openid?  
+  validates_presence_of     :email, :if => :email_required?
+  validates_format_of       :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i  , :if => :email_required?
+  validates_length_of       :email, :within => 3..100,   :if => :email_required?
+  validates_uniqueness_of   :email,                      :if => :email_required?  
   validates_presence_of     :password,                   :if => :password_required?
   validates_presence_of     :password_confirmation,      :if => :password_required?
   validates_length_of       :password, :within => 5..40, :if => :password_required?
@@ -175,8 +175,16 @@ class User < ActiveRecord::Base
     self.crypted_password = encrypt(password)
   end
 
+  def email_required?
+    !built_in?
+  end
+
   def password_required?
-    not_openid? && (crypted_password.blank? or not password.blank?)
+     !built_in? && not_openid? && (crypted_password.blank? or not password.blank?)
+  end
+ 
+  def built_in?
+    [:wagbot, :anon].member?(login.to_sym)
   end
  
   def not_openid?

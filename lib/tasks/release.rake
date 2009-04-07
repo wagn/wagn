@@ -19,7 +19,7 @@ RDOC_TITLE = "Wagn -- Organic Knowledge Management"
 RDOC_EXTRAS = ["README", "CHANGELOG", "LICENSE"]
 
 
-namespace 'wagn' do
+namespace :wagn do
   spec = Gem::Specification.new do |s|
     s.name = PKG_NAME
     s.version = PKG_VERSION

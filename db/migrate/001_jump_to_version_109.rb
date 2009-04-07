@@ -121,9 +121,9 @@ class JumpToVersion109 < ActiveRecord::Migration
     if ENV['WAGN_SKIP_BOOTSTRAP_DATA']
       puts "Skipping data load"
     else        
-      puts ">> loading bootstrap_data"  
+      puts ">> loading bootstrap data"  
       #`rake wagn:load_bootstrap_data`  -- this doesn't work under windows
-      Rake::Task['wagn:load_bootstrap_data'].invoke
+      Rake::Task['wagn:bootstrap:load'].invoke
     end
   end
   

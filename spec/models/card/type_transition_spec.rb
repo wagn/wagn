@@ -45,7 +45,7 @@ end
 
 describe Card, "with role" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @role = Card::Role.find(:first)
   end
   
@@ -64,7 +64,7 @@ end
 
 describe Card, "with account" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @joe = change_card_to_type('Joe User', 'Basic')
   end
   
@@ -99,7 +99,7 @@ end
 
 describe Card, "clone to type"  do
   before do
-    User.as :admin
+    User.as :wagbot 
     @a = Card.find_by_name("basicname")
     @b = @a.send(:clone_to_type, "CardtypeA") 
   end  

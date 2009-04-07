@@ -42,30 +42,19 @@ module SlotHelpers
 
   def edit_submenu(on)
     div(:class=>'submenu') do
-      [[ :content,    'card/edit',          true                      ],
-       [ :name,       'card/edit_name',     true                      ],
-       [ :type,       'card/edit_type',     !(card.type_template? || (card.type=='Cardtype' && !Card.search(:type=>card.name).empty?))            ],
-       [ :inclusions, 'card/edit',          !(card.out_transclusions.empty? || card.template? || card.hard_template),         {:inclusions=>true} ]
-       ].map do |key,partial,ok,args|
+      [[ :content,    true  ],
+       [ :name,       true, ],
+       [ :type,       !(card.type_template? || (card.type=='Cardtype' && !Card.search(:type=>card.name).empty?))],
+       [ :inclusions, !(card.out_transclusions.empty? || card.template? || card.hard_template),         {:inclusions=>true} ]
+       ].map do |key,ok,args|
 
         link_to_remote( key, 
-          { :url=>url_for(partial, args), :update => ([:name,:type].member?(key) ? id('card-body') : id) }, 
+          { :url=>url_for("card/edit", args, key), :update => ([:name,:type].member?(key) ? id('card-body') : id) }, 
           :class=>(key==on ? 'on' : '') 
         ) if ok
       end.compact.join       
      end  
   end
-=begin 
-  <% div(:class=>'submenu') do %>
-
-
-    <%= link_to_remote 'content', :url=>slot.url_for("card/edit_content"), :update => slot.id('card-body') %>
-    <%= link_to_remote 'name', :url=>slot.url_for("cardname/edit"), :update => slot.id('card-body') %>
-    <% unless card.type_template? %>
-      <%= link_to_remote 'type', :url=>slot.url_for("cardtype/edit"), :update => slot.id('card-body') %>
-  	<% end %>
-  <% end %>
-=end
 
   def paging_params
     s = {}
@@ -76,9 +65,10 @@ module SlotHelpers
   end
 
 
-  def url_for(url, args=nil)
+  def url_for(url, args=nil, attribute=nil)
     url = "javascript:'/#{url}"
     url << "/#{escape_javascript(URI.escape(card_id.to_s))}" if (card and card_id)
+    url << "/#{attribute}" if attribute   
     url << "?context='+getSlotContext(this)"
     url << "+'&' + getSlotOptions(this)"
     url << ("+'"+ args.map{|k,v| "&#{k}=#{escape_javascript(URI.escape(v.to_s))}"}.join('') + "'") if args

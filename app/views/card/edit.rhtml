@@ -5,7 +5,7 @@
 	<style><%= ".cardid-#{card.id} .edit-area .title-#{css_name(card.name)} { display: none; }" %></style>
 
   <% div( :id=>slot.id('card-body'), :class=>'card-body') do %>  
-    <%= slot.render_partial 'edit_content' %>
+    <%= slot.render_partial 'card/edit/content' %>
   <% end %>
 	
 	<%= slot.notice %>

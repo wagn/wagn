@@ -1,8 +1,0 @@
-<% query_results = card.search %>
-
-<% if query_results.length==0 %>
-  Search returns no results.
-<% else %>
-	<%= render :partial=>'block/tag_cloud', :locals=>{ :card=>card, :cards => query_results } %>
-<% end %>
-

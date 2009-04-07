@@ -1,6 +1,0 @@
-<% c = slot.expand_transclusions(slot.card.content).gsub(/,/,'').gsub(/ /,'_')  %>
-<% c.split("\n").each do |line| %>
-	<iframe class="website" src="<%= line %>"></iframe>
-<% end %>
-
-

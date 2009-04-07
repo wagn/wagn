@@ -125,7 +125,7 @@ Object.extend(Wagn.Lister.prototype, {
     $(this.div_id).innerHTML = '';
     card_part = (this.card_id()=='') ? '' : "/" + this.card_id();
     new Ajax.Updater(this.div_id, 
-      '/block/' + this.display_type() + card_part + ".html",
+      '/types/search/' + this.display_type() + card_part + ".html",
       $H(this._ajax_parameters( this._arguments )).merge( arguments[0] )
     );
     this.set_button();

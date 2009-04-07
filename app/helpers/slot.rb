@@ -173,18 +173,18 @@ module WagnHelper
 
       ###-----------( FULL )
         when :new
-          w_content = render_partial('card/new')
+          w_content = render_partial('views/new')
           
         when :open, :view, :card
           @state = :view; self.requested_view = 'open'
           # FIXME: accessing params here is ugly-- breaks tests.
           #w_action = (@template.params[:view]=='content' && context=="main_1") ? 'nude' : 'open'
           w_action = 'open'
-          w_content = render_partial('card/open')
+          w_content = render_partial('views/open')
 
         when :closed, :line    
           @state = :line; w_action='closed'; self.requested_view = 'closed'
-          w_content = render_partial('card/line')  # --> slot.wrap_content slot.render( :expanded_line_content )   
+          w_content = render_partial('views/closed')  # --> slot.wrap_content slot.render( :expanded_line_content )   
           
       ###----------------( NAME)
       
@@ -204,11 +204,11 @@ module WagnHelper
 
         when :rss_change
           w_action = self.requested_view = 'content'
-          render_partial('card/change')
+          render_partial('views/change')
           
         when :change;
           w_action = self.requested_view = 'content'
-          w_content = render_partial('card/change')
+          w_content = render_partial('views/change')
 
       ###---(  CONTENT VARIATIONS ) 
         #-----( with transclusions processed )
@@ -244,17 +244,15 @@ module WagnHelper
           expand_transclusions( render(:raw_content) )
 
         when :edit_in_form
-          render_partial('card/edit_in_form', args.merge(:form=>form))
+          render_partial('views/edit_in_form', args.merge(:form=>form))
             
         ###---(  EXCEPTIONS ) 
         
-          when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
-            #w_action = 'exception'
-            #w_content = 
-            render_partial("card/#{ok_action}", args)
+        when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
+            render_partial("views/#{ok_action}", args)
 
   
-        else raise("Unknown slot render action '#{ok_action}'")
+        else; "<strong>#{card.name} - unknown card view: '#{ok_action}'</strong>"
       end
       if w_content
         args[:add_slot] = true unless args.key?(:add_slot)
@@ -262,7 +260,7 @@ module WagnHelper
       end
       
 #      result ||= "" #FIMXE: wtf?
-      result << javascript_tag("setupLinksAndDoubleClicks()") if args[:add_javascript]
+      result << javascript_tag("setupLinksAndDoubleClicks();") if args[:add_javascript]
       result
     rescue Card::PermissionDenied=>e
       return "Permission error: #{e.message}"
@@ -294,6 +292,8 @@ module WagnHelper
             #warn "options for #{tname}: #{options.inspect}"
             fullname.to_absolute(options[:base]=='parent' ? card.name.parent_name : card.name)
             fullname.gsub!('_user', User.current_user.card.name)
+            options[:fullname] = fullname
+            options[:showname] = tname.to_show(fullname)
             #logger.info("absolutized tname and now have these transclusion options: #{options.inspect}")
 
             if fullname.blank?  
@@ -368,17 +368,7 @@ module WagnHelper
         when state==:line                   ; :expanded_line_content
         else                                ; vmode
       end
-=begin      
-       # these take precedence over state=view/line
-        else
-          case state
-          when :edit   ; card.phantom? ? :edit_auto : :edit_in_form                           
-          when :line   ; :expanded_line_content           
-          # now we are in state==:view, switch on viewmode (from transclusion syntax)
-          else         ; vmode
-          end
-        end
-=end
+
       #logger.info("<transclusion_case: state=#{state} vmode=#{vmode} --> Action=#{action}, Option=#{options.inspect}")
 
       result = subslot.render action, options

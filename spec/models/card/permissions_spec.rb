@@ -4,7 +4,7 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 # WE STOPPED ENFORCING THIS RULE!
 describe Card, "New Connection Card with two differently restricted pieces" do
   before do
-    User.as :admin
+    User.as :wagbot 
     c = Card['c']; c.permit :read, Role['r1']; c.save!    
     d = Card['d']; d.permit :read, Role['r2']; d.save!    
     @cd = Card.create :name=>'c+d'
@@ -20,7 +20,7 @@ end
 
 describe Card, "New Connection Card with one restricted piece" do
   before do
-    User.as :admin
+    User.as :wagbot 
     c = Card['c']
     c.permit :read, Role['r1']
     c.save!    
@@ -34,7 +34,7 @@ end
 
 describe Card, "Piece Card with new restriction" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @cd = Card.create! :name=>'c+d'
     c = Card['c']
     c.permit :read, Role['r1']
@@ -52,7 +52,7 @@ end
 
 describe Card, "Piece of Connection Card with restriction" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @cd = Card.create :name=>'c+d'
     @cd.permit :read, Role['r2']
     @cd.save!
@@ -109,7 +109,7 @@ end
 
 describe Card, "updating permissions" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @anon = Role.find_by_codename 'anon'
     @auth = Role.find_by_codename 'auth'
     @perms = [:read,:edit,:comment,:delete].map{|t| ::Permission.new(:task=>t.to_s, :party=>@anon)}
@@ -134,7 +134,7 @@ end
 
 describe Card, "Permit method on existing card" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @c = Card.find_by_name 'X'
     @r2 = Role.find_by_codename 'r2'
     @c.permit(:read, @r2)
@@ -162,7 +162,7 @@ end
 
 describe Card, "Permit method on new card" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @c = Card.create :name=>'New Bee'
     @r2 = Role.find_by_codename 'r2'
     @c.permit(:read, @r2)

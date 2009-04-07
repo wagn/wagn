@@ -1,17 +1,22 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
+# We're not supporting this any more, right?
+
+=begin
+
 describe User, "Normal user" do
   before do
-    User.as :admin do
+    User.as :wagbot  do
       ::Role.cache={}
       r = Role.find_by_codename('auth')
       r.tasks = 'set_personal_card_permissions'
       r.save!        
     end
     @u = User.as :joe_user    
-    @other_user = User.find_by_login('admin')
+    @other_user = User[:wagbot]
+
     @xu = Card.create! :name=>'X+Joe User'
-    @xo = Card.create! :name=>'X+Admin User'
+    @xo = Card.create! :name=>'X+Wagn Bot'
     @ux = Card.create! :name=>'Joe User+X'
     @xuy= Card.create! :name=>'X+Joe User+Y'
   end
@@ -50,7 +55,7 @@ end
 describe Card, "User not allowed to set personal cards" do
   before do
     ::Role.cache={}
-    User.as :admin do
+    User.as :wagbot  do
       r = Role.find_by_codename('auth')
       r.tasks = ''
       r.save         
@@ -69,4 +74,4 @@ describe Card, "User not allowed to set personal cards" do
     @xu.ok?(:permissions).should_not be_true
   end  
 end
-
+=end

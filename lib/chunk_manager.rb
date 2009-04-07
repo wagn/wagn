@@ -11,6 +11,7 @@ module ChunkManager
   unless defined? ACTIVE_CHUNKS
     ACTIVE_CHUNKS = [ 
       Literal::Pre,
+      Literal::Escape,
       Chunk::Transclude,
       Chunk::Link,
       URIChunk, 

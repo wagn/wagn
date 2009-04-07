@@ -1,9 +1,0 @@
-<h1>User Administration</h1>
-
-<div id='create-button'>
-  <% if Card::User.create_ok? %>
-    <%= link_to 'Invite a New User', :controller=>'account', :action=>'invite' %>
-  <% end %>
-</div>
-
-<%= get_slot(Card.find_phantom('*Users')).render :content %>

@@ -110,7 +110,7 @@ module CardLib
       end      
 #=begin
       if template? and trunk.type == 'Cardtype' and create_party = who_can(:create)
-        ::User.as :admin do
+        ::User.as :wagbot do
           trunk.permit(:create, create_party)
           trunk.save!
           if trunk.codename == 'Basic'

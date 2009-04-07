@@ -564,17 +564,7 @@ module Card
           end
         end
 
-=begin
-        if !rec.simple?
-          err ||= rec.pieces_incompatible?(rec.trunk,rec.tag) #is this necessary?  shouldn't get to this situation
-          err ||= rec.piece_and_junction_incompatible?( rec.trunk, rec ) 
-          err ||= rec.piece_and_junction_incompatible?( rec.tag,   rec )
-        end 
-        rec.dependents.each do |junction|   
-          err ||= rec.piece_and_junction_incompatible?(rec,junction, override_weak_junction_ok=true)  
-          #anon and auth are ok here because any change to this card's permissions can safely override them.
-        end
-=end
+
         if err
           rec.errors.add :permissions, "can't set read permissions on #{rec.name} to #{reader.cardname} because #{err}"
         end
@@ -626,7 +616,8 @@ module Card
     def validate_destroy  
       if extension_type=='User' and extension and Revision.find_by_created_by( extension.id )
         errors.add :destroy, "Edits have been made with #{name}'s user account.<br>  Deleting this card would mess up our revision records."
-      end      
+      end
+      #should collect errors from dependent destroys here.  
     end
 
     def validate_type_change  

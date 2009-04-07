@@ -6,8 +6,23 @@ include WagnTestHelper
 
 A_JOINEES = ["B", "C", "D", "E", "F"]
       
-CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User"].sort    
+CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User","plusses+*rform"].sort    
 
+#=begin 
+describe Wql2, "in" do
+  it "should work for content options" do
+    Card.search(:in=>['AlphaBeta', 'Theta']).map(&:name).should == %w(A+B T)
+  end
+
+  it "should find the same thing in full syntax" do
+    Card.search(:content=>[:in,'Theta','AlphaBeta']).map(&:name).sort.should == %w(A+B T)
+  end
+  
+  it "should work on types" do
+    Card.search(:type=>[:in,'Cardtype E', 'Cardtype F']).map(&:name).sort.should == %w(type-e-card type-f-card)
+  end
+    
+end
 
 describe Wql2, "member_of/member" do
   it "member_of should find members" do
@@ -17,7 +32,6 @@ describe Wql2, "member_of/member" do
     Card.search( :member => {:match=>"u1"} ).map(&:name).sort.should == %w(r1 r2 r3)
   end
 end
-
 
 
 describe Wql2, "not" do 
@@ -33,13 +47,13 @@ describe Wql2, "edited_by/edited" do
   before { 
     # User.as(:joe_user) {  Card.create!( :name=>"JoeLater", :content=>"test") }
     # User.as(:joe_user) {  Card.create!( :name=>"JoeNow", :content=>"test") }
-    # User.as(:admin) {  Card.create!(:name=>"AdminNow", :content=>"test") }
+    # User.as(:wagbot)  {  Card.create!(:name=>"AdminNow", :content=>"test") }
   }
   it "should find card edited by joe using subspec" do
     Card.search(:edited_by=>{:match=>"Joe User"}, :sort=>"update", :limit=>1).should == [Card["JoeNow"]]
   end     
-  it "should find card edited by joe" do
-    Card.search(:edited_by=>"Admin", :sort=>"update", :limit=>1).should == [Card["AdminNow"]]
+  it "should find card edited by Wagn Bot" do
+    Card.search(:edited_by=>"Wagn Bot", :sort=>"update", :limit=>1).should == [Card["AdminNow"]]
   end     
   it "should fail gracefully if user isn't there" do
     Card.search(:edited_by=>"Joe LUser", :sort=>"update", :limit=>1).should == []
@@ -72,50 +86,16 @@ describe Card, "find_phantom" do
   end
 end
 
-describe Wql2, "order" do
-  before { User.as :joe_user }
-
-  
-  it "should sort by create" do  
-    given_cards(
-      { "Cardtype:Nudetype" => ""},
-      { "Nudetype:nfirst" => "a"},
-      { "Nudetype:nsecond" => "b"},
-      { "Nudetype:nthird"=> "c" }
-    )
-    # WACK!! this doesn't seem to be consistent across fixture generations :-/
-    Card.search( :type=>"Nudetype", :sort=>"create", :dir=>"asc").plot(:name).should ==
-      ["nfirst","nsecond","nthird"]
-  end  
-
-#  it "should sort by update" do     
-#    # do this on a restricted set so it won't change every time we add a card..
-#    Card.search( :match=>"two", :sort=>"update", :dir=>"desc").plot(:name).should == ["One+Two+Three", "One+Two","Two","Joe User"]
-#    Card["Two"].update_attributes! :content=>"new bar"
-#    Card.search( :match=>"two", :sort=>"update", :dir=>"desc").plot(:name).should == ["Two","One+Two+Three", "One+Two","Joe User"]
-#  end 
-#
-#  it "should sort by alhpa" do
-#    Card.search( :sort=>"alpha", :dir=>"desc", :limit=>6 ).plot(:name).should ==  ["Z", "Y", "X", "Wagn", "UserForm+*template", "UserForm"]
-#  end
-  
-  #it "should sort by plusses" do
-  #  Card.search(  :sort=>"plusses", :dir=>"desc", :limit=>6 ).plot(:name).should ==  ["*template", "A", "LewTest", "D", "C", "One"]
-  #end
-
-end
-    
-
 describe Wql2, "keyword" do
   before { User.as :joe_user }
   it "should escape nonword characters" do
-    Card.search( :match=>"two :(!").map(&:name).sort.should==["Joe User","One+Two","One+Two+Three","Two"]
+    Card.search( :match=>"two :(!").map(&:name).sort.should==CARDS_MATCHING_TWO
   end
 end
 
 describe Wql2, "search count" do
   before { User.as :joe_user }
-  it "should cound search" do
+  it "should count search" do
     s = Card::Search.create! :name=>"ksearch", :content=>'{"match":"_keyword"}'
     s.count("_keyword"=>"two").should==CARDS_MATCHING_TWO.length
   end
@@ -124,9 +104,9 @@ end
     
 describe Wql2, "cgi_params" do
   before { User.as :joe_user }
-  it "should match content from cgi" do
-    Card.search( :content=>[:match, "_keyword"], :_keyword=>"two").plot(:name).sort.should==CARDS_MATCHING_TWO
-  end
+#  it "should match content from cgi with explicit content setting" do
+#    Card.search( :content=>[:match, "_keyword"], :_keyword=>"two").plot(:name).sort.should==CARDS_MATCHING_TWO
+#  end
 
   it "should match content from cgi" do
     Card.search( :match=>"_keyword", :_keyword=>"two").plot(:name).sort.should==CARDS_MATCHING_TWO
@@ -134,16 +114,6 @@ describe Wql2, "cgi_params" do
 end
 
 
-
-describe Wql2, "fulltext" do 
-  before { User.as :joe_user }
-  it "should match content explicity" do
-    Card.search( :content=>[:match, "two"] ).plot(:name).sort.should==CARDS_MATCHING_TWO
-  end
-  it "should match via shortcut" do
-    Card.search( :match=>"two").plot(:name).sort.should==CARDS_MATCHING_TWO
-  end
-end
 
 describe Wql2, "content equality" do 
   before { User.as :joe_user }
@@ -174,10 +144,9 @@ describe Wql2, "relative links" do
   it("should handle relative refer_to")  { Card.search( :refer_to=>'_self', :_card=>Card['Z']).plot(:name).sort.should == %w{ A B } }
 end
 
-
 describe Wql2, "permissions" do
   it "should not find cards not in group" do
-    User.as :admin do
+    User.as :wagbot  do
       c = Card['C']
       c.permit(:read, Role['r1'])
       c.save!
@@ -221,6 +190,94 @@ describe Wql2, "basics" do
 end
 
 
+describe Wql2, "type" do  
+  before { User.as :joe_user }
+  
+  user_cards = ["Joe User","No Count","Sample User","Wagn Bot","Anonymous","u1","u2","u3"].sort
+  
+  it "should find cards of this type" do
+    Card.search( :type=>"_self", :_card=>Card['User']).plot(:name).sort.should == user_cards
+  end
+
+  it "should find User cards " do
+    Card.search( :type=>"User" ).plot(:name).sort.should == user_cards
+  end
+
+  it "should handle casespace variants" do
+    Card.search( :type=>"users" ).plot(:name).sort.should == user_cards
+  end
+
+end
+
+describe Wql2, "group tagging" do
+  it "should find frequent taggers of cardtype cards" do
+    Card.search( :group_tagging=>'Cardtype' ).map(&:name).sort().should == ["*context", "*rform", "*tform"].sort()
+  end
+end
+
+describe Wql2, "trash handling" do   
+  before { User.as :joe_user }
+  
+  it "should not find cards in the trash" do 
+    Card["A+B"].destroy!
+    Card.search( :left=>"A" ).plot(:name).sort.should == ["A+C", "A+D", "A+E"]
+  end
+end      
+
+describe Wql2, 'append' do
+  it "should find real cards" do
+    Card.search(:name=>[:in, 'C', 'D', 'F'], :append=>'A' ).plot(:name).sort.should == ["C+A", "D+A", "F+A"]
+  end
+
+  it "should find virtual cards" do
+    Card.search(:name=>[:in, 'C', 'D'], :append=>'*plus cards' ).plot(:name).sort.should == ["C+*plus cards", "D+*plus cards"]
+  end
+end
+
+
+describe Wql2, "order" do
+  before { User.as :joe_user }
+
+  it "should sort by create" do  
+    given_cards(
+      { "Cardtype:Nudetype" => ""},
+      { "Nudetype:nfirst" => "a"},
+      { "Nudetype:nsecond" => "b"},
+      { "Nudetype:nthird"=> "c" }
+    )
+    # WACK!! this doesn't seem to be consistent across fixture generations :-/
+    Card.search( :type=>"Nudetype", :sort=>"create", :dir=>"asc").plot(:name).should ==
+      ["nfirst","nsecond","nthird"]
+  end  
+
+    it "should sort by name" do
+      Card.search( :name=> %w{ in B Z A Y C X }, :sort=>"alpha", :dir=>"desc" ).plot(:name).should ==  %w{ Z Y X C B A }
+      Card.search( :name=> %w{ in B Z A Y C X }, :sort=>"name", :dir=>"desc" ).plot(:name).should ==  %w{ Z Y X C B A }
+    end
+
+    it "should sort by content" do
+      Card.search( :name=> %w{ in Z T A }, :sort=>"content").plot(:name).should ==  %w{ A Z T }
+    end
+    it "should play nice with match" do
+      Card.search( :match=>'Z', :type=>'Basic', :sort=>"content").plot(:name).should ==  %w{ A B Z }
+    end
+
+#  it "should sort by update" do     
+#    # do this on a restricted set so it won't change every time we add a card..
+#    Card.search( :match=>"two", :sort=>"update", :dir=>"desc").plot(:name).should == ["One+Two+Three", "One+Two","Two","Joe User"]
+#    Card["Two"].update_attributes! :content=>"new bar"
+#    Card.search( :match=>"two", :sort=>"update", :dir=>"desc").plot(:name).should == ["Two","One+Two+Three", "One+Two","Joe User"]
+#  end 
+#
+
+  
+  #it "should sort by plusses" do
+  #  Card.search(  :sort=>"plusses", :dir=>"desc", :limit=>6 ).plot(:name).should ==  ["*template", "A", "LewTest", "D", "C", "One"]
+  #end
+
+end
+
+
 
 describe Wql2, "relative" do
   before { User.as :joe_user }
@@ -242,36 +299,39 @@ describe Wql2, "relative" do
   end
 end
 
+describe Wql2, "found_by" do
+  before do
+    User.as :wagbot 
+    @simple_search = Card.create(:name=>'Simple Search', :type=>'Search', :content=>'{"name":"A"}')
+  end 
 
-
-describe Wql2, "type" do  
-  before { User.as :joe_user }
-  it "should find cards of this type" do
-    Card.search( :type=>"_self", :_card=>Card['User']).plot(:name).sort.should == ["Joe User","No Count","Sample User","Wagn Bot","Admin","Anonymous","u1","u2","u3"].sort
+#  it "should find cards returned by search of given name" do
+#    Card.search(:found_by=>'Simple Search').first.name.should=='A'
+#  end
+#  it "should play nicely with other properties and relationships" do
+#    Card.search(:plus=>{:found_by=>'Simple Search'}).should==Card.search(:plus=>'A')
+#  end
+  it "should be able to handle _self" do
+    Card.search(:_card=>@simple_search, :left=>{:found_by=>'_self'}, :right=>'B').first.name.should=='A+B'
   end
-
-  it "should find User cards " do
-    Card.search( :type=>"User" ).plot(:name).sort.should == ["Joe User","No Count","Sample User","Wagn Bot","Admin","Anonymous","u1","u2","u3"].sort
-  end
-
+  
 end
 
 
-describe Wql2, "group tagging" do
-  it "should find frequent taggers of basic cards" do
-    Card.search( :group_tagging=>'Basic' ).map(&:name).sort().should ==   ["*rform", "A", "C", "B", "D", "E", "Five", "One", "Three", "Two"].sort()
-  end
-end
+#=end
 
-describe Wql2, "trash handling" do   
+describe Wql2, "match" do 
   before { User.as :joe_user }
   
-  it "should not find cards in the trash" do 
-    Card["A+B"].destroy!
-    Card.search( :left=>"A" ).plot(:name).sort.should == ["A+C", "A+D", "A+E"]
+  it "should reach content and name via shortcut" do
+    Card.search( :match=>"two").plot(:name).sort.should==CARDS_MATCHING_TWO
   end
-end      
+  
+  it "should get only content when content is explicit" do
+    Card.search( :content=>[:match, "two"] ).plot(:name).sort.should==["Joe User",'plusses+*rform']
+  end
 
-
-
-
+  it "should get only name when name is explicit" do
+    Card.search( :name=>[:match, "two"] ).plot(:name).sort.should==["One+Two","One+Two+Three","Two"]
+  end
+end

@@ -23,18 +23,15 @@ from cards t0 order by count desc limit 10;
   
 =end
 
-module Wql2  
-  # FIXME: this should not be hardcoded
-  ANON_ROLE_ID = 1 unless defined?(ANON_ROLE_ID)
-  AUTH_ROLE_ID = 2 unless defined?(AUTH_ROLE_ID)
-  
+module Wql2    
   ATTRIBUTES = {
     :basic=> %w{ name type content id key extension_type extension_id },
     :system => %w{ trunk_id tag_id },
-    :semi_relational=> %w{ edited_by edited member_of member role },
+    :semi_relational=> %w{ edited_by edited member_of member role found_by },
     :relational => %w{ part left right plus left_plus right_plus },  
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
-    :special => %w{ or complete not count },
+    :special => %w{ or match complete not count },
+    :ignore => %w{ prepend append },
     :pass => %w{ cond }
   }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
   # put into form: { :content=>:basic, :left=>:relational, etc.. }
@@ -67,8 +64,10 @@ module Wql2
   DEFAULT_ORDER_DIRS =  {
     "update" => "desc",
     "create" => "asc",
-    "alpha" => "asc",
-    "plusses" => "desc",
+    "alpha" => "asc", # DEPRECATED
+    "name" => "asc",
+    "content" => "asc",
+    #"plusses" => "desc",
     "relevance" => "desc"
   }
 
@@ -89,6 +88,13 @@ module Wql2
     
     def quote(v)
       ActiveRecord::Base.connection.quote(v) 
+    end
+    
+    def match_prep(v,cardspec=self)
+      cxn ||= ActiveRecord::Base.connection
+      v=cardspec.root.params['_keyword'] if v=='_keyword'
+      v.strip!
+      [cxn, v]
     end
   end
   
@@ -120,7 +126,7 @@ module Wql2
     def initialize(spec)   
       # NOTE:  when creating new specs, make sure to specify _parent *before*
       #  any spec which could trigger another cardspec creation further down.
-      
+      spec = spec.clone
       @mods = MODIFIERS.clone
       @spec = {}  
       @params = {}   
@@ -145,15 +151,20 @@ module Wql2
       @card || raise(Wagn::WqlError, "_self referenced but no card is available")
     end
     
+    def to_card(relative_name)
+      case relative_name
+      when "_self";  root.card                                   
+      when "_left";  CachedCard.get(root.card.name.parent_name)
+      when "_right"; CachedCard.get(root.card.name.tag_name)
+      end
+    end
+    
     def merge(spec)
       # string or number shortcut    
       #warn "#{self}.merge(#{spec.inspect})"
       
       spec = case spec
-        when "_self";  { :id => root.card.id }                                   
-        when "_left";  { :id => CachedCard.get(root.card.name.parent_name).id }  # use name not .trunk() for auto_cards
-        when "_right";  { :id => CachedCard.get(root.card.name.tag_name).id }
-    #   when "_none";  { }
+        when /^_(self|left|right)$/;  { :id => to_card(spec).id }                                   
         when String;   { :key => spec.to_key }
         when Integer;  { :id => spec   }  
         when Hash;     spec
@@ -165,14 +176,14 @@ module Wql2
 
       # non-attribute filters shortcut
       spec.each do |key,val|     
-        if key==:_card       
+        if key== :_card       
           #warn "Assigning Card"      
           @card = spec.delete(key) 
-        elsif key==:_parent  
+        elsif key== :_parent  
           @parent = spec.delete(key) 
         elsif key.to_s.match(/^_\w+$/)
           @params[key.to_s]= spec.delete(key)
-        elsif OPERATORS.has_key?(key.to_s)
+        elsif OPERATORS.has_key?(key.to_s) && !ATTRIBUTES[key]
           spec.delete(key)
           spec[:content] = [key,val]
         elsif MODIFIERS.has_key?(key)
@@ -192,6 +203,7 @@ module Wql2
           when :system; spec[key] = val.is_a?(ValueSpec) ? val : subspec(val)
           when :relational, :semi_relational, :plus, :special; self.send(key, spec.delete(key))    
           when :referential;  self.refspec(key, spec.delete(key))
+          when :ignore; spec.delete(key)
           when :pass; # for :cond  ie. raw sql condition to be ANDed
           else raise("Invalid attribute #{key}") unless key.to_s.match(/(type|id)\:\d+/)
         end                      
@@ -200,6 +212,34 @@ module Wql2
       @spec.merge! spec  
       self
     end          
+    
+    def found_by(val)
+      cards = val=~/^_/ ? [to_card(val)] : Card.search(val)
+      cards.each do |c|
+        raise %{"found_by" value needs to be valid Search card} unless c && c.type=='Search'
+        merge field(:id) => subspec(c.get_spec)
+      end
+    end
+    
+    def match(val)
+      cxn, v = match_prep(val)
+      v.gsub!(/\W+/,' ')
+      
+      cond =
+        if System.enable_postgres_fulltext
+          v = v.strip.gsub(/\s+/, '&')
+          sql.relevance_fields << "rank(indexed_name, to_tsquery(#{quote(v)}), 1) AS name_rank"
+          sql.relevance_fields << "rank(indexed_content, to_tsquery(#{quote(v)}), 1) AS content_rank"
+          "indexed_content @@ to_tsquery(#{quote(v)})" 
+        else
+          sql.joins << "join revisions r on r.id=#{self.table_alias}.current_revision_id"
+          # FIXME: OMFG this is ugly
+          '(' + ["replace(#{self.table_alias}.name,'+',' ')",'r.content'].collect do |f|
+            v.split(/\s+/).map{ |x| %{#{f} #{cxn.match(quote("[[:<:]]#{x}[[:>:]]"))}} }.join(" AND ")
+          end.join(" OR ") + ')'
+        end
+      merge :cond=>SqlCond.new(cond)
+    end
     
     def complete(val)
       no_plus_card = (val=~/\+/ ? '' : "and tag_id is null")  #FIXME -- this should really be more nuanced -- it breaks down after one plus
@@ -341,10 +381,11 @@ module Wql2
       
       # Permissions       
       t = table_alias
-      unless User.current_user.login.to_s=='admin' #System.always_ok?
-        user_roles = [ANON_ROLE_ID]
+      #unless User.current_user.login.to_s=='wagbot' #
+      unless System.always_ok?
+        user_roles = [Role[:anon].id]
         unless User.current_user.login.to_s=='anon'
-          user_roles += [AUTH_ROLE_ID] + User.current_user.roles.map(&:id)
+          user_roles += [Role[:auth].id] + User.current_user.roles.map(&:id)
         end                                                                
         user_roles = user_roles.map(&:to_s).join(',')
         # type!=User is about 6x faster than type='Role'...
@@ -375,8 +416,11 @@ module Wql2
         sql.order << case order_key
           when "update"; "#{table_alias}.updated_at #{dir}"
           when "create"; "#{table_alias}.created_at #{dir}"
-          when "alpha";  "#{table_alias}.key #{dir}"  
+          when /^(name|alpha)$/;  "#{table_alias}.key #{dir}"  
           when "count";  "count(*) #{dir}, #{table_alias}.name asc"
+          when 'content'
+            sql.joins << "join revisions r2 on r2.id=#{self.table_alias}.current_revision_id"
+            "r2.content #{dir}"
           when "relevance";  
             if !sql.relevance_fields.empty?
               sql.fields << sql.relevance_fields
@@ -428,7 +472,7 @@ module Wql2
       
       # bare value shortcut
       @spec = case spec   
-        when ValueSpec; spec.instance_variable_get('@spec')  # FIXME whatta fucking hack
+        when ValueSpec; spec.instance_variable_get('@spec')  # FIXME whatta fucking hack (what's this for?)
         when Array;     spec
         when String;    ['=', spec]
         when Integer;   ['=', spec]
@@ -446,7 +490,7 @@ module Wql2
       raise("Invalid Operator #{@spec[0]}") unless OPERATORS.has_key?(@spec[0])
 
       # handle IN
-      if @spec[0] == :in and !@spec[1].is_a?(CardSpec) and !@spec[1].is_a?(RefSpec)
+      if @spec[0]=='in' and !@spec[1].is_a?(CardSpec) and !@spec[1].is_a?(RefSpec)
         @spec = [@spec[0], @spec[1..-1]]
       end
     end
@@ -458,46 +502,40 @@ module Wql2
     def sqlize(v)
       case v
         when CardSpec, RefSpec, SqlCond; v.to_sql
-        when Array;    "(" + v.collect {|x| sqlize(x)}.join("','") + ")"
+        when Array;    "(" + v.flatten.collect {|x| sqlize(x)}.join(',') + ")"
         else quote(v.to_s)
       end
     end
     
     def to_sql(field)
-      @cxn ||= ActiveRecord::Base.connection
+      clause = nil
       op,v = @spec
       v=@cardspec.card if v=='_self'
-      v=@cardspec.root.params['_keyword'] if v=='_keyword'
-
-      v=v.gsub(/\W/,' ') if op == '~'
-
-
-      if op == '~' && System.enable_postgres_fulltext   
-        v = v.strip.gsub(/\s+/, '&')
-        @cardspec.sql.relevance_fields << "rank(indexed_name, to_tsquery(#{sqlize(v)}), 1) AS name_rank"
-        @cardspec.sql.relevance_fields << "rank(indexed_content, to_tsquery(#{sqlize(v)}), 1) AS content_rank"
-        "indexed_content @@ to_tsquery(#{sqlize(v)})" 
-      elsif op == '~'
-        # FIXME: OMFG this is ugly
-        @cardspec.sql.joins << "join revisions on revisions.id=#{@cardspec.table_alias}.current_revision_id"
-        '(' + ['key','name','content'].collect do |f|
-          sql = v.split(/\s+/).map do |x|
-            x.gsub!( /(\*|\+|\(|\))/ ) { '\\\\' + $~[1] }
-            "replace(#{@cxn.quote_column_name(f)}, '#{JOINT}',' ') #{@cxn.match(sqlize("[[:<:]]" + x + "[[:>:]]"))}"
-          end.join(" AND ")
-        end.join(" OR ") + ')'
-      elsif field=="content"
-        @cardspec.sql.joins << "join revisions on revisions.id=#{@cardspec.table_alias}.current_revision_id"
-        "revisions.content #{op} #{sqlize(v)}"
-      elsif field=="cond" 
-        "(#{sqlize(v)})"
-      elsif field=="type"
-        t = Cardtype.classname_for(  v.is_a?(Card::Base) ? v.name : v )
-        "#{field} = #{sqlize(t)}"
+      
+      case field
+      when "content"
+        @cardspec.sql.joins << "join revisions r on r.id=#{@cardspec.table_alias}.current_revision_id"
+        field = 'r.content'
+      when "type"
+        v = [v].flatten.map do |val| 
+          Cardtype.classname_for(  val.is_a?(Card::Base) ? val.name : val  )
+        end
+        v = v[0] if v.length==1
+      when "cond"
+        clause = "(#{sqlize(v)})"
       else   
         field = "#{@cardspec.table_alias}.#{field}"
-        "#{field} #{op} #{sqlize(v)}"
-      end          
+      end
+      
+      
+      clause ||=
+        if op=='~'
+          cxn, v = match_prep(v,@cardspec)
+          %{#{field} #{cxn.match(sqlize(v))}}
+        else
+          "#{field} #{op} #{sqlize(v)}"
+        end
+      
     end
   end         
 end

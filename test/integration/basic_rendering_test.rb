@@ -13,16 +13,14 @@ class BasicRenderingTest < ActionController::IntegrationTest
   test_render "card/edit/:id"           , :users=>{ :anon=>403, :admin=>200 }, :cardtypes=>:all
   test_render "card/new"                , :users=>{ :anon=>403, :joe_user=>200 }
   test_render "connection/new/:id"      , :users=>{ :anon=>200, :joe_user=>200 }
-  test_render "card/edit_name/:id"       , :users=>{ :anon=>403, :joe_user=>200 }
-  test_render "card/edit_type/:id"       , :users=>{ :anon=>403, :joe_user=>200 }
   
 =begin  
 
-test_render "block/render_list/:id?query=recent_changes"
-test_render "block/recent_list/:id?query=recent_changes"
-test_render "block/search_list/:id?query=recent_changes"
-test_render "block/connection_list/:id?query=recent_changes"
-test_render "block/link_list/:id?query=recent_changes"
+test_render "types/search/render_list/:id?query=recent_changes"
+test_render "types/search/recent_list/:id?query=recent_changes"
+test_render "types/search/search_list/:id?query=recent_changes"
+test_render "types/search/connection_list/:id?query=recent_changes"
+test_render "types/search/link_list/:id?query=recent_changes"
 
   def test_should_do_some_action
     test_action "card/update"

@@ -44,7 +44,7 @@ end
 
 describe Card, "created by Card.new " do
   before(:each) do     
-    User.as :admin
+    User.as :wagbot 
     @c = Card::Basic.new :name=>"New Card", :content=>"Great Content"
   end
   
@@ -66,7 +66,7 @@ end
 
 describe Card, "created by Card.create with valid attributes" do
   before(:each) do
-    User.as :admin
+    User.as :wagbot 
     @b = Card.create :name=>"New Card", :content=>"Great Content"
     @c = Card.find(@b.id)
   end
@@ -115,7 +115,7 @@ end
 
 describe Card, "types" do
   before do
-    User.as :admin 
+    User.as :wagbot  
     # NOTE: it looks like these tests aren't DRY- but you can pull the cardtype creation up here because:
     #  creating cardtypes creates constants in the namespace, and those aren't removed 
     #  when the db is rolled back, so you're not starting in the original state.

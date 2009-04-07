@@ -199,7 +199,7 @@ class CachedCard
 
   def ok?(task) 
     case task
-      when :read; party_ok?(read_permission)
+      when :read; System.always_ok? || party_ok?(read_permission)
       when :comment; party_ok?(comment_permission)
       else card.ok?(task)
     end

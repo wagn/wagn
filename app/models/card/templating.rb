@@ -106,11 +106,11 @@ module CardLib
     end
        
     def type_template?
-      name ? (name.tag_name == '*tform') : (tag and tag.name == '*tform')
+      name ? (name.junction? && name.tag_name == '*tform') : (tag and tag.name == '*tform')
     end
 
     def right_template?
-      name ? (name.tag_name == '*rform') : (tag and tag.name == '*rform')
+      name ? (name.junction? && name.tag_name == '*rform') : (tag and tag.name == '*rform')
     end
        
     def hard_template?
@@ -135,7 +135,7 @@ module CardLib
     
     def hard_templatees
       if wql=hard_templatee_wql
-        User.as(:admin) {  Card.search(wql)  }
+        User.as(:wagbot)  {  Card.search(wql)  }
       else
         []
       end
@@ -144,7 +144,7 @@ module CardLib
     def expire_templatee_references
 	   return unless respond_to?('references_expired')
       if wql=hard_templatee_wql
-        condition = User.as(:admin){ Wql2::CardSpec.new(wql.merge(:return=>"condition")).to_sql }
+        condition = User.as(:wagbot) { Wql2::CardSpec.new(wql.merge(:return=>"condition")).to_sql }
         card_ids_to_update = connection.select_rows("select id from cards t where #{condition}").map(&:first)
         card_ids_to_update.each_slice(100) do |id_batch|
           connection.execute "update cards set references_expired=1 where id in (#{id_batch.join(',')})"

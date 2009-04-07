@@ -30,7 +30,7 @@ class CardActionTest < ActionController::IntegrationTest
   # connection/remove ??
 
   def test_comment      
-    User.as(:admin) do
+    User.as(:wagbot)  do
       @a = Card.find_by_name("A")  
       @a.permit('comment', Role.find_by_codename('anon'))
       @a.save!
@@ -68,7 +68,7 @@ class CardActionTest < ActionController::IntegrationTest
   
   def test_comment
     @a = Card.find_by_name("A")  
-    User.as :admin do
+    User.as :wagbot  do
       @a.permit :comment, Role.find_by_codename('anon')
       @a.save
     end

@@ -1,22 +1,24 @@
-<h2> Welcome To <%= site_title %></h2>
+<h1> Welcome To <%= site_title %></h1>
 
-<%= error_messages_for 'user' %>
-<%= error_messages_for 'system' %>
+<%= error_messages_for :user %>
 
-<p>To get started, you need to setup the administrative account. </p>
+<% get_slot(card).wrap('account-request') do |slot| %>
 
-<% form_tag :id=>params[:id], :action => "save_setup" do %>
+  <div class="open-content">
+    <h2>To get started, set up an account. </h2>
+    
+    <% form_tag :id=>params[:id], :action => "setup" do %>
 
-<!--[form:user]-->
-
-<p><label for="user_email">Email</label><br/>
-<%= text_field 'user', 'email'  %></p>
-
-<p><label for="user_password">Password</label><br/>
-<%= password_field_tag 'user[password]', '' %></p>
-
-<p><label for="user_password_confirmation">Confirm Password</label><br/>
-<%= password_field_tag 'user[password_confirmation]', '' %></p>
-
-  <%= submit_tag 'Create' %>
+    <table class="fieldset">
+      <% slot.option(
+          :name=>"name", 
+      		:help=>"<strong>Title for user's card</strong><br/> Usually a full name.",
+      		:label=>"Name") do %>
+      	<%= text_field :card, :name %>
+      <% end %>
+      <%= render :partial=>'account/edit', :locals=>{:slot=>slot, :card=>@card} %>
+    </table>
+      <%= submit_tag 'Create' %>
+    <% end %>
+  </div>
 <% end %>

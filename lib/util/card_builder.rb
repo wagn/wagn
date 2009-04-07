@@ -1,6 +1,6 @@
 module CardBuilderMethods
   ## ug
-  ADMIN_ID = 1
+  WAGBOT_ID = 1
 
   def newcard(name, content="")
     ::Card::Basic.create! :name=>name, :content=>content
@@ -36,7 +36,7 @@ module CardBuilderMethods
         :email=>"#{username.gsub(/\s+/,'')}@grasscommons.org",
         :login=>username, 
         :blocked => true,
-        :invite_sender_id=>ADMIN_ID  
+        :invite_sender_id=>WAGBOT_ID  
       )
 
       if c = Card.find_by_name(username)
@@ -55,7 +55,7 @@ module CardBuilderMethods
   end      
     
   def admin
-    User.find(ADMIN_ID)
+    User[:wagbot]
   end
   
   def as(admin)

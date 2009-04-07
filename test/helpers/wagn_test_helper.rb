@@ -5,12 +5,14 @@ module WagnTestHelper
  
   def setup_default_user
     # FIXME: should login as joe_user by default-- see what havoc it creates...
-    @user = User.current_user = User.find_by_login('admin')
+    @user = User.current_user = User[:wagbot]
+
     @user.update_attribute('crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c')
     @user.roles << Role.find_by_codename('admin')
     
     # setup admin while we're at it
-    @admin = User.find_by_login('admin')
+    @admin = User[:wagbot]
+
     @ra = Role.find_by_codename('admin')
     @admin.roles << @ra
     #User.current_user = User.find_by_login('joe_user')
@@ -51,7 +53,7 @@ module WagnTestHelper
     case user.to_s 
       when 'anon'; #do nothing
       when 'joe_user'; login='joe@user.com'; pass='joe_pass'
-      when 'admin';    login='webmaster@grasscommons.org'; pass='w8gn8t0r'
+      when 'admin';    login='u3@user.com'; pass='u3_pass'
       else raise "Don't know email & password for #{user}"
     end
     unless user==:anon

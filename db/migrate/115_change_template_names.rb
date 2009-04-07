@@ -1,6 +1,6 @@
 class ChangeTemplateNames < ActiveRecord::Migration
   def self.up
-    if User.as :admin
+    if User.as :wagbot 
       Card.reset_column_information 
     
       Card.search(:right=>'*template').each do |card|

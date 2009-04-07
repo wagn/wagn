@@ -11,11 +11,11 @@ class OptionsControllerTest < Test::Unit::TestCase
   include AuthenticatedTestHelper
 
   def setup
-    User.as :admin
+    User.as :wagbot 
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new                                
     @controller = OptionsController.new
-    login_as(:admin)
+    login_as(:wagbot)
   end    
 
 

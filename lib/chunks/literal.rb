@@ -12,16 +12,28 @@ module Literal
     end
   end
 
+  class Escape < AbstractLiteral
+    unless defined? ESCAPE_PATTERN
+      ESCAPE_PATTERN = /\\((\[|\{){2}[^\]\}]*[\]\}]{2})/
+    end
+    def self.pattern() ESCAPE_PATTERN end
+
+    def initialize(match_data, content)
+      super
+      first = match_data[2]
+      @unmask_text = "#{match_data[1].sub(first, "<span>#{first}</span>")}"
+    end
+  end
+
   # A literal chunk that protects 'code' and 'pre' tags from wiki rendering.
   class Pre < AbstractLiteral
-#    unless defined? PRE_PATTERN
+    unless defined? PRE_PATTERN
       PRE_PATTERN = /\/\*(.*?)\*\//
-#    end
+    end
     def self.pattern() PRE_PATTERN end
 
     def initialize(match_data, content)
       super
-#      warn "LITERALLY!!"
       @unmask_text = "<code>#{match_data[1]}</code>"
     end
 

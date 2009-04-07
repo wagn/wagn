@@ -1,30 +1,35 @@
-<% get_slot.wrap(:related) do |slot| %>
+<%
+  sources = [card.cardtype.name,nil]
+  sources.unshift '*account' if card.extension_type=='User' 
+  items = sources.map do |root| 
+    c = CachedCard[(root ? "#{root}+" : '') +'*context']
+    c && c.type=='Pointer' && c.pointees
+  end.flatten.compact
+  items<<'config' if card.simple? || card.is_a?(Card::Basic)
+  current = params[:attribute] || items.first.to_key
+
+  get_slot.wrap(:related) do |slot| %>
 	<%= slot.header %>
-	<%= slot.notice %>  
-	<div class="open-content related headroom">
-		<h2>Self</h2>
-		<% @card.pieces.each do |particle| %>
-		  <%= render_card particle, :closed %>
-		<% end %>
-		<% unless @card.type == 'Basic' %>
-  		<h2>Type</h2>
-  		<%= render_card @card.cardtype, :closed %>
-  	<% end %>
-	  <% if @card.type == 'Cardtype' %>
-	    <h2><%= @card.name %> Cards</h2>
-	    <%= render_card "#{@card.name}+*type cards", 'line' %>
-	    <% if Cardtype.create_ok?(@card.type) %>
-	      <%= button_to "Create new #{@card.name} card", "/card/new?card[type]=#{@card.codename}" %>
-				<%= link_to "Import Cards of this type", "/import?cardtype=#{@card.codename}" %>
-	    <% end %>
+
+	<% div(:class=>'submenu') do
+	   items.each do |item|
+	     key = item.to_key %>
+       <%= link_to_remote( item, 
+          { :url=>slot.url_for("card/related", nil, key), :update => slot.id }, 
+          :class=>(key==current ? 'on' : '') 
+        ) %>
     <% end %>
-	  <h2>Connections</h2>
-    <%= render_card "#{@card.name}+*plus cards", 'line' %>
-    <%= render_card "#{@card.name}+*plus parts", 'line' %>  
-		<h2>References</h2>
-		<% ['linked to', 'linked from', 'included', 'that include'].each do |search| %>
-      <%= render_card "#{@card.name}+*cards #{search}", 'line' %>
-		<% end %>	
+	<% end %>
+	<%= slot.notice %>  
+
+	<div class="open-content related headroom">
+	  <% if current=='config' %>
+	    <%= slot.expand_transclusions render(:partial=>'config') %>
+	  <% else %>
+   	  <%= render_card( "#{card.name}+#{current}", :content ) %>
+   	<% end %>
 	</div>
 	
+	<%= javascript_tag("setupLinksAndDoubleClicks();") %>
+
 <% end %>

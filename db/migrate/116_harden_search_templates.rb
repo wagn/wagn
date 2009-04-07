@@ -1,6 +1,6 @@
 class HardenSearchTemplates < ActiveRecord::Migration
   def self.up
-    if User.as :admin
+    if User.as :wagbot 
       Card.search(:type=>'Search',:right=>'*rform').each do |card|
         card.extension_type='HardTemplate'
         card.save!

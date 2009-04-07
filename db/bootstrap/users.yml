@@ -1,43 +1,11 @@
 --- 
 users_001: 
-  status: system
-  salt: c420fa40c65a38186deb25ba859edacd9bf7d8f8
-  updated_at: 2007-12-03 00:29:07.787331
-  cards_per_page: "25"
-  crypted_password: 13d124f96e2953fea135c13df097fb3d754588be
-  invite_sender_id: "1"
-  blocked: f
-  password_reset_code: 
-  id: "2"
-  hide_duplicates: t
-  login: wagbot
-  created_at: 2007-12-03 00:29:07.787331
-  email: wagnbot@grasscommons.org
-users_002: 
-  status: active
-  salt: bf2a748b23e6fc6fa64d5acb99df8e72e308c58c
-  updated_at: 2007-12-03 00:29:09.521583
-  cards_per_page: "25"
-  crypted_password: 610bb7b564d468ad896e0fe4c3c5c919ea5cf16c
-  invite_sender_id: "1"
-  blocked: f
-  password_reset_code: 
   id: "1"
-  hide_duplicates: t
-  login: admin
-  created_at: 2007-12-03 00:29:07.770414
-  email: webmaster@grasscommons.org
-users_003: 
   status: system
-  salt: c420fa40c65a38186deb25ba859edacd9bf7d8f8
-  updated_at: 2007-12-03 00:29:09.753286
-  cards_per_page: "25"
-  crypted_password: 13d124f96e2953fea135c13df097fb3d754588be
   invite_sender_id: "1"
-  blocked: f
-  password_reset_code: 
-  id: "3"
-  hide_duplicates: t
+  login: wagbot
+users_002: 
+  status: system
+  invite_sender_id: "1"
+  id: "2"
   login: anon
-  created_at: 2007-12-03 00:29:09.622298
-  email: anonymous@grasscommons.org

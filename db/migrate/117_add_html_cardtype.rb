@@ -1,6 +1,6 @@
 class AddHtmlCardtype < ActiveRecord::Migration
   def self.up
-    if User.as :admin
+    if User.as :wagbot 
       Card::Cardtype.create(:name=>'HTML')
     end
   end

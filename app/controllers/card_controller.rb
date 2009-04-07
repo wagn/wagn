@@ -7,24 +7,25 @@ class CardController < ApplicationController
   before_filter :create_ok, :only=>[ :new, :create ]
 
   before_filter :load_card!, :only=>[
-    :changes, :comment, :denied, :edit, :edit_conflict, :edit_name, 
-    :edit_type, :options, :quick_update, :related, :remove, :rollback, 
-    :save_draft, :update
+    :changes, :comment, :denied, :edit, :options, :quick_update, 
+    :related, :remove, :rollback, :save_draft, :update
   ]
 
   before_filter :load_card_with_cache, :only => [:line, :view, :open ]
   
-  before_filter :edit_ok,   :only=>[ :edit, :edit_name, :edit_type, :update, :rollback, :save_draft] 
+  before_filter :edit_ok,   :only=>[ :edit, :update, :rollback, :save_draft] 
   before_filter :remove_ok, :only=>[ :remove ]
   
   #----------( Special cards )
   
   def index
-    if card = CachedCard.get_real('*home')
-      redirect_to '/'+ card.content
-    else
-      redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_title)
-    end
+    redirect_to(
+      case
+      when User.no_logins?;                 '/admin/setup'
+      when home = System.setting('*home');  '/'+ home
+      else { :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_title) }
+      end
+    )
   end
 
   def mine
@@ -42,7 +43,6 @@ class CardController < ApplicationController
     @card_name = Cardname.unescape(params['id'] || '')
     if (@card_name.nil? or @card_name.empty?) then    
       @card_name = System.site_title
-      #@card_name = System.deck_name
     end             
     @card = CachedCard.get(@card_name)
 
@@ -90,7 +90,7 @@ class CardController < ApplicationController
 
     @card = Card.new args                   
     if request.xhr?
-      render :partial => 'card/new', :locals=>{ :card=>@card }
+      render :partial => 'views/new', :locals=>{ :card=>@card }
     else
       render :action=> 'new'
     end
@@ -101,20 +101,16 @@ class CardController < ApplicationController
   end
   
   def create
-    #@card = Card.new params[:card]
-    #return denial if !@card.cardtype.ok?(:create)  
     @card = Card.create params[:card]
     @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards] and @card.errors.empty?
 
-    # double check to prevent infinite redirect loop was breaking all the error checking on card creation.  has to be a better way!
- 
     render_args = 
       case
         when !@card.errors.empty?;  {
           :status => 422,
           :inline=>"<%= error_messages_for :card %><%= javascript_tag 'scroll(0,0)' %>" 
         }
-        when main_card?;            
+        when main_card?;  {:action=>'new_redirect', :status=>418 }          
           # according to rails / prototype docs:
           # :success: [...] the HTTP status code is in the 2XX range.
           # :failure: [...] the HTTP status code is not in the 2XX range.
@@ -122,58 +118,51 @@ class CardController < ApplicationController
           # however on 302 ie6 does not update the :failure area, rather it sets the :success area to blank..
           # for now, to get the redirect notice to go in the failure slot where we want it, 
           # we've chosen to render with the 'teapot' failure status: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-          {:action=>'new_redirect', :status=>418 }
-        else;                       {:action=>'show'}
+          
+        else;              {:action=>'show'}
       end
     render render_args
   end
   
   #--------------( editing )
   
-  def edit 
-    if params[:card] and @card.type=params[:card][:type]  
-      @request_type='html'
-      @card.save!    
-      @card = Card.find(card.id)
-    end
+  def edit
+    render :partial=>"card/edit/#{params[:attribute]}" if ['name','type'].member?(params[:attribute])
   end
-  
-  def edit_name             
+
+  def update
+    card_args=params[:card] || {}
+    #fail "card params required" unless params[:card] or params[:cards]
+
+    # ~~~ REFACTOR! -- this conflict management handling is sloppy
     @old_card = @card.clone
-    if !params[:card]
-    elsif @card.update_attributes params[:card]
-      render_update_slot render_to_string(:action=>'edit')
-    elsif @card.errors.on(:confirmation_required) && @card.errors.map {|e,f| e}.uniq.length==1
-      @confirm = true   
-      @card.confirm_rename=true
-      @card.update_link_ins = (@card.update_link_ins=='true')
-#      render :action=>'edit', :status=>200
-    else          
-      # don't report confirmation required as error in a case where the interface will let you fix it.
-      @card.errors.instance_variable_get('@errors').delete('confirmation_required')
-      @request_type='html'
-      render_card_errors(@card)
-    end
-  end
-  
-  
-  def update     
-    old_rev_id = params[:card] ? params[:card].delete(:current_revision_id)  : nil
-    #warn "old rev id = #{old_rev_id}; current = #{@card.current_revision.id} "
-    ##FIXME -- this should be taken care of in transclusions, too.
-    if params[:card] and params[:card][:content] and (old_rev_id.to_i != @card.current_revision.id.to_i)
+    @current_revision_id = @card.current_revision.id
+    old_revision_id = card_args.delete(:current_revision_id) || @current_revision_id
+    if old_revision_id.to_i != @current_revision_id.to_i
       changes  # FIXME -- this should probably be abstracted?
       @no_changes_header = true
       @changes = render_to_string :action=>'changes' 
       return render( :action=>:edit_conflict )
     end 
-    if params[:multi_edit]
-      @card.multi_update(params[:cards])
-    else
-      @card.update_attributes! params[:card]     
-    end
+    # ~~~~~~  /REFACTOR ~~~~~ #
+    
+    case
+    when params[:multi_edit]; @card.multi_update(params[:cards])
+    when card_args[:type];       @card[:type]=card_args[:type]; @card.save
+      #can't do this via update attributes: " Can't mass-assign these protected attributes: type"
+      #might be addressable via attr_accessors?
+    else;                     @card.update_attributes(card_args)     
+    end  
 
+    if @card.errors.on(:confirmation_required) && @card.errors.map {|e,f| e}.uniq.length==1  
+      ## I don't get the second condition.  pls document  
+      @confirm = @card.confirm_rename=true
+      @card.update_link_ins = (@card.update_link_ins=='true')
+      return render(:partial=>'card/edit/name', :status=>200)
+    end
+    
     return render_card_errors(@card) unless @card.errors.empty?
+    @card = Card.find(card.id)
     render_update_slot render_to_string(:action=>'show')
   end
 
@@ -288,7 +277,7 @@ class CardController < ApplicationController
   
   def auto_complete_for_navbox
     @stub = params['navbox']
-    @items = Card.search( :complete=>@stub, :limit=>8, :sort=>'alpha' ) 
+    @items = Card.search( :complete=>@stub, :limit=>8, :sort=>'name' ) 
     render :inline => "<%= navbox_result @items, 'name', @stub %>"
   end
     
@@ -303,9 +292,9 @@ class CardController < ApplicationController
     end
 
     if !params[:id].blank? && (card = Card["#{params[:id].tag_name}+*options"]) && card.type=='Search'
-      @items = card.search( :complete=>complete, :limit=>8, :sort=>'alpha')
+      @items = card.search( :complete=>complete, :limit=>8, :sort=>'name')
     else
-      @items = Card.search( :complete=>complete, :limit=>8, :sort=>'alpha' )
+      @items = Card.search( :complete=>complete, :limit=>8, :sort=>'name' )
     end
     render :inline => "<%= auto_complete_result @items, 'name' %>"
   end                                              
@@ -314,7 +303,7 @@ class CardController < ApplicationController
   # doesn't really seem to fit here.  may want to add new controller if methods accrue?        
   def add_field # for pointers only
     load_card! if params[:id]
-    render :partial=>'cardtypes/pointer/field', :locals=>params.merge({:link=>"",:card=>@card})
+    render :partial=>'types/pointer/field', :locals=>params.merge({:link=>"",:card=>@card})
   end
 end
 

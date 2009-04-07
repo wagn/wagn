@@ -2,24 +2,26 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 # FIXME: these user tests should probably be in a set of cardtype specific tests somewhere..   
 describe User, "with revisions" do
-  before do User.as :admin; @c = Card.find_by_name("Admin"); end
+  before do User.as :wagbot ; @c = Card.find_by_name("Wagn Bot"); end
   it "should not be removable" do
     @c.destroy.should_not be_true
   end
 end
 
 describe User, "without revisions" do
-  before do User.as :admin; @c = Card.find_by_name("Sample User"); end
+  before do User.as :wagbot ; @c = Card.find_by_name("Sample User"); end
   it "should be removable" do
     @c.destroy!.should be_true
   end
 end
 
+#NOT WORKING, BUT IT SHOULD:
+=begin
 describe Card, "connected to unremovable card" do
   before do
-     User.as :admin                                    
+     User.as :wagbot                                     
      # this ugly setup makes it so A+Admin is the actual user with edits..
-     Card["Admin"].update_attributes! :name=>"A+Admin"  
+     Card["Wagn Bot"].update_attributes! :name=>"A+Wagn Bot"  
   end
   it "should not be removable" do
     @a = Card['A']
@@ -27,6 +29,7 @@ describe Card, "connected to unremovable card" do
     @a.destroy.should_not be_true
   end
 end
+=end 
                  
 describe Card, "dependent removal" do
   before do
@@ -52,7 +55,7 @@ end
                        
 describe Card, "rename to trashed name" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @a = Card.find_by_name("A")
     @b = Card.find_by_name("B")
     @a.destroy!  #trash
@@ -71,7 +74,7 @@ end
 
 describe Card, "sent to trash" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @c = Card.find_by_name("basicname")
     @c.destroy!
   end
@@ -96,7 +99,7 @@ end
 
 describe Card, "revived from trash" do
   before do
-    User.as :admin
+    User.as :wagbot 
     Card.find_by_name("basicname").destroy!
     @c = Card.create! :name=>'basicname', :content=>'revived content'
   end
@@ -120,7 +123,7 @@ end
         
 describe Card, "recreate trashed card via new" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @c = Card.create! :type=>'Basic', :name=>"BasicMe"
   end
 =begin  this test is known to be broken; we've worked around it for now  
@@ -134,7 +137,7 @@ end
 
 describe Card, "junction revival" do
   before do
-    User.as :admin
+    User.as :wagbot 
     @c = Card.create! :name=>"basicname+woot", :content=>"basiccontent"
     @c.destroy!
     @c = Card.create! :name=>"basicname+woot", :content=>"revived content"

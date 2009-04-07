@@ -41,6 +41,7 @@ module Chunk
           when /^https?:/; 'external-link'
           when /^mailto:/; 'email-link'
           else
+            @link_text = @link_text.to_show(href)
             if refcard
               href = '/wagn/' + href.to_url_key
               'known-card'

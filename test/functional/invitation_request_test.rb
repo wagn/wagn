@@ -59,7 +59,7 @@ class InvitationRequestTest < Test::Unit::TestCase
   
 =begin DOES NOT AUTOMATICALLY HAPPEN ANY MORE.
    def test_should_send_notification
-      User.as :admin do
+      User.as :wagbot  do
         Card.create :name=>'*invite+*to', :content=> 'test@user.com'
       end
   #    System.invite_request_alert_email = 'test@user.com' if System.invite_request_alert_email.blank?

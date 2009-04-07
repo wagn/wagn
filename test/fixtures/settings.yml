@@ -1,7 +1,2 @@
---- 
-settings_002: 
-  id: "2"
-  codename: sample_setting
-settings_001: 
-  id: "1"
-  codename: invitation_request_landing
+--- {}
+

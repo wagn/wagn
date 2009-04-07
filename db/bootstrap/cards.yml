@@ -463,26 +463,26 @@ cards_085:
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_001: 
   reader_type: Role
-  name: Administrator links
-  indexed_content: "'link':2A 'role':5 'global':7 'account':3,4 'permiss':8 'administr':1A '/admin/tasks':6"
-  updated_at: 2009-04-07 12:00:58.908559 -06:00
+  name: Account Request+*tform
+  indexed_content: "'tform':3A 'account':1A 'request':2A"
+  updated_at: 2009-04-07 13:29:24.095193 -06:00
   appender_id: 
   references_expired: 
-  indexed_name: "'link':2 'administr':1"
-  current_revision_id: 1740
+  indexed_name: "'tform':3 'account':1 'request':2"
+  current_revision_id: 1747
   created_by: 3
   type: Basic
-  tag_id: 
-  extension_type: 
+  tag_id: 49
+  extension_type: SoftTemplate
   updated_by: 3
   reader_id: 3
-  id: 151
-  trunk_id: 
+  id: 155
+  trunk_id: 12
   trash: false
   appender_type: 
-  key: administrator_link
+  key: account_request+*tform
   extension_id: 
-  created_at: 2009-04-07 12:00:58.908559 -06:00
+  created_at: 2009-04-07 13:29:24.095193 -06:00
 cards_022: 
   reader_type: Role
   name: "*users+*rform"
@@ -661,26 +661,26 @@ cards_065:
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_002: 
   reader_type: Role
-  name: Wagn Bot
-  indexed_content: "'bot':2A 'etc':23 'card':12,22 'link':18 'make':8 'sign':16 'wagn':1A 'autom':10 'creat':13 'renam':21 'updat':11,19 'someon':15 'account':6"
-  updated_at: 2009-04-07 11:41:35.799276 -06:00
+  name: new
+  indexed_content: "'d':448,539,573,725 'm':499,587 '02':391,394 '08':392 '10':393 '12':747 '13':695,718,721,744 '14':696 '18':697,719,745 '49':720 '52':698 '59':746 'ad':16,653 'll':96,641 're':151,175,309,611 'us':729 '1.0':251 'abb':388 'css':319 'fri':693,716,742 'get':410 'key':705 'let':509 'lot':256,485,518 'mar':390,694,717,743 'may':36,477,685 'mon':389 'new':1A,11,28,734 'one':21,139 'rid':411 'see':652,728 'set':271,512 'tab':123,144,156,182,736 'use':320,466,565,600 'wql':556 '2009':396,700,723,749 'also':588,651 'bold':254 'card':2,24,34,51,73,85,89,120,129,136,148,164,171,179,190,237,471,489,550,551,581,594,607,619,674,713 'case':566 'code':221 'come':632 'copi':9,26,242 'done':188,240 'edit':117,118,303,333,383,661 'even':543 'form':77 'good':624 'hard':444 'help':108 'home':311,606 'hope':458 'imag':4 'item':160 'john':50,387,474 'kind':501 'last':382 'left':102,130,615 'less':544 'lewi':49 'like':534,540,574,726 'line':428 'link':299,312,332,451,655 'logo':306 'look':366 'make':307,359 'move':516 'much':449,467,521 'name':133,560 'need':247,265,642 'note':124 'ongo':340 'open':660 'page':217 'part':103 'plus':72,84,88,119,178 'role':56,172 'rubi':580 'seem':533 'sent':70,294 'sinc':683 'sort':385 'sure':308,360 'take':364,505 'text':109,318,413,420,430 'took':546 'trim':469,522 'type':162,496 'user':59,170,461 'view':141 'wagn':7,12,29,662 'wait':275 'want':98,417,478,483,679 'week':739 'well':105 'work':248,258,266,341,402,731 '-0700':699,722,748 '-0800':395 'alpha':386 'avail':145,157 'avoid':463 'basic':669 'blank':470,488 'bunch':400 'chang':269,687 'close':19,30,58,61,74,80,86,90,113,116,121 'coher':609 'could':434,462 'delet':94,100,270,702 'doabl':235 'email':711 'ethan':48,691,714,740 'everi':147,427 'focal':407 'fuzzi':569 'googl':703 'handl':513,602 'hurri':690 'ignor':18,43 'inlin':682 'invit':65,291,529 'later':435 'littl':419 'might':597,631 'order':384 'point':408 'prove':436 'relat':54,122,143,155,181,350,712,735 'relev':227 'remov':577 'rform':82,87,128,377 'right':494 'rough':558 'setup':585 'solut':625 'space':209 'stabl':284 'start':730 'tform':81,83,281,330 'thank':64,71,604 'thing':196,244,425 'think':415,622 'today':405 'typic':169 'updat':22,342,362,446 'watch':198 'would':457 'wrong':437 'access':646 'almost':707 'analyt':704 'bottom':214,665 'config':106,110,111,261,301,363,648,673 'confus':562 'consid':590 'custom':180 'duplic':39 'except':13,44 'explan':296 'extens':168 'fuller':295 'happen':192,259 'inclin':503 'includ':629 'inclus':112,115 'inform':524 'involv':220 'launch':252 'licens':310 'pretti':283 'propos':576 'rather':450 'realli':599 'recent':205 'reopen':591 'return':131 'script':578 'signup':67,289,523,526 'someth':432 'though':455 'ticket':228,348 'within':189 'wouldn':677 'account':53,55,167,328,668 'automat':23 'awkward':439 'cardtyp':75,78,161,280,288,305 'comment':321 'compris':32 'content':323 'context':153,177,337 'convers':595,637 'currenc':272 'default':380,495,511,584 'discuss':211,375,480 'essenti':612 'everyth':184,218,231 'instanc':57,60,79,376 'overkil':535 'pointer':159 'possibl':422,473 'probabl':97,246 'process':183 'reflect':268 'request':69,293,329,527 'section':670 'serious':589 'sidebar':114 'success':66,68,290,292,618 'templat':322 'univers':154 'viewabl':324 'document':297,347,468,657 'instruct':681 'redirect':593,613,636 'richtext':274 'wagn.org':225,230,263,278,344,353,357,369,454 'administr':327,331,336 'last-edit':381 'mccutchen':692,715,741 'open-edit':659 'paragraph':531 'percentag':273 'copy/adapt':285 'account-rel':52 '/admin/setup':314 'welcome/explanatory':317 '/wagn/star_cards</p>':345 'wagn.org/wagn/star_cards':343 'wagn.org/wagn/installation':352 'wagn.org/wagn/configuration':262 'wagn.org/wagn/administration':356 '/wagn/cards_to_include_by_default':370 'wagn.org/wagn/cards_to_include_by_default':368 '/wagn/configuration|configuration]]</strong>':264 '/wagn/implement_initial_setup_for_new_wagn|the':226 '/wagn/installation+tickets_for_item|installation]]':354 'wagn.org/wagn/implement_initial_setup_for_new_wagn':224 '/wagn/administration+tickets_for_item|administration]],':358 '/wagn/can_t_remove_or_change_cardtype_of_cardtype_cards</p>':279 'wagn.org/wagn/can_t_remove_or_change_cardtype_of_cardtype_cards':277"
+  updated_at: 2009-04-07 13:18:29.845708 -06:00
   appender_id: 
   references_expired: 
-  indexed_name: "'bot':2 'wagn':1"
-  current_revision_id: 1541
-  created_by: 1
-  type: User
+  indexed_name: "'new':1"
+  current_revision_id: 1741
+  created_by: 3
+  type: Basic
   tag_id: 
-  extension_type: User
+  extension_type: 
   updated_by: 3
   reader_id: 3
-  id: 1
+  id: 152
   trunk_id: 
   trash: false
   appender_type: 
-  key: wagn_bot
-  extension_id: 1
-  created_at: 2009-04-06 14:11:12.920280 -06:00
+  key: new
+  extension_id: 
+  created_at: 2009-04-07 13:18:29.845708 -06:00
 cards_102: 
   reader_type: Role
   name: "*roles+*rform"
@@ -771,25 +771,25 @@ cards_066:
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_003: 
   reader_type: Role
-  name: Invite Success
-  indexed_content: "'way':9 'invit':1A,5 'thank':3 'success':2A"
-  updated_at: 2009-04-06 17:54:30.856444 -06:00
+  name: Wagn Bot
+  indexed_content: "'bot':2A 'etc':23 'card':12,22 'link':18 'make':8 'sign':16 'wagn':1A 'autom':10 'creat':13 'renam':21 'updat':11,19 'someon':15 'account':6"
+  updated_at: 2009-04-07 11:41:35.799276 -06:00
   appender_id: 
   references_expired: 
-  indexed_name: "'invit':1 'success':2"
-  current_revision_id: 1738
+  indexed_name: "'bot':2 'wagn':1"
+  current_revision_id: 1541
   created_by: 1
-  type: Basic
+  type: User
   tag_id: 
-  extension_type: 
+  extension_type: User
   updated_by: 3
   reader_id: 3
-  id: 68
+  id: 1
   trunk_id: 
   trash: false
   appender_type: 
-  key: invite_success
-  extension_id: 
+  key: wagn_bot
+  extension_id: 1
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_024: 
   reader_type: Role
@@ -815,24 +815,24 @@ cards_024:
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_103: 
   reader_type: Role
-  name: account
-  indexed_content: "'account':1A"
+  name: discussion+*rform
+  indexed_content: "'rform':2A 'discuss':1A"
   updated_at: 2009-04-06 14:11:12.920280 -06:00
   appender_id: 
   references_expired: 
-  indexed_name: "'account':1"
-  current_revision_id: 1711
+  indexed_name: "'rform':2 'discuss':1"
+  current_revision_id: 1410
   created_by: 1
   type: Basic
-  tag_id: 
-  extension_type: 
+  tag_id: 48
+  extension_type: SoftTemplate
   updated_by: 1
   reader_id: 3
-  id: 148
-  trunk_id: 
+  id: 131
+  trunk_id: 130
   trash: false
   appender_type: 
-  key: account
+  key: discussion+*rform
   extension_id: 
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_088: 
@@ -881,26 +881,26 @@ cards_067:
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_004: 
   reader_type: Role
-  name: John Abbe
-  indexed_content: "'abb':2A 'john':1A"
-  updated_at: 2009-04-06 17:33:18.384317 -06:00
+  name: Invite Success
+  indexed_content: "'way':9 'invit':1A,5 'thank':3 'success':2A"
+  updated_at: 2009-04-06 17:54:30.856444 -06:00
   appender_id: 
   references_expired: 
-  indexed_name: "'abb':2 'john':1"
-  current_revision_id: 1731
-  created_by: 3
-  type: User
+  indexed_name: "'invit':1 'success':2"
+  current_revision_id: 1738
+  created_by: 1
+  type: Basic
   tag_id: 
-  extension_type: User
+  extension_type: 
   updated_by: 3
   reader_id: 3
-  id: 150
+  id: 68
   trunk_id: 
   trash: false
   appender_type: 
-  key: john_abbe
-  extension_id: 4
-  created_at: 2009-04-06 17:33:18.384317 -06:00
+  key: invite_success
+  extension_id: 
+  created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_025: 
   reader_type: Role
   name: "*users"
@@ -947,24 +947,24 @@ cards_046:
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_104: 
   reader_type: Role
-  name: discussion+*rform
-  indexed_content: "'rform':2A 'discuss':1A"
+  name: account
+  indexed_content: "'account':1A"
   updated_at: 2009-04-06 14:11:12.920280 -06:00
   appender_id: 
   references_expired: 
-  indexed_name: "'rform':2 'discuss':1"
-  current_revision_id: 1410
+  indexed_name: "'account':1"
+  current_revision_id: 1711
   created_by: 1
   type: Basic
-  tag_id: 48
-  extension_type: SoftTemplate
+  tag_id: 
+  extension_type: 
   updated_by: 1
   reader_id: 3
-  id: 131
-  trunk_id: 130
+  id: 148
+  trunk_id: 
   trash: false
   appender_type: 
-  key: discussion+*rform
+  key: account
   extension_id: 
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_090: 
@@ -1035,26 +1035,26 @@ cards_068:
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_005: 
   reader_type: Role
-  name: Ethan McCutchen
-  indexed_content: "'ethan':1A 'mccutchen':2A"
-  updated_at: 2009-04-06 17:32:45.885157 -06:00
+  name: "*table of contents"
+  indexed_content: "'tabl':1A 'content':3A"
+  updated_at: 2009-04-06 14:11:12.920280 -06:00
   appender_id: 
   references_expired: 
-  indexed_name: "'ethan':1 'mccutchen':2"
-  current_revision_id: 1730
+  indexed_name: "'tabl':1 'content':3"
+  current_revision_id: 311
   created_by: 1
-  type: User
+  type: Basic
   tag_id: 
-  extension_type: User
+  extension_type: 
   updated_by: 1
   reader_id: 3
-  id: 149
+  id: 89
   trunk_id: 
   trash: false
   appender_type: 
-  key: ethan_mc_cutchen
-  extension_id: 3
-  created_at: 2009-04-06 17:32:45.885157 -06:00
+  key: "*table_of_content"
+  extension_id: 
+  created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_026: 
   reader_type: Role
   name: "*tform"
@@ -1189,25 +1189,25 @@ cards_069:
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_006: 
   reader_type: Role
-  name: Phrase
-  indexed_content: "'phrase':1A"
+  name: "*logo"
+  indexed_content: "'logo':1A 'logo.jpg':2"
   updated_at: 2009-04-06 14:11:12.920280 -06:00
   appender_id: 
   references_expired: 
-  indexed_name: "'phrase':1"
-  current_revision_id: 52
+  indexed_name: "'logo':1"
+  current_revision_id: 234
   created_by: 1
-  type: Cardtype
+  type: Image
   tag_id: 
-  extension_type: Cardtype
+  extension_type: 
   updated_by: 1
   reader_id: 3
-  id: 52
+  id: 79
   trunk_id: 
   trash: false
   appender_type: 
-  key: phrase
-  extension_id: 23
+  key: "*logo"
+  extension_id: 
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_027: 
   reader_type: Role
@@ -1321,25 +1321,25 @@ cards_071:
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_007: 
   reader_type: Role
-  name: links
-  indexed_content: "'link':1A"
+  name: Phrase
+  indexed_content: "'phrase':1A"
   updated_at: 2009-04-06 14:11:12.920280 -06:00
   appender_id: 
   references_expired: 
-  indexed_name: "'link':1"
-  current_revision_id: 43
+  indexed_name: "'phrase':1"
+  current_revision_id: 52
   created_by: 1
-  type: Basic
+  type: Cardtype
   tag_id: 
-  extension_type: 
+  extension_type: Cardtype
   updated_by: 1
   reader_id: 3
-  id: 43
+  id: 52
   trunk_id: 
   trash: false
   appender_type: 
-  key: link
-  extension_id: 
+  key: phrase
+  extension_id: 23
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_028: 
   reader_type: Role
@@ -1407,28 +1407,6 @@ cards_049:
   key: inclusion
   extension_id: 
   created_at: 2009-04-06 14:11:12.920280 -06:00
-cards_107: 
-  reader_type: Role
-  name: "*table of contents"
-  indexed_content: "'tabl':1A 'content':3A"
-  updated_at: 2009-04-06 14:11:12.920280 -06:00
-  appender_id: 
-  references_expired: 
-  indexed_name: "'tabl':1 'content':3"
-  current_revision_id: 311
-  created_by: 1
-  type: Basic
-  tag_id: 
-  extension_type: 
-  updated_by: 1
-  reader_id: 3
-  id: 89
-  trunk_id: 
-  trash: false
-  appender_type: 
-  key: "*table_of_content"
-  extension_id: 
-  created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_093: 
   reader_type: Role
   name: "*options"
@@ -1475,25 +1453,25 @@ cards_072:
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_008: 
   reader_type: Role
-  name: Cardtype
-  indexed_content: "'card':5 'name':4 'self':3 'cardtyp':1A 'instanc':6 'descript':2"
+  name: links
+  indexed_content: "'link':1A"
   updated_at: 2009-04-06 14:11:12.920280 -06:00
   appender_id: 
   references_expired: 
-  indexed_name: "'cardtyp':1"
-  current_revision_id: 1435
+  indexed_name: "'link':1"
+  current_revision_id: 43
   created_by: 1
-  type: Cardtype
+  type: Basic
   tag_id: 
-  extension_type: Cardtype
+  extension_type: 
   updated_by: 1
   reader_id: 3
-  id: 5
+  id: 43
   trunk_id: 
   trash: false
   appender_type: 
-  key: cardtype
-  extension_id: 3
+  key: link
+  extension_id: 
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_030: 
   reader_type: Role
@@ -1561,28 +1539,6 @@ cards_051:
   key: "*plu_card"
   extension_id: 
   created_at: 2009-04-06 14:11:12.920280 -06:00
-cards_108: 
-  reader_type: Role
-  name: "*logo"
-  indexed_content: "'logo':1A 'logo.jpg':2"
-  updated_at: 2009-04-06 14:11:12.920280 -06:00
-  appender_id: 
-  references_expired: 
-  indexed_name: "'logo':1"
-  current_revision_id: 234
-  created_by: 1
-  type: Image
-  tag_id: 
-  extension_type: 
-  updated_by: 1
-  reader_id: 3
-  id: 79
-  trunk_id: 
-  trash: false
-  appender_type: 
-  key: "*logo"
-  extension_id: 
-  created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_094: 
   reader_type: Role
   name: Administrator+description
@@ -1629,28 +1585,6 @@ cards_073:
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_010: 
   reader_type: Role
-  name: User+*rform
-  indexed_content: "'left':6,9 'name':7 'role':8 'user':1A,10 'rform':2A 'account':3"
-  updated_at: 2009-04-06 14:11:12.920280 -06:00
-  appender_id: 
-  references_expired: 
-  indexed_name: "'user':1 'rform':2"
-  current_revision_id: 1694
-  created_by: 1
-  type: Basic
-  tag_id: 48
-  extension_type: HardTemplate
-  updated_by: 1
-  reader_id: 3
-  id: 145
-  trunk_id: 4
-  trash: false
-  appender_type: 
-  key: user+*rform
-  extension_id: 
-  created_at: 2009-04-06 14:11:12.920280 -06:00
-cards_009: 
-  reader_type: Role
   name: tags
   indexed_content: "'tag':1A"
   updated_at: 2009-04-06 14:11:12.920280 -06:00
@@ -1670,6 +1604,28 @@ cards_009:
   appender_type: 
   key: tag
   extension_id: 
+  created_at: 2009-04-06 14:11:12.920280 -06:00
+cards_009: 
+  reader_type: Role
+  name: Cardtype
+  indexed_content: "'card':5 'name':4 'self':3 'cardtyp':1A 'instanc':6 'descript':2"
+  updated_at: 2009-04-06 14:11:12.920280 -06:00
+  appender_id: 
+  references_expired: 
+  indexed_name: "'cardtyp':1"
+  current_revision_id: 1435
+  created_by: 1
+  type: Cardtype
+  tag_id: 
+  extension_type: Cardtype
+  updated_by: 1
+  reader_id: 3
+  id: 5
+  trunk_id: 
+  trash: false
+  appender_type: 
+  key: cardtype
+  extension_id: 3
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_031: 
   reader_type: Role
@@ -1761,24 +1717,24 @@ cards_074:
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_011: 
   reader_type: Role
-  name: "*instance"
-  indexed_content: "'instanc':1A"
+  name: User+*rform
+  indexed_content: "'left':6,9 'name':7 'role':8 'user':1A,10 'rform':2A 'account':3"
   updated_at: 2009-04-06 14:11:12.920280 -06:00
   appender_id: 
   references_expired: 
-  indexed_name: "'instanc':1"
-  current_revision_id: 45
+  indexed_name: "'user':1 'rform':2"
+  current_revision_id: 1694
   created_by: 1
   type: Basic
-  tag_id: 
-  extension_type: 
+  tag_id: 48
+  extension_type: HardTemplate
   updated_by: 1
   reader_id: 3
-  id: 45
-  trunk_id: 
+  id: 145
+  trunk_id: 4
   trash: false
   appender_type: 
-  key: "*instance"
+  key: user+*rform
   extension_id: 
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_032: 
@@ -1871,24 +1827,24 @@ cards_075:
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_012: 
   reader_type: Role
-  name: "*editing"
-  indexed_content: "'edit':1A"
+  name: "*instance"
+  indexed_content: "'instanc':1A"
   updated_at: 2009-04-06 14:11:12.920280 -06:00
   appender_id: 
   references_expired: 
-  indexed_name: "'edit':1"
-  current_revision_id: 1550
+  indexed_name: "'instanc':1"
+  current_revision_id: 45
   created_by: 1
   type: Basic
   tag_id: 
   extension_type: 
   updated_by: 1
   reader_id: 3
-  id: 138
+  id: 45
   trunk_id: 
   trash: false
   appender_type: 
-  key: "*editing"
+  key: "*instance"
   extension_id: 
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_033: 
@@ -2025,25 +1981,25 @@ cards_055:
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_013: 
   reader_type: Role
-  name: Setting
-  indexed_content: "'set':1A"
+  name: "*editing"
+  indexed_content: "'edit':1A"
   updated_at: 2009-04-06 14:11:12.920280 -06:00
   appender_id: 
   references_expired: 
-  indexed_name: "'set':1"
-  current_revision_id: 13
+  indexed_name: "'edit':1"
+  current_revision_id: 1550
   created_by: 1
-  type: Cardtype
+  type: Basic
   tag_id: 
-  extension_type: Cardtype
+  extension_type: 
   updated_by: 1
   reader_id: 3
-  id: 13
+  id: 138
   trunk_id: 
   trash: false
   appender_type: 
-  key: setting
-  extension_id: 7
+  key: "*editing"
+  extension_id: 
   created_at: 2009-04-06 14:11:12.920280 -06:00
 cards_098: 
   reader_type: Role

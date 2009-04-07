@@ -2,12 +2,72 @@
 revisions_105: 
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
-  card_id: "85"
-  id: "937"
+  card_id: "73"
+  id: "1309"
   content: |-
-    <p>[[Config|Configure your wagn]]</p>
+    <h1>Basics</h1>
+    <blockquote>
+    <p><em>Site name (appears in browser's title bar):</em> {{*title|closed;type:Phrase}}</p>
+    <p><em>Name of home card (if different from *title):</em> {{*home|closed;type:Phrase}}</p>
+    <p>{{*logo|closed;type:image}}</p>
+    </blockquote>
     <p>&nbsp;</p>
-    <p>Double-click to edit this (or any) card.</p>
+    <h1>Sidebar</h1>
+    <blockquote>
+    <p><em>[[http://wagn.org/wagn/sidebar|How to customize sidebar]].</em></p>
+    <p>{{*sidebar|closed}}<em></em></p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h1>Account basics</h1>
+    <p>&nbsp;</p>
+    <h2>Invitations</h2>
+    <p><em><br></em></p>
+    <p><em>Settings for inviting new users, requesting accounts, and getting accounts approved.</em></p>
+    <blockquote>
+    <p>{{*invite|closed}}</p>
+    <p>{{*request|closed}}</p>
+    <p>{{*signup|closed}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <h1>Advanced</h1>
+    <p>&nbsp;</p>
+    <h2>Appearance</h2>
+    <blockquote>
+    <p><em>See http://wagn.org/Skin for CSS examples.</em></p>
+    <em></em>
+    <p>{{*css|closed;type:HTML}}</p>
+    <p>{{*favicon|closed;type:image}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h2>Account information emails<br></h2>
+    <blockquote>
+    <p><em>"From" address for emails that deliver user account information. (I.e., when someone signs up, is invited/approved, or forgot their password).&nbsp; </em></p>
+    <p>{{*account+*from|closed;type:Phrase}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h2>Sign-up forms</h2>
+    <blockquote>
+    <p><em>[[http://wagn.org/wagn/custom_sign-up_information|How to create a custom sign-up form]]. <br></em></p>
+    <p>{{Account Request+*tform|closed}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h2>Edit toolbar</h2>
+    <blockquote>
+    <p><em>[[http://wagn.org/wagn/TinyMCE|How to customize the edit toolbar]].</em></p>
+    <p>{{*tinyMCE|closed}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h2>Google Analytics</h2>
+    <blockquote>
+    <p><em>[[http://wagn.org/wagn/Google_Analytics|How to set up Google Analytics for Wagns]]</em></p>
+    <p>{{*google analytics key|type:Phrase}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <blockquote>
+    <p><em></em></p>
+    </blockquote>
   created_at: 2009-04-06 14:11:12.948281
 revisions_091: 
   updated_at: 2009-04-06 14:11:12.948281
@@ -67,9 +127,9 @@ revisions_048:
 revisions_106: 
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
-  card_id: "33"
-  id: "33"
-  content: ""
+  card_id: "147"
+  id: "1697"
+  content: <p>Administrators automatically have all of the [[/admin/tasks|global permissions]].</p>
   created_at: 2009-04-06 14:11:12.948281
 revisions_092: 
   updated_at: 2009-04-06 14:11:12.948281
@@ -116,8 +176,8 @@ revisions_049:
 revisions_107: 
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
-  card_id: "64"
-  id: "66"
+  card_id: "30"
+  id: "30"
   content: ""
   created_at: 2009-04-06 14:11:12.948281
 revisions_093: 
@@ -195,8 +255,8 @@ revisions_051:
 revisions_108: 
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
-  card_id: "129"
-  id: "1408"
+  card_id: "61"
+  id: "62"
   content: ""
   created_at: 2009-04-06 14:11:12.948281
 revisions_094: 
@@ -255,6 +315,23 @@ revisions_052:
   id: "1521"
   content: ""
   created_at: 2009-04-06 14:11:12.948281
+revisions_110: 
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  card_id: "33"
+  id: "33"
+  content: ""
+  created_at: 2009-04-06 14:11:12.948281
+revisions_109: 
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  card_id: "85"
+  id: "937"
+  content: |-
+    <p>[[Config|Configure your wagn]]</p>
+    <p>&nbsp;</p>
+    <p>Double-click to edit this (or any) card.</p>
+  created_at: 2009-04-06 14:11:12.948281
 revisions_095: 
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
@@ -288,6 +365,13 @@ revisions_053:
   created_by: "1"
   card_id: "148"
   id: "1711"
+  content: ""
+  created_at: 2009-04-06 14:11:12.948281
+revisions_111: 
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  card_id: "64"
+  id: "66"
   content: ""
   created_at: 2009-04-06 14:11:12.948281
 revisions_096: 
@@ -326,6 +410,13 @@ revisions_054:
   created_by: "1"
   card_id: "138"
   id: "1550"
+  content: ""
+  created_at: 2009-04-06 14:11:12.948281
+revisions_112: 
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  card_id: "129"
+  id: "1408"
   content: ""
   created_at: 2009-04-06 14:11:12.948281
 revisions_097: 
@@ -727,15 +818,118 @@ revisions_063:
   content: ""
   created_at: 2009-04-06 14:11:12.948281
 revisions_100: 
-  updated_at: 2009-04-07 12:00:58.944561
+  updated_at: 2009-04-07 13:18:29.889711
   created_by: "3"
-  card_id: "151"
-  id: "1740"
+  card_id: "152"
+  id: "1741"
   content: |-
-    <p>[[*account|Accounts]]</p>
-    <p>[[Roles]]</p>
-    <p>[[/admin/tasks|Global permissions]]</p>
-  created_at: 2009-04-07 12:00:58.944561
+    <p><strong><em><span>Cards and [[images]] in this Wagn are copied to new Wagns</span></em>. Exceptions should be added here:</strong></p>
+    <p>{{*ignore|closed}}</p>
+    <p>&nbsp;</p>
+    <p><strong>This one updates automatically:</strong></p>
+    <p>{{cards to copy to new Wagns|closed}}</p>
+    <p>&nbsp;</p>
+    <h1>What comprises those cards</h1>
+    <p>(There may be some duplicates, and you can ignore exceptions such as the Ethan, Lewis &amp; John cards.)</p>
+    <p>&nbsp;</p>
+    <h2>Account-related</h2>
+    <blockquote>
+    <p>[[*account]]</p>
+    <p>{{Role+*instances|closed}}</p>
+    <p>{{User+*instances|closed}}</p>
+    <p>[[*to]], [[*from]], [[*thanks]], [[Invite Success]], [[Signup Success]], [[Request Sent]]<br> {{*thanks+*plus cards|closed}}</p>
+    </blockquote>
+    <h2>Cardtypes and forms</h2>
+    <blockquote>
+    <p>{{Cardtype+*instances|closed}}</p>
+    <p>[[*tform]], [[*rform]]</p>
+    <p>{{*tform+*plus cards|closed}}</p>
+    <p>{{*rform+*plus cards|closed}}</p>
+    <p>(if any are deleted, you'll probably want to delete the left part as well)</p>
+    </blockquote>
+    <h2>Config and help text</h2>
+    <blockquote>
+    <p>[[Config]]</p>
+    <p>{{Config+inclusions|closed}}</p>
+    <p>{{*sidebar+inclusions|closed}}</p>
+    <p>[[*edit]]</p>
+    <p>{{*edit+*plus cards|closed}}</p>
+    </blockquote>
+    <h2>Related tab</h2>
+    <p>(Note that in these +*rform cards, _left returns the name of the card on which one is viewing the Related tab.)</p>
+    <p>&nbsp;</p>
+    <p>Available on every card, because they're in [[*context]]:</p>
+    <blockquote>
+    <p>{{universal Related tabs}}</p>
+    </blockquote>
+    <p>Available on [[Pointers]] (item), [[Cardtypes]] (type), and cards with an account extension (typically, [[User]] cards &mdash; Role). Because they're in [[*context+*plus cards]]:</p>
+    <blockquote>
+    <p>{{custom Related tabs}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <hr>
+    <p>&nbsp;</p>
+    <h1>Process</h1>
+    <ol>
+    <li>Everything that can be done within cards is happening here. Just do things, and watch what each other are doing on Recent, and there's space for discussion at the bottom of this page.</li>
+    <li>Everything that involves code is on [[http://wagn.org/wagn/implement_initial_setup_for_new_Wagn|the relevant ticket on wagn.org]] (everything there that was doable in cards has been done, or copied here).</li>
+    <li>Things that probably need work before the 1.0 launch are <strong>bold</strong>.</li>
+    </ol>
+    <p>&nbsp;</p>
+    <p>A lot of work happens on <strong>[[Config]]</strong>.</p>
+    <p>&nbsp;</p>
+    <p><strong>[[http://wagn.org/wagn/configuration|configuration]]</strong> needs work to reflect changes.</p>
+    <p>&nbsp;</p>
+    <p><strong>delete [[Setting]], [[Currency]], [[Percentage]], [[RichText]]</strong> - waiting on http://wagn.org/wagn/Can_t_remove_or_change_Cardtype_of_Cardtype_cards</p>
+    <p>&nbsp;</p>
+    <p><strong>[[Cardtype+*tform]] (when pretty stable, copy/adapt to other [[cardtypes]])</strong></p>
+    <p>&nbsp;</p>
+    <p><strong>[[Signup Success]], [[Invite Success]], [[Request Sent]]</strong> - fuller explanation?</p>
+    <p>&nbsp;</p>
+    <p>Documentation:</p>
+    <p>more links on [[Config]]</p>
+    <p>more +*edit on cardtypes?</p>
+    <p>??</p>
+    <p>&nbsp;</p>
+    <p>[[*logo]] - make sure re licensing</p>
+    <p>[[Home]] - link to /admin/setup and more welcome/explanatory text, ??</p>
+    <p>[[*css]] - useful comments; template content?</p>
+    <p>&nbsp;</p>
+    <p>Viewable only by Administrator:</p>
+    <p>[[Account Request+*tform]]</p>
+    <p>[[Administrator links]]</p>
+    <p>&nbsp;</p>
+    <p>Editable only by Administrator:</p>
+    <p>[[*context]]</p>
+    <p>[[*to]]</p>
+    <p>[[*from]]</p>
+    <p>?</p>
+    <p>&nbsp;</p>
+    <h2>Ongoing work<br></h2>
+    <p>Update http://wagn.org/wagn/star_cards</p>
+    <p>When documenting tickets that relate to [[http://wagn.org/wagn/Installation+tickets_for_item|installation]] or [[http://wagn.org/wagn/administration+tickets_for_item|administration]], make sure to update [[Config]].</p>
+    <p>Take a look at http://wagn.org/wagn/cards_to_include_by_default once in a while</p>
+    <p>&nbsp;</p>
+    <h1>Discussion<br></h1>
+    <hr>
+    <p>[[*instances+*rform]] is in default, last-edited order. Sort alpha?</p>
+    <p><em>&nbsp;&nbsp;--[[John Abbe]].....Mon Mar 02 08:10:02 -0800 2009</em></p>
+    <hr>
+    <p>I did a bunch of work on this today.  My focal points were:</p>
+    <ul>
+    <li>getting rid of text. I think we want as little text as possible in this thing, because every line of text is something that could later prove wrong or awkward, and it will be hard to update. I'd much rather link off to wagn.org (though I would hope that most users could avoid having to use much documentation).</li>
+    <li>trimming blank cards where possible. John and I may want to discuss. Before we wanted a lot of those blank cards there to have the right default type, but I'm now kind of inclined to take them off and let the default setting handle it.</li>
+    <li>I moved a lot of the (much trimmed) signup information into *signup, *request, and *invite. The paragraphs there seemed like overkill to me. I'd like to do even less.</li>
+    </ul>
+    <p><br>I took off the [[All cards]] card (for now) because the wql is rough, the name is confusing, and the use case is very fuzzy to me.<br><br>I'd like to propose removing Script and Ruby cards from the default setup.<br><br>I'm also seriously considering reopening the "redirect" card conversation, which might be really useful for handling the *thanks and *home cards more coherently (they're essentially redirects).<br><br>I left out the success cards for now thinking a good solution for how to include them might come out of the redirect conversation. If not they'll need to be more accessible from Config.<br><br>I can also see adding a link to documentation about open-edit wagns to the bottom of the Account Basics section on the Config card, but I wouldn't want those instructions inline, since that may be changing in a hurry.</p>
+    <p><em>&nbsp;&nbsp;--[[Ethan McCutchen]].....Fri Mar 13 14:18:52 -0700 2009</em></p>
+    <hr>
+    <p>I delete *google analytics keys and almost all of the email related cards.</p>
+    <p><em>&nbsp;&nbsp;--[[Ethan McCutchen]].....Fri Mar 13 18:49:13 -0700 2009</em></p>
+    <hr>
+    <p>I'd like to see us start working on the new Related Tab here this week.</p>
+    <p><em>&nbsp;&nbsp;--[[Ethan McCutchen]].....Fri Mar 13 18:59:12 -0700 2009</em></p>
+  created_at: 2009-04-07 13:18:29.889711
 revisions_085: 
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
@@ -776,75 +970,15 @@ revisions_064:
      "view": "change"}
   created_at: 2009-04-06 14:11:12.948281
 revisions_101: 
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  card_id: "73"
-  id: "1309"
+  updated_at: 2009-04-07 12:00:58.944561
+  created_by: "3"
+  card_id: "151"
+  id: "1740"
   content: |-
-    <h1>Basics</h1>
-    <blockquote>
-    <p><em>Site name (appears in browser's title bar):</em> {{*title|closed;type:Phrase}}</p>
-    <p><em>Name of home card (if different from *title):</em> {{*home|closed;type:Phrase}}</p>
-    <p>{{*logo|closed;type:image}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h1>Sidebar</h1>
-    <blockquote>
-    <p><em>[[http://wagn.org/wagn/sidebar|How to customize sidebar]].</em></p>
-    <p>{{*sidebar|closed}}<em></em></p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h1>Account basics</h1>
-    <p>&nbsp;</p>
-    <h2>Invitations</h2>
-    <p><em><br></em></p>
-    <p><em>Settings for inviting new users, requesting accounts, and getting accounts approved.</em></p>
-    <blockquote>
-    <p>{{*invite|closed}}</p>
-    <p>{{*request|closed}}</p>
-    <p>{{*signup|closed}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <h1>Advanced</h1>
-    <p>&nbsp;</p>
-    <h2>Appearance</h2>
-    <blockquote>
-    <p><em>See http://wagn.org/Skin for CSS examples.</em></p>
-    <em></em>
-    <p>{{*css|closed;type:HTML}}</p>
-    <p>{{*favicon|closed;type:image}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h2>Account information emails<br></h2>
-    <blockquote>
-    <p><em>"From" address for emails that deliver user account information. (I.e., when someone signs up, is invited/approved, or forgot their password).&nbsp; </em></p>
-    <p>{{*account+*from|closed;type:Phrase}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h2>Sign-up forms</h2>
-    <blockquote>
-    <p><em>[[http://wagn.org/wagn/custom_sign-up_information|How to create a custom sign-up form]]. <br></em></p>
-    <p>{{Account Request+*tform|closed}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h2>Edit toolbar</h2>
-    <blockquote>
-    <p><em>[[http://wagn.org/wagn/TinyMCE|How to customize the edit toolbar]].</em></p>
-    <p>{{*tinyMCE|closed}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h2>Google Analytics</h2>
-    <blockquote>
-    <p><em>[[http://wagn.org/wagn/Google_Analytics|How to set up Google Analytics for Wagns]]</em></p>
-    <p>{{*google analytics key|type:Phrase}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <blockquote>
-    <p><em></em></p>
-    </blockquote>
-  created_at: 2009-04-06 14:11:12.948281
+    <p>[[*account|Accounts]]</p>
+    <p>[[Roles]]</p>
+    <p>[[/admin/tasks|Global permissions]]</p>
+  created_at: 2009-04-07 12:00:58.944561
 revisions_086: 
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
@@ -897,12 +1031,16 @@ revisions_002:
   content: ""
   created_at: 2009-04-06 14:11:12.948281
 revisions_102: 
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  card_id: "147"
-  id: "1697"
-  content: <p>Administrators automatically have all of the [[/admin/tasks|global permissions]].</p>
-  created_at: 2009-04-06 14:11:12.948281
+  updated_at: 2009-04-07 13:22:12.375901
+  created_by: "3"
+  card_id: "154"
+  id: "1745"
+  content: |-
+    [[Ethan McCutchen]]
+    [[John Abbe]]
+    [[cards to copy to new Wagns]]
+    [[*ignore]]
+  created_at: 2009-04-07 13:22:12.375901
 revisions_087: 
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
@@ -939,12 +1077,16 @@ revisions_024:
   content: "{\"include\":\"_self\"}"
   created_at: 2009-04-06 14:11:12.948281
 revisions_103: 
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  card_id: "30"
-  id: "30"
-  content: ""
-  created_at: 2009-04-06 14:11:12.948281
+  updated_at: 2009-04-07 13:22:42.713629
+  created_by: "3"
+  card_id: "153"
+  id: "1746"
+  content: |-
+    {"not": {"referred_to_by": "*ignore"},
+     "sort": "alpha",
+     "limit": 200
+    }
+  created_at: 2009-04-07 13:22:42.713629
 revisions_088: 
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
@@ -1000,12 +1142,12 @@ revisions_046:
   content: <p>{{DeleteMe|open}}</p>
   created_at: 2009-04-06 14:11:12.948281
 revisions_104: 
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  card_id: "61"
-  id: "62"
+  updated_at: 2009-04-07 13:29:24.151196
+  created_by: "3"
+  card_id: "155"
+  id: "1747"
   content: ""
-  created_at: 2009-04-06 14:11:12.948281
+  created_at: 2009-04-07 13:29:24.151196
 revisions_090: 
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"

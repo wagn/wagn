@@ -5,9 +5,9 @@ def check_for_fulltext_schema
   schema_error = ("Oops! Attempt to load a schema with a broken cards table.  Rails can't properly dump and restore a schema with fulltext index data (indexed_content). " +
     "you'll need to connect to a database without these fields and rerun >rake db:schema:dump first.")
   begin 
-    if Card.columns.map(&:name).include?('indexed_content')
-      raise(schema_error)
-    end
+#    if Card.columns.map(&:name).include?('indexed_content')
+#      raise(schema_error)
+#    end
   rescue
     raise(schema_error)
   end

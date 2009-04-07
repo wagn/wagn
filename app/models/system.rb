@@ -62,7 +62,7 @@ class System < ActiveRecord::Base
    
     def host
       # FIXME: hacking this so users don't have to update config.  will want to fix later 
-      System.base_url.gsub(/^http:\/\//,'').gsub(/\/$/,'')
+      System.base_url.gsub(/^http:\/\//,'')
     end
 
 
@@ -170,5 +170,5 @@ if File.exists? "#{RAILS_ROOT}/config/wagn.rb"
   require_dependency "#{RAILS_ROOT}/config/wagn.rb"    
 end
 
-# Configuration cleanup: Make sure System.base_url ends with a /. Breaks redirects if not.
-System.base_url += '/' if System.base_url && System.base_url[-1] != '/'
+# Configuration cleanup: Make sure System.base_url doesn't end with a /
+System.base_url.gsub!(/\/$/,'')

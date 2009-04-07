@@ -6,7 +6,7 @@ describe "CachedCard" do
     @mc = flexmock()           
     CachedCard.reset_cache
     CachedCard.cache = @mc    
-    @gs_key = System.base_url.split('//').last + '/test/global_seq'
+    @gs_key = System.host + '/test/global_seq'
   end    
 
   it "bump_global_seq should change global_seq" do

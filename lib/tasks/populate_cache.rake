@@ -5,7 +5,7 @@
 task :populate_cache=>:environment do
   ActiveRecord::Base.connection.select_all("select name from cards order by updated_at desc").each do |record|
     cardname = URI.escape(Cardname.escape(record['name']))
-    url = "#{System.base_url}card/show/#{cardname}.json"
+    url = "#{System.base_url}/card/show/#{cardname}.json"
     cmd = "curl -s -S '#{url}' > /dev/null"
     puts url + " " + `#{cmd}`
   end

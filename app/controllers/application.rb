@@ -21,7 +21,6 @@ class ApplicationController < ActionController::Base
   include ActionView::Helpers::SanitizeHelper
 
   before_filter :per_request_setup, :except=>[:render_fast_404]                  
-  before_filter :set_canonical_domain
   
   # OPTIMIZE: render_fast_404 still isn't that fast (?18reqs/sec) 
   # can we turn sessions off for it and see if that helps?
@@ -29,23 +28,21 @@ class ApplicationController < ActionController::Base
 
   protected
   
-  def set_canonical_domain
-    requested_base =  "#{request.protocol}#{(request.subdomains.blank? ? '' : (request.subdomains.join('.') + '.'))}#{request.domain}#{request.port_string}"
-    unless requested_base == System.base_url || (requested_base+'/') == System.base_url
-      if RAILS_ENV=="production"
-        redirect_to "#{System.base_url.gsub(/\/$/,'')}#{request.path}"    if "#{request.protocol}#{request.subdomains}#{request.domain}#{request.port_string}/" != System.base_url
-      end
-    end
-  end
-                
-  
   def per_request_setup
     if System.multihost
-      System.multihost_name = request.subdomains[0] || "www"
-      System.base_url = "http://" + System.multihost_name + ".wagn.org"  
-      ActiveRecord::Base.connection.execute %{ set search_path to #{System.multihost_name} }
-      
+      if mapping = MultihostMapping.find_by_requested_host(request.host)
+        System.base_url = "http://" + mapping.canonical_host + '/'
+        ActiveRecord::Base.connection.execute %{ set search_path to #{mapping.schema} }      
+      else
+        return render_fast_404
+      end
+    end                                                                                     
+    
+    # Set/Redirect to Canonical Domain
+    if request.raw_host_with_port != System.host and RAILS_ENV=="production"
+      return redirect_to "http://#{System.host}/#{request.path}" 
     end
+
     User.current_user = current_user || User.find_by_login('anon')
     
     @context = params[:context] || 'main_1'

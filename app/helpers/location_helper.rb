@@ -56,7 +56,7 @@ module LocationHelper
   end            
   
   def card_url( card )
-    "#{System.base_url.gsub(/\/$/,'')}#{request.port_string}" + card_path(card)
+    "http://" + System.host + card_path(card)
   end
   
   # Links ----------------------------------------------------------------------
@@ -65,7 +65,7 @@ module LocationHelper
     title ||= text
     url_options = (options[:type]) ? {:type=>options[:type]} : {}                              
     if (options.delete(:include_domain)) 
-      link_to text, System.base_url.gsub(/\/$/,'') + url_for_page(title, url_options) #, :only_path=>true )
+      link_to text, System.base_url + url_for_page(title, url_options) #, :only_path=>true )
     else
       link_to text, url_for_page( title, url_options ), options
     end

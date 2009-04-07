@@ -76,6 +76,12 @@ class System < ActiveRecord::Base
     rescue
       nil
     end
+   
+    def image_setting(name)
+      if content = setting(name)
+        content.match(/src=\"([^\"]+)/)[1]
+      end
+    end
 
     def site_title
       setting('*title') || 'Wagn'
@@ -83,12 +89,11 @@ class System < ActiveRecord::Base
     
     def favicon
       # bit of a kludge. 
-      (card_content = setting('*favicon')) ? card_content.match(/src=\"([^\"]+)/)[1] : '/images/favicon.ico'
+      image_setting('*favicon') || '/images/favicon.ico'
     end
     
     def logo
-      img_name = setting('*logo') 
-      img_name ? "/image/#{img_name}" : File.exists?("#{RAILS_ROOT}/public/images/logo.gif") ? "/images/logo.gif" : nil
+      image_setting('*logo') || (File.exists?("#{RAILS_ROOT}/public/images/logo.gif") ? "/images/logo.gif" : nil)
     end
 
     #def admin_user

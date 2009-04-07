@@ -317,7 +317,7 @@ module WagnHelper
               self.char_count += (tcontent ? tcontent.length : 0)
                                       
               if size = options[:size]
-                tcontent = tcontent.gsub(/(\.\w+\")/,"_#{size}"+'\1')
+                tcontent = tcontent.gsub(/_small(\.\w+\")/,"_#{size}"+'\1')
               end
               
               tcontent

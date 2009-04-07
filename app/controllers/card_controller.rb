@@ -17,19 +17,6 @@ class CardController < ApplicationController
   before_filter :edit_ok,   :only=>[ :edit, :edit_name, :edit_type, :update, :rollback, :save_draft] 
   before_filter :remove_ok, :only=>[ :remove ]
   
-  #caches_action :show, :view, :to_view
-
-  protected
-  def action_fragment_key(options)
-    roles_key = User.current_user.all_roles.map(&:id).join('-')
-    global_serial = Cache.get('GlobalSerial') #Time.now.to_f }
-    key = url_for(options).split('://').last + "/#{roles_key}" + "/#{global_serial}" + 
-      "/#{default_layout}"
-  end
-       
-
-  public    
-
   #----------( Special cards )
   
   def index

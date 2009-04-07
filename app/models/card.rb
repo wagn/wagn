@@ -24,7 +24,6 @@ require_dependency 'card/defaults'
 require_dependency 'card/permissions'
 require_dependency 'card/search'
 require_dependency 'card/references'
-require_dependency 'card/caching'     
 require_dependency 'lib/card_attachment'
 
 Card::Base.class_eval do       

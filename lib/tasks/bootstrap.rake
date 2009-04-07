@@ -63,8 +63,8 @@ namespace :wagn do
       permission = {
         :basic=>{
           :read=> {:default=>:anon, 'administrator_link'=> :admin},
-          :edit=> {:default=>:auth},
-          :delete=>{:default=>:auth},
+          :edit=> {:default=>:auth, 'administrator_link'=> :admin},
+          :delete=>{:default=>:auth, 'administrator_link'=> :admin},
           :create=>{:default=>:auth, 'account_request'=>:anon},
           :comment=>{:default=>nil, 'discussion+*rform'=>:anon}
         }

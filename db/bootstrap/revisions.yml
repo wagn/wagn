@@ -2,9 +2,12 @@
 revisions_105: 
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
-  card_id: "33"
-  id: "33"
-  content: ""
+  card_id: "85"
+  id: "937"
+  content: |-
+    <p>[[Config|Configure your wagn]]</p>
+    <p>&nbsp;</p>
+    <p>Double-click to edit this (or any) card.</p>
   created_at: 2009-04-06 14:11:12.948281
 revisions_091: 
   updated_at: 2009-04-06 14:11:12.948281
@@ -64,8 +67,8 @@ revisions_048:
 revisions_106: 
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
-  card_id: "64"
-  id: "66"
+  card_id: "33"
+  id: "33"
   content: ""
   created_at: 2009-04-06 14:11:12.948281
 revisions_092: 
@@ -113,8 +116,8 @@ revisions_049:
 revisions_107: 
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
-  card_id: "129"
-  id: "1408"
+  card_id: "64"
+  id: "66"
   content: ""
   created_at: 2009-04-06 14:11:12.948281
 revisions_093: 
@@ -188,6 +191,13 @@ revisions_051:
     <blockquote>
     <p><span>HTTP:// <em>(YOUR WAGN'S DOMAIN)</em></span><em> </em>/{{+*thanks}}</p>
     </blockquote>
+  created_at: 2009-04-06 14:11:12.948281
+revisions_108: 
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  card_id: "129"
+  id: "1408"
+  content: ""
   created_at: 2009-04-06 14:11:12.948281
 revisions_094: 
   updated_at: 2009-04-06 14:11:12.948281
@@ -717,6 +727,55 @@ revisions_063:
   content: ""
   created_at: 2009-04-06 14:11:12.948281
 revisions_100: 
+  updated_at: 2009-04-07 12:00:58.944561
+  created_by: "3"
+  card_id: "151"
+  id: "1740"
+  content: |-
+    <p>[[*account|Accounts]]</p>
+    <p>[[Roles]]</p>
+    <p>[[/admin/tasks|Global permissions]]</p>
+  created_at: 2009-04-07 12:00:58.944561
+revisions_085: 
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  card_id: "20"
+  id: "20"
+  content: ""
+  created_at: 2009-04-06 14:11:12.948281
+revisions_001: 
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  card_id: "89"
+  id: "311"
+  content: ""
+  created_at: 2009-04-06 14:11:12.948281
+revisions_022: 
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  card_id: "83"
+  id: "978"
+  content: |-
+    <p>Contents will appear on right sidebar.</p>
+    <p>&nbsp;</p>
+  created_at: 2009-04-06 14:11:12.948281
+revisions_043: 
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  card_id: "77"
+  id: "113"
+  content: Home
+  created_at: 2009-04-06 14:11:12.948281
+revisions_064: 
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  card_id: "95"
+  id: "352"
+  content: |-
+    {"edited_by": "_self",
+     "view": "change"}
+  created_at: 2009-04-06 14:11:12.948281
+revisions_101: 
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   card_id: "73"
@@ -786,52 +845,6 @@ revisions_100:
     <p><em></em></p>
     </blockquote>
   created_at: 2009-04-06 14:11:12.948281
-revisions_085: 
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  card_id: "20"
-  id: "20"
-  content: ""
-  created_at: 2009-04-06 14:11:12.948281
-revisions_001: 
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  card_id: "89"
-  id: "311"
-  content: ""
-  created_at: 2009-04-06 14:11:12.948281
-revisions_022: 
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  card_id: "83"
-  id: "978"
-  content: |-
-    <p>Contents will appear on right sidebar.</p>
-    <p>&nbsp;</p>
-  created_at: 2009-04-06 14:11:12.948281
-revisions_043: 
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  card_id: "77"
-  id: "113"
-  content: Home
-  created_at: 2009-04-06 14:11:12.948281
-revisions_064: 
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  card_id: "95"
-  id: "352"
-  content: |-
-    {"edited_by": "_self",
-     "view": "change"}
-  created_at: 2009-04-06 14:11:12.948281
-revisions_101: 
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  card_id: "147"
-  id: "1697"
-  content: <p>Administrators automatically have all of the [[/admin/tasks|global permissions]].</p>
-  created_at: 2009-04-06 14:11:12.948281
 revisions_086: 
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
@@ -886,9 +899,9 @@ revisions_002:
 revisions_102: 
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
-  card_id: "30"
-  id: "30"
-  content: ""
+  card_id: "147"
+  id: "1697"
+  content: <p>Administrators automatically have all of the [[/admin/tasks|global permissions]].</p>
   created_at: 2009-04-06 14:11:12.948281
 revisions_087: 
   updated_at: 2009-04-06 14:11:12.948281
@@ -928,8 +941,8 @@ revisions_024:
 revisions_103: 
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
-  card_id: "61"
-  id: "62"
+  card_id: "30"
+  id: "30"
   content: ""
   created_at: 2009-04-06 14:11:12.948281
 revisions_088: 
@@ -989,12 +1002,9 @@ revisions_046:
 revisions_104: 
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
-  card_id: "85"
-  id: "937"
-  content: |-
-    <p>[[Config|Configure your wagn]]</p>
-    <p>&nbsp;</p>
-    <p>Double-click to edit this (or any) card.</p>
+  card_id: "61"
+  id: "62"
+  content: ""
   created_at: 2009-04-06 14:11:12.948281
 revisions_090: 
   updated_at: 2009-04-06 14:11:12.948281

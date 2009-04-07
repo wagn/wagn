@@ -161,6 +161,10 @@ class User < ActiveRecord::Base
     self.password_confirmation = self.password
   end
 
+
+  def built_in?
+    status=='system'
+  end
    
   protected
   # Encrypts the password with the user salt
@@ -182,10 +186,7 @@ class User < ActiveRecord::Base
   def password_required?
      !built_in? && not_openid? && (crypted_password.blank? or not password.blank?)
   end
- 
-  def built_in?
-    [:wagbot, :anon].member?(login.to_sym)
-  end
+
  
   def not_openid?
     identity_url.blank?

@@ -199,14 +199,13 @@ class CachedCard
 
   def ok?(task) 
     case task
-      when :read; party_ok?(read_permission)
+      when :read; System.always_ok? || party_ok?(read_permission)
       when :comment; party_ok?(comment_permission)
       else card.ok?(task)
     end
   end
   
   def party_ok?(party_str)
-    return true if System.always_ok?
     party_class, party_id = party_str.split(':'); party_id = party_id.to_i   
     party_class == 'Role' ? System.role_ok?(party_id) : (party_id==User.current_user.id)
   end

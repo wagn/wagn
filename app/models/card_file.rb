@@ -10,6 +10,6 @@ class CardFile < ActiveRecord::Base
 	end
 
   def bucket_name
-    System.multihost ? System.host : s3_config[:bucket_name]
+    (System.multihost ? "#{System.wagn_name}." : "") + s3_config[:bucket_name]
   end
 end

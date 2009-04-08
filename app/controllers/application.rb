@@ -35,7 +35,7 @@ class ApplicationController < ActionController::Base
         System.wagn_name = mapping.wagn_name
         ActiveRecord::Base.connection.execute %{ set search_path to #{mapping.wagn_name} }      
       else
-		  ActiveRecord::Base.connection.execute %{ set search_path to #{DEFAULT_SCHEMA} }
+  		  #ActiveRecord::Base.connection.execute %{ set search_path to #{DEFAULT_SCHEMA} }
         return render_fast_404
       end
     end

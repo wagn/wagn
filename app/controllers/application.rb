@@ -31,11 +31,10 @@ class ApplicationController < ActionController::Base
   def per_request_setup
     if System.multihost
       if mapping = MultihostMapping.find_by_requested_host(request.host)
-        System.base_url = "http://" + mapping.canonical_host + '/'
+        System.base_url = "http://" + mapping.canonical_host
         System.wagn_name = mapping.wagn_name
         ActiveRecord::Base.connection.execute %{ set search_path to #{mapping.wagn_name} }      
       else
-  		  #ActiveRecord::Base.connection.execute %{ set search_path to #{DEFAULT_SCHEMA} }
         return render_fast_404
       end
     end

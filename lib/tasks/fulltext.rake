@@ -32,7 +32,7 @@ namespace :fulltext do
     cxn = ActiveRecord::Base.connection
     return unless  is_postgresql?(cxn)
     
-    #cxn.execute %{ alter table cards drop indexed_name, drop indexed_content; }
+    cxn.execute %{ alter table cards drop indexed_name, drop indexed_content; }
     cxn.execute %{ alter table cards add indexed_name tsvector, add indexed_content tsvector }
     
     cxn.execute %{ update cards set indexed_name = to_tsvector( name ) }

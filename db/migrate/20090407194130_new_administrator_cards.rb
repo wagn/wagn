@@ -1,5 +1,10 @@
 class NewAdministratorCards < ActiveRecord::Migration
-  def self.up
+  def self.up           
+    if u = User.find_by_login('hoozebot')
+      u.update_attribute :login, 'wagbot'
+      u.update_attribute :email, ''
+    end
+      
     user = User[:wagbot]
     user.roles=[Role[:admin]]
     User.as :wagbot

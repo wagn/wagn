@@ -58,16 +58,16 @@ ActiveRecord::Schema.define(:version => 20090407194659) do
     t.text     "indexed_content"
   end
 
-  add_index "cards", ["reader_id"], :name => "card_reader_id_index"
-  add_index "cards", ["reader_type"], :name => "card_reader_type_index"
-  add_index "cards", ["type"], :name => "card_type_index"
   add_index "cards", ["extension_id", "extension_type"], :name => "cards_extension_index"
   add_index "cards", ["extension_id", "extension_type"], :name => "cards_extension_type_id_index", :unique => true
   add_index "cards", ["key"], :name => "cards_key_uniq", :unique => true
   add_index "cards", ["name"], :name => "cards_name_index"
   add_index "cards", ["name"], :name => "cards_name_uniq", :unique => true
+  add_index "cards", ["reader_id"], :name => "card_reader_id_index"
+  add_index "cards", ["reader_type"], :name => "card_reader_type_index"
   add_index "cards", ["tag_id"], :name => "index_cards_on_tag_id"
   add_index "cards", ["trunk_id"], :name => "index_cards_on_trunk_id"
+  add_index "cards", ["type"], :name => "card_type_index"
 
   create_table "cardtypes", :force => true do |t|
     t.string  "class_name"
@@ -79,6 +79,16 @@ ActiveRecord::Schema.define(:version => 20090407194659) do
   create_table "db_files", :force => true do |t|
     t.binary "data"
   end
+
+  create_table "multihost_mappings", :force => true do |t|
+    t.string   "requested_host"
+    t.string   "canonical_host"
+    t.string   "wagn_name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "multihost_mappings", ["requested_host"], :name => "index_multihost_mappings_on_requested_host", :unique => true
 
   create_table "open_id_authentication_associations", :force => true do |t|
     t.integer "issued"

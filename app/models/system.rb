@@ -171,3 +171,5 @@ end
 
 # Configuration cleanup: Make sure System.base_url doesn't end with a /
 System.base_url.gsub!(/\/$/,'')
+
+System.connection.execute("set search_path to #{DEFAULT_SCHEMA}")

@@ -74,8 +74,8 @@ System
 # select a store for the rails/card cache
 ActionController::Base.cache_store = :mem_cache_store # file_store, "#{RAILS_ROOT}/../cache"  
 
-#System.base_url = "http://localhost:3000"
-#System.site_name = "NeWagN"
-
-#System.multihost = true
-
+# ****************************************************
+# IMPORTANT!!!:  YOU CANNOT PUT System.settings here
+#  they will get LOST when System reloads in development environment. 
+#   put them in wagn.rb instead.
+# ****************************************************

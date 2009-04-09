@@ -7,3 +7,6 @@
 [submodule "vendor/plugins/make_resourceful"]
 	path = vendor/plugins/make_resourceful
 	url = git://github.com/hcatlin/make_resourceful.git
+[submodule "vendor/plugins/hoptoad"]
+	path = vendor/plugins/hoptoad
+	url = git://github.com/thoughtbot/hoptoad_notifier.git

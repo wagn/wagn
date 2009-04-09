@@ -60,31 +60,40 @@ namespace :wagn do
 
       config_cards = %w{ *context *to *title account_request+*tform *invite+*thank *signup+*thank *from }
       permset = :basic
+      
       permission = {
         :basic=>{
-          :read=> {:default=>:anon, 'administrator_link'=> :admin},
-          :edit=> {:default=>:auth, 'administrator_link'=> :admin},
-          :delete=>{:default=>:auth, 'administrator_link'=> :admin},
-          :create=>{:default=>:auth, 'account_request'=>:anon},
-          :comment=>{:default=>nil, 'discussion+*rform'=>:anon}
+         :default=> {:read=>:anon, :edit=>:auth, :delete=>:auth, :create=>:auth, :comment=>nil},
+         :star=> {:edit=>:admin},
+         'role'=> {:create=>:admin},
+         'html'=> {:create=>:admin},
+         'account_request' => {:create=>:anon},
+#         'account_request+*tform' {:read=>:admin},
+         'administrator_link'=> {:read=>:admin},
+         'discussion+*rform'=> {:comment=>:anon}
         }
-      
       }
     
       role_ids = {}
       Role.find(:all).each do |role|
         role_ids[role.codename.to_sym] = role.id
       end
+
+      perms = permission[:basic]
+      default = perms[:default]
     
       ActiveRecord::Base.connection.delete( 'delete from permissions')
       ActiveRecord::Base.connection.select_all( 'select * from cards' ).each do |card|
         key = card['key']
-        tasks = permission[:basic]
-        tasks.keys.each do |task|
-          perms = tasks[task]
-          next if !perms[:default] and !perms[key]
+        cardset = perms[key] || {}
+        starset = (key =~ /^\*/ ? perms[:star] : {})
+          
+        default.keys.each do |task|
           next if task== :create and card['type'] != 'Cardtype'
-          party_id = role_ids[perms[key] || perms[:default]]
+          codename = cardset[task] || starset[task] || default[task]
+          next unless codename
+          party_id = role_ids[codename]
+          
           ActiveRecord::Base.connection.update(
             "INSERT into permissions (card_id, task, party_type, party_id) "+
             "VALUES (#{card['id']}, '#{task}', 'Role', #{party_id} )"

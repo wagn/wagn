@@ -39,8 +39,7 @@ class ApplicationController < ActionController::Base
       end
     end
 
-    CachedCard.cache_key_prefix = "#{System.host}/#{RAILS_ENV}"
-    CachedCard.seq_key = CachedCard.cache_key_prefix + "/" + "global_seq"
+    CachedCard.set_cache_prefix "#{System.host}/#{RAILS_ENV}"
     
     # Set/Redirect to Canonical Domain
     if request.raw_host_with_port != System.host and RAILS_ENV=="production"

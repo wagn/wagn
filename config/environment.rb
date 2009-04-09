@@ -54,18 +54,17 @@ end
 # configure session store
 Session = CGI::Session::ActiveRecordStore.session_class
 
-# force loading of the system model. FIXME: this seems like a terrible way to do this
-System
 
 #ExceptionNotifier.exception_recipients = %w(someone@somewhere.org)
 #ExceptionNotifier.sender_address = %("#{System.site_name} Error" <notifier@wagn.org>)
 #ExceptionNotifier.email_prefix = "[#{System.site_name}] "
 
-#System.enable_postgres_fulltext = true
-#System.postgres_src_dir = "/usr/local/src/postgres/postgresql-8.2.1/"
-
 # select a store for the rails/card cache
 ActionController::Base.cache_store = :mem_cache_store # file_store, "#{RAILS_ROOT}/../cache"  
+
+
+# force loading of the system model. 
+System
 
 # ****************************************************
 # IMPORTANT!!!:  YOU CANNOT PUT System.settings here

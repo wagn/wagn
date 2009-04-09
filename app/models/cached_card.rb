@@ -21,6 +21,11 @@ class CachedCard
   self.local_cache={ :real=>{}, :get=>{}, :seq=>nil }
   
   class << self       
+    def set_cache_prefix( prefix )
+      self.cache_key_prefix = prefix
+      self.seq_key = self.cache_key_prefix + "/global_seq"
+    end
+    
     def reset_cache
       self.local_cache = {
         :real => {},

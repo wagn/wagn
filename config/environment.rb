@@ -55,9 +55,6 @@ Rails::Initializer.run do |config|
   }  
 end
 
-
-require 'remote_uploads.rb'
-   
 # configure session store
 Session = CGI::Session::ActiveRecordStore.session_class
 

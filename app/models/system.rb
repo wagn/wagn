@@ -15,42 +15,6 @@ class System < ActiveRecord::Base
     # Crap?  :admin_user_defaults, :debug_wql, :pagesize, :time, 
     
     
-  def self.javascript_files
-    no_more = %{
-      Wikiwyg.js
-      Wikiwyg/Toolbar.js
-      Wikiwyg/Wysiwyg.js
-      Wikiwyg/Wikitext.js
-      Wikiwyg/Preview.js
-      Wikiwyg/Util.js
-      Wikiwyg/HTML.js
-      Wikiwyg/Debug.js
-      Wagn/Wikiwyg.js
-      Wagn/Lister.js
-      Wagn/LinkEditor.js      
-      builder.js
-      window.js   
-    } 
-    
-    # FIXME: on_demand isn't built yet.
-    #  calendar should go here.
-    on_demand = %w{
-      transport.js  
-      calendar.js             
-    }
-
-    always = %w{
-      prototype.js
-      effects.js 
-      controls.js
-      application.js  
-    }
-  end
-  
-  def self.compressed_js
-    'wagn_cmp.js' 
-  end  
-  
   class << self
     def base_url
       if (request and request.env['HTTP_HOST'] and !@@base_url)

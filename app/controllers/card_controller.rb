@@ -2,7 +2,6 @@ class CardController < ApplicationController
 
   helper :wagn, :card 
   layout :default_layout
-  cache_sweeper :card_sweeper
 
   before_filter :create_ok, :only=>[ :new, :create ]
 

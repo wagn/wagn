@@ -15,14 +15,17 @@ class CachedCard
   attr_accessor :comment, :comment_author
   self.cache = ActionController::Base.cache_store
   self.perform_caching = ActionController::Base.perform_caching  
-  self.cache_key_prefix = "#{System.base_url.split('//').last}/#{RAILS_ENV}"
-  self.seq_key = self.cache_key_prefix + "/" + "global_seq"
   
   cattr_accessor :card_names, :local_cache
   self.card_names={} 
   self.local_cache={ :real=>{}, :get=>{}, :seq=>nil }
   
   class << self       
+    def set_cache_prefix( prefix )
+      self.cache_key_prefix = prefix
+      self.seq_key = self.cache_key_prefix + "/global_seq"
+    end
+    
     def reset_cache
       self.local_cache = {
         :real => {},

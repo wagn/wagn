@@ -35,10 +35,6 @@ Rails::Initializer.run do |config|
 
   # Activate observers that should always be running
   
-  # FIXME observers weren't working right last time I tried -LWH 
-  # hmm card observer seems to work... but not user_observer
-  config.active_record.observers = :invitation_request_observer
-  
   # Make Active Record use UTC-base instead of local time
   # config.active_record.default_timezone = :utc
   
@@ -55,24 +51,20 @@ Rails::Initializer.run do |config|
   }  
 end
 
-
-require 'remote_uploads.rb'
-   
 # configure session store
 Session = CGI::Session::ActiveRecordStore.session_class
 
-# force loading of the system model. FIXME: this seems like a terrible way to do this
-System
 
 #ExceptionNotifier.exception_recipients = %w(someone@somewhere.org)
 #ExceptionNotifier.sender_address = %("#{System.site_name} Error" <notifier@wagn.org>)
 #ExceptionNotifier.email_prefix = "[#{System.site_name}] "
 
-#System.enable_postgres_fulltext = true
-#System.postgres_src_dir = "/usr/local/src/postgres/postgresql-8.2.1/"
-
 # select a store for the rails/card cache
 ActionController::Base.cache_store = :mem_cache_store # file_store, "#{RAILS_ROOT}/../cache"  
+
+
+# force loading of the system model. 
+System
 
 # ****************************************************
 # IMPORTANT!!!:  YOU CANNOT PUT System.settings here

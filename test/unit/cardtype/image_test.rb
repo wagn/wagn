@@ -18,7 +18,6 @@ class Card::ImageTest < Test::Unit::TestCase
     @c=Card::Image.create( :name => "Bananamaster", :attachment_id=>card_image.id )
 
     assert_instance_of Card::Image, @c
-    assert_instance_of CardImage, @c.card_image
   end
   
 end

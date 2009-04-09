@@ -38,6 +38,9 @@ class ApplicationController < ActionController::Base
         return render_fast_404
       end
     end
+
+    CachedCard.cache_key_prefix = "#{System.host}/#{RAILS_ENV}"
+    CachedCard.seq_key = CachedCard.cache_key_prefix + "/" + "global_seq"
     
     # Set/Redirect to Canonical Domain
     if request.raw_host_with_port != System.host and RAILS_ENV=="production"

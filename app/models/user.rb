@@ -84,7 +84,8 @@ class User < ActiveRecord::Base
     end    
     
     def [](login)
-      self.cache[login.to_s] ||= User.find_by_login(login.to_s)
+      login=login.to_s
+      login.blank? ? nil : (self.cache[login] ||= User.find_by_login(login)) 
     end
 
     def no_logins?

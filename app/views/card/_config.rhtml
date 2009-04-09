@@ -1,11 +1,57 @@
-<% if card.simple? %>
-  <h1>Cards ending in +<%= card.name %></h1>
-  <p>{{+*rform}}</p>
-  <p>{{+*edit}}</p>
-  <p>{{+*new}}</p>
+<% tagname = card.name.tag_name 
+   type = card.cardtype
+%>
+
+<% if card.simple? || card.hard_template %>
+  <h1>Formatting</h1>
+  <p>&nbsp;</p>
+  
+  <% if tt = card.type_template and tt.hard_template? %>
+    <p><strong>By Type</strong></p>
+    <p><em>Formats all <%= type.name %> cards.</em>. <em><a href="http://wagn.org/wagn/formatting">Learn more about formatting</a>.</em></p>
+    <p>&nbsp;</p>
+    <blockquote><p>{{<%= tt.name %>|closed}}</p></blockquote>
+  <% end %>
+  
+  <% if card.simple? || (rt = card.right_template and rt.hard_template?) %>
+    <p><strong>By Name<br /></strong></p>
+    <p><em>Formats any <a href="<%= tagname %>+plusses">plus card whose name ends in "+<%= tagname %>."</a>. <a href="http://wagn.org/wagn/formatting">Learn more about formatting</a>.</em></p>
+    <blockquote>
+    <p>{{<%= tagname %>+*rform|closed}}</p>
+    </blockquote>    
+  <% end %>
+  <p>&nbsp;</p>  
+  <p>&nbsp;</p>  
 <% end %>
-<p></p>
+
+
+<h1>Help Text</h1>
+<p>&nbsp;</p>
+<p><strong>Editing Cards<br /></strong></p>
+<p><em>Help text appears when </em><em>any <%= type=='Cardtype' ? "#{card.name} cards, or " : '' %> <a href="<%= tagname %>+plusses">plus card whose name ends in "+<%= tagname %>"</a> is created or edited. <a href="http://wagn.org/wagn/help_text">Learn more about help text</a>.<br /></em></p>
+<blockquote>
+<p>{{<%= tagname %>+*edit|closed}}</p>
+</blockquote>
+<p>&nbsp;</p>
+<p><strong>Creating Cards<br /></strong></p>
+<p><em>Help text appears only when any <%= type=='Cardtype' ? "#{card.name} cards, or " : '' %> <a href="_left+plusses">plus card whose name ends in "+<%= tagname %>"</a> is created. (This overrides the editing help text above.)</em></p>
+<blockquote><p>{{<%= tagname %>+*new|closed}}</p></blockquote>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
 <% if card.is_a? Card::Basic %>
-  <h1>Table of contents</h1>
-  <p>{{+*table of contents}}</p>
-<% end%>
+  <h1>Table of Contents<br /></h1>
+  <p>&nbsp;</p>
+  <p><em>Manually turn off the table of contents for <%= card.name %>. By default all cards with at least 4 headers have tables of contents.</em></p>
+  <blockquote><p>{{+*table of contents|closed}}</p></blockquote>
+<% end %>
+
+<% if type=='Pointer' && card.right_template? %>
+  <h1>Options</h1>
+  <p>&nbsp;</p>
+  <p><em>This Search defines the pool of cards from which any <a href="Pointer">Pointer</a> whose name ends in "<%= card.trunk.name %>" auto-completes. If it specifies a type, then any cards created through the Pointer will default to that type. <a href="http://wagn.org/wagn/Pointer">Learn more about Pointers</a>.</em></p>
+  <blockquote><p>{{+*options|closed}}</p></blockquote>
+<% end %>
+
+

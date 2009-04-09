@@ -5,7 +5,6 @@
 class ApplicationController < ActionController::Base
   require_dependency 'exception_system' 
   include AuthenticatedSystem
-  include ExceptionNotifiable
   include ExceptionSystem
 
   include LocationHelper

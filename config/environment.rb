@@ -35,10 +35,6 @@ Rails::Initializer.run do |config|
 
   # Activate observers that should always be running
   
-  # FIXME observers weren't working right last time I tried -LWH 
-  # hmm card observer seems to work... but not user_observer
-  config.active_record.observers = :invitation_request_observer
-  
   # Make Active Record use UTC-base instead of local time
   # config.active_record.default_timezone = :utc
   

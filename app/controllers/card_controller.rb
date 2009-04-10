@@ -251,10 +251,10 @@ class CardController < ApplicationController
     sources = [card.cardtype.name,nil]
     sources.unshift '*account' if card.extension_type=='User' 
     @items = sources.map do |root| 
-      c = CachedCard[(root ? "#{root}+" : '') +'*context']
+      c = CachedCard[(root ? "#{root}+" : '') +'*related']
       c && c.type=='Pointer' && c.pointees
     end.flatten.compact
-    @items << 'config' if card.simple? || card.is_a?(Card::Basic)
+    @items << 'config'
     @current = params[:attribute] || @items.first.to_key
   end
 

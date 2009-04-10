@@ -4,7 +4,7 @@
 	<% div(:class=>'submenu') do
 	   @items.each do |item|
 	     key = item.to_key %>
-       <%= link_to_remote( item, 
+       <%= link_to_remote( item.gsub('*',''), 
           { :url=>slot.url_for("card/related", nil, key), :update => slot.id }, 
           :class=>(key==@current ? 'on' : '') 
         ) %>

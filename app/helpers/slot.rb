@@ -55,7 +55,6 @@ module WagnHelper
     end
 
     def wrap_content( content="" )
-      raise("How did I get to wrap[2]\n")
       %{<span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick">} +
          content.to_s + 
       %{</span><!--[if IE]>&nbsp;<![endif]-->} 
@@ -69,7 +68,6 @@ module WagnHelper
     # internal slot calls, so I added the option passing internal content which
     # makes all the ugly block_given? ifs..                                                 
     def wrap(action="", args={}) 
-      raise("How did I get to wrap\n")
       render_slot = args.key?(:add_slot) ? args.delete(:add_slot) : !request.xhr? 
       content = args.delete(:content)
        
@@ -262,7 +260,6 @@ module WagnHelper
           when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
             #w_action = 'exception'
             #w_content = 
-            raise("Action: #{ok_action}\n")
             render_partial("card/#{ok_action}", args)
 
   
@@ -373,9 +370,9 @@ module WagnHelper
         when state==:line                   ; :expanded_line_content
         else                                ; vmode
       end
-      if action == :open_missing
-        raise("proc_tran: #{state}, #{vmode}, #{action}\n")
-      end
+      #if action == :open_missing
+      #  raise("proc_tran: #{state}, #{vmode}, #{action}\n")
+      #end
 =begin      
        # these take precedence over state=view/line
         else

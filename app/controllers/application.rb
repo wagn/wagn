@@ -53,6 +53,7 @@ class ApplicationController < ActionController::Base
     # reset class caches
     # FIXME: this is a bit of a kluge.. several things stores as cattrs in modules
     # that need to be reset with every request (in addition to current user)
+    User.clear_cache if System.multihost
     Card.reset_cache
     Cardtype.reset_cache
     Role.reset_cache

@@ -11,9 +11,9 @@ class AttachmentFuMigration < ActiveRecord::Migration
     (Card::Image.find(:all) + Card::File.find(:all)).each do |card|
       path_segment,attachable_model = (card.class == Card::Image) ? ["image",CardImage] : ["file",CardFile]
       
-      path = "#{RAILS_ROOT}/public/#{path_segment}/#{card.content.gsub(" ","_")}"
+      path = "#{RAILS_ROOT}/public/#{path_segment}/#{card.content}"
       if !card.content.blank? and File.exists?(path)
-        mimetype = `file -ib #{path}`.gsub(/\n/,"")
+        mimetype = `file -ib "#{path}"`.gsub(/\n/,"")
         puts "uploading #{mimetype} #{path}"
         begin
           attachable = attachable_model.new(:uploaded_data => ActionController::TestUploadedFile.new(path, mimetype))

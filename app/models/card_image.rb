@@ -8,14 +8,14 @@ class CardImage < ActiveRecord::Base
                  :thumbnails => {
                    :icon => '16x75',
                    :small => '75x75',
-                   :medium => '200x200',
-                   :large  => '500x500'
+                   :medium => '200x200>',
+                   :large  => '500x500>'
                  } 
                  
   validates_as_attachment                 
 
   def preview
-    "<img src=\"#{public_filename(:small)}\" />"
+    "<img src=\"#{public_filename(:medium)}\" />"
 	end
 
   def bucket_name

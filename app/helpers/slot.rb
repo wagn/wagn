@@ -318,7 +318,7 @@ module WagnHelper
                                       
               if size = options[:size] 
                 size = (size.to_s == "full" ? "" : "_#{size}")
-                tcontent = tcontent.gsub(/_small(\.\w+\")/,"#{size}"+'\1')
+                tcontent = tcontent.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
               end
               
               tcontent

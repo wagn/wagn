@@ -58,7 +58,7 @@ module WagnHelper
       raise("How did I get to wrap[2]\n")
       %{<span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick">} +
          content.to_s + 
-      %{</span><!--[if x6IE]>&nbsp;<![endif]-->} 
+      %{</span><!--[if IE]>&nbsp;<![endif]-->} 
     end    
     
     def js
@@ -102,10 +102,10 @@ module WagnHelper
         }
         
         slot_attr = attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join
-        open_slot = %{<!--[if x7IE]><div #{slot_attr}><![endif]-->} +
-                    %{<![if !x8IE]><object #{slot_attr}><![endif]>} 
-        close_slot= %{<!--[if x9IE]></div><![endif]-->} +
-                    %{<![if !x10IE]></object><![endif]>} 
+        open_slot = %{<!--[if IE]><div #{slot_attr}><![endif]-->} +
+                    %{<![if !IE]><object #{slot_attr}><![endif]>} 
+        close_slot= %{<!--[if IE]></div><![endif]-->} +
+                    %{<![if !IE]></object><![endif]>} 
 
       end
       

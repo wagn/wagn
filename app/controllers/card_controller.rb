@@ -247,7 +247,16 @@ class CardController < ApplicationController
     @previous_revision = @card.previous_revision(@revision)
   end
 
-
+  def related
+    sources = [card.cardtype.name,nil]
+    sources.unshift '*account' if card.extension_type=='User' 
+    @items = sources.map do |root| 
+      c = CachedCard[(root ? "#{root}+" : '') +'*context']
+      c && c.type=='Pointer' && c.pointees
+    end.flatten.compact
+    @items << 'config' if card.simple? || card.is_a?(Card::Basic)
+    @current = params[:attribute] || @items.first.to_key
+  end
 
   #------------------( views )
 

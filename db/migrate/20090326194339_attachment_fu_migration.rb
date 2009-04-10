@@ -13,7 +13,7 @@ class AttachmentFuMigration < ActiveRecord::Migration
       
       path = "#{RAILS_ROOT}/public/#{path_segment}/#{card.content.gsub(" ","_")}"
       if !card.content.blank? and File.exists?(path)
-        mimetype = `file -ib #{path}`.gsub(/\n/,"")
+        mimetype = `file -ib "#{path}"`.gsub(/\n/,"")
         puts "uploading #{mimetype} #{path}"
         begin
           attachable = attachable_model.new(:uploaded_data => ActionController::TestUploadedFile.new(path, mimetype))

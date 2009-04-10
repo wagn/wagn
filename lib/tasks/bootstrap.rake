@@ -19,7 +19,9 @@ namespace :wagn do
         File.open("#{RAILS_ROOT}/db/bootstrap/#{table}.yml", 'w') do |file|
           data = 
             if table=='cards'
-              Card.search({:not=>{:referred_to_by=>'*ignore'}}).map &:attributes
+              User.as :wagbot do
+                Card.search({:not=>{:referred_to_by=>'*ignore'}}).map &:attributes
+              end
             else
               sql = (table=='revisions' ?
                 'select r.*from %s r join cards c on c.current_revision_id = r.id' :

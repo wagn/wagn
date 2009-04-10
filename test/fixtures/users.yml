@@ -1,10 +1,10 @@
 --- 
 users_004: 
   status: active
-  salt: 8a925a67e7056717de07de692322958b4de66763
-  updated_at: 2009-04-07 16:44:58.362673
+  salt: 28b23e390fabb3934844aa143548fcc0212480ac
+  updated_at: 2009-04-10 16:32:59.191948
   cards_per_page: "25"
-  crypted_password: 92515e72ea1f08d3e730d2948676c1a1aaa57010
+  crypted_password: e20b6e4a97b973856f32dc4cdd23a974472bd502
   invite_sender_id: "1"
   blocked: f
   password_reset_code: 
@@ -12,14 +12,14 @@ users_004:
   identity_url: 
   hide_duplicates: t
   login: 
-  created_at: 2009-04-07 16:44:58.362673
+  created_at: 2009-04-10 16:32:59.191948
   email: ron@request.com
 users_005: 
   status: active
-  salt: a0325778cd97c65f49769c274ef578e55b7ead3e
-  updated_at: 2009-04-07 16:44:58.485027
+  salt: d56637d6af6d4cf7587c4d2ae2838f1ca36e332e
+  updated_at: 2009-04-10 16:32:59.334552
   cards_per_page: "25"
-  crypted_password: b3d5ca29f03f94c8c92f4af8059e64e9bcafe4a7
+  crypted_password: ddc90ee3cf998c5e3c6129e96ac15e3cd316bb1c
   invite_sender_id: "1"
   blocked: f
   password_reset_code: 
@@ -27,14 +27,14 @@ users_005:
   identity_url: 
   hide_duplicates: t
   login: sample_user
-  created_at: 2009-04-07 16:44:58.485027
+  created_at: 2009-04-10 16:32:59.334552
   email: sample@user.com
 users_006: 
   status: active
-  salt: 8e4cf770122b21810619ae26b3fd8947505897b9
-  updated_at: 2009-04-07 16:45:00.208144
+  salt: 133447d2b8fae4e0bdeff3fcdc8ccf9e6d9e20c8
+  updated_at: 2009-04-10 16:33:01.297132
   cards_per_page: "25"
-  crypted_password: 6b27ae33d2b07511682ba9dda9de38c676ae234d
+  crypted_password: 397649e34d97cb62cdedf08684508f5e7f2b8368
   invite_sender_id: "1"
   blocked: f
   password_reset_code: 
@@ -42,14 +42,14 @@ users_006:
   identity_url: 
   hide_duplicates: t
   login: u1
-  created_at: 2009-04-07 16:45:00.208144
+  created_at: 2009-04-10 16:33:01.297132
   email: u1@user.com
 users_007: 
   status: active
-  salt: b0107d7beb7b1ca69abc2d7a9e3bdc872c0760ea
-  updated_at: 2009-04-07 16:45:00.212989
+  salt: 4b94416d8fdee36823abca5ff375e446c3082625
+  updated_at: 2009-04-10 16:33:01.303466
   cards_per_page: "25"
-  crypted_password: 90e69fda2f0807c3bc7ac564fb52c863a20aaa0b
+  crypted_password: ae462ed951168e47ed05889228deed820282fdf9
   invite_sender_id: "1"
   blocked: f
   password_reset_code: 
@@ -57,14 +57,14 @@ users_007:
   identity_url: 
   hide_duplicates: t
   login: u2
-  created_at: 2009-04-07 16:45:00.212989
+  created_at: 2009-04-10 16:33:01.303466
   email: u2@user.com
 users_008: 
   status: active
-  salt: 5f910da603088c2f09ef4d3ce4de3cd9d038a275
-  updated_at: 2009-04-07 16:45:00.218384
+  salt: 6a71b031853cb2970f4c51abfc546027987b6f20
+  updated_at: 2009-04-10 16:33:01.310119
   cards_per_page: "25"
-  crypted_password: feed48cc59c983821f72a09af11723a8e9d2dc9e
+  crypted_password: a897824fca3315863b630d1c20098389c2522826
   invite_sender_id: "1"
   blocked: f
   password_reset_code: 
@@ -72,12 +72,12 @@ users_008:
   identity_url: 
   hide_duplicates: t
   login: u3
-  created_at: 2009-04-07 16:45:00.218384
+  created_at: 2009-04-10 16:33:01.310119
   email: u3@user.com
 users_001: 
   status: system
   salt: 
-  updated_at: 2009-04-07 16:44:50.09456
+  updated_at: 2009-04-10 16:32:52.212674
   cards_per_page: "25"
   crypted_password: 
   invite_sender_id: "1"
@@ -87,12 +87,12 @@ users_001:
   identity_url: 
   hide_duplicates: t
   login: wagbot
-  created_at: 2009-04-07 16:44:50.09456
-  email: 
+  created_at: 2009-04-10 16:32:52.212674
+  email: noreply@wagn.org
 users_002: 
   status: system
   salt: 
-  updated_at: 2009-04-07 16:44:50.09456
+  updated_at: 2009-04-10 16:32:52.212674
   cards_per_page: "25"
   crypted_password: 
   invite_sender_id: "1"
@@ -102,14 +102,14 @@ users_002:
   identity_url: 
   hide_duplicates: t
   login: anon
-  created_at: 2009-04-07 16:44:50.09456
-  email: 
+  created_at: 2009-04-10 16:32:52.212674
+  email: noreply@wagn.org
 users_003: 
   status: active
-  salt: 4812270ed079f46f945339eebab3b39ff6c276ee
-  updated_at: 2009-04-07 16:44:57.778746
+  salt: 02acbac6d93ade4a08d83e2068dd4884da531770
+  updated_at: 2009-04-10 16:32:58.033115
   cards_per_page: "25"
-  crypted_password: ea9465053623004e947330ab89f8a3320c3c6870
+  crypted_password: c6393ef6b793ae958635cecf60a55066dbce0379
   invite_sender_id: "1"
   blocked: f
   password_reset_code: 
@@ -117,5 +117,5 @@ users_003:
   identity_url: 
   hide_duplicates: t
   login: joe_user
-  created_at: 2009-04-07 16:44:57.778746
+  created_at: 2009-04-10 16:32:58.033115
   email: joe@user.com

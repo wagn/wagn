@@ -44,39 +44,4 @@ class AdminController < ApplicationController
     redirect_to :action=>'tasks'
   end
   
-=begin  
-
-  
-  def save_setup
-    ensure_new_system
-    @user = User.find_by_login('wagbot')
-    if (@user.update_attributes( params[:user] ) and  
-        @system = System.create(:name=>'wagn') and
-        @system.save)
-      #@user.activate( "Admin" )
-      self.current_user = @user
-      flash[:notice] = "Your administrative account has been activated. " + "Welcome!" 
-      redirect_to previous_location
-    else
-      flash[:notice] = "Durn, setup went awry..."
-      render :action=>'setup'
-    end
-  end
-
-  def navigation
-    @ok = System.ok_hash
-    render :layout=>nil
-  end
-
-  def users
-    #@cards = Card.search(:extension_type=>"User", :sort=>'alpha')
-  end
-
-  def roles
-    @cards = Card.search(:extension_type=>"Role", :sort=>'alpha')
-  end
-=end  
-
-
-  
 end

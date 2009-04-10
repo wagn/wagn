@@ -55,9 +55,10 @@ module WagnHelper
     end
 
     def wrap_content( content="" )
+      raise("How did I get to wrap[2]\n")
       %{<span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick">} +
          content.to_s + 
-      %{</span><!--[if IE]>&nbsp;<![endif]-->} 
+      %{</span><!--[if x6IE]>&nbsp;<![endif]-->} 
     end    
     
     def js
@@ -68,6 +69,7 @@ module WagnHelper
     # internal slot calls, so I added the option passing internal content which
     # makes all the ugly block_given? ifs..                                                 
     def wrap(action="", args={}) 
+      raise("How did I get to wrap\n")
       render_slot = args.key?(:add_slot) ? args.delete(:add_slot) : !request.xhr? 
       content = args.delete(:content)
        
@@ -100,10 +102,10 @@ module WagnHelper
         }
         
         slot_attr = attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join
-        open_slot = %{<!--[if IE]><div #{slot_attr}><![endif]-->} +
-                    %{<![if !IE]><object #{slot_attr}><![endif]>} 
-        close_slot= %{<!--[if IE]></div><![endif]-->} +
-                    %{<![if !IE]></object><![endif]>} 
+        open_slot = %{<!--[if x7IE]><div #{slot_attr}><![endif]-->} +
+                    %{<![if !x8IE]><object #{slot_attr}><![endif]>} 
+        close_slot= %{<!--[if x9IE]></div><![endif]-->} +
+                    %{<![if !x10IE]></object><![endif]>} 
 
       end
       
@@ -217,6 +219,15 @@ module WagnHelper
           c = self.render( :expanded_view_content)
           w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c))
 
+        when :xml_missing
+          "<b>No:</b> " + self.render( :name )
+        when :xml_content
+          self.render_partial('card/plain')
+
+        when :xml
+          @state = 'view'
+          expand_transclusions( cache_action('view_content') { card.post_render( render(:xml_content)) } )
+
         when :expanded_view_content, :raw 
           @state = 'view'
           expand_transclusions(  cache_action('view_content') {  card.post_render( render(:open_content)) } )
@@ -251,6 +262,7 @@ module WagnHelper
           when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
             #w_action = 'exception'
             #w_content = 
+            raise("Action: #{ok_action}\n")
             render_partial("card/#{ok_action}", args)
 
   
@@ -357,9 +369,12 @@ module WagnHelper
       action = case
         when [:name, :link].member?(vmode)  ; vmode
         when state==:edit                   ; card.phantom? ? :edit_auto : :edit_in_form   
-        when new_card                       ; state==:line  ? :closed_missing : :open_missing
+        when new_card                       ; vmode==:xml_content ? :xml_missing : state==:line  ? :closed_missing : :open_missing
         when state==:line                   ; :expanded_line_content
         else                                ; vmode
+      end
+      if action == :open_missing
+        raise("proc_tran: #{state}, #{vmode}, #{action}\n")
       end
 =begin      
        # these take precedence over state=view/line
@@ -389,6 +404,11 @@ module WagnHelper
     def render_stub(partial, locals={})
       raise("Invalid partial") if partial.blank? 
       case partial
+        when "card/foo"
+          raise("card/foo render_stub\n")
+        when "card/plain"
+        #  %{"Card/plain" + card.name} + render(:custom_view)
+          raise("card/plain render_stub\n")
         when "card/view"
           %{\n<div class="view">\n} + wrap_content( render( :expanded_view_content ))+ %{\n</div>\n}
         when "card/line"

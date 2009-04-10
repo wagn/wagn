@@ -12,11 +12,20 @@ if Card::Pointer === @card
 else 
   xml.card do
     xml.title System.site_title + " : " + @card.name.gsub(/^\*/,'')
-    slot = get_slot(card, "main_1", "view")
+    slot = get_slot(card, "main_1", "view", :transclusion_view_overrides => {
+          :open => :xml,
+          :content => :xml_content,
+          :closed => :name,
+          :open_missing => :name,
+        })
     xml.name card.name
     xml.key card.key
     xml.revision card.current_revision.id
-    xml.description slot.render( :raw_content )
+    xml.content slot.render( :raw_content )
+    xml.raw do
+      xml << slot.render( :xml )
+    end
+    #xml.description slot.render( :expanded_view_content )
     xml.date card.updated_at.to_s(:rfc822) 
     xml.link card_url(card)
     #xml.guid card_url(card)

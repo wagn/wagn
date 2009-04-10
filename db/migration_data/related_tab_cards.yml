@@ -1,0 +1,129 @@
+--- 
+- - "*related"
+  - Pointer
+  - |-
+    [[*community]]
+    [[*references]]
+    [[*plusses]]
+- - "*plusses+*rform"
+  - Basic
+  - |-
+    <p><em>Plus cards</em> have a plus (+) in their name <em>(e.g., "Menu+description")</em>. They are formed by plussing two cards together to make a third.</p>
+    <p>&nbsp;</p>
+    <h1>Plus Cards</h1>
+    <p><em>Cards of which <strong>{{_left|name}}</strong> is part</em></p>
+    <blockquote>
+    <p>{{_left+*plus cards}}</p>
+    </blockquote>
+    <h1><br></h1>
+    <h1>Parts<br></h1>
+    <p><em>Cards that form plus cards with <strong>{{_left|name}}</strong></em></p>
+    <blockquote>
+    <p>{{_left+*plus parts}}</p>
+    </blockquote>
+- - "*references+*rform"
+  - Basic
+  - |-
+    <h1>Links</h1>
+    <p><em>Cards that <strong>{{_left|name}}</strong> links to:</em></p>
+    <blockquote>
+    <p>{{_left+*links}}</p>
+    </blockquote>
+    <p><em>Cards that link to <strong>{{_left|name}}</strong>:</em></p>
+    <blockquote>
+    <p>{{_left+*linkers}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h1>Inclusions</h1>
+    <p><em>Cards that <strong>{{_left|name}}</strong> includes:</em></p>
+    <blockquote>
+    <p>{{_left+*inclusions}}</p>
+    </blockquote>
+    <p><em>Cards that include <strong>{{_left|name}}</strong>:</em></p>
+    <blockquote>
+    <p>{{_left+*includers}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+- - "*related+*rform"
+  - Pointer
+  - ""
+- - Cardtype+*related
+  - Pointer
+  - "[[*type]]"
+- - "*type+*rform"
+  - Basic
+  - |-
+    <p>[[/new/{{_left|linkname}}|add a {{_left|name}} card]]</p>
+    <p>&nbsp;</p>
+    <h1>Form for {{_left|name}} cards<br></h1>
+    <blockquote>
+    <p>{{_left+*tform|closed}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h1>{{_left|name}} cards</h1>
+    <blockquote>
+    <p>{{_left+*type cards}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+- - "*account+*related"
+  - Pointer
+  - "[[*account]]"
+- - "*account+*rform"
+  - Basic
+  - |-
+    <h1>{{_left|name}}'s roles<br></h1>
+    <blockquote>
+    <p>{{_left+*roles|item:link}}</p>
+    </blockquote>
+    <h1>Cards {{_left|name}} has edited</h1>
+    <blockquote>
+    <p>{{_left +*editing}}</p>
+    </blockquote>
+- - "*editing+*rform"
+  - Search
+  - |-
+    {"edited_by": "_self",
+     "view": "change"}
+- - "*editors+*rform"
+  - Search
+  - "{\"edited\": \"_self\"} "
+- - "*members+*rform"
+  - Search
+  - "{\"member_of\": \"_self\", \"sort\":\"name\"}"
+- - Role+*tform
+  - Basic
+  - |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <h1>Accounts with the {{_self|name}} role<br></h1>
+    <blockquote>
+    <p>{{+*members}}</p>
+    </blockquote>
+- - "*options+*rform"
+  - Search
+  - "{}"
+- - "*community+*rform"
+  - Basic
+  - |-
+    <h1>Editors</h1>
+    <blockquote>
+    <p>{{_left+*editors|item:link}}</p>
+    </blockquote>
+    <h1>Discussion<br></h1>
+    <blockquote>
+    <p>{{+discussion|open}}</p>
+    </blockquote>
+    <h1>Tags</h1>
+    <blockquote>
+    <p>{{+tags}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+- - "*table of contents+*edit"
+  - Basic
+  - <p>use "off" or "on" to force a table setting.</p>
+- - "*table of contents+*rform"
+  - PlainText
+  - "off"
+- - tags+*rform
+  - Pointer
+  - ""

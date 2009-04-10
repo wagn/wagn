@@ -10,10 +10,15 @@ class RenameAndTouchUpStarCards < ActiveRecord::Migration
     names.keys.each do |old|
       if c = Card[old]
         c.name = names[old]
+        c.confirm_rename = true
         c.save
       end
     end
     
+    %w{ *rform *tform }.each do |name|
+      c = Card[name]
+      c.permit(:comment, nil)
+    end 
     
   end
 

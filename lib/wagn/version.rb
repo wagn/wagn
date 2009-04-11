@@ -2,7 +2,7 @@ unless defined? Wagn::Version
   module Wagn
     module Version
       Major = '0'
-      Minor = '12'
+      Minor = '13'
       Tiny  = '0'
       Eensie = ''
     

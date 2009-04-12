@@ -19,11 +19,12 @@ else
           :open_missing => :name,
         })
     xml.name card.name
+    xml.type card.type
     xml.key card.key
     xml.revision card.current_revision.id
-    xml.content slot.render( :raw_content )
-    xml.raw do
-      xml << slot.render( :xml )
+    xml.rawcontent slot.render( :raw_content )
+    xml.content do
+      xml << slot.render_xml( :xml_expanded )
     end
     #xml.description slot.render( :expanded_view_content )
     xml.date card.updated_at.to_s(:rfc822) 

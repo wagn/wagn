@@ -1,0 +1,50 @@
+
+     This wagn branch is an experiment with XML interfaces to implement a
+distributed model on top of a regular wagn.  The model at an abstract level is
+a network of nodes, mathematically a graph, specifically a di-graph (directional)
+with some content (text at first, but icons or really any media content could
+be accomodated) at each node.  The abstract objects of this model are sets of
+nodes (the dots or circles) and edges (links or arrows between nodes).  We will
+need to work with subsets of both nodes and edges, which can be thought of as
+tags or labels on either/both the nodes and edges to select out subgraphs from
+a larger network.
+
+     In the language of the metacurrency project, what is described above is the
+Mesh, and now I will describe the Churn, that is changes to the distibuted
+network of related graphs through one or more local and remote repositories
+by a variety of distributed client interfaces. Any particular information graph
+(Mesh state) can be arrived at through sequences of atomic changes starting from
+an arbitrary number of empty spaces.  This is the list of operations (Churn
+Atoms):
+
+ +O Add a new node with no edges connected, and some initial content and tags
+ -O Delete a node.  The node must have no edges to or from it to delete it.
+ Up:O Update a node content and tags (spaces)
+ +^ Add a new edge (link) with simple content and tags (link labels)
+ -^ Delete an edge (link)
+ Up^ Update edge tags (link labels) and simple content
+
+     Transactions are sets of atomic Churns added or subtracted as a group.
+Transactions may be nested, but keep in mind that it may not always be possible
+to completely reverse the effects of some changes because you cannot delete
+a node that still has links.  This is fine, though, it is the nature of
+systems that record a historical trace of changes that objects are never
+really permanently deleted unless explicite steps are taken to expunge them
+from the change history as well.
+
+Content: A web resource and descriptor for it's semantics, and some media
+  descriptive or iconic to the resource
+Simple content: Tags for labeled edges may be enough, if you need more, put
+  a node in the middle of the link (i.e. make one edge into two edges and
+  a node with one edge in and one out)
+
+     The change sets (transactions) will need to propagate through a network
+of information resources that each hold different subsets of the complete
+networked universe of information resources.  We will use the distributed
+change model represented by git, and some implementations may use git to help
+support these information spaces, to design systems to propagate and control
+the flow of these streams of changes in the network.  Every point can hold
+all of the change history of the spaces it accesses, and push and pull changes
+from any network nodes that it can associate with through established network
+protocals.
+

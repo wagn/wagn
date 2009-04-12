@@ -128,7 +128,7 @@ module WagnHelper
         card.send(cc_method) || begin
           cached_card, @card = card, Card.find_by_key_and_trash(card.key, false) || raise("Oops! found cached card for #{card.key} but couln't find the real one") 
           content = yield(@card)
-          cached_card.send("#{cc_method}=", content.clone)  
+          cached_card.send("#{cc_method}=", @card.content.clone)  
           content
         end
       else
@@ -154,9 +154,44 @@ module WagnHelper
       VIEW_ALIASES[view.to_sym] || view
     end
 
+    def render_xml(action, args={})
+      rkey = self.card.name + ":" + action.to_s
+      root.renders[rkey] ||= 1; root.renders[rkey] += 1
+      #root.start_time ||= Time.now.to_f
+
+      ok_action = case
+        when root.renders[rkey] > System.max_renders                    ; :too_many_renders
+        #when (Time.now.to_f - root.start_time) > System.max_render_time ; :too_slow
+        when denial = deny_render?(action)                              ; denial
+        else                                                            ; action
+      end
+
+      result = case ok_action
+        when :xml_missing
+          "<no_card> " + self.render( :name ) + "</no_card> "
+
+        when :xml_content
+          processed = @card.content
+          (processed=~/\{\{[^\}]+\}\}/) ? expand_transclusions( processed ) : processed
+        when :xml, :xml_expanded
+          @state = 'view'
+          processed = cache_action('view_content') { render_xml(:xml_content) }
+          processed = expand_transclusions( processed )
+
+        ###---(  EXCEPTIONS ) 
+        when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
+            render_partial("card/#{ok_action}", args)
+  
+        else raise("Unknown slot render action '#{ok_action}'")
+      end
+
+      rescue Card::PermissionDenied=>e
+        return "Permission error: #{e.message}"
+    end
+
     def render(action, args={})      
       #warn "<render(#{card.name}, #{@state}).render(#{action}, item=>#{args[:item]})"
-      
+
       rkey = self.card.name + ":" + action.to_s
       root.renders[rkey] ||= 1; root.renders[rkey] += 1
       #root.start_time ||= Time.now.to_f
@@ -202,7 +237,7 @@ module WagnHelper
           # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
           content_tag( :h2, less_fancy_title(card.name) ) + self.render( :expanded_view_content )
 
-        when :rss_change
+        when :rss_change;
           w_action = self.requested_view = 'content'
           render_partial('card/change')
           
@@ -217,15 +252,6 @@ module WagnHelper
           c = self.render( :expanded_view_content)
           w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c))
 
-        when :xml_missing
-          "<b>No:</b> " + self.render( :name )
-        when :xml_content
-          self.render_partial('card/plain')
-
-        when :xml
-          @state = 'view'
-          expand_transclusions( cache_action('view_content') { card.post_render( render(:xml_content)) } )
-
         when :expanded_view_content, :raw 
           @state = 'view'
           expand_transclusions(  cache_action('view_content') {  card.post_render( render(:open_content)) } )
@@ -233,9 +259,7 @@ module WagnHelper
         when :expanded_line_content
           expand_transclusions(  cache_action('line_content') { render(:closed_content) } )
 
-
         #-----( without transclusions processed )
-
         when :closed_content;   render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
         when :open_content;     render_card_partial(:content)  # FIXME?: 'content' is inconsistent
         when :raw_content;    
@@ -331,12 +355,33 @@ module WagnHelper
           end
         end
       end  
+      #if card.name == 'Wagn'
+      #  raise ("Wagn #{raw_content}\n")
+      #end
       content     
     end
        
+    def render_partial_xml( partial, locals={} )
+      locals =  { :card=>card, :slot=>self }.merge(locals)
+      if StubTemplate===@template 
+        render_stub(partial, locals)
+      else
+        #if card.hard_template
+        #  foo = card.type_template.name
+        #  bar = @template.template.name
+        #  raise("Hard processing.. #{foo} :: #{bar}\n")
+        #end
+        @template.render(:partial=>partial, :locals=>locals)
+      end
+    end
+
     def render_partial( partial, locals={} )
       locals =  { :card=>card, :slot=>self }.merge(locals)
-      StubTemplate===@template ? render_stub(partial, locals) : @template.render(:partial=>partial, :locals=>locals)
+      if StubTemplate===@template 
+        render_stub(partial, locals)
+      else
+        @template.render(:partial=>partial, :locals=>locals)
+      end
     end
 
     def card_partial(action) 
@@ -366,13 +411,13 @@ module WagnHelper
       action = case
         when [:name, :link].member?(vmode)  ; vmode
         when state==:edit                   ; card.phantom? ? :edit_auto : :edit_in_form   
-        when new_card                       ; vmode==:xml_content ? :xml_missing : state==:line  ? :closed_missing : :open_missing
+        when new_card  ; [:xml, :xml_content].member?(vmode) ? :xml_missing : state==:line  ? :closed_missing : :open_missing
         when state==:line                   ; :expanded_line_content
         else                                ; vmode
       end
-      #if action == :open_missing
-      #  raise("proc_tran: #{state}, #{vmode}, #{action}\n")
-      #end
+      if action == :open_missing
+        raise("proc_tran: #{state}, #{vmode}, #{action}\n")
+      end
 =begin      
        # these take precedence over state=view/line
         else
@@ -386,7 +431,11 @@ module WagnHelper
 =end
       #logger.info("<transclusion_case: state=#{state} vmode=#{vmode} --> Action=#{action}, Option=#{options.inspect}")
 
-      result = subslot.render action, options
+      result = if [:xml, :xml_content, :xml_expanded, :xml_missing ].member?(action)
+        '<'+subslot.card.type+'>'+subslot.render_xml(action, options)+'<'+subslot.card.type+'/>'
+      else
+        subslot.render(action, options)
+      end
       @template.controller.slot = old_slot
       result
     end   

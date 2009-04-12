@@ -196,11 +196,11 @@ module Card
         given_type = args.pull('type')
         tag_template = right_template(get_name_from_args(args)||"")
 
-        
         broken_type = nil
         
         requested_type = case
-          when tag_template && tag_template.hard_template?;   tag_template.type  
+          #when tag_template && tag_template.hard_template?;  foo =  tag_template.type;   raise("HTemp: #{foo}\n");
+          when tag_template && tag_template.hard_template?;  tag_template.type
           when given_type;                                    given_type
           when tag_template && tag_template.soft_template?;   tag_template.type
           else                                                default_class.to_s.demodulize  # depends on what class we're in
@@ -396,6 +396,8 @@ module Card
       #end
       if tmpl = hard_template and tmpl!=self
         tmpl.content
+      #elsif tmpl = xml_hard_template and tmpl!=self
+      #  tmpl.content
       else
         current_revision ? current_revision.content : ""
       end

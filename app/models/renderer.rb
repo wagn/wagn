@@ -68,6 +68,27 @@ class Renderer
     @rescue_errors = true
   end
 
+  def render_xml(card=nil, content=nil, update_references=false, &process_block)
+    raise "Renderer.render() requires card" unless card
+    if @render_stack.plot(:name).include?( card.name )
+      raise Wagn::Oops, %{Circular transclusion; #{@render_stack.plot(:name).join(' --> ')}\n}
+    end
+    @render_stack.push(card)      
+    # FIXME: this means if you had a card with content, but you WANTED to have
+    # it render the empty string you passed it, it won't work.  but we seem
+    # to need it because card.content='' in set_card_defaults and if you make
+    # it nil a bunch of other stuff breaks
+    content = content.blank? ? card.content_for_rendering  : content 
+
+    #raise("xml(#{content}\n")
+    #xml_content = content #XmlContent.new(card, content, self)
+    xml_content = WikiContent.new(card, content, self)
+    yield xml_content if block_given?
+    update_xml_references(card, xml_content) if update_references
+    @render_stack.pop
+    xml_content
+  end
+
   def render( card=nil, content=nil, update_references=false, &process_block )
     wiki_content = common_processing(card, content, update_references, &process_block)
     #warn  "CALLNG POST_RENDER on #{card.class}:#{card.name}"
@@ -136,6 +157,9 @@ class Renderer
     @render_stack[-1]
   end
   
+  def update_xml_references(card, rendering_result)
+  end
+
   def update_references(card, rendering_result)
     WikiReference.delete_all ['card_id = ?', card.id]
     

@@ -42,7 +42,7 @@ class ApplicationController < ActionController::Base
     
     # Set/Redirect to Canonical Domain
     if request.raw_host_with_port != System.host and RAILS_ENV=="production"
-      return redirect_to "http://#{System.host}/#{request.path}" 
+      return redirect_to "http://#{System.host}#{request.path}" 
     end
 
     User.current_user = current_user || User.find_by_login('anon')

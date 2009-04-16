@@ -317,6 +317,7 @@ module WagnHelper
         else 
           begin
             match = $~
+            match_str = match[1]+(match[3]||'')
             tname, options = Chunk::Transclude.parse(match)     
             if view_map = root.transclusion_view_overrides 
               if translated_view = view_map[ canonicalize_view( options[:view] )]
@@ -346,7 +347,7 @@ module WagnHelper
           
               #warn("sending these options for processing: #{options.inspect}")
          
-              tcontent = process_transclusion( tcard, options ) 
+              tcontent = process_transclusion( tcard, match_str, options ) 
               self.char_count += (tcontent ? tcontent.length : 0)
               tcontent   
             end
@@ -393,7 +394,7 @@ module WagnHelper
        render_partial card_partial(action), locals
     end
     
-    def process_transclusion( card, options={} )  
+    def process_transclusion( card, match_str, options={} )  
       #warn("<process_transclusion card=#{card.name} options=#{options.inspect}")
       subslot = subslot(card)  
       old_slot, @template.controller.slot = @template.controller.slot, subslot
@@ -432,7 +433,8 @@ module WagnHelper
       #logger.info("<transclusion_case: state=#{state} vmode=#{vmode} --> Action=#{action}, Option=#{options.inspect}")
 
       result = if [:xml, :xml_content, :xml_expanded, :xml_missing ].member?(action)
-        '<'+subslot.card.type+'>'+subslot.render_xml(action, options)+'<'+subslot.card.type+'/>'
+        xmltag = subslot.card.name.tag_name.downcase
+        "<#{xmltag} type=\""+subslot.card.type+"\" transclude=\""+match_str+'">'+subslot.render_xml(action, options)+"</#{xmltag}>"
       else
         subslot.render(action, options)
       end

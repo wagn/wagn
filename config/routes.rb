@@ -1,9 +1,19 @@
 FORMAT_PATTERN = /html|json|xml|rss/ unless defined? FORMAT_PATTERN   
 
+#require 'ruby-debug'
+#debugger
+
 ActionController::Routing::Routes.draw do |map|
-  #map.connect 'c/:controller/:action/:id'
-  #map.connect 'c/:controller/:action'
-  #map.connect 'c/:controller', :action=>'index'
+  map.connect 'c/:controller/:action/:id'
+  map.connect 'c/:controller/:action'
+  map.connect 'c/:controller', :action=>'index'
+
+  map.connect 'xml/:controller/:id', :conditions => { :method => :get }, :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'show'
+  map.connect 'xml/:controller/:id', :conditions => { :method => :post }, :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'POST'
+  map.connect 'xml/:controller/:id', :conditions => { :method => :put }, :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'PUT'
+  map.connect 'xml/:controller/:id', :conditions => { :method => :delete }, :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'DELETE'
+
+  #map.connect_resource :card
 
   # these file requests should only get here if the file isn't present.
   # if we get a request for a file we don't have, don't waste any time on it.
@@ -29,7 +39,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'me',               :controller => 'card', :action=>'mine'
  
   map.connect ':controller/:action/:id/:attribute' 
-  #map.connect '/card/new/:cardtype', :controller=>'card', :action=>'new'
+  map.connect '/card/new/:cardtype', :controller=>'card', :action=>'new'
   
   map.connect ':controller/:action/:id.:format',  :requirements=>{ :id=>/.*/, :format=>FORMAT_PATTERN  }
   map.connect ':controller/:action/:id',  :requirements=>{ :id=>/.*/ }
@@ -42,7 +52,10 @@ ActionController::Routing::Routes.draw do |map|
   map.connect '', :controller=>'card', :action=>'index'
   map.connect ':id.:format', :controller=> 'card', :action=>'show', :requirements=>{ :id=>/.*/, :format=>FORMAT_PATTERN} 
   map.connect ':id', :controller=> 'card', :action=>'show', :requirements=>{ :id=>/.*/} 
-  map.connect '*id', :controller=>'application', :action=>'render_404'
+
+  #map.connect 'xml/:controller/:id',  :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> :method
+  #map.resource ':card' , :plural=>'card'
   
+  map.connect '*id', :controller=>'application', :action=>'render_404'
 end
                      

@@ -95,5 +95,5 @@ CACHE = MemCache.new 'localhost:11211', :namespace => 'my_rails_app'
 require_dependency 'lib/cache'                                      
 CachedModel::use_local_cache=true
 
-
+SCRIPT_LINES__ = {} if ENV['RAILS_ENV'] == 'development'
 

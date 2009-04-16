@@ -1,3 +1,5 @@
+require 'ruby-debug'
+
 class CardController < ApplicationController
 
   helper :wagn, :card 
@@ -46,6 +48,9 @@ class CardController < ApplicationController
 
   #---------( VIEWING CARDS )
     
+  def GET
+  end
+
   def show
     # record this as a place to come back to.
     location_history.push(request.request_uri) if request.get?
@@ -80,6 +85,53 @@ class CardController < ApplicationController
 
   #----------------( MODIFYING CARDS )
   
+  def read_xml(xml, card_name, card_updates, card_content)
+    xml.each_element { |e|
+      if REXML::Element===xml
+        read_xml(e, card_name+'+'+xml.name, card_updates, subcontent='')
+        card_content += (t=e.attribute('transclude') ? "{{#{t}}}" : e.to_s)
+      else
+        card_content += e.to_s
+      end
+    }
+    debugger if ENV['RAILS_ENV'] == 'development'
+    card_updates
+  end
+
+  def PUT
+    #debugger if ENV['RAILS_ENV'] == 'development'
+    @card_name = Cardname.unescape(params['id'] || '')
+    if (@card_name.nil? or @card_name.empty?) then    
+      raise("Need a card name to put")
+    end
+    @card = CachedCard.get(@card_name)
+
+    #raise("PUT #{params.to_yaml}\n")
+    doc = REXML::Document.new(@_request.body)
+    #content = @_request.body.read
+    card_name, card_updates, card_content = "#{@card_name}", Hash.new, ''
+    if read_xml(doc.root.elements['content'], card_name, card_updates, card_content)
+      @card.multi_update card_updates     
+    end
+  end
+
+  def POST
+    @card_name = Cardname.unescape(params['id'] || '')
+    if (@card_name.nil? or @card_name.empty?) then    
+      raise("Need a card name to post")
+    end
+    @card = CachedCard.get(@card_name)
+    #debugger if ENV['RAILS_ENV'] == 'development'
+    if params[:multi_edit]
+      @card.multi_update(params[:cards])
+    else
+      @card.update_attributes! params[:card]     
+    end
+  end
+
+  def DELETE
+  end
+
   #----------------( creating)                                                               
   def new
     args = (params[:card] ||= {})

@@ -434,7 +434,7 @@ module WagnHelper
 
       result = if [:xml, :xml_content, :xml_expanded, :xml_missing ].member?(action)
         xmltag = subslot.card.name.tag_name.downcase
-        "<#{xmltag} type=\""+subslot.card.type+"\" transclude=\""+match_str+'">'+subslot.render_xml(action, options)+"</#{xmltag}>"
+        "<card name=\"#{xmltag}\" type=\""+subslot.card.type+"\" transclude=\""+match_str+'">'+subslot.render_xml(action, options)+"</#{xmltag}>"
       else
         subslot.render(action, options)
       end

@@ -8,10 +8,14 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'c/:controller/:action'
   map.connect 'c/:controller', :action=>'index'
 
-  map.connect 'xml/:controller/:id', :conditions => { :method => :get }, :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'show'
-  map.connect 'xml/:controller/:id', :conditions => { :method => :post }, :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'POST'
-  map.connect 'xml/:controller/:id', :conditions => { :method => :put }, :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'PUT'
-  map.connect 'xml/:controller/:id', :conditions => { :method => :delete }, :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'DELETE'
+  REST_METHODS = [:get, :post, :put, :delete]
+
+  #map.connect 'xml/:controller/:id', :conditions => { :method => :get }, :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'show'
+  #map.connect 'xml/:controller/:id', :conditions => { :method => :post }, :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'POST'
+  #map.connect 'xml/:controller/:id', :conditions => { :method => :put }, :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'PUT'
+  #map.connect 'xml/:controller/:id', :conditions => { :method => :delete }, :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'DELETE'
+  map.connect 'xml/:controller/:id', :conditions => { :method => REST_METHODS }, :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'REST'
+
 
   #map.connect_resource :card
 

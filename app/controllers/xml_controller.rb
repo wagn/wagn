@@ -1,8 +1,6 @@
 require 'ruby-debug'
 
-class CardController < ApplicationController
-
-  REST_METHODS = [:get, :post, :put, :delete]
+class XmlCardController < ApplicationController
 
   helper :wagn, :card 
   layout :default_layout
@@ -50,18 +48,7 @@ class CardController < ApplicationController
 
   #---------( VIEWING CARDS )
     
-  def REST
-    method = request.method
-    if REST_METHODS.member?(method)
-      self.send(method)
-    else
-      debugger
-      raise("Not a REST method #{method}")
-    end
-  end
-
-  def get
-    self.show
+  def GET
   end
 
   def show
@@ -107,11 +94,11 @@ class CardController < ApplicationController
         card_content += e.to_s
       end
     }
-    #debugger if ENV['RAILS_ENV'] == 'development'
+    debugger if ENV['RAILS_ENV'] == 'development'
     card_updates
   end
 
-  def put
+  def PUT
     #debugger if ENV['RAILS_ENV'] == 'development'
     @card_name = Cardname.unescape(params['id'] || '')
     if (@card_name.nil? or @card_name.empty?) then    
@@ -120,15 +107,15 @@ class CardController < ApplicationController
     @card = CachedCard.get(@card_name)
 
     #raise("PUT #{params.to_yaml}\n")
-    doc = REXML::Document.new(request.body)
-    #content = request.body.read
+    doc = REXML::Document.new(@_request.body)
+    #content = @_request.body.read
     card_name, card_updates, card_content = "#{@card_name}", Hash.new, ''
     if read_xml(doc.root.elements['content'], card_name, card_updates, card_content)
       @card.multi_update card_updates     
     end
   end
 
-  def post
+  def POST
     @card_name = Cardname.unescape(params['id'] || '')
     if (@card_name.nil? or @card_name.empty?) then    
       raise("Need a card name to post")
@@ -142,7 +129,7 @@ class CardController < ApplicationController
     end
   end
 
-  def delete
+  def DELETE
   end
 
   #----------------( creating)                                                               

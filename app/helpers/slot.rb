@@ -1,4 +1,5 @@
 require_dependency 'slot_helpers'
+
 module WagnHelper 
   class Slot
     include SlotHelpers  
@@ -412,12 +413,9 @@ module WagnHelper
       action = case
         when [:name, :link].member?(vmode)  ; vmode
         when state==:edit                   ; card.phantom? ? :edit_auto : :edit_in_form   
-        when new_card  ; [:xml, :xml_content].member?(vmode) ? :xml_missing : state==:line  ? :closed_missing : :open_missing
+        when new_card; [:xml, :xml_content].member?(vmode) ? :xml_missing : state==:line ? :closed_missing : :open_missing
         when state==:line                   ; :expanded_line_content
         else                                ; vmode
-      end
-      if action == :open_missing
-        raise("proc_tran: #{state}, #{vmode}, #{action}\n")
       end
 =begin      
        # these take precedence over state=view/line
@@ -434,9 +432,9 @@ module WagnHelper
 
       result = if [:xml, :xml_content, :xml_expanded, :xml_missing ].member?(action)
         xmltag = subslot.card.name.tag_name.downcase
-        "<card name=\"#{xmltag}\" type=\""+subslot.card.type
-         +"\" transclude=\""+match_str+'">'+subslot.render_xml(action, options)
-         +"</card>"
+        "<card name=\"#{xmltag}\" type=\""+subslot.card.type+
+         "\" transclude=\""+match_str+'">'+subslot.render_xml(action, options)+
+         "</card>"
       else
         subslot.render(action, options)
       end

@@ -37,7 +37,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'me',               :controller => 'card', :action=>'mine'
  
   map.connect ':controller/:action/:id/:attribute' 
-  map.connect '/card/new/:cardtype', :controller=>'card', :action=>'new'
+  #map.connect '/card/new/:cardtype', :controller=>'card', :action=>'new'
   
   map.connect ':controller/:action/:id.:format',  :requirements=>{ :id=>/.*/, :format=>FORMAT_PATTERN  }
   map.connect ':controller/:action/:id',  :requirements=>{ :id=>/.*/ }

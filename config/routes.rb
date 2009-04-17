@@ -4,20 +4,14 @@ FORMAT_PATTERN = /html|json|xml|rss/ unless defined? FORMAT_PATTERN
 #debugger
 
 ActionController::Routing::Routes.draw do |map|
-  map.connect 'c/:controller/:action/:id'
-  map.connect 'c/:controller/:action'
-  map.connect 'c/:controller', :action=>'index'
+  #map.connect 'c/:controller/:action/:id'
+  #map.connect 'c/:controller/:action'
+  #map.connect 'c/:controller', :action=>'index'
 
   REST_METHODS = [:get, :post, :put, :delete]
 
-  #map.connect 'xml/:controller/:id', :conditions => { :method => :get }, :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'show'
-  #map.connect 'xml/:controller/:id', :conditions => { :method => :post }, :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'POST'
-  #map.connect 'xml/:controller/:id', :conditions => { :method => :put }, :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'PUT'
-  #map.connect 'xml/:controller/:id', :conditions => { :method => :delete }, :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'DELETE'
-  map.connect 'xml/:controller/:id', :conditions => { :method => REST_METHODS }, :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'REST'
-
-
-  #map.connect_resource :card
+  map.connect 'xmlcard/:id', :conditions => { :method => REST_METHODS }, :controller=>'xmlcard', :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'method'
+  #map.connect_resource :xmlcard
 
   # these file requests should only get here if the file isn't present.
   # if we get a request for a file we don't have, don't waste any time on it.

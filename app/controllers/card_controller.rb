@@ -1,9 +1,5 @@
-require 'ruby-debug'
 
 class CardController < ApplicationController
-
-  REST_METHODS = [:get, :post, :put, :delete]
-
   helper :wagn, :card 
   layout :default_layout
   cache_sweeper :card_sweeper
@@ -50,100 +46,6 @@ class CardController < ApplicationController
 
   #---------( VIEWING CARDS )
     
-  def REST
-    method = request.method
-    if REST_METHODS.member?(method)
-      self.send(method)
-    else
-      debugger
-      raise("Not a REST method #{method}")
-    end
-  end
-
-  def get
-    self.show
-  end
-
-  def show
-    # record this as a place to come back to.
-    location_history.push(request.request_uri) if request.get?
-
-    params[:_keyword] && params[:_keyword].gsub!('_',' ') ## this will be unnecessary soon.
-
-    @card_name = Cardname.unescape(params['id'] || '')
-    if (@card_name.nil? or @card_name.empty?) then    
-      @card_name = System.site_title
-      #@card_name = System.deck_name
-    end             
-    @card = CachedCard.get(@card_name)
-
-    if @card.new_record? && ! @card.phantom?
-      params[:card]={:name=>@card_name, :type=>params[:type]}
-      if Cardtype.createable_cardtypes.empty? 
-        return render(:action=>'missing')
-      else
-        return self.new
-      end
-    end                                                                                  
-    return unless view_ok # if view is not ok, it will render denied. return so we dont' render twice
-
-    # rss causes infinite memory suck in rails 2.1.2.  
-    unless Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >=2
-      respond_to do |format|
-        format.rss { raise("Sorry, RSS is broken in rails < 2.2") }
-        format.html {}
-      end
-    end 
-  end
-
-  #----------------( MODIFYING CARDS )
-  
-  def read_xml(xml, card_name, card_updates, card_content)
-    xml.each_element { |e|
-      if REXML::Element===xml
-        read_xml(e, card_name+'+'+xml.name, card_updates, subcontent='')
-        card_content += (t=e.attribute('transclude') ? "{{#{t}}}" : e.to_s)
-      else
-        card_content += e.to_s
-      end
-    }
-    #debugger if ENV['RAILS_ENV'] == 'development'
-    card_updates
-  end
-
-  def put
-    #debugger if ENV['RAILS_ENV'] == 'development'
-    @card_name = Cardname.unescape(params['id'] || '')
-    if (@card_name.nil? or @card_name.empty?) then    
-      raise("Need a card name to put")
-    end
-    @card = CachedCard.get(@card_name)
-
-    #raise("PUT #{params.to_yaml}\n")
-    doc = REXML::Document.new(request.body)
-    #content = request.body.read
-    card_name, card_updates, card_content = "#{@card_name}", Hash.new, ''
-    if read_xml(doc.root.elements['content'], card_name, card_updates, card_content)
-      @card.multi_update card_updates     
-    end
-  end
-
-  def post
-    @card_name = Cardname.unescape(params['id'] || '')
-    if (@card_name.nil? or @card_name.empty?) then    
-      raise("Need a card name to post")
-    end
-    @card = CachedCard.get(@card_name)
-    #debugger if ENV['RAILS_ENV'] == 'development'
-    if params[:multi_edit]
-      @card.multi_update(params[:cards])
-    else
-      @card.update_attributes! params[:card]     
-    end
-  end
-
-  def delete
-  end
 
   #----------------( creating)                                                               
   def new

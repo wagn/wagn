@@ -199,8 +199,7 @@ module Card
         broken_type = nil
         
         requested_type = case
-          #when tag_template && tag_template.hard_template?;  foo =  tag_template.type;   raise("HTemp: #{foo}\n");
-          when tag_template && tag_template.hard_template?;  tag_template.type
+          when tag_template && tag_template.hard_template?;   tag_template.type
           when given_type;                                    given_type
           when tag_template && tag_template.soft_template?;   tag_template.type
           else                                                default_class.to_s.demodulize  # depends on what class we're in

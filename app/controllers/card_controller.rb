@@ -1,5 +1,5 @@
-
 class CardController < ApplicationController
+
   helper :wagn, :card 
   layout :default_layout
   cache_sweeper :card_sweeper
@@ -46,7 +46,40 @@ class CardController < ApplicationController
 
   #---------( VIEWING CARDS )
     
+  def show
+    # record this as a place to come back to.
+    location_history.push(request.request_uri) if request.get?
 
+    params[:_keyword] && params[:_keyword].gsub!('_',' ') ## this will be unnecessary soon.
+
+    @card_name = Cardname.unescape(params['id'] || '')
+    if (@card_name.nil? or @card_name.empty?) then    
+      @card_name = System.site_title
+      #@card_name = System.deck_name
+    end             
+    @card = CachedCard.get(@card_name)
+
+    if @card.new_record? && ! @card.phantom?
+      params[:card]={:name=>@card_name, :type=>params[:type]}
+      if Cardtype.createable_cardtypes.empty? 
+        return render :action=>'missing'
+      else
+        return self.new
+      end
+    end                                                                                  
+    return unless view_ok # if view is not ok, it will render denied. return so we dont' render twice
+
+    # rss causes infinite memory suck in rails 2.1.2.  
+    unless Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >=2
+      respond_to do |format|
+        format.rss { raise("Sorry, RSS is broken in rails < 2.2") }
+        format.html {}
+      end
+    end 
+  end
+
+  #----------------( MODIFYING CARDS )
+  
   #----------------( creating)                                                               
   def new
     args = (params[:card] ||= {})

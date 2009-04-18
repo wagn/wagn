@@ -1,9 +1,5 @@
 
 require 'rexml/document'
-#require 'rexml/formatters'
-
-require 'ruby-debug'
-#debugger
 
 class XmlcardController < ApplicationController
 
@@ -119,7 +115,6 @@ class XmlcardController < ApplicationController
         card_cc = this_card.content
         this_name = this_card.name
         if card_content != card_cc
-debugger
           card_updates[card_name] = {:content => card_content}
         end
       end
@@ -128,7 +123,6 @@ debugger
   end
 
   def put
-#debugger if ENV['RAILS_ENV'] == 'development'
     @card_name = Cardname.unescape(params['id'] || '')
     raise("Need a card name to put") if (@card_name.nil? or @card_name.empty?)
     @card = CachedCard.get(@card_name)
@@ -139,7 +133,6 @@ debugger
     #f = REXML::Formatters::Transitive.new
     card_updates = Hash.new
     read_xml(doc.root, @card_name, card_updates, nil)
-#debugger
     if !card_updates.empty?
       @card.multi_update card_updates 
     end
@@ -151,7 +144,6 @@ debugger
       raise("Need a card name to post")
     end
     @card = CachedCard.get(@card_name)
-    #debugger if ENV['RAILS_ENV'] == 'development'
     if params[:multi_edit]
       @card.multi_update(params[:cards])
     else

@@ -1,8 +1,5 @@
 FORMAT_PATTERN = /html|json|xml|rss/ unless defined? FORMAT_PATTERN   
 
-#require 'ruby-debug'
-#debugger
-
 ActionController::Routing::Routes.draw do |map|
   #map.connect 'c/:controller/:action/:id'
   #map.connect 'c/:controller/:action'

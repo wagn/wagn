@@ -41,11 +41,9 @@ class XmlcardController < ApplicationController
   
   def method
     method = request.method
-#debugger
     if REST_METHODS.member?(method)
       self.send(method)
     else
-      #debugger
       raise("Not a REST method #{method}")
     end
   end
@@ -84,45 +82,66 @@ class XmlcardController < ApplicationController
 
   #----------------( MODIFYING CARDS )
   
-  def read_xml(xml, card_name, card_updates, card_content, f)
-    xml.each_element { |e|
-      if REXML::Element===xml
-        sub_cname = card_name
+  def read_xml(xml, card_name, card_updates, f)
+    card_content=''
+    no_card=false
+    #raise("Should be card, #{card_name}") if xml.name != 'card'
+    xml.each_child { |e|
+      if REXML::Element===e
         if e.name == 'card'
-          sub_cname += '+'+e.attribute('name').to_s
+          sub_cname = card_name+'+'+e.attribute('name').to_s
           t= e.attribute('transclude') || 'no transclude attribute'
           card_content += "{{#{t}}}"
+          read_xml(e, sub_cname, card_updates, f)
         else
-          #f.write_element(e, card_content)
-          e.write(card_content)
+          e.name == 'no_card' && no_card=true
+          card_content += '<'+e.expanded_name
+          e.attributes.each_attribute do |attr|
+            card_content += " "
+            attr.write( card_content )
+          end unless e.attributes.empty?
+          if e.children.empty?
+            card_content += "/>"
+          else    
+            card_content += '>'+read_xml(e, card_name, card_updates, f)+
+                            '</'+e.expanded_name+'>'
+          end
         end
-        read_xml(e, sub_cname, card_updates, subcontent='', f)
       else
         #f.write_text(e, card_content)
         e.write(card_content)
       end
     }
-    #debugger if ENV['RAILS_ENV'] == 'development'
-    if xml.name == 'card' 
-      card_updates[card_name] = {:content => card_content}
+    if xml.name == 'card'
+      this_card = CachedCard.get(card_name)
+      # no card and no new content, don't update
+      unless no_card || this_card.new_record? && !card_content
+        card_cc = this_card.content
+        this_name = this_card.name
+        if card_content != card_cc
+debugger
+          card_updates[card_name] = {:content => card_content}
+        end
+      end
     end
-    card_updates
+    card_content
   end
 
   def put
-    #debugger if ENV['RAILS_ENV'] == 'development'
+#debugger if ENV['RAILS_ENV'] == 'development'
     @card_name = Cardname.unescape(params['id'] || '')
-    if (@card_name.nil? or @card_name.empty?) then    
-      raise("Need a card name to put")
-    end
+    raise("Need a card name to put") if (@card_name.nil? or @card_name.empty?)
     @card = CachedCard.get(@card_name)
 
     #raise("PUT #{params.to_yaml}\n")
     doc = REXML::Document.new(request.body)
     #content = request.body.read
     #f = REXML::Formatters::Transitive.new
-    if card_updates = read_xml(doc.root, @card_name, Hash.new, '', nil)
-      @card.multi_update card_updates     
+    card_updates = Hash.new
+    read_xml(doc.root, @card_name, card_updates, nil)
+#debugger
+    if !card_updates.empty?
+      @card.multi_update card_updates 
     end
   end
 

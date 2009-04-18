@@ -431,7 +431,7 @@ module WagnHelper
       #logger.info("<transclusion_case: state=#{state} vmode=#{vmode} --> Action=#{action}, Option=#{options.inspect}")
 
       result = if [:xml, :xml_content, :xml_expanded, :xml_missing ].member?(action)
-        xmltag = subslot.card.name.tag_name.downcase
+        xmltag = subslot.card.name.tag_name
         "<card name=\"#{xmltag}\" type=\""+subslot.card.type+
          "\" transclude=\""+match_str+'">'+subslot.render_xml(action, options)+
          "</card>"

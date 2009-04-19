@@ -1,45 +1,10 @@
 require 'diff'
 require_dependency 'models/wiki_reference'
-#require_dependency 'application_helper'
-#require_dependency 'card_helper'
  
-class StubSlot < WagnHelper::Slot              
-  def slot
-    #controller.slot ||= Slot.new(@card,@context,@action,self)
-  end
-=begin  Is any of this even in use?
-
-  def render_transclusion( card, *args )    
-    new_slot = subslot(card)  
-    new_slot.renderer = @renderer
-    result = new_slot.send("render_transclusion_#{@transclusion_mode}", *args)
-    result
-  end   
-
-  def render_transclusion_view( options={} )   
-    #return "TRANSCLUDING #{card.name}"
-    if card.new_record? 
-      %{<span class="faint createOnClick" position="#{position}" cardid="" cardname="#{card.name}">}+
-        %{Click to create #{card.name}</span>}
-    elsif options[:view]=='raw'
-      card.content
-    elsif options[:view]=='card' 
-      head + wrap_content( @renderer.render(card) ) + foot
-      #@action = 'view'
-      #@template.render :partial=>'/card/view', :locals=>{ :card=>card,:render_slot=>true }
-    elsif options[:view]=='line'
-      head + wrap_content( @renderer.render(card) ) + foot
-      #@action = 'line'
-      #@template.render :partial=>'/card/line', :locals=>{ :card=>card, :render_slot=>true }
-    else #options['view']=='content' -- default case
-      #@action='transclusion'
-      head + wrap_content( @renderer.render(card) ) + foot
-      #@template.render :partial=>'/transclusion/view', :locals=>{ :card=>card, :render_slot=>true }
-    end   
-  end
-=end  
+class StubSlot < WagnHelper::Slot
+ def slot
+ end
 end
-
 
 class Renderer                
   include HTMLDiff
@@ -69,6 +34,7 @@ class Renderer
   end
 
   def render_xml(card=nil, content=nil, update_references=false, &process_block)
+    #wiki_content = common_processing(card, content, update_references, &process_block)
     raise "Renderer.render() requires card" unless card
     if @render_stack.plot(:name).include?( card.name )
       raise Wagn::Oops, %{Circular transclusion; #{@render_stack.plot(:name).join(' --> ')}\n}

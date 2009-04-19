@@ -74,7 +74,9 @@ module Card
       self.trash = false   
       self.key = name.to_key if name
       
-      self.extension_type = 'SoftTemplate' if (template? and !self.extension_type)
+      if (template? and !self.extension_type)
+        self.extension_type = (xml_template?) ? 'HardTemplate' : 'SoftTemplate'
+      end
        
       unless updates.for?(:permissions)
         self.permissions = default_permissions
@@ -388,6 +390,15 @@ module Card
       true
     end
     
+    def xml_content
+      new_record? ? ok!(:create_me) : ok!(:read)
+      if tmpl = xml_template and tmpl!=self
+        tmpl.content
+      else
+        current_revision ? current_revision.content : ""
+      end
+    end
+
     def content   
       # FIXME: we keep having permissions break when looking up system cards- this isn't great but better than error.
       #unless name=~/^\*|\+\*/  
@@ -395,8 +406,8 @@ module Card
       #end
       if tmpl = hard_template and tmpl!=self
         tmpl.content
-      #elsif tmpl = xml_hard_template and tmpl!=self
-      #  tmpl.content
+      elsif tmpl = xml_template and tmpl!=self
+        tmpl.content
       else
         current_revision ? current_revision.content : ""
       end

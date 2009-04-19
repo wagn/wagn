@@ -28,9 +28,33 @@ module Chunk
       @unmask_text ||= card_link
     end
     
+    def unmask_xml
+      @unmask_xml ||= card_link_xml
+    end
+
     def revert
       @text = @card_name == @link_text ? "[[#{@card_name}]]" : "[[#{@card_name}|#{@link_text}]]"
       super
+    end
+
+    def card_link_xml
+      href = refcard_name
+      klass = 
+        case href
+          when /^\//;    'internal-link'
+          when /^https?:/; 'external-link'
+          when /^mailto:/; 'email-link'
+          else
+            if refcard
+              href = href.to_url_key
+              'known-card'
+            else
+              href = CGI.escape(Cardname.escape(href))
+              'wanted-card'
+            end
+            return %{<cardref class="#{klass}" card="${href}">#{link_text}</cardref>}
+        end
+      %{<link class="#{klass}" href="#{href}">#{link_text}</link>}
     end
 
     def card_link
@@ -54,3 +78,4 @@ module Chunk
 
   end
 end
+

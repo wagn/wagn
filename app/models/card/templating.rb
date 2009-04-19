@@ -1,3 +1,5 @@
+require 'ruby-debug'
+
 module CardLib 
   module Templating  
     
@@ -8,17 +10,22 @@ module CardLib
         
     module ClassMethods
       def template(name)
-        right_template(name) || type_template(name) || default_template
+        right_template(name) || type_template(name) ||
+          xml_template(name) || default_template
       end
       
       def right_template(name='')
         return nil unless name and name.junction?
-        (tag = find_template(name.tag_name) and find_template(Cardtype.name_for(tag.type)+"+*rform")) || 
+        (tag = find_template(name.tag_name) and
+          find_template(Cardtype.name_for(tag.type)+"+*rform")) || 
           find_template(name.tag_name+"+*rform")
       end
       
-      def xml_template(name, type=nil)
-        multi_xml_template(name) || single_xml_template(name)
+      def xml_template(name='', type=nil)
+        return nil unless name and name.junction?
+        (tag = find_template(name.tag_name) and
+          find_template(Cardtype.name_for(tag.type)+"+*xform")) || 
+            find_template(name.tag_name+"+*xform")
       end
 
       def single_xml_template(name)
@@ -80,10 +87,9 @@ module CardLib
     #------( this template governs me )
     
     def template 
-      @template ||= right_template || type_template || xml_template || self.class.default_template  
-    end
-    
-    def xtemplate 
+      @template ||= right_template ||
+                    type_template ||
+                    self.class.default_template  
     end
     
     def right_template
@@ -91,19 +97,25 @@ module CardLib
     end
     
     def type_template
-      @type_template ||= self.class.multi_type_template(name) || single_type_template
+      @type_template ||= self.class.multi_type_template(name) ||
+                         single_type_template
     end
     
     def xml_template
-      @xml_template ||= self.class.xml_template(name)
+      @xml_template ||= self.class.multi_xml_template(name) ||
+                        self.single_xml_template
     end
 
     def xml_hard_template
-      xml_template && xml_template.hard_template? ? xml_template : nil
+      (t=xml_template) && t.hard_template? ? t : nil
     end
 
     def hard_template
-      template.hard_template? ? template : nil
+      (t=template) && t.hard_template? ? t : nil
+    end
+    
+    def single_xml_template
+      self.class.xform(Cardtype.name_for(self.type)) || self.class.xform('Basic')
     end
     
     def single_type_template

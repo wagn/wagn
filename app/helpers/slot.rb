@@ -6,8 +6,10 @@ module WagnHelper
     cattr_accessor :max_char_count
     self.max_char_count = 200
     attr_reader :card, :context, :action, :renderer, :template
-    attr_accessor :editor_count, :options_need_save, :state, :requested_view, :js_queue_initialized,  
-      :transclusions, :position, :renderer, :form, :superslot, :char_count, :item_format, :type, :renders, :start_time,
+    attr_accessor :editor_count, :options_need_save, :state,
+      :requested_view, :js_queue_initialized, :transclusions,
+      :position, :renderer, :form, :superslot, :char_count,
+      :item_format, :type, :renders, :start_time,
       :transclusion_view_overrides, :skip_autosave
     attr_writer :form 
 
@@ -17,8 +19,11 @@ module WagnHelper
       :line => :closed,
     }
      
-    def initialize(card, context="main_1", action="view", template=nil, opts={} )
-      @card, @context, @action, @template, = card, context.to_s, action.to_s, (template||StubTemplate.new)
+    def initialize(card, context="main_1", action="view", template=nil, opts={})
+      @card, @context, @action = card, context.to_s, action.to_s
+      @template = template ||
+                  (opts[:format] == :xml && card.xml_template) ||
+                  StubTemplate.new
       context = "main_1" unless context =~ /\_/
       @position = context.split('_').last    
       @char_count = 0
@@ -172,7 +177,7 @@ module WagnHelper
           "<no_card> " + self.render( :name ) + "</no_card> "
 
         when :xml_content
-          processed = @card.content
+          processed = @card.xml_content
           (processed=~/\{\{[^\}]+\}\}/) ? expand_transclusions( processed ) : processed
         when :xml, :xml_expanded
           @state = 'view'
@@ -365,25 +370,16 @@ module WagnHelper
        
     def render_partial_xml( partial, locals={} )
       locals =  { :card=>card, :slot=>self }.merge(locals)
-      if StubTemplate===@template 
-        render_stub(partial, locals)
-      else
-        #if card.hard_template
-        #  foo = card.type_template.name
-        #  bar = @template.template.name
-        #  raise("Hard processing.. #{foo} :: #{bar}\n")
-        #end
+      StubTemplate===@template ?
+        render_stub(partial, locals) :
         @template.render(:partial=>partial, :locals=>locals)
-      end
     end
 
     def render_partial( partial, locals={} )
       locals =  { :card=>card, :slot=>self }.merge(locals)
-      if StubTemplate===@template 
-        render_stub(partial, locals)
-      else
+      StubTemplate===@template ?
+        render_stub(partial, locals) :
         @template.render(:partial=>partial, :locals=>locals)
-      end
     end
 
     def card_partial(action) 
@@ -445,15 +441,14 @@ module WagnHelper
     def method_missing(method_id, *args, &proc) 
       # silence Rails 2.2.2 warning about binding argument to concat.  tried detecting rails 2.2
       # and removing the argument but it broken lots of integration tests.
-      ActiveSupport::Deprecation.silence { @template.send(method_id, *args, &proc) }
+      #ActiveSupport::Deprecation.silence { @template.send(method_id, *args, &proc) }
+      @template.send(method_id, *args, &proc)
     end
 
     
     def render_stub(partial, locals={})
       raise("Invalid partial") if partial.blank? 
       case partial
-        when "card/foo"
-          raise("card/foo render_stub\n")
         when "card/plain"
         #  %{"Card/plain" + card.name} + render(:custom_view)
           raise("card/plain render_stub\n")

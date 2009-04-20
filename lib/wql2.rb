@@ -420,7 +420,7 @@ module Wql2
           when "count";  "count(*) #{dir}, #{table_alias}.name asc"
           when 'content'
             sql.joins << "join revisions r2 on r2.id=#{self.table_alias}.current_revision_id"
-            "r2.content #{dir}"
+            "lower(r2.content) #{dir}"
           when "relevance";  
             if !sql.relevance_fields.empty?
               sql.fields << sql.relevance_fields

@@ -6,7 +6,7 @@ include WagnTestHelper
 
 A_JOINEES = ["B", "C", "D", "E", "F"]
       
-CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User","plusses+*rform"].sort    
+CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User","*plusses+*rform"].sort    
 
 #=begin 
 describe Wql2, "in" do
@@ -189,11 +189,10 @@ describe Wql2, "basics" do
 
 end
 
-
 describe Wql2, "type" do  
   before { User.as :joe_user }
   
-  user_cards = ["Joe User","No Count","Sample User","Wagn Bot","Anonymous","u1","u2","u3"].sort
+  user_cards = ["Joe User","No Count","Sample User","u1","u2","u3"].sort
   
   it "should find cards of this type" do
     Card.search( :type=>"_self", :_card=>Card['User']).plot(:name).sort.should == user_cards
@@ -209,9 +208,11 @@ describe Wql2, "type" do
 
 end
 
+
+
 describe Wql2, "group tagging" do
   it "should find frequent taggers of cardtype cards" do
-    Card.search( :group_tagging=>'Cardtype' ).map(&:name).sort().should == ["*context", "*rform", "*tform"].sort()
+    Card.search( :group_tagging=>'Cardtype' ).map(&:name).sort().should == ["*related", "*tform"].sort()
   end
 end
 
@@ -318,7 +319,6 @@ describe Wql2, "found_by" do
 end
 
 
-#=end
 
 describe Wql2, "match" do 
   before { User.as :joe_user }
@@ -328,10 +328,10 @@ describe Wql2, "match" do
   end
   
   it "should get only content when content is explicit" do
-    Card.search( :content=>[:match, "two"] ).plot(:name).sort.should==["Joe User",'plusses+*rform']
+    Card.search( :content=>[:match, "two"] ).plot(:name).sort.should==["Joe User",'*plusses+*rform'].sort
   end
 
   it "should get only name when name is explicit" do
-    Card.search( :name=>[:match, "two"] ).plot(:name).sort.should==["One+Two","One+Two+Three","Two"]
+    Card.search( :name=>[:match, "two"] ).plot(:name).sort.should==["One+Two","One+Two+Three","Two"].sort
   end
 end

@@ -390,23 +390,12 @@ module Card
       true
     end
     
-    def xml_content
-      new_record? ? ok!(:create_me) : ok!(:read)
-      if tmpl = xml_template and tmpl!=self
-        tmpl.content
-      else
-        current_revision ? current_revision.content : ""
-      end
-    end
-
     def content   
       # FIXME: we keep having permissions break when looking up system cards- this isn't great but better than error.
       #unless name=~/^\*|\+\*/  
         new_record? ? ok!(:create_me) : ok!(:read) # fixme-perm.  might need this, but it's breaking create...
       #end
       if tmpl = hard_template and tmpl!=self
-        tmpl.content
-      elsif tmpl = xml_template and tmpl!=self
         tmpl.content
       else
         current_revision ? current_revision.content : ""
@@ -462,6 +451,17 @@ module Card
       party==::Role[:auth]
     end
        
+#
+# xml content/render path
+#
+    def xml_content
+      new_record? ? ok!(:create_me) : ok!(:read)
+      if tmpl = xml_template and tmpl!=self
+        tmpl.content
+      else
+        current_revision ? current_revision.content : ""
+      end
+    end
 
     protected
     def clear_drafts

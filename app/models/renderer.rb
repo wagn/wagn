@@ -33,6 +33,25 @@ class Renderer
     @rescue_errors = true
   end
 
+  def render( card=nil, content=nil, update_references=false, &process_block )
+    wiki_content = common_processing(card, content, update_references, &process_block)
+    #warn  "CALLNG POST_RENDER on #{card.class}:#{card.name}"
+    #card.post_render( ..  )
+    wiki_content.render! 
+=begin
+  rescue Exception=>e 
+    if @rescue_errors
+      WikiContent.new(card, "Error rendering #{card.name}: #{e.message}", self).render!
+    else
+      raise e
+    end
+=end
+  end
+
+  def render_diff( card, content1, content2 )
+    diff( self.render( card, content1), self.render(card, content2) )
+  end
+
   def render_xml(card=nil, content=nil, update_references=false, &process_block)
     #wiki_content = common_processing(card, content, update_references, &process_block)
     raise "Renderer.render() requires card" unless card
@@ -55,23 +74,7 @@ class Renderer
     xml_content
   end
 
-  def render( card=nil, content=nil, update_references=false, &process_block )
-    wiki_content = common_processing(card, content, update_references, &process_block)
-    #warn  "CALLNG POST_RENDER on #{card.class}:#{card.name}"
-    #card.post_render( ..  )
-    wiki_content.render! 
-=begin
-  rescue Exception=>e 
-    if @rescue_errors
-      WikiContent.new(card, "Error rendering #{card.name}: #{e.message}", self).render!
-    else
-      raise e
-    end
-=end
-  end
-
-  def render_diff( card, content1, content2 )
-    diff( self.render( card, content1), self.render(card, content2) )
+  def update_xml_references(card, rendering_result)
   end
 
   # process is used to make systematic transformations on cards that require
@@ -81,8 +84,6 @@ class Renderer
     wiki_content = common_processing(card, content, update_references, &process_block)
     # wow, this doesnt' work: chunks.each { |c| c.revert }
 
-    # FIXME: there is case here, I think when reverting links in content transcluded
-    # from another card, that the @content reference held in the chunks doesn't match
     # the 'wiki_content' here, which causes the while loop below go forever.
     if wiki_content.chunks.find {|c| c.instance_variable_get('@content')!=wiki_content }
       raise "can't revert transcluded content when processing card '#{card.name}'; "
@@ -123,9 +124,6 @@ class Renderer
     @render_stack[-1]
   end
   
-  def update_xml_references(card, rendering_result)
-  end
-
   def update_references(card, rendering_result)
     WikiReference.delete_all ['card_id = ?', card.id]
     

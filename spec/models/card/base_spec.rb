@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 describe Card, "test data" do
   it "should be findable by name" do
-    Card.find_by_name("Wagn Bot").class.should == Card::User
+    Card.find_by_name("Wagn Bot").class.should == Card::Basic
   end
 end  
 

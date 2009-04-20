@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090407194659) do
+ActiveRecord::Schema.define(:version => 20090411154108) do
 
   create_table "card_files", :force => true do |t|
     t.string   "filename"
@@ -146,10 +146,6 @@ ActiveRecord::Schema.define(:version => 20090407194659) do
   end
 
   add_index "sessions", ["session_id"], :name => "sessions_session_id_index"
-
-  create_table "settings", :force => true do |t|
-    t.string "codename"
-  end
 
   create_table "system", :force => true do |t|
     t.string "name", :default => ""

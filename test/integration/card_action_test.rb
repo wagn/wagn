@@ -39,9 +39,8 @@ class CardActionTest < ActionController::IntegrationTest
     assert_response :success
   end      
   
-
-
-  def test_create_role_card
+  def test_create_role_card   
+    integration_login_as :admin
     post( 'card/create', :card=>{:content=>"test", :type=>'Role', :name=>"Editor"})
     assert_response 418
     assert_instance_of Card::Role, Card.find_by_name('Editor')

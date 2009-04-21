@@ -12,7 +12,7 @@ require File.join(File.dirname(__FILE__), 'boot')
                           
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence those specified here
-  RAILS_GEM_VERSION = '2.2.2' unless defined? RAILS_GEM_VERSION  
+  RAILS_GEM_VERSION = '2.3.2' unless defined? RAILS_GEM_VERSION  
   # Skip frameworks you're not going to use
   config.frameworks -= [ :action_web_service ]
 
@@ -35,6 +35,10 @@ Rails::Initializer.run do |config|
 
   # Activate observers that should always be running
   
+  # FIXME observers weren't working right last time I tried -LWH 
+  # hmm card observer seems to work... but not user_observer
+  config.active_record.observers = :invitation_request_observer
+  
   # Make Active Record use UTC-base instead of local time
   # config.active_record.default_timezone = :utc
   
@@ -51,29 +55,45 @@ Rails::Initializer.run do |config|
   }  
 end
 
+# Add new inflection rules using the following format 
+ActiveSupport::Inflector.inflections do |inflect|
+  inflect.irregular 'grave', 'graveyard'
+  inflect.irregular 'this', 'this'     
+  inflect.irregular 'anonymous', 'anonymous'   
+  inflect.singular(/(ss)$/i, '\1')
+  inflect.plural(/(ss)$/i, '\1')
+end
+   
+# Define a regexp function so the ~ WQL operator works with SQLite.
+=begin
+if ActiveRecord::Base.connection.adapter_name == "SQLite"
+  ActiveRecord::Base.connection.raw_connection.create_function("regexp", 2) do |func, expr, arg|
+    if arg.to_s =~ Regexp.new(expr.to_s)
+      func.result = 1
+    else
+      func.result = 0
+    end
+  end
+end
+=end
+
+  
 # configure session store
-Session = CGI::Session::ActiveRecordStore.session_class
-#Session = ActionController::Session::AbstractStore
+#Session = CGI::Session::ActiveRecordStore.session_class
+Session = ActionController::Session::AbstractStore
 
 # configure fragment store
-#ActionController::Base.cache_store = :mem_cache_store #:memory_store #:file_store, "#{RAILS_ROOT}/../cache"
+ActionController::Base.cache_store = :mem_cache_store #:memory_store #:file_store, "#{RAILS_ROOT}/../cache"
  
 # force loading of the system model. FIXME: this seems like a terrible way to do this
-
-#ExceptionNotifier.exception_recipients = %w(someone@somewhere.org)
-#ExceptionNotifier.sender_address = %("#{System.site_name} Error" <notifier@wagn.org>)
-#ExceptionNotifier.email_prefix = "[#{System.site_name}] "
-
-# select a store for the rails/card cache
-ActionController::Base.cache_store = :mem_cache_store # file_store, "#{RAILS_ROOT}/../cache"  
-
-
-# force loading of the system model. 
 System
-SCRIPT_LINES__ = {} if ENV['RAILS_ENV'] == 'development'
 
-# ****************************************************
-# IMPORTANT!!!:  YOU CANNOT PUT System.settings here
-#  they will get LOST when System reloads in development environment. 
-#   put them in wagn.rb instead.
-# ****************************************************
+
+# cached-model
+require_dependency 'lib/cached_model'
+CACHE = MemCache.new 'localhost:11211', :namespace => 'my_rails_app'
+require_dependency 'lib/cache'                                      
+CachedModel::use_local_cache=true
+
+
+

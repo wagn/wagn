@@ -1,45 +1,10 @@
 require 'diff'
 require_dependency 'models/wiki_reference'
-#require_dependency 'application_helper'
-#require_dependency 'card_helper'
  
-class StubSlot < WagnHelper::Slot              
-  def slot
-    #controller.slot ||= Slot.new(@card,@context,@action,self)
-  end
-=begin  Is any of this even in use?
-
-  def render_transclusion( card, *args )    
-    new_slot = subslot(card)  
-    new_slot.renderer = @renderer
-    result = new_slot.send("render_transclusion_#{@transclusion_mode}", *args)
-    result
-  end   
-
-  def render_transclusion_view( options={} )   
-    #return "TRANSCLUDING #{card.name}"
-    if card.new_record? 
-      %{<span class="faint createOnClick" position="#{position}" cardid="" cardname="#{card.name}">}+
-        %{Click to create #{card.name}</span>}
-    elsif options[:view]=='raw'
-      card.content
-    elsif options[:view]=='card' 
-      head + wrap_content( @renderer.render(card) ) + foot
-      #@action = 'view'
-      #@template.render :partial=>'/card/view', :locals=>{ :card=>card,:render_slot=>true }
-    elsif options[:view]=='line'
-      head + wrap_content( @renderer.render(card) ) + foot
-      #@action = 'line'
-      #@template.render :partial=>'/card/line', :locals=>{ :card=>card, :render_slot=>true }
-    else #options['view']=='content' -- default case
-      #@action='transclusion'
-      head + wrap_content( @renderer.render(card) ) + foot
-      #@template.render :partial=>'/transclusion/view', :locals=>{ :card=>card, :render_slot=>true }
-    end   
-  end
-=end  
+class StubSlot < WagnHelper::Slot
+ def slot
+ end
 end
-
 
 class Renderer                
   include HTMLDiff
@@ -87,6 +52,31 @@ class Renderer
     diff( self.render( card, content1), self.render(card, content2) )
   end
 
+  def render_xml(card=nil, content=nil, update_references=false, &process_block)
+    #wiki_content = common_processing(card, content, update_references, &process_block)
+    raise "Renderer.render() requires card" unless card
+    if @render_stack.plot(:name).include?( card.name )
+      raise Wagn::Oops, %{Circular transclusion; #{@render_stack.plot(:name).join(' --> ')}\n}
+    end
+    @render_stack.push(card)      
+    # FIXME: this means if you had a card with content, but you WANTED to have
+    # it render the empty string you passed it, it won't work.  but we seem
+    # to need it because card.content='' in set_card_defaults and if you make
+    # it nil a bunch of other stuff breaks
+    content = content.blank? ? card.content_for_rendering  : content 
+
+    #raise("xml(#{content}\n")
+    #xml_content = content #XmlContent.new(card, content, self)
+    xml_content = WikiContent.new(card, content, self)
+    yield xml_content if block_given?
+    update_xml_references(card, xml_content) if update_references
+    @render_stack.pop
+    xml_content
+  end
+
+  def update_xml_references(card, rendering_result)
+  end
+
   # process is used to make systematic transformations on cards that require
   # knowledge at the rendering level-- for example updating links when a card
   # has been renamed.
@@ -94,8 +84,6 @@ class Renderer
     wiki_content = common_processing(card, content, update_references, &process_block)
     # wow, this doesnt' work: chunks.each { |c| c.revert }
 
-    # FIXME: there is case here, I think when reverting links in content transcluded
-    # from another card, that the @content reference held in the chunks doesn't match
     # the 'wiki_content' here, which causes the while loop below go forever.
     if wiki_content.chunks.find {|c| c.instance_variable_get('@content')!=wiki_content }
       raise "can't revert transcluded content when processing card '#{card.name}'; "

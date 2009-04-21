@@ -1,0 +1,1 @@
+../../../app/views/xmlcard/method.xml.builder

@@ -46,7 +46,7 @@ module CardLib
     end
 
     def save_with_permissions(perform_checking=true)
-      if perform_checking && approved? || !perform_checking
+      unless perform_checking && !approved? 
         save_without_permissions(perform_checking)
       else
         # Decided I want to raise errors more..

@@ -74,7 +74,9 @@ module Card
       self.trash = false   
       self.key = name.to_key if name
       
-      self.extension_type = 'SoftTemplate' if (template? and !self.extension_type)
+      if (template? and !self.extension_type)
+        self.extension_type = (xml_template?) ? 'HardTemplate' : 'SoftTemplate'
+      end
        
       unless updates.for?(:permissions)
         self.permissions = default_permissions
@@ -196,11 +198,10 @@ module Card
         given_type = args.pull('type')
         tag_template = right_template(get_name_from_args(args)||"")
 
-        
         broken_type = nil
         
         requested_type = case
-          when tag_template && tag_template.hard_template?;   tag_template.type  
+          when tag_template && tag_template.hard_template?;   tag_template.type
           when given_type;                                    given_type
           when tag_template && tag_template.soft_template?;   tag_template.type
           else                                                default_class.to_s.demodulize  # depends on what class we're in
@@ -450,6 +451,17 @@ module Card
       party==::Role[:auth]
     end
        
+#
+# xml content/render path
+#
+    def xml_content
+      new_record? ? ok!(:create_me) : ok!(:read)
+      if tmpl = xml_template and tmpl!=self
+        tmpl.content
+      else
+        current_revision ? current_revision.content : ""
+      end
+    end
 
     protected
     def clear_drafts

@@ -144,5 +144,5 @@ if System.multihost and ENV['WAGN_NAME']
     System.base_url = "http://" + mapping.canonical_host
     System.wagn_name = mapping.wagn_name
   end
-  ActiveRecord::Base.connection.schema_search_path =  ENV['WAGN_NAME'] 
+  ActiveRecord::Base.connection.schema_search_path = ENV['WAGN_NAME']
 end

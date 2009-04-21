@@ -19,6 +19,13 @@ class ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
   def quote_column_name(name) #:nodoc:
     PGconn.quote_ident(name.to_s)
   end
+
+  def schema_search_path=(schema_csv)
+    if schema_csv
+      execute "SET search_path TO \"#{schema_csv}\""
+      @schema_search_path = schema_csv
+    end
+  end
  
   private
  
@@ -35,4 +42,5 @@ class ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
     end
     return nil, nil
   end
-end
+end               
+

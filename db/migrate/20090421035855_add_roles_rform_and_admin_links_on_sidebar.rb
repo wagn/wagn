@@ -14,6 +14,12 @@ class AddRolesRformAndAdminLinksOnSidebar < ActiveRecord::Migration
       c.content = c.content+"<p>&nbsp;</p><p>{{Administrator links|open}}</p>"
       c.save
     end
+    if c=Card['invitation email subject']
+      c.destroy
+    end
+    if c=Card['invitation email body']
+      c.destroy
+    end
   end
 
   def self.down

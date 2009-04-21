@@ -120,8 +120,9 @@ class System < ActiveRecord::Base
     assign_user_roles
   }
   
-end
- 
+end        
+
+
 # load wagn configuration. 
 # FIXME: this has to be here because System is both a config store and a model-- which means
 # in development mode it gets reloaded so we lose the config settings.  The whole config situation
@@ -135,5 +136,13 @@ end
 
 # Configuration cleanup: Make sure System.base_url doesn't end with a /
 System.base_url.gsub!(/\/$/,'')
+     
 
-#System.connection.execute("set search_path to #{DEFAULT_SCHEMA}")
+# set schema for multihost wagns   (make sure this is AFTER loading wagn.rb duh)
+if System.multihost and ENV['WAGN_NAME']    
+  if mapping = MultihostMapping.find_by_wagn_name(ENV['WAGN_NAME'])
+    System.base_url = "http://" + mapping.canonical_host
+    System.wagn_name = mapping.wagn_name
+  end
+  ActiveRecord::Base.connection.schema_search_path =  ENV['WAGN_NAME'] 
+end

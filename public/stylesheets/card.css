@@ -332,6 +332,9 @@ div:hover.card-footer .card-links{
   width: 25%;
   padding: 0.5%;
 }
+.card-slot .label-in-multi .title {
+  white-space: inherit;
+}
 .card-slot .field-in-multi {
   float: right;
   width: 72%;

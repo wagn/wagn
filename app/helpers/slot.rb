@@ -217,7 +217,7 @@ module WagnHelper
           c = self.render( :expanded_view_content)
           w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c))
 
-        when :expanded_view_content, :raw 
+        when :expanded_view_content, :naked, :raw # raw is DEPRECATED
           @state = 'view'
           expand_transclusions(  cache_action('view_content') {  card.post_render( render(:open_content)) } )
 
@@ -229,7 +229,7 @@ module WagnHelper
 
         when :closed_content;   render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
         when :open_content;     render_card_partial(:content)  # FIXME?: 'content' is inconsistent
-        when :raw_content;    
+        when :naked_content, :raw_content # raw_content is DEPRECATED
           #warn "rendering #{card.name} refs=#{card.references_expired} card.content=#{card.content}"
           @renderer.render( card, args.delete(:content) || "", update_refs=card.references_expired)
           
@@ -241,7 +241,7 @@ module WagnHelper
           @state=:edit 
           args[:add_javascript]=true
           hidden_field_tag( :multi_edit, true) +
-          expand_transclusions( render(:raw_content) )
+          expand_transclusions( render(:naked_content) )
 
         when :edit_in_form
           render_partial('views/edit_in_form', args.merge(:form=>form))
@@ -392,7 +392,7 @@ module WagnHelper
         when "card/line"
           %{\n<div class="view">\n} + wrap_content( render(:expanded_line_content) ) + %{\n</div>\n}
         when "basic/content"
-          render :raw_content
+          render :naked_content
         when "basic/line"
           truncatewords_with_closing_tags( render( :custom_view ))
         else

@@ -243,7 +243,7 @@ module Wql2
     
     def complete(val)
       no_plus_card = (val=~/\+/ ? '' : "and tag_id is null")  #FIXME -- this should really be more nuanced -- it breaks down after one plus
-      merge :cond => SqlCond.new(" lower(name) LIKE lower(#{quote(val+'%')}) #{no_plus_card}")
+      merge :cond => SqlCond.new(" lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}")
     end
 
     def field(name)

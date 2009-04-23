@@ -41,9 +41,8 @@ Rails::Initializer.run do |config|
   
   #config.gem "rspec-rails", :lib => "spec"          
   config.gem "uuid"
-  config.gem "json-pure"
+  config.gem "json"
 
-  # FIXME: should we also set :secret ?
   require 'yaml'   
   require 'erb'     
   database_configuration_file = 'config/database.yml'
@@ -54,16 +53,10 @@ Rails::Initializer.run do |config|
   }  
 end
    
-ActiveRecord::Base.connection.reconnect!          
-ActiveRecord::Base.logger.info("after config")
-
 
 #ExceptionNotifier.exception_recipients = %w(someone@somewhere.org)
 #ExceptionNotifier.sender_address = %("#{System.site_name} Error" <notifier@wagn.org>)
 #ExceptionNotifier.email_prefix = "[#{System.site_name}] "
-
-# select a store for the rails/card cache
-ActionController::Base.cache_store = :mem_cache_store # file_store, "#{RAILS_ROOT}/../cache"  
 
 
 # force loading of the system model. 

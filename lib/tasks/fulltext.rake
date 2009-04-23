@@ -11,17 +11,21 @@ namespace :fulltext do
 
        # NOTE: this will only work if the user running the migration has sudo priveleges
 		  tsearch_dir = System.postgres_tsearch_dir ? System.postgres_tsearch_dir : "#{System.postgres_src_dir}/contrib/tsearch2"
-      `cat #{tsearch_dir}/tsearch2.sql | ruby -ne '$_.gsub!(/public/,\"#{schema}\"); print' | sudo -u postgres psql #{db}`
+      cmd = "cat #{tsearch_dir}/tsearch2.sql | ruby -ne '$_.gsub!(/public/,\"#{schema}\"); print' | sudo -u postgres psql #{db}"
+      `#{cmd}`
       cmd =  %{ echo "} + 
         %{ set search_path to \"#{schema}\"; } +
         %{ alter table pg_ts_cfg owner to #{user};    } +
         %{ alter table pg_ts_cfgmap owner to #{user}; } + 
         %{ alter table pg_ts_dict owner to #{user};   } + 
         %{ alter table pg_ts_parser owner to #{user};" | sudo -u postgres psql #{db}
-      }  
+      }       
       `#{cmd}`
-
-      `echo "update pg_ts_cfg set locale = 'en_US' where ts_name = 'default'" | sudo -u postgres psql #{db}`   
+      
+      # This command breaks my local copy (pg 8.2) , and doesn't seem necessary for postgres-8.3 servers. LWH
+      # cmd = %{echo "update \"#{schema}\".pg_ts_cfg set locale = 'en_US' where ts_name = 'default'" | sudo -u postgres psql #{db} }
+      # see "IF YOU GET" note at bottom.
+      
       Rake::Task['fulltext:enable'].invoke
 
     else

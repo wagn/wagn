@@ -12,7 +12,7 @@ require File.join(File.dirname(__FILE__), 'boot')
                           
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence those specified here
-  #RAILS_GEM_VERSION = '2.1.2' unless defined? RAILS_GEM_VERSION  
+  #RAILS_GEM_VERSION = '2.2.2' unless defined? RAILS_GEM_VERSION  
   # Skip frameworks you're not going to use
   config.frameworks -= [ :action_web_service ]
 
@@ -23,10 +23,6 @@ Rails::Initializer.run do |config|
   # Force all environments to use the same logger level 
   # (by default production uses :info, the others :debug)
   # config.log_level = :debug
-
-  # Use the database for sessions instead of the file system
-  # (create the session table with 'rake db:sessions:create')
-  config.action_controller.session_store = :active_record_store
 
   # Use SQL instead of Active Record's schema dumper when creating the test database.
   # This is necessary if your schema can't be completely dumped by the schema dumper, 
@@ -50,9 +46,6 @@ Rails::Initializer.run do |config|
     :secret      => db[RAILS_ENV]['secret']
   }  
 end
-
-# configure session store
-Session = CGI::Session::ActiveRecordStore.session_class
 
 
 #ExceptionNotifier.exception_recipients = %w(someone@somewhere.org)

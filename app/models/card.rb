@@ -17,6 +17,7 @@ end
   
 
 require 'json'
+require 'uuid'
 require_dependency 'card/base' 
 require_dependency 'card/tracked_attributes'
 require_dependency 'card/templating'

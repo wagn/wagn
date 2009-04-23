@@ -46,8 +46,9 @@ module CardLib
             
       if newname.junction?
         # move the current card out of the way, in case the new name will require
-        # re-creating a card with the current name, ie.  A -> A+B
-        connection.update %{update cards set #{quoted_comma_pair_list(connection, {:name=>"''",:key=>"''"})} where id=#{id}}
+        # re-creating a card with the current name, ie.  A -> A+B     
+        tmp_name = "tmp:" + UUID.new.generate
+        connection.update %{update cards set #{quoted_comma_pair_list(connection, {:name=>"'#{tmp_name}'",:key=>"'#{tmp_name}'"})} where id=#{id}}
         self.trunk = Card.find_or_create :name=>newname.parent_name
         self.tag = Card.find_or_create :name=>newname.tag_name
       else

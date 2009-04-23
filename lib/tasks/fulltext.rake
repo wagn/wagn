@@ -53,7 +53,7 @@ namespace :fulltext do
     cxn.execute %{ CREATE INDEX content_fti ON cards USING gist(indexed_content);  }    
     # choosing GIST for faster updates, at least for now.
     # see: http://www.postgresql.org/docs/8.3/static/textsearch-indexes.html
-    cxn.execute %{ vacuum full analyze }
+    cxn.execute %{ analyze cards }
   end
 
   

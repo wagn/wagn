@@ -2,8 +2,9 @@ class System < ActiveRecord::Base
   #Why is this an ActiveRecord?
   set_table_name 'system'
   
+  cattr_writer :attachment_storage    # storage option passed to attachment_fu   
   cattr_accessor :role_tasks, :request,                          
-    # Configuration Options 
+    # Configuration Options     
     :base_url, :max_render_time, :max_renders,   # Common; docs in sample_wagn.rb
     :enable_ruby_cards, :enable_server_cards,    # Uncommon; Check Security risks before enabling these cardtypes (wagn.org ref url?)
     :enable_postgres_fulltext, :postgres_src_dir, :postgres_tsearch_dir, # Optimize PostgreSQL performance
@@ -29,7 +30,11 @@ class System < ActiveRecord::Base
       System.base_url.gsub(/^http:\/\//,'')
     end
 
-
+    
+    def attachment_storage
+      @@attachment_storage || :file_system
+    end
+    
     # CARD-BASED SETTINGS
 
     def setting(name)

@@ -25,6 +25,8 @@ class AttachmentFuMigration < ActiveRecord::Migration
         rescue Exception=>e
           puts "ERROR: #{e.message}"
         end
+      else
+        puts "MISSING FILE #{path}"
       end
     end
   end

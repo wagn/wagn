@@ -6,7 +6,7 @@ class CardFile < ActiveRecord::Base
   validates_as_attachment              
   
   def preview
-    "<a href=\"#{public_filename}\">#{public_filename}</a>"
+    "<a href=\"#{public_filename}\">#{filename}</a>"
 	end
 
   def bucket_name

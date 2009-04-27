@@ -625,6 +625,8 @@ module Card
     
     def destroy_extension
       extension.destroy if extension
+      extension = nil
+      true
     end
     
     def validate_content( content )

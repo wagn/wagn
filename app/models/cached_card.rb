@@ -204,7 +204,7 @@ class CachedCard
     case task
       when :read; System.always_ok? || party_ok?(read_permission)
       when :comment; party_ok?(comment_permission)
-      else card.ok?(task)
+      else card && card.ok?(task)
     end
   end
   

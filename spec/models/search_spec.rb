@@ -209,12 +209,13 @@ describe Wql2, "type" do
 end
 
 
-
+=begin
 describe Wql2, "group tagging" do
   it "should find frequent taggers of cardtype cards" do
     Card.search( :group_tagging=>'Cardtype' ).map(&:name).sort().should == ["*related", "*tform"].sort()
   end
 end
+=end
 
 describe Wql2, "trash handling" do   
   before { User.as :joe_user }

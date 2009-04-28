@@ -15,16 +15,3 @@ CachedCard.set_cache_prefix "#{System.host}/#{RAILS_ENV}"
 #                                     :memory_store 
 #                                     :file_store, "#{RAILS_ROOT}/../cache"
 
-
-
-#STARRY:  don't stop until this is cleaned up and documented.
-
-# GOING AWAY:
-
-
-=begin
-System.invitation_email_subject = "Join the {site_title} Community!"
-System.invitation_email_body = "\nHello,\n{invitor} has invited you to join the {site_title} community.\n"
-#System.site_title = "NeWagN"
-System.invite_request_alert_email = 'somebody@somewhere.com'
-=end

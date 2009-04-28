@@ -69,7 +69,7 @@ class CardController < ApplicationController
   #----------------( creating)                                                               
   def new
     args = (params[:card] ||= {})
-    args[:type] ||= params[:cardtype] # for /new/:cardtype shortcut in routes
+    args[:type] ||= params[:type] # for /new/:type shortcut in routes
     
     # don't pass a blank type as argument
     # look up other types in case Cardtype name is given instead of ruby type
@@ -298,7 +298,7 @@ class CardController < ApplicationController
       next unless key.to_s =~ /card|pointer/ 
       complete = params[key].values[0]
     end
-    complete.to_s!
+    complete = complete.to_s
 
     if !params[:id].blank? && (card = Card["#{params[:id].tag_name}+*options"]) && card.type=='Search'
       @items = card.search( :complete=>complete, :limit=>8, :sort=>'name')

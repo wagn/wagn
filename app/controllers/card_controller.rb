@@ -185,10 +185,11 @@ class CardController < ApplicationController
       session[:comment_author] = @author
       @author = "#{@author} (Not signed in)"
     else
-      @author = "[[#{User.current_user.card.name}]]"
+      username=User.current_user.card.name
+      @author = "{{#{username}+image|size:icon}} [[#{username}]]"
     end
     @comment.gsub! /\n/, '<br/>'
-    @card.comment = "<hr>#{@comment}<br/><p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
+    @card.comment = "<hr><p>#{@comment}</p><p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
     @card.save!   
     view = render_to_string(:action=>'show')
     render_update_slot view

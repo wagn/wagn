@@ -306,7 +306,7 @@ module WagnHelper
                 when @state==:edit
                   ( Card.find_by_name( fullname ) || 
                     Card.find_phantom( fullname ) || 
-                    Card.new( :name=>  fullname ) )
+                    Card.new(   :name=>fullname, :type=>options[:type] ) )
                 else
                   CachedCard.get fullname
                 end

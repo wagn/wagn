@@ -87,6 +87,7 @@ class CardController < ApplicationController
       return
     end
 
+    args.delete(:content) if c=args[:content] and c.blank? #means soft-templating still takes effect 
     @card = Card.new args                   
     if request.xhr?
       render :partial => 'views/new', :locals=>{ :card=>@card }
@@ -186,7 +187,8 @@ class CardController < ApplicationController
       @author = "#{@author} (Not signed in)"
     else
       username=User.current_user.card.name
-      @author = "{{#{username}+image|size:icon}} [[#{username}]]"
+      #@author = "{{#{username}+image|size:icon}} [[#{username}]]"
+      @author = "[[#{username}]]"
     end
     @comment.gsub! /\n/, '<br/>'
     @card.comment = "<hr><p>#{@comment}</p><p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"

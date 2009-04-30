@@ -367,7 +367,9 @@ module Card
     
     # I don't really like this.. 
     def attribute_card( attr_name )
-      Card.find_by_name( name + JOINT + attr_name )
+      ::User.as :wagbot do
+        CachedCard.get_real( name + JOINT + attr_name )
+      end
     end
      
     def revised_at

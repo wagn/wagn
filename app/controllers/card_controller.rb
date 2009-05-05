@@ -69,7 +69,7 @@ class CardController < ApplicationController
   #----------------( creating)                                                               
   def new
     args = (params[:card] ||= {})
-    args[:type] ||= params[:cardtype] # for /new/:cardtype shortcut in routes
+    args[:type] ||= params[:type] # for /new/:type shortcut in routes
     
     # don't pass a blank type as argument
     # look up other types in case Cardtype name is given instead of ruby type
@@ -87,6 +87,7 @@ class CardController < ApplicationController
       return
     end
 
+    args.delete(:content) if c=args[:content] and c.blank? #means soft-templating still takes effect 
     @card = Card.new args                   
     if request.xhr?
       render :partial => 'views/new', :locals=>{ :card=>@card }
@@ -185,10 +186,12 @@ class CardController < ApplicationController
       session[:comment_author] = @author
       @author = "#{@author} (Not signed in)"
     else
-      @author = "[[#{User.current_user.card.name}]]"
+      username=User.current_user.card.name
+      #@author = "{{#{username}+image|size:icon}} [[#{username}]]"
+      @author = "[[#{username}]]"
     end
     @comment.gsub! /\n/, '<br/>'
-    @card.comment = "<hr>#{@comment}<br/><p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
+    @card.comment = "<hr><p>#{@comment}</p><p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
     @card.save!   
     view = render_to_string(:action=>'show')
     render_update_slot view
@@ -298,7 +301,7 @@ class CardController < ApplicationController
       next unless key.to_s =~ /card|pointer/ 
       complete = params[key].values[0]
     end
-    complete.to_s!
+    complete = complete.to_s
 
     if !params[:id].blank? && (card = Card["#{params[:id].tag_name}+*options"]) && card.type=='Search'
       @items = card.search( :complete=>complete, :limit=>8, :sort=>'name')

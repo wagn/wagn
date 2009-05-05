@@ -13,8 +13,7 @@ class ApplicationController < ActionController::Base
   attr_reader :card, :cards, :renderer, :context   
   attr_accessor :notice, :slot
   
-  helper_method :card, :cards, :renderer, :context, 
-    :edit_user_context, :sidebar_cards, :notice, :slot
+  helper_method :card, :cards, :renderer, :context, :edit_user_context, :notice, :slot
 
   include ActionView::Helpers::TextHelper #FIXME: do we have to do this? its for strip_tags() in edit()
   include ActionView::Helpers::SanitizeHelper

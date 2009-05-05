@@ -55,7 +55,7 @@ module Wql2
     :dir    => "",
     :limit  => "",
     :offset => "",  
-    :group_tagging  => "",
+#    :group_tagging  => "",
     :return => :list,
     :join   => :and,
     :view   => nil    # handled in interface-- ignore here
@@ -391,7 +391,8 @@ module Wql2
         # type!=User is about 6x faster than type='Role'...
         sql.conditions << %{ (#{t}.reader_type!='User' and #{t}.reader_id IN (#{user_roles})) }
       end
-      
+
+=begin      
       if !@mods[:group_tagging].blank?
         card_class = @mods[:group_tagging] 
         fields = Card::Base.columns.map {|c| "#{table_alias}.#{c.name}"}.join(", ")
@@ -407,6 +408,7 @@ module Wql2
         @mods[:sort] = 'count'
         @mods[:dir] = 'desc'
       end
+=end
             
       # Order 
       unless @parent or @mods[:return]==:count

@@ -25,7 +25,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'recent.:format',   :controller => 'card', :action=>'show', :id=>'*recent_changes', :view=>'content', :requirements=>{ :format=>FORMAT_PATTERN }
   map.connect 'search/:_keyword.:format', :controller => 'card', :action=>'show', :id=>'*search',         :view=>'content', :requirements=>{ :format=>FORMAT_PATTERN }   
   map.connect 'search/:_keyword', :controller => 'card', :action=>'show', :id=>'*search',         :view=>'content'
-  map.connect 'new/:cardtype',    :controller => 'card', :action=>'new'
+  map.connect 'new/:type',        :controller => 'card', :action=>'new'
   map.connect 'me',               :controller => 'card', :action=>'mine'
 
   map.resource :card_images

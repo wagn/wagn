@@ -1,9 +1,9 @@
 require File.dirname(__FILE__) + '/../../test_helper'
 class Card::BaseTest < Test::Unit::TestCase
   common_fixtures
-  # def setup
-  #   setup_default_user
-  # end
+  def setup           
+    ::User.as(:u3)  # FIXME!!! wtf?  this works and :admin doesn't
+  end
   
   def test_autocard_should_respond_to_ampersand_email_attribute
     c = Card.auto_card("u1+*email")
@@ -13,6 +13,11 @@ class Card::BaseTest < Test::Unit::TestCase
   def test_autocard_should_not_respond_to_not_templated_or_ampersanded_card
     assert_equal nil, Card.auto_card("u1+email")
   end           
+
+  def test_should_not_show_card_to_joe_user
+    ::User.as(:joe_user)
+    assert_equal nil, Card.auto_card("u1+*email")
+  end
                             
   def test_autocard_should_not_break_if_extension_missing
     assert_equal "", Card.auto_card("A+*email").content

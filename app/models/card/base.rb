@@ -530,11 +530,11 @@ module Card
         end
         
         # require confirmation for renaming multiple cards
-        if !rec.dependents.empty? and !rec.confirm_rename
+        if !rec.confirm_rename and !rec.dependents.empty? 
           rec.errors.add :confirmation_required, "#{rec.name} has #{rec.dependents.size} dependents"
         end
         
-        if !rec.link_in_cards.empty? and !rec.confirm_rename
+        if !rec.confirm_rename and !rec.link_in_cards.empty? 
           rec.errors.add :confirmation_required, "#{rec.name} has #{rec.link_in_cards.size} links in"
         end
       end
@@ -636,4 +636,3 @@ module Card
     
   end
 end
-

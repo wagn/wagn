@@ -3,7 +3,7 @@ class CardImage < ActiveRecord::Base
   attr_accessor :attachment_uuid
   
   has_attachment :content_type => :image, 
-                 :storage => :s3,   
+                 :storage => :file,   
                  :size => (1..5.megabyte),   
                  :thumbnails => {
                    :icon => '16x75',

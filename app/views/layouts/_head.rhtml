@@ -18,7 +18,7 @@
     <%= @title || "#{controller.controller_name} - #{controller.action_name}" %>
     - <%= System.site_title %>
   </title>
-	<%= stylesheet_link_merged :base %> 
+	<%#stylesheet_link_merged :base %>
   <%#= asset_manager can do alternate media but it has to be a separate call anyway %>
 	<%= stylesheet_link_tag 'print', :media=>'print' %>
   
@@ -29,7 +29,7 @@
 	<% end %>
 
 	<%# tried javascript at bottom, much breakage %>
-  <%= javascript_include_merged :base %>       
+  <%# javascript_include_merged :base %>       
      
   
 

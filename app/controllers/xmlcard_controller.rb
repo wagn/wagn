@@ -5,7 +5,6 @@ class XmlcardController < ApplicationController
 
   helper :card 
   layout :default_layout
-  cache_sweeper :card_sweeper
 
   before_filter :create_ok, :only=>[ :post, :put ]
 

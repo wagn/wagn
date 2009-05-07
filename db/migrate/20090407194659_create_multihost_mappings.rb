@@ -1,6 +1,5 @@
 class CreateMultihostMappings < ActiveRecord::Migration
   def self.up
-    execute "set search_path to public"
     create_table :multihost_mappings do |t|
       t.string :requested_host
       t.string :canonical_host

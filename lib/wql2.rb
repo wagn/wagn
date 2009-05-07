@@ -55,7 +55,7 @@ module Wql2
     :dir    => "",
     :limit  => "",
     :offset => "",  
-    :group_tagging  => "",
+#    :group_tagging  => "",
     :return => :list,
     :join   => :and,
     :view   => nil    # handled in interface-- ignore here
@@ -243,7 +243,7 @@ module Wql2
     
     def complete(val)
       no_plus_card = (val=~/\+/ ? '' : "and tag_id is null")  #FIXME -- this should really be more nuanced -- it breaks down after one plus
-      merge :cond => SqlCond.new(" lower(name) LIKE lower(#{quote(val+'%')}) #{no_plus_card}")
+      merge :cond => SqlCond.new(" lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}")
     end
 
     def field(name)
@@ -391,7 +391,8 @@ module Wql2
         # type!=User is about 6x faster than type='Role'...
         sql.conditions << %{ (#{t}.reader_type!='User' and #{t}.reader_id IN (#{user_roles})) }
       end
-      
+
+=begin      
       if !@mods[:group_tagging].blank?
         card_class = @mods[:group_tagging] 
         fields = Card::Base.columns.map {|c| "#{table_alias}.#{c.name}"}.join(", ")
@@ -407,6 +408,7 @@ module Wql2
         @mods[:sort] = 'count'
         @mods[:dir] = 'desc'
       end
+=end
             
       # Order 
       unless @parent or @mods[:return]==:count

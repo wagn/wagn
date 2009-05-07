@@ -368,7 +368,9 @@ module Card
     
     # I don't really like this.. 
     def attribute_card( attr_name )
-      Card.find_by_name( name + JOINT + attr_name )
+      ::User.as :wagbot do
+        CachedCard.get_real( name + JOINT + attr_name )
+      end
     end
      
     def revised_at
@@ -540,11 +542,11 @@ module Card
         end
         
         # require confirmation for renaming multiple cards
-        if !rec.dependents.empty? and !rec.confirm_rename
+        if !rec.confirm_rename and !rec.dependents.empty? 
           rec.errors.add :confirmation_required, "#{rec.name} has #{rec.dependents.size} dependents"
         end
         
-        if !rec.link_in_cards.empty? and !rec.confirm_rename
+        if !rec.confirm_rename and !rec.link_in_cards.empty? 
           rec.errors.add :confirmation_required, "#{rec.name} has #{rec.link_in_cards.size} links in"
         end
       end
@@ -637,6 +639,8 @@ module Card
     
     def destroy_extension
       extension.destroy if extension
+      extension = nil
+      true
     end
     
     def validate_content( content )
@@ -644,4 +648,3 @@ module Card
     
   end
 end
-

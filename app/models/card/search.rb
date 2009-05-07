@@ -7,7 +7,7 @@ module CardLib
           { '*recent_change' => %{ {"sort":"update", "dir":"desc", "view":"change"} },
             '*search'        => %{ {"match":"_keyword", "sort":"relevance"        } },
             '*broken_link'   => %{ {"link_to":"_none"                             } },
-            '*user'          => %{ {"extension_type":"User"                       } }
+            '*user'          => %{ {"extension_type":"User"                       } },
           }
         case 
           when searches[key];
@@ -24,18 +24,24 @@ module CardLib
       def auto_card(name)
         return nil if name.simple?
         template = (Card.right_template(name) || Card.multi_type_template(name))
-
-        ActiveRecord::Base.logger.info "<FOUND TEMPLATE: #{template.inspect}>"
-
-        return nil unless template and template.hard_template?
-
-        ActiveRecord::Base.logger.info "<CREATING: #{template.content}!>"
-
-        User.as(:wagbot) { 
-          Card.create_phantom name, template.content #, template.type, template.reader  want these??
-        }
+        if template and template.hard_template?    
+          User.as(:wagbot) do
+            Card.create_phantom name, template.content
+          end
+        elsif System.ok?(:administrate_users) and name.tag_name =~ /^\*(\w+)$/
+          attr_name = $~[1]
+          content = Card.retrieve_extension_attribute( name.trunk_name, attr_name ) || ""
+          User.as(:wagbot) do
+            Card.create_phantom name, content  
+          end
+        else
+          return nil
+        end
       end
 
+      def retrieve_extension_attribute( cardname, attr_name )
+        c = Card.find_by_name(cardname) and e = c.extension and e.send(attr_name)
+      end
 
       def create_phantom(name, content, type='Basic', reader=Role[:anon])
         c=Card.new(:name=>name, :content=>content, :type=>type ,:reader=>reader, :phantom=>true)

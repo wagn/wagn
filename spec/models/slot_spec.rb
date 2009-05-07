@@ -13,7 +13,7 @@ describe WagnHelper::Slot, "" do
 
   it "should not render transclusions in raw content" do
      @a = Card.new(:name=>'t', :content=>"{{A}}")
-    Slot.new(@a).render(:raw_content).should == "{{A}}"
+    Slot.new(@a).render(:naked_content).should == "{{A}}"
   end                                                                                  
   
   it "should use transclusion view overrides" do  

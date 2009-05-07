@@ -5,6 +5,17 @@ class Card::RenameTest < Test::Unit::TestCase
   def setup
     setup_default_user
   end
+      
+  def test_rename_name_substitution
+    c1 = Card.create! :name => "chuck_wagn+chuck"
+    c2 = Card["chuck"]
+    assert_rename c2, "buck"
+    assert_equal "chuck_wagn+buck", Card.find(c1.id).name
+  end      
+                                      
+  def test_rename_same_key_with_dependents
+    assert_rename card("B"), "b"
+  end
 
   def test_flip
     with_debugging do
@@ -31,11 +42,11 @@ class Card::RenameTest < Test::Unit::TestCase
     c41 =  Card["Four+One"]
     c415 = Card["Four+One+Five"]
 
-    assert_equal ["One#{JOINT}Two","One#{JOINT}Two#{JOINT}Three","Four#{JOINT}One","Four#{JOINT}One#{JOINT}Five"], [c12,c123,c41,c415].plot(:name)
+    assert_equal ["One+Two","One+Two+Three","Four+One","Four+One+Five"], [c12,c123,c41,c415].plot(:name)
     c1.name="Uno"
     c1.confirm_rename = true
     c1.save!
-    assert_equal ["Uno#{JOINT}Two","Uno#{JOINT}Two#{JOINT}Three","Four#{JOINT}Uno","Four#{JOINT}Uno#{JOINT}Five"], [c12,c123,c41,c415].plot(:reload).plot(:name)
+    assert_equal ["Uno+Two","Uno+Two+Three","Four+Uno","Four+Uno+Five"], [c12,c123,c41,c415].plot(:reload).plot(:name)
   end     
 
 

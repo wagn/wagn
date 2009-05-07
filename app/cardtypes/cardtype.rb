@@ -32,7 +32,7 @@
     end
     
     def me_type
-      Card.const_get( self.extension.class_name )
+      self.extension && Card.const_get( self.extension.class_name )
     end
     
     def queries

@@ -5,20 +5,28 @@ namespace :fulltext do
     if System.enable_postgres_fulltext and is_postgresql?(cxn) 
       db = ActiveRecord::Base.configurations[RAILS_ENV]["database"]
       user = ActiveRecord::Base.configurations[RAILS_ENV]["username"]    
-
+        
+      # FIXME get this from somewhere else?
+      schema = ENV['WAGN_NAME'].blank? ? "public" : ENV['WAGN_NAME']
 
        # NOTE: this will only work if the user running the migration has sudo priveleges
 		  tsearch_dir = System.postgres_tsearch_dir ? System.postgres_tsearch_dir : "#{System.postgres_src_dir}/contrib/tsearch2"
-      `sudo -u postgres psql #{db} < #{tsearch_dir}/tsearch2.sql`
-       cmd = %{ echo "alter table pg_ts_cfg owner to #{user}; } +
-         %{ alter table pg_ts_cfgmap owner to #{user}; } + 
-         %{ alter table pg_ts_dict owner to #{user}; } + 
-         %{ alter table pg_ts_parser owner to #{user};" | sudo -u postgres psql #{db}
-       }
-       `#{cmd}`
-
-       `echo "update pg_ts_cfg set locale = 'en_US' where ts_name = 'default'" | sudo -u postgres psql #{db}`   
-       Rake::Task['fulltext:enable'].invoke
+      cmd = "cat #{tsearch_dir}/tsearch2.sql | ruby -ne '$_.gsub!(/public/,\"\\\"#{schema}\\\"\"); print' | sudo -u postgres psql #{db}"
+      `#{cmd}`
+      cmd =  %{ echo "} + 
+        %{ set search_path to \"\\\"#{schema}\\\"\"; } +
+        %{ alter table pg_ts_cfg owner to #{user};    } +
+        %{ alter table pg_ts_cfgmap owner to #{user}; } + 
+        %{ alter table pg_ts_dict owner to #{user};   } + 
+        %{ alter table pg_ts_parser owner to #{user};" | sudo -u postgres psql #{db}
+      }       
+      `#{cmd}`
+      
+      # This command breaks my local copy (pg 8.2) , and doesn't seem necessary for postgres-8.3 servers. LWH
+      # cmd = %{echo "update \"#{schema}\".pg_ts_cfg set locale = 'en_US' where ts_name = 'default'" | sudo -u postgres psql #{db} }
+      # see "IF YOU GET" note at bottom.
+      
+      Rake::Task['fulltext:enable'].invoke
 
     else
       # FIXME: do whatever needs to happen for mysql? sqlite?
@@ -31,7 +39,7 @@ namespace :fulltext do
   task :enable => :environment do
     cxn = ActiveRecord::Base.connection
     return unless  is_postgresql?(cxn)
-    
+
     cxn.execute %{ alter table cards drop indexed_name, drop indexed_content; }
     cxn.execute %{ alter table cards add indexed_name tsvector, add indexed_content tsvector }
     
@@ -45,7 +53,7 @@ namespace :fulltext do
     cxn.execute %{ CREATE INDEX content_fti ON cards USING gist(indexed_content);  }    
     # choosing GIST for faster updates, at least for now.
     # see: http://www.postgresql.org/docs/8.3/static/textsearch-indexes.html
-    cxn.execute %{ vacuum full analyze }
+    cxn.execute %{ analyze cards }
   end
 
   

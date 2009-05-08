@@ -15,6 +15,33 @@ class Card::RenameTest < Test::Unit::TestCase
                                       
   def test_rename_same_key_with_dependents
     assert_rename card("B"), "b"
+  end                                     
+
+  def test_updates_inclusions_when_renaming    
+    Card::Base.debug=true
+    c1 = Card.create! :name => "Blue"
+    c2 = Card.create! :name => "br1", :content => "{{Blue}}"
+    c3 = Card.create! :name => "br2", :content => "{{blue|closed;other:stuff}}"
+    
+    #assert_equal ["br1","br2"], c1.transcluders.map(&:name).sort
+    c1.name = "Red"
+    c1.update_referencers = true
+    c1.save!
+    assert_equal "{{Red}}", Card.find(c2.id).content                     
+    # NOTE these attrs pass through a hash stage that may not preserve order
+    assert_equal "{{Red|closed;other:stuff}}", Card.find(c3.id).content  
+  end
+
+  
+  def test_reference_updates_on_case_variants
+    c1 = Card.create! :name => "Blue"
+    c2 = Card.create! :name => "blue ref 1", :content => "[[Blue]]"
+    c3 = Card.create! :name => "blue ref 2", :content => "[[blue]]"
+    c1.name = "Red"
+    c1.update_referencers = true
+    c1.save!
+    assert_equal "[[Red]]", Card.find(c2.id).content
+    assert_equal "[[Red]]", Card.find(c3.id).content
   end
 
   def test_flip

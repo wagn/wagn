@@ -11,7 +11,7 @@ module Chunk
     def initialize(match_data, content)
       super   
       #warn "FOUND TRANSCLUDE #{match_data} #{content}"
-      @card_name, @options = self.class.parse(match_data)
+      @card_name, @options, @configs = self.class.parse(match_data)
       @relative = @options[:relative]
       @renderer = @content.renderer
       @card = @content.card or raise "No Card in Transclude Chunk!!"     
@@ -42,7 +42,14 @@ module Chunk
         end
       end
       options[:style] = style.map{|k,v| "#{k}:#{v};"}.join
-      [name, options]  
+      [name, options, configs]  
+    end                        
+    
+    def revert                             
+      configs = @configs.to_semicolon_attr_list;  
+      configs = "|#{configs}" unless configs.blank?
+      @text = "{{#{@card_name}#{configs}}}"
+      super
     end
     
     private

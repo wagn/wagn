@@ -9,7 +9,7 @@ module Chunk
 
     def self.pattern() WIKI_LINK end
 
-    def initialize(match_data, content)
+    def initialize(match_data, content, render_xml=false)
       super
       @link_type = :show
       if @card_name = match_data[1] 
@@ -25,11 +25,7 @@ module Chunk
     end
 
     def unmask_text
-      @unmask_text ||= card_link
-    end
-    
-    def unmask_xml
-      @unmask_xml ||= card_link_xml
+      @unmask_text ||= card_link(@render_xml)
     end
 
     def revert
@@ -37,46 +33,35 @@ module Chunk
       super
     end
 
-    def card_link_xml
+    def card_link(render_xml=false)
       href = refcard_name
-      klass = 
+      if (klass = 
         case href
           when /^\//;    'internal-link'
           when /^https?:/; 'external-link'
           when /^mailto:/; 'email-link'
-          else
-            if refcard
-              href = href.to_url_key
-              'known-card'
-            else
-              href = CGI.escape(Cardname.escape(href))
-              'wanted-card'
-            end
-            return %{<cardref class="#{klass}" card="${href}">#{link_text}</cardref>}
+        end)
+        if (render_xml)
+          %{<link class="#{klass}" href="#{href}">#{link_text}</link>}
+        else
+          %{<a class="#{klass}" href="#{href}">#{link_text}</a>}
         end
-      %{<link class="#{klass}" href="#{href}">#{link_text}</link>}
-    end
-
-    def card_link
-      href = refcard_name
-      klass = 
-        case href
-          when /^\//;    'internal-link'
-          when /^https?:/; 'external-link'
-          when /^mailto:/; 'email-link'
-          else
-            @link_text = @link_text.to_show(href)
-            if refcard
-              href = '/wagn/' + href.to_url_key
-              'known-card'
-            else
-              href = '/wagn/' + CGI.escape(Cardname.escape(href))
-              'wanted-card'
-            end
+      else
+        @link_text = @link_text.to_show(href)
+        klass = if refcard
+          href = href.to_url_key
+          'known-card'
+        else
+          href = CGI.escape(Cardname.escape(href))
+          'wanted-card'
         end
-      %{<a class="#{klass}" href="#{href}">#{link_text}</a>}
+        if render_xml
+          %{<cardref class="#{klass}" card="${href}">#{link_text}</cardref>}
+         else
+          %{<a class="#{klass}" href="/wagn/#{href}">#{link_text}</a>}
+        end
+      end
     end
-
   end
 end
 

@@ -67,7 +67,7 @@ class Renderer
 
     #raise("xml(#{content}\n")
     #xml_content = content #XmlContent.new(card, content, self)
-    xml_content = WikiContent.new(card, content, self)
+    xml_content = WikiContent.new(card, content, self, true)
     yield xml_content if block_given?
     update_xml_references(card, xml_content) if update_references
     @render_stack.pop

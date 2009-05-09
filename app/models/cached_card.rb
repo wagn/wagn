@@ -237,7 +237,10 @@ class CachedCard
   end
 
   def method_missing(method_id,*args)
-    (@card || @auto_load) ? card.send(method_id, *args) : raise("Unknown method: #{method_id} for CachedCard")
+    (@card ||
+      @auto_load) ?
+      card.send(method_id, *args) :
+      raise("Unknown method: #{method_id} for CachedCard")
   end
   
   def get(field)

@@ -1,3 +1,4 @@
+require 'ruby-debug'
 require_dependency 'slot_helpers'
 
 module WagnHelper
@@ -5,7 +6,7 @@ module WagnHelper
     include SlotHelpers
     cattr_accessor :max_char_count
     self.max_char_count = 200
-    attr_reader :card, :context, :action, :renderer, :template
+    attr_reader :card, :context, :action, :renderer, :template, :render_xml
     attr_accessor :editor_count, :options_need_save, :state,
       :requested_view, :js_queue_initialized, :transclusions,
       :position, :renderer, :form, :superslot, :char_count,
@@ -21,8 +22,9 @@ module WagnHelper
 
     def initialize(card, context="main_1", action="view", template=nil, opts={})
       @card, @context, @action = card, context.to_s, action.to_s
+      @render_xml = opts[:format] == :xml
       @template = template ||
-                  (opts[:format] == :xml && card.xml_template) ||
+                  (@render_xml && card.xml_template) ||
                   StubTemplate.new
       context = "main_1" unless context =~ /\_/
       @position = context.split('_').last
@@ -161,6 +163,7 @@ module WagnHelper
     end
 
     def render(action, args={})
+      return render_xml(action, args) if @render_xml 
       #warn "<render(#{card.name}, #{@state}).render(#{action}, item=>#{args[:item]})"
 
       rkey = self.card.name + ":" + action.to_s
@@ -353,16 +356,16 @@ module WagnHelper
     end
 
     def render_xml(action, args={})
+
       rkey = self.card.name + ":" + action.to_s
       root.renders[rkey] ||= 1; root.renders[rkey] += 1
       #root.start_time ||= Time.now.to_f
 
       ok_action = case
-        when root.renders[rkey] > System.max_renders ; :too_many_renders
-        #when (Time.now.to_f - root.start_time) > System.max_render_time ;
-                                                     # :too_slow
-        when denial = deny_render?(action)           ; denial
-        else                                         ; action
+        when root.renders[rkey] > System.max_renders                    ; :too_many_renders
+        #when (Time.now.to_f - root.start_time) > System.max_render_time ; :too_slow
+        when denial = deny_render?(action)                              ; denial
+        else                                                            ; action
       end
 
       result = case ok_action
@@ -370,12 +373,23 @@ module WagnHelper
           "<no_card> " + self.render( :name ) + "</no_card> "
 
         when :xml_content
-          processed = @card.xml_content
-          (processed=~/\{\{[^\}]+\}\}/) ? expand_transclusions_xml( processed ) : processed
+begin
+          @card.xml_content
+rescue Exception => e
+  debugger  
+end
+
         when :xml, :xml_expanded
+begin
           @state = 'view'
           processed = cache_action('view_content') { render_xml(:xml_content) }
-          processed = expand_transclusions_xml( processed )
+          while (processed=~/\{\{[^\}]+\}\}/) do
+            processed=expand_transclusions_xml( processed )
+          end
+          processed
+rescue Exception => e
+  debugger  
+end
 
         ###---(  EXCEPTIONS )
         when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
@@ -405,7 +419,7 @@ module WagnHelper
               options[:view] = translated_view
             end
           end
-          fullname = String.new(tname)
+          fullname = tname+''
           fullname.to_absolute(options[:base]=='parent' ? card.name.parent_name : card.name)
           fullname.gsub!('_user', User.current_user.card.name)
 

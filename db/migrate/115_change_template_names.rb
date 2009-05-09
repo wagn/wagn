@@ -10,7 +10,7 @@ class ChangeTemplateNames < ActiveRecord::Migration
           card.name = card.trunk.name+'+*rform'
         end
   		  card.confirm_rename = true
-  		  card.update_link_ins = true
+  		  card.update_referencers = true
         card.save!
       end
     end

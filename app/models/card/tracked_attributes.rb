@@ -153,29 +153,31 @@ module CardLib
     end
     
     def cascade_name_changes 
-      #ActiveRecord::Base.logger.info("---------- CASCADE #{self.name}  -----------------------------------")
       return true unless @name_changed
+      #ActiveRecord::Base.logger.info("----------------------- CASCADE #{self.name}  -------------------------------------")  
       
       deps = self.dependents
                                             
-      deps.each do |card|
-        #ActiveRecord::Base.logger.info("---------- DEP #{card.name}  -------------------------------------")  
+      deps.each do |dep|
+        #ActiveRecord::Base.logger.info("---------------------- DEP #{dep.name}  -------------------------------------")  
         cxn = ActiveRecord::Base.connection
-        depname = card.name.particle_names.map {|x| x==@old_name ? name : x }.join("+")
+        depname = dep.name.particle_names.map {|x| x==@old_name ? name : x }.join("+")
         depkey = depname.to_key    
         # here we specifically want NOT to invoke recursive cascades on these cards, have to go this 
         # low level to avoid callbacks.                                                               
-        Card.update_all("name=#{cxn.quote(depname)}, key=#{cxn.quote(depkey)}", "id = #{card.id}")
+        Card.update_all("name=#{cxn.quote(depname)}, key=#{cxn.quote(depkey)}", "id = #{dep.id}")
+        dep.expire(dep)
       end 
 
-      if !update_link_ins or update_link_ins == 'false'  #  doing the string check because the radio button is sending an actual "false" string
+      if !update_referencers || update_referencers == 'false'  # FIXME doing the string check because the radio button is sending an actual "false" string
         #warn "no updating.."
         ([self]+deps).each do |dep|
+          #ActiveRecord::Base.logger.info("--------------- NOUPDATE REFERRER #{dep.name}  ---------------------------")
           WikiReference.update_on_destroy(dep, @old_name) 
         end
       else
         ([self]+deps).map(&:referencers).flatten.uniq.each do |referrer|
-          #ActiveRecord::Base.logger.info("---------- REFERRER #{referrer.name}  -----------------------------")
+          #ActiveRecord::Base.logger.info("------------------ UPDATE REFERRER #{referrer.name}  ------------------------")
           WagBot.instance.revise_card_links( referrer, @old_name, name )
         end
       end

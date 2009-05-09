@@ -4,6 +4,10 @@ class Card::BaseTest < Test::Unit::TestCase
   def setup           
     ::User.as(:u3)  # FIXME!!! wtf?  this works and :admin doesn't
   end
+         
+  def test_autocard_should_not_respond_to_tform 
+    assert_nil Card.auto_card("u1+*tform")
+  end
   
   def test_autocard_should_respond_to_ampersand_email_attribute
     c = Card.auto_card("u1+*email")

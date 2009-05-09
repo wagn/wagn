@@ -70,7 +70,7 @@ class WikiReferenceTest < Test::Unit::TestCase
      lew = newcard('Lew', "likes [[watermelon]] and [[watermelon#{JOINT}seeds|seeds]]")
 
      watermelon = Card['watermelon']
-     watermelon.update_link_ins = true
+     watermelon.update_referencers = true
      watermelon.confirm_rename = true
      watermelon.name="grapefruit"
      watermelon.save!
@@ -78,7 +78,7 @@ class WikiReferenceTest < Test::Unit::TestCase
 
 
      watermelon = Card['grapefruit']
-     watermelon.update_link_ins = false
+     watermelon.update_referencers = false
      watermelon.confirm_rename = true
      watermelon.name='bananas'
      watermelon.save!
@@ -97,7 +97,7 @@ class WikiReferenceTest < Test::Unit::TestCase
    def test_update_referencing_content_on_rename_junction_card
      @ab = Card.find_by_name("A+B") #linked to from X, transcluded by Y
      @ab.confirm_rename = true
-     @ab.update_attributes! :name=>'Peanut+Butter', :update_link_ins=>false
+     @ab.update_attributes! :name=>'Peanut+Butter', :update_referencers=>false
      @x = Card.find_by_name('X')
      assert_equal "[[A]] [[A+B]] [[T]]", @x.content
    end

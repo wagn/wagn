@@ -39,7 +39,7 @@ module Card
     before_validation_on_create :set_needed_defaults
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
-      :update_link_ins, :allow_type_change, :phantom, :broken_type, :skip_defaults
+      :update_referencers, :allow_type_change, :phantom, :broken_type, :skip_defaults
   
     private
       belongs_to :reader, :polymorphic=>true  
@@ -334,8 +334,8 @@ module Card
       junctions(*args).map { |r| [r ] + r.dependents(*args) }.flatten 
     end
 
-    def link_in_cards
-      (dependents + [self]).plot(:linkers).flatten.uniq
+    def extended_referencers
+      (dependents + [self]).plot(:referencers).flatten.uniq
     end
 
     def cardtype
@@ -546,8 +546,8 @@ module Card
           rec.errors.add :confirmation_required, "#{rec.name} has #{rec.dependents.size} dependents"
         end
         
-        if !rec.confirm_rename and !rec.link_in_cards.empty? 
-          rec.errors.add :confirmation_required, "#{rec.name} has #{rec.link_in_cards.size} links in"
+        if !rec.update_referencers || rec.update_referencers == 'false' and !rec.extended_referencers.empty? 
+          rec.errors.add :confirmation_required, "#{rec.name} has #{rec.extended_referencers.size} links in"
         end
       end
     end

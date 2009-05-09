@@ -157,7 +157,7 @@ class CardController < ApplicationController
     if @card.errors.on(:confirmation_required) && @card.errors.map {|e,f| e}.uniq.length==1  
       ## I don't get the second condition.  pls document  
       @confirm = @card.confirm_rename=true
-      @card.update_link_ins = (@card.update_link_ins=='true')
+      @card.update_referencers = (@card.update_referencers=='true')
       return render(:partial=>'card/edit/name', :status=>200)
     end
     

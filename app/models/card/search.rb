@@ -28,7 +28,7 @@ module CardLib
           User.as(:wagbot) do
             Card.create_phantom name, template.content
           end
-        elsif System.ok?(:administrate_users) and name.tag_name =~ /^\*(\w+)$/
+        elsif System.ok?(:administrate_users) and name.tag_name =~ /^\*(email)$/
           attr_name = $~[1]
           content = Card.retrieve_extension_attribute( name.trunk_name, attr_name ) || ""
           User.as(:wagbot) do

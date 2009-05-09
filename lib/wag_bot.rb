@@ -19,20 +19,31 @@ module WagBot
 
   # FIXME: I think this method should be somewhere else, maybe card::base, and then in the 
   # update-links-on-rename do User.as(wagbot){ card.revise_links(old, new) }  --LWH
-  def revise_card_links( card, oldlink, newlink )
+  def revise_card_links( card, oldlink, newlink )  
     content_with_revised_links = Renderer.instance.process(card, nil) do |wiki_content|
       wiki_content.find_chunks(Chunk::Link).each do |chunk|
         link_bound = chunk.card_name == chunk.link_text          
-        warn "\nBEFORE chunk.card_name: #{chunk.card_name}  sub #{oldlink} -> #{newlink}" if Card::Base.debug
-        chunk.card_name.gsub!(/#{Regexp.escape(oldlink)}/,newlink)
-        warn "AFTER chunk.card_name: #{chunk.card_name} " if Card::Base.debug
+        ActiveRecord::Base.logger.info "\n-----BEFORE chunk.card_name: #{chunk.card_name}  sub #{oldlink} -> #{newlink}" if Card::Base.debug
+        if chunk.card_name.to_key == oldlink.to_key
+          chunk.card_name.replace newlink
+        end
+        #chunk.card_name.gsub!(/#{Regexp.escape(oldlink)}/,newlink)
+        ActiveRecord::Base.logger.info "-----AFTER chunk.card_name: #{chunk.card_name} " if Card::Base.debug
         chunk.link_text = chunk.card_name if link_bound
+      end
+      
+      wiki_content.find_chunks(Chunk::Transclude).each do |chunk|
+        ActiveRecord::Base.logger.info "\n-----BEFORE chunk.card_name: #{chunk.card_name}  sub #{oldlink} -> #{newlink}" if Card::Base.debug
+        if chunk.card_name.to_key == oldlink.to_key
+          chunk.card_name.replace newlink
+        end
+        ActiveRecord::Base.logger.info "-----AFTER chunk.card_name: #{chunk.card_name} " if Card::Base.debug
       end
     end
 
     revise_card( card, content_with_revised_links )
-  rescue
-    warn "Error revising card '#{card.name}'"
+  #rescue
+  #  warn "Error revising card '#{card.name}'"
   end
   
   def revise_card( card, content="" )

@@ -1,4 +1,3 @@
-require 'ruby-debug'
 require_dependency 'slot_helpers'
 
 module WagnHelper
@@ -136,7 +135,7 @@ module WagnHelper
         card.send(cc_method) || begin
           cached_card, @card = card, Card.find_by_key_and_trash(card.key, false) || raise("Oops! found cached card for #{card.key} but couln't find the real one")
           content = yield(@card)
-          cached_card.send("#{cc_method}=", @card.content.clone)
+          cached_card.send("#{cc_method}=", content.clone)
           content
         end
       else
@@ -373,23 +372,15 @@ module WagnHelper
           "<no_card> " + self.render( :name ) + "</no_card> "
 
         when :xml_content
-begin
-          @card.xml_content
-rescue Exception => e
-  debugger  
-end
+          render_partial_xml('card/xml', args)
 
         when :xml, :xml_expanded
-begin
           @state = 'view'
           processed = cache_action('view_content') { render_xml(:xml_content) }
           while (processed=~/\{\{[^\}]+\}\}/) do
             processed=expand_transclusions_xml( processed )
           end
           processed
-rescue Exception => e
-  debugger  
-end
 
         ###---(  EXCEPTIONS )
         when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
@@ -478,11 +469,11 @@ end
       end
       #logger.info("<transclusion_case: state=#{state} vmode=#{vmode} --> Action=#{action}, Option=#{options.inspect}")
 
-      result = if [:xml,:xml_content,:xml_expanded,:xml_missing].member?(action)
+      result = if @render_xml
         xmltag = subslot.card.name.tag_name
         match_str ||= '' 
-        "<card name=\"#{xmltag}\" type=\""+subslot.card.type+
-         "\" transclude=\""+match_str+'">'+
+        %{"<card name="#{xmltag}" type="#{subslot.card.type}" }+
+         %{transclude="#{match_str}">}+
          subslot.render_xml(action, options)+"</card>"
       else
         subslot.render(action, options)

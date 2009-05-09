@@ -186,6 +186,7 @@ class CachedCard
   def name()  get('name') { card.name } end
   def type()  get('type') { card.type } end 
   def content() get('content') { card.content } end
+  def xml_content() get('xml_content') { card.xml_content } end
   def extension_type() get('extension_type') { card.extension_type } end
   def created_at() get('created_at') { card.created_at } end
   def updated_at() get('updated_at') { card.updated_at } end

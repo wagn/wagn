@@ -1,3 +1,4 @@
+require 'ruby-debug'
 module Chunk  
   class Link < Reference
     attr_accessor :link_text, :link_type, :card_name
@@ -35,6 +36,7 @@ module Chunk
 
     def card_link(render_xml=false)
       href = refcard_name
+debugger
       if (klass = 
         case href
           when /^\//;    'internal-link'

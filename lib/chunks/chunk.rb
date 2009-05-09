@@ -20,7 +20,8 @@ module Chunk
     end
     
     #attr_reader :text, :unmask_text, :unmask_mode
-    attr_accessor :text,:unmask_text,  :unmask_mode, :revision, :card
+    attr_reader :render_xml
+    attr_accessor :text,:unmask_text, :unmask_mode, :revision, :card
     
     def initialize(match_data, content, render_xml=false) 
       @render_xml=render_xml
@@ -47,7 +48,7 @@ module Chunk
       @mask ||= "chunk#{self.object_id}#{self.class.mask_string}chunk"
     end
 
-    def unmask(render_xml=false)
+    def unmask
       @content.sub!(mask, unmask_text)
     end
 

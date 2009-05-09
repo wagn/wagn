@@ -97,13 +97,15 @@ class WikiContent < String
   
   
   include ChunkManager
-  attr_reader :revision, :not_rendered, :pre_rendered, :renderer, :card
+  attr_reader :revision, :not_rendered, :pre_rendered, :renderer, :card,
+              :render_xml
 
   def initialize(card, content, renderer, render_xml=false)
     @not_rendered = @pre_rendered = nil
     @renderer = renderer
     @card = card or raise "No Card in Content!!"
     super(content)
+    @render_xml=render_xml
     init_chunk_manager(render_xml)
     # FIXME: apply transcludes first?
     #Include.apply_to(self)

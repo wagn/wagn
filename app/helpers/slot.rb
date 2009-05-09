@@ -492,9 +492,6 @@ module WagnHelper
     def render_stub(partial, locals={})
       raise("Invalid partial") if partial.blank?
       case partial
-        when "card/plain"
-        #  %{"Card/plain" + card.name} + render(:custom_view)
-          raise("card/plain render_stub\n")
         when "card/view"
           %{\n<div class="view">\n} + wrap_content( render( :expanded_view_content ))+ %{\n</div>\n}
         when "card/line"

@@ -57,7 +57,7 @@ module Chunk
           'wanted-card'
         end
         if render_xml
-          %{<cardref class="#{klass}" card="${href}">#{link_text}</cardref>}
+          %{<cardref class="#{klass}" card="#{href}">#{link_text}</cardref>}
          else
           %{<a class="#{klass}" href="/wagn/#{href}">#{link_text}</a>}
         end

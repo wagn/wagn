@@ -52,31 +52,6 @@ class Renderer
     diff( self.render( card, content1), self.render(card, content2) )
   end
 
-  def render_xml(card=nil, content=nil, update_references=false, &process_block)
-    #wiki_content = common_processing(card, content, update_references, &process_block)
-    raise "Renderer.render() requires card" unless card
-    if @render_stack.plot(:name).include?( card.name )
-      raise Wagn::Oops, %{Circular transclusion; #{@render_stack.plot(:name).join(' --> ')}\n}
-    end
-    @render_stack.push(card)      
-    # FIXME: this means if you had a card with content, but you WANTED to have
-    # it render the empty string you passed it, it won't work.  but we seem
-    # to need it because card.content='' in set_card_defaults and if you make
-    # it nil a bunch of other stuff breaks
-    content = content.blank? ? card.content_for_rendering  : content 
-
-    #raise("xml(#{content}\n")
-    #xml_content = content #XmlContent.new(card, content, self)
-    xml_content = WikiContent.new(card, content, self, true)
-    yield xml_content if block_given?
-    update_xml_references(card, xml_content) if update_references
-    @render_stack.pop
-    xml_content
-  end
-
-  def update_xml_references(card, rendering_result)
-  end
-
   # process is used to make systematic transformations on cards that require
   # knowledge at the rendering level-- for example updating links when a card
   # has been renamed.
@@ -97,6 +72,7 @@ class Renderer
   end
       
   protected
+
   def common_processing( card, content=nil, update_references=false)
     raise "Renderer.render() requires card" unless card
     if @render_stack.plot(:name).include?( card.name )
@@ -109,7 +85,7 @@ class Renderer
     # stuff breaks
     content = content.blank? ? card.content_for_rendering  : content 
     
-    wiki_content = WikiContent.new(card, content, self)
+    wiki_content = WikiContent.new(card, content, self, slot.render_as_xml)
     yield wiki_content if block_given?
     update_references(card, wiki_content) if update_references
     @render_stack.pop
@@ -127,10 +103,10 @@ class Renderer
   def update_references(card, rendering_result)
     WikiReference.delete_all ['card_id = ?', card.id]
     
-	 if card.id and card.respond_to?('references_expired')
-    	card.connection.execute("update cards set references_expired=NULL where id=#{card.id}") 
+    if card.id and card.respond_to?('references_expired')
+      card.connection.execute("update cards set references_expired=NULL where id=#{card.id}") 
     end
-    
+
     rendering_result.find_chunks(Chunk::Reference).each do |chunk|
    #  warn "   reference basename: #{chunk.send(:base_card).name} #{chunk.class} #{chunk.card_name} #{chunk.refcard_name}"
       reference_type = 

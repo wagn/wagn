@@ -109,7 +109,7 @@ class WikiContent < String
     init_chunk_manager(render_xml)
     # FIXME: apply transcludes first?
     #Include.apply_to(self)
-    ACTIVE_CHUNKS.each{|chunk_type| chunk_type.apply_to(self)}
+    ACTIVE_CHUNKS.each{|chunk_type| chunk_type.apply_to(self, @render_xml)}
     @not_rendered = String.new(self)
   end
 

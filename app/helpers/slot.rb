@@ -5,7 +5,7 @@ module WagnHelper
     include SlotHelpers
     cattr_accessor :max_char_count
     self.max_char_count = 200
-    attr_reader :card, :context, :action, :renderer, :template, :render_xml
+    attr_reader :card, :context, :action, :renderer, :template, :render_as_xml
     attr_accessor :editor_count, :options_need_save, :state,
       :requested_view, :js_queue_initialized, :transclusions,
       :position, :renderer, :form, :superslot, :char_count,
@@ -21,9 +21,9 @@ module WagnHelper
 
     def initialize(card, context="main_1", action="view", template=nil, opts={})
       @card, @context, @action = card, context.to_s, action.to_s
-      @render_xml = opts[:format] == :xml
+      @render_as_xml = opts[:format] == :xml
       @template = template ||
-                  (@render_xml && card.xml_template) ||
+                  (@render_as_xml && card.xml_template) ||
                   StubTemplate.new
       context = "main_1" unless context =~ /\_/
       @position = context.split('_').last
@@ -36,9 +36,11 @@ module WagnHelper
     end
 
     def subslot(card, &proc)
+      opts = { :renderer => @renderer }
+      opts[:format] = :xml if @render_as_xml
       # Note that at this point the subslot context, and thus id, are
       # somewhat meaningless-- the subslot is only really used for tracking position.
-      new_slot = self.class.new(card, context+"_#{@subslots.size+1}", @action, @template, :renderer=>@renderer)
+      new_slot = self.class.new(card, context+"_#{@subslots.size+1}", @action, @template, opts)
       new_slot.state = @state
       @subslots << new_slot
       new_slot.superslot = self
@@ -162,7 +164,7 @@ module WagnHelper
     end
 
     def render(action, args={})
-      return render_xml(action, args) if @render_xml 
+      return render_xml(action, args) if @render_as_xml 
       #warn "<render(#{card.name}, #{@state}).render(#{action}, item=>#{args[:item]})"
 
       rkey = self.card.name + ":" + action.to_s
@@ -258,7 +260,8 @@ module WagnHelper
             render_partial("views/#{ok_action}", args)
 
   
-        else; "<strong>#{card.name} - unknown card view: '#{ok_action}'</strong>"
+        else
+          "<strong>#{card.name} - unknown card view: '#{ok_action}'</strong>"
       end
       if w_content
         args[:add_slot] = true unless args.key?(:add_slot)
@@ -367,16 +370,18 @@ module WagnHelper
         else                                                            ; action
       end
 
+#ActiveRecord::Base.logger.info("<Render_xml: #{ok_action} #{rkey} #{root.renders[rkey]} >")
       result = case ok_action
-        when :xml_missing
-          "<no_card> " + self.render( :name ) + "</no_card> "
-
-        when :xml_content
-          render_partial_xml('card/xml', args)
+        when :xml_missing ; "<no_card>#{card.name}</no_card>"
+        when :xml_content ; render_card_partial(:xml_content)
+        when :naked_content
+          @renderer.render( card, args.delete(:xml_content)|| "",
+                            update_refs=card.references_expired )
 
         when :xml, :xml_expanded
           @state = 'view'
           processed = cache_action('view_content') { render_xml(:xml_content) }
+          processed=expand_transclusions_xml( processed )
           while (processed=~/\{\{[^\}]+\}\}/) do
             processed=expand_transclusions_xml( processed )
           end
@@ -389,6 +394,7 @@ module WagnHelper
         else raise("Unknown slot render action '#{ok_action}'")
       end
 
+#ActiveRecord::Base.logger.info("<Render_xml(#{ok_action}) #{rkey} #{root.renders[rkey]}} #{result}>") ; result
       rescue Card::PermissionDenied=>e
         return "Permission error: #{e.message}"
     end
@@ -431,13 +437,7 @@ module WagnHelper
 
     def render_partial( partial, locals={} )
       locals =  { :card=>card, :slot=>self }.merge(locals)
-      StubTemplate===@template ?
-        render_stub(partial, locals) :
-        @template.render(:partial=>partial, :locals=>locals)
-    end
-
-    def render_partial_xml( partial, locals={} )
-      locals =  { :card=>card, :slot=>self }.merge(locals)
+#ActiveRecord::Base.logger.info("<Render part: #{partial} #{locals[:card].name}>")
       StubTemplate===@template ?
         render_stub(partial, locals) :
         @template.render(:partial=>partial, :locals=>locals)
@@ -469,7 +469,7 @@ module WagnHelper
       end
       #logger.info("<transclusion_case: state=#{state} vmode=#{vmode} --> Action=#{action}, Option=#{options.inspect}")
 
-      result = if @render_xml
+      result = if @render_as_xml
         xmltag = subslot.card.name.tag_name
         match_str ||= '' 
         %{"<card name="#{xmltag}" type="#{subslot.card.type}" }+

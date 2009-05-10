@@ -61,7 +61,6 @@ end
 
 # force loading of the system model. 
 System
-SCRIPT_LINES__ = {} if ENV['RAILS_ENV'] == 'development'
 
 # ****************************************************
 # IMPORTANT!!!:  YOU CANNOT PUT System.settings here

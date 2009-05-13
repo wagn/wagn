@@ -138,6 +138,7 @@ class Card::RenameTest < Test::Unit::TestCase
   def assert_rename( card, new_name )
     attrs_before = name_invariant_attributes( card )
     card.name=new_name
+    card.update_referencers = true
     card.confirm_rename = true
     card.save!
     assert_equal attrs_before, name_invariant_attributes(card)

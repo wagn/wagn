@@ -229,7 +229,9 @@ module WagnHelper
 
         when :expanded_view_content, :naked, :raw # raw is DEPRECATED
           @state = 'view'
-          expand_transclusions(  cache_action('view_content') {  card.post_render( render(:open_content)) } )
+          expand_transclusions(  cache_action('view_content') {
+            card.post_render( render(:open_content))
+          } )
 
         when :expanded_line_content
           expand_transclusions(  cache_action('line_content') { render(:closed_content) } )
@@ -373,6 +375,7 @@ module WagnHelper
 #ActiveRecord::Base.logger.info("<Render_xml: #{ok_action} #{rkey} #{root.renders[rkey]} >")
       result = case ok_action
         when :xml_missing ; "<no_card>#{card.name}</no_card>"
+        when :name ; card.name
         when :xml_content ; render_card_partial(:xml_content)
         when :naked_content
           @renderer.render( card, args.delete(:xml_content)|| "",

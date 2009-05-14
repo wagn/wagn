@@ -60,6 +60,7 @@ module Card
       return if (!new_record? || skip_defaults? || phantom? || @defaults_already_set)  
       @defaults_already_set = true
       set_defaults
+      #replace_content_variables
     end
     
     def set_defaults 
@@ -86,6 +87,11 @@ module Card
 
       self.name='' if self.name.nil?
     end
+    
+    #def replace_content_variables
+      # this should search through all variables (in links and inclusions) starting with $ 
+      #and replace them with either the corresponding passed-in param or ''
+    #end
     
     def default_permissions
       perm = template.real_card.permissions.reject { |p| p.task == 'create' unless (type == 'Cardtype' or template?) }
@@ -136,6 +142,7 @@ module Card
           with_class_from_args(args, p)
         end
         c.send(:set_needed_defaults)
+        #c.trash=false
         c
       end                      
                                   

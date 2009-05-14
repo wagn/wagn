@@ -214,9 +214,16 @@ module Wql2
     end          
     
     def found_by(val)
-      cards = val=~/^_/ ? [to_card(val)] : Card.search(val)
+      #cards = val=~/^_/ ? [to_card(val)] : Card.search(val)
+      cards = case
+          when val=~/^_/;    [to_card(val)]
+          when String===val; [CachedCard.get(val)]
+          else;              Card.search(val)
+        end  
+#      cards = val=~/^_/ ? [to_card(val)] : Card.search(val)
+#      cards = val=~/^_/ ? [to_card(val)] : Card.search(val)
       cards.each do |c|
-        raise %{"found_by" value needs to be valid Search card} unless c && c.type=='Search'
+        raise %{"found_by" value needs to be valid Search card #{c.inspect}} unless c && c.type=='Search'
         merge field(:id) => subspec(c.get_spec)
       end
     end

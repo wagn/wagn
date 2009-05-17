@@ -190,7 +190,7 @@ class CardController < ApplicationController
       #@author = "{{#{username}+image|size:icon}} [[#{username}]]"
       @author = "[[#{username}]]"
     end
-    @comment=@comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
+    @comment.gsub! /\n/, '<br/>'
     @card.comment = "<hr><p>#{@comment}</p><p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
     @card.save!   
     view = render_to_string(:action=>'show')

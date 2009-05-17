@@ -28,9 +28,7 @@
   			<p>(See the <%= slot.link_to_action('options', 'options') %> tab to learn more.)</p>
   		<% end %>
   		
-    	<% if User.current_user.anonymous? && Card::InvitationRequest.create_ok? %>
     	  <p><%= link_to 'Sign up for a new account', '/account/signup' %>.</p>
-    	<% end %>
     </div>
 
 	  <% if @skip_slot_header && !@type %>	

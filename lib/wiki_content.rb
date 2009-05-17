@@ -14,37 +14,36 @@ class WikiContent < String
        'a' => ['href' ],
        'img' => ['src', 'alt', 'title'],
        'br' => [],
-       'i'  => [],
-#         'u' => [],
-       'b'  => [],
-       'pre'=> [],
-#         'kbd' => [],
+       'i'  => nil,
+#         'u' => nil,
+       'b'  => nil,
+       'pre'=> nil,
+#         'kbd' => nil,
        'code' => ['lang'],
-       'cite'=> [],
-       'strong'=> [],
-       'em'  => [],
-       'ins' => [],
-       'sup' => [],
-       'sub' => [],
-       'del' => [],
-#         'table' => [],
-#         'tr' => [],
-#         'td' => [],
-#         'th' => [],
-       'ol' => [],       
-       'hr' => [],
-       'ul' => [],
-       'li' => [],
-       'p'  => [],
-       'div'=> [],
-       'h1' => [],
-       'h2' => [],
-       'h3' => [],
-       'h4' => [],
-       'h5' => [],
-       'h6' => [],
+       'cite'=> nil,
+       'strong'=> nil,
+       'em'  => nil,
+       'ins' => nil,
+       'sup' => nil,
+       'sub' => nil,
+       'del' => nil,
+#         'table' => nil,
+#         'tr' => nil,
+#         'td' => nil,
+#         'th' => nil,
+       'ol' => nil,
+       'hr' => nil,
+       'ul' => nil,
+       'li' => nil,
+       'p'  => nil,
+       'h1' => nil,
+       'h2' => nil,
+       'h3' => nil,
+       'h4' => nil,
+       'h5' => nil,
+       'h6' => nil,
        'blockquote' => ['cite'],
-       'span'=>[]
+       'span'=>['class']
       }                                             
   
 
@@ -59,10 +58,10 @@ class WikiContent < String
           tag = raw[2].downcase
           if tags.has_key? tag
             pcs = [tag]  
-            tags[tag]<<('class').each do |prop| 
+            tags[tag].each do |prop| 
               ['"', "'", ''].each do |q|
                 q2 = ( q != '' ? q : '\s' )
-                if prop=='class'
+                if tag=='span' && prop=='class'
                   if raw[3] =~ /#{prop}\s*=\s*#{q}(w-[^#{q2}]+)#{q}/i   
                     pcs << "#{prop}=\"#{$1.gsub('"', '\\"')}\"" 
                     break

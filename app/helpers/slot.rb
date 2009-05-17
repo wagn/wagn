@@ -134,6 +134,8 @@ module WagnHelper
 
     def cache_action(cc_method)
       (if CachedCard===card
+#ActiveRecord::Base.logger.info("Name:#{card.key}:#{cc_method}:")
+#debugger if card.key == 'annoteCard+icon'
         card.send(cc_method) || begin
           cached_card, @card = card, Card.find_by_key_and_trash(card.key, false) || raise("Oops! found cached card for #{card.key} but couln't find the real one")
           content = yield(@card)
@@ -376,10 +378,16 @@ module WagnHelper
       result = case ok_action
         when :xml_missing ; "<no_card>#{card.name}</no_card>"
         when :name ; card.name
-        when :xml_content ; render_card_partial(:xml_content)
+        when :xml_content ; 
+#debugger if card.name == 'AnnoteCard+icon'
+#ren =
+          render_card_partial(:xml_content)
+#debugger if ren =~ /^\s*<img>\s*$/ ; ren
         when :naked_content
+#ren =
           @renderer.render( card, args.delete(:xml_content)|| "",
                             update_refs=card.references_expired )
+#debugger if ren =~ /^\s*<img>\s*$/ ; ren
 
         when :xml, :xml_expanded
           @state = 'view'

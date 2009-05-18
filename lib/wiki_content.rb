@@ -15,10 +15,8 @@ class WikiContent < String
        'img' => ['src', 'alt', 'title'],
        'br' => [],
        'i'  => [],
-#         'u' => [],
        'b'  => [],
        'pre'=> [],
-#         'kbd' => [],
        'code' => ['lang'],
        'cite'=> [],
        'strong'=> [],
@@ -27,10 +25,6 @@ class WikiContent < String
        'sup' => [],
        'sub' => [],
        'del' => [],
-#         'table' => [],
-#         'tr' => [],
-#         'td' => [],
-#         'th' => [],
        'ol' => [],       
        'hr' => [],
        'ul' => [],
@@ -46,6 +40,9 @@ class WikiContent < String
        'blockquote' => ['cite'],
        'span'=>[]
       }                                             
+      
+      BASIC_TAGS.each_key {|k| BASIC_TAGS[k] << 'class' }
+        
   
 
       ## Method which cleans the String of HTML tags
@@ -59,7 +56,7 @@ class WikiContent < String
           tag = raw[2].downcase
           if tags.has_key? tag
             pcs = [tag]  
-            tags[tag]<<('class').each do |prop| 
+            tags[tag].each do |prop| 
               ['"', "'", ''].each do |q|
                 q2 = ( q != '' ? q : '\s' )
                 if prop=='class'

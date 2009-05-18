@@ -62,6 +62,7 @@ module NewRelic::Agent::Instrumentation
       end
       
       def dispatcher_finish(time)
+        return unless (@dispatcher_start)
         Thread.critical = true
         @accumulator += (time - @dispatcher_start)
         @dispatcher_start = nil

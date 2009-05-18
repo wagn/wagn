@@ -8,7 +8,7 @@ class WikiContentTest < Test::Unit::TestCase
   
   def test_clean
     assert_equal ' [grrew][/wiki/grrew]ss ',WikiContent.clean_html!(' [grrew][/wiki/grrew]ss ')
-    assert_equal '<p>html with funky tags</p>', WikiContent.clean_html!('<p>html<div class="boo">with</div><table>funky</td>tags</p>')
+    assert_equal '<p>html with  funky tags</p>', WikiContent.clean_html!('<p>html<div class="boo">with</div><table>funky</td>tags</p>')
   end
 
   def test_clean_should_allow_permitted_classes_in_spans

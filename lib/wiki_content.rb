@@ -30,7 +30,6 @@ class WikiContent < String
        'ul' => [],
        'li' => [],
        'p'  => [],
-       'div'=> [],
        'h1' => [],
        'h2' => [],
        'h3' => [],
@@ -38,15 +37,15 @@ class WikiContent < String
        'h5' => [],
        'h6' => [],
        'blockquote' => ['cite'],
-       'span'=>['class']
+       'span'=>[]
       }                                             
       
       BASIC_TAGS.each_key {|k| BASIC_TAGS[k] << 'class' }
-        
-  
+
+
 
       ## Method which cleans the String of HTML tags
-      ## and attributes outside of the allowed list.          
+      ## and attributes outside of the allowed list.
       
       # this has been hacked for wagn to allow classes in spans if 
       # the class begins with "w-"
@@ -72,7 +71,7 @@ class WikiContent < String
             end if tags[tag]
             "<#{raw[1]}#{pcs.join " "}>" 
           else
-            " " 
+            " "
           end
         end
         string

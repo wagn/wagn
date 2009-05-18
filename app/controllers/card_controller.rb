@@ -303,7 +303,7 @@ class CardController < ApplicationController
     end
     complete = complete.to_s
 
-    if !params[:id].blank? && (card = Card["#{params[:id].tag_name}+*options"]) && card.type=='Search'
+    if !params[:id].blank? && card=Card::Pointer.options_card(params[:id].tag_name)
       @items = card.search( :complete=>complete, :limit=>8, :sort=>'name')
     else
       @items = Card.search( :complete=>complete, :limit=>8, :sort=>'name' )

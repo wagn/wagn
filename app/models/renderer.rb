@@ -83,8 +83,10 @@ class Renderer
     # the empty string you passed it, it won't work.  but we seem to need it because
     # card.content='' in set_card_defaults and if you make it nil a bunch of other
     # stuff breaks
-    content = content.blank? ? card.content_for_rendering  : content 
-    
+    content = slot.render_as_xml ?
+                card.xml_content_for_rendering :
+                card.content_for_rendering if content.blank?
+
     wiki_content = WikiContent.new(card, content, self, slot.render_as_xml)
     yield wiki_content if block_given?
     update_references(card, wiki_content) if update_references

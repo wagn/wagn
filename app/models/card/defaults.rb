@@ -25,6 +25,10 @@ module CardLib
       false
     end
         
+    def xml_content_for_rendering
+      xml_content
+    end
+    
     def content_for_rendering
       content
     end

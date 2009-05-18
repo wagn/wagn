@@ -10,6 +10,11 @@ module Card
   # right_junctions:: from the point of view of A, A+B is a right_junction (the +B part is on the right)  
   #
   class Base < ActiveRecord::Base
+
+    HTML_ENTITIES = {
+      'nbsp' => "\240"
+    }
+
     set_table_name 'cards'
                                          
     # FIXME:  this is ugly, but also useful sometimes... do in a more thoughtful way maybe?
@@ -458,21 +463,25 @@ module Card
 #
     def xml_content
       new_record? ? ok!(:create_me) : ok!(:read)
-      if tmpl = xml_template and tmpl!=self
+      res = if tmpl = xml_template and tmpl!=self
         tmpl.content
       else
         current_revision ? current_revision.content : ""
       end
+      # ent refs to UTF-8
+      res.gsub(/&([^;]+);/) do |m|
+        HTML_ENTITIES.member?($1) ? HTML_ENTITIES[$1] : '&bad_ent&'
+      end
     end
 
     protected
+
     def clear_drafts
       connection.execute(%{
         delete from revisions where card_id=#{id} and id > #{current_revision_id} 
       })
     end
 
-    
     def clone_to_type( newtype )
       attrs = self.attributes_before_type_cast
       attrs['type'] = newtype 

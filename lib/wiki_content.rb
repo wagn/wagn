@@ -10,6 +10,12 @@ class WikiContent < String
     
    ## Dictionary describing allowable HTML
    ## tags and attributes.
+     EMPTY_TAGS = {
+       'img' => 1,
+       'br' => 1,
+       'hr' => 1,
+     }
+
      BASIC_TAGS = {
        'a' => ['href' ],
        'img' => ['src', 'alt', 'title'],
@@ -65,11 +71,16 @@ class WikiContent < String
                   end
                 elsif raw[3] =~ /#{prop}\s*=\s*#{q}([^#{q2}]+)#{q}/i
                   pcs << "#{prop}=\"#{$1.gsub('"', '\\"')}\"" 
+ActiveRecord::Base.logger.info("Img: #{prop} #{$1}") if tag == 'img'
                   break
                 end
               end
             end if tags[tag]
-            "<#{raw[1]}#{pcs.join " "}>" 
+            if EMPTY_TAGS[tag]
+              "<#{raw[1]}#{pcs.join " "}/>" 
+            else
+              "<#{raw[1]}#{pcs.join " "}>" 
+            end
           else
             " "
           end

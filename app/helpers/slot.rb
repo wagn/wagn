@@ -476,9 +476,8 @@ module WagnHelper
       result = if @render_as_xml
         xmltag = subslot.card.name.tag_name
         match_str ||= '' 
-        %{"<card name="#{xmltag}" type="#{subslot.card.type}" }+
-         %{transclude="#{match_str}">}+
-         subslot.render_xml(action, options)+"</card>"
+        %{\n<card name="#{xmltag}" type="#{subslot.card.type}" transclude="#{match_str}">} +
+         subslot.render_xml(action, options) + %{</card>}
       else
         subslot.render(action, options)
       end

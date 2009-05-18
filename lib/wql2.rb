@@ -30,7 +30,7 @@ module Wql2
     :semi_relational=> %w{ edited_by edited member_of member role found_by },
     :relational => %w{ part left right plus left_plus right_plus },  
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
-    :special => %w{ or match complete not count },
+    :special => %w{ or match complete not count and },
     :ignore => %w{ prepend append },
     :pass => %w{ cond }
   }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
@@ -263,6 +263,10 @@ module Wql2
     #end
     
     def cond(val); #noop      
+    end
+    
+    def and(val)
+      merge val
     end
     
     def or(val)

@@ -8,7 +8,7 @@ A_JOINEES = ["B", "C", "D", "E", "F"]
       
 CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User","*plusses+*rform"].sort    
 
-#=begin 
+=begin 
 describe Wql2, "in" do
   it "should work for content options" do
     Card.search(:in=>['AlphaBeta', 'Theta']).map(&:name).should == %w(A+B T)
@@ -315,7 +315,6 @@ describe Wql2, "match" do
     Card.search( :name=>[:match, "two"] ).plot(:name).sort.should==["One+Two","One+Two+Three","Two"].sort
   end
 end
-#=end
 
 describe Wql2, "found_by" do
   before do
@@ -337,4 +336,11 @@ describe Wql2, "found_by" do
   end
   
 end
+=end
 
+
+describe Wql2, "and" do
+  it "should act as a simple passthrough" do
+    Card.search(:and=>{:match=>'two'}).plot(:name).sort.should==CARDS_MATCHING_TWO
+  end
+end

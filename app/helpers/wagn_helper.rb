@@ -208,12 +208,6 @@ module WagnHelper
     content.gsub(/\[\[/,"<li class=\"item-#{view}\">{{").gsub(/\]\]/,"|#{view}#{type ? ';type:'+ type : ''}}}</li>") 
   end
   
-  def pointer_type(card)
-    if card.tag and (opts = CachedCard.get_real("#{card.tag.name}+*options")) and (opts.type == 'Search')
-      opts.get_spec[:type]
-    end
-  end
-  
   ## -----------
 
   def google_analytics

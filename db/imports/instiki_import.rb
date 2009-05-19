@@ -34,7 +34,7 @@ module InstikiImport
   class Importer
     def initialize
       warn "Connecting to #{DB[:database]}"
-      User.current_user = WagBot.instance
+      User.as :wagbot
     end
     
     def import_cards( add_to_existing=false)

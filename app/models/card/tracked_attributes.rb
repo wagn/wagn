@@ -154,14 +154,14 @@ module CardLib
     
     def cascade_name_changes 
       return true unless @name_changed
-      #ActiveRecord::Base.logger.info("----------------------- CASCADE #{self.name}  -------------------------------------")  
+      ActiveRecord::Base.logger.info("----------------------- CASCADE #{self.name}  -------------------------------------")  
       
       deps = self.dependents
                                             
       deps.each do |dep|
-        #ActiveRecord::Base.logger.info("---------------------- DEP #{dep.name}  -------------------------------------")  
+        ActiveRecord::Base.logger.info("---------------------- DEP #{dep.name}  -------------------------------------")  
         cxn = ActiveRecord::Base.connection
-        depname = dep.name.particle_names.map {|x| x==@old_name ? name : x }.join("+")
+        depname = dep.name.replace_particle @old_name, name
         depkey = depname.to_key    
         # here we specifically want NOT to invoke recursive cascades on these cards, have to go this 
         # low level to avoid callbacks.                                                               
@@ -172,13 +172,26 @@ module CardLib
       if !update_referencers || update_referencers == 'false'  # FIXME doing the string check because the radio button is sending an actual "false" string
         #warn "no updating.."
         ([self]+deps).each do |dep|
-          #ActiveRecord::Base.logger.info("--------------- NOUPDATE REFERRER #{dep.name}  ---------------------------")
+          ActiveRecord::Base.logger.info("--------------- NOUPDATE REFERRER #{dep.name}  ---------------------------")
           WikiReference.update_on_destroy(dep, @old_name) 
         end
       else
-        ([self]+deps).map(&:referencers).flatten.uniq.each do |referrer|
-          #ActiveRecord::Base.logger.info("------------------ UPDATE REFERRER #{referrer.name}  ------------------------")
-          WagBot.instance.revise_card_links( referrer, @old_name, name )
+        ([self]+deps).map(&:referencers).flatten.uniq.each do |card|
+          ActiveRecord::Base.logger.info("------------------ UPDATE REFERRER #{card.name}  ------------------------")
+          User.as(:wagbot) do      
+            card.content = Renderer.instance.process(card, nil) do |wiki_content|
+              wiki_content.find_chunks(Chunk::Link).each do |chunk|
+                link_bound = chunk.card_name == chunk.link_text          
+                chunk.card_name.replace chunk.card_name.replace_particle(@old_name, name)
+                chunk.link_text = chunk.card_name if link_bound
+              end
+              
+              wiki_content.find_chunks(Chunk::Transclude).each do |chunk|
+                chunk.card_name.replace chunk.card_name.replace_particle(@old_name, name)
+              end
+            end
+            card.save!
+          end
         end
       end
 
@@ -186,6 +199,8 @@ module CardLib
       @name_changed = false   
       true
     end
+
+    
                
     def self.append_features(base)
       super 

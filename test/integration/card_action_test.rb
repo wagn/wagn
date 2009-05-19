@@ -89,7 +89,7 @@ class CardActionTest < ActionController::IntegrationTest
   def test_newcard_works_with_fuzzy_renamed_cardtype
     given_cards "Cardtype:ZFoo" => ""
     User.as(:joe_user) do
-      Card["ZFoo"].update_attributes! :name=>"ZFooRenamed"
+      Card["ZFoo"].update_attributes! :name=>"ZFooRenamed", :confirm_rename=>true
     end
     
     get 'card/new', :card => { :type=>'z_foo_renamed' }       

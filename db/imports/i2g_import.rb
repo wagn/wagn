@@ -30,7 +30,7 @@ module I2gImport
     end
     
     def import_company_names
-      hoozebot = ::WagBot.instance
+      hoozebot = User.find_by_login(:wagbot)
       ::Node::Company.find(:all).each_with_index do |company,i| 
         if body = Body.find_by_name_tag( company.name )
           if body.nick_name.length > 3 and body.nick_name != company.name

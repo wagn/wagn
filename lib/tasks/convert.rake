@@ -1,7 +1,7 @@
 namespace :convert do
   task :markdown => :environment do
     require_gem 'BlueCloth'
-    User.current_user = HoozeBot.new.user
+    User.as :wagbot
     Card.find(:all, :order=>'name').each do |card|
       puts "Converting #{card.name}"
       html = BlueCloth.new(card.content || "").to_html
@@ -13,7 +13,7 @@ namespace :convert do
 
   task :textile => :environment do
     require_gem 'RedCloth'
-    User.current_user = WagBot.instance
+    User.as :wagbot
     Card.find(:all, :order=>'name').each do |card|
       puts "Converting #{card.name}"
       r = RedCloth.new(card.content || "")

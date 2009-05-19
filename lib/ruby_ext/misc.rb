@@ -18,7 +18,7 @@ class Hash
   end
   
   def to_semicolon_attr_list
-    self.map {|key,value| key.to_s == 'view' ? value : "#{key}:#{value}" }.join(";")
+    self.map {|key,value| key.to_s == 'view' ? value : "#{key}:#{value}" }.sort_by(&:length).join(";")
   end
 
 end

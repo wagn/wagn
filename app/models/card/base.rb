@@ -60,6 +60,7 @@ module Card
       return if (!new_record? || skip_defaults? || phantom? || @defaults_already_set)  
       @defaults_already_set = true
       set_defaults
+      #replace_content_variables
     end
     
     def set_defaults 
@@ -86,6 +87,11 @@ module Card
 
       self.name='' if self.name.nil?
     end
+    
+    #def replace_content_variables
+      # this should search through all variables (in links and inclusions) starting with $ 
+      #and replace them with either the corresponding passed-in param or ''
+    #end
     
     def default_permissions
       perm = template.real_card.permissions.reject { |p| p.task == 'create' unless (type == 'Cardtype' or template?) }
@@ -126,16 +132,24 @@ module Card
         c = find_or_new(args); c.save; c
       end
       
-      def find_or_new(args={})  
+      def find_or_new(args={})
         args.stringify_keys!
         # FIXME -- this finds cards in or out of the trash-- we need that for
         # renaming card in the trash, but may cause other problems.
         raise "Must specify :name to find_or_create" if args['name'].blank?
-        c = Card::Base.find_by_key(args['name'].to_key) || begin
+        c = Card.find(:first, :conditions=>"key = '#{args['name'].to_key}'") || begin
           p = Proc.new {|k| k.new(args)}
           with_class_from_args(args, p)
         end
         c.send(:set_needed_defaults)
+        # FIXME - this will lead to double saving when called from find_or_create, 
+        # but trashed cards are not getting saved when called from set_defaults   there's probably a better way.
+        if c.trash
+          ::User.as(:wagbot) do  
+            c.trash=false
+            c.save
+          end
+        end
         c
       end                      
                                   

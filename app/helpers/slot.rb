@@ -158,7 +158,7 @@ module WagnHelper
       #warn "<render(#{card.name}, #{@state}).render(#{action}, item=>#{args[:item]})"
       
       rkey = self.card.name + ":" + action.to_s
-      root.renders[rkey] ||= 1; 
+      root.renders[rkey] ||= 1 
       root.renders[rkey] += 1 unless [:name, :link].member?(action)
       #root.start_time ||= Time.now.to_f
 

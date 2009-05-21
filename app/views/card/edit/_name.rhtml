@@ -1,4 +1,6 @@
-<% @old_card ||= @card %>
+<% @old_card ||= @card 
+  @card.update_referencers ||= false
+%>
 
 
 <% get_slot.wrap('name') do |slot| %>
@@ -29,10 +31,10 @@
 
 			  <% if children = @card.extended_referencers and !children.empty? %>
 			    <div class="headroom">
-			      <h2>Links to <%= @old_card.name %></h2>
+			      <h2>References to <%= @old_card.name %></h2>
 			    </div>
 			    <div class="instruction">
-  			    <p>Renaming will break links on the following cards unless they're updated:</p>
+  			    <p>Renaming could break links and inclusions on the following cards unless they're updated:</p>
   			    <ul>
   			      <% children.map do |child| %>
   			        <li><%= link_to_page formal_title(child), child.name %>

@@ -70,6 +70,17 @@ class Card::BaseTest < Test::Unit::TestCase
     assert !Card.find_by_name('no such card+no such tag')
     assert !Card.find_by_name('HomeCard+no such tag')
   end
+          
+
+  def test_multi_update_should_create_subcards
+  end
+  
+  def test_multi_update_should_create_subcards_as_wagbot_if_missing_subcard_permissions
+  end
+  
+  def test_multi_update_should_not_create_cards_if_missing_card_permissions
+  end
+
 
   private 
     def assert_simple_card( card )

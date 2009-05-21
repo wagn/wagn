@@ -72,7 +72,7 @@ module CardLib
         after_destroy :update_references_on_destroy
         after_update :update_references_on_update
         
-        #after_save :expire_cache
+        after_save :expire_cache
       end
     end
   end

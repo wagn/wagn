@@ -343,6 +343,7 @@ div:hover.card-footer .card-links{
 
 .in-multi .instruction,
 .in-multi .instruction p{
+  clear:left;
   border: 0px;
   background: inherit;
   text-align: left;
@@ -674,7 +675,11 @@ body.wagn .card-slot.line h2,
   font-size: 15px;
 }
 
+/*-------------( Phrase)-----------*/
 
+.card-slot .phrasebox {
+  width: 98%;
+}
 
 /*---------( Search ) ---------- */
 

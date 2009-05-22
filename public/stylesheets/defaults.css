@@ -12,7 +12,7 @@ body.mceContentBody {
   margin: 4px;
 }
 
-body, p, ol, ul, td, th {
+body, p, ol, ul, td, th, input, textarea {
   font-family: verdana, arial, helvetica, sans-serif;
   font-size:   12px;
   font-weight: normal;
@@ -102,12 +102,14 @@ td, th {
   vertical-align: top;
   padding: 0px;
 }
-
 .table-row-odd {
   background: #cce;
 }
-input[type=text], #navbox_background,
+input[type=text], 
+#navbox_background,
 input[type=password],
+input[type=checkbox],
+textarea,
 select {
   padding-left: 3px;
   border: 1px solid #aaa;
@@ -117,7 +119,9 @@ select {
   color: #555;
   background: #ffd;
 }
-
+#tinymce {
+  background: #ffd;  
+}
 input {
   padding: 0px;
 }
@@ -131,8 +135,18 @@ input[type=button] {
   border-bottom: 1px solid #666;
   margin: 5px;
 }
+input:focus,
+select:focus,
+textarea:focus,
+div:focus#tinymce {
+  background: #ffa;
+}
+input[type=submit]:focus, 
+input[type=button]:focus {
+  color: #000
+}
 textarea {
-  width: 100%;    
+  width: 98%;    
 }
 img {
   border: 0px;

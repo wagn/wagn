@@ -2,7 +2,8 @@ require File.dirname(__FILE__) + '/../../test_helper'
 class Card::BaseTest < Test::Unit::TestCase
   common_fixtures
   def setup
-    setup_default_user
+    setup_default_user     
+    CachedCard.bump_global_seq
   end
 
   def test_remove
@@ -41,8 +42,13 @@ class Card::BaseTest < Test::Unit::TestCase
   def test_attribute_card
     alpha, beta = Card.create(:name=>'alpha'), Card.create(:name=>'beta')
     assert_nil alpha.attribute_card('beta')
-    Card.create :name=>'alpha+beta'
-    assert_instance_of Card::Basic, alpha.attribute_card('beta')
+    Card.create :name=>'alpha+beta'   
+    # Oh what a broken api...
+    if CachedCard.perform_caching
+      assert_instance_of CachedCard, alpha.attribute_card('beta')
+    else
+      assert_instance_of Card::Basic, alpha.attribute_card('beta')
+    end
   end
 
   def test_create
@@ -70,6 +76,62 @@ class Card::BaseTest < Test::Unit::TestCase
     assert !Card.find_by_name('no such card+no such tag')
     assert !Card.find_by_name('HomeCard+no such tag')
   end
+          
+
+  def test_multi_update_should_create_subcards  
+    User.as(:joe_user)
+    b = Card.create!( :name=>'Banana' )
+    b.multi_update({ "+peel" => { :content => "yellow" }})
+    assert_equal "yellow", Card["Banana+peel"].content   
+    assert_equal User[:joe_user].id, Card["Banana+peel"].created_by
+  end
+  
+  def test_multi_update_should_create_subcards_as_wagbot_if_missing_subcard_permissions
+    # 1st setup anonymously create-able cardtype
+    User.as(:joe_admin)
+    f = Card.create! :type=>"Cardtype", :name=>"Fruit"
+    f.permit(:create, Role[:anon])       
+    f.permit(:read, Role[:admin])
+    f.save!
+
+    # then repeat multiple update as above, as :anon
+    User.as(:anon) 
+    b = Card.create!( :type=>"Fruit", :name=>'Banana' )
+    b.multi_update({ "+peel" => { :content => "yellow" }})
+    assert_equal "yellow", Card["Banana+peel"].content   
+    assert_equal User[:wagbot].id, Card["Banana+peel"].created_by
+  end
+  
+  def test_multi_update_should_not_create_cards_if_missing_main_card_permissions
+    User.as(:joe_user)
+    b = Card.create!( :name=>'Banana' )
+    User.as(:anon) 
+    assert_raises( Card::PermissionDenied ) do
+      b.multi_update({ "+peel" => { :content => "yellow" }})
+    end
+  end
+
+
+  def test_create_without_read_permission
+    # 1st setup anonymously create-able cardtype
+    User.as(:joe_admin)
+    f = Card.create! :type=>"Cardtype", :name=>"Fruit"
+    f.permit(:create, Role[:anon])       
+    f.permit(:read, Role[:admin])   
+    f.save!
+    
+    ff = Card.create! :name=>"Fruit+*tform"
+    ff.permit(:read, Role[:auth])
+    ff.save!
+    
+    User.as(:anon)     
+    c = Card.create! :name=>"Banana", :type=>"Fruit", :content=>"mush"
+
+    assert_raises Card::PermissionDenied do
+      Card['Banana'].content
+    end
+  end
+  
 
   private 
     def assert_simple_card( card )

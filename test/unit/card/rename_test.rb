@@ -1,7 +1,11 @@
 require File.dirname(__FILE__) + '/../../test_helper'
 class Card::RenameTest < Test::Unit::TestCase
   common_fixtures
-
+  
+  # FIXME: these tests are TOO SLOW!  8s against server, 12s from command line.  
+  # not sure if it's the card creation or the actual renaming process.
+  # Card#save needs optimized in general.
+  
   def setup
     setup_default_user
   end
@@ -24,7 +28,8 @@ class Card::RenameTest < Test::Unit::TestCase
     c3 = Card.create! :name => "br2", :content => "{{blue|closed;other:stuff}}"
     
     #assert_equal ["br1","br2"], c1.transcluders.map(&:name).sort
-    c1.name = "Red"
+    c1.reload.name = "Red"
+    c1.confirm_rename = true
     c1.update_referencers = true
     c1.save!
     assert_equal "{{Red}}", Card.find(c2.id).content                     
@@ -37,7 +42,8 @@ class Card::RenameTest < Test::Unit::TestCase
     c1 = Card.create! :name => "Blue"
     c2 = Card.create! :name => "blue ref 1", :content => "[[Blue]]"
     c3 = Card.create! :name => "blue ref 2", :content => "[[blue]]"
-    c1.name = "Red"
+    c1.reload.name = "Red"
+    c1.confirm_rename = true
     c1.update_referencers = true
     c1.save!
     assert_equal "[[Red]]", Card.find(c2.id).content

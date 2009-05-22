@@ -104,13 +104,20 @@ class CardController < ApplicationController
     @card = Card.create params[:card]
     @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards] and @card.errors.empty?
 
+    @redirect_location = if @card.ok?(:read)
+      url_for_page(@card.name)
+    else
+      "/" + ( System.setting(@card.cardtype.name + "+*thanks") || System.setting("Basic+*thanks") || '' )
+    end              
+    
     render_args = 
       case
-        when !@card.errors.empty?;  {
+        when !@card.errors.empty?; {
           :status => 422,
           :inline=>"<%= error_messages_for :card %><%= javascript_tag 'scroll(0,0)' %>" 
-        }
-        when main_card?;  {:action=>'new_redirect', :status=>418 }          
+        }    
+        when (!@card.ok?(:read));  {:action=>'redirect_to_thanks', :status=>418  }
+        when main_card?;    {:action=>'redirect_to_created_card', :status=>418 }          
           # according to rails / prototype docs:
           # :success: [...] the HTTP status code is in the 2XX range.
           # :failure: [...] the HTTP status code is not in the 2XX range.
@@ -190,8 +197,8 @@ class CardController < ApplicationController
       #@author = "{{#{username}+image|size:icon}} [[#{username}]]"
       @author = "[[#{username}]]"
     end
-    @comment.gsub! /\n/, '<br/>'
-    @card.comment = "<hr><p>#{@comment}</p><p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
+    @comment=@comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
+    @card.comment = "<hr>#{@comment}<p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
     @card.save!   
     view = render_to_string(:action=>'show')
     render_update_slot view

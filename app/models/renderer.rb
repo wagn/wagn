@@ -110,14 +110,14 @@ class Renderer
     end
 
     rendering_result.find_chunks(Chunk::Reference).each do |chunk|
-   #  warn "   reference basename: #{chunk.send(:base_card).name} #{chunk.class} #{chunk.card_name} #{chunk.refcard_name}"
+      ActiveRecord::Base.logger.info " ------ REFERENCE BASENAME: #{chunk.send(:base_card).name} #{chunk.class} #{chunk.card_name} #{chunk.refcard_name}"
       reference_type = 
         case chunk
           when Chunk::Link;       chunk.refcard ? LINK : WANTED_LINK
           when Chunk::Transclude; chunk.refcard ? TRANSCLUSION : WANTED_TRANSCLUSION
           else raise "Unknown chunk reference class #{chunk.class}"
         end
-      #warn "  CREATING REFERNCE #{card.name}:#{card.id} --> #{chunk.refcard_name} #{reference_type}"
+      ActiveRecord::Base.logger.info " -------  CREATING REFERNCE #{card.name}:#{card.id} --> #{chunk.refcard_name} #{reference_type}"
       WikiReference.create!(
         :card_id=>card.id,
         :referenced_name=>chunk.refcard_name.to_key, 

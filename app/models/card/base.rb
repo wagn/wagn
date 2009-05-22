@@ -89,7 +89,7 @@ module Card
       end
       
       if template.hard_template? || !updates.for?(:content) 
-        self.content = template.content
+        self.content = ::User.as(:wagbot) { template.content }
       end
 
       self.name='' if self.name.nil?
@@ -273,8 +273,12 @@ module Card
         if card = Card[name]
           card.update_attributes(opts)
         elsif !opts[:content].strip.blank?  #fixme -- need full-on strip that gets rid of blank html tags.
-          opts[:name] = name
-          card = Card.create(opts)
+          opts[:name] = name   
+          if ::Cardtype.create_ok?( self.type ) && !::Cardtype.create_ok?( Card.new(opts).type )
+            ::User.as(:wagbot) { Card.create(opts) }
+          else
+            Card.create(opts)
+          end
         end
         if card and !card.errors.empty?
           card.errors.each do |field, err|
@@ -569,7 +573,7 @@ module Card
           rec.errors.add :confirmation_required, "#{rec.name} has #{rec.dependents.size} dependents"
         end
         
-        if !rec.update_referencers || rec.update_referencers == 'false' and !rec.extended_referencers.empty? 
+        if !rec.confirm_rename || rec.update_referencers == 'false' and !rec.extended_referencers.empty? 
           rec.errors.add :confirmation_required, "#{rec.name} has #{rec.extended_referencers.size} links in"
         end
       end

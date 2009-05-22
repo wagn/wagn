@@ -41,7 +41,7 @@ module CardLib
       end
 
       def find_template(name)
-        CachedCard.get_real(name) #
+        User.as(:wagbot) { CachedCard.get_real(name) }
       end
 
       def default_template

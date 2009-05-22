@@ -75,7 +75,7 @@ module CardLib
     end
     
     # ok? and ok! are public facing methods to approve one operation at a time
-    def ok?(operation) 
+    def ok?(operation)  
       self.operation_approved = true
       send("approve_#{operation}")     
       operation_approved
@@ -126,9 +126,10 @@ module CardLib
     
     def approve_read
       if reader_type=='Role'
-        deny_because you_cant("read this card") unless System.role_ok?(reader_id)
+        (self.operation_approved = false) unless System.role_ok?(reader_id)
       else
-        approve_task(:read)
+        testee = template? ? trunk : self
+        (self.operation_approved = false) unless testee.lets_user( :read ) 
       end
     end
        

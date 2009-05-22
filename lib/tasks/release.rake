@@ -53,9 +53,6 @@ namespace :wagn do
     #files.exclude 'vendor'            
     
     files.exclude 'selenium-on-rails'
-    
-    # if you include the test, it runs them.  that will be a good thing later, but for now
-    # I want a tight debug loop on building the package.
     #files.exclude 'test'
     s.files = files.to_a
   end
@@ -92,7 +89,8 @@ namespace :wagn do
   end
 
   task :setup do
-    sh "cd config; cp sample_database.yml database.yml; cp sample_wagn.rb wagn.rb; cd ../;"
+    sh "cd config; cp sample_database.yml database.yml; cp sample_wagn.rb wagn.rb; cd ../;" 
+    `rake gems:freeze`
   end   
 
   # before running this task, do a svn log --xml -rXXXX:XXX > svnlog.xml to get the log entries into

@@ -14,3 +14,5 @@ public/javascripts/base*
 public/card_images
 public/card_files
 *.out
+test/unit/tmp_test.rb
+public/javascripts/inline-console.js

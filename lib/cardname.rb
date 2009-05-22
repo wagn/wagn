@@ -32,6 +32,10 @@ module Cardname
     (simple? ? self : self.tag_name) + "+*template"
   end
 =end
+    
+  def replace_particle( oldpart, newpart )
+    particle_names.map {|x| x.to_key == oldpart.to_key ? newpart : x }.join("+")
+  end
 
   def pre_cgi
     gsub('+','~plus~')

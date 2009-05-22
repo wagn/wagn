@@ -1,4 +1,21 @@
 require File.dirname(__FILE__) + '/../spec_helper'
+
+
+describe "CachedCard semi-integration" do
+  if CachedCard.perform_caching
+    it "should return a cached card the second time" do
+      CachedCard.get("A");  # populate the cache if we haven't gotten this card yet
+      CachedCard.find("a").should be_instance_of(CachedCard)  # should be in the cache now
+    end
+
+    it "should not find a card after bumping the sequence" do
+      CachedCard.get("A");  # populate the cache if we haven't gotten this card yet
+      CachedCard.bump_global_seq
+      CachedCard.find("a").should == nil
+    end
+  end
+end
+
  
 
 describe "CachedCard" do

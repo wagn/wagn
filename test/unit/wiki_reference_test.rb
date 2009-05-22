@@ -63,44 +63,48 @@ class WikiReferenceTest < Test::Unit::TestCase
     assert Card["Ethan"].referencers.plot(:name).include?("L")
   end
                   
-  def test_update_references_on_rename
-     watermelon = newcard('watermelon', 'mmmm')
-     seeds = newcard('seeds')
-     watermelon_seeds = watermelon.connect seeds, 'black'
-     lew = newcard('Lew', "likes [[watermelon]] and [[watermelon#{JOINT}seeds|seeds]]")
+  def test_should_update_references_on_rename_when_requested
+    watermelon = newcard('watermelon', 'mmmm')
+    watermelon_seeds = newcard('watermelon+seeds', 'black')
+    lew = newcard('Lew', "likes [[watermelon]] and [[watermelon#{JOINT}seeds|seeds]]")
 
-     watermelon = Card['watermelon']
-     watermelon.update_referencers = true
-     watermelon.confirm_rename = true
-     watermelon.name="grapefruit"
-     watermelon.save!
-     assert_equal "likes [[grapefruit]] and [[grapefruit#{JOINT}seeds|seeds]]", lew.reload.content
+    watermelon = Card['watermelon']
+    watermelon.update_referencers = true
+    watermelon.confirm_rename = true
+    watermelon.name="grapefruit"
+    watermelon.save!
+    assert_equal "likes [[grapefruit]] and [[grapefruit#{JOINT}seeds|seeds]]", lew.reload.content
+  end
+  
+  def test_should_not_update_references_when_not_requested
+    watermelon = newcard('watermelon', 'mmmm')
+    watermelon_seeds = newcard('watermelon+seeds', 'black')
+    lew = newcard('Lew', "likes [[watermelon]] and [[watermelon#{JOINT}seeds|seeds]]")
 
+    watermelon = Card['watermelon']
+    watermelon.update_referencers = false
+    watermelon.confirm_rename = true
+    watermelon.name="grapefruit"
+    watermelon.save!
+    assert_equal "likes [[watermelon]] and [[watermelon#{JOINT}seeds|seeds]]", lew.reload.content
+    w = ReferenceTypes::WANTED_LINK
+    assert_equal [w,w], lew.out_references.plot(:link_type), "links should be Wanted"
+  end
 
-     watermelon = Card['grapefruit']
-     watermelon.update_referencers = false
-     watermelon.confirm_rename = true
-     watermelon.name='bananas'
-     watermelon.save!
-     assert_equal "likes [[grapefruit]] and [[grapefruit#{JOINT}seeds|seeds]]", lew.reload.content 
-     w = ReferenceTypes::WANTED_LINK
-     assert_equal [w,w], lew.out_references.plot(:link_type), "links should be Wanted"
-   end
+  def test_update_referencing_content_on_rename_junction_card
+    @ab = Card.find_by_name("A+B") #linked to from X, transcluded by Y
+    @ab.update_attributes! :name=>'Peanut+Butter'
+    @x = Card.find_by_name('X')
+    assert_equal "[[A]] [[Peanut+Butter]] [[T]]", @x.content
+  end
 
-   def test_update_referencing_content_on_rename_junction_card
-     @ab = Card.find_by_name("A+B") #linked to from X, transcluded by Y
-     @ab.update_attributes! :name=>'Peanut+Butter'
-     @x = Card.find_by_name('X')
-     assert_equal "[[A]] [[Peanut+Butter]] [[T]]", @x.content
-   end
-
-   def test_update_referencing_content_on_rename_junction_card
-     @ab = Card.find_by_name("A+B") #linked to from X, transcluded by Y
-     @ab.confirm_rename = true
-     @ab.update_attributes! :name=>'Peanut+Butter', :update_referencers=>false
-     @x = Card.find_by_name('X')
-     assert_equal "[[A]] [[A+B]] [[T]]", @x.content
-   end
+  def test_update_referencing_content_on_rename_junction_card
+    @ab = Card.find_by_name("A+B") #linked to from X, transcluded by Y
+    @ab.confirm_rename = true
+    @ab.update_attributes! :name=>'Peanut+Butter', :update_referencers=>false
+    @x = Card.find_by_name('X')
+    assert_equal "[[A]] [[A+B]] [[T]]", @x.content
+  end
     
   def test_template_transclusion
     cardtype = Card::Cardtype.create! :name=>"ColorType", :content=>""
@@ -147,7 +151,8 @@ class WikiReferenceTest < Test::Unit::TestCase
   def test_pickup_new_links_on_create
     @l = newcard("woof", "[[Lewdog]]")  # no Lewdog card yet...
     @e = newcard("Lewdog")              # now there is
-    assert @e.referencers.plot(:name).include?("woof")
+    # NOTE @e.referencers does not work, you have to reload
+    assert @e.reload.referencers.plot(:name).include?("woof")
   end
   
   

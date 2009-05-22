@@ -215,6 +215,24 @@ class CardControllerTest < Test::Unit::TestCase
     assert_template "redirect_to_created_card"
   end
 
+  def test_new_should_work_for_creatable_nonviewable_cardtype
+    User.as(:joe_admin)
+    f = Card.create! :type=>"Cardtype", :name=>"Fruit"
+    f.permit(:create, Role[:anon])       
+    f.permit(:read, Role[:auth])   
+    f.permit(:edit, Role[:admin])   
+    f.save!
+
+    ff = Card.create! :name=>"Fruit+*tform"
+    ff.permit(:read, Role[:auth])
+    ff.save!
+    
+    login_as(:anon)     
+    get :new, :type=>"Fruit"
+
+    assert_response :success
+    assert_template "new"
+  end
   
   
 =begin FIXME

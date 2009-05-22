@@ -99,6 +99,18 @@ class PermissionTest < Test::Unit::TestCase
   end
 =end
  
+  def test_checking_ok_read_should_not_add_to_errors
+    User.as(:joe_admin)
+    h = Card.create! :name=>"Hidden"
+    h.permit(:read, Role[:auth])   
+    h.save!
+  
+    User.as(:anon)
+    h = Card["Hidden"]
+    h.ok?(:read)
+    assert h.errors.empty?
+  end   
+
   
   
   def test_reader_setting

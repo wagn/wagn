@@ -82,7 +82,7 @@ module Card
       end
       
       if template.hard_template? || !updates.for?(:content) 
-        self.content = template.content
+        self.content = ::User.as(:wagbot) { template.content }
       end
 
       self.name='' if self.name.nil?

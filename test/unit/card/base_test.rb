@@ -2,7 +2,8 @@ require File.dirname(__FILE__) + '/../../test_helper'
 class Card::BaseTest < Test::Unit::TestCase
   common_fixtures
   def setup
-    setup_default_user
+    setup_default_user     
+    CachedCard.bump_global_seq
   end
 
   def test_remove
@@ -41,8 +42,13 @@ class Card::BaseTest < Test::Unit::TestCase
   def test_attribute_card
     alpha, beta = Card.create(:name=>'alpha'), Card.create(:name=>'beta')
     assert_nil alpha.attribute_card('beta')
-    Card.create :name=>'alpha+beta'
-    assert_instance_of Card::Basic, alpha.attribute_card('beta')
+    Card.create :name=>'alpha+beta'   
+    # Oh what a broken api...
+    if CachedCard.perform_caching
+      assert_instance_of CachedCard, alpha.attribute_card('beta')
+    else
+      assert_instance_of Card::Basic, alpha.attribute_card('beta')
+    end
   end
 
   def test_create
@@ -104,6 +110,28 @@ class Card::BaseTest < Test::Unit::TestCase
       b.multi_update({ "+peel" => { :content => "yellow" }})
     end
   end
+
+
+  def test_create_without_read_permission
+    # 1st setup anonymously create-able cardtype
+    User.as(:joe_admin)
+    f = Card.create! :type=>"Cardtype", :name=>"Fruit"
+    f.permit(:create, Role[:anon])       
+    f.permit(:read, Role[:admin])   
+    f.save!
+    
+    ff = Card.create! :name=>"Fruit+*tform"
+    ff.permit(:read, Role[:auth])
+    ff.save!
+    
+    User.as(:anon)     
+    c = Card.create! :name=>"Banana", :type=>"Fruit", :content=>"mush"
+
+    assert_raises Card::PermissionDenied do
+      Card['Banana'].content
+    end
+  end
+  
 
   private 
     def assert_simple_card( card )

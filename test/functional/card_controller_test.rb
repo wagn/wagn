@@ -171,6 +171,50 @@ class CardControllerTest < Test::Unit::TestCase
     assert Card.find_by_name("sss")
     assert Card.find_by_name("sss+text")
   end
+
+  def test_should_redirect_to_thanks_on_create_without_read_permission
+    # 1st setup anonymously create-able cardtype
+    User.as(:joe_admin)
+    f = Card.create! :type=>"Cardtype", :name=>"Fruit"
+    f.permit(:create, Role[:anon])       
+    f.permit(:read, Role[:admin])   
+    f.save!
+    
+    ff = Card.create! :name=>"Fruit+*tform"
+    ff.permit(:read, Role[:auth])
+    ff.save!
+    
+    Card.create! :name=>"Fruit+*thanks", :type=>"Phrase", :content=>"wagn/sweet"
+    
+    login_as(:anon)     
+    post :create, :card => {
+      :name=>"Banana", :type=>"Fruit", :content=>"mush"
+    }     
+    assert_equal "/wagn/sweet", assigns["redirect_location"]
+    assert_template "redirect_to_thanks"
+  end
+  
+
+  def test_should_redirect_to_card_on_create_main_card
+    # 1st setup anonymously create-able cardtype
+    User.as(:joe_admin)
+    f = Card.create! :type=>"Cardtype", :name=>"Fruit"
+    f.permit(:create, Role[:anon])       
+    f.permit(:read, Role[:anon])   
+    f.save!
+
+    ff = Card.create! :name=>"Fruit+*tform"
+    ff.permit(:read, Role[:anon])
+    ff.save!
+    
+    login_as(:anon)     
+    post :create, :context=>"main_1", :card => {
+      :name=>"Banana", :type=>"Fruit", :content=>"mush"
+    }                    
+    assert_equal "/wagn/Banana", assigns["redirect_location"]
+    assert_template "redirect_to_created_card"
+  end
+
   
   
 =begin FIXME

@@ -121,12 +121,12 @@ class Card::BaseTest < Test::Unit::TestCase
     f.save!
     
     ff = Card.create! :name=>"Fruit+*tform"
-    ff.permit(:read, Role[:admin])
+    ff.permit(:read, Role[:auth])
     ff.save!
     
     User.as(:anon)     
-    Card.create :name=>"Banana", :type=>"Fruit", :content=>"mush"
-    
+    c = Card.create! :name=>"Banana", :type=>"Fruit", :content=>"mush"
+
     assert_raises Card::PermissionDenied do
       Card['Banana'].content
     end

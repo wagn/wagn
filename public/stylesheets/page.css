@@ -185,7 +185,7 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
 .edit-instruction {
   margin: 8px 0px;
 }
-#new-card .instruction {
+#new-card .main-instruction {
   margin-bottom: 20px;
 }
 

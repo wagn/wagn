@@ -152,7 +152,8 @@ module Card
         # FIXME - this will lead to double saving when called from find_or_create, 
         # but trashed cards are not getting saved when called from set_defaults   there's probably a better way.
         if c.trash
-          ::User.as(:wagbot) do  
+          ::User.as(:wagbot) do
+            c.content=''  
             c.trash=false
             c.save
           end

@@ -38,6 +38,11 @@ Rails::Initializer.run do |config|
   # config.active_record.default_timezone = :utc
   
   # See Rails::Configuration for more options   
+
+
+  # select a store for the rails/card cache
+  config.action_controller.cache_store = :file_store, "#{RAILS_ROOT}/tmp/cache" #, :mem_cache_store # 
+
   
   #config.gem "rspec-rails", :lib => "spec"          
   config.gem "uuid"

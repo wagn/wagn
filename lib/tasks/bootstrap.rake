@@ -61,10 +61,10 @@ namespace :wagn do
       )
 
       config_cards = %w{ *context *to *title account_request+*tform *invite+*thank *signup+*thank *from }
-      permset = :basic
+      permset = ENV['PERMISSIONS'].to_sym || :standard
       
       permission = {
-        :basic=>{
+        :standard=>{
          :default=> {:read=>:anon, :edit=>:auth, :delete=>:auth, :create=>:auth, :comment=>nil},
          :star=> {:edit=>:admin},
          'role'=> {:create=>:admin},
@@ -73,15 +73,25 @@ namespace :wagn do
 #         'account_request+*tform' {:read=>:admin},
          'administrator_link'=> {:read=>:admin},
          'discussion+*rform'=> {:comment=>:anon}
+        },
+        :openedit=>{
+         :default=> {:read=>:anon, :edit=>:anon, :delete=>:auth, :create=>:anon, :comment=>nil},
+         :star=> {:edit=>:admin, :delete=>:admin},
+         'role'=> {:create=>:admin},
+         'html'=> {:create=>:admin},
+         'html+*tform'=> {:edit=>:admin},
+         'administrator_link'=> {:read=>:admin},
+         'discussion+*rform'=> {:comment=>:anon}
         }
-      }
+      } 
+      
     
       role_ids = {}
       Role.find(:all).each do |role|
         role_ids[role.codename.to_sym] = role.id
       end
 
-      perms = permission[:basic]
+      perms = permission[permset]
       default = perms[:default]
     
       ActiveRecord::Base.connection.delete( 'delete from permissions')

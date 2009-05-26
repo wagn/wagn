@@ -98,7 +98,7 @@ class Card::BaseTest < Test::Unit::TestCase
     User.as(:anon) 
     b = Card.create!( :type=>"Fruit", :name=>'Banana' )
     b.multi_update({ "+peel" => { :content => "yellow" }})
-    assert_equal "yellow", Card["Banana+peel"].content   
+    assert_equal "yellow", Card["Banana+peel"].current_revision.content   
     assert_equal User[:wagbot].id, Card["Banana+peel"].created_by
   end
   

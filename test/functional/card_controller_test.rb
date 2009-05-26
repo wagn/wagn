@@ -234,12 +234,23 @@ class CardControllerTest < Test::Unit::TestCase
     assert_template "new"
   end
   
-  
-=begin FIXME
-  def test_new    
+  def test_rename_without_update_references_should_work
+    User.as :joe_user
+    f = Card.create! :type=>"Cardtype", :name=>"Fruit"
+    post :update, :id => f.id, :card => {
+      :confirm_rename => true,
+      :name => "Newt",
+      :update_referencers => "false",
+    }                   
+    assert_equal ({ "name"=>"Newt", "update_referencers"=>'false', "confirm_rename"=>true }), assigns['card_args']
+    assert_equal [], assigns['card'].errors
+    assert_response 418
+    assert Card["Newt"]
   end
 
-  def test_rename
+
+=begin FIXME
+  def test_new    
   end
   
   def test_revision

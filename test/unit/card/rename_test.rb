@@ -166,5 +166,11 @@ class Card::RenameTest < Test::Unit::TestCase
     assert_equal "[[/new/{{_self|name}}|new]]", Card["Buttah"].content
   end
 
+  def test_renaming_card_without_updating_references_should_not_have_errors
+    Card.create! :type=>"Cardtype", :name=>"Dairy", :content => "[[/new/{{_self|name}}|new]]"
+    c = Card["Dairy"]
+    c.update_attributes "name"=>"Newt", "update_referencers"=>'false', "confirm_rename"=>true 
+    assert_equal "[[/new/{{_self|name}}|new]]", Card["Newt"].content
+  end
 end
 

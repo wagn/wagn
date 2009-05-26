@@ -152,6 +152,8 @@ class CardController < ApplicationController
       return render( :action=>:edit_conflict )
     end 
     # ~~~~~~  /REFACTOR ~~~~~ #
+
+    @card_args = card_args
     
     case
     when params[:multi_edit]; @card.multi_update(params[:cards])
@@ -162,9 +164,9 @@ class CardController < ApplicationController
     end  
 
     if @card.errors.on(:confirmation_required) && @card.errors.map {|e,f| e}.uniq.length==1  
-      ## I don't get the second condition.  pls document  
-      @confirm = @card.confirm_rename=true
-      @card.update_referencers = (@card.update_referencers=='true')
+      # If there is confirmation error and *only* that error 
+      @confirm = (@card.confirm_rename=true)
+      @card.update_referencers = true
       return render(:partial=>'card/edit/name', :status=>200)
     end
     

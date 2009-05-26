@@ -553,8 +553,8 @@ module Card
           rec.errors.add :confirmation_required, "#{rec.name} has #{rec.dependents.size} dependents"
         end
         
-        if !rec.confirm_rename || rec.update_referencers == 'false' and !rec.extended_referencers.empty? 
-          rec.errors.add :confirmation_required, "#{rec.name} has #{rec.extended_referencers.size} links in"
+        if rec.update_referencers.nil? and !rec.extended_referencers.empty? 
+          rec.errors.add :confirmation_required, "#{rec.name} has #{rec.extended_referencers.size} referencers"
         end
       end
     end

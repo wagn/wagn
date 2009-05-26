@@ -82,8 +82,8 @@ class CardActionTest < ActionController::IntegrationTest
       {"YFoo+*edit"  => "instruct-me"}
     )
     get 'card/new', :card => {:type=>'YFoo'}
-    assert_tag :tag=>'div', :attributes=>{ :class=>"instruction" }, 
-      :child=>{ :tag=>'p',:content=>/instruct-me/ }
+    assert_tag :tag=>'div', :attributes=>{ :class=>"instruction main-instruction" }, 
+      :child=>{ :tag=>'div',:content=>/instruct-me/ }
   end
 
   def test_newcard_works_with_fuzzy_renamed_cardtype

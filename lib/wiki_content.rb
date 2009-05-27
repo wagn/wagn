@@ -109,8 +109,6 @@ class WikiContent < String
 
   def pre_render!
     unless @pre_rendered
-      # FIXME: unmask transcluded chunks here??
-      #@chunks_by_type[Include].each{|chunk| chunk.unmask }
       @pre_rendered = String.new(self)
     end
     @pre_rendered 
@@ -118,14 +116,11 @@ class WikiContent < String
 
   def render!( revert = false )
     pre_render!
-    x = 0
     while (gsub!(MASK_RE[ACTIVE_CHUNKS]) do 
        chunk = @chunks_by_id[$~[1].to_i]
        chunk.nil? ? $~[0] : ( revert ? chunk.revert : chunk.unmask_text )
       end)
     end
-    self
-  rescue MissingChunk
     self
   end                    
   

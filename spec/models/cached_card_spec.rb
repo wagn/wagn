@@ -10,6 +10,7 @@ describe "CachedCard semi-integration" do
 
     it "should not find a card after bumping the sequence" do
       CachedCard.get("A");  # populate the cache if we haven't gotten this card yet
+      CachedCard.reset_cache # reset the local cache, which happens every request.
       CachedCard.bump_global_seq
       CachedCard.find("a").should == nil
     end

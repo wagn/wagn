@@ -179,7 +179,7 @@ module CardLib
         ([self]+deps).map(&:referencers).flatten.uniq.each do |card|
           ActiveRecord::Base.logger.info("------------------ UPDATE REFERRER #{card.name}  ------------------------")
           User.as(:wagbot) do      
-            card.content = Renderer.instance.replace_references( card, @old_name, name )
+            card.content = Renderer.new.replace_references( card, @old_name, name )
             card.save! unless card==self
           end
         end

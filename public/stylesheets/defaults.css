@@ -134,6 +134,7 @@ input[type=button] {
   border-right: 1px solid #666;
   border-bottom: 1px solid #666;
   margin: 5px;
+  padding: 0px 6px;
 }
 input:focus,
 select:focus,

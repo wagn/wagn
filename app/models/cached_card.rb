@@ -35,7 +35,6 @@ class CachedCard
     end
     
     def global_seq 
-      reset_cache
       self.local_cache[:seq] ||= (cache.read(@@seq_key) || bump_global_seq ).to_i
     end
 

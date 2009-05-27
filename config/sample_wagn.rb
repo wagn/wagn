@@ -8,9 +8,4 @@ ExceptionNotifier.email_prefix         = "[Wagn]"
 
 CachedCard.set_cache_prefix "#{System.host}/#{RAILS_ENV}"
 
-
-# select a store for the rails/card cache
-#ActionController::Base.cache_store = :mem_cache_store 
-#                                     :memory_store 
-#                                     :file_store, "#{RAILS_ROOT}/../cache"
-
+# NOTE you cannot set the cache_store here, you must set it in environment.rb config section.

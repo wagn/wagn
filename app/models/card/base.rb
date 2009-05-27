@@ -151,13 +151,13 @@ module Card
         c.send(:set_needed_defaults)
         # FIXME - this will lead to double saving when called from find_or_create, 
         # but trashed cards are not getting saved when called from set_defaults   there's probably a better way.
-        if c.trash
-          ::User.as(:wagbot) do
-            c.content=''  
-            c.trash=false
-            c.save
-          end
-        end
+#        if c.trash
+#          ::User.as(:wagbot) do
+#            c.content=''  
+#            c.trash=false
+#            c.save
+#          end
+#        end
         c
       end                      
                                   
@@ -574,8 +574,8 @@ module Card
           rec.errors.add :confirmation_required, "#{rec.name} has #{rec.dependents.size} dependents"
         end
         
-        if !rec.confirm_rename || rec.update_referencers == 'false' and !rec.extended_referencers.empty? 
-          rec.errors.add :confirmation_required, "#{rec.name} has #{rec.extended_referencers.size} links in"
+        if rec.update_referencers.nil? and !rec.extended_referencers.empty? 
+          rec.errors.add :confirmation_required, "#{rec.name} has #{rec.extended_referencers.size} referencers"
         end
       end
     end

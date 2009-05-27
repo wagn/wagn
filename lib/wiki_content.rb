@@ -2,6 +2,8 @@ require 'cgi'
 require_dependency 'chunks/chunk'
 require_dependency 'chunk_manager'
 
+class MissingChunk < StandardError; end
+
 class WikiContent < String    
   # FIXME: this is crap I already defined it in string
    class << self
@@ -130,13 +132,18 @@ ActiveRecord::Base.logger.info("Img: #{prop} #{$1}") if tag == 'img'
     @pre_rendered 
   end
 
-  def render!
+  def render!  
     pre_render!
-    while ( gsub!(MASK_RE[ACTIVE_CHUNKS]) do 
+    x = 0
+    while (gsub!(MASK_RE[ACTIVE_CHUNKS]) do 
+       x += 1
+       raise MissingChunk("Infininte loop in wiki_content#render!") if x > 1000
        chunk = @chunks_by_id[$~[1].to_i]
        chunk.nil? ? $~[0] : chunk.unmask_text
       end )
     end
+    self
+  rescue MissingChunk
     self
   end
 end

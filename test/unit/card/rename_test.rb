@@ -155,5 +155,21 @@ class Card::RenameTest < Test::Unit::TestCase
     Card.find_by_name(name) or raise "Couldn't find card named #{name}"
   end                          
 
+  def test_renaming_card_with_self_link_should_not_hang
+    Card.create! :type=>"Cardtype", :name=>"Dairy", :content => "[[/new/{{_self|name}}|new]]"
+    c = Card["Dairy"]
+    c.name = "Buttah"
+    c.update_referencers = true
+    c.confirm_rename = true
+    c.save!
+    assert_equal "[[/new/{{_self|name}}|new]]", Card["Buttah"].content
+  end
+
+  def test_renaming_card_without_updating_references_should_not_have_errors
+    Card.create! :type=>"Cardtype", :name=>"Dairy", :content => "[[/new/{{_self|name}}|new]]"
+    c = Card["Dairy"]
+    c.update_attributes "name"=>"Newt", "update_referencers"=>'false', "confirm_rename"=>true 
+    assert_equal "[[/new/{{_self|name}}|new]]", Card["Newt"].content
+  end
 end
 

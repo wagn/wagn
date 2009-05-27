@@ -5,7 +5,7 @@ require 'card_controller'
 class CardController 
   def rescue_action(e) raise e end 
 end
-
+    
 class CardControllerTest < Test::Unit::TestCase
   common_fixtures
   include AuthenticatedTestHelper
@@ -157,6 +157,7 @@ class CardControllerTest < Test::Unit::TestCase
      "content_to_replace"=>"",
      "context"=>"main_1", 
      "multi_edit"=>"true", "view"=>"open"
+    assert_equal "can't be blank", assigns['card'].errors["name"]
     assert_response 422
   end
 
@@ -184,7 +185,7 @@ class CardControllerTest < Test::Unit::TestCase
     ff.permit(:read, Role[:auth])
     ff.save!
     
-    Card.create! :name=>"Fruit+*thanks", :type=>"Phrase", :content=>"wagn/sweet"
+    Card.create! :name=>"Fruit+*thanks", :type=>"Phrase", :content=>"/wagn/sweet"
     
     login_as(:anon)     
     post :create, :card => {
@@ -233,13 +234,27 @@ class CardControllerTest < Test::Unit::TestCase
     assert_response :success
     assert_template "new"
   end
-  
-  
-=begin FIXME
-  def test_new    
+
+  def test_rename_without_update_references_should_work
+    User.as :joe_user
+    f = Card.create! :type=>"Cardtype", :name=>"Fruit"
+    post :update, :id => f.id, :card => {
+      :confirm_rename => true,
+      :name => "Newt",
+      :update_referencers => "false",
+    }                   
+    assert_equal ({ "name"=>"Newt", "update_referencers"=>'false', "confirm_rename"=>true }), assigns['card_args']
+    assert assigns['card'].errors.empty?
+    assert_template 'show'
+    assert Card["Newt"]
   end
 
-  def test_rename
+
+
+
+
+=begin FIXME
+  def test_new    
   end
   
   def test_revision

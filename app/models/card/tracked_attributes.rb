@@ -190,7 +190,7 @@ module CardLib
                 chunk.card_name.replace chunk.card_name.replace_particle(@old_name, name)
               end
             end
-            card.save!
+            card.save! unless card==self
           end
         end
       end

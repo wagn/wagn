@@ -1,4 +1,4 @@
-class InvitationError < StandardError; end
+  class InvitationError < StandardError; end
 
 class AccountController < ApplicationController
   layout :default_layout
@@ -29,10 +29,10 @@ class AccountController < ApplicationController
         email_args = { :message => System.setting('*signup+*message') || "Thanks for signing up to #{System.site_title}!",
                        :subject => System.setting('*signup+*subject') || "Account info for #{System.site_title}!" }
         @user.accept(email_args)
-        redirect_to '/' + (System.setting('*signup+*thanks') || '')
+        redirect_to (System.setting('*signup+*thanks') || '/')
       else
         Notifier.deliver_signup_alert(@card) if System.setting('*request+*to')
-        redirect_to '/' + (System.setting('*request+*thanks') || '')
+        redirect_to (System.setting('*request+*thanks') || '/')
       end
     end
   end
@@ -50,7 +50,7 @@ class AccountController < ApplicationController
     if request.post?
       @user.accept(params[:email])
       if @user.errors.empty? #SUCCESS
-        redirect_to '/' + (System.setting('*invite+*thanks') || '')
+        redirect_to (System.setting('*invite+*thanks') || '/')
         return
       end
     end
@@ -65,7 +65,7 @@ class AccountController < ApplicationController
       [User.new, Card.new]
     if request.post? and @user.errors.empty?
       @user.send_account_info(params[:email])
-      redirect_to '/' + (System.setting('*invite+*thanks') || '')
+      redirect_to (System.setting('*invite+*thanks') || '/')
     end
   end
   

@@ -107,7 +107,7 @@ class CardController < ApplicationController
     @redirect_location = if @card.ok?(:read)
       url_for_page(@card.name)
     else
-      "/" + ( System.setting(@card.cardtype.name + "+*thanks") || System.setting("Basic+*thanks") || '' )
+      ( System.setting(@card.cardtype.name + "+*thanks") || System.setting("Basic+*thanks") || '/' )
     end              
     
     render_args = 

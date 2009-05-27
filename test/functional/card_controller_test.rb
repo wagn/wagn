@@ -185,7 +185,7 @@ class CardControllerTest < Test::Unit::TestCase
     ff.permit(:read, Role[:auth])
     ff.save!
     
-    Card.create! :name=>"Fruit+*thanks", :type=>"Phrase", :content=>"wagn/sweet"
+    Card.create! :name=>"Fruit+*thanks", :type=>"Phrase", :content=>"/wagn/sweet"
     
     login_as(:anon)     
     post :create, :card => {

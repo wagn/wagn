@@ -179,17 +179,7 @@ module CardLib
         ([self]+deps).map(&:referencers).flatten.uniq.each do |card|
           ActiveRecord::Base.logger.info("------------------ UPDATE REFERRER #{card.name}  ------------------------")
           User.as(:wagbot) do      
-            card.content = Renderer.instance.process(card, nil) do |wiki_content|
-              wiki_content.find_chunks(Chunk::Link).each do |chunk|
-                link_bound = chunk.card_name == chunk.link_text          
-                chunk.card_name.replace chunk.card_name.replace_particle(@old_name, name)
-                chunk.link_text = chunk.card_name if link_bound
-              end
-              
-              wiki_content.find_chunks(Chunk::Transclude).each do |chunk|
-                chunk.card_name.replace chunk.card_name.replace_particle(@old_name, name)
-              end
-            end
+            card.content = Renderer.new.replace_references( card, @old_name, name )
             card.save! unless card==self
           end
         end

@@ -22,7 +22,7 @@ module WagnTestHelper
  
   def get_renderer()
     require 'renderer'
-    Renderer.instance
+    Renderer.new
   end
   
   def given_cards( *definitions )   
@@ -37,7 +37,7 @@ module WagnTestHelper
   end
   
   def render( card )
-    Renderer.instance.render(card)
+    Renderer.new.render(card)
   end 
   
   def assert_difference(object, method = nil, difference = 1)

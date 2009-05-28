@@ -41,12 +41,11 @@
 
 
 
-#navbox_background{
+#navbox_background {
   padding: 2px 0px;
   margin:  0 8px;
-  background: #ffd;
   margin-bottom: 2px;
-}     
+}
 /* use both ids otherwise #top-menu a  overrides */            
 #navbox_background #navbox_image {
   padding: 2px 8px;
@@ -55,7 +54,8 @@
 html>body #navbox_background #navbox_image { 
   background-image: url(/images/search.png);
 }
-#navbox_field {
+#navbox_field,
+#navbox_field:focus {
   padding: 0 3px;
   margin: 0px;
   height: 18px;
@@ -64,7 +64,8 @@ html>body #navbox_background #navbox_image {
   z-index: 1;
   font-size: 13px;
   border: 0px;
-}     
+  background: #ffc;
+}
 #navbox_field_auto_complete {
   background: #eee
   width: auto;

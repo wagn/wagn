@@ -584,7 +584,7 @@ module Card
       if rec.updates.for?(:content)
         rec.send :validate_content, value
         begin 
-          res = Renderer.instance.render_without_rescue(rec, value, update_references=false)
+          res = Renderer.new.render(rec, value, update_references=false)
         rescue Exception=>e
           rec.errors.add :content, "#{e.class}: #{e.message}"
         end   

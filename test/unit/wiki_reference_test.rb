@@ -4,7 +4,6 @@ class WikiReferenceTest < Test::Unit::TestCase
   common_fixtures
   def setup
     setup_default_user  
-    Renderer.instance.rescue_errors = false
   end
 
   def test_hard_templated_card_should_insert_references_on_create

@@ -41,9 +41,4 @@ describe Card, "rename with dependants" do
     @c.errors.on(:confirmation_required).should_not be_nil
   end
   
-  it "should succeed if confirm_rename is set" do
-    @c.name = "Brand New Name"
-    @c.confirm_rename = true 
-    @c.save.should be_true
-  end
 end

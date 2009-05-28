@@ -9,6 +9,7 @@ end
 class Renderer                
   include HTMLDiff
   include ReferenceTypes
+  attr_accessor :render_xml
 
   def render( card, content=nil, update_references=false)
     # FIXME: this means if you had a card with content, but you WANTED to have it render 
@@ -16,7 +17,7 @@ class Renderer
     # card.content='' in set_card_defaults and if you make it nil a bunch of other
     # stuff breaks
     content = content.blank? ? card.content_for_rendering  : content 
-    wiki_content = WikiContent.new(card, content, self, @render_as_xml)
+    wiki_content = WikiContent.new(card, content, self, @render_xml)
     update_references(card, wiki_content) if update_references
     wiki_content.render! 
   end
@@ -27,7 +28,7 @@ class Renderer
 
   def replace_references( card, old_name, new_name )
     content = content.blank? ? card.content_for_rendering  : content 
-    wiki_content = WikiContent.new(card, content, self, @render_as_xml)
+    wiki_content = WikiContent.new(card, content, self, @render_xml)
 
     wiki_content.find_chunks(Chunk::Link).each do |chunk|
       link_bound = chunk.card_name == chunk.link_text          

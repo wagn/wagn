@@ -31,8 +31,8 @@ module WagnHelper
       @subslots = []
       @state = 'view'
       @renders = {}
-      @transclusion_view_overrides = opts[:transclusion_view_overrides]
-      @renderer = opts[:renderer] || Renderer.new(self)
+      @transclusion_view_overrides = opts[:transclusion_view_overrides] 
+      @renderer = opts[:renderer] || Renderer.new
     end
 
     def subslot(card, &proc)

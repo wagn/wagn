@@ -9,6 +9,7 @@ describe Card, "deleted card" do
     @c.trash.should be_true
   end
   it "should come out of the trash when a plus card is created" do
+    pending
     Card.create(:name=>'A+*account')
     c = Card['A']
     c.trash.should_not be_true
@@ -77,7 +78,7 @@ describe Card, "rename to trashed name" do
     @a = Card.find_by_name("A")
     @b = Card.find_by_name("B")
     @a.destroy!  #trash
-    @b.update_attributes! :name=>"A", :confirm_rename=>true
+    @b.update_attributes! :name=>"A", :confirm_rename=>true, :update_referencers=>true
   end
   
   it "should rename b to a" do

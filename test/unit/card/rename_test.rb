@@ -171,5 +171,30 @@ class Card::RenameTest < Test::Unit::TestCase
     c.update_attributes "name"=>"Newt", "update_referencers"=>'false', "confirm_rename"=>true 
     assert_equal "[[/new/{{_self|name}}|new]]", Card["Newt"].content
   end
+
+  def test_rename_should_not_fail_when_updating_inaccessible_referencer
+    Card.create! :name => "Joe Card", :content => "Whattup"
+    User.as(:joe_admin) { 
+      c = Card.create! :name => "Admin Card", :content => "[[Joe Card]]" 
+      c.permit :edit, Role[:admin]
+      c.save!
+    }
+    c = Card["Joe Card"]
+    c.update_attributes! :name => "Card of Joe", :update_referencers => true
+    assert_equal "[[Card of Joe]]", Card["Admin Card"].content
+  end      
+
+  def test_rename_should_not_fail_when_updating_hard_templated_referencer
+    Card.create! :name => "Fruit", :type=>"Cardtype"     
+    Card.create! :name => "Pit"
+    Card.create! :name => "Orange", :type=>"Fruit", :content => "[[Pit]]" 
+    
+    Card.create! :name => "Fruit+*tform", :extension_type => "HardTemplate", :content=>"this [[Pit]]"
+    
+    assert_equal "this [[Pit]]", Card["Orange"].content
+    c = Card["Pit"]
+    c.update_attributes! :name => "Seed", :update_referencers => true
+    assert true  # just make sure nothing exploded
+  end      
 end
 

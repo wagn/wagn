@@ -122,5 +122,4 @@ class CardActionTest < ActionController::IntegrationTest
     assert_nil Card.find_by_name( t1.name )
   end
 
-
 end

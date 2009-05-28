@@ -35,7 +35,6 @@ class CardController < ApplicationController
     
   def show
     # record this as a place to come back to.
-    location_history.push(request.request_uri) if request.get?
 
     params[:_keyword] && params[:_keyword].gsub!('_',' ') ## this will be unnecessary soon.
 
@@ -45,14 +44,16 @@ class CardController < ApplicationController
     end             
     @card = CachedCard.get(@card_name)
 
-    if @card.new_record? && ! @card.phantom?
+    if @card.new_record? && !@card.phantom?
       params[:card]={:name=>@card_name, :type=>params[:type]}
       if Cardtype.createable_cardtypes.empty? 
         return render( :action=>'missing' )
       else
         return self.new
       end
-    end                                                                                  
+    else
+      save_location
+    end
     return unless view_ok # if view is not ok, it will render denied. return so we dont' render twice
 
     # rss causes infinite memory suck in rails 2.1.2.  

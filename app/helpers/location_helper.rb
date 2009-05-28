@@ -36,7 +36,8 @@ module LocationHelper
     pattern = /#{Regexp.quote(card.id.to_s)}|#{Regexp.quote(card.key)}|#{Regexp.quote(card.name)}/       
     while location_history.last =~ pattern
       location_history.pop
-    end
+    end  
+    load_location
   end
    
    # -----------( urls and redirects from application.rb) ----------------

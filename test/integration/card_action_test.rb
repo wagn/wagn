@@ -122,5 +122,15 @@ class CardActionTest < ActionController::IntegrationTest
     assert_nil Card.find_by_name( t1.name )
   end
 
+  def test_previous_location_should_be_assigned_after_viewing
+    get "Joe_User"       
+    assert_equal "/Joe_User", assigns['previous_location']
+  end
+  
+  def test_previous_location_should_not_be_updated_by_nonexistent_card
+    get "Joe_User"     
+    get "Not_Me"
+    assert_equal "/Joe_User", assigns['previous_location']
+  end
 
 end

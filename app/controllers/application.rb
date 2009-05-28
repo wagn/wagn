@@ -59,7 +59,8 @@ class ApplicationController < ActionController::Base
     CachedCard.reset_cache
     System.request = request 
     #System.time = Time.now.to_f              
-
+    
+    load_location
   end
 
   def default_layout

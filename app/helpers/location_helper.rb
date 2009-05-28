@@ -17,9 +17,18 @@ module LocationHelper
     session[:history].shift if session[:history].size > 5
     session[:history]
   end
+
+  def save_location
+    location_history.push(request.request_uri)
+    load_location
+  end
      
+  def load_location
+    @previous_location = location_history.last
+  end
+    
   def previous_location
-    location_history.last
+    @previous_location
   end
                
   def discard_locations_for(card)  

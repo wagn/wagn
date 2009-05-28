@@ -35,7 +35,6 @@ class CardController < ApplicationController
     
   def show
     # record this as a place to come back to.
-    location_history.push(request.request_uri) if request.get?
 
     params[:_keyword] && params[:_keyword].gsub!('_',' ') ## this will be unnecessary soon.
 
@@ -44,6 +43,8 @@ class CardController < ApplicationController
       @card_name = System.site_title
     end             
     @card = CachedCard.get(@card_name)
+
+    save_location unless @card.new_record?
 
     if @card.new_record? && ! @card.phantom?
       params[:card]={:name=>@card_name, :type=>params[:type]}

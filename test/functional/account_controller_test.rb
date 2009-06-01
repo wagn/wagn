@@ -20,6 +20,7 @@ class AccountControllerTest < Test::Unit::TestCase
     @response   = ActionController::TestResponse.new
   end
 
+#=begin
   def test_create_successful   
     login_as :joe_user
     assert_difference ActionMailer::Base.deliveries, :size do 
@@ -49,6 +50,16 @@ class AccountControllerTest < Test::Unit::TestCase
     assert_nil session[:user]
     assert_response :redirect
   end
+
+#  def test_should_say_user_blocked
+#    logout
+#    u = User.find_by_email('u3@user.com')
+#    u.blocked = true
+#    post :signin, :login => 'u3@user.com', :password => 'u3_pass'
+#    assert_response 403    
+#    assert_template ('blocked')
+#  end
+
 
   def test_forgot_password_not_found
   end                        

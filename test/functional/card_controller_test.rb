@@ -21,6 +21,7 @@ class CardControllerTest < Test::Unit::TestCase
     login_as(:joe_user)
   end    
 
+#=begin
   def test_create_cardtype_card
     post :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
     assert assigns['card']
@@ -33,31 +34,29 @@ class CardControllerTest < Test::Unit::TestCase
 
   
 
-=begin
-  what's happening with this test is that when changing from Basic to CardtypeA it is 
-  stripping the html when the test doesn't think it should.  this could be a bug, but it
-  seems less urgent that a lot of the other bugs on the list, so I'm leaving this test out
-  for now.
+#  what's happening with this test is that when changing from Basic to CardtypeA it is 
+#  stripping the html when the test doesn't think it should.  this could be a bug, but it
+#  seems less urgent that a lot of the other bugs on the list, so I'm leaving this test out
+#  for now.
+# 
+#  def test_update_cardtype_no_stripping
+#    User.as :joe_user                                               
+#    post :update, {:id=>@simple_card.id, :card=>{ :type=>"CardtypeA",:content=>"<br/>" } }
+#    #assert_equal "boo", assigns['card'].content
+#    assert_equal "<br/>", assigns['card'].content
+#    assert_response :success, "changed card type"   
+#    assert_equal "CardtypeA", Card['Sample Basic'].type
+#  end 
+# 
+#  def test_update_cardtype_with_stripping
+#    User.as :joe_user                                               
+#    post :edit, {:id=>@simple_card.id, :card=>{ :type=>"Date",:content=>"<br/>" } }
+#    #assert_equal "boo", assigns['card'].content
+#    assert_response :success, "changed card type"   
+#    assert_equal "", assigns['card'].content  
+#    assert_equal "Date", Card['Sample Basic'].type
+#  end 
 
-  def test_update_cardtype_no_stripping
-    User.as :joe_user                                               
-    post :update, {:id=>@simple_card.id, :card=>{ :type=>"CardtypeA",:content=>"<br/>" } }
-    #assert_equal "boo", assigns['card'].content
-    assert_equal "<br/>", assigns['card'].content
-    assert_response :success, "changed card type"   
-    assert_equal "CardtypeA", Card['Sample Basic'].type
-  end 
-
-  def test_update_cardtype_with_stripping
-    User.as :joe_user                                               
-    post :edit, {:id=>@simple_card.id, :card=>{ :type=>"Date",:content=>"<br/>" } }
-    #assert_equal "boo", assigns['card'].content
-    assert_response :success, "changed card type"   
-    assert_equal "", assigns['card'].content  
-    assert_equal "Date", Card['Sample Basic'].type
-  end 
-
-=end 
 
 
 
@@ -249,20 +248,16 @@ class CardControllerTest < Test::Unit::TestCase
     assert Card["Newt"]
   end
 
-
-
-
-
-=begin FIXME
-  def test_new    
+#=end
+  def test_unrecognized_card_renders_missing_unless_can_create_basic
+    #User.as :anon
+    login_as(:anon) 
+    post :show, :id=>'crazy unknown name'
+    assert_template 'missing'
   end
-  
-  def test_revision
-  end
-  
-  def test_rollback
-  end
-=end 
+
+
+
 
   
 

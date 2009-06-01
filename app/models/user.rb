@@ -149,7 +149,7 @@ class User < ActiveRecord::Base
   end  
 
   def active?
-    status == 'active'
+    status == 'active' && !blocked
   end
 
   def anonymous?

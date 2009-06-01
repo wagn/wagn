@@ -26,11 +26,11 @@
 	  <span class="faint">(0)</span>
 	<% else %>
 		<span class="faint">(<%= total %>)</span>
-		<ul class="search-result-list">
+		<div class="search-result-list">
   		<% query_results.each_with_index do |c,index| %>
-  			<li><%='name' == slot.item_format || params[:item] ? c.name : link_to_page( c.name ) %>
+  			<div class="search-result-item"><%='name' == slot.item_format || params[:item] ? c.name : link_to_page( c.name ) %></div>
   		<% end %>
-		</ul>
+		</div>
 	<% end %>
                               
 <% end %>

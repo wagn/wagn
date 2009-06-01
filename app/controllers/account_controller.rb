@@ -128,7 +128,7 @@ class AccountController < ApplicationController
   def password_authentication(login, password)
     if self.current_user = User.authenticate(params[:login], params[:password])
       successful_login
-    elsif u = User.find_by_email(params[:login])
+    elsif u = User.find_by_email(params[:login].strip)
       if u.blocked
         failed_login("Sorry, this account is currently blocked.")
       else

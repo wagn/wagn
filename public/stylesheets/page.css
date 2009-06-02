@@ -231,8 +231,9 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
 #sign-in p {
   margin: 5px;
 }
-#sign-in input[type=text],
-#sign-in input[type=password] {
+#sign-in input#login_field,
+#sign-in input#password,
+#sign-in input#email {
   width: 50%;
 }
 
@@ -303,7 +304,6 @@ div.auto_complete ul strong.highlight {
   margin:0;
   padding:0;
 }
-
 
 /*------- HACK FIXME------------*/
 

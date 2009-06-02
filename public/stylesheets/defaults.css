@@ -16,6 +16,8 @@ body, p, ol, ul, td, th, input, textarea {
   font-family: verdana, arial, helvetica, sans-serif;
   font-size:   12px;
   font-weight: normal;
+}
+body, p, ol, ul {
   line-height: 21px;
 }
 body {
@@ -122,9 +124,10 @@ select {
 #tinymce {
   background: #ffe;  
 }
-input {
+/*  do we need this?  - efm 6-1-09
+ input {  
   padding: 0px;
-}
+}*/
 input[type=submit], 
 input[type=button] {
   background: #99a;

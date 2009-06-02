@@ -81,9 +81,9 @@ module SlotHelpers
 
   def menu   
     if card.phantom?
-      return %{<div class="card-menu faint">Virtual</div>\n}
+      return %{<span class="card-menu faint">Virtual</span>\n}
     end
-    menu = %{<div class="card-menu">\n}
+    menu = %{<span class="card-menu">\n}
     menu << %{<span class="card-menu-left">\n}
   	menu << link_to_menu_action('view')
   	menu << link_to_menu_action('changes')
@@ -94,7 +94,7 @@ module SlotHelpers
   	menu << link_to_menu_action('edit') 
   	
     
-    menu << "</div>"
+    menu << "</span>"
   end
 
   def footer 

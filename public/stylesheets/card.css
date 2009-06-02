@@ -345,11 +345,10 @@ div:hover.card-footer .card-links{
 .in-multi .instruction p{
   clear:left;
   border: 0px;
-  background: inherit;
+  background-color: #ddd; /*hard-coded because inherit wasn't working right in IE */
   text-align: left;
   padding: 0px 5px;
 }
- 
 /* for IE */
 div.transcluded {
   display: inline;
@@ -484,6 +483,7 @@ div.transcluded {
 
 #sidebar .card-slot .card-menu {
   display: none; 
+  float:none;  /* necessary for IE */
 }
 .none {
   background: #ccc;

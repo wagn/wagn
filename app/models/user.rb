@@ -74,8 +74,8 @@ class User < ActiveRecord::Base
     
     # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
     def authenticate(email, password)
-      u = self.find_by_email(email)
-      u && u.authenticated?(password) ? u : nil
+      u = self.find_by_email(email.strip)
+      u && u.authenticated?(password.strip) ? u : nil
     end
 
     # Encrypts some data with the salt.

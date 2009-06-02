@@ -61,7 +61,7 @@ namespace :wagn do
       )
 
       config_cards = %w{ *context *to *title account_request+*tform *invite+*thank *signup+*thank *from }
-      permset = ENV['PERMISSIONS'].to_sym || :standard
+      permset = (ENV['PERMISSIONS'] || :standard).to_sym
       
       permission = {
         :standard=>{

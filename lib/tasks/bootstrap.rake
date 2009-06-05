@@ -66,7 +66,7 @@ namespace :wagn do
       permission = {
         :standard=>{
          :default=> {:read=>:anon, :edit=>:auth, :delete=>:auth, :create=>:auth, :comment=>nil},
-         :star=> {:edit=>:admin},
+         :star=> {:edit=>:admin, :delete=>:admin},
          'role'=> {:create=>:admin},
          'html'=> {:create=>:admin},
          'account_request' => {:create=>:anon},

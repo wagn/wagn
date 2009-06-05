@@ -6,4 +6,5 @@ if System.multihost and ENV['WAGN']
     System.wagn_name = mapping.wagn_name
   end
   ActiveRecord::Base.connection.schema_search_path = ENV['WAGN']
+  CachedCard.set_cache_prefix "#{System.host}/#{RAILS_ENV}" 
 end  

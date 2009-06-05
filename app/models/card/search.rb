@@ -50,6 +50,7 @@ module CardLib
       
       def count_by_wql(spec)       
         #.gsub(/^\s*\(/,'').gsub(/\)\s*$/,'')
+        spec.delete(:offset)
         result = connection.select_one( Wql2::CardSpec.new(spec).merge(:return=>'count').to_sql )
         (result['count'] || result['count(*)']).to_i
       end

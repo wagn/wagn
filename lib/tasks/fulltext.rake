@@ -7,7 +7,7 @@ namespace :fulltext do
       user = ActiveRecord::Base.configurations[RAILS_ENV]["username"]    
         
       # FIXME get this from somewhere else?
-      schema = ENV['WAGN_NAME'].blank? ? "public" : ENV['WAGN_NAME']
+      schema = ENV['WAGN'].blank? ? "public" : ENV['WAGN']
 
        # NOTE: this will only work if the user running the migration has sudo priveleges
 		  tsearch_dir = System.postgres_tsearch_dir ? System.postgres_tsearch_dir : "#{System.postgres_src_dir}/contrib/tsearch2"

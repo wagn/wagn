@@ -8,7 +8,6 @@
 <% if card.ok?(:comment) %> <%#and !card.hard_template %>
    <div class="comment-box">
    <% form_remote_for :card, card, :url=>slot.url_for('card/comment') do |f| %>
-     <label>Comment:</label><br/> 
      <%= f.text_area :comment, :rows=>3 %><br/>
 	  <% unless current_user %>
 		  <% card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") %>

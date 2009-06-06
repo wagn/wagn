@@ -8,7 +8,7 @@ A_JOINEES = ["B", "C", "D", "E", "F"]
       
 CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User","*plusses+*rform"].sort    
 
-=begin 
+#=begin 
 describe Wql2, "in" do
   it "should work for content options" do
     Card.search(:in=>['AlphaBeta', 'Theta']).map(&:name).should == %w(A+B T)
@@ -192,7 +192,7 @@ end
 describe Wql2, "type" do  
   before { User.as :joe_user }
   
-  user_cards = ["Joe User","No Count","Sample User","u1","u2","u3"].sort
+  user_cards = ["Joe Admin","Joe User","No Count","Sample User","u1","u2","u3"].sort
   
   it "should find cards of this type" do
     Card.search( :type=>"_self", :_card=>Card['User']).plot(:name).sort.should == user_cards
@@ -336,11 +336,18 @@ describe Wql2, "found_by" do
   end
   
 end
-=end
-
 
 describe Wql2, "and" do
   it "should act as a simple passthrough" do
     Card.search(:and=>{:match=>'two'}).plot(:name).sort.should==CARDS_MATCHING_TWO
+  end
+end
+
+#=end
+
+
+describe Wql2, "offset" do
+  it "should not break count" do
+    Card.count_by_wql({:match=>'two', :offset=>1}).should==CARDS_MATCHING_TWO.length
   end
 end

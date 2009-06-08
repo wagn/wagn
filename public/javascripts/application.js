@@ -534,11 +534,10 @@ var attachmentOnChangeUpdateParent = function(attachment_uuid, filename) {
   preview_slot = document.getElementById(attachment_uuid + '-preview');
   // TODO: report prototype bug: preview_slot.update should work but fails in IE
   Element.update(preview_slot, '<img src="/images/wait_lg.gif">  Uploading...');  
-	name_field = preview_slot.up('form').down('.card-name-field');
-  //alert('field= ' + name_field);
-	if (!name_field.value || name_field.value.blank()) { 
-	  //alert(filename);
-    name_field.value = filename; 
+	if (name_field = preview_slot.up('form').down('.card-name-field')) {
+  	if (!name_field.value || name_field.value.blank()) { 
+      name_field.value = filename; 
+    }
   }
 	deactivateSubmit(attachment_uuid);  
 }

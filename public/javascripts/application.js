@@ -505,14 +505,14 @@ Event.observe(window, 'keydown', handleGlobalShortcuts );
 
 
 /* helpers for image setup */
-var deactivateSubmit = function(attachment_uuid) {  
-  button = findSubmit(attachment_uuid);
+var deactivateSubmit = function(form_element_or_id) {  
+  button = findSubmit(form_element_or_id);
   button.setStyle({ color: "#ccc", border: "1px solid #ccc" }); 
   button.onclick = (function(){});
 }
 
-var activateSubmit = function(attachment_uuid) {
-  button = findSubmit(attachment_uuid);
+var activateSubmit = function(form_element_or_id) {
+  button = findSubmit(form_element_or_id);
   button.setStyle({ color: "#444", border: "1px solid #666" });
   /* FIXME */
   /* "this.form.onsubmit()" is duplicated in this function on purpose.  */
@@ -521,9 +521,30 @@ var activateSubmit = function(attachment_uuid) {
   button.onclick = (function(){this.form.onsubmit(); this.form.onsubmit();});
 }
     
-var findSubmit = function(element) {
-  form = $(element).up('form');
+var findSubmit = function(form_element_or_id) {
+  form = $(form_element_or_id).up('form');
   return form.down('.save-card-button') || form.down('#create-button');
+}  
+  
+var attachmentOnChangeUpdateParent = function(attachment_uuid, filename) {
+  filename = unescape(filename);
+	if (short_name = filename.match(/([^\/\\]+)\.\w+$/)[1]) {
+	  filename = short_name;
+  }
+  preview_slot = document.getElementById(attachment_uuid + '-preview');
+  // TODO: report prototype bug: preview_slot.update should work but fails in IE
+  Element.update(preview_slot, '<img src="/images/wait_lg.gif">  Uploading...');  
+	name_field = preview_slot.up('form').down('.card-name-field');
+  //alert('field= ' + name_field);
+	if (!name_field.value || name_field.value.blank()) { 
+	  //alert(filename);
+    name_field.value = filename; 
+  }
+	deactivateSubmit(attachment_uuid);  
 }
+
+
+
+
 
 

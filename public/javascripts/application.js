@@ -393,9 +393,7 @@ navboxOnSubmit=function(form){
 }
 
 navboxAfterUpdate=function(text,li){
-  if (!li.hasClassName('search')) {
-    $('navbox_form').action = '/wagn';
-  }
+  $('navbox_form').action = (li.hasClassName('search') ? '/search' : '/wagn');
 }
 
 Event.KEY_SHIFT = 16;

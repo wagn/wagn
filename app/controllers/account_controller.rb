@@ -1,4 +1,4 @@
-  class InvitationError < StandardError; end
+class InvitationError < StandardError; end
 
 class AccountController < ApplicationController
   layout :default_layout

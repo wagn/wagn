@@ -164,70 +164,12 @@ revisions_106:
     </blockquote>
   created_at: 2009-04-24 11:23:22.658665
 revisions_163: 
-  updated_at: 2009-06-07 12:58:14.833766
+  updated_at: 2009-06-07 14:02:15.75763
   created_by: "4"
-  card_id: "198"
-  id: "2509"
-  content: |-
-    /* Body text */
-    body, .reset {
-      color: #444444;
-    }
-    
-    /* Header text (need edit mode styles) */
-    h1, h2, body.wagn .card-slot h1, body.wagn .card-slot h2 {
-      color: #664444;
-    }
-    
-    /* page background
-    body.wagn {
-      background: #CCDDBB;
-    } */
-    
-    /* links */
-    a, a:link, a:visited {
-      color: #448844;
-    }
-    .card-slot a.external-link,
-    .card-slot.line .content a.external-link,
-    .card-slot a.email-link {
-      color: #997799;
-    }
-    .card-slot .change-view .last-edited {
-      color: #77AA77;
-    }
-    
-    /* links to nonexistent cards */
-    .card-slot a.wanted-card {
-      color: #990000;
-    }
-    
-    /* top bar, card headers and subtab text */
-    #top-menu {
-      background: #000000;
-    }
-    .card-slot .card-header {
-      background: #005800 none repeat scroll 0 0;
-    }
-    .card-slot .submenu a {
-      color: #005800;
-    }
-    
-    /* plus in plus cards */
-    .card-slot .joint {
-      color: #996600;
-    }
-    
-    /* comment box */
-    .card-slot .comment-box {
-      background: #CCCCEE none repeat scroll 0 0;
-    }
-    
-    /* help text boxes */
-    .help, .instruction {
-      background: #EEEECC;
-    }
-  created_at: 2009-06-07 12:58:14.833766
+  card_id: "147"
+  id: "2516"
+  content: <p>Administrators automatically have all of the [[/admin/tasks|global permissions]], and has the power to see, edit and delete every card in the system regardless of its permissions settings. See the [[http://wagn.org/wagn/permissions|documentation about permissions]].</p>
+  created_at: 2009-06-07 14:02:15.75763
 revisions_135: 
   updated_at: 2009-04-28 13:45:01.053616
   created_by: "4"
@@ -267,12 +209,18 @@ revisions_107:
     </blockquote>
   created_at: 2009-04-24 11:24:04.885939
 revisions_164: 
-  updated_at: 2009-06-07 14:02:15.75763
+  updated_at: 2009-06-07 14:19:06.838093
   created_by: "4"
-  card_id: "147"
-  id: "2516"
-  content: <p>Administrators automatically have all of the [[/admin/tasks|global permissions]], and has the power to see, edit and delete every card in the system regardless of its permissions settings. See the [[http://wagn.org/wagn/permissions|documentation about permissions]].</p>
-  created_at: 2009-06-07 14:02:15.75763
+  card_id: "7"
+  id: "2522"
+  content: |-
+    <p>Each [[user]] has one or more roles, and each role's capabilities are defined in [[/admin/tasks|Global permissions]] (except for the [[Administrator]] role, which has all permissions). [[http://wagn.org/wagn/Role|Learn more about roles]].</p>
+    <p>&nbsp;</p>
+    <p>[[/new/Role|Add a new role]]</p>
+    <p>&nbsp;</p>
+    <h1>Roles</h1>
+    <p>{{+*type cards}}</p>
+  created_at: 2009-06-07 14:19:06.838093
 revisions_136: 
   updated_at: 2009-04-29 08:47:58.913385
   created_by: "4"
@@ -310,58 +258,6 @@ revisions_050:
   content: ""
   created_at: 2009-04-06 14:11:12.948281
 revisions_165: 
-  updated_at: 2009-06-07 14:19:06.838093
-  created_by: "4"
-  card_id: "7"
-  id: "2522"
-  content: |-
-    <p>Each [[user]] has one or more roles, and each role's capabilities are defined in [[/admin/tasks|Global permissions]] (except for the [[Administrator]] role, which has all permissions). [[http://wagn.org/wagn/Role|Learn more about roles]].</p>
-    <p>&nbsp;</p>
-    <p>[[/new/Role|Add a new role]]</p>
-    <p>&nbsp;</p>
-    <h1>Roles</h1>
-    <p>{{+*type cards}}</p>
-  created_at: 2009-06-07 14:19:06.838093
-revisions_137: 
-  updated_at: 2009-04-29 08:48:28.571835
-  created_by: "4"
-  card_id: "85"
-  id: "2328"
-  content: |-
-    <p>[[/card/new|Add a card]]</p>
-    <p>&nbsp;</p>
-    <p>[[Config|Configure your wagn]]</p>
-  created_at: 2009-04-29 08:48:28.571835
-revisions_023: 
-  updated_at: 2009-04-08 08:59:14.709684
-  created_by: "4"
-  card_id: "156"
-  id: "1748"
-  content: ""
-  created_at: 2009-04-08 08:59:14.709684
-revisions_109: 
-  updated_at: 2009-04-24 11:25:43.416422
-  created_by: "4"
-  card_id: "22"
-  id: "2076"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
-    <p>&nbsp;</p>
-    <h2>{{_self|name}} Cards</h2>
-    <blockquote>
-    <p>{{+*type cards}}</p>
-    </blockquote>
-  created_at: 2009-04-24 11:25:43.416422
-revisions_051: 
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  card_id: "98"
-  id: "355"
-  content: ""
-  created_at: 2009-04-06 14:11:12.948281
-revisions_166: 
   updated_at: 2009-06-07 18:41:27.773251
   created_by: "4"
   card_id: "73"
@@ -447,6 +343,118 @@ revisions_166:
     <p><em></em></p>
     </blockquote>
   created_at: 2009-06-07 18:41:27.773251
+revisions_137: 
+  updated_at: 2009-04-29 08:48:28.571835
+  created_by: "4"
+  card_id: "85"
+  id: "2328"
+  content: |-
+    <p>[[/card/new|Add a card]]</p>
+    <p>&nbsp;</p>
+    <p>[[Config|Configure your wagn]]</p>
+  created_at: 2009-04-29 08:48:28.571835
+revisions_023: 
+  updated_at: 2009-04-08 08:59:14.709684
+  created_by: "4"
+  card_id: "156"
+  id: "1748"
+  content: ""
+  created_at: 2009-04-08 08:59:14.709684
+revisions_109: 
+  updated_at: 2009-04-24 11:25:43.416422
+  created_by: "4"
+  card_id: "22"
+  id: "2076"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
+    <p>&nbsp;</p>
+    <h2>{{_self|name}} Cards</h2>
+    <blockquote>
+    <p>{{+*type cards}}</p>
+    </blockquote>
+  created_at: 2009-04-24 11:25:43.416422
+revisions_051: 
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  card_id: "98"
+  id: "355"
+  content: ""
+  created_at: 2009-04-06 14:11:12.948281
+revisions_166: 
+  updated_at: 2009-06-09 15:41:28.286186
+  created_by: "4"
+  card_id: "198"
+  id: "2538"
+  content: |-
+    /* Body text */
+    body, .reset {
+      color: #444444;
+    }
+    
+    /* Header text (need edit mode styles) */
+    h1, h2, body.wagn .card-slot h1, body.wagn .card-slot h2 {
+      color: #664444;
+    }
+    
+    body.wagn {
+      background: url(http://s3.amazonaws.com/sandwagn.wagn.org/card_images/162/body-bg.png) repeat-x #CCC;
+    }
+    
+    /* in-Wagn links, to non-existent (wanted) cards, external links, the "edited" link on Recent */
+    a, a:link, a:visited {
+      color: #448844;
+    }
+    .card-slot a.wanted-card {
+      color: #990000;
+    }
+    .card-slot a.external-link,
+    .card-slot.line .content a.external-link,
+    .card-slot a.email-link {
+      color: #997799;
+    }
+    .card-slot .change-view .last-edited {
+      color: #77AA77;
+    }
+    
+    /* top bar, card headers and subtab text */
+    #top-menu {
+      background: #353;
+    } 
+    .card-slot .card-header {
+      background: #C0D9C0;
+    }
+    .card-slot .title { 
+      font-weight: normal;
+    }
+    .card-slot .card-header,
+    .card-slot .card-header a,
+    .card-slot .card-header .title a,
+    .card-slot .card-header .title a:link,
+    .card-slot .card-header .title a:visited,
+    .card-slot .card-header .title a:hover {
+      color: #333 
+    }
+    .card-slot .submenu a {
+      color: #005800;
+    }
+    
+    /* plus in plus cards */
+    .card-slot .joint {
+      color: #996600;
+    }
+    
+    /* comment box */
+    .card-slot .comment-box {
+      background: #CCCCEE none repeat scroll 0 0;
+    }
+    
+    /* help text boxes */
+    .help, .instruction {
+      background: #EEEECC;
+    }
+  created_at: 2009-06-09 15:41:28.286186
 revisions_138: 
   updated_at: 2009-04-29 15:25:14.206292
   created_by: "3"

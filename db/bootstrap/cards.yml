@@ -507,26 +507,26 @@ cards_088:
   created_at: 2009-04-06 14:11:12.920280 -05:00
 cards_001: 
   reader_type: Role
-  name: Config
-  indexed_content: "'bar':10 'css':74 'get':49 'i.e':94 'key':237 'see':207 'set':42,231 'tab':143,189 'card':18,151,157,163,176,200 'edit':130,138 'form':114,125,190,218 'home':17,23 'html':77 'imag':30,81 'logo':27 'name':4,15 'plus':156 'sign':97,112,123 'site':3 'skin':71 'titl':9,11,22 'type':13,25,29,76,80,108,167,238 'user':91 'wagn':73,220 'avail':148 'basic':2,41,223 'close':12,24,28,39,59,61,63,75,79,107,129,141,181 'creat':119,198 'deliv':90 'email':84,88 'everi':150 'given':166 'googl':225,233,235 'invit':44,58 'learn':208 'peopl':45,193 'relat':142,144,152,155,168,188 'rform':180 'taken':196 'tform':128 'thank':191,214,224 'advanc':64 'analyt':226,234,236 'appear':5,65,160,174 'approv':51 'config':1A 'custom':36,121,136 'differ':20 'domain':222 'forgot':102 'inform':83,93 'messag':216 'phrase':14,26,109,239 'signup':62 'someon':96 'subtab':146,153,159,169,173 'tinymc':140 'account':40,47,50,57,82,92,105,110,126,178,179 'address':86 'browser':7 'cardtyp':170 'favicon':78 'permiss':205 'request':46,60,127 'sidebar':31,37,38 'sign-up':111,122 'special':172 'toolbar':131,139 'univers':154 'password':104 'wagn.org':33,53,67,116,133,183,212,228 '/wagn/skin|learn':68 'invited/approved':100 '/wagn/sidebar|how':34 '/wagn/tinymce|how':134 'wagn.org/wagn/skin':66 'wagn.org/wagn/account':52 'wagn.org/wagn/sidebar':32 'wagn.org/wagn/tinymce':132 '/wagn/related_tab|learn':184 'wagn.org/wagn/related_tab':182 '/wagn/google_analytics|how':229 'wagn.org/wagn/google_analytics':227 '/wagn/custom_sign-up_information|how':117 'wagn.org/wagn/custom_sign-up_information':115 '/wagn/account#administering%20accounts|learn':54 '/wagn/custom_thank_you_messages_for_forms|custom':213 'wagn.org/wagn/custom_thank_you_messages_for_forms':211"
-  updated_at: 2009-06-07 18:41:27.781252 -05:00
+  name: "*css"
+  indexed_content: "'0':204,205 'x':36 'h1':14,20 'h2':15,25 '333':173 '353':107 'bar':97 'box':192,198,208 'ccc':37 'css':1A 'non':44 'top':96,104 'url':30 'bodi':2,4 'card':18,23,47,63,66,70,79,86,98,109,112,117,125,128,131,134,138,141,146,149,155,158,164,167,175,184,186,194 'edit':11,51,93 'font':121 'help':206,209 'last':92 'link':41,49,52,57,73,77,82,153 'menu':105 'mode':12 'need':10 'none':201 'plus':181,183 'slot':19,24,64,71,80,87,110,118,126,132,139,147,156,165,176,187,195 'text':3,9,102,207 'titl':119,143,151,160,169 'view':90 'wagn':40 'want':46 'chang':89 'color':6,26,60,67,83,94,172,179,189 'exist':45 'hover':171 'joint':188 'reset':5 'style':13 'visit':59,162 '005800':180 '444444':7 '448844':61 '664444':27 '77aa77':95 '990000':68 '996600':190 '997799':84 'c0d9c0':115 'ccccee':200 'eeeecc':212 'extern':48 'header':8,99,113,129,135,142,150,159,168 'normal':123 'recent':54 'repeat':35,202 'scroll':203 'subtab':101 'weight':122 'a.email':81 'comment':191,197 'content':75 'in-wagn':38 'submenu':177 'a.wanted':65 'instruct':210 'repeat-x':34 'top-menu':103 'body.wagn':16,21,28 'card-head':111,127,133,140,148,157,166 'card-slot':17,22,62,69,78,85,108,116,124,130,137,145,154,163,174,185,193 'last-edit':91 'non-exist':43 'a.external':72,76 'background':29,106,114,199,211 'change-view':88 'comment-box':196 'font-weight':120 'card-slot.line':74 's3.amazonaws.com':32 '/sandwagn.wagn.org/card_images/162/body-bg.png)':33 's3.amazonaws.com/sandwagn.wagn.org/card_images/162/body-bg.png':31"
+  updated_at: 2009-06-09 15:41:28.302187 -05:00
   appender_id: 
   references_expired: 
-  indexed_name: "'config':1"
-  current_revision_id: 2525
-  created_by: 1
-  type: Basic
+  indexed_name: "'css':1"
+  current_revision_id: 2538
+  created_by: 4
+  type: HTML
   tag_id: 
   extension_type: 
   updated_by: 4
   reader_id: 3
-  id: 73
+  id: 198
   trunk_id: 
   trash: false
   appender_type: 
-  key: config
+  key: "*css"
   extension_id: 
-  created_at: 2009-04-06 14:11:12.920280 -05:00
+  created_at: 2009-05-19 22:18:56.476994 -05:00
 cards_116: 
   reader_type: Role
   name: "*table of contents+*rform"
@@ -595,25 +595,25 @@ cards_089:
   created_at: 2009-04-06 14:11:12.920280 -05:00
 cards_002: 
   reader_type: Role
-  name: Role
-  indexed_content: "'add':36 'new':38 'one':5 'card':42 'role':1A,8,11,24,34,39,40 'type':41 'user':3 'defin':15 'capabl':13 'except':20 'global':18 'permiss':19,28 'wagn.org':30 '/new/role':35 'administr':23 '/admin/tasks':17 '/wagn/role|learn':31 'wagn.org/wagn/role':29"
-  updated_at: 2009-06-07 14:19:06.846093 -05:00
+  name: Config
+  indexed_content: "'bar':10 'css':74 'get':49 'i.e':94 'key':237 'see':207 'set':42,231 'tab':143,189 'card':18,151,157,163,176,200 'edit':130,138 'form':114,125,190,218 'home':17,23 'html':77 'imag':30,81 'logo':27 'name':4,15 'plus':156 'sign':97,112,123 'site':3 'skin':71 'titl':9,11,22 'type':13,25,29,76,80,108,167,238 'user':91 'wagn':73,220 'avail':148 'basic':2,41,223 'close':12,24,28,39,59,61,63,75,79,107,129,141,181 'creat':119,198 'deliv':90 'email':84,88 'everi':150 'given':166 'googl':225,233,235 'invit':44,58 'learn':208 'peopl':45,193 'relat':142,144,152,155,168,188 'rform':180 'taken':196 'tform':128 'thank':191,214,224 'advanc':64 'analyt':226,234,236 'appear':5,65,160,174 'approv':51 'config':1A 'custom':36,121,136 'differ':20 'domain':222 'forgot':102 'inform':83,93 'messag':216 'phrase':14,26,109,239 'signup':62 'someon':96 'subtab':146,153,159,169,173 'tinymc':140 'account':40,47,50,57,82,92,105,110,126,178,179 'address':86 'browser':7 'cardtyp':170 'favicon':78 'permiss':205 'request':46,60,127 'sidebar':31,37,38 'sign-up':111,122 'special':172 'toolbar':131,139 'univers':154 'password':104 'wagn.org':33,53,67,116,133,183,212,228 '/wagn/skin|learn':68 'invited/approved':100 '/wagn/sidebar|how':34 '/wagn/tinymce|how':134 'wagn.org/wagn/skin':66 'wagn.org/wagn/account':52 'wagn.org/wagn/sidebar':32 'wagn.org/wagn/tinymce':132 '/wagn/related_tab|learn':184 'wagn.org/wagn/related_tab':182 '/wagn/google_analytics|how':229 'wagn.org/wagn/google_analytics':227 '/wagn/custom_sign-up_information|how':117 'wagn.org/wagn/custom_sign-up_information':115 '/wagn/account#administering%20accounts|learn':54 '/wagn/custom_thank_you_messages_for_forms|custom':213 'wagn.org/wagn/custom_thank_you_messages_for_forms':211"
+  updated_at: 2009-06-07 18:41:27.781252 -05:00
   appender_id: 
   references_expired: 
-  indexed_name: "'role':1"
-  current_revision_id: 2522
+  indexed_name: "'config':1"
+  current_revision_id: 2525
   created_by: 1
-  type: Cardtype
+  type: Basic
   tag_id: 
-  extension_type: Cardtype
+  extension_type: 
   updated_by: 4
   reader_id: 3
-  id: 7
+  id: 73
   trunk_id: 
   trash: false
   appender_type: 
-  key: role
-  extension_id: 5
+  key: config
+  extension_id: 
   created_at: 2009-04-06 14:11:12.920280 -05:00
 cards_117: 
   reader_type: Role
@@ -661,25 +661,25 @@ cards_031:
   created_at: 2009-04-27 23:08:41.560200 -05:00
 cards_003: 
   reader_type: Role
-  name: Administrator+description
-  indexed_content: "'see':17,31 'set':30 'card':22 'edit':18 'delet':20 'everi':21 'power':15 'global':10 'system':25 'automat':4 'permiss':11,29,37 'descript':2A 'wagn.org':34 'administr':1A,3 'regardless':26 '/admin/tasks':9 'wagn.org/wagn/permissions':33 '/wagn/permissions|documentation':35"
-  updated_at: 2009-06-07 14:02:15.761630 -05:00
+  name: Role
+  indexed_content: "'add':36 'new':38 'one':5 'card':42 'role':1A,8,11,24,34,39,40 'type':41 'user':3 'defin':15 'capabl':13 'except':20 'global':18 'permiss':19,28 'wagn.org':30 '/new/role':35 'administr':23 '/admin/tasks':17 '/wagn/role|learn':31 'wagn.org/wagn/role':29"
+  updated_at: 2009-06-07 14:19:06.846093 -05:00
   appender_id: 
   references_expired: 
-  indexed_name: "'descript':2 'administr':1"
-  current_revision_id: 2516
+  indexed_name: "'role':1"
+  current_revision_id: 2522
   created_by: 1
-  type: Basic
-  tag_id: 146
-  extension_type: 
+  type: Cardtype
+  tag_id: 
+  extension_type: Cardtype
   updated_by: 4
   reader_id: 3
-  id: 147
-  trunk_id: 10
+  id: 7
+  trunk_id: 
   trash: false
   appender_type: 
-  key: administrator+description
-  extension_id: 
+  key: role
+  extension_id: 5
   created_at: 2009-04-06 14:11:12.920280 -05:00
 cards_118: 
   reader_type: Role
@@ -727,26 +727,26 @@ cards_032:
   created_at: 2009-04-06 14:11:12.920280 -05:00
 cards_004: 
   reader_type: Role
-  name: "*css"
-  indexed_content: "'0':102,103,134,135 'h1':14,20 'h2':15,25 'bar':80 'box':122,128,138 'css':1A 'top':79,87 'bodi':2,4 'card':18,23,42,51,58,71,73,76,81,92,95,105,114,116,124 'edit':11,65 'help':136,139 'last':64 'link':33,36,45,49,54,68 'menu':88 'mode':12 'need':10 'none':99,131 'page':28 'plus':111,113 'slot':19,24,43,52,59,74,93,106,117,125 'text':3,9,85,137 'view':62 'chang':61 'color':6,26,39,55,66,77,109,119 'joint':118 'reset':5 'style':13 'visit':38 '000000':90 '005800':98,110 '444444':7 '448844':40 '664444':27 '77aa77':67 '990000':78 '996600':120 '997799':56 'ccccee':130 'ccddbb':32 'eeeecc':142 'header':8,82,96 'repeat':100,132 'scroll':101,133 'subtab':84 'a.email':53 'comment':121,127 'content':47 'submenu':107 'a.wanted':75 'instruct':140 'nonexist':70 'top-menu':86 'body.wagn':16,21,30 'card-head':94 'card-slot':17,22,41,50,57,72,91,104,115,123 'last-edit':63 'a.external':44,48 'background':29,31,89,97,129,141 'change-view':60 'comment-box':126 'card-slot.line':46"
-  updated_at: 2009-06-07 12:58:15.261790 -05:00
+  name: Administrator+description
+  indexed_content: "'see':17,31 'set':30 'card':22 'edit':18 'delet':20 'everi':21 'power':15 'global':10 'system':25 'automat':4 'permiss':11,29,37 'descript':2A 'wagn.org':34 'administr':1A,3 'regardless':26 '/admin/tasks':9 'wagn.org/wagn/permissions':33 '/wagn/permissions|documentation':35"
+  updated_at: 2009-06-07 14:02:15.761630 -05:00
   appender_id: 
   references_expired: 
-  indexed_name: "'css':1"
-  current_revision_id: 2509
-  created_by: 4
-  type: HTML
-  tag_id: 
+  indexed_name: "'descript':2 'administr':1"
+  current_revision_id: 2516
+  created_by: 1
+  type: Basic
+  tag_id: 146
   extension_type: 
   updated_by: 4
   reader_id: 3
-  id: 198
-  trunk_id: 
+  id: 147
+  trunk_id: 10
   trash: false
   appender_type: 
-  key: "*css"
+  key: administrator+description
   extension_id: 
-  created_at: 2009-05-19 22:18:56.476994 -05:00
+  created_at: 2009-04-06 14:11:12.920280 -05:00
 cards_060: 
   reader_type: Role
   name: "*tagged"

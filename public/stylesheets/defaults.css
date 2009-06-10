@@ -124,10 +124,6 @@ select {
 #tinymce {
   background: #ffe;  
 }
-/*  do we need this?  - efm 6-1-09
- input {  
-  padding: 0px;
-}*/
 input[type=submit], 
 input[type=button] {
   background: #99a;

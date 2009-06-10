@@ -42,10 +42,20 @@
 
 
 #navbox_background {
-  padding: 2px 0px;
   margin:  0 8px;
-  margin-bottom: 2px;
+  margin-bottom: 2px;     
+  background: #ffc;        
+  
+  /* this is already specified in defaults.css, but specifying it again here fixes ie */
+  border: 1px solid #aaa;
+  border-top: 2px solid #666;
+  border-left: 2px solid #666;
 }
+
+html>body #navbox_background {
+  padding: 2px 0px;
+}
+
 /* use both ids otherwise #top-menu a  overrides */            
 #navbox_background #navbox_image {
   padding: 2px 8px;
@@ -56,7 +66,7 @@ html>body #navbox_background #navbox_image {
 }
 #navbox_field,
 #navbox_field:focus {
-  padding: 0 3px;
+  padding: 0px 3px;
   margin: 0px;
   height: 18px;
   width: 30%;

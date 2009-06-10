@@ -34,7 +34,7 @@ class CachedCard
       }  
     end
     
-    def global_seq
+    def global_seq 
       self.local_cache[:seq] ||= (cache.read(@@seq_key) || bump_global_seq ).to_i
     end
 
@@ -52,19 +52,17 @@ class CachedCard
     # called by templating system
     def get_real(name)     
       key = name.to_key             
+           
+      return Card[name] unless perform_caching
       
       if self.local_cache[:real].has_key?(key)
         return self.local_cache[:real][key]
       else
         self.local_cache[:real][key] = begin
-          if perform_caching
-            if card = self.find(key)
-              card
-            elsif card = self.load_card(name)
-              self.cache_me_if_you_can(card, :cache=>true)
-            end
-          else
-            Card[name] 
+          if card = self.find(key)
+            card
+          elsif card = self.load_card(name)
+            self.cache_me_if_you_can(card, :cache=>true)
           end
         end
       end
@@ -204,7 +202,7 @@ class CachedCard
     case task
       when :read; System.always_ok? || party_ok?(read_permission)
       when :comment; party_ok?(comment_permission)
-      else card.ok?(task)
+      else card && card.ok?(task)
     end
   end
   

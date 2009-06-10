@@ -50,7 +50,9 @@ namespace :db do
   end
 end
         
-namespace :wagn do
+namespace :wagn do                            
+  ## FIXME: this generates an "Adminstrator links" card with the wrong reader_id, I have been 
+  ##  setting it by hand after fixture generation.  
   desc "recreate test fixtures from fresh db"
   task :generate_fixtures => :environment do  
 
@@ -119,6 +121,11 @@ namespace :wagn do
     ::User.as(:wagbot) do 
       joe_user = ::User.create! :login=>"joe_user",:email=>'joe@user.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>User[:wagbot]
       joe_card = Card::User.create! :name=>"Joe User", :extension=>joe_user, :content => "I'm number two"    
+      
+      joe_admin = ::User.create! :login=>"joe_admin",:email=>'joe@admin.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>User[:wagbot]
+      joe_admin_card = Card::User.create! :name=>"Joe Admin", :extension=>joe_admin, :content => "I'm number one"    
+      Role[:admin].users<< [ joe_admin ]
+
 
       bt = Card.find_by_name 'Basic+*tform'
       fail "oh god #{bt.permissions.inspect}" if bt.permissions.empty?

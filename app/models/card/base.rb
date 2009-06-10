@@ -39,7 +39,7 @@ module Card
     before_validation_on_create :set_needed_defaults
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
-      :update_link_ins, :allow_type_change, :phantom, :broken_type, :skip_defaults
+      :update_referencers, :allow_type_change, :phantom, :broken_type, :skip_defaults
   
     private
       belongs_to :reader, :polymorphic=>true  
@@ -60,6 +60,7 @@ module Card
       return if (!new_record? || skip_defaults? || phantom? || @defaults_already_set)  
       @defaults_already_set = true
       set_defaults
+      #replace_content_variables
     end
     
     def set_defaults 
@@ -81,11 +82,16 @@ module Card
       end
       
       if template.hard_template? || !updates.for?(:content) 
-        self.content = template.content
+        self.content = ::User.as(:wagbot) { template.content }
       end
 
       self.name='' if self.name.nil?
     end
+    
+    #def replace_content_variables
+      # this should search through all variables (in links and inclusions) starting with $ 
+      #and replace them with either the corresponding passed-in param or ''
+    #end
     
     def default_permissions
       perm = template.real_card.permissions.reject { |p| p.task == 'create' unless (type == 'Cardtype' or template?) }
@@ -126,16 +132,25 @@ module Card
         c = find_or_new(args); c.save; c
       end
       
-      def find_or_new(args={})  
+      def find_or_new(args={})
         args.stringify_keys!
         # FIXME -- this finds cards in or out of the trash-- we need that for
         # renaming card in the trash, but may cause other problems.
         raise "Must specify :name to find_or_create" if args['name'].blank?
-        c = Card::Base.find_by_key(args['name'].to_key) || begin
+        c = Card.find(:first, :conditions=>"key = '#{args['name'].to_key}'") || begin
           p = Proc.new {|k| k.new(args)}
           with_class_from_args(args, p)
         end
         c.send(:set_needed_defaults)
+        # FIXME - this will lead to double saving when called from find_or_create, 
+        # but trashed cards are not getting saved when called from set_defaults   there's probably a better way.
+#        if c.trash
+#          ::User.as(:wagbot) do
+#            c.content=''  
+#            c.trash=false
+#            c.save
+#          end
+#        end
         c
       end                      
                                   
@@ -253,8 +268,12 @@ module Card
         if card = Card[name]
           card.update_attributes(opts)
         elsif !opts[:content].strip.blank?  #fixme -- need full-on strip that gets rid of blank html tags.
-          opts[:name] = name
-          card = Card.create(opts)
+          opts[:name] = name   
+          if ::Cardtype.create_ok?( self.type ) && !::Cardtype.create_ok?( Card.new(opts).type )
+            ::User.as(:wagbot) { Card.create(opts) }
+          else
+            Card.create(opts)
+          end
         end
         if card and !card.errors.empty?
           card.errors.each do |field, err|
@@ -333,8 +352,8 @@ module Card
       junctions(*args).map { |r| [r ] + r.dependents(*args) }.flatten 
     end
 
-    def link_in_cards
-      (dependents + [self]).plot(:linkers).flatten.uniq
+    def extended_referencers
+      (dependents + [self]).plot(:referencers).flatten.uniq
     end
 
     def cardtype
@@ -367,7 +386,9 @@ module Card
     
     # I don't really like this.. 
     def attribute_card( attr_name )
-      Card.find_by_name( name + JOINT + attr_name )
+      ::User.as :wagbot do
+        CachedCard.get_real( name + JOINT + attr_name )
+      end
     end
      
     def revised_at
@@ -528,12 +549,12 @@ module Card
         end
         
         # require confirmation for renaming multiple cards
-        if !rec.dependents.empty? and !rec.confirm_rename
+        if !rec.confirm_rename and !rec.dependents.empty? 
           rec.errors.add :confirmation_required, "#{rec.name} has #{rec.dependents.size} dependents"
         end
         
-        if !rec.link_in_cards.empty? and !rec.confirm_rename
-          rec.errors.add :confirmation_required, "#{rec.name} has #{rec.link_in_cards.size} links in"
+        if rec.update_referencers.nil? and !rec.extended_referencers.empty? 
+          rec.errors.add :confirmation_required, "#{rec.name} has #{rec.extended_referencers.size} referencers"
         end
       end
     end
@@ -542,7 +563,7 @@ module Card
       if rec.updates.for?(:content)
         rec.send :validate_content, value
         begin 
-          res = Renderer.instance.render_without_rescue(rec, value, update_references=false)
+          res = Renderer.new.render(rec, value, update_references=false)
         rescue Exception=>e
           rec.errors.add :content, "#{e.class}: #{e.message}"
         end   
@@ -625,6 +646,8 @@ module Card
     
     def destroy_extension
       extension.destroy if extension
+      extension = nil
+      true
     end
     
     def validate_content( content )
@@ -632,4 +655,3 @@ module Card
     
   end
 end
-

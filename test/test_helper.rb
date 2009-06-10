@@ -1,3 +1,8 @@
+require 'rubygems'
+require 'rails_test_serving'
+RailsTestServing.boot
+
+
 unless defined? TEST_ROOT
   ENV["RAILS_ENV"] = "test"
   require 'pathname'

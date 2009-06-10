@@ -25,7 +25,7 @@ module WagnHelper
       @state = 'view'
       @renders = {}
       @transclusion_view_overrides = opts[:transclusion_view_overrides] 
-      @renderer = opts[:renderer] || Renderer.new(self)
+      @renderer = opts[:renderer] || Renderer.new
     end
 
     def subslot(card, &proc)
@@ -158,7 +158,8 @@ module WagnHelper
       #warn "<render(#{card.name}, #{@state}).render(#{action}, item=>#{args[:item]})"
       
       rkey = self.card.name + ":" + action.to_s
-      root.renders[rkey] ||= 1; root.renders[rkey] += 1
+      root.renders[rkey] ||= 1 
+      root.renders[rkey] += 1 unless [:name, :link].member?(action)
       #root.start_time ||= Time.now.to_f
 
       ok_action = case
@@ -306,7 +307,7 @@ module WagnHelper
                 when @state==:edit
                   ( Card.find_by_name( fullname ) || 
                     Card.find_phantom( fullname ) || 
-                    Card.new( :name=>  fullname ) )
+                    Card.new(   :name=>fullname, :type=>options[:type] ) )
                 else
                   CachedCard.get fullname
                 end

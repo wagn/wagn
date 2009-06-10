@@ -13,8 +13,7 @@ class ApplicationController < ActionController::Base
   attr_reader :card, :cards, :renderer, :context   
   attr_accessor :notice, :slot
   
-  helper_method :card, :cards, :renderer, :context, 
-    :edit_user_context, :sidebar_cards, :notice, :slot
+  helper_method :card, :cards, :renderer, :context, :edit_user_context, :notice, :slot
 
   include ActionView::Helpers::TextHelper #FIXME: do we have to do this? its for strip_tags() in edit()
   include ActionView::Helpers::SanitizeHelper
@@ -29,10 +28,10 @@ class ApplicationController < ActionController::Base
   
   def per_request_setup
     if System.multihost
-      if mapping = MultihostMapping.find_by_requested_host(request.host)
+      if mapping = MultihostMapping.find_by_requested_host(request.host) || MultihostMapping.find_by_requested_host("")
         System.base_url = "http://" + mapping.canonical_host
         System.wagn_name = mapping.wagn_name
-        ActiveRecord::Base.connection.execute %{ set search_path to "#{mapping.wagn_name}" }      
+        ActiveRecord::Base.connection.schema_search_path = mapping.wagn_name
       else
         return render_fast_404
       end
@@ -60,7 +59,8 @@ class ApplicationController < ActionController::Base
     CachedCard.reset_cache
     System.request = request 
     #System.time = Time.now.to_f              
-
+    
+    load_location
   end
 
   def default_layout

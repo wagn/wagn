@@ -3,7 +3,7 @@ module ActiveRecord
     module ClassMethods
 
       def validates_uniqueness_of(*attr_names)
-        configuration = { :message => ActiveRecord::Errors.default_error_messages[:taken], :case_sensitive => true }
+        configuration = { :message =>  I18n.translate('activerecord.errors.messages.taken'), :case_sensitive => true }
         configuration.update(attr_names.pop) if attr_names.last.is_a?(Hash)
 
         validates_each(attr_names,configuration) do |record, attr_name, value|

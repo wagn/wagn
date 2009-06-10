@@ -1,5 +1,23 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
+describe Card, "deleted card" do
+  before do User.as(:wagbot)
+    @c = Card['A']
+    @c.destroy!
+  end
+  it "should be in the trash" do
+    @c.trash.should be_true
+  end
+  it "should come out of the trash when a plus card is created" do
+    pending
+    Card.create(:name=>'A+*account')
+    c = Card['A']
+    c.trash.should_not be_true
+  end
+end
+
+
+
 # FIXME: these user tests should probably be in a set of cardtype specific tests somewhere..   
 describe User, "with revisions" do
   before do User.as :wagbot ; @c = Card.find_by_name("Wagn Bot"); end
@@ -15,22 +33,23 @@ describe User, "without revisions" do
   end
 end
 
-#NOT WORKING, BUT IT SHOULD:
-=begin
-describe Card, "connected to unremovable card" do
-  before do
-     User.as :wagbot                                     
-     # this ugly setup makes it so A+Admin is the actual user with edits..
-     Card["Wagn Bot"].update_attributes! :name=>"A+Wagn Bot"  
-  end
-  it "should not be removable" do
-    @a = Card['A']
-    @a.confirm_destroy = true
-    @a.destroy.should_not be_true
-  end
-end
-=end 
-                 
+
+  
+
+#NOT WORKING, BUT IT SHOULD
+#describe Card, "a part of an unremovable card" do
+#  before do
+#     User.as :wagbot                                     
+#     # this ugly setup makes it so A+Admin is the actual user with edits..
+#     Card["Wagn Bot"].update_attributes! :name=>"A+Wagn Bot"  
+#  end
+#  it "should not be removable" do
+#    @a = Card['A']
+#    @a.confirm_destroy = true
+#    @a.destroy.should_not be_true
+#  end
+#end
+           
 describe Card, "dependent removal" do
   before do
     User.as :joe_user
@@ -59,7 +78,7 @@ describe Card, "rename to trashed name" do
     @a = Card.find_by_name("A")
     @b = Card.find_by_name("B")
     @a.destroy!  #trash
-    @b.update_attributes! :name=>"A", :confirm_rename=>true
+    @b.update_attributes! :name=>"A", :confirm_rename=>true, :update_referencers=>true
   end
   
   it "should rename b to a" do
@@ -126,13 +145,14 @@ describe Card, "recreate trashed card via new" do
     User.as :wagbot 
     @c = Card.create! :type=>'Basic', :name=>"BasicMe"
   end
-=begin  this test is known to be broken; we've worked around it for now  
-  it "should delete and recreate with a different cardtype" do
-    @c.destroy!
-    @re_c = Card.new :type=>"Phrase", :name=>"BasicMe", :content=>"Banana"
-    @re_c.save!
-  end
-=end
+
+#  this test is known to be broken; we've worked around it for now  
+#  it "should delete and recreate with a different cardtype" do
+#    @c.destroy!
+#    @re_c = Card.new :type=>"Phrase", :name=>"BasicMe", :content=>"Banana"
+#    @re_c.save!
+#  end
+
 end                    
 
 describe Card, "junction revival" do
@@ -159,12 +179,14 @@ describe Card, "junction revival" do
     @c.content.should == 'revived content'
   end
 end    
+
+
+#=end
          
 # FIXME OH FIXME
 # if a tightly restricted card "Foo" is trashed, then someone with lesser permissions tries to
-# create "Foo" they'll get permission denied and it won't make ANY sense. We should probably rename
-# the trashed card to free up the namespace and start from scratch.
+# create "Foo" they'll get permission denied and it won't make ANY sense. 
 
-# FIXME
-# if you destroy a card "Foo" of Cardtype A, then create card "Foo" of cardtype Basic, it should
+# FIXME  is this fixed now??? -efm
+# if you destroy a card "Foo" of Cardtype A, then create card "Foo" of cardtype  Basic, it should
 # create that basic card as long as you have permissions to create basic cards.

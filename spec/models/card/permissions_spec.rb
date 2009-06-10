@@ -83,7 +83,7 @@ describe Card, "new permissions" do
 
   it "should let joe render content of new cards" do
     @c = Card.new
-    Renderer.instance.render(@c).should == ''
+    Renderer.new.render(@c).should == ''
   end
 
 end

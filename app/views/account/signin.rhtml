@@ -19,9 +19,11 @@
     <p><%= submit_tag 'Reset my password' %></p>
   <% end %>
   <p>&nbsp;</p>
-
-  <h2>Need an Account?</h2>
-	<p><%= link_to 'Sign Up!', :action=>'signup' %></p>
+  
+  <% if Card::InvitationRequest.create_ok? %>
+    <h2>Need an Account?</h2>
+    <p><%= link_to 'Sign Up!', :action=>'signup' %></p>
+  <% end %>
 	
   <%= javascript_tag( "$('login_field').focus()" ) %>
 

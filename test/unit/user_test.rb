@@ -5,7 +5,7 @@ class UserTest < Test::Unit::TestCase
   # Then, you can remove it from this and the functional test.
   include AuthenticatedTestHelper
   #fixtures :users
- 
+
   def test_should_reset_password
     User.find_by_email('joe@user.com').update_attributes(:password => 'new password', :password_confirmation => 'new password')
     assert_equal User.find_by_email('joe@user.com'), User.authenticate('joe@user.com', 'new password')
@@ -38,8 +38,6 @@ class UserTest < Test::Unit::TestCase
     end
   end
 
-
-
   def test_should_not_rehash_password
     User.find_by_email('joe@user.com').update_attributes!(:email => 'joe2@user.com')
     assert_equal User.find_by_email('joe2@user.com'), User.authenticate('joe2@user.com', 'joe_pass')
@@ -47,6 +45,10 @@ class UserTest < Test::Unit::TestCase
 
   def test_should_authenticate_user
     assert_equal User.find_by_email('joe@user.com'), User.authenticate('joe@user.com', 'joe_pass')
+  end
+
+  def test_should_authenticate_user_with_whitespace
+    assert_equal User.find_by_email('joe@user.com'), User.authenticate(' joe@user.com ', ' joe_pass ')
   end
   
   protected

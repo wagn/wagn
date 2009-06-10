@@ -192,7 +192,7 @@ end
 describe Wql2, "type" do  
   before { User.as :joe_user }
   
-  user_cards = ["Joe User","No Count","Sample User","u1","u2","u3"].sort
+  user_cards = ["Joe Admin","Joe User","No Count","Sample User","u1","u2","u3"].sort
   
   it "should find cards of this type" do
     Card.search( :type=>"_self", :_card=>Card['User']).plot(:name).sort.should == user_cards
@@ -208,13 +208,11 @@ describe Wql2, "type" do
 
 end
 
-
-
-describe Wql2, "group tagging" do
-  it "should find frequent taggers of cardtype cards" do
-    Card.search( :group_tagging=>'Cardtype' ).map(&:name).sort().should == ["*related", "*tform"].sort()
-  end
-end
+#describe Wql2, "group tagging" do
+#  it "should find frequent taggers of cardtype cards" do
+#    Card.search( :group_tagging=>'Cardtype' ).map(&:name).sort().should == ["*related", "*tform"].sort()
+#  end
+#end
 
 describe Wql2, "trash handling" do   
   before { User.as :joe_user }
@@ -300,24 +298,6 @@ describe Wql2, "relative" do
   end
 end
 
-describe Wql2, "found_by" do
-  before do
-    User.as :wagbot 
-    @simple_search = Card.create(:name=>'Simple Search', :type=>'Search', :content=>'{"name":"A"}')
-  end 
-
-#  it "should find cards returned by search of given name" do
-#    Card.search(:found_by=>'Simple Search').first.name.should=='A'
-#  end
-#  it "should play nicely with other properties and relationships" do
-#    Card.search(:plus=>{:found_by=>'Simple Search'}).should==Card.search(:plus=>'A')
-#  end
-  it "should be able to handle _self" do
-    Card.search(:_card=>@simple_search, :left=>{:found_by=>'_self'}, :right=>'B').first.name.should=='A+B'
-  end
-  
-end
-
 
 
 describe Wql2, "match" do 
@@ -333,5 +313,41 @@ describe Wql2, "match" do
 
   it "should get only name when name is explicit" do
     Card.search( :name=>[:match, "two"] ).plot(:name).sort.should==["One+Two","One+Two+Three","Two"].sort
+  end
+end
+
+describe Wql2, "found_by" do
+  before do
+    User.as :wagbot 
+    @simple_search = Card.create(:name=>'Simple Search', :type=>'Search', :content=>'{"name":"A"}')
+  end 
+
+  it "should find cards returned by search of given name" do
+    Card.search(:found_by=>'Simple Search').first.name.should=='A'
+  end
+  it "should find cards returned by virtual cards" do
+    Card.search(:found_by=>'Image+*type cards').plot(:name).sort.should==Card::Image.find(:all).plot(:name).sort
+  end
+  it "should play nicely with other properties and relationships" do
+    Card.search(:plus=>{:found_by=>'Simple Search'}).should==Card.search(:plus=>'A')
+  end
+  it "should be able to handle _self" do
+    Card.search(:_card=>@simple_search, :left=>{:found_by=>'_self'}, :right=>'B').first.name.should=='A+B'
+  end
+  
+end
+
+describe Wql2, "and" do
+  it "should act as a simple passthrough" do
+    Card.search(:and=>{:match=>'two'}).plot(:name).sort.should==CARDS_MATCHING_TWO
+  end
+end
+
+#=end
+
+
+describe Wql2, "offset" do
+  it "should not break count" do
+    Card.count_by_wql({:match=>'two', :offset=>1}).should==CARDS_MATCHING_TWO.length
   end
 end

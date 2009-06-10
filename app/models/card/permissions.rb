@@ -49,9 +49,7 @@ module CardLib
       if perform_checking && approved? || !perform_checking
         save_without_permissions(perform_checking)
       else
-        # Decided I want to raise errors more..
         raise ::Card::PermissionDenied.new(self)
-        #false
       end
     end 
     
@@ -64,20 +62,32 @@ module CardLib
     end
  
     def approved?  
-      self.operation_approved = true
+      self.operation_approved = true    
+      self.permission_errors = []
       if new_record?
         approve_create_me
       end
       updates.each_pair do |attr,value|
         send("approve_#{attr}")
+      end         
+      permission_errors.each do |err|
+        errors.add :permission_denied, err
       end
       operation_approved
     end
     
     # ok? and ok! are public facing methods to approve one operation at a time
-    def ok?(operation) 
-      self.operation_approved = true
+    def ok?(operation)  
+      self.operation_approved = true    
+      self.permission_errors = []
+      
       send("approve_#{operation}")     
+      # approve_* methods set errors on the card.
+      # that's what we want when doing approve? on save and checking each attribute
+      # but we don't want just checking ok? to set errors. 
+      # so we hack around the errors added in approve_* by clearing them here.    
+      # self.errors.clear 
+
       operation_approved
     end  
     
@@ -112,9 +122,7 @@ module CardLib
     end
     
     def deny_because(why)    
-      [why].flatten.each do |err|
-        errors.add :permission_denied, err
-      end
+      [why].flatten.each {|err| permission_errors << err }
       self.operation_approved = false
     end
 
@@ -126,9 +134,10 @@ module CardLib
     
     def approve_read
       if reader_type=='Role'
-        deny_because you_cant("read this card") unless System.role_ok?(reader_id)
+        (self.operation_approved = false) unless System.role_ok?(reader_id)
       else
-        approve_task(:read)
+        testee = template? ? trunk : self
+        (self.operation_approved = false) unless testee.lets_user( :read ) 
       end
     end
        
@@ -159,7 +168,7 @@ module CardLib
       deny_because("No comments allowed on hard templated cards") if hard_template
     end
 
-    def approve_task(operation, verb=nil) #read, edit, comment, delete
+    def approve_task(operation, verb=nil) #read, edit, comment, delete           
       verb ||= operation.to_s
       testee = template? ? trunk : self
       deny_because("#{YDHPT} #{verb} this card") unless testee.lets_user( operation ) 
@@ -206,7 +215,7 @@ module CardLib
       super
       base.extend(ClassMethods)
       base.class_eval do           
-        attr_accessor :operation_approved 
+        attr_accessor :operation_approved, :permission_errors
         alias_method_chain :destroy, :permissions  
         alias_method_chain :destroy!, :permissions  
         alias_method_chain :save, :permissions

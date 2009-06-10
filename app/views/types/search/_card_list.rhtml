@@ -28,11 +28,11 @@
   <div class="search-no-results faint">Search returned no results</div>
 <% else %>    
   <%= paging %>
-	<ul class="search-result-list">
+	<div class="search-result-list">
 		<% cards.each do |c| %>     	
-			<li class="item-<%= view %>"><%= slot.process_transclusion(c, {:view=>view, :showname=>c.name }) %></li>
+			<div class="search-result-item item-<%= view %>"><%= slot.process_transclusion(c, {:view=>view, :showname=>c.name }) %></div>
 		<% end %>     
-	</ul>
+	</div>
 	<%= paging %>
   
 <% end %>

@@ -26,7 +26,6 @@ module CardLib
     
     protected 
     def set_name(newname)
-    
       oldname = self.name_without_tracking
       self.name_without_tracking = newname 
       return if new_record?
@@ -35,7 +34,7 @@ module CardLib
       if trash = Card.find_by_key(newname.to_key)
         if trash.trash  
           trash.update_attributes! :name=>trash.name+"*trash", :confirm_rename=>true
-        else
+        else                             
           # note -- this happens when changing to a name variant.  any special handling needed?
         end
       end
@@ -58,7 +57,6 @@ module CardLib
       @old_name = oldname
       @search_content_changed=true 
       if cc=CachedCard.find(@old_name.to_key) then cc.expire_all end  # clear cache of old name.
-      
     end
 
     def set_type(new_type)
@@ -155,41 +153,45 @@ module CardLib
     end
     
     def cascade_name_changes 
-      # This happens after_save because of the way it references trunk.name and tag.name
-      # which depend on the original card being saved.
       return true unless @name_changed
-      # update the name cache all down the tree
-      junctions.each do |card|
-        dep_name = card.trunk.name + JOINT + card.tag.name
-        #warn "  dep #{card.id} (#{card.name})= #{dep_name}"
-        card.name = dep_name
-        card.update_link_ins = update_link_ins
-        card.confirm_rename = confirm_rename
-        card.save! #FIXME -- not sure this should be a ! (?), but probably needs handling if not...
-      end
+      ActiveRecord::Base.logger.info("----------------------- CASCADE #{self.name}  -------------------------------------")  
       
-      #warn "UPDATE LINK INS:  #{update_link_ins}  #{update_link_ins == false}  #{update_link_ins == 'false'}"
-       
-      # update references (unless we're asked not to)
-      if !update_link_ins or update_link_ins == 'false'  #  doing the string check because the radio button is sending an actual "false" string
+      deps = self.dependents
+                                            
+      deps.each do |dep|
+        ActiveRecord::Base.logger.info("---------------------- DEP #{dep.name}  -------------------------------------")  
+        cxn = ActiveRecord::Base.connection
+        depname = dep.name.replace_particle @old_name, name
+        depkey = depname.to_key    
+        # here we specifically want NOT to invoke recursive cascades on these cards, have to go this 
+        # low level to avoid callbacks.                                                               
+        Card.update_all("name=#{cxn.quote(depname)}, key=#{cxn.quote(depkey)}", "id = #{dep.id}")
+        dep.expire(dep)
+      end 
+
+      if !update_referencers || update_referencers == 'false'  # FIXME doing the string check because the radio button is sending an actual "false" string
         #warn "no updating.."
-        WikiReference.update_on_destroy(self, @old_name) 
+        ([self]+deps).each do |dep|
+          ActiveRecord::Base.logger.info("--------------- NOUPDATE REFERRER #{dep.name}  ---------------------------")
+          WikiReference.update_on_destroy(dep, @old_name) 
+        end
       else
-        link_in_cards.each do |linker|
-          #warn "updating #{linker.name}"
-          WagBot.instance.revise_card_links( linker, @old_name, name )
-        end        
-        # FIXME: do update transclusions as well?
-        # don't do update_on_destroy for old links-- those should have been repointed
-        # to the new card.
+        ([self]+deps).map(&:referencers).flatten.uniq.each do |card|
+          ActiveRecord::Base.logger.info("------------------ UPDATE REFERRER #{card.name}  ------------------------")
+          User.as(:wagbot) do      
+            card.content = Renderer.new.replace_references( card, @old_name, name )
+            card.save! unless card==self
+          end
+        end
       end
+
       WikiReference.update_on_create( self )
       @name_changed = false   
       true
     end
-   
+
     
-   
+               
     def self.append_features(base)
       super 
       base.after_create :set_initial_content 

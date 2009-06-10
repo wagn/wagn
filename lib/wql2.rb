@@ -30,7 +30,7 @@ module Wql2
     :semi_relational=> %w{ edited_by edited member_of member role found_by },
     :relational => %w{ part left right plus left_plus right_plus },  
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
-    :special => %w{ or match complete not count },
+    :special => %w{ or match complete not count and },
     :ignore => %w{ prepend append },
     :pass => %w{ cond }
   }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
@@ -55,7 +55,7 @@ module Wql2
     :dir    => "",
     :limit  => "",
     :offset => "",  
-    :group_tagging  => "",
+#    :group_tagging  => "",
     :return => :list,
     :join   => :and,
     :view   => nil    # handled in interface-- ignore here
@@ -214,9 +214,14 @@ module Wql2
     end          
     
     def found_by(val)
-      cards = val=~/^_/ ? [to_card(val)] : Card.search(val)
+      #cards = val=~/^_/ ? [to_card(val)] : Card.search(val)
+      cards = case
+          when val=~/^_/;    [to_card(val)]
+          when String===val; [CachedCard.get(val)]
+          else;              Card.search(val)
+        end  
       cards.each do |c|
-        raise %{"found_by" value needs to be valid Search card} unless c && c.type=='Search'
+        raise %{"found_by" value needs to be valid Search card #{c.inspect}} unless c && c.type=='Search'
         merge field(:id) => subspec(c.get_spec)
       end
     end
@@ -256,6 +261,10 @@ module Wql2
     #end
     
     def cond(val); #noop      
+    end
+    
+    def and(val)
+      merge val
     end
     
     def or(val)
@@ -391,7 +400,8 @@ module Wql2
         # type!=User is about 6x faster than type='Role'...
         sql.conditions << %{ (#{t}.reader_type!='User' and #{t}.reader_id IN (#{user_roles})) }
       end
-      
+
+=begin      
       if !@mods[:group_tagging].blank?
         card_class = @mods[:group_tagging] 
         fields = Card::Base.columns.map {|c| "#{table_alias}.#{c.name}"}.join(", ")
@@ -407,6 +417,7 @@ module Wql2
         @mods[:sort] = 'count'
         @mods[:dir] = 'desc'
       end
+=end
             
       # Order 
       unless @parent or @mods[:return]==:count

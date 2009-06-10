@@ -58,11 +58,8 @@ module Chunk
       @unmask_mode == :escape
     end
 
-    def revert
-      @content.sub!(mask, @text)
-      # unregister     
-      #warn "deleteing chunk: #{self} from #{@content}"
-      @content.delete_chunk(self)
+    def revert   
+      @text
     end
 
   end

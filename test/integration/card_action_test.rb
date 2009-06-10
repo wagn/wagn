@@ -76,20 +76,20 @@ class CardActionTest < ActionController::IntegrationTest
   end 
 
 
-  def test_newcard_shows_edit_instructions
+  def test_newcard_shows_edit_instructions   
     given_cards( 
       {"Cardtype:YFoo" => ""},
       {"YFoo+*edit"  => "instruct-me"}
     )
     get 'card/new', :card => {:type=>'YFoo'}
-    assert_tag :tag=>'div', :attributes=>{ :class=>"instruction" }, 
-      :child=>{ :tag=>'p',:content=>/instruct-me/ }
+    assert_tag :tag=>'div', :attributes=>{ :class=>"instruction main-instruction" }, 
+      :child=>{ :tag=>'div',:content=>/instruct-me/ }
   end
 
   def test_newcard_works_with_fuzzy_renamed_cardtype
     given_cards "Cardtype:ZFoo" => ""
     User.as(:joe_user) do
-      Card["ZFoo"].update_attributes! :name=>"ZFooRenamed"
+      Card["ZFoo"].update_attributes! :name=>"ZFooRenamed", :update_referencers=>true
     end
     
     get 'card/new', :card => { :type=>'z_foo_renamed' }       
@@ -121,6 +121,5 @@ class CardActionTest < ActionController::IntegrationTest
     assert_rjs_redirected_to '/'
     assert_nil Card.find_by_name( t1.name )
   end
-
 
 end

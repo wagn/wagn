@@ -1,5 +1,5 @@
-<![if !IE]><span class="createOnClick" view="<%= view %>" cardid="" position="<%=slot.position %>" cardname="<%= card.name %>" type="<%= slot.type %>"><![endif]>
-<!--[if IE]><div class="createOnClick" view="<%= view %>" cardid="" position="<%=slot.position %>" cardname="<%= card.name %>" type="<%= slot.type %>" style="display:inline" ><![endif]--> 
+<![if !IE]><span class="createOnClick" view="<%= view %>" cardid="" position="<%=slot.position %>" cardname="<%= h card.name %>" type="<%= slot.type %>"><![endif]>
+<!--[if IE]><div class="createOnClick" view="<%= view %>" cardid="" position="<%=slot.position %>" cardname="<%= h card.name %>" type="<%= slot.type %>" style="display:inline" ><![endif]--> 
 
 	<span class="open-missing">Add <strong><%= showname || card.name %></strong></span>
 <!--[if IE]></div><![endif]-->

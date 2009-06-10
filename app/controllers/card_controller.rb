@@ -35,7 +35,6 @@ class CardController < ApplicationController
     
   def show
     # record this as a place to come back to.
-    location_history.push(request.request_uri) if request.get?
 
     params[:_keyword] && params[:_keyword].gsub!('_',' ') ## this will be unnecessary soon.
 
@@ -45,14 +44,16 @@ class CardController < ApplicationController
     end             
     @card = CachedCard.get(@card_name)
 
-    if @card.new_record? && ! @card.phantom?
+    if @card.new_record? && !@card.phantom?
       params[:card]={:name=>@card_name, :type=>params[:type]}
-      if Cardtype.createable_cardtypes.empty? 
-        return render :action=>'missing'
+      if !Card::Basic.create_ok?
+        return render( :action=>'missing' )
       else
         return self.new
       end
-    end                                                                                  
+    else
+      save_location
+    end
     return unless view_ok # if view is not ok, it will render denied. return so we dont' render twice
 
     # rss causes infinite memory suck in rails 2.1.2.  
@@ -69,7 +70,7 @@ class CardController < ApplicationController
   #----------------( creating)                                                               
   def new
     args = (params[:card] ||= {})
-    args[:type] ||= params[:cardtype] # for /new/:cardtype shortcut in routes
+    args[:type] ||= params[:type] # for /new/:type shortcut in routes
     
     # don't pass a blank type as argument
     # look up other types in case Cardtype name is given instead of ruby type
@@ -87,6 +88,7 @@ class CardController < ApplicationController
       return
     end
 
+    args.delete(:content) if c=args[:content] and c.blank? #means soft-templating still takes effect 
     @card = Card.new args                   
     if request.xhr?
       render :partial => 'views/new', :locals=>{ :card=>@card }
@@ -103,13 +105,20 @@ class CardController < ApplicationController
     @card = Card.create params[:card]
     @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards] and @card.errors.empty?
 
+    @redirect_location = if @card.ok?(:read)
+      url_for_page(@card.name)
+    else
+      ( System.setting(@card.cardtype.name + "+*thanks") || System.setting("Basic+*thanks") || '/' )
+    end              
+    
     render_args = 
       case
-        when !@card.errors.empty?;  {
+        when !@card.errors.empty?; {
           :status => 422,
           :inline=>"<%= error_messages_for :card %><%= javascript_tag 'scroll(0,0)' %>" 
-        }
-        when main_card?;  {:action=>'new_redirect', :status=>418 }          
+        }    
+        when (!@card.ok?(:read));  {:action=>'redirect_to_thanks', :status=>418  }
+        when main_card?;    {:action=>'redirect_to_created_card', :status=>418 }          
           # according to rails / prototype docs:
           # :success: [...] the HTTP status code is in the 2XX range.
           # :failure: [...] the HTTP status code is not in the 2XX range.
@@ -144,6 +153,8 @@ class CardController < ApplicationController
       return render( :action=>:edit_conflict )
     end 
     # ~~~~~~  /REFACTOR ~~~~~ #
+
+    @card_args = card_args
     
     case
     when params[:multi_edit]; @card.multi_update(params[:cards])
@@ -154,9 +165,9 @@ class CardController < ApplicationController
     end  
 
     if @card.errors.on(:confirmation_required) && @card.errors.map {|e,f| e}.uniq.length==1  
-      ## I don't get the second condition.  pls document  
-      @confirm = @card.confirm_rename=true
-      @card.update_link_ins = (@card.update_link_ins=='true')
+      # If there is confirmation error and *only* that error 
+      @confirm = (@card.confirm_rename=true)
+      @card.update_referencers = true
       return render(:partial=>'card/edit/name', :status=>200)
     end
     
@@ -185,10 +196,12 @@ class CardController < ApplicationController
       session[:comment_author] = @author
       @author = "#{@author} (Not signed in)"
     else
-      @author = "[[#{User.current_user.card.name}]]"
+      username=User.current_user.card.name
+      #@author = "{{#{username}+image|size:icon}} [[#{username}]]"
+      @author = "[[#{username}]]"
     end
-    @comment.gsub! /\n/, '<br/>'
-    @card.comment = "<hr>#{@comment}<br/><p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
+    @comment=@comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
+    @card.comment = "<hr>#{@comment}<p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
     @card.save!   
     view = render_to_string(:action=>'show')
     render_update_slot view
@@ -298,9 +311,9 @@ class CardController < ApplicationController
       next unless key.to_s =~ /card|pointer/ 
       complete = params[key].values[0]
     end
-    complete.to_s!
+    complete = complete.to_s
 
-    if !params[:id].blank? && (card = Card["#{params[:id].tag_name}+*options"]) && card.type=='Search'
+    if !params[:id].blank? && card=Card::Pointer.options_card(params[:id].tag_name)
       @items = card.search( :complete=>complete, :limit=>8, :sort=>'name')
     else
       @items = Card.search( :complete=>complete, :limit=>8, :sort=>'name' )

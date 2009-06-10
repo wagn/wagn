@@ -45,6 +45,12 @@
 				</span>
 			</div>
 			
+			<% if card.template? %>
+			  <%- card.extension_type='HardTemplate' if card.type_template? %>
+        <%= render :partial=>'card/hardsoft_form', :locals=>{:card=>card, :mode=>'new'} %>
+      <% end %>
+      
+			
 			<div class="edit-area">
   			<div class="editor">
   				<% if card.hard_template %>

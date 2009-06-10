@@ -41,12 +41,21 @@
 
 
 
-#navbox_background{
-  padding: 2px 0px;
+#navbox_background {
   margin:  0 8px;
-  background: #ffd;
-  margin-bottom: 2px;
-}     
+  margin-bottom: 2px;     
+  background: #ffc;        
+  
+  /* this is already specified in defaults.css, but specifying it again here fixes ie */
+  border: 1px solid #aaa;
+  border-top: 2px solid #666;
+  border-left: 2px solid #666;
+}
+
+html>body #navbox_background {
+  padding: 2px 0px;
+}
+
 /* use both ids otherwise #top-menu a  overrides */            
 #navbox_background #navbox_image {
   padding: 2px 8px;
@@ -55,8 +64,9 @@
 html>body #navbox_background #navbox_image { 
   background-image: url(/images/search.png);
 }
-#navbox_field {
-  padding: 0 3px;
+#navbox_field,
+#navbox_field:focus {
+  padding: 0px 3px;
   margin: 0px;
   height: 18px;
   width: 30%;
@@ -64,7 +74,8 @@ html>body #navbox_background #navbox_image {
   z-index: 1;
   font-size: 13px;
   border: 0px;
-}     
+  background: #ffc;
+}
 #navbox_field_auto_complete {
   background: #eee
   width: auto;
@@ -185,7 +196,7 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
 .edit-instruction {
   margin: 8px 0px;
 }
-#new-card .instruction {
+#new-card .main-instruction {
   margin-bottom: 20px;
 }
 
@@ -230,8 +241,9 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
 #sign-in p {
   margin: 5px;
 }
-#sign-in input[type=text],
-#sign-in input[type=password] {
+#sign-in input#login_field,
+#sign-in input#password,
+#sign-in input#email {
   width: 50%;
 }
 
@@ -302,7 +314,6 @@ div.auto_complete ul strong.highlight {
   margin:0;
   padding:0;
 }
-
 
 /*------- HACK FIXME------------*/
 

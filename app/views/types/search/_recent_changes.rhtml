@@ -29,11 +29,11 @@
     %>
     <% cards_by_day.keys.sort.reverse.each do |day| %>
       <h2><%= format_date(day, include_time = false) %></h2>
-      <ul class="search-result-list">
+      <div class="search-result-list">
         <% cards_by_day[day].each do |card| %>
-      		<li class="item-<%= view %>"><%= get_slot(card).render(view) %>
+      		<div class="search-result-item item-<%= view %>"><%= get_slot(card).render(view) %></div>
         <% end %>
-      </ul>  
+      </div>  
     <% end %>
     <%= paging %>
   </div>

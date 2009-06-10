@@ -11,7 +11,7 @@ class AccountController < ApplicationController
   
   def signup
     raise(Wagn::Oops, "You have to sign out before signing up for a new Account") if logged_in?
-    raise(Card::PermissionDenied, "Sorry, no Signup allowed") unless Card::InvitationRequest.create_ok?
+    raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless Card::InvitationRequest.create_ok?
     card_args = (params[:card]||{}).merge({:type=>'InvitationRequest'})
 
     #fail "params.inspect: #{params.inspect}" if request.post?
@@ -29,10 +29,10 @@ class AccountController < ApplicationController
         email_args = { :message => System.setting('*signup+*message') || "Thanks for signing up to #{System.site_title}!",
                        :subject => System.setting('*signup+*subject') || "Account info for #{System.site_title}!" }
         @user.accept(email_args)
-        redirect_to '/' + (System.setting('*signup+*thanks') || '')
+        redirect_to (System.setting('*signup+*thanks') || '/')
       else
         Notifier.deliver_signup_alert(@card) if System.setting('*request+*to')
-        redirect_to '/' + (System.setting('*request+*thanks') || '')
+        redirect_to (System.setting('*request+*thanks') || '/')
       end
     end
   end
@@ -45,12 +45,12 @@ class AccountController < ApplicationController
   def accept
     @card = Card[params[:card][:key]] or raise(Wagn::NotFound, "Can't find this Account Request")
     @user = @card.extension or raise(Wagn::Oops, "This card doesn't have an account to approve")
-    System.ok?(:create_accounts) or raise(Card::PermissionDenied, "You need permission to create accounts")
+    System.ok?(:create_accounts) or raise(Wagn::PermissionDenied, "You need permission to create accounts")
     
     if request.post?
       @user.accept(params[:email])
       if @user.errors.empty? #SUCCESS
-        redirect_to '/' + (System.setting('*invite+*thanks') || '')
+        redirect_to (System.setting('*invite+*thanks') || '/')
         return
       end
     end
@@ -58,14 +58,14 @@ class AccountController < ApplicationController
   end
   
   def invite
-    System.ok?(:create_accounts) or raise(Card::PermissionDenied, "You need permission to create")
+    System.ok?(:create_accounts) or raise(Wagn::PermissionDenied, "You need permission to create")
     
     @user, @card = request.post? ? 
       User.create_with_card( params[:user], params[:card] ) :
       [User.new, Card.new]
     if request.post? and @user.errors.empty?
       @user.send_account_info(params[:email])
-      redirect_to '/' + (System.setting('*invite+*thanks') || '')
+      redirect_to (System.setting('*invite+*thanks') || '/')
     end
   end
   
@@ -128,8 +128,12 @@ class AccountController < ApplicationController
   def password_authentication(login, password)
     if self.current_user = User.authenticate(params[:login], params[:password])
       successful_login
-    elsif User.find_by_email(params[:login])
-      failed_login("Wrong password for that email")
+    elsif u = User.find_by_email(params[:login].strip)
+      if u.blocked
+        failed_login("Sorry, this account is currently blocked.")
+      else
+        failed_login("Wrong password for that email")
+      end
     else
       failed_login("We don't recognize that email")
     end

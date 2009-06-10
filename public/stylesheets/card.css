@@ -343,12 +343,12 @@ div:hover.card-footer .card-links{
 
 .in-multi .instruction,
 .in-multi .instruction p{
+  clear:left;
   border: 0px;
-  background: inherit;
+  background-color: #ddd; /*hard-coded because inherit wasn't working right in IE */
   text-align: left;
   padding: 0px 5px;
 }
- 
 /* for IE */
 div.transcluded {
   display: inline;
@@ -483,6 +483,7 @@ div.transcluded {
 
 #sidebar .card-slot .card-menu {
   display: none; 
+  float:none;  /* necessary for IE */
 }
 .none {
   background: #ccc;
@@ -674,7 +675,11 @@ body.wagn .card-slot.line h2,
   font-size: 15px;
 }
 
+/*-------------( Phrase)-----------*/
 
+.card-slot .phrasebox {
+  width: 98%;
+}
 
 /*---------( Search ) ---------- */
 
@@ -687,20 +692,20 @@ body.wagn .card-slot.line h2,
 
 /*---------(Search & Pointer) --------*/
 
-ul.pointer-list,
-ul.search-result-list {
+div.pointer-list,
+div.search-result-list {
   list-style: none;
   padding: 5px 10px;
   margin: 0;
 }
 
-ul.pointer-list li,
-ul.search-result-list li {
+div.pointer-list .pointer-item,
+div.search-result-list .search-result-item {
   margin: 0;
 }
 
-li.item-link,
-li.item-name {
+.search-result-item.item-link, .pointer-item.item-link,
+.search-result-item.item-name, .pointer-item.item-name {
   display: block;
   text-indent: -15px;
   padding-left: 15px;

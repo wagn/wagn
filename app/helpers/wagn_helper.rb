@@ -157,9 +157,9 @@ module WagnHelper
   #  render :partial=> 'card/related'
   #end
 
-  def sidebar
-    render :partial=>partial_for_action('sidebar', @card)
-  end
+  #def sidebar
+  #  render :partial=>partial_for_action('sidebar', @card)
+  #end
 
   def format_date(date, include_time = true)
     # Must use DateTime because Time doesn't support %e on at least some platforms
@@ -205,13 +205,7 @@ module WagnHelper
   def div(*args, &block)   content_tag(:div, *args, &block);  end
 
   def pointer_item(content,view,type=nil)
-    content.gsub(/\[\[/,"<li class=\"item-#{view}\">{{").gsub(/\]\]/,"|#{view}#{type ? ';type:'+ type : ''}}}</li>") 
-  end
-  
-  def pointer_type(card)
-    if card.tag and (opts = CachedCard.get_real("#{card.tag.name}+*options")) and (opts.type == 'Search')
-      opts.get_spec[:type]
-    end
+    content.gsub(/\[\[/,"<div class=\"pointer-item item-#{view}\">{{").gsub(/\]\]/,"|#{view}#{type ? ';type:'+ type : ''}}}</div>") 
   end
   
   ## -----------

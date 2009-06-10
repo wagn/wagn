@@ -1,4 +1,4 @@
-<ul class="pointer-list">
-  <%= pointer_item(slot.card.content, (slot.item_format||'closed'), pointer_type(slot.card)) %>
-</ul>
+<div class="pointer-list">
+  <%= pointer_item(slot.card.content, (slot.item_format||'closed'), slot.card.item_type) %>
+</div>
 <%= link_to_function 'add/edit', %{editTransclusion(this)} %>

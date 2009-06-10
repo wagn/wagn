@@ -5,7 +5,7 @@ require 'card_controller'
 class CardController 
   def rescue_action(e) raise e end 
 end
-
+    
 class CardControllerTest < Test::Unit::TestCase
   common_fixtures
   include AuthenticatedTestHelper
@@ -21,6 +21,7 @@ class CardControllerTest < Test::Unit::TestCase
     login_as(:joe_user)
   end    
 
+#=begin
   def test_create_cardtype_card
     post :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
     assert assigns['card']
@@ -33,31 +34,29 @@ class CardControllerTest < Test::Unit::TestCase
 
   
 
-=begin
-  what's happening with this test is that when changing from Basic to CardtypeA it is 
-  stripping the html when the test doesn't think it should.  this could be a bug, but it
-  seems less urgent that a lot of the other bugs on the list, so I'm leaving this test out
-  for now.
+#  what's happening with this test is that when changing from Basic to CardtypeA it is 
+#  stripping the html when the test doesn't think it should.  this could be a bug, but it
+#  seems less urgent that a lot of the other bugs on the list, so I'm leaving this test out
+#  for now.
+# 
+#  def test_update_cardtype_no_stripping
+#    User.as :joe_user                                               
+#    post :update, {:id=>@simple_card.id, :card=>{ :type=>"CardtypeA",:content=>"<br/>" } }
+#    #assert_equal "boo", assigns['card'].content
+#    assert_equal "<br/>", assigns['card'].content
+#    assert_response :success, "changed card type"   
+#    assert_equal "CardtypeA", Card['Sample Basic'].type
+#  end 
+# 
+#  def test_update_cardtype_with_stripping
+#    User.as :joe_user                                               
+#    post :edit, {:id=>@simple_card.id, :card=>{ :type=>"Date",:content=>"<br/>" } }
+#    #assert_equal "boo", assigns['card'].content
+#    assert_response :success, "changed card type"   
+#    assert_equal "", assigns['card'].content  
+#    assert_equal "Date", Card['Sample Basic'].type
+#  end 
 
-  def test_update_cardtype_no_stripping
-    User.as :joe_user                                               
-    post :update, {:id=>@simple_card.id, :card=>{ :type=>"CardtypeA",:content=>"<br/>" } }
-    #assert_equal "boo", assigns['card'].content
-    assert_equal "<br/>", assigns['card'].content
-    assert_response :success, "changed card type"   
-    assert_equal "CardtypeA", Card['Sample Basic'].type
-  end 
-
-  def test_update_cardtype_with_stripping
-    User.as :joe_user                                               
-    post :edit, {:id=>@simple_card.id, :card=>{ :type=>"Date",:content=>"<br/>" } }
-    #assert_equal "boo", assigns['card'].content
-    assert_response :success, "changed card type"   
-    assert_equal "", assigns['card'].content  
-    assert_equal "Date", Card['Sample Basic'].type
-  end 
-
-=end 
 
 
 
@@ -157,6 +156,7 @@ class CardControllerTest < Test::Unit::TestCase
      "content_to_replace"=>"",
      "context"=>"main_1", 
      "multi_edit"=>"true", "view"=>"open"
+    assert_equal "can't be blank", assigns['card'].errors["name"]
     assert_response 422
   end
 
@@ -171,21 +171,93 @@ class CardControllerTest < Test::Unit::TestCase
     assert Card.find_by_name("sss")
     assert Card.find_by_name("sss+text")
   end
+
+  def test_should_redirect_to_thanks_on_create_without_read_permission
+    # 1st setup anonymously create-able cardtype
+    User.as(:joe_admin)
+    f = Card.create! :type=>"Cardtype", :name=>"Fruit"
+    f.permit(:create, Role[:anon])       
+    f.permit(:read, Role[:admin])   
+    f.save!
+    
+    ff = Card.create! :name=>"Fruit+*tform"
+    ff.permit(:read, Role[:auth])
+    ff.save!
+    
+    Card.create! :name=>"Fruit+*thanks", :type=>"Phrase", :content=>"/wagn/sweet"
+    
+    login_as(:anon)     
+    post :create, :card => {
+      :name=>"Banana", :type=>"Fruit", :content=>"mush"
+    }     
+    assert_equal "/wagn/sweet", assigns["redirect_location"]
+    assert_template "redirect_to_thanks"
+  end
   
-  
-=begin FIXME
-  def test_new    
+
+  def test_should_redirect_to_card_on_create_main_card
+    # 1st setup anonymously create-able cardtype
+    User.as(:joe_admin)
+    f = Card.create! :type=>"Cardtype", :name=>"Fruit"
+    f.permit(:create, Role[:anon])       
+    f.permit(:read, Role[:anon])   
+    f.save!
+
+    ff = Card.create! :name=>"Fruit+*tform"
+    ff.permit(:read, Role[:anon])
+    ff.save!
+    
+    login_as(:anon)     
+    post :create, :context=>"main_1", :card => {
+      :name=>"Banana", :type=>"Fruit", :content=>"mush"
+    }                    
+    assert_equal "/wagn/Banana", assigns["redirect_location"]
+    assert_template "redirect_to_created_card"
   end
 
-  def test_rename
+  def test_new_should_work_for_creatable_nonviewable_cardtype
+    User.as(:joe_admin)
+    f = Card.create! :type=>"Cardtype", :name=>"Fruit"
+    f.permit(:create, Role[:anon])       
+    f.permit(:read, Role[:auth])   
+    f.permit(:edit, Role[:admin])   
+    f.save!
+
+    ff = Card.create! :name=>"Fruit+*tform"
+    ff.permit(:read, Role[:auth])
+    ff.save!
+    
+    login_as(:anon)     
+    get :new, :type=>"Fruit"
+
+    assert_response :success
+    assert_template "new"
   end
-  
-  def test_revision
+
+  def test_rename_without_update_references_should_work
+    User.as :joe_user
+    f = Card.create! :type=>"Cardtype", :name=>"Fruit"
+    post :update, :id => f.id, :card => {
+      :confirm_rename => true,
+      :name => "Newt",
+      :update_referencers => "false",
+    }                   
+    assert_equal ({ "name"=>"Newt", "update_referencers"=>'false', "confirm_rename"=>true }), assigns['card_args']
+    assert assigns['card'].errors.empty?
+    assert_template 'show'
+    assert Card["Newt"]
   end
-  
-  def test_rollback
+
+#=end
+  def test_unrecognized_card_renders_missing_unless_can_create_basic
+    #User.as :anon
+    login_as(:anon) 
+    post :show, :id=>'crazy unknown name'
+    assert_template 'missing'
   end
-=end 
+
+
+
 
   
 

@@ -1,8 +1,8 @@
 unless defined? Wagn::Version
   module Wagn
     module Version
-      Major = '0'
-      Minor = '13'
+      Major = '1'
+      Minor = '0'
       Tiny  = '0'
       Eensie = nil
     

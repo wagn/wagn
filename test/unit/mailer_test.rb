@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 require 'notifier'
 
-class NotifierTest < Test::Unit::TestCase
+class MailerTest < Test::Unit::TestCase
   FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
   CHARSET = "utf-8"
 
@@ -19,6 +19,13 @@ class NotifierTest < Test::Unit::TestCase
   def test_truth
     assert true
   end
+
+  # 1. no existing run.  notify of changes up to $max_interval ago
+  # 2. recent run.  notify of changes since last run.
+  # 3. stale run.  notify of changes up to $max_interval ago
+
+
+  # log:  $time.  Notified X users of Y cards that changed between T1 and T2 **
 
   private
     def read_fixture(action)

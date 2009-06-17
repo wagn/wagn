@@ -31,7 +31,7 @@ class AccountController < ApplicationController
         @user.accept(email_args)
         redirect_to (System.setting('*signup+*thanks') || '/')
       else
-        Notifier.deliver_signup_alert(@card) if System.setting('*request+*to')
+        Mailer.deliver_signup_alert(@card) if System.setting('*request+*to')
         redirect_to (System.setting('*request+*thanks') || '/')
       end
     end
@@ -93,7 +93,7 @@ class AccountController < ApplicationController
       subject = "Password Reset"
       message = "You have been give a new temporary password.  " +
          "Please update your password once you've logged in. "
-      Notifier.deliver_account_info(@user, subject, message)
+      Mailer.deliver_account_info(@user, subject, message)
       flash[:notice] = "A new temporary password has been set on your account and sent to your email address" 
       redirect_to previous_location
     else

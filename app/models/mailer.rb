@@ -1,4 +1,4 @@
-class Notifier < ActionMailer::Base
+class Mailer < ActionMailer::Base
   def account_info(user, subject, message)
     from_user = User.current_user || User[:wagbot]
     from_name = from_user.card ? from_user.card.name : ''
@@ -29,7 +29,10 @@ class Notifier < ActionMailer::Base
           :name => invite_request.name,
           :content => invite_request.content,
           :url =>  url_for(:host=>System.host, :controller=>'card', :action=>'show', :id=>invite_request.name.to_url_key)
-  end
+  end               
+  
+  
+  
 
 end
 

@@ -17,3 +17,9 @@ config.action_controller.perform_caching             = true
 # The :test delivery method accumulates sent emails in the
 # ActionMailer::Base.deliveries array.
 config.action_mailer.delivery_method = :test
+
+config.gem 'thoughtbot-shoulda', :lib => 'shoulda', :source => 'http://gems.github.com'
+
+# FIXME: these should be in the list here, but at the moment including them busts actually running the tests.
+# config.gem 'rspec'        
+# config.gem 'rspec-rails'

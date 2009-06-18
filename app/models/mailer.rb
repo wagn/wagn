@@ -6,8 +6,8 @@ class Mailer < ActionMailer::Base
 
     recipients "#{user.email}"
     from       (System.setting('*account+*from') || "#{from_name} <#{from_user.email}>") #FIXME - might want different from settings for different emails?
-    sent_on    Time.now
     subject    subject
+    sent_on    Time.now
     body  :email    => (user.email    or raise Wagn::Oops.new("Oops didn't have user email")),
           :password => (user.password or raise Wagn::Oops.new("Oops didn't have user password")),
           
@@ -19,9 +19,9 @@ class Mailer < ActionMailer::Base
   end                 
   
   def signup_alert(invite_request)  
-    subject "#{invite_request.name} signed up for #{System.site_title}"
-    from        System.setting('*request+*from') || invite_request.extension.email
     recipients  System.setting('*request+*to')
+    from        System.setting('*request+*from') || invite_request.extension.email
+    subject "#{invite_request.name} signed up for #{System.site_title}"
     content_type 'text/html'
     body  :site => System.site_title,
           :card => invite_request,
@@ -30,8 +30,19 @@ class Mailer < ActionMailer::Base
           :content => invite_request.content,
           :url =>  url_for(:host=>System.host, :controller=>'card', :action=>'show', :id=>invite_request.name.to_url_key)
   end               
+
   
-  
+  def change_notice( user, card, action )
+    recipients "#{user.email}"
+    from       System.setting('*notifications+*from') || System.site_title
+    subject    "#{card.updater.card.name} #{action} #{card.name} " 
+    content_type 'text/html'
+    body :card => card,
+         :updater => card.updater.card.name,
+         :action => action,
+         :content => card.content,
+         :card_url => "#{System.base_url}/wagn/#{card.name.to_url_key}"
+  end
   
 
 end

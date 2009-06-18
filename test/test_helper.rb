@@ -1,5 +1,7 @@
 require 'rubygems'
-require 'rails_test_serving'
+require 'rails_test_serving'  
+require 'shoulda'
+
 RailsTestServing.boot
 
 

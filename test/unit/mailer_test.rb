@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + '/../test_helper'
-require 'notifier'
+require 'mailer'
 
 class MailerTest < Test::Unit::TestCase
   FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
@@ -19,13 +19,32 @@ class MailerTest < Test::Unit::TestCase
   def test_truth
     assert true
   end
+  
+  ## see notifier test for data used in these tests
+  
+  context "change_notice" do
+    setup do
+      user =  ::User.find_by_login('sara')
+      card =  Card["Sunglasses"]
+      action = "edited"
+      
+      Mailer.deliver_change_notice( user, card, action )
+    end
 
-  # 1. no existing run.  notify of changes up to $max_interval ago
-  # 2. recent run.  notify of changes since last run.
-  # 3. stale run.  notify of changes up to $max_interval ago
-
-
-  # log:  $time.  Notified X users of Y cards that changed between T1 and T2 **
+    should "deliver a message" do
+      assert_equal 1, ActionMailer::Base.deliveries.size
+    end
+    
+    context "message" do
+      setup do
+        @mail = ActionMailer::Base.deliveries[0]
+      end
+      should "be addressed to users email" do
+        assert_equal ["sara@user.com"],  @mail.to
+      end
+    end
+  end
+  
 
   private
     def read_fixture(action)

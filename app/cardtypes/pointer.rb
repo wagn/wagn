@@ -15,6 +15,9 @@ module Card
       false
     end
 	  
+    # FIXME: pointees should
+    # 1) to work on all cards not just pointers
+    # 2) to return [] instead of [''] in case none are found
 	  def pointees
 	    links = content.split(/\n+/).map{ |x| x.gsub(/\[\[|\]\]/,'')}
 	    links.empty? ? [''] : links

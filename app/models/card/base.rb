@@ -470,8 +470,20 @@ module Card
     def authenticated?(party)
       party==::Role[:auth]
     end
-       
 
+    def watchers
+      # Dammit, all these Card[] calls should run through the cache but
+      #  can't because CachedCards are different from Cards.
+      watchers = []
+      [ 
+        Card["#{name}+*watchers"], 
+        Card[ ::Cardtype.name_for( self.type ) + "+*watchers" ]
+      ].compact.each do |c|
+        watchers += c.pointees.reject{|x|x==''}.map {|name|  Card[name] }
+      end  
+      watchers
+    end
+            
     protected
     def clear_drafts
       connection.execute(%{

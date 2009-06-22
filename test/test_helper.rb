@@ -92,8 +92,10 @@ unless defined? TEST_ROOT
         
         args[:users] ||= { :anon=>200 }
         args[:cardtypes] ||= ['Basic']
-        if args[:cardtypes]==:all                       
-          args[:cardtypes] = YAML.load_file('test/fixtures/cardtypes.yml').collect {|k,v| v['class_name']}
+        if args[:cardtypes]==:all 
+          cardtypes_defined_in_code =  Dir["app/cardtypes/*.rb"].map {|x| x.match(/\/([^\/\.]+)\.rb$/)[1].camelize }
+          cardtypes_loaded_in_fixtures = YAML.load_file('test/fixtures/cardtypes.yml').collect {|k,v| v['class_name']}                   
+          args[:cardtypes] = cardtypes_defined_in_code & cardtypes_loaded_in_fixtures
         end
 
         args[:users].each_pair do |user,status|

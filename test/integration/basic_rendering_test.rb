@@ -2,7 +2,7 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 
 class BasicRenderingTest < ActionController::IntegrationTest
   common_fixtures               
-  
+   
   warn "Defining basic rendering tests"
   test_render "card/changes/:id"        , :users=>{ :anon=>200, :joe_user=>200 }
   test_render "card/view/:id"           , :users=>{ :anon=>200, :joe_user=>200 }, :cardtypes=>:all

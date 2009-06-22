@@ -1,9 +1,11 @@
 require File.dirname(__FILE__) + '/../test_helper' 
 
 class WikiReferenceTest < Test::Unit::TestCase
-  common_fixtures
+  common_fixtures           
+  
   def setup
     setup_default_user  
+    CachedCard.bump_global_seq
   end
 
   def test_hard_templated_card_should_insert_references_on_create
@@ -109,12 +111,12 @@ class WikiReferenceTest < Test::Unit::TestCase
     cardtype = Card::Cardtype.create! :name=>"ColorType", :content=>""
     template = Card['*tform']
     Card.create! :trunk=>cardtype, :tag=>template, :content=>"{{#{JOINT}rgb}}"
-    blue = Card::ColorType.create! :name=>"blue"
+    green = Card::ColorType.create! :name=>"green"
     rgb = newcard 'rgb'
-    blue_rgb = Card.create! :trunk=>blue, :tag=>rgb, :content=>"#OOOOFF"
+    green_rgb = Card.create! :trunk=>green, :tag=>rgb, :content=>"#00ff00"
     
-    assert_equal ["blue#{JOINT}rgb"], blue.reload.transcludees.plot(:name)
-    assert_equal ['blue'], blue_rgb.reload.transcluders.plot(:name)
+    assert_equal ["green#{JOINT}rgb"], green.reload.transcludees.plot(:name)
+    assert_equal ['green'], green_rgb.reload.transcluders.plot(:name)
   end
 
   def test_simple_link

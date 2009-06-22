@@ -483,8 +483,16 @@ module Card
       end  
       watchers
     end
-            
-    protected
+
+    def to_s
+      "#<#{self.class.name}:#{self.attributes['name']}>"
+    end
+
+    def mocha_inspect
+      to_s
+    end
+     
+   protected
     def clear_drafts
       connection.execute(%{
         delete from revisions where card_id=#{id} and id > #{current_revision_id} 

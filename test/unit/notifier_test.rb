@@ -36,8 +36,6 @@ class NotifierTest < Test::Unit::TestCase
     CachedCard.reset_cache; 
     CachedCard.bump_global_seq  # should figure out how not to have to do this all over..
     Timecop.freeze(FUTURE)  # make sure we're ahead of all the test data
-    User.as(:sara)          # default editor
-
   end
 
   context "Card#watchers" do
@@ -49,30 +47,48 @@ class NotifierTest < Test::Unit::TestCase
       assert_equal ["Sara"], Card["Sunglasses"].watchers.map(&:name)
     end
   end
-  
-  context "Given no previous runs" do
+    
+  context "Card Changes" do
     setup do
-      Card["John Watching"].update_attributes :content => "An old change"
+      User.as(:john)
     end
     
-    context "Notifier.recently_changed()" do
-      should "return cards changed since max_interval" do
-        Timecop.freeze(FUTURE + Notifier.max_interval + 1.day) do
-          Card["Sara Watching"].update_attributes :content => "A new change"
-          assert_equal ["Sara Watching"], Notifier.recently_changed.map(&:name)
-        end
-      end  
-    end    
+    should "send notifications of edits" do
+      Mailer.expects(:deliver_change_notice).with( User[:sara], Card["Sara Watching"], "edited" )
+      Card["Sara Watching"].update_attributes :content => "A new change"
+    end
+                                    
+    should "send notifications of additions" do
+      new_card = Card.new :name => "Microscope", :type => "Optic"
+      Mailer.expects(:deliver_change_notice).with( User[:sara], new_card,    "added"  )
+      new_card.save!
+    end 
     
-    context "Notifier.send_notifications()" do
-      should "send notifications about recent changes to watchers" do
-        Timecop.freeze(FUTURE + Notifier.max_interval + 1.day) do
-          Card["Sara Watching"].update_attributes :content => "A new change"   
-          
-          Notifier.send_notifications()
-        end
-      end
+    should "send notification of updates" do
+      Mailer.expects(:deliver_change_notice).with( User[:sara], Card["Sunglasses"],    "updated")
+      Card["Sunglasses"].update_attributes :type => "Basic"
     end
     
+    should "not send notification to author of change" do
+      Mailer.expects(:deliver_change_notice).with( User[:sara], Card["All Eyes On Me"],    "edited")
+      Card["All Eyes On Me"].update_attributes :content => "edit by John"
+      # note no message to John
+    end
+  end
+
+  context "Notifier.recently_changed()" do
+    setup do 
+      User.as(:john)
+    end
+
+    should "return cards changed since max_interval" do
+      Card["All Eyes On Me"].update_attributes :content => "An old change"
+      Timecop.freeze(FUTURE + Notifier.max_interval + 1.day) 
+      Card["Sara Watching"].update_attributes :content => "A new change"
+      assert_equal ["Sara Watching"], Notifier.recently_changed.map(&:name)
+    end  
+    
+
   end    
+
 end

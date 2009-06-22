@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'rails_test_serving'  
 require 'shoulda'
+require 'mocha'
 
 RailsTestServing.boot
 
@@ -13,8 +14,8 @@ unless defined? TEST_ROOT
   #silence_warnings { RAILS_ENV = "test" }
   require 'test_help' 
   
-  require TEST_ROOT + '/helpers/wagn_test_helper'
-  require TEST_ROOT + '/helpers/chunk_test_helper'  # FIXME-- should only be in certain tests
+  load TEST_ROOT + '/helpers/wagn_test_helper.rb'
+  load TEST_ROOT + '/helpers/chunk_test_helper.rb'  # FIXME-- should only be in certain tests
   
   class Test::Unit::TestCase
     include AuthenticatedTestHelper

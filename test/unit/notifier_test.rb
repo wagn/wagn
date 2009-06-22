@@ -75,20 +75,4 @@ class NotifierTest < Test::Unit::TestCase
       # note no message to John
     end
   end
-
-  context "Notifier.recently_changed()" do
-    setup do 
-      User.as(:john)
-    end
-
-    should "return cards changed since max_interval" do
-      Card["All Eyes On Me"].update_attributes :content => "An old change"
-      Timecop.freeze(FUTURE + Notifier.max_interval + 1.day) 
-      Card["Sara Watching"].update_attributes :content => "A new change"
-      assert_equal ["Sara Watching"], Notifier.recently_changed.map(&:name)
-    end  
-    
-
-  end    
-
 end

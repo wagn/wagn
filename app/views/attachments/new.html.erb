@@ -1,7 +1,9 @@
 <%= javascript_include_merged :base %>       
 
 <% javascript_tag do %>
-	var attachmentOnChange = function(element) {
+	var attachmentOnChange = function(element) {   
+		warn('element = ' + element);
+		warn('element value = ' + element.value);
 	  attachment_uuid = '<%= current_object.attachment_uuid %>'; 
 		with(window.parent) { 
 		  window.eval('attachmentOnChangeUpdateParent("' + attachment_uuid + '","' + escape(element.value) + '")'); 

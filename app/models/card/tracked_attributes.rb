@@ -165,7 +165,7 @@ module CardLib
         depkey = depname.to_key    
         # here we specifically want NOT to invoke recursive cascades on these cards, have to go this 
         # low level to avoid callbacks.                                                               
-        Card.update_all("name=#{cxn.quote(depname)}, key=#{cxn.quote(depkey)}", "id = #{dep.id}")
+        Card.update_all("name=#{cxn.quote(depname)}, #{cxn.quote_column_name("key")}=#{cxn.quote(depkey)}", "id = #{dep.id}")
         dep.expire(dep)
       end 
 

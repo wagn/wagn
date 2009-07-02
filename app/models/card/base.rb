@@ -144,7 +144,7 @@ module Card
         # FIXME -- this finds cards in or out of the trash-- we need that for
         # renaming card in the trash, but may cause other problems.
         raise "Must specify :name to find_or_create" if args['name'].blank?
-        c = Card.find(:first, :conditions=>"key = '#{args['name'].to_key}'") || begin
+        c = Card.find(:first, :conditions=>"#{ActiveRecord::Base.connection.quote_column_name("key")} = '#{args['name'].to_key}'") || begin
           p = Proc.new {|k| k.new(args)}
           with_class_from_args(args, p)
         end

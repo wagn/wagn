@@ -525,18 +525,23 @@ var findSubmit = function(form_element_or_id) {
 }  
   
 var attachmentOnChangeUpdateParent = function(attachment_uuid, filename) {
-  filename = unescape(filename);
-	if (short_name = filename.match(/([^\/\\]+)\.\w+$/)[1]) {
-	  filename = short_name;
-  }
   preview_slot = document.getElementById(attachment_uuid + '-preview');
   // TODO: report prototype bug: preview_slot.update should work but fails in IE
-  Element.update(preview_slot, '<img src="/images/wait_lg.gif">  Uploading...');  
+  Element.update(preview_slot, '<img src="/images/wait_lg.gif">  Uploading...');   
+  
+  // Set the card name from filename if we can find the name field and it's blank.
 	if (name_field = preview_slot.up('form').down('.card-name-field')) {
   	if (!name_field.value || name_field.value.blank()) { 
+      filename = unescape(filename);
+      // chop off directories etc.
+    	if (match_bits = filename.match(/([^\/\\]+)\.\w+$/)) {
+    	  filename = match_bits[1];
+      }
       name_field.value = filename; 
     }
-  }
+  }                               
+  
+  // for now, don't let users submit while the image is in process of uploading.
 	deactivateSubmit(attachment_uuid);  
 }
 

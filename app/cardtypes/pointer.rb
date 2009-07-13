@@ -23,6 +23,14 @@ module Card
 	    links.empty? ? [''] : links
 	  end
 	  
+	  def add_reference( cardname )
+	    unless pointees.include? cardname
+	      self.content = (pointees + [cardname]).map{|x| "[[#{x}]]" }.join("\n")
+      end
+	    save!
+    end 
+	       
+	  
 	  def item_type
 	    opt = options_card
 	    opt ? opt.get_spec[:type] : nil

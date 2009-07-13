@@ -1,10 +1,10 @@
 require File.dirname(__FILE__) + '/../../test_helper'
-class Card::ImageTest < Test::Unit::TestCase       
+class Card::ImageTest < ActiveSupport::TestCase       
   # required to use ActionController::TestUploadedFile 
   require 'action_controller'
   require 'action_controller/test_process.rb'
   
-  common_fixtures
+  
   
   def setup
     setup_default_user

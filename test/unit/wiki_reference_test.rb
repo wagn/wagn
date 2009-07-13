@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper' 
 
-class WikiReferenceTest < Test::Unit::TestCase
-  common_fixtures           
+class WikiReferenceTest < ActiveSupport::TestCase
+             
   
   def setup
     setup_default_user  

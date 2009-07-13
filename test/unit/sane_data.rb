@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class SaneDataTest < Test::Unit::TestCase
-  common_fixtures
+class SaneDataTest < ActiveSupport::TestCase
+  
   
   def test_cardtypes
     assert ::Cardtype.count >= 3 

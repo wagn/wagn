@@ -6,8 +6,8 @@ class OptionsController
   def rescue_action(e) raise e end 
 end
 
-class OptionsControllerTest < Test::Unit::TestCase
-  common_fixtures
+class OptionsControllerTest < ActionController::TestCase
+  
   include AuthenticatedTestHelper
 
   def setup

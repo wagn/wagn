@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../test_helper'
-class Card::PointerTest < Test::Unit::TestCase       
-  setup do
+class Card::PointerTest < ActiveSupport::TestCase       
+  def setup 
     User.as :joe_user
   end
   

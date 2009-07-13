@@ -127,7 +127,7 @@ namespace :test do
     SharedData.add_test_data
     
     Dir["#{RAILS_ROOT}/test/**/*.rb"].each {|f| load "#{f}"}  
-    Test::Unit::TestCase.descendents.each do |c|
+    ActiveSupport::TestCase.descendents.each do |c|
       if c.respond_to? :add_test_data 
         c.add_test_data
       end

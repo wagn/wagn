@@ -6,8 +6,8 @@ class CardController
   def rescue_action(e) raise e end 
 end
     
-class CardControllerTest < Test::Unit::TestCase
-  common_fixtures
+class CardControllerTest < ActionController::TestCase
+  
   include AuthenticatedTestHelper
 
   def setup

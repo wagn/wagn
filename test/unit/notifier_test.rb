@@ -1,10 +1,10 @@
 require File.dirname(__FILE__) + '/../test_helper'   
 require 'timecop'    
 
-class NotifierTest < Test::Unit::TestCase  
+class NotifierTest < ActiveSupport::TestCase  
   FUTURE = Time.local(2020,1,1,0,0,0)
   
-  def self.add_test_data
+  def self.custom_test_data
     User.as(:wagbot) do
       # have these items created way in the past
 
@@ -32,13 +32,17 @@ class NotifierTest < Test::Unit::TestCase
     end
   end  
 
-  setup do                             
+  def setup                             
     CachedCard.reset_cache; 
     CachedCard.bump_global_seq  # should figure out how not to have to do this all over..
     Timecop.freeze(FUTURE)  # make sure we're ahead of all the test data
   end
 
   context "Card#watchers" do
+    setup do
+      NotifierTest.custom_test_data
+    end
+    
     should "return users watching this card specifically" do
       assert_equal ["Sara", "John"], Card["All Eyes On Me"].watchers.map(&:name)
     end
@@ -50,27 +54,28 @@ class NotifierTest < Test::Unit::TestCase
     
   context "Card Changes" do
     setup do
-      User.as(:john)
+      NotifierTest.custom_test_data
+      User.as(:john)           
     end
     
     should "send notifications of edits" do
-      Mailer.expects(:deliver_change_notice).with( User[:sara], Card["Sara Watching"], "edited" )
+      Mailer.expects(:deliver_change_notice).with( User.find_by_login('sara'), Card["Sara Watching"], "edited" )
       Card["Sara Watching"].update_attributes :content => "A new change"
     end
                                     
     should "send notifications of additions" do
       new_card = Card.new :name => "Microscope", :type => "Optic"
-      Mailer.expects(:deliver_change_notice).with( User[:sara], new_card,    "added"  )
+      Mailer.expects(:deliver_change_notice).with( User.find_by_login('sara'), new_card,    "added"  )
       new_card.save!
     end 
     
     should "send notification of updates" do
-      Mailer.expects(:deliver_change_notice).with( User[:sara], Card["Sunglasses"],    "updated")
+      Mailer.expects(:deliver_change_notice).with( User.find_by_login('sara'), Card["Sunglasses"],    "updated")
       Card["Sunglasses"].update_attributes :type => "Basic"
     end
     
     should "not send notification to author of change" do
-      Mailer.expects(:deliver_change_notice).with( User[:sara], Card["All Eyes On Me"],    "edited")
+      Mailer.expects(:deliver_change_notice).with( User.find_by_login('sara'), Card["All Eyes On Me"],    "edited")
       Card["All Eyes On Me"].update_attributes :content => "edit by John"
       # note no message to John
     end

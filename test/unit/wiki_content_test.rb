@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class WikiContentTest < Test::Unit::TestCase
+class WikiContentTest < ActiveSupport::TestCase
   
   def test_clean_tables
     assert_equal '     foo     ', WikiContent.clean_html!("<table> <tbody><tr><td>foo</td></tr> </tbody></table>")

@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../test_helper'
-class Card::CardtypeTest < Test::Unit::TestCase
-  common_fixtures
+class Card::CardtypeTest < ActiveSupport::TestCase
+  
   def setup
     setup_default_user
   end

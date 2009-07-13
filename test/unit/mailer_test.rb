@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 require 'mailer'
 
-class MailerTest < Test::Unit::TestCase
+class MailerTest < ActiveSupport::TestCase
   FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
   CHARSET = "utf-8"
 
@@ -14,6 +14,15 @@ class MailerTest < Test::Unit::TestCase
 
     @expected = TMail::Mail.new
     @expected.set_content_type "text", "plain", { "charset" => CHARSET }
+
+    User.as(:wagbot) do
+      # have these items created way in the past
+
+      sara_account = ::User.create! :login=>"sara",:email=>'sara@user.com', :status => 'active', :password=>'sara_pass', :password_confirmation=>'sara_pass', :invite_sender=>User[:wagbot]
+      Card.create! :name=>"Sara", :type=> "User", :extension=>sara_account       
+      Card.create! :name => "Sunglasses", :type=>"Optic"
+    end
+    
   end  
   
   def test_truth

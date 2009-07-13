@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../test_helper'
-class Card::RemoveTest < Test::Unit::TestCase
-  common_fixtures
+class Card::RemoveTest < ActiveSupport::TestCase
+  
 
   def setup
     setup_default_user

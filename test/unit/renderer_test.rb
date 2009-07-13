@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class RendererTest < Test::Unit::TestCase
-  common_fixtures
+class RendererTest < ActiveSupport::TestCase
+  
   def setup
     setup_default_user     
     CachedCard.bump_global_seq

@@ -15,9 +15,10 @@ unless defined? TEST_ROOT
   require 'test_help' 
   
   load TEST_ROOT + '/helpers/wagn_test_helper.rb'
+  load TEST_ROOT + '/helpers/permission_test_helper.rb'
   load TEST_ROOT + '/helpers/chunk_test_helper.rb'  # FIXME-- should only be in certain tests
   
-  class Test::Unit::TestCase
+  class ActiveSupport::TestCase
     include AuthenticatedTestHelper
     # Transactional fixtures accelerate your tests by wrapping each test method
     # in a transaction that's rolled back on completion.  This ensures that the
@@ -40,16 +41,15 @@ unless defined? TEST_ROOT
     # then set this back to true.
     self.use_instantiated_fixtures  = false
   
-    def self.common_fixtures
-      #fixtures :system, :users, :tags, :tag_revisions, :cards, :revisions, :roles, :cardtypes
-      # FIXME: this burns me every time we add a table the tests break and I dunno why...
-      #fixtures :cards, :cardtypes, :revisions, :roles, :roles_users, :system, :tag_revisions, :tags, :users, :settings, :permissions
-    end
     
+    
+  end
+
+  class ActiveSupport::TestCase      
+    include AuthenticatedTestHelper
     include WagnTestHelper
     include ChunkTestHelper
-  
-    
+
     def prepare_url(url, cardtype)
       if url =~ /:id/
         # find by naming convention in test data:
@@ -123,5 +123,7 @@ unless defined? TEST_ROOT
     end
     
   end
+
+
 end  
 

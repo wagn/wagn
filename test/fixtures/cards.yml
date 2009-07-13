@@ -628,7 +628,7 @@ cards_114:
   tag_id: 
   extension_type: 
   type: Basic
-  reader_id: "3"
+  reader_id: 1
   updated_by: "1"
   id: "151"
   trash: f

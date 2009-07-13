@@ -1,11 +1,14 @@
 require File.dirname(__FILE__) + '/../../test_helper'
-class Card::RenameTest < Test::Unit::TestCase
-  common_fixtures
+class Card::RenameTest < ActiveSupport::TestCase
+  
   
   # FIXME: these tests are TOO SLOW!  8s against server, 12s from command line.  
   # not sure if it's the card creation or the actual renaming process.
   # Card#save needs optimized in general.
   def self.add_test_data
+  end
+  
+  def setup
     ::User.as(:wagbot) do
       Card.create! :name => "chuck_wagn+chuck"   
       Card.create! :name => "Blue" 
@@ -18,9 +21,6 @@ class Card::RenameTest < Test::Unit::TestCase
       
       Card.create! :type=>"Cardtype", :name=>"Dairy", :content => "[[/new/{{_self|name}}|new]]"
     end
-  end
-  
-  def setup
     setup_default_user                 
   end
   

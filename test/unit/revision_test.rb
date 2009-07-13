@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
-class RevisionTest < Test::Unit::TestCase
-  common_fixtures
+class RevisionTest < ActiveSupport::TestCase
+  
   def setup
     setup_default_user
   end

@@ -59,10 +59,6 @@ cardtypes_001:
   class_name: Pointer
   system: 
   id: "20"
-cardtypes_024: 
-  class_name: Optic
-  system: 
-  id: "32"
 cardtypes_013: 
   class_name: Search
   system: 
@@ -71,10 +67,6 @@ cardtypes_002:
   class_name: Image
   system: 
   id: "11"
-cardtypes_025: 
-  class_name: Dairy
-  system: 
-  id: "33"
 cardtypes_014: 
   class_name: Cardtype
   system: 

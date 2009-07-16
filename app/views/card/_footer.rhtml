@@ -7,7 +7,10 @@
 	    <span class="last-editor">
 	      <span>Last Editor:</span> <%= link_to_page card.current_revision.created_by.card.name %> 
 	    </span>
-    <% end %>
+    <% end %>   
+		<% if logged_in? %>
+			<%= slot.button_to_action( "watch", 'watch') %>
+		<% end %>
   </span>
   <span class="height-holder">&nbsp;</span>
   

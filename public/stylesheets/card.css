@@ -161,7 +161,12 @@ html>body  .card-footer .card-links {
 div:hover.card-footer .card-links{
   display: inline;
 } 
-       
+              
+.card-slot .card-footer .watch-link {
+}       
+.card-slot .card-footer .watch-link a {
+  color: #999;
+}       
 
 /*-------------  TABS -------*/
 

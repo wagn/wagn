@@ -13,6 +13,9 @@ module NavigationHelpers
 
     when /recent changes/
       '/recent'
+      
+    when /card (.*)$/
+      "/wagn/#{$1}"
     # Add more mappings here.
     # Here is a more fancy example:
     #

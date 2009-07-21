@@ -7,7 +7,7 @@ class CardController < ApplicationController
 
   before_filter :load_card!, :only=>[
     :changes, :comment, :denied, :edit, :options, :quick_update, 
-    :related, :remove, :rollback, :save_draft, :update
+    :related, :remove, :rollback, :save_draft, :update, :watch, :unwatch
   ]
 
   before_filter :load_card_with_cache, :only => [:line, :view, :open ]
@@ -238,7 +238,11 @@ class CardController < ApplicationController
     end
   end
 
-
+  def watch 
+    watchers = Card.find_or_create( :name => @card.name + "+*watchers" )
+    watchers.add_reference User.current_user.card.name
+    render :text=>'woot'
+  end
 
   #---------------( tabs )
 

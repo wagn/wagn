@@ -1,17 +1,22 @@
 <div class="card-footer">
-  <span class="card-links">
-    <span class="link-list">
-      <span>Cards:</span> <%= card.name.piece_names.map { |c| link_to_page c }.join(', ') %> 
-    </span>                     
-		<% if card.current_revision %>
-	    <span class="last-editor">
-	      <span>Last Editor:</span> <%= link_to_page card.current_revision.created_by.card.name %> 
-	    </span>
-    <% end %>   
-		<% if logged_in? %>
-			<%= slot.button_to_action( "watch", 'watch') %>
-		<% end %>
-  </span>
+	<table width="100%"><tr><td width="90%">
+	  <span class="card-links">
+	    <span class="link-list">
+	      <span>Cards:</span> <%= card.name.piece_names.map { |c| link_to_page c }.join(', ') %> 
+	    </span>                     
+			<% if card.current_revision %>
+		    <span class="last-editor">
+		      <span>Last Editor:</span> <%= link_to_page card.current_revision.created_by.card.name %> 
+		    </span>
+	    <% end %>   
+	  </span>   
+	</td><td width="10%">
+		<span class="watch-link">
+			<% if logged_in? %>
+				<%= slot.link_to_action( "watch", 'watch') %>
+			<% end %>
+		</span>
+	</td></tr></table>
   <span class="height-holder">&nbsp;</span>
   
 </div>   

@@ -1246,7 +1246,7 @@ permissions_080:
   task: edit
   id: "80"
   party_type: Role
-  party_id: "1"
+  party_id: "2"
 permissions_223: 
   card_id: "5"
   task: read
@@ -3928,4 +3928,4 @@ permissions_079:
   task: delete
   id: "79"
   party_type: Role
-  party_id: "1"
+  party_id: "2"

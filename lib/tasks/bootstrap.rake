@@ -99,6 +99,7 @@ namespace :wagn do
         key = card['key']
         cardset = perms[key] || {}
         starset = (key =~ /^\*/ ? perms[:star] : {})
+        starset = {} if key == "*watcher"
           
         default.keys.each do |task|
           next if task== :create and card['type'] != 'Cardtype'

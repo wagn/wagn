@@ -72,7 +72,9 @@ namespace :wagn do
          'account_request' => {:create=>:anon},
 #         'account_request+*tform' {:read=>:admin},
          'administrator_link'=> {:read=>:admin},
-         'discussion+*rform'=> {:comment=>:anon}
+         'discussion+*rform'=> {:comment=>:anon},
+         '*watcher' => {:edit=>:auth},
+         '*watcher+*rform' => {:edit=>:auth}
         },
         :openedit=>{
          :default=> {:read=>:anon, :edit=>:anon, :delete=>:auth, :create=>:anon, :comment=>nil},
@@ -81,7 +83,9 @@ namespace :wagn do
          'html'=> {:create=>:admin},
          'html+*tform'=> {:edit=>:admin},
          'administrator_link'=> {:read=>:admin},
-         'discussion+*rform'=> {:comment=>:anon}
+         'discussion+*rform'=> {:comment=>:anon},
+         '*watcher' => {:edit=>:auth},
+         '*watcher+*rform' => {:edit=>:auth}
         }
       } 
       
@@ -99,7 +103,6 @@ namespace :wagn do
         key = card['key']
         cardset = perms[key] || {}
         starset = (key =~ /^\*/ ? perms[:star] : {})
-        starset = {} if key == "*watcher"
           
         default.keys.each do |task|
           next if task== :create and card['type'] != 'Cardtype'

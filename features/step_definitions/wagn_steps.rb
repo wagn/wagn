@@ -12,12 +12,28 @@ Given /^I log in as (.+)$/ do |user_card_name|
   #end
 end                                     
 
-                   
-Then /^In (.*) I should see "([^\"]*)"$/ do |section, text|
-  within scope_of(section) do |scope|
-    scope.should contain(text)
+Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
+  webrat.simulate do
+    User.as(:wagbot) do
+      card = Card.find_or_create! :name=>cardname
+      card.content = content
+      card.save!
+    end
   end
 end
+         
+Given /^the pointer (.*) contains "([^\"]*)"$/ do |cardname, content|
+  webrat.simulate do
+    Given "the card #{cardname} contains \"#{content}\"" 
+  end
+end
+
+When /the page updates/ do
+  webrat.simulate do
+    visit '/wagn/Home'
+  end
+end
+                   
 
 When /^In (.*) I follow "([^\"]*)"$/ do |section, link|
   within scope_of(section) do |scope|
@@ -35,4 +51,32 @@ When /^In (.*) I click (.*)$/ do |section, control|
   webrat.simulate do                      
     visit *params_for(control,section)
   end                                             
+end   
+     
+Then /the card (.*) should contain "([^\"]*)"$/ do |cardname, content|
+  visit path_to("card #{cardname}")
+  within scope_of("the main card content") do |scope|
+    scope.should contain(content)
+  end
+end
+
+Then /the card (.*) should not contain "([^\"]*)"$/ do |cardname, content|
+  visit path_to("card #{cardname}")
+  within scope_of("the main card content") do |scope|
+    scope.should_not contain(content)
+  end
+end
+
+
+Then /^In (.*) I should see "([^\"]*)"$/ do |section, text|
+  within scope_of(section) do |scope|
+    scope.should contain(text)
+  end
+end
+
+
+Then /^In (.*) I should not see "([^\"]*)"$/ do |section, text|
+  within scope_of(section) do |scope|
+    scope.should_not contain(text)
+  end
 end

@@ -214,6 +214,14 @@ class CardControllerTest < ActionController::TestCase
     assert_equal "/wagn/Banana", assigns["redirect_location"]
     assert_template "redirect_to_created_card"
   end
+            
+
+  def test_should_watch
+    login_as(:joe_user)
+    post :watch, :id=>"Home"
+    assert_equal "[[Joe User]]", Card["Home+*watchers"].content
+  end
+
 
   def test_new_should_work_for_creatable_nonviewable_cardtype
     User.as(:joe_admin)

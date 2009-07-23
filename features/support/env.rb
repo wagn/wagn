@@ -9,9 +9,14 @@ Spork.prefork do
   require 'webrat'
  
   Webrat.configure do |config|
-    config.mode = :rails
-    config.application_environment = :test
     config.application_framework = :rails
+    if ENV["WEBRAT_MODE"] == "selenium"
+      config.application_environment = :test
+      config.mode = :selenium
+    else
+      config.application_environment = :cucumber
+      config.mode = :rails   
+    end
   end
  
   require 'webrat/core/matchers'

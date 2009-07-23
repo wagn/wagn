@@ -16,6 +16,9 @@ module AjaxHelper
 
     when /the watch link/
       ["/card/watch/#{current_card}", :post]
+
+    when /the unwatch link/
+      ["/card/unwatch/#{current_card}", :post]
     
     else
       raise "Can't find mapping from \"#{control}\" to parameters.\n" +

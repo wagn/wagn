@@ -5,42 +5,50 @@ class Card::PointerTest < ActiveSupport::TestCase
   end
   
   context "add_reference" do
-    setup do
-      @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>"[[Jane]]"
+    should "add to empty ref list" do
+      @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>""
+      @pointer.add_reference "John"
+      assert_equal "[[John]]", @pointer.content
     end
 
-    should "add link to content" do
+    should "add to existing ref list" do
+      @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>"[[Jane]]"
       @pointer.add_reference "John"
       assert_equal "[[Jane]]\n[[John]]", @pointer.content
     end
     
     should "not add duplicate entries" do
+      @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>"[[Jane]]"
       @pointer.add_reference "Jane"
       assert_equal "[[Jane]]", @pointer.content
     end
   end       
   
   context "remove_reference" do
-    setup do
-      @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>"[[Jane]]\n[[John]]"
-    end                                                                                
-    
     should "remove the link" do
+      @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>"[[Jane]]\n[[John]]"
       @pointer.remove_reference "Jane" 
       assert_equal "[[John]]", @pointer.content
     end                                
     
     should "not fail on non-existent reference" do
+      @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>"[[Jane]]\n[[John]]"
       @pointer.remove_reference "Bigfoot" 
       assert_equal "[[Jane]]\n[[John]]", @pointer.content
     end
-    
+
+    should "remove the last link" do
+      @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>"[[Jane]]"
+      @pointer.remove_reference "Jane"
+      assert_equal "", @pointer.content
+    end
   end
      
   context "watching" do
     should "not break on permissions" do
       watchers = Card.find_or_new( :name => "Home+*watchers" )
       watchers.add_reference User.current_user.card.name
+      assert_equal '[[Joe User]]', watchers.content
     end
   end
 end

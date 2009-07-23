@@ -15,6 +15,12 @@ config.action_controller.allow_forgery_protection    = false
 # ActionMailer::Base.deliveries array.
 config.action_mailer.delivery_method = :test
 
+
+
+config.log_level = :info
+
+
+
 config.gem "cucumber",    :lib => false,        :version => ">=0.3.11" unless File.directory?(File.join(Rails.root, 'vendor/plugins/cucumber'))
 config.gem "webrat",      :lib => false,        :version => ">=0.4.4" unless File.directory?(File.join(Rails.root, 'vendor/plugins/webrat'))
 config.gem "rspec",       :lib => false,        :version => ">=1.2.6" unless File.directory?(File.join(Rails.root, 'vendor/plugins/rspec'))

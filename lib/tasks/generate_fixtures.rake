@@ -119,19 +119,24 @@ namespace :test do
     # setup test data here
     # additional test data auto-loaded from Test classes    
     # when I load these I don't want them to run as is the default; this is somewhat brutal..
-    require 'test/unit'    
-    require 'shoulda/test_unit'
-    Test::Unit::AutoRunner.class_eval {  def self.run() 1 end }
               
     load 'test/fixtures/shared_data.rb'
     SharedData.add_test_data
+
+    ## FIXME: this was an attempt to automate loading data from the test files.
+    #  I think it was maybe a little misguided.  anyway it breaks under rails 2.3 so 
+    # not using it for now.
     
-    Dir["#{RAILS_ROOT}/test/**/*.rb"].each {|f| load "#{f}"}  
-    ActiveSupport::TestCase.descendents.each do |c|
-      if c.respond_to? :add_test_data 
-        c.add_test_data
-      end
-    end
+    #require 'test/unit'    
+    #require 'shoulda/test_unit'
+    #Test::Unit::AutoRunner.class_eval {  def self.run() 1 end }
+
+    # Dir["#{RAILS_ROOT}/test/**/*.rb"].each {|f| load "#{f}"}  
+    # ActiveSupport::TestCase.descendents.each do |c|
+    #   if c.respond_to? :add_test_data 
+    #     c.add_test_data
+    #   end
+    # end
   end
  
 end

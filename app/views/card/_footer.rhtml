@@ -13,7 +13,11 @@
 	</td><td width="10%">
 		<span class="watch-link">
 			<% if logged_in? %>
-				<%= slot.link_to_action( "watch", 'watch') %>
+				<% if card.watchers.include? User.current_user.card %>
+					<%= slot.link_to_action( "unwatch", 'unwatch') %>
+				<% else %>
+					<%= slot.link_to_action( "watch", 'watch') %>
+				<% end %>
 			<% end %>
 		</span>
 	</td></tr></table>

@@ -239,8 +239,14 @@ class CardController < ApplicationController
   end
 
   def watch 
-    watchers = Card.find_or_create( :name => @card.name + "+*watchers" )
+    watchers = Card.find_or_new( :name => @card.name + "+*watchers" )
     watchers.add_reference User.current_user.card.name
+    render :text=>'woot'
+  end
+
+  def unwatch 
+    watchers = Card.find_or_new( :name => @card.name + "+*watchers" )
+    watchers.remove_reference User.current_user.card.name
     render :text=>'woot'
   end
 

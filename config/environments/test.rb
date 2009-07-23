@@ -18,6 +18,8 @@ config.action_controller.perform_caching             = false
 # ActionMailer::Base.deliveries array.
 config.action_mailer.delivery_method = :test
 
+config.log_level = :info
+
 config.gem 'thoughtbot-shoulda', :lib => 'shoulda', :source => 'http://gems.github.com'
 config.gem 'mocha'
 # FIXME: these should be in the list here, but at the moment including them busts actually running the tests.

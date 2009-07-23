@@ -4,7 +4,7 @@ cards_196:
   reader_type: Role
   name: Cardtype F
   appender_id: 
-  updated_at: 2009-07-22 13:21:51.923256
+  updated_at: 2009-07-22 14:42:49.843347
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -20,13 +20,13 @@ cards_196:
   appender_type: 
   key: cardtype_f
   extension_id: "30"
-  created_at: 2009-07-22 13:21:51.923256
+  created_at: 2009-07-22 14:42:49.843347
 cards_168: 
   indexed_content: 
   reader_type: Role
   name: T
   appender_id: 
-  updated_at: 2009-07-22 13:21:47.713
+  updated_at: 2009-07-22 14:42:45.708352
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -42,13 +42,13 @@ cards_168:
   appender_type: 
   key: t
   extension_id: 
-  created_at: 2009-07-22 13:21:47.713
+  created_at: 2009-07-22 14:42:45.708352
 cards_054: 
   indexed_content: "'inclus':1A"
   reader_type: Role
   name: "*inclusions"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'inclus':1"
   references_expired: 
   created_by: "1"
@@ -64,13 +64,13 @@ cards_054:
   appender_type: 
   key: "*inclusion"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_026: 
   indexed_content: "'name':17 'sort':16 'type':3 'view':18 'built':10 'refer':6 'append':13 'cardtyp':1A,4,12,14 'content':19 'built-in':9 'dashboard':2A 'infrastructur':15"
   reader_type: Role
   name: cardtypes dashboard
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'cardtyp':1 'dashboard':2"
   references_expired: 
   created_by: "1"
@@ -86,13 +86,13 @@ cards_026:
   appender_type: 
   key: cardtype_dashboard
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_082: 
   indexed_content: "'tag':1A,5 'plus':4 'self':8 'refer':6 'rform':2A 'right':3"
   reader_type: Role
   name: "*tagged+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'tag':1 'rform':2"
   references_expired: 
   created_by: "1"
@@ -108,13 +108,13 @@ cards_082:
   appender_type: 
   key: "*tagged+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_197: 
   indexed_content: 
   reader_type: Role
   name: basicname
   appender_id: 
-  updated_at: 2009-07-22 13:21:52.107366
+  updated_at: 2009-07-22 14:42:50.030417
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -130,13 +130,13 @@ cards_197:
   appender_type: 
   key: basicname
   extension_id: 
-  created_at: 2009-07-22 13:21:52.107366
+  created_at: 2009-07-22 14:42:50.030417
 cards_169: 
   indexed_content: 
   reader_type: Role
   name: X
   appender_id: 
-  updated_at: 2009-07-22 13:21:47.933729
+  updated_at: 2009-07-22 14:42:45.915378
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -152,13 +152,13 @@ cards_169:
   appender_type: 
   key: x
   extension_id: 
-  created_at: 2009-07-22 13:21:47.933729
+  created_at: 2009-07-22 14:42:45.915378
 cards_055: 
   indexed_content: "'linker':1A"
   reader_type: Role
   name: "*linkers"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'linker':1"
   references_expired: 
   created_by: "1"
@@ -174,13 +174,13 @@ cards_055:
   appender_type: 
   key: "*linker"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_110: 
   indexed_content: "'card':1A 'type':5 'user':6 'extens':4 'account':3A"
   reader_type: Role
   name: Cards with accounts
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'card':1 'account':3"
   references_expired: 
   created_by: "1"
@@ -196,13 +196,13 @@ cards_110:
   appender_type: 
   key: card_with_account
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_027: 
   indexed_content: "'includ':1A"
   reader_type: Role
   name: "*includers"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'includ':1"
   references_expired: 
   created_by: "1"
@@ -218,13 +218,13 @@ cards_027:
   appender_type: 
   key: "*includer"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_083: 
   indexed_content: "'add':6 '/new':3 'card':10,15,21,24 'form':11 'left':4,8,13,16,19,22 'name':9,14,20 'type':1A,23 'close':18 'rform':2A 'tform':17 'linknam':5"
   reader_type: Role
   name: "*type+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'type':1 'rform':2"
   references_expired: 
   created_by: "1"
@@ -240,13 +240,13 @@ cards_083:
   appender_type: 
   key: "*type+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_198: 
   indexed_content: 
   reader_type: Role
   name: type-a-card
   appender_id: 
-  updated_at: 2009-07-22 13:21:52.222948
+  updated_at: 2009-07-22 14:42:50.147052
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -262,13 +262,13 @@ cards_198:
   appender_type: 
   key: type_a_card
   extension_id: 
-  created_at: 2009-07-22 13:21:52.222948
+  created_at: 2009-07-22 14:42:50.147052
 cards_056: 
   indexed_content: "'edit':2 'made':3 'sign':9 'peopl':5 'anonym':1A,14 'credit':12 'account':20 'wagn.org':16 '/wagn/account|learn':17 'wagn.org/wagn/account':15"
   reader_type: Role
   name: Anonymous
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'anonym':1"
   references_expired: 
   created_by: "1"
@@ -284,13 +284,13 @@ cards_056:
   appender_type: 
   key: anonymous
   extension_id: "2"
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_111: 
   indexed_content: "'link':5 'menu':2 'open':3,6 'sidebar':1A 'administr':4"
   reader_type: Role
   name: "*sidebar"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'sidebar':1"
   references_expired: 
   created_by: "1"
@@ -306,13 +306,13 @@ cards_111:
   appender_type: 
   key: "*sidebar"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_028: 
   indexed_content: "'descript':1A"
   reader_type: Role
   name: description
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'descript':1"
   references_expired: 
   created_by: "1"
@@ -328,13 +328,13 @@ cards_028:
   appender_type: 
   key: description
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_084: 
   indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'basic':1A 'descript':2"
   reader_type: Role
   name: Basic
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'basic':1"
   references_expired: 
   created_by: "1"
@@ -350,13 +350,13 @@ cards_084:
   appender_type: 
   key: basic
   extension_id: "1"
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_199: 
   indexed_content: 
   reader_type: Role
   name: type-b-card
   appender_id: 
-  updated_at: 2009-07-22 13:21:52.345091
+  updated_at: 2009-07-22 14:42:50.266946
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -372,13 +372,13 @@ cards_199:
   appender_type: 
   key: type_b_card
   extension_id: 
-  created_at: 2009-07-22 13:21:52.345091
+  created_at: 2009-07-22 14:42:50.266946
 cards_140: 
   indexed_content: 
   reader_type: Role
   name: Sample User
   appender_id: 
-  updated_at: 2009-07-22 13:21:43.535503
+  updated_at: 2009-07-22 14:42:40.431863
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -394,13 +394,13 @@ cards_140:
   appender_type: 
   key: sample_user
   extension_id: "6"
-  created_at: 2009-07-22 13:21:43.535503
+  created_at: 2009-07-22 14:42:40.431863
 cards_057: 
   indexed_content: "'relat':2A 'account':1A,3"
   reader_type: Role
   name: "*account+*related"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'relat':2 'account':1"
   references_expired: 
   created_by: "1"
@@ -416,13 +416,13 @@ cards_057:
   appender_type: 
   key: "*account+*related"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_112: 
   indexed_content: "'one':5 'card':15 'item':8 'anoth':14 'point':12 'pointer':1A,3,21 'descript':2A 'wagn.org':17 '/wagn/pointer|learn':18 'wagn.org/wagn/pointer':16"
   reader_type: Role
   name: Pointer+description
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'pointer':1 'descript':2"
   references_expired: 
   created_by: "1"
@@ -438,13 +438,13 @@ cards_112:
   appender_type: 
   key: pointer+description
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_029: 
   indexed_content: "'anyon':1A"
   reader_type: Role
   name: Anyone
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'anyon':1"
   references_expired: 
   created_by: "1"
@@ -460,13 +460,13 @@ cards_029:
   appender_type: 
   key: anyone
   extension_id: "3"
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_085: 
   indexed_content: "'rform':2A 'watcher':1A"
   reader_type: Role
   name: "*watchers+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'rform':2 'watcher':1"
   references_expired: 
   created_by: "1"
@@ -482,13 +482,13 @@ cards_085:
   appender_type: 
   key: "*watcher+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_141: 
   indexed_content: 
   reader_type: Role
   name: Sample InvitationRequest
   appender_id: 
-  updated_at: 2009-07-22 13:21:43.641796
+  updated_at: 2009-07-22 14:42:40.536746
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -504,13 +504,13 @@ cards_141:
   appender_type: 
   key: sample_invitation_request
   extension_id: 
-  created_at: 2009-07-22 13:21:43.641796
+  created_at: 2009-07-22 14:42:40.536746
 cards_058: 
   indexed_content: "'link':2A 'role':9 'wagn':6 'config':3 'global':11 'account':7,8 'permiss':12 'configur':4 'administr':1A '/admin/tasks':10"
   reader_type: Role
   name: Administrator links
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'link':2 'administr':1"
   references_expired: 
   created_by: "1"
@@ -526,13 +526,13 @@ cards_058:
   appender_type: 
   key: administrator_link
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_113: 
   indexed_content: "'date':9 'file':10 'html':11 'imag':12 'role':17 'rubi':18 'user':22 'basic':7 'built':2A 'toggl':21 'number':13 'phrase':14 'script':19 'search':20 'account':5 'cardtyp':4A,8 'pointer':16 'request':6 'built-in':1A 'plaintext':15"
   reader_type: Role
   name: built-in cardtypes
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'built':2 'cardtyp':4 'built-in':1"
   references_expired: 
   created_by: "1"
@@ -548,13 +548,13 @@ cards_113:
   appender_type: 
   key: built_in_cardtype
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_086: 
   indexed_content: "'basic':1A 'thank':2A '/wagn/form_submission_thanks':3"
   reader_type: Role
   name: Basic+*thanks
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'basic':1 'thank':2"
   references_expired: 
   created_by: "1"
@@ -570,13 +570,13 @@ cards_086:
   appender_type: 
   key: basic+*thank
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_170: 
   indexed_content: 
   reader_type: Role
   name: Y
   appender_id: 
-  updated_at: 2009-07-22 13:21:48.108478
+  updated_at: 2009-07-22 14:42:46.072879
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -592,13 +592,13 @@ cards_170:
   appender_type: 
   key: y
   extension_id: 
-  created_at: 2009-07-22 13:21:48.108478
+  created_at: 2009-07-22 14:42:46.072879
 cards_142: 
   indexed_content: 
   reader_type: Role
   name: Sample Pointer
   appender_id: 
-  updated_at: 2009-07-22 13:21:43.761664
+  updated_at: 2009-07-22 14:42:40.658504
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -614,13 +614,13 @@ cards_142:
   appender_type: 
   key: sample_pointer
   extension_id: 
-  created_at: 2009-07-22 13:21:43.761664
+  created_at: 2009-07-22 14:42:40.658504
 cards_114: 
   indexed_content: "'card':2A 'name':7 'self':5 'sort':6 'type':1A,4 'rform':3A"
   reader_type: Role
   name: "*type cards+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'card':2 'type':1 'rform':3"
   references_expired: 
   created_by: "1"
@@ -636,13 +636,13 @@ cards_114:
   appender_type: 
   key: "*type_card+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_087: 
   indexed_content: "'name':7 'self':5 'sort':6 'rform':2A 'member':1A,3"
   reader_type: Role
   name: "*members+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'rform':2 'member':1"
   references_expired: 
   created_by: "1"
@@ -658,13 +658,13 @@ cards_087:
   appender_type: 
   key: "*member+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_059: 
   indexed_content: "'self':6 'sort':7 'found':4 'rform':3A 'updat':2A,8"
   reader_type: Role
   name: by update+*rform
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'rform':3 'updat':2"
   references_expired: 
   created_by: "1"
@@ -680,13 +680,13 @@ cards_059:
   appender_type: 
   key: by_update+*rform
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_171: 
   indexed_content: 
   reader_type: Role
   name: A+B
   appender_id: 
-  updated_at: 2009-07-22 13:21:48.287905
+  updated_at: 2009-07-22 14:42:46.242094
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -702,13 +702,13 @@ cards_171:
   appender_type: 
   key: a+b
   extension_id: 
-  created_at: 2009-07-22 13:21:48.287905
+  created_at: 2009-07-22 14:42:46.242094
 cards_143: 
   indexed_content: 
   reader_type: Role
   name: Sample Image
   appender_id: 
-  updated_at: 2009-07-22 13:21:43.885062
+  updated_at: 2009-07-22 14:42:40.777086
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -724,13 +724,13 @@ cards_143:
   appender_type: 
   key: sample_image
   extension_id: 
-  created_at: 2009-07-22 13:21:43.885062
+  created_at: 2009-07-22 14:42:40.777086
 cards_115: 
   indexed_content: "'rform':1A"
   reader_type: Role
   name: "*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'rform':1"
   references_expired: 
   created_by: "1"
@@ -746,13 +746,13 @@ cards_115:
   appender_type: 
   key: "*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_088: 
   indexed_content: "'card':11 'edit':15,17 'item':9 'left':3,7,12,16 'link':10 'name':4,13 'role':6,8 'rform':2A 'account':1A"
   reader_type: Role
   name: "*account+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'rform':2 'account':1"
   references_expired: 
   created_by: "1"
@@ -768,13 +768,13 @@ cards_088:
   appender_type: 
   key: "*account+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_001: 
   indexed_content: ""
   reader_type: Role
   name: "*to"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: ""
   references_expired: 
   created_by: "1"
@@ -790,13 +790,13 @@ cards_001:
   appender_type: 
   key: "*to"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_172: 
   indexed_content: 
   reader_type: Role
   name: One
   appender_id: 
-  updated_at: 2009-07-22 13:21:48.531542
+  updated_at: 2009-07-22 14:42:46.475021
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -812,13 +812,13 @@ cards_172:
   appender_type: 
   key: one
   extension_id: 
-  created_at: 2009-07-22 13:21:48.531542
+  created_at: 2009-07-22 14:42:46.475021
 cards_144: 
   indexed_content: 
   reader_type: Role
   name: Sample Phrase
   appender_id: 
-  updated_at: 2009-07-22 13:21:44.009469
+  updated_at: 2009-07-22 14:42:40.896466
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -834,13 +834,13 @@ cards_144:
   appender_type: 
   key: sample_phrase
   extension_id: 
-  created_at: 2009-07-22 13:21:44.009469
+  created_at: 2009-07-22 14:42:40.896466
 cards_116: 
   indexed_content: "'yes':6 'indic':5 'toggl':1A,3,14 'simpli':4 'descript':2A 'wagn.org':10 '/wagn/toggle|learn':11 'wagn.org/wagn/toggle':9"
   reader_type: Role
   name: Toggle+description
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'toggl':1 'descript':2"
   references_expired: 
   created_by: "1"
@@ -856,13 +856,13 @@ cards_116:
   appender_type: 
   key: toggle+description
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_030: 
   indexed_content: "'creat':2A"
   reader_type: Role
   name: by create
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'creat':2"
   references_expired: 
   created_by: "1"
@@ -878,13 +878,13 @@ cards_030:
   appender_type: 
   key: by_create
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_089: 
   indexed_content: "'name':8 'role':1A,9 'self':7 'tform':2A 'member':10 'account':4 'descript':3"
   reader_type: Role
   name: Role+*tform
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'role':1 'tform':2"
   references_expired: 
   created_by: "1"
@@ -900,13 +900,13 @@ cards_089:
   appender_type: 
   key: role+*tform
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_002: 
   indexed_content: "'sign':2A 'anyon':1A"
   reader_type: Role
   name: Anyone Signed In
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'sign':2 'anyon':1"
   references_expired: 
   created_by: "1"
@@ -922,13 +922,13 @@ cards_002:
   appender_type: 
   key: anyone_signed_in
   extension_id: "2"
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_200: 
   indexed_content: 
   reader_type: Role
   name: type-c-card
   appender_id: 
-  updated_at: 2009-07-22 13:21:52.47003
+  updated_at: 2009-07-22 14:42:50.389266
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -944,13 +944,13 @@ cards_200:
   appender_type: 
   key: type_c_card
   extension_id: 
-  created_at: 2009-07-22 13:21:52.47003
+  created_at: 2009-07-22 14:42:50.389266
 cards_173: 
   indexed_content: 
   reader_type: Role
   name: Two
   appender_id: 
-  updated_at: 2009-07-22 13:21:48.590702
+  updated_at: 2009-07-22 14:42:46.532649
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -966,13 +966,13 @@ cards_173:
   appender_type: 
   key: two
   extension_id: 
-  created_at: 2009-07-22 13:21:48.590702
+  created_at: 2009-07-22 14:42:46.532649
 cards_145: 
   indexed_content: 
   reader_type: Role
   name: Sample Basic
   appender_id: 
-  updated_at: 2009-07-22 13:21:44.129691
+  updated_at: 2009-07-22 14:42:41.012659
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -988,13 +988,13 @@ cards_145:
   appender_type: 
   key: sample_basic
   extension_id: 
-  created_at: 2009-07-22 13:21:44.129691
+  created_at: 2009-07-22 14:42:41.012659
 cards_117: 
   indexed_content: "'relat':1A 'rform':2A"
   reader_type: Role
   name: "*related+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'relat':1 'rform':2"
   references_expired: 
   created_by: "1"
@@ -1010,13 +1010,13 @@ cards_117:
   appender_type: 
   key: "*related+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_031: 
   indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'phrase':1A 'descript':2"
   reader_type: Role
   name: Phrase
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'phrase':1"
   references_expired: 
   created_by: "1"
@@ -1032,13 +1032,13 @@ cards_031:
   appender_type: 
   key: phrase
   extension_id: "23"
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_003: 
   indexed_content: "'favicon':1A"
   reader_type: Role
   name: "*favicon"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'favicon':1"
   references_expired: 
   created_by: "1"
@@ -1054,13 +1054,13 @@ cards_003:
   appender_type: 
   key: "*favicon"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_201: 
   indexed_content: 
   reader_type: Role
   name: type-d-card
   appender_id: 
-  updated_at: 2009-07-22 13:21:52.594928
+  updated_at: 2009-07-22 14:42:50.516013
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -1076,13 +1076,13 @@ cards_201:
   appender_type: 
   key: type_d_card
   extension_id: 
-  created_at: 2009-07-22 13:21:52.594928
+  created_at: 2009-07-22 14:42:50.516013
 cards_174: 
   indexed_content: 
   reader_type: Role
   name: One+Two
   appender_id: 
-  updated_at: 2009-07-22 13:21:48.72823
+  updated_at: 2009-07-22 14:42:46.669482
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -1098,13 +1098,13 @@ cards_174:
   appender_type: 
   key: one+two
   extension_id: 
-  created_at: 2009-07-22 13:21:48.72823
+  created_at: 2009-07-22 14:42:46.669482
 cards_146: 
   indexed_content: 
   reader_type: Role
   name: Sample Date
   appender_id: 
-  updated_at: 2009-07-22 13:21:44.332226
+  updated_at: 2009-07-22 14:42:41.215679
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -1120,13 +1120,13 @@ cards_146:
   appender_type: 
   key: sample_date
   extension_id: 
-  created_at: 2009-07-22 13:21:44.332226
+  created_at: 2009-07-22 14:42:41.215679
 cards_118: 
   indexed_content: "'bot':2A 'etc':23 'card':12,22 'link':18 'make':8 'sign':16 'wagn':1A 'autom':10 'creat':13 'renam':21 'updat':11,19 'someon':15 'account':6"
   reader_type: Role
   name: Wagn Bot
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'bot':2 'wagn':1"
   references_expired: 
   created_by: "1"
@@ -1142,13 +1142,13 @@ cards_118:
   appender_type: 
   key: wagn_bot
   extension_id: "1"
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_032: 
   indexed_content: "'html':1A 'tform':2A"
   reader_type: Role
   name: HTML+*tform
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'html':1 'tform':2"
   references_expired: 
   created_by: "1"
@@ -1164,13 +1164,13 @@ cards_032:
   appender_type: 
   key: html+*tform
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_004: 
   indexed_content: "'tabl':1A 'content':3A"
   reader_type: Role
   name: "*table of contents"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'tabl':1 'content':3"
   references_expired: 
   created_by: "1"
@@ -1186,13 +1186,13 @@ cards_004:
   appender_type: 
   key: "*table_of_content"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_060: 
   indexed_content: "'administr':1A"
   reader_type: Role
   name: Administrator
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'administr':1"
   references_expired: 
   created_by: "1"
@@ -1208,13 +1208,13 @@ cards_060:
   appender_type: 
   key: administrator
   extension_id: "1"
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_202: 
   indexed_content: 
   reader_type: Role
   name: type-e-card
   appender_id: 
-  updated_at: 2009-07-22 13:21:52.802379
+  updated_at: 2009-07-22 14:42:50.720766
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -1230,13 +1230,13 @@ cards_202:
   appender_type: 
   key: type_e_card
   extension_id: 
-  created_at: 2009-07-22 13:21:52.802379
+  created_at: 2009-07-22 14:42:50.720766
 cards_175: 
   indexed_content: 
   reader_type: Role
   name: Three
   appender_id: 
-  updated_at: 2009-07-22 13:21:48.780109
+  updated_at: 2009-07-22 14:42:46.720194
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -1252,13 +1252,13 @@ cards_175:
   appender_type: 
   key: three
   extension_id: 
-  created_at: 2009-07-22 13:21:48.780109
+  created_at: 2009-07-22 14:42:46.720194
 cards_147: 
   indexed_content: 
   reader_type: Role
   name: Sample Number
   appender_id: 
-  updated_at: 2009-07-22 13:21:44.451544
+  updated_at: 2009-07-22 14:42:41.335347
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -1274,13 +1274,13 @@ cards_147:
   appender_type: 
   key: sample_number
   extension_id: 
-  created_at: 2009-07-22 13:21:44.451544
+  created_at: 2009-07-22 14:42:41.335347
 cards_119: 
   indexed_content: "'tag':19,23,26 'left':3,5,9,11,13,16,18,20,25 'link':4,7,10 'name':6,14,21 'outgo':1A 'rform':2A 'includ':15 'inclus':12,17"
   reader_type: Role
   name: "*outgoing+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'outgo':1 'rform':2"
   references_expired: 
   created_by: "1"
@@ -1296,13 +1296,13 @@ cards_119:
   appender_type: 
   key: "*outgoing+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_033: 
   indexed_content: "'home':1A,2"
   reader_type: Role
   name: "*home"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'home':1"
   references_expired: 
   created_by: "1"
@@ -1318,13 +1318,13 @@ cards_033:
   appender_type: 
   key: "*home"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_005: 
   indexed_content: "'thank':1A"
   reader_type: Role
   name: "*thanks"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'thank':1"
   references_expired: 
   created_by: "1"
@@ -1340,13 +1340,13 @@ cards_005:
   appender_type: 
   key: "*thank"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_061: 
   indexed_content: "'pluss':1A"
   reader_type: Role
   name: "*plusses"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'pluss':1"
   references_expired: 
   created_by: "1"
@@ -1362,13 +1362,13 @@ cards_061:
   appender_type: 
   key: "*pluss"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_203: 
   indexed_content: 
   reader_type: Role
   name: type-f-card
   appender_id: 
-  updated_at: 2009-07-22 13:21:52.923175
+  updated_at: 2009-07-22 14:42:50.839605
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -1384,13 +1384,13 @@ cards_203:
   appender_type: 
   key: type_f_card
   extension_id: 
-  created_at: 2009-07-22 13:21:52.923175
+  created_at: 2009-07-22 14:42:50.839605
 cards_176: 
   indexed_content: 
   reader_type: Role
   name: One+Two+Three
   appender_id: 
-  updated_at: 2009-07-22 13:21:48.828029
+  updated_at: 2009-07-22 14:42:46.768036
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -1406,13 +1406,13 @@ cards_176:
   appender_type: 
   key: one+two+three
   extension_id: 
-  created_at: 2009-07-22 13:21:48.828029
+  created_at: 2009-07-22 14:42:46.768036
 cards_148: 
   indexed_content: 
   reader_type: Role
   name: Sample PlainText
   appender_id: 
-  updated_at: 2009-07-22 13:21:44.571085
+  updated_at: 2009-07-22 14:42:41.456747
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -1428,13 +1428,13 @@ cards_148:
   appender_type: 
   key: sample_plain_text
   extension_id: 
-  created_at: 2009-07-22 13:21:44.571085
+  created_at: 2009-07-22 14:42:41.456747
 cards_034: 
   indexed_content: "'tag':1A"
   reader_type: Role
   name: tags
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'tag':1"
   references_expired: 
   created_by: "1"
@@ -1450,13 +1450,13 @@ cards_034:
   appender_type: 
   key: tag
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_006: 
   indexed_content: "'part':2A 'plus':1A"
   reader_type: Role
   name: "*plus parts"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'part':2 'plus':1"
   references_expired: 
   created_by: "1"
@@ -1472,13 +1472,13 @@ cards_006:
   appender_type: 
   key: "*plu_part"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_090: 
   indexed_content: "'incom':1A"
   reader_type: Role
   name: "*incoming"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'incom':1"
   references_expired: 
   created_by: "1"
@@ -1494,13 +1494,13 @@ cards_090:
   appender_type: 
   key: "*incoming"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_062: 
   indexed_content: "'card':2A 'type':1A"
   reader_type: Role
   name: "*type cards"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'card':2 'type':1"
   references_expired: 
   created_by: "1"
@@ -1516,13 +1516,13 @@ cards_062:
   appender_type: 
   key: "*type_card"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_204: 
   indexed_content: 
   reader_type: Role
   name: revtest
   appender_id: 
-  updated_at: 2009-07-22 13:21:53.22521
+  updated_at: 2009-07-22 14:42:51.141165
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -1538,13 +1538,13 @@ cards_204:
   appender_type: 
   key: revtest
   extension_id: 
-  created_at: 2009-07-22 13:21:53.038957
+  created_at: 2009-07-22 14:42:50.954758
 cards_177: 
   indexed_content: 
   reader_type: Role
   name: Four
   appender_id: 
-  updated_at: 2009-07-22 13:21:49.028429
+  updated_at: 2009-07-22 14:42:46.966159
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -1560,13 +1560,13 @@ cards_177:
   appender_type: 
   key: four
   extension_id: 
-  created_at: 2009-07-22 13:21:49.028429
+  created_at: 2009-07-22 14:42:46.966159
 cards_149: 
   indexed_content: 
   reader_type: Role
   name: Sample HTML
   appender_id: 
-  updated_at: 2009-07-22 13:21:44.684453
+  updated_at: 2009-07-22 14:42:41.571973
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -1582,13 +1582,13 @@ cards_149:
   appender_type: 
   key: sample_html
   extension_id: 
-  created_at: 2009-07-22 13:21:44.684453
+  created_at: 2009-07-22 14:42:41.571973
 cards_035: 
   indexed_content: "'member':1A"
   reader_type: Role
   name: "*members"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'member':1"
   references_expired: 
   created_by: "1"
@@ -1604,13 +1604,13 @@ cards_035:
   appender_type: 
   key: "*member"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_007: 
   indexed_content: "'left':4,8 'name':16 'sort':15 'type':9 'refer':5 'relat':1A,12 'rform':14 'right':11,13 'subtab':2A 'cardtyp':3A,10"
   reader_type: Role
   name: Related subtabs - cardtypes
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'relat':1 'subtab':2 'cardtyp':3"
   references_expired: 
   created_by: "1"
@@ -1626,13 +1626,13 @@ cards_007:
   appender_type: 
   key: related_subtab_cardtype
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_091: 
   indexed_content: "'edit':3 'self':4 'rform':2A 'editor':1A"
   reader_type: Role
   name: "*editors+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'rform':2 'editor':1"
   references_expired: 
   created_by: "1"
@@ -1648,13 +1648,13 @@ cards_091:
   appender_type: 
   key: "*editor+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_063: 
   indexed_content: "'new':11 'way':18 'sign':6 'soon':27 'titl':9 'thank':3 'inform':13 'signup':1A 'account':12 'success':2A 'emailbox':21"
   reader_type: Role
   name: Signup Success
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'signup':1 'success':2"
   references_expired: 
   created_by: "1"
@@ -1670,13 +1670,13 @@ cards_063:
   appender_type: 
   key: signup_success
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_205: 
   indexed_content: 
   reader_type: Role
   name: UserForm
   appender_id: 
-  updated_at: 2009-07-22 13:21:53.337206
+  updated_at: 2009-07-22 14:42:51.248104
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -1692,13 +1692,13 @@ cards_205:
   appender_type: 
   key: user_form
   extension_id: "31"
-  created_at: 2009-07-22 13:21:53.337206
+  created_at: 2009-07-22 14:42:51.248104
 cards_178: 
   indexed_content: 
   reader_type: Role
   name: Four+One
   appender_id: 
-  updated_at: 2009-07-22 13:21:49.0781
+  updated_at: 2009-07-22 14:42:47.01567
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -1714,13 +1714,13 @@ cards_178:
   appender_type: 
   key: four+one
   extension_id: 
-  created_at: 2009-07-22 13:21:49.0781
+  created_at: 2009-07-22 14:42:47.01567
 cards_036: 
   indexed_content: "'role':1A"
   reader_type: Role
   name: "*roles"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'role':1"
   references_expired: 
   created_by: "1"
@@ -1736,13 +1736,13 @@ cards_036:
   appender_type: 
   key: "*role"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_008: 
   indexed_content: "'part':2A 'plus':1A,4 'self':5 'rform':3A"
   reader_type: Role
   name: "*plus parts+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'part':2 'plus':1 'rform':3"
   references_expired: 
   created_by: "1"
@@ -1758,13 +1758,13 @@ cards_008:
   appender_type: 
   key: "*plu_part+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_092: 
   indexed_content: "'name':2A,8 'self':6 'sort':7 'found':4 'rform':3A"
   reader_type: Role
   name: by name+*rform
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'name':2 'rform':3"
   references_expired: 
   created_by: "1"
@@ -1780,13 +1780,13 @@ cards_092:
   appender_type: 
   key: by_name+*rform
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_064: 
   indexed_content: "'option':1A"
   reader_type: Role
   name: "*options"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'option':1"
   references_expired: 
   created_by: "1"
@@ -1802,13 +1802,13 @@ cards_064:
   appender_type: 
   key: "*option"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_206: 
   indexed_content: 
   reader_type: Role
   name: UserForm+*tform
   appender_id: 
-  updated_at: 2009-07-22 13:21:53.647052
+  updated_at: 2009-07-22 14:42:51.649229
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -1824,13 +1824,13 @@ cards_206:
   appender_type: 
   key: user_form+*tform
   extension_id: 
-  created_at: 2009-07-22 13:21:53.647052
+  created_at: 2009-07-22 14:42:51.649229
 cards_179: 
   indexed_content: 
   reader_type: Role
   name: Five
   appender_id: 
-  updated_at: 2009-07-22 13:21:49.130798
+  updated_at: 2009-07-22 14:42:47.068003
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -1846,13 +1846,13 @@ cards_179:
   appender_type: 
   key: five
   extension_id: 
-  created_at: 2009-07-22 13:21:49.130798
+  created_at: 2009-07-22 14:42:47.068003
 cards_120: 
   indexed_content: "'card':14 'left':4,6,9,12 'type':13 'close':5,8,11,15 'rform':3A,10 'tform':7 'cardtyp':1A 'infrastructur':2A"
   reader_type: Role
   name: cardtype infrastructure+*rform
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'rform':3 'cardtyp':1 'infrastructur':2"
   references_expired: 
   created_by: "1"
@@ -1868,13 +1868,13 @@ cards_120:
   appender_type: 
   key: cardtype_infrastructure+*rform
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_037: 
   indexed_content: "'card':2A 'part':4 'plus':1A 'self':5 'rform':3A"
   reader_type: Role
   name: "*plus cards+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'card':2 'plus':1 'rform':3"
   references_expired: 
   created_by: "1"
@@ -1890,13 +1890,13 @@ cards_037:
   appender_type: 
   key: "*plu_card+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_009: 
   indexed_content: "'rform':2A 'thank':1A"
   reader_type: Role
   name: "*thanks+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'rform':2 'thank':1"
   references_expired: 
   created_by: "1"
@@ -1912,13 +1912,13 @@ cards_009:
   appender_type: 
   key: "*thank+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_093: 
   indexed_content: "'link':1A"
   reader_type: Role
   name: "*links"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'link':1"
   references_expired: 
   created_by: "1"
@@ -1934,13 +1934,13 @@ cards_093:
   appender_type: 
   key: "*link"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_065: 
   indexed_content: "'tag':1A 'rform':2A"
   reader_type: Role
   name: tags+*rform
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'tag':1 'rform':2"
   references_expired: 
   created_by: "1"
@@ -1956,13 +1956,13 @@ cards_065:
   appender_type: 
   key: tag+*rform
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_207: 
   indexed_content: 
   reader_type: Role
   name: JoeLater
   appender_id: 
-  updated_at: 2009-07-22 13:21:53.841059
+  updated_at: 2009-07-22 14:42:51.89011
   indexed_name: 
   references_expired: 
   created_by: "3"
@@ -1978,13 +1978,13 @@ cards_207:
   appender_type: 
   key: joe_later
   extension_id: 
-  created_at: 2009-07-22 13:21:53.841059
+  created_at: 2009-07-22 14:42:51.89011
 cards_121: 
   indexed_content: "'card':10,21 'read':14 'user':1A,9,20 'learn':12 'peopl':3 'account':5 'general':6 'descript':2A 'wagn.org':17 'wagn.org/wagn/user':16 '/wagn/user|documentation':18"
   reader_type: Role
   name: User+description
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'user':1 'descript':2"
   references_expired: 
   created_by: "1"
@@ -2000,13 +2000,13 @@ cards_121:
   appender_type: 
   key: user+description
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_094: 
   indexed_content: "'type':1A"
   reader_type: Role
   name: "*type"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'type':1"
   references_expired: 
   created_by: "1"
@@ -2022,13 +2022,13 @@ cards_094:
   appender_type: 
   key: "*type"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_066: 
   indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'descript':2 'plaintext':1A"
   reader_type: Role
   name: PlainText
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'plaintext':1"
   references_expired: 
   created_by: "1"
@@ -2044,13 +2044,13 @@ cards_066:
   appender_type: 
   key: plain_text
   extension_id: "14"
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_038: 
   indexed_content: "'sent':2A 'sign':6 'soon':22 'titl':9 'thank':3 'approv':19 'receiv':12 'someon':10 'account':17 'possibl':24 'request':1A,14"
   reader_type: Role
   name: Request Sent
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'sent':2 'request':1"
   references_expired: 
   created_by: "1"
@@ -2066,13 +2066,13 @@ cards_038:
   appender_type: 
   key: request_sent
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_208: 
   indexed_content: 
   reader_type: Role
   name: JoeNow
   appender_id: 
-  updated_at: 2009-07-22 13:21:53.954743
+  updated_at: 2009-07-22 14:42:52.004869
   indexed_name: 
   references_expired: 
   created_by: "3"
@@ -2088,13 +2088,13 @@ cards_208:
   appender_type: 
   key: joe_now
   extension_id: 
-  created_at: 2009-07-22 13:21:53.954743
+  created_at: 2009-07-22 14:42:52.004869
 cards_150: 
   indexed_content: 
   reader_type: Role
   name: Sample Role
   appender_id: 
-  updated_at: 2009-07-22 13:21:44.805479
+  updated_at: 2009-07-22 14:42:41.700996
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -2110,13 +2110,13 @@ cards_150:
   appender_type: 
   key: sample_role
   extension_id: "4"
-  created_at: 2009-07-22 13:21:44.805479
+  created_at: 2009-07-22 14:42:41.700996
 cards_122: 
   indexed_content: "'add':20 'goe':14 'also':19 'card':4,33 'kind':11 'read':27 'type':7,34 'everi':3 'learn':25 'shape':9 'inform':13 'cardtyp':1A,23 'descript':2A 'wagn.org':30 'wagn.org/wagn/card_types':29 '/wagn/card_types|documentation':31"
   reader_type: Role
   name: Cardtype+description
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'cardtyp':1 'descript':2"
   references_expired: 
   created_by: "1"
@@ -2132,13 +2132,13 @@ cards_122:
   appender_type: 
   key: cardtype+description
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_095: 
   indexed_content: "'card':2A 'plus':1A"
   reader_type: Role
   name: "*plus cards"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'card':2 'plus':1"
   references_expired: 
   created_by: "1"
@@ -2154,13 +2154,13 @@ cards_095:
   appender_type: 
   key: "*plu_card"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_067: 
   indexed_content: "'communiti':1A"
   reader_type: Role
   name: "*community"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'communiti':1"
   references_expired: 
   created_by: "1"
@@ -2176,13 +2176,13 @@ cards_067:
   appender_type: 
   key: "*community"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_039: 
   indexed_content: "'add':6 '/new':3 'card':10,13,15 'html':1A 'name':5,9,12 'self':4,8,11 'type':14 'descript':2"
   reader_type: Role
   name: HTML
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'html':1"
   references_expired: 
   created_by: "1"
@@ -2198,13 +2198,13 @@ cards_039:
   appender_type: 
   key: html
   extension_id: "21"
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_209: 
   indexed_content: 
   reader_type: Role
   name: AdminNow
   appender_id: 
-  updated_at: 2009-07-22 13:21:54.065705
+  updated_at: 2009-07-22 14:42:52.116045
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -2220,13 +2220,13 @@ cards_209:
   appender_type: 
   key: admin_now
   extension_id: 
-  created_at: 2009-07-22 13:21:54.065705
+  created_at: 2009-07-22 14:42:52.116045
 cards_151: 
   indexed_content: 
   reader_type: Role
   name: Sample File
   appender_id: 
-  updated_at: 2009-07-22 13:21:45.015547
+  updated_at: 2009-07-22 14:42:43.02036
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -2242,13 +2242,13 @@ cards_151:
   appender_type: 
   key: sample_file
   extension_id: 
-  created_at: 2009-07-22 13:21:45.015547
+  created_at: 2009-07-22 14:42:43.02036
 cards_123: 
   indexed_content: "'get':8 'new':5 'set':11 'home':1A 'wagn':6 'refer':16 'start':9 'config':10 'import':13 'option':15 'welcom':2 'configur':14,20 'document':24 'wagn.org':18,22 '/wagn/configuration|wagn':19 '/wagn/documentation|wagn':23 'wagn.org/wagn/configuration':17 'wagn.org/wagn/documentation':21"
   reader_type: Role
   name: Home
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'home':1"
   references_expired: 
   created_by: "1"
@@ -2264,13 +2264,13 @@ cards_123:
   appender_type: 
   key: home
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_096: 
   indexed_content: "'set':13 'use':5 'edit':4A 'forc':10 'tabl':1A,12 'content':3A"
   reader_type: Role
   name: "*table of contents+*edit"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'edit':4 'tabl':1 'content':3"
   references_expired: 
   created_by: "1"
@@ -2286,13 +2286,13 @@ cards_096:
   appender_type: 
   key: "*table_of_content+*edit"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_068: 
   indexed_content: "'add':3 'card':5,13 'edit':15 'menu':1A 'click':8 'doubl':7 '/card/new':2 'double-click':6"
   reader_type: Role
   name: Menu
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'menu':1"
   references_expired: 
   created_by: "1"
@@ -2308,13 +2308,13 @@ cards_068:
   appender_type: 
   key: menu
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_180: 
   indexed_content: 
   reader_type: Role
   name: Four+One+Five
   appender_id: 
-  updated_at: 2009-07-22 13:21:49.181053
+  updated_at: 2009-07-22 14:42:47.11803
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -2330,13 +2330,13 @@ cards_180:
   appender_type: 
   key: four+one+five
   extension_id: 
-  created_at: 2009-07-22 13:21:49.181053
+  created_at: 2009-07-22 14:42:47.11803
 cards_152: 
   indexed_content: 
   reader_type: Role
   name: Sample Search
   appender_id: 
-  updated_at: 2009-07-22 13:21:45.210151
+  updated_at: 2009-07-22 14:42:43.213117
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -2352,13 +2352,13 @@ cards_152:
   appender_type: 
   key: sample_search
   extension_id: 
-  created_at: 2009-07-22 13:21:45.210151
+  created_at: 2009-07-22 14:42:43.213117
 cards_124: 
   indexed_content: "'see':10 'use':7 'card':4,17 'html':1A,9,16 'allow':5 'descript':2A 'wagn.org':13 'unrestrict':6 'wagn.org/wagn/html':12 '/wagn/html|documentation':14"
   reader_type: Role
   name: HTML+description
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'html':1 'descript':2"
   references_expired: 
   created_by: "1"
@@ -2374,13 +2374,13 @@ cards_124:
   appender_type: 
   key: html+description
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_097: 
   indexed_content: "'self':5 'rform':2A 'includ':3 'inclus':1A"
   reader_type: Role
   name: "*inclusions+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'rform':2 'inclus':1"
   references_expired: 
   created_by: "1"
@@ -2396,13 +2396,13 @@ cards_097:
   appender_type: 
   key: "*inclusion+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_010: 
   indexed_content: "'edit':1A"
   reader_type: Role
   name: "*editing"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'edit':1"
   references_expired: 
   created_by: "1"
@@ -2418,13 +2418,13 @@ cards_010:
   appender_type: 
   key: "*editing"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_069: 
   indexed_content: "'updat':2A"
   reader_type: Role
   name: by update
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'updat':2"
   references_expired: 
   created_by: "1"
@@ -2440,13 +2440,13 @@ cards_069:
   appender_type: 
   key: by_update
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_181: 
   indexed_content: 
   reader_type: Role
   name: C
   appender_id: 
-  updated_at: 2009-07-22 13:21:49.331202
+  updated_at: 2009-07-22 14:42:47.266381
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -2462,13 +2462,13 @@ cards_181:
   appender_type: 
   key: c
   extension_id: 
-  created_at: 2009-07-22 13:21:49.331202
+  created_at: 2009-07-22 14:42:47.266381
 cards_153: 
   indexed_content: 
   reader_type: Role
   name: Sample Cardtype
   appender_id: 
-  updated_at: 2009-07-22 13:21:45.333216
+  updated_at: 2009-07-22 14:42:43.337325
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -2484,13 +2484,13 @@ cards_153:
   appender_type: 
   key: sample_cardtype
   extension_id: "24"
-  created_at: 2009-07-22 13:21:45.333216
+  created_at: 2009-07-22 14:42:43.337325
 cards_125: 
   indexed_content: "'bot':15 'new':5 'see':21 'card':20,36,37 'titl':40 'type':35 'user':6,19 'wagn':14 'invit':3 'learn':29 'anonym':12 'associ':17 'account':1A,9,27,31,33,39 'default':8 'request':32,34 'wagn.org':24 '/account/invite':2 'wagn.org/wagn/account':23 '/wagn/account|documentation':25"
   reader_type: Role
   name: "*account"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'account':1"
   references_expired: 
   created_by: "1"
@@ -2506,13 +2506,13 @@ cards_125:
   appender_type: 
   key: "*account"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_098: 
   indexed_content: "'invit':1A 'thank':2A '/wagn/invite_success':3"
   reader_type: Role
   name: "*invite+*thanks"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'invit':1 'thank':2"
   references_expired: 
   created_by: "1"
@@ -2528,13 +2528,13 @@ cards_098:
   appender_type: 
   key: "*invite+*thank"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_011: 
   indexed_content: "'basic':1A 'tform':2A"
   reader_type: Role
   name: Basic+*tform
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'basic':1 'tform':2"
   references_expired: 
   created_by: "1"
@@ -2550,13 +2550,13 @@ cards_011:
   appender_type: 
   key: basic+*tform
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_182: 
   indexed_content: 
   reader_type: Role
   name: A+C
   appender_id: 
-  updated_at: 2009-07-22 13:21:49.467491
+  updated_at: 2009-07-22 14:42:47.400997
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -2572,13 +2572,13 @@ cards_182:
   appender_type: 
   key: a+c
   extension_id: 
-  created_at: 2009-07-22 13:21:49.467491
+  created_at: 2009-07-22 14:42:47.400997
 cards_154: 
   indexed_content: 
   reader_type: Role
   name: Sample Toggle
   appender_id: 
-  updated_at: 2009-07-22 13:21:45.541901
+  updated_at: 2009-07-22 14:42:43.544286
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -2594,13 +2594,13 @@ cards_154:
   appender_type: 
   key: sample_toggle
   extension_id: 
-  created_at: 2009-07-22 13:21:45.541901
+  created_at: 2009-07-22 14:42:43.544286
 cards_126: 
   indexed_content: "'0':230,231 'x':36 'h1':10,16,25 'h2':11,21,27 '229':29 '333':177 '353':105 'bar':95 'box':218,224,234 'ccc':37 'css':1A 'eee':111 'non':44 'top':94,102,107 'url':32 'bodi':2,4 'card':14,19,47,61,64,68,77,84,96,113,116,121,129,132,135,138,142,145,150,153,159,162,168,171,179,186,189,192,198,207,212,220 'edit':49,91 'font':125 'help':232,235 'last':90 'link':38,55,71,75,80,157 'menu':103,108 'name':208 'none':227 'plus':204,206 'slot':15,20,62,69,78,85,114,122,130,136,143,151,160,169,180,187,193,199,213,221 'text':3,9,100,233 'titl':123,147,155,164,173 'view':88 'wagn':41 'want':46 'chang':52,87 'color':6,22,28,58,65,81,92,110,176,183,215 'exist':45 'hover':175 'joint':214 'navig':196 'reset':5 'revis':195 'visit':57,166 '005800':184 '444444':7 '448844':59 '664444':23 '77aa77':93 '990000':66 '996600':216 '997799':82 'c0d9c0':119 'ccccee':226 'dddddd':202 'eeeecc':238 'extern':48 'footer':190 'header':8,97,117,133,139,146,154,163,172,210 'normal':127 'recent':51 'repeat':35,228 'scroll':229 'subtab':99 'weight':126 'a.email':79 'comment':217,223 'content':73 'current':200 'in-wagn':39 'submenu':181 'a.wanted':63 'instruct':236 'repeat-x':34 'top-menu':101,106 'body.wagn':12,17,24,26,30 'card-foot':188 'card-head':115,131,137,144,152,161,170 'card-slot':13,18,60,67,76,83,112,120,128,134,141,149,158,167,178,185,191,197,211,219 'last-edit':89 'non-exist':43 'a.external':70,74 'background':31,104,118,201,225,237 'change-view':86 'comment-box':222 'font-weight':124 'card-slot.line':72 'revision-navig':194 '/images/body-bg.png':33"
   reader_type: Role
   name: "*css"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'css':1"
   references_expired: 
   created_by: "1"
@@ -2616,13 +2616,13 @@ cards_126:
   appender_type: 
   key: "*css"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_099: 
   indexed_content: "'form':1A,8 'thank':3A,4 'submit':6 'submiss':2A"
   reader_type: Role
   name: Form submission thanks
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'form':1 'thank':3 'submiss':2"
   references_expired: 
   created_by: "1"
@@ -2638,13 +2638,13 @@ cards_099:
   appender_type: 
   key: form_submission_thank
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_012: 
   indexed_content: "'name':2A"
   reader_type: Role
   name: by name
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'name':2"
   references_expired: 
   created_by: "1"
@@ -2660,13 +2660,13 @@ cards_012:
   appender_type: 
   key: by_name
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_040: 
   indexed_content: "'card':10,27 'imag':1A,7,9,18,26 'wagn':4 'want':16 'appear':20 'includ':12 'upload':6 'wherev':14 'descript':2A 'wagn.org':22 '/wagn/image|learn':23 'wagn.org/wagn/image':21"
   reader_type: Role
   name: Image+description
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'imag':1 'descript':2"
   references_expired: 
   created_by: "1"
@@ -2682,13 +2682,13 @@ cards_040:
   appender_type: 
   key: image+description
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_210: 
   indexed_content: 
   reader_type: Role
   name: Cardtype B
   appender_id: 
-  updated_at: 2009-07-22 13:21:50.905238
+  updated_at: 2009-07-22 14:42:48.825961
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -2704,13 +2704,13 @@ cards_210:
   appender_type: 
   key: cardtype_b
   extension_id: "26"
-  created_at: 2009-07-22 13:21:50.905238
+  created_at: 2009-07-22 14:42:48.825961
 cards_183: 
   indexed_content: 
   reader_type: Role
   name: D
   appender_id: 
-  updated_at: 2009-07-22 13:21:49.616479
+  updated_at: 2009-07-22 14:42:47.551635
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -2726,13 +2726,13 @@ cards_183:
   appender_type: 
   key: d
   extension_id: 
-  created_at: 2009-07-22 13:21:49.616479
+  created_at: 2009-07-22 14:42:47.551635
 cards_155: 
   indexed_content: 
   reader_type: Role
   name: u1
   appender_id: 
-  updated_at: 2009-07-22 13:21:45.682749
+  updated_at: 2009-07-22 14:42:43.683219
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -2748,13 +2748,13 @@ cards_155:
   appender_type: 
   key: u1
   extension_id: "7"
-  created_at: 2009-07-22 13:21:45.682749
+  created_at: 2009-07-22 14:42:43.683219
 cards_127: 
   indexed_content: "'role':12 'sign':2A,8 'anyon':1A,5 'account':18 'descript':4A 'wagn.org':14 '/wagn/account|learn':15 'wagn.org/wagn/account':13"
   reader_type: Role
   name: Anyone Signed In+description
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'sign':2 'anyon':1 'descript':4"
   references_expired: 
   created_by: "1"
@@ -2770,13 +2770,13 @@ cards_127:
   appender_type: 
   key: anyone_signed_in+description
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_013: 
   indexed_content: "'tform':1A"
   reader_type: Role
   name: "*tform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'tform':1"
   references_expired: 
   created_by: "1"
@@ -2792,13 +2792,13 @@ cards_013:
   appender_type: 
   key: "*tform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_041: 
   indexed_content: "'outgo':1A"
   reader_type: Role
   name: "*outgoing"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'outgo':1"
   references_expired: 
   created_by: "1"
@@ -2814,13 +2814,13 @@ cards_041:
   appender_type: 
   key: "*outgoing"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_184: 
   indexed_content: 
   reader_type: Role
   name: A+D
   appender_id: 
-  updated_at: 2009-07-22 13:21:49.667479
+  updated_at: 2009-07-22 14:42:47.600564
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -2836,13 +2836,13 @@ cards_184:
   appender_type: 
   key: a+d
   extension_id: 
-  created_at: 2009-07-22 13:21:49.667479
+  created_at: 2009-07-22 14:42:47.600564
 cards_156: 
   indexed_content: 
   reader_type: Role
   name: u2
   appender_id: 
-  updated_at: 2009-07-22 13:21:45.800187
+  updated_at: 2009-07-22 14:42:43.799658
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -2858,13 +2858,13 @@ cards_156:
   appender_type: 
   key: u2
   extension_id: "8"
-  created_at: 2009-07-22 13:21:45.800187
+  created_at: 2009-07-22 14:42:43.799658
 cards_128: 
   indexed_content: "'e.g':11 'two':19 'card':4,20,28,30,38 'form':16 'left':26,31,36,39,45 'make':23 'menu':12 'name':10,32 'part':34,41,44,47 'plus':3,7,27,29,37,40,46 'pluss':1A,18 'rform':2A 'third':25 'togeth':21 'descript':13"
   reader_type: Role
   name: "*plusses+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'pluss':1 'rform':2"
   references_expired: 
   created_by: "1"
@@ -2880,13 +2880,13 @@ cards_128:
   appender_type: 
   key: "*pluss+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_014: 
   indexed_content: "'tag':1A"
   reader_type: Role
   name: "*tagged"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'tag':1"
   references_expired: 
   created_by: "1"
@@ -2902,13 +2902,13 @@ cards_014:
   appender_type: 
   key: "*tagged"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_070: 
   indexed_content: "'editor':1A"
   reader_type: Role
   name: "*editors"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'editor':1"
   references_expired: 
   created_by: "1"
@@ -2924,13 +2924,13 @@ cards_070:
   appender_type: 
   key: "*editor"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_042: 
   indexed_content: "'edit':12 'make':14 'role':11 'sign':7 'anyon':1A,3 'anonym':19 'credit':17 'account':25 'descript':2A 'wagn.org':21 '/wagn/account|learn':22 'wagn.org/wagn/account':20"
   reader_type: Role
   name: Anyone+description
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'anyon':1 'descript':2"
   references_expired: 
   created_by: "1"
@@ -2946,13 +2946,13 @@ cards_042:
   appender_type: 
   key: anyone+description
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_185: 
   indexed_content: 
   reader_type: Role
   name: E
   appender_id: 
-  updated_at: 2009-07-22 13:21:49.814224
+  updated_at: 2009-07-22 14:42:47.745291
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -2968,13 +2968,13 @@ cards_185:
   appender_type: 
   key: e
   extension_id: 
-  created_at: 2009-07-22 13:21:49.814224
+  created_at: 2009-07-22 14:42:47.745291
 cards_157: 
   indexed_content: 
   reader_type: Role
   name: u3
   appender_id: 
-  updated_at: 2009-07-22 13:21:46.010377
+  updated_at: 2009-07-22 14:42:44.006516
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -2990,13 +2990,13 @@ cards_157:
   appender_type: 
   key: u3
   extension_id: "9"
-  created_at: 2009-07-22 13:21:46.010377
+  created_at: 2009-07-22 14:42:44.006516
 cards_129: 
   indexed_content: "'bar':10 'css':98 'get':50 'i.e':118 'key':261 'see':59,231 'set':43,62,255 'tab':167,213 'card':18,175,181,187,200,224 'come':70 'edit':154,162 'form':76,138,149,214,242 'home':17,23 'html':101 'imag':30,105 'logo':27 'name':4,15 'plus':180 'sign':80,121,136,147 'site':3 'skin':95 'titl':9,11,22 'type':13,25,29,100,104,132,191,262 'user':115 'wagn':97,244 'avail':172 'basic':2,42,247 'close':12,24,28,40,83,85,87,99,103,131,153,165,205 'creat':74,143,222 'deliv':114 'email':69,108,112 'everi':174 'given':190 'googl':249,257,259 'invit':45,82 'learn':232 'peopl':46,78,217 'relat':68,166,168,176,179,192,212 'rform':204 'taken':220 'tform':152 'thank':215,238,248 'advanc':88 'analyt':250,258,260 'appear':5,89,184,198 'approv':52 'config':1A 'custom':36,145,160 'differ':20 'domain':246 'forgot':126 'inform':107,117 'messag':240 'phrase':14,26,133,263 'signup':86 'someon':120 'subtab':170,177,183,193,197 'tinymc':164 'account':41,48,51,58,67,106,116,129,134,150,202,203 'address':64,110 'browser':7 'cardtyp':194 'favicon':102 'permiss':229 'request':47,84,151 'sidebar':31,38,39 'sign-up':135,146 'special':196 'toolbar':155,163 'univers':178 'password':128 'wagn.org':33,54,91,140,157,207,236,252 'account-rel':66 '/wagn/skin|learn':92 'invited/approved':124 '/wagn/sidebar|how':34 '/wagn/tinymce|how':158 'wagn.org/wagn/skin':90 'wagn.org/wagn/account':53 'wagn.org/wagn/sidebar':32 'wagn.org/wagn/tinymce':156 '/wagn/related_tab|learn':208 'wagn.org/wagn/related_tab':206 '/wagn/google_analytics|how':253 'wagn.org/wagn/google_analytics':251 '/wagn/custom_sign-up_information|how':141 'wagn.org/wagn/custom_sign-up_information':139 '/wagn/account#administering%20accounts|learn':55 '/wagn/custom_thank_you_messages_for_forms|custom':237 'wagn.org/wagn/custom_thank_you_messages_for_forms':235"
   reader_type: Role
   name: Config
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'config':1"
   references_expired: 
   created_by: "1"
@@ -3012,13 +3012,13 @@ cards_129:
   appender_type: 
   key: config
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_015: 
   indexed_content: "'see':10 'way':9 'invit':1A,5 'thank':3 'account':11 'request':12 'success':2A"
   reader_type: Role
   name: Invite Success
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'invit':1 'success':2"
   references_expired: 
   created_by: "1"
@@ -3034,13 +3034,13 @@ cards_015:
   appender_type: 
   key: invite_success
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_071: 
   indexed_content: "'imag':1A 'rform':2A"
   reader_type: Role
   name: Image+*rform
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'imag':1 'rform':2"
   references_expired: 
   created_by: "1"
@@ -3056,13 +3056,13 @@ cards_071:
   appender_type: 
   key: image+*rform
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_043: 
   indexed_content: "'tag':21,24,28 'left':3,8,10,12,16,18,20,25,27 'link':6 'name':9,17,26 'incom':1A 'rform':2A 'includ':13,15,19 'linker':4,11"
   reader_type: Role
   name: "*incoming+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'incom':1 'rform':2"
   references_expired: 
   created_by: "1"
@@ -3078,13 +3078,13 @@ cards_043:
   appender_type: 
   key: "*incoming+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_186: 
   indexed_content: 
   reader_type: Role
   name: A+E
   appender_id: 
-  updated_at: 2009-07-22 13:21:49.864664
+  updated_at: 2009-07-22 14:42:47.795011
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -3100,13 +3100,13 @@ cards_186:
   appender_type: 
   key: a+e
   extension_id: 
-  created_at: 2009-07-22 13:21:49.864664
+  created_at: 2009-07-22 14:42:47.795011
 cards_158: 
   indexed_content: 
   reader_type: Role
   name: r1
   appender_id: 
-  updated_at: 2009-07-22 13:21:46.12026
+  updated_at: 2009-07-22 14:42:44.116507
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -3122,13 +3122,13 @@ cards_158:
   appender_type: 
   key: r1
   extension_id: "5"
-  created_at: 2009-07-22 13:21:46.12026
+  created_at: 2009-07-22 14:42:44.116507
 cards_016: 
   indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'cardtyp':1A 'descript':2"
   reader_type: Role
   name: Cardtype
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'cardtyp':1"
   references_expired: 
   created_by: "1"
@@ -3144,13 +3144,13 @@ cards_016:
   appender_type: 
   key: cardtype
   extension_id: "3"
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_072: 
   indexed_content: "'0':85 'p':66 'h1':67 'h2':68 'hr':24,96 '100':3 'alt':86 'css':70 'img':81 'src':83 'top':43 'url':8 'auto':4 'bold':16 'code':28 'face':102 'fals':9,38,57 'font':101 'href':77 'ital':17 'left':48 'name':76,95 'path':37 'redo':27 'size':99,103 'span':106 'titl':79,87 'true':6,52 'undo':26 'align':47,92,108 'class':82,97,107 'color':104 'locat':42,61 'relat':7 'resiz':5,51,55 'separ':18,25 'style':105,109 'theme':10,12,29,32,35,39,44,49,53,58,63 'valid':73 'width':2,90,98 'advanc':11,13,30,33,36,40,45,50,54,59,64 'border':84 'bottom':62 'extend':72 'height':91 'hspace':88 'indent':22 'noshad':100 'target':78 'tinymc':1A 'vspace':89 'bullist':20 'content':69 'element':74 'numlist':21 'onclick':80 'outdent':23 'toolbar':41,46 'buttons1':14 'buttons2':31 'buttons3':34 'horizont':56 'blockquot':19 'onmouseov':93 'statusbar':60 'onmouseout':94 'blockformat':65 'formatselect':15 '/stylesheets/defaults.css':71"
   reader_type: Role
   name: "*tinyMCE"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'tinymc':1"
   references_expired: 
   created_by: "1"
@@ -3166,13 +3166,13 @@ cards_072:
   appender_type: 
   key: "*tiny_mce"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_044: 
   indexed_content: "'add':7 '/new':4 'card':11,14,16 'name':6,10,13 'self':5,9,12 'type':15 'tform':2A 'cardtyp':1A 'descript':3"
   reader_type: Role
   name: Cardtype+*tform
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'tform':2 'cardtyp':1"
   references_expired: 
   created_by: "1"
@@ -3188,13 +3188,13 @@ cards_044:
   appender_type: 
   key: cardtype+*tform
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_187: 
   indexed_content: 
   reader_type: Role
   name: C+A
   appender_id: 
-  updated_at: 2009-07-22 13:21:50.004806
+  updated_at: 2009-07-22 14:42:47.932314
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -3210,13 +3210,13 @@ cards_187:
   appender_type: 
   key: c+a
   extension_id: 
-  created_at: 2009-07-22 13:21:50.004806
+  created_at: 2009-07-22 14:42:47.932314
 cards_159: 
   indexed_content: 
   reader_type: Role
   name: r2
   appender_id: 
-  updated_at: 2009-07-22 13:21:46.298792
+  updated_at: 2009-07-22 14:42:44.29739
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -3232,13 +3232,13 @@ cards_159:
   appender_type: 
   key: r2
   extension_id: "6"
-  created_at: 2009-07-22 13:21:46.298792
+  created_at: 2009-07-22 14:42:44.29739
 cards_073: 
   indexed_content: "'tform':3A 'account':1A 'request':2A"
   reader_type: Role
   name: Account Request+*tform
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'tform':3 'account':1 'request':2"
   references_expired: 
   created_by: "1"
@@ -3254,13 +3254,13 @@ cards_073:
   appender_type: 
   key: account_request+*tform
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_045: 
   indexed_content: ""
   reader_type: Role
   name: "*from"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: ""
   references_expired: 
   created_by: "1"
@@ -3276,13 +3276,13 @@ cards_045:
   appender_type: 
   key: "*from"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_100: 
   indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'pointer':1A 'descript':2"
   reader_type: Role
   name: Pointer
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'pointer':1"
   references_expired: 
   created_by: "1"
@@ -3298,13 +3298,13 @@ cards_100:
   appender_type: 
   key: pointer
   extension_id: "20"
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_017: 
   indexed_content: "'role':1A 'self':4 'rform':2A 'member':3"
   reader_type: Role
   name: "*roles+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'role':1 'rform':2"
   references_expired: 
   created_by: "1"
@@ -3320,13 +3320,13 @@ cards_017:
   appender_type: 
   key: "*role+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_188: 
   indexed_content: 
   reader_type: Role
   name: D+A
   appender_id: 
-  updated_at: 2009-07-22 13:21:50.142623
+  updated_at: 2009-07-22 14:42:48.073426
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -3342,13 +3342,13 @@ cards_188:
   appender_type: 
   key: d+a
   extension_id: 
-  created_at: 2009-07-22 13:21:50.142623
+  created_at: 2009-07-22 14:42:48.073426
 cards_074: 
   indexed_content: "'rform':2A 'option':1A"
   reader_type: Role
   name: "*options+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'rform':2 'option':1"
   references_expired: 
   created_by: "1"
@@ -3364,13 +3364,13 @@ cards_074:
   appender_type: 
   key: "*option+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_046: 
   indexed_content: "'add':36 'new':38 'one':5 'card':42 'role':1A,8,11,24,34,39,40 'type':41 'user':3 'defin':15 'capabl':13 'except':20 'global':18 'permiss':19,28 'wagn.org':30 '/new/role':35 'administr':23 '/admin/tasks':17 '/wagn/role|learn':31 'wagn.org/wagn/role':29"
   reader_type: Role
   name: Role
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'role':1"
   references_expired: 
   created_by: "1"
@@ -3386,13 +3386,13 @@ cards_046:
   appender_type: 
   key: role
   extension_id: "5"
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_101: 
   indexed_content: "'add':6 '/new':3 'card':10,13,15 'imag':1A 'name':5,9,12 'self':4,8,11 'type':14 'descript':2"
   reader_type: Role
   name: Image
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'imag':1"
   references_expired: 
   created_by: "1"
@@ -3408,13 +3408,13 @@ cards_101:
   appender_type: 
   key: image
   extension_id: "11"
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_018: 
   indexed_content: "'add':6 '/new':3 'card':10,13,15 'date':1A 'name':5,9,12 'self':4,8,11 'type':14 'descript':2"
   reader_type: Role
   name: Date
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'date':1"
   references_expired: 
   created_by: "1"
@@ -3430,13 +3430,13 @@ cards_018:
   appender_type: 
   key: date
   extension_id: "9"
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_189: 
   indexed_content: 
   reader_type: Role
   name: F
   appender_id: 
-  updated_at: 2009-07-22 13:21:50.392534
+  updated_at: 2009-07-22 14:42:48.318324
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -3452,13 +3452,13 @@ cards_189:
   appender_type: 
   key: f
   extension_id: 
-  created_at: 2009-07-22 13:21:50.392534
+  created_at: 2009-07-22 14:42:48.318324
 cards_130: 
   indexed_content: "'re':36 'new':17 'via':19 'send':32 'sign':4 'type':24,29 'user':6,18 'wagn':40 'creat':13 'email':20 'invit':1A,16,34 'taken':37 'thank':43 'domain':42 'global':10 'messag':27,28 'phrase':25 'account':14 'default':21,26 'permiss':11 'subject':22,23 'plaintext':30 'signed-in':3 '/admin/tasks':9"
   reader_type: Role
   name: "*invite"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'invit':1"
   references_expired: 
   created_by: "1"
@@ -3474,13 +3474,13 @@ cards_130:
   appender_type: 
   key: "*invite"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_075: 
   indexed_content: "'type':3 'relat':2A 'cardtyp':1A"
   reader_type: Role
   name: Cardtype+*related
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'relat':2 'cardtyp':1"
   references_expired: 
   created_by: "1"
@@ -3496,13 +3496,13 @@ cards_075:
   appender_type: 
   key: cardtype+*related
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_047: 
   indexed_content: "'see':17,31 'set':30 'card':22 'edit':18 'delet':20 'everi':21 'power':15 'global':10 'system':25 'automat':4 'permiss':11,29,37 'descript':2A 'wagn.org':34 'administr':1A,3 'regardless':26 '/admin/tasks':9 'wagn.org/wagn/permissions':33 '/wagn/permissions|documentation':35"
   reader_type: Role
   name: Administrator+description
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'descript':2 'administr':1"
   references_expired: 
   created_by: "1"
@@ -3518,13 +3518,13 @@ cards_047:
   appender_type: 
   key: administrator+description
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_102: 
   indexed_content: "'card':5 'type':4 'updat':7 'account':1A 'request':2A 'descript':3"
   reader_type: Role
   name: Account Request
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'account':1 'request':2"
   references_expired: 
   created_by: "1"
@@ -3540,13 +3540,13 @@ cards_102:
   appender_type: 
   key: account_request
   extension_id: "6"
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_019: 
   indexed_content: "'link':1A,3 'self':6 'rform':2A"
   reader_type: Role
   name: "*links+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'link':1 'rform':2"
   references_expired: 
   created_by: "1"
@@ -3562,13 +3562,13 @@ cards_019:
   appender_type: 
   key: "*link+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_131: 
   indexed_content: "'let':3 'give':19 'sent':33,60,67 'sign':5,63 'type':47,54 'user':4,30 'wagn':70 'allow':11 'anyon':12,20 'close':53 'creat':15,26 'email':35,43,49,58 'newli':28 'thank':73 'approv':9 'detail':42 'domain':72 'follow':41 'global':23 'messag':50,52 'person':62 'phrase':48 'regist':29 'signup':1A,45,51 'account':16,27 'permiss':24 'process':10 'request':17 'subject':44,46 'password':38 'plaintext':55 '/admin/tasks':22 '/card/options/account_request':14"
   reader_type: Role
   name: "*signup"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'signup':1"
   references_expired: 
   created_by: "1"
@@ -3584,13 +3584,13 @@ cards_131:
   appender_type: 
   key: "*signup"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_076: 
   indexed_content: "'cardtyp':1A 'infrastructur':2A"
   reader_type: Role
   name: cardtype infrastructure
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'cardtyp':1 'infrastructur':2"
   references_expired: 
   created_by: "1"
@@ -3606,13 +3606,13 @@ cards_076:
   appender_type: 
   key: cardtype_infrastructure
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_048: 
   indexed_content: "'edit':1A"
   reader_type: Role
   name: "*edit"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'edit':1"
   references_expired: 
   created_by: "1"
@@ -3628,13 +3628,13 @@ cards_048:
   appender_type: 
   key: "*edit"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_103: 
   indexed_content: "'add':6 '/new':3 'card':10,13,15 'file':1A 'name':5,9,12 'self':4,8,11 'type':14 'descript':2"
   reader_type: Role
   name: File
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'file':1"
   references_expired: 
   created_by: "1"
@@ -3650,13 +3650,13 @@ cards_103:
   appender_type: 
   key: file
   extension_id: "10"
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_160: 
   indexed_content: 
   reader_type: Role
   name: r3
   appender_id: 
-  updated_at: 2009-07-22 13:21:46.48059
+  updated_at: 2009-07-22 14:42:44.477638
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -3672,13 +3672,13 @@ cards_160:
   appender_type: 
   key: r3
   extension_id: "7"
-  created_at: 2009-07-22 13:21:46.48059
+  created_at: 2009-07-22 14:42:44.477638
 cards_132: 
   indexed_content: "'tag':17,21,24 'item':8 'left':3,6,10,13,16,18,23 'link':9 'name':19 'open':15 'rform':2A 'editor':4,5,7 'discuss':11,12,14 'communiti':1A"
   reader_type: Role
   name: "*community+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'rform':2 'communiti':1"
   references_expired: 
   created_by: "1"
@@ -3694,13 +3694,13 @@ cards_132:
   appender_type: 
   key: "*community+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_077: 
   indexed_content: "'thank':2A 'signup':1A '/wagn/signup_success':3"
   reader_type: Role
   name: "*signup+*thanks"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'thank':2 'signup':1"
   references_expired: 
   created_by: "1"
@@ -3716,13 +3716,13 @@ cards_077:
   appender_type: 
   key: "*signup+*thank"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_049: 
   indexed_content: "'thank':2A 'request':1A '/wagn/request_sent':3"
   reader_type: Role
   name: "*request+*thanks"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'thank':2 'request':1"
   references_expired: 
   created_by: "1"
@@ -3738,13 +3738,13 @@ cards_049:
   appender_type: 
   key: "*request+*thank"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_104: 
   indexed_content: "'yet':11 'peopl':4 'approv':13 'account':1A,8,19 'request':2A,7 'descript':3A 'wagn.org':15 '/wagn/account|learn':16 'wagn.org/wagn/account':14"
   reader_type: Role
   name: Account Request+description
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'account':1 'request':2 'descript':3"
   references_expired: 
   created_by: "1"
@@ -3760,13 +3760,13 @@ cards_104:
   appender_type: 
   key: account_request+description
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_161: 
   indexed_content: 
   reader_type: Role
   name: r4
   appender_id: 
-  updated_at: 2009-07-22 13:21:46.664703
+  updated_at: 2009-07-22 14:42:44.659388
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -3782,13 +3782,13 @@ cards_161:
   appender_type: 
   key: r4
   extension_id: "8"
-  created_at: 2009-07-22 13:21:46.664703
+  created_at: 2009-07-22 14:42:44.659388
 cards_133: 
   indexed_content: "'one':8 'via':9 'link':13 'sign':11 'type':34 'wagn':44 'allow':16 'anyon':17 'creat':20 'email':31 'peopl':2 'thank':47 'approv':25 'domain':46 'phrase':35 'signup':24 'unless':23 'account':5,21 'automat':26 'request':1A,7,22,28,38 'without':3 'redirect':41 '/card/options/account_request':19"
   reader_type: Role
   name: "*request"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'request':1"
   references_expired: 
   created_by: "1"
@@ -3804,13 +3804,13 @@ cards_133:
   appender_type: 
   key: "*request"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_078: 
   indexed_content: "'self':6 'sort':7 'creat':2A,8 'found':4 'rform':3A"
   reader_type: Role
   name: by create+*rform
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'creat':2 'rform':3"
   references_expired: 
   created_by: "1"
@@ -3826,13 +3826,13 @@ cards_078:
   appender_type: 
   key: by_create+*rform
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_105: 
   indexed_content: "'watcher':1A"
   reader_type: Role
   name: "*watchers"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'watcher':1"
   references_expired: 
   created_by: "1"
@@ -3848,13 +3848,13 @@ cards_105:
   appender_type: 
   key: "*watcher"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_190: 
   indexed_content: 
   reader_type: Role
   name: F+A
   appender_id: 
-  updated_at: 2009-07-22 13:21:50.441769
+  updated_at: 2009-07-22 14:42:48.366541
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -3870,13 +3870,13 @@ cards_190:
   appender_type: 
   key: f+a
   extension_id: 
-  created_at: 2009-07-22 13:21:50.441769
+  created_at: 2009-07-22 14:42:48.366541
 cards_162: 
   indexed_content: 
   reader_type: Role
   name: c1
   appender_id: 
-  updated_at: 2009-07-22 13:21:47.048441
+  updated_at: 2009-07-22 14:42:45.045908
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -3892,13 +3892,13 @@ cards_162:
   appender_type: 
   key: c1
   extension_id: 
-  created_at: 2009-07-22 13:21:47.048441
+  created_at: 2009-07-22 14:42:45.045908
 cards_134: 
   indexed_content: 
   reader_type: Role
   name: Joe User
   appender_id: 
-  updated_at: 2009-07-22 13:21:42.656862
+  updated_at: 2009-07-22 14:42:39.552338
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -3914,13 +3914,13 @@ cards_134:
   appender_type: 
   key: joe_user
   extension_id: "3"
-  created_at: 2009-07-22 13:21:42.656862
+  created_at: 2009-07-22 14:42:39.552338
 cards_079: 
   indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'number':1A 'descript':2"
   reader_type: Role
   name: Number
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'number':1"
   references_expired: 
   created_by: "1"
@@ -3936,13 +3936,13 @@ cards_079:
   appender_type: 
   key: number
   extension_id: "12"
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_106: 
   indexed_content: "'rform':2A 'discuss':1A"
   reader_type: Role
   name: discussion+*rform
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'rform':2 'discuss':1"
   references_expired: 
   created_by: "1"
@@ -3958,13 +3958,13 @@ cards_106:
   appender_type: 
   key: discussion+*rform
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_020: 
   indexed_content: "'titl':1A 'wagn':3"
   reader_type: Role
   name: "*title"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'titl':1"
   references_expired: 
   created_by: "1"
@@ -3980,13 +3980,13 @@ cards_020:
   appender_type: 
   key: "*title"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_191: 
   indexed_content: 
   reader_type: Role
   name: A+B+C
   appender_id: 
-  updated_at: 2009-07-22 13:21:50.578651
+  updated_at: 2009-07-22 14:42:48.503078
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -4002,13 +4002,13 @@ cards_191:
   appender_type: 
   key: a+b+c
   extension_id: 
-  created_at: 2009-07-22 13:21:50.578651
+  created_at: 2009-07-22 14:42:48.503078
 cards_163: 
   indexed_content: 
   reader_type: Role
   name: c2
   appender_id: 
-  updated_at: 2009-07-22 13:21:47.155763
+  updated_at: 2009-07-22 14:42:45.156423
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -4024,13 +4024,13 @@ cards_163:
   appender_type: 
   key: c2
   extension_id: 
-  created_at: 2009-07-22 13:21:47.155763
+  created_at: 2009-07-22 14:42:45.156423
 cards_135: 
   indexed_content: 
   reader_type: Role
   name: Joe Admin
   appender_id: 
-  updated_at: 2009-07-22 13:21:42.800729
+  updated_at: 2009-07-22 14:42:39.693625
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -4046,13 +4046,13 @@ cards_135:
   appender_type: 
   key: joe_admin
   extension_id: "4"
-  created_at: 2009-07-22 13:21:42.800729
+  created_at: 2009-07-22 14:42:39.693625
 cards_107: 
   indexed_content: "'tabl':1A 'rform':4A 'content':3A"
   reader_type: Role
   name: "*table of contents+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'tabl':1 'rform':4 'content':3"
   references_expired: 
   created_by: "1"
@@ -4068,13 +4068,13 @@ cards_107:
   appender_type: 
   key: "*table_of_content+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_021: 
   indexed_content: "'logo':1A"
   reader_type: Role
   name: "*logo"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'logo':1"
   references_expired: 
   created_by: "1"
@@ -4090,13 +4090,13 @@ cards_021:
   appender_type: 
   key: "*logo"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_192: 
   indexed_content: 
   reader_type: Role
   name: Cardtype A
   appender_id: 
-  updated_at: 2009-07-22 13:21:50.696612
+  updated_at: 2009-07-22 14:42:48.620865
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -4112,13 +4112,13 @@ cards_192:
   appender_type: 
   key: cardtype_a
   extension_id: "25"
-  created_at: 2009-07-22 13:21:50.696612
+  created_at: 2009-07-22 14:42:48.620865
 cards_164: 
   indexed_content: 
   reader_type: Role
   name: c3
   appender_id: 
-  updated_at: 2009-07-22 13:21:47.261691
+  updated_at: 2009-07-22 14:42:45.266037
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -4134,13 +4134,13 @@ cards_164:
   appender_type: 
   key: c3
   extension_id: 
-  created_at: 2009-07-22 13:21:47.261691
+  created_at: 2009-07-22 14:42:45.266037
 cards_136: 
   indexed_content: 
   reader_type: Role
   name: color
   appender_id: 
-  updated_at: 2009-07-22 13:21:42.943672
+  updated_at: 2009-07-22 14:42:39.836648
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -4156,13 +4156,13 @@ cards_136:
   appender_type: 
   key: color
   extension_id: 
-  created_at: 2009-07-22 13:21:42.943672
+  created_at: 2009-07-22 14:42:39.836648
 cards_108: 
   indexed_content: "'self':4 'rform':2A 'includ':1A,3"
   reader_type: Role
   name: "*includers+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'rform':2 'includ':1"
   references_expired: 
   created_by: "1"
@@ -4178,13 +4178,13 @@ cards_108:
   appender_type: 
   key: "*includer+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_050: 
   indexed_content: "'edit':1A,3 'self':5 'view':6 'chang':7 'rform':2A"
   reader_type: Role
   name: "*editing+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'edit':1 'rform':2"
   references_expired: 
   created_by: "1"
@@ -4200,13 +4200,13 @@ cards_050:
   appender_type: 
   key: "*editing+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_022: 
   indexed_content: "'see':14 'use':5 'wql':9 'card':4 'wagn':11 'queri':12 'search':1A,3 'syntax':18 'languag':13 'descript':2A 'document':19 'wagn.org':7,16 '/wagn/wql':17 '/wagn/wql|':8 'wagn.org/wagn/wql':6,15"
   reader_type: Role
   name: Search+description
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'search':1 'descript':2"
   references_expired: 
   created_by: "1"
@@ -4222,13 +4222,13 @@ cards_022:
   appender_type: 
   key: search+description
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_193: 
   indexed_content: 
   reader_type: Role
   name: Cardtype C
   appender_id: 
-  updated_at: 2009-07-22 13:21:51.207021
+  updated_at: 2009-07-22 14:42:49.130856
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -4244,13 +4244,13 @@ cards_193:
   appender_type: 
   key: cardtype_c
   extension_id: "27"
-  created_at: 2009-07-22 13:21:51.207021
+  created_at: 2009-07-22 14:42:49.130856
 cards_165: 
   indexed_content: 
   reader_type: Role
   name: Z
   appender_id: 
-  updated_at: 2009-07-22 13:21:47.357225
+  updated_at: 2009-07-22 14:42:45.358895
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -4266,13 +4266,13 @@ cards_165:
   appender_type: 
   key: z
   extension_id: 
-  created_at: 2009-07-22 13:21:47.357225
+  created_at: 2009-07-22 14:42:45.358895
 cards_137: 
   indexed_content: 
   reader_type: Role
   name: Basic Card
   appender_id: 
-  updated_at: 2009-07-22 13:21:43.057418
+  updated_at: 2009-07-22 14:42:39.950135
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -4288,13 +4288,13 @@ cards_137:
   appender_type: 
   key: basic_card
   extension_id: 
-  created_at: 2009-07-22 13:21:43.057418
+  created_at: 2009-07-22 14:42:39.950135
 cards_109: 
   indexed_content: "'left':6 'name':12 'sort':11 'refer':7 'relat':1A,10 'rform':5 'right':4 'subtab':2A 'univers':3A"
   reader_type: Role
   name: Related subtabs - universal
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'relat':1 'subtab':2 'univers':3"
   references_expired: 
   created_by: "1"
@@ -4310,13 +4310,13 @@ cards_109:
   appender_type: 
   key: related_subtab_universal
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_051: 
   indexed_content: "'discuss':1A"
   reader_type: Role
   name: discussion
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'discuss':1"
   references_expired: 
   created_by: "1"
@@ -4332,13 +4332,13 @@ cards_051:
   appender_type: 
   key: discussion
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_023: 
   indexed_content: "'edit':2A 'right':7 'appear':5 'content':3 'sidebar':1A,8"
   reader_type: Role
   name: "*sidebar+*edit"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'edit':2 'sidebar':1"
   references_expired: 
   created_by: "1"
@@ -4354,13 +4354,13 @@ cards_023:
   appender_type: 
   key: "*sidebar+*edit"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_194: 
   indexed_content: 
   reader_type: Role
   name: Cardtype D
   appender_id: 
-  updated_at: 2009-07-22 13:21:51.412478
+  updated_at: 2009-07-22 14:42:49.337238
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -4376,13 +4376,13 @@ cards_194:
   appender_type: 
   key: cardtype_d
   extension_id: "28"
-  created_at: 2009-07-22 13:21:51.412478
+  created_at: 2009-07-22 14:42:49.337238
 cards_166: 
   indexed_content: 
   reader_type: Role
   name: A
   appender_id: 
-  updated_at: 2009-07-22 13:21:47.474399
+  updated_at: 2009-07-22 14:42:45.472819
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -4398,13 +4398,13 @@ cards_166:
   appender_type: 
   key: a
   extension_id: 
-  created_at: 2009-07-22 13:21:47.474399
+  created_at: 2009-07-22 14:42:45.472819
 cards_138: 
   indexed_content: 
   reader_type: Role
   name: Ron Request
   appender_id: 
-  updated_at: 2009-07-22 13:21:43.32473
+  updated_at: 2009-07-22 14:42:40.218408
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -4420,13 +4420,13 @@ cards_138:
   appender_type: 
   key: ron_request
   extension_id: "5"
-  created_at: 2009-07-22 13:21:43.172473
+  created_at: 2009-07-22 14:42:40.06614
 cards_080: 
   indexed_content: "'link':3 'self':5 'rform':2A 'linker':1A"
   reader_type: Role
   name: "*linkers+*rform"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'rform':2 'linker':1"
   references_expired: 
   created_by: "1"
@@ -4442,13 +4442,13 @@ cards_080:
   appender_type: 
   key: "*linker+*rform"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_052: 
   indexed_content: "'incom':2 'outgo':3 'pluss':4 'relat':1A 'communiti':5"
   reader_type: Role
   name: "*related"
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'relat':1"
   references_expired: 
   created_by: "1"
@@ -4464,13 +4464,13 @@ cards_052:
   appender_type: 
   key: "*related"
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_024: 
   indexed_content: "'card':10,14,31 'file':1A,7,9,22,30 'link':19 'wagn':4 'want':17 'appear':24 'includ':12 'upload':6 'wherev':15 'descript':2A 'wagn.org':26 '/wagn/file|learn':27 'wagn.org/wagn/file':25"
   reader_type: Role
   name: File+description
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'file':1 'descript':2"
   references_expired: 
   created_by: "1"
@@ -4486,13 +4486,13 @@ cards_024:
   appender_type: 
   key: file+description
   extension_id: 
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_195: 
   indexed_content: 
   reader_type: Role
   name: Cardtype E
   appender_id: 
-  updated_at: 2009-07-22 13:21:51.62066
+  updated_at: 2009-07-22 14:42:49.543955
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -4508,13 +4508,13 @@ cards_195:
   appender_type: 
   key: cardtype_e
   extension_id: "29"
-  created_at: 2009-07-22 13:21:51.62066
+  created_at: 2009-07-22 14:42:49.543955
 cards_167: 
   indexed_content: 
   reader_type: Role
   name: B
   appender_id: 
-  updated_at: 2009-07-22 13:21:47.591626
+  updated_at: 2009-07-22 14:42:45.588683
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -4530,13 +4530,13 @@ cards_167:
   appender_type: 
   key: b
   extension_id: 
-  created_at: 2009-07-22 13:21:47.591626
+  created_at: 2009-07-22 14:42:45.588683
 cards_139: 
   indexed_content: 
   reader_type: Role
   name: No Count
   appender_id: 
-  updated_at: 2009-07-22 13:21:43.404231
+  updated_at: 2009-07-22 14:42:40.29681
   indexed_name: 
   references_expired: 
   created_by: "1"
@@ -4552,13 +4552,13 @@ cards_139:
   appender_type: 
   key: no_count
   extension_id: 
-  created_at: 2009-07-22 13:21:43.404231
+  created_at: 2009-07-22 14:42:40.29681
 cards_053: 
   indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'toggl':1A 'descript':2"
   reader_type: Role
   name: Toggle
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'toggl':1"
   references_expired: 
   created_by: "1"
@@ -4574,13 +4574,13 @@ cards_053:
   appender_type: 
   key: toggle
   extension_id: "22"
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_025: 
   indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'search':1A 'descript':2"
   reader_type: Role
   name: Search
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'search':1"
   references_expired: 
   created_by: "1"
@@ -4596,13 +4596,13 @@ cards_025:
   appender_type: 
   key: search
   extension_id: "19"
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177
 cards_081: 
   indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'user':1A 'descript':2"
   reader_type: Role
   name: User
   appender_id: 
-  updated_at: 2009-07-22 13:21:31.448207
+  updated_at: 2009-07-22 14:42:29.315177
   indexed_name: "'user':1"
   references_expired: 
   created_by: "1"
@@ -4618,4 +4618,4 @@ cards_081:
   appender_type: 
   key: user
   extension_id: "2"
-  created_at: 2009-07-22 13:21:31.448207
+  created_at: 2009-07-22 14:42:29.315177

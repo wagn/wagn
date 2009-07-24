@@ -39,7 +39,10 @@ namespace :wagn do
   
   
     desc "load bootstrap fixtures into db"
-    task :load => :environment do
+    task :load => :environment do     
+      
+      
+      
       require 'active_record/fixtures'                         
       #ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
       Dir.glob(File.join(RAILS_ROOT, 'db', 'bootstrap', '*.{yml,csv}')).each do |fixture_file|
@@ -100,6 +103,7 @@ namespace :wagn do
     
       ActiveRecord::Base.connection.delete( 'delete from permissions')
       ActiveRecord::Base.connection.select_all( 'select * from cards' ).each do |card|
+        debugger if card.id == 15
         key = card['key']
         cardset = perms[key] || {}
         starset = (key =~ /^\*/ ? perms[:star] : {})
@@ -116,7 +120,7 @@ namespace :wagn do
           )
           if task== :read
             ActiveRecord::Base.connection.update(
-              "UPDATE cards set reader_type='Role', reader_id=#{party_id}"
+              "UPDATE cards set reader_type='Role', reader_id=#{party_id} where id=#{card.id}"
             )
           end
         end

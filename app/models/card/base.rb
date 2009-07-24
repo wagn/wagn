@@ -471,19 +471,6 @@ module Card
       party==::Role[:auth]
     end
 
-    def watchers
-      # Dammit, all these Card[] calls should run through the cache but
-      #  can't because CachedCards are different from Cards.
-      watchers = []
-      [ 
-        Card["#{name}+*watchers"], 
-        Card[ ::Cardtype.name_for( self.type ) + "+*watchers" ]
-      ].compact.each do |c|
-        watchers += c.pointees.reject{|x|x==''}.map {|name|  Card[name] }
-      end  
-      watchers
-    end
-
     def to_s
       "#<#{self.class.name}:#{self.attributes['name']}>"
     end

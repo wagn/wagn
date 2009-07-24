@@ -26,6 +26,7 @@ require_dependency 'card/permissions'
 require_dependency 'card/search'
 require_dependency 'card/references'
 require_dependency 'card/notification'
+require_dependency 'card/cacheable'
 require_dependency 'lib/card_attachment'
 
 Card::Base.class_eval do       
@@ -35,7 +36,8 @@ Card::Base.class_eval do
   include CardLib::Permissions                               
   include CardLib::Search 
   include CardLib::References  
-  include CardLib::Notification
+  include CardLib::Notification 
+  include CardLib::Cacheable
   extend Card::CardAttachment::ActMethods
 end
  

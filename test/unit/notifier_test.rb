@@ -44,11 +44,11 @@ class NotifierTest < ActiveSupport::TestCase
     end
     
     should "return users watching this card specifically" do
-      assert_equal ["Sara", "John"], Card["All Eyes On Me"].watchers.map(&:name)
+      assert_equal ["Sara", "John"], Card["All Eyes On Me"].watchers
     end
     
     should "return users watching cards of this type" do
-      assert_equal ["Sara"], Card["Sunglasses"].watchers.map(&:name)
+      assert_equal ["Sara"], Card["Sunglasses"].watchers
     end
   end
     

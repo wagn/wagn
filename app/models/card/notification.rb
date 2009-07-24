@@ -7,8 +7,8 @@ module CardLib
         else; 'updated'
       end
 
-      watchers.each do |user_card|
-        notifyee = user_card.extension
+      watchers.each do |cardname|
+        notifyee = Card[cardname].extension
         unless self.updater == notifyee
           Mailer.deliver_change_notice( notifyee, self, action )
         end

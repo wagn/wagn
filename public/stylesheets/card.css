@@ -172,6 +172,7 @@ div:hover.card-footer table {
 .card-slot .card-footer td.watch {
   width: 10%; 
   text-align: right;
+  white-space: nowrap;
 }        
 
 

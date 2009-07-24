@@ -174,7 +174,7 @@ module CardLib
     def approve_task(operation, verb=nil) #read, edit, comment, delete           
       verb ||= operation.to_s
       testee = template? ? trunk : self
-      deny_because("#{ydhpt} #{verb} this card; who can edit=#{self.who_can(:edit).codename} ") unless testee.lets_user( operation ) 
+      deny_because("#{ydhpt} #{verb} this card") unless testee.lets_user( operation ) 
     end
 
     def approve_type

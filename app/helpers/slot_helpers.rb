@@ -109,10 +109,14 @@ module SlotHelpers
   
   def watch_link 
     return "" unless logged_in?
-    if card.watchers.include? User.current_user.card
-			slot.link_to_action( "unwatch", 'unwatch', :update=>slot.id("watch-link"))
+    type_link = (card.type == "Cardtype") ? " #{card.name.pluralize}" : ""
+    type_msg = (card.type == "Cardtype") ? " cards" : ""
+    if card.watchers.include? User.current_user.card.name   
+			slot.link_to_action( "unwatch#{type_link}", 'unwatch', {:update=>slot.id("watch-link")},{
+			  :title => "stop getting emails about changes to #{card.name}#{type_msg}"})
 		else
-			slot.link_to_action( "watch", 'watch', :update=>slot.id("watch-link"))
+			slot.link_to_action( "watch#{type_link}", 'watch', {:update=>slot.id("watch-link")},{
+        :title=>"get emails about changes to #{card.name}#{type_msg}" })
 		end
   end
 

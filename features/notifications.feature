@@ -22,6 +22,10 @@ Feature: Notifications
     And I am on the homepage  
     When In the main card footer I click the unwatch link
     And the page updates
-    Then In the main card footer I should not see "unwatch"
+    Then In the main card footer I should not see "unwatch" 
     And the card Home+*watchers should not contain "Joe User"
-
+           
+  Scenario: Watching a Cardtype Card
+    Given I log in as Joe User
+    When I go to card User
+    Then In the main card footer I should see "watch Users"

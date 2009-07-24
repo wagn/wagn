@@ -29,7 +29,9 @@ Given /^the pointer (.*) contains "([^\"]*)"$/ do |cardname, content|
 end
 
 When /the page updates/ do
-  webrat.simulate do
+  webrat.simulate do           
+    # FIXME: this should find the current page we're on
+    #  (which is likely *not* current_url if we just did an ajax call, but the previous url )
     visit '/wagn/Home'
   end
 end

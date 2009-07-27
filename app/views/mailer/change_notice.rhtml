@@ -1,3 +1,4 @@
-You can see the changes <%= @updater %> made to <%= @card.name %> here:
-
-<%= @card_url %>
+<a href="<%= @card_url %>"><%= @card.name %></a> was <%= @action %> by <%= @updater %> at <%= @card.updated_at %>.
+<%- if @action=='edited' -%>
+You can also see <a href="<%= @change_url %>">what changed</a>.
+<%- end %>

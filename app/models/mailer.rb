@@ -34,14 +34,15 @@ class Mailer < ActionMailer::Base
   
   def change_notice( user, card, action )
     recipients "#{user.email}"
-    from       System.setting('*notifications+*from') || System.site_title
-    subject    "#{card.updater.card.name} #{action} #{card.name} " 
+    from       System.setting('*notify+*from') || User.find_by_login('wagbot').email
+    subject    "#{card.updater.card.name} #{action} \"#{card.name}\"" 
     content_type 'text/html'
     body :card => card,
          :updater => card.updater.card.name,
          :action => action,
          :content => card.content,
-         :card_url => "#{System.base_url}/wagn/#{card.name.to_url_key}"
+         :card_url => "#{System.base_url}/wagn/#{card.name.to_url_key}",
+         :change_url => "#{System.base_url}/card/changes/#{card.name.to_url_key}"
   end
   
 

@@ -35,8 +35,7 @@ class MailerTest < ActiveSupport::TestCase
     setup do
       user =  ::User.find_by_login('sara')
       card =  Card["Sunglasses"]
-      action = "edited"
-      
+      action = "edited"      
       Mailer.deliver_change_notice( user, card, action )
     end
 
@@ -50,7 +49,25 @@ class MailerTest < ActiveSupport::TestCase
       end
       should "be addressed to users email" do
         assert_equal ["sara@user.com"],  @mail.to
-      end
+      end    
+      should "be from Wag bot email" do
+        assert_equal [User.find_by_login('wagbot').email], @mail.from
+      end     
+    end     
+  end
+  
+  context "change notice with custom from" do
+    setup do
+      user =  ::User.find_by_login('sara')
+      card =  Card["Sunglasses"]
+      action = "edited"      
+      User.as :wagbot
+      Card.create! :name => "*notify+*from", :type=>"Phrase", :content=>"jiffy@lube.com"
+      Mailer.deliver_change_notice( user, card, action )
+      @mail = ActionMailer::Base.deliveries[0] 
+    end
+    should "be from custom address" do
+      assert_equal ["jiffy@lube.com"], @mail.from
     end
   end
   

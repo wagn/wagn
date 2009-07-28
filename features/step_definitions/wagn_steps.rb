@@ -12,6 +12,12 @@ Given /^I log in as (.+)$/ do |user_card_name|
   #end
 end                                     
 
+Given /^I log out/ do
+  visit "/"
+  click_link("Sign out")
+  response.should_not contain "My Card"
+end
+
 Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
   webrat.simulate do
     User.as(:wagbot) do

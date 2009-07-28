@@ -17,18 +17,18 @@ module CardLib
   	    links.empty? ? [''] : links
 	    end
 	  end
-
-    def watchers
-      watchers = []
-      [ 
-        CachedCard.get("#{name}+*watchers"), 
-        CachedCard.get( ::Cardtype.name_for( self.type ) + "+*watchers" )
-      ].compact.each do |c|
-        watchers += c.pointees.reject{|x|x==''}
-      end  
-      watchers
+    
+    def card_watchers 
+      (c = CachedCard.get("#{name}+*watchers")) ? c.pointees.reject{|x|x==''} : []
     end
-
+    
+    def type_watchers
+      (c = CachedCard.get( ::Cardtype.name_for( self.type ) + "+*watchers" )) ? c.pointees.reject{|x|x==''} : []
+    end
+      
+    def watchers
+      card_watchers + type_watchers
+    end
     
   end
 end

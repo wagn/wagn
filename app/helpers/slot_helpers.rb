@@ -109,9 +109,28 @@ module SlotHelpers
   
   def watch_link 
     return "" unless logged_in?
-    type_link = (card.type == "Cardtype") ? " #{card.name.pluralize}" : ""
-    type_msg = (card.type == "Cardtype") ? " cards" : ""
-    if card.watchers.include? User.current_user.card.name   
+    me = User.current_user.card.name          
+    if card.type == "Cardtype"
+      (card.type_watchers.include?(me) ? watching_type_cards : "") +  " | #{watch_unwatch}"
+    else
+      if card.type_watchers.include?(me) 
+        watching_type_cards
+      else
+        watch_unwatch
+      end
+    end
+  end
+  
+  def watching_type_cards
+    "watching #{link_to_page(card.type)} cards"      # can I parse this and get the link to happen? that wud r@wk.
+  end
+     
+  def watch_unwatch      
+    type_link = (card.type == "Cardtype") ? " #{card.name} cards" : ""
+    type_msg = (card.type == "Cardtype") ? " cards" : ""    
+    me = User.current_user.card.name   
+
+    if card.card_watchers.include?(me) or card.type != 'Cardtype' && card.watchers.include?(me)
 			slot.link_to_action( "unwatch#{type_link}", 'unwatch', {:update=>slot.id("watch-link")},{
 			  :title => "stop getting emails about changes to #{card.name}#{type_msg}"})
 		else

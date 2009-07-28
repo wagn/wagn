@@ -15,12 +15,7 @@ module NavigationHelpers
       '/recent'
       
     when /card (.*)$/
-      "/wagn/#{$1}"
-    # Add more mappings here.
-    # Here is a more fancy example:
-    #
-    #   when /^(.*)'s profile page$/i
-    #     user_profile_path(User.find_by_login($1))
+      "/wagn/#{$1.to_url_key}"
 
     else
       raise "Can't find mapping from \"#{page_name}\" to a path.\n" +

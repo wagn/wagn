@@ -50,6 +50,18 @@ class NotifierTest < ActiveSupport::TestCase
     should "return users watching cards of this type" do
       assert_equal ["Sara"], Card["Sunglasses"].watchers
     end
+    
+    context "card_watchers" do
+      should "return users watching this card specifically" do
+        assert_equal ["Sara", "John"], Card["All Eyes On Me"].card_watchers
+      end
+    end
+    
+    context "type_watchers" do
+      should "return users watching cards of this type" do
+        assert_equal ["Sara"], Card["Sunglasses"].type_watchers
+      end
+    end
   end
     
   context "Card Changes" do

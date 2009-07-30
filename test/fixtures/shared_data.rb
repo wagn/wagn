@@ -2,12 +2,14 @@ class SharedData
   def self.add_test_data
     ::User.as(:wagbot) do 
       joe_user = ::User.create! :login=>"joe_user",:email=>'joe@user.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>User[:wagbot]
-      joe_card = Card::User.create! :name=>"Joe User", :extension=>joe_user, :content => "I'm number two"    
+      Card::User.create! :name=>"Joe User", :extension=>joe_user, :content => "I'm number two"    
       
       joe_admin = ::User.create! :login=>"joe_admin",:email=>'joe@admin.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>User[:wagbot]
-      joe_admin_card = Card::User.create! :name=>"Joe Admin", :extension=>joe_admin, :content => "I'm number one"    
+      Card::User.create! :name=>"Joe Admin", :extension=>joe_admin, :content => "I'm number one"    
       Role[:admin].users<< [ joe_admin ]
 
+      joe_camel = ::User.create! :login=>"joe_camel",:email=>'joe@camel.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>User[:wagbot]
+      Card::User.create! :name=>"Joe Camel", :extension=>joe_camel, :content => "Mr. Buttz"    
 
       bt = Card.find_by_name 'Basic+*tform'
       fail "oh god #{bt.permissions.inspect}" if bt.permissions.empty?

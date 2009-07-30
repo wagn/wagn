@@ -1,4 +1,10 @@
 <a href="<%= @card_url %>"><%= @card.name %></a> was <%= @action %> by <%= @updater %> at <%= @card.updated_at %>.
 <%- if @action=='edited' -%>
 You can also see <a href="<%= @change_url %>">what changed</a>.
-<%- end %>
+<%- end %>                                                     
+<%- if @subedits.present? -%>
+This update included the following changes:
+	<%- @subedits.each do |name, action| -%>
+  <%= action %> <%= name %>
+	<%- end -%>
+<%- end -%>

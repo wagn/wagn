@@ -13,7 +13,10 @@ module ScopeHelpers
     
     when /the main card footer/
       '#main .card-slot .card-footer'
-      
+     
+    when /the main card header/
+      '#main .card-slot .card-header'
+        
     else
       raise "Can't find mapping from \"#{section}\" to a scope.\n" +
         "Now, go and add a mapping in #{__FILE__}"

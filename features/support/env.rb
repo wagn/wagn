@@ -32,7 +32,9 @@ end
  
 Spork.each_run do
   # This code will be run each time you run your specs.
-  require 'cucumber/rails/world'
+  require 'cucumber/rails/world'   
+  require 'email_spec/cucumber'
+  
 
   # Comment out the next line if you don't want transactions to
   # open/roll back around each scenario

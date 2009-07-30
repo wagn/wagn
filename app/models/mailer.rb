@@ -32,7 +32,7 @@ class Mailer < ActionMailer::Base
   end               
 
   
-  def change_notice( user, card, action )
+  def change_notice( user, card, action, subedits=[] )
     recipients "#{user.email}"
     from       System.setting('*notify+*from') || User.find_by_login('wagbot').email
     subject    "#{card.updater.card.name} #{action} \"#{card.name}\"" 
@@ -40,7 +40,8 @@ class Mailer < ActionMailer::Base
     body :card => card,
          :updater => card.updater.card.name,
          :action => action,
-         :content => card.content,
+         :content => card.content,   
+         :subedits => subedits,
          :card_url => "#{System.base_url}/wagn/#{card.name.to_url_key}",
          :change_url => "#{System.base_url}/card/changes/#{card.name.to_url_key}"
   end

@@ -18,7 +18,7 @@
 
   			<div id="sidebar" context="sidebar">
   				<% if sidebar_card = CachedCard.get_real("*sidebar")  %>
-  					<%= WagnHelper::Slot.new(sidebar_card, "sidebar_1", "view", self).render(:naked) %>
+  					<%= Slot.new(sidebar_card, "sidebar_1", "view", self).render(:naked) %>
   				<% end %>
   			</div>
 		

@@ -71,7 +71,7 @@ class CardController < ApplicationController
   def new
     args = (params[:card] ||= {})
     args[:type] ||= params[:type] # for /new/:type shortcut in routes
-    
+
     # don't pass a blank type as argument
     # look up other types in case Cardtype name is given instead of ruby type
     if args[:type]
@@ -103,7 +103,7 @@ class CardController < ApplicationController
   
   def create
     @card = Card.create params[:card]
-    @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards] and @card.errors.empty?
+    @card.multi_create(params[:cards]) if params[:multi_edit] and params[:cards] and @card.errors.empty?
 
     @redirect_location = if @card.ok?(:read)
       url_for_page(@card.name)

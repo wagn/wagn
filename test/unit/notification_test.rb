@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'   
 require 'timecop'    
 
-class NotifierTest < ActiveSupport::TestCase  
+class NotificationTest < ActiveSupport::TestCase  
   FUTURE = Time.local(2020,1,1,0,0,0)
   
   def self.custom_test_data
@@ -20,12 +20,15 @@ class NotifierTest < ActiveSupport::TestCase
 
         Card.create! :name => "Sara Watching+*watchers",  :content => "[[Sara]]"
         Card.create! :name => "All Eyes On Me+*watchers", :content => "[[Sara]]\n[[John]]"
+        Card.create! :name => "John Watching", :content => "{{+her}}"
         Card.create! :name => "John Watching+*watchers",  :content => "[[John]]"
-        Card.create! :name => "No One Sees Me"  
+        Card.create! :name => "John Watching+her" 
+        Card.create! :name => "No One Sees Me" 
 
         Card.create! :name => "Optic", :type => "Cardtype"
         Card.create! :name => "Optic+*watchers", :content => "[[Sara]]"
-        Card.create! :name => "Sunglasses", :type=>"Optic"
+        Card.create! :name => "Sunglasses", :type=>"Optic", :content=>"{{+tint}}"                          
+        Card.create! :name => "Sunglasses+tint"
 
         # TODO: I would like to setup these card definitions with something like Cucumbers table feature.
       end
@@ -37,10 +40,10 @@ class NotifierTest < ActiveSupport::TestCase
     CachedCard.bump_global_seq  # should figure out how not to have to do this all over..
     Timecop.freeze(FUTURE)  # make sure we're ahead of all the test data
   end
-
+  
   context "Card#watchers" do
     setup do
-      NotifierTest.custom_test_data
+      NotificationTest.custom_test_data
     end
     
     should "return users watching this card specifically" do
@@ -61,12 +64,21 @@ class NotifierTest < ActiveSupport::TestCase
       should "return users watching cards of this type" do
         assert_equal ["Sara"], Card["Sunglasses"].type_watchers
       end
-    end
+    end    
+    
+    context "trunk_watchers" do
+      should "return users watching the trunk" do
+        assert_equal ["John"], Card["John Watching+her"].trunk_watchers
+      end
+      should "return users watching trunk's type" do
+        assert_equal ["Sara"], Card["Sunglasses+tint"].trunk_watchers
+      end
+    end  
   end
     
   context "Card Changes" do
     setup do
-      NotifierTest.custom_test_data
+      NotificationTest.custom_test_data
       User.as(:john)           
     end
     

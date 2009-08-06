@@ -1,10 +1,24 @@
-<a href="<%= @card_url %>"><%= @card.name %></a> was <%= @action %> by <%= @updater %> at <%= @card.updated_at %>.
+<p>
+	<a href="<%= @card_url %>"><%= @card.name %></a> 
+	was <%= @action %> by <%= @updater %> at <%= @card.updated_at %>.
+</p>
+
 <%- if @action=='edited' -%>
-You can also see <a href="<%= @change_url %>">what changed</a>.
+	<p>You can also see <a href="<%= @change_url %>">what changed</a>.</p>
 <%- end %>                                                     
+
 <%- if @subedits.present? -%>
-This update included the following changes:
-	<%- @subedits.each do |name, action| -%>
-  <%= action %> <%= name %>
-	<%- end -%>
+	<p>
+		This update included the following changes:
+		<ul>
+			<%- @subedits.each do |name, action| -%>
+		  <li><%= action %> <%= name %>
+			<%- end -%>
+		</ul>
+	</p>
 <%- end -%>
+
+<p> 
+	You received this email because you're watching <%= @watched %>. <br/>
+	<a href="<%= @unwatch_url %>">Unwatch</a> to stop receiving these emails.	
+</p>

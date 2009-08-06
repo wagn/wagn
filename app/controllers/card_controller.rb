@@ -12,7 +12,7 @@ class CardController < ApplicationController
 
   before_filter :load_card_with_cache, :only => [:line, :view, :open ]
   
-  before_filter :edit_ok,   :only=>[ :edit, :update, :rollback, :save_draft] 
+  before_filter :edit_ok,   :only=>[ :edit, :update, :rollback, :save_draft, :watch, :unwatch] 
   before_filter :remove_ok, :only=>[ :remove ]
   
   #----------( Special cards )
@@ -241,13 +241,15 @@ class CardController < ApplicationController
   def watch 
     watchers = Card.find_or_new( :name => @card.name + "+*watchers" )
     watchers.add_reference User.current_user.card.name
-    render :inline=>%{<%= get_slot.watch_link %>}
+    flash[:notice] = "You are now watching #{card.name}"
+    request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
   def unwatch 
     watchers = Card.find_or_new( :name => @card.name + "+*watchers" )
     watchers.remove_reference User.current_user.card.name
-    render :inline=>%{<%= get_slot.watch_link %>}
+    flash[:notice] = "You are no longer watching #{card.name}"
+    request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
   #---------------( tabs )

@@ -1,6 +1,28 @@
 <% tagname = card.name.tag_name 
    type = card.cardtype
 %>
+       
+<h1>Watchers</h1>
+<p>&nbsp;</p>
+<% if card.type == "Cardtype" %>
+	<strong>People watching "<%= card.name %>" cards</strong>
+	<p>Watchers receive email when "<%= card.name %>" cards are changed.
+		<a href="http://wagn.org/wagn/Notification">Learn more about notifications</a>
+	</p>                                                  
+	<blockquote>
+		<p>{{+*watchers}}</p>
+	</blockquote>
+<% else %>
+	<strong>People watching "<%= card.name %>"</strong>
+	<p>Watchers receive email when cards of this type are changed.
+		<a href="http://wagn.org/wagn/Notification">Learn more about notifications</a>
+	</p>                                                  
+	<blockquote>
+		<p>{{+*watchers}}</p>	
+	</blockquote>
+<% end %>
+<p>&nbsp;</p>  
+<p>&nbsp;</p>  
 
 <% if card.simple? || card.hard_template %>
   <h1>Formatting</h1>

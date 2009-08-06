@@ -18,9 +18,10 @@ module Notification
   
   module CardMethods
     def send_notifications 
-      action = case updated_at.to_s
-        when created_at.to_s; 'added'
-        when current_revision.created_at.to_s;  'edited'
+      action = case  
+        when trash;  'deleted'
+        when updated_at.to_s==created_at.to_s; 'added'
+        when updated_at.to_s==current_revision.created_at.to_s;  'edited'  
         else; 'updated'
       end
       
@@ -41,7 +42,7 @@ module Notification
     end  
 
     def watcher_watched_pairs
-      author = self.updater.card.name
+      author = User.current_user.card.name
       (card_watchers.except(author).map {|watcher| [Card[watcher].extension,self.name] }  +
         type_watchers.except(author).map {|watcher| [Card[watcher].extension,::Cardtype.name_for(self.type)]})
     end

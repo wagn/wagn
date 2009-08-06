@@ -22,4 +22,9 @@ Feature: Notifications
     When I follow "Unwatch" in the email
     Then the card Phrase+*watchers should not contain "Joe Admin" 
 
+  Scenario: Watching a Card
+    Given Joe User is watching "Home"
+    When Joe Admin deletes "Home"
+    Then Joe User should be notified that "Joe Admin deleted \"Home\"" 
+    
   

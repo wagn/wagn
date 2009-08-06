@@ -68,6 +68,13 @@ When /^(.*) creates?\s*([^\s]*) card "([^"]*)" with plusses:$/ do |username,card
     end
   end
 end
+   
+When /^(.*) deletes? "([^\"]*)"$/ do |username, cardname|
+  logged_in_as(username) do
+    visit "/card/remove/#{cardname.to_url_key}?card[confirm_destroy]=true"
+  end
+end
+
 
 def fill_in_hidden_or_not(field_locator, options={})
   set_hidden_field(field_locator, :to=>options[:with])

@@ -1,5 +1,7 @@
 require 'rubygems'
 require 'spork'
+        
+ 
  
 Spork.prefork do
   # Sets up the Rails environment for Cucumber
@@ -35,6 +37,9 @@ Spork.each_run do
   require 'cucumber/rails/world'   
   require 'email_spec/cucumber'
   
+  Before do
+    CachedCard.bump_global_seq
+  end 
 
   # Comment out the next line if you don't want transactions to
   # open/roll back around each scenario

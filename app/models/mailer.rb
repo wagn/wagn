@@ -45,6 +45,7 @@ class Mailer < ActionMailer::Base
          :card_url => "#{System.base_url}/wagn/#{card.name.to_url_key}",
          :change_url => "#{System.base_url}/card/changes/#{card.name.to_url_key}",
          :unwatch_url => "#{System.base_url}/card/unwatch/#{watched.to_url_key}",
+         :udpater_url => "#{System.base_url}/wagn/#{card.updater.card.name.to_url_key}",
          :watched => (watched == card.name ? "#{watched}" : "#{watched} cards")
   end
   

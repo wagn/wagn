@@ -36,16 +36,10 @@ module Notification
         nested_edit.nested_notifications << [ name, action ]
       else
         @trunk_watcher_watched_pairs.each do |watcher, watched|
-          Mailer.deliver_change_notice( watcher, self.trunk, 'updated', watched, [name, action] )
+          Mailer.deliver_change_notice( watcher, self.trunk, 'updated', watched, [[name, action]] )
         end
       end
     end  
-
-    def watcher_watched_pairs
-      author = User.current_user.card.name
-      (card_watchers.except(author).map {|watcher| [Card[watcher].extension,self.name] }  +
-        type_watchers.except(author).map {|watcher| [Card[watcher].extension,::Cardtype.name_for(self.type)]})
-    end
     
     def trunk_watcher_watched_pairs
       # do the watchers lookup before the transcluder test since it's faster.
@@ -68,6 +62,11 @@ module Notification
   end
   
   module CacheableMethods
+    def watcher_watched_pairs
+      author = User.current_user.card.name
+      (card_watchers.except(author).map {|watcher| [Card[watcher].extension,self.name] }  +
+        type_watchers.except(author).map {|watcher| [Card[watcher].extension,::Cardtype.name_for(self.type)]})
+    end
     
     def card_watchers 
       pointees_from("#{name}+*watchers")

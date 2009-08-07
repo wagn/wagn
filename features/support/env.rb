@@ -1,5 +1,7 @@
 require 'rubygems'
 require 'spork'
+        
+ 
  
 Spork.prefork do
   # Sets up the Rails environment for Cucumber
@@ -7,6 +9,7 @@ Spork.prefork do
   require File.expand_path(File.dirname(__FILE__) + '/../../config/environment')
  
   require 'webrat'
+  
  
   Webrat.configure do |config|
     config.application_framework = :rails
@@ -34,7 +37,15 @@ Spork.each_run do
   # This code will be run each time you run your specs.
   require 'cucumber/rails/world'   
   require 'email_spec/cucumber'
-  
+ 
+  CachedCard.set_cache_prefix "#{System.host}/test"
+  CachedCard.bump_global_seq
+  CachedCard.set_cache_prefix "#{System.host}/cucumber"
+  CachedCard.bump_global_seq
+
+  Before do
+    CachedCard.bump_global_seq
+  end 
 
   # Comment out the next line if you don't want transactions to
   # open/roll back around each scenario

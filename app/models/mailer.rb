@@ -35,7 +35,7 @@ class Mailer < ActionMailer::Base
   def change_notice( user, card, action, watched, subedits=[] )
     recipients "#{user.email}"
     from       System.setting('*notify+*from') || User.find_by_login('wagbot').email
-    subject    "#{card.updater.card.name} #{action} \"#{card.name}\"" 
+    subject    "[#{System.setting('*title')} notice] #{card.updater.card.name} #{action} \"#{card.name}\"" 
     content_type 'text/html'
     body :card => card,
          :updater => card.updater.card.name,

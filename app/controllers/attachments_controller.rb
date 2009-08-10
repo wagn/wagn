@@ -1,5 +1,6 @@
 class AttachmentsController < ApplicationController   
   layout nil
+
   make_resourceful do
     actions :all
     

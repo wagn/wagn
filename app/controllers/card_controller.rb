@@ -1,7 +1,5 @@
 class CardController < ApplicationController
-
   helper :wagn, :card 
-  layout :default_layout
 
   before_filter :create_ok, :only=>[ :new, :create ]
 

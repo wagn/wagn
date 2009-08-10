@@ -11,7 +11,8 @@ Feature: Update Includer cards
   
   Scenario: Watcher should be notified of updates to transcluded plus card
     When I create card "Ulysses+author" with content "James Joyce"
-    Then Joe Camel should be notified that "Joe User updated \"Ulysses\""
+    Then Joe Camel should be notified that "Joe User updated \"Ulysses\""   
+    #And He should see "added Ulysses+author" in the email  -- FIXME need multiline matching
     And Joe Admin should be notified that "Joe User updated \"Ulysses\""
     When I edit "Ulysses+author" setting content to "Jim"
     Then Joe Camel should be notified that "Joe User updated \"Ulysses\""
@@ -28,13 +29,13 @@ Feature: Update Includer cards
   Scenario: Templated cards should only send one email when added or updated
     Given I create card "Book+*tform" with content "by {{+author}}, design by {{+illustrator}}"
     When I create Book card "Bros Krmzv" with plusses:
-      |author|illustrator|
-      |Dostoyevsky|Delacroix|      
-    Then Joe Admin should be notified that "Joe User added \"Bros Krmzv\""
+      |author|
+      |Dostoyevsky|
+    Then Joe Admin should be notified that "Joe User added \"Bros Krmzv\""    
     When I edit "Bros Krmzv" with plusses:
       |author|illustrator|
       |Rumi|Monet|
-    Then Joe Admin should be notified that "Joe User updated \"Bros Krmzv\""
+    Then Joe Admin should be notified that "Joe User updated \"Bros Krmzv\""    
 
   Scenario: Watching a plus card on multiedit; and watching both plus card and including card on multiedit
     Given I create Cardtype card "Fruit"

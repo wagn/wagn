@@ -8,7 +8,6 @@
 	<%- end -%>
 	by <a href="<%= @updater_url %>"><%= @updater %></a>
 </p>
-<br/>
 
 <%- if @subedits.present? -%>
 	<p>
@@ -19,12 +18,9 @@
 			<%- end -%>
 		</ul>
 	</p>
-	<br/>
 <%- end -%>
 
-
-<p>See the card: <%= @card_url %></p><br/>
-
+<p>See the card: <%= @card_url %></p>
                
 <p> 
 	You received this email because you're watching "<%= @watched %>". <br/>

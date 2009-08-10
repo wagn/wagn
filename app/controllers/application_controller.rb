@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
   
   # OPTIMIZE: render_fast_404 still isn't that fast (?18reqs/sec) 
   # can we turn sessions off for it and see if that helps?
-  layout :default_layout, :except=>[:render_fast_404]
+  layout :wagn_layout, :except=>[:render_fast_404]
 
   protected
   
@@ -62,7 +62,7 @@ class ApplicationController < ActionController::Base
     load_location
   end
 
-  def default_layout
+  def wagn_layout
     layout = nil
     respond_to do |format|
       format.html {

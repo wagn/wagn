@@ -40,7 +40,7 @@ module Card
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
       :update_referencers, :allow_type_change, :phantom, :broken_type, :skip_defaults
-  
+        
     private
       belongs_to :reader, :polymorphic=>true  
       
@@ -260,15 +260,25 @@ module Card
       #alias_method_chain :instantiate, :permissions
       
     end
+
+    def multi_create(cards)
+      multi_save(cards)
+    end
     
     def multi_update(cards)
+      multi_save(cards)
+      Notification.after_multi_update(self)  # future system hook
+    end
+    
+    def multi_save(cards)
+      Notification.before_multi_save(self,cards)  # future system hook
       cards.each_pair do |name, opts|
         name = name.post_cgi.to_absolute(self.name)
         logger.info "multi update working on #{name}: #{opts.inspect}"
-        if card = Card[name]
+        if card = Card[name]      
           card.update_attributes(opts)
         elsif !opts[:content].strip.blank?  #fixme -- need full-on strip that gets rid of blank html tags.
-          opts[:name] = name   
+          opts[:name] = name                
           if ::Cardtype.create_ok?( self.type ) && !::Cardtype.create_ok?( Card.new(opts).type )
             ::User.as(:wagbot) { Card.create(opts) }
           else
@@ -470,9 +480,16 @@ module Card
     def authenticated?(party)
       party==::Role[:auth]
     end
-       
 
-    protected
+    def to_s
+      "#<#{self.class.name}:#{self.attributes['name']}>"
+    end
+
+    def mocha_inspect
+      to_s
+    end
+     
+   protected
     def clear_drafts
       connection.execute(%{
         delete from revisions where card_id=#{id} and id > #{current_revision_id} 

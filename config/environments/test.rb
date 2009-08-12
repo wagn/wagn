@@ -17,3 +17,18 @@ config.action_controller.perform_caching             = true
 # The :test delivery method accumulates sent emails in the
 # ActionMailer::Base.deliveries array.
 config.action_mailer.delivery_method = :test
+
+config.log_level = :info
+
+config.gem "rspec-rails", :version => "~>1.2.6", :lib => false
+config.gem "webrat", :version => "~>0.4.4", :lib => false
+config.gem "cucumber", :version => "~>0.3.9", :lib => false
+config.gem 'thoughtbot-shoulda', :lib => false, :source => 'http://gems.github.com'
+config.gem 'mocha'                                         
+config.gem 'flexmock'  # I know two mocking libraries?  rspec seemed to break without it.
+config.gem 'timecop'
+config.gem 'spork'
+
+# FIXME: these should be in the list here, but at the moment including them busts actually running the tests.
+# config.gem 'rspec'        
+# config.gem 'rspec-rails'

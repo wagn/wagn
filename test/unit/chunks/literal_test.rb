@@ -1,8 +1,9 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../test_helper')
 
-class LiteralTest < Test::Unit::TestCase
-  test_helper :chunk
-  common_fixtures
+class LiteralTest < ActiveSupport::TestCase
+  include ChunkTestHelper
+  
+  
   def setup
     setup_default_user
   end

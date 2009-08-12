@@ -6,6 +6,7 @@
   3. processing search()
   
 =end     
+require_dependency 'card/cacheable'
 
 class CacheError < StandardError; end
 
@@ -19,6 +20,9 @@ class CachedCard
   cattr_accessor :card_names, :local_cache
   self.card_names={} 
   self.local_cache={ :real=>{}, :get=>{}, :seq=>nil }
+                                           
+  
+  include ::CardLib::Cacheable
   
   class << self       
     def set_cache_prefix( prefix )
@@ -117,12 +121,12 @@ class CachedCard
 
     def load_card(name)  
       cached_card = self.new(name.to_key)
-      return nil if cached_card.read('missing')  
+      return nil if perform_caching && cached_card.read('missing')  
       if card = Card[name]
         card
       else
         # make a note that we didn't find it
-        cached_card.write('missing','true')
+        cached_card.write('missing','true') if perform_caching
         nil
       end
     end
@@ -164,20 +168,6 @@ class CachedCard
   
   def phantom?() false end  # only cache non-phantom cards -- not sure this should be the case.
   def new_record?() false end  # only cache existing cards
-
-
-  # FIXME -- these methods cut and pasted from templating-- need a standard place to 
-  #  mix in methods that will work with both basic cards and cached_cards
-  def hard_template?
-    extension_type =='HardTemplate'
-  end
-
-  def soft_template?
-    !hard_template?
-  end
-  # /FIXME    
-  
-  
    
   def to_id() id end            
   def id()  id = get('id') { card.id.to_s }; id.to_i end

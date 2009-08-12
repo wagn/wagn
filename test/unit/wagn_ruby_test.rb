@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + '/../test_helper'
-class WagnRubyTest < Test::Unit::TestCase
+class WagnRubyTest < ActiveSupport::TestCase
   def setup
   end
   

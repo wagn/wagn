@@ -143,25 +143,38 @@ div:hover.card-header .card-menu-left {
 
 
 /* card footer-------------------------------*/
-
-.card-slot .card-footer,
+.card-slot .card-footer td,
 .card-slot .revision-navigation {
-  background: #bbb;
   padding: 0px 10px;
   font-size: 9px;
-  height: 18px;
+}
+.card-slot .card-footer,
+.card-slot .revision-navigation {
+   background: #bbb;
+   height: 18px;
 }
 .card-slot .card-footer {
   clear: both;
   -moz-border-radius: 0px 0px 6px 6px;
 }
-html>body  .card-footer .card-links {
+html>body  .card-footer table {
   display: none;
 }
-div:hover.card-footer .card-links{
-  display: inline;
+div:hover.card-footer table {
+  display: table;
 } 
-       
+.card-slot .card-footer table {
+  width: 100%; 
+}        
+.card-slot .card-footer td.links {
+  width: 90%;   
+}        
+.card-slot .card-footer td.watch {
+  width: 10%; 
+  text-align: right;
+  white-space: nowrap;
+}        
+
 
 /*-------------  TABS -------*/
 

@@ -1,18 +1,31 @@
 require File.dirname(__FILE__) + '/../../test_helper'
-class Card::RenameTest < Test::Unit::TestCase
-  common_fixtures
+class Card::RenameTest < ActiveSupport::TestCase
+  
   
   # FIXME: these tests are TOO SLOW!  8s against server, 12s from command line.  
   # not sure if it's the card creation or the actual renaming process.
   # Card#save needs optimized in general.
+  def self.add_test_data
+  end
   
   def setup
-    setup_default_user
-  end
+    ::User.as(:wagbot) do
+      Card.create! :name => "chuck_wagn+chuck"   
+      Card.create! :name => "Blue" 
       
+      Card.create! :name => "blue includer 1", :content => "{{Blue}}"
+      Card.create! :name => "blue includer 2", :content => "{{blue|closed;other:stuff}}"
+      
+      Card.create! :name => "blue linker 1", :content => "[[Blue]]"
+      Card.create! :name => "blue linker 2", :content => "[[blue]]"      
+      
+      Card.create! :type=>"Cardtype", :name=>"Dairy", :content => "[[/new/{{_self|name}}|new]]"
+    end
+    setup_default_user                 
+  end
+  
   def test_rename_name_substitution
-    c1 = Card.create! :name => "chuck_wagn+chuck"
-    c2 = Card["chuck"]
+    c1, c2 = Card["chuck_wagn+chuck"], Card["chuck"]
     assert_rename c2, "buck"
     assert_equal "chuck_wagn+buck", Card.find(c1.id).name
   end      
@@ -22,26 +35,15 @@ class Card::RenameTest < Test::Unit::TestCase
   end                                     
 
   def test_updates_inclusions_when_renaming    
-    Card::Base.debug=true
-    c1 = Card.create! :name => "Blue"
-    c2 = Card.create! :name => "br1", :content => "{{Blue}}"
-    c3 = Card.create! :name => "br2", :content => "{{blue|closed;other:stuff}}"
-    
-    #assert_equal ["br1","br2"], c1.transcluders.map(&:name).sort
-    c1.reload.name = "Red"
-    c1.confirm_rename = true
-    c1.update_referencers = true
-    c1.save!
+    c1,c2,c3 = Card["Blue"], Card["blue includer 1"], Card["blue includer 2"]
+    c1.update_attributes :name => "Red", :confirm_rename => true, :update_referencers => true
     assert_equal "{{Red}}", Card.find(c2.id).content                     
     # NOTE these attrs pass through a hash stage that may not preserve order
     assert_equal "{{Red|closed;other:stuff}}", Card.find(c3.id).content  
   end
-
   
   def test_reference_updates_on_case_variants
-    c1 = Card.create! :name => "Blue"
-    c2 = Card.create! :name => "blue ref 1", :content => "[[Blue]]"
-    c3 = Card.create! :name => "blue ref 2", :content => "[[blue]]"
+    c1,c2,c3 = Card["Blue"], Card["blue linker 1"], Card["blue linker 2"]
     c1.reload.name = "Red"
     c1.confirm_rename = true
     c1.update_referencers = true
@@ -157,7 +159,6 @@ class Card::RenameTest < Test::Unit::TestCase
   end                          
 
   def test_renaming_card_with_self_link_should_not_hang
-    Card.create! :type=>"Cardtype", :name=>"Dairy", :content => "[[/new/{{_self|name}}|new]]"
     c = Card["Dairy"]
     c.name = "Buttah"
     c.update_referencers = true
@@ -167,7 +168,6 @@ class Card::RenameTest < Test::Unit::TestCase
   end
 
   def test_renaming_card_without_updating_references_should_not_have_errors
-    Card.create! :type=>"Cardtype", :name=>"Dairy", :content => "[[/new/{{_self|name}}|new]]"
     c = Card["Dairy"]
     c.update_attributes "name"=>"Newt", "update_referencers"=>'false', "confirm_rename"=>true 
     assert_equal "[[/new/{{_self|name}}|new]]", Card["Newt"].content

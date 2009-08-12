@@ -62,4 +62,23 @@ class String
     self.insert(-1,after)
     self
   end
+end            
+
+class Array
+  def except(*exceptions)
+    result = self.clone
+    result.delete_if { |i| exceptions.include?(i) }
+    result
+  end
+  def except!(*exceptions)
+    self.delete_if { |i| exceptions.include?(i) }
+    self
+  end
+  def each_except(*exceptions)
+    self.each do |i|
+      if exceptions.include?(i) == false
+        yield(i)
+      end
+    end
+  end
 end

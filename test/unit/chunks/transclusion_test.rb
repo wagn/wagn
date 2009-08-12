@@ -4,10 +4,10 @@ require File.expand_path(File.dirname(__FILE__) + '/../../test_helper')
 # level, but these cases should still be covered by tests
 
 
-class TransclusionTest < Test::Unit::TestCase
-  test_helper :chunk
+class TransclusionTest < ActiveSupport::TestCase
+  include ChunkTestHelper
   include ActionView::Helpers::TextHelper
-  common_fixtures
+  
   def setup
     setup_default_user
   end  

@@ -3,7 +3,7 @@
 require File.dirname(__FILE__) + '/../../test_helper'
 require 'chunks/uri'
 
-class URITest < Test::Unit::TestCase
+class URITest < ActiveSupport::TestCase
   def test_non_matches
     assert_conversion_does_not_apply(URIChunk, 'There is no URI here')
     assert_conversion_does_not_apply(URIChunk, 

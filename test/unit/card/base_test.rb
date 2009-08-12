@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../test_helper'
-class Card::BaseTest < Test::Unit::TestCase
-  common_fixtures
+class Card::BaseTest < ActiveSupport::TestCase
+  
   def setup
     setup_default_user     
     CachedCard.bump_global_seq

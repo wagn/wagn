@@ -98,9 +98,15 @@ module SlotHelpers
   end
 
   def footer 
-     cache_action('footer') { render_partial( 'card/footer' ) }
+    render_partial 'card/footer' 
   end
-
+            
+  def footer_links
+    cache_action('footer') { 
+      render_partial( 'card/footer_links' )   # this is ugly reusing this cache code
+    }
+  end     
+  
   def option( args={}, &proc)
     args[:label] ||= args[:name]
     args[:editable]= true unless args.has_key?(:editable)
@@ -128,10 +134,10 @@ module SlotHelpers
   end
 
   def link_to_action( text, to_action, remote_opts={}, html_opts={})
-    link_to_remote text, remote_opts.merge(
+    link_to_remote text, {
       :url=>url_for("card/#{to_action}"),
       :update => id
-    ), html_opts
+    }.merge(remote_opts), html_opts
   end
 
   def button_to_action( text, to_action, remote_opts={}, html_opts={})

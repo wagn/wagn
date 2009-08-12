@@ -11,7 +11,7 @@
 	
   	<%= error_messages_for :card %>
     <div class=cardnotice></div>
-	  <% form_remote_for :card, card, :url=>slot.url_for('card/create'), 
+	  <% form_remote_for :card, card, :url=>"/card/create", 
 					:update => {
 						:success => slot.id,   
 						:failure => slot.id(:cardnotice)
@@ -44,7 +44,6 @@
 					<% end %> 
 				</span>
 			</div>
-			
 			<% if card.template? %>
 			  <%- card.extension_type='HardTemplate' if card.type_template? %>
         <%= render :partial=>'card/hardsoft_form', :locals=>{:card=>card, :mode=>'new'} %>
@@ -52,7 +51,7 @@
       
 			
 			<div class="edit-area">
-  			<div class="editor">
+  			<div class="editor">  
   				<% if card.hard_template %>
   				  <%- slot.form = form %>
     			  <%= slot.render(:multi_edit)%>

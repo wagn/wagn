@@ -65,15 +65,6 @@ class NotificationTest < ActiveSupport::TestCase
         assert_equal ["Sara"], Card["Sunglasses"].type_watchers
       end
     end    
-    
-    context "trunk_watchers" do
-      should "return users watching the trunk" do
-        assert_equal ["John"], Card["John Watching+her"].trunk_watchers
-      end
-      should "return users watching trunk's type" do
-        assert_equal ["Sara"], Card["Sunglasses+tint"].trunk_watchers
-      end
-    end  
   end
     
   context "Card Changes" do
@@ -83,23 +74,23 @@ class NotificationTest < ActiveSupport::TestCase
     end
     
     should "send notifications of edits" do
-      Mailer.expects(:deliver_change_notice).with( User.find_by_login('sara'), Card["Sara Watching"], "edited" )
+      Mailer.expects(:deliver_change_notice).with( User.find_by_login('sara'), Card["Sara Watching"], "edited", "Sara Watching" )
       Card["Sara Watching"].update_attributes :content => "A new change"
     end
                                     
     should "send notifications of additions" do
       new_card = Card.new :name => "Microscope", :type => "Optic"
-      Mailer.expects(:deliver_change_notice).with( User.find_by_login('sara'), new_card,    "added"  )
+      Mailer.expects(:deliver_change_notice).with( User.find_by_login('sara'), new_card,"added", "Optic"  )
       new_card.save!
     end 
     
     should "send notification of updates" do
-      Mailer.expects(:deliver_change_notice).with( User.find_by_login('sara'), Card["Sunglasses"],    "updated")
+      Mailer.expects(:deliver_change_notice).with( User.find_by_login('sara'), Card["Sunglasses"], "updated", "Optic")
       Card["Sunglasses"].update_attributes :type => "Basic"
     end
     
     should "not send notification to author of change" do
-      Mailer.expects(:deliver_change_notice).with( User.find_by_login('sara'), Card["All Eyes On Me"],    "edited")
+      Mailer.expects(:deliver_change_notice).with( User.find_by_login('sara'), Card["All Eyes On Me"],"edited", "All Eyes On Me")
       Card["All Eyes On Me"].update_attributes :content => "edit by John"
       # note no message to John
     end

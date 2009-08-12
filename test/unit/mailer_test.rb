@@ -30,21 +30,24 @@ class MailerTest < ActiveSupport::TestCase
   end
   
   ## see notifier test for data used in these tests
-  
-  context "change_notice" do
+  # FIXME: the cache is not cleared properly between tests.  if the order changes
+  #  (ie try renamed change notice below to change_notice) then *notify+*from gets stuck on.
+  context "change notice" do
     setup do
       user =  ::User.find_by_login('sara')
       card =  Card["Sunglasses"]
-      action = "edited"      
-      Mailer.deliver_change_notice( user, card, action )
+      action = "edited"  
+      CachedCard.bump_global_seq    
+      Mailer.deliver_change_notice( user, card, action, card.name )
     end
 
     should "deliver a message" do
       assert_equal 1, ActionMailer::Base.deliveries.size
     end
     
-    context "message" do
-      setup do
+    context "change notice message" do
+      setup do  
+        CachedCard.bump_global_seq    
         @mail = ActionMailer::Base.deliveries[0]
       end
       should "be addressed to users email" do
@@ -63,11 +66,11 @@ class MailerTest < ActiveSupport::TestCase
       action = "edited"      
       User.as :wagbot
       Card.create! :name => "*notify+*from", :type=>"Phrase", :content=>"jiffy@lube.com"
-      Mailer.deliver_change_notice( user, card, action )
+      Mailer.deliver_change_notice( user, card, action, card.name )
       @mail = ActionMailer::Base.deliveries[0] 
     end
     should "be from custom address" do
-      assert_equal ["jiffy@lube.com"], @mail.from
+      assert_equal @mail.from, ["jiffy@lube.com"]
     end
   end
   

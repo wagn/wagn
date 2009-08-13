@@ -11,11 +11,12 @@
 	
   	<%= error_messages_for :card %>
     <div class=cardnotice></div>
-	  <% form_remote_for :card, card, :url=>"/card/create", 
+	  <% form_remote_for :card, card, :url=>"card/create", 
+					:slot => slot,
 					:update => {
 						:success => slot.id,   
-						:failure => slot.id(:cardnotice)
-					},
+						:failure => slot.id(:cardnotice),
+					},                                       
 					:html=>{ :class=>'form',:onsubmit=>slot.save_function	} do |form| %>
 
 			<div class="card-header">

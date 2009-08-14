@@ -40,7 +40,6 @@ class Mailer < ActionMailer::Base
     body :card => card,
          :updater => card.updater.card.name,
          :action => action,
-         :content => card.content,   
          :subedits => subedits,
          :card_url => "#{System.base_url}/wagn/#{card.name.to_url_key}",
          :change_url => "#{System.base_url}/card/changes/#{card.name.to_url_key}",

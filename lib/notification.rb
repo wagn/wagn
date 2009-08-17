@@ -83,20 +83,6 @@ module Notification
   end    
 
   module SlotHelperMethods     
-    def footer
-      template.render :inline => %{
-        <div class="card-footer">
-        	<table>
-        		<tr>
-        			<td class="links"><%= slot.footer_links %></td>
-        			<td class="watch"><span class="watch-link"><%= slot.watch_link %></span></td>
-        		</tr>
-        	</table>   
-        	<span class="height-holder">&nbsp;</span>
-        </div> 
-      }
-    end
-    
     def watch_link 
       return "" unless logged_in?
       me = User.current_user.card.name          

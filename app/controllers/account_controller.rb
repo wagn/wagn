@@ -1,13 +1,8 @@
 class InvitationError < StandardError; end
 
 class AccountController < ApplicationController
-  layout :default_layout
-  
   before_filter :login_required, :only => [ :invite, :update ] 
-  #observer :card_observer, :tag_observer
   helper :wagn
-
-
   
   def signup
     raise(Wagn::Oops, "You have to sign out before signing up for a new Account") if logged_in?

@@ -8,12 +8,9 @@ module Notification
     end 
   
     def after_multi_update( card )                  
-      if card.nested_notifications.present?
-        card.watchers.each do |watchername|
-          notifyee = Card[watchername].extension
-          unless card.updater == notifyee
-            Mailer.deliver_change_notice( notifyee, card, 'updated', card.nested_notifications )
-          end
+      if card.nested_notifications.present?  
+        card.watcher_watched_pairs.each do |watcher, watched|
+          Mailer.deliver_change_notice( watcher, card, 'updated', watched, card.nested_notifications )
         end
       end
     end
@@ -21,37 +18,38 @@ module Notification
   
   module CardMethods
     def send_notifications 
-      action = case updated_at.to_s
-        when created_at.to_s; 'added'
-        when current_revision.created_at.to_s;  'edited'
+      action = case  
+        when trash;  'deleted'
+        when updated_at.to_s==created_at.to_s; 'added'
+        when updated_at.to_s==current_revision.created_at.to_s;  'edited'  
         else; 'updated'
       end
       
-      @watchers, @trunk_watchers = watchers, trunk_watchers
-
-      @watchers.each do |watchername|       
-        notifyee = Card[watchername].extension
-        unless self.updater == notifyee or @trunk_watchers.include?(watchername)
-          Mailer.deliver_change_notice( notifyee, self, action )
-        end
+      @trunk_watcher_watched_pairs = trunk_watcher_watched_pairs
+      @trunk_watchers = @trunk_watcher_watched_pairs.map(&:first)
+      
+      watcher_watched_pairs.reject {|p| @trunk_watchers.include?(p.first) }.each do |watcher, watched|
+        Mailer.deliver_change_notice( watcher, self, action, watched )
       end
       
       if nested_edit
         nested_edit.nested_notifications << [ name, action ]
       else
-        @trunk_watchers.each do |watchername|
-          notifyee = Card[watchername].extension
-          unless self.updater == notifyee
-            Mailer.deliver_change_notice( notifyee, self.trunk, 'updated', [name, action] )
-          end
+        @trunk_watcher_watched_pairs.each do |watcher, watched|
+          Mailer.deliver_change_notice( watcher, self.trunk, 'updated', watched, [[name, action]] )
         end
       end
     end  
-
-    def trunk_watchers
-      return [] unless name.junction? and transcluders.include?(trunk)
-      trunk = CachedCard.get("#{name.trunk_name}")
-      pointees_from("#{name.trunk_name}+*watchers") + pointees_from(::Cardtype.name_for( trunk.type )+"+*watchers")
+    
+    def trunk_watcher_watched_pairs
+      # do the watchers lookup before the transcluder test since it's faster.
+      if (name.junction? and 
+          pairs = CachedCard.get("#{name.trunk_name}").watcher_watched_pairs and
+          transcluders.include?(trunk))
+        pairs
+      else
+        []
+      end
     end
     
     def self.included(base)   
@@ -64,6 +62,11 @@ module Notification
   end
   
   module CacheableMethods
+    def watcher_watched_pairs
+      author = User.current_user.card.name
+      (card_watchers.except(author).map {|watcher| [Card[watcher].extension,self.name] }  +
+        type_watchers.except(author).map {|watcher| [Card[watcher].extension,::Cardtype.name_for(self.type)]})
+    end
     
     def card_watchers 
       pointees_from("#{name}+*watchers")
@@ -87,7 +90,7 @@ module Notification
       return "" unless logged_in?
       me = User.current_user.card.name          
       if card.type == "Cardtype"
-        (card.type_watchers.include?(me) ? watching_type_cards : "") +  " | #{watch_unwatch}"
+        (card.type_watchers.include?(me) ? "#{watching_type_cards} | " : "") +  watch_unwatch
       else
         if card.type_watchers.include?(me) 
           watching_type_cards

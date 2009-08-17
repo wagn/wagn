@@ -11,7 +11,7 @@ config.whiny_nils = true
 
 # Show full error reports and disable caching
 config.action_controller.consider_all_requests_local = true
-config.action_controller.perform_caching             = false
+config.action_controller.perform_caching             = true
 
 # Tell ActionMailer not to deliver emails to the real world.
 # The :test delivery method accumulates sent emails in the
@@ -20,9 +20,13 @@ config.action_mailer.delivery_method = :test
 
 config.log_level = :info
 
-config.gem 'thoughtbot-shoulda', :lib => 'shoulda', :source => 'http://gems.github.com'
+config.gem "rspec-rails", :version => "~>1.2.6", :lib => false
+config.gem "webrat", :version => "~>0.4.4", :lib => false
+config.gem "cucumber", :version => "~>0.3.9", :lib => false
+config.gem 'thoughtbot-shoulda', :lib => false, :source => 'http://gems.github.com'
 config.gem 'mocha'  
-config.gem 'bmabey-email_spec', :lib => 'email_spec'
+config.gem 'timecop'
+config.gem 'spork'
 
 # FIXME: these should be in the list here, but at the moment including them busts actually running the tests.
 # config.gem 'rspec'        

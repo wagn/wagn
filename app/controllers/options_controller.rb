@@ -1,8 +1,6 @@
 class OptionsController < ApplicationController
   helper :wagn, :card 
-  layout :default_layout
   before_filter :load_card
-
 
   def update
     if perms=params[:permissions] 

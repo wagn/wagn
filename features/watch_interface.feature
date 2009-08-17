@@ -13,7 +13,6 @@ Feature: Watch interface
   Scenario: Watching a Card
     When I go to the homepage
     And In the main card footer I click the watch link    
-    And the page updates
     Then In the main card footer I should see "unwatch"
     And the card Home+*watchers should contain "Joe User"
 
@@ -21,22 +20,23 @@ Feature: Watch interface
     Given Joe User is watching "Home"
     And I am on the homepage  
     When In the main card footer I click the unwatch link
-    And the page updates
     Then In the main card footer I should not see "unwatch" 
     And the card Home+*watchers should not contain "Joe User"
            
   Scenario: Watching a Cardtype
     When I go to card User
     Then In the main card footer I should see "watch User cards"
+    And In the main card footer I should not see "|"
 
   Scenario: A Card whose Cardtype is Watched
     Given Joe User is watching "User"
     And I go to card Joe User
-    Then In the main card footer I should see "watching User cards"
+    Then In the main card footer I should see "watching User cards"     
   
   Scenario: Watching Cardtypes
     Given Joe User is watching "Cardtype"
     When I go to card User
     Then In the main card footer I should see "watching Cardtype cards | watch User cards"
   
-    
+                
+  

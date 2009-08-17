@@ -121,12 +121,12 @@ class CachedCard
 
     def load_card(name)  
       cached_card = self.new(name.to_key)
-      return nil if cached_card.read('missing')  
+      return nil if perform_caching && cached_card.read('missing')  
       if card = Card[name]
         card
       else
         # make a note that we didn't find it
-        cached_card.write('missing','true')
+        cached_card.write('missing','true') if perform_caching
         nil
       end
     end

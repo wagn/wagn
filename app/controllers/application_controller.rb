@@ -59,9 +59,6 @@ class ApplicationController < ActionController::Base
     CachedCard.reset_cache
     System.request = request 
     #System.time = Time.now.to_f              
-
-    ActiveRecord::Base.logger.debug "USER: #{User.current_user.login}"
-    
     load_location
   end
 

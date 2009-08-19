@@ -2,7 +2,7 @@ unless defined? Wagn::Version
   module Wagn
     module Version
       Major = '1'
-      Minor = '0'
+      Minor = '1'
       Tiny  = '0'
       Eensie = nil
     

@@ -108,7 +108,6 @@ class CardController < ApplicationController
     else
       ( System.setting(@card.cardtype.name + "+*thanks") || System.setting("Basic+*thanks") || '/' )
     end              
-    
     render_args = 
       case
         when !@card.errors.empty?; {

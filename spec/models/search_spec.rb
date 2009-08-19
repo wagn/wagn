@@ -8,6 +8,22 @@ A_JOINEES = ["B", "C", "D", "E", "F"]
       
 CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User","*plusses+*rform"].sort    
 
+
+describe Wql2, 'append' do
+  it "should find real cards" do
+    Card.search(:name=>[:in, 'C', 'D', 'F'], :append=>'A' ).plot(:name).sort.should == ["C+A", "D+A", "F+A"]
+  end
+
+  it "should absolutize names" do
+    Card.search(:name=>[:in, 'C', 'D', 'F'], :append=>'_self', :_card=>Card['A'] ).plot(:name).sort.should == ["C+A", "D+A", "F+A"]
+  end
+
+
+  it "should find virtual cards" do
+    Card.search(:name=>[:in, 'C', 'D'], :append=>'*plus cards' ).plot(:name).sort.should == ["C+*plus cards", "D+*plus cards"]
+  end
+end
+
 #=begin 
 describe Wql2, "in" do          
   it "should work for content options" do
@@ -82,6 +98,7 @@ describe Card, "find_phantom" do
       :content=>'{"plus":"_self"}'  
     Card.find_phantom("A+testsearch").search(:limit=>100).plot(:name).sort.should == A_JOINEES
   end
+  
 end
 
 describe Wql2, "keyword" do
@@ -221,15 +238,7 @@ describe Wql2, "trash handling" do
   end
 end      
 
-describe Wql2, 'append' do
-  it "should find real cards" do
-    Card.search(:name=>[:in, 'C', 'D', 'F'], :append=>'A' ).plot(:name).sort.should == ["C+A", "D+A", "F+A"]
-  end
 
-  it "should find virtual cards" do
-    Card.search(:name=>[:in, 'C', 'D'], :append=>'*plus cards' ).plot(:name).sort.should == ["C+*plus cards", "D+*plus cards"]
-  end
-end
 
 
 describe Wql2, "order" do
@@ -347,7 +356,6 @@ describe Wql2, "and" do
   end
 end
 
-#=end
 
 
 describe Wql2, "offset" do
@@ -355,3 +363,5 @@ describe Wql2, "offset" do
     Card.count_by_wql({:match=>'two', :offset=>1}).should==CARDS_MATCHING_TWO.length
   end
 end
+
+#=end

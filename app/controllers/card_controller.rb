@@ -236,7 +236,7 @@ class CardController < ApplicationController
   end
 
   def watch 
-    watchers = Card.find_or_new( :name => @card.name + "+*watchers" )
+    watchers = Card.find_or_new( :name => @card.name + "+*watchers", :type => 'Pointer' )
     watchers.add_reference User.current_user.card.name
     flash[:notice] = "You are now watching #{card.name}"
     request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view

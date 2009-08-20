@@ -58,6 +58,8 @@ module WagnHelper
 
     if options[:url] =~ /^javascript\:/
       function << options[:url].gsub(/^javascript\:/,'')
+    elsif options[:slot] 
+      function << slot.url_for(options[:url]).gsub(/^javascript\:/,'')
     else
       url_options = options[:url]
       url_options = url_options.merge(:escape => false) if url_options.is_a?(Hash)
@@ -72,7 +74,8 @@ module WagnHelper
     function = "if (confirm('#{escape_javascript(options[:confirm])}')) { #{function}; }" if options[:confirm]
 
     return function
-  end
+  end    
+
 
 
   def truncatewords_with_closing_tags(input, words = 25, truncate_string = "...")
@@ -107,11 +110,19 @@ module WagnHelper
 
   def partial_for_action( name, card=nil )
     # FIXME: this should look up the inheritance hierarchy, once we have one
+    # wow this is a steaming heap of dung.
     cardtype = (card ? card.type : 'Basic').underscore
     if Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR <=1
       finder.file_exists?("/types/#{cardtype}/_#{name}") ?
         "/types/#{cardtype}/#{name}" :
         "/types/basic/#{name}"
+    elsif   Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR > 2
+      begin
+        self.view_paths.find_template "types/#{cardtype}/_#{name}" 
+        "types/#{cardtype}/#{name}"
+      rescue ActionView::MissingTemplate => e
+        "/types/basic/#{name}"
+      end
     else
       self.view_paths.find { |template_path| template_path.paths.include?("types/#{cardtype}/_#{name}") } ?
         "/types/#{cardtype}/#{name}" :
@@ -205,7 +216,12 @@ module WagnHelper
   def div(*args, &block)   content_tag(:div, *args, &block);  end
 
   def pointer_item(content,view,type=nil)
-    content.gsub(/\[\[/,"<div class=\"pointer-item item-#{view}\">{{").gsub(/\]\]/,"|#{view}#{type ? ';type:'+ type : ''}}}</div>") 
+    typeparam = case
+      when type.is_a?(String); ";type:#{type}"
+      when type.is_a?(Array);  ";type:#{type.second}"  #type spec is likely ["in", "Type1", "Type2"]
+      else ""
+    end
+    content.gsub(/\[\[/,"<div class=\"pointer-item item-#{view}\">{{").gsub(/\]\]/,"|#{view}#{typeparam}}}</div>") 
   end
   
   ## -----------

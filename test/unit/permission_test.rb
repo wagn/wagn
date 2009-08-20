@@ -22,9 +22,9 @@ module Card
 end
  
 
-class PermissionTest < Test::Unit::TestCase
-  common_fixtures
-  test_helper :permission
+class PermissionTest < ActiveSupport::TestCase
+  
+  include ::PermissionTestHelper
   
   def setup
     setup_default_user 

@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
-Slot=WagnHelper::Slot    
+Slot=Slot    
 
-describe WagnHelper::Slot, "" do      
+describe Slot, "" do      
   before { 
     User.as :joe_user 
   }

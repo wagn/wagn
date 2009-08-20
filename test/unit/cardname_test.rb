@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + '/../test_helper'
-class CardnameTest < Test::Unit::TestCase
+class CardnameTest < ActiveSupport::TestCase
   def setup
   end
     

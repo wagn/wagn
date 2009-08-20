@@ -1,18 +1,16 @@
 class CardController < ApplicationController
-
   helper :wagn, :card 
-  layout :default_layout
 
   before_filter :create_ok, :only=>[ :new, :create ]
 
   before_filter :load_card!, :only=>[
     :changes, :comment, :denied, :edit, :options, :quick_update, 
-    :related, :remove, :rollback, :save_draft, :update
+    :related, :remove, :rollback, :save_draft, :update, :watch, :unwatch
   ]
 
   before_filter :load_card_with_cache, :only => [:line, :view, :open ]
   
-  before_filter :edit_ok,   :only=>[ :edit, :update, :rollback, :save_draft] 
+  before_filter :edit_ok,   :only=>[ :edit, :update, :rollback, :save_draft, :watch, :unwatch] 
   before_filter :remove_ok, :only=>[ :remove ]
   
   #----------( Special cards )
@@ -71,7 +69,7 @@ class CardController < ApplicationController
   def new
     args = (params[:card] ||= {})
     args[:type] ||= params[:type] # for /new/:type shortcut in routes
-    
+
     # don't pass a blank type as argument
     # look up other types in case Cardtype name is given instead of ruby type
     if args[:type]
@@ -103,14 +101,13 @@ class CardController < ApplicationController
   
   def create
     @card = Card.create params[:card]
-    @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards] and @card.errors.empty?
+    @card.multi_create(params[:cards]) if params[:multi_edit] and params[:cards] and @card.errors.empty?
 
     @redirect_location = if @card.ok?(:read)
       url_for_page(@card.name)
     else
       ( System.setting(@card.cardtype.name + "+*thanks") || System.setting("Basic+*thanks") || '/' )
     end              
-    
     render_args = 
       case
         when !@card.errors.empty?; {
@@ -238,7 +235,19 @@ class CardController < ApplicationController
     end
   end
 
+  def watch 
+    watchers = Card.find_or_new( :name => @card.name + "+*watchers" )
+    watchers.add_reference User.current_user.card.name
+    flash[:notice] = "You are now watching #{card.name}"
+    request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
+  end
 
+  def unwatch 
+    watchers = Card.find_or_new( :name => @card.name + "+*watchers" )
+    watchers.remove_reference User.current_user.card.name
+    flash[:notice] = "You are no longer watching #{card.name}"
+    request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
+  end
 
   #---------------( tabs )
 

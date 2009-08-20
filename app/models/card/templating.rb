@@ -13,9 +13,8 @@ module CardLib
 
       def right_template(name='')
         return nil unless name and name.junction?
-        (tag = find_template(name.tag_name) and
-          find_template(Cardtype.name_for(tag.type)+"+*rform")) ||
-          find_template(name.tag_name+"+*rform")
+        #(tag = find_template(name.tag_name) and find_template(Cardtype.name_for(tag.type)+"+*rform")) || 
+        find_template(name.tag_name+"+*rform")
       end
 
       def type_template(name, type=nil)

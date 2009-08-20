@@ -8,7 +8,7 @@ end
 
 
 class LocationTest < ActionController::IntegrationTest
-  common_fixtures 
+   
   include LocationHelper
   
   def setup

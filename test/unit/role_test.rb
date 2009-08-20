@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
-class RoleTest < Test::Unit::TestCase
-  common_fixtures
-  test_helper :permission
+class RoleTest < ActiveSupport::TestCase
+  
+  include PermissionTestHelper
   
   def setup
     setup_default_user

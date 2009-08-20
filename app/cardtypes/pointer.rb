@@ -6,7 +6,7 @@ module Card
         card = ::User.as(:wagbot) do
 	        CachedCard.get_real("#{tagname}+*options")
 	      end
-	      card.type=='Search' ? card : nil
+	      (card && card.type=='Search') ? card : nil
 	    end
 	    
     end
@@ -14,11 +14,22 @@ module Card
 	  def cacheable?
       false
     end
-	  
-	  def pointees
-	    links = content.split(/\n+/).map{ |x| x.gsub(/\[\[|\]\]/,'')}
-	    links.empty? ? [''] : links
-	  end
+	  	  
+	  def add_reference( cardname )
+	    unless pointees.include? cardname
+	      self.content = (pointees + [cardname]).reject{|x|x.blank?}.map{|x| "[[#{x}]]" }.join("\n")
+  	    save!
+      end
+    end 
+	                                   
+	  def remove_reference( cardname ) 
+	    if pointees.include? cardname
+  	    self.content = (pointees - [cardname]).map{|x| "[[#{x}]]"}.join("\n")
+  	    save!
+	    end
+    end
+	    
+	       
 	  
 	  def item_type
 	    opt = options_card

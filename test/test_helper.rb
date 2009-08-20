@@ -1,5 +1,8 @@
 require 'rubygems'
-require 'rails_test_serving'
+require 'rails_test_serving'  
+require 'shoulda'
+require 'mocha'
+
 RailsTestServing.boot
 
 
@@ -11,10 +14,11 @@ unless defined? TEST_ROOT
   #silence_warnings { RAILS_ENV = "test" }
   require 'test_help' 
   
-  require TEST_ROOT + '/helpers/wagn_test_helper'
-  require TEST_ROOT + '/helpers/chunk_test_helper'  # FIXME-- should only be in certain tests
+  load TEST_ROOT + '/helpers/wagn_test_helper.rb'
+  load TEST_ROOT + '/helpers/permission_test_helper.rb'
+  load TEST_ROOT + '/helpers/chunk_test_helper.rb'  # FIXME-- should only be in certain tests
   
-  class Test::Unit::TestCase
+  class ActiveSupport::TestCase
     include AuthenticatedTestHelper
     # Transactional fixtures accelerate your tests by wrapping each test method
     # in a transaction that's rolled back on completion.  This ensures that the
@@ -37,16 +41,21 @@ unless defined? TEST_ROOT
     # then set this back to true.
     self.use_instantiated_fixtures  = false
   
-    def self.common_fixtures
-      #fixtures :system, :users, :tags, :tag_revisions, :cards, :revisions, :roles, :cardtypes
-      # FIXME: this burns me every time we add a table the tests break and I dunno why...
-      #fixtures :cards, :cardtypes, :revisions, :roles, :roles_users, :system, :tag_revisions, :tags, :users, :settings, :permissions
-    end
     
+    CachedCard.set_cache_prefix "#{System.host}/test"
+    CachedCard.bump_global_seq
+    CachedCard.set_cache_prefix "#{System.host}/cucumber"
+    CachedCard.bump_global_seq
+
+
+    
+  end
+
+  class ActiveSupport::TestCase      
+    include AuthenticatedTestHelper
     include WagnTestHelper
     include ChunkTestHelper
-  
-    
+
     def prepare_url(url, cardtype)
       if url =~ /:id/
         # find by naming convention in test data:
@@ -89,8 +98,10 @@ unless defined? TEST_ROOT
         
         args[:users] ||= { :anon=>200 }
         args[:cardtypes] ||= ['Basic']
-        if args[:cardtypes]==:all                       
-          args[:cardtypes] = YAML.load_file('test/fixtures/cardtypes.yml').collect {|k,v| v['class_name']}
+        if args[:cardtypes]==:all 
+          cardtypes_defined_in_code =  Dir["app/cardtypes/*.rb"].map {|x| x.match(/\/([^\/\.]+)\.rb$/)[1].camelize }
+          cardtypes_loaded_in_fixtures = YAML.load_file('test/fixtures/cardtypes.yml').collect {|k,v| v['class_name']}                   
+          args[:cardtypes] = cardtypes_defined_in_code & cardtypes_loaded_in_fixtures
         end
 
         args[:users].each_pair do |user,status|
@@ -118,5 +129,7 @@ unless defined? TEST_ROOT
     end
     
   end
+
+
 end  
 

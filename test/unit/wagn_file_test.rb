@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class WagnFileTest < Test::Unit::TestCase
+class WagnFileTest < ActiveSupport::TestCase
   
   #fixtures :wagn_files
 

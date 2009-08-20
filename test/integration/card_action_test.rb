@@ -8,7 +8,7 @@ end
 
 
 class CardActionTest < ActionController::IntegrationTest
-  common_fixtures 
+   
   include LocationHelper
   
   def setup

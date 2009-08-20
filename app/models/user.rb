@@ -138,7 +138,7 @@ class User < ActiveRecord::Base
     raise(Wagn::Oops, "subject is required") unless (args[:subject])
     raise(Wagn::Oops, "message is required") unless (args[:message])
     begin
-      Notifier.deliver_account_info(self, args[:subject], args[:message])
+      Mailer.deliver_account_info(self, args[:subject], args[:message])
     rescue; warn("ACCOUNT INFO DELIVERY FAILED: \n #{args.inspect}")
     end
   end  
@@ -169,6 +169,14 @@ class User < ActiveRecord::Base
 
   def built_in?
     status=='system'
+  end
+
+  def to_s
+    "#<#{self.class.name}:#{login.blank? ? email : login}}>"
+  end
+
+  def mocha_inspect
+    to_s
   end
    
   protected

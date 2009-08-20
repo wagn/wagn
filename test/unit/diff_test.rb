@@ -3,7 +3,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 require 'diff'
 
-class DiffTest < Test::Unit::TestCase
+class DiffTest < ActiveSupport::TestCase
 
   include HTMLDiff
 

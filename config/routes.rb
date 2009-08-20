@@ -1,4 +1,9 @@
 FORMAT_PATTERN = /html|json|xml|rss/ unless defined? FORMAT_PATTERN   
+ID_REQUIREMENTS1 = { :id => /([^\.]*)/, :format=>FORMAT_PATTERN }                        
+
+# This is to facilitate matching cards with '.' in the name, as long as the end doesn't
+# match one of the extension formats.
+ID_REQUIREMENTS2 = { :id => /(.*)\.(?!(rss|xml))([^\.]*)/, :format=>FORMAT_PATTERN }
 
 ActionController::Routing::Routes.draw do |map|
   #map.connect 'c/:controller/:action/:id'
@@ -13,11 +18,13 @@ ActionController::Routing::Routes.draw do |map|
 
   map.connect 'images/:foo/:bar', :requirements=>{ :bar=>/.*/ }, :controller=>'application', :action=>'render_fast_404'
   
-  map.connect 'wagn/:id.:format', :controller => 'card', :action=>'show', :requirements=>{ :id=>/.*/, :format=>FORMAT_PATTERN }
+  map.connect 'wagn/:id.:format', :controller => 'card', :action=>'show', :requirements=> ID_REQUIREMENTS1
+  map.connect 'wagn/:id.:format', :controller => 'card', :action=>'show', :requirements=> ID_REQUIREMENTS2
   map.connect 'wagn/:id', :controller => 'card', :action=>'show', :requirements=>{ :id=>/.*/}
 
   #DEPRECATED
-  map.connect 'wiki/:id.:format', :controller => 'card', :action=>'show', :requirements=>{ :id=>/.*/, :format=>FORMAT_PATTERN }
+  map.connect 'wiki/:id.:format', :controller => 'card', :action=>'show', :requirements=>ID_REQUIREMENTS1
+  map.connect 'wagn/:id.:format', :controller => 'card', :action=>'show', :requirements=> ID_REQUIREMENTS2
   map.connect 'wiki/:id', :controller => 'card', :action=>'show', :requirements=>{ :id=>/.*/}
   #/DEPRECATED   
 
@@ -34,7 +41,8 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':controller/:action/:id/:attribute' 
   #map.connect '/card/new/:cardtype', :controller=>'card', :action=>'new'
   
-  map.connect ':controller/:action/:id.:format',  :requirements=>{ :id=>/.*/, :format=>FORMAT_PATTERN  }
+  map.connect ':controller/:action/:id.:format',  :requirements=>ID_REQUIREMENTS1
+  map.connect ':controller/:action/:id.:format',  :requirements=>ID_REQUIREMENTS2
   map.connect ':controller/:action/:id',  :requirements=>{ :id=>/.*/ }
 
   map.connect ':controller/:action.:format', :requirements=>{ :format=>FORMAT_PATTERN  }
@@ -43,8 +51,8 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':controller', :action=>'index'
   
   map.connect '', :controller=>'card', :action=>'index'
-  map.connect ':id.:format', :controller=> 'card', :action=>'show', :requirements=>{ :id=>/.*/, :format=>FORMAT_PATTERN} 
-  map.connect ':id', :controller=> 'card', :action=>'show', :requirements=>{ :id=>/.*/} 
+  map.connect ':id.:format', :controller=> 'card', :action=>'show', :requirements=>ID_REQUIREMENTS2
+  map.connect ':id.:format', :controller=> 'card', :action=>'show', :requirements=>ID_REQUIREMENTS1
   map.connect '*id', :controller=>'application', :action=>'render_404'
  
  

@@ -169,8 +169,9 @@ class CardController < ApplicationController
     end
     
     return render_card_errors(@card) unless @card.errors.empty?
-    @card = Card.find(card.id)
-    render_update_slot render_to_string(:action=>'show')
+    @card = Card.find(card.id)  
+    flash[:notice] = "updated #{@card.name}"
+    request.xhr? ? render_update_slot(render_to_string(:action=>'show')) : render(:action=>'show')
   end
 
   def quick_update

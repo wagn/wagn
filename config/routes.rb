@@ -18,13 +18,13 @@ ActionController::Routing::Routes.draw do |map|
 
   map.connect 'images/:foo/:bar', :requirements=>{ :bar=>/.*/ }, :controller=>'application', :action=>'render_fast_404'
   
-  map.connect 'wagn/:id.:format', :controller => 'card', :action=>'show', :requirements=> ID_REQUIREMENTS1
   map.connect 'wagn/:id.:format', :controller => 'card', :action=>'show', :requirements=> ID_REQUIREMENTS2
-  map.connect 'wagn/:id', :controller => 'card', :action=>'show', :requirements=>{ :id=>/.*/}
+  map.connect 'wagn/:id.:format', :controller => 'card', :action=>'show', :requirements=> ID_REQUIREMENTS1
+  #map.connect 'wagn/:id', :controller => 'card', :action=>'show', :requirements=>{ :id=>/.*/}
 
   #DEPRECATED
+  map.connect 'wiki/:id.:format', :controller => 'card', :action=>'show', :requirements=> ID_REQUIREMENTS2
   map.connect 'wiki/:id.:format', :controller => 'card', :action=>'show', :requirements=>ID_REQUIREMENTS1
-  map.connect 'wagn/:id.:format', :controller => 'card', :action=>'show', :requirements=> ID_REQUIREMENTS2
   map.connect 'wiki/:id', :controller => 'card', :action=>'show', :requirements=>{ :id=>/.*/}
   #/DEPRECATED   
 
@@ -41,9 +41,9 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':controller/:action/:id/:attribute' 
   #map.connect '/card/new/:cardtype', :controller=>'card', :action=>'new'
   
-  map.connect ':controller/:action/:id.:format',  :requirements=>ID_REQUIREMENTS1
   map.connect ':controller/:action/:id.:format',  :requirements=>ID_REQUIREMENTS2
-  map.connect ':controller/:action/:id',  :requirements=>{ :id=>/.*/ }
+  map.connect ':controller/:action/:id.:format',  :requirements=>ID_REQUIREMENTS1
+  #map.connect ':controller/:action/:id',  :requirements=>{ :id=>/.*/ }
 
   map.connect ':controller/:action.:format', :requirements=>{ :format=>FORMAT_PATTERN  }
   map.connect ':controller/:action'          

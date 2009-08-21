@@ -104,11 +104,8 @@ class Slot
       }
       
       slot_attr = attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join
-      open_slot = %{<!--[if IE]><div #{slot_attr}><![endif]-->} +
-                  %{<![if !IE]><object #{slot_attr}><![endif]>} 
-      close_slot= %{<!--[if IE]></div><![endif]-->} +
-                  %{<![if !IE]></object><![endif]>} 
-
+      open_slot = "<div #{slot_attr}>"
+      close_slot= "</div>"
     end
     
     if block_given? 

@@ -560,8 +560,8 @@ module Card
   #  validates_associated :appender   
     
     
-    # Freaky-- when enabled, this throws some Confirmation required errors on things that shouldn't be changing
-    # in the template_spec
+    # Freaky-- when enabled, this throws some Confirmation required errors
+    # on things that shouldn't be changing in the template_spec
     #validates_each :trunk do |rec,attr,value|
     #  if card = value
     #    if !card.valid? 

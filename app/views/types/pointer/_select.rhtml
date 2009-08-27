@@ -1,0 +1,3 @@
+<%- eid = slot.context %> 
+<% options = card.options_card.search(:limit=>50).map{|x| [x.name,x.name]} %>
+<%= slot.form.select :pointees, options, {}, :id=>"#{eid}-select", :class=>'pointer-select' %>

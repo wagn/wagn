@@ -177,7 +177,8 @@ module SlotHelpers
     self.form = form              
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
-    pre_content + self.render_partial( card_partial('editor'), options ) + setup_autosave
+    editor_partial = ((c=CachedCard.get_real("#{card.name.tag_name}+*input")) ? c.content : 'editor')
+    pre_content + self.render_partial( card_partial(editor_partial), options ) + setup_autosave
   end                          
  
   def save_function 

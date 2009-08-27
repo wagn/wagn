@@ -8,7 +8,6 @@ module Card
 	      end
 	      (card && card.type=='Search') ? card : nil
 	    end
-	    
     end
 
 	  def cacheable?

@@ -1,0 +1,8 @@
+<%- eid = slot.context %> 
+<% options = card.options_card.search(:limit=>50) %>    
+<% options.each do |option| %> 
+  <div class="pointer-radio">
+		<%= slot.form.radio_button :pointee, option.key, :id=>"#{eid}-radio-#{option.key}", :class=>'pointer-radio-button' %>
+		<span class="pointer-radio-label"><%= option.name %></span>
+	</div>         
+<% end %>

@@ -17,7 +17,10 @@ module CardLib
   	    links.empty? ? [''] : links
 	    end
 	  end
-
+	  
+	  def pointee
+	    pointees.first
+    end
     
   end
 end

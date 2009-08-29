@@ -16,6 +16,9 @@ module NavigationHelpers
       
     when /card (.*)$/
       "/wagn/#{$1.to_url_key}"
+    
+    when /edit (.*)$/
+      "/card/edit/#{$1.to_url_key}"  
 
     when /new (.*)$/
       "/new/#{$1.to_url_key}"

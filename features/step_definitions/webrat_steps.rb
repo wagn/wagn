@@ -9,6 +9,7 @@ end
 
 When /^I go to (.+)$/ do |page_name|
   visit path_to(page_name)
+  save_and_open_page
 end
 
 When /^I press "([^\"]*)"$/ do |button|

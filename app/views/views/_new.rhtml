@@ -4,13 +4,15 @@
    #  so we pass an argument to create one.  eventually, the "Add <Cardname>" view should have
    #  a slot so that this isn't necessary
 	 args << { :add_slot=>params[:add_slot] } if params[:add_slot]
+	rendered_instructions ||= false
 %>
 
 <% get_slot(nil).wrap("new", *args) do |slot| %>   
 	<% @title = "New Card" %>  
 	
   	<%= error_messages_for :card %>
-    <div class=cardnotice></div>
+    <div class=cardnotice></div>   
+
 	  <% form_remote_for :card, card, :url=>"card/create", 
 					:slot => slot,
 					:update => {
@@ -49,7 +51,11 @@
 			  <%- card.extension_type='HardTemplate' if card.type_template? %>
         <%= render :partial=>'card/hardsoft_form', :locals=>{:card=>card, :mode=>'new'} %>
       <% end %>
-      
+      <% if card.new_instructions and !rendered_instructions %> 
+				<div class="custom-instructions instruction"><%= render_card card.new_instructions, :expanded_view_content %></div>
+	    <% end %>
+
+			
 			
 			<div class="edit-area">
   			<div class="editor">  

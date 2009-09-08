@@ -78,7 +78,7 @@ end
 
 def fill_in_hidden_or_not(field_locator, options={})
   set_hidden_field(field_locator, :to=>options[:with])
-rescue Webrat::NotFoundError=>e
+rescue Exception => e
   fill_in(field_locator, options)
 end
 

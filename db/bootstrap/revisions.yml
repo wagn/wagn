@@ -820,7 +820,7 @@ revisions_174:
   created_by: "1"
   card_id: "108"
   id: "2610"
-  content: //wagn/Request_Sent
+  content: /wagn/Request_Sent
   created_at: 2009-06-18 13:49:41.783917
 revisions_146: 
   updated_at: 2009-05-25 10:08:44.206159
@@ -878,7 +878,7 @@ revisions_175:
   created_by: "1"
   card_id: "62"
   id: "2611"
-  content: //wagn/Invite_Success
+  content: /wagn/Invite_Success
   created_at: 2009-06-18 13:49:41.883549
 revisions_147: 
   updated_at: 2009-05-26 11:18:41.071447
@@ -923,7 +923,7 @@ revisions_176:
   created_by: "1"
   card_id: "67"
   id: "2612"
-  content: //wagn/Signup_Success
+  content: /wagn/Signup_Success
   created_at: 2009-06-18 13:49:41.970513
 revisions_148: 
   updated_at: 2009-05-26 17:35:51.973998
@@ -970,7 +970,7 @@ revisions_177:
   created_by: "1"
   card_id: "199"
   id: "2613"
-  content: //wagn/Form_submission_thanks
+  content: /wagn/Form_submission_thanks
   created_at: 2009-06-18 13:49:42.059786
 revisions_149: 
   updated_at: 2009-05-26 17:42:40.511863

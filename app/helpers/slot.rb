@@ -51,6 +51,11 @@ class Slot
       card.name.gsub!(/^#{root.card.name}\+/, '+') if root.card.new_record?  ##FIXME -- need to match other relative inclusions.
       fields_for = builder.new("cards[#{card.name.pre_cgi}]", card, @template, options, block)       
     end
+  end    
+  
+  def full_field_name(field)
+    card.name.gsub!(/^#{root.card.name}\+/, '+') if root.card.new_record?
+    "cards[#{card.name.pre_cgi}][#{field}]"
   end
 
   def wrap_content( content="" )
@@ -99,11 +104,8 @@ class Slot
       }
       
       slot_attr = attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join
-      open_slot = %{<!--[if IE]><div #{slot_attr}><![endif]-->} +
-                  %{<![if !IE]><object #{slot_attr}><![endif]>} 
-      close_slot= %{<!--[if IE]></div><![endif]-->} +
-                  %{<![if !IE]></object><![endif]>} 
-
+      open_slot = "<div #{slot_attr}>"
+      close_slot= "</div>"
     end
     
     if block_given? 

@@ -1,0 +1,8 @@
+<%- eid = slot.context %> 
+<% options = options_from_collection_for_select(card.options_card.search(:limit=>50),:name,:name,slot.card.pointees) %>
+<%= select_tag slot.full_field_name(:pointees), options, :multiple=>true, :id=>"#{eid}-select", :class=>'pointer-select' %>    
+
+<%- eid = slot.context %> 
+<% options = card.options_card.search(:limit=>50).map{|x| [x.name,x.name]} %>
+<%= debugger %>
+<%= slot.form.select :pointees, options, {}, :id=>"#{eid}-select", :class=>'pointer-select' %>      

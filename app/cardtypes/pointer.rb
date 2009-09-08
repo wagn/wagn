@@ -29,7 +29,13 @@ module Card
 	    end
     end
 	    
-	       
+	  def pointees=(items)
+	    self.content = [items].flatten.map{|x| "[[#{x}]]"}.join("\n")
+    end  
+    
+    def pointee=(item)
+      self.pointees = [item]
+    end  
 	  
 	  def item_type
 	    opt = options_card

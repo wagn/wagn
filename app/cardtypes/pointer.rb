@@ -53,5 +53,11 @@ module Card
       (c=self.options_card) ? c.search(:limit=>limit) : Card.search(:sort=>'alpha',:limit=>limit)
     end
     
+    def limit
+      card = ::User.as(:wagbot) do
+        CachedCard.get_real("#{self.name.tag_name}+*limit")
+      end or return nil
+      card.content.strip.to_i
+    end    
 	end
 end

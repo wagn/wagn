@@ -380,6 +380,7 @@ getSlotOptions=function(element){
 urlForAddField=function(card_id, eid) {
   //return 'foo'
   //index = getSlotElements(getSlotFromContext(eid), 'pointer-li').length;
+  $(eid+'-add').remove();
   index = Element.select($(eid+'-ul'), ".pointer-text").length;
   return ('/card/add_field/' + card_id + '?index=' + index + '&eid=' + eid);
 }

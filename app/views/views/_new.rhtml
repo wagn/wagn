@@ -67,13 +67,16 @@
   			</div>
   			
   		  <%= hidden_field_tag :view, params[:requested_view] || params[:view] || :open %>
-  			<%= button_to_function 'Create', "this.form.onsubmit()", :id=>'create-button'  %>
+  		  <div class="edit-button-area">
+    		
+    			<%= button_to_function 'Create', "this.form.onsubmit()", :id=>'create-button'  %>
 						
-        <% if request.xhr? %>						
-  				<%= slot.button_to_action 'Cancel', :open_missing, { :before=>slot.cancel_function }  %> 
-  			<% else %>
-  		    <%= button_to_function 'Cancel',"document.location.href='#{previous_location}'" %> 
+          <% if request.xhr? %>						
+    				<%= slot.button_to_action 'Cancel', :open_missing, { :before=>slot.cancel_function }  %> 
+    			<% else %>
+    		    <%= button_to_function 'Cancel',"document.location.href='#{previous_location}'" %> 
   			<% end %>
+  			</div>
   		</div>
 		<% end %>
 

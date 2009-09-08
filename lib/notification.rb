@@ -36,7 +36,7 @@ module Notification
         nested_edit.nested_notifications << [ name, action ]
       else
         @trunk_watcher_watched_pairs.each do |watcher, watched|
-          Mailer.deliver_change_notice( watcher, self.trunk, 'updated', watched, [[name, action]] )
+          Mailer.deliver_change_notice( watcher, self.trunk, 'updated', watched, [[name, action]], self )
         end
       end
     end  

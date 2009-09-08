@@ -29,6 +29,7 @@ module Card
     end
 	    
 	  def pointees=(items)
+	    items=items.values if Hash===items 
 	    self.content = [items].flatten.map{|x| "[[#{x}]]"}.join("\n")
     end  
     

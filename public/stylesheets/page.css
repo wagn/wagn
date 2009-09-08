@@ -179,19 +179,16 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
 
 /* -- instructions ---*/
 
-.instruction {
-  border: 1px dashed #660;
-  margin: 3px 0px;
-}
 .help, .instruction {
   background: #eec;
   color: #440;
   font-style: italic;
   text-align: center;
+  padding: 2px;
 }
 .instruction div, 
 .instruction p {
-  padding: 6px;
+  padding: 4px;
 }
 .edit-instruction {
   margin: 8px 0px;

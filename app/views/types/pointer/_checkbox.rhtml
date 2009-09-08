@@ -1,28 +1,17 @@
-<%- 
-  eid = slot.context
-  options = card.options_card.search(:limit=>50)
-  texttag = ((c=CachedCard.get_real('*option text')) ? c.content : 'description')  
-%>
-
+<%- texttag = ((c=CachedCard.get_real('*option text')) ? c.content : 'description')  %>
   
-<% options.each do |option| %> 
+<% card.options.each do |option| %> 
   <div class="pointer-checkbox">
-
     <%= check_box_tag  "card[pointees][#{option.key}]", option.name, card.pointees.include?(option.name),
-      { :id=>"#{eid}-checkbox-#{option.key}", :class=>'pointer-checkbox-button' }
+      { :id=>"#{slot.context}-checkbox-#{option.key}", :class=>'pointer-checkbox-button' }
     %>
 		<span class="pointer-checkbox-label">
 		  <span class="checkbox-option-name"><%= link_to_page option.name %></span>
-		  <span class="checkbox-option-description">
-  		  <%= option_text = 
-          if c=CachedCard.get_real(option.name+'+'+texttag) and !c.content.empty?
-            c.content
-          else
-            ''
-          end
-        %>
-      </span>
+  		<% if textcard=CachedCard.get_real(option.name+'+'+texttag) and !textcard.content.empty? %>
+  		  <div class="checkbox-option-description">
+          <%= textcard.content %>
+        </div>
+      <% end %>
     </span>
-		
 	</div>         
 <% end %>

@@ -10,6 +10,7 @@ module Card
 	    end
     end
 
+
 	  def cacheable?
       false
     end
@@ -43,8 +44,13 @@ module Card
 	  end
 	  
 	  def options_card
-	    return nil unless tag
-	    self.class.options_card(tag.name)
+	    tagname = self.name.tag_name or return nil
+	    self.class.options_card(tagname)
 	  end
+	  
+	  def options(limit=50)
+      (c=self.options_card) ? c.search(:limit=>limit) : Card.search(:sort=>'alpha',:limit=>limit)
+    end
+    
 	end
 end

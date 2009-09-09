@@ -14,9 +14,9 @@ Feature: Update Includer cards
     Then Joe Camel should be notified that "Joe User updated \"Ulysses\""   
     #And He should see "added Ulysses+author" in the email  -- FIXME need multiline matching
     And Joe Admin should be notified that "Joe User updated \"Ulysses\""
-    When I edit "Ulysses+author" setting content to "Jim"
-    Then Joe Camel should be notified that "Joe User updated \"Ulysses\""
-    And Joe Admin should be notified that "Joe User updated \"Ulysses\""
+    When Joe Admin edits "Ulysses+author" setting content to "Jim"
+    Then Joe Camel should be notified that "Joe Admin updated \"Ulysses\""
+    #And Joe Admin should be notified that "Joe User updated \"Ulysses\""
     
   Scenario: Should not notify of transcluded but not plussed card
     When I create card "illustrator" with content "Picasso"

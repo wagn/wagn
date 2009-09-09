@@ -58,6 +58,8 @@ module WagnHelper
 
     if options[:url] =~ /^javascript\:/
       function << options[:url].gsub(/^javascript\:/,'')
+    elsif options[:slot] 
+      function << slot.url_for(options[:url]).gsub(/^javascript\:/,'')
     else
       url_options = options[:url]
       url_options = url_options.merge(:escape => false) if url_options.is_a?(Hash)
@@ -72,7 +74,8 @@ module WagnHelper
     function = "if (confirm('#{escape_javascript(options[:confirm])}')) { #{function}; }" if options[:confirm]
 
     return function
-  end
+  end    
+
 
 
   def truncatewords_with_closing_tags(input, words = 25, truncate_string = "...")

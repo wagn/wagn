@@ -143,34 +143,31 @@ div:hover.card-header .card-menu-left {
 
 
 /* card footer-------------------------------*/
-.card-slot .card-footer td,
+.card-slot .card-footer,
 .card-slot .revision-navigation {
   padding: 0px 10px;
   font-size: 9px;
+  text-align: left;
 }
 .card-slot .card-footer,
 .card-slot .revision-navigation {
    background: #bbb;
-   height: 18px;
 }
 .card-slot .card-footer {
   clear: both;
   -moz-border-radius: 0px 0px 6px 6px;
 }
-html>body  .card-footer table {
+html>body  .card-footer .footer-content {
   display: none;
 }
-div:hover.card-footer table {
-  display: table;
+div:hover.card-footer .footer-content {
+  display: inline;
 } 
-.card-slot .card-footer table {
+.card-slot .card-footer .footer-content {
   width: 100%; 
 }        
-.card-slot .card-footer td.links {
-  width: 90%;   
-}        
-.card-slot .card-footer td.watch {
-  width: 10%; 
+.card-slot .card-footer .watch-link {
+  float: right;
   text-align: right;
   white-space: nowrap;
 }        

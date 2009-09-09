@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090721173947) do
+ActiveRecord::Schema.define(:version => 20090906232832) do
 
   create_table "card_files", :force => true do |t|
     t.string   "filename"
@@ -40,8 +40,8 @@ ActiveRecord::Schema.define(:version => 20090721173947) do
     t.datetime "created_at",                             :null => false
     t.datetime "updated_at",                             :null => false
     t.integer  "current_revision_id"
-    t.string   "name",                                   :null => false
-    t.string   "type",                                   :null => false
+    t.string   "name",                :default => "",    :null => false
+    t.string   "type",                :default => "",    :null => false
     t.integer  "extension_id"
     t.string   "extension_type"
     t.integer  "created_by"
@@ -49,7 +49,7 @@ ActiveRecord::Schema.define(:version => 20090721173947) do
     t.integer  "reader_id"
     t.string   "reader_type"
     t.integer  "tag_id"
-    t.string   "key",                                    :null => false
+    t.string   "key",                 :default => "",    :null => false
     t.boolean  "trash",               :default => false, :null => false
     t.string   "appender_type"
     t.integer  "appender_id"
@@ -100,9 +100,9 @@ ActiveRecord::Schema.define(:version => 20090721173947) do
   end
 
   create_table "open_id_authentication_nonces", :force => true do |t|
-    t.integer "timestamp",  :null => false
+    t.integer "timestamp",                  :null => false
     t.string  "server_url"
-    t.string  "salt",       :null => false
+    t.string  "salt",       :default => "", :null => false
   end
 
   create_table "permissions", :force => true do |t|

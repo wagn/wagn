@@ -61,13 +61,18 @@ module CardLib
         #warn ">>>>>>>>SPEC: #{spec.inspect}"
         #warn ">>>>>>>>SQL: #{sql.inspect}"
         if spec[:prepend] || spec[:append]
+          if context_card = spec[:_card]
+            context_name = context_card.simple? ? context_card.name : context_card.name.trunk_name
+            spec[:prepend] &&= spec[:prepend].to_absolute(context_name)
+            spec[:append]  &&= spec[:append].to_absolute(context_name)
+          end
           results = results.map do |card|             
             CachedCard.get [spec[:prepend], card.name, spec[:append]].compact.join('+')
           end
         end
         results
       end
-
+      
       #def find_by_json(spec)
       #  Card.find_by_sql( Wql2::CardSpec.new( JSON.parse(spec) ).to_sql )
       #end

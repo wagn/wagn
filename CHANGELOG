@@ -1,7 +1,7 @@
 === 1.1.1 (Sept 9, 2009)
 * fix footers of inclusions
 * implement contextual terms in prepend
-* implement notification system
+* implement touchups to notification system
 * show help text when creating via inclusion
 * show *edit when adding untyped new card
 

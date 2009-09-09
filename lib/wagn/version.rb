@@ -3,7 +3,7 @@ unless defined? Wagn::Version
     module Version
       Major = '1'
       Minor = '1'
-      Tiny  = '0'
+      Tiny  = '1'
       Eensie = nil
     
       class << self

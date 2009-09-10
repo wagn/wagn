@@ -302,12 +302,7 @@ class Slot
              # process_transclusion blows up if name is nil
             "{<bogus/>{#{fullname}}}" 
           else
-
-            specified_content = ''
-            if (cardparams = @template.controller.params['cards'] and
-                card_args = cardparams[fullname.pre_cgi])
-              specified_content = card_args['content']
-            end
+            specified_content = @template.controller.params[fullname.gsub(/\+/,'_')]
  
             tcard = case
               when @state==:edit

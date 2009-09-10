@@ -302,13 +302,18 @@ class Slot
              # process_transclusion blows up if name is nil
             "{<bogus/>{#{fullname}}}" 
           else
-  #          options[:view]='edit' if @state == :edit
 
+            specified_content = ''
+            if (cardparams = @template.controller.params['cards'] and
+                card_args = cardparams[fullname.pre_cgi])
+              specified_content = card_args['content']
+            end
+ 
             tcard = case
               when @state==:edit
                 ( Card.find_by_name( fullname ) || 
                   Card.find_phantom( fullname ) || 
-                  Card.new(   :name=>fullname, :type=>options[:type] ) )
+                  Card.new(   :name=>fullname, :type=>options[:type], :content=>specified_content ) )
               else
                 CachedCard.get fullname
               end

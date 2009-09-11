@@ -1,6 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class RendererTest < ActiveSupport::TestCase
+  include ChunkTestHelper
   
   def setup
     setup_default_user     
@@ -10,5 +11,73 @@ class RendererTest < ActiveSupport::TestCase
   def test_replace_references_should_work_on_inclusions_inside_links       
     card = Card.create!(:name=>"test", :content=>"[[test{{test}}]]"  )    
     assert_equal "[[test{{best}}]]", Renderer.new.replace_references( card, "test", "best" )
-  end                                                                                                
-end
+  end
+
+  def slot_link(card, render_type=:content)
+    render = Slot.new(card).render(render_type)
+    m = render.match(/<(cardref|link|a) class.*<\/(cardref|link|a)>/)
+    (m.to_s != "") ? m.to_s : render
+  end
+
+  def test_slot_render
+    card = newcard('Baines', '[[Nixon]]')
+    assert_equal '<a class="wanted-card" href="/wagn/Nixon">Nixon</a>', slot_link(card)
+
+    lbj_link = '<a class="known-card" href="/wagn/Baines">Lyndon</a>'
+    
+    card2 = newcard('Johnson', '[Lyndon][Baines]')
+    assert_equal(lbj_link, slot_link(card2))
+    
+    card2.content = '[[Baines|Lyndon]]'; card2.save
+    assert_equal(lbj_link, slot_link(card2))
+    
+  end
+
+  def test_slot_render_xml
+    card = newcard('Baines', '[[Nixon]]')
+    assert_equal '<cardref class="wanted-card" card="Nixon">Nixon</cardref>', slot_link(card,:xml)
+
+    lbj_link = '<cardref class="known-card" card="Baines">Lyndon</cardref>'
+    
+    card2 = newcard('Johnson', '[Lyndon][Baines]')
+    assert_equal(lbj_link, slot_link(card2,:xml))
+    
+    card2.content = '[[Baines|Lyndon]]'; card2.save
+    assert_equal(lbj_link, slot_link(card2,:xml))
+    
+  end
+
+  def test_slot_relative_card
+    cardA = newcard('Kennedy', '[[+Monroe]]')
+    assert_equal '<a class="wanted-card" href="/wagn/Kennedy%2BMonroe">+Monroe</a>', slot_link(cardA)
+
+    cardB = newcard('Clinton', '[[Lewinsky+]]')
+    assert_equal '<a class="wanted-card" href="/wagn/Lewinsky%2BClinton">Lewinsky+</a>', slot_link(cardB)
+  end
+
+  def test_slot_relative_url
+    card3 = newcard('recent changes', '[[/recent]]')
+    assert_equal '<a class="internal-link" href="/recent">/recent</a>', slot_link(card3)
+  end
+  
+  def test_slot_external
+    card4 = newcard('google link', '[[http://google.com]]')
+    assert_equal '<a class="external-link" href="http://google.com">http://google.com</a>', slot_link(card4)
+  end
+  
+  def internal_needs_escaping    
+    card5 = newcard('userlink', '[Marie][Marie "Mad Dog" Deatherage]')
+    assert_equal '<a class="wanted-card" href="/wagn/Marie_%22Mad_Dog%22_Deatherage">Marie</a>', slot_link(card5)
+  end
+     
+  def external_needs_not_escaped
+    card6 = newcard('google link2', 'wgw&nbsp; [google][http://www.google.com] &nbsp;  <br>')
+    assert_equal "wgw&nbsp; <a class=\"wanted-card\" href=\"http://www.google.com\">google</a> &nbsp;  <br>", slot_link(card6)
+  end
+  
+  def test_relative_link
+    dude,job = newcard('Harvey',"[[#{JOINT}business]]"), newcard('business')
+    card = dude.connect job, "icepicker" 
+    assert_equal "<a class=\"known-card\" href=\"/wagn/Harvey+business\">#{JOINT}business</a>", slot_link(dude)
+  end
+end                                                                      

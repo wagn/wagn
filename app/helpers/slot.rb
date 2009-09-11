@@ -1,3 +1,4 @@
+require "ruby-debug"
 require_dependency 'slot_helpers'
 
 class Slot
@@ -33,7 +34,8 @@ class Slot
     @transclusion_view_overrides = opts[:transclusion_view_overrides]
     unless @renderer = opts[:renderer]
       @renderer = Renderer.new
-      @renderer.render_xml = true
+      @renderer.render_xml = @render_as_xml
+#ActiveRecord::Base.logger.info "XML:slot:initialize: render_xml = #{@render_as_xml}>>#{@renderer.render_xml}\n"
     end
   end
 
@@ -167,6 +169,7 @@ class Slot
   end
 
   def render(action, args={})
+    @render_as_xml = true if action == :xml
     return render_xml(action, args) if @render_as_xml 
     #warn "<render(#{card.name}, #{@state}).render(#{action}, item=>#{args[:item]})"
 
@@ -379,8 +382,10 @@ class Slot
       when :name ; card.name
       when :xml_content ; render_card_partial(:xml_content)
       when :naked_content
+        @renderer.render_xml = true
         @renderer.render( card, args.delete(:xml_content)|| "",
                           update_refs=card.references_expired )
+        #@renderer.render( card, args.delete(:content) || "", update_refs=card.references_expired)
 
       when :xml, :xml_expanded
         @state = 'view'
@@ -500,10 +505,13 @@ class Slot
         %{\n<div class="view">\n} + wrap_content( render(:expanded_line_content) ) + %{\n</div>\n}
       when "basic/content"
         render :naked_content
+      when "basic/xml_content"
+        render_xml :naked_content
       when "basic/line"
         truncatewords_with_closing_tags( render( :custom_view ))
       else
         "No Stub for #{partial}"
+#ActiveRecord::Base.logger.info "XML:render_stub: No Stub = #{partial}\n"
     end
   end
 end

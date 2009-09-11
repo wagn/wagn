@@ -36,7 +36,7 @@ module Notification
         nested_edit.nested_notifications << [ name, action ]
       else
         @trunk_watcher_watched_pairs.each do |watcher, watched|
-          Mailer.deliver_change_notice( watcher, self.trunk, 'updated', watched, [[name, action]] )
+          Mailer.deliver_change_notice( watcher, self.trunk, 'updated', watched, [[name, action]], self )
         end
       end
     end  
@@ -86,20 +86,6 @@ module Notification
   end    
 
   module SlotHelperMethods     
-    def footer
-      template.render :inline => %{
-        <div class="card-footer">
-        	<table>
-        		<tr>
-        			<td class="links"><%= slot.footer_links %></td>
-        			<td class="watch"><span class="watch-link"><%= slot.watch_link %></span></td>
-        		</tr>
-        	</table>   
-        	<span class="height-holder">&nbsp;</span>
-        </div> 
-      }
-    end
-    
     def watch_link 
       return "" unless logged_in?
       me = User.current_user.card.name          

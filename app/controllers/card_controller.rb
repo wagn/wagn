@@ -169,8 +169,9 @@ class CardController < ApplicationController
     end
     
     return render_card_errors(@card) unless @card.errors.empty?
-    @card = Card.find(card.id)
-    render_update_slot render_to_string(:action=>'show')
+    @card = Card.find(card.id)  
+    flash[:notice] = "updated #{@card.name}"
+    request.xhr? ? render_update_slot(render_to_string(:action=>'show')) : render(:action=>'show')
   end
 
   def quick_update
@@ -236,7 +237,7 @@ class CardController < ApplicationController
   end
 
   def watch 
-    watchers = Card.find_or_new( :name => @card.name + "+*watchers" )
+    watchers = Card.find_or_new( :name => @card.name + "+*watchers", :type => 'Pointer' )
     watchers.add_reference User.current_user.card.name
     flash[:notice] = "You are now watching #{card.name}"
     request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view

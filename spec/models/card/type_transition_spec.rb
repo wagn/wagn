@@ -13,13 +13,13 @@ module Card
   
   class CardtypeC < Base
     def validate_type_change
-      errors.add :destroy, "card c is indestructible"
+      errors.add :destroy_error, "card c is indestructible"
     end
   end
   
   class CardtypeD < Base 
     def valid?
-      errors.add :create, "card d always has errors"
+      errors.add :create_error, "card d always has errors"
     end
   end
   
@@ -135,7 +135,7 @@ describe Card, "type transition validate_destroy" do
   before do @c = change_card_to_type("type-c-card", 'Basic') end
   
   it "should have errors" do
-    @c.errors.on(:destroy).should == "card c is indestructible"
+    @c.errors.on(:destroy_error).should == "card c is indestructible"
   end
   
   it "should retain original type" do
@@ -147,7 +147,7 @@ describe Card, "type transition validate_create" do
   before do @c = change_card_to_type("basicname", "CardtypeD") end
   
   it "should have errors" do
-    @c.errors.on(:create).should == "card d always has errors"
+    @c.errors.on(:create_error).should == "card d always has errors"
   end
   
   it "should retain original type" do
@@ -189,7 +189,8 @@ end
 def change_card_to_type(name, type)
   User.as :joe_user
   card = Card.find_by_name(name)
-  card.type = type;  card.save
+  card.type = type;  
+  card.save
   # FIXME FIXME FIXME:  this doesn't work!  something about inheritance column?
   # card.update_attributes :type=>type
   card

@@ -1,3 +1,10 @@
+=== 1.1.1 (Sept 9, 2009)
+* fix footers of inclusions
+* implement contextual terms in prepend
+* implement touchups to notification system
+* show help text when creating via inclusion
+* show *edit when adding untyped new card
+
 === 1.1.0 (Aug 10, 2009)
 * Notifications
 * Cucumber

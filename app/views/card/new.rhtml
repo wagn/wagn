@@ -2,21 +2,26 @@
   <% if !request.post? %>
   	<h1>New <%= @card.type != 'Basic' ? @card.cardtype.name : '' %> Card</h1>
 
-  	<div class="instruction main-instruction">
+		<% @instruction = capture do %>
 			<% if @card.broken_type %>
 				<p class="error" id="no-cardtype-error">Oops! There's no <strong>card type</strong> called "<strong><%= @card.broken_type %></strong>".</p>
 			<% end %>
       <% if card.new_instructions %> 
-				<div class="custom-instructions"><%= render_card card.new_instructions, :expanded_view_content %></div>
+				<%# they'll go inside the card %>
   	  <% elsif !@card.name.blank? %>
   	    <p>Currently, there is no card named "<strong><%= @card.name %></strong>", but you are welcomed to create it.</p>
   	  <% else%>
         <p>Creating a new card is easy; you just need a unique name.</p>
   	  <% end %>
-  	</div>
+	  <% end %>
+
+		<% unless @instruction.blank? %>
+			<div class="instruction main-instruction">
+				<%= @instruction %>
+	  	</div>
+		<% end %>
   <% end %>
- 
-	<%= render :partial => 'views/new', :locals=>{ :card=>@card } %>
+	<%= render :partial => 'views/new', :locals=>{ :card=>@card, :rendered_instructions=>true } %>
 </div>
    
 

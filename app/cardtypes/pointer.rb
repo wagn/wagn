@@ -54,7 +54,7 @@ module Card
     
     def limit
       card = ::User.as(:wagbot) do
-        CachedCard.get_real("#{self.name.tag_name}+*limit")
+        CachedCard.get_real("#{self.name.tag_name}+*max")
       end or return nil
       card.content.strip.to_i
     end    

@@ -288,9 +288,9 @@ div:hover.card-footer .footer-content {
   padding: 4px;
 }
 .card-slot .in-multi {
-  background: #ddd;
+  background: #e3e3e3;
   width: 100%;
-  padding: 0px;
+  padding: 1 0px;
   margin: 1px;
 }
 .card-slot .new-type .cardtype {

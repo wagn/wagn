@@ -56,7 +56,7 @@ module Card
     end
     
     def limit
-      System.setting("#{self.name.tag_name}+*limit")
+      System.setting("#{self.name.tag_name}+*max")
     end
     
     def autoname

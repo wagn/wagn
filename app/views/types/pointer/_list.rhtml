@@ -1,6 +1,7 @@
 <%- 
   eid = slot.context 
   pointees = card.pointees
+  pointees = [''] if pointees.empty?
 %>
 
 <%= slot.form.hidden_field :content, :id=>"#{eid}-hidden-content" %>

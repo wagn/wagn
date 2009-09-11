@@ -51,7 +51,7 @@ When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
   end
 end
      
-When /^(.*) creates?\s*a?\s+([^\s]*) card "(.*)" with content "(.*)"$/ do |username, cardtype, cardname, content|
+When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/ do |username, cardtype, cardname, content|
   create_card(username, cardtype, cardname, content) do   
     fill_in_hidden_or_not("card[content]", :with=>content)
   end
@@ -75,6 +75,9 @@ When /^(.*) deletes? "([^\"]*)"$/ do |username, cardname|
   end
 end
 
+Then /what/ do
+  save_and_open_page
+end
 
 def fill_in_hidden_or_not(field_locator, options={})
   set_hidden_field(field_locator, :to=>options[:with])

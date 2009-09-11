@@ -17,7 +17,9 @@ module Card
 	  	  
 	  def add_reference( cardname )
 	    unless pointees.include? cardname
-	      self.content = (pointees + [cardname]).reject{|x|x.blank?}.map{|x| "[[#{x}]]" }.join("\n")
+	      self.content = (pointees + [cardname]).map{|x| "[[#{x}]]" }.join("\n")
+	      #self.content = (pointees + [cardname]).reject{|x|x.blank?}.map{|x| "[[#{x}]]" }.join("\n")
+	      #I think this the reject is probably not necessary any more.
   	    save!
       end
     end 
@@ -53,10 +55,12 @@ module Card
     end
     
     def limit
-      card = ::User.as(:wagbot) do
-        CachedCard.get_real("#{self.name.tag_name}+*max")
-      end or return nil
+      card = System.setting("#{self.name.tag_name}+*max") or return nil
       card.content.strip.to_i
     end    
+    
+    def autoname
+      System.setting("#{self.name.tag_name}+*autoname")
+    end
 	end
 end

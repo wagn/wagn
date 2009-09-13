@@ -55,6 +55,14 @@ class RendererTest < ActiveSupport::TestCase
     assert_equal '<a class="wanted-card" href="/wagn/Lewinsky%2BClinton">Lewinsky+</a>', slot_link(cardB)
   end
 
+  def test_slot_relative_card_xml
+    cardA = newcard('Kennedy', '[[+Monroe]]')
+    assert_equal '<cardref class="wanted-card" card="Kennedy+Monroe">+Monroe</cardref>', slot_link(cardA,:xml)
+
+    cardB = newcard('Clinton', '[[Lewinsky+]]')
+    assert_equal '<cardref class="wanted-card" card="Lewinsky+Clinton">Lewinsky+</cardref>', slot_link(cardB,:xml)
+  end
+
   def test_slot_relative_url
     card3 = newcard('recent changes', '[[/recent]]')
     assert_equal '<a class="internal-link" href="/recent">/recent</a>', slot_link(card3)
@@ -63,6 +71,11 @@ class RendererTest < ActiveSupport::TestCase
   def test_slot_external
     card4 = newcard('google link', '[[http://google.com]]')
     assert_equal '<a class="external-link" href="http://google.com">http://google.com</a>', slot_link(card4)
+  end
+  
+  def test_slot_external_xml
+    card4 = newcard('google link', '[[http://google.com]]')
+    assert_equal '<link class="external-link" href="http://google.com">http://google.com</link>', slot_link(card4,:xml)
   end
   
   def internal_needs_escaping    
@@ -79,5 +92,11 @@ class RendererTest < ActiveSupport::TestCase
     dude,job = newcard('Harvey',"[[#{JOINT}business]]"), newcard('business')
     card = dude.connect job, "icepicker" 
     assert_equal "<a class=\"known-card\" href=\"/wagn/Harvey+business\">#{JOINT}business</a>", slot_link(dude)
+  end
+  
+  def test_relative_link_xml
+    dude,job = newcard('Harvey',"[[#{JOINT}business]]"), newcard('business')
+    card = dude.connect job, "icepicker" 
+    assert_equal "<cardref class=\"known-card\" card=\"Harvey+business\">#{JOINT}business</cardref>", slot_link(dude,:xml)
   end
 end                                                                      

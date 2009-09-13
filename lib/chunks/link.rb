@@ -53,7 +53,7 @@ module Chunk
           href = href.to_url_key
           'known-card'
         else
-          href = CGI.escape(Cardname.escape(href))
+          href = CGI.escape(Cardname.escape(href)) unless render_xml
           'wanted-card'
         end
         if render_xml

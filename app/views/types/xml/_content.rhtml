@@ -134,7 +134,6 @@ ol.CodeRay li { white-space: pre }
 .CodeRay .head .head { color: #f4f; }
 </style>
         <% end %>
-<span class="cl">CodeRay</span>
   <pre class="CodeRay">
   <% content = slot.render :naked_content %>
   <%= CodeRay.scan(content, :xml).html %>

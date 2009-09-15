@@ -2,7 +2,7 @@
   
 <% card.options.each do |option| %> 
   <div class="pointer-checkbox">
-    <%= check_box_tag slot.full_field_name(:pointees), option.name, card.pointees.include?(option.name),
+    <%= check_box_tag slot.full_field_name(:pointees)+"[]", option.name, card.pointees.include?(option.name),
       { :id=>"#{slot.context}-checkbox-#{option.key}", :class=>'pointer-checkbox-button' }
     %>
 		<span class="pointer-checkbox-label">

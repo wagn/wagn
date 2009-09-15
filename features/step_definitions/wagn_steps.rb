@@ -164,3 +164,12 @@ Then /^In (.*) I should not see "([^\"]*)"$/ do |section, text|
     scope.should_not contain(text)
   end
 end
+
+Then /^the "([^"]*)" field should contain "([^"]*)"$/ do |field, value|
+  field_labeled(field).value.should =~ /#{value}/
+end
+
+Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field|
+  field_labeled(field).element.search(".//option[@selected = 'selected']").inner_html.should =~ /#{value}/
+end
+

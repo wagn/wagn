@@ -278,7 +278,7 @@ module Card
         logger.info "multi update working on #{name}: #{opts.inspect}"
         if card = Card[name]      
           card.update_attributes(opts)
-        elsif opts[:content].strip.present? or opts[:pointees].present?  #fixme -- need full-on strip that gets rid of blank html tags.
+        elsif opts[:content].strip.present? or opts[:pointee].present? or opts[:pointees].present?  #fixme -- need full-on strip that gets rid of blank html tags.
           opts[:name] = name                
           if ::Cardtype.create_ok?( self.type ) && !::Cardtype.create_ok?( Card.new(opts).type )
             ::User.as(:wagbot) { Card.create(opts) }

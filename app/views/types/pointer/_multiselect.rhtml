@@ -1,4 +1,3 @@
 <% options = options_from_collection_for_select(card.options,:name,:name,slot.card.pointees) %>
-<% field_name = slot.form.text_field(:pointees).match(/name=\"([^\"]*)\"/)[1] %>
-<%= select_tag field_name, options, :multiple=>true, :id=>"#{slot.context}-multiselect", :class=>'pointer-multiselect' %>    
+<%= select_tag slot.full_field_name(:pointees), options, :multiple=>true, :id=>"#{slot.context}-multiselect", :class=>'pointer-multiselect' %>    
     

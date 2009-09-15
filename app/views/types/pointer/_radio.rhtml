@@ -1,7 +1,7 @@
 <div class="pointer-radio-list">
-  <% card.options.each do |option| %> 
+  <% slot.card.options.each do |option| %> 
     <div class="pointer-radio">
-  		<%= slot.form.radio_button :pointee, option.key, :id=>"#{slot.context}-radio-#{option.key}", :class=>'pointer-radio-button' %>
+  		<%= slot.form.radio_button :pointee, option.name, :id=>"#{slot.context}-radio-#{option.key}", :class=>'pointer-radio-button' %>
   		<span class="pointer-radio-label"><%= option.name %></span>
   	</div>         
   <% end %>

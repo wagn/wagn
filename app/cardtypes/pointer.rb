@@ -17,9 +17,7 @@ module Card
 	  	  
 	  def add_reference( cardname )
 	    unless pointees.include? cardname
-	      self.content = (pointees + [cardname]).map{|x| "[[#{x}]]" }.join("\n")
-	      #self.content = (pointees + [cardname]).reject{|x|x.blank?}.map{|x| "[[#{x}]]" }.join("\n")
-	      #I think this the reject is probably not necessary any more.
+	      self.content = (pointees + [cardname]).reject{|x|x.blank?}.map{|x| "[[#{x}]]" }.join("\n")
   	    save!
       end
     end 
@@ -33,7 +31,7 @@ module Card
 	    
 	  def pointees=(items)
 	    items=items.values if Hash===items 
-	    self.content = [items].flatten.map{|x| "[[#{x}]]"}.join("\n")
+	    self.content = [items].flatten.reject{|x|x.blank?}.map{|x| "[[#{x}]]"}.join("\n")
     end  
     
     def pointee=(item)

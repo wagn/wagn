@@ -53,9 +53,8 @@ class Slot
     end
   end    
   
-  def full_field_name(field)
-    card.name.gsub!(/^#{root.card.name}\+/, '+') if root.card.new_record?
-    "cards[#{card.name.pre_cgi}][#{field}]"
+  def full_field_name(field)   
+    form.text_field(field).match(/name=\"([^\"]*)\"/)[1] 
   end
 
   def wrap_content( content="" )

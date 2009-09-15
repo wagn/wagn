@@ -14,7 +14,7 @@ Feature: Pointer Inputs
     And I press "Create"
     And I go to card "Joe User+friends"
     Then I should see "Joe Camel"   
-    
+
   Scenario: Creating a templated card including a select input
     Given I create card "User+*tform" with content "{{+friends}}"
     And I create Phrase card "friends+*input" with content "select"
@@ -69,7 +69,7 @@ Feature: Pointer Inputs
     And I go to card "Joe User+friends"
     Then I should see "Joe Camel"
 
-    
+
 # should test:
 # switching type before create from pointers
 # correct default values for each input type selected / checked / filled in

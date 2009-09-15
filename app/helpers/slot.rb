@@ -30,7 +30,7 @@ class Slot
   def subslot(card, &proc)
     # Note that at this point the subslot context, and thus id, are
     # somewhat meaningless-- the subslot is only really used for tracking position.
-    new_slot = self.class.new(card, context+"_#{@subslots.size+1}", @action, @template, :renderer=>@renderer)
+    new_slot = self.class                                                                                                                                                                                                                                                                                                                                                     .new(card, context+"_#{@subslots.size+1}", @action, @template, :renderer=>@renderer)
     new_slot.state = @state
     @subslots << new_slot 
     new_slot.superslot = self

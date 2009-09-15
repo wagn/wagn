@@ -101,7 +101,6 @@ class CachedCard
             when :got_it   ;    card
             when :cache_it ;    self.cache_me_if_you_can(card, opts)       
             when :make_it  ;    
-              ActiveRecord::Base.logger.info("*****Making Card: #{card_opts}")
               Card.new(card_opts.merge(:skip_defaults=>true)) unless opts[:no_new]    # FIXME: opts[:no_new] is an ugly hack- interface needs work.     
           
               ## opts[:no_new] is here for cases when you want to look for a card in the cache and do something else

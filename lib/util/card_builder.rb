@@ -3,7 +3,9 @@ module CardBuilderMethods
   WAGBOT_ID = 1
 
   def newcard(name, content="")
-    ::Card::Basic.create! :name=>name, :content=>content
+    c = ::Card::Basic.create! :name=>name, :content=>content
+    raise("Not created #{name}") if c == nil
+    c
   end
   
   def card_content( cardname )

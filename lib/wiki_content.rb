@@ -1,3 +1,4 @@
+require 'ruby-debug'
 require 'cgi'
 require_dependency 'chunks/chunk'
 require_dependency 'chunk_manager'
@@ -112,6 +113,7 @@ ActiveRecord::Base.logger.info("Img: #{prop} #{$1}") if tag == 'img'
     @not_rendered = @pre_rendered = nil
     @renderer = renderer
     @card = card or raise "No Card in Content!!"
+debugger unless String===content
     super(content)
     @render_xml=render_xml
     init_chunk_manager(render_xml)

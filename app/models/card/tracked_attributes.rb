@@ -98,6 +98,8 @@ module CardLib
     end
     
     def set_permissions(perms)
+#raise "no perms to set" unless perms
+      return unless perms
       self.updates.clear(:permissions)
       if type=='Cardtype' and !perms.detect{|p| p.task=='create'}
         old_create_party = self.who_can(:create) || Card::Basic.new.cardtype.who_can(:create) 

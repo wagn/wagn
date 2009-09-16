@@ -55,7 +55,9 @@ class LinkTest < ActiveSupport::TestCase
   def test_relative_link
     dude,job = newcard('Harvey',"[[#{JOINT}business]]"), newcard('business')
     card = dude.connect job, "icepicker" 
-    assert_equal("<a class=\"known-card\" href=\"/wagn/Harvey+business\">#{JOINT}business</a>", render(dude) )
+    dr = render(dude)
+ActiveRecord::Base.logger.info("DudeR:#{dr}\n")
+    assert_equal("<a class=\"known-card\" href=\"/wagn/Harvey+business\">#{JOINT}business</a>", dr )
   end
   
   

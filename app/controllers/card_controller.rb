@@ -12,9 +12,21 @@ class CardController < ApplicationController
   
   before_filter :edit_ok,   :only=>[ :edit, :update, :rollback, :save_draft, :watch, :unwatch] 
   before_filter :remove_ok, :only=>[ :remove ]
+
+  def help
+    Helper.instance
+  end
   
+  def controller
+    self
+  end
+
+  class Helper
+    include Singleton
+    include WagnHelper
+  end
+
   #----------( Special cards )
-  
   def index
     redirect_to(
       case

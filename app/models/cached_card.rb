@@ -6,6 +6,7 @@
   3. processing search()
   
 =end     
+#require 'ruby-debug'
 require_dependency 'card/cacheable'
 
 class CacheError < StandardError; end
@@ -95,14 +96,14 @@ class CachedCard
               else                                                ; [ :make_it    , 'scratch'          ]
             end 
         
-          #ActiveRecord::Base.logger.info "<get card: #{name} :: #{todo.last}>"
+ActiveRecord::Base.logger.info "INFO:<get card: #{name} :: #{todo.first} :: #{todo.last}>"
 
           case todo.first
             when :got_it   ;    card
             when :cache_it ;    self.cache_me_if_you_can(card, opts)       
             when :make_it  ;    
               ActiveRecord::Base.logger.info("*****Making Card: #{card_opts}")
-              Card.new(card_opts.merge(:skip_defaults=>true)) unless opts[:no_new]    # FIXME: opts[:no_new] is an ugly hack- interface needs work.     
+              card = Card.new(card_opts.merge(:skip_defaults=>true)) unless opts[:no_new]    # FIXME: opts[:no_new] is an ugly hack- interface needs work.     
           
               ## opts[:no_new] is here for cases when you want to look for a card in the cache and do something else
               ## if it's not there-- particularly builtin cards such as *favicon.  If an anonymous user tries to
@@ -170,22 +171,27 @@ class CachedCard
   def new_record?() false end  # only cache existing cards
    
   def to_id() id end            
-  def id()  id = get('id') { card.id.to_s }; id.to_i end
-  def name()  get('name') { card.name } end
-  def type()  get('type') { card.type } end 
-  def content() get('content') { card.content } end
-  def xml_content() get('xml_content') { card.xml_content } end
+  def id()  id = get('id') { card && card.id.to_s || '' }; id.to_i end
+  def name()  get('name') { card && card.name || '' } end
+  def type()  get('type') { card && card.type || 'Basic' } end 
+  def content() get('content') { card && card.content || '' } end
+  def xml_content() get('xml_content') { card && card.xml_content || '' } end
   def current_revision() get('current_revision') { card.current_revision } end
-  def extension_type() get('extension_type') { card.extension_type } end
-  def created_at() get('created_at') { card.created_at } end
-  def updated_at() get('updated_at') { card.updated_at } end
+  def extension_type() get('extension_type') { card && card.extension_type } end
+  def created_at() get('created_at') { card && card.created_at } end
+  def updated_at() get('updated_at') { card && card.updated_at } end
   def read_permission() 
-    get('read_permission') { p = card.who_can(:read);  "#{p.class.to_s}:#{p.id}" }
-  end       
+    get('read_permission') {
+      return '' unless card
+      p = card.who_can(:read)
+      "#{p.class.to_s}:#{p.id}"
+    }
+  end
   
   def comment_permission() 
     get('comment_permission') {
-       p = card.who_can(:comment); 
+       return '' unless card
+       p = card && card.who_can(:comment); 
        p ? "#{p.class.to_s}:#{p.id}" : "User:-1"
     }
   end
@@ -215,15 +221,21 @@ class CachedCard
   def real_card
     card || begin
       expire_all
-      raise(CacheError, "cached card #{@key} found but it's not in database")
+#      raise(CacheError, "cached card #{@key} found but it's not in database")
+ActiveRecord::Base.logger.info("ERROR:cached card #{@key} found but it's not in database")
+      nil
     end
   end
   
   def card
-    @card ||= (
-      #ActiveRecord::Base.logger.info("<Loading: #{@key}>")
-      Card.find_by_key_and_trash(@key, false)
-    )
+    unless @card
+#ActiveRecord::Base.logger.info("INFO:<Loading: #{@key}>")
+      @card =  Card.find_by_key_and_trash(@key, false)
+ActiveRecord::Base.logger.info("ERROR:INFO:<Loading: nokey #{@key}>") unless @card
+#raise "ERROR: card find failed #{@key}>" unless @card
+#debugger unless @card
+    end
+    @card
   end
 
   def method_missing(method_id,*args)

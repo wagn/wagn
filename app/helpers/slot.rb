@@ -1,4 +1,4 @@
-require "ruby-debug"
+require 'ruby-debug'
 require_dependency 'slot_helpers'
 
 class Slot
@@ -10,7 +10,7 @@ class Slot
     :requested_view, :js_queue_initialized, :transclusions,
     :position, :renderer, :form, :superslot, :char_count,
     :item_format, :type, :renders, :start_time,
-    :transclusion_view_overrides, :skip_autosave
+    :transclusion_view_overrides, :skip_autosave, :controller
   attr_writer :form
 
   VIEW_ALIASES = {
@@ -19,13 +19,18 @@ class Slot
     :line => :closed,
   }
 
-  def initialize(card, context="main_1", action="view", template=nil, opts={})
-    @card, @context, @action = card, context.to_s, action.to_s
+  def initialize(card, controller, context="main_1", action="view", template=nil, opts={})
+    @card, @controller, @context, @action = card, controller, context.to_s, action.to_s
     @render_as_xml = opts[:format] == :xml
-    @template = template ||
-                (@render_as_xml && card.xml_template) ||
-                StubTemplate.new
     context = "main_1" unless context =~ /\_/
+    @template = template || (@render_as_xml && card.xml_template)
+    unless @template
+ActionController::Base.logger.info("INFO:Creating StubTemplate #{card.name}\n")
+      
+#debugger if CardController::Helper===controller
+      @template = StubTemplate.new(card, controller, context, action, opts)
+    end
+#debugger if Hash===@template
     @position = context.split('_').last
     @char_count = 0
     @subslots = []
@@ -35,7 +40,7 @@ class Slot
     unless @renderer = opts[:renderer]
       @renderer = Renderer.new
       @renderer.render_xml = @render_as_xml
-#ActiveRecord::Base.logger.info "XML:slot:initialize: render_xml = #{@render_as_xml}>>#{@renderer.render_xml}\n"
+#ActionController::Base.logger.info "INFO:XML:slot:initialize: render_xml = #{@render_as_xml}>>#{@renderer.render_xml}\n"
     end
   end
 
@@ -44,7 +49,7 @@ class Slot
     opts[:format] = :xml if @render_as_xml
     # Note that at this point the subslot context, and thus id, are
     # somewhat meaningless-- the subslot is only really used for tracking position.
-    new_slot = self.class.new(card, context+"_#{@subslots.size+1}", @action, @template, opts)
+    new_slot = self.class.new(card, controller, context+"_#{@subslots.size+1}", @action, @template, opts)
     new_slot.state = @state
     @subslots << new_slot
     new_slot.superslot = self
@@ -138,7 +143,7 @@ class Slot
 
   def cache_action(cc_method)
     (if CachedCard===card
-#ActiveRecord::Base.logger.info("Name:#{card.key}:#{cc_method}:")
+#ActionController::Base.logger.info("INFO:Name:#{card.key}:#{cc_method}:")
       card.send(cc_method) || begin
         cached_card, @card = card, Card.find_by_key_and_trash(card.key, false) || raise("Oops! found cached card for #{card.key} but couln't find the real one")
         content = yield(@card)
@@ -178,6 +183,7 @@ class Slot
     root.renders[rkey] += 1 unless [:name, :link].member?(action)
     #root.start_time ||= Time.now.to_f
 
+ActionController::Base.logger.info("INFO:Root.Renders(#{rkey}) #{root.renders[rkey]}\n")
     ok_action = case
       when root.renders[rkey] > System.max_renders                    ; :too_many_renders
       #when (Time.now.to_f - root.start_time) > System.max_render_time ; :too_slow
@@ -349,14 +355,20 @@ class Slot
 
   def render_partial( partial, locals={} )
     locals =  { :card=>card, :slot=>self }.merge(locals)
-    StubTemplate===@template ?
-      render_stub(partial, locals) :
+    if StubTemplate===@template
+      render_stub(partial, locals)
+    else
       @template.render(:partial=>partial, :locals=>locals)
+    end
   end
 
   def card_partial(action)
     # FIXME: I like this method name better- maybe other calls should resolve here instead
-    @template.partial_for_action(action, card)
+ActionController::Base.logger.info("INFO:card_partial(#{action},#{card.name}) #{@template.class}")
+    cp = @template.partial_for_action(action, card)
+debugger if Hash===@template
+ActionController::Base.logger.info("INFO:card_partial(#{action},#{card.name}) #{@template.class} :: #{cp}")
+    cp
   end
 
   def render_card_partial(action, locals={})
@@ -366,9 +378,11 @@ class Slot
   def render_xml(action, args={})
 
     rkey = self.card.name + ":" + action.to_s
-    root.renders[rkey] ||= 1; root.renders[rkey] += 1
+    root.renders[rkey] ||= 1;
+    root.renders[rkey] += 1 unless [:name, :link].member?(action)
     #root.start_time ||= Time.now.to_f
 
+ActionController::Base.logger.info("INFO:Root.Renders(#{rkey}) #{root.renders[rkey]}\n")
     ok_action = case
       when root.renders[rkey] > System.max_renders                    ; :too_many_renders
       #when (Time.now.to_f - root.start_time) > System.max_render_time ; :too_slow
@@ -376,7 +390,7 @@ class Slot
       else                                                            ; action
     end
 
-#ActiveRecord::Base.logger.info("<Render_xml: #{ok_action} #{rkey} #{root.renders[rkey]} >")
+#ActionController::Base.logger.info("INFO:<Render_xml: #{ok_action} #{rkey} #{root.renders[rkey]} >")
     result = case ok_action
       when :xml_missing ; "<no_card>#{card.name}</no_card>"
       when :name ; card.name
@@ -385,7 +399,6 @@ class Slot
         @renderer.render_xml = true
         @renderer.render( card, args.delete(:xml_content)|| "",
                           update_refs=card.references_expired )
-        #@renderer.render( card, args.delete(:content) || "", update_refs=card.references_expired)
 
       when :xml, :xml_expanded
         @state = 'view'
@@ -403,7 +416,7 @@ class Slot
       else raise("Unknown slot render action '#{ok_action}'")
     end
 
-#ActiveRecord::Base.logger.info("<Render_xml(#{ok_action}) #{rkey} #{root.renders[rkey]}} #{result}>") ; result
+#ActionController::Base.logger.info("INFO:<Render_xml(#{ok_action}) #{rkey} #{root.renders[rkey]}} #{result}>") ; result
     rescue Card::PermissionDenied=>e
       return "Permission error: #{e.message}"
   end
@@ -444,21 +457,16 @@ class Slot
     content
   end
 
-  def render_partial( partial, locals={} )
-    locals =  { :card=>card, :slot=>self }.merge(locals)
-#ActiveRecord::Base.logger.info("<Render part: #{partial} #{locals[:card].name}>")
-    StubTemplate===@template ?
-      render_stub(partial, locals) :
-      @template.render(:partial=>partial, :locals=>locals)
-  end
-
 #   General
 
   def process_transclusion( card, options={} )
     #warn("<process_transclusion card=#{card.name} options=#{options.inspect}")
     match_str = options[:match_str]
     subslot = subslot(card)
-    old_slot, @template.controller.slot = @template.controller.slot, subslot
+    subslot.controller = @controller
+    controller = @template.controller
+    #controller = @controller
+    old_slot, controller.slot = controller.slot, subslot
 
     # set item_format;  search cards access this variable when rendering their content.
     subslot.item_format = options[:item] if options[:item]
@@ -509,36 +517,89 @@ class Slot
         render_xml :naked_content
       when "basic/line"
         truncatewords_with_closing_tags( render( :custom_view ))
+        #card.content
+      when "specialtype/content";
+        render :expanded_view_content
+      when "views/open_missing";
+        "Add #{card.name}"
+      when "views/too_many_renders" ;
+        "#{card.content}"
       else
-        "No Stub for #{partial}"
-#ActiveRecord::Base.logger.info "XML:render_stub: No Stub = #{partial}\n"
+ActionController::Base.logger.info "INFO:XML:render_stub: No Stub = #{partial} Name:#{card.name}\n"
+        "No Stub for #{partial} Name:#{card.name}"
     end
+  end
+
+  def self.full_sanitizer
+    #@template.full_sanitizer
+    @full_sanitizer ||= HTML::FullSanitizer.new
+  end
+end
+
+class StubController
+  attr_accessor :slot
+  def initialize(slot)
+    @slot = slot;
   end
 end
 
 # For testing/console use of a slot w/o controllers etc.
-class StubTemplate
-  include ActionView::Helpers::SanitizeHelper
-  attr_accessor :indent, :slot
+class StubTemplate < ActionView::Template
+  #include ActionView::Helpers::SanitizeHelper
+  attr_accessor :indent, :slot, :controller, :card
+
   # for testing & commandline use
   # not totally happy with this..
+  #def self.full_sanitizer
+  #  @full_sanitizer ||= HTML::FullSanitizer.new
+  #end
 
-  def self.full_sanitizer
-    @full_sanitizer ||= HTML::FullSanitizer.new
+  def initialize(card, controller, context="nocontext", action="view", opts={})
+    @controller, @slot =
+      controller, opts[:slot] || Slot.new(card, controller, context, action, self, opts)
+    #@tpath = ActionView::Template::Path.new('app/views')
+    #@controller = @slot.controller
   end
-
 
   def params
     return {}
   end
 
-  def controller
-    @controller ||= (Struct.new(:slot)).new(nil)
+  def partial_for_action(action, card)
+    ty = card ? card.type : "NoCard"
+ActionController::Base.logger.info("INFO:StubP4A#{ty.to_s.downcase}/#{action}")
+    res = "#{ty.to_s.downcase}/#{action}"
+#debugger unless action == :partial || action == :view
+    res
   end
 
-  def partial_for_action(action, card)
-    "#{card.type.to_s.downcase}/#{action}"
-  end
+  #def render(action, args={})
+#ActionController::Base.logger.info("INFO:StubRender(#{action},#{args[:partial]})\n")
+  #  if action == :partial || action == :view
+  #    if (part = args[:partial])
+  #      #super.render(:partial => part)
+  #      if part == 'views/open_missing'
+  #         "StubT:Add #{@slot.card.name}"
+  #      elsif part == 'views/too_many_renders'
+  #         "#{@slot.card.content}"
+  #      else
+  #         "StubT:Unknown part: ${part}"
+  #      end
+  #    else
+  #      "StubT:No partial #{action}:#{args}"
+  #    end
+#debugger
+      #@slot.renderer.render(@slot.card, :open_missing, 0)
+#       template = @tpath[args[:partial]]
+#       if template
+#         template.render_template(action, args)
+#       else
+#ActionController::Base.logger.error("No template StubRender(#{action},#{args[:partial]})\n")
+#       end
+#    else
+#ActionController::Base.logger.error("INFO:Bad Action StubRender(#{action},#{args[:partial]})\n")
+#    end
+#  end
 end
 
 

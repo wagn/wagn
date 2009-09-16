@@ -6,7 +6,7 @@
   <%# if !@card.hard_template %>
     <%#= @content %>
   <%# end %>
-  <%# slot =  Slot.new(@card, 'bogus_1', 'view', self) %>
+  <%# slot =  new_slot(@card, nil, 'bogus_1', 'view', self) %>
   <%#- a = slot.expand_transclusions(slot.render(:naked_content)) %>
   <%# warn "email content: #{a}" %>
   <%#= a %>

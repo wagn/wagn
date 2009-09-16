@@ -107,7 +107,8 @@ module CardLib
     end
     
     def who_can(operation)
-      perm = permissions.reject { |perm| perm.task != operation.to_s }.first   
+      return unless perm = permissions
+      perm = perm.reject { |perm| perm.task != operation.to_s }.first   
       perm && perm.party ? perm.party : nil
     end 
     

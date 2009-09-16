@@ -2,15 +2,24 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class WikiReferenceTest < ActiveSupport::TestCase
              
+  attr_accessor :controller
   
   def setup
     setup_default_user  
     CachedCard.bump_global_seq
   end
 
+  def controller
+    @controller ||= CardController.new()
+  end
+
+  def new_slot(card)
+    controller.help.new_slot(card,controller)
+  end
+ 
   def test_hard_templated_card_should_insert_references_on_create
     Card::UserForm.create! :name=>"JoeForm"
-    Slot.new(Card["JoeForm"]).render(:naked_content)
+    new_slot(Card["JoeForm"]).render(:naked_content)
     assert_equal ["joe_form+age", "joe_form+name", "joe_form+description"].sort,
       Card["JoeForm"].out_references.plot(:referenced_name).sort     
     assert !Card["JoeForm"].references_expired      
@@ -20,7 +29,7 @@ class WikiReferenceTest < ActiveSupport::TestCase
     Card::Cardtype.create! :name=>"SpecialForm"
     Card::SpecialForm.create! :name=>"Form1", :content=>"foo"
     Card.create! :name=>"SpecialForm+*tform", :content=>"{{+bar}}", :extension_type=>"HardTemplate"
-    Slot.new(Card["Form1"]).render(:naked_content)
+    new_slot(Card["Form1"]).render(:naked_content)
     assert !Card["Form1"].references_expired      
     assert_equal ["form1+bar"], Card["Form1"].out_references.plot(:referenced_name)
   end
@@ -39,7 +48,7 @@ class WikiReferenceTest < ActiveSupport::TestCase
     Card::UserForm.create! :name=>"JoeForm"
     tmpl = Card["UserForm+*tform"]
     tmpl.content = "{{+monkey}} {{+banana}} {{+fruit}}"; tmpl.save!
-    Slot.new(Card["JoeForm"]).render(:naked_content)
+    new_slot(Card["JoeForm"]).render(:naked_content)
     assert_equal ["joe_form+monkey", "joe_form+banana", "joe_form+fruit"].sort,
       Card["JoeForm"].out_references.plot(:referenced_name).sort     
     assert !Card["JoeForm"].references_expired

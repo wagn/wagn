@@ -29,8 +29,16 @@ module CardLib
 
       def multi_type_template(name)
         if name and !name.simple?
-          trunk = find_template(name.trunk_name) or return nil
-          tag   = find_template(name.tag_name)   or return nil
+          trunk = find_template(name.trunk_name) and trunk or return nil
+          tag = find_template(name.tag_name) and tag  or return nil
+          trtypename = Cardtype.name_for(trunk.type)
+          begin
+            tagtypename = Cardtype.name_for(tag.type)
+          rescue Exception => e
+logger.info("ERROR:INFO:MMMtag(#{e.message})#{tag.name}\n");
+            return nil
+          end
+logger.info("INFO:MMM:#{trunk.name}:#{trunk.type}::#{tag.name}:#{tag.type}\n");
           tform "#{Cardtype.name_for(trunk.type)}+#{Cardtype.name_for(tag.type)}"
         end
       end

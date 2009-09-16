@@ -8,8 +8,18 @@ module WagnHelper
     card ||= @card; context||=@context; action||=@action
     slot = case
       when controller.slot;  nil_given ? controller.slot : controller.slot.subslot(card)
-      else controller.slot = Slot.new(card,context,action,self,opts)
+      else
+        #opts[:controller] = controller
+        controller.slot = Slot.new(card,controller,context,action,self,opts)
     end
+  end
+
+  def new_slot(card=nil, controller=nil, context=nil, action=nil, template=nil, opts={})
+ActionController::Base.logger.info("INFO:new_slot(#{card.name},#{card.type},#{context})#{action}:#{template}:#{opts}\n")
+    controller ||= self
+    slot=Slot.new(card, controller, context, action, template, opts)
+ActionController::Base.logger.info("INFO:new_slot = #{slot}")
+    slot
   end
 
   # FIMXE: this one's a hack...
@@ -19,7 +29,7 @@ module WagnHelper
     end
     # FIXME: some cases we're called before controller.slot is initialized.
     #  should we initialize here? or always do Slot.new?
-    subslot = controller.slot ? controller.slot.subslot(card) : Slot.new(card)
+    subslot = controller.slot ? controller.slot.subslot(card) : Slot.new(card,controller)
     subslot.render(mode.to_sym, args)
   end
 
@@ -112,7 +122,8 @@ module WagnHelper
     # FIXME: this should look up the inheritance hierarchy, once we have one
     # wow this is a steaming heap of dung.
     cardtype = (card ? card.type : 'Basic').underscore
-    if Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR <=1
+#logger.info "Helper:partial_for_action#{name} #{cardtype}"
+    part = if Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR <=1
       finder.file_exists?("/types/#{cardtype}/_#{name}") ?
         "/types/#{cardtype}/#{name}" :
         "/types/basic/#{name}"
@@ -128,6 +139,8 @@ module WagnHelper
         "/types/#{cardtype}/#{name}" :
         "/types/basic/#{name}"
     end
+logger.info("Partial_for_action(#{name},#{card.type},#{cardtype})#{part}\n")
+   part
   end
 
   def symbolize_param(param)
@@ -284,6 +297,3 @@ module WagnHelper
 
 
 end
-
-
-

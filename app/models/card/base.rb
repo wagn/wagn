@@ -1,3 +1,6 @@
+#require 'action_controller/base'
+#require 'action_controller/helpers'
+
 module Card
   #
   # == Associations
@@ -10,6 +13,14 @@ module Card
   # right_junctions:: from the point of view of A, A+B is a right_junction (the +B part is on the right)  
   #
   class Base < ActiveRecord::Base
+    #def helpers
+    #  Helpers.instance
+    #end
+#
+#    class Helpers
+#      include Singleton
+#      include ActionController::Helpers
+#    end
 
     HTML_ENTITIES = {
       'nbsp' => "\240"
@@ -101,7 +112,13 @@ module Card
     #end
     
     def default_permissions
-      perm = template.real_card.permissions.reject { |p| p.task == 'create' unless (type == 'Cardtype' or template?) }
+      tmpl = template
+#logger "No template1" unless tmpl
+      tmpl = tmpl.card if tmpl===CachedCard
+      tmpl = tmpl.real_card if tmpl
+#logger "No template3" unless tmpl
+      return unless tmpl
+      perm = tmpl.real_card.permissions.reject { |p| p.task == 'create' unless (type == 'Cardtype' or template?) }
       
       perm.map do |p|  
         if p.task == 'read'
@@ -233,6 +250,7 @@ module Card
         end
      
         card = p.call( klass )
+ActiveRecord::Base.logger.info("INFO:with_class_from_arg(#{card.name},#{klass}(#{broken_type}))") unless card
         card.broken_type = broken_type
         card
       end
@@ -612,16 +630,20 @@ module Card
     # private cards can't be connected to private cards with a different group
     validates_each :permissions do |rec, attr, value|
       if rec.updates.for?(:permissions)
-        rec.errors.add :permissions, 'Insufficient permissions specifications' if value.length < 3
-        reader,err = nil, nil
-        value.each do |p|  #fixme-perm -- ugly - no alibi
-          unless %w{ create read edit comment delete }.member?(p.task.to_s)
-            rec.errors.add :permissions, "No such permission: #{p.task}"
+        if value
+          rec.errors.add :permissions, 'Insufficient permissions specifications' if value.length < 3
+          reader,err = nil, nil
+          value.each do |p|  #fixme-perm -- ugly - no alibi
+            unless %w{ create read edit comment delete }.member?(p.task.to_s)
+              rec.errors.add :permissions, "No such permission: #{p.task}"
+            end
+            if p.task == 'read' then reader = p.party end
+            if p.party == nil and p.task!='comment'
+              rec.errors.add :permission, "#{p.task} party can't be set to nil"
+            end
           end
-          if p.task == 'read' then reader = p.party end
-          if p.party == nil and p.task!='comment'
-            rec.errors.add :permission, "#{p.task} party can't be set to nil"
-          end
+        #else
+        #  rec.errors.add :permissions, 'Permissions specifications missing'
         end
 
 

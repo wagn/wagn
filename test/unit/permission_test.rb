@@ -220,7 +220,11 @@ class PermissionTest < ActiveSupport::TestCase
 
  
   def test_should_allow_reader_change_on_existing_connections
-    a, ab, abc, ad = %w(A A+B A+B+C A+D ).collect do |name|  Card.find_by_name(name)  end
+    a, ab, abc, ad = %w(A A+B A+B+C A+D ).collect do |name|
+      c=Card.find_by_name(name)
+      #assert_equal name, '' unless  Card::Basic===c
+      c
+    end
     a.permit(:read, @r1); a.save
     
     # assert that cards of which a is a part have also been changed

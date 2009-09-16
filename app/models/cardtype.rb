@@ -48,7 +48,9 @@ class Cardtype < ActiveRecord::Base
     
     def name_for(classname)
       load_cache if @@cache.empty?
-      @@cache[:card_names][classname] || raise("No card name for class #{classname}") 
+      @@cache[:card_names][classname] ||
+logger.error("No card name for class #{classname}") 
+# raise("No card name for class #{classname}") 
     end
 
     def classname_for(card_name) 

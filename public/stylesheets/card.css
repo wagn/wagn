@@ -365,7 +365,7 @@ div:hover.card-footer .footer-content {
 .in-multi .instruction p{
   clear:left;
   border: 0px;
-  background-color: #ddd; /*hard-coded because inherit wasn't working right in IE */
+  background-color: #e3e3e3; /*hard-coded because inherit wasn't working right in IE */
   text-align: left;
   padding: 0 3px;
 }

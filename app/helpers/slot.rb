@@ -1,4 +1,3 @@
-require 'ruby-debug'
 require_dependency 'slot_helpers'
 
 class Slot
@@ -23,14 +22,8 @@ class Slot
     @card, @controller, @context, @action = card, controller, context.to_s, action.to_s
     @render_as_xml = opts[:format] == :xml
     context = "main_1" unless context =~ /\_/
-    @template = template || (@render_as_xml && card.xml_template)
-    unless @template
-ActionController::Base.logger.info("INFO:Creating StubTemplate #{card.name}\n")
-      
-#debugger if CardController::Helper===controller
-      @template = StubTemplate.new(card, controller, context, action, opts)
-    end
-#debugger if Hash===@template
+    @template = template || (@render_as_xml && card.xml_template) ||
+      StubTemplate.new(card, controller, context, action, opts)
     @position = context.split('_').last
     @char_count = 0
     @subslots = []
@@ -40,7 +33,6 @@ ActionController::Base.logger.info("INFO:Creating StubTemplate #{card.name}\n")
     unless @renderer = opts[:renderer]
       @renderer = Renderer.new
       @renderer.render_xml = @render_as_xml
-#ActionController::Base.logger.info "INFO:XML:slot:initialize: render_xml = #{@render_as_xml}>>#{@renderer.render_xml}\n"
     end
   end
 
@@ -143,7 +135,6 @@ ActionController::Base.logger.info("INFO:Creating StubTemplate #{card.name}\n")
 
   def cache_action(cc_method)
     (if CachedCard===card
-#ActionController::Base.logger.info("INFO:Name:#{card.key}:#{cc_method}:")
       card.send(cc_method) || begin
         cached_card, @card = card, Card.find_by_key_and_trash(card.key, false) || raise("Oops! found cached card for #{card.key} but couln't find the real one")
         content = yield(@card)
@@ -183,7 +174,6 @@ ActionController::Base.logger.info("INFO:Creating StubTemplate #{card.name}\n")
     root.renders[rkey] += 1 unless [:name, :link].member?(action)
     #root.start_time ||= Time.now.to_f
 
-ActionController::Base.logger.info("INFO:Root.Renders(#{rkey}) #{root.renders[rkey]}\n")
     ok_action = case
       when root.renders[rkey] > System.max_renders                    ; :too_many_renders
       #when (Time.now.to_f - root.start_time) > System.max_render_time ; :too_slow
@@ -364,11 +354,7 @@ ActionController::Base.logger.info("INFO:Root.Renders(#{rkey}) #{root.renders[rk
 
   def card_partial(action)
     # FIXME: I like this method name better- maybe other calls should resolve here instead
-ActionController::Base.logger.info("INFO:card_partial(#{action},#{card.name}) #{@template.class}")
-    cp = @template.partial_for_action(action, card)
-debugger if Hash===@template
-ActionController::Base.logger.info("INFO:card_partial(#{action},#{card.name}) #{@template.class} :: #{cp}")
-    cp
+    @template.partial_for_action(action, card)
   end
 
   def render_card_partial(action, locals={})
@@ -382,7 +368,6 @@ ActionController::Base.logger.info("INFO:card_partial(#{action},#{card.name}) #{
     root.renders[rkey] += 1 unless [:name, :link].member?(action)
     #root.start_time ||= Time.now.to_f
 
-ActionController::Base.logger.info("INFO:Root.Renders(#{rkey}) #{root.renders[rkey]}\n")
     ok_action = case
       when root.renders[rkey] > System.max_renders                    ; :too_many_renders
       #when (Time.now.to_f - root.start_time) > System.max_render_time ; :too_slow
@@ -390,7 +375,6 @@ ActionController::Base.logger.info("INFO:Root.Renders(#{rkey}) #{root.renders[rk
       else                                                            ; action
     end
 
-#ActionController::Base.logger.info("INFO:<Render_xml: #{ok_action} #{rkey} #{root.renders[rkey]} >")
     result = case ok_action
       when :xml_missing ; "<no_card>#{card.name}</no_card>"
       when :name ; card.name
@@ -416,7 +400,6 @@ ActionController::Base.logger.info("INFO:Root.Renders(#{rkey}) #{root.renders[rk
       else raise("Unknown slot render action '#{ok_action}'")
     end
 
-#ActionController::Base.logger.info("INFO:<Render_xml(#{ok_action}) #{rkey} #{root.renders[rkey]}} #{result}>") ; result
     rescue Card::PermissionDenied=>e
       return "Permission error: #{e.message}"
   end
@@ -525,7 +508,6 @@ ActionController::Base.logger.info("INFO:Root.Renders(#{rkey}) #{root.renders[rk
       when "views/too_many_renders" ;
         "#{card.content}"
       else
-ActionController::Base.logger.info "INFO:XML:render_stub: No Stub = #{partial} Name:#{card.name}\n"
         "No Stub for #{partial} Name:#{card.name}"
     end
   end
@@ -567,39 +549,7 @@ class StubTemplate < ActionView::Template
 
   def partial_for_action(action, card)
     ty = card ? card.type : "NoCard"
-ActionController::Base.logger.info("INFO:StubP4A#{ty.to_s.downcase}/#{action}")
     res = "#{ty.to_s.downcase}/#{action}"
-#debugger unless action == :partial || action == :view
     res
   end
-
-  #def render(action, args={})
-#ActionController::Base.logger.info("INFO:StubRender(#{action},#{args[:partial]})\n")
-  #  if action == :partial || action == :view
-  #    if (part = args[:partial])
-  #      #super.render(:partial => part)
-  #      if part == 'views/open_missing'
-  #         "StubT:Add #{@slot.card.name}"
-  #      elsif part == 'views/too_many_renders'
-  #         "#{@slot.card.content}"
-  #      else
-  #         "StubT:Unknown part: ${part}"
-  #      end
-  #    else
-  #      "StubT:No partial #{action}:#{args}"
-  #    end
-#debugger
-      #@slot.renderer.render(@slot.card, :open_missing, 0)
-#       template = @tpath[args[:partial]]
-#       if template
-#         template.render_template(action, args)
-#       else
-#ActionController::Base.logger.error("No template StubRender(#{action},#{args[:partial]})\n")
-#       end
-#    else
-#ActionController::Base.logger.error("INFO:Bad Action StubRender(#{action},#{args[:partial]})\n")
-#    end
-#  end
 end
-
-

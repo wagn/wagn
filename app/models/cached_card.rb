@@ -96,8 +96,6 @@ class CachedCard
               else                                                ; [ :make_it    , 'scratch'          ]
             end 
         
-ActiveRecord::Base.logger.info "INFO:<get card: #{name} :: #{todo.first} :: #{todo.last}>"
-
           case todo.first
             when :got_it   ;    card
             when :cache_it ;    self.cache_me_if_you_can(card, opts)       
@@ -157,7 +155,6 @@ ActiveRecord::Base.logger.info "INFO:<get card: #{name} :: #{todo.first} :: #{to
   
   def initialize(key, real_card=nil, opts={})
     @auto_load = opts[:auto_load_card]   
-    #ActiveRecord::Base.logger.info("<Cache init: #{key}, #{real_card}>")
     @card = real_card  
     @attrs = nil 
     @key=key
@@ -221,7 +218,7 @@ ActiveRecord::Base.logger.info "INFO:<get card: #{name} :: #{todo.first} :: #{to
   def real_card
     card || begin
       expire_all
-#      raise(CacheError, "cached card #{@key} found but it's not in database")
+      #raise(CacheError, "cached card #{@key} found but it's not in database")
 ActiveRecord::Base.logger.info("ERROR:cached card #{@key} found but it's not in database")
       nil
     end
@@ -229,11 +226,8 @@ ActiveRecord::Base.logger.info("ERROR:cached card #{@key} found but it's not in 
   
   def card
     unless @card
-#ActiveRecord::Base.logger.info("INFO:<Loading: #{@key}>")
       @card =  Card.find_by_key_and_trash(@key, false)
 ActiveRecord::Base.logger.info("ERROR:INFO:<Loading: nokey #{@key}>") unless @card
-#raise "ERROR: card find failed #{@key}>" unless @card
-#debugger unless @card
     end
     @card
   end

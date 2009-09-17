@@ -113,10 +113,8 @@ module Card
     
     def default_permissions
       tmpl = template
-#logger "No template1" unless tmpl
       tmpl = tmpl.card if tmpl===CachedCard
       tmpl = tmpl.real_card if tmpl
-#logger "No template3" unless tmpl
       return unless tmpl
       perm = tmpl.real_card.permissions.reject { |p| p.task == 'create' unless (type == 'Cardtype' or template?) }
       
@@ -250,7 +248,6 @@ module Card
         end
      
         card = p.call( klass )
-ActiveRecord::Base.logger.info("INFO:with_class_from_arg(#{card.name},#{klass}(#{broken_type}))") unless card
         card.broken_type = broken_type
         card
       end
@@ -642,8 +639,6 @@ ActiveRecord::Base.logger.info("INFO:with_class_from_arg(#{card.name},#{klass}(#
               rec.errors.add :permission, "#{p.task} party can't be set to nil"
             end
           end
-        #else
-        #  rec.errors.add :permissions, 'Permissions specifications missing'
         end
 
 

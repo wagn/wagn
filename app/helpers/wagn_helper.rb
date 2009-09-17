@@ -15,10 +15,8 @@ module WagnHelper
   end
 
   def new_slot(card=nil, controller=nil, context=nil, action=nil, template=nil, opts={})
-ActionController::Base.logger.info("INFO:new_slot(#{card.name},#{card.type},#{context})#{action}:#{template}:#{opts}\n")
     controller ||= self
     slot=Slot.new(card, controller, context, action, template, opts)
-ActionController::Base.logger.info("INFO:new_slot = #{slot}")
     slot
   end
 
@@ -122,8 +120,7 @@ ActionController::Base.logger.info("INFO:new_slot = #{slot}")
     # FIXME: this should look up the inheritance hierarchy, once we have one
     # wow this is a steaming heap of dung.
     cardtype = (card ? card.type : 'Basic').underscore
-#logger.info "Helper:partial_for_action#{name} #{cardtype}"
-    part = if Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR <=1
+    if Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR <=1
       finder.file_exists?("/types/#{cardtype}/_#{name}") ?
         "/types/#{cardtype}/#{name}" :
         "/types/basic/#{name}"
@@ -139,8 +136,6 @@ ActionController::Base.logger.info("INFO:new_slot = #{slot}")
         "/types/#{cardtype}/#{name}" :
         "/types/basic/#{name}"
     end
-logger.info("Partial_for_action(#{name},#{card.type},#{cardtype})#{part}\n")
-   part
   end
 
   def symbolize_param(param)

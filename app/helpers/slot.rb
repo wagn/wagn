@@ -18,7 +18,7 @@ class Slot
     :line => :closed,
   }
 
-  def initialize(card, controller, context="main_1", action="view", template=nil, opts={})
+  def initialize(card, controller, context="main_1", action="view", template=nil, opts={}, renderer=nil)
     @card, @controller, @context, @action = card, controller, context.to_s, action.to_s
     @render_as_xml = opts[:format] == :xml
     context = "main_1" unless context =~ /\_/
@@ -312,8 +312,8 @@ class Slot
              # process_transclusion blows up if name is nil
             "{<bogus/>{#{fullname}}}" 
           else                                             
-            debugger
-            specified_content = @template.controller.params[tname.gsub(/\+/,'_')] || ''
+            params = @template.controller.params
+            specified_content = params && params[tname.gsub(/\+/,'_')] || ''
  
             tcard = case
               when @state==:edit

@@ -301,7 +301,6 @@ class Slot
              # process_transclusion blows up if name is nil
             "{<bogus/>{#{fullname}}}" 
           else                                             
-            debugger
             specified_content = @template.controller.params[tname.gsub(/\+/,'_')] || ''
  
             tcard = case

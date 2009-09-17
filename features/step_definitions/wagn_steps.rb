@@ -51,7 +51,7 @@ When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
   end
 end
      
-When /^(.*) creates?\s*([^\s]*) card "(.*)" with content "(.*)"$/ do |username, cardtype, cardname, content|
+When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/ do |username, cardtype, cardname, content|
   create_card(username, cardtype, cardname, content) do   
     fill_in_hidden_or_not("card[content]", :with=>content)
   end
@@ -75,10 +75,13 @@ When /^(.*) deletes? "([^\"]*)"$/ do |username, cardname|
   end
 end
 
+Then /what/ do
+  save_and_open_page
+end
 
 def fill_in_hidden_or_not(field_locator, options={})
   set_hidden_field(field_locator, :to=>options[:with])
-rescue Webrat::NotFoundError=>e
+rescue Exception => e
   fill_in(field_locator, options)
 end
 
@@ -161,3 +164,12 @@ Then /^In (.*) I should not see "([^\"]*)"$/ do |section, text|
     scope.should_not contain(text)
   end
 end
+
+Then /^the "([^"]*)" field should contain "([^"]*)"$/ do |field, value|
+  field_labeled(field).value.should =~ /#{value}/
+end
+
+Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field|
+  field_labeled(field).element.search(".//option[@selected = 'selected']").inner_html.should =~ /#{value}/
+end
+

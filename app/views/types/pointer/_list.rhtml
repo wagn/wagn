@@ -1,11 +1,15 @@
-<%- eid = slot.context %>
+<%- 
+  eid = slot.context 
+  pointees = card.pointees
+  pointees = [''] if pointees.empty?
+%>
+
 <%= slot.form.hidden_field :content, :id=>"#{eid}-hidden-content" %>
 <ul id="<%=eid%>-ul" class="pointer">
-  <% card.pointees.each_with_index do |link, index| %>
-    <%= render :partial=>'/types/pointer/field', :locals=>{ :eid=>eid, :link=>link, :index=>index, :card=>card } %>
+  <% pointees.each_with_index do |link, index| %>
+    <%= render :partial=>'/types/pointer/field', :locals=>{ :eid=>eid, :card=>card, :index=>index, :link=>link } %>
   <% end %>
-  <li id="<%=eid%>-add">
-  <%= link_to_remote 'Add another', :url=>"javascript:urlForAddField('#{card.id}','#{eid}')", :update=>"#{eid}-add", :position=>:before %>
+  <%= render :partial=>'types/pointer/add_item', :locals=>{ :eid=>eid, :card=>card, :index=>pointees.length } %>
 </ul>
 
 <%= slot.editor_hooks :save=>%{              

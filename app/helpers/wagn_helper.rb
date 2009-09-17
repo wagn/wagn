@@ -125,8 +125,9 @@ module WagnHelper
         "/types/#{cardtype}/#{name}" :
         "/types/basic/#{name}"
     elsif   Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR > 2
+      ## This test works for .rhtml files but seems to fail on .html.erb
       begin
-        self.view_paths.find_template "types/#{cardtype}/_#{name}" 
+        self.view_paths.find_template "types/#{cardtype}/_#{name}"
         "types/#{cardtype}/#{name}"
       rescue ActionView::MissingTemplate => e
         "/types/basic/#{name}"

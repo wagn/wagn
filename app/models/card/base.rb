@@ -293,12 +293,13 @@ module Card
     
     def multi_save(cards)
       Notification.before_multi_save(self,cards)  # future system hook
-      cards.each_pair do |name, opts|
+      cards.each_pair do |name, opts|              
+        opts[:content] ||= ""
         name = name.post_cgi.to_absolute(self.name)
         logger.info "multi update working on #{name}: #{opts.inspect}"
         if card = Card[name]      
           card.update_attributes(opts)
-        elsif !opts[:content].strip.blank?  #fixme -- need full-on strip that gets rid of blank html tags.
+        elsif opts[:content].strip.present? or opts[:pointee].present? or opts[:pointees].present?  #fixme -- need full-on strip that gets rid of blank html tags.
           opts[:name] = name                
           if ::Cardtype.create_ok?( self.type ) && !::Cardtype.create_ok?( Card.new(opts).type )
             ::User.as(:wagbot) { Card.create(opts) }

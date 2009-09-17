@@ -41,7 +41,7 @@ class Slot
     opts[:format] = :xml if @render_as_xml
     # Note that at this point the subslot context, and thus id, are
     # somewhat meaningless-- the subslot is only really used for tracking position.
-    new_slot = self.class.new(card, controller, context+"_#{@subslots.size+1}", @action, @template, opts)
+    new_slot = self.class.new(card, controller, context+"_#{@subslots.size+1}", @action, @template, opts, :renderer=>@renderer)
     new_slot.state = @state
     @subslots << new_slot
     new_slot.superslot = self
@@ -62,6 +62,10 @@ class Slot
       card.name.gsub!(/^#{root.card.name}\+/, '+') if root.card.new_record?  ##FIXME -- need to match other relative inclusions.
       fields_for = builder.new("cards[#{card.name.pre_cgi}]", card, @template, options, block)
     end
+  end    
+  
+  def full_field_name(field)   
+    form.text_field(field).match(/name=\"([^\"]*)\"/)[1] 
   end
 
   def wrap_content( content="" )
@@ -110,11 +114,8 @@ class Slot
       }
 
       slot_attr = attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join
-      open_slot = %{<!--[if IE]><div #{slot_attr}><![endif]-->} +
-                  %{<![if !IE]><object #{slot_attr}><![endif]>}
-      close_slot= %{<!--[if IE]></div><![endif]-->} +
-                  %{<![if !IE]></object><![endif]>}
-
+      open_slot = "<div #{slot_attr}>"
+      close_slot= "</div>"
     end
 
     if block_given?
@@ -309,15 +310,16 @@ class Slot
 
           if fullname.blank?
              # process_transclusion blows up if name is nil
-            "{<bogus/>{#{fullname}}}"
-          else
-  #          options[:view]='edit' if @state == :edit
-
+            "{<bogus/>{#{fullname}}}" 
+          else                                             
+            debugger
+            specified_content = @template.controller.params[tname.gsub(/\+/,'_')] || ''
+ 
             tcard = case
               when @state==:edit
                 ( Card.find_by_name( fullname ) || 
                   Card.find_phantom( fullname ) || 
-                  Card.new(   :name=>fullname, :type=>options[:type] ) )
+                  Card.new(   :name=>fullname, :type=>options[:type], :content=>specified_content ) )
               else
                 CachedCard.get fullname
             end

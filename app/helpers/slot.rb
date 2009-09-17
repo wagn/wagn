@@ -305,6 +305,7 @@ class Slot
             if (specified_content = @template.controller.params[tname.gsub(/\+/,'_')]).present?
               cargs[:content] = specified_content
             end
+
             tcard = case
               when @state==:edit
                   (Card.find_by_name( fullname ) || Card.find_phantom( fullname ) ||  Card.new( cargs ))

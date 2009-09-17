@@ -106,8 +106,8 @@ ActionController::Base.logger.info("TEST:INFO:slot_render_testing #{card.name} R
     bob_address = Card.create! :name=>'bob+address'
     #FIXME -- does not work retroactively if template is created later.
 
-    #assert_equal span(bob_city, "Sparta"), slot_render(bob_address.reload), "include"
     assert_equal ["bob#{JOINT}address"], bob_city.transcluders.plot(:name)
+    assert_equal span(bob_city, "Sparta"), slot_render(bob_address.reload), "include"
   end
 
   def test_nested_transclude

@@ -504,7 +504,7 @@ class Slot
         truncatewords_with_closing_tags( render( :custom_view ))
         #card.content
       when "specialtype/content";
-        render :expanded_view_content
+        @template.render :expanded_view_content
       when "views/open_missing";
         "Add #{card.name}"
       when "views/too_many_renders" ;
@@ -517,13 +517,6 @@ class Slot
   def self.full_sanitizer
     #@template.full_sanitizer
     @full_sanitizer ||= HTML::FullSanitizer.new
-  end
-end
-
-class StubController
-  attr_accessor :slot
-  def initialize(slot)
-    @slot = slot;
   end
 end
 

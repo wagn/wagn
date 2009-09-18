@@ -17,6 +17,7 @@ class Slot
    
   def initialize(card, context="main_1", action="view", template=nil, opts={} )
     @card, @context, @action, @template, = card, context.to_s, action.to_s, (template||StubTemplate.new)
+    @main_content = opts[:main_content]
     context = "main_1" unless context =~ /\_/
     @position = context.split('_').last    
     @char_count = 0
@@ -297,9 +298,22 @@ class Slot
           options[:showname] = tname.to_show(fullname)
           #logger.info("absolutized tname and now have these transclusion options: #{options.inspect}")
 
+          builtin_partial = {
+            '**head' => true,
+            '**top_menu' => true,
+            '**logo' => true,
+            '**bottom_menu' => true,
+            '**alerts' => true,
+            '**foot' => true
+          }
+
           if fullname.blank?  
              # process_transclusion blows up if name is nil
             "{<bogus/>{#{fullname}}}" 
+          elsif builtin_partial[fullname]
+            @template.render :partial => "layouts/#{fullname.gsub(/\*/,'')}"
+          elsif fullname == "_main"
+            @main_content
           else                                             
             specified_content = @template.controller.params[tname.gsub(/\+/,'_')] || ''
  

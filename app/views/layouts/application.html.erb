@@ -18,7 +18,8 @@
 
   			<div id="sidebar" context="sidebar">
   				<% if sidebar_card = CachedCard.get_real("*sidebar")  %>
-  					<%= new_slot(sidebar_card, nil, "sidebar_1", "view", self).render(:naked) %>
+  					<%= xx = new_slot(sidebar_card, "sidebar_1", "view", self) %>
+                                        <%= xx.render(:naked) %>
   				<% end %>
   			</div>
 		

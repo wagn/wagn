@@ -1,5 +1,5 @@
+require "ruby-debug"
 #require 'action_controller/base'
-#require 'action_controller/helpers'
 
 module Card
   #
@@ -13,15 +13,6 @@ module Card
   # right_junctions:: from the point of view of A, A+B is a right_junction (the +B part is on the right)  
   #
   class Base < ActiveRecord::Base
-    #def helpers
-    #  Helpers.instance
-    #end
-#
-#    class Helpers
-#      include Singleton
-#      include ActionController::Helpers
-#    end
-
     HTML_ENTITIES = {
       'nbsp' => "\240"
     }
@@ -110,14 +101,11 @@ module Card
       # this should search through all variables (in links and inclusions) starting with $ 
       #and replace them with either the corresponding passed-in param or ''
     #end
-    
+
     def default_permissions
-      tmpl = template
-      tmpl = tmpl.card if tmpl===CachedCard
-      tmpl = tmpl.real_card if tmpl
-      return unless tmpl
-      perm = tmpl.real_card.permissions.reject { |p| p.task == 'create' unless (type == 'Cardtype' or template?) }
-      
+      return unless template && cc=template.real_card
+      perm = cc.permissions.reject { |p| p.task == 'create' unless (type == 'Cardtype' or template?) }
+
       perm.map do |p|  
         if p.task == 'read'
           party = p.party

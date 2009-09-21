@@ -1,3 +1,4 @@
+require "ruby-debug"
 module Chunk  
   class Link < Reference
     attr_accessor :link_text, :link_type, :card_name
@@ -43,6 +44,7 @@ module Chunk
           when /^mailto:/; 'email-link'
         end)
         if (render_xml)
+#debugger if href == "http://google.com"
           %{<link class="#{klass}" href="#{href}">#{link_text}</link>}
         else
           %{<a class="#{klass}" href="#{href}">#{link_text}</a>}

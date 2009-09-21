@@ -6,12 +6,12 @@
   3. processing search()
   
 =end     
-#require 'ruby-debug'
+require "ruby-debug"
 require_dependency 'card/cacheable'
 
 class CacheError < StandardError; end
 
-class CachedCard 
+class CachedCard
   cattr_accessor :cache, :perform_caching, :cache_key_prefix, :seq_key
   attr_reader :key
   attr_accessor :comment, :comment_author
@@ -22,10 +22,17 @@ class CachedCard
   self.card_names={} 
   self.local_cache={ :real=>{}, :get=>{}, :seq=>nil }
                                            
-  
   include ::CardLib::Cacheable
   
+  def initialize(key, real_card=nil, opts={})
+    @auto_load = opts[:auto_load_card]   
+    @card = real_card  
+    @attrs = nil 
+    @key=key
+  end
+  
   class << self       
+
     def set_cache_prefix( prefix )
       self.cache_key_prefix = prefix
       self.seq_key = self.cache_key_prefix + "/global_seq"
@@ -150,33 +157,29 @@ class CachedCard
     def [](name)
       find(name.to_key) || Card[name]
     end
-         
   end
-  
-  def initialize(key, real_card=nil, opts={})
-    @auto_load = opts[:auto_load_card]   
-    @card = real_card  
-    @attrs = nil 
-    @key=key
-  end
-  
+
+  # my truth value, so a cached card can be false
+  def nil?; @card.nil?;  end
+
   def exists?
     !!(read('name') || read('content'))
+    #!!(read('name') || !self.nil?)
   end
   
   def phantom?() false end  # only cache non-phantom cards -- not sure this should be the case.
   def new_record?() false end  # only cache existing cards
    
   def to_id() id end            
-  def id()  id = get('id') { card && card.id.to_s || '' }; id.to_i end
+  def id()  id = get('id') { card && card.id.to_s || 0 }; id.to_i end
   def name()  get('name') { card && card.name || '' } end
   def type()  get('type') { card && card.type || 'Basic' } end 
   def content() get('content') { card && card.content || '' } end
-  def xml_content() get('xml_content') { card && card.xml_content || '' } end
-  def current_revision() get('current_revision') { card.current_revision } end
+  def current_revision() get('current_revision') { card && card.current_revision } end
   def extension_type() get('extension_type') { card && card.extension_type } end
   def created_at() get('created_at') { card && card.created_at } end
   def updated_at() get('updated_at') { card && card.updated_at } end
+  def references_expired() get('references_expired') { card && card.references_expired } end
   def read_permission() 
     get('read_permission') {
       return '' unless card
@@ -206,28 +209,29 @@ class CachedCard
     party_class == 'Role' ? System.role_ok?(party_id) : (party_id==User.current_user.id)
   end
 
-  def line_content()   read('line_content') end
+  def line_content() read('line_content') end
   def line_content=(content)  write('line_content', content)  end      
   
   def view_content() read('view_content') end
   def view_content=(content)  write('view_content', content) end
   
+  def xml_content() read('xml_content') end
+  def xml_content=(content) write('xml_content', content) end
+
   def footer() read('footer') end
   def footer=(content) write('footer', content) end
   
   def real_card
-    card || begin
+    !nil? && card || begin
       expire_all
-      #raise(CacheError, "cached card #{@key} found but it's not in database")
-ActiveRecord::Base.logger.info("ERROR:cached card #{@key} found but it's not in database")
-      nil
+      raise(CacheError, "cached card #{@key} found but it's not in database")
     end
   end
   
   def card
     unless @card
       @card =  Card.find_by_key_and_trash(@key, false)
-ActiveRecord::Base.logger.info("ERROR:INFO:<Loading: nokey #{@key}>") unless @card
+ActiveRecord::Base.logger.info("ERROR:INFO:Loading: nokey #{@key}>") unless @card
     end
     @card
   end

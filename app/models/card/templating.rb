@@ -31,15 +31,7 @@ module CardLib
         if name and !name.simple?
           (trunk = find_template(name.trunk_name)) and trunk or return nil
           (tag = find_template(name.tag_name)) and tag  or return nil
-          trtypename = Cardtype.name_for(trunk.type)
-          begin
-            tagtypename = Cardtype.name_for(tag.type)
-          rescue Exception => e
-logger.info("ERROR:INFO:MMMtag(#{e.message})#{tag.name}\n");
-            return nil
-          end
-logger.info("INFO:MMMtag #{trtypename}+#{tagtypename}\n");
-          tform "#{trtypename}+#{tagtypename}"
+          tform "#{Cardtype.name_for(trunk.type)}+#{Cardtype.name_for(tag.type)}"
         end
       end
 
@@ -94,9 +86,10 @@ logger.info("INFO:MMMtag #{trtypename}+#{tagtypename}\n");
     #------( this template governs me )
 
     def template
-      @template ||= right_template ||
-                    type_template ||
-                    self.class.default_template
+      @template ||= right_template
+      @template ||= type_template
+      @template ||= self.class.default_template
+       @template
     end
 
     def right_template
@@ -104,8 +97,9 @@ logger.info("INFO:MMMtag #{trtypename}+#{tagtypename}\n");
     end
 
     def type_template
-      @type_template ||= self.class.multi_type_template(name) ||
-                         single_type_template
+      @type_template ||= self.class.multi_type_template(name)
+      @type_template ||= single_type_template
+      @type_template
     end
 
     def hard_template
@@ -226,4 +220,3 @@ logger.info("INFO:MMMtag #{trtypename}+#{tagtypename}\n");
   end
 end
 
-:q

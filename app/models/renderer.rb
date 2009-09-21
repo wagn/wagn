@@ -1,3 +1,4 @@
+require 'ruby-debug'
 require 'diff'
 require_dependency 'models/wiki_reference'
 
@@ -11,6 +12,8 @@ class Renderer
     # the empty string you passed it, it won't work.  but we seem to need it because
     # card.content='' in set_card_defaults and if you make it nil a bunch of other
     # stuff breaks
+
+raise "render card nil" if card.nil?
     content = content.blank? ? card.content_for_rendering  : content 
     wiki_content = WikiContent.new(card, content, self, @render_xml)
     update_references(card, wiki_content) if update_references

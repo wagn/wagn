@@ -1,15 +1,16 @@
+require "ruby-debug"
 require_dependency 'slot_helpers'
 
 class Slot
   include SlotHelpers
   cattr_accessor :max_char_count
   self.max_char_count = 200
-  attr_reader :card, :context, :action, :renderer, :template, :render_as_xml
+  attr_reader :card, :context, :action, :renderer, :template
   attr_accessor :editor_count, :options_need_save, :state,
     :requested_view, :js_queue_initialized, :transclusions,
     :position, :renderer, :form, :superslot, :char_count,
     :item_format, :type, :renders, :start_time,
-    :transclusion_view_overrides, :skip_autosave, :controller
+    :transclusion_view_overrides, :skip_autosave
   attr_writer :form
 
   VIEW_ALIASES = {
@@ -18,30 +19,36 @@ class Slot
     :line => :closed,
   }
 
-  def initialize(card, controller, context="main_1", action="view", template=nil, opts={}, renderer=nil)
-    @card, @controller, @context, @action = card, controller, context.to_s, action.to_s
-    @render_as_xml = opts[:format] == :xml
+  def initialize(card, context="main_1", action="view", template=nil, opts={}, renderer=nil)
+    @card, @context, @action, @renderer =
+        card, context.to_s, action.to_s, renderer
+#ActionController::Base.logger.info("requested_view:#{requested_view} :xml_view #{card.name}\n") if opts[:format] == :xml
+    @requested_view = :xml_view if  opts[:format] == :xml
     context = "main_1" unless context =~ /\_/
-    @template = template || (@render_as_xml && card.xml_template) ||
-      StubTemplate.new(card, controller, context, action, opts)
+    @template = template || (xml? && card.xml_template) ||
+       StubTemplate.new(card, context, action, opts)
     @position = context.split('_').last
     @char_count = 0
     @subslots = []
     @state = 'view'
     @renders = {}
     @transclusion_view_overrides = opts[:transclusion_view_overrides]
-    unless @renderer = opts[:renderer]
+    unless @renderer
       @renderer = Renderer.new
-      @renderer.render_xml = @render_as_xml
+      @renderer.render_xml = xml?
     end
   end
 
+  def xml?
+    [:xml_view, :xml_content].member?(@requested_view)
+  end
+ 
   def subslot(card, &proc)
-    opts = { :renderer => @renderer }
-    opts[:format] = :xml if @render_as_xml
     # Note that at this point the subslot context, and thus id, are
     # somewhat meaningless-- the subslot is only really used for tracking position.
-    new_slot = self.class.new(card, controller, context+"_#{@subslots.size+1}", @action, @template, opts, :renderer=>@renderer)
+#ActionController::Base.logger.info("INFO:new_slot(#{card.name}, #{@requested_view}::#{action}, #{@template.class}, #{@renderer.class})\n")
+    new_slot = self.class.new(card, context+"_#{@subslots.size+1}", @action, @template, {}, @renderer)
+    new_slot.requested_view = @requested_view
     new_slot.state = @state
     @subslots << new_slot
     new_slot.superslot = self
@@ -134,17 +141,29 @@ class Slot
     end
   end
 
+  # Store block output in cc_method attribute in the cache
   def cache_action(cc_method)
-    (if CachedCard===card
-      card.send(cc_method) || begin
-        cached_card, @card = card, Card.find_by_key_and_trash(card.key, false) || raise("Oops! found cached card for #{card.key} but couln't find the real one")
-        content = yield(@card)
-        cached_card.send("#{cc_method}=", content.clone)
-        content
+    cc = card
+    get_value = if cc && CachedCard===cc
+      cc.send(cc_method) || begin
+        if @card = Card.find_by_key_and_trash(cc.key, false)
+# || raise("Oops! found cached card for #{cc.key} but couldn't find the real one Method(#{cc_method})")
+          content = yield(cc)
+          cc.send("#{cc_method}=", content.clone)
+          content
+        else
+          msg="Oops! found cached card for #{cc.key} but couldn't find the real one Method(#{cc_method})"
+          raise msg
+        end
       end
+    elsif cc
+      yield(cc)
     else
-      yield(card)
-    end).clone
+      msg="Oops! found cached card for #{card.key} but couldn't find the real one Method(#{cc_method})"
+      raise msg
+    end
+raise "Error: Nil for #{cc_method} Card:#{card.name}" if get_value == nil
+    get_value.clone
   end
   
   def deny_render?(action)
@@ -165,26 +184,43 @@ class Slot
     VIEW_ALIASES[view.to_sym] || view
   end
 
-  def render(action, args={})
-    @render_as_xml = true if action == :xml
-    return render_xml(action, args) if @render_as_xml 
-    #warn "<render(#{card.name}, #{@state}).render(#{action}, item=>#{args[:item]})"
+  def Slot.ok_xml_action?(action)
+    [:xml_missing, :xml, :xml_content, :xml_expanded, :naked].member?(action)
+  end
 
+  def Slot.ok_action?(action)
+    [:naked_content, :naked].member?(action) || ! Slot.ok_xml_action?(action)
+  end
+
+  def ok_action(action)
+#raise "Action?(#{action})" if xml? && ! Slot.ok_xml_action?(action)
+#raise "Action?(#{action})" if !xml? && ! Slot.ok_action?(action)
     rkey = self.card.name + ":" + action.to_s
     root.renders[rkey] ||= 1 
     root.renders[rkey] += 1 unless [:name, :link].member?(action)
     #root.start_time ||= Time.now.to_f
+#ActionController::Base.logger.info("OkAction(#{rkey})#{root.renders[rkey]}\n")
 
-    ok_action = case
-      when root.renders[rkey] > System.max_renders                    ; :too_many_renders
+    case
+      when root.renders[rkey] > System.max_renders                    ;
+#ActionController::Base.logger.info("INFO:OkAction too_many #{rkey}\n")
+#raise "Infinite loop #{action} #{@requested_view}" if root.renders[rkey] > System.max_renders
+        :too_many_renders
       #when (Time.now.to_f - root.start_time) > System.max_render_time ; :too_slow
       when denial = deny_render?(action)                              ; denial
       else                                                            ; action
     end
+  end
 
+  def render(action, args={})
+    @requested_view = :xml_view if action == :xml
+#ActionController::Base.logger.info("requested_view:#{requested_view} :xml action #{card.name}\n") if action == :xml
     w_content = nil
-    result = case ok_action
+    result = case ok_action = ok_action(action)
     ###-----------( FULL )
+      when :xml_content, :xml, :xml_expanded
+        render_xml(ok_action, args)
+
       when :new
         w_content = render_partial('views/new')
         
@@ -232,19 +268,20 @@ class Slot
 
       when :expanded_view_content, :naked, :raw # raw is DEPRECATED
         @state = 'view'
-        expand_transclusions(  cache_action('view_content') {
-          card.post_render( render(:open_content))
+        expand_transclusions(  cache_action('view_content') { |c|
+          c.post_render( render(:open_content) )
         } )
 
       when :expanded_line_content
-        expand_transclusions(  cache_action('line_content') { render(:closed_content) } )
+        expand_transclusions(  cache_action('line_content') { |c| render(:closed_content) } )
 
       #-----( without transclusions processed )
       when :closed_content;   render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
       when :open_content;     render_card_partial(:content)  # FIXME?: 'content' is inconsistent
       when :naked_content, :raw_content # raw_content is DEPRECATED
         #warn "rendering #{card.name} refs=#{card.references_expired} card.content=#{card.content}"
-        @renderer.render( card, args.delete(:content) || "", update_refs=card.references_expired)
+#debugger if xml? ^ @renderer.render_xml
+        @renderer.render( card, args.delete(:content) || "", card.references_expired)
 
     ###---(  EDIT VIEWS )
 
@@ -261,10 +298,10 @@ class Slot
             
       ###---(  EXCEPTIONS ) 
         
-      when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
+      when :deny_view, :edit_auto, :too_slow, :open_missing, :closed_missing, :too_many_renders;
           render_partial("views/#{ok_action}", args)
-
       else
+raise "unknown card view #{ok_action}"
         "<strong>#{card.name} - unknown card view: '#{ok_action}'</strong>"
     end
     if w_content
@@ -281,7 +318,7 @@ class Slot
 
   def expand_transclusions(content, args={})
     #return ("skip(#{card.name}):"+content)
-    if card.name.template_name?
+    if card && card.name.template_name?
       # KLUGILICIOIUS: if we leave the {{}} transclusions intact they may get processed by
       #  an outer card expansion-- causing weird rendering oddities.  the bogus thing
       #  seems to work ok for now.
@@ -306,7 +343,7 @@ class Slot
           fullname.gsub!('_user', User.current_user.card.name)
           options[:fullname] = fullname
           options[:showname] = tname.to_show(fullname)
-          #logger.info("absolutized tname and now have these transclusion options: #{options.inspect}")
+          #logger.info("absolutized tname and now have these transclusion options: #{options.inspect}\n")
 
           if fullname.blank?
              # process_transclusion blows up if name is nil
@@ -326,9 +363,15 @@ class Slot
 
             #warn("sending these options for processing: #{options.inspect}")
 
-            tcontent = process_transclusion( tcard, options )
+#raise "Transclude error" if tcard.nil?
+            tcontent = unless tcard.nil? && !tcard
+              process_transclusion( tcard, options )
+            else 
+              "Transclude error: #{card.name}"
+            end
             self.char_count += (tcontent ? tcontent.length : 0)
                                     
+            # FIXME: Isn't this totally the wrong place for this?
             if size = options[:size] 
               size = (size.to_s == "full" ? "" : "_#{size}")
               tcontent = tcontent.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
@@ -347,11 +390,19 @@ class Slot
 
   def render_partial( partial, locals={} )
     locals =  { :card=>card, :slot=>self }.merge(locals)
-    if StubTemplate===@template
+ActionController::Base.logger.info("INFO:render_partial(#{partial}, #{@template.class}, #{locals[:card].name} #{card.name}\n")
+
+
+    res = if StubTemplate===@template
+#raise "StubTemplate Render #{partial}"
+debugger if @template.nil?
       render_stub(partial, locals)
     else
+#raise "Regular template: #{@template.class} #{partial}"
       @template.render(:partial=>partial, :locals=>locals)
     end
+raise "Nothing #{card.name} #{partial} #{@template.class}" if res == nil
+    res || "Nothing #{partial} #{@template.class}"
   end
 
   def card_partial(action)
@@ -365,48 +416,37 @@ class Slot
 
   def render_xml(action, args={})
 
-    rkey = self.card.name + ":" + action.to_s
-    root.renders[rkey] ||= 1;
-    root.renders[rkey] += 1 unless [:name, :link].member?(action)
-    #root.start_time ||= Time.now.to_f
-
-    ok_action = case
-      when root.renders[rkey] > System.max_renders                    ; :too_many_renders
-      #when (Time.now.to_f - root.start_time) > System.max_render_time ; :too_slow
-      when denial = deny_render?(action)                              ; denial
-      else                                                            ; action
-    end
-
-    result = case ok_action
+    result = case ok_action = ok_action(action)
       when :xml_missing ; "<no_card>#{card.name}</no_card>"
       when :name ; card.name
-      when :xml_content ; render_card_partial(:xml_content)
-      when :naked_content
-        @renderer.render_xml = true
-        @renderer.render( card, args.delete(:xml_content)|| "",
-                          update_refs=card.references_expired )
-
+      #when :xml_content ; render_card_partial(:xml_content)
+      when :xml_content
+#ActionController::Base.logger.info("INFO:Need xml?\n") if xml? ^ @renderer.render_xml
+        @renderer.render_xml = true if xml?
+        render_card_partial(ok_action, args)  # FIXME?: 'content' is inconsistent
+      when :naked
+#raise("INFO:Need renderer xml?") if xml? ^ @renderer.render_xml
+    @renderer.render_xml = true if xml?
+ActionController::Base.logger.info("INFO:Need renderer xml?\n") if xml? ^ @renderer.render_xml
+#debugger if xml? ^ @renderer.render_xml
+        @renderer.render( card, args.delete(:content)||card.content||"", card.references_expired )
       when :xml, :xml_expanded
         @state = 'view'
-        processed = cache_action('view_content') { render_xml(:xml_content) }
-        processed=expand_transclusions_xml( processed )
-        while (processed=~/\{\{[^\}]+\}\}/) do
-          processed=expand_transclusions_xml( processed )
-        end
-        processed
+        expand_transclusions_xml( cache_action('xml_content') { render_xml(:xml_content) } )
 
       ###---(  EXCEPTIONS )
-      when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
-          render_partial("card/#{ok_action}", args)
-
+      when :deny_view, :edit_auto, :too_slow, :open_missing, :closed_missing, :too_many_renders
+          "Error Path: "+render_partial("card/#{ok_action}", args)
       else raise("Unknown slot render action '#{ok_action}'")
     end
-
-    rescue Card::PermissionDenied=>e
-      return "Permission error: #{e.message}"
+if result.nil?
+#ActionController::Base.logger.info("RR:Nothing #{ok_action} #{card.name} #{@template.class}\n")
+result="Nil Result"
+end
+    result
   end
 
-  def expand_transclusions_xml(content, args={})
+  def expand_transclusions_xml(content, options={})
     if card.name.template_name?
       # KLUGILICIOIUS: if we leave the {{}} transclusions intact they may
       # get processed by an outer card expansion-- causing weird rendering
@@ -432,11 +472,14 @@ class Slot
         else
           options[:match_str] = match_str
           options[:view] ||= :xml_content
-          tcard = CachedCard.get fullname
-          process_transclusion(tcard, options)
+          if (tcard = CachedCard.get fullname) && !tcard.nil?
+            process_transclusion(tcard, options)
+          else 
+            "Transclude error: #{card.name}"
+          end
         end
       rescue Card::PermissionDenied
-        ""
+        "Perm?"
       end
     end
     content
@@ -448,7 +491,7 @@ class Slot
     #warn("<process_transclusion card=#{card.name} options=#{options.inspect}")
     match_str = options[:match_str]
     subslot = subslot(card)
-    subslot.controller = @controller
+    #subslot.controller = @controller
     controller = @template.controller
     #controller = @controller
     old_slot, controller.slot = controller.slot, subslot
@@ -459,23 +502,36 @@ class Slot
 
     # FIXME! need a different test here
     new_card = card.new_record? && !card.phantom?
-
-    state, vmode = @state.to_sym, (options[:view] || :content).to_sym
+raise "Subslot missmatch; #{subslot.requested_view}, #{requested_view}" if subslot.requested_view != @requested_view
+    state, vmode = @state.to_sym, xml? ? :xml_content : (options[:view] || :open_content).to_s
+    vmode = vmode.to_sym
+#ActionController::Base.logger.info("requested_view sub:#{subslot.requested_view} xml:#{xml?}:#{subslot.xml?} #{card.name} vmode:#{vmode} #{card.name}\n")
     subslot.requested_view = vmode
+    @renderer.render_xml = true if xml?
+#debugger if xml? ^ @renderer.render_xml
     action = case
       when [:name, :link].member?(vmode)  ; vmode
       when state==:edit                   ; card.phantom? ? :edit_auto : :edit_in_form
       when new_card; [:xml, :xml_content].member?(vmode) ? :xml_missing : state==:line ? :closed_missing : :open_missing
       when state==:line                   ; :expanded_line_content
+      when [:xml, :xml_content].member?(vmode) ; vmode
       else                                ; vmode
     end
-    #logger.info("<transclusion_case: state=#{state} vmode=#{vmode} --> Action=#{action}, Option=#{options.inspect}")
+ActionController::Base.logger.info("<transclusion_case: state=#{state} vmode=#{vmode} --> Action=#{action}, Option=#{options.inspect}\n")
 
-    result = if @render_as_xml
+    result = if xml?
       xmltag = subslot.card.name.tag_name
       match_str ||= '' 
-      %{\n<card name="#{xmltag}" type="#{subslot.card.type}" transclude="#{match_str}">} +
-       subslot.render_xml(action, options) + %{</card>}
+ActionController::Base.logger.info("Convert nil card #{card.name}\n") if card && card.nil?
+      #card = nil if card && card.nil?
+      if !card.nil? || card
+        sub_render = subslot.render_xml(action, options)
+sub_render = "NilClass" if sub_render.nil?
+       %{\n<card name="#{xmltag}" type="#{subslot.card.type}" transclude="#{match_str}">} +
+        sub_render + %{</card>}
+      else
+"Nil Card ... #{action}"
+      end
     else
       subslot.render(action, options)
     end
@@ -491,60 +547,57 @@ class Slot
 
   def render_stub(partial, locals={})
     raise("Invalid partial") if partial.blank?
+ActionController::Base.logger.info("INFO:render_stub(#{partial},#{card.name})\n")
     case partial
-      when "card/view"
-        %{\n<div class="view">\n} + wrap_content( render( :expanded_view_content ))+ %{\n</div>\n}
-      when "card/line"
-        %{\n<div class="view">\n} + wrap_content( render(:expanded_line_content) ) + %{\n</div>\n}
+      when "card/view", "card/line"
+debugger
       when "basic/content"
-        render :naked_content
+raise "Xml in regular" if xml?
+#debugger# unless @template.card
+begin
+        @template.render_partial(partial, locals)
+rescue Exception => e
+#debugger
+raise e
+end
+        #%{\n<div class="view">\n} + wrap_content( @renderer.render(card) ) + %{\n</div>\n}
       when "basic/xml_content"
-        render_xml :naked_content
-      when "basic/line"
-        truncatewords_with_closing_tags( render( :custom_view ))
-        #card.content
-      when "specialtype/content";
-        @template.render :expanded_view_content
+ActionController::Base.logger.info "Change it?\n" if xml? && !@renderer.render_xml
+raise %{Error: regular in xml} unless xml?
+        @renderer.render( card, locals.delete(:content) || "", card.references_expired)
+        #@template.render(:partial=>partial)
       when "views/open_missing";
-        "Add #{card.name}"
-      when "views/too_many_renders" ;
-        "#{card.content}"
+      when "views/too_many_renders";
+        #@renderer.render_xml = true if xml?
+        @template.render(:partial=>partial)
+        #%{\n<div class="view">\n} + wrap_content( "Add #{card.name}" ) + %{\n</div>\n}
       else
         "No Stub for #{partial} Name:#{card.name}"
     end
   end
 
   def self.full_sanitizer
-    #@template.full_sanitizer
     @full_sanitizer ||= HTML::FullSanitizer.new
   end
 end
 
 # For testing/console use of a slot w/o controllers etc.
 class StubTemplate < ActionView::Template
-  #include ActionView::Helpers::SanitizeHelper
-  attr_accessor :indent, :slot, :controller, :card
+  attr_accessor :indent, :slot, :card, :as_xml
 
-  # for testing & commandline use
-  # not totally happy with this..
-  #def self.full_sanitizer
-  #  @full_sanitizer ||= HTML::FullSanitizer.new
-  #end
-
-  def initialize(card, controller, context="nocontext", action="view", opts={})
-    @controller, @slot =
-      controller, opts[:slot] || Slot.new(card, controller, context, action, self, opts)
-    #@tpath = ActionView::Template::Path.new('app/views')
-    #@controller = @slot.controller
+  def initialize(card, context="nocontext", action="view", opts={})
+    super('app/views')
+    @card = card
+    @as_xml = opts[:format] == :xml
   end
 
-  def params
-    return {}
+  def render_partial(partial, locals)
+    inline = %{ get_slot.render(:partial => "#{partial}") }
+    render([:inline=>inline], locals)
   end
 
   def partial_for_action(action, card)
     ty = card ? card.type : "NoCard"
-    res = "#{ty.to_s.downcase}/#{action}"
-    res
+    "#{ty.to_s.downcase}/#{action}"
   end
 end

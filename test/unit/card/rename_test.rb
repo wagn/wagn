@@ -31,7 +31,7 @@ class Card::RenameTest < ActiveSupport::TestCase
   end      
                                       
   def test_rename_same_key_with_dependents
-    assert_rename card("B"), "b"
+    assert_rename card_with_refs("B"), "b"
   end                                     
 
   def test_updates_inclusions_when_renaming    
@@ -54,7 +54,7 @@ class Card::RenameTest < ActiveSupport::TestCase
 
   def test_flip
     with_debugging do
-      assert_rename card("A+B"), "B+A"
+      assert_rename card_with_refs("A+B"), "B+A"
     end
   end
 
@@ -86,7 +86,7 @@ class Card::RenameTest < ActiveSupport::TestCase
 
 
   def test_junction_to_simple   
-    assert_rename card("A+B"), "K" 
+    assert_rename card_with_refs("A+B"), "K" 
   end
    
   
@@ -97,15 +97,15 @@ class Card::RenameTest < ActiveSupport::TestCase
   
   
   def test_simple_to_simple
-    assert_rename card("A"), "Alephant"
+    assert_rename card_with_refs("A"), "Alephant"
   end
          
   def test_simple_to_junction_with_create
-    assert_rename card("T"), "C+J"
+    assert_rename card_with_refs("T"), "C+J"
   end
 
   def test_subdivision
-    assert_rename card("A+B"), "A+B+T"  # re-uses the parent card: A+B
+    assert_rename card_with_refs("A+B"), "A+B+T"  # re-uses the parent card: A+B
   end
   
   def test_reset_key
@@ -156,6 +156,12 @@ class Card::RenameTest < ActiveSupport::TestCase
   def card(name)
     Card.find_by_name(name) or raise "Couldn't find card named #{name}"
   end                          
+
+  def card_with_refs(cardname)
+    card = card(cardname)
+    card.update_referencers = true
+    card
+  end
 
   def test_renaming_card_with_self_link_should_not_hang
     c = Card["Dairy"]

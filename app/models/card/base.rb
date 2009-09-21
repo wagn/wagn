@@ -103,8 +103,8 @@ module Card
     #end
 
     def default_permissions
-      return unless template && cc=template.real_card
-      perm = cc.permissions.reject { |p| p.task == 'create' unless (type == 'Cardtype' or template?) }
+      return unless real_card=template.real_card
+      perm = real_card.permissions.reject { |p| p.task == 'create' unless (type == 'Cardtype' or template?) }
 
       perm.map do |p|  
         if p.task == 'read'

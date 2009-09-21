@@ -95,6 +95,7 @@ module CardLib
     end  
     
     def ok!(operation)
+ActionController::Base.logger.info("INFO:OK: #{self.name}")
       raise ::Card::PermissionDenied.new(self) unless ok?(operation);  true
     end
 

@@ -552,10 +552,11 @@ ActionController::Base.logger.info("INFO:render_stub(#{partial},#{card.name})\n"
       when "card/view", "card/line"
 debugger
       when "basic/content"
-raise "Xml in regular" if xml?
+        locals[:format] = :xml if xml?
 #debugger# unless @template.card
 begin
-        @template.render_partial(partial, locals)
+        "Stub can't render card content: "+@renderer.render( card, locals.delete(:content) || "", card.references_expired)
+        #@template.render_partial(partial, locals)
 rescue Exception => e
 #debugger
 raise e
@@ -564,13 +565,14 @@ end
       when "basic/xml_content"
 ActionController::Base.logger.info "Change it?\n" if xml? && !@renderer.render_xml
 raise %{Error: regular in xml} unless xml?
-        @renderer.render( card, locals.delete(:content) || "", card.references_expired)
-        #@template.render(:partial=>partial)
+        "Stub can't render card xml_content: "+@renderer.render( card, locals.delete(:content) || "", card.references_expired)
+        #@template.render_partial(partial,locals)
       when "views/open_missing";
-      when "views/too_many_renders";
         #@renderer.render_xml = true if xml?
-        @template.render(:partial=>partial)
-        #%{\n<div class="view">\n} + wrap_content( "Add #{card.name}" ) + %{\n</div>\n}
+        #@template.render(:partial=>partial)
+        %{\n<div class="view">\n} + wrap_content( "Add #{card.name}" ) + %{\n</div>\n}
+      when "views/too_many_renders";
+        %{Oops There must be a transclude loop including #{card.name} => #{card.content}}
       else
         "No Stub for #{partial} Name:#{card.name}"
     end
@@ -583,9 +585,10 @@ end
 
 # For testing/console use of a slot w/o controllers etc.
 class StubTemplate < ActionView::Template
-  attr_accessor :indent, :slot, :card, :as_xml
+  attr_accessor :indent, :slot, :card, :as_xml, :controller
 
-  def initialize(card, context="nocontext", action="view", opts={})
+  def initialize(card, context="nocontext", action="view", opts={}, controller=nil)
+    @controller = controller || CardController.new()
     super('app/views')
     @card = card
     @as_xml = opts[:format] == :xml
@@ -593,6 +596,8 @@ class StubTemplate < ActionView::Template
 
   def render_partial(partial, locals)
     inline = %{ get_slot.render(:partial => "#{partial}") }
+xml= locals[:slot].xml?
+raise "StubRender:#{xml} C:#{locals[:card].name} P:#{partial}"
     render([:inline=>inline], locals)
   end
 

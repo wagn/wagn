@@ -221,9 +221,15 @@ class CachedCard
   def footer() read('footer') end
   def footer=(content) write('footer', content) end
   
+  def get_real
+    card unless nil?
+    @card = self.class.get_real(name.to_key).card
+  end
+
   def real_card
     !nil? && card || begin
       expire_all
+      @card = self.class.get_real(@key) ||
       raise(CacheError, "cached card #{@key} found but it's not in database")
     end
   end
@@ -233,7 +239,7 @@ class CachedCard
       @card =  Card.find_by_key_and_trash(@key, false)
 ActiveRecord::Base.logger.info("ERROR:INFO:Loading: nokey #{@key}>") unless @card
     end
-    @card
+    @card.nil? ? nil : @card
   end
 
   def method_missing(method_id,*args)

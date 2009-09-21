@@ -183,7 +183,7 @@ module CardLib
     #-----( ... and I govern these cards )
 
     def real_card
-      self
+      self==CachedCard ? self.get_real : self
     end
 
     def hard_templatees

@@ -8,15 +8,12 @@ module WagnHelper
     card ||= @card; context||=@context; action||=@action
     slot = case
       when controller.slot;  nil_given ? controller.slot : controller.slot.subslot(card)
-      else
-        #opts[:controller] = controller
-        controller.slot = Slot.new(card,context,action,self,opts)
+      else controller.slot = Slot.new(card,context,action,self,opts)
     end
   end
 
   def new_slot(card=nil, context=nil, action=nil, template=nil, opts={}, renderer=nil)
-    slot=Slot.new(card, context, action, template, opts, renderer)
-    slot
+    Slot.new(card, context, action, template, opts, renderer)
   end
 
   # FIMXE: this one's a hack...
@@ -132,7 +129,6 @@ module WagnHelper
         "/types/basic/#{name}"
       end
     else
-debugger if template_path.paths.nil?
       self.view_paths.find { |template_path| template_path.paths.include?("types/#{cardtype}/_#{name}") } ?
         "/types/#{cardtype}/#{name}" :
         "/types/basic/#{name}"

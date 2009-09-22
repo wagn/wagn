@@ -160,11 +160,10 @@ class CachedCard
   end
 
   # my truth value, so a cached card can be false
-  def nil?; @card.nil?;  end
+  def nil?; @card ? true : false; end
 
   def exists?
     !!(read('name') || read('content'))
-    #!!(read('name') || !self.nil?)
   end
   
   def phantom?() false end  # only cache non-phantom cards -- not sure this should be the case.
@@ -227,22 +226,27 @@ class CachedCard
   end
 
   def real_card
-    !nil? && card || begin
+    !nil? && (real=card) || begin
       expire_all
-      @card = self.class.get_real(@key) ||
-      msg = "cached card #{@key} found but it's not in database"
-      #raise(CacheError, msg)
-ActiveRecord::Base.logger.error("ERROR: #{msg}\n")
-      nil
+      if real = self.class.get_real(@key)
+        @card = real
+      else
+        msg = "cached card #{@key} found but it's not in database"
+        #raise(CacheError, msg)
+ActiveRecord::Base.logger.info("INFO:WARNING: No real card, return nil\nINFO: #{msg}\n")
+        nil
+      end
     end
+    real
   end
   
   def card
-    unless @card
-      @card =  Card.find_by_key_and_trash(@key, false)
+    if @card; @card
+    else
 ActiveRecord::Base.logger.info("ERROR:INFO:Loading: nokey #{@key}>") unless @card
+      @card =  Card.find_by_key_and_trash(@key, false)
+      @card.nil? ? nil : @card
     end
-    @card.nil? ? nil : @card
   end
 
   def method_missing(method_id,*args)

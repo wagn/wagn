@@ -103,7 +103,7 @@ module Card
     #end
 
     def default_permissions
-      return unless real_card=template.real_card
+      return unless template && real_card=template.real_card
       perm = real_card.permissions.reject { |p| p.task == 'create' unless (type == 'Cardtype' or template?) }
 
       perm.map do |p|  
@@ -112,7 +112,8 @@ module Card
           
           if trunk and tag
             trunk_reader, tag_reader = trunk.who_can(:read), tag.who_can(:read)
-              if trunk_reader.anonymous? or (authenticated?(trunk_reader) and !tag_reader.anonymous?)
+              if !trunk_reader or trunk_reader.anonymous? or
+                   (authenticated?(trunk_reader) and !tag_reader.anonymous?)
                 party = tag_reader
               else
                 party = trunk_reader

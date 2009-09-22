@@ -230,7 +230,10 @@ class CachedCard
     !nil? && card || begin
       expire_all
       @card = self.class.get_real(@key) ||
-      raise(CacheError, "cached card #{@key} found but it's not in database")
+      msg = "cached card #{@key} found but it's not in database"
+      #raise(CacheError, msg)
+ActiveRecord::Base.logger.error("ERROR: #{msg}\n")
+      nil
     end
   end
   

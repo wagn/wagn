@@ -5,7 +5,9 @@ javascripts:
   - effects
   - controls
   - application
-  - calendar
+  - calendar       
+  - jquery.metadata
+  - jquery.maps
 stylesheets: 
 - base: 
   - page

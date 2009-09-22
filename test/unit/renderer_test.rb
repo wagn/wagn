@@ -1,5 +1,10 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
+#
+# Note that we are using stub rendering here to get links.  This isn't really a very good
+# test because it has a very special code path that is really very limited.  It gets
+# internal links expanded in html or xml style, and prety much ignores any other output.
+#
 class RendererTest < ActiveSupport::TestCase
   include ChunkTestHelper
   

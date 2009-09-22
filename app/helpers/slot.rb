@@ -46,7 +46,7 @@ class Slot
   def subslot(card, &proc)
     # Note that at this point the subslot context, and thus id, are
     # somewhat meaningless-- the subslot is only really used for tracking position.
-#ActionController::Base.logger.info("INFO:new_slot(#{card.name}, #{@requested_view}::#{action}, #{@template.class}, #{@renderer.class})\n")
+ActionController::Base.logger.info("INFO:subslot(#{card.name}, #{@requested_view}::#{action}, #{@template.class}, #{@renderer.class})\n")
     new_slot = self.class.new(card, context+"_#{@subslots.size+1}", @action, @template, {}, @renderer)
     new_slot.requested_view = @requested_view
     new_slot.state = @state
@@ -203,7 +203,6 @@ raise "Error: Nil for #{cc_method} Card:#{card.name}" if get_value == nil
 
     case
       when root.renders[rkey] > System.max_renders                    ;
-#ActionController::Base.logger.info("INFO:OkAction too_many #{rkey}\n")
 #raise "Infinite loop #{action} #{@requested_view}" if root.renders[rkey] > System.max_renders
         :too_many_renders
       #when (Time.now.to_f - root.start_time) > System.max_render_time ; :too_slow
@@ -392,16 +391,11 @@ raise "unknown card view #{ok_action}"
     locals =  { :card=>card, :slot=>self }.merge(locals)
 ActionController::Base.logger.info("INFO:render_partial(#{partial}, #{@template.class}, #{locals[:card].name} #{card.name}\n")
 
-
     res = if StubTemplate===@template
-#raise "StubTemplate Render #{partial}"
-debugger if @template.nil?
       render_stub(partial, locals)
     else
-#raise "Regular template: #{@template.class} #{partial}"
       @template.render(:partial=>partial, :locals=>locals)
     end
-raise "Nothing #{card.name} #{partial} #{@template.class}" if res == nil
     res || "Nothing #{partial} #{@template.class}"
   end
 
@@ -419,16 +413,12 @@ raise "Nothing #{card.name} #{partial} #{@template.class}" if res == nil
     result = case ok_action = ok_action(action)
       when :xml_missing ; "<no_card>#{card.name}</no_card>"
       when :name ; card.name
-      #when :xml_content ; render_card_partial(:xml_content)
       when :xml_content
-#ActionController::Base.logger.info("INFO:Need xml?\n") if xml? ^ @renderer.render_xml
         @renderer.render_xml = true if xml?
         render_card_partial(ok_action, args)  # FIXME?: 'content' is inconsistent
       when :naked
-#raise("INFO:Need renderer xml?") if xml? ^ @renderer.render_xml
-    @renderer.render_xml = true if xml?
+@renderer.render_xml = true if xml?
 ActionController::Base.logger.info("INFO:Need renderer xml?\n") if xml? ^ @renderer.render_xml
-#debugger if xml? ^ @renderer.render_xml
         @renderer.render( card, args.delete(:content)||card.content||"", card.references_expired )
       when :xml, :xml_expanded
         @state = 'view'
@@ -549,23 +539,13 @@ sub_render = "NilClass" if sub_render.nil?
     raise("Invalid partial") if partial.blank?
 ActionController::Base.logger.info("INFO:render_stub(#{partial},#{card.name})\n")
     case partial
-      when "card/view", "card/line"
-debugger
       when "basic/content"
         locals[:format] = :xml if xml?
-#debugger# unless @template.card
-begin
-        "Stub can't render card content: "+@renderer.render( card, locals.delete(:content) || "", card.references_expired)
+        @renderer.render( card, locals.delete(:content) || "", card.references_expired)
         #@template.render_partial(partial, locals)
-rescue Exception => e
-#debugger
-raise e
-end
         #%{\n<div class="view">\n} + wrap_content( @renderer.render(card) ) + %{\n</div>\n}
       when "basic/xml_content"
-ActionController::Base.logger.info "Change it?\n" if xml? && !@renderer.render_xml
-raise %{Error: regular in xml} unless xml?
-        "Stub can't render card xml_content: "+@renderer.render( card, locals.delete(:content) || "", card.references_expired)
+        @renderer.render( card, locals.delete(:content) || "", card.references_expired)
         #@template.render_partial(partial,locals)
       when "views/open_missing";
         #@renderer.render_xml = true if xml?

@@ -1,4 +1,4 @@
-config/database.yml
+config/database.yml*
 config/amazon_s3.yml
 config/newrelic.yml
 config/wagn.rb
@@ -7,6 +7,7 @@ tmp/*
 script/performance/*.session
 public/stylesheets/local.css
 pkg
+public/crossdomain.xml
 public/image
 public/file
 public_scripts

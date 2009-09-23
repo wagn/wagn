@@ -1,35 +1,28 @@
-
 require 'rexml/document'
 
 class XmlcardController < ApplicationController
+  helper :wagn, :card 
 
-  helper :card 
-  layout :default_layout
-
-  before_filter :create_ok, :only=>[ :post, :put ]
+  before_filter :create_ok, :only=>[ :put, :post ]
 
   before_filter :load_card!, :only=>[ :get, :put, :post ]
-    #:changes, :comment, :denied, :edit, :edit_conflict, :edit_name, 
-    #:edit_type, :options, :quick_update, :related, :remove, :rollback, 
-    #:save_draft, :update
-  #]
 
   before_filter :load_card_with_cache, :only => [ :get ]
   
-  before_filter :edit_ok,   :only=>[ :post, :put ]
+  before_filter :edit_ok,   :only=>[ :put, :post ] 
   before_filter :remove_ok, :only=>[ :delete ]
-  
-  #caches_action :show, :view, :to_view
 
-  protected
-  def action_fragment_key(options)
-    roles_key = User.current_user.all_roles.map(&:id).join('-')
-    global_serial = Cache.get('GlobalSerial') #Time.now.to_f }
-    key = url_for(options).split('://').last + "/#{roles_key}" + "/#{global_serial}" + 
-      "/#{default_layout}"
+  def help
+    Helper.instance
   end
-       
+  
+  class Helper
+    include Singleton
+    include WagnHelper
+  end
 
+  #----------( Special cards )
+  
   public    
 
   #----------( Special cards )
@@ -58,10 +51,10 @@ class XmlcardController < ApplicationController
 
     if @card.new_record? && ! @card.phantom?
       params[:card]={:name=>@card_name, :type=>params[:type]}
-      if Cardtype.createable_cardtypes.empty? 
+      if !Card::Basic.create_ok?
         return render(:action=>'missing')
       else
-        return self.new
+        return self.post
       end
     end                                                                                  
     return unless view_ok # if view is not ok, it will render denied. return so we dont' render twice
@@ -178,7 +171,7 @@ class XmlcardController < ApplicationController
   end
 
     
-    def xml_missing
+  def xml_missing
     load_card
     params[:view] = method
     if id = params[:replace]
@@ -190,4 +183,3 @@ class XmlcardController < ApplicationController
     end
   end
 end
-

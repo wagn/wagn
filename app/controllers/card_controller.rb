@@ -17,10 +17,6 @@ class CardController < ApplicationController
     Helper.instance
   end
   
-  def controller
-    self
-  end
-
   class Helper
     include Singleton
     include WagnHelper

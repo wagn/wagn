@@ -56,12 +56,15 @@ unless defined? TEST_ROOT
     include WagnTestHelper
     include ChunkTestHelper
 
-    def prepare_url(url, cardtype)
+    def prepare_url(url, cardtype, format)
       if url =~ /:id/
         # find by naming convention in test data:
         card = Card["Sample #{cardtype}"] or puts "ERROR finding 'Sample #{cardtype}'"
-        url.gsub!(/:id/,card.id.to_s)
+        idstr = card.id.to_s
+        idstr += '.'+format if format!=''
+        url.gsub!(/:id/,idstr)
       end
+ActionController::Base.logger.info("URL:#{url}")
       url
     end
   
@@ -95,6 +98,7 @@ unless defined? TEST_ROOT
       attr_reader :title, :url, :cardtype, :user, :status, :card
       def initialize(test_class,url,args={})
         @test_class,@url = test_class,url
+        format = $1 if url.sub!(/\.(\w+)$/, '')
         
         args[:users] ||= { :anon=>200 }
         args[:cardtypes] ||= ['Basic']
@@ -115,7 +119,7 @@ unless defined? TEST_ROOT
             test_def = %{
               def test_render_#{title}_#{user}_#{status} 
                 #{login}
-                url = prepare_url('#{url}', '#{cardtype}')
+                url = prepare_url('#{url}', '#{cardtype}', '#{format}')
                 #warn "GET \#\{url\}"
                 get url
                 assert_response #{status}, "\#\{url\} as #{user} should have status #{status}"

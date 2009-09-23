@@ -1,14 +1,14 @@
 require 'rexml/document'
 
-class XmlcardController < ApplicationController
+class MessagesController < ApplicationController; end
+
+class XmlcardController < MessagesController
   helper :wagn, :card 
 
   before_filter :create_ok, :only=>[ :put, :post ]
-
-  before_filter :load_card!, :only=>[ :get, :put, :post ]
-
-  before_filter :load_card_with_cache, :only => [ :get ]
-  
+  before_filter :load_card!, :only=>[ :get, :put ]
+  before_filter :load_card_with_cache, :only => [ :get, :delete ]
+  before_filter :name_ok,   :only=>[ :put, :post ] 
   before_filter :edit_ok,   :only=>[ :put, :post ] 
   before_filter :remove_ok, :only=>[ :delete ]
 
@@ -51,11 +51,12 @@ class XmlcardController < ApplicationController
 
     if @card.new_record? && ! @card.phantom?
       params[:card]={:name=>@card_name, :type=>params[:type]}
-      if !Card::Basic.create_ok?
-        return render(:action=>'missing')
-      else
-        return self.post
-      end
+begin
+      return render(:action=>'missing', :format=>'xml')
+rescue Exception=>e
+raise e
+end
+
     end                                                                                  
     return unless view_ok # if view is not ok, it will render denied. return so we dont' render twice
 
@@ -74,6 +75,7 @@ class XmlcardController < ApplicationController
     card_content=''
     no_card=false
     #raise("Should be card, #{card_name}") if xml.name != 'card'
+    raise("No xml?, #{card_name}") unless xml
     xml.each_child { |e|
       if REXML::Element===e
         if e.name == 'card'
@@ -120,8 +122,9 @@ class XmlcardController < ApplicationController
     @card = CachedCard.get(@card_name)
 
     #raise("PUT #{params.to_yaml}\n")
-    doc = REXML::Document.new(request.body)
-    #content = request.body.read
+    content = request.body.read
+    doc = REXML::Document.new(content)
+raise "XML error: #{doc} #{content}" unless doc.root
     #f = REXML::Formatters::Transitive.new
     card_updates = Hash.new
     read_xml(doc.root, @card_name, card_updates, nil)
@@ -131,20 +134,31 @@ class XmlcardController < ApplicationController
   end
 
   def post
-    @card_name = Cardname.unescape(params['id'] || '')
-    if (@card_name.nil? or @card_name.empty?) then    
-      raise("Need a card name to post")
-    end
-    @card = CachedCard.get(@card_name)
-    if params[:multi_edit]
-      @card.multi_update(params[:cards])
+    return render(:action=>"missing", :format=>:xml)  unless params[:card]
+    @card = Card.create params[:card]
+    @card.multi_create(params[:cards]) if params[:multi_edit] and params[:cards] and @card.errors.empty?
+
+    @redirect_location = if @card.ok?(:read)
+      url_for_page(@card.name)
     else
-      @card.update_attributes! params[:card]     
-    end
+      ( System.setting(@card.cardtype.name + "+*thanks") || System.setting("Basic+*thanks") || '/' )
+    end              
+    render_args = 
+      case
+        when !@card.errors.empty?; {
+          :status => 422,
+          :inline=>"<%= error_messages_for :card %><%= javascript_tag 'scroll(0,0)' %>" 
+        }    
+        when (!@card.ok?(:read));  {:action=>'redirect_to_thanks', :status=>418  }
+        when main_card?;    {:action=>'redirect_to_created_card', :status=>418 }          
+        else;              {:action=>'get'}
+      end
+    render_args[:format] = :xml
+    render render_args
   end
 
   def denial
-    render :template=>'/card/denied', :status => 403
+    render :template=>'/card/denied', :status => 403, :format => :xml
   end
   
   def delete  
@@ -176,10 +190,10 @@ class XmlcardController < ApplicationController
     params[:view] = method
     if id = params[:replace]
       render_update_slot do |page, target|
-        target.update render_to_string(:action=>'show')
+        target.update render_to_string(:action=>'get')
       end
     else
-      render :action=>'show'
+      render :action=>'missing', :format => :xml
     end
   end
 end

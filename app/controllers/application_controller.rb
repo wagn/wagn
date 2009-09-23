@@ -107,8 +107,15 @@ class ApplicationController < ActionController::Base
     end
   end    
   
+  def name_ok
+     !((card = params[:card]) && card['name'] == "")
+  end
+
   def edit_ok
-    @card.ok?( :edit ) || render_denied( 'edit' )
+     @card = @card.get_real if @card===CachedCard
+     #load_card unless @card
+     @card && (@card.ok?( :edit ) ||
+ @card.name == '' ? nil : render_denied( 'edit' ))
   end
   
   def create_ok
@@ -119,7 +126,7 @@ class ApplicationController < ActionController::Base
   end
   
   def remove_ok
-    @card.ok!( :delete ) || render_denied( 'delete' )
+    @card && @card.ok!( :delete ) || render_denied( 'delete' )
   end
          
   def render_denied(action = '')
@@ -133,7 +140,8 @@ class ApplicationController < ActionController::Base
   def load_card!
     load_card
     if @card.new_record? && !@card.phantom?
-      raise Wagn::NotFound, "#{request.env['REQUEST_URI']} requires a card id"
+      #raise Wagn::NotFound, "#{request.env['REQUEST_URI']} requires a card id"
+logger.error("ERROR: Wagn::NotFound, #{request.env['REQUEST_URI']} requires a card id")
     end
   end
 

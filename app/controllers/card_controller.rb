@@ -1,17 +1,14 @@
 class CardController < ApplicationController
   helper :wagn, :card 
 
-  before_filter :create_ok, :only=>[ :new, :create ]
-
+  before_filter :create_ok, :only=>[ :new, :create, :put, :post ]
   before_filter :load_card!, :only=>[
     :changes, :comment, :denied, :edit, :options, :quick_update, 
-    :related, :remove, :rollback, :save_draft, :update, :watch, :unwatch
-  ]
-
-  before_filter :load_card_with_cache, :only => [:line, :view, :open ]
-  
-  before_filter :edit_ok,   :only=>[ :edit, :update, :rollback, :save_draft, :watch, :unwatch] 
-  before_filter :remove_ok, :only=>[ :remove ]
+    :related, :remove, :rollback, :save_draft, :update, :watch, :unwatch, :get, :put ]
+  before_filter :load_card_with_cache, :only => [:line, :view, :open, :get ]
+  before_filter :edit_ok,   :only=>[ :edit, :update, :rollback, :save_draft, :watch,
+    :unwatch, :put, :post ] 
+  before_filter :remove_ok, :only=>[ :remove, :delete ]
 
   def help
     Helper.instance

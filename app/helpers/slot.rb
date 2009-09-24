@@ -378,7 +378,7 @@ class Slot
     state, vmode = @state.to_sym, (options[:view] || :content).to_sym      
     subslot.requested_view = vmode
     action = case
-      when [:name, :link].member?(vmode)  ; vmode
+      when [:name, :link, :linkname].member?(vmode)  ; vmode
       when state==:edit                   ; card.phantom? ? :edit_auto : :edit_in_form   
       when new_card                       ; state==:line  ? :closed_missing : :open_missing
       when state==:line                   ; :expanded_line_content

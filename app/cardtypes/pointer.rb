@@ -29,6 +29,11 @@ module Card
 	    end
     end
 	    
+	  def option_text(option)
+	    name = System.setting('*option text') || 'description'
+	    System.setting(option+'+'+name)
+	  end
+	    
 	  def pointees=(items)
 	    items=items.values if Hash===items 
 	    self.content = [items].flatten.reject{|x|x.blank?}.map{|x| "[[#{x}]]"}.join("\n")

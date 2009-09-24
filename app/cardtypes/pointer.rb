@@ -30,8 +30,9 @@ module Card
     end
 	    
 	  def option_text(option)
-	    name = System.setting('*option text') || 'description'
-	    System.setting(option+'+'+name)
+	    name = System.setting('*option label') || System.setting("#{self.name.tag_name}+*option label") || 'description'
+	    textcard = CachedCard.get_real(option+'+'+name)
+	    textcard ? textcard.content : nil
 	  end
 	    
 	  def pointees=(items)

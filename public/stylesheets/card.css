@@ -731,6 +731,7 @@ div.search-result-list .search-result-item {
   padding-left: 15px;
 }
 
+.card-slot .radio-option-description,
 .card-slot .checkbox-option-description {
   margin-left: 40px; 
 }

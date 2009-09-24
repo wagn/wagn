@@ -22,7 +22,7 @@ module NavigationHelpers
 
     when /new (.*)$/
       "/new/#{$1.to_url_key}"
-
+      
     else
       raise "Can't find mapping from \"#{page_name}\" to a path.\n" +
         "Now, go and add a mapping in #{__FILE__}"

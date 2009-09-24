@@ -28,8 +28,8 @@
 		</style>              
 	<% end %>
 
-     
- 	<script type="text/javascript" src="/javascripts/jquery-1.3.2.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+
 	<script type="text/javascript">
 		jQuery.noConflict();
 	</script>
@@ -37,6 +37,8 @@
 
 	<%# tried javascript at bottom, much breakage %>
   <%= javascript_include_merged :base %>       
+	<script type="text/javascript" src="/javascripts/jquery.metadata.js"></script>
+	<script type="text/javascript" src="/javascripts/jquery.google_map.js"></script>
 
 
 	<%# tiny_mce seem finnicky about getting compressed, & it also accesses other files in it's directory %>

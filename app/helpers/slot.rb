@@ -196,6 +196,7 @@ class Slot
         opts[:type] = slot.type if slot.type 
         link_to_page card.name, card.name, opts
       when :name;   card.name
+      when :key;    card.name.to_key
       when :linkname;  Cardname.escape(card.name)
       when :titled;
         content_tag( :h1, less_fancy_title(card.name) ) + self.render( :content )
@@ -253,6 +254,8 @@ class Slot
       when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
           render_partial("views/#{ok_action}", args)
 
+      when :blank; 
+        ""
 
       else; "<strong>#{card.name} - unknown card view: '#{ok_action}'</strong>"
     end
@@ -380,7 +383,12 @@ class Slot
     action = case
       when [:name, :link, :linkname].member?(vmode)  ; vmode
       when state==:edit                   ; card.phantom? ? :edit_auto : :edit_in_form   
-      when new_card                       ; state==:line  ? :closed_missing : :open_missing
+      when new_card                       
+        case   
+          when vmode==:naked; :blank
+          when state==:line;  :closed_missing
+          else ;              :open_missing
+        end
       when state==:line                   ; :expanded_line_content
       else                                ; vmode
     end

@@ -167,7 +167,7 @@ module Card
       end
       alias_method_chain :create, :type    
       
-      def create_with_trash!(args={})     
+      def create_with_trash!(args={})   
         args.stringify_keys!
         if c = Card.find_by_key_and_trash(get_name_from_args(args).to_key, true)
           args.merge('trash'=>false).each { |k,v|  c.send( "#{k}=", v ) }

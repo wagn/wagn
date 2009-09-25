@@ -302,12 +302,12 @@ class Slot
             "{<bogus/>{#{fullname}}}" 
           else                                             
             cargs = { :name=>fullname, :type=>options[:type] }
-            # if (specified_content = @template.controller.params[tname.gsub(/\+/,'_')]).present?
-            #   cargs[:content] = specified_content
-            # end
+            if (specified_content = @template.controller.params[tname.gsub(/\+/,'_')]).present?
+              cargs[:content] = specified_content
+            end
             tcard = case
               when @state==:edit
-                (Card.find_by_name( fullname ) || Card.find_phantom( fullname ) ||  Card.new( cargs ))
+                  (Card.find_by_name( fullname ) || Card.find_phantom( fullname ) ||  Card.new( cargs ))
               else
                 CachedCard.get fullname
               end

@@ -29,6 +29,12 @@ module Card
 	    end
     end
 	    
+	  def option_text(option)
+	    name = System.setting('*option label') || System.setting("#{self.name.tag_name}+*option label") || 'description'
+	    textcard = CachedCard.get_real(option+'+'+name)
+	    textcard ? textcard.content : nil
+	  end
+	    
 	  def pointees=(items)
 	    items=items.values if Hash===items 
 	    self.content = [items].flatten.reject{|x|x.blank?}.map{|x| "[[#{x}]]"}.join("\n")

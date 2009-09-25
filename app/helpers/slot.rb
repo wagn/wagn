@@ -318,11 +318,16 @@ class Slot
           elsif fullname == "_main"
             @main_content
           else                                             
+<<<<<<< HEAD:app/helpers/slot.rb
             cargs = { :name=>fullname, :type=>options[:type] }
             if (specified_content = @template.controller.params[tname.gsub(/\+/,'_')]).present?
               cargs[:content] = specified_content
             end
 
+=======
+            specified_content = @template.controller.params[tname.gsub(/\+/,'_')] || ''
+ 
+>>>>>>> 7e6b11ac52c3dab72609f01b5d1bc8be2584708f:app/helpers/slot.rb
             tcard = case
               when @state==:edit
                   (Card.find_by_name( fullname ) || Card.find_phantom( fullname ) ||  Card.new( cargs ))
@@ -382,7 +387,7 @@ class Slot
     state, vmode = @state.to_sym, (options[:view] || :content).to_sym      
     subslot.requested_view = vmode
     action = case
-      when [:name, :link].member?(vmode); vmode
+      when [:name, :link, :linkname].member?(vmode)  ; vmode
       when state==:edit                   ; card.phantom? ? :edit_auto : :edit_in_form   
       when new_card                       
         case   

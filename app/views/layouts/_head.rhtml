@@ -28,17 +28,11 @@
 		</style>              
 	<% end %>
 
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-
-	<script type="text/javascript">
-		jQuery.noConflict();
-	</script>
-	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-
 	<%# tried javascript at bottom, much breakage %>
   <%= javascript_include_merged :base %>       
-	<script type="text/javascript" src="/javascripts/jquery.metadata.js"></script>
-	<script type="text/javascript" src="/javascripts/jquery.google_map.js"></script>
+  <script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAA5yO06x91IBr9oKK57xU-kRSWPodhC6wLLpV6xYzSog0legcbhhT0-N3OKUWSa2v_LV_VnVPbd3zgKg"></script>     
+  
+
 
 
 	<%# tiny_mce seem finnicky about getting compressed, & it also accesses other files in it's directory %>

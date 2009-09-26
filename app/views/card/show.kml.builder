@@ -12,11 +12,13 @@ xml.kml do
       if geocard = CachedCard.get_real("#{card.name}+*geocode")    
         xml.Placemark do
           xml.name card.name  
-          content_card = CachedCard.get_real("#{card.name}+*geodescription") || card
+          content_card = CachedCard.get("#{card.name}+*geodescription") || card
           slot = get_slot(content_card, "main_1", "view")
           xml.description slot.render( :content )
-          xml.Point do
-            xml.coordinates geocard.content
+          xml.Point do                                                  
+            # apparently the google API likes them in the opposite order for static maps.
+            # since we don't have code in the static maps address, we store them that way.
+            xml.coordinates geocard.content.split(',').reverse.join(',')
           end
         end
       end

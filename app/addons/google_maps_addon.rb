@@ -11,7 +11,9 @@ class GoogleMapsAddon
     url = "http://maps.google.com/maps/geo?" + opts.map{|k,v| "#{k}=#{URI.escape(v)}" }.join('&')
     result = JSON.parse(Net::HTTP.get(URI.parse(url)))   # FIXME: error handling please
     return nil unless result["Status"]["code"] == 200    # FIMXE: log error?
-    result["Placemark"][0]["Point"]["coordinates"][0..1].join(",")
+    # apparently the google API likes lat,long in the opposite order for static maps.
+    # since we don't have access to code when referencing the static maps address, we store them that way.
+    result["Placemark"][0]["Point"]["coordinates"][0..1].reverse.join(",")
   end
 end                     
 

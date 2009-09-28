@@ -134,23 +134,19 @@ module Card
       
       def find_or_new(args={})
         args.stringify_keys!
-        # FIXME -- this finds cards in or out of the trash-- we need that for
-        # renaming card in the trash, but may cause other problems.
         raise "Must specify :name to find_or_create" if args['name'].blank?
         c = Card.find(:first, :conditions=>"#{ActiveRecord::Base.connection.quote_column_name("key")} = '#{args['name'].to_key}'") || begin
           p = Proc.new {|k| k.new(args)}
           with_class_from_args(args, p)
         end
         c.send(:set_needed_defaults)
-        # FIXME - this will lead to double saving when called from find_or_create, 
-        # but trashed cards are not getting saved when called from set_defaults   there's probably a better way.
-#        if c.trash
-#          ::User.as(:wagbot) do
-#            c.content=''  
-#            c.trash=false
-#            c.save
-#          end
-#        end
+
+        if c.trash
+          ::User.as(:wagbot) do
+            c.content=''  
+            c.trash=false
+          end
+        end
         c
       end                      
                                   

@@ -1,7 +1,6 @@
 require 'rubygems'
 require 'rails_test_serving'  
 require 'shoulda'
-require 'mocha'
 
 RailsTestServing.boot
 

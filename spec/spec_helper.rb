@@ -23,10 +23,7 @@ Spork.prefork do
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
     config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
- 
-    #config.mock_with :flexmock
-    #config.mock_with :rr
-    #
+
     # == Notes
     # 
     # For more information take a look at Spec::Example::Configuration and Spec::Runner

@@ -23,7 +23,7 @@ class Card::Base
   def update_geocode           
     if conf = CachedCard.get_real('*geocode')
       if self.junction? && conf.pointees.include?( self.name.tag_name )
-        address = conf.pointees.map{|p| System.setting(self.name.trunk_name+"+#{p}")}.compact.join(' ')
+        address = conf.pointees.map{|p| (c=CachedCard.get(self.name.trunk_name+"+#{p}")) && c.content}.select(&:present?).join(', ')
         if (geocode = GoogleMapsAddon.geocode(address))
           Card.find_or_create(
               :name=>"#{self.name.trunk_name}+*geocode", 
@@ -39,7 +39,7 @@ end
 describe GoogleMapsAddon do
   context "geocode" do
     it "returns correct coords for Ethan's House" do
-      GoogleMapsAddon.geocode("519 Peterson St., Ft. Collins, CO").should match(/^-105.0\d+,40.5\d+$/)
+      GoogleMapsAddon.geocode("519 Peterson St., Ft. Collins, CO").should match(/^40.5\d+,-105.0\d+$/)
     end
   end
 end

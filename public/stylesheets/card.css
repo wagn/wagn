@@ -607,6 +607,7 @@ body.wagn .card-slot.line h2,
 }
 .card-slot.line .content img {
   height: 16px;
+  width: auto;
   float: none;
   padding: 0px;
 }

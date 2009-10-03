@@ -1,5 +1,3 @@
-<%- texttag = ((c=CachedCard.get_real('*option text')) ? c.content : 'description')  %>
-  
 <% card.options.each do |option| %> 
   <div class="pointer-checkbox">
     <%= check_box_tag slot.full_field_name(:pointees)+"[]", option.name, card.pointees.include?(option.name),
@@ -7,11 +5,9 @@
     %>
 		<span class="pointer-checkbox-label">
 		  <span class="checkbox-option-name"><%= option.name %></span>
-  		<% if textcard=CachedCard.get_real(option.name+'+'+texttag) and !textcard.content.empty? %>
-  		  <div class="checkbox-option-description">
-          <%= textcard.content %>
-        </div>
-      <% end %>
+	    <% if description = card.option_text(option.name) %>
+		    <div class="checkbox-option-description"><%= description %></div>
+		  <% end %>
     </span>
 	</div>         
 <% end %>

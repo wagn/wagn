@@ -15,8 +15,7 @@ class CardImage < ActiveRecord::Base
   validates_as_attachment                 
 
   def preview
-    #%{<img src="#{public_filename}" \\\/>}
-    %{<img src="#{public_filename(:medium)}" />}
+    %{<img width="#{width}" height="#{height}" src=\"#{public_filename(:medium)}\" />}
   end
 
   def bucket_name

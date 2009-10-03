@@ -6,6 +6,8 @@ class ApplicationController < ActionController::Base
   require_dependency 'exception_system' 
   include AuthenticatedSystem
   include ExceptionSystem
+   
+  GoogleMapsAddon
 
   include LocationHelper
   helper :all

@@ -19,11 +19,11 @@ class Slot
     :line => :closed,
   }
 
-  def initialize(card, context="main_1", action="view", template=nil, opts={}, renderer=nil)
-    @card, @context, @action, @renderer =
-        card, context.to_s, action.to_s, renderer
+  def initialize(card, context="main_1", action="view", template=nil, opts={} )
+    @card, @context, @action = card, context.to_s, action.to_s
 #ActionController::Base.logger.info("requested_view:#{requested_view} :xml_view #{card.name}\n") if opts[:format] == :xml
     @requested_view = :xml_view if  opts[:format] == :xml
+    @main_content = opts[:main_content]
     context = "main_1" unless context =~ /\_/
     @template = template || (xml? && card.xml_template) ||
        StubTemplate.new(card, context, action, opts)
@@ -242,6 +242,7 @@ raise "Error: Nil for #{cc_method} Card:#{card.name}" if get_value == nil
         opts[:type] = slot.type if slot.type
         link_to_page card.name, card.name, opts
       when :name;   card.name
+      when :key;    card.name.to_key
       when :linkname;  Cardname.escape(card.name)
       when :titled;
         content_tag( :h1, less_fancy_title(card.name) ) + self.render( :content )
@@ -299,9 +300,11 @@ raise "Error: Nil for #{cc_method} Card:#{card.name}" if get_value == nil
         
       when :deny_view, :edit_auto, :too_slow, :open_missing, :closed_missing, :too_many_renders;
           render_partial("views/#{ok_action}", args)
-      else
-raise "unknown card view #{ok_action}"
-        "<strong>#{card.name} - unknown card view: '#{ok_action}'</strong>"
+
+      when :blank; 
+        ""
+
+      else; "<strong>#{card.name} - unknown card view: '#{ok_action}'</strong>"
     end
     if w_content
       args[:add_slot] = true unless args.key?(:add_slot)
@@ -344,18 +347,31 @@ raise "unknown card view #{ok_action}"
           options[:showname] = tname.to_show(fullname)
           #logger.info("absolutized tname and now have these transclusion options: #{options.inspect}\n")
 
-          if fullname.blank?
+          builtin_partial = {
+            '**head' => true,
+            '**top_menu' => true,
+            '**logo' => true,
+            '**bottom_menu' => true,
+            '**alerts' => true,
+            '**foot' => true
+          }
+
+          if fullname.blank?  
              # process_transclusion blows up if name is nil
             "{<bogus/>{#{fullname}}}" 
+          elsif builtin_partial[fullname]
+            @template.render :partial => "layouts/#{fullname.gsub(/\*/,'')}"
+          elsif fullname == "_main"
+            @main_content
           else                                             
-            params = @template.controller.params
-            specified_content = params && params[tname.gsub(/\+/,'_')] || ''
- 
+            cargs = { :name=>fullname, :type=>options[:type] }
+            if (specified_content = @template.controller.params[tname.gsub(/\+/,'_')]).present?
+              cargs[:content] = specified_content
+            end
+
             tcard = case
               when @state==:edit
-                ( Card.find_by_name( fullname ) || 
-                  Card.find_phantom( fullname ) || 
-                  Card.new(   :name=>fullname, :type=>options[:type], :content=>specified_content ) )
+                  (Card.find_by_name( fullname ) || Card.find_phantom( fullname ) ||  Card.new( cargs ))
               else
                 CachedCard.get fullname
             end
@@ -500,9 +516,15 @@ raise "Subslot missmatch; #{subslot.requested_view}, #{requested_view}" if subsl
     @renderer.render_xml = true if xml?
 #debugger if xml? ^ @renderer.render_xml
     action = case
-      when [:name, :link].member?(vmode)  ; vmode
-      when state==:edit                   ; card.phantom? ? :edit_auto : :edit_in_form
-      when new_card; [:xml, :xml_content].member?(vmode) ? :xml_missing : state==:line ? :closed_missing : :open_missing
+      when [:name, :link, :linkname].member?(vmode)  ; vmode
+      when state==:edit                   ; card.phantom? ? :edit_auto : :edit_in_form   
+      when new_card                       
+        case   
+          when [:xml, :xml_content].member?(vmode); :xml_missing
+          when vmode==:naked; :blank
+          when state==:line;  :closed_missing
+          else ;              :open_missing
+        end
       when state==:line                   ; :expanded_line_content
       when [:xml, :xml_content].member?(vmode) ; vmode
       else                                ; vmode

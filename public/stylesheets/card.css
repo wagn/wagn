@@ -607,6 +607,7 @@ body.wagn .card-slot.line h2,
 }
 .card-slot.line .content img {
   height: 16px;
+  width: auto;
   float: none;
   padding: 0px;
 }
@@ -731,6 +732,7 @@ div.search-result-list .search-result-item {
   padding-left: 15px;
 }
 
+.card-slot .radio-option-description,
 .card-slot .checkbox-option-description {
   margin-left: 40px; 
 }

@@ -15,6 +15,26 @@ class Card::RemoveTest < ActiveSupport::TestCase
     assert @a.destroy!, "card should be destroyable"
     assert_nil Card.find_by_name("A")
   end
-
+         
+  def test_recreate_plus_card_name_variant
+    Card.create( :name => "rta+rtb" ).destroy
+    Card["rta"].update_attributes :name=> "rta!"
+    c = Card.create! :name=>"rta!+rtb"
+    assert Card["rta!+rtb"]
+    assert !Card["rta!+rtb"].trash
+    assert !Card.find(:first, :conditions=>"name=E'rtb*trash'")
+  end   
+  
+  
+  def test_multiple_trash_collision
+    Card.create( :name => "alpha" ).destroy
+    3.times do
+      b = Card.create( :name => "beta" )
+      b.name = "alpha"
+      assert b.save! 
+      b.destroy
+    end
+  end
+  
 end
 

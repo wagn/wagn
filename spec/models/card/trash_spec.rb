@@ -14,9 +14,15 @@ describe Card, "deleted card" do
     c = Card['A']
     c.trash.should_not be_true
   end
+end 
+
+describe Card, "in trash" do
+  it "should be retrieved by find_or_create" do
+    Card.create(:name=>"Betty").destroy
+    Card.find_or_create(:name=>"Betty")
+    Card["Betty"].should be_instance_of(Card::Basic)
+  end
 end
-
-
 
 # FIXME: these user tests should probably be in a set of cardtype specific tests somewhere..   
 describe User, "with revisions" do

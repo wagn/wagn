@@ -1,9 +1,10 @@
-FORMAT_PATTERN = /html|json|xml|rss/ unless defined? FORMAT_PATTERN   
+FORMATS = "html|json|xml|rss|kml" unless defined? FORMATS
+FORMAT_PATTERN = /#{FORMATS}/ unless defined? FORMAT_PATTERN   
 ID_REQUIREMENTS1 = { :id => /([^\.]*)/, :format=>FORMAT_PATTERN }                        
 
 # This is to facilitate matching cards with '.' in the name, as long as the end doesn't
 # match one of the extension formats.
-ID_REQUIREMENTS2 = { :id => /(.*)\.(?!(rss|xml))([^\.]*)/, :format=>FORMAT_PATTERN }
+ID_REQUIREMENTS2 = { :id => /(.*)\.(?!(#{FORMATS}))([^\.]*)/, :format=>FORMAT_PATTERN }
 
 ActionController::Routing::Routes.draw do |map|
   #map.connect 'c/:controller/:action/:id'

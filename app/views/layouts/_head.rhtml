@@ -30,10 +30,8 @@
 
 	<%# tried javascript at bottom, much breakage %>
   <%= javascript_include_merged :base %>       
-     
-  
+	<% if key = System.setting("*google_ajax_api_key") %>
+	  <script type="text/javascript" src="http://www.google.com/jsapi?key=<%= key %>"></script>     
+	<% end %>
 
-
-
-	<%# tiny_mce seem finnicky about getting compressed, & it also accesses other files in it's directory %>
 </head>

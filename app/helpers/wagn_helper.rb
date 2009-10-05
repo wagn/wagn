@@ -12,8 +12,8 @@ module WagnHelper
     end
   end
 
-  def new_slot(card=nil, context=nil, action=nil, template=nil, opts={}, renderer=nil)
-    Slot.new(card, context, action, template, opts, renderer)
+  def new_slot(card=nil, context=nil, action=nil, template=nil, opts={})
+    Slot.new(card, context, action, template, opts)
   end
 
   # FIMXE: this one's a hack...

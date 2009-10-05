@@ -47,7 +47,7 @@ class Slot
     # Note that at this point the subslot context, and thus id, are
     # somewhat meaningless-- the subslot is only really used for tracking position.
 ActionController::Base.logger.info("INFO:subslot(#{card.name}, #{@requested_view}::#{action}, #{@template.class}, #{@renderer.class})\n")
-    new_slot = self.class.new(card, context+"_#{@subslots.size+1}", @action, @template, {}, @renderer)
+    new_slot = self.class.new(card, context+"_#{@subslots.size+1}", @action, @template, {})
     new_slot.requested_view = @requested_view
     new_slot.state = @state
     @subslots << new_slot

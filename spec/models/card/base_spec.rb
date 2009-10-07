@@ -110,9 +110,9 @@ describe Card, "content change should create new revision" do
 end    
      
 
-describe Card, "created with :phantom=>'true'" do
-  it "should be flagged as phantom" do
-    Card.new(:phantom=>true).phantom?.should be_true
+describe Card, "created with :virtual=>'true'" do
+  it "should be flagged as virtual" do
+    Card.new(:virtual=>true).virtual?.should be_true
   end
 end
 

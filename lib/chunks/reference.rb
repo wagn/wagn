@@ -12,7 +12,7 @@ module Chunk
     
     def refcard 
       name =  refcard_name.gsub(/_/,' ')   
-      @refcard ||= (Card.find_by_name( name ) || Card.find_phantom( name ))
+      @refcard ||= (Card.find_by_name( name ) || Card.find_virtual( name ))
     end
       
     def link_text 

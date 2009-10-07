@@ -11,11 +11,11 @@ module CardLib
           }
         case 
           when searches[key];
-            create_phantom(name, searches[key], 'Search')
+            create_virtual(name, searches[key], 'Search')
         end
       end
       
-      def find_phantom(name)  
+      def find_virtual(name)  
         find_builtin(name) or begin 
           auto_card(name)
         end   
@@ -26,13 +26,13 @@ module CardLib
         template = (Card.right_template(name) || Card.multi_type_template(name))
         if template and template.hard_template?    
           User.as(:wagbot) do
-            Card.create_phantom name, template.content
+            Card.create_virtual name, template.content
           end
         elsif System.ok?(:administrate_users) and name.tag_name =~ /^\*(email)$/
           attr_name = $~[1]
           content = Card.retrieve_extension_attribute( name.trunk_name, attr_name ) || ""
           User.as(:wagbot) do
-            Card.create_phantom name, content  
+            Card.create_virtual name, content  
           end
         else
           return nil
@@ -43,8 +43,8 @@ module CardLib
         c = Card.find_by_name(cardname) and e = c.extension and e.send(attr_name)
       end
 
-      def create_phantom(name, content, type='Basic', reader=Role[:anon])
-        c=Card.new(:name=>name, :content=>content, :type=>type ,:reader=>reader, :phantom=>true)
+      def create_virtual(name, content, type='Basic', reader=Role[:anon])
+        c=Card.new(:name=>name, :content=>content, :type=>type ,:reader=>reader, :virtual=>true)
         c
       end
       

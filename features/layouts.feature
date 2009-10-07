@@ -12,6 +12,9 @@ Feature: Layouts
     Then I should see "Simple Header"
     And I should see "Sample Content"
     
-    
-    
-  
+Scenario: title
+  Given context
+  When event
+  Then outcome
+
+

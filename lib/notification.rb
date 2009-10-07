@@ -87,7 +87,8 @@ module Notification
 
   module SlotHelperMethods     
     def watch_link 
-      return "" unless logged_in?
+      return "" unless logged_in?   
+      return "" if card.virtual? 
       me = User.current_user.card.name          
       if card.type == "Cardtype"
         (card.type_watchers.include?(me) ? "#{watching_type_cards} | " : "") +  watch_unwatch

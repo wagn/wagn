@@ -232,9 +232,12 @@ class Slot
 
       when :closed_content;   render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
       when :open_content;     render_card_partial(:content)  # FIXME?: 'content' is inconsistent
-      when :naked_content, :raw_content # raw_content is DEPRECATED
-        #warn "rendering #{card.name} refs=#{card.references_expired} card.content=#{card.content}"
-        @renderer.render( card, args.delete(:content) || "", update_refs=card.references_expired)
+      when :naked_content
+        if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
+          template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}" 
+        else
+          @renderer.render( card, args.delete(:content) || "", update_refs=card.references_expired)
+        end
         
     ###---(  EDIT VIEWS ) 
 
@@ -301,20 +304,10 @@ class Slot
           options[:showname] = tname.to_show(fullname)
           #logger.info("absolutized tname and now have these transclusion options: #{options.inspect}")
 
-          builtin_partial = {
-            '*head' => true,
-            '*alerts' => true,
-            '*foot' => true,
-            '*navbox' => true,
-            '*version' => true,
-            '*account links' => true        
-          }
 
           if fullname.blank?  
              # process_transclusion blows up if name is nil
             "{<bogus/>{#{fullname}}}" 
-          elsif builtin_partial[fullname]
-            @template.render :partial => "layouts/#{fullname.to_key.gsub(/\*/,'')}"
           elsif fullname == "_main"
             @main_content
           else                                             

@@ -9,8 +9,12 @@ describe CardLib::Search, "find_builtin" do
     Card.find_builtin('*ghost').should be_instance_of(Card::Basic)
     Card.find_builtin('*ghost').content.should == "X"
   end
-  
-  it "should retrieve standard builtin card" do
-    
+
+  it "should retrieve standard builtin cards" do
+    ['*head','*foot','*alerts','*navbox','*version','*account links'].each do |name|
+      card = Card.find_builtin(name)
+      card.should be_instance_of(Card::Basic)
+      card.should be_builtin
+    end
   end
 end

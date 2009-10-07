@@ -37,7 +37,10 @@ Card::Base.class_eval do
   include CardLib::References  
   include CardLib::Cacheable
   extend Card::CardAttachment::ActMethods
+  
 end
+
+
 Notification.init
 
 Dir["#{RAILS_ROOT}/app/cardtypes/*.rb"].sort.each do |cardtype|
@@ -165,4 +168,12 @@ module Card
     end
      
   end
+end    
+
+#FIXME: this should be at a more coherent stage of the process.
+%w{ *head *alert *foot *navbox *version *account_link }.each do |key|
+  Card.add_builtin( Card.new(:name=>key, :builtin=>true))
 end
+
+
+

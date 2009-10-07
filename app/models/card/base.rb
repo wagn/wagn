@@ -39,7 +39,7 @@ module Card
     before_validation_on_create :set_needed_defaults
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
-      :update_referencers, :allow_type_change, :virtual, :broken_type, :skip_defaults
+      :update_referencers, :allow_type_change, :virtual, :builtin, :broken_type, :skip_defaults
         
     private
       belongs_to :reader, :polymorphic=>true  
@@ -410,7 +410,11 @@ module Card
     end
 
     def virtual?
-      @virtual ||= virtual
+      @virtual || @builtin
+    end    
+    
+    def builtin?
+      @builtin
     end
     
     def clean_html?

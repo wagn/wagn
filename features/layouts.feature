@@ -6,15 +6,10 @@ Feature: Layouts
   Scenario: I configure a simple layout
     Given I log in as Joe Admin
     And I create Html card "simple layout" with content "Simple Header {{_main}} Simple Footer"
-    And I create card "Sample" with content "Sample Content" 
     And I create Pointer card "*layout" with content "[[simple layout]]"
-    When I go to card "Sample"
+    When I go to card "*account links"
     Then I should see "Simple Header"
-    And I should see "Sample Content"
+    And I should see "Invite a Friend"
     
-Scenario: title
-  Given context
-  When event
-  Then outcome
 
 

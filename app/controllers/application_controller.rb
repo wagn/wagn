@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include ExceptionSystem
    
-  GoogleMapsAddon
+  #GoogleMapsAddon
 
   include LocationHelper
   helper :all

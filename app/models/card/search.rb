@@ -1,18 +1,23 @@
 module CardLib
   module Search
-    module ClassMethods 
+    module ClassMethods
+      @@builtins = {}
+      
       def find_builtin(name)
         key=name.to_key
         searches =  
           { '*recent_change' => %{ {"sort":"update", "dir":"desc", "view":"change"} },
             '*search'        => %{ {"match":"_keyword", "sort":"relevance"        } },
             '*broken_link'   => %{ {"link_to":"_none"                             } },
-            '*user'          => %{ {"extension_type":"User"                       } },
           }
         case 
-          when searches[key];
-            create_virtual(name, searches[key], 'Search')
+          when searches[key]; create_virtual(name, searches[key], 'Search')
+          when @@builtins[key]; @@builtins[key].call(slot)
         end
+      end
+      
+      def add_builtin(key, &block)
+        @@builtins[key] = block
       end
       
       def find_virtual(name)  

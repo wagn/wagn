@@ -302,19 +302,19 @@ class Slot
           #logger.info("absolutized tname and now have these transclusion options: #{options.inspect}")
 
           builtin_partial = {
-            '**head' => true,
-            '**top_menu' => true,
-            '**logo' => true,
-            '**bottom_menu' => true,
-            '**alerts' => true,
-            '**foot' => true
+            '*head' => true,
+            '*alerts' => true,
+            '*foot' => true,
+            '*navbox' => true,
+            '*version' => true,
+            '*account links' => true        
           }
 
           if fullname.blank?  
              # process_transclusion blows up if name is nil
             "{<bogus/>{#{fullname}}}" 
           elsif builtin_partial[fullname]
-            @template.render :partial => "layouts/#{fullname.gsub(/\*/,'')}"
+            @template.render :partial => "layouts/#{fullname.to_key.gsub(/\*/,'')}"
           elsif fullname == "_main"
             @main_content
           else                                             

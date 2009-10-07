@@ -1,4 +1,51 @@
 <% @default_layout = capture do %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+   <head>
+    {{*head}}
+  </head>
+  <body id="wagn" class="wagn">
+    <div id="top-menu">
+      [[/ | Home]]
+      [[/recent | Recent]]
+      {{*navbox}}
+
+      <span id="logging">
+        {{*account links}}
+      </span>
+    </div>
+    <div id="page">
+      <div id="page-left">
+        <div id="main" context="main">{{_main}}</div>
+      </div>  
+      <div id="page-right">
+        <div id="logo">
+          <span id="logo-card" class="card-slot">
+              <a href="/">{{*logo}}</a>
+          </span>
+        </div>
+
+        <div id="sidebar" context="sidebar">
+          {{*sidebar}}
+        </div>
+        <div id="bottom-menu">
+          <div id="credit">
+            Wheeled by  [[http://www.wagn.org|Wagn]]
+            v. {{*version}}
+          </div>
+        </div>
+        {{*alerts}}
+      </div>
+    </div>
+
+    {{*foot}}
+  </body>
+</html>
+<% end %>
+
+<%#
 	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -21,8 +68,10 @@
 		  {{**foot}}
 	  </body>
 	</html>
-<% end %>
+%>
 
-<% layout_card = CachedCard.get_real("*layout") || Card.new(:name=>"*layout",:content=>@default_layout) %> 
+<% layout_card = (c = CachedCard.get_real("*layout") and c.type == 'Pointer') ?
+                        CachedCard.get_real(c.pointee) : 
+                        Card.new(:name=>"**layout",:content=>@default_layout)  %>  
 <%= Slot.new(layout_card, "0_0", "view", self, :main_content=>@content_for_layout).render(:naked) %>
 

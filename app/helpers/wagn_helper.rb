@@ -15,7 +15,7 @@ module WagnHelper
   # FIMXE: this one's a hack...
   def render_card(card, mode, args={})
     if String===card && name = card
-      raise("Card #{name} not present") unless card= (CachedCard.get(name) || Card[name] || Card.find_phantom(name))
+      raise("Card #{name} not present") unless card= (CachedCard.get(name) || Card[name] || Card.find_virtual(name))
     end
     # FIXME: some cases we're called before controller.slot is initialized.
     #  should we initialize here? or always do Slot.new?

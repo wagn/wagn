@@ -39,7 +39,7 @@ module Card
     before_validation_on_create :set_needed_defaults
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
-      :update_referencers, :allow_type_change, :phantom, :broken_type, :skip_defaults
+      :update_referencers, :allow_type_change, :virtual, :broken_type, :skip_defaults
         
     private
       belongs_to :reader, :polymorphic=>true  
@@ -57,7 +57,7 @@ module Card
     #  couldn't we create initialize_with_defaults and chain it?
     def set_needed_defaults
       # new record check because create callbacks are also called in type transitions 
-      return if (!new_record? || skip_defaults? || phantom? || @defaults_already_set)  
+      return if (!new_record? || skip_defaults? || virtual? || @defaults_already_set)  
       @defaults_already_set = true
       set_defaults
       #replace_content_variables
@@ -237,10 +237,10 @@ module Card
       end
       
       def [](name) 
-        # DONT do find_phantom here-- it ends up happening all over the place--
+        # DONT do find_virtual here-- it ends up happening all over the place--
         # call it explicitly if that's what you want
         #self.cache[name.to_s] ||= 
-        self.find_by_name(name.to_s, :include=>:current_revision) #|| self.find_phantom(name.to_s)
+        self.find_by_name(name.to_s, :include=>:current_revision) #|| self.find_virtual(name.to_s)
         #self.find_by_name(name.to_s)
       end
              
@@ -409,8 +409,8 @@ module Card
       !!skip_defaults
     end
 
-    def phantom?
-      @phantom ||= phantom
+    def virtual?
+      @virtual ||= virtual
     end
     
     def clean_html?

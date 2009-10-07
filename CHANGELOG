@@ -253,7 +253,7 @@
 * alternative suggestion for when migration 100 breaks
 * remove breaking google call
 * slot bug fix
-* pointer fixes / phantom handling
+* pointer fixes / virtual handling
 * fixed pointer editing
 * add options for pointer type
 * fix indexed_name update
@@ -278,7 +278,7 @@
 * menu css
 * footer fix -- add last editor
 * fix sidebar slot on pages without cards
-* fix last editor for phantom cards?
+* fix last editor for virtual cards?
 * fix nested multi-edit
 * fixed role and user pages
 * fix bizarro migration failure

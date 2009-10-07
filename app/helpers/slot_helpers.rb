@@ -80,7 +80,7 @@ module SlotHelpers
   end
 
   def menu   
-    if card.phantom?
+    if card.virtual?
       return %{<span class="card-menu faint">Virtual</span>\n}
     end
     menu = %{<span class="card-menu">\n}

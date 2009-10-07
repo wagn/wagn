@@ -42,7 +42,7 @@ class CardController < ApplicationController
     end             
     @card = CachedCard.get(@card_name)
 
-    if @card.new_record? && !@card.phantom?
+    if @card.new_record? && !@card.virtual?
       params[:card]={:name=>@card_name, :type=>params[:type]}
       if !Card::Basic.create_ok?
         return render( :action=>'missing' )

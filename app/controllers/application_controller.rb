@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include ExceptionSystem
    
-  GoogleMapsAddon
+  #GoogleMapsAddon
 
   include LocationHelper
   helper :all
@@ -102,7 +102,7 @@ class ApplicationController < ActionController::Base
 
   # ------------------( permission filters ) -------
   def view_ok
-    if (@card.new_record? && !@card.phantom?) || @card.ok?( :read )
+    if (@card.new_record? && !@card.virtual?) || @card.ok?( :read )
       true
     else
       render_denied( 'view' )
@@ -134,7 +134,7 @@ class ApplicationController < ActionController::Base
   # --------------( card loading filters ) ----------
   def load_card!
     load_card
-    if @card.new_record? && !@card.phantom?
+    if @card.new_record? && !@card.virtual?
       raise Wagn::NotFound, "#{request.env['REQUEST_URI']} requires a card id"
     end
   end

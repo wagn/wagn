@@ -192,7 +192,7 @@ class Slot
     
       #when :link;   link_to_page card.name, card.name, :class=>"cardname-link #{card.new_record? ? 'wanted-card' : 'known-card'}"
       when :link;
-        opts = {:class=>"cardname-link #{(card.new_record? && !card.phantom?) ? 'wanted-card' : 'known-card'}"}
+        opts = {:class=>"cardname-link #{(card.new_record? && !card.virtual?) ? 'wanted-card' : 'known-card'}"}
         opts[:type] = slot.type if slot.type 
         link_to_page card.name, card.name, opts
       when :name;   card.name
@@ -302,19 +302,19 @@ class Slot
           #logger.info("absolutized tname and now have these transclusion options: #{options.inspect}")
 
           builtin_partial = {
-            '**head' => true,
-            '**top_menu' => true,
-            '**logo' => true,
-            '**bottom_menu' => true,
-            '**alerts' => true,
-            '**foot' => true
+            '*head' => true,
+            '*alerts' => true,
+            '*foot' => true,
+            '*navbox' => true,
+            '*version' => true,
+            '*account links' => true        
           }
 
           if fullname.blank?  
              # process_transclusion blows up if name is nil
             "{<bogus/>{#{fullname}}}" 
           elsif builtin_partial[fullname]
-            @template.render :partial => "layouts/#{fullname.gsub(/\*/,'')}"
+            @template.render :partial => "layouts/#{fullname.to_key.gsub(/\*/,'')}"
           elsif fullname == "_main"
             @main_content
           else                                             
@@ -325,7 +325,7 @@ class Slot
 
             tcard = case
               when @state==:edit
-                  (Card.find_by_name( fullname ) || Card.find_phantom( fullname ) ||  Card.new( cargs ))
+                  (Card.find_by_name( fullname ) || Card.find_virtual( fullname ) ||  Card.new( cargs ))
               else
                 CachedCard.get fullname
               end
@@ -377,13 +377,13 @@ class Slot
                            
     
     # FIXME! need a different test here   
-    new_card = card.new_record? && !card.phantom?
+    new_card = card.new_record? && !card.virtual?
     
     state, vmode = @state.to_sym, (options[:view] || :content).to_sym      
     subslot.requested_view = vmode
     action = case
       when [:name, :link, :linkname].member?(vmode)  ; vmode
-      when state==:edit                   ; card.phantom? ? :edit_auto : :edit_in_form   
+      when state==:edit                   ; card.virtual? ? :edit_auto : :edit_in_form   
       when new_card                       
         case   
           when vmode==:naked; :blank

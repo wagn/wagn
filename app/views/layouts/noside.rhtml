@@ -2,17 +2,17 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
-  <%= render :partial=>'layouts/head' %>
+  <%= render :partial=>'builtin/head' %>
   
   <body id="noside" class="wagn">
 
   <%= render :partial=>'layouts/top_menu' %>
-	<%= render :partial=>'layouts/alert' %>
+	<%= render :partial=>'builtin/alert' %>
     
 	<div id="main" context="main"><%= yield %></div>
 	  		
   <%= render :partial=>'layouts/bottom_menu' %>
-	<%= render :partial=>'layouts/foot' %>
+	<%= render :partial=>'builtin/foot' %>
 
   </body>
 </html>

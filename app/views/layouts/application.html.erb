@@ -45,33 +45,6 @@
 </html>
 <% end %>
 
-<%#
-	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-	  {{**head}}
-	  <body class="wagn">
-		  {{**top_menu}}
-	    <div id="page">
-	   	  <div id="page-left">
-	  			<div id="main" context="main">{{_main}}</div>
-	  		</div>  
-	  	  <div id="page-right">
-	  		  {{**logo}}
-	  			<div id="sidebar" context="sidebar"> 
-						{{*sidebar|naked}}
-	  			</div>
-	  	    {{**bottom_menu}}
-	  	    {{**alerts}}
-	  		</div>
-	  	</div>
-		  {{**foot}}
-	  </body>
-	</html>
-%>
 
-<% layout_card = (c = CachedCard.get_real("*layout") and c.type == 'Pointer') ?
-                        CachedCard.get_real(c.pointee) : 
-                        Card.new(:name=>"**layout",:content=>@default_layout)  %>  
-<%= Slot.new(layout_card, "0_0", "view", self, :main_content=>@content_for_layout).render(:naked) %>
+<%= Slot.new(System.layout_card(:default=>@default_layout), "0_0", "view", self, :main_content=>@content_for_layout).render(:naked) %>
 

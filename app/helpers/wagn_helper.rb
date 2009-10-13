@@ -3,9 +3,11 @@ require_dependency 'slot'
 module WagnHelper
   require_dependency 'wiki_content'
 
+  # FIXME: I think all this slot initialization should happen in controllers
   def get_slot(card=nil, context=nil, action=nil, opts={})
     nil_given = card.nil?
     card ||= @card; context||=@context; action||=@action
+    opts[:relative_content] = params  
     slot = case
       when controller.slot;  nil_given ? controller.slot : controller.slot.subslot(card)
       else controller.slot = Slot.new(card,context,action,self,opts)

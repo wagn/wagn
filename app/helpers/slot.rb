@@ -1,12 +1,14 @@
 require_dependency 'slot_helpers'
+require 'ostruct'
+
 class Slot
   include SlotHelpers  
   cattr_accessor :max_char_count
   self.max_char_count = 200
   attr_reader :card, :context, :action, :renderer, :template
   attr_accessor :editor_count, :options_need_save, :state, :requested_view, :js_queue_initialized,  
-    :transclusions, :position, :renderer, :form, :superslot, :char_count, :item_format, :type, :renders, :start_time,
-    :transclusion_view_overrides, :skip_autosave
+    :transclusions, :position, :renderer, :form, :superslot, :char_count, :item_format, :type, :renders, 
+    :start_time, :skip_autosave, :config, :slot_options
   attr_writer :form 
 
   VIEW_ALIASES = { 
@@ -17,21 +19,29 @@ class Slot
    
   def initialize(card, context="main_1", action="view", template=nil, opts={} )
     @card, @context, @action, @template, = card, context.to_s, action.to_s, (template||StubTemplate.new)
-    @main_content = opts[:main_content]
-    context = "main_1" unless context =~ /\_/
-    @position = context.split('_').last    
+    # FIXME: this and context should all be part of the context object, I think.
+    # In any case I had to use "slot_options" rather than just options to avoid confusion with lots of 
+    # local variables named options.
+    @slot_options = OpenStruct.new({
+      :relative_content => {},
+      :main_content => nil,
+      :transclusion_view_overrides => nil,
+      :renderer => Renderer.new
+    }.merge(opts))
+    
+    @renderer = @slot_options.renderer
+    @context = "main_1" unless @context =~ /\_/
+    @position = @context.split('_').last    
     @char_count = 0
     @subslots = []  
     @state = 'view'
     @renders = {}
-    @transclusion_view_overrides = opts[:transclusion_view_overrides] 
-    @renderer = opts[:renderer] || Renderer.new
   end
 
   def subslot(card, &proc)
     # Note that at this point the subslot context, and thus id, are
     # somewhat meaningless-- the subslot is only really used for tracking position.
-    new_slot = self.class                                                                                                                                                                                                                                                                                                                                                     .new(card, context+"_#{@subslots.size+1}", @action, @template, :renderer=>@renderer)
+    new_slot = self.class.new(card, context+"_#{@subslots.size+1}", @action, @template, :renderer=>@renderer)
     new_slot.state = @state
     @subslots << new_slot 
     new_slot.superslot = self
@@ -291,7 +301,7 @@ class Slot
         begin
           match = $~
           tname, options = Chunk::Transclude.parse(match)     
-          if view_map = root.transclusion_view_overrides 
+          if view_map = root.slot_options.transclusion_view_overrides 
             if translated_view = view_map[ canonicalize_view( options[:view] )]
               options[:view] = translated_view
             end
@@ -309,16 +319,17 @@ class Slot
              # process_transclusion blows up if name is nil
             "{<bogus/>{#{fullname}}}" 
           elsif fullname == "_main"
-            @main_content
+            slot_options.main_content
           else                                             
             cargs = { :name=>fullname, :type=>options[:type] }
-            if (specified_content = @template.controller.params[tname.gsub(/\+/,'_')]).present?
+            #@template.controller.params[tname.gsub(/\+/,'_')]).present?
+            if (specified_content = root.slot_options.relative_content[tname.gsub(/\+/,'_')]).present?
               cargs[:content] = specified_content
             end
 
             tcard = case
               when @state==:edit
-                  (Card.find_by_name( fullname ) || Card.find_virtual( fullname ) ||  Card.new( cargs ))
+                (Card.find_by_name( fullname ) || Card.find_virtual( fullname ) ||  Card.new( cargs ))
               else
                 CachedCard.get fullname
               end

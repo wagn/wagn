@@ -4,8 +4,7 @@ Feature: Update Includer cards
 
   Background:
     Given I log in as Joe User
-    And I create Cardtype card "Book" with content ""
-    And I create Book card "Ulysses" with content "by {{+author}}, design by {{illustrator}}"
+    And I create Book card "Ulysses"
     And Joe Camel is watching "Ulysses"
     And Joe Admin is watching "Book"
   
@@ -27,7 +26,6 @@ Feature: Update Includer cards
     Then No notification should be sent
 
   Scenario: Templated cards should only send one email when added or updated
-    Given I create card "Book+*tform" with content "by {{+author}}, design by {{+illustrator}}"
     When I create Book card "Bros Krmzv" with plusses:
       |author|
       |Dostoyevsky|

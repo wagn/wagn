@@ -4,7 +4,6 @@ Feature: autonaming
   
   Background:
     Given I log in as Joe User
-    And I create Cardtype card "Book"
     And I create Phrase card "Book+*autoname" with content "Book 1"
   
   Scenario: Simple cardtype autoname       

@@ -4,8 +4,6 @@ Feature: templates
 
   Background:
     Given I log in as Joe User
-    And I create Cardtype card "Book"
-    And I create card "Book+*tform" with content "by {{+author}}, design by {{+illustrator}}"
 
   Scenario: New templated card
     When I go to new Book 

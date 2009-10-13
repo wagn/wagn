@@ -269,7 +269,11 @@ module Card
     def multi_save(cards)
       Notification.before_multi_save(self,cards)  # future system hook
       cards.each_pair do |name, opts|              
-        opts[:content] ||= ""
+        opts[:content] ||= ""   
+        # make sure blank content doesn't override pointee assignments if they are present
+        if (opts['pointee'].present? or opts['pointees'].present?) 
+          opts.delete('content')
+        end                                                                               
         name = name.post_cgi.to_absolute(self.name)
         logger.info "multi update working on #{name}: #{opts.inspect}"
         if card = Card[name]      

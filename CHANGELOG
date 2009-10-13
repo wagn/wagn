@@ -1,3 +1,14 @@
+=== 1.2.0 (Oct 13, 2009)         
+* fix pointer interfaces breaking under multiedit
+* implement autoname by type
+* more interfaces for pointers
+* google maps proto-module
+* layouts
+* improve deeply nested form
+* specifiable relative content for plus cards
+* fix rform content
+* touch up form look and feel
+
 === 1.1.1 (Sept 9, 2009)
 * fix footers of inclusions
 * implement contextual terms in prepend

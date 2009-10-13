@@ -20,7 +20,6 @@ Feature: Google maps
 
   Scenario: I look at the KML for a search
     When I go to url "/wagn/House+*type_cards.kml"
-    Then what
     Then I should see "Welcome to Ft Collins!"
 
 

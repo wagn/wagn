@@ -34,7 +34,7 @@ describe Slot, "" do
   context "builtin card" do
     it "should render layout partial with name of card" do     
       template = mock("template")
-      template.should_receive(:render).with(:partial=>"builtin").and_return("Boo")
+      template.should_receive(:render).with(:partial=>"builtin/builtin").and_return("Boo")
       builtin_card = Card.new( :name => "*builtin", :builtin=>true )
       slot = Slot.new( builtin_card, "main_1", "view", template  ) 
       slot.render(:naked_content).should == "Boo"

@@ -29,7 +29,7 @@ describe "CachedCard" do
 
   it "bump_global_seq should change global_seq" do
     @mc.should_receive(:read).with(@gs_key)
-    @mc.should_receive(:write)
+    @mc.should_receive(:write).twice
     initial = CachedCard.global_seq  
     sleep(0.02)  # long enough for time counter to register new value.
     CachedCard.bump_global_seq.to_i.should > initial.to_i

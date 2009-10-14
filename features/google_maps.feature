@@ -13,8 +13,8 @@ Feature: Google maps
       [[zip]]
       """
     And I create Cardtype card "House"
-    And I create House card "Ethan's House" with content "Welcome to Ft Collins!"
-    And I create House card "Lew's House" with content "Weclome to Chicago!"
+    And I create House card "Ethan's House" 
+    And I create card "Ethan's House+*geodescription" with content "Welcome to Ft Collins!"
     And I create card "Ethan's House+street address" with content "519 Peterson St"
     And I create card "Ethan's House+zip" with content "80524"    
 

@@ -319,7 +319,7 @@ class Slot
              # process_transclusion blows up if name is nil
             "{<bogus/>{#{fullname}}}" 
           elsif fullname == "_main"
-            slot_options.main_content
+            %{<div id="main" context="main">#{slot_options.main_content}</div>}
           else                                             
             cargs = { :name=>fullname, :type=>options[:type] }
             #@template.controller.params[tname.gsub(/\+/,'_')]).present?

@@ -94,13 +94,10 @@ html>body #navbox_background #navbox_image {
 /* -------  logo --------- */
 #logo {
   text-align: center;
-}
-#logo .card-slot {
-  font-weight: bold;
-  font-size:25;
-  letter-spacing: -2px;
-  text-align: center;
   padding: 10px 0px;
+  background: #fff; 
+  border: 1px solid #777; 
+  -moz-border-radius: 8px; 
 }
 
 #logo a, 

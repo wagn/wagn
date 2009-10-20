@@ -3,7 +3,7 @@ class SetStarAccountPlusStarRform < ActiveRecord::Migration
     User.as(:wagbot) do
       card = Card.find_or_create :name=>"*account+*rform", :type=>"Basic"
       if card.revisions.map(&:author).map(&:login).uniq == ["wagbot"]
-        card.content <<CONTENT
+        card.content =<<CONTENT
 <h1>{{_left|name}}'s roles<br></h1>
 <blockquote>
 <p>{{_left+*roles|item:link}}</p>

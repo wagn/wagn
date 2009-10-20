@@ -3,7 +3,7 @@ class SetStarInputPlusStarRform < ActiveRecord::Migration
     User.as(:wagbot) do
       card = Card.find_or_create :name=>"*input+*rform", :type=>"Phrase"
       if card.revisions.map(&:author).map(&:login).uniq == ["wagbot"]
-        card.content <<CONTENT
+        card.content =<<CONTENT
 
 CONTENT
         card.permit('edit',Role[:admin])

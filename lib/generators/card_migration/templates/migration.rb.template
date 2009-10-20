@@ -3,7 +3,7 @@ class <%= migration_name.camelize %> < ActiveRecord::Migration
     User.as(:wagbot) do
       card = Card.find_or_create :name=>"<%= card.name %>", :type=>"<%= card.type %>"
       if card.revisions.map(&:author).map(&:login).uniq == ["wagbot"]
-        card.content <<CONTENT
+        card.content =<<CONTENT
 <%= card.content %>
 CONTENT
         card.permit('edit',Role[:admin])

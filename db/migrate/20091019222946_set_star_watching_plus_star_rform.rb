@@ -3,7 +3,7 @@ class SetStarWatchingPlusStarRform < ActiveRecord::Migration
     User.as(:wagbot) do
       card = Card.find_or_create :name=>"*watching+*rform", :type=>"Search"
       if card.revisions.map(&:author).map(&:login).uniq == ["wagbot"]
-        card.content <<CONTENT
+        card.content =<<CONTENT
 /* fixit - once "type" accepts card defs:
 {"or": 
  {"and": {"plus": ["*watcher", {"refer_to": "_self"} ], "not": {"type": "Cardtype"} } },

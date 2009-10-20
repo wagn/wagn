@@ -39,12 +39,12 @@ my $basic_xpath = "descendant::".join("|", (keys %basic_tags));
 %convert_tags = (
   col => ':skip', # column style
   div => ':skip',
-  embed => ':delete',  # html 5 embedded 
+  embed => ':html',  # html 5 embedded 
   font => ':skip',
   form => ':delete',
-  #iframe => ':error',
+  iframe => ':html',
   input => ':delete',
-  object => ':delete',  # html 5 embedded
+  object => ':html',  # html 5 embedded
   option => ':delete',
   param => ':delete',
   script => ':delete',
@@ -57,9 +57,12 @@ my $basic_xpath = "descendant::".join("|", (keys %basic_tags));
   td => '\t',
   u => ':skip',
 );
-#my $convert_xpath = "*/".join("|*/", (keys %convert_tags));
-my $convert_xpath = "descendant::".join("|", (keys %convert_tags));
+my $convert_xpath = "descendant::".
+        join("|", grep($convert_tags{$_} ne ':html', (keys %convert_tags)));
+my $convert_xpath_html = "descendant::".
+        join("|", grep($convert_tags{$_} eq ':html', (keys %convert_tags)));
 
+print STDERR "Path: $convert_xpath\nHTML Path: $convert_xpath_html\n";
 my $xmlfile = "tt.com.xml";
 
 my $xp = XML::XPath->new(filename => $xmlfile);
@@ -77,16 +80,22 @@ print "\@user = User.current_user = User.find_by_login('wagbot')\n\n";
 foreach my $node ($nodeset->get_nodelist) {
   #print &dumplinks($node);
 
-  my $if_nodes = $node->find("*/iframe");
+  my $if_nodes = $node->find($convert_xpath_html);
   if ($if_nodes->get_nodelist > 0) {
-    print STDERR "Skip html node",$node->findvalue('@name'),"\n";
-    #print &transform_html($node);
+    print create_card('HTML', $node->findvalue('@name'),&transform_html($node));
   } else {
-    print "Card::Basic.create(:name => %{",$node->findvalue('@name'),"},\n\t:content => %{",&transform($node),"})\n";
+    print create_card('Basic',$node->findvalue('@name'),&transform($node));
   }
 }
 for my $i (sort keys %images) { print STDERR "$i: $images{$i}\n"; }
 exit;
+
+sub create_card {
+my ($type, $name, $cont) = @_;
+  $cont =~ s/}/\\}/g;
+  $cont =~ s/{/\\{/g;
+  "Card::$type.create(:name => %{$name},\n\t:content => %{$cont})\n";
+}
 
 sub pagename {
 my $title = shift;
@@ -131,7 +140,7 @@ print STDERR "A nodes:\n";
 sub transform_html {
 my ($node) = (shift);
 my $myname = $node->findvalue("\@name");
-print STDERR "Card has an iframe, html?: $myname\n";
+#print STDERR "Card has an iframe, html?: $myname\n";
    $node->toString."\n";
 }
 
@@ -206,13 +215,13 @@ my ($r, $x)=0;
 }
 
 sub change_elements {
-my ($node, $f) = @_;
+my ($node, $cardname, $f) = @_;
+  $cardname = $node->findvalue('@name') unless $cardname;
 my @chg_nodes = $node->find($convert_xpath)->get_nodelist;
 if ($f) {
   my $ndstr = $node->toString;
   my $findstr = map($_->getName, @chg_nodes);
   #print STDERR "change_el: Node: $ndstr Find:$findstr\n";
-Carp::confess if $convert_xpath =~ /tr/ && $ndstr =~ /<tr/ && !$findstr;
 }
   for my $c (@chg_nodes) {
     my $tag = $c->getName;
@@ -223,25 +232,28 @@ Carp::confess if $convert_xpath =~ /tr/ && $ndstr =~ /<tr/ && !$findstr;
 #print STDERR "Symbol\n";
       if ($ccode eq ':error') {
       } elsif ($ccode eq ':delete') {
+#print STDERR "Delete[$cardname] $tag\n";
+#print STDERR "Node:",$node->toString,"\n" unless $cardname;
+#Carp::confess unless $cardname;
         $c->dispose
       } elsif ($ccode eq ':error') {
 #print STDERR "Unexpected tag: $tag\n";
       } elsif ($ccode eq ':skip') {
         @replace = $c->getChildNodes;
-        &change_elements($c, 1);
-        #grep(&change_elements($_, 1), @replace);
+        &change_elements($c, $cardname, 1);
+        #grep(&change_elements($_, $cardname, 1), @replace);
       }
     } elsif ($ccode =~ s/^<(\w+)>$/$1/) {
-#print STDERR "Element\n";
+#print STDERR "Element[$cardname] $tag\n";
       @replace = (XML::XPath::Node::Element->new($ccode));
-      &change_elements($c, 1);
+      &change_elements($c, $cardname, 1);
       for my $kid ($c->getChildNodes) {
         $replace[0]->appendChild($kid);
       }
     } else {
 #print STDERR "Text Replace element with text: $ccode:: ",$c->toString,"\n";
       @replace = ($c->getChildNodes, XML::XPath::Node::Text->new($ccode));
-      &change_elements($c, 1);
+      &change_elements($c, $cardname, 1);
     }
     &replacenode($node, $c, @replace);
 ##print STDERR ("Found two: ".$node->toString." C:".$c->toString."\n");

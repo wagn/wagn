@@ -1,9 +1,0 @@
-class <%= class_name %>Datatype < Datatype::Base
-  
-  register "<%= class_name %>"
-  
-  description %{
-    Describe <%= datatype_name %> datatype here.
-  }
-  
-end

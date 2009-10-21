@@ -296,7 +296,7 @@ getSlotFromContext=function(context){
                         Element.select(element, '.createOnClick')
                  )))).find(function(x){
       ss = getSlotSpan(x.parentNode);
-      return (!ss || ss==element) && x.getAttributeNode('position').value==pos;
+      return (!ss || ss==element) && ((n = x.getAttributeNode('position')) && n.value==pos);
     });
   }
   return element;

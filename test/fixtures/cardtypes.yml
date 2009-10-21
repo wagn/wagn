@@ -59,6 +59,10 @@ cardtypes_001:
   class_name: Pointer
   system: 
   id: "20"
+cardtypes_024: 
+  class_name: Book
+  system: 
+  id: "32"
 cardtypes_013: 
   class_name: Search
   system: 

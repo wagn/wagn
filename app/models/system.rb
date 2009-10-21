@@ -45,6 +45,16 @@ class System < ActiveRecord::Base
     rescue
       nil
     end
+
+    def layout_card(opts)
+      User.as(:wagbot) do
+        (c = CachedCard.get_real("*layout") and c.type == 'Pointer' and
+          layout_name=c.pointee and !layout_name.nil? and
+          lc = CachedCard.get_real(layout_name) and lc.ok?(:read)) ? 
+            lc :
+            Card.new(:name=>"**layout",:content=>opts[:default]) 
+      end
+    end
    
     def image_setting(name)
       if content = setting(name) and  content.match(/src=\"([^\"]+)/)

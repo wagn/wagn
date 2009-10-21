@@ -1,7 +1,7 @@
 require 'spec'
 
 class GoogleMapsAddon    
-  def self.geocode(address)   
+  def self.geocode(address) 
     opts = {
       :q => address,
       :key => "ABQIAAAA5yO06x91IBr9oKK57xU-kRSWPodhC6wLLpV6xYzSog0legcbhhT0-N3OKUWSa2v_LV_VnVPbd3zgKg",
@@ -20,7 +20,7 @@ end
 class Card::Base
   after_save :update_geocode
   
-  def update_geocode           
+  def update_geocode 
     if conf = CachedCard.get_real('*geocode')
       if self.junction? && conf.pointees.include?( self.name.tag_name )
         address = conf.pointees.map{|p| (c=CachedCard.get(self.name.trunk_name+"+#{p}")) && c.content}.select(&:present?).join(', ')

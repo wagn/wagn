@@ -3,9 +3,11 @@ require_dependency 'slot'
 module WagnHelper
   require_dependency 'wiki_content'
 
+  # FIXME: I think all this slot initialization should happen in controllers
   def get_slot(card=nil, context=nil, action=nil, opts={})
     nil_given = card.nil?
     card ||= @card; context||=@context; action||=@action
+    opts[:relative_content] = params  
     slot = case
       when controller.slot;  nil_given ? controller.slot : controller.slot.subslot(card)
       else controller.slot = Slot.new(card,context,action,self,opts)
@@ -15,7 +17,7 @@ module WagnHelper
   # FIMXE: this one's a hack...
   def render_card(card, mode, args={})
     if String===card && name = card
-      raise("Card #{name} not present") unless card= (CachedCard.get(name) || Card[name] || Card.find_phantom(name))
+      raise("Card #{name} not present") unless card= (CachedCard.get(name) || Card[name] || Card.find_virtual(name))
     end
     # FIXME: some cases we're called before controller.slot is initialized.
     #  should we initialize here? or always do Slot.new?

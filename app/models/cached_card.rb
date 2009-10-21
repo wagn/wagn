@@ -165,7 +165,7 @@ class CachedCard
     !!(read('name') || read('content'))
   end
   
-  def phantom?() false end  # only cache non-phantom cards -- not sure this should be the case.
+  def virtual?() false end  # only cache non-virtual cards -- not sure this should be the case.
   def new_record?() false end  # only cache existing cards
    
   def to_id() id end            

@@ -80,7 +80,7 @@ module SlotHelpers
   end
 
   def menu   
-    if card.phantom?
+    if card.virtual?
       return %{<span class="card-menu faint">Virtual</span>\n}
     end
     menu = %{<span class="card-menu">\n}
@@ -177,7 +177,8 @@ module SlotHelpers
     self.form = form              
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
-    pre_content + self.render_partial( card_partial('editor'), options ) + setup_autosave
+    editor_partial = (card.type=='Pointer' ? ((c=System.setting("#{card.name.tag_name}+*input")) ? c.gsub(/[\[\]]/,'') : 'list') : 'editor')
+    pre_content + self.render_partial( card_partial(editor_partial), options ) + setup_autosave
   end                          
  
   def save_function 

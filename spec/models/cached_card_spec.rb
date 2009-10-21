@@ -21,7 +21,7 @@ end
 
 describe "CachedCard" do
   before do
-    @mc = flexmock()           
+    @mc = mock("cache")           
     CachedCard.reset_cache
     CachedCard.cache = @mc    
     @gs_key = System.host + '/test/global_seq'
@@ -29,8 +29,7 @@ describe "CachedCard" do
 
   it "bump_global_seq should change global_seq" do
     @mc.should_receive(:read).with(@gs_key)
-    @mc.should_receive(:read).with(@gs_key)
-    @mc.should_receive(:write)
+    @mc.should_receive(:write).twice
     initial = CachedCard.global_seq  
     sleep(0.02)  # long enough for time counter to register new value.
     CachedCard.bump_global_seq.to_i.should > initial.to_i
@@ -67,8 +66,8 @@ describe CachedCard, "access" do
   end
 
   it "should only forward name to the card the first time" do
-    mc = flexmock()
-    mc.should_receive(:name).times(1).and_return("cardname")
+    mc = mock("cache")
+    mc.should_receive(:name).once.and_return("cardname")
     
     cc = CachedCard.new('a', mc)
     cc.name.should == "cardname"
@@ -76,8 +75,8 @@ describe CachedCard, "access" do
   end
   
   it "should only forward id to the card" do
-    mc = flexmock()
-    mc.should_receive(:id).times(1).and_return(32)
+    mc = mock("cache")
+    mc.should_receive(:id).once.and_return(32)
     
     cc = CachedCard.new('a', mc)
     cc.id.should == 32
@@ -106,7 +105,7 @@ describe CachedCard, "access" do
 
 
   it "should only forward p to the card the first time" do
-    mc = flexmock(); mc.should_receive(:name).times(1).and_return("cardname")
+    mc = mock("cache"); mc.should_receive(:name).once.and_return("cardname")
     cc = CachedCard.new('a', mc)
     
     cc.name.should == "cardname"

@@ -94,13 +94,10 @@ html>body #navbox_background #navbox_image {
 /* -------  logo --------- */
 #logo {
   text-align: center;
-}
-#logo .card-slot {
-  font-weight: bold;
-  font-size:25;
-  letter-spacing: -2px;
-  text-align: center;
   padding: 10px 0px;
+  background: #fff; 
+  border: 1px solid #777; 
+  -moz-border-radius: 8px; 
 }
 
 #logo a, 
@@ -179,19 +176,16 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
 
 /* -- instructions ---*/
 
-.instruction {
-  border: 1px dashed #660;
-  margin: 3px 0px;
-}
 .help, .instruction {
   background: #eec;
   color: #440;
   font-style: italic;
   text-align: center;
+  padding: 2px;
 }
 .instruction div, 
 .instruction p {
-  padding: 6px;
+  padding: 4px;
 }
 .edit-instruction {
   margin: 8px 0px;

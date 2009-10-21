@@ -3,9 +3,11 @@ require_dependency 'slot'
 module WagnHelper
   require_dependency 'wiki_content'
 
+  # FIXME: I think all this slot initialization should happen in controllers
   def get_slot(card=nil, context=nil, action=nil, opts={})
     nil_given = card.nil?
     card ||= @card; context||=@context; action||=@action
+    opts[:relative_content] = params  
     slot = case
       when controller.slot;  nil_given ? controller.slot : controller.slot.subslot(card)
       else controller.slot = Slot.new(card,context,action,self,opts)
@@ -15,7 +17,7 @@ module WagnHelper
   # FIMXE: this one's a hack...
   def render_card(card, mode, args={})
     if String===card && name = card
-      raise("Card #{name} not present") unless card= (CachedCard.get(name) || Card[name] || Card.find_phantom(name))
+      raise("Card #{name} not present") unless card= (CachedCard.get(name) || Card[name] || Card.find_virtual(name))
     end
     # FIXME: some cases we're called before controller.slot is initialized.
     #  should we initialize here? or always do Slot.new?
@@ -117,8 +119,9 @@ module WagnHelper
         "/types/#{cardtype}/#{name}" :
         "/types/basic/#{name}"
     elsif   Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR > 2
+      ## This test works for .rhtml files but seems to fail on .html.erb
       begin
-        self.view_paths.find_template "types/#{cardtype}/_#{name}" 
+        self.view_paths.find_template "types/#{cardtype}/_#{name}"
         "types/#{cardtype}/#{name}"
       rescue ActionView::MissingTemplate => e
         "/types/basic/#{name}"
@@ -230,12 +233,15 @@ module WagnHelper
     User.as(:wagbot)  do
       if ga_key = System.setting("*google analytics key")
         %{
-          <script type="text/javascript">
-            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          <script type="text/javascript">    
+            // make sure this is only run once:  it may be called twice in the case that you are viewing a *layout page
+            if (typeof(pageTracker)=='undefined') {
+              var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+              document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+            }              
           </script>
           <script type="text/javascript">
-            var pageTracker = _gat._getTracker('#{ga_key}');
+            pageTracker = _gat._getTracker('#{ga_key}');
             pageTracker._trackPageview();
           </script>
         }

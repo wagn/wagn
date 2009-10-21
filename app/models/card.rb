@@ -37,7 +37,10 @@ Card::Base.class_eval do
   include CardLib::References  
   include CardLib::Cacheable
   extend Card::CardAttachment::ActMethods
+  
 end
+
+
 Notification.init
 
 Dir["#{RAILS_ROOT}/app/cardtypes/*.rb"].sort.each do |cardtype|
@@ -90,10 +93,22 @@ module Card
     def new(args={})
       args=args.stringify_keys unless args.nil?   
       p = Proc.new {|k| k.new(args)}
-      c=with_class_from_args(args,p) 
+      c=with_class_from_args(args,p)  
+      
+      # autoname.  note I'm not sure that this is the right place for this at all, but 
+      #  :set_needed_defaults returns if new_record? so I think we don't want it in there
+      ::User.as(:wagbot) do
+        autoname_cardname = ::Cardtype.name_for(c.type)+"+*autoname" 
+        if CachedCard.get_real autoname_cardname
+          autoname_card = Card[autoname_cardname]
+          c.name = autoname_card.content
+          autoname_card.content = autoname_card.content.next
+          autoname_card.save!
+        end                                         
+      end
       c.send(:set_needed_defaults)
       c
-    end
+    end 
     
     def method_missing( method_id, *args )
       Card::Base.send(method_id, *args)
@@ -153,4 +168,12 @@ module Card
     end
      
   end
+end    
+
+#FIXME: this should be at a more coherent stage of the process.
+%w{ *head *alert *foot *navbox *version *account_link }.each do |key|
+  Card.add_builtin( Card.new(:name=>key, :builtin=>true))
 end
+
+
+

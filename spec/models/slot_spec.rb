@@ -29,6 +29,18 @@ describe Slot, "" do
     result = Slot.new(t, "main_1", "view", nil, :transclusion_view_overrides=>{ :open => :expanded_view_content } ).render :expanded_view_content
     result.should == "boo"
   end
+    
+
+  context "builtin card" do
+    it "should render layout partial with name of card" do     
+      template = mock("template")
+      template.should_receive(:render).with(:partial=>"builtin/builtin").and_return("Boo")
+      builtin_card = Card.new( :name => "*builtin", :builtin=>true )
+      slot = Slot.new( builtin_card, "main_1", "view", template  ) 
+      slot.render(:naked_content).should == "Boo"
+    end
+  end
+
 
 =begin
   # FIXME: this test is very brittle-- based on specific html;

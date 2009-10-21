@@ -1,0 +1,13 @@
+<% card.options.each do |option| %> 
+  <div class="pointer-checkbox">
+    <%= check_box_tag slot.full_field_name(:pointees)+"[]", option.name, card.pointees.include?(option.name),
+      { :id=>"#{slot.context}-checkbox-#{option.key}", :class=>'pointer-checkbox-button' }
+    %>
+		<span class="pointer-checkbox-label">
+		  <span class="checkbox-option-name"><%= option.name %></span>
+	    <% if description = card.option_text(option.name) %>
+		    <div class="checkbox-option-description"><%= description %></div>
+		  <% end %>
+    </span>
+	</div>         
+<% end %>

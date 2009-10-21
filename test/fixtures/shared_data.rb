@@ -109,8 +109,12 @@ class SharedData
       User.as(:wagbot) {  
         Card.create!(:name=>"AdminNow", :content=>"test") 
         bt.permit(:create, Role['r1']); bt.save!  # set it so that Joe User can't create this type
-      }
-
+      }  
+      
+      Card.create! :type=>"Cardtype", :name=>"Book"
+      Card.create! :name=>"Book+*tform", :content=>"by {{+author}}, design by {{+illustrator}}",
+        :extension_type => 'HardTemplate'
+      
     end   
   end
 end  

@@ -8,8 +8,8 @@ module Card
 	      end
 	      (card && card.type=='Search') ? card : nil
 	    end
-	    
     end
+
 
 	  def cacheable?
       false
@@ -29,7 +29,20 @@ module Card
 	    end
     end
 	    
-	       
+	  def option_text(option)
+	    name = System.setting('*option label') || System.setting("#{self.name.tag_name}+*option label") || 'description'
+	    textcard = CachedCard.get_real(option+'+'+name)
+	    textcard ? textcard.content : nil
+	  end
+	    
+	  def pointees=(items)
+	    items=items.values if Hash===items 
+	    self.content = [items].flatten.reject{|x|x.blank?}.map{|x| "[[#{x}]]"}.join("\n")
+    end  
+    
+    def pointee=(item)
+      self.pointees = [item]
+    end  
 	  
 	  def item_type
 	    opt = options_card
@@ -37,8 +50,21 @@ module Card
 	  end
 	  
 	  def options_card
-	    return nil unless tag
-	    self.class.options_card(tag.name)
+	    tagname = self.name.tag_name or return nil
+	    self.class.options_card(tagname)
 	  end
+	  
+	  def options(limit=50)
+      (c=self.options_card) ? c.search(:limit=>limit) : Card.search(:sort=>'alpha',:limit=>limit)
+    end
+    
+    def limit
+      card = System.setting("#{self.name.tag_name}+*max") or return nil
+      card.content.strip.to_i
+    end    
+    
+    def autoname
+      System.setting("#{self.name.tag_name}+*autoname")
+    end
 	end
 end

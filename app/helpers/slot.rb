@@ -1,12 +1,14 @@
 require_dependency 'slot_helpers'
+require 'ostruct'
+
 class Slot
   include SlotHelpers  
   cattr_accessor :max_char_count
   self.max_char_count = 200
   attr_reader :card, :context, :action, :renderer, :template
   attr_accessor :editor_count, :options_need_save, :state, :requested_view, :js_queue_initialized,  
-    :transclusions, :position, :renderer, :form, :superslot, :char_count, :item_format, :type, :renders, :start_time,
-    :transclusion_view_overrides, :skip_autosave
+    :transclusions, :position, :renderer, :form, :superslot, :char_count, :item_format, :type, :renders, 
+    :start_time, :skip_autosave, :config, :slot_options
   attr_writer :form 
 
   VIEW_ALIASES = { 
@@ -17,14 +19,23 @@ class Slot
    
   def initialize(card, context="main_1", action="view", template=nil, opts={} )
     @card, @context, @action, @template, = card, context.to_s, action.to_s, (template||StubTemplate.new)
-    context = "main_1" unless context =~ /\_/
-    @position = context.split('_').last    
+    # FIXME: this and context should all be part of the context object, I think.
+    # In any case I had to use "slot_options" rather than just options to avoid confusion with lots of 
+    # local variables named options.
+    @slot_options = {
+      :relative_content => {},
+      :main_content => nil,
+      :transclusion_view_overrides => nil,
+      :renderer => Renderer.new
+    }.merge(opts)
+    
+    @renderer = @slot_options[:renderer]
+    @context = "main_1" unless @context =~ /\_/
+    @position = @context.split('_').last    
     @char_count = 0
     @subslots = []  
     @state = 'view'
     @renders = {}
-    @transclusion_view_overrides = opts[:transclusion_view_overrides] 
-    @renderer = opts[:renderer] || Renderer.new
   end
 
   def subslot(card, &proc)
@@ -51,6 +62,10 @@ class Slot
       card.name.gsub!(/^#{root.card.name}\+/, '+') if root.card.new_record?  ##FIXME -- need to match other relative inclusions.
       fields_for = builder.new("cards[#{card.name.pre_cgi}]", card, @template, options, block)       
     end
+  end    
+  
+  def full_field_name(field)   
+    form.text_field(field).match(/name=\"([^\"]*)\"/)[1] 
   end
 
   def wrap_content( content="" )
@@ -99,11 +114,8 @@ class Slot
       }
       
       slot_attr = attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join
-      open_slot = %{<!--[if IE]><div #{slot_attr}><![endif]-->} +
-                  %{<![if !IE]><object #{slot_attr}><![endif]>} 
-      close_slot= %{<!--[if IE]></div><![endif]-->} +
-                  %{<![if !IE]></object><![endif]>} 
-
+      open_slot = "<div #{slot_attr}>"
+      close_slot= "</div>"
     end
     
     if block_given? 
@@ -190,10 +202,11 @@ class Slot
     
       #when :link;   link_to_page card.name, card.name, :class=>"cardname-link #{card.new_record? ? 'wanted-card' : 'known-card'}"
       when :link;
-        opts = {:class=>"cardname-link #{(card.new_record? && !card.phantom?) ? 'wanted-card' : 'known-card'}"}
+        opts = {:class=>"cardname-link #{(card.new_record? && !card.virtual?) ? 'wanted-card' : 'known-card'}"}
         opts[:type] = slot.type if slot.type 
         link_to_page card.name, card.name, opts
       when :name;   card.name
+      when :key;    card.name.to_key
       when :linkname;  Cardname.escape(card.name)
       when :titled;
         content_tag( :h1, less_fancy_title(card.name) ) + self.render( :content )
@@ -229,9 +242,12 @@ class Slot
 
       when :closed_content;   render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
       when :open_content;     render_card_partial(:content)  # FIXME?: 'content' is inconsistent
-      when :naked_content, :raw_content # raw_content is DEPRECATED
-        #warn "rendering #{card.name} refs=#{card.references_expired} card.content=#{card.content}"
-        @renderer.render( card, args.delete(:content) || "", update_refs=card.references_expired)
+      when :naked_content
+        if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
+          template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}" 
+        else
+          @renderer.render( card, args.delete(:content) || "", update_refs=card.references_expired)
+        end
         
     ###---(  EDIT VIEWS ) 
 
@@ -251,6 +267,8 @@ class Slot
       when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
           render_partial("views/#{ok_action}", args)
 
+      when :blank; 
+        ""
 
       else; "<strong>#{card.name} - unknown card view: '#{ok_action}'</strong>"
     end
@@ -283,7 +301,7 @@ class Slot
         begin
           match = $~
           tname, options = Chunk::Transclude.parse(match)     
-          if view_map = root.transclusion_view_overrides 
+          if view_map = root.slot_options[:transclusion_view_overrides]
             if translated_view = view_map[ canonicalize_view( options[:view] )]
               options[:view] = translated_view
             end
@@ -296,17 +314,22 @@ class Slot
           options[:showname] = tname.to_show(fullname)
           #logger.info("absolutized tname and now have these transclusion options: #{options.inspect}")
 
+
           if fullname.blank?  
              # process_transclusion blows up if name is nil
             "{<bogus/>{#{fullname}}}" 
-          else
-  #          options[:view]='edit' if @state == :edit
+          elsif fullname == "_main"
+            %{<div id="main" context="main">#{slot_options[:main_content]}</div>}
+          else                                             
+            cargs = { :name=>fullname, :type=>options[:type] }
+            #@template.controller.params[tname.gsub(/\+/,'_')]).present?
+            if (specified_content = root.slot_options[:relative_content][tname.gsub(/\+/,'_')]).present?
+              cargs[:content] = specified_content
+            end
 
             tcard = case
               when @state==:edit
-                ( Card.find_by_name( fullname ) || 
-                  Card.find_phantom( fullname ) || 
-                  Card.new(   :name=>fullname, :type=>options[:type] ) )
+                (Card.find_by_name( fullname ) || Card.find_virtual( fullname ) ||  Card.new( cargs ))
               else
                 CachedCard.get fullname
               end
@@ -358,14 +381,19 @@ class Slot
                            
     
     # FIXME! need a different test here   
-    new_card = card.new_record? && !card.phantom?
+    new_card = card.new_record? && !card.virtual?
     
     state, vmode = @state.to_sym, (options[:view] || :content).to_sym      
     subslot.requested_view = vmode
     action = case
-      when [:name, :link].member?(vmode)  ; vmode
-      when state==:edit                   ; card.phantom? ? :edit_auto : :edit_in_form   
-      when new_card                       ; state==:line  ? :closed_missing : :open_missing
+      when [:name, :link, :linkname].member?(vmode)  ; vmode
+      when state==:edit                   ; card.virtual? ? :edit_auto : :edit_in_form   
+      when new_card                       
+        case   
+          when vmode==:naked; :blank
+          when state==:line;  :closed_missing
+          else ;              :open_missing
+        end
       when state==:line                   ; :expanded_line_content
       else                                ; vmode
     end

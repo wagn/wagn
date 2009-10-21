@@ -2,8 +2,8 @@ unless defined? Wagn::Version
   module Wagn
     module Version
       Major = '1'
-      Minor = '1'
-      Tiny  = '1'
+      Minor = '2'
+      Tiny  = '0'
       Eensie = nil
     
       class << self

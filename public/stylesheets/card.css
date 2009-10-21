@@ -282,18 +282,16 @@ div:hover.card-footer .footer-content {
 }
 */
 
-
-.card-slot .edit-area ,
-.card-slot span:hover.transcluded div.edit-area  {
-  background: #ddd;
-  border: dashed 1px #aaa;
-  margin: 4px;
-  padding: 3px;
-/*  position: relative;*/
-}
-.card-slot .templated.edit-area {
-  background: white;
+.card-slot .edit-area {
+  background: #f9f9f9;
   border: 0px;
+  padding: 4px;
+}
+.card-slot .in-multi {
+  background: #e3e3e3;
+  width: 100%;
+  padding: 1 0px;
+  margin: 1px;
 }
 .card-slot .new-type .cardtype {
   font-size: 14px;
@@ -315,6 +313,10 @@ div:hover.card-footer .footer-content {
 .card-slot .edit-area .richtext {
   background: #fff;
 }
+.card-slot ul.pointer {
+  margin: 0px;
+  padding: 0px;
+}
 .card-slot .edit-area .label not(.fieldset) {
   display: block;
   margin: 2px;
@@ -328,6 +330,12 @@ div:hover.card-footer .footer-content {
   width: 98%;
   margin-bottom: 5px;
 }
+.card-slot .edit-area .mceEditor table,
+.card-slot .edit-area .mceEditor table td{
+  margin: 0px;
+  padding:0px 1px;
+  border: 0px;
+}
 .card-slot .edit-area td {
   vertical-align: middle;
 }
@@ -340,24 +348,26 @@ div:hover.card-footer .footer-content {
 .card-slot .label-in-multi {
   float: left;
   width: 25%;
-  padding: 0.5%;
 }
 .card-slot .label-in-multi .title {
   white-space: inherit;
+  padding: 1px 5px;
 }
 .card-slot .field-in-multi {
   float: right;
-  width: 72%;
-  padding: 0.5%;
+  width: 70%;
+  padding: 3px;
 }
-
+.card-slot .edit-button-area {
+  margin-top: 7px;
+}
 .in-multi .instruction,
 .in-multi .instruction p{
   clear:left;
   border: 0px;
-  background-color: #ddd; /*hard-coded because inherit wasn't working right in IE */
+  background-color: #e3e3e3; /*hard-coded because inherit wasn't working right in IE */
   text-align: left;
-  padding: 0px 5px;
+  padding: 0 3px;
 }
 /* for IE */
 div.transcluded {
@@ -597,6 +607,7 @@ body.wagn .card-slot.line h2,
 }
 .card-slot.line .content img {
   height: 16px;
+  width: auto;
   float: none;
   padding: 0px;
 }
@@ -719,6 +730,11 @@ div.search-result-list .search-result-item {
   display: block;
   text-indent: -15px;
   padding-left: 15px;
+}
+
+.card-slot .radio-option-description,
+.card-slot .checkbox-option-description {
+  margin-left: 40px; 
 }
 
 /*-----------( Image ) -----------*/

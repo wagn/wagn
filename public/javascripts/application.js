@@ -296,7 +296,7 @@ getSlotFromContext=function(context){
                         Element.select(element, '.createOnClick')
                  )))).find(function(x){
       ss = getSlotSpan(x.parentNode);
-      return (!ss || ss==element) && x.getAttributeNode('position').value==pos;
+      return (!ss || ss==element) && ((n = x.getAttributeNode('position')) && n.value==pos);
     });
   }
   return element;
@@ -380,6 +380,7 @@ getSlotOptions=function(element){
 urlForAddField=function(card_id, eid) {
   //return 'foo'
   //index = getSlotElements(getSlotFromContext(eid), 'pointer-li').length;
+  $(eid+'-add').remove();
   index = Element.select($(eid+'-ul'), ".pointer-text").length;
   return ('/card/add_field/' + card_id + '?index=' + index + '&eid=' + eid);
 }

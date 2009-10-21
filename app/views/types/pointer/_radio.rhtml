@@ -1,0 +1,13 @@
+<div class="pointer-radio-list">
+  <% slot.card.options.each do |option| %> 
+    <div class="pointer-radio">
+  		<%= slot.form.radio_button :pointee, option.name, :id=>"#{slot.context}-radio-#{option.key}", :class=>'pointer-radio-button' %>
+  		<span class="pointer-radio-label">
+  		  <span class="radio-option-name"><%= option.name %></span>
+  		  <% if description = card.option_text(option.name) %>
+  		    <div class="radio-option-description"><%= description %></div>
+  		  <% end %>
+  		</span>
+  	</div>         
+  <% end %>
+</div>

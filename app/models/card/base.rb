@@ -39,7 +39,7 @@ module Card
     before_validation_on_create :set_needed_defaults
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
-      :update_referencers, :allow_type_change, :phantom, :broken_type, :skip_defaults
+      :update_referencers, :allow_type_change, :virtual, :builtin, :broken_type, :skip_defaults
         
     private
       belongs_to :reader, :polymorphic=>true  
@@ -57,7 +57,7 @@ module Card
     #  couldn't we create initialize_with_defaults and chain it?
     def set_needed_defaults
       # new record check because create callbacks are also called in type transitions 
-      return if (!new_record? || skip_defaults? || phantom? || @defaults_already_set)  
+      return if (!new_record? || skip_defaults? || virtual? || @defaults_already_set)  
       @defaults_already_set = true
       set_defaults
       #replace_content_variables
@@ -134,23 +134,19 @@ module Card
       
       def find_or_new(args={})
         args.stringify_keys!
-        # FIXME -- this finds cards in or out of the trash-- we need that for
-        # renaming card in the trash, but may cause other problems.
         raise "Must specify :name to find_or_create" if args['name'].blank?
         c = Card.find(:first, :conditions=>"#{ActiveRecord::Base.connection.quote_column_name("key")} = '#{args['name'].to_key}'") || begin
           p = Proc.new {|k| k.new(args)}
           with_class_from_args(args, p)
         end
         c.send(:set_needed_defaults)
-        # FIXME - this will lead to double saving when called from find_or_create, 
-        # but trashed cards are not getting saved when called from set_defaults   there's probably a better way.
-#        if c.trash
-#          ::User.as(:wagbot) do
-#            c.content=''  
-#            c.trash=false
-#            c.save
-#          end
-#        end
+
+        if c.trash
+          ::User.as(:wagbot) do
+            c.content=''  
+            c.trash=false
+          end
+        end
         c
       end                      
                                   
@@ -167,7 +163,7 @@ module Card
       end
       alias_method_chain :create, :type    
       
-      def create_with_trash!(args={})     
+      def create_with_trash!(args={})   
         args.stringify_keys!
         if c = Card.find_by_key_and_trash(get_name_from_args(args).to_key, true)
           args.merge('trash'=>false).each { |k,v|  c.send( "#{k}=", v ) }
@@ -241,10 +237,10 @@ module Card
       end
       
       def [](name) 
-        # DONT do find_phantom here-- it ends up happening all over the place--
+        # DONT do find_virtual here-- it ends up happening all over the place--
         # call it explicitly if that's what you want
         #self.cache[name.to_s] ||= 
-        self.find_by_name(name.to_s, :include=>:current_revision) #|| self.find_phantom(name.to_s)
+        self.find_by_name(name.to_s, :include=>:current_revision) #|| self.find_virtual(name.to_s)
         #self.find_by_name(name.to_s)
       end
              
@@ -272,12 +268,18 @@ module Card
     
     def multi_save(cards)
       Notification.before_multi_save(self,cards)  # future system hook
-      cards.each_pair do |name, opts|
+      cards.each_pair do |name, opts|              
+        opts[:content] ||= ""   
+        # make sure blank content doesn't override pointee assignments if they are present
+        if (opts['pointee'].present? or opts['pointees'].present?) 
+          opts.delete('content')
+        end                                                                               
         name = name.post_cgi.to_absolute(self.name)
         logger.info "multi update working on #{name}: #{opts.inspect}"
         if card = Card[name]      
           card.update_attributes(opts)
-        elsif !opts[:content].strip.blank?  #fixme -- need full-on strip that gets rid of blank html tags.
+        elsif opts[:pointee].present? or opts[:pointees].present? or  
+                (opts[:content].present? and opts[:content].strip.present?)
           opts[:name] = name                
           if ::Cardtype.create_ok?( self.type ) && !::Cardtype.create_ok?( Card.new(opts).type )
             ::User.as(:wagbot) { Card.create(opts) }
@@ -412,8 +414,12 @@ module Card
       !!skip_defaults
     end
 
-    def phantom?
-      @phantom ||= phantom
+    def virtual?
+      @virtual || @builtin
+    end    
+    
+    def builtin?
+      @builtin
     end
     
     def clean_html?

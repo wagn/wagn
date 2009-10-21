@@ -1,7 +1,18 @@
+=== 1.2.0 (Oct 21, 2009)         
+* fix pointer interfaces breaking under multiedit
+* implement autoname by type
+* more interfaces for pointers
+* google maps proto-module
+* layouts
+* improve deeply nested form
+* specifiable relative content for plus cards
+* fix rform content
+* touch up form look and feel
+
 === 1.1.1 (Sept 9, 2009)
 * fix footers of inclusions
 * implement contextual terms in prepend
-* implement notification system
+* implement touchups to notification system
 * show help text when creating via inclusion
 * show *edit when adding untyped new card
 
@@ -253,7 +264,7 @@
 * alternative suggestion for when migration 100 breaks
 * remove breaking google call
 * slot bug fix
-* pointer fixes / phantom handling
+* pointer fixes / virtual handling
 * fixed pointer editing
 * add options for pointer type
 * fix indexed_name update
@@ -278,7 +289,7 @@
 * menu css
 * footer fix -- add last editor
 * fix sidebar slot on pages without cards
-* fix last editor for phantom cards?
+* fix last editor for virtual cards?
 * fix nested multi-edit
 * fixed role and user pages
 * fix bizarro migration failure

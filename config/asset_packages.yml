@@ -5,7 +5,7 @@ javascripts:
   - effects
   - controls
   - application
-  - calendar
+  - calendar       
 stylesheets: 
 - base: 
   - page

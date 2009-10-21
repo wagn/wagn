@@ -49,9 +49,10 @@ class System < ActiveRecord::Base
     def layout_card(opts)
       User.as(:wagbot) do
         (c = CachedCard.get_real("*layout") and c.type == 'Pointer' and
-                lc = CachedCard.get_real(c.pointee) and lc.ok?(:read)) ? 
-                lc :
-                Card.new(:name=>"**layout",:content=>opts[:default]) 
+          layout_name=c.pointee and !layout_name.nil? and
+          lc = CachedCard.get_real(layout_name) and lc.ok?(:read)) ? 
+            lc :
+            Card.new(:name=>"**layout",:content=>opts[:default]) 
       end
     end
    

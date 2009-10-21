@@ -1,19 +1,6 @@
 require 'lib/util/card_builder.rb'      
 
 
-def check_for_fulltext_schema
-  schema_error = ("Oops! Attempt to load a schema with a broken cards table.  Rails can't properly dump and restore a schema with fulltext index data (indexed_content). " +
-    "you'll need to connect to a database without these fields and rerun >rake db:schema:dump first.")
-  begin 
-    # it would be good to do a test here, but it has to see whether the type is tsvector now, because cards should always have indexed_content.
-    
-#    if Card.columns.map(&:name).include?('indexed_content')
-#      raise(schema_error)
-#    end
-  rescue
-    raise(schema_error)
-  end
-end
  
 def set_database( db )
   y = YAML.load_file("#{RAILS_ROOT}/config/database.yml")
@@ -24,19 +11,14 @@ def set_database( db )
   end
 end
 
+# desc 'Check for pending migrations and load the test schema'
+# task :prepare => 'db:abort_if_pending_migrations' do
+#   if defined?(ActiveRecord) && !ActiveRecord::Base.configurations.blank?
+#     Rake::Task[{ :sql  => "db:test:clone_structure", :ruby => "db:test:load" }[ActiveRecord::Base.schema_format]].invoke
+#   end
+# end
+
 namespace :db do
-  namespace :test do
-    desc 'Prepare the test database and load the schema'
-    task :prepare => :environment do   
-      check_for_fulltext_schema        
-      if defined?(ActiveRecord::Base) && !ActiveRecord::Base.configurations.blank?
-        Rake::Task[{ :sql  => "db:test:clone_structure", :ruby => "db:test:clone" }[ActiveRecord::Base.schema_format]].invoke
-      end 
-      puts ">>loading test fixtures"
-      puts `rake db:fixtures:load RAILS_ENV=test`
-    end
-  end
-  
   namespace :fixtures do
     desc "Load fixtures into the current environment's database.  Load specific fixtures using FIXTURES=x,y"
     task :load => :environment do
@@ -92,7 +74,7 @@ namespace :test do
     # go ahead and load the fixtures into the test database
     
     puts ">>preparing test database"
-    puts `rake db:test:prepare RAILS_ENV=test`
+    puts `rake db:test:prepare RAILS_ENV=test RELOAD_TEST_DATA=true`
     #Rake::Task['db:test:prepare'].invoke
   #=end
   end

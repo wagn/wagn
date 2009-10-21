@@ -22,14 +22,14 @@ class Slot
     # FIXME: this and context should all be part of the context object, I think.
     # In any case I had to use "slot_options" rather than just options to avoid confusion with lots of 
     # local variables named options.
-    @slot_options = OpenStruct.new({
+    @slot_options = {
       :relative_content => {},
       :main_content => nil,
       :transclusion_view_overrides => nil,
       :renderer => Renderer.new
-    }.merge(opts))
+    }.merge(opts)
     
-    @renderer = @slot_options.renderer
+    @renderer = @slot_options[:renderer]
     @context = "main_1" unless @context =~ /\_/
     @position = @context.split('_').last    
     @char_count = 0
@@ -301,7 +301,7 @@ class Slot
         begin
           match = $~
           tname, options = Chunk::Transclude.parse(match)     
-          if view_map = root.slot_options.transclusion_view_overrides 
+          if view_map = root.slot_options[:transclusion_view_overrides]
             if translated_view = view_map[ canonicalize_view( options[:view] )]
               options[:view] = translated_view
             end
@@ -319,11 +319,11 @@ class Slot
              # process_transclusion blows up if name is nil
             "{<bogus/>{#{fullname}}}" 
           elsif fullname == "_main"
-            %{<div id="main" context="main">#{slot_options.main_content}</div>}
+            %{<div id="main" context="main">#{slot_options[:main_content]}</div>}
           else                                             
             cargs = { :name=>fullname, :type=>options[:type] }
             #@template.controller.params[tname.gsub(/\+/,'_')]).present?
-            if (specified_content = root.slot_options.relative_content[tname.gsub(/\+/,'_')]).present?
+            if (specified_content = root.slot_options[:relative_content][tname.gsub(/\+/,'_')]).present?
               cargs[:content] = specified_content
             end
 

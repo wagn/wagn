@@ -86,7 +86,7 @@ class AccountController < ApplicationController
       @user.generate_password
       @user.save!                       
       subject = "Password Reset"
-      message = "You have been give a new temporary password.  " +
+      message = "You have been given a new temporary password.  " +
          "Please update your password once you've logged in. "
       Mailer.deliver_account_info(@user, subject, message)
       flash[:notice] = "A new temporary password has been set on your account and sent to your email address" 

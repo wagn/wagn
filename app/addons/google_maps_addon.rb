@@ -35,11 +35,11 @@ class Card::Base
   end
 end
 
-##  This spec is here instead of the test suite since it actually connects to the google service
-describe GoogleMapsAddon do
-  context "geocode" do
-    it "returns correct coords for Ethan's House" do
-      GoogleMapsAddon.geocode("519 Peterson St., Ft. Collins, CO").should match(/^40.5\d+,-105.0\d+$/)
-    end
-  end
-end
+# ##  This spec is here instead of the test suite since it actually connects to the google service
+# describe GoogleMapsAddon do
+#   context "geocode" do
+#     it "returns correct coords for Ethan's House" do
+#       GoogleMapsAddon.geocode("519 Peterson St., Ft. Collins, CO").should match(/^40.5\d+,-105.0\d+$/)
+#     end
+#   end
+# end

@@ -9,9 +9,8 @@
       
   <% div(:class=>'edit-area' ) do %>  
  	  <h2>Edit Name</h2>  
-		<% form_remote_for :card, @card, :url=>slot.url_for('card/update'), 
+		<% wagn_form_for :card, @card, :url=>slot.url_for('card/update'), 
 				:update=>{:success=>slot.id('card-body'), :failure=>"javascript:getNextElement(this,'notice')" }do |f| %>
-			 
 			<p>Change from <%= link_to_page less_fancy_title(@old_card), @old_card.name %> to this   
   		    <%= slot.name_field(f) %>
 			</p>
@@ -46,10 +45,11 @@
   			      <%= f.radio_button :update_referencers, 'false' %>Let the references be broken (keep them as they are)
   			    </p>
   			  </div>
-			  <% end %>
+			  <% end %>        
 			  <%= f.hidden_field 'confirm_rename' %> 
 			<% end %>
 			
+			<%= slot.captcha %>			
 		 	<%= submit_tag 'Rename' %>
 		  <%= button_to_remote 'Cancel', :url=>slot.url_for('card/edit'), :update=>slot.id() %>
 		<% end %>

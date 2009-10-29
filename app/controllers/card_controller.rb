@@ -1,21 +1,22 @@
 class CardController < ApplicationController
   helper :wagn, :card 
 
-  before_filter :create_ok, :only=>[ :new, :create ]
+  EDIT_ACTIONS =  [ :edit, :update, :rollback, :save_draft, :watch, :unwatch ]
+  LOAD_ACTIONS = EDIT_ACTIONS + [ :changes, :comment, :denied, :options, :quick_update, :related, :remove ]
 
-  before_filter :load_card!, :only=>[
-    :changes, :comment, :denied, :edit, :options, :quick_update, 
-    :related, :remove, :rollback, :save_draft, :update, :watch, :unwatch
-  ]
-
+  before_filter :load_card, :only=>LOAD_ACTIONS
   before_filter :load_card_with_cache, :only => [:line, :view, :open ]
+
+  before_filter :view_ok,   :only=> LOAD_ACTIONS
+  before_filter :create_ok, :only=>[ :new, :create ]  
+  before_filter :edit_ok,   :only=> EDIT_ACTIONS
+  before_filter :remove_ok, :only=>[ :remove ]          
   
-  before_filter :edit_ok,   :only=>[ :edit, :update, :rollback, :save_draft, :watch, :unwatch] 
-  before_filter :remove_ok, :only=>[ :remove ]
+  before_filter :require_captcha, :only => [ :create, :update, :comment, :remove, :rollback, :quick_update ]
   
   #----------( Special cards )
   
-  def index
+  def index   
     redirect_to(
       case
       when User.no_logins?;                 '/admin/setup'
@@ -99,34 +100,31 @@ class CardController < ApplicationController
     render :template=>'/card/denied', :status => 403
   end
   
-  def create
-    @card = Card.create params[:card]
-    @card.multi_create(params[:cards]) if params[:multi_edit] and params[:cards] and @card.errors.empty?
-
+  def create    
+    @card = Card.create params[:card]        
+    
     @redirect_location = if @card.ok?(:read)
       url_for_page(@card.name)
     else
       ( System.setting(@card.cardtype.name + "+*thanks") || System.setting("Basic+*thanks") || '/' )
-    end              
-    render_args = 
+    end                     
+
+    # according to rails / prototype docs:
+    # :success: [...] the HTTP status code is in the 2XX range.
+    # :failure: [...] the HTTP status code is not in the 2XX range.
+  
+    # however on 302 ie6 does not update the :failure area, rather it sets the :success area to blank..
+    # for now, to get the redirect notice to go in the failure slot where we want it, 
+    # we've chosen to render with the 'teapot' failure status: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes  
+
+    handling_errors do
+      @card.multi_create(params[:cards]) if params[:multi_edit] and params[:cards]
       case
-        when !@card.errors.empty?; {
-          :status => 422,
-          :inline=>"<%= error_messages_for :card %><%= javascript_tag 'scroll(0,0)' %>" 
-        }    
-        when (!@card.ok?(:read));  {:action=>'redirect_to_thanks', :status=>418  }
-        when main_card?;    {:action=>'redirect_to_created_card', :status=>418 }          
-          # according to rails / prototype docs:
-          # :success: [...] the HTTP status code is in the 2XX range.
-          # :failure: [...] the HTTP status code is not in the 2XX range.
-          
-          # however on 302 ie6 does not update the :failure area, rather it sets the :success area to blank..
-          # for now, to get the redirect notice to go in the failure slot where we want it, 
-          # we've chosen to render with the 'teapot' failure status: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-          
-        else;              {:action=>'show'}
+        when (!@card.ok?(:read));  render(:action=>'redirect_to_thanks', :status=>418 )
+        when main_card?;           render( :action=>'redirect_to_created_card', :status=>418 )
+        else;                      render(:action=>'show')
       end
-    render render_args
+    end
   end
   
   #--------------( editing )
@@ -135,7 +133,7 @@ class CardController < ApplicationController
     render :partial=>"card/edit/#{params[:attribute]}" if ['name','type'].member?(params[:attribute])
   end
 
-  def update
+  def update  
     card_args=params[:card] || {}
     #fail "card params required" unless params[:card] or params[:cards]
 
@@ -172,16 +170,19 @@ class CardController < ApplicationController
       @card.update_referencers = true
       return render(:partial=>'card/edit/name', :status=>200)
     end
-    
-    return render_card_errors(@card) unless @card.errors.empty?
-    @card = Card.find(card.id)  
-    flash[:notice] = "updated #{@card.name}"
-    request.xhr? ? render_update_slot(render_to_string(:action=>'show')) : render(:action=>'show')
+
+    handling_errors do
+      @card = Card.find(card.id)  
+      flash[:notice] = "updated #{@card.name}"
+      request.xhr? ? render_update_slot(render_to_string(:action=>'show')) : render(:action=>'show')
+    end
   end
 
-  def quick_update
-    @card.update_attributes! params[:card]
-    @card.errors.empty? ? render(:text=>'Success') : render_card_errors(@card)    
+  def quick_update   
+    @card.update_attributes! params[:card]   
+    handling_errors do
+      render(:text=>'Success')
+    end
   end
 
   def save_draft
@@ -221,8 +222,15 @@ class CardController < ApplicationController
   def remove  
     if params[:card]
       @card.confirm_destroy = params[:card][:confirm_destroy]
+    end        
+    
+    @card.destroy
+         
+    if @card.errors.on(:confirmation_required)
+      return render_update_slot( render_to_string(:partial=>'confirm_remove'))
     end
-    if @card.destroy     
+
+    handling_errors do
       discard_locations_for(@card)
       render_update_slot do |page,target|
         if @context=="main_1"
@@ -234,25 +242,7 @@ class CardController < ApplicationController
           page.wagn.messenger.note( "#{@card.name} removed. ")  
         end
       end
-    elsif @card.errors.on(:confirmation_required)
-      render_update_slot render_to_string(:partial=>'confirm_remove')
-    else
-      render_card_errors(@card)
     end
-  end
-
-  def watch 
-    watchers = Card.find_or_new( :name => @card.name + "+*watchers", :type => 'Pointer' )
-    watchers.add_reference User.current_user.card.name
-    flash[:notice] = "You are now watching #{card.name}"
-    request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
-  end
-
-  def unwatch 
-    watchers = Card.find_or_new( :name => @card.name + "+*watchers" )
-    watchers.remove_reference User.current_user.card.name
-    flash[:notice] = "You are no longer watching #{card.name}"
-    request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
   #---------------( tabs )
@@ -311,6 +301,20 @@ class CardController < ApplicationController
     
   #-------- ( MISFIT METHODS )  
   
+  def watch 
+    watchers = Card.find_or_new( :name => @card.name + "+*watchers", :type => 'Pointer' )
+    watchers.add_reference User.current_user.card.name
+    flash[:notice] = "You are now watching #{card.name}"
+    request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
+  end
+
+  def unwatch 
+    watchers = Card.find_or_new( :name => @card.name + "+*watchers" )
+    watchers.remove_reference User.current_user.card.name
+    flash[:notice] = "You are no longer watching #{card.name}"
+    request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
+  end
+
   def auto_complete_for_navbox
     @stub = params['navbox']
     @items = Card.search( :complete=>@stub, :limit=>8, :sort=>'name' ) 
@@ -341,6 +345,41 @@ class CardController < ApplicationController
   def add_field # for pointers only
     load_card! if params[:id]
     render :partial=>'types/pointer/field', :locals=>params.merge({:link=>:add,:card=>@card})
+  end   
+  
+  private  
+  def handling_errors 
+    if @card.errors.present?
+      render_card_errors(@card)
+    else
+      yield
+    end
   end
+  
+  def require_captcha 
+    load_card unless @card  
+    if captcha_required?
+      if params[:recaptcha_challenge_field] and params[:recaptcha_response_field] 
+        if verify_recaptcha(:model=>@card, :timeout=>20)
+          return true
+        end
+      else 
+        @card.errors.add(:captcha, "Since you're not signed in, we need to verify that you're human in the captcha below")
+      end
+      render_card_errors(@card)
+      return false
+    end
+    true
+  end
+
+  def captcha_required?   
+    setting = nil
+    setting = System.toggle_setting("#{@card.type}+*captcha") if @card
+    setting = System.toggle_setting('*captcha') if setting.nil?
+    setting = false if setting.nil?
+    not logged_in? and setting
+  end  
+  
+  helper_method :captcha_required?
 end
 

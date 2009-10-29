@@ -40,10 +40,14 @@ class System < ActiveRecord::Base
     def setting(name)
       User.as :wagbot  do
         card=CachedCard.get_real(name) and !card.content.strip.empty? and card.content
-        #card=CachedCard.get_real(name)  card.content
       end
     rescue
       nil
+    end           
+    
+    def toggle_setting(name)
+      # "no" feels like a kluge
+      content = setting(name) and content != "no"
     end
 
     def layout_card(opts)
@@ -136,7 +140,6 @@ class System < ActiveRecord::Base
   }
   
 end        
-
 
 # load wagn configuration. 
 # FIXME: this has to be here because System is both a config store and a model-- which means

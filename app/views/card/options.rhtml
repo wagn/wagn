@@ -5,7 +5,7 @@
 	<%= slot.notice %>
 	
   <% div( :class=>'options-body') do %>   
-    <% form_remote_for :card, @card, :url=>slot.url_for('options/update') do |form| %>
+    <% wagn_form_for :card, @card, :url=>slot.url_for('options/update') do |form| %>
 
 
       <table class="fieldset">

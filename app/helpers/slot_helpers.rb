@@ -234,5 +234,13 @@ module SlotHelpers
       javascript_tag "Wagn.setupAutosave('#{card.id}', '#{context}');\n"
     end
   end
+          
+  def captcha
+    if captcha_required?
+      key = card.new_record? ? "new" : card.name.to_key
+      recaptcha_tags :ajax=>true, :display=>{:theme=>'white'}, :id=>key
+    end
+  end
+
   
 end  

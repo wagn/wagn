@@ -11,8 +11,8 @@
 	
   	<%= error_messages_for :card %>
     <div class=cardnotice></div>   
-
-	  <% form_remote_for :card, card, :url=>"card/create", 
+                                            
+	  <% wagn_form_for :card, card, :url=>"card/create", 
 					:slot => slot,
 					:update => {
 						:success => slot.id,   
@@ -65,7 +65,8 @@
   					<%= slot.content_field(form) %>
   				<% end %>
   			</div>
-  			
+  		 
+				<%= slot.captcha %>
   		  <%= hidden_field_tag :view, params[:requested_view] || params[:view] || :open %>
   		  <div class="edit-button-area">
     		

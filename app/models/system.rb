@@ -151,8 +151,10 @@ end
 if File.exists? "#{RAILS_ROOT}/config/wagn.rb" 
   require_dependency "#{RAILS_ROOT}/config/wagn.rb"    
 end
-                
-require File.expand_path(File.dirname(__FILE__) + '/../../app/addons/google_maps_addon')  
+
+# FIXME: loading this in application.rb breaks testing.
+#        loading it here breaks bootstrap
+# require File.expand_path(File.dirname(__FILE__) + '/../../app/addons/google_maps_addon')  
 
 # Configuration cleanup: Make sure System.base_url doesn't end with a /
 System.base_url.gsub!(/\/$/,'')

@@ -4,9 +4,10 @@
 class ApplicationController < ActionController::Base
   require_dependency 'exception_system' 
   include AuthenticatedSystem
-  include ExceptionSystem
+  include ExceptionSystem        
+  include CaptchaSystem
    
-  GoogleMapsAddon
+  ::GoogleMapsAddon
 
   include LocationHelper
   helper :all
@@ -192,6 +193,14 @@ class ApplicationController < ActionController::Base
     return false
   end
 
+  def handling_errors 
+    if @card.errors.present?
+      render_card_errors(@card)
+    else
+      yield
+    end
+  end
+  
   def render_card_errors(card=nil)
     card ||= @card
     stuff = %{<div class="errorExplanation">
@@ -227,7 +236,7 @@ class ApplicationController < ActionController::Base
         end
       when requesting_ajax? && params['_update'];
         render :inline=>stuff_with_javascript, :layout=>nil, :status=>422
-      when !requesting_ajax;
+      when !requesting_ajax?;
         render :inline=>stuff_with_javascript, :layout=>'application', :status=>422
     end
   end  

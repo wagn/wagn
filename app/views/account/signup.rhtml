@@ -24,6 +24,7 @@
         <%= f.hidden_field 'type'  %>
         <%- slot.form = f %>
         <%= error_messages_for :user %>
+				<%= slot.captcha %>
 
       	<table class="fieldset">
       	  <%= slot.option_header 'Account Details' %>

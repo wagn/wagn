@@ -2,6 +2,7 @@ class InvitationError < StandardError; end
 
 class AccountController < ApplicationController
   before_filter :login_required, :only => [ :invite, :update ] 
+  #before_filter :require_captcha, :only=> [:signup]
   helper :wagn
   
   def signup

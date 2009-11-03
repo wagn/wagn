@@ -50,13 +50,27 @@ class System < ActiveRecord::Base
       content = setting(name) and content != "no"
     end
 
-    def layout_card(opts)
-      User.as(:wagbot) do
-        (c = CachedCard.get_real("*layout") and c.type == 'Pointer' and
-          layout_name=c.pointee and !layout_name.nil? and
-          lc = CachedCard.get_real(layout_name) and lc.ok?(:read)) ? 
-            lc :
-            Card.new(:name=>"**layout",:content=>opts[:default]) 
+    def layout_card(cardname, opts)
+      User.as(:wagbot) do      
+        cardname = "*layout" if cardname.blank?
+        if ( 
+              cardname.present? and 
+              layout_card = CachedCard.get_real(cardname) and 
+              layout_card.ok?(:read)
+            )
+          layout_card
+        elsif (
+              c = CachedCard.get_real("*layout")             and
+              c.type == 'Pointer'                            and
+              layout_name=c.pointee                          and
+              !layout_name.nil?                              and
+              layout_card = CachedCard.get_real(layout_name) and
+              layout_card.ok?(:read)
+            ) 
+          layout_card
+        else 
+          Card.new(:name=>"**layout",:content=>opts[:default]) 
+        end
       end
     end
    

@@ -25,6 +25,9 @@ class ApplicationController < ActionController::Base
   # OPTIMIZE: render_fast_404 still isn't that fast (?18reqs/sec) 
   # can we turn sessions off for it and see if that helps?
   layout :wagn_layout, :except=>[:render_fast_404]
+  
+  BUILTIN_LAYOUTS = %w{ blank noside simple }
+
 
   protected
   
@@ -69,10 +72,10 @@ class ApplicationController < ActionController::Base
     respond_to do |format|
       format.html {
         unless request.xhr?
-          layout = case params[:layout]
-            when nil; 'application'
-            when 'none'; nil
-            else params[:layout]
+          layout = case 
+            when BUILTIN_LAYOUTS.include?(params[:layout]); params[:layout]
+            when params[:layout] == 'none'; nil
+            else 'application'
           end
         end
       }

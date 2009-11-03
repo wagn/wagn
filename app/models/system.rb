@@ -51,8 +51,8 @@ class System < ActiveRecord::Base
     end
 
     def layout_card(cardname, opts)
+      debugger
       User.as(:wagbot) do      
-        cardname = "*layout" if cardname.blank?
         if ( 
               cardname.present? and 
               layout_card = CachedCard.get_real(cardname) and 

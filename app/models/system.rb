@@ -51,7 +51,6 @@ class System < ActiveRecord::Base
     end
 
     def layout_card(cardname, opts)
-      debugger
       User.as(:wagbot) do      
         if ( 
               cardname.present? and 

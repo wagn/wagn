@@ -12,10 +12,10 @@ class CardController < ApplicationController
   before_filter :edit_ok,   :only=> EDIT_ACTIONS
   before_filter :remove_ok, :only=>[ :remove ]          
   
-  before_filter :require_captcha, :only => [ :create, :update, :comment, :remove, :rollback, :quick_update ]
+  before_filter :require_captcha, :only => [ :create, :update, :comment, :rollback, :quick_update ]
   
   #----------( Special cards )
-  
+    
   def index   
     redirect_to(
       case
@@ -224,8 +224,13 @@ class CardController < ApplicationController
       @card.confirm_destroy = params[:card][:confirm_destroy]
     end        
     
+    captcha_ok = captcha_required? ? verify_captcha : true   
+    unless captcha_ok
+      return render_update_slot( render_to_string(:partial=>'confirm_remove'))
+    end
+
     @card.destroy
-         
+      
     if @card.errors.on(:confirmation_required)
       return render_update_slot( render_to_string(:partial=>'confirm_remove'))
     end

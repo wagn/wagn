@@ -1,7 +1,7 @@
 <% get_slot.wrap('remove') do |slot| %>  
   <%= slot.header %>
 	<% wagn_form_for :card, card, :url=>slot.url_for("card/remove") do |f| %>
-	  <div class="content">
+	  <div class="content open-content">
   	  <p>Really remove <%= link_to_page formal_title(@card), @card.name %>?</p>
   	  <% if dependents = @card.dependents and !dependents.empty? %>
   	    <p>That would mean removing all these cards, too:</p>
@@ -11,6 +11,8 @@
   	      <% end. join ', ' %>
   	    </ul>
   	  <% end %>   
+			<%= error_messages_for :card %>
+			<%= slot.full_captcha %>
   		<%= hidden_field_tag 'card[confirm_destroy]', 'true' %>
       <%= submit_tag 'Yes, get rid of it' %>
       <%= slot.button_to_action "Cancel", 'view' %>

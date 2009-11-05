@@ -24,7 +24,7 @@ Spork.prefork do
     config.use_instantiated_fixtures  = false
     config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
            
-    config.include AuthenticatedTestHelper, :type=>:controllers
+    config.include AuthenticatedTestHelper, :type=>:controllers      
     # == Notes
     # 
     # For more information take a look at Spec::Example::Configuration and Spec::Runner

@@ -1,11 +1,30 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe CardController, "captcha_required?" do
+module CaptchaExampleGroupMethods
+  def require_captcha_on(action, params)
+    it action.to_s do
+      require_captcha!
+      post action, params    
+      #yield if block_given?
+    end
+  end
+end  
+
+module CaptchaExampleMethods
+  def require_captcha!  
+    @controller.should_receive(:verify_captcha).and_return(false)
+  end
+end
+
+Spec::Rails::Example::ControllerExampleGroup.extend CaptchaExampleGroupMethods
+Spec::Rails::Example::ControllerExampleGroup.send(:include, CaptchaExampleMethods)
+
+describe CardController, "captcha_required?" do    
   it "is false for joe user" do
     login_as :joe_user      
     @controller.send(:captcha_required?).should be_false
   end                                       
-    
+
   context "for anonymous" do
     it "is true when global setting is true" do
       Card.create! :name=>"*captcha", :content=>"yes"
@@ -16,7 +35,7 @@ describe CardController, "captcha_required?" do
       Card.create! :name=>"*captcha", :content=>"no"
       @controller.send(:captcha_required?).should be_false
     end
-    
+
     it "is true when type card setting is on and global setting is off" do
       User.as(:wagbot) do
         c=Card["Book"];c.permit(:create, Role[:anon]);c.save! 
@@ -39,7 +58,7 @@ describe CardController, "captcha_required?" do
   end
 end  
 
-describe CardController, "with captcha enabled requires captcha on" do
+describe CardController, "with captcha enabled requires captcha on" do   
   before do
     User.as(:wagbot) do
       Card.create! :name=>"*captcha", :content=>"yes"
@@ -53,41 +72,18 @@ describe CardController, "with captcha enabled requires captcha on" do
       a.save!
     end
   end
-  
-  def require_captcha!
-    @controller.should_receive(:verify_recaptcha).and_return(false)
-  end
-    
-  it "create" do
-    require_captcha!
-    post :create, :card=>{:name=>"TestA", :content=>"TestC"}  
-    Card["TestA"].should be_nil
-  end
-      
-  it "remove" do
-    require_captcha!
-    post :remove, :id => "A"        
-    Card["A"].should_not be_nil
-  end
-  
-  it "update" do    
-    require_captcha!
-    post :update, :id=>"A", :card=>{:name=>"Booker"}
-    Card["A"].should_not be_nil
-  end
-  
-  it "quick_update" do
-    require_captcha!
-    post :quick_update, :id=>"A", :card=>{:type=>"Image"}
-    Card["A"].type.should == 'Basic'
-  end    
-  
-  it "comment" do
-    require_captcha!
-    post :comment, :id=>"A", :card=>{:content=>"Yeah"}
-    Card["A"].content.should_not =~ /Yeah/
-  end
-  
-  
-  
+
+  require_captcha_on :create, :card=>{:name=>"TestA", :content=>"TestC"} 
+  require_captcha_on :remove, :id => "A"        
+  require_captcha_on :update, :id=>"A", :card=>{:name=>"Booker"}
+  require_captcha_on :quick_update, :id=>"A", :card=>{:type=>"Image"}
+  require_captcha_on :comment, :id=>"A", :card=>{:content=>"Yeah"}
+end
+
+describe AccountController, "with captcha enabled" do
+  require_captcha_on( :signup, 
+                      :card => 
+                      { :name => "Bob", :type=>"InvitationRequest" },
+                      :user => { :email => "bob@user.com" })
+
 end

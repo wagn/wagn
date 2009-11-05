@@ -1,19 +1,24 @@
 module CaptchaSystem
   protected
-  def require_captcha 
+  def require_captcha  
     load_card unless @card  
-    if captcha_required?
-      if params[:recaptcha_challenge_field] and params[:recaptcha_response_field] 
-        if verify_recaptcha(:model=>@card, :timeout=>20)
-          return true
-        end
-      else 
-        @card.errors.add(:captcha, "Since you're not signed in, we need to verify that you're human in the captcha below")
-      end
+    if captcha_required? and !verify_captcha(:model=>@card)
       render_card_errors(@card)
       return false
     end
     true
+  end                  
+  
+  def verify_captcha(args={})          
+    opts = {
+      :model => @card,
+      :timeout => 20
+    }.merge(args)
+    unless params[:recaptcha_challenge_field] and params[:recaptcha_response_field] 
+      opts[:model].errors.add(:captcha, "is needed to verify that you're human")
+      return false 
+    end
+    verify_recaptcha(opts) 
   end
 
   def captcha_required?   

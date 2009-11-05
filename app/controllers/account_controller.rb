@@ -2,7 +2,6 @@ class InvitationError < StandardError; end
 
 class AccountController < ApplicationController
   before_filter :login_required, :only => [ :invite, :update ] 
-  #before_filter :require_captcha, :only=> [:signup]
   helper :wagn
   
   def signup
@@ -14,21 +13,26 @@ class AccountController < ApplicationController
     @user, @card = request.post? ?
       User.create_with_card( params[:user], card_args ) :
       [User.new, Card.new( card_args )]
+
+    if request.post? 
+      captcha_ok = captcha_required? ? verify_captcha(:model=>@user) : true
+      if captcha_ok and @user.errors.empty?
+
       
-    if request.post? and @user.errors.empty?
-      User.as :wagbot  do ## in case user doesn't have permission for included cardtypes.  For now letting signup proceed even if there are errors on multi-update
-        @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards]  
-      end
+        User.as :wagbot  do ## in case user doesn't have permission for included cardtypes.  For now letting signup proceed even if there are errors on multi-update
+          @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards]  
+        end
       
       
-      if System.ok?(:create_accounts)       #complete the signup now
-        email_args = { :message => System.setting('*signup+*message') || "Thanks for signing up to #{System.site_title}!",
-                       :subject => System.setting('*signup+*subject') || "Account info for #{System.site_title}!" }
-        @user.accept(email_args)
-        redirect_to (System.setting('*signup+*thanks') || '/')
-      else
-        Mailer.deliver_signup_alert(@card) if System.setting('*request+*to')
-        redirect_to (System.setting('*request+*thanks') || '/')
+        if System.ok?(:create_accounts)       #complete the signup now
+          email_args = { :message => System.setting('*signup+*message') || "Thanks for signing up to #{System.site_title}!",
+                         :subject => System.setting('*signup+*subject') || "Account info for #{System.site_title}!" }
+          @user.accept(email_args)
+          redirect_to (System.setting('*signup+*thanks') || '/')
+        else
+          Mailer.deliver_signup_alert(@card) if System.setting('*request+*to')
+          redirect_to (System.setting('*request+*thanks') || '/')
+        end
       end
     end
   end

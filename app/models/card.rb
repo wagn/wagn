@@ -97,14 +97,16 @@ module Card
       
       # autoname.  note I'm not sure that this is the right place for this at all, but 
       #  :set_needed_defaults returns if new_record? so I think we don't want it in there
-      ::User.as(:wagbot) do
-        autoname_cardname = ::Cardtype.name_for(c.type)+"+*autoname" 
-        if CachedCard.get_real autoname_cardname
-          autoname_card = Card[autoname_cardname]
-          c.name = autoname_card.content
-          autoname_card.content = autoname_card.content.next
-          autoname_card.save!
-        end                                         
+      if args["name"].blank?
+        ::User.as(:wagbot) do
+          autoname_cardname = ::Cardtype.name_for(c.type)+"+*autoname" 
+          if CachedCard.get_real autoname_cardname
+            autoname_card = Card[autoname_cardname]
+            c.name = autoname_card.content
+            autoname_card.content = autoname_card.content.next
+            autoname_card.save!
+          end                                         
+        end
       end
       c.send(:set_needed_defaults)
       c

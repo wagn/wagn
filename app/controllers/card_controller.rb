@@ -102,6 +102,7 @@ class CardController < ApplicationController
   
   def create    
     @card = Card.create params[:card]        
+    #@card.save
     
     @redirect_location = if @card.ok?(:read)
       url_for_page(@card.name)

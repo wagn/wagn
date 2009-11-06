@@ -55,7 +55,10 @@ Rails::Initializer.run do |config|
   config.action_controller.session = {
     :session_key => db[RAILS_ENV]['session_key'],
     :secret      => db[RAILS_ENV]['secret']
-  }  
+  }     
+  
+  config.load_paths << "#{RAILS_ROOT}/app/addons"
+  
 end
    
 

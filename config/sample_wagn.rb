@@ -8,5 +8,4 @@ ExceptionNotifier.email_prefix         = "[Wagn]"
 
 CachedCard.set_cache_prefix "#{System.host}/#{RAILS_ENV}"
 
-ActiveSupport::Dependencies.load_paths << "#{RAILS_ROOT}/app/addons"
 

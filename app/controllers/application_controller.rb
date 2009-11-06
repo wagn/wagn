@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   include ExceptionSystem        
   include CaptchaSystem
    
-  ::GoogleMapsAddon
+#  ::GoogleMapsAddon
 
   include LocationHelper
   helper :all

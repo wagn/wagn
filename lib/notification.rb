@@ -102,7 +102,7 @@ module Notification
     end
 
     def watching_type_cards
-      "watching #{link_to_page(card.type)} cards"      # can I parse this and get the link to happen? that wud r@wk.
+      "watching #{link_to_page(Cardtype.name_for(card.type))} cards"      # can I parse this and get the link to happen? that wud r@wk.
     end
 
     def watch_unwatch      

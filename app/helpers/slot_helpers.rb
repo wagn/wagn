@@ -234,5 +234,25 @@ module SlotHelpers
       javascript_tag "Wagn.setupAutosave('#{card.id}', '#{context}');\n"
     end
   end
+          
+  def half_captcha
+    if captcha_required?
+      key = card.new_record? ? "new" : card.key
+      javascript_tag(%{loadScript("http://api.recaptcha.net/js/recaptcha_ajax.js")}) +
+        recaptcha_tags( :ajax=>true, :display=>{:theme=>'white'}, :id=>key)
+    end
+  end
   
+  def full_captcha
+    if captcha_required?
+      key = card.new_record? ? "new" : card.key          
+        recaptcha_tags( :ajax=>true, :display=>{:theme=>'white'}, :id=>key ) +
+          javascript_tag(   
+            %{jQuery.getScript("http://api.recaptcha.net/js/recaptcha_ajax.js", function(){
+              document.getElementById('dynamic_recaptcha-#{key}').innerHTML='<span class="faint">loading captcha</span>'; 
+              Recaptcha.create('#{ENV['RECAPTCHA_PUBLIC_KEY']}', document.getElementById('dynamic_recaptcha-#{key}'),RecaptchaOptions);
+            });
+          })
+    end
+  end
 end  

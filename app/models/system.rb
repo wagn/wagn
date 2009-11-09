@@ -40,18 +40,36 @@ class System < ActiveRecord::Base
     def setting(name)
       User.as :wagbot  do
         card=CachedCard.get_real(name) and !card.content.strip.empty? and card.content
-        #card=CachedCard.get_real(name)  card.content
       end
     rescue
       nil
+    end           
+    
+    def toggle_setting(name)
+      # "no" feels like a kluge
+      content = setting(name) and content != "no"
     end
 
-    def layout_card(opts)
-      User.as(:wagbot) do
-        (c = CachedCard.get_real("*layout") and c.type == 'Pointer' and
-                lc = CachedCard.get_real(c.pointee) and lc.ok?(:read)) ? 
-                lc :
-                Card.new(:name=>"**layout",:content=>opts[:default]) 
+    def layout_card(cardname, opts)
+      User.as(:wagbot) do      
+        if ( 
+              cardname.present? and 
+              layout_card = CachedCard.get_real(cardname) and 
+              layout_card.ok?(:read)
+            )
+          layout_card
+        elsif (
+              c = CachedCard.get_real("*layout")             and
+              c.type == 'Pointer'                            and
+              layout_name=c.pointee                          and
+              !layout_name.nil?                              and
+              layout_card = CachedCard.get_real(layout_name) and
+              layout_card.ok?(:read)
+            ) 
+          layout_card
+        else 
+          Card.new(:name=>"**layout",:content=>opts[:default]) 
+        end
       end
     end
    
@@ -136,7 +154,6 @@ class System < ActiveRecord::Base
   
 end        
 
-
 # load wagn configuration. 
 # FIXME: this has to be here because System is both a config store and a model-- which means
 # in development mode it gets reloaded so we lose the config settings.  The whole config situation
@@ -147,6 +164,10 @@ end
 if File.exists? "#{RAILS_ROOT}/config/wagn.rb" 
   require_dependency "#{RAILS_ROOT}/config/wagn.rb"    
 end
+
+# FIXME: loading this in application.rb breaks testing.
+#        loading it here breaks bootstrap
+# require File.expand_path(File.dirname(__FILE__) + '/../../app/addons/google_maps_addon')  
 
 # Configuration cleanup: Make sure System.base_url doesn't end with a /
 System.base_url.gsub!(/\/$/,'')

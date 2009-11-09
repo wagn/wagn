@@ -18,9 +18,6 @@ class OptionsControllerTest < ActionController::TestCase
     login_as(:wagbot)
   end    
 
-
-
-
   def test_should_create_account_from_scratch
     assert_difference ActionMailer::Base.deliveries, :size do 
       post :create_account, :user=>{:email=>'foo@bar.com'}, :id=>'a'
@@ -33,5 +30,11 @@ class OptionsControllerTest < ActionController::TestCase
     #assert_equal 'active', User.find_by_email('new@user.com').status
   end
 
-
+  def test_update_user_extension_blocked_status
+    assert !User.find_by_login('joe_user').blocked?
+    post :update, :id=>"Joe User".to_key, :extension => { :blocked => true }
+    assert User.find_by_login('joe_user').blocked?
+    post :update, :id=>"Joe User".to_key, :extension => { :blocked => false }
+    assert !User.find_by_login('joe_user').blocked?
+  end
 end

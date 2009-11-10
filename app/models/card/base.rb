@@ -344,7 +344,15 @@ module Card
       destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
     end
      
-    # Extended associations ----------------------------------------
+    # Extended associations ----------------------------------------        
+    def left
+      trunk
+    end
+    
+    def right
+      tag
+    end
+    
     def pieces
       simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq 
     end

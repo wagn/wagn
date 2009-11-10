@@ -114,6 +114,7 @@ class SharedData
       Card.create! :type=>"Cardtype", :name=>"Book"
       Card.create! :name=>"Book+*tform", :content=>"by {{+author}}, design by {{+illustrator}}",
         :extension_type => 'HardTemplate'
+      Card.create! :name => "Illiad", :type=>"Book"
       
     end   
   end

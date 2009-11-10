@@ -34,7 +34,7 @@ module CardLib
       self.hard_templatees.each {|c| expire(c) }     
       self.dependents.each {|c| expire(c) }
       self.referencers.each {|c| expire(c) }
-      self.name_references.plot(:referencer).each{|c| expire(c)}  
+      self.name_references.plot(:referencer).compact.each{|c| expire(c)}  
     end
     
     def expire(card)  

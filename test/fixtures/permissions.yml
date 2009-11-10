@@ -1871,6 +1871,12 @@ permissions_143:
   id: "143"
   task: delete
   party_type: Role
+permissions_714: 
+  party_id: "2"
+  card_id: "335"
+  id: "714"
+  task: delete
+  party_type: Role
 permissions_571: 
   party_id: "2"
   card_id: "290"
@@ -1943,6 +1949,12 @@ permissions_145:
   id: "145"
   task: edit
   party_type: Role
+permissions_715: 
+  party_id: "2"
+  card_id: "335"
+  id: "715"
+  task: edit
+  party_type: Role
 permissions_573: 
   party_id: "2"
   card_id: "291"
@@ -1978,6 +1990,12 @@ permissions_146:
   card_id: "45"
   id: "146"
   task: delete
+  party_type: Role
+permissions_716: 
+  party_id: "3"
+  card_id: "335"
+  id: "716"
+  task: read
   party_type: Role
 permissions_574: 
   party_id: "2"

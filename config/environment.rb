@@ -58,6 +58,7 @@ Rails::Initializer.run do |config|
   }     
   
   config.load_paths << "#{RAILS_ROOT}/app/addons"
+  config.active_record.observers = :card_hook_observer
   
 end
    

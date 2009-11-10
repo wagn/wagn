@@ -6,12 +6,28 @@ describe Pattern do
     Pattern.should be_true
   end    
   
-  context :create do
+  context :matching_subclass do
     it "chooses appropriate class" do
-      Pattern.create( :right => "author" ).should be_instance_of(RightNamePattern)
+      Pattern.class_for( :right => "author" ).should == RightNamePattern
+    end
+  end   
+  
+  context :key_for_spec do
+    it "generates key for Type spec" do
+      Pattern.key_for_spec( :type => "Book" ).should == "Type:Book"
+    end
+    
+    it "generates key for RightName spec" do
+      Pattern.key_for_spec( :right => "author" ).should == "RightName:author"
     end
   end
-  
+          
+  context :keys_for_card do
+    it "generates keys from multiple patterns for card" do                    
+      ia = Card.new( :name => "Illiad+author" )
+      Pattern.keys_for_card( ia ).should == ["Type:Basic","RightName:author","LeftTypeRightName:Book:author"]
+    end
+  end
 end
 
 describe RightNamePattern do

@@ -1,20 +1,26 @@
 class Pattern
   @@subclasses = []
-  @@registry = {}
-  class << self
 
+  class << self
+    def register_class klass 
+      @@subclasses << klass
+    end
     
-    def create( spec )
+    def class_for spec
       matching_classes = @@subclasses.select {|pattern_class| pattern_class.recognize( spec ) }
       raise("invalid pattern") if matching_classes.length < 1
       raise("pattern conflict") if matching_classes.length > 1
-      matching_classes.first.new( spec )
-    end 
-
-    def register_class( klass )
-      @@subclasses << klass
+      matching_classes.first
     end
-    # 
+    
+    def key_for_spec spec
+      class_for(spec).key_for_spec spec
+    end
+    
+    def keys_for_card card
+      @@subclasses.map { |pattern_class| pattern_class.key_for_card(card) }.compact
+    end
+
     # def register( pattern )      
     #   @@registry[ pattern.key ] ||= []
     #   @@registry[ pattern.key ] << pattern
@@ -28,7 +34,6 @@ class Pattern
     # def cards_for(pattern)
     #   Card.search( pattern.spec )
     # end
-    # 
     # 
     # private
     # def keys_for(card)

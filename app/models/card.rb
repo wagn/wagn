@@ -173,9 +173,13 @@ module Card
 end    
 
 #FIXME: this should be at a more coherent stage of the process.
-%w{ *head *alert *foot *navbox *version *account_link }.each do |key|
-  Card.add_builtin( Card.new(:name=>key, :builtin=>true))
+# we have to rescue errors because it sometimes is run before the database structure is in place
+# which triggers errors.
+begin
+  %w{ *head *alert *foot *navbox *version *account_link }.each do |key|
+    Card.add_builtin( Card.new(:name=>key, :builtin=>true))
+  end
+rescue
 end
-
 
 

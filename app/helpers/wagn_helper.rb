@@ -308,7 +308,7 @@ module WagnHelper
     concat(form_remote_tag(options))
     fields_for(object_name, *(args << options), &proc)
     if args.second[:update]
-      concat(hidden_field_tag '_update','true')
+      concat hidden_field_tag('_update','true')
     end
     concat('</form>')
   end

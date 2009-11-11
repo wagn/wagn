@@ -1,4 +1,4 @@
-module CardLib 
+module Cardlib 
   module Templating  
     
     def self.included(base)   

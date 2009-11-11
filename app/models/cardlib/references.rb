@@ -1,4 +1,4 @@
-module CardLib
+module Cardlib
   module References
     module ClassMethods 
     end

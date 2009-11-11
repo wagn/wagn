@@ -1,5 +1,5 @@
 <% get_slot.wrap(:options) do |slot| %>
-  <% form_remote_for :card, @card, :url=>slot.url_for('options/create_account') do |form| %>
+  <% wagn_form_for :card, @card, :url=>slot.url_for('options/create_account') do |form| %>
     <table class="fieldset">
       <%= render :partial=>'account/email' %>
       <tr><td colspan="3" style><p>

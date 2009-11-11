@@ -129,7 +129,7 @@ class AccountController < ApplicationController
     end
   end
   
-  def empty_trash
+  def empty_trash ## DEPRECATED:  this method will not be long for this world.
     if System.ok?(:administrate_users)
       User.find_all_by_status('blocked').each do |user|
         card=Card.find_by_extension_type_and_extension_id('User',user.id)

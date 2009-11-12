@@ -7,28 +7,29 @@ class AccountController < ApplicationController
   def signup
     raise(Wagn::Oops, "You have to sign out before signing up for a new Account") if logged_in?
     raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless Card::InvitationRequest.create_ok?
-    card_args = (params[:card]||{}).merge({:type=>'InvitationRequest'})
 
-    #fail "params.inspect: #{params.inspect}" if request.post?
-    @user, @card = request.post? ?
-      User.create_with_card( params[:user], card_args ) :
-      [User.new, Card.new( card_args )]
-      
-    if request.post? and @user.errors.empty?
-      User.as :wagbot  do ## in case user doesn't have permission for included cardtypes.  For now letting signup proceed even if there are errors on multi-update
-        @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards]  
-      end
-      
-      
-      if System.ok?(:create_accounts)       #complete the signup now
-        email_args = { :message => System.setting('*signup+*message') || "Thanks for signing up to #{System.site_title}!",
-                       :subject => System.setting('*signup+*subject') || "Account info for #{System.site_title}!" }
-        @user.accept(email_args)
-        redirect_to (System.setting('*signup+*thanks') || '/')
-      else
-        Mailer.deliver_signup_alert(@card) if System.setting('*request+*to')
-        redirect_to (System.setting('*request+*thanks') || '/')
-      end
+    @user = User.new((params[:user]||{}).merge(:status=>'system')) #does not validate password
+    card_args =      (params[:card]||{}).merge(:type=>'InvitationRequest')
+    @card = Card.new( card_args )
+    
+    return unless request.post?
+    return unless (captcha_required? ? verify_captcha(:model=>@user) : true)
+
+    @user, @card = User.create_with_card( params[:user], card_args )
+    return unless @user.errors.empty?
+              
+    User.as :wagbot  do ## in case user doesn't have permission for included cardtypes.  For now letting signup proceed even if there are errors on multi-update
+      @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards]  
+    end
+  
+    if System.ok?(:create_accounts)       #complete the signup now
+      email_args = { :message => System.setting('*signup+*message') || "Thanks for signing up to #{System.site_title}!",
+                     :subject => System.setting('*signup+*subject') || "Account info for #{System.site_title}!" }
+      @user.accept(email_args)
+      redirect_to (System.setting('*signup+*thanks') || '/')
+    else
+      Mailer.deliver_signup_alert(@card) if System.setting('*request+*to')
+      redirect_to (System.setting('*request+*thanks') || '/')
     end
   end
   
@@ -86,7 +87,7 @@ class AccountController < ApplicationController
       @user.generate_password
       @user.save!                       
       subject = "Password Reset"
-      message = "You have been give a new temporary password.  " +
+      message = "You have been given a new temporary password.  " +
          "Please update your password once you've logged in. "
       Mailer.deliver_account_info(@user, subject, message)
       flash[:notice] = "A new temporary password has been set on your account and sent to your email address" 
@@ -118,7 +119,26 @@ class AccountController < ApplicationController
       end
     end    
   end  
-    
+
+  def deny_all  ## DEPRECATED:  this method will not be long for this world.
+    if System.ok?(:administrate_users)
+      Card::InvitationRequest.find(:all).each do |card|
+        card.destroy
+      end
+      redirect_to '/wagn/Account_Request'
+    end
+  end
+  
+  def empty_trash ## DEPRECATED:  this method will not be long for this world.
+    if System.ok?(:administrate_users)
+      User.find_all_by_status('blocked').each do |user|
+        card=Card.find_by_extension_type_and_extension_id('User',user.id)
+        user.destroy if (!card or card.trash)
+      end 
+      redirect_to '/wagn/Account_Request'
+    end
+  end
+
   protected
   def password_authentication(login, password)
     if self.current_user = User.authenticate(params[:login], params[:password])

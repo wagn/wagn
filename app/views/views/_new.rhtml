@@ -11,8 +11,8 @@
 	
   	<%= error_messages_for :card %>
     <div class=cardnotice></div>   
-
-	  <% form_remote_for :card, card, :url=>"card/create", 
+                                            
+	  <% wagn_form_for :card, card, :url=>"card/create", 
 					:slot => slot,
 					:update => {
 						:success => slot.id,   
@@ -48,7 +48,7 @@
 			</div>
 			<% if card.template? %>
 			  <%- card.extension_type='HardTemplate' if card.type_template? %>
-        <%= render :partial=>'card/hardsoft_form', :locals=>{:card=>card, :mode=>'new'} %>
+        <%= render :partial=>'card/hardsoft_form', :locals=>{:card=> card, :mode=>'new'} %>
       <% end %>
       <% if card.new_instructions %> 
 				<div class="custom-instructions instruction"><%= render_card card.new_instructions, :expanded_view_content %></div>
@@ -65,7 +65,8 @@
   					<%= slot.content_field(form) %>
   				<% end %>
   			</div>
-  			
+  		 
+				<%= slot.half_captcha %>
   		  <%= hidden_field_tag :view, params[:requested_view] || params[:view] || :open %>
   		  <div class="edit-button-area">
     		

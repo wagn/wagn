@@ -67,7 +67,6 @@ class User < ActiveRecord::Base
       [@user, @card]
     end
 
-    
     def active_users
       self.find(:all, :conditions=>"status='active'")
     end 
@@ -149,9 +148,26 @@ class User < ActiveRecord::Base
   end  
 
   def active?
-    status == 'active' && !blocked
+    status == 'active'
+  end
+      
+  # blocked methods for legacy boolean status
+  def blocked=(block)
+    if block != '0'
+      self.status = 'blocked'
+    elsif !built_in?
+      self.status = 'active'
+    end
+  end
+      
+  def blocked
+    blocked?
   end
 
+  def blocked?
+    status == 'blocked'
+  end
+  
   def anonymous?
     login == 'anon'
   end

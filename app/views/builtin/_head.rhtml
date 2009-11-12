@@ -29,9 +29,10 @@
 	<% end %>
 
 	<%# tried javascript at bottom, much breakage %>
-  <%= javascript_include_merged :base %>       
+  <%= javascript_include_merged :base %> 
+   
+
 	<% if key = System.setting("*google_ajax_api_key") %>
 	  <script type="text/javascript" src="http://www.google.com/jsapi?key=<%= key %>"></script>     
-	<% end %>
-
+	<% end %>          
 </head>

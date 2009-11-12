@@ -7,10 +7,11 @@
 <%= slot.notice %>	
 <% if card.ok?(:comment) %> <%#and !card.hard_template %>
    <div class="comment-box">
-   <% form_remote_for :card, card, :url=>slot.url_for('card/comment') do |f| %>
+   <% wagn_form_for :card, card, :url=>slot.url_for('card/comment') do |f| %>
      <%= f.text_area :comment, :rows=>3 %><br/>
 	  <% unless current_user %>
 		  <% card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") %>
+			<%= slot.half_captcha %>
 	    <label>My Name is:</label>
 		  <%= f.text_field :comment_author, {'onClick'=>"this.value=''" } %> 
 	  <% end %>

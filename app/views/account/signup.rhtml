@@ -13,7 +13,7 @@
       <p><strong>All Account Requests are subject to review.</strong></p>
     <% else %>
       <p><strong>Send us the following, and we'll send you a password.</strong></p>
-    <% end %>
+    <% end %>                                                               
   </div>
 
   <div class="content">
@@ -23,8 +23,7 @@
         <%= hidden_field_tag 'element', "#{div_id}"  %>
         <%= f.hidden_field 'type'  %>
         <%- slot.form = f %>
-        <%= error_messages_for :user %>
-
+        <%= error_messages_for :user %> 
       	<table class="fieldset">
       	  <%= slot.option_header 'Account Details' %>
       	  <% slot.option(
@@ -40,6 +39,7 @@
       	<div class="open-content">
         	<%= slot.render :edit %>
         </div>
+  			<%= slot.full_captcha %>
       	<div class="submit-tag">
         	<%= submit_tag 'Submit' %>
         </div>

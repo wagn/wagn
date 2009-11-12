@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091019223017) do
+ActiveRecord::Schema.define(:version => 20091103182738) do
 
   create_table "card_files", :force => true do |t|
     t.string   "filename"
@@ -159,9 +159,6 @@ ActiveRecord::Schema.define(:version => 20091019223017) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "password_reset_code", :limit => 40
-    t.boolean  "blocked",                            :default => false,     :null => false
-    t.integer  "cards_per_page",                     :default => 25,        :null => false
-    t.boolean  "hide_duplicates",                    :default => true,      :null => false
     t.string   "status",                             :default => "request"
     t.integer  "invite_sender_id"
     t.string   "identity_url"

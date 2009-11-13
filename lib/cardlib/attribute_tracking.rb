@@ -1,4 +1,4 @@
-module ActiveRecord
+module Cardlib
   module AttributeTracking
     class Updates
       include Enumerable
@@ -108,5 +108,5 @@ module ActiveRecord
 end
 
 ActiveRecord::Base.class_eval do
-  include ActiveRecord::AttributeTracking
+  include Cardlib::AttributeTracking
 end

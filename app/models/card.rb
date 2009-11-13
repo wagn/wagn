@@ -18,7 +18,8 @@ end
 require 'json'
 require 'uuid'
 
-Card::Base.class_eval do       
+Card::Base.class_eval do   
+  Cardlib:AttributeTracking    
   include Cardlib::TrackedAttributes
   include Cardlib::Templating
   include Cardlib::Defaults

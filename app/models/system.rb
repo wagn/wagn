@@ -154,21 +154,3 @@ class System < ActiveRecord::Base
   
 end        
 
-# load wagn configuration. 
-# FIXME: this has to be here because System is both a config store and a model-- which means
-# in development mode it gets reloaded so we lose the config settings.  The whole config situation
-# needs an overhaul 
-if File.exists? "#{RAILS_ROOT}/config/sample_wagn.rb"
-  require_dependency "#{RAILS_ROOT}/config/sample_wagn.rb"
-end
-if File.exists? "#{RAILS_ROOT}/config/wagn.rb" 
-  require_dependency "#{RAILS_ROOT}/config/wagn.rb"    
-end
-
-# FIXME: loading this in application.rb breaks testing.
-#        loading it here breaks bootstrap
-# require File.expand_path(File.dirname(__FILE__) + '/../../app/addons/google_maps_addon')  
-
-# Configuration cleanup: Make sure System.base_url doesn't end with a /
-System.base_url.gsub!(/\/$/,'')
-     

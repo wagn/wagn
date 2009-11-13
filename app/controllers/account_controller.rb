@@ -122,7 +122,7 @@ class AccountController < ApplicationController
 
   def deny_all  ## DEPRECATED:  this method will not be long for this world.
     if System.ok?(:administrate_users)
-      Card::InvitationRequest.find(:all).each do |card|
+      Card::InvitationRequest.find_all_by_trash(false).each do |card|
         card.destroy
       end
       redirect_to '/wagn/Account_Request'

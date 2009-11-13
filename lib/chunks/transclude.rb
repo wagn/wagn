@@ -3,7 +3,7 @@ module Chunk
     attr_reader :stars
     unless defined? TRANSCLUDE_PATTERN
       #  {{+name|attr:val;attr:val;attr:val}}
-      TRANSCLUDE_PATTERN = /\{\{((#{'\\'+JOINT})?[^\|]+?)\s*(\|([^\}]+?))?\}\}/
+      TRANSCLUDE_PATTERN = /\{\{((#{'\\'+Cardname::JOINT})?[^\|]+?)\s*(\|([^\}]+?))?\}\}/
     end         
     
     def self.pattern() TRANSCLUDE_PATTERN end

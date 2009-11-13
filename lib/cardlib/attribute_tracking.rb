@@ -106,7 +106,3 @@ module Cardlib
     end
   end
 end
-
-ActiveRecord::Base.class_eval do
-  include Cardlib::AttributeTracking
-end

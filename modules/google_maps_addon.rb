@@ -1,5 +1,3 @@
-require 'spec'
-
 class GoogleMapsAddon    
   def self.geocode(address) 
     opts = {

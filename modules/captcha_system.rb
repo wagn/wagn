@@ -33,3 +33,5 @@ module CaptchaSystem
     base.send :helper_method, :captcha_required?
   end
 end
+
+ApplicationController.send :include, CaptchaSystem

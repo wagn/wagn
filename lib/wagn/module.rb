@@ -1,4 +1,3 @@
-require 'ruby-debug'
 module Wagn
   class Module
     class << self
@@ -11,10 +10,8 @@ module Wagn
             raise "Error loading modules/#{module_name}: #{e.message}"
           end
         end
-        
       end
     end
   end
 end
 
-Wagn::Module.load_all

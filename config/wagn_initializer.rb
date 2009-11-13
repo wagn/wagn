@@ -5,10 +5,8 @@ module Wagn
         config.active_record.observers = :card_observer            
         config.cache_store = :file_store, "#{RAILS_ROOT}/tmp/cache"
         config.frameworks -= [ :action_web_service ]
-
         config.gem "uuid"
         config.gem "json"
-
         require 'yaml'   
         require 'erb'     
         database_configuration_file = 'config/database.yml'
@@ -17,41 +15,18 @@ module Wagn
           :session_key => db[RAILS_ENV]['session_key'],
           :secret      => db[RAILS_ENV]['secret']
         }     
-
-        config.load_paths << "#{RAILS_ROOT}/app/addons"
       end
 
-      def run         
-        register_dispatch_callbacks
-        load
-      end
-
-      # This to (re)triggers load in the development environment without depending
-      # on any particular constant being loaded.
-      def register_dispatch_callbacks
-        ActionController::Dispatcher.prepare_dispatch do
-          Wagn::Initializer.load
-        end
-      end
-    
       def load  
         load_config  
-        trigger_autoloading
+        load_cardlib
+        load_cardtypes
+        load_modules
+        initialize_builtin_cards
       end
-      
-      # Modules won't necessarily get loaded unless we explicitly call them.
-      # these constant invocations call the cards in a way that preserves Rails reloading
-      # in development.
-      def trigger_autoloading 
-        Wagn::Exceptions       
-        Card
-        Card::Base
-        Wagn::Module 
-      end
-
+        
       def load_config
         System
-        # load wagn configuration. 
         # FIXME: this has to be here because System is both a config store and a model-- which means
         # in development mode it gets reloaded so we lose the config settings.  The whole config situation
         # needs an overhaul 
@@ -64,6 +39,55 @@ module Wagn
 
         # Configuration cleanup: Make sure System.base_url doesn't end with a /
         System.base_url.gsub!(/\/$/,'')
+      end
+
+      def load_cardlib
+        Wagn::Exceptions       
+
+        ActiveRecord::Base.class_eval do
+          include Cardlib::ActsAsCardExtension
+          include Cardlib::AttributeTracking
+        end
+        
+        Cardlib::ModuleMethods #load
+
+        Card::Base.class_eval do                            
+          include Cardlib::TrackedAttributes
+          include Cardlib::Templating
+          include Cardlib::Defaults
+          include Cardlib::Permissions                               
+          include Cardlib::Search 
+          include Cardlib::References  
+          include Cardlib::Cacheable      
+          include Cardlib::Settings
+          extend Card::CardAttachment::ActMethods  
+        end                                      
+      end
+      
+      def load_cardtypes
+        Dir["#{RAILS_ROOT}/app/models/card/*.rb"].sort.each do |cardtype|
+          cardtype.gsub!(/.*\/([^\/]*)$/, '\1')
+          begin
+            require_dependency "card/#{cardtype}"
+          rescue Exception=>e
+            raise "Error loading card/#{cardtype}: #{e.message}"
+          end
+        end
+      end
+
+      def load_modules
+        Wagn::Module.load_all
+      end
+          
+      def initialize_builtin_cards    
+        ## DEBUG
+        File.open("#{RAILS_ROOT}/log/wagn.log","w") do |f|
+          f.puts "Wagn::Initializer.initialize_builtin_cards"
+        end
+        
+        %w{ *head *alert *foot *navbox *version *account_link }.each do |key|
+          Card.add_builtin( Card.new(:name=>key, :builtin=>true))
+        end
       end
     end   
   end

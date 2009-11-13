@@ -16,7 +16,6 @@ Feature: Pattern settings
     When I go to new card named "Test"
     Then I should see "spicy"
     When I go to new card "Test+color"      
-    Then what
     Then I should see "colorblind"
   
                 

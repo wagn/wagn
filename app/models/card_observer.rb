@@ -1,9 +1,9 @@
-class CardHookObserver < ActiveRecord::Observer
+class CardObserver < ActiveRecord::Observer
   observe Card
-  Hook
+  Wagn::Hook
   [:before_save, :before_create, :after_save, :after_create].each do |hookname| 
     define_method( hookname ) do |card|
-      CardHook.invoke hookname, card
+      Wagn::Hook::Card.invoke hookname, card
     end
   end
 end

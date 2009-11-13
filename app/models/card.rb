@@ -32,9 +32,10 @@ Card::Base.class_eval do
 end
 
 
+
 Notification.init
 
-Dir["#{RAILS_ROOT}/app/card/*.rb"].sort.each do |cardtype|
+Dir["#{RAILS_ROOT}/app/models/card/*.rb"].sort.each do |cardtype|
   cardtype.gsub!(/.*\/([^\/]*)$/, '\1')
   begin
     require_dependency "card/#{cardtype}"
@@ -43,7 +44,7 @@ Dir["#{RAILS_ROOT}/app/card/*.rb"].sort.each do |cardtype|
   end
 end
    
-    
+
 # Hack to get ActiveRecord to load dynamic Cardtype-- otherwise it throws the
 # "SubclassNotFound" error when loading the card object. 
 #

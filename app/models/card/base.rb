@@ -452,7 +452,10 @@ module Card
          (cardtype and cardtype.attribute_card('*edit'))
     end
     
-    def new_instructions
+    def new_instructions  
+      if value = self.setting('new')
+        return value
+      end
       [tag, cardtype].each do |tsar|
         %w{ *new *edit}.each do |attr_card|
           if tsar and instructions = tsar.attribute_card(attr_card)

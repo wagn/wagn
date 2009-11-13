@@ -1,4 +1,7 @@
 module Wagn
+  module Exceptions
+  end
+  
   class Error < StandardError
   end
   

@@ -133,7 +133,8 @@ class AccountController < ApplicationController
     if System.ok?(:administrate_users)
       User.find_all_by_status('blocked').each do |user|
         card=Card.find_by_extension_type_and_extension_id('User',user.id)
-        user.destroy if (!card or card.trash)
+        user.destroy                if (!card or card.trash)
+        card.destroy_without_trash  if (card and card.trash)
       end 
       redirect_to '/wagn/Account_Request'
     end

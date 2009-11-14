@@ -213,6 +213,23 @@ div.auto_complete ul strong.highlight {
 }
 
 
+/*--- errors -----*/
+
+.exception p {
+  margin: 15px;
+}
+.error-explanation {
+  margin: 10px;
+  padding: 10px;
+  border: 3px solid #966;
+  background: #ffa;
+  -moz-border-radius: 8px;
+  border: 1px solid #777;
+  border-bottom: 2px solid #888;
+  border-right: 2px solid #888;
+}
+
+
 /*-------- Special Pages --------*/
 
 /*-- sign in page --*/
@@ -239,9 +256,6 @@ div.auto_complete ul strong.highlight {
 }
 .task {
   padding: 2px;
-}
-.exception p {
-  margin: 15px;
 }
 
 

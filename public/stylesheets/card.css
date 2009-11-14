@@ -80,11 +80,7 @@ html>body .search-icon{ background-image: url(/images/search.png); }
   font-size: 10px;
 }
 .card-slot .card-header,
-.card-slot .card-header a,
-.card-slot .card-header .title a,
-.card-slot .card-header .title a:link,
-.card-slot .card-header .title a:visited,
-.card-slot .card-header .title a:hover {
+.card-slot .card-header a {
   color: #fff 
 }
 html>body .card-menu-left,

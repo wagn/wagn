@@ -498,10 +498,10 @@ div.transcluded {
     
 --*/
 
-/*----- sidebar ----------------*/
+/*----- Secondary (sidebar) ----------------*/
 
 
-#sidebar .card-slot .card-menu {
+#secondary .card-slot .card-menu {
   display: none; 
   float:none;  /* necessary for IE */
 }
@@ -515,7 +515,7 @@ div.transcluded {
 
 /*----------recent changes -----------*/
 
-body.wagn .card-slot.recent-changes h2 {
+body#wagn .card-slot.recent-changes h2 {
   margin-top: 15px;
 }
 
@@ -577,8 +577,8 @@ body.wagn .card-slot.recent-changes h2 {
 .card-slot.line tr, 
 .card-slot.line td, 
 .card-slot.line p,
-body.wagn .card-slot.line h1, 
-body.wagn .card-slot.line h2, 
+body#wagn .card-slot.line h1, 
+body#wagn .card-slot.line h2, 
 .card-slot.line h3, 
 .card-slot.line h4, 
 .card-slot.line h5, 

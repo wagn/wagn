@@ -1,9 +1,8 @@
-
-#page-right, #alerts, #top-menu {
-  display: none !important;
-}
-#page-left {
+#primary {
   width: 100%
+}
+#secondary, #alerts, #menu {
+  display: none !important;
 }
 .card-slot.paragraph .content {
   overflow: visible !important;

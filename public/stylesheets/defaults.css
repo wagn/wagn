@@ -1,4 +1,4 @@
-body.wagn {
+body#wagn {
   background: url(/images/body-bg.bmp) repeat-x #cdb;
 }
 body, .reset{
@@ -7,11 +7,9 @@ body, .reset{
   font-weight: normal;
   font-size: 11px;
 }
-
 body.mceContentBody {  
   margin: 4px;
 }
-
 body, p, ol, ul, td, th, input, textarea {
   font-family: verdana, arial, helvetica, sans-serif;
   font-size:   12px;
@@ -65,8 +63,8 @@ h2 {
   font-size: 13px; 
 }
 /* headers outside of cards */
-body.wagn h1, 
-body.wagn h2 { 
+body#wagn h1, 
+body#wagn h2 { 
   color: #22d; 
   font-weight: normal; 
   margin: 0 0 10px 0;
@@ -74,8 +72,8 @@ body.wagn h2 {
 
 /* headers within cards */
 h1, h2,
-body.wagn .card-slot h1,
-body.wagn .card-slot h2 {
+body#wagn .card-slot h1,
+body#wagn .card-slot h2 {
   color:#644;
   font-weight: bold;
   margin: 0px;
@@ -152,7 +150,6 @@ img {
   border: 0px;
   vertical-align: middle;
 }  
-
 li {
   margin-bottom: 2px;
 }

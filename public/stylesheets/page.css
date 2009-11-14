@@ -1,35 +1,33 @@
 /*---- page layout */
 
-#page {
-  margin: 0 2% 0 2%;
-}
-#page-left {
+#primary {
+  margin: 0 1%;
   float: left;
   width: 67%;
-  margin-bottom: 400px;  
 }
-#page-right {
+#secondary {
+  margin: 0 1%;
   float: right;
   width: 28%;
 }
 
 
-/* top-menu -------------*/
+/* --------menu -------------*/
 
-#top-menu {
+#menu {
+  display: block;
   font-size: 14px;
   background: #005800;
   margin-bottom: 20px;
   padding: 2px;
 } 
-#top-menu a {
+#menu a {
   color: white;
   padding: 0px 4px;
 }
-#top-menu div {
+#menu div {
   display: inline;
 }
-
 #logging {  /* signing in and out */
   position: absolute;
   right: 0.5%;
@@ -38,25 +36,19 @@
 #my-card-link {
   font-weight: bold;
 }
-
-
-
 #navbox_background {
   margin:  0 8px;
   margin-bottom: 2px;     
   background: #ffc;        
-  
   /* this is already specified in defaults.css, but specifying it again here fixes ie */
   border: 1px solid #aaa;
   border-top: 2px solid #666;
   border-left: 2px solid #666;
 }
-
 html>body #navbox_background {
   padding: 2px 0px;
 }
-
-/* use both ids otherwise #top-menu a  overrides */            
+/* use both ids otherwise #menu a  overrides */            
 #navbox_background #navbox_image {
   padding: 2px 8px;
   background: url(/images/search.gif) no-repeat right;
@@ -88,10 +80,11 @@ html>body #navbox_background #navbox_image {
   display: inline;
   padding: 3px 8px;
   margin-right: 4px;
-
 }
 
-/* -------  logo --------- */
+
+/* -------  Secondary --------- */
+
 #logo {
   text-align: center;
   padding: 10px 0px;
@@ -99,7 +92,6 @@ html>body #navbox_background #navbox_image {
   border: 1px solid #777; 
   -moz-border-radius: 8px; 
 }
-
 #logo a, 
 #logo a:link,
 #logo a:visited { 
@@ -107,21 +99,14 @@ html>body #navbox_background #navbox_image {
   text-decoration: none;
   text-align: center;
 }
-
-
-
-/*---- main card ------*/
-
-.paging-links {
-  float:right;
-  margin-right: 15px
+#credit {
+  margin: 30px 0;
+  padding: 5px;
+  text-align: center;
+  color: #333;
+  background: #bbb;
+  border: 1px solid #666;
 }
-
-
-
-
-/*----- alerts ----------*/
-
 #alerts {
   padding: 2px 9px;
   -moz-border-radius: 8px;
@@ -144,6 +129,7 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
 #alerts div {
   display: none;
 }
+
 
 /*----- fieldset tables --------*/
 
@@ -195,89 +181,6 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
 }
 
 
-/* --  miscellaneous --- */
-/*
-#maincontent { 
-  padding: 0px 8px 10px 8px;
-}
-
-#create-advanced { 
-  border: 1px solid #ccc;
-  -moz-border-radius: 4px; 
-}
-*/
-
-.admin-nav {
-  margin: 10px 10px 30px 10px;
-}
-
-/* -----bottom menu ------*/
-
-#bottom-menu {
-  padding: 40px 0px 10px 0px;
-  width: 100%;
-  clear: both;
-}
-
-#credit {
-  width: 75%;
-  text-align: center;
-  color: #999;
-}
-
-
-
-/*-------- Special Pages --------*/
-
-
-/*-- sign in page --*/
-
-#sign-in p {
-  margin: 5px;
-}
-#sign-in input#login_field,
-#sign-in input#password,
-#sign-in input#email {
-  width: 50%;
-}
-
-
-/*-- new card page ---*/
-
-#new-editor {
-  margin-top: 10px;
-}
-#new-card-cardtype {
-  position: relative;
-  top: 15px;
-}
-
-
-/*---- recent changes page ----*/
-
-#recent-list h2 {
-  margin: 8px 16px;
-}
-
-
-/* -- permissions page -----*/
-
-#role_task {
-  margin-bottom: 2em;
-  padding: 3px;
-}
-.role {
-  text-align: center;
-  padding: 2px 8px;
-}
-.task {
-  padding: 2px;
-}
-
-.exception p {
-  margin: 15px;
-}
-
 /*-------- auto complete --------*/
 
 div.auto_complete {
@@ -309,11 +212,38 @@ div.auto_complete ul strong.highlight {
   padding:0;
 }
 
-/*------- HACK FIXME------------*/
 
-/*-- options toggle was looking funky in safari.  the pound makes safari ignore it.  MUST be at end of file, or else safari will ignore everything else */
-#related #options-toggle { margin: 0px 10px;}
-#related #options-toggle { margin: -15px 10px;#}
+/*-------- Special Pages --------*/
+
+/*-- sign in page --*/
+
+#sign-in p {
+  margin: 5px;
+}
+#sign-in input#login_field,
+#sign-in input#password,
+#sign-in input#email {
+  width: 50%;
+}
+
+
+/* -- permissions page -----*/
+
+#role_task {
+  margin-bottom: 2em;
+  padding: 3px;
+}
+.role {
+  text-align: center;
+  padding: 2px 8px;
+}
+.task {
+  padding: 2px;
+}
+.exception p {
+  margin: 15px;
+}
+
 
 
 

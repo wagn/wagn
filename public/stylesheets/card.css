@@ -87,10 +87,10 @@ html>body .card-menu-left,
 html>body .page-icon {
   display: none;
 }
-.line.card-header {
+.line .card-header {
   padding-right: 22px;
 }
-.linediv:hover.card-header {
+.line div:hover.card-header {
   padding-right: 0px;
 }
 
@@ -189,7 +189,7 @@ a.wanted-card {
   color: #900 
 }
 a.external-link, 
-.line.content a.external-link { 
+.line .content a.external-link { 
   color: #979; 
   background: url(/images/external_link.png) center right no-repeat;
   padding-right: 13px !important;
@@ -545,7 +545,7 @@ body#wagn .card-slot.recent-changes h2 {
 
 /*------------- closed cards -------*/
 
-.line{
+.line {
   overflow: hidden;
   white-space: nowrap;
   border-bottom: 0px;
@@ -558,13 +558,13 @@ body#wagn .card-slot.recent-changes h2 {
   height: 25px;
 }
 
-.line.content, 
-.line.card-header {
+.line .content, 
+.line .card-header {
   display: inline;
   float: left;
   vertical-align: center;
 }
-.line.card-header {
+.line .card-header {
   line-height: 15px;
   -moz-border-radius: 0px 6px 6px 0px;
   padding-top: 4px;
@@ -572,26 +572,26 @@ body#wagn .card-slot.recent-changes h2 {
   margin-right: 4px;
 }
 
-.linetr, 
-.linetd, 
-.linep,
-body#wagn .lineh1, 
-body#wagn .lineh2, 
-.lineh3, 
-.lineh4, 
-.lineh5, 
-.lineh6, 
-.lineul, 
-.lineli,
-.linepre, 
-.lineol, 
-.linehr, 
-.line.content div, 
-.line.content span,
-.line.content,  
-.line.workspace,
-.line.content a,
-.lineblockquote {
+.line tr, 
+.line td, 
+.line p,
+body#wagn .line h1, 
+body#wagn .line h2, 
+.line h3, 
+.line h4, 
+.line h5, 
+.line h6, 
+.line ul, 
+.line li,
+.line pre, 
+.line ol, 
+.line hr, 
+.line .content div, 
+.line .content span,
+.line .content,  
+.line .workspace,
+.line .content a,
+.line blockquote {
   display: inline; 
   margin: 0px 4px; 
   padding: 0px !important;
@@ -600,24 +600,24 @@ body#wagn .lineh2,
   white-space: nowrap;      
   float: none !important;
 }
-.line.content a {
+.line .content a {
   margin: 0px;
 }
-.line.content img {
+.line .content img {
   height: 16px;
   width: auto;
   float: none;
   padding: 0px;
 }
-.linebr,  
-.linehr,
-.lineinput,
-.linetextarea,
-.line.comment-box,
-.line.table-of-contents,
-.line.card-menu,
-.line.card-footer,
-.line.close-link {
+.line br,  
+.line hr,
+.line input,
+.line textarea,
+.line .comment-box,
+.line .table-of-contents,
+.line .card-menu,
+.line .card-footer,
+.line .close-link {
   display: none !important;
 }
 /*----------- Change View ---------*/

@@ -4,24 +4,20 @@
 # you don't control web/app server and can't set it the proper way
 # ENV['RAILS_ENV'] ||= 'production'
 
-
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
+require File.join(File.dirname(__FILE__), 'wagn_initializer')
   
-# needs to be loaded for all files, before migrations, etc.
-#require "lib/wagn"         
-#ActiveRecord::Base.logger.info("after boot, before config")
-
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence those specified here
   #RAILS_GEM_VERSION = '2.3.2' unless defined? RAILS_GEM_VERSION  
+     
+  Wagn::Initializer.set_default_rails_config config
 
   # Skip frameworks you're not going to use
-  config.frameworks -= [ :action_web_service ]
 
   # Add additional load paths for your own custom dirs
   # config.load_paths += %W( #{RAILS_ROOT}/extras )
-  config.load_paths += ["#{RAILS_ROOT}/lib/imports", "#{RAILS_ROOT}"]
 
   # Force all environments to use the same logger level 
   # (by default production uses :info, the others :debug)
@@ -38,40 +34,8 @@ Rails::Initializer.run do |config|
   # config.active_record.default_timezone = :utc
   
   # See Rails::Configuration for more options   
-
-
   # select a store for the rails/card cache
-  config.action_controller.cache_store = :file_store, "#{RAILS_ROOT}/tmp/cache" #, :mem_cache_store # 
-
-  
-  #config.gem "rspec-rails", :lib => "spec"          
-  config.gem "uuid"
-  config.gem "json"
-
-  require 'yaml'   
-  require 'erb'     
-  database_configuration_file = 'config/database.yml'
-  db = YAML::load(ERB.new(IO.read(database_configuration_file)).result)
-  config.action_controller.session = {
-    :session_key => db[RAILS_ENV]['session_key'],
-    :secret      => db[RAILS_ENV]['secret']
-  }     
-  
-  config.load_paths << "#{RAILS_ROOT}/app/addons"
-  
 end
    
-
-#ExceptionNotifier.exception_recipients = %w(someone@somewhere.org)
-#ExceptionNotifier.sender_address = %("#{System.site_name} Error" <notifier@wagn.org>)
-#ExceptionNotifier.email_prefix = "[#{System.site_name}] "
-
-
-# force loading of the system model. 
-System
-
-# ****************************************************
-# IMPORTANT!!!:  YOU CANNOT PUT System.settings here
-#  they will get LOST when System reloads in development environment. 
-#   put them in wagn.rb instead.
-# ****************************************************
+# Now Rails is initialized, initialize Wagn      
+Wagn::Initializer.run

@@ -1,4 +1,4 @@
-module CardLib
+module Cardlib
   module Defaults
     def self.included(base)   
       super 

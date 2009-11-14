@@ -1,4 +1,4 @@
-module CardLib
+module Cardlib
   module Cacheable
     def hard_template?
       extension_type =='HardTemplate'
@@ -17,6 +17,5 @@ module CardLib
 	  def pointee
 	    pointees.first
     end
-    
   end
 end

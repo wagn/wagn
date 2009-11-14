@@ -3,7 +3,8 @@ class AdminController < ApplicationController
   
   def setup
     raise(Wagn::Oops, "Already setup") unless User.no_logins? && !User[:first]
-    if request.post?
+    if request.post?  
+      Card::User  # wtf - trigger loading of Card::User, otherwise it tries to use U
       User.as :wagbot do
         @user, @card = User.create_with_card( params[:extension].merge({:login=>'first'}), params[:card] )
       end
@@ -18,8 +19,8 @@ class AdminController < ApplicationController
         flash[:notice] = "Durn, setup went awry..."
       end
     else
-      @card = Card.new( params[:card] )
-      @user = User.new( params[:user] )
+      @card = Card.new( params[:card] || {} )
+      @user = User.new( params[:user] || {} )
     end
   end
   

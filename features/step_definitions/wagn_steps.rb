@@ -59,7 +59,6 @@ end
 
 When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content$/ do |username, cardtype, cardname, content|
   create_card(username, cardtype, cardname, content) do   
-    content.should === "[[street address]]\n[[zip]]"
     fill_in_hidden_or_not("card[content]", :with=>content)
   end
 end    

@@ -1,4 +1,4 @@
-module CardLib                        
+module Cardlib                        
   class ::Card::PermissionDenied < Wagn::PermissionDenied
     attr_reader :card
     def initialize(card)

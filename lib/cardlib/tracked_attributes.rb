@@ -1,4 +1,4 @@
-module CardLib
+module Cardlib
   module TrackedAttributes 
      
     def set_tracked_attributes  

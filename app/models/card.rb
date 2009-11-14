@@ -15,44 +15,36 @@ module Card
   end
 end
   
-
 require 'json'
 require 'uuid'
-require_dependency 'card/base' 
-require_dependency 'card/tracked_attributes'
-require_dependency 'card/templating'
-require_dependency 'card/defaults' 
-require_dependency 'card/permissions'
-require_dependency 'card/search'
-require_dependency 'card/references'
-require_dependency 'card/cacheable'
-require_dependency 'lib/card_attachment'
 
 Card::Base.class_eval do       
-  include CardLib::TrackedAttributes
-  include CardLib::Templating
-  include CardLib::Defaults
-  include CardLib::Permissions                               
-  include CardLib::Search 
-  include CardLib::References  
-  include CardLib::Cacheable
+  include Cardlib::TrackedAttributes
+  include Cardlib::Templating
+  include Cardlib::Defaults
+  include Cardlib::Permissions                               
+  include Cardlib::Search 
+  include Cardlib::References  
+  include Cardlib::Cacheable      
+  include Cardlib::Settings
   extend Card::CardAttachment::ActMethods
   
 end
 
 
+
 Notification.init
 
-Dir["#{RAILS_ROOT}/app/cardtypes/*.rb"].sort.each do |cardtype|
+Dir["#{RAILS_ROOT}/app/models/card/*.rb"].sort.each do |cardtype|
   cardtype.gsub!(/.*\/([^\/]*)$/, '\1')
   begin
-    require_dependency "cardtypes/#{cardtype}"
+    require_dependency "card/#{cardtype}"
   rescue Exception=>e
-    raise "Error loading cardtypes/#{cardtype}: #{e.message}"
+    raise "Error loading card/#{cardtype}: #{e.message}"
   end
 end
    
-    
+
 # Hack to get ActiveRecord to load dynamic Cardtype-- otherwise it throws the
 # "SubclassNotFound" error when loading the card object. 
 #
@@ -173,9 +165,13 @@ module Card
 end    
 
 #FIXME: this should be at a more coherent stage of the process.
-%w{ *head *alert *foot *navbox *version *account_link }.each do |key|
-  Card.add_builtin( Card.new(:name=>key, :builtin=>true))
+# we have to rescue errors because it sometimes is run before the database structure is in place
+# which triggers errors.
+begin
+  %w{ *head *alert *foot *navbox *version *account_link }.each do |key|
+    Card.add_builtin( Card.new(:name=>key, :builtin=>true))
+  end
+rescue
 end
-
 
 

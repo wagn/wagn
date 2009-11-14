@@ -7,11 +7,9 @@
 .card-slot.paragraph .content {
   overflow: visible !important;
 }
-body, .reset{
+body {
   color: #444;
   font-style: normal;
-  font-weight: normal;
-  font-size: 11px;
 }
 body, p, ol, ul, td, th {
   font-family: verdana, arial, helvetica, sans-serif;
@@ -19,19 +17,14 @@ body, p, ol, ul, td, th {
   font-weight: normal;
   line-height: 21px;
 }
-body, .reset{
-  color: #444;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 12px;
-}
 p { 
   margin: 0px; 
 }     
-a, 
+a {
+	color: #484;   
+}
 a:link, 
 a:visited { 
-	color: #484; 
 	text-decoration: none;
 }
 a:hover, 

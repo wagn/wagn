@@ -1,5 +1,3 @@
-require 'ruby-debug'
-
 module Cardlib
   module Search
     module ClassMethods

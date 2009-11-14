@@ -60,7 +60,7 @@ module Wagn
           include Cardlib::References  
           include Cardlib::Cacheable      
           include Cardlib::Settings
-          extend Card::CardAttachment::ActMethods  
+          extend Cardlib::CardAttachment::ActMethods  
         end                                      
       end
       

@@ -127,7 +127,10 @@ form {
 }
 p { 
   margin: 0px; 
-}     
+}   
+hr {
+  margin: 10px
+}    
 img {
   border: 0px;
   vertical-align: middle;

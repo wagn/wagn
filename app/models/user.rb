@@ -56,10 +56,8 @@ class User < ActiveRecord::Base
     # FIXME: args=params.  should be less coupled..
     def create_with_card(user_args, card_args, email_args={})
       @card = (Hash===card_args ? Card.new({'type'=>'User'}.merge(card_args)) : card_args) 
-
       @user = User.new({:invite_sender=>User.current_user, :status=>'active'}.merge(user_args))
       @user.generate_password if @user.password.blank?
-      
       @user.save_with_card(@card)
       begin
         @user.send_account_info(email_args) if @user.errors.empty? && !email_args.empty?
@@ -105,21 +103,21 @@ class User < ActiveRecord::Base
 
   def save_with_card(card)
     #fail "save with card #{card.inspect}"
-    User.transaction do 
-      card.extension = self
+    User.transaction do
       save
+      card.extension = self
       card.save
       card.errors.each do |key,err|
         next if key=='extension'
         self.errors.add key,err
-      end 
+      end
       raise ActiveRecord::RecordInvalid.new(self) if !self.errors.empty?
     end
   rescue  
   end
       
 
-  def accept(email)
+  def accept(email_args)
     User.as :wagbot  do #what permissions does approver lack?  Should we check for them?
       card.type = 'User'  # change from Invite Request -> User
       card.permit :edit, Card.new(:type=>'User').who_can(:edit) #give default user permissions
@@ -129,7 +127,7 @@ class User < ActiveRecord::Base
       save_with_card(card)
     end
     #card.save #hack to make it so last editor is current user.
-    self.send_account_info(email) if self.errors.empty?
+    self.send_account_info(email_args) if self.errors.empty?
   end
 
   def send_account_info(args)
@@ -148,9 +146,18 @@ class User < ActiveRecord::Base
   end  
 
   def active?
-    status == 'active'
+    status=='active'
   end
-      
+  def blocked?
+    status=='blocked'
+  end
+  def built_in?
+    status=='system'
+  end
+  def pending?
+    status=='pending'
+  end
+
   # blocked methods for legacy boolean status
   def blocked=(block)
     if block != '0'
@@ -159,15 +166,7 @@ class User < ActiveRecord::Base
       self.status = 'active'
     end
   end
-      
-  def blocked
-    blocked?
-  end
 
-  def blocked?
-    status == 'blocked'
-  end
-  
   def anonymous?
     login == 'anon'
   end
@@ -213,7 +212,7 @@ class User < ActiveRecord::Base
   end
 
   def password_required?
-     !built_in? && not_openid? && (crypted_password.blank? or not password.blank?)
+     !built_in? && !pending? && not_openid? && (crypted_password.blank? or not password.blank?)
   end
  
   def not_openid?

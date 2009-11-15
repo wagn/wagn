@@ -8,14 +8,15 @@ class AccountController < ApplicationController
     raise(Wagn::Oops, "You have to sign out before signing up for a new Account") if logged_in?
     raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless Card::InvitationRequest.create_ok?
 
-    @user = User.new((params[:user]||{}).merge(:status=>'system')) #does not validate password
-    card_args =      (params[:card]||{}).merge(:type=>'InvitationRequest')
+    user_args = (params[:user]||{}).merge(:status=>'pending').symbolize_keys
+    @user = User.new( user_args ) #does not validate password
+    card_args = (params[:card]||{}).merge(:type=>'InvitationRequest')
     @card = Card.new( card_args )
     
     return unless request.post?
     return unless (captcha_required? ? verify_captcha(:model=>@user) : true)
 
-    @user, @card = User.create_with_card( params[:user], card_args )
+    @user, @card = User.create_with_card( user_args, card_args )
     return unless @user.errors.empty?
               
     User.as :wagbot  do ## in case user doesn't have permission for included cardtypes.  For now letting signup proceed even if there are errors on multi-update
@@ -83,7 +84,14 @@ class AccountController < ApplicationController
   
   def forgot_password
     return unless request.post?
-    if @user = User.find_by_email(params[:email])
+    @user = User.find_by_email(params[:email])
+    if @user.nil?
+      flash[:notice] = "Could not find a user with that email address." 
+      render :action=>'signin', :status=>404
+    elsif !@user.active?
+      flash[:notice] = "The account associated with that email address is not active."
+      render :action=>'signin', :status=>403
+    else
       @user.generate_password
       @user.save!                       
       subject = "Password Reset"
@@ -92,9 +100,6 @@ class AccountController < ApplicationController
       Mailer.deliver_account_info(@user, subject, message)
       flash[:notice] = "A new temporary password has been set on your account and sent to your email address" 
       redirect_to previous_location
-    else
-      flash[:notice] = "Could not find a user with that email address" 
-      render :action=>'signin', :status=>403
     end  
   end
         
@@ -145,7 +150,7 @@ class AccountController < ApplicationController
     if self.current_user = User.authenticate(params[:login], params[:password])
       successful_login
     elsif u = User.find_by_email(params[:login].strip)
-      if u.blocked
+      if u.blocked?
         failed_login("Sorry, this account is currently blocked.")
       else
         failed_login("Wrong password for that email")

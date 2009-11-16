@@ -17,7 +17,7 @@ class User < ActiveRecord::Base
   validates_presence_of     :email, :if => :email_required?
   validates_format_of       :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i  , :if => :email_required?
   validates_length_of       :email, :within => 3..100,   :if => :email_required?
-  validates_uniqueness_of   :email,                      :if => :email_required?  
+  validates_uniqueness_of   :email, :scope=>:login,      :if => :email_required?  
   validates_presence_of     :password,                   :if => :password_required?
   validates_presence_of     :password_confirmation,      :if => :password_required?
   validates_length_of       :password, :within => 5..40, :if => :password_required?
@@ -25,6 +25,7 @@ class User < ActiveRecord::Base
   validates_presence_of     :invite_sender,              :if => :active?
 #  validates_uniqueness_of   :salt, :allow_nil => true
   
+  before_validation :downcase_email!
   before_save :encrypt_password
   
   cattr_accessor :cache  
@@ -71,7 +72,7 @@ class User < ActiveRecord::Base
     
     # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
     def authenticate(email, password)
-      u = self.find_by_email(email.strip)
+      u = self.find_by_email(email.strip.downcase)
       u && u.authenticated?(password.strip) ? u : nil
     end
 
@@ -181,11 +182,6 @@ class User < ActiveRecord::Base
     self.password_confirmation = self.password
   end
 
-
-  def built_in?
-    status=='system'
-  end
-
   def to_s
     "#<#{self.class.name}:#{login.blank? ? email : login}}>"
   end
@@ -194,13 +190,18 @@ class User < ActiveRecord::Base
     to_s
   end
    
+  #before validation
+  def downcase_email!
+    email.downcase! if email
+  end 
+   
   protected
   # Encrypts the password with the user salt
   def encrypt(password)
     self.class.encrypt(password, salt)
   end
-   
-  # before filter 
+
+  # before save
   def encrypt_password
     return if password.blank?
     self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{login}--") if new_record?

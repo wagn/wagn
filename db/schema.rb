@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091103182738) do
+ActiveRecord::Schema.define(:version => 20091115234622) do
 
   create_table "card_files", :force => true do |t|
     t.string   "filename"
@@ -56,6 +56,10 @@ ActiveRecord::Schema.define(:version => 20091103182738) do
     t.integer  "references_expired"
     t.text     "indexed_name"
     t.text     "indexed_content"
+    t.string   "settings"
+    t.string   "codename"
+    t.string   "pattern_keys"
+    t.string   "pattern_spec_key"
   end
 
   add_index "cards", ["extension_id", "extension_type"], :name => "cards_extension_index"

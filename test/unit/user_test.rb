@@ -6,6 +6,8 @@ class UserTest < ActiveSupport::TestCase
   include AuthenticatedTestHelper
   #fixtures :users
 
+  
+
   def test_should_reset_password
     User.find_by_email('joe@user.com').update_attributes(:password => 'new password', :password_confirmation => 'new password')
     assert_equal User.find_by_email('joe@user.com'), User.authenticate('joe@user.com', 'new password')
@@ -37,6 +39,11 @@ class UserTest < ActiveSupport::TestCase
       assert u.errors.on(:email)
     end
   end
+  
+  def test_should_downcase_email
+    u=create_user(:email=>'QuIrE@example.com')
+    assert_equal 'quire@example.com', u.email
+  end
 
   def test_should_not_rehash_password
     User.find_by_email('joe@user.com').update_attributes!(:email => 'joe2@user.com')
@@ -50,6 +57,11 @@ class UserTest < ActiveSupport::TestCase
   def test_should_authenticate_user_with_whitespace
     assert_equal User.find_by_email('joe@user.com'), User.authenticate(' joe@user.com ', ' joe_pass ')
   end
+
+  def test_should_authenticate_user_with_weird_email_capitalization
+    assert User.authenticate('JOE@user.com', 'joe_pass')
+  end
+
   
   protected
   def create_user(options = {})

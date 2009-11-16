@@ -17,6 +17,20 @@ Feature: Pattern settings
     Then I should see "spicy"
     When I go to new card "Test+color"      
     Then I should see "colorblind"
+    
+  Scenario: single setting 
+    Given I create Pattern card "plus color" with content 
+    """
+    {"right": "color"}
+    """
+    And I create card "*default+*edit" with content "say something spicy"
+    And I create card "Test+color+*edit" with content "I like maroon"    
+    When I go to url "/card/edit/Joe_User"
+    Then I should see "spicy"
+    When I go to url "/card/edit/Test+color" 
+    Then I should see "maroon"
+     
+    
   
                 
   

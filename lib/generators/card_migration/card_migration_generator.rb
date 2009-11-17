@@ -1,5 +1,3 @@
-require 'ruby-debug'
-
 class CardMigrationGenerator < Rails::Generator::NamedBase
   attr_accessor :migration_name
   

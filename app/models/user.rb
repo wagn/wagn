@@ -1,5 +1,4 @@
- require 'digest/sha1'
-require_dependency "acts_as_card_extension"
+require 'digest/sha1'
 
 class User < ActiveRecord::Base
   #FIXME: THIS WHOLE MODEL SHOULD BE CALLED ACCOUNT

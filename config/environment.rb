@@ -37,5 +37,3 @@ Rails::Initializer.run do |config|
   # select a store for the rails/card cache
 end
    
-# Now Rails is initialized, initialize Wagn      
-Wagn::Initializer.run

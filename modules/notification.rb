@@ -121,12 +121,15 @@ module Notification
   end
   
   def self.init
-    Card::Base.class_eval {  include CardMethods;  include CacheableMethods  }
-    CachedCard.class_eval { include CacheableMethods }
-    Slot.class_eval { include SlotHelperMethods }
+    Card::Base.send :include, CardMethods
+    Card::Base.send :include, CacheableMethods  
+    CachedCard.send :include, CacheableMethods 
+    Slot.send :include, SlotHelperMethods 
     self.extend Hooks 
   end   
 end    
+
+Notification.init
 
 
 

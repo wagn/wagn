@@ -13,6 +13,7 @@ describe Card do
     end                                          
     
     it "retrieves default values" do
+      Card.create :name => "all Basic cards", :type => "Pattern", :content => "{\"type\": \"Basic\"}"
       Card.create :name => "*default+*new", :content => "lobotomize"
       Card.new( :type => "Basic" ).setting('new').should == "lobotomize"
     end

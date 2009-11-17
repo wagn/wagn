@@ -21,5 +21,12 @@ class CardnameTest < ActiveSupport::TestCase
     assert_equal "a", "a".tag_name
   end
   
+  def test_replace_part
+    assert_equal 'x+b', 'a+b'.replace_part('a','x')
+    assert_equal 'x+c', 'a+b+c'.replace_part('a+b','x')
+    assert_equal 'a+b+c', 'a+b+c'.replace_part('b+c','x')
+  end
+  
+  
 end
     

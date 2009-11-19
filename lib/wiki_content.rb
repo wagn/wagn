@@ -39,7 +39,14 @@ class WikiContent < String
        'h5' => [],
        'h6' => [],
        'blockquote' => ['cite'],
-       'span'=>[]
+       'span'=>[],
+       'table'=>[],
+       'tr'=>[],
+       'td'=>[],
+       'th'=>[],
+       'tbody'=>[],
+       'thead'=>[],
+       'tfoot'=>[]
       }                                             
       
       BASIC_TAGS.each_key {|k| BASIC_TAGS[k] << 'class' }

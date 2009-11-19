@@ -13,21 +13,18 @@ module Card
       min = self.setting('table of contents').to_i
       return unless min and min > 0
       
-      toc = []  
-      current_depth = 1
-      content.gsub!( /<(h1)>(.*?)<\/h1>|<(h2)>(.*?)<\/h2>/i ) do
-        tag, value = $~[1] ? $~[1,2] : $~[3,2]
+      toc, dep = [], 1
+      content.gsub!( /<(h\d)>(.*?)<\/h\d>/i ) do
+        tag, value = $~[1,2]
         next if value.strip.empty?
         value = ActionView::Base.new.strip_tags(value)
         item = { :value => value, :uri => URI.escape(value) }
-        case tag
+        case tag.downcase
         when 'h1'
-          item[:depth] = current_depth = 1          
-          toc << item
+          item[:depth] = dep = 1; toc << item
         when 'h2'
-          toc << []  if current_depth == 1
-          item[:depth] = current_depth = 2
-          toc.last << item
+          toc << []  if dep == 1
+          item[:depth] = dep = 2; toc.last << item
         end
         %{<a name="#{item[:uri]}"></a>} + $MATCH
       end

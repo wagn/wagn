@@ -68,8 +68,7 @@ class System < ActiveRecord::Base
     
     def layout_from_setting(card)
       return unless setting_card =
-        card &&
-        (Card===card || card = card.card) &&  #KLUDGE.  after CachedCard refactor we should get rid of this
+        card = (CachedCard===card ? card.card : card) &&  #KLUDGE.  after CachedCard refactor we should get rid of this
         card.setting_card('layout') or 
         Card.new.default_setting_card('layout')
       return unless setting_card.type == 'Pointer'        and

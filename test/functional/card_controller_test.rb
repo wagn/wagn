@@ -184,12 +184,14 @@ class CardControllerTest < ActionController::TestCase
     ff.permit(:read, Role[:auth])
     ff.save!
     
-    Card.create! :name=>"Fruit+*thanks", :type=>"Phrase", :content=>"/wagn/sweet"
+    Card.create! :name=>'All Fruit', :type=>'Pattern', :content=>'{"type":"Fruit"}'
+    Card.create! :name=>"All Fruit+*thanks", :type=>"Phrase", :content=>"/wagn/sweet"
     
     login_as(:anon)     
     post :create, :card => {
       :name=>"Banana", :type=>"Fruit", :content=>"mush"
-    }     
+    }
+#    assert_equal "/wagn/sweet", Card['Banana'].setting('thanks')
     assert_equal "/wagn/sweet", assigns["redirect_location"]
     assert_template "redirect_to_thanks"
   end
@@ -210,7 +212,7 @@ class CardControllerTest < ActionController::TestCase
     login_as(:anon)     
     post :create, :context=>"main_1", :card => {
       :name=>"Banana", :type=>"Fruit", :content=>"mush"
-    }                    
+    }
     assert_equal "/wagn/Banana", assigns["redirect_location"]
     assert_template "redirect_to_created_card"
   end

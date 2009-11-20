@@ -50,8 +50,8 @@ module Wagn
   class RightNamePattern < Pattern 
     class << self
       def key_for_card card
-        return nil unless card.junction?
-        "RightName:#{card.name.tag_name}"
+        return nil unless name=card.name and name.junction?
+        "RightName:#{name.tag_name}"
       end
   
       def recognize spec

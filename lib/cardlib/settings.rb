@@ -3,7 +3,7 @@ module Cardlib
     
     def setting setting_name
       card = setting_card setting_name
-      return card ? card.content : 'no setting'
+      return card && card.content
     end
     
     def setting_card setting_name
@@ -16,16 +16,28 @@ module Cardlib
         end
       end
 
-      return default_setting_card(setting_name) 
+      return self.class.default_setting_card(setting_name) 
     end
     
+    
+    module ClassMethods
     
     ## this should probably be a class method
-    def default_setting_card setting_name
-      setting_card = CachedCard.get_real( "*default+*#{setting_name}" ) 
+
+      def default_setting setting_name
+        card = default_setting_card setting_name
+        return card && card.content
+      end
+      
+      def default_setting_card setting_name
+        setting_card = CachedCard.get_real( "*default+*#{setting_name}" ) 
+      end
+    end
+      
+    def self.append_features(base)
+      super
+      base.extend(ClassMethods)
     end
 
-    
-    
   end
 end

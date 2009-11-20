@@ -53,8 +53,8 @@ module Card
       card.content.strip.to_i
     end    
     
-    def autoname
-      System.setting("#{self.name.tag_name}+*autoname")
-    end
+#    def autoname
+#      System.setting("#{self.name.tag_name}+*autoname")
+#    end
 	end
 end

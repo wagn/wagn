@@ -34,10 +34,10 @@ class AccountController < ApplicationController
     end
   end
   
-  def thanks(card_name)
-    thanks = System.setting(card_name)
-    thanks
-  end
+#  def thanks(card_name)
+#    thanks = System.setting(card_name)
+#    thanks
+#  end
   
   def accept
     @card = Card[params[:card][:key]] or raise(Wagn::NotFound, "Can't find this Account Request")  #ENGLISH

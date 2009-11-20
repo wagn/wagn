@@ -9,9 +9,7 @@ module Cardlib
       #  :set_needed_defaults returns if new_record? so I think we don't want it in there
       if args["name"].blank?
         ::User.as(:wagbot) do
-          autoname_cardname = ::Cardtype.name_for(c.type)+"+*autoname" 
-          if CachedCard.get_real autoname_cardname
-            autoname_card = Card[autoname_cardname]
+          if autoname_card = c.setting_card('autoname')
             c.name = autoname_card.content
             autoname_card.content = autoname_card.content.next
             autoname_card.save!

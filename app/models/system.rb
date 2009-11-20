@@ -45,10 +45,8 @@ class System < ActiveRecord::Base
       nil
     end           
     
-    def toggle_setting(name)
-      # "no" feels like a kluge - LWH
-      # yeah, that's just a content view thing.  actual content in db is "0" - EFM
-      content = setting(name) and content != "0"
+    def toggle(val)
+      val == '1'
     end
 
     def layout_card(cardname, opts)

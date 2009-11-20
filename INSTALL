@@ -27,9 +27,7 @@ To get the latest code, you will need to use git:
 CONFIGURE WAGN
 
    1. In the config directory, copy sample_wagn.rb to wagn.rb
-   2. In wagn.rb set:
-      System.base_url= final URL (what users will really type in their browser)
-      System.site_title=name of the Wagn's front page (note: this can be overridden in Wagn itself).
+   2. In wagn.rb set: System.base_url= final URL (what users will really type in their browser)
    3. to get mail working, see Installation+mail setup
 
  

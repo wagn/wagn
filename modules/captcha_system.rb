@@ -21,12 +21,8 @@ module CaptchaSystem
     verify_recaptcha(opts) 
   end
 
-  def captcha_required?   
-    setting = nil
-    setting = System.toggle_setting("#{@card.type}+*captcha") if @card
-    setting = System.toggle_setting('*captcha') if setting.nil?
-    setting = false if setting.nil?
-    not logged_in? and setting
+  def captcha_required?
+    !logged_in? and System.toggle(@card ? @card.setting('captcha') : Card.default_setting('captcha'))
   end  
   
   def self.included(base)

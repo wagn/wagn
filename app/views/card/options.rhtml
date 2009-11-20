@@ -14,7 +14,7 @@
           <%= slot.option_header 'Account Details' %>
           <%= render :partial=>'account/edit',  :locals=>locals %>
           <%= render :partial=>'options/roles', :locals=>locals %>
-        <% elsif !card.extension_type and card.ok?(:edit) and System.ok?(:create_accounts)%>
+        <% elsif !card.extension_type and card.ok?(:edit) and System.ok?(:create_accounts) and System.toggle(card.setting('accountable')) %>
           <tr><td colspan="3" class="new-account-link">
             <%= link_to_remote %{Add a sign-in account for "#{@card.name}"}, 
                 {:url=>"/options/new_account/#{@card.id}", :update=>slot.id('options-body')} 

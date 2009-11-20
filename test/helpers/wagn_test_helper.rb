@@ -72,7 +72,7 @@ module WagnTestHelper
     end
     if block_given?
       yield
-      post "/account/logout",:controller=>'account'
+      post "/account/signout",:controller=>'account'
     end
   end
   

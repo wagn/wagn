@@ -59,8 +59,8 @@ class AccountCreationTest < ActionController::TestCase
 
 
   def test_create_permission_denied_if_not_logged_in
-    logout
-    post "logout"
+    signout
+    post "signout"
     assert_no_new_account do
 #    assert_raises(Card::PermissionDenied) do
       post_invite

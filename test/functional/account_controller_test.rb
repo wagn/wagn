@@ -22,7 +22,7 @@ class AccountControllerTest < ActionController::TestCase
     @newby_email = 'newby@wagn.net'
     @newby_args =  {:user=>{ :email=>@newby_email },
                     :card=>{ :name=>'Newby Dooby' }}
-    logout
+    signout
   end
 
 
@@ -38,8 +38,8 @@ class AccountControllerTest < ActionController::TestCase
     assert_response 403
   end
   
-  def test_should_logout
-    get :logout
+  def test_should_signout
+    get :signout
     assert_nil session[:user]
     assert_response :redirect
   end

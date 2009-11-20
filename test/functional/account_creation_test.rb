@@ -118,8 +118,9 @@ class AccountCreationTest < ActionController::TestCase
   end   
   
   def test_should_require_unique_email
+    post_invite :user=>{ :email=>'duplor@user.com' }
     assert_no_new_account do
-      post_invite :user=>{ :email=>'joe@user.com' }
+      post_invite :user=>{ :email=>'duplor@user.com' }
     end
   end
 =begin  We may want to support this eventually, but we don't yet.

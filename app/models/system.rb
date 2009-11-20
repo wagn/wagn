@@ -52,30 +52,35 @@ class System < ActiveRecord::Base
     end
 
     def layout_card(cardname, opts)
-      User.as(:wagbot) do      
-        if ( 
-              cardname.present? and 
-              layout_card = CachedCard.get_real(cardname) and 
-              layout_card.ok?(:read)
-            )
-          layout_card
-        elsif (
-              c = CachedCard.get_real("*layout")             and
-              c.type == 'Pointer'                            and
-              layout_name=c.pointee                          and
-              !layout_name.nil?                              and
-              layout_card = CachedCard.get_real(layout_name) and
-              layout_card.ok?(:read)
-            ) 
-          layout_card
-        else 
-          Card.new(:name=>"**layout",:content=>opts[:default]) 
-        end
+      User.as(:wagbot) do 
+        layout_from_url(cardname) or
+        layout_from_setting(opts[:card]) or
+        Card.new(:name=>"**layout",:content=>opts[:default]) 
       end
+    end
+    
+    def layout_from_url(cardname)
+      return nil unless cardname.present? and 
+        layout_card = CachedCard.get_real(cardname) and 
+        layout_card.ok?(:read)
+      layout_card
+    end
+    
+    def layout_from_setting(card)
+      return unless setting_card =
+        card = (CachedCard===card ? card.card : card) &&  #KLUDGE.  after CachedCard refactor we should get rid of this
+        card.setting_card('layout') or 
+        Card.new.default_setting_card('layout')
+      return unless setting_card.type == 'Pointer'        and
+        layout_name=setting_card.pointee                  and
+        !layout_name.nil?                                 and
+        layout_card = CachedCard.get_real(layout_name)    and
+        layout_card.ok?(:read)
+      layout_card
     end
    
     def image_setting(name)
-      if content = setting(name) and  content.match(/src=\"([^\"]+)/)
+      if content = setting(name) and content.match(/src=\"([^\"]+)/)
         $~[1]
       end
     end
@@ -155,21 +160,3 @@ class System < ActiveRecord::Base
   
 end        
 
-# load wagn configuration. 
-# FIXME: this has to be here because System is both a config store and a model-- which means
-# in development mode it gets reloaded so we lose the config settings.  The whole config situation
-# needs an overhaul 
-if File.exists? "#{RAILS_ROOT}/config/sample_wagn.rb"
-  require_dependency "#{RAILS_ROOT}/config/sample_wagn.rb"
-end
-if File.exists? "#{RAILS_ROOT}/config/wagn.rb" 
-  require_dependency "#{RAILS_ROOT}/config/wagn.rb"    
-end
-
-# FIXME: loading this in application.rb breaks testing.
-#        loading it here breaks bootstrap
-# require File.expand_path(File.dirname(__FILE__) + '/../../app/addons/google_maps_addon')  
-
-# Configuration cleanup: Make sure System.base_url doesn't end with a /
-System.base_url.gsub!(/\/$/,'')
-     

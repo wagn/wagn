@@ -79,7 +79,8 @@ class CardActionTest < ActionController::IntegrationTest
   def test_newcard_shows_edit_instructions   
     given_cards( 
       {"Cardtype:YFoo" => ""},
-      {"YFoo+*edit"  => "instruct-me"}
+      {"Pattern:All YFoo" => '{"type":"YFoo"}'},
+      {"All YFoo+*edit"  => "instruct-me"}
     )
     get 'card/new', :card => {:type=>'YFoo'}
     assert_tag :tag=>'div', :attributes=>{ :class=>"custom-instructions instruction" },  :content=>/instruct-me/ 

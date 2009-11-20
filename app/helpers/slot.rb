@@ -1,5 +1,4 @@
 require_dependency 'slot_helpers'
-require 'ostruct'
 
 class Slot
   include SlotHelpers  

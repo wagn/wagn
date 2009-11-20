@@ -6,48 +6,32 @@ module Card
 
     def post_render(content)
       #warn "CALLED POST RENDER: #{content}"
-      table_of_contents(content) 
+      table_of_contents(content) || content
     end
 
     def table_of_contents(content)
-      toc = []  
-      current_depth = 1
-      content.gsub!( /<(h1)>(.*?)<\/h1>|<(h2)>(.*?)<\/h2>/i ) do
-        tag, value = $~[1] ? $~[1,2] : $~[3,2]
+      min = self.setting('table of contents').to_i
+      return unless min and min > 0
+      
+      toc, dep = [], 1
+      content.gsub!( /<(h\d)>(.*?)<\/h\d>/i ) do
+        tag, value = $~[1,2]
         next if value.strip.empty?
+        value = ActionView::Base.new.strip_tags(value)
         item = { :value => value, :uri => URI.escape(value) }
-        case tag
+        case tag.downcase
         when 'h1'
-          item[:depth] = current_depth = 1          
-          toc << item
+          item[:depth] = dep = 1; toc << item
         when 'h2'
-          toc << []  if current_depth == 1
-          item[:depth] = current_depth = 2
-          toc.last << item
+          toc << []  if dep == 1
+          item[:depth] = dep = 2; toc.last << item
         end
         %{<a name="#{item[:uri]}"></a>} + $MATCH
       end
 
-      length = toc.flatten.length 
-      add_toc = false
-      toc_card_content = '' 
-      if length > 0 
-		  toc_card=nil
-        ::User.as(:wagbot)  do
-		  	 toc_card = self.attribute_card("*table of contents")
-		  
-       	 toc_card_content = toc_card ? toc_card.content : ''
-        	if  !toc_card_content.match('off') and (toc_card_content.match('on') or length > 3)
-        	  add_toc = true
-        	end
-		  end
-      end
-
-      if add_toc
+      if toc.flatten.length >= min
         content.replace %{ <div class="table-of-contents"> <h5>Table of Contents</h5> } +
-        make_table_of_contents_list(toc) + '</div>'+ content 
-      else
-        content
+        make_table_of_contents_list(toc) + '</div>'+ content
       end
     end
     

@@ -19,7 +19,16 @@ end
 Spec::Rails::Example::ControllerExampleGroup.extend CaptchaExampleGroupMethods
 Spec::Rails::Example::ControllerExampleGroup.send(:include, CaptchaExampleMethods)
 
-describe CardController, "captcha_required?" do    
+describe CardController, "captcha_required?" do
+  before do
+    User.as :wagbot do
+      Card.create! :name=>"*default+*captcha", :content=>"1"
+      Card.create! :name=>'All Books', :type=>'Pattern', :content=>'{"type":"Book"}'
+      c=Card["Book"];c.permit(:create, Role[:anon]);c.save! 
+      Card.create :name=>"All Books+*captcha", :content => "1"  
+    end
+  end
+  
   it "is false for joe user" do
     login_as :joe_user      
     @controller.send(:captcha_required?).should be_false
@@ -27,30 +36,23 @@ describe CardController, "captcha_required?" do
 
   context "for anonymous" do
     it "is true when global setting is true" do
-      Card.create! :name=>"*captcha", :content=>"yes"
       @controller.send(:captcha_required?).should be_true
     end
 
     it "is false when global setting is off" do
-      Card.create! :name=>"*captcha", :content=>"no"
+      c= Card['*default+*captcha']; c.content='0'; c.save!
       @controller.send(:captcha_required?).should be_false
     end
 
     it "is true when type card setting is on and global setting is off" do
-      User.as(:wagbot) do
-        c=Card["Book"];c.permit(:create, Role[:anon]);c.save! 
-        Card.create! :name=>"*captcha", :content=>"no"
-        Card.create :name=>"Book+*captcha", :content => "yes"  
-      end
+      c= Card['*default+*captcha']; c.content='0'; c.save!
       get :new, :type=>"Book"
       @controller.send(:captcha_required?).should be_true
     end
 
     it "is false when type card setting is off and global setting is on" do
-      User.as(:wagbot) do 
-        c=Card["Book"];c.permit(:create, Role[:anon]);c.save! 
-        Card.create! :name=>"*captcha", :content=>"yes"
-        Card.create :name=>"Book+*captcha", :content => "no"  
+      User.as :wagbot do
+        c= Card['All Books+*captcha']; c.content='0'; c.save!
       end
       get :new, :type=>"Book"
       @controller.send(:captcha_required?).should be_false
@@ -61,7 +63,7 @@ end
 describe CardController, "with captcha enabled requires captcha on" do   
   before do
     User.as(:wagbot) do
-      Card.create! :name=>"*captcha", :content=>"yes"
+      Card.create! :name=>"*default+*captcha", :content=>"1"
       #FIXME it would be nice if there were a simpler idiom for this     
       c = Card['Basic']
       c.permit(:create,Role[:anon])

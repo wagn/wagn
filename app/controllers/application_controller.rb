@@ -201,7 +201,7 @@ class ApplicationController < ActionController::Base
   
   def render_card_errors(card=nil)
     card ||= @card
-    stuff = %{<div class="errorExplanation">
+    stuff = %{<div class="error-explanation">
       <h2>Rats. Issue with #{card.name && card.name.upcase} card:</h2><p>} + 
       card.errors.map do |attr,msg|    
         "#{attr.gsub(/base/,'captcha').upcase }: #{msg}" 

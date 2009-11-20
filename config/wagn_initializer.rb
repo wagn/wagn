@@ -9,7 +9,7 @@ module Wagn
         config.gem "json"
         require 'yaml'   
         require 'erb'     
-        database_configuration_file = 'config/database.yml'
+        database_configuration_file = "#{RAILS_ROOT}/config/database.yml"
         db = YAML::load(ERB.new(IO.read(database_configuration_file)).result)
         config.action_controller.session = {
           :session_key => db[RAILS_ENV]['session_key'],
@@ -60,6 +60,7 @@ module Wagn
           include Cardlib::References  
           include Cardlib::Cacheable      
           include Cardlib::Settings
+          include Cardlib::Settings::ClassMethods
           extend Cardlib::CardAttachment::ActMethods  
         end                                      
       end

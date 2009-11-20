@@ -24,6 +24,8 @@ class Card::RenameTest < ActiveSupport::TestCase
     setup_default_user                 
   end
   
+
+
   def test_rename_name_substitution
     c1, c2 = Card["chuck_wagn+chuck"], Card["chuck"]
     assert_rename c2, "buck"
@@ -33,6 +35,19 @@ class Card::RenameTest < ActiveSupport::TestCase
   def test_rename_same_key_with_dependents
     assert_rename card("B"), "b"
   end                                     
+
+  
+  def test_junction_to_simple
+    assert_rename card("A+B"), "K" 
+  end
+  
+  def test_reference_updates_plus_to_simple
+     c1, c2 = Card['Blue'], Card["chuck_wagn+chuck"]
+     c1.content = "[[chuck wagn+chuck]]"
+     c1.save!
+     assert_rename c2, 'schmuck'
+     assert_equal '[[schmuck]]', Card.find(c1.id).content
+  end
 
   def test_updates_inclusions_when_renaming    
     c1,c2,c3 = Card["Blue"], Card["blue includer 1"], Card["blue includer 2"]
@@ -85,9 +100,6 @@ class Card::RenameTest < ActiveSupport::TestCase
   end     
 
 
-  def test_junction_to_simple   
-    assert_rename card("A+B"), "K" 
-  end
    
   
   def test_should_error_invalid_name
@@ -121,7 +133,6 @@ class Card::RenameTest < ActiveSupport::TestCase
   end
 
 
- 
   private
   
   def with_debugging

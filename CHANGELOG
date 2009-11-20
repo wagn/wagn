@@ -1,4 +1,4 @@
-=== 1.2.0 (Oct 13, 2009)         
+=== 1.2.0 (Oct 21, 2009)         
 * fix pointer interfaces breaking under multiedit
 * implement autoname by type
 * more interfaces for pointers

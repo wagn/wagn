@@ -34,6 +34,7 @@ describe Wagn::RightNamePattern do
   it_accepts :right => "author"
   it_rejects :type => "Book", :right => "author"
   it_generates :key => "RightName:author", :from => Card.new( :name => "Illiad+author" )
+  it_generates :key => "RightName:author", :from => Card.new( :name => "+author" )
   it_generates :key => "RightName:author", :from => { :right => "author" }
 end
                               

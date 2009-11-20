@@ -1,46 +1,34 @@
 <% @default_layout = capture do %>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-   <head>
-    {{*head}}
+<!DOCTYPE HTML>
+<html>
+  <head>
+    {{*head|naked}}
   </head>
-  <body id="wagn" class="wagn">
-    <div id="top-menu">
-      [[/ | Home]]
-      [[/recent | Recent]]
-      {{*navbox}}
-
-      <span id="logging">
-        {{*account links}}
-      </span>
-    </div>
-    <div id="page">
-      <div id="page-left">
-        {{_main}}
-      </div>  
-      <div id="page-right">
-        <div id="logo">
-          <a href="/">{{*logo}}</a>
-        </div>
-        <div id="sidebar">
-          {{*sidebar}}
-        </div>
-        <div id="bottom-menu">
-          <div id="credit">
-            Wheeled by  [[http://www.wagn.org|Wagn]] v. {{*version}}
-          </div>
-        </div>
-        {{*alerts}}
-      </div>
-    </div>
-
-    {{*foot}}
+  
+  <body id="wagn">
+    <header id="menu">
+      [[/ | Home]]   [[/recent | Recent]]   {{*navbox|naked}} {{*account links|naked}}
+    </header>
+    
+    <section id="primary">
+      {{_main}}
+    </section>
+    
+    <section id="secondary">
+      <div id="logo">[[/ | {{*logo|naked}}]]</div>
+      {{*sidebar|naked}}
+      <div id="credit">Wheeled by  [[http://www.wagn.org|Wagn]] v. {{*version|naked}}</div>
+      {{*alerts}}
+    </section>
+    
+    {{*foot|naked}}
   </body>
 </html>
 <% end %>
 
 
-<%= Slot.new(System.layout_card(params[:layout],:default=>@default_layout), "0_0", "view", self, :main_content=>@content_for_layout).render(:naked) %>
+<%= Slot.new(
+  System.layout_card(params[:layout],:default=>@default_layout, :card=>@card), 
+  "0_0", "view", self, :main_content=>@content_for_layout
+ ).render(:naked) %>
 

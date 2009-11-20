@@ -1,16 +1,6 @@
 module Card
 	class Pointer < Base
 
-    class << self
-      def options_card(tagname)
-        card = ::User.as(:wagbot) do
-	        CachedCard.get_real("#{tagname}+*options")
-	      end
-	      (card && card.type=='Search') ? card : nil
-	    end
-    end
-
-
 	  def cacheable?
       false
     end
@@ -30,7 +20,7 @@ module Card
     end
 	    
 	  def option_text(option)
-	    name = System.setting('*option label') || System.setting("#{self.name.tag_name}+*option label") || 'description'
+	    name = setting('*option label') || 'description'
 	    textcard = CachedCard.get_real(option+'+'+name)
 	    textcard ? textcard.content : nil
 	  end
@@ -50,12 +40,12 @@ module Card
 	  end
 	  
 	  def options_card
-	    tagname = self.name.tag_name or return nil
-	    self.class.options_card(tagname)
+      card = self.setting_card('options')
+	    (card && card.type=='Search') ? card : nil
 	  end
 	  
 	  def options(limit=50)
-      (c=self.options_card) ? c.search(:limit=>limit) : Card.search(:sort=>'alpha',:limit=>limit)
+      (oc=self.options_card) ? oc.search(:limit=>limit) : Card.search(:sort=>'alpha',:limit=>limit)
     end
     
     def limit
@@ -63,8 +53,8 @@ module Card
       card.content.strip.to_i
     end    
     
-    def autoname
-      System.setting("#{self.name.tag_name}+*autoname")
-    end
+#    def autoname
+#      System.setting("#{self.name.tag_name}+*autoname")
+#    end
 	end
 end

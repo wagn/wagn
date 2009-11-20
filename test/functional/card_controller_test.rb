@@ -32,34 +32,6 @@ class CardControllerTest < ActionController::TestCase
     # assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor')
   end
 
-  
-
-#  what's happening with this test is that when changing from Basic to CardtypeA it is 
-#  stripping the html when the test doesn't think it should.  this could be a bug, but it
-#  seems less urgent that a lot of the other bugs on the list, so I'm leaving this test out
-#  for now.
-# 
-#  def test_update_cardtype_no_stripping
-#    User.as :joe_user                                               
-#    post :update, {:id=>@simple_card.id, :card=>{ :type=>"CardtypeA",:content=>"<br/>" } }
-#    #assert_equal "boo", assigns['card'].content
-#    assert_equal "<br/>", assigns['card'].content
-#    assert_response :success, "changed card type"   
-#    assert_equal "CardtypeA", Card['Sample Basic'].type
-#  end 
-# 
-#  def test_update_cardtype_with_stripping
-#    User.as :joe_user                                               
-#    post :edit, {:id=>@simple_card.id, :card=>{ :type=>"Date",:content=>"<br/>" } }
-#    #assert_equal "boo", assigns['card'].content
-#    assert_response :success, "changed card type"   
-#    assert_equal "", assigns['card'].content  
-#    assert_equal "Date", Card['Sample Basic'].type
-#  end 
-
-
-
-
   def test_new_with_name
     post :new, :card=>{:name=>"BananaBread"}
     assert_response :success, "response should succeed"                     
@@ -184,12 +156,14 @@ class CardControllerTest < ActionController::TestCase
     ff.permit(:read, Role[:auth])
     ff.save!
     
-    Card.create! :name=>"Fruit+*thanks", :type=>"Phrase", :content=>"/wagn/sweet"
+    Card.create! :name=>'All Fruit', :type=>'Pattern', :content=>'{"type":"Fruit"}'
+    Card.create! :name=>"All Fruit+*thanks", :type=>"Phrase", :content=>"/wagn/sweet"
     
     login_as(:anon)     
     post :create, :card => {
       :name=>"Banana", :type=>"Fruit", :content=>"mush"
-    }     
+    }
+#    assert_equal "/wagn/sweet", Card['Banana'].setting('thanks')
     assert_equal "/wagn/sweet", assigns["redirect_location"]
     assert_template "redirect_to_thanks"
   end
@@ -210,7 +184,7 @@ class CardControllerTest < ActionController::TestCase
     login_as(:anon)     
     post :create, :context=>"main_1", :card => {
       :name=>"Banana", :type=>"Fruit", :content=>"mush"
-    }                    
+    }
     assert_equal "/wagn/Banana", assigns["redirect_location"]
     assert_template "redirect_to_created_card"
   end
@@ -263,10 +237,29 @@ class CardControllerTest < ActionController::TestCase
     post :show, :id=>'crazy unknown name'
     assert_template 'missing'
   end
-
-
-
-
   
+  def test_update_cardtype_with_stripping
+    User.as :joe_user                                               
+    post :update, {:id=>@simple_card.id, :card=>{ :type=>"Date",:content=>"<br/>" } }
+    #assert_equal "boo", assigns['card'].content
+    assert_response :success, "changed card type"   
+    assert_equal "", assigns['card'].content  
+    assert_equal "Date", Card['Sample Basic'].type
+  end
 
+
+  #  what's happening with this test is that when changing from Basic to CardtypeA it is 
+  #  stripping the html when the test doesn't think it should.  this could be a bug, but it
+  #  seems less urgent that a lot of the other bugs on the list, so I'm leaving this test out
+  #  for now.
+  # 
+  #  def test_update_cardtype_no_stripping
+  #    User.as :joe_user                                               
+  #    post :update, {:id=>@simple_card.id, :card=>{ :type=>"CardtypeA",:content=>"<br/>" } }
+  #    #assert_equal "boo", assigns['card'].content
+  #    assert_equal "<br/>", assigns['card'].content
+  #    assert_response :success, "changed card type"   
+  #    assert_equal "CardtypeA", Card['Sample Basic'].type
+  #  end 
+  # 
 end

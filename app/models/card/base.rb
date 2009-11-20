@@ -281,7 +281,7 @@ module Card
 
     def destroy_with_trash(caller="")     
       if callback(:before_destroy) == false
-        errors.add(:destroy, "before destroy back aborted destroy")
+        errors.add(:destroy, "could not prepare card for destruction")
         return false 
       end  
       deps = self.dependents       

@@ -163,7 +163,7 @@ module Cardlib
       deps.each do |dep|
         ActiveRecord::Base.logger.info("---------------------- DEP #{dep.name}  -------------------------------------")  
         cxn = ActiveRecord::Base.connection
-        depname = dep.name.replace_particle @old_name, name
+        depname = dep.name.replace_part @old_name, name
         depkey = depname.to_key    
         # here we specifically want NOT to invoke recursive cascades on these cards, have to go this 
         # low level to avoid callbacks.                                                               

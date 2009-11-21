@@ -1,6 +1,6 @@
 <%- 
 view = symbolize_param(:view) 
-view = :open if [:closed, :line,:open,:card,:view, nil].member?(view)
+view = :open if [:closed, :line,:open,:card,:view, nil].member?(view)  #line, card, and view are deprecated
 @title = @card.name
 
 slot = get_slot

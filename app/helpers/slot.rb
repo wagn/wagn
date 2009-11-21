@@ -24,7 +24,7 @@ class Slot
     @slot_options = {
       :relative_content => {},
       :main_content => nil,
-      :transclusion_view_overrides => nil,
+      :inclusion_view_overrides => nil,
       :renderer => Renderer.new
     }.merge(opts)
     
@@ -231,10 +231,10 @@ class Slot
 
       when :expanded_view_content, :naked, :raw # raw is DEPRECATED
         @state = 'view'
-        expand_transclusions(  cache_action('view_content') {  card.post_render( render(:open_content)) } )
+        expand_inclusions(  cache_action('view_content') {  card.post_render( render(:open_content)) } )
 
       when :expanded_line_content
-        expand_transclusions(  cache_action('line_content') { render(:closed_content) } )
+        expand_inclusions(  cache_action('line_content') { render(:closed_content) } )
 
 
       #-----( without transclusions processed )
@@ -256,7 +256,7 @@ class Slot
         @state=:edit 
         args[:add_javascript]=true
         hidden_field_tag( :multi_edit, true) +
-        expand_transclusions( render(:naked_content) )
+        expand_inclusions( render(:naked_content) )
 
       when :edit_in_form
         render_partial('views/edit_in_form', args.merge(:form=>form))
@@ -284,75 +284,70 @@ class Slot
     
   end
 
-  def expand_transclusions(content, args={}) 
-    #return ("skip(#{card.name}):"+content) 
-    if card.name.template_name?          
-      # KLUGILICIOIUS: if we leave the {{}} transclusions intact they may get processed by
-      #  an outer card expansion-- causing weird rendering oddities.  the bogus thing
-      #  seems to work ok for now.
-      return content.gsub(/\{\{/,'{<bogus />{').gsub(/\}\}/,'}<bogus />}')
+  def sterilize_inclusion(content)
+    content.gsub(/\{\{/,'{<bogus />{').gsub(/\}\}/,'}<bogus />}')
+    # KLUGILICIOIUS:  when don't want inclusions rendered, we can't leave the {{}} intact or an outer card 
+    # could expand them (often weirdly). The <bogus> thing seems to work ok for now.
+  end
+
+  def expand_inclusions(content, args={}) 
+    return sterilize_inclusion(content) if card.name.template_name?
+    content.gsub!(Chunk::Transclude::TRANSCLUDE_PATTERN) do
+      expand_inclusion($~)
     end
-    #content = "noskip(#{card.name}):" + content
-    content.gsub!(Chunk::Transclude::TRANSCLUDE_PATTERN) do  
-      if @state==:line && self.char_count > Slot.max_char_count
-        ""
-      else 
-        begin
-          match = $~
-          tname, options = Chunk::Transclude.parse(match)     
-          if view_map = root.slot_options[:transclusion_view_overrides]
-            if translated_view = view_map[ canonicalize_view( options[:view] )]
-              options[:view] = translated_view
-            end
-          end
-          fullname = tname+'' #weird.  have to do this or the tname gets busted in the options hash!!
-          #warn "options for #{tname}: #{options.inspect}"
-          fullname.to_absolute(options[:base]=='parent' ? card.name.parent_name : card.name)
-          fullname.gsub!('_user', User.current_user.card.name)
-          options[:fullname] = fullname
-          options[:showname] = tname.to_show(fullname)
-          #logger.info("absolutized tname and now have these transclusion options: #{options.inspect}")
-
-
-          if fullname.blank?  
-             # process_transclusion blows up if name is nil
-            "{<bogus/>{#{fullname}}}" 
-          elsif fullname == "_main"
-            %{<div id="main" context="main">#{slot_options[:main_content]}</div>}
-          else                                             
-            cargs = { :name=>fullname, :type=>options[:type] }
-            #@template.controller.params[tname.gsub(/\+/,'_')]).present?
-            if (specified_content = root.slot_options[:relative_content][tname.gsub(/\+/,'_')]).present?
-              cargs[:content] = specified_content
-            end
-
-            tcard = case
-              when @state==:edit
-                (Card.find_by_name( fullname ) || Card.find_virtual( fullname ) ||  Card.new( cargs ))
-              else
-                CachedCard.get fullname
-              end
-        
-            #warn("sending these options for processing: #{options.inspect}")
-       
-            tcontent = process_transclusion( tcard, options ) 
-            self.char_count += (tcontent ? tcontent.length : 0)
-                                    
-            if size = options[:size] 
-              size = (size.to_s == "full" ? "" : "_#{size}")
-              tcontent = tcontent.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
-            end
-            
-            tcontent
-            
-               
-          end
-        rescue Card::PermissionDenied
-          ""
-        end
-      end
+    content
+  end 
+  
+  def expand_inclusion(match)   
+    return '' if (@state==:line && self.char_count > Slot.max_char_count) # Don't bother processing inclusion if we're already out of view
+    tname, options = Chunk::Transclude.parse(match)
+    
+    case tname
+    when /^\#\#/                 ; return ''                     #invisible comment
+    when /^\#/ || nil? || blank? ; return "<!-- #{match} -->"    #visible comment
+    when '_main'                 ; return %{<div id="main" context="main">#{slot_options[:main_content]}</div>}
     end  
-    content     
+         
+    options[:view]                = get_inclusion_view(           options[:view])
+    options[:fullname] = fullname = get_inclusion_fullname(tname, options[:base])
+    options[:showname]            = tname.to_show(fullname)
+    
+    new_args = { :name=>fullname, :type=>options[:type] }
+    new_args[:content]=content if content=get_inclusion_content(tname)
+      
+    tcard = (@state==:edit ?
+      (Card.find_by_name(fullname) || Card.find_virtual(fullname) || Card.new(new_args))  :
+      CachedCard.get(fullname)
+    )
+
+    tcontent = process_inclusion( tcard, options ) 
+    self.char_count += (tcontent ? tcontent.length : 0)  #should we be stripping html here?
+     
+    options[:size] ? resize_image_content(tcontent) : tcontent                       
+  rescue Card::PermissionDenied; ''
+  end
+  
+  def get_inclusion_fullname(name, base)
+    fullname = name+'' #weird.  have to do this or the tname gets busted in the options hash!!
+    fullname.to_absolute(base=='parent' ? card.name.parent_name : card.name)
+    fullname.gsub!('_user', User.current_user.card.name)
+    fullname
+  end
+
+  def get_inclusion_view(view)
+    if map = root.slot_options[:inclusion_view_overrides] and translation = map[ canonicalize_view( view )]
+      translation
+    else; view; end
+  end
+
+  def get_inclusion_content(cardname)
+    content = root.slot_options[:relative_content][cardname.gsub(/\+/,'_')]
+    content if content.present?  #not sure I get why this is necessary - efm
+  end
+
+  def resize_image_content(content)
+    size = (size.to_s == "full" ? "" : "_#{size}")
+    content.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
   end
      
   def render_partial( partial, locals={} )
@@ -369,8 +364,8 @@ class Slot
      render_partial card_partial(action), locals
   end
   
-  def process_transclusion( card, options={} )  
-    #warn("<process_transclusion card=#{card.name} options=#{options.inspect}")
+  def process_inclusion( card, options={} )  
+    #warn("<process_inclusion card=#{card.name} options=#{options.inspect}")
     subslot = subslot(card)  
     old_slot, @template.controller.slot = @template.controller.slot, subslot
 
@@ -378,7 +373,6 @@ class Slot
     subslot.item_format = options[:item] if options[:item]
     subslot.type = options[:type] if options[:type]
                            
-    
     # FIXME! need a different test here   
     new_card = card.new_record? && !card.virtual?
     
@@ -386,18 +380,16 @@ class Slot
     subslot.requested_view = vmode
     action = case
       when [:name, :link, :linkname].member?(vmode)  ; vmode
-      when state==:edit                   ; card.virtual? ? :edit_auto : :edit_in_form   
+      when state==:edit      ; card.virtual? ? :edit_auto : :edit_in_form   
       when new_card                       
         case   
-          when vmode==:naked; :blank
-          when state==:line;  :closed_missing
-          else ;              :open_missing
+          when vmode==:naked ; :blank
+          when state==:line  ; :closed_missing
+          else               ; :open_missing
         end
-      when state==:line                   ; :expanded_line_content
-      else                                ; vmode
+      when state==:line      ; :expanded_line_content
+      else                   ; vmode
     end
-
-    #logger.info("<transclusion_case: state=#{state} vmode=#{vmode} --> Action=#{action}, Option=#{options.inspect}")
 
     result = subslot.render action, options
     @template.controller.slot = old_slot
@@ -440,7 +432,6 @@ class StubTemplate
     @full_sanitizer ||= HTML::FullSanitizer.new
   end
   
-   
   def params
     return {}
   end

@@ -14,7 +14,7 @@
 
 	<div class="open-content related">
 	  <% if @current=='config' %>
-	    <%= slot.expand_transclusions render(:partial=>'config') %>
+	    <%= slot.expand_inclusions render(:partial=>'config') %>
 	  <% else %>
    	  <%= render_card( "#{card.name}+#{@current}", :content ) %>
    	<% end %>

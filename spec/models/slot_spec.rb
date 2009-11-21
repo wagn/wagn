@@ -24,9 +24,9 @@ describe Slot, "" do
     
     # a little weird that we need :expanded_view_content  to get the version without
     # slot divs wrapped around it.
-    result = Slot.new(t, "main_1", "view", nil, :transclusion_view_overrides=>{ :open => :name } ).render :expanded_view_content
+    result = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :name } ).render :expanded_view_content
     result.should == "t2"
-    result = Slot.new(t, "main_1", "view", nil, :transclusion_view_overrides=>{ :open => :expanded_view_content } ).render :expanded_view_content
+    result = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :expanded_view_content } ).render :expanded_view_content
     result.should == "boo"
   end
     

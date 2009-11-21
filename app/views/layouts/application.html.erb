@@ -1,13 +1,14 @@
-<% @default_layout = capture do %>
+<% unless @lay_card = System.layout_card(@card, params[:layout]) %>
+  <% @lay_content = capture do %>
 <!DOCTYPE HTML>
 <html>
   <head>
-    {{*head|naked}}
+    {{*head}}
   </head>
   
   <body id="wagn">
     <header id="menu">
-      [[/ | Home]]   [[/recent | Recent]]   {{*navbox|naked}} {{*account links|naked}}
+      [[/ | Home]]   [[/recent | Recent]]   {{*navbox}} {{*account links}}
     </header>
     
     <section id="primary">
@@ -15,20 +16,17 @@
     </section>
     
     <section id="secondary">
-      <div id="logo">[[/ | {{*logo|naked}}]]</div>
-      {{*sidebar|naked}}
-      <div id="credit">Wheeled by  [[http://www.wagn.org|Wagn]] v. {{*version|naked}}</div>
+      <div id="logo">[[/ | {{*logo}}]]</div>
+      {{*sidebar}}
+      <div id="credit">Wheeled by [[http://www.wagn.org|Wagn]] v. {{*version}}</div>
       {{*alerts}}
     </section>
     
-    {{*foot|naked}}
+    {{*foot}}
   </body>
 </html>
+  <% end %>
+  <% @lay_card = layout_card(@lay_content) %>
 <% end %>
 
-
-<%= Slot.new(
-  System.layout_card(params[:layout],:default=>@default_layout, :card=>@card), 
-  "0_0", "view", self, :main_content=>@content_for_layout
- ).render(:naked) %>
-
+<%= render_layout_card(@lay_card) %>

@@ -4,11 +4,12 @@ class Slot
   include SlotHelpers  
   cattr_accessor :max_char_count
   self.max_char_count = 200
-  attr_reader :card, :context, :action, :renderer, :template
-  attr_accessor :editor_count, :options_need_save, :state, :requested_view, :js_queue_initialized,  
-    :transclusions, :position, :renderer, :form, :superslot, :char_count, :item_format, :type, :renders, 
-    :start_time, :skip_autosave, :config, :slot_options
+  attr_reader :card, :context, :action, :template
   attr_writer :form 
+  attr_accessor  :options_need_save, :state, :requested_view, :js_queue_initialized,  
+    :position, :renderer, :form, :superslot, :char_count, :item_format, :type, :renders, 
+    :start_time, :skip_autosave, :config, :slot_options
+    #:editor_count, :transclusions, 
 
   VIEW_ALIASES = { 
     :view => :open,
@@ -24,6 +25,7 @@ class Slot
     @slot_options = {
       :relative_content => {},
       :main_content => nil,
+      :main_card => nil,
       :inclusion_view_overrides => nil,
       :renderer => Renderer.new
     }.merge(opts)
@@ -37,10 +39,10 @@ class Slot
     @renders = {}
   end
 
-  def subslot(card, &proc)
+  def subslot(card, context_base=nil, &proc)
     # Note that at this point the subslot context, and thus id, are
     # somewhat meaningless-- the subslot is only really used for tracking position.
-    new_slot = self.class.new(card, context+"_#{@subslots.size+1}", @action, @template, :renderer=>@renderer)
+    new_slot = self.class.new(card, "#{context_base || context}_#{@subslots.size+1}", @action, @template, :renderer=>@renderer)
     new_slot.state = @state
     @subslots << new_slot 
     new_slot.superslot = self
@@ -67,12 +69,7 @@ class Slot
     form.text_field(field).match(/name=\"([^\"]*)\"/)[1] 
   end
 
-  def wrap_content( content="" )
-    %{<span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick">} +
-       content.to_s + 
-    %{</span><!--[if IE]>&nbsp;<![endif]-->} 
-  end    
-  
+ 
   def js
     @js ||= SlotJavascript.new(self)
   end
@@ -95,8 +92,8 @@ class Slot
         else begin
           css_class = 'card-slot '      
           css_class << (action=='closed' ? 'line' : 'paragraph')
-          css_class << ' full' if (context=~/main/ or (action!='view' and action!='closed'))
-          css_class << ' sidebar' if context=~/sidebar/
+#          css_class << ' full' if (context=~/main/ or (action!='view' and action!='closed'))
+#          css_class << ' sidebar' if context=~/sidebar/
         end
       end       
       
@@ -146,6 +143,16 @@ class Slot
     end).clone
   end
   
+  def wrap_content( content="" )
+    %{<span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick">} +
+    content.to_s + 
+    %{</span><!--[if IE]>&nbsp;<![endif]-->} 
+  end    
+
+  def wrap_main(content)
+    %{<div id="main" context="main">#{content}</div>}
+  end
+  
   def deny_render?(action)
     case
       when [:deny_view, :edit_auto, :open_missing, :closed_missing].member?(action);
@@ -185,7 +192,7 @@ class Slot
     ###-----------( FULL )
       when :new
         w_content = render_partial('views/new')
-        
+      
       when :open, :view, :card
         @state = :view; self.requested_view = 'open'
         # FIXME: accessing params here is ugly-- breaks tests.
@@ -281,7 +288,6 @@ class Slot
     result
   rescue Card::PermissionDenied=>e
     return "Permission error: #{e.message}"
-    
   end
 
   def sterilize_inclusion(content)
@@ -303,28 +309,39 @@ class Slot
     tname, options = Chunk::Transclude.parse(match)
     
     case tname
-    when /^\#\#/                 ; return ''                     #invisible comment
-    when /^\#/ || nil? || blank? ; return "<!-- #{match} -->"    #visible comment
-    when '_main'                 ; return %{<div id="main" context="main">#{slot_options[:main_content]}</div>}
+    when /^\#\#/                 ; return ''                      #invisible comment
+    when /^\#/ || nil? || blank? ; return "<!-- #{h match[1]} -->"    #visible comment
+    when '_main'
+      if content=slot_options[:main_content] and content!='~~render main inclusion~~'
+        return wrap_main(slot_options[:main_content]) 
+      end  
+      tcard=slot_options[:main_card] 
+      item  = symbolize_param(:item) and options[:item] = item
+      pview = symbolize_param(:view) and options[:view] = pview
+      options[:context] = 'main_1'
+      options[:view] ||= :open
     end  
          
-    options[:view]                = get_inclusion_view(           options[:view])
+    options[:view] ||= (self.context =~ /layout/ ? :naked : :content)
+    options[:view] = get_inclusion_view(options[:view])
     options[:fullname] = fullname = get_inclusion_fullname(tname, options[:base])
-    options[:showname]            = tname.to_show(fullname)
-    
-    new_args = { :name=>fullname, :type=>options[:type] }
-    new_args[:content]=content if content=get_inclusion_content(tname)
-      
-    tcard = (@state==:edit ?
-      (Card.find_by_name(fullname) || Card.find_virtual(fullname) || Card.new(new_args))  :
+    options[:showname] = tname.to_show(fullname)
+          
+    tcard ||= (@state==:edit ?
+      ( Card.find_by_name(fullname) || 
+        Card.find_virtual(fullname) || 
+        Card.new(new_inclusion_card_args(tname, options))
+      ) :
       CachedCard.get(fullname)
     )
 
-    tcontent = process_inclusion( tcard, options ) 
+    tcontent = process_inclusion( tcard, options )
+    tcontent = resize_image_content(tcontent) if options[:size]
+
     self.char_count += (tcontent ? tcontent.length : 0)  #should we be stripping html here?
-     
-    options[:size] ? resize_image_content(tcontent) : tcontent                       
-  rescue Card::PermissionDenied; ''
+    tname=='_main' ? wrap_main(tcontent) : tcontent
+  rescue Card::PermissionDenied
+    ''
   end
   
   def get_inclusion_fullname(name, base)
@@ -343,6 +360,17 @@ class Slot
   def get_inclusion_content(cardname)
     content = root.slot_options[:relative_content][cardname.gsub(/\+/,'_')]
     content if content.present?  #not sure I get why this is necessary - efm
+  end
+
+  def new_inclusion_card_args(tname, options)
+    args = { 
+      :name=>options[:fullname], 
+      :type=>options[:type] 
+    }
+    if content=get_inclusion_content(tname)
+      args[:content]=content 
+    end
+    args
   end
 
   def resize_image_content(content)
@@ -366,7 +394,7 @@ class Slot
   
   def process_inclusion( card, options={} )  
     #warn("<process_inclusion card=#{card.name} options=#{options.inspect}")
-    subslot = subslot(card)  
+    subslot = subslot(card, options[:context])
     old_slot, @template.controller.slot = @template.controller.slot, subslot
 
     # set item_format;  search cards access this variable when rendering their content.
@@ -406,16 +434,16 @@ class Slot
   def render_stub(partial, locals={})
     raise("Invalid partial") if partial.blank? 
     case partial
-      when "card/view"
-        %{\n<div class="view">\n} + wrap_content( render( :expanded_view_content ))+ %{\n</div>\n}
-      when "card/line"
-        %{\n<div class="view">\n} + wrap_content( render(:expanded_line_content) ) + %{\n</div>\n}
-      when "basic/content"
-        render :naked_content
-      when "basic/line"
-        truncatewords_with_closing_tags( render( :custom_view ))
-      else
-        "No Stub for #{partial}"
+    when "card/view"
+      %{\n<div class="view">\n} + wrap_content( render( :expanded_view_content ))+ %{\n</div>\n}
+    when "card/line"
+      %{\n<div class="view">\n} + wrap_content( render(:expanded_line_content) ) + %{\n</div>\n}
+    when "basic/content"
+      render :naked_content
+    when "basic/line"
+      truncatewords_with_closing_tags( render( :custom_view ))
+    else
+      "No Stub for #{partial}"
     end
   end
 end   
@@ -443,7 +471,6 @@ class StubTemplate
   def partial_for_action(action, card) 
     "#{card.type.to_s.downcase}/#{action}"
   end  
-  
 end
 
 

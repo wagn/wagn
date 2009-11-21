@@ -24,13 +24,12 @@ Feature: Pattern settings
     {"right": "color"}
     """
     And I create card "*default+*edit" with content "say something spicy"
-    And I create card "Test+color+*edit" with content "I like maroon"    
+    And I create card "Test+color+*edit" with content "I like maroon"
+    ##FIXME -- this isn't how this should work, is it?
     When I go to url "/card/edit/Joe_User"
     Then I should see "spicy"
     When I go to url "/card/edit/Test+color" 
     Then I should see "maroon"
-     
-    
   
                 
   

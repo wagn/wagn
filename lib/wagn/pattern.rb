@@ -33,7 +33,7 @@ module Wagn
   class TypePattern < Pattern
     class << self
       def key_for_card card
-        "Type:#{card.type}"
+        "Type:#{card.cardtype.name}"
       end 
 
       def recognize spec
@@ -69,7 +69,7 @@ module Wagn
     class << self
       def key_for_card card
         return nil unless card.junction?      
-        "LeftTypeRightName:#{card.left.type}:#{card.name.tag_name}"
+        "LeftTypeRightName:#{card.left.cardtype.name}:#{card.name.tag_name}"
       end
   
       def recognize spec

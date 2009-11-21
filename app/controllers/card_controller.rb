@@ -61,7 +61,13 @@ class CardController < ApplicationController
         format.rss { raise("Sorry, RSS is broken in rails < 2.2") }
         format.html {}
       end
-    end 
+    end
+    render_show
+  end
+
+  def render_show
+    @title = @card.name
+    (request.xhr? || params[:format]) ? render(:action=>'show') : render(:text=>'~~render main inclusion~~', :layout=>true)
   end
 
   #----------------( MODIFYING CARDS )
@@ -123,7 +129,7 @@ class CardController < ApplicationController
       case
         when (!@card.ok?(:read));  render(:action=>'redirect_to_thanks', :status=>418 )
         when main_card?;           render( :action=>'redirect_to_created_card', :status=>418 )
-        else;                      render(:action=>'show')
+        else;                      render_show
       end
     end
   end
@@ -175,7 +181,7 @@ class CardController < ApplicationController
     handling_errors do
       @card = Card.find(card.id)  
       flash[:notice] = "updated #{@card.name}"
-      request.xhr? ? render_update_slot(render_to_string(:action=>'show')) : render(:action=>'show')
+      request.xhr? ? render_update_slot(render_to_string(:action=>'show')) : render_show
     end
   end
 
@@ -208,14 +214,13 @@ class CardController < ApplicationController
     @comment=@comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
     @card.comment = "<hr>#{@comment}<p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
     @card.save!   
-    view = render_to_string(:action=>'show')
-    render_update_slot view
+    render_update_slot render_to_string(:action=>'show')
   end
 
   def rollback
     load_card_and_revision
     @card.update_attributes! :content=>@revision.content
-    render :action=>'show'
+    render_show
   end  
 
   #------------( deleting )
@@ -254,11 +259,11 @@ class CardController < ApplicationController
   #---------------( tabs )
 
   def view
-    render :action=>'show'
+    render_show
   end   
   
   def open
-    render :action=>'show'
+    render_show
   end
 
   def options
@@ -284,10 +289,7 @@ class CardController < ApplicationController
 
   #------------------( views )
 
-  def open
-    render :action=>'show'
-  end
-    
+
   [:open_missing, :closed_missing].each do |method|
     define_method( method ) do
       load_card
@@ -297,7 +299,7 @@ class CardController < ApplicationController
           target.update render_to_string(:action=>'show')
         end
       else
-        render :action=>'show'
+        render_show
       end
     end
   end

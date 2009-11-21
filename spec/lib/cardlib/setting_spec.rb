@@ -17,6 +17,11 @@ describe Card do
       Card.create :name => "*default+*new", :content => "lobotomize"
       Card.default_setting('new').should == "lobotomize"
       Card.new( :type => "Basic" ).setting('new').should == "lobotomize"
+    end                                                                 
+    
+    it "retrieves single values" do
+      Card.create :name => "banana+*self+*edit", :content => "pebbles"
+      Card["banana"].setting('edit').should == "pebbles"
     end
   end
   

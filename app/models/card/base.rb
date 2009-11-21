@@ -16,8 +16,8 @@ module Card
     cattr_accessor :debug    
     Card::Base.debug = false
 
-    cattr_accessor :cache  
-    self.cache = {}
+#    cattr_accessor :cache  
+#    self.cache = {}
    
     belongs_to :trunk, :class_name=>'Card::Base', :foreign_key=>'trunk_id' #, :dependent=>:dependent
     has_many   :right_junctions, :class_name=>'Card::Base', :foreign_key=>'trunk_id'#, :dependent=>:destroy  
@@ -232,29 +232,13 @@ module Card
         args['name'] || (args['trunk'] && args['tag']  ? args["trunk"].name + "+" + args["tag"].name : "")
       end      
       
-      def reset_cache
-        self.cache={}
-      end
-      
       def [](name) 
         # DONT do find_virtual here-- it ends up happening all over the place--
         # call it explicitly if that's what you want
         #self.cache[name.to_s] ||= 
         self.find_by_name(name.to_s, :include=>:current_revision) #|| self.find_virtual(name.to_s)
         #self.find_by_name(name.to_s)
-      end
-             
-      # uncomment if we want to protect 'unreadable' cards from even
-      # being loaded.  thinking for now let them load and check when
-      # requesting content.
-      #
-      #def instantiate_with_permissions(record)
-      #  card = instantiate_without_permissions(record)
-      #  card.ok! :read
-      #  card
-      #end
-      #alias_method_chain :instantiate, :permissions
-      
+      end             
     end
 
     def multi_create(cards)

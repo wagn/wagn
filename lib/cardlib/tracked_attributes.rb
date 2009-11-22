@@ -103,7 +103,7 @@ module Cardlib
       self.updates.clear(:permissions)
       if type=='Cardtype' and !perms.detect{|p| p.task=='create'}
         old_create_party = self.who_can(:create) || Card::Basic.new.cardtype.who_can(:create) 
-        perms << Permission.new(:task=>'create', :party=>old_create_party)
+        perms << Permission.new(:task=>'create', :party=>old_create_party, :card_id=>self.id)
       end
       self.permissions_without_tracking = perms.reject {|p| p.party==nil }
       perms.each do |p| 

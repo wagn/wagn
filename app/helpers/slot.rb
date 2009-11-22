@@ -236,16 +236,20 @@ class Slot
         c = self.render( :expanded_view_content)
         w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c))
 
-      when :expanded_view_content, :naked, :raw # raw is DEPRECATED
+      when :expanded_view_content, :naked 
         @state = 'view'
         expand_inclusions(  cache_action('view_content') {  card.post_render( render(:open_content)) } )
+      
 
       when :expanded_line_content
         expand_inclusions(  cache_action('line_content') { render(:closed_content) } )
 
 
       #-----( without transclusions processed )
-
+      # removed raw from 'naked' after deprecation period for 1.3  
+      # need a short period to flush out issues before releasing
+      # when :raw;             "<pre>#{card.content}</pre>"
+      # when :raw_content;     card.content
       when :closed_content;   render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
       when :open_content;     render_card_partial(:content)  # FIXME?: 'content' is inconsistent
       when :naked_content

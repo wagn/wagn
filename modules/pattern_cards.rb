@@ -1,5 +1,6 @@
 
 Wagn::Hook::Card.register :before_save, { :type => "Pattern" } do |card|
-  card.pattern_spec_key = Wagn::Pattern.key_for_spec( JSON.parse( card.content ).symbolize_keys )
+  spec = Wql2::CardSpec.new(card.get_spec).spec
+  card.pattern_spec_key = Wagn::Pattern.key_for_spec( spec )
 end
 

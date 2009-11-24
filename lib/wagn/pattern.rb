@@ -15,6 +15,7 @@ module Wagn
       end
     
       def key_for_spec spec
+        spec = Wql2::CardSpec.new(spec).spec
         class_for(spec).key_for_spec spec
       end
     

@@ -31,5 +31,14 @@ Feature: Pattern settings
     When I go to url "/card/edit/Test+color" 
     Then I should see "maroon"
   
-                
+  Scenario: rform Pattern
+    Given I create Pattern card "*on right+*rform" with content 
+    """
+    {"right": "_self"}
+    """
+    And I create Phrase card "cereal+*on right+*new" with content "I go poopoo for poco cuffs"
+    When I go to new card named "Test+cereal"
+    Then I should see "poopoo"
+    
+
   

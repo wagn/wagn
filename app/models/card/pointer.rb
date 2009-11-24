@@ -20,7 +20,7 @@ module Card
     end
 	    
 	  def option_text(option)
-	    name = setting('*option label') || 'description'
+	    name = setting('option label') || 'description'
 	    textcard = CachedCard.get_real(option+'+'+name)
 	    textcard ? textcard.content : nil
 	  end

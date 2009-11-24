@@ -1,7 +1,7 @@
 module Card      
   module SearchMethods
      def test
-       "" =~ /plus\"\:\[\"([^\"]+)\"\W*refer_to\W*_self/ 
+       "" =~ /plus\"\:\[\"([^\"]+)\"\W*refer_to\W*_self/ #what's all this?
      end
   end
   

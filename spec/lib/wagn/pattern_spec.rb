@@ -24,6 +24,10 @@ describe Wagn::Pattern do
     it "generates key for relative Type spec" do
       Wagn::Pattern.key_for_spec( :_card=>Card['Book'], :type => "_self" ).should == "Type:Book"
     end
+    
+    it "generates key for Solo spec" do
+      Wagn::Pattern.key_for_spec( :name => "author" ).should == "Solo:author"
+    end
   end
   
   

@@ -83,6 +83,24 @@ module Wagn
       end
     end
     register_class self
-  end   
+  end
+  
+  class SoloPattern < Pattern
+    class << self
+      def key_for_card card
+        "Solo:#{card.key}"
+      end
+  
+      def recognize spec
+        spec[:name] && spec[:name].is_a?(String) && spec.keys.length == 1
+      end                                
+  
+      def key_for_spec spec
+        "Solo:#{spec[:name].to_key}"
+      end
+    end
+    register_class self
+  end
+   
 end   
 

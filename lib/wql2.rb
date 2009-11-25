@@ -187,7 +187,7 @@ module Wql2
       spec.each do |key,val|  #must be separate loop to make sure card values are set
         case val
         when String ; spec[key] = absolute_name(val)
-        when Hash   ; clean(val)
+        when Hash   ; spec[key] = clean(val)
         end
       end
       

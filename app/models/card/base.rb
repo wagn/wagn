@@ -567,12 +567,14 @@ module Card
         end
         
         # require confirmation for renaming multiple cards
-        if !rec.confirm_rename and !rec.dependents.empty? 
-          rec.errors.add :confirmation_required, "#{rec.name} has #{rec.dependents.size} dependents"
-        end
+        if !rec.confirm_rename 
+          if !rec.dependents.empty? 
+            rec.errors.add :confirmation_required, "#{rec.name} has #{rec.dependents.size} dependents"
+          end
         
-        if rec.update_referencers.nil? and !rec.extended_referencers.empty? 
-          rec.errors.add :confirmation_required, "#{rec.name} has #{rec.extended_referencers.size} referencers"
+          if rec.update_referencers.nil? and !rec.extended_referencers.empty? 
+            rec.errors.add :confirmation_required, "#{rec.name} has #{rec.extended_referencers.size} referencers"
+          end
         end
       end
     end

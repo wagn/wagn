@@ -7,9 +7,9 @@ module Cardlib
     end
     
     def setting_card setting_name
-      # if setting_card = CachedCard.get( "#{self.name}+*self+#{setting_name}" )  and !setting_card.missing?
-      #   return setting_card.content
-      # end
+      if setting_card = CachedCard.get_real( "#{self.name}+*+*#{setting_name}" )
+        return setting_card
+      end
 
       # look for pattern
       Wagn::Pattern.keys_for_card( self ).each do |key|

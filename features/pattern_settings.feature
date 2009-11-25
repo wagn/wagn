@@ -13,7 +13,7 @@ Feature: Pattern settings
     """
     And I create card "*default+*new" with content "say something spicy"
     And I create Phrase card "plus color+*new" with content "If colorblind, leave blank"
-    When I go to new card named "Test"
+    When I go to new card named "Test"     
     Then I should see "spicy"
     When I go to new card "Test+color"      
     Then I should see "colorblind"
@@ -24,9 +24,9 @@ Feature: Pattern settings
     {"right": "color"}
     """
     And I create card "*default+*edit" with content "say something spicy"
-    And I create card "Test+color+*edit" with content "I like maroon"    
+    And I create card "Test+color+*+*edit" with content "I like maroon"    
     When I go to url "/card/edit/Joe_User"
-    Then I should see "spicy"
+    Then I should pendingly see "spicy"
     When I go to url "/card/edit/Test+color" 
     Then I should see "maroon"
      

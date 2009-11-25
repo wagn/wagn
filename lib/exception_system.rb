@@ -4,8 +4,8 @@ module ExceptionSystem
     erase_results if performed?
     status = exception_status(exception)
     
-    if exception.respond_to?(:card)
-      render_card_errors(exception.card)
+    if exception.respond_to?(:get_card)
+      render_card_errors(exception.get_card)
     elsif exception.respond_to?(:record)
       render_card_errors(exception.record)
     else

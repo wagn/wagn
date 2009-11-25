@@ -28,7 +28,11 @@ module Card
     def initialize(card)
       @card = card
       super build_message 
-    end    
+    end   
+    
+    def get_card
+      @card
+    end 
     
     def build_message
       "#{@card.name} has errors: #{@card.errors.full_messages.join(', ')}"

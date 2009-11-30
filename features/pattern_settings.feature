@@ -5,7 +5,7 @@ Feature: Pattern settings
   
   Background:
     Given I log in as Joe User
-    And I create card "*default+*new" with content "say something spicy"
+    And I create card "*all+*new" with content "say something spicy"
     And I create Pattern card "plus color" with content "{"right": "color"}"
 
   Scenario: default setting and plus card override

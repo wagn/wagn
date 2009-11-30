@@ -1,13 +1,10 @@
  module Card
   class Cardtype < Base
-    ## FIXME -- needs to create constant-safe class name and validate its uniqueness 
+
     before_validation_on_create :create_extension, :reset_cardtype_cache
-    #after_save :reload_cardtypes
-    
     before_destroy :ensure_not_in_use, :destroy_extension   # order is important!
     after_destroy :reset_cardtype_cache
-    
-    #validates_presence_of :extension  
+    after_save :reset_cardtype_cache
                                        
     def codename
       extension ? extension.class_name : nil
@@ -54,12 +51,6 @@
       destroy_extension
       reload_cardtypes
     end
-    
-#    def reload_cardtypes
-#      warn "reloading cardtypes.  extension currently: #{self.extension}"
-#      ::Cardtype.send(:load_cache)
-#    rescue
-#    end
     
     def ensure_not_in_use
       if extension and Card.search(:type=>name).length > 0

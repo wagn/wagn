@@ -14,7 +14,7 @@ class PatternizeSimpleSettings < ActiveRecord::Migration
     Card.search(:right=>'*table of contents').each do |c|
       c.name= c.name.trunk_name+'+*solo+*table of contents'
       c.confirm_rename=true
-      c.content= (c.content=='off' ? 0 : 1)
+      c.content= (c.content=='off' ? '0' : '1')
       c.save!
     end
     

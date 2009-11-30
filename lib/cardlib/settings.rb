@@ -34,7 +34,7 @@ module Cardlib
       end
       
       def default_setting_card setting_name
-        setting_card = CachedCard.get_real( "*default+*#{setting_name}" ) 
+        setting_card = CachedCard.get_real( "*all+*#{setting_name}" ) 
       end
     end
       

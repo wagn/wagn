@@ -61,7 +61,7 @@ Feature: Pointer Inputs
 
   Scenario: Creating a card with checkbox input
     Given I create Phrase card "right friends+*input" with content "checkbox"
-    And I create a Phrase card "*default+*option text" with content "description"
+    And I create a Phrase card "*all+*option text" with content "description"
     And I create a Basic card "Joe Camel+description" with content "boom yow yow"
     When I go to card "Joe User+friends"
     Then I should see "boom yow yow"

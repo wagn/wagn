@@ -14,7 +14,7 @@ describe Card do
     
     it "retrieves default values" do
       Card.create :name => "all Basic cards", :type => "Pattern", :content => "{\"type\": \"Basic\"}"  #defaults should work when other patterns are present
-      Card.create :name => "*default+*new", :content => "lobotomize"
+      Card.create :name => "*all+*new", :content => "lobotomize"
       Card.default_setting('new').should == "lobotomize"
       Card.new( :type => "Basic" ).setting('new').should == "lobotomize"
     end                                                                 

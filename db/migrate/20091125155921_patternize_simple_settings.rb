@@ -48,7 +48,7 @@ class PatternizeSimpleSettings < ActiveRecord::Migration
     #Knobs
     Card.create! :name=>'Knob', :type=>'Cardtype'
     ['autoname', 'thanks', 'captcha', 'layout', 'table of contents', 'input', 'options', 'option label'].each do |name|
-      c = Card["*#{name}"]
+      c = Card["*#{name}"] || Card.new( :name => "*#{name}" )
       c.type = 'Knob'
       c.save!
     end

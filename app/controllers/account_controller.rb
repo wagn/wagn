@@ -76,7 +76,7 @@ class AccountController < ApplicationController
     end
   end
 
-  def logout
+  def signout
     self.current_user = nil
     flash[:notice] = "You have been logged out."
     redirect_to '/'  # previous_location here can cause infinite loop.  ##  Really?  Shouldn't.  -efm

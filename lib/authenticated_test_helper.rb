@@ -5,7 +5,7 @@ module AuthenticatedTestHelper
     User.current_user = User.find(@request.session[:user])
   end
                  
-  def logout
+  def signout
     @request.session[:user] = nil
     User.current_user = @request.session[:user]
   end

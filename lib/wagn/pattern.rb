@@ -15,6 +15,7 @@ module Wagn
       end
     
       def key_for_spec spec
+        spec = Wql2::CardSpec.new(spec).spec
         class_for(spec).key_for_spec spec
       end
     
@@ -33,7 +34,7 @@ module Wagn
   class TypePattern < Pattern
     class << self
       def key_for_card card
-        "Type:#{card.type}"
+        "Type:#{card.cardtype.name}"
       end 
 
       def recognize spec
@@ -69,7 +70,7 @@ module Wagn
     class << self
       def key_for_card card
         return nil unless card.junction?      
-        "LeftTypeRightName:#{card.left.type}:#{card.name.tag_name}"
+        "LeftTypeRightName:#{card.left.cardtype.name}:#{card.name.tag_name}"
       end
   
       def recognize spec
@@ -82,6 +83,24 @@ module Wagn
       end
     end
     register_class self
-  end   
+  end
+  
+  class SoloPattern < Pattern
+    class << self
+      def key_for_card card
+        "Solo:#{card.key}"
+      end
+  
+      def recognize spec
+        spec[:name] && spec[:name].is_a?(String) && spec.keys.length == 1
+      end                                
+  
+      def key_for_spec spec
+        "Solo:#{spec[:name].to_key}"
+      end
+    end
+    register_class self
+  end
+   
 end   
 

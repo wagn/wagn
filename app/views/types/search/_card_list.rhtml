@@ -30,7 +30,7 @@
   <%= paging %>
 	<div class="search-result-list">
 		<% cards.each do |c| %>     	
-			<div class="search-result-item item-<%= view %>"><%= slot.process_transclusion(c, {:view=>view, :showname=>c.name }) %></div>
+			<div class="search-result-item item-<%= view %>"><%= slot.process_inclusion(c, {:view=>view, :showname=>c.name }) %></div>
 		<% end %>     
 	</div>
 	<%= paging %>

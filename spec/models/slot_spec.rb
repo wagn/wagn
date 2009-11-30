@@ -8,15 +8,25 @@ describe Slot, "" do
 
   it "should render content" do 
     @a = Card.new(:name=>'t', :content=>"[[A]]")
-    Slot.new(@a).render(:raw).should == "<a class=\"known-card\" href=\"/wagn/A\">A</a>"
+    Slot.new(@a).render(:naked).should == "<a class=\"known-card\" href=\"/wagn/A\">A</a>"
   end 
 
-  it "should not render transclusions in raw content" do
+  it "should not render inclusions in raw content" do
      @a = Card.new(:name=>'t', :content=>"{{A}}")
     Slot.new(@a).render(:naked_content).should == "{{A}}"
   end                                                                                  
   
-  it "should use transclusion view overrides" do  
+  it "should not render invisible comment inclusions" do
+    c = Card.new(:name=>'invis', :content=>'{{## now you see nothing}}')
+    Slot.new(c).render(:naked).should == ''
+  end
+  
+  it "should not render invisible comment inclusions" do
+    c = Card.new(:name=>'invis', :content=>'{{# now you see me}}')
+    Slot.new(c).render(:naked).should == '<!-- # now you see me -->'
+  end
+  
+  it "should use inclusion view overrides" do  
     # FIXME love to have these in a scenario so they don't load every time.
     t = Card.create! :name=>'t1', :content=>"{{t2|card}}"
     Card.create! :name => "t2", :content => "{{t3|view}}" 
@@ -24,9 +34,9 @@ describe Slot, "" do
     
     # a little weird that we need :expanded_view_content  to get the version without
     # slot divs wrapped around it.
-    result = Slot.new(t, "main_1", "view", nil, :transclusion_view_overrides=>{ :open => :name } ).render :expanded_view_content
+    result = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :name } ).render :expanded_view_content
     result.should == "t2"
-    result = Slot.new(t, "main_1", "view", nil, :transclusion_view_overrides=>{ :open => :expanded_view_content } ).render :expanded_view_content
+    result = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :expanded_view_content } ).render :expanded_view_content
     result.should == "boo"
   end
     
@@ -44,10 +54,10 @@ describe Slot, "" do
 
 =begin
   # FIXME: this test is very brittle-- based on specific html;
-  #  want to test rendering transclusions, but attributes in the wrapper are built from 
+  #  want to test rendering inclusions, but attributes in the wrapper are built from 
   #  a hash so the order is unpredictable. 
   
-  it "should render transclusions in view" do
+  it "should render inclusions in view" do
     @a = Card.new(:name=>'weird_t', :content=>"{{A}}")
     @a.send(:set_defaults)
     Slot.new(@a).render(:view).should ==  "<span  class=\"card-slot paragraph full wrapper cardid- type-Basic\"  position=\"1\"  >\n<div class=\"view\">\n<span class=\"content editOnDoubleClick\"><span  view=\"content\"  class=\"transcluded wrapper cardid-82 type-Basic\"  position=\"1\"  style=\"\"  base=\"self\"  cardId=\"82\"  ><span class=\"content editOnDoubleClick\">Alpha <a class=\"known-card\" href=\"/wagn/Z\">Z</a></span></span></span>\n</div>\n</span>"

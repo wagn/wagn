@@ -57,12 +57,12 @@ module Cardlib
       def count_by_wql(spec)       
         #.gsub(/^\s*\(/,'').gsub(/\)\s*$/,'')
         spec.delete(:offset)
-        result = connection.select_one( Wql2::CardSpec.new(spec).merge(:return=>'count').to_sql )
+        result = connection.select_one( Wql2::CardSpec.build(spec).merge(:return=>'count').to_sql )
         (result['count'] || result['count(*)']).to_i
       end
 
       def search(spec) 
-        sql = Wql2::CardSpec.new(spec).to_sql
+        sql = Wql2::CardSpec.build(spec).to_sql
         results = Card.find_by_sql( sql )
         #warn ">>>>>>>>SPEC: #{spec.inspect}"
         #warn ">>>>>>>>SQL: #{sql.inspect}"
@@ -80,7 +80,7 @@ module Cardlib
       end
       
       #def find_by_json(spec)
-      #  Card.find_by_sql( Wql2::CardSpec.new( JSON.parse(spec) ).to_sql )
+      #  Card.find_by_sql( Wql2::CardSpec.build( JSON.parse(spec) ).to_sql )
       #end
 
       def find_by_name( name, opts={} ) 

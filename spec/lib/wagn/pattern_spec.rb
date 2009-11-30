@@ -20,7 +20,17 @@ describe Wagn::Pattern do
     it "generates key for RightName spec" do
       Wagn::Pattern.key_for_spec( :right => "author" ).should == "RightName:author"
     end
+    
+    it "generates key for relative Type spec" do
+      Wagn::Pattern.key_for_spec( :_card=>Card['Book'], :type => "_self" ).should == "Type:Book"
+    end
+    
+    it "generates key for Solo spec" do
+      Wagn::Pattern.key_for_spec( :name => "author" ).should == "Solo:author"
+    end
   end
+  
+  
           
   context :keys_for_card do
     it "generates keys from multiple patterns for card" do                    
@@ -52,4 +62,4 @@ describe Wagn::LeftTypeRightNamePattern do
   it_generates :key => "LeftTypeRightName:Book:author", :from => Card.new( :name=>"Illiad+author" )
   it_generates :key => "LeftTypeRightName:Book:author", :from => { :left=>{:type=>"Book"}, :right=>"author" }
 end
-                                                
+                                          

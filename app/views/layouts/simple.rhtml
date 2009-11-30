@@ -1,10 +1,14 @@
+<% @lay_content = capture do %>
+<!DOCTYPE HTML>
 <html>
   <head>
-	  <%= render :partial=>'builtin/head' %>
+	  {{*head}}
   </head>
 
   <body>
-	  <%= yield %>     
-		<%= render :partial=>'builtin/foot' %>
+    {{_main}}
+    {{*foot}}
 	</body>
 </html>
+<% end %>
+<%= render_layout_content(@lay_content) %>

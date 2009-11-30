@@ -1,13 +1,13 @@
  module Card
   class Cardtype < Base
     ## FIXME -- needs to create constant-safe class name and validate its uniqueness 
-    before_validation_on_create :create_extension
-    after_save :reload_cardtypes
+    before_validation_on_create :create_extension, :reset_cardtype_cache
+    #after_save :reload_cardtypes
     
     before_destroy :ensure_not_in_use, :destroy_extension   # order is important!
-    after_destroy :reload_cardtypes
+    after_destroy :reset_cardtype_cache
     
-    #validates_presence_of :extension
+    #validates_presence_of :extension  
                                        
     def codename
       extension ? extension.class_name : nil
@@ -28,7 +28,7 @@
       newclass = Class.new( ::Card::Basic )
       ::Card.const_set class_name, newclass
       self.extension = ::Cardtype.create!( :class_name => class_name )
-      self.extension
+#      self.extension
     end
     
     def me_type
@@ -39,6 +39,13 @@
       super.unshift 'cardtype_cards'
     end
 
+    # FIXME -- the current system of caching cardtypes is not "thread safe":
+    # multiple running ruby servers could get out of sync re: available cardtypes  
+
+    def reset_cardtype_cache
+      ::Cardtype.send(:reset_cache)
+    rescue
+    end
 
     private
     
@@ -48,12 +55,11 @@
       reload_cardtypes
     end
     
-    # FIXME -- the current system of caching cardtypes is not "thread safe":
-    # multiple running ruby servers could get out of sync re: available cardtypes  
-    def reload_cardtypes
-      ::Cardtype.send(:load_cache)
-    rescue
-    end
+#    def reload_cardtypes
+#      warn "reloading cardtypes.  extension currently: #{self.extension}"
+#      ::Cardtype.send(:load_cache)
+#    rescue
+#    end
     
     def ensure_not_in_use
       if extension and Card.search(:type=>name).length > 0

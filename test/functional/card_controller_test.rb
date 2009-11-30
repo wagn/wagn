@@ -21,7 +21,6 @@ class CardControllerTest < ActionController::TestCase
     login_as(:joe_user)
   end    
 
-#=begin
   def test_create_cardtype_card
     post :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
     assert assigns['card']
@@ -146,24 +145,25 @@ class CardControllerTest < ActionController::TestCase
 
   def test_should_redirect_to_thanks_on_create_without_read_permission
     # 1st setup anonymously create-able cardtype
-    User.as(:joe_admin)
-    f = Card.create! :type=>"Cardtype", :name=>"Fruit"
-    f.permit(:create, Role[:anon])       
-    f.permit(:read, Role[:admin])   
-    f.save!
+    User.as(:joe_admin) do
+      f = Card.create! :type=>"Cardtype", :name=>"Fruit"
+      f.permit(:create, Role[:anon])       
+      f.permit(:read, Role[:admin])   
+      f.save!
     
-    ff = Card.create! :name=>"Fruit+*tform"
-    ff.permit(:read, Role[:auth])
-    ff.save!
+      ff = Card.create! :name=>"Fruit+*tform"
+      ff.permit(:read, Role[:auth])
+      ff.save!
     
-    Card.create! :name=>'All Fruit', :type=>'Pattern', :content=>'{"type":"Fruit"}'
-    Card.create! :name=>"All Fruit+*thanks", :type=>"Phrase", :content=>"/wagn/sweet"
+      Card.create! :name=>'All Fruit', :type=>'Pattern', :content=>'{"type":"Fruit"}'
+      Card.create! :name=>"All Fruit+*thanks", :type=>"Phrase", :content=>"/wagn/sweet"
+    end
     
     login_as(:anon)     
     post :create, :card => {
       :name=>"Banana", :type=>"Fruit", :content=>"mush"
     }
-#    assert_equal "/wagn/sweet", Card['Banana'].setting('thanks')
+    
     assert_equal "/wagn/sweet", assigns["redirect_location"]
     assert_template "redirect_to_thanks"
   end
@@ -226,7 +226,7 @@ class CardControllerTest < ActionController::TestCase
     }                   
     assert_equal ({ "name"=>"Newt", "update_referencers"=>'false', "confirm_rename"=>true }), assigns['card_args']
     assert assigns['card'].errors.empty?
-    assert_template 'show'
+    assert_response :success
     assert Card["Newt"]
   end
 

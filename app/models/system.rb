@@ -29,7 +29,6 @@ class System < ActiveRecord::Base
       # FIXME: hacking this so users don't have to update config.  will want to fix later 
       System.base_url.gsub(/^http:\/\//,'')
     end
-
     
     def attachment_storage
       @@attachment_storage || :file_system
@@ -49,19 +48,17 @@ class System < ActiveRecord::Base
       val == '1'
     end
 
-    def layout_card(cardname, opts)
+    def layout_card(card, cardname)
       User.as(:wagbot) do 
-        layout_from_url(cardname) or
-        layout_from_setting(opts[:card]) or
-        Card.new(:name=>"**layout",:content=>opts[:default]) 
+        layout_from_url(cardname) or layout_from_setting(card)
       end
     end
     
     def layout_from_url(cardname)
       return nil unless cardname.present? and 
-        layout_card = CachedCard.get_real(cardname) and 
-        layout_card.ok?(:read)
-      layout_card
+        lo_card = CachedCard.get_real(cardname) and 
+        lo_card.ok?(:read)
+      lo_card
     end
     
     def layout_from_setting(card)
@@ -72,9 +69,9 @@ class System < ActiveRecord::Base
       return unless setting_card.type == 'Pointer'        and
         layout_name=setting_card.pointee                  and
         !layout_name.nil?                                 and
-        layout_card = CachedCard.get_real(layout_name)    and
-        layout_card.ok?(:read)
-      layout_card
+        lo_card = CachedCard.get_real(layout_name)    and
+        lo_card.ok?(:read)
+      lo_card
     end
    
     def image_setting(name)
@@ -96,11 +93,6 @@ class System < ActiveRecord::Base
       image_setting('*logo') || (File.exists?("#{RAILS_ROOT}/public/images/logo.gif") ? "/images/logo.gif" : nil)
     end
 
-    #def admin_user
-    #  User[:wagbot]
-
-    #end    
-    
     # PERMISSIONS
     
     def ok?(task)

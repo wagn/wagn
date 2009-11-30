@@ -1,17 +1,13 @@
 <%- 
-view = symbolize_param(:view) 
-view = :open if [:closed, :line,:open,:card,:view, nil].member?(view)
-@title = @card.name
-
 slot = get_slot
-if item = symbolize_param(:item)
-  slot.item_format = item
-end
+item = symbolize_param(:item) and slot.item_format = item
+view = symbolize_param(:view) 
+view = :open if [:closed, :line,:open,:card,:view, nil].member?(view)  
+#line, card, and view are deprecated
+#Why is it that we're converting closed and line here??
 %>
 
-
-<%= slot.render(view, :add_slot => !request.xhr?, :add_javascript=>true, :view=>view, :showname=>nil ) %>
-
-<% if request.xhr? && view == :open %>
+<%= slot.render(view, :add_javascript=>true, :add_slot=>false, :view=>view, :showname=>nil ) %>
+<% if view == :open %>
   <%= javascript_tag("Wagn.line_to_paragraph(getSlotFromContext('#{@context}'))") %>
-<% end %>                 
+<% end %>

@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
   # can we turn sessions off for it and see if that helps?
   layout :wagn_layout, :except=>[:render_fast_404]
   
-  BUILTIN_LAYOUTS = %w{ blank noside simple }
+  BUILTIN_LAYOUTS = %w{ blank noside simple none }
 
 
   protected
@@ -69,7 +69,7 @@ class ApplicationController < ActionController::Base
         unless request.xhr?
           layout = case 
             when BUILTIN_LAYOUTS.include?(params[:layout]); params[:layout]
-            when params[:layout] == 'none'; nil
+#            when params[:layout] == 'none'; nil
             else 'application'
           end
         end

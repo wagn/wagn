@@ -16,7 +16,7 @@ xml.rss :version => "2.0" do
     cards.each do |card|
       xml.item do 
         xml.title card.name
-        slot = get_slot(card, "main_1", "view", :transclusion_view_overrides => {
+        slot = get_slot(card, "main_1", "view", :inclusion_view_overrides => {
           :open => :rss_titled,
           :content => :expanded_view_content,
           :closed => :link

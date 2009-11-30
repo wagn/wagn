@@ -4,7 +4,7 @@
     <% if System.ok?(:create_accounts) %>
       <%= link_to 'Invite a Friend', :controller=>'account', :action=>'invite' %>
     <% end %>   
-    <%= link_to 'Sign out', :controller=>'account', :action=>'logout' %>
+    <%= link_to 'Sign out', :controller=>'account', :action=>'signout' %>
   <% else %>
     <% if Card::InvitationRequest.create_ok? %>
   	  <%= link_to 'Sign up', :controller=>'account', :action=>'signup' %> 

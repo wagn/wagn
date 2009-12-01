@@ -4,7 +4,7 @@ module Wagn
 
     class << self
       def register_class klass 
-        @@subclasses << klass
+        @@subclasses.unshift klass
       end
     
       def class_for spec
@@ -69,7 +69,7 @@ module Wagn
   class LeftTypeRightNamePattern < Pattern                     
     class << self
       def key_for_card card
-        return nil unless card.junction?      
+        return nil unless card.junction?
         "LeftTypeRightName:#{card.left.cardtype.name}:#{card.name.tag_name}"
       end
   

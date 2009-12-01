@@ -1,0 +1,14 @@
+<%= slot.options_submenu(:knobs) %>
+<ul>
+  <% Card.search(:type=>'Knob', :sort=>'name').each do |knob| %>
+
+    <% next if ['*autoname','*thanks'].member?(knob.name) %>
+    <% next if (card.type!='Pointer' and ['*input','*options','*option label'].member?(knob.name))%>
+
+    <li>
+      <% slot.wrap(:knob, :add_slot=>true) do |slot| %>
+        <%= slot.render_partial 'card/options/closed_setting', :knob=>knob %>
+      <% end %>
+    </li>
+  <% end %>
+</ul>

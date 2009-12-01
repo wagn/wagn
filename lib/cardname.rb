@@ -92,6 +92,10 @@ module Cardname
     (self =~/_(left|right|whole|self|user)/) ? absolute : self
   end
 
+  def to_star
+    (self=~/^\*/) ? self : '*'+self
+  end
+  
   def to_absolute(context_name)
     name = self
     name.gsub! /_self|_whole/  , context_name

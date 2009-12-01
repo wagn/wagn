@@ -55,7 +55,18 @@ module SlotHelpers
       end.compact.join       
      end  
   end
-
+  
+  def options_submenu(on)
+    div(:class=>'submenu') do
+      [:permissions, :knobs].map do |key|
+        link_to_remote( key, 
+          { :url=>url_for("card/options", {}, key), :update => id }, 
+          :class=>(key==on ? 'on' : '') 
+        )
+      end.join
+    end
+  end
+    
   def paging_params
     s = {}
     [:offset,:limit].each{|key| s[key] = params[key]}

@@ -195,8 +195,6 @@ class Slot
       
       when :open, :view, :card
         @state = :view; self.requested_view = 'open'
-        # FIXME: accessing params here is ugly-- breaks tests.
-        #w_action = (@template.params[:view]=='content' && context=="main_1") ? 'nude' : 'open'
         w_action = 'open'
         w_content = render_partial('views/open')
 
@@ -206,28 +204,28 @@ class Slot
         
     ###----------------( NAME)
     
-      #when :link;   link_to_page card.name, card.name, :class=>"cardname-link #{card.new_record? ? 'wanted-card' : 'known-card'}"
-      when :link;
+      when :link;  # FIXME -- this processing should be unified with standard link processing imho
         opts = {:class=>"cardname-link #{(card.new_record? && !card.virtual?) ? 'wanted-card' : 'known-card'}"}
         opts[:type] = slot.type if slot.type 
         link_to_page card.name, card.name, opts
-      when :name;   card.name
-      when :key;    card.name.to_key
-      when :linkname;  Cardname.escape(card.name)
-      when :titled;
-        content_tag( :h1, less_fancy_title(card.name) ) + self.render( :content )
-        
+      when :name;     card.name
+      when :key;      card.name.to_key
+      when :linkname; Cardname.escape(card.name)
+      when :titled;   content_tag( :h1, less_fancy_title(card.name) ) + self.render( :content )
       when :rss_titled;                                                         
         # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
         content_tag( :h2, less_fancy_title(card.name) ) + self.render( :expanded_view_content )
 
+
+   ###----------------( CHANGES)
+
+      when :change;
+        w_action = self.requested_view = 'content'
+        w_content = render_partial('views/change')
       when :rss_change
         w_action = self.requested_view = 'content'
         render_partial('views/change')
         
-      when :change;
-        w_action = self.requested_view = 'content'
-        w_content = render_partial('views/change')
 
     ###---(  CONTENT VARIATIONS ) 
       #-----( with transclusions processed )
@@ -239,7 +237,6 @@ class Slot
       when :expanded_view_content, :naked 
         @state = 'view'
         expand_inclusions(  cache_action('view_content') {  card.post_render( render(:open_content)) } )
-      
 
       when :expanded_line_content
         expand_inclusions(  cache_action('line_content') { render(:closed_content) } )
@@ -271,7 +268,14 @@ class Slot
 
       when :edit_in_form
         render_partial('views/edit_in_form', args.merge(:form=>form))
-          
+    
+      
+      
+      ###---(  SPECIAL ) 
+
+      when :open_setting;   render_partial('views/open_setting')
+      when :closed_setting; render_partial('views/closed_setting')
+
       ###---(  EXCEPTIONS ) 
       
       when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing

@@ -10,7 +10,7 @@ module Cardlib
       # look for pattern
       Wagn::Pattern.keys_for_card( self ).each do |key|
         if pattern_card = Card.find_by_pattern_spec_key( key )
-          if setting_card = CachedCard.get_real( "#{pattern_card.name}+*#{knob}" ) 
+          if setting_card = CachedCard.get_real( "#{pattern_card.name}+#{knob.to_star}" ) 
             return setting_card
           end
         end
@@ -27,7 +27,7 @@ module Cardlib
       end
       
       def default_setting_card knob
-        setting_card = CachedCard.get_real( "*all+*#{knob}" ) 
+        setting_card = CachedCard.get_real( "*all+#{knob.to_star}" ) 
       end
     end
       

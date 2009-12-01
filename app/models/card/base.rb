@@ -328,7 +328,14 @@ module Card
       destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
     end
      
-    # Extended associations ----------------------------------------        
+    # Extended associations ----------------------------------------
+    def patterns
+      Wagn::Pattern.keys_for_card( self ).map do |key|
+        Card.find_by_pattern_spec_key( key )
+      end.compact + 
+      [Card['*all']]
+    end
+    
     def left
       trunk
     end

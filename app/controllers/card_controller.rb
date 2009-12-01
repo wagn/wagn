@@ -268,6 +268,7 @@ class CardController < ApplicationController
 
   def options
     @extension = card.extension
+    render :partial=>"card/options/#{params[:attribute]}" if params[:knob]
   end
 
   def changes

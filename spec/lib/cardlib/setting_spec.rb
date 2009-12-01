@@ -20,7 +20,8 @@ describe Card do
     end                                                                 
     
     it "retrieves single values" do
-      Card.create :name => "banana+*+*edit", :content => "pebbles"
+      Card.create :name => '*solo+*rform', :type=>'Pattern', :content=>'{"name":"_self"}'
+      Card.create :name => "banana+*solo+*edit", :content => "pebbles"
       Card["banana"].setting('edit').should == "pebbles"
     end
   end

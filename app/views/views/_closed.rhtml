@@ -3,7 +3,7 @@
    	<%= link_to_remote less_fancy_title(card), 
    	    {:url=>slot.url_for("card/open"), :update=>slot.id}, 
    	    :title=>"open #{card.name}", :class=>'title right-arrow' %>
-  	<%= page_icon(card) %>
+  	<%= page_icon(card.name) %>
   	&nbsp;		
   </div>  
 </div>    

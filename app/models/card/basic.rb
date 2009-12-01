@@ -16,8 +16,8 @@ module Card
       toc, dep = [], 1
       content.gsub!( /<(h\d)>(.*?)<\/h\d>/i ) do
         tag, value = $~[1,2]
-        next if value.strip.empty?
-        value = ActionView::Base.new.strip_tags(value)
+        value = ActionView::Base.new.strip_tags(value).strip
+        next if value.empty?
         item = { :value => value, :uri => URI.escape(value) }
         case tag.downcase
         when 'h1'
@@ -31,7 +31,7 @@ module Card
 
       if toc.flatten.length >= min
         content.replace %{ <div class="table-of-contents"> <h5>Table of Contents</h5> } +
-        make_table_of_contents_list(toc) + '</div>'+ content
+          make_table_of_contents_list(toc) + '</div>'+ content
       end
     end
     

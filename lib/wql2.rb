@@ -184,14 +184,18 @@ module Wql2
         end
       end
       
-      spec.each do |key,val|  #must be separate loop to make sure card values are set
-        case val
-        when String ; spec[key] = absolute_name(val)
-        when Hash   ; spec[key] = clean(val)
-        end
-      end
-      
+      spec.each{ |key,val| clean_val(val, spec, key) } #must be separate loop to make sure card values are set
       spec
+    end
+    
+    def clean_val(val, spec, key)
+      spec[key] =
+        case val
+        when String ; absolute_name(val)
+        when Hash   ; clean(val)
+        when Array  ; val.map{ |v| clean_val(v, spec, key)}
+        else        ; val
+        end
     end
     
     def merge(spec)

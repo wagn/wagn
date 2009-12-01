@@ -39,6 +39,17 @@ describe Wql2, "in" do
     
 end
 
+describe Wql2, "symbolization" do
+  before {
+    User.as :joe_user
+  }
+  it "should handle array values" do
+    spec = {'plus'=>['tags',{'refer_to'=>'cookies'}]}
+    Wql2::CardSpec.new(spec).spec.should== {:plus=>['tags',{:refer_to=>'cookies'}]}
+  end
+end
+
+
 describe Wql2, "member_of/member" do
   it "member_of should find members" do
     Card.search( :member_of => "r1" ).map(&:name).sort.should == %w(u1 u2 u3)

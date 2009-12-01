@@ -9,9 +9,9 @@ slot = get_slot
     :title=>"close #{knobname}", :class=>'title down-arrow' %>
   	<%= page_icon(knobname) %>
   	<ol>
-      <% card.patterns.each do |pattern|%>
+      <% card.patterns.each do |pattern_card|%>
         <% slot.wrap(:setting, :add_slot=>true) do |slot| %>
-          <li><%= slot.expand_inclusions "{{#{pattern.name}+#{knobname} | closed }}" %>
+          <li><%= slot.expand_inclusions "{{#{pattern_card.name}+#{knobname} | closed }}" %>
         <% end %>
       <% end %>
     </ol>

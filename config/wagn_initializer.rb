@@ -17,9 +17,23 @@ module Wagn
         }     
       end
 
+      def run
+        ActionController::Dispatcher.prepare_dispatch do
+          Wagn::Initializer.load
+        end
+      end
+    
+      def pre_schema?
+        ActiveRecord::Base.connection.execute("select * from cards")
+        return false
+      rescue ActiveRecord::StatementInvalid
+        return true
+      end
+
       def load  
         load_config  
         load_cardlib
+        return if pre_schema?
         load_cardtypes
         load_modules
         initialize_builtin_cards

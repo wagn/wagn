@@ -1,1 +1,1 @@
-#Wagn::Initializer.load
+Wagn::Initializer.run

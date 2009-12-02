@@ -43,13 +43,12 @@ class PatternizeSimpleSettings < ActiveRecord::Migration
     ['layout', 'captcha', 'option label'].each do |name|
       c = Card["*#{name}"]
       next if !c
-      c.name="*all+*#{name}"
-      c.confirm_rename = true
-      c.update_referencers=true
+      Card.create!(:name=>"*all+*#{name}", :type=>c.type, :content=>c.content)
+      c.content=''
       c.save!
     end
     
-    #Knobs
+    #Knobs  -- Later migrated to "Setting"
     Card.create! :name=>'Knob', :type=>'Cardtype'
     ['autoname', 'thanks', 'captcha', 'layout', 'table of contents', 'input', 'options', 'option label'].each do |name|
       c = Card["*#{name}"] || Card.new( :name => "*#{name}" )

@@ -1,17 +1,17 @@
 <%- 
-knobname = params[:knob]
+setting_name = params[:setting]
 slot = get_slot
 %>
 <% div(:class=>'setting') do %>
-  <% div(:class=>'knob') do %>
-    <%= link_to_remote knobname, 
-    {:url=>slot.url_for("card/options", :attribute=>'closed_setting', :knob=>knobname), :update=>slot.id}, 
-    :title=>"close #{knobname}", :class=>'title down-arrow' %>
-  	<%= page_icon(knobname) %>
+  <% div(:class=>'setting') do %>
+    <%= link_to_remote setting_name, 
+    {:url=>slot.url_for("card/options", :attribute=>'closed_setting', :setting=>setting_name), :update=>slot.id}, 
+    :title=>"close #{setting_name}", :class=>'title down-arrow' %>
+  	<%= page_icon(setting_name) %>
   	<ol>
-      <% card.patterns.each do |pattern_card|%>
+      <% card.sets.each do |set_card|%>
         <% slot.wrap(:setting, :add_slot=>true) do |slot| %>
-          <li><%= slot.expand_inclusions "{{#{pattern_card.name}+#{knobname} | closed }}" %>
+          <li><%= slot.expand_inclusions "{{#{set_card.name}+#{setting_name} | closed }}" %>
         <% end %>
       <% end %>
     </ol>

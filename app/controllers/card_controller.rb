@@ -268,7 +268,7 @@ class CardController < ApplicationController
 
   def options
     @extension = card.extension
-    render :partial=>"card/options/#{params[:attribute]}" if params[:knob] and 
+    render :partial=>"card/options/#{params[:attribute]}" if params[:setting] and 
       ['closed_setting','open_setting'].include?(params[:attribute])
   end
 

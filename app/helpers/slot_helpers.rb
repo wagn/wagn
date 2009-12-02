@@ -58,7 +58,7 @@ module SlotHelpers
   
   def options_submenu(on)
     div(:class=>'submenu') do
-      [:permissions, :knobs].map do |key|
+      [:permissions, :settings].map do |key|
         link_to_remote( key, 
           { :url=>url_for("card/options", {}, key), :update => id }, 
           :class=>(key==on ? 'on' : '') 

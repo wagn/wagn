@@ -1,0 +1,14 @@
+<%= slot.options_submenu(:settings) %>
+<ul>
+  <% Card.search(:type=>'setting', :sort=>'name').each do |setting| %>
+
+    <% next if ['*autoname','*thanks'].member?(setting.name) %>
+    <% next if (card.type!='Pointer' and ['*input','*options','*option label'].member?(setting.name))%>
+
+    <li>
+      <% slot.wrap(:setting, :add_slot=>true) do |slot| %>
+        <%= slot.render_partial 'card/options/closed_setting', :setting=>setting %>
+      <% end %>
+    </li>
+  <% end %>
+</ul>

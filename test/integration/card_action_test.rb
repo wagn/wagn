@@ -79,7 +79,7 @@ class CardActionTest < ActionController::IntegrationTest
   def test_newcard_shows_edit_instructions   
     given_cards( 
       {"Cardtype:YFoo" => ""},
-      {"Pattern:All YFoo" => '{"type":"YFoo"}'},
+      {"Set:All YFoo" => '{"type":"YFoo"}'},
       {"All YFoo+*edit"  => "instruct-me"}
     )
     get 'card/new', :card => {:type=>'YFoo'}

@@ -155,7 +155,7 @@ class CardControllerTest < ActionController::TestCase
       ff.permit(:read, Role[:auth])
       ff.save!
     
-      Card.create! :name=>'All Fruit', :type=>'Pattern', :content=>'{"type":"Fruit"}'
+      Card.create! :name=>'All Fruit', :type=>'Set', :content=>'{"type":"Fruit"}'
       Card.create! :name=>"All Fruit+*thanks", :type=>"Phrase", :content=>"/wagn/sweet"
     end
     

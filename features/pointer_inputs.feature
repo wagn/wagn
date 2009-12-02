@@ -4,7 +4,7 @@ Feature: Pointer Inputs
 
   Background:
     Given I log in as Joe User
-    And I create Pattern card "right friends" with content "{"right":"friends"}"
+    And I create Set card "right friends" with content "{"right":"friends"}"
     And I create Search card "right friends+*options" with content "{"type":"User"}"
     And I create Pointer card "friends+*rform"
    

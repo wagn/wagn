@@ -1,15 +1,15 @@
 <%- 
-knobname = params[:knob] || knob.name
+setting_name = params[:setting] || setting.name
 slot ||= get_slot
-setting = card.setting(knobname) 
+value = card.setting(setting_name) 
 %>
 
 <% div(:class=>'setting') do %>
-  <span class="knob">
-    <%= link_to_remote knobname, 
-   	    {:url=>slot.url_for("card/options", :attribute=>'open_setting', :knob=>knobname), :update=>slot.id}, 
-   	    :title=>"open #{knobname}", :class=>'title right-arrow' %>
-  	<%= page_icon(knobname) %>
+  <span class="setting">
+    <%= link_to_remote setting_name, 
+   	    {:url=>slot.url_for("card/options", :attribute=>'open_setting', :setting=>setting_name), :update=>slot.id}, 
+   	    :title=>"open #{setting_name}", :class=>'title right-arrow' %>
+  	<%= page_icon(setting_name) %>
   </span>
-  <span class="setting-value"><%= setting %></span>
+  <span class="setting-value"><%= value %></span>
 <% end %>

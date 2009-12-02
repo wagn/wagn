@@ -23,7 +23,7 @@ end
 describe Card::Search, "pattern key generation" do
   it "should store a relative pattern key" do
     User.as :wagbot
-    Card.create!(:name=>"*on right+*rform", :type=>'Pattern', :content=>'{"right":"_left"}')
+    Card.create!(:name=>"*on right+*rform", :type=>'Set', :content=>'{"right":"_left"}')
     c = Card.create!(:name=>"test+*on right")
     c.pattern_spec_key.should=="RightName:test"
   end

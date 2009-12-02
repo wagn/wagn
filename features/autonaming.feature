@@ -4,7 +4,7 @@ Feature: autonaming
   
   Background:
     Given I log in as Joe User
-    And I create Pattern card "Book cards" with content "{"type":"Book"}"
+    And I create Set card "Book cards" with content "{"type":"Book"}"
     And I create Phrase card "Book cards+*autoname" with content "Book 1"
   
   Scenario: Simple cardtype autoname       

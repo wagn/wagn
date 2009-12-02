@@ -14,6 +14,7 @@ class PatternizeSimpleSettings < ActiveRecord::Migration
     Card.search(:right=>'*table of contents').each do |c|
       c.name= c.name.trunk_name+'+*solo+*table of contents'
       c.confirm_rename=true
+      c.update_referencers=true
       c.content= (c.content=='off' ? '0' : '1')
       c.save!
     end
@@ -23,6 +24,7 @@ class PatternizeSimpleSettings < ActiveRecord::Migration
       Card.search(:right=>"*#{name}").each do |c|
         c.name= c.name.trunk_name+"+*on right+*#{name}"
         c.confirm_rename = true
+        c.update_referencers=true
         c.save!
       end
     end
@@ -32,6 +34,7 @@ class PatternizeSimpleSettings < ActiveRecord::Migration
       Card.search(:right=>"*#{name}").each do |c|
         c.name= c.name.trunk_name+"+*is type+*#{name}"
         c.confirm_rename = true
+        c.update_referencers=true
         c.save!
       end
     end
@@ -42,6 +45,7 @@ class PatternizeSimpleSettings < ActiveRecord::Migration
       next if !c
       c.name="*all+*#{name}"
       c.confirm_rename = true
+      c.update_referencers=true
       c.save!
     end
     

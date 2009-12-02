@@ -97,7 +97,7 @@ module Card
       
       # autoname.  note I'm not sure that this is the right place for this at all, but 
       #  :set_needed_defaults returns if new_record? so I think we don't want it in there
-      if args["name"].blank?
+      if !args.nil? and args["name"].blank?
         ::User.as(:wagbot) do
           autoname_cardname = ::Cardtype.name_for(c.type)+"+*autoname" 
           if CachedCard.get_real autoname_cardname

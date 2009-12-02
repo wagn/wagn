@@ -33,8 +33,13 @@ module Cardname
   end
 =end
     
-  def replace_particle( oldpart, newpart )
-    particle_names.map {|x| x.to_key == oldpart.to_key ? newpart : x }.join("+")
+  def replace_part( oldpart, newpart )
+    part_names(oldpart.particle_names.size).map {|x| x.to_key == oldpart.to_key ? newpart : x }.join("+")
+  end
+  
+  def part_names(n=1)
+    p = particle_names
+    size > 1 ? [p[0..(n-1)].join(JOINT), p[n..p.size]].flatten.compact : p
   end
 
   def pre_cgi

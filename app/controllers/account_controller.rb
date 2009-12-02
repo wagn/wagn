@@ -7,10 +7,9 @@ class AccountController < ApplicationController
   def signup
     raise(Wagn::Oops, "You have to sign out before signing up for a new Account") if logged_in?
     raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless Card::InvitationRequest.create_ok?
-    card_args = (params[:card]||{}).merge({:type=>'InvitationRequest'})
 
-    #fail "params.inspect: #{params.inspect}" if request.post?
-    @user = User.new((params[:user] || {}).merge(:status=>'system'))
+    @user = User.new((params[:user]||{}).merge(:status=>'system')) #does not validate password
+    card_args =      (params[:card]||{}).merge(:type=>'InvitationRequest')
     @card = Card.new( card_args )
     
     return unless request.post?
@@ -120,7 +119,27 @@ class AccountController < ApplicationController
       end
     end    
   end  
-    
+
+  def deny_all  ## DEPRECATED:  this method will not be long for this world.
+    if System.ok?(:administrate_users)
+      Card::InvitationRequest.find_all_by_trash(false).each do |card|
+        card.destroy
+      end
+      redirect_to '/wagn/Account_Request'
+    end
+  end
+  
+  def empty_trash ## DEPRECATED:  this method will not be long for this world.
+    if System.ok?(:administrate_users)
+      User.find_all_by_status('blocked').each do |user|
+        card=Card.find_by_extension_type_and_extension_id('User',user.id)
+        user.destroy                if (!card or card.trash)
+        card.destroy_without_trash  if (card and card.trash)
+      end 
+      redirect_to '/wagn/Account_Request'
+    end
+  end
+
   protected
   def password_authentication(login, password)
     if self.current_user = User.authenticate(params[:login], params[:password])

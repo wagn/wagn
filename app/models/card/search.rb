@@ -34,6 +34,7 @@ module Card
     end
     
     def get_spec(params={})
+      raise("Error in card '#{self.name}':can't run search with empty content") if self.content.empty?
       spec = JSON.parse( self.content )   
       # FIXME: should unit test this 
       

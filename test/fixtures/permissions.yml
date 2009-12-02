@@ -1,4339 +1,4741 @@
 --- 
-permissions_697: 
-  party_id: "2"
-  card_id: "330"
-  id: "698"
-  task: edit
-  party_type: Role
-permissions_649: 
-  party_id: "2"
-  card_id: "316"
-  id: "649"
-  task: delete
-  party_type: Role
-permissions_700: 
-  party_id: "2"
-  card_id: "331"
-  id: "701"
-  task: delete
-  party_type: Role
-permissions_698: 
-  party_id: "3"
-  card_id: "330"
-  id: "699"
-  task: read
-  party_type: Role
-permissions_510: 
-  party_id: "2"
-  card_id: "270"
-  id: "510"
-  task: delete
-  party_type: Role
-permissions_320: 
-  party_id: "3"
-  card_id: "52"
-  id: "320"
-  task: read
-  party_type: Role
-permissions_130: 
-  party_id: "2"
-  card_id: "181"
-  id: "130"
-  task: edit
-  party_type: Role
-permissions_701: 
-  party_id: "2"
-  card_id: "331"
-  id: "702"
-  task: edit
-  party_type: Role
-permissions_699: 
-  party_id: "2"
-  card_id: "330"
-  id: "700"
-  task: create
-  party_type: Role
-permissions_511: 
-  party_id: "2"
-  card_id: "270"
-  id: "511"
-  task: edit
-  party_type: Role
-permissions_321: 
-  party_id: "1"
-  card_id: "242"
-  id: "321"
-  task: edit
-  party_type: Role
-permissions_131: 
-  party_id: "2"
-  card_id: "181"
-  id: "131"
-  task: delete
-  party_type: Role
-permissions_702: 
-  party_id: "3"
-  card_id: "331"
-  id: "703"
-  task: read
-  party_type: Role
-permissions_512: 
-  party_id: "3"
-  card_id: "270"
-  id: "512"
-  task: read
-  party_type: Role
-permissions_322: 
-  party_id: "1"
-  card_id: "242"
-  id: "322"
-  task: delete
-  party_type: Role
-permissions_132: 
-  party_id: "3"
-  card_id: "181"
-  id: "132"
-  task: read
-  party_type: Role
-permissions_703: 
-  party_id: "2"
-  card_id: "332"
-  id: "704"
-  task: delete
-  party_type: Role
-permissions_560: 
-  party_id: "2"
-  card_id: "286"
-  id: "560"
-  task: edit
-  party_type: Role
-permissions_513: 
-  party_id: "2"
-  card_id: "271"
-  id: "513"
-  task: delete
-  party_type: Role
-permissions_370: 
-  party_id: "3"
-  card_id: "35"
-  id: "370"
-  task: read
-  party_type: Role
-permissions_180: 
-  party_id: "1"
-  card_id: "172"
-  id: "180"
-  task: edit
-  party_type: Role
-permissions_323: 
-  party_id: "3"
-  card_id: "242"
-  id: "323"
-  task: read
-  party_type: Role
-permissions_133: 
-  party_id: "2"
-  card_id: "17"
-  id: "133"
-  task: edit
-  party_type: Role
-permissions_561: 
-  party_id: "3"
-  card_id: "286"
-  id: "561"
-  task: read
-  party_type: Role
-permissions_514: 
-  party_id: "2"
-  card_id: "271"
-  id: "514"
-  task: edit
-  party_type: Role
-permissions_371: 
-  party_id: "2"
-  card_id: "155"
-  id: "371"
-  task: edit
-  party_type: Role
-permissions_181: 
-  party_id: "1"
-  card_id: "172"
-  id: "181"
-  task: delete
-  party_type: Role
-permissions_324: 
-  party_id: "2"
-  card_id: "4"
-  id: "324"
-  task: edit
-  party_type: Role
-permissions_134: 
-  party_id: "2"
-  card_id: "17"
-  id: "134"
-  task: create
-  party_type: Role
-permissions_704: 
-  party_id: "2"
-  card_id: "332"
-  id: "705"
-  task: edit
-  party_type: Role
-permissions_562: 
-  party_id: "2"
-  card_id: "287"
-  id: "562"
-  task: delete
-  party_type: Role
-permissions_515: 
-  party_id: "3"
-  card_id: "271"
-  id: "515"
-  task: read
-  party_type: Role
-permissions_372: 
-  party_id: "2"
-  card_id: "155"
-  id: "372"
-  task: delete
-  party_type: Role
-permissions_182: 
-  party_id: "3"
-  card_id: "172"
-  id: "182"
-  task: read
-  party_type: Role
-permissions_325: 
-  party_id: "2"
-  card_id: "4"
-  id: "325"
-  task: create
-  party_type: Role
-permissions_135: 
-  party_id: "2"
-  card_id: "17"
-  id: "135"
-  task: delete
-  party_type: Role
-permissions_705: 
-  party_id: "3"
-  card_id: "332"
-  id: "706"
-  task: read
-  party_type: Role
-permissions_563: 
-  party_id: "2"
-  card_id: "287"
-  id: "563"
-  task: edit
-  party_type: Role
-permissions_516: 
-  party_id: "2"
-  card_id: "272"
-  id: "516"
-  task: delete
-  party_type: Role
-permissions_373: 
-  party_id: "3"
-  card_id: "155"
-  id: "373"
-  task: read
-  party_type: Role
-permissions_183: 
-  party_id: "2"
-  card_id: "3"
-  id: "183"
-  task: edit
-  party_type: Role
-permissions_326: 
-  party_id: "2"
-  card_id: "4"
-  id: "326"
-  task: delete
-  party_type: Role
-permissions_136: 
-  party_id: "3"
-  card_id: "17"
-  id: "136"
-  task: read
-  party_type: Role
-permissions_706: 
-  party_id: "2"
-  card_id: "333"
-  id: "707"
-  task: delete
-  party_type: Role
-permissions_564: 
-  party_id: "3"
-  card_id: "287"
-  id: "564"
-  task: read
-  party_type: Role
-permissions_374: 
-  party_id: "1"
-  card_id: "250"
-  id: "374"
-  task: edit
-  party_type: Role
-permissions_184: 
-  party_id: "2"
-  card_id: "3"
-  id: "184"
-  task: create
-  party_type: Role
-permissions_327: 
-  party_id: "3"
-  card_id: "4"
-  id: "327"
-  task: read
-  party_type: Role
-permissions_137: 
-  party_id: "1"
-  card_id: "247"
-  id: "137"
-  task: edit
-  party_type: Role
-permissions_707: 
-  party_id: "2"
-  card_id: "333"
-  id: "708"
-  task: edit
-  party_type: Role
-permissions_565: 
-  party_id: "2"
-  card_id: "288"
-  id: "565"
-  task: delete
-  party_type: Role
-permissions_517: 
-  party_id: "2"
-  card_id: "272"
-  id: "517"
-  task: edit
-  party_type: Role
-permissions_375: 
-  party_id: "1"
-  card_id: "250"
-  id: "375"
-  task: delete
-  party_type: Role
-permissions_185: 
-  party_id: "2"
-  card_id: "3"
-  id: "185"
-  task: delete
-  party_type: Role
-permissions_328: 
-  party_id: "2"
-  card_id: "212"
-  id: "328"
-  task: edit
-  party_type: Role
-permissions_138: 
-  party_id: "1"
-  card_id: "247"
-  id: "138"
-  task: delete
-  party_type: Role
-permissions_708: 
-  party_id: "3"
-  card_id: "333"
-  id: "709"
-  task: read
-  party_type: Role
-permissions_566: 
-  party_id: "2"
-  card_id: "288"
-  id: "566"
-  task: edit
-  party_type: Role
-permissions_518: 
-  party_id: "3"
-  card_id: "272"
-  id: "518"
-  task: read
-  party_type: Role
-permissions_376: 
-  party_id: "3"
-  card_id: "250"
-  id: "376"
-  task: read
-  party_type: Role
-permissions_186: 
-  party_id: "3"
-  card_id: "3"
-  id: "186"
-  task: read
-  party_type: Role
-permissions_329: 
-  party_id: "2"
-  card_id: "212"
-  id: "329"
-  task: delete
-  party_type: Role
-permissions_139: 
-  party_id: "3"
-  card_id: "247"
-  id: "139"
-  task: read
-  party_type: Role
-permissions_709: 
-  party_id: "2"
-  card_id: "334"
-  id: "710"
-  task: delete
-  party_type: Role
-permissions_567: 
-  party_id: "3"
-  card_id: "288"
-  id: "567"
-  task: read
-  party_type: Role
-permissions_519: 
-  party_id: "2"
-  card_id: "273"
-  id: "519"
-  task: delete
-  party_type: Role
-permissions_377: 
-  party_id: "1"
-  card_id: "39"
-  id: "377"
-  task: edit
-  party_type: Role
-permissions_187: 
-  party_id: "1"
-  card_id: "222"
-  id: "187"
-  task: edit
-  party_type: Role
-permissions_568: 
-  party_id: "2"
-  card_id: "289"
-  id: "568"
-  task: delete
-  party_type: Role
-permissions_378: 
-  party_id: "1"
-  card_id: "39"
-  id: "378"
-  task: delete
-  party_type: Role
-permissions_188: 
-  party_id: "1"
-  card_id: "222"
-  id: "188"
-  task: delete
-  party_type: Role
-permissions_569: 
-  party_id: "2"
-  card_id: "289"
-  id: "569"
-  task: edit
-  party_type: Role
-permissions_001: 
-  party_id: "1"
-  card_id: "43"
-  id: "1"
-  task: edit
-  party_type: Role
-permissions_379: 
-  party_id: "3"
-  card_id: "39"
-  id: "379"
-  task: read
-  party_type: Role
-permissions_189: 
-  party_id: "3"
-  card_id: "222"
-  id: "189"
-  task: read
-  party_type: Role
-permissions_002: 
-  party_id: "1"
-  card_id: "43"
-  id: "2"
-  task: delete
-  party_type: Role
-permissions_620: 
-  party_id: "2"
-  card_id: "306"
-  id: "620"
-  task: edit
-  party_type: Role
-permissions_430: 
-  party_id: "2"
-  card_id: "20"
-  id: "430"
-  task: edit
-  party_type: Role
-permissions_240: 
-  party_id: "2"
-  card_id: "80"
-  id: "240"
-  task: delete
-  party_type: Role
-permissions_050: 
-  party_id: "1"
-  card_id: "117"
-  id: "50"
-  task: edit
-  party_type: Role
-permissions_003: 
-  party_id: "3"
-  card_id: "43"
-  id: "3"
-  task: read
-  party_type: Role
-permissions_621: 
-  party_id: "3"
-  card_id: "306"
-  id: "621"
-  task: read
-  party_type: Role
-permissions_431: 
-  party_id: "2"
-  card_id: "20"
-  id: "431"
-  task: create
-  party_type: Role
-permissions_241: 
-  party_id: "3"
-  card_id: "80"
-  id: "241"
-  task: read
-  party_type: Role
-permissions_051: 
-  party_id: "1"
-  card_id: "117"
-  id: "51"
-  task: delete
-  party_type: Role
-permissions_004: 
-  party_id: "2"
-  card_id: "50"
-  id: "4"
-  task: edit
-  party_type: Role
-permissions_622: 
-  party_id: "2"
-  card_id: "307"
-  id: "622"
-  task: delete
-  party_type: Role
-permissions_432: 
-  party_id: "2"
-  card_id: "20"
-  id: "432"
-  task: delete
-  party_type: Role
-permissions_242: 
-  party_id: "2"
-  card_id: "191"
-  id: "242"
-  task: edit
-  party_type: Role
-permissions_052: 
-  party_id: "3"
-  card_id: "117"
-  id: "52"
-  task: read
-  party_type: Role
-permissions_005: 
-  party_id: "1"
-  card_id: "50"
-  id: "5"
-  task: create
-  party_type: Role
-permissions_670: 
-  party_id: "3"
-  card_id: "321"
-  id: "671"
-  task: read
-  party_type: Role
-permissions_623: 
-  party_id: "2"
-  card_id: "307"
-  id: "623"
-  task: edit
-  party_type: Role
-permissions_480: 
-  party_id: "2"
-  card_id: "260"
-  id: "480"
-  task: delete
-  party_type: Role
-permissions_433: 
-  party_id: "3"
-  card_id: "20"
-  id: "433"
-  task: read
-  party_type: Role
-permissions_290: 
-  party_id: "2"
-  card_id: "51"
-  id: "290"
-  task: create
-  party_type: Role
-permissions_243: 
-  party_id: "2"
-  card_id: "191"
-  id: "243"
-  task: delete
-  party_type: Role
-permissions_053: 
-  party_id: "1"
-  card_id: "87"
-  id: "53"
-  task: edit
-  party_type: Role
-permissions_006: 
-  party_id: "2"
-  card_id: "50"
-  id: "6"
-  task: delete
-  party_type: Role
-permissions_671: 
-  party_id: "2"
-  card_id: "321"
-  id: "672"
-  task: create
-  party_type: Role
-permissions_624: 
-  party_id: "3"
-  card_id: "307"
-  id: "624"
-  task: read
-  party_type: Role
-permissions_481: 
-  party_id: "2"
-  card_id: "260"
-  id: "481"
-  task: edit
-  party_type: Role
-permissions_434: 
-  party_id: "1"
-  card_id: "98"
-  id: "434"
-  task: edit
-  party_type: Role
-permissions_291: 
-  party_id: "2"
-  card_id: "51"
-  id: "291"
-  task: delete
-  party_type: Role
-permissions_244: 
-  party_id: "3"
-  card_id: "191"
-  id: "244"
-  task: read
-  party_type: Role
-permissions_054: 
-  party_id: "1"
-  card_id: "87"
-  id: "54"
-  task: delete
-  party_type: Role
-permissions_007: 
-  party_id: "3"
-  card_id: "50"
-  id: "7"
-  task: read
-  party_type: Role
-permissions_672: 
-  party_id: "2"
-  card_id: "322"
-  id: "673"
-  task: delete
-  party_type: Role
-permissions_625: 
-  party_id: "2"
-  card_id: "308"
-  id: "625"
-  task: delete
-  party_type: Role
-permissions_482: 
-  party_id: "3"
-  card_id: "260"
-  id: "482"
-  task: read
-  party_type: Role
-permissions_435: 
-  party_id: "1"
-  card_id: "98"
-  id: "435"
-  task: delete
-  party_type: Role
-permissions_292: 
-  party_id: "3"
-  card_id: "51"
-  id: "292"
-  task: read
-  party_type: Role
-permissions_245: 
-  party_id: "2"
-  card_id: "30"
-  id: "245"
-  task: edit
-  party_type: Role
-permissions_055: 
-  party_id: "3"
-  card_id: "87"
-  id: "55"
-  task: read
-  party_type: Role
-permissions_008: 
-  party_id: "1"
-  card_id: "96"
-  id: "8"
-  task: edit
-  party_type: Role
-permissions_673: 
-  party_id: "2"
-  card_id: "322"
-  id: "674"
-  task: edit
-  party_type: Role
-permissions_626: 
-  party_id: "2"
-  card_id: "308"
-  id: "626"
-  task: edit
-  party_type: Role
-permissions_483: 
-  party_id: "2"
-  card_id: "261"
-  id: "483"
-  task: delete
-  party_type: Role
-permissions_436: 
-  party_id: "3"
-  card_id: "98"
-  id: "436"
-  task: read
-  party_type: Role
-permissions_293: 
-  party_id: "1"
-  card_id: "67"
-  id: "293"
-  task: edit
-  party_type: Role
-permissions_246: 
-  party_id: "2"
-  card_id: "30"
-  id: "246"
-  task: create
-  party_type: Role
-permissions_056: 
-  party_id: "2"
-  card_id: "18"
-  id: "56"
-  task: edit
-  party_type: Role
-permissions_009: 
-  party_id: "1"
-  card_id: "96"
-  id: "9"
-  task: delete
-  party_type: Role
-permissions_674: 
-  party_id: "3"
-  card_id: "322"
-  id: "675"
-  task: read
-  party_type: Role
-permissions_484: 
-  party_id: "2"
-  card_id: "261"
-  id: "484"
-  task: edit
-  party_type: Role
-permissions_437: 
-  party_id: "1"
-  card_id: "249"
-  id: "437"
-  task: edit
-  party_type: Role
-permissions_294: 
-  party_id: "1"
-  card_id: "67"
-  id: "294"
-  task: delete
-  party_type: Role
-permissions_247: 
-  party_id: "2"
-  card_id: "30"
-  id: "247"
-  task: delete
-  party_type: Role
-permissions_057: 
-  party_id: "2"
-  card_id: "18"
-  id: "57"
-  task: create
-  party_type: Role
-permissions_675: 
-  party_id: "2"
-  card_id: "323"
-  id: "676"
-  task: delete
-  party_type: Role
-permissions_627: 
-  party_id: "3"
-  card_id: "308"
-  id: "627"
-  task: read
-  party_type: Role
-permissions_485: 
-  party_id: "3"
-  card_id: "261"
-  id: "485"
-  task: read
-  party_type: Role
-permissions_438: 
-  party_id: "1"
-  card_id: "249"
-  id: "438"
-  task: delete
-  party_type: Role
-permissions_295: 
-  party_id: "3"
-  card_id: "67"
-  id: "295"
-  task: read
-  party_type: Role
-permissions_248: 
-  party_id: "3"
-  card_id: "30"
-  id: "248"
-  task: read
-  party_type: Role
-permissions_058: 
-  party_id: "2"
-  card_id: "18"
-  id: "58"
-  task: delete
-  party_type: Role
-permissions_676: 
-  party_id: "2"
-  card_id: "323"
-  id: "677"
-  task: edit
-  party_type: Role
-permissions_628: 
-  party_id: "2"
-  card_id: "309"
-  id: "628"
-  task: delete
-  party_type: Role
-permissions_486: 
-  party_id: "2"
-  card_id: "262"
-  id: "486"
-  task: delete
-  party_type: Role
-permissions_439: 
-  party_id: "3"
-  card_id: "249"
-  id: "439"
-  task: read
-  party_type: Role
-permissions_296: 
-  party_id: "1"
-  card_id: "55"
-  id: "296"
-  task: edit
-  party_type: Role
-permissions_249: 
-  party_id: "1"
-  card_id: "62"
-  id: "249"
-  task: edit
-  party_type: Role
-permissions_059: 
-  party_id: "3"
-  card_id: "18"
-  id: "59"
-  task: read
-  party_type: Role
-permissions_677: 
-  party_id: "3"
-  card_id: "323"
-  id: "678"
-  task: read
-  party_type: Role
-permissions_629: 
-  party_id: "2"
-  card_id: "309"
-  id: "629"
-  task: edit
-  party_type: Role
-permissions_487: 
-  party_id: "2"
-  card_id: "262"
-  id: "487"
-  task: edit
-  party_type: Role
-permissions_297: 
-  party_id: "1"
-  card_id: "55"
-  id: "297"
-  task: delete
-  party_type: Role
-permissions_678: 
-  party_id: "2"
-  card_id: "324"
-  id: "679"
-  task: delete
-  party_type: Role
-permissions_488: 
-  party_id: "3"
-  card_id: "262"
-  id: "488"
-  task: read
-  party_type: Role
-permissions_298: 
-  party_id: "3"
-  card_id: "55"
-  id: "298"
-  task: read
-  party_type: Role
-permissions_300: 
-  party_id: "1"
-  card_id: "56"
-  id: "300"
-  task: delete
-  party_type: Role
-permissions_110: 
-  party_id: "1"
-  card_id: "122"
-  id: "110"
-  task: delete
-  party_type: Role
-permissions_679: 
-  party_id: "2"
-  card_id: "324"
-  id: "680"
-  task: edit
-  party_type: Role
-permissions_489: 
-  party_id: "2"
-  card_id: "263"
-  id: "489"
-  task: delete
-  party_type: Role
-permissions_301: 
-  party_id: "3"
-  card_id: "56"
-  id: "301"
-  task: read
-  party_type: Role
-permissions_111: 
-  party_id: "3"
-  card_id: "122"
-  id: "111"
-  task: read
-  party_type: Role
-permissions_299: 
-  party_id: "1"
-  card_id: "56"
-  id: "299"
-  task: edit
-  party_type: Role
-permissions_302: 
-  party_id: "2"
-  card_id: "201"
-  id: "302"
-  task: edit
-  party_type: Role
-permissions_112: 
-  party_id: "1"
-  card_id: "112"
-  id: "112"
-  task: edit
-  party_type: Role
-permissions_540: 
-  party_id: "3"
-  card_id: "279"
-  id: "540"
-  task: read
-  party_type: Role
-permissions_350: 
-  party_id: "1"
-  card_id: "64"
-  id: "350"
-  task: edit
-  party_type: Role
-permissions_160: 
-  party_id: "2"
-  card_id: "101"
-  id: "160"
-  task: delete
-  party_type: Role
-permissions_303: 
-  party_id: "2"
-  card_id: "201"
-  id: "303"
-  task: delete
-  party_type: Role
-permissions_113: 
-  party_id: "1"
-  card_id: "112"
-  id: "113"
-  task: delete
-  party_type: Role
-permissions_541: 
-  party_id: "2"
-  card_id: "280"
-  id: "541"
-  task: delete
-  party_type: Role
-permissions_351: 
-  party_id: "1"
-  card_id: "64"
-  id: "351"
-  task: delete
-  party_type: Role
-permissions_161: 
-  party_id: "3"
-  card_id: "101"
-  id: "161"
-  task: read
-  party_type: Role
 permissions_304: 
-  party_id: "3"
-  card_id: "201"
+  card_id: "118"
+  task: delete
   id: "304"
-  task: read
   party_type: Role
-permissions_114: 
-  party_id: "3"
-  card_id: "112"
-  id: "114"
-  task: read
-  party_type: Role
-permissions_542: 
-  party_id: "2"
-  card_id: "280"
-  id: "542"
-  task: edit
-  party_type: Role
-permissions_352: 
-  party_id: "3"
-  card_id: "64"
-  id: "352"
-  task: read
-  party_type: Role
-permissions_162: 
   party_id: "1"
-  card_id: "108"
-  id: "162"
-  task: edit
+permissions_436: 
+  card_id: "147"
+  task: delete
+  id: "436"
   party_type: Role
+  party_id: "2"
+permissions_568: 
+  card_id: "290"
+  task: delete
+  id: "568"
+  party_type: Role
+  party_id: "2"
 permissions_305: 
-  party_id: "1"
-  card_id: "251"
+  card_id: "118"
+  task: edit
   id: "305"
-  task: edit
   party_type: Role
-permissions_115: 
   party_id: "1"
-  card_id: "41"
-  id: "115"
+permissions_437: 
+  card_id: "147"
   task: edit
+  id: "437"
   party_type: Role
-permissions_590: 
   party_id: "2"
-  card_id: "296"
-  id: "590"
+permissions_569: 
+  card_id: "290"
   task: edit
+  id: "569"
   party_type: Role
-permissions_543: 
-  party_id: "3"
-  card_id: "280"
-  id: "543"
-  task: read
-  party_type: Role
-permissions_353: 
-  party_id: "1"
-  card_id: "38"
-  id: "353"
-  task: edit
-  party_type: Role
-permissions_163: 
-  party_id: "1"
-  card_id: "108"
-  id: "163"
-  task: delete
-  party_type: Role
+  party_id: "2"
 permissions_306: 
-  party_id: "1"
-  card_id: "251"
+  card_id: "118"
+  task: read
   id: "306"
-  task: delete
   party_type: Role
-permissions_116: 
-  party_id: "1"
-  card_id: "41"
-  id: "116"
-  task: delete
-  party_type: Role
-permissions_591: 
   party_id: "3"
-  card_id: "296"
-  id: "591"
+permissions_438: 
+  card_id: "147"
   task: read
+  id: "438"
   party_type: Role
-permissions_544: 
-  party_id: "2"
-  card_id: "281"
-  id: "544"
-  task: delete
-  party_type: Role
-permissions_354: 
-  party_id: "1"
-  card_id: "38"
-  id: "354"
-  task: delete
-  party_type: Role
-permissions_164: 
   party_id: "3"
-  card_id: "108"
-  id: "164"
-  task: read
-  party_type: Role
 permissions_307: 
-  party_id: "3"
-  card_id: "251"
+  card_id: "263"
+  task: delete
   id: "307"
-  task: read
   party_type: Role
-permissions_117: 
-  party_id: "3"
-  card_id: "41"
-  id: "117"
-  task: read
-  party_type: Role
-permissions_592: 
-  party_id: "2"
-  card_id: "297"
-  id: "592"
-  task: delete
-  party_type: Role
-permissions_545: 
-  party_id: "2"
-  card_id: "281"
-  id: "545"
-  task: edit
-  party_type: Role
-permissions_355: 
-  party_id: "3"
-  card_id: "38"
-  id: "355"
-  task: read
-  party_type: Role
-permissions_165: 
   party_id: "1"
-  card_id: "171"
-  id: "165"
-  task: edit
+permissions_439: 
+  card_id: "43"
+  task: delete
+  id: "439"
   party_type: Role
-permissions_118: 
-  party_id: "2"
-  card_id: "182"
-  id: "118"
-  task: edit
-  party_type: Role
-permissions_593: 
-  party_id: "2"
-  card_id: "297"
-  id: "593"
-  task: edit
-  party_type: Role
-permissions_546: 
-  party_id: "3"
-  card_id: "281"
-  id: "546"
-  task: read
-  party_type: Role
-permissions_356: 
-  party_id: "2"
-  card_id: "206"
-  id: "356"
-  task: edit
-  party_type: Role
-permissions_166: 
   party_id: "1"
-  card_id: "171"
-  id: "166"
-  task: delete
-  party_type: Role
-permissions_308: 
-  party_id: "1"
-  card_id: "40"
-  id: "308"
-  task: edit
-  party_type: Role
-permissions_119: 
-  party_id: "2"
-  card_id: "182"
-  id: "119"
-  task: delete
-  party_type: Role
-permissions_594: 
-  party_id: "3"
-  card_id: "297"
-  id: "594"
-  task: read
-  party_type: Role
-permissions_547: 
-  party_id: "2"
-  card_id: "282"
-  id: "547"
-  task: delete
-  party_type: Role
-permissions_357: 
-  party_id: "2"
-  card_id: "206"
-  id: "357"
-  task: delete
-  party_type: Role
-permissions_167: 
-  party_id: "3"
-  card_id: "171"
-  id: "167"
-  task: read
-  party_type: Role
-permissions_309: 
-  party_id: "1"
-  card_id: "40"
-  id: "309"
-  task: delete
-  party_type: Role
-permissions_595: 
-  party_id: "2"
-  card_id: "298"
-  id: "595"
-  task: delete
-  party_type: Role
-permissions_548: 
-  party_id: "2"
-  card_id: "282"
-  id: "548"
-  task: edit
-  party_type: Role
-permissions_358: 
-  party_id: "3"
-  card_id: "206"
-  id: "358"
-  task: read
-  party_type: Role
-permissions_168: 
-  party_id: "1"
-  card_id: "99"
-  id: "168"
-  task: edit
-  party_type: Role
-permissions_596: 
-  party_id: "2"
-  card_id: "298"
-  id: "596"
-  task: edit
-  party_type: Role
-permissions_549: 
-  party_id: "3"
-  card_id: "282"
-  id: "549"
-  task: read
-  party_type: Role
-permissions_359: 
-  party_id: "1"
-  card_id: "168"
-  id: "359"
-  task: edit
-  party_type: Role
-permissions_169: 
-  party_id: "1"
-  card_id: "99"
-  id: "169"
-  task: delete
-  party_type: Role
-permissions_597: 
-  party_id: "3"
-  card_id: "298"
-  id: "597"
-  task: read
-  party_type: Role
-permissions_600: 
-  party_id: "3"
-  card_id: "299"
-  id: "600"
-  task: read
-  party_type: Role
-permissions_598: 
-  party_id: "2"
-  card_id: "299"
-  id: "598"
-  task: delete
-  party_type: Role
-permissions_410: 
-  party_id: "1"
-  card_id: "44"
-  id: "410"
-  task: delete
-  party_type: Role
-permissions_220: 
-  party_id: "1"
-  card_id: "61"
-  id: "220"
-  task: edit
-  party_type: Role
-permissions_030: 
-  party_id: "1"
-  card_id: "115"
-  id: "30"
-  task: delete
-  party_type: Role
-permissions_601: 
-  party_id: "2"
-  card_id: "300"
-  id: "601"
-  task: delete
-  party_type: Role
-permissions_599: 
-  party_id: "2"
-  card_id: "299"
-  id: "599"
-  task: edit
-  party_type: Role
-permissions_411: 
-  party_id: "3"
-  card_id: "44"
-  id: "411"
-  task: read
-  party_type: Role
-permissions_221: 
-  party_id: "1"
-  card_id: "61"
-  id: "221"
-  task: delete
-  party_type: Role
-permissions_031: 
-  party_id: "3"
-  card_id: "115"
-  id: "31"
-  task: read
-  party_type: Role
-permissions_602: 
-  party_id: "2"
-  card_id: "300"
-  id: "602"
-  task: edit
-  party_type: Role
-permissions_412: 
-  party_id: "1"
-  card_id: "79"
-  id: "412"
-  task: edit
-  party_type: Role
-permissions_222: 
-  party_id: "3"
-  card_id: "61"
-  id: "222"
-  task: read
-  party_type: Role
-permissions_032: 
-  party_id: "2"
-  card_id: "130"
-  id: "32"
-  task: edit
-  party_type: Role
-permissions_650: 
-  party_id: "2"
-  card_id: "316"
-  id: "650"
-  task: edit
-  party_type: Role
-permissions_603: 
-  party_id: "3"
-  card_id: "300"
-  id: "603"
-  task: read
-  party_type: Role
-permissions_460: 
-  party_id: "1"
-  card_id: "220"
-  id: "460"
-  task: delete
-  party_type: Role
-permissions_413: 
-  party_id: "1"
-  card_id: "79"
-  id: "413"
-  task: delete
-  party_type: Role
-permissions_270: 
-  party_id: "2"
-  card_id: "69"
-  id: "270"
-  task: edit
-  party_type: Role
-permissions_080: 
-  party_id: "3"
-  card_id: "46"
-  id: "80"
-  task: read
-  party_type: Role
-permissions_223: 
-  party_id: "2"
-  card_id: "5"
-  id: "223"
-  task: edit
-  party_type: Role
-permissions_033: 
-  party_id: "2"
-  card_id: "130"
-  id: "33"
-  task: delete
-  party_type: Role
-permissions_651: 
-  party_id: "3"
-  card_id: "316"
-  id: "651"
-  task: read
-  party_type: Role
-permissions_604: 
-  party_id: "2"
-  card_id: "301"
-  id: "604"
-  task: delete
-  party_type: Role
-permissions_461: 
-  party_id: "3"
-  card_id: "220"
-  id: "461"
-  task: read
-  party_type: Role
-permissions_414: 
-  party_id: "3"
-  card_id: "79"
-  id: "414"
-  task: read
-  party_type: Role
-permissions_271: 
-  party_id: "2"
-  card_id: "69"
-  id: "271"
-  task: delete
-  party_type: Role
-permissions_081: 
-  party_id: "1"
-  card_id: "253"
-  id: "81"
-  task: edit
-  party_type: Role
-permissions_224: 
-  party_id: "2"
-  card_id: "5"
-  id: "224"
-  task: create
-  party_type: Role
-permissions_034: 
-  party_id: "3"
-  card_id: "130"
-  id: "34"
-  task: read
-  party_type: Role
-permissions_652: 
-  party_id: "2"
-  card_id: "316"
-  id: "652"
-  task: create
-  party_type: Role
-permissions_462: 
-  party_id: "2"
-  card_id: "109"
-  id: "462"
-  task: edit
-  party_type: Role
-permissions_415: 
-  party_id: "2"
-  card_id: "210"
-  id: "415"
-  task: edit
-  party_type: Role
-permissions_272: 
-  party_id: "3"
-  card_id: "69"
-  id: "272"
-  task: read
-  party_type: Role
-permissions_082: 
-  party_id: "1"
-  card_id: "253"
-  id: "82"
-  task: delete
-  party_type: Role
-permissions_225: 
-  party_id: "2"
-  card_id: "5"
-  id: "225"
-  task: delete
-  party_type: Role
-permissions_035: 
-  party_id: "1"
-  card_id: "252"
-  id: "35"
-  task: edit
-  party_type: Role
-permissions_653: 
-  party_id: "2"
-  card_id: "317"
-  id: "653"
-  task: delete
-  party_type: Role
-permissions_605: 
-  party_id: "2"
-  card_id: "301"
-  id: "605"
-  task: edit
-  party_type: Role
-permissions_463: 
-  party_id: "2"
-  card_id: "109"
-  id: "463"
-  task: delete
-  party_type: Role
-permissions_416: 
-  party_id: "2"
-  card_id: "210"
-  id: "416"
-  task: delete
-  party_type: Role
-permissions_273: 
-  party_id: "1"
-  card_id: "95"
-  id: "273"
-  task: edit
-  party_type: Role
-permissions_083: 
-  party_id: "3"
-  card_id: "253"
-  id: "83"
-  task: read
-  party_type: Role
-permissions_226: 
-  party_id: "3"
-  card_id: "5"
-  id: "226"
-  task: read
-  party_type: Role
-permissions_036: 
-  party_id: "1"
-  card_id: "252"
-  id: "36"
-  task: delete
-  party_type: Role
-permissions_654: 
-  party_id: "2"
-  card_id: "317"
-  id: "654"
-  task: edit
-  party_type: Role
-permissions_606: 
-  party_id: "3"
-  card_id: "301"
-  id: "606"
-  task: read
-  party_type: Role
-permissions_464: 
-  party_id: "3"
-  card_id: "109"
-  id: "464"
-  task: read
-  party_type: Role
-permissions_417: 
-  party_id: "3"
-  card_id: "210"
-  id: "417"
-  task: read
-  party_type: Role
-permissions_274: 
-  party_id: "1"
-  card_id: "95"
-  id: "274"
-  task: delete
-  party_type: Role
-permissions_084: 
-  party_id: "2"
-  card_id: "199"
-  id: "84"
-  task: edit
-  party_type: Role
-permissions_227: 
-  party_id: "2"
-  card_id: "180"
-  id: "227"
-  task: edit
-  party_type: Role
-permissions_037: 
-  party_id: "3"
-  card_id: "252"
-  id: "37"
-  task: read
-  party_type: Role
-permissions_655: 
-  party_id: "3"
-  card_id: "317"
-  id: "655"
-  task: read
-  party_type: Role
-permissions_607: 
-  party_id: "2"
-  card_id: "302"
-  id: "607"
-  task: delete
-  party_type: Role
-permissions_465: 
-  party_id: "2"
-  card_id: "146"
-  id: "465"
-  task: edit
-  party_type: Role
-permissions_275: 
-  party_id: "3"
-  card_id: "95"
-  id: "275"
-  task: read
-  party_type: Role
-permissions_085: 
-  party_id: "2"
-  card_id: "199"
-  id: "85"
-  task: delete
-  party_type: Role
-permissions_228: 
-  party_id: "2"
-  card_id: "180"
-  id: "228"
-  task: delete
-  party_type: Role
-permissions_038: 
-  party_id: "2"
-  card_id: "217"
-  id: "38"
-  task: edit
-  party_type: Role
-permissions_656: 
-  party_id: "2"
-  card_id: "318"
-  id: "657"
-  task: delete
-  party_type: Role
-permissions_608: 
-  party_id: "2"
-  card_id: "302"
-  id: "608"
-  task: edit
-  party_type: Role
-permissions_466: 
-  party_id: "2"
-  card_id: "146"
-  id: "466"
-  task: delete
-  party_type: Role
-permissions_418: 
-  party_id: "1"
-  card_id: "66"
-  id: "418"
-  task: edit
-  party_type: Role
-permissions_276: 
-  party_id: "1"
-  card_id: "137"
-  id: "276"
-  task: edit
-  party_type: Role
-permissions_086: 
-  party_id: "3"
-  card_id: "199"
-  id: "86"
-  task: read
-  party_type: Role
-permissions_229: 
-  party_id: "3"
-  card_id: "180"
-  id: "229"
-  task: read
-  party_type: Role
-permissions_039: 
-  party_id: "2"
-  card_id: "217"
-  id: "39"
-  task: delete
-  party_type: Role
-permissions_657: 
-  party_id: "2"
-  card_id: "318"
-  id: "658"
-  task: edit
-  party_type: Role
-permissions_609: 
-  party_id: "3"
-  card_id: "302"
-  id: "609"
-  task: read
-  party_type: Role
-permissions_467: 
-  party_id: "3"
-  card_id: "146"
-  id: "467"
-  task: read
-  party_type: Role
-permissions_419: 
-  party_id: "1"
-  card_id: "66"
-  id: "419"
-  task: delete
-  party_type: Role
-permissions_277: 
-  party_id: "1"
-  card_id: "137"
-  id: "277"
-  task: delete
-  party_type: Role
-permissions_087: 
-  party_id: "1"
-  card_id: "223"
-  id: "87"
-  task: edit
-  party_type: Role
-permissions_658: 
-  party_id: "3"
-  card_id: "318"
-  id: "659"
-  task: read
-  party_type: Role
-permissions_468: 
-  party_id: "2"
-  card_id: "256"
-  id: "468"
-  task: delete
-  party_type: Role
-permissions_278: 
-  party_id: "3"
-  card_id: "137"
-  id: "278"
-  task: read
-  party_type: Role
-permissions_088: 
-  party_id: "1"
-  card_id: "223"
-  id: "88"
-  task: delete
-  party_type: Role
-permissions_659: 
-  party_id: "2"
-  card_id: "318"
-  id: "660"
-  task: create
-  party_type: Role
-permissions_469: 
-  party_id: "2"
-  card_id: "256"
-  id: "469"
-  task: edit
-  party_type: Role
-permissions_279: 
-  party_id: "2"
-  card_id: "131"
-  id: "279"
-  task: edit
-  party_type: Role
-permissions_089: 
-  party_id: "3"
-  card_id: "223"
-  id: "89"
-  task: read
-  party_type: Role
-permissions_710: 
-  party_id: "2"
-  card_id: "334"
-  id: "711"
-  task: edit
-  party_type: Role
-permissions_520: 
-  party_id: "2"
-  card_id: "273"
-  id: "520"
-  task: edit
-  party_type: Role
-permissions_330: 
-  party_id: "3"
-  card_id: "212"
-  id: "330"
-  task: read
-  party_type: Role
-permissions_140: 
-  party_id: "2"
-  card_id: "7"
-  id: "140"
-  task: edit
-  party_type: Role
-permissions_711: 
-  party_id: "3"
-  card_id: "334"
-  id: "712"
-  task: read
-  party_type: Role
-permissions_521: 
-  party_id: "3"
-  card_id: "273"
-  id: "521"
-  task: read
-  party_type: Role
-permissions_331: 
-  party_id: "1"
-  card_id: "97"
-  id: "331"
-  task: edit
-  party_type: Role
-permissions_141: 
-  party_id: "1"
-  card_id: "7"
-  id: "141"
-  task: create
-  party_type: Role
-permissions_712: 
-  party_id: "2"
-  card_id: 
-  id: "656"
-  task: create
-  party_type: Role
-permissions_522: 
-  party_id: "2"
-  card_id: "274"
-  id: "522"
-  task: delete
-  party_type: Role
-permissions_332: 
-  party_id: "1"
-  card_id: "97"
-  id: "332"
-  task: delete
-  party_type: Role
-permissions_142: 
-  party_id: "2"
-  card_id: "7"
-  id: "142"
-  task: delete
-  party_type: Role
-permissions_713: 
-  party_id: "5"
-  card_id: "317"
-  id: "713"
-  task: create
-  party_type: Role
 permissions_570: 
-  party_id: "3"
-  card_id: "289"
+  card_id: "290"
+  task: read
   id: "570"
-  task: read
   party_type: Role
-permissions_523: 
-  party_id: "2"
-  card_id: "274"
-  id: "523"
-  task: edit
-  party_type: Role
-permissions_380: 
-  party_id: "2"
-  card_id: "185"
-  id: "380"
-  task: edit
-  party_type: Role
-permissions_190: 
-  party_id: "1"
-  card_id: "34"
-  id: "190"
-  task: edit
-  party_type: Role
-permissions_333: 
   party_id: "3"
-  card_id: "97"
-  id: "333"
-  task: read
-  party_type: Role
-permissions_143: 
-  party_id: "3"
-  card_id: "7"
-  id: "143"
-  task: read
-  party_type: Role
-permissions_714: 
-  party_id: "2"
-  card_id: "335"
-  id: "714"
-  task: delete
-  party_type: Role
 permissions_571: 
-  party_id: "2"
-  card_id: "290"
+  card_id: "291"
+  task: delete
   id: "571"
-  task: delete
   party_type: Role
-permissions_524: 
-  party_id: "3"
-  card_id: "274"
-  id: "524"
-  task: read
-  party_type: Role
-permissions_381: 
   party_id: "2"
-  card_id: "185"
-  id: "381"
-  task: delete
+permissions_308: 
+  card_id: "263"
+  task: edit
+  id: "308"
   party_type: Role
-permissions_191: 
   party_id: "1"
-  card_id: "34"
-  id: "191"
-  task: delete
-  party_type: Role
-permissions_334: 
-  party_id: "2"
-  card_id: "88"
-  id: "334"
-  task: edit
-  party_type: Role
-permissions_144: 
-  party_id: "2"
-  card_id: "8"
-  id: "144"
-  task: edit
-  party_type: Role
-permissions_572: 
-  party_id: "2"
-  card_id: "290"
-  id: "572"
-  task: edit
-  party_type: Role
-permissions_525: 
-  party_id: "2"
-  card_id: "274"
-  id: "525"
-  task: create
-  party_type: Role
-permissions_382: 
-  party_id: "3"
-  card_id: "185"
-  id: "382"
-  task: read
-  party_type: Role
-permissions_192: 
-  party_id: "3"
-  card_id: "34"
-  id: "192"
-  task: read
-  party_type: Role
-permissions_335: 
-  party_id: "2"
-  card_id: "88"
-  id: "335"
-  task: delete
-  party_type: Role
-permissions_145: 
-  party_id: "2"
-  card_id: "8"
-  id: "145"
-  task: delete
-  party_type: Role
-permissions_715: 
-  party_id: "2"
-  card_id: "335"
-  id: "715"
-  task: edit
-  party_type: Role
-permissions_573: 
-  party_id: "3"
-  card_id: "290"
-  id: "573"
-  task: read
-  party_type: Role
-permissions_526: 
-  party_id: "2"
-  card_id: "275"
-  id: "526"
-  task: delete
-  party_type: Role
-permissions_383: 
-  party_id: "1"
-  card_id: "169"
-  id: "383"
-  task: edit
-  party_type: Role
-permissions_193: 
-  party_id: "1"
-  card_id: "241"
-  id: "193"
-  task: edit
-  party_type: Role
-permissions_336: 
-  party_id: "3"
-  card_id: "88"
-  id: "336"
-  task: read
-  party_type: Role
-permissions_146: 
-  party_id: "3"
-  card_id: "8"
-  id: "146"
-  task: read
-  party_type: Role
-permissions_716: 
-  party_id: "3"
-  card_id: "335"
-  id: "716"
-  task: read
-  party_type: Role
-permissions_574: 
-  party_id: "2"
-  card_id: "291"
-  id: "574"
-  task: delete
-  party_type: Role
-permissions_527: 
-  party_id: "2"
-  card_id: "275"
-  id: "527"
-  task: edit
-  party_type: Role
-permissions_384: 
-  party_id: "1"
-  card_id: "169"
-  id: "384"
-  task: delete
-  party_type: Role
-permissions_194: 
-  party_id: "1"
-  card_id: "241"
-  id: "194"
-  task: delete
-  party_type: Role
-permissions_337: 
-  party_id: "2"
-  card_id: "200"
-  id: "337"
-  task: edit
-  party_type: Role
-permissions_147: 
-  party_id: "2"
-  card_id: "128"
-  id: "147"
-  task: edit
-  party_type: Role
-permissions_717: 
-  party_id: "2"
-  card_id: "335"
-  id: "717"
-  task: create
-  party_type: Role
-permissions_575: 
-  party_id: "2"
-  card_id: "291"
-  id: "575"
-  task: edit
-  party_type: Role
-permissions_385: 
-  party_id: "3"
-  card_id: "169"
-  id: "385"
-  task: read
-  party_type: Role
-permissions_195: 
-  party_id: "3"
-  card_id: "241"
-  id: "195"
-  task: read
-  party_type: Role
-permissions_338: 
-  party_id: "2"
-  card_id: "200"
-  id: "338"
-  task: delete
-  party_type: Role
-permissions_148: 
-  party_id: "2"
-  card_id: "128"
-  id: "148"
-  task: delete
-  party_type: Role
-permissions_718: 
-  party_id: "2"
-  card_id: "336"
-  id: "718"
-  task: delete
-  party_type: Role
-permissions_576: 
-  party_id: "3"
-  card_id: "291"
-  id: "576"
-  task: read
-  party_type: Role
-permissions_528: 
-  party_id: "3"
-  card_id: "275"
-  id: "528"
-  task: read
-  party_type: Role
-permissions_386: 
-  party_id: "1"
-  card_id: "254"
-  id: "386"
-  task: edit
-  party_type: Role
-permissions_196: 
-  party_id: "1"
-  card_id: "86"
-  id: "196"
-  task: edit
-  party_type: Role
-permissions_339: 
-  party_id: "3"
-  card_id: "200"
-  id: "339"
-  task: read
-  party_type: Role
-permissions_149: 
-  party_id: "3"
-  card_id: "128"
-  id: "149"
-  task: read
-  party_type: Role
-permissions_719: 
-  party_id: "2"
-  card_id: "336"
-  id: "719"
-  task: edit
-  party_type: Role
-permissions_577: 
-  party_id: "2"
-  card_id: "292"
-  id: "577"
-  task: delete
-  party_type: Role
-permissions_529: 
-  party_id: "2"
-  card_id: "276"
-  id: "529"
-  task: delete
-  party_type: Role
-permissions_387: 
-  party_id: "1"
-  card_id: "254"
-  id: "387"
-  task: delete
-  party_type: Role
-permissions_197: 
-  party_id: "1"
-  card_id: "86"
-  id: "197"
-  task: delete
-  party_type: Role
-permissions_578: 
-  party_id: "2"
-  card_id: "292"
-  id: "578"
-  task: edit
-  party_type: Role
-permissions_200: 
-  party_id: "1"
-  card_id: "246"
-  id: "200"
-  task: delete
-  party_type: Role
-permissions_010: 
-  party_id: "3"
-  card_id: "96"
-  id: "10"
-  task: read
-  party_type: Role
-permissions_388: 
-  party_id: "3"
-  card_id: "254"
-  id: "388"
-  task: read
-  party_type: Role
-permissions_198: 
-  party_id: "3"
-  card_id: "86"
-  id: "198"
-  task: read
-  party_type: Role
-permissions_579: 
-  party_id: "3"
-  card_id: "292"
-  id: "579"
-  task: read
-  party_type: Role
-permissions_201: 
-  party_id: "3"
-  card_id: "246"
-  id: "201"
-  task: read
-  party_type: Role
-permissions_011: 
-  party_id: "1"
-  card_id: "119"
-  id: "11"
-  task: edit
-  party_type: Role
-permissions_389: 
-  party_id: "2"
-  card_id: "15"
-  id: "389"
-  task: edit
-  party_type: Role
-permissions_199: 
-  party_id: "1"
-  card_id: "246"
-  id: "199"
-  task: edit
-  party_type: Role
-permissions_202: 
-  party_id: "2"
-  card_id: "158"
-  id: "202"
-  task: edit
-  party_type: Role
-permissions_012: 
-  party_id: "1"
-  card_id: "119"
-  id: "12"
-  task: delete
-  party_type: Role
-permissions_630: 
-  party_id: "3"
-  card_id: "309"
-  id: "630"
-  task: read
-  party_type: Role
 permissions_440: 
-  party_id: "1"
-  card_id: "116"
+  card_id: "43"
+  task: edit
   id: "440"
+  party_type: Role
+  party_id: "1"
+permissions_572: 
+  card_id: "291"
   task: edit
+  id: "572"
   party_type: Role
-permissions_203: 
   party_id: "2"
-  card_id: "158"
-  id: "203"
-  task: delete
-  party_type: Role
-permissions_013: 
-  party_id: "3"
-  card_id: "119"
-  id: "13"
+permissions_309: 
+  card_id: "263"
   task: read
+  id: "309"
   party_type: Role
-permissions_250: 
-  party_id: "1"
-  card_id: "62"
-  id: "250"
-  task: delete
-  party_type: Role
-permissions_060: 
-  party_id: "1"
-  card_id: "111"
-  id: "60"
-  task: edit
-  party_type: Role
-permissions_631: 
-  party_id: "2"
-  card_id: "310"
-  id: "631"
-  task: delete
-  party_type: Role
+  party_id: "3"
 permissions_441: 
-  party_id: "1"
-  card_id: "116"
+  card_id: "43"
+  task: read
   id: "441"
-  task: delete
   party_type: Role
-permissions_204: 
   party_id: "3"
-  card_id: "158"
-  id: "204"
+permissions_573: 
+  card_id: "291"
   task: read
+  id: "573"
   party_type: Role
-permissions_014: 
-  party_id: "1"
-  card_id: "100"
-  id: "14"
-  task: edit
-  party_type: Role
-permissions_251: 
   party_id: "3"
-  card_id: "62"
-  id: "251"
-  task: read
-  party_type: Role
-permissions_061: 
-  party_id: "1"
-  card_id: "111"
-  id: "61"
-  task: delete
-  party_type: Role
-permissions_632: 
-  party_id: "2"
-  card_id: "310"
-  id: "632"
-  task: edit
-  party_type: Role
-permissions_442: 
-  party_id: "3"
-  card_id: "116"
-  id: "442"
-  task: read
-  party_type: Role
-permissions_205: 
-  party_id: "1"
-  card_id: "92"
-  id: "205"
-  task: edit
-  party_type: Role
-permissions_015: 
-  party_id: "1"
-  card_id: "100"
-  id: "15"
-  task: delete
-  party_type: Role
-permissions_252: 
-  party_id: "2"
-  card_id: "129"
-  id: "252"
-  task: edit
-  party_type: Role
-permissions_062: 
-  party_id: "3"
-  card_id: "111"
-  id: "62"
-  task: read
-  party_type: Role
-permissions_680: 
-  party_id: "3"
-  card_id: "324"
-  id: "681"
-  task: read
-  party_type: Role
-permissions_633: 
-  party_id: "3"
-  card_id: "310"
-  id: "633"
-  task: read
-  party_type: Role
-permissions_490: 
-  party_id: "2"
-  card_id: "263"
-  id: "490"
-  task: edit
-  party_type: Role
-permissions_443: 
-  party_id: "2"
-  card_id: "47"
-  id: "443"
-  task: edit
-  party_type: Role
-permissions_206: 
-  party_id: "1"
-  card_id: "92"
-  id: "206"
-  task: delete
-  party_type: Role
-permissions_016: 
-  party_id: "3"
-  card_id: "100"
-  id: "16"
-  task: read
-  party_type: Role
-permissions_253: 
-  party_id: "2"
-  card_id: "129"
-  id: "253"
-  task: delete
-  party_type: Role
-permissions_063: 
-  party_id: "1"
-  card_id: "89"
-  id: "63"
-  task: edit
-  party_type: Role
-permissions_681: 
-  party_id: "2"
-  card_id: "325"
-  id: "682"
-  task: delete
-  party_type: Role
-permissions_634: 
-  party_id: "2"
-  card_id: "311"
-  id: "634"
-  task: delete
-  party_type: Role
-permissions_491: 
-  party_id: "3"
-  card_id: "263"
-  id: "491"
-  task: read
-  party_type: Role
-permissions_444: 
-  party_id: "2"
-  card_id: "47"
-  id: "444"
-  task: create
-  party_type: Role
-permissions_207: 
-  party_id: "3"
-  card_id: "92"
-  id: "207"
-  task: read
-  party_type: Role
-permissions_017: 
-  party_id: "1"
-  card_id: "83"
-  id: "17"
-  task: edit
-  party_type: Role
-permissions_254: 
-  party_id: "3"
-  card_id: "129"
-  id: "254"
-  task: read
-  party_type: Role
-permissions_064: 
-  party_id: "1"
-  card_id: "89"
-  id: "64"
-  task: delete
-  party_type: Role
-permissions_682: 
-  party_id: "2"
-  card_id: "325"
-  id: "683"
-  task: edit
-  party_type: Role
-permissions_635: 
-  party_id: "2"
-  card_id: "311"
-  id: "635"
-  task: edit
-  party_type: Role
-permissions_492: 
-  party_id: "2"
-  card_id: "264"
-  id: "492"
-  task: delete
-  party_type: Role
-permissions_445: 
-  party_id: "2"
-  card_id: "47"
-  id: "445"
-  task: delete
-  party_type: Role
-permissions_208: 
-  party_id: "2"
-  card_id: "214"
-  id: "208"
-  task: edit
-  party_type: Role
-permissions_018: 
-  party_id: "1"
-  card_id: "83"
-  id: "18"
-  task: delete
-  party_type: Role
-permissions_255: 
-  party_id: "1"
-  card_id: "170"
-  id: "255"
-  task: edit
-  party_type: Role
-permissions_065: 
-  party_id: "3"
-  card_id: "89"
-  id: "65"
-  task: read
-  party_type: Role
-permissions_683: 
-  party_id: "3"
-  card_id: "325"
-  id: "684"
-  task: read
-  party_type: Role
-permissions_636: 
-  party_id: "3"
-  card_id: "311"
-  id: "636"
-  task: read
-  party_type: Role
-permissions_493: 
-  party_id: "2"
-  card_id: "264"
-  id: "493"
-  task: edit
-  party_type: Role
-permissions_446: 
-  party_id: "3"
-  card_id: "47"
-  id: "446"
-  task: read
-  party_type: Role
-permissions_019: 
-  party_id: "3"
-  card_id: "83"
-  id: "19"
-  task: read
-  party_type: Role
-permissions_256: 
-  party_id: "1"
-  card_id: "170"
-  id: "256"
-  task: delete
-  party_type: Role
-permissions_066: 
-  party_id: "2"
-  card_id: "209"
-  id: "66"
-  task: edit
-  party_type: Role
-permissions_684: 
-  party_id: "2"
-  card_id: "326"
-  id: "685"
-  task: delete
-  party_type: Role
-permissions_637: 
-  party_id: "2"
-  card_id: "312"
-  id: "637"
-  task: delete
-  party_type: Role
-permissions_494: 
-  party_id: "3"
-  card_id: "264"
-  id: "494"
-  task: read
-  party_type: Role
-permissions_447: 
-  party_id: "1"
-  card_id: "37"
-  id: "447"
-  task: edit
-  party_type: Role
-permissions_209: 
-  party_id: "2"
-  card_id: "214"
-  id: "209"
-  task: delete
-  party_type: Role
-permissions_257: 
-  party_id: "3"
-  card_id: "170"
-  id: "257"
-  task: read
-  party_type: Role
-permissions_067: 
-  party_id: "2"
-  card_id: "209"
-  id: "67"
-  task: delete
-  party_type: Role
-permissions_685: 
-  party_id: "2"
-  card_id: "326"
-  id: "686"
-  task: edit
-  party_type: Role
-permissions_495: 
-  party_id: "2"
-  card_id: "265"
-  id: "495"
-  task: delete
-  party_type: Role
-permissions_448: 
-  party_id: "1"
-  card_id: "37"
-  id: "448"
-  task: delete
-  party_type: Role
-permissions_258: 
-  party_id: "2"
-  card_id: "202"
-  id: "258"
-  task: edit
-  party_type: Role
-permissions_068: 
-  party_id: "3"
-  card_id: "209"
-  id: "68"
-  task: read
-  party_type: Role
-permissions_686: 
-  party_id: "3"
-  card_id: "326"
-  id: "687"
-  task: read
-  party_type: Role
-permissions_638: 
-  party_id: "2"
-  card_id: "312"
-  id: "638"
-  task: edit
-  party_type: Role
-permissions_496: 
-  party_id: "2"
-  card_id: "265"
-  id: "496"
-  task: edit
-  party_type: Role
-permissions_449: 
-  party_id: "3"
-  card_id: "37"
-  id: "449"
-  task: read
-  party_type: Role
-permissions_259: 
-  party_id: "2"
-  card_id: "202"
-  id: "259"
-  task: delete
-  party_type: Role
-permissions_069: 
-  party_id: "1"
-  card_id: "49"
-  id: "69"
-  task: edit
-  party_type: Role
-permissions_687: 
-  party_id: "2"
-  card_id: "327"
-  id: "688"
-  task: delete
-  party_type: Role
-permissions_639: 
-  party_id: "3"
-  card_id: "312"
-  id: "639"
-  task: read
-  party_type: Role
-permissions_497: 
-  party_id: "3"
-  card_id: "265"
-  id: "497"
-  task: read
-  party_type: Role
-permissions_688: 
-  party_id: "2"
-  card_id: "327"
-  id: "689"
-  task: edit
-  party_type: Role
-permissions_500: 
-  party_id: "3"
-  card_id: "266"
-  id: "500"
-  task: read
-  party_type: Role
-permissions_498: 
-  party_id: "2"
-  card_id: "266"
-  id: "498"
-  task: delete
-  party_type: Role
 permissions_310: 
-  party_id: "3"
-  card_id: "40"
-  id: "310"
-  task: read
-  party_type: Role
-permissions_120: 
-  party_id: "3"
-  card_id: "182"
-  id: "120"
-  task: read
-  party_type: Role
-permissions_689: 
-  party_id: "3"
-  card_id: "327"
-  id: "690"
-  task: read
-  party_type: Role
-permissions_501: 
-  party_id: "2"
-  card_id: "267"
-  id: "501"
-  task: delete
-  party_type: Role
-permissions_499: 
-  party_id: "2"
-  card_id: "266"
-  id: "499"
-  task: edit
-  party_type: Role
-permissions_311: 
-  party_id: "1"
-  card_id: "103"
-  id: "311"
-  task: edit
-  party_type: Role
-permissions_121: 
-  party_id: "1"
-  card_id: "53"
-  id: "121"
-  task: edit
-  party_type: Role
-permissions_502: 
-  party_id: "2"
-  card_id: "267"
-  id: "502"
-  task: edit
-  party_type: Role
-permissions_312: 
-  party_id: "1"
-  card_id: "103"
-  id: "312"
-  task: delete
-  party_type: Role
-permissions_122: 
-  party_id: "1"
-  card_id: "53"
-  id: "122"
-  task: delete
-  party_type: Role
-permissions_550: 
-  party_id: "2"
-  card_id: "283"
-  id: "550"
-  task: delete
-  party_type: Role
-permissions_503: 
-  party_id: "3"
-  card_id: "267"
-  id: "503"
-  task: read
-  party_type: Role
-permissions_313: 
-  party_id: "3"
-  card_id: "103"
-  id: "313"
-  task: read
-  party_type: Role
-permissions_123: 
-  party_id: "3"
-  card_id: "53"
-  id: "123"
-  task: read
-  party_type: Role
-permissions_360: 
-  party_id: "1"
-  card_id: "168"
-  id: "360"
-  task: delete
-  party_type: Role
-permissions_170: 
-  party_id: "3"
-  card_id: "99"
-  id: "170"
-  task: read
-  party_type: Role
-permissions_551: 
-  party_id: "2"
-  card_id: "283"
-  id: "551"
-  task: edit
-  party_type: Role
-permissions_504: 
-  party_id: "2"
-  card_id: "268"
-  id: "504"
-  task: delete
-  party_type: Role
-permissions_314: 
-  party_id: "1"
-  card_id: "82"
-  id: "314"
-  task: edit
-  party_type: Role
-permissions_124: 
-  party_id: "1"
-  card_id: "91"
-  id: "124"
-  task: edit
-  party_type: Role
-permissions_361: 
-  party_id: "3"
-  card_id: "168"
-  id: "361"
-  task: read
-  party_type: Role
-permissions_171: 
-  party_id: "1"
-  card_id: "45"
-  id: "171"
-  task: edit
-  party_type: Role
-permissions_552: 
-  party_id: "3"
-  card_id: "283"
-  id: "552"
-  task: read
-  party_type: Role
-permissions_505: 
-  party_id: "2"
-  card_id: "268"
-  id: "505"
-  task: edit
-  party_type: Role
-permissions_315: 
-  party_id: "1"
-  card_id: "82"
-  id: "315"
-  task: delete
-  party_type: Role
-permissions_125: 
-  party_id: "1"
-  card_id: "91"
-  id: "125"
-  task: delete
-  party_type: Role
-permissions_362: 
-  party_id: "2"
-  card_id: "10"
-  id: "362"
-  task: edit
-  party_type: Role
-permissions_172: 
-  party_id: "1"
-  card_id: "45"
-  id: "172"
-  task: delete
-  party_type: Role
-permissions_553: 
-  party_id: "2"
-  card_id: "284"
-  id: "553"
-  task: delete
-  party_type: Role
-permissions_316: 
-  party_id: "3"
-  card_id: "82"
-  id: "316"
-  task: read
-  party_type: Role
-permissions_126: 
-  party_id: "3"
-  card_id: "91"
-  id: "126"
-  task: read
-  party_type: Role
-permissions_363: 
-  party_id: "2"
-  card_id: "10"
-  id: "363"
-  task: delete
-  party_type: Role
-permissions_173: 
-  party_id: "3"
-  card_id: "45"
-  id: "173"
-  task: read
-  party_type: Role
-permissions_554: 
-  party_id: "2"
-  card_id: "284"
-  id: "554"
-  task: edit
-  party_type: Role
-permissions_506: 
-  party_id: "3"
-  card_id: "268"
-  id: "506"
-  task: read
-  party_type: Role
-permissions_317: 
-  party_id: "2"
-  card_id: "52"
-  id: "317"
-  task: edit
-  party_type: Role
-permissions_127: 
-  party_id: "2"
-  card_id: "207"
-  id: "127"
-  task: edit
-  party_type: Role
-permissions_364: 
-  party_id: "3"
-  card_id: "10"
-  id: "364"
-  task: read
-  party_type: Role
-permissions_174: 
-  party_id: "1"
-  card_id: "110"
-  id: "174"
-  task: edit
-  party_type: Role
-permissions_555: 
-  party_id: "3"
-  card_id: "284"
-  id: "555"
-  task: read
-  party_type: Role
-permissions_507: 
-  party_id: "2"
-  card_id: "269"
-  id: "507"
-  task: delete
-  party_type: Role
-permissions_318: 
-  party_id: "2"
-  card_id: "52"
-  id: "318"
-  task: create
-  party_type: Role
-permissions_128: 
-  party_id: "2"
-  card_id: "207"
-  id: "128"
-  task: delete
-  party_type: Role
-permissions_365: 
-  party_id: "2"
-  card_id: "178"
-  id: "365"
-  task: edit
-  party_type: Role
-permissions_175: 
-  party_id: "1"
-  card_id: "110"
-  id: "175"
-  task: delete
-  party_type: Role
-permissions_556: 
-  party_id: "2"
-  card_id: "285"
-  id: "556"
-  task: delete
-  party_type: Role
-permissions_508: 
-  party_id: "2"
-  card_id: "269"
-  id: "508"
-  task: edit
-  party_type: Role
-permissions_129: 
-  party_id: "3"
-  card_id: "207"
-  id: "129"
-  task: read
-  party_type: Role
-permissions_366: 
-  party_id: "2"
-  card_id: "178"
-  id: "366"
-  task: delete
-  party_type: Role
-permissions_176: 
-  party_id: "3"
-  card_id: "110"
-  id: "176"
-  task: read
-  party_type: Role
-permissions_557: 
-  party_id: "2"
-  card_id: "285"
-  id: "557"
-  task: edit
-  party_type: Role
-permissions_509: 
-  party_id: "3"
-  card_id: "269"
-  id: "509"
-  task: read
-  party_type: Role
-permissions_319: 
-  party_id: "2"
-  card_id: "52"
-  id: "319"
-  task: delete
-  party_type: Role
-permissions_367: 
-  party_id: "3"
-  card_id: "178"
-  id: "367"
-  task: read
-  party_type: Role
-permissions_177: 
-  party_id: "1"
-  card_id: "205"
-  id: "177"
-  task: edit
-  party_type: Role
-permissions_558: 
-  party_id: "3"
-  card_id: "285"
-  id: "558"
-  task: read
-  party_type: Role
-permissions_368: 
-  party_id: "1"
-  card_id: "35"
-  id: "368"
-  task: edit
-  party_type: Role
-permissions_178: 
-  party_id: "1"
-  card_id: "205"
-  id: "178"
-  task: delete
-  party_type: Role
-permissions_559: 
-  party_id: "2"
-  card_id: "286"
-  id: "559"
-  task: delete
-  party_type: Role
-permissions_369: 
-  party_id: "1"
-  card_id: "35"
-  id: "369"
-  task: delete
-  party_type: Role
-permissions_179: 
-  party_id: "3"
-  card_id: "205"
-  id: "179"
-  task: read
-  party_type: Role
-permissions_610: 
-  party_id: "2"
-  card_id: "303"
-  id: "610"
-  task: delete
-  party_type: Role
-permissions_420: 
-  party_id: "3"
-  card_id: "66"
-  id: "420"
-  task: read
-  party_type: Role
-permissions_230: 
-  party_id: "2"
-  card_id: "1"
-  id: "230"
-  task: edit
-  party_type: Role
-permissions_040: 
-  party_id: "3"
-  card_id: "217"
-  id: "40"
-  task: read
-  party_type: Role
-permissions_611: 
-  party_id: "2"
-  card_id: "303"
-  id: "611"
-  task: edit
-  party_type: Role
-permissions_421: 
-  party_id: "2"
-  card_id: "105"
-  id: "421"
-  task: edit
-  party_type: Role
-permissions_231: 
-  party_id: "2"
-  card_id: "1"
-  id: "231"
-  task: delete
-  party_type: Role
-permissions_041: 
-  party_id: "2"
-  card_id: "211"
-  id: "41"
-  task: edit
-  party_type: Role
-permissions_612: 
-  party_id: "3"
-  card_id: "303"
-  id: "612"
-  task: read
-  party_type: Role
-permissions_422: 
-  party_id: "2"
-  card_id: "105"
-  id: "422"
-  task: delete
-  party_type: Role
-permissions_232: 
-  party_id: "3"
-  card_id: "1"
-  id: "232"
-  task: read
-  party_type: Role
-permissions_042: 
-  party_id: "2"
-  card_id: "211"
-  id: "42"
-  task: delete
-  party_type: Role
-permissions_660: 
-  party_id: "2"
-  card_id: "319"
-  id: "661"
-  task: delete
-  party_type: Role
-permissions_613: 
-  party_id: "2"
-  card_id: "304"
-  id: "613"
-  task: delete
-  party_type: Role
-permissions_470: 
-  party_id: "3"
-  card_id: "256"
-  id: "470"
-  task: read
-  party_type: Role
-permissions_423: 
-  party_id: "3"
-  card_id: "105"
-  id: "423"
-  task: read
-  party_type: Role
-permissions_233: 
-  party_id: "2"
-  card_id: "213"
-  id: "233"
-  task: edit
-  party_type: Role
-permissions_043: 
-  party_id: "3"
-  card_id: "211"
-  id: "43"
-  task: read
-  party_type: Role
-permissions_280: 
-  party_id: "2"
   card_id: "131"
-  id: "280"
-  task: delete
-  party_type: Role
-permissions_090: 
-  party_id: "2"
-  card_id: "120"
-  id: "90"
-  task: edit
-  party_type: Role
-permissions_661: 
-  party_id: "2"
-  card_id: "319"
-  id: "662"
-  task: edit
-  party_type: Role
-permissions_614: 
-  party_id: "2"
-  card_id: "304"
-  id: "614"
-  task: edit
-  party_type: Role
-permissions_471: 
-  party_id: "2"
-  card_id: "257"
-  id: "471"
-  task: delete
-  party_type: Role
-permissions_424: 
-  party_id: "2"
-  card_id: "240"
-  id: "424"
-  task: edit
-  party_type: Role
-permissions_234: 
-  party_id: "2"
-  card_id: "213"
-  id: "234"
-  task: delete
-  party_type: Role
-permissions_044: 
-  party_id: "1"
-  card_id: "42"
-  id: "44"
-  task: edit
-  party_type: Role
-permissions_281: 
-  party_id: "3"
-  card_id: "131"
-  id: "281"
   task: comment
+  id: "310"
   party_type: Role
-permissions_091: 
-  party_id: "2"
-  card_id: "120"
-  id: "91"
+  party_id: "3"
+permissions_442: 
+  card_id: "128"
   task: delete
+  id: "442"
   party_type: Role
-permissions_662: 
-  party_id: "3"
-  card_id: "319"
-  id: "663"
-  task: read
-  party_type: Role
-permissions_615: 
-  party_id: "3"
-  card_id: "304"
-  id: "615"
-  task: read
-  party_type: Role
-permissions_472: 
   party_id: "2"
-  card_id: "257"
-  id: "472"
-  task: edit
+permissions_574: 
+  card_id: "292"
+  task: delete
+  id: "574"
   party_type: Role
-permissions_425: 
   party_id: "2"
-  card_id: "240"
-  id: "425"
-  task: delete
-  party_type: Role
-permissions_235: 
-  party_id: "3"
-  card_id: "213"
-  id: "235"
-  task: read
-  party_type: Role
-permissions_045: 
-  party_id: "1"
-  card_id: "42"
-  id: "45"
-  task: delete
-  party_type: Role
-permissions_282: 
-  party_id: "3"
+permissions_311: 
   card_id: "131"
-  id: "282"
-  task: read
-  party_type: Role
-permissions_092: 
-  party_id: "3"
-  card_id: "120"
-  id: "92"
-  task: read
-  party_type: Role
-permissions_663: 
-  party_id: "2"
-  card_id: "319"
-  id: "664"
-  task: create
-  party_type: Role
-permissions_473: 
-  party_id: "3"
-  card_id: "257"
-  id: "473"
-  task: read
-  party_type: Role
-permissions_426: 
-  party_id: "3"
-  card_id: "240"
-  id: "426"
-  task: read
-  party_type: Role
-permissions_236: 
-  party_id: "1"
-  card_id: "138"
-  id: "236"
-  task: edit
-  party_type: Role
-permissions_046: 
-  party_id: "3"
-  card_id: "42"
-  id: "46"
-  task: read
-  party_type: Role
-permissions_283: 
-  party_id: "1"
-  card_id: "198"
-  id: "283"
-  task: edit
-  party_type: Role
-permissions_093: 
-  party_id: "2"
-  card_id: "19"
-  id: "93"
-  task: edit
-  party_type: Role
-permissions_664: 
-  party_id: "2"
-  card_id: "320"
-  id: "665"
   task: delete
+  id: "311"
   party_type: Role
-permissions_616: 
   party_id: "2"
-  card_id: "305"
-  id: "616"
-  task: delete
-  party_type: Role
-permissions_474: 
-  party_id: "2"
-  card_id: "258"
-  id: "474"
-  task: delete
-  party_type: Role
-permissions_427: 
-  party_id: "2"
-  card_id: "219"
-  id: "427"
+permissions_443: 
+  card_id: "128"
   task: edit
+  id: "443"
   party_type: Role
-permissions_237: 
-  party_id: "1"
-  card_id: "138"
-  id: "237"
-  task: delete
-  party_type: Role
-permissions_047: 
   party_id: "2"
-  card_id: "216"
-  id: "47"
+permissions_575: 
+  card_id: "292"
   task: edit
+  id: "575"
   party_type: Role
-permissions_284: 
-  party_id: "1"
-  card_id: "198"
-  id: "284"
-  task: delete
-  party_type: Role
-permissions_094: 
   party_id: "2"
-  card_id: "19"
-  id: "94"
-  task: create
-  party_type: Role
-permissions_665: 
-  party_id: "2"
-  card_id: "320"
-  id: "666"
+permissions_312: 
+  card_id: "131"
   task: edit
+  id: "312"
   party_type: Role
-permissions_617: 
   party_id: "2"
-  card_id: "305"
-  id: "617"
-  task: edit
-  party_type: Role
-permissions_475: 
-  party_id: "2"
-  card_id: "258"
-  id: "475"
-  task: edit
-  party_type: Role
-permissions_428: 
-  party_id: "1"
-  card_id: "219"
-  id: "428"
-  task: delete
-  party_type: Role
-permissions_238: 
-  party_id: "3"
-  card_id: "138"
-  id: "238"
+permissions_444: 
+  card_id: "128"
   task: read
+  id: "444"
   party_type: Role
-permissions_048: 
-  party_id: "2"
-  card_id: "216"
-  id: "48"
-  task: delete
-  party_type: Role
-permissions_285: 
   party_id: "3"
-  card_id: "198"
-  id: "285"
+permissions_576: 
+  card_id: "292"
   task: read
+  id: "576"
   party_type: Role
-permissions_095: 
-  party_id: "2"
-  card_id: "19"
-  id: "95"
-  task: delete
-  party_type: Role
-permissions_666: 
   party_id: "3"
-  card_id: "320"
-  id: "667"
+permissions_313: 
+  card_id: "131"
   task: read
+  id: "313"
   party_type: Role
-permissions_618: 
   party_id: "3"
-  card_id: "305"
-  id: "618"
-  task: read
-  party_type: Role
-permissions_476: 
-  party_id: "3"
-  card_id: "258"
-  id: "476"
-  task: read
-  party_type: Role
-permissions_239: 
-  party_id: "2"
-  card_id: "80"
-  id: "239"
-  task: edit
-  party_type: Role
-permissions_049: 
-  party_id: "3"
-  card_id: "216"
-  id: "49"
-  task: read
-  party_type: Role
-permissions_286: 
-  party_id: "1"
-  card_id: "173"
-  id: "286"
-  task: edit
-  party_type: Role
-permissions_096: 
-  party_id: "3"
-  card_id: "19"
-  id: "96"
-  task: read
-  party_type: Role
-permissions_667: 
-  party_id: "2"
-  card_id: "320"
-  id: "668"
-  task: create
-  party_type: Role
-permissions_619: 
-  party_id: "2"
-  card_id: "306"
-  id: "619"
-  task: delete
-  party_type: Role
-permissions_477: 
-  party_id: "2"
-  card_id: "259"
-  id: "477"
-  task: delete
-  party_type: Role
-permissions_429: 
-  party_id: "3"
-  card_id: "219"
-  id: "429"
-  task: read
-  party_type: Role
-permissions_287: 
-  party_id: "1"
-  card_id: "173"
-  id: "287"
-  task: delete
-  party_type: Role
-permissions_097: 
-  party_id: "2"
-  card_id: "225"
-  id: "97"
-  task: edit
-  party_type: Role
-permissions_668: 
-  party_id: "2"
-  card_id: "321"
-  id: "669"
-  task: delete
-  party_type: Role
-permissions_478: 
-  party_id: "2"
-  card_id: "259"
-  id: "478"
-  task: edit
-  party_type: Role
-permissions_100: 
-  party_id: "2"
-  card_id: "208"
-  id: "100"
-  task: edit
-  party_type: Role
-permissions_288: 
-  party_id: "3"
-  card_id: "173"
-  id: "288"
-  task: read
-  party_type: Role
-permissions_098: 
-  party_id: "2"
-  card_id: "225"
-  id: "98"
-  task: delete
-  party_type: Role
-permissions_669: 
-  party_id: "2"
-  card_id: "321"
-  id: "670"
-  task: edit
-  party_type: Role
-permissions_479: 
-  party_id: "3"
-  card_id: "259"
-  id: "479"
-  task: read
-  party_type: Role
-permissions_101: 
-  party_id: "2"
-  card_id: "208"
-  id: "101"
-  task: delete
-  party_type: Role
-permissions_289: 
-  party_id: "2"
-  card_id: "51"
-  id: "289"
-  task: edit
-  party_type: Role
-permissions_099: 
-  party_id: "3"
-  card_id: "225"
-  id: "99"
-  task: read
-  party_type: Role
-permissions_102: 
-  party_id: "3"
-  card_id: "208"
-  id: "102"
-  task: read
-  party_type: Role
-permissions_720: 
-  party_id: "3"
-  card_id: "336"
-  id: "720"
-  task: read
-  party_type: Role
-permissions_530: 
-  party_id: "2"
+permissions_445: 
   card_id: "276"
-  id: "530"
-  task: edit
-  party_type: Role
-permissions_340: 
-  party_id: "2"
-  card_id: "190"
-  id: "340"
-  task: edit
-  party_type: Role
-permissions_150: 
-  party_id: "1"
-  card_id: "90"
-  id: "150"
-  task: edit
-  party_type: Role
-permissions_103: 
-  party_id: "1"
-  card_id: "248"
-  id: "103"
-  task: edit
-  party_type: Role
-permissions_721: 
-  party_id: "2"
-  card_id: "337"
-  id: "721"
   task: delete
+  id: "445"
   party_type: Role
-permissions_531: 
-  party_id: "3"
+  party_id: "1"
+permissions_577: 
+  card_id: "293"
+  task: delete
+  id: "577"
+  party_type: Role
+  party_id: "2"
+permissions_314: 
+  card_id: "1"
+  task: delete
+  id: "314"
+  party_type: Role
+  party_id: "2"
+permissions_446: 
   card_id: "276"
-  id: "531"
-  task: read
-  party_type: Role
-permissions_341: 
-  party_id: "2"
-  card_id: "190"
-  id: "341"
-  task: delete
-  party_type: Role
-permissions_151: 
-  party_id: "1"
-  card_id: "90"
-  id: "151"
-  task: delete
-  party_type: Role
-permissions_104: 
-  party_id: "1"
-  card_id: "248"
-  id: "104"
-  task: delete
-  party_type: Role
-permissions_722: 
-  party_id: "2"
-  card_id: "337"
-  id: "722"
   task: edit
+  id: "446"
   party_type: Role
-permissions_532: 
+  party_id: "1"
+permissions_578: 
+  card_id: "293"
+  task: edit
+  id: "578"
+  party_type: Role
   party_id: "2"
-  card_id: "277"
-  id: "532"
+permissions_315: 
+  card_id: "1"
+  task: edit
+  id: "315"
+  party_type: Role
+  party_id: "2"
+permissions_447: 
+  card_id: "276"
+  task: read
+  id: "447"
+  party_type: Role
+  party_id: "3"
+permissions_579: 
+  card_id: "293"
+  task: read
+  id: "579"
+  party_type: Role
+  party_id: "3"
+permissions_316: 
+  card_id: "1"
+  task: read
+  id: "316"
+  party_type: Role
+  party_id: "3"
+permissions_448: 
+  card_id: "180"
   task: delete
+  id: "448"
   party_type: Role
-permissions_342: 
-  party_id: "3"
-  card_id: "190"
-  id: "342"
-  task: read
+  party_id: "2"
+permissions_317: 
+  card_id: "261"
+  task: delete
+  id: "317"
   party_type: Role
-permissions_152: 
-  party_id: "3"
-  card_id: "90"
-  id: "152"
-  task: read
+  party_id: "1"
+permissions_449: 
+  card_id: "180"
+  task: edit
+  id: "449"
   party_type: Role
-permissions_105: 
-  party_id: "3"
-  card_id: "248"
-  id: "105"
-  task: read
-  party_type: Role
-permissions_723: 
-  party_id: "3"
-  card_id: "337"
-  id: "723"
-  task: read
-  party_type: Role
+  party_id: "2"
 permissions_580: 
-  party_id: "2"
-  card_id: "293"
+  card_id: "294"
+  task: delete
   id: "580"
-  task: delete
   party_type: Role
-permissions_533: 
   party_id: "2"
-  card_id: "277"
-  id: "533"
+permissions_318: 
+  card_id: "261"
   task: edit
+  id: "318"
   party_type: Role
-permissions_343: 
-  party_id: "2"
-  card_id: "255"
-  id: "343"
-  task: edit
-  party_type: Role
-permissions_153: 
   party_id: "1"
-  card_id: "118"
-  id: "153"
-  task: edit
-  party_type: Role
-permissions_106: 
-  party_id: "1"
-  card_id: "36"
-  id: "106"
-  task: edit
-  party_type: Role
-permissions_390: 
-  party_id: "2"
-  card_id: "15"
-  id: "390"
-  task: delete
-  party_type: Role
 permissions_581: 
-  party_id: "2"
-  card_id: "293"
+  card_id: "294"
+  task: edit
   id: "581"
-  task: edit
   party_type: Role
-permissions_534: 
-  party_id: "3"
-  card_id: "277"
-  id: "534"
-  task: read
-  party_type: Role
-permissions_344: 
   party_id: "2"
-  card_id: "255"
-  id: "344"
-  task: create
-  party_type: Role
-permissions_154: 
-  party_id: "1"
-  card_id: "118"
-  id: "154"
-  task: delete
-  party_type: Role
-permissions_107: 
-  party_id: "1"
-  card_id: "36"
-  id: "107"
-  task: delete
-  party_type: Role
-permissions_391: 
-  party_id: "3"
-  card_id: "15"
-  id: "391"
-  task: read
-  party_type: Role
-permissions_582: 
-  party_id: "3"
-  card_id: "293"
-  id: "582"
-  task: read
-  party_type: Role
-permissions_535: 
-  party_id: "2"
-  card_id: "278"
-  id: "535"
-  task: delete
-  party_type: Role
-permissions_345: 
-  party_id: "2"
-  card_id: "255"
-  id: "345"
-  task: delete
-  party_type: Role
-permissions_155: 
-  party_id: "3"
-  card_id: "118"
-  id: "155"
-  task: read
-  party_type: Role
-permissions_108: 
-  party_id: "3"
-  card_id: "36"
-  id: "108"
-  task: read
-  party_type: Role
-permissions_392: 
-  party_id: "2"
-  card_id: "22"
-  id: "392"
-  task: edit
-  party_type: Role
-permissions_583: 
-  party_id: "2"
-  card_id: "294"
-  id: "583"
-  task: delete
-  party_type: Role
-permissions_536: 
-  party_id: "2"
-  card_id: "278"
-  id: "536"
-  task: edit
-  party_type: Role
-permissions_346: 
-  party_id: "3"
-  card_id: "255"
-  id: "346"
-  task: read
-  party_type: Role
-permissions_156: 
-  party_id: "1"
-  card_id: "93"
-  id: "156"
-  task: edit
-  party_type: Role
-permissions_109: 
-  party_id: "1"
-  card_id: "122"
-  id: "109"
-  task: edit
-  party_type: Role
-permissions_393: 
-  party_id: "2"
-  card_id: "22"
-  id: "393"
-  task: create
-  party_type: Role
-permissions_584: 
-  party_id: "2"
-  card_id: "294"
-  id: "584"
-  task: edit
-  party_type: Role
-permissions_537: 
-  party_id: "3"
-  card_id: "278"
-  id: "537"
-  task: read
-  party_type: Role
-permissions_347: 
-  party_id: "2"
-  card_id: "215"
-  id: "347"
-  task: edit
-  party_type: Role
-permissions_157: 
-  party_id: "1"
-  card_id: "93"
-  id: "157"
-  task: delete
-  party_type: Role
-permissions_394: 
-  party_id: "2"
-  card_id: "22"
-  id: "394"
-  task: delete
-  party_type: Role
-permissions_585: 
-  party_id: "3"
-  card_id: "294"
-  id: "585"
-  task: read
-  party_type: Role
-permissions_538: 
-  party_id: "2"
-  card_id: "279"
-  id: "538"
-  task: delete
-  party_type: Role
-permissions_348: 
-  party_id: "2"
-  card_id: "215"
-  id: "348"
-  task: delete
-  party_type: Role
-permissions_158: 
-  party_id: "3"
-  card_id: "93"
-  id: "158"
-  task: read
-  party_type: Role
-permissions_395: 
-  party_id: "3"
-  card_id: "22"
-  id: "395"
-  task: read
-  party_type: Role
-permissions_586: 
-  party_id: "2"
-  card_id: "295"
-  id: "586"
-  task: delete
-  party_type: Role
-permissions_349: 
-  party_id: "3"
-  card_id: "215"
-  id: "349"
-  task: read
-  party_type: Role
-permissions_159: 
-  party_id: "2"
-  card_id: "101"
-  id: "159"
-  task: edit
-  party_type: Role
-permissions_396: 
-  party_id: "1"
-  card_id: "33"
-  id: "396"
-  task: edit
-  party_type: Role
-permissions_587: 
-  party_id: "2"
-  card_id: "295"
-  id: "587"
-  task: edit
-  party_type: Role
-permissions_539: 
-  party_id: "2"
-  card_id: "279"
-  id: "539"
-  task: edit
-  party_type: Role
-permissions_397: 
-  party_id: "1"
-  card_id: "33"
-  id: "397"
-  task: delete
-  party_type: Role
-permissions_588: 
-  party_id: "3"
-  card_id: "295"
-  id: "588"
-  task: read
-  party_type: Role
-permissions_400: 
-  party_id: "1"
-  card_id: "77"
-  id: "400"
-  task: delete
-  party_type: Role
-permissions_210: 
-  party_id: "3"
-  card_id: "214"
-  id: "210"
-  task: read
-  party_type: Role
-permissions_020: 
-  party_id: "1"
-  card_id: "63"
-  id: "20"
-  task: edit
-  party_type: Role
-permissions_398: 
-  party_id: "3"
-  card_id: "33"
-  id: "398"
-  task: read
-  party_type: Role
-permissions_589: 
-  party_id: "2"
-  card_id: "296"
-  id: "589"
-  task: delete
-  party_type: Role
-permissions_401: 
-  party_id: "3"
-  card_id: "77"
-  id: "401"
-  task: read
-  party_type: Role
-permissions_211: 
-  party_id: "1"
-  card_id: "48"
-  id: "211"
-  task: edit
-  party_type: Role
-permissions_021: 
-  party_id: "1"
-  card_id: "63"
-  id: "21"
-  task: delete
-  party_type: Role
-permissions_399: 
-  party_id: "1"
-  card_id: "77"
-  id: "399"
-  task: edit
-  party_type: Role
-permissions_402: 
-  party_id: "2"
-  card_id: "12"
-  id: "402"
-  task: edit
-  party_type: Role
-permissions_212: 
-  party_id: "1"
-  card_id: "48"
-  id: "212"
-  task: delete
-  party_type: Role
-permissions_022: 
-  party_id: "3"
-  card_id: "63"
-  id: "22"
-  task: read
-  party_type: Role
-permissions_640: 
-  party_id: "2"
-  card_id: "313"
-  id: "640"
-  task: delete
-  party_type: Role
 permissions_450: 
-  party_id: "2"
-  card_id: "184"
+  card_id: "180"
+  task: read
   id: "450"
-  task: edit
   party_type: Role
-permissions_403: 
   party_id: "3"
-  card_id: "12"
-  id: "403"
-  task: create
-  party_type: Role
-permissions_260: 
-  party_id: "3"
-  card_id: "202"
-  id: "260"
+permissions_582: 
+  card_id: "294"
   task: read
+  id: "582"
   party_type: Role
-permissions_070: 
-  party_id: "1"
-  card_id: "49"
-  id: "70"
-  task: delete
-  party_type: Role
-permissions_213: 
   party_id: "3"
-  card_id: "48"
-  id: "213"
+permissions_319: 
+  card_id: "261"
   task: read
+  id: "319"
   party_type: Role
-permissions_023: 
-  party_id: "2"
-  card_id: "157"
-  id: "23"
-  task: edit
-  party_type: Role
-permissions_641: 
-  party_id: "2"
-  card_id: "313"
-  id: "641"
-  task: edit
-  party_type: Role
+  party_id: "3"
 permissions_451: 
-  party_id: "2"
-  card_id: "184"
+  card_id: "68"
+  task: delete
   id: "451"
-  task: delete
   party_type: Role
-permissions_404: 
   party_id: "2"
-  card_id: "12"
-  id: "404"
+permissions_583: 
+  card_id: "295"
   task: delete
+  id: "583"
   party_type: Role
-permissions_261: 
-  party_id: "1"
-  card_id: "121"
-  id: "261"
-  task: edit
-  party_type: Role
-permissions_071: 
-  party_id: "3"
-  card_id: "49"
-  id: "71"
-  task: read
-  party_type: Role
-permissions_214: 
   party_id: "2"
-  card_id: "73"
-  id: "214"
-  task: edit
-  party_type: Role
-permissions_024: 
-  party_id: "2"
-  card_id: "157"
-  id: "24"
-  task: delete
-  party_type: Role
-permissions_642: 
-  party_id: "3"
-  card_id: "313"
-  id: "642"
-  task: read
-  party_type: Role
 permissions_452: 
-  party_id: "3"
-  card_id: "184"
+  card_id: "68"
+  task: edit
   id: "452"
-  task: read
   party_type: Role
-permissions_405: 
-  party_id: "3"
-  card_id: "12"
-  id: "405"
-  task: read
-  party_type: Role
-permissions_262: 
-  party_id: "1"
-  card_id: "121"
-  id: "262"
-  task: delete
-  party_type: Role
-permissions_072: 
   party_id: "2"
-  card_id: "28"
-  id: "72"
+permissions_584: 
+  card_id: "295"
   task: edit
+  id: "584"
   party_type: Role
-permissions_215: 
   party_id: "2"
-  card_id: "73"
-  id: "215"
+permissions_320: 
+  card_id: "77"
   task: delete
+  id: "320"
   party_type: Role
-permissions_025: 
-  party_id: "3"
-  card_id: "157"
-  id: "25"
-  task: read
-  party_type: Role
-permissions_690: 
-  party_id: "2"
-  card_id: "328"
-  id: "691"
-  task: delete
-  party_type: Role
-permissions_643: 
-  party_id: "2"
-  card_id: "314"
-  id: "643"
-  task: delete
-  party_type: Role
+  party_id: "1"
 permissions_453: 
-  party_id: "2"
   card_id: "68"
+  task: read
   id: "453"
-  task: edit
   party_type: Role
-permissions_406: 
-  party_id: "2"
-  card_id: "151"
-  id: "406"
-  task: edit
-  party_type: Role
-permissions_263: 
   party_id: "3"
-  card_id: "121"
-  id: "263"
+permissions_585: 
+  card_id: "295"
   task: read
+  id: "585"
   party_type: Role
-permissions_073: 
-  party_id: "2"
-  card_id: "28"
-  id: "73"
-  task: delete
-  party_type: Role
-permissions_216: 
   party_id: "3"
-  card_id: "73"
-  id: "216"
-  task: read
-  party_type: Role
-permissions_026: 
-  party_id: "2"
-  card_id: "179"
-  id: "26"
+permissions_321: 
+  card_id: "77"
   task: edit
+  id: "321"
   party_type: Role
-permissions_691: 
-  party_id: "2"
-  card_id: "328"
-  id: "692"
-  task: edit
-  party_type: Role
-permissions_644: 
-  party_id: "2"
-  card_id: "314"
-  id: "644"
-  task: edit
-  party_type: Role
+  party_id: "1"
 permissions_454: 
-  party_id: "2"
-  card_id: "68"
+  card_id: "42"
+  task: delete
   id: "454"
+  party_type: Role
+  party_id: "1"
+permissions_586: 
+  card_id: "296"
   task: delete
+  id: "586"
   party_type: Role
-permissions_264: 
   party_id: "2"
-  card_id: "147"
-  id: "264"
-  task: edit
-  party_type: Role
-permissions_074: 
-  party_id: "3"
-  card_id: "28"
-  id: "74"
+permissions_322: 
+  card_id: "77"
   task: read
+  id: "322"
   party_type: Role
-permissions_217: 
-  party_id: "2"
-  card_id: "85"
-  id: "217"
-  task: edit
-  party_type: Role
-permissions_027: 
-  party_id: "2"
-  card_id: "179"
-  id: "27"
-  task: delete
-  party_type: Role
-permissions_692: 
   party_id: "3"
-  card_id: "328"
-  id: "693"
-  task: read
-  party_type: Role
-permissions_645: 
-  party_id: "3"
-  card_id: "314"
-  id: "645"
-  task: read
-  party_type: Role
 permissions_455: 
-  party_id: "3"
-  card_id: "68"
+  card_id: "42"
+  task: edit
   id: "455"
-  task: read
   party_type: Role
-permissions_407: 
-  party_id: "2"
-  card_id: "151"
-  id: "407"
-  task: delete
-  party_type: Role
-permissions_265: 
-  party_id: "2"
-  card_id: "147"
-  id: "265"
-  task: delete
-  party_type: Role
-permissions_075: 
   party_id: "1"
-  card_id: "81"
-  id: "75"
+permissions_587: 
+  card_id: "296"
   task: edit
+  id: "587"
   party_type: Role
-permissions_218: 
   party_id: "2"
-  card_id: "85"
-  id: "218"
+permissions_323: 
+  card_id: "89"
   task: delete
+  id: "323"
   party_type: Role
-permissions_028: 
-  party_id: "3"
-  card_id: "179"
-  id: "28"
-  task: read
-  party_type: Role
-permissions_693: 
-  party_id: "2"
-  card_id: "329"
-  id: "694"
-  task: delete
-  party_type: Role
-permissions_646: 
-  party_id: "2"
-  card_id: "315"
-  id: "646"
-  task: delete
-  party_type: Role
+  party_id: "1"
 permissions_456: 
-  party_id: "2"
-  card_id: "9"
+  card_id: "42"
+  task: read
   id: "456"
-  task: edit
   party_type: Role
-permissions_408: 
-  party_id: "1"
-  card_id: "151"
-  id: "408"
-  task: read
-  party_type: Role
-permissions_266: 
   party_id: "3"
-  card_id: "147"
-  id: "266"
+permissions_588: 
+  card_id: "296"
   task: read
+  id: "588"
   party_type: Role
-permissions_076: 
-  party_id: "1"
-  card_id: "81"
-  id: "76"
-  task: delete
-  party_type: Role
-permissions_219: 
   party_id: "3"
-  card_id: "85"
-  id: "219"
-  task: read
+permissions_324: 
+  card_id: "89"
+  task: edit
+  id: "324"
   party_type: Role
-permissions_029: 
   party_id: "1"
-  card_id: "115"
-  id: "29"
-  task: edit
-  party_type: Role
-permissions_694: 
-  party_id: "2"
-  card_id: "329"
-  id: "695"
-  task: edit
-  party_type: Role
-permissions_647: 
-  party_id: "2"
-  card_id: "315"
-  id: "647"
-  task: edit
-  party_type: Role
 permissions_457: 
-  party_id: "2"
-  card_id: "9"
+  card_id: "138"
+  task: delete
   id: "457"
+  party_type: Role
+  party_id: "1"
+permissions_589: 
+  card_id: "297"
   task: delete
+  id: "589"
   party_type: Role
-permissions_409: 
-  party_id: "1"
-  card_id: "44"
-  id: "409"
-  task: edit
-  party_type: Role
-permissions_267: 
-  party_id: "1"
-  card_id: "221"
-  id: "267"
-  task: edit
-  party_type: Role
-permissions_077: 
-  party_id: "3"
-  card_id: "81"
-  id: "77"
+  party_id: "2"
+permissions_325: 
+  card_id: "89"
   task: read
+  id: "325"
   party_type: Role
-permissions_695: 
   party_id: "3"
-  card_id: "329"
-  id: "696"
-  task: read
-  party_type: Role
-permissions_648: 
-  party_id: "3"
-  card_id: "315"
-  id: "648"
-  task: read
-  party_type: Role
 permissions_458: 
-  party_id: "3"
-  card_id: "9"
+  card_id: "138"
+  task: edit
   id: "458"
-  task: read
   party_type: Role
-permissions_268: 
   party_id: "1"
-  card_id: "221"
-  id: "268"
-  task: delete
-  party_type: Role
-permissions_078: 
-  party_id: "1"
+permissions_326: 
   card_id: "46"
-  id: "78"
-  task: edit
-  party_type: Role
-permissions_696: 
-  party_id: "2"
-  card_id: "330"
-  id: "697"
   task: delete
+  id: "326"
   party_type: Role
+  party_id: "1"
 permissions_459: 
-  party_id: "2"
-  card_id: "220"
-  id: "459"
-  task: edit
-  party_type: Role
-permissions_269: 
-  party_id: "3"
-  card_id: "221"
-  id: "269"
+  card_id: "138"
   task: read
+  id: "459"
   party_type: Role
-permissions_079: 
-  party_id: "1"
+  party_id: "3"
+permissions_327: 
   card_id: "46"
-  id: "79"
-  task: delete
+  task: edit
+  id: "327"
   party_type: Role
+  party_id: "1"
+permissions_590: 
+  card_id: "297"
+  task: edit
+  id: "590"
+  party_type: Role
+  party_id: "2"
+permissions_328: 
+  card_id: "46"
+  task: read
+  id: "328"
+  party_type: Role
+  party_id: "3"
+permissions_591: 
+  card_id: "297"
+  task: read
+  id: "591"
+  party_type: Role
+  party_id: "3"
+permissions_329: 
+  card_id: "19"
+  task: delete
+  id: "329"
+  party_type: Role
+  party_id: "2"
+permissions_460: 
+  card_id: "275"
+  task: delete
+  id: "460"
+  party_type: Role
+  party_id: "1"
+permissions_592: 
+  card_id: "298"
+  task: delete
+  id: "592"
+  party_type: Role
+  party_id: "2"
+permissions_461: 
+  card_id: "275"
+  task: edit
+  id: "461"
+  party_type: Role
+  party_id: "1"
+permissions_593: 
+  card_id: "298"
+  task: edit
+  id: "593"
+  party_type: Role
+  party_id: "2"
+permissions_330: 
+  card_id: "19"
+  task: edit
+  id: "330"
+  party_type: Role
+  party_id: "2"
+permissions_462: 
+  card_id: "275"
+  task: read
+  id: "462"
+  party_type: Role
+  party_id: "3"
+permissions_594: 
+  card_id: "298"
+  task: read
+  id: "594"
+  party_type: Role
+  party_id: "3"
+permissions_331: 
+  card_id: "19"
+  task: read
+  id: "331"
+  party_type: Role
+  party_id: "3"
+permissions_463: 
+  card_id: "52"
+  task: delete
+  id: "463"
+  party_type: Role
+  party_id: "2"
+permissions_595: 
+  card_id: "299"
+  task: delete
+  id: "595"
+  party_type: Role
+  party_id: "2"
+permissions_200: 
+  card_id: "103"
+  task: read
+  id: "200"
+  party_type: Role
+  party_id: "3"
+permissions_332: 
+  card_id: "19"
+  task: create
+  id: "332"
+  party_type: Role
+  party_id: "2"
+permissions_464: 
+  card_id: "52"
+  task: edit
+  id: "464"
+  party_type: Role
+  party_id: "2"
+permissions_596: 
+  card_id: "299"
+  task: edit
+  id: "596"
+  party_type: Role
+  party_id: "2"
+permissions_201: 
+  card_id: "251"
+  task: delete
+  id: "201"
+  party_type: Role
+  party_id: "1"
+permissions_333: 
+  card_id: "198"
+  task: delete
+  id: "333"
+  party_type: Role
+  party_id: "1"
+permissions_465: 
+  card_id: "52"
+  task: read
+  id: "465"
+  party_type: Role
+  party_id: "3"
+permissions_597: 
+  card_id: "299"
+  task: read
+  id: "597"
+  party_type: Role
+  party_id: "3"
+permissions_202: 
+  card_id: "251"
+  task: edit
+  id: "202"
+  party_type: Role
+  party_id: "1"
+permissions_334: 
+  card_id: "198"
+  task: edit
+  id: "334"
+  party_type: Role
+  party_id: "1"
+permissions_466: 
+  card_id: "52"
+  task: create
+  id: "466"
+  party_type: Role
+  party_id: "2"
+permissions_598: 
+  card_id: "300"
+  task: delete
+  id: "598"
+  party_type: Role
+  party_id: "2"
+permissions_203: 
+  card_id: "251"
+  task: read
+  id: "203"
+  party_type: Role
+  party_id: "3"
+permissions_335: 
+  card_id: "198"
+  task: read
+  id: "335"
+  party_type: Role
+  party_id: "3"
+permissions_467: 
+  card_id: "41"
+  task: delete
+  id: "467"
+  party_type: Role
+  party_id: "1"
+permissions_599: 
+  card_id: "300"
+  task: edit
+  id: "599"
+  party_type: Role
+  party_id: "2"
+permissions_204: 
+  card_id: "122"
+  task: delete
+  id: "204"
+  party_type: Role
+  party_id: "1"
+permissions_336: 
+  card_id: "33"
+  task: delete
+  id: "336"
+  party_type: Role
+  party_id: "1"
+permissions_468: 
+  card_id: "41"
+  task: edit
+  id: "468"
+  party_type: Role
+  party_id: "1"
+permissions_205: 
+  card_id: "122"
+  task: edit
+  id: "205"
+  party_type: Role
+  party_id: "1"
+permissions_337: 
+  card_id: "33"
+  task: edit
+  id: "337"
+  party_type: Role
+  party_id: "1"
+permissions_469: 
+  card_id: "41"
+  task: read
+  id: "469"
+  party_type: Role
+  party_id: "3"
+permissions_206: 
+  card_id: "122"
+  task: read
+  id: "206"
+  party_type: Role
+  party_id: "3"
+permissions_338: 
+  card_id: "33"
+  task: read
+  id: "338"
+  party_type: Role
+  party_id: "3"
+permissions_207: 
+  card_id: "83"
+  task: delete
+  id: "207"
+  party_type: Role
+  party_id: "1"
+permissions_339: 
+  card_id: "255"
+  task: delete
+  id: "339"
+  party_type: Role
+  party_id: "1"
+permissions_470: 
+  card_id: "69"
+  task: delete
+  id: "470"
+  party_type: Role
+  party_id: "2"
+permissions_208: 
+  card_id: "83"
+  task: edit
+  id: "208"
+  party_type: Role
+  party_id: "1"
+permissions_471: 
+  card_id: "69"
+  task: edit
+  id: "471"
+  party_type: Role
+  party_id: "2"
+permissions_340: 
+  card_id: "255"
+  task: edit
+  id: "340"
+  party_type: Role
+  party_id: "1"
+permissions_472: 
+  card_id: "69"
+  task: read
+  id: "472"
+  party_type: Role
+  party_id: "3"
+permissions_209: 
+  card_id: "83"
+  task: read
+  id: "209"
+  party_type: Role
+  party_id: "3"
+permissions_341: 
+  card_id: "255"
+  task: read
+  id: "341"
+  party_type: Role
+  party_id: "3"
+permissions_473: 
+  card_id: "274"
+  task: delete
+  id: "473"
+  party_type: Role
+  party_id: "1"
+permissions_210: 
+  card_id: "79"
+  task: delete
+  id: "210"
+  party_type: Role
+  party_id: "1"
+permissions_342: 
+  card_id: "45"
+  task: delete
+  id: "342"
+  party_type: Role
+  party_id: "1"
+permissions_474: 
+  card_id: "274"
+  task: edit
+  id: "474"
+  party_type: Role
+  party_id: "1"
+permissions_211: 
+  card_id: "79"
+  task: edit
+  id: "211"
+  party_type: Role
+  party_id: "1"
+permissions_343: 
+  card_id: "45"
+  task: edit
+  id: "343"
+  party_type: Role
+  party_id: "1"
+permissions_475: 
+  card_id: "274"
+  task: read
+  id: "475"
+  party_type: Role
+  party_id: "3"
+permissions_212: 
+  card_id: "79"
+  task: read
+  id: "212"
+  party_type: Role
+  party_id: "3"
+permissions_344: 
+  card_id: "45"
+  task: read
+  id: "344"
+  party_type: Role
+  party_id: "3"
+permissions_476: 
+  card_id: "205"
+  task: delete
+  id: "476"
+  party_type: Role
+  party_id: "1"
+permissions_213: 
+  card_id: "268"
+  task: delete
+  id: "213"
+  party_type: Role
+  party_id: "1"
+permissions_345: 
+  card_id: "214"
+  task: delete
+  id: "345"
+  party_type: Role
+  party_id: "2"
+permissions_477: 
+  card_id: "205"
+  task: edit
+  id: "477"
+  party_type: Role
+  party_id: "1"
+permissions_214: 
+  card_id: "268"
+  task: edit
+  id: "214"
+  party_type: Role
+  party_id: "1"
+permissions_346: 
+  card_id: "214"
+  task: edit
+  id: "346"
+  party_type: Role
+  party_id: "2"
+permissions_478: 
+  card_id: "205"
+  task: read
+  id: "478"
+  party_type: Role
+  party_id: "3"
+permissions_215: 
+  card_id: "268"
+  task: read
+  id: "215"
+  party_type: Role
+  party_id: "3"
+permissions_347: 
+  card_id: "214"
+  task: read
+  id: "347"
+  party_type: Role
+  party_id: "3"
+permissions_479: 
+  card_id: "22"
+  task: delete
+  id: "479"
+  party_type: Role
+  party_id: "2"
+permissions_216: 
+  card_id: "120"
+  task: delete
+  id: "216"
+  party_type: Role
+  party_id: "2"
+permissions_348: 
+  card_id: "257"
+  task: delete
+  id: "348"
+  party_type: Role
+  party_id: "1"
+permissions_217: 
+  card_id: "120"
+  task: edit
+  id: "217"
+  party_type: Role
+  party_id: "2"
+permissions_349: 
+  card_id: "257"
+  task: edit
+  id: "349"
+  party_type: Role
+  party_id: "1"
+permissions_218: 
+  card_id: "120"
+  task: read
+  id: "218"
+  party_type: Role
+  party_id: "3"
+permissions_480: 
+  card_id: "22"
+  task: edit
+  id: "480"
+  party_type: Role
+  party_id: "2"
+permissions_219: 
+  card_id: "191"
+  task: delete
+  id: "219"
+  party_type: Role
+  party_id: "2"
+permissions_481: 
+  card_id: "22"
+  task: read
+  id: "481"
+  party_type: Role
+  party_id: "3"
+permissions_350: 
+  card_id: "257"
+  task: read
+  id: "350"
+  party_type: Role
+  party_id: "3"
+permissions_482: 
+  card_id: "22"
+  task: create
+  id: "482"
+  party_type: Role
+  party_id: "2"
+permissions_351: 
+  card_id: "3"
+  task: delete
+  id: "351"
+  party_type: Role
+  party_id: "2"
+permissions_483: 
+  card_id: "38"
+  task: delete
+  id: "483"
+  party_type: Role
+  party_id: "1"
+permissions_220: 
+  card_id: "191"
+  task: edit
+  id: "220"
+  party_type: Role
+  party_id: "2"
+permissions_352: 
+  card_id: "3"
+  task: edit
+  id: "352"
+  party_type: Role
+  party_id: "2"
+permissions_484: 
+  card_id: "38"
+  task: edit
+  id: "484"
+  party_type: Role
+  party_id: "1"
+permissions_221: 
+  card_id: "191"
+  task: read
+  id: "221"
+  party_type: Role
+  party_id: "3"
+permissions_353: 
+  card_id: "3"
+  task: read
+  id: "353"
+  party_type: Role
+  party_id: "3"
+permissions_485: 
+  card_id: "38"
+  task: read
+  id: "485"
+  party_type: Role
+  party_id: "3"
+permissions_222: 
+  card_id: "220"
+  task: delete
+  id: "222"
+  party_type: Role
+  party_id: "1"
+permissions_354: 
+  card_id: "3"
+  task: create
+  id: "354"
+  party_type: Role
+  party_id: "2"
+permissions_486: 
+  card_id: "9"
+  task: delete
+  id: "486"
+  party_type: Role
+  party_id: "2"
+permissions_223: 
+  card_id: "220"
+  task: edit
+  id: "223"
+  party_type: Role
+  party_id: "2"
+permissions_355: 
+  card_id: "213"
+  task: delete
+  id: "355"
+  party_type: Role
+  party_id: "2"
+permissions_487: 
+  card_id: "9"
+  task: edit
+  id: "487"
+  party_type: Role
+  party_id: "2"
+permissions_224: 
+  card_id: "220"
+  task: read
+  id: "224"
+  party_type: Role
+  party_id: "3"
+permissions_356: 
+  card_id: "213"
+  task: edit
+  id: "356"
+  party_type: Role
+  party_id: "2"
+permissions_488: 
+  card_id: "9"
+  task: read
+  id: "488"
+  party_type: Role
+  party_id: "3"
+permissions_225: 
+  card_id: "170"
+  task: delete
+  id: "225"
+  party_type: Role
+  party_id: "1"
+permissions_357: 
+  card_id: "213"
+  task: read
+  id: "357"
+  party_type: Role
+  party_id: "3"
+permissions_489: 
+  card_id: "199"
+  task: delete
+  id: "489"
+  party_type: Role
+  party_id: "2"
+permissions_226: 
+  card_id: "170"
+  task: edit
+  id: "226"
+  party_type: Role
+  party_id: "1"
+permissions_358: 
+  card_id: "256"
+  task: delete
+  id: "358"
+  party_type: Role
+  party_id: "1"
+permissions_227: 
+  card_id: "170"
+  task: read
+  id: "227"
+  party_type: Role
+  party_id: "3"
+permissions_359: 
+  card_id: "256"
+  task: edit
+  id: "359"
+  party_type: Role
+  party_id: "1"
+permissions_490: 
+  card_id: "199"
+  task: edit
+  id: "490"
+  party_type: Role
+  party_id: "2"
+permissions_228: 
+  card_id: "190"
+  task: delete
+  id: "228"
+  party_type: Role
+  party_id: "2"
+permissions_491: 
+  card_id: "199"
+  task: read
+  id: "491"
+  party_type: Role
+  party_id: "3"
+permissions_229: 
+  card_id: "190"
+  task: edit
+  id: "229"
+  party_type: Role
+  party_id: "2"
+permissions_360: 
+  card_id: "256"
+  task: read
+  id: "360"
+  party_type: Role
+  party_id: "3"
+permissions_492: 
+  card_id: "223"
+  task: delete
+  id: "492"
+  party_type: Role
+  party_id: "1"
+permissions_361: 
+  card_id: "92"
+  task: delete
+  id: "361"
+  party_type: Role
+  party_id: "1"
+permissions_493: 
+  card_id: "223"
+  task: edit
+  id: "493"
+  party_type: Role
+  party_id: "1"
+permissions_230: 
+  card_id: "190"
+  task: read
+  id: "230"
+  party_type: Role
+  party_id: "3"
+permissions_362: 
+  card_id: "92"
+  task: edit
+  id: "362"
+  party_type: Role
+  party_id: "1"
+permissions_494: 
+  card_id: "223"
+  task: read
+  id: "494"
+  party_type: Role
+  party_id: "3"
+permissions_231: 
+  card_id: "217"
+  task: delete
+  id: "231"
+  party_type: Role
+  party_id: "2"
+permissions_363: 
+  card_id: "92"
+  task: read
+  id: "363"
+  party_type: Role
+  party_id: "3"
+permissions_495: 
+  card_id: "47"
+  task: delete
+  id: "495"
+  party_type: Role
+  party_id: "2"
+permissions_100: 
+  card_id: "171"
+  task: delete
+  id: "100"
+  party_type: Role
+  party_id: "1"
+permissions_232: 
+  card_id: "217"
+  task: edit
+  id: "232"
+  party_type: Role
+  party_id: "2"
+permissions_364: 
+  card_id: "61"
+  task: delete
+  id: "364"
+  party_type: Role
+  party_id: "1"
+permissions_496: 
+  card_id: "47"
+  task: edit
+  id: "496"
+  party_type: Role
+  party_id: "2"
+permissions_101: 
+  card_id: "171"
+  task: edit
+  id: "101"
+  party_type: Role
+  party_id: "1"
+permissions_233: 
+  card_id: "217"
+  task: read
+  id: "233"
+  party_type: Role
+  party_id: "3"
+permissions_365: 
+  card_id: "61"
+  task: edit
+  id: "365"
+  party_type: Role
+  party_id: "1"
+permissions_497: 
+  card_id: "47"
+  task: read
+  id: "497"
+  party_type: Role
+  party_id: "3"
+permissions_102: 
+  card_id: "171"
+  task: read
+  id: "102"
+  party_type: Role
+  party_id: "3"
+permissions_234: 
+  card_id: "168"
+  task: delete
+  id: "234"
+  party_type: Role
+  party_id: "1"
+permissions_366: 
+  card_id: "61"
+  task: read
+  id: "366"
+  party_type: Role
+  party_id: "3"
+permissions_498: 
+  card_id: "47"
+  task: create
+  id: "498"
+  party_type: Role
+  party_id: "2"
+permissions_103: 
+  card_id: "8"
+  task: delete
+  id: "103"
+  party_type: Role
+  party_id: "2"
+permissions_235: 
+  card_id: "168"
+  task: edit
+  id: "235"
+  party_type: Role
+  party_id: "1"
+permissions_367: 
+  card_id: "173"
+  task: delete
+  id: "367"
+  party_type: Role
+  party_id: "1"
+permissions_499: 
+  card_id: "37"
+  task: delete
+  id: "499"
+  party_type: Role
+  party_id: "1"
+permissions_104: 
+  card_id: "8"
+  task: edit
+  id: "104"
+  party_type: Role
+  party_id: "2"
+permissions_236: 
+  card_id: "168"
+  task: read
+  id: "236"
+  party_type: Role
+  party_id: "3"
+permissions_368: 
+  card_id: "173"
+  task: edit
+  id: "368"
+  party_type: Role
+  party_id: "1"
+permissions_105: 
+  card_id: "8"
+  task: read
+  id: "105"
+  party_type: Role
+  party_id: "3"
+permissions_237: 
+  card_id: "267"
+  task: delete
+  id: "237"
+  party_type: Role
+  party_id: "1"
+permissions_369: 
+  card_id: "173"
+  task: read
+  id: "369"
+  party_type: Role
+  party_id: "3"
+permissions_106: 
+  card_id: "262"
+  task: delete
+  id: "106"
+  party_type: Role
+  party_id: "1"
+permissions_238: 
+  card_id: "267"
+  task: edit
+  id: "238"
+  party_type: Role
+  party_id: "1"
+permissions_107: 
+  card_id: "262"
+  task: edit
+  id: "107"
+  party_type: Role
+  party_id: "1"
+permissions_239: 
+  card_id: "267"
+  task: read
+  id: "239"
+  party_type: Role
+  party_id: "3"
+permissions_108: 
+  card_id: "262"
+  task: read
+  id: "108"
+  party_type: Role
+  party_id: "3"
+permissions_370: 
+  card_id: "254"
+  task: delete
+  id: "370"
+  party_type: Role
+  party_id: "1"
+permissions_109: 
+  card_id: "96"
+  task: delete
+  id: "109"
+  party_type: Role
+  party_id: "1"
+permissions_371: 
+  card_id: "254"
+  task: edit
+  id: "371"
+  party_type: Role
+  party_id: "1"
+permissions_240: 
+  card_id: "151"
+  task: delete
+  id: "240"
+  party_type: Role
+  party_id: "2"
+permissions_372: 
+  card_id: "254"
+  task: read
+  id: "372"
+  party_type: Role
+  party_id: "3"
+permissions_241: 
+  card_id: "151"
+  task: edit
+  id: "241"
+  party_type: Role
+  party_id: "2"
+permissions_373: 
+  card_id: "212"
+  task: delete
+  id: "373"
+  party_type: Role
+  party_id: "2"
+permissions_110: 
+  card_id: "96"
+  task: edit
+  id: "110"
+  party_type: Role
+  party_id: "1"
+permissions_242: 
+  card_id: "151"
+  task: read
+  id: "242"
+  party_type: Role
+  party_id: "1"
+permissions_374: 
+  card_id: "212"
+  task: edit
+  id: "374"
+  party_type: Role
+  party_id: "2"
+permissions_111: 
+  card_id: "96"
+  task: read
+  id: "111"
+  party_type: Role
+  party_id: "3"
+permissions_243: 
+  card_id: "35"
+  task: delete
+  id: "243"
+  party_type: Role
+  party_id: "1"
+permissions_375: 
+  card_id: "212"
+  task: read
+  id: "375"
+  party_type: Role
+  party_id: "3"
+permissions_112: 
+  card_id: "271"
+  task: delete
+  id: "112"
+  party_type: Role
+  party_id: "1"
+permissions_244: 
+  card_id: "35"
+  task: edit
+  id: "244"
+  party_type: Role
+  party_id: "1"
+permissions_376: 
+  card_id: "129"
+  task: delete
+  id: "376"
+  party_type: Role
+  party_id: "2"
+permissions_113: 
+  card_id: "271"
+  task: edit
+  id: "113"
+  party_type: Role
+  party_id: "1"
+permissions_245: 
+  card_id: "35"
+  task: read
+  id: "245"
+  party_type: Role
+  party_id: "3"
+permissions_377: 
+  card_id: "129"
+  task: edit
+  id: "377"
+  party_type: Role
+  party_id: "2"
+permissions_114: 
+  card_id: "271"
+  task: read
+  id: "114"
+  party_type: Role
+  party_id: "3"
+permissions_246: 
+  card_id: "215"
+  task: delete
+  id: "246"
+  party_type: Role
+  party_id: "2"
+permissions_378: 
+  card_id: "129"
+  task: read
+  id: "378"
+  party_type: Role
+  party_id: "3"
+permissions_115: 
+  card_id: "158"
+  task: delete
+  id: "115"
+  party_type: Role
+  party_id: "2"
+permissions_247: 
+  card_id: "215"
+  task: edit
+  id: "247"
+  party_type: Role
+  party_id: "2"
+permissions_379: 
+  card_id: "247"
+  task: delete
+  id: "379"
+  party_type: Role
+  party_id: "1"
+permissions_116: 
+  card_id: "158"
+  task: edit
+  id: "116"
+  party_type: Role
+  party_id: "2"
+permissions_248: 
+  card_id: "215"
+  task: read
+  id: "248"
+  party_type: Role
+  party_id: "3"
+permissions_117: 
+  card_id: "158"
+  task: read
+  id: "117"
+  party_type: Role
+  party_id: "3"
+permissions_249: 
+  card_id: "105"
+  task: delete
+  id: "249"
+  party_type: Role
+  party_id: "2"
+permissions_380: 
+  card_id: "247"
+  task: edit
+  id: "380"
+  party_type: Role
+  party_id: "1"
+permissions_118: 
+  card_id: "93"
+  task: delete
+  id: "118"
+  party_type: Role
+  party_id: "1"
+permissions_381: 
+  card_id: "247"
+  task: read
+  id: "381"
+  party_type: Role
+  party_id: "3"
+permissions_119: 
+  card_id: "93"
+  task: edit
+  id: "119"
+  party_type: Role
+  party_id: "1"
+permissions_250: 
+  card_id: "105"
+  task: edit
+  id: "250"
+  party_type: Role
+  party_id: "2"
+permissions_382: 
+  card_id: "169"
+  task: delete
+  id: "382"
+  party_type: Role
+  party_id: "1"
+permissions_251: 
+  card_id: "105"
+  task: read
+  id: "251"
+  party_type: Role
+  party_id: "3"
+permissions_383: 
+  card_id: "169"
+  task: edit
+  id: "383"
+  party_type: Role
+  party_id: "1"
+permissions_120: 
+  card_id: "93"
+  task: read
+  id: "120"
+  party_type: Role
+  party_id: "3"
+permissions_252: 
+  card_id: "265"
+  task: delete
+  id: "252"
+  party_type: Role
+  party_id: "1"
+permissions_384: 
+  card_id: "169"
+  task: read
+  id: "384"
+  party_type: Role
+  party_id: "3"
+permissions_121: 
+  card_id: "17"
+  task: delete
+  id: "121"
+  party_type: Role
+  party_id: "2"
+permissions_253: 
+  card_id: "265"
+  task: edit
+  id: "253"
+  party_type: Role
+  party_id: "1"
+permissions_385: 
+  card_id: "253"
+  task: delete
+  id: "385"
+  party_type: Role
+  party_id: "1"
+permissions_122: 
+  card_id: "17"
+  task: edit
+  id: "122"
+  party_type: Role
+  party_id: "2"
+permissions_254: 
+  card_id: "265"
+  task: read
+  id: "254"
+  party_type: Role
+  party_id: "3"
+permissions_386: 
+  card_id: "253"
+  task: edit
+  id: "386"
+  party_type: Role
+  party_id: "1"
+permissions_123: 
+  card_id: "17"
+  task: read
+  id: "123"
+  party_type: Role
+  party_id: "3"
+permissions_255: 
+  card_id: "185"
+  task: delete
+  id: "255"
+  party_type: Role
+  party_id: "2"
+permissions_387: 
+  card_id: "253"
+  task: read
+  id: "387"
+  party_type: Role
+  party_id: "3"
+permissions_124: 
+  card_id: "17"
+  task: create
+  id: "124"
+  party_type: Role
+  party_id: "2"
+permissions_256: 
+  card_id: "185"
+  task: edit
+  id: "256"
+  party_type: Role
+  party_id: "2"
+permissions_388: 
+  card_id: "15"
+  task: delete
+  id: "388"
+  party_type: Role
+  party_id: "2"
+permissions_125: 
+  card_id: "63"
+  task: delete
+  id: "125"
+  party_type: Role
+  party_id: "1"
+permissions_257: 
+  card_id: "185"
+  task: read
+  id: "257"
+  party_type: Role
+  party_id: "3"
+permissions_389: 
+  card_id: "15"
+  task: edit
+  id: "389"
+  party_type: Role
+  party_id: "2"
+permissions_126: 
+  card_id: "63"
+  task: edit
+  id: "126"
+  party_type: Role
+  party_id: "1"
+permissions_258: 
+  card_id: "101"
+  task: delete
+  id: "258"
+  party_type: Role
+  party_id: "2"
+permissions_127: 
+  card_id: "63"
+  task: read
+  id: "127"
+  party_type: Role
+  party_id: "3"
+permissions_259: 
+  card_id: "101"
+  task: edit
+  id: "259"
+  party_type: Role
+  party_id: "2"
+permissions_390: 
+  card_id: "15"
+  task: read
+  id: "390"
+  party_type: Role
+  party_id: "3"
+permissions_128: 
+  card_id: "97"
+  task: delete
+  id: "128"
+  party_type: Role
+  party_id: "1"
+permissions_391: 
+  card_id: "277"
+  task: delete
+  id: "391"
+  party_type: Role
+  party_id: "1"
+permissions_129: 
+  card_id: "97"
+  task: edit
+  id: "129"
+  party_type: Role
+  party_id: "1"
+permissions_260: 
+  card_id: "101"
+  task: read
+  id: "260"
+  party_type: Role
+  party_id: "3"
+permissions_392: 
+  card_id: "277"
+  task: edit
+  id: "392"
+  party_type: Role
+  party_id: "1"
+permissions_261: 
+  card_id: "12"
+  task: delete
+  id: "261"
+  party_type: Role
+  party_id: "2"
+permissions_393: 
+  card_id: "277"
+  task: read
+  id: "393"
+  party_type: Role
+  party_id: "3"
+permissions_262: 
+  card_id: "12"
+  task: edit
+  id: "262"
+  party_type: Role
+  party_id: "2"
+permissions_394: 
+  card_id: "116"
+  task: delete
+  id: "394"
+  party_type: Role
+  party_id: "1"
+permissions_130: 
+  card_id: "97"
+  task: read
+  id: "130"
+  party_type: Role
+  party_id: "3"
+permissions_263: 
+  card_id: "12"
+  task: read
+  id: "263"
+  party_type: Role
+  party_id: "3"
+permissions_395: 
+  card_id: "116"
+  task: edit
+  id: "395"
+  party_type: Role
+  party_id: "1"
+permissions_131: 
+  card_id: "73"
+  task: delete
+  id: "131"
+  party_type: Role
+  party_id: "2"
+permissions_264: 
+  card_id: "12"
+  task: create
+  id: "264"
+  party_type: Role
+  party_id: "3"
+permissions_396: 
+  card_id: "116"
+  task: read
+  id: "396"
+  party_type: Role
+  party_id: "3"
+permissions_132: 
+  card_id: "73"
+  task: edit
+  id: "132"
+  party_type: Role
+  party_id: "2"
+permissions_265: 
+  card_id: "99"
+  task: delete
+  id: "265"
+  party_type: Role
+  party_id: "1"
+permissions_397: 
+  card_id: "246"
+  task: delete
+  id: "397"
+  party_type: Role
+  party_id: "1"
+permissions_001: 
+  card_id: "272"
+  task: delete
+  id: "1"
+  party_type: Role
+  party_id: "1"
+permissions_133: 
+  card_id: "73"
+  task: read
+  id: "133"
+  party_type: Role
+  party_id: "3"
+permissions_266: 
+  card_id: "99"
+  task: edit
+  id: "266"
+  party_type: Role
+  party_id: "1"
+permissions_398: 
+  card_id: "246"
+  task: edit
+  id: "398"
+  party_type: Role
+  party_id: "1"
+permissions_002: 
+  card_id: "272"
+  task: edit
+  id: "2"
+  party_type: Role
+  party_id: "1"
+permissions_134: 
+  card_id: "5"
+  task: delete
+  id: "134"
+  party_type: Role
+  party_id: "2"
+permissions_267: 
+  card_id: "99"
+  task: read
+  id: "267"
+  party_type: Role
+  party_id: "3"
+permissions_399: 
+  card_id: "246"
+  task: read
+  id: "399"
+  party_type: Role
+  party_id: "3"
+permissions_003: 
+  card_id: "272"
+  task: read
+  id: "3"
+  party_type: Role
+  party_id: "3"
+permissions_135: 
+  card_id: "5"
+  task: edit
+  id: "135"
+  party_type: Role
+  party_id: "2"
+permissions_268: 
+  card_id: "184"
+  task: delete
+  id: "268"
+  party_type: Role
+  party_id: "2"
+permissions_004: 
+  card_id: "260"
+  task: delete
+  id: "4"
+  party_type: Role
+  party_id: "1"
+permissions_136: 
+  card_id: "5"
+  task: read
+  id: "136"
+  party_type: Role
+  party_id: "3"
+permissions_269: 
+  card_id: "184"
+  task: edit
+  id: "269"
+  party_type: Role
+  party_id: "2"
+permissions_005: 
+  card_id: "260"
+  task: edit
+  id: "5"
+  party_type: Role
+  party_id: "1"
+permissions_137: 
+  card_id: "5"
+  task: create
+  id: "137"
+  party_type: Role
+  party_id: "2"
+permissions_006: 
+  card_id: "260"
+  task: read
+  id: "6"
+  party_type: Role
+  party_id: "3"
+permissions_138: 
+  card_id: "108"
+  task: delete
+  id: "138"
+  party_type: Role
+  party_id: "1"
+permissions_007: 
+  card_id: "241"
+  task: delete
+  id: "7"
+  party_type: Role
+  party_id: "1"
+permissions_139: 
+  card_id: "108"
+  task: edit
+  id: "139"
+  party_type: Role
+  party_id: "1"
+permissions_270: 
+  card_id: "184"
+  task: read
+  id: "270"
+  party_type: Role
+  party_id: "3"
+permissions_008: 
+  card_id: "241"
+  task: edit
+  id: "8"
+  party_type: Role
+  party_id: "1"
+permissions_271: 
+  card_id: "82"
+  task: delete
+  id: "271"
+  party_type: Role
+  party_id: "1"
+permissions_009: 
+  card_id: "241"
+  task: read
+  id: "9"
+  party_type: Role
+  party_id: "3"
+permissions_140: 
+  card_id: "108"
+  task: read
+  id: "140"
+  party_type: Role
+  party_id: "3"
+permissions_272: 
+  card_id: "82"
+  task: edit
+  id: "272"
+  party_type: Role
+  party_id: "1"
+permissions_141: 
+  card_id: "64"
+  task: delete
+  id: "141"
+  party_type: Role
+  party_id: "1"
+permissions_273: 
+  card_id: "82"
+  task: read
+  id: "273"
+  party_type: Role
+  party_id: "3"
+permissions_010: 
+  card_id: "248"
+  task: delete
+  id: "10"
+  party_type: Role
+  party_id: "1"
+permissions_142: 
+  card_id: "64"
+  task: edit
+  id: "142"
+  party_type: Role
+  party_id: "1"
+permissions_274: 
+  card_id: "121"
+  task: delete
+  id: "274"
+  party_type: Role
+  party_id: "1"
+permissions_011: 
+  card_id: "248"
+  task: edit
+  id: "11"
+  party_type: Role
+  party_id: "1"
+permissions_143: 
+  card_id: "64"
+  task: read
+  id: "143"
+  party_type: Role
+  party_id: "3"
+permissions_275: 
+  card_id: "121"
+  task: edit
+  id: "275"
+  party_type: Role
+  party_id: "1"
+permissions_012: 
+  card_id: "248"
+  task: read
+  id: "12"
+  party_type: Role
+  party_id: "3"
+permissions_144: 
+  card_id: "266"
+  task: delete
+  id: "144"
+  party_type: Role
+  party_id: "1"
+permissions_276: 
+  card_id: "121"
+  task: read
+  id: "276"
+  party_type: Role
+  party_id: "3"
+permissions_013: 
+  card_id: "90"
+  task: delete
+  id: "13"
+  party_type: Role
+  party_id: "1"
+permissions_145: 
+  card_id: "266"
+  task: edit
+  id: "145"
+  party_type: Role
+  party_id: "1"
+permissions_277: 
+  card_id: "216"
+  task: delete
+  id: "277"
+  party_type: Role
+  party_id: "2"
+permissions_014: 
+  card_id: "90"
+  task: edit
+  id: "14"
+  party_type: Role
+  party_id: "1"
+permissions_146: 
+  card_id: "266"
+  task: read
+  id: "146"
+  party_type: Role
+  party_id: "3"
+permissions_278: 
+  card_id: "216"
+  task: edit
+  id: "278"
+  party_type: Role
+  party_id: "2"
+permissions_015: 
+  card_id: "90"
+  task: read
+  id: "15"
+  party_type: Role
+  party_id: "3"
+permissions_147: 
+  card_id: "88"
+  task: delete
+  id: "147"
+  party_type: Role
+  party_id: "2"
+permissions_279: 
+  card_id: "216"
+  task: read
+  id: "279"
+  party_type: Role
+  party_id: "3"
+permissions_700: 
+  card_id: "333"
+  task: read
+  id: "700"
+  party_type: Role
+  party_id: "3"
+permissions_016: 
+  card_id: "67"
+  task: delete
+  id: "16"
+  party_type: Role
+  party_id: "1"
+permissions_148: 
+  card_id: "88"
+  task: edit
+  id: "148"
+  party_type: Role
+  party_id: "2"
+permissions_701: 
+  card_id: "334"
+  task: delete
+  id: "701"
+  party_type: Role
+  party_id: "2"
+permissions_017: 
+  card_id: "67"
+  task: edit
+  id: "17"
+  party_type: Role
+  party_id: "1"
+permissions_149: 
+  card_id: "88"
+  task: read
+  id: "149"
+  party_type: Role
+  party_id: "3"
+permissions_702: 
+  card_id: "334"
+  task: edit
+  id: "702"
+  party_type: Role
+  party_id: "2"
+permissions_280: 
+  card_id: "98"
+  task: delete
+  id: "280"
+  party_type: Role
+  party_id: "1"
+permissions_018: 
+  card_id: "67"
+  task: read
+  id: "18"
+  party_type: Role
+  party_id: "3"
+permissions_703: 
+  card_id: "334"
+  task: read
+  id: "703"
+  party_type: Role
+  party_id: "3"
+permissions_281: 
+  card_id: "98"
+  task: edit
+  id: "281"
+  party_type: Role
+  party_id: "1"
+permissions_019: 
+  card_id: "207"
+  task: delete
+  id: "19"
+  party_type: Role
+  party_id: "2"
+permissions_150: 
+  card_id: "225"
+  task: delete
+  id: "150"
+  party_type: Role
+  party_id: "2"
+permissions_282: 
+  card_id: "98"
+  task: read
+  id: "282"
+  party_type: Role
+  party_id: "3"
+permissions_704: 
+  card_id: "335"
+  task: delete
+  id: "704"
+  party_type: Role
+  party_id: "2"
+permissions_151: 
+  card_id: "225"
+  task: edit
+  id: "151"
+  party_type: Role
+  party_id: "2"
+permissions_283: 
+  card_id: "111"
+  task: delete
+  id: "283"
+  party_type: Role
+  party_id: "1"
+permissions_705: 
+  card_id: "335"
+  task: edit
+  id: "705"
+  party_type: Role
+  party_id: "2"
+permissions_020: 
+  card_id: "207"
+  task: edit
+  id: "20"
+  party_type: Role
+  party_id: "2"
+permissions_152: 
+  card_id: "225"
+  task: read
+  id: "152"
+  party_type: Role
+  party_id: "3"
+permissions_284: 
+  card_id: "111"
+  task: edit
+  id: "284"
+  party_type: Role
+  party_id: "1"
+permissions_706: 
+  card_id: "335"
+  task: read
+  id: "706"
+  party_type: Role
+  party_id: "3"
+permissions_021: 
+  card_id: "207"
+  task: read
+  id: "21"
+  party_type: Role
+  party_id: "3"
+permissions_153: 
+  card_id: "270"
+  task: delete
+  id: "153"
+  party_type: Role
+  party_id: "1"
+permissions_285: 
+  card_id: "111"
+  task: read
+  id: "285"
+  party_type: Role
+  party_id: "3"
+permissions_707: 
+  card_id: "336"
+  task: delete
+  id: "707"
+  party_type: Role
+  party_id: "2"
+permissions_022: 
+  card_id: "80"
+  task: delete
+  id: "22"
+  party_type: Role
+  party_id: "2"
+permissions_154: 
+  card_id: "270"
+  task: edit
+  id: "154"
+  party_type: Role
+  party_id: "1"
+permissions_286: 
+  card_id: "146"
+  task: delete
+  id: "286"
+  party_type: Role
+  party_id: "2"
+permissions_708: 
+  card_id: "336"
+  task: edit
+  id: "708"
+  party_type: Role
+  party_id: "2"
+permissions_023: 
+  card_id: "80"
+  task: edit
+  id: "23"
+  party_type: Role
+  party_id: "2"
+permissions_155: 
+  card_id: "270"
+  task: read
+  id: "155"
+  party_type: Role
+  party_id: "3"
+permissions_287: 
+  card_id: "146"
+  task: edit
+  id: "287"
+  party_type: Role
+  party_id: "2"
+permissions_709: 
+  card_id: "336"
+  task: read
+  id: "709"
+  party_type: Role
+  party_id: "3"
+permissions_024: 
+  card_id: "80"
+  task: read
+  id: "24"
+  party_type: Role
+  party_id: "3"
+permissions_156: 
+  card_id: "91"
+  task: delete
+  id: "156"
+  party_type: Role
+  party_id: "1"
+permissions_288: 
+  card_id: "146"
+  task: read
+  id: "288"
+  party_type: Role
+  party_id: "3"
+permissions_025: 
+  card_id: "30"
+  task: delete
+  id: "25"
+  party_type: Role
+  party_id: "2"
+permissions_157: 
+  card_id: "91"
+  task: edit
+  id: "157"
+  party_type: Role
+  party_id: "1"
+permissions_289: 
+  card_id: "252"
+  task: delete
+  id: "289"
+  party_type: Role
+  party_id: "1"
+permissions_710: 
+  card_id: "337"
+  task: delete
+  id: "710"
+  party_type: Role
+  party_id: "2"
+permissions_026: 
+  card_id: "30"
+  task: edit
+  id: "26"
+  party_type: Role
+  party_id: "2"
+permissions_158: 
+  card_id: "91"
+  task: read
+  id: "158"
+  party_type: Role
+  party_id: "3"
+permissions_711: 
+  card_id: "337"
+  task: edit
+  id: "711"
+  party_type: Role
+  party_id: "2"
+permissions_027: 
+  card_id: "30"
+  task: read
+  id: "27"
+  party_type: Role
+  party_id: "3"
+permissions_159: 
+  card_id: "264"
+  task: delete
+  id: "159"
+  party_type: Role
+  party_id: "1"
+permissions_712: 
+  card_id: "337"
+  task: read
+  id: "712"
+  party_type: Role
+  party_id: "3"
+permissions_028: 
+  card_id: "30"
+  task: create
+  id: "28"
+  party_type: Role
+  party_id: "2"
+permissions_713: 
+  card_id: "338"
+  task: delete
+  id: "713"
+  party_type: Role
+  party_id: "2"
+permissions_290: 
+  card_id: "252"
+  task: edit
+  id: "290"
+  party_type: Role
+  party_id: "1"
+permissions_029: 
+  card_id: "34"
+  task: delete
+  id: "29"
+  party_type: Role
+  party_id: "1"
+permissions_714: 
+  card_id: "338"
+  task: edit
+  id: "714"
+  party_type: Role
+  party_id: "2"
+permissions_291: 
+  card_id: "252"
+  task: read
+  id: "291"
+  party_type: Role
+  party_id: "3"
+permissions_160: 
+  card_id: "264"
+  task: edit
+  id: "160"
+  party_type: Role
+  party_id: "1"
+permissions_292: 
+  card_id: "117"
+  task: delete
+  id: "292"
+  party_type: Role
+  party_id: "1"
+permissions_715: 
+  card_id: "338"
+  task: read
+  id: "715"
+  party_type: Role
+  party_id: "3"
+permissions_161: 
+  card_id: "264"
+  task: read
+  id: "161"
+  party_type: Role
+  party_id: "3"
+permissions_293: 
+  card_id: "117"
+  task: edit
+  id: "293"
+  party_type: Role
+  party_id: "1"
+permissions_716: 
+  card_id: "339"
+  task: delete
+  id: "716"
+  party_type: Role
+  party_id: "2"
+permissions_030: 
+  card_id: "34"
+  task: edit
+  id: "30"
+  party_type: Role
+  party_id: "1"
+permissions_162: 
+  card_id: "172"
+  task: delete
+  id: "162"
+  party_type: Role
+  party_id: "1"
+permissions_294: 
+  card_id: "117"
+  task: read
+  id: "294"
+  party_type: Role
+  party_id: "3"
+permissions_717: 
+  card_id: "339"
+  task: edit
+  id: "717"
+  party_type: Role
+  party_id: "2"
+permissions_031: 
+  card_id: "34"
+  task: read
+  id: "31"
+  party_type: Role
+  party_id: "3"
+permissions_163: 
+  card_id: "172"
+  task: edit
+  id: "163"
+  party_type: Role
+  party_id: "1"
+permissions_295: 
+  card_id: "112"
+  task: delete
+  id: "295"
+  party_type: Role
+  party_id: "1"
+permissions_718: 
+  card_id: "339"
+  task: read
+  id: "718"
+  party_type: Role
+  party_id: "3"
+permissions_032: 
+  card_id: "202"
+  task: delete
+  id: "32"
+  party_type: Role
+  party_id: "2"
+permissions_164: 
+  card_id: "172"
+  task: read
+  id: "164"
+  party_type: Role
+  party_id: "3"
+permissions_296: 
+  card_id: "112"
+  task: edit
+  id: "296"
+  party_type: Role
+  party_id: "1"
+permissions_719: 
+  card_id: "339"
+  task: create
+  id: "719"
+  party_type: Role
+  party_id: "2"
+permissions_033: 
+  card_id: "202"
+  task: edit
+  id: "33"
+  party_type: Role
+  party_id: "2"
+permissions_165: 
+  card_id: "7"
+  task: delete
+  id: "165"
+  party_type: Role
+  party_id: "2"
+permissions_297: 
+  card_id: "112"
+  task: read
+  id: "297"
+  party_type: Role
+  party_id: "3"
+permissions_034: 
+  card_id: "202"
+  task: read
+  id: "34"
+  party_type: Role
+  party_id: "3"
+permissions_166: 
+  card_id: "7"
+  task: edit
+  id: "166"
+  party_type: Role
+  party_id: "2"
+permissions_298: 
+  card_id: "87"
+  task: delete
+  id: "298"
+  party_type: Role
+  party_id: "1"
+permissions_720: 
+  card_id: "340"
+  task: delete
+  id: "720"
+  party_type: Role
+  party_id: "2"
+permissions_035: 
+  card_id: "206"
+  task: delete
+  id: "35"
+  party_type: Role
+  party_id: "2"
+permissions_167: 
+  card_id: "7"
+  task: read
+  id: "167"
+  party_type: Role
+  party_id: "3"
+permissions_299: 
+  card_id: "87"
+  task: edit
+  id: "299"
+  party_type: Role
+  party_id: "1"
+permissions_721: 
+  card_id: "340"
+  task: edit
+  id: "721"
+  party_type: Role
+  party_id: "2"
+permissions_036: 
+  card_id: "206"
+  task: edit
+  id: "36"
+  party_type: Role
+  party_id: "2"
+permissions_168: 
+  card_id: "7"
+  task: create
+  id: "168"
+  party_type: Role
+  party_id: "1"
+permissions_722: 
+  card_id: "340"
+  task: read
+  id: "722"
+  party_type: Role
+  party_id: "3"
+permissions_037: 
+  card_id: "206"
+  task: read
+  id: "37"
+  party_type: Role
+  party_id: "3"
+permissions_169: 
+  card_id: "221"
+  task: delete
+  id: "169"
+  party_type: Role
+  party_id: "1"
+permissions_723: 
+  card_id: "341"
+  task: delete
+  id: "724"
+  party_type: Role
+  party_id: "2"
+permissions_038: 
+  card_id: "51"
+  task: delete
+  id: "38"
+  party_type: Role
+  party_id: "2"
+permissions_724: 
+  card_id: "341"
+  task: edit
+  id: "725"
+  party_type: Role
+  party_id: "2"
+permissions_039: 
+  card_id: "51"
+  task: edit
+  id: "39"
+  party_type: Role
+  party_id: "2"
+permissions_725: 
+  card_id: "341"
+  task: read
+  id: "726"
+  party_type: Role
+  party_id: "3"
+permissions_170: 
+  card_id: "221"
+  task: edit
+  id: "170"
+  party_type: Role
+  party_id: "1"
+permissions_171: 
+  card_id: "221"
+  task: read
+  id: "171"
+  party_type: Role
+  party_id: "3"
+permissions_726: 
+  card_id: "341"
+  task: create
+  id: "727"
+  party_type: Role
+  party_id: "2"
+permissions_040: 
+  card_id: "51"
+  task: read
+  id: "40"
+  party_type: Role
+  party_id: "3"
+permissions_172: 
+  card_id: "28"
+  task: delete
+  id: "172"
+  party_type: Role
+  party_id: "2"
+permissions_727: 
+  card_id: "342"
+  task: delete
+  id: "728"
+  party_type: Role
+  party_id: "2"
+permissions_041: 
+  card_id: "51"
+  task: create
+  id: "41"
+  party_type: Role
+  party_id: "2"
+permissions_173: 
+  card_id: "28"
+  task: edit
+  id: "173"
+  party_type: Role
+  party_id: "2"
+permissions_728: 
+  card_id: "342"
+  task: edit
+  id: "729"
+  party_type: Role
+  party_id: "2"
+permissions_042: 
+  card_id: "56"
+  task: delete
+  id: "42"
+  party_type: Role
+  party_id: "1"
+permissions_174: 
+  card_id: "28"
+  task: read
+  id: "174"
+  party_type: Role
+  party_id: "3"
+permissions_729: 
+  card_id: "342"
+  task: read
+  id: "730"
+  party_type: Role
+  party_id: "3"
+permissions_043: 
+  card_id: "56"
+  task: edit
+  id: "43"
+  party_type: Role
+  party_id: "1"
+permissions_175: 
+  card_id: "278"
+  task: delete
+  id: "175"
+  party_type: Role
+  party_id: "2"
+permissions_044: 
+  card_id: "56"
+  task: read
+  id: "44"
+  party_type: Role
+  party_id: "3"
+permissions_176: 
+  card_id: "278"
+  task: edit
+  id: "176"
+  party_type: Role
+  party_id: "2"
+permissions_045: 
+  card_id: "201"
+  task: delete
+  id: "45"
+  party_type: Role
+  party_id: "2"
+permissions_177: 
+  card_id: "278"
+  task: read
+  id: "177"
+  party_type: Role
+  party_id: "3"
+permissions_730: 
+  card_id: "342"
+  task: create
+  id: "731"
+  party_type: Role
+  party_id: "2"
+permissions_046: 
+  card_id: "201"
+  task: edit
+  id: "46"
+  party_type: Role
+  party_id: "2"
+permissions_178: 
+  card_id: "278"
+  task: create
+  id: "178"
+  party_type: Role
+  party_id: "2"
+permissions_731: 
+  card_id: "343"
+  task: delete
+  id: "732"
+  party_type: Role
+  party_id: "2"
+permissions_047: 
+  card_id: "201"
+  task: read
+  id: "47"
+  party_type: Role
+  party_id: "3"
+permissions_179: 
+  card_id: "157"
+  task: delete
+  id: "179"
+  party_type: Role
+  party_id: "2"
+permissions_600: 
+  card_id: "300"
+  task: read
+  id: "600"
+  party_type: Role
+  party_id: "3"
+permissions_732: 
+  card_id: "343"
+  task: edit
+  id: "733"
+  party_type: Role
+  party_id: "2"
+permissions_048: 
+  card_id: "240"
+  task: delete
+  id: "48"
+  party_type: Role
+  party_id: "2"
+permissions_601: 
+  card_id: "300"
+  task: create
+  id: "601"
+  party_type: Role
+  party_id: "2"
+permissions_733: 
+  card_id: "343"
+  task: read
+  id: "734"
+  party_type: Role
+  party_id: "3"
+permissions_049: 
+  card_id: "240"
+  task: edit
+  id: "49"
+  party_type: Role
+  party_id: "2"
+permissions_602: 
+  card_id: "301"
+  task: delete
+  id: "602"
+  party_type: Role
+  party_id: "2"
+permissions_734: 
+  card_id: "343"
+  task: create
+  id: "735"
+  party_type: Role
+  party_id: "2"
+permissions_603: 
+  card_id: "301"
+  task: edit
+  id: "603"
+  party_type: Role
+  party_id: "2"
+permissions_735: 
+  card_id: "344"
+  task: delete
+  id: "736"
+  party_type: Role
+  party_id: "2"
+permissions_180: 
+  card_id: "157"
+  task: edit
+  id: "180"
+  party_type: Role
+  party_id: "2"
+permissions_604: 
+  card_id: "301"
+  task: read
+  id: "604"
+  party_type: Role
+  party_id: "3"
+permissions_736: 
+  card_id: "344"
+  task: edit
+  id: "737"
+  party_type: Role
+  party_id: "2"
+permissions_181: 
+  card_id: "157"
+  task: read
+  id: "181"
+  party_type: Role
+  party_id: "3"
+permissions_050: 
+  card_id: "240"
+  task: read
+  id: "50"
+  party_type: Role
+  party_id: "3"
+permissions_182: 
+  card_id: "222"
+  task: delete
+  id: "182"
+  party_type: Role
+  party_id: "1"
+permissions_605: 
+  card_id: "302"
+  task: delete
+  id: "605"
+  party_type: Role
+  party_id: "2"
+permissions_737: 
+  card_id: "344"
+  task: read
+  id: "738"
+  party_type: Role
+  party_id: "3"
+permissions_051: 
+  card_id: "4"
+  task: delete
+  id: "51"
+  party_type: Role
+  party_id: "2"
+permissions_183: 
+  card_id: "222"
+  task: edit
+  id: "183"
+  party_type: Role
+  party_id: "1"
+permissions_606: 
+  card_id: "302"
+  task: edit
+  id: "606"
+  party_type: Role
+  party_id: "2"
+permissions_738: 
+  card_id: "344"
+  task: create
+  id: "739"
+  party_type: Role
+  party_id: "2"
+permissions_052: 
+  card_id: "4"
+  task: edit
+  id: "52"
+  party_type: Role
+  party_id: "2"
+permissions_184: 
+  card_id: "222"
+  task: read
+  id: "184"
+  party_type: Role
+  party_id: "3"
+permissions_607: 
+  card_id: "302"
+  task: read
+  id: "607"
+  party_type: Role
+  party_id: "3"
+permissions_739: 
+  card_id: "345"
+  task: delete
+  id: "740"
+  party_type: Role
+  party_id: "2"
+permissions_053: 
+  card_id: "4"
+  task: read
+  id: "53"
+  party_type: Role
+  party_id: "3"
+permissions_185: 
+  card_id: "269"
+  task: delete
+  id: "185"
+  party_type: Role
+  party_id: "1"
+permissions_608: 
+  card_id: "303"
+  task: delete
+  id: "608"
+  party_type: Role
+  party_id: "2"
+permissions_054: 
+  card_id: "4"
+  task: create
+  id: "54"
+  party_type: Role
+  party_id: "2"
+permissions_186: 
+  card_id: "269"
+  task: edit
+  id: "186"
+  party_type: Role
+  party_id: "1"
+permissions_740: 
+  card_id: "345"
+  task: edit
+  id: "741"
+  party_type: Role
+  party_id: "2"
+permissions_609: 
+  card_id: "303"
+  task: edit
+  id: "609"
+  party_type: Role
+  party_id: "2"
+permissions_055: 
+  card_id: "62"
+  task: delete
+  id: "55"
+  party_type: Role
+  party_id: "1"
+permissions_187: 
+  card_id: "269"
+  task: read
+  id: "187"
+  party_type: Role
+  party_id: "3"
+permissions_741: 
+  card_id: "345"
+  task: read
+  id: "742"
+  party_type: Role
+  party_id: "3"
+permissions_056: 
+  card_id: "62"
+  task: edit
+  id: "56"
+  party_type: Role
+  party_id: "1"
+permissions_188: 
+  card_id: "109"
+  task: delete
+  id: "188"
+  party_type: Role
+  party_id: "2"
+permissions_610: 
+  card_id: "303"
+  task: read
+  id: "610"
+  party_type: Role
+  party_id: "3"
+permissions_742: 
+  card_id: "346"
+  task: delete
+  id: "743"
+  party_type: Role
+  party_id: "2"
+permissions_057: 
+  card_id: "62"
+  task: read
+  id: "57"
+  party_type: Role
+  party_id: "3"
+permissions_189: 
+  card_id: "109"
+  task: edit
+  id: "189"
+  party_type: Role
+  party_id: "2"
+permissions_611: 
+  card_id: "304"
+  task: delete
+  id: "611"
+  party_type: Role
+  party_id: "2"
+permissions_743: 
+  card_id: "346"
+  task: edit
+  id: "744"
+  party_type: Role
+  party_id: "2"
+permissions_058: 
+  card_id: "200"
+  task: delete
+  id: "58"
+  party_type: Role
+  party_id: "2"
+permissions_612: 
+  card_id: "304"
+  task: edit
+  id: "612"
+  party_type: Role
+  party_id: "2"
+permissions_744: 
+  card_id: "346"
+  task: read
+  id: "745"
+  party_type: Role
+  party_id: "3"
+permissions_059: 
+  card_id: "200"
+  task: edit
+  id: "59"
+  party_type: Role
+  party_id: "2"
+permissions_613: 
+  card_id: "304"
+  task: read
+  id: "613"
+  party_type: Role
+  party_id: "3"
+permissions_745: 
+  card_id: "347"
+  task: delete
+  id: "746"
+  party_type: Role
+  party_id: "2"
+permissions_190: 
+  card_id: "109"
+  task: read
+  id: "190"
+  party_type: Role
+  party_id: "3"
+permissions_614: 
+  card_id: "305"
+  task: delete
+  id: "614"
+  party_type: Role
+  party_id: "2"
+permissions_746: 
+  card_id: "347"
+  task: edit
+  id: "747"
+  party_type: Role
+  party_id: "2"
+permissions_191: 
+  card_id: "259"
+  task: delete
+  id: "191"
+  party_type: Role
+  party_id: "2"
+permissions_615: 
+  card_id: "305"
+  task: edit
+  id: "615"
+  party_type: Role
+  party_id: "2"
+permissions_747: 
+  card_id: "347"
+  task: read
+  id: "748"
+  party_type: Role
+  party_id: "3"
+permissions_060: 
+  card_id: "200"
+  task: read
+  id: "60"
+  party_type: Role
+  party_id: "3"
+permissions_192: 
+  card_id: "259"
+  task: edit
+  id: "192"
+  party_type: Role
+  party_id: "2"
+permissions_061: 
+  card_id: "48"
+  task: delete
+  id: "61"
+  party_type: Role
+  party_id: "1"
+permissions_193: 
+  card_id: "259"
+  task: read
+  id: "193"
+  party_type: Role
+  party_id: "3"
+permissions_616: 
+  card_id: "305"
+  task: read
+  id: "616"
+  party_type: Role
+  party_id: "3"
+permissions_748: 
+  card_id: "348"
+  task: delete
+  id: "749"
+  party_type: Role
+  party_id: "2"
+permissions_062: 
+  card_id: "48"
+  task: edit
+  id: "62"
+  party_type: Role
+  party_id: "1"
+permissions_194: 
+  card_id: "259"
+  task: create
+  id: "194"
+  party_type: Role
+  party_id: "2"
+permissions_617: 
+  card_id: "306"
+  task: delete
+  id: "617"
+  party_type: Role
+  party_id: "2"
+permissions_749: 
+  card_id: "348"
+  task: edit
+  id: "750"
+  party_type: Role
+  party_id: "2"
+permissions_063: 
+  card_id: "48"
+  task: read
+  id: "63"
+  party_type: Role
+  party_id: "3"
+permissions_195: 
+  card_id: "81"
+  task: delete
+  id: "195"
+  party_type: Role
+  party_id: "1"
+permissions_618: 
+  card_id: "306"
+  task: edit
+  id: "618"
+  party_type: Role
+  party_id: "2"
+permissions_064: 
+  card_id: "182"
+  task: delete
+  id: "64"
+  party_type: Role
+  party_id: "2"
+permissions_196: 
+  card_id: "81"
+  task: edit
+  id: "196"
+  party_type: Role
+  party_id: "1"
+permissions_619: 
+  card_id: "306"
+  task: read
+  id: "619"
+  party_type: Role
+  party_id: "3"
+permissions_065: 
+  card_id: "182"
+  task: edit
+  id: "65"
+  party_type: Role
+  party_id: "2"
+permissions_197: 
+  card_id: "81"
+  task: read
+  id: "197"
+  party_type: Role
+  party_id: "3"
+permissions_750: 
+  card_id: "348"
+  task: read
+  id: "751"
+  party_type: Role
+  party_id: "3"
+permissions_066: 
+  card_id: "182"
+  task: read
+  id: "66"
+  party_type: Role
+  party_id: "3"
+permissions_198: 
+  card_id: "103"
+  task: delete
+  id: "198"
+  party_type: Role
+  party_id: "1"
+permissions_751: 
+  card_id: "349"
+  task: delete
+  id: "752"
+  party_type: Role
+  party_id: "2"
+permissions_067: 
+  card_id: "20"
+  task: delete
+  id: "67"
+  party_type: Role
+  party_id: "2"
+permissions_199: 
+  card_id: "103"
+  task: edit
+  id: "199"
+  party_type: Role
+  party_id: "1"
+permissions_620: 
+  card_id: "307"
+  task: delete
+  id: "620"
+  party_type: Role
+  party_id: "2"
+permissions_752: 
+  card_id: "349"
+  task: edit
+  id: "753"
+  party_type: Role
+  party_id: "2"
+permissions_068: 
+  card_id: "20"
+  task: edit
+  id: "68"
+  party_type: Role
+  party_id: "2"
+permissions_621: 
+  card_id: "307"
+  task: edit
+  id: "621"
+  party_type: Role
+  party_id: "2"
+permissions_753: 
+  card_id: "349"
+  task: read
+  id: "754"
+  party_type: Role
+  party_id: "3"
+permissions_069: 
+  card_id: "20"
+  task: read
+  id: "69"
+  party_type: Role
+  party_id: "3"
+permissions_622: 
+  card_id: "307"
+  task: read
+  id: "622"
+  party_type: Role
+  party_id: "3"
+permissions_754: 
+  card_id: "350"
+  task: delete
+  id: "755"
+  party_type: Role
+  party_id: "2"
+permissions_623: 
+  card_id: "308"
+  task: delete
+  id: "623"
+  party_type: Role
+  party_id: "2"
+permissions_755: 
+  card_id: "350"
+  task: edit
+  id: "756"
+  party_type: Role
+  party_id: "2"
+permissions_624: 
+  card_id: "308"
+  task: edit
+  id: "624"
+  party_type: Role
+  party_id: "2"
+permissions_756: 
+  card_id: "350"
+  task: read
+  id: "757"
+  party_type: Role
+  party_id: "3"
+permissions_070: 
+  card_id: "20"
+  task: create
+  id: "70"
+  party_type: Role
+  party_id: "2"
+permissions_625: 
+  card_id: "308"
+  task: read
+  id: "625"
+  party_type: Role
+  party_id: "3"
+permissions_757: 
+  card_id: "351"
+  task: delete
+  id: "758"
+  party_type: Role
+  party_id: "2"
+permissions_071: 
+  card_id: "100"
+  task: delete
+  id: "71"
+  party_type: Role
+  party_id: "1"
+permissions_626: 
+  card_id: "309"
+  task: delete
+  id: "626"
+  party_type: Role
+  party_id: "2"
+permissions_758: 
+  card_id: "351"
+  task: edit
+  id: "759"
+  party_type: Role
+  party_id: "2"
+permissions_072: 
+  card_id: "100"
+  task: edit
+  id: "72"
+  party_type: Role
+  party_id: "1"
+permissions_073: 
+  card_id: "100"
+  task: read
+  id: "73"
+  party_type: Role
+  party_id: "3"
+permissions_627: 
+  card_id: "309"
+  task: edit
+  id: "627"
+  party_type: Role
+  party_id: "2"
+permissions_759: 
+  card_id: "351"
+  task: read
+  id: "760"
+  party_type: Role
+  party_id: "3"
+permissions_074: 
+  card_id: "55"
+  task: delete
+  id: "74"
+  party_type: Role
+  party_id: "1"
+permissions_628: 
+  card_id: "309"
+  task: read
+  id: "628"
+  party_type: Role
+  party_id: "3"
+permissions_075: 
+  card_id: "55"
+  task: edit
+  id: "75"
+  party_type: Role
+  party_id: "1"
+permissions_760: 
+  card_id: "352"
+  task: delete
+  id: "761"
+  party_type: Role
+  party_id: "2"
+permissions_629: 
+  card_id: "310"
+  task: delete
+  id: "629"
+  party_type: Role
+  party_id: "2"
+permissions_076: 
+  card_id: "55"
+  task: read
+  id: "76"
+  party_type: Role
+  party_id: "3"
+permissions_761: 
+  card_id: "352"
+  task: edit
+  id: "762"
+  party_type: Role
+  party_id: "2"
+permissions_077: 
+  card_id: "50"
+  task: delete
+  id: "77"
+  party_type: Role
+  party_id: "2"
+permissions_630: 
+  card_id: "310"
+  task: edit
+  id: "630"
+  party_type: Role
+  party_id: "2"
+permissions_762: 
+  card_id: "352"
+  task: read
+  id: "763"
+  party_type: Role
+  party_id: "3"
+permissions_078: 
+  card_id: "50"
+  task: edit
+  id: "78"
+  party_type: Role
+  party_id: "2"
+permissions_631: 
+  card_id: "310"
+  task: read
+  id: "631"
+  party_type: Role
+  party_id: "3"
+permissions_763: 
+  card_id: "353"
+  task: delete
+  id: "764"
+  party_type: Role
+  party_id: "2"
+permissions_079: 
+  card_id: "50"
+  task: read
+  id: "79"
+  party_type: Role
+  party_id: "3"
+permissions_500: 
+  card_id: "37"
+  task: edit
+  id: "500"
+  party_type: Role
+  party_id: "1"
+permissions_632: 
+  card_id: "311"
+  task: delete
+  id: "632"
+  party_type: Role
+  party_id: "2"
+permissions_764: 
+  card_id: "353"
+  task: edit
+  id: "765"
+  party_type: Role
+  party_id: "2"
+permissions_501: 
+  card_id: "37"
+  task: read
+  id: "501"
+  party_type: Role
+  party_id: "3"
+permissions_633: 
+  card_id: "311"
+  task: edit
+  id: "633"
+  party_type: Role
+  party_id: "2"
+permissions_765: 
+  card_id: "353"
+  task: read
+  id: "766"
+  party_type: Role
+  party_id: "3"
+permissions_502: 
+  card_id: "130"
+  task: delete
+  id: "502"
+  party_type: Role
+  party_id: "2"
+permissions_634: 
+  card_id: "311"
+  task: read
+  id: "634"
+  party_type: Role
+  party_id: "3"
+permissions_766: 
+  card_id: "353"
+  task: create
+  id: "767"
+  party_type: Role
+  party_id: "2"
+permissions_503: 
+  card_id: "130"
+  task: edit
+  id: "503"
+  party_type: Role
+  party_id: "2"
+permissions_635: 
+  card_id: "312"
+  task: delete
+  id: "635"
+  party_type: Role
+  party_id: "2"
+permissions_767: 
+  card_id: "354"
+  task: delete
+  id: "768"
+  party_type: Role
+  party_id: "2"
+permissions_080: 
+  card_id: "50"
+  task: create
+  id: "80"
+  party_type: Role
+  party_id: "1"
+permissions_504: 
+  card_id: "130"
+  task: read
+  id: "504"
+  party_type: Role
+  party_id: "3"
+permissions_636: 
+  card_id: "312"
+  task: edit
+  id: "636"
+  party_type: Role
+  party_id: "2"
+permissions_768: 
+  card_id: "354"
+  task: edit
+  id: "769"
+  party_type: Role
+  party_id: "2"
+permissions_081: 
+  card_id: "95"
+  task: delete
+  id: "81"
+  party_type: Role
+  party_id: "1"
+permissions_505: 
+  card_id: "273"
+  task: delete
+  id: "505"
+  party_type: Role
+  party_id: "2"
+permissions_637: 
+  card_id: "312"
+  task: read
+  id: "637"
+  party_type: Role
+  party_id: "3"
+permissions_769: 
+  card_id: "354"
+  task: read
+  id: "770"
+  party_type: Role
+  party_id: "3"
+permissions_082: 
+  card_id: "95"
+  task: edit
+  id: "82"
+  party_type: Role
+  party_id: "1"
+permissions_083: 
+  card_id: "95"
+  task: read
+  id: "83"
+  party_type: Role
+  party_id: "3"
+permissions_506: 
+  card_id: "273"
+  task: edit
+  id: "506"
+  party_type: Role
+  party_id: "2"
+permissions_638: 
+  card_id: "313"
+  task: delete
+  id: "638"
+  party_type: Role
+  party_id: "2"
+permissions_084: 
+  card_id: "53"
+  task: delete
+  id: "84"
+  party_type: Role
+  party_id: "1"
+permissions_770: 
+  card_id: "355"
+  task: delete
+  id: "771"
+  party_type: Role
+  party_id: "2"
+permissions_507: 
+  card_id: "273"
+  task: read
+  id: "507"
+  party_type: Role
+  party_id: "3"
+permissions_639: 
+  card_id: "313"
+  task: edit
+  id: "639"
+  party_type: Role
+  party_id: "2"
+permissions_085: 
+  card_id: "53"
+  task: edit
+  id: "85"
+  party_type: Role
+  party_id: "1"
+permissions_771: 
+  card_id: "355"
+  task: edit
+  id: "772"
+  party_type: Role
+  party_id: "2"
+permissions_508: 
+  card_id: "119"
+  task: delete
+  id: "508"
+  party_type: Role
+  party_id: "1"
+permissions_086: 
+  card_id: "53"
+  task: read
+  id: "86"
+  party_type: Role
+  party_id: "3"
+permissions_640: 
+  card_id: "313"
+  task: read
+  id: "640"
+  party_type: Role
+  party_id: "3"
+permissions_772: 
+  card_id: "355"
+  task: read
+  id: "773"
+  party_type: Role
+  party_id: "3"
+permissions_509: 
+  card_id: "119"
+  task: edit
+  id: "509"
+  party_type: Role
+  party_id: "1"
+permissions_087: 
+  card_id: "155"
+  task: delete
+  id: "87"
+  party_type: Role
+  party_id: "2"
+permissions_641: 
+  card_id: "314"
+  task: delete
+  id: "641"
+  party_type: Role
+  party_id: "2"
+permissions_773: 
+  card_id: "356"
+  task: delete
+  id: "774"
+  party_type: Role
+  party_id: "2"
+permissions_088: 
+  card_id: "155"
+  task: edit
+  id: "88"
+  party_type: Role
+  party_id: "2"
+permissions_642: 
+  card_id: "314"
+  task: edit
+  id: "642"
+  party_type: Role
+  party_id: "2"
+permissions_774: 
+  card_id: "356"
+  task: edit
+  id: "775"
+  party_type: Role
+  party_id: "2"
+permissions_089: 
+  card_id: "155"
+  task: read
+  id: "89"
+  party_type: Role
+  party_id: "3"
+permissions_510: 
+  card_id: "119"
+  task: read
+  id: "510"
+  party_type: Role
+  party_id: "3"
+permissions_643: 
+  card_id: "314"
+  task: read
+  id: "643"
+  party_type: Role
+  party_id: "3"
+permissions_775: 
+  card_id: "356"
+  task: read
+  id: "776"
+  party_type: Role
+  party_id: "3"
+permissions_511: 
+  card_id: "209"
+  task: delete
+  id: "511"
+  party_type: Role
+  party_id: "2"
+permissions_644: 
+  card_id: "315"
+  task: delete
+  id: "644"
+  party_type: Role
+  party_id: "2"
+permissions_776: 
+  card_id: "357"
+  task: delete
+  id: "777"
+  party_type: Role
+  party_id: "2"
+permissions_512: 
+  card_id: "209"
+  task: edit
+  id: "512"
+  party_type: Role
+  party_id: "2"
+permissions_645: 
+  card_id: "315"
+  task: edit
+  id: "645"
+  party_type: Role
+  party_id: "2"
+permissions_777: 
+  card_id: "357"
+  task: edit
+  id: "778"
+  party_type: Role
+  party_id: "2"
+permissions_090: 
+  card_id: "219"
+  task: delete
+  id: "90"
+  party_type: Role
+  party_id: "1"
+permissions_513: 
+  card_id: "209"
+  task: read
+  id: "513"
+  party_type: Role
+  party_id: "3"
+permissions_646: 
+  card_id: "315"
+  task: read
+  id: "646"
+  party_type: Role
+  party_id: "3"
+permissions_778: 
+  card_id: "357"
+  task: read
+  id: "779"
+  party_type: Role
+  party_id: "3"
+permissions_091: 
+  card_id: "219"
+  task: edit
+  id: "91"
+  party_type: Role
+  party_id: "2"
+permissions_514: 
+  card_id: "115"
+  task: delete
+  id: "514"
+  party_type: Role
+  party_id: "1"
+permissions_647: 
+  card_id: "316"
+  task: delete
+  id: "647"
+  party_type: Role
+  party_id: "2"
+permissions_779: 
+  card_id: 
+  task: create
+  id: "723"
+  party_type: Role
+  party_id: "2"
+permissions_092: 
+  card_id: "219"
+  task: read
+  id: "92"
+  party_type: Role
+  party_id: "3"
+permissions_515: 
+  card_id: "115"
+  task: edit
+  id: "515"
+  party_type: Role
+  party_id: "1"
+permissions_648: 
+  card_id: "316"
+  task: edit
+  id: "648"
+  party_type: Role
+  party_id: "2"
+permissions_093: 
+  card_id: "18"
+  task: delete
+  id: "93"
+  party_type: Role
+  party_id: "2"
+permissions_516: 
+  card_id: "115"
+  task: read
+  id: "516"
+  party_type: Role
+  party_id: "3"
+permissions_094: 
+  card_id: "18"
+  task: edit
+  id: "94"
+  party_type: Role
+  party_id: "2"
+permissions_095: 
+  card_id: "18"
+  task: read
+  id: "95"
+  party_type: Role
+  party_id: "3"
+permissions_780: 
+  card_id: "340"
+  task: create
+  id: "780"
+  party_type: Role
+  party_id: "5"
+permissions_517: 
+  card_id: "36"
+  task: delete
+  id: "517"
+  party_type: Role
+  party_id: "1"
+permissions_649: 
+  card_id: "316"
+  task: read
+  id: "649"
+  party_type: Role
+  party_id: "3"
+permissions_096: 
+  card_id: "18"
+  task: create
+  id: "96"
+  party_type: Role
+  party_id: "2"
+permissions_781: 
+  card_id: "358"
+  task: delete
+  id: "781"
+  party_type: Role
+  party_id: "2"
+permissions_518: 
+  card_id: "36"
+  task: edit
+  id: "518"
+  party_type: Role
+  party_id: "1"
+permissions_097: 
+  card_id: "10"
+  task: delete
+  id: "97"
+  party_type: Role
+  party_id: "2"
+permissions_650: 
+  card_id: "317"
+  task: delete
+  id: "650"
+  party_type: Role
+  party_id: "2"
+permissions_782: 
+  card_id: "358"
+  task: edit
+  id: "782"
+  party_type: Role
+  party_id: "2"
+permissions_519: 
+  card_id: "36"
+  task: read
+  id: "519"
+  party_type: Role
+  party_id: "3"
+permissions_098: 
+  card_id: "10"
+  task: edit
+  id: "98"
+  party_type: Role
+  party_id: "2"
+permissions_651: 
+  card_id: "317"
+  task: edit
+  id: "651"
+  party_type: Role
+  party_id: "2"
+permissions_783: 
+  card_id: "358"
+  task: read
+  id: "783"
+  party_type: Role
+  party_id: "3"
+permissions_099: 
+  card_id: "10"
+  task: read
+  id: "99"
+  party_type: Role
+  party_id: "3"
+permissions_520: 
+  card_id: "208"
+  task: delete
+  id: "520"
+  party_type: Role
+  party_id: "2"
+permissions_652: 
+  card_id: "317"
+  task: read
+  id: "652"
+  party_type: Role
+  party_id: "3"
+permissions_784: 
+  card_id: "358"
+  task: create
+  id: "784"
+  party_type: Role
+  party_id: "2"
+permissions_521: 
+  card_id: "208"
+  task: edit
+  id: "521"
+  party_type: Role
+  party_id: "2"
+permissions_653: 
+  card_id: "318"
+  task: delete
+  id: "653"
+  party_type: Role
+  party_id: "2"
+permissions_785: 
+  card_id: "359"
+  task: delete
+  id: "785"
+  party_type: Role
+  party_id: "2"
+permissions_522: 
+  card_id: "208"
+  task: read
+  id: "522"
+  party_type: Role
+  party_id: "3"
+permissions_654: 
+  card_id: "318"
+  task: edit
+  id: "654"
+  party_type: Role
+  party_id: "2"
+permissions_786: 
+  card_id: "359"
+  task: edit
+  id: "786"
+  party_type: Role
+  party_id: "2"
+permissions_787: 
+  card_id: "359"
+  task: read
+  id: "787"
+  party_type: Role
+  party_id: "3"
+permissions_523: 
+  card_id: "66"
+  task: delete
+  id: "523"
+  party_type: Role
+  party_id: "1"
+permissions_655: 
+  card_id: "318"
+  task: read
+  id: "655"
+  party_type: Role
+  party_id: "3"
+permissions_788: 
+  card_id: "360"
+  task: delete
+  id: "788"
+  party_type: Role
+  party_id: "2"
+permissions_524: 
+  card_id: "66"
+  task: edit
+  id: "524"
+  party_type: Role
+  party_id: "1"
+permissions_656: 
+  card_id: "319"
+  task: delete
+  id: "656"
+  party_type: Role
+  party_id: "2"
+permissions_789: 
+  card_id: "360"
+  task: edit
+  id: "789"
+  party_type: Role
+  party_id: "2"
+permissions_525: 
+  card_id: "66"
+  task: read
+  id: "525"
+  party_type: Role
+  party_id: "3"
+permissions_657: 
+  card_id: "319"
+  task: edit
+  id: "657"
+  party_type: Role
+  party_id: "2"
+permissions_526: 
+  card_id: "249"
+  task: delete
+  id: "526"
+  party_type: Role
+  party_id: "1"
+permissions_658: 
+  card_id: "319"
+  task: read
+  id: "658"
+  party_type: Role
+  party_id: "3"
+permissions_527: 
+  card_id: "249"
+  task: edit
+  id: "527"
+  party_type: Role
+  party_id: "1"
+permissions_659: 
+  card_id: "320"
+  task: delete
+  id: "659"
+  party_type: Role
+  party_id: "2"
+permissions_790: 
+  card_id: "360"
+  task: read
+  id: "790"
+  party_type: Role
+  party_id: "3"
+permissions_528: 
+  card_id: "249"
+  task: read
+  id: "528"
+  party_type: Role
+  party_id: "3"
+permissions_660: 
+  card_id: "320"
+  task: edit
+  id: "660"
+  party_type: Role
+  party_id: "2"
+permissions_529: 
+  card_id: "110"
+  task: delete
+  id: "529"
+  party_type: Role
+  party_id: "1"
+permissions_661: 
+  card_id: "320"
+  task: read
+  id: "661"
+  party_type: Role
+  party_id: "3"
+permissions_530: 
+  card_id: "110"
+  task: edit
+  id: "530"
+  party_type: Role
+  party_id: "1"
+permissions_662: 
+  card_id: "321"
+  task: delete
+  id: "662"
+  party_type: Role
+  party_id: "2"
+permissions_531: 
+  card_id: "110"
+  task: read
+  id: "531"
+  party_type: Role
+  party_id: "3"
+permissions_663: 
+  card_id: "321"
+  task: edit
+  id: "663"
+  party_type: Role
+  party_id: "2"
+permissions_400: 
+  card_id: "210"
+  task: delete
+  id: "400"
+  party_type: Role
+  party_id: "2"
+permissions_532: 
+  card_id: "49"
+  task: delete
+  id: "532"
+  party_type: Role
+  party_id: "1"
+permissions_664: 
+  card_id: "321"
+  task: read
+  id: "664"
+  party_type: Role
+  party_id: "3"
+permissions_401: 
+  card_id: "210"
+  task: edit
+  id: "401"
+  party_type: Role
+  party_id: "2"
+permissions_533: 
+  card_id: "49"
+  task: edit
+  id: "533"
+  party_type: Role
+  party_id: "1"
+permissions_665: 
+  card_id: "322"
+  task: delete
+  id: "665"
+  party_type: Role
+  party_id: "2"
+permissions_402: 
+  card_id: "210"
+  task: read
+  id: "402"
+  party_type: Role
+  party_id: "3"
+permissions_534: 
+  card_id: "49"
+  task: read
+  id: "534"
+  party_type: Role
+  party_id: "3"
+permissions_666: 
+  card_id: "322"
+  task: edit
+  id: "666"
+  party_type: Role
+  party_id: "2"
+permissions_403: 
+  card_id: "40"
+  task: delete
+  id: "403"
+  party_type: Role
+  party_id: "1"
+permissions_535: 
+  card_id: "279"
+  task: delete
+  id: "535"
+  party_type: Role
+  party_id: "2"
+permissions_667: 
+  card_id: "322"
+  task: read
+  id: "667"
+  party_type: Role
+  party_id: "3"
+permissions_404: 
+  card_id: "40"
+  task: edit
+  id: "404"
+  party_type: Role
+  party_id: "1"
+permissions_536: 
+  card_id: "279"
+  task: edit
+  id: "536"
+  party_type: Role
+  party_id: "2"
+permissions_668: 
+  card_id: "323"
+  task: delete
+  id: "668"
+  party_type: Role
+  party_id: "2"
+permissions_405: 
+  card_id: "40"
+  task: read
+  id: "405"
+  party_type: Role
+  party_id: "3"
+permissions_537: 
+  card_id: "279"
+  task: read
+  id: "537"
+  party_type: Role
+  party_id: "3"
+permissions_669: 
+  card_id: "323"
+  task: edit
+  id: "669"
+  party_type: Role
+  party_id: "2"
+permissions_406: 
+  card_id: "179"
+  task: delete
+  id: "406"
+  party_type: Role
+  party_id: "2"
+permissions_538: 
+  card_id: "280"
+  task: delete
+  id: "538"
+  party_type: Role
+  party_id: "2"
+permissions_407: 
+  card_id: "179"
+  task: edit
+  id: "407"
+  party_type: Role
+  party_id: "2"
+permissions_539: 
+  card_id: "280"
+  task: edit
+  id: "539"
+  party_type: Role
+  party_id: "2"
+permissions_670: 
+  card_id: "323"
+  task: read
+  id: "670"
+  party_type: Role
+  party_id: "3"
+permissions_408: 
+  card_id: "179"
+  task: read
+  id: "408"
+  party_type: Role
+  party_id: "3"
+permissions_671: 
+  card_id: "324"
+  task: delete
+  id: "671"
+  party_type: Role
+  party_id: "2"
+permissions_409: 
+  card_id: "242"
+  task: delete
+  id: "409"
+  party_type: Role
+  party_id: "1"
+permissions_540: 
+  card_id: "280"
+  task: read
+  id: "540"
+  party_type: Role
+  party_id: "3"
+permissions_672: 
+  card_id: "324"
+  task: edit
+  id: "672"
+  party_type: Role
+  party_id: "2"
+permissions_541: 
+  card_id: "281"
+  task: delete
+  id: "541"
+  party_type: Role
+  party_id: "2"
+permissions_673: 
+  card_id: "324"
+  task: read
+  id: "673"
+  party_type: Role
+  party_id: "3"
+permissions_410: 
+  card_id: "242"
+  task: edit
+  id: "410"
+  party_type: Role
+  party_id: "1"
+permissions_542: 
+  card_id: "281"
+  task: edit
+  id: "542"
+  party_type: Role
+  party_id: "2"
+permissions_674: 
+  card_id: "325"
+  task: delete
+  id: "674"
+  party_type: Role
+  party_id: "2"
+permissions_411: 
+  card_id: "242"
+  task: read
+  id: "411"
+  party_type: Role
+  party_id: "3"
+permissions_543: 
+  card_id: "281"
+  task: read
+  id: "543"
+  party_type: Role
+  party_id: "3"
+permissions_675: 
+  card_id: "325"
+  task: edit
+  id: "675"
+  party_type: Role
+  party_id: "2"
+permissions_412: 
+  card_id: "211"
+  task: delete
+  id: "412"
+  party_type: Role
+  party_id: "2"
+permissions_544: 
+  card_id: "282"
+  task: delete
+  id: "544"
+  party_type: Role
+  party_id: "2"
+permissions_676: 
+  card_id: "325"
+  task: read
+  id: "676"
+  party_type: Role
+  party_id: "3"
+permissions_413: 
+  card_id: "211"
+  task: edit
+  id: "413"
+  party_type: Role
+  party_id: "2"
+permissions_545: 
+  card_id: "282"
+  task: edit
+  id: "545"
+  party_type: Role
+  party_id: "2"
+permissions_677: 
+  card_id: "326"
+  task: delete
+  id: "677"
+  party_type: Role
+  party_id: "2"
+permissions_414: 
+  card_id: "211"
+  task: read
+  id: "414"
+  party_type: Role
+  party_id: "3"
+permissions_546: 
+  card_id: "282"
+  task: read
+  id: "546"
+  party_type: Role
+  party_id: "3"
+permissions_678: 
+  card_id: "326"
+  task: edit
+  id: "678"
+  party_type: Role
+  party_id: "2"
+permissions_415: 
+  card_id: "39"
+  task: delete
+  id: "415"
+  party_type: Role
+  party_id: "1"
+permissions_547: 
+  card_id: "283"
+  task: delete
+  id: "547"
+  party_type: Role
+  party_id: "2"
+permissions_679: 
+  card_id: "326"
+  task: read
+  id: "679"
+  party_type: Role
+  party_id: "3"
+permissions_416: 
+  card_id: "39"
+  task: edit
+  id: "416"
+  party_type: Role
+  party_id: "1"
+permissions_548: 
+  card_id: "283"
+  task: edit
+  id: "548"
+  party_type: Role
+  party_id: "2"
+permissions_417: 
+  card_id: "39"
+  task: read
+  id: "417"
+  party_type: Role
+  party_id: "3"
+permissions_549: 
+  card_id: "283"
+  task: read
+  id: "549"
+  party_type: Role
+  party_id: "3"
+permissions_680: 
+  card_id: "327"
+  task: delete
+  id: "680"
+  party_type: Role
+  party_id: "2"
+permissions_681: 
+  card_id: "327"
+  task: edit
+  id: "681"
+  party_type: Role
+  party_id: "2"
+permissions_418: 
+  card_id: "178"
+  task: delete
+  id: "418"
+  party_type: Role
+  party_id: "2"
+permissions_550: 
+  card_id: "284"
+  task: delete
+  id: "550"
+  party_type: Role
+  party_id: "2"
+permissions_682: 
+  card_id: "327"
+  task: read
+  id: "682"
+  party_type: Role
+  party_id: "3"
+permissions_419: 
+  card_id: "178"
+  task: edit
+  id: "419"
+  party_type: Role
+  party_id: "2"
+permissions_551: 
+  card_id: "284"
+  task: edit
+  id: "551"
+  party_type: Role
+  party_id: "2"
+permissions_683: 
+  card_id: "328"
+  task: delete
+  id: "683"
+  party_type: Role
+  party_id: "2"
+permissions_420: 
+  card_id: "178"
+  task: read
+  id: "420"
+  party_type: Role
+  party_id: "3"
+permissions_552: 
+  card_id: "284"
+  task: read
+  id: "552"
+  party_type: Role
+  party_id: "3"
+permissions_684: 
+  card_id: "328"
+  task: edit
+  id: "684"
+  party_type: Role
+  party_id: "2"
+permissions_421: 
+  card_id: "250"
+  task: delete
+  id: "421"
+  party_type: Role
+  party_id: "1"
+permissions_553: 
+  card_id: "285"
+  task: delete
+  id: "553"
+  party_type: Role
+  party_id: "2"
+permissions_685: 
+  card_id: "328"
+  task: read
+  id: "685"
+  party_type: Role
+  party_id: "3"
+permissions_422: 
+  card_id: "250"
+  task: edit
+  id: "422"
+  party_type: Role
+  party_id: "1"
+permissions_554: 
+  card_id: "285"
+  task: edit
+  id: "554"
+  party_type: Role
+  party_id: "2"
+permissions_686: 
+  card_id: "329"
+  task: delete
+  id: "686"
+  party_type: Role
+  party_id: "2"
+permissions_423: 
+  card_id: "250"
+  task: read
+  id: "423"
+  party_type: Role
+  party_id: "3"
+permissions_555: 
+  card_id: "285"
+  task: read
+  id: "555"
+  party_type: Role
+  party_id: "3"
+permissions_687: 
+  card_id: "329"
+  task: edit
+  id: "687"
+  party_type: Role
+  party_id: "2"
+permissions_424: 
+  card_id: "85"
+  task: delete
+  id: "424"
+  party_type: Role
+  party_id: "2"
+permissions_556: 
+  card_id: "286"
+  task: delete
+  id: "556"
+  party_type: Role
+  party_id: "2"
+permissions_688: 
+  card_id: "329"
+  task: read
+  id: "688"
+  party_type: Role
+  party_id: "3"
+permissions_425: 
+  card_id: "85"
+  task: edit
+  id: "425"
+  party_type: Role
+  party_id: "2"
+permissions_557: 
+  card_id: "286"
+  task: edit
+  id: "557"
+  party_type: Role
+  party_id: "2"
+permissions_689: 
+  card_id: "330"
+  task: delete
+  id: "689"
+  party_type: Role
+  party_id: "2"
+permissions_426: 
+  card_id: "85"
+  task: read
+  id: "426"
+  party_type: Role
+  party_id: "3"
+permissions_558: 
+  card_id: "286"
+  task: read
+  id: "558"
+  party_type: Role
+  party_id: "3"
+permissions_427: 
+  card_id: "44"
+  task: delete
+  id: "427"
+  party_type: Role
+  party_id: "1"
+permissions_559: 
+  card_id: "287"
+  task: delete
+  id: "559"
+  party_type: Role
+  party_id: "2"
+permissions_690: 
+  card_id: "330"
+  task: edit
+  id: "690"
+  party_type: Role
+  party_id: "2"
+permissions_428: 
+  card_id: "44"
+  task: edit
+  id: "428"
+  party_type: Role
+  party_id: "1"
+permissions_691: 
+  card_id: "330"
+  task: read
+  id: "691"
+  party_type: Role
+  party_id: "3"
+permissions_692: 
+  card_id: "331"
+  task: delete
+  id: "692"
+  party_type: Role
+  party_id: "2"
+permissions_429: 
+  card_id: "44"
+  task: read
+  id: "429"
+  party_type: Role
+  party_id: "3"
+permissions_560: 
+  card_id: "287"
+  task: edit
+  id: "560"
+  party_type: Role
+  party_id: "2"
+permissions_693: 
+  card_id: "331"
+  task: edit
+  id: "693"
+  party_type: Role
+  party_id: "2"
+permissions_561: 
+  card_id: "287"
+  task: read
+  id: "561"
+  party_type: Role
+  party_id: "3"
+permissions_694: 
+  card_id: "331"
+  task: read
+  id: "694"
+  party_type: Role
+  party_id: "3"
+permissions_430: 
+  card_id: "137"
+  task: delete
+  id: "430"
+  party_type: Role
+  party_id: "1"
+permissions_562: 
+  card_id: "288"
+  task: delete
+  id: "562"
+  party_type: Role
+  party_id: "2"
+permissions_695: 
+  card_id: "332"
+  task: delete
+  id: "695"
+  party_type: Role
+  party_id: "2"
+permissions_431: 
+  card_id: "137"
+  task: edit
+  id: "431"
+  party_type: Role
+  party_id: "1"
+permissions_563: 
+  card_id: "288"
+  task: edit
+  id: "563"
+  party_type: Role
+  party_id: "2"
+permissions_696: 
+  card_id: "332"
+  task: edit
+  id: "696"
+  party_type: Role
+  party_id: "2"
+permissions_300: 
+  card_id: "87"
+  task: read
+  id: "300"
+  party_type: Role
+  party_id: "3"
+permissions_432: 
+  card_id: "137"
+  task: read
+  id: "432"
+  party_type: Role
+  party_id: "3"
+permissions_564: 
+  card_id: "288"
+  task: read
+  id: "564"
+  party_type: Role
+  party_id: "3"
+permissions_301: 
+  card_id: "86"
+  task: delete
+  id: "301"
+  party_type: Role
+  party_id: "1"
+permissions_433: 
+  card_id: "181"
+  task: delete
+  id: "433"
+  party_type: Role
+  party_id: "2"
+permissions_565: 
+  card_id: "289"
+  task: delete
+  id: "565"
+  party_type: Role
+  party_id: "2"
+permissions_697: 
+  card_id: "332"
+  task: read
+  id: "697"
+  party_type: Role
+  party_id: "3"
+permissions_302: 
+  card_id: "86"
+  task: edit
+  id: "302"
+  party_type: Role
+  party_id: "1"
+permissions_434: 
+  card_id: "181"
+  task: edit
+  id: "434"
+  party_type: Role
+  party_id: "2"
+permissions_566: 
+  card_id: "289"
+  task: edit
+  id: "566"
+  party_type: Role
+  party_id: "2"
+permissions_698: 
+  card_id: "333"
+  task: delete
+  id: "698"
+  party_type: Role
+  party_id: "2"
+permissions_303: 
+  card_id: "86"
+  task: read
+  id: "303"
+  party_type: Role
+  party_id: "3"
+permissions_435: 
+  card_id: "181"
+  task: read
+  id: "435"
+  party_type: Role
+  party_id: "3"
+permissions_567: 
+  card_id: "289"
+  task: read
+  id: "567"
+  party_type: Role
+  party_id: "3"
+permissions_699: 
+  card_id: "333"
+  task: edit
+  id: "699"
+  party_type: Role
+  party_id: "2"

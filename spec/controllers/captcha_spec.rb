@@ -22,7 +22,7 @@ Spec::Rails::Example::ControllerExampleGroup.send(:include, CaptchaExampleMethod
 describe CardController, "captcha_required?" do
   before do
     User.as :wagbot do
-      Card.create! :name=>"*all+*captcha", :content=>"1"
+      Card["*all+*captcha"].update_attributes! :content=>"1"
       Card.create! :name=>'All Books', :type=>'Set', :content=>'{"type":"Book"}'
       c=Card["Book"];c.permit(:create, Role[:anon]);c.save! 
       Card.create :name=>"All Books+*captcha", :content => "1"  
@@ -63,7 +63,7 @@ end
 describe CardController, "with captcha enabled requires captcha on" do   
   before do
     User.as(:wagbot) do
-      Card.create! :name=>"*all+*captcha", :content=>"1"
+      Card["*all+*captcha"].update_attributes! :content=>"1"
       #FIXME it would be nice if there were a simpler idiom for this     
       c = Card['Basic']
       c.permit(:create,Role[:anon])
@@ -85,7 +85,7 @@ end
 describe AccountController, "with captcha enabled" do    
   before do
     User.as(:wagbot) do
-      Card.create! :name=>"*all+*captcha", :content=>"1"
+      Card["*all+*captcha"].update_attributes! :content=>"1"
       #FIXME it would be nice if there were a simpler idiom for this     
       c = Card['Basic']
       c.permit(:create,Role[:anon])

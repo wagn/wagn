@@ -56,7 +56,8 @@ module Wagn
       end
 
       def load_cardlib
-        Wagn::Exceptions       
+        Wagn.send :include, Wagn::Exceptions       
+        Card.send :include, Cardlib::Exceptions
 
         ActiveRecord::Base.class_eval do
           include Cardlib::ActsAsCardExtension

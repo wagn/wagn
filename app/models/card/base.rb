@@ -661,11 +661,13 @@ module Card
       end
     end
      
-    def validate_destroy  
+    def validate_destroy    
       if extension_type=='User' and extension and Revision.find_by_created_by( extension.id )
         errors.add :destroy, "Edits have been made with #{name}'s user account.<br>  Deleting this card would mess up our revision records."
-      end
+        return false
+      end           
       #should collect errors from dependent destroys here.  
+      true
     end
 
     def validate_type_change  

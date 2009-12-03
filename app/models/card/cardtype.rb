@@ -47,9 +47,7 @@
     private
     
     def on_type_change
-      ensure_not_in_use
-      destroy_extension
-      reload_cardtypes
+      validate_destroy && destroy_extension && reset_cardtype_cache
     end
     
     # def ensure_not_in_use

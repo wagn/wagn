@@ -103,7 +103,6 @@ namespace :wagn do
     
       ActiveRecord::Base.connection.delete( 'delete from permissions')
       ActiveRecord::Base.connection.select_all( 'select * from cards' ).each do |card|
-        #debugger if card.id == 15
         key = card['key']
         cardset = perms[key] || {}
         starset = (key =~ /^\*/ ? perms[:star] : {})

@@ -34,10 +34,11 @@ end
 
 When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
   logged_in_as(username) do
-    visit "/card/edit/#{cardname.to_url_key}"  
-    fill_in_hidden_or_not "card[content]", :with=>content 
+    visit "/card/edit/#{cardname.to_url_key}"
+    fill_in_hidden_or_not 'card[content]', :with=>content 
     click_button("Save")
-    response.should contain(content)
+    match_content = content.gsub(/\[\[|\]\]/,'')  #link markup won't show up in view.
+    response.should contain(match_content)
   end
 end    
                    

@@ -35,7 +35,7 @@ describe Wagn::Pattern do
   context :keys_for_card do
     it "generates keys from multiple patterns for card" do                    
       ia = Card.new( :name => "Illiad+author" )
-      Wagn::Pattern.keys_for_card( ia ).should == ["Type:Basic","RightName:author","LeftTypeRightName:Book:author"]
+      Wagn::Pattern.keys_for_card( ia ).should == ["Solo:illiad+author","LeftTypeRightName:Book:author","RightName:author","Type:Basic"]
     end
   end
 end

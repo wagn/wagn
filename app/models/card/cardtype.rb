@@ -2,7 +2,7 @@
   class Cardtype < Base
 
     before_validation_on_create :create_extension, :reset_cardtype_cache
-    before_destroy :ensure_not_in_use, :destroy_extension   # order is important!
+    before_destroy :validate_destroy, :destroy_extension   # order is important!
     after_destroy :reset_cardtype_cache
     after_save :reset_cardtype_cache
                                        
@@ -25,7 +25,7 @@
       newclass = Class.new( ::Card::Basic )
       ::Card.const_set class_name, newclass
       self.extension = ::Cardtype.create!( :class_name => class_name )
-#      self.extension
+      #self.extension
     end
     
     def me_type
@@ -52,12 +52,12 @@
       reload_cardtypes
     end
     
-    def ensure_not_in_use
-      if extension and Card.search(:type=>name).length > 0
-        errors.add :destroy, "Can't remove Cardtype #{name}: cards of this type still exist"
-        return false
-      end
-    end
+    # def ensure_not_in_use
+    #   if extension and Card.search(:type=>name).length > 0
+    #     errors.add :destroy, "Can't remove Cardtype #{name}: cards of this type still exist"
+    #     return false
+    #   end
+    # end
     
     
     def validate_type_change

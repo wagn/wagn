@@ -22,6 +22,9 @@ class AccountControllerTest < ActionController::TestCase
     @newby_email = 'newby@wagn.net'
     @newby_args =  {:user=>{ :email=>@newby_email },
                     :card=>{ :name=>'Newby Dooby' }}
+    User.as :wagbot do 
+      Card.create(:name=>'Account Request+*type+*captcha', :content=>'0')
+    end
     signout
   end
 

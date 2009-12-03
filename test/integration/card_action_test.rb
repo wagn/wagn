@@ -76,7 +76,7 @@ class CardActionTest < ActionController::IntegrationTest
   end 
 
 
-  def test_newcard_shows_edit_instructions   
+  def test_newcard_shows_edit_instructions
     given_cards( 
       {"Cardtype:YFoo" => ""},
       {"Set:All YFoo" => '{"type":"YFoo"}'},

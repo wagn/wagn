@@ -38,6 +38,8 @@ namespace :db do
         puts `rake db:test:clone`
         puts ">> loading test fixtures"
         puts `rake db:fixtures:load RAILS_ENV=test`
+      else
+        puts "skipping loading test data.  to force, run  env RELOAD_TEST_DATA=true rake db:test:prepare"
       end
     end
   end

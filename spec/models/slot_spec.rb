@@ -1,30 +1,31 @@
 require File.dirname(__FILE__) + '/../spec_helper'
-Slot=Slot    
 
 describe Slot, "" do      
-  before { 
-    User.as :joe_user 
-  }
+  before { User.as :joe_user }
 
-  it "should render content" do 
-    @a = Card.new(:name=>'t', :content=>"[[A]]")
-    Slot.new(@a).render(:naked).should == "<a class=\"known-card\" href=\"/wagn/A\">A</a>"
-  end 
+  context "renders" do
+    it "simple card links" do
+      render_content( "[[A]]" ).should == "<a class=\"known-card\" href=\"/wagn/A\">A</a>"  
+    end
+    
+    it "invisible comment inclusions as blank" do
+      render_content( "{{## now you see nothing}}" ).should == ''
+    end
+    
+    it "visible comment inclusions as html comments" do
+      render_content( "{{# now you see me}}" ).should == '<!-- # now you see me -->'
+    end  
+    
+    it "image tags of different sizes" do
+      Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}
+      render_content( "{{TestImage | naked; size:small }}" ).should == %{<img src="http://wagn.org/image53_small.jpg">} 
+    end
+  end
 
-  it "should not render inclusions in raw content" do
+  it "raw content" do
      @a = Card.new(:name=>'t', :content=>"{{A}}")
     Slot.new(@a).render(:naked_content).should == "{{A}}"
   end                                                                                  
-  
-  it "should not render invisible comment inclusions" do
-    c = Card.new(:name=>'invis', :content=>'{{## now you see nothing}}')
-    Slot.new(c).render(:naked).should == ''
-  end
-  
-  it "should not render invisible comment inclusions" do
-    c = Card.new(:name=>'invis', :content=>'{{# now you see me}}')
-    Slot.new(c).render(:naked).should == '<!-- # now you see me -->'
-  end
   
   it "should use inclusion view overrides" do  
     # FIXME love to have these in a scenario so they don't load every time.
@@ -50,8 +51,12 @@ describe Slot, "" do
       slot.render(:naked_content).should == "Boo"
     end
   end
-
-
+             
+  private 
+  def render_content *args
+    Slot.render_content *args
+  end
+  
 =begin
   # FIXME: this test is very brittle-- based on specific html;
   #  want to test rendering inclusions, but attributes in the wrapper are built from 

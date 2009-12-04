@@ -16,6 +16,15 @@ class Slot
     :card => :open,
     :line => :closed,
   }
+    
+   
+  class << self
+    def render_content content, opts = {}
+      opts[:view] ||= :naked
+      tmp_card = Card.new :name=>"__tmp_card__", :content => content 
+      Slot.new(tmp_card).render(opts[:view])
+    end
+  end
    
   def initialize(card, context="main_1", action="view", template=nil, opts={} )
     @card, @context, @action, @template, = card, context.to_s, action.to_s, (template||StubTemplate.new)
@@ -344,7 +353,7 @@ class Slot
     )
 
     tcontent = process_inclusion( tcard, options )
-    tcontent = resize_image_content(tcontent) if options[:size]
+    tcontent = resize_image_content(tcontent, options[:size]) if options[:size]
 
     self.char_count += (tcontent ? tcontent.length : 0)  #should we be stripping html here?
     tname=='_main' ? wrap_main(tcontent) : tcontent
@@ -381,7 +390,7 @@ class Slot
     args
   end
 
-  def resize_image_content(content)
+  def resize_image_content(content, size)
     size = (size.to_s == "full" ? "" : "_#{size}")
     content.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
   end
@@ -446,7 +455,7 @@ class Slot
       %{\n<div class="view">\n} + wrap_content( render( :expanded_view_content ))+ %{\n</div>\n}
     when "card/line"
       %{\n<div class="view">\n} + wrap_content( render(:expanded_line_content) ) + %{\n</div>\n}
-    when "basic/content"
+    when "basic/content", "image/content"
       render :naked_content
     when "basic/line"
       truncatewords_with_closing_tags( render( :custom_view ))

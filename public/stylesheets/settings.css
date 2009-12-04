@@ -1,0 +1,61 @@
+.options-body { 
+  padding: 5px 15px;
+}
+.set-setting {
+  width: 100%;
+  border: 0px;
+  margin-bottom: 20px;
+}
+.set-setting .setting-row {
+  border-bottom: 1px solid #999;
+  padding: 0px;
+}
+.setting-row div {
+  padding: 4px;
+}
+.set-setting .open-set-setting {
+  padding: 0px;
+  margin: 0px;
+}
+.set-setting .open-set-setting .setting-row {
+  border: 0px;
+  background: #fff
+}
+.setting-header-row {
+  background: white;
+  font-weight: bold;
+}
+.edit-link {
+  color: #484;
+  float: right; 
+}
+.setting-description,
+.value {
+  width: 67%;
+  float:right;
+  margin-left: 10px;
+}
+.not-set .value,
+.overridden .value{
+  background: #ddd
+}
+
+.setting a{ 
+  font-weight: bold;
+  color: #484
+}
+.setting-description {
+  background: #eec;
+  color: #440;
+  font-style: italic;
+  padding: 4px;
+  text-align: center;
+  display: block;
+}
+.set { 
+  font-style: italic;
+  color: #484;
+  text-align: right;
+  background: #fff
+
+}

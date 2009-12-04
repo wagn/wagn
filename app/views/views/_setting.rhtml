@@ -1,6 +1,11 @@
-<div class="value">
-	<%= slot.render( :closed_content ) %>
-</div>
-<div class="set">
-	<%= slot.render( :link ) %>
+<div class="setting-row">
+	<div class="value">             
+		<span class="edit-link">
+			<%= slot.link_to_action('edit','edit') %>
+		</span>
+		<%= slot.render( :closed_content ) %>
+	</div>
+	<div class="set">
+		<%= slot.render( :link ) %>
+	</div>
 </div>

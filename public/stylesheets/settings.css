@@ -1,16 +1,14 @@
-.options-body { 
-  padding: 5px 15px;
-}
+
 .set-setting {
-  width: 100%;
   border: 0px;
   margin-bottom: 20px;
+  padding: 5px 15px;
 }
 .set-setting .setting-row {
   border-bottom: 1px solid #999;
   padding: 0px;
 }
-.setting-row div {
+.setting-row .set, .setting-row .value {
   padding: 4px;
 }
 .set-setting .open-set-setting {
@@ -23,7 +21,8 @@
 }
 .setting-header-row {
   background: white;
-  font-weight: bold;
+  font-weight: bold;    
+  border-bottom: 1px solid #999;  
 }
 .edit-link {
   color: #484;
@@ -58,4 +57,5 @@
   text-align: right;
   background: #fff
 
-}
+}                      
+.set-setting .card-slot { border-bottom: 0px !important }

@@ -12,15 +12,11 @@ slot = get_slot
   </div>
 
   <% card.sets.each do |set_card|%>    
-		<div class="setting-row <%= 'current' %>">
-			<%# FIXME: possible refactoring / api change: %>
-			<%#= slot.render_content("{{#{set_card.name}+#{setting_name} | closed }}") %>
-
-	    <% slot.subslot(card).wrap(:setting, :add_slot=>true) do |ss| %>
-	      <%= ss.expand_inclusions "{{#{set_card.name}+#{setting_name} | setting }}" %>
-	    <% end %>
-		</div>
-
+		<%# FIXME: possible refactoring / api change: %>
+		<%#= slot.render_content("{{#{set_card.name}+#{setting_name} | closed }}") %>
+    <% slot.subslot(card).wrap(:content, :add_slot=>true) do |ss| %>     
+      <%= ss.expand_inclusions "{{#{set_card.name}+#{setting_name} | setting }}" %>
+    <% end %>
   <% end %>
 </div>
 

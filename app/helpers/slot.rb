@@ -211,9 +211,14 @@ class Slot
         @state = :line; w_action='closed'; self.requested_view = 'closed'
         w_content = render_partial('views/closed')  # --> slot.wrap_content slot.render( :expanded_line_content )   
          
-      when :setting
+      when :setting  
         w_action = self.requested_view = 'content'
-        w_content = render_partial('views/setting')
+        w_content = render_partial('views/setting')  
+
+      when :setting_missing  
+        w_action = self.requested_view = 'content'
+        w_content = render_partial('views/setting_missing')  
+      
     ###----------------( NAME)
     
       when :link;  # FIXME -- this processing should be unified with standard link processing imho
@@ -432,6 +437,7 @@ class Slot
       when new_card                       
         case   
           when vmode==:naked ; :blank
+          when vmode==:setting; :setting_missing
           when state==:line  ; :closed_missing
           else               ; :open_missing
         end

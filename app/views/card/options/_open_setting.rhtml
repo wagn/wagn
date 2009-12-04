@@ -9,11 +9,16 @@ slot = get_slot
     :title=>"close #{setting_name}", :class=>'title down-arrow' %>
   	<%= page_icon(setting_name) %>
   	<ol>
-      <% card.sets.each do |set_card|%>
-        <% slot.wrap(:setting, :add_slot=>true) do |slot| %>
-          <li><%= slot.expand_inclusions "{{#{set_card.name}+#{setting_name} | closed }}" %>
+      <% card.sets.each do |set_card|%>    
+				<%# FIXME: possible refactoring / api change: %>
+				<%#= slot.render_content("{{#{set_card.name}+#{setting_name} | closed }}") %>
+			
+        <% slot.subslot(card).wrap(:setting, :add_slot=>true) do |ss| %>
+          <li><%= ss.expand_inclusions "{{#{set_card.name}+#{setting_name} | closed }}" %>
         <% end %>
       <% end %>
     </ol>
   <% end %>
 <% end %>
+
+<%= javascript_tag("setupLinksAndDoubleClicks();") %>

@@ -289,12 +289,12 @@ getSlotFromContext=function(context){
   element = $(outer_context);
   while(a.size() > 0) {
     pos = a.shift();      
-    // FIXME: this is crazy.  must do better.
-    element =  $A(Element.select(element, '.card-slot').concat(
-                    Element.select(element, '.transcluded').concat(
-                      Element.select(element, '.nude-slot').concat( 
-                        Element.select(element, '.createOnClick')
-                 )))).find(function(x){
+    // FIXME: this probably a better way to get 
+    candidate_elements = $A(Element.select(element, '.card-slot'  ).concat(
+                            Element.select(element, '.transcluded').concat(
+                            Element.select(element, '.nude-slot'  ).concat( 
+                            Element.select(element, '.createOnClick')))));
+    element = candidate_elements.find(function(x){
       ss = getSlotSpan(x.parentNode);
       return (!ss || ss==element) && ((n = x.getAttributeNode('position')) && n.value==pos);
     });

@@ -6,8 +6,8 @@
     <% next if (card.type!='Pointer' and ['*input','*options','*option label'].member?(setting.name))%>
 
     <li>
-      <% slot.wrap(:setting, :add_slot=>true) do |slot| %>
-        <%= slot.render_partial 'card/options/closed_setting', :setting=>setting %>
+      <% slot.subslot(card).wrap(:setting, :add_slot=>true) do |ss| %>
+        <%= ss.render_partial 'card/options/closed_setting', :setting=>setting %>
       <% end %>
     </li>
   <% end %>

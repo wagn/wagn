@@ -33,7 +33,8 @@ class URIChunk < Chunk::Abstract
       'nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|pt|pw|py|qa|re|ro|ru|rw|sa|sb|sc|' + 
       'sd|se|sg|sh|si|sj|sk|sl|sm|sn|so|sr|st|su|sv|sy|sz|tc|td|tf|tg|th|tj|tk|' + 
       'tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|um|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|' + 
-      'ws|ye|yt|yu|za|zm|zr|zw'
+      'ws|ye|yt|yu|za|zm|zr|zw|' + 
+      'eu' # made this separate, since it's not technically a country -efm
     # These are needed otherwise HOST will match almost anything
     TLDS = "(?:#{GENERIC}|#{COUNTRY})"
     

@@ -14,6 +14,7 @@ describe Slot, "" do
     
     it "visible comment inclusions as html comments" do
       render_content( "{{# now you see me}}" ).should == '<!-- # now you see me -->'
+      render_content( "{{# -->}}" ).should == '<!-- # --&gt; -->'
     end  
     
     it "image tags of different sizes" do

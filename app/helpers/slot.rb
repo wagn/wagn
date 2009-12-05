@@ -339,7 +339,7 @@ class Slot
     
     case tname
     when /^\#\#/                 ; return ''                      #invisible comment
-    when /^\#/ || nil? || blank? ; return "<!-- #{match[1]} -->"    #visible comment
+    when /^\#/ || nil? || blank? ; return "<!-- #{CGI.escapeHTML match[1]} -->"    #visible comment
     when '_main'
       if content=slot_options[:main_content] and content!='~~render main inclusion~~'
         return wrap_main(slot_options[:main_content]) 

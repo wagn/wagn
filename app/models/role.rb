@@ -69,6 +69,4 @@ class Role < ActiveRecord::Base
       self.cache[codename.to_s] ||= Role.find_by_codename(codename.to_s)
     end
   end
-  
-  
 end

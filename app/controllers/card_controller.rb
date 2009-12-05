@@ -343,8 +343,12 @@ class CardController < ApplicationController
     end
     complete = complete.to_s
 
+    pointer_options = 
+      !params[:id].blank? &&
+      (pointer_card = c=Card[params[:id].tag_name]) && 
+      pointer_card.setting_card('options')
+
     search_args = {  :complete=>complete, :limit=>8, :sort=>'name' }
-    pointer_options= !params[:id].blank? && (c=Card.find params[:id]) && c.setting_card('options')
     @items = pointer_options ? pointer_options.search(search_args) : Card.search(search_args)
 
     render :inline => "<%= auto_complete_result @items, 'name' %>"

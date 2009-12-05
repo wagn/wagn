@@ -79,6 +79,7 @@ class CardController < ApplicationController
 
     # don't pass a blank type as argument
     # look up other types in case Cardtype name is given instead of ruby type
+    # what?  should always be cardtype name.  we do NOT want to support both, but we do want to support variants.  --efm
     if args[:type]
       if args[:type].blank?
         args.delete(:type) 

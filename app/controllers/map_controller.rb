@@ -20,4 +20,19 @@ class MapController < ActionController::Base
       end
     end
   end
+  
+  
+#  def show
+#    content, done = [], {}
+#    Card.search(:type=>'Pattern', :plus_right=>'related patterns').each do |linker|
+#      Card.search(:type=>'Pattern', :linked_to_by=>{:id=>linker.id}).each do |linkee|
+#        content<< "#{linker.name}~->~#{linkee.name}"
+#        [linker, linkee].each{|pattern| done[pattern.name]=true}
+#      end
+#    end
+#    Card.search(:type=>'Pattern').each do |pattern|
+#      done[pattern.name] or content<<pattern.name}
+#    end
+#    @content = content.join("\n")
+#  end
 end

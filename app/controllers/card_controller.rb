@@ -66,7 +66,8 @@ class CardController < ApplicationController
   end
 
   def render_show
-    @title = @card.name
+    @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
+    ## fixme, we ought to be setting special titles (or all titles) in cards
     (request.xhr? || params[:format]) ? render(:action=>'show') : render(:text=>'~~render main inclusion~~', :layout=>true)
   end
 
@@ -128,7 +129,7 @@ class CardController < ApplicationController
     handling_errors do
       @card.multi_create(params[:cards]) if params[:multi_edit] and params[:cards]
       case
-        when (!@card.ok?(:read));  render(:action=>'redirect_to_thanks', :status=>418 )
+        when (!@card.ok?(:read));  render( :action=>'redirect_to_thanks',       :status=>418 )
         when main_card?;           render( :action=>'redirect_to_created_card', :status=>418 )
         else;                      render_show
       end
@@ -245,7 +246,7 @@ class CardController < ApplicationController
     handling_errors do
       discard_locations_for(@card)
       render_update_slot do |page,target|
-        if @context=="main_1"
+        if main_card?
           page.wagn.messenger.note "#{@card.name} removed."
           page.redirect_to previous_location
           flash[:notice] =  "#{@card.name} removed"
@@ -342,6 +343,7 @@ class CardController < ApplicationController
       complete = params[key].values[0]
     end
     complete = complete.to_s
+    # FIXME - shouldn't we bail here if we don't have anything to complete?
 
     pointer_options = 
       !params[:id].blank? &&

@@ -95,7 +95,7 @@ class ApplicationController < ActionController::Base
   end
      
   def main_card?
-    @context == 'main_1'
+    @context =~ /^main_\d$/
   end    
 
   # ------------------( permission filters ) -------

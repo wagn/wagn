@@ -1,4 +1,8 @@
-<%= get_slot.edit_submenu(params[:inclusions] ? :inclusions : :content) %>
+<% if params[:view] == 'setting' %>
+	<% slot = get_slot %>
+<% else %>
+	<%= get_slot.edit_submenu(params[:inclusions] ? :inclusions : :content) %>
+<% end %>
 
 <% if card.template? %>
   <% wagn_form_for :card, card, :url=>slot.url_for("card/quick_update") do %>

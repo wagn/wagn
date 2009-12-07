@@ -9,8 +9,11 @@
     <%= slot.content_field( form, :nested=>true ) %>
   </div>
 
-  <% if inst = card.edit_instructions %>
-      <%= render( :partial=> 'card/instructions', :locals=>{ :instructions=> inst } ) %> 
+  <% if inst = card.setting('edit help') %>
+    <%# note - this slot goofiness keeps instruction inclusions from going into edit mode %>
+    <%- slot.state= :view %>
+    <div class="instruction"><%= slot.expand_inclusions inst %></div>
+    <%- slot.state= :edit %>
   <% end %>
 
   

@@ -440,25 +440,9 @@ module Card
         current_revision ? current_revision.content : ""
       end
     end   
-    
-    def edit_instructions #returns card
-      tag_card = tag || (name and Card[name.tag_name])
-      (tag_card && tag_card.attribute_card('*edit')) || 
-         (cardtype and cardtype.attribute_card('*edit'))
-    end
-    
+        
     def new_instructions  
-      if value = self.setting('new')
-        return value
-      end
-      [tag, cardtype].each do |tsar|
-        %w{ *new *edit}.each do |attr_card|
-          if tsar and instructions = tsar.attribute_card(attr_card)
-            return instructions
-          end
-        end
-      end
-      return nil
+      self.setting('add help') || self.setting('edit help')
     end
     
     def type

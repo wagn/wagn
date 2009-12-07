@@ -368,7 +368,11 @@ module Card
     end
 
     def cardtype
-      @cardtype ||= ::Cardtype.find_by_class_name( self.type ).card
+      @cardtype ||= begin
+        ct = ::Cardtype.find_by_class_name( self.type )
+        raise("Error in #{self.name}: No cardtype for #{self.type}")  unless ct
+        ct.card
+      end
     end  
     
     def drafts

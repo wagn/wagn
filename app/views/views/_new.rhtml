@@ -76,7 +76,7 @@
     			<%= button_to_function 'Create', "this.form.onsubmit()", :id=>'create-button'  %>
 						
           <% if request.xhr? %>						
-    				<%= slot.button_to_action 'Cancel', :open_missing, { :before=>slot.cancel_function }  %> 
+    				<%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function }  %> 
     			<% else %>
     		    <%= button_to_function 'Cancel',"document.location.href='#{previous_location}'" %> 
   			<% end %>

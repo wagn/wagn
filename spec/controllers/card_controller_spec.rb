@@ -1,7 +1,23 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe CardController do
+  context "new" do    
+    before do
+      login_as :wagbot
+    end
+    it "assigns @args[:name] from id" do
+      post :new, :id => "xxx"
+      assigns[:args][:name].should == "xxx"
+    end
+  end     
+  
   describe "- route generation" do
+    it "gets name/id from /card/new/xxx" do
+      params_from(:post, "/card/new/xxx").should == {
+        :controller=>"card", :action=>'new', :id=>"xxx"
+      }
+    end
+    
     it "should recognize .rss on /recent" do
       params_from(:get, "/recent.rss").should == {:controller=>"card", :view=>"content", :action=>"show", 
         :id=>"*recent_changes", :format=>"rss"

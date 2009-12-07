@@ -33,8 +33,6 @@ class CardController < ApplicationController
   #---------( VIEWING CARDS )
     
   def show
-    # record this as a place to come back to.
-
     params[:_keyword] && params[:_keyword].gsub!('_',' ') ## this will be unnecessary soon.
 
     @card_name = Cardname.unescape(params['id'] || '')
@@ -75,28 +73,31 @@ class CardController < ApplicationController
   
   #----------------( creating)                                                               
   def new
-    args = (params[:card] ||= {})
-    args[:type] ||= params[:type] # for /new/:type shortcut in routes
+    @args = (params[:card] ||= {})
+    @args[:type] ||= params[:type] # for /new/:type shortcut in routes
+    
+    @args[:name] = params[:id] if params[:id] and !@args[:name]
+
 
     # don't pass a blank type as argument
     # look up other types in case Cardtype name is given instead of ruby type
     # what?  should always be cardtype name.  we do NOT want to support both, but we do want to support variants.  --efm
-    if args[:type]
-      if args[:type].blank?
-        args.delete(:type) 
-      elsif ct=CachedCard.get_real(args[:type])    
-        args[:type] = ct.name 
+    if @args[:type]
+      if @args[:type].blank?
+        @args.delete(:type) 
+      elsif ct=CachedCard.get_real(@args[:type])    
+        @args[:type] = ct.name 
       end
     end
 
     # if given a name of a card that exists, got to edit instead
-    if args[:name] and CachedCard.exists?(args[:name])
-      render :text => "<span class=\"faint\">Oops, <strong>#{args[:name]}</strong> was recently created! try reloading the page to edit it</span>"
+    if @args[:name] and CachedCard.exists?(@args[:name])
+      render :text => "<span class=\"faint\">Oops, <strong>#{@args[:name]}</strong> was recently created! try reloading the page to edit it</span>"
       return
     end
 
-    args.delete(:content) if c=args[:content] and c.blank? #means soft-templating still takes effect 
-    @card = Card.new args                   
+    @args.delete(:content) if c=@args[:content] and c.blank? #means soft-templating still takes effect 
+    @card = Card.new @args                   
     if request.xhr?
       render :partial => 'views/new', :locals=>{ :card=>@card }
     else
@@ -297,7 +298,7 @@ class CardController < ApplicationController
 
   #------------------( views )
 
-
+  
   [:open_missing, :closed_missing].each do |method|
     define_method( method ) do
       load_card

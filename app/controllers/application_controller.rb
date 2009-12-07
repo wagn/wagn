@@ -4,11 +4,7 @@
 class ApplicationController < ActionController::Base
   require_dependency 'exception_system' 
   include AuthenticatedSystem
-  include ExceptionSystem        
-  include CaptchaSystem
-   
-  ::GoogleMapsAddon
-
+  include ExceptionSystem           
   include LocationHelper
   helper :all
 
@@ -26,7 +22,7 @@ class ApplicationController < ActionController::Base
   # can we turn sessions off for it and see if that helps?
   layout :wagn_layout, :except=>[:render_fast_404]
   
-  BUILTIN_LAYOUTS = %w{ blank noside simple }
+  BUILTIN_LAYOUTS = %w{ blank noside simple none }
 
 
   protected
@@ -58,7 +54,6 @@ class ApplicationController < ActionController::Base
     # FIXME: this is a bit of a kluge.. several things stores as cattrs in modules
     # that need to be reset with every request (in addition to current user)
     User.clear_cache if System.multihost
-    Card.reset_cache
     Cardtype.reset_cache
     Role.reset_cache
     CachedCard.reset_cache
@@ -74,7 +69,7 @@ class ApplicationController < ActionController::Base
         unless request.xhr?
           layout = case 
             when BUILTIN_LAYOUTS.include?(params[:layout]); params[:layout]
-            when params[:layout] == 'none'; nil
+#            when params[:layout] == 'none'; nil
             else 'application'
           end
         end
@@ -100,7 +95,7 @@ class ApplicationController < ActionController::Base
   end
      
   def main_card?
-    @context == 'main_1'
+    @context =~ /^main_\d$/
   end    
 
   # ------------------( permission filters ) -------
@@ -206,7 +201,7 @@ class ApplicationController < ActionController::Base
   
   def render_card_errors(card=nil)
     card ||= @card
-    stuff = %{<div class="errorExplanation">
+    stuff = %{<div class="error-explanation">
       <h2>Rats. Issue with #{card.name && card.name.upcase} card:</h2><p>} + 
       card.errors.map do |attr,msg|    
         "#{attr.gsub(/base/,'captcha').upcase }: #{msg}" 

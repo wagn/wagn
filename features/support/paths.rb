@@ -16,6 +16,9 @@ module NavigationHelpers
       
     when /card (.*)$/
       "/wagn/#{$1.to_url_key}"
+      
+    when /new card named (.*)$/
+      "/card/new?card[name]=#{CGI.escape($1)}"
     
     when /edit (.*)$/
       "/card/edit/#{$1.to_url_key}"  

@@ -1,5 +1,0 @@
-module Card
-	class <%= class_name %> < Base
-	
-	end
-end

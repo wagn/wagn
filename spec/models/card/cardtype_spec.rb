@@ -174,3 +174,19 @@ describe Card, "Cardtype with Existing Cards" do
 end
 
 
+describe Card::Cardtype do
+  before do
+    User.as :wagbot
+  end
+  
+  it "should handle changing away from Cardtype" do
+    ctg = Card.create! :name=>"CardtypeG", :type=>"Cardtype"
+    ctg.type = 'Basic'
+    ctg.save!
+    ctg = Card["CardtypeG"]
+    ctg.type.should == 'Basic'
+    ctg.extension.should == nil
+  end
+end
+
+

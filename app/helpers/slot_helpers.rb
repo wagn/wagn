@@ -55,15 +55,29 @@ module SlotHelpers
       end.compact.join       
      end  
   end
-
+  
+  def options_submenu(on)
+    div(:class=>'submenu') do
+      [:permissions, :settings].map do |key|
+        link_to_remote( key, 
+          { :url=>url_for("card/options", {}, key), :update => id }, 
+          :class=>(key==on ? 'on' : '') 
+        )
+      end.join
+    end
+  end
+    
   def paging_params
     s = {}
     [:offset,:limit].each{|key| s[key] = params[key]}
     s[:offset] = s[:offset] ? s[:offset].to_i : 0
-  	s[:limit]  = s[:limit]  ? s[:limit].to_i  : (context=='main_1' ? 50 : 20)
+  	s[:limit]  = s[:limit]  ? s[:limit].to_i  : (main_card? ? 50 : 20)
 	  s
   end
 
+  def main_card?
+    context=~/^main_\d$/
+  end
 
   def url_for(url, args=nil, attribute=nil)
     url = "javascript:'/#{url}"
@@ -177,8 +191,8 @@ module SlotHelpers
     self.form = form              
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
-    editor_partial = (card.type=='Pointer' ? ((c=System.setting("#{card.name.tag_name}+*input")) ? c.gsub(/[\[\]]/,'') : 'list') : 'editor')
-    pre_content + self.render_partial( card_partial(editor_partial), options ) + setup_autosave
+    editor_partial = (card.type=='Pointer' ? ((c=card.setting('input'))  ? c.gsub(/[\[\]]/,'') : 'list') : 'editor')
+    pre_content + self.render_partial( card_partial(editor_partial), options ) + setup_autosave 
   end                          
  
   def save_function 

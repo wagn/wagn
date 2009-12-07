@@ -312,4 +312,16 @@ module WagnHelper
     end
     concat('</form>')
   end
+  
+  def layout_card(content)
+    Card.new(:name=>"**layout",:content=>content)
+  end
+  
+  def render_layout_card(card)
+    Slot.new(card, "layout_0", "view", self, :main_content=>@content_for_layout, :main_card=>@card).render(:naked)
+  end  
+  
+  def render_layout_content(content)
+    render_layout_card layout_card(content)
+  end
 end       

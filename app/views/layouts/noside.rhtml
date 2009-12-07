@@ -1,20 +1,25 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-
+<% @lay_content = capture do %>
+<!DOCTYPE HTML>
+<html>
   <head>
-    <%= render :partial=>'builtin/head' %>
+    {{*head}}
   </head>
   
-  <body id="noside" class="wagn">
-
-  <%= render :partial=>'layouts/top_menu' %>
-	<%= render :partial=>'builtin/alert' %>
+  <body id="wagn" class="noside">
+    <div id="menu">
+      [[/ | Home]]   [[/recent | Recent]]   {{*navbox}} {{*account links}}
+    </div>
     
-	<div id="main" context="main"><%= yield %></div>
-	  		
-  <%= render :partial=>'layouts/bottom_menu' %>
-	<%= render :partial=>'builtin/foot' %>
-
+    <div>
+      {{*alerts}}
+      {{_main}}
+    
+      {{*sidebar}}
+      <div id="credit">Wheeled by [[http://www.wagn.org|Wagn]] v. {{*version}}</div>
+    </div>
+    
+    {{*foot}}
   </body>
 </html>
+<% end %>
+<%= render_layout_content(@lay_content) %>

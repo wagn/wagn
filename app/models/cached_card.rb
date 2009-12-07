@@ -6,7 +6,6 @@
   3. processing search()
   
 =end     
-require_dependency 'card/cacheable'
 
 class CacheError < StandardError; end
 
@@ -22,7 +21,7 @@ class CachedCard
   self.local_cache={ :real=>{}, :get=>{}, :seq=>nil }
                                            
   
-  include ::CardLib::Cacheable
+  include ::Cardlib::Cacheable
   
   class << self       
     def set_cache_prefix( prefix )

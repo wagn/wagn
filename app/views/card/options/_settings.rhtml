@@ -1,0 +1,17 @@
+<%= slot.options_submenu(:settings) %>   
+<div class="set-setting">
+	<div class="setting-header-row">
+    <span class="setting-header">Setting</span>
+    <span class="setting-header value">Value</span>		
+	</div>   
+	
+  <% Card.search(:type=>'setting', :sort=>'name').each do |setting| %>
+    <% next if ['*autoname','*thanks'].member?(setting.name) %>
+    <% next if (card.type!='Pointer' and ['*input','*options','*option label'].member?(setting.name))%>
+    <div class="setting-row">
+      <% slot.subslot(card).wrap(:setting, :add_slot=>true) do |ss| %>
+        <%= ss.render_partial 'card/options/closed_setting', :setting=>setting %>
+      <% end %>    	
+    </div>
+  <% end %>
+</div>

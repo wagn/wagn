@@ -1,0 +1,23 @@
+<%- 
+setting_name = params[:setting]
+slot = get_slot
+%>
+<div class="open-set-setting">
+	<div classe="setting-row">
+		<div class="setting-description"> Sets cue text to prompt users when editing cards.</div>
+	</div> 
+
+	<div class="setting">
+		<%= link_to_remote setting_name, {:url=>slot.url_for("card/options", :attribute=>'closed_setting', :setting=>setting_name), :update=>slot.id}, :title=>"close #{setting_name}", :class=>'title down-arrow' %>
+  </div>
+
+  <% card.sets.each do |set_card|%>    
+		<%# FIXME: possible refactoring / api change: %>
+		<%#= slot.render_content("{{#{set_card.name}+#{setting_name} | closed }}") %>
+    <% slot.subslot(card).wrap(:content, :add_slot=>true) do |ss| %>     
+      <%= ss.expand_inclusions "{{#{set_card.name}+#{setting_name} | setting }}" %>
+    <% end %>
+  <% end %>
+</div>
+
+<%= javascript_tag("setupLinksAndDoubleClicks();") %>

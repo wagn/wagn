@@ -56,7 +56,7 @@ describe Card, "attribute tracking for new card" do
   end
   
   it "should have updates" do
-    ActiveRecord::AttributeTracking::Updates.should === @c.updates
+    Cardlib::AttributeTracking::Updates.should === @c.updates
   end
   
   it "should return original value" do

@@ -103,7 +103,8 @@ namespace :test do
   end
   
   desc "create sample data for testing"
-  task :populate_template_database => :environment do   
+  task :populate_template_database => :environment do        
+    CachedCard.perform_caching = false
     # setup test data here
     # additional test data auto-loaded from Test classes    
     # when I load these I don't want them to run as is the default; this is somewhat brutal..

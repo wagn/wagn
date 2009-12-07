@@ -49,9 +49,12 @@
 			<% if card.template? %>
 			  <%- card.extension_type='HardTemplate' if card.type_template? %>
         <%= render :partial=>'card/hardsoft_form', :locals=>{:card=> card, :mode=>'new'} %>
-      <% end %>
-      <% if card.new_instructions %> 
-				<div class="custom-instructions instruction"><%= render_card card.new_instructions, :expanded_view_content %></div>
+      <% end %>                  
+      <% if instructions = card.new_instructions %> 
+				<div class="custom-instructions instruction">
+					<%= instructions %>
+					<%#= render_card card.new_instructions, :expanded_view_content %>
+				</div>
 	    <% end %>
 
 			
@@ -73,7 +76,7 @@
     			<%= button_to_function 'Create', "this.form.onsubmit()", :id=>'create-button'  %>
 						
           <% if request.xhr? %>						
-    				<%= slot.button_to_action 'Cancel', :open_missing, { :before=>slot.cancel_function }  %> 
+    				<%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function }  %> 
     			<% else %>
     		    <%= button_to_function 'Cancel',"document.location.href='#{previous_location}'" %> 
   			<% end %>

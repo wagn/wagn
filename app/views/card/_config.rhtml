@@ -62,18 +62,4 @@
 <p>&nbsp;</p>
 
 
-<% if card.is_a? Card::Basic %>
-  <h1>Table of Contents<br /></h1>
-  <p>&nbsp;</p>
-  <p><em>Manually turn off the table of contents for <%= card.name %>. By default all cards with at least 4 headers have tables of contents.</em></p>
-  <blockquote><p>{{+*table of contents|closed}}</p></blockquote>
-<% end %>
-
-<% if card.type=='Pointer' && card.right_template? %>
-  <h1>Options</h1>
-  <p>&nbsp;</p>
-  <p><em>This Search defines the pool of cards from which any <a href="Pointer">Pointer</a> whose name ends in "<%= card.trunk.name %>" auto-completes. If it specifies a type, then any cards created through the Pointer will default to that type. <a href="http://wagn.org/wagn/Pointer">Learn more about Pointers</a>.</em></p>
-  <blockquote><p>{{+*options|closed}}</p></blockquote>
-<% end %>
-
 

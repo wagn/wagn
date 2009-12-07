@@ -1,5 +1,6 @@
 class AddWatchersToAccount < ActiveRecord::Migration
-  def self.up 
+  def self.up                                       
+    User.as :wagbot
     c = Card.find_or_create :name=>"*account+*rform"
     c.content =<<-'CONTENT'
       <h1>{{_left|name}}'s roles<br /></h1>

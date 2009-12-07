@@ -1,0 +1,13 @@
+<div class="setting-row">
+	<div class="value">             
+		<% if card.ok?(:edit) %>
+			<span class="edit-link">
+				<%= slot.link_to_action('edit','edit') %>
+			</span>
+		<% end %>
+		<%= slot.render( :closed_content ) %>
+	</div>
+	<div class="set">
+		<%= slot.render( :link ) %>
+	</div>
+</div>

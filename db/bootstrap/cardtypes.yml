@@ -1,4 +1,8 @@
 --- 
+cardtypes_017: 
+  class_name: Setting
+  system: 
+  id: "25"
 cardtypes_006: 
   class_name: Pointer
   system: 
@@ -55,6 +59,10 @@ cardtypes_004:
   class_name: Search
   system: 
   id: "19"
+cardtypes_016: 
+  class_name: Set
+  system: 
+  id: "24"
 cardtypes_005: 
   class_name: Toggle
   system: 

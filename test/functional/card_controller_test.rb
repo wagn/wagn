@@ -21,7 +21,6 @@ class CardControllerTest < ActionController::TestCase
     login_as(:joe_user)
   end    
 
-#=begin
   def test_create_cardtype_card
     post :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
     assert assigns['card']
@@ -31,34 +30,6 @@ class CardControllerTest < ActionController::TestCase
     # passes under rake test.
     # assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor')
   end
-
-  
-
-#  what's happening with this test is that when changing from Basic to CardtypeA it is 
-#  stripping the html when the test doesn't think it should.  this could be a bug, but it
-#  seems less urgent that a lot of the other bugs on the list, so I'm leaving this test out
-#  for now.
-# 
-#  def test_update_cardtype_no_stripping
-#    User.as :joe_user                                               
-#    post :update, {:id=>@simple_card.id, :card=>{ :type=>"CardtypeA",:content=>"<br/>" } }
-#    #assert_equal "boo", assigns['card'].content
-#    assert_equal "<br/>", assigns['card'].content
-#    assert_response :success, "changed card type"   
-#    assert_equal "CardtypeA", Card['Sample Basic'].type
-#  end 
-# 
-#  def test_update_cardtype_with_stripping
-#    User.as :joe_user                                               
-#    post :edit, {:id=>@simple_card.id, :card=>{ :type=>"Date",:content=>"<br/>" } }
-#    #assert_equal "boo", assigns['card'].content
-#    assert_response :success, "changed card type"   
-#    assert_equal "", assigns['card'].content  
-#    assert_equal "Date", Card['Sample Basic'].type
-#  end 
-
-
-
 
   def test_new_with_name
     post :new, :card=>{:name=>"BananaBread"}
@@ -174,22 +145,25 @@ class CardControllerTest < ActionController::TestCase
 
   def test_should_redirect_to_thanks_on_create_without_read_permission
     # 1st setup anonymously create-able cardtype
-    User.as(:joe_admin)
-    f = Card.create! :type=>"Cardtype", :name=>"Fruit"
-    f.permit(:create, Role[:anon])       
-    f.permit(:read, Role[:admin])   
-    f.save!
+    User.as(:joe_admin) do
+      f = Card.create! :type=>"Cardtype", :name=>"Fruit"
+      f.permit(:create, Role[:anon])       
+      f.permit(:read, Role[:admin])   
+      f.save!
     
-    ff = Card.create! :name=>"Fruit+*tform"
-    ff.permit(:read, Role[:auth])
-    ff.save!
+      ff = Card.create! :name=>"Fruit+*tform"
+      ff.permit(:read, Role[:auth])
+      ff.save!
     
-    Card.create! :name=>"Fruit+*thanks", :type=>"Phrase", :content=>"/wagn/sweet"
+      Card.create! :name=>'All Fruit', :type=>'Set', :content=>'{"type":"Fruit"}'
+      Card.create! :name=>"All Fruit+*thanks", :type=>"Phrase", :content=>"/wagn/sweet"
+    end
     
     login_as(:anon)     
     post :create, :card => {
       :name=>"Banana", :type=>"Fruit", :content=>"mush"
-    }     
+    }
+    
     assert_equal "/wagn/sweet", assigns["redirect_location"]
     assert_template "redirect_to_thanks"
   end
@@ -210,7 +184,7 @@ class CardControllerTest < ActionController::TestCase
     login_as(:anon)     
     post :create, :context=>"main_1", :card => {
       :name=>"Banana", :type=>"Fruit", :content=>"mush"
-    }                    
+    }
     assert_equal "/wagn/Banana", assigns["redirect_location"]
     assert_template "redirect_to_created_card"
   end
@@ -252,7 +226,7 @@ class CardControllerTest < ActionController::TestCase
     }                   
     assert_equal ({ "name"=>"Newt", "update_referencers"=>'false', "confirm_rename"=>true }), assigns['card_args']
     assert assigns['card'].errors.empty?
-    assert_template 'show'
+    assert_response :success
     assert Card["Newt"]
   end
 
@@ -263,10 +237,29 @@ class CardControllerTest < ActionController::TestCase
     post :show, :id=>'crazy unknown name'
     assert_template 'missing'
   end
-
-
-
-
   
+  def test_update_cardtype_with_stripping
+    User.as :joe_user                                               
+    post :update, {:id=>@simple_card.id, :card=>{ :type=>"Date",:content=>"<br/>" } }
+    #assert_equal "boo", assigns['card'].content
+    assert_response :success, "changed card type"   
+    assert_equal "", assigns['card'].content  
+    assert_equal "Date", Card['Sample Basic'].type
+  end
 
+
+  #  what's happening with this test is that when changing from Basic to CardtypeA it is 
+  #  stripping the html when the test doesn't think it should.  this could be a bug, but it
+  #  seems less urgent that a lot of the other bugs on the list, so I'm leaving this test out
+  #  for now.
+  # 
+  #  def test_update_cardtype_no_stripping
+  #    User.as :joe_user                                               
+  #    post :update, {:id=>@simple_card.id, :card=>{ :type=>"CardtypeA",:content=>"<br/>" } }
+  #    #assert_equal "boo", assigns['card'].content
+  #    assert_equal "<br/>", assigns['card'].content
+  #    assert_response :success, "changed card type"   
+  #    assert_equal "CardtypeA", Card['Sample Basic'].type
+  #  end 
+  # 
 end

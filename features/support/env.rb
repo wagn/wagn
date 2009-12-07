@@ -6,8 +6,7 @@ require 'spork'
 Spork.prefork do
   # Sets up the Rails environment for Cucumber
   ENV["RAILS_ENV"] ||= "cucumber"
-  #ActiveSupport::Dependencies.load_paths << "#{RAILS_ROOT}/app/addons"                      
-  
+
   require File.expand_path(File.dirname(__FILE__) + '/../../config/environment')
  
   require 'webrat'

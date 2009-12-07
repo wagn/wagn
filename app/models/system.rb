@@ -29,7 +29,6 @@ class System < ActiveRecord::Base
       # FIXME: hacking this so users don't have to update config.  will want to fix later 
       System.base_url.gsub(/^http:\/\//,'')
     end
-
     
     def attachment_storage
       @@attachment_storage || :file_system
@@ -45,36 +44,38 @@ class System < ActiveRecord::Base
       nil
     end           
     
-    def toggle_setting(name)
-      # "no" feels like a kluge
-      content = setting(name) and content != "no"
+    def toggle(val)
+      val == '1'
     end
 
-    def layout_card(cardname, opts)
-      User.as(:wagbot) do      
-        if ( 
-              cardname.present? and 
-              layout_card = CachedCard.get_real(cardname) and 
-              layout_card.ok?(:read)
-            )
-          layout_card
-        elsif (
-              c = CachedCard.get_real("*layout")             and
-              c.type == 'Pointer'                            and
-              layout_name=c.pointee                          and
-              !layout_name.nil?                              and
-              layout_card = CachedCard.get_real(layout_name) and
-              layout_card.ok?(:read)
-            ) 
-          layout_card
-        else 
-          Card.new(:name=>"**layout",:content=>opts[:default]) 
-        end
+    def layout_card(card, cardname)
+      User.as(:wagbot) do 
+        layout_from_url(cardname) or layout_from_setting(card)
       end
+    end
+    
+    def layout_from_url(cardname)
+      return nil unless cardname.present? and 
+        lo_card = CachedCard.get_real(cardname) and 
+        lo_card.ok?(:read)
+      lo_card
+    end
+    
+    def layout_from_setting(card)
+      return unless setting_card =
+        card = (CachedCard===card ? card.card : card) &&  #KLUDGE.  after CachedCard refactor we should get rid of this
+        card.setting_card('layout') or 
+        Card.new.default_setting_card('layout')
+      return unless setting_card.type == 'Pointer'        and
+        layout_name=setting_card.pointee                  and
+        !layout_name.nil?                                 and
+        lo_card = CachedCard.get_real(layout_name)    and
+        lo_card.ok?(:read)
+      lo_card
     end
    
     def image_setting(name)
-      if content = setting(name) and  content.match(/src=\"([^\"]+)/)
+      if content = setting(name) and content.match(/src=\"([^\"]+)/)
         $~[1]
       end
     end
@@ -92,11 +93,6 @@ class System < ActiveRecord::Base
       image_setting('*logo') || (File.exists?("#{RAILS_ROOT}/public/images/logo.gif") ? "/images/logo.gif" : nil)
     end
 
-    #def admin_user
-    #  User[:wagbot]
-
-    #end    
-    
     # PERMISSIONS
     
     def ok?(task)
@@ -154,21 +150,3 @@ class System < ActiveRecord::Base
   
 end        
 
-# load wagn configuration. 
-# FIXME: this has to be here because System is both a config store and a model-- which means
-# in development mode it gets reloaded so we lose the config settings.  The whole config situation
-# needs an overhaul 
-if File.exists? "#{RAILS_ROOT}/config/sample_wagn.rb"
-  require_dependency "#{RAILS_ROOT}/config/sample_wagn.rb"
-end
-if File.exists? "#{RAILS_ROOT}/config/wagn.rb" 
-  require_dependency "#{RAILS_ROOT}/config/wagn.rb"    
-end
-
-# FIXME: loading this in application.rb breaks testing.
-#        loading it here breaks bootstrap
-# require File.expand_path(File.dirname(__FILE__) + '/../../app/addons/google_maps_addon')  
-
-# Configuration cleanup: Make sure System.base_url doesn't end with a /
-System.base_url.gsub!(/\/$/,'')
-     

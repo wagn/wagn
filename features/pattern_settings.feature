@@ -5,11 +5,11 @@ Feature: Set settings
   
   Background:
     Given I log in as Joe User
-    And I create card "*all+*new" with content "say something spicy"
+    And I create card "*all+*add help" with content "say something spicy"
     And I create Set card "plus color" with content "{"right": "color"}"
 
   Scenario: default setting and plus card override
-    Given I create Phrase card "plus color+*new" with content "If colorblind, leave blank"
+    Given I create Phrase card "plus color+*add help" with content "If colorblind, leave blank"
     When I go to new card named "Test"
     Then I should see "spicy"
     When I go to new card "Test+color"      
@@ -17,7 +17,7 @@ Feature: Set settings
   
   Scenario: rform Set
     Given I create Set card "*on right+*rform" with content "{"right": "_self"}"
-    And I create Phrase card "cereal+*on right+*new" with content "I go poopoo for poco cuffs"
+    And I create Phrase card "cereal+*on right+*add help" with content "I go poopoo for poco puffs"
     When I go to new card named "Test+cereal"
     Then I should see "poopoo"
 

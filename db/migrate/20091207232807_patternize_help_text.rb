@@ -11,13 +11,13 @@ class PatternizeHelpText < ActiveRecord::Migration
         c.confirm_rename = true
         c.update_referencers = true
         c.save!
-        c.type = 'Set'
+        c.type = 'Setting'
         c.save!
       end
       
       Card.search(:right=>"#{newname}").each do |c|
         if c.trunk.type == 'Cardtype'
-          Card.create!(:name=>"#{c.trunk.cardtype.name}+*type+#{newname}", :type=>c.cardtype.name, :content=>c.content)
+          Card.create!(:name=>"#{c.trunk.name}+*type+#{newname}", :type=>c.cardtype.name, :content=>c.content)
         end
         
         c.name= c.name.trunk_name+"+*on right+#{newname}"

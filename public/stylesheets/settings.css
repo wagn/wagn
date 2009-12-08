@@ -8,7 +8,9 @@
   border-bottom: 1px solid #999;
   padding: 0px;
 }
-.setting-row .set, .setting-row .value {
+.setting-row .set, 
+.setting-row .setting, 
+.setting-row .value {
   padding: 4px;
 }
 .set-setting .open-set-setting {

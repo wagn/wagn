@@ -56,7 +56,9 @@ module Wagn
         System.base_url.gsub!(/\/$/,'')
       end
 
-      def load_cardlib
+      def load_cardlib  
+        Cardname 
+        
         Wagn.send :include, Wagn::Exceptions       
         Card.send :include, Cardlib::Exceptions
 

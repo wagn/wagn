@@ -32,7 +32,8 @@ module Wagn
 
       def load  
         load_config  
-        load_cardlib
+        load_cardlib                                               
+        setup_multihost
         return if pre_schema?
         load_cardtypes
         load_modules
@@ -79,6 +80,19 @@ module Wagn
           extend Cardlib::CardAttachment::ActMethods  
         end                                      
       end
+      
+      def setup_multihost
+        # set schema for multihost wagns   (make sure this is AFTER loading wagn.rb duh)             
+        #ActiveRecord::Base.logger.info("------- multihost = #{System.multihost} and WAGN_NAME= #{ENV['WAGN']} -------")
+        if System.multihost and ENV['WAGN']    
+          if mapping = MultihostMapping.find_by_wagn_name(ENV['WAGN'])
+            System.base_url = "http://" + mapping.canonical_host
+            System.wagn_name = mapping.wagn_name
+          end
+          ActiveRecord::Base.connection.schema_search_path = ENV['WAGN']
+          CachedCard.set_cache_prefix "#{System.host}/#{RAILS_ENV}" 
+        end  
+      end                 
       
       def load_cardtypes
         Dir["#{RAILS_ROOT}/app/models/card/*.rb"].sort.each do |cardtype|

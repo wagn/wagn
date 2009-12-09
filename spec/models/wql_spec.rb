@@ -217,7 +217,7 @@ end
 describe Wql2, "type" do  
   before { User.as :joe_user }
   
-  user_cards = ["Joe Admin","Joe Camel","Joe User","No Count","Sample User","u1","u2","u3"].sort
+  user_cards =  ["Joe Admin", "Joe Camel", "Joe User", "John", "No Count", "Sample User", "Sara", "u1", "u2", "u3"].sort
   
   it "should find cards of this type" do
     Card.search( :type=>"_self", :_card=>Card['User']).plot(:name).sort.should == user_cards

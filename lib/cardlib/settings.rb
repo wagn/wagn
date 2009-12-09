@@ -4,7 +4,7 @@ module Cardlib
     def setting setting_name
       card = setting_card setting_name
       card && begin
-        content = User.as(:wagbot) { card.content }
+        User.as(:wagbot){ card.content }
       end
     end
     

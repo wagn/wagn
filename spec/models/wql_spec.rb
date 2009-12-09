@@ -251,12 +251,10 @@ describe Wql2, "order" do
   before { User.as :joe_user }
 
   it "should sort by create" do  
-    given_cards(
-      { "Cardtype:Nudetype" => ""},
-      { "Nudetype:nfirst" => "a"},
-      { "Nudetype:nsecond" => "b"},
-      { "Nudetype:nthird"=> "c" }
-    )
+    Card.create! :type=>"Cardtype", :name=>"Nudetype"
+    Card.create! :type=>"Nudetype", :name=>"nfirst", :content=>"a"
+    Card.create! :type=>"Nudetype", :name=>"nsecond", :content=>"b"
+    Card.create! :type=>"Nudetype", :name=>"nthird", :content=>"c"
     # WACK!! this doesn't seem to be consistent across fixture generations :-/
     Card.search( :type=>"Nudetype", :sort=>"create", :dir=>"asc").plot(:name).should ==
       ["nfirst","nsecond","nthird"]

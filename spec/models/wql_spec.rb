@@ -1,8 +1,4 @@
 require File.dirname(__FILE__) + '/../spec_helper'
-require File.dirname(__FILE__) + '/../../test/helpers/wagn_test_helper'
-
-include WagnTestHelper
-
 
 A_JOINEES = ["B", "C", "D", "E", "F"]
       

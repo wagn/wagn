@@ -3,6 +3,9 @@ require 'spork'
 ENV["RAILS_ENV"] = "test"
 
 Spork.prefork do
+  require File.expand_path(File.dirname(__FILE__) + "/../config/wagn_initializer")
+  Spork.trap_class_method(Wagn::Initializer,"load")
+
   require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
   require 'spec'
   require 'spec/autorun'
@@ -31,7 +34,7 @@ Spork.prefork do
   end
 end
 
-Spork.each_run do
+Spork.each_run do     
   # This code will be run each time you run your specs.
 end
 

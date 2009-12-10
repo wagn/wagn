@@ -25,7 +25,8 @@ class AccountCreationTest < ActionController::TestCase
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
     login_as :joe_user
-    CachedCard.bump_global_seq
+    CachedCard.bump_global_seq  
+    CachedCard.reset_cache
   end     
     
 # this is working in interface but I can't get it to work here:

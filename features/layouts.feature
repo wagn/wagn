@@ -7,8 +7,7 @@ Feature: Layouts
     Given I log in as Joe Admin
     And I create Html card "simple layout" with content "Simple Header {{_main}} Simple Footer"
     And I edit "*all+*layout" setting content to "[[simple layout]]"
-    And I create Set card "*is type+*rform" with content "{"type": "_self"}"
-    And I create Pointer card "User+*is type+*layout" with content "[[user layout]]"
+    And I create Pointer card "User+*type+*layout" with content "[[user layout]]"
     And I create Html card "user layout" with content "User Header {{_main}}"
 
   Scenario: I visit a Basic card with the simple layout

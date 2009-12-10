@@ -15,7 +15,7 @@ module Cardlib
           return setting_card
         end
       end
-      return self.class.default_setting_card(setting_name) 
+      return nil
     end
     
     

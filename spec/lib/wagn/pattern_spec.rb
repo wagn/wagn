@@ -31,6 +31,10 @@ describe Wagn::TypePattern do
   it_generates :name => "Book+*type", :from => Card.new( :type => "Book" )
 end
 
+describe Wagn::AllPattern do
+  it_generates :name => "*all", :from => Card.new( :type => "Book" )
+end
+
 describe Wagn::LeftTypeRightNamePattern do
   it_generates :name => "Book+author+*type plus right", :from => Card.new( :name=>"Illiad+author" )
 end

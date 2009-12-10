@@ -10,7 +10,7 @@ module Wagn
       def set_names card
         @@subclasses.map do |sc|
           sc.pattern_applies?(card) ? sc.set_name(card) : nil
-        end.compact << "*all"
+        end.compact
       end
     end  
    
@@ -20,6 +20,19 @@ module Wagn
       @spec = spec
     end
   end                                                                     
+
+  class AllPattern < Pattern
+    class << self
+      def pattern_applies? card
+        true
+      end
+
+      def set_name card
+        "*all"
+      end
+    end
+    register_class self
+  end
 
   class TypePattern < Pattern
     class << self

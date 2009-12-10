@@ -145,7 +145,13 @@ class SharedData
         Card.create! :name => "Sunglasses+tint"
 
         # TODO: I would like to setup these card definitions with something like Cucumbers table feature.
-      end
+      end          
+      
+      
+      ## --------- create templated permissions -------------
+      #r1 = Role.find_by_codename 'r1'
+      ctt = Card.create! :name=> 'Cardtype E+*tform'
+      
       
     end   
   end

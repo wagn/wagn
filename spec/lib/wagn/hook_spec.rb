@@ -27,7 +27,9 @@ end
 
 describe Wagn::Hook::Card do
   before(:each) do
-    Cod = mock("cod")
+    unless self.class.const_defined?("Cod")
+      Cod = mock("cod")
+    end
     Wagn::Hook::Card.reset
     Wagn::Hook::Card.register :save, { :type => "Book" } do
       Cod.hooked

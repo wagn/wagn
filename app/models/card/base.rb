@@ -329,13 +329,7 @@ module Card
     end
      
     # Extended associations ----------------------------------------
-    def sets
-      Wagn::Pattern.keys_for_card( self ).map do |key|
-        Card.find_by_pattern_spec_key( key )
-      end.compact + 
-      [Card['*all']]
-    end
-    
+
     def left
       trunk
     end

@@ -10,14 +10,11 @@ module Cardlib
     
     def setting_card setting_name
       # look for pattern
-      Wagn::Pattern.keys_for_card( self ).each do |key|
-        if pattern_card = Card.find_by_pattern_spec_key( key )
-          if setting_card = CachedCard.get_real( "#{pattern_card.name}+#{setting_name.to_star}" ) 
-            return setting_card
-          end
+      Wagn::Pattern.set_names( self ).each do |name|
+        if setting_card = CachedCard.get_real( "#{name}+#{setting_name.to_star}" ) 
+          return setting_card
         end
       end
-
       return self.class.default_setting_card(setting_name) 
     end
     

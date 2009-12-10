@@ -36,6 +36,12 @@ Spork.prefork do
       CachedCard.reset_cache     
       CachedCard.bump_global_seq   
     end
+
+    config.after(:each) do
+      CachedCard.reset_cache     
+      CachedCard.bump_global_seq   
+    end
+
   end
 end
 

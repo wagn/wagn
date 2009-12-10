@@ -7,8 +7,7 @@ describe Card do
   
   context "settings" do
     it "retrieves Set based value" do
-      Card.create :name => "Book cards", :type => "Set", :content => "{\"type\": \"Book\"}"
-      Card.create :name => "Book cards+*add help", :content => "authorize"
+      Card.create :name => "Book+*type+*add help", :content => "authorize"
       Card.new( :type => "Book" ).setting('add help').should == "authorize"
     end                                          
     
@@ -20,8 +19,7 @@ describe Card do
     end                                                                 
     
     it "retrieves single values" do
-      Card.create :name => '*solo+*rform', :type=>'Set', :content=>'{"name":"_self"}'
-      Card.create :name => "banana+*solo+*edit help", :content => "pebbles"
+      Card.create :name => "banana+*self+*edit help", :content => "pebbles"
       Card["banana"].setting('edit help').should == "pebbles"
     end
   end

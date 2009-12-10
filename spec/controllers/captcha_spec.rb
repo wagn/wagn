@@ -22,10 +22,11 @@ Spec::Rails::Example::ControllerExampleGroup.send(:include, CaptchaExampleMethod
 describe CardController, "captcha_required?" do
   before do
     User.as :wagbot do
+      #debugger
+      #CachedCard.bump_global_seq
       Card["*all+*captcha"].update_attributes! :content=>"1"
-      Card.create! :name=>'All Books', :type=>'Set', :content=>'{"type":"Book"}'
       c=Card["Book"];c.permit(:create, Role[:anon]);c.save! 
-      Card.create :name=>"All Books+*captcha", :content => "1"  
+      Card.create :name=>"Book+*type+*captcha", :content => "1"  
     end
   end
   
@@ -52,7 +53,7 @@ describe CardController, "captcha_required?" do
 
     it "is false when type card setting is off and global setting is on" do
       User.as :wagbot do
-        c= Card['All Books+*captcha']; c.content='0'; c.save!
+        c= Card['Book+*type+*captcha']; c.content='0'; c.save!
       end
       get :new, :type=>"Book"
       @controller.send(:captcha_required?).should be_false

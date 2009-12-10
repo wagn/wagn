@@ -3,4 +3,6 @@
 --loadby mtime
 --reverse     
 --drb
+--backtrace
+--debugger
 

@@ -7,7 +7,7 @@ describe "Card" do
   before do
     CachedCard.reset_cache; 
     CachedCard.bump_global_seq  # should figure out how not to have to do this all over..
-    Timecop.freeze(FUTURE)  # make sure we're ahead of all the test data
+    Timecop.travel(FUTURE)  # make sure we're ahead of all the test data
   end 
 
   describe "#watchers" do
@@ -38,7 +38,7 @@ describe "On Card Changes" do
     User.as(:john)           
     CachedCard.reset_cache; 
     CachedCard.bump_global_seq  # should figure out how not to have to do this all over..
-    Timecop.freeze(FUTURE)  # make sure we're ahead of all the test data
+    Timecop.travel(FUTURE)  # make sure we're ahead of all the test data
   end
   
   it "sends notifications of edits" do

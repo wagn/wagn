@@ -27,15 +27,15 @@ module Wagn
   class Hook::Card < Hook
     @@registry = {}
     class << self
-      def register hookname, pattern_spec, &block
+      def register hookname, set_name, &block
         hook_slot = (@@registry[hookname] ||= {})
-        hook_pattern_list = (hook_slot[Wagn::Pattern.key_for_spec( pattern_spec )] ||= [])
+        hook_pattern_list = (hook_slot[set_name] ||= [])
         hook_pattern_list << block
       end
     
       def invoke hookname, card, *args
         hook_slot = @@registry[hookname] or return true        
-        hooks = Wagn::Pattern.keys_for_card( card ).map do |pattern_key|
+        hooks = Wagn::Pattern.set_names( card ).map do |pattern_key|
           hook_slot[pattern_key]
         end.flatten.compact
         hooks.each do |hook|

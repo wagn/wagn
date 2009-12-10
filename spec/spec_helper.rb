@@ -31,6 +31,11 @@ Spork.prefork do
     # == Notes
     # 
     # For more information take a look at Spec::Example::Configuration and Spec::Runner
+    
+    config.before(:each) do
+      CachedCard.reset_cache     
+      CachedCard.bump_global_seq   
+    end
   end
 end
 

@@ -48,10 +48,10 @@ class CardActionTest < ActionController::IntegrationTest
   end
 
   def test_create_cardtype_card
-    post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"} )
+    post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor2"} )
     assert_response 418
-    assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
-    assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor')
+    assert_instance_of Card::Cardtype, Card.find_by_name('Editor2')
+    assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor2')
   end
 
   def test_create                   
@@ -79,8 +79,7 @@ class CardActionTest < ActionController::IntegrationTest
   def test_newcard_shows_edit_instructions
     given_cards( 
       {"Cardtype:YFoo" => ""},
-      {"Set:All YFoo" => '{"type":"YFoo"}'},
-      {"All YFoo+*edit help"  => "instruct-me"}
+      {"YFoo+*type+*edit help"  => "instruct-me"}
     )
     get 'card/new', :card => {:type=>'YFoo'}
     assert_tag :tag=>'div', :attributes=>{ :class=>"instruction" },  :content=>/instruct-me/ 

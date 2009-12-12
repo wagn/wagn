@@ -73,7 +73,7 @@ class Slot
       options = {} # do I need any? #args.last.is_a?(Hash) ? args.pop : {}
       block = Proc.new {}
       builder = options[:builder] || ActionView::Base.default_form_builder
-      card.name.gsub!(/^#{root.card.name}\+/, '+') if root.card.new_record?  ##FIXME -- need to match other relative inclusions.
+      card.name.gsub!(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_record?  ##FIXME -- need to match other relative inclusions.
       fields_for = builder.new("cards[#{card.name.pre_cgi}]", card, @template, options, block)       
     end
   end    

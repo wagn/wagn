@@ -44,7 +44,7 @@ module SlotHelpers
     div(:class=>'submenu') do
       [[ :content,    true  ],
        [ :name,       true, ],
-       [ :type,       !(card.type_template? || (card.type=='Cardtype' and ct=card.me_type and !ct.find(:all).empty?))],
+       [ :type,       !(card.type_template? || (card.type=='Cardtype' and ct=card.me_type and !ct.find_by_trash(false).empty?))],
        [ :inclusions, !(card.out_transclusions.empty? || card.template? || card.hard_template),         {:inclusions=>true} ]
        ].map do |key,ok,args|
 

@@ -20,7 +20,7 @@ class PatternizeHelpText < ActiveRecord::Migration
           Card.create!(:name=>"#{c.trunk.name}+*type+#{newname}", :type=>c.cardtype.name, :content=>c.content)
         end
         
-        c.name= c.name.trunk_name+"+*on right+#{newname}"
+        c.name= c.name.trunk_name+"+*right+#{newname}"
         c.confirm_rename = true
         c.update_referencers=true
         c.save!

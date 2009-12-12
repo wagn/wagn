@@ -34,8 +34,10 @@ module Card
     end
     
     def get_spec(params={})
-      raise("Error in card '#{self.name}':can't run search with empty content") if self.content.empty?
-      spec = JSON.parse( self.content )   
+      spec = ::User.as(:wagbot) do
+        raise("Error in card '#{self.name}':can't run search with empty content") if self.content.empty?
+        JSON.parse( self.content )   
+      end
       # FIXME: should unit test this 
       
       self_card ||= ( name.junction? ? Card[name.parent_name]||Card.auto_card(name.parent_name) : nil )  

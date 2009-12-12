@@ -11,7 +11,7 @@ class UpdatePatternNomenclature < ActiveRecord::Migration
       ].each do |oldname, newname|
       c = Card[oldname]
       next unless c    
-      next if Card[newname]
+      #next if Card[newname]
       c.name = newname
       c.confirm_rename = true
       c.update_referencers = true

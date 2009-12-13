@@ -6,7 +6,6 @@ describe Wagn::Pattern do
     Wagn::Pattern.should be_true
   end    
   
-  
   describe :set_names do
     it "returns solo, type, all for simple cards" do
       Wagn::Pattern.set_names( Card.new( :name => "AnewCard" )).should == [
@@ -20,11 +19,23 @@ describe Wagn::Pattern do
       ]
     end
   end
+  
+  describe :label do
+    it "returns label for name" do
+      Wagn::Pattern.label('address+*right').should== "Cards ending in +address"
+    end
+  end
 end
 
 describe Wagn::RightNamePattern do
   it_generates :name => "author+*right", :from => Card.new( :name => "Illiad+author" )
   it_generates :name => "author+*right", :from => Card.new( :name => "+author" )
+  
+  describe :label do
+    it "returns label for name" do
+      Wagn::RightNamePattern.label('address+*right').should== "Cards ending in +address"
+    end
+  end
 end
                               
 describe Wagn::TypePattern do

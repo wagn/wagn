@@ -36,11 +36,12 @@
   float:right;
   margin-left: 10px;
 }
+/*
 .not-set .value,
 .overridden .value{
   background: #ddd
 }
-
+*/
 .setting a{ 
   font-weight: bold;
   color: #484

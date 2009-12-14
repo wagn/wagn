@@ -292,11 +292,6 @@ class Slot
     
       
       
-      ###---(  SPECIAL ) 
-
-      when :open_setting;   render_partial('views/open_setting')
-      when :closed_setting; render_partial('views/closed_setting')
-
       ###---(  EXCEPTIONS ) 
       
       when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing

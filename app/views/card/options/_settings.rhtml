@@ -14,4 +14,15 @@
       <% end %>    	
     </div>
   <% end %>
+  
+  <% if card.type=='Cardtype' %>
+    <br/>
+    <br/>
+    <h2>Settings for <%= Wagn::Pattern.label("#{card.name}+*type")%></h2>
+    <br/>
+    <%= slot.subslot(Card::Search.new(:name=>'', 
+        :content=>%{{"prepend":"#{card.name}+*type", "type":"Setting"}} #, "left_plus":{"right":"*type"}}})
+      )).render :naked %>
+  <% end %>
+  
 </div>

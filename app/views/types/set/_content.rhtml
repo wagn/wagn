@@ -4,7 +4,9 @@
 <br/>
 
 <h2>Settings</h2>
-<%= slot.subslot(Card::Search.new(:name=>'', :content=>%{{"left":"#{card.key}", "right":{"type":"Setting"}}})).render :naked %>
+<%= slot.subslot(Card::Search.new(:name=>'', 
+     :content=>%{{"prepend":"#{card.name}", "type":"Setting"}} #, "left_plus":{"right":"*type"}}}
+     )).render :naked %>
 
 <br />
 <h2>Cards in Set</h2>

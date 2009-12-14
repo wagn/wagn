@@ -61,4 +61,10 @@
   background: #fff
 
 }                      
-.set-setting .card-slot { border-bottom: 0px !important }
+.set-setting .card-slot { 
+  border-bottom: 0px !important 
+}
+.settings-for-set,
+.values-for-setting {
+  margin: 20px 5px 5px 5px;
+}

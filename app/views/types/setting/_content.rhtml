@@ -1,0 +1,12 @@
+<% slot.subslot(card).wrap( :add_slot=>true) do |ss| %>     
+  <%= ss.expand_inclusions "{{+*label | open }}" %>
+<% end %>
+
+<% Wagn::Pattern.subclasses.reverse.each do |set_class| %>
+  <%- key = set_class.key %>
+  <h2 class="values-for-setting"><%= key=='*all' ? '*all' : "+#{key}"%></h2>
+  <%= slot.subslot(Card::Search.new(:name=>'', 
+     :content=>%{{"left":{"type":"Set","#{key=='*all' ? 'name' : 'right'}":"#{key}"}, 
+                  "right":"#{card.name}"}} #, "left_plus":{"right":"*type"}}}
+     )).render :naked %>
+<% end %>

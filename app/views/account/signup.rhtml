@@ -9,8 +9,8 @@
   <% get_slot(card).wrap('account-request') do |slot| %>
 
     <div class="instruction">
-      <% if inst = card.new_instructions %> 
-        <%= slot.expand_inclusions inst %>
+      <% if inst = card.add_help_card %> 
+        <%= slot.subslot(inst).render :naked %>
       <% elsif !System.ok?(:create_accounts) %>
         <p><strong>All Account Requests are subject to review.</strong></p>
       <% else %>

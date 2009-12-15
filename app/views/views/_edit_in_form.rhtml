@@ -9,10 +9,10 @@
     <%= slot.content_field( form, :nested=>true ) %>
   </div>
 
-  <% if inst = card.setting('edit help') %>
+  <% if inst = card.setting_card('edit help') %>
     <%# note - this slot goofiness keeps instruction inclusions from going into edit mode %>
     <%- slot.state= :view %>
-    <div class="instruction"><%= slot.expand_inclusions inst %></div>
+    <div class="instruction"><%= slot.subslot(inst).render :naked %></div>
     <%- slot.state= :edit %>
   <% end %>
 

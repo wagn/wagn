@@ -27,7 +27,6 @@
   border-bottom: 1px solid #999;  
 }
 .edit-link {
-  color: #484;
   float: right; 
 }
 .setting-description,
@@ -44,8 +43,8 @@
 */
 .setting a{ 
   font-weight: bold;
-  color: #484
 }
+/*
 .setting-description {
   background: #eec;
   color: #440;
@@ -54,12 +53,10 @@
   text-align: center;
   display: block;
 }
+*/
 .set { 
   font-style: italic;
-  color: #484;
   text-align: right;
-  background: #fff
-
 }                      
 .set-setting .card-slot { 
   border-bottom: 0px !important 

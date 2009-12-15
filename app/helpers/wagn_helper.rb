@@ -109,30 +109,6 @@ module WagnHelper
     wordstring
   end
 
-
-  def partial_for_action( name, card=nil )
-    # FIXME: this should look up the inheritance hierarchy, once we have one
-    # wow this is a steaming heap of dung.
-    cardtype = (card ? card.type : 'Basic').underscore
-    if Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR <=1
-      finder.file_exists?("/types/#{cardtype}/_#{name}") ?
-        "/types/#{cardtype}/#{name}" :
-        "/types/basic/#{name}"
-    elsif   Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR > 2
-      ## This test works for .rhtml files but seems to fail on .html.erb
-      begin
-        self.view_paths.find_template "types/#{cardtype}/_#{name}"
-        "types/#{cardtype}/#{name}"
-      rescue ActionView::MissingTemplate => e
-        "/types/basic/#{name}"
-      end
-    else
-      self.view_paths.find { |template_path| template_path.paths.include?("types/#{cardtype}/_#{name}") } ?
-        "/types/#{cardtype}/#{name}" :
-        "/types/basic/#{name}"
-    end
-  end
-
   def symbolize_param(param)
     val = params[param]
     (val && !val.to_s.empty?) ? val.to_sym : nil

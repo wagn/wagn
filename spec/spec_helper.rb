@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'spork'
 ENV["RAILS_ENV"] = "test"
+require 'assert2/xhtml'
 
 Spork.prefork do
   require File.expand_path(File.dirname(__FILE__) + "/../config/wagn_initializer")
@@ -10,7 +11,6 @@ Spork.prefork do
   require 'spec'
   require 'spec/autorun'
   require 'spec/rails' 
-
   
   
   # Loading more in this block will cause your tests to run faster. However, 

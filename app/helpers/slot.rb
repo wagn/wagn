@@ -37,7 +37,7 @@ class Slot
   end
    
   def initialize(card, context="main_1", action="view", template=nil, opts={} )
-    @card, @context, @action, @template, = card, context.to_s, action.to_s, template
+    @card, @context, @action, @template = card, context.to_s, action.to_s, template
     Slot.current_slot ||= self
     
     @template ||= begin

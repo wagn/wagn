@@ -1,9 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Slot, "" do      
-  before { User.as :joe_user }
-  #it("is ready for the whole test suite") { false.should be_true } 
-  
+  before { User.as :joe_user }   
   describe "renders" do
     it "simple card links" do
       Slot.render_content( "[[A]]" ).should == "<a class=\"known-card\" href=\"/wagn/A\">A</a>"  

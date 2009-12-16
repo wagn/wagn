@@ -15,9 +15,9 @@ Feature: Flexmail
     And I create Email card "Testemailconfig"
       And I create Search card "Testemailconfig+*to" with content
         """
-        {"referred_to_by":"{{_self+recipients|naked}}"}
+        {"referred_to_by":{"left":"_self","right":"recipients"}}
         """
-      And I create Phrase card "Testemailconfig+*from" with content "{{_self+email|naked}}"
+      And I create Search card "Testemailconfig+*from" with content "{"left":"_self","right":"email"}"
       And I create Phrase card "Testemailconfig+*subject" with content "Subjectimus"
       And I create Phrase card "Testemailconfig+*bcc"
       And I create Basic card "Testemailconfig+*message" with content 

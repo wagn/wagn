@@ -435,8 +435,8 @@ module Card
       end
     end   
         
-    def new_instructions  
-      self.setting('add help') || self.setting('edit help')
+    def add_help_card  
+      self.setting_card('add help') || self.setting_card('edit help')
     end
     
     def type

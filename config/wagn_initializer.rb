@@ -26,7 +26,7 @@ module Wagn
       def pre_schema?
         ActiveRecord::Base.connection.execute("select * from cards")
         return false
-      rescue ActiveRecord::StatementInvalid
+      rescue Exception=>e
         return true
       end
 

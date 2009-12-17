@@ -266,8 +266,7 @@ class Slot
       #-----( without transclusions processed )
       # removed raw from 'naked' after deprecation period for 1.3  
       # need a short period to flush out issues before releasing
-      # when :raw;             "<pre>#{card.content}</pre>"
-      # when :raw_content;     card.content
+      # when :raw;     card.content
       when :closed_content;   render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
       when :open_content;     render_card_partial(:content)  # FIXME?: 'content' is inconsistent
       when :naked_content

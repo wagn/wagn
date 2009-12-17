@@ -7,6 +7,10 @@ module Wagn
       def register_class klass 
         @@subclasses.unshift klass
       end
+      
+      def subclasses
+        @@subclasses
+      end
     
       def set_names card
         @@subclasses.map do |sc|

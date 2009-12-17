@@ -10,7 +10,6 @@
   </div>
 
   <% if inst = card.setting_card('edit help') %>
-    <%# note - this slot goofiness keeps instruction inclusions from going into edit mode %>
     <%- ss = slot.subslot(inst); ss.state= :view %>
     <div class="instruction"><%= ss.render :naked %></div>
   <% end %>

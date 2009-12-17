@@ -12,7 +12,9 @@ class MoreSettingsCleanup < ActiveRecord::Migration
         card.save!
       end
     end
-    Card['*on right'].destroy!
+    if c = Card['*on right']
+      c.destroy!
+    end
     
     c = Card['*all']
     c.type='Set'

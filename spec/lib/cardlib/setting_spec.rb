@@ -23,5 +23,4 @@ describe Card do
       Card["banana"].setting('edit help').should == "pebbles"
     end
   end
-  
 end

@@ -1,23 +1,33 @@
-require_dependency 'slot_helpers'
-
 class Slot
-  include SlotHelpers  
-  cattr_accessor :max_char_count
+  module NoControllerHelpers
+    def protect_against_forgery?
+      # FIXME
+      false
+    end
+
+    def logged_in?
+      !(User.current_user.nil? || User.current_user.login == 'anon')
+    end
+
+    def slot
+      Slot.current_slot
+    end
+  end
+
+  cattr_accessor :max_char_count, :current_slot
   self.max_char_count = 200
   attr_reader :card, :context, :action, :template
   attr_writer :form 
   attr_accessor  :options_need_save, :state, :requested_view, :js_queue_initialized,  
     :position, :renderer, :form, :superslot, :char_count, :item_format, :type, :renders, 
     :start_time, :skip_autosave, :config, :slot_options
-    #:editor_count, :transclusions, 
 
   VIEW_ALIASES = { 
     :view => :open,
     :card => :open,
     :line => :closed,
   }
-    
-   
+       
   class << self
     def render_content content, opts = {}
       opts[:view] ||= :naked
@@ -27,7 +37,15 @@ class Slot
   end
    
   def initialize(card, context="main_1", action="view", template=nil, opts={} )
-    @card, @context, @action, @template, = card, context.to_s, action.to_s, (template||StubTemplate.new)
+    @card, @context, @action, @template = card, context.to_s, action.to_s, template
+    Slot.current_slot ||= self
+    
+    @template ||= begin
+      t = ActionView::Base.new( CardController.view_paths, { :slot => self, :card=>card })
+      t.helpers.send :include, CardController.master_helper_module
+      t.helpers.send :include, NoControllerHelpers
+      t
+    end
     # FIXME: this and context should all be part of the context object, I think.
     # In any case I had to use "slot_options" rather than just options to avoid confusion with lots of 
     # local variables named options.
@@ -308,7 +326,7 @@ class Slot
     
 #      result ||= "" #FIMXE: wtf?
     result << javascript_tag("setupLinksAndDoubleClicks();") if args[:add_javascript]
-    result
+    result.strip
   rescue Card::PermissionDenied=>e
     return "Permission error: #{e.message}"
   end
@@ -402,13 +420,12 @@ class Slot
   end
      
   def render_partial( partial, locals={} )
-    locals =  { :card=>card, :slot=>self }.merge(locals)
-    StubTemplate===@template ? render_stub(partial, locals) : @template.render(:partial=>partial, :locals=>locals)
+    @template.render(:partial=>partial, :locals=>{ :card=>card, :slot=>self }.merge(locals))
   end
 
   def card_partial(action) 
     # FIXME: I like this method name better- maybe other calls should resolve here instead
-    @template.partial_for_action(action, card)
+    partial_for_action(action, card)
   end
   
   def render_card_partial(action, locals={})
@@ -418,7 +435,10 @@ class Slot
   def process_inclusion( card, options={} )  
     #warn("<process_inclusion card=#{card.name} options=#{options.inspect}")
     subslot = subslot(card, options[:context])
-    old_slot, @template.controller.slot = @template.controller.slot, subslot
+    if @template.controller
+      old_slot, @template.controller.slot = @template.controller.slot, subslot
+    end
+    old_slot, Slot.current_slot = Slot.current_slot, subslot
 
     # set item_format;  search cards access this variable when rendering their content.
     subslot.item_format = options[:item] if options[:item]
@@ -444,7 +464,10 @@ class Slot
     end
 
     result = subslot.render action, options
-    @template.controller.slot = old_slot
+    if @template.controller
+      @template.controller.slot = old_slot
+    end
+    Slot.current_slot = old_slot
     result
   end   
   
@@ -453,48 +476,300 @@ class Slot
     # and removing the argument but it broken lots of integration tests.
     ActiveSupport::Deprecation.silence { @template.send(method_id, *args, &proc) }
   end
-
   
-  def render_stub(partial, locals={})
-    raise("Invalid partial") if partial.blank? 
-    case partial
-    when "card/view"
-      %{\n<div class="view">\n} + wrap_content( render( :expanded_view_content ))+ %{\n</div>\n}
-    when "card/line"
-      %{\n<div class="view">\n} + wrap_content( render(:expanded_line_content) ) + %{\n</div>\n}
-    when "basic/content", "image/content"
-      render :naked_content
-    when "basic/line"
-      truncatewords_with_closing_tags( render( :custom_view ))
-    else
-      "No Stub for #{partial}"
+  #### --------------------  additional helpers ---------------- ###
+  def render_diff(card, *args)
+    @renderer.render_diff(card, *args)
+  end
+  
+  def notice 
+    %{<span class="notice">#{controller ? controller.notice : ''}</span>}
+  end
+
+  def id(area="") 
+    area, id = area.to_s, ""  
+    id << "javascript:#{get(area)}"
+  end  
+  
+  def parent
+    "javascript:getSlotSpan(getSlotSpan(this).parentNode)"
+  end                       
+   
+  def nested_context?
+    context.split('_').length > 2
+  end
+   
+  def get(area="")
+    area.empty? ? "getSlotSpan(this)" : "getSlotElement(this, '#{area}')"
+  end
+   
+  def selector(area="")   
+    "getSlotFromContext('#{context}')";
+  end             
+ 
+  def card_id
+    (card.new_record? && card.name)  ? Cardname.escape(card.name) : card.id
+  end
+
+  def editor_id(area="")
+    area, eid = area.to_s, ""
+    eid << context
+    eid << (area.blank? ? '' : "-#{area}")
+  end
+
+  def edit_submenu(on)
+    div(:class=>'submenu') do
+      [[ :content,    true  ],
+       [ :name,       true, ],
+       [ :type,       !(card.type_template? || (card.type=='Cardtype' and ct=card.me_type and !ct.find_all_by_trash(false).empty?))],
+       [ :inclusions, !(card.out_transclusions.empty? || card.template? || card.hard_template),         {:inclusions=>true} ]
+       ].map do |key,ok,args|
+
+        link_to_remote( key, 
+          { :url=>url_for("card/edit", args, key), :update => ([:name,:type].member?(key) ? id('card-body') : id) }, 
+          :class=>(key==on ? 'on' : '') 
+        ) if ok
+      end.compact.join       
+     end  
+  end
+  
+  def options_submenu(on)
+    div(:class=>'submenu') do
+      [:permissions, :settings].map do |key|
+        link_to_remote( key, 
+          { :url=>url_for("card/options", {}, key), :update => id }, 
+          :class=>(key==on ? 'on' : '') 
+        )
+      end.join
     end
   end
+    
+  def paging_params
+    s = {}
+    [:offset,:limit].each{|key| s[key] = params[key]}
+    s[:offset] = s[:offset] ? s[:offset].to_i : 0
+  	s[:limit]  = s[:limit]  ? s[:limit].to_i  : (main_card? ? 50 : 20)
+	  s
+  end
+
+  def main_card?
+    context=~/^main_\d$/
+  end
+
+  def url_for(url, args=nil, attribute=nil)
+    url = "javascript:'/#{url}"
+    url << "/#{escape_javascript(URI.escape(card_id.to_s))}" if (card and card_id)
+    url << "/#{attribute}" if attribute   
+    url << "?context='+getSlotContext(this)"
+    url << "+'&' + getSlotOptions(this)"
+    url << ("+'"+ args.map{|k,v| "&#{k}=#{escape_javascript(URI.escape(v.to_s))}"}.join('') + "'") if args
+    url
+  end
+
+  def header 
+    @template.render :partial=>'card/header', :locals=>{ :card=>card, :slot=>self }
+  end
+
+  def menu   
+    if card.virtual?
+      return %{<span class="card-menu faint">Virtual</span>\n}
+    end
+    menu = %{<span class="card-menu">\n}
+    menu << %{<span class="card-menu-left">\n}
+  	menu << link_to_menu_action('view')
+  	menu << link_to_menu_action('changes')
+  	menu << link_to_menu_action('options') 
+  	menu << link_to_menu_action('related')
+  	menu << "</span>"
+    
+  	menu << link_to_menu_action('edit') 
+  	
+    
+    menu << "</span>"
+  end
+
+  def footer 
+    render_partial 'card/footer' 
+  end
+            
+  def footer_links
+    cache_action('footer') { 
+      render_partial( 'card/footer_links' )   # this is ugly reusing this cache code
+    }
+  end     
+  
+  def option( args={}, &proc)
+    args[:label] ||= args[:name]
+    args[:editable]= true unless args.has_key?(:editable)
+    self.options_need_save = true if args[:editable]
+    concat %{<tr>
+      <td class="inline label"><label for="#{args[:name]}">#{args[:label]}</label></td>
+      <td class="inline field">
+    }, proc.binding
+    yield
+    concat %{
+      </td>
+      <td class="help">#{args[:help]}</td>
+      </tr>
+    }, proc.binding
+  end
+
+  def option_header(title)
+    %{<tr><td colspan="3" class="option-header"><h2>#{title}</h2></td></tr>}
+  end
+
+  def link_to_menu_action( to_action)
+    menu_action = (%w{ show update }.member?(action) ? 'view' : action)
+    content_tag( :li, link_to_action( to_action.capitalize, to_action, {} ),
+      :class=> (menu_action==to_action ? 'current' : ''))
+  end
+
+  def link_to_action( text, to_action, remote_opts={}, html_opts={})
+    link_to_remote text, {
+      :url=>url_for("card/#{to_action}"),
+      :update => id
+    }.merge(remote_opts), html_opts
+  end
+
+  def button_to_action( text, to_action, remote_opts={}, html_opts={})
+    if remote_opts.delete(:replace)
+      r_opts =  { :url=>url_for("card/#{to_action}", :replace=>id ) }.merge(remote_opts)
+    else
+      r_opts =  { :url=>url_for("card/#{to_action}" ), :update => id }.merge(remote_opts)
+    end
+    button_to_remote( text, r_opts, html_opts )
+  end
+
+  def name_field(form,options={})
+    form.text_field( :name, { :class=>'field card-name-field'}.merge(options))
+  end
+
+
+  def cardtype_field(form,options={})
+    text = %{<span class="label"> type:</span>\n} 
+    text << @template.select_tag('card[type]', cardtype_options_for_select(card.type), options) 
+  end
+
+  def update_cardtype_function(options={})
+    fn = ['File','Image'].include?(card.type) ? 
+            "Wagn.onSaveQueue['#{context}'].clear(); " :
+            "Wagn.runQueue(Wagn.onSaveQueue['#{context}']); "      
+    if @card.hard_template
+      #options.delete(:with)
+    end
+    fn << remote_function( options )   
+  end
+     
+  def js_content_element 
+    @card.hard_template ? "" : ",getSlotElement(this,'form').elements['card[content]']" 
+  end
+
+  def content_field(form,options={})   
+    self.form = form              
+    @nested = options[:nested]
+    pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
+    editor_partial = (card.type=='Pointer' ? ((c=card.setting('input'))  ? c.gsub(/[\[\]]/,'') : 'list') : 'editor')
+    pre_content + self.render_partial( card_partial(editor_partial), options ) + setup_autosave 
+  end                          
+ 
+  def save_function 
+    "if(ds=Wagn.draftSavers['#{context}']){ds.stop()}; if (Wagn.runQueue(Wagn.onSaveQueue['#{context}'])) { } else {return false}"
+  end
+
+  def cancel_function 
+    "if(ds=Wagn.draftSavers['#{context}']){ds.stop()}; Wagn.runQueue(Wagn.onCancelQueue['#{context}']);"
+  end
+
+
+  def editor_hooks(hooks)
+    # it seems as though code executed inline on ajax requests works fine
+    # to initialize the editor, but when loading a full page it fails-- so
+    # we run it in an onLoad queue.  the rest of this code we always run
+    # inline-- at least until that causes problems.    
+    
+    #FIXME: this looks like it won't work for arbitraritly nested forms.  1-level only
+    hook_context = @nested ? context.split('_')[0..-2].join('_') : context
+    code = "" 
+    if hooks[:setup]
+      code << "Wagn.onLoadQueue.push(function(){\n" unless request.xhr?
+      code << hooks[:setup]
+      code << "});\n" unless request.xhr?
+    end
+    root.js_queue_initialized||={}
+    unless root.js_queue_initialized.has_key?(hook_context) 
+      #code << "warn('initializing #{hook_context} save & cancel queues');"
+      code << "Wagn.onSaveQueue['#{hook_context}']=$A([]);\n"
+      code << "Wagn.onCancelQueue['#{hook_context}']=$A([]);\n"
+      root.js_queue_initialized[hook_context]=true
+    end
+    if hooks[:save]  
+      code << "Wagn.onSaveQueue['#{hook_context}'].push(function(){\n"
+      #code << "warn('running #{hook_context} save hook');"
+      code << hooks[:save]
+      code << "});\n"
+      code << "warn('hook: fn(){ #{hooks[:save].gsub(/\'/,"|").gsub(/\n/,"; ")} }');"
+      #code << "added to #{hook_context} save queue');"
+    end
+    if hooks[:cancel]
+      code << "Wagn.onCancelQueue['#{hook_context}'].push(function(){\n"
+      code << hooks[:cancel]
+      code << "});\n"
+    end
+    javascript_tag code
+  end                   
+  
+  def setup_autosave
+    if @nested or skip_autosave 
+      ""
+    else
+      javascript_tag "Wagn.setupAutosave('#{card.id}', '#{context}');\n"
+    end
+  end
+          
+  def half_captcha
+    if captcha_required?
+      key = card.new_record? ? "new" : card.key
+      javascript_tag(%{loadScript("http://api.recaptcha.net/js/recaptcha_ajax.js")}) +
+        recaptcha_tags( :ajax=>true, :display=>{:theme=>'white'}, :id=>key)
+    end
+  end
+  
+  def full_captcha
+    if captcha_required?
+      key = card.new_record? ? "new" : card.key          
+        recaptcha_tags( :ajax=>true, :display=>{:theme=>'white'}, :id=>key ) +
+          javascript_tag(   
+            %{jQuery.getScript("http://api.recaptcha.net/js/recaptcha_ajax.js", function(){
+              document.getElementById('dynamic_recaptcha-#{key}').innerHTML='<span class="faint">loading captcha</span>'; 
+              Recaptcha.create('#{ENV['RECAPTCHA_PUBLIC_KEY']}', document.getElementById('dynamic_recaptcha-#{key}'),RecaptchaOptions);
+            });
+          })
+    end
+  end
+  
+  ### ------  from wagn_helper ----
+  def partial_for_action( name, card=nil )
+    # FIXME: this should look up the inheritance hierarchy, once we have one
+    # wow this is a steaming heap of dung.
+    cardtype = (card ? card.type : 'Basic').underscore
+    if Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR <=1
+      finder.file_exists?("/types/#{cardtype}/_#{name}") ?
+        "/types/#{cardtype}/#{name}" :
+        "/types/basic/#{name}"
+    elsif   Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR > 2
+      ## This test works for .rhtml files but seems to fail on .html.erb
+      begin
+        @template.view_paths.find_template "types/#{cardtype}/_#{name}"
+        "types/#{cardtype}/#{name}"
+      rescue ActionView::MissingTemplate => e
+        "/types/basic/#{name}"
+      end
+    else
+      @template.view_paths.find { |template_path| template_path.paths.include?("types/#{cardtype}/_#{name}") } ?
+        "/types/#{cardtype}/#{name}" :
+        "/types/basic/#{name}"
+    end
+  end
+  
 end   
-
-
-# For testing/console use of a slot w/o controllers etc.
-class StubTemplate      
-  include ActionView::Helpers::SanitizeHelper
-  attr_accessor :indent, :slot
-  # for testing & commandline use  
-  # not totally happy with this..    
-
-  def self.full_sanitizer
-    @full_sanitizer ||= HTML::FullSanitizer.new
-  end
-  
-  def params
-    return {}
-  end
-  
-  def controller
-    @controller ||= (Struct.new(:slot)).new(nil)
-  end 
-  
-  def partial_for_action(action, card) 
-    "#{card.type.to_s.downcase}/#{action}"
-  end  
-end
-
 

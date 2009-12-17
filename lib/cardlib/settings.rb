@@ -1,6 +1,5 @@
 module Cardlib
   module Settings
-    
     def setting setting_name
       card = setting_card setting_name
       card && begin

@@ -5,7 +5,7 @@ slot = get_slot
 <div class="open-set-setting">
 
   <% slot.subslot(card).wrap( :add_slot=>true) do |ss| %>
-    <div class="instruction">  
+    <div class="instruction setting-description">  
       <%= ss.expand_inclusions "{{#{setting_name}+*right+*edit help}}" %>
     </div>
   <% end %>

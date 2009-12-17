@@ -350,13 +350,13 @@ class CardController < ApplicationController
     complete = complete.to_s
     # FIXME - shouldn't we bail here if we don't have anything to complete?
 
-    pointer_options = 
-      !params[:id].blank? &&
-      (pointer_card = c=Card[params[:id].tag_name]) && 
-      pointer_card.setting_card('options')
+    options_card = 
+      (!params[:id].blank? &&
+       (pointer_card = CachedCard.get(params[:id])) && 
+       pointer_card.setting_card('options'))
 
     search_args = {  :complete=>complete, :limit=>8, :sort=>'name' }
-    @items = pointer_options ? pointer_options.search(search_args) : Card.search(search_args)
+    @items = options_card ? options_card.search(search_args) : Card.search(search_args)
 
     render :inline => "<%= auto_complete_result @items, 'name' %>"
   end                                              

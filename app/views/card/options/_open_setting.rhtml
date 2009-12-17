@@ -4,11 +4,9 @@ slot = get_slot
 %>
 <div class="open-set-setting">
 
-  <% slot.subslot(card).wrap( :add_slot=>true) do |ss| %>
-    <div class="instruction">  
-      <%= ss.expand_inclusions "{{#{setting_name}+*right+*edit help}}" %>
-    </div>
-  <% end %>
+  <div class="instruction setting-description">  
+    <%= slot.expand_inclusions "{{#{setting_name}+*right+*edit help}}" %>
+  </div>
 
 	<div class="setting">
 		<%= link_to_remote setting_name, {:url=>slot.url_for("card/options", :attribute=>'closed_setting', :setting=>setting_name), :update=>slot.id}, :title=>"close #{setting_name}", :class=>'title down-arrow' %>

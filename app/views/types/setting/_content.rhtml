@@ -1,8 +1,6 @@
-<% slot.subslot(card).wrap( :add_slot=>true) do |ss| %>
-  <div class="instruction">  
-    <%= ss.expand_inclusions "{{+*right+*edit help}}" %>
-  </div>
-<% end %>
+<div class="instruction">  
+  <%= slot.expand_inclusions "{{+*right+*edit help}}" %>
+</div>
 
 <% Wagn::Pattern.subclasses.reverse.each do |set_class| %>
   <%- key = set_class.key %>

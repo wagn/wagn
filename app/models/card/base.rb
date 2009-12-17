@@ -435,10 +435,6 @@ module Card
       end
     end   
         
-    def add_help_card  
-      self.setting_card('add help') || self.setting_card('edit help')
-    end
-    
     def type
       read_attribute :type
     end

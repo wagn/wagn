@@ -7,7 +7,6 @@ Feature: Content Settings
     Given I log in as Joe User
     And I create Cardtype card "Movie"
     And I create card "Movie+*type+*content" with content "{{+director}} {{+lead}}"
-    
 
   Scenario: New card with templated content
     When I go to new Movie

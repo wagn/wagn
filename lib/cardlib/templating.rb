@@ -152,6 +152,12 @@ module Cardlib
       end
     end
     
+    
+    ## -------- ( setting-based content/templating ) ----------
+    def content_templated?
+      c = setting_card('content') and c.name.tag_name != '*default'
+    end        
+    
     private
     def hard_templatee_wql
       return nil unless template? and hard_template?

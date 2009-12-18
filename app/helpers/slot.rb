@@ -287,7 +287,10 @@ class Slot
         if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
           template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}" 
         else
-          @renderer.render( card, args.delete(:content) || "", update_refs=card.references_expired)
+          passed_in_content = args.delete(:content)
+          templated_content = card.setting("content")
+          renderer_content = passed_in_content || templated_content || ""
+          @renderer.render( card, renderer_content, update_refs=card.references_expired)
         end
         
     ###---(  EDIT VIEWS ) 

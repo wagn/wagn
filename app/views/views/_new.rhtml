@@ -21,7 +21,7 @@
 					:html=>{ :class=>'form',:onsubmit=>slot.save_function	} do |form| %>
 
 			<div class="card-header">
-			  <% if !request.xhr? and params[:card] and cardtype = params[:card][:type] and !card.broken_type %>
+			  <% if !slot.xhr? and params[:card] and cardtype = params[:card][:type] and !card.broken_type %>
 			    <%= form.hidden_field :type %>
 			  <% else %>
   			  <span class="new-type">
@@ -72,7 +72,7 @@
     		
     			<%= button_to_function 'Create', "this.form.onsubmit()", :id=>'create-button'  %>
 						
-          <% if request.xhr? %>						
+          <% if slot.xhr? %>						
     				<%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function }  %> 
     			<% else %>
     		    <%= button_to_function 'Cancel',"document.location.href='#{previous_location}'" %> 

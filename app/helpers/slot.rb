@@ -105,7 +105,7 @@ class Slot
   # internal slot calls, so I added the option passing internal content which
   # makes all the ugly block_given? ifs..                                                 
   def wrap(action="", args={}) 
-    render_slot = args.key?(:add_slot) ? args.delete(:add_slot) : !request.xhr? 
+    render_slot = args.key?(:add_slot) ? args.delete(:add_slot) : !xhr? 
     content = args.delete(:content)
      
     open_slot, close_slot = "",""
@@ -288,14 +288,15 @@ class Slot
           template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}" 
         else
           passed_in_content = args.delete(:content)
-          templated_content = card.setting("content")
+          templated_content = card.content_templated? ? card.setting('content') : nil
           renderer_content = passed_in_content || templated_content || ""
           @renderer.render( card, renderer_content, update_refs=card.references_expired)
         end
         
     ###---(  EDIT VIEWS ) 
-
-      when :edit;  @state=:edit; card.hard_template ? render(:multi_edit) : content_field(slot.form)
+      when :edit;  
+        @state=:edit
+        (card.hard_template || card.content_templated?) ? render(:multi_edit) : content_field(slot.form)
         
       when :multi_edit;
         @state=:edit 
@@ -678,6 +679,9 @@ class Slot
     "if(ds=Wagn.draftSavers['#{context}']){ds.stop()}; Wagn.runQueue(Wagn.onCancelQueue['#{context}']);"
   end
 
+  def xhr?
+    controller && controller.request.xhr?
+  end
 
   def editor_hooks(hooks)
     # it seems as though code executed inline on ajax requests works fine
@@ -689,9 +693,9 @@ class Slot
     hook_context = @nested ? context.split('_')[0..-2].join('_') : context
     code = "" 
     if hooks[:setup]
-      code << "Wagn.onLoadQueue.push(function(){\n" unless request.xhr?
+      code << "Wagn.onLoadQueue.push(function(){\n" unless xhr?
       code << hooks[:setup]
-      code << "});\n" unless request.xhr?
+      code << "});\n" unless xhr?
     end
     root.js_queue_initialized||={}
     unless root.js_queue_initialized.has_key?(hook_context) 

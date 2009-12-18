@@ -68,6 +68,12 @@ describe Slot, "" do
     end
   end
 
-
+  context "with content settings" do
+    it "should use content settings" do
+      @card = Card.new( :name=>"templated", :content => "bar" )
+      @card.should_receive(:setting).with("content").and_return("Yoruba")
+      Slot.new(@card).render(:naked_content).should == "Yoruba"
+    end
+  end
 end
 

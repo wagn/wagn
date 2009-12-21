@@ -172,6 +172,7 @@ class ApplicationController < ActionController::Base
   # FIXME: this should be fixed to use a call to getSlotElement() instead of default
   # selectors, so that we can reject elements inside nested slots.
   def render_update_slot_element(name,stuff="")
+    self.slot = nil  # reset slot object.
     render :update do |page|
       page.extend(WagnHelper::MyCrappyJavascriptHack) 
       elem_code = "getSlotFromContext('#{get_slot.context}')"

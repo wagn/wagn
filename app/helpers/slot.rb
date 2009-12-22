@@ -137,7 +137,7 @@ class Slot
         :item     => args[:item],
         :base     => args[:base], # deprecated
         :class    => css_class,
-        :position => position
+        :position => UUID.new.generate
       }
       
       slot_attr = attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join

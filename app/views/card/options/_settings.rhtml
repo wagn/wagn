@@ -17,7 +17,7 @@
   
   <% if card.type=='Cardtype' %>
     <h2 class="settings-for-set">Settings for <%= Wagn::Pattern.label("#{card.name}+*type")%></h2>
-    <%= slot.subslot(Card::Search.new(:name=>UUID.new.generate,:content=>%{{"prepend":"#{card.name}+*type", "type":"Setting"}}
+    <%= slot.subslot(Card::Search.new(:name=>UUID.new.generate,:content=>%{{"prepend":"#{card.name}+*type", "type":"Setting", "sort":"name"}}
       )).render :naked %>
   <% end %>
   

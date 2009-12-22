@@ -683,6 +683,7 @@ body#wagn .line h2,
 
 /*-------------( Pointer )--------*/
 .pointer input {
+  float: left;
   width: 60%;
 }
 .pointer li {
@@ -694,6 +695,7 @@ body#wagn .line h2,
   color: #933;
   font-size: 15px;
 }
+
 
 /*-------------( Phrase)-----------*/
 

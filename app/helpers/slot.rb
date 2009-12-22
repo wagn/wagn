@@ -137,7 +137,7 @@ class Slot
         :item     => args[:item],
         :base     => args[:base], # deprecated
         :class    => css_class,
-        :position => UUID.new.generate
+        :position => UUID.new.generate.gsub(/^(\w+)0-(\w+)-(\w+)-(\w+)-(\w+)/,'\1')
       }
       
       slot_attr = attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join

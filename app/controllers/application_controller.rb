@@ -8,11 +8,6 @@ class ApplicationController < ActionController::Base
   include LocationHelper
   helper :all
 
-  attr_reader :card, :cards, :renderer, :context   
-  attr_accessor :notice, :slot
-  
-  helper_method :card, :cards, :renderer, :context, :edit_user_context, :notice, :slot
-
   include ActionView::Helpers::TextHelper #FIXME: do we have to do this? its for strip_tags() in edit()
   include ActionView::Helpers::SanitizeHelper
 
@@ -49,6 +44,8 @@ class ApplicationController < ActionController::Base
     
     @context = params[:context] || 'main_1'
     @action = params[:action]
+    
+    Slot.current_slot = nil
     
     # reset class caches
     # FIXME: this is a bit of a kluge.. several things stores as cattrs in modules
@@ -172,7 +169,6 @@ class ApplicationController < ActionController::Base
   # FIXME: this should be fixed to use a call to getSlotElement() instead of default
   # selectors, so that we can reject elements inside nested slots.
   def render_update_slot_element(name,stuff="")
-    self.slot = nil  # reset slot object.
     render :update do |page|
       page.extend(WagnHelper::MyCrappyJavascriptHack) 
       elem_code = "getSlotFromContext('#{get_slot.context}')"

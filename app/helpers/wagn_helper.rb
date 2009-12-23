@@ -306,4 +306,15 @@ module WagnHelper
   def render_layout_content(content)
     render_layout_card layout_card(content)
   end
+  
+  # ------------( helpers ) --------------
+  def edit_user_context(card)
+    if System.ok?(:administrate_users)
+    	'admin'
+    elsif current_user == card.extension
+    	'user'
+    else
+    	'public'
+    end
+  end
 end       

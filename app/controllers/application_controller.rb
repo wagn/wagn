@@ -7,6 +7,8 @@ class ApplicationController < ActionController::Base
   include ExceptionSystem           
   include LocationHelper
   helper :all
+  
+  helper_method :main_card?
 
   include ActionView::Helpers::TextHelper #FIXME: do we have to do this? its for strip_tags() in edit()
   include ActionView::Helpers::SanitizeHelper
@@ -75,25 +77,11 @@ class ApplicationController < ActionController::Base
     layout
   end
            
-
-  # ------------( helpers ) --------------
-  def edit_user_context(card)
-    if System.ok?(:administrate_users)
-    	'admin'
-    elsif current_user == card.extension
-    	'user'
-    else
-    	'public'
-    end
-  end
-
-  def renderer
-    Renderer.new
-  end
-     
+  # ----------- (helper) ----------
   def main_card?
     @context =~ /^main_\d$/
-  end    
+  end      
+
 
   # ------------------( permission filters ) -------
   def view_ok

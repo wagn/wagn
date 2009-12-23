@@ -109,8 +109,6 @@ class AccountController < ApplicationController
     load_card
     @user = @card.extension or raise("extension gotta be a user")    #ENGLISH      
     element_id = params[:element]           
-    context = edit_user_context(@card)
-    #TODO: need to check context for security
     
     if @user.update_attributes params[:user]
       render :update do |page|

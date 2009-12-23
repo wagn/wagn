@@ -186,7 +186,7 @@ class CardController < ApplicationController
     end
 
     handling_errors do
-      @card = Card.find(card.id)  
+      @card = Card.find(@card.id)   # wtf?
       flash[:notice] = "updated #{@card.name}"
       request.xhr? ? render_update_slot(render_to_string(:action=>'show')) : render_show
     end
@@ -274,7 +274,7 @@ class CardController < ApplicationController
   end
 
   def options
-    @extension = card.extension
+    @extension = @card.extension
     render :partial=>"card/options/#{params[:attribute]}" if params[:setting] and 
       ['closed_setting','open_setting'].include?(params[:attribute])
   end
@@ -286,8 +286,8 @@ class CardController < ApplicationController
   end
 
   def related
-    sources = [card.cardtype.name,nil]
-    sources.unshift '*account' if card.extension_type=='User' 
+    sources = [@card.cardtype.name,nil]
+    sources.unshift '*account' if @card.extension_type=='User' 
     @items = sources.map do |root| 
       c = CachedCard[(root ? "#{root}+" : '') +'*related']
       c && c.type=='Pointer' && c.pointees
@@ -321,14 +321,14 @@ class CardController < ApplicationController
   def watch 
     watchers = Card.find_or_new( :name => @card.name + "+*watchers", :type => 'Pointer' )
     watchers.add_reference User.current_user.card.name
-    flash[:notice] = "You are now watching #{card.name}"
+    flash[:notice] = "You are now watching #{@card.name}"
     request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
   def unwatch 
     watchers = Card.find_or_new( :name => @card.name + "+*watchers" )
     watchers.remove_reference User.current_user.card.name
-    flash[:notice] = "You are no longer watching #{card.name}"
+    flash[:notice] = "You are no longer watching #{@card.name}"
     request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 

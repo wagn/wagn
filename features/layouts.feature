@@ -3,13 +3,21 @@ Feature: Layouts
   As a User
   I want custom html templates
 
-  Scenario: I configure a simple layout
+  Background:
     Given I log in as Joe Admin
     And I create Html card "simple layout" with content "Simple Header {{_main}} Simple Footer"
-    And I create Pointer card "*layout" with content "[[simple layout]]"
+    And I edit "*all+*layout" setting content to "[[simple layout]]"
+    And I create Pointer card "User+*type+*layout" with content "[[user layout]]"
+    And I create Html card "user layout" with content "User Header {{_main}}"
+
+  Scenario: I visit a Basic card with the simple layout
     When I go to card "*account links"
     Then I should see "Simple Header"
     And I should see "Invite a Friend"
-    
+  
+  Scenario: I visit a User card with the user layout
+    When I go to card "Joe User"
+    Then I should see "User Header"
+  
 
 

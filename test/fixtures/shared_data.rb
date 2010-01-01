@@ -1,4 +1,7 @@
-class SharedData
+require 'timecop'    
+
+class SharedData   
+  FUTURE = Time.local(2020,1,1,0,0,0)  
   def self.add_test_data
     ::User.as(:wagbot) do 
       joe_user = ::User.create! :login=>"joe_user",:email=>'joe@user.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>User[:wagbot]
@@ -31,7 +34,8 @@ class SharedData
 
       request_card = Card::InvitationRequest.create! :name=>"Sample InvitationRequest" #, :email=>"invitation@request.com"  
       Cardtype.find(:all).each do |ct|
-        next if ['User','InvitationRequest'].include? ct.codename
+        next if ['User','InvitationRequest','Set'].include? ct.codename
+        puts "CODENAME: #{ct.codename}"
         Card.create! :type=>ct.codename, :name=>"Sample #{ct.codename}"
       end
       # data for role_test.rb
@@ -114,6 +118,40 @@ class SharedData
       Card.create! :type=>"Cardtype", :name=>"Book"
       Card.create! :name=>"Book+*tform", :content=>"by {{+author}}, design by {{+illustrator}}",
         :extension_type => 'HardTemplate'
+      Card.create! :name => "Illiad", :type=>"Book"
+                                                                               
+      
+      ### -------- Notification data ------------
+      Timecop.freeze(FUTURE - 1.day) do
+        # fwiw Timecop is apparently limited by ruby Time object, which goes only to 2037 and back to 1900 or so.
+        #  whereas DateTime can represent all dates. 
+
+        john_account = ::User.create! :login=>"john",:email=>'john@user.com', :status => 'active', :password=>'john_pass', :password_confirmation=>'john_pass', :invite_sender=>User[:wagbot]
+        sara_account = ::User.create! :login=>"sara",:email=>'sara@user.com', :status => 'active', :password=>'sara_pass', :password_confirmation=>'sara_pass', :invite_sender=>User[:wagbot]
+
+        Card.create! :name=>"John", :type=> "User", :extension=>john_account
+        Card.create! :name=>"Sara", :type=> "User", :extension=>sara_account       
+
+        Card.create! :name => "Sara Watching+*watchers",  :content => "[[Sara]]"
+        Card.create! :name => "All Eyes On Me+*watchers", :content => "[[Sara]]\n[[John]]"
+        Card.create! :name => "John Watching", :content => "{{+her}}"
+        Card.create! :name => "John Watching+*watchers",  :content => "[[John]]"
+        Card.create! :name => "John Watching+her" 
+        Card.create! :name => "No One Sees Me" 
+
+        Card.create! :name => "Optic", :type => "Cardtype"
+        Card.create! :name => "Optic+*watchers", :content => "[[Sara]]"
+        Card.create! :name => "Sunglasses", :type=>"Optic", :content=>"{{+tint}}"                          
+        Card.create! :name => "Sunglasses+tint"
+
+        # TODO: I would like to setup these card definitions with something like Cucumbers table feature.
+      end          
+      
+      
+      ## --------- create templated permissions -------------
+      #r1 = Role.find_by_codename 'r1'
+      ctt = Card.create! :name=> 'Cardtype E+*tform'
+      
       
     end   
   end

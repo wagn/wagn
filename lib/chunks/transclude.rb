@@ -3,7 +3,7 @@ module Chunk
     attr_reader :stars
     unless defined? TRANSCLUDE_PATTERN
       #  {{+name|attr:val;attr:val;attr:val}}
-      TRANSCLUDE_PATTERN = /\{\{((#{'\\'+JOINT})?[^\|]+?)\s*(\|([^\}]+?))?\}\}/
+      TRANSCLUDE_PATTERN = /\{\{(((#{'\\'+Cardname::JOINT})?[^\|]+?)\s*(\|([^\}]+?))?)\}\}/
     end         
     
     def self.pattern() TRANSCLUDE_PATTERN end
@@ -20,19 +20,19 @@ module Chunk
     end
   
     def self.parse(match)
-      name = match[1].strip
-      relative = match[2]
+      name = match[2].strip
+      relative = match[3]
       options = {
         :tname   =>name,
         :relative=>relative,
-        :view  => 'content',
         :base  => 'self',
+        :view  => nil,
         :item  => nil,
         :type  => nil,
         :size  => nil,
       }
       style = {}
-      configs = Hash.new_from_semicolon_attr_list match[4]
+      configs = Hash.new_from_semicolon_attr_list match[5]
       configs.each_pair do |key, value|
         if options.key? key.to_sym
           options[key.to_sym] = value

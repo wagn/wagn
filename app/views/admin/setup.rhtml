@@ -1,11 +1,11 @@
-<h1> Welcome To <%= site_title %></h1>
+<h1 class="page-header"> Welcome To Wagn </h1>
 
 <%= error_messages_for :user %>
 
 <% get_slot(card).wrap('account-request') do |slot| %>
 
   <div class="open-content">
-    <h2>To get started, set up an account. </h2>
+    <h2 class="page-header">To get started, set up an account. </h2>
     
     <% form_tag :id=>params[:id], :action => "setup" do %>
 

@@ -22,12 +22,12 @@
 	<%#= text_field :extension, :identity_url %>
 <%# end %>
 
-<% if card.extension and System.ok?(:administrate_users) %>
+<% if card.extension and System.ok?(:administrate_users) and !extension.built_in? %>
    <% slot.option(
       :name=>"block_user", 
  			:help=>"Blocking a user prevents them from signing in",
  			:label=>"Block") do %>
-    		<%= check_box :extension, :blocked %>
+    		<%= check_box :extension, :blocked? %>
    <% end %>
 <% end %>
 

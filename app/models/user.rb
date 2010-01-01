@@ -1,5 +1,4 @@
- require 'digest/sha1'
-require_dependency "acts_as_card_extension"
+require 'digest/sha1'
 
 class User < ActiveRecord::Base
   #FIXME: THIS WHOLE MODEL SHOULD BE CALLED ACCOUNT
@@ -17,7 +16,7 @@ class User < ActiveRecord::Base
   validates_presence_of     :email, :if => :email_required?
   validates_format_of       :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i  , :if => :email_required?
   validates_length_of       :email, :within => 3..100,   :if => :email_required?
-  validates_uniqueness_of   :email,                      :if => :email_required?  
+  validates_uniqueness_of   :email, :scope=>:login,      :if => :email_required?  
   validates_presence_of     :password,                   :if => :password_required?
   validates_presence_of     :password_confirmation,      :if => :password_required?
   validates_length_of       :password, :within => 5..40, :if => :password_required?
@@ -25,6 +24,7 @@ class User < ActiveRecord::Base
   validates_presence_of     :invite_sender,              :if => :active?
 #  validates_uniqueness_of   :salt, :allow_nil => true
   
+  before_validation :downcase_email!
   before_save :encrypt_password
   
   cattr_accessor :cache  
@@ -56,10 +56,8 @@ class User < ActiveRecord::Base
     # FIXME: args=params.  should be less coupled..
     def create_with_card(user_args, card_args, email_args={})
       @card = (Hash===card_args ? Card.new({'type'=>'User'}.merge(card_args)) : card_args) 
-
       @user = User.new({:invite_sender=>User.current_user, :status=>'active'}.merge(user_args))
       @user.generate_password if @user.password.blank?
-      
       @user.save_with_card(@card)
       begin
         @user.send_account_info(email_args) if @user.errors.empty? && !email_args.empty?
@@ -67,14 +65,13 @@ class User < ActiveRecord::Base
       [@user, @card]
     end
 
-    
     def active_users
       self.find(:all, :conditions=>"status='active'")
     end 
     
     # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
     def authenticate(email, password)
-      u = self.find_by_email(email.strip)
+      u = self.find_by_email(email.strip.downcase)
       u && u.authenticated?(password.strip) ? u : nil
     end
 
@@ -106,21 +103,21 @@ class User < ActiveRecord::Base
 
   def save_with_card(card)
     #fail "save with card #{card.inspect}"
-    User.transaction do 
-      card.extension = self
+    User.transaction do
       save
+      card.extension = self
       card.save
       card.errors.each do |key,err|
         next if key=='extension'
         self.errors.add key,err
-      end 
+      end
       raise ActiveRecord::RecordInvalid.new(self) if !self.errors.empty?
     end
   rescue  
   end
       
 
-  def accept(email)
+  def accept(email_args)
     User.as :wagbot  do #what permissions does approver lack?  Should we check for them?
       card.type = 'User'  # change from Invite Request -> User
       card.permit :edit, Card.new(:type=>'User').who_can(:edit) #give default user permissions
@@ -130,7 +127,7 @@ class User < ActiveRecord::Base
       save_with_card(card)
     end
     #card.save #hack to make it so last editor is current user.
-    self.send_account_info(email) if self.errors.empty?
+    self.send_account_info(email_args) if self.errors.empty?
   end
 
   def send_account_info(args)
@@ -149,7 +146,25 @@ class User < ActiveRecord::Base
   end  
 
   def active?
-    status == 'active' && !blocked
+    status=='active'
+  end
+  def blocked?
+    status=='blocked'
+  end
+  def built_in?
+    status=='system'
+  end
+  def pending?
+    status=='pending'
+  end
+
+  # blocked methods for legacy boolean status
+  def blocked=(block)
+    if block != '0'
+      self.status = 'blocked'
+    elsif !built_in?
+      self.status = 'active'
+    end
   end
 
   def anonymous?
@@ -166,11 +181,6 @@ class User < ActiveRecord::Base
     self.password_confirmation = self.password
   end
 
-
-  def built_in?
-    status=='system'
-  end
-
   def to_s
     "#<#{self.class.name}:#{login.blank? ? email : login}}>"
   end
@@ -179,13 +189,18 @@ class User < ActiveRecord::Base
     to_s
   end
    
+  #before validation
+  def downcase_email!
+    self.email=self.email.downcase if self.email
+  end 
+   
   protected
   # Encrypts the password with the user salt
   def encrypt(password)
     self.class.encrypt(password, salt)
   end
-   
-  # before filter 
+
+  # before save
   def encrypt_password
     return if password.blank?
     self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{login}--") if new_record?
@@ -197,7 +212,7 @@ class User < ActiveRecord::Base
   end
 
   def password_required?
-     !built_in? && not_openid? && (crypted_password.blank? or not password.blank?)
+     !built_in? && !pending? && not_openid? && (crypted_password.blank? or not password.blank?)
   end
  
   def not_openid?

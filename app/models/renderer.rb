@@ -26,12 +26,12 @@ class Renderer
 
     wiki_content.find_chunks(Chunk::Link).each do |chunk|
       link_bound = chunk.card_name == chunk.link_text          
-      chunk.card_name.replace chunk.card_name.replace_particle(old_name, new_name)
+      chunk.card_name.replace chunk.card_name.replace_part(old_name, new_name)
       chunk.link_text = chunk.card_name if link_bound
     end
     
     wiki_content.find_chunks(Chunk::Transclude).each do |chunk|
-      chunk.card_name.replace chunk.card_name.replace_particle(old_name, new_name)
+      chunk.card_name.replace chunk.card_name.replace_part(old_name, new_name)
     end
 
     String.new wiki_content.unrender!  

@@ -4,8 +4,6 @@
 #  I want a full input view on pointers.
 # 
 # 
-# 
-# Scenario: Creating a card with full input
 #   #Given 
 #   And I create Basic card "phone+*options" with content "{"type":"Phrase"}"
 #   And I create Pointer card "phone+*rform"

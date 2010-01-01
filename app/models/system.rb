@@ -29,7 +29,6 @@ class System < ActiveRecord::Base
       # FIXME: hacking this so users don't have to update config.  will want to fix later 
       System.base_url.gsub(/^http:\/\//,'')
     end
-
     
     def attachment_storage
       @@attachment_storage || :file_system
@@ -40,24 +39,43 @@ class System < ActiveRecord::Base
     def setting(name)
       User.as :wagbot  do
         card=CachedCard.get_real(name) and !card.content.strip.empty? and card.content
-        #card=CachedCard.get_real(name)  card.content
       end
     rescue
       nil
+    end           
+    
+    def toggle(val)
+      val == '1'
     end
 
-    def layout_card(opts)
-      User.as(:wagbot) do
-        (c = CachedCard.get_real("*layout") and c.type == 'Pointer' and
-          layout_name=c.pointee and !layout_name.nil? and
-          lc = CachedCard.get_real(layout_name) and lc.ok?(:read)) ? 
-            lc :
-            Card.new(:name=>"**layout",:content=>opts[:default]) 
+    def layout_card(card, cardname)
+      User.as(:wagbot) do 
+        layout_from_url(cardname) or layout_from_setting(card)
       end
+    end
+    
+    def layout_from_url(cardname)
+      return nil unless cardname.present? and 
+        lo_card = CachedCard.get_real(cardname) and 
+        lo_card.ok?(:read)
+      lo_card
+    end
+    
+    def layout_from_setting(card)
+      return unless setting_card =
+        card = (CachedCard===card ? card.card : card) &&  #KLUDGE.  after CachedCard refactor we should get rid of this
+        card.setting_card('layout') or 
+        Card.default_setting_card('layout')
+      return unless setting_card.is_a?(Card::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.type == 'Pointer'        and
+        layout_name=setting_card.pointee                  and
+        !layout_name.nil?                                 and
+        lo_card = CachedCard.get_real(layout_name)    and
+        lo_card.ok?(:read)
+      lo_card
     end
    
     def image_setting(name)
-      if content = setting(name) and  content.match(/src=\"([^\"]+)/)
+      if content = setting(name) and content.match(/src=\"([^\"]+)/)
         $~[1]
       end
     end
@@ -75,11 +93,6 @@ class System < ActiveRecord::Base
       image_setting('*logo') || (File.exists?("#{RAILS_ROOT}/public/images/logo.gif") ? "/images/logo.gif" : nil)
     end
 
-    #def admin_user
-    #  User[:wagbot]
-
-    #end    
-    
     # PERMISSIONS
     
     def ok?(task)
@@ -137,18 +150,3 @@ class System < ActiveRecord::Base
   
 end        
 
-
-# load wagn configuration. 
-# FIXME: this has to be here because System is both a config store and a model-- which means
-# in development mode it gets reloaded so we lose the config settings.  The whole config situation
-# needs an overhaul 
-if File.exists? "#{RAILS_ROOT}/config/sample_wagn.rb"
-  require_dependency "#{RAILS_ROOT}/config/sample_wagn.rb"
-end
-if File.exists? "#{RAILS_ROOT}/config/wagn.rb" 
-  require_dependency "#{RAILS_ROOT}/config/wagn.rb"    
-end
-
-# Configuration cleanup: Make sure System.base_url doesn't end with a /
-System.base_url.gsub!(/\/$/,'')
-     

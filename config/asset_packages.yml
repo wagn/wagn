@@ -2,6 +2,7 @@
 javascripts: 
 - base: 
   - prototype
+  - jquery-1.3.2.min
   - effects
   - controls
   - application
@@ -11,3 +12,4 @@ stylesheets:
   - page
   - defaults
   - card
+  - settings

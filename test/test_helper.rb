@@ -1,16 +1,10 @@
 require 'rubygems'
-require 'rails_test_serving'  
-require 'shoulda'
-
-RailsTestServing.boot
-
 
 unless defined? TEST_ROOT
   ENV["RAILS_ENV"] = "test"
   require 'pathname'
   TEST_ROOT = Pathname.new(File.expand_path(File.dirname(__FILE__))).cleanpath(true).to_s
   require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
-  #silence_warnings { RAILS_ENV = "test" }
   require 'test_help' 
   
   load TEST_ROOT + '/helpers/wagn_test_helper.rb'
@@ -41,13 +35,22 @@ unless defined? TEST_ROOT
     self.use_instantiated_fixtures  = false
   
     
-    CachedCard.set_cache_prefix "#{System.host}/test"
-    CachedCard.bump_global_seq
-    CachedCard.set_cache_prefix "#{System.host}/cucumber"
-    CachedCard.bump_global_seq
+    # CachedCard.set_cache_prefix "#{System.host}/test"
+    # CachedCard.bump_global_seq
+    # CachedCard.set_cache_prefix "#{System.host}/cucumber"
+    # CachedCard.bump_global_seq
 
-
-    
+    def setup  
+      ## DEBUG
+      File.open("#{RAILS_ROOT}/log/wagn.log","w") do |f|
+        f.puts "running test setup"
+      end
+      
+      CachedCard.set_cache_prefix "#{System.host}/cucumber"
+      CachedCard.bump_global_seq
+      CachedCard.set_cache_prefix "#{System.host}/test"
+      CachedCard.bump_global_seq
+    end
   end
 
   class ActiveSupport::TestCase      

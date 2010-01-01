@@ -122,17 +122,27 @@ module Wql2
 
   class CardSpec < Spec 
     attr_reader :params, :sql
+    
+    class << self
+      def build(spec)
+        spec = spec.clone
+        cardspec= self.new(spec)
+        cardspec.merge(cardspec.spec)         
+      end
+    end 
      
     def initialize(spec)   
       # NOTE:  when creating new specs, make sure to specify _parent *before*
       #  any spec which could trigger another cardspec creation further down.
-      spec = spec.clone
       @mods = MODIFIERS.clone
-      @spec = {}  
       @params = {}   
       @card, @parent = nil, nil
+      #warn("<br>before clean #{(Hash===spec ? spec : spec.spec).keys}<br>")
+      @spec = clean(spec.clone)
+      #warn("after clean #{@spec.inspect}<br>")
+      
       @sql = SqlStatement.new
-      merge(spec) 
+      self
     end
     
     def table_alias 
@@ -148,15 +158,44 @@ module Wql2
     end
     
     def card   
-      @card || raise(Wagn::WqlError, "_self referenced but no card is available")
+      @card #|| raise(Wagn::WqlError, "_self referenced but no card is available")
     end
     
-    def to_card(relative_name)
-      case relative_name
-      when "_self";  root.card                                   
-      when "_left";  CachedCard.get(root.card.name.parent_name)
-      when "_right"; CachedCard.get(root.card.name.tag_name)
+#   def to_card(relative_name)
+#     case relative_name
+#     when "_self";  root.card                                   
+#     when "_left";  CachedCard.get(root.card.name.parent_name)
+#     when "_right"; CachedCard.get(root.card.name.tag_name)
+#     end
+#   end
+    
+    def absolute_name(name)
+      name = (root.card ? name.to_absolute(root.card.name) : name)
+    end
+    
+    def clean(spec)
+      spec = spec.symbolize_keys
+
+      spec.each do |key,val|
+        case key.to_s
+        when '_card'   ; @card             = spec.delete(key)
+        when '_parent' ; @parent           = spec.delete(key) 
+        when /^_\w+$/  ; @params[key.to_s] = spec.delete(key)
+        end
       end
+      
+      spec.each{ |key,val| clean_val(val, spec, key) } #must be separate loop to make sure card values are set
+      spec
+    end
+    
+    def clean_val(val, spec, key)
+      spec[key] =
+        case val
+        when String ; absolute_name(val)
+        when Hash   ; clean(val)
+        when Array  ; val.map{ |v| clean_val(v, spec, key)}
+        else        ; val
+        end
     end
     
     def merge(spec)
@@ -164,25 +203,16 @@ module Wql2
       #warn "#{self}.merge(#{spec.inspect})"
       
       spec = case spec
-        when /^_(self|left|right)$/;  { :id => to_card(spec).id }                                   
+#        when /^_(self|left|right)$/;  { :id => to_card(spec).id }                                   
         when String;   { :key => spec.to_key }
-        when Integer;  { :id => spec   }  
+        when Integer;  { :id  => spec }  
         when Hash;     spec
         else raise("Invalid cardspec args #{spec.inspect}")
       end
-      
-      spec = spec.symbolize_keys
-      #spec = spec.each_pair { |k,v| spec.delete(k); spec[k.to_s.to_key.to_sym]=v }
 
-      # non-attribute filters shortcut
-      spec.each do |key,val|     
-        if key== :_card       
-          #warn "Assigning Card"      
-          @card = spec.delete(key) 
-        elsif key== :_parent  
+      spec.each do |key,val| 
+        if key == :_parent
           @parent = spec.delete(key) 
-        elsif key.to_s.match(/^_\w+$/)
-          @params[key.to_s]= spec.delete(key)
         elsif OPERATORS.has_key?(key.to_s) && !ATTRIBUTES[key]
           spec.delete(key)
           spec[:content] = [key,val]
@@ -195,7 +225,7 @@ module Wql2
           end
         end
       end
-
+      
       # process conditions
       spec.each do |key,val| 
         case ATTRIBUTES[key]
@@ -214,15 +244,11 @@ module Wql2
     end          
     
     def found_by(val)
-      #cards = val=~/^_/ ? [to_card(val)] : Card.search(val)
-      cards = case
-          when val=~/^_/;    [to_card(val)]
-          when String===val; [CachedCard.get(val)]
-          else;              Card.search(val)
-        end  
+      cards = (String===val ? [CachedCard.get(absolute_name(val))] : Card.search(val))
       cards.each do |c|
-        raise %{"found_by" value needs to be valid Search card #{c.inspect}} unless c && c.type=='Search'
-        merge field(:id) => subspec(c.get_spec)
+        raise %{"found_by" value needs to be valid Search card #{c.inspect}} unless c && ['Search','Set'].include?(c.type)
+        found_by_spec = CardSpec.new(c.get_spec).spec
+        merge(field(:id) => subspec(found_by_spec))
       end
     end
     
@@ -268,7 +294,7 @@ module Wql2
     end
     
     def or(val)
-      merge :cond => CardSpec.new(:join=>:or, :return=>:condition, :_parent=>self).merge(val)
+      merge :cond => CardSpec.build(:join=>:or, :return=>:condition, :_parent=>self).merge(val)
     end
     
     def not(val)
@@ -298,22 +324,23 @@ module Wql2
     end    
 
     def plus(val)
+      #warn "GOT PLUS: #{val}"
       part_spec, connection_spec = val.is_a?(Array) ? val : [ val, {} ]
       merge :or=>{
-        field(:id) => subspec(connection_spec, :return=>'trunk_id', :tag_id=>part_spec),
+        field(:id) => subspec(connection_spec, :return=>'trunk_id', :tag_id=>part_spec.clone),
         field(:id) => subspec(connection_spec, :return=>'tag_id', :trunk_id=>part_spec)
       }
     end          
     
     def edited_by(val)
       #user_id = ((c = Card::User[val]) ? c.extension_id : 0)
-      extension_select = CardSpec.new(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val).to_sql
+      extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val).to_sql
       sql.joins << "join (select distinct card_id from revisions r " +
         "where created_by in #{extension_select} ) ru on ru.card_id=#{table_alias}.id"
     end
     
     def edited(val)
-      inner_spec = CardSpec.new(:return=>'ru.created_by', :_parent=>self).merge(val)
+      inner_spec = CardSpec.build(:return=>'ru.created_by', :_parent=>self).merge(val)
       inner_spec.sql.joins << "join (select distinct card_id, created_by from revisions r  ) ru on ru.card_id=#{inner_spec.table_alias}.id"
       
       merge({
@@ -323,7 +350,7 @@ module Wql2
     end
     
     def member_of(val)
-      inner_spec = CardSpec.new(:return=>'ru.user_id', :extension_type=>'Role', :_parent=>self).merge(val)
+      inner_spec = CardSpec.build(:return=>'ru.user_id', :extension_type=>'Role', :_parent=>self).merge(val)
       inner_spec.sql.joins << "join roles_users ru on ru.role_id = #{inner_spec.table_alias}.extension_id"
       merge({
         :extension_id => ValueSpec.new(['in',inner_spec],self),
@@ -332,7 +359,7 @@ module Wql2
     end
 
     def member(val)
-      inner_spec = CardSpec.new(:return=>'ru.role_id', :extension_type=>'User', :_parent=>self).merge(val)
+      inner_spec = CardSpec.build(:return=>'ru.role_id', :extension_type=>'User', :_parent=>self).merge(val)
       inner_spec.sql.joins << "join roles_users ru on ru.user_id = #{inner_spec.table_alias}.extension_id"
       merge({
         :extension_id => ValueSpec.new(['in',inner_spec],self),
@@ -345,7 +372,7 @@ module Wql2
       raise(Wagn::WqlError, "count works only on outermost spec") if @parent
       join_spec = { :id=>SqlCond.new("#{table_alias}.id") } 
       val.each do |relation, subspec|
-        subquery = CardSpec.new(:_parent=>self, :return=>:count, relation.to_sym=>join_spec).merge(subspec).to_sql
+        subquery = CardSpec.build(:_parent=>self, :return=>:count, relation.to_sym=>join_spec).merge(subspec).to_sql
         sql.fields << "#{subquery} as #{relation}_count"
       end
     end
@@ -355,7 +382,7 @@ module Wql2
         key = :link_to_missing
         cardspec = 'blank'
       end
-      cardspec = CardSpec.new(:return=>'id', :_parent=>self).merge(cardspec)
+      cardspec = CardSpec.build(:return=>'id', :_parent=>self).merge(cardspec)
       merge field(:id) => ValueSpec.new(['in',RefSpec.new([key,cardspec])], self)
     end
     
@@ -363,7 +390,7 @@ module Wql2
       additions = additions.merge(:_parent=>self)
       join = negate ? 'not in' : 'in'
       #warn "#{self}.subspec(#{additions}, #{spec})"
-      ValueSpec.new([join,CardSpec.new(additions).merge(spec)], self)
+      ValueSpec.new([join,CardSpec.build(additions).merge(spec)], self)
     end 
     
     def to_sql(*args)

@@ -1,22 +1,49 @@
 require File.dirname(__FILE__) + '/../spec_helper'
-Slot=Slot    
 
 describe Slot, "" do      
-  before { 
-    User.as :joe_user 
-  }
+  before { User.as :joe_user }   
+  describe "renders" do
+    it "simple card links" do
+      Slot.render_content( "[[A]]" ).should == "<a class=\"known-card\" href=\"/wagn/A\">A</a>"  
+    end
+    
+    it "invisible comment inclusions as blank" do
+      Slot.render_content( "{{## now you see nothing}}" ).should == ''
+    end
+    
+    it "visible comment inclusions as html comments" do
+      Slot.render_content( "{{# now you see me}}" ).should == '<!-- # now you see me -->'
+      Slot.render_content( "{{# -->}}" ).should == '<!-- # --&gt; -->'
+    end  
+    
+    it "image tags of different sizes" do
+      Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}
+      Slot.render_content( "{{TestImage | naked; size:small }}" ).should == %{<img src="http://wagn.org/image53_small.jpg">} 
+    end
+    
+    describe "views" do
+      it "open" do
+        mu = mock(:mu)
+        mu.should_receive(:generate).twice.and_return("1")
+        UUID.should_receive(:new).twice.and_return(mu)
+        Slot.render_content("{{A|open}}").should be_html_with do
+          div( :position => 1, :class => "card-slot") {
+            div( :class => "card-header" )
+            span( :class => "content")  {
+              p "Alpha"
+            }
+          }
+        end
+      end
+    end
+    
+    it "raw content" do
+       @a = Card.new(:name=>'t', :content=>"{{A}}")
+      Slot.new(@a).render(:naked_content).should == "{{A}}"
+    end                                                                                      
+  end
 
-  it "should render content" do 
-    @a = Card.new(:name=>'t', :content=>"[[A]]")
-    Slot.new(@a).render(:raw).should == "<a class=\"known-card\" href=\"/wagn/A\">A</a>"
-  end 
-
-  it "should not render transclusions in raw content" do
-     @a = Card.new(:name=>'t', :content=>"{{A}}")
-    Slot.new(@a).render(:naked_content).should == "{{A}}"
-  end                                                                                  
-  
-  it "should use transclusion view overrides" do  
+  it "should use inclusion view overrides" do  
     # FIXME love to have these in a scenario so they don't load every time.
     t = Card.create! :name=>'t1', :content=>"{{t2|card}}"
     Card.create! :name => "t2", :content => "{{t3|view}}" 
@@ -24,13 +51,13 @@ describe Slot, "" do
     
     # a little weird that we need :expanded_view_content  to get the version without
     # slot divs wrapped around it.
-    result = Slot.new(t, "main_1", "view", nil, :transclusion_view_overrides=>{ :open => :name } ).render :expanded_view_content
+    result = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :name } ).render :expanded_view_content
     result.should == "t2"
-    result = Slot.new(t, "main_1", "view", nil, :transclusion_view_overrides=>{ :open => :expanded_view_content } ).render :expanded_view_content
+    result = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :expanded_view_content } ).render :expanded_view_content
     result.should == "boo"
   end
     
-
+  
   context "builtin card" do
     it "should render layout partial with name of card" do     
       template = mock("template")
@@ -41,21 +68,6 @@ describe Slot, "" do
     end
   end
 
-
-=begin
-  # FIXME: this test is very brittle-- based on specific html;
-  #  want to test rendering transclusions, but attributes in the wrapper are built from 
-  #  a hash so the order is unpredictable. 
-  
-  it "should render transclusions in view" do
-    @a = Card.new(:name=>'weird_t', :content=>"{{A}}")
-    @a.send(:set_defaults)
-    Slot.new(@a).render(:view).should ==  "<span  class=\"card-slot paragraph full wrapper cardid- type-Basic\"  position=\"1\"  >\n<div class=\"view\">\n<span class=\"content editOnDoubleClick\"><span  view=\"content\"  class=\"transcluded wrapper cardid-82 type-Basic\"  position=\"1\"  style=\"\"  base=\"self\"  cardId=\"82\"  ><span class=\"content editOnDoubleClick\">Alpha <a class=\"known-card\" href=\"/wagn/Z\">Z</a></span></span></span>\n</div>\n</span>"
-      #"<span  class=\"card-slot paragraph full wrapper cardid- type-Basic\"  position=\"1\"  >\n<div class=\"view\">\n<span class=\"content editOnDoubleClick\"><span  base=\"self\"  cardId=\"82\"  class=\"transcluded wrapper cardid-82 type-Basic\"  style=\"\"  position=\"1\"  view=\"content\"  ><span class=\"content editOnDoubleClick\">Alpha <a class=\"known-card\" href=\"/wagn/Z\">Z</a></span></span></span>\n</div>\n</span>"
-
-  end    
-=end    
-  
 
 end
 

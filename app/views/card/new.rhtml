@@ -1,12 +1,12 @@
 <div id="new-card">
   <% if !request.post? %>
-  	<h1>New <%= @card.type != 'Basic' ? @card.cardtype.name : '' %> Card</h1>
+  	<h1 class="page-header">New <%= @card.type != 'Basic' ? @card.cardtype.name : '' %> Card</h1>
 
 		<% @instruction = capture do %>
 			<% if @card.broken_type %>
 				<p class="error" id="no-cardtype-error">Oops! There's no <strong>card type</strong> called "<strong><%= @card.broken_type %></strong>".</p>
 			<% end %>
-      <% if card.new_instructions %> 
+      <% if card.add_help_card %> 
 				<%# they'll go inside the card %>
   	  <% elsif !@card.name.blank? %>
   	    <p>Currently, there is no card named "<strong><%= @card.name %></strong>", but you are welcomed to create it.</p>

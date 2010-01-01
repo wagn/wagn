@@ -1,21 +1,22 @@
 class CardController < ApplicationController
   helper :wagn, :card 
 
-  before_filter :create_ok, :only=>[ :new, :create ]
+  EDIT_ACTIONS =  [ :edit, :update, :rollback, :save_draft, :watch, :unwatch ]
+  LOAD_ACTIONS = EDIT_ACTIONS + [ :changes, :comment, :denied, :options, :quick_update, :related, :remove ]
 
-  before_filter :load_card!, :only=>[
-    :changes, :comment, :denied, :edit, :options, :quick_update, 
-    :related, :remove, :rollback, :save_draft, :update, :watch, :unwatch
-  ]
-
+  before_filter :load_card, :only=>LOAD_ACTIONS
   before_filter :load_card_with_cache, :only => [:line, :view, :open ]
+
+  before_filter :view_ok,   :only=> LOAD_ACTIONS
+  before_filter :create_ok, :only=>[ :new, :create ]  
+  before_filter :edit_ok,   :only=> EDIT_ACTIONS
+  before_filter :remove_ok, :only=>[ :remove ]          
   
-  before_filter :edit_ok,   :only=>[ :edit, :update, :rollback, :save_draft, :watch, :unwatch] 
-  before_filter :remove_ok, :only=>[ :remove ]
+  before_filter :require_captcha, :only => [ :create, :update, :comment, :rollback, :quick_update ]
   
   #----------( Special cards )
-  
-  def index
+    
+  def index   
     redirect_to(
       case
       when User.no_logins?;                 '/admin/setup'
@@ -32,8 +33,6 @@ class CardController < ApplicationController
   #---------( VIEWING CARDS )
     
   def show
-    # record this as a place to come back to.
-
     params[:_keyword] && params[:_keyword].gsub!('_',' ') ## this will be unnecessary soon.
 
     @card_name = Cardname.unescape(params['id'] || '')
@@ -60,34 +59,45 @@ class CardController < ApplicationController
         format.rss { raise("Sorry, RSS is broken in rails < 2.2") }
         format.html {}
       end
-    end 
+    end
+    render_show
+  end
+
+  def render_show
+    @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
+    ## fixme, we ought to be setting special titles (or all titles) in cards
+    (request.xhr? || params[:format]) ? render(:action=>'show') : render(:text=>'~~render main inclusion~~', :layout=>true)
   end
 
   #----------------( MODIFYING CARDS )
   
   #----------------( creating)                                                               
   def new
-    args = (params[:card] ||= {})
-    args[:type] ||= params[:type] # for /new/:type shortcut in routes
+    @args = (params[:card] ||= {})
+    @args[:type] ||= params[:type] # for /new/:type shortcut in routes
+    
+    @args[:name] = params[:id] if params[:id] and !@args[:name]
+
 
     # don't pass a blank type as argument
     # look up other types in case Cardtype name is given instead of ruby type
-    if args[:type]
-      if args[:type].blank?
-        args.delete(:type) 
-      elsif ct=CachedCard.get_real(args[:type])    
-        args[:type] = ct.name 
+    # what?  should always be cardtype name.  we do NOT want to support both, but we do want to support variants.  --efm
+    if @args[:type]
+      if @args[:type].blank?
+        @args.delete(:type) 
+      elsif ct=CachedCard.get_real(@args[:type])    
+        @args[:type] = ct.name 
       end
     end
 
     # if given a name of a card that exists, got to edit instead
-    if args[:name] and CachedCard.exists?(args[:name])
-      render :text => "<span class=\"faint\">Oops, <strong>#{args[:name]}</strong> was recently created! try reloading the page to edit it</span>"
+    if @args[:name] and CachedCard.exists?(@args[:name])
+      render :text => "<span class=\"faint\">Oops, <strong>#{@args[:name]}</strong> was recently created! try reloading the page to edit it</span>"
       return
     end
 
-    args.delete(:content) if c=args[:content] and c.blank? #means soft-templating still takes effect 
-    @card = Card.new args                   
+    @args.delete(:content) if c=@args[:content] and c.blank? #means soft-templating still takes effect 
+    @card = Card.new @args                   
     if request.xhr?
       render :partial => 'views/new', :locals=>{ :card=>@card }
     else
@@ -99,43 +109,45 @@ class CardController < ApplicationController
     render :template=>'/card/denied', :status => 403
   end
   
-  def create
-    @card = Card.create params[:card]
-    @card.multi_create(params[:cards]) if params[:multi_edit] and params[:cards] and @card.errors.empty?
-
+  def create    
+    @card = Card.create params[:card]        
+    #@card.save
+    
     @redirect_location = if @card.ok?(:read)
       url_for_page(@card.name)
     else
-      ( System.setting(@card.cardtype.name + "+*thanks") || System.setting("Basic+*thanks") || '/' )
-    end              
-    render_args = 
+      @card.setting('thanks') || '/'
+    end                     
+
+    # according to rails / prototype docs:
+    # :success: [...] the HTTP status code is in the 2XX range.
+    # :failure: [...] the HTTP status code is not in the 2XX range.
+  
+    # however on 302 ie6 does not update the :failure area, rather it sets the :success area to blank..
+    # for now, to get the redirect notice to go in the failure slot where we want it, 
+    # we've chosen to render with the 'teapot' failure status: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes  
+
+    handling_errors do
+      @card.multi_create(params[:cards]) if params[:multi_edit] and params[:cards]
       case
-        when !@card.errors.empty?; {
-          :status => 422,
-          :inline=>"<%= error_messages_for :card %><%= javascript_tag 'scroll(0,0)' %>" 
-        }    
-        when (!@card.ok?(:read));  {:action=>'redirect_to_thanks', :status=>418  }
-        when main_card?;    {:action=>'redirect_to_created_card', :status=>418 }          
-          # according to rails / prototype docs:
-          # :success: [...] the HTTP status code is in the 2XX range.
-          # :failure: [...] the HTTP status code is not in the 2XX range.
-          
-          # however on 302 ie6 does not update the :failure area, rather it sets the :success area to blank..
-          # for now, to get the redirect notice to go in the failure slot where we want it, 
-          # we've chosen to render with the 'teapot' failure status: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-          
-        else;              {:action=>'show'}
+        when (!@card.ok?(:read));  render( :action=>'redirect_to_thanks',       :status=>418 )
+        when main_card?;           render( :action=>'redirect_to_created_card', :status=>418 )
+        else;                      render_show
       end
-    render render_args
+    end
   end
   
   #--------------( editing )
   
-  def edit
-    render :partial=>"card/edit/#{params[:attribute]}" if ['name','type'].member?(params[:attribute])
+  def edit                                             
+    if ['name','type'].member?(params[:attribute])
+      render :partial=>"card/edit/#{params[:attribute]}" 
+    elsif params[:view] == 'setting'
+      render :partial => "card/edit/content"
+    end
   end
 
-  def update
+  def update  
     card_args=params[:card] || {}
     #fail "card params required" unless params[:card] or params[:cards]
 
@@ -159,7 +171,7 @@ class CardController < ApplicationController
       #  @card.pointees=params[:cards].keys.map{|n|n.post_cgi}
       #  @card.save
       #end 
-    when card_args[:type];       @card[:type]=card_args.delete(:type); @card.save
+    when card_args[:type];       @card.type=card_args.delete(:type); @card.save
       #can't do this via update attributes: " Can't mass-assign these protected attributes: type"
       #might be addressable via attr_accessors?
     else;   @card.update_attributes(card_args)
@@ -172,16 +184,19 @@ class CardController < ApplicationController
       @card.update_referencers = true
       return render(:partial=>'card/edit/name', :status=>200)
     end
-    
-    return render_card_errors(@card) unless @card.errors.empty?
-    @card = Card.find(card.id)  
-    flash[:notice] = "updated #{@card.name}"
-    request.xhr? ? render_update_slot(render_to_string(:action=>'show')) : render(:action=>'show')
+
+    handling_errors do
+      @card = Card.find(@card.id)   # wtf?
+      flash[:notice] = "updated #{@card.name}"
+      request.xhr? ? render_update_slot(render_to_string(:action=>'show')) : render_show
+    end
   end
 
-  def quick_update
-    @card.update_attributes! params[:card]
-    @card.errors.empty? ? render(:text=>'Success') : render_card_errors(@card)    
+  def quick_update   
+    @card.update_attributes! params[:card]   
+    handling_errors do
+      render(:text=>'Success')
+    end
   end
 
   def save_draft
@@ -206,14 +221,13 @@ class CardController < ApplicationController
     @comment=@comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
     @card.comment = "<hr>#{@comment}<p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
     @card.save!   
-    view = render_to_string(:action=>'show')
-    render_update_slot view
+    render_update_slot render_to_string(:action=>'show')
   end
 
   def rollback
     load_card_and_revision
     @card.update_attributes! :content=>@revision.content
-    render :action=>'show'
+    render_show
   end  
 
   #------------( deleting )
@@ -221,11 +235,23 @@ class CardController < ApplicationController
   def remove  
     if params[:card]
       @card.confirm_destroy = params[:card][:confirm_destroy]
+    end        
+    
+    captcha_ok = captcha_required? ? verify_captcha : true   
+    unless captcha_ok
+      return render_update_slot( render_to_string(:partial=>'confirm_remove'))
     end
-    if @card.destroy     
+
+    @card.destroy
+      
+    if @card.errors.on(:confirmation_required)
+      return render_update_slot( render_to_string(:partial=>'confirm_remove'))
+    end
+
+    handling_errors do
       discard_locations_for(@card)
       render_update_slot do |page,target|
-        if @context=="main_1"
+        if main_card?
           page.wagn.messenger.note "#{@card.name} removed."
           page.redirect_to previous_location
           flash[:notice] =  "#{@card.name} removed"
@@ -234,39 +260,24 @@ class CardController < ApplicationController
           page.wagn.messenger.note( "#{@card.name} removed. ")  
         end
       end
-    elsif @card.errors.on(:confirmation_required)
-      render_update_slot render_to_string(:partial=>'confirm_remove')
-    else
-      render_card_errors(@card)
     end
-  end
-
-  def watch 
-    watchers = Card.find_or_new( :name => @card.name + "+*watchers", :type => 'Pointer' )
-    watchers.add_reference User.current_user.card.name
-    flash[:notice] = "You are now watching #{card.name}"
-    request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
-  end
-
-  def unwatch 
-    watchers = Card.find_or_new( :name => @card.name + "+*watchers" )
-    watchers.remove_reference User.current_user.card.name
-    flash[:notice] = "You are no longer watching #{card.name}"
-    request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
   #---------------( tabs )
 
   def view
-    render :action=>'show'
+    render_show
   end   
   
   def open
-    render :action=>'show'
+    params[:view] = :open
+    render_show
   end
 
   def options
-    @extension = card.extension
+    @extension = @card.extension
+    render :partial=>"card/options/#{params[:attribute]}" if params[:setting] and 
+      ['closed_setting','open_setting'].include?(params[:attribute])
   end
 
   def changes
@@ -276,8 +287,8 @@ class CardController < ApplicationController
   end
 
   def related
-    sources = [card.cardtype.name,nil]
-    sources.unshift '*account' if card.extension_type=='User' 
+    sources = [@card.cardtype.name,nil]
+    sources.unshift '*account' if @card.extension_type=='User' 
     @items = sources.map do |root| 
       c = CachedCard[(root ? "#{root}+" : '') +'*related']
       c && c.type=='Pointer' && c.pointees
@@ -288,10 +299,7 @@ class CardController < ApplicationController
 
   #------------------( views )
 
-  def open
-    render :action=>'show'
-  end
-    
+  
   [:open_missing, :closed_missing].each do |method|
     define_method( method ) do
       load_card
@@ -301,7 +309,7 @@ class CardController < ApplicationController
           target.update render_to_string(:action=>'show')
         end
       else
-        render :action=>'show'
+        render_show
       end
     end
   end
@@ -311,6 +319,20 @@ class CardController < ApplicationController
     
   #-------- ( MISFIT METHODS )  
   
+  def watch 
+    watchers = Card.find_or_new( :name => @card.name + "+*watchers", :type => 'Pointer' )
+    watchers.add_reference User.current_user.card.name
+    flash[:notice] = "You are now watching #{@card.name}"
+    request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
+  end
+
+  def unwatch 
+    watchers = Card.find_or_new( :name => @card.name + "+*watchers" )
+    watchers.remove_reference User.current_user.card.name
+    flash[:notice] = "You are no longer watching #{@card.name}"
+    request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
+  end
+
   def auto_complete_for_navbox
     @stub = params['navbox']
     @items = Card.search( :complete=>@stub, :limit=>8, :sort=>'name' ) 
@@ -327,12 +349,16 @@ class CardController < ApplicationController
       complete = params[key].values[0]
     end
     complete = complete.to_s
+    # FIXME - shouldn't we bail here if we don't have anything to complete?
 
-    if !params[:id].blank? && card=Card::Pointer.options_card(params[:id].tag_name)
-      @items = card.search( :complete=>complete, :limit=>8, :sort=>'name')
-    else
-      @items = Card.search( :complete=>complete, :limit=>8, :sort=>'name' )
-    end
+    options_card = 
+      (!params[:id].blank? &&
+       (pointer_card = CachedCard.get(params[:id])) && 
+       pointer_card.setting_card('options'))
+
+    search_args = {  :complete=>complete, :limit=>8, :sort=>'name' }
+    @items = options_card ? options_card.search(search_args) : Card.search(search_args)
+
     render :inline => "<%= auto_complete_result @items, 'name' %>"
   end                                              
   
@@ -341,6 +367,7 @@ class CardController < ApplicationController
   def add_field # for pointers only
     load_card! if params[:id]
     render :partial=>'types/pointer/field', :locals=>params.merge({:link=>:add,:card=>@card})
-  end
+  end   
+  
 end
 

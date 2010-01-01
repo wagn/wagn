@@ -1,31 +1,8 @@
-
+<%- subtab = params[:attribute] || 'permissions' %>
 <% get_slot.wrap(:options) do |slot| %>
-  <%- locals = {:card=>@card, :slot=>slot, :extension=>@card.extension } %>
 	<%= slot.header %>
-	<%= slot.notice %>
-	
-  <% div( :class=>'options-body') do %>   
-    <% form_remote_for :card, @card, :url=>slot.url_for('options/update') do |form| %>
-
-
-      <table class="fieldset">
-        <%= render :partial=>'options/permissions', :locals=>locals %>
-        <% if card.extension_type == 'User' and (edit_user_context(card)=='user' or System.ok?(:administrate_users)) %>
-          <%= slot.option_header 'Account Details' %>
-          <%= render :partial=>'account/edit',  :locals=>locals %>
-          <%= render :partial=>'options/roles', :locals=>locals %>
-        <% elsif !card.extension_type and card.ok?(:edit) and System.ok?(:create_accounts)%>
-          <tr><td colspan="3" class="new-account-link">
-            <%= link_to_remote %{Add a sign-in account for "#{@card.name}"}, 
-                {:url=>"/options/new_account/#{@card.id}", :update=>slot.id('options-body')} 
-            %>
-          </td></tr>
-        <% end %>    
-
-        <% if slot.options_need_save %>
-    		  <tr><td colspan="3"><%= submit_tag 'Save Changes' %></td></tr>
-    		<% end %>
-      </table>
-    <% end %>
-  <% end %>
+	<div class="options-body">
+    <%= slot.render_partial "card/options/#{subtab}" %>
+	</div>
+  <%= slot.notice %>
 <% end %>

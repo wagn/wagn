@@ -25,7 +25,8 @@ class AccountCreationTest < ActionController::TestCase
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
     login_as :joe_user
-    CachedCard.bump_global_seq
+    CachedCard.bump_global_seq  
+    CachedCard.reset_cache
   end     
     
 # this is working in interface but I can't get it to work here:
@@ -59,8 +60,8 @@ class AccountCreationTest < ActionController::TestCase
 
 
   def test_create_permission_denied_if_not_logged_in
-    logout
-    post "logout"
+    signout
+    post "signout"
     assert_no_new_account do
 #    assert_raises(Card::PermissionDenied) do
       post_invite
@@ -118,8 +119,9 @@ class AccountCreationTest < ActionController::TestCase
   end   
   
   def test_should_require_unique_email
+    post_invite :user=>{ :email=>'duplor@user.com' }
     assert_no_new_account do
-      post_invite :user=>{ :email=>'joe@user.com' }
+      post_invite :user=>{ :email=>'duplor@user.com' }
     end
   end
 =begin  We may want to support this eventually, but we don't yet.

@@ -3,14 +3,22 @@ require_dependency 'slot'
 module WagnHelper
   require_dependency 'wiki_content'
 
+  def slot
+    Slot.current_slot
+  end
+  
+  def card
+    @card
+  end
+  
   # FIXME: I think all this slot initialization should happen in controllers
   def get_slot(card=nil, context=nil, action=nil, opts={})
     nil_given = card.nil?
     card ||= @card; context||=@context; action||=@action
     opts[:relative_content] = params  
     slot = case
-      when controller.slot;  nil_given ? controller.slot : controller.slot.subslot(card)
-      else controller.slot = Slot.new(card,context,action,self,opts)
+      when Slot.current_slot;  nil_given ? Slot.current_slot : Slot.current_slot.subslot(card)
+      else Slot.current_slot = Slot.new(card,context,action,self,opts)
     end
   end
 
@@ -19,9 +27,9 @@ module WagnHelper
     if String===card && name = card
       raise("Card #{name} not present") unless card= (CachedCard.get(name) || Card[name] || Card.find_virtual(name))
     end
-    # FIXME: some cases we're called before controller.slot is initialized.
+    # FIXME: some cases we're called before Slot.current_slot is initialized.
     #  should we initialize here? or always do Slot.new?
-    subslot = controller.slot ? controller.slot.subslot(card) : Slot.new(card)
+    subslot = Slot.current_slot ? Slot.current_slot.subslot(card) : Slot.new(card)
     subslot.render(mode.to_sym, args)
   end
 
@@ -61,7 +69,7 @@ module WagnHelper
     if options[:url] =~ /^javascript\:/
       function << options[:url].gsub(/^javascript\:/,'')
     elsif options[:slot] 
-      function << slot.url_for(options[:url]).gsub(/^javascript\:/,'')
+      function << Slot.current_slot.url_for(options[:url]).gsub(/^javascript\:/,'')
     else
       url_options = options[:url]
       url_options = url_options.merge(:escape => false) if url_options.is_a?(Hash)
@@ -77,8 +85,6 @@ module WagnHelper
 
     return function
   end    
-
-
 
   def truncatewords_with_closing_tags(input, words = 25, truncate_string = "...")
     if input.nil? then return end
@@ -107,30 +113,6 @@ module WagnHelper
     wordstring.gsub! /<[\/]?br[\s\/]*>/, ' ' ## Also a hack -- get rid of <br>'s -- they make line view ugly.
     wordstring.gsub! /<[\/]?p[^>]*>/, ' ' ## Also a hack -- get rid of <br>'s -- they make line view ugly.
     wordstring
-  end
-
-
-  def partial_for_action( name, card=nil )
-    # FIXME: this should look up the inheritance hierarchy, once we have one
-    # wow this is a steaming heap of dung.
-    cardtype = (card ? card.type : 'Basic').underscore
-    if Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR <=1
-      finder.file_exists?("/types/#{cardtype}/_#{name}") ?
-        "/types/#{cardtype}/#{name}" :
-        "/types/basic/#{name}"
-    elsif   Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR > 2
-      ## This test works for .rhtml files but seems to fail on .html.erb
-      begin
-        self.view_paths.find_template "types/#{cardtype}/_#{name}"
-        "types/#{cardtype}/#{name}"
-      rescue ActionView::MissingTemplate => e
-        "/types/basic/#{name}"
-      end
-    else
-      self.view_paths.find { |template_path| template_path.paths.include?("types/#{cardtype}/_#{name}") } ?
-        "/types/#{cardtype}/#{name}" :
-        "/types/basic/#{name}"
-    end
   end
 
   def symbolize_param(param)
@@ -247,8 +229,8 @@ module WagnHelper
         }
       end
     end
-  end
-
+  end        
+  
   # ---------------( NAVBOX ) -----------------------------------    
 
   def navbox
@@ -287,9 +269,52 @@ module WagnHelper
     end
   end
             
-
-
-end
-
-
-
+  def wagn_form_for(record_or_name_or_array, *args, &proc)
+    options = args.extract_options!
+  
+    case record_or_name_or_array
+    when String, Symbol
+      object_name = record_or_name_or_array
+    when Array
+      object = record_or_name_or_array.last
+      object_name = ActionController::RecordIdentifier.singular_class_name(object)
+      apply_form_for_options!(record_or_name_or_array, options)
+      args.unshift object
+    else
+      object      = record_or_name_or_array
+      object_name = ActionController::RecordIdentifier.singular_class_name(record_or_name_or_array)
+      apply_form_for_options!(object, options)
+      args.unshift object
+    end
+  
+    concat(form_remote_tag(options))
+    fields_for(object_name, *(args << options), &proc)
+    if args.second[:update]
+      concat hidden_field_tag('_update','true')
+    end
+    concat('</form>')
+  end
+  
+  def layout_card(content)
+    Card.new(:name=>"**layout",:content=>content)
+  end
+  
+  def render_layout_card(card)
+    Slot.new(card, "layout_0", "view", self, :main_content=>@content_for_layout, :main_card=>@card).render(:naked)
+  end  
+  
+  def render_layout_content(content)
+    render_layout_card layout_card(content)
+  end
+  
+  # ------------( helpers ) --------------
+  def edit_user_context(card)
+    if System.ok?(:administrate_users)
+    	'admin'
+    elsif current_user == card.extension
+    	'user'
+    else
+    	'public'
+    end
+  end
+end       

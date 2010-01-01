@@ -12,6 +12,10 @@ class InvitationRequestTest < ActionController::TestCase
     @controller = CardController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
+    
+    User.as :wagbot do 
+      Card.create(:name=>'Account Request+*type+*captcha', :content=>'0')
+    end
   end
   
  

@@ -49,15 +49,18 @@ namespace :test do
 
   #=begin  
     begin
+      # assume we have a good database, ie. just migrated dev db.
+      puts `rake db:migrate`
+      puts `rake db:schema:dump`
       set_database 'wagn_test_template'
-      
-      #Rake::Task['wagn:create'].invoke   # FIXME I'd rather call create, but it was operating on the wrong db
-      Rake::Task['db:drop'].invoke
-      Rake::Task['db:create'].invoke
-
-      Rake::Task['db:schema:load'].invoke
-      Rake::Task['wagn:bootstrap:load'].invoke
-  
+      # Rake::Task['db:drop'].invoke
+      # Rake::Task['db:create'].invoke
+      # Rake::Task['db:schema:load'].invoke
+      # Rake::Task['wagn:bootstrap:load'].invoke
+      puts `rake db:drop`
+      puts `rake db:create`
+      puts `rake db:schema:load`
+      puts `rake wagn:bootstrap:load`       
   
       # I spent waay to long trying to do this in a less hacky way--  
       # Basically initial database setup/migration breaks your models and you really 
@@ -73,8 +76,11 @@ namespace :test do
     end
     # go ahead and load the fixtures into the test database
     
-    puts ">>preparing test database"
-    puts `rake db:test:prepare RAILS_ENV=test RELOAD_TEST_DATA=true`
+    puts ">> preparing test database"
+    puts `rake db:test:load`
+    puts ">> loading test fixtures"
+    puts `rake db:fixtures:load RAILS_ENV=test`
+    
     #Rake::Task['db:test:prepare'].invoke
   #=end
   end
@@ -97,7 +103,8 @@ namespace :test do
   end
   
   desc "create sample data for testing"
-  task :populate_template_database => :environment do   
+  task :populate_template_database => :environment do        
+    CachedCard.perform_caching = false
     # setup test data here
     # additional test data auto-loaded from Test classes    
     # when I load these I don't want them to run as is the default; this is somewhat brutal..
@@ -110,7 +117,6 @@ namespace :test do
     # not using it for now.
     
     #require 'test/unit'    
-    #require 'shoulda/test_unit'
     #Test::Unit::AutoRunner.class_eval {  def self.run() 1 end }
 
     # Dir["#{RAILS_ROOT}/test/**/*.rb"].each {|f| load "#{f}"}  

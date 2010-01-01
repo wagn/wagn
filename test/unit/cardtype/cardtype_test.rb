@@ -36,12 +36,17 @@ class Card::CardtypeTest < ActiveSupport::TestCase
     assert_instance_of Card::BananaPudding, Card::BananaPudding.create( :name=>"figgy" )
   end
   
-  ##FIXME -- this test fails
-=begin
-  def test_class_name
-    assert_equal 'Basic', Card::Basic.find(:first).class_name
+  def test_conversion_to_cardtype
+    card = Card.create!(:name=>'Cookie')
+    assert_equal 'Basic', card.type
+    card.type = 'Cardtype'
+    card.save!
+    
+    card=Card['Cookie']
+    assert_instance_of Cardtype, card.extension
+    assert_not_nil Permission.find_by_card_id_and_task(card.id, 'create')
+    assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).type
   end
-=end  
   
   def test_cardtype
     Card.find(:all).each do |card|

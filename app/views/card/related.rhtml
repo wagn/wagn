@@ -3,8 +3,9 @@
 
 	<% div(:class=>'submenu') do
 	   @items.each do |item|
-	     key = item.to_key %>
-       <%= link_to_remote( item.gsub('*',''), 
+	     key = item.to_key 
+	     linktext = item.gsub('*','').gsub('subtab','').strip %>
+       <%= link_to_remote( linktext, 
           { :url=>slot.url_for("card/related", nil, key), :update => slot.id }, 
           :class=>(key==@current ? 'on' : '') 
         ) %>
@@ -14,7 +15,7 @@
 
 	<div class="open-content related">
 	  <% if @current=='config' %>
-	    <%= slot.expand_transclusions render(:partial=>'config') %>
+	    <%= slot.expand_inclusions render(:partial=>'config') %>
 	  <% else %>
    	  <%= render_card( "#{card.name}+#{@current}", :content ) %>
    	<% end %>

@@ -8,21 +8,28 @@ describe Card, "test data" do
 end  
 
 describe Card, "new" do
-  before do
-    @c = Card.new :name=>"Ceee"
-    @d = Card::Date.new
-  end
+  context "with name" do
+    before do
+      @c = Card.new :name=>"Ceee"
+      @d = Card::Date.new
+    end
   
-  it "c should have name before_typecast" do
-    @c.name_before_type_cast.should == "Ceee"
-  end
+    it "c should have name before_typecast" do
+      @c.name_before_type_cast.should == "Ceee"
+    end
   
-  it "c should have cardtype basic" do
-    @c.type.should == 'Basic'
-  end
+    it "c should have cardtype basic" do
+      @c.type.should == 'Basic'
+    end
   
-  it "d should have cardtype Date" do
-    @d.type.should == 'Date'
+    it "d should have cardtype Date" do
+      @d.type.should == 'Date'
+    end
+  end
+
+  it "name is not nil" do
+    Card.new.name.should == ""
+    Card.new( nil ).name.should == ""
   end
 end
                             
@@ -56,7 +63,7 @@ describe Card, "attribute tracking for new card" do
   end
   
   it "should have updates" do
-    ActiveRecord::AttributeTracking::Updates.should === @c.updates
+    Cardlib::AttributeTracking::Updates.should === @c.updates
   end
   
   it "should return original value" do

@@ -16,8 +16,8 @@ module Card
     cattr_accessor :debug    
     Card::Base.debug = false
 
-    cattr_accessor :cache  
-    self.cache = {}
+#    cattr_accessor :cache  
+#    self.cache = {}
    
     belongs_to :trunk, :class_name=>'Card::Base', :foreign_key=>'trunk_id' #, :dependent=>:dependent
     has_many   :right_junctions, :class_name=>'Card::Base', :foreign_key=>'trunk_id'#, :dependent=>:destroy  
@@ -232,29 +232,13 @@ module Card
         args['name'] || (args['trunk'] && args['tag']  ? args["trunk"].name + "+" + args["tag"].name : "")
       end      
       
-      def reset_cache
-        self.cache={}
-      end
-      
       def [](name) 
         # DONT do find_virtual here-- it ends up happening all over the place--
         # call it explicitly if that's what you want
         #self.cache[name.to_s] ||= 
         self.find_by_name(name.to_s, :include=>:current_revision) #|| self.find_virtual(name.to_s)
         #self.find_by_name(name.to_s)
-      end
-             
-      # uncomment if we want to protect 'unreadable' cards from even
-      # being loaded.  thinking for now let them load and check when
-      # requesting content.
-      #
-      #def instantiate_with_permissions(record)
-      #  card = instantiate_without_permissions(record)
-      #  card.ok! :read
-      #  card
-      #end
-      #alias_method_chain :instantiate, :permissions
-      
+      end             
     end
 
     def multi_create(cards)
@@ -297,7 +281,7 @@ module Card
 
     def destroy_with_trash(caller="")     
       if callback(:before_destroy) == false
-        errors.add(:destroy, "before destroy back aborted destroy")
+        errors.add(:destroy, "could not prepare card for destruction")
         return false 
       end  
       deps = self.dependents       
@@ -345,6 +329,15 @@ module Card
     end
      
     # Extended associations ----------------------------------------
+
+    def left
+      trunk
+    end
+    
+    def right
+      tag
+    end
+    
     def pieces
       simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq 
     end
@@ -369,7 +362,11 @@ module Card
     end
 
     def cardtype
-      @cardtype ||= ::Cardtype.find_by_class_name( self.type ).card
+      @cardtype ||= begin
+        ct = ::Cardtype.find_by_class_name( self.type )
+        raise("Error in #{self.name}: No cardtype for #{self.type}")  unless ct
+        ct.card
+      end
     end  
     
     def drafts
@@ -437,22 +434,9 @@ module Card
         current_revision ? current_revision.content : ""
       end
     end   
-    
-    def edit_instructions #returns card
-      tag_card = tag || (name and Card[name.tag_name])
-      (tag_card && tag_card.attribute_card('*edit')) || 
-         (cardtype and cardtype.attribute_card('*edit'))
-    end
-    
-    def new_instructions
-      [tag, cardtype].each do |tsar|
-        %w{ *new *edit}.each do |attr_card|
-          if tsar and instructions = tsar.attribute_card(attr_card)
-            return instructions
-          end
-        end
-      end
-      return nil
+        
+    def add_help_card  
+      self.setting_card('add help') || self.setting_card('edit help')
     end
     
     def type
@@ -572,12 +556,14 @@ module Card
         end
         
         # require confirmation for renaming multiple cards
-        if !rec.confirm_rename and !rec.dependents.empty? 
-          rec.errors.add :confirmation_required, "#{rec.name} has #{rec.dependents.size} dependents"
-        end
+        if !rec.confirm_rename 
+          if !rec.dependents.empty? 
+            rec.errors.add :confirmation_required, "#{rec.name} has #{rec.dependents.size} dependents"
+          end
         
-        if rec.update_referencers.nil? and !rec.extended_referencers.empty? 
-          rec.errors.add :confirmation_required, "#{rec.name} has #{rec.extended_referencers.size} referencers"
+          if rec.update_referencers.nil? and !rec.extended_referencers.empty? 
+            rec.errors.add :confirmation_required, "#{rec.name} has #{rec.extended_referencers.size} referencers"
+          end
         end
       end
     end
@@ -657,11 +643,13 @@ module Card
       end
     end
      
-    def validate_destroy  
+    def validate_destroy    
       if extension_type=='User' and extension and Revision.find_by_created_by( extension.id )
         errors.add :destroy, "Edits have been made with #{name}'s user account.<br>  Deleting this card would mess up our revision records."
-      end
+        return false
+      end           
       #should collect errors from dependent destroys here.  
+      true
     end
 
     def validate_type_change  

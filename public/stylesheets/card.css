@@ -21,32 +21,32 @@ html>body .card-slot {
 
 /*----- header ---------*/
 
-.card-slot .card-header {
+.card-header {
   background: #005800;
   padding: 5px; 
   margin: 0px;
   -moz-border-radius: 6px 6px 0 0;
 }
-.card-slot.line .title-menu {
+.title-menu {
   line-height: 18px;
 }
-.card-slot .title { 
+.title { 
   margin: 0px 2px;
   font-weight: bold;
   font-size: 13px;
   padding: 2px 0px 2px 25px;
   white-space: nowrap;
 }
-.card-slot .right-arrow {
+.right-arrow {
   background: url(/images/arrow_right.gif) no-repeat left;
 }
-html>body .card-slot .right-arrow {
+html>body .right-arrow {
   background-image: url(/images/arrow_right.png);
 }
-.card-slot .down-arrow {
+.down-arrow {
   background: url(/images/arrow_down.gif) no-repeat left;
 }
-html>body .card-slot .down-arrow {
+html>body .down-arrow {
   background-image: url(/images/arrow_down.png);
 }
 .page-icon {
@@ -75,85 +75,82 @@ html>body .plus-icon{ background-image: url(/images/plus.png); }
 html>body .search-icon{ background-image: url(/images/search.png); }
 
 
-.card-slot .cardtype { 
+.cardtype { 
   font-style: italic;
   font-size: 10px;
 }
-.card-slot .card-header,
-.card-slot .card-header a,
-.card-slot .card-header .title a,
-.card-slot .card-header .title a:link,
-.card-slot .card-header .title a:visited,
-.card-slot .card-header .title a:hover {
+.card-header,
+.card-header a {
   color: #fff 
 }
 html>body .card-menu-left,
 html>body .page-icon {
   display: none;
 }
-.card-slot.line .card-header {
+.line .card-header {
   padding-right: 22px;
 }
-.card-slot.line div:hover.card-header {
+.line div:hover.card-header {
   padding-right: 0px;
 }
 
+div:hover.setting .page-icon,
 div:hover.card-header .page-icon,
 div:hover.card-header .card-menu-left {
   display:inline;
 }
 
-.card-slot .card-menu {
+.card-menu {
    float:right;
    white-space: nowrap;
    position: relative;
    right: 0px;
    z-index: 1;
 }
-.card-slot .card-menu li { 
+.card-menu li { 
   padding: 1px 5px;
   margin: 0px;
   -moz-border-radius: 4px 4px 0 0;
 }
-.card-slot .current {
+.current {
   background: #bbb;
   padding-bottom: 7px !important;
 }
 
-.card-slot .submenu {
+.submenu {
   background: #bbb;
   padding: 0px 10px;
   text-align: right;
 }
-.card-slot .submenu a {
+.submenu a {
   padding: 0px 5px;
   color: #005800
 }
-.card-slot .submenu a.on {
+.submenu a.on {
   background: #fff;
   color: #777;
   padding-bottom: 3px;
   -moz-border-radius: 4px 4px 0 0;
 }
 
-.card-slot .card-header li {
+.card-header li {
   display:inline;
 }
 
 
 
 /* card footer-------------------------------*/
-.card-slot .card-footer,
-.card-slot .revision-navigation {
+.card-footer,
+.revision-navigation {
   padding: 0px 10px;
   font-size: 9px;
   text-align: left;
 }
-.card-slot .card-footer,
-.card-slot .revision-navigation {
+.card-footer,
+.revision-navigation {
    background: #bbb;
 }
-.card-slot .card-footer {
+.card-footer {
   clear: both;
   -moz-border-radius: 0px 0px 6px 6px;
 }
@@ -163,10 +160,10 @@ html>body  .card-footer .footer-content {
 div:hover.card-footer .footer-content {
   display: inline;
 } 
-.card-slot .card-footer .footer-content {
+.card-footer .footer-content {
   width: 100%; 
 }        
-.card-slot .card-footer .watch-link {
+.card-footer .watch-link {
   float: right;
   text-align: right;
   white-space: nowrap;
@@ -177,58 +174,55 @@ div:hover.card-footer .footer-content {
 
 /* -------- view tab / content ----------------- */
 
-
+/* isn't this covered?
 .card-slot p { 
   margin: 0px; 
 }
-.card-slot hr {
-  margin: 10px
-}     
-.card-slot .faint {
+*/
+    
+.faint {
   color: #bbc;
 }
-.card-slot .editor-message {
-  display: none;
-}
-.card-slot .editor .editor-message {
-  display: block;
-}
-.card-slot .word .title { 
-  font-weight: normal 
-}
-.card-slot .joint { 
+.joint { 
   color: #960; 
 }
-.card-slot a.wanted-card { 
+a.wanted-card { 
   color: #900 
 }
-.card-slot .open-missing {
-  color: #99b;
-  font-variant: small-caps;
-}
-.card-slot span:hover.open-missing {
-  color: #069;
-  background: #ffc;
-}
-.card-slot a.external-link, 
-.card-slot.line .content a.external-link { 
+a.external-link, 
+.line .content a.external-link { 
   color: #979; 
   background: url(/images/external_link.png) center right no-repeat;
   padding-right: 13px !important;
 }
-.card-slot a.email-link { 
+a.email-link { 
   color: #979 
 }
-.card-slot .transcluded p, 
-.card-slot .transcluded span, 
-.card-slot .transcluded a, 
-.card-slot .transcluded ul, 
-.card-slot .transcluded ol, 
-.card-slot .transcluded h1, 
-.card-slot .transcluded h2 {
+.open-missing {
+  color: #99b;
+  font-variant: small-caps;
+}
+span:hover.open-missing {
+  color: #069;
+  background: #ffc;
+}
+
+.transcluded p, 
+.transcluded span, 
+.transcluded a, 
+.transcluded ul, 
+.transcluded ol, 
+.transcluded h1, 
+.transcluded h2 {
   background-color: inherit;
   -moz-border-radius: inherit;
 }
+
+/*  I can't find where this is used.  if you uncomment, please document -efm 
+.word .title { 
+  font-weight: normal 
+}
+*/
 
 
 
@@ -238,70 +232,56 @@ div:hover.card-footer .footer-content {
 
 /* ---------- edit tab / new / inline editing--------*/
 
-.card-slot .new-name,
-.card-slot .new-type {
+.new-name,
+.new-type {
   white-space: nowrap;
 }
-.card-slot .new-name .title {
+.new-name .title {
   padding-left: 2px;
 }
-.card-slot .new-name .card-name-field {
+.new-name .card-name-field {
   width: 50%;
 }
-.card-slot .new-type {
+.new-type {
   float: right;
 }
-.card-slot .editor {
+.editor {
   display: block;
 }
 .card-slot.new-card .editor {
   padding: 0px;
 }
-.card-slot .editor .revision-navigation,
-.card-slot .editor .autosave-alert {
+.editor .revision-navigation,
+.editor .autosave-alert {
   display: none
 }
-.card-slot .card-name-field {
+.card-name-field {
   background: #eef;
   font-weight: bold;
   color: #448;
   -moz-border-radius: 6px;
   padding: 1px 5px;
 }
-.card-slot .syntax-tips {
-  color: #888;
-}
-/*
-.card-slot .name-editor .label,
-.card-slot .cardtype-editor .label {
-  display: none
-}
-.card-slot .name-editor p,
-.card-slot .cardtype-editor p {
-  margin: 5px;
-}
-*/
-
-.card-slot .edit-area {
+.edit-area {
   background: #f9f9f9;
   border: 0px;
   padding: 4px;
 }
-.card-slot .in-multi {
+.in-multi {
   background: #e3e3e3;
   width: 100%;
   padding: 1 0px;
   margin: 1px;
 }
-.card-slot .new-type .cardtype {
+.new-type .cardtype {
   font-size: 14px;
   float:right;
 }
-.card-slot .edit-area p {
+.edit-area p {
   padding: 2px;
 }
-.card-slot .edit-area input[type=submit], 
-.card-slot .edit-area input[type=button] {
+.edit-area input[type=submit], 
+.edit-area input[type=button] {
   margin: 2px 2px;
   font-size: 11px;
   background: #ddd;
@@ -310,55 +290,55 @@ div:hover.card-footer .footer-content {
   border-right: 1px solid #666;
   border-bottom: 1px solid #666;
 }
-.card-slot .edit-area .richtext {
+.edit-area .richtext {
   background: #fff;
 }
-.card-slot ul.pointer {
+ul.pointer {
   margin: 0px;
   padding: 0px;
 }
-.card-slot .edit-area .label not(.fieldset) {
+.edit-area .label not(.fieldset) {
   display: block;
   margin: 2px;
   font-size: 12px;
 }
-.card-slot .edit-area .field not(.fieldset) {
+.edit-area .field not(.fieldset) {
   display: block;
   margin: 4px;
 }
-.card-slot .edit-area table {
+.edit-area table {
   width: 98%;
   margin-bottom: 5px;
 }
-.card-slot .edit-area .mceEditor table,
-.card-slot .edit-area .mceEditor table td{
+.edit-area .mceEditor table,
+.edit-area .mceEditor table td{
   margin: 0px;
   padding:0px 1px;
   border: 0px;
 }
-.card-slot .edit-area td {
+.edit-area td {
   vertical-align: middle;
 }
-.card-slot .edit-area .title,
-.card-slot .transcluded .edit-area .title {
+.edit-area .title,
+.transcluded .edit-area .title {
   display: block;
   font-size: 11px;
 }
 
-.card-slot .label-in-multi {
+.label-in-multi {
   float: left;
   width: 25%;
 }
-.card-slot .label-in-multi .title {
+.label-in-multi .title {
   white-space: inherit;
   padding: 1px 5px;
 }
-.card-slot .field-in-multi {
+.field-in-multi {
   float: right;
   width: 70%;
   padding: 3px;
 }
-.card-slot .edit-button-area {
+.edit-button-area {
   margin-top: 7px;
 }
 .in-multi .instruction,
@@ -373,68 +353,86 @@ div:hover.card-footer .footer-content {
 div.transcluded {
   display: inline;
 }
+
+
+/* not in use?
+.syntax-tips {
+  color: #888;
+}
+.name-editor .label,
+.cardtype-editor .label {
+  display: none
+}
+.name-editor p,
+.cardtype-editor p {
+  margin: 5px;
+}
+*/
+
+
+
 /* ---------- changes tab -------*/
 
 
-.card-slot .revision-header {
+.revision-header {
   background: #ddf;
   padding: 4px;
   border-bottom: 1px solid silver;
   text-align: center;
 }
-.card-slot .revision-title {
+.revision-title {
   font-weight: bold;
 }
-.card-slot .revision-header p {
+.revision-header p {
   margin: 2px;
 }
-.card-slot .revision {
+.revision {
   margin: 0px 1px;
   padding: 10px 5px;
   background: #ffd;
 }
-.card-slot .autosave-alert {
+.autosave-alert {
   font-weight: bold;
 }
-.card-slot .revision-navigation span {
+.revision-navigation span {
    margin: 0px 10px
 }
-.card-slot ins.diffmod, 
-.card-slot .diffins {
+ins.diffmod, 
+.diffins {
   background: #aea;
 }
-.card-slot del.diffmod, 
-.card-slot .diffdel {
+del.diffmod, 
+.diffdel {
   background: #eaa;
 }
 
 /*-------options tab ------*/
 
-.card-slot .small {
+.small {  /* this is a crappy class name */
   font-size: 10px;
   display: block;
   margin: 2px;
   line-height: 13px
 }
-.card-slot .template,
-.card-slot .option-header h2 {
+.template,
+.option-header h2 {
   padding: 6px ;
   text-align: center;
 }
-.card-slot .template {
+.template {
   background: #bdd
 }
-.card-slot .template .card-slot {
+.template .card-slot {
   text-align: left;
 }
-.card-slot .new-account-link {
+.new-account-link {
   text-align: center;
 }
 
 /*-----------related tab ----------*/
 
-.card-slot .related.headroom h1,
-.card-slot .related.headroom h2 {
+.related.headroom h1,
+.related.headroom h2 {
   margin-top: 10px;
 }
 
@@ -442,7 +440,7 @@ div.transcluded {
 /*------------- multiple tabs / misc -----*/
 
 
-.card-slot .notice {
+.notice {
   background: #fff;
   font-weight: bold;
   font-style: italic;
@@ -452,31 +450,32 @@ div.transcluded {
   margin: 0px 0px 4px 0px;
 
 }
-.card-slot .help.content {
+.help.content {
   padding: 10px;
   margin-top: 5px;
   color: #444;
 }
-.card-slot .open-content, /* paragraph content */
-.card-slot .revision {
+.open-content, /* paragraph content */
+.revision {
   display: block;
   padding: 5px 15px 10px 15px;
 }
 
-.card-slot .instruction {
+.instruction {
   border-left: 0px;
   border-right: 0px;
 }
 
-.card-slot h1.headroom,
-.card-slot h2.headroom,
-.card-slot .headroom h1,
-.card-slot .headroom h2 {
+/* we should be able to get rid of this stuff.  used once.  and it's poorly named */
+h1.headroom,
+h2.headroom,
+.headroom h1,
+.headroom h2 {
   margin-top: 10px;
   padding: 6px;
 }
 
-.card-slot .denied {
+.denied {
   display: none;
 }
 
@@ -486,11 +485,11 @@ div.transcluded {
 /*-------- main card ----*/
 
 /*-- makes things funny in IE
-#main .card-slot.paragraph .title {
+#main .paragraph .title {
   font-size: 16px;
   line-height: 25px;
 }
-#main .card-slot.paragraph .content .title,
+#main .paragraph .content .title,
 #main .card-slot .edit-area .title {
   font-size: inherit;
   line-height: inherit;
@@ -498,10 +497,10 @@ div.transcluded {
     
 --*/
 
-/*----- sidebar ----------------*/
+/*----- Secondary (sidebar) ----------------*/
 
 
-#sidebar .card-slot .card-menu {
+#secondary .card-menu {
   display: none; 
   float:none;  /* necessary for IE */
 }
@@ -515,7 +514,7 @@ div.transcluded {
 
 /*----------recent changes -----------*/
 
-body.wagn .card-slot.recent-changes h2 {
+body#wagn .card-slot.recent-changes h2 {
   margin-top: 15px;
 }
 
@@ -525,7 +524,7 @@ body.wagn .card-slot.recent-changes h2 {
 
 /*-----------  open cards -------*/
 
-.card-slot.paragraph {
+.paragraph {
   margin: 1px 0px;
   padding: 0px !important;
   -moz-border-radius: 8px;
@@ -536,18 +535,18 @@ body.wagn .card-slot.recent-changes h2 {
 */
 
   /* means content view */
-.card-slot .content-content {
+.content-content {
   display: inline;
   padding: 0;
 }
-.card-slot.paragraph .down-arrow,
-.card-slot.paragraph .close-link {
+.paragraph .down-arrow,
+.paragraph .close-link {
   margin: 0px 5px 0px 0px;
 }
 
 /*------------- closed cards -------*/
 
-.card-slot.line {
+.line {
   overflow: hidden;
   white-space: nowrap;
   border-bottom: 0px;
@@ -560,13 +559,13 @@ body.wagn .card-slot.recent-changes h2 {
   height: 25px;
 }
 
-.card-slot.line .content, 
-.card-slot.line .card-header {
+.line .content, 
+.line .card-header {
   display: inline;
   float: left;
   vertical-align: center;
 }
-.card-slot.line .card-header {
+.line .card-header {
   line-height: 15px;
   -moz-border-radius: 0px 6px 6px 0px;
   padding-top: 4px;
@@ -574,26 +573,26 @@ body.wagn .card-slot.recent-changes h2 {
   margin-right: 4px;
 }
 
-.card-slot.line tr, 
-.card-slot.line td, 
-.card-slot.line p,
-body.wagn .card-slot.line h1, 
-body.wagn .card-slot.line h2, 
-.card-slot.line h3, 
-.card-slot.line h4, 
-.card-slot.line h5, 
-.card-slot.line h6, 
-.card-slot.line ul, 
-.card-slot.line li,
-.card-slot.line pre, 
-.card-slot.line ol, 
-.card-slot.line hr, 
-.card-slot.line .content div, 
-.card-slot.line .content span,
-.card-slot.line .content,  
-.card-slot.line .workspace,
-.card-slot.line .content a,
-.card-slot.line blockquote {
+.line tr, 
+.line td, 
+.line p,
+body#wagn .line h1, 
+body#wagn .line h2, 
+.line h3, 
+.line h4, 
+.line h5, 
+.line h6, 
+.line ul, 
+.line li,
+.line pre, 
+.line ol, 
+.line hr, 
+.line .content div, 
+.line .content span,
+.line .content,  
+.line .workspace,
+.line .content a,
+.line blockquote {
   display: inline; 
   margin: 0px 4px; 
   padding: 0px !important;
@@ -602,41 +601,41 @@ body.wagn .card-slot.line h2,
   white-space: nowrap;      
   float: none !important;
 }
-.card-slot.line .content a {
+.line .content a {
   margin: 0px;
 }
-.card-slot.line .content img {
+.line .content img {
   height: 16px;
   width: auto;
   float: none;
   padding: 0px;
 }
-.card-slot.line br,  
-.card-slot.line hr,
-.card-slot.line input,
-.card-slot.line textarea,
-.card-slot.line .comment-box,
-.card-slot.line .table-of-contents,
-.card-slot.line .card-menu,
-.card-slot.line .card-footer,
-.card-slot.line .close-link {
+.line br,  
+.line hr,
+.line input,
+.line textarea,
+.line .comment-box,
+.line .table-of-contents,
+.line .card-menu,
+.line .card-footer,
+.line .close-link {
   display: none !important;
 }
 /*----------- Change View ---------*/
 
-.card-slot .change-view {
+.change-view {
   padding: 5px 0px;
   border-bottom: 1px dotted grey;
   clear: both;
 }
-.card-slot .change-view .change-card{
+.change-view .change-card{
   font-weight: bold;
   float: left;
 }
-.card-slot .change-view .last-update {
+.change-view .last-update {
   float:right;
 }
-.card-slot .change-view .last-edited {
+.change-view .last-edited {
   color: #7a7;
 }
 
@@ -665,46 +664,48 @@ body.wagn .card-slot.line h2,
 
 /*---------- ( Richtext )-------------*/
 
-.card-slot .table-of-contents {
+.table-of-contents {
   background: #eee;
   -moz-border-radius: 10px;
   padding: 4px;
   margin: 5px 20px 20px 20px;
 }
-.card-slot .table-of-contents h5 {
+.table-of-contents h5 {
   margin: 0px 0px 0px 40px;
 }
-.card-slot .table-of-contents ol {
+.table-of-contents ol {
   list-style-type: upper-roman; 
 }
-.card-slot .table-of-contents ol ol {
+.table-of-contents ol ol {
   list-style-type: upper-alpha;
   padding-left: 25px 
 }
 
 /*-------------( Pointer )--------*/
-.card-slot .pointer input {
+.pointer input {
+  float: left;
   width: 60%;
 }
-.card-slot .pointer li {
+.pointer li {
   list-style: none;
 }
-.card-slot .pointer .delete {
+.pointer .delete {
   margin-left: 4px;
   font-weight: bold;
   color: #933;
   font-size: 15px;
 }
 
+
 /*-------------( Phrase)-----------*/
 
-.card-slot .phrasebox {
+.phrasebox {
   width: 98%;
 }
 
 /*---------( Search ) ---------- */
 
-.card-slot .content .paging img {
+.content .paging img {
   float: none !important;
   padding: 0px 3px;
   margin: 0px;
@@ -732,16 +733,16 @@ div.search-result-list .search-result-item {
   padding-left: 15px;
 }
 
-.card-slot .radio-option-description,
-.card-slot .checkbox-option-description {
+.radio-option-description,
+.checkbox-option-description {
   margin-left: 40px; 
 }
 
 /*-----------( Image ) -----------*/
 
 
-/*.card-slot.paragraph.type-Image, */
-.card-slot.paragraph .type-Image .content {
+/*.paragraph.type-Image, */
+.paragraph .type-Image .content {
 /*  overflow: auto;  */
   padding: 5px;
 }
@@ -749,53 +750,15 @@ div.search-result-list .search-result-item {
 
 
 
-
-
-
-/*---------- comment-box -------------------------------------- */
-.card-slot .comment-box textarea { 
-    width: 100%; 
-    margin-bottom:5px;
-}   
-.card-slot .comment-box input {
-  padding: 0px;
-  font-size: 12px;
-}
-.card-slot .comment-box { 
-    background: #cce;
-    padding: 8px;
-    margin: 0px;
-}
-
-/*--------(Search....also used when connecting...) ---------*/
-
-/*------- tag cloud ----------------------------------*/
-
-.card-slot .cloud a { 
-  white-space: nowrap; 
-  padding: 0px 3px !important;
-  background: #eef;
-  padding: 0px 4px;
-  -moz-border-radius: 8px;
-}
-.card-slot .cloud-1 { font-size: 90% }
-.card-slot .cloud-2 { font-size: 100% }
-.card-slot .cloud-3 { font-size: 115% }
-.card-slot .cloud-4 { font-size: 130% }
-.card-slot .cloud-5 { font-size: 145% }
-
-
-
-
 /*----------- (Invitation Request)--------------*/
 
 
-.card-slot .invite-links {
+.invite-links {
   padding: 10px;
   margin-top: 10px;
   border: 1px solid #66b;
 }
-.card-slot .invite-links a {
+.invite-links a {
   font-style: normal;
   font-weight: bold;
   margin-right: 20px;
@@ -803,30 +766,39 @@ div.search-result-list .search-result-item {
 
 
 
-/*---I think is is actually a connection thing? --*/
-.card-slot .inline.field span {
-  display: block;
-  padding-right: 5px;
-  vertical-align: middle;
-  text-align: right;
+
+/*---------- comment-box -------------------------------------- */
+.comment-box textarea { 
+    width: 100%; 
+    margin-bottom:5px;
+}   
+.comment-box input {
+  padding: 0px;
+  font-size: 12px;
+}
+.comment-box { 
+    background: #cce;
+    padding: 8px;
+    margin: 0px;
 }
 
-/*--- connections --*/
+/*------- tag cloud ------- (not currently in use)---------------------------*/
 
-.new-connection {
-  text-align: center; 
+/*
+.cloud a { 
+  white-space: nowrap; 
+  padding: 0px 3px !important;
+  background: #eef;
+  padding: 0px 4px;
+  -moz-border-radius: 8px;
 }
-.new-connection div {
-  margin-top: 5px;
-  margin-bottom: 15px
-}
-.card-slot .fat {
-  font-size: 20px;
-  font-weight: bold;
-  margin: 10px 40px ;
-  display: block;
-  color: #600
-}
-.card-slot .add-form input {
-  margin: 1px 5px;
-}
+.cloud-1 { font-size: 90% }
+.cloud-2 { font-size: 100% }
+.cloud-3 { font-size: 115% }
+.cloud-4 { font-size: 130% }
+.cloud-5 { font-size: 145% }
+*/
+
+
+
+

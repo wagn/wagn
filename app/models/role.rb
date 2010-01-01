@@ -1,5 +1,3 @@
-require_dependency "acts_as_card_extension"
-
 class Role < ActiveRecord::Base
   acts_as_card_extension
   has_and_belongs_to_many :users
@@ -71,6 +69,4 @@ class Role < ActiveRecord::Base
       self.cache[codename.to_s] ||= Role.find_by_codename(codename.to_s)
     end
   end
-  
-  
 end

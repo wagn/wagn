@@ -22,7 +22,7 @@ class Cardtype < ActiveRecord::Base
         select distinct ct.class_name, c.name, c.key, p.party_type, p.party_id 
         from cardtypes ct 
         join cards c on c.extension_id=ct.id and c.type='Cardtype'    
-         join permissions p on p.card_id=c.id and p.task='create' 
+        join permissions p on p.card_id=c.id and p.task='create' 
       }).each do |rec|
         @@cache[:card_keys][rec['key']] = rec['name']
         @@cache[:card_names][rec['class_name']] = rec['name'];   
@@ -64,7 +64,7 @@ class Cardtype < ActiveRecord::Base
     def createable_cardtypes  
       load_cache if @@cache.empty?
       @@cache[:card_names].collect do |class_name,card_name|
-        next if class_name == 'InvitationRequest'
+        next if ['InvitationRequest','Setting','Set'].include?(class_name)
         next unless create_ok?(class_name)
         { :codename=>class_name, :name=>card_name }
       end.compact.sort_by {|x| x[:name].downcase }

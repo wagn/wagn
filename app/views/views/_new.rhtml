@@ -11,8 +11,8 @@
 	
   	<%= error_messages_for :card %>
     <div class=cardnotice></div>   
-
-	  <% form_remote_for :card, card, :url=>"card/create", 
+                                            
+	  <% wagn_form_for :card, card, :url=>"card/create", 
 					:slot => slot,
 					:update => {
 						:success => slot.id,   
@@ -48,10 +48,10 @@
 			</div>
 			<% if card.template? %>
 			  <%- card.extension_type='HardTemplate' if card.type_template? %>
-        <%= render :partial=>'card/hardsoft_form', :locals=>{:card=>card, :mode=>'new'} %>
-      <% end %>
-      <% if card.new_instructions %> 
-				<div class="custom-instructions instruction"><%= render_card card.new_instructions, :expanded_view_content %></div>
+        <%= render :partial=>'card/hardsoft_form', :locals=>{:card=> card, :mode=>'new'} %>
+      <% end %>                  
+      <% if inst = card.add_help_card %>
+        <div class="instruction"><%= slot.subslot(inst).render :naked %></div>
 	    <% end %>
 
 			
@@ -65,14 +65,15 @@
   					<%= slot.content_field(form) %>
   				<% end %>
   			</div>
-  			
+  		 
+				<%= slot.half_captcha %>
   		  <%= hidden_field_tag :view, params[:requested_view] || params[:view] || :open %>
   		  <div class="edit-button-area">
     		
     			<%= button_to_function 'Create', "this.form.onsubmit()", :id=>'create-button'  %>
 						
           <% if request.xhr? %>						
-    				<%= slot.button_to_action 'Cancel', :open_missing, { :before=>slot.cancel_function }  %> 
+    				<%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function }  %> 
     			<% else %>
     		    <%= button_to_function 'Cancel',"document.location.href='#{previous_location}'" %> 
   			<% end %>

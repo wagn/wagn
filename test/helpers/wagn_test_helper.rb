@@ -30,11 +30,11 @@ module WagnTestHelper
       Card.create_these *definitions
     end
   end
-
-
-  def card( name )
-    ::Card.find_by_name(name)
-  end
+  # 
+  # 
+  # def card( name )
+  #   ::Card.find_by_name(name)
+  # end
   
   def render( card )
     Renderer.new.render(card)
@@ -72,7 +72,7 @@ module WagnTestHelper
     end
     if block_given?
       yield
-      post "/account/logout",:controller=>'account'
+      post "/account/signout",:controller=>'account'
     end
   end
   

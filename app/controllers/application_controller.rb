@@ -1,21 +1,14 @@
-
 # # Filters added to this controller will be run for all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
   require_dependency 'exception_system' 
   include AuthenticatedSystem
-  include ExceptionSystem
-   
-  GoogleMapsAddon
-
+  include ExceptionSystem           
   include LocationHelper
   helper :all
-
-  attr_reader :card, :cards, :renderer, :context   
-  attr_accessor :notice, :slot
   
-  helper_method :card, :cards, :renderer, :context, :edit_user_context, :notice, :slot
+  helper_method :main_card?
 
   include ActionView::Helpers::TextHelper #FIXME: do we have to do this? its for strip_tags() in edit()
   include ActionView::Helpers::SanitizeHelper
@@ -25,6 +18,9 @@ class ApplicationController < ActionController::Base
   # OPTIMIZE: render_fast_404 still isn't that fast (?18reqs/sec) 
   # can we turn sessions off for it and see if that helps?
   layout :wagn_layout, :except=>[:render_fast_404]
+  
+  BUILTIN_LAYOUTS = %w{ blank noside simple none }
+
 
   protected
   
@@ -51,11 +47,12 @@ class ApplicationController < ActionController::Base
     @context = params[:context] || 'main_1'
     @action = params[:action]
     
+    Slot.current_slot = nil
+    
     # reset class caches
     # FIXME: this is a bit of a kluge.. several things stores as cattrs in modules
     # that need to be reset with every request (in addition to current user)
     User.clear_cache if System.multihost
-    Card.reset_cache
     Cardtype.reset_cache
     Role.reset_cache
     CachedCard.reset_cache
@@ -69,10 +66,10 @@ class ApplicationController < ActionController::Base
     respond_to do |format|
       format.html {
         unless request.xhr?
-          layout = case params[:layout]
-            when nil; 'application'
-            when 'none'; nil
-            else params[:layout]
+          layout = case 
+            when BUILTIN_LAYOUTS.include?(params[:layout]); params[:layout]
+#            when params[:layout] == 'none'; nil
+            else 'application'
           end
         end
       }
@@ -80,25 +77,11 @@ class ApplicationController < ActionController::Base
     layout
   end
            
-
-  # ------------( helpers ) --------------
-  def edit_user_context(card)
-    if System.ok?(:administrate_users)
-    	'admin'
-    elsif current_user == card.extension
-    	'user'
-    else
-    	'public'
-    end
-  end
-
-  def renderer
-    Renderer.new
-  end
-     
+  # ----------- (helper) ----------
   def main_card?
-    @context == 'main_1'
-  end    
+    @context =~ /^main_([^\_]+)$/
+  end      
+
 
   # ------------------( permission filters ) -------
   def view_ok
@@ -124,15 +107,10 @@ class ApplicationController < ActionController::Base
     @card.ok!( :delete ) || render_denied( 'delete' )
   end
          
-  def render_denied(action = '')
-    @deny = action
-    render :controller=>'card', :action=>'denied', :status=>403
-    return false
-  end
 
 
   # --------------( card loading filters ) ----------
-  def load_card!
+  def load_card!   
     load_card
     if @card.new_record? && !@card.virtual?
       raise Wagn::NotFound, "#{request.env['REQUEST_URI']} requires a card id"
@@ -155,8 +133,6 @@ class ApplicationController < ActionController::Base
     card_params = params[:card] ? params[:card].clone : nil
     @card = CachedCard.get(name, @card, :cache=>cache, :card_params=>card_params )
     @card
-    
-    return view_ok
   end
                 
   def load_card_and_revision
@@ -193,4 +169,61 @@ class ApplicationController < ActionController::Base
       end
     end
   end
-end
+
+  def render_denied(action = '')
+    @deny = action
+    render :controller=>'card', :action=>'denied', :status=>403
+    return false
+  end
+
+  def handling_errors 
+    if @card.errors.present?
+      render_card_errors(@card)
+    else
+      yield
+    end
+  end
+  
+  def render_card_errors(card=nil)
+    card ||= @card
+    stuff = %{<div class="error-explanation">
+      <h2>Rats. Issue with #{card.name && card.name.upcase} card:</h2><p>} + 
+      card.errors.map do |attr,msg|    
+        "#{attr.gsub(/base/,'captcha').upcase }: #{msg}" 
+      end.join(",<br> ") +
+      '</p></div>' 
+            
+    # Create used this scroll
+    #<%= javascript_tag 'scroll(0,0)'
+        
+    #errors.each{|attr,msg| puts "#{attr} - #{msg}" }      
+    # getNextElement() will crawl up nested slots until it finds one with a notice div
+      
+    on_error_js = ""
+    
+    if captcha_required?         
+      key = @card.new_record? ? "new" : @card.name.to_key           
+      on_error_js << %{ document.getElementById('dynamic_recaptcha-#{key}').innerHTML='<span class="faint">loading captcha</span>'; }
+      on_error_js << %{ Recaptcha.create('#{ENV['RECAPTCHA_PUBLIC_KEY']}', document.getElementById('dynamic_recaptcha-#{key}'),RecaptchaOptions); }
+    end
+    
+    js_tag = %{<%= javascript_tag(%{#{on_error_js}}) %>}
+    stuff_with_javascript = stuff + js_tag
+    
+    case 
+      when requesting_ajax? && !params['_update']; 
+        render :update do |page|
+          page << %{notice = getNextElement(#{get_slot.selector},'notice');\n}
+          page << %{notice.update('#{escape_javascript(stuff)}');\n}
+          page << on_error_js
+        end
+      when requesting_ajax? && params['_update'];
+        render :inline=>stuff_with_javascript, :layout=>nil, :status=>422
+      when !requesting_ajax?;
+        render :inline=>stuff_with_javascript, :layout=>'application', :status=>422
+    end
+  end  
+  
+end            
+
+  

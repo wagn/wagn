@@ -1,13 +1,16 @@
 require 'rubygems'
 require 'spork'
 ENV["RAILS_ENV"] = "test"
+require 'assert2/xhtml'
 
 Spork.prefork do
+  require File.expand_path(File.dirname(__FILE__) + "/../config/wagn_initializer")
+  Spork.trap_class_method(Wagn::Initializer,"load")
+
   require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
   require 'spec'
   require 'spec/autorun'
   require 'spec/rails' 
-
   
   
   # Loading more in this block will cause your tests to run faster. However, 
@@ -23,14 +26,26 @@ Spork.prefork do
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
     config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
-
+           
+    config.include AuthenticatedTestHelper, :type=>:controllers      
     # == Notes
     # 
     # For more information take a look at Spec::Example::Configuration and Spec::Runner
+    
+    config.before(:each) do
+      CachedCard.reset_cache     
+      CachedCard.bump_global_seq   
+    end
+
+    config.after(:each) do
+      CachedCard.reset_cache     
+      CachedCard.bump_global_seq   
+    end
+
   end
 end
 
-Spork.each_run do
+Spork.each_run do     
   # This code will be run each time you run your specs.
 end
 

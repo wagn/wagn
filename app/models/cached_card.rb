@@ -6,7 +6,6 @@
   3. processing search()
   
 =end     
-require_dependency 'card/cacheable'
 
 class CacheError < StandardError; end
 
@@ -22,7 +21,7 @@ class CachedCard
   self.local_cache={ :real=>{}, :get=>{}, :seq=>nil }
                                            
   
-  include ::CardLib::Cacheable
+  include ::Cardlib::Cacheable
   
   class << self       
     def set_cache_prefix( prefix )
@@ -39,11 +38,11 @@ class CachedCard
     end
     
     def global_seq 
-      self.local_cache[:seq] ||= (cache.read(@@seq_key) || bump_global_seq ).to_i
+      self.local_cache[:seq] ||= (cache.read(@@seq_key) || bump_global_seq )
     end
 
     def bump_global_seq
-      write_global_seq(  (Time.now.to_f * 100).to_i )
+      write_global_seq(  UUID.new.generate )
     end
 
     def write_global_seq(val)
@@ -219,7 +218,7 @@ class CachedCard
   def card
     @card ||= (
       #ActiveRecord::Base.logger.info("<Loading: #{@key}>")
-      Card.find_by_key_and_trash(@key, false)
+      Card.find_by_key_and_trash(@key, false) || raise(CacheError, "cached card #{@key} found but it's not in database")
     )
   end
 

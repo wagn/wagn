@@ -3,7 +3,7 @@ module Wagn
     Major = '1'
     Minor = '3'
     Tiny  = '0'
-    Eensie = 'pre1'
+    Eensie = ''
   
     class << self
       def full

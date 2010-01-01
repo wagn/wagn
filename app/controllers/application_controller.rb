@@ -79,7 +79,7 @@ class ApplicationController < ActionController::Base
            
   # ----------- (helper) ----------
   def main_card?
-    @context =~ /^main_\d$/
+    @context =~ /^main_([^\_]+)$/
   end      
 
 

@@ -270,6 +270,7 @@ class CardController < ApplicationController
   end   
   
   def open
+    params[:view] = :open
     render_show
   end
 

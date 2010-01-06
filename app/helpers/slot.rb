@@ -160,7 +160,10 @@ class Slot
   def cache_action(cc_method) 
     (if CachedCard===card 
       card.send(cc_method) || begin
-        cached_card, @card = card, Card.find_by_key_and_trash(card.key, false) || raise("Oops! found cached card for #{card.key} but couln't find the real one") 
+        cached_card, @card = card, Card.find_by_key_and_trash(card.key, false)
+        if !@card
+          return "Oops! found cached card for #{card.key} but couln't find the real one"
+        end
         content = yield(@card)
         cached_card.send("#{cc_method}=", content.clone)  
         content
@@ -296,7 +299,12 @@ class Slot
     ###---(  EDIT VIEWS ) 
       when :edit;  
         @state=:edit
-        (card.hard_template || card.content_templated?) ? render(:multi_edit) : content_field(slot.form)
+        # FIXME CONTENT: the hard template test can go away when we phase out the old system.
+        if card.hard_template or card.content_templated?
+          render(:multi_edit)
+        else
+          content_field(slot.form)
+        end
         
       when :multi_edit;
         @state=:edit 

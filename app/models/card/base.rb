@@ -80,11 +80,12 @@ module Card
       unless updates.for?(:permissions)
         self.permissions = default_permissions
       end
-      
+
+      # FIXME CONTENT - goes away?
       if template.hard_template? || !updates.for?(:content) 
         self.content = ::User.as(:wagbot) { template.content }
       end
-
+            
       self.name='' if self.name.nil?
     end
     
@@ -428,6 +429,8 @@ module Card
       #unless name=~/^\*|\+\*/  
         new_record? ? ok!(:create_me) : ok!(:read) # fixme-perm.  might need this, but it's breaking create...
       #end
+      
+      #FIXME CONTENT - goes away?
       if tmpl = hard_template and tmpl!=self
         tmpl.content
       else

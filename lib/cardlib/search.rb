@@ -29,10 +29,9 @@ module Cardlib
 
       def auto_card(name)
         return nil if name.simple?
-        template = (Card.right_template(name) || Card.multi_type_template(name)) 
-        if template and template.hard_template?    
+        if template = Card.new(:name=>name).setting_card('virtual')   
           User.as(:wagbot) do
-            Card.create_virtual name, template.content
+            Card.create_virtual name, template.content, template.type
           end
         elsif System.ok?(:administrate_users) and name.tag_name =~ /^\*(email)$/
           attr_name = $~[1]

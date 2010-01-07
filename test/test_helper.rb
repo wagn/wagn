@@ -1,4 +1,5 @@
 require 'rubygems'
+require 'ruby-debug'
 
 unless defined? TEST_ROOT
   ENV["RAILS_ENV"] = "test"
@@ -46,10 +47,13 @@ unless defined? TEST_ROOT
         f.puts "running test setup"
       end
       
-      CachedCard.set_cache_prefix "#{System.host}/cucumber"
-      CachedCard.bump_global_seq
-      CachedCard.set_cache_prefix "#{System.host}/test"
-      CachedCard.bump_global_seq
+      # let the cache stick accross test-runs while profiling
+      unless ActionController.const_defined?("PerformanceTest") and self.class.superclass == ActionController::PerformanceTest
+        CachedCard.set_cache_prefix "#{System.host}/cucumber"
+        CachedCard.bump_global_seq
+        CachedCard.set_cache_prefix "#{System.host}/test"
+        CachedCard.bump_global_seq
+      end
     end
   end
 

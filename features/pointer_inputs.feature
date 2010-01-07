@@ -16,7 +16,7 @@ Feature: Pointer Inputs
     Then I should see "Joe Camel"   
 
   Scenario: Creating a templated card including a select input
-    Given I create card "User+*tform" with content "{{+friends}}"
+    Given I create card "User+*type+*content" with content "{{+friends}}"
     And I create Phrase card "friends+*right+*input" with content "select"
     When I go to new User
     And I fill in "card_name" with "Jill"
@@ -41,7 +41,7 @@ Feature: Pointer Inputs
     Then I should see "Joe Camel" 
 
   Scenario: Creating a templated card including a muliselect input
-    Given I create card "User+*tform" with content "{{+friends}}"
+    Given I create card "User+*type+*content" with content "{{+friends}}"
     And I create Phrase card "friends+*right+*input" with content "multiselect"
     When I go to new User
     And I fill in "card_name" with "Jill"

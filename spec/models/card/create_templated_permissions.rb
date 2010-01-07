@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 describe Card, "New Basic Card" do
   before do
     User.as :wagbot 
-    @bt= Card['Basic+*tform']
+    @bt= Card['Basic+*type+*default']
     @r1 = Role.find_by_codename 'r1'
     @bt.permit(:edit, @r1)
     @bt.save!
@@ -24,7 +24,7 @@ end
 describe Card, "Cardtype template" do
   before do
     User.as :wagbot 
-    @ctt = Card['Cardtype E+*tform']
+    @ctt = Card['Cardtype E+*type+*default']
     @r1 = Role.find_by_codename 'r1'
     @ctt.permit(:create, @r1)
     #warn "permissions #{@ctt.permissions.plot :task}"
@@ -46,7 +46,7 @@ end
 describe Card, "Cardtype template" do
   before do
     User.as :wagbot 
-    @ctt = Card['Cardtype E+*tform']
+    @ctt = Card['Cardtype E+*type+*default']
     @r1 = Role.find_by_codename 'r1'
     @ctt.permit(:create, @r1)
     #warn "permissions #{@ctt.permissions.plot :task}"

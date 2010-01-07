@@ -151,7 +151,7 @@ class CardControllerTest < ActionController::TestCase
       f.permit(:read, Role[:admin])   
       f.save!
     
-      ff = Card.create! :name=>"Fruit+*tform"
+      ff = Card.create! :name=>"Fruit+*type+*default"
       ff.permit(:read, Role[:auth])
       ff.save!
     
@@ -176,7 +176,7 @@ class CardControllerTest < ActionController::TestCase
     f.permit(:read, Role[:anon])   
     f.save!
 
-    ff = Card.create! :name=>"Fruit+*tform"
+    ff = Card.create! :name=>"Fruit+*type+*default"
     ff.permit(:read, Role[:anon])
     ff.save!
     
@@ -204,7 +204,7 @@ class CardControllerTest < ActionController::TestCase
     f.permit(:edit, Role[:admin])   
     f.save!
 
-    ff = Card.create! :name=>"Fruit+*tform"
+    ff = Card.create! :name=>"Fruit+*type+*default"
     ff.permit(:read, Role[:auth])
     ff.save!
     

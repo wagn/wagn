@@ -93,7 +93,7 @@ end
 
 describe Card, "find_virtual" do
   before { User.as :joe_user }
-
+  #
   it "should find: *plus parts" do
     Card.find_virtual("A+*plus parts").search(:limit=>100).plot(:name).sort.should == A_JOINEES
   end
@@ -231,7 +231,7 @@ end
 
 #describe Wql2, "group tagging" do
 #  it "should find frequent taggers of cardtype cards" do
-#    Card.search( :group_tagging=>'Cardtype' ).map(&:name).sort().should == ["*related", "*tform"].sort()
+#    Card.search( :group_tagging=>'Cardtype' ).map(&:name).sort().should == ["*related", "*type+*default"].sort()
 #  end
 #end
 

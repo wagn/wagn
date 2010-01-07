@@ -79,8 +79,8 @@ end
 describe Card, "with hard type template and hard tag template" do
   before do
     User.as :joe_user
-    @dt = Card.create! :name=>"Date+*tform", :extension_type=>'HardTemplate', :type=>'Basic', :content=>'Tomorrow'
-    @bt = Card.create! :name=>"birthday+*rform", :extension_type=>'HardTemplate', :type=>'Date', :content=>"Today!"      
+    @dt = Card.create! :name=>"Date+*type+*content", :type=>'Basic', :content=>'Tomorrow'
+    @bt = Card.create! :name=>"birthday+*right+*virtual", :type=>'Date', :content=>"Today!"      
     @jb =  Card.create! :name=>"Jim+birthday"
   end       
   
@@ -100,7 +100,7 @@ end
 describe Card, "with hard type template" do
   before do
     User.as :joe_user
-    @dt = Card.create! :name=>"Date+*tform", :extension_type=>'HardTemplate', :type=>'Basic', :content=>'Tomorrow'
+    @dt = Card.create! :name=>"Date+*type+*content", :type=>'Basic', :content=>'Tomorrow'
   end       
   
   it "should return templated content even if content is passed in" do

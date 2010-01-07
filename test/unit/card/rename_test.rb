@@ -202,7 +202,7 @@ class Card::RenameTest < ActiveSupport::TestCase
     Card.create! :name => "Pit"
     Card.create! :name => "Orange", :type=>"Fruit", :content => "[[Pit]]" 
     
-    Card.create! :name => "Fruit+*tform", :extension_type => "HardTemplate", :content=>"this [[Pit]]"
+    Card.create! :name => "Fruit+*type+*default", :content=>"this [[Pit]]"
     
     assert_equal "this [[Pit]]", Card["Orange"].content
     c = Card["Pit"]

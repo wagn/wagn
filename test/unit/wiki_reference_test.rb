@@ -19,7 +19,7 @@ class WikiReferenceTest < ActiveSupport::TestCase
   def test_hard_template_reference_creation_on_template_creation
     Card::Cardtype.create! :name=>"SpecialForm"
     Card::SpecialForm.create! :name=>"Form1", :content=>"foo"
-    Card.create! :name=>"SpecialForm+*tform", :content=>"{{+bar}}", :extension_type=>"HardTemplate"
+    Card.create! :name=>"SpecialForm+*type+*content", :content=>"{{+bar}}"
     Slot.new(Card["Form1"]).render(:naked_content)
     assert !Card["Form1"].references_expired      
     assert_equal ["form1+bar"], Card["Form1"].out_references.plot(:referenced_name)
@@ -37,7 +37,7 @@ class WikiReferenceTest < ActiveSupport::TestCase
 
   def test_hard_templated_card_should_update_references_on_template_update
     Card::UserForm.create! :name=>"JoeForm"
-    tmpl = Card["UserForm+*tform"]
+    tmpl = Card["UserForm+*type+*content"]
     tmpl.content = "{{+monkey}} {{+banana}} {{+fruit}}"; tmpl.save!
     Slot.new(Card["JoeForm"]).render(:naked_content)
     assert_equal ["joe_form+monkey", "joe_form+banana", "joe_form+fruit"].sort,
@@ -109,8 +109,7 @@ class WikiReferenceTest < ActiveSupport::TestCase
     
   def test_template_transclusion
     cardtype = Card::Cardtype.create! :name=>"ColorType", :content=>""
-    template = Card['*tform']
-    Card.create! :trunk=>cardtype, :tag=>template, :content=>"{{#{JOINT}rgb}}"
+    Card.create! "ColorType+*type+*content", :content=>"{{#{JOINT}rgb}}"
     green = Card::ColorType.create! :name=>"green"
     rgb = newcard 'rgb'
     green_rgb = Card.create! :trunk=>green, :tag=>rgb, :content=>"#00ff00"

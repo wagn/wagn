@@ -63,7 +63,7 @@ namespace :wagn do
         " (           card_id is not null and not exists (select * from cards where cards.id = wiki_references.card_id));"
       )
 
-      config_cards = %w{ *context *to *title account_request+*tform *invite+*thank *signup+*thank *from }
+      #config_cards = %w{ *context *to *title account_request+*type+*content account_request+*type+*default *invite+*thank *signup+*thank *from }
       permset = (ENV['PERMISSIONS'] || :standard).to_sym
       
       permission = {
@@ -75,7 +75,7 @@ namespace :wagn do
          'account_request' => {:create=>:anon},
 #         'account_request+*tform' {:read=>:admin},
          'administrator_link'=> {:read=>:admin},
-         'discussion+*rform'=> {:comment=>:anon},
+         'discussion+*right+*default'=> {:comment=>:anon},
          '*watcher' => {:edit=>:auth},
          '*watcher+*rform' => {:edit=>:auth}
         },
@@ -84,11 +84,11 @@ namespace :wagn do
          :star=> {:edit=>:admin, :delete=>:admin},
          'role'=> {:create=>:admin},
          'html'=> {:create=>:admin},
-         'html+*tform'=> {:edit=>:admin},
+         'html+*type+*default'=> {:edit=>:admin},
          'administrator_link'=> {:read=>:admin},
-         'discussion+*rform'=> {:comment=>:anon},
+         'discussion+*right+*default'=> {:comment=>:anon},
          '*watcher' => {:edit=>:auth},
-         '*watcher+*rform' => {:edit=>:auth}
+         '*watcher+*right+*default' => {:edit=>:auth}
         }
       } 
       
@@ -138,7 +138,7 @@ end
     Account Request (create - anon?)
     HTML (create - anon) ??
     *to / *from (delete)
-    *context, *to, *title, Account Request+*tform, *invite+*thanks, *signup+*thanks, *from (edit by admin)      
+    *context, *to, *title, Account Request+*type+*content, *invite+*thanks, *signup+*thanks, *from (edit by admin)      
     Administrator links        
     # 
 

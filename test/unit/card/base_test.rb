@@ -120,7 +120,7 @@ class Card::BaseTest < ActiveSupport::TestCase
     f.permit(:read, Role[:admin])   
     f.save!
     
-    ff = Card.create! :name=>"Fruit+*tform"
+    ff = Card.create! :name=>"Fruit+*type+*default"
     ff.permit(:read, Role[:auth])
     ff.save!
     

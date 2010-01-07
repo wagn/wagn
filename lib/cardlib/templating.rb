@@ -36,7 +36,7 @@ module Cardlib
       end
       
       def tform(name)
-        find_template(name+'+*tform')
+        find_template(name+'+*type+*content')
       end
       
       def find_template(name)
@@ -90,7 +90,7 @@ module Cardlib
     end
     
     def type_templator?
-      attribute_card '*tform'
+      attribute_card '*type+*content'
     end
     
     def right_templator?
@@ -102,11 +102,12 @@ module Cardlib
     #-----( I am a template )
     
     def template?
+      ['*default', '*content', '*virtual'].include?( name.tag_name )
       type_template? or right_template?
     end
        
     def type_template?
-      name ? (name.junction? && name.tag_name == '*tform') : (tag and tag.name == '*tform')
+      name ? (name.junction? && name.tag_name == '*type+*content') : (tag and tag.name == '*tform')
     end
 
     def right_template?

@@ -131,7 +131,7 @@ describe User, "Joe User" do
   before do
     User.as :wagbot 
     @r3 = Role[:r3]
-    @ctf_t = Card.create! :name=>'Cardtype F+*tform'
+    @ctf_t = Card.create! :name=>'Cardtype F+*type+*default'
     @ctf_t.permit(:create, @r3)
     @ctf_t.save!
 

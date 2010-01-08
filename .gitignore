@@ -4,6 +4,7 @@ config/newrelic.yml
 config/wagn.rb
 log/*
 tmp/*
+*.out
 script/performance/*.session
 public/stylesheets/local.css
 pkg
@@ -16,3 +17,5 @@ public/card_images
 public/card_files
 test/unit/tmp_test.rb
 public/javascripts/inline-console.js
+git-daemon-export-ok
+sv

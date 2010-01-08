@@ -143,13 +143,13 @@ describe User, "Joe User" do
   end
 
   it "should not have r3 permissions" do
-    @user.roles.member?(@r3).should_not be_true
+    @user.roles.member?(@r3).should be_false
   end
   it "should ponder creating a card of Cardtype F, but find that he lacks create permissions" do
-    @ctf.ok?(:create).should_not be_true
+    @ctf.ok?(:create).should be_false
   end
   it "should not find Cardtype F on its list of createable cardtypes" do
-    @cardtype_names.member?('Cardtype F').should_not be_true
+    @cardtype_names.member?('Cardtype F').should be_false
   end
   it "should find Basic on its list of createable cardtypes" do
     @cardtype_names.member?('Basic').should be_true

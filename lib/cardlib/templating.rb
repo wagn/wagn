@@ -94,7 +94,7 @@ module Cardlib
     end
     
     def right_templator?
-      attribute_card '*rform'
+      attribute_card( '*right+*default')  || attribute_card( '*right+*content' )
     end
     
 
@@ -102,28 +102,27 @@ module Cardlib
     #-----( I am a template )
     
     def template?
-      name && ['*default', '*content', '*virtual'].include?( name.tag_name )
-      type_template? or right_template?
+      name && name.template_name?
     end
        
     def type_template?
-      name ? (name.junction? && name.tag_name == '*type+*content') : (tag and tag.name == '*tform')
+      name && name.template_name? && name =~ /\*type/
     end
 
     def right_template?
-      name ? (name.junction? && name.tag_name == '*rform') : (tag and tag.name == '*rform')
+      name && name.template_name? && name =~ /\*right/
     end
        
     def hard_template?
-      extension_type=='HardTemplate'
+      !soft_template?
     end
 
     def soft_template?
-      !hard_template?
+      name && name =~ /\*default/
     end
     
     def auto_template?
-      hard_template? and !(type_template? and trunk.simple?)
+      name && name =~ /\*virtual/
     end
     
     
@@ -135,15 +134,17 @@ module Cardlib
     end   
     
     def hard_templatees
-      if wql=hard_templatee_wql
-        User.as(:wagbot)  {  Card.search(wql)  }
+      # FIXME: checking self.trunk.type == "Set" caused all kindof warnings..
+      if self.trunk.isa?(Card::Set)
+        User.as(:wagbot)  {  self.trunk.search()  }
       else
         []
       end
     end    
-    
+
+    # FIXME: content settings -- do we really need the reference expiration system?
     def expire_templatee_references
-	   return unless respond_to?('references_expired')
+	    return unless respond_to?('references_expired')
       if wql=hard_templatee_wql
         condition = User.as(:wagbot) { Wql2::CardSpec.build(wql.merge(:return=>"condition")).to_sql }
         card_ids_to_update = connection.select_rows("select id from cards t where #{condition}").map(&:first)
@@ -160,6 +161,7 @@ module Cardlib
     end        
     
     private
+    # FIXME: remove after adjusting expire_templatee_references to content_settings
     def hard_templatee_wql
       return nil unless template? and hard_template?
       wql =

@@ -77,7 +77,7 @@ namespace :wagn do
          'administrator_link'=> {:read=>:admin},
          'discussion+*rform'=> {:comment=>:anon},
          '*watcher' => {:edit=>:auth},
-         '*watcher+*rform' => {:edit=>:auth}
+         '*watcher+*right+*default' => {:edit=>:auth}
         },
         :openedit=>{
          :default=> {:read=>:anon, :edit=>:anon, :delete=>:auth, :create=>:anon, :comment=>nil},

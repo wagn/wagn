@@ -47,7 +47,7 @@ class WikiReferenceTest < ActiveSupport::TestCase
   
   def test_container_transclusion
     bob_city = Card.create :name=>'bob+city' 
-    Card.create :name=>'address+*rform',:content=>"{{#{JOINT}city|base:parent}}"
+    Card.create :name=>'address+*right+*default',:content=>"{{#{JOINT}city|base:parent}}"
     bob_address = Card.create :name=>'bob+address'
     
     assert_equal ["bob#{JOINT}city"], bob_address.transcludees.plot(:name) 

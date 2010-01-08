@@ -75,8 +75,6 @@ module Card
       self.trash = false   
       self.key = name.to_key if name
       
-      self.extension_type = 'SoftTemplate' if (template? and !self.extension_type)
-       
       unless updates.for?(:permissions)
         self.permissions = default_permissions
       end

@@ -25,9 +25,13 @@ module Cardname
   end
   
   def template_name?
+    !!(tag_name =~ /\*default|\*content|\*virtual/)
+  end
+  
+=begin      
+  def template_name?
     tag_name.=~ /\*.form$/
   end
-=begin      
   def auto_template_name
     (simple? ? self : self.tag_name) + "+*template"
   end

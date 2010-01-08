@@ -102,7 +102,7 @@ module Cardlib
     #-----( I am a template )
     
     def template?
-      ['*default', '*content', '*virtual'].include?( name.tag_name )
+      name && ['*default', '*content', '*virtual'].include?( name.tag_name )
       type_template? or right_template?
     end
        

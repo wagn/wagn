@@ -5,15 +5,10 @@ describe Card, "with hard tag template" do
   before do
     CachedCard.reset_cache
     User.as :joe_user
-    @bt = Card.create! :name=>"birthday+*rform", :extension_type=>'HardTemplate',
-      :type=>'Date', :content=>"Today!"
+    @bt = Card.create! :name=>"birthday+*content", :type=>'Date', :content=>"Today!"
     @jb =  Card.create! :name=>"Jim+birthday"
   end       
  
-  it "should have a hard tag template" do
-    Card['birthday+*rform'].extension_type.should=='HardTemplate'
-  end
-
   it "should have default cardtype" do
     @jb.type.should == 'Date'
   end
@@ -44,7 +39,7 @@ describe Card, "with soft tag template" do
     CachedCard.reset_cache
     CachedCard.bump_global_seq
     User.as :wagbot  do
-      @bt = Card.create! :name=>"birthday+*rform", :type=>'Date', :content=>"Today!"
+      @bt = Card.create! :name=>"birthday+*right+*default", :type=>'Date', :content=>"Today!"
       @bt.permit(:comment, Role['auth']);  @bt.permit(:delete, Role['admin'])
       @bt.save!
     end
@@ -53,7 +48,7 @@ describe Card, "with soft tag template" do
   end
                
   it "should fail without extension" do
-    c = Card.create :type=>"Phrase", :name=>"status+*rform", :content=>"open"
+    c = Card.create :type=>"Phrase", :name=>"status+*right+*default", :content=>"open"
     c.extension_type=nil
     c.save!
     Card.new(:name=>"dt+status").type.should == 'Phrase'

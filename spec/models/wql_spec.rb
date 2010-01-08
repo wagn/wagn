@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 A_JOINEES = ["B", "C", "D", "E", "F"]
       
-CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User","*plusses+*rform"].sort    
+CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User","*plusses+*right+*content"].sort    
 
 #=begin
 describe Wql2, 'append' do
@@ -99,7 +99,7 @@ describe Card, "find_virtual" do
   end
 
   it "should find custom: testsearch" do
-    Card::Search.create! :name=>"testsearch+*rform", 
+    Card::Search.create! :name=>"testsearch+*right+*virtual", 
       :extension_type=>"HardTemplate",
       :content=>'{"plus":"_self"}'  
     Card.find_virtual("A+testsearch").search(:limit=>100).plot(:name).sort.should == A_JOINEES
@@ -299,7 +299,7 @@ describe Wql2, "match" do
   end
   
   it "should get only content when content is explicit" do
-    Card.search( :content=>[:match, "two"] ).plot(:name).sort.should==["Joe User",'*plusses+*rform'].sort
+    Card.search( :content=>[:match, "two"] ).plot(:name).sort.should==["Joe User",'*plusses+*right+*content'].sort
   end
 
   it "should get only name when name is explicit" do

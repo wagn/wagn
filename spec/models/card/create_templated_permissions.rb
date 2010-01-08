@@ -70,7 +70,7 @@ describe Card, "Basic Card template" do
   context "when a create permission is submitted" do 
     before do
       User.as :wagbot 
-      @bt = Card.find_by_name 'Basic+*tform'
+      @bt = Card.find_by_name 'Basic+*type+*default'
       @r1 = Role.find_by_codename 'r1'
       @bt.permit(:create, @r1)
       @bt.save!

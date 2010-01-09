@@ -46,6 +46,7 @@ class User < ActiveRecord::Base
    
     def as(given_user='wagbot')
       given_user = self[given_user] unless given_user===User
+logger.info("WagnRunAs #{given_user}\n")
       tmp_user, self.current_user = self.current_user, given_user
       if block_given?
         value = yield
@@ -70,7 +71,7 @@ class User < ActiveRecord::Base
 
     def authenticate?(email, password)
       (u = self.find_by_email(email.strip.downcase)) &&
-        self.authenticate({:email=>u.email, :password=>password}) ? u : nil
+        self.authenticate({:email => u.email, :password => password.strip}) ? u : nil
     end
 
     def active_users

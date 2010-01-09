@@ -13,6 +13,14 @@ class UserTest < ActiveSupport::TestCase
     assert_equal User.find_by_email('joe@user.com'), User.authenticate?('joe@user.com', 'new password')
   end
   
+  def test_password_too_short
+    assert_no_difference User, :count do
+      u=create_user(:password => 'quire', :password_confirmation => 'quire')
+      assert !u.valid?
+      assert u.errors.on(:password)
+    end
+  end
+
   def test_should_create_user
     assert_difference User, :count do
       assert create_user.valid?
@@ -21,7 +29,8 @@ class UserTest < ActiveSupport::TestCase
 
   def test_should_require_password
     assert_no_difference User, :count do
-      u = create_user(:password => nil)
+      u=create_user(:password => nil)
+      assert u.nil? || !u.valid?
       assert u.errors.on(:password)
     end
   end
@@ -61,13 +70,15 @@ class UserTest < ActiveSupport::TestCase
   def test_should_authenticate_user_with_weird_email_capitalization
     assert User.authenticate?('JOE@user.com', 'joe_pass')
   end
-
   
   protected
   def create_user(options = {})
     User.create({ :login => 'quire', :email => 'quire@example.com', 
-      :password => 'quire', :password_confirmation => 'quire',
+      :password => 'quire1', :password_confirmation => 'quire1',
       :invite_sender_id=>1
     }.merge(options))
+  rescue Exception => e;
+    ActiveRecord::Base.logger.info("Error from create_user:\n#{e.inspect}\n")
+    nil
   end
 end

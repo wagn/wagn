@@ -1,5 +1,5 @@
 class Mailer < ActionMailer::Base
-  def account_info(user, subject, message)
+  def account_info(user, subject, message, password=nil)
     from_user = User.current_user || User[:wagbot]
     from_name = from_user.card ? from_user.card.name : ''
     url_key = user.card.name.to_url_key
@@ -9,7 +9,7 @@ class Mailer < ActionMailer::Base
     subject    subject
     sent_on    Time.now
     body  :email    => (user.email    or raise Wagn::Oops.new("Oops didn't have user email")),
-          :password => (user.password or raise Wagn::Oops.new("Oops didn't have user password")),
+          :password => (password or user.password or raise Wagn::Oops.new("Oops didn't have user password")),
           
           :card_url => "#{System.base_url}/wagn/#{url_key}",
           :pw_url   => "#{System.base_url}/card/options/#{url_key}",

@@ -61,17 +61,17 @@ logger.info("WagnRunAs *#{given_user}*\n")
     def create_with_card(user_args, card_args, email_args={})
       @card = (Hash===card_args ? Card.new({'type'=>'User'}.merge(card_args)) : card_args) 
       @user = User.new({:invite_sender=>User.current_user, :status=>'active'}.merge(user_args))
-      @user.generate_password if @user.password.blank?
+      # gen_pw = Does devise do the mailing here? need to look into it
+      @user.generate_password if @user.encrypted_password.blank?
       @user.save_with_card(@card)
-      begin
-        @user.send_account_info(email_args) if @user.errors.empty? && !email_args.empty?
-      end
+      #begin
+      #  @user.send_account_info(email_args) if @user.errors.empty? && !email_args.empty?
+      #end
       [@user, @card]
     end
 
-    def create(*args)
-      if (u=super).encrypted_password; u
-      else raise "Validation: password required" end
+    def random_base64(n=9)
+      ActiveSupport::SecureRandom.base64(n)
     end
 
     def authenticate?(email, password)
@@ -111,7 +111,7 @@ logger.info("WagnRunAs *#{given_user}*\n")
       card.permit :edit, Card.new(:type=>'User').who_can(:edit) #give default user permissions
       self.status='active'
       self.invite_sender = ::User.current_user
-      generate_password
+      email_args[:password] = generate_password
       save_with_card(card)
     end
     #card.save #hack to make it so last editor is current user.
@@ -123,7 +123,7 @@ logger.info("WagnRunAs *#{given_user}*\n")
     raise(Wagn::Oops, "subject is required") unless (args[:subject])
     raise(Wagn::Oops, "message is required") unless (args[:message])
     begin
-      Mailer.deliver_account_info(self, args[:subject], args[:message])
+      Mailer.deliver_account_info(self, args[:subject], args[:message], args[:password])
     rescue Exception=>e; warn("\nACCOUNT INFO DELIVERY FAILED: #{e.full_message} \n #{args.inspect}")
     end
   end  
@@ -132,6 +132,9 @@ logger.info("WagnRunAs *#{given_user}*\n")
     @cached_roles ||= (login=='anon' ? [Role[:anon]] : 
       roles + [Role[:anon], Role[:auth]])
   end  
+  def generate_password;
+    if encrypted_password.blank?; password = User.random_base64 else '' end
+  end
   def active?; status=='active' end
   def blocked?; status=='blocked' end
   def built_in?; status=='system' end

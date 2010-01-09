@@ -10,7 +10,7 @@ module Card
     end
 
     private
-=begin    
+
     def create_user
       self.extension = ::User.new( self.account )
       extension.generate_password         
@@ -18,7 +18,6 @@ module Card
       extension.errors.each do |attr,msg| self.errors.add(attr,msg) end
       return false unless extension.valid?
     end
-=end
    
     def block_user
       if extension

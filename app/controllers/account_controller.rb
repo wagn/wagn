@@ -17,6 +17,7 @@ class AccountController < ApplicationController
     return unless (captcha_required? ? verify_captcha(:model=>@user) : true)
 
     @user, @card = User.create_with_card( user_args, card_args )
+debugger unless @user.errors.empty?
     return unless @user.errors.empty?
               
     User.as :wagbot  do ## in case user doesn't have permission for included cardtypes.  For now letting signup proceed even if there are errors on multi-update
@@ -92,12 +93,12 @@ class AccountController < ApplicationController
       flash[:notice] = "The account associated with that email address is not active."  #ENGLISH
       render :action=>'signin', :status=>403
     else
-      @user.generate_password
+      generated_password = @user.generate_password
       @user.save!                       
       subject = "Password Reset"  #ENGLISH
       message = "You have been given a new temporary password.  " +  #ENGLISH
          "Please update your password once you've logged in. "
-      Mailer.deliver_account_info(@user, subject, message)
+      Mailer.deliver_account_info(@user, subject, message, generated_password)
       flash[:notice] = "A new temporary password has been set on your account and sent to your email address"  #ENGLISH
       redirect_to previous_location
     end  
@@ -144,9 +145,8 @@ class AccountController < ApplicationController
   end
 
   protected
-=begin
   def password_authentication(login, password)
-    if self.current_user = User.authenticate(params[:login], params[:password])
+    if self.current_user = User.authenticate?(params[:login], params[:password])
       successful_login
     elsif u = User.find_by_email(params[:login].strip.downcase)
       if u.blocked?
@@ -158,7 +158,6 @@ class AccountController < ApplicationController
       failed_login("We don't recognize that email")  #ENGLISH
     end
   end
-=end
 
 =begin
   def open_id_authentication

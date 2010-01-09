@@ -46,7 +46,7 @@ class User < ActiveRecord::Base
    
     def as(given_user='wagbot')
       given_user = self[given_user] unless given_user===User
-logger.info("WagnRunAs #{given_user}\n")
+logger.info("WagnRunAs *#{given_user}*\n")
       tmp_user, self.current_user = self.current_user, given_user
       if block_given?
         value = yield
@@ -69,32 +69,27 @@ logger.info("WagnRunAs #{given_user}\n")
       [@user, @card]
     end
 
+    def create(*args)
+      if (u=super).encrypted_password; u
+      else raise "Validation: password required" end
+    end
+
     def authenticate?(email, password)
       (u = self.find_by_email(email.strip.downcase)) &&
         self.authenticate({:email => u.email, :password => password.strip}) ? u : nil
     end
 
-    def active_users
-      self.find(:all, :conditions=>"status='active'")
-    end 
-    
     def [](login)
-      login=login.to_s
-      login.blank? ? nil : (self.cache[login] ||= User.find_by_login(login)) 
+      if (login=login.to_s).blank? ; nil
+      else self[login] = self.find_by_login(login) end
     end
-
-    def no_logins?
-      self.cache[:no_logins] ||= User.count < 3
-    end
-    
-    def clear_cache
-      self.cache = {}
-    end
-
+    def active_users; self.find(:all, :conditions=>"status='active'") end 
+    def []=(login, user); self.cache[login] = user end
+    def no_logins?; self.cache[:no_logins] ||= User.count < 3 end
+    def clear_cache; self.cache = {} end
   end 
 
   ## INSTANCE METHODS
-
   def save_with_card(card)
     #fail "save with card #{card.inspect}"
     User.transaction do
@@ -109,7 +104,6 @@ logger.info("WagnRunAs #{given_user}\n")
     end
   rescue  
   end
-      
 
   def accept(email_args)
     User.as do #what permissions does approver lack?  Should we check for them?
@@ -138,67 +132,27 @@ logger.info("WagnRunAs #{given_user}\n")
     @cached_roles ||= (login=='anon' ? [Role[:anon]] : 
       roles + [Role[:anon], Role[:auth]])
   end  
-
-  def active?
-    status=='active'
-  end
-  def blocked?
-    status=='blocked'
-  end
-  def built_in?
-    status=='system'
-  end
-  def pending?
-    status=='pending'
-  end
-
+  def active?; status=='active' end
+  def blocked?; status=='blocked' end
+  def built_in?; status=='system' end
+  def pending?; status=='pending' end
+  def anonymous?; login == 'anon' end
+  def to_s; "#<#{self.class.name}:#{login.blank? ? email : login}}>" end
+  def mocha_inspect; to_s end
+  def downcase_email!; self.email=self.email.downcase if self.email end 
   # blocked methods for legacy boolean status
   def blocked=(block)
-    if block != '0'
-      self.status = 'blocked'
-    elsif !built_in?
-      self.status = 'active'
-    end
+    self.status = if block != '0'; 'blocked'
+      elsif !built_in?; 'active'
+      else self.status end
   end
-
-  def anonymous?
-    login == 'anon'
-  end
-
-  def generate_password
-    pw=''; 9.times { pw << ['A'..'Z','a'..'z','0'..'9'].map{|r| r.to_a}.flatten[rand*61] }
-    self.password = pw 
-    self.password_confirmation = self.password
-  end
-
-  def to_s
-    "#<#{self.class.name}:#{login.blank? ? email : login}}>"
-  end
-
-  def mocha_inspect
-    to_s
-  end
-   
-  #before validation
-  def downcase_email!
-    self.email=self.email.downcase if self.email
-  end 
    
   protected
-  # Encrypts the password with the user salt
-  def encrypt(password)
-    self.class.encrypt(password, salt)
-  end
-
-  def email_required?
-    !built_in?
-  end
-
   def password_required?
-     !built_in? && !pending? && nonlocal? &&
-       (encrypted_password.blank? or not password.blank?)
+     rs = !built_in? && !pending? && local? &&
+      (encrypted_password.blank? or not password.blank?)
   end
- 
-  def nonlocal?; false end
+  def email_required?; !built_in? end
+  def local?; true end # make false for remove service based logins ...
 end
 

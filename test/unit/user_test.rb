@@ -46,9 +46,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   def test_should_not_rehash_password
-#debugger
-    u = User.find_by_email('joe@user.com')
-    u.update_attributes!(:email => 'joe2@user.com')
+    User.find_by_email('joe@user.com').update_attributes!(:email => 'joe2@user.com')
     assert_equal User.find_by_email('joe2@user.com'), User.authenticate?('joe2@user.com', 'joe_pass')
   end
 

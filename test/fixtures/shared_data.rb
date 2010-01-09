@@ -3,7 +3,6 @@ require 'timecop'
 class SharedData   
   FUTURE = Time.local(2020,1,1,0,0,0)  
   def self.add_test_data
-debugger
     ::User.as do 
       joe_user = ::User.create! :login=>"joe_user",:email=>'joe@user.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>User[:wagbot]
       Card::User.create! :name=>"Joe User", :extension=>joe_user, :content => "I'm number two"    

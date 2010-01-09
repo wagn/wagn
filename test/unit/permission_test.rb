@@ -171,6 +171,7 @@ class PermissionTest < ActiveSupport::TestCase
       c2(r2)  T  T  F
       c3(r3)  T  F  F
     }
+#debugger # none are true ???
     assert_equal true,  @c1.writeable_by(@u1), "c1 writeable by u1"
     assert_equal true,  @c1.writeable_by(@u2), "c1 writeable by u2" 
     assert_equal true,  @c1.writeable_by(@u3), "c1 writeable by u3" 

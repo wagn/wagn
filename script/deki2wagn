@@ -1,0 +1,313 @@
+#!/usr/bin/perl -w
+
+use Carp;
+use XML::XPath;
+use XML::XPath::XMLParser;
+
+my %basic_tags = (
+  #a => ['href' ],
+  #img => ['src', 'alt', 'title'],
+  br => [],
+  i  => [],
+  b  => [],
+  pre=> [],
+  code => ['lang'],
+  cite=> [],
+  strong=> [],
+  em  => [],
+  ins => [],
+  sup => [],
+  sub => [],
+  del => [],
+  ol => [],       
+  hr => [],
+  ul => [],
+  li => [],
+  p  => [],
+  h1 => [],
+  h2 => [],
+  h3 => [],
+  h4 => [],
+  h5 => [],
+  h6 => [],
+  blockquote => ['cite'],
+  span=>[]
+);
+#my $basic_xpath = "*/".join("|*/", (keys %basic_tags));
+my $basic_xpath = "descendant::".join("|", (keys %basic_tags));
+
+%convert_tags = (
+  col => ':skip', # column style
+  div => ':skip',
+  embed => ':html',  # html 5 embedded 
+  font => ':skip',
+  form => ':delete',
+  iframe => ':html',
+  input => ':delete',
+  object => ':html',  # html 5 embedded
+  option => ':delete',
+  param => ':delete',
+  script => ':delete',
+  select => ':delete',
+  small => ':skip',
+  strike => ':skip',   # deprecated for <del>
+  table => '<pre>',
+  tbody => ':skip',    # html 5 table body
+  tr => '\n',
+  td => '\t',
+  u => ':skip',
+);
+my $convert_xpath = "descendant::".
+        join("|", grep($convert_tags{$_} ne ':html', (keys %convert_tags)));
+my $convert_xpath_html = "descendant::".
+        join("|", grep($convert_tags{$_} eq ':html', (keys %convert_tags)));
+
+print STDERR "Path: $convert_xpath\nHTML Path: $convert_xpath_html\n";
+my $xmlfile = "tt.com.xml";
+
+my $xp = XML::XPath->new(filename => $xmlfile);
+
+my $nodeset = $xp->find("/deki/page"); # find all pages
+
+&allelements($nodeset) if (@ARGV && $ARGV[0] eq '-E');
+
+my %pagename = ();
+my %images = ();
+grep(&savename($_),($nodeset->get_nodelist));
+  
+binmode STDOUT, ':utf8';
+print "\@user = User.current_user = User.find_by_login('wagbot')\n\n";
+foreach my $node ($nodeset->get_nodelist) {
+  #print &dumplinks($node);
+
+  my $if_nodes = $node->find($convert_xpath_html);
+  if ($if_nodes->get_nodelist > 0) {
+    print create_card('HTML', $node->findvalue('@name'),&transform_html($node));
+  } else {
+    print create_card('Basic',$node->findvalue('@name'),&transform($node));
+  }
+}
+for my $i (sort keys %images) { print STDERR "$i: $images{$i}\n"; }
+exit;
+
+sub create_card {
+my ($type, $name, $cont) = @_;
+  $cont =~ s/}/\\}/g;
+  $cont =~ s/{/\\{/g;
+  "Card::$type.create(:name => %{$name},\n\t:content => %{$cont})\n";
+}
+
+sub pagename {
+my $title = shift;
+my $x = $pagename{$title};
+  return $x if $x;
+my $name = $title;
+  $name =~ s!.*/!!;
+  $pagename{$title} = $name;
+}
+
+sub savename {
+my $name = $_[0]->findvalue('@name');
+my $title = $_[0]->findvalue('@title');
+  print STDERR "Dup: $title -> $name :: $pagename{$title}\n" if defined($pagename{$title});
+#print STDERR "Pagename: $title -> $name\n";
+  $pagename{$title} = $name;
+}
+
+sub dumplinks {
+my ($node) = (shift);
+my $out = '';
+my $myname = $node->findvalue("\@name");
+my $mytitle = $node->findvalue("\@title");
+print STDERR "Page: N:$myname T:$mytitle\n";
+
+my $img_nodes = $node->find("*/img");
+ if ($img_nodes->get_nodelist > 0) {
+print STDERR "Image nodes:\n";
+  for my $i ($img_nodes->get_nodelist) {
+    print STDERR "Img:",$i->toString,"\n";
+  }
+ }
+my $a_nodes = $node->find("*/a");
+ if ($a_nodes->get_nodelist > 0) {
+print STDERR "A nodes:\n";
+  for my $a ($a_nodes->get_nodelist) {
+    print STDERR "A:",$a->toString,"\n";
+  }
+ }
+}
+
+sub transform_html {
+my ($node) = (shift);
+my $myname = $node->findvalue("\@name");
+#print STDERR "Card has an iframe, html?: $myname\n";
+   $node->toString."\n";
+}
+
+sub transform {
+my ($node) = (shift);
+my $myname = $node->findvalue("\@name");
+#print STDERR "Myname: $myname",$myname->value,"\n";
+
+my $good_nodes;
+  $good_nodes=$node->find($basic_xpath);
+  for my $s ($good_nodes->get_nodelist) {
+    my $tag = $s->getName;
+    my $ok_attr = {};
+    my $x =$basic_tags{$tag};
+#print STDERR "XXX: $x ",join(', ', @$x),"\n";
+    grep($$ok_attr{$_}=1,@$x);
+    &clean_attr($s, $ok_attr);
+#print STDERR "Processed basic: ".$node->toString."\n";
+  }
+
+my $img_nodes = $node->find("*/img");
+  # process img nodes
+  for my $i ($img_nodes->get_nodelist) {
+    my $src = $i->findvalue('@src');
+    my $alt = $i->findvalue('@alt');
+    my $class = $i->findvalue('@class');
+    if ($class eq 'externallink') {
+      if ($src =~ m!external_link\.gif\s*$!) {
+        &replacenode($node, $i);
+      } else {
+        &image($src);
+#print STDERR "Img: C:$class A:$alt S:$src\n";
+      }
+    } else {
+      &replacenode($node, $i);
+    }
+  }
+  # check if any <img> tags survived.
+  if ($img_nodes = $node->find("*/img")) {
+    for my $i ($img_nodes->get_nodelist) {
+      print STDERR "Image: ",$i->toString,"\n";
+    }
+  }
+my $a_nodes = $node->find("*/a");
+  for my $a ($a_nodes->get_nodelist) {
+    my $class = $a->findvalue("\@class");
+    my $kids = $a->getChildNodes;
+#$k = join(', ', map($_->toString(), @$kids));
+    $kids = join('', map($_->toString(), @$kids));
+    if ($class =~ /^\s*external\s*$/) {
+      my $href = $a->findvalue("\@href");
+#print STDERR "Replace: $class $href [[$href|$kids]]", $href->value(),"\n";
+      $href .= "|$kids" unless $kids eq $href;
+      &replacenode($node, $a, XML::XPath::Node::Text->new("[[$href]]"));
+    } elsif ($class =~ /^\s*internal\s*$/) {
+      my $title = $a->findvalue("\@title");
+      my $name = &pagename($title);
+#print STDERR "Replace: Title: N:$name T:$title K:$kids\n";
+      $name .= "|$kids" unless $kids eq $name;
+      &replacenode($node, $a, XML::XPath::Node::Text->new("[[$name]]"));
+    } else {
+      my $name = $a->findvalue("\@name");
+      &replacenode($node, $a);
+#print STDERR "Replace: Anchor? $class N:$name",$a->toString,"\n";
+    }
+  }
+my ($r, $x)=0;
+  while ($x=&change_elements($node)) {
+#print STDERR "ChEl [",$r++,"] $x\n";
+  }
+  $node->toString."\n";
+}
+
+sub change_elements {
+my ($node, $cardname, $f) = @_;
+  $cardname = $node->findvalue('@name') unless $cardname;
+my @chg_nodes = $node->find($convert_xpath)->get_nodelist;
+if ($f) {
+  my $ndstr = $node->toString;
+  my $findstr = map($_->getName, @chg_nodes);
+  #print STDERR "change_el: Node: $ndstr Find:$findstr\n";
+}
+  for my $c (@chg_nodes) {
+    my $tag = $c->getName;
+    my $ccode = $convert_tags{$tag};
+    my @replace =();
+#print STDERR "Chg code: $ccode $tag ";
+    if ($ccode =~ /^:/) {
+#print STDERR "Symbol\n";
+      if ($ccode eq ':error') {
+      } elsif ($ccode eq ':delete') {
+#print STDERR "Delete[$cardname] $tag\n";
+#print STDERR "Node:",$node->toString,"\n" unless $cardname;
+#Carp::confess unless $cardname;
+        $c->dispose
+      } elsif ($ccode eq ':error') {
+#print STDERR "Unexpected tag: $tag\n";
+      } elsif ($ccode eq ':skip') {
+        @replace = $c->getChildNodes;
+        &change_elements($c, $cardname, 1);
+        #grep(&change_elements($_, $cardname, 1), @replace);
+      }
+    } elsif ($ccode =~ s/^<(\w+)>$/$1/) {
+#print STDERR "Element[$cardname] $tag\n";
+      @replace = (XML::XPath::Node::Element->new($ccode));
+      &change_elements($c, $cardname, 1);
+      for my $kid ($c->getChildNodes) {
+        $replace[0]->appendChild($kid);
+      }
+    } else {
+#print STDERR "Text Replace element with text: $ccode:: ",$c->toString,"\n";
+      @replace = ($c->getChildNodes, XML::XPath::Node::Text->new($ccode));
+      &change_elements($c, $cardname, 1);
+    }
+    &replacenode($node, $c, @replace);
+##print STDERR ("Found two: ".$node->toString." C:".$c->toString."\n");
+  }
+#print STDERR "Found tags: ",join(' :: ', map($_->getName, @chg_nodes)),"\n" if ((@chg_nodes) > 0);
+  scalar(@chg_nodes);
+}
+
+sub clean_attr {
+my ($node, $ok_ref) = @_;
+my $attr = $node->getAttributes;
+  return unless $attr;
+#print STDERR "clean_attr: ",join(', ',map($_->getName,@$attr))," ",join(', ', (keys %$ok_ref)),"\n";
+my $rm = 0;
+  for my $at (@$attr) {
+    my $atname = $at->getName;
+    unless ($$ok_ref{$atname}) {
+#print STDERR "Remove attr: ",$node->getName," $atname\n";
+$rm = 1;
+      $node->removeAttribute($atname);
+    }
+  }
+#print STDERR "cleaned_attr: ",$node->toString,"\n" if $rm;
+}
+
+sub image { my $x = $images{$_[0]}; $images{$_[0]} = ($x) ? $x+1 : 1; }
+
+sub replacenode {
+my ($context, $replace) = (shift, shift);
+  my $parent = $replace->getParentNode || $context;
+  my $siblings = $parent->getChildNodes;
+  my $pos = $replace->get_pos;
+  #$replace->del_parent_link;
+  $replace->dispose;
+  grep($_->setParentNode($parent), @_);
+Carp::confess() if $pos<0;
+  splice(@$siblings, $pos, 1, @_);
+  grep(${$siblings}[$_]->set_pos($_), ($pos..$#$siblings));
+my $new = join('',map($_->toString, @_));
+#print STDERR "Replace P:$pos N:$#_ Nd:",substr($replace->toString,0,16)," Nw:$new\n";
+  @_;
+}
+
+sub allelements {
+my ($nodes) = (shift);
+  foreach my $node ($nodes->get_nodelist) {
+    next if ($node->find('*/iframe'));
+  my $all = $node->find('descendant::*');
+    my @list = map($_->getName, ($all->get_nodelist));
+    grep($tags{$_}||=0, @list);
+    grep($tags{$_}++, @list);
+  }
+  for my $t (sort keys %tags) { print STDERR "$t -> $tags{$t}\n"; }
+  exit;
+}
+
+

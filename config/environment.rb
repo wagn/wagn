@@ -11,7 +11,14 @@ require File.join(File.dirname(__FILE__), 'wagn_initializer')
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence those specified here
   #RAILS_GEM_VERSION = '2.3.2' unless defined? RAILS_GEM_VERSION  
-     
+
+  # for devise authentication
+  config.gem 'warden', :version => '>=0.6.5'
+  config.gem 'devise', :version => '>=0.7.0'
+
+  #config.i18n.default_locale = :en
+  #config.time_zone = 'UTC'
+
   Wagn::Initializer.set_default_rails_config config
 
   # Skip frameworks you're not going to use

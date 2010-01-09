@@ -1,48 +1,52 @@
 require 'digest/sha1'
 
 class User < ActiveRecord::Base
-  #FIXME: THIS WHOLE MODEL SHOULD BE CALLED ACCOUNT
+  #FIXME: THIS WHOLE MODEL WILL BE SPLIT INTO User and Account
+  # Card::Account will be a new extended cardtype
+  # Refactor to warden/devise first
   
-  # Virtual attribute for the unencrypted password
-  attr_accessor :password, :name
+  # Declare devise configuration
+  devise :all
+  
   cattr_accessor :current_user
   
   has_and_belongs_to_many :roles
-  belongs_to :invite_sender, :class_name=>'User', :foreign_key=>'invite_sender_id'
-  has_many :invite_recipients, :class_name=>'User', :foreign_key=>'invite_sender_id'
+  belongs_to :invite_sender,     :class_name=>'User',
+               :foreign_key=>'invite_sender_id'
+  has_many   :invite_recipients, :class_name=>'User',
+               :foreign_key=>'invite_sender_id'
 
   acts_as_card_extension
    
-  validates_presence_of     :email, :if => :email_required?
-  validates_format_of       :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i  , :if => :email_required?
-  validates_length_of       :email, :within => 3..100,   :if => :email_required?
-  validates_uniqueness_of   :email, :scope=>:login,      :if => :email_required?  
-  validates_presence_of     :password,                   :if => :password_required?
-  validates_presence_of     :password_confirmation,      :if => :password_required?
-  validates_length_of       :password, :within => 5..40, :if => :password_required?
-  validates_confirmation_of :password,                   :if => :password_required?
-  validates_presence_of     :invite_sender,              :if => :active?
+  validates_presence_of     :email,                 :if => :email_required?
+  validates_format_of       :email, :with =>
+     /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i  , :if => :email_required?
+  validates_length_of       :email,
+                              :within => 3..100,    :if => :email_required?
+  validates_uniqueness_of   :email, :scope=>:login, :if => :email_required?  
+  validates_presence_of     :password,              :if => :password_required?
+  validates_presence_of     :password_confirmation, :if => :password_required?
+  validates_length_of       :password,
+                              :within => 5..40,     :if => :password_required?
+  validates_confirmation_of :password,              :if => :password_required?
+  validates_presence_of     :invite_sender,         :if => :active?
 #  validates_uniqueness_of   :salt, :allow_nil => true
   
   before_validation :downcase_email!
-  before_save :encrypt_password
   
   cattr_accessor :cache  
   self.cache = {}
-  
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
   class << self
     # CURRENT USER
-    def current_user
-      @@current_user ||= find_by_login('anon')  
-    end
-    
-    def current_user=(user)
-      @@current_user = user
-    end
+    def current_user; @@current_user ||= self.anonymous end
+    def current_user=(user); @@current_user = user end
+    def anonymous; self['anon'] end
+    def admin; self['wagbot'] end
    
-    def as(given_user)
-      tmp_user = self.current_user
-      self.current_user = given_user.class==User ? given_user : User[given_user]
+    def as(given_user='wagbot')
+      given_user = self[given_user] unless given_user===User
+      tmp_user, self.current_user = self.current_user, given_user
       if block_given?
         value = yield
         self.current_user = tmp_user
@@ -51,8 +55,7 @@ class User < ActiveRecord::Base
         current_user
       end
     end
-    
-    
+
     # FIXME: args=params.  should be less coupled..
     def create_with_card(user_args, card_args, email_args={})
       @card = (Hash===card_args ? Card.new({'type'=>'User'}.merge(card_args)) : card_args) 
@@ -65,20 +68,14 @@ class User < ActiveRecord::Base
       [@user, @card]
     end
 
+    def authenticate?(email, password)
+      (u = self.find_by_email(email.strip.downcase)) &&
+        self.authenticate({:email=>u.email, :password=>password}) ? u : nil
+    end
+
     def active_users
       self.find(:all, :conditions=>"status='active'")
     end 
-    
-    # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
-    def authenticate(email, password)
-      u = self.find_by_email(email.strip.downcase)
-      u && u.authenticated?(password.strip) ? u : nil
-    end
-
-    # Encrypts some data with the salt.
-    def encrypt(password, salt)
-      Digest::SHA1.hexdigest("#{salt}--#{password}--")
-    end    
     
     def [](login)
       login=login.to_s
@@ -93,10 +90,6 @@ class User < ActiveRecord::Base
       self.cache = {}
     end
 
-    # OPENID - on hold
-    #def find_or_create_by_identity_url(url)
-    #  self.find_by_identity_url(url) || User.create_with_card(:identity_url=>url)
-    #end
   end 
 
   ## INSTANCE METHODS
@@ -118,7 +111,7 @@ class User < ActiveRecord::Base
       
 
   def accept(email_args)
-    User.as :wagbot  do #what permissions does approver lack?  Should we check for them?
+    User.as do #what permissions does approver lack?  Should we check for them?
       card.type = 'User'  # change from Invite Request -> User
       card.permit :edit, Card.new(:type=>'User').who_can(:edit) #give default user permissions
       self.status='active'
@@ -136,7 +129,7 @@ class User < ActiveRecord::Base
     raise(Wagn::Oops, "message is required") unless (args[:message])
     begin
       Mailer.deliver_account_info(self, args[:subject], args[:message])
-    rescue; warn("ACCOUNT INFO DELIVERY FAILED: \n #{args.inspect}")
+    rescue Exception=>e; warn("\nACCOUNT INFO DELIVERY FAILED: #{e.full_message} \n #{args.inspect}")
     end
   end  
 
@@ -171,10 +164,6 @@ class User < ActiveRecord::Base
     login == 'anon'
   end
 
-  def authenticated?(password) 
-    crypted_password == encrypt(password) and active?      
-  end
-
   def generate_password
     pw=''; 9.times { pw << ['A'..'Z','a'..'z','0'..'9'].map{|r| r.to_a}.flatten[rand*61] }
     self.password = pw 
@@ -200,24 +189,15 @@ class User < ActiveRecord::Base
     self.class.encrypt(password, salt)
   end
 
-  # before save
-  def encrypt_password
-    return if password.blank?
-    self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{login}--") if new_record?
-    self.crypted_password = encrypt(password)
-  end
-
   def email_required?
     !built_in?
   end
 
   def password_required?
-     !built_in? && !pending? && not_openid? && (crypted_password.blank? or not password.blank?)
+     !built_in? && !pending? && nonlocal? &&
+       (encrypted_password.blank? or not password.blank?)
   end
  
-  def not_openid?
-    identity_url.blank?
-  end
-
+  def nonlocal?; false end
 end
 

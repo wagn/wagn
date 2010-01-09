@@ -144,6 +144,7 @@ class AccountController < ApplicationController
   end
 
   protected
+=begin
   def password_authentication(login, password)
     if self.current_user = User.authenticate(params[:login], params[:password])
       successful_login
@@ -157,6 +158,7 @@ class AccountController < ApplicationController
       failed_login("We don't recognize that email")  #ENGLISH
     end
   end
+=end
 
 =begin
   def open_id_authentication

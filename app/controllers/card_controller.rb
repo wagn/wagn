@@ -19,7 +19,7 @@ class CardController < ApplicationController
   def index   
     redirect_to(
       case
-      when User.no_logins?;                 '/admin/setup'
+      when User.first_login.nil?;                 '/admin/setup'
       when home = System.setting('*home');  '/'+ home
       else { :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_title) }
       end

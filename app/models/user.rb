@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   # Declare devise configuration
   devise :all
   
-  cattr_accessor :current_user
+  cattr_accessor :current_user, :first_user
   
   has_and_belongs_to_many :roles
   belongs_to :invite_sender,     :class_name=>'User',
@@ -34,23 +34,28 @@ class User < ActiveRecord::Base
   
   before_validation :downcase_email!
   
-  cattr_accessor :cache, :root_login, :nobody_login, :aliases
-  self.aliases = {}
-  self.cache = {}
-  self.root_login=self.find_by_id(1).login
+  cattr_reader :cache, :root_login, :nobody_login, :aliases
+  @@aliases = {}
+  @@cache = {}
+  @@root_login=self.find_by_id(1).login
   logger.info("Login:Root: #{self.cache[:root]}\n")
-  self.nobody_login=self.find_by_id(2).login
+  @@nobody_login=self.find_by_id(2).login
   logger.info("Login:Nobody: #{self.cache[:nobody]}\n")
-#debugger
+  self.first_user=self.find_by_id(3)
+  logger.info("Login:First: #{self.cache[:first]}\n")
 
   class << self
     # CURRENT USER
     Card::Base.login_alias :root, :admin, :wagbot
     Card::Base.login_alias :nobody, :anon, :anonymous
     def current_user; @@current_user ||= self.anonymous end
+    def first_login; self.first_user.login end
+    def first_login=(user)
+      self.first_user = User===user ? user : self.find_by_login(user)
+    end
     def current_user=(user)
 raise "User not user #{user.class}" if user && !User===user
-logger.info "User not user #{user.class}" if user && !User===user
+#logger.info "User not user #{user.class}" if user && !User===user
       @@current_user = user ? User===user ? user : self[user] : anonymous
     end
     def anonymous; self[self.nobody_login] end
@@ -117,8 +122,7 @@ end
     end
     def active_users; self.find(:all, :conditions=>"status='active'") end 
     def []=(login, user); self.cache[login] = user end
-    def no_logins?; self.cache[:no_logins] ||= User.count < 3 end
-    def clear_cache; self.cache = {} end
+    def clear_cache; @@cache = {} end
   end 
 
   ## INSTANCE METHODS

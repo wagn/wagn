@@ -7,7 +7,7 @@ module WagnTestHelper
     User.clear_cache
     
     # FIXME: should login as joe_user by default-- see what havoc it creates...
-    @user = User.current_user = User.find_by_login('wagbot')
+    @user = User.current_user = User.admin
 
     #@user.update_attribute('crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c')
     #@user.password="wagbot_pass"

@@ -7,7 +7,7 @@ module AuthenticatedTestHelper
                  
   def signout
     @request.session[:user] = nil
-    User.current_user = @request.session[:user]
+    User.current_user = ::User[@request.session[:user]]
   end
   
   

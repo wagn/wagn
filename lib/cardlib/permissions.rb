@@ -19,7 +19,6 @@ module Cardlib
       "#{User.current_user.login}, You don't have permission to"
     end
 
-    
     module ClassMethods 
       def create_ok?()   
         ::Cardtype.create_ok?(  self.name.gsub(/.*::/,'') )
@@ -31,6 +30,11 @@ module Cardlib
           msg = "You don't have permission to create #{type} cards" 
           raise Wagn::PermissionDenied.new(msg) 
         end
+      end
+      def login_alias(*args)
+       args.each do |a|
+         User.aliases[a.to_s] = args[0]
+       end
       end
     end
 

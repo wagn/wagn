@@ -34,20 +34,40 @@ class User < ActiveRecord::Base
   
   before_validation :downcase_email!
   
-  cattr_accessor :cache  
+  cattr_accessor :cache, :root_login, :nobody_login, :aliases
+  self.aliases = {}
   self.cache = {}
-#1234567890123456789012345678901234567890123456789012345678901234567890123456789
+  self.root_login=self.find_by_id(1).login
+  logger.info("Login:Root: #{self.cache[:root]}\n")
+  self.nobody_login=self.find_by_id(2).login
+  logger.info("Login:Nobody: #{self.cache[:nobody]}\n")
+#debugger
+
   class << self
     # CURRENT USER
+    Card::Base.login_alias :root, :admin, :wagbot
+    Card::Base.login_alias :nobody, :anon, :anonymous
     def current_user; @@current_user ||= self.anonymous end
-    def current_user=(user); @@current_user = user end
-    def anonymous; self['anon'] end
-    def admin; self['wagbot'] end
+    def current_user=(user)
+raise "User not user #{user.class}" if user && !User===user
+logger.info "User not user #{user.class}" if user && !User===user
+      @@current_user = user ? User===user ? user : self[user] : anonymous
+    end
+    def anonymous; self[self.nobody_login] end
+    def admin; self[self.root_login] end
    
-    def as(given_user='wagbot')
-      given_user = self[given_user] unless given_user===User
-logger.info("WagnRunAs *#{given_user}*\n")
-      tmp_user, self.current_user = self.current_user, given_user
+    def as(as_user=nil)
+      unless as_user===User
+#b=as_user
+        as_user = as_user && self[as_user] || admin
+#c = self[b] if b
+#d = admin unless b and c
+#as_user = b and c or d
+#debugger unless User === as_user
+raise "User for as not user (#{b}) #{as_user.class}\n#{as_user.inspect}\n" unless User===as_user
+      end
+      #logger.info("WagnRunAs *#{as_user}*\n")
+      tmp_user, self.current_user = self.current_user, as_user
       if block_given?
         value = yield
         self.current_user = tmp_user
@@ -62,7 +82,7 @@ logger.info("WagnRunAs *#{given_user}*\n")
       @card = (Hash===card_args ? Card.new({'type'=>'User'}.merge(card_args)) : card_args) 
       @user = User.new({:invite_sender=>User.current_user, :status=>'active'}.merge(user_args))
       # gen_pw = Does devise do the mailing here? need to look into it
-      @user.generate_password if @user.encrypted_password.blank?
+      #@user.generate_password if @user.encrypted_password.blank?
       @user.save_with_card(@card)
       #begin
       #  @user.send_account_info(email_args) if @user.errors.empty? && !email_args.empty?
@@ -70,6 +90,14 @@ logger.info("WagnRunAs *#{given_user}*\n")
       [@user, @card]
     end
 
+=begin
+def create(*args)
+super
+rescue Exception=>e
+debugger
+raise e
+end
+=end
     def random_base64(n=9)
       ActiveSupport::SecureRandom.base64(n)
     end
@@ -79,9 +107,13 @@ logger.info("WagnRunAs *#{given_user}*\n")
         self.authenticate({:email => u.email, :password => password.strip}) ? u : nil
     end
 
+    def alias_to_user(login)
+      return u if (u=self.aliases[login])===User
+      self.aliases[login] = self.cache[login]
+    end
     def [](login)
       if (login=login.to_s).blank? ; nil
-      else self[login] = self.find_by_login(login) end
+      else self[login] = alias_to_user(login) || self.find_by_login(login) end
     end
     def active_users; self.find(:all, :conditions=>"status='active'") end 
     def []=(login, user); self.cache[login] = user end
@@ -123,8 +155,10 @@ logger.info("WagnRunAs *#{given_user}*\n")
     raise(Wagn::Oops, "subject is required") unless (args[:subject])
     raise(Wagn::Oops, "message is required") unless (args[:message])
     begin
-      Mailer.deliver_account_info(self, args[:subject], args[:message], args[:password])
+#Mailer.deliver_account_info(self, args[:subject], args[:message], args[:password])
+logger.info("Send acct info #{self}, #{args[:subject]}, #{args[:message]}, #{args[:password]})\n")
     rescue Exception=>e; warn("\nACCOUNT INFO DELIVERY FAILED: #{e.full_message} \n #{args.inspect}")
+#debugger
     end
   end  
 
@@ -139,7 +173,7 @@ logger.info("WagnRunAs *#{given_user}*\n")
   def blocked?; status=='blocked' end
   def built_in?; status=='system' end
   def pending?; status=='pending' end
-  def anonymous?; login == 'anon' end
+  def anonymous?; login == nobody_login end
   def to_s; "#<#{self.class.name}:#{login.blank? ? email : login}}>" end
   def mocha_inspect; to_s end
   def downcase_email!; self.email=self.email.downcase if self.email end 

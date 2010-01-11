@@ -20,7 +20,7 @@ module Devise # will be Account
 
     module UrlHelpers
       action_map = {
-        :session => { :new => :signin, :destry => :signout, :blank => :new },
+        :session => { :new => :signin, :destroy => :signout, :blank => :new },
         :password => { :edit => :update, :new => :signup, :blank => :new },
         :confirmation => { :new => :invite, :blank => :accept  }, #
       }

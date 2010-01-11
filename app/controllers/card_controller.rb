@@ -17,6 +17,7 @@ class CardController < ApplicationController
   #----------( Special cards )
     
   def index   
+debugger
     redirect_to(
       case
       when User.first_login.nil?;                 '/admin/setup'

@@ -1,21 +1,21 @@
 require File.dirname(__FILE__) + '/../test_helper'
-require 'account_controller'
+require 'user_controller'
 
 # Re-raise errors caught by the controller.
-class AccountController; def rescue_action(e) raise e end; end
+class UserController; def rescue_action(e) raise e end; end
 
-class AccountControllerTest < ActionController::TestCase
+class UserControllerTest < ActionController::TestCase
   # Be sure to include AuthenticatedTestHelper in test/test_helper.rb instead
   # Then, you can remove it from this and the units test.
   include AuthenticatedTestHelper
   
-  # Note-- account creation is handled in it's own file account_creation_test
+  # Note-- user creation is handled in it's own file user_creation_test
 
   
 
   def setup
     get_renderer
-    @controller = AccountController.new
+    @controller = UserController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
     
@@ -47,30 +47,37 @@ class AccountControllerTest < ActionController::TestCase
     assert_response :redirect
   end
 
-  def test_create_successful   
+  def test_create_successful   #debugger
     login_as :joe_user
+b=User::Mailer.deliveries.size
+post_invite
+a=User::Mailer.deliveries.size
+debugger
+assert_not_equal b, a
+=begin
     assert_difference ActionMailer::Base.deliveries, :size do 
-      assert_new_account do 
+      assert_new_user do 
         post_invite
       end
     end
+=end
   end
 
   def test_signup_with_approval
     post :signup, @newby_args
     assert_response :redirect
-    assert_status @newby_email, 'pending'
+    assert_status @newby_email, 'pending' # active debugger
     
     login_as :joe_user
     post :accept, :card=>{:key=>'newby_dooby'}, :email=>{:subject=>'hello', :message=>'world'}
-    assert_response :redirect
+    assert_response :redirect # 200 debugger
     assert_status @newby_email, 'active'
   end
 
   def test_signup_without_approval
-    User.as :wagbot do  #make it so anyone can create accounts (ie, no approval needed)
+    User.as :wagbot do  #make it so anyone can create users (ie, no approval needed)
       ne1 = Role[:anon]
-      ne1.tasks = 'create_accounts'
+      ne1.tasks = 'create_users'
       ne1.save!
     end
     post :signup, @newby_args
@@ -83,13 +90,13 @@ class AccountControllerTest < ActionController::TestCase
     u.blocked = true
     u.save
     post :signin, :login => 'u3@user.com', :password => 'u3_pass'
-    assert_response 403 
+    assert_response 403 # 302 debugger
     assert_template ('signin')
   end
 
   def test_forgot_password
     post :forgot_password, :email=>'u3@user.com'
-    assert_response :redirect
+    assert_response :redirect # 200 debugger
   end 
 
   def test_forgot_password_not_found

@@ -50,9 +50,9 @@ class UserControllerTest < ActionController::TestCase
   def test_create_successful   #debugger
     login_as :joe_user
 b=User::Mailer.deliveries.size
+debugger
 post_invite
 a=User::Mailer.deliveries.size
-debugger
 assert_not_equal b, a
 =begin
     assert_difference ActionMailer::Base.deliveries, :size do 

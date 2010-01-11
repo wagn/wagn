@@ -66,14 +66,14 @@ module WagnTestHelper
       #tmp_controller = @controller
       #@controller = AccountController.new
       
-      post '/account/signin', :login=>login, :password=>pass
+      post '/user/signin', :login=>login, :password=>pass
       assert_response :redirect
       
       #@controller = tmp_controller
     end
     if block_given?
       yield
-      post "/account/signout",:controller=>'account'
+      post "/user/signout",:controller=>'user'
     end
   end
   

@@ -51,6 +51,10 @@ class UserTest < ActiveSupport::TestCase
   
   def test_should_downcase_email
     u=create_user(:email=>'QuIrE@example.com')
+#require "ruby-debug"
+#debugger unless u
+#ActiveRecord::Base.logger.info("downcase:\n")
+#ActiveRecord::Base.logger.info("downcase: #{u.email}\n")
     assert_equal 'quire@example.com', u.email
   end
 
@@ -78,6 +82,8 @@ class UserTest < ActiveSupport::TestCase
       :invite_sender_id=>1
     }.merge(options))
   rescue Exception => e;
+require "ruby-debug"
+debugger
     ActiveRecord::Base.logger.info("Error from create_user:\n#{e.inspect}\n")
     nil
   end

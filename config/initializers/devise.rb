@@ -40,6 +40,9 @@ Devise.setup do |config|
 
   # Configure the e-mail address which will be shown in DeviseMailer.
   config.mailer_sender = "gerryg@inbox.com"
+  ::DeviseMailer.default_url_options[:host] = "74.0.57.155:3000"
+  #config.devise_mailer.default_url_options[:host] = "74.0.57.155:3000"
+#ActionMailer::Base.default_url_options[:host] = "74.0.57.155"
 
   # Configure the ORM. Supports :active_record, :data_mapper and :mongo_mapper.
   # config.orm = :active_record
@@ -68,4 +71,5 @@ Devise.setup do |config|
   # config.default_url_options do
   #   { :locale => I18n.locale }
   # end
+
 end

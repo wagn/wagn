@@ -10,7 +10,7 @@ module Notification
     def after_multi_update( card )                  
       if card.nested_notifications.present?  
         card.watcher_watched_pairs.each do |watcher, watched|
-          Mailer.deliver_change_notice( watcher, card, 'updated', watched, card.nested_notifications )
+          watcher.deliver_change_notice( watcher, card, 'updated', watched, card.nested_notifications )
         end
       end
     end
@@ -29,14 +29,14 @@ module Notification
       @trunk_watchers = @trunk_watcher_watched_pairs.map(&:first)
       
       watcher_watched_pairs.reject {|p| @trunk_watchers.include?(p.first) }.each do |watcher, watched|
-        Mailer.deliver_change_notice( watcher, self, action, watched )
+        watcher.deliver_change_notice( watcher, self, action, watched )
       end
       
       if nested_edit
         nested_edit.nested_notifications << [ name, action ]
       else
         @trunk_watcher_watched_pairs.each do |watcher, watched|
-          Mailer.deliver_change_notice( watcher, self.trunk, 'updated', watched, [[name, action]], self )
+          watcher.deliver_change_notice( watcher, self.trunk, 'updated', watched, [[name, action]], self )
         end
       end
     end  

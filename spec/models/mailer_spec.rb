@@ -24,7 +24,7 @@ describe Mailer do
       user =  ::User.find_by_login('sara')
       card =  Card["Sunglasses"]
       action = "edited"  
-      Mailer.deliver_change_notice( user, card, action, card.name )
+      user.deliver_change_notice( card, action, card.name )
     end
 
     it "deliver a message" do
@@ -51,7 +51,7 @@ describe Mailer do
       action = "edited"      
       User.as :wagbot
       Card.create! :name => "*notify+*from", :type=>"Phrase", :content=>"jiffy@lube.com"
-      Mailer.deliver_change_notice( user, card, action, card.name )
+      user.deliver_change_notice( card, action, card.name )
       @mail = ActionMailer::Base.deliveries[0] 
     end       
     

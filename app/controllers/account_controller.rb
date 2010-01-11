@@ -30,7 +30,7 @@ debugger unless @user.errors.empty?
       @user.accept(email_args)
       redirect_to (System.setting('*signup+*thanks') || '/')
     else
-      Mailer.deliver_signup_alert(@card) if System.setting('*request+*to')
+      User.deliver_signup_alert(@card) if System.setting('*request+*to')
       redirect_to (System.setting('*request+*thanks') || '/')
     end
   end
@@ -93,12 +93,12 @@ debugger unless @user.errors.empty?
       flash[:notice] = "The account associated with that email address is not active."  #ENGLISH
       render :action=>'signin', :status=>403
     else
-      generated_password = @user.generate_password
+      #generated_password = @user.generate_password
       @user.save!                       
       subject = "Password Reset"  #ENGLISH
       message = "You have been given a new temporary password.  " +  #ENGLISH
          "Please update your password once you've logged in. "
-      Mailer.deliver_account_info(@user, subject, message, generated_password)
+      @user.deliver_account_info(subject, message, generated_password)
       flash[:notice] = "A new temporary password has been set on your account and sent to your email address"  #ENGLISH
       redirect_to previous_location
     end  

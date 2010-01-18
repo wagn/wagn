@@ -4,43 +4,24 @@ module Wagn
       def reset
         @@registry = {}
       end
-    end
-  end
 
-  class Hook::System < Hook
-    @@registry = {}
-    class << self
-      def register hookname, &block
-        list = (@@registry[hookname] ||= [])
-        list << block
+      def add hookname, set_name, &block
+        @@registry[hookname] ||= {}
+        @@registry[hookname][set_name] ||= []
+        @@registry[hookname][set_name] << block
       end
     
-      def invoke hookname, *args
-        list = @@registry[hookname] or return true
-        list.each do |hook|
-          hook.call(*args)
+      def invoke hookname, card_or_set_name, *args
+        if !@@registry[hookname] 
+          # nothing implementing this hook
+          return true 
         end
-      end
-    end
-  end
-
-  class Hook::Card < Hook
-    @@registry = {}
-    class << self
-      def register hookname, set_name, &block
-        hook_slot = (@@registry[hookname] ||= {})
-        hook_pattern_list = (hook_slot[set_name] ||= [])
-        hook_pattern_list << block
-      end
-    
-      def invoke hookname, card, *args
-        hook_slot = @@registry[hookname] or return true        
-        hooks = Wagn::Pattern.set_names( card ).map do |pattern_key|
-          hook_slot[pattern_key]
-        end.flatten.compact
-        hooks.each do |hook|
-          hook.call(card, *args)
+        set_names = case card_or_set_name
+          when Card::Base; Wagn::Pattern.set_names( card_or_set_name )
+          when String; [card_or_set_name]
         end
+        hooks = set_names.map { |s| @@registry[hookname][s] }.flatten.compact
+        hooks.each { |h| h.call(card_or_set_name, *args) }
       end         
     end
   end

@@ -24,8 +24,8 @@ module Wagn
       end
     
       def pre_schema?
-        ActiveRecord::Base.connection.execute("select * from cards")
-        return false
+        return false if ActiveRecord::Base.connection.select_all("select * from cardtypes").size > 5
+        return true
       rescue Exception=>e
         return true
       end
@@ -38,6 +38,7 @@ module Wagn
         load_cardtypes
         load_modules
         initialize_builtin_cards
+        ActiveRecord::Base.logger.info("\n----------- Wagn Initialization Complete -----------\n\n")
       end
         
       def load_config

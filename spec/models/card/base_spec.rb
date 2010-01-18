@@ -1,60 +1,73 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
-  
 
-describe Card, "test data" do
-  it "should be findable by name" do
-    Card.find_by_name("Wagn Bot").class.should == Card::Basic
+describe Card do
+  describe "#new" do
+    context "with name" do
+      before do
+        @c = Card.new :name=>"Ceee"
+        @d = Card::Date.new
+      end
+
+      it "c should have name before_typecast" do
+        @c.name_before_type_cast.should == "Ceee"
+      end
+
+      it "c should have cardtype basic" do
+        @c.type.should == 'Basic'
+      end
+
+      it "d should have cardtype Date" do
+        @d.type.should == 'Date'
+      end
+    end
+    
+    context "plus card" do
+      it "should have permissions" do
+        User.as :wagbot
+        Card.create :name=>"jill+pretty"
+        Card['pretty'].permissions.should_not be_empty
+      end
+    end
+
+    it "name is not nil" do
+      Card.new.name.should == ""
+      Card.new( nil ).name.should == ""
+    end
+  end
+  
+  describe "#create" do
+    before(:each) do           
+      User.as :wagbot 
+      @b = Card.create! :name=>"New Card", :content=>"Great Content"
+      @c = Card.find(@b.id)
+    end
+
+    it "should not have errors"        do @b.errors.size.should == 0        end
+    it "should have the right class"   do @c.class.should    == Card::Basic end
+    it "should have the right key"     do @c.key.should      == "new_card"  end
+    it "should have the right name"    do @c.name.should     == "New Card"  end
+    it "should have the right content" do @c.content.should  == "Great Content" end
+
+    it "should have a revision with the right content" do
+      @c.current_revision.content == "Great Content"
+    end
+
+    it "should be findable by name" do
+      Card.find_by_name("New Card").class.should == Card::Basic
+    end  
+  end
+  
+  describe "#find_or_new" do
+    context "when card not found" do
+      it "new should have permissions" do
+        c=Card.find_or_new(:name=>"Bilboa")
+        c.permissions.should_not be_empty
+      end
+    end
   end
 end  
 
-describe Card, "new" do
-  context "with name" do
-    before do
-      @c = Card.new :name=>"Ceee"
-      @d = Card::Date.new
-    end
-  
-    it "c should have name before_typecast" do
-      @c.name_before_type_cast.should == "Ceee"
-    end
-  
-    it "c should have cardtype basic" do
-      @c.type.should == 'Basic'
-    end
-  
-    it "d should have cardtype Date" do
-      @d.type.should == 'Date'
-    end
-  end
-
-  it "name is not nil" do
-    Card.new.name.should == ""
-    Card.new( nil ).name.should == ""
-  end
-end
                             
-describe Card, "creation" do
-  before(:each) do           
-    User.as :wagbot 
-    @b = Card.create! :name=>"New Card", :content=>"Great Content"
-    @c = Card.find(@b.id)
-  end
-  
-  it "should not have errors"        do @b.errors.size.should == 0        end
-  it "should have the right class"   do @c.class.should    == Card::Basic end
-  it "should have the right key"     do @c.key.should      == "new_card"  end
-  it "should have the right name"    do @c.name.should     == "New Card"  end
-  it "should have the right content" do @c.content.should  == "Great Content" end
-
-  it "should have a revision with the right content" do
-    @c.current_revision.content == "Great Content"
-  end
-
-  it "should be findable by name" do
-    Card.find_by_name("New Card").class.should == Card::Basic
-  end  
-end
-
 
 describe Card, "attribute tracking for new card" do
   before(:each) do

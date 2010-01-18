@@ -62,7 +62,7 @@
   				  <%- slot.form = form %>
     			  <%= slot.render(:multi_edit)%>
   				<% else %>
-						<% if default_content = card.setting('default') ; card.content = default_content; end %>
+						<%# if default_content = card.setting('default') ; card.content = default_content; end %>
   					<%= slot.content_field(form) %>
   				<% end %>
   			</div>

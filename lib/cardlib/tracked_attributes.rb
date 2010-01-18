@@ -110,12 +110,17 @@ module Cardlib
         set_reader( p.party ) if p.task == 'read'
       end      
 #=begin
-      if template? and trunk.type == 'Cardtype' and create_party = who_can(:create)
+      #debugger
+      if template? and type_card = trunk.trunk and type_card.type == 'Cardtype' and create_party = who_can(:create)
+        
         ::User.as :wagbot do
-          trunk.permit(:create, create_party)
-          trunk.save!
-          if trunk.codename == 'Basic'
-            Card::Basic.permission_dependent_cardtypes.each do |ct|
+          type_card.permit(:create, create_party)
+          type_card.save!
+          if type_card.codename == 'Basic'
+            types_to_update = Card::Cardtype.find(:all).reject { |c| 
+              CachedCard.get_real("#{c.name}+*type+*default")
+            }
+            types_to_update.each do |ct|
               #warn "updating cardtype: #{ct.name}"
               ct.permit(:create, create_party)
               ct.save

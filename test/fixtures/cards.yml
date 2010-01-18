@@ -2523,7 +2523,7 @@ cards_159:
   appender_id: 
 cards_185: 
   reader_type: Role
-  name: "*watchers+*right+*default"
+  name: "*watchers+*right+*virtual"
   created_at: 2010-01-08 16:01:34.97012
   indexed_content: "'rform':2A 'watcher':1A"
   tag_id: "318"

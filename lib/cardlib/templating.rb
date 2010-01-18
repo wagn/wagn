@@ -82,49 +82,6 @@ module Cardlib
       self.class.find_template(name)
     end
 
-
-    #--------( I "control" a template )
-    
-    def templator?  #used to be template tsar
-      type_templator? or right_templator?
-    end
-    
-    def type_templator?
-      attribute_card '*type+*content'
-    end
-    
-    def right_templator?
-      attribute_card( '*right+*default')  || attribute_card( '*right+*content' )
-    end
-    
-
-    
-    #-----( I am a template )
-    
-    def template?
-      name && name.template_name?
-    end
-       
-    def type_template?
-      name && name.template_name? && name =~ /\*type/
-    end
-
-    def right_template?
-      name && name.template_name? && name =~ /\*right/
-    end
-       
-    def hard_template?
-      !soft_template?
-    end
-
-    def soft_template?
-      name && name =~ /\*default/
-    end
-    
-    def auto_template?
-      name && name =~ /\*virtual/
-    end
-    
     
     
     #-----( ... and I govern these cards )
@@ -134,9 +91,9 @@ module Cardlib
     end   
     
     def hard_templatees
-      # FIXME: checking self.trunk.type == "Set" caused all kindof warnings..
-      if self.trunk.isa?(Card::Set)
-        User.as(:wagbot)  {  self.trunk.search()  }
+      debugger
+      if wql=hard_templatee_wql
+        User.as(:wagbot)  {  Card.search(wql)  }
       else
         []
       end
@@ -163,14 +120,8 @@ module Cardlib
     private
     # FIXME: remove after adjusting expire_templatee_references to content_settings
     def hard_templatee_wql
-      return nil unless template? and hard_template?
-      wql =
-        case
-        when right_template?
-          trunk.simple? ? {:right=>trunk.id} : {:left=>{:type=>trunk.trunk.name},:right=>trunk.tag.id}
-        when type_template?
-          trunk.simple? ? {:type=>trunk.name} : {:left=>{:type=>trunk.trunk.name},:right=>{:type=>trunk.tag.name}}
-        end
+      return nil unless template? and hard_template? and self.trunk && self.trunk.is_a?(Card::Set)
+      wql = self.trunk.spec
     end
       
   end

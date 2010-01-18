@@ -30,19 +30,19 @@ class ContentSettings < ActiveRecord::Migration
     
     Card.search( :right=>"*rform" ).each do |rform|
       begin
-        rightname = rform.name.trunk_name
+        leftname = rform.name.trunk_name
         
         if rform.extension_type == 'HardTemplate'
-          rform.update_attributes :name => "#{rightname}+*right+*virtual",
+          rform.update_attributes :name => "#{leftname}+*right+*virtual",
             :confirm_rename => true, :update_referencers => true
         else
-          rform.update_attributes :name => "#{rightname}+*right+*default",
+          rform.update_attributes :name => "#{leftname}+*right+*default",
             :confirm_rename => true, :update_referencers => true
         end
       
-        puts "migrated #{rightname}+*rform"
+        puts "migrated #{leftname}+*rform"
       rescue Exception => e
-        puts "Exception migrationg #{rightname}: #{e.message}"
+        puts "Exception migrationg #{leftname}: #{e.message}"
       end
     end
   end

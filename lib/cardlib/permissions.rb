@@ -199,11 +199,6 @@ module Cardlib
       end
     end
    
-    def approve_template_tsar
-      deny_because "plus cards can't be control right formats" if !simple? and right_templator?
-      deny_because "can't be template" if template?
-    end
-
     def approve_permissions
       return if System.always_ok?
       unless System.ok?(:set_card_permissions)  or 

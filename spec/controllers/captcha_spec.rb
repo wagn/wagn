@@ -22,8 +22,6 @@ Spec::Rails::Example::ControllerExampleGroup.send(:include, CaptchaExampleMethod
 describe CardController, "captcha_required?" do
   before do
     User.as :wagbot do
-      #debugger
-      #CachedCard.bump_global_seq
       Card["*all+*captcha"].update_attributes! :content=>"1"
       c=Card["Book"];c.permit(:create, Role[:anon]);c.save! 
       Card.create :name=>"Book+*type+*captcha", :content => "1"  

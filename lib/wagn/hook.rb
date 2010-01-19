@@ -1,5 +1,8 @@
 module Wagn
   class Hook
+    cattr_reader :registry
+    @@registry = {}
+  
     class << self
       def reset
         @@registry = {}
@@ -16,6 +19,11 @@ module Wagn
           # nothing implementing this hook
           return true 
         end
+        
+        # FIXME: I'm not sure having the parameter optionally be a card or name
+        # is a good idea. it's useful, but I can see it tripping things up when
+        # a hook that was defined to expect a card is invoked with a name.
+
         set_names = case card_or_set_name
           when Card::Base; Wagn::Pattern.set_names( card_or_set_name )
           when String; [card_or_set_name]
@@ -26,5 +34,18 @@ module Wagn
     end
   end
 end
+
+# install Wagn hooks in some of the active record callbacks.
+module Card
+  class Base
+    [:before_save, :before_create, :after_save, :after_create].each do |hookname| 
+      self.send( hookname ) do |card|
+        Wagn::Hook.invoke hookname, card
+      end
+    end
+  end
+end
+
+
 
 

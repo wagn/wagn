@@ -2,7 +2,7 @@ module Wagn
   class Initializer
     class << self
       def set_default_rails_config config    
-        config.active_record.observers = :card_observer            
+        #config.active_record.observers = :card_observer            
         config.cache_store = :file_store, "#{RAILS_ROOT}/tmp/cache"
         config.frameworks -= [ :action_web_service ]
         config.gem "uuid"

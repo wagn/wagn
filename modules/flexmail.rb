@@ -12,26 +12,30 @@ module Flexmail
               card.content
             end
           else 
-            [setting_card.content]
+            setting_card.content.split("\n")
         end
       end
     end
     
     def expand_content_setting setting_card, context_card
       context_card.content = setting_card.content
-      Slot.new(context_card).render(:naked)
+      s=Slot.new(context_card);
+      # FIXME: maybe slot.rb should have an additional view for this.
+      # ultimately we need to be able to process links and inclusions in an email/text friendly way
+      s.expand_inclusions(s.render(:naked_content))
     end
   end  
-  # hook
-=begin SKETCH
-  Wagn::Hook::Card.register :after_create, "*all" do |created_card|
+end
+
+Wagn::Hook.add :after_create, '*all' do |created_card|
   if send_config = created_card.setting_card("*send")
-    pointee_cards = send_config.pointees.map { |name| CachedCard.get_real(name) }
-    pointee_cards.each do |email_config_card|
+    email_config_cards = send_config.pointees.map { |name| CachedCard.get_real(name) }
+    email_config_cards.each do |email_config_card|
       Mailer.deliver_flexmail created_card, email_config_card
     end
   end
-=end
+end
+  
 
   # mailer method
 =begin SKETCH  
@@ -54,4 +58,3 @@ module Flexmail
   Mailer.send :include, MailerMethods
 =end
 
-end

@@ -1,66 +1,98 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Flexmail do
-  it("is ready for the whole test suite") { false.should be_true } 
-  
-  describe ".expand_list_setting" do
-    before do
-      # note cards 'A' and 'Z' are in shared_data.
-      @context_card = CachedCard.get("A") # refers to 'Z'
-    end
-    
-    it "returns item for each line of basic setting" do
-      setting_card = Card.new :name=>"foo", :content => "X\nY" 
-      Flexmail.expand_list_setting( setting_card, @context_card ).should == ["X","Y"]
-    end
-    
-    it "returns pointee's content for pointer setting" do
-      setting_card = Card.new :name=>"foo", :type=>"Pointer", :content => "[[Z]]" 
-      Flexmail.expand_list_setting( setting_card, @context_card ).should == ["I'm here to be referenced to"]
-    end
-    
-    it "returns search results content for search setting" do
-      setting_card = Card.new :name=>"foo", :type=>"Search", :content => %[{"name":"Z"}] 
-      Flexmail.expand_list_setting( setting_card, @context_card ).should == ["I'm here to be referenced to"]
-    end
-    
-    it "handles searches relative to context card" do
-      setting_card = Card.new :name=>"foo", :type=>"Search", :content => %[{"referred_to_by":"_self"}]
-      Flexmail.expand_list_setting( setting_card, @context_card ).should == ["I'm here to be referenced to"]
-    end
-  end
-  
-  describe ".expand_content_setting" do
-    before do
-      # note cards 'A' and 'Z' are in shared_data.
-      @context_card = CachedCard.get("A") # refers to 'Z'
-    end
-
-    it "returns content for basic setting" do
-      setting_card = Card.new :name=>"foo", :content => "X" 
-      Flexmail.expand_content_setting( setting_card, @context_card ).should == "X"
-    end
-    
-    it "processes inclusions relative to context card" do
-      setting_card = Card.new :name=>"foo", :content => "{{_self+B|naked}}"
-      Flexmail.expand_content_setting( setting_card, @context_card ).should == "AlphaBeta"
-    end
-  end
-  
-  describe "card creation hook" do
+describe Flexmail do  
+  describe ".configs_for" do
     before do
       User.as :wagbot
-      Card.create! :type=>"Pointer", :name => "Book+*type+*send", :content=>"[[mailconfig]]"
       Card.create! :name => "mailconfig+*to", :content => "joe@user.com"
+      Card.create! :name => "mailconfig+*from", :content => "from@user.com"
+      Card.create! :name => "mailconfig+*subject", :content => "Subject of the mail"
+      Card.create! :name => "mailconfig+*message", :content => "This {{_self|naked}}"
+      Card.create! :name => "emailtest+*right+*send", :content => "[[mailconfig]]"
     end
     
-    it "calls to flexmail mailer when config is present" do
-      Mailer.should_receive(:deliver_flexmail) do |card, config|
-        card.name.should == "TaoTeChing"
-        config.name.should == "mailconfig"
-      end
-      Card.create :type => "Book", :name => "TaoTeChing"
+    it "returns empty list for card with no configs" do
+      Flexmail.configs_for( Card.new( :name => "random" )).should == []
+    end
+    
+    it "returns list with correct hash for card with configs" do
+      c = Card.create :name => "Banana+emailtest", :content => "data content"
+      Flexmail.configs_for(c).should == [{
+        :to => "joe@user.com",
+        :from => "from@user.com",
+        :bcc => "",
+        :subject => "Subject of the mail",
+        :message => "This data content"
+      }]
     end
   end
-  
+
+  describe "hooks for" do
+    describe "untemplated card" do
+      before do
+        User.as :wagbot
+        Card.create! :name => "emailtest+*right+*send", :type => "Pointer", 
+          :content => "[[mailconfig]]"
+        Card.create! :name => "mailconfig+*to", :content => "joe@user.com"
+      end
+    
+      it "calls to mailer on Card#create" do
+        Mailer.should_receive(:deliver_flexmail).with(hash_including(:to=>"joe@user.com"))
+        Card.create :name => "Banana+emailtest"
+      end
+    end
+    
+    describe "templated card" do
+      before do
+        User.as :wagbot
+        Card.create! :name => "Book+*type+*send", :type => "Pointer", 
+          :content => "[[mailconfig]]"
+        Card.create! :name => "mailconfig+*to", :content => "joe@user.com"
+      end
+    
+      it "doesn't call to mailer on Card#create" do
+        Mailer.should_not_receive(:deliver_flexmail)
+        Card.create :name => "Banana+emailtest"
+      end
+      
+      it "calls to mailer on Card#multi_create" do
+        Mailer.should_receive(:deliver_flexmail).with(hash_including(:to=>"joe@user.com"))
+        c = Card.create :name => "Illiodity", :type=>"Book"
+        c.multi_create( {"~author" => {"name" => "Bukowski" }})
+      end
+    end
+  end
+
+  # Note: this mailer method and the corresponding template are defined in the regular rails places
+  # rather that the flexmail module.
+  # They can/should be brought out to more modular space if/when modules support adding
+  # view template (through adding directories, etc.)
+  describe "Mailer#flexmail" do
+    # to access things like 'create_account_url' include UrlWriter
+    # include ActionController::UrlWriter  
+    
+    before(:all) do 
+      @email = Mailer.deliver_flexmail({ 
+        :to=>"joe@user.com", 
+        :subject=>"boo-ya", 
+        :message=>"Ipsum Daido Lorem" 
+      })   
+    end
+    
+    it "respects to:" do
+      @email.should deliver_to("joe@user.com")
+    end
+    
+    it "respects subject:" do
+      @email.should have_subject(/boo-ya/)
+    end
+    
+    it "respects content:" do
+      @email.should have_text(/Ipsum Daido Lorem/)
+    end
+  end
 end
+
+
+
+

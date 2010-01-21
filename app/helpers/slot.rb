@@ -393,8 +393,8 @@ class Slot
     fullname.to_absolute(base=='parent' ? card.name.parent_name : card.name)
     fullname.gsub!('_user', User.current_user.card.name)
     fullname = fullname.particle_names.map do |x| 
-      if x =~ /^_/ and slot_options[:params] and slot_options[:params][x]
-        CGI.escapeHTML( slot_options[:params][x] )
+      if x =~ /^_/ and root.slot_options[:params] and root.slot_options[:params][x]
+        CGI.escapeHTML( root.slot_options[:params][x] )
       else x end
     end.join("+")
     fullname

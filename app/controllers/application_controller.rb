@@ -7,11 +7,8 @@ class ApplicationController < ActionController::Base
   include ExceptionSystem           
   include LocationHelper
   helper :all
-
-  attr_reader :card, :cards, :renderer, :context   
-  attr_accessor :notice, :slot
   
-  helper_method :card, :cards, :renderer, :context, :edit_user_context, :notice, :slot
+  helper_method :main_card?
 
   include ActionView::Helpers::TextHelper #FIXME: do we have to do this? its for strip_tags() in edit()
   include ActionView::Helpers::SanitizeHelper
@@ -50,6 +47,8 @@ class ApplicationController < ActionController::Base
     @context = params[:context] || 'main_1'
     @action = params[:action]
     
+    Slot.current_slot = nil
+    
     # reset class caches
     # FIXME: this is a bit of a kluge.. several things stores as cattrs in modules
     # that need to be reset with every request (in addition to current user)
@@ -78,25 +77,11 @@ class ApplicationController < ActionController::Base
     layout
   end
            
-
-  # ------------( helpers ) --------------
-  def edit_user_context(card)
-    if System.ok?(:administrate_users)
-    	'admin'
-    elsif current_user == card.extension
-    	'user'
-    else
-    	'public'
-    end
-  end
-
-  def renderer
-    Renderer.new
-  end
-     
+  # ----------- (helper) ----------
   def main_card?
-    @context =~ /^main_\d$/
-  end    
+    @context =~ /^main_([^\_]+)$/
+  end      
+
 
   # ------------------( permission filters ) -------
   def view_ok
@@ -172,7 +157,6 @@ class ApplicationController < ActionController::Base
   # FIXME: this should be fixed to use a call to getSlotElement() instead of default
   # selectors, so that we can reject elements inside nested slots.
   def render_update_slot_element(name,stuff="")
-    self.slot = nil  # reset slot object.
     render :update do |page|
       page.extend(WagnHelper::MyCrappyJavascriptHack) 
       elem_code = "getSlotFromContext('#{get_slot.context}')"

@@ -8,10 +8,6 @@ class Slot
     def logged_in?
       !(User.current_user.nil? || User.current_user.login == 'anon')
     end
-
-    def slot
-      Slot.current_slot
-    end
   end
 
   cattr_accessor :max_char_count, :current_slot
@@ -41,7 +37,7 @@ class Slot
     Slot.current_slot ||= self
     
     @template ||= begin
-      t = ActionView::Base.new( CardController.view_paths, { :slot => self, :card=>card })
+      t = ActionView::Base.new( CardController.view_paths, {} )
       t.helpers.send :include, CardController.master_helper_module
       t.helpers.send :include, NoControllerHelpers
       t
@@ -296,7 +292,7 @@ class Slot
         
     ###---(  EDIT VIEWS ) 
 
-      when :edit;  @state=:edit;  card.hard_template ? render(:multi_edit) : content_field(slot.form)
+      when :edit;  @state=:edit; card.hard_template ? render(:multi_edit) : content_field(slot.form)
         
       when :multi_edit;
         @state=:edit 
@@ -435,9 +431,6 @@ class Slot
   def process_inclusion( card, options={} )  
     #warn("<process_inclusion card=#{card.name} options=#{options.inspect}")
     subslot = subslot(card, options[:context])
-    if @template.controller
-      old_slot, @template.controller.slot = @template.controller.slot, subslot
-    end
     old_slot, Slot.current_slot = Slot.current_slot, subslot
 
     # set item_format;  search cards access this variable when rendering their content.
@@ -464,9 +457,6 @@ class Slot
     end
 
     result = subslot.render action, options
-    if @template.controller
-      @template.controller.slot = old_slot
-    end
     Slot.current_slot = old_slot
     result
   end   
@@ -476,14 +466,19 @@ class Slot
     # and removing the argument but it broken lots of integration tests.
     ActiveSupport::Deprecation.silence { @template.send(method_id, *args, &proc) }
   end
-  
+
   #### --------------------  additional helpers ---------------- ###
   def render_diff(card, *args)
     @renderer.render_diff(card, *args)
   end
   
   def notice 
-    %{<span class="notice">#{controller ? controller.notice : ''}</span>}
+    # this used to access controller.notice, but as near I can tell
+    # nothing ever assigns to controller.notice, so I took it away.
+    # entries in flash[:notice] would be more appropriate in the page-wide
+    # alert area. a quick javascript hack to have this put them there resulted in
+    # odd behavior so leaving it off for now -LWH
+    %{<span class="notice"></span>}
   end
 
   def id(area="") 

@@ -3,14 +3,22 @@ require_dependency 'slot'
 module WagnHelper
   require_dependency 'wiki_content'
 
+  def slot
+    Slot.current_slot
+  end
+  
+  def card
+    @card
+  end
+  
   # FIXME: I think all this slot initialization should happen in controllers
   def get_slot(card=nil, context=nil, action=nil, opts={})
     nil_given = card.nil?
     card ||= @card; context||=@context; action||=@action
     opts[:relative_content] = params  
     slot = case
-      when controller.slot;  nil_given ? controller.slot : controller.slot.subslot(card)
-      else controller.slot = Slot.new(card,context,action,self,opts)
+      when Slot.current_slot;  nil_given ? Slot.current_slot : Slot.current_slot.subslot(card)
+      else Slot.current_slot = Slot.new(card,context,action,self,opts)
     end
   end
 
@@ -19,9 +27,9 @@ module WagnHelper
     if String===card && name = card
       raise("Card #{name} not present") unless card= (CachedCard.get(name) || Card[name] || Card.find_virtual(name))
     end
-    # FIXME: some cases we're called before controller.slot is initialized.
+    # FIXME: some cases we're called before Slot.current_slot is initialized.
     #  should we initialize here? or always do Slot.new?
-    subslot = controller.slot ? controller.slot.subslot(card) : Slot.new(card)
+    subslot = Slot.current_slot ? Slot.current_slot.subslot(card) : Slot.new(card)
     subslot.render(mode.to_sym, args)
   end
 
@@ -61,7 +69,7 @@ module WagnHelper
     if options[:url] =~ /^javascript\:/
       function << options[:url].gsub(/^javascript\:/,'')
     elsif options[:slot] 
-      function << slot.url_for(options[:url]).gsub(/^javascript\:/,'')
+      function << Slot.current_slot.url_for(options[:url]).gsub(/^javascript\:/,'')
     else
       url_options = options[:url]
       url_options = url_options.merge(:escape => false) if url_options.is_a?(Hash)
@@ -77,8 +85,6 @@ module WagnHelper
 
     return function
   end    
-
-
 
   def truncatewords_with_closing_tags(input, words = 25, truncate_string = "...")
     if input.nil? then return end
@@ -299,5 +305,16 @@ module WagnHelper
   
   def render_layout_content(content)
     render_layout_card layout_card(content)
+  end
+  
+  # ------------( helpers ) --------------
+  def edit_user_context(card)
+    if System.ok?(:administrate_users)
+    	'admin'
+    elsif current_user == card.extension
+    	'user'
+    else
+    	'public'
+    end
   end
 end       

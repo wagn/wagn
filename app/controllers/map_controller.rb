@@ -1,4 +1,6 @@
-class MapController < ActionController::Base
+class MapController < ApplicationController
+  layout nil
+  
   def show
     @content = ""
     done = []

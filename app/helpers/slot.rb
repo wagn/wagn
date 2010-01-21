@@ -30,7 +30,6 @@ class Slot
       view = :naked unless view && !view.blank?
       tmp_card = Card.new :name=>"__tmp_card__", :content => content 
       Slot.new(tmp_card, "main_1", view, nil, opts).render(view)
-      #Slot.new(tmp_card).render(view)
     end
   end
    
@@ -128,6 +127,7 @@ class Slot
       end       
       
       css_class << " wrapper cardid-#{card.id} type-#{card.type}" if card
+      css_class << " type-#{Cardtype.name_for(card.type)}"
       
       attributes = { 
         :cardId   => (card && card.id),
@@ -390,7 +390,7 @@ class Slot
     fullname.gsub!('_user', User.current_user.card.name)
     fullname = fullname.particle_names.map do |x| 
       if x =~ /^_/ and slot_options[:params] and slot_options[:params][x]
-        slot_options[:params][x]
+        CGI.escapeHTML( slot_options[:params][x] )
       else x end
     end.join("+")
     fullname

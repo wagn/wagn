@@ -42,6 +42,17 @@ describe Slot, "" do
       Slot.new(@a).render(:naked_content).should == "{{A}}"
     end                                                                                      
   end
+  
+  describe "cgi params" do
+    it "renders params in card inclusions" do
+      result = Slot.render_content("{{_card+B|naked}}", :params=>{'_card' => "A"})
+      result.should == "AlphaBeta"
+    end
+    
+    it "should not change name if variable isn't present" do
+      Slot.render_content("{{_card+B|name}}").should == "_card+B"
+    end
+  end
 
   it "should use inclusion view overrides" do  
     # FIXME love to have these in a scenario so they don't load every time.

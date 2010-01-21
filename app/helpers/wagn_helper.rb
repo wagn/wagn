@@ -15,7 +15,7 @@ module WagnHelper
   def get_slot(card=nil, context=nil, action=nil, opts={})
     nil_given = card.nil?
     card ||= @card; context||=@context; action||=@action
-    opts[:relative_content] = params  
+    opts[:relative_content] = opts[:params] = params  
     slot = case
       when Slot.current_slot;  nil_given ? Slot.current_slot : Slot.current_slot.subslot(card)
       else Slot.current_slot = Slot.new(card,context,action,self,opts)

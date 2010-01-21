@@ -26,9 +26,11 @@ class Slot
        
   class << self
     def render_content content, opts = {}
-      opts[:view] ||= :naked
+      view = opts.delete(:view)
+      view = :naked unless view && !view.blank?
       tmp_card = Card.new :name=>"__tmp_card__", :content => content 
-      Slot.new(tmp_card).render(opts[:view])
+      Slot.new(tmp_card, "main_1", view, nil, opts).render(view)
+      #Slot.new(tmp_card).render(view)
     end
   end
    
@@ -50,6 +52,7 @@ class Slot
       :main_content => nil,
       :main_card => nil,
       :inclusion_view_overrides => nil,
+      :params => {},
       :renderer => Renderer.new
     }.merge(opts)
     
@@ -385,6 +388,11 @@ class Slot
     fullname = name+'' #weird.  have to do this or the tname gets busted in the options hash!!
     fullname.to_absolute(base=='parent' ? card.name.parent_name : card.name)
     fullname.gsub!('_user', User.current_user.card.name)
+    fullname = fullname.particle_names.map do |x| 
+      if x =~ /^_/ and slot_options[:params] and slot_options[:params][x]
+        slot_options[:params][x]
+      else x end
+    end.join("+")
     fullname
   end
 

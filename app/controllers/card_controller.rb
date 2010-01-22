@@ -110,6 +110,7 @@ class CardController < ApplicationController
   end
   
   def create    
+    #debugger if params[:card][:type]=='Testimony'
     @card = Card.create params[:card]        
     #@card.save
     

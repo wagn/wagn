@@ -23,6 +23,7 @@ class Flexmail
     
     def deliver_mail_for(card)
       configs_for(card).each do |config|
+        ActiveRecord::Base.logger.warn "Sending mailconfig: #{config.inspect}"
         Mailer.deliver_flexmail config
       end
     end

@@ -11,6 +11,8 @@ Feature: Flexmail
       """
       {{+name}} {{+email}} {{+Testimony}} {{+recipients}}
       """
+    And I create Search card "search test+*rform" with content "{"type":"User"}"
+    And I harden "search test+*rform"
     And I create email card "Testemailconfig"
       And I create Search card "Testemailconfig+*to" with content
         """
@@ -21,7 +23,7 @@ Feature: Flexmail
       And I create Phrase card "Testemailconfig+*bcc"
       And I create Basic card "Testemailconfig+*message" with content 
         """
-        Pleistocles, {{_self+name|naked}} says: {{_self+Testimony|naked}}
+        Pleistocles, {{_self+name|naked}} says: {{_self+Testimony|naked}} {{_self+search test|naked;item:name}}
         buena,
         Thaddeus
         """

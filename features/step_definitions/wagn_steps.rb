@@ -32,6 +32,10 @@ Given /^the pointer (.*) contains "([^\"]*)"$/ do |cardname, content|
   end
 end
 
+Given /I harden "([^\"]*)"/ do |cardname|
+  Card[cardname].update_attribute :extension_type, "HardTemplate"
+end
+
 When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
   logged_in_as(username) do
     visit "/card/edit/#{cardname.to_url_key}"

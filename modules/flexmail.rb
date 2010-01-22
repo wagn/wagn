@@ -10,7 +10,6 @@ class Flexmail
             end.else("")
           end
           [:subject, :message].each do |field|
-            debugger
             config[field] = if_card("#{email_config}+*#{field}") do |c|
               c.contextual_content(card)
             end.else("")

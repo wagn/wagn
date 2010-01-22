@@ -1,3 +1,25 @@
+=== 1.3.0 (Jan 1, 2010)
+* simple pattern settings
+* let plus-star-edit cards be searches
+* add inclusion comments
+* add setting for which cards can add accounts
+* use numbers for richer control of ToCs
+* main inclusion in layout should respect view options
+* IE8 compatibility view required to view wagn
+* simplify default layout
+* fix forgot password checks
+* specify layout in url
+* fix default layout
+* use current type name everywhere
+* fix including in help text
+* deny account requests from already-denied addresses
+* implement captcha
+* make found_by work with virtual cards
+* strip html from toc links
+* add extensions when cardtype is changed
+* allow forcing on of table of contents
+* De-sensitize case for e-mail for signing in
+
 === 1.2.0 (Oct 21, 2009)         
 * fix pointer interfaces breaking under multiedit
 * implement autoname by type

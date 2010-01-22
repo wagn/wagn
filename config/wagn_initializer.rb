@@ -2,7 +2,7 @@ module Wagn
   class Initializer
     class << self
       def set_default_rails_config config    
-        config.active_record.observers = :card_observer            
+        #config.active_record.observers = :card_observer            
         config.cache_store = :file_store, "#{RAILS_ROOT}/tmp/cache"
         config.frameworks -= [ :action_web_service ]
         config.gem "uuid"
@@ -26,13 +26,14 @@ module Wagn
       def pre_schema?
         ActiveRecord::Base.connection.execute("select * from cards")
         return false
-      rescue ActiveRecord::StatementInvalid
+      rescue Exception=>e
         return true
       end
 
       def load  
         load_config  
-        load_cardlib
+        load_cardlib                                               
+        setup_multihost
         return if pre_schema?
         load_cardtypes
         load_modules
@@ -55,7 +56,9 @@ module Wagn
         System.base_url.gsub!(/\/$/,'')
       end
 
-      def load_cardlib
+      def load_cardlib  
+        Cardname 
+        
         Wagn.send :include, Wagn::Exceptions       
         Card.send :include, Cardlib::Exceptions
 
@@ -79,6 +82,19 @@ module Wagn
           extend Cardlib::CardAttachment::ActMethods  
         end                                      
       end
+      
+      def setup_multihost
+        # set schema for multihost wagns   (make sure this is AFTER loading wagn.rb duh)             
+        #ActiveRecord::Base.logger.info("------- multihost = #{System.multihost} and WAGN_NAME= #{ENV['WAGN']} -------")
+        if System.multihost and ENV['WAGN']    
+          if mapping = MultihostMapping.find_by_wagn_name(ENV['WAGN'])
+            System.base_url = "http://" + mapping.canonical_host
+            System.wagn_name = mapping.wagn_name
+          end
+          ActiveRecord::Base.connection.schema_search_path = ENV['WAGN']
+          CachedCard.set_cache_prefix "#{System.host}/#{RAILS_ENV}" 
+        end  
+      end                 
       
       def load_cardtypes
         Dir["#{RAILS_ROOT}/app/models/card/*.rb"].sort.each do |cardtype|

@@ -1,5 +1,5 @@
 namespace :wagn do
-  
+  desc "(re) create a wagn database from scratch"
   task :create => :environment do
     Rake::Task['db:drop'].invoke
     Rake::Task['db:create'].invoke

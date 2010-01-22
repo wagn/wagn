@@ -8,25 +8,20 @@ Feature: Table of Contents
     And I create Number card "*all+*table of contents" with content "1"
     And I create Basic card "One Header" with content "<h1>I'm a header</h1>"
     And I create Basic card "Three Headers" with content "<h1>I'm a header</h1><h2>Me too</h2><h1>same here</h1>"
-    And I create Set card "all Basic cards" with content
-    """
-    {"type": "Basic"}
-    """
-  
     
  Scenario: always on setting
    When I go to card "One Header"
    Then I should see "Table of Contents"
    
  Scenario: minimum setting
-   And I create Phrase card "all Basic cards+*table of contents" with content "2"
+   And I create Phrase card "Basic+*type+*table of contents" with content "2"
    And I go to card "One Header"
    Then I should not see "Table of Contents"
    When I go to card "Three Headers"
    Then I should see "Table of Contents"
  
  Scenario: always off setting
-   When I create Phrase card "all Basic cards+*table of contents" with content "0"
+   When I create Phrase card "Basic+*type+*table of contents" with content "0"
    And I go to card "One Header"
    Then I should not see "Table of Contents"
   

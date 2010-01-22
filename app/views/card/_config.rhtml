@@ -47,19 +47,6 @@
 <% end %>
 
 
-<h1>Help Text</h1>
-<p>&nbsp;</p>
-<p><strong>Editing Cards<br /></strong></p>
-<p><em>Help text appears when </em><em>any <%= type=='Cardtype' ? "#{card.name} cards, or " : '' %> <a href="/wagn/<%= tagname.to_url_key %>+*plusses">plus card whose name ends in "+<%= tagname %>"</a> is created or edited. <a href="http://wagn.org/wagn/help_text">Learn more about help text</a>.<br /></em></p>
-<blockquote>
-<p>{{<%= tagname %>+*edit|closed}}</p>
-</blockquote>
-<p>&nbsp;</p>
-<p><strong>Creating Cards<br /></strong></p>
-<p><em>Help text appears only when any <%= type=='Cardtype' ? "#{card.name} cards, or " : '' %> <a href="/wagn/<%= tagname.to_url_key %>+*plusses">plus card whose name ends in "+<%= tagname %>"</a> is created. (This overrides the editing help text above.)</em></p>
-<blockquote><p>{{<%= tagname %>+*new|closed}}</p></blockquote>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
 
 
 

@@ -1,13 +1,18 @@
 require 'rubygems'
 require 'spork'
 ENV["RAILS_ENV"] = "test"
+require 'assert2/xhtml'
 
 Spork.prefork do
+  require File.expand_path(File.dirname(__FILE__) + "/../config/wagn_initializer")
+  Spork.trap_class_method(Wagn::Initializer,"load")
+
   require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
   require 'spec'
   require 'spec/autorun'
   require 'spec/rails' 
-
+  
+  require "email_spec"
   
   
   # Loading more in this block will cause your tests to run faster. However, 
@@ -28,10 +33,23 @@ Spork.prefork do
     # == Notes
     # 
     # For more information take a look at Spec::Example::Configuration and Spec::Runner
+    config.include(EmailSpec::Helpers)
+    config.include(EmailSpec::Matchers)
+    
+    config.before(:each) do
+      CachedCard.reset_cache     
+      CachedCard.bump_global_seq   
+    end
+
+    config.after(:each) do
+      CachedCard.reset_cache     
+      CachedCard.bump_global_seq   
+    end
+
   end
 end
 
-Spork.each_run do
+Spork.each_run do     
   # This code will be run each time you run your specs.
 end
 

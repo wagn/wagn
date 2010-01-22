@@ -6,19 +6,20 @@
   <h1 class="page-header">Sign Up</h1>
 
 
-  <div class="instruction">
-    <% if card.new_instructions %> 
-  		<%= render_card card.new_instructions, :expanded_view_content %>
-    <% elsif !System.ok?(:create_accounts) %>
-      <p><strong>All Account Requests are subject to review.</strong></p>
-    <% else %>
-      <p><strong>Send us the following, and we'll send you a password.</strong></p>
-    <% end %>                                                               
-  </div>
+  <% get_slot(card).wrap('account-request') do |slot| %>
 
-  <div class="content">
+    <div class="instruction">
+      <% if inst = card.add_help_card %> 
+        <%= slot.subslot(inst).render :naked %>
+      <% elsif !System.ok?(:create_accounts) %>
+        <p><strong>All Account Requests are subject to review.</strong></p>
+      <% else %>
+        <p><strong>Send us the following, and we'll send you a password.</strong></p>
+      <% end %>                                                               
+    </div>
+
+    <div class="content">
     
-    <% get_slot(card).wrap('account-request') do |slot| %>
       <% form_for :card, @card, :action=>'signup', :html=>{ :onsubmit=>"Wagn.runQueue(Wagn.onSaveQueue['main_1'])"} do |f| %>
         <%= hidden_field_tag 'element', "#{div_id}"  %>
         <%= f.hidden_field 'type'  %>
@@ -35,7 +36,7 @@
     	    <%= render :partial=>'account/email' %>
     	    <%= slot.option_header 'About You' %>
     	  </table>    
-  	
+	
       	<div class="open-content">
         	<%= slot.render :edit %>
         </div>
@@ -43,11 +44,11 @@
       	<div class="submit-tag">
         	<%= submit_tag 'Submit' %>
         </div>
-	
+
     		<%= slot.notice %>
-    
-  	
+  
+	
     	<% end %>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 </div>  

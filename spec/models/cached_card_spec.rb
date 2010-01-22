@@ -31,8 +31,7 @@ describe "CachedCard" do
     @mc.should_receive(:read).with(@gs_key)
     @mc.should_receive(:write).twice
     initial = CachedCard.global_seq  
-    sleep(0.02)  # long enough for time counter to register new value.
-    CachedCard.bump_global_seq.to_i.should > initial.to_i
+    CachedCard.bump_global_seq.to_i.should_not == initial
   end
   
   it "global_seq should return value when no global_seq is cached" do
@@ -43,7 +42,7 @@ describe "CachedCard" do
   
   it  "global_seq should return cached value when present" do
     @mc.should_receive(:read).with(@gs_key).and_return("2")
-    CachedCard.global_seq.should == 2
+    CachedCard.global_seq.should == "2"
   end
   
   after do

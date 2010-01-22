@@ -155,8 +155,7 @@ class CardControllerTest < ActionController::TestCase
       ff.permit(:read, Role[:auth])
       ff.save!
     
-      Card.create! :name=>'All Fruit', :type=>'Set', :content=>'{"type":"Fruit"}'
-      Card.create! :name=>"All Fruit+*thanks", :type=>"Phrase", :content=>"/wagn/sweet"
+      Card.create! :name=>"Fruit+*type+*thanks", :type=>"Phrase", :content=>"/wagn/sweet"
     end
     
     login_as(:anon)     
@@ -232,7 +231,6 @@ class CardControllerTest < ActionController::TestCase
 
 #=end
   def test_unrecognized_card_renders_missing_unless_can_create_basic
-    #User.as :anon
     login_as(:anon) 
     post :show, :id=>'crazy unknown name'
     assert_template 'missing'

@@ -94,6 +94,7 @@ html>body .page-icon {
   padding-right: 0px;
 }
 
+div:hover.setting .page-icon,
 div:hover.card-header .page-icon,
 div:hover.card-header .card-menu-left {
   display:inline;
@@ -682,6 +683,7 @@ body#wagn .line h2,
 
 /*-------------( Pointer )--------*/
 .pointer input {
+  float: left;
   width: 60%;
 }
 .pointer li {
@@ -693,6 +695,7 @@ body#wagn .line h2,
   color: #933;
   font-size: 15px;
 }
+
 
 /*-------------( Phrase)-----------*/
 

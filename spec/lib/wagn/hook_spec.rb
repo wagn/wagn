@@ -6,41 +6,53 @@ describe Wagn::Hook do
   end                      
 end
 
-describe Wagn::Hook::System do
-  before(:each) do       
-    Wagn::Hook::System.reset
-    Fish = mock("fish")    
-  end                  
-  
-  it "invokes multiple registered hooks with arguments" do
-    Fish.should_receive("hooked").once.with("boo")
-    Fish.should_receive("hooked").once.with("more boo")
-    Wagn::Hook::System.register :samplehook do |arg|
-      Fish.hooked arg
+describe Wagn::Hook do
+  describe ".invoke" do
+    before(:all){  Fish = mock("cod") }
+    before do
+      Wagn::Hook.reset
+      Wagn::Hook.add :save, "Book+*type" do
+        Fish.hooked
+      end
     end
-    Wagn::Hook::System.register :samplehook do |arg|
-      Fish.hooked "more #{arg}"
-    end
-    Wagn::Hook::System.invoke :samplehook, "boo"
-  end
-end                                 
 
-describe Wagn::Hook::Card do
-  before(:each) do
-    Cod = mock("cod")
-    Wagn::Hook::Card.reset
-    Wagn::Hook::Card.register :save, { :type => "Book" } do
-      Cod.hooked
+    it "invokes hooks on matching cards" do
+      Fish.should_receive("hooked").once
+      Wagn::Hook.invoke :save, Card.new(:type => "Book", :name=>"Hitchhikers Guide")    
+    end
+  
+    it "does note invoke hooks on non-matching cards" do
+      Fish.should_not_receive("hooked")
+      Wagn::Hook.invoke :save, Card.new(:type => "Basic", :name=>"button")    
+    end
+
+    it "invokes multiple registered hooks with arguments" do
+      Fish.should_receive("hooked").once.with("boo")
+      Fish.should_receive("hooked").once.with("more boo")
+      Wagn::Hook.add(:samplehook, '*all') do |card, arg|
+        Fish.hooked arg
+      end
+      Wagn::Hook.add(:samplehook, '*all') do |card, arg|
+        Fish.hooked "more #{arg}"
+      end
+      Wagn::Hook.invoke :samplehook, '*all', "boo"
     end
   end
-  
-  it "invokes hooks on matching cards" do
-    Cod.should_receive("hooked").once
-    Wagn::Hook::Card.invoke :save, Card.new(:type => "Book", :name=>"Hitchhikers Guide")    
+end
+
+describe Card do
+  before(:each) do
+    Wagn::Hook.reset  # this is really just here to trigger hook auto-loading
   end
-  
-  it "does note invoke hooks on non-matching cards" do
-    Cod.should_not_receive("hooked")
-    Wagn::Hook::Card.invoke :save, Card.new(:type => "Basic", :name=>"button")    
+
+  describe "#create" do 
+    it "invokes hooks" do
+      [:before_save, :before_create, :after_save, :after_create].each do |hookname|
+        Wagn::Hook.should_receive(:invoke).with(hookname, instance_of(Card::Basic))
+      end 
+      User.as :wagbot do
+        Card.create :name => "testit"
+      end
+    end
   end
 end

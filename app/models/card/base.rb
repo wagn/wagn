@@ -242,16 +242,19 @@ module Card
     end
 
     def multi_create(cards)
+      Wagn::Hook.invoke :before_multi_create, self, cards
       multi_save(cards)
+      Wagn::Hook.invoke :after_multi_create, self
     end
     
     def multi_update(cards)
+      Wagn::Hook.invoke :before_multi_update, self, cards
       multi_save(cards)
-      Notification.after_multi_update(self)  # future system hook
+      Wagn::Hook.invoke :after_multi_update, self
     end
     
     def multi_save(cards)
-      Notification.before_multi_save(self,cards)  # future system hook
+      Wagn::Hook.invoke :before_multi_save, self, cards
       cards.each_pair do |name, opts|              
         opts[:content] ||= ""   
         # make sure blank content doesn't override pointee assignments if they are present
@@ -277,6 +280,7 @@ module Card
           end
         end
       end  
+      Wagn::Hook.invoke :after_multi_save, self, cards
     end
 
     def destroy_with_trash(caller="")     
@@ -329,13 +333,7 @@ module Card
     end
      
     # Extended associations ----------------------------------------
-    def sets
-      Wagn::Pattern.keys_for_card( self ).map do |key|
-        Card.find_by_pattern_spec_key( key )
-      end.compact + 
-      [Card['*all']]
-    end
-    
+
     def left
       trunk
     end
@@ -440,25 +438,9 @@ module Card
         current_revision ? current_revision.content : ""
       end
     end   
-    
-    def edit_instructions #returns card
-      tag_card = tag || (name and Card[name.tag_name])
-      (tag_card && tag_card.attribute_card('*edit')) || 
-         (cardtype and cardtype.attribute_card('*edit'))
-    end
-    
-    def new_instructions  
-      if value = self.setting('new')
-        return value
-      end
-      [tag, cardtype].each do |tsar|
-        %w{ *new *edit}.each do |attr_card|
-          if tsar and instructions = tsar.attribute_card(attr_card)
-            return instructions
-          end
-        end
-      end
-      return nil
+        
+    def add_help_card  
+      self.setting_card('add help') || self.setting_card('edit help')
     end
     
     def type

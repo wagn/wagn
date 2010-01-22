@@ -8,6 +8,7 @@
 		<% end %>
 	</div>
 	<div class="set">
-		<%= slot.render( :link ) %>
+	  <%- set_name = card.name.trunk_name %>
+	  <%= link_to_page Wagn::Pattern.label(set_name), set_name %>
 	</div>
 </div>

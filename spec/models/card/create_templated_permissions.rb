@@ -24,7 +24,7 @@ end
 describe Card, "Cardtype template" do
   before do
     User.as :wagbot 
-    @ctt = Card.create! :name=> 'Cardtype E+*tform'
+    @ctt = Card['Cardtype E+*tform']
     @r1 = Role.find_by_codename 'r1'
     @ctt.permit(:create, @r1)
     #warn "permissions #{@ctt.permissions.plot :task}"
@@ -46,7 +46,7 @@ end
 describe Card, "Cardtype template" do
   before do
     User.as :wagbot 
-    @ctt = Card.create! :name=> 'Cardtype E+*tform'
+    @ctt = Card['Cardtype E+*tform']
     @r1 = Role.find_by_codename 'r1'
     @ctt.permit(:create, @r1)
     #warn "permissions #{@ctt.permissions.plot :task}"
@@ -67,36 +67,39 @@ describe Card, "Cardtype template" do
 end         
 
 describe Card, "Basic Card template" do
-  before do
-    User.as :wagbot 
-    Card.create! :name=> 'Cardtype E+*tform'
-    @bt = Card.find_by_name 'Basic+*tform'
-    @r1 = Role.find_by_codename 'r1'
-    @bt.permit(:create, @r1)
-    @bt.save!
-    @b = Card.find_by_name 'Basic'
-    @ctd = Card.find_by_name 'Cardtype D'
-    @cte = Card.find_by_name 'Cardtype E'
-  end
+  context "when a create permission is submitted" do 
+    before do
+      User.as :wagbot 
+      @bt = Card.find_by_name 'Basic+*tform'
+      @r1 = Role.find_by_codename 'r1'
+      @bt.permit(:create, @r1)
+      @bt.save!
+      @b = Card.find_by_name 'Basic'
+      @ctd = Card.find_by_name 'Cardtype D'
+      @cte = Card.find_by_name 'Cardtype E'
+    end
+
+    it "should update the basic template's create permission" do
+      @bt.who_can(:create).should== @r1
+    end
+    it "should update the basic cardtype's create permission" do
+      @b.who_can(:create).should== @r1
+    end
+    
+    it "should update other cardtypes' permissions" do
+      @ctd.who_can(:create).should== @r1
+    end
+    
+    it "should not update other cardtypes' permissions if they have a template set" do
+      @cte.who_can(:create).should_not== @r1
+    end  
   
-  it "should update the basic template's create permission when a create permission is submitted" do
-    @bt.who_can(:create).should== @r1
-  end
-  it "should update the basic cardtype's create permission when a create permission is submitted" do
-    @b.who_can(:create).should== @r1
-  end
-  it "should update other cardtypes' permissions" do
-    @ctd.who_can(:create).should== @r1
-  end
-  it "should not update other cardtypes' permissions if they have a template set" do
-    @cte.who_can(:create).should_not== @r1
-  end  
-  
-  it "should keep create permission from template when updated directly" do
-    @ctd.permissions = %w{read edit delete comment}.collect {|t| 
-      Permission.new(:task=>t, :party=>::Role[:auth])
-    }
-    @ctd.save!
-    @ctd.who_can(:create).should== @r1
+    it "should keep create permission from template when updated directly" do
+      @ctd.permissions = %w{read edit delete comment}.collect {|t| 
+        Permission.new(:task=>t, :party=>::Role[:auth])
+      }
+      @ctd.save!
+      @ctd.who_can(:create).should== @r1
+    end
   end
 end

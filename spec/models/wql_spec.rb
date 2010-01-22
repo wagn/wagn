@@ -1,8 +1,4 @@
 require File.dirname(__FILE__) + '/../spec_helper'
-require File.dirname(__FILE__) + '/../../test/helpers/wagn_test_helper'
-
-include WagnTestHelper
-
 
 A_JOINEES = ["B", "C", "D", "E", "F"]
       
@@ -217,7 +213,7 @@ end
 describe Wql2, "type" do  
   before { User.as :joe_user }
   
-  user_cards = ["Joe Admin","Joe Camel","Joe User","No Count","Sample User","u1","u2","u3"].sort
+  user_cards =  ["Joe Admin", "Joe Camel", "Joe User", "John", "No Count", "Sample User", "Sara", "u1", "u2", "u3"].sort
   
   it "should find cards of this type" do
     Card.search( :type=>"_self", :_card=>Card['User']).plot(:name).sort.should == user_cards
@@ -255,12 +251,10 @@ describe Wql2, "order" do
   before { User.as :joe_user }
 
   it "should sort by create" do  
-    given_cards(
-      { "Cardtype:Nudetype" => ""},
-      { "Nudetype:nfirst" => "a"},
-      { "Nudetype:nsecond" => "b"},
-      { "Nudetype:nthird"=> "c" }
-    )
+    Card.create! :type=>"Cardtype", :name=>"Nudetype"
+    Card.create! :type=>"Nudetype", :name=>"nfirst", :content=>"a"
+    Card.create! :type=>"Nudetype", :name=>"nsecond", :content=>"b"
+    Card.create! :type=>"Nudetype", :name=>"nthird", :content=>"c"
     # WACK!! this doesn't seem to be consistent across fixture generations :-/
     Card.search( :type=>"Nudetype", :sort=>"create", :dir=>"asc").plot(:name).should ==
       ["nfirst","nsecond","nthird"]

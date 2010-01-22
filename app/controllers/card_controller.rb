@@ -110,6 +110,7 @@ class CardController < ApplicationController
   end
   
   def create    
+    #debugger if params[:card][:type]=='Testimony'
     @card = Card.create params[:card]        
     #@card.save
     
@@ -186,7 +187,7 @@ class CardController < ApplicationController
     end
 
     handling_errors do
-      @card = Card.find(card.id)  
+      @card = Card.find(@card.id)   # wtf?
       flash[:notice] = "updated #{@card.name}"
       request.xhr? ? render_update_slot(render_to_string(:action=>'show')) : render_show
     end
@@ -270,11 +271,12 @@ class CardController < ApplicationController
   end   
   
   def open
+    params[:view] = :open
     render_show
   end
 
   def options
-    @extension = card.extension
+    @extension = @card.extension
     render :partial=>"card/options/#{params[:attribute]}" if params[:setting] and 
       ['closed_setting','open_setting'].include?(params[:attribute])
   end
@@ -286,8 +288,8 @@ class CardController < ApplicationController
   end
 
   def related
-    sources = [card.cardtype.name,nil]
-    sources.unshift '*account' if card.extension_type=='User' 
+    sources = [@card.cardtype.name,nil]
+    sources.unshift '*account' if @card.extension_type=='User' 
     @items = sources.map do |root| 
       c = CachedCard[(root ? "#{root}+" : '') +'*related']
       c && c.type=='Pointer' && c.pointees
@@ -321,14 +323,14 @@ class CardController < ApplicationController
   def watch 
     watchers = Card.find_or_new( :name => @card.name + "+*watchers", :type => 'Pointer' )
     watchers.add_reference User.current_user.card.name
-    flash[:notice] = "You are now watching #{card.name}"
+    flash[:notice] = "You are now watching #{@card.name}"
     request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
   def unwatch 
     watchers = Card.find_or_new( :name => @card.name + "+*watchers" )
     watchers.remove_reference User.current_user.card.name
-    flash[:notice] = "You are no longer watching #{card.name}"
+    flash[:notice] = "You are no longer watching #{@card.name}"
     request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
@@ -350,13 +352,13 @@ class CardController < ApplicationController
     complete = complete.to_s
     # FIXME - shouldn't we bail here if we don't have anything to complete?
 
-    pointer_options = 
-      !params[:id].blank? &&
-      (pointer_card = c=Card[params[:id].tag_name]) && 
-      pointer_card.setting_card('options')
+    options_card = 
+      (!params[:id].blank? &&
+       (pointer_card = CachedCard.get(params[:id])) && 
+       pointer_card.setting_card('options'))
 
     search_args = {  :complete=>complete, :limit=>8, :sort=>'name' }
-    @items = pointer_options ? pointer_options.search(search_args) : Card.search(search_args)
+    @items = options_card ? options_card.search(search_args) : Card.search(search_args)
 
     render :inline => "<%= auto_complete_result @items, 'name' %>"
   end                                              

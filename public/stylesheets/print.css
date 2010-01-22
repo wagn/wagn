@@ -1,13 +1,19 @@
 #primary {
   width: 100%
 }
-#secondary, #alerts, #menu {
+#secondary, #alerts, #menu, .card-menu {
   display: none !important;
+}
+.title {
+  font-size: 15px;
 }
 .card-slot.paragraph .content {
   overflow: visible !important;
 }
-body {
+div.transcluded {
+  display: inline;
+}
+body#wagn {
   color: #444;
   font-style: normal;
 }

@@ -178,9 +178,10 @@ module Cardlib
           WikiReference.update_on_destroy(dep, @old_name) 
         end
       else
-        ([self]+deps).map(&:referencers).flatten.uniq.each do |card|
-          ActiveRecord::Base.logger.info("------------------ UPDATE REFERRER #{card.name}  ------------------------")
-          User.as(:wagbot) do      
+        User.as(:wagbot) do      
+          ([self]+deps).map(&:referencers).flatten.uniq.each do |card|
+            ActiveRecord::Base.logger.info("------------------ UPDATE REFERRER #{card.name}  ------------------------")
+            next if card.hard_template
             card.content = Renderer.new.replace_references( card, @old_name, name )
             card.save! unless card==self
           end
@@ -191,8 +192,6 @@ module Cardlib
       @name_changed = false   
       true
     end
-
-    
                
     def self.append_features(base)
       super 

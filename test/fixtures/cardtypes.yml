@@ -95,6 +95,10 @@ cardtypes_004:
   class_name: Phrase
   system: 
   id: "23"
+cardtypes_027: 
+  class_name: Optic
+  system: 
+  id: "35"
 cardtypes_016: 
   class_name: Toggle
   system: 

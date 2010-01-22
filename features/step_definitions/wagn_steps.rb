@@ -25,11 +25,15 @@ Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
     end
   end
 end
-         
+
 Given /^the pointer (.*) contains "([^\"]*)"$/ do |cardname, content|
   webrat.simulate do
     Given "the card #{cardname} contains \"#{content}\"" 
   end
+end
+
+Given /I harden "([^\"]*)"/ do |cardname|
+  Card[cardname].update_attribute :extension_type, "HardTemplate"
 end
 
 When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
@@ -53,7 +57,8 @@ When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
 end
      
 When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/ do |username, cardtype, cardname, content|
-  create_card(username, cardtype, cardname, content) do   
+  create_card(username, cardtype, cardname, content) do  
+    content.gsub!(/\\n/,"\n") 
     fill_in_hidden_or_not("card[content]", :with=>content)
   end
 end    
@@ -96,7 +101,11 @@ def create_card(username,cardtype,cardname,content="")
   logged_in_as(username) do
     visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"   
     yield if block_given?
-    click_button("Create")
+    click_button("Create") 
+    # Fixme - need better error handling here-- the following raise
+    # at least keeps us from going on to the next step if the create bombs
+    # but it doesn't report the reason for the failure.
+    raise "Creating #{cardname} failed" unless Card[cardname]
   end
 end
 

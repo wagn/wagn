@@ -167,14 +167,7 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
   color: #440;
   font-style: italic;
   text-align: center;
-  padding: 2px;
-}
-.instruction div, 
-.instruction p {
-  padding: 4px;
-}
-.edit-instruction {
-  margin: 8px 0px;
+  padding: 4px 10px;
 }
 #new-card .main-instruction {
   margin-bottom: 20px;

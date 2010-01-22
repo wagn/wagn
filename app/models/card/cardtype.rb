@@ -1,5 +1,5 @@
  module Card
-  class Cardtype < Base
+  class Cardtype < Basic
 
     before_validation_on_create :create_extension, :reset_cardtype_cache
     before_destroy :validate_destroy, :destroy_extension   # order is important!

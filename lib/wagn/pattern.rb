@@ -1,26 +1,32 @@
 module Wagn
   class Pattern
     @@subclasses = []
+    cattr_accessor :key
 
     class << self
       def register_class klass 
         @@subclasses.unshift klass
       end
-    
-      def class_for spec
-        matching_classes = @@subclasses.select {|pattern_class| pattern_class.recognize( spec ) }
-        raise("invalid pattern #{spec.inspect}") if matching_classes.length < 1
-        raise("pattern conflict for #{spec.inspect}: matched by #{matching_classes.inspect}") if matching_classes.length > 1
-        matching_classes.first
+      
+      def subclasses
+        @@subclasses
       end
     
-      def key_for_spec spec
-        spec = Wql2::CardSpec.new(spec).spec
-        class_for(spec).key_for_spec spec
+      def set_names card
+        @@subclasses.map do |sc|
+          sc.pattern_applies?(card) ? sc.set_name(card) : nil
+        end.compact
       end
-    
-      def keys_for_card card
-        @@subclasses.map { |pattern_class| pattern_class.key_for_card(card) }.compact
+      
+      def label name
+        @@subclasses.map do |sc|
+          return sc.label(name) if sc.match(name)
+        end
+        return nil
+      end
+            
+      def match name
+        name.tag_name==self.key
       end
     end  
    
@@ -29,38 +35,67 @@ module Wagn
     def initialize spec
       @spec = spec
     end
+    
   end                                                                     
+
+  class AllPattern < Pattern
+    class << self
+      def key
+        '*all'
+      end
+      
+      def pattern_applies? card
+        true
+      end
+
+      def set_name card
+        key
+      end
+      
+      def label name
+        'All Cards'
+      end
+    end
+    register_class self
+  end
 
   class TypePattern < Pattern
     class << self
-      def key_for_card card
-        "Type:#{card.cardtype.name}"
-      end 
-
-      def recognize spec
-        spec[:type] && spec[:type].is_a?(String) && spec.keys.length == 1
+      def key
+        '*type'
+      end
+      
+      def pattern_applies? card
+        true
       end
 
-      def key_for_spec spec
-        "Type:#{spec[:type]}"                        
-      end    
+      def set_name card
+        "#{card.cardtype.name}+#{key}"
+      end
+      
+      def label name
+        "All #{name.trunk_name} cards"
+      end
     end
     register_class self
   end
 
   class RightNamePattern < Pattern 
     class << self
-      def key_for_card card
-        return nil unless name=card.name and name.junction?
-        "RightName:#{name.tag_name}"
+      def key
+        '*right'
+      end
+      
+      def pattern_applies? card
+        card.name && card.name.junction?
       end
   
-      def recognize spec
-        spec[:right] && spec[:right].is_a?(String) && spec.keys.length == 1
+      def set_name card
+        "#{card.name.tag_name}+#{key}"
       end
-  
-      def key_for_spec spec
-        "RightName:#{spec[:right]}"
+      
+      def label name
+        "Cards ending in +#{name.trunk_name}"
       end
     end
     register_class self
@@ -68,18 +103,20 @@ module Wagn
 
   class LeftTypeRightNamePattern < Pattern                     
     class << self
-      def key_for_card card
-        return nil unless card.junction?
-        "LeftTypeRightName:#{card.left.cardtype.name}:#{card.name.tag_name}"
+      def key
+        '*type plus right'
       end
-  
-      def recognize spec
-        !!(spec[:right] && spec[:right].is_a?(String) &&
-              spec[:left] && spec[:left].is_a?(Hash) && spec[:left][:type])
-      end                                
-  
-      def key_for_spec spec
-        "LeftTypeRightName:#{spec[:left][:type]}:#{spec[:right]}"
+      
+      def pattern_applies? card
+        card.name && card.name.junction? && card.left
+      end
+      
+      def set_name card
+        "#{card.left.cardtype.name}+#{card.name.tag_name}+#{key}"
+      end
+      
+      def label name
+        "Any #{name.trunk_name.trunk_name} card plus #{name.trunk_name.tag_name}"
       end
     end
     register_class self
@@ -87,16 +124,20 @@ module Wagn
   
   class SoloPattern < Pattern
     class << self
-      def key_for_card card
-        "Solo:#{card.key}"
+      def key
+        '*self'
       end
-  
-      def recognize spec
-        spec[:name] && spec[:name].is_a?(String) && spec.keys.length == 1
-      end                                
-  
-      def key_for_spec spec
-        "Solo:#{spec[:name].to_key}"
+      
+      def pattern_applies? card
+        card.name
+      end
+      
+      def set_name card
+        "#{card.name}+#{key}"
+      end
+      
+      def label name
+        "Just \"#{name.trunk_name}\""
       end
     end
     register_class self

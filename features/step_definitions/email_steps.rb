@@ -60,6 +60,11 @@ Then %r{^(I|He) should see "([^"]*?)" in the email$} do |pronoun, text|
   current_email.body.should =~ Regexp.new(text)
 end
 
+Then /^it should be from "(.*)"$/ do |from| 
+  # hmm.. this first thing seems a bit of a hack
+  current_email.from.first.should == from
+end
+
 When %r{^"([^"]*?)" opens? the email with subject "(.*)"$} do |address, subject|
   open_email(address, :with_subject => subject)
 end

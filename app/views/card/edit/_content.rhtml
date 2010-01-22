@@ -11,8 +11,8 @@
 <% end %>
 
 
-<% if inst = card.edit_instructions %>
-  <%= render( :partial=> 'card/instructions', :locals=>{ :instructions=> inst } ) %>
+<% if inst = card.setting_card('edit help') %>
+  <div class="instruction"><%= slot.subslot(inst).render :naked %></div>
 <% end %>
 
 <% if card.hard_template and card.hard_template.ok? :read %>

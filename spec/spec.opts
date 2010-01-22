@@ -1,6 +1,6 @@
 --colour
---format progress
+--format profile
 --loadby mtime
 --reverse     
---backtrace
+--drb
 

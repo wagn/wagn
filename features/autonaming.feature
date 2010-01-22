@@ -4,8 +4,7 @@ Feature: autonaming
   
   Background:
     Given I log in as Joe User
-    And I create Set card "Book cards" with content "{"type":"Book"}"
-    And I create Phrase card "Book cards+*autoname" with content "Book 1"
+    And I create Phrase card "Book+*type+*autoname" with content "Book 1"
   
   Scenario: Simple cardtype autoname       
     When I go to new Book

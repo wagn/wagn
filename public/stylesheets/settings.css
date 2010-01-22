@@ -5,10 +5,13 @@
   padding: 5px 15px;
 }
 .set-setting .setting-row {
+  clear: both;
   border-bottom: 1px solid #999;
   padding: 0px;
 }
-.setting-row .set, .setting-row .value {
+.setting-row .set, 
+.setting-row .setting, 
+.setting-row .value {
   padding: 4px;
 }
 .set-setting .open-set-setting {
@@ -25,7 +28,6 @@
   border-bottom: 1px solid #999;  
 }
 .edit-link {
-  color: #484;
   float: right; 
 }
 .setting-description,
@@ -34,15 +36,16 @@
   float:right;
   margin-left: 10px;
 }
+/*
 .not-set .value,
 .overridden .value{
   background: #ddd
 }
-
+*/
 .setting a{ 
   font-weight: bold;
-  color: #484
 }
+/*
 .setting-description {
   background: #eec;
   color: #440;
@@ -51,11 +54,15 @@
   text-align: center;
   display: block;
 }
+*/
 .set { 
   font-style: italic;
-  color: #484;
   text-align: right;
-  background: #fff
-
 }                      
-.set-setting .card-slot { border-bottom: 0px !important }
+.set-setting .card-slot { 
+  border-bottom: 0px !important 
+}
+.settings-for-set,
+.values-for-setting {
+  margin: 20px 5px 5px 5px;
+}

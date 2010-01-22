@@ -117,7 +117,6 @@ namespace :test do
     # not using it for now.
     
     #require 'test/unit'    
-    #require 'shoulda/test_unit'
     #Test::Unit::AutoRunner.class_eval {  def self.run() 1 end }
 
     # Dir["#{RAILS_ROOT}/test/**/*.rb"].each {|f| load "#{f}"}  

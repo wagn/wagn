@@ -1,13 +1,11 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-class RendererTest < ActiveSupport::TestCase
-  
-  def setup
-    setup_default_user     
-    CachedCard.bump_global_seq
+describe Renderer do
+  before do
+    User.as :wagbot
   end
-
-  def test_replace_references_should_work_on_inclusions_inside_links       
+  
+  it "replace references should work on inclusions inside links" do       
     card = Card.create!(:name=>"test", :content=>"[[test{{test}}]]"  )    
     assert_equal "[[test{{best}}]]", Renderer.new.replace_references( card, "test", "best" )
   end                                                                                                

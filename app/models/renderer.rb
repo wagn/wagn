@@ -44,7 +44,6 @@ class Renderer
 	 if card.id and card.respond_to?('references_expired')
     	card.connection.execute("update cards set references_expired=NULL where id=#{card.id}") 
     end
-    
     rendering_result.find_chunks(Chunk::Reference).each do |chunk|
       reference_type = 
         case chunk

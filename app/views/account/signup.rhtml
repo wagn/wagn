@@ -24,6 +24,7 @@
         <%= hidden_field_tag 'element', "#{div_id}"  %>
         <%= f.hidden_field 'type'  %>
         <%- slot.form = f %>
+				<% debugger %>
         <%= error_messages_for :user %> 
       	<table class="fieldset">
       	  <%= slot.option_header 'Account Details' %>

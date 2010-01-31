@@ -1,6 +1,10 @@
-module Wagn    
+module Wagn
   class Initializer
     class << self
+      def set_default_config config
+        config.available_modules = Dir["#{RAILS_ROOT}/modules/*.rb"]
+      end
+      
       def set_default_rails_config config    
         #config.active_record.observers = :card_observer            
         config.cache_store = :file_store, "#{RAILS_ROOT}/tmp/cache"
@@ -14,7 +18,7 @@ module Wagn
         config.action_controller.session = {
           :session_key => db[RAILS_ENV]['session_key'],
           :secret      => db[RAILS_ENV]['secret']
-        }     
+        }    
       end
 
       def run
@@ -122,6 +126,28 @@ module Wagn
         end
       end
     end   
+  end
+  
+  # oof, this is not polished
+  class Config
+    def initialize
+      @data = {}
+    end
+    
+    def method_missing(meth, *args)
+      if meth.to_s =~ /^(.*)\=$/
+        @data[$~[1]] = args[0]
+      else
+        @data[meth.to_s]
+      end
+    end
+  end
+
+  @@config = Config.new
+  Wagn::Initializer.set_default_config @@config
+  
+  def self.config
+    @@config
   end
 end        
 

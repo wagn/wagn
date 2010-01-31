@@ -16,3 +16,4 @@ public/card_images
 public/card_files
 test/unit/tmp_test.rb
 public/javascripts/inline-console.js
+vendor/plugins/policy_portal_payment/

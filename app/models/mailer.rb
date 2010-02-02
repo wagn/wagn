@@ -53,6 +53,7 @@ class Mailer < ActionMailer::Base
   def flexmail config
     recipients  config[:to]
     from        config[:from]
+    cc          config[:cc]
     bcc         config[:bcc]
     subject     config[:subject]
     content_type 'text/html'

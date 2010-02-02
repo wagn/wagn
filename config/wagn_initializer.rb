@@ -121,7 +121,7 @@ module Wagn
           f.puts "Wagn::Initializer.initialize_builtin_cards"
         end
         
-        %w{ *head *alert *foot *navbox *version *account_link }.each do |key|
+        %w{ *head *alert *foot *navbox *version *account_link *today }.each do |key|
           Card.add_builtin( Card.new(:name=>key, :builtin=>true))
         end
       end

@@ -4,7 +4,7 @@ class Flexmail
       if send_card = card.setting_card("*send")
         send_card.list_items.map do |email_config|
           config = {}
-          [:to, :from, :bcc].each do |field|
+          [:to, :from, :cc, :bcc].each do |field|
             config[field] = if_card("#{email_config}+*#{field}") do |c|
               c.extended_list(card).join(",")
             end.else("")

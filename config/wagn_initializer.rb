@@ -18,7 +18,8 @@ module Wagn
         config.action_controller.session = {
           :session_key => db[RAILS_ENV]['session_key'],
           :secret      => db[RAILS_ENV]['secret']
-        }    
+        }  
+        set_default_config Wagn.config
       end
 
       def run
@@ -144,7 +145,6 @@ module Wagn
   end
 
   @@config = Config.new
-  Wagn::Initializer.set_default_config @@config
   
   def self.config
     @@config

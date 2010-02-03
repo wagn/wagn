@@ -14,6 +14,7 @@ class Flexmail
               c.contextual_content(card)
             end.else("")
           end
+          config[:subject] = strip_html(config[:subject]).strip
           config
         end
       else
@@ -26,6 +27,10 @@ class Flexmail
         ActiveRecord::Base.logger.warn "Sending mailconfig: #{config.inspect}"
         Mailer.deliver_flexmail config
       end
+    end
+    
+    def strip_html string
+      string.gsub(/<\/?[^>]*>/,  "")
     end
   end  
 

@@ -1,24 +1,26 @@
 class Flexmail
   class << self
     def configs_for card
-      if send_card = card.setting_card("*send")
-        send_card.list_items.map do |email_config|
-          config = {}
-          [:to, :from, :cc, :bcc].each do |field|
-            config[field] = if_card("#{email_config}+*#{field}") do |c|
-              c.extended_list(card).join(",")
-            end.else("")
+      User.as :wagbot do
+        if send_card = card.setting_card("*send")
+          send_card.list_items.map do |email_config|
+            config = {}
+            [:to, :from, :cc, :bcc].each do |field|
+              config[field] = if_card("#{email_config}+*#{field}") do |c|
+                c.extended_list(card).join(",")
+              end.else("")
+            end
+            [:subject, :message].each do |field|
+              config[field] = if_card("#{email_config}+*#{field}") do |c|
+                c.contextual_content(card)
+              end.else("")
+            end
+            config[:subject] = strip_html(config[:subject]).strip
+            config
           end
-          [:subject, :message].each do |field|
-            config[field] = if_card("#{email_config}+*#{field}") do |c|
-              c.contextual_content(card)
-            end.else("")
-          end
-          config[:subject] = strip_html(config[:subject]).strip
-          config
+        else
+          []
         end
-      else
-        []
       end
     end
     

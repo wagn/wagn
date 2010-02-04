@@ -28,6 +28,33 @@ describe Flexmail do
     end
   end
 
+  describe "complex configs for" do
+    before do
+      User.as :wagbot
+      Card::Phrase.create!  :name => 'Bobs addy', :content=>'bob@bob.com'
+      Card::Pointer.create! :name => 'his addy', :content=>'[[bobs addy]]'
+      Card::Search.create!  :name => "mailconfig+*to", :content => %{ {"key":"bob_addy"} }
+      Card::Search.create!  :name => "mailconfig+*from", :content => %{ {"referred_to_by":"his_addy"} }
+      Card::Search.create!  :name => "mailconfig+*subject", :content => "{{his addy+*link | naked; item:name}}"
+      Card.create! :name => "mailconfig+*message", :content => "Oughta get fancier"
+      Card.create! :name => "emailtest+*right+*send", :content => "[[mailconfig]]"
+      c= Card['Basic']; c.permit(:create, Role[:anon]); c.save!
+      User.as :anon
+    end
+        
+    it "returns list with correct hash for card with configs" do
+      c = Card.create :name => "Banana+emailtest", :content => "data content"
+      Flexmail.configs_for(c).should == [{
+        :to => "bob@bob.com",
+        :from => "bob@bob.com",
+        :bcc => "",
+        :cc => '',
+        :subject => "Bobs addy",
+        :message => "Oughta get fancier"
+      }]
+    end
+  end
+
   describe "hooks for" do
     describe "untemplated card" do
       before do

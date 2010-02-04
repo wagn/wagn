@@ -403,7 +403,13 @@ class Slot
   end
 
   def get_inclusion_content(cardname)
-    content = root.slot_options[:relative_content][cardname.gsub(/\+/,'_')]
+    parameters = root.slot_options[:relative_content]
+    content = parameters[cardname.gsub(/\+/,'_')]
+    
+    # CLEANME This is a hack to get it so plus cards re-populate on failed signups
+    if parameters['cards'] and card_params = parameters['cards'][cardname.gsub('+','~plus~')]  
+      content = card_params['content']
+    end  
     content if content.present?  #not sure I get why this is necessary - efm
   end
 

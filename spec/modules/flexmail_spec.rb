@@ -21,7 +21,7 @@ describe Flexmail do
         :to => "joe@user.com",
         :from => "from@user.com",
         :bcc => "",
-        :cc => '',
+        :cc => "",
         :subject => "Subject of the mail",
         :message => "This data content"
       }]

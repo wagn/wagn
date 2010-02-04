@@ -7,6 +7,7 @@ module Wagn
         config.frameworks -= [ :action_web_service ]
         config.gem "uuid"
         config.gem "json"
+        config.gem "hoptoad_notifier"
         require 'yaml'   
         require 'erb'     
         database_configuration_file = "#{RAILS_ROOT}/config/database.yml"

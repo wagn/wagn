@@ -70,7 +70,7 @@
   		  <%= hidden_field_tag :view, params[:requested_view] || params[:view] || :open %>
   		  <div class="edit-button-area">
     		
-    			<%= button_to_function 'Create', "this.form.onsubmit()", :id=>'create-button'  %>
+    			<%= button_to_function 'Submit', "this.form.onsubmit()", :id=>'create-button'  %>
 						
           <% if request.xhr? %>						
     				<%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function }  %> 

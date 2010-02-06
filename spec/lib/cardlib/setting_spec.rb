@@ -58,7 +58,7 @@ describe Card do
     end
     
     it "processes inclusions relative to context card" do
-      context_card = CachedCard.get("A") # refers to 'Z'
+      context_card = Card["A"] # refers to 'Z'
       c = Card.new(:name=>"foo", :content => "{{_self+B|naked}}")
       c.contextual_content( context_card ).should == "AlphaBeta"
     end

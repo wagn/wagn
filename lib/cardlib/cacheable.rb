@@ -48,9 +48,6 @@ module Cardlib
     
     def contextual_content context = nil
       context ||= self
-      context = context.clone
-      context.permit :read, Role[:anon]
-      context.permit :write, Role[:anon]
       context.content = self.content
       s=Slot.new(context);
       # FIXME: maybe slot.rb should have an additional view for this.

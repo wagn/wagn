@@ -30,26 +30,45 @@ describe Flexmail do
 
   describe "complex configs for" do
     before do
+      class ActionView::Base
+        def params
+          if @controller
+            @controller.params
+          else
+            {}
+          end
+        end
+      end
+      
       User.as :wagbot
       Card::Phrase.create!  :name => 'Bobs addy', :content=>'bob@bob.com'
-      Card::Pointer.create! :name => 'his addy', :content=>'[[bobs addy]]'
+      Card::Phrase.create!  :name => 'default subject', :content=>'a very nutty thang'
       Card::Search.create!  :name => "mailconfig+*to", :content => %{ {"key":"bob_addy"} }
-      Card::Search.create!  :name => "mailconfig+*from", :content => %{ {"referred_to_by":"his_addy"} }
-      Card::Search.create!  :name => "mailconfig+*subject", :content => "{{his addy+*link | naked; item:name}}"
+      Card::Search.create!  :name => "mailconfig+*from", :content => %{ {"left":"_left", "right":"email"} }
+      Card::Search.create!  :name => "subject search+*rform", :content => %{{"referred_to_by":"_self+subject"}},
+        :extension_type => 'HardTemplate'
+      Card.create!  :name => "mailconfig+*subject", :content => "{{+subject search|naked;item:naked}}"
       Card.create! :name => "mailconfig+*message", :content => "Oughta get fancier"
-      Card.create! :name => "emailtest+*right+*send", :content => "[[mailconfig]]"
-      c= Card['Basic']; c.permit(:create, Role[:anon]); c.save!
+      c = Card::Cardtype.create! :name=>'Trigger'
+      c.permit(:create, Role[:anon])
+      c.permit(:read,   Role[:auth]) 
+      c.save!
+      Card.create! :name=>'Trigger+*tform', :extension_type=>'HardTemplate', :content=>''
+      Card::Pointer.create! :name => "Trigger+*type+*send", :content => "[[mailconfig]]"
       User.as :anon
     end
         
     it "returns list with correct hash for card with configs" do
-      c = Card.create :name => "Banana+emailtest", :content => "data content"
+      c = Card::Trigger.create :name => "Banana Trigger", :content => "data content"
+      c.multi_create( '~plus~email'=>{:content=>'gary@gary.com'},
+        '~plus~subject'=>{:type=>'Pointer', :content=>'[[default subject]]'}
+       )
       Flexmail.configs_for(c).should == [{
         :to => "bob@bob.com",
-        :from => "bob@bob.com",
+        :from => "gary@gary.com",
         :bcc => "",
         :cc => '',
-        :subject => "Bobs addy",
+        :subject => "a very nutty thang",
         :message => "Oughta get fancier"
       }]
     end

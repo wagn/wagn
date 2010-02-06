@@ -101,7 +101,7 @@ def create_card(username,cardtype,cardname,content="")
   logged_in_as(username) do
     visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"   
     yield if block_given?
-    click_button("Create") 
+    click_button("Submit") 
     # Fixme - need better error handling here-- the following raise
     # at least keeps us from going on to the next step if the create bombs
     # but it doesn't report the reason for the failure.

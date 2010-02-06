@@ -71,7 +71,17 @@ module Wql2
     "relevance" => "desc"
   }
 
+  mattr_reader :root_perms_only
+  @@root_perms_only = false
 
+  def self.without_nested_permissions
+    @@root_perms_only = true
+    result = yield
+    @@root_perms_only = false
+    result
+  end
+    
+  
   class Spec 
     attr_accessor :spec
     
@@ -155,6 +165,10 @@ module Wql2
     
     def root
       @parent ? @parent.root : self
+    end
+    
+    def root?
+      root == self
     end
     
     def card   
@@ -418,7 +432,7 @@ module Wql2
       # Permissions       
       t = table_alias
       #unless User.current_user.login.to_s=='wagbot' #
-      unless System.always_ok?
+      unless System.always_ok? or (Wql2.root_perms_only && !root?)
         user_roles = [Role[:anon].id]
         unless User.current_user.login.to_s=='anon'
           user_roles += [Role[:auth].id] + User.current_user.roles.map(&:id)

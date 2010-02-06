@@ -48,9 +48,10 @@ module Cardlib
     
     def contextual_content context = nil
       context ||= self
-      User.as :wagbot do
-        context.content = self.content
-      end
+      context = context.clone
+      context.permit :read, Role[:anon]
+      context.permit :write, Role[:anon]
+      context.content = self.content
       s=Slot.new(context);
       # FIXME: maybe slot.rb should have an additional view for this.
       # ultimately we need to be able to process links and inclusions in an email/text friendly way

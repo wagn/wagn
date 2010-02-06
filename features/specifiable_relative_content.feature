@@ -6,7 +6,7 @@ Feature: Specifiable relative content
   Scenario: User age
     Given I log in as Joe User
     And I go to url "/new/Book?_author=shakespeare&card[name]=btest"
-    And I press "Create"
+    And I press "Submit" "Create"
     When I go to card btest+author
     Then I should see "shakespeare"
   

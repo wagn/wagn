@@ -365,6 +365,10 @@ module Card
       (dependents + [self]).plot(:referencers).flatten.uniq
     end
 
+    def card
+      self
+    end
+
     def cardtype
       @cardtype ||= begin
         ct = ::Cardtype.find_by_class_name( self.type )

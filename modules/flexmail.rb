@@ -8,14 +8,14 @@ class Flexmail
           [:to, :from, :cc, :bcc].each do |field|
             config[field] = if_card("#{email_config}+*#{field}") do |c|
               # configuration can be anything visible to configurer
-              User.as( c.updater ) do
+              User.as( c.card.updater ) do
                 c.extended_list(card).join(",")
               end
             end.else("")
           end
           [:subject, :message].each do |field|
             config[field] = if_card("#{email_config}+*#{field}") do |c|
-              User.as( c.updater ) do
+              User.as( c.card.updater ) do
                 c.contextual_content(card)
               end
             end.else("")

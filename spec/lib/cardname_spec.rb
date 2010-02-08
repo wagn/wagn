@@ -74,4 +74,14 @@ describe Cardname do
     'a+b+c'.replace_part('a+b','x').should == 'x+c'
     'a+b+c'.replace_part('b+c','x').should == 'a+b+c'    
   end
+  
+  describe "#to_css_key" do
+    it "replaces first part" do
+      "This+That".to_css_key.should == '_PLUS_that'
+    end
+    
+    it "doesn't change simple cards" do
+      "this".to_css_key.should == 'this'
+    end
+  end
 end

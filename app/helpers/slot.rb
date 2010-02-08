@@ -127,7 +127,7 @@ class Slot
       end       
       
       css_class << " wrapper cardid-#{card.id} type-#{card.type}" if card
-      css_class << " name-#{card.key} type-#{Cardtype.name_for(card.type).to_key}" if card && card.type
+      css_class << " name-#{card.key.to_css_key} type-#{Cardtype.name_for(card.type).to_key}" if card && card.type
       
       attributes = { 
         :cardId   => (card && card.id),

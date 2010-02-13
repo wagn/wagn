@@ -20,6 +20,14 @@ describe Slot, "" do
       Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}
       Slot.render_content( "{{TestImage | naked; size:small }}" ).should == %{<img src="http://wagn.org/image53_small.jpg">} 
     end
+
+    describe "css classes" do
+      it "are correct for open view" do
+        Slot.render_content("{{A|open}}").should be_html_with do
+          div( :class => "card-slot paragraph ALL TYPE-basic SELF-a") {}
+        end
+      end
+    end
     
     describe "views" do
       it "open" do

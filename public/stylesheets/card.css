@@ -13,7 +13,8 @@ html>body .card-slot {
   width: auto;  /* so non-ie browsers do better with image floats */
 }
 .card-slot,
-.card-slot .ALL {
+.card-slot .wrapper,
+.card-slot .wrapper {
   overflow: hidden;
 }
 
@@ -741,7 +742,7 @@ div.search-result-list .search-result-item {
 
 
 /*.paragraph.type-Image, */
-.paragraph .TYPE-image .content {
+.paragraph .type-Image .content {
 /*  overflow: auto;  */
   padding: 5px;
 }

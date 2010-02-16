@@ -88,8 +88,8 @@ module Cardname
     end.join(JOINT)
   end  
 
-  def css_name
-    self.to_key.gsub('*','X').gsub('+','-')
+  def to_css_key
+    self.gsub(/^([^\+])+\+(.*)/,'_PLUS_\2')
   end
 
   def to_show(absolute)

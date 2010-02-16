@@ -117,18 +117,18 @@ class Slot
       case action.to_s
         when 'content';    css_class = 'transcluded'
         when 'exception';  css_class = 'exception'    
+#          when 'nude'   ;   css_class = 'nude-slot'
         else begin
           css_class = 'card-slot '      
           css_class << (action=='closed' ? 'line' : 'paragraph')
+#          css_class << ' full' if (context=~/main/ or (action!='view' and action!='closed'))
+#          css_class << ' sidebar' if context=~/sidebar/
         end
       end       
       
-      css_class << " " + Wagn::Pattern.css_names( card ) if card
-      
-      # DEPRECATED: remove me after wagns have been converted to new css classes
       css_class << " wrapper cardid-#{card.id} type-#{card.type}" if card
-      css_class << " name-#{card.key.css_name} type-#{Cardtype.name_for(card.type).to_key}" if card && card.type
-
+      css_class << " name-#{card.key.to_css_key} type-#{Cardtype.name_for(card.type).to_key}" if card && card.type
+      
       attributes = { 
         :cardId   => (card && card.id),
         :style    => args[:style],

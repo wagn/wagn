@@ -2,7 +2,7 @@
 
 <% get_slot.wrap( 'edit' ) do |slot| %>  
 	<%= slot.header %>
-	<style><%= ".SELF-#{@card.key.css_name} .edit-area .title-#{@card.name.css_name} { display: none; }" %></style>
+	<style><%= ".cardid-#{@card.id} .edit-area .title-#{css_name(@card.name)} { display: none; }" %></style>
 
   <% div( :id=>slot.id('card-body'), :class=>'card-body') do %>  
     <%= slot.render_partial 'card/edit/content' %>

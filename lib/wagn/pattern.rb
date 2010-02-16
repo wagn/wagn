@@ -17,12 +17,6 @@ module Wagn
           sc.pattern_applies?(card) ? sc.set_name(card) : nil
         end.compact
       end
-
-      def css_names card
-        @@subclasses.map do |sc|
-          sc.pattern_applies?(card) ? sc.css_name(card) : nil
-        end.compact.reverse.join(" ")
-      end
       
       def label name
         @@subclasses.map do |sc|
@@ -34,12 +28,6 @@ module Wagn
       def match name
         name.tag_name==self.key
       end
-
-      def css_name card
-        sn = set_name card
-        sn.tag_name.gsub(' ','_').gsub('*','').upcase + '-' + 
-          sn.trunk_name.css_name
-      end
     end  
    
     attr_reader :spec
@@ -47,7 +35,6 @@ module Wagn
     def initialize spec
       @spec = spec
     end
-    
     
   end                                                                     
 
@@ -63,10 +50,6 @@ module Wagn
 
       def set_name card
         key
-      end
-      
-      def css_name card
-        "ALL"
       end
       
       def label name

@@ -20,18 +20,6 @@ describe Wagn::Pattern do
     end
   end
   
-  describe :css_names do
-    it "returns self, type, all for simple cards" do
-      Wagn::Pattern.css_names( Card.new( :name => "*AnewCard")).should == 
-        "ALL TYPE-basic SELF-Xanew_card"
-    end
-
-    it "returns set names for junction cards" do
-      Wagn::Pattern.css_names( Card.new( :name=>"Illiad+author" )).should == 
-        "ALL TYPE-basic RIGHT-author TYPE_PLUS_RIGHT-book-author SELF-illiad-author"
-    end
-  end
-  
   describe :label do
     it "returns label for name" do
       Wagn::Pattern.label('address+*right').should== "Cards ending in +address"

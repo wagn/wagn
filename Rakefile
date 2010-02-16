@@ -11,3 +11,12 @@ require 'tasks/rails'
 
 
 task :default => [:test, :spec, :features]
+
+task :setup do
+  if ENV['RUN_CODE_RUN']
+    FileUtils.cp("config/sample_wagn.rb", "config/wagn.rb") unless File.exists?("config/wagn.rb")
+  end
+end
+
+task :environment => :setup
+    

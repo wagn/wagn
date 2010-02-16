@@ -16,30 +16,36 @@ module Wagn
         @@registry[hookname][set_name] << block
       end
     
-      def invoke hookname, card_or_set_name, *args
-        # FIXME: I'm not sure having the parameter optionally be a card or name
-        # is a good idea. it's useful, but I can see it tripping things up when
-        # a hook that was defined to expect a card is invoked with a name or vice versa.
-        cardname, card = card_or_set_name.is_a?(String) ? 
-          [card_or_set_name,nil] : [card_or_set_name.name, card_or_set_name]
-        debug.call "#{cardname} :#{hookname}" if debug
+      def call hookname, card_or_set_name, *args
+        return [] unless @@registry[hookname] 
 
-        if !@@registry[hookname] 
-          # nothing implementing this hook
-          return true 
+        if card_or_set_name.is_a?(String) 
+          call_set_name hookname, card_or_set_name, *args
+        else
+          call_card hookname, card_or_set_name, *args
         end
-
-        set_names = case card_or_set_name
-          when Card::Base; Wagn::Pattern.set_names( card_or_set_name )
-          when String; [card_or_set_name]
+      end
+      
+      def call_card hookname, card, *args
+        set_names =  Wagn::Pattern.set_names( card )
+        hooks_for_set_names(hookname,set_names).map do |h|
+          h.call(card, *args)
         end
-        hooks = set_names.map do |s| 
+      end
+      
+      def call_set_name hookname, set_name, *args
+        hooks_for_set_names(hookname,[set_name]).map do |h| 
+          h.call(set_name, *args) 
+        end
+      end
+      
+      def hooks_for_set_names hookname, set_names
+        set_names.map do |s| 
           h=@@registry[hookname][s] 
           debug.call "   - #{s}: #{h.inspect}" if h && debug
           h
         end.flatten.compact
-        hooks.each { |h| h.call(card_or_set_name, *args) }
-      end         
+      end
     end
   end
 end
@@ -49,7 +55,7 @@ module Card
   class Base
     [:before_save, :before_create, :after_save, :after_create].each do |hookname| 
       self.send( hookname ) do |card|
-        Wagn::Hook.invoke hookname, card
+        Wagn::Hook.call hookname, card
       end
     end
   end

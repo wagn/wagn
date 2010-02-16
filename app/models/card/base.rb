@@ -242,19 +242,19 @@ module Card
     end
 
     def multi_create(cards)
-      Wagn::Hook.invoke :before_multi_create, self, cards
+      Wagn::Hook.call :before_multi_create, self, cards
       multi_save(cards)
-      Wagn::Hook.invoke :after_multi_create, self
+      Wagn::Hook.call :after_multi_create, self
     end
     
     def multi_update(cards)
-      Wagn::Hook.invoke :before_multi_update, self, cards
+      Wagn::Hook.call :before_multi_update, self, cards
       multi_save(cards)
-      Wagn::Hook.invoke :after_multi_update, self
+      Wagn::Hook.call :after_multi_update, self
     end
     
     def multi_save(cards)
-      Wagn::Hook.invoke :before_multi_save, self, cards
+      Wagn::Hook.call :before_multi_save, self, cards
       cards.each_pair do |name, opts|              
         opts[:content] ||= ""   
         # make sure blank content doesn't override pointee assignments if they are present
@@ -280,7 +280,7 @@ module Card
           end
         end
       end  
-      Wagn::Hook.invoke :after_multi_save, self, cards
+      Wagn::Hook.call :after_multi_save, self, cards
     end
 
     def destroy_with_trash(caller="")     

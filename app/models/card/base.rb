@@ -40,6 +40,13 @@ module Card
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
       :update_referencers, :allow_type_change, :virtual, :builtin, :broken_type, :skip_defaults
+
+    # setup hooks on AR callbacks
+    [:before_save, :before_create, :after_save, :after_create].each do |hookname| 
+      self.send( hookname ) do |card|
+        Wagn::Hook.call hookname, card
+      end
+    end
         
     private
       belongs_to :reader, :polymorphic=>true  

@@ -4,9 +4,7 @@ describe Wagn::Hook do
   it "module exists and autoloads" do
     Wagn::Hook.should be_true
   end                      
-end
 
-describe Wagn::Hook do
   describe ".invoke" do
     before(:all){  Fish = mock("cod") }
     before do
@@ -44,19 +42,4 @@ describe Wagn::Hook do
   end
 end
 
-describe Card do
-  before(:each) do
-    Wagn::Hook.reset  # this is really just here to trigger hook auto-loading
-  end
 
-  describe "#create" do 
-    it "invokes hooks" do
-      [:before_save, :before_create, :after_save, :after_create].each do |hookname|
-        Wagn::Hook.should_receive(:call).with(hookname, instance_of(Card::Basic))
-      end 
-      User.as :wagbot do
-        Card.create :name => "testit"
-      end
-    end
-  end
-end

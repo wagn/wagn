@@ -50,17 +50,6 @@ module Wagn
   end
 end
 
-# install Wagn hooks in some of the active record callbacks.
-module Card
-  class Base
-    [:before_save, :before_create, :after_save, :after_create].each do |hookname| 
-      self.send( hookname ) do |card|
-        Wagn::Hook.call hookname, card
-      end
-    end
-  end
-end
-
 
 
 

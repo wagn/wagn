@@ -59,6 +59,8 @@ class ApplicationController < ActionController::Base
     System.request = request 
     #System.time = Time.now.to_f              
     load_location
+    
+    Wagn::Hook.call :before_request, '*all', self
   end
 
   def wagn_layout

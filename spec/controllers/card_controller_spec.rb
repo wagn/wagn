@@ -53,6 +53,116 @@ describe CardController do
     end
   end
 
+  describe "#create" do
+    before do
+      login_as :joe_user
+    end
+
+    # FIXME: several of these tests go all the way to DB,
+    #  which means they're closer to integration than unit tests.
+    #  maybe think about refactoring to use mocks etc. to reduce
+    #  test dependencies.
+    it "creates cards" do
+      post :create, :card => {
+        :name=>"NewCardFoo",
+        :type=>"Basic",
+        :content=>"Bananas"
+      }
+      assert_response 418
+      assert_instance_of Card::Basic, Card.find_by_name("NewCardFoo")
+      Card.find_by_name("NewCardFoo").content.should == "Bananas"
+    end
+    
+    it "creates cardtype cards" do
+      post :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
+      assigns['card'].should_not be_nil
+      assert_response 418
+      assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
+    end
+    
+    it "pulls deleted cards from trash" do
+      @c = Card.create! :name=>"Problem", :content=>"boof"
+      @c.destroy!
+      post :create, :card=>{"name"=>"Problem","type"=>"Phrase","content"=>"noof"}
+      assert_response 418
+      assert_instance_of Card::Phrase, Card.find_by_name("Problem")
+    end
+
+    context "multi-create" do
+      it "catches missing name error" do
+        post :create, "card"=>{"name"=>"", "type"=>"Form"},
+         "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
+         "content_to_replace"=>"",
+         "context"=>"main_1", 
+         "multi_edit"=>"true", "view"=>"open"
+        assigns['card'].errors["name"].should == "can't be blank"
+        assert_response 422
+      end
+
+      it "creates card and plus cards" do
+        post :create, "card"=>{"name"=>"sss", "type"=>"Form"},
+         "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
+         "content_to_replace"=>"",
+         "context"=>"main_1", 
+         "multi_edit"=>"true", "view"=>"open"
+        assert_response 418    
+        Card.find_by_name("sss").should_not be_nil
+        Card.find_by_name("sss+text").should_not be_nil
+      end
+    end
+   
+    it "renders errors if create fails" do
+      post :create, "card"=>{"name"=>"Joe User"}
+      assert_response 422
+      assert_template "application"  # this is a wee bit funky
+    end
+   
+    it "redirects to thanks if present" do
+      Card.create :name=>"*all+*thanks", :content=>"/thank_you"
+      post :create, "card" => { "name" => "Wombly" }
+      assert_template "ajax_redirect"
+      assigns["redirect_location"].should == "/thank_you"
+    end
+
+    it "redirects to card if thanks is blank" do
+      Card.create! :name=>"*all+*thanks", :content=>"/thank_you"
+      Card.create! :name=>"boop+*right+*thanks", :content=>""
+      post :create, "card" => { "name" => "Joe+boop" }
+      assert_template "ajax_redirect"
+      assigns["redirect_location"].should ==  "/wagn/Joe+boop"
+    end
+   
+    it "redirects to home if not readable and thanks not specified" do
+      # Fruits (from shared_data) are anon creatable but not readable
+      login_as :anon
+      post :create, "card" => { "type"=>"Fruit", :name=>"papaya" }
+      assert_template "ajax_redirect"
+      assigns["redirect_location"].should ==  "/"
+    end
+
+    #hook
+    it "redirects to location specified by :after_create_location hook if it is present" do
+      Wagn::Hook.ephemerally do
+        Wagn::Hook.add :redirect_after_create, '*all' do
+          "/test"
+        end
+        post :create, "card" => { "name" => "Wombly" }
+      end
+      assert_template "ajax_redirect"
+      assigns["redirect_location"].should ==  "/test"
+    end
+      
+    it "should redirect to card on create main card" do
+      post :create, :context=>"main_1", :card => {
+        :name=>"Banana", :type=>"Basic", :content=>"mush"
+      }
+      assigns["redirect_location"].should == "/wagn/Banana"
+      assert_template "ajax_redirect"
+    end
+    
+  end
+
+
   describe "test unit tests" do
     include AuthenticatedTestHelper
 
@@ -65,16 +175,6 @@ describe CardController do
       @simple_card = Card['Sample Basic']
       @combo_card = Card['A+B']
       login_as(:joe_user)
-    end    
-
-    it "create cardtype card" do
-      post :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
-      assigns['card'].should_not be_nil
-      assert_response 418
-      assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
-      # this assertion fails under autotest when running the whole suite,
-      # passes under rake test.
-      # assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor')
     end
 
     it "new with name" do
@@ -136,17 +236,6 @@ describe CardController do
       assert_equal 'Date', assigns['card'].type, "@card type should == Date"
     end        
 
-    it "create" do
-      post :create, :card => {
-        :name=>"NewCardFoo",
-        :type=>"Basic",
-        :content=>"Bananas"
-      }
-      assert_response 418
-      assert_instance_of Card::Basic, Card.find_by_name("NewCardFoo")
-      Card.find_by_name("NewCardFoo").content.should == "Bananas"
-    end
-
     it "remove" do
       c = Card.create( :name=>"Boo", :content=>"booya")
       post :remove, :id=>c.id.to_s
@@ -154,116 +243,22 @@ describe CardController do
       Card.find_by_name("Boo").should == nil
     end
 
-
-    it "recreate from trash" do
-      @c = Card.create! :name=>"Problem", :content=>"boof"
-      @c.destroy!
-      post :create, :card=>{
-        "name"=>"Problem",
-        "type"=>"Phrase",
-        "content"=>"noof"
-      }
-      assert_response 418
-      assert_instance_of Card::Phrase, Card.find_by_name("Problem")
-    end
-
-    it "multi create without name" do
-      post :create, "card"=>{"name"=>"", "type"=>"Form"},
-       "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
-       "content_to_replace"=>"",
-       "context"=>"main_1", 
-       "multi_edit"=>"true", "view"=>"open"
-      assigns['card'].errors["name"].should == "can't be blank"
-      assert_response 422
-    end
-
-
-    it "multi create" do
-      post :create, "card"=>{"name"=>"sss", "type"=>"Form"},
-       "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
-       "content_to_replace"=>"",
-       "context"=>"main_1", 
-       "multi_edit"=>"true", "view"=>"open"
-      assert_response 418    
-      Card.find_by_name("sss").should_not be_nil
-      Card.find_by_name("sss+text").should_not be_nil
-    end
-
-    it "should redirect to thanks on create without read permission" do
-      # 1st setup anonymously create-able cardtype
-      User.as(:joe_admin) do
-        f = Card.create! :type=>"Cardtype", :name=>"Fruit"
-        f.permit(:create, Role[:anon])       
-        f.permit(:read, Role[:admin])   
-        f.save!
-
-        ff = Card.create! :name=>"Fruit+*tform"
-        ff.permit(:read, Role[:auth])
-        ff.save!
-
-        Card.create! :name=>"Fruit+*type+*thanks", :type=>"Phrase", :content=>"/wagn/sweet"
-      end
-
-      login_as(:anon)     
-      post :create, :card => {
-        :name=>"Banana", :type=>"Fruit", :content=>"mush"
-      }
-
-      assigns["redirect_location"].should == "/wagn/sweet"
-      assert_template "redirect_to_thanks"
-    end
-
-
-    it "should redirect to card on create main card" do
-      # 1st setup anonymously create-able cardtype
-      User.as(:joe_admin)
-      f = Card.create! :type=>"Cardtype", :name=>"Fruit"
-      f.permit(:create, Role[:anon])       
-      f.permit(:read, Role[:anon])   
-      f.save!
-
-      ff = Card.create! :name=>"Fruit+*tform"
-      ff.permit(:read, Role[:anon])
-      ff.save!
-
-      login_as(:anon)     
-      post :create, :context=>"main_1", :card => {
-        :name=>"Banana", :type=>"Fruit", :content=>"mush"
-      }
-      assigns["redirect_location"].should == "/wagn/Banana"
-      assert_template "redirect_to_created_card"
-    end
-
-
     it "should watch" do
       login_as(:joe_user)
       post :watch, :id=>"Home"
       Card["Home+*watchers"].content.should == "[[Joe User]]"
     end
 
-
     it "new should work for creatable nonviewable cardtype" do
-      User.as(:joe_admin)
-      f = Card.create! :type=>"Cardtype", :name=>"Fruit"
-      f.permit(:create, Role[:anon])       
-      f.permit(:read, Role[:auth])   
-      f.permit(:edit, Role[:admin])   
-      f.save!
-
-      ff = Card.create! :name=>"Fruit+*tform"
-      ff.permit(:read, Role[:auth])
-      ff.save!
-
       login_as(:anon)     
       get :new, :type=>"Fruit"
-
       assert_response :success
       assert_template "new"
     end
 
     it "rename without update references should work" do
       User.as :joe_user
-      f = Card.create! :type=>"Cardtype", :name=>"Fruit"
+      f = Card.create! :type=>"Cardtype", :name=>"Apple"
       post :update, :id => f.id, :card => {
         :confirm_rename => true,
         :name => "Newt",

@@ -112,13 +112,9 @@ class CardController < ApplicationController
   def create    
     #debugger if params[:card][:type]=='Testimony'
     @card = Card.create params[:card]        
-    #@card.save
-    
-    @redirect_location = if @card.ok?(:read)
-      url_for_page(@card.name)
-    else
-      @card.setting('thanks') || '/'
-    end                     
+    if params[:multi_edit] and params[:cards] and !@card.errors.present?
+      @card.multi_create(params[:cards]) 
+    end
 
     # according to rails / prototype docs:
     # :success: [...] the HTTP status code is in the 2XX range.
@@ -126,17 +122,26 @@ class CardController < ApplicationController
   
     # however on 302 ie6 does not update the :failure area, rather it sets the :success area to blank..
     # for now, to get the redirect notice to go in the failure slot where we want it, 
-    # we've chosen to render with the 'teapot' failure status: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes  
-
+    # we've chosen to render with the (418) 'teapot' failure status: 
+    # http://en.wikipedia.org/wiki/List_of_HTTP_status_codes  
     handling_errors do
-      @card.multi_create(params[:cards]) if params[:multi_edit] and params[:cards]
+      @thanks = Wagn::Hook.call( :redirect_after_create, @card ).first ||
+        @card.setting('thanks')
       case
-        when (!@card.ok?(:read));  render( :action=>'redirect_to_thanks',       :status=>418 )
-        when main_card?;           render( :action=>'redirect_to_created_card', :status=>418 )
-        else;                      render_show
+        when @thanks.present?;               ajax_redirect_to @thanks 
+        when @card.ok?(:read) && main_card?; ajax_redirect_to url_for_page( @card.name )
+        when @card.ok?(:read);               render_show
+        else                                 ajax_redirect_to "/"
       end
     end
   end
+  
+  def ajax_redirect_to url
+    @redirect_location = url
+    @message = "Create Successful!"
+    render :action => "ajax_redirect", :status => 418
+  end
+    
   
   #--------------( editing )
   
@@ -177,7 +182,6 @@ class CardController < ApplicationController
       #might be addressable via attr_accessors?
     else;   @card.update_attributes(card_args)
     end  
-
     
     if @card.errors.on(:confirmation_required) && @card.errors.map {|e,f| e}.uniq.length==1  
       # If there is confirmation error and *only* that error 

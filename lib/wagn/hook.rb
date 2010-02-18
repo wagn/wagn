@@ -46,6 +46,12 @@ module Wagn
           h
         end.flatten.compact
       end
+      
+      def ephemerally
+        old_hooks = @@registry.clone
+        yield
+        @@registry = old_hooks
+      end
     end
   end
 end

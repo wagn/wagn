@@ -10,6 +10,7 @@ module Cardlib
       if !args.nil? and args["name"].blank?
         ::User.as(:wagbot) do
           if autoname_card = c.setting_card('autoname')
+            autoname_card = autoname_card.card
             c.name = autoname_card.content
             autoname_card.content = autoname_card.content.next
             autoname_card.save!

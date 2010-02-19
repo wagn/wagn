@@ -89,7 +89,7 @@ module Cardname
   end  
 
   def to_css_key
-    self.gsub(/^([^\+])+\+(.*)/,'_PLUS_\2')
+    self.to_key.gsub(/^([^\+])+\+(.*)/,'_PLUS_\2')
   end
 
   def to_show(absolute)

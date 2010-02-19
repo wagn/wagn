@@ -300,7 +300,12 @@ module WagnHelper
   end
   
   def render_layout_card(card)
-    Slot.new(card, "layout_0", "view", self, :main_content=>@content_for_layout, :main_card=>@card).render(:naked)
+    opts = {
+      :main_content => @content_for_layout,
+      :main_card => @card
+    }
+    opts[:relative_content] = opts[:params] = params
+    Slot.new(card, "layout_0", "view", self, opts).render(:naked)
   end  
   
   def render_layout_content(content)

@@ -48,7 +48,7 @@ module Wagn
       end
       
       def ephemerally
-        old_hooks = @@registry.clone
+        old_hooks = @@registry.deep_clone
         yield
         @@registry = old_hooks
       end

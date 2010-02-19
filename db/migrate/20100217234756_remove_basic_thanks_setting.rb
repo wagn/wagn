@@ -1,7 +1,9 @@
 class RemoveBasicThanksSetting < ActiveRecord::Migration
   def self.up
     User.as :wagbot
-    Card["Basic+*type+*thanks"].destroy
+    if c = Card["Basic+*type+*thanks"]
+      c.destroy
+    end
   end
 
   def self.down

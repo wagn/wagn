@@ -569,11 +569,11 @@ class Slot
 
   def url_for(url, args=nil, attribute=nil)
     url = "javascript:'/#{url}"
-    url << "/#{escape_javascript(URI.escape(card_id.to_s))}" if (card and card_id)
+    url << "/#{escape_javascript(CGI.escape(card_id.to_s))}" if (card and card_id)
     url << "/#{attribute}" if attribute   
     url << "?context='+getSlotContext(this)"
     url << "+'&' + getSlotOptions(this)"
-    url << ("+'"+ args.map{|k,v| "&#{k}=#{escape_javascript(URI.escape(v.to_s))}"}.join('') + "'") if args
+    url << ("+'"+ args.map{|k,v| "&#{k}=#{escape_javascript(CGI.escape(v.to_s))}"}.join('') + "'") if args
     url
   end
 

@@ -80,7 +80,7 @@ class AccountController < ApplicationController
 
   def signout
     self.current_user = nil
-    flash[:notice] = "You have been logged out."
+    flash[:notice] = "You have been logged out." #ENGLISH
     redirect_to '/'  # previous_location here can cause infinite loop.  ##  Really?  Shouldn't.  -efm
   end
   
@@ -192,7 +192,7 @@ class AccountController < ApplicationController
   private  
 
     def successful_login
-      flash[:notice] = "Welcome to #{System.site_title}"
+      flash[:notice] = "Welcome to #{System.site_title}"  #ENGLISH
       redirect_to previous_location
     end
 

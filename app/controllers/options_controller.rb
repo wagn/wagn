@@ -27,7 +27,7 @@ class OptionsController < ApplicationController
       ext.update_attributes!(ext_params)
       @extension = ext
     end
-    @notice ||= "Got it!  Your changes have been saved."
+    flash[:notice] ||= "Got it!  Your changes have been saved."  #ENGLISH
     render_update_slot render_to_string(:template=>'card/options')
   end
   
@@ -37,12 +37,12 @@ class OptionsController < ApplicationController
   
   def create_account
     System.ok!(:create_accounts) && @card.ok?(:edit)
-    email_args = { :subject => "Your new #{System.site_title} account.", 
-                   :message => "Welcome!  You now have an account on #{System.site_title}." }
+    email_args = { :subject => "Your new #{System.site_title} account.",   #ENGLISH
+                   :message => "Welcome!  You now have an account on #{System.site_title}." } #ENGLISH
     @user, @card = User.create_with_card(params[:user],@card, email_args)
     raise ActiveRecord::RecordInvalid.new(@user) if !@user.errors.empty?
     @extension = User.new(:email=>@user.email)
-    @notice ||= "Done.  A password has been sent to that email."
+    flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
     render_update_slot render_to_string(:template=>'card/options')        
   end
 

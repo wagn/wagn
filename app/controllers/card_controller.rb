@@ -370,7 +370,7 @@ class CardController < ApplicationController
   
   # doesn't really seem to fit here.  may want to add new controller if methods accrue?        
   def add_field # for pointers only
-    load_card! if params[:id]
+    load_card if params[:id]
     render :partial=>'types/pointer/field', :locals=>params.merge({:link=>:add,:card=>@card})
   end   
   

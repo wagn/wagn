@@ -7,6 +7,7 @@
   
   <div class="field-in-multi">
     <%= slot.content_field( form, :nested=>true ) %>
+    <%= card.new_record? ? slot.form.hidden_field(:type) : '' %>
   </div>
 
   <% if inst = card.setting_card('edit help') %>

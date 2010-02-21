@@ -36,6 +36,13 @@ Given /I harden "([^\"]*)"/ do |cardname|
   Card[cardname].update_attribute :extension_type, "HardTemplate"
 end
 
+When /^(.*) edits? "([^\"]*)"$/ do |username, cardname|
+  logged_in_as(username) do
+    visit "/card/edit/#{cardname.to_url_key}"
+  end
+end  
+  
+
 When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
   logged_in_as(username) do
     visit "/card/edit/#{cardname.to_url_key}"

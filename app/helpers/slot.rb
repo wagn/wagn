@@ -570,6 +570,8 @@ class Slot
   end
 
   def url_for(url, args=nil, attribute=nil)
+    # recently changed URI.escape to CGI.escape to address question mark issue, but I'm still concerned neither is perfect
+    # so long as we keep doing the weird Cardname.escape thing.  
     url = "javascript:'/#{url}"
     url << "/#{escape_javascript(CGI.escape(card_id.to_s))}" if (card and card_id)
     url << "/#{attribute}" if attribute   

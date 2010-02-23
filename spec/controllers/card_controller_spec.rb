@@ -162,6 +162,29 @@ describe CardController do
     
   end
 
+  describe "#new" do
+    before do
+      login_as :joe_user
+    end
+    
+    it "new should work for creatable nonviewable cardtype" do
+      login_as(:anon)     
+      get :new, :type=>"Fruit"
+      assert_response :success
+      assert_template "new"
+    end
+
+    it "new with existing card" do
+      get :new, :card=>{:name=>"A"}
+      assert_response :success, "response should succeed"
+    end
+    
+    it "invokes before_new hook" do
+      login_as :joe_user
+      Wagn::Hook.should_receive(:call).with(:before_new, "*all", instance_of(CardController))
+      get :new,:card=>{:name=>"A"}
+    end
+  end
 
   describe "test unit tests" do
     include AuthenticatedTestHelper
@@ -182,11 +205,6 @@ describe CardController do
       assert_response :success, "response should succeed"                     
       assert_equal 'BananaBread', assigns['card'].name, "@card.name should == BananaBread"
     end        
-
-    it "new with existing card" do
-      get :new, :card=>{:name=>"A"}
-      assert_response :success, "response should succeed"
-    end
 
     it "show" do
       get :show, {:id=>'Sample_Basic'}
@@ -247,13 +265,6 @@ describe CardController do
       login_as(:joe_user)
       post :watch, :id=>"Home"
       Card["Home+*watchers"].content.should == "[[Joe User]]"
-    end
-
-    it "new should work for creatable nonviewable cardtype" do
-      login_as(:anon)     
-      get :new, :type=>"Fruit"
-      assert_response :success
-      assert_template "new"
     end
 
     it "rename without update references should work" do

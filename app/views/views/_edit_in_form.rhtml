@@ -1,4 +1,4 @@
-<div class="edit-area in-multi name-_PLUS_<%= card.name.tag_name.to_key %>">
+<div class="edit-area in-multi RIGHT-<%= card.name.tag_name.to_key.css_name %>">
   <div class="label-in-multi">
     <span class="title">
       <%= link_to_page(less_fancy_title(showname || card), (card.new_record? ? card.name.tag_name : card.name)) %>

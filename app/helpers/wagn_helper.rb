@@ -145,10 +145,6 @@ module WagnHelper
     System.site_title
   end
 
-  def css_name( name )
-    name.gsub(/#{'\\'+JOINT}/,'-').gsub(/[^\w-]+/,'_')
-  end
-
   #def related
   #  render :partial=> 'card/related'
   #end

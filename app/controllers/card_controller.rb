@@ -73,6 +73,8 @@ class CardController < ApplicationController
   
   #----------------( creating)                                                               
   def new
+    Wagn::Hook.call :before_new, '*all', self
+        
     @args = (params[:card] ||= {})
     @args[:type] ||= params[:type] # for /new/:type shortcut in routes
     

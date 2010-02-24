@@ -179,6 +179,10 @@ class CachedCard
     get('read_permission') { p = card.who_can(:read);  "#{p.class.to_s}:#{p.id}" }
   end       
   
+  def left
+    CachedCard.get_real( name.trunk_name )
+  end
+
   def comment_permission() 
     get('comment_permission') {
        p = card.who_can(:comment); 

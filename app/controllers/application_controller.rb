@@ -58,9 +58,9 @@ class ApplicationController < ActionController::Base
     CachedCard.reset_cache
     System.request = request 
     #System.time = Time.now.to_f              
+    ## DEBUG
+    ActiveRecord::Base.logger.info("WAGN: per request setup")
     load_location
-    
-    Wagn::Hook.call :before_request, '*all', self
   end
 
   def wagn_layout

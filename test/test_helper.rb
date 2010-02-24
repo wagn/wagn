@@ -34,22 +34,20 @@ unless defined? TEST_ROOT
     # then set this back to true.
     self.use_instantiated_fixtures  = false
   
-    
     # CachedCard.set_cache_prefix "#{System.host}/test"
     # CachedCard.bump_global_seq
     # CachedCard.set_cache_prefix "#{System.host}/cucumber"
     # CachedCard.bump_global_seq
 
     def setup  
-      ## DEBUG
-      File.open("#{RAILS_ROOT}/log/wagn.log","w") do |f|
-        f.puts "running test setup"
+      if $ARGV[0] == "--benchmark"
+        # FIXME: boy this is brittle
+      else
+        CachedCard.set_cache_prefix "#{System.host}/cucumber"
+        CachedCard.bump_global_seq
+        CachedCard.set_cache_prefix "#{System.host}/test"
+        CachedCard.bump_global_seq
       end
-      
-      CachedCard.set_cache_prefix "#{System.host}/cucumber"
-      CachedCard.bump_global_seq
-      CachedCard.set_cache_prefix "#{System.host}/test"
-      CachedCard.bump_global_seq
     end
   end
 

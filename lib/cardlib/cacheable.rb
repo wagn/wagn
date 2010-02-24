@@ -55,6 +55,11 @@ module Cardlib
       s.expand_inclusions(s.render(:naked_content))
     end
 
+    def cardtype_name
+      Cardtype.name_for( self.type )
+    end
+
+
     
   end
 end

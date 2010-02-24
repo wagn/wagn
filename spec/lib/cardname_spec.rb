@@ -69,19 +69,15 @@ describe Cardname do
     end
   end
 
+  describe "#css_name" do
+    it "subs pluses & stars" do
+      "Alpha?+*be-ta".css_name.should == "alpha-Xbe_tum"
+    end
+  end
+
   describe "#replace_part" do
     'a+b'.replace_part('a','x').should == 'x+b'
     'a+b+c'.replace_part('a+b','x').should == 'x+c'
     'a+b+c'.replace_part('b+c','x').should == 'a+b+c'    
-  end
-  
-  describe "#to_css_key" do
-    it "replaces first part" do
-      "This+That".to_css_key.should == '_PLUS_that'
-    end
-    
-    it "doesn't change simple cards" do
-      "this".to_css_key.should == 'this'
-    end
-  end
+  end  
 end

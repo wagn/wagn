@@ -7,7 +7,7 @@ describe Flexmail do
       Card.create! :name => "mailconfig+*to", :content => "joe@user.com"
       Card.create! :name => "mailconfig+*from", :content => "from@user.com"
       Card.create! :name => "mailconfig+*subject", :content => "Subject of the mail"
-      Card.create! :name => "mailconfig+*message", :content => "This {{_self|naked}}"
+      Card.create! :name => "mailconfig+*message", :content => "It's true that {{_left+story|naked}}"
       Card.create! :name => "emailtest+*right+*send", :content => "[[mailconfig]]"
     end
     
@@ -16,6 +16,7 @@ describe Flexmail do
     end
     
     it "returns list with correct hash for card with configs" do
+      c = Card.create :name=>'Banana+story', :content=>"I was born a poor black seed"
       c = Card.create :name => "Banana+emailtest", :content => "data content"
       Flexmail.configs_for(c).should == [{
         :to => "joe@user.com",
@@ -23,7 +24,7 @@ describe Flexmail do
         :bcc => "",
         :cc => "",
         :subject => "Subject of the mail",
-        :message => "This data content"
+        :message => "It's true that I was born a poor black seed"
       }]
     end
   end

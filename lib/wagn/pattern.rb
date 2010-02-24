@@ -87,7 +87,7 @@ module Wagn
       end
 
       def set_name card
-        "#{card.cardtype.name}+#{key}"
+        "#{card.cardtype_name}+#{key}"
       end
       
       def label name
@@ -129,7 +129,7 @@ module Wagn
       end
       
       def set_name card
-        "#{card.left.cardtype.name}+#{card.name.tag_name}+#{key}"
+        "#{card.left.cardtype_name}+#{card.name.tag_name}+#{key}"
       end
       
       def label name

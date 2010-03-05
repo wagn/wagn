@@ -125,10 +125,6 @@ class Slot
       
       css_class << " " + Wagn::Pattern.css_names( card ) if card
       
-      # DEPRECATED: remove me after wagns have been converted to new css classes
-      css_class << " wrapper cardid-#{card.id} type-#{card.type}" if card
-      css_class << " name-#{card.key.css_name} type-#{Cardtype.name_for(card.type).to_key}" if card && card.type
-
       attributes = { 
         :cardId   => (card && card.id),
         :style    => args[:style],

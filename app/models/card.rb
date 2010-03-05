@@ -9,6 +9,7 @@ module Card
     def create_or_update args
       if c = Card[ args[:name] ]
         c.update_attributes args
+        c
       else
         Card.create! args
       end

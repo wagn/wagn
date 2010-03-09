@@ -11,7 +11,10 @@ module Card
         c.update_attributes args
         c
       else
-        Card.create! args
+        c= Card.new args
+        c.save!
+        #Card.create! args
+        c
       end
     end
     

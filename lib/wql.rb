@@ -23,7 +23,7 @@ from cards t0 order by count desc limit 10;
   
 =end
 
-module Wql2    
+module Wql    
   ATTRIBUTES = {
     :basic=> %w{ name type content id key extension_type extension_id },
     :system => %w{ trunk_id tag_id },
@@ -432,7 +432,7 @@ module Wql2
       # Permissions       
       t = table_alias
       #unless User.current_user.login.to_s=='wagbot' #
-      unless System.always_ok? or (Wql2.root_perms_only && !root?)
+      unless System.always_ok? or (Wql.root_perms_only && !root?)
         user_roles = [Role[:anon].id]
         unless User.current_user.login.to_s=='anon'
           user_roles += [Role[:auth].id] + User.current_user.roles.map(&:id)

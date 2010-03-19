@@ -1,6 +1,72 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Cardname do
+  describe "#to_absolute" do
+    it "handles _self, _whole, _" do
+      "_self".to_absolute("foo").should == "foo"
+      "_whole".to_absolute("foo").should == "foo"
+      "_".to_absolute("foo").should == "foo"
+    end
+    
+    it "handles _left" do
+      "_left+Z".to_absolute("A+B+C").should == "A+B+Z"
+    end
+    
+    it "handles _right" do
+      "_right+bang".to_absolute("nutter+butter").should == "butter+bang"
+    end
+    
+    it "handles leading +" do
+      "+bug".to_absolute("hum").should == "hum+bug"
+    end
+    
+    it "handles trailing +" do
+      "bug+".to_absolute("tracks").should == "bug+tracks"
+    end
+    
+    it "handles _(numbers)" do
+      "_1".to_absolute("A+B+C").should == "A"
+      "_1+_2".to_absolute("A+B+C").should == "A+B"
+      "_2+_3".to_absolute("A+B+C").should == "B+C"
+    end
+
+    it "handles _LLR etc" do
+      "_R".to_absolute("A+B+C+D+E").should    == "E"
+      "_L".to_absolute("A+B+C+D+E").should    == "A+B+C+D"
+      "_LR".to_absolute("A+B+C+D+E").should   == "D"
+      "_LL".to_absolute("A+B+C+D+E").should   == "A+B+C"
+      "_LLR".to_absolute("A+B+C+D+E").should  == "C"
+      "_LLL".to_absolute("A+B+C+D+E").should  == "A+B"
+      "_LLLR".to_absolute("A+B+C+D+E").should == "B"
+      "_LLLL".to_absolute("A+B+C+D+E").should == "A"
+    end
+    
+    context "mismatched requests" do
+      it "returns _self for _left or _right on non-junctions" do
+        "_left+Z".to_absolute("A").should == "A+Z"
+        "_right+Z".to_absolute("A").should == "A+Z"
+      end
+
+      it "handles bogus numbers" do
+        "_1".to_absolute("A").should == "A"
+        "_1+_2".to_absolute("A").should == "A+A"
+        "_2+_3".to_absolute("A").should == "A+A"
+      end
+      
+      it "handles bogus _llr requests" do
+           "_R".to_absolute("A").should == "A"
+           "_L".to_absolute("A").should == "A"
+          "_LR".to_absolute("A").should == "A"
+          "_LL".to_absolute("A").should == "A"
+         "_LLR".to_absolute("A").should == "A"
+         "_LLL".to_absolute("A").should == "A"
+        "_LLLR".to_absolute("A").should == "A"
+        "_LLLL".to_absolute("A").should == "A"
+      end
+    end
+  end
+  
+  
   describe "#to_key" do
     it "should remove spaces" do
       "This Name".to_key.should == "this_name"

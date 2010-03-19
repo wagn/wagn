@@ -35,7 +35,7 @@ module Cardlib
       when "Pointer";
         self.list_items.map{|cardname| CachedCard.get( cardname ) }
       when "Search";
-        self.search(:limit => "", :_card=>(context ? context : self))
+        self.search(:limit => "", :_self=>(context ? context.name : self.name))
       else
         [self]
       end
@@ -59,7 +59,5 @@ module Cardlib
       Cardtype.name_for( self.type )
     end
 
-
-    
   end
 end

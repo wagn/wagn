@@ -1,13 +1,7 @@
 module Card      
-  module SearchMethods
-     def test
-       "" =~ /plus\"\:\[\"([^\"]+)\"\W*refer_to\W*_self/ #what's all this?
-     end
-  end
   
 	class Search < Base  
-	  include SearchMethods
-	  attr_accessor :self_card, :results, :search_opts, :spec
+	  attr_accessor :self_cardname, :results, :search_opts, :spec
     before_save :escape_content
 
     def escape_content
@@ -40,10 +34,10 @@ module Card
       end
       # FIXME: should unit test this 
       
-      self_card ||= ( name.junction? ? Card[name.parent_name]||Card.auto_card(name.parent_name) : nil )  
+      self_cardname ||= ( name.junction? ? name.parent_name : nil )  
       
-      if spec.is_a?(Hash) && self_card
-        spec[:_card] = self_card
+      if spec.is_a?(Hash) && self_cardname
+        spec[:_self] = self_cardname
       end
       spec.merge! params
       spec.symbolize_keys!

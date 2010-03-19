@@ -11,7 +11,7 @@ describe Wql2 do
     end
 
     it "should absolutize names" do
-      Card.search(:name=>[:in, 'C', 'D', 'F'], :append=>'_self', :_card=>Card['A'] ).plot(:name).sort.should == ["C+A", "D+A", "F+A"]
+      Card.search(:name=>[:in, 'C', 'D', 'F'], :append=>'_right', :_self=>'B+A' ).plot(:name).sort.should == ["C+A", "D+A", "F+A"]
     end
 
     it "should find virtual cards" do
@@ -160,7 +160,7 @@ describe Wql2 do
   
   describe "relative links" do
     before { User.as :joe_user }
-    it("should handle relative refer_to")  { Card.search( :refer_to=>'_self', :_card=>Card['Z']).plot(:name).sort.should == %w{ A B } }
+    it("should handle relative refer_to")  { Card.search( :refer_to=>'_self', :_self=>'Z').plot(:name).sort.should == %w{ A B } }
   end
 
   describe "permissions" do
@@ -214,7 +214,7 @@ describe Wql2 do
     user_cards =  ["Joe Admin", "Joe Camel", "Joe User", "John", "No Count", "Sample User", "Sara", "u1", "u2", "u3"].sort
   
     it "should find cards of this type" do
-      Card.search( :type=>"_self", :_card=>Card['User']).plot(:name).sort.should == user_cards
+      Card.search( :type=>"_self", :_self=>'User').plot(:name).sort.should == user_cards
     end
 
     it "should find User cards " do
@@ -323,7 +323,7 @@ describe Wql2 do
   describe "found_by" do
     before do
       User.as :wagbot 
-      @simple_search = Card.create(:name=>'Simple Search', :type=>'Search', :content=>'{"name":"A"}')
+      Card.create(:name=>'Simple Search', :type=>'Search', :content=>'{"name":"A"}')
     end 
 
     it "should find cards returned by search of given name" do
@@ -336,7 +336,7 @@ describe Wql2 do
       Card.search(:plus=>{:found_by=>'Simple Search'}).map(&:name).sort.should==Card.search(:plus=>{:name=>'A'}).map(&:name).sort
     end
     it "should be able to handle _self" do
-      Card.search(:_card=>@simple_search, :left=>{:found_by=>'_self'}, :right=>'B').first.name.should=='A+B'
+      Card.search(:_self=>'Simple Search', :left=>{:found_by=>'_self'}, :right=>'B').first.name.should=='A+B'
     end
   
   end
@@ -349,30 +349,35 @@ describe Wql2 do
     before { User.as :joe_user }
 
     it "should clean wql" do
-      cspec = Wql2::CardSpec.new( :part=>"_self",:_card=>Card['A'] )
+      cspec = Wql2::CardSpec.new( :part=>"_self",:_self=>'A' )
       cspec.spec[:part].should == 'A'
     end
 
     it "should find connection cards" do
-      Card.search( :part=>"_self", :_card=>Card['A'] ).plot(:name).sort.should == ["A+B", "A+C", "A+D", "A+E", "C+A", "D+A", "F+A"]
+      Card.search( :part=>"_self", :_self=>'A' ).plot(:name).sort.should == ["A+B", "A+C", "A+D", "A+E", "C+A", "D+A", "F+A"]
+    end
+
+    it "should be able to use parts of nonexistent cards in search" do
+      Card['B+A'].should be_nil
+      Card.search( :left=>'_right', :right=>'_left', :_self=>'B+A' ).plot(:name).should == ['A+B']
     end
 
     it "should find plus cards for _self" do
-      Card.search( :plus=>"_self", :_card=>Card["A"] ).plot(:name).sort.should == A_JOINEES
+      Card.search( :plus=>"_self", :_self=>"A" ).plot(:name).sort.should == A_JOINEES
     end
 
     it "should find plus cards for _left" do   
       # this test fails in mysql when running the full suite 
       # (although not when running the individual test )
       #pending
-      Card.search( :plus=>"_left", :_card=>Card["A+B"] ).plot(:name).sort.should == A_JOINEES
+      Card.search( :plus=>"_left", :_self=>"A+B" ).plot(:name).sort.should == A_JOINEES
     end
 
     it "should find plus cards for _right" do
       # this test fails in mysql when running the full suite 
       # (although not when running the individual test )
       #pending
-      Card.search( :plus=>"_right", :_card=>Card["C+A"] ).plot(:name).sort.should == A_JOINEES
+      Card.search( :plus=>"_right", :_self=>"C+A" ).plot(:name).sort.should == A_JOINEES
     end
   
     #I may have just fixed these.  if not please recomment and set back to pending - efm

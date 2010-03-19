@@ -146,7 +146,7 @@ module Wql2
       #  any spec which could trigger another cardspec creation further down.
       @mods = MODIFIERS.clone
       @params = {}   
-      @card, @parent = nil, nil
+      @selfname, @parent = nil, nil
       #warn("<br>before clean #{(Hash===spec ? spec : spec.spec).keys}<br>")
       @spec = clean(spec.clone)
       #warn("after clean #{@spec.inspect}<br>")
@@ -171,8 +171,8 @@ module Wql2
       root == self
     end
     
-    def card   
-      @card #|| raise(Wagn::WqlError, "_self referenced but no card is available")
+    def selfname   
+      @selfname #|| raise(Wagn::WqlError, "_self referenced but no card is available")
     end
     
 #   def to_card(relative_name)
@@ -184,7 +184,7 @@ module Wql2
 #   end
     
     def absolute_name(name)
-      name = (root.card ? name.to_absolute(root.card.name) : name)
+      name = (root.selfname ? name.to_absolute(root.selfname) : name)
     end
     
     def clean(spec)
@@ -192,9 +192,9 @@ module Wql2
 
       spec.each do |key,val|
         case key.to_s
-        when '_card'   ; @card             = spec.delete(key)
-        when '_parent' ; @parent           = spec.delete(key) 
-        when /^_\w+$/  ; @params[key.to_s] = spec.delete(key)
+        when '_self'    ; @selfname         = spec.delete(key)
+        when '_parent'  ; @parent           = spec.delete(key) 
+        when /^_\w+$/   ; @params[key.to_s] = spec.delete(key)
         end
       end
       

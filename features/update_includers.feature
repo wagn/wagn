@@ -36,9 +36,9 @@ Feature: Update Includer cards
     Then Joe Admin should be notified that "Joe User updated \"Bros Krmzv\""    
 
   Scenario: Watching a plus card on multiedit; and watching both plus card and including card on multiedit
-    Given I create Cardtype card "Fruit"
-    And I create card "Fruit+*tform" with content "{{+color}} {{+flavor}}"
-    And I create Fruit card "Banana" with plusses:
+    Given I create Cardtype card "Froot"
+    And I create card "Froot+*tform" with content "{{+color}} {{+flavor}}"
+    And I create Froot card "Banana" with plusses:
       |color|flavor|
       |yellow|sweet|
     And Joe Camel is watching "Banana+color"

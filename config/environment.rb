@@ -32,6 +32,8 @@ Rails::Initializer.run do |config|
   
   # Make Active Record use UTC-base instead of local time
   # config.active_record.default_timezone = :utc
+  #config.gem 'localmemcache_store', :source => 'http://gemcutter.org'
+  #config.cache_store = :localmemcache_store, { :namespace => 'testapp', :size_mb => 256 }
   
   # See Rails::Configuration for more options   
   # select a store for the rails/card cache

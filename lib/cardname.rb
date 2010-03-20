@@ -110,7 +110,7 @@ module Cardname
         when /^_left$/i;            context_name.trunk_name
         when /^_right$/i;           context_name.tag_name
         when /^_(\d+)$/i;           context_parts[ $~[1].to_i - 1 ] 
-        when /^_(L*)(R?)/i
+        when /^_(L*)(R?)$/i
           l_count, r_count = $~[1].size, $~[2].size
           trunk = context_name.split(JOINT)[0..(0-(l_count+1))].join(JOINT)
           r_count > 0 ? trunk.tag_name : trunk

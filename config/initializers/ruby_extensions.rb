@@ -86,7 +86,7 @@ end
 class Object
   def deep_clone
     case self
-    when Fixnum,Bignum,Float,NilClass,FalseClass,TrueClass,Continuation
+    when Fixnum,Bignum,Float,NilClass,FalseClass,TrueClass,Continuation,Symbol
       klone = self
     when Hash
       klone = self.clone

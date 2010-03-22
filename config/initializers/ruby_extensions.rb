@@ -37,6 +37,7 @@ end
 
 class Class
   def descendents
+    raise "descendents is deprecated: it's too slow.  find another way"
     descendents = []
     ObjectSpace.each_object(Class) do |klass|
       descendents << klass if klass.ancestors.include?(self)

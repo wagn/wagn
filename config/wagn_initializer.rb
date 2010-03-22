@@ -27,10 +27,12 @@ module Wagn
       end
     
       def pre_schema?
-        ActiveRecord::Base.connection.execute("select * from cards")
-        return false
-      rescue Exception=>e
-        return true
+        @@schema_initialized ||= begin
+          ActiveRecord::Base.connection.execute("select * from cards limit 1")
+        rescue Exception=>e
+          false
+        end
+        !@@schema_initialized
       end
 
       def load  

@@ -25,10 +25,6 @@ module Cardlib
       false
     end
         
-    def content_for_rendering
-      content
-    end
-    
     def cacheable?
       return true
     end

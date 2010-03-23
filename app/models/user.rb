@@ -116,6 +116,9 @@ class User < ActiveRecord::Base
   rescue  
   end
       
+  def cardname
+    @cardname ||= card.name
+  end
 
   def accept(email_args)
     User.as :wagbot  do #what permissions does approver lack?  Should we check for them?

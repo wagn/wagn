@@ -2,6 +2,14 @@ class System < ActiveRecord::Base
   #Why is this an ActiveRecord?
   set_table_name 'system'
   
+  def self.reset_cache
+    @@cache={
+      :always => {},
+      :ok_hash => {}
+    }
+  end
+  reset_cache
+  
   cattr_writer :attachment_storage    # storage option passed to attachment_fu   
   cattr_accessor :role_tasks, :request,                          
     # Configuration Options     
@@ -122,19 +130,28 @@ class System < ActiveRecord::Base
     # FIXME stick this in session? cache it somehow??
     def ok_hash
       usr = User.current_user
-      ok = {}
-      ok[:role_ids] = {}
-      usr.all_roles.each do |role|
-        ok[:role_ids][role.id] = true
-        role.task_list.each { |t| ok[t] = 1 }
+      if (h = @@cache[:ok_hash][usr]).nil?
+        @@cache[:ok_hash][usr] = begin
+          ok = {}
+          ok[:role_ids] = {}
+          usr.all_roles.each do |role|
+            ok[:role_ids][role.id] = true
+            role.task_list.each { |t| ok[t] = 1 }
+          end
+          ok
+        end || false
+      else
+        h
       end
-      ok
     end
     
     def always_ok?   
       return false unless usr = User.current_user  
-      usr.roles.each { |r| return true if r.codename == 'admin' }
-      return false      
+      if (c = @@cache[:always][usr]).nil?
+        @@cache[:always][usr] = usr.roles.detect { |r| r.codename == 'admin' } || false
+      else
+        c
+      end
     end
   end 
 

@@ -57,6 +57,7 @@ class ApplicationController < ActionController::Base
     Role.reset_cache
     CachedCard.reset_cache
     System.request = request 
+    System.reset_cache
     #System.time = Time.now.to_f              
     ## DEBUG
     ActiveRecord::Base.logger.info("WAGN: per request setup")

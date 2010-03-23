@@ -5,8 +5,8 @@ module Card
       valid_number?( content ) and  p >= 0 and p <=1.0
     end
 
-    def content_for_rendering
-      (content.to_f * 100.0).to_s + '%'
+    def post_render( content )
+      content.replace((content.to_f * 100.0).to_s + '%')
     end 
   
 	end

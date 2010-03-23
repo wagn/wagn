@@ -12,7 +12,7 @@ class CardController < ApplicationController
   before_filter :edit_ok,   :only=> EDIT_ACTIONS
   before_filter :remove_ok, :only=>[ :remove ]          
   
-  before_filter :require_captcha, :only => [ :create, :update, :comment, :rollback, :quick_update ]
+ # before_filter :require_captcha, :only => [ :create, :update, :comment, :rollback, :quick_update ]
   
   #----------( Special cards )
     

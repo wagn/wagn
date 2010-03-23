@@ -341,10 +341,6 @@ module Card
      
     # Extended associations ----------------------------------------
 
-    def left
-      trunk
-    end
-    
     def right
       tag
     end

@@ -59,5 +59,8 @@ module Cardlib
       Cardtype.name_for( self.type )
     end
 
+    def left
+      CachedCard.get_real( name.trunk_name )
+    end
   end
 end

@@ -411,6 +411,10 @@ module Card
       !!skip_defaults
     end
 
+    def known?
+      !(new_record? && !virtual?)
+    end
+    
     def virtual?
       @virtual || @builtin
     end    

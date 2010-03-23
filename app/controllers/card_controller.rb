@@ -4,7 +4,7 @@ class CardController < ApplicationController
   EDIT_ACTIONS =  [ :edit, :update, :rollback, :save_draft, :watch, :unwatch ]
   LOAD_ACTIONS = EDIT_ACTIONS + [ :changes, :comment, :denied, :options, :quick_update, :related, :remove ]
 
-  before_filter :load_card, :only=>LOAD_ACTIONS
+  before_filter :load_card!, :only=>LOAD_ACTIONS
   before_filter :load_card_with_cache, :only => [:line, :view, :open ]
 
   before_filter :view_ok,   :only=> LOAD_ACTIONS
@@ -12,7 +12,7 @@ class CardController < ApplicationController
   before_filter :edit_ok,   :only=> EDIT_ACTIONS
   before_filter :remove_ok, :only=>[ :remove ]          
   
-  before_filter :require_captcha, :only => [ :create, :update, :comment, :rollback, :quick_update ]
+ # before_filter :require_captcha, :only => [ :create, :update, :comment, :rollback, :quick_update ]
   
   #----------( Special cards )
     

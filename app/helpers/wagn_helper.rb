@@ -145,14 +145,6 @@ module WagnHelper
     System.site_title
   end
 
-  #def related
-  #  render :partial=> 'card/related'
-  #end
-
-  #def sidebar
-  #  render :partial=>partial_for_action('sidebar', @card)
-  #end
-
   def format_date(date, include_time = true)
     # Must use DateTime because Time doesn't support %e on at least some platforms
     if include_time

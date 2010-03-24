@@ -146,7 +146,7 @@ module Wagn
       end
       
       def pattern_applies? card
-        card.name
+        card.name and !card.virtual?
       end
       
       def set_name card

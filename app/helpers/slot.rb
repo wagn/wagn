@@ -280,15 +280,28 @@ class Slot
       # removed raw from 'naked' after deprecation period for 1.3  
       # need a short period to flush out issues before releasing
       # when :raw;     card.content
-      when :closed_content;   render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
-      when :open_content;     render_card_partial(:content)  # FIXME?: 'content' is inconsistent
-      when :naked_content
-        if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
-          template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}" 
+      when :closed_content;   
+        if card.type == 'Basic'
+          truncatewords_with_closing_tags( slot.render( :open_content ))
         else
-          @renderer.render( card, args.delete(:content) || "", update_refs=card.references_expired)
+          render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
         end
         
+      when :open_content;     
+        if card.type == 'Basic'
+          slot.render :naked_content
+        else
+          render_card_partial(:content)  # FIXME?: 'content' is inconsistent
+        end
+        
+      when :naked_content
+        cache_action('naked_content') do
+          if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin) 
+            template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}" 
+          else
+            @renderer.render( card, args.delete(:content) || "", update_refs=card.references_expired)
+          end
+        end
     ###---(  EDIT VIEWS ) 
 
       when :edit;  @state=:edit; card.hard_template ? render(:multi_edit) : content_field(slot.form)

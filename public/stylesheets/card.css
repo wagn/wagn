@@ -354,21 +354,6 @@ div.transcluded {
 }
 
 
-/* not in use?
-.syntax-tips {
-  color: #888;
-}
-.name-editor .label,
-.cardtype-editor .label {
-  display: none
-}
-.name-editor p,
-.cardtype-editor p {
-  margin: 5px;
-}
-*/
-
-
 
 /* ---------- changes tab -------*/
 
@@ -709,7 +694,9 @@ body#wagn .card-slot.recent-changes h2 {
   padding: 0px 3px;
   margin: 0px;
 }
-
+.search-no-results:after {
+  content:'search returned no results'; 
+}
 
 /*---------(Search & Pointer) --------*/
 
@@ -746,11 +733,7 @@ div.search-result-list .search-result-item {
   padding: 5px;
 }
 
-
-
-
 /*----------- (Invitation Request)--------------*/
-
 
 .invite-links {
   padding: 10px;
@@ -762,9 +745,6 @@ div.search-result-list .search-result-item {
   font-weight: bold;
   margin-right: 20px;
 }
-
-
-
 
 /*---------- comment-box -------------------------------------- */
 .comment-box textarea { 

@@ -6,6 +6,7 @@ module Wagn
         Cardtype.reset_cache
         Role.reset_cache
         System.reset_cache
+        Wagn::Pattern.reset_cache
         CachedCard.reset_cache
       end
     

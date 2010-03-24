@@ -34,15 +34,13 @@ unless defined? TEST_ROOT
     # then set this back to true.
     self.use_instantiated_fixtures  = false
   
-    # CachedCard.set_cache_prefix "#{System.host}/test"
-    # CachedCard.bump_global_seq
-    # CachedCard.set_cache_prefix "#{System.host}/cucumber"
-    # CachedCard.bump_global_seq
-
     def setup  
       if $ARGV[0] == "--benchmark"
         # FIXME: boy this is brittle
       else
+        Wagn::Cache.reset_local
+
+        # reset global
         CachedCard.set_cache_prefix "#{System.host}/cucumber"
         CachedCard.bump_global_seq
         CachedCard.set_cache_prefix "#{System.host}/test"

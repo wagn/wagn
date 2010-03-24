@@ -263,45 +263,12 @@ class Slot
 
     ###---(  CONTENT VARIATIONS ) 
       #-----( with transclusions processed      
-      when :content;  
-        w_action = self.requested_view = 'content'  
-        c = self.render( :expanded_view_content)
-        w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c))
-
-      when :expanded_view_content, :naked 
-        @state = 'view'
-        expand_inclusions(  cache_action('view_content') {  card.post_render( render(:open_content)) } )
-
-      when :expanded_line_content
-        expand_inclusions(  cache_action('line_content') { render(:closed_content) } )
-
-
-      #-----( without transclusions processed )
-      # removed raw from 'naked' after deprecation period for 1.3  
-      # need a short period to flush out issues before releasing
-      # when :raw;     card.content
-      when :closed_content;   
-        if card.type == 'Basic'
-          truncatewords_with_closing_tags( slot.render( :open_content ))
-        else
-          render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
-        end
-        
-      when :open_content;     
-        if card.type == 'Basic'
-          slot.render :naked_content
-        else
-          render_card_partial(:content)  # FIXME?: 'content' is inconsistent
-        end
-        
-      when :naked_content
-        cache_action('naked_content') do
-          if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin) 
-            template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}" 
-          else
-            @renderer.render( card, args.delete(:content) || "", update_refs=card.references_expired)
-          end
-        end
+      when :content;  self.render_content  
+      when :expanded_view_content, :naked; self.render_expanded_view_content
+      when :expanded_line_content; self.render_expanded_line_content
+      when :closed_content;  self.render_closed_content 
+      when :open_content; self.render_open_content
+      when :naked_content; self.render_naked_content
     ###---(  EDIT VIEWS ) 
 
       when :edit;  @state=:edit; card.hard_template ? render(:multi_edit) : content_field(slot.form)
@@ -315,8 +282,6 @@ class Slot
       when :edit_in_form
         render_partial('views/edit_in_form', args.merge(:form=>form))
     
-      
-      
       ###---(  EXCEPTIONS ) 
       
       when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
@@ -338,6 +303,54 @@ class Slot
   rescue Card::PermissionDenied=>e
     return "Permission error: #{e.message}"
   end
+
+  def render_content
+    w_action = self.requested_view = 'content'  
+    c = render_expanded_view_content
+    w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c))
+  end
+  
+  def render_expanded_view_content
+    @state = 'view'
+    expand_inclusions(  cache_action('view_content') {  
+      card.post_render( render_open_content) 
+    })
+  end
+  
+  def render_expanded_line_content
+    expand_inclusions(  cache_action('line_content') { render_closed_content } )
+  end
+  
+  def render_closed_content
+    if card.type == 'Basic'
+      truncatewords_with_closing_tags( render_open_content )
+    else
+      render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
+    end
+  end
+  
+  def render_open_content
+    if card.type == 'Basic'
+      slot.render :naked_content
+    else
+      render_card_partial(:content)  # FIXME?: 'content' is inconsistent
+    end
+  end
+  
+  def render_naked_content
+    cache_action('naked_content') do
+      if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin) 
+        template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}" 
+      else
+        @renderer.render( card, "", update_refs=card.references_expired)
+      end
+    end
+  end
+  
+
+
+
+
 
   def sterilize_inclusion(content)
     content.gsub(/\{\{/,'{<bogus />{').gsub(/\}\}/,'}<bogus />}')

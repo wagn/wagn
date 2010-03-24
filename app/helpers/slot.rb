@@ -383,7 +383,7 @@ class Slot
   def get_inclusion_fullname(name, base)
     fullname = name+'' #weird.  have to do this or the tname gets busted in the options hash!!
     fullname = fullname.to_absolute(base=='parent' ? card.name.parent_name : card.name)
-    fullname.gsub!('_user', User.current_user.card.name)
+    fullname.gsub!('_user') { User.current_user.cardname }
     fullname = fullname.particle_names.map do |x| 
       if x =~ /^_/ and root.slot_options[:params] and root.slot_options[:params][x]
         CGI.escapeHTML( root.slot_options[:params][x] )

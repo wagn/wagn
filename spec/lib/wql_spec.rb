@@ -400,6 +400,15 @@ describe Wql do
     end
   
   end
+  
+  describe "return values" do
+    # FIXME: should do other return thingies here
+    it "returns name_content" do 
+      Wql.new( { :name => "A+B", :return => "name_content" } ).run.should == { 
+        "A+B" => "AlphaBeta" 
+      }
+    end
+  end
 end
 
 

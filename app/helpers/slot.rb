@@ -323,7 +323,7 @@ class Slot
   end
   
   def render_closed_content
-    if card.type == 'Basic'
+    if generic_card? 
       truncatewords_with_closing_tags( render_open_content )
     else
       render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
@@ -331,18 +331,23 @@ class Slot
   end
   
   def render_open_content
-    if card.type == 'Basic'
-      slot.render :naked_content
+    if generic_card?
+      render_naked_content
     else
       render_card_partial(:content)  # FIXME?: 'content' is inconsistent
     end
   end
   
+  def generic_card?
+    # FIXME: this could be *much* better.  going for 80/20.
+    card.type == 'Basic' || card.type == 'Phrase'
+  end
+  
   def render_naked_content
-    cache_action('naked_content') do
-      if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin) 
-        template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}" 
-      else
+    if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin) 
+      template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}" 
+    else
+      cache_action('naked_content') do
         @renderer.render( card, (render_args.delete(:content) || ""), update_refs=card.references_expired)
       end
     end

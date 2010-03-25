@@ -18,7 +18,7 @@ module Wagn
       end
     
       def set_names card
-        @@cache[card.name + card.type] ||= begin
+        @@cache[(card.name ||"") + (card.type||"")] ||= begin
           @@subclasses.map do |sc|
             sc.pattern_applies?(card) ? sc.set_name(card) : nil
           end.compact

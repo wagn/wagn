@@ -16,7 +16,7 @@ class Slot
   attr_writer :form 
   attr_accessor  :options_need_save, :state, :requested_view, :js_queue_initialized,  
     :position, :renderer, :form, :superslot, :char_count, :item_format, :type, :renders, 
-    :start_time, :skip_autosave, :config, :slot_options
+    :start_time, :skip_autosave, :config, :slot_options, :render_args
 
   VIEW_ALIASES = { 
     :view => :open,
@@ -26,6 +26,7 @@ class Slot
        
   class << self
     def render_content content, opts = {}
+      Slot.current_slot = nil
       view = opts.delete(:view)
       view = :naked unless view && !view.blank?
       tmp_card = Card.new :name=>"__tmp_card__", :content => content 
@@ -199,7 +200,7 @@ class Slot
 
   def render(action, args={})      
     #warn "<render(#{card.name}, #{@state}).render(#{action}, item=>#{args[:item]})"
-    
+    self.render_args = args.clone
     rkey = self.card.name + ":" + action.to_s
     root.renders[rkey] ||= 1 
     root.renders[rkey] += 1 unless [:name, :link].member?(action)
@@ -342,7 +343,7 @@ class Slot
       if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin) 
         template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}" 
       else
-        @renderer.render( card, "", update_refs=card.references_expired)
+        @renderer.render( card, (render_args.delete(:content) || ""), update_refs=card.references_expired)
       end
     end
   end

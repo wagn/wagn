@@ -264,7 +264,11 @@ class Slot
 
     ###---(  CONTENT VARIATIONS ) 
       #-----( with transclusions processed      
-      when :content;  self.render_content  
+      when :content
+        w_action = self.requested_view = 'content'  
+        c = render_expanded_view_content
+        w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c))
+          
       when :expanded_view_content, :naked; self.render_expanded_view_content
       when :expanded_line_content; self.render_expanded_line_content
       when :closed_content;  self.render_closed_content 
@@ -305,11 +309,6 @@ class Slot
     return "Permission error: #{e.message}"
   end
 
-  def render_content
-    w_action = self.requested_view = 'content'  
-    c = render_expanded_view_content
-    w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c))
-  end
   
   def render_expanded_view_content
     @state = 'view'

@@ -89,13 +89,19 @@ class Wql
   end
   
   def run
-    results = Card.find_by_sql( sql )
-    if query[:prepend] || query[:append]
-      results = results.map do |card|             
-        CachedCard.get [query[:prepend], card.name, query[:append]].compact.join('+')
+    if query[:return] == "name_content"
+      ActiveRecord::Base.connection.select_all( sql ).inject({}) do |h,x|
+        h[x["name"]] = x["content"]; h
       end
+    else
+      results = Card.find_by_sql( sql )
+      if query[:prepend] || query[:append]
+        results = results.map do |card|             
+          CachedCard.get [query[:prepend], card.name, query[:append]].compact.join('+')
+        end
+      end
+      results
     end
-    results
   end
   
   class Spec 
@@ -439,6 +445,9 @@ class Wql
         when :count; "count(*)"
         when :first; "#{table_alias}.*"
         when :ids;   "id"
+        when :name_content;
+          sql.joins << "join revisions r on r.card_id = #{table_alias}.id"
+          "#{table_alias}.name, r.content"
         when :codename; 
           sql.joins << "join cardtypes as extension on extension.id=#{table_alias}.extension_id "
           'extension.class_name'

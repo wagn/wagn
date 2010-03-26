@@ -179,10 +179,6 @@ class CachedCard
     get('read_permission') { p = card.who_can(:read);  "#{p.class.to_s}:#{p.id}" }
   end       
   
-  def left
-    CachedCard.get_real( name.trunk_name )
-  end
-
   def comment_permission() 
     get('comment_permission') {
        p = card.who_can(:comment); 
@@ -191,10 +187,13 @@ class CachedCard
   end
 
   def ok?(task) 
-    case task
-      when :read; System.always_ok? || party_ok?(read_permission)
-      when :comment; party_ok?(comment_permission)
-      else card && card.ok?(task)
+    @ok ||= {}
+    @ok[task] ||= begin
+      case task
+        when :read; System.always_ok? || party_ok?(read_permission)
+        when :comment; party_ok?(comment_permission)
+        else card && card.ok?(task)
+      end
     end
   end
   

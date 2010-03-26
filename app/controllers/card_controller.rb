@@ -36,22 +36,16 @@ class CardController < ApplicationController
     params[:_keyword] && params[:_keyword].gsub!('_',' ') ## this will be unnecessary soon.
 
     @card_name = Cardname.unescape(params['id'] || '')
-    if (@card_name.nil? or @card_name.empty?) then    
-      @card_name = System.site_title
-    end             
+    @card_name = System.site_title if (@card_name.nil? or @card_name.empty?) 
     @card = CachedCard.get(@card_name)
 
-    if @card.new_record? && !@card.virtual?
+    if @card.new_record? && !@card.virtual?  # why doesnt !known? work here?
       params[:card]={:name=>@card_name, :type=>params[:type]}
-      if !Card::Basic.create_ok?
-        return render( :action=>'missing' )
-      else
-        return self.new
-      end
+      return ( Card::Basic.create_ok? ? self.new : render(:action=>'missing') )
     else
       save_location
     end
-    return unless view_ok # if view is not ok, it will render denied. return so we dont' render twice
+    return if !view_ok # if view is not ok, it will render denied. return so we dont' render twice
 
     # rss causes infinite memory suck in rails 2.1.2.  
     unless Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >=2
@@ -75,35 +69,20 @@ class CardController < ApplicationController
   def new
     Wagn::Hook.call :before_new, '*all', self
         
+    #normalize args
     @args = (params[:card] ||= {})
-    @args[:type] ||= params[:type] # for /new/:type shortcut in routes
-    
-    @args[:name] = params[:id] if params[:id] and !@args[:name]
+    @args[:name] ||= params[:id] # for ajax (?)
+    @args[:type] ||= params[:type] # for /new/:type shortcut 
+    [:name, :type, :content].each {|key| @args.delete(key) unless a=@args[key] and !a.blank?} #filter blank args
 
-
-    # don't pass a blank type as argument
-    # look up other types in case Cardtype name is given instead of ruby type
-    # what?  should always be cardtype name.  we do NOT want to support both, but we do want to support variants.  --efm
-    if @args[:type]
-      if @args[:type].blank?
-        @args.delete(:type) 
-      elsif ct=CachedCard.get_real(@args[:type])    
-        @args[:type] = ct.name 
-      end
-    end
-
-    # if given a name of a card that exists, got to edit instead
-    if @args[:name] and CachedCard.exists?(@args[:name])
-      render :text => "<span class=\"faint\">Oops, <strong>#{@args[:name]}</strong> was recently created! try reloading the page to edit it</span>"
-      return
-    end
-
-    @args.delete(:content) if c=@args[:content] and c.blank? #means soft-templating still takes effect 
-    @card = Card.new @args                   
-    if request.xhr?
-      render :partial => 'views/new', :locals=>{ :card=>@card }
+    if @args[:name] and CachedCard.exists?(@args[:name]) #card exists
+      render :text => "<span class=\"faint\">Oops, <strong>#{@args[:name]}</strong> was recently created! try reloading the page to edit it</span>" #ENGLISH
     else
-      render :action=> 'new'
+      @card = Card.new @args                   
+      render (request.xhr? ? 
+        {:partial=>'views/new', :locals=>{ :card=>@card }} : #ajax
+        {:action=> 'new'} #normal
+      )
     end
   end
   

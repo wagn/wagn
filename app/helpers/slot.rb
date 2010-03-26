@@ -274,6 +274,8 @@ class Slot
       when :closed_content;  self.render_closed_content 
       when :open_content; self.render_open_content
       when :naked_content; self.render_naked_content
+        
+      when :array;  render_array
     ###---(  EDIT VIEWS ) 
 
       when :edit;  @state=:edit; card.hard_template ? render(:multi_edit) : content_field(slot.form)
@@ -329,6 +331,18 @@ class Slot
     end
   end
   
+  def render_array
+    case card.type 
+      when 'Search'
+        names = Wql.new(card.get_spec(:return => 'name_content')).run.keys
+        Slot.render_content('[' + names.map{|name| "{{#{name}|naked}}"}.join(',') + ']')
+      when 'Pointer'
+        Slot.render_content('[' + card.pointees.map{|name| "{{#{name}|naked}}" }.join(",") + ']')
+      else
+        "['" + render_expanded_view_content + "']"
+    end
+  end
+  
   def render_open_content
     if generic_card?
       render_naked_content
@@ -351,11 +365,6 @@ class Slot
       end
     end
   end
-  
-
-
-
-
 
   def sterilize_inclusion(content)
     content.gsub(/\{\{/,'{<bogus />{').gsub(/\}\}/,'}<bogus />}')

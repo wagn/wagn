@@ -208,6 +208,9 @@ class CachedCard
   def view_content() read('view_content') end
   def view_content=(content)  write('view_content', content) end
   
+  def naked_content()   read('naked_content') end
+  def naked_content=(content)  write('naked_content', content)  end      
+
   def footer() read('footer') end
   def footer=(content) write('footer', content) end
   

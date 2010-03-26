@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
   # can we turn sessions off for it and see if that helps?
   layout :wagn_layout, :except=>[:render_fast_404]
   
-  BUILTIN_LAYOUTS = %w{ blank noside simple none }
+  BUILTIN_LAYOUTS = %w{ blank noside simple pre none }
 
 
   protected

@@ -12,11 +12,11 @@ class Slot
 
   cattr_accessor :max_char_count, :current_slot
   self.max_char_count = 200
-  attr_reader :card, :context, :action, :template
+  attr_reader :card, :action, :template
   attr_writer :form 
   attr_accessor  :options_need_save, :state, :requested_view, :js_queue_initialized,  
     :position, :renderer, :form, :superslot, :char_count, :item_format, :type, :renders, 
-    :start_time, :skip_autosave, :config, :slot_options, :render_args
+    :start_time, :skip_autosave, :config, :slot_options, :render_args, :context
 
   VIEW_ALIASES = { 
     :view => :open,
@@ -269,11 +269,13 @@ class Slot
         c = render_expanded_view_content
         w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c))
           
-      when :expanded_view_content, :naked; self.render_expanded_view_content
+      when :expanded_view_content, :naked, :bare; self.render_expanded_view_content
       when :expanded_line_content; self.render_expanded_line_content
       when :closed_content;  self.render_closed_content 
       when :open_content; self.render_open_content
       when :naked_content; self.render_naked_content
+      when :raw; card.content  
+        
     ###---(  EDIT VIEWS ) 
 
       when :edit;  @state=:edit; card.hard_template ? render(:multi_edit) : content_field(slot.form)
@@ -385,11 +387,11 @@ class Slot
       tcard=slot_options[:main_card] 
       item  = symbolize_param(:item) and options[:item] = item
       pview = symbolize_param(:view) and options[:view] = pview
-      options[:context] = 'main'
+      self.context = options[:context] = 'main'
       options[:view] ||= :open
     end  
          
-    options[:view] ||= (self.context =~ /layout/ ? :naked : :content)
+    options[:view] ||= (self.context == "layout_0" ? :naked : :content)
     options[:view] = get_inclusion_view(options[:view])
     options[:fullname] = fullname = get_inclusion_fullname(tname, options[:base])
     options[:showname] = tname.to_show(fullname)

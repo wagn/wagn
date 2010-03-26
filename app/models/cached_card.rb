@@ -187,7 +187,8 @@ class CachedCard
   end
 
   def ok?(task) 
-    @ok ||= begin
+    @ok ||= {}
+    @ok[task] ||= begin
       case task
         when :read; System.always_ok? || party_ok?(read_permission)
         when :comment; party_ok?(comment_permission)

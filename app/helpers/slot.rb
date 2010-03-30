@@ -198,19 +198,23 @@ class Slot
     VIEW_ALIASES[view.to_sym] || view
   end
 
-  def render(action, args={})      
-    #warn "<render(#{card.name}, #{@state}).render(#{action}, item=>#{args[:item]})"
-    self.render_args = args.clone
-    rkey = self.card.name + ":" + action.to_s
-    root.renders[rkey] ||= 1 
-    root.renders[rkey] += 1 unless [:name, :link].member?(action)
-    #root.start_time ||= Time.now.to_f
+  def count_render
+    root.renders[card.name] ||= 1 
+    root.renders[card.name] += 1 
+  end
+  
+  def too_many_renders?
+    root.renders[card.name] > System.max_renders 
+  end
 
+  def render(action, args={})      
+    Rails.logger.info "Slot(#{card.name}).render #{action}"
+    self.render_args = args.clone
+    count_render unless [:name, :link].member?(action)
     ok_action = case
-      when root.renders[rkey] > System.max_renders                    ; :too_many_renders
-      #when (Time.now.to_f - root.start_time) > System.max_render_time ; :too_slow
-      when denial = deny_render?(action)                              ; denial
-      else                                                            ; action
+      when too_many_renders?;   :too_many_renders
+      when denial = deny_render?(action) ; denial
+      else                               ; action
     end
 
     w_content = nil
@@ -274,7 +278,7 @@ class Slot
       when :closed_content;  self.render_closed_content 
       when :open_content; self.render_open_content
       when :naked_content; self.render_naked_content
-      when :array;  render_array
+      when :array;  render_array;
       when :raw; card.content  
 
     ###---(  EDIT VIEWS ) 
@@ -333,14 +337,20 @@ class Slot
   end
   
   def render_array
+    Rails.logger.info "Slot(#{card.name}).render_array   root = #{root}"
+    
+    count_render
+    if too_many_renders?
+      return render_partial( 'views/too_many_renders' ) 
+    end
     case card.type 
       when 'Search'
         names = Wql.new(card.get_spec(:return => 'name_content')).run.keys
-        Slot.render_content('[' + names.map{|name| "{{#{name}|naked}}"}.join(',') + ']')
+        names.map{|x| subslot(CachedCard.get(x)).render(:naked) }.inspect
       when 'Pointer'
-        Slot.render_content('[' + card.pointees.map{|name| "{{#{name}|naked}}" }.join(",") + ']')
+        card.pointees.map{|x| subslot(CachedCard.get(x)).render(:naked) }.inspect
       else
-        "['" + render_expanded_view_content + "']"
+        [render_expanded_view_content].inspect
     end
   end
   

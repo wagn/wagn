@@ -49,24 +49,28 @@ describe Slot, "" do
       end
       
       it "array (basic card)" do
-        Slot.render_content("{{A+B|array}}").should == "['AlphaBeta']"
+        Slot.render_content("{{A+B|array}}").should == %{["AlphaBeta"]}
       end
       
       it "array (search card)" do
-        Card.create :name => "n+a", :type=>"Number", :content=>"10"
-        Card.create :name => "n+b", :type=>"Number", :content=>"20"
-        Card.create :name => "n+c", :type=>"Number", :content=>"30"
-        Slot.render_content("{{n+*plus cards|array}}").should == "[10,20,30]"
+        Card.create! :name => "n+a", :type=>"Number", :content=>"10"
+        Card.create! :name => "n+b", :type=>"Phrase", :content=>"say:\"what\""
+        Card.create! :name => "n+c", :type=>"Number", :content=>"30"
+        Slot.render_content("{{n+*plus cards|array}}").should == %{["10", "say:\\"what\\"", "30"]}
       end
 
       it "array (pointer card)" do
-        Card.create :name => "n+a", :type=>"Number", :content=>"10"
-        Card.create :name => "n+b", :type=>"Number", :content=>"20"
-        Card.create :name => "n+c", :type=>"Number", :content=>"30"
-        Card.create :name => "npoint", :type=>"Pointer", :content => "[[n+a]]\n[[n+b]]\n[[n+c]]"
-        Slot.render_content("{{npoint|array}}").should == "[10,20,30]"
+        Card.create! :name => "n+a", :type=>"Number", :content=>"10"
+        Card.create! :name => "n+b", :type=>"Number", :content=>"20"
+        Card.create! :name => "n+c", :type=>"Number", :content=>"30"
+        Card.create! :name => "npoint", :type=>"Pointer", :content => "[[n+a]]\n[[n+b]]\n[[n+c]]"
+        Slot.render_content("{{npoint|array}}").should == %q{["10", "20", "30"]}
       end
 
+      it "array doesn't go in infinite loop" do        
+        Card.create! :name => "n+a", :content=>"{{n+a|array}}"
+        Slot.render_content("{{n+a|array}}").should == "[\"Oops!  I tried more than the maximum number of times to render n+A, but then stopped, fearing infinity.\"]"
+      end
     end
     
     it "raw content" do

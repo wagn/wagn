@@ -604,7 +604,7 @@ class Slot
   def paging_params
     s = {}
     if p = root.slot_options[:params]
-      [:offset,:limit].each{|key| s[key] = p[key]}
+      [:offset,:limit].each{|key| s[key] = p.delete(key)}
     end
     s[:offset] = s[:offset] ? s[:offset].to_i : 0
   	s[:limit]  = s[:limit]  ? s[:limit].to_i  : (main_card? ? 50 : 20)

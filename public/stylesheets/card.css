@@ -695,7 +695,7 @@ body#wagn .card-slot.recent-changes h2 {
   margin: 0px;
 }
 .search-no-results:after {
-  content:'search returned no results'; 
+  content:'0 results'; 
 }
 
 /*---------(Search & Pointer) --------*/

@@ -1,7 +1,7 @@
 <% @lay_content = capture do %>
 <!DOCTYPE HTML>
-<pre>
-  {{_main}}
-</pre>
+<html>
+  <body><pre>{{_main}}</pre></body>
+</html>
 <% end %>
 <%= render_layout_content(@lay_content) %>

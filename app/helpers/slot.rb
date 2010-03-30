@@ -204,6 +204,7 @@ class Slot
   end
   
   def too_many_renders?
+    root.renders[card.name] ||= 1 
     root.renders[card.name] > System.max_renders 
   end
 

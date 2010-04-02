@@ -187,10 +187,13 @@ class CachedCard
   end
 
   def ok?(task) 
-    case task
-      when :read; System.always_ok? || party_ok?(read_permission)
-      when :comment; party_ok?(comment_permission)
-      else card && card.ok?(task)
+    @ok ||= {}
+    @ok[task] ||= begin
+      case task
+        when :read; System.always_ok? || party_ok?(read_permission)
+        when :comment; party_ok?(comment_permission)
+        else card && card.ok?(task)
+      end
     end
   end
   
@@ -205,6 +208,9 @@ class CachedCard
   def view_content() read('view_content') end
   def view_content=(content)  write('view_content', content) end
   
+  def naked_content()   read('naked_content') end
+  def naked_content=(content)  write('naked_content', content)  end      
+
   def footer() read('footer') end
   def footer=(content) write('footer', content) end
   

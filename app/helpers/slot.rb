@@ -12,11 +12,11 @@ class Slot
 
   cattr_accessor :max_char_count, :current_slot
   self.max_char_count = 200
-  attr_reader :card, :context, :action, :template
+  attr_reader :card, :action, :template
   attr_writer :form 
   attr_accessor  :options_need_save, :state, :requested_view, :js_queue_initialized,  
     :position, :renderer, :form, :superslot, :char_count, :item_format, :type, :renders, 
-    :start_time, :skip_autosave, :config, :slot_options
+    :start_time, :skip_autosave, :config, :slot_options, :render_args, :context
 
   VIEW_ALIASES = { 
     :view => :open,
@@ -26,9 +26,11 @@ class Slot
        
   class << self
     def render_content content, opts = {}
-      opts[:view] ||= :naked
+      Slot.current_slot = nil
+      view = opts.delete(:view)
+      view = :naked unless view && !view.blank?
       tmp_card = Card.new :name=>"__tmp_card__", :content => content 
-      Slot.new(tmp_card).render(opts[:view])
+      Slot.new(tmp_card, "main_1", view, nil, opts).render(view)
     end
   end
    
@@ -50,6 +52,7 @@ class Slot
       :main_content => nil,
       :main_card => nil,
       :inclusion_view_overrides => nil,
+      :params => {},
       :renderer => Renderer.new
     }.merge(opts)
     
@@ -115,16 +118,13 @@ class Slot
       case action.to_s
         when 'content';    css_class = 'transcluded'
         when 'exception';  css_class = 'exception'    
-#          when 'nude'   ;   css_class = 'nude-slot'
         else begin
           css_class = 'card-slot '      
           css_class << (action=='closed' ? 'line' : 'paragraph')
-#          css_class << ' full' if (context=~/main/ or (action!='view' and action!='closed'))
-#          css_class << ' sidebar' if context=~/sidebar/
         end
       end       
       
-      css_class << " wrapper cardid-#{card.id} type-#{card.type}" if card
+      css_class << " " + Wagn::Pattern.css_names( card ) if card
       
       attributes = { 
         :cardId   => (card && card.id),
@@ -201,19 +201,24 @@ class Slot
     VIEW_ALIASES[view.to_sym] || view
   end
 
-  def render(action, args={})      
-    #warn "<render(#{card.name}, #{@state}).render(#{action}, item=>#{args[:item]})"
-    
-    rkey = self.card.name + ":" + action.to_s
-    root.renders[rkey] ||= 1 
-    root.renders[rkey] += 1 unless [:name, :link].member?(action)
-    #root.start_time ||= Time.now.to_f
+  def count_render
+    root.renders[card.name] ||= 1 
+    root.renders[card.name] += 1 
+  end
+  
+  def too_many_renders?
+    root.renders[card.name] ||= 1 
+    root.renders[card.name] > System.max_renders 
+  end
 
+  def render(action, args={})      
+    Rails.logger.info "Slot(#{card.name}).render #{action}"
+    self.render_args = args.clone
+    count_render unless [:name, :link].member?(action)
     ok_action = case
-      when root.renders[rkey] > System.max_renders                    ; :too_many_renders
-      #when (Time.now.to_f - root.start_time) > System.max_render_time ; :too_slow
-      when denial = deny_render?(action)                              ; denial
-      else                                                            ; action
+      when too_many_renders?;   :too_many_renders
+      when denial = deny_render?(action) ; denial
+      else                               ; action
     end
 
     w_content = nil
@@ -267,10 +272,18 @@ class Slot
 
     ###---(  CONTENT VARIATIONS ) 
       #-----( with transclusions processed      
-      when :content;  
+      when :content
         w_action = self.requested_view = 'content'  
-        c = self.render( :expanded_view_content)
+        c = render_expanded_view_content
         w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c))
+          
+      when :expanded_view_content, :naked, :bare; self.render_expanded_view_content
+      when :expanded_line_content; self.render_expanded_line_content
+      when :closed_content;  self.render_closed_content 
+      when :open_content; self.render_open_content
+      when :naked_content; self.render_naked_content
+      when :array;  render_array;
+      when :raw; card.content  
 
       when :expanded_view_content, :naked 
         @state = 'view'
@@ -315,8 +328,6 @@ class Slot
       when :edit_in_form
         render_partial('views/edit_in_form', args.merge(:form=>form))
     
-      
-      
       ###---(  EXCEPTIONS ) 
       
       when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
@@ -337,6 +348,67 @@ class Slot
     result.strip
   rescue Card::PermissionDenied=>e
     return "Permission error: #{e.message}"
+  end
+
+  
+  def render_expanded_view_content
+    @state = 'view'
+    expand_inclusions(  cache_action('view_content') {  
+      card.post_render( render_open_content) 
+    })
+  end
+  
+  def render_expanded_line_content
+    expand_inclusions(  cache_action('line_content') { render_closed_content } )
+  end
+  
+  def render_closed_content
+    if generic_card? 
+      truncatewords_with_closing_tags( render_open_content )
+    else
+      render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
+    end
+  end
+  
+  def render_array
+    Rails.logger.info "Slot(#{card.name}).render_array   root = #{root}"
+    
+    count_render
+    if too_many_renders?
+      return render_partial( 'views/too_many_renders' ) 
+    end
+    case card.type 
+      when 'Search'
+        names = Wql.new(card.get_spec(:return => 'name_content')).run.keys
+        names.map{|x| subslot(CachedCard.get(x)).render(:naked) }.inspect
+      when 'Pointer'
+        card.pointees.map{|x| subslot(CachedCard.get(x)).render(:naked) }.inspect
+      else
+        [render_expanded_view_content].inspect
+    end
+  end
+  
+  def render_open_content
+    if generic_card?
+      render_naked_content
+    else
+      render_card_partial(:content)  # FIXME?: 'content' is inconsistent
+    end
+  end
+  
+  def generic_card?
+    # FIXME: this could be *much* better.  going for 80/20.
+    card.type == 'Basic' || card.type == 'Phrase'
+  end
+  
+  def render_naked_content
+    if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin) 
+      template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}" 
+    else
+      cache_action('naked_content') do
+        @renderer.render( card, (render_args.delete(:content) || ""), update_refs=card.references_expired)
+      end
+    end
   end
 
   def sterilize_inclusion(content)
@@ -367,11 +439,11 @@ class Slot
       tcard=slot_options[:main_card] 
       item  = symbolize_param(:item) and options[:item] = item
       pview = symbolize_param(:view) and options[:view] = pview
-      options[:context] = 'main'
+      self.context = options[:context] = 'main'
       options[:view] ||= :open
     end  
          
-    options[:view] ||= (self.context =~ /layout/ ? :naked : :content)
+    options[:view] ||= (self.context == "layout_0" ? :naked : :content)
     options[:view] = get_inclusion_view(options[:view])
     options[:fullname] = fullname = get_inclusion_fullname(tname, options[:base])
     options[:showname] = tname.to_show(fullname)
@@ -395,8 +467,13 @@ class Slot
   
   def get_inclusion_fullname(name, base)
     fullname = name+'' #weird.  have to do this or the tname gets busted in the options hash!!
-    fullname.to_absolute(base=='parent' ? card.name.parent_name : card.name)
-    fullname.gsub!('_user', User.current_user.card.name)
+    fullname = fullname.to_absolute(base=='parent' ? card.name.parent_name : card.name)
+    fullname.gsub!('_user') { User.current_user.cardname }
+    fullname = fullname.particle_names.map do |x| 
+      if x =~ /^_/ and root.slot_options[:params] and root.slot_options[:params][x]
+        CGI.escapeHTML( root.slot_options[:params][x] )
+      else x end
+    end.join("+")
     fullname
   end
 
@@ -407,7 +484,13 @@ class Slot
   end
 
   def get_inclusion_content(cardname)
-    content = root.slot_options[:relative_content][cardname.gsub(/\+/,'_')]
+    parameters = root.slot_options[:relative_content]
+    content = parameters[cardname.gsub(/\+/,'_')]
+    
+    # CLEANME This is a hack to get it so plus cards re-populate on failed signups
+    if parameters['cards'] and card_params = parameters['cards'][cardname.gsub('+','~plus~')]  
+      content = card_params['content']
+    end  
     content if content.present?  #not sure I get why this is necessary - efm
   end
 
@@ -553,7 +636,9 @@ class Slot
     
   def paging_params
     s = {}
-    [:offset,:limit].each{|key| s[key] = params[key]}
+    if p = root.slot_options[:params]
+      [:offset,:limit].each{|key| s[key] = p.delete(key)}
+    end
     s[:offset] = s[:offset] ? s[:offset].to_i : 0
   	s[:limit]  = s[:limit]  ? s[:limit].to_i  : (main_card? ? 50 : 20)
 	  s
@@ -564,12 +649,14 @@ class Slot
   end
 
   def url_for(url, args=nil, attribute=nil)
+    # recently changed URI.escape to CGI.escape to address question mark issue, but I'm still concerned neither is perfect
+    # so long as we keep doing the weird Cardname.escape thing.  
     url = "javascript:'/#{url}"
-    url << "/#{escape_javascript(URI.escape(card_id.to_s))}" if (card and card_id)
+    url << "/#{escape_javascript(CGI.escape(card_id.to_s))}" if (card and card_id)
     url << "/#{attribute}" if attribute   
     url << "?context='+getSlotContext(this)"
     url << "+'&' + getSlotOptions(this)"
-    url << ("+'"+ args.map{|k,v| "&#{k}=#{escape_javascript(URI.escape(v.to_s))}"}.join('') + "'") if args
+    url << ("+'"+ args.map{|k,v| "&#{k}=#{escape_javascript(CGI.escape(v.to_s))}"}.join('') + "'") if args
     url
   end
 

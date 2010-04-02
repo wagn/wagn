@@ -12,6 +12,8 @@ Spork.prefork do
   require 'spec/autorun'
   require 'spec/rails' 
   
+  require "email_spec"
+  
   
   # Loading more in this block will cause your tests to run faster. However, 
   # if you change any configuration or code from libraries loaded here, you'll
@@ -31,17 +33,18 @@ Spork.prefork do
     # == Notes
     # 
     # For more information take a look at Spec::Example::Configuration and Spec::Runner
+    config.include(EmailSpec::Helpers)
+    config.include(EmailSpec::Matchers)
     
     config.before(:each) do
-      CachedCard.reset_cache     
-      CachedCard.bump_global_seq   
+      Wagn::Cache.reset_local
+      Wagn::Cache.reset_global
     end
 
     config.after(:each) do
-      CachedCard.reset_cache     
-      CachedCard.bump_global_seq   
+      Wagn::Cache.reset_local
+      Wagn::Cache.reset_global
     end
-
   end
 end
 

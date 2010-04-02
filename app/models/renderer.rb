@@ -10,7 +10,7 @@ class Renderer
     # the empty string you passed it, it won't work.  but we seem to need it because
     # card.content='' in set_card_defaults and if you make it nil a bunch of other
     # stuff breaks
-    content = content.blank? ? card.content_for_rendering  : content 
+    content = content.blank? ? card.content : content 
     wiki_content = WikiContent.new(card, content, self)
     update_references(card, wiki_content) if update_references
     wiki_content.render! 
@@ -21,7 +21,7 @@ class Renderer
   end
 
   def replace_references( card, old_name, new_name )
-    content = content.blank? ? card.content_for_rendering  : content 
+    content = content.blank? ? card.content : content 
     wiki_content = WikiContent.new(card, content, self)
 
     wiki_content.find_chunks(Chunk::Link).each do |chunk|
@@ -44,7 +44,6 @@ class Renderer
 	 if card.id and card.respond_to?('references_expired')
     	card.connection.execute("update cards set references_expired=NULL where id=#{card.id}") 
     end
-    
     rendering_result.find_chunks(Chunk::Reference).each do |chunk|
       reference_type = 
         case chunk

@@ -1,12 +1,20 @@
-module Wagn    
+module Wagn
   class Initializer
     class << self
+      def set_default_config config
+        config.available_modules = Dir["#{RAILS_ROOT}/modules/*.rb"]
+      end
+      
       def set_default_rails_config config    
-        config.active_record.observers = :card_observer            
+        #config.active_record.observers = :card_observer            
         config.cache_store = :file_store, "#{RAILS_ROOT}/tmp/cache"
         config.frameworks -= [ :action_web_service ]
         config.gem "uuid"
         config.gem "json"
+        config.gem "fastercsv"
+        unless ENV['RUN_CODE_RUN']
+          config.gem "hoptoad_notifier"
+        end
         require 'yaml'   
         require 'erb'     
         database_configuration_file = "#{RAILS_ROOT}/config/database.yml"
@@ -14,7 +22,8 @@ module Wagn
         config.action_controller.session = {
           :session_key => db[RAILS_ENV]['session_key'],
           :secret      => db[RAILS_ENV]['secret']
-        }     
+        }  
+        set_default_config Wagn.config
       end
 
       def run
@@ -24,10 +33,12 @@ module Wagn
       end
     
       def pre_schema?
-        return false if ActiveRecord::Base.connection.select_all("select * from cardtypes").size > 5
-        return true
-      rescue Exception=>e
-        return true
+        @@schema_initialized ||= begin
+          ActiveRecord::Base.connection.execute("select * from cards limit 1")
+        rescue Exception=>e
+          false
+        end
+        !@@schema_initialized
       end
 
       def load  
@@ -118,11 +129,32 @@ module Wagn
           f.puts "Wagn::Initializer.initialize_builtin_cards"
         end
         
-        %w{ *head *alert *foot *navbox *version *account_link }.each do |key|
+        %w{ *head *alert *foot *navbox *version *account_link *now }.each do |key|
           Card.add_builtin( Card.new(:name=>key, :builtin=>true))
         end
       end
     end   
+  end
+  
+  # oof, this is not polished
+  class Config
+    def initialize
+      @data = {}
+    end
+    
+    def method_missing(meth, *args)
+      if meth.to_s =~ /^(.*)\=$/
+        @data[$~[1]] = args[0]
+      else
+        @data[meth.to_s]
+      end
+    end
+  end
+
+  @@config = Config.new
+  
+  def self.config
+    @@config
   end
 end        
 

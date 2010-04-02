@@ -50,6 +50,15 @@ class Mailer < ActionMailer::Base
          :watched => (watched == card.name ? "#{watched}" : "#{watched} cards")
   end
   
-
+  def flexmail config
+    recipients  config[:to]
+    from        config[:from]
+    cc          config[:cc]
+    bcc         config[:bcc]
+    subject     config[:subject]
+    content_type 'text/html'
+    body :content => config[:message]
+  end
+  
 end
 

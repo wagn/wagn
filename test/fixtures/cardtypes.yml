@@ -1,4 +1,8 @@
 --- 
+cardtypes_028: 
+  class_name: Fruit
+  system: 
+  id: "36"
 cardtypes_017: 
   class_name: Set
   system: 

@@ -41,6 +41,13 @@ module Card
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
       :update_referencers, :allow_type_change, :virtual, :builtin, :broken_type, :skip_defaults
+
+    # setup hooks on AR callbacks
+    [:before_save, :before_create, :after_save, :after_create].each do |hookname| 
+      self.send( hookname ) do |card|
+        Wagn::Hook.call hookname, card
+      end
+    end
         
     private
       belongs_to :reader, :polymorphic=>true  
@@ -252,16 +259,19 @@ module Card
     end
 
     def multi_create(cards)
+      Wagn::Hook.call :before_multi_create, self, cards
       multi_save(cards)
+      Wagn::Hook.call :after_multi_create, self
     end
     
     def multi_update(cards)
+      Wagn::Hook.call :before_multi_update, self, cards
       multi_save(cards)
-      Notification.after_multi_update(self)  # future system hook
+      Wagn::Hook.call :after_multi_update, self
     end
     
     def multi_save(cards)
-      Notification.before_multi_save(self,cards)  # future system hook
+      Wagn::Hook.call :before_multi_save, self, cards
       cards.each_pair do |name, opts|              
         opts[:content] ||= ""   
         # make sure blank content doesn't override pointee assignments if they are present
@@ -287,6 +297,7 @@ module Card
           end
         end
       end  
+      Wagn::Hook.call :after_multi_save, self, cards
     end
 
     def destroy_with_trash(caller="")     
@@ -340,10 +351,6 @@ module Card
      
     # Extended associations ----------------------------------------
 
-    def left
-      trunk
-    end
-    
     def right
       tag
     end
@@ -369,6 +376,10 @@ module Card
 
     def extended_referencers
       (dependents + [self]).plot(:referencers).flatten.uniq
+    end
+
+    def card
+      self
     end
 
     def cardtype
@@ -421,6 +432,10 @@ module Card
       !!skip_defaults
     end
 
+    def known?
+      !(new_record? && !virtual?)
+    end
+    
     def virtual?
       @virtual || @builtin
     end    

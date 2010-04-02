@@ -1,10 +1,18 @@
 --- 
 users_004: 
+<<<<<<< HEAD:test/fixtures/users.yml
   salt: 8450cfa61228502005bb5d7f2fda4a6eb790d311
   created_at: 2010-01-08 16:01:40.443121
   crypted_password: 6e4624c1d51bb37a53a43ddf91b887ad10a8f665
   password_reset_code: 
   updated_at: 2010-01-08 16:01:40.443121
+=======
+  salt: 5381d768d11724215ce3719abe5da3af009021dc
+  created_at: 2010-02-17 17:00:18.236207
+  crypted_password: ca768ffef3f2eba2f3a9dfd1f292170221dfc639
+  password_reset_code: 
+  updated_at: 2010-02-17 17:00:18.236207
+>>>>>>> master:test/fixtures/users.yml
   id: "4"
   invite_sender_id: "1"
   identity_url: 
@@ -12,11 +20,19 @@ users_004:
   login: joe_admin
   email: joe@admin.com
 users_005: 
+<<<<<<< HEAD:test/fixtures/users.yml
   salt: 7428e11a81da6287ed88402665de5e5223a225ef
   created_at: 2010-01-08 16:01:40.607635
   crypted_password: fa9fc078978b328c28113bd58269bea698a89ff9
   password_reset_code: 
   updated_at: 2010-01-08 16:01:40.607635
+=======
+  salt: 7e2f40ba8b2ef99135f1ff6dbc9918dc38bce2a9
+  created_at: 2010-02-17 17:00:18.392164
+  crypted_password: 53f1b4880f64518b7da85a573698a40793f3629e
+  password_reset_code: 
+  updated_at: 2010-02-17 17:00:18.392164
+>>>>>>> master:test/fixtures/users.yml
   id: "5"
   invite_sender_id: "1"
   identity_url: 
@@ -24,11 +40,19 @@ users_005:
   login: joe_camel
   email: joe@camel.com
 users_006: 
+<<<<<<< HEAD:test/fixtures/users.yml
   salt: 84d2555257eb31d69211e1a4d1fc4f97e54568f8
   created_at: 2010-01-08 16:01:41.390324
   crypted_password: 9ef841e91ab743f3ac3b9262842bb8e86a4c59bf
   password_reset_code: 
   updated_at: 2010-01-08 16:01:41.390324
+=======
+  salt: 7639f5307f2c5c61e527acee6abb89d9041e67c7
+  created_at: 2010-02-17 17:00:19.111127
+  crypted_password: 7bfd37ae3327030d8e65b6bb765285e63b85316b
+  password_reset_code: 
+  updated_at: 2010-02-17 17:00:19.111127
+>>>>>>> master:test/fixtures/users.yml
   id: "6"
   invite_sender_id: "1"
   identity_url: 
@@ -36,11 +60,19 @@ users_006:
   login: 
   email: ron@request.com
 users_007: 
+<<<<<<< HEAD:test/fixtures/users.yml
   salt: 2c79a4c33fdc226412e384ceb6352375ab7b9115
   created_at: 2010-01-08 16:01:41.679753
   crypted_password: 32e7e12f80024aa0a48a031b37416bcfb7c81fe7
   password_reset_code: 
   updated_at: 2010-01-08 16:01:41.679753
+=======
+  salt: 0c1fa961482a136035bfc1451c73f83d85475e88
+  created_at: 2010-02-17 17:00:19.280386
+  crypted_password: c88f4aefe6cdc4a79fa77b814f5aab8664ada881
+  password_reset_code: 
+  updated_at: 2010-02-17 17:00:19.280386
+>>>>>>> master:test/fixtures/users.yml
   id: "7"
   invite_sender_id: "1"
   identity_url: 
@@ -48,11 +80,19 @@ users_007:
   login: sample_user
   email: sample@user.com
 users_008: 
+<<<<<<< HEAD:test/fixtures/users.yml
   salt: 4fbed5cb40ac6e6ca5b0d54d0949d9e884fd3ac6
   created_at: 2010-01-08 16:01:45.53517
   crypted_password: 5095286ddc4b866340939defaf73bdb1d9ce454c
   password_reset_code: 
   updated_at: 2010-01-08 16:01:45.53517
+=======
+  salt: 3fb3416e566f595824f4cd6f6b3f47407a140013
+  created_at: 2010-02-17 17:00:22.490365
+  crypted_password: c82d8a94b6c9ad9bd0aeb056ef2bcb5dd62389ba
+  password_reset_code: 
+  updated_at: 2010-02-17 17:00:22.490365
+>>>>>>> master:test/fixtures/users.yml
   id: "8"
   invite_sender_id: "1"
   identity_url: 
@@ -60,11 +100,19 @@ users_008:
   login: u1
   email: u1@user.com
 users_010: 
+<<<<<<< HEAD:test/fixtures/users.yml
   salt: 0dd9e88216d406ec39a59b4c84a83f884cdb0e6b
   created_at: 2010-01-08 16:01:45.546392
   crypted_password: e39633f6a924aa14306f8d5b925404c31aea54d1
   password_reset_code: 
   updated_at: 2010-01-08 16:01:45.546392
+=======
+  salt: c0c5626e3395ec59522e2a0d572f453cfc6883fc
+  created_at: 2010-02-17 17:00:22.502919
+  crypted_password: 60a1b149a3b6a87ce092a6df635c6db5b1b429dc
+  password_reset_code: 
+  updated_at: 2010-02-17 17:00:22.502919
+>>>>>>> master:test/fixtures/users.yml
   id: "10"
   invite_sender_id: "1"
   identity_url: 
@@ -72,11 +120,19 @@ users_010:
   login: u3
   email: u3@user.com
 users_009: 
+<<<<<<< HEAD:test/fixtures/users.yml
   salt: 3a5812f2ca1eb4c1b8fe91547b3dc89ec504dbb0
   created_at: 2010-01-08 16:01:45.54086
   crypted_password: fa4d335bc6dbf216d77919ae90a113794613b8ef
   password_reset_code: 
   updated_at: 2010-01-08 16:01:45.54086
+=======
+  salt: 1bbbd5aa2f3fb34f296120be5b19e4a2e2bb8934
+  created_at: 2010-02-17 17:00:22.496437
+  crypted_password: 216d1d0618ada66fd199a62fd76e59983326023f
+  password_reset_code: 
+  updated_at: 2010-02-17 17:00:22.496437
+>>>>>>> master:test/fixtures/users.yml
   id: "9"
   invite_sender_id: "1"
   identity_url: 
@@ -109,10 +165,17 @@ users_012:
   email: sara@user.com
 users_001: 
   salt: 
+<<<<<<< HEAD:test/fixtures/users.yml
   created_at: 2010-01-08 16:01:34.968625
   crypted_password: 
   password_reset_code: 
   updated_at: 2010-01-08 16:01:34.968625
+=======
+  created_at: 2010-02-17 17:00:11.430173
+  crypted_password: 
+  password_reset_code: 
+  updated_at: 2010-02-17 17:00:11.430173
+>>>>>>> master:test/fixtures/users.yml
   id: "1"
   invite_sender_id: "1"
   identity_url: 
@@ -121,10 +184,17 @@ users_001:
   email: noreply@wagn.org
 users_002: 
   salt: 
+<<<<<<< HEAD:test/fixtures/users.yml
   created_at: 2010-01-08 16:01:34.968625
   crypted_password: 
   password_reset_code: 
   updated_at: 2010-01-08 16:01:34.968625
+=======
+  created_at: 2010-02-17 17:00:11.430173
+  crypted_password: 
+  password_reset_code: 
+  updated_at: 2010-02-17 17:00:11.430173
+>>>>>>> master:test/fixtures/users.yml
   id: "2"
   invite_sender_id: "1"
   identity_url: 
@@ -132,11 +202,19 @@ users_002:
   login: anon
   email: noreply@wagn.org
 users_003: 
+<<<<<<< HEAD:test/fixtures/users.yml
   salt: 6c3cb354e015687e53f84d7cb81bd5d177fcb6bc
   created_at: 2010-01-08 16:01:40.076131
   crypted_password: 0589889391fd3e724fb720f8c7c2894cabf27ae2
   password_reset_code: 
   updated_at: 2010-01-08 16:01:40.076131
+=======
+  salt: ed54b8898468a8443b0358e98b72bbd1768e5286
+  created_at: 2010-02-17 17:00:17.911662
+  crypted_password: 1c74fc18869c07358fe1e891a5b27a1017cecbf5
+  password_reset_code: 
+  updated_at: 2010-02-17 17:00:17.911662
+>>>>>>> master:test/fixtures/users.yml
   id: "3"
   invite_sender_id: "1"
   identity_url: 

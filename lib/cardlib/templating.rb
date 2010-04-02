@@ -103,7 +103,7 @@ module Cardlib
     def expire_templatee_references
 	    return unless respond_to?('references_expired')
       if wql=hard_templatee_wql
-        condition = User.as(:wagbot) { Wql2::CardSpec.build(wql.merge(:return=>"condition")).to_sql }
+        condition = User.as(:wagbot) { Wql::CardSpec.build(wql.merge(:return=>"condition")).to_sql }
         card_ids_to_update = connection.select_rows("select id from cards t where #{condition}").map(&:first)
         card_ids_to_update.each_slice(100) do |id_batch|
           connection.execute "update cards set references_expired=1 where id in (#{id_batch.join(',')})"

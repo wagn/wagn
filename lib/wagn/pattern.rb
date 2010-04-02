@@ -2,8 +2,13 @@ module Wagn
   class Pattern
     @@subclasses = []
     cattr_accessor :key
+    @@cache = {}
 
     class << self
+      def reset_cache
+        @@cache = {}
+      end
+      
       def register_class klass 
         @@subclasses.unshift klass
       end
@@ -13,9 +18,21 @@ module Wagn
       end
     
       def set_names card
-        @@subclasses.map do |sc|
-          sc.pattern_applies?(card) ? sc.set_name(card) : nil
-        end.compact
+        @@cache[(card.name ||"") + (card.type||"")] ||= begin
+          @@subclasses.map do |sc|
+            sc.pattern_applies?(card) ? sc.set_name(card) : nil
+          end.compact
+        end
+      end
+
+      def css_names card
+        set_names(card).map do |sn|
+          if sn == "*all"
+            "ALL"
+          else
+            sn.tag_name.gsub(' ','_').gsub('*','').upcase + '-' + sn.trunk_name.css_name
+          end
+        end.reverse.join(" ")
       end
       
       def label name
@@ -28,6 +45,11 @@ module Wagn
       def match name
         name.tag_name==self.key
       end
+
+      # def css_name card
+      #   sn = set_name card
+      #   sn.tag_name.gsub(' ','_').gsub('*','').upcase + '-' + sn.trunk_name.css_name
+      # end
     end  
    
     attr_reader :spec
@@ -35,6 +57,7 @@ module Wagn
     def initialize spec
       @spec = spec
     end
+    
     
   end                                                                     
 
@@ -51,6 +74,10 @@ module Wagn
       def set_name card
         key
       end
+      
+      # def css_name card
+      #   "ALL"
+      # end
       
       def label name
         'All Cards'
@@ -70,7 +97,7 @@ module Wagn
       end
 
       def set_name card
-        "#{card.cardtype.name}+#{key}"
+        "#{card.cardtype_name}+#{key}"
       end
       
       def label name
@@ -112,7 +139,7 @@ module Wagn
       end
       
       def set_name card
-        "#{card.left.cardtype.name}+#{card.name.tag_name}+#{key}"
+        "#{card.left.cardtype_name}+#{card.name.tag_name}+#{key}"
       end
       
       def label name
@@ -129,7 +156,7 @@ module Wagn
       end
       
       def pattern_applies? card
-        card.name
+        card.name and !card.virtual?
       end
       
       def set_name card

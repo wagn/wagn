@@ -92,6 +92,10 @@ module Cardname
     end.join(JOINT)
   end  
 
+  def css_name
+    self.to_key.gsub('*','X').gsub('+','-')
+  end
+
   def to_show(absolute)
     (self =~/_(left|right|whole|self|user)/) ? absolute : self
   end
@@ -101,20 +105,25 @@ module Cardname
   end
   
   def to_absolute(context_name)
-    name = self
-    name.gsub! /_self|_whole/  , context_name
-    name.gsub! /\s*\+$/        , '+'+context_name 
-    name.gsub! /^\+\s*/        , context_name+'+' 
-    if context_name.junction?  
-      name.gsub! /_left/       , context_name.parent_name
-      name.gsub! /_right/      , context_name.tag_name
-#      name.sub!  /_(\-?\d+)/ , context_name.particle_names[$~[1].to_i]  #fixme -- this would break on multiple nums
-    else
-      name.gsub! /_left|_right/, context_name
-    end
-    name
+    context_parts = context_name.split(JOINT)
+    # split wont give an item after trailing +
+    # we add a space to force it
+    (self+" ").split(JOINT).map do |part|
+      new_part = case part.strip
+        when /^(_self|_whole|_)$/i; context_name
+        when /^_left$/i;            context_name.trunk_name
+        when /^_right$/i;           context_name.tag_name
+        when /^_(\d+)$/i;           context_parts[ $~[1].to_i - 1 ] 
+        when /^_(L*)(R?)$/i
+          l_count, r_count = $~[1].size, $~[2].size
+          trunk = context_name.split(JOINT)[0..(0-(l_count+1))].join(JOINT)
+          r_count > 0 ? trunk.tag_name : trunk
+        else                     part
+      end
+      new_part = (new_part || "").strip
+      new_part.empty? ? context_name : new_part
+    end.join(JOINT)
   end
-
 end    
                
 # pollute the main namespace because we use it sooo much

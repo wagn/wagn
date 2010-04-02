@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100106050020) do
+ActiveRecord::Schema.define(:version => 20100217234756) do
 
   create_table "card_files", :force => true do |t|
     t.string   "filename"

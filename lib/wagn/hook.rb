@@ -1,49 +1,61 @@
 module Wagn
   class Hook
+    cattr_reader :registry
+    cattr_accessor :debug
+    @@registry = {}
+    @@debug = nil #lambda{|x| puts "#{x}<br/>\n" }
+  
     class << self
       def reset
         @@registry = {}
       end
-    end
-  end
 
-  class Hook::System < Hook
-    @@registry = {}
-    class << self
-      def register hookname, &block
-        list = (@@registry[hookname] ||= [])
-        list << block
+      def add hookname, set_name, &block
+        @@registry[hookname] ||= {}
+        @@registry[hookname][set_name] ||= []
+        @@registry[hookname][set_name] << block
       end
     
-      def invoke hookname, *args
-        list = @@registry[hookname] or return true
-        list.each do |hook|
-          hook.call(*args)
+      def call hookname, card_or_set_name, *args
+        return [] unless @@registry[hookname] 
+
+        if card_or_set_name.is_a?(String) 
+          call_set_name hookname, card_or_set_name, *args
+        else
+          call_card hookname, card_or_set_name, *args
         end
       end
-    end
-  end
-
-  class Hook::Card < Hook
-    @@registry = {}
-    class << self
-      def register hookname, set_name, &block
-        hook_slot = (@@registry[hookname] ||= {})
-        hook_pattern_list = (hook_slot[set_name] ||= [])
-        hook_pattern_list << block
+      
+      def call_card hookname, card, *args
+        set_names =  Wagn::Pattern.set_names( card )
+        hooks_for_set_names(hookname,set_names).map do |h|
+          h.call(card, *args)
+        end
       end
-    
-      def invoke hookname, card, *args
-        hook_slot = @@registry[hookname] or return true        
-        hooks = Wagn::Pattern.set_names( card ).map do |pattern_key|
-          hook_slot[pattern_key]
+      
+      def call_set_name hookname, set_name, *args
+        hooks_for_set_names(hookname,[set_name]).map do |h| 
+          h.call(set_name, *args) 
+        end
+      end
+      
+      def hooks_for_set_names hookname, set_names
+        set_names.map do |s| 
+          h=@@registry[hookname][s] 
+          debug.call "   - #{s}: #{h.inspect}" if h && debug
+          h
         end.flatten.compact
-        hooks.each do |hook|
-          hook.call(card, *args)
-        end
-      end         
+      end
+      
+      def ephemerally
+        old_hooks = @@registry.deep_clone
+        yield
+        @@registry = old_hooks
+      end
     end
   end
 end
+
+
 
 

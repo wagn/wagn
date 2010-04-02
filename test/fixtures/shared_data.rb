@@ -149,6 +149,17 @@ class SharedData
       ctt = Card.create! :name=> 'Cardtype E+*type+*default'
       
       
+      ## --------- Fruit: creatable by anon but not readable ---
+      f = Card.create! :type=>"Cardtype", :name=>"Fruit"
+      f.permit(:create, Role[:anon])       
+      f.permit(:read, Role[:admin])   
+      f.save!
+
+      ff = Card.create! :name=>"Fruit+*type+*default"
+      ff.permit(:read, Role[:admin])
+      ff.save!
+
+      
     end   
   end
 end  

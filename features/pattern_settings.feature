@@ -9,7 +9,7 @@ Feature: Set settings
 
   Scenario: default setting and plus card override
     Given I create Phrase card "color+*right+*add help" with content "If colorblind, leave blank"
-    When I go to new card named "Test"
+    When I go to new card "Test"
     Then I should see "spicy"
     When I go to new card "Test+color"      
     Then I should see "colorblind"

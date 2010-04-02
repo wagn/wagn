@@ -20,6 +20,14 @@ describe Slot, "" do
       Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}
       Slot.render_content( "{{TestImage | naked; size:small }}" ).should == %{<img src="http://wagn.org/image53_small.jpg">} 
     end
+
+    describe "css classes" do
+      it "are correct for open view" do
+        Slot.render_content("{{A|open}}").should be_html_with do
+          div( :class => "card-slot paragraph ALL TYPE-basic SELF-a") {}
+        end
+      end
+    end
     
     describe "views" do
       it "open" do
@@ -35,12 +43,51 @@ describe Slot, "" do
           }
         end
       end
+      
+      it "naked" do
+        Slot.render_content("{{A+B|naked}}").should == "AlphaBeta"
+      end
+      
+      it "array (basic card)" do
+        Slot.render_content("{{A+B|array}}").should == %{["AlphaBeta"]}
+      end
+      
+      it "array (search card)" do
+        Card.create! :name => "n+a", :type=>"Number", :content=>"10"
+        Card.create! :name => "n+b", :type=>"Phrase", :content=>"say:\"what\""
+        Card.create! :name => "n+c", :type=>"Number", :content=>"30"
+        Slot.render_content("{{n+*plus cards|array}}").should == %{["10", "say:\\"what\\"", "30"]}
+      end
+
+      it "array (pointer card)" do
+        Card.create! :name => "n+a", :type=>"Number", :content=>"10"
+        Card.create! :name => "n+b", :type=>"Number", :content=>"20"
+        Card.create! :name => "n+c", :type=>"Number", :content=>"30"
+        Card.create! :name => "npoint", :type=>"Pointer", :content => "[[n+a]]\n[[n+b]]\n[[n+c]]"
+        Slot.render_content("{{npoint|array}}").should == %q{["10", "20", "30"]}
+      end
+
+      it "array doesn't go in infinite loop" do        
+        Card.create! :name => "n+a", :content=>"{{n+a|array}}"
+        Slot.render_content("{{n+a|array}}").should == "[\"Oops!  I tried more than the maximum number of times to render n+A, but then stopped, fearing infinity.\"]"
+      end
     end
     
     it "raw content" do
        @a = Card.new(:name=>'t', :content=>"{{A}}")
       Slot.new(@a).render(:naked_content).should == "{{A}}"
     end                                                                                      
+  end
+  
+  describe "cgi params" do
+    it "renders params in card inclusions" do
+      result = Slot.render_content("{{_card+B|naked}}", :params=>{'_card' => "A"})
+      result.should == "AlphaBeta"
+    end
+    
+    it "should not change name if variable isn't present" do
+      Slot.render_content("{{_card+B|name}}").should == "_card+B"
+    end
   end
 
   it "should use inclusion view overrides" do  
@@ -51,10 +98,11 @@ describe Slot, "" do
     
     # a little weird that we need :expanded_view_content  to get the version without
     # slot divs wrapped around it.
-    result = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :name } ).render :expanded_view_content
-    result.should == "t2"
-    result = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :expanded_view_content } ).render :expanded_view_content
-    result.should == "boo"
+    s = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :name } )
+    s.render( :expanded_view_content ).should == "t2"
+    
+    s = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :expanded_view_content } )
+    s.render( :expanded_view_content ).should == "boo"
   end
   
   context "builtin card" do

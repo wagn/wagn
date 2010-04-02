@@ -4,7 +4,7 @@ class CardController < ApplicationController
   EDIT_ACTIONS =  [ :edit, :update, :rollback, :save_draft, :watch, :unwatch ]
   LOAD_ACTIONS = EDIT_ACTIONS + [ :changes, :comment, :denied, :options, :quick_update, :related, :remove ]
 
-  before_filter :load_card, :only=>LOAD_ACTIONS
+  before_filter :load_card!, :only=>LOAD_ACTIONS
   before_filter :load_card_with_cache, :only => [:line, :view, :open ]
 
   before_filter :view_ok,   :only=> LOAD_ACTIONS
@@ -36,22 +36,16 @@ class CardController < ApplicationController
     params[:_keyword] && params[:_keyword].gsub!('_',' ') ## this will be unnecessary soon.
 
     @card_name = Cardname.unescape(params['id'] || '')
-    if (@card_name.nil? or @card_name.empty?) then    
-      @card_name = System.site_title
-    end             
+    @card_name = System.site_title if (@card_name.nil? or @card_name.empty?) 
     @card = CachedCard.get(@card_name)
 
-    if @card.new_record? && !@card.virtual?
+    if @card.new_record? && !@card.virtual?  # why doesnt !known? work here?
       params[:card]={:name=>@card_name, :type=>params[:type]}
-      if !Card::Basic.create_ok?
-        return render( :action=>'missing' )
-      else
-        return self.new
-      end
+      return ( Card::Basic.create_ok? ? self.new : render(:action=>'missing') )
     else
       save_location
     end
-    return unless view_ok # if view is not ok, it will render denied. return so we dont' render twice
+    return if !view_ok # if view is not ok, it will render denied. return so we dont' render twice
 
     # rss causes infinite memory suck in rails 2.1.2.  
     unless Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >=2
@@ -73,35 +67,22 @@ class CardController < ApplicationController
   
   #----------------( creating)                                                               
   def new
+    Wagn::Hook.call :before_new, '*all', self
+        
+    #normalize args
     @args = (params[:card] ||= {})
-    @args[:type] ||= params[:type] # for /new/:type shortcut in routes
-    
-    @args[:name] = params[:id] if params[:id] and !@args[:name]
+    @args[:name] ||= params[:id] # for ajax (?)
+    @args[:type] ||= params[:type] # for /new/:type shortcut 
+    [:name, :type, :content].each {|key| @args.delete(key) unless a=@args[key] and !a.blank?} #filter blank args
 
-
-    # don't pass a blank type as argument
-    # look up other types in case Cardtype name is given instead of ruby type
-    # what?  should always be cardtype name.  we do NOT want to support both, but we do want to support variants.  --efm
-    if @args[:type]
-      if @args[:type].blank?
-        @args.delete(:type) 
-      elsif ct=CachedCard.get_real(@args[:type])    
-        @args[:type] = ct.name 
-      end
-    end
-
-    # if given a name of a card that exists, got to edit instead
-    if @args[:name] and CachedCard.exists?(@args[:name])
-      render :text => "<span class=\"faint\">Oops, <strong>#{@args[:name]}</strong> was recently created! try reloading the page to edit it</span>"
-      return
-    end
-
-    @args.delete(:content) if c=@args[:content] and c.blank? #means soft-templating still takes effect 
-    @card = Card.new @args                   
-    if request.xhr?
-      render :partial => 'views/new', :locals=>{ :card=>@card }
+    if @args[:name] and CachedCard.exists?(@args[:name]) #card exists
+      render :text => "<span class=\"faint\">Oops, <strong>#{@args[:name]}</strong> was recently created! try reloading the page to edit it</span>" #ENGLISH
     else
-      render :action=> 'new'
+      @card = Card.new @args                   
+      render (request.xhr? ? 
+        {:partial=>'views/new', :locals=>{ :card=>@card }} : #ajax
+        {:action=> 'new'} #normal
+      )
     end
   end
   
@@ -110,14 +91,11 @@ class CardController < ApplicationController
   end
   
   def create    
+    #debugger if params[:card][:type]=='Testimony'
     @card = Card.create params[:card]        
-    #@card.save
-    
-    @redirect_location = if @card.ok?(:read)
-      url_for_page(@card.name)
-    else
-      @card.setting('thanks') || '/'
-    end                     
+    if params[:multi_edit] and params[:cards] and !@card.errors.present?
+      @card.multi_create(params[:cards]) 
+    end
 
     # according to rails / prototype docs:
     # :success: [...] the HTTP status code is in the 2XX range.
@@ -125,17 +103,26 @@ class CardController < ApplicationController
   
     # however on 302 ie6 does not update the :failure area, rather it sets the :success area to blank..
     # for now, to get the redirect notice to go in the failure slot where we want it, 
-    # we've chosen to render with the 'teapot' failure status: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes  
-
+    # we've chosen to render with the (418) 'teapot' failure status: 
+    # http://en.wikipedia.org/wiki/List_of_HTTP_status_codes  
     handling_errors do
-      @card.multi_create(params[:cards]) if params[:multi_edit] and params[:cards]
+      @thanks = Wagn::Hook.call( :redirect_after_create, @card ).first ||
+        @card.setting('thanks')
       case
-        when (!@card.ok?(:read));  render( :action=>'redirect_to_thanks',       :status=>418 )
-        when main_card?;           render( :action=>'redirect_to_created_card', :status=>418 )
-        else;                      render_show
+        when @thanks.present?;               ajax_redirect_to @thanks 
+        when @card.ok?(:read) && main_card?; ajax_redirect_to url_for_page( @card.name )
+        when @card.ok?(:read);               render_show
+        else                                 ajax_redirect_to "/"
       end
     end
   end
+  
+  def ajax_redirect_to url
+    @redirect_location = url
+    @message = "Create Successful!"
+    render :action => "ajax_redirect", :status => 418
+  end
+    
   
   #--------------( editing )
   
@@ -176,7 +163,6 @@ class CardController < ApplicationController
       #might be addressable via attr_accessors?
     else;   @card.update_attributes(card_args)
     end  
-
     
     if @card.errors.on(:confirmation_required) && @card.errors.map {|e,f| e}.uniq.length==1  
       # If there is confirmation error and *only* that error 
@@ -365,7 +351,7 @@ class CardController < ApplicationController
   
   # doesn't really seem to fit here.  may want to add new controller if methods accrue?        
   def add_field # for pointers only
-    load_card! if params[:id]
+    load_card if params[:id]
     render :partial=>'types/pointer/field', :locals=>params.merge({:link=>:add,:card=>@card})
   end   
   

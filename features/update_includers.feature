@@ -37,7 +37,7 @@ Feature: Update Includer cards
 
   Scenario: Watching a plus card on multiedit; and watching both plus card and including card on multiedit
     Given I create Cardtype card "Fruit"
-    And I create card "Fruit+*type+*content" with content "{{+color}} {{+flavor}}"
+    And I create card "Froot+*type+*content" with content "{{+color}} {{+flavor}}"
     And I create Fruit card "Banana" with plusses:
       |color|flavor|
       |yellow|sweet|

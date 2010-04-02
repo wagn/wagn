@@ -71,7 +71,8 @@ module Cardlib
     end
     
     def hard_template
-      template.hard_template? ? template : nil
+      nil
+      #template.hard_template? ? template : nil
     end
     
     def single_type_template

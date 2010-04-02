@@ -14,7 +14,7 @@ module Cardlib
     end
        
     def hard_template?
-      !soft_template?
+      false
     end
 
     def soft_template?

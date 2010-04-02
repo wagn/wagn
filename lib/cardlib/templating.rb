@@ -91,7 +91,6 @@ module Cardlib
     end   
     
     def hard_templatees
-      debugger
       if wql=hard_templatee_wql
         User.as(:wagbot)  {  Card.search(wql)  }
       else

@@ -59,11 +59,8 @@ module Cardlib
         end
       end
       
-      begin 
-        Card.const_get(given_type)
-      rescue Exception=>e
-        nil
-      end
+      c.send(:set_needed_defaults)
+      c
     end
     
     def create_these( *args )                                                                                  

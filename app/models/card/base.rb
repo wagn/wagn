@@ -462,11 +462,6 @@ module Card
     
     def junction?() !simple? end
        
-    # FIXME: I don't really want this but it's in about 80 tests...
-    def connect( other_card, content='')
-      Card.create :trunk=>self, :tag=>other_card, :content=>content
-    end   
-        
     def authenticated?(party)
       party==::Role[:auth]
     end

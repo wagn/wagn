@@ -111,7 +111,7 @@ module Cardlib
       end      
 #=begin
       #debugger
-      if template? and type_card = trunk.trunk and type_card.type == 'Cardtype' and create_party = who_can(:create)
+      if template? and type_card = trunk and type_card.type == 'Cardtype' and create_party = who_can(:create)
         
         ::User.as :wagbot do
           type_card.permit(:create, create_party)

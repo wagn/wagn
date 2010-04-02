@@ -29,6 +29,19 @@ module Card
       Card::Base[arg]
     end
     
+    def class_for(given_type)
+      if ::Cardtype.name_for_key?( given_type.to_key )
+        given_type = ::Cardtype.classname_for( ::Cardtype.name_for_key( given_type.to_key ))
+      end
+      
+      begin 
+        Card.const_get(given_type)
+      rescue Exception=>e
+        nil
+      end
+    end
+
+
     def create_or_update args
       if c = Card[ args[:name] ]
         c.update_attributes args

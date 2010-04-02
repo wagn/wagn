@@ -34,7 +34,7 @@ module Wagn
     
       def pre_schema?
         @@schema_initialized ||= begin
-          ActiveRecord::Base.connection.execute("select * from cards limit 1")
+          ActiveRecord::Base.connection.select_all("select * from cards limit 2").size > 2
         rescue Exception=>e
           false
         end
@@ -45,8 +45,8 @@ module Wagn
         load_config  
         load_cardlib                                               
         setup_multihost
-        return if pre_schema?
         load_cardtypes
+        return if pre_schema?
         load_modules
         initialize_builtin_cards
         ActiveRecord::Base.logger.info("\n----------- Wagn Initialization Complete -----------\n\n")

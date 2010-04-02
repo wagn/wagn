@@ -26,43 +26,6 @@ module Cardlib
     #   end
     # end
 
-    
-    def class_for(given_type)
-      if ::Cardtype.name_for_key?( given_type.to_key )
-        given_type = ::Cardtype.classname_for( ::Cardtype.name_for_key( given_type.to_key ))
-      end
-      
-      begin 
-        Card.const_get(given_type)
-      rescue Exception=>e
-        nil
-      end
-    end
-    
-
-
-    def new(args={})
-      args=args.stringify_keys unless args.nil?   
-      p = Proc.new {|k| k.new(args)}
-      c=with_class_from_args(args,p)  
-
-      # autoname.  note I'm not sure that this is the right place for this at all, but 
-      #  :set_needed_defaults returns if new_record? so I think we don't want it in there
-      if !args.nil? and args["name"].blank?
-        ::User.as(:wagbot) do
-          if autoname_card = c.setting_card('autoname')
-            autoname_card = autoname_card.card
-            c.name = autoname_card.content
-            autoname_card.content = autoname_card.content.next
-            autoname_card.save!
-          end                                         
-        end
-      end
-      
-      c.send(:set_needed_defaults)
-      c
-    end
-    
     def create_these( *args )                                                                                  
       definitions = args.size > 1 ? args : (args.first.inject([]) {|a,p| a.push({p.first=>p.last}); a })
       definitions.map do |input|

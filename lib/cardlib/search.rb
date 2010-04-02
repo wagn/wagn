@@ -22,14 +22,12 @@ module Cardlib
       end
       
       def find_virtual(name)  
-        find_builtin(name) or begin 
-          auto_card(name)
-        end   
+        find_builtin(name) or auto_card(name)
       end
 
       def auto_card(name)
         return nil if name.simple?
-        if template = Card.new(:name=>name).setting_card('virtual')   
+        if template = Card.new(:name=>name).setting_card('content')   
           User.as(:wagbot) do
             Card.create_virtual name, template.content, template.type
           end

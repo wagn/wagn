@@ -58,7 +58,7 @@
 			<div class="edit-area">
   			<div class="editor">  
 					<% #FIXME CONTENT: the hard template test can go away when we phase out the old sytem %>
-  				<% if (card.hard_template || card.content_templated?) %>
+  				<% if card.content_templated? %>
   				  <%- slot.form = form %>
     			  <%= slot.render(:multi_edit)%>
   				<% else %>

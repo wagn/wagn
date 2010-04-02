@@ -28,12 +28,12 @@ class ContentSettings < ActiveRecord::Migration
       end
     end
     
-    Card.search( :right=>"*rform" ).each do |rform|
+    Wql.new( :right=>"*rform" ).run.each do |rform|
       begin
         leftname = rform.name.trunk_name
         
         if rform.extension_type == 'HardTemplate'
-          rform.update_attributes :name => "#{leftname}+*right+*virtual",
+          rform.update_attributes :name => "#{leftname}+*right+*content",
             :confirm_rename => true, :update_referencers => true
         else
           rform.update_attributes :name => "#{leftname}+*right+*default",

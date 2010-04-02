@@ -313,7 +313,7 @@ class Slot
       when :edit;  
         @state=:edit
         # FIXME CONTENT: the hard template test can go away when we phase out the old system.
-        if card.hard_template or card.content_templated?
+        if card.content_templated?
           render(:multi_edit)
         else
           content_field(slot.form)
@@ -748,9 +748,6 @@ class Slot
     fn = ['File','Image'].include?(card.type) ? 
             "Wagn.onSaveQueue['#{context}'].clear(); " :
             "Wagn.runQueue(Wagn.onSaveQueue['#{context}']); "      
-    if @card.hard_template
-      #options.delete(:with)
-    end
     fn << remote_function( options )   
   end
      

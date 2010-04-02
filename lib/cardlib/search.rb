@@ -64,20 +64,8 @@ module Cardlib
         Wql.new(spec).run
       end
 
-      #def find_by_json(spec)
-      #  Card.find_by_sql( Wql::CardSpec.build( JSON.parse(spec) ).to_sql )
-      #end
-
       def find_by_name( name, opts={} ) 
         self.find_by_key_and_trash( name.to_key, false, opts )
-      end
-
-      def find_by_wql_options( options={} )
-        raise("Deprecated: old wql")
-      end
-
-      def find_by_wql( wql, options={})
-        raise("Deprecated: old wql")
       end
       
       # FIXME Hack to keep dynamic classes from breaking after application reload in development..
@@ -109,7 +97,7 @@ module Cardlib
 
     def self.append_features(base)   
       super
-      base.extend(ClassMethods)    
+      Card.extend(ClassMethods)    
       base.after_save :update_search_index
       base.class_eval do
         cattr_accessor :skip_index_updates

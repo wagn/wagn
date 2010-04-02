@@ -6,25 +6,20 @@ module Cardlib
     end
        
     def type_template?
-      name && name.template_name? && name =~ /\*type/
+      name && name =~ /\+\*type\+/
     end
 
     def right_template?
-      name && name.template_name? && name =~ /\*right/
+      name && name =~ /\+\*right\+/
     end
        
     def hard_template?
-      false
+      name && name =~ /\+\*content$/
     end
 
     def soft_template?
       name && name =~ /\*default/
     end
-    
-    def auto_template?
-      name && name =~ /\*virtual/
-    end
-    
 
 	  def pointees
 	    User.as(:wagbot) do

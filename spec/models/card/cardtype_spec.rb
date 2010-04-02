@@ -90,8 +90,6 @@ describe Card, "Recreated Card" do
   
 end
 
-
-
 describe Card, "New Cardtype" do
   before do
     User.as :wagbot 
@@ -101,13 +99,11 @@ describe Card, "New Cardtype" do
   it "should have create permissions" do
     @ct.who_can(:create).should_not be_nil
   end
+  
   it "its create permissions should be based on Basic" do
     @ct.who_can(:create).should == Card['Basic'].who_can(:create)
   end
 end
-
-
-
 
 describe Card, "Wannabe Cardtype Card" do
   before do
@@ -125,19 +121,17 @@ describe Card, "Wannabe Cardtype Card" do
   end
 end
 
-
-
 describe User, "Joe User" do
   before do
     User.as :wagbot 
     @r3 = Role[:r3]
-    @ctf_t = Card.create! :name=>'Cardtype F+*type+*default'
-    @ctf_t.permit(:create, @r3)
-    @ctf_t.save!
+
+    @ctf = Card['Cardtype F']
+    @ctf.permit(:create, @r3)
+    @ctf.save!
 
     User.as :joe_user
     @user = User[:joe_user]
-    @ctf = Card['Cardtype F']
     Cardtype.reset_cache
     @cardtype_names = Cardtype.createable_cardtypes.map{ |ct| ct[:name] }
   end

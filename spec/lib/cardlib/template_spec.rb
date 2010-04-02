@@ -14,11 +14,11 @@ describe Card do
     end
   end
   
-  describe "#content_templated?" do
+  it "#content_templated?" do
     pending
   end
   
-  describe "#expire_templatee_references" do
+  it "#expire_templatee_references" do
     pending
   end
   

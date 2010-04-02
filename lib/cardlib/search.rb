@@ -63,8 +63,16 @@ module Cardlib
       end
 
       def find_by_name( name, opts={} ) 
-        self.find_by_key_and_trash( name.to_key, false, opts )
+        self.find_by_key_and_trash( name.to_key, false, opts.merge( :include=>:current_revision ))
       end
+
+      def [](name) 
+        # DONT do find_virtual here-- it ends up happening all over the place--
+        # call it explicitly if that's what you want
+        #self.cache[name.to_s] ||= 
+        #self.find_by_name(name.to_s, :include=>:current_revision) #|| self.find_virtual(name.to_s)
+        self.find_by_name(name.to_s)
+      end             
       
       # FIXME Hack to keep dynamic classes from breaking after application reload in development..
       def find_with_rescue(*args)
@@ -95,6 +103,7 @@ module Cardlib
 
     def self.append_features(base)   
       super
+      Card::Base.extend(ClassMethods)
       Card.extend(ClassMethods)    
       base.after_save :update_search_index
       base.class_eval do

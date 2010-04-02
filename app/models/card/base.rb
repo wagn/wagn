@@ -175,12 +175,15 @@ module Card
           args['type'] = default_card ? default_card.type : "Basic"
         end
         
-        card_class = Card.class_for( args['type'] ) or raise "No class for card_type: #{args['type'].to_key}"
+        card_class = Card.class_for( args['type'] ) || (
+          broken_type = args['type']; Card::Basic
+        )
 
         # create the new card based on the class we've determined
         args.delete('type')
         new_card = card_class.ar_new args
         yield(new_card) if block_given?
+        new_card.broken_type = broken_type if broken_type
         new_card.send( :set_defaults, args ) unless args['skip_defaults'] 
         new_card
       end 
@@ -248,14 +251,6 @@ module Card
         end
         c
       end                      
-                                       
-      def [](name) 
-        # DONT do find_virtual here-- it ends up happening all over the place--
-        # call it explicitly if that's what you want
-        #self.cache[name.to_s] ||= 
-        self.find_by_name(name.to_s, :include=>:current_revision) #|| self.find_virtual(name.to_s)
-        #self.find_by_name(name.to_s)
-      end             
     end
 
     def multi_create(cards)

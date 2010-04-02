@@ -1,8 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper' 
 
 describe "WikiReference" do
-             
-  
   before do
     #setup_default_user  
     User.as :wagbot
@@ -20,9 +18,11 @@ describe "WikiReference" do
   it "hard template reference creation on template creation" do
     Card::Cardtype.create! :name=>"SpecialForm"
     Card::SpecialForm.create! :name=>"Form1", :content=>"foo"
+    Card["Form1"].references_expired.should be_false
     Card.create! :name=>"SpecialForm+*type+*content", :content=>"{{+bar}}"
+    Card["Form1"].references_expired.should be_true
     Slot.new(Card["Form1"]).render(:naked_content)
-    Card["Form1"].references_expired.should_not == true
+    Card["Form1"].references_expired.should be_false
     Card["Form1"].out_references.plot(:referenced_name).should == ["form1+bar"]
   end
   

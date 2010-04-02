@@ -280,7 +280,7 @@ class Wql
     end          
     
     def found_by(val)
-      cards = (String===val ? [CachedCard.get(absolute_name(val))] : Card.search(val))
+      cards = (String===val ? [CachedCard.get(absolute_name(val))] : Wql.new(val).run)
       cards.each do |c|
         raise %{"found_by" value needs to be valid Search card #{c.inspect}} unless c && ['Search','Set'].include?(c.type)
         found_by_spec = CardSpec.new(c.get_spec).spec

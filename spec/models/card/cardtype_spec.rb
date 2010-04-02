@@ -48,30 +48,30 @@ end
 describe Card, "Card changed to become a Cardtype" do
   before do
     User.as :wagbot 
-    @a = Card['a']
+    @a = Card['A']
     @a.type = 'Cardtype'
     @a.save!
   end
   it "should have a create permission set" do
-    Card['a'].who_can(:create).should_not == nil
+    Card['A'].who_can(:create).should_not == nil
   end
 end
 
 describe Card, "Normal card with junctions" do
   before do
     User.as :wagbot 
-    @a = Card['a']
+    @a = Card['A']
   end
   it "should confirm that it has junctions" do
     @a.junctions.length.should > 0
   end
   it "should successfull have its type changed" do
     @a.type = 'Number'; @a.save!
-    Card['a'].type.should== 'Number'
+    Card['A'].type.should== 'Number'
   end
   it "should still have its junctions after changing type" do
     @a.type = 'CardtypeE'; @a.save!
-    Card['a'].junctions.length.should > 0
+    Card['A'].junctions.length.should > 0
   end
 end
 

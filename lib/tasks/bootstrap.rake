@@ -1,3 +1,4 @@
+require 'ruby-debug'
 namespace :wagn do
   desc "(re) create a wagn database from scratch"
   task :create => :environment do
@@ -40,8 +41,7 @@ namespace :wagn do
   
     desc "load bootstrap fixtures into db"
     task :load => :environment do     
-      
-      
+      require 'ruby-debug'
       
       require 'active_record/fixtures'                         
       #ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
@@ -107,19 +107,19 @@ namespace :wagn do
         cardset = perms[key] || {}
         starset = (key =~ /^\*/ ? perms[:star] : {})
           
-        default.keys.each do |task|
-          next if task== :create and card['type'] != 'Cardtype'
-          codename = cardset[task] || starset[task] || default[task]
+        default.keys.each do |ttask|
+          next if ttask== :create and card['type'] != 'Cardtype'
+          codename = cardset[ttask] || starset[ttask] || default[ttask]
           next unless codename
           party_id = role_ids[codename]
           
           ActiveRecord::Base.connection.update(
             "INSERT into permissions (card_id, task, party_type, party_id) "+
-            "VALUES (#{card['id']}, '#{task}', 'Role', #{party_id} )"
+            "VALUES (#{card['id']}, '#{ttask}', 'Role', #{party_id} )"
           )
-          if task== :read
+          if ttask== :read
             ActiveRecord::Base.connection.update(
-              "UPDATE cards set reader_type='Role', reader_id=#{party_id} where id=#{card.id}"
+              "UPDATE cards set reader_type='Role', reader_id=#{party_id} where id=#{card['id']}"
             )
           end
         end

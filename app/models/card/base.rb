@@ -93,7 +93,9 @@ module Card
         end
 
         if !args['content'] and default_card = setting_card('default')
-          self.content = default_card.content
+          ::User.as(:wagbot) do
+            self.content = default_card.content
+          end
         end
       end
       

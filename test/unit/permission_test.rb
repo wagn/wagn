@@ -115,7 +115,7 @@ class PermissionTest < ActiveSupport::TestCase
   
   def test_reader_setting
     Card.find(:all).each do |c|
-      assert_equal c.who_can(:read), c.reader, "card #{c.name} reader (#{c.reader.codename}) and who can read (#{c.who_can(:read).codename}) should be same for card #{c.name}"
+      assert_equal c.who_can(:read), c.reader, "reader (#{c.reader.codename}) and who can read (#{c.who_can(:read).codename}) should be same for card #{c.name}"
     end
   end
 

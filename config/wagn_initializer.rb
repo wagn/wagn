@@ -34,7 +34,7 @@ module Wagn
     
       def pre_schema?
         @@schema_initialized ||= begin
-          ActiveRecord::Base.connection.select_all("select * from cards limit 2").size > 2
+          ActiveRecord::Base.connection.select_all("select * from cards limit 3").size > 2
         rescue Exception=>e
           false
         end

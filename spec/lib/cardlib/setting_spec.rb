@@ -4,6 +4,13 @@ describe Card do
   before do
     User.as(:wagbot)
   end
+  
+  describe "setting data setup" do
+    it "should make Set of +*type" do
+      Card::Cardtype.create! :name=>"SpecialForm"
+      Card.create!( :name=>"SpecialForm+*type" ).type.should == "Set"
+    end
+  end
 
   describe "#settings" do
     it "retrieves Set based value" do

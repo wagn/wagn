@@ -173,7 +173,11 @@ module Card
 
         # set type from settings
         if !args['type']
-          default_card = Card::Basic.new({ :type => "Basic",:skip_defaults=>true }.merge(args) ).setting_card('default')
+          default_card = Card::Basic.new({ 
+            :name=> args['name'], 
+            :type => "Basic",
+            :skip_defaults=>true 
+          }).setting_card('content')
           args['type'] = default_card ? default_card.type : "Basic"
         end
         

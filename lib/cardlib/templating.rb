@@ -125,8 +125,9 @@ module Cardlib
     private
     # FIXME: remove after adjusting expire_templatee_references to content_settings
     def hard_templatee_wql
-      return nil unless template? and hard_template? and self.trunk && self.trunk.is_a?(Card::Set)
-      wql = self.trunk.get_spec
+      if hard_template? and c=CachedCard.get(name.trunk_name) and c.type == "Set"
+        wql = c.get_spec
+      end
     end
       
   end

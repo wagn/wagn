@@ -102,7 +102,7 @@ describe "WikiReference" do
 
   it "update referencing content on rename junction card" do
     @ab = Card.find_by_name("A+B") #linked to from X, transcluded by Y
-    @ab.update_attributes! :name=>'Peanut+Butter'
+    @ab.update_attributes! :name=>'Peanut+Butter', :confirm_rename => true, :update_referencers => true
     @x = Card.find_by_name('X')
     @x.content.should == "[[A]] [[Peanut+Butter]] [[T]]"
   end
@@ -120,7 +120,7 @@ describe "WikiReference" do
     Card.create! :name=>"ColorType+*type+*content", :content=>"{{#{JOINT}rgb}}"
     green = Card::ColorType.create! :name=>"green"
     rgb = newcard 'rgb'
-    green_rgb = Card.create! :trunk=>green, :tag=>rgb, :content=>"#00ff00"
+    green_rgb = Card.create! :name => "green+rgb", :content=>"#00ff00"
     
     green.reload.transcludees.plot(:name).should == ["green#{JOINT}rgb"]
     green_rgb.reload.transcluders.plot(:name).should == ['green']

@@ -299,15 +299,7 @@ class Slot
       # when :raw;     card.content
       when :closed_content;   render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
       when :open_content;     render_card_partial(:content)  # FIXME?: 'content' is inconsistent
-      when :naked_content
-        if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
-          template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}" 
-        else
-          passed_in_content = args.delete(:content)
-          templated_content = card.content_templated? ? card.setting('content') : nil
-          renderer_content = passed_in_content || templated_content || ""
-          @renderer.render( card, renderer_content, update_refs=card.references_expired)
-        end
+      when :naked_content;   render_naked_content
         
     ###---(  EDIT VIEWS ) 
       when :edit;  
@@ -402,11 +394,14 @@ class Slot
   end
   
   def render_naked_content
-    if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin) 
+    if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
       template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}" 
     else
       cache_action('naked_content') do
-        @renderer.render( card, (render_args.delete(:content) || ""), update_refs=card.references_expired)
+        #passed_in_content = args.delete(:content) # Can we get away without this??
+        templated_content = card.content_templated? ? card.setting('content') : nil
+        renderer_content = templated_content || ""
+        @renderer.render( card, renderer_content, update_refs=card.references_expired)
       end
     end
   end

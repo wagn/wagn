@@ -529,6 +529,7 @@ module Card
     tracks :name, :content, :type, :comment, :permissions#, :reader, :writer, :appender
 
     def name_with_key_sync=(name)
+      name ||= ""
       self.key = name.to_key
       self.name_without_key_sync = name
     end

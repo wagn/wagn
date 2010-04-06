@@ -68,7 +68,7 @@ class Mailer < ActionMailer::Base
       end
 
       config[:attach].each do |cardname|
-        if cardfile = Card[ cardname ].attachment
+        if c = Card[ cardname ] and cardfile = c.attachment
           attachment cardfile.content_type do |a|
             open( cardfile.public_filename ) do |f|
               a.filename cardfile.filename

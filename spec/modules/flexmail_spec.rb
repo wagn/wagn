@@ -24,7 +24,8 @@ describe Flexmail do
         :bcc => "",
         :cc => "",
         :subject => "Subject of the mail",
-        :message => "It's true that I was born a poor black seed"
+        :message => "It's true that I was born a poor black seed",
+        :attach => ""
       }]
     end
   end
@@ -50,6 +51,7 @@ describe Flexmail do
         :extension_type => 'HardTemplate'
       Card.create!  :name => "mailconfig+*subject", :content => "{{+subject search|naked;item:naked}}"
       Card.create! :name => "mailconfig+*message", :content => "Oughta get fancier"
+      Card.create! :name => "mailconfig+*attach", :type=>"Pointer", :content => "[[_self+attachment]]"
       c = Card::Cardtype.create! :name=>'Trigger'
       c.permit(:create, Role[:anon])
       c.permit(:read,   Role[:auth]) 
@@ -62,7 +64,8 @@ describe Flexmail do
     it "returns list with correct hash for card with configs" do
       c = Card::Trigger.create :name => "Banana Trigger", :content => "data content"
       c.multi_create( '~plus~email'=>{:content=>'gary@gary.com'},
-        '~plus~subject'=>{:type=>'Pointer', :content=>'[[default subject]]'}
+        '~plus~subject'=>{:type=>'Pointer', :content=>'[[default subject]]'},
+        '~plus~attachment' => {:type=>'File', :content=>"notreally.txt" }
        )
       Flexmail.configs_for(c).should == [{
         :to => "bob@bob.com",
@@ -70,7 +73,8 @@ describe Flexmail do
         :bcc => "",
         :cc => '',
         :subject => "a very nutty thang",
-        :message => "Oughta get fancier"
+        :message => "Oughta get fancier",
+        :attach => ['Banana Trigger+attachment']
       }]
     end
   end

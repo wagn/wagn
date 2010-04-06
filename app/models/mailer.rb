@@ -56,8 +56,28 @@ class Mailer < ActionMailer::Base
     cc          config[:cc]
     bcc         config[:bcc]
     subject     config[:subject]
-    content_type 'text/html'
-    body :content => config[:message]
+    
+    if !config[:attach] or config[:attach].empty?
+      content_type 'text/html'
+      body :content => config[:message]
+    else
+      content_type 'multipart/alternative'
+      
+      part 'text/html' do |p|
+        p.body = config[:message]
+      end
+
+      config[:attach].each do |cardname|
+        if cardfile = Card[ cardname ].attachment
+          attachment cardfile.content_type do |a|
+            open( cardfile.public_filename ) do |f|
+              a.filename cardfile.filename
+              a.body = f.read
+            end
+          end
+        end
+      end
+    end
   end
   
 end

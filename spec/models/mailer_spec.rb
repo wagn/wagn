@@ -59,7 +59,10 @@ describe Mailer do
       assert_equal @mail.from, ["jiffy@lube.com"]
     end
   end
-  
+
+  describe "flexmail" do
+    # FIXME: at least two tests should be here, with & w/o attachment.
+  end
 
   private
     def read_fixture(action)

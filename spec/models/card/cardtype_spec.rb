@@ -1,5 +1,74 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
+describe "Card::Cardtype", ActiveSupport::TestCase do
+  
+  before do
+    User.as :joe_user
+  end
+  
+  it "should not allow cardtype remove when instances present" do
+    Card::Cardtype.create :name=>'City'
+    city = Card::Cardtype.find_by_name('City')
+    Card::City.create :name=>'Sparta'
+    Card::City.create :name=>'Eugene'
+    assert_equal ['Eugene','Sparta'], Card.search(:type=>'City').plot(:name).sort
+    assert_raises Wagn::Oops do
+      city.destroy!
+    end                             
+    # make sure it wasn't destroyed / trashed
+    Card.find_by_name('City').should_not be_nil
+  end
+  
+  it "remove cardtype" do
+    Card::Cardtype.create! :name=>'County'
+    city = Card::Cardtype.find_by_name('County')
+    #warn "extension: #{city.extension}"
+    city.destroy
+    Cardtype.find_by_class_name('County').should == nil
+  end
+  
+  it "cardtype creation and dynamic cardtype" do
+    assert_raises( NameError ) do
+      Card::BananaPudding.create :name=>"figgy"
+    end
+    assert_instance_of Card::Cardtype, Card::Cardtype.create( :name=>'BananaPudding' )
+    assert_instance_of Cardtype, Card.find_by_name("BananaPudding").extension
+    assert_instance_of Cardtype, Cardtype.find_by_class_name("BananaPudding")    
+    assert_instance_of Card::BananaPudding, Card::BananaPudding.create( :name=>"figgy" )
+  end
+
+  describe "conversion to cardtype" do
+    it "resets Cardtype cache" do
+      card = Card.create!(:name=>'Cookie')
+      card.type.should == 'Basic'
+      card.type = 'Cardtype'
+      Cardtype.should_receive(:reset_cache)
+      card.save!
+      Cardtype.name_for('Cookie').should == 'Cookie'
+    end
+    
+    it "creates cardtype model and permission" do
+      card = Card.create!(:name=>'Cookie')
+      card.type.should == 'Basic'
+      card.type = 'Cardtype'
+      card.save!
+    
+      card=Card['Cookie']
+      assert_instance_of Cardtype, card.extension
+      Permission.find_by_card_id_and_task(card.id, 'create').should_not be_nil
+      assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).type
+    end
+  end
+  
+  it "cardtype" do
+    Card.find(:all).each do |card|
+      assert_instance_of Card::Cardtype, card.cardtype
+    end
+  end
+  
+end
+
+
 
 describe Card, "codename_generation" do
   it "should create valid classnames" do

@@ -26,7 +26,7 @@ module Cardlib
       end
 
       def auto_card(name)
-        return nil if name.simple?
+        return nil unless name && name.junction?
         if template = Card.new(:name=>name).setting_card('content') and template.hard_template? 
           User.as(:wagbot) do
             Card.create_virtual name, template.content, template.type

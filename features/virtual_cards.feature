@@ -5,6 +5,6 @@ Feature: Virtual Cards
     And I create card "Scratch" with content "that itch"
     And I create Search card "editors+*right+*content" with content
       """
-      {"edited_by":"_self"}
+      {"edited":"_self"}
       """
     Then the card "Scratch+editors" should contain "Joe User"

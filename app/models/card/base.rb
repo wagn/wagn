@@ -92,8 +92,8 @@ module Card
           self.permissions = default_permissions
         end
 
-        if !args['content'] and self.content.blank? and default_card = setting_card('default')
-          ::User.as(:wagbot) do
+        ::User.as(:wagbot) do
+          if !args['content'] and self.content.blank? and default_card = setting_card('default')
             self.content = default_card.content
           end
         end

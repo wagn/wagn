@@ -53,7 +53,8 @@ class Slot
       :main_card => nil,
       :inclusion_view_overrides => nil,
       :params => {},
-      :renderer => Renderer.new
+      :renderer => Renderer.new,
+      :base => nil
     }.merge(opts)
     
     @renderer = @slot_options[:renderer]
@@ -412,7 +413,7 @@ class Slot
     # could expand them (often weirdly). The <bogus> thing seems to work ok for now.
   end
 
-  def expand_inclusions(content, args={}) 
+  def expand_inclusions(content, args={})
     return sterilize_inclusion(content) if card.name.template_name?
     newcontent = content.gsub(Chunk::Transclude::TRANSCLUDE_PATTERN) do
       expand_inclusion($~)
@@ -440,7 +441,7 @@ class Slot
          
     options[:view] ||= (self.context == "layout_0" ? :naked : :content)
     options[:view] = get_inclusion_view(options[:view])
-    options[:fullname] = fullname = get_inclusion_fullname(tname, options[:base])
+    options[:fullname] = fullname = get_inclusion_fullname(tname,options)
     options[:showname] = tname.to_show(fullname)
           
     tcard ||= (@state==:edit ?
@@ -460,9 +461,10 @@ class Slot
     ''
   end
   
-  def get_inclusion_fullname(name, base)
+  def get_inclusion_fullname(name,options)
     fullname = name+'' #weird.  have to do this or the tname gets busted in the options hash!!
-    fullname = fullname.to_absolute(base=='parent' ? card.name.parent_name : card.name)
+    context = slot_options[:base] || (options[:base]=='parent' ? card.parent_name : card.name)
+    fullname = fullname.to_absolute(context)
     fullname.gsub!('_user') { User.current_user.cardname }
     fullname = fullname.particle_names.map do |x| 
       if x =~ /^_/ and root.slot_options[:params] and root.slot_options[:params][x]

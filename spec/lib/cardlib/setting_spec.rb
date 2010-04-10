@@ -90,5 +90,12 @@ describe Card do
       c = Card.new(:name=>"foo", :content => "{{_self+B|naked}}")
       c.contextual_content( context_card ).should == "AlphaBeta"
     end
+    
+    it "returns content even when context card is hard templated" do
+      context_card = Card["A"] # refers to 'Z'
+      Card.create! :name => "A+*self+*content", :content => "Banana"
+      c = Card.new( :name => "foo", :content => "{{_self+B|naked}}" )
+      c.contextual_content( context_card ).should == "AlphaBeta"
+    end
   end
 end

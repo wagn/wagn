@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "Card::Cardtype", ActiveSupport::TestCase do
+describe "Card::Cardtype" do
   
   before do
     User.as :joe_user
@@ -38,24 +38,18 @@ describe "Card::Cardtype", ActiveSupport::TestCase do
   end
 
   describe "conversion to cardtype" do
-    it "resets Cardtype cache" do
-      card = Card.create!(:name=>'Cookie')
-      card.type.should == 'Basic'
-      card.type = 'Cardtype'
-      Cardtype.should_receive(:reset_cache)
-      card.save!
-      Cardtype.name_for('Cookie').should == 'Cookie'
+    before do
+      @card = Card.create!(:name=>'Cookie')
+      @card.type.should == 'Basic'      
     end
     
     it "creates cardtype model and permission" do
-      card = Card.create!(:name=>'Cookie')
-      card.type.should == 'Basic'
-      card.type = 'Cardtype'
-      card.save!
-    
-      card=Card['Cookie']
-      assert_instance_of Cardtype, card.extension
-      Permission.find_by_card_id_and_task(card.id, 'create').should_not be_nil
+      @card.type = 'Cardtype'
+      @card.save!    
+      Cardtype.name_for('Cookie').should == 'Cookie'
+      @card=Card['Cookie']
+      assert_instance_of Cardtype, @card.extension
+      Permission.find_by_card_id_and_task(@card.id, 'create').should_not be_nil
       assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).type
     end
   end

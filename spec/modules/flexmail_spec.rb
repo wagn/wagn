@@ -46,8 +46,7 @@ describe Flexmail do
       Card::Phrase.create!  :name => 'default subject', :content=>'a very nutty thang'
       Card::Search.create!  :name => "mailconfig+*to", :content => %{ {"key":"bob_addy"} }
       Card::Search.create!  :name => "mailconfig+*from", :content => %{ {"left":"_left", "right":"email"} }
-      Card::Search.create!  :name => "subject search+*rform", :content => %{{"referred_to_by":"_self+subject"}},
-        :extension_type => 'HardTemplate'
+      Card::Search.create!  :name => "subject search+*right+*content", :content => %{{"referred_to_by":"_self+subject"}}
       Card.create!  :name => "mailconfig+*subject", :content => "{{+subject search|naked;item:naked}}"
       Card.create! :name => "mailconfig+*message", :content => "Oughta get fancier"
       c = Card::Cardtype.create! :name=>'Trigger'
@@ -61,7 +60,8 @@ describe Flexmail do
         
     it "returns list with correct hash for card with configs" do
       c = Card::Trigger.create :name => "Banana Trigger", :content => "data content"
-      c.multi_create( '~plus~email'=>{:content=>'gary@gary.com'},
+      c.multi_create( 
+        '~plus~email'=>{:content=>'gary@gary.com'},
         '~plus~subject'=>{:type=>'Pointer', :content=>'[[default subject]]'}
        )
       Flexmail.configs_for(c).should == [{

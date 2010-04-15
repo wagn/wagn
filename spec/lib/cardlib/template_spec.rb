@@ -72,15 +72,15 @@ describe Card, "with right default template" do
   end
 end
 
-describe Card, "with type content template and right content template" do
+describe Card, "templating" do
   before do
     User.as :joe_user
     @dt = Card.create! :name=>"Date+*type+*content", :type=>'Basic', :content=>'Tomorrow'
     @bt = Card.create! :name=>"birthday+*right+*content", :type=>'Date', :content=>"Today!"      
-    @jb =  Card.create! :name=>"Jim+birthday"
+    @jb =  Card.new :name=>"Jim+birthday"
   end       
   
-  it "should have right content" do
+  it "*right setting should override *type setting" do
     Slot.new(@jb).render(:naked_content).should == 'Today!'
   end
 end

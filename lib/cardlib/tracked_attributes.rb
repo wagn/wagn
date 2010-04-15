@@ -70,7 +70,7 @@ module Cardlib
       if !templatees.empty?
         #warn "going through hard templatees"  
         templatees.each do |tee|
-          tee.allow_type_change = "HELLS YEAH"  #FIXME? this is a hacky way around the standard validation
+          tee.allow_type_change = true  #FIXME? this is a hacky way around the standard validation
           tee.type = new_type
           tee.save!
         end

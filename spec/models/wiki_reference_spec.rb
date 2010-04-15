@@ -174,7 +174,7 @@ describe "WikiReference" do
     @l = Card.create! :name=>"woof", :content=>"{{Lewdog}}"  # no Lewdog card yet...
     @e = Card.new(:name=>"Lewdog", :content=>"grrr")              # now there is
     warn @e.name_references.inspect
-    @e.name_references.plot(:referencer).plot(:name).include?("woof").should.not == nil
+    @e.name_references.plot(:referencer).plot(:name).include?("woof").should_not == nil
   end
 =end
 

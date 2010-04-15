@@ -90,7 +90,7 @@ describe CardController do
 
     context "multi-create" do
       it "catches missing name error" do
-        post :create, "card"=>{"name"=>"", "type"=>"Form"},
+        post :create, "card"=>{"name"=>"", "type"=>"Fruit"},
          "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
          "content_to_replace"=>"",
          "context"=>"main_1", 
@@ -100,7 +100,7 @@ describe CardController do
       end
 
       it "creates card and plus cards" do
-        post :create, "card"=>{"name"=>"sss", "type"=>"Form"},
+        post :create, "card"=>{"name"=>"sss", "type"=>"Fruit"},
          "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
          "content_to_replace"=>"",
          "context"=>"main_1", 

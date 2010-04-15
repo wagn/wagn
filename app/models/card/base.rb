@@ -41,6 +41,17 @@ module Card
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
       :update_referencers, :allow_type_change, :virtual, :builtin, :broken_type, :skip_defaults
         
+    # apparently callbacks defined this way are called last.
+    # that's what we want for this one.  
+    def after_save 
+      Rails.logger.debug "Cardtype after_save type == #{card.type}"
+      if card.type == 'Cardtype'
+        Rails.logger.debug "Cardtype after_save resetting"
+        ::Cardtype.reset_cache
+      end
+      true
+    end
+        
     private
       belongs_to :reader, :polymorphic=>true  
       

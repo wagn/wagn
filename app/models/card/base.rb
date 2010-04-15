@@ -198,6 +198,7 @@ module Card
 
         # create the new card based on the class we've determined
         args.delete('type')
+        
         new_card = card_class.ar_new args
         yield(new_card) if block_given?
         new_card.broken_type = broken_type if broken_type
@@ -465,13 +466,7 @@ module Card
       #unless name=~/^\*|\+\*/  
         new_record? ? ok!(:create_me) : ok!(:read) # fixme-perm.  might need this, but it's breaking create...
       #end
-      
-      #FIXME CONTENT - goes away?
-      if tmpl = hard_template and tmpl!=self
-        tmpl.content
-      else
-        current_revision ? current_revision.content : ""
-      end
+      current_revision ? current_revision.content : ""
     end   
         
     def type

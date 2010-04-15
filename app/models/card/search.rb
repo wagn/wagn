@@ -30,8 +30,9 @@ module Card
     
     def get_spec(params={})
       spec = ::User.as(:wagbot) do
-        raise("Error in card '#{self.name}':can't run search with empty content") if self.content.empty?
-        JSON.parse( self.content )   
+        spec_content = content_templated? ? setting('content') : self.content
+        raise("Error in card '#{self.name}':can't run search with empty content") if spec_content.empty?
+        JSON.parse( spec_content )   
       end
       # FIXME: should unit test this 
       

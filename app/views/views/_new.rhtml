@@ -46,10 +46,6 @@
 					<% end %> 
 				</span>
 			</div>
-			<% if card.template? %>
-			  <%- card.extension_type='HardTemplate' if card.type_template? %>
-        <%= render :partial=>'card/hardsoft_form', :locals=>{:card=> card, :mode=>'new'} %>
-      <% end %>                  
       <% if inst = card.setting_card('add help') %>
         <div class="instruction"><%= slot.subslot(inst).render :naked %></div>
 	    <% end %>

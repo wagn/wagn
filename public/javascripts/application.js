@@ -187,14 +187,21 @@ handleGlobalShortcuts=function(event){
   }
 }
 
-
-
 setupLinksAndDoubleClicks = function() {
   getNewWindowLinks();
-  setupDoubleClickToEdit();  
   setupCreateOnClick();
-}                  
+  
+  jQuery(".editOnDoubleClick").dblclick(function(event){
+    editTransclusion(this);
+    event.stopPropagation();
+  });
 
+  // make sure these nested elements don't bubble up their double click
+  // to a containing double-click handler.
+  jQuery(".comment-box, .TYPE-pointer", ".editOnDoubleClick").dblclick(function(event){
+    event.stopPropagation();
+  });
+}                  
 
 setupCreateOnClick=function(container) {
 //  console.log("setting up creates");
@@ -217,17 +224,7 @@ setupCreateOnClick=function(container) {
     }
   });
 }                  
-
-setupDoubleClickToEdit=function(container) {                               
-  $$( ".editOnDoubleClick" ).each(function(el){
-    el.ondblclick=function(event) {   
-      if (Prototype.Browser.IE) { event = window.event } // shouldn't prototype take card of this?              
-      element = Event.element(event);   
-      editTransclusion(element);
-      Event.stop(event);
-    }
-  });
-}        
+     
    
 editTransclusion=function(element){
    span = getSlotSpan(element);   

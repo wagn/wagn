@@ -69,7 +69,7 @@ describe Slot, "" do
 
       it "array doesn't go in infinite loop" do        
         Card.create! :name => "n+a", :content=>"{{n+a|array}}"
-        Slot.render_content("{{n+a|array}}").should =~ /Oops!/
+        Slot.render_content("{{n+a|array}}").should =~ /Oops\!/
       end
     end
     

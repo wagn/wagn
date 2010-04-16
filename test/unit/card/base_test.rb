@@ -30,15 +30,6 @@ class Card::BaseTest < ActiveSupport::TestCase
     #assert_equal 0, Card::Basic.find_all_by_trash(false).size
   end
 
-  def test_should_create_connection_card
-    Card::Basic.create!(
-      :trunk => Card.find_by_name('Joe User'),
-      :tag => Card.find_by_name('color'),
-      :content=>'green'
-     )
-     assert_instance_of Card::Basic, Card.find_by_name("Joe User+color")
-  end
-
   def test_attribute_card
     alpha, beta = Card.create(:name=>'alpha'), Card.create(:name=>'beta')
     assert_nil alpha.attribute_card('beta')

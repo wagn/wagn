@@ -1,9 +1,0 @@
-<div class="template-type-form instruction">
-  <span class="title">Form Rules:</span>
-  <%- define={ :Soft=>'set card defaults', :Hard=>'manage card formatting'} %>
-  <%- card.extension_type ||= 'SoftTemplate' %>
-  <% [:Soft, :Hard ].each do |type| %>
-    <%= radio_button :card, :extension_type, "#{type}Template", :onchange=>(mode=='edit' ? 'this.form.onsubmit()' : '') %> 
-    <label><%= type.to_s.upcase %></label> - <%= define[type] %>
-  <% end %>
-</div>

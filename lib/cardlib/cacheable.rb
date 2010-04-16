@@ -1,11 +1,24 @@
 module Cardlib
   module Cacheable
+    
+    def template?
+      name && name.template_name?
+    end
+       
+    def type_template?
+      name && name =~ /\+\*type\+/
+    end
+
+    def right_template?
+      name && name =~ /\+\*right\+/
+    end
+       
     def hard_template?
-      extension_type =='HardTemplate'
+      name && name =~ /\+\*content$/
     end
 
     def soft_template?
-      !hard_template?
+      name && name =~ /\*default/
     end
 
 	  def pointees( context = nil )
@@ -52,8 +65,8 @@ module Cardlib
     
     def contextual_content context = nil
       context ||= self
-      context.content = self.content
-      s=Slot.new(context);
+      #context.content = self.content
+      s=Slot.new(self, "main_1","view",nil, :base => context.name)
       # FIXME: maybe slot.rb should have an additional view for this.
       # ultimately we need to be able to process links and inclusions in an email/text friendly way
       s.expand_inclusions(s.render(:naked_content))

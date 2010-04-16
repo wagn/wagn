@@ -54,7 +54,7 @@ class LinkTest < ActiveSupport::TestCase
   
   def test_relative_link
     dude,job = newcard('Harvey',"[[#{JOINT}business]]"), newcard('business')
-    card = dude.connect job, "icepicker" 
+    card = Card.create! :name => "#{dude.name}+#{job.name}", :content => "icepicker" 
     assert_equal("<a class=\"known-card\" href=\"/wagn/Harvey+business\">#{JOINT}business</a>", render(dude) )
   end
   

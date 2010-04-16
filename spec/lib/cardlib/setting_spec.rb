@@ -5,6 +5,13 @@ describe Card do
     User.as(:wagbot)
   end
   
+  describe "setting data setup" do
+    it "should make Set of +*type" do
+      Card::Cardtype.create! :name=>"SpecialForm"
+      Card.create!( :name=>"SpecialForm+*type" ).type.should == "Set"
+    end
+  end
+
   describe "#settings" do
     it "retrieves Set based value" do
       Card.create :name => "Book+*type+*add help", :content => "authorize"
@@ -24,6 +31,27 @@ describe Card do
     end
   end
   
+  context "cascading settings" do
+    before do
+      Card.create :name => "*all+*edit help", :content => "edit any kind of card"
+    end
+    
+    it "retrieves default setting" do
+      Card.new( :type => "Book" ).setting('add help').should == "edit any kind of card"
+    end
+    
+    it "retrieves primary setting" do
+      Card.create :name => "*all+*add help", :content => "add any kind of card"
+      Card.new( :type => "Book" ).setting('add help').should == "add any kind of card"
+    end
+    
+    it "retrieves more specific default setting" do
+      Card.create :name => "*all+*add help", :content => "add any kind of card"
+      Card.create :name => "*Book+*type+*edit help", :content => "edit a Book"
+      Card.new( :type => "Book" ).setting('add help').should == "add any kind of card"
+    end
+  end
+
   describe "#list_items" do
     it "returns item for each line of basic content" do
       Card.new( :name=>"foo", :content => "X\nY" ).list_items.should == ["X","Y"]
@@ -62,7 +90,12 @@ describe Card do
       c = Card.new(:name=>"foo", :content => "{{_self+B|naked}}")
       c.contextual_content( context_card ).should == "AlphaBeta"
     end
+    
+    it "returns content even when context card is hard templated" do
+      context_card = Card["A"] # refers to 'Z'
+      Card.create! :name => "A+*self+*content", :content => "Banana"
+      c = Card.new( :name => "foo", :content => "{{_self+B|naked}}" )
+      c.contextual_content( context_card ).should == "AlphaBeta"
+    end
   end
-  
-  
 end

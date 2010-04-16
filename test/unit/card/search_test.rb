@@ -6,7 +6,7 @@ class Card::BaseTest < ActiveSupport::TestCase
   end
          
   def test_autocard_should_not_respond_to_tform 
-    assert_nil Card.auto_card("u1+*tform")
+    assert_nil Card.auto_card("u1+*type+*content")
   end
   
   def test_autocard_should_respond_to_ampersand_email_attribute

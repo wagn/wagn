@@ -1,5 +1,68 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
+describe "Card::Cardtype" do
+  
+  before do
+    User.as :joe_user
+  end
+  
+  it "should not allow cardtype remove when instances present" do
+    Card::Cardtype.create :name=>'City'
+    city = Card::Cardtype.find_by_name('City')
+    Card::City.create :name=>'Sparta'
+    Card::City.create :name=>'Eugene'
+    assert_equal ['Eugene','Sparta'], Card.search(:type=>'City').plot(:name).sort
+    assert_raises Wagn::Oops do
+      city.destroy!
+    end                             
+    # make sure it wasn't destroyed / trashed
+    Card.find_by_name('City').should_not be_nil
+  end
+  
+  it "remove cardtype" do
+    Card::Cardtype.create! :name=>'County'
+    city = Card::Cardtype.find_by_name('County')
+    #warn "extension: #{city.extension}"
+    city.destroy
+    Cardtype.find_by_class_name('County').should == nil
+  end
+  
+  it "cardtype creation and dynamic cardtype" do
+    assert_raises( NameError ) do
+      Card::BananaPudding.create :name=>"figgy"
+    end
+    assert_instance_of Card::Cardtype, Card::Cardtype.create( :name=>'BananaPudding' )
+    assert_instance_of Cardtype, Card.find_by_name("BananaPudding").extension
+    assert_instance_of Cardtype, Cardtype.find_by_class_name("BananaPudding")    
+    assert_instance_of Card::BananaPudding, Card::BananaPudding.create( :name=>"figgy" )
+  end
+
+  describe "conversion to cardtype" do
+    before do
+      @card = Card.create!(:name=>'Cookie')
+      @card.type.should == 'Basic'      
+    end
+    
+    it "creates cardtype model and permission" do
+      @card.type = 'Cardtype'
+      @card.save!    
+      Cardtype.name_for('Cookie').should == 'Cookie'
+      @card=Card['Cookie']
+      assert_instance_of Cardtype, @card.extension
+      Permission.find_by_card_id_and_task(@card.id, 'create').should_not be_nil
+      assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).type
+    end
+  end
+  
+  it "cardtype" do
+    Card.find(:all).each do |card|
+      assert_instance_of Card::Cardtype, card.cardtype
+    end
+  end
+  
+end
+
+
 
 describe Card, "codename_generation" do
   it "should create valid classnames" do
@@ -48,30 +111,30 @@ end
 describe Card, "Card changed to become a Cardtype" do
   before do
     User.as :wagbot 
-    @a = Card['a']
+    @a = Card['A']
     @a.type = 'Cardtype'
     @a.save!
   end
   it "should have a create permission set" do
-    Card['a'].who_can(:create).should_not == nil
+    Card['A'].who_can(:create).should_not == nil
   end
 end
 
 describe Card, "Normal card with junctions" do
   before do
     User.as :wagbot 
-    @a = Card['a']
+    @a = Card['A']
   end
   it "should confirm that it has junctions" do
     @a.junctions.length.should > 0
   end
   it "should successfull have its type changed" do
     @a.type = 'Number'; @a.save!
-    Card['a'].type.should== 'Number'
+    Card['A'].type.should== 'Number'
   end
   it "should still have its junctions after changing type" do
     @a.type = 'CardtypeE'; @a.save!
-    Card['a'].junctions.length.should > 0
+    Card['A'].junctions.length.should > 0
   end
 end
 
@@ -90,8 +153,6 @@ describe Card, "Recreated Card" do
   
 end
 
-
-
 describe Card, "New Cardtype" do
   before do
     User.as :wagbot 
@@ -101,13 +162,11 @@ describe Card, "New Cardtype" do
   it "should have create permissions" do
     @ct.who_can(:create).should_not be_nil
   end
+  
   it "its create permissions should be based on Basic" do
     @ct.who_can(:create).should == Card['Basic'].who_can(:create)
   end
 end
-
-
-
 
 describe Card, "Wannabe Cardtype Card" do
   before do
@@ -125,31 +184,29 @@ describe Card, "Wannabe Cardtype Card" do
   end
 end
 
-
-
 describe User, "Joe User" do
   before do
     User.as :wagbot 
     @r3 = Role[:r3]
-    @ctf_t = Card.create! :name=>'Cardtype F+*tform'
-    @ctf_t.permit(:create, @r3)
-    @ctf_t.save!
+
+    @ctf = Card['Cardtype F']
+    @ctf.permit(:create, @r3)
+    @ctf.save!
 
     User.as :joe_user
     @user = User[:joe_user]
-    @ctf = Card['Cardtype F']
     Cardtype.reset_cache
     @cardtype_names = Cardtype.createable_cardtypes.map{ |ct| ct[:name] }
   end
 
   it "should not have r3 permissions" do
-    @user.roles.member?(@r3).should_not be_true
+    @user.roles.member?(@r3).should be_false
   end
   it "should ponder creating a card of Cardtype F, but find that he lacks create permissions" do
-    @ctf.ok?(:create).should_not be_true
+    @ctf.ok?(:create).should be_false
   end
   it "should not find Cardtype F on its list of createable cardtypes" do
-    @cardtype_names.member?('Cardtype F').should_not be_true
+    @cardtype_names.member?('Cardtype F').should be_false
   end
   it "should find Basic on its list of createable cardtypes" do
     @cardtype_names.member?('Basic').should be_true

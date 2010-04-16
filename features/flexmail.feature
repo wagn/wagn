@@ -7,12 +7,11 @@ Feature: Flexmail
     Given I log in as Joe User
     And I create Cardtype card "Testimony"    
     And I create Pointer card "Testimony+*type+*send" with content "[[Testemailconfig]]"
-    And I create card "Testimony+*tform" with content
+    And I create card "Testimony+*type+*content" with content
       """
       {{+name}} {{+email}} {{+Testimony}} {{+recipients}}
       """
-    And I create Search card "search test+*rform" with content "{"type":"User"}"
-    And I harden "search test+*rform"
+    And I create Search card "search test+*right+*content" with content "{"type":"User"}"
     And I create email card "Testemailconfig"
       And I create Search card "Testemailconfig+*to" with content
         """
@@ -41,10 +40,11 @@ Feature: Flexmail
       """
     
   Scenario: Submitting a new Testimony
+    Given I go to new Testimony
     When I create Testimony card "MoanE" with plusses:
       |name|email|Testimony|recipients|
       |Lee|lee@user.net|This is outrageous|[[List1]]|
-    And "argumus@test.com" should receive 1 email
+    Then "argumus@test.com" should receive 1 email
     When "argumus@test.com" opens the email with subject "Subjectimus"
     And it should be from "lee@user.net"
     Then He should see "Pleistocles" in the email

@@ -10,7 +10,7 @@ describe Card, "sets permissions correctly by default" do
   
   it "should set default permissions immediately upon creation" do
 #    warn "PERMISSIONS: #{Card.template('temp card').inspect}"
-#    warn "Basic template: #{Card['Basic+*tform'].inspect}"
+#    warn "Basic template: #{Card['Basic+*type+*default'].inspect}"
     @c.permissions.length.should==3
   end
   

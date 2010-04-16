@@ -173,7 +173,8 @@ module Cardlib
 
     def approve_task(operation, verb=nil) #read, edit, comment, delete           
       verb ||= operation.to_s
-      testee = template? ? trunk : self
+      #testee = template.hard_template? ? trunk : self
+      testee = self
       deny_because("#{ydhpt} #{verb} this card") unless testee.lets_user( operation ) 
     end
 
@@ -199,11 +200,6 @@ module Cardlib
       end
     end
    
-    def approve_template_tsar
-      deny_because "plus cards can't be control right formats" if !simple? and right_templator?
-      deny_because "can't be template" if template?
-    end
-
     def approve_permissions
       return if System.always_ok?
       unless System.ok?(:set_card_permissions)  or 

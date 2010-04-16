@@ -104,7 +104,6 @@ describe Slot, "" do
     s = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :expanded_view_content } )
     s.render( :expanded_view_content ).should == "boo"
   end
-    
   
   context "builtin card" do
     it "should render layout partial with name of card" do     
@@ -116,6 +115,35 @@ describe Slot, "" do
     end
   end
 
-
+  context "with content settings" do
+    it "uses content setting" do
+      @card = Card.new( :name=>"templated", :content => "bar" )
+      config_card = Card.new(:name=>"templated+*self+*content", :content=>"Yoruba" )
+      @card.should_receive(:setting_card).twice.with("content").and_return(config_card)
+      Slot.new(@card).render(:naked_content).should == "Yoruba"
+    end
+    
+    it "doesn't use content setting if default is present" do
+      @card = Card.new( :name=>"templated", :content => "Bar" )
+      config_card = Card.new(:name=>"templated+*self+*default", :content=>"Yoruba" )
+      @card.should_receive(:setting_card).with("content").and_return(config_card)
+      Slot.new(@card).render(:naked_content).should == "Bar"
+    end
+    
+    # FIXME: this test is important but I can't figure out how it should be 
+    # working.
+    it "uses content setting in edit" do
+      pending
+      config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )
+      @card = Card.new( :name=>"templated", :content => "Bar" )
+      #@card.should_receive(:setting_card).at_least(:twice).with("content").and_return(config_card)
+      result = Slot.new(@card).render(:edit)
+      result.should be_html_with do
+        div :class => "edit_in_multi" do
+          #input :name=>"cards[~plus~alpha][content]", :type => 'hidden' 
+        end
+      end
+    end
+  end
 end
 

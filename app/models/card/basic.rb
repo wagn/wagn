@@ -1,9 +1,5 @@
 module Card
   class Basic < Base
-    def self.permission_dependent_cardtypes
-      Card::Cardtype.find(:all).reject { |c| c.type_templator? }
-    end
-
     def post_render(content)
       #warn "CALLED POST RENDER: #{content}"
       table_of_contents(content) || content

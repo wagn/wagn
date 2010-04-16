@@ -86,7 +86,7 @@ describe Cardname do
     end          
   
     it "should retain * for star cards" do
-      "*rform".to_key.should == "*rform"
+      "*right".to_key.should == "*right"
     end
   
     it "should not singularize double s's" do

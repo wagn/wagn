@@ -98,6 +98,10 @@ Then /what/ do
   save_and_open_page
 end
 
+Then /debug/ do
+  debugger
+end
+
 def fill_in_hidden_or_not(field_locator, options={})
   set_hidden_field(field_locator, :to=>options[:with])
 rescue Exception => e

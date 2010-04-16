@@ -1,4 +1,5 @@
 require 'rubygems'
+require 'ruby-debug'
 
 unless defined? TEST_ROOT
   ENV["RAILS_ENV"] = "test"
@@ -35,12 +36,8 @@ unless defined? TEST_ROOT
     self.use_instantiated_fixtures  = false
   
     def setup  
-      if $ARGV[0] == "--benchmark"
-        # FIXME: boy this is brittle
-      else
-        Wagn::Cache.reset_local
-
-        # reset global
+      # let the cache stick accross test-runs while profiling
+      unless ActionController.const_defined?("PerformanceTest") and self.class.superclass == ActionController::PerformanceTest
         CachedCard.set_cache_prefix "#{System.host}/cucumber"
         CachedCard.bump_global_seq
         CachedCard.set_cache_prefix "#{System.host}/test"

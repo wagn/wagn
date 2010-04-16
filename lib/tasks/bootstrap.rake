@@ -1,3 +1,4 @@
+require 'ruby-debug'
 namespace :wagn do
   desc "(re) create a wagn database from scratch"
   task :create => :environment do
@@ -40,8 +41,7 @@ namespace :wagn do
   
     desc "load bootstrap fixtures into db"
     task :load => :environment do     
-      
-      
+      require 'ruby-debug'
       
       require 'active_record/fixtures'                         
       #ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
@@ -63,7 +63,7 @@ namespace :wagn do
         " (           card_id is not null and not exists (select * from cards where cards.id = wiki_references.card_id));"
       )
 
-      config_cards = %w{ *context *to *title account_request+*tform *invite+*thank *signup+*thank *from }
+      #config_cards = %w{ *context *to *title account_request+*type+*content account_request+*type+*default *invite+*thank *signup+*thank *from }
       permset = (ENV['PERMISSIONS'] || :standard).to_sym
       
       permission = {
@@ -75,20 +75,20 @@ namespace :wagn do
          'account_request' => {:create=>:anon},
 #         'account_request+*tform' {:read=>:admin},
          'administrator_link'=> {:read=>:admin},
-         'discussion+*rform'=> {:comment=>:anon},
+         'discussion+*right+*default'=> {:comment=>:anon},
          '*watcher' => {:edit=>:auth},
-         '*watcher+*rform' => {:edit=>:auth}
+         '*watcher+*right+*default' => {:edit=>:auth}
         },
         :openedit=>{
          :default=> {:read=>:anon, :edit=>:anon, :delete=>:auth, :create=>:anon, :comment=>nil},
          :star=> {:edit=>:admin, :delete=>:admin},
          'role'=> {:create=>:admin},
          'html'=> {:create=>:admin},
-         'html+*tform'=> {:edit=>:admin},
+         'html+*type+*default'=> {:edit=>:admin},
          'administrator_link'=> {:read=>:admin},
-         'discussion+*rform'=> {:comment=>:anon},
+         'discussion+*right+*default'=> {:comment=>:anon},
          '*watcher' => {:edit=>:auth},
-         '*watcher+*rform' => {:edit=>:auth}
+         '*watcher+*right+*default' => {:edit=>:auth}
         }
       } 
       
@@ -107,19 +107,19 @@ namespace :wagn do
         cardset = perms[key] || {}
         starset = (key =~ /^\*/ ? perms[:star] : {})
           
-        default.keys.each do |task|
-          next if task== :create and card['type'] != 'Cardtype'
-          codename = cardset[task] || starset[task] || default[task]
+        default.keys.each do |ttask|
+          next if ttask== :create and card['type'] != 'Cardtype'
+          codename = cardset[ttask] || starset[ttask] || default[ttask]
           next unless codename
           party_id = role_ids[codename]
           
           ActiveRecord::Base.connection.update(
             "INSERT into permissions (card_id, task, party_type, party_id) "+
-            "VALUES (#{card['id']}, '#{task}', 'Role', #{party_id} )"
+            "VALUES (#{card['id']}, '#{ttask}', 'Role', #{party_id} )"
           )
-          if task== :read
+          if ttask== :read
             ActiveRecord::Base.connection.update(
-              "UPDATE cards set reader_type='Role', reader_id=#{party_id} where id=#{card.id}"
+              "UPDATE cards set reader_type='Role', reader_id=#{party_id} where id=#{card['id']}"
             )
           end
         end
@@ -138,7 +138,7 @@ end
     Account Request (create - anon?)
     HTML (create - anon) ??
     *to / *from (delete)
-    *context, *to, *title, Account Request+*tform, *invite+*thanks, *signup+*thanks, *from (edit by admin)      
+    *context, *to, *title, Account Request+*type+*content, *invite+*thanks, *signup+*thanks, *from (edit by admin)      
     Administrator links        
     # 
 

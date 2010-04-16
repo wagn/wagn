@@ -21,7 +21,8 @@ module Card
     def search( params={} )  
       self.search_opts = params  
       self.spec = get_spec(params.clone)
-      raise("OH NO.. no limit") unless self.spec[:limit] and self.spec[:limit]
+      raise("OH NO.. no limit") unless self.spec[:limit] 
+      self.spec.delete(:limit) if spec[:limit].to_i <= 0
       self.results = Card.search( self.spec ).map do |card|   
         c = CachedCard.get(card.name, card)
       end
@@ -29,8 +30,9 @@ module Card
     
     def get_spec(params={})
       spec = ::User.as(:wagbot) do
-        raise("Error in card '#{self.name}':can't run search with empty content") if self.content.empty?
-        JSON.parse( self.content )   
+        spec_content = content_templated? ? setting('content') : self.content
+        raise("Error in card '#{self.name}':can't run search with empty content") if spec_content.empty?
+        JSON.parse( spec_content )   
       end
       # FIXME: should unit test this 
       

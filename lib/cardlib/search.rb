@@ -22,17 +22,14 @@ module Cardlib
       end
       
       def find_virtual(name)  
-        find_builtin(name) or begin 
-          auto_card(name)
-        end   
+        find_builtin(name) or auto_card(name)
       end
 
       def auto_card(name)
-        return nil if name.simple?
-        template = (Card.right_template(name) || Card.multi_type_template(name)) 
-        if template and template.hard_template?    
+        return nil unless name && name.junction?
+        if template = Card.new(:name=>name).setting_card('content') and template.hard_template? 
           User.as(:wagbot) do
-            Card.create_virtual name, template.content
+            Card.create_virtual name, template.content, template.type
           end
         elsif System.ok?(:administrate_users) and name.tag_name =~ /^\*(email)$/
           attr_name = $~[1]
@@ -65,21 +62,17 @@ module Cardlib
         Wql.new(spec).run
       end
 
-      #def find_by_json(spec)
-      #  Card.find_by_sql( Wql::CardSpec.build( JSON.parse(spec) ).to_sql )
-      #end
-
       def find_by_name( name, opts={} ) 
-        self.find_by_key_and_trash( name.to_key, false, opts )
+        self.find_by_key_and_trash( name.to_key, false, opts.merge( :include=>:current_revision ))
       end
 
-      def find_by_wql_options( options={} )
-        raise("Deprecated: old wql")
-      end
-
-      def find_by_wql( wql, options={})
-        raise("Deprecated: old wql")
-      end
+      def [](name) 
+        # DONT do find_virtual here-- it ends up happening all over the place--
+        # call it explicitly if that's what you want
+        #self.cache[name.to_s] ||= 
+        #self.find_by_name(name.to_s, :include=>:current_revision) #|| self.find_virtual(name.to_s)
+        self.find_by_name(name.to_s)
+      end             
       
       # FIXME Hack to keep dynamic classes from breaking after application reload in development..
       def find_with_rescue(*args)
@@ -110,7 +103,8 @@ module Cardlib
 
     def self.append_features(base)   
       super
-      base.extend(ClassMethods)    
+      Card::Base.extend(ClassMethods)
+      Card.extend(ClassMethods)    
       base.after_save :update_search_index
       base.class_eval do
         cattr_accessor :skip_index_updates

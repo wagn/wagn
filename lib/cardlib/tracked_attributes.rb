@@ -70,7 +70,7 @@ module Cardlib
       if !templatees.empty?
         #warn "going through hard templatees"  
         templatees.each do |tee|
-          tee.allow_type_change = "HELLS YEAH"  #FIXME? this is a hacky way around the standard validation
+          tee.allow_type_change = true  #FIXME? this is a hacky way around the standard validation
           tee.type = new_type
           tee.save!
         end
@@ -102,28 +102,13 @@ module Cardlib
     def set_permissions(perms)
       self.updates.clear(:permissions)
       if type=='Cardtype' and !perms.detect{|p| p.task=='create'}
-        old_create_party = self.who_can(:create) || Card::Basic.new.cardtype.who_can(:create) 
-        perms << Permission.new(:task=>'create', :party=>old_create_party, :card_id=>self.id)
+        party = Role.find( Cardtype.create_party_for( 'Basic' ) )
+        perms << Permission.new(:task=>'create', :party=>party, :card_id=>self.id )
       end
       self.permissions_without_tracking = perms.reject {|p| p.party==nil }
       perms.each do |p| 
         set_reader( p.party ) if p.task == 'read'
       end      
-#=begin
-      if template? and trunk.type == 'Cardtype' and create_party = who_can(:create)
-        ::User.as :wagbot do
-          trunk.permit(:create, create_party)
-          trunk.save!
-          if trunk.codename == 'Basic'
-            Card::Basic.permission_dependent_cardtypes.each do |ct|
-              #warn "updating cardtype: #{ct.name}"
-              ct.permit(:create, create_party)
-              ct.save
-            end
-          end
-        end
-      end
-#=end    
       return true
     end
    

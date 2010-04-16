@@ -5,6 +5,10 @@ describe Card do
     it "gracefully handles explicit nil as parameters" do
       Card.new( nil ).should be_instance_of(Card::Basic)
     end
+    
+    it "gracefully handles explicit nil name" do
+      Card.new( :name => nil ).should be_instance_of(Card::Basic)
+    end
   end
   
   describe "#create" do 

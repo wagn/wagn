@@ -25,14 +25,9 @@ module Cardname
   end
   
   def template_name?
-    tag_name.=~ /\*.form$/
+    !!(tag_name =~ /\*default|\*content/)
   end
-=begin      
-  def auto_template_name
-    (simple? ? self : self.tag_name) + "+*template"
-  end
-=end
-    
+  
   def replace_part( oldpart, newpart )
     part_names(oldpart.particle_names.size).map {|x| x.to_key == oldpart.to_key ? newpart : x }.join("+")
   end

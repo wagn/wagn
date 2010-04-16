@@ -53,7 +53,8 @@ class Slot
       :main_card => nil,
       :inclusion_view_overrides => nil,
       :params => {},
-      :renderer => Renderer.new
+      :renderer => Renderer.new,
+      :base => nil
     }.merge(opts)
     
     @renderer = @slot_options[:renderer]
@@ -108,7 +109,7 @@ class Slot
   # internal slot calls, so I added the option passing internal content which
   # makes all the ugly block_given? ifs..                                                 
   def wrap(action="", args={}) 
-    render_slot = args.key?(:add_slot) ? args.delete(:add_slot) : !request.xhr? 
+    render_slot = args.key?(:add_slot) ? args.delete(:add_slot) : !xhr? 
     content = args.delete(:content)
      
     open_slot, close_slot = "",""
@@ -160,7 +161,10 @@ class Slot
   def cache_action(cc_method) 
     (if CachedCard===card 
       card.send(cc_method) || begin
-        cached_card, @card = card, Card.find_by_key_and_trash(card.key, false) || raise("Oops! found cached card for #{card.key} but couln't find the real one") 
+        cached_card, @card = card, Card.find_by_key_and_trash(card.key, false)
+        if !@card
+          return "Oops! found cached card for #{card.key} but couln't find the real one"
+        end
         content = yield(@card)
         cached_card.send("#{cc_method}=", content.clone)  
         content
@@ -282,9 +286,31 @@ class Slot
       when :array;  render_array;
       when :raw; card.content  
 
-    ###---(  EDIT VIEWS ) 
+      when :expanded_view_content, :naked 
+        @state = 'view'
+        expand_inclusions(  cache_action('view_content') {  card.post_render( render(:open_content)) } )
 
-      when :edit;  @state=:edit; card.hard_template ? render(:multi_edit) : content_field(slot.form)
+      when :expanded_line_content
+        expand_inclusions(  cache_action('line_content') { render(:closed_content) } )
+
+
+      #-----( without transclusions processed )
+      # removed raw from 'naked' after deprecation period for 1.3  
+      # need a short period to flush out issues before releasing
+      # when :raw;     card.content
+      when :closed_content;   render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
+      when :open_content;     render_card_partial(:content)  # FIXME?: 'content' is inconsistent
+      when :naked_content;   render_naked_content
+        
+    ###---(  EDIT VIEWS ) 
+      when :edit;  
+        @state=:edit
+        # FIXME CONTENT: the hard template test can go away when we phase out the old system.
+        if card.content_templated?
+          render(:multi_edit)
+        else
+          content_field(slot.form)
+        end
         
       when :multi_edit;
         @state=:edit 
@@ -369,11 +395,14 @@ class Slot
   end
   
   def render_naked_content
-    if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin) 
+    if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
       template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}" 
     else
       cache_action('naked_content') do
-        @renderer.render( card, (render_args.delete(:content) || ""), update_refs=card.references_expired)
+        #passed_in_content = args.delete(:content) # Can we get away without this??
+        templated_content = card.content_templated? ? card.setting('content') : nil
+        renderer_content = templated_content || ""
+        @renderer.render( card, renderer_content, update_refs=card.references_expired)
       end
     end
   end
@@ -384,7 +413,7 @@ class Slot
     # could expand them (often weirdly). The <bogus> thing seems to work ok for now.
   end
 
-  def expand_inclusions(content, args={}) 
+  def expand_inclusions(content, args={})
     return sterilize_inclusion(content) if card.name.template_name?
     newcontent = content.gsub(Chunk::Transclude::TRANSCLUDE_PATTERN) do
       expand_inclusion($~)
@@ -412,7 +441,7 @@ class Slot
          
     options[:view] ||= (self.context == "layout_0" ? :naked : :content)
     options[:view] = get_inclusion_view(options[:view])
-    options[:fullname] = fullname = get_inclusion_fullname(tname, options[:base])
+    options[:fullname] = fullname = get_inclusion_fullname(tname,options)
     options[:showname] = tname.to_show(fullname)
           
     tcard ||= (@state==:edit ?
@@ -432,9 +461,10 @@ class Slot
     ''
   end
   
-  def get_inclusion_fullname(name, base)
+  def get_inclusion_fullname(name,options)
     fullname = name+'' #weird.  have to do this or the tname gets busted in the options hash!!
-    fullname = fullname.to_absolute(base=='parent' ? card.name.parent_name : card.name)
+    context = slot_options[:base] || (options[:base]=='parent' ? card.parent_name : card.name)
+    fullname = fullname.to_absolute(context)
     fullname.gsub!('_user') { User.current_user.cardname }
     fullname = fullname.particle_names.map do |x| 
       if x =~ /^_/ and root.slot_options[:params] and root.slot_options[:params][x]
@@ -715,9 +745,6 @@ class Slot
     fn = ['File','Image'].include?(card.type) ? 
             "Wagn.onSaveQueue['#{context}'].clear(); " :
             "Wagn.runQueue(Wagn.onSaveQueue['#{context}']); "      
-    if @card.hard_template
-      #options.delete(:with)
-    end
     fn << remote_function( options )   
   end
      
@@ -741,6 +768,9 @@ class Slot
     "if(ds=Wagn.draftSavers['#{context}']){ds.stop()}; Wagn.runQueue(Wagn.onCancelQueue['#{context}']);"
   end
 
+  def xhr?
+    controller && controller.request.xhr?
+  end
 
   def editor_hooks(hooks)
     # it seems as though code executed inline on ajax requests works fine
@@ -752,9 +782,9 @@ class Slot
     hook_context = @nested ? context.split('_')[0..-2].join('_') : context
     code = "" 
     if hooks[:setup]
-      code << "Wagn.onLoadQueue.push(function(){\n" unless request.xhr?
+      code << "Wagn.onLoadQueue.push(function(){\n" unless xhr?
       code << hooks[:setup]
-      code << "});\n" unless request.xhr?
+      code << "});\n" unless xhr?
     end
     root.js_queue_initialized||={}
     unless root.js_queue_initialized.has_key?(hook_context) 

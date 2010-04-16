@@ -91,7 +91,6 @@ class CardController < ApplicationController
   end
   
   def create    
-    #debugger if params[:card][:type]=='Testimony'
     @card = Card.create params[:card]        
     if params[:multi_edit] and params[:cards] and !@card.errors.present?
       @card.multi_create(params[:cards]) 

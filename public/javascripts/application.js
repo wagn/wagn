@@ -40,14 +40,17 @@ var Cookie = {
 Wagn.Messenger = {  
   element: function() { return $('alerts') },
   alert: function( message ) {
+    if (!this.element()) return;
     this.element().innerHTML = '<span style="color:red; font-weight: bold">' + message + '</span>';
     new Effect.Highlight( this.element(), {startcolor:"#ffff00", endcolor:"#ffffaa", restorecolor:"#ffffaa", duration:1});
   },
   note: function(message) {
+    if (!this.element()) return;
     this.element().innerHTML = message;
     new Effect.Highlight( this.element(), {startcolor:"#ffff00", endcolor:"#ffffaa", restorecolor:"#ffffaa", duration:1});
   },
   log: function( message ) {
+    if (!this.element()) return;
     this.element().innerHTML = message; 
     new Effect.Highlight( this.element(), {startcolor:"#eeeebb", endcolor:"#ffffaa", restorecolor:"#ffffaa", duration:1});
   },

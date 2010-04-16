@@ -16,7 +16,5 @@
 <%= slot.form.hidden_field "content", :id=>"#{attachment_uuid}-content" %>
 
 <%- slot.skip_autosave = true %>
-<%= slot.editor_hooks :save=>%{
-	//FIXME: handle the case that the upload isn't finished.
-} %>
+<%#= slot.editor_hooks :save=>%{ //FIXME: handle the case that the upload isn't finished.} %>
 

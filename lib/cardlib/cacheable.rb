@@ -21,9 +21,11 @@ module Cardlib
       name && name =~ /\*default/
     end
 
-	  def pointees
+	  def pointees( context = nil )
 	    User.as(:wagbot) do
-  	    links = content.split(/\n+/).map{ |x| x.gsub(/\[\[|\]\]/,'')}
+  	    links = content.split(/\n+/).map{ |x| x.gsub(/\[\[|\]\]/,'')}.map{|x|
+  	      context ? x.to_absolute(context) : x
+	      }
 	    end
 	  end
 	  
@@ -35,9 +37,11 @@ module Cardlib
     def list_items context = nil
       case self.type
       when "Pointer"
-        self.pointees
+        self.pointees( context ? context.name : nil )
       when "Search"
         self.list_cards(context).map {|card| card.name }
+      when "File"
+        [self.name]
       else
         self.content.split(/[,\n]/)
       end
@@ -46,7 +50,7 @@ module Cardlib
     def list_cards context = nil
       case self.type
       when "Pointer";
-        self.list_items.map{|cardname| CachedCard.get( cardname ) }
+        self.list_items( context ).map{|cardname| CachedCard.get( cardname ) }
       when "Search";
         self.search(:limit => "", :_self=>(context ? context.name : self.name))
       else
@@ -56,7 +60,7 @@ module Cardlib
     
     def extended_list context = nil
       # this could go on and on..
-      self.list_cards(context).map{|x| x.list_cards }.flatten.map{|x| x.list_items }.flatten
+      self.list_cards(context).map{|x| x.list_cards(context) }.flatten.map{|x| x.list_items(context) }.flatten
     end
     
     def contextual_content context = nil

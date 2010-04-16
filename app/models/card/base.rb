@@ -75,7 +75,7 @@ module Card
       # autoname
       if args["name"].blank?
         ::User.as(:wagbot) do
-          if autoname_card = setting_card('autoname')
+          if ac = setting_card('autoname') and autoname_card = ac.card
             self.name = autoname_card.content
             autoname_card.content = autoname_card.content.next
             autoname_card.save!

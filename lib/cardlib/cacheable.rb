@@ -75,5 +75,14 @@ module Cardlib
     def left
       CachedCard.get_real( name.trunk_name )
     end
+    
+    # FIXME: limit moved here from pointer card.
+    # This fixes explosion creating pointer cards, but it
+    # should be refactored.    
+    def limit
+      card = System.setting("#{self.name.tag_name}+*max") or return nil
+      card.content.strip.to_i
+    end    
+    
   end
 end

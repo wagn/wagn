@@ -16,9 +16,10 @@ class ContentSettings < ActiveRecord::Migration
     Card.search( :right=>"*tform" ).each do |tform|
       begin
         typename = tform.name.trunk_name
-        tform.update_attributes 
+        tform.update_attributes( 
           :name => "#{typename}+*type+#{tform.extension_type=='HardTemplate' ? '*content' : '*default'}", 
           :confirm_rename => true, :update_referencers => true
+        )
         puts "migrated #{typename}+*tform"
       rescue Exception => e
         puts "Exception migrating #{typename}: #{e.message}"

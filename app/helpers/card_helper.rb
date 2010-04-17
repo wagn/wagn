@@ -52,9 +52,10 @@ module CardHelper
   end
 
   def rollback
-    link_to_remote 'Save as current', 
-      :url => { :action=>'rollback', :id=>@card.id, :rev=>@revision_number },
-      :update=>'javascript:getSlotSpan(this)' 
+    unless @card.current_revision == @revision
+      link_to_remote 'Save as current', 
+        :url => { :action=>'rollback', :id=>@card.id, :rev=>@revision_number }
+    end
   end
   
   def revision_menu
@@ -68,7 +69,7 @@ module CardHelper
     menu << back_for_revision
     menu << forward
     menu << see_or_hide_changes_for_revision 
-    menu << rollback
+    menu << rollback if logged_in?
     menu
   end
   

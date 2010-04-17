@@ -16,12 +16,9 @@ class ContentSettings < ActiveRecord::Migration
     Card.search( :right=>"*tform" ).each do |tform|
       begin
         typename = tform.name.trunk_name
-        tform.update_attributes :name => "#{typename}+*type+*default", 
+        tform.update_attributes 
+          :name => "#{typename}+*type+#{tform.extension_type=='HardTemplate' ? '*content' : '*default'}", 
           :confirm_rename => true, :update_referencers => true
-
-        if tform.extension_type == 'HardTemplate'
-          Card.create! :name => "#{typename}+*type+*content", :content => tform.content
-        end
         puts "migrated #{typename}+*tform"
       rescue Exception => e
         puts "Exception migrating #{typename}: #{e.message}"
@@ -31,18 +28,11 @@ class ContentSettings < ActiveRecord::Migration
     Wql.new( :right=>"*rform" ).run.each do |rform|
       begin
         leftname = rform.name.trunk_name
-        
-        if rform.extension_type == 'HardTemplate'
-          rform.update_attributes :name => "#{leftname}+*right+*content",
-            :confirm_rename => true, :update_referencers => true
-        else
-          rform.update_attributes :name => "#{leftname}+*right+*default",
-            :confirm_rename => true, :update_referencers => true
-        end
-      
+        rform.update_attributes :name => "#{leftname}+*right+#{tform.extension_type=='HardTemplate' ? '*content' : '*default'}",
+          :confirm_rename => true, :update_referencers => true
         puts "migrated #{leftname}+*rform"
       rescue Exception => e
-        puts "Exception migrationg #{leftname}: #{e.message}"
+        puts "Exception migrating #{leftname}: #{e.message}"
       end
     end
   end

@@ -221,14 +221,14 @@ debugger
     end
     @comment=@comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
     @card.comment = "<hr>#{@comment}<p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
-    @card.save!   
+    @card.save!
     render_update_slot render_to_string(:action=>'show')
   end
 
   def rollback
     load_card_and_revision
     @card.update_attributes! :content=>@revision.content
-    render_show
+    render_update_slot render_to_string(:action=>'show')
   end  
 
   #------------( deleting )

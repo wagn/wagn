@@ -721,7 +721,7 @@ class Slot
       #code << "warn('running #{hook_context} save hook');"
       code << hooks[:save]
       code << "});\n"
-      code << "warn('hook: fn(){ #{hooks[:save].gsub(/\'/,"|").gsub(/\n/,"; ")} }');"
+      #code << "warn('hook: fn(){ #{hooks[:save].gsub(/\'/,"|").gsub(/\n/,"; ")} }');"
       #code << "added to #{hook_context} save queue');"
     end
     if hooks[:cancel]

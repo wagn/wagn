@@ -126,7 +126,7 @@ module Card
         }
       else
         #raise( "Missing permission configuration for #{name}" ) unless source_card && !source_card.permissions.empty?
-        perms = [:read,:edit,:comment,:delete].map{|t| ::Permission.new(:task=>t.to_s, :party=>::Role[:auth])}
+        perms = [:read,:edit,:delete].map{|t| ::Permission.new(:task=>t.to_s, :party=>::Role[:auth])}
       end
     
       # We loop through and create copies of each permission object here because

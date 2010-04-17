@@ -16,8 +16,9 @@ class ContentSettings < ActiveRecord::Migration
     Card.search( :right=>"*tform" ).each do |tform|
       begin
         typename = tform.name.trunk_name
-        tform.update_attributes :name => "#{typename}+*type+*default", 
+        tform.update_attributes( :name => "#{typename}+*type+*default", 
           :confirm_rename => true, :update_referencers => true
+        )
 
         if tform.extension_type == 'HardTemplate'
           Card.create! :name => "#{typename}+*type+*content", :content => tform.content

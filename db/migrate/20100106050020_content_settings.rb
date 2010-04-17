@@ -29,7 +29,7 @@ class ContentSettings < ActiveRecord::Migration
     Wql.new( :right=>"*rform" ).run.each do |rform|
       begin
         leftname = rform.name.trunk_name
-        rform.update_attributes :name => "#{leftname}+*right+#{tform.extension_type=='HardTemplate' ? '*content' : '*default'}",
+        rform.update_attributes :name => "#{leftname}+*right+#{rform.extension_type=='HardTemplate' ? '*content' : '*default'}",
           :confirm_rename => true, :update_referencers => true
         puts "migrated #{leftname}+*rform"
       rescue Exception => e

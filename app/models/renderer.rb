@@ -17,7 +17,9 @@ class Renderer
   end
 
   def render_diff( card, content1, content2 )
-    diff( self.render( card, content1), self.render(card, content2) )
+    c1 = WikiContent.new(card, content1, self).render!
+    c2 = WikiContent.new(card, content2, self).render!
+    diff c1, c2
   end
 
   def replace_references( card, old_name, new_name )

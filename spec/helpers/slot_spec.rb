@@ -145,5 +145,16 @@ describe Slot, "" do
       end
     end
   end
+  
+  describe "diff" do
+    it "should not overwrite empty content with current" do
+      User.as(:wagbot)
+      c = Card.create! :name=>"ChChChanges", :content => ""
+      c.update_attributes :content => "A"
+      c.update_attributes :content => "B"
+      r = Slot.new(c).render_diff( c, c.revisions[0].content, c.revisions[1].content )
+      r.should == "<ins class=\"diffins\">A</ins>"
+    end
+  end
 end
 

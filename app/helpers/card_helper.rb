@@ -69,7 +69,7 @@ module CardHelper
     menu << back_for_revision
     menu << forward
     menu << see_or_hide_changes_for_revision 
-    menu << rollback if logged_in?
+    menu << rollback
     menu
   end
   

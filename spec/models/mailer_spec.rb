@@ -44,22 +44,6 @@ describe Mailer do
     end     
   end
   
-  context "change notice with custom from" do
-    before do
-      user =  ::User.find_by_login('sara')
-      card =  Card["Sunglasses"]
-      action = "edited"      
-      User.as :wagbot
-      Card.create! :name => "*notify+*from", :type=>"Phrase", :content=>"jiffy@lube.com"
-      Mailer.deliver_change_notice( user, card, action, card.name )
-      @mail = ActionMailer::Base.deliveries[0] 
-    end       
-    
-    it "is from custom address" do
-      assert_equal @mail.from, ["jiffy@lube.com"]
-    end
-  end
-
   describe "flexmail" do
     # FIXME: at least two tests should be here, with & w/o attachment.
   end

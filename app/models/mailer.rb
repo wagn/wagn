@@ -5,7 +5,7 @@ class Mailer < ActionMailer::Base
     url_key = user.card.name.to_url_key
 
     recipients "#{user.email}"
-    from       (System.setting('*account+*from') || "#{from_name} <#{from_user.email}>") #FIXME - might want different from settings for different emails?
+    from       (System.setting('*invite+*from') || "#{from_name} <#{from_user.email}>") #FIXME - might want different from settings for different emails?
     subject    subject
     sent_on    Time.now
     body  :email    => (user.email    or raise Wagn::Oops.new("Oops didn't have user email")),

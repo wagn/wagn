@@ -24,29 +24,5 @@
 <p>&nbsp;</p>  
 <p>&nbsp;</p>  
 
-<% if card.simple? || card.hard_template %>
-  <h1>Formatting</h1>
-  <p>&nbsp;</p>
-  
-  <% if tt = card.type_template and tt.hard_template? %>
-    <p><strong>By Type</strong></p>
-    <p><em>Formats all <%= type.name %> cards. <a href="http://wagn.org/wagn/formatting">Learn more about formatting</a>.</em></p>
-    <p>&nbsp;</p>
-    <blockquote><p>{{<%= tt.name %>|closed}}</p></blockquote>
-  <% end %>
-  
-  <% if card.simple? || (rt = card.right_template and rt.hard_template?) %>
-    <p><strong>By Name<br /></strong></p>
-    <p><em>Formats any <a href="/wagn/<%= tagname.to_url_key %>+*plusses">plus card whose name ends in "+<%= tagname %>."</a>. <a href="http://wagn.org/wagn/formatting">Learn more about formatting</a>.</em></p>
-    <blockquote>
-    <p>{{<%= tagname %>+*right+*default|closed}}</p>
-    </blockquote>    
-  <% end %>
-  <p>&nbsp;</p>  
-  <p>&nbsp;</p>  
-<% end %>
-
-
-
 
 

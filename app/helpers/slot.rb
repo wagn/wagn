@@ -405,7 +405,7 @@ class Slot
   end
 
   def expand_inclusions(content, args={})
-    return sterilize_inclusion(content) if card.name.template_name?
+    return sterilize_inclusion(content) if card.name.template_name? or card.name.email_config_name?
     newcontent = content.gsub(Chunk::Transclude::TRANSCLUDE_PATTERN) do
       expand_inclusion($~)
     end

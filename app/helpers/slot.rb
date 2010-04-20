@@ -293,15 +293,6 @@ class Slot
       when :expanded_line_content
         expand_inclusions(  cache_action('line_content') { render(:closed_content) } )
 
-
-      #-----( without transclusions processed )
-      # removed raw from 'naked' after deprecation period for 1.3  
-      # need a short period to flush out issues before releasing
-      # when :raw;     card.content
-      when :closed_content;   render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
-      when :open_content;     render_card_partial(:content)  # FIXME?: 'content' is inconsistent
-      when :naked_content;   render_naked_content
-        
     ###---(  EDIT VIEWS ) 
       when :edit;  
         @state=:edit

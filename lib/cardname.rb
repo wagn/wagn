@@ -25,7 +25,7 @@ module Cardname
   end
   
   def template_name?
-    !!(tag_name =~ /\*default|\*content/)
+    junction? && !!(tag_name =~ /\*default|\*content/)
   end
   
   def replace_part( oldpart, newpart )

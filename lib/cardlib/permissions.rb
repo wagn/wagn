@@ -49,6 +49,7 @@ module Cardlib
     end
 
     def save_with_permissions(perform_checking=true)
+      Rails.logger.debug "Card#save_with_permissions"
       if perform_checking && approved? || !perform_checking
         save_without_permissions(perform_checking)
       else
@@ -57,6 +58,7 @@ module Cardlib
     end 
     
     def save_with_permissions!
+      Rails.logger.debug "Card#save_with_permissions!"
       if approved?
         save_without_permissions!
       else

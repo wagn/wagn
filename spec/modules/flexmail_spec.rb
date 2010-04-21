@@ -7,8 +7,6 @@ describe Flexmail do
       Card.create! :name => "mailconfig+*to", :content => "joe@user.com"
       Card.create! :name => "mailconfig+*from", :content => "from@user.com"
       Card.create! :name => "mailconfig+*subject", :content => "Subject of the mail"
-      Card.create! :name => "mailconfig+*message", :content => "It's true that {{_left+story|naked}}"
-      Card.create! :name => "emailtest+*right+*send", :content => "[[mailconfig]]"
     end
     
     it "returns empty list for card with no configs" do
@@ -16,6 +14,8 @@ describe Flexmail do
     end
     
     it "returns list with correct hash for card with configs" do
+      Card.create! :name => "emailtest+*right+*send", :content => "[[mailconfig]]"
+      Card.create! :name => "mailconfig+*message", :content => "It's true that {{_left+story|naked}}"
       c = Card.create :name=>'Banana+story', :content=>"I was born a poor black seed"
       c = Card.create :name => "Banana+emailtest", :content => "data content"
       Flexmail.configs_for(c).should == [{
@@ -83,8 +83,7 @@ describe Flexmail do
     describe "untemplated card" do
       before do
         User.as :wagbot
-        Card.create! :name => "emailtest+*right+*send", :type => "Pointer", 
-          :content => "[[mailconfig]]"
+        Card.create! :name => "emailtest+*right+*send", :type => "Pointer", :content => "[[mailconfig]]"
         Card.create! :name => "mailconfig+*to", :content => "joe@user.com"
       end
     
@@ -92,6 +91,17 @@ describe Flexmail do
         Mailer.should_receive(:deliver_flexmail).with(hash_including(:to=>"joe@user.com"))
         Card.create :name => "Banana+emailtest"
       end
+      
+      it "handles case of referring to self for content" do
+        Card.create! :name => "Email", :type => "Cardtype"
+        Card.create! :name => "Email+*type+*send", :type => "Pointer", :content => "[[mailconfig]]"
+        Card.create! :name => "mailconfig+*message", :content => "this {{_self|naked}}"
+        
+        Rails.logger.level = ActiveSupport::BufferedLogger::Severity::DEBUG
+        Mailer.should_receive(:deliver_flexmail).with(hash_including(:message=>"this had betta work"))
+        c = Card.create! :name => "ToYou", :type => "Email", :content => "had betta work"
+      end
+      
     end
     
     describe "templated card" do

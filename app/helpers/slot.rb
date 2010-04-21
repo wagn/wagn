@@ -213,7 +213,7 @@ class Slot
   end
 
   def render(action, args={})      
-    Rails.logger.info "Slot(#{card.name}).render #{action}"
+    Rails.logger.debug "Slot(#{card.name}).render #{action}"
     self.render_args = args.clone
     count_render unless [:name, :link].member?(action)
     ok_action = case
@@ -355,7 +355,7 @@ class Slot
   end
   
   def render_array
-    Rails.logger.info "Slot(#{card.name}).render_array   root = #{root}"
+    Rails.logger.debug "Slot(#{card.name}).render_array   root = #{root}"
     
     count_render
     if too_many_renders?
@@ -405,7 +405,9 @@ class Slot
   end
 
   def expand_inclusions(content, args={})
-    return sterilize_inclusion(content) if card.name.template_name?
+    if card.name.template_name? or (card.name.email_config_name? and !slot_options[:base])
+      return sterilize_inclusion(content) 
+    end
     newcontent = content.gsub(Chunk::Transclude::TRANSCLUDE_PATTERN) do
       expand_inclusion($~)
     end
@@ -434,13 +436,15 @@ class Slot
     options[:view] = get_inclusion_view(options[:view])
     options[:fullname] = fullname = get_inclusion_fullname(tname,options)
     options[:showname] = tname.to_show(fullname)
-          
+    
     tcard ||= (@state==:edit ?
       ( Card.find_by_name(fullname) || 
         Card.find_virtual(fullname) || 
         Card.new(new_inclusion_card_args(tname, options))
       ) :
-      CachedCard.get(fullname)
+      ( slot_options[:base].respond_to?(:name) && slot_options[:base].name == fullname ?
+        slot_options[:base] : CachedCard.get(fullname)
+      )
     )
 
     tcontent = process_inclusion( tcard, options )
@@ -454,7 +458,14 @@ class Slot
   
   def get_inclusion_fullname(name,options)
     fullname = name+'' #weird.  have to do this or the tname gets busted in the options hash!!
-    context = slot_options[:base] || (options[:base]=='parent' ? card.parent_name : card.name)
+    sob = slot_options[:base]
+    context = case
+    when sob; (sob.respond_to?(:name) ? sob.name : sob)
+    when options[:base]=='parent' 
+      card.parent_name
+    else
+      card.name
+    end
     fullname = fullname.to_absolute(context)
     fullname.gsub!('_user') { User.current_user.cardname }
     fullname = fullname.particle_names.map do |x| 

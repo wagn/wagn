@@ -28,6 +28,10 @@ module Cardname
     junction? && !!(tag_name =~ /\*default|\*content/)
   end
   
+  def email_config_name?
+    junction? && ["*subject","*message"].include?(tag_name)
+  end
+  
   def replace_part( oldpart, newpart )
     part_names(oldpart.particle_names.size).map {|x| x.to_key == oldpart.to_key ? newpart : x }.join("+")
   end

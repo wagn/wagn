@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 A_JOINEES = ["B", "C", "D", "E", "F"]
     
-CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User","*plusses+*right+*content"].sort    
+CARDS_MATCHING_TWO = ["Two","One+Two","Config","One+Two+Three","Joe User","*plusses+*right+*content"].sort    
 
 describe Wql do
   describe 'append' do
@@ -278,7 +278,7 @@ describe Wql do
     end
   
     it "should get only content when content is explicit" do
-      Wql.new( :content=>[:match, "two"] ).run.plot(:name).sort.should==["Joe User",'*plusses+*right+*content'].sort
+      Wql.new( :content=>[:match, "two"] ).run.plot(:name).sort.should==["Joe User","Config",'*plusses+*right+*content'].sort
     end
 
     it "should get only name when name is explicit" do

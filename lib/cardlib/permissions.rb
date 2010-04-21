@@ -181,10 +181,9 @@ module Cardlib
     def approve_type
       unless new_record?       
         approve_delete
-        if right_template and right_template.hard_template? and right_template.type!=type and !allow_type_change
-          warn "rt: #{right_template.type}, st: #{self.type}, twt: #{type_without_tracking}"
-          deny_because you_cant( "change the type of this card -- it is hard templated by #{right_template.name}")
-        end
+#        if right_template and right_template.hard_template? and right_template.type!=type and !allow_type_change
+#          deny_because you_cant( "change the type of this card -- it is hard templated by #{right_template.name}")
+#        end
       end
       new_self = clone_to_type( type ) 
       unless Cardtype.create_ok?(new_self.type)
@@ -203,10 +202,8 @@ module Cardlib
    
     def approve_permissions
       return if System.always_ok?
-      unless System.ok?(:set_card_permissions)  or 
-          (System.ok?(:set_personal_card_permissions) and (personal_user == ::User.current_user)) or 
-          new_record? then #FIXME-perm.  on new cards we should check that permission has not been altered from default unless user can set permissions.
-          
+      unless System.ok?(:set_card_permissions) or new_record?
+        #FIXME-perm.  on new cards we should check that permission has not been altered from default unless user can set permissions. 
         deny_because you_cant("set permissions" )
       end
     end

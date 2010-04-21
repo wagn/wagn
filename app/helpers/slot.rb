@@ -213,7 +213,7 @@ class Slot
   end
 
   def render(action, args={})      
-    Rails.logger.info "Slot(#{card.name}).render #{action}"
+    Rails.logger.debug "Slot(#{card.name}).render #{action}"
     self.render_args = args.clone
     count_render unless [:name, :link].member?(action)
     ok_action = case
@@ -355,7 +355,7 @@ class Slot
   end
   
   def render_array
-    Rails.logger.info "Slot(#{card.name}).render_array   root = #{root}"
+    Rails.logger.debug "Slot(#{card.name}).render_array   root = #{root}"
     
     count_render
     if too_many_renders?

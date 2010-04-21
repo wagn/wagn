@@ -56,7 +56,7 @@ class ApplicationController < ActionController::Base
     System.request = request 
     #System.time = Time.now.to_f              
     ## DEBUG
-    ActiveRecord::Base.logger.info("WAGN: per request setup")
+    ActiveRecord::Base.logger.debug("WAGN: per request setup")
     load_location
   end
 

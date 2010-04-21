@@ -98,8 +98,6 @@ describe Flexmail do
         Card.create! :name => "mailconfig+*message", :content => "this {{_self|naked}}"
         
         Rails.logger.level = ActiveSupport::BufferedLogger::Severity::DEBUG
-        
-        Rails.logger.info "\nFIRST I say: create\n\n"
         Mailer.should_receive(:deliver_flexmail).with(hash_including(:message=>"this had betta work"))
         c = Card.create! :name => "ToYou", :type => "Email", :content => "had betta work"
       end

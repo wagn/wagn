@@ -2,6 +2,7 @@ module Cardlib
   module TrackedAttributes 
      
     def set_tracked_attributes  
+      Rails.logger.debug "Card(#{name})#set_tracked_attributes begin"
       updates.each_pair do |attr, value| 
         if send("set_#{attr}", value )
           updates.clear attr
@@ -9,6 +10,7 @@ module Cardlib
         #warn "SET CHANGED #{attr.to_sym.inspect}"    
         @changed ||={}; @changed[attr.to_sym]=true 
       end
+      Rails.logger.debug "Card(#{name})#set_tracked_attributes end"
     end
     
     
@@ -125,6 +127,7 @@ module Cardlib
     end
  
     def set_initial_content  
+      Rails.logger.debug "Card(#{name})#set_inital_content start"
       # set_content bails out if we call it on a new record because it needs the
       # card id to create the revision.  call it again now that we have the id.
       
@@ -137,6 +140,7 @@ module Cardlib
         "update cards set current_revision_id=#{current_revision_id} where id=#{id}",
         "Card Update"
       )
+      Rails.logger.debug "Card(#{name})#set_inital_content end"
     end
     
     def cascade_name_changes 

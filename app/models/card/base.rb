@@ -19,6 +19,17 @@ module Card
 
 #    cattr_accessor :cache  
 #    self.cache = {}
+
+   
+    [:before_validation, :before_validation_on_create, :after_validation, 
+      :after_validation_on_create, :before_save, :before_create, :after_create,
+      :after_save
+    ].each do |callback|
+      self.send(callback) do 
+        Rails.logger.debug "Card#callback #{callback}"
+      end
+    end
+   
    
     belongs_to :trunk, :class_name=>'Card::Base', :foreign_key=>'trunk_id' #, :dependent=>:dependent
     has_many   :right_junctions, :class_name=>'Card::Base', :foreign_key=>'trunk_id'#, :dependent=>:destroy  
@@ -48,6 +59,7 @@ module Card
         Wagn::Hook.call hookname, card
       end
     end
+      
         
     # apparently callbacks defined this way are called last.
     # that's what we want for this one.  
@@ -56,6 +68,7 @@ module Card
         Rails.logger.debug "Cardtype after_save resetting"
         ::Cardtype.reset_cache
       end
+      Rails.logger.debug "Card#after_save end"
       true
     end
         
@@ -73,6 +86,7 @@ module Card
     
     def set_defaults args
       # autoname
+      Rails.logger.debug "Card(#{name})#set_defaults begin"
       if args["name"].blank?
         ::User.as(:wagbot) do
           if ac = setting_card('autoname') and autoname_card = ac.card
@@ -113,7 +127,7 @@ module Card
       self.trash = false   
       self.key = name.to_key if name
       self.name='' if name.nil?
-
+      Rails.logger.debug "Card(#{name})#set_defaults end"
       self
     end
 

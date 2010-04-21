@@ -183,7 +183,8 @@ module Cardlib
     def approve_type
       unless new_record?       
         approve_delete
-        if right_template and right_template.hard_template?  and !allow_type_change
+        if right_template and right_template.hard_template? and right_template.type!=type and !allow_type_change
+          warn "rt: #{right_template.type}, st: #{self.type}, twt: #{type_without_tracking}"
           deny_because you_cant( "change the type of this card -- it is hard templated by #{right_template.name}")
         end
       end

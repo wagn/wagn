@@ -133,7 +133,7 @@ module Card
 
     
     def default_permissions
-      source_card = setting_card('default') || Card.new(:type=>"Basic",:skip_defaults=>true).setting_card('default')
+      source_card = setting_card('default')
       if source_card
         perms = source_card.card.permissions.reject { 
           |p| p.task == 'create' unless (type == 'Cardtype' or template?) 

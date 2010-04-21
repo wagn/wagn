@@ -70,6 +70,7 @@ namespace :wagn do
         :standard=>{
          :default=> {:read=>:anon, :edit=>:auth, :delete=>:auth, :create=>:auth, :comment=>nil},
          :star=> {:edit=>:admin, :delete=>:admin},
+         '*all+*default' => {:edit=>:auth, :delete=>:auth},
          'role'=> {:create=>:admin},
          'html'=> {:create=>:admin},
          'account_request' => {:create=>:anon},

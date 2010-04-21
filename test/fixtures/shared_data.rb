@@ -14,8 +14,8 @@ class SharedData
       joe_camel = ::User.create! :login=>"joe_camel",:email=>'joe@camel.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>User[:wagbot]
       Card::User.create! :name=>"Joe Camel", :extension=>joe_camel, :content => "Mr. Buttz"    
 
-      bt = Card.find_by_name 'Basic+*type+*default'
-      fail "oh god #{bt.permissions.inspect}" if bt.permissions.empty?
+      #bt = Card.find_by_name 'Basic+*type+*default'
+      #fail "oh god #{bt.permissions.inspect}" if bt.permissions.empty?
 
       # generic, shared attribute card
       color = Card::Basic.create! :name=>"color"

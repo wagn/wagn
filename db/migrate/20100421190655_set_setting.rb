@@ -2,7 +2,7 @@ class SetSetting < ActiveRecord::Migration
   def self.up 
     User.as(:wagbot) do
       card = Card.find_or_create :name=>"Setting", :type=>"Cardtype"
-        card.content =<<CONTENT
+      content =<<CONTENT
 <p>{{+description}}</p>
 <p>&nbsp;</p>
 <h1>[[http://www.wagn.org/wagn/Help text|Help text]]<br></h1>
@@ -34,9 +34,14 @@ class SetSetting < ActiveRecord::Migration
 <p>{{*thanks|closed}}</p>
 </blockquote>
 CONTENT
+      if card.content_templated?
+        Card.create! :name => "Setting+*self+*content", :content => content
+      else
+        card.content = content
         card.permit('edit',Role[:admin])
         card.permit('delete',Role[:admin])
         card.save!
+      end
     end
   end
 

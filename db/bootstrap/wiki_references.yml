@@ -1,365 +1,29 @@
 --- 
 wiki_references_370: 
-  link_type: L
-  created_at: 2010-04-21 13:22:41.025105
-  card_id: "299"
-  updated_at: 2010-04-21 13:22:41.025105
-  id: "10919"
-  referenced_card_id: "47"
-  referenced_name: pointer
+  link_type: W
+  created_at: 2010-04-21 16:24:33.180883
+  card_id: "180"
+  updated_at: 2010-04-21 16:24:33.180883
+  id: "10954"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_card_type
 wiki_references_344: 
   link_type: W
-  created_at: 2010-04-21 13:22:38.041665
-  card_id: "278"
-  updated_at: 2010-04-21 13:22:38.041665
-  id: "10893"
+  created_at: 2010-04-21 16:24:29.077364
+  card_id: "359"
+  updated_at: 2010-04-21 16:24:29.077364
+  id: "10928"
   referenced_card_id: 
   referenced_name: http_www_wagn_org_wagn_formatting
 wiki_references_318: 
   link_type: L
-  created_at: 2010-04-21 13:22:37.507038
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.507038
-  id: "10867"
-  referenced_card_id: "259"
-  referenced_name: set
-wiki_references_263: 
-  link_type: M
-  created_at: 2010-04-20 08:16:16.91623
-  card_id: "150"
-  updated_at: 2010-04-20 08:16:16.91623
-  id: "10574"
-  referenced_card_id: 
-  referenced_name: name_and_email+*right+*content
-wiki_references_237: 
-  link_type: W
-  created_at: 2009-12-21 10:48:26.895445
-  card_id: "297"
-  updated_at: 2009-12-21 10:48:26.895445
-  id: "9282"
-  referenced_card_id: 
-  referenced_name: http_www_wagn_org_wagn_setting
-wiki_references_156: 
-  link_type: L
-  created_at: 2009-04-24 15:34:53.307726
-  card_id: "112"
-  updated_at: 2009-04-24 15:34:53.307726
-  id: "6653"
-  referenced_card_id: "115"
-  referenced_name: "*community"
-wiki_references_182: 
-  link_type: W
-  created_at: 2010-04-20 17:20:59.147348
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:59.147348
-  id: "10812"
-  referenced_card_id: 
-  referenced_name: "*migrate_content"
-wiki_references_049: 
-  link_type: T
-  created_at: 2009-04-09 16:41:38.719278
-  card_id: "9"
-  updated_at: 2009-04-09 16:41:38.719278
-  id: "6036"
-  referenced_card_id: 
-  referenced_name: anyone_signed_in+*member
-wiki_references_075: 
-  link_type: W
-  created_at: 2009-04-24 11:18:02.924055
-  card_id: "5"
-  updated_at: 2009-04-24 11:18:02.924055
-  id: "6522"
-  referenced_card_id: 
-  referenced_name: new_chunk69892110645160chunktranscludechunk
-wiki_references_345: 
-  link_type: W
-  created_at: 2010-04-21 13:22:38.153273
-  card_id: "278"
-  updated_at: 2010-04-21 13:22:38.153273
-  id: "10894"
-  referenced_card_id: 
-  referenced_name: http_www_wagn_org_wagn_pointer
-wiki_references_319: 
-  link_type: L
-  created_at: 2010-04-21 13:22:37.512291
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.512291
-  id: "10868"
-  referenced_card_id: "1"
-  referenced_name: wagn_bot
-wiki_references_290: 
-  link_type: M
-  created_at: 2010-04-15 18:43:11.986065
-  card_id: "116"
-  updated_at: 2010-04-15 18:43:11.986065
-  id: "9782"
-  referenced_card_id: 
-  referenced_name: "*community+*right+*editor"
-wiki_references_264: 
-  link_type: T
-  created_at: 2010-04-20 08:16:16.964233
-  card_id: "150"
-  updated_at: 2010-04-20 08:16:16.964233
-  id: "10575"
-  referenced_card_id: 
-  referenced_name: john_abbe+*watching
-wiki_references_238: 
-  link_type: T
-  created_at: 2010-04-15 18:42:31.90274
-  card_id: "88"
-  updated_at: 2010-04-15 18:42:31.90274
-  id: "9454"
-  referenced_card_id: "88"
-  referenced_name: cardtype+*type+*default
-wiki_references_157: 
-  link_type: T
-  created_at: 2009-06-09 18:36:53.128869
-  card_id: "19"
-  updated_at: 2009-06-09 18:36:53.128869
-  id: "8083"
-  referenced_card_id: "19"
-  referenced_name: image
-wiki_references_183: 
-  link_type: L
-  created_at: 2010-04-20 17:20:59.159349
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:59.159349
-  id: "10813"
-  referenced_card_id: "150"
-  referenced_name: john_abbe
-wiki_references_076: 
-  link_type: T
-  created_at: 2009-04-09 16:41:38.267252
-  card_id: "8"
-  updated_at: 2009-04-09 16:41:38.267252
-  id: "6031"
-  referenced_card_id: "210"
-  referenced_name: anyone+description
-wiki_references_346: 
-  link_type: L
-  created_at: 2010-04-21 13:22:38.638685
-  card_id: "365"
-  updated_at: 2010-04-21 13:22:38.638685
-  id: "10895"
-  referenced_card_id: "259"
-  referenced_name: set
-wiki_references_291: 
-  link_type: M
-  created_at: 2010-04-15 18:43:12.08607
-  card_id: "116"
-  updated_at: 2010-04-15 18:43:12.08607
-  id: "9783"
-  referenced_card_id: 
-  referenced_name: "*community+*right+discussion"
-wiki_references_265: 
-  link_type: W
-  created_at: 2010-04-20 08:16:16.976233
-  card_id: "150"
-  updated_at: 2010-04-20 08:16:16.976233
-  id: "10576"
-  referenced_card_id: 
-  referenced_name: http_johnabbe_wagn_org_wagn_contact_me
-wiki_references_239: 
-  link_type: T
-  created_at: 2010-04-15 18:42:31.910741
-  card_id: "88"
-  updated_at: 2010-04-15 18:42:31.910741
-  id: "9455"
-  referenced_card_id: "88"
-  referenced_name: cardtype+*type+*default
-wiki_references_158: 
-  link_type: T
-  created_at: 2009-06-09 18:36:53.132869
-  card_id: "19"
-  updated_at: 2009-06-09 18:36:53.132869
-  id: "8084"
-  referenced_card_id: "19"
-  referenced_name: image
-wiki_references_184: 
-  link_type: W
-  created_at: 2010-04-20 17:34:34.953778
-  card_id: "368"
-  updated_at: 2010-04-20 17:34:34.953778
-  id: "10814"
-  referenced_card_id: 
-  referenced_name: "*send+*right+email_config"
-wiki_references_077: 
-  link_type: T
-  created_at: 2009-04-09 16:41:38.647274
-  card_id: "9"
-  updated_at: 2009-04-09 16:41:38.647274
-  id: "6034"
-  referenced_card_id: "211"
-  referenced_name: anyone_signed_in+description
-wiki_references_347: 
-  link_type: W
-  created_at: 2010-04-21 13:22:38.885647
-  card_id: "304"
-  updated_at: 2010-04-21 13:22:38.885647
-  id: "10896"
-  referenced_card_id: 
-  referenced_name: http_www_wagn_org_wagn_captcha
-wiki_references_292: 
-  link_type: T
-  created_at: 2010-04-15 18:43:12.098071
-  card_id: "116"
-  updated_at: 2010-04-15 18:43:12.098071
-  id: "9784"
-  referenced_card_id: "340"
-  referenced_name: "*community+*right"
-wiki_references_266: 
-  link_type: L
-  created_at: 2010-04-20 08:16:16.988234
-  card_id: "150"
-  updated_at: 2010-04-20 08:16:16.988234
-  id: "10577"
-  referenced_card_id: "152"
-  referenced_name: new
-wiki_references_159: 
-  link_type: T
-  created_at: 2009-06-09 18:36:53.14487
-  card_id: "19"
-  updated_at: 2009-06-09 18:36:53.14487
-  id: "8085"
-  referenced_card_id: 
-  referenced_name: image+*type_card
-wiki_references_185: 
-  link_type: M
-  created_at: 2010-04-20 17:40:18.578212
-  card_id: "373"
-  updated_at: 2010-04-20 17:40:18.578212
-  id: "10817"
-  referenced_card_id: 
-  referenced_name: email_config+*right+*content+*from
-wiki_references_078: 
-  link_type: T
-  created_at: 2009-04-24 11:18:02.728044
-  card_id: "5"
-  updated_at: 2009-04-24 11:18:02.728044
-  id: "6517"
-  referenced_card_id: "180"
-  referenced_name: cardtype+description
-wiki_references_348: 
-  link_type: L
-  created_at: 2010-04-21 13:22:38.892775
-  card_id: "304"
-  updated_at: 2010-04-21 13:22:38.892775
-  id: "10897"
-  referenced_card_id: "259"
-  referenced_name: set
-wiki_references_293: 
-  link_type: M
-  created_at: 2010-04-15 18:43:12.170075
-  card_id: "116"
-  updated_at: 2010-04-15 18:43:12.170075
-  id: "9785"
-  referenced_card_id: 
-  referenced_name: "*community+*right+tag"
-wiki_references_267: 
-  link_type: T
-  created_at: 2010-04-15 18:43:05.009667
-  card_id: "171"
-  updated_at: 2010-04-15 18:43:05.009667
-  id: "9742"
-  referenced_card_id: "334"
-  referenced_name: "*incoming+*right"
-wiki_references_186: 
-  link_type: M
-  created_at: 2010-04-20 17:40:18.666217
-  card_id: "373"
-  updated_at: 2010-04-20 17:40:18.666217
-  id: "10818"
-  referenced_card_id: 
-  referenced_name: email_config+*right+*content+*to
-wiki_references_079: 
-  link_type: W
-  created_at: 2009-04-24 11:49:31.56414
-  card_id: "180"
-  updated_at: 2009-04-24 11:49:31.56414
-  id: "6612"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_card_type
-wiki_references_349: 
-  link_type: L
-  created_at: 2010-04-21 13:22:39.052089
-  card_id: "301"
-  updated_at: 2010-04-21 13:22:39.052089
-  id: "10898"
+  created_at: 2010-04-21 13:22:39.223325
+  card_id: "254"
+  updated_at: 2010-04-21 13:22:39.223325
+  id: "10902"
   referenced_card_id: "47"
   referenced_name: pointer
-wiki_references_294: 
-  link_type: W
-  created_at: 2010-04-15 18:43:12.234079
-  card_id: "116"
-  updated_at: 2010-04-15 18:43:12.234079
-  id: "9786"
-  referenced_card_id: 
-  referenced_name: "*community+*right+*editor"
-wiki_references_268: 
-  link_type: M
-  created_at: 2010-04-15 18:43:05.081671
-  card_id: "171"
-  updated_at: 2010-04-15 18:43:05.081671
-  id: "9743"
-  referenced_card_id: 
-  referenced_name: "*incoming+*right+*linker"
-wiki_references_187: 
-  link_type: M
-  created_at: 2010-04-20 17:40:18.738221
-  card_id: "373"
-  updated_at: 2010-04-20 17:40:18.738221
-  id: "10819"
-  referenced_card_id: 
-  referenced_name: email_config+*right+*content+*cc
-wiki_references_295: 
-  link_type: W
-  created_at: 2010-04-15 18:43:12.294082
-  card_id: "116"
-  updated_at: 2010-04-15 18:43:12.294082
-  id: "9787"
-  referenced_card_id: 
-  referenced_name: "*community+*right+discussion"
-wiki_references_269: 
-  link_type: T
-  created_at: 2010-04-15 18:43:05.089672
-  card_id: "171"
-  updated_at: 2010-04-15 18:43:05.089672
-  id: "9744"
-  referenced_card_id: "334"
-  referenced_name: "*incoming+*right"
-wiki_references_188: 
-  link_type: M
-  created_at: 2010-04-20 17:40:18.806225
-  card_id: "373"
-  updated_at: 2010-04-20 17:40:18.806225
-  id: "10820"
-  referenced_card_id: 
-  referenced_name: email_config+*right+*content+*bcc
-wiki_references_296: 
-  link_type: W
-  created_at: 2010-04-15 18:43:12.362086
-  card_id: "116"
-  updated_at: 2010-04-15 18:43:12.362086
-  id: "9788"
-  referenced_card_id: 
-  referenced_name: "*community+*right+tag"
-wiki_references_189: 
-  link_type: M
-  created_at: 2010-04-20 17:40:18.854228
-  card_id: "373"
-  updated_at: 2010-04-20 17:40:18.854228
-  id: "10821"
-  referenced_card_id: 
-  referenced_name: email_config+*right+*content+*subject
-wiki_references_297: 
-  link_type: T
-  created_at: 2010-04-21 13:22:37.353031
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.353031
-  id: "10846"
-  referenced_card_id: "55"
-  referenced_name: "*title"
-wiki_references_298: 
+wiki_references_263: 
   link_type: T
   created_at: 2010-04-21 13:22:37.363294
   card_id: "73"
@@ -367,6 +31,342 @@ wiki_references_298:
   id: "10847"
   referenced_card_id: "77"
   referenced_name: "*home"
+wiki_references_237: 
+  link_type: M
+  created_at: 2010-04-15 18:43:05.253681
+  card_id: "171"
+  updated_at: 2010-04-15 18:43:05.253681
+  id: "9747"
+  referenced_card_id: 
+  referenced_name: "*incoming+*right+*tagged"
+wiki_references_156: 
+  link_type: L
+  created_at: 2010-04-20 17:20:58.899334
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.899334
+  id: "10798"
+  referenced_card_id: "137"
+  referenced_name: "*from"
+wiki_references_182: 
+  link_type: L
+  created_at: 2010-04-19 17:09:48.718645
+  card_id: "154"
+  updated_at: 2010-04-19 17:09:48.718645
+  id: "10464"
+  referenced_card_id: "226"
+  referenced_name: basic+*watcher
+wiki_references_049: 
+  link_type: L
+  created_at: 2009-04-09 16:11:44.66611
+  card_id: "118"
+  updated_at: 2009-04-09 16:11:44.66611
+  id: "5808"
+  referenced_card_id: "100"
+  referenced_name: "*account"
+wiki_references_075: 
+  link_type: T
+  created_at: 2009-04-09 16:41:38.267252
+  card_id: "8"
+  updated_at: 2009-04-09 16:41:38.267252
+  id: "6031"
+  referenced_card_id: "210"
+  referenced_name: anyone+description
+wiki_references_345: 
+  link_type: L
+  created_at: 2010-04-21 16:24:29.256499
+  card_id: "357"
+  updated_at: 2010-04-21 16:24:29.256499
+  id: "10929"
+  referenced_card_id: "259"
+  referenced_name: set
+wiki_references_319: 
+  link_type: W
+  created_at: 2010-04-21 13:22:39.229321
+  card_id: "254"
+  updated_at: 2010-04-21 13:22:39.229321
+  id: "10903"
+  referenced_card_id: 
+  referenced_name: http_www_wagn_org_wagn_pointer
+wiki_references_290: 
+  link_type: W
+  created_at: 2010-04-21 13:22:37.54668
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.54668
+  id: "10874"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_sidebar
+wiki_references_264: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.376161
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.376161
+  id: "10848"
+  referenced_card_id: "79"
+  referenced_name: "*logo"
+wiki_references_238: 
+  link_type: W
+  created_at: 2010-04-15 18:43:05.309684
+  card_id: "171"
+  updated_at: 2010-04-15 18:43:05.309684
+  id: "9748"
+  referenced_card_id: 
+  referenced_name: "*incoming+*right+*linker"
+wiki_references_157: 
+  link_type: L
+  created_at: 2010-04-20 17:20:58.911335
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.911335
+  id: "10799"
+  referenced_card_id: "61"
+  referenced_name: "*thank"
+wiki_references_183: 
+  link_type: L
+  created_at: 2010-04-19 17:09:48.726645
+  card_id: "154"
+  updated_at: 2010-04-19 17:09:48.726645
+  id: "10465"
+  referenced_card_id: "157"
+  referenced_name: related_subtab_universal
+wiki_references_076: 
+  link_type: T
+  created_at: 2009-04-09 16:41:38.647274
+  card_id: "9"
+  updated_at: 2009-04-09 16:41:38.647274
+  id: "6034"
+  referenced_card_id: "211"
+  referenced_name: anyone_signed_in+description
+wiki_references_346: 
+  link_type: W
+  created_at: 2010-04-21 16:24:29.263076
+  card_id: "357"
+  updated_at: 2010-04-21 16:24:29.263076
+  id: "10930"
+  referenced_card_id: 
+  referenced_name: http_www_wagn_org_wagn_formatting
+wiki_references_291: 
+  link_type: W
+  created_at: 2010-04-21 13:22:37.647514
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.647514
+  id: "10875"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_tiny_mce
+wiki_references_265: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.387246
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.387246
+  id: "10849"
+  referenced_card_id: "278"
+  referenced_name: setting
+wiki_references_239: 
+  link_type: W
+  created_at: 2010-04-15 18:43:05.365687
+  card_id: "171"
+  updated_at: 2010-04-15 18:43:05.365687
+  id: "9749"
+  referenced_card_id: 
+  referenced_name: "*incoming+*right+*includer"
+wiki_references_158: 
+  link_type: L
+  created_at: 2010-04-20 17:20:58.923335
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.923335
+  id: "10800"
+  referenced_card_id: "68"
+  referenced_name: invite_success
+wiki_references_184: 
+  link_type: L
+  created_at: 2010-04-19 17:09:48.738646
+  card_id: "154"
+  updated_at: 2010-04-19 17:09:48.738646
+  id: "10466"
+  referenced_card_id: "360"
+  referenced_name: setting_value
+wiki_references_077: 
+  link_type: T
+  created_at: 2009-04-24 11:18:02.728044
+  card_id: "5"
+  updated_at: 2009-04-24 11:18:02.728044
+  id: "6517"
+  referenced_card_id: "180"
+  referenced_name: cardtype+description
+wiki_references_347: 
+  link_type: L
+  created_at: 2010-04-21 16:24:29.582264
+  card_id: "392"
+  updated_at: 2010-04-21 16:24:29.582264
+  id: "10931"
+  referenced_card_id: "363"
+  referenced_name: "*send"
+wiki_references_292: 
+  link_type: W
+  created_at: 2010-04-21 13:22:37.65377
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.65377
+  id: "10876"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_google_analytic
+wiki_references_266: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.400215
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.400215
+  id: "10850"
+  referenced_card_id: "274"
+  referenced_name: "*all"
+wiki_references_159: 
+  link_type: L
+  created_at: 2010-04-20 17:20:58.935336
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.935336
+  id: "10801"
+  referenced_card_id: "69"
+  referenced_name: signup_success
+wiki_references_185: 
+  link_type: L
+  created_at: 2010-04-19 17:09:48.746647
+  card_id: "154"
+  updated_at: 2010-04-19 17:09:48.746647
+  id: "10467"
+  referenced_card_id: "362"
+  referenced_name: not_set_or_setting
+wiki_references_078: 
+  link_type: T
+  created_at: 2009-12-20 12:29:16.372872
+  card_id: "259"
+  updated_at: 2009-12-20 12:29:16.372872
+  id: "9278"
+  referenced_card_id: "259"
+  referenced_name: set
+wiki_references_348: 
+  link_type: L
+  created_at: 2010-04-21 16:24:29.589047
+  card_id: "392"
+  updated_at: 2010-04-21 16:24:29.589047
+  id: "10932"
+  referenced_card_id: "259"
+  referenced_name: set
+wiki_references_293: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.943316
+  card_id: "278"
+  updated_at: 2010-04-21 13:22:37.943316
+  id: "10877"
+  referenced_card_id: "298"
+  referenced_name: setting+description
+wiki_references_267: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.405807
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.405807
+  id: "10851"
+  referenced_card_id: "1"
+  referenced_name: wagn_bot
+wiki_references_186: 
+  link_type: T
+  created_at: 2010-04-19 12:14:00.185298
+  card_id: "69"
+  updated_at: 2010-04-19 12:14:00.185298
+  id: "10046"
+  referenced_card_id: "55"
+  referenced_name: "*title"
+wiki_references_079: 
+  link_type: T
+  created_at: 2009-12-20 12:29:16.384872
+  card_id: "259"
+  updated_at: 2009-12-20 12:29:16.384872
+  id: "9279"
+  referenced_card_id: 
+  referenced_name: set+*type_card
+wiki_references_349: 
+  link_type: W
+  created_at: 2010-04-21 16:24:29.595563
+  card_id: "392"
+  updated_at: 2010-04-21 16:24:29.595563
+  id: "10933"
+  referenced_card_id: 
+  referenced_name: http_www_wagn_org_wagn_relative_name
+wiki_references_294: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.956749
+  card_id: "278"
+  updated_at: 2010-04-21 13:22:37.956749
+  id: "10878"
+  referenced_card_id: "309"
+  referenced_name: "*add_help"
+wiki_references_268: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.411247
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.411247
+  id: "10852"
+  referenced_card_id: "323"
+  referenced_name: account_request+*type
+wiki_references_187: 
+  link_type: T
+  created_at: 2009-07-03 13:30:47.420451
+  card_id: "7"
+  updated_at: 2009-07-03 13:30:47.420451
+  id: "8185"
+  referenced_card_id: 
+  referenced_name: role+*type_card
+wiki_references_295: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.962969
+  card_id: "278"
+  updated_at: 2010-04-21 13:22:37.962969
+  id: "10879"
+  referenced_card_id: "82"
+  referenced_name: "*edit_help"
+wiki_references_269: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.416639
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.416639
+  id: "10853"
+  referenced_card_id: "294"
+  referenced_name: user+*type
+wiki_references_188: 
+  link_type: W
+  created_at: 2009-07-03 13:30:47.428451
+  card_id: "7"
+  updated_at: 2009-07-03 13:30:47.428451
+  id: "8186"
+  referenced_card_id: 
+  referenced_name: new_role
+wiki_references_296: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.968984
+  card_id: "278"
+  updated_at: 2010-04-21 13:22:37.968984
+  id: "10880"
+  referenced_card_id: "317"
+  referenced_name: "*content"
+wiki_references_189: 
+  link_type: T
+  created_at: 2009-07-03 13:30:47.300444
+  card_id: "7"
+  updated_at: 2009-07-03 13:30:47.300444
+  id: "8184"
+  referenced_card_id: "225"
+  referenced_name: role+description
+wiki_references_297: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.974817
+  card_id: "278"
+  updated_at: 2010-04-21 13:22:37.974817
+  id: "10881"
+  referenced_card_id: "318"
+  referenced_name: "*default"
+wiki_references_298: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.980107
+  card_id: "278"
+  updated_at: 2010-04-21 13:22:37.980107
+  id: "10882"
+  referenced_card_id: "241"
+  referenced_name: "*input"
 wiki_references_001: 
   link_type: W
   created_at: 2009-09-08 12:00:55.095687
@@ -377,12 +377,12 @@ wiki_references_001:
   referenced_name: http_wagn_org_wagn_support
 wiki_references_299: 
   link_type: T
-  created_at: 2010-04-21 13:22:37.376161
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.376161
-  id: "10848"
-  referenced_card_id: "79"
-  referenced_name: "*logo"
+  created_at: 2010-04-21 13:22:37.985386
+  card_id: "278"
+  updated_at: 2010-04-21 13:22:37.985386
+  id: "10883"
+  referenced_card_id: "86"
+  referenced_name: "*option"
 wiki_references_002: 
   link_type: T
   created_at: 2009-04-24 11:24:04.953942
@@ -392,22 +392,6 @@ wiki_references_002:
   referenced_card_id: "30"
   referenced_name: search
 wiki_references_003: 
-  link_type: W
-  created_at: 2010-04-20 08:41:38.341418
-  card_id: "298"
-  updated_at: 2010-04-20 08:41:38.341418
-  id: "10681"
-  referenced_card_id: 
-  referenced_name: http_www_wagn_org_wagn_setting
-wiki_references_110: 
-  link_type: M
-  created_at: 2009-04-24 11:22:49.923929
-  card_id: "20"
-  updated_at: 2009-04-24 11:22:49.923929
-  id: "6553"
-  referenced_card_id: 
-  referenced_name: number+description
-wiki_references_004: 
   link_type: T
   created_at: 2009-04-24 11:18:02.740045
   card_id: "5"
@@ -415,175 +399,7 @@ wiki_references_004:
   id: "6518"
   referenced_card_id: "5"
   referenced_name: cardtype
-wiki_references_030: 
-  link_type: M
-  created_at: 2009-12-17 09:21:51.904291
-  card_id: "56"
-  updated_at: 2009-12-17 09:21:51.904291
-  id: "9267"
-  referenced_card_id: 
-  referenced_name: "*invite+*message"
-wiki_references_111: 
-  link_type: T
-  created_at: 2009-04-24 11:22:49.93193
-  card_id: "20"
-  updated_at: 2009-04-24 11:22:49.93193
-  id: "6554"
-  referenced_card_id: "20"
-  referenced_name: number
-wiki_references_300: 
-  link_type: T
-  created_at: 2010-04-21 13:22:37.387246
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.387246
-  id: "10849"
-  referenced_card_id: "278"
-  referenced_name: setting
-wiki_references_005: 
-  link_type: T
-  created_at: 2009-04-24 11:24:04.957943
-  card_id: "30"
-  updated_at: 2009-04-24 11:24:04.957943
-  id: "6573"
-  referenced_card_id: "30"
-  referenced_name: search
-wiki_references_031: 
-  link_type: L
-  created_at: 2009-04-27 22:09:19.590852
-  card_id: "151"
-  updated_at: 2009-04-27 22:09:19.590852
-  id: "7274"
-  referenced_card_id: "7"
-  referenced_name: role
-wiki_references_112: 
-  link_type: T
-  created_at: 2009-04-24 11:22:49.93993
-  card_id: "20"
-  updated_at: 2009-04-24 11:22:49.93993
-  id: "6555"
-  referenced_card_id: "20"
-  referenced_name: number
-wiki_references_301: 
-  link_type: T
-  created_at: 2010-04-21 13:22:37.400215
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.400215
-  id: "10850"
-  referenced_card_id: "274"
-  referenced_name: "*all"
-wiki_references_006: 
-  link_type: T
-  created_at: 2009-04-24 11:18:02.752045
-  card_id: "5"
-  updated_at: 2009-04-24 11:18:02.752045
-  id: "6519"
-  referenced_card_id: "5"
-  referenced_name: cardtype
-wiki_references_032: 
-  link_type: W
-  created_at: 2009-04-27 22:09:19.598853
-  card_id: "151"
-  updated_at: 2009-04-27 22:09:19.598853
-  id: "7275"
-  referenced_card_id: 
-  referenced_name: admin_task
-wiki_references_113: 
-  link_type: T
-  created_at: 2009-04-24 11:22:49.94793
-  card_id: "20"
-  updated_at: 2009-04-24 11:22:49.94793
-  id: "6556"
-  referenced_card_id: "20"
-  referenced_name: number
-wiki_references_220: 
-  link_type: L
-  created_at: 2009-07-27 17:13:01.530515
-  card_id: "226"
-  updated_at: 2009-07-27 17:13:01.530515
-  id: "8254"
-  referenced_card_id: "150"
-  referenced_name: john_abbe
-wiki_references_302: 
-  link_type: T
-  created_at: 2010-04-21 13:22:37.405807
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.405807
-  id: "10851"
-  referenced_card_id: "1"
-  referenced_name: wagn_bot
-wiki_references_007: 
-  link_type: W
-  created_at: 2009-09-08 12:00:55.135689
-  card_id: "80"
-  updated_at: 2009-09-08 12:00:55.135689
-  id: "8788"
-  referenced_card_id: 
-  referenced_name: http_www_flickr_com_photo_fmgbain_3122673091
-wiki_references_033: 
-  link_type: T
-  created_at: 2009-12-23 11:51:04.068471
-  card_id: "314"
-  updated_at: 2009-12-23 11:51:04.068471
-  id: "9438"
-  referenced_card_id: 
-  referenced_name: "*navbox"
-wiki_references_114: 
-  link_type: T
-  created_at: 2009-04-24 11:22:49.959931
-  card_id: "20"
-  updated_at: 2009-04-24 11:22:49.959931
-  id: "6557"
-  referenced_card_id: 
-  referenced_name: number+*type_card
-wiki_references_140: 
-  link_type: T
-  created_at: 2010-04-20 17:20:58.807329
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.807329
-  id: "10791"
-  referenced_card_id: "157"
-  referenced_name: related_subtab_universal
-wiki_references_221: 
-  link_type: L
-  created_at: 2009-07-27 17:13:01.542516
-  card_id: "226"
-  updated_at: 2009-07-27 17:13:01.542516
-  id: "8255"
-  referenced_card_id: "149"
-  referenced_name: ethan_mc_cutchen
-wiki_references_303: 
-  link_type: T
-  created_at: 2010-04-21 13:22:37.411247
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.411247
-  id: "10852"
-  referenced_card_id: "323"
-  referenced_name: account_request+*type
-wiki_references_008: 
-  link_type: T
-  created_at: 2009-04-24 11:24:04.965943
-  card_id: "30"
-  updated_at: 2009-04-24 11:24:04.965943
-  id: "6574"
-  referenced_card_id: "30"
-  referenced_name: search
-wiki_references_034: 
-  link_type: T
-  created_at: 2009-04-09 16:41:38.151245
-  card_id: "10"
-  updated_at: 2009-04-09 16:41:38.151245
-  id: "6028"
-  referenced_card_id: "147"
-  referenced_name: administrator+description
-wiki_references_060: 
-  link_type: T
-  created_at: 2009-04-24 11:25:57.637233
-  card_id: "52"
-  updated_at: 2009-04-24 11:25:57.637233
-  id: "6590"
-  referenced_card_id: "52"
-  referenced_name: phrase
-wiki_references_115: 
+wiki_references_110: 
   link_type: W
   created_at: 2009-04-24 11:22:49.971932
   card_id: "20"
@@ -591,71 +407,23 @@ wiki_references_115:
   id: "6558"
   referenced_card_id: 
   referenced_name: new_chunk69892111670700chunktranscludechunk
-wiki_references_141: 
-  link_type: M
-  created_at: 2010-04-20 17:20:58.815329
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.815329
-  id: "10792"
-  referenced_card_id: 
-  referenced_name: related_subtab_cardtype
-wiki_references_222: 
+wiki_references_004: 
+  link_type: T
+  created_at: 2009-04-24 11:24:04.957943
+  card_id: "30"
+  updated_at: 2009-04-24 11:24:04.957943
+  id: "6573"
+  referenced_card_id: "30"
+  referenced_name: search
+wiki_references_030: 
   link_type: L
-  created_at: 2009-09-08 12:00:55.055684
-  card_id: "80"
-  updated_at: 2009-09-08 12:00:55.055684
-  id: "8784"
-  referenced_card_id: "73"
-  referenced_name: config
-wiki_references_330: 
-  link_type: T
-  created_at: 2010-04-21 13:22:37.962969
-  card_id: "278"
-  updated_at: 2010-04-21 13:22:37.962969
-  id: "10879"
-  referenced_card_id: "82"
-  referenced_name: "*edit_help"
-wiki_references_304: 
-  link_type: T
-  created_at: 2010-04-21 13:22:37.416639
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.416639
-  id: "10853"
-  referenced_card_id: "294"
-  referenced_name: user+*type
-wiki_references_223: 
-  link_type: W
-  created_at: 2009-09-08 12:00:55.067685
-  card_id: "80"
-  updated_at: 2009-09-08 12:00:55.067685
-  id: "8785"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_configuration
-wiki_references_009: 
-  link_type: T
-  created_at: 2009-12-12 14:05:19.72143
-  card_id: "81"
-  updated_at: 2009-12-12 14:05:19.72143
-  id: "9258"
-  referenced_card_id: "85"
-  referenced_name: menu
-wiki_references_035: 
-  link_type: T
-  created_at: 2009-04-09 16:41:38.159246
-  card_id: "10"
-  updated_at: 2009-04-09 16:41:38.159246
-  id: "6029"
-  referenced_card_id: "10"
-  referenced_name: administrator
-wiki_references_061: 
-  link_type: T
-  created_at: 2009-04-24 11:25:57.653234
-  card_id: "52"
-  updated_at: 2009-04-24 11:25:57.653234
-  id: "6591"
-  referenced_card_id: "52"
-  referenced_name: phrase
-wiki_references_116: 
+  created_at: 2009-04-27 22:09:19.590852
+  card_id: "151"
+  updated_at: 2009-04-27 22:09:19.590852
+  id: "7274"
+  referenced_card_id: "7"
+  referenced_name: role
+wiki_references_111: 
   link_type: T
   created_at: 2009-04-24 11:23:14.430196
   card_id: "4"
@@ -663,319 +431,7 @@ wiki_references_116:
   id: "6560"
   referenced_card_id: "4"
   referenced_name: user
-wiki_references_142: 
-  link_type: L
-  created_at: 2010-04-20 17:20:58.83533
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.83533
-  id: "10793"
-  referenced_card_id: "19"
-  referenced_name: image
-wiki_references_331: 
-  link_type: T
-  created_at: 2010-04-21 13:22:37.968984
-  card_id: "278"
-  updated_at: 2010-04-21 13:22:37.968984
-  id: "10880"
-  referenced_card_id: "317"
-  referenced_name: "*content"
-wiki_references_305: 
-  link_type: T
-  created_at: 2010-04-21 13:22:37.422155
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.422155
-  id: "10854"
-  referenced_card_id: "56"
-  referenced_name: "*invite"
-wiki_references_250: 
-  link_type: T
-  created_at: 2010-04-15 18:42:53.687982
-  card_id: "119"
-  updated_at: 2010-04-15 18:42:53.687982
-  id: "9598"
-  referenced_card_id: "330"
-  referenced_name: "*account+*right"
-wiki_references_224: 
-  link_type: W
-  created_at: 2009-09-08 12:00:55.083686
-  card_id: "80"
-  updated_at: 2009-09-08 12:00:55.083686
-  id: "8786"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_documentation
-wiki_references_036: 
-  link_type: T
-  created_at: 2009-04-09 16:41:38.171246
-  card_id: "10"
-  updated_at: 2009-04-09 16:41:38.171246
-  id: "6030"
-  referenced_card_id: 
-  referenced_name: administrator+*member
-wiki_references_062: 
-  link_type: T
-  created_at: 2009-04-24 11:25:57.665234
-  card_id: "52"
-  updated_at: 2009-04-24 11:25:57.665234
-  id: "6592"
-  referenced_card_id: "52"
-  referenced_name: phrase
-wiki_references_117: 
-  link_type: T
-  created_at: 2009-04-24 11:23:14.442196
-  card_id: "4"
-  updated_at: 2009-04-24 11:23:14.442196
-  id: "6561"
-  referenced_card_id: "4"
-  referenced_name: user
-wiki_references_143: 
-  link_type: W
-  created_at: 2009-06-09 18:19:44.891138
-  card_id: "211"
-  updated_at: 2009-06-09 18:19:44.891138
-  id: "8074"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_account
-wiki_references_332: 
-  link_type: T
-  created_at: 2010-04-21 13:22:37.974817
-  card_id: "278"
-  updated_at: 2010-04-21 13:22:37.974817
-  id: "10881"
-  referenced_card_id: "318"
-  referenced_name: "*default"
-wiki_references_306: 
-  link_type: T
-  created_at: 2010-04-21 13:22:37.42762
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.42762
-  id: "10855"
-  referenced_card_id: "66"
-  referenced_name: "*signup"
-wiki_references_251: 
-  link_type: T
-  created_at: 2010-04-15 18:42:53.771986
-  card_id: "119"
-  updated_at: 2010-04-15 18:42:53.771986
-  id: "9599"
-  referenced_card_id: 
-  referenced_name: "*account+*right+*watching"
-wiki_references_225: 
-  link_type: M
-  created_at: 2009-11-03 10:29:16.453217
-  card_id: "3"
-  updated_at: 2009-11-03 10:29:16.453217
-  id: "8838"
-  referenced_card_id: 
-  referenced_name: basic+description
-wiki_references_037: 
-  link_type: W
-  created_at: 2009-12-17 09:21:51.980295
-  card_id: "56"
-  updated_at: 2009-12-17 09:21:51.980295
-  id: "9269"
-  referenced_card_id: 
-  referenced_name: admin_task
-wiki_references_063: 
-  link_type: T
-  created_at: 2009-04-24 11:25:57.697236
-  card_id: "52"
-  updated_at: 2009-04-24 11:25:57.697236
-  id: "6593"
-  referenced_card_id: 
-  referenced_name: phrase+*type_card
-wiki_references_090: 
-  link_type: W
-  created_at: 2009-04-24 11:21:58.488131
-  card_id: "17"
-  updated_at: 2009-04-24 11:21:58.488131
-  id: "6534"
-  referenced_card_id: 
-  referenced_name: new_chunk69892113660500chunktranscludechunk
-wiki_references_118: 
-  link_type: T
-  created_at: 2009-04-24 11:23:14.450197
-  card_id: "4"
-  updated_at: 2009-04-24 11:23:14.450197
-  id: "6562"
-  referenced_card_id: "4"
-  referenced_name: user
-wiki_references_144: 
-  link_type: L
-  created_at: 2009-06-09 18:24:29.246163
-  card_id: "210"
-  updated_at: 2009-06-09 18:24:29.246163
-  id: "8075"
-  referenced_card_id: "15"
-  referenced_name: anonymous
-wiki_references_170: 
-  link_type: L
-  created_at: 2010-04-20 17:20:58.923335
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.923335
-  id: "10800"
-  referenced_card_id: "68"
-  referenced_name: invite_success
-wiki_references_333: 
-  link_type: T
-  created_at: 2010-04-21 13:22:37.980107
-  card_id: "278"
-  updated_at: 2010-04-21 13:22:37.980107
-  id: "10882"
-  referenced_card_id: "241"
-  referenced_name: "*input"
-wiki_references_307: 
-  link_type: T
-  created_at: 2010-04-21 13:22:37.432894
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.432894
-  id: "10856"
-  referenced_card_id: "63"
-  referenced_name: "*request"
-wiki_references_252: 
-  link_type: T
-  created_at: 2010-04-15 18:42:53.783987
-  card_id: "119"
-  updated_at: 2010-04-15 18:42:53.783987
-  id: "9600"
-  referenced_card_id: "330"
-  referenced_name: "*account+*right"
-wiki_references_226: 
-  link_type: T
-  created_at: 2009-11-03 10:29:16.465218
-  card_id: "3"
-  updated_at: 2009-11-03 10:29:16.465218
-  id: "8839"
-  referenced_card_id: "3"
-  referenced_name: basic
-wiki_references_038: 
-  link_type: T
-  created_at: 2009-12-17 09:21:51.948293
-  card_id: "56"
-  updated_at: 2009-12-17 09:21:51.948293
-  id: "9268"
-  referenced_card_id: "62"
-  referenced_name: "*invite+*thank"
-wiki_references_064: 
-  link_type: W
-  created_at: 2009-04-24 11:25:57.709237
-  card_id: "52"
-  updated_at: 2009-04-24 11:25:57.709237
-  id: "6594"
-  referenced_card_id: 
-  referenced_name: new_chunk69892115869060chunktranscludechunk
-wiki_references_119: 
-  link_type: T
-  created_at: 2009-04-24 11:23:14.470198
-  card_id: "4"
-  updated_at: 2009-04-24 11:23:14.470198
-  id: "6563"
-  referenced_card_id: 
-  referenced_name: user+*type_card
-wiki_references_145: 
-  link_type: W
-  created_at: 2009-06-09 18:24:29.258164
-  card_id: "210"
-  updated_at: 2009-06-09 18:24:29.258164
-  id: "8076"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_account
-wiki_references_171: 
-  link_type: L
-  created_at: 2010-04-20 17:20:58.935336
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.935336
-  id: "10801"
-  referenced_card_id: "69"
-  referenced_name: signup_success
-wiki_references_360: 
-  link_type: W
-  created_at: 2010-04-21 13:22:39.803226
-  card_id: "281"
-  updated_at: 2010-04-21 13:22:39.803226
-  id: "10909"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_custom_layout
-wiki_references_334: 
-  link_type: T
-  created_at: 2010-04-21 13:22:37.985386
-  card_id: "278"
-  updated_at: 2010-04-21 13:22:37.985386
-  id: "10883"
-  referenced_card_id: "86"
-  referenced_name: "*option"
-wiki_references_308: 
-  link_type: T
-  created_at: 2010-04-21 13:22:37.438316
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.438316
-  id: "10857"
-  referenced_card_id: "151"
-  referenced_name: administrator_link
-wiki_references_253: 
-  link_type: M
-  created_at: 2010-04-15 18:42:53.859991
-  card_id: "119"
-  updated_at: 2010-04-15 18:42:53.859991
-  id: "9601"
-  referenced_card_id: 
-  referenced_name: "*account+*right+*editing"
-wiki_references_227: 
-  link_type: T
-  created_at: 2009-11-03 10:29:16.473218
-  card_id: "3"
-  updated_at: 2009-11-03 10:29:16.473218
-  id: "8840"
-  referenced_card_id: "3"
-  referenced_name: basic
-wiki_references_039: 
-  link_type: M
-  created_at: 2009-12-17 09:21:53.864402
-  card_id: "63"
-  updated_at: 2009-12-17 09:21:53.864402
-  id: "9270"
-  referenced_card_id: 
-  referenced_name: "*request+*to"
-wiki_references_065: 
-  link_type: T
-  created_at: 2009-12-23 11:51:04.100473
-  card_id: "314"
-  updated_at: 2009-12-23 11:51:04.100473
-  id: "9441"
-  referenced_card_id: "79"
-  referenced_name: "*logo"
-wiki_references_091: 
-  link_type: T
-  created_at: 2009-12-20 12:29:16.360871
-  card_id: "259"
-  updated_at: 2009-12-20 12:29:16.360871
-  id: "9277"
-  referenced_card_id: "297"
-  referenced_name: set+description
-wiki_references_146: 
-  link_type: W
-  created_at: 2009-06-09 18:25:35.55433
-  card_id: "15"
-  updated_at: 2009-06-09 18:25:35.55433
-  id: "8077"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_account
-wiki_references_172: 
-  link_type: L
-  created_at: 2010-04-20 17:20:58.947337
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.947337
-  id: "10802"
-  referenced_card_id: "109"
-  referenced_name: request_sent
-wiki_references_361: 
-  link_type: L
-  created_at: 2010-04-21 13:22:40.059356
-  card_id: "249"
-  updated_at: 2010-04-21 13:22:40.059356
-  id: "10910"
-  referenced_card_id: "259"
-  referenced_name: set
-wiki_references_335: 
+wiki_references_300: 
   link_type: T
   created_at: 2010-04-21 13:22:37.990567
   card_id: "278"
@@ -983,79 +439,31 @@ wiki_references_335:
   id: "10884"
   referenced_card_id: "252"
   referenced_name: "*option_label"
-wiki_references_309: 
+wiki_references_005: 
   link_type: T
-  created_at: 2010-04-21 13:22:37.449019
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.449019
-  id: "10858"
-  referenced_card_id: "198"
-  referenced_name: "*css"
-wiki_references_280: 
+  created_at: 2009-04-24 11:18:02.752045
+  card_id: "5"
+  updated_at: 2009-04-24 11:18:02.752045
+  id: "6519"
+  referenced_card_id: "5"
+  referenced_name: cardtype
+wiki_references_031: 
   link_type: W
-  created_at: 2010-04-15 18:43:08.061841
-  card_id: "111"
-  updated_at: 2010-04-15 18:43:08.061841
-  id: "9755"
+  created_at: 2009-04-27 22:09:19.598853
+  card_id: "151"
+  updated_at: 2009-04-27 22:09:19.598853
+  id: "7275"
   referenced_card_id: 
-  referenced_name: "*pluss+*right+*plu_part"
-wiki_references_254: 
-  link_type: W
-  created_at: 2010-04-15 18:42:53.871992
-  card_id: "119"
-  updated_at: 2010-04-15 18:42:53.871992
-  id: "9602"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_notification
-wiki_references_228: 
+  referenced_name: admin_task
+wiki_references_112: 
   link_type: T
-  created_at: 2009-11-03 10:29:16.485219
-  card_id: "3"
-  updated_at: 2009-11-03 10:29:16.485219
-  id: "8841"
-  referenced_card_id: "3"
-  referenced_name: basic
-wiki_references_066: 
-  link_type: T
-  created_at: 2009-12-23 11:51:04.108474
-  card_id: "314"
-  updated_at: 2009-12-23 11:51:04.108474
-  id: "9442"
-  referenced_card_id: "81"
-  referenced_name: "*sidebar"
-wiki_references_092: 
-  link_type: T
-  created_at: 2009-04-24 11:22:20.870273
-  card_id: "18"
-  updated_at: 2009-04-24 11:22:20.870273
-  id: "6536"
-  referenced_card_id: "18"
-  referenced_name: file
-wiki_references_147: 
-  link_type: T
-  created_at: 2009-04-24 11:23:22.850676
-  card_id: "51"
-  updated_at: 2009-04-24 11:23:22.850676
-  id: "6565"
-  referenced_card_id: "212"
-  referenced_name: toggle+description
-wiki_references_173: 
-  link_type: L
-  created_at: 2010-04-20 17:20:58.959338
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.959338
-  id: "10803"
-  referenced_card_id: "73"
-  referenced_name: config
-wiki_references_362: 
-  link_type: W
-  created_at: 2010-04-21 13:22:40.066281
-  card_id: "249"
-  updated_at: 2010-04-21 13:22:40.066281
-  id: "10911"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_autonaming
-wiki_references_336: 
+  created_at: 2009-04-24 11:23:14.442196
+  card_id: "4"
+  updated_at: 2009-04-24 11:23:14.442196
+  id: "6561"
+  referenced_card_id: "4"
+  referenced_name: user
+wiki_references_301: 
   link_type: T
   created_at: 2010-04-21 13:22:37.99593
   card_id: "278"
@@ -1063,15 +471,31 @@ wiki_references_336:
   id: "10885"
   referenced_card_id: "291"
   referenced_name: "*accountable"
-wiki_references_281: 
+wiki_references_006: 
+  link_type: W
+  created_at: 2009-09-08 12:00:55.135689
+  card_id: "80"
+  updated_at: 2009-09-08 12:00:55.135689
+  id: "8788"
+  referenced_card_id: 
+  referenced_name: http_www_flickr_com_photo_fmgbain_3122673091
+wiki_references_032: 
   link_type: T
-  created_at: 2010-04-15 18:43:10.421976
-  card_id: "169"
-  updated_at: 2010-04-15 18:43:10.421976
-  id: "9773"
-  referenced_card_id: "339"
-  referenced_name: "*outgoing+*right"
-wiki_references_255: 
+  created_at: 2009-12-23 11:51:04.068471
+  card_id: "314"
+  updated_at: 2009-12-23 11:51:04.068471
+  id: "9438"
+  referenced_card_id: 
+  referenced_name: "*navbox"
+wiki_references_113: 
+  link_type: T
+  created_at: 2009-04-24 11:23:14.450197
+  card_id: "4"
+  updated_at: 2009-04-24 11:23:14.450197
+  id: "6562"
+  referenced_card_id: "4"
+  referenced_name: user
+wiki_references_220: 
   link_type: T
   created_at: 2010-04-20 08:16:16.772222
   card_id: "150"
@@ -1079,55 +503,7 @@ wiki_references_255:
   id: "10566"
   referenced_card_id: 
   referenced_name: setting+*type_card
-wiki_references_229: 
-  link_type: T
-  created_at: 2009-11-03 10:29:16.50522
-  card_id: "3"
-  updated_at: 2009-11-03 10:29:16.50522
-  id: "8842"
-  referenced_card_id: 
-  referenced_name: basic+*type_card
-wiki_references_067: 
-  link_type: T
-  created_at: 2009-12-23 11:51:04.128475
-  card_id: "314"
-  updated_at: 2009-12-23 11:51:04.128475
-  id: "9443"
-  referenced_card_id: 
-  referenced_name: "*version"
-wiki_references_093: 
-  link_type: T
-  created_at: 2009-04-24 11:22:20.878274
-  card_id: "18"
-  updated_at: 2009-04-24 11:22:20.878274
-  id: "6537"
-  referenced_card_id: "18"
-  referenced_name: file
-wiki_references_148: 
-  link_type: W
-  created_at: 2009-06-09 18:32:14.507492
-  card_id: "212"
-  updated_at: 2009-06-09 18:32:14.507492
-  id: "8078"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_toggle
-wiki_references_174: 
-  link_type: L
-  created_at: 2010-04-20 17:20:58.971338
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.971338
-  id: "10804"
-  referenced_card_id: "112"
-  referenced_name: "*related"
-wiki_references_363: 
-  link_type: W
-  created_at: 2010-04-21 13:22:40.207222
-  card_id: "306"
-  updated_at: 2010-04-21 13:22:40.207222
-  id: "10912"
-  referenced_card_id: 
-  referenced_name: http_www_wagn_org_wagn_custom_help_text
-wiki_references_337: 
+wiki_references_302: 
   link_type: T
   created_at: 2010-04-21 13:22:38.001078
   card_id: "278"
@@ -1135,1519 +511,31 @@ wiki_references_337:
   id: "10886"
   referenced_card_id: "247"
   referenced_name: "*autoname"
-wiki_references_282: 
-  link_type: M
-  created_at: 2010-04-15 18:43:10.50198
-  card_id: "169"
-  updated_at: 2010-04-15 18:43:10.50198
-  id: "9774"
-  referenced_card_id: 
-  referenced_name: "*outgoing+*right+*link"
-wiki_references_256: 
+wiki_references_007: 
   link_type: T
-  created_at: 2010-04-20 08:16:16.788223
-  card_id: "150"
-  updated_at: 2010-04-20 08:16:16.788223
-  id: "10567"
-  referenced_card_id: "224"
-  referenced_name: cardtype_description
-wiki_references_068: 
-  link_type: T
-  created_at: 2009-12-23 11:51:04.136475
-  card_id: "314"
-  updated_at: 2009-12-23 11:51:04.136475
-  id: "9444"
-  referenced_card_id: 
-  referenced_name: "*alert"
-wiki_references_094: 
-  link_type: T
-  created_at: 2009-04-24 11:22:20.890275
-  card_id: "18"
-  updated_at: 2009-04-24 11:22:20.890275
-  id: "6538"
-  referenced_card_id: "18"
-  referenced_name: file
-wiki_references_149: 
-  link_type: W
-  created_at: 2009-06-09 18:34:02.234287
-  card_id: "213"
-  updated_at: 2009-06-09 18:34:02.234287
-  id: "8079"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_pointer
-wiki_references_175: 
-  link_type: L
-  created_at: 2010-04-20 17:20:58.987339
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.987339
-  id: "10805"
-  referenced_card_id: "5"
-  referenced_name: cardtype
-wiki_references_364: 
-  link_type: L
-  created_at: 2010-04-21 13:22:40.214849
-  card_id: "306"
-  updated_at: 2010-04-21 13:22:40.214849
-  id: "10913"
-  referenced_card_id: "259"
-  referenced_name: set
-wiki_references_338: 
-  link_type: T
-  created_at: 2010-04-21 13:22:38.006753
-  card_id: "278"
-  updated_at: 2010-04-21 13:22:38.006753
-  id: "10887"
-  referenced_card_id: "256"
-  referenced_name: "*captcha"
-wiki_references_283: 
-  link_type: T
-  created_at: 2010-04-15 18:43:10.509981
-  card_id: "169"
-  updated_at: 2010-04-15 18:43:10.509981
-  id: "9775"
-  referenced_card_id: "339"
-  referenced_name: "*outgoing+*right"
-wiki_references_257: 
-  link_type: M
-  created_at: 2010-04-20 08:16:16.800223
-  card_id: "150"
-  updated_at: 2010-04-20 08:16:16.800223
-  id: "10568"
-  referenced_card_id: 
-  referenced_name: cardtype_help_text
-wiki_references_069: 
-  link_type: T
-  created_at: 2009-12-23 11:51:04.140476
-  card_id: "314"
-  updated_at: 2009-12-23 11:51:04.140476
-  id: "9445"
-  referenced_card_id: 
-  referenced_name: "*foot"
-wiki_references_095: 
-  link_type: T
-  created_at: 2009-04-24 11:22:20.902275
-  card_id: "18"
-  updated_at: 2009-04-24 11:22:20.902275
-  id: "6539"
-  referenced_card_id: 
-  referenced_name: file+*type_card
-wiki_references_176: 
-  link_type: L
-  created_at: 2010-04-20 17:20:59.019341
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:59.019341
-  id: "10806"
-  referenced_card_id: 
-  referenced_name: "*related+*plu_card"
-wiki_references_365: 
-  link_type: W
-  created_at: 2010-04-21 13:22:40.468515
-  card_id: "311"
-  updated_at: 2010-04-21 13:22:40.468515
-  id: "10914"
-  referenced_card_id: 
-  referenced_name: http_www_wagn_org_wagn_custom_help_text
-wiki_references_339: 
-  link_type: T
-  created_at: 2010-04-21 13:22:38.012349
-  card_id: "278"
-  updated_at: 2010-04-21 13:22:38.012349
-  id: "10888"
-  referenced_card_id: "255"
-  referenced_name: "*layout"
-wiki_references_284: 
-  link_type: M
-  created_at: 2010-04-15 18:43:10.569984
-  card_id: "169"
-  updated_at: 2010-04-15 18:43:10.569984
-  id: "9776"
-  referenced_card_id: 
-  referenced_name: "*outgoing+*right+*inclusion"
-wiki_references_258: 
-  link_type: M
-  created_at: 2010-04-20 08:16:16.812224
-  card_id: "150"
-  updated_at: 2010-04-20 08:16:16.812224
-  id: "10569"
-  referenced_card_id: 
-  referenced_name: cardtype_form
-wiki_references_096: 
-  link_type: W
-  created_at: 2009-04-24 11:22:20.914276
-  card_id: "18"
-  updated_at: 2009-04-24 11:22:20.914276
-  id: "6540"
-  referenced_card_id: 
-  referenced_name: new_chunk69892110410760chunktranscludechunk
-wiki_references_177: 
-  link_type: L
-  created_at: 2010-04-20 17:20:59.031342
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:59.031342
-  id: "10807"
-  referenced_card_id: "119"
-  referenced_name: "*account+*right+*content"
-wiki_references_366: 
-  link_type: L
-  created_at: 2010-04-21 13:22:40.474892
-  card_id: "311"
-  updated_at: 2010-04-21 13:22:40.474892
-  id: "10915"
-  referenced_card_id: "259"
-  referenced_name: set
-wiki_references_285: 
-  link_type: T
-  created_at: 2010-04-15 18:43:10.581985
-  card_id: "169"
-  updated_at: 2010-04-15 18:43:10.581985
-  id: "9777"
-  referenced_card_id: "339"
-  referenced_name: "*outgoing+*right"
-wiki_references_259: 
-  link_type: M
-  created_at: 2010-04-20 08:16:16.820224
-  card_id: "150"
-  updated_at: 2010-04-20 08:16:16.820224
-  id: "10570"
-  referenced_card_id: 
-  referenced_name: right_form_that_aren_t_subtab
-wiki_references_097: 
-  link_type: T
-  created_at: 2009-04-24 11:22:32.602942
-  card_id: "50"
-  updated_at: 2009-04-24 11:22:32.602942
-  id: "6542"
-  referenced_card_id: "50"
-  referenced_name: html
-wiki_references_178: 
-  link_type: W
-  created_at: 2010-04-20 17:20:59.043342
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:59.043342
-  id: "10808"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_initial_permission
-wiki_references_367: 
-  link_type: W
-  created_at: 2010-04-21 13:22:40.621835
-  card_id: "308"
-  updated_at: 2010-04-21 13:22:40.621835
-  id: "10916"
-  referenced_card_id: 
-  referenced_name: http_www_wagn_org_wagn_account
-wiki_references_286: 
-  link_type: M
-  created_at: 2010-04-15 18:43:10.649989
-  card_id: "169"
-  updated_at: 2010-04-15 18:43:10.649989
-  id: "9778"
-  referenced_card_id: 
-  referenced_name: "*outgoing+*right+tag"
-wiki_references_098: 
-  link_type: T
-  created_at: 2009-04-24 11:22:32.610943
-  card_id: "50"
-  updated_at: 2009-04-24 11:22:32.610943
-  id: "6543"
-  referenced_card_id: "50"
-  referenced_name: html
-wiki_references_179: 
-  link_type: W
-  created_at: 2010-04-20 17:20:59.091345
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:59.091345
-  id: "10809"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_installation+ticket_for_item
-wiki_references_368: 
-  link_type: L
-  created_at: 2010-04-21 13:22:40.628295
-  card_id: "308"
-  updated_at: 2010-04-21 13:22:40.628295
-  id: "10917"
-  referenced_card_id: "259"
-  referenced_name: set
-wiki_references_287: 
-  link_type: W
-  created_at: 2010-04-15 18:43:10.870001
-  card_id: "169"
-  updated_at: 2010-04-15 18:43:10.870001
-  id: "9779"
-  referenced_card_id: 
-  referenced_name: "*outgoing+*right+*link"
-wiki_references_099: 
-  link_type: T
-  created_at: 2009-04-24 11:22:32.622943
-  card_id: "50"
-  updated_at: 2009-04-24 11:22:32.622943
-  id: "6544"
-  referenced_card_id: "50"
-  referenced_name: html
-wiki_references_369: 
-  link_type: W
-  created_at: 2010-04-21 13:22:40.770341
-  card_id: "83"
-  updated_at: 2010-04-21 13:22:40.770341
-  id: "10918"
-  referenced_card_id: 
-  referenced_name: http_www_wagn_org_wagn_sidebar
-wiki_references_288: 
-  link_type: W
-  created_at: 2010-04-15 18:43:10.926004
-  card_id: "169"
-  updated_at: 2010-04-15 18:43:10.926004
-  id: "9780"
-  referenced_card_id: 
-  referenced_name: "*outgoing+*right+*inclusion"
-wiki_references_289: 
-  link_type: W
-  created_at: 2010-04-15 18:43:10.974007
-  card_id: "169"
-  updated_at: 2010-04-15 18:43:10.974007
-  id: "9781"
-  referenced_card_id: 
-  referenced_name: "*outgoing+*right+tag"
-wiki_references_100: 
-  link_type: T
-  created_at: 2009-04-24 11:22:32.630944
-  card_id: "50"
-  updated_at: 2009-04-24 11:22:32.630944
-  id: "6545"
-  referenced_card_id: 
-  referenced_name: html+*type_card
-wiki_references_101: 
-  link_type: W
-  created_at: 2009-04-24 11:22:32.638944
-  card_id: "50"
-  updated_at: 2009-04-24 11:22:32.638944
-  id: "6546"
-  referenced_card_id: 
-  referenced_name: new_chunk69892112717280chunktranscludechunk
-wiki_references_020: 
-  link_type: T
-  created_at: 2009-12-02 16:28:23.310092
-  card_id: "109"
-  updated_at: 2009-12-02 16:28:23.310092
-  id: "9174"
-  referenced_card_id: "55"
-  referenced_name: "*title"
-wiki_references_021: 
-  link_type: M
-  created_at: 2009-12-17 09:21:49.096131
-  card_id: "66"
-  updated_at: 2009-12-17 09:21:49.096131
-  id: "9261"
-  referenced_card_id: 
-  referenced_name: "*signup+*subject"
-wiki_references_102: 
-  link_type: T
-  created_at: 2009-05-04 14:32:57.689206
-  card_id: "100"
-  updated_at: 2009-05-04 14:32:57.689206
-  id: "7596"
-  referenced_card_id: 
-  referenced_name: account_request+*type_card
-wiki_references_210: 
-  link_type: T
-  created_at: 2009-07-03 13:30:47.420451
-  card_id: "7"
-  updated_at: 2009-07-03 13:30:47.420451
-  id: "8185"
-  referenced_card_id: 
-  referenced_name: role+*type_card
-wiki_references_022: 
-  link_type: M
-  created_at: 2009-12-17 09:21:49.224138
-  card_id: "66"
-  updated_at: 2009-12-17 09:21:49.224138
-  id: "9262"
-  referenced_card_id: 
-  referenced_name: "*signup+*message"
-wiki_references_103: 
-  link_type: T
-  created_at: 2009-05-04 14:32:57.697206
-  card_id: "100"
-  updated_at: 2009-05-04 14:32:57.697206
-  id: "7597"
-  referenced_card_id: "101"
-  referenced_name: card_with_account
-wiki_references_211: 
-  link_type: W
-  created_at: 2009-07-03 13:30:47.428451
-  card_id: "7"
-  updated_at: 2009-07-03 13:30:47.428451
-  id: "8186"
-  referenced_card_id: 
-  referenced_name: new_role
-wiki_references_023: 
-  link_type: T
-  created_at: 2009-12-23 11:51:03.956465
-  card_id: "314"
-  updated_at: 2009-12-23 11:51:03.956465
-  id: "9437"
-  referenced_card_id: 
-  referenced_name: "*head"
-wiki_references_104: 
-  link_type: W
-  created_at: 2009-05-04 14:32:57.701207
-  card_id: "100"
-  updated_at: 2009-05-04 14:32:57.701207
-  id: "7598"
-  referenced_card_id: 
-  referenced_name: account_invite
-wiki_references_130: 
-  link_type: T
-  created_at: 2010-04-20 17:20:58.147291
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.147291
-  id: "10781"
-  referenced_card_id: "154"
-  referenced_name: "*ignore"
-wiki_references_212: 
-  link_type: T
-  created_at: 2009-07-03 13:30:47.300444
-  card_id: "7"
-  updated_at: 2009-07-03 13:30:47.300444
-  id: "8184"
-  referenced_card_id: "225"
-  referenced_name: role+description
-wiki_references_024: 
-  link_type: W
-  created_at: 2009-12-17 09:21:49.240139
-  card_id: "66"
-  updated_at: 2009-12-17 09:21:49.240139
-  id: "9264"
-  referenced_card_id: 
-  referenced_name: card_option_account_request
-wiki_references_050: 
-  link_type: L
-  created_at: 2009-04-09 16:11:44.66611
-  card_id: "118"
-  updated_at: 2009-04-09 16:11:44.66611
-  id: "5808"
-  referenced_card_id: "100"
-  referenced_name: "*account"
-wiki_references_105: 
-  link_type: L
-  created_at: 2009-05-04 14:32:57.709207
-  card_id: "100"
-  updated_at: 2009-05-04 14:32:57.709207
-  id: "7599"
-  referenced_card_id: "15"
-  referenced_name: anonymous
-wiki_references_131: 
-  link_type: T
-  created_at: 2010-04-20 17:20:58.3073
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.3073
-  id: "10782"
-  referenced_card_id: "153"
-  referenced_name: card_to_copy_to_new_wagn
-wiki_references_320: 
-  link_type: L
-  created_at: 2010-04-21 13:22:37.518138
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.518138
-  id: "10869"
-  referenced_card_id: "259"
-  referenced_name: set
-wiki_references_213: 
-  link_type: L
-  created_at: 2009-07-03 13:30:54.236839
-  card_id: "225"
-  updated_at: 2009-07-03 13:30:54.236839
-  id: "8187"
-  referenced_card_id: "4"
-  referenced_name: user
-wiki_references_025: 
-  link_type: W
-  created_at: 2009-12-17 09:21:49.25214
-  card_id: "66"
-  updated_at: 2009-12-17 09:21:49.25214
-  id: "9265"
-  referenced_card_id: 
-  referenced_name: admin_task
-wiki_references_051: 
-  link_type: W
-  created_at: 2009-12-22 07:48:22.404472
-  card_id: "251"
-  updated_at: 2009-12-22 07:48:22.404472
-  id: "9326"
-  referenced_card_id: 
-  referenced_name: select
-wiki_references_106: 
-  link_type: L
-  created_at: 2009-05-04 14:32:57.717208
-  card_id: "100"
-  updated_at: 2009-05-04 14:32:57.717208
-  id: "7600"
-  referenced_card_id: "1"
-  referenced_name: wagn_bot
-wiki_references_132: 
-  link_type: T
-  created_at: 2010-04-20 17:20:58.351303
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.351303
-  id: "10783"
-  referenced_card_id: 
-  referenced_name: set+*type_card
-wiki_references_321: 
-  link_type: L
-  created_at: 2010-04-21 13:22:37.524229
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.524229
-  id: "10870"
-  referenced_card_id: "5"
-  referenced_name: cardtype
-wiki_references_240: 
-  link_type: M
-  created_at: 2010-04-15 18:42:31.986745
-  card_id: "88"
-  updated_at: 2010-04-15 18:42:31.986745
-  id: "9456"
-  referenced_card_id: 
-  referenced_name: cardtype+*type+*default+*type_card
-wiki_references_214: 
-  link_type: W
-  created_at: 2009-07-03 13:30:54.24884
-  card_id: "225"
-  updated_at: 2009-07-03 13:30:54.24884
-  id: "8188"
-  referenced_card_id: 
-  referenced_name: admin_task
-wiki_references_026: 
-  link_type: T
-  created_at: 2009-12-17 09:21:49.232138
-  card_id: "66"
-  updated_at: 2009-12-17 09:21:49.232138
-  id: "9263"
-  referenced_card_id: "67"
-  referenced_name: "*signup+*thank"
-wiki_references_052: 
-  link_type: M
-  created_at: 2009-04-24 11:25:43.476426
-  card_id: "22"
-  updated_at: 2009-04-24 11:25:43.476426
-  id: "6583"
-  referenced_card_id: 
-  referenced_name: plain_text+description
-wiki_references_107: 
-  link_type: L
-  created_at: 2009-05-04 14:32:57.725208
-  card_id: "100"
-  updated_at: 2009-05-04 14:32:57.725208
-  id: "7601"
-  referenced_card_id: "4"
-  referenced_name: user
-wiki_references_133: 
-  link_type: T
-  created_at: 2010-04-20 17:20:58.391305
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.391305
-  id: "10784"
-  referenced_card_id: 
-  referenced_name: setting+*type_card
-wiki_references_322: 
-  link_type: L
-  created_at: 2010-04-21 13:22:37.529829
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.529829
-  id: "10871"
-  referenced_card_id: "151"
-  referenced_name: administrator_link
-wiki_references_241: 
-  link_type: W
-  created_at: 2010-04-15 18:42:31.994745
-  card_id: "88"
-  updated_at: 2010-04-15 18:42:31.994745
-  id: "9457"
-  referenced_card_id: 
-  referenced_name: new_chunk70088691662860chunktranscludechunk
-wiki_references_215: 
-  link_type: L
-  created_at: 2009-07-03 13:30:54.260841
-  card_id: "225"
-  updated_at: 2009-07-03 13:30:54.260841
-  id: "8189"
-  referenced_card_id: "10"
-  referenced_name: administrator
-wiki_references_027: 
-  link_type: L
-  created_at: 2009-04-27 22:09:19.574851
-  card_id: "151"
-  updated_at: 2009-04-27 22:09:19.574851
-  id: "7272"
-  referenced_card_id: "73"
-  referenced_name: config
-wiki_references_053: 
-  link_type: T
-  created_at: 2009-04-24 11:25:43.484426
-  card_id: "22"
-  updated_at: 2009-04-24 11:25:43.484426
-  id: "6584"
-  referenced_card_id: "22"
-  referenced_name: plain_text
-wiki_references_108: 
-  link_type: W
-  created_at: 2009-05-04 14:32:57.729208
-  card_id: "100"
-  updated_at: 2009-05-04 14:32:57.729208
-  id: "7602"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_account
-wiki_references_134: 
-  link_type: T
-  created_at: 2010-04-20 17:20:58.407306
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.407306
-  id: "10785"
-  referenced_card_id: "360"
-  referenced_name: setting_value
-wiki_references_160: 
-  link_type: W
-  created_at: 2009-06-09 18:36:53.15287
-  card_id: "19"
-  updated_at: 2009-06-09 18:36:53.15287
-  id: "8086"
-  referenced_card_id: 
-  referenced_name: new_chunk70203879566840chunktranscludechunk
-wiki_references_323: 
-  link_type: W
-  created_at: 2010-04-21 13:22:37.535556
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.535556
-  id: "10872"
-  referenced_card_id: 
-  referenced_name: http_www_wagn_org_wagn_account_administering_20account
-wiki_references_242: 
-  link_type: M
-  created_at: 2010-04-15 18:42:35.810963
-  card_id: "105"
-  updated_at: 2010-04-15 18:42:35.810963
-  id: "9500"
-  referenced_card_id: 
-  referenced_name: role+*type+*default+description
-wiki_references_028: 
-  link_type: L
-  created_at: 2009-04-27 22:09:19.582852
-  card_id: "151"
-  updated_at: 2009-04-27 22:09:19.582852
-  id: "7273"
-  referenced_card_id: "100"
-  referenced_name: "*account"
-wiki_references_054: 
-  link_type: T
-  created_at: 2009-04-24 11:25:43.492427
-  card_id: "22"
-  updated_at: 2009-04-24 11:25:43.492427
-  id: "6585"
-  referenced_card_id: "22"
-  referenced_name: plain_text
-wiki_references_080: 
-  link_type: W
-  created_at: 2009-04-24 11:52:32.365421
-  card_id: "181"
-  updated_at: 2009-04-24 11:52:32.365421
-  id: "6613"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_user
-wiki_references_109: 
-  link_type: T
-  created_at: 2009-04-24 11:22:32.590941
-  card_id: "50"
-  updated_at: 2009-04-24 11:22:32.590941
-  id: "6541"
-  referenced_card_id: "202"
-  referenced_name: html+description
-wiki_references_135: 
-  link_type: T
-  created_at: 2010-04-20 17:20:58.447308
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.447308
-  id: "10786"
-  referenced_card_id: 
-  referenced_name: cardtype+*type_card
-wiki_references_161: 
-  link_type: L
-  created_at: 2010-04-20 17:20:58.847331
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.847331
-  id: "10794"
-  referenced_card_id: "100"
-  referenced_name: "*account"
-wiki_references_216: 
-  link_type: W
-  created_at: 2009-07-03 13:30:54.272841
-  card_id: "225"
-  updated_at: 2009-07-03 13:30:54.272841
-  id: "8190"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_role
-wiki_references_350: 
-  link_type: L
-  created_at: 2010-04-21 13:22:39.058653
-  card_id: "301"
-  updated_at: 2010-04-21 13:22:39.058653
-  id: "10899"
+  created_at: 2009-04-24 11:24:04.965943
+  card_id: "30"
+  updated_at: 2009-04-24 11:24:04.965943
+  id: "6574"
   referenced_card_id: "30"
   referenced_name: search
-wiki_references_324: 
-  link_type: W
-  created_at: 2010-04-21 13:22:37.541183
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.541183
-  id: "10873"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_skin
-wiki_references_243: 
+wiki_references_033: 
   link_type: T
-  created_at: 2010-04-15 18:42:35.822964
-  card_id: "105"
-  updated_at: 2010-04-15 18:42:35.822964
-  id: "9501"
-  referenced_card_id: "105"
-  referenced_name: role+*type+*default
-wiki_references_029: 
-  link_type: M
-  created_at: 2009-12-17 09:21:51.860288
-  card_id: "56"
-  updated_at: 2009-12-17 09:21:51.860288
-  id: "9266"
-  referenced_card_id: 
-  referenced_name: "*invite+*subject"
-wiki_references_055: 
-  link_type: M
-  created_at: 2009-12-23 11:51:04.088473
-  card_id: "314"
-  updated_at: 2009-12-23 11:51:04.088473
-  id: "9440"
-  referenced_card_id: 
-  referenced_name: main
-wiki_references_081: 
-  link_type: W
-  created_at: 2009-07-27 20:14:07.289813
-  card_id: "182"
-  updated_at: 2009-07-27 20:14:07.289813
-  id: "8470"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_wql
-wiki_references_136: 
+  created_at: 2009-04-09 16:41:38.151245
+  card_id: "10"
+  updated_at: 2009-04-09 16:41:38.151245
+  id: "6028"
+  referenced_card_id: "147"
+  referenced_name: administrator+description
+wiki_references_114: 
   link_type: T
-  created_at: 2010-04-20 17:20:58.463309
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.463309
-  id: "10787"
-  referenced_card_id: "224"
-  referenced_name: cardtype_description
-wiki_references_162: 
-  link_type: W
-  created_at: 2009-06-09 18:41:41.751224
-  card_id: "216"
-  updated_at: 2009-06-09 18:41:41.751224
-  id: "8088"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_account
-wiki_references_217: 
-  link_type: L
-  created_at: 2010-04-20 21:10:25.67158
-  card_id: "392"
-  updated_at: 2010-04-20 21:10:25.67158
-  id: "10843"
-  referenced_card_id: "363"
-  referenced_name: "*send"
-wiki_references_351: 
-  link_type: W
-  created_at: 2010-04-21 13:22:39.064002
-  card_id: "301"
-  updated_at: 2010-04-21 13:22:39.064002
-  id: "10900"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_pointer
-wiki_references_325: 
-  link_type: W
-  created_at: 2010-04-21 13:22:37.54668
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.54668
-  id: "10874"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_sidebar
-wiki_references_270: 
-  link_type: M
-  created_at: 2010-04-15 18:43:05.161676
-  card_id: "171"
-  updated_at: 2010-04-15 18:43:05.161676
-  id: "9745"
-  referenced_card_id: 
-  referenced_name: "*incoming+*right+*includer"
-wiki_references_244: 
-  link_type: M
-  created_at: 2010-04-15 18:42:35.918969
-  card_id: "105"
-  updated_at: 2010-04-15 18:42:35.918969
-  id: "9502"
-  referenced_card_id: 
-  referenced_name: role+*type+*default+*member
-wiki_references_056: 
-  link_type: T
-  created_at: 2009-04-24 11:25:43.500427
-  card_id: "22"
-  updated_at: 2009-04-24 11:25:43.500427
-  id: "6586"
-  referenced_card_id: "22"
-  referenced_name: plain_text
-wiki_references_082: 
-  link_type: W
-  created_at: 2009-07-27 20:14:07.321815
-  card_id: "182"
-  updated_at: 2009-07-27 20:14:07.321815
-  id: "8471"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_wql_syntax
-wiki_references_137: 
-  link_type: T
-  created_at: 2010-04-20 17:20:58.515312
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.515312
-  id: "10788"
-  referenced_card_id: 
-  referenced_name: role+*type_card
-wiki_references_163: 
-  link_type: T
-  created_at: 2009-06-09 18:42:00.504293
-  card_id: "12"
-  updated_at: 2009-06-09 18:42:00.504293
-  id: "8089"
-  referenced_card_id: "216"
-  referenced_name: account_request+description
-wiki_references_218: 
-  link_type: L
-  created_at: 2010-04-20 21:10:25.687581
-  card_id: "392"
-  updated_at: 2010-04-20 21:10:25.687581
-  id: "10844"
-  referenced_card_id: "259"
-  referenced_name: set
-wiki_references_352: 
-  link_type: W
-  created_at: 2010-04-21 13:22:39.069553
-  card_id: "301"
-  updated_at: 2010-04-21 13:22:39.069553
-  id: "10901"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wql_syntax
-wiki_references_326: 
-  link_type: W
-  created_at: 2010-04-21 13:22:37.647514
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.647514
-  id: "10875"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_tiny_mce
-wiki_references_271: 
-  link_type: T
-  created_at: 2010-04-15 18:43:05.173676
-  card_id: "171"
-  updated_at: 2010-04-15 18:43:05.173676
-  id: "9746"
-  referenced_card_id: "334"
-  referenced_name: "*incoming+*right"
-wiki_references_245: 
-  link_type: M
-  created_at: 2010-04-15 18:42:37.751073
-  card_id: "322"
-  updated_at: 2010-04-15 18:42:37.751073
-  id: "9520"
-  referenced_card_id: 
-  referenced_name: role+*type+*content+description
-wiki_references_057: 
-  link_type: T
-  created_at: 2009-04-24 11:25:43.516428
-  card_id: "22"
-  updated_at: 2009-04-24 11:25:43.516428
-  id: "6587"
-  referenced_card_id: 
-  referenced_name: plain_text+*type_card
-wiki_references_083: 
-  link_type: T
-  created_at: 2009-12-20 12:29:16.372872
-  card_id: "259"
-  updated_at: 2009-12-20 12:29:16.372872
-  id: "9278"
-  referenced_card_id: "259"
-  referenced_name: set
-wiki_references_138: 
-  link_type: T
-  created_at: 2010-04-20 17:20:58.559315
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.559315
-  id: "10789"
-  referenced_card_id: 
-  referenced_name: config+*inclusion
-wiki_references_164: 
-  link_type: T
-  created_at: 2009-06-09 18:42:00.516293
-  card_id: "12"
-  updated_at: 2009-06-09 18:42:00.516293
-  id: "8090"
-  referenced_card_id: 
-  referenced_name: account_request+*type_card+by_update
-wiki_references_190: 
-  link_type: M
-  created_at: 2010-04-20 17:40:19.026238
-  card_id: "373"
-  updated_at: 2010-04-20 17:40:19.026238
-  id: "10822"
-  referenced_card_id: 
-  referenced_name: email_config+*right+*content+*message
-wiki_references_219: 
-  link_type: W
-  created_at: 2010-04-20 21:10:25.699582
-  card_id: "392"
-  updated_at: 2010-04-20 21:10:25.699582
-  id: "10845"
-  referenced_card_id: 
-  referenced_name: http_www_wagn_org_wagn_relative_name
-wiki_references_353: 
-  link_type: L
-  created_at: 2010-04-21 13:22:39.223325
-  card_id: "254"
-  updated_at: 2010-04-21 13:22:39.223325
-  id: "10902"
-  referenced_card_id: "47"
-  referenced_name: pointer
-wiki_references_327: 
-  link_type: W
-  created_at: 2010-04-21 13:22:37.65377
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.65377
-  id: "10876"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_google_analytic
-wiki_references_272: 
-  link_type: M
-  created_at: 2010-04-15 18:43:05.253681
-  card_id: "171"
-  updated_at: 2010-04-15 18:43:05.253681
-  id: "9747"
-  referenced_card_id: 
-  referenced_name: "*incoming+*right+*tagged"
-wiki_references_246: 
-  link_type: T
-  created_at: 2010-04-15 18:42:37.763074
-  card_id: "322"
-  updated_at: 2010-04-15 18:42:37.763074
-  id: "9521"
-  referenced_card_id: "322"
-  referenced_name: role+*type+*content
-wiki_references_058: 
-  link_type: W
-  created_at: 2009-04-24 11:25:43.524428
-  card_id: "22"
-  updated_at: 2009-04-24 11:25:43.524428
-  id: "6588"
-  referenced_card_id: 
-  referenced_name: new_chunk69892111869180chunktranscludechunk
-wiki_references_084: 
-  link_type: T
-  created_at: 2009-12-20 12:29:16.384872
-  card_id: "259"
-  updated_at: 2009-12-20 12:29:16.384872
-  id: "9279"
-  referenced_card_id: 
-  referenced_name: set+*type_card
-wiki_references_139: 
-  link_type: T
-  created_at: 2010-04-20 17:20:58.795328
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.795328
-  id: "10790"
-  referenced_card_id: 
-  referenced_name: "*sidebar+*inclusion"
-wiki_references_165: 
-  link_type: L
-  created_at: 2010-04-20 17:20:58.859332
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.859332
-  id: "10795"
-  referenced_card_id: "1"
-  referenced_name: wagn_bot
-wiki_references_191: 
-  link_type: M
-  created_at: 2010-04-20 17:40:19.098242
-  card_id: "373"
-  updated_at: 2010-04-20 17:40:19.098242
-  id: "10823"
-  referenced_card_id: 
-  referenced_name: email_config+*right+*content+*attach
-wiki_references_354: 
-  link_type: W
-  created_at: 2010-04-21 13:22:39.229321
-  card_id: "254"
-  updated_at: 2010-04-21 13:22:39.229321
-  id: "10903"
-  referenced_card_id: 
-  referenced_name: http_www_wagn_org_wagn_pointer
-wiki_references_328: 
-  link_type: T
-  created_at: 2010-04-21 13:22:37.943316
-  card_id: "278"
-  updated_at: 2010-04-21 13:22:37.943316
-  id: "10877"
-  referenced_card_id: "298"
-  referenced_name: setting+description
-wiki_references_273: 
-  link_type: W
-  created_at: 2010-04-15 18:43:05.309684
-  card_id: "171"
-  updated_at: 2010-04-15 18:43:05.309684
-  id: "9748"
-  referenced_card_id: 
-  referenced_name: "*incoming+*right+*linker"
-wiki_references_247: 
-  link_type: M
-  created_at: 2010-04-15 18:42:37.819077
-  card_id: "322"
-  updated_at: 2010-04-15 18:42:37.819077
-  id: "9522"
-  referenced_card_id: 
-  referenced_name: role+*type+*content+*member
-wiki_references_059: 
-  link_type: M
-  created_at: 2009-04-24 11:25:57.625232
-  card_id: "52"
-  updated_at: 2009-04-24 11:25:57.625232
-  id: "6589"
-  referenced_card_id: 
-  referenced_name: phrase+description
-wiki_references_085: 
-  link_type: M
-  created_at: 2009-04-24 11:21:58.448128
-  card_id: "17"
-  updated_at: 2009-04-24 11:21:58.448128
-  id: "6529"
-  referenced_card_id: 
-  referenced_name: date+description
-wiki_references_166: 
-  link_type: L
-  created_at: 2010-04-20 17:20:58.871333
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.871333
-  id: "10796"
-  referenced_card_id: "15"
-  referenced_name: anonymous
-wiki_references_192: 
-  link_type: W
-  created_at: 2009-06-07 14:02:15.833634
-  card_id: "147"
-  updated_at: 2009-06-07 14:02:15.833634
-  id: "7983"
-  referenced_card_id: 
-  referenced_name: admin_task
-wiki_references_355: 
-  link_type: L
-  created_at: 2010-04-21 13:22:39.491191
-  card_id: "250"
-  updated_at: 2010-04-21 13:22:39.491191
-  id: "10904"
-  referenced_card_id: "259"
-  referenced_name: set
-wiki_references_329: 
-  link_type: T
-  created_at: 2010-04-21 13:22:37.956749
-  card_id: "278"
-  updated_at: 2010-04-21 13:22:37.956749
-  id: "10878"
-  referenced_card_id: "309"
-  referenced_name: "*add_help"
-wiki_references_274: 
-  link_type: W
-  created_at: 2010-04-15 18:43:05.365687
-  card_id: "171"
-  updated_at: 2010-04-15 18:43:05.365687
-  id: "9749"
-  referenced_card_id: 
-  referenced_name: "*incoming+*right+*includer"
-wiki_references_248: 
-  link_type: T
-  created_at: 2010-04-15 18:42:53.579975
-  card_id: "119"
-  updated_at: 2010-04-15 18:42:53.579975
-  id: "9596"
-  referenced_card_id: "330"
-  referenced_name: "*account+*right"
-wiki_references_086: 
-  link_type: T
-  created_at: 2009-04-24 11:21:58.456129
-  card_id: "17"
-  updated_at: 2009-04-24 11:21:58.456129
-  id: "6530"
-  referenced_card_id: "17"
-  referenced_name: date
-wiki_references_167: 
-  link_type: L
-  created_at: 2010-04-20 17:20:58.883333
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.883333
-  id: "10797"
-  referenced_card_id: "64"
-  referenced_name: "*to"
-wiki_references_193: 
-  link_type: W
-  created_at: 2009-06-07 14:02:15.845635
-  card_id: "147"
-  updated_at: 2009-06-07 14:02:15.845635
-  id: "7984"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_permission
-wiki_references_356: 
-  link_type: W
-  created_at: 2010-04-21 13:22:39.497874
-  card_id: "250"
-  updated_at: 2010-04-21 13:22:39.497874
-  id: "10905"
-  referenced_card_id: 
-  referenced_name: http_www_wagn_org_wagn_custom_thank_you_message_for_form
-wiki_references_275: 
-  link_type: W
-  created_at: 2010-04-15 18:43:05.605701
-  card_id: "171"
-  updated_at: 2010-04-15 18:43:05.605701
-  id: "9750"
-  referenced_card_id: 
-  referenced_name: "*incoming+*right+*tagged"
-wiki_references_249: 
-  link_type: M
-  created_at: 2010-04-15 18:42:53.675981
-  card_id: "119"
-  updated_at: 2010-04-15 18:42:53.675981
-  id: "9597"
-  referenced_card_id: 
-  referenced_name: "*account+*right+*role"
-wiki_references_087: 
-  link_type: T
-  created_at: 2009-04-24 11:21:58.464129
-  card_id: "17"
-  updated_at: 2009-04-24 11:21:58.464129
-  id: "6531"
-  referenced_card_id: "17"
-  referenced_name: date
-wiki_references_168: 
-  link_type: L
-  created_at: 2010-04-20 17:20:58.899334
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.899334
-  id: "10798"
-  referenced_card_id: "137"
-  referenced_name: "*from"
-wiki_references_194: 
-  link_type: W
-  created_at: 2009-05-21 12:21:57.737938
-  card_id: "202"
-  updated_at: 2009-05-21 12:21:57.737938
-  id: "7657"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_html
-wiki_references_357: 
-  link_type: W
-  created_at: 2010-04-21 13:22:39.640434
-  card_id: "90"
-  updated_at: 2010-04-21 13:22:39.640434
-  id: "10906"
-  referenced_card_id: 
-  referenced_name: http_www_wagn_org_wagn_table_of_content
-wiki_references_276: 
-  link_type: T
-  created_at: 2010-04-15 18:43:07.657818
-  card_id: "111"
-  updated_at: 2010-04-15 18:43:07.657818
-  id: "9751"
-  referenced_card_id: "337"
-  referenced_name: "*pluss+*right"
-wiki_references_088: 
-  link_type: T
-  created_at: 2009-04-24 11:21:58.47213
-  card_id: "17"
-  updated_at: 2009-04-24 11:21:58.47213
-  id: "6532"
-  referenced_card_id: "17"
-  referenced_name: date
-wiki_references_169: 
-  link_type: L
-  created_at: 2010-04-20 17:20:58.911335
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:58.911335
-  id: "10799"
-  referenced_card_id: "61"
-  referenced_name: "*thank"
-wiki_references_195: 
-  link_type: L
-  created_at: 2010-04-19 17:09:48.62264
-  card_id: "154"
-  updated_at: 2010-04-19 17:09:48.62264
-  id: "10455"
-  referenced_card_id: "149"
-  referenced_name: ethan_mc_cutchen
-wiki_references_358: 
-  link_type: L
-  created_at: 2010-04-21 13:22:39.646686
-  card_id: "90"
-  updated_at: 2010-04-21 13:22:39.646686
-  id: "10907"
-  referenced_card_id: "259"
-  referenced_name: set
-wiki_references_277: 
-  link_type: M
-  created_at: 2010-04-15 18:43:07.889831
-  card_id: "111"
-  updated_at: 2010-04-15 18:43:07.889831
-  id: "9752"
-  referenced_card_id: 
-  referenced_name: "*pluss+*right+*plu_card"
-wiki_references_089: 
-  link_type: T
-  created_at: 2009-04-24 11:21:58.48013
-  card_id: "17"
-  updated_at: 2009-04-24 11:21:58.48013
-  id: "6533"
-  referenced_card_id: 
-  referenced_name: date+*type_card
-wiki_references_196: 
-  link_type: L
-  created_at: 2010-04-19 17:09:48.63464
-  card_id: "154"
-  updated_at: 2010-04-19 17:09:48.63464
-  id: "10456"
-  referenced_card_id: "150"
-  referenced_name: john_abbe
-wiki_references_359: 
-  link_type: L
-  created_at: 2010-04-21 13:22:39.796329
-  card_id: "281"
-  updated_at: 2010-04-21 13:22:39.796329
-  id: "10908"
-  referenced_card_id: "259"
-  referenced_name: set
-wiki_references_278: 
-  link_type: M
-  created_at: 2010-04-15 18:43:07.961835
-  card_id: "111"
-  updated_at: 2010-04-15 18:43:07.961835
-  id: "9753"
-  referenced_card_id: 
-  referenced_name: "*pluss+*right+*plu_part"
-wiki_references_197: 
-  link_type: L
-  created_at: 2010-04-19 17:09:48.646641
-  card_id: "154"
-  updated_at: 2010-04-19 17:09:48.646641
-  id: "10457"
-  referenced_card_id: "156"
-  referenced_name: lewi_hoffman
-wiki_references_279: 
-  link_type: W
-  created_at: 2010-04-15 18:43:08.009838
-  card_id: "111"
-  updated_at: 2010-04-15 18:43:08.009838
-  id: "9754"
-  referenced_card_id: 
-  referenced_name: "*pluss+*right+*plu_card"
-wiki_references_198: 
-  link_type: L
-  created_at: 2010-04-19 17:09:48.654641
-  card_id: "154"
-  updated_at: 2010-04-19 17:09:48.654641
-  id: "10458"
-  referenced_card_id: "154"
-  referenced_name: "*ignore"
-wiki_references_199: 
-  link_type: L
-  created_at: 2010-04-19 17:09:48.666642
-  card_id: "154"
-  updated_at: 2010-04-19 17:09:48.666642
-  id: "10459"
-  referenced_card_id: "153"
-  referenced_name: card_to_copy_to_new_wagn
-wiki_references_010: 
-  link_type: T
-  created_at: 2009-04-24 11:24:04.977944
-  card_id: "30"
-  updated_at: 2009-04-24 11:24:04.977944
-  id: "6575"
-  referenced_card_id: 
-  referenced_name: search+*type_card
-wiki_references_011: 
-  link_type: W
-  created_at: 2009-04-24 11:24:04.985944
-  card_id: "30"
-  updated_at: 2009-04-24 11:24:04.985944
-  id: "6576"
-  referenced_card_id: 
-  referenced_name: new_chunk69892111616260chunktranscludechunk
-wiki_references_012: 
-  link_type: T
-  created_at: 2009-12-12 14:05:19.821436
-  card_id: "81"
-  updated_at: 2009-12-12 14:05:19.821436
-  id: "9259"
-  referenced_card_id: "151"
-  referenced_name: administrator_link
-wiki_references_200: 
-  link_type: L
-  created_at: 2010-04-19 17:09:48.678643
-  card_id: "154"
-  updated_at: 2010-04-19 17:09:48.678643
-  id: "10460"
-  referenced_card_id: "152"
-  referenced_name: new
-wiki_references_013: 
-  link_type: T
-  created_at: 2009-04-24 11:24:39.527913
-  card_id: "47"
-  updated_at: 2009-04-24 11:24:39.527913
-  id: "6578"
-  referenced_card_id: "47"
-  referenced_name: pointer
-wiki_references_120: 
-  link_type: W
-  created_at: 2009-04-24 11:23:14.478198
+  created_at: 2009-04-24 11:23:14.470198
   card_id: "4"
-  updated_at: 2009-04-24 11:23:14.478198
-  id: "6564"
+  updated_at: 2009-04-24 11:23:14.470198
+  id: "6563"
   referenced_card_id: 
-  referenced_name: new_chunk69892112163620chunktranscludechunk
-wiki_references_201: 
-  link_type: L
-  created_at: 2010-04-19 17:09:48.686643
-  card_id: "154"
-  updated_at: 2010-04-19 17:09:48.686643
-  id: "10461"
-  referenced_card_id: "159"
-  referenced_name: all_non_star_card
-wiki_references_014: 
-  link_type: T
-  created_at: 2009-04-24 11:24:39.539913
-  card_id: "47"
-  updated_at: 2009-04-24 11:24:39.539913
-  id: "6579"
-  referenced_card_id: "47"
-  referenced_name: pointer
-wiki_references_040: 
-  link_type: T
-  created_at: 2009-12-23 11:51:04.080472
-  card_id: "314"
-  updated_at: 2009-12-23 11:51:04.080472
-  id: "9439"
-  referenced_card_id: 
-  referenced_name: "*account_link"
-wiki_references_121: 
-  link_type: T
-  created_at: 2009-04-24 11:23:22.858676
-  card_id: "51"
-  updated_at: 2009-04-24 11:23:22.858676
-  id: "6566"
-  referenced_card_id: "51"
-  referenced_name: toggle
-wiki_references_202: 
-  link_type: L
-  created_at: 2010-04-19 17:09:48.698644
-  card_id: "154"
-  updated_at: 2010-04-19 17:09:48.698644
-  id: "10462"
-  referenced_card_id: "161"
-  referenced_name: card_by_type
-wiki_references_310: 
-  link_type: T
-  created_at: 2010-04-21 13:22:37.454369
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.454369
-  id: "10859"
-  referenced_card_id: "81"
-  referenced_name: "*sidebar"
-wiki_references_015: 
-  link_type: T
-  created_at: 2009-04-24 11:24:39.547914
-  card_id: "47"
-  updated_at: 2009-04-24 11:24:39.547914
-  id: "6580"
-  referenced_card_id: "47"
-  referenced_name: pointer
-wiki_references_041: 
-  link_type: W
-  created_at: 2009-12-17 09:21:53.888404
-  card_id: "63"
-  updated_at: 2009-12-17 09:21:53.888404
-  id: "9272"
-  referenced_card_id: 
-  referenced_name: card_option_account_request
-wiki_references_122: 
-  link_type: T
-  created_at: 2009-04-24 11:23:22.866676
-  card_id: "51"
-  updated_at: 2009-04-24 11:23:22.866676
-  id: "6567"
-  referenced_card_id: "51"
-  referenced_name: toggle
-wiki_references_203: 
-  link_type: L
-  created_at: 2010-04-19 17:09:48.706644
-  card_id: "154"
-  updated_at: 2010-04-19 17:09:48.706644
-  id: "10463"
-  referenced_card_id: "224"
-  referenced_name: cardtype_description
-wiki_references_311: 
-  link_type: T
-  created_at: 2010-04-21 13:22:37.467096
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.467096
-  id: "10860"
-  referenced_card_id: "53"
-  referenced_name: "*tiny_mce"
-wiki_references_230: 
-  link_type: W
-  created_at: 2009-11-03 10:29:16.513221
-  card_id: "3"
-  updated_at: 2009-11-03 10:29:16.513221
-  id: "8843"
-  referenced_card_id: 
-  referenced_name: new_chunk70116713095700chunktranscludechunk
-wiki_references_016: 
-  link_type: T
-  created_at: 2009-04-24 11:24:39.563915
-  card_id: "47"
-  updated_at: 2009-04-24 11:24:39.563915
-  id: "6581"
-  referenced_card_id: 
-  referenced_name: pointer+*type_card
-wiki_references_042: 
-  link_type: L
-  created_at: 2009-12-17 09:21:53.896404
-  card_id: "63"
-  updated_at: 2009-12-17 09:21:53.896404
-  id: "9273"
-  referenced_card_id: "66"
-  referenced_name: "*signup"
-wiki_references_123: 
-  link_type: T
-  created_at: 2009-04-24 11:23:22.874677
-  card_id: "51"
-  updated_at: 2009-04-24 11:23:22.874677
-  id: "6568"
-  referenced_card_id: "51"
-  referenced_name: toggle
-wiki_references_204: 
-  link_type: L
-  created_at: 2010-04-19 17:09:48.718645
-  card_id: "154"
-  updated_at: 2010-04-19 17:09:48.718645
-  id: "10464"
-  referenced_card_id: "226"
-  referenced_name: basic+*watcher
-wiki_references_312: 
-  link_type: M
-  created_at: 2010-04-21 13:22:37.472467
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.472467
-  id: "10861"
-  referenced_card_id: 
-  referenced_name: "*google_analytic_key"
-wiki_references_231: 
-  link_type: L
-  created_at: 2010-04-19 17:34:25.591833
-  card_id: "359"
-  updated_at: 2010-04-19 17:34:25.591833
-  id: "10470"
-  referenced_card_id: "259"
-  referenced_name: set
-wiki_references_017: 
-  link_type: L
-  created_at: 2009-06-01 12:55:14.327145
-  card_id: "68"
-  updated_at: 2009-06-01 12:55:14.327145
-  id: "7911"
-  referenced_card_id: "12"
-  referenced_name: account_request
-wiki_references_043: 
-  link_type: T
-  created_at: 2009-12-17 09:21:53.876403
-  card_id: "63"
-  updated_at: 2009-12-17 09:21:53.876403
-  id: "9271"
-  referenced_card_id: "108"
-  referenced_name: "*request+*thank"
-wiki_references_124: 
-  link_type: T
-  created_at: 2009-04-24 11:23:22.890678
-  card_id: "51"
-  updated_at: 2009-04-24 11:23:22.890678
-  id: "6569"
-  referenced_card_id: 
-  referenced_name: toggle+*type_card
-wiki_references_150: 
-  link_type: W
-  created_at: 2009-06-09 18:35:38.544183
-  card_id: "214"
-  updated_at: 2009-06-09 18:35:38.544183
-  id: "8080"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_image
-wiki_references_205: 
-  link_type: L
-  created_at: 2010-04-19 17:09:48.726645
-  card_id: "154"
-  updated_at: 2010-04-19 17:09:48.726645
-  id: "10465"
-  referenced_card_id: "157"
-  referenced_name: related_subtab_universal
-wiki_references_313: 
-  link_type: T
-  created_at: 2010-04-21 13:22:37.477779
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.477779
-  id: "10862"
-  referenced_card_id: "103"
-  referenced_name: "*favicon"
-wiki_references_232: 
-  link_type: W
-  created_at: 2010-04-19 17:34:25.603834
-  card_id: "359"
-  updated_at: 2010-04-19 17:34:25.603834
-  id: "10471"
-  referenced_card_id: 
-  referenced_name: http_www_wagn_org_wagn_formatting
-wiki_references_018: 
-  link_type: W
-  created_at: 2009-04-24 11:24:39.571915
-  card_id: "47"
-  updated_at: 2009-04-24 11:24:39.571915
-  id: "6582"
-  referenced_card_id: 
-  referenced_name: new_chunk69892110956340chunktranscludechunk
-wiki_references_044: 
-  link_type: T
-  created_at: 2009-04-09 16:41:38.279253
-  card_id: "8"
-  updated_at: 2009-04-09 16:41:38.279253
-  id: "6032"
-  referenced_card_id: "8"
-  referenced_name: anyone
-wiki_references_070: 
-  link_type: W
-  created_at: 2009-12-23 11:51:04.148476
-  card_id: "314"
-  updated_at: 2009-12-23 11:51:04.148476
-  id: "9446"
-  referenced_card_id: 
-  referenced_name: ""
-wiki_references_125: 
-  link_type: W
-  created_at: 2009-04-24 11:23:22.898678
-  card_id: "51"
-  updated_at: 2009-04-24 11:23:22.898678
-  id: "6570"
-  referenced_card_id: 
-  referenced_name: new_chunk69892116452820chunktranscludechunk
-wiki_references_151: 
+  referenced_name: user+*type_card
+wiki_references_140: 
   link_type: T
   created_at: 2009-06-09 18:36:53.112868
   card_id: "19"
@@ -2655,63 +543,55 @@ wiki_references_151:
   id: "8081"
   referenced_card_id: "214"
   referenced_name: image+description
-wiki_references_206: 
-  link_type: L
-  created_at: 2010-04-19 17:09:48.738646
-  card_id: "154"
-  updated_at: 2010-04-19 17:09:48.738646
-  id: "10466"
-  referenced_card_id: "360"
-  referenced_name: setting_value
-wiki_references_340: 
+wiki_references_221: 
   link_type: T
-  created_at: 2010-04-21 13:22:38.018556
+  created_at: 2010-04-20 08:16:16.788223
+  card_id: "150"
+  updated_at: 2010-04-20 08:16:16.788223
+  id: "10567"
+  referenced_card_id: "224"
+  referenced_name: cardtype_description
+wiki_references_303: 
+  link_type: T
+  created_at: 2010-04-21 13:22:38.006753
   card_id: "278"
-  updated_at: 2010-04-21 13:22:38.018556
-  id: "10889"
-  referenced_card_id: "363"
-  referenced_name: "*send"
-wiki_references_314: 
-  link_type: L
-  created_at: 2010-04-21 13:22:37.483523
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.483523
-  id: "10863"
-  referenced_card_id: "278"
-  referenced_name: setting
-wiki_references_233: 
-  link_type: L
-  created_at: 2010-04-19 17:35:22.323726
-  card_id: "357"
-  updated_at: 2010-04-19 17:35:22.323726
-  id: "10472"
-  referenced_card_id: "259"
-  referenced_name: set
-wiki_references_045: 
+  updated_at: 2010-04-21 13:22:38.006753
+  id: "10887"
+  referenced_card_id: "256"
+  referenced_name: "*captcha"
+wiki_references_008: 
   link_type: T
-  created_at: 2009-04-09 16:41:38.491265
-  card_id: "8"
-  updated_at: 2009-04-09 16:41:38.491265
-  id: "6033"
-  referenced_card_id: 
-  referenced_name: anyone+*member
-wiki_references_071: 
+  created_at: 2009-12-12 14:05:19.72143
+  card_id: "81"
+  updated_at: 2009-12-12 14:05:19.72143
+  id: "9258"
+  referenced_card_id: "85"
+  referenced_name: menu
+wiki_references_034: 
+  link_type: T
+  created_at: 2009-04-09 16:41:38.159246
+  card_id: "10"
+  updated_at: 2009-04-09 16:41:38.159246
+  id: "6029"
+  referenced_card_id: "10"
+  referenced_name: administrator
+wiki_references_060: 
+  link_type: T
+  created_at: 2009-04-24 11:25:57.653234
+  card_id: "52"
+  updated_at: 2009-04-24 11:25:57.653234
+  id: "6591"
+  referenced_card_id: "52"
+  referenced_name: phrase
+wiki_references_115: 
   link_type: W
-  created_at: 2009-12-23 11:51:04.160477
-  card_id: "314"
-  updated_at: 2009-12-23 11:51:04.160477
-  id: "9447"
-  referenced_card_id: 
-  referenced_name: recent
-wiki_references_126: 
-  link_type: T
-  created_at: 2009-04-24 11:23:14.422195
+  created_at: 2009-04-24 11:23:14.478198
   card_id: "4"
-  updated_at: 2009-04-24 11:23:14.422195
-  id: "6559"
-  referenced_card_id: "181"
-  referenced_name: user+description
-wiki_references_152: 
+  updated_at: 2009-04-24 11:23:14.478198
+  id: "6564"
+  referenced_card_id: 
+  referenced_name: new_chunk69892112163620chunktranscludechunk
+wiki_references_141: 
   link_type: T
   created_at: 2009-06-09 18:36:53.120868
   card_id: "19"
@@ -2719,79 +599,71 @@ wiki_references_152:
   id: "8082"
   referenced_card_id: "19"
   referenced_name: image
-wiki_references_207: 
-  link_type: L
-  created_at: 2010-04-19 17:09:48.746647
-  card_id: "154"
-  updated_at: 2010-04-19 17:09:48.746647
-  id: "10467"
-  referenced_card_id: "362"
-  referenced_name: not_set_or_setting
-wiki_references_019: 
-  link_type: T
-  created_at: 2009-04-24 11:24:39.519912
-  card_id: "47"
-  updated_at: 2009-04-24 11:24:39.519912
-  id: "6577"
-  referenced_card_id: "213"
-  referenced_name: pointer+description
-wiki_references_341: 
-  link_type: T
-  created_at: 2010-04-21 13:22:38.024814
-  card_id: "278"
-  updated_at: 2010-04-21 13:22:38.024814
-  id: "10890"
-  referenced_card_id: "89"
-  referenced_name: "*table_of_content"
-wiki_references_315: 
-  link_type: L
-  created_at: 2010-04-21 13:22:37.48929
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.48929
-  id: "10864"
-  referenced_card_id: "259"
-  referenced_name: set
-wiki_references_260: 
-  link_type: T
-  created_at: 2010-04-20 08:16:16.832225
+wiki_references_222: 
+  link_type: M
+  created_at: 2010-04-20 08:16:16.800223
   card_id: "150"
-  updated_at: 2010-04-20 08:16:16.832225
-  id: "10571"
-  referenced_card_id: "159"
-  referenced_name: all_non_star_card
-wiki_references_234: 
-  link_type: W
-  created_at: 2010-04-19 17:35:22.331726
-  card_id: "357"
-  updated_at: 2010-04-19 17:35:22.331726
-  id: "10473"
+  updated_at: 2010-04-20 08:16:16.800223
+  id: "10568"
   referenced_card_id: 
-  referenced_name: http_www_wagn_org_wagn_formatting
-wiki_references_046: 
-  link_type: T
-  created_at: 2009-04-24 11:18:02.760046
-  card_id: "5"
-  updated_at: 2009-04-24 11:18:02.760046
-  id: "6520"
-  referenced_card_id: "5"
-  referenced_name: cardtype
-wiki_references_072: 
+  referenced_name: cardtype_help_text
+wiki_references_330: 
   link_type: W
-  created_at: 2009-12-23 11:51:04.168477
-  card_id: "314"
-  updated_at: 2009-12-23 11:51:04.168477
-  id: "9448"
+  created_at: 2010-04-21 13:22:40.468515
+  card_id: "311"
+  updated_at: 2010-04-21 13:22:40.468515
+  id: "10914"
   referenced_card_id: 
-  referenced_name: ""
-wiki_references_127: 
+  referenced_name: http_www_wagn_org_wagn_custom_help_text
+wiki_references_304: 
   link_type: T
-  created_at: 2009-04-24 11:24:04.941942
+  created_at: 2010-04-21 13:22:38.012349
+  card_id: "278"
+  updated_at: 2010-04-21 13:22:38.012349
+  id: "10888"
+  referenced_card_id: "255"
+  referenced_name: "*layout"
+wiki_references_223: 
+  link_type: M
+  created_at: 2010-04-20 08:16:16.812224
+  card_id: "150"
+  updated_at: 2010-04-20 08:16:16.812224
+  id: "10569"
+  referenced_card_id: 
+  referenced_name: cardtype_form
+wiki_references_009: 
+  link_type: T
+  created_at: 2009-04-24 11:24:04.977944
   card_id: "30"
-  updated_at: 2009-04-24 11:24:04.941942
-  id: "6571"
-  referenced_card_id: "182"
-  referenced_name: search+description
-wiki_references_153: 
+  updated_at: 2009-04-24 11:24:04.977944
+  id: "6575"
+  referenced_card_id: 
+  referenced_name: search+*type_card
+wiki_references_035: 
+  link_type: T
+  created_at: 2009-04-09 16:41:38.171246
+  card_id: "10"
+  updated_at: 2009-04-09 16:41:38.171246
+  id: "6030"
+  referenced_card_id: 
+  referenced_name: administrator+*member
+wiki_references_061: 
+  link_type: T
+  created_at: 2009-04-24 11:25:57.665234
+  card_id: "52"
+  updated_at: 2009-04-24 11:25:57.665234
+  id: "6592"
+  referenced_card_id: "52"
+  referenced_name: phrase
+wiki_references_116: 
+  link_type: T
+  created_at: 2009-04-24 11:23:22.858676
+  card_id: "51"
+  updated_at: 2009-04-24 11:23:22.858676
+  id: "6566"
+  referenced_card_id: "51"
+  referenced_name: toggle
+wiki_references_142: 
   link_type: L
   created_at: 2009-04-24 15:34:53.155717
   card_id: "112"
@@ -2799,63 +671,63 @@ wiki_references_153:
   id: "6650"
   referenced_card_id: "170"
   referenced_name: "*incoming"
-wiki_references_208: 
-  link_type: W
-  created_at: 2009-06-10 10:01:56.894252
-  card_id: "215"
-  updated_at: 2009-06-10 10:01:56.894252
-  id: "8091"
-  referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_file
-wiki_references_342: 
-  link_type: T
-  created_at: 2010-04-21 13:22:38.030431
-  card_id: "278"
-  updated_at: 2010-04-21 13:22:38.030431
-  id: "10891"
-  referenced_card_id: "61"
-  referenced_name: "*thank"
-wiki_references_316: 
+wiki_references_331: 
   link_type: L
-  created_at: 2010-04-21 13:22:37.495092
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.495092
-  id: "10865"
-  referenced_card_id: "278"
-  referenced_name: setting
-wiki_references_261: 
+  created_at: 2010-04-21 13:22:40.474892
+  card_id: "311"
+  updated_at: 2010-04-21 13:22:40.474892
+  id: "10915"
+  referenced_card_id: "259"
+  referenced_name: set
+wiki_references_305: 
   link_type: T
-  created_at: 2010-04-20 08:16:16.844226
-  card_id: "150"
-  updated_at: 2010-04-20 08:16:16.844226
-  id: "10572"
-  referenced_card_id: "161"
-  referenced_name: card_by_type
-wiki_references_235: 
+  created_at: 2010-04-21 13:22:38.018556
+  card_id: "278"
+  updated_at: 2010-04-21 13:22:38.018556
+  id: "10889"
+  referenced_card_id: "363"
+  referenced_name: "*send"
+wiki_references_250: 
+  link_type: T
+  created_at: 2010-04-15 18:43:10.581985
+  card_id: "169"
+  updated_at: 2010-04-15 18:43:10.581985
+  id: "9777"
+  referenced_card_id: "339"
+  referenced_name: "*outgoing+*right"
+wiki_references_224: 
   link_type: M
-  created_at: 2010-04-15 18:42:31.830736
-  card_id: "88"
-  updated_at: 2010-04-15 18:42:31.830736
-  id: "9452"
+  created_at: 2010-04-20 08:16:16.820224
+  card_id: "150"
+  updated_at: 2010-04-20 08:16:16.820224
+  id: "10570"
   referenced_card_id: 
-  referenced_name: cardtype+*type+*default+description
-wiki_references_073: 
+  referenced_name: right_form_that_aren_t_subtab
+wiki_references_036: 
   link_type: W
-  created_at: 2009-12-23 11:51:04.176478
-  card_id: "314"
-  updated_at: 2009-12-23 11:51:04.176478
-  id: "9449"
+  created_at: 2009-12-17 09:21:51.980295
+  card_id: "56"
+  updated_at: 2009-12-17 09:21:51.980295
+  id: "9269"
   referenced_card_id: 
-  referenced_name: http_www_wagn_org
-wiki_references_128: 
-  link_type: W
-  created_at: 2009-06-09 18:15:35.336419
-  card_id: "85"
-  updated_at: 2009-06-09 18:15:35.336419
-  id: "8072"
+  referenced_name: admin_task
+wiki_references_062: 
+  link_type: T
+  created_at: 2009-04-24 11:25:57.697236
+  card_id: "52"
+  updated_at: 2009-04-24 11:25:57.697236
+  id: "6593"
   referenced_card_id: 
-  referenced_name: card_new
-wiki_references_154: 
+  referenced_name: phrase+*type_card
+wiki_references_117: 
+  link_type: T
+  created_at: 2009-04-24 11:23:22.866676
+  card_id: "51"
+  updated_at: 2009-04-24 11:23:22.866676
+  id: "6567"
+  referenced_card_id: "51"
+  referenced_name: toggle
+wiki_references_143: 
   link_type: L
   created_at: 2009-04-24 15:34:53.163717
   card_id: "112"
@@ -2863,79 +735,71 @@ wiki_references_154:
   id: "6651"
   referenced_card_id: "168"
   referenced_name: "*outgoing"
-wiki_references_180: 
+wiki_references_332: 
   link_type: W
-  created_at: 2010-04-20 17:20:59.123347
-  card_id: "152"
-  updated_at: 2010-04-20 17:20:59.123347
-  id: "10810"
+  created_at: 2010-04-21 13:22:40.621835
+  card_id: "308"
+  updated_at: 2010-04-21 13:22:40.621835
+  id: "10916"
   referenced_card_id: 
-  referenced_name: http_wagn_org_wagn_administration+ticket_for_item
-wiki_references_209: 
+  referenced_name: http_www_wagn_org_wagn_account
+wiki_references_306: 
   link_type: T
-  created_at: 2010-04-19 12:14:00.185298
-  card_id: "69"
-  updated_at: 2010-04-19 12:14:00.185298
-  id: "10046"
-  referenced_card_id: "55"
-  referenced_name: "*title"
-wiki_references_047: 
-  link_type: T
-  created_at: 2009-04-24 11:18:02.916055
-  card_id: "5"
-  updated_at: 2009-04-24 11:18:02.916055
-  id: "6521"
-  referenced_card_id: 
-  referenced_name: cardtype+*type_card
-wiki_references_343: 
-  link_type: W
-  created_at: 2010-04-21 13:22:38.03608
+  created_at: 2010-04-21 13:22:38.024814
   card_id: "278"
-  updated_at: 2010-04-21 13:22:38.03608
-  id: "10892"
-  referenced_card_id: 
-  referenced_name: http_www_wagn_org_wagn_help_text
-wiki_references_317: 
-  link_type: L
-  created_at: 2010-04-21 13:22:37.50105
-  card_id: "73"
-  updated_at: 2010-04-21 13:22:37.50105
-  id: "10866"
-  referenced_card_id: "259"
-  referenced_name: set
-wiki_references_262: 
+  updated_at: 2010-04-21 13:22:38.024814
+  id: "10890"
+  referenced_card_id: "89"
+  referenced_name: "*table_of_content"
+wiki_references_251: 
   link_type: M
-  created_at: 2010-04-20 08:16:16.852226
-  card_id: "150"
-  updated_at: 2010-04-20 08:16:16.852226
-  id: "10573"
+  created_at: 2010-04-15 18:43:10.649989
+  card_id: "169"
+  updated_at: 2010-04-15 18:43:10.649989
+  id: "9778"
   referenced_card_id: 
-  referenced_name: user_email
-wiki_references_236: 
+  referenced_name: "*outgoing+*right+tag"
+wiki_references_225: 
   link_type: T
-  created_at: 2010-04-15 18:42:31.890739
-  card_id: "88"
-  updated_at: 2010-04-15 18:42:31.890739
-  id: "9453"
-  referenced_card_id: "88"
-  referenced_name: cardtype+*type+*default
-wiki_references_074: 
-  link_type: L
-  created_at: 2009-12-23 11:51:05.640561
-  card_id: "275"
-  updated_at: 2009-12-23 11:51:05.640561
-  id: "9450"
-  referenced_card_id: "314"
-  referenced_name: default_layout
-wiki_references_129: 
+  created_at: 2010-04-20 08:16:16.832225
+  card_id: "150"
+  updated_at: 2010-04-20 08:16:16.832225
+  id: "10571"
+  referenced_card_id: "159"
+  referenced_name: all_non_star_card
+wiki_references_037: 
   link_type: T
-  created_at: 2009-04-24 11:22:20.862273
+  created_at: 2009-12-17 09:21:51.948293
+  card_id: "56"
+  updated_at: 2009-12-17 09:21:51.948293
+  id: "9268"
+  referenced_card_id: "62"
+  referenced_name: "*invite+*thank"
+wiki_references_063: 
+  link_type: W
+  created_at: 2009-04-24 11:25:57.709237
+  card_id: "52"
+  updated_at: 2009-04-24 11:25:57.709237
+  id: "6594"
+  referenced_card_id: 
+  referenced_name: new_chunk69892115869060chunktranscludechunk
+wiki_references_090: 
+  link_type: T
+  created_at: 2009-04-24 11:22:20.902275
   card_id: "18"
-  updated_at: 2009-04-24 11:22:20.862273
-  id: "6535"
-  referenced_card_id: "215"
-  referenced_name: file+description
-wiki_references_155: 
+  updated_at: 2009-04-24 11:22:20.902275
+  id: "6539"
+  referenced_card_id: 
+  referenced_name: file+*type_card
+wiki_references_118: 
+  link_type: T
+  created_at: 2009-04-24 11:23:22.874677
+  card_id: "51"
+  updated_at: 2009-04-24 11:23:22.874677
+  id: "6568"
+  referenced_card_id: "51"
+  referenced_name: toggle
+wiki_references_144: 
   link_type: L
   created_at: 2009-04-24 15:34:53.171718
   card_id: "112"
@@ -2943,7 +807,1471 @@ wiki_references_155:
   id: "6652"
   referenced_card_id: "110"
   referenced_name: "*pluss"
-wiki_references_181: 
+wiki_references_170: 
+  link_type: W
+  created_at: 2010-04-20 17:20:59.147348
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:59.147348
+  id: "10812"
+  referenced_card_id: 
+  referenced_name: "*migrate_content"
+wiki_references_333: 
+  link_type: L
+  created_at: 2010-04-21 13:22:40.628295
+  card_id: "308"
+  updated_at: 2010-04-21 13:22:40.628295
+  id: "10917"
+  referenced_card_id: "259"
+  referenced_name: set
+wiki_references_307: 
+  link_type: T
+  created_at: 2010-04-21 13:22:38.030431
+  card_id: "278"
+  updated_at: 2010-04-21 13:22:38.030431
+  id: "10891"
+  referenced_card_id: "61"
+  referenced_name: "*thank"
+wiki_references_252: 
+  link_type: W
+  created_at: 2010-04-15 18:43:10.870001
+  card_id: "169"
+  updated_at: 2010-04-15 18:43:10.870001
+  id: "9779"
+  referenced_card_id: 
+  referenced_name: "*outgoing+*right+*link"
+wiki_references_226: 
+  link_type: T
+  created_at: 2010-04-20 08:16:16.844226
+  card_id: "150"
+  updated_at: 2010-04-20 08:16:16.844226
+  id: "10572"
+  referenced_card_id: "161"
+  referenced_name: card_by_type
+wiki_references_038: 
+  link_type: M
+  created_at: 2009-12-17 09:21:53.864402
+  card_id: "63"
+  updated_at: 2009-12-17 09:21:53.864402
+  id: "9270"
+  referenced_card_id: 
+  referenced_name: "*request+*to"
+wiki_references_064: 
+  link_type: T
+  created_at: 2009-12-23 11:51:04.100473
+  card_id: "314"
+  updated_at: 2009-12-23 11:51:04.100473
+  id: "9441"
+  referenced_card_id: "79"
+  referenced_name: "*logo"
+wiki_references_119: 
+  link_type: T
+  created_at: 2009-04-24 11:23:22.890678
+  card_id: "51"
+  updated_at: 2009-04-24 11:23:22.890678
+  id: "6569"
+  referenced_card_id: 
+  referenced_name: toggle+*type_card
+wiki_references_145: 
+  link_type: L
+  created_at: 2009-04-24 15:34:53.307726
+  card_id: "112"
+  updated_at: 2009-04-24 15:34:53.307726
+  id: "6653"
+  referenced_card_id: "115"
+  referenced_name: "*community"
+wiki_references_171: 
+  link_type: L
+  created_at: 2010-04-20 17:20:59.159349
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:59.159349
+  id: "10813"
+  referenced_card_id: "150"
+  referenced_name: john_abbe
+wiki_references_360: 
+  link_type: W
+  created_at: 2010-04-21 16:24:31.209634
+  card_id: "214"
+  updated_at: 2010-04-21 16:24:31.209634
+  id: "10944"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_image
+wiki_references_334: 
+  link_type: W
+  created_at: 2010-04-21 13:22:40.770341
+  card_id: "83"
+  updated_at: 2010-04-21 13:22:40.770341
+  id: "10918"
+  referenced_card_id: 
+  referenced_name: http_www_wagn_org_wagn_sidebar
+wiki_references_308: 
+  link_type: W
+  created_at: 2010-04-21 13:22:38.03608
+  card_id: "278"
+  updated_at: 2010-04-21 13:22:38.03608
+  id: "10892"
+  referenced_card_id: 
+  referenced_name: http_www_wagn_org_wagn_help_text
+wiki_references_253: 
+  link_type: W
+  created_at: 2010-04-15 18:43:10.926004
+  card_id: "169"
+  updated_at: 2010-04-15 18:43:10.926004
+  id: "9780"
+  referenced_card_id: 
+  referenced_name: "*outgoing+*right+*inclusion"
+wiki_references_227: 
+  link_type: M
+  created_at: 2010-04-20 08:16:16.852226
+  card_id: "150"
+  updated_at: 2010-04-20 08:16:16.852226
+  id: "10573"
+  referenced_card_id: 
+  referenced_name: user_email
+wiki_references_039: 
+  link_type: T
+  created_at: 2009-12-23 11:51:04.080472
+  card_id: "314"
+  updated_at: 2009-12-23 11:51:04.080472
+  id: "9439"
+  referenced_card_id: 
+  referenced_name: "*account_link"
+wiki_references_065: 
+  link_type: T
+  created_at: 2009-12-23 11:51:04.108474
+  card_id: "314"
+  updated_at: 2009-12-23 11:51:04.108474
+  id: "9442"
+  referenced_card_id: "81"
+  referenced_name: "*sidebar"
+wiki_references_091: 
+  link_type: W
+  created_at: 2009-04-24 11:22:20.914276
+  card_id: "18"
+  updated_at: 2009-04-24 11:22:20.914276
+  id: "6540"
+  referenced_card_id: 
+  referenced_name: new_chunk69892110410760chunktranscludechunk
+wiki_references_146: 
+  link_type: T
+  created_at: 2009-06-09 18:36:53.128869
+  card_id: "19"
+  updated_at: 2009-06-09 18:36:53.128869
+  id: "8083"
+  referenced_card_id: "19"
+  referenced_name: image
+wiki_references_172: 
+  link_type: W
+  created_at: 2010-04-20 17:34:34.953778
+  card_id: "368"
+  updated_at: 2010-04-20 17:34:34.953778
+  id: "10814"
+  referenced_card_id: 
+  referenced_name: "*send+*right+email_config"
+wiki_references_361: 
+  link_type: W
+  created_at: 2010-04-21 16:24:31.52404
+  card_id: "213"
+  updated_at: 2010-04-21 16:24:31.52404
+  id: "10945"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_pointer
+wiki_references_335: 
+  link_type: L
+  created_at: 2010-04-21 13:22:41.025105
+  card_id: "299"
+  updated_at: 2010-04-21 13:22:41.025105
+  id: "10919"
+  referenced_card_id: "47"
+  referenced_name: pointer
+wiki_references_309: 
+  link_type: W
+  created_at: 2010-04-21 13:22:38.041665
+  card_id: "278"
+  updated_at: 2010-04-21 13:22:38.041665
+  id: "10893"
+  referenced_card_id: 
+  referenced_name: http_www_wagn_org_wagn_formatting
+wiki_references_280: 
+  link_type: L
+  created_at: 2010-04-21 13:22:37.48929
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.48929
+  id: "10864"
+  referenced_card_id: "259"
+  referenced_name: set
+wiki_references_254: 
+  link_type: W
+  created_at: 2010-04-15 18:43:10.974007
+  card_id: "169"
+  updated_at: 2010-04-15 18:43:10.974007
+  id: "9781"
+  referenced_card_id: 
+  referenced_name: "*outgoing+*right+tag"
+wiki_references_228: 
+  link_type: M
+  created_at: 2010-04-20 08:16:16.91623
+  card_id: "150"
+  updated_at: 2010-04-20 08:16:16.91623
+  id: "10574"
+  referenced_card_id: 
+  referenced_name: name_and_email+*right+*content
+wiki_references_066: 
+  link_type: T
+  created_at: 2009-12-23 11:51:04.128475
+  card_id: "314"
+  updated_at: 2009-12-23 11:51:04.128475
+  id: "9443"
+  referenced_card_id: 
+  referenced_name: "*version"
+wiki_references_092: 
+  link_type: T
+  created_at: 2009-04-24 11:22:32.602942
+  card_id: "50"
+  updated_at: 2009-04-24 11:22:32.602942
+  id: "6542"
+  referenced_card_id: "50"
+  referenced_name: html
+wiki_references_147: 
+  link_type: T
+  created_at: 2009-06-09 18:36:53.132869
+  card_id: "19"
+  updated_at: 2009-06-09 18:36:53.132869
+  id: "8084"
+  referenced_card_id: "19"
+  referenced_name: image
+wiki_references_173: 
+  link_type: L
+  created_at: 2010-04-19 17:09:48.62264
+  card_id: "154"
+  updated_at: 2010-04-19 17:09:48.62264
+  id: "10455"
+  referenced_card_id: "149"
+  referenced_name: ethan_mc_cutchen
+wiki_references_362: 
+  link_type: W
+  created_at: 2010-04-21 16:24:31.70398
+  card_id: "212"
+  updated_at: 2010-04-21 16:24:31.70398
+  id: "10946"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_toggle
+wiki_references_336: 
+  link_type: M
+  created_at: 2010-04-21 16:24:27.693307
+  card_id: "373"
+  updated_at: 2010-04-21 16:24:27.693307
+  id: "10920"
+  referenced_card_id: 
+  referenced_name: email_config+*right+*content+*from
+wiki_references_281: 
+  link_type: L
+  created_at: 2010-04-21 13:22:37.495092
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.495092
+  id: "10865"
+  referenced_card_id: "278"
+  referenced_name: setting
+wiki_references_255: 
+  link_type: M
+  created_at: 2010-04-15 18:43:11.986065
+  card_id: "116"
+  updated_at: 2010-04-15 18:43:11.986065
+  id: "9782"
+  referenced_card_id: 
+  referenced_name: "*community+*right+*editor"
+wiki_references_229: 
+  link_type: T
+  created_at: 2010-04-20 08:16:16.964233
+  card_id: "150"
+  updated_at: 2010-04-20 08:16:16.964233
+  id: "10575"
+  referenced_card_id: 
+  referenced_name: john_abbe+*watching
+wiki_references_067: 
+  link_type: T
+  created_at: 2009-12-23 11:51:04.136475
+  card_id: "314"
+  updated_at: 2009-12-23 11:51:04.136475
+  id: "9444"
+  referenced_card_id: 
+  referenced_name: "*alert"
+wiki_references_093: 
+  link_type: T
+  created_at: 2009-04-24 11:22:32.610943
+  card_id: "50"
+  updated_at: 2009-04-24 11:22:32.610943
+  id: "6543"
+  referenced_card_id: "50"
+  referenced_name: html
+wiki_references_148: 
+  link_type: T
+  created_at: 2009-06-09 18:36:53.14487
+  card_id: "19"
+  updated_at: 2009-06-09 18:36:53.14487
+  id: "8085"
+  referenced_card_id: 
+  referenced_name: image+*type_card
+wiki_references_174: 
+  link_type: L
+  created_at: 2010-04-19 17:09:48.63464
+  card_id: "154"
+  updated_at: 2010-04-19 17:09:48.63464
+  id: "10456"
+  referenced_card_id: "150"
+  referenced_name: john_abbe
+wiki_references_363: 
+  link_type: L
+  created_at: 2010-04-21 16:24:31.890774
+  card_id: "210"
+  updated_at: 2010-04-21 16:24:31.890774
+  id: "10947"
+  referenced_card_id: "15"
+  referenced_name: anonymous
+wiki_references_337: 
+  link_type: M
+  created_at: 2010-04-21 16:24:27.861035
+  card_id: "373"
+  updated_at: 2010-04-21 16:24:27.861035
+  id: "10921"
+  referenced_card_id: 
+  referenced_name: email_config+*right+*content+*to
+wiki_references_282: 
+  link_type: L
+  created_at: 2010-04-21 13:22:37.50105
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.50105
+  id: "10866"
+  referenced_card_id: "259"
+  referenced_name: set
+wiki_references_256: 
+  link_type: M
+  created_at: 2010-04-15 18:43:12.08607
+  card_id: "116"
+  updated_at: 2010-04-15 18:43:12.08607
+  id: "9783"
+  referenced_card_id: 
+  referenced_name: "*community+*right+discussion"
+wiki_references_068: 
+  link_type: T
+  created_at: 2009-12-23 11:51:04.140476
+  card_id: "314"
+  updated_at: 2009-12-23 11:51:04.140476
+  id: "9445"
+  referenced_card_id: 
+  referenced_name: "*foot"
+wiki_references_094: 
+  link_type: T
+  created_at: 2009-04-24 11:22:32.622943
+  card_id: "50"
+  updated_at: 2009-04-24 11:22:32.622943
+  id: "6544"
+  referenced_card_id: "50"
+  referenced_name: html
+wiki_references_149: 
+  link_type: W
+  created_at: 2009-06-09 18:36:53.15287
+  card_id: "19"
+  updated_at: 2009-06-09 18:36:53.15287
+  id: "8086"
+  referenced_card_id: 
+  referenced_name: new_chunk70203879566840chunktranscludechunk
+wiki_references_175: 
+  link_type: L
+  created_at: 2010-04-19 17:09:48.646641
+  card_id: "154"
+  updated_at: 2010-04-19 17:09:48.646641
+  id: "10457"
+  referenced_card_id: "156"
+  referenced_name: lewi_hoffman
+wiki_references_364: 
+  link_type: W
+  created_at: 2010-04-21 16:24:31.899168
+  card_id: "210"
+  updated_at: 2010-04-21 16:24:31.899168
+  id: "10948"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_account
+wiki_references_338: 
+  link_type: M
+  created_at: 2010-04-21 16:24:27.943493
+  card_id: "373"
+  updated_at: 2010-04-21 16:24:27.943493
+  id: "10922"
+  referenced_card_id: 
+  referenced_name: email_config+*right+*content+*cc
+wiki_references_283: 
+  link_type: L
+  created_at: 2010-04-21 13:22:37.507038
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.507038
+  id: "10867"
+  referenced_card_id: "259"
+  referenced_name: set
+wiki_references_257: 
+  link_type: T
+  created_at: 2010-04-15 18:43:12.098071
+  card_id: "116"
+  updated_at: 2010-04-15 18:43:12.098071
+  id: "9784"
+  referenced_card_id: "340"
+  referenced_name: "*community+*right"
+wiki_references_069: 
+  link_type: W
+  created_at: 2009-12-23 11:51:04.148476
+  card_id: "314"
+  updated_at: 2009-12-23 11:51:04.148476
+  id: "9446"
+  referenced_card_id: 
+  referenced_name: ""
+wiki_references_095: 
+  link_type: T
+  created_at: 2009-04-24 11:22:32.630944
+  card_id: "50"
+  updated_at: 2009-04-24 11:22:32.630944
+  id: "6545"
+  referenced_card_id: 
+  referenced_name: html+*type_card
+wiki_references_176: 
+  link_type: L
+  created_at: 2010-04-19 17:09:48.654641
+  card_id: "154"
+  updated_at: 2010-04-19 17:09:48.654641
+  id: "10458"
+  referenced_card_id: "154"
+  referenced_name: "*ignore"
+wiki_references_365: 
+  link_type: W
+  created_at: 2010-04-21 16:24:32.244801
+  card_id: "211"
+  updated_at: 2010-04-21 16:24:32.244801
+  id: "10949"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_account
+wiki_references_339: 
+  link_type: M
+  created_at: 2010-04-21 16:24:28.155923
+  card_id: "373"
+  updated_at: 2010-04-21 16:24:28.155923
+  id: "10923"
+  referenced_card_id: 
+  referenced_name: email_config+*right+*content+*bcc
+wiki_references_284: 
+  link_type: L
+  created_at: 2010-04-21 13:22:37.512291
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.512291
+  id: "10868"
+  referenced_card_id: "1"
+  referenced_name: wagn_bot
+wiki_references_258: 
+  link_type: M
+  created_at: 2010-04-15 18:43:12.170075
+  card_id: "116"
+  updated_at: 2010-04-15 18:43:12.170075
+  id: "9785"
+  referenced_card_id: 
+  referenced_name: "*community+*right+tag"
+wiki_references_096: 
+  link_type: W
+  created_at: 2009-04-24 11:22:32.638944
+  card_id: "50"
+  updated_at: 2009-04-24 11:22:32.638944
+  id: "6546"
+  referenced_card_id: 
+  referenced_name: new_chunk69892112717280chunktranscludechunk
+wiki_references_177: 
+  link_type: L
+  created_at: 2010-04-19 17:09:48.666642
+  card_id: "154"
+  updated_at: 2010-04-19 17:09:48.666642
+  id: "10459"
+  referenced_card_id: "153"
+  referenced_name: card_to_copy_to_new_wagn
+wiki_references_366: 
+  link_type: W
+  created_at: 2010-04-21 16:24:32.43015
+  card_id: "147"
+  updated_at: 2010-04-21 16:24:32.43015
+  id: "10950"
+  referenced_card_id: 
+  referenced_name: admin_task
+wiki_references_285: 
+  link_type: L
+  created_at: 2010-04-21 13:22:37.518138
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.518138
+  id: "10869"
+  referenced_card_id: "259"
+  referenced_name: set
+wiki_references_259: 
+  link_type: W
+  created_at: 2010-04-15 18:43:12.234079
+  card_id: "116"
+  updated_at: 2010-04-15 18:43:12.234079
+  id: "9786"
+  referenced_card_id: 
+  referenced_name: "*community+*right+*editor"
+wiki_references_097: 
+  link_type: T
+  created_at: 2009-05-04 14:32:57.689206
+  card_id: "100"
+  updated_at: 2009-05-04 14:32:57.689206
+  id: "7596"
+  referenced_card_id: 
+  referenced_name: account_request+*type_card
+wiki_references_178: 
+  link_type: L
+  created_at: 2010-04-19 17:09:48.678643
+  card_id: "154"
+  updated_at: 2010-04-19 17:09:48.678643
+  id: "10460"
+  referenced_card_id: "152"
+  referenced_name: new
+wiki_references_367: 
+  link_type: W
+  created_at: 2010-04-21 16:24:32.436849
+  card_id: "147"
+  updated_at: 2010-04-21 16:24:32.436849
+  id: "10951"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_permission
+wiki_references_286: 
+  link_type: L
+  created_at: 2010-04-21 13:22:37.524229
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.524229
+  id: "10870"
+  referenced_card_id: "5"
+  referenced_name: cardtype
+wiki_references_098: 
+  link_type: T
+  created_at: 2009-05-04 14:32:57.697206
+  card_id: "100"
+  updated_at: 2009-05-04 14:32:57.697206
+  id: "7597"
+  referenced_card_id: "101"
+  referenced_name: card_with_account
+wiki_references_179: 
+  link_type: L
+  created_at: 2010-04-19 17:09:48.686643
+  card_id: "154"
+  updated_at: 2010-04-19 17:09:48.686643
+  id: "10461"
+  referenced_card_id: "159"
+  referenced_name: all_non_star_card
+wiki_references_368: 
+  link_type: W
+  created_at: 2010-04-21 16:24:32.754125
+  card_id: "202"
+  updated_at: 2010-04-21 16:24:32.754125
+  id: "10952"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_html
+wiki_references_287: 
+  link_type: L
+  created_at: 2010-04-21 13:22:37.529829
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.529829
+  id: "10871"
+  referenced_card_id: "151"
+  referenced_name: administrator_link
+wiki_references_099: 
+  link_type: W
+  created_at: 2009-05-04 14:32:57.701207
+  card_id: "100"
+  updated_at: 2009-05-04 14:32:57.701207
+  id: "7598"
+  referenced_card_id: 
+  referenced_name: account_invite
+wiki_references_369: 
+  link_type: W
+  created_at: 2010-04-21 16:24:32.982502
+  card_id: "181"
+  updated_at: 2010-04-21 16:24:32.982502
+  id: "10953"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_user
+wiki_references_288: 
+  link_type: W
+  created_at: 2010-04-21 13:22:37.535556
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.535556
+  id: "10872"
+  referenced_card_id: 
+  referenced_name: http_www_wagn_org_wagn_account_administering_20account
+wiki_references_289: 
+  link_type: W
+  created_at: 2010-04-21 13:22:37.541183
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.541183
+  id: "10873"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_skin
+wiki_references_100: 
+  link_type: L
+  created_at: 2009-05-04 14:32:57.709207
+  card_id: "100"
+  updated_at: 2009-05-04 14:32:57.709207
+  id: "7599"
+  referenced_card_id: "15"
+  referenced_name: anonymous
+wiki_references_101: 
+  link_type: L
+  created_at: 2009-05-04 14:32:57.717208
+  card_id: "100"
+  updated_at: 2009-05-04 14:32:57.717208
+  id: "7600"
+  referenced_card_id: "1"
+  referenced_name: wagn_bot
+wiki_references_020: 
+  link_type: M
+  created_at: 2009-12-17 09:21:49.096131
+  card_id: "66"
+  updated_at: 2009-12-17 09:21:49.096131
+  id: "9261"
+  referenced_card_id: 
+  referenced_name: "*signup+*subject"
+wiki_references_021: 
+  link_type: M
+  created_at: 2009-12-17 09:21:49.224138
+  card_id: "66"
+  updated_at: 2009-12-17 09:21:49.224138
+  id: "9262"
+  referenced_card_id: 
+  referenced_name: "*signup+*message"
+wiki_references_102: 
+  link_type: L
+  created_at: 2009-05-04 14:32:57.725208
+  card_id: "100"
+  updated_at: 2009-05-04 14:32:57.725208
+  id: "7601"
+  referenced_card_id: "4"
+  referenced_name: user
+wiki_references_210: 
+  link_type: M
+  created_at: 2010-04-15 18:42:37.751073
+  card_id: "322"
+  updated_at: 2010-04-15 18:42:37.751073
+  id: "9520"
+  referenced_card_id: 
+  referenced_name: role+*type+*content+description
+wiki_references_022: 
+  link_type: T
+  created_at: 2009-12-23 11:51:03.956465
+  card_id: "314"
+  updated_at: 2009-12-23 11:51:03.956465
+  id: "9437"
+  referenced_card_id: 
+  referenced_name: "*head"
+wiki_references_103: 
+  link_type: W
+  created_at: 2009-05-04 14:32:57.729208
+  card_id: "100"
+  updated_at: 2009-05-04 14:32:57.729208
+  id: "7602"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_account
+wiki_references_211: 
+  link_type: T
+  created_at: 2010-04-15 18:42:37.763074
+  card_id: "322"
+  updated_at: 2010-04-15 18:42:37.763074
+  id: "9521"
+  referenced_card_id: "322"
+  referenced_name: role+*type+*content
+wiki_references_023: 
+  link_type: W
+  created_at: 2009-12-17 09:21:49.240139
+  card_id: "66"
+  updated_at: 2009-12-17 09:21:49.240139
+  id: "9264"
+  referenced_card_id: 
+  referenced_name: card_option_account_request
+wiki_references_104: 
+  link_type: T
+  created_at: 2009-04-24 11:22:32.590941
+  card_id: "50"
+  updated_at: 2009-04-24 11:22:32.590941
+  id: "6541"
+  referenced_card_id: "202"
+  referenced_name: html+description
+wiki_references_130: 
+  link_type: T
+  created_at: 2010-04-20 17:20:58.447308
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.447308
+  id: "10786"
+  referenced_card_id: 
+  referenced_name: cardtype+*type_card
+wiki_references_212: 
+  link_type: M
+  created_at: 2010-04-15 18:42:37.819077
+  card_id: "322"
+  updated_at: 2010-04-15 18:42:37.819077
+  id: "9522"
+  referenced_card_id: 
+  referenced_name: role+*type+*content+*member
+wiki_references_024: 
+  link_type: W
+  created_at: 2009-12-17 09:21:49.25214
+  card_id: "66"
+  updated_at: 2009-12-17 09:21:49.25214
+  id: "9265"
+  referenced_card_id: 
+  referenced_name: admin_task
+wiki_references_050: 
+  link_type: W
+  created_at: 2009-12-22 07:48:22.404472
+  card_id: "251"
+  updated_at: 2009-12-22 07:48:22.404472
+  id: "9326"
+  referenced_card_id: 
+  referenced_name: select
+wiki_references_105: 
+  link_type: M
+  created_at: 2009-04-24 11:22:49.923929
+  card_id: "20"
+  updated_at: 2009-04-24 11:22:49.923929
+  id: "6553"
+  referenced_card_id: 
+  referenced_name: number+description
+wiki_references_131: 
+  link_type: T
+  created_at: 2010-04-20 17:20:58.463309
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.463309
+  id: "10787"
+  referenced_card_id: "224"
+  referenced_name: cardtype_description
+wiki_references_320: 
+  link_type: L
+  created_at: 2010-04-21 13:22:39.491191
+  card_id: "250"
+  updated_at: 2010-04-21 13:22:39.491191
+  id: "10904"
+  referenced_card_id: "259"
+  referenced_name: set
+wiki_references_213: 
+  link_type: T
+  created_at: 2010-04-15 18:42:53.579975
+  card_id: "119"
+  updated_at: 2010-04-15 18:42:53.579975
+  id: "9596"
+  referenced_card_id: "330"
+  referenced_name: "*account+*right"
+wiki_references_025: 
+  link_type: T
+  created_at: 2009-12-17 09:21:49.232138
+  card_id: "66"
+  updated_at: 2009-12-17 09:21:49.232138
+  id: "9263"
+  referenced_card_id: "67"
+  referenced_name: "*signup+*thank"
+wiki_references_051: 
+  link_type: M
+  created_at: 2009-04-24 11:25:43.476426
+  card_id: "22"
+  updated_at: 2009-04-24 11:25:43.476426
+  id: "6583"
+  referenced_card_id: 
+  referenced_name: plain_text+description
+wiki_references_106: 
+  link_type: T
+  created_at: 2009-04-24 11:22:49.93193
+  card_id: "20"
+  updated_at: 2009-04-24 11:22:49.93193
+  id: "6554"
+  referenced_card_id: "20"
+  referenced_name: number
+wiki_references_132: 
+  link_type: T
+  created_at: 2010-04-20 17:20:58.515312
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.515312
+  id: "10788"
+  referenced_card_id: 
+  referenced_name: role+*type_card
+wiki_references_321: 
+  link_type: W
+  created_at: 2010-04-21 13:22:39.497874
+  card_id: "250"
+  updated_at: 2010-04-21 13:22:39.497874
+  id: "10905"
+  referenced_card_id: 
+  referenced_name: http_www_wagn_org_wagn_custom_thank_you_message_for_form
+wiki_references_240: 
+  link_type: W
+  created_at: 2010-04-15 18:43:05.605701
+  card_id: "171"
+  updated_at: 2010-04-15 18:43:05.605701
+  id: "9750"
+  referenced_card_id: 
+  referenced_name: "*incoming+*right+*tagged"
+wiki_references_214: 
+  link_type: M
+  created_at: 2010-04-15 18:42:53.675981
+  card_id: "119"
+  updated_at: 2010-04-15 18:42:53.675981
+  id: "9597"
+  referenced_card_id: 
+  referenced_name: "*account+*right+*role"
+wiki_references_026: 
+  link_type: L
+  created_at: 2009-04-27 22:09:19.574851
+  card_id: "151"
+  updated_at: 2009-04-27 22:09:19.574851
+  id: "7272"
+  referenced_card_id: "73"
+  referenced_name: config
+wiki_references_052: 
+  link_type: T
+  created_at: 2009-04-24 11:25:43.484426
+  card_id: "22"
+  updated_at: 2009-04-24 11:25:43.484426
+  id: "6584"
+  referenced_card_id: "22"
+  referenced_name: plain_text
+wiki_references_107: 
+  link_type: T
+  created_at: 2009-04-24 11:22:49.93993
+  card_id: "20"
+  updated_at: 2009-04-24 11:22:49.93993
+  id: "6555"
+  referenced_card_id: "20"
+  referenced_name: number
+wiki_references_133: 
+  link_type: T
+  created_at: 2010-04-20 17:20:58.559315
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.559315
+  id: "10789"
+  referenced_card_id: 
+  referenced_name: config+*inclusion
+wiki_references_322: 
+  link_type: W
+  created_at: 2010-04-21 13:22:39.640434
+  card_id: "90"
+  updated_at: 2010-04-21 13:22:39.640434
+  id: "10906"
+  referenced_card_id: 
+  referenced_name: http_www_wagn_org_wagn_table_of_content
+wiki_references_241: 
+  link_type: T
+  created_at: 2010-04-15 18:43:07.657818
+  card_id: "111"
+  updated_at: 2010-04-15 18:43:07.657818
+  id: "9751"
+  referenced_card_id: "337"
+  referenced_name: "*pluss+*right"
+wiki_references_215: 
+  link_type: T
+  created_at: 2010-04-15 18:42:53.687982
+  card_id: "119"
+  updated_at: 2010-04-15 18:42:53.687982
+  id: "9598"
+  referenced_card_id: "330"
+  referenced_name: "*account+*right"
+wiki_references_027: 
+  link_type: L
+  created_at: 2009-04-27 22:09:19.582852
+  card_id: "151"
+  updated_at: 2009-04-27 22:09:19.582852
+  id: "7273"
+  referenced_card_id: "100"
+  referenced_name: "*account"
+wiki_references_053: 
+  link_type: T
+  created_at: 2009-04-24 11:25:43.492427
+  card_id: "22"
+  updated_at: 2009-04-24 11:25:43.492427
+  id: "6585"
+  referenced_card_id: "22"
+  referenced_name: plain_text
+wiki_references_108: 
+  link_type: T
+  created_at: 2009-04-24 11:22:49.94793
+  card_id: "20"
+  updated_at: 2009-04-24 11:22:49.94793
+  id: "6556"
+  referenced_card_id: "20"
+  referenced_name: number
+wiki_references_134: 
+  link_type: T
+  created_at: 2010-04-20 17:20:58.795328
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.795328
+  id: "10790"
+  referenced_card_id: 
+  referenced_name: "*sidebar+*inclusion"
+wiki_references_160: 
+  link_type: L
+  created_at: 2010-04-20 17:20:58.947337
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.947337
+  id: "10802"
+  referenced_card_id: "109"
+  referenced_name: request_sent
+wiki_references_323: 
+  link_type: L
+  created_at: 2010-04-21 13:22:39.646686
+  card_id: "90"
+  updated_at: 2010-04-21 13:22:39.646686
+  id: "10907"
+  referenced_card_id: "259"
+  referenced_name: set
+wiki_references_242: 
+  link_type: M
+  created_at: 2010-04-15 18:43:07.889831
+  card_id: "111"
+  updated_at: 2010-04-15 18:43:07.889831
+  id: "9752"
+  referenced_card_id: 
+  referenced_name: "*pluss+*right+*plu_card"
+wiki_references_028: 
+  link_type: M
+  created_at: 2009-12-17 09:21:51.860288
+  card_id: "56"
+  updated_at: 2009-12-17 09:21:51.860288
+  id: "9266"
+  referenced_card_id: 
+  referenced_name: "*invite+*subject"
+wiki_references_054: 
+  link_type: M
+  created_at: 2009-12-23 11:51:04.088473
+  card_id: "314"
+  updated_at: 2009-12-23 11:51:04.088473
+  id: "9440"
+  referenced_card_id: 
+  referenced_name: main
+wiki_references_080: 
+  link_type: M
+  created_at: 2009-04-24 11:21:58.448128
+  card_id: "17"
+  updated_at: 2009-04-24 11:21:58.448128
+  id: "6529"
+  referenced_card_id: 
+  referenced_name: date+description
+wiki_references_109: 
+  link_type: T
+  created_at: 2009-04-24 11:22:49.959931
+  card_id: "20"
+  updated_at: 2009-04-24 11:22:49.959931
+  id: "6557"
+  referenced_card_id: 
+  referenced_name: number+*type_card
+wiki_references_135: 
+  link_type: T
+  created_at: 2010-04-20 17:20:58.807329
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.807329
+  id: "10791"
+  referenced_card_id: "157"
+  referenced_name: related_subtab_universal
+wiki_references_161: 
+  link_type: L
+  created_at: 2010-04-20 17:20:58.959338
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.959338
+  id: "10803"
+  referenced_card_id: "73"
+  referenced_name: config
+wiki_references_216: 
+  link_type: T
+  created_at: 2010-04-15 18:42:53.771986
+  card_id: "119"
+  updated_at: 2010-04-15 18:42:53.771986
+  id: "9599"
+  referenced_card_id: 
+  referenced_name: "*account+*right+*watching"
+wiki_references_350: 
+  link_type: W
+  created_at: 2010-04-21 16:24:29.736664
+  card_id: "298"
+  updated_at: 2010-04-21 16:24:29.736664
+  id: "10934"
+  referenced_card_id: 
+  referenced_name: http_www_wagn_org_wagn_setting
+wiki_references_324: 
+  link_type: L
+  created_at: 2010-04-21 13:22:39.796329
+  card_id: "281"
+  updated_at: 2010-04-21 13:22:39.796329
+  id: "10908"
+  referenced_card_id: "259"
+  referenced_name: set
+wiki_references_243: 
+  link_type: M
+  created_at: 2010-04-15 18:43:07.961835
+  card_id: "111"
+  updated_at: 2010-04-15 18:43:07.961835
+  id: "9753"
+  referenced_card_id: 
+  referenced_name: "*pluss+*right+*plu_part"
+wiki_references_029: 
+  link_type: M
+  created_at: 2009-12-17 09:21:51.904291
+  card_id: "56"
+  updated_at: 2009-12-17 09:21:51.904291
+  id: "9267"
+  referenced_card_id: 
+  referenced_name: "*invite+*message"
+wiki_references_055: 
+  link_type: T
+  created_at: 2009-04-24 11:25:43.500427
+  card_id: "22"
+  updated_at: 2009-04-24 11:25:43.500427
+  id: "6586"
+  referenced_card_id: "22"
+  referenced_name: plain_text
+wiki_references_081: 
+  link_type: T
+  created_at: 2009-04-24 11:21:58.456129
+  card_id: "17"
+  updated_at: 2009-04-24 11:21:58.456129
+  id: "6530"
+  referenced_card_id: "17"
+  referenced_name: date
+wiki_references_136: 
+  link_type: M
+  created_at: 2010-04-20 17:20:58.815329
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.815329
+  id: "10792"
+  referenced_card_id: 
+  referenced_name: related_subtab_cardtype
+wiki_references_162: 
+  link_type: L
+  created_at: 2010-04-20 17:20:58.971338
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.971338
+  id: "10804"
+  referenced_card_id: "112"
+  referenced_name: "*related"
+wiki_references_217: 
+  link_type: T
+  created_at: 2010-04-15 18:42:53.783987
+  card_id: "119"
+  updated_at: 2010-04-15 18:42:53.783987
+  id: "9600"
+  referenced_card_id: "330"
+  referenced_name: "*account+*right"
+wiki_references_351: 
+  link_type: W
+  created_at: 2010-04-21 16:24:30.118155
+  card_id: "297"
+  updated_at: 2010-04-21 16:24:30.118155
+  id: "10935"
+  referenced_card_id: 
+  referenced_name: http_www_wagn_org_wagn_setting
+wiki_references_325: 
+  link_type: W
+  created_at: 2010-04-21 13:22:39.803226
+  card_id: "281"
+  updated_at: 2010-04-21 13:22:39.803226
+  id: "10909"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_custom_layout
+wiki_references_270: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.422155
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.422155
+  id: "10854"
+  referenced_card_id: "56"
+  referenced_name: "*invite"
+wiki_references_244: 
+  link_type: W
+  created_at: 2010-04-15 18:43:08.009838
+  card_id: "111"
+  updated_at: 2010-04-15 18:43:08.009838
+  id: "9754"
+  referenced_card_id: 
+  referenced_name: "*pluss+*right+*plu_card"
+wiki_references_056: 
+  link_type: T
+  created_at: 2009-04-24 11:25:43.516428
+  card_id: "22"
+  updated_at: 2009-04-24 11:25:43.516428
+  id: "6587"
+  referenced_card_id: 
+  referenced_name: plain_text+*type_card
+wiki_references_082: 
+  link_type: T
+  created_at: 2009-04-24 11:21:58.464129
+  card_id: "17"
+  updated_at: 2009-04-24 11:21:58.464129
+  id: "6531"
+  referenced_card_id: "17"
+  referenced_name: date
+wiki_references_137: 
+  link_type: L
+  created_at: 2010-04-20 17:20:58.83533
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.83533
+  id: "10793"
+  referenced_card_id: "19"
+  referenced_name: image
+wiki_references_163: 
+  link_type: L
+  created_at: 2010-04-20 17:20:58.987339
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.987339
+  id: "10805"
+  referenced_card_id: "5"
+  referenced_name: cardtype
+wiki_references_218: 
+  link_type: M
+  created_at: 2010-04-15 18:42:53.859991
+  card_id: "119"
+  updated_at: 2010-04-15 18:42:53.859991
+  id: "9601"
+  referenced_card_id: 
+  referenced_name: "*account+*right+*editing"
+wiki_references_352: 
+  link_type: W
+  created_at: 2010-04-21 16:24:30.277051
+  card_id: "182"
+  updated_at: 2010-04-21 16:24:30.277051
+  id: "10936"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_wql
+wiki_references_326: 
+  link_type: L
+  created_at: 2010-04-21 13:22:40.059356
+  card_id: "249"
+  updated_at: 2010-04-21 13:22:40.059356
+  id: "10910"
+  referenced_card_id: "259"
+  referenced_name: set
+wiki_references_271: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.42762
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.42762
+  id: "10855"
+  referenced_card_id: "66"
+  referenced_name: "*signup"
+wiki_references_245: 
+  link_type: W
+  created_at: 2010-04-15 18:43:08.061841
+  card_id: "111"
+  updated_at: 2010-04-15 18:43:08.061841
+  id: "9755"
+  referenced_card_id: 
+  referenced_name: "*pluss+*right+*plu_part"
+wiki_references_057: 
+  link_type: W
+  created_at: 2009-04-24 11:25:43.524428
+  card_id: "22"
+  updated_at: 2009-04-24 11:25:43.524428
+  id: "6588"
+  referenced_card_id: 
+  referenced_name: new_chunk69892111869180chunktranscludechunk
+wiki_references_083: 
+  link_type: T
+  created_at: 2009-04-24 11:21:58.47213
+  card_id: "17"
+  updated_at: 2009-04-24 11:21:58.47213
+  id: "6532"
+  referenced_card_id: "17"
+  referenced_name: date
+wiki_references_138: 
+  link_type: W
+  created_at: 2009-06-09 18:25:35.55433
+  card_id: "15"
+  updated_at: 2009-06-09 18:25:35.55433
+  id: "8077"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_account
+wiki_references_164: 
+  link_type: L
+  created_at: 2010-04-20 17:20:59.019341
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:59.019341
+  id: "10806"
+  referenced_card_id: 
+  referenced_name: "*related+*plu_card"
+wiki_references_190: 
+  link_type: L
+  created_at: 2009-07-27 17:13:01.530515
+  card_id: "226"
+  updated_at: 2009-07-27 17:13:01.530515
+  id: "8254"
+  referenced_card_id: "150"
+  referenced_name: john_abbe
+wiki_references_219: 
+  link_type: W
+  created_at: 2010-04-15 18:42:53.871992
+  card_id: "119"
+  updated_at: 2010-04-15 18:42:53.871992
+  id: "9602"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_notification
+wiki_references_353: 
+  link_type: W
+  created_at: 2010-04-21 16:24:30.287181
+  card_id: "182"
+  updated_at: 2010-04-21 16:24:30.287181
+  id: "10937"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_wql_syntax
+wiki_references_327: 
+  link_type: W
+  created_at: 2010-04-21 13:22:40.066281
+  card_id: "249"
+  updated_at: 2010-04-21 13:22:40.066281
+  id: "10911"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_autonaming
+wiki_references_272: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.432894
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.432894
+  id: "10856"
+  referenced_card_id: "63"
+  referenced_name: "*request"
+wiki_references_246: 
+  link_type: T
+  created_at: 2010-04-15 18:43:10.421976
+  card_id: "169"
+  updated_at: 2010-04-15 18:43:10.421976
+  id: "9773"
+  referenced_card_id: "339"
+  referenced_name: "*outgoing+*right"
+wiki_references_058: 
+  link_type: M
+  created_at: 2009-04-24 11:25:57.625232
+  card_id: "52"
+  updated_at: 2009-04-24 11:25:57.625232
+  id: "6589"
+  referenced_card_id: 
+  referenced_name: phrase+description
+wiki_references_084: 
+  link_type: T
+  created_at: 2009-04-24 11:21:58.48013
+  card_id: "17"
+  updated_at: 2009-04-24 11:21:58.48013
+  id: "6533"
+  referenced_card_id: 
+  referenced_name: date+*type_card
+wiki_references_139: 
+  link_type: T
+  created_at: 2009-04-24 11:23:22.850676
+  card_id: "51"
+  updated_at: 2009-04-24 11:23:22.850676
+  id: "6565"
+  referenced_card_id: "212"
+  referenced_name: toggle+description
+wiki_references_165: 
+  link_type: L
+  created_at: 2010-04-20 17:20:59.031342
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:59.031342
+  id: "10807"
+  referenced_card_id: "119"
+  referenced_name: "*account+*right+*content"
+wiki_references_191: 
+  link_type: L
+  created_at: 2009-07-27 17:13:01.542516
+  card_id: "226"
+  updated_at: 2009-07-27 17:13:01.542516
+  id: "8255"
+  referenced_card_id: "149"
+  referenced_name: ethan_mc_cutchen
+wiki_references_354: 
+  link_type: L
+  created_at: 2010-04-21 16:24:30.471726
+  card_id: "225"
+  updated_at: 2010-04-21 16:24:30.471726
+  id: "10938"
+  referenced_card_id: "4"
+  referenced_name: user
+wiki_references_328: 
+  link_type: W
+  created_at: 2010-04-21 13:22:40.207222
+  card_id: "306"
+  updated_at: 2010-04-21 13:22:40.207222
+  id: "10912"
+  referenced_card_id: 
+  referenced_name: http_www_wagn_org_wagn_custom_help_text
+wiki_references_273: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.438316
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.438316
+  id: "10857"
+  referenced_card_id: "151"
+  referenced_name: administrator_link
+wiki_references_247: 
+  link_type: M
+  created_at: 2010-04-15 18:43:10.50198
+  card_id: "169"
+  updated_at: 2010-04-15 18:43:10.50198
+  id: "9774"
+  referenced_card_id: 
+  referenced_name: "*outgoing+*right+*link"
+wiki_references_059: 
+  link_type: T
+  created_at: 2009-04-24 11:25:57.637233
+  card_id: "52"
+  updated_at: 2009-04-24 11:25:57.637233
+  id: "6590"
+  referenced_card_id: "52"
+  referenced_name: phrase
+wiki_references_085: 
+  link_type: W
+  created_at: 2009-04-24 11:21:58.488131
+  card_id: "17"
+  updated_at: 2009-04-24 11:21:58.488131
+  id: "6534"
+  referenced_card_id: 
+  referenced_name: new_chunk69892113660500chunktranscludechunk
+wiki_references_166: 
+  link_type: W
+  created_at: 2010-04-20 17:20:59.043342
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:59.043342
+  id: "10808"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_initial_permission
+wiki_references_192: 
+  link_type: L
+  created_at: 2009-09-08 12:00:55.055684
+  card_id: "80"
+  updated_at: 2009-09-08 12:00:55.055684
+  id: "8784"
+  referenced_card_id: "73"
+  referenced_name: config
+wiki_references_355: 
+  link_type: W
+  created_at: 2010-04-21 16:24:30.477634
+  card_id: "225"
+  updated_at: 2010-04-21 16:24:30.477634
+  id: "10939"
+  referenced_card_id: 
+  referenced_name: admin_task
+wiki_references_329: 
+  link_type: L
+  created_at: 2010-04-21 13:22:40.214849
+  card_id: "306"
+  updated_at: 2010-04-21 13:22:40.214849
+  id: "10913"
+  referenced_card_id: "259"
+  referenced_name: set
+wiki_references_274: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.449019
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.449019
+  id: "10858"
+  referenced_card_id: "198"
+  referenced_name: "*css"
+wiki_references_248: 
+  link_type: T
+  created_at: 2010-04-15 18:43:10.509981
+  card_id: "169"
+  updated_at: 2010-04-15 18:43:10.509981
+  id: "9775"
+  referenced_card_id: "339"
+  referenced_name: "*outgoing+*right"
+wiki_references_086: 
+  link_type: T
+  created_at: 2009-12-20 12:29:16.360871
+  card_id: "259"
+  updated_at: 2009-12-20 12:29:16.360871
+  id: "9277"
+  referenced_card_id: "297"
+  referenced_name: set+description
+wiki_references_167: 
+  link_type: W
+  created_at: 2010-04-20 17:20:59.091345
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:59.091345
+  id: "10809"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_installation+ticket_for_item
+wiki_references_193: 
+  link_type: W
+  created_at: 2009-09-08 12:00:55.067685
+  card_id: "80"
+  updated_at: 2009-09-08 12:00:55.067685
+  id: "8785"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_configuration
+wiki_references_356: 
+  link_type: L
+  created_at: 2010-04-21 16:24:30.489337
+  card_id: "225"
+  updated_at: 2010-04-21 16:24:30.489337
+  id: "10940"
+  referenced_card_id: "10"
+  referenced_name: administrator
+wiki_references_275: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.454369
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.454369
+  id: "10859"
+  referenced_card_id: "81"
+  referenced_name: "*sidebar"
+wiki_references_249: 
+  link_type: M
+  created_at: 2010-04-15 18:43:10.569984
+  card_id: "169"
+  updated_at: 2010-04-15 18:43:10.569984
+  id: "9776"
+  referenced_card_id: 
+  referenced_name: "*outgoing+*right+*inclusion"
+wiki_references_087: 
+  link_type: T
+  created_at: 2009-04-24 11:22:20.870273
+  card_id: "18"
+  updated_at: 2009-04-24 11:22:20.870273
+  id: "6536"
+  referenced_card_id: "18"
+  referenced_name: file
+wiki_references_168: 
+  link_type: W
+  created_at: 2010-04-20 17:20:59.123347
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:59.123347
+  id: "10810"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_administration+ticket_for_item
+wiki_references_194: 
+  link_type: W
+  created_at: 2009-09-08 12:00:55.083686
+  card_id: "80"
+  updated_at: 2009-09-08 12:00:55.083686
+  id: "8786"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_documentation
+wiki_references_357: 
+  link_type: W
+  created_at: 2010-04-21 16:24:30.495808
+  card_id: "225"
+  updated_at: 2010-04-21 16:24:30.495808
+  id: "10941"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_role
+wiki_references_276: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.467096
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.467096
+  id: "10860"
+  referenced_card_id: "53"
+  referenced_name: "*tiny_mce"
+wiki_references_088: 
+  link_type: T
+  created_at: 2009-04-24 11:22:20.878274
+  card_id: "18"
+  updated_at: 2009-04-24 11:22:20.878274
+  id: "6537"
+  referenced_card_id: "18"
+  referenced_name: file
+wiki_references_169: 
   link_type: L
   created_at: 2010-04-20 17:20:59.135348
   card_id: "152"
@@ -2951,7 +2279,607 @@ wiki_references_181:
   id: "10811"
   referenced_card_id: "73"
   referenced_name: config
-wiki_references_048: 
+wiki_references_195: 
+  link_type: M
+  created_at: 2009-11-03 10:29:16.453217
+  card_id: "3"
+  updated_at: 2009-11-03 10:29:16.453217
+  id: "8838"
+  referenced_card_id: 
+  referenced_name: basic+description
+wiki_references_358: 
+  link_type: W
+  created_at: 2010-04-21 16:24:30.80493
+  card_id: "215"
+  updated_at: 2010-04-21 16:24:30.80493
+  id: "10942"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_file
+wiki_references_277: 
+  link_type: M
+  created_at: 2010-04-21 13:22:37.472467
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.472467
+  id: "10861"
+  referenced_card_id: 
+  referenced_name: "*google_analytic_key"
+wiki_references_089: 
+  link_type: T
+  created_at: 2009-04-24 11:22:20.890275
+  card_id: "18"
+  updated_at: 2009-04-24 11:22:20.890275
+  id: "6538"
+  referenced_card_id: "18"
+  referenced_name: file
+wiki_references_196: 
+  link_type: T
+  created_at: 2009-11-03 10:29:16.465218
+  card_id: "3"
+  updated_at: 2009-11-03 10:29:16.465218
+  id: "8839"
+  referenced_card_id: "3"
+  referenced_name: basic
+wiki_references_359: 
+  link_type: W
+  created_at: 2010-04-21 16:24:31.029541
+  card_id: "216"
+  updated_at: 2010-04-21 16:24:31.029541
+  id: "10943"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wagn_account
+wiki_references_278: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.477779
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.477779
+  id: "10862"
+  referenced_card_id: "103"
+  referenced_name: "*favicon"
+wiki_references_197: 
+  link_type: T
+  created_at: 2009-11-03 10:29:16.473218
+  card_id: "3"
+  updated_at: 2009-11-03 10:29:16.473218
+  id: "8840"
+  referenced_card_id: "3"
+  referenced_name: basic
+wiki_references_279: 
+  link_type: L
+  created_at: 2010-04-21 13:22:37.483523
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.483523
+  id: "10863"
+  referenced_card_id: "278"
+  referenced_name: setting
+wiki_references_198: 
+  link_type: T
+  created_at: 2009-11-03 10:29:16.485219
+  card_id: "3"
+  updated_at: 2009-11-03 10:29:16.485219
+  id: "8841"
+  referenced_card_id: "3"
+  referenced_name: basic
+wiki_references_199: 
+  link_type: T
+  created_at: 2009-11-03 10:29:16.50522
+  card_id: "3"
+  updated_at: 2009-11-03 10:29:16.50522
+  id: "8842"
+  referenced_card_id: 
+  referenced_name: basic+*type_card
+wiki_references_010: 
+  link_type: W
+  created_at: 2009-04-24 11:24:04.985944
+  card_id: "30"
+  updated_at: 2009-04-24 11:24:04.985944
+  id: "6576"
+  referenced_card_id: 
+  referenced_name: new_chunk69892111616260chunktranscludechunk
+wiki_references_011: 
+  link_type: T
+  created_at: 2009-12-12 14:05:19.821436
+  card_id: "81"
+  updated_at: 2009-12-12 14:05:19.821436
+  id: "9259"
+  referenced_card_id: "151"
+  referenced_name: administrator_link
+wiki_references_012: 
+  link_type: T
+  created_at: 2009-04-24 11:24:39.527913
+  card_id: "47"
+  updated_at: 2009-04-24 11:24:39.527913
+  id: "6578"
+  referenced_card_id: "47"
+  referenced_name: pointer
+wiki_references_200: 
+  link_type: W
+  created_at: 2009-11-03 10:29:16.513221
+  card_id: "3"
+  updated_at: 2009-11-03 10:29:16.513221
+  id: "8843"
+  referenced_card_id: 
+  referenced_name: new_chunk70116713095700chunktranscludechunk
+wiki_references_013: 
+  link_type: T
+  created_at: 2009-04-24 11:24:39.539913
+  card_id: "47"
+  updated_at: 2009-04-24 11:24:39.539913
+  id: "6579"
+  referenced_card_id: "47"
+  referenced_name: pointer
+wiki_references_120: 
+  link_type: W
+  created_at: 2009-04-24 11:23:22.898678
+  card_id: "51"
+  updated_at: 2009-04-24 11:23:22.898678
+  id: "6570"
+  referenced_card_id: 
+  referenced_name: new_chunk69892116452820chunktranscludechunk
+wiki_references_201: 
+  link_type: M
+  created_at: 2010-04-15 18:42:31.830736
+  card_id: "88"
+  updated_at: 2010-04-15 18:42:31.830736
+  id: "9452"
+  referenced_card_id: 
+  referenced_name: cardtype+*type+*default+description
+wiki_references_014: 
+  link_type: T
+  created_at: 2009-04-24 11:24:39.547914
+  card_id: "47"
+  updated_at: 2009-04-24 11:24:39.547914
+  id: "6580"
+  referenced_card_id: "47"
+  referenced_name: pointer
+wiki_references_040: 
+  link_type: W
+  created_at: 2009-12-17 09:21:53.888404
+  card_id: "63"
+  updated_at: 2009-12-17 09:21:53.888404
+  id: "9272"
+  referenced_card_id: 
+  referenced_name: card_option_account_request
+wiki_references_121: 
+  link_type: T
+  created_at: 2009-04-24 11:23:14.422195
+  card_id: "4"
+  updated_at: 2009-04-24 11:23:14.422195
+  id: "6559"
+  referenced_card_id: "181"
+  referenced_name: user+description
+wiki_references_202: 
+  link_type: T
+  created_at: 2010-04-15 18:42:31.890739
+  card_id: "88"
+  updated_at: 2010-04-15 18:42:31.890739
+  id: "9453"
+  referenced_card_id: "88"
+  referenced_name: cardtype+*type+*default
+wiki_references_310: 
+  link_type: W
+  created_at: 2010-04-21 13:22:38.153273
+  card_id: "278"
+  updated_at: 2010-04-21 13:22:38.153273
+  id: "10894"
+  referenced_card_id: 
+  referenced_name: http_www_wagn_org_wagn_pointer
+wiki_references_015: 
+  link_type: T
+  created_at: 2009-04-24 11:24:39.563915
+  card_id: "47"
+  updated_at: 2009-04-24 11:24:39.563915
+  id: "6581"
+  referenced_card_id: 
+  referenced_name: pointer+*type_card
+wiki_references_041: 
+  link_type: L
+  created_at: 2009-12-17 09:21:53.896404
+  card_id: "63"
+  updated_at: 2009-12-17 09:21:53.896404
+  id: "9273"
+  referenced_card_id: "66"
+  referenced_name: "*signup"
+wiki_references_122: 
+  link_type: T
+  created_at: 2009-04-24 11:24:04.941942
+  card_id: "30"
+  updated_at: 2009-04-24 11:24:04.941942
+  id: "6571"
+  referenced_card_id: "182"
+  referenced_name: search+description
+wiki_references_203: 
+  link_type: T
+  created_at: 2010-04-15 18:42:31.90274
+  card_id: "88"
+  updated_at: 2010-04-15 18:42:31.90274
+  id: "9454"
+  referenced_card_id: "88"
+  referenced_name: cardtype+*type+*default
+wiki_references_311: 
+  link_type: L
+  created_at: 2010-04-21 13:22:38.638685
+  card_id: "365"
+  updated_at: 2010-04-21 13:22:38.638685
+  id: "10895"
+  referenced_card_id: "259"
+  referenced_name: set
+wiki_references_230: 
+  link_type: W
+  created_at: 2010-04-20 08:16:16.976233
+  card_id: "150"
+  updated_at: 2010-04-20 08:16:16.976233
+  id: "10576"
+  referenced_card_id: 
+  referenced_name: http_johnabbe_wagn_org_wagn_contact_me
+wiki_references_016: 
+  link_type: L
+  created_at: 2009-06-01 12:55:14.327145
+  card_id: "68"
+  updated_at: 2009-06-01 12:55:14.327145
+  id: "7911"
+  referenced_card_id: "12"
+  referenced_name: account_request
+wiki_references_042: 
+  link_type: T
+  created_at: 2009-12-17 09:21:53.876403
+  card_id: "63"
+  updated_at: 2009-12-17 09:21:53.876403
+  id: "9271"
+  referenced_card_id: "108"
+  referenced_name: "*request+*thank"
+wiki_references_123: 
+  link_type: W
+  created_at: 2009-06-09 18:15:35.336419
+  card_id: "85"
+  updated_at: 2009-06-09 18:15:35.336419
+  id: "8072"
+  referenced_card_id: 
+  referenced_name: card_new
+wiki_references_204: 
+  link_type: T
+  created_at: 2010-04-15 18:42:31.910741
+  card_id: "88"
+  updated_at: 2010-04-15 18:42:31.910741
+  id: "9455"
+  referenced_card_id: "88"
+  referenced_name: cardtype+*type+*default
+wiki_references_312: 
+  link_type: W
+  created_at: 2010-04-21 13:22:38.885647
+  card_id: "304"
+  updated_at: 2010-04-21 13:22:38.885647
+  id: "10896"
+  referenced_card_id: 
+  referenced_name: http_www_wagn_org_wagn_captcha
+wiki_references_231: 
+  link_type: L
+  created_at: 2010-04-20 08:16:16.988234
+  card_id: "150"
+  updated_at: 2010-04-20 08:16:16.988234
+  id: "10577"
+  referenced_card_id: "152"
+  referenced_name: new
+wiki_references_017: 
+  link_type: W
+  created_at: 2009-04-24 11:24:39.571915
+  card_id: "47"
+  updated_at: 2009-04-24 11:24:39.571915
+  id: "6582"
+  referenced_card_id: 
+  referenced_name: new_chunk69892110956340chunktranscludechunk
+wiki_references_043: 
+  link_type: T
+  created_at: 2009-04-09 16:41:38.279253
+  card_id: "8"
+  updated_at: 2009-04-09 16:41:38.279253
+  id: "6032"
+  referenced_card_id: "8"
+  referenced_name: anyone
+wiki_references_124: 
+  link_type: T
+  created_at: 2009-04-24 11:22:20.862273
+  card_id: "18"
+  updated_at: 2009-04-24 11:22:20.862273
+  id: "6535"
+  referenced_card_id: "215"
+  referenced_name: file+description
+wiki_references_150: 
+  link_type: L
+  created_at: 2010-04-20 17:20:58.847331
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.847331
+  id: "10794"
+  referenced_card_id: "100"
+  referenced_name: "*account"
+wiki_references_205: 
+  link_type: M
+  created_at: 2010-04-15 18:42:31.986745
+  card_id: "88"
+  updated_at: 2010-04-15 18:42:31.986745
+  id: "9456"
+  referenced_card_id: 
+  referenced_name: cardtype+*type+*default+*type_card
+wiki_references_313: 
+  link_type: L
+  created_at: 2010-04-21 13:22:38.892775
+  card_id: "304"
+  updated_at: 2010-04-21 13:22:38.892775
+  id: "10897"
+  referenced_card_id: "259"
+  referenced_name: set
+wiki_references_232: 
+  link_type: T
+  created_at: 2010-04-15 18:43:05.009667
+  card_id: "171"
+  updated_at: 2010-04-15 18:43:05.009667
+  id: "9742"
+  referenced_card_id: "334"
+  referenced_name: "*incoming+*right"
+wiki_references_018: 
+  link_type: T
+  created_at: 2009-04-24 11:24:39.519912
+  card_id: "47"
+  updated_at: 2009-04-24 11:24:39.519912
+  id: "6577"
+  referenced_card_id: "213"
+  referenced_name: pointer+description
+wiki_references_044: 
+  link_type: T
+  created_at: 2009-04-09 16:41:38.491265
+  card_id: "8"
+  updated_at: 2009-04-09 16:41:38.491265
+  id: "6033"
+  referenced_card_id: 
+  referenced_name: anyone+*member
+wiki_references_070: 
+  link_type: W
+  created_at: 2009-12-23 11:51:04.160477
+  card_id: "314"
+  updated_at: 2009-12-23 11:51:04.160477
+  id: "9447"
+  referenced_card_id: 
+  referenced_name: recent
+wiki_references_125: 
+  link_type: T
+  created_at: 2010-04-20 17:20:58.147291
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.147291
+  id: "10781"
+  referenced_card_id: "154"
+  referenced_name: "*ignore"
+wiki_references_151: 
+  link_type: T
+  created_at: 2009-06-09 18:42:00.504293
+  card_id: "12"
+  updated_at: 2009-06-09 18:42:00.504293
+  id: "8089"
+  referenced_card_id: "216"
+  referenced_name: account_request+description
+wiki_references_206: 
+  link_type: W
+  created_at: 2010-04-15 18:42:31.994745
+  card_id: "88"
+  updated_at: 2010-04-15 18:42:31.994745
+  id: "9457"
+  referenced_card_id: 
+  referenced_name: new_chunk70088691662860chunktranscludechunk
+wiki_references_340: 
+  link_type: M
+  created_at: 2010-04-21 16:24:28.243955
+  card_id: "373"
+  updated_at: 2010-04-21 16:24:28.243955
+  id: "10924"
+  referenced_card_id: 
+  referenced_name: email_config+*right+*content+*subject
+wiki_references_314: 
+  link_type: L
+  created_at: 2010-04-21 13:22:39.052089
+  card_id: "301"
+  updated_at: 2010-04-21 13:22:39.052089
+  id: "10898"
+  referenced_card_id: "47"
+  referenced_name: pointer
+wiki_references_233: 
+  link_type: M
+  created_at: 2010-04-15 18:43:05.081671
+  card_id: "171"
+  updated_at: 2010-04-15 18:43:05.081671
+  id: "9743"
+  referenced_card_id: 
+  referenced_name: "*incoming+*right+*linker"
+wiki_references_045: 
+  link_type: T
+  created_at: 2009-04-24 11:18:02.760046
+  card_id: "5"
+  updated_at: 2009-04-24 11:18:02.760046
+  id: "6520"
+  referenced_card_id: "5"
+  referenced_name: cardtype
+wiki_references_071: 
+  link_type: W
+  created_at: 2009-12-23 11:51:04.168477
+  card_id: "314"
+  updated_at: 2009-12-23 11:51:04.168477
+  id: "9448"
+  referenced_card_id: 
+  referenced_name: ""
+wiki_references_126: 
+  link_type: T
+  created_at: 2010-04-20 17:20:58.3073
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.3073
+  id: "10782"
+  referenced_card_id: "153"
+  referenced_name: card_to_copy_to_new_wagn
+wiki_references_152: 
+  link_type: T
+  created_at: 2009-06-09 18:42:00.516293
+  card_id: "12"
+  updated_at: 2009-06-09 18:42:00.516293
+  id: "8090"
+  referenced_card_id: 
+  referenced_name: account_request+*type_card+by_update
+wiki_references_207: 
+  link_type: M
+  created_at: 2010-04-15 18:42:35.810963
+  card_id: "105"
+  updated_at: 2010-04-15 18:42:35.810963
+  id: "9500"
+  referenced_card_id: 
+  referenced_name: role+*type+*default+description
+wiki_references_019: 
+  link_type: T
+  created_at: 2009-12-02 16:28:23.310092
+  card_id: "109"
+  updated_at: 2009-12-02 16:28:23.310092
+  id: "9174"
+  referenced_card_id: "55"
+  referenced_name: "*title"
+wiki_references_341: 
+  link_type: M
+  created_at: 2010-04-21 16:24:28.339007
+  card_id: "373"
+  updated_at: 2010-04-21 16:24:28.339007
+  id: "10925"
+  referenced_card_id: 
+  referenced_name: email_config+*right+*content+*message
+wiki_references_315: 
+  link_type: L
+  created_at: 2010-04-21 13:22:39.058653
+  card_id: "301"
+  updated_at: 2010-04-21 13:22:39.058653
+  id: "10899"
+  referenced_card_id: "30"
+  referenced_name: search
+wiki_references_260: 
+  link_type: W
+  created_at: 2010-04-15 18:43:12.294082
+  card_id: "116"
+  updated_at: 2010-04-15 18:43:12.294082
+  id: "9787"
+  referenced_card_id: 
+  referenced_name: "*community+*right+discussion"
+wiki_references_234: 
+  link_type: T
+  created_at: 2010-04-15 18:43:05.089672
+  card_id: "171"
+  updated_at: 2010-04-15 18:43:05.089672
+  id: "9744"
+  referenced_card_id: "334"
+  referenced_name: "*incoming+*right"
+wiki_references_046: 
+  link_type: T
+  created_at: 2009-04-24 11:18:02.916055
+  card_id: "5"
+  updated_at: 2009-04-24 11:18:02.916055
+  id: "6521"
+  referenced_card_id: 
+  referenced_name: cardtype+*type_card
+wiki_references_072: 
+  link_type: W
+  created_at: 2009-12-23 11:51:04.176478
+  card_id: "314"
+  updated_at: 2009-12-23 11:51:04.176478
+  id: "9449"
+  referenced_card_id: 
+  referenced_name: http_www_wagn_org
+wiki_references_127: 
+  link_type: T
+  created_at: 2010-04-20 17:20:58.351303
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.351303
+  id: "10783"
+  referenced_card_id: 
+  referenced_name: set+*type_card
+wiki_references_153: 
+  link_type: L
+  created_at: 2010-04-20 17:20:58.859332
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.859332
+  id: "10795"
+  referenced_card_id: "1"
+  referenced_name: wagn_bot
+wiki_references_208: 
+  link_type: T
+  created_at: 2010-04-15 18:42:35.822964
+  card_id: "105"
+  updated_at: 2010-04-15 18:42:35.822964
+  id: "9501"
+  referenced_card_id: "105"
+  referenced_name: role+*type+*default
+wiki_references_342: 
+  link_type: M
+  created_at: 2010-04-21 16:24:28.408257
+  card_id: "373"
+  updated_at: 2010-04-21 16:24:28.408257
+  id: "10926"
+  referenced_card_id: 
+  referenced_name: email_config+*right+*content+*attach
+wiki_references_316: 
+  link_type: W
+  created_at: 2010-04-21 13:22:39.064002
+  card_id: "301"
+  updated_at: 2010-04-21 13:22:39.064002
+  id: "10900"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_pointer
+wiki_references_261: 
+  link_type: W
+  created_at: 2010-04-15 18:43:12.362086
+  card_id: "116"
+  updated_at: 2010-04-15 18:43:12.362086
+  id: "9788"
+  referenced_card_id: 
+  referenced_name: "*community+*right+tag"
+wiki_references_235: 
+  link_type: M
+  created_at: 2010-04-15 18:43:05.161676
+  card_id: "171"
+  updated_at: 2010-04-15 18:43:05.161676
+  id: "9745"
+  referenced_card_id: 
+  referenced_name: "*incoming+*right+*includer"
+wiki_references_073: 
+  link_type: L
+  created_at: 2009-12-23 11:51:05.640561
+  card_id: "275"
+  updated_at: 2009-12-23 11:51:05.640561
+  id: "9450"
+  referenced_card_id: "314"
+  referenced_name: default_layout
+wiki_references_128: 
+  link_type: T
+  created_at: 2010-04-20 17:20:58.391305
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.391305
+  id: "10784"
+  referenced_card_id: 
+  referenced_name: setting+*type_card
+wiki_references_154: 
+  link_type: L
+  created_at: 2010-04-20 17:20:58.871333
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.871333
+  id: "10796"
+  referenced_card_id: "15"
+  referenced_name: anonymous
+wiki_references_180: 
+  link_type: L
+  created_at: 2010-04-19 17:09:48.698644
+  card_id: "154"
+  updated_at: 2010-04-19 17:09:48.698644
+  id: "10462"
+  referenced_card_id: "161"
+  referenced_name: card_by_type
+wiki_references_209: 
+  link_type: M
+  created_at: 2010-04-15 18:42:35.918969
+  card_id: "105"
+  updated_at: 2010-04-15 18:42:35.918969
+  id: "9502"
+  referenced_card_id: 
+  referenced_name: role+*type+*default+*member
+wiki_references_047: 
   link_type: T
   created_at: 2009-04-09 16:41:38.667275
   card_id: "9"
@@ -2959,3 +2887,75 @@ wiki_references_048:
   id: "6035"
   referenced_card_id: "9"
   referenced_name: anyone_signed_in
+wiki_references_343: 
+  link_type: L
+  created_at: 2010-04-21 16:24:29.049431
+  card_id: "359"
+  updated_at: 2010-04-21 16:24:29.049431
+  id: "10927"
+  referenced_card_id: "259"
+  referenced_name: set
+wiki_references_317: 
+  link_type: W
+  created_at: 2010-04-21 13:22:39.069553
+  card_id: "301"
+  updated_at: 2010-04-21 13:22:39.069553
+  id: "10901"
+  referenced_card_id: 
+  referenced_name: http_wagn_org_wql_syntax
+wiki_references_262: 
+  link_type: T
+  created_at: 2010-04-21 13:22:37.353031
+  card_id: "73"
+  updated_at: 2010-04-21 13:22:37.353031
+  id: "10846"
+  referenced_card_id: "55"
+  referenced_name: "*title"
+wiki_references_236: 
+  link_type: T
+  created_at: 2010-04-15 18:43:05.173676
+  card_id: "171"
+  updated_at: 2010-04-15 18:43:05.173676
+  id: "9746"
+  referenced_card_id: "334"
+  referenced_name: "*incoming+*right"
+wiki_references_074: 
+  link_type: W
+  created_at: 2009-04-24 11:18:02.924055
+  card_id: "5"
+  updated_at: 2009-04-24 11:18:02.924055
+  id: "6522"
+  referenced_card_id: 
+  referenced_name: new_chunk69892110645160chunktranscludechunk
+wiki_references_129: 
+  link_type: T
+  created_at: 2010-04-20 17:20:58.407306
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.407306
+  id: "10785"
+  referenced_card_id: "360"
+  referenced_name: setting_value
+wiki_references_155: 
+  link_type: L
+  created_at: 2010-04-20 17:20:58.883333
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.883333
+  id: "10797"
+  referenced_card_id: "64"
+  referenced_name: "*to"
+wiki_references_181: 
+  link_type: L
+  created_at: 2010-04-19 17:09:48.706644
+  card_id: "154"
+  updated_at: 2010-04-19 17:09:48.706644
+  id: "10463"
+  referenced_card_id: "224"
+  referenced_name: cardtype_description
+wiki_references_048: 
+  link_type: T
+  created_at: 2009-04-09 16:41:38.719278
+  card_id: "9"
+  updated_at: 2009-04-09 16:41:38.719278
+  id: "6036"
+  referenced_card_id: 
+  referenced_name: anyone_signed_in+*member

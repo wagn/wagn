@@ -1,5 +1,4 @@
 require 'rubygems'
-require 'ruby-debug'
 
 unless defined? TEST_ROOT
   ENV["RAILS_ENV"] = "test"

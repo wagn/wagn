@@ -198,14 +198,11 @@ class Card::RenameTest < ActiveSupport::TestCase
   end      
 
   def test_rename_should_not_fail_when_updating_hard_templated_referencer
-    Card.create! :name => "Fruit", :type=>"Cardtype"     
-    Card.create! :name => "Pit"
+    c=Card.create! :name => "Pit"
     Card.create! :name => "Orange", :type=>"Fruit", :content => "[[Pit]]" 
-    
-    Card.create! :name => "Fruit+*tform", :extension_type => "HardTemplate", :content=>"this [[Pit]]"
+    Card["Fruit+*type+*default"].update_attributes(:content=>"this [[Pit]]")
     
     assert_equal "this [[Pit]]", Card["Orange"].content
-    c = Card["Pit"]
     c.update_attributes! :name => "Seed", :update_referencers => true
     assert true  # just make sure nothing exploded
   end      

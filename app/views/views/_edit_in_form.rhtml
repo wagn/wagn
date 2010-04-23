@@ -1,12 +1,13 @@
-<div class="edit-area in-multi">
+<div class="edit-area in-multi RIGHT-<%= card.name.tag_name.to_key.css_name %>">
   <div class="label-in-multi">
     <span class="title">
-      <%= link_to_page(@template.less_fancy_title(showname || card), (card.new_record? ? card.name.tag_name : card.name)) %>
+      <%= link_to_page(less_fancy_title(showname || card), (card.new_record? ? card.name.tag_name : card.name)) %>
     </span>
   </div>     
   
   <div class="field-in-multi">
     <%= slot.content_field( form, :nested=>true ) %>
+    <%= card.new_record? ? slot.form.hidden_field(:type) : '' %>
   </div>
 
   <% if inst = card.setting_card('edit help') %>

@@ -5,23 +5,23 @@ Feature: Pointer Inputs
   Background:
     Given I log in as Joe User
     And I create Search card "friends+*right+*options" with content "{"type":"User"}"
-    And I create Pointer card "friends+*rform"
+    And I create Pointer card "friends+*right+*default"
    
   Scenario: Creating a card with select input
     Given I create Phrase card "friends+*right+*input" with content "select"
     When I go to card "Joe User+friends"
     And I select "Joe Camel" from "main_1-select"
-    And I press "Create"
+    And I press "Submit"
     And I go to card "Joe User+friends"
     Then I should see "Joe Camel"   
 
   Scenario: Creating a templated card including a select input
-    Given I create card "User+*tform" with content "{{+friends}}"
+    Given I create card "User+*type+*content" with content "{{+friends}}"
     And I create Phrase card "friends+*right+*input" with content "select"
     When I go to new User
     And I fill in "card_name" with "Jill"
     And I select "Joe Admin" from "main_1_1-select"
-    And I press "Create"
+    And I press "Submit"
     And I go to card "Jill"
     Then I should see "Joe Admin"
     
@@ -36,17 +36,17 @@ Feature: Pointer Inputs
     Given I create Phrase card "friends+*right+*input" with content "multiselect"
     When I go to card "Joe User+friends"
     And I select "Joe Camel" from "main_1-multiselect"
-    And I press "Create"
+    And I press "Submit"
     And I go to card "Joe User+friends"
     Then I should see "Joe Camel" 
 
   Scenario: Creating a templated card including a muliselect input
-    Given I create card "User+*tform" with content "{{+friends}}"
+    Given I create card "User+*type+*content" with content "{{+friends}}"
     And I create Phrase card "friends+*right+*input" with content "multiselect"
     When I go to new User
     And I fill in "card_name" with "Jill"
     And I select "Joe Admin" from "main_1_1-multiselect"
-    And I press "Create"
+    And I press "Submit"
     And I go to card "Jill"
     And I should see "Joe Admin"
     
@@ -54,7 +54,7 @@ Feature: Pointer Inputs
     Given I create Phrase card "friends+*right+*input" with content "radio"
     When I go to card "Joe User+friends"
     And I choose "main_1-radio-joe_camel"
-    And I press "Create"
+    And I press "Submit"
     And I go to card "Joe User+friends"
     Then I should see "Joe Camel"
 
@@ -65,9 +65,15 @@ Feature: Pointer Inputs
     When I go to card "Joe User+friends"
     Then I should see "boom yow yow"
     And I check "main_1-checkbox-joe_camel"
-    And I press "Create"
+    And I press "Submit"
     And I go to card "Joe User+friends"
     Then I should see "Joe Camel"
+    And I edit "Joe User+friends"
+    And I uncheck "main_1-checkbox-joe_camel"
+    And I press "Save"
+    And I go to card "Joe User+friends"
+    Then I should not see "Joe Camel"
+    
 
 
 # should test:

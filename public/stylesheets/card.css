@@ -13,8 +13,7 @@ html>body .card-slot {
   width: auto;  /* so non-ie browsers do better with image floats */
 }
 .card-slot,
-.card-slot .wrapper,
-.card-slot .wrapper {
+.card-slot .ALL {
   overflow: hidden;
 }
 
@@ -355,21 +354,6 @@ div.transcluded {
 }
 
 
-/* not in use?
-.syntax-tips {
-  color: #888;
-}
-.name-editor .label,
-.cardtype-editor .label {
-  display: none
-}
-.name-editor p,
-.cardtype-editor p {
-  margin: 5px;
-}
-*/
-
-
 
 /* ---------- changes tab -------*/
 
@@ -576,8 +560,8 @@ body#wagn .card-slot.recent-changes h2 {
 .line tr, 
 .line td, 
 .line p,
-body#wagn .line h1, 
-body#wagn .line h2, 
+.line h1, 
+.line h2, 
 .line h3, 
 .line h4, 
 .line h5, 
@@ -710,7 +694,9 @@ body#wagn .line h2,
   padding: 0px 3px;
   margin: 0px;
 }
-
+.search-no-results:after {
+  content:'0 results'; 
+}
 
 /*---------(Search & Pointer) --------*/
 
@@ -742,16 +728,12 @@ div.search-result-list .search-result-item {
 
 
 /*.paragraph.type-Image, */
-.paragraph .type-Image .content {
+.paragraph .TYPE-image .content {
 /*  overflow: auto;  */
   padding: 5px;
 }
 
-
-
-
 /*----------- (Invitation Request)--------------*/
-
 
 .invite-links {
   padding: 10px;
@@ -763,9 +745,6 @@ div.search-result-list .search-result-item {
   font-weight: bold;
   margin-right: 20px;
 }
-
-
-
 
 /*---------- comment-box -------------------------------------- */
 .comment-box textarea { 

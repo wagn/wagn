@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
   # can we turn sessions off for it and see if that helps?
   layout :wagn_layout, :except=>[:render_fast_404]
   
-  BUILTIN_LAYOUTS = %w{ blank noside simple none }
+  BUILTIN_LAYOUTS = %w{ blank noside simple pre none }
 
 
   protected
@@ -52,12 +52,11 @@ class ApplicationController < ActionController::Base
     # reset class caches
     # FIXME: this is a bit of a kluge.. several things stores as cattrs in modules
     # that need to be reset with every request (in addition to current user)
-    User.clear_cache if System.multihost
-    Cardtype.reset_cache
-    Role.reset_cache
-    CachedCard.reset_cache
+    Wagn::Cache.reset_local
     System.request = request 
     #System.time = Time.now.to_f              
+    ## DEBUG
+    ActiveRecord::Base.logger.debug("WAGN: per request setup")
     load_location
   end
 
@@ -112,27 +111,22 @@ class ApplicationController < ActionController::Base
   # --------------( card loading filters ) ----------
   def load_card!   
     load_card
-    if @card.new_record? && !@card.virtual?
-      raise Wagn::NotFound, "#{request.env['REQUEST_URI']} requires a card id"
-    end
+    return @card if @card && @card.known?
+    raise Wagn::NotFound, "We looked everywhere but found no such card (#{params[:id]})."
   end
 
   def load_card_with_cache
     return load_card( cache=true )
   end
 
-  def load_card( cache=false)                
-    if params[:id] && params[:id] =~ /^\d+$/
-      @card = Card.find(params[:id])
-      name = @card.name
-    elsif params[:id]
-      name = Cardname.unescape( params[:id] )
-    else 
-      name=""
-    end
+  def load_card( cache=false)
+    return @card=nil unless id = params[:id]            
+    name = (id =~ /^\d+$/ ?
+      (@card = Card.find(id); name = @card.name) :
+      Cardname.unescape( id )
+    )
     card_params = params[:card] ? params[:card].clone : nil
     @card = CachedCard.get(name, @card, :cache=>cache, :card_params=>card_params )
-    @card
   end
                 
   def load_card_and_revision

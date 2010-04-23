@@ -15,7 +15,7 @@ module WagnHelper
   def get_slot(card=nil, context=nil, action=nil, opts={})
     nil_given = card.nil?
     card ||= @card; context||=@context; action||=@action
-    opts[:relative_content] = params  
+    opts[:relative_content] = opts[:params] = params  
     slot = case
       when Slot.current_slot;  nil_given ? Slot.current_slot : Slot.current_slot.subslot(card)
       else Slot.current_slot = Slot.new(card,context,action,self,opts)
@@ -144,18 +144,6 @@ module WagnHelper
   def site_title
     System.site_title
   end
-
-  def css_name( name )
-    name.gsub(/#{'\\'+JOINT}/,'-').gsub(/[^\w-]+/,'_')
-  end
-
-  #def related
-  #  render :partial=> 'card/related'
-  #end
-
-  #def sidebar
-  #  render :partial=>partial_for_action('sidebar', @card)
-  #end
 
   def format_date(date, include_time = true)
     # Must use DateTime because Time doesn't support %e on at least some platforms
@@ -300,7 +288,12 @@ module WagnHelper
   end
   
   def render_layout_card(card)
-    Slot.new(card, "layout_0", "view", self, :main_content=>@content_for_layout, :main_card=>@card).render(:naked)
+    opts = {
+      :main_content => @content_for_layout,
+      :main_card => @card
+    }
+    opts[:relative_content] = opts[:params] = params
+    Slot.new(card, "layout_0", "view", self, opts).render(:naked)
   end  
   
   def render_layout_content(content)

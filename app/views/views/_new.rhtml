@@ -21,7 +21,7 @@
 					:html=>{ :class=>'form',:onsubmit=>slot.save_function	} do |form| %>
 
 			<div class="card-header">
-			  <% if !request.xhr? and params[:card] and cardtype = params[:card][:type] and !card.broken_type %>
+			  <% if !request.xhr? && @args[:type] && !@card.broken_type %>
 			    <%= form.hidden_field :type %>
 			  <% else %>
   			  <span class="new-type">
@@ -46,22 +46,19 @@
 					<% end %> 
 				</span>
 			</div>
-			<% if card.template? %>
-			  <%- card.extension_type='HardTemplate' if card.type_template? %>
-        <%= render :partial=>'card/hardsoft_form', :locals=>{:card=> card, :mode=>'new'} %>
-      <% end %>                  
-      <% if inst = card.add_help_card %>
+      <% if inst = card.setting_card('add help') %>
         <div class="instruction"><%= slot.subslot(inst).render :naked %></div>
 	    <% end %>
 
 			
-			
 			<div class="edit-area">
   			<div class="editor">  
-  				<% if card.hard_template %>
+					<% #FIXME CONTENT: the hard template test can go away when we phase out the old sytem %>
+  				<% if card.content_templated? %>
   				  <%- slot.form = form %>
     			  <%= slot.render(:multi_edit)%>
   				<% else %>
+						<%# if default_content = card.setting('default') ; card.content = default_content; end %>
   					<%= slot.content_field(form) %>
   				<% end %>
   			</div>
@@ -70,9 +67,9 @@
   		  <%= hidden_field_tag :view, params[:requested_view] || params[:view] || :open %>
   		  <div class="edit-button-area">
     		
-    			<%= button_to_function 'Create', "this.form.onsubmit()", :id=>'create-button'  %>
+    			<%= button_to_function 'Submit', "this.form.onsubmit()", :id=>'create-button'  %>
 						
-          <% if request.xhr? %>						
+          <% if slot.xhr? %>						
     				<%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function }  %> 
     			<% else %>
     		    <%= button_to_function 'Cancel',"document.location.href='#{previous_location}'" %> 

@@ -37,7 +37,10 @@ namespace :test do
   ##  setting it by hand after fixture generation.  
   desc "recreate test fixtures from fresh db"
   task :generate_fixtures => :environment do  
-
+    # env gets auto-set to 'test' somehow.
+    # but we need development to get the right schema dumped. 
+    ENV['RAILS_ENV'] = 'development'
+    
     if System.enable_postgres_fulltext
       raise("Oops!  you need to disable postgres_fulltext in wagn.rb before generating fixtures")
     end
@@ -45,12 +48,12 @@ namespace :test do
     abcs = ActiveRecord::Base.configurations    
     config = RAILS_ENV || 'development'  
     olddb = abcs[config]["database"]
-    abcs[config]["database"] = "wagn_test_template"
+    #abcs[config]["database"] = "wagn_test_template"
 
   #=begin  
     begin
       # assume we have a good database, ie. just migrated dev db.
-      puts `rake db:migrate`
+      puts `echo $RAILS_ENV; rake db:migrate`
       puts `rake db:schema:dump`
       set_database 'wagn_test_template'
       # Rake::Task['db:drop'].invoke

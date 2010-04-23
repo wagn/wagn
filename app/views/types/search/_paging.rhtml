@@ -3,11 +3,13 @@
  s = card.search_opts
  offset, limit = s[:offset], s[:limit]
  first,last = offset+1,offset+card.results.length 
-# shared_params = shared_params.symbolize_keys
+# shared_params = shared_args.symbolize_keys
  total = card.count( s ) 
  
+ args = slot.slot_options[:params]
+
  s[:requested_view] = slot.requested_view 
- s[:item] = slot.item_format || params[:item]
+ s[:item] = slot.item_format || args[:item]
  
 %>
 
@@ -18,7 +20,7 @@
     <% if first > 1 %>
       <%- s[:offset]= [offset-limit,0].max %>
     	<%= link_to_remote image_tag('prev-page.png'), :update=>slot.id,
-    				:url=>slot.url_for('card/view', params.merge(s)) 
+    				:url=>slot.url_for('card/view', args.merge(s)) 
     	%>
     <% end %>
     
@@ -26,7 +28,7 @@
     <% if last < total %>
       <%- s[:offset]= last %>
     	<%= link_to_remote image_tag('next-page.png'), :update=>slot.id,
-    	 			:url=>slot.url_for('card/view', params.merge(s))
+    	 			:url=>slot.url_for('card/view', args.merge(s))
     	 %>
     <% end %>     
   </span>

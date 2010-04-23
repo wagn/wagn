@@ -30,11 +30,13 @@
 	  <% if @show_diff and @previous_revision %>
 	    <%= slot.render_diff( @card, @previous_revision.content, @revision.content ) %>
 	  <% else %>
-	    <%= slot.render :naked_content, :content=>@revision.content %>
+			<%= @revision.content %>
 	  <% end %>
 	</div>
 
 	<div class="revision-navigation card-footer">
 	  <%= revision_menu %>
 	</div>
+	
+	
 <% end %>

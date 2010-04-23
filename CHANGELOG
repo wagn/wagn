@@ -1,3 +1,19 @@
+=== 1.4.0 (April 22, 2010)
+* Content Settings
+* add flexible emailing
+* fix file saving bugs
+* implement calculations
+* ignore double-click in comment box
+* checkboxes should handle none checked
+* fix error handling for options
+* don't redirect after creating cards with question marks in name
+* add vacuum analyze to data pull
+* fix *options autocomplete after first pointer item
+* fix type-specification in inclusions
+* implement raw view
+* make initially closed cards stay open after edit
+* make remove redirect independent of *alerts
+
 === 1.3.0 (Jan 1, 2010)
 * simple pattern settings
 * let plus-star-edit cards be searches

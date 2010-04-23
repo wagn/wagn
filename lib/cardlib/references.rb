@@ -5,13 +5,13 @@ module Cardlib
 
     protected   
     
-    def update_references_on_create   
+    def update_references_on_create  
       WikiReference.update_on_create(self)  
 
       # FIXME: bogus blank default content is set on hard_templated cards...
       User.as(:wagbot) {
-        content = self.template ? self.template.content : self.content
-        Renderer.new.render(self, content, update_references=true)   
+        render_content = content_templated? ? setting('content') : self.content
+        Renderer.new.render(self, render_content, update_references=true)   
       }
       expire_templatee_references
     end

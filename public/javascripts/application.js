@@ -9,45 +9,20 @@ var warn = function(stuff) {
     console.log( stuff );
 }
 
-var Cookie = {
-  set: function(name, value, daysToExpire) {
-    var expire = '';
-    if (daysToExpire != undefined) {
-      var d = new Date();
-      d.setTime(d.getTime() + (86400000 * parseFloat(daysToExpire)));
-      expire = '; expires=' + d.toGMTString();
-    }
-    return (document.cookie = escape(name) + '=' + escape(value || '') + expire);
-  },
-  get: function(name) {
-    var cookie = document.cookie.match(new RegExp('(^|;)\\s*' + escape(name) + '=([^;\\s]*)'));
-    return (cookie ? unescape(cookie[2]) : null);
-  },
-  erase: function(name) {
-    var cookie = Cookie.get(name) || true;
-    Cookie.set(name, '', -1);
-    return cookie;
-  },
-  accept: function() {
-    if (typeof navigator.cookieEnabled == 'boolean') {
-      return navigator.cookieEnabled;
-    }
-    Cookie.set('_test', '1');
-    return (Cookie.erase('_test') === '1');
-  }
-};
-
 Wagn.Messenger = {  
   element: function() { return $('alerts') },
   alert: function( message ) {
+    if (!this.element()) return;
     this.element().innerHTML = '<span style="color:red; font-weight: bold">' + message + '</span>';
     new Effect.Highlight( this.element(), {startcolor:"#ffff00", endcolor:"#ffffaa", restorecolor:"#ffffaa", duration:1});
   },
   note: function(message) {
+    if (!this.element()) return;
     this.element().innerHTML = message;
     new Effect.Highlight( this.element(), {startcolor:"#ffff00", endcolor:"#ffffaa", restorecolor:"#ffffaa", duration:1});
   },
   log: function( message ) {
+    if (!this.element()) return;
     this.element().innerHTML = message; 
     new Effect.Highlight( this.element(), {startcolor:"#eeeebb", endcolor:"#ffffaa", restorecolor:"#ffffaa", duration:1});
   },
@@ -215,14 +190,21 @@ handleGlobalShortcuts=function(event){
   }
 }
 
-
-
 setupLinksAndDoubleClicks = function() {
   getNewWindowLinks();
-  setupDoubleClickToEdit();  
   setupCreateOnClick();
-}                  
+  
+  jQuery(".editOnDoubleClick").dblclick(function(event){
+    editTransclusion(this);
+    event.stopPropagation();
+  });
 
+  // make sure these nested elements don't bubble up their double click
+  // to a containing double-click handler.
+  jQuery(".comment-box, .TYPE-pointer", ".editOnDoubleClick").dblclick(function(event){
+    event.stopPropagation();
+  });
+}                  
 
 setupCreateOnClick=function(container) {
 //  console.log("setting up creates");
@@ -245,17 +227,7 @@ setupCreateOnClick=function(container) {
     }
   });
 }                  
-
-setupDoubleClickToEdit=function(container) {                               
-  $$( ".editOnDoubleClick" ).each(function(el){
-    el.ondblclick=function(event) {   
-      if (Prototype.Browser.IE) { event = window.event } // shouldn't prototype take card of this?              
-      element = Event.element(event);   
-      editTransclusion(element);
-      Event.stop(event);
-    }
-  });
-}        
+     
    
 editTransclusion=function(element){
    span = getSlotSpan(element);   

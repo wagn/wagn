@@ -28,7 +28,7 @@ module ChunkManager
   
   def init_chunk_manager
     @chunks_by_type = Hash.new
-    Chunk::Abstract.descendents.each{|chunk_type| 
+    ACTIVE_CHUNKS.each{|chunk_type| 
       @chunks_by_type[chunk_type] = Array.new 
     }
     @chunks_by_id = Hash.new

@@ -1,7 +1,7 @@
 module Wagn
   module Version
     Major = '1'
-    Minor = '3'
+    Minor = '4'
     Tiny  = '0'
     Eensie = ''
   

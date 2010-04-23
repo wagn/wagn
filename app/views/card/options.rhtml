@@ -4,5 +4,5 @@
 	<div class="options-body">
     <%= slot.render_partial "card/options/#{subtab}" %>
 	</div>
-  <%= slot.notice %>
+  <span class="notice"><%= flash[:notice] %></span>
 <% end %>

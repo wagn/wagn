@@ -30,15 +30,6 @@ class Card::BaseTest < ActiveSupport::TestCase
     #assert_equal 0, Card::Basic.find_all_by_trash(false).size
   end
 
-  def test_should_create_connection_card
-    Card::Basic.create!(
-      :trunk => Card.find_by_name('Joe User'),
-      :tag => Card.find_by_name('color'),
-      :content=>'green'
-     )
-     assert_instance_of Card::Basic, Card.find_by_name("Joe User+color")
-  end
-
   def test_attribute_card
     alpha, beta = Card.create(:name=>'alpha'), Card.create(:name=>'beta')
     assert_nil alpha.attribute_card('beta')
@@ -87,13 +78,6 @@ class Card::BaseTest < ActiveSupport::TestCase
   end
   
   def test_multi_update_should_create_subcards_as_wagbot_if_missing_subcard_permissions
-    # 1st setup anonymously create-able cardtype
-    User.as(:joe_admin)
-    f = Card.create! :type=>"Cardtype", :name=>"Fruit"
-    f.permit(:create, Role[:anon])       
-    f.permit(:read, Role[:admin])
-    f.save!
-
     # then repeat multiple update as above, as :anon
     User.as(:anon) 
     b = Card.create!( :type=>"Fruit", :name=>'Banana' )
@@ -113,20 +97,8 @@ class Card::BaseTest < ActiveSupport::TestCase
 
 
   def test_create_without_read_permission
-    # 1st setup anonymously create-able cardtype
-    User.as(:joe_admin)
-    f = Card.create! :type=>"Cardtype", :name=>"Fruit"
-    f.permit(:create, Role[:anon])       
-    f.permit(:read, Role[:admin])   
-    f.save!
-    
-    ff = Card.create! :name=>"Fruit+*tform"
-    ff.permit(:read, Role[:auth])
-    ff.save!
-    
     User.as(:anon)     
     c = Card.create! :name=>"Banana", :type=>"Fruit", :content=>"mush"
-
     assert_raises Card::PermissionDenied do
       Card['Banana'].content
     end

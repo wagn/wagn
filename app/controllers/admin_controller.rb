@@ -34,7 +34,7 @@ class AdminController < ApplicationController
   
   def save_tasks
     System.ok!(:set_global_permissions)    
-    role_tasks = params[:role_task]
+    role_tasks = params[:role_task] || {}
     Role.find( :all ).each  do |role|
       tasks = role_tasks[role.id.to_s] || {}
       role.tasks = tasks.keys.join(',')

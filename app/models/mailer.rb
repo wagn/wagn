@@ -5,7 +5,7 @@ class Mailer < ActionMailer::Base
     url_key = user.card.name.to_url_key
 
     recipients "#{user.email}"
-    from       (System.setting('*account+*from') || "#{from_name} <#{from_user.email}>") #FIXME - might want different from settings for different emails?
+    from       (System.setting('*invite+*from') || "#{from_name} <#{from_user.email}>") #FIXME - might want different from settings for different emails?
     subject    subject
     sent_on    Time.now
     body  :email    => (user.email    or raise Wagn::Oops.new("Oops didn't have user email")),
@@ -36,7 +36,7 @@ class Mailer < ActionMailer::Base
     updated_card ||= card
     updater = updated_card.updater
     recipients "#{user.email}"
-    from       System.setting('*notify+*from') || User.find_by_login('wagbot').email
+    from       User.find_by_login('wagbot').email
     subject    "[#{System.setting('*title')} notice] #{updater.card.name} #{action} \"#{card.name}\"" 
     content_type 'text/html'
     body :card => card,
@@ -50,6 +50,35 @@ class Mailer < ActionMailer::Base
          :watched => (watched == card.name ? "#{watched}" : "#{watched} cards")
   end
   
+  def flexmail config
+    recipients  config[:to]
+    from        config[:from]
+    cc          config[:cc]
+    bcc         config[:bcc]
+    subject     config[:subject]
+    
+    if !config[:attach] or config[:attach].empty?
+      content_type 'text/html'
+      body :content => config[:message]
+    else
+      content_type 'multipart/alternative'
+      
+      part 'text/html' do |p|
+        p.body = config[:message]
+      end
 
+      config[:attach].each do |cardname|
+        if c = Card[ cardname ] and cardfile = c.attachment
+          attachment cardfile.content_type do |a|
+            open( cardfile.public_filename ) do |f|
+              a.filename cardfile.filename
+              a.body = f.read
+            end
+          end
+        end
+      end
+    end
+  end
+  
 end
 

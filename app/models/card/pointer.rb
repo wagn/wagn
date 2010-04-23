@@ -48,11 +48,6 @@ module Card
       (oc=self.options_card) ? oc.search(:limit=>limit) : Card.search(:sort=>'alpha',:limit=>limit)
     end
     
-    def limit
-      card = System.setting("#{self.name.tag_name}+*max") or return nil
-      card.content.strip.to_i
-    end    
-    
 #    def autoname
 #      System.setting("#{self.name.tag_name}+*autoname")
 #    end

@@ -533,7 +533,7 @@ function Nimbb_videoSaved(idPlayer)
   recorder = jQuery("#"+idPlayer);
   recorder.prevAll("input").val( recorder[0].getGuid() );
   if ( !recorder.parents(".in-multi")[0] ) {
-    f[0].onsubmit();
+    recorder.parents("form")[0].onsubmit();
   }
 }
 

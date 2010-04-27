@@ -519,35 +519,23 @@ var attachmentOnChangeUpdateParent = function(attachment_uuid, filename) {
 }
 
 
-// Nimbb.  this should be moved to module.
-// Global variable to hold player's reference.
-var _Nimbb;
-
-// Global variable to hold the guid of the recorded video.
-var _Guid = "";
 
 // Event: Nimbb Player has been initialized and is ready.
 function Nimbb_initCompleted(idPlayer)
 {
-  alert(idPlayer);
-  warn(idPlayer);
-  // Get a reference to the player since it was successfully created.
-  _Nimbb = document[idPlayer];
+  warn("Nimbb initCompleted");
 }
 
 // Event: the video was saved.
 function Nimbb_videoSaved(idPlayer)
 {
-  // Keep the video guid.
-  _Guid = _Nimbb.getGuid();
-	//form.guid.value = _Guid;
-	
-	alert(_Guid);
-  // Redirect user.
-  // redirect();
+  warn("Nimbb videoSaved");
+  recorder = jQuery("#"+idPlayer);
+  recorder.prevAll("input").val( recorder[0].getGuid() );
+  if ( !recorder.parents(".in-multi")[0] ) {
+    f[0].onsubmit();
+  }
 }
-
-
 
 
 

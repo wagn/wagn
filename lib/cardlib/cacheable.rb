@@ -40,7 +40,7 @@ module Cardlib
         self.pointees( context ? context.name : nil )
       when "Search"
         self.list_cards(context).map {|card| card.name }
-      when "File"
+      when "File","NimbbVideo"
         [self.name]
       else
         self.content.split(/[,\n]/)

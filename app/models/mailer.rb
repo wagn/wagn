@@ -1,3 +1,5 @@
+require 'open-uri'
+
 class Mailer < ActionMailer::Base
   def account_info(user, subject, message)
     from_user = User.current_user || User[:wagbot]
@@ -73,6 +75,16 @@ class Mailer < ActionMailer::Base
             open( cardfile.public_filename ) do |f|
               a.filename cardfile.filename
               a.body = f.read
+            end
+          end
+        elsif c = Card[cardname] and c.type == "NimbbVideo"
+          attachment "video/x-flv" do |a|
+            video_url = "http://api.nimbb.com/Video/Download.aspx?" +         
+              "key=#{Wagn.config.nimbb_public_key}&" + 
+              "code=#{Wagn.config.nimbb_private_key}&" + 
+              "guid=#{c.content}"
+            open( url ) do |v|
+              a.body = v.read
             end
           end
         end

@@ -70,7 +70,7 @@ class Mailer < ActionMailer::Base
       end
 
       config[:attach].each do |cardname|
-        if c = Card[ cardname ] and cardfile = c.attachment
+        if c = Card[ cardname ] and c.respond_to?(:attachment) and cardfile = c.attachment
           attachment cardfile.content_type do |a|
             open( cardfile.public_filename ) do |f|
               a.filename cardfile.filename
@@ -79,11 +79,14 @@ class Mailer < ActionMailer::Base
           end
         elsif c = Card[cardname] and c.type == "NimbbVideo"
           attachment "video/x-flv" do |a|
+            guid = User.as(:wagbot){ c.content }
             video_url = "http://api.nimbb.com/Video/Download.aspx?" +         
               "key=#{Wagn.config.nimbb_public_key}&" + 
               "code=#{Wagn.config.nimbb_private_key}&" + 
-              "guid=#{c.content}"
-            open( url ) do |v|
+              "guid=#{guid}"
+            debugger
+            open( video_url ) do |v|
+              a.filename "video-#{guid}.flv"
               a.body = v.read
             end
           end

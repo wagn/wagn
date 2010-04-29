@@ -346,7 +346,7 @@ class Wql
     end
     
     def part(val) 
-      merge :or=>{ :tag_id => val, :trunk_id => val }
+      merge :or=>{ :tag_id => val.clone, :trunk_id => val }
     end  
     
     def right_plus(val) 

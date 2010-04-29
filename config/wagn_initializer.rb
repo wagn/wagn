@@ -11,7 +11,6 @@ module Wagn
         config.frameworks -= [ :action_web_service ]
         config.gem "uuid"
         config.gem "json"
-        config.gem "fastercsv"
         unless ENV['RUN_CODE_RUN']
           config.gem "hoptoad_notifier"
         end

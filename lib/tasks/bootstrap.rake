@@ -1,4 +1,3 @@
-require 'ruby-debug'
 namespace :wagn do
   desc "(re) create a wagn database from scratch"
   task :create => :environment do
@@ -41,7 +40,6 @@ namespace :wagn do
   
     desc "load bootstrap fixtures into db"
     task :load => :environment do     
-      require 'ruby-debug'
       
       require 'active_record/fixtures'                         
       #ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)

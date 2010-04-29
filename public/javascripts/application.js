@@ -520,6 +520,22 @@ var attachmentOnChangeUpdateParent = function(attachment_uuid, filename) {
 
 
 
+// Event: Nimbb Player has been initialized and is ready.
+function Nimbb_initCompleted(idPlayer)
+{
+  warn("Nimbb initCompleted");
+}
+
+// Event: the video was saved.
+function Nimbb_videoSaved(idPlayer)
+{
+  warn("Nimbb videoSaved");
+  recorder = jQuery("#"+idPlayer);
+  recorder.prevAll("input").val( recorder[0].getGuid() );
+  if ( !recorder.parents(".in-multi")[0] ) {
+    recorder.parents("form")[0].onsubmit();
+  }
+}
 
 
 

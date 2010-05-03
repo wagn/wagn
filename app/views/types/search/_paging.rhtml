@@ -1,6 +1,6 @@
 
 <%- 
- s = card.search_opts
+ s = card.spec
  offset, limit = s[:offset], s[:limit]
  first,last = offset+1,offset+card.results.length 
 # shared_params = shared_args.symbolize_keys
@@ -16,14 +16,12 @@
 <!-- paging -->
 <% if total > limit %>
   <span class="paging">
-  
     <% if first > 1 %>
       <%- s[:offset]= [offset-limit,0].max %>
     	<%= link_to_remote image_tag('prev-page.png'), :update=>slot.id,
     				:url=>slot.url_for('card/view', args.merge(s)) 
     	%>
     <% end %>
-    
     <span class="faint"><%= first %> to <%= last %> of <%= total %></span>
     <% if last < total %>
       <%- s[:offset]= last %>

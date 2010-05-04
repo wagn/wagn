@@ -10,7 +10,7 @@ class AccountController < ApplicationController
 
     user_args = (params[:user]||{}).merge(:status=>'pending').symbolize_keys
     @user = User.new( user_args ) #does not validate password
-    card_args = (params[:card]||{}).merge(:type=>'InvitationRequest')
+    card_args = (params[:card]||{}).merge(:typecode=>'InvitationRequest')
     @card = Card.new( card_args )
     
     return unless request.post?

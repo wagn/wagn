@@ -186,31 +186,31 @@ module Card
         args = {} if args.nil?
         args = args.stringify_keys
 
-        # FIXME: if a name is given, do we want to check 
-        # if the card is virtual or in the trash?
-
-        # set the type from the class we're called from 
-        calling_class = self.name.split(/::/).last
-        if calling_class != 'Base'
-          args['type'] = calling_class
-        end
-
-        # set type from settings
-        if !args['type']
-          default_card = Card::Basic.new({ 
-            :name=> args['name'], 
-            :type => "Basic",
-            :skip_defaults=>true 
-          }).setting_card('content')
-          args['type'] = default_card ? default_card.type : "Basic"
-        end
+        # FIXME: if a name is given, we want to check 
+        # if the card is virtual or in the trash
         
-        card_class = Card.class_for( args['type'] ) || (
+        calling_class = self.name.split(/::/).last
+        field = :codename
+        
+        args['type'] =
+          case
+          when args['typecode']
+            args.delete('typecode')
+          when calling_class != 'Base'
+            calling_class
+          when args['type']
+            field= :cardname
+            args['type']
+          else
+            setting = Card::Basic.new(:name=> args['name'], :skip_defaults=>true ).setting_card('content')
+            setting ? setting.type : 'Basic'
+          end
+
+        card_class = Card.class_for( args['type'], field ) || (
           broken_type = args['type']; Card::Basic
         )
+        args.delete('type') # create new card based on the class we've determined (not arg['type'])
 
-        # create the new card based on the class we've determined
-        args.delete('type')
         
         new_card = card_class.ar_new args
         yield(new_card) if block_given?
@@ -528,7 +528,7 @@ module Card
     def clone_to_type( newtype )
       attrs = self.attributes_before_type_cast
       attrs['type'] = newtype 
-      Card.class_for(newtype).new do |record|
+      Card.class_for(newtype, :cardname).new do |record|
         record.send :instance_variable_set, '@attributes', attrs
         record.send :instance_variable_set, '@new_record', false
         # FIXME: I don't really understand why it's running the validations on the new card?
@@ -669,8 +669,8 @@ module Card
           rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rec.right_template.type}"
         end        
         
-        # must be cardtype name or constant name
-        unless Card.class_for(value)
+        # must be cardtype name
+        unless Card.class_for(value, :cardname)
           rec.errors.add :type, "won't work.  There's no cardtype named '#{value}'"
         end
       end

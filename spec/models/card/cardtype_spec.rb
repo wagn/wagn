@@ -96,13 +96,13 @@ end
 
 describe Card, ".class_for" do
   it "should find valid types" do
-    Card.class_for('basic').should == Card::Basic
-    Card.class_for('Cardtype').should == Card::Cardtype
+    Card.class_for('basic', :cardname).should == Card::Basic
+    Card.class_for('Cardtype', :codename).should == Card::Cardtype
   end
   
   it "should return nil for invalid type" do
-    Card.class_for("mumbo-jumbo").should be_nil
-    Card.class_for('$d_foo#adfa').should be_nil
+    Card.class_for("mumbo-jumbo", :cardname).should be_nil
+    Card.class_for('$d_foo#adfa', :codename).should be_nil
   end
  
 end

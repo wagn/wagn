@@ -30,23 +30,13 @@ module Card
     end
     
     def class_for(name, field='codename')
-      
-      #if ::Cardtype.name_for_key?( given_type.to_key )
-      #  given_type = ::Cardtype.classname_for( ::Cardtype.name_for_key( given_type.to_key ))
-      #end
-      codename = 
+      Card.const_get(
         field.to_sym == :codename ? name :
           ( cardname = ::Cardtype.name_for_key(name.to_key) and
-            ::Cardtype.classname_for( cardname ) 
-          )
-        
-      
-      begin 
-#        Card.const_get(given_type)
-        Card.const_get(codename)
-      rescue Exception=>e
-        nil
-      end
+            ::Cardtype.classname_for( cardname ) )
+      )
+    rescue Exception=>e
+      nil
     end
 
 

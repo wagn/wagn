@@ -528,7 +528,7 @@ module Card
     def clone_to_type( newtype )
       attrs = self.attributes_before_type_cast
       attrs['type'] = newtype 
-      Card.class_for(newtype, :cardname).new do |record|
+      Card.class_for(newtype, :codename).new do |record|
         record.send :instance_variable_set, '@attributes', attrs
         record.send :instance_variable_set, '@new_record', false
         # FIXME: I don't really understand why it's running the validations on the new card?
@@ -670,7 +670,7 @@ module Card
         end        
         
         # must be cardtype name
-        unless Card.class_for(value, :cardname)
+        unless Card.class_for(value, :codename)
           rec.errors.add :type, "won't work.  There's no cardtype named '#{value}'"
         end
       end

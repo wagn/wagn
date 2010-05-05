@@ -113,7 +113,7 @@ div:hover.card-header .card-menu-left {
 }
 .current {
   background: #bbb;
-  padding-bottom: 7px !important;
+  padding-bottom: 5px !important;
 }
 
 .submenu {

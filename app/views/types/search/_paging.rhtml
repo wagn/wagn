@@ -1,7 +1,7 @@
 
 <%- 
  s = card.spec
- offset, limit = s[:offset], s[:limit]
+ offset, limit = s[:offset].to_i, s[:limit].to_i
  first,last = offset+1,offset+card.results.length 
 # shared_params = shared_args.symbolize_keys
  total = card.count( s ) 

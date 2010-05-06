@@ -58,7 +58,7 @@ class RevisionMerger
     data.each do |line|
       updated_str, author_name, diff = line.split_twice("::")
       time = Time.parse(updated_str)
-      author = Card[author_name].extension
+      author = (Card[author_name] || Card["Wagn Bot"]).extension
       if @card.revisions.find_by_updated_at_and_created_by(time, author)
         Rails.logger.debug "RevisionMerger( #{@card.name} )" +
           " skipping #{author_name}:#{updated_str}"
@@ -93,9 +93,21 @@ module CardMerger
   end
   
   def load data
-    YAML.load(data).each do |cardname, data|
+    YAML.load(data).map do |cardname, data|
+      begin
+        Cardtype.classname_for( data['type'] )
+        Cardtype.name_for( data['type'] )
+      rescue Exception => e
+        if e.message =~ /No (class|card) name/
+          Card::Cardtype.create! :name => data['type']
+        else
+          raise e
+        end
+      end
+        
       c = Card.find_or_create :name => cardname, :type => data['type']
       RevisionMerger.new(c).load( data['revisions'] )
+      cardname
     end
   end
 end

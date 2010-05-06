@@ -72,7 +72,7 @@ describe RevisionMerger do
     before do
       Rails.logger.level = ActiveSupport::BufferedLogger::Severity::DEBUG
     end
-      
+
     it "loads revisions into a card" do
       @rm.load @revtest_dump 
       @rm.card.reload
@@ -84,6 +84,10 @@ describe RevisionMerger do
       @rm.load @revtest_dump 
       @rm.card.reload
       @rm.dump.should == @revclone_dump
+    end
+    
+    it "handles missing authors" do
+      # somehow
     end
   end
 end
@@ -107,11 +111,26 @@ describe CardMerger do
   end
   
   describe ".load" do
+    it "returns list of saved cards" do
+      @rm.load( @revtest_dump ).should == ["revclone"]
+    end
+      
     it "loads cards from a txt format" do
       Card["revtest"].destroy_without_trash
       CardMerger.load @dump
       c = Card["revtest"]
       c.revisions.map(&:content).should == ["","first","second","third"]
+    end
+    
+    it "autocreates type if needed" do
+      data = "--- \n" +
+        "bluetest: \n"+
+        "  revisions: \n"+
+        "  - 2010-04-22T12:46:55.786149-06:00::Wagn Bot::+0:first\n" +
+        "  type: Bandana\n"
+      CardMerger.load( data )
+      c = Card["bluetest"]
+      c.type.should == "Bandana"
     end
   end
 end

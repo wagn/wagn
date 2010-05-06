@@ -1,6 +1,6 @@
 require 'csv'
 
-module Card
+module Cardlib
   class Import
     class << self
       def csv(opts={})

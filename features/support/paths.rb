@@ -14,9 +14,12 @@ module NavigationHelpers
     when /recent changes/
       '/recent'
       
+    when /card (.*) with (.*) layout$/
+      "/wagn/#{$1.to_url_key}?layout=$2"
+
     when /card (.*)$/
       "/wagn/#{$1.to_url_key}"
-      
+
     when /new card named (.*)$/
       "/card/new?card[name]=#{CGI.escape($1)}"
     

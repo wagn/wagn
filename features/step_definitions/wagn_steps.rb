@@ -200,3 +200,13 @@ Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field|
   field_labeled(field).element.search(".//option[@selected = 'selected']").inner_html.should =~ /#{value}/
 end
 
+
+## variants of standard steps to handle """ style quoted args
+Then /^I should see$/ do |text|
+  response.should contain(text)
+end
+
+When /^I fill in "([^\"]*)" with$/ do |field, value|
+  fill_in(field, :with => value) 
+end
+

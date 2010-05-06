@@ -2,7 +2,7 @@ class CardController < ApplicationController
   helper :wagn, :card 
 
   EDIT_ACTIONS =  [ :edit, :update, :rollback, :save_draft, :watch, :unwatch ]
-  LOAD_ACTIONS = EDIT_ACTIONS + [ :changes, :comment, :denied, :options, :quick_update, :related, :remove ]
+  LOAD_ACTIONS = EDIT_ACTIONS + [ :changes, :comment, :denied, :options, :quick_update, :update_codename, :related, :remove ]
 
   before_filter :load_card!, :only=>LOAD_ACTIONS
   before_filter :load_card_with_cache, :only => [:line, :view, :open ]
@@ -125,7 +125,7 @@ class CardController < ApplicationController
   #--------------( editing )
   
   def edit                                             
-    if ['name','type'].member?(params[:attribute])
+    if ['name','type','codename'].member?(params[:attribute])
       render :partial=>"card/edit/#{params[:attribute]}" 
     elsif params[:view] == 'setting'
       render :partial => "card/edit/content"
@@ -180,6 +180,13 @@ class CardController < ApplicationController
     @card.update_attributes! params[:card]   
     handling_errors do
       render(:text=>'Success')
+    end
+  end
+  
+  def update_codename
+    @card.extension.update_attribute :class_name, params[:codename]
+    handling_errors do
+      render(:text => 'Success' )
     end
   end
 
@@ -302,7 +309,6 @@ class CardController < ApplicationController
     
     
   #-------- ( MISFIT METHODS )  
-  
   def watch 
     watchers = Card.find_or_new( :name => @card.name + "+*watchers", :type => 'Pointer' )
     watchers.add_reference User.current_user.card.name

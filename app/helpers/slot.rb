@@ -284,6 +284,7 @@ class Slot
       when :open_content; self.render_open_content
       when :naked_content; self.render_naked_content
       when :array;  render_array;
+      when :wdiff;  render_wdiff;
       when :raw; card.content  
 
       when :expanded_view_content, :naked 
@@ -353,6 +354,23 @@ class Slot
       render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
     end
   end
+  
+  def render_wdiff
+    DiffPatch # hack, autotload CardMerger
+    count_render
+    if too_many_renders?
+      return render_partial( 'views/too_many_renders' ) 
+    end
+    
+    names = case card.type 
+      when 'Search';    Wql.new(card.get_spec(:return => 'name_content')).run.keys
+      when 'Pointer';    card.pointees
+      else  card.name
+    end
+    
+    inner_content = CardMerger.dump( names )
+    "<form><textarea rows=20 cols=50>#{inner_content}</textarea></form>"
+  end  
   
   def render_array
     Rails.logger.debug "Slot(#{card.name}).render_array   root = #{root}"
@@ -611,11 +629,12 @@ class Slot
       [[ :content,    true  ],
        [ :name,       true, ],
        [ :type,       !(card.type_template? || (card.type=='Cardtype' and ct=card.me_type and !ct.find_all_by_trash(false).empty?))],
+       [ :codename,   (System.always_ok? && card.type=='Cardtype')],
        [ :inclusions, !(card.out_transclusions.empty? || card.template? || card.hard_template),         {:inclusions=>true} ]
        ].map do |key,ok,args|
 
         link_to_remote( key, 
-          { :url=>url_for("card/edit", args, key), :update => ([:name,:type].member?(key) ? id('card-body') : id) }, 
+          { :url=>url_for("card/edit", args, key), :update => ([:name,:type,:codename].member?(key) ? id('card-body') : id) }, 
           :class=>(key==on ? 'on' : '') 
         ) if ok
       end.compact.join       

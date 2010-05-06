@@ -6,23 +6,15 @@
 <p>&nbsp;</p>
 <% if card.type == "Cardtype" %>
 	<strong>People watching "<%= card.name %>" cards</strong>
-	<p>Watchers receive email when "<%= card.name %>" cards are changed.
-		<a href="http://wagn.org/wagn/Notification">Learn more about notifications</a>
-	</p>                                                  
-	<blockquote>
-		<p>{{+*watchers}}</p>
-	</blockquote>
+	<p>Watchers receive email when "<%= card.name %>" cards are changed.</p>
 <% else %>
 	<strong>People watching "<%= card.name %>"</strong>
-	<p>Watchers receive email when cards of this type are changed.
-		<a href="http://wagn.org/wagn/Notification">Learn more about notifications</a>
-	</p>                                                  
-	<blockquote>
-		<p>{{+*watchers}}</p>	
-	</blockquote>
+	<p>Watchers receive email when cards of this type are changed.</p>
 <% end %>
-<p>&nbsp;</p>  
-<p>&nbsp;</p>  
+<p><a href="http://wagn.org/wagn/Notification">Learn more about notifications</a></p>                                                  
+<blockquote>
+	<p>{{+*watchers}}</p>	
+</blockquote>
 
 
 

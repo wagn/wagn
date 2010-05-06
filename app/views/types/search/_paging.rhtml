@@ -3,30 +3,27 @@
  s = card.spec
  offset, limit = s[:offset].to_i, s[:limit].to_i
  first,last = offset+1,offset+card.results.length 
-# shared_params = shared_args.symbolize_keys
- total = card.count( s ) 
+ total = card.count
  
  args = slot.slot_options[:params]
+ args[:limit] = limit
 
- s[:requested_view] = slot.requested_view 
- s[:item] = slot.item_format || args[:item]
- 
+ args[:requested_view] = slot.requested_view 
+ args[:item] = slot.item_format || args[:item]
 %>
 
 <!-- paging -->
 <% if total > limit %>
   <span class="paging">
     <% if first > 1 %>
-      <%- s[:offset]= [offset-limit,0].max %>
     	<%= link_to_remote image_tag('prev-page.png'), :update=>slot.id,
-    				:url=>slot.url_for('card/view', args.merge(s)) 
+    				:url=>slot.url_for('card/view', args.merge(:offset=>[offset-limit,0].max)) 
     	%>
     <% end %>
     <span class="faint"><%= first %> to <%= last %> of <%= total %></span>
     <% if last < total %>
-      <%- s[:offset]= last %>
     	<%= link_to_remote image_tag('next-page.png'), :update=>slot.id,
-    	 			:url=>slot.url_for('card/view', args.merge(s))
+    	 			:url=>slot.url_for('card/view', args.merge(:offset=>last))
     	 %>
     <% end %>     
   </span>

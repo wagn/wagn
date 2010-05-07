@@ -1,15 +1,16 @@
 
-<%- 
+<% 
  s = card.spec
  offset, limit = s[:offset].to_i, s[:limit].to_i
  first,last = offset+1,offset+card.results.length 
- total = card.count(s) #needs spec for _keyword to work on *search
+ total = card.count
  
  args = slot.slot_options[:params]
  args[:limit] = limit
 
  args[:requested_view] = slot.requested_view 
  args[:item] = slot.item_format || args[:item]
+ args[:_keyword] = params[:_keyword] if params[:_keyword]
 %>
 
 <!-- paging -->

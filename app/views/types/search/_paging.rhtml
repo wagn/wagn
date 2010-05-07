@@ -3,7 +3,7 @@
  s = card.spec
  offset, limit = s[:offset].to_i, s[:limit].to_i
  first,last = offset+1,offset+card.results.length 
- total = card.count
+ total = card.count(s) #needs spec for _keyword to work on *search
  
  args = slot.slot_options[:params]
  args[:limit] = limit

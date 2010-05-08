@@ -184,7 +184,9 @@ class CardController < ApplicationController
   end
   
   def update_codename
+    old_codename = @card.extension.class_name
     @card.extension.update_attribute :class_name, params[:codename]
+    Card.update_all( {:type=> params[:codename] }, ["type = ?", old_codename])
     handling_errors do
       render(:text => 'Success' )
     end

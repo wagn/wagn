@@ -62,6 +62,7 @@ class RevisionMerger
       if @card.revisions.find_by_updated_at_and_created_by(time, author)
         Rails.logger.debug "RevisionMerger( #{@card.name} )" +
           " skipping #{author_name}:#{updated_str}"
+        nil
       else
         newcontent = DiffPatch.patch(@card.content, diff)
         Rails.logger.debug "RevisionMerger( #{@card.name} )" +
@@ -72,9 +73,11 @@ class RevisionMerger
         cr.updated_at = time
         cr.created_by = author
         cr.update_record_without_timestamping
+        true
       end
-    end
+    end.compact
   end
+  
 end
 
 module CardMerger  
@@ -106,7 +109,8 @@ module CardMerger
       end
         
       c = Card.find_or_create :name => cardname, :type => data['type']
-      RevisionMerger.new(c).load( data['revisions'] )
+      n_updates = RevisionMerger.new(c).load( data['revisions'] )
+      Rails.logger.info("Import updated #{cardname} with #{n_updates} revisions")
       cardname
     end
   end

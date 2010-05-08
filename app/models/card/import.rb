@@ -4,8 +4,8 @@ module Card
     
     def import_content
       DiffPatch
-      cardnames = CardMerger.load( self.content )
-      self.content = "updated #{cardnames.join(", ")}"
+      messages = CardMerger.load( self.content )
+      self.content = "#{messages.join("<br/>")}"
     end
   end
 end

@@ -110,8 +110,9 @@ module CardMerger
         
       c = Card.find_or_create :name => cardname, :type => data['type']
       n_updates = RevisionMerger.new(c).load( data['revisions'] )
-      Rails.logger.info("Import updated #{cardname} with #{n_updates} revisions")
-      cardname
+      msg = "updated #{cardname} with #{n_updates} new revisions"
+      Rails.logger.info("Import: " + msg)
+      msg
     end
   end
 end

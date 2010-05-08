@@ -13,7 +13,7 @@
 	s = slot.paging_params #params[:s] || {}
 	begin
 		query_results = card.search( s )  
-		total = card.count( s )
+		total = card.count
 	rescue Exception=>e
 		error = e
 		query_results = nil

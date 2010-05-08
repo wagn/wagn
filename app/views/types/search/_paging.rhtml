@@ -1,5 +1,5 @@
 
-<%- 
+<% 
  s = card.spec
  offset, limit = s[:offset].to_i, s[:limit].to_i
  first,last = offset+1,offset+card.results.length 
@@ -10,6 +10,7 @@
 
  args[:requested_view] = slot.requested_view 
  args[:item] = slot.item_format || args[:item]
+ args[:_keyword] = params[:_keyword] if params[:_keyword]
 %>
 
 <!-- paging -->

@@ -9,6 +9,7 @@
 
  args[:requested_view] = slot.requested_view 
  args[:item] = slot.item_format || args[:item]
+ args[:_keyword] = s[:_keyword] if s[:_keyword]
 %>
 
 <!-- paging -->

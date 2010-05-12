@@ -652,7 +652,7 @@ class Slot
   end
 
   def name_field(form,options={})
-    form.text_field( :name, { :class=>'field card-name-field'}.merge(options))
+    form.text_field( :name, { :class=>'field card-name-field', :autocomplete=>'off'}.merge(options))
   end
 
 

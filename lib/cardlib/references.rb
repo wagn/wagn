@@ -48,8 +48,6 @@ module Cardlib
       base.class_eval do           
         has_many :name_references, :class_name=>'WikiReference',
           :finder_sql=>%q{SELECT * from wiki_references w where w.referenced_name=#{ActiveRecord::Base.connection.quote(key)}}
-    #    has_many :name_referencers, :through=>:name_references, :source=>:referencer
-    #       :finder_sql=>%q{SELECT cards.* FROM cards INNER JOIN wiki_references ON cards.id = wiki_references.card_id    WHERE ((wiki_references.referenced_name = #{ActiveRecord::Base.connection.quote(key)})) }
 
         has_many :in_references,:class_name=>'WikiReference', :foreign_key=>'referenced_card_id'
         has_many :out_references,:class_name=>'WikiReference', :foreign_key=>'card_id', :dependent=>:destroy
@@ -75,6 +73,13 @@ module Cardlib
         after_update :update_references_on_update
         
         after_save :expire_cache
+      end
+      
+      def name_referencers(rname = key)
+        Card.find_by_sql(
+          "SELECT c.* FROM cards c JOIN wiki_references r ON c.id = r.card_id "+
+          "WHERE (r.referenced_name = #{ActiveRecord::Base.connection.quote(rname.to_key)})"
+        )
       end
     end
   end

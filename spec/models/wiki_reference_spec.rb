@@ -19,11 +19,11 @@ describe "WikiReference" do
     it "on template creation" do
       Card::Cardtype.create! :name=>"SpecialForm"
       Card::SpecialForm.create! :name=>"Form1", :content=>"foo"
-      Card["Form1"].references_expired.should be_false
+      Card["Form1"].references_expired.should be_nil
       Card.create! :name=>"SpecialForm+*type+*content", :content=>"{{+bar}}"
       Card["Form1"].references_expired.should be_true
       Slot.new(Card["Form1"]).render(:naked_content)
-      Card["Form1"].references_expired.should be_false
+      Card["Form1"].references_expired.should be_nil
       Card["Form1"].out_references.plot(:referenced_name).should == ["form1+bar"]
     end
 
@@ -164,7 +164,7 @@ describe "WikiReference" do
   end
   
   
-=begin   
+#=begin   
   # this test is about the time between when a card is first created and the time that
   # references pointing to the cards name are updated and given an id;  
   # these 'name_references' are used in the cache_sweeper, but i'm not sure i understand
@@ -176,7 +176,7 @@ describe "WikiReference" do
     warn @e.name_references.inspect
     @e.name_references.plot(:referencer).plot(:name).include?("woof").should_not == nil
   end
-=end
+#=end
 
 =begin  
 

@@ -25,6 +25,7 @@
 			    <%= form.hidden_field :type %>
 			  <% else %>
   			  <span class="new-type">
+  			    <span class="label"> type:</span>
 					  <%= slot.cardtype_field form, :onchange=>slot.update_cardtype_function(   
 					        :url=>slot.url_for('card/new'), :update=>slot.id, 			    
 					        :with=>"Form.serialize(getSlotElement(this,'form'))" 

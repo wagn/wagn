@@ -137,7 +137,6 @@ class CardController < ApplicationController
     #fail "card params required" unless params[:card] or params[:cards]
 
     # ~~~ REFACTOR! -- this conflict management handling is sloppy
-    @old_card = @card.clone
     @current_revision_id = @card.current_revision.id
     old_revision_id = card_args.delete(:current_revision_id) || @current_revision_id
     if old_revision_id.to_i != @current_revision_id.to_i

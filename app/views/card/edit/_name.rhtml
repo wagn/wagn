@@ -1,25 +1,21 @@
-<% @old_card ||= @card 
-  @card.update_referencers ||= false
-%>
+<%-  @card.update_referencers ||= false %>
 
 
 <% get_slot.wrap('name') do |slot| %>
   
   <%= slot.edit_submenu :name %>
       
-  <% div(:class=>'edit-area' ) do %>  
- 	  <h2>Edit Name</h2>  
+  <% div(:class=>'edit-area edit-name' ) do %>  
+ 	  <h2>Change Name</h2>  
 		<% wagn_form_for :card, @card, :url=>slot.url_for('card/update'), 
 				:update=>{:success=>slot.id('card-body'), :failure=>"javascript:getNextElement(this,'notice')" }do |f| %>
-			<p>Change from <%= link_to_page less_fancy_title(@old_card), @old_card.name %> to this   
-  		    <%= slot.name_field(f) %>
-			</p>
+			<div>to <%= slot.name_field(f) %></div>
 							
 			<% if @confirm==true %>
 			  
 			  <% if dependents = @card.dependents and !dependents.empty? %>
 			    <div class="instruction">
-			      <p>This will change the names of these cards, too:</p>
+			      <div>This will change the names of these cards, too:</div>
 	  		    <ul>
   			      <% dependents.map do |dep| %>
   			        <li><%= link_to_page formal_title(dep), dep.name %>
@@ -29,21 +25,22 @@
 			  <% end %>          
 
 			  <% if children = @card.extended_referencers and !children.empty? %>
-			    <div class="headroom">
-			      <h2>References to <%= @old_card.name %></h2>
-			    </div>
+			    <h2>References</h2>
 			    <div class="instruction">
-  			    <p>Renaming could break links and inclusions on the following cards unless they're updated:</p>
+  			    <div>Renaming could break old links and inclusions on these cards:</div>
   			    <ul>
   			      <% children.map do |child| %>
   			        <li><%= link_to_page formal_title(child), child.name %>
   			      <% end. join ', ' %>
   			    </ul>
-  			    Would you like to 
-  			    <p>
-  			      <%= f.radio_button :update_referencers, 'true' %>Update references on all these cards with the new name
-  			      <%= f.radio_button :update_referencers, 'false' %>Let the references be broken (keep them as they are)
-  			    </p>
+  			    <div>You can...
+  			      <div class="radio"><%= f.radio_button :update_referencers, 'true' %>
+  			        <strong>Fix them</strong>: update old references with new name
+  			      </div>
+  			      <div class="radio"><%= f.radio_button :update_referencers, 'false' %>
+  			        <strong>Leave them</strong>: let old references point to old name
+  			      </div>
+  			    </div>
   			  </div>
 			  <% end %>        
 			  <%= f.hidden_field 'confirm_rename' %> 

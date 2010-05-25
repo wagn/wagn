@@ -57,6 +57,8 @@ class CardController < ApplicationController
   end
 
   def render_show
+    Wagn::Hook.call :before_show, '*all', self
+    
     @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
     ## fixme, we ought to be setting special titles (or all titles) in cards
     (request.xhr? || params[:format]) ? render(:action=>'show') : render(:text=>'~~render main inclusion~~', :layout=>true)

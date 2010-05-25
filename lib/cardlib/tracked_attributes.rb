@@ -167,8 +167,15 @@ module Cardlib
           WikiReference.update_on_destroy(dep, @old_name) 
         end
       else
-        User.as(:wagbot) do      
-          ([self]+deps).map(&:referencers).flatten.uniq.each do |card|
+        User.as(:wagbot) do
+          [self.name_referencers(@old_name)+(deps.map &:referencers)].flatten.uniq.each do |card|
+            # FIXME  using "name_referencers" instead of plain "referencers" for self because there are cases where trunk and tag
+            # have already been saved via association by this point and therefore referencers misses things
+            # eg.  X includes Y, and Y is renamed to X+Z.  When X+Z is saved, X is first updated as a trunk before X+Z gets to this point.
+            # so at this time X is still including Y, which does not exist.  therefore #referencers doesn't find it, but name_referencers(old_name) does.
+            # some even more complicated scenario probably breaks on the dependents, so this probably needs a more thoughtful refactor
+            # aligning the dependent saving with the name cascading
+            
             ActiveRecord::Base.logger.info("------------------ UPDATE REFERRER #{card.name}  ------------------------")
             next if card.hard_template
             card.content = Renderer.new.replace_references( card, @old_name, name )

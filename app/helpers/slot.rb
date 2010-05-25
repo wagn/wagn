@@ -753,13 +753,12 @@ class Slot
   end
 
   def name_field(form,options={})
-    form.text_field( :name, { :class=>'field card-name-field'}.merge(options))
+    form.text_field( :name, { :class=>'field card-name-field', :autocomplete=>'off'}.merge(options))
   end
 
 
   def cardtype_field(form,options={})
-    text = %{<span class="label"> type:</span>\n} 
-    text << @template.select_tag('card[type]', cardtype_options_for_select(card.type), options) 
+    @template.select_tag('card[type]', cardtype_options_for_select(card.type), options) 
   end
 
   def update_cardtype_function(options={})

@@ -23,6 +23,7 @@ class Renderer
   end
 
   def replace_references( card, old_name, new_name )
+    #warn "replacing references...card name: #{card.name}, old name: #{old_name}, new_name: #{new_name}"
     content = content.blank? ? card.content : content 
     wiki_content = WikiContent.new(card, content, self)
 

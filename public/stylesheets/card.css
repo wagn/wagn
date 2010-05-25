@@ -352,6 +352,17 @@ ul.pointer {
 div.transcluded {
   display: inline;
 }
+.edit-name input,
+.edit-type select {
+  margin: 10px 0px;
+}
+.edit-name .instruction {
+  text-align: left;
+  margin: 10px;
+}
+.edit-name .radio {
+  padding-left: 20px;
+}
 
 
 

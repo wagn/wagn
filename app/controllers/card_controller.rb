@@ -183,6 +183,7 @@ class CardController < ApplicationController
   end
   
   def update_codename
+    return unless System.always_ok?
     old_codename = @card.extension.class_name
     @card.extension.update_attribute :class_name, params[:codename]
     Card.update_all( {:type=> params[:codename] }, ["type = ?", old_codename])

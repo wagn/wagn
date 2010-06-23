@@ -71,6 +71,7 @@ describe Card, "codename_generation" do
   
   it "should create incremented classnames when first choice is taken" do
     Card.generate_codename_for("User").should == "User1"
+    Card.generate_codename_for('Process').should == 'Process1'
   end
 end                  
 

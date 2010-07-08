@@ -62,6 +62,7 @@ class Slot
     @subslots = []  
     @state = 'view'
     @renders = {}
+    @js_queue_initialized = {}
   end
 
   def subslot(card, context_base=nil, &proc)
@@ -662,7 +663,7 @@ class Slot
 
   def update_cardtype_function(options={})
     fn = ['File','Image'].include?(card.type) ? 
-            "Wagn.onSaveQueue['#{context}'].clear(); " :
+            "Wagn.onSaveQueue['#{context}']=[]" :
             "Wagn.runQueue(Wagn.onSaveQueue['#{context}']); "      
     if @card.hard_template
       #options.delete(:with)
@@ -678,9 +679,22 @@ class Slot
     self.form = form              
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
-    editor_partial = (card.type=='Pointer' ? ((c=card.setting('input'))  ? c.gsub(/[\[\]]/,'') : 'list') : 'editor')
-    pre_content + self.render_partial( card_partial(editor_partial), options ) + setup_autosave 
+    editor_partial = (card.type=='Pointer' ? ((c=card.setting('input'))  ? c.gsub(/[\[\]]/,'') : 'list') : 'editor')    
+    pre_content + clear_queues + self.render_partial( card_partial(editor_partial), options ) + setup_autosave 
   end                          
+ 
+  def clear_queues
+    queue_context = get_queue_context
+
+    return '' if root.js_queue_initialized.has_key?(queue_context) 
+    root.js_queue_initialized[queue_context]=true
+
+    javascript_tag(
+      "Wagn.onSaveQueue['#{queue_context}']=[];\n"+
+      "Wagn.onCancelQueue['#{queue_context}']=[];"
+    )
+  end
+
  
   def save_function 
     "if(ds=Wagn.draftSavers['#{context}']){ds.stop()}; if (Wagn.runQueue(Wagn.onSaveQueue['#{context}'])) { } else {return false}"
@@ -693,6 +707,11 @@ class Slot
   def xhr?
     controller && controller.request.xhr?
   end
+  
+  def get_queue_context
+    #FIXME: this looks like it won't work for arbitraritly nested forms.  1-level only
+    @nested ? context.split('_')[0..-2].join('_') : context
+  end
 
   def editor_hooks(hooks)
     # it seems as though code executed inline on ajax requests works fine
@@ -700,33 +719,18 @@ class Slot
     # we run it in an onLoad queue.  the rest of this code we always run
     # inline-- at least until that causes problems.    
     
-    #FIXME: this looks like it won't work for arbitraritly nested forms.  1-level only
-    hook_context = @nested ? context.split('_')[0..-2].join('_') : context
-    code = "" 
+    queue_context = get_queue_context
+    code = ""
     if hooks[:setup]
       code << "Wagn.onLoadQueue.push(function(){\n" unless xhr?
       code << hooks[:setup]
       code << "});\n" unless xhr?
     end
-    root.js_queue_initialized||={}
-    unless root.js_queue_initialized.has_key?(hook_context) 
-      #code << "warn('initializing #{hook_context} save & cancel queues');"
-      code << "Wagn.onSaveQueue['#{hook_context}']=$A([]);\n"
-      code << "Wagn.onCancelQueue['#{hook_context}']=$A([]);\n"
-      root.js_queue_initialized[hook_context]=true
-    end
     if hooks[:save]  
-      code << "Wagn.onSaveQueue['#{hook_context}'].push(function(){\n"
-      #code << "warn('running #{hook_context} save hook');"
-      code << hooks[:save]
-      code << "});\n"
-      #code << "warn('hook: fn(){ #{hooks[:save].gsub(/\'/,"|").gsub(/\n/,"; ")} }');"
-      #code << "added to #{hook_context} save queue');"
+      code << "Wagn.onSaveQueue['#{queue_context}'].push(function(){\n #{hooks[:save]} \n });\n"
     end
     if hooks[:cancel]
-      code << "Wagn.onCancelQueue['#{hook_context}'].push(function(){\n"
-      code << hooks[:cancel]
-      code << "});\n"
+      code << "Wagn.onCancelQueue['#{queue_context}'].push(function(){\n #{hooks[:cancel]} \n });\n"
     end
     javascript_tag code
   end                   

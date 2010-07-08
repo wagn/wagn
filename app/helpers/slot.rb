@@ -663,7 +663,7 @@ class Slot
 
   def update_cardtype_function(options={})
     fn = ['File','Image'].include?(card.type) ? 
-            "Wagn.onSaveQueue['#{context}']=[]" :
+            "Wagn.onSaveQueue['#{context}']=[];" :
             "Wagn.runQueue(Wagn.onSaveQueue['#{context}']); "      
     if @card.hard_template
       #options.delete(:with)

@@ -553,16 +553,16 @@ class Slot
     subslot.requested_view = vmode
     action = case
       when [:name, :link, :linkname].member?(vmode)  ; vmode
-      when state==:edit      ; card.virtual? ? :edit_auto : :edit_in_form   
+      when state==:edit       ; card.virtual? ? :edit_auto : :edit_in_form   
       when new_card                       
         case   
-          when vmode==:naked ; :blank
+          when vmode==:naked  ; :blank
           when vmode==:setting; :setting_missing
-          when state==:line  ; :closed_missing
-          else               ; :open_missing
+          when state==:line   ; :closed_missing
+          else                ; :open_missing
         end
-      when state==:line      ; :expanded_line_content
-      else                   ; vmode
+      when state==:line       ; :expanded_line_content
+      else                    ; vmode
     end
 
     result = subslot.render action, options

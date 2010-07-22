@@ -143,8 +143,6 @@ debugger
   def edit                                             
     if ['name','type'].member?(params[:attribute])
       render :partial=>"card/edit/#{params[:attribute]}" 
-    elsif params[:view] == 'setting'
-      render :partial => "card/edit/content"
     end
   end
 

@@ -1,14 +1,10 @@
-<div class="setting-row not-set">
-	<div class="value">      
-		<% if card.ok?(:edit) %>		                       
-			<span class="edit-link faint">
-				<%#= slot.link_to_action('add','new') %>
-				<%= link_to "add", "/card/new/#{card.name}" %>
-			</span>
-		<% end %>
-	</div>
-	<div class="set">
-	  <%- set_name = card.name.trunk_name %>
-	  <%= link_to_page Wagn::Pattern.label(set_name), set_name %>
-	</div>
-</div>
+<%-
+  attributes = %{ class="createOnClick" view="setting" cardid="" position="#{slot.position}" cardname="#{h card.name}" type="" }
+%>
+<% if card.ok?(:edit) %>
+  <![if !IE]><span <%= attributes %> ><![endif]>
+  <!--[if IE]><div <%= attributes %> style="display:inline" ><![endif]--> 
+  	<a class="setting-missing edit-link">add</a>
+  <!--[if IE]></div><![endif]-->
+  <![if !IE]></span><![endif]>
+<% end %>

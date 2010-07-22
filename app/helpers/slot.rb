@@ -242,10 +242,6 @@ class Slot
       when :setting  
         w_action = self.requested_view = 'content'
         w_content = render_partial('views/setting')  
-
-      when :setting_missing  
-        w_action = self.requested_view = 'content'
-        w_content = render_partial('views/setting_missing')  
       
     ###----------------( NAME)
     
@@ -316,7 +312,7 @@ class Slot
     
       ###---(  EXCEPTIONS ) 
       
-      when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
+      when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing, :setting_missing
           render_partial("views/#{ok_action}", args)
 
       when :blank; 

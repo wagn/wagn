@@ -1,16 +1,11 @@
-<div class="setting-row">
-	<div class="value line">             
-		<% if card.ok?(:edit) %>
-			<span class="edit-link">
-				<%= slot.link_to_action('edit','edit') %>
-			</span>
-		<% end %>
-		<span class="content">
-		  <%= slot.render( :expanded_line_content ) %>
-		</span>
-	</div>
-	<div class="set">
-	  <%- set_name = card.name.trunk_name %>
-	  <%= link_to_page Wagn::Pattern.label(set_name), set_name %>
-	</div>
+<div class="line">
+  <% if card.ok?(:edit) %>
+  	<span class="edit-link">
+  		<%= slot.link_to_action('edit','edit') %>
+  	</span>
+  <% end %>
+  <span class="content">
+    <%= slot.render( :expanded_line_content ) %>
+  </span>
 </div>
+

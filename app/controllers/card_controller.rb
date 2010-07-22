@@ -129,8 +129,6 @@ class CardController < ApplicationController
   def edit                                             
     if ['name','type','codename'].member?(params[:attribute])
       render :partial=>"card/edit/#{params[:attribute]}" 
-    elsif params[:view] == 'setting'
-      render :partial => "card/edit/content"
     end
   end
 

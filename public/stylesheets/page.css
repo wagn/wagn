@@ -221,7 +221,11 @@ div.auto_complete ul strong.highlight {
   border-bottom: 2px solid #888;
   border-right: 2px solid #888;
 }
-
+.inclusion-error {
+  background-color: #ecc !important;
+  padding: 1px 20px;
+  font-style: italic;
+}
 
 /*-------- Special Pages --------*/
 

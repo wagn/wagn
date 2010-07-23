@@ -568,6 +568,8 @@ class Slot
     result = subslot.render action, options
     Slot.current_slot = old_slot
     result
+  rescue
+    %{<span class="inclusion-error">error rendering #{link_to_page card.name}</span>}
   end   
   
   def method_missing(method_id, *args, &proc) 

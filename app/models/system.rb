@@ -84,7 +84,7 @@ class System < ActiveRecord::Base
     
     def favicon
       # bit of a kludge. 
-      image_setting('*favicon') || '/images/favicon.ico'
+      image_setting('*favicon') || image_setting('*logo') || '/images/favicon.ico'
     end
     
     def logo

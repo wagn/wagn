@@ -177,6 +177,7 @@ class Slot
   end    
 
   def wrap_main(content)
+    return content if p=root.slot_options[:params] and p[:layout]=='none'
     %{<div id="main" context="main">#{content}</div>}
   end
   

@@ -25,6 +25,7 @@ html>body .card-slot {
   padding: 5px; 
   margin: 0px;
   -moz-border-radius: 6px 6px 0 0;
+  text-align: left;
 }
 .title-menu {
   line-height: 18px;

@@ -27,7 +27,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'wiki/:id.:format', :controller => 'card', :action=>'show', :requirements=> ID_REQUIREMENTS2
   map.connect 'wiki/:id.:format', :controller => 'card', :action=>'show', :requirements=>ID_REQUIREMENTS1
   map.connect 'wiki/:id', :controller => 'card', :action=>'show', :requirements=>{ :id=>/.*/}
-  #/DEPRECATED   
+  #/DEPRECATED
 
   map.connect 'recent',           :controller => 'card', :action=>'show', :id=>'*recent_changes', :view=>'content'
   map.connect 'recent.:format',   :controller => 'card', :action=>'show', :id=>'*recent_changes', :view=>'content', :requirements=>{ :format=>FORMAT_PATTERN }

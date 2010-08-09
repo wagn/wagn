@@ -47,7 +47,7 @@
 					<% end %> 
 				</span>
 			</div>
-      <% if inst = card.setting_card('add help') && !params[:view] == 'setting' %>
+      <% if inst = card.setting_card('add help') && params[:view]!='setting' %>
         <div class="instruction"><%= slot.subslot(inst).render :naked %></div>
 	    <% end %>
 

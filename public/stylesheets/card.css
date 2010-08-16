@@ -609,6 +609,7 @@ body#wagn .card-slot.recent-changes h2 {
 .line hr,
 .line input,
 .line textarea,
+.line object,
 .line .comment-box,
 .line .table-of-contents,
 .line .card-menu,

@@ -29,7 +29,9 @@
       <h2><%= format_date(day, include_time = false) %></h2>
       <div class="search-result-list">
         <% cards_by_day[day].each do |card| %>
-      		<div class="search-result-item item-<%= view %>"><%= get_slot(card).render(view) %></div>
+      		<div class="search-result-item item-<%= view %>">
+      		  <%= slot.process_inclusion(card, {:view=>view, :showname=>card.name }) %>
+      		</div>
         <% end %>
       </div>  
     <% end %>

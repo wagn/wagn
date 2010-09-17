@@ -173,7 +173,7 @@ class Slot
   def wrap_content( content="" )
     %{<span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick">} +
     content.to_s + 
-    %{</span><!--[if IE]>&nbsp;<![endif]-->} 
+    %{</span>} #<!--[if IE]>&nbsp;<![endif]-->} 
   end    
 
   def wrap_main(content)

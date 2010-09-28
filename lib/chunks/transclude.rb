@@ -12,7 +12,7 @@ module Chunk
       super   
       #warn "FOUND TRANSCLUDE #{match_data} #{content}"
       @card_name, @options, @configs = self.class.parse(match_data)
-      @relative = @options[:relative]
+#      @relative = @options[:relative]
       @renderer = @content.renderer
       @card = @content.card or raise "No Card in Transclude Chunk!!"     
       @card_name.gsub!(/_self/,@card.name)
@@ -24,7 +24,7 @@ module Chunk
       relative = match[3]
       options = {
         :tname   =>name,
-        :relative=>relative,
+#        :relative=>relative, #does this do anything?
         :base  => 'self',
         :view  => nil,
         :item  => nil,

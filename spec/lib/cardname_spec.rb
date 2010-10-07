@@ -1,6 +1,49 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Cardname do
+  
+  describe "#to_key" do
+    it "should remove spaces" do
+      "This Name".to_key.should == "this_name"
+    end
+  
+    it "should singularize" do
+      "ethans".to_key.should == "ethan"
+    end                               
+  
+    it "should underscore" do 
+      "ThisThing".to_key.should == "this_thing"
+    end
+  
+    it "should handle plus cards" do
+      "ThisThing+Ethans".to_key.should == "this_thing+ethan"
+    end          
+  
+    it "should retain * for star cards" do
+      "*right".to_key.should == "*right"
+    end
+  
+    it "should not singularize double s's" do
+      "grass".to_key.should == 'grass'    
+    end
+    
+    it "should handle unicode characters" do
+      "Mañana".to_key.should == 'mañana'
+    end
+    
+    it "should handle weird initial characters" do
+      '?!_you motha @#$'.to_key.should == 'you_motha'
+    end
+    
+    it "should allow numbers" do
+      "3way".to_key.should == '3way'
+    end  
+    
+    it "should handle html entities" do
+      "Jean-fran&ccedil;ois Noubel".to_key.should == 'jean_françoi_noubel'
+    end
+  end
+  
   describe "#to_absolute" do
     it "handles _self, _whole, _" do
       "_self".to_absolute("foo").should == "foo"
@@ -66,32 +109,7 @@ describe Cardname do
     end
   end
   
-  
-  describe "#to_key" do
-    it "should remove spaces" do
-      "This Name".to_key.should == "this_name"
-    end
-  
-    it "should singularize" do
-      "ethans".to_key.should == "ethan"
-    end                               
-  
-    it "should underscore" do 
-      "ThisThing".to_key.should == "this_thing"
-    end
-  
-    it "should handle plus cards" do
-      "ThisThing+Ethans".to_key.should == "this_thing+ethan"
-    end          
-  
-    it "should retain * for star cards" do
-      "*right".to_key.should == "*right"
-    end
-  
-    it "should not singularize double s's" do
-      "grass".to_key.should == 'grass'    
-    end
-  end  
+
 
   describe "#to_url_key" do
     cardnames = ["GrassCommons.org", 'Oh you @##', "Alice's Restaurant!"]

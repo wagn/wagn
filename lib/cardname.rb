@@ -1,5 +1,6 @@
 module Cardname   
   CARD_KEYS = {}
+  require 'htmlentities'
 
   JOINT = '+'
   CARDNAME_BANNED_CHARACTERS = [ JOINT, '/', '~', '|']
@@ -83,10 +84,15 @@ module Cardname
   end
   
   def to_key
-    split(JOINT).map do |name| 
-      CARD_KEYS[name] ||= name.underscore.split(/[^a-z0-9\*]+/).plot(:singularize).reject {|x| x==""}.join("_")
+    split(JOINT).map do |name|  
+      CARD_KEYS[name] ||= name.decode_html.underscore.gsub(/[^\w\*]+/,'_').split(/_+/).plot(:singularize).reject {|x| x==""}.join("_")
     end.join(JOINT)
-  end  
+  end
+  
+  def decode_html
+    coder = HTMLEntities.new
+    coder.decode(self)
+  end
 
   def css_name
     self.to_key.gsub('*','X').gsub('+','-')

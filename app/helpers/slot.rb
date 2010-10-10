@@ -266,12 +266,6 @@ class Slot
         c = self.render( :expanded_view_content)
         w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c))
 
-      when :expanded_view_content, :naked 
-        @state = 'view'
-        expand_inclusions(  cache_action('view_content') {  card.post_render( render(:open_content)) } )
-
-      when :expanded_line_content
-        expand_inclusions(  cache_action('line_content') { render(:closed_content) } )
 
 
       #-----( without transclusions processed )

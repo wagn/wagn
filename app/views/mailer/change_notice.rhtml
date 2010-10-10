@@ -1,4 +1,4 @@
-<p>
+<div>
 <a href="<%= @card_url %>"><%= @card.name %></a> 
 	was just 
 	<%- if @action=='edited' -%>
@@ -7,24 +7,24 @@
 	  <%= @action %>
 	<%- end -%>
 	by <a href="<%= @updater_url %>"><%= @updater %></a>
-</p>
+</div>
 
-<%- if @subedits.present? -%>
-	<p>
+<%- if @subedits.present? -%> <%#ENGLISH%>
+	<div>
 		This update included the following changes:
 		<ul>
 			<%- @subedits.each do |name, action| -%>
 		  <li><%= action %> <%= name %></li>
 			<%- end -%>
 		</ul>
-	</p>
+	</div>
 <%- end -%>
 
 <br/>
 
-<p>See the card: <%= @card_url %></p>
+<div>See the card: <%= @card_url %></div>
                
-<p> 
+<div> 
 	You received this email because you're watching "<%= @watched %>". <br/>
 	<a href="<%= @unwatch_url %>">Unwatch</a> to stop receiving these emails.	
-</p>
+</div>

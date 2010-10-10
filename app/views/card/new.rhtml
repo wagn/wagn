@@ -11,7 +11,7 @@
       <% if card.setting_card('add help') %> 
 				<%# they'll go inside the card %>
   	  <% elsif !@card.name.blank? %>
-  	    <div>Currently, there is no card named "<strong><%= @card.name %></strong>", but you're welcomed to create it.</div>
+  	    <div>Currently, there is no card named "<strong><%= @card.name %></strong>", but you're welcomed to create it.</div> <%#ENGLISH%>
   	  <% else%>
         <div>Creating a new card is easy; you just need a unique name.</div>
   	  <% end %>

@@ -1,4 +1,4 @@
-page.wagn.messenger.log( "<b>Conflict</b> #{@card.name} was not saved" )
+page.wagn.messenger.log( "<b>Conflict</b> #{@card.name} was not saved" ) #ENGLISH
 page << %{
   slot = #{slot.selector};
   notice = getNextElement(slot,'notice');

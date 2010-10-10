@@ -285,12 +285,6 @@ class Slot
       when :wdiff;  render_wdiff;
       when :raw; card.content  
 
-      when :expanded_view_content, :naked 
-        @state = 'view'
-        expand_inclusions(  cache_action('view_content') {  card.post_render( render(:open_content)) } )
-
-      when :expanded_line_content
-        expand_inclusions(  cache_action('line_content') { render(:closed_content) } )
 
     ###---(  EDIT VIEWS ) 
       when :edit;  

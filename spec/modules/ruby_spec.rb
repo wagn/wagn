@@ -15,6 +15,8 @@ describe "Ruby Cardtype" do
     Card.create! :name => "lr sum+*rform", :type => "Ruby", :content => "{{_1|naked}}+{{_2|naked}}",
       :extension_type => "HardTemplate"
     Card.create! :name => "a1test", :type=>"Phrase", :content => "{{a1+b1+lr sum|naked}}, {{b1+d1+lr sum|naked}}"
+
+    System.stub(:enable_ruby_cards).and_return(true)
   end
 
   it "should keep different ruby cards straight" do

@@ -98,7 +98,7 @@ class CardActionTest < ActionController::IntegrationTest
   def test_newcard_gives_reasonable_error_for_invalid_cardtype
     get 'card/new', :card => { :type=>'bananamorph' }       
     assert_response :success
-    assert_tag :tag=>'p', :attributes=>{:class=>'error', :id=>'no-cardtype-error'}
+    assert_tag :tag=>'div', :attributes=>{:class=>'error', :id=>'no-cardtype-error'}
   end
 
 

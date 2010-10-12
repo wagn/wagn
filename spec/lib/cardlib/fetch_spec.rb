@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Card do
-  context "fetch" do
+  describe ".fetch" do
     it "returns and caches existing cards" do
       Card.fetch("A").should be_instance_of(Card::Basic)
       Card.cache.read("a").should be_instance_of(Card::Basic)
@@ -29,19 +29,19 @@ describe Card do
     end
 
     it "returns and does not cache virtual cards" do
-      # code for this is written.  lazed on test.
-      pending
+      User.as(:wagbot)
+      card = Card.fetch("Joe User+*email")
+      card.should be_instance_of(Card::Basic)
+      card.content.should == 'joe@user.com'
+      Card.cache.read("joe_user+*email").should be_nil
     end
 
-    it "does not recurse infinitively on template templates" do
+    it "does not recurse infinitely on template templates" do
       Card.fetch("*content+*right+*content").should be_nil
     end
 
-  end
-
-  context "cached cards" do
     it "expires card and dependencies on save" do
-      Card.cache.dump  # should be empty
+      Card.cache.dump # should be empty
       Card.cache.local.keys.should == []
 
       User.as :wagbot
@@ -73,6 +73,26 @@ describe Card do
       # they were not previously tested under and the hook to call Card.cache expirations
       # is essentially the same as the old way.
       pending
+    end
+  end
+
+  describe "#fetch_or_new" do
+    it "returns a new card if it doesn't find one" do
+      new_card = Card.fetch_or_new("Never Seen Me Before")
+      new_card.should be_instance_of(Card::Basic)
+      new_card.new_record?.should be_true
+    end
+
+    it "returns a card if it finds one" do
+      new_card = Card.fetch_or_new("A+B")
+      new_card.should be_instance_of(Card::Basic)
+      new_card.new_record?.should be_false
+    end
+
+    it "takes a second hash of options as new card options" do
+      new_card = Card.fetch_or_new("Never Before", {}, :type => "Image")
+      new_card.should be_instance_of(Card::Image)
+      new_card.new_record?.should be_true
     end
   end
 end

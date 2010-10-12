@@ -26,17 +26,18 @@ module Cardlib
       # cards are not returned
       def fetch cardname, opts = {}
         key = cardname.to_key
+        cacheable = false
 
         if perform_caching?
           card = Card.cache.read( key )
-          wasnt_cached = true if card.nil?
+          cacheable = true if card.nil?
         end
-        card = Card.find_builtin( key ) unless card || opts[:skip_auto]
-        card = Card.find_virtual( key ) unless card || opts[:skip_auto]
-        card = Card.find_by_key( key )  unless card
-        card = Card.new( :name => cardname, :missing => true ) unless card
 
-        if wasnt_cached and !card.builtin? and !card.virtual?
+        card ||= Card.find_virtual( key ) unless opts[:skip_auto]
+        card ||= Card.find_by_key( key )
+        card ||= Card.new( :name => cardname, :missing => true )
+
+        if cacheable and !card.builtin? and !card.virtual?
           Card.cache.write key, card
         end
 
@@ -47,15 +48,9 @@ module Cardlib
         card
       end
 
-      def fetch_or_new cardname, *args
-        opts = args.extract_options!
-        opts[:name] ||= cardname
-        fetch( cardname ) or Card.new( opts )
-      end
-
-      def fetch_real cardname, opts={}
-        opts[:skip_auto] = true
-        fetch cardname, opts
+      def fetch_or_new cardname, fetch_opts = {}, card_opts = {}
+        card_opts[:name] = cardname
+        fetch( cardname, fetch_opts ) || Card.new( card_opts )
       end
     end
 

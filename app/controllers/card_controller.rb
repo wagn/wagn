@@ -36,7 +36,7 @@ class CardController < ApplicationController
 
     @card_name = Cardname.unescape(params['id'] || '')
     @card_name = System.site_title if (@card_name.nil? or @card_name.empty?) 
-    @card = CachedCard.get(@card_name)
+    @card =   CachedCard.get(@card_name)
 
     if @card.new_record? && !@card.virtual?  # why doesnt !known? work here?
       params[:card]={:name=>@card_name, :type=>params[:type]}
@@ -311,7 +311,9 @@ class CardController < ApplicationController
     
     
   #-------- ( MISFIT METHODS )  
-  def watch 
+  def watch
+    p "@card #{@card}"
+    p "@card.name #{@card.name}"
     watchers = Card.find_or_new( :name => @card.name + "+*watchers", :type => 'Pointer' )
     watchers.add_reference User.current_user.card.name
     flash[:notice] = "You are now watching #{@card.name}"

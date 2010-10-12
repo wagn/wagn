@@ -50,15 +50,15 @@ module Wagn
       end
 
       def read key
-        p "reading #{key}"
+#        p "reading #{key}"
         fetch_local(key) do
-          p "reading #{key} from @store"
+#          p "reading #{key} from @store"
           @store.read(@prefix + key)
         end
       end
 
       def write key, value
-        p "Cache writing #{key}, #{value.inspect[0..30]}"
+#        p "Cache writing #{key}, #{value.inspect[0..30]}"
         @local[key] = value
         @store.write(@prefix + key, value)
       end

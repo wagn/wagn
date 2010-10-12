@@ -4,14 +4,14 @@ describe Card do
   context "fetch" do
     it "returns and caches existing cards" do
       Card.fetch("A").should be_instance_of(Card::Basic)
-      Card.cache.read("A").should be_instance_of(Card::Basic)
+      Card.cache.read("a").should be_instance_of(Card::Basic)
       Card.should_not_receive(:find_by_key)
       Card.fetch("A").should be_instance_of(Card::Basic)
     end
 
     it "returns nil and caches missing cards" do
       Card.fetch("Zork").should be_nil
-      Card.cache.read("Zork").missing.should be_true
+      Card.cache.read("zork").missing.should be_true
       Card.fetch("Zork").should be_nil
     end
 

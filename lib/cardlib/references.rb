@@ -24,21 +24,22 @@ module Cardlib
     def update_references_on_destroy
       WikiReference.update_on_destroy(self)
       expire_templatee_references
-    end     
-    
+    end
+
     def expire_cache
       expire(self)
+      self.hard_templatees.each {|c| expire(c) }
+      self.dependents.each {|c| expire(c) }
+      self.referencers.each {|c| expire(c) }
+      self.name_references.plot(:referencer).compact.each{|c| expire(c)}
       # FIXME: this will need review when we do the new defaults/templating system
       #if card.changed?(:content)
 
-      self.hard_templatees.each {|c| expire(c) }     
-      self.dependents.each {|c| expire(c) }
-      self.referencers.each {|c| expire(c) }
-      self.name_references.plot(:referencer).compact.each{|c| expire(c)}  
     end
     
     def expire(card)  
       #warn "expiring #{card.name}"
+      Wagn::Cache.expire_card card.key
       CachedCard.new(card.key).expire_all
     end
     

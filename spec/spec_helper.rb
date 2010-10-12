@@ -37,13 +37,21 @@ Spork.prefork do
     config.include(EmailSpec::Matchers)
     
     config.before(:each) do
+      # old cache stuff
       Wagn::Cache.reset_local
       Wagn::Cache.reset_global
+
+      # new cache stuff
+      Wagn.cache.reset
+      Card.cache.reset_local
     end
 
     config.after(:each) do
-      Wagn::Cache.reset_local
-      Wagn::Cache.reset_global
+#      Wagn::Cache.reset_local
+#      Wagn::Cache.reset_global
+#
+#      Wagn.cache.reset
+#      Card.cache.reset_local
     end
   end
 end

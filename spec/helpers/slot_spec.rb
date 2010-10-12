@@ -32,8 +32,8 @@ describe Slot, "" do
     describe "views" do
       it "open" do
         mu = mock(:mu)
-        mu.should_receive(:generate).twice.and_return("1")
-        UUID.should_receive(:new).twice.and_return(mu)
+        mu.should_receive(:generate).and_return("1")
+        UUID.should_receive(:new).and_return(mu)
         Slot.render_content("{{A|open}}").should be_html_with do
           div( :position => 1, :class => "card-slot") {
             div( :class => "card-header" )

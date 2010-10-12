@@ -35,9 +35,7 @@ class ApplicationController < ActionController::Base
       end
     end
 
-    CachedCard.set_cache_prefix "#{System.host}/#{RAILS_ENV}"
-    Wagn::Initializer.initialize_cache
-
+    Wagn::Cache.re_initialize_for_new_request
     # Set/Redirect to Canonical Domain
     if request.raw_host_with_port != System.host and RAILS_ENV=="production"
       return redirect_to( "http://#{System.host}#{request.path}" )
@@ -53,8 +51,7 @@ class ApplicationController < ActionController::Base
     # reset class caches
     # FIXME: this is a bit of a kluge.. several things stores as cattrs in modules
     # that need to be reset with every request (in addition to current user)
-    Wagn::Cache.reset_local
-    System.request = request 
+    System.request = request
     #System.time = Time.now.to_f              
     ## DEBUG
     ActiveRecord::Base.logger.debug("WAGN: per request setup")

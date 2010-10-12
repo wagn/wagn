@@ -2,11 +2,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Card do
   context "fetch" do
-    before do
-      Wagn.cache.reset
-      Card.cache.reset_local
-    end
-
     it "returns and caches existing cards" do
       Card.fetch("A").should be_instance_of(Card::Basic)
       Card.cache.read("A").should be_instance_of(Card::Basic)
@@ -46,24 +41,12 @@ describe Card do
 
   context "cached cards" do
     it "expires card and dependencies on save" do
-      Wagn.cache.reset
-      Wagn.cache.reset
+      Card.cache.dump  # should be empty
+      Card.cache.local.keys.should == []
+
       User.as :wagbot
-      a_db = Card.find_by_key("a")
 
-      p "A from db #{a_db}"
-      a_cache = Card.cache.read("a")
-
-      p "A from cache #{a_cache}"
-      a_fetch = Card.fetch("A")
-      p "A from fetch #{a_fetch}"
-
-      a_cap = Card.cache.read("A")
-      p "A from cache with caps #{a_cap}  "
-
-      a = a_cap
-      a_fetch.should be_instance_of(Card::Basic)
-      p "FETCHWORKED"
+      a = Card.fetch("A")
       a.should be_instance_of(Card::Basic)
 
       # expires the saved card

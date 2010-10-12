@@ -48,7 +48,7 @@ module Wagn
         load_cardtypes
         return if pre_schema?
         load_modules
-        initialize_cache
+        Wagn::Cache.initialize_on_startup
         initialize_builtin_cards
         ActiveRecord::Base.logger.info("\n----------- Wagn Initialization Complete -----------\n\n")
       end
@@ -134,11 +134,6 @@ module Wagn
         %w{ *head *alert *foot *navbox *version *account_link *now }.each do |key|
           Card.add_builtin( Card.new(:name=>key, :builtin=>true))
         end
-      end
-
-      def initialize_cache
-        Wagn.cache = Wagn::Cache::Main.new Rails.cache, "#{System.host}/#{RAILS_ENV}"
-        Card.cache = Wagn::Cache::Base.new Wagn.cache, "card"
       end
     end
   end

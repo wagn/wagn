@@ -40,13 +40,7 @@ unless defined? TEST_ROOT
     def setup
       # let the cache stick accross test-runs while profiling
       unless ActionController.const_defined?("PerformanceTest") and self.class.superclass == ActionController::PerformanceTest
-        CachedCard.set_cache_prefix "#{System.host}/cucumber"
-        CachedCard.bump_global_seq
-        CachedCard.set_cache_prefix "#{System.host}/test"
-        CachedCard.bump_global_seq
-        Wagn.cache.reset
-        Card.cache.reset_local
-
+        Wagn::Cache.reset_for_tests
       end
     end
   end

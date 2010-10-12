@@ -3,6 +3,25 @@ module Wagn
 
   module Cache
     class << self
+      def initialize_on_startup
+        Card.cache = Wagn::Cache::Main.new Rails.cache, "#{System.host}/#{RAILS_ENV}"
+      end
+
+      def re_initialize_for_new_request
+        CachedCard.set_cache_prefix "#{System.host}/#{RAILS_ENV}"
+        initialize_on_startup
+        reset_local
+      end
+
+      def reset_for_tests
+        reset_global
+        CachedCard.set_cache_prefix "#{System.host}/cucumber"
+        CachedCard.bump_global_seq
+        CachedCard.set_cache_prefix "#{System.host}/test"
+        CachedCard.bump_global_seq
+      end
+
+      private
       def reset_local
         User.clear_cache if System.multihost
         Cardtype.reset_cache
@@ -10,15 +29,19 @@ module Wagn
         System.reset_cache
         Wagn::Pattern.reset_cache
         CachedCard.reset_cache
+        Card.cache.reset_local
       end
 
       def reset_global
         CachedCard.bump_global_seq
+        Card.cache.reset
+        reset_local
       end
+
     end
 
     class Base
-      attr_reader :prefix
+      attr_reader :prefix, :local
 
       def initialize(store, prefix)
         @store = store
@@ -27,12 +50,15 @@ module Wagn
       end
 
       def read key
+        p "reading #{key}"
         fetch_local(key) do
+          p "reading #{key} from @store"
           @store.read(@prefix + key)
         end
       end
 
       def write key, value
+        p "Cache writing #{key}, #{value.inspect[0..30]}"
         @local[key] = value
         @store.write(@prefix + key, value)
       end
@@ -46,6 +72,13 @@ module Wagn
       def delete key
         @local.delete key
         @store.delete(@prefix + key)
+      end
+
+      def dump
+        p "dumping local...."
+        @local.each do |k,v|
+          p "#{k} --> #{v.inspect[0..30]}"
+        end
       end
 
       def reset_local
@@ -88,11 +121,6 @@ module Wagn
 
     def self.expire_card(key)
       Card.cache.delete key
-     # legacy
-      begin
-        Card.fetch(key).expire_all
-      rescue
-      end
     end
   end
 end

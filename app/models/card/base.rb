@@ -197,16 +197,12 @@ module Card
 
         # set type from settings
         if !args['type']
-          if args.delete('skip_type_lookup')
-            args['type'] = "Basic"
-          else
-            default_card = Card::Basic.new({
-              :name=> args['name'],
-              :type => "Basic",
-              :skip_defaults=>true
-            }).setting_card('content')
-            args['type'] = default_card ? default_card.type : "Basic"
-          end
+          default_card = Card::Basic.new({ 
+            :name=> args['name'], 
+            :type => "Basic",
+            :skip_defaults=>true 
+          }).setting_card('content')
+          args['type'] = default_card ? default_card.type : "Basic"
         end
         
         card_class = Card.class_for( args['type'] ) || (
@@ -447,7 +443,7 @@ module Card
     # I don't really like this.. 
     def attribute_card( attr_name )
       ::User.as :wagbot do
-        Card.fetch( name + JOINT + attr_name , :skip_virtual => true)
+        CachedCard.get_real( name + JOINT + attr_name )
       end
     end
      

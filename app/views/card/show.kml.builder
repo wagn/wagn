@@ -9,7 +9,7 @@ xml.kml do
         end
         
     cards.each do |card| 
-      if geocard = Card.fetch("#{card.name}+*geocode", :skip_virtual => true)
+      if geocard = CachedCard.get_real("#{card.name}+*geocode")    
         xml.Placemark do
           xml.name card.name  
           content_card = CachedCard.get("#{card.name}+*geodescription") || card

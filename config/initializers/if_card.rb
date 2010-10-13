@@ -4,7 +4,7 @@ class Object
   end
 
   def if_card cardname
-    if card = Card.fetch( cardname , :skip_virtual => true)
+    if card = CachedCard.get_real( cardname )
       yield(card)
     else
       nil

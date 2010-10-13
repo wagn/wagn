@@ -21,7 +21,7 @@ module Card
 	    
 	  def option_text(option)
 	    name = setting('option label') || 'description'
-	    textcard = Card.fetch(option+'+'+name, :skip_virtual => true)
+	    textcard = CachedCard.get_real(option+'+'+name)
 	    textcard ? textcard.content : nil
 	  end
 	    

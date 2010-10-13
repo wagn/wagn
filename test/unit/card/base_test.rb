@@ -34,7 +34,12 @@ class Card::BaseTest < ActiveSupport::TestCase
     alpha, beta = Card.create(:name=>'alpha'), Card.create(:name=>'beta')
     assert_nil alpha.attribute_card('beta')
     Card.create :name=>'alpha+beta'   
-    assert_instance_of Card::Basic, alpha.attribute_card('beta')
+    # Oh what a broken api...
+    if CachedCard.perform_caching
+      assert_instance_of CachedCard, alpha.attribute_card('beta')
+    else
+      assert_instance_of Card::Basic, alpha.attribute_card('beta')
+    end
   end
 
   def test_create

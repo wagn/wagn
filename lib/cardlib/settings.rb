@@ -15,9 +15,9 @@ module Cardlib
     def setting_card setting_name
       ## look for pattern
       Wagn::Pattern.set_names( self ).each do |name|
-        if sc = Card.fetch( "#{name}+#{setting_name.to_star}" , :skip_virtual => true)
+        if sc = CachedCard.get_real( "#{name}+#{setting_name.to_star}" ) 
           return sc
-        elsif fallback=Fallbacks[setting_name.to_star] and sc = Card.fetch("#{name}+#{fallback}", :skip_virtual => true)
+        elsif fallback=Fallbacks[setting_name.to_star] and sc = CachedCard.get_real("#{name}+#{fallback}") 
           return sc              
         end
       end
@@ -31,7 +31,7 @@ module Cardlib
       end
       
       def default_setting_card setting_name
-        setting_card = Card.fetch( "*all+#{setting_name.to_star}" , :skip_virtual => true)
+        setting_card = CachedCard.get_real( "*all+#{setting_name.to_star}" ) 
       end
     end
       

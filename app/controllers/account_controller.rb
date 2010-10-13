@@ -67,7 +67,6 @@ class AccountController < ApplicationController
     if request.post? and @user.errors.empty?
       @user.send_account_info(params[:email])
       redirect_to (System.setting('*invite+*thanks') || '/')
-      p @user.errors.full_messages.join('. ')
     end
   end
   

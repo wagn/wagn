@@ -77,7 +77,7 @@ module Cardlib
     end
 
     def left
-      Card.fetch( name.trunk_name , :skip_virtual => true)
+      CachedCard.get_real( name.trunk_name )
     end
     
     # FIXME: limit moved here from pointer card.

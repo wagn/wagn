@@ -3,7 +3,11 @@ module Cardlib
     module ClassMethods
       @@builtins = {}
 
-      def find_builtin(name)
+      def find_virtual(name)
+        builtin_virtual(name) or pattern_virtual(name)
+      end
+
+      def builtin_virtual(name)
         key=name.to_key
         searches =  
           { '*recent_change' => %{ {"sort":"update", "dir":"desc", "view":"change"} },
@@ -21,11 +25,7 @@ module Cardlib
         @@builtins[card.key] = card
       end
       
-      def find_virtual(name)  
-        find_builtin(name) or auto_card(name)
-      end
-
-      def auto_card(name)
+     def pattern_virtual(name)
         return nil unless name && name.junction?
         if template = Card.new(:name=>name).setting_card('content') and template.hard_template? 
           User.as(:wagbot) do

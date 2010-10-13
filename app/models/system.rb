@@ -64,7 +64,7 @@ class System < ActiveRecord::Base
     
     def layout_from_url(cardname)
       return nil unless cardname.present? and 
-        lo_card = CachedCard.get_real(cardname) and 
+        lo_card = CachedCard.get_real(cardname) and
         lo_card.ok?(:read)
       lo_card
     end

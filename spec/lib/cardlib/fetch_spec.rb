@@ -28,12 +28,14 @@ describe Card do
       Card.cache.read("*head").should be_nil
     end
 
-    it "returns and does not cache virtual cards" do
+    it "returns virtual cards and caches them as missing" do
       User.as(:wagbot)
       card = Card.fetch("Joe User+*email")
       card.should be_instance_of(Card::Basic)
       card.content.should == 'joe@user.com'
-      Card.cache.read("joe_user+*email").should be_nil
+      cached_card = Card.cache.read("joe_user+*email")
+      cached_card.missing?.should be_true
+      cached_card.virtual?.should be_true
     end
 
     it "does not recurse infinitely on template templates" do
@@ -68,11 +70,44 @@ describe Card do
       a.save!
     end
 
-    it "expire when dependents are updated" do
-      # several more cases of expiration really should be tested.
-      # they were not previously tested under and the hook to call Card.cache expirations
-      # is essentially the same as the old way.
-      pending
+    describe "preferences" do
+      before do
+        User.as :wagbot
+      end
+
+      it "prefers builtin virtual card to db cards" do
+        Card.add_builtin(Card.new(:name => "ghost", :content => "Builtin Content"))
+        Card.create!(:name => "ghost", :content => "DB Content")
+        card = Card.fetch("ghost")
+        card.content.should == "Builtin Content"
+        card.virtual?.should be_true
+      end
+
+      it "prefers db cards to pattern virtual cards" do
+        Card.create!(:name => "y+*right+*content", :content => "Formatted Content")
+        Card.create!(:name => "a+y", :content => "DB Content")
+        card = Card.fetch("a+y")
+        card.virtual?.should be_false
+        card.content.should == "DB Content"
+        card.setting('content').should == "Formatted Content"
+      end
+
+      it "prefers a pattern virtual card to trash cards" do
+        Card.create!(:name => "y+*right+*content", :content => "Formatted Content")
+        Card.create!(:name => "a+y", :content => "DB Content")
+        Card.fetch("a+y").destroy!
+
+        card = Card.fetch("a+y")
+        card.virtual?.should be_true
+        card.content.should == "Formatted Content"
+      end
+
+      it "should not hit the database for every pattern_virtual lookup" do
+        Card.create!(:name => "y+*right+*content", :content => "Formatted Content")
+        Card.fetch("a+y")
+        Card.should_not_receive(:find_by_key)
+        Card.fetch("a+y")
+      end
     end
   end
 

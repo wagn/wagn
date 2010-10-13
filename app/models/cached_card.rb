@@ -88,9 +88,9 @@ class CachedCard
               when caching && (card = self.find(key, card, opts)) ; [ :got_it     , 'found in cache'   ] 
               when card                                           ; [ :cache_it   , 'called with card' ]
               when name.blank?                                    ; [ :make_it    , 'blank name'       ]
-              when card = Card.find_builtin(name)                 ; [ :got_it     , 'built-in'         ]
+              when card = Card.builtin_virtual(name)              ; [ :got_it     , 'built-in'         ]
               when card = self.load_card(name)                    ; [ :cache_it   , 'found by name'    ]
-              when card = Card.auto_card(name)                    ; [ :got_it     , 'auto card'        ]
+              when card = Card.pattern_virtual(name)              ; [ :got_it     , 'auto card'        ]
               else                                                ; [ :make_it    , 'scratch'          ]
             end 
         

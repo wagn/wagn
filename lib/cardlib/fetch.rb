@@ -33,15 +33,21 @@ module Cardlib
           cacheable = true if card.nil?
         end
 
-        card ||= Card.find_virtual( key ) unless opts[:skip_auto]
+        card ||= Card.builtin_virtual( key ) unless opts[:skip_virtual]
         card ||= Card.find_by_key( key )
+        if !opts[:skip_virtual] && (!card || card.missing? || card.trash?)
+          if virtual_card = Card.pattern_virtual( key )
+            card = virtual_card
+            card.missing = true
+          end
+        end
         card ||= Card.new( :name => cardname, :missing => true )
 
-        if cacheable and !card.builtin? and !card.virtual?
+        if cacheable and !card.builtin?
           Card.cache.write key, card
         end
 
-        if card.missing? or card.trash?
+        if (card.missing? && !card.virtual?) || card.trash?
           return nil
         end
 
@@ -52,6 +58,7 @@ module Cardlib
         card_opts[:name] = cardname
         fetch( cardname, fetch_opts ) || Card.new( card_opts )
       end
+
     end
 
     module InstanceMethods

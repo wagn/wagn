@@ -77,7 +77,9 @@ describe Card do
 
       it "prefers builtin virtual card to db cards" do
         Card.add_builtin(Card.new(:name => "ghost", :content => "Builtin Content"))
+        Card.cache.read("ghost").virtual?.should be_true
         Card.create!(:name => "ghost", :content => "DB Content")
+#        Card.cache.read("ghost").should be_nil
         card = Card.fetch("ghost")
         card.content.should == "Builtin Content"
         card.virtual?.should be_true

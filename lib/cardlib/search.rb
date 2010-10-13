@@ -22,6 +22,9 @@ module Cardlib
       
       def add_builtin(card)     
         card.builtin = true
+        card.missing = false
+        card.virtual = true
+        Card.cache.write(card.key, card)
         @@builtins[card.key] = card
       end
       

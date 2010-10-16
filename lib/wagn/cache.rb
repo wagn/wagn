@@ -1,24 +1,32 @@
 module Wagn
-  mattr_accessor :cache
-
-  module Cache
+  class Cache
     class << self
       def initialize_on_startup
-        Card.cache = Wagn::Cache::Main.new Rails.cache, "#{System.host}/#{RAILS_ENV}"
+        Card.cache = Wagn::Cache.new Rails.cache, system_prefix
+      end
+
+      def system_prefix
+        cache_env = (RAILS_ENV == 'cucumber') ? 'test' : RAILS_ENV
+        "#{System.host}/#{cache_env}"
       end
 
       def re_initialize_for_new_request
-        CachedCard.set_cache_prefix "#{System.host}/#{RAILS_ENV}"
-        initialize_on_startup
+        CachedCard.set_cache_prefix system_prefix
+        Card.cache.system_prefix = system_prefix
         reset_local
       end
 
       def reset_for_tests
         reset_global
-        CachedCard.set_cache_prefix "#{System.host}/cucumber"
         CachedCard.bump_global_seq
-        CachedCard.set_cache_prefix "#{System.host}/test"
-        CachedCard.bump_global_seq
+      end
+
+      def generate_cache_id
+        ((Time.now.to_f * 100).to_i).to_s + ('a'..'z').to_a[rand(26)] + ('a'..'z').to_a[rand(26)]
+      end
+
+      def expire_card(key)
+        Card.cache.delete key
       end
 
       private
@@ -37,90 +45,73 @@ module Wagn
         Card.cache.reset
         reset_local
       end
-
     end
 
-    class Base
-      attr_reader :prefix, :local
+    attr_reader :prefix, :local, :store
 
-      def initialize(store, prefix)
-        @store = store
-        @local = Hash.new
-        @prefix = prefix + '/'
+    def initialize(store, system_prefix)
+      @store = store
+      @local = Hash.new
+      self.system_prefix = system_prefix
+    end
+
+    def system_prefix=(system_prefix)
+      @system_prefix = system_prefix
+      @system_prefix += '/' unless @system_prefix[-1] == '/'
+      @cache_id = @store.fetch(@system_prefix + "cache_id") do
+        self.class.generate_cache_id
       end
+      @prefix = @system_prefix + @cache_id + "/"
+    end
 
-      def read key
-#        p "reading #{key}"
-        fetch_local(key) do
-#          p "reading #{key} from @store"
-          @store.read(@prefix + key)
-        end
-      end
-
-      def write key, value
-#        p "Cache writing #{key}, #{value.inspect[0..30]}"
-        @local[key] = value
-        @store.write(@prefix + key, value)
-      end
-
-      def fetch key, &block
-        fetch_local(key) do
-          @store.fetch(@prefix + key, &block)
-        end
-      end
-
-      def delete key
-        @local.delete key
-        @store.delete(@prefix + key)
-      end
-
-      def dump
-        p "dumping local...."
-        @local.each do |k,v|
-          p "#{k} --> #{v.inspect[0..30]}"
-        end
-      end
-
-      def reset_local
-        @local = {}
-      end
-
-      private
-      def fetch_local key
-        if @local.has_key?(key)
-          @local[key]
-        else
-          val = yield
-          @local[key] = val
-        end
+    def read key
+      fetch_local(key) do
+        @store.read(@prefix + key)
       end
     end
 
-    class Main < Base
-      def initialize(store, prefix)
-        @store = store
-        @local = Hash.new
-        @original_prefix = prefix + '/'
-        @cache_id = @store.fetch(@original_prefix + "cache_id") do
-          self.class.generate_cache_id
-        end
-        @prefix = @original_prefix + @cache_id + "/"
-      end
+    def write key, value
+      @local[key] = value
+      @store.write(@prefix + key, value)
+    end
 
-      def reset
-        reset_local
-        @cache_id = self.class.generate_cache_id
-        @store.write(@original_prefix + "cache_id", @cache_id)
-        @prefix = @original_prefix + @cache_id + "/"
-      end
-
-      def self.generate_cache_id
-        ((Time.now.to_f * 100).to_i).to_s + ('a'..'z').to_a[rand(26)] + ('a'..'z').to_a[rand(26)]
+    def fetch key, &block
+      fetch_local(key) do
+        @store.fetch(@prefix + key, &block)
       end
     end
 
-    def self.expire_card(key)
-      Card.cache.delete key
+    def delete key
+      @local.delete key
+      @store.delete(@prefix + key)
+    end
+
+    def dump
+      p "dumping local...."
+      @local.each do |k, v|
+        p "#{k} --> #{v.inspect[0..30]}"
+      end
+    end
+
+    def reset_local
+      @local = {}
+    end
+
+    def reset
+      reset_local
+      @cache_id = self.class.generate_cache_id
+      @store.write(@system_prefix + "cache_id", @cache_id)
+      @prefix = @system_prefix + @cache_id + "/"
+    end
+
+    private
+    def fetch_local key
+      if @local.has_key?(key)
+        @local[key]
+      else
+        val = yield
+        @local[key] = val
+      end
     end
   end
 end

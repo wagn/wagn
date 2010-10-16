@@ -34,8 +34,8 @@ unless defined? TEST_ROOT
     # then set this back to true.
     self.use_instantiated_fixtures  = false
 
-    Wagn::Cache::Main.new( Rails.cache, "#{System.host}/test" ).reset
-    Wagn::Cache::Main.new( Rails.cache, "#{System.host}/cucumber" ).reset
+    Wagn::Cache.new( Rails.cache, "#{System.host}/test" ).reset
+    Wagn::Cache.new( Rails.cache, "#{System.host}/cucumber" ).reset
 
     def setup
       # let the cache stick accross test-runs while profiling

@@ -4,8 +4,8 @@ describe Wagn::Cache do
   describe "with same cache_id" do
     before :each do
       @store = ActiveSupport::Cache::MemoryStore.new
-      Wagn::Cache::Main.should_receive("generate_cache_id").and_return("cache_id")
-      @cache = Wagn::Cache::Main.new @store, "prefix"
+      Wagn::Cache.should_receive("generate_cache_id").and_return("cache_id")
+      @cache = Wagn::Cache.new @store, "prefix"
     end
 
     it "reads" do
@@ -31,13 +31,21 @@ describe Wagn::Cache do
   end
 
   it "resets" do
-    Wagn::Cache::Main.should_receive("generate_cache_id").and_return("cache_id1")
+    Wagn::Cache.should_receive("generate_cache_id").and_return("cache_id1")
     @store = ActiveSupport::Cache::MemoryStore.new
-    @cache = Wagn::Cache::Main.new @store, "prefix"
+    @cache = Wagn::Cache.new @store, "prefix"
+    @cache.prefix.should == "prefix/cache_id1/"
     @cache.write("foo","bar")
     @cache.read("foo").should == "bar"
-    Wagn::Cache::Main.should_receive("generate_cache_id").and_return("cache_id2")
+
+    # reset
+    Wagn::Cache.should_receive("generate_cache_id").and_return("cache_id2")
     @cache.reset
+    @cache.prefix.should == "prefix/cache_id2/"
+    @cache.store.read("prefix/cache_id").should == "cache_id2"
     @cache.read("foo").should be_nil
+
+    cache2 = Wagn::Cache.new @store, "prefix"
+    cache2.prefix.should == "prefix/cache_id2/"
   end
 end

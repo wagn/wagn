@@ -69,7 +69,7 @@ class ApplicationController < ActionController::Base
 #            when params[:layout] == 'none'; nil
             else
               'application'
-                   end
+            end
         end
       }
     end

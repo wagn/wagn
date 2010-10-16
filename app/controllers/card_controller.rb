@@ -312,8 +312,6 @@ class CardController < ApplicationController
     
   #-------- ( MISFIT METHODS )  
   def watch
-    p "@card #{@card}"
-    p "@card.name #{@card.name}"
     watchers = Card.find_or_new( :name => @card.name + "+*watchers", :type => 'Pointer' )
     watchers.add_reference User.current_user.card.name
     flash[:notice] = "You are now watching #{@card.name}"

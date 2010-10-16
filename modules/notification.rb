@@ -42,9 +42,7 @@ module Notification
         after_save :send_notifications
       end
     end
-  end
-  
-  module CacheableMethods
+
     def watcher_watched_pairs
       author = User.current_user.card.name
       (card_watchers.except(author).map {|watcher| [Card[watcher].extension,self.name] }  +
@@ -120,9 +118,7 @@ module Notification
   
   def self.init
     Card::Base.send :include, CardMethods
-    Card::Base.send :include, CacheableMethods  
-    CachedCard.send :include, CacheableMethods 
-    Slot.send :include, SlotHelperMethods 
+    Slot.send :include, SlotHelperMethods
   end   
 end    
 

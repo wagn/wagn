@@ -133,4 +133,14 @@ describe Card do
       new_card.new_record?.should be_true
     end
   end
+
+  describe "#exists?" do
+    it "is true for cards that are there" do
+      Card.exists?("A").should == true
+    end
+
+    it "is false for cards that arent'" do
+      Card.exists?("Mumblefunk is gone").should == false
+    end
+  end
 end

@@ -70,7 +70,6 @@ class System < ActiveRecord::Base
     end
     
     def layout_from_setting(card)
-      card = CachedCard===card ? card.card : card #KLUDGE.  after CachedCard refactor we should get rid of this
       return unless setting_card = ((card && card.setting_card('layout')) or Card.default_setting_card('layout'))
       return unless setting_card.is_a?(Card::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.type == 'Pointer'        and
         layout_name=setting_card.pointee                  and

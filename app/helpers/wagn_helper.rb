@@ -241,7 +241,7 @@ module WagnHelper
     return unless entries
     items = []
     items << navbox_item( :search, %{<a class="search-icon">&nbsp;</a>Search for: }, stub )
-    if !Cardtype.createable_cardtypes.empty? && !CachedCard.exists?(stub)
+    if !Cardtype.createable_cardtypes.empty? && !Card.exists?(stub)
       items << navbox_item( :new, %{<a class="plus-icon">&nbsp;</a>Add new card: }, stub )
     end
     items += entries.map do |entry| 

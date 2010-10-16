@@ -4,7 +4,6 @@ describe "WikiReference" do
   before do
     #setup_default_user  
     User.as :wagbot
-    CachedCard.bump_global_seq
   end
 
   describe "references on hard templated cards should get updated" do

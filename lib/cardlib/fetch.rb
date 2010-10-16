@@ -2,6 +2,14 @@
 #
 # A multipurpose retrieval operator that incorporates caching, "virtual" card retrieval
 #
+
+
+# TODO:
+#  - implement pre-load api.  use in search to prevent reloading card during rendering
+#  - implement Slot#cache_action  (for footer, etc.) if necessary
+#  - review deprecation of CacheCard.set_cache_prefix  in wagn.rb
+#
+
 module Cardlib
   module Fetch
     mattr_accessor :cache
@@ -61,6 +69,10 @@ module Cardlib
       def fetch_or_new cardname, fetch_opts = {}, card_opts = {}
         card_opts[:name] = cardname
         fetch( cardname, fetch_opts ) || Card.new( card_opts )
+      end
+
+      def exists?(name)
+        fetch(name).present?
       end
 
     end

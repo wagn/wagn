@@ -159,20 +159,9 @@ class Slot
     end
   end
   
-  def cache_action(cc_method) 
-    (if CachedCard===card 
-      card.send(cc_method) || begin
-        cached_card, @card = card, Card.find_by_key_and_trash(card.key, false)
-        if !@card
-          return "Oops! found cached card for #{card.key} but couln't find the real one"
-        end
-        content = yield(@card)
-        cached_card.send("#{cc_method}=", content.clone)  
-        content
-      end
-    else
-      yield(card)
-    end).clone
+  def cache_action(cc_method)
+    # FIXME: restore cacheing if necessary
+    yield
   end
   
   def wrap_content( content="" )

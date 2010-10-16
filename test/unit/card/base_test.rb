@@ -3,7 +3,6 @@ class Card::BaseTest < ActiveSupport::TestCase
   
   def setup
     setup_default_user     
-    CachedCard.bump_global_seq
   end
 
   def test_remove

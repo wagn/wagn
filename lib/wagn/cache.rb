@@ -11,14 +11,12 @@ module Wagn
       end
 
       def re_initialize_for_new_request
-        CachedCard.set_cache_prefix system_prefix
         Card.cache.system_prefix = system_prefix
         reset_local
       end
 
       def reset_for_tests
         reset_global
-        CachedCard.bump_global_seq
       end
 
       def generate_cache_id
@@ -36,12 +34,10 @@ module Wagn
         Role.reset_cache
         System.reset_cache
         Wagn::Pattern.reset_cache
-        CachedCard.reset_cache
         Card.cache.reset_local
       end
 
       def reset_global
-        CachedCard.bump_global_seq
         Card.cache.reset
         reset_local
       end

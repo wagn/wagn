@@ -76,7 +76,7 @@ class CardController < ApplicationController
     @args[:type] ||= params[:type] # for /new/:type shortcut 
     [:name, :type, :content].each {|key| @args.delete(key) unless a=@args[key] and !a.blank?} #filter blank args
 
-    if @args[:name] and CachedCard.exists?(@args[:name]) #card exists
+    if @args[:name] and Card.exists?(@args[:name]) #card exists
       render :text => "<span class=\"faint\">Oops, <strong>#{@args[:name]}</strong> was recently created! try reloading the page to edit it</span>" #ENGLISH
     else
       @card = Card.new @args                   
@@ -283,7 +283,7 @@ class CardController < ApplicationController
     sources = [@card.cardtype.name,nil]
     sources.unshift '*account' if @card.extension_type=='User' 
     @items = sources.map do |root| 
-      c = CachedCard[(root ? "#{root}+" : '') +'*related']
+      c = Card.fetch((root ? "#{root}+" : '') +'*related')
       c && c.type=='Pointer' && c.pointees
     end.flatten.compact
     @items << 'config'

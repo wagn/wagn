@@ -40,7 +40,7 @@ module Cardlib
       # end
       # 
       # def find_template(name)
-      #   User.as(:wagbot) { CachedCard.get_real(name) }
+      #   User.as(:wagbot) { Card.fetch(name, :skip_virtual => true) }
       # end
       # 
       # def default_template

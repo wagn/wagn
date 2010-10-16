@@ -9,7 +9,7 @@
 
 class CacheError < StandardError; end
 
-class CachedCard 
+class CachedCard
   cattr_accessor :cache, :perform_caching, :cache_key_prefix, :seq_key
   attr_reader :key
   attr_accessor :comment, :comment_author

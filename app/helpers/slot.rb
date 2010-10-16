@@ -356,9 +356,9 @@ class Slot
     case card.type 
       when 'Search'
         names = Wql.new(card.get_spec(:return => 'name_content')).run.keys
-        names.map{|x| subslot(CachedCard.get(x)).render(:naked) }.inspect
+        names.map{|x| subslot(Card.fetch_or_new(x)).render(:naked) }.inspect
       when 'Pointer'
-        card.pointees.map{|x| subslot(CachedCard.get(x)).render(:naked) }.inspect
+        card.pointees.map{|x| subslot(Card.fetch_or_new(x)).render(:naked) }.inspect
       else
         [render_expanded_view_content].inspect
     end
@@ -435,7 +435,7 @@ class Slot
         Card.new(new_inclusion_card_args(tname, options))
       ) :
       ( slot_options[:base].respond_to?(:name) && slot_options[:base].name == fullname ?
-        slot_options[:base] : CachedCard.get(fullname)
+        slot_options[:base] : Card.fetch_or_new(fullname)
       )
     )
 

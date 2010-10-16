@@ -32,6 +32,7 @@ describe Card do
       User.as(:wagbot)
       card = Card.fetch("Joe User+*email")
       card.should be_instance_of(Card::Basic)
+      card.name.should == "Joe User+*email"
       card.content.should == 'joe@user.com'
       cached_card = Card.cache.read("joe_user+*email")
       cached_card.missing?.should be_true

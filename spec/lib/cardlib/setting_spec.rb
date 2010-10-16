@@ -63,7 +63,7 @@ describe Card do
     end
     
     it "handles searches relative to context card" do
-      context_card = CachedCard.get("A") # refers to 'Z'
+      context_card = Card.fetch_or_new("A") # refers to 'Z'
       c = Card.new :name=>"foo", :type=>"Search", :content => %[{"referred_to_by":"_self"}]
       c.list_items( context_card ).should == ["Z"]
     end

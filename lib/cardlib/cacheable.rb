@@ -50,7 +50,7 @@ module Cardlib
     def list_cards context = nil
       case self.type
       when "Pointer";
-        self.list_items( context ).map{|cardname| CachedCard.get( cardname ) }
+        self.list_items( context ).map{|cardname| Card.fetch_or_new( cardname ) }
       when "Search";
         self.search(:limit => "", :_self=>(context ? context.name : self.name))
       else

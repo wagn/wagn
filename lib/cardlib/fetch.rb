@@ -38,7 +38,7 @@ module Cardlib
         card ||= Card.find_by_key( key )
 
         if !opts[:skip_virtual] && (!card || card.missing? || card.trash? || card.builtin?)
-          if virtual_card = Card.pattern_virtual( key )
+          if virtual_card = Card.pattern_virtual( cardname )
             card = virtual_card
             card.missing = true
           end

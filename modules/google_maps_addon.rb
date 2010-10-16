@@ -21,7 +21,7 @@ class Card::Base
   def update_geocode 
     if conf = Card.fetch('*geocode', :skip_virtual => true)
       if self.junction? && conf.pointees.include?( self.name.tag_name )
-        address = conf.pointees.map{|p| (c=CachedCard.get(self.name.trunk_name+"+#{p}")) && c.content}.select(&:present?).join(', ')
+        address = conf.pointees.map{|p| (c=Card.fetch_or_new(self.name.trunk_name+"+#{p}")) && c.content}.select(&:present?).join(', ')
         if (geocode = GoogleMapsAddon.geocode(address))
           Card.find_or_create(
               :name=>"#{self.name.trunk_name}+*geocode", 

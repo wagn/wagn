@@ -36,7 +36,7 @@ class CardController < ApplicationController
 
     @card_name = Cardname.unescape(params['id'] || '')
     @card_name = System.site_title if (@card_name.nil? or @card_name.empty?) 
-    @card =   CachedCard.get(@card_name)
+    @card =   Card.fetch_or_new(@card_name)
 
     if @card.new_record? && !@card.virtual?  # why doesnt !known? work here?
       params[:card]={:name=>@card_name, :type=>params[:type]}
@@ -347,7 +347,7 @@ class CardController < ApplicationController
 
     options_card = 
       (!params[:id].blank? &&
-       (pointer_card = CachedCard.get(params[:id])) && 
+       (pointer_card = Card.fetch_or_new(params[:id])) &&
        pointer_card.setting_card('options'))
 
     search_args = {  :complete=>complete, :limit=>8, :sort=>'name' }

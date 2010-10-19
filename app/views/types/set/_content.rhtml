@@ -1,13 +1,13 @@
 <div class="instruction">
   <%= Wagn::Pattern.label(card.name)%>
 </div>
-<br/>
+<br />
 
-<h2>Settings</h2>
+<h2>Settings</h2> <%# #ENGLISH %>
 <%= slot.subslot(Card::Search.new(:name=>UUID.new.generate, 
-     :content=>%{{"prepend":"#{card.name}", "type":"Setting"}} #, "left_plus":{"right":"*type"}}}
-     )).render :naked %>
+     :content=>%{{"prepend":"#{card.name}", "type":"Setting", "sort":"name"}} #, "left_plus":{"right":"*type"}}}
+     )).render :content %>
 
 <br />
-<h2>Cards in Set</h2>
-<%= render :partial=> 'types/search/content', :locals=>{ :slot=>slot, :card=>card } %>
+<h2>Cards in Set</h2> <%# #ENGLISH %>
+{{<%=card.name%>+by update}}

@@ -2,7 +2,7 @@ class CardController < ApplicationController
   helper :wagn, :card 
 
   EDIT_ACTIONS =  [ :edit, :update, :rollback, :save_draft, :watch, :unwatch ]
-  LOAD_ACTIONS = EDIT_ACTIONS + [ :changes, :comment, :denied, :options, :quick_update, :related, :remove ]
+  LOAD_ACTIONS = EDIT_ACTIONS + [ :changes, :comment, :denied, :options, :quick_update, :update_codename, :related, :remove ]
 
   before_filter :load_card!, :only=>LOAD_ACTIONS
   before_filter :load_card_with_cache, :only => [:line, :view, :open ]
@@ -57,6 +57,8 @@ class CardController < ApplicationController
   end
 
   def render_show
+    Wagn::Hook.call :before_show, '*all', self
+    
     @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
     ## fixme, we ought to be setting special titles (or all titles) in cards
     (request.xhr? || params[:format]) ? render(:action=>'show') : render(:text=>'~~render main inclusion~~', :layout=>true)
@@ -125,10 +127,8 @@ class CardController < ApplicationController
   #--------------( editing )
   
   def edit                                             
-    if ['name','type'].member?(params[:attribute])
+    if ['name','type','codename'].member?(params[:attribute])
       render :partial=>"card/edit/#{params[:attribute]}" 
-    elsif params[:view] == 'setting'
-      render :partial => "card/edit/content"
     end
   end
 
@@ -137,7 +137,6 @@ class CardController < ApplicationController
     #fail "card params required" unless params[:card] or params[:cards]
 
     # ~~~ REFACTOR! -- this conflict management handling is sloppy
-    @old_card = @card.clone
     @current_revision_id = @card.current_revision.id
     old_revision_id = card_args.delete(:current_revision_id) || @current_revision_id
     if old_revision_id.to_i != @current_revision_id.to_i
@@ -180,6 +179,16 @@ class CardController < ApplicationController
     @card.update_attributes! params[:card]   
     handling_errors do
       render(:text=>'Success')
+    end
+  end
+  
+  def update_codename
+    return unless System.always_ok?
+    old_codename = @card.extension.class_name
+    @card.extension.update_attribute :class_name, params[:codename]
+    Card.update_all( {:type=> params[:codename] }, ["type = ?", old_codename])
+    handling_errors do
+      render(:text => 'Success' )
     end
   end
 
@@ -302,7 +311,6 @@ class CardController < ApplicationController
     
     
   #-------- ( MISFIT METHODS )  
-  
   def watch 
     watchers = Card.find_or_new( :name => @card.name + "+*watchers", :type => 'Pointer' )
     watchers.add_reference User.current_user.card.name

@@ -4,14 +4,16 @@
 
 		<% @instruction = capture do %>
 			<% if @card.broken_type %>
-				<p class="error" id="no-cardtype-error">Oops! There's no <strong>card type</strong> called "<strong><%= @card.broken_type %></strong>".</p>
+				<div class="error" id="no-cardtype-error">
+				  Oops! There's no <strong>card type</strong> called "<strong><%= @card.broken_type %></strong>".
+				</div>
 			<% end %>
       <% if card.setting_card('add help') %> 
 				<%# they'll go inside the card %>
   	  <% elsif !@card.name.blank? %>
-  	    <p>Currently, there is no card named "<strong><%= @card.name %></strong>", but you are welcomed to create it.</p>
+  	    <div>Currently, there is no card named "<strong><%= @card.name %></strong>", but you're welcomed to create it.</div> <%#ENGLISH%>
   	  <% else%>
-        <p>Creating a new card is easy; you just need a unique name.</p>
+        <div>Creating a new card is easy; you just need a unique name.</div>
   	  <% end %>
 	  <% end %>
 

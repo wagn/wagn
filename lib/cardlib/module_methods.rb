@@ -67,16 +67,19 @@ module Cardlib
     end
      
     def generate_codename_for(cardname)
-      class_name = cardname.gsub(/^\W+|\W+$/,'').gsub(/\W+/,'_').camelize   
-      # shoot me now  
-      if const_defined?(class_name)
-        class_name_base, i = class_name, 1
-        while const_defined?(class_name)  
-          class_name = class_name_base + i.to_s
-          i+=1
-        end
+      codename = cardname.gsub(/^\W+|\W+$/,'').gsub(/\W+/,'_').camelize   
+      base, i = codename, 1
+      while codename_unavailable?(codename)  
+        codename = base+i.to_s
+        i+=1
       end
-      class_name
+      codename
+    end
+    
+    def codename_unavailable?(name)
+      const_defined?(name) || Module.const_get(name)
+    rescue
+      false
     end
      
     def default_cardtype_key

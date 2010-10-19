@@ -13,7 +13,7 @@ Then /^(.*) should be notified that "(.*)"$/ do |username, subject|
   rescue Spec::Expectations::ExpectationNotMetError=>e
     raise Spec::Expectations::ExpectationNotMetError, "#{e.message}\n Found the following emails:\n\n #{all_emails.to_s}" 
   end
-  When %{"#{email}" opens the email with subject "#{subject}"}     
+  open_email(email, :with_subject => subject)
 end
 
 Then /^No notification should be sent$/ do  

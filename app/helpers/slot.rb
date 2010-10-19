@@ -64,6 +64,7 @@ class Slot
     @subslots = []  
     @state = 'view'
     @renders = {}
+    @js_queue_initialized = {}
   end
 
   def subslot(card, context_base=nil, &proc)
@@ -177,10 +178,11 @@ class Slot
   def wrap_content( content="" )
     %{<span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick">} +
     content.to_s + 
-    %{</span><!--[if IE]>&nbsp;<![endif]-->} 
+    %{</span>} #<!--[if IE]>&nbsp;<![endif]-->} 
   end    
 
   def wrap_main(content)
+    return content if p=root.slot_options[:params] and p[:layout]=='none'
     %{<div id="main" context="main">#{content}</div>}
   end
   
@@ -241,10 +243,6 @@ class Slot
       when :setting  
         w_action = self.requested_view = 'content'
         w_content = render_partial('views/setting')  
-
-      when :setting_missing  
-        w_action = self.requested_view = 'content'
-        w_content = render_partial('views/setting_missing')  
       
     ###----------------( NAME)
     
@@ -284,14 +282,8 @@ class Slot
       when :open_content; self.render_open_content
       when :naked_content; self.render_naked_content
       when :array;  render_array;
-      when :raw; card.content  
+      when :raw; card.content
 
-      when :expanded_view_content, :naked 
-        @state = 'view'
-        expand_inclusions(  cache_action('view_content') {  card.post_render( render(:open_content)) } )
-
-      when :expanded_line_content
-        expand_inclusions(  cache_action('line_content') { render(:closed_content) } )
 
     ###---(  EDIT VIEWS ) 
       when :edit;  
@@ -314,7 +306,7 @@ class Slot
     
       ###---(  EXCEPTIONS ) 
       
-      when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing
+      when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing, :setting_missing
           render_partial("views/#{ok_action}", args)
 
       when :blank; 
@@ -353,7 +345,7 @@ class Slot
       render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
     end
   end
-  
+
   def render_array
     Rails.logger.debug "Slot(#{card.name}).render_array   root = #{root}"
     
@@ -538,21 +530,23 @@ class Slot
     subslot.requested_view = vmode
     action = case
       when [:name, :link, :linkname].member?(vmode)  ; vmode
-      when state==:edit      ; card.virtual? ? :edit_auto : :edit_in_form   
+      when state==:edit       ; card.virtual? ? :edit_auto : :edit_in_form   
       when new_card                       
         case   
-          when vmode==:naked ; :blank
+          when vmode==:naked  ; :blank
           when vmode==:setting; :setting_missing
-          when state==:line  ; :closed_missing
-          else               ; :open_missing
+          when state==:line   ; :closed_missing
+          else                ; :open_missing
         end
-      when state==:line      ; :expanded_line_content
-      else                   ; vmode
+      when state==:line       ; :expanded_line_content
+      else                    ; vmode
     end
 
     result = subslot.render action, options
     Slot.current_slot = old_slot
     result
+  rescue
+    %{<span class="inclusion-error">error rendering #{link_to_page card.name}</span>}
   end   
   
   def method_missing(method_id, *args, &proc) 
@@ -611,11 +605,12 @@ class Slot
       [[ :content,    true  ],
        [ :name,       true, ],
        [ :type,       !(card.type_template? || (card.type=='Cardtype' and ct=card.me_type and !ct.find_all_by_trash(false).empty?))],
+       [ :codename,   (System.always_ok? && card.type=='Cardtype')],
        [ :inclusions, !(card.out_transclusions.empty? || card.template? || card.hard_template),         {:inclusions=>true} ]
        ].map do |key,ok,args|
 
         link_to_remote( key, 
-          { :url=>url_for("card/edit", args, key), :update => ([:name,:type].member?(key) ? id('card-body') : id) }, 
+          { :url=>url_for("card/edit", args, key), :update => ([:name,:type,:codename].member?(key) ? id('card-body') : id) }, 
           :class=>(key==on ? 'on' : '') 
         ) if ok
       end.compact.join       
@@ -734,18 +729,17 @@ class Slot
   end
 
   def name_field(form,options={})
-    form.text_field( :name, { :class=>'field card-name-field'}.merge(options))
+    form.text_field( :name, { :class=>'field card-name-field', :autocomplete=>'off'}.merge(options))
   end
 
 
   def cardtype_field(form,options={})
-    text = %{<span class="label"> type:</span>\n} 
-    text << @template.select_tag('card[type]', cardtype_options_for_select(card.type), options) 
+    @template.select_tag('card[type]', cardtype_options_for_select(card.type), options) 
   end
 
   def update_cardtype_function(options={})
     fn = ['File','Image'].include?(card.type) ? 
-            "Wagn.onSaveQueue['#{context}'].clear(); " :
+            "Wagn.onSaveQueue['#{context}']=[];" :
             "Wagn.runQueue(Wagn.onSaveQueue['#{context}']); "      
     fn << remote_function( options )   
   end
@@ -758,9 +752,22 @@ class Slot
     self.form = form              
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
-    editor_partial = (card.type=='Pointer' ? ((c=card.setting('input'))  ? c.gsub(/[\[\]]/,'') : 'list') : 'editor')
-    pre_content + self.render_partial( card_partial(editor_partial), options ) + setup_autosave 
+    editor_partial = (card.type=='Pointer' ? ((c=card.setting('input'))  ? c.gsub(/[\[\]]/,'') : 'list') : 'editor')    
+    pre_content + clear_queues + self.render_partial( card_partial(editor_partial), options ) + setup_autosave 
   end                          
+ 
+  def clear_queues
+    queue_context = get_queue_context
+
+    return '' if root.js_queue_initialized.has_key?(queue_context) 
+    root.js_queue_initialized[queue_context]=true
+
+    javascript_tag(
+      "Wagn.onSaveQueue['#{queue_context}']=[];\n"+
+      "Wagn.onCancelQueue['#{queue_context}']=[];"
+    )
+  end
+
  
   def save_function 
     "if(ds=Wagn.draftSavers['#{context}']){ds.stop()}; if (Wagn.runQueue(Wagn.onSaveQueue['#{context}'])) { } else {return false}"
@@ -773,6 +780,11 @@ class Slot
   def xhr?
     controller && controller.request.xhr?
   end
+  
+  def get_queue_context
+    #FIXME: this looks like it won't work for arbitraritly nested forms.  1-level only
+    @nested ? context.split('_')[0..-2].join('_') : context
+  end
 
   def editor_hooks(hooks)
     # it seems as though code executed inline on ajax requests works fine
@@ -780,33 +792,18 @@ class Slot
     # we run it in an onLoad queue.  the rest of this code we always run
     # inline-- at least until that causes problems.    
     
-    #FIXME: this looks like it won't work for arbitraritly nested forms.  1-level only
-    hook_context = @nested ? context.split('_')[0..-2].join('_') : context
-    code = "" 
+    queue_context = get_queue_context
+    code = ""
     if hooks[:setup]
       code << "Wagn.onLoadQueue.push(function(){\n" unless xhr?
       code << hooks[:setup]
       code << "});\n" unless xhr?
     end
-    root.js_queue_initialized||={}
-    unless root.js_queue_initialized.has_key?(hook_context) 
-      #code << "warn('initializing #{hook_context} save & cancel queues');"
-      code << "Wagn.onSaveQueue['#{hook_context}']=$A([]);\n"
-      code << "Wagn.onCancelQueue['#{hook_context}']=$A([]);\n"
-      root.js_queue_initialized[hook_context]=true
-    end
     if hooks[:save]  
-      code << "Wagn.onSaveQueue['#{hook_context}'].push(function(){\n"
-      #code << "warn('running #{hook_context} save hook');"
-      code << hooks[:save]
-      code << "});\n"
-      #code << "warn('hook: fn(){ #{hooks[:save].gsub(/\'/,"|").gsub(/\n/,"; ")} }');"
-      #code << "added to #{hook_context} save queue');"
+      code << "Wagn.onSaveQueue['#{queue_context}'].push(function(){\n #{hooks[:save]} \n });\n"
     end
     if hooks[:cancel]
-      code << "Wagn.onCancelQueue['#{hook_context}'].push(function(){\n"
-      code << hooks[:cancel]
-      code << "});\n"
+      code << "Wagn.onCancelQueue['#{queue_context}'].push(function(){\n #{hooks[:cancel]} \n });\n"
     end
     javascript_tag code
   end                   

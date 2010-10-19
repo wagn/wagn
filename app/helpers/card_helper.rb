@@ -52,9 +52,9 @@ module CardHelper
   end
 
   def rollback
-    unless @card.current_revision == @revision
+    if @card.ok?(:edit) && !(@card.current_revision==@revision)
       link_to_remote 'Save as current', 
-        :url => { :action=>'rollback', :id=>@card.id, :rev=>@revision_number }
+        :url => { :action=>'rollback', :id=>@card.id, :rev=>@revision_number, :context=>@context }
     end
   end
   
@@ -65,12 +65,7 @@ module CardHelper
   end
   
   def revision_menu_items
-    menu = []
-    menu << back_for_revision
-    menu << forward
-    menu << see_or_hide_changes_for_revision 
-    menu << rollback
-    menu
+    [back_for_revision, forward, see_or_hide_changes_for_revision, rollback]
   end
   
   def forward

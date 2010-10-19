@@ -15,7 +15,17 @@ slot = get_slot
 
   <% Wagn::Pattern.set_names(card).each do |set_name|%>
     <%- value_card = CachedCard.get("#{set_name}+#{setting_name}") %>
-    <%= slot.subslot(value_card).render (value_card.new_record? ? :setting_missing : :setting) %>
+  
+    <div class="setting-row">
+      <div class="value">
+        <%= slot.subslot(value_card).render((value_card.new_record? ? :setting_missing : :setting), :view=>'setting') %>
+      </div>
+    	<div class="set">
+    	  <%= link_to_page Wagn::Pattern.label(set_name), set_name %>
+    	</div>
+    </div>
+  
+  
   <% end %>
 </div>
 

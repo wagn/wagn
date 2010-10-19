@@ -25,6 +25,7 @@ html>body .card-slot {
   padding: 5px; 
   margin: 0px;
   -moz-border-radius: 6px 6px 0 0;
+  text-align: left;
 }
 .title-menu {
   line-height: 18px;
@@ -113,7 +114,7 @@ div:hover.card-header .card-menu-left {
 }
 .current {
   background: #bbb;
-  padding-bottom: 7px !important;
+  padding-bottom: 5px !important;
 }
 
 .submenu {
@@ -351,6 +352,17 @@ ul.pointer {
 /* for IE */
 div.transcluded {
   display: inline;
+}
+.edit-name input,
+.edit-type select {
+  margin: 10px 0px;
+}
+.edit-name .instruction {
+  text-align: left;
+  margin: 10px;
+}
+.edit-name .radio {
+  padding-left: 20px;
 }
 
 
@@ -598,6 +610,7 @@ body#wagn .card-slot.recent-changes h2 {
 .line hr,
 .line input,
 .line textarea,
+.line object,
 .line .comment-box,
 .line .table-of-contents,
 .line .card-menu,
@@ -748,7 +761,6 @@ div.search-result-list .search-result-item {
 
 /*---------- comment-box -------------------------------------- */
 .comment-box textarea { 
-    width: 100%; 
     margin-bottom:5px;
 }   
 .comment-box input {

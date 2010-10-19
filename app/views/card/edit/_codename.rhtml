@@ -1,0 +1,12 @@
+<% get_slot.wrap('codename') do |slot| %>
+  <%= slot.edit_submenu :codename %>
+
+	<div class="codename-editor edit-area">
+	  <h2>Edit Codename</h2>  <%#ENGLISH%>
+   		<% wagn_form_for :card, @card, :url=>"/card/update_codename/#{@card.name}", 
+   		    :update=>{:success=>slot.id('card-body'), :failure=>"javascript:getNextElement(this,'notice')" } do |f| %>
+   	      <p><%= text_field_tag :codename, @card.extension.class_name %></p>
+		  		<%= submit_tag "Save" %>
+		<% end %>
+	</div>
+<% end %>

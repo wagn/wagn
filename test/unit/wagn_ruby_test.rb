@@ -7,6 +7,7 @@ class WagnRubyTest < ActiveSupport::TestCase
     assert_equal( {}, Hash.new_from_semicolon_attr_list("") )
     assert_equal( {}, Hash.new_from_semicolon_attr_list(nil) )
     assert_equal( {:a=>'b', :c=>'4'}, Hash.new_from_semicolon_attr_list("a:b;c:4"))
+    assert_equal( {:d=>'b', :e=>'4'}, Hash.new_from_semicolon_attr_list("d:b;e:4; "))
   end       
       
   def test_pull

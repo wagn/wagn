@@ -139,9 +139,7 @@ Wagn.setupAutosave=function(card_id, slot_id) {
     if (!form) { return }
 
     // run each item in the save queue to save data to form elements
-    if (Wagn.onSaveQueue[slot_id]) {
-      Wagn.onSaveQueue[slot_id].each(function(item){ item.call() });
-    }
+    Wagn.runQueue(Wagn.onSaveQueue[slot_id]);
 
     new_parameters = Form.serialize( form );  
     if (new_parameters != parameters) {
@@ -162,20 +160,17 @@ Wagn.setupAutosave=function(card_id, slot_id) {
 /* ------------------ OnLoad --------------------*/
 
 Wagn.runQueue = function(queue) {
-  if (typeof(queue)=='undefined') { return true; }
   result = true;
-  while (fn = queue.shift()) {
-    if (!fn.call()) {
-      result = false;
-    }
+  if (typeof(queue)!='undefined') {
+    queue.each(function(fn){
+      if (!fn.call()) { result=false }
+    });
   }
   return result;
 };
-Wagn.onLoadQueue = $A([]);
-Wagn.onSaveQueue = $H({});
-Wagn.onCancelQueue = $H({});
-Wagn.editors = $H({});
-
+Wagn.onLoadQueue   = [];
+Wagn.onSaveQueue   = {};
+Wagn.onCancelQueue = {};
 
 wagnOnload = function() {
   Wagn.Messenger.flash();
@@ -219,7 +214,7 @@ setupCreateOnClick=function(container) {
       ie = (Prototype.Browser.IE ? '&ie=true' : '');
       new Ajax.Request('/card/new?add_slot=true&context='+getSlotContext(element), {
         asynchronous: true, evalScripts: true,     
-        parameters: "card[type]=" + encodeURIComponent(card_type) + "&card[name]="+encodeURIComponent(card_name)+"&requested_view="+slot_span.getAttributeNode('view').value+ie,
+        parameters: "card[type]=" + encodeURIComponent(card_type) + "&card[name]="+encodeURIComponent(card_name)+"&view="+slot_span.getAttributeNode('view').value+ie,
         onSuccess: function(request){ slot_span.replace(request.responseText) },
         onFailure: function(request){ slot_span.replace(request.responseText) }
       });

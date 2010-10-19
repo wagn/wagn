@@ -1,7 +1,7 @@
 module Card      
   
 	class Search < Base  
-	  attr_accessor :self_cardname, :results, :search_opts, :spec
+	  attr_accessor :self_cardname, :results, :spec
     before_save :escape_content
 
     def escape_content
@@ -13,13 +13,10 @@ module Card
     end
      
     def count(params={})
-      params = params.symbolize_keys  
-      [:offset, :limit].each {|x| params.delete(x) }
-      Card.count_by_wql( get_spec(params) )
+      Card.count_by_wql( (params.empty? && spec) ? spec : get_spec(params) )
     end
                                 
     def search( params={} )  
-      self.search_opts = params  
       self.spec = get_spec(params.clone)
       raise("OH NO.. no limit") unless self.spec[:limit] 
       self.spec.delete(:limit) if spec[:limit].to_i <= 0

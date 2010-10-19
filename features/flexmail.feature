@@ -46,8 +46,8 @@ Feature: Flexmail
       |Lee|lee@user.net|This is outrageous|[[List1]]|
     Then "argumus@test.com" should receive 1 email
     When "argumus@test.com" opens the email with subject "Subjectimus"
-    And it should be from "lee@user.net"
-    Then He should see "Pleistocles" in the email
-    And He should see "Lee" in the email
-    And He should see "This is outrageous" in the email
+    And they should see the email delivered from "lee@user.net"
+    And they should see "Pleistocles" in the email body
+    And they should see "Lee" in the email body
+    And they should see "This is outrageous" in the email body
     

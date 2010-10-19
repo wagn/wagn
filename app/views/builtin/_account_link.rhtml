@@ -1,4 +1,4 @@
-<span id="logging">
+<span id="logging"> <%#ENGLISH%>
   <% if logged_in? %>
     <%= link_to "My Card: #{current_user.card.name}", '/me', :id=>'my-card-link' %>
     <% if System.ok?(:create_accounts) %>

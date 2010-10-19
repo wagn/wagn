@@ -25,8 +25,6 @@ class Card::RenameTest < ActiveSupport::TestCase
     super           
   end
   
-
-
   def test_rename_name_substitution
     c1, c2 = Card["chuck_wagn+chuck"], Card["chuck"]
     assert_rename c2, "buck"
@@ -49,7 +47,7 @@ class Card::RenameTest < ActiveSupport::TestCase
      assert_rename c2, 'schmuck'
      assert_equal '[[schmuck]]', Card.find(c1.id).content
   end
-
+  
   def test_updates_inclusions_when_renaming    
     c1,c2,c3 = Card["Blue"], Card["blue includer 1"], Card["blue includer 2"]
     c1.update_attributes :name => "Red", :confirm_rename => true, :update_referencers => true
@@ -58,6 +56,12 @@ class Card::RenameTest < ActiveSupport::TestCase
     assert_equal "{{Red|closed;other:stuff}}", Card.find(c3.id).content  
   end
   
+  def test_updates_inclusions_when_renaming_to_plus    
+    c1,c2 = Card["Blue"], Card["blue includer 1"]
+    c1.update_attributes :name => "blue includer 1+color", :confirm_rename => true, :update_referencers => true
+    assert_equal "{{blue includer 1+color}}", Card.find(c2.id).content                     
+  end
+    
   def test_reference_updates_on_case_variants
     c1,c2,c3 = Card["Blue"], Card["blue linker 1"], Card["blue linker 2"]
     c1.reload.name = "Red"
@@ -207,4 +211,3 @@ class Card::RenameTest < ActiveSupport::TestCase
     assert true  # just make sure nothing exploded
   end      
 end
-

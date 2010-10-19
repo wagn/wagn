@@ -1,20 +1,20 @@
 
 <% slot.option(
     :name=>"email", 
-		:help=>"email address for account",
+		:help=>"email address for account", #ENGLISH
 		:label=>"Email") do %>
 	<%= text_field :extension, :email %>
 <% end %>
 <% slot.option(
     :name=>"password", 
-	    :help=> card.extension ? "If left blank, password will remain the same" : '',
+	    :help=> card.extension ? "If left blank, password will remain the same" : '', #ENGLISH
 	  	:label=>"Password") do %>
 		<%= password_field :extension, :password %>
 <% end %>
 <% slot.option(
      :name=>"password_confirm", 
-			:help=>"",
-			:label=>"Confirm password") do %>
+			:help=>"", #ENGLISH
+			:label=>"Confirm password") do %> 
 		<%= password_field :extension, :password_confirmation %>
 <% end %>
 
@@ -25,7 +25,7 @@
 <% if card.extension and System.ok?(:administrate_users) and !extension.built_in? %>
    <% slot.option(
       :name=>"block_user", 
- 			:help=>"Blocking a user prevents them from signing in",
+ 			:help=>"Blocking a user prevents them from signing in", #ENGLISH
  			:label=>"Block") do %>
     		<%= check_box :extension, :blocked? %>
    <% end %>

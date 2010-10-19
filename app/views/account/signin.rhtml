@@ -1,5 +1,5 @@
 <div id="sign-in" class="content">
-  <h1 class="page-header">Sign In</h1>
+  <h1 class="page-header">Sign In</h1><%#ENGLISH%>
 	
   <% form_tag :action=>'signin' do %>
     <p><label for="login">Email</label></p>
@@ -10,7 +10,7 @@
   <% end %>
   <p>&nbsp;</p>                          
 	
-  <h2 class="page-header">Forgot your password?</h2>
+  <h2 class="page-header">Forgot your password?</h2><%#ENGLISH%>
   <%= error_messages_for 'user' %>
   <% form_tag :action=>'forgot_password' do %>
     <p><label for="email">Email</label></p>
@@ -21,7 +21,7 @@
   <p>&nbsp;</p>
   
   <% if Card::InvitationRequest.create_ok? %>
-    <h2 class="page-header">Need an Account?</h2>
+    <h2 class="page-header">Need an Account?</h2><%#ENGLISH%>
     <p><%= link_to 'Sign Up!', :action=>'signup' %></p>
   <% end %>
 	

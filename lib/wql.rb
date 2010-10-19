@@ -124,8 +124,8 @@ class Wql
     
     def match_prep(v,cardspec=self)
       cxn ||= ActiveRecord::Base.connection
-      v=cardspec.root.params['_keyword'] if v=='_keyword'
-      v.strip!
+      v=cardspec.root.params['_keyword'] if v=='_keyword' 
+      v.strip!#FIXME - breaks if v is nil
       [cxn, v]
     end
   end

@@ -7,7 +7,7 @@ class Hash
   class << self
     def new_from_semicolon_attr_list(attr_string)
       return {} if attr_string.blank?
-      attr_string.split(';').inject({}) do |result, pair|
+      attr_string.strip.split(';').inject({}) do |result, pair|
         value, key = pair.split(':').reverse
         key ||= 'view'
         key.strip!; value.strip!

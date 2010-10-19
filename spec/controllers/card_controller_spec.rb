@@ -5,6 +5,7 @@ describe CardController do
     before do
       login_as :wagbot
     end
+    
     it "assigns @args[:name] from id" do
       post :new, :id => "xxx"
       assigns[:args][:name].should == "xxx"
@@ -186,7 +187,7 @@ describe CardController do
     end
   end
 
-  describe "test unit tests" do
+  describe "unit tests" do
     include AuthenticatedTestHelper
 
     before do
@@ -205,41 +206,53 @@ describe CardController do
       assert_response :success, "response should succeed"                     
       assert_equal 'BananaBread', assigns['card'].name, "@card.name should == BananaBread"
     end        
+    
+    describe "#show" do
+      it "works for basic request" do
+        get :show, {:id=>'Sample_Basic'}
+        assert_response :success
+        'Sample Basic'.should == assigns['card'].name
+      end
 
-    it "show" do
-      get :show, {:id=>'Sample_Basic'}
-      assert_response :success
-      'Sample Basic'.should == assigns['card'].name
+      it "handles nonexistent card" do
+        get :show, {:id=>'Sample_Fako'}
+        assert_response :success   
+        assert_template 'new'
+      end
+
+      it "handles nonexistent card without create permissions" do
+        login_as :anon
+        get :show, {:id=>'Sample_Fako'}
+        assert_response :success   
+        assert_template 'missing'
+      end
+      
+      it "invokes before_show hook" do
+        Wagn::Hook.should_receive(:call).with(:before_show, "*all", instance_of(CardController))
+        get :show, {:id=>'Sample_Basic'}
+      end
     end
-
-    it "show nonexistent card" do
-      get :show, {:id=>'Sample_Fako'}
-      assert_response :success   
-      assert_template 'new'
+    
+    
+    describe "#update" do
+      it "works" do
+        post :update, { :id=>@simple_card.id, 
+          :card=>{:current_revision_id=>@simple_card.current_revision.id, :content=>'brand new content' }} #, {:user=>@user.id} 
+        assert_response :success, "edited card"
+        assert_equal 'brand new content', Card['Sample Basic'].content, "content was updated"
+      end
     end
+    
+    describe "#changes" do
+      it "works" do
+        id = Card.find_by_name('revtest').id
+        get :changes, :id=>id, :rev=>1
+        assert_equal 'first', assigns['revision'].content, "revision 1 content==first"
 
-    it "show nonexistent card no create" do
-      login_as :anon
-      get :show, {:id=>'Sample_Fako'}
-      assert_response :success   
-      assert_template 'missing'
-    end
-
-    it "update" do
-      post :update, { :id=>@simple_card.id, 
-        :card=>{:current_revision_id=>@simple_card.current_revision.id, :content=>'brand new content' }} #, {:user=>@user.id} 
-      assert_response :success, "edited card"
-      assert_equal 'brand new content', Card['Sample Basic'].content, "content was updated"
-    end
-
-    it "changes" do
-      id = Card.find_by_name('revtest').id
-      get :changes, :id=>id, :rev=>1
-      assert_equal 'first', assigns['revision'].content, "revision 1 content==first"
-
-      get :changes, :id=>id, :rev=>2
-      assert_equal 'second', assigns['revision'].content, "revision 2 content==second"
-      assert_equal 'first', assigns['previous_revision'].content, 'prev content=="first"'
+        get :changes, :id=>id, :rev=>2
+        assert_equal 'second', assigns['revision'].content, "revision 2 content==second"
+        assert_equal 'first', assigns['previous_revision'].content, 'prev content=="first"'
+      end
     end
 
     it "new without cardtype" do

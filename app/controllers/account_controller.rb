@@ -31,7 +31,9 @@ class AccountController < ApplicationController
       @user.accept(email_args)
       redirect_to (System.setting('*signup+*thanks') || '/')
     else
-      Mailer.deliver_signup_alert(@card) if System.setting('*request+*to')
+      User.as :wagbot do
+        Mailer.deliver_signup_alert(@card) if System.setting('*request+*to')
+      end
       redirect_to (System.setting('*request+*thanks') || '/')
     end
   end

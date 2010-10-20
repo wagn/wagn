@@ -63,9 +63,6 @@ describe Wql do
 
 
   describe "edited_by/edited" do
-    before { 
-      CachedCard.bump_global_seq
-    }
     it "should find card edited by joe using subspec" do
       Wql.new(:edited_by=>{:match=>"Joe User"}, :sort=>"name").run.should == [Card["JoeLater"], Card["JoeNow"]]
     end     

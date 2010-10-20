@@ -125,7 +125,6 @@ class ApplicationController < ActionController::Base
     name = Cardname.unescape(id)
     card_params = params[:card] ? params[:card].clone : {}
     @card = Card.fetch_or_new(name, {}, card_params)
-#    @card = CachedCard.get(name, @card, :cache=>cache, :card_params=>card_params)
   end
 
   def load_card_and_revision

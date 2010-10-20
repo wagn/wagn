@@ -38,11 +38,7 @@ module Cardlib
     end
     
     def expire(card)  
-      #warn "expiring #{card.name}"
       Wagn::Cache.expire_card card.key
-      # TODO: when we remove this CachedCard thing,
-      # we need to figure out how to expire-all references in the new system.
-      CachedCard.new(card.key).expire_all
     end
     
     def self.included(base)   

@@ -5,8 +5,6 @@ FUTURE = SharedData::FUTURE
 
 describe "Card" do
   before do
-    CachedCard.reset_cache; 
-    CachedCard.bump_global_seq  # should figure out how not to have to do this all over..
     Timecop.travel(FUTURE)  # make sure we're ahead of all the test data
   end 
 
@@ -36,8 +34,6 @@ end
 describe "On Card Changes" do
   before do
     User.as(:john)           
-    CachedCard.reset_cache; 
-    CachedCard.bump_global_seq  # should figure out how not to have to do this all over..
     Timecop.travel(FUTURE)  # make sure we're ahead of all the test data
   end
   

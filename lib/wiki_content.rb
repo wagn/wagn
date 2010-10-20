@@ -102,15 +102,17 @@ class WikiContent < String
   end
   
   include ChunkManager
-  attr_reader :revision, :not_rendered, :pre_rendered, :renderer, :card
+  attr_reader :revision, :not_rendered, :pre_rendered, :renderer, :card,
+     :render_xml
 
-  def initialize(card, content, renderer)
+  def initialize(card, content, renderer, render_xml=false)
     @not_rendered = @pre_rendered = nil
     @renderer = renderer
     @card = card or raise "No Card in Content!!"
     super(content)
-    init_chunk_manager
-    ACTIVE_CHUNKS.each{|chunk_type| chunk_type.apply_to(self)}
+    @render_xml=render_xml
+    init_chunk_manager(render_xml)
+    ACTIVE_CHUNKS.each{|chunk_type| chunk_type.apply_to(self, @render_xml)}
     @not_rendered = String.new(self)
   end
 

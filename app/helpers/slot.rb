@@ -12,7 +12,7 @@ class Slot
 
   cattr_accessor :max_char_count, :current_slot
   self.max_char_count = 200
-  attr_reader :card, :action, :template
+  attr_reader :card, :action, :template, :format
   attr_writer :form 
   attr_accessor  :options_need_save, :state, :requested_view, :js_queue_initialized,  
     :position, :renderer, :form, :superslot, :char_count, :item_format, :type, :renders, 
@@ -35,7 +35,8 @@ class Slot
   end
    
   def initialize(card, context="main_1", action="view", template=nil, opts={} )
-    @card, @context, @action, @template = card, context.to_s, action.to_s, template
+    @card, @context, @action, @template, @format =
+       card,context.to_s,action.to_s,template,(opts[:format] || :html).to_sym
     Slot.current_slot ||= self
     
     @template ||= begin
@@ -67,12 +68,14 @@ class Slot
     @js_queue_initialized = {}
   end
 
+  def xml?() @format == :xml end
+
   def subslot(card, context_base=nil, &proc)
     # Note that at this point the subslot context, and thus id, are
     # somewhat meaningless-- the subslot is only really used for tracking position.
     context_base ||= self.context
     new_position = @subslots.size + 1
-    new_slot = self.class.new(card, "#{context_base}_#{new_position}", @action, @template, :renderer=>@renderer)
+    new_slot = self.class.new(card, "#{context_base}_#{new_position}", @action, @template, :renderer=>@renderer, :format=>format)
 
     new_slot.state = @state
     new_slot.superslot = self
@@ -128,19 +131,29 @@ class Slot
       
       css_class << " " + Wagn::Pattern.css_names( card ) if card
       
-      attributes = { 
-        :cardId   => (card && card.id),
-        :style    => args[:style],
-        :view     => args[:view],
-        :item     => args[:item],
-        :base     => args[:base], # deprecated
-        :class    => css_class,
-        :position => UUID.new.generate.gsub(/^(\w+)0-(\w+)-(\w+)-(\w+)-(\w+)/,'\1')
-      }
+      if xml?
+	attributes = {
+          :name => card.name.tag_name,
+          :cardId   => (card && card.id),
+	  :type => card.type,
+	  :transclude => args[:match_str],
+          :class    => css_class,
+	}
+        open_slot, close_slot = "<card ",  "</card>"
+      else
+        attributes = { 
+          :cardId   => (card && card.id),
+          :style    => args[:style],
+          :view     => args[:view],
+          :item     => args[:item],
+          :base     => args[:base], # deprecated
+          :class    => css_class,
+          :position => UUID.new.generate.gsub(/^(\w+)0-(\w+)-(\w+)-(\w+)-(\w+)/,'\1')
+        }
+        open_slot, close_slot = "<div ", "</div>"
+      end
       
-      slot_attr = attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join
-      open_slot = "<div #{slot_attr}>"
-      close_slot= "</div>"
+      open_slot += attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join + '>'
     end
     
     if block_given? 
@@ -176,9 +189,13 @@ class Slot
   end
   
   def wrap_content( content="" )
-    %{<span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick">} +
-    content.to_s + 
-    %{</span>} #<!--[if IE]>&nbsp;<![endif]-->} 
+    if xml?
+      content.to_s
+    else
+      %{<span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick">} +
+      content.to_s + 
+      %{</span>} #<!--[if IE]>&nbsp;<![endif]-->} 
+    end    
   end    
 
   def wrap_main(content)
@@ -249,6 +266,7 @@ class Slot
       when :link;  # FIXME -- this processing should be unified with standard link processing imho
         opts = {:class=>"cardname-link #{(card.new_record? && !card.virtual?) ? 'wanted-card' : 'known-card'}"}
         opts[:type] = slot.type if slot.type 
+	opts[:format] = format
         link_to_page card.name, card.name, opts
       when :name;     card.name
       when :key;      card.name.to_key
@@ -270,7 +288,7 @@ class Slot
         
 
     ###---(  CONTENT VARIATIONS ) 
-      #-----( with transclusions processed      
+      #-----( with transclusions processed )
       when :content
         w_action = self.requested_view = 'content'  
         c = render_expanded_view_content
@@ -278,7 +296,7 @@ class Slot
           
       when :expanded_view_content, :naked, :bare; self.render_expanded_view_content
       when :expanded_line_content; self.render_expanded_line_content
-      when :closed_content;  self.render_closed_content 
+      when :closed_content;  self.render_closed_content
       when :open_content; self.render_open_content
       when :naked_content; self.render_naked_content
       when :array;  render_array;
@@ -307,7 +325,8 @@ class Slot
       ###---(  EXCEPTIONS ) 
       
       when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing, :setting_missing
-          render_partial("views/#{ok_action}", args)
+          xml? ? "<no_card status='#{ok_action}'>#{card.name}</no_card>" :
+                 render_partial("views/#{ok_action}", args)
 
       when :blank; 
         ""
@@ -330,7 +349,7 @@ class Slot
   def render_expanded_view_content
     @state = 'view'
     expand_inclusions(  cache_action('view_content') {  
-      card.post_render( render_open_content) 
+      xml? ? render_open_content : card.post_render( render_open_content) 
     })
   end
   
@@ -385,7 +404,7 @@ class Slot
         #passed_in_content = args.delete(:content) # Can we get away without this??
         templated_content = card.content_templated? ? card.setting('content') : nil
         renderer_content = templated_content || ""
-        @renderer.render( card, renderer_content, update_refs=card.references_expired)
+        @renderer.render( card, renderer_content, update_refs=card.references_expired, format)
       end
     end
   end
@@ -405,7 +424,7 @@ class Slot
     end
     newcontent
   end 
-  
+
   def expand_inclusion(match)   
     return '' if (@state==:line && self.char_count > Slot.max_char_count) # Don't bother processing inclusion if we're already out of view
     tname, options = Chunk::Transclude.parse(match)
@@ -420,6 +439,7 @@ class Slot
       tcard=slot_options[:main_card] 
       item  = symbolize_param(:item) and options[:item] = item
       pview = symbolize_param(:view) and options[:view] = pview
+      pformat = symbolize_param(:format)||format and options[:format] = pformat
       self.context = options[:context] = 'main'
       options[:view] ||= :open
     end  
@@ -428,6 +448,7 @@ class Slot
     options[:view] = get_inclusion_view(options[:view])
     options[:fullname] = fullname = get_inclusion_fullname(tname,options)
     options[:showname] = tname.to_show(fullname)
+    options[:match_str] = match[1]+(match[3]||'')
     
     tcard ||= (@state==:edit ?
       ( Card.find_by_name(fullname) || 
@@ -516,6 +537,7 @@ class Slot
   
   def process_inclusion( card, options={} )  
     #warn("<process_inclusion card=#{card.name} options=#{options.inspect}")
+    match_str = options[:match_str] || ''
     subslot = subslot(card, options[:context])
     old_slot, Slot.current_slot = Slot.current_slot, subslot
 
@@ -526,8 +548,8 @@ class Slot
     # FIXME! need a different test here   
     new_card = card.new_record? && !card.virtual?
     
-    state, vmode = @state.to_sym, (options[:view] || :content).to_sym      
-    subslot.requested_view = vmode
+    state = @state.to_sym
+    subslot.requested_view = vmode = (options[:view] || :content).to_sym
     action = case
       when [:name, :link, :linkname].member?(vmode)  ; vmode
       when state==:edit       ; card.virtual? ? :edit_auto : :edit_in_form   
@@ -541,8 +563,9 @@ class Slot
       when state==:line       ; :expanded_line_content
       else                    ; vmode
     end
+    logger.info("<transclusion_case: state=#{state} vmode=#{vmode} --> Action=#{action}, Format=#{format}, Option=#{options.inspect}")
 
-    result = subslot.render action, options
+    result = subslot.render(action, options)
     Slot.current_slot = old_slot
     result
   rescue

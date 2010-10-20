@@ -11,6 +11,11 @@ ActionController::Routing::Routes.draw do |map|
   #map.connect 'c/:controller/:action'
   #map.connect 'c/:controller', :action=>'index'
 
+  REST_METHODS = [:get, :post, :put, :delete]
+
+  map.connect 'xmlcard/:id', :conditions => { :method => REST_METHODS }, :controller=>'xmlcard', :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'method'
+
+  #map.connect_resource :xmlcard
   # these file requests should only get here if the file isn't present.
   # if we get a request for a file we don't have, don't waste any time on it.
   map.connect 'images/:foo.:format', :controller=>'application', :action=>'render_fast_404'
@@ -56,6 +61,9 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':id.:format', :controller=> 'card', :action=>'show', :requirements=>ID_REQUIREMENTS1
   map.connect '*id', :controller=>'application', :action=>'render_404'
  
+# Devise is user
+#map.devise_for :users
+
  
 end
                      

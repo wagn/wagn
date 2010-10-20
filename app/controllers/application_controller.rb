@@ -98,7 +98,8 @@ class ApplicationController < ActionController::Base
   def create_ok
     @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
     @skip_slot_header = true
-    t = Card.class_for(@type) || Card::Basic
+    #p "CREATE OK: #{@type}"
+    t = Card.class_for(@type, :cardname) || Card::Basic
     t.create_ok? || render_denied('create')
   end
 

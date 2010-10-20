@@ -29,16 +29,14 @@ module Card
       Card::Base[arg]
     end
     
-    def class_for(given_type)
-      if ::Cardtype.name_for_key?( given_type.to_key )
-        given_type = ::Cardtype.classname_for( ::Cardtype.name_for_key( given_type.to_key ))
-      end
-      
-      begin 
-        Card.const_get(given_type)
-      rescue Exception=>e
-        nil
-      end
+    def class_for(name, field='codename')
+      Card.const_get(
+        field.to_sym == :codename ? name :
+          ( cardname = ::Cardtype.name_for_key(name.to_key) and
+            ::Cardtype.classname_for( cardname ) )
+      )
+    rescue Exception=>e
+      nil
     end
 
 

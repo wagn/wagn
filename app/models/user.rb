@@ -55,7 +55,7 @@ class User < ActiveRecord::Base
     
     # FIXME: args=params.  should be less coupled..
     def create_with_card(user_args, card_args, email_args={})
-      @card = (Hash===card_args ? Card.new({'type'=>'User'}.merge(card_args)) : card_args) 
+      @card = (Hash===card_args ? Card.new({'typecode'=>'User'}.merge(card_args)) : card_args) 
       @user = User.new({:invite_sender=>User.current_user, :status=>'active'}.merge(user_args))
       @user.generate_password if @user.password.blank?
       @user.save_with_card(@card)

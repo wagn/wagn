@@ -1,11 +1,8 @@
-==A Fine Vehicle for Pioneering
+==Wagn: Wiki on Wheels
 
-What does Wagn do?
+Wagn is an open web platform for collaborating to build open web systems.
 
-From note-taking to knowledge management, from daily todo lists to a public directory of company and product information, from back-of-envelope ideas to databases, and from rolodex to operations manuals:
+Using simple wiki building blocks called cards, Wagneers can construct web systems ranging from simple content managers to custom project trackers to fully integrated web suites.  
 
-Wagn covers a lot of ground.
-
-It's a wiki you query, an on-the-fly community database, a formatting system, an application platform, and a playground .... all in one.
 
 	

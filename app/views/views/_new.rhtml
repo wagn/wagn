@@ -22,7 +22,7 @@
 
 			<div class="card-header">
 			  <% if !request.xhr? && @args[:type] && !@card.broken_type %>
-			    <%= form.hidden_field :type %>
+			    <%= hidden_field_tag 'card[type]', @args[:type] %>
 			  <% else %>
   			  <span class="new-type">
   			    <span class="label"> type:</span>

@@ -44,7 +44,7 @@ describe Card do
     end
 
     it "expires card and dependencies on save" do
-      Card.cache.dump # should be empty
+      #Card.cache.dump # should be empty
       Card.cache.local.keys.should == []
 
       User.as :wagbot

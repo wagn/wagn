@@ -22,7 +22,7 @@ class Card::RemoveTest < ActiveSupport::TestCase
     c = Card.create! :name=>"rta!+rtb"
     assert Card["rta!+rtb"]
     assert !Card["rta!+rtb"].trash
-    assert !Card.find(:first, :conditions=>"name=E'rtb*trash'")
+    assert !Card.find(:first, :conditions=>"name='rtb*trash'")
   end   
   
   

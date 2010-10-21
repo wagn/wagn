@@ -1,8 +1,6 @@
 require 'rexml/document'
 
-class MessagesController < ApplicationController; end
-
-class XmlcardController < MessagesController
+class XmlrestController < ApplicationController
   helper :wagn, :card 
 
   before_filter :create_ok, :only=>[ :put, :post ]
@@ -28,7 +26,7 @@ class XmlcardController < MessagesController
   end
   
   def get
-    location_history.push(request.request_uri) if request.get?
+    #location_history.push(request.request_uri) if request.get?
     params[:_keyword] && params[:_keyword].gsub!('_',' ') ## this will be unnecessary soon.
 
     @card_name = Cardname.unescape(params['id'] || '')
@@ -43,7 +41,6 @@ class XmlcardController < MessagesController
       rescue Exception=>e
         raise e
       end
-      #return ( Card::Basic.create_ok? ? self.new : render(:action=>'missing') )
     else
       save_location
     end
@@ -64,7 +61,8 @@ class XmlcardController < MessagesController
     
     @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
     ## fixme, we ought to be setting special titles (or all titles) in cards
-    (request.xhr? || params[:format]) ? render(:action=>'get') : render(:text=>'~~render main inclusion~~', :layout=>true)
+    (request.xhr? || params[:format]) ? render(:action=>'get') :
+	render(:text=>'~~render main inclusion~~', :layout=>true)
   end
 
   #----------------( MODIFYING CARDS )

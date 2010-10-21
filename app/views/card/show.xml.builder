@@ -1,1 +1,1 @@
-../../../app/views/xmlcard/method.xml.builder
+../xmlrest/method.xml.builder

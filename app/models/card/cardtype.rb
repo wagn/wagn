@@ -40,6 +40,11 @@
     # multiple running ruby servers could get out of sync re: available cardtypes  
 
     def reset_cardtype_cache
+      ## DEBUG
+      File.open("#{RAILS_ROOT}/log/wagn.log","w") do |f|
+        f.puts "--reset cardtype cache"
+      end
+      
       ::Cardtype.send(:reset_cache)
     rescue
     end

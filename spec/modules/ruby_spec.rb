@@ -12,8 +12,7 @@ describe "Ruby Cardtype" do
     Card.create! :name => "d1", :type => "Number", :content => "5"
     Card.create! :name => "a1+b1"
     Card.create! :name => "b1+d1"
-    Card.create! :name => "lr sum+*rform", :type => "Ruby", :content => "{{_1|naked}}+{{_2|naked}}",
-      :extension_type => "HardTemplate"
+    Card.create! :name => "lr sum+*right+*content", :type => "Ruby", :content => "{{_1|naked}}+{{_2|naked}}"
     Card.create! :name => "a1test", :type=>"Phrase", :content => "{{a1+b1+lr sum|naked}}, {{b1+d1+lr sum|naked}}"
 
     System.stub(:enable_ruby_cards).and_return(true)

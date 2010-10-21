@@ -11,7 +11,7 @@
           else; 'updated'
         end
         %> 
-        <%= time_ago_in_words card.updated_at %> ago by
+        <%= time_ago_in_words card.updated_at %> ago by <%#ENGLISH%>
       </span> 
       <%= link_to_page card.updater.card.name, nil, :class=>'last-editor' %>
     </span>

@@ -27,6 +27,14 @@ describe Card do
       end
     end
 
+    context "plus card" do
+      it "should have permissions" do
+        User.as :wagbot
+        Card.create :name=>"jill+pretty"
+        Card['pretty'].permissions.should_not be_empty
+      end
+    end
+
     it "name is not nil" do
       Card.new.name.should == ""
       Card.new( nil ).name.should == ""
@@ -53,6 +61,15 @@ describe Card do
     it "should be findable by name" do
       Card.find_by_name("New Card").class.should == Card::Basic
     end  
+  end
+
+  describe "#find_or_new" do
+    context "when card not found" do
+      it "new should have permissions" do
+        c=Card.find_or_new(:name=>"Bilboa")
+        c.permissions.should_not be_empty
+      end
+    end
   end
 
 

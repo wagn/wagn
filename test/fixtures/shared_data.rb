@@ -14,8 +14,8 @@ class SharedData
       joe_camel = ::User.create! :login=>"joe_camel",:email=>'joe@camel.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>User[:wagbot]
       Card::User.create! :name=>"Joe Camel", :extension=>joe_camel, :content => "Mr. Buttz"    
 
-      bt = Card.find_by_name 'Basic+*tform'
-      fail "oh god #{bt.permissions.inspect}" if bt.permissions.empty?
+      #bt = Card.find_by_name 'Basic+*type+*default'
+      #fail "oh god #{bt.permissions.inspect}" if bt.permissions.empty?
 
       # generic, shared attribute card
       color = Card::Basic.create! :name=>"color"
@@ -103,10 +103,7 @@ class SharedData
 
       # for template stuff
       Card::Cardtype.create! :name=> "UserForm"
-      Card.create! :name=>"UserForm+*tform", :content=>"{{+name}} {{+age}} {{+description}}",
-        :extension_type=>"HardTemplate"
-      #Card::UserForm.create! :name=>"JoeForm"      
-
+      Card.create! :name=>"UserForm+*type+*content", :content=>"{{+name}} {{+age}} {{+description}}"
 
       User.as(:joe_user) {  Card.create!( :name=>"JoeLater", :content=>"test") }
       User.as(:joe_user) {  Card.create!( :name=>"JoeNow", :content=>"test") }
@@ -116,8 +113,7 @@ class SharedData
       }  
       
       Card.create! :type=>"Cardtype", :name=>"Book"
-      Card.create! :name=>"Book+*tform", :content=>"by {{+author}}, design by {{+illustrator}}",
-        :extension_type => 'HardTemplate'
+      Card.create! :name=>"Book+*type+*content", :content=>"by {{+author}}, design by {{+illustrator}}"
       Card.create! :name => "Illiad", :type=>"Book"
                                                                                
       
@@ -150,8 +146,19 @@ class SharedData
       
       ## --------- create templated permissions -------------
       #r1 = Role.find_by_codename 'r1'
-      ctt = Card.create! :name=> 'Cardtype E+*tform'
+      ctt = Card.create! :name=> 'Cardtype E+*type+*default'
       
+      
+      ## --------- Fruit: creatable by anon but not readable ---
+      f = Card.create! :type=>"Cardtype", :name=>"Fruit"
+      f.permit(:create, Role[:anon])       
+      f.permit(:read, Role[:admin])   
+      f.save!
+
+      ff = Card.create! :name=>"Fruit+*type+*default"
+      ff.permit(:read, Role[:admin])
+      ff.save!
+
       
     end   
   end

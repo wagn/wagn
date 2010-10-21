@@ -2,7 +2,7 @@ class CardController < ApplicationController
   helper :wagn, :card 
 
   EDIT_ACTIONS =  [ :edit, :update, :rollback, :save_draft, :watch, :unwatch ]
-  LOAD_ACTIONS = EDIT_ACTIONS + [ :changes, :comment, :denied, :options, :quick_update, :related, :remove ]
+  LOAD_ACTIONS = EDIT_ACTIONS + [ :changes, :comment, :denied, :options, :quick_update, :update_codename, :related, :remove ]
 
   before_filter :load_card!, :only=>LOAD_ACTIONS
   before_filter :load_card_with_cache, :only => [:line, :view, :open ]
@@ -16,15 +16,13 @@ class CardController < ApplicationController
   
   #----------( Special cards )
     
-  def index   
-debugger
-    redirect_to(
-      case
-      when User.first_login.nil?;                 '/admin/setup'
-      when home = System.setting('*home');  '/'+ home
-      else { :controller=>'card',:action=>'show', :id=>Cardname.escape(System.site_title) }
-      end
-    )
+  def index
+    if User.no_logins?
+      redirect_to '/admin/setup'
+    else
+      params['id'] = System.setting('*home')
+      show
+    end
   end
 
   def mine
@@ -37,22 +35,16 @@ debugger
     params[:_keyword] && params[:_keyword].gsub!('_',' ') ## this will be unnecessary soon.
 
     @card_name = Cardname.unescape(params['id'] || '')
-    if (@card_name.nil? or @card_name.empty?) then    
-      @card_name = System.site_title
-    end             
+    @card_name = System.site_title if (@card_name.nil? or @card_name.empty?) 
     @card = CachedCard.get(@card_name)
 
-    if @card.new_record? && !@card.virtual?
+    if @card.new_record? && !@card.virtual?  # why doesnt !known? work here?
       params[:card]={:name=>@card_name, :type=>params[:type]}
-      if !Card::Basic.create_ok?
-        return render( :action=>'missing' )
-      else
-        return self.new
-      end
+      return ( Card::Basic.create_ok? ? self.new : render(:action=>'missing') )
     else
       save_location
     end
-    return unless view_ok # if view is not ok, it will render denied. return so we dont' render twice
+    return if !view_ok # if view is not ok, it will render denied. return so we dont' render twice
 
     # rss causes infinite memory suck in rails 2.1.2.  
     unless Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >=2
@@ -65,6 +57,8 @@ debugger
   end
 
   def render_show
+    Wagn::Hook.call :before_show, '*all', self
+    
     @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
     ## fixme, we ought to be setting special titles (or all titles) in cards
     (request.xhr? || params[:format]) ? render(:action=>'show') : render(:text=>'~~render main inclusion~~', :layout=>true)
@@ -74,35 +68,22 @@ debugger
   
   #----------------( creating)                                                               
   def new
+    Wagn::Hook.call :before_new, '*all', self
+        
+    #normalize args
     @args = (params[:card] ||= {})
-    @args[:type] ||= params[:type] # for /new/:type shortcut in routes
-    
-    @args[:name] = params[:id] if params[:id] and !@args[:name]
+    @args[:name] ||= params[:id] # for ajax (?)
+    @args[:type] ||= params[:type] # for /new/:type shortcut 
+    [:name, :type, :content].each {|key| @args.delete(key) unless a=@args[key] and !a.blank?} #filter blank args
 
-
-    # don't pass a blank type as argument
-    # look up other types in case Cardtype name is given instead of ruby type
-    # what?  should always be cardtype name.  we do NOT want to support both, but we do want to support variants.  --efm
-    if @args[:type]
-      if @args[:type].blank?
-        @args.delete(:type) 
-      elsif ct=CachedCard.get_real(@args[:type])    
-        @args[:type] = ct.name 
-      end
-    end
-
-    # if given a name of a card that exists, got to edit instead
-    if @args[:name] and CachedCard.exists?(@args[:name])
-      render :text => "<span class=\"faint\">Oops, <strong>#{@args[:name]}</strong> was recently created! try reloading the page to edit it</span>"
-      return
-    end
-
-    @args.delete(:content) if c=@args[:content] and c.blank? #means soft-templating still takes effect 
-    @card = Card.new @args                   
-    if request.xhr?
-      render :partial => 'views/new', :locals=>{ :card=>@card }
+    if @args[:name] and CachedCard.exists?(@args[:name]) #card exists
+      render :text => "<span class=\"faint\">Oops, <strong>#{@args[:name]}</strong> was recently created! try reloading the page to edit it</span>" #ENGLISH
     else
-      render :action=> 'new'
+      @card = Card.new @args                   
+      render (request.xhr? ? 
+        {:partial=>'views/new', :locals=>{ :card=>@card }} : #ajax
+        {:action=> 'new'} #normal
+      )
     end
   end
   
@@ -112,13 +93,9 @@ debugger
   
   def create    
     @card = Card.create params[:card]        
-    #@card.save
-    
-    @redirect_location = if @card.ok?(:read)
-      url_for_page(@card.name)
-    else
-      @card.setting('thanks') || '/'
-    end                     
+    if params[:multi_edit] and params[:cards] and !@card.errors.present?
+      @card.multi_create(params[:cards]) 
+    end
 
     # according to rails / prototype docs:
     # :success: [...] the HTTP status code is in the 2XX range.
@@ -126,22 +103,31 @@ debugger
   
     # however on 302 ie6 does not update the :failure area, rather it sets the :success area to blank..
     # for now, to get the redirect notice to go in the failure slot where we want it, 
-    # we've chosen to render with the 'teapot' failure status: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes  
-
+    # we've chosen to render with the (418) 'teapot' failure status: 
+    # http://en.wikipedia.org/wiki/List_of_HTTP_status_codes  
     handling_errors do
-      @card.multi_create(params[:cards]) if params[:multi_edit] and params[:cards]
+      @thanks = Wagn::Hook.call( :redirect_after_create, @card ).first ||
+        @card.setting('thanks')
       case
-        when (!@card.ok?(:read));  render( :action=>'redirect_to_thanks',       :status=>418 )
-        when main_card?;           render( :action=>'redirect_to_created_card', :status=>418 )
-        else;                      render_show
+        when @thanks.present?;               ajax_redirect_to @thanks 
+        when @card.ok?(:read) && main_card?; ajax_redirect_to url_for_page( @card.name )
+        when @card.ok?(:read);               render_show
+        else                                 ajax_redirect_to "/"
       end
     end
   end
   
+  def ajax_redirect_to url
+    @redirect_location = url
+    @message = "Create Successful!"
+    render :action => "ajax_redirect", :status => 418
+  end
+    
+  
   #--------------( editing )
   
   def edit                                             
-    if ['name','type'].member?(params[:attribute])
+    if ['name','type','codename'].member?(params[:attribute])
       render :partial=>"card/edit/#{params[:attribute]}" 
     end
   end
@@ -174,7 +160,6 @@ debugger
       #might be addressable via attr_accessors?
     else;   @card.update_attributes(card_args)
     end  
-
     
     if @card.errors.on(:confirmation_required) && @card.errors.map {|e,f| e}.uniq.length==1  
       # If there is confirmation error and *only* that error 
@@ -194,6 +179,16 @@ debugger
     @card.update_attributes! params[:card]   
     handling_errors do
       render(:text=>'Success')
+    end
+  end
+  
+  def update_codename
+    return unless System.always_ok?
+    old_codename = @card.extension.class_name
+    @card.extension.update_attribute :class_name, params[:codename]
+    Card.update_all( {:type=> params[:codename] }, ["type = ?", old_codename])
+    handling_errors do
+      render(:text => 'Success' )
     end
   end
 
@@ -316,7 +311,6 @@ debugger
     
     
   #-------- ( MISFIT METHODS )  
-  
   def watch 
     watchers = Card.find_or_new( :name => @card.name + "+*watchers", :type => 'Pointer' )
     watchers.add_reference User.current_user.card.name

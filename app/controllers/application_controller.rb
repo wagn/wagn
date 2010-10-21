@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
   # can we turn sessions off for it and see if that helps?
   layout :wagn_layout, :except=>[:render_fast_404]
   
-  BUILTIN_LAYOUTS = %w{ blank noside simple none }
+  BUILTIN_LAYOUTS = %w{ blank noside simple pre none }
 
 
   protected
@@ -52,12 +52,11 @@ class ApplicationController < ActionController::Base
     # reset class caches
     # FIXME: this is a bit of a kluge.. several things stores as cattrs in modules
     # that need to be reset with every request (in addition to current user)
-    User.clear_cache if System.multihost
-    Cardtype.reset_cache
-    Role.reset_cache
-    CachedCard.reset_cache
+    Wagn::Cache.reset_local
     System.request = request 
     #System.time = Time.now.to_f              
+    ## DEBUG
+    ActiveRecord::Base.logger.debug("WAGN: per request setup")
     load_location
     
     Wagn::Hook.call :before_request, '*all', self

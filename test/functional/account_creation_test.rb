@@ -48,8 +48,8 @@ class UserCreationTest < ActionController::TestCase
     assert_equal "active", User.find_by_email("ron@request.com").status
   end
   
-  def test_should_create_user_from_invitation_request_when_user_hard_templated
-    Card.create :name=>'User+*tform', :content=>"like this", :extension_type=>"HardTemplate"
+  def test_should_create_account_from_invitation_request_when_user_hard_templated
+    Card.create :name=>'User+*type+*content', :content=>"like this"
     assert_difference Card::InvitationRequest, :count, -1 do
       assert_difference Card::User, :count, 1 do
         post_invite :card=>{ :key=>"ron_request"}, :action=>:accept
@@ -85,10 +85,9 @@ class UserCreationTest < ActionController::TestCase
     assert_equal 'active', User.find_by_email('new@user.com').status
   end
 
-  def test_should_create_user_when_user_cards_are_templated   ##FIXME -- I don't think this actually catches the bug I saw.
-    Card.create! :name=> 'User+*tform', :extension_type=>'HardTemplate'
-#debugger
-    assert_new_user do 
+  def test_should_create_account_when_user_cards_are_templated   ##FIXME -- I don't think this actually catches the bug I saw.
+    Card.create! :name=> 'User+*type+*content'
+    assert_new_account do 
       post_invite
       assert_response 302
     end

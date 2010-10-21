@@ -21,7 +21,7 @@
 					:html=>{ :class=>'form',:onsubmit=>slot.save_function	} do |form| %>
 
 			<div class="card-header">
-			  <% if !slot.xhr? and params[:card] and cardtype = params[:card][:type] and !card.broken_type %>
+			  <% if !request.xhr? && @args[:type] && !@card.broken_type %>
 			    <%= form.hidden_field :type %>
 			  <% else %>
   			  <span class="new-type">
@@ -52,13 +52,14 @@
 	    <% end %>
 
 			
-			
 			<div class="edit-area">
   			<div class="editor">  
-  				<% if card.hard_template %>
+					<% #FIXME CONTENT: the hard template test can go away when we phase out the old sytem %>
+  				<% if card.content_templated? %>
   				  <%- slot.form = form %>
     			  <%= slot.render(:multi_edit)%>
   				<% else %>
+						<%# if default_content = card.setting('default') ; card.content = default_content; end %>
   					<%= slot.content_field(form) %>
   				<% end %>
   			</div>

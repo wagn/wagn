@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "Card::Cardtype", ActiveSupport::TestCase do
+describe "Card::Cardtype" do
   
   before do
     User.as :joe_user
@@ -38,24 +38,18 @@ describe "Card::Cardtype", ActiveSupport::TestCase do
   end
 
   describe "conversion to cardtype" do
-    it "resets Cardtype cache" do
-      card = Card.create!(:name=>'Cookie')
-      card.type.should == 'Basic'
-      card.type = 'Cardtype'
-      Cardtype.should_receive(:reset_cache)
-      card.save!
-      Cardtype.name_for('Cookie').should == 'Cookie'
+    before do
+      @card = Card.create!(:name=>'Cookie')
+      @card.type.should == 'Basic'      
     end
     
     it "creates cardtype model and permission" do
-      card = Card.create!(:name=>'Cookie')
-      card.type.should == 'Basic'
-      card.type = 'Cardtype'
-      card.save!
-    
-      card=Card['Cookie']
-      assert_instance_of Cardtype, card.extension
-      Permission.find_by_card_id_and_task(card.id, 'create').should_not be_nil
+      @card.type = 'Cardtype'
+      @card.save!    
+      Cardtype.name_for('Cookie').should == 'Cookie'
+      @card=Card['Cookie']
+      assert_instance_of Cardtype, @card.extension
+      Permission.find_by_card_id_and_task(@card.id, 'create').should_not be_nil
       assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).type
     end
   end
@@ -77,6 +71,7 @@ describe Card, "codename_generation" do
   
   it "should create incremented classnames when first choice is taken" do
     Card.generate_codename_for("User").should == "User1"
+    Card.generate_codename_for('Process').should == 'Process1'
   end
 end                  
 
@@ -117,30 +112,30 @@ end
 describe Card, "Card changed to become a Cardtype" do
   before do
     User.as :wagbot 
-    @a = Card['a']
+    @a = Card['A']
     @a.type = 'Cardtype'
     @a.save!
   end
   it "should have a create permission set" do
-    Card['a'].who_can(:create).should_not == nil
+    Card['A'].who_can(:create).should_not == nil
   end
 end
 
 describe Card, "Normal card with junctions" do
   before do
     User.as :wagbot 
-    @a = Card['a']
+    @a = Card['A']
   end
   it "should confirm that it has junctions" do
     @a.junctions.length.should > 0
   end
   it "should successfull have its type changed" do
     @a.type = 'Number'; @a.save!
-    Card['a'].type.should== 'Number'
+    Card['A'].type.should== 'Number'
   end
   it "should still have its junctions after changing type" do
     @a.type = 'CardtypeE'; @a.save!
-    Card['a'].junctions.length.should > 0
+    Card['A'].junctions.length.should > 0
   end
 end
 
@@ -159,8 +154,6 @@ describe Card, "Recreated Card" do
   
 end
 
-
-
 describe Card, "New Cardtype" do
   before do
     User.as :wagbot 
@@ -170,13 +163,11 @@ describe Card, "New Cardtype" do
   it "should have create permissions" do
     @ct.who_can(:create).should_not be_nil
   end
+  
   it "its create permissions should be based on Basic" do
     @ct.who_can(:create).should == Card['Basic'].who_can(:create)
   end
 end
-
-
-
 
 describe Card, "Wannabe Cardtype Card" do
   before do
@@ -194,31 +185,29 @@ describe Card, "Wannabe Cardtype Card" do
   end
 end
 
-
-
 describe User, "Joe User" do
   before do
     User.as :wagbot 
     @r3 = Role[:r3]
-    @ctf_t = Card.create! :name=>'Cardtype F+*tform'
-    @ctf_t.permit(:create, @r3)
-    @ctf_t.save!
+
+    @ctf = Card['Cardtype F']
+    @ctf.permit(:create, @r3)
+    @ctf.save!
 
     User.as :joe_user
     @user = User[:joe_user]
-    @ctf = Card['Cardtype F']
     Cardtype.reset_cache
     @cardtype_names = Cardtype.createable_cardtypes.map{ |ct| ct[:name] }
   end
 
   it "should not have r3 permissions" do
-    @user.roles.member?(@r3).should_not be_true
+    @user.roles.member?(@r3).should be_false
   end
   it "should ponder creating a card of Cardtype F, but find that he lacks create permissions" do
-    @ctf.ok?(:create).should_not be_true
+    @ctf.ok?(:create).should be_false
   end
   it "should not find Cardtype F on its list of createable cardtypes" do
-    @cardtype_names.member?('Cardtype F').should_not be_true
+    @cardtype_names.member?('Cardtype F').should be_false
   end
   it "should find Basic on its list of createable cardtypes" do
     @cardtype_names.member?('Basic').should be_true

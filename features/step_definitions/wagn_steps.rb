@@ -25,12 +25,23 @@ Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
     end
   end
 end
-         
+
 Given /^the pointer (.*) contains "([^\"]*)"$/ do |cardname, content|
   webrat.simulate do
     Given "the card #{cardname} contains \"#{content}\"" 
   end
 end
+
+Given /I harden "([^\"]*)"/ do |cardname|
+  Card[cardname].update_attribute :extension_type, "HardTemplate"
+end
+
+When /^(.*) edits? "([^\"]*)"$/ do |username, cardname|
+  logged_in_as(username) do
+    visit "/card/edit/#{cardname.to_url_key}"
+  end
+end  
+  
 
 When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
   logged_in_as(username) do
@@ -53,7 +64,8 @@ When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
 end
      
 When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/ do |username, cardtype, cardname, content|
-  create_card(username, cardtype, cardname, content) do   
+  create_card(username, cardtype, cardname, content) do  
+    content.gsub!(/\\n/,"\n") 
     fill_in_hidden_or_not("card[content]", :with=>content)
   end
 end    
@@ -86,6 +98,10 @@ Then /what/ do
   save_and_open_page
 end
 
+Then /debug/ do
+  debugger
+end
+
 def fill_in_hidden_or_not(field_locator, options={})
   set_hidden_field(field_locator, :to=>options[:with])
 rescue Exception => e
@@ -96,7 +112,11 @@ def create_card(username,cardtype,cardname,content="")
   logged_in_as(username) do
     visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"   
     yield if block_given?
-    click_button("Create")
+    click_button("Submit") 
+    # Fixme - need better error handling here-- the following raise
+    # at least keeps us from going on to the next step if the create bombs
+    # but it doesn't report the reason for the failure.
+    raise "Creating #{cardname} failed" unless Card[cardname]
   end
 end
 
@@ -178,5 +198,15 @@ end
 
 Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field|
   field_labeled(field).element.search(".//option[@selected = 'selected']").inner_html.should =~ /#{value}/
+end
+
+
+## variants of standard steps to handle """ style quoted args
+Then /^I should see$/ do |text|
+  response.should contain(text)
+end
+
+When /^I fill in "([^\"]*)" with$/ do |field, value|
+  fill_in(field, :with => value) 
 end
 

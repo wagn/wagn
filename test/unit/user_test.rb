@@ -74,6 +74,10 @@ class UserTest < ActiveSupport::TestCase
   def test_should_authenticate_user_with_weird_email_capitalization
     assert User.authenticate?('JOE@user.com', 'joe_pass')
   end
+
+#  def test_should_authenticate_user_with_same_email_as_wagbot
+#    u1 = User[:wagbot]
+#  end
   
   protected
   def create_user(options = {})

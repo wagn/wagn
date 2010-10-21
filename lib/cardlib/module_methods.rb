@@ -1,30 +1,31 @@
 module Cardlib
   module ModuleMethods    
-    def new(args={})
-      args=args.stringify_keys unless args.nil?   
-      p = Proc.new {|k| k.new(args)}
-      c=with_class_from_args(args,p)  
-    
-      # autoname.  note I'm not sure that this is the right place for this at all, but 
-      #  :set_needed_defaults returns if new_record? so I think we don't want it in there
-      if !args.nil? and args["name"].blank?
-        ::User.as(:wagbot) do
-          if autoname_card = c.setting_card('autoname')
-            autoname_card = autoname_card.card
-            c.name = autoname_card.content
-            autoname_card.content = autoname_card.content.next
-            autoname_card.save!
-          end                                         
-        end
-      end
-      c.send(:set_needed_defaults)
-      c
-    end 
-  
-    def method_missing( method_id, *args )
-      Card::Base.send(method_id, *args)
-    end  
-       
+    # create, and create! copied from activerecord.
+    # make sure we call Card.new  before dropping to 
+    # Card::X.create,new,etc., so we can do class lookup, defaults, etc.
+    # in Card.new
+    # def create(attributes = nil, &block)
+    #   if attributes.is_a?(Array)
+    #     attributes.collect { |attr| create(attr, &block) }
+    #   else
+    #     object = new(attributes)
+    #     yield(object) if block_given?
+    #     object.save
+    #     object
+    #   end
+    # end
+    # 
+    # def create!(attributes = nil, &block)
+    #   if attributes.is_a?(Array)
+    #     attributes.collect { |attr| create!(attr, &block) }
+    #   else
+    #     object = new(attributes)
+    #     yield(object) if block_given?
+    #     object.save!
+    #     object
+    #   end
+    # end
+
     def create_these( *args )                                                                                  
       definitions = args.size > 1 ? args : (args.first.inject([]) {|a,p| a.push({p.first=>p.last}); a })
       definitions.map do |input|
@@ -66,16 +67,19 @@ module Cardlib
     end
      
     def generate_codename_for(cardname)
-      class_name = cardname.gsub(/^\W+|\W+$/,'').gsub(/\W+/,'_').camelize   
-      # shoot me now  
-      if const_defined?(class_name)
-        class_name_base, i = class_name, 1
-        while const_defined?(class_name)  
-          class_name = class_name_base + i.to_s
-          i+=1
-        end
+      codename = cardname.gsub(/^\W+|\W+$/,'').gsub(/\W+/,'_').camelize   
+      base, i = codename, 1
+      while codename_unavailable?(codename)  
+        codename = base+i.to_s
+        i+=1
       end
-      class_name
+      codename
+    end
+    
+    def codename_unavailable?(name)
+      const_defined?(name) || Module.const_get(name)
+    rescue
+      false
     end
      
     def default_cardtype_key

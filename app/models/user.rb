@@ -146,6 +146,10 @@ end
     end
   rescue
   end
+      
+  def cardname
+    @cardname ||= card.name
+  end
 
   def accept(email_args)
     User.as do #what permissions does approver lack?  Should we check for them?

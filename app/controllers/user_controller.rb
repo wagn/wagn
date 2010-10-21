@@ -16,6 +16,8 @@ class UserController < ApplicationController
     return unless request.post?
     return unless (captcha_required? ? verify_captcha(:model=>@user) : true)
 
+    Wagn::Hook.call( :account_controller_create, @card, self, params, @user )
+    return unless @user.errors.empty?
     @user, @card = User.create_with_card( user_args, card_args )
 debugger unless @user.errors.empty?
     return unless @user.errors.empty?
@@ -30,7 +32,9 @@ debugger unless @user.errors.empty?
       @user.accept(email_args)
       redirect_to (System.setting('*signup+*thanks') || '/')
     else
-      User.deliver_signup_alert(@card) if System.setting('*request+*to')
+      User.as :wagbot do
+        Mailer.deliver_signup_alert(@card) if System.setting('*request+*to')
+      end
       redirect_to (System.setting('*request+*thanks') || '/')
     end
   end

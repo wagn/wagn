@@ -1,13 +1,7 @@
 module Card      
-  module SearchMethods
-     def test
-       "" =~ /plus\"\:\[\"([^\"]+)\"\W*refer_to\W*_self/ #what's all this?
-     end
-  end
   
 	class Search < Base  
-	  include SearchMethods
-	  attr_accessor :self_card, :results, :search_opts, :spec
+	  attr_accessor :self_cardname, :results, :spec
     before_save :escape_content
 
     def escape_content
@@ -19,15 +13,13 @@ module Card
     end
      
     def count(params={})
-      params = params.symbolize_keys  
-      [:offset, :limit].each {|x| params.delete(x) }
-      Card.count_by_wql( get_spec(params) )
+      Card.count_by_wql( (params.empty? && spec) ? spec : get_spec(params) )
     end
                                 
     def search( params={} )  
-      self.search_opts = params  
       self.spec = get_spec(params.clone)
-      raise("OH NO.. no limit") unless self.spec[:limit] and self.spec[:limit]
+      raise("OH NO.. no limit") unless self.spec[:limit] 
+      self.spec.delete(:limit) if spec[:limit].to_i <= 0
       self.results = Card.search( self.spec ).map do |card|   
         c = CachedCard.get(card.name, card)
       end
@@ -35,15 +27,16 @@ module Card
     
     def get_spec(params={})
       spec = ::User.as(:wagbot) do
-        raise("Error in card '#{self.name}':can't run search with empty content") if self.content.empty?
-        JSON.parse( self.content )   
+        spec_content = content_templated? ? setting('content') : self.content
+        raise("Error in card '#{self.name}':can't run search with empty content") if spec_content.empty?
+        JSON.parse( spec_content )   
       end
       # FIXME: should unit test this 
       
-      self_card ||= ( name.junction? ? Card[name.parent_name]||Card.auto_card(name.parent_name) : nil )  
+      self_cardname ||= ( name.junction? ? name.parent_name : nil )  
       
-      if spec.is_a?(Hash) && self_card
-        spec[:_card] = self_card
+      if spec.is_a?(Hash) && self_cardname
+        spec[:_self] = self_cardname
       end
       spec.merge! params
       spec.symbolize_keys!

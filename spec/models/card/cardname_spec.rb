@@ -38,4 +38,14 @@ describe Cardname, "changing from plus card to simple" do
     @c.trunk_id.should== nil
     @c.tag_id.should== nil
   end
+  
+  describe "template_name?" do
+    it "returns true for template" do
+      "bazoinga+*right+*content".template_name?.should be_true
+    end
+    
+    it "returns false for non-template" do
+      "bazoinga+*right+nontent".template_name?.should be_false
+    end
+  end
 end

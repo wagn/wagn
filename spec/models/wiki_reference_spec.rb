@@ -1,29 +1,43 @@
 require File.dirname(__FILE__) + '/../spec_helper' 
 
 describe "WikiReference" do
-             
-  
   before do
     #setup_default_user  
     User.as :wagbot
     CachedCard.bump_global_seq
   end
 
-  it "hard templated card should insert references on create" do
-    Card::UserForm.create! :name=>"JoeForm"
-    Slot.new(Card["JoeForm"]).render(:naked_content)
-    assert_equal ["joe_form+age", "joe_form+name", "joe_form+description"].sort,
-      Card["JoeForm"].out_references.plot(:referenced_name).sort     
-    Card["JoeForm"].references_expired.should_not == true
-  end         
+  describe "references on hard templated cards should get updated" do
+    it "on templatee creation" do
+      Card::UserForm.create! :name=>"JoeForm"
+      Slot.new(Card["JoeForm"]).render(:naked_content)
+      assert_equal ["joe_form+age", "joe_form+name", "joe_form+description"].sort,
+        Card["JoeForm"].out_references.plot(:referenced_name).sort     
+      Card["JoeForm"].references_expired.should_not == true
+    end         
 
-  it "hard template reference creation on template creation" do
-    Card::Cardtype.create! :name=>"SpecialForm"
-    Card::SpecialForm.create! :name=>"Form1", :content=>"foo"
-    Card.create! :name=>"SpecialForm+*type+*content", :content=>"{{+bar}}"
-    Slot.new(Card["Form1"]).render(:naked_content)
-    Card["Form1"].references_expired.should_not == true
-    Card["Form1"].out_references.plot(:referenced_name).should == ["form1+bar"]
+    it "on template creation" do
+      Card::Cardtype.create! :name=>"SpecialForm"
+      Card::SpecialForm.create! :name=>"Form1", :content=>"foo"
+      Card["Form1"].references_expired.should be_nil
+      Card.create! :name=>"SpecialForm+*type+*content", :content=>"{{+bar}}"
+      Card["Form1"].references_expired.should be_true
+      Slot.new(Card["Form1"]).render(:naked_content)
+      Card["Form1"].references_expired.should be_nil
+      Card["Form1"].out_references.plot(:referenced_name).should == ["form1+bar"]
+    end
+
+    it "on template update" do
+      Card::UserForm.create! :name=>"JoeForm"
+      tmpl = Card["UserForm+*type+*content"]
+      tmpl.content = "{{+monkey}} {{+banana}} {{+fruit}}"; 
+      tmpl.save!
+      Card["JoeForm"].references_expired.should be_true
+      Slot.new(Card["JoeForm"]).render(:naked_content)
+      assert_equal ["joe_form+monkey", "joe_form+banana", "joe_form+fruit"].sort,
+        Card["JoeForm"].out_references.plot(:referenced_name).sort     
+      Card["JoeForm"].references_expired.should_not == true
+    end                                                         
   end
   
   it "in references should survive cardtype change" do
@@ -32,19 +46,12 @@ describe "WikiReference" do
     newcard("Sun","[[Yellow]]")
     newcard("Yellow")
     Card["Yellow"].referencers.plot(:name).sort.should == %w{ Banana Submarine Sun }
-    y=Card["Yellow"];  y.type="UserForm"; y.save!
+    y=Card["Yellow"];  
+    y.type="UserForm"; 
+    y.save!
     Card["Yellow"].referencers.plot(:name).sort.should == %w{ Banana Submarine Sun }
   end
 
-  it "hard templated card should update references on template update" do
-    Card::UserForm.create! :name=>"JoeForm"
-    tmpl = Card["UserForm+*type+*content"]
-    tmpl.content = "{{+monkey}} {{+banana}} {{+fruit}}"; tmpl.save!
-    Slot.new(Card["JoeForm"]).render(:naked_content)
-    assert_equal ["joe_form+monkey", "joe_form+banana", "joe_form+fruit"].sort,
-      Card["JoeForm"].out_references.plot(:referenced_name).sort     
-    Card["JoeForm"].references_expired.should_not == true
-  end                                                         
   
   it "container transclusion" do
     bob_city = Card.create :name=>'bob+city' 
@@ -95,7 +102,7 @@ describe "WikiReference" do
 
   it "update referencing content on rename junction card" do
     @ab = Card.find_by_name("A+B") #linked to from X, transcluded by Y
-    @ab.update_attributes! :name=>'Peanut+Butter'
+    @ab.update_attributes! :name=>'Peanut+Butter', :confirm_rename => true, :update_referencers => true
     @x = Card.find_by_name('X')
     @x.content.should == "[[A]] [[Peanut+Butter]] [[T]]"
   end
@@ -113,7 +120,7 @@ describe "WikiReference" do
     Card.create! :name=>"ColorType+*type+*content", :content=>"{{#{JOINT}rgb}}"
     green = Card::ColorType.create! :name=>"green"
     rgb = newcard 'rgb'
-    green_rgb = Card.create! :trunk=>green, :tag=>rgb, :content=>"#00ff00"
+    green_rgb = Card.create! :name => "green+rgb", :content=>"#00ff00"
     
     green.reload.transcludees.plot(:name).should == ["green#{JOINT}rgb"]
     green_rgb.reload.transcluders.plot(:name).should == ['green']
@@ -157,7 +164,7 @@ describe "WikiReference" do
   end
   
   
-=begin   
+#=begin   
   # this test is about the time between when a card is first created and the time that
   # references pointing to the cards name are updated and given an id;  
   # these 'name_references' are used in the cache_sweeper, but i'm not sure i understand
@@ -167,9 +174,9 @@ describe "WikiReference" do
     @l = Card.create! :name=>"woof", :content=>"{{Lewdog}}"  # no Lewdog card yet...
     @e = Card.new(:name=>"Lewdog", :content=>"grrr")              # now there is
     warn @e.name_references.inspect
-    @e.name_references.plot(:referencer).plot(:name).include?("woof").should.not == nil
+    @e.name_references.plot(:referencer).plot(:name).include?("woof").should_not == nil
   end
-=end
+#=end
 
 =begin  
 

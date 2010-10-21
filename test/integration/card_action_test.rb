@@ -101,13 +101,13 @@ class CardActionTest < ActionController::IntegrationTest
     assert_tag :tag=>'div', :attributes=>{:class=>'error', :id=>'no-cardtype-error'}
   end
 
-
   # FIXME: this should probably be files in the spot for a remove test
   def test_removal_and_return_to_previous_undeleted_card_after_deletion
-    t1, t2 = given_cards( 
-      { "Testable1" => "hello" }, 
-      { "Testable1+*banana" => "world" } 
-    )
+    t1 = t2 = nil
+    User.as(:wagbot) do 
+      t1 = Card.create! :name => "Testable1", :content => "hello"
+      t2 = Card.create! :name => "Testable1+*banana", :content => "world"
+    end
     
     get url_for_page( t1.name )
     get url_for_page( t2.name )

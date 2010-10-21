@@ -1,9 +1,10 @@
-#Commonly used email steps
+# Commonly used email steps
 #
 # To add your own steps make a custom_email_steps.rb
 # The provided methods are:
 #
-# reset_mailer 
+# last_email_address
+# reset_mailer
 # open_last_email
 # visit_in_email
 # unread_emails_for
@@ -12,67 +13,170 @@
 # open_email
 # read_emails_for
 # find_email
+#
+# General form for email scenarios are:
+#   - clear the email queue (done automatically by email_spec)
+#   - execute steps that sends an email
+#   - check the user received an/no/[0-9] emails
+#   - open the email
+#   - inspect the email contents
+#   - interact with the email (e.g. click links)
+#
+# The Cucumber steps below are setup in this order.
 
 module EmailHelpers
   def current_email_address
-    User.current_user.email # Replace with your a way to find your current_email. e.g current_user.email
+    # Replace with your a way to find your current email. e.g @current_user.email
+    # last_email_address will return the last email address used by email spec to find an email.
+    # Note that last_email_address will be reset after each Scenario.
+    last_email_address || "example@example.com"
   end
 end
+
 World(EmailHelpers)
 
-# Use this step to reset the e-mail queue within a scenario.
+#
+# Reset the e-mail queue within a scenario.
 # This is done automatically before each scenario.
+#
+
 Given /^(?:a clear email queue|no emails have been sent)$/ do
   reset_mailer
 end
 
-# Use this step to open the most recently sent e-mail. 
-When /^(I|He) opens? the email$/ do |pronoun|
-  open_email(current_email_address)
+#
+# Check how many emails have been sent/received
+#
+
+Then /^(?:I|they|"([^"]*?)") should receive (an|no|\d+) emails?$/ do |address, amount|
+  unread_emails_for(address).size.should == parse_email_count(amount)
 end
 
-When %r{^I follow "([^"]*?)" in the email$} do |link|
-  visit_in_email(link)
+Then /^(?:I|they|"([^"]*?)") should have (an|no|\d+) emails?$/ do |address, amount|
+  mailbox_for(address).size.should == parse_email_count(amount)
 end
 
-Then /^I should receive (an|\d+) emails?$/ do |amount|
-  amount = 1 if amount == "an"
-  unread_emails_for(current_email_address).size.should == amount.to_i
+Then /^(?:I|they|"([^"]*?)") should receive (an|no|\d+) emails? with subject "([^"]*?)"$/ do |address, amount, subject|
+  unread_emails_for(address).select { |m| m.subject =~ Regexp.new(subject) }.size.should == parse_email_count(amount)
 end
 
-Then %r{^"([^"]*?)" should receive (\d+) emails?$} do |address, n|
-  unread_emails_for(address).size.should == n.to_i 
+Then /^(?:I|they|"([^"]*?)") should receive an email with the following body:$/ do |address, expected_body|
+  open_email(address, :with_text => expected_body)
 end
 
-Then %r{^"([^"]*?)" should have (\d+) emails?$} do |address, n|
-  mailbox_for(address).size.should == n.to_i
+#
+# Accessing emails
+#
+
+# Opens the most recently received email
+When /^(?:I|they|"([^"]*?)") opens? the email$/ do |address|
+  open_email(address)
 end
 
-Then %r{^"([^"]*?)" should not receive an email$} do |address|
-  find_email(address).should be_nil
-end
-
-Then %r{^(I|He) should see "(.*)" in the subject$} do |pronoun, text|
-  current_email.should have_subject(Regexp.new(text))
-end
-
-Then %r{^(I|He) should see "([^"]*?)" in the email$} do |pronoun, text|
-  current_email.body.should =~ Regexp.new(text)
-end
-
-Then /^it should be from "(.*)"$/ do |from|
-  current_email.from.should == from
-end
-
-When %r{^"([^"]*?)" opens? the email with subject "(.*)"$} do |address, subject|
+When /^(?:I|they|"([^"]*?)") opens? the email with subject "([^"]*?)"$/ do |address, subject|
   open_email(address, :with_subject => subject)
 end
 
-When %r{^"([^"]*?)" opens? the email with text "([^"]*?)"$} do |address, text|
+When /^(?:I|they|"([^"]*?)") opens? the email with text "([^"]*?)"$/ do |address, text|
   open_email(address, :with_text => text)
 end
 
-When /^I click the first link in the email$/ do
+#
+# Inspect the Email Contents
+#
+
+Then /^(?:I|they) should see "([^"]*?)" in the email subject$/ do |text|
+  current_email.should have_subject(text)
+end
+
+Then /^(?:I|they) should see \/([^"]*?)\/ in the email subject$/ do |text|
+  current_email.should have_subject(Regexp.new(text))
+end
+
+Then /^(?:I|they) should see "([^"]*?)" in the email body$/ do |text|
+  current_email.body.should include(text)
+end
+
+Then /^(?:I|they) should see \/([^"]*?)\/ in the email body$/ do |text|
+  current_email.body.should =~ Regexp.new(text)
+end
+
+Then /^(?:I|they) should see the email delivered from "([^"]*?)"$/ do |text|
+  current_email.should be_delivered_from(text)
+end
+
+Then /^(?:I|they) should see "([^\"]*)" in the email "([^"]*?)" header$/ do |text, name|
+  current_email.should have_header(name, text)
+end
+
+Then /^(?:I|they) should see \/([^\"]*)\/ in the email "([^"]*?)" header$/ do |text, name|
+  current_email.should have_header(name, Regexp.new(text))
+end
+
+#
+# Inspect the Email Attachments
+#
+
+Then /^(?:I|they) should see (an|no|\d+) attachments? with the email$/ do |amount|
+  current_email_attachments.size.should == parse_email_count(amount)
+end
+
+Then /^there should be (an|no|\d+) attachments? named "([^"]*?)"$/ do |amount, filename|
+  current_email_attachments.select { |a| a.original_filename == filename }.size.should == parse_email_count(amount)
+end
+
+Then /^attachment (\d+) should be named "([^"]*?)"$/ do |index, filename|
+  current_email_attachments[(index.to_i - 1)].original_filename.should == filename
+end
+
+Then /^there should be (an|no|\d+) attachments? of type "([^"]*?)"$/ do |amount, content_type|
+  current_email_attachments.select { |a| a.content_type == content_type }.size.should == parse_email_count(amount)
+end
+
+Then /^attachment (\d+) should be of type "([^"]*?)"$/ do |index, content_type|
+  current_email_attachments[(index.to_i - 1)].content_type.should == content_type
+end
+
+Then /^all attachments should not be blank$/ do
+  current_email_attachments.each do |attachment|
+    attachment.size.should_not == 0
+  end
+end
+
+Then /^show me a list of email attachments$/ do
+  EmailSpec::EmailViewer::save_and_open_email_attachments_list(current_email)
+end
+
+#
+# Interact with Email Contents
+#
+
+When /^(?:I|they) follow "([^"]*?)" in the email$/ do |link|
+  visit_in_email(link)
+end
+
+When /^(?:I|they) click the first link in the email$/ do
   click_first_link_in_email
 end
 
+#
+# Debugging
+# These only work with Rails and OSx ATM since EmailViewer uses RAILS_ROOT and OSx's 'open' command.
+# Patches accepted. ;)
+#
+
+Then /^save and open current email$/ do
+  EmailSpec::EmailViewer::save_and_open_email(current_email)
+end
+
+Then /^save and open all text emails$/ do
+  EmailSpec::EmailViewer::save_and_open_all_text_emails
+end
+
+Then /^save and open all html emails$/ do
+  EmailSpec::EmailViewer::save_and_open_all_html_emails
+end
+
+Then /^save and open all raw emails$/ do
+  EmailSpec::EmailViewer::save_and_open_all_raw_emails
+end

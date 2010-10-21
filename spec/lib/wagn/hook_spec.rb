@@ -4,13 +4,21 @@ describe Wagn::Hook do
   it "module exists and autoloads" do
     Wagn::Hook.should be_true
   end                      
-end
 
-describe Wagn::Hook do
+  describe ".ephemerally" do
+    it "restores registry to original state after running block" do
+      reg = Wagn::Hook.registry.deep_clone
+      Wagn::Hook.ephemerally do
+        Wagn::Hook.add :save, "Book+*type" do "fish" end
+        Wagn::Hook.registry.should_not == reg
+      end
+      Wagn::Hook.registry.should == reg
+    end
+  end
+
   describe ".invoke" do
     before(:all){  Fish = mock("cod") }
     before do
-      Wagn::Hook.reset
       Wagn::Hook.add :save, "Book+*type" do
         Fish.hooked
       end
@@ -18,12 +26,16 @@ describe Wagn::Hook do
 
     it "invokes hooks on matching cards" do
       Fish.should_receive("hooked").once
-      Wagn::Hook.invoke :save, Card.new(:type => "Book", :name=>"Hitchhikers Guide")    
+      Wagn::Hook.call :save, Card.new(:type => "Book", :name=>"Hitchhikers Guide")    
     end
   
     it "does note invoke hooks on non-matching cards" do
       Fish.should_not_receive("hooked")
-      Wagn::Hook.invoke :save, Card.new(:type => "Basic", :name=>"button")    
+      Wagn::Hook.call :save, Card.new(:type => "Basic", :name=>"button")    
+    end
+
+    it "invokes hooks for set names" do
+      
     end
 
     it "invokes multiple registered hooks with arguments" do
@@ -35,24 +47,9 @@ describe Wagn::Hook do
       Wagn::Hook.add(:samplehook, '*all') do |card, arg|
         Fish.hooked "more #{arg}"
       end
-      Wagn::Hook.invoke :samplehook, '*all', "boo"
+      Wagn::Hook.call :samplehook, '*all', "boo"
     end
   end
 end
 
-describe Card do
-  before(:each) do
-    Wagn::Hook.reset  # this is really just here to trigger hook auto-loading
-  end
 
-  describe "#create" do 
-    it "invokes hooks" do
-      [:before_save, :before_create, :after_save, :after_create].each do |hookname|
-        Wagn::Hook.should_receive(:invoke).with(hookname, instance_of(Card::Basic))
-      end 
-      User.as :wagbot do
-        Card.create :name => "testit"
-      end
-    end
-  end
-end

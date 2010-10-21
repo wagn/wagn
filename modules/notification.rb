@@ -1,21 +1,4 @@
-module Notification 
-  module Hooks
-    def before_multi_save( card, multi_card_params )
-      multi_card_params.each_pair do |name, opts|
-        opts[:nested_edit] = card
-      end  
-      card.nested_notifications = []
-    end 
-  
-    def after_multi_update( card )                  
-      if card.nested_notifications.present?  
-        card.watcher_watched_pairs.each do |watcher, watched|
-          watcher.deliver_change_notice( watcher, card, 'updated', watched, card.nested_notifications )
-        end
-      end
-    end
-  end
-  
+module Notification   
   module CardMethods
     def send_notifications 
       action = case  
@@ -119,13 +102,27 @@ module Notification
   		end
     end
   end
+
+  Wagn::Hook.add :before_multi_save, '*all' do |card, multi_card_params|
+    multi_card_params.each_pair do |name, opts|
+      opts[:nested_edit] = card
+    end  
+    card.nested_notifications = []
+  end 
+
+  Wagn::Hook.add :after_multi_update, '*all' do |card|
+    if card.nested_notifications.present?  
+      card.watcher_watched_pairs.each do |watcher, watched|
+        Mailer.deliver_change_notice( watcher, card, 'updated', watched, card.nested_notifications )
+      end
+    end
+  end
   
   def self.init
     Card::Base.send :include, CardMethods
     Card::Base.send :include, CacheableMethods  
     CachedCard.send :include, CacheableMethods 
     Slot.send :include, SlotHelperMethods 
-    self.extend Hooks 
   end   
 end    
 

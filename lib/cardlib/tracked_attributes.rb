@@ -2,6 +2,7 @@ module Cardlib
   module TrackedAttributes 
      
     def set_tracked_attributes  
+      Rails.logger.debug "Card(#{name})#set_tracked_attributes begin"
       updates.each_pair do |attr, value| 
         if send("set_#{attr}", value )
           updates.clear attr
@@ -9,6 +10,7 @@ module Cardlib
         #warn "SET CHANGED #{attr.to_sym.inspect}"    
         @changed ||={}; @changed[attr.to_sym]=true 
       end
+      Rails.logger.debug "Card(#{name})#set_tracked_attributes end"
     end
     
     
@@ -70,7 +72,7 @@ module Cardlib
       if !templatees.empty?
         #warn "going through hard templatees"  
         templatees.each do |tee|
-          tee.allow_type_change = "HELLS YEAH"  #FIXME? this is a hacky way around the standard validation
+          tee.allow_type_change = true  #FIXME? this is a hacky way around the standard validation
           tee.type = new_type
           tee.save!
         end
@@ -102,28 +104,13 @@ module Cardlib
     def set_permissions(perms)
       self.updates.clear(:permissions)
       if type=='Cardtype' and !perms.detect{|p| p.task=='create'}
-        old_create_party = self.who_can(:create) || Card::Basic.new.cardtype.who_can(:create) 
-        perms << Permission.new(:task=>'create', :party=>old_create_party, :card_id=>self.id)
+        party = Role.find( Cardtype.create_party_for( 'Basic' ) )
+        perms << Permission.new(:task=>'create', :party=>party, :card_id=>self.id )
       end
       self.permissions_without_tracking = perms.reject {|p| p.party==nil }
       perms.each do |p| 
         set_reader( p.party ) if p.task == 'read'
       end      
-#=begin
-      if template? and trunk.type == 'Cardtype' and create_party = who_can(:create)
-        ::User.as :wagbot do
-          trunk.permit(:create, create_party)
-          trunk.save!
-          if trunk.codename == 'Basic'
-            Card::Basic.permission_dependent_cardtypes.each do |ct|
-              #warn "updating cardtype: #{ct.name}"
-              ct.permit(:create, create_party)
-              ct.save
-            end
-          end
-        end
-      end
-#=end    
       return true
     end
    
@@ -140,6 +127,7 @@ module Cardlib
     end
  
     def set_initial_content  
+      Rails.logger.debug "Card(#{name})#set_inital_content start"
       # set_content bails out if we call it on a new record because it needs the
       # card id to create the revision.  call it again now that we have the id.
       
@@ -152,6 +140,7 @@ module Cardlib
         "update cards set current_revision_id=#{current_revision_id} where id=#{id}",
         "Card Update"
       )
+      Rails.logger.debug "Card(#{name})#set_inital_content end"
     end
     
     def cascade_name_changes 
@@ -178,8 +167,15 @@ module Cardlib
           WikiReference.update_on_destroy(dep, @old_name) 
         end
       else
-        User.as(:wagbot) do      
-          ([self]+deps).map(&:referencers).flatten.uniq.each do |card|
+        User.as(:wagbot) do
+          [self.name_referencers(@old_name)+(deps.map &:referencers)].flatten.uniq.each do |card|
+            # FIXME  using "name_referencers" instead of plain "referencers" for self because there are cases where trunk and tag
+            # have already been saved via association by this point and therefore referencers misses things
+            # eg.  X includes Y, and Y is renamed to X+Z.  When X+Z is saved, X is first updated as a trunk before X+Z gets to this point.
+            # so at this time X is still including Y, which does not exist.  therefore #referencers doesn't find it, but name_referencers(old_name) does.
+            # some even more complicated scenario probably breaks on the dependents, so this probably needs a more thoughtful refactor
+            # aligning the dependent saving with the name cascading
+            
             ActiveRecord::Base.logger.info("------------------ UPDATE REFERRER #{card.name}  ------------------------")
             next if card.hard_template
             card.content = Renderer.new.replace_references( card, @old_name, name )

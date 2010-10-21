@@ -27,6 +27,7 @@ class CardMigrationGenerator < Rails::Generator::NamedBase
   end
   
   def card
+    User.as(:wagbot)
     @card||=Card[file_name]
   end
   

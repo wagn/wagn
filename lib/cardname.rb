@@ -26,14 +26,13 @@ module Cardname
   end
   
   def template_name?
-    tag_name.=~ /\*.form$/
+    junction? && !!(tag_name =~ /\*default|\*content/)
   end
-=begin      
-  def auto_template_name
-    (simple? ? self : self.tag_name) + "+*template"
+  
+  def email_config_name?
+    junction? && ["*subject","*message"].include?(tag_name)
   end
-=end
-    
+  
   def replace_part( oldpart, newpart )
     part_names(oldpart.particle_names.size).map {|x| x.to_key == oldpart.to_key ? newpart : x }.join("+")
   end
@@ -116,7 +115,7 @@ module Cardname
         when /^_left$/i;            context_name.trunk_name
         when /^_right$/i;           context_name.tag_name
         when /^_(\d+)$/i;           context_parts[ $~[1].to_i - 1 ] 
-        when /^_(L*)(R?)/i
+        when /^_(L*)(R?)$/i
           l_count, r_count = $~[1].size, $~[2].size
           trunk = context_name.split(JOINT)[0..(0-(l_count+1))].join(JOINT)
           r_count > 0 ? trunk.tag_name : trunk

@@ -53,6 +53,7 @@ module Cardlib
     end
 
     def save_with_permissions(perform_checking=true)
+      Rails.logger.debug "Card#save_with_permissions"
       if perform_checking && approved? || !perform_checking
         save_without_permissions(perform_checking)
       else
@@ -61,6 +62,7 @@ module Cardlib
     end 
     
     def save_with_permissions!
+      Rails.logger.debug "Card#save_with_permissions!"
       if approved?
         save_without_permissions!
       else
@@ -177,16 +179,17 @@ module Cardlib
 
     def approve_task(operation, verb=nil) #read, edit, comment, delete           
       verb ||= operation.to_s
-      testee = template? ? trunk : self
+      #testee = template.hard_template? ? trunk : self
+      testee = self
       deny_because("#{ydhpt} #{verb} this card") unless testee.lets_user( operation ) 
     end
 
     def approve_type
       unless new_record?       
         approve_delete
-        if right_template and right_template.hard_template?  and !allow_type_change
-          deny_because you_cant( "change the type of this card -- it is hard templated by #{right_template.name}")
-        end
+#        if right_template and right_template.hard_template? and right_template.type!=type and !allow_type_change
+#          deny_because you_cant( "change the type of this card -- it is hard templated by #{right_template.name}")
+#        end
       end
       new_self = clone_to_type( type ) 
       unless Cardtype.create_ok?(new_self.type)
@@ -203,17 +206,10 @@ module Cardlib
       end
     end
    
-    def approve_template_tsar
-      deny_because "plus cards can't be control right formats" if !simple? and right_templator?
-      deny_because "can't be template" if template?
-    end
-
     def approve_permissions
       return if System.always_ok?
-      unless System.ok?(:set_card_permissions)  or 
-          (System.ok?(:set_personal_card_permissions) and (personal_user == ::User.current_user)) or 
-          new_record? then #FIXME-perm.  on new cards we should check that permission has not been altered from default unless user can set permissions.
-          
+      unless System.ok?(:set_card_permissions) or new_record?
+        #FIXME-perm.  on new cards we should check that permission has not been altered from default unless user can set permissions. 
         deny_because you_cant("set permissions" )
       end
     end

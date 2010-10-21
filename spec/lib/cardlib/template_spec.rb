@@ -1,40 +1,50 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
    
 
-describe Card, "with hard tag template" do
-  before do
-    CachedCard.reset_cache
-    User.as :joe_user
-    @bt = Card.create! :name=>"birthday+*content", :type=>'Date', :content=>"Today!"
-    @jb =  Card.create! :name=>"Jim+birthday"
-  end       
- 
-  it "should have default cardtype" do
-    @jb.type.should == 'Date'
+describe Card do
+  before do 
+    User.as :wagbot
   end
-  it "should have default content" do
-    @jb.content.should == 'Today!'
-  end        
-  it "should change cardtype with template" do
-     # @bt.update_attributes!(:type => 'Basic'); @bt.save!
-     @bt.type = 'Basic'; @bt.save!;
-
-     Card['Jim+birthday'].type.should == 'Basic'
-   end   
   
-  it "should change content with template" do
-    @bt.content = "Tomorrow"; @bt.save!
-    Card['Jim+birthday'].content.should == 'Tomorrow'
-  end 
-  
-  it "should not let you change the type" do
-    @jb.ok?(:type).should_not be_true
+  describe "#hard_templatees" do
+    it "for User+*type+*content should return all Users" do
+      Card.create(:name=>'User+*type+*content').hard_templatees.map(&:name).sort.should == [
+        "Joe Admin", "Joe Camel", "Joe User", "John", "No Count", "Sample User", "Sara", "u1", "u2", "u3"
+      ]
+    end
   end
-
+  
+  it "#content_templated?" do
+    pending
+  end
+  
+  it "#expire_templatee_references" do
+    pending
+  end
+  
 end
 
 
-describe Card, "with soft tag template" do
+describe Card, "with right content template" do
+  before do
+    CachedCard.reset_cache
+    User.as :joe_user
+    @bt = Card.create! :name=>"birthday+*right+*content", :type=>'Date', :content=>"Today!"
+    @jb = Card.create! :name=>"Jim+birthday"
+  end       
+ 
+  it "should have default content" do
+    Slot.new(@jb).render(:naked_content).should == 'Today!'
+  end        
+  
+  it "should change content with template" do
+    @bt.content = "Tomorrow"; @bt.save!
+    Slot.new( Card['Jim+birthday']).render(:naked_content).should == 'Tomorrow'
+  end 
+end
+
+
+describe Card, "with right default template" do
   before do 
     CachedCard.reset_cache
     CachedCard.bump_global_seq
@@ -47,14 +57,6 @@ describe Card, "with soft tag template" do
     @jb = Card.create! :name=>"Jim+birthday"
   end
                
-  it "should fail without extension" do
-    c = Card.create :type=>"Phrase", :name=>"status+*right+*default", :content=>"open"
-    c.extension_type=nil
-    c.save!
-    Card.new(:name=>"dt+status").type.should == 'Phrase'
-    Card.new(:name=>"dt+status").content.should == 'open'
-  end
-  
   it "should have default cardtype" do
     @jb.type.should == 'Date'
   end
@@ -70,41 +72,29 @@ describe Card, "with soft tag template" do
   end
 end
 
-# FIXME: this situation (hard tag + hard type) need re-thought-through
-describe Card, "with hard type template and hard tag template" do
+describe Card, "templating" do
   before do
     User.as :joe_user
-    @dt = Card.create! :name=>"Date+*tform", :extension_type=>'HardTemplate', :type=>'Basic', :content=>'Tomorrow'
-    @bt = Card.create! :name=>"birthday+*rform", :extension_type=>'HardTemplate', :type=>'Date', :content=>"Today!"      
-    @jb =  Card.create! :name=>"Jim+birthday"
+    @dt = Card.create! :name=>"Date+*type+*content", :type=>'Basic', :content=>'Tomorrow'
+    @bt = Card.create! :name=>"birthday+*right+*content", :type=>'Date', :content=>"Today!"      
+    @jb =  Card.new :name=>"Jim+birthday"
   end       
   
-  it "should have tag content" do
-    #@jb.content.should == 'Today!'
-    @jb.content.should == 'Tomorrow'
+  it "*right setting should override *type setting" do
+    Slot.new(@jb).render(:naked_content).should == 'Today!'
   end
-
-  #it "should change content with cardtype" do
-    #@bt.content = 'Yesterday'; @bt.save!
-    #Card['Jim+birthday'].content.should== 'Yesterday'
-    #Card['Jim+birthday'].content.should== 'Tomorrow'
-  #end
-  
 end
 
-describe Card, "with hard type template" do
+describe Card, "with type content template" do
   before do
     User.as :joe_user
-    @dt = Card.create! :name=>"Date+*tform", :extension_type=>'HardTemplate', :type=>'Basic', :content=>'Tomorrow'
+    @dt = Card.create! :name=>"Date+*type+*content", :type=>'Basic', :content=>'Tomorrow'
   end       
   
   it "should return templated content even if content is passed in" do
-    Card.new(:type=>'Date', :content=>'').content.should == 'Tomorrow'
+    Slot.new(Card.new(:type=>'Date', :content=>'')).render(:naked_content).should == 'Tomorrow'
   end
 end
 
-describe Card, "with soft type template" do
-  
-end
 
 

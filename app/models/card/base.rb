@@ -1,4 +1,5 @@
 module Card
+  
   #
   # == Associations
   #  
@@ -18,6 +19,17 @@ module Card
 
 #    cattr_accessor :cache  
 #    self.cache = {}
+
+   
+    [:before_validation, :before_validation_on_create, :after_validation, 
+      :after_validation_on_create, :before_save, :before_create, :after_create,
+      :after_save
+    ].each do |callback|
+      self.send(callback) do 
+        Rails.logger.debug "Card#callback #{callback}"
+      end
+    end
+   
    
     belongs_to :trunk, :class_name=>'Card::Base', :foreign_key=>'trunk_id' #, :dependent=>:dependent
     has_many   :right_junctions, :class_name=>'Card::Base', :foreign_key=>'trunk_id'#, :dependent=>:destroy  
@@ -36,10 +48,29 @@ module Card
 
     before_destroy :destroy_extension
                
-    before_validation_on_create :set_needed_defaults
+    #before_validation_on_create :set_needed_defaults
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
       :update_referencers, :allow_type_change, :virtual, :builtin, :broken_type, :skip_defaults
+
+    # setup hooks on AR callbacks
+    [:before_save, :before_create, :after_save, :after_create].each do |hookname| 
+      self.send( hookname ) do |card|
+        Wagn::Hook.call hookname, card
+      end
+    end
+      
+        
+    # apparently callbacks defined this way are called last.
+    # that's what we want for this one.  
+    def after_save 
+      if card.type == 'Cardtype'
+        Rails.logger.debug "Cardtype after_save resetting"
+        ::Cardtype.reset_cache
+      end
+      Rails.logger.debug "Card#after_save end"
+      true
+    end
         
     # apparently callbacks defined this way are called last.
     # that's what we want for this one.  
@@ -63,60 +94,82 @@ module Card
       
     protected        
     
-    # FIXME:  instead of calling c.send(:set_needed_defaults)  in a bunch of places
-    #  couldn't we create initialize_with_defaults and chain it?
-    def set_needed_defaults
-      # new record check because create callbacks are also called in type transitions 
-      return if (!new_record? || skip_defaults? || virtual? || @defaults_already_set)  
-      @defaults_already_set = true
-      set_defaults
-      #replace_content_variables
-    end
-    
-    def set_defaults 
-      # FIXME: AccountCreationTest:test_should_require_valid_cardname
-      # fails unless we add the  'and name.valid_cardname?'  below
-      # but I don't understand why. it should still throw the error
-      if simple? and name and name.junction? and name.valid_cardname?
-        self.trunk = Card::Base.find_or_new :name=>name.parent_name
-        self.tag =   Card::Base.find_or_new :name=>name.tag_name
+    def set_defaults args
+      # autoname
+      Rails.logger.debug "Card(#{name})#set_defaults begin"
+      if args["name"].blank?
+        ::User.as(:wagbot) do
+          if ac = setting_card('autoname') and autoname_card = ac.card
+            self.name = autoname_card.content
+            autoname_card.content = autoname_card.content.next
+            autoname_card.save!
+          end                                         
+        end
       end
-      self.name = trunk.name + JOINT + tag.name if junction?
+      
+      # auto-creation of left and right components
+      # if trunk and tag are new, they will be saved when the parent
+      # card is saved.
+      if simple? and name and name.junction? and name.valid_cardname? 
+        self.trunk = Card.find_or_new :name=>name.parent_name
+        self.tag =   Card.find_or_new :name=>name.tag_name
+        #puts "Found or Newed trunk #{self.trunk.name}"
+        #puts "Found or Newed tag #{self.tag.name}"
+        raise Exception, "missing permissions on #{self.trunk.name}" if self.trunk.permissions.empty?
+        raise Exception, "missing permissions on #{self.tag.name}, #{self.tag.inspect}" if self.tag.permissions.empty?
+      end
+      
+      # now that we have trunk and tag;
+      # handle default content and permissions
+      if new_record? and !virtual?
+        if !args['permissions']
+          self.permissions = default_permissions
+        end
+
+        ::User.as(:wagbot) do
+          if !args['content'] and self.content.blank? and default_card = setting_card('default')
+            self.content = default_card.content
+          end
+        end
+      end
+      
+      # misc defaults- trash, key, fallbacks
       self.trash = false   
       self.key = name.to_key if name
-      
-      self.extension_type = 'SoftTemplate' if (template? and !self.extension_type)
-       
-      unless updates.for?(:permissions)
-        self.permissions = default_permissions
-      end
-      
-      if template.hard_template? || !updates.for?(:content) 
-        self.content = ::User.as(:wagbot) { template.content }
-      end
-
-      self.name='' if self.name.nil?
+      self.name='' if name.nil?
+      Rails.logger.debug "Card(#{name})#set_defaults end"
+      self
     end
-    
-    #def replace_content_variables
-      # this should search through all variables (in links and inclusions) starting with $ 
-      #and replace them with either the corresponding passed-in param or ''
-    #end
+
     
     def default_permissions
-      perm = template.real_card.permissions.reject { |p| p.task == 'create' unless (type == 'Cardtype' or template?) }
-      
-      perm.map do |p|  
+      source_card = setting_card('content')
+      if source_card
+        perms = source_card.card.permissions.reject { 
+          |p| p.task == 'create' unless (type == 'Cardtype' or template?) 
+        }
+      else
+        #raise( "Missing permission configuration for #{name}" ) unless source_card && !source_card.permissions.empty?
+        perms = [:read,:edit,:delete].map{|t| ::Permission.new(:task=>t.to_s, :party=>::Role[:auth])}
+      end
+    
+      # We loop through and create copies of each permission object here because
+      # direct copies end up re-assigning which card the permission objects are assigned to.
+      # leads to painful errors.
+      perms.map do |p|  
         if p.task == 'read'
           party = p.party
           
           if trunk and tag
             trunk_reader, tag_reader = trunk.who_can(:read), tag.who_can(:read)
-              if trunk_reader.anonymous? or (authenticated?(trunk_reader) and !tag_reader.anonymous?)
-                party = tag_reader
-              else
-                party = trunk_reader
-              end
+            if !trunk_reader or !tag_reader
+              raise "bum permissions: #{trunk.name}:#{trunk_reader}, #{tag.name}:#{tag_reader}"
+            end
+            if trunk_reader.anonymous? or (authenticated?(trunk_reader) and !tag_reader.anonymous?)
+              party = tag_reader
+            else
+              party = trunk_reader
+            end
           end
           Permission.new :task=>p.task, :party=>party
         else
@@ -125,54 +178,63 @@ module Card
       end
     end
     
+        
     public
+
+    # FIXME: this is here so that we can call .card  and get card whether it's cached or "real".
+    # goes away with cached_card refactor
+    def card
+      self
+    end
     
     # Creation & Destruction --------------------------------------------------
-
     class << self
-      def default_class
-        self==Card::Base ? Card.const_get( Card.default_cardtype_key ) : self
-      end
-      
-      def find_or_create!(args={})
-        c = find_or_new(args); c.save!; c
-      end
-      
-      def find_or_create(args={})
-        c = find_or_new(args); c.save; c
-      end
-      
-      def find_or_new(args={})
-        args.stringify_keys!
-        raise "Must specify :name to find_or_create" if args['name'].blank?
-        c = Card.find(:first, :conditions=>"#{ActiveRecord::Base.connection.quote_column_name("key")} = '#{args['name'].to_key}'") || begin
-          p = Proc.new {|k| k.new(args)}
-          with_class_from_args(args, p)
-        end
-        c.send(:set_needed_defaults)
+      alias_method :ar_new, :new
 
-        if c.trash
-          ::User.as(:wagbot) do
-            c.content=''  
-            c.trash=false
-          end
-        end
-        c
-      end                      
-                                  
-      # sorry, I know the next two aren't DRY, I couldn't figure out how else to do it.
-      def create_with_type!(args={})  
-        p = Proc.new {|k| k.create_without_type!(args)}
-        with_class_from_args(args,p)
-      end
-      alias_method_chain :create!, :type    
+      def new(args={})
+        # standardize arguments ( why strings? )
+        args = {} if args.nil?
+        args = args.stringify_keys
 
-      def create_with_type(args={})
-        p = Proc.new {|k| k.create_without_type(args)}
-        with_class_from_args(args,p)
-      end
-      alias_method_chain :create, :type    
-      
+        # FIXME: if a name is given, do we want to check 
+        # if the card is virtual or in the trash?
+
+        # set the type from the class we're called from 
+        calling_class = self.name.split(/::/).last
+        if calling_class != 'Base'
+          args['type'] = calling_class
+        end
+
+        # set type from settings
+        if !args['type']
+          default_card = Card::Basic.new({ 
+            :name=> args['name'], 
+            :type => "Basic",
+            :skip_defaults=>true 
+          }).setting_card('content')
+          args['type'] = default_card ? default_card.type : "Basic"
+        end
+        
+        card_class = Card.class_for( args['type'] ) || (
+          broken_type = args['type']; Card::Basic
+        )
+
+        # create the new card based on the class we've determined
+        args.delete('type')
+        
+        new_card = card_class.ar_new args
+        yield(new_card) if block_given?
+        new_card.broken_type = broken_type if broken_type
+        new_card.send( :set_defaults, args ) unless args['skip_defaults'] 
+        new_card
+      end 
+
+      def get_name_from_args(args={})
+        args ||= {}
+        args['name'] || (args['trunk'] && args['tag']  ? args["trunk"].name + "+" + args["tag"].name : "")
+      end      
+
+      # FIXME: I hate hate hate hate this trash code.
       def create_with_trash!(args={})   
         args.stringify_keys!
         if c = Card.find_by_key_and_trash(get_name_from_args(args).to_key, true)
@@ -198,70 +260,54 @@ module Card
         end
       end
       alias_method_chain :create, :trash   
-
-      def class_for(given_type)
-        if ::Cardtype.name_for_key?( given_type.to_key )
-          given_type = ::Cardtype.classname_for( ::Cardtype.name_for_key( given_type.to_key ))
-        end
-        
-        begin 
-          Card.const_get(given_type)
-        rescue Exception=>e
-          nil
-        end
+      
+      def default_class
+        self==Card::Base ? Card.const_get( Card.default_cardtype_key ) : self
       end
       
-      def with_class_from_args(args, p)        
-        args ||={}  # huh?  why doesn't the method parameter do this?
-
-        given_type = args.pull('type')
-        tag_template = right_template(get_name_from_args(args)||"")
-
-        
-        broken_type = nil
-        
-        requested_type = case
-          when tag_template && tag_template.hard_template?;   tag_template.type  
-          when given_type;                                    given_type
-          when tag_template && tag_template.soft_template?;   tag_template.type
-          else                                                default_class.to_s.demodulize  # depends on what class we're in
-        end
-
-        klass = Card.class_for( requested_type ) || begin
-          broken_type = requested_type
-          Card::Basic
-        end
-     
-        card = p.call( klass )
-        card.broken_type = broken_type
-        card
+      def find_or_create!(args={})
+        c = find_or_new(args); c.save!; c
       end
-            
-      def get_name_from_args(args={})
-        args ||= {}
-        args['name'] || (args['trunk'] && args['tag']  ? args["trunk"].name + "+" + args["tag"].name : "")
-      end      
       
-      def [](name) 
-        # DONT do find_virtual here-- it ends up happening all over the place--
-        # call it explicitly if that's what you want
-        #self.cache[name.to_s] ||= 
-        self.find_by_name(name.to_s, :include=>:current_revision) #|| self.find_virtual(name.to_s)
-        #self.find_by_name(name.to_s)
-      end             
+      def find_or_create(args={})
+        c = find_or_new(args); c.save; c
+      end
+      
+      def find_or_new(args={})
+        args.stringify_keys!
+        raise "Must specify :name to find_or_create" if args['name'].blank?
+        column = ActiveRecord::Base.connection.quote_column_name("key")  # really there's not a better way to do this?
+        if c = Card.find(:first, :conditions=>"#{column} = '#{args['name'].to_key}'")
+          raise "missing permissions from find #{c.name}" if c.permissions.empty?
+        else
+          c = Card.new( args )
+          raise "missing permissions from new" if c.permissions.empty?
+        end
+
+        if c.trash
+          ::User.as(:wagbot) do
+            c.content=''  
+            c.trash=false
+          end
+        end
+        c
+      end                      
     end
 
     def multi_create(cards)
+      Wagn::Hook.call :before_multi_create, self, cards
       multi_save(cards)
+      Wagn::Hook.call :after_multi_create, self
     end
     
     def multi_update(cards)
+      Wagn::Hook.call :before_multi_update, self, cards
       multi_save(cards)
-      Notification.after_multi_update(self)  # future system hook
+      Wagn::Hook.call :after_multi_update, self
     end
     
     def multi_save(cards)
-      Notification.before_multi_save(self,cards)  # future system hook
+      Wagn::Hook.call :before_multi_save, self, cards
       cards.each_pair do |name, opts|              
         opts[:content] ||= ""   
         # make sure blank content doesn't override pointee assignments if they are present
@@ -287,6 +333,7 @@ module Card
           end
         end
       end  
+      Wagn::Hook.call :after_multi_save, self, cards
     end
 
     def destroy_with_trash(caller="")     
@@ -340,10 +387,6 @@ module Card
      
     # Extended associations ----------------------------------------
 
-    def left
-      trunk
-    end
-    
     def right
       tag
     end
@@ -369,6 +412,10 @@ module Card
 
     def extended_referencers
       (dependents + [self]).plot(:referencers).flatten.uniq
+    end
+
+    def card
+      self
     end
 
     def cardtype
@@ -442,11 +489,7 @@ module Card
       #unless name=~/^\*|\+\*/  
         new_record? ? ok!(:create_me) : ok!(:read) # fixme-perm.  might need this, but it's breaking create...
       #end
-      if tmpl = hard_template and tmpl!=self
-        tmpl.content
-      else
-        current_revision ? current_revision.content : ""
-      end
+      current_revision ? current_revision.content : ""
     end   
         
     def type
@@ -515,6 +558,7 @@ module Card
     tracks :name, :content, :type, :comment, :permissions#, :reader, :writer, :appender
 
     def name_with_key_sync=(name)
+      name ||= ""
       self.key = name.to_key
       self.name_without_key_sync = name
     end

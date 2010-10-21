@@ -7,8 +7,8 @@ class Sandbox
     :securityViolationText, :syntaxErrorDetected,
     :syntaxErrorText, :sandboxOutput 
     
-  def initialize(level = 2, request=nil, maxRunTime = 10,
-    maxThreadCount = 10, maxNewObjects = 10000)
+  def initialize(level = 2, request=nil, maxRunTime = 5,
+    maxThreadCount = 5, maxNewObjects = 1000)
     @request = request
     @level = level
     @maxRunTime = maxRunTime

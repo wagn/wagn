@@ -6,10 +6,22 @@ class ConvertStarSendToSetting < ActiveRecord::Migration
       c.type = "Setting"
       c.save!
     end
-    Card.find_or_create! :name => "*send+*right+*default", :type=>'Pointer', :content => "[[_left+email config]]"
-    Card.find_or_create!( :name => "email config+*right+*default", 
-      :content => "{{+*to}}<br/>{{+*bcc}}<br/>{{+*from}}<br/>{{+*subject}}<br/>{{+*message}}"
-    )
+    Card.search(:right=>'*type').each do |c|
+      if c.type != 'Set'
+        c.type='Set'
+        c.save!
+      end
+    end
+    c = Card['*right+*right']
+    if c and c.type!="Set"
+      c.type = "Set"
+      c.save!
+    end
+    
+#    Card.find_or_create! :name => "*send+*right+*default", :type=>'Pointer', :content => "[[_left+email config]]"
+#    Card.find_or_create!( :name => "email config+*right+*default", 
+#      :content => "{{+*to}}<br/>{{+*bcc}}<br/>{{+*from}}<br/>{{+*subject}}<br/>{{+*message}}"
+#    )
   end
 
   def self.down

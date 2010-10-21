@@ -57,6 +57,7 @@ describe Cardname do
     
     it "handles _right" do
       "_right+bang".to_absolute("nutter+butter").should == "butter+bang"
+      "C+_right".to_absolute("B+A").should == "C+A"
     end
     
     it "handles leading +" do

@@ -60,6 +60,12 @@ describe Card, "created by Card.new " do
     @c.name = 'Old Card'
     @c.name.should == 'Old Card'
   end
+  
+  it "should not override content set by pointees with default content" do
+    Card.create! :name => "blue+*right+*default", :content => "joe", :type=>"Pointer"
+    c = Card.new :name => "Lady+blue", :pointees => "Jimmy"
+    c.content.should == "[[Jimmy]]"
+  end
 end
                   
 
@@ -116,7 +122,7 @@ end
 describe Card, "types" do
   before do
     User.as :wagbot  
-    # NOTE: it looks like these tests aren't DRY- but you can pull the cardtype creation up here because:
+    # NOTE: it looks like these tests aren't DRY- but you can't pull the cardtype creation up here because:
     #  creating cardtypes creates constants in the namespace, and those aren't removed 
     #  when the db is rolled back, so you're not starting in the original state.
     #  during use of the application the behavior probably won't create a problem, so we test around it here.

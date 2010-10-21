@@ -83,3 +83,32 @@ class Array
     end
   end
 end
+
+class Object
+  def deep_clone
+    case self
+    when Fixnum,Bignum,Float,NilClass,FalseClass,TrueClass,Continuation,Symbol
+      klone = self
+    when Hash
+      klone = self.clone
+      self.each{|k,v| klone[k] = v.deep_clone}
+    when Array
+      klone = self.clone
+      klone.clear
+      self.each{|v| klone << v.deep_clone}
+    else
+      klone = self.clone
+    end
+    klone.instance_variables.each {|v|
+      klone.instance_variable_set(v,
+      klone.instance_variable_get(v).deep_clone)
+    }
+    klone
+  end
+  
+  def m
+    time = Benchmark.measure { yield }
+    sprintf("%.2f",time.real * 1000) + 'ms'
+  end
+  
+end

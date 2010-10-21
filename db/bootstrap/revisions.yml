@@ -1,19 +1,185 @@
 --- 
 revisions_024: 
   created_at: 2009-04-06 14:11:12.948281
-  card_id: "135"
+  card_id: "87"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
-  id: "1455"
-  content: <p>{{DeleteMe|open}}</p>
+  id: "267"
+  content: "{}"
 revisions_050: 
   created_at: 2009-04-06 14:11:12.948281
-  card_id: "124"
+  card_id: "146"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
-  id: "1284"
+  id: "1696"
   content: ""
 revisions_105: 
+  created_at: 2009-04-24 11:49:31.476135
+  card_id: "180"
+  updated_at: 2009-04-24 11:49:31.476135
+  created_by: "4"
+  id: "2093"
+  content: <p><span><span>Every card has a type, which shapes what kind of information goes into it. You can also add your own cardtypes. To learn more, read the [[http://wagn.org/wagn/card_types|documentation about card types]].<br></span></span></p>
+revisions_131: 
+  created_at: 2010-04-15 18:43:06.769767
+  card_id: "336"
+  updated_at: 2010-04-15 18:43:06.769767
+  created_by: "1"
+  id: "3225"
+  content: ""
+revisions_212: 
+  created_at: 2009-06-01 12:55:14.259141
+  card_id: "68"
+  updated_at: 2009-06-01 12:55:14.259141
+  created_by: "4"
+  id: "2494"
+  content: |-
+    <p>Thanks!&nbsp; Your invitation is on its way.</p>
+    <p>&nbsp;</p>
+    <p>See [[Account Requests]].</p>
+revisions_320: 
+  created_at: 2009-12-08 12:25:06.826886
+  card_id: "288"
+  updated_at: 2009-12-08 12:25:06.826886
+  created_by: "1"
+  id: "3065"
+  content: ""
+revisions_025: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "42"
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  id: "42"
+  content: "{\"included_by\":\"_self\"}"
+revisions_051: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "28"
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  id: "28"
+  content: ""
+revisions_106: 
+  created_at: 2009-04-24 11:52:32.305417
+  card_id: "181"
+  updated_at: 2009-04-24 11:52:32.305417
+  created_by: "4"
+  id: "2094"
+  content: <p>People with accounts generally have a User card. To learn more, read the [[http://wagn.org/wagn/User|documentation about User cards]].</p>
+revisions_132: 
+  created_at: 2010-04-15 18:43:07.453806
+  card_id: "337"
+  updated_at: 2010-04-15 18:43:07.453806
+  created_by: "1"
+  id: "3226"
+  content: ""
+revisions_213: 
+  created_at: 2009-06-03 12:04:23.543816
+  card_id: "56"
+  updated_at: 2009-06-03 12:04:23.543816
+  created_by: "4"
+  id: "2506"
+  content: |-
+    <p><em>Any signed-in user with the [[/admin/tasks|global permission]] to "create accounts" can invite new users via email.</em></p>
+    <p>&nbsp;</p>
+    <h2>Default subject</h2>
+    <blockquote>
+    <p>{{+*subject|type:Phrase}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h2>Default message</h2>
+    <blockquote>
+    <p>{{+*message|type:PlainText}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <p><strong>After sending an invitation, you're taken here:</strong><span><strong></strong></span></p>
+    <blockquote>
+    <p>&nbsp; <span>HTTP:// <em>(YOUR WAGN'S DOMAIN)</em></span><em> </em>{{+*thanks}}</p>
+    </blockquote>
+revisions_321: 
+  created_at: 2009-12-08 12:25:08.839001
+  card_id: "289"
+  updated_at: 2009-12-08 12:25:08.839001
+  created_by: "1"
+  id: "3066"
+  content: ""
+revisions_240: 
+  created_at: 2009-07-03 10:54:09.701217
+  card_id: "221"
+  updated_at: 2009-07-03 10:54:09.701217
+  created_by: "4"
+  id: "2623"
+  content: "{\"type\": \"User\"}"
+revisions_026: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "9"
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  id: "9"
+  content: ""
+revisions_052: 
+  created_at: 2009-04-08 10:23:29.108262
+  card_id: "55"
+  updated_at: 2009-04-08 10:23:29.108262
+  created_by: "3"
+  id: "1755"
+  content: My Wagn
+revisions_107: 
+  created_at: 2009-04-24 22:49:13.065432
+  card_id: "183"
+  updated_at: 2009-04-24 22:49:13.065432
+  created_by: "4"
+  id: "2200"
+  content: "{\"type\": \"Cardtype\", \"sort\": \"name\", \"append\": \"*edit\"}"
+revisions_133: 
+  created_at: 2010-04-15 18:43:09.421919
+  card_id: "338"
+  updated_at: 2010-04-15 18:43:09.421919
+  created_by: "1"
+  id: "3228"
+  content: ""
+revisions_214: 
+  created_at: 2009-06-07 14:02:15.75763
+  card_id: "147"
+  updated_at: 2009-06-07 14:02:15.75763
+  created_by: "4"
+  id: "2516"
+  content: <p>Administrators automatically have all of the [[/admin/tasks|global permissions]], and has the power to see, edit and delete every card in the system regardless of its permissions settings. See the [[http://wagn.org/wagn/permissions|documentation about permissions]].</p>
+revisions_322: 
+  created_at: 2009-12-08 12:25:11.511153
+  card_id: "290"
+  updated_at: 2009-12-08 12:25:11.511153
+  created_by: "1"
+  id: "3067"
+  content: ""
+revisions_241: 
+  created_at: 2009-07-03 11:43:20.536424
+  card_id: "222"
+  updated_at: 2009-07-03 11:43:20.536424
+  created_by: "4"
+  id: "2624"
+  content: ""
+revisions_027: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "137"
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  id: "1521"
+  content: ""
+revisions_053: 
+  created_at: 2009-04-07 13:29:24.151196
+  card_id: "155"
+  updated_at: 2009-04-07 13:29:24.151196
+  created_by: "3"
+  id: "1747"
+  content: ""
+revisions_053: 
+  created_at: 2009-04-08 10:23:29.108262
+  card_id: "55"
+  updated_at: 2009-04-08 10:23:29.108262
+  created_by: "3"
+  id: "1755"
+  content: My Wagn
+revisions_108: 
   created_at: 2009-04-24 23:16:49.401769
   card_id: "111"
   updated_at: 2009-04-24 23:16:49.401769
@@ -31,135 +197,12 @@ revisions_105:
     <blockquote>
     <p>{{_left+*plus parts}}</p>
     </blockquote>
-revisions_131: 
-  created_at: 2009-05-21 13:30:09.367411
-  card_id: "197"
-  updated_at: 2009-05-21 13:30:09.367411
-  created_by: "3"
-  id: "2417"
-  content: "{\"type\":\"User\",\"sort\":\"name\",\"append\":\"name and email\", \"view\":\"naked\"}"
-revisions_212: 
-  created_at: 2009-12-02 16:02:55.948646
-  card_id: "276"
-  updated_at: 2009-12-02 16:02:55.948646
+revisions_134: 
+  created_at: 2010-04-15 18:43:10.14196
+  card_id: "339"
+  updated_at: 2010-04-15 18:43:10.14196
   created_by: "1"
-  id: "3020"
-  content: "1"
-revisions_025: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "87"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "267"
-  content: "{}"
-revisions_051: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "146"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "1696"
-  content: ""
-revisions_106: 
-  created_at: 2009-04-25 12:29:02.544053
-  card_id: "184"
-  updated_at: 2009-04-25 12:29:02.544053
-  created_by: "4"
-  id: "2264"
-  content: ""
-revisions_132: 
-  created_at: 2009-05-21 13:43:12.813443
-  card_id: "204"
-  updated_at: 2009-05-21 13:43:12.813443
-  created_by: "3"
-  id: "2427"
-  content: "{{_left|link}}, {{_left+*email}}"
-revisions_213: 
-  created_at: 2009-12-02 16:02:56.100655
-  card_id: "256"
-  updated_at: 2009-12-02 16:02:56.100655
-  created_by: "1"
-  id: "3021"
-  content: ""
-revisions_240: 
-  created_at: 2009-12-20 12:29:16.268866
-  card_id: "259"
-  updated_at: 2009-12-20 12:29:16.268866
-  created_by: "4"
-  id: "3090"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <h2>{{_self|name}} Cards</h2>
-    <blockquote>
-    <p>{{+*type cards}}</p>
-    </blockquote>
-revisions_026: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "42"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "42"
-  content: "{\"included_by\":\"_self\"}"
-revisions_052: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "28"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "28"
-  content: ""
-revisions_107: 
-  created_at: 2009-04-27 15:14:44.539207
-  card_id: "187"
-  updated_at: 2009-04-27 15:14:44.539207
-  created_by: "2"
-  id: "2276"
-  content: ""
-revisions_133: 
-  created_at: 2009-05-26 11:18:41.071447
-  card_id: "207"
-  updated_at: 2009-05-26 11:18:41.071447
-  created_by: "4"
-  id: "2464"
-  content: ""
-revisions_214: 
-  created_at: 2009-12-02 16:02:56.560681
-  card_id: "277"
-  updated_at: 2009-12-02 16:02:56.560681
-  created_by: "1"
-  id: "3022"
-  content: description
-revisions_241: 
-  created_at: 2009-12-21 10:48:26.615429
-  card_id: "297"
-  updated_at: 2009-12-21 10:48:26.615429
-  created_by: "3"
-  id: "3093"
-  content: |-
-    <p><span>
-    <div>
-    <p>Sets define a group of cards to which a setting will be applied. [[http://www.wagn.org/wagn/Setting|Learn more about settings.]]</p>
-    </div>
-    </span></p>
-revisions_027: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "9"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "9"
-  content: ""
-revisions_053: 
-  created_at: 2009-04-08 10:23:29.108262
-  card_id: "55"
-  updated_at: 2009-04-08 10:23:29.108262
-  created_by: "3"
-  id: "1755"
-  content: My Wagn
-revisions_108: 
-  created_at: 2009-05-22 10:10:51.466465
-  card_id: "205"
-  updated_at: 2009-05-22 10:10:51.466465
-  created_by: "4"
-  id: "2430"
+  id: "3229"
   content: ""
 revisions_134: 
   created_at: 2009-05-26 14:49:19.504422
@@ -169,691 +212,318 @@ revisions_134:
   id: "2471"
   content: /wagn/Form_submission_thanks
 revisions_160: 
-  created_at: 2009-09-16 14:34:59.904099
-  card_id: "248"
-  updated_at: 2009-09-16 14:34:59.904099
+  created_at: 2010-04-16 21:08:50.509353
+  card_id: "356"
+  updated_at: 2010-04-16 21:08:50.509353
   created_by: "4"
-  id: "2890"
+  id: "3253"
   content: ""
 revisions_215: 
-  created_at: 2009-12-02 16:02:56.72069
-  card_id: "252"
-  updated_at: 2009-12-02 16:02:56.72069
-  created_by: "1"
-  id: "3023"
-  content: ""
-revisions_242: 
-  created_at: 2009-12-21 10:50:13.652382
-  card_id: "250"
-  updated_at: 2009-12-21 10:50:13.652382
+  created_at: 2009-09-08 12:00:54.967679
+  card_id: "80"
+  updated_at: 2009-09-08 12:00:54.967679
   created_by: "3"
-  id: "3095"
-  content: <p>Where to take people when they create a card that they don't have permission to read. [[http://www.wagn.org/wagn/Custom_thank_you_messages_for_forms|Learn more about thank you messages.]]</p>
-revisions_028: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "137"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "1521"
-  content: ""
-revisions_054: 
-  created_at: 2009-04-07 13:29:24.151196
-  card_id: "155"
-  updated_at: 2009-04-07 13:29:24.151196
-  created_by: "3"
-  id: "1747"
-  content: ""
-revisions_080: 
-  created_at: 2009-04-14 06:58:47.721822
-  card_id: "166"
-  updated_at: 2009-04-14 06:58:47.721822
-  created_by: "4"
-  id: "1966"
-  content: "{\"member_of\": \"_self\", \"sort\":\"name\"}"
-revisions_109: 
-  created_at: 2009-04-25 11:02:14.69329
-  card_id: "158"
-  updated_at: 2009-04-25 11:02:14.69329
-  created_by: "3"
-  id: "2242"
+  id: "2877"
   content: |-
-    {"left": {"referred_to_by": {"left":{"type":"Cardtype"},"right": "*related"}},
-     "right": "*rform",
-     "sort": "name"}
-revisions_135: 
-  created_at: 2009-05-26 14:49:19.808439
-  card_id: "67"
-  updated_at: 2009-05-26 14:49:19.808439
-  created_by: "1"
-  id: "2472"
-  content: /wagn/Signup_Success
-revisions_161: 
-  created_at: 2009-06-10 10:01:56.814248
-  card_id: "215"
-  updated_at: 2009-06-10 10:01:56.814248
-  created_by: "3"
-  id: "2603"
-  content: <p>On Wagn you upload files to File cards, then include the cards wherever you want a link to the file to appear. [[http://wagn.org/wagn/File|Learn more about File cards]].</p>
-revisions_216: 
-  created_at: 2009-12-02 16:02:58.756806
-  card_id: "120"
-  updated_at: 2009-12-02 16:02:58.756806
-  created_by: "1"
-  id: "3025"
-  content: "[[*type subtab]]"
-revisions_243: 
-  created_at: 2009-12-21 10:54:19.747895
-  card_id: "298"
-  updated_at: 2009-12-21 10:54:19.747895
-  created_by: "3"
-  id: "3098"
-  content: |-
-    <p><span>
-    <div>
-    <p>Settings control various options about how a card looks and behaves. Each card's Options tab has a "settings" subtab that lets you configure the settings that apply to that card.</p>
+    <h1>Welcome to your new Wagn!</h1>
     <p>&nbsp;</p>
-    <p>[[http://www.wagn.org/wagn/Setting|Learn more about settings.]]</p>
-    </div>
-    </span></p>
-revisions_029: 
+    <p>To get started, [[Config|set some important configuration options]].</p>
+    <p>&nbsp;</p>
+    <p>[[http://wagn.org/wagn/configuration|About Wagn Configuration]]</p>
+    <p>[[http://wagn.org/wagn/Documentation|Other Documentation]]</p>
+    <p>[[http://wagn.org/wagn/Support|Support]]</p>
+    <p>&nbsp;</p>
+    <p><em>[[http://www.flickr.com/photos/fmgbain/3122673091/|logo photo by fmbgain]]</em></p>
+revisions_323: 
+  created_at: 2009-12-08 16:36:03.284591
+  card_id: "198"
+  updated_at: 2009-12-08 16:36:03.284591
+  created_by: "4"
+  id: "3074"
+  content: |
+    /* body text */
+    body {
+      color: #444444;
+    }
+    
+    /* page - background image and color */
+    body#wagn {
+      background: url(/images/body-bg.png) repeat-x #CCCCCC;
+    }
+    
+    /* main card and sidebar widths */
+    #primary {
+      width:67%;
+    }
+    #secondary {
+      width:28%;
+    }
+    
+    /* top bar background color; text colors */
+    #menu {
+      background: #335533;
+    }
+    #menu a {
+      color: #EEEEEE;
+    }
+    
+    /* header text */
+    h1, h2 {
+      color: #664444;
+    }
+    h1.page-header, 
+    h2.page-header {
+      color: #222299; 
+    }
+    
+    
+    /* card headers etc */
+    .card-header {
+      background: #C0D9C0;
+    }
+    .card-header,
+    .card-header a {
+      font-weight: normal;
+      color: #333333; 
+    }
+    
+    /* misc */
+    
+    .card-footer, 
+    .revision-navigation, 
+    .current,
+    #credit {
+      background: #DDDDDD;
+    }
+
+revisions_242: 
+  created_at: 2009-09-24 12:59:50.421303
+  card_id: "246"
+  updated_at: 2009-09-24 12:59:50.421303
+  created_by: "4"
+  id: "2898"
+  content: <p>[[http://wagn.org/wagn/Pointer|Learn more about Pointers' input interfaces.]]</p>
+revisions_028: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "148"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "1711"
   content: ""
-revisions_055: 
+revisions_054: 
   created_at: 2009-04-24 10:30:47.3222
   card_id: "172"
   updated_at: 2009-04-24 10:30:47.3222
   created_by: "3"
   id: "2013"
   content: ""
-revisions_081: 
-  created_at: 2009-04-24 10:44:07.789056
-  card_id: "173"
-  updated_at: 2009-04-24 10:44:07.789056
+revisions_080: 
+  created_at: 2009-04-14 06:55:17.808923
+  card_id: "145"
+  updated_at: 2009-04-14 06:55:17.808923
   created_by: "4"
-  id: "2022"
-  content: "{\"right_plus\":[\"tags\", {\"refer_to\":\"_self\"}]}"
-revisions_136: 
-  created_at: 2009-05-26 14:49:19.956447
-  card_id: "108"
-  updated_at: 2009-05-26 14:49:19.956447
-  created_by: "1"
-  id: "2473"
-  content: /wagn/Request_Sent
-revisions_162: 
-  created_at: 2009-06-13 23:20:31.229969
-  card_id: "217"
-  updated_at: 2009-06-13 23:20:31.229969
+  id: "1958"
+  content: |-
+    <h1>Accounts with the {{_left|name}} role<br></h1>
+    <blockquote>
+    <p>{{_left+*users}}</p>
+    </blockquote>
+revisions_109: 
+  created_at: 2009-04-25 12:29:02.544053
+  card_id: "184"
+  updated_at: 2009-04-25 12:29:02.544053
   created_by: "4"
-  id: "2604"
+  id: "2264"
   content: ""
-revisions_217: 
-  created_at: 2009-12-02 16:28:23.218086
-  card_id: "109"
-  updated_at: 2009-12-02 16:28:23.218086
-  created_by: "4"
-  id: "3031"
-  content: <div>Thank you for signing up with {{*title}}. Someone will receive your request for an account and approve it as soon as possible.</div>
-revisions_270: 
-  created_at: 2010-01-07 14:57:32.539236
-  card_id: "319"
-  updated_at: 2010-01-07 14:57:32.539236
+revisions_135: 
+  created_at: 2010-04-15 18:43:11.422033
+  card_id: "340"
+  updated_at: 2010-04-15 18:43:11.422033
   created_by: "1"
-  id: "3187"
-  content: "{\"type\":\"_self\"}"
-revisions_244: 
-  created_at: 2009-12-21 13:05:37.455487
-  card_id: "300"
-  updated_at: 2009-12-21 13:05:37.455487
-  created_by: "3"
-  id: "3101"
-  content: "{\"right\":\"_self\"}"
-revisions_056: 
+  id: "3230"
+  content: ""
+revisions_161: 
+  created_at: 2010-04-16 21:15:07.151814
+  card_id: "358"
+  updated_at: 2010-04-16 21:15:07.151814
+  created_by: "4"
+  id: "3260"
+  content: ""
+revisions_216: 
+  created_at: 2009-09-08 16:14:41.49172
+  card_id: "241"
+  updated_at: 2009-09-08 16:14:41.49172
+  created_by: "4"
+  id: "2878"
+  content: ""
+revisions_324: 
+  created_at: 2009-12-10 14:34:36.102794
+  card_id: "291"
+  updated_at: 2009-12-10 14:34:36.102794
+  created_by: "4"
+  id: "3078"
+  content: ""
+revisions_243: 
+  created_at: 2009-07-03 13:26:08.954695
+  card_id: "224"
+  updated_at: 2009-07-03 13:26:08.954695
+  created_by: "4"
+  id: "2646"
+  content: "{\"type\": \"Cardtype\", \"sort\": \"name\", \"append\": \"description\"}"
+revisions_029: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "138"
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  id: "1550"
+  content: ""
+revisions_055: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "61"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "62"
   content: ""
-revisions_082: 
-  created_at: 2009-04-24 10:45:44.319517
-  card_id: "174"
-  updated_at: 2009-04-24 10:45:44.319517
-  created_by: "3"
-  id: "2023"
-  content: |-
-    <h1>Editors</h1>
-    <blockquote>
-    <p>{{_left+*editors|item:link}}</p>
-    </blockquote>
-    <h1>Discussion<br></h1>
-    <blockquote>
-    <p>{{+discussion|open}}</p>
-    </blockquote>
-    <h1>Tags</h1>
-    <blockquote>
-    <p>{{+tags}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-revisions_137: 
-  created_at: 2009-05-26 14:49:20.144458
-  card_id: "62"
-  updated_at: 2009-05-26 14:49:20.144458
-  created_by: "1"
-  id: "2474"
-  content: /wagn/Invite_Success
-revisions_163: 
-  created_at: 2009-06-16 08:59:45.444765
-  card_id: "218"
-  updated_at: 2009-06-16 08:59:45.444765
+revisions_081: 
+  created_at: 2009-04-14 06:57:17.500379
+  card_id: "144"
+  updated_at: 2009-04-14 06:57:17.500379
   created_by: "4"
-  id: "2605"
+  id: "1961"
+  content: "[[users]]"
+revisions_136: 
+  created_at: 2010-04-15 18:43:13.930175
+  card_id: "341"
+  updated_at: 2010-04-15 18:43:13.930175
+  created_by: "1"
+  id: "3232"
   content: ""
-revisions_218: 
-  created_at: 2009-12-03 15:41:14.340236
-  card_id: "91"
-  updated_at: 2009-12-03 15:41:14.340236
+revisions_162: 
+  created_at: 2010-04-16 21:16:24.685056
+  card_id: "308"
+  updated_at: 2010-04-16 21:16:24.685056
   created_by: "4"
-  id: "3033"
-  content: "4"
-revisions_271: 
-  created_at: 2010-01-07 14:57:32.83456
-  card_id: "320"
-  updated_at: 2010-01-07 14:57:32.83456
-  created_by: "1"
-  id: "3188"
-  content: "{\"type\":\"_self\"}"
-revisions_245: 
-  created_at: 2009-12-21 13:05:37.827508
-  card_id: "301"
-  updated_at: 2009-12-21 13:05:37.827508
+  id: "3263"
+  content: <p>When "yes", users with the global "create accounts" permission can add [[http://www.wagn.org/wagn/account|accounts]] to cards in the [[set]].</p>
+revisions_217: 
+  created_at: 2009-09-08 16:14:42.383771
+  card_id: "242"
+  updated_at: 2009-09-08 16:14:42.383771
+  created_by: "4"
+  id: "2879"
+  content: ""
+revisions_325: 
+  created_at: 2009-12-10 14:34:37.490874
+  card_id: "292"
+  updated_at: 2009-12-10 14:34:37.490874
+  created_by: "4"
+  id: "3079"
+  content: "0"
+revisions_270: 
+  created_at: 2010-04-19 17:19:01.18405
+  card_id: "363"
+  updated_at: 2010-04-19 17:19:01.18405
   created_by: "3"
-  id: "3102"
-  content: <p>A search that determines the values available on a set of [[Pointer]] cards.&nbsp; [[http://wagn.org/Pointer|Learn about Pointers.]]&nbsp; [[http://wagn.org/WQL_Syntax|Learn WQL Syntax.]]</p>
-revisions_057: 
+  id: "3478"
+  content: ""
+revisions_244: 
+  created_at: 2009-07-03 13:30:46.784415
+  card_id: "7"
+  updated_at: 2009-07-03 13:30:46.784415
+  created_by: "4"
+  id: "2652"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <p>[[/new/Role|Add a new role]]</p>
+    <p>&nbsp;</p>
+    <h1>Roles</h1>
+    <p>{{+*type cards}}</p>
+revisions_056: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "33"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "33"
   content: ""
-revisions_083: 
-  created_at: 2009-04-24 10:45:44.439524
-  card_id: "175"
-  updated_at: 2009-04-24 10:45:44.439524
-  created_by: "3"
-  id: "2024"
-  content: "[[Menu]]"
-revisions_138: 
-  created_at: 2009-05-26 17:35:51.973998
-  card_id: "208"
-  updated_at: 2009-05-26 17:35:51.973998
+revisions_082: 
+  created_at: 2009-04-14 06:58:16.476041
+  card_id: "165"
+  updated_at: 2009-04-14 06:58:16.476041
   created_by: "4"
-  id: "2475"
-  content: |-
-    <p>{{_left|closed}}</p>
-    <p>{{_left+*tform|closed}}</p>
-    <p>{{_left+*rform|closed}}</p>
-    <p>{{_left+*type cards|closed}}</p>
-    <hr>
-revisions_164: 
-  created_at: 2009-06-18 10:56:06.777959
-  card_id: "219"
-  updated_at: 2009-06-18 10:56:06.777959
-  created_by: "5"
-  id: "2608"
+  id: "1963"
   content: ""
-revisions_190: 
-  created_at: 2009-07-27 18:01:01.345033
-  card_id: "238"
-  updated_at: 2009-07-27 18:01:01.345033
-  created_by: "4"
-  id: "2746"
-  content: "[[John Abbe]]"
-revisions_219: 
-  created_at: 2009-12-03 16:11:05.965021
-  card_id: "279"
-  updated_at: 2009-12-03 16:11:05.965021
-  created_by: "4"
-  id: "3038"
-  content: "4"
-revisions_272: 
-  created_at: 2010-01-07 14:57:34.948991
-  card_id: "321"
-  updated_at: 2010-01-07 14:57:34.948991
+revisions_137: 
+  created_at: 2010-04-15 18:43:14.786224
+  card_id: "342"
+  updated_at: 2010-04-15 18:43:14.786224
   created_by: "1"
-  id: "3190"
-  content: "{\"type\":\"_self\"}"
-revisions_246: 
-  created_at: 2009-12-21 13:08:21.588911
-  card_id: "299"
-  updated_at: 2009-12-21 13:08:21.588911
+  id: "3233"
+  content: ""
+revisions_163: 
+  created_at: 2010-04-16 21:16:52.83066
+  card_id: "311"
+  updated_at: 2010-04-16 21:16:52.83066
+  created_by: "4"
+  id: "3264"
+  content: |-
+    <p><span> </span></p>
+    <div>
+    <p><span> </span></p>
+    <div>
+    <p>[[http://www.wagn.org/wagn/custom_help_text|Help text]] people will see when adding cards in the [[set]].</p>
+    </div>
+    </div>
+revisions_218: 
+  created_at: 2009-09-08 16:17:56.122703
+  card_id: "243"
+  updated_at: 2009-09-08 16:17:56.122703
+  created_by: "4"
+  id: "2880"
+  content: ""
+revisions_326: 
+  created_at: 2009-12-10 14:35:21.062617
+  card_id: "293"
+  updated_at: 2009-12-10 14:35:21.062617
+  created_by: "4"
+  id: "3081"
+  content: "0"
+revisions_271: 
+  created_at: 2010-04-19 17:32:19.067324
+  card_id: "249"
+  updated_at: 2010-04-19 17:32:19.067324
   created_by: "3"
-  id: "3106"
-  content: "<p>The type of editor for a set of [[Pointer]] cards.&nbsp; Can be: list, radio, checkbox, select, multiselect</p>"
-revisions_058: 
+  id: "3480"
+  content: <p>Wagn will autoname new cards in the [[set]] with the name you give here, and increment for each new card. [[http://wagn.org/wagn/Autonaming|Learn more.]]</p>
+revisions_245: 
+  created_at: 2009-07-03 13:30:54.144834
+  card_id: "225"
+  updated_at: 2009-07-03 13:30:54.144834
+  created_by: "4"
+  id: "2653"
+  content: <p>Each [[user]] has one or more roles, and each role's capabilities are defined in [[/admin/tasks|Global permissions]] (except for the [[Administrator]] role, which has all permissions). [[http://wagn.org/wagn/Role|Learn more about roles]].</p>
+revisions_057: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "64"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "66"
   content: ""
-revisions_084: 
-  created_at: 2009-04-24 11:10:14.222183
-  card_id: "169"
-  updated_at: 2009-04-24 11:10:14.222183
+revisions_083: 
+  created_at: 2009-04-14 06:58:47.721822
+  card_id: "166"
+  updated_at: 2009-04-14 06:58:47.721822
   created_by: "4"
-  id: "2054"
-  content: |-
-    <h1>[[_left+*links|"{{_left|name}}" links to]]</h1>
-    <blockquote>
-    <p>{{_left+*links}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h1>[[_left+*inclusions|"{{_left|name}}" includes]]</h1>
-    <blockquote>
-    <p>{{_left+*inclusions}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h1>[[_left+tags|"{{_left|name}}" is tagged with]]</h1>
-    <blockquote>
-    <p>{{_left+tags}}</p>
-    </blockquote>
-revisions_139: 
-  created_at: 2009-05-26 17:42:40.511863
-  card_id: "209"
-  updated_at: 2009-05-26 17:42:40.511863
-  created_by: "4"
-  id: "2486"
-  content: |-
-    {"type": "Cardtype", "not": {"referred_to_by": "built-in cardtypes"},
-     "append": "cardtype infrastructure",
-     "sort": "name", "view": "content"
-    }
-revisions_165: 
-  created_at: 2009-06-18 10:56:07.714013
-  card_id: "220"
-  updated_at: 2009-06-18 10:56:07.714013
-  created_by: "5"
-  id: "2609"
+  id: "1966"
+  content: "{\"member_of\": \"_self\", \"sort\":\"name\"}"
+revisions_138: 
+  created_at: 2010-04-15 18:43:16.506322
+  card_id: "343"
+  updated_at: 2010-04-15 18:43:16.506322
+  created_by: "1"
+  id: "3235"
   content: ""
-revisions_191: 
-  created_at: 2009-07-27 18:01:03.833523
-  card_id: "239"
-  updated_at: 2009-07-27 18:01:03.833523
-  created_by: "4"
-  id: "2747"
-  content: "[[John Abbe]]"
-revisions_273: 
-  created_at: 2010-01-07 14:57:36.185982
-  card_id: "322"
-  updated_at: 2010-01-07 14:57:36.185982
-  created_by: "1"
-  id: "3192"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <h1>Accounts with the {{_self|name}} role<br></h1>
-    <blockquote>
-    <p>{{+*members}}</p>
-    </blockquote>
-revisions_247: 
-  created_at: 2009-12-21 14:07:38.319923
-  card_id: "302"
-  updated_at: 2009-12-21 14:07:38.319923
-  created_by: "3"
-  id: "3123"
-  content: "{\"right\":\"_self\"}"
-revisions_059: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "129"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "1408"
-  content: ""
-revisions_085: 
-  created_at: 2009-04-24 11:10:23.126691
-  card_id: "116"
-  updated_at: 2009-04-24 11:10:23.126691
-  created_by: "4"
-  id: "2055"
-  content: |-
-    <h1>[[_left+*editors|Editors]]</h1>
-    <blockquote>
-    <p>{{_left+*editors|item:link}}</p>
-    </blockquote>
-    <h1>[[_left+discussion|Discussion]]<br></h1>
-    <blockquote>
-    <p>{{_left+discussion|open}}</p>
-    </blockquote>
-    <h1>[[_left+tags|"{{_left|name}}" is tagged with]]</h1>
-    <blockquote>
-    <p>{{_left+tags}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-revisions_166: 
-  created_at: 2009-06-26 00:00:49.010402
-  card_id: "79"
-  updated_at: 2009-06-26 00:00:49.010402
-  created_by: "4"
-  id: "2618"
-  content: <img src="http://s3.amazonaws.com/en.dwagn.org/card_images/32/red_wagon_wheel_medium.jpg">
-revisions_192: 
-  created_at: 2009-07-27 20:14:07.185807
-  card_id: "182"
-  updated_at: 2009-07-27 20:14:07.185807
-  created_by: "4"
-  id: "2752"
-  content: <p>Search cards use [[http://wagn.org/wagn/WQL|WQL, the Wagn Query Language]].&nbsp; See [[http://wagn.org/wagn/WQL syntax|syntax documentation]].</p>
-revisions_274: 
-  created_at: 2010-01-07 14:57:36.422196
-  card_id: "323"
-  updated_at: 2010-01-07 14:57:36.422196
-  created_by: "1"
-  id: "3193"
-  content: "{\"type\":\"_self\"}"
-revisions_248: 
-  created_at: 2009-12-21 14:08:43.849124
-  card_id: "305"
-  updated_at: 2009-12-21 14:08:43.849124
-  created_by: "3"
-  id: "3126"
-  content: "{\"right\":\"_self\"}"
-revisions_086: 
-  created_at: 2009-04-24 11:15:05.155179
-  card_id: "177"
-  updated_at: 2009-04-24 11:15:05.155179
-  created_by: "3"
-  id: "2056"
-  content: "[[Menu]]"
-revisions_167: 
-  created_at: 2009-06-26 00:05:59.673278
-  card_id: "103"
-  updated_at: 2009-06-26 00:05:59.673278
-  created_by: "4"
-  id: "2622"
-  content: <img src="http://s3.amazonaws.com/en.dwagn.org/card_images/42/red_wagon_wheel_medium.png">
-revisions_193: 
-  created_at: 2009-07-27 20:58:14.576037
-  card_id: "223"
-  updated_at: 2009-07-27 20:58:14.576037
-  created_by: "4"
-  id: "2786"
-  content: |-
-    /* fixit - once "type" accepts card defs:
-    {"or": 
-     {"and": {"plus": ["*watcher", {"refer_to": "_self"} ], "not": {"type": "Cardtype"} } },
-     {"type": {"plus": ["*watcher", {"refer_to": "_self"} ], "type": "Cardtype"} }
-    }
-    */
-    
-    {"plus": ["*watcher", {"refer_to": "_self"} ] }
-revisions_275: 
-  created_at: 2010-01-07 14:57:38.608939
-  card_id: "324"
-  updated_at: 2010-01-07 14:57:38.608939
-  created_by: "1"
-  id: "3195"
-  content: "{\"right\":\"_self\"}"
-revisions_249: 
-  created_at: 2009-12-21 14:24:17.903769
-  card_id: "307"
-  updated_at: 2009-12-21 14:24:17.903769
-  created_by: "3"
-  id: "3133"
-  content: "{\"right\":\"_self\"}"
-revisions_087: 
-  created_at: 2009-04-24 11:17:11.980144
-  card_id: "88"
-  updated_at: 2009-04-24 11:17:11.980144
-  created_by: "4"
-  id: "2058"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
-    <p>&nbsp;</p>
-    <h2>{{_self|name}} Cards</h2>
-    <blockquote>
-    <p>{{+*type cards}}</p>
-    </blockquote>
-revisions_168: 
-  created_at: 2009-07-03 10:54:09.701217
-  card_id: "221"
-  updated_at: 2009-07-03 10:54:09.701217
-  created_by: "4"
-  id: "2623"
-  content: "{\"type\": \"User\"}"
-revisions_194: 
-  created_at: 2009-11-11 23:01:09.519135
-  card_id: "257"
-  updated_at: 2009-11-11 23:01:09.519135
-  created_by: "4"
-  id: "2930"
-  content: "1"
-revisions_276: 
-  created_at: 2010-01-07 14:57:38.856914
-  card_id: "325"
-  updated_at: 2010-01-07 14:57:38.856914
-  created_by: "1"
-  id: "3196"
-  content: ""
-revisions_088: 
-  created_at: 2009-04-24 11:18:02.66404
-  card_id: "5"
-  updated_at: 2009-04-24 11:18:02.66404
-  created_by: "4"
-  id: "2060"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
-    <p>&nbsp;</p>
-    <h1>{{_self|name}} Cards</h1>
-    <blockquote>
-    <p>{{+*type cards}}</p>
-    </blockquote>
-revisions_169: 
-  created_at: 2009-07-03 11:43:20.536424
-  card_id: "222"
-  updated_at: 2009-07-03 11:43:20.536424
-  created_by: "4"
-  id: "2624"
-  content: ""
-revisions_195: 
-  created_at: 2009-11-11 23:17:19.087118
-  card_id: "258"
-  updated_at: 2009-11-11 23:17:19.087118
-  created_by: "4"
-  id: "2936"
-  content: "1"
-revisions_277: 
-  created_at: 2010-01-07 14:57:39.091564
-  card_id: "326"
-  updated_at: 2010-01-07 14:57:39.091564
-  created_by: "1"
-  id: "3197"
-  content: ""
-revisions_089: 
-  created_at: 2009-04-24 11:21:39.891071
-  card_id: "3"
-  updated_at: 2009-04-24 11:21:39.891071
-  created_by: "4"
-  id: "2065"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
-    <p>&nbsp;</p>
-    <h2>{{_self|name}} Cards</h2>
-    <blockquote>
-    <p>{{+*type cards}}</p>
-    </blockquote>
-revisions_196: 
-  created_at: 2009-12-02 16:02:47.328155
-  card_id: "260"
-  updated_at: 2009-12-02 16:02:47.328155
-  created_by: "1"
-  id: "3001"
-  content: ""
-revisions_278: 
-  created_at: 2010-01-07 14:57:39.490956
-  card_id: "327"
-  updated_at: 2010-01-07 14:57:39.490956
-  created_by: "1"
-  id: "3198"
-  content: ""
-revisions_197: 
-  created_at: 2009-12-02 16:02:47.448162
-  card_id: "261"
-  updated_at: 2009-12-02 16:02:47.448162
-  created_by: "1"
-  id: "3002"
-  content: "{\"right\":\"_self\"}"
-revisions_279: 
-  created_at: 2010-01-07 14:57:39.888293
-  card_id: "328"
-  updated_at: 2010-01-07 14:57:39.888293
-  created_by: "1"
-  id: "3199"
-  content: ""
-revisions_198: 
-  created_at: 2009-12-02 16:02:47.704176
-  card_id: "262"
-  updated_at: 2009-12-02 16:02:47.704176
-  created_by: "1"
-  id: "3003"
-  content: ""
-revisions_199: 
-  created_at: 2009-12-02 16:02:47.94819
-  card_id: "263"
-  updated_at: 2009-12-02 16:02:47.94819
-  created_by: "1"
-  id: "3004"
-  content: "{\"left\":{\"type\":\"_left\"}, \"right\":\"_right\"}"
-revisions_010: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "131"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "1410"
-  content: ""
-revisions_011: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "36"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "36"
-  content: "{\"plus\":\"_self\"}"
-revisions_012: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "37"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "37"
-  content: ""
-revisions_200: 
-  created_at: 2009-12-02 16:02:48.236207
-  card_id: "264"
-  updated_at: 2009-12-02 16:02:48.236207
-  created_by: "1"
-  id: "3005"
-  content: ""
-revisions_013: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "38"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "38"
-  content: "{\"include\":\"_self\"}"
-revisions_120: 
-  created_at: 2009-04-29 15:26:33.415615
-  card_id: "81"
-  updated_at: 2009-04-29 15:26:33.415615
-  created_by: "3"
-  id: "2331"
-  content: |-
-    <p>&nbsp;</p>
-    <p>{{Menu|open}}</p>
-    <p>&nbsp;</p>
-    <p>{{Administrator links|open}}</p>
-revisions_201: 
-  created_at: 2009-12-02 16:02:48.348213
-  card_id: "265"
-  updated_at: 2009-12-02 16:02:48.348213
-  created_by: "1"
-  id: "3006"
-  content: "{\"name\":\"_self\"}"
-revisions_014: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "82"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "237"
-  content: ""
-revisions_040: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "125"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "1563"
-  content: |-
-    <p>Adding a +*options Search card to a Pointer limits the auto-completion to the cards returned by the Search. And if it's a simple search for a cardtype, then cards created through the pointer will automatically be set to that type.</p>
-    <p>&nbsp;</p>
-    <p>{{_left+*options}}</p>
-revisions_121: 
-  created_at: 2009-04-29 15:32:20.288221
-  card_id: "171"
-  updated_at: 2009-04-29 15:32:20.288221
-  created_by: "3"
-  id: "2336"
-  content: |-
-    <h1>[[_left+*linkers|What links to "{{_left|name}}"?]]<br></h1>
-    <blockquote>
-    <p>{{_left+*linkers}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h1>[[_left+*includers|What includes "{{_left|name}}"?]]</h1>
-    <blockquote>
-    <p>{{_left+*includers}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h1>[[_left+*tagged|What's tagged "{{_left|name}}"?]]</h1>
-    <blockquote>
-    <p>{{_left+*tagged}}</p>
-    </blockquote>
-revisions_202: 
-  created_at: 2009-12-02 16:02:48.760237
-  card_id: "266"
-  updated_at: 2009-12-02 16:02:48.760237
-  created_by: "1"
-  id: "3007"
-  content: ""
-revisions_310: 
-  created_at: 2010-01-07 14:58:10.059791
-  card_id: "355"
-  updated_at: 2010-01-07 14:58:10.059791
-  created_by: "1"
-  id: "3240"
-  content: ""
-revisions_015: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "39"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "39"
-  content: ""
-revisions_041: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "96"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "353"
-  content: ""
-revisions_122: 
+revisions_164: 
   created_at: 2009-08-16 15:23:35.152427
   card_id: "160"
   updated_at: 2009-08-16 15:23:35.152427
@@ -935,97 +605,72 @@ revisions_122:
     <p>{{+*options|closed}}</p>
     </blockquote>
     <p>&nbsp;</p>
-revisions_203: 
-  created_at: 2009-12-02 16:02:48.856242
-  card_id: "267"
-  updated_at: 2009-12-02 16:02:48.856242
-  created_by: "1"
-  id: "3008"
-  content: "{\"type\":\"_self\"}"
-revisions_311: 
-  created_at: 2010-01-07 14:58:10.666863
-  card_id: "356"
-  updated_at: 2010-01-07 14:58:10.666863
-  created_by: "1"
-  id: "3241"
-  content: ""
-revisions_230: 
-  created_at: 2009-12-08 16:36:03.284591
-  card_id: "198"
-  updated_at: 2009-12-08 16:36:03.284591
+revisions_190: 
+  created_at: 2010-04-20 17:59:09.87247
+  card_id: "385"
+  updated_at: 2010-04-20 17:59:09.87247
+  created_by: "3"
+  id: "3622"
+  content: "[[_left+email config]]"
+revisions_219: 
+  created_at: 2009-09-08 16:17:56.550727
+  card_id: "244"
+  updated_at: 2009-09-08 16:17:56.550727
   created_by: "4"
-  id: "3074"
-  content: |
-    /* body text */
-    body {
-      color: #444444;
-    }
-    
-    /* page - background image and color */
-    body#wagn {
-      background: url(/images/body-bg.png) repeat-x #CCCCCC;
-    }
-    
-    /* main card and sidebar widths */
-    #primary {
-      width:67%;
-    }
-    #secondary {
-      width:28%;
-    }
-    
-    /* top bar background color; text colors */
-    #menu {
-      background: #335533;
-    }
-    #menu a {
-      color: #EEEEEE;
-    }
-    
-    /* header text */
-    h1, h2 {
-      color: #664444;
-    }
-    h1.page-header, 
-    h2.page-header {
-      color: #222299; 
-    }
-    
-    
-    /* card headers etc */
-    .card-header {
-      background: #C0D9C0;
-    }
-    .card-header,
-    .card-header a {
-      font-weight: normal;
-      color: #333333; 
-    }
-    
-    /* misc */
-    
-    .card-footer, 
-    .revision-navigation, 
-    .current,
-    #credit {
-      background: #DDDDDD;
-    }
-
-revisions_016: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "40"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "40"
-  content: "{\"link_to\":\"_self\"}"
-revisions_042: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "48"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "48"
+  id: "2881"
   content: ""
-revisions_123: 
+revisions_327: 
+  created_at: 2009-12-10 14:35:53.388459
+  card_id: "294"
+  updated_at: 2009-12-10 14:35:53.388459
+  created_by: "4"
+  id: "3082"
+  content: "{\"type\":\"_self\"}"
+revisions_272: 
+  created_at: 2010-04-19 17:34:25.567832
+  card_id: "359"
+  updated_at: 2010-04-19 17:34:25.567832
+  created_by: "3"
+  id: "3482"
+  content: <p>Controls content of cards in the [[set]]. [[http://www.wagn.org/wagn/formatting|More about formatting]].</p>
+revisions_246: 
+  created_at: 2009-07-06 17:38:24.270368
+  card_id: "63"
+  updated_at: 2009-07-06 17:38:24.270368
+  created_by: "3"
+  id: "2657"
+  content: |-
+    <p>People without an account can request one via a "Sign Up" link if you allow "Anyone" to [[/card/options/Account_Request|create account requests]].</p>
+    <p>&nbsp;</p>
+    <p>Unless [[*signup|approved automatically]], the <strong>request will be emailed to</strong>:</p>
+    <blockquote>
+    <p>{{+*to|closed;type:Phrase}}</p>
+    </blockquote>
+    <p><strong>and the requester will be redirected here:</strong></p>
+    <p>&nbsp;</p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span>HTTP:// <em>(YOUR WAGN'S DOMAIN)</em></span><em> </em>{{+*thanks}}</p>
+revisions_058: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "129"
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  id: "1408"
+  content: ""
+revisions_084: 
+  created_at: 2009-04-24 10:44:07.789056
+  card_id: "173"
+  updated_at: 2009-04-24 10:44:07.789056
+  created_by: "4"
+  id: "2022"
+  content: "{\"right_plus\":[\"tags\", {\"refer_to\":\"_self\"}]}"
+revisions_139: 
+  created_at: 2010-04-15 18:43:18.174417
+  card_id: "344"
+  updated_at: 2010-04-15 18:43:18.174417
+  created_by: "1"
+  id: "3237"
+  content: ""
+revisions_165: 
   created_at: 2009-05-04 14:32:57.629203
   card_id: "100"
   updated_at: 2009-05-04 14:32:57.629203
@@ -1040,67 +685,562 @@ revisions_123:
     <p>{{Account Request+*type cards}}</p>
     <p>&nbsp;</p>
     <p>{{Cards with accounts|titled}}</p>
-revisions_204: 
-  created_at: 2009-12-02 16:02:49.17226
-  card_id: "268"
-  updated_at: 2009-12-02 16:02:49.17226
-  created_by: "1"
-  id: "3009"
-  content: "{\"right\":\"_self\"}"
-revisions_312: 
-  created_at: 2010-01-07 14:58:11.387994
-  card_id: "163"
-  updated_at: 2010-01-07 14:58:11.387994
-  created_by: "1"
-  id: "3242"
-  content: |-
-    [[*related]]
-    [[*plusses+*right+*virtual]]
-    [[*references+*rform]]
-    [[*related+*right+*default]]
-    [[Cardtype+*related]]
-    [[*type subtab+*right+*virtual]]
-    [[*account+*related]]
-    [[*account+*right+*virtual]]
-    [[*editing+*right+*virtual]]
-    [[*editors+*right+*virtual]]
-    [[*members+*right+*virtual]]
-    [[Role+*type+*default]]
-    [[*options+*right+*default]]
-    [[*community+*right+*virtual]]
-    [[*table of contents+*on right+*edit help]]
-    [[*table of contents+*right+*default]]
-    [[tags+*right+*default]]
-revisions_231: 
-  created_at: 2009-12-08 16:59:05.485169
-  card_id: "53"
-  updated_at: 2009-12-08 16:59:05.485169
+revisions_191: 
+  created_at: 2010-04-20 17:59:10.056481
+  card_id: "386"
+  updated_at: 2010-04-20 17:59:10.056481
   created_by: "3"
-  id: "3077"
+  id: "3623"
+  content: ""
+revisions_328: 
+  created_at: 2009-12-10 14:35:53.744479
+  card_id: "295"
+  updated_at: 2009-12-10 14:35:53.744479
+  created_by: "4"
+  id: "3083"
+  content: "1"
+revisions_273: 
+  created_at: 2010-04-19 17:35:22.303725
+  card_id: "357"
+  updated_at: 2010-04-19 17:35:22.303725
+  created_by: "3"
+  id: "3485"
+  content: <p>Determines initial type, content, and permissions of new cards in the [[set]]. [[http://www.wagn.org/wagn/formatting|More about formatting]].</p>
+revisions_247: 
+  created_at: 2009-09-24 13:16:05.044844
+  card_id: "253"
+  updated_at: 2009-09-24 13:16:05.044844
+  created_by: "4"
+  id: "2901"
+  content: ""
+revisions_059: 
+  created_at: 2009-04-09 16:05:12.262003
+  card_id: "162"
+  updated_at: 2009-04-09 16:05:12.262003
+  created_by: "3"
+  id: "1872"
+  content: ""
+revisions_085: 
+  created_at: 2009-04-24 10:45:44.319517
+  card_id: "174"
+  updated_at: 2009-04-24 10:45:44.319517
+  created_by: "3"
+  id: "2023"
+  content: |-
+    <h1>Editors</h1>
+    <blockquote>
+    <p>{{_left+*editors|item:link}}</p>
+    </blockquote>
+    <h1>Discussion<br></h1>
+    <blockquote>
+    <p>{{+discussion|open}}</p>
+    </blockquote>
+    <h1>Tags</h1>
+    <blockquote>
+    <p>{{+tags}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+revisions_166: 
+  created_at: 2010-04-16 21:17:36.445812
+  card_id: "306"
+  updated_at: 2010-04-16 21:17:36.445812
+  created_by: "4"
+  id: "3266"
+  content: <p>[[http://www.wagn.org/wagn/custom_help_text|Help text]] people will see when editing cards in the [[set]].</p>
+revisions_192: 
+  created_at: 2009-05-21 13:30:50.021728
+  card_id: "203"
+  updated_at: 2009-05-21 13:30:50.021728
+  created_by: "3"
+  id: "2418"
+  content: ""
+revisions_329: 
+  created_at: 2009-12-10 14:37:21.052086
+  card_id: "296"
+  updated_at: 2009-12-10 14:37:21.052086
+  created_by: "4"
+  id: "3084"
+  content: "1"
+revisions_274: 
+  created_at: 2010-04-19 17:38:24.540162
+  card_id: "281"
+  updated_at: 2010-04-19 17:38:24.540162
+  created_by: "3"
+  id: "3490"
+  content: <p>Determines layout card used when viewing page of any card in the [[set]].&nbsp; [[http://wagn.org/custom_layouts | Learn more about layouts]]</p>
+revisions_248: 
+  created_at: 2009-07-27 17:13:01.430509
+  card_id: "226"
+  updated_at: 2009-07-27 17:13:01.430509
+  created_by: "4"
+  id: "2682"
+  content: |-
+    [[John Abbe]]
+    [[Ethan McCutchen]]
+revisions_086: 
+  created_at: 2009-04-24 10:45:44.439524
+  card_id: "175"
+  updated_at: 2009-04-24 10:45:44.439524
+  created_by: "3"
+  id: "2024"
+  content: "[[Menu]]"
+revisions_167: 
+  created_at: 2009-08-18 16:14:04.3785
+  card_id: "119"
+  updated_at: 2009-08-18 16:14:04.3785
+  created_by: "4"
+  id: "2856"
+  content: |-
+    <h1>{{_left|name}}'s roles<br></h1>
+    <blockquote>
+    <p>{{_left+*roles|item:link}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h1>Cards {{_left|name}} is watching</h1>
+    <blockquote>
+    <p>You'll receive email whenever these cards (or cards of types listed here) are changed. [[http://wagn.org/wagn/Notification|Learn more about notifications]].</p>
+    <p>{{_left+*watching|item:change}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h1>Cards {{_left|name}} has edited</h1>
+    <blockquote>
+    <p>{{_left +*editing}}</p>
+    </blockquote>
+revisions_193: 
+  created_at: 2010-04-20 17:59:31.933727
+  card_id: "387"
+  updated_at: 2010-04-20 17:59:31.933727
+  created_by: "3"
+  id: "3624"
+  content: ""
+revisions_275: 
+  created_at: 2010-04-19 17:39:59.522219
+  card_id: "90"
+  updated_at: 2010-04-19 17:39:59.522219
+  created_by: "3"
+  id: "3494"
+  content: <p>Autogenerate [[http://www.wagn.org/wagn/table_of_contents|table of contents]] when cards in the [[set]] have at least this many headers ("0" means never).</p>
+revisions_249: 
+  created_at: 2009-07-27 17:14:35.216636
+  card_id: "227"
+  updated_at: 2009-07-27 17:14:35.216636
+  created_by: "4"
+  id: "2683"
+  content: "[[John Abbe]]"
+revisions_087: 
+  created_at: 2009-04-24 11:10:14.222183
+  card_id: "169"
+  updated_at: 2009-04-24 11:10:14.222183
+  created_by: "4"
+  id: "2054"
+  content: |-
+    <h1>[[_left+*links|"{{_left|name}}" links to]]</h1>
+    <blockquote>
+    <p>{{_left+*links}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h1>[[_left+*inclusions|"{{_left|name}}" includes]]</h1>
+    <blockquote>
+    <p>{{_left+*inclusions}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h1>[[_left+tags|"{{_left|name}}" is tagged with]]</h1>
+    <blockquote>
+    <p>{{_left+tags}}</p>
+    </blockquote>
+revisions_168: 
+  created_at: 2010-04-20 17:20:58.055286
+  card_id: "152"
+  updated_at: 2010-04-20 17:20:58.055286
+  created_by: "3"
+  id: "3605"
+  content: |-
+    <p><em><span>Cards and [[images]] in this Wagn are copied to new Wagns</span></em>. Exceptions should be added here:</p>
+    <p>{{*ignore|closed}}</p>
+    <p>&nbsp;</p>
+    <p>This one updates automatically:</p>
+    <p>{{cards to copy to new Wagns|closed}}</p>
+    <p>&nbsp;</p>
+    <h1>What comprises those cards</h1>
+    <p>&nbsp;</p>
+    <p>{{Set+*type_cards|closed}}</p>
+    <p>{{Settings+*type cards|closed}}</p>
+    <p>{{Setting values| closed}}</p>
+    <p>&nbsp;</p>
+    <p>{{Cardtype+*type cards|closed}}</p>
+    <p>{{cardtype descriptions|closed}}</p>
+    <p>&nbsp;</p>
+    <p>{{Role+*type cards|closed}}</p>
+    <p>[[*account]], [[WagnBot]], [[Anonymous]]</p>
+    <p>[[*to]], [[*from]], [[*thanks]], [[Invite Success]], [[Signup  Success]], [[Request Sent]]</p>
+    <p>&nbsp;</p>
+    <p>[[Config]]</p>
+    <p>{{Config+*inclusions|closed}}</p>
+    <p>{{*sidebar+*inclusions|closed}}</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <h2>Related tab</h2>
+    <p>(Note that in these +*rform cards, _left returns the name of the card on which one is viewing the Related tab.)</p>
+    <p>&nbsp;</p>
+    <p>Available on every card, because they're in [[*related]]:</p>
+    <blockquote>
+    <p>{{Related subtabs - universal|closed}}</p>
+    </blockquote>
+    <p>Available on [[Cardtypes]] (under "type") because they're [[*related+*plus cards|plussed to *related]]:</p>
+    <blockquote>
+    <p>{{Related subtabs - cardtypes|closed}}</p>
+    <p>[[*account+*right+*content]] - available on any card that has the account extension</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <hr>
+    <p>&nbsp;</p>
+    <h1>Process</h1>
+    <ol>
+    <li>Everything about default Wagns that can be done within cards happens here. Make changes that make sense to you, and watch what each other are doing on Recent. There's space for discussion at the bottom of this page if you like.</li>
+    <li>For changes here to show up in already-existing Wagns, put a note in the next Wagn release's discussion about which cards you want migrated.</li>
+    <li>[[http://wagn.org/wagn/initial_permissions|Permissions are specified on wagn.org]], because we want people to be able to choose different initial setups.</li>
+    <li>Everything that involves code should be ticketed on wagn.org. </li>
+    </ol>
+    <p>&nbsp;</p>
+    <h1>Todo</h1>
+    <p>&nbsp;</p>
+    <h2>Content / Wagneering<br></h2>
+    <ol>
+    <li>make *ignore a Search that returns Users, Account Requests, and things referred to by *ignore+tag. (Requires changing the dump a little, but could bring new users in with less overhead.)&nbsp; <em>eventually.&nbsp;&nbsp; not ready for this yet --efm</em></li>
+    <li> Test and tweak http://wagn.org/wagn/initial_permissions (ongoing)</li>
+    </ol>
+    <p>&nbsp;</p>
+    <h2>Documentation<br></h2>
+    <ul>
+    <li>When documenting tickets that relate to [[http://wagn.org/wagn/Installation+tickets_for_item|installation]] or [[http://wagn.org/wagn/administration+tickets_for_item|administration]], make sure to update [[Config]]. (make search to show ones from current/recent releases?)</li>
+    </ul>
+    <p>&nbsp;</p>
+    <h1>Discussion</h1>
+    <p>&nbsp;</p>
+    <hr>
+    <p>What is [[*migrate content]] for?</p>
+    <p><em>&nbsp;&nbsp;--[[John Abbe]].....Mon Jul 27 17:17:14 -0700 2009</em></p>
+revisions_194: 
+  created_at: 2010-04-20 17:59:32.193742
+  card_id: "388"
+  updated_at: 2010-04-20 17:59:32.193742
+  created_by: "3"
+  id: "3625"
+  content: "[[_left+email config]]"
+revisions_276: 
+  created_at: 2010-04-19 17:41:17.451909
+  card_id: "250"
+  updated_at: 2010-04-19 17:41:17.451909
+  created_by: "3"
+  id: "3495"
+  content: <p>Where to take people after they create a card in the [[set]]. [[http://www.wagn.org/wagn/Custom_thank_you_messages_for_forms|Learn more about thank you messages.]]</p>
+revisions_088: 
+  created_at: 2009-04-24 11:10:23.126691
+  card_id: "116"
+  updated_at: 2009-04-24 11:10:23.126691
+  created_by: "4"
+  id: "2055"
+  content: |-
+    <h1>[[_left+*editors|Editors]]</h1>
+    <blockquote>
+    <p>{{_left+*editors|item:link}}</p>
+    </blockquote>
+    <h1>[[_left+discussion|Discussion]]<br></h1>
+    <blockquote>
+    <p>{{_left+discussion|open}}</p>
+    </blockquote>
+    <h1>[[_left+tags|"{{_left|name}}" is tagged with]]</h1>
+    <blockquote>
+    <p>{{_left+tags}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+revisions_169: 
+  created_at: 2010-04-20 17:34:34.893775
+  card_id: "368"
+  updated_at: 2010-04-20 17:34:34.893775
+  created_by: "3"
+  id: "3606"
+  content: "[[_left+email config]]"
+revisions_195: 
+  created_at: 2010-04-20 17:59:32.525761
+  card_id: "389"
+  updated_at: 2010-04-20 17:59:32.525761
+  created_by: "3"
+  id: "3626"
+  content: ""
+revisions_277: 
+  created_at: 2010-04-19 17:43:08.491613
+  card_id: "254"
+  updated_at: 2010-04-19 17:43:08.491613
+  created_by: "3"
+  id: "3500"
+  content: <p>Labels for [[Pointer]] options.&nbsp; Value is a card name, which is plussed to each of a Pointer's option cards to form label cards for radio button and checkbox items. E.g., "description" will make Wagn look for "option 1+description", "option 2+description", etc. [[http://www.wagn.org/wagn/Pointer|Learn more.]]</p>
+revisions_089: 
+  created_at: 2009-04-24 11:15:05.155179
+  card_id: "177"
+  updated_at: 2009-04-24 11:15:05.155179
+  created_by: "3"
+  id: "2056"
+  content: "[[Menu]]"
+revisions_196: 
+  created_at: 2010-04-20 18:05:48.13144
+  card_id: "390"
+  updated_at: 2010-04-20 18:05:48.13144
+  created_by: "3"
+  id: "3628"
+  content: ""
+revisions_278: 
+  created_at: 2009-07-27 20:58:14.576037
+  card_id: "223"
+  updated_at: 2009-07-27 20:58:14.576037
+  created_by: "4"
+  id: "2786"
+  content: |-
+    /* fixit - once "type" accepts card defs:
+    {"or": 
+     {"and": {"plus": ["*watcher", {"refer_to": "_self"} ], "not": {"type": "Cardtype"} } },
+     {"type": {"plus": ["*watcher", {"refer_to": "_self"} ], "type": "Cardtype"} }
+    }
+    */
+    
+    {"plus": ["*watcher", {"refer_to": "_self"} ] }
+revisions_197: 
+  created_at: 2010-04-20 18:05:48.327451
+  card_id: "391"
+  updated_at: 2010-04-20 18:05:48.327451
+  created_by: "3"
+  id: "3629"
+  content: ""
+revisions_279: 
+  created_at: 2010-04-19 17:51:24.277184
+  card_id: "301"
+  updated_at: 2010-04-19 17:51:24.277184
+  created_by: "3"
+  id: "3510"
+  content: <p>Value options for set of [[Pointer]] cards, expressed as a WQL [[Search]].&nbsp; [[http://wagn.org/Pointer|Learn about Pointers.]]&nbsp; [[http://wagn.org/WQL_Syntax|Learn WQL Syntax.]]</p>
+revisions_198: 
+  created_at: 2010-04-18 10:59:53.160329
+  card_id: "159"
+  updated_at: 2010-04-18 10:59:53.160329
+  created_by: "3"
+  id: "3277"
+  content: |-
+    /* all cards except *cards (which are more infrastructure-related) */
+    /* Note: this will return things like User+*type+*content+discussion */
+    {"not":
+     {"or":
+      {"complete": "*",
+       "left":{"complete": "*"},
+       "right":{"complete": "*"} } },
+     "sort": "name"
+    }
+revisions_199: 
+  created_at: 2009-05-21 13:30:09.367411
+  card_id: "197"
+  updated_at: 2009-05-21 13:30:09.367411
+  created_by: "3"
+  id: "2417"
+  content: "{\"type\":\"User\",\"sort\":\"name\",\"append\":\"name and email\", \"view\":\"naked\"}"
+revisions_010: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "36"
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  id: "36"
+  content: "{\"plus\":\"_self\"}"
+revisions_011: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "37"
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  id: "37"
+  content: ""
+revisions_012: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "38"
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  id: "38"
+  content: "{\"include\":\"_self\"}"
+revisions_200: 
+  created_at: 2010-04-20 21:10:25.647579
+  card_id: "392"
+  updated_at: 2010-04-20 21:10:25.647579
+  created_by: "3"
+  id: "3632"
+  content: <p>If used as a [[*send]] setting value, Wagn will send an email with the following fields when a card in the [[set]] is created.&nbsp; If the emails include [[http://www.wagn.org/wagn/relative_names|relative names]], the newly created card will be treated as "self".</p>
+revisions_013: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "82"
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  id: "237"
+  content: ""
+revisions_120: 
+  created_at: 2010-04-15 18:42:52.507914
+  card_id: "329"
+  updated_at: 2010-04-15 18:42:52.507914
+  created_by: "1"
+  id: "3213"
+  content: ""
+revisions_201: 
+  created_at: 2009-05-21 13:43:12.813443
+  card_id: "204"
+  updated_at: 2009-05-21 13:43:12.813443
+  created_by: "3"
+  id: "2427"
+  content: "{{_left|link}}, {{_left+*email}}"
+revisions_014: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "39"
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  id: "39"
+  content: ""
+revisions_040: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "96"
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  id: "3196"
+  content: ""
+revisions_121: 
+  created_at: 2010-04-15 18:42:53.179953
+  card_id: "330"
+  updated_at: 2010-04-15 18:42:53.179953
+  created_by: "1"
+  id: "3214"
+  content: ""
+revisions_202: 
+  created_at: 2010-04-21 16:26:46.929052
+  card_id: "73"
+  updated_at: 2010-04-21 16:26:46.929052
+  created_by: "1"
+  id: "3634"
   content: |
-    width: '100%',
-    auto_resize : true,
-    relative_urls: false,
-    theme : "advanced",
-    theme_advanced_buttons1 : "formatselect,bold,italic,separator,"
-    + "blockquote,bullist,numlist,indent,outdent,hr,separator,undo,redo,"
-    + "code",                         
-    theme_advanced_buttons2 : "",                         
-    theme_advanced_buttons3 : "",                         
-    theme_advanced_path : false,                         
-    theme_advanced_toolbar_location : "top",  
-    theme_advanced_toolbar_align : "left", 
-    theme_advanced_resizing : true,
-    theme_advanced_resize_horizontal : false,                      
-    theme_advanced_statusbar_location : "bottom",
-    theme_advanced_blockformats : "p,h1,h2",
-    content_css : '/stylesheets/defaults.css,/card/view/*css?layout=none',
-    extended_valid_elements : "a[name|href|target|title|onclick],"
-    + "img[class|src|border=0|alt|title|hspace|vspace|width|height|"
-    + "align|onmouseover|onmouseout|name],hr[class|width|size|noshade],"
-    + "font[face|size|color|style],span[class|align|style]"          
+    <h1>Basics <em></em></h1>
+    <blockquote>
+    <p><em>Site name:</em> {{*title|closed;type:Phrase}}</p>
+    <p><em>Home card:</em> {{*home|closed;type:Phrase}}</p>
+    <p><em>Logo Image: </em>{{*logo|closed;type:Image}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <h1>Sets / Settings</h1>
+    <p>&nbsp;</p>
+    <p>Wagn allows you to apply <em>[[settings]]</em> (configuration options) to <em>[[sets]] </em>(groups) of cards.</p>
+    <blockquote>
+    <p>{{settings|open}}</p>
+    </blockquote>
+    <p>Each of the above [[settings]] can be applied to any [[set]] of cards.&nbsp; A [[set]] may be as specific as a single card or as general as all cards. Settings applied to this "*all" set will apply to any card that does not have the same setting applied to a more specific set:</p>
+    <blockquote>
+    <p>{{*all|closed}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <h1>Email / Account Configuration</h1>
+    <p>&nbsp;</p>
+    <p>By default system emails come from the [[Wagn  Bot|"Wagn Bot's"]] email address.&nbsp; Change it via the Options tab:</p>
+    <blockquote>
+    <p>{{Wagn Bot|closed}}</p>
+    </blockquote>
+    <p>The following two [[sets]] are important for configuring account-related [[cardtypes]]:</p>
+    <blockquote>
+    <p>{{Account Request+*type|closed}}</p>
+    <p>{{User+*type|closed}}</p>
+    </blockquote>
+    <p>Configure account-related emails here:</p>
+    <blockquote>
+    <p><em>User Invitation</em></p>
+    <p><em></em>{{*invite|closed}}</p>
+    <p><em>User Signup</em></p>
+    <p>{{*signup|closed}}</p>
+    <p><em>Account Request<br></em></p>
+    <p>{{*request|closed}}</p>
+    </blockquote>
+    <p>Valuable account administration cards are linked to from the [[Administrator Links]] card:</p>
+    <blockquote>
+    <p>{{Administrator Links|closed}}</p>
+    </blockquote>
+    <p><em>[[http://www.wagn.org/wagn/account#Administering%20accounts | Learn  more about configuring accounts]]</em></p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <h1>Other Config<br></h1>
+    <p>&nbsp;</p>
+    <blockquote>{{*css|closed;type:HTML}} <em>[[http://wagn.org/wagn/Skin|How to "skin" your Wagn]].</em>
+    <p>&nbsp;</p>
+    <p>{{*sidebar|closed}}<em> [[http://wagn.org/wagn/sidebar|How to  customize the sidebar]]</em></p>
+    <p>&nbsp;</p>
+    <p>{{*tinyMCE|closed}} <em>[[http://wagn.org/wagn/TinyMCE|How to customize the edit toolbar]]</em></p>
+    <p>&nbsp;</p>
+    <p>{{*google analytics key|type:Phrase}} <em>[[http://wagn.org/wagn/Google_Analytics|How to set up Google  Analytics]]</em></p>
+    <p>&nbsp;</p>
+    <p>{{*favicon|closed;type:Image}}</p>
+    <p>&nbsp;</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <blockquote>
+    <p><em></em></p>
+    </blockquote>
 
-revisions_017: 
+revisions_310: 
+  created_at: 2009-12-02 16:28:23.218086
+  card_id: "109"
+  updated_at: 2009-12-02 16:28:23.218086
+  created_by: "4"
+  id: "3031"
+  content: <div>Thank you for signing up with {{*title}}. Someone will receive your request for an account and approve it as soon as possible.</div>
+revisions_015: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "40"
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  id: "40"
+  content: "{\"link_to\":\"_self\"}"
+revisions_041: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "48"
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  id: "48"
+  content: ""
+revisions_122: 
+  created_at: 2010-04-15 18:42:59.872334
+  card_id: "331"
+  updated_at: 2010-04-15 18:42:59.872334
+  created_by: "1"
+  id: "3218"
+  content: ""
+revisions_203: 
+  created_at: 2009-05-26 11:18:41.071447
+  card_id: "207"
+  updated_at: 2009-05-26 11:18:41.071447
+  created_by: "4"
+  id: "2464"
+  content: ""
+revisions_311: 
+  created_at: 2009-12-03 15:41:14.340236
+  card_id: "91"
+  updated_at: 2009-12-03 15:41:14.340236
+  created_by: "4"
+  id: "3033"
+  content: "4"
+revisions_230: 
+  created_at: 2009-06-09 18:42:00.440289
+  card_id: "12"
+  updated_at: 2009-06-09 18:42:00.440289
+  created_by: "4"
+  id: "2582"
+  content: |-
+    <p>{{+description}}</p>
+    <blockquote>
+    <p>{{+*type cards+by update}}</p>
+    </blockquote>
+revisions_016: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "127"
   updated_at: 2009-04-06 14:11:12.948281
@@ -1157,139 +1297,135 @@ revisions_017:
     <p>{{*logo|float:right}}{{DeleteMe|open}}</p>
     <p>&nbsp;</p>
     <p>{{*logo|float:left}}{{DeleteMe|closed}}</p>
-revisions_043: 
+revisions_042: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "97"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "354"
   content: "{\"member\": \"_self\"}"
-revisions_124: 
-  created_at: 2009-08-18 16:14:04.3785
-  card_id: "119"
-  updated_at: 2009-08-18 16:14:04.3785
-  created_by: "4"
-  id: "2856"
-  content: |-
-    <h1>{{_left|name}}'s roles<br></h1>
-    <blockquote>
-    <p>{{_left+*roles|item:link}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h1>Cards {{_left|name}} is watching</h1>
-    <blockquote>
-    <p>You'll receive email whenever these cards (or cards of types listed here) are changed. [[http://wagn.org/wagn/Notification|Learn more about notifications]].</p>
-    <p>{{_left+*watching|item:change}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h1>Cards {{_left|name}} has edited</h1>
-    <blockquote>
-    <p>{{_left +*editing}}</p>
-    </blockquote>
-revisions_150: 
-  created_at: 2009-06-09 18:24:29.182159
-  card_id: "210"
-  updated_at: 2009-06-09 18:24:29.182159
-  created_by: "4"
-  id: "2571"
-  content: <p>Anyone who is not signed in has this role. Edits they make will be credited to [[Anonymous]]. [[http://wagn.org/wagn/account|Learn more about accounts]].</p>
-revisions_205: 
-  created_at: 2009-12-02 16:02:49.8763
-  card_id: "269"
-  updated_at: 2009-12-02 16:02:49.8763
+revisions_123: 
+  created_at: 2010-04-15 18:43:00.576374
+  card_id: "332"
+  updated_at: 2010-04-15 18:43:00.576374
   created_by: "1"
-  id: "3010"
-  content: "{\"right\":\"_self\"}"
-revisions_232: 
-  created_at: 2009-12-10 14:34:36.102794
-  card_id: "291"
-  updated_at: 2009-12-10 14:34:36.102794
-  created_by: "4"
-  id: "3078"
+  id: "3219"
   content: ""
-revisions_018: 
+revisions_204: 
+  created_at: 2009-05-26 14:49:19.504422
+  card_id: "199"
+  updated_at: 2009-05-26 14:49:19.504422
+  created_by: "1"
+  id: "2471"
+  content: /wagn/Form_submission_thanks
+revisions_312: 
+  created_at: 2009-12-03 16:11:05.965021
+  card_id: "279"
+  updated_at: 2009-12-03 16:11:05.965021
+  created_by: "4"
+  id: "3038"
+  content: "4"
+revisions_231: 
+  created_at: 2009-09-16 14:34:58.131998
+  card_id: "247"
+  updated_at: 2009-09-16 14:34:58.131998
+  created_by: "4"
+  id: "2889"
+  content: ""
+revisions_197: 
+  created_at: 2009-12-02 16:02:47.448162
+  card_id: "261"
+  updated_at: 2009-12-02 16:02:47.448162
+  created_by: "1"
+  id: "3002"
+  content: "{\"right\":\"_self\"}"
+revisions_279: 
+  created_at: 2010-01-07 14:57:39.888293
+  card_id: "328"
+  updated_at: 2010-01-07 14:57:39.888293
+  created_by: "1"
+  id: "3199"
+  content: ""
+revisions_198: 
+  created_at: 2009-12-02 16:02:47.704176
+  card_id: "262"
+  updated_at: 2009-12-02 16:02:47.704176
+  created_by: "1"
+  id: "3003"
+  content: ""
+revisions_199: 
+  created_at: 2009-12-02 16:02:47.94819
+  card_id: "263"
+  updated_at: 2009-12-02 16:02:47.94819
+  created_by: "1"
+  id: "3004"
+  content: "{\"left\":{\"type\":\"_left\"}, \"right\":\"_right\"}"
+revisions_010: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "41"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "41"
   content: ""
-revisions_044: 
+revisions_043: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "117"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "1270"
   content: ""
-revisions_070: 
-  created_at: 2009-04-25 11:10:29.894867
-  card_id: "157"
-  updated_at: 2009-04-25 11:10:29.894867
-  created_by: "3"
-  id: "2255"
-  content: |-
-    {"right": "*rform", 
-     "left":{ "referred_to_by": "*related" },
-     "sort": "name"
-    }
-revisions_125: 
-  created_at: 2009-08-19 14:38:27.057142
-  card_id: "206"
-  updated_at: 2009-08-19 14:38:27.057142
-  created_by: "4"
-  id: "2857"
-  content: |-
-    [[Basic]]
-    [[Cardtype]]
-    [[Date]]
-    [[File]]
-    [[HTML]]
-    [[Image]]
-    [[Number]]
-    [[Phrase]]
-    [[PlainText]]
-    [[Pointer]]
-    [[Role]]
-    [[Ruby]]
-    [[Script]]
-    [[Search]]
-    [[Toggle]]
-revisions_151: 
-  created_at: 2009-09-12 00:22:17.260277
-  card_id: "245"
-  updated_at: 2009-09-12 00:22:17.260277
-  created_by: "4"
-  id: "2886"
-  content: <p>The maximum number of items allowed in a Pointer. Only works with +*input set to list, checkbox or multiselect.</p>
-revisions_206: 
-  created_at: 2009-12-02 16:02:50.668345
-  card_id: "270"
-  updated_at: 2009-12-02 16:02:50.668345
+revisions_124: 
+  created_at: 2010-04-15 18:43:01.681477
+  card_id: "333"
+  updated_at: 2010-04-15 18:43:01.681477
   created_by: "1"
-  id: "3011"
-  content: "{\"type\":\"_self\"}"
-revisions_233: 
-  created_at: 2009-12-10 14:34:37.490874
-  card_id: "292"
-  updated_at: 2009-12-10 14:34:37.490874
+  id: "3220"
+  content: ""
+revisions_150: 
+  created_at: 2009-04-27 23:19:56.219403
+  card_id: "193"
+  updated_at: 2009-04-27 23:19:56.219403
   created_by: "4"
-  id: "3079"
-  content: "0"
-revisions_019: 
+  id: "2304"
+  content: |
+    {"found_by": "_self", "sort": "content"}
+
+revisions_205: 
+  created_at: 2009-05-26 14:49:19.808439
+  card_id: "67"
+  updated_at: 2009-05-26 14:49:19.808439
+  created_by: "1"
+  id: "2472"
+  content: /wagn/Signup_Success
+revisions_313: 
+  created_at: 2009-12-03 18:15:55.743166
+  card_id: "280"
+  updated_at: 2009-12-03 18:15:55.743166
+  created_by: "4"
+  id: "3040"
+  content: ""
+revisions_232: 
+  created_at: 2009-09-16 14:34:59.904099
+  card_id: "248"
+  updated_at: 2009-09-16 14:34:59.904099
+  created_by: "4"
+  id: "2890"
+  content: ""
+revisions_018: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "8"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "8"
   content: ""
-revisions_045: 
+revisions_044: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "49"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "49"
   content: ""
-revisions_071: 
+revisions_070: 
   created_at: 2009-04-25 12:30:25.905385
   card_id: "185"
   updated_at: 2009-04-25 12:30:25.905385
@@ -1298,271 +1434,242 @@ revisions_071:
   content: |
     {"found_by": "_self", "sort": "name"}
 
-revisions_126: 
-  created_at: 2009-08-19 14:43:16.022141
-  card_id: "240"
-  updated_at: 2009-08-19 14:43:16.022141
+revisions_125: 
+  created_at: 2009-04-27 22:08:47.836281
+  card_id: "189"
+  updated_at: 2009-04-27 22:08:47.836281
   created_by: "4"
-  id: "2862"
-  content: |-
-    {"type": "Cardtype",
-     "not": {"referred_to_by": "default cardtype"},
-     "append": "*tform",
-     "sort": "name"
-    }
-revisions_152: 
-  created_at: 2009-06-09 18:25:35.490326
-  card_id: "15"
-  updated_at: 2009-06-09 18:25:35.490326
+  id: "2278"
+  content: <img src="http://s3.amazonaws.com/en.indecks.net/card_images/25/arrow_medium.png">
+revisions_151: 
+  created_at: 2009-04-27 23:21:34.353956
+  card_id: "194"
+  updated_at: 2009-04-27 23:21:34.353956
   created_by: "4"
-  id: "2573"
-  content: <p>Edits made by people who are not signed in are credited to Anonymous. [[http://wagn.org/wagn/account|Learn more about accounts]].</p>
-revisions_207: 
-  created_at: 2009-12-02 16:02:51.648401
-  card_id: "271"
-  updated_at: 2009-12-02 16:02:51.648401
+  id: "2305"
+  content: ""
+revisions_206: 
+  created_at: 2009-05-26 14:49:19.956447
+  card_id: "108"
+  updated_at: 2009-05-26 14:49:19.956447
   created_by: "1"
-  id: "3012"
-  content: "{\"type\":\"_self\"}"
-revisions_260: 
-  created_at: 2009-12-22 07:17:23.795017
-  card_id: "281"
-  updated_at: 2009-12-22 07:17:23.795017
+  id: "2473"
+  content: /wagn/Request_Sent
+revisions_340: 
+  created_at: 2009-12-22 06:49:58.561898
+  card_id: "312"
+  updated_at: 2009-12-22 06:49:58.561898
   created_by: "4"
-  id: "3167"
-  content: <p>Points to card used as the layout when a card in the [[set]] is visited (as the main card).&nbsp; [[http://wagn.org/custom_layouts | Learn more about layouts]]</p>
-revisions_234: 
-  created_at: 2009-12-10 14:35:21.062617
-  card_id: "293"
-  updated_at: 2009-12-10 14:35:21.062617
+  id: "3148"
+  content: "{\"name\":\"_self\"}"
+revisions_314: 
+  created_at: 2009-12-03 23:45:55.618845
+  card_id: "282"
+  updated_at: 2009-12-03 23:45:55.618845
   created_by: "4"
-  id: "3081"
-  content: "0"
-revisions_046: 
+  id: "3042"
+  content: "{\"type\": \"HTML\"}"
+revisions_233: 
+  created_at: 2009-06-10 10:01:56.814248
+  card_id: "215"
+  updated_at: 2009-06-10 10:01:56.814248
+  created_by: "3"
+  id: "2603"
+  content: <p>On Wagn you upload files to File cards, then include the cards wherever you want a link to the file to appear. [[http://wagn.org/wagn/File|Learn more about File cards]].</p>
+revisions_019: 
+  created_at: 2009-04-06 17:32:45.92516
+  card_id: "149"
+  updated_at: 2009-04-06 17:32:45.92516
+  created_by: "1"
+  id: "1730"
+  content: ""
+revisions_045: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "98"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "355"
   content: ""
-revisions_072: 
+revisions_071: 
   created_at: 2009-04-27 02:57:11.275454
   card_id: "186"
   updated_at: 2009-04-27 02:57:11.275454
   created_by: "2"
   id: "2275"
   content: ""
-revisions_127: 
-  created_at: 2009-05-21 10:35:27.29339
-  card_id: "200"
-  updated_at: 2009-05-21 10:35:27.29339
+revisions_126: 
+  created_at: 2009-04-27 22:09:19.522848
+  card_id: "151"
+  updated_at: 2009-04-27 22:09:19.522848
   created_by: "4"
-  id: "2402"
-  content: <p>Thanks for submitting this form!</p>
-revisions_153: 
-  created_at: 2009-06-09 18:32:14.435488
-  card_id: "212"
-  updated_at: 2009-06-09 18:32:14.435488
+  id: "2279"
+  content: |-
+    <p>[[Config|Configure your wagn]]</p>
+    <p>&nbsp;</p>
+    <p>[[*account|Accounts]]</p>
+    <p>[[Roles]]</p>
+    <p>[[/admin/tasks|Global permissions]]</p>
+revisions_152: 
+  created_at: 2009-04-27 23:21:34.457961
+  card_id: "195"
+  updated_at: 2009-04-27 23:21:34.457961
   created_by: "4"
-  id: "2574"
-  content: <p>Toggles simply indicate yes or no. [[http://wagn.org/wagn/Toggle|Learn more about Toggles]].</p>
-revisions_208: 
-  created_at: 2009-12-02 16:02:52.656459
-  card_id: "272"
-  updated_at: 2009-12-02 16:02:52.656459
+  id: "2306"
+  content: |
+    {"found_by": "_self", "dir": "desc"}
+
+revisions_207: 
+  created_at: 2009-05-26 14:49:20.144458
+  card_id: "62"
+  updated_at: 2009-05-26 14:49:20.144458
   created_by: "1"
-  id: "3013"
-  content: "{\"type\":\"_self\"}"
-revisions_261: 
-  created_at: 2009-12-22 07:17:41.648034
-  card_id: "306"
-  updated_at: 2009-12-22 07:17:41.648034
+  id: "2474"
+  content: /wagn/Invite_Success
+revisions_341: 
+  created_at: 2009-12-22 06:49:58.709907
+  card_id: "313"
+  updated_at: 2009-12-22 06:49:58.709907
   created_by: "4"
-  id: "3168"
-  content: <p>[[http://www.wagn.org/wagn/custom_help_text|Help text]] people will see when editing cards in the set.&nbsp;</p>
-revisions_235: 
-  created_at: 2009-12-10 14:35:53.388459
-  card_id: "294"
-  updated_at: 2009-12-10 14:35:53.388459
+  id: "3149"
+  content: |-
+    <p>works?</p>
+    <p>&nbsp;</p>
+revisions_315: 
+  created_at: 2009-12-08 12:24:58.433859
+  card_id: "283"
+  updated_at: 2009-12-08 12:24:58.433859
+  created_by: "1"
+  id: "3059"
+  content: ""
+revisions_260: 
+  created_at: 2009-07-27 18:00:57.492814
+  card_id: "237"
+  updated_at: 2009-07-27 18:00:57.492814
   created_by: "4"
-  id: "3082"
-  content: "{\"type\":\"_self\"}"
-revisions_047: 
+  id: "2745"
+  content: "[[John Abbe]]"
+revisions_234: 
+  created_at: 2009-06-13 23:20:31.229969
+  card_id: "217"
+  updated_at: 2009-06-13 23:20:31.229969
+  created_by: "4"
+  id: "2604"
+  content: ""
+revisions_046: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "101"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "486"
   content: "{\"extension_type\": \"User\"}"
-revisions_073: 
+revisions_072: 
   created_at: 2009-04-24 10:07:12.06015
   card_id: "170"
   updated_at: 2009-04-24 10:07:12.06015
   created_by: "4"
   id: "1993"
   content: ""
-revisions_128: 
-  created_at: 2009-05-21 11:52:53.612884
-  card_id: "201"
-  updated_at: 2009-05-21 11:52:53.612884
-  created_by: "4"
-  id: "2403"
-  content: ""
-revisions_154: 
-  created_at: 2009-06-09 18:34:02.138282
-  card_id: "213"
-  updated_at: 2009-06-09 18:34:02.138282
-  created_by: "4"
-  id: "2575"
-  content: <p><span><span>Pointers have one or more items in them, each "pointing" to another card. [[http://wagn.org/wagn/Pointer|Learn more about Pointers]].<br></span></span></p>
-revisions_180: 
-  created_at: 2009-07-27 17:19:53.188393
-  card_id: "230"
-  updated_at: 2009-07-27 17:19:53.188393
-  created_by: "4"
-  id: "2699"
-  content: "[[John Abbe]]"
-revisions_209: 
-  created_at: 2009-12-02 16:02:53.332497
-  card_id: "66"
-  updated_at: 2009-12-02 16:02:53.332497
+revisions_127: 
+  created_at: 2010-04-15 18:43:04.609644
+  card_id: "334"
+  updated_at: 2010-04-15 18:43:04.609644
   created_by: "1"
-  id: "3014"
-  content: |-
-    <p>To let users sign up with no approval process, allow "Anyone" to [[/card/options/Account_Request|create account requests]], and give "Anyone" the [[/admin/tasks |global permission]] to create accounts.&nbsp; Newly registered users will be sent an email with a password and the following details:</p>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <h2>Email Subject<br></h2>
-    <blockquote>
-    <p>{{*signup+*subject|type:Phrase}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h2>Email Message</h2>
-    <blockquote>
-    <p>{{*signup+*message|closed;type:PlainText}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <p>As the email is sent, the<strong> person signing up will be sent here</strong>:</p>
-    <blockquote>
-    <p><span>HTTP:// <em>(YOUR WAGN'S DOMAIN)</em></span><em> </em>{{+*thanks}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-revisions_262: 
-  created_at: 2009-12-22 07:18:58.061887
-  card_id: "308"
-  updated_at: 2009-12-22 07:18:58.061887
-  created_by: "4"
-  id: "3169"
-  content: <p>When "yes", users with the global "create accounts" permission can add [[http://www.wagn.org/wagn/account|accounts]] to cards in the set.</p>
-revisions_236: 
-  created_at: 2009-12-10 14:35:53.744479
-  card_id: "295"
-  updated_at: 2009-12-10 14:35:53.744479
-  created_by: "4"
-  id: "3083"
-  content: "1"
-revisions_048: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "121"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "1276"
+  id: "3223"
   content: ""
-revisions_074: 
-  created_at: 2009-04-24 10:16:38.752547
-  card_id: "153"
-  updated_at: 2009-04-24 10:16:38.752547
-  created_by: "3"
-  id: "1998"
+revisions_153: 
+  created_at: 2010-04-15 18:43:29.947088
+  card_id: "354"
+  updated_at: 2010-04-15 18:43:29.947088
+  created_by: "1"
+  id: "3250"
+  content: ""
+revisions_208: 
+  created_at: 2009-05-26 17:35:51.973998
+  card_id: "208"
+  updated_at: 2009-05-26 17:35:51.973998
+  created_by: "4"
+  id: "2475"
   content: |-
-    {"not": {"referred_to_by": "*ignore"},
-     "sort": "update",
-     "limit": 200
-    }
-revisions_129: 
-  created_at: 2009-05-21 12:21:57.565928
-  card_id: "202"
-  updated_at: 2009-05-21 12:21:57.565928
-  created_by: "4"
-  id: "2408"
-  content: <p>These cards allow unrestricted use of HTML. See the [[http://wagn.org/wagn/HTML|documentation on HTML cards]].</p>
-revisions_155: 
-  created_at: 2009-06-09 18:35:38.480179
-  card_id: "214"
-  updated_at: 2009-06-09 18:35:38.480179
-  created_by: "4"
-  id: "2576"
-  content: <p>On Wagn you upload images to Image cards, then include them wherever you want the image to appear. [[http://wagn.org/wagn/Image|Learn more about Image cards]].</p>
-revisions_181: 
-  created_at: 2009-07-27 17:20:14.989975
-  card_id: "231"
-  updated_at: 2009-07-27 17:20:14.989975
-  created_by: "4"
-  id: "2700"
-  content: "[[John Abbe]]"
-revisions_263: 
+    <p>{{_left|closed}}</p>
+    <p>{{_left+*tform|closed}}</p>
+    <p>{{_left+*rform|closed}}</p>
+    <p>{{_left+*type cards|closed}}</p>
+    <hr>
+revisions_342: 
   created_at: 2009-12-22 07:28:28.172394
   card_id: "275"
   updated_at: 2009-12-22 07:28:28.172394
   created_by: "4"
   id: "3171"
   content: "[[Default Layout]]"
-revisions_237: 
-  created_at: 2009-12-10 14:37:21.052086
-  card_id: "296"
-  updated_at: 2009-12-10 14:37:21.052086
+revisions_316: 
+  created_at: 2009-12-08 12:24:58.80588
+  card_id: "284"
+  updated_at: 2009-12-08 12:24:58.80588
+  created_by: "1"
+  id: "3060"
+  content: ""
+revisions_261: 
+  created_at: 2009-07-27 18:01:01.345033
+  card_id: "238"
+  updated_at: 2009-07-27 18:01:01.345033
   created_by: "4"
-  id: "3084"
-  content: "1"
-revisions_049: 
+  id: "2746"
+  content: "[[John Abbe]]"
+revisions_235: 
+  created_at: 2009-06-16 08:59:45.444765
+  card_id: "218"
+  updated_at: 2009-06-16 08:59:45.444765
+  created_by: "4"
+  id: "2605"
+  content: ""
+revisions_047: 
   created_at: 2009-04-06 14:11:12.948281
-  card_id: "123"
+  card_id: "121"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
-  id: "1283"
-  content: "[[items]]"
-revisions_075: 
-  created_at: 2009-04-24 10:25:17.682718
-  card_id: "112"
-  updated_at: 2009-04-24 10:25:17.682718
-  created_by: "3"
-  id: "2008"
-  content: |-
-    [[*incoming]]
-    [[*outgoing]]
-    [[*plusses]]
-    [[*community]]
-revisions_156: 
-  created_at: 2009-06-09 18:36:53.060865
-  card_id: "19"
-  updated_at: 2009-06-09 18:36:53.060865
-  created_by: "4"
-  id: "2579"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <p>[[/new/{{_self|name}}|add an {{_self|name}} card]]</p>
-    <p>&nbsp;</p>
-    <h2>{{_self|name}} Cards</h2>
-    <blockquote>
-    <p>{{+*type cards}}</p>
-    </blockquote>
-revisions_182: 
-  created_at: 2009-07-27 17:21:13.381631
-  card_id: "232"
-  updated_at: 2009-07-27 17:21:13.381631
-  created_by: "4"
-  id: "2704"
-  content: "[[John Abbe]]"
-revisions_290: 
-  created_at: 2010-01-07 14:57:51.994531
-  card_id: "335"
-  updated_at: 2010-01-07 14:57:51.994531
-  created_by: "1"
-  id: "3213"
+  id: "1276"
   content: ""
-revisions_264: 
+revisions_073: 
+  created_at: 2010-04-15 18:42:28.546549
+  card_id: "317"
+  updated_at: 2010-04-15 18:42:28.546549
+  created_by: "1"
+  id: "3196"
+  content: ""
+revisions_128: 
+  created_at: 2010-04-15 18:43:06.049726
+  card_id: "335"
+  updated_at: 2010-04-15 18:43:06.049726
+  created_by: "1"
+  id: "3224"
+  content: ""
+revisions_154: 
+  created_at: 2009-04-28 10:01:16.450648
+  card_id: "196"
+  updated_at: 2009-04-28 10:01:16.450648
+  created_by: "4"
+  id: "2318"
+  content: johnca@ourpla.net
+revisions_180: 
+  created_at: 2010-04-20 17:58:33.68176
+  card_id: "378"
+  updated_at: 2010-04-20 17:58:33.68176
+  created_by: "3"
+  id: "3615"
+  content: ""
+revisions_209: 
+  created_at: 2009-05-26 17:42:40.511863
+  card_id: "209"
+  updated_at: 2009-05-26 17:42:40.511863
+  created_by: "4"
+  id: "2486"
+  content: |-
+    {"type": "Cardtype", "not": {"referred_to_by": "built-in cardtypes"},
+     "append": "cardtype infrastructure",
+     "sort": "name", "view": "content"
+    }
+revisions_343: 
   created_at: 2009-12-22 07:28:41.881175
   card_id: "314"
   updated_at: 2009-12-22 07:28:41.881175
@@ -1594,236 +1701,428 @@ revisions_264:
         {{*foot}}
       </body>
     </html>
-revisions_238: 
-  created_at: 2009-12-17 11:52:04.651069
-  card_id: "274"
-  updated_at: 2009-12-17 11:52:04.651069
+revisions_317: 
+  created_at: 2009-12-08 12:25:00.053952
+  card_id: "285"
+  updated_at: 2009-12-08 12:25:00.053952
   created_by: "1"
-  id: "3088"
-  content: "{}"
-revisions_076: 
-  created_at: 2009-04-13 10:14:24.495363
-  card_id: "164"
-  updated_at: 2009-04-13 10:14:24.495363
-  created_by: "4"
-  id: "1955"
-  content: "{\"view\": \"name\", \"sort\": \"name\", \"limit\": 500}"
-revisions_157: 
-  created_at: 2009-06-09 18:41:41.67522
-  card_id: "216"
-  updated_at: 2009-06-09 18:41:41.67522
-  created_by: "4"
-  id: "2581"
-  content: <p>People who have requested accounts but not yet been approved ([[http://wagn.org/wagn/account|learn more about accounts]]):</p>
-revisions_183: 
-  created_at: 2009-07-27 17:28:59.190777
-  card_id: "176"
-  updated_at: 2009-07-27 17:28:59.190777
-  created_by: "4"
-  id: "2710"
-  content: |-
-    {"right": "*rform",
-     "not": {"found_by": "Related subtabs - universal"},
-     "limit": "50",
-     "sort": "name"}
-revisions_291: 
-  created_at: 2010-01-07 14:57:53.024122
-  card_id: "336"
-  updated_at: 2010-01-07 14:57:53.024122
-  created_by: "1"
-  id: "3214"
+  id: "3061"
   content: ""
-revisions_265: 
+revisions_262: 
+  created_at: 2009-07-27 18:01:03.833523
+  card_id: "239"
+  updated_at: 2009-07-27 18:01:03.833523
+  created_by: "4"
+  id: "2747"
+  content: "[[John Abbe]]"
+revisions_236: 
+  created_at: 2009-06-18 10:56:06.777959
+  card_id: "219"
+  updated_at: 2009-06-18 10:56:06.777959
+  created_by: "5"
+  id: "2608"
+  content: ""
+revisions_048: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "123"
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  id: "1283"
+  content: "[[items]]"
+revisions_074: 
+  created_at: 2009-04-24 10:16:38.752547
+  card_id: "153"
+  updated_at: 2009-04-24 10:16:38.752547
+  created_by: "3"
+  id: "1998"
+  content: |-
+    {"not": {"referred_to_by": "*ignore"},
+     "sort": "update",
+     "limit": 200
+    }
+revisions_129: 
+  created_at: 2009-04-27 23:08:41.588201
+  card_id: "190"
+  updated_at: 2009-04-27 23:08:41.588201
+  created_by: "4"
+  id: "2290"
+  content: ""
+revisions_155: 
+  created_at: 2010-04-15 18:43:30.827138
+  card_id: "355"
+  updated_at: 2010-04-15 18:43:30.827138
+  created_by: "1"
+  id: "3251"
+  content: ""
+revisions_181: 
+  created_at: 2010-04-20 17:58:33.973776
+  card_id: "379"
+  updated_at: 2010-04-20 17:58:33.973776
+  created_by: "3"
+  id: "3616"
+  content: "[[_left+email config]]"
+revisions_344: 
   created_at: 2009-12-22 07:48:22.332468
   card_id: "251"
   updated_at: 2009-12-22 07:48:22.332468
   created_by: "4"
   id: "3176"
   content: "[[select]]"
-revisions_239: 
-  created_at: 2009-12-20 10:56:44.494809
-  card_id: "278"
-  updated_at: 2009-12-20 10:56:44.494809
-  created_by: "4"
-  id: "3089"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <h2>{{_self|name}} Cards</h2>
-    <blockquote>
-    <p>{{+*type cards}}</p>
-    </blockquote>
-revisions_077: 
-  created_at: 2009-04-14 06:55:17.808923
-  card_id: "145"
-  updated_at: 2009-04-14 06:55:17.808923
-  created_by: "4"
-  id: "1958"
-  content: |-
-    <h1>Accounts with the {{_left|name}} role<br></h1>
-    <blockquote>
-    <p>{{_left+*users}}</p>
-    </blockquote>
-revisions_158: 
-  created_at: 2009-06-09 18:42:00.440289
-  card_id: "12"
-  updated_at: 2009-06-09 18:42:00.440289
-  created_by: "4"
-  id: "2582"
-  content: |-
-    <p>{{+description}}</p>
-    <blockquote>
-    <p>{{+*type cards+by update}}</p>
-    </blockquote>
-revisions_184: 
-  created_at: 2009-07-27 17:42:57.811856
-  card_id: "233"
-  updated_at: 2009-07-27 17:42:57.811856
-  created_by: "4"
-  id: "2720"
-  content: "[[John Abbe]]"
-revisions_292: 
-  created_at: 2010-01-07 14:57:53.579593
-  card_id: "337"
-  updated_at: 2010-01-07 14:57:53.579593
+revisions_318: 
+  created_at: 2009-12-08 12:25:02.230624
+  card_id: "286"
+  updated_at: 2009-12-08 12:25:02.230624
   created_by: "1"
-  id: "3215"
+  id: "3063"
   content: ""
-revisions_266: 
+revisions_263: 
+  created_at: 2009-07-27 20:14:07.185807
+  card_id: "182"
+  updated_at: 2009-07-27 20:14:07.185807
+  created_by: "4"
+  id: "2752"
+  content: <p>Search cards use [[http://wagn.org/wagn/WQL|WQL, the Wagn Query Language]].&nbsp; See [[http://wagn.org/wagn/WQL syntax|syntax documentation]].</p>
+revisions_237: 
+  created_at: 2009-06-18 10:56:07.714013
+  card_id: "220"
+  updated_at: 2009-06-18 10:56:07.714013
+  created_by: "5"
+  id: "2609"
+  content: ""
+revisions_049: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "124"
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  id: "1284"
+  content: ""
+revisions_075: 
+  created_at: 2009-04-24 10:25:17.682718
+  card_id: "112"
+  updated_at: 2009-04-24 10:25:17.682718
+  created_by: "3"
+  id: "2008"
+  content: |-
+    [[*incoming]]
+    [[*outgoing]]
+    [[*plusses]]
+    [[*community]]
+revisions_156: 
+  created_at: 2010-04-15 18:43:31.467175
+  card_id: "163"
+  updated_at: 2010-04-15 18:43:31.467175
+  created_by: "1"
+  id: "3252"
+  content: |-
+    [[*related]]
+    [[*plusses+*right+*content]]
+    [[*references+*rform]]
+    [[*related+*right+*default]]
+    [[Cardtype+*related]]
+    [[*type subtab+*right+*content]]
+    [[*account+*related]]
+    [[*account+*right+*content]]
+    [[*editing+*right+*content]]
+    [[*editors+*right+*content]]
+    [[*members+*right+*content]]
+    [[Role+*type+*default]]
+    [[*options+*right+*default]]
+    [[*community+*right+*content]]
+    [[*table of contents+*on right+*edit help]]
+    [[*table of contents+*right+*default]]
+    [[tags+*right+*default]]
+revisions_182: 
+  created_at: 2010-04-20 17:58:34.281794
+  card_id: "380"
+  updated_at: 2010-04-20 17:58:34.281794
+  created_by: "3"
+  id: "3617"
+  content: ""
+revisions_345: 
   created_at: 2009-12-22 08:05:08.413671
   card_id: "315"
   updated_at: 2009-12-22 08:05:08.413671
   created_by: "4"
   id: "3177"
   content: "{\"name\":\"_self\"}"
-revisions_078: 
-  created_at: 2009-04-14 06:57:17.500379
-  card_id: "144"
-  updated_at: 2009-04-14 06:57:17.500379
-  created_by: "4"
-  id: "1961"
-  content: "[[users]]"
-revisions_159: 
-  created_at: 2009-09-16 14:34:58.131998
-  card_id: "247"
-  updated_at: 2009-09-16 14:34:58.131998
-  created_by: "4"
-  id: "2889"
-  content: ""
-revisions_185: 
-  created_at: 2009-07-27 17:45:39.394302
-  card_id: "159"
-  updated_at: 2009-07-27 17:45:39.394302
-  created_by: "4"
-  id: "2723"
-  content: |-
-    /* all cards except *cards (which are more infrastructure-related) */
-    /* Note: this will return things like User+*tform+discussion */
-    {"not":
-     {"or":
-      {"complete": "*",
-       "left":{"complete": "*"},
-       "right":{"complete": "*"} } },
-     "sort": "name"
-    }
-revisions_293: 
-  created_at: 2010-01-07 14:57:54.237468
-  card_id: "338"
-  updated_at: 2010-01-07 14:57:54.237468
+revisions_319: 
+  created_at: 2009-12-08 12:25:04.61876
+  card_id: "287"
+  updated_at: 2009-12-08 12:25:04.61876
   created_by: "1"
-  id: "3216"
+  id: "3064"
   content: ""
-revisions_267: 
+revisions_290: 
+  created_at: 2009-12-02 16:02:47.704176
+  card_id: "262"
+  updated_at: 2009-12-02 16:02:47.704176
+  created_by: "1"
+  id: "3003"
+  content: ""
+revisions_264: 
+  created_at: 2010-04-19 15:24:30.799829
+  card_id: "360"
+  updated_at: 2010-04-19 15:24:30.799829
+  created_by: "3"
+  id: "3430"
+  content: "{\"left\":{\"type\":\"Set\"}, \"right\":{\"type\":\"Setting\"} }"
+revisions_238: 
+  created_at: 2009-06-26 00:00:49.010402
+  card_id: "79"
+  updated_at: 2009-06-26 00:00:49.010402
+  created_by: "4"
+  id: "2618"
+  content: <img src="http://s3.amazonaws.com/en.dwagn.org/card_images/32/red_wagon_wheel_medium.jpg">
+revisions_076: 
+  created_at: 2010-04-15 18:42:28.898569
+  card_id: "318"
+  updated_at: 2010-04-15 18:42:28.898569
+  created_by: "1"
+  id: "3197"
+  content: ""
+revisions_157: 
+  created_at: 2009-04-29 08:47:58.913385
+  card_id: "188"
+  updated_at: 2009-04-29 08:47:58.913385
+  created_by: "4"
+  id: "2327"
+  content: <p><strong>If you have questions</strong> see the [[http://wagn.org/wagn/Documentation|Wagn documentation]] or leave a question here:</p>
+revisions_183: 
+  created_at: 2010-04-20 17:58:52.174814
+  card_id: "381"
+  updated_at: 2010-04-20 17:58:52.174814
+  created_by: "3"
+  id: "3618"
+  content: ""
+revisions_346: 
   created_at: 2009-12-22 08:27:16.540474
   card_id: "316"
   updated_at: 2009-12-22 08:27:16.540474
   created_by: "4"
   id: "3178"
   content: "{\"type\": \"HTML\"}"
-revisions_079: 
-  created_at: 2009-04-14 06:58:16.476041
-  card_id: "165"
-  updated_at: 2009-04-14 06:58:16.476041
-  created_by: "4"
-  id: "1963"
-  content: ""
-revisions_186: 
-  created_at: 2009-07-27 18:00:49.904381
-  card_id: "234"
-  updated_at: 2009-07-27 18:00:49.904381
-  created_by: "4"
-  id: "2742"
-  content: "[[John Abbe]]"
-revisions_294: 
-  created_at: 2010-01-07 14:57:55.553712
-  card_id: "339"
-  updated_at: 2010-01-07 14:57:55.553712
+revisions_291: 
+  created_at: 2009-12-02 16:02:47.94819
+  card_id: "263"
+  updated_at: 2009-12-02 16:02:47.94819
   created_by: "1"
-  id: "3218"
+  id: "3004"
+  content: "{\"left\":{\"type\":\"_left\"}, \"right\":\"_right\"}"
+revisions_265: 
+  created_at: 2010-04-19 15:30:17.016148
+  card_id: "157"
+  updated_at: 2010-04-19 15:30:17.016148
+  created_by: "3"
+  id: "3433"
+  content: |-
+    {
+     "left":{"left":{ "referred_to_by": "*related" }, "right":"*right"},
+     "right": "*content", 
+     "sort": "name"
+    }
+revisions_239: 
+  created_at: 2009-06-26 00:05:59.673278
+  card_id: "103"
+  updated_at: 2009-06-26 00:05:59.673278
+  created_by: "4"
+  id: "2622"
+  content: <img src="http://s3.amazonaws.com/en.dwagn.org/card_images/42/red_wagon_wheel_medium.png">
+revisions_077: 
+  created_at: 2010-04-15 18:42:29.318593
+  card_id: "319"
+  updated_at: 2010-04-15 18:42:29.318593
+  created_by: "1"
+  id: "3198"
+  content: ""
+revisions_158: 
+  created_at: 2009-04-29 15:26:33.415615
+  card_id: "81"
+  updated_at: 2009-04-29 15:26:33.415615
+  created_by: "3"
+  id: "2331"
+  content: |-
+    <p>&nbsp;</p>
+    <p>{{Menu|open}}</p>
+    <p>&nbsp;</p>
+    <p>{{Administrator links|open}}</p>
+revisions_184: 
+  created_at: 2009-05-21 10:35:27.29339
+  card_id: "200"
+  updated_at: 2009-05-21 10:35:27.29339
+  created_by: "4"
+  id: "2402"
+  content: <p>Thanks for submitting this form!</p>
+revisions_347: 
+  created_at: 2010-01-03 09:17:12.171433
+  card_id: "83"
+  updated_at: 2010-01-03 09:17:12.171433
+  created_by: "4"
+  id: "3186"
+  content: <p>Contents will appear on sidebar. [[http://www.wagn.org/wagn/sidebar|Learn more about the sidebar.]]</p>
+revisions_292: 
+  created_at: 2009-12-02 16:02:48.236207
+  card_id: "264"
+  updated_at: 2009-12-02 16:02:48.236207
+  created_by: "1"
+  id: "3005"
+  content: ""
+revisions_266: 
+  created_at: 2010-04-19 15:46:16.137186
+  card_id: "158"
+  updated_at: 2010-04-19 15:46:16.137186
+  created_by: "3"
+  id: "3440"
+  content: |-
+    {"left":{"left": {"referred_to_by": {"left":{"type":"Cardtype"},"right": "*related"}},
+                "right":"*right"},
+     "right": "*content",
+     "sort": "name"}
+revisions_078: 
+  created_at: 2010-04-15 18:42:31.1947
+  card_id: "320"
+  updated_at: 2010-04-15 18:42:31.1947
+  created_by: "1"
+  id: "3199"
+  content: ""
+revisions_159: 
+  created_at: 2009-04-29 15:32:20.288221
+  card_id: "171"
+  updated_at: 2009-04-29 15:32:20.288221
+  created_by: "3"
+  id: "2336"
+  content: |-
+    <h1>[[_left+*linkers|What links to "{{_left|name}}"?]]<br></h1>
+    <blockquote>
+    <p>{{_left+*linkers}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h1>[[_left+*includers|What includes "{{_left|name}}"?]]</h1>
+    <blockquote>
+    <p>{{_left+*includers}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h1>[[_left+*tagged|What's tagged "{{_left|name}}"?]]</h1>
+    <blockquote>
+    <p>{{_left+*tagged}}</p>
+    </blockquote>
+revisions_185: 
+  created_at: 2009-05-21 11:52:53.612884
+  card_id: "201"
+  updated_at: 2009-05-21 11:52:53.612884
+  created_by: "4"
+  id: "2403"
+  content: ""
+revisions_293: 
+  created_at: 2009-12-02 16:02:48.348213
+  card_id: "265"
+  updated_at: 2009-12-02 16:02:48.348213
+  created_by: "1"
+  id: "3006"
+  content: "{\"name\":\"_self\"}"
+revisions_267: 
+  created_at: 2010-04-19 16:46:20.363822
+  card_id: "361"
+  updated_at: 2010-04-19 16:46:20.363822
+  created_by: "3"
+  id: "3466"
+  content: "{\"found_by\":\"Setting+*type cards\"}"
+revisions_079: 
+  created_at: 2009-04-13 10:14:24.495363
+  card_id: "164"
+  updated_at: 2009-04-13 10:14:24.495363
+  created_by: "4"
+  id: "1955"
+  content: "{\"view\": \"name\", \"sort\": \"name\", \"limit\": 500}"
+revisions_186: 
+  created_at: 2010-04-20 17:58:52.430828
+  card_id: "382"
+  updated_at: 2010-04-20 17:58:52.430828
+  created_by: "3"
+  id: "3619"
+  content: "[[_left+email config]]"
+revisions_294: 
+  created_at: 2009-12-02 16:02:48.760237
+  card_id: "266"
+  updated_at: 2009-12-02 16:02:48.760237
+  created_by: "1"
+  id: "3007"
   content: ""
 revisions_268: 
-  created_at: 2010-01-07 14:57:31.99849
-  card_id: "317"
-  updated_at: 2010-01-07 14:57:31.99849
-  created_by: "1"
-  id: "3185"
-  content: ""
+  created_at: 2010-04-19 17:04:33.8495
+  card_id: "362"
+  updated_at: 2010-04-19 17:04:33.8495
+  created_by: "3"
+  id: "3475"
+  content: "{\"not\":{\"or\":{\"type\":[\"in\",\"Set\",\"Setting\"], \"left\":{\"type\":\"Set\"}, \"referred_to_by\":\"*ignore\"}}}"
 revisions_187: 
-  created_at: 2009-07-27 18:00:53.544589
-  card_id: "235"
-  updated_at: 2009-07-27 18:00:53.544589
-  created_by: "4"
-  id: "2743"
-  content: "[[John Abbe]]"
+  created_at: 2010-04-20 17:58:52.742846
+  card_id: "383"
+  updated_at: 2010-04-20 17:58:52.742846
+  created_by: "3"
+  id: "3620"
+  content: ""
 revisions_295: 
-  created_at: 2010-01-07 14:57:56.228178
-  card_id: "340"
-  updated_at: 2010-01-07 14:57:56.228178
+  created_at: 2009-12-02 16:02:48.856242
+  card_id: "267"
+  updated_at: 2009-12-02 16:02:48.856242
   created_by: "1"
-  id: "3219"
-  content: ""
+  id: "3008"
+  content: "{\"type\":\"_self\"}"
 revisions_269: 
-  created_at: 2010-01-07 14:57:32.176886
-  card_id: "318"
-  updated_at: 2010-01-07 14:57:32.176886
-  created_by: "1"
-  id: "3186"
-  content: ""
+  created_at: 2010-04-19 17:09:48.602638
+  card_id: "154"
+  updated_at: 2010-04-19 17:09:48.602638
+  created_by: "3"
+  id: "3477"
+  content: |-
+    [[Ethan McCutchen]]
+    [[John Abbe]]
+    [[Lewis Hoffman]]
+    [[*ignore]]
+    [[cards to copy to new Wagns]]
+    [[new]]
+    [[all non-star cards]]
+    [[cards by type]]
+    [[Cardtype descriptions]]
+    [[Basic+*watchers]]
+    [[related subtabs - universal]]
+    [[Settings values]]
+    [[not set or setting]]
 revisions_188: 
-  created_at: 2009-07-27 18:00:55.420695
-  card_id: "236"
-  updated_at: 2009-07-27 18:00:55.420695
-  created_by: "4"
-  id: "2744"
-  content: "[[John Abbe]]"
+  created_at: 2010-04-20 17:59:09.620456
+  card_id: "384"
+  updated_at: 2010-04-20 17:59:09.620456
+  created_by: "3"
+  id: "3621"
+  content: ""
 revisions_296: 
-  created_at: 2010-01-07 14:57:57.263284
-  card_id: "341"
-  updated_at: 2010-01-07 14:57:57.263284
+  created_at: 2009-12-02 16:02:49.17226
+  card_id: "268"
+  updated_at: 2009-12-02 16:02:49.17226
   created_by: "1"
-  id: "3220"
-  content: ""
+  id: "3009"
+  content: "{\"right\":\"_self\"}"
 revisions_189: 
-  created_at: 2009-07-27 18:00:57.492814
-  card_id: "237"
-  updated_at: 2009-07-27 18:00:57.492814
+  created_at: 2009-05-21 12:21:57.565928
+  card_id: "202"
+  updated_at: 2009-05-21 12:21:57.565928
   created_by: "4"
-  id: "2745"
-  content: "[[John Abbe]]"
+  id: "2408"
+  content: <p>These cards allow unrestricted use of HTML. See the [[http://wagn.org/wagn/HTML|documentation on HTML cards]].</p>
 revisions_297: 
-  created_at: 2010-01-07 14:57:58.833161
-  card_id: "342"
-  updated_at: 2010-01-07 14:57:58.833161
+  created_at: 2009-12-02 16:02:49.8763
+  card_id: "269"
+  updated_at: 2009-12-02 16:02:49.8763
   created_by: "1"
-  id: "3222"
-  content: ""
+  id: "3010"
+  content: "{\"right\":\"_self\"}"
 revisions_298: 
-  created_at: 2010-01-07 14:57:59.394365
-  card_id: "343"
-  updated_at: 2010-01-07 14:57:59.394365
+  created_at: 2009-12-02 16:02:50.668345
+  card_id: "270"
+  updated_at: 2009-12-02 16:02:50.668345
   created_by: "1"
-  id: "3223"
-  content: ""
+  id: "3011"
+  content: "{\"type\":\"_self\"}"
 revisions_001: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "89"
@@ -1832,12 +2131,12 @@ revisions_001:
   id: "311"
   content: ""
 revisions_299: 
-  created_at: 2010-01-07 14:58:00.505921
-  card_id: "344"
-  updated_at: 2010-01-07 14:58:00.505921
+  created_at: 2009-12-02 16:02:51.648401
+  card_id: "271"
+  updated_at: 2009-12-02 16:02:51.648401
   created_by: "1"
-  id: "3225"
-  content: ""
+  id: "3012"
+  content: "{\"type\":\"_self\"}"
 revisions_002: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "43"
@@ -1846,12 +2145,12 @@ revisions_002:
   id: "43"
   content: ""
 revisions_110: 
-  created_at: 2009-04-27 22:08:47.836281
-  card_id: "189"
-  updated_at: 2009-04-27 22:08:47.836281
-  created_by: "4"
-  id: "2278"
-  content: <img src="http://s3.amazonaws.com/en.indecks.net/card_images/25/arrow_medium.png">
+  created_at: 2009-04-27 15:14:44.539207
+  card_id: "187"
+  updated_at: 2009-04-27 15:14:44.539207
+  created_by: "2"
+  id: "2276"
+  content: ""
 revisions_003: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "10"
@@ -1861,23 +2160,18 @@ revisions_003:
   content: ""
 revisions_030: 
   created_at: 2009-04-06 14:11:12.948281
-  card_id: "138"
+  card_id: "44"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
-  id: "1550"
-  content: ""
+  id: "44"
+  content: "{\"linked_to_by\":\"_self\"}"
 revisions_111: 
-  created_at: 2009-04-27 22:09:19.522848
-  card_id: "151"
-  updated_at: 2009-04-27 22:09:19.522848
+  created_at: 2009-05-22 10:10:51.466465
+  card_id: "205"
+  updated_at: 2009-05-22 10:10:51.466465
   created_by: "4"
-  id: "2279"
-  content: |-
-    <p>[[Config|Configure your wagn]]</p>
-    <p>&nbsp;</p>
-    <p>[[*account|Accounts]]</p>
-    <p>[[Roles]]</p>
-    <p>[[/admin/tasks|Global permissions]]</p>
+  id: "2430"
+  content: ""
 revisions_004: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "1"
@@ -1886,274 +2180,237 @@ revisions_004:
   id: "1541"
   content: <p>This is the account that makes any automated updates &mdash; cards created when someone signs up, link updates when renaming cards, etc.</p>
 revisions_300: 
-  created_at: 2010-01-07 14:58:01.582375
-  card_id: "345"
-  updated_at: 2010-01-07 14:58:01.582375
+  created_at: 2009-12-02 16:02:52.656459
+  card_id: "272"
+  updated_at: 2009-12-02 16:02:52.656459
   created_by: "1"
-  id: "3227"
-  content: ""
+  id: "3013"
+  content: "{\"type\":\"_self\"}"
 revisions_112: 
-  created_at: 2009-04-27 23:08:41.588201
-  card_id: "190"
-  updated_at: 2009-04-27 23:08:41.588201
-  created_by: "4"
-  id: "2290"
+  created_at: 2010-04-15 18:42:35.358937
+  card_id: "321"
+  updated_at: 2010-04-15 18:42:35.358937
+  created_by: "1"
+  id: "3201"
   content: ""
 revisions_005: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "69"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "958"
-  content: <p>Thank you for signing up with {{*title}}. Your new account information is on it's way to your emailbox now and should be there soon.</p>
-revisions_031: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "44"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "44"
-  content: "{\"linked_to_by\":\"_self\"}"
-revisions_301: 
-  created_at: 2010-01-07 14:58:02.278458
-  card_id: "346"
-  updated_at: 2010-01-07 14:58:02.278458
-  created_by: "1"
-  id: "3228"
-  content: ""
-revisions_113: 
-  created_at: 2009-04-27 23:08:41.672206
-  card_id: "191"
-  updated_at: 2009-04-27 23:08:41.672206
-  created_by: "4"
-  id: "2291"
-  content: "{\"found_by\": \"_self\", \"sort\": \"create\"}"
-revisions_220: 
-  created_at: 2009-12-03 18:15:55.743166
-  card_id: "280"
-  updated_at: 2009-12-03 18:15:55.743166
-  created_by: "4"
-  id: "3040"
-  content: ""
-revisions_006: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "128"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "1407"
   content: ""
-revisions_032: 
+revisions_031: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "113"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "1242"
   content: ""
-revisions_302: 
-  created_at: 2010-01-07 14:58:02.960374
-  card_id: "347"
-  updated_at: 2010-01-07 14:58:02.960374
+revisions_301: 
+  created_at: 2009-12-02 16:02:53.332497
+  card_id: "66"
+  updated_at: 2009-12-02 16:02:53.332497
   created_by: "1"
-  id: "3229"
-  content: ""
-revisions_114: 
-  created_at: 2009-04-27 23:19:55.919386
-  card_id: "192"
-  updated_at: 2009-04-27 23:19:55.919386
-  created_by: "4"
-  id: "2303"
-  content: ""
-revisions_140: 
-  created_at: 2009-06-01 12:55:14.259141
-  card_id: "68"
-  updated_at: 2009-06-01 12:55:14.259141
-  created_by: "4"
-  id: "2494"
+  id: "3014"
   content: |-
-    <p>Thanks!&nbsp; Your invitation is on its way.</p>
+    <p>To let users sign up with no approval process, allow "Anyone" to [[/card/options/Account_Request|create account requests]], and give "Anyone" the [[/admin/tasks |global permission]] to create accounts.&nbsp; Newly registered users will be sent an email with a password and the following details:</p>
     <p>&nbsp;</p>
-    <p>See [[Account Requests]].</p>
-revisions_221: 
-  created_at: 2009-12-03 23:45:55.618845
-  card_id: "282"
-  updated_at: 2009-12-03 23:45:55.618845
+    <p>&nbsp;</p>
+    <h2>Email Subject<br></h2>
+    <blockquote>
+    <p>{{*signup+*subject|type:Phrase}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h2>Email Message</h2>
+    <blockquote>
+    <p>{{*signup+*message|closed;type:PlainText}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <p>As the email is sent, the<strong> person signing up will be sent here</strong>:</p>
+    <blockquote>
+    <p><span>HTTP:// <em>(YOUR WAGN'S DOMAIN)</em></span><em> </em>{{+*thanks}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+revisions_113: 
+  created_at: 2010-04-15 18:42:37.675069
+  card_id: "322"
+  updated_at: 2010-04-15 18:42:37.675069
+  created_by: "1"
+  id: "3203"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <h1>Accounts with the {{_self|name}} role<br></h1>
+    <blockquote>
+    <p>{{+*members}}</p>
+    </blockquote>
+revisions_220: 
+  created_at: 2009-06-09 18:15:35.256414
+  card_id: "85"
+  updated_at: 2009-06-09 18:15:35.256414
   created_by: "4"
-  id: "3042"
-  content: "{\"type\": \"HTML\"}"
-revisions_007: 
+  id: "2565"
+  content: |-
+    <p>[[/card/new|Add a card]]</p>
+    <p>&nbsp;</p>
+    <p><em>Double-click here (or in any card) to edit.</em></p>
+revisions_006: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "34"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "34"
   content: "{\"part\":\"_self\"}"
-revisions_033: 
+revisions_032: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "92"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "349"
   content: ""
-revisions_303: 
-  created_at: 2010-01-07 14:58:03.554299
-  card_id: "348"
-  updated_at: 2010-01-07 14:58:03.554299
+revisions_302: 
+  created_at: 2009-12-02 16:02:53.824525
+  card_id: "273"
+  updated_at: 2009-12-02 16:02:53.824525
   created_by: "1"
-  id: "3230"
-  content: ""
-revisions_115: 
-  created_at: 2009-04-27 23:19:56.219403
-  card_id: "193"
-  updated_at: 2009-04-27 23:19:56.219403
-  created_by: "4"
-  id: "2304"
-  content: |
-    {"found_by": "_self", "sort": "content"}
-
-revisions_141: 
-  created_at: 2009-06-03 12:04:23.543816
-  card_id: "56"
-  updated_at: 2009-06-03 12:04:23.543816
-  created_by: "4"
-  id: "2506"
-  content: |-
-    <p><em>Any signed-in user with the [[/admin/tasks|global permission]] to "create accounts" can invite new users via email.</em></p>
-    <p>&nbsp;</p>
-    <h2>Default subject</h2>
-    <blockquote>
-    <p>{{+*subject|type:Phrase}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h2>Default message</h2>
-    <blockquote>
-    <p>{{+*message|type:PlainText}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <p><strong>After sending an invitation, you're taken here:</strong><span><strong></strong></span></p>
-    <blockquote>
-    <p>&nbsp; <span>HTTP:// <em>(YOUR WAGN'S DOMAIN)</em></span><em> </em>{{+*thanks}}</p>
-    </blockquote>
-revisions_222: 
-  created_at: 2009-12-08 12:24:58.433859
-  card_id: "283"
-  updated_at: 2009-12-08 12:24:58.433859
+  id: "3015"
+  content: "{\"type\":\"_self\"}"
+revisions_114: 
+  created_at: 2010-04-15 18:42:38.423112
+  card_id: "323"
+  updated_at: 2010-04-15 18:42:38.423112
   created_by: "1"
-  id: "3059"
+  id: "3204"
   content: ""
-revisions_008: 
+revisions_140: 
+  created_at: 2010-04-15 18:43:18.970463
+  card_id: "345"
+  updated_at: 2010-04-15 18:43:18.970463
+  created_by: "1"
+  id: "3238"
+  content: ""
+revisions_221: 
+  created_at: 2009-06-09 18:19:44.815134
+  card_id: "211"
+  updated_at: 2009-06-09 18:19:44.815134
+  created_by: "4"
+  id: "2570"
+  content: <p>Anyone who is signed in has this role. [[http://wagn.org/wagn/account|Learn more about accounts]].</p>
+revisions_007: 
   created_at: 2009-04-06 14:11:12.948281
-  card_id: "130"
+  card_id: "34"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "1409"
   content: ""
-revisions_034: 
+revisions_033: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "110"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "1225"
   content: ""
-revisions_060: 
-  created_at: 2009-04-09 16:05:12.262003
-  card_id: "162"
-  updated_at: 2009-04-09 16:05:12.262003
-  created_by: "3"
-  id: "1872"
-  content: ""
-revisions_304: 
-  created_at: 2010-01-07 14:58:04.141247
-  card_id: "349"
-  updated_at: 2010-01-07 14:58:04.141247
+revisions_303: 
+  created_at: 2009-12-02 16:02:55.724633
+  card_id: "255"
+  updated_at: 2009-12-02 16:02:55.724633
   created_by: "1"
-  id: "3231"
+  id: "3019"
   content: ""
-revisions_223: 
-  created_at: 2009-12-08 12:24:58.80588
-  card_id: "284"
-  updated_at: 2009-12-08 12:24:58.80588
+revisions_115: 
+  created_at: 2010-04-15 18:42:42.563348
+  card_id: "324"
+  updated_at: 2010-04-15 18:42:42.563348
   created_by: "1"
-  id: "3060"
+  id: "3206"
   content: ""
-revisions_116: 
-  created_at: 2009-04-27 23:21:34.353956
-  card_id: "194"
-  updated_at: 2009-04-27 23:21:34.353956
-  created_by: "4"
-  id: "2305"
+revisions_141: 
+  created_at: 2010-04-15 18:43:19.778509
+  card_id: "346"
+  updated_at: 2010-04-15 18:43:19.778509
+  created_by: "1"
+  id: "3239"
   content: ""
-revisions_142: 
-  created_at: 2009-06-07 14:02:15.75763
-  card_id: "147"
-  updated_at: 2009-06-07 14:02:15.75763
+revisions_222: 
+  created_at: 2009-06-09 18:24:29.182159
+  card_id: "210"
+  updated_at: 2009-06-09 18:24:29.182159
   created_by: "4"
-  id: "2516"
-  content: <p>Administrators automatically have all of the [[/admin/tasks|global permissions]], and has the power to see, edit and delete every card in the system regardless of its permissions settings. See the [[http://wagn.org/wagn/permissions|documentation about permissions]].</p>
-revisions_009: 
+  id: "2571"
+  content: <p>Anyone who is not signed in has this role. Edits they make will be credited to [[Anonymous]]. [[http://wagn.org/wagn/account|Learn more about accounts]].</p>
+revisions_008: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "35"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "35"
   content: ""
-revisions_035: 
+revisions_034: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "13"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "13"
   content: ""
-revisions_061: 
+revisions_060: 
   created_at: 2009-04-24 09:57:11.417349
   card_id: "168"
   updated_at: 2009-04-24 09:57:11.417349
   created_by: "4"
   id: "1988"
   content: ""
-revisions_305: 
-  created_at: 2010-01-07 14:58:04.733617
-  card_id: "350"
-  updated_at: 2010-01-07 14:58:04.733617
+revisions_330: 
+  created_at: 2009-12-17 11:52:04.651069
+  card_id: "274"
+  updated_at: 2009-12-17 11:52:04.651069
   created_by: "1"
-  id: "3232"
-  content: ""
-revisions_250: 
-  created_at: 2009-12-21 16:02:41.580925
-  card_id: "309"
-  updated_at: 2009-12-21 16:02:41.580925
+  id: "3088"
+  content: "{}"
+revisions_304: 
+  created_at: 2009-12-02 16:02:55.948646
+  card_id: "276"
+  updated_at: 2009-12-02 16:02:55.948646
   created_by: "1"
-  id: "3137"
-  content: ""
-revisions_224: 
-  created_at: 2009-12-08 12:25:00.053952
-  card_id: "285"
-  updated_at: 2009-12-08 12:25:00.053952
+  id: "3020"
+  content: "1"
+revisions_223: 
+  created_at: 2009-09-12 00:22:17.260277
+  card_id: "245"
+  updated_at: 2009-09-12 00:22:17.260277
+  created_by: "4"
+  id: "2886"
+  content: <p>The maximum number of items allowed in a Pointer. Only works with +*input set to list, checkbox or multiselect.</p>
+revisions_116: 
+  created_at: 2010-04-15 18:42:43.423397
+  card_id: "325"
+  updated_at: 2010-04-15 18:42:43.423397
   created_by: "1"
-  id: "3061"
+  id: "3207"
   content: ""
-revisions_143: 
-  created_at: 2009-09-08 12:00:54.967679
-  card_id: "80"
-  updated_at: 2009-09-08 12:00:54.967679
-  created_by: "3"
-  id: "2877"
-  content: |-
-    <h1>Welcome to your new Wagn!</h1>
-    <p>&nbsp;</p>
-    <p>To get started, [[Config|set some important configuration options]].</p>
-    <p>&nbsp;</p>
-    <p>[[http://wagn.org/wagn/configuration|About Wagn Configuration]]</p>
-    <p>[[http://wagn.org/wagn/Documentation|Other Documentation]]</p>
-    <p>[[http://wagn.org/wagn/Support|Support]]</p>
-    <p>&nbsp;</p>
-    <p><em>[[http://www.flickr.com/photos/fmgbain/3122673091/|logo photo by fmbgain]]</em></p>
-revisions_036: 
+revisions_142: 
+  created_at: 2010-04-15 18:43:20.478549
+  card_id: "347"
+  updated_at: 2010-04-15 18:43:20.478549
+  created_by: "1"
+  id: "3240"
+  content: ""
+revisions_009: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "131"
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  id: "1410"
+  content: ""
+revisions_035: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "45"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "45"
   content: ""
-revisions_062: 
+revisions_061: 
   created_at: 2009-04-09 15:53:18.444384
   card_id: "114"
   updated_at: 2009-04-09 15:53:18.444384
@@ -2177,54 +2434,51 @@ revisions_062:
     </blockquote>
     <p><em>Cards that include <strong>{{_left|name}}</strong>:</em></p>
     <blockquote>
-    <p>{{_left+*includers}}</p>
+    <p>{{_left+*inclusions}}</p>
     </blockquote>
     <p>&nbsp;</p>
-revisions_117: 
-  created_at: 2009-04-27 23:21:34.457961
-  card_id: "195"
-  updated_at: 2009-04-27 23:21:34.457961
+revisions_331: 
+  created_at: 2009-12-20 12:29:16.268866
+  card_id: "259"
+  updated_at: 2009-12-20 12:29:16.268866
   created_by: "4"
-  id: "2306"
-  content: |
-    {"found_by": "_self", "dir": "desc"}
-
-revisions_306: 
-  created_at: 2010-01-07 14:58:05.324897
-  card_id: "351"
-  updated_at: 2010-01-07 14:58:05.324897
+  id: "3090"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <h2>{{_self|name}} Cards</h2>
+    <blockquote>
+    <p>{{+*type cards}}</p>
+    </blockquote>
+revisions_305: 
+  created_at: 2009-12-02 16:02:56.100655
+  card_id: "256"
+  updated_at: 2009-12-02 16:02:56.100655
   created_by: "1"
-  id: "3233"
+  id: "3021"
   content: ""
-revisions_251: 
-  created_at: 2009-12-22 06:45:59.586702
-  card_id: "310"
-  updated_at: 2009-12-22 06:45:59.586702
+revisions_250: 
+  created_at: 2009-07-27 17:16:06.886527
+  card_id: "228"
+  updated_at: 2009-07-27 17:16:06.886527
   created_by: "4"
-  id: "3140"
-  content: "{\"right\":\"_self\"}"
-revisions_225: 
-  created_at: 2009-12-08 12:25:02.230624
-  card_id: "286"
-  updated_at: 2009-12-08 12:25:02.230624
+  id: "2687"
+  content: "[[John Abbe]]"
+revisions_224: 
+  created_at: 2009-06-09 18:25:35.490326
+  card_id: "15"
+  updated_at: 2009-06-09 18:25:35.490326
+  created_by: "4"
+  id: "2573"
+  content: <p>Edits made by people who are not signed in are credited to Anonymous. [[http://wagn.org/wagn/account|Learn more about accounts]].</p>
+revisions_143: 
+  created_at: 2010-04-15 18:43:21.190589
+  card_id: "348"
+  updated_at: 2010-04-15 18:43:21.190589
   created_by: "1"
-  id: "3063"
+  id: "3241"
   content: ""
-revisions_144: 
-  created_at: 2009-09-08 16:14:41.49172
-  card_id: "241"
-  updated_at: 2009-09-08 16:14:41.49172
-  created_by: "4"
-  id: "2878"
-  content: ""
-revisions_170: 
-  created_at: 2009-09-24 12:59:50.421303
-  card_id: "246"
-  updated_at: 2009-09-24 12:59:50.421303
-  created_by: "4"
-  id: "2898"
-  content: <p>[[http://wagn.org/wagn/Pointer|Learn more about Pointers' input interfaces.]]</p>
-revisions_037: 
+revisions_036: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "95"
   updated_at: 2009-04-06 14:11:12.948281
@@ -2233,7 +2487,7 @@ revisions_037:
   content: |-
     {"edited_by": "_self",
      "view": "change"}
-revisions_063: 
+revisions_062: 
   created_at: 2009-04-09 16:39:48.420147
   card_id: "105"
   updated_at: 2009-04-09 16:39:48.420147
@@ -2246,61 +2500,158 @@ revisions_063:
     <blockquote>
     <p>{{+*members}}</p>
     </blockquote>
-revisions_118: 
-  created_at: 2009-04-28 10:01:16.450648
-  card_id: "196"
-  updated_at: 2009-04-28 10:01:16.450648
-  created_by: "4"
-  id: "2318"
-  content: johnca@ourpla.net
-revisions_307: 
-  created_at: 2010-01-07 14:58:07.64234
-  card_id: "352"
-  updated_at: 2010-01-07 14:58:07.64234
+revisions_117: 
+  created_at: 2010-04-15 18:42:44.251444
+  card_id: "326"
+  updated_at: 2010-04-15 18:42:44.251444
   created_by: "1"
-  id: "3236"
+  id: "3208"
   content: ""
-revisions_252: 
-  created_at: 2009-12-22 06:47:13.309697
-  card_id: "83"
-  updated_at: 2009-12-22 06:47:13.309697
-  created_by: "4"
-  id: "3145"
-  content: <p>Contents will appear on sidebar.</p>
-revisions_226: 
-  created_at: 2009-12-08 12:25:04.61876
-  card_id: "287"
-  updated_at: 2009-12-08 12:25:04.61876
+revisions_332: 
+  created_at: 2009-12-21 10:48:26.615429
+  card_id: "297"
+  updated_at: 2009-12-21 10:48:26.615429
+  created_by: "3"
+  id: "3093"
+  content: |-
+    <p><span>
+    <div>
+    <p>Sets define a group of cards to which a setting will be applied. [[http://www.wagn.org/wagn/Setting|Learn more about settings.]]</p>
+    </div>
+    </span></p>
+revisions_306: 
+  created_at: 2009-12-02 16:02:56.560681
+  card_id: "277"
+  updated_at: 2009-12-02 16:02:56.560681
   created_by: "1"
-  id: "3064"
-  content: ""
-revisions_171: 
-  created_at: 2009-07-03 13:26:08.954695
-  card_id: "224"
-  updated_at: 2009-07-03 13:26:08.954695
+  id: "3022"
+  content: description
+revisions_251: 
+  created_at: 2009-07-27 17:19:41.983755
+  card_id: "229"
+  updated_at: 2009-07-27 17:19:41.983755
   created_by: "4"
-  id: "2646"
-  content: "{\"type\": \"Cardtype\", \"sort\": \"name\", \"append\": \"description\"}"
-revisions_038: 
+  id: "2698"
+  content: "[[John Abbe]]"
+revisions_225: 
+  created_at: 2009-06-09 18:32:14.435488
+  card_id: "212"
+  updated_at: 2009-06-09 18:32:14.435488
+  created_by: "4"
+  id: "2574"
+  content: <p>Toggles simply indicate yes or no. [[http://wagn.org/wagn/Toggle|Learn more about Toggles]].</p>
+revisions_144: 
+  created_at: 2010-04-15 18:43:21.858627
+  card_id: "349"
+  updated_at: 2010-04-15 18:43:21.858627
+  created_by: "1"
+  id: "3242"
+  content: ""
+revisions_170: 
+  created_at: 2010-04-20 17:35:20.945212
+  card_id: "369"
+  updated_at: 2010-04-20 17:35:20.945212
+  created_by: "3"
+  id: "3607"
+  content: "[[_left+email config]]"
+revisions_037: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "115"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "1253"
   content: ""
-revisions_064: 
+revisions_063: 
   created_at: 2009-04-10 14:49:40.07942
   card_id: "161"
   updated_at: 2009-04-10 14:49:40.07942
   created_by: "3"
   id: "1946"
   content: "{\"type\":\"Cardtype\",\"append\":\"*type cards\",\"sort\":\"name\"}"
-revisions_090: 
-  created_at: 2009-04-24 11:21:58.392125
-  card_id: "17"
-  updated_at: 2009-04-24 11:21:58.392125
+revisions_118: 
+  created_at: 2010-04-15 18:42:44.987486
+  card_id: "327"
+  updated_at: 2010-04-15 18:42:44.987486
+  created_by: "1"
+  id: "3209"
+  content: ""
+revisions_333: 
+  created_at: 2009-12-21 13:05:37.455487
+  card_id: "300"
+  updated_at: 2009-12-21 13:05:37.455487
+  created_by: "3"
+  id: "3101"
+  content: "{\"right\":\"_self\"}"
+revisions_307: 
+  created_at: 2009-12-02 16:02:56.72069
+  card_id: "252"
+  updated_at: 2009-12-02 16:02:56.72069
+  created_by: "1"
+  id: "3023"
+  content: ""
+revisions_252: 
+  created_at: 2009-07-27 17:19:53.188393
+  card_id: "230"
+  updated_at: 2009-07-27 17:19:53.188393
   created_by: "4"
-  id: "2066"
+  id: "2699"
+  content: "[[John Abbe]]"
+revisions_226: 
+  created_at: 2009-06-09 18:34:02.138282
+  card_id: "213"
+  updated_at: 2009-06-09 18:34:02.138282
+  created_by: "4"
+  id: "2575"
+  content: <p><span><span>Pointers have one or more items in them, each "pointing" to another card. [[http://wagn.org/wagn/Pointer|Learn more about Pointers]].<br></span></span></p>
+revisions_171: 
+  created_at: 2010-04-20 17:40:17.758166
+  card_id: "371"
+  updated_at: 2010-04-20 17:40:17.758166
+  created_by: "3"
+  id: "3608"
+  content: ""
+revisions_038: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "93"
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  id: "350"
+  content: "{\"edited\": \"_self\"} "
+revisions_064: 
+  created_at: 2010-03-22 15:29:18.048241
+  card_id: "53"
+  updated_at: 2010-03-22 15:29:18.048241
+  created_by: "3"
+  id: "3195"
+  content: |
+    width: '100%',
+    auto_resize : true,
+    relative_urls: false,
+    theme : "advanced",
+    theme_advanced_buttons1 : "formatselect,bold,italic,separator,"
+    + "blockquote,bullist,numlist,hr,separator,undo,redo,"
+    + "code",                         
+    theme_advanced_buttons2 : "",                         
+    theme_advanced_buttons3 : "",                         
+    theme_advanced_path : false,                         
+    theme_advanced_toolbar_location : "top",  
+    theme_advanced_toolbar_align : "left", 
+    theme_advanced_resizing : true,
+    theme_advanced_resize_horizontal : false,                      
+    theme_advanced_statusbar_location : "bottom",
+    theme_advanced_blockformats : "p,h1,h2",
+    content_css : '/stylesheets/defaults.css,/card/view/*css?layout=none',
+    extended_valid_elements : "a[name|href|target|title|onclick],"
+    + "img[class|src|border=0|alt|title|hspace|vspace|width|height|"
+    + "align|onmouseover|onmouseout|name],hr[class|width|size|noshade],"
+    + "font[face|size|color|style],span[class|align|style]"          
+
+revisions_090: 
+  created_at: 2009-04-24 11:17:11.980144
+  card_id: "88"
+  updated_at: 2009-04-24 11:17:11.980144
+  created_by: "4"
+  id: "2058"
   content: |-
     <p>{{+description}}</p>
     <p>&nbsp;</p>
@@ -2311,60 +2662,64 @@ revisions_090:
     <p>{{+*type cards}}</p>
     </blockquote>
 revisions_119: 
-  created_at: 2009-04-29 08:47:58.913385
-  card_id: "188"
-  updated_at: 2009-04-29 08:47:58.913385
-  created_by: "4"
-  id: "2327"
-  content: <p><strong>If you have questions</strong> see the [[http://wagn.org/wagn/Documentation|Wagn documentation]] or leave a question here:</p>
+  created_at: 2010-04-15 18:42:48.703698
+  card_id: "328"
+  updated_at: 2010-04-15 18:42:48.703698
+  created_by: "1"
+  id: "3211"
+  content: ""
 revisions_145: 
-  created_at: 2009-09-08 16:14:42.383771
-  card_id: "242"
-  updated_at: 2009-09-08 16:14:42.383771
-  created_by: "4"
-  id: "2879"
+  created_at: 2010-04-15 18:43:22.618671
+  card_id: "350"
+  updated_at: 2010-04-15 18:43:22.618671
+  created_by: "1"
+  id: "3243"
   content: ""
+revisions_334: 
+  created_at: 2009-12-21 13:08:21.588911
+  card_id: "299"
+  updated_at: 2009-12-21 13:08:21.588911
+  created_by: "3"
+  id: "3106"
+  content: "<p>The type of editor for a set of [[Pointer]] cards.&nbsp; Can be: list, radio, checkbox, select, multiselect</p>"
 revisions_308: 
-  created_at: 2010-01-07 14:58:08.302428
-  card_id: "353"
-  updated_at: 2010-01-07 14:58:08.302428
+  created_at: 2009-12-02 16:02:58.756806
+  card_id: "120"
+  updated_at: 2009-12-02 16:02:58.756806
   created_by: "1"
-  id: "3237"
-  content: ""
+  id: "3025"
+  content: "[[*type subtab]]"
 revisions_253: 
-  created_at: 2009-12-22 06:49:58.561898
-  card_id: "312"
-  updated_at: 2009-12-22 06:49:58.561898
+  created_at: 2009-07-27 17:20:14.989975
+  card_id: "231"
+  updated_at: 2009-07-27 17:20:14.989975
   created_by: "4"
-  id: "3148"
-  content: "{\"name\":\"_self\"}"
+  id: "2700"
+  content: "[[John Abbe]]"
 revisions_227: 
-  created_at: 2009-12-08 12:25:06.826886
-  card_id: "288"
-  updated_at: 2009-12-08 12:25:06.826886
-  created_by: "1"
-  id: "3065"
-  content: ""
-revisions_172: 
-  created_at: 2009-07-03 13:30:46.784415
-  card_id: "7"
-  updated_at: 2009-07-03 13:30:46.784415
+  created_at: 2009-06-09 18:35:38.480179
+  card_id: "214"
+  updated_at: 2009-06-09 18:35:38.480179
   created_by: "4"
-  id: "2652"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <p>[[/new/Role|Add a new role]]</p>
-    <p>&nbsp;</p>
-    <h1>Roles</h1>
-    <p>{{+*type cards}}</p>
+  id: "2576"
+  content: <p>On Wagn you upload images to Image cards, then include them wherever you want the image to appear. [[http://wagn.org/wagn/Image|Learn more about Image cards]].</p>
+revisions_172: 
+  created_at: 2010-04-20 17:40:18.134187
+  card_id: "372"
+  updated_at: 2010-04-20 17:40:18.134187
+  created_by: "3"
+  id: "3609"
+  content: ""
 revisions_039: 
   created_at: 2009-04-06 14:11:12.948281
-  card_id: "93"
+  card_id: "125"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
-  id: "350"
-  content: "{\"edited\": \"_self\"} "
+  id: "1563"
+  content: |-
+    <p>Adding a +*options Search card to a Pointer limits the auto-completion to the cards returned by the Search. And if it's a simple search for a cardtype, then cards created through the pointer will automatically be set to that type.</p>
+    <p>&nbsp;</p>
+    <p>{{_left+*options}}</p>
 revisions_065: 
   created_at: 2009-04-09 15:56:19.024125
   card_id: "122"
@@ -2385,6 +2740,217 @@ revisions_065:
     </blockquote>
     <p>&nbsp;</p>
 revisions_091: 
+  created_at: 2009-04-24 11:18:02.66404
+  card_id: "5"
+  updated_at: 2009-04-24 11:18:02.66404
+  created_by: "4"
+  id: "2060"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
+    <p>&nbsp;</p>
+    <h1>{{_self|name}} Cards</h1>
+    <blockquote>
+    <p>{{+*type cards}}</p>
+    </blockquote>
+revisions_146: 
+  created_at: 2010-04-15 18:43:23.394715
+  card_id: "351"
+  updated_at: 2010-04-15 18:43:23.394715
+  created_by: "1"
+  id: "3244"
+  content: ""
+revisions_335: 
+  created_at: 2009-12-21 14:07:38.319923
+  card_id: "302"
+  updated_at: 2009-12-21 14:07:38.319923
+  created_by: "3"
+  id: "3123"
+  content: "{\"right\":\"_self\"}"
+revisions_309: 
+  created_at: 2010-04-20 08:41:38.309416
+  card_id: "298"
+  updated_at: 2010-04-20 08:41:38.309416
+  created_by: "4"
+  id: "3577"
+  content: |-
+    <p><span>
+    <div>
+    <p>Settings control various options about how a card looks and behaves. Each card's Options tab has a "settings" subtab that lets you configure the settings that apply to that card.</p>
+    <p>&nbsp;</p>
+    <p><em>[[http://www.wagn.org/wagn/Setting|Learn more about settings.]]</em></p>
+    </div>
+    </span></p>
+revisions_280: 
+  created_at: 2010-04-19 17:52:16.924808
+  card_id: "304"
+  updated_at: 2010-04-19 17:52:16.924808
+  created_by: "3"
+  id: "3512"
+  content: <p>Anti-spam setting.&nbsp; If checked will require non-signed-in users to complete a [[http://www.wagn.org/wagn/captcha|captcha]] before adding or editing cards in the [[set]].</p>
+revisions_254: 
+  created_at: 2009-07-27 17:21:13.381631
+  card_id: "232"
+  updated_at: 2009-07-27 17:21:13.381631
+  created_by: "4"
+  id: "2704"
+  content: "[[John Abbe]]"
+revisions_228: 
+  created_at: 2009-06-09 18:36:53.060865
+  card_id: "19"
+  updated_at: 2009-06-09 18:36:53.060865
+  created_by: "4"
+  id: "2579"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <p>[[/new/{{_self|name}}|add an {{_self|name}} card]]</p>
+    <p>&nbsp;</p>
+    <h2>{{_self|name}} Cards</h2>
+    <blockquote>
+    <p>{{+*type cards}}</p>
+    </blockquote>
+revisions_066: 
+  created_at: 2009-04-09 16:00:47.089005
+  card_id: "46"
+  updated_at: 2009-04-09 16:00:47.089005
+  created_by: "3"
+  id: "1870"
+  content: "{\"type\":\"_self\", \"sort\":\"name\"}"
+revisions_092: 
+  created_at: 2009-04-24 11:21:39.891071
+  card_id: "3"
+  updated_at: 2009-04-24 11:21:39.891071
+  created_by: "4"
+  id: "2065"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
+    <p>&nbsp;</p>
+    <h2>{{_self|name}} Cards</h2>
+    <blockquote>
+    <p>{{+*type cards}}</p>
+    </blockquote>
+revisions_147: 
+  created_at: 2010-04-15 18:43:25.386828
+  card_id: "352"
+  updated_at: 2010-04-15 18:43:25.386828
+  created_by: "1"
+  id: "3246"
+  content: ""
+revisions_173: 
+  created_at: 2010-04-20 17:40:18.282195
+  card_id: "373"
+  updated_at: 2010-04-20 17:40:18.282195
+  created_by: "3"
+  id: "3610"
+  content: |-
+    <p>{{+*from}}</p>
+    <p>{{+*to}}</p>
+    <p>{{+*cc}}</p>
+    <p>{{+*bcc}}</p>
+    <p>{{+*subject}}</p>
+    <p>{{+*message}}</p>
+    <p>{{+*attach}}</p>
+revisions_336: 
+  created_at: 2009-12-21 14:08:43.849124
+  card_id: "305"
+  updated_at: 2009-12-21 14:08:43.849124
+  created_by: "3"
+  id: "3126"
+  content: "{\"right\":\"_self\"}"
+revisions_281: 
+  created_at: 2010-04-19 17:54:32.161758
+  card_id: "364"
+  updated_at: 2010-04-19 17:54:32.161758
+  created_by: "3"
+  id: "3513"
+  content: ""
+revisions_255: 
+  created_at: 2009-07-27 17:28:59.190777
+  card_id: "176"
+  updated_at: 2009-07-27 17:28:59.190777
+  created_by: "4"
+  id: "2710"
+  content: |-
+    {"right": "*rform",
+     "not": {"found_by": "Related subtabs - universal"},
+     "limit": "50",
+     "sort": "name"}
+revisions_229: 
+  created_at: 2009-06-09 18:41:41.67522
+  card_id: "216"
+  updated_at: 2009-06-09 18:41:41.67522
+  created_by: "4"
+  id: "2581"
+  content: <p>People who have requested accounts but not yet been approved ([[http://wagn.org/wagn/account|learn more about accounts]]):</p>
+revisions_067: 
+  created_at: 2009-04-09 16:01:37.632355
+  card_id: "118"
+  updated_at: 2009-04-09 16:01:37.632355
+  created_by: "3"
+  id: "1871"
+  content: "[[*account]]"
+revisions_093: 
+  created_at: 2009-04-24 11:21:58.392125
+  card_id: "17"
+  updated_at: 2009-04-24 11:21:58.392125
+  created_by: "4"
+  id: "2066"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
+    <p>&nbsp;</p>
+    <h2>{{_self|name}} Cards</h2>
+    <blockquote>
+    <p>{{+*type cards}}</p>
+    </blockquote>
+revisions_148: 
+  created_at: 2010-04-15 18:43:27.302938
+  card_id: "353"
+  updated_at: 2010-04-15 18:43:27.302938
+  created_by: "1"
+  id: "3248"
+  content: ""
+revisions_174: 
+  created_at: 2010-04-20 17:57:56.915009
+  card_id: "374"
+  updated_at: 2010-04-20 17:57:56.915009
+  created_by: "3"
+  id: "3611"
+  content: "[[_left+email config]]"
+revisions_337: 
+  created_at: 2009-12-21 14:24:17.903769
+  card_id: "307"
+  updated_at: 2009-12-21 14:24:17.903769
+  created_by: "3"
+  id: "3133"
+  content: "{\"right\":\"_self\"}"
+revisions_282: 
+  created_at: 2010-04-19 17:54:32.345769
+  card_id: "365"
+  updated_at: 2010-04-19 17:54:32.345769
+  created_by: "3"
+  id: "3514"
+  content: <p>Configures email to be sent when card in [[set]] is created.</p>
+revisions_256: 
+  created_at: 2009-07-27 17:42:57.811856
+  card_id: "233"
+  updated_at: 2009-07-27 17:42:57.811856
+  created_by: "4"
+  id: "2720"
+  content: "[[John Abbe]]"
+revisions_068: 
+  created_at: 2009-04-09 16:16:27.739934
+  card_id: "99"
+  updated_at: 2009-04-09 16:16:27.739934
+  created_by: "3"
+  id: "1881"
+  content: "{\"member_of\": \"_self\", \"sort\":\"name\"}"
+revisions_094: 
   created_at: 2009-04-24 11:22:20.80627
   card_id: "18"
   updated_at: 2009-04-24 11:22:20.80627
@@ -2399,51 +2965,49 @@ revisions_091:
     <blockquote>
     <p>{{+*type cards}}</p>
     </blockquote>
-revisions_146: 
-  created_at: 2009-09-08 16:17:56.122703
-  card_id: "243"
-  updated_at: 2009-09-08 16:17:56.122703
+revisions_149: 
+  created_at: 2009-04-27 23:19:55.919386
+  card_id: "192"
+  updated_at: 2009-04-27 23:19:55.919386
   created_by: "4"
-  id: "2880"
+  id: "2303"
   content: ""
-revisions_309: 
-  created_at: 2010-01-07 14:58:09.410588
-  card_id: "354"
-  updated_at: 2010-01-07 14:58:09.410588
-  created_by: "1"
-  id: "3239"
-  content: ""
-revisions_280: 
-  created_at: 2010-01-07 14:57:42.377687
-  card_id: "329"
-  updated_at: 2010-01-07 14:57:42.377687
-  created_by: "1"
-  id: "3201"
-  content: ""
-revisions_254: 
-  created_at: 2009-12-22 06:49:58.709907
-  card_id: "313"
-  updated_at: 2009-12-22 06:49:58.709907
-  created_by: "4"
-  id: "3149"
-  content: |-
-    <p>works?</p>
-    <p>&nbsp;</p>
-revisions_228: 
-  created_at: 2009-12-08 12:25:08.839001
-  card_id: "289"
-  updated_at: 2009-12-08 12:25:08.839001
-  created_by: "1"
-  id: "3066"
-  content: ""
-revisions_066: 
-  created_at: 2009-04-09 16:00:47.089005
-  card_id: "46"
-  updated_at: 2009-04-09 16:00:47.089005
+revisions_175: 
+  created_at: 2010-04-20 17:57:57.147023
+  card_id: "375"
+  updated_at: 2010-04-20 17:57:57.147023
   created_by: "3"
-  id: "1870"
-  content: "{\"type\":\"_self\", \"sort\":\"name\"}"
-revisions_092: 
+  id: "3612"
+  content: ""
+revisions_338: 
+  created_at: 2009-12-21 16:02:41.580925
+  card_id: "309"
+  updated_at: 2009-12-21 16:02:41.580925
+  created_by: "1"
+  id: "3137"
+  content: ""
+revisions_283: 
+  created_at: 2009-11-11 23:01:09.519135
+  card_id: "257"
+  updated_at: 2009-11-11 23:01:09.519135
+  created_by: "4"
+  id: "2930"
+  content: "1"
+revisions_257: 
+  created_at: 2009-07-27 18:00:49.904381
+  card_id: "234"
+  updated_at: 2009-07-27 18:00:49.904381
+  created_by: "4"
+  id: "2742"
+  content: "[[John Abbe]]"
+revisions_069: 
+  created_at: 2009-04-24 09:02:48.340245
+  card_id: "167"
+  updated_at: 2009-04-24 09:02:48.340245
+  created_by: "4"
+  id: "1985"
+  content: "{\"type\": \"Cardtype\", \"sort\": \"name\", \"append\": \"*tform\"}"
+revisions_095: 
   created_at: 2009-04-24 11:22:32.530938
   card_id: "50"
   updated_at: 2009-04-24 11:22:32.530938
@@ -2458,56 +3022,72 @@ revisions_092:
     <blockquote>
     <p>{{+*type cards}}</p>
     </blockquote>
-revisions_147: 
-  created_at: 2009-09-08 16:17:56.550727
-  card_id: "244"
-  updated_at: 2009-09-08 16:17:56.550727
+revisions_176: 
+  created_at: 2009-08-19 14:38:27.057142
+  card_id: "206"
+  updated_at: 2009-08-19 14:38:27.057142
   created_by: "4"
-  id: "2881"
-  content: ""
-revisions_173: 
-  created_at: 2009-07-03 13:30:54.144834
-  card_id: "225"
-  updated_at: 2009-07-03 13:30:54.144834
-  created_by: "4"
-  id: "2653"
-  content: <p>Each [[user]] has one or more roles, and each role's capabilities are defined in [[/admin/tasks|Global permissions]] (except for the [[Administrator]] role, which has all permissions). [[http://wagn.org/wagn/Role|Learn more about roles]].</p>
-revisions_281: 
-  created_at: 2010-01-07 14:57:44.62742
-  card_id: "330"
-  updated_at: 2010-01-07 14:57:44.62742
-  created_by: "1"
-  id: "3203"
-  content: ""
-revisions_255: 
-  created_at: 2009-12-22 07:13:16.279325
-  card_id: "311"
-  updated_at: 2009-12-22 07:13:16.279325
-  created_by: "4"
-  id: "3152"
+  id: "2857"
   content: |-
-    <p><span> </span></p>
-    <div>
-    <p><span> </span></p>
-    <div>
-    <p>[[http://www.wagn.org/wagn/custom_help_text|Help text]] people will see when adding cards in the set.</p>
-    </div>
-    </div>
-revisions_229: 
-  created_at: 2009-12-08 12:25:11.511153
-  card_id: "290"
-  updated_at: 2009-12-08 12:25:11.511153
-  created_by: "1"
-  id: "3067"
-  content: ""
-revisions_067: 
-  created_at: 2009-04-09 16:01:37.632355
-  card_id: "118"
-  updated_at: 2009-04-09 16:01:37.632355
-  created_by: "3"
-  id: "1871"
-  content: "[[*account]]"
-revisions_093: 
+    [[Basic]]
+    [[Cardtype]]
+    [[Date]]
+    [[File]]
+    [[HTML]]
+    [[Image]]
+    [[Number]]
+    [[Phrase]]
+    [[PlainText]]
+    [[Pointer]]
+    [[Role]]
+    [[Ruby]]
+    [[Script]]
+    [[Search]]
+    [[Toggle]]
+revisions_339: 
+  created_at: 2009-12-22 06:45:59.586702
+  card_id: "310"
+  updated_at: 2009-12-22 06:45:59.586702
+  created_by: "4"
+  id: "3140"
+  content: "{\"right\":\"_self\"}"
+revisions_284: 
+  created_at: 2010-04-20 08:16:16.704218
+  card_id: "150"
+  updated_at: 2010-04-20 08:16:16.704218
+  created_by: "4"
+  id: "3517"
+  content: |-
+    <p>There are [[http://johnabbe.wagn.org/wagn/Contact_me|several ways to contact me]].</p>
+    <p>&nbsp;</p>
+    <p>[[new]] is where we talk about building this default content for new Wagns.</p>
+    <p>&nbsp;</p>
+    <blockquote>
+    <p>{{Setting+*type cards|item:name}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <p>Some helpful cards:</p>
+    <p>{{Cardtype descriptions|closed}}</p>
+    <p>{{Cardtype help text|closed}}</p>
+    <p>{{Cardtype forms|closed}}</p>
+    <p>{{Right forms that aren't subtabs|closed}}</p>
+    <p>&nbsp;</p>
+    <p>{{all non-star cards|closed}}</p>
+    <p>{{cards by type|closed}}</p>
+    <p>&nbsp;</p>
+    <p>Are these just for testing; can they be deleted?</p>
+    <p>{{User emails|closed}}</p>
+    <p>{{name and email+*right+*content|closed}}</p>
+    <p>&nbsp;</p>
+    <p>{{+*watching|open}}</p>
+revisions_258: 
+  created_at: 2009-07-27 18:00:53.544589
+  card_id: "235"
+  updated_at: 2009-07-27 18:00:53.544589
+  created_by: "4"
+  id: "2743"
+  content: "[[John Abbe]]"
+revisions_096: 
   created_at: 2009-04-24 11:22:49.867926
   card_id: "20"
   updated_at: 2009-04-24 11:22:49.867926
@@ -2522,54 +3102,33 @@ revisions_093:
     <blockquote>
     <p>{{+*type cards}}</p>
     </blockquote>
-revisions_148: 
-  created_at: 2009-06-09 18:15:35.256414
-  card_id: "85"
-  updated_at: 2009-06-09 18:15:35.256414
+revisions_177: 
+  created_at: 2009-08-19 14:43:16.022141
+  card_id: "240"
+  updated_at: 2009-08-19 14:43:16.022141
   created_by: "4"
-  id: "2565"
+  id: "2862"
   content: |-
-    <p>[[/card/new|Add a card]]</p>
-    <p>&nbsp;</p>
-    <p><em>Double-click here (or in any card) to edit.</em></p>
-revisions_174: 
-  created_at: 2009-07-06 17:38:24.270368
-  card_id: "63"
-  updated_at: 2009-07-06 17:38:24.270368
-  created_by: "3"
-  id: "2657"
-  content: |-
-    <p>People without an account can request one via a "Sign Up" link if you allow "Anyone" to [[/card/options/Account_Request|create account requests]].</p>
-    <p>&nbsp;</p>
-    <p>Unless [[*signup|approved automatically]], the <strong>request will be emailed to</strong>:</p>
-    <blockquote>
-    <p>{{+*to|closed;type:Phrase}}</p>
-    </blockquote>
-    <p><strong>and the requester will be redirected here:</strong></p>
-    <p>&nbsp;</p>
-    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span>HTTP:// <em>(YOUR WAGN'S DOMAIN)</em></span><em> </em>{{+*thanks}}</p>
-revisions_282: 
-  created_at: 2010-01-07 14:57:45.083177
-  card_id: "331"
-  updated_at: 2010-01-07 14:57:45.083177
-  created_by: "1"
-  id: "3204"
-  content: ""
-revisions_256: 
-  created_at: 2009-12-22 07:13:51.46133
-  card_id: "249"
-  updated_at: 2009-12-22 07:13:51.46133
+    {"type": "Cardtype",
+     "not": {"referred_to_by": "default cardtype"},
+     "append": "*tform",
+     "sort": "name"
+    }
+revisions_285: 
+  created_at: 2009-11-11 23:17:19.087118
+  card_id: "258"
+  updated_at: 2009-11-11 23:17:19.087118
   created_by: "4"
-  id: "3154"
-  content: <p>Wagn will autoname new cards of the specified type with the name you give here, and increment for each new card. [[http://wagn.org/wagn/Autonaming|Learn more.]]</p>
-revisions_068: 
-  created_at: 2009-04-09 16:16:27.739934
-  card_id: "99"
-  updated_at: 2009-04-09 16:16:27.739934
-  created_by: "3"
-  id: "1881"
-  content: "{\"member_of\": \"_self\", \"sort\":\"name\"}"
-revisions_094: 
+  id: "2936"
+  content: "1"
+revisions_259: 
+  created_at: 2009-07-27 18:00:55.420695
+  card_id: "236"
+  updated_at: 2009-07-27 18:00:55.420695
+  created_by: "4"
+  id: "2744"
+  content: "[[John Abbe]]"
+revisions_097: 
   created_at: 2009-04-24 11:23:14.354191
   card_id: "4"
   updated_at: 2009-04-24 11:23:14.354191
@@ -2584,135 +3143,21 @@ revisions_094:
     <blockquote>
     <p>{{+*type cards}}</p>
     </blockquote>
-revisions_149: 
-  created_at: 2009-06-09 18:19:44.815134
-  card_id: "211"
-  updated_at: 2009-06-09 18:19:44.815134
+revisions_178: 
+  created_at: 2010-04-20 17:58:20.917032
+  card_id: "376"
+  updated_at: 2010-04-20 17:58:20.917032
+  created_by: "3"
+  id: "3613"
+  content: "[[_left+email config]]"
+revisions_286: 
+  created_at: 2010-04-20 08:38:31.656851
+  card_id: "366"
+  updated_at: 2010-04-20 08:38:31.656851
   created_by: "4"
-  id: "2570"
-  content: <p>Anyone who is signed in has this role. [[http://wagn.org/wagn/account|Learn more about accounts]].</p>
-revisions_175: 
-  created_at: 2009-09-24 13:16:05.044844
-  card_id: "253"
-  updated_at: 2009-09-24 13:16:05.044844
-  created_by: "4"
-  id: "2901"
+  id: "3574"
   content: ""
-revisions_283: 
-  created_at: 2010-01-07 14:57:46.528146
-  card_id: "73"
-  updated_at: 2010-01-07 14:57:46.528146
-  created_by: "1"
-  id: "3206"
-  content: |-
-    <h1>Basics</h1>
-    <blockquote>
-    <p><em>Site name (appears in browser's title bar):</em> {{*title|closed;type:Phrase}}</p>
-    <p><em>Name of home card (if different from *title):</em> {{*home|closed;type:Phrase}}</p>
-    <p>{{*logo|closed;type:Image}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h1>Sidebar</h1>
-    <blockquote>
-    <p><em>[[http://wagn.org/wagn/sidebar|How to customize the sidebar]]</em></p>
-    <p>{{*sidebar|closed}}<em></em></p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h1>Account basics</h1>
-    <blockquote>
-    <p><em>Settings for inviting people, requesting accounts, and getting accounts approved ([[http://wagn.org/wagn/account#Administering%20accounts|learn more about accounts]]). See below to set the address that account-related emails come from, or to create a form for people who sign up.<br></em></p>
-    <p>{{*invite|closed}}</p>
-    <p>{{*request|closed}}</p>
-    <p>{{*signup|closed}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h1>Advanced</h1>
-    <p>&nbsp;</p>
-    <h2>Appearance</h2>
-    <blockquote>
-    <p><em>[[http://wagn.org/wagn/Skin|Learn more about "skinning" your Wagn]].</em></p>
-    <em></em>
-    <p>{{*css|closed;type:HTML}}</p>
-    <p>{{Default Layout|closed;type:HTML}}</p>
-    <p>{{*favicon|closed;type:Image}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h2>Account information emails</h2>
-    <blockquote>
-    <p><em>"From" address for emails that deliver user account information. (I.e., when someone signs up, is invited/approved, or forgot their password.)<br></em></p>
-    <p>{{*account+*from|closed;type:Phrase}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h2>Account sign-up form</h2>
-    <blockquote>
-    <p><em>[[http://wagn.org/wagn/custom_sign-up_information|How to create a custom sign-up form]]<br></em></p>
-    <p>{{Account Request+*type+*default|closed}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h2>Edit toolbar</h2>
-    <blockquote>
-    <p><em>[[http://wagn.org/wagn/TinyMCE|How to customize the edit toolbar]]</em></p>
-    <p>{{*tinyMCE|closed}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h2>Notification emails</h2>
-    <blockquote>
-    <p><em>"From" address for emails notifying people of changes to cards they are watching. [[http://wagn.org/wagn/Notification|Learn more about notification]]</em></p>
-    <p>{{*notify+*from|closed;type:phrase}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h2>Spam prevention (using captcha)<br></h2>
-    <blockquote><em>Require unregistered users to prove they are human whenever they create, edit, comment, or delete</em><em>:</em>
-    <p>{{*captcha|closed}}</p>
-    <p>&nbsp;</p>
-    <p><em>Note: your Wagn must be properly configured to run captchas.&nbsp; [[http://wagn.org/wagn/captcha|Learn more]]</em></p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h2>Related tab</h2>
-    <blockquote>
-    <p><em>[[*related|Some subtabs are available on every card]]:</em></p>
-    <p>{{Related subtabs - universal}}</p>
-    <p>&nbsp;</p>
-    <p><em>[[*related+*plus cards|Some subtabs]] appear only on cards of a given type:</em></p>
-    <p>{{Related subtabs - cardtypes}}</p>
-    <p>&nbsp;</p>
-    <p><em>A special subtab appears on cards with accounts:</em></p>
-    <p>{{*account+*right+*virtual|closed}}</p>
-    <p>&nbsp;</p>
-    <p><em>[[http://wagn.org/wagn/Related_tab|Learn more about the Related tab]].</em></p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h2>Form thanks<br></h2>
-    <blockquote>
-    <p><em>Where people will be taken after creating a card they don't have permission to see (learn more about [[http://wagn.org/wagn/Custom_thank_you_messages_for_forms|custom thank you messages for forms]]):</em></p>
-    <p>HTTP:// <em>(YOUR WAGN'S DOMAIN) </em>{{Basic+*type+*thanks}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <h2>Google Analytics</h2>
-    <blockquote>
-    <p><em>[[http://wagn.org/wagn/Google_Analytics|How to set up Google Analytics]]</em></p>
-    <p>{{*google analytics key|type:Phrase}}</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <blockquote>
-    <p><em></em></p>
-    </blockquote>
-revisions_257: 
-  created_at: 2009-12-22 07:14:33.561138
-  card_id: "304"
-  updated_at: 2009-12-22 07:14:33.561138
-  created_by: "4"
-  id: "3157"
-  content: <p>Whether to require non-signed-in users to complete a [[http://www.wagn.org/wagn/captcha|captcha]] before adding or editing cards in the set.</p>
-revisions_069: 
-  created_at: 2009-04-24 09:02:48.340245
-  card_id: "167"
-  updated_at: 2009-04-24 09:02:48.340245
-  created_by: "4"
-  id: "1985"
-  content: "{\"type\": \"Cardtype\", \"sort\": \"name\", \"append\": \"*tform\"}"
-revisions_095: 
+revisions_098: 
   created_at: 2009-04-24 11:23:22.658665
   card_id: "51"
   updated_at: 2009-04-24 11:23:22.658665
@@ -2727,104 +3172,21 @@ revisions_095:
     <blockquote>
     <p>{{+*type cards}}</p>
     </blockquote>
-revisions_176: 
-  created_at: 2009-07-27 17:13:01.430509
-  card_id: "226"
-  updated_at: 2009-07-27 17:13:01.430509
+revisions_179: 
+  created_at: 2010-04-20 17:58:21.181047
+  card_id: "377"
+  updated_at: 2010-04-20 17:58:21.181047
+  created_by: "3"
+  id: "3614"
+  content: ""
+revisions_287: 
+  created_at: 2010-04-20 08:38:31.912866
+  card_id: "367"
+  updated_at: 2010-04-20 08:38:31.912866
   created_by: "4"
-  id: "2682"
-  content: |-
-    [[John Abbe]]
-    [[Ethan McCutchen]]
-revisions_284: 
-  created_at: 2010-01-07 14:57:47.356068
-  card_id: "152"
-  updated_at: 2010-01-07 14:57:47.356068
-  created_by: "1"
-  id: "3207"
-  content: |-
-    <p><em><span>Cards and [[images]] in this Wagn are copied to new Wagns</span></em>. Exceptions should be added here:</p>
-    <p>{{*ignore|closed}}</p>
-    <p>&nbsp;</p>
-    <p>This one updates automatically:</p>
-    <p>{{cards to copy to new Wagns|closed}}</p>
-    <p>&nbsp;</p>
-    <h1>What comprises those cards</h1>
-    <p>&nbsp;</p>
-    <h2>Account-related</h2>
-    <blockquote>
-    <p>[[*account]], [[WagnBot]], [[Anonymous]]</p>
-    <p>{{Role+*type cards|closed}}</p>
-    <p>[[*to]], [[*from]], [[*thanks]], [[Invite Success]], [[Signup Success]], [[Request Sent]]<br> {{*thanks+*plus cards|closed}}</p>
-    </blockquote>
-    <h2>Cardtypes and forms</h2>
-    <blockquote>
-    <p>{{Cardtype+*type cards|closed}}</p>
-    <p>{{cardtype descriptions|closed}}</p>
-    <p>[[*tform]], [[*rform]]</p>
-    <p>{{*tform+*plus cards|closed}}</p>
-    <p>{{*rform+*plus cards|closed}}</p>
-    </blockquote>
-    <h2>Config and help text</h2>
-    <blockquote>
-    <p>[[Config]]</p>
-    <p>{{Config+*inclusions|closed}}</p>
-    <p>{{*sidebar+*inclusions|closed}}</p>
-    <p>[[*edit help]]</p>
-    <p>{{*edit help+*plus cards|closed}}</p>
-    </blockquote>
-    <h2>Related tab</h2>
-    <p>(Note that in these +*rform cards, _left returns the name of the card on which one is viewing the Related tab.)</p>
-    <p>&nbsp;</p>
-    <p>Available on every card, because they're in [[*related]]:</p>
-    <blockquote>
-    <p>{{Related subtabs - universal|closed}}</p>
-    </blockquote>
-    <p>Available on [[Cardtypes]] (under "type") because they're [[*related+*plus cards|plussed to *related]]:</p>
-    <blockquote>
-    <p>{{Related subtabs - cardtypes|closed}}</p>
-    <p>[[*account+*right+*virtual]] - available on any card that has the account extension</p>
-    </blockquote>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <hr>
-    <p>&nbsp;</p>
-    <h1>Process</h1>
-    <ol>
-    <li>Everything about default Wagns that can be done within cards happens here. Make changes that make sense to you, and watch what each other are doing on Recent. There's space for discussion at the bottom of this page if you like.</li>
-    <li>For changes here to show up in already-existing Wagns, put a note in the next Wagn release's discussion about which cards you want migrated.</li>
-    <li>[[http://wagn.org/wagn/initial_permissions|Permissions are specified on wagn.org]], because we want people to be able to choose different initial setups.</li>
-    <li>The [[config subtab]] is designed here, but since it involves code it is not grabbed programmatically like the other subtabs.</li>
-    <li>Everything that involves code should be ticketed on wagn.org and perhaps listed below. Original development was described on [[http://wagn.org/wagn/implement_initial_setup_for_new_Wagn|implement initial setup for new Wagns]].</li>
-    </ol>
-    <p>&nbsp;</p>
-    <h1>Todo</h1>
-    <p>&nbsp;</p>
-    <h2>Content / Wagneering<br></h2>
-    <ol>
-    <li>Copy/adapt [[Cardtype+*type+*default]] to more [[Cardtype forms]]; add more [[Cardtype descriptions]].</li>
-    <li>make *ignore a Search that returns Users, Account Requests, and things referred to by *ignore+tag. (Requires changing the dump a little, but could bring new users in with less overhead.)</li>
-    <li> Test and tweak http://wagn.org/wagn/initial_permissions (ongoing)</li>
-    </ol>
-    <p>&nbsp;</p>
-    <h2>Documentation<br></h2>
-    <ul>
-    <li>When documenting tickets that relate to [[http://wagn.org/wagn/Installation+tickets_for_item|installation]] or [[http://wagn.org/wagn/administration+tickets_for_item|administration]], make sure to update [[Config]]. (make search to show ones from current/recent releases?)</li>
-    </ul>
-    <p>&nbsp;</p>
-    <h1>Discussion</h1>
-    <p>&nbsp;</p>
-    <hr>
-    <p>What is [[*migrate content]] for?</p>
-    <p><em>&nbsp;&nbsp;--[[John Abbe]].....Mon Jul 27 17:17:14 -0700 2009</em></p>
-revisions_258: 
-  created_at: 2009-12-22 07:16:05.009136
-  card_id: "254"
-  updated_at: 2009-12-22 07:16:05.009136
-  created_by: "4"
-  id: "3165"
-  content: <p>Name plussed to each of a Pointer's option cards to form label cards for radio button and checkbox items. E.g., "description" will make Wagn look for "option 1+description", "option 2+description", etc. [[http://www.wagn.org/wagn/Pointer|Learn more.]]</p>
-revisions_096: 
+  id: "3575"
+  content: "0"
+revisions_099: 
   created_at: 2009-04-24 11:24:04.885939
   card_id: "30"
   updated_at: 2009-04-24 11:24:04.885939
@@ -2839,28 +3201,21 @@ revisions_096:
     <blockquote>
     <p>{{+*type cards}}</p>
     </blockquote>
-revisions_177: 
-  created_at: 2009-07-27 17:14:35.216636
-  card_id: "227"
-  updated_at: 2009-07-27 17:14:35.216636
-  created_by: "4"
-  id: "2683"
-  content: "[[John Abbe]]"
-revisions_285: 
-  created_at: 2010-01-07 14:57:49.285801
-  card_id: "332"
-  updated_at: 2010-01-07 14:57:49.285801
+revisions_288: 
+  created_at: 2009-12-02 16:02:47.328155
+  card_id: "260"
+  updated_at: 2009-12-02 16:02:47.328155
   created_by: "1"
-  id: "3208"
+  id: "3001"
   content: ""
-revisions_259: 
-  created_at: 2009-12-22 07:16:39.81912
-  card_id: "90"
-  updated_at: 2009-12-22 07:16:39.81912
-  created_by: "4"
-  id: "3166"
-  content: <p>Autogenerate [[http://www.wagn.org/wagn/table_of_contents|table of contents]] when cards in the set have at least this many headers ("0" means never ever).</p>
-revisions_097: 
+revisions_289: 
+  created_at: 2009-12-02 16:02:47.448162
+  card_id: "261"
+  updated_at: 2009-12-02 16:02:47.448162
+  created_by: "1"
+  id: "3002"
+  content: "{\"right\":\"_self\"}"
+revisions_100: 
   created_at: 2009-04-24 11:24:39.463909
   card_id: "47"
   updated_at: 2009-04-24 11:24:39.463909
@@ -2875,21 +3230,14 @@ revisions_097:
     <blockquote>
     <p>{{+*type cards}}</p>
     </blockquote>
-revisions_178: 
-  created_at: 2009-07-27 17:16:06.886527
-  card_id: "228"
-  updated_at: 2009-07-27 17:16:06.886527
+revisions_020: 
+  created_at: 2009-04-08 08:59:14.709684
+  card_id: "156"
+  updated_at: 2009-04-08 08:59:14.709684
   created_by: "4"
-  id: "2687"
-  content: "[[John Abbe]]"
-revisions_286: 
-  created_at: 2010-01-07 14:57:49.765341
-  card_id: "333"
-  updated_at: 2010-01-07 14:57:49.765341
-  created_by: "1"
-  id: "3209"
+  id: "1748"
   content: ""
-revisions_098: 
+revisions_101: 
   created_at: 2009-04-24 11:25:43.416422
   card_id: "22"
   updated_at: 2009-04-24 11:25:43.416422
@@ -2904,21 +3252,14 @@ revisions_098:
     <blockquote>
     <p>{{+*type cards}}</p>
     </blockquote>
-revisions_179: 
-  created_at: 2009-07-27 17:19:41.983755
-  card_id: "229"
-  updated_at: 2009-07-27 17:19:41.983755
-  created_by: "4"
-  id: "2698"
-  content: "[[John Abbe]]"
-revisions_287: 
-  created_at: 2010-01-07 14:57:50.366312
-  card_id: "334"
-  updated_at: 2010-01-07 14:57:50.366312
+revisions_021: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "77"
+  updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
-  id: "3210"
-  content: ""
-revisions_099: 
+  id: "113"
+  content: Home
+revisions_102: 
   created_at: 2009-04-24 11:25:57.541227
   card_id: "52"
   updated_at: 2009-04-24 11:25:57.541227
@@ -2933,150 +3274,83 @@ revisions_099:
     <blockquote>
     <p>{{+*type cards}}</p>
     </blockquote>
-revisions_288: 
-  created_at: 2010-01-07 14:57:50.838314
-  card_id: "150"
-  updated_at: 2010-01-07 14:57:50.838314
-  created_by: "1"
-  id: "3211"
-  content: |-
-    <p>There are [[http://johnabbe.wagn.org/wagn/Contact_me|several ways to contact me]].</p>
-    <p>&nbsp;</p>
-    <p>[[new]] is where we talk about building this default content for new Wagns.</p>
-    <p>&nbsp;</p>
-    <p>Some helpful cards:</p>
-    <p>{{Cardtype descriptions|closed}}</p>
-    <p>{{Cardtype help text|closed}}</p>
-    <p>{{Cardtype forms|closed}}</p>
-    <p>{{Right forms that aren't subtabs|closed}}</p>
-    <p>&nbsp;</p>
-    <p>{{all non-star cards|closed}}</p>
-    <p>{{cards by type|closed}}</p>
-    <p>&nbsp;</p>
-    <p>Are these just for testing; can they be deleted?</p>
-    <p>{{User emails|closed}}</p>
-    <p>{{name and email+*right+*virtual|closed}}</p>
-    <p>&nbsp;</p>
-    <p>{{+*watching|open}}</p>
-revisions_289: 
-  created_at: 2010-01-07 14:57:51.442474
-  card_id: "154"
-  updated_at: 2010-01-07 14:57:51.442474
-  created_by: "1"
-  id: "3212"
-  content: |-
-    [[Ethan McCutchen]]
-    [[John Abbe]]
-    [[Lewis Hoffman]]
-    [[*ignore]]
-    [[cards to copy to new Wagns]]
-    [[new]]
-    [[all non-star cards]]
-    [[cards by type]]
-    [[*migrate content]]
-    [[Cardtype forms]]
-    [[Right forms that aren't subtabs]]
-    [[Cardtype help text]]
-    [[config subtab]]
-    [[User emails]]
-    [[name and email]]
-    [[name and email+*right+*virtual]]
-    [[Cardtype descriptions]]
-    [[Basic+*watchers]]
-    [[Pointer+*watchers]]
-    [[Phrase+*watchers]]
-    [[PlainText+*watchers]]
-    [[HTML+*watchers]]
-    [[Image+*watchers]]
-    [[Search+*watchers]]
-    [[User+*watchers]]
-    [[Cardtype+*watchers]]
-    [[Date+*watchers]]
-    [[File+*watchers]]
-    [[Number+*watchers]]
-    [[Role+*watchers]]
-    [[Toggle+*watchers]]
-revisions_100: 
-  created_at: 2009-04-24 11:32:57.543528
-  card_id: "178"
-  updated_at: 2009-04-24 11:32:57.543528
-  created_by: "4"
-  id: "2087"
-  content: ""
-revisions_020: 
-  created_at: 2009-04-06 17:32:45.92516
-  card_id: "149"
-  updated_at: 2009-04-06 17:32:45.92516
-  created_by: "1"
-  id: "1730"
-  content: ""
-revisions_101: 
-  created_at: 2009-04-24 11:33:28.198203
-  card_id: "179"
-  updated_at: 2009-04-24 11:33:28.198203
-  created_by: "4"
-  id: "2089"
-  content: "{\"found_by\": \"_self\", \"sort\": \"update\"}"
-revisions_021: 
-  created_at: 2009-04-08 08:59:14.709684
-  card_id: "156"
-  updated_at: 2009-04-08 08:59:14.709684
-  created_by: "4"
-  id: "1748"
-  content: ""
-revisions_102: 
-  created_at: 2009-04-24 11:49:31.476135
-  card_id: "180"
-  updated_at: 2009-04-24 11:49:31.476135
-  created_by: "4"
-  id: "2093"
-  content: <p><span><span>Every card has a type, which shapes what kind of information goes into it. You can also add your own cardtypes. To learn more, read the [[http://wagn.org/wagn/card_types|documentation about card types]].<br></span></span></p>
 revisions_022: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "77"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "113"
-  content: Home
-revisions_103: 
-  created_at: 2009-04-24 11:52:32.305417
-  card_id: "181"
-  updated_at: 2009-04-24 11:52:32.305417
-  created_by: "4"
-  id: "2094"
-  content: <p>People with accounts generally have a User card. To learn more, read the [[http://wagn.org/wagn/User|documentation about User cards]].</p>
-revisions_210: 
-  created_at: 2009-12-02 16:02:53.824525
-  card_id: "273"
-  updated_at: 2009-12-02 16:02:53.824525
-  created_by: "1"
-  id: "3015"
-  content: "{\"type\":\"_self\"}"
-revisions_023: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "86"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "266"
   content: ""
-revisions_104: 
-  created_at: 2009-04-24 22:49:13.065432
-  card_id: "183"
-  updated_at: 2009-04-24 22:49:13.065432
+revisions_103: 
+  created_at: 2009-04-24 11:32:57.543528
+  card_id: "178"
+  updated_at: 2009-04-24 11:32:57.543528
   created_by: "4"
-  id: "2200"
-  content: "{\"type\": \"Cardtype\", \"sort\": \"name\", \"append\": \"*edit\"}"
-revisions_130: 
-  created_at: 2009-05-21 13:30:50.021728
-  card_id: "203"
-  updated_at: 2009-05-21 13:30:50.021728
+  id: "2087"
+  content: ""
+revisions_210: 
+  created_at: 2010-04-19 12:14:00.153296
+  card_id: "69"
+  updated_at: 2010-04-19 12:14:00.153296
   created_by: "3"
-  id: "2418"
-  content: ""
-revisions_211: 
-  created_at: 2009-12-02 16:02:55.724633
-  card_id: "255"
-  updated_at: 2009-12-02 16:02:55.724633
+  id: "3318"
+  content: <div>Thank you for signing up with {{*title}}. Your new account information is on it's way to your emailbox now and should be there soon.</div>
+revisions_023: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "135"
+  updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
-  id: "3019"
-  content: ""
+  id: "1455"
+  content: <p>{{DeleteMe|open}}</p>
+revisions_104: 
+  created_at: 2009-04-24 11:33:28.198203
+  card_id: "179"
+  updated_at: 2009-04-24 11:33:28.198203
+  created_by: "4"
+  id: "2089"
+  content: "{\"found_by\": \"_self\", \"sort\": \"update\"}"
+revisions_130: 
+  created_at: 2009-04-27 23:08:41.672206
+  card_id: "191"
+  updated_at: 2009-04-27 23:08:41.672206
+  created_by: "4"
+  id: "2291"
+  content: "{\"found_by\": \"_self\", \"sort\": \"create\"}"
+revisions_211: 
+  created_at: 2010-04-21 16:26:48.885164
+  card_id: "278"
+  updated_at: 2010-04-21 16:26:48.885164
+  created_by: "1"
+  id: "3635"
+  content: |
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <h1>[[http://www.wagn.org/wagn/Help text|Help text]]<br></h1>
+    <blockquote>
+    <p>{{*add help|closed}}</p>
+    <p>{{*edit help|closed}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h1>[[http://www.wagn.org/wagn/Formatting|Formatting]]<br></h1>
+    <blockquote>
+    <p>{{*content|closed}}</p>
+    <p>{{*default|closed}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h1>[[http://www.wagn.org/wagn/Pointers|Pointers]]<br></h1>
+    <blockquote>
+    <p>{{*input|closed}}</p>
+    <p>{{*options|closed}}</p>
+    <p>{{*option label|closed}}</p>
+    <br></blockquote>
+    <h1>Other<br></h1>
+    <blockquote>
+    <p>{{*accountable|closed}}</p>
+    <p>{{*autoname|closed}}</p>
+    <p>{{*captcha|closed}}</p>
+    {{*layout|closed}}
+    <p>{{*send|closed}}</p>
+    {{*table of contents|closed}}
+    <p>{{*thanks|closed}}</p>
+    </blockquote>
+

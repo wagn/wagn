@@ -23,7 +23,7 @@ module Cardlib
       end
       return nil
     end
-    
+
     module ClassMethods
       def default_setting setting_name
         card = default_setting_card setting_name

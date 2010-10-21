@@ -13,7 +13,7 @@
 #   And I fill in cards_joe_user_plus_phone_plus_1_content with "is you is"
 #   And I follow (the add new one link)
 #   And I fill in cards_joe_user_plus_phone_plus_1_content with "is you aint"
-#   And I press "Create"
+#   And I press "Submit" "Create"
 #   And I go to card "Joe User+phone"
 #   Then I should see "is you is"
 #   And I should see "is you aint"

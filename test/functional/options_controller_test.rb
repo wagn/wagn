@@ -20,8 +20,6 @@ class OptionsControllerTest < ActionController::TestCase
 
   def test_should_create_account_from_scratch
     assert_difference ActionMailer::Base.deliveries, :size do 
-require "ruby-debug"
-debugger
       post :create_account, :user=>{:email=>'foo@bar.com'}, :id=>'a'
       assert_response 200
     end

@@ -122,12 +122,6 @@ module Cardlib
       hard_template
     end        
     
-    
-    ## -------- ( setting-based content/templating ) ----------
-    def content_templated?
-      c = setting_card('content') and c.name.tag_name != '*default'
-    end        
-    
     private
     # FIXME: remove after adjusting expire_templatee_references to content_settings
     def hard_templatee_wql

@@ -72,16 +72,6 @@ module Card
       true
     end
         
-    # apparently callbacks defined this way are called last.
-    # that's what we want for this one.  
-    def after_save 
-      if card.type == 'Cardtype'
-        Rails.logger.debug "Cardtype after_save resetting"
-        ::Cardtype.reset_cache
-      end
-      true
-    end
-        
     private
       belongs_to :reader, :polymorphic=>true  
       

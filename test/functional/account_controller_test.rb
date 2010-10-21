@@ -1,21 +1,21 @@
 require File.dirname(__FILE__) + '/../test_helper'
-require 'user_controller'
+require 'account_controller'
 
 # Re-raise errors caught by the controller.
-class UserController; def rescue_action(e) raise e end; end
+class AccountController; def rescue_action(e) raise e end; end
 
-class UserControllerTest < ActionController::TestCase
+class AccountControllerTest < ActionController::TestCase
   # Be sure to include AuthenticatedTestHelper in test/test_helper.rb instead
   # Then, you can remove it from this and the units test.
   include AuthenticatedTestHelper
   
-  # Note-- user creation is handled in it's own file user_creation_test
+  # Note-- account creation is handled in it's own file account_creation_test
 
   
 
   def setup
     get_renderer
-    @controller = UserController.new
+    @controller = AccountController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
     
@@ -59,18 +59,18 @@ class UserControllerTest < ActionController::TestCase
   def test_signup_with_approval
     post :signup, @newby_args
     assert_response :redirect
-    assert_status @newby_email, 'pending' # active debugger
+    assert_status @newby_email, 'pending'
     
     login_as :joe_user
     post :accept, :card=>{:key=>'newby_dooby'}, :email=>{:subject=>'hello', :message=>'world'}
-    assert_response :redirect # 200 debugger
+    assert_response :redirect
     assert_status @newby_email, 'active'
   end
 
   def test_signup_without_approval
-    User.as :wagbot do  #make it so anyone can create users (ie, no approval needed)
+    User.as :wagbot do  #make it so anyone can create accounts (ie, no approval needed)
       ne1 = Role[:anon]
-      ne1.tasks = 'create_users'
+      ne1.tasks = 'create_accounts'
       ne1.save!
     end
     post :signup, @newby_args

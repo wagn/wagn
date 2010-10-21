@@ -172,13 +172,6 @@ revisions_053:
   created_by: "3"
   id: "1747"
   content: ""
-revisions_053: 
-  created_at: 2009-04-08 10:23:29.108262
-  card_id: "55"
-  updated_at: 2009-04-08 10:23:29.108262
-  created_by: "3"
-  id: "1755"
-  content: My Wagn
 revisions_108: 
   created_at: 2009-04-24 23:16:49.401769
   card_id: "111"
@@ -204,13 +197,6 @@ revisions_134:
   created_by: "1"
   id: "3229"
   content: ""
-revisions_134: 
-  created_at: 2009-05-26 14:49:19.504422
-  card_id: "199"
-  updated_at: 2009-05-26 14:49:19.504422
-  created_by: "1"
-  id: "2471"
-  content: /wagn/Form_submission_thanks
 revisions_160: 
   created_at: 2010-04-16 21:08:50.509353
   card_id: "356"
@@ -1103,7 +1089,7 @@ revisions_040:
   card_id: "96"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
-  id: "3196"
+  id: "353"
   content: ""
 revisions_121: 
   created_at: 2010-04-15 18:42:53.179953
@@ -1332,35 +1318,7 @@ revisions_231:
   created_by: "4"
   id: "2889"
   content: ""
-revisions_197: 
-  created_at: 2009-12-02 16:02:47.448162
-  card_id: "261"
-  updated_at: 2009-12-02 16:02:47.448162
-  created_by: "1"
-  id: "3002"
-  content: "{\"right\":\"_self\"}"
-revisions_279: 
-  created_at: 2010-01-07 14:57:39.888293
-  card_id: "328"
-  updated_at: 2010-01-07 14:57:39.888293
-  created_by: "1"
-  id: "3199"
-  content: ""
-revisions_198: 
-  created_at: 2009-12-02 16:02:47.704176
-  card_id: "262"
-  updated_at: 2009-12-02 16:02:47.704176
-  created_by: "1"
-  id: "3003"
-  content: ""
-revisions_199: 
-  created_at: 2009-12-02 16:02:47.94819
-  card_id: "263"
-  updated_at: 2009-12-02 16:02:47.94819
-  created_by: "1"
-  id: "3004"
-  content: "{\"left\":{\"type\":\"_left\"}, \"right\":\"_right\"}"
-revisions_010: 
+revisions_017: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "41"
   updated_at: 2009-04-06 14:11:12.948281
@@ -2300,7 +2258,7 @@ revisions_221:
   content: <p>Anyone who is signed in has this role. [[http://wagn.org/wagn/account|Learn more about accounts]].</p>
 revisions_007: 
   created_at: 2009-04-06 14:11:12.948281
-  card_id: "34"
+  card_id: "130"
   updated_at: 2009-04-06 14:11:12.948281
   created_by: "1"
   id: "1409"
@@ -2434,7 +2392,7 @@ revisions_061:
     </blockquote>
     <p><em>Cards that include <strong>{{_left|name}}</strong>:</em></p>
     <blockquote>
-    <p>{{_left+*inclusions}}</p>
+    <p>{{_left+*includers}}</p>
     </blockquote>
     <p>&nbsp;</p>
 revisions_331: 

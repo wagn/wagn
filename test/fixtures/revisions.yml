@@ -1551,19 +1551,79 @@ revisions_137:
   card_id: "160"
   id: "2853"
   content: |-
-    <h1>[[_left+*linkers|What links to "{{_left|name}}"?]]<br></h1>
+    <p>(DESIGN FOR CONFIG TAB)</p>
+    <p>&nbsp;</p>
+    <h1>Watchers</h1>
+    <p>&nbsp;</p>
+    <p>Watchers receive email when this card is changed. [[http://wagn.org/wagn/Notification|Learn more about notifications.]]</p>
+    <p>((SHOWS UP on non-cardtype cards))</p>
+    <p><strong>People watching "{{_left|name}}"</strong></p>
     <blockquote>
-    <p>{{_left+*linkers}}</p>
+    <p>{{_left+*watchers|item:link}}</p>
     </blockquote>
     <p>&nbsp;</p>
-    <h1>[[_left+*includers|What includes "{{_left|name}}"?]]</h1>
+    <p>((SHOWS UP on cards relative-including this card -- if this seems too difficult for now, drop it))</p>
+    <p><strong>People watching "[card including _left]"</strong></p>
     <blockquote>
-    <p>{{_left+*includers}}</p>
+    <p>{{[card including _left]+*watchers|item:link}}</p>
     </blockquote>
     <p>&nbsp;</p>
-    <h1>[[_left+*tagged|What's tagged "{{_left|name}}"?]]</h1>
+    <p>((SHOWS UP on cardtype cards))</p>
+    <p><strong>People watching "[cardtype of _left]"</strong></p>
     <blockquote>
-    <p>{{_left+*tagged}}</p>
+    <p>{{[cardtype of _left]+*watchers|item:link}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <h1>Formatting</h1>
+    <p>&nbsp;</p>
+    <p>((SHOWS UP if hard formatted by type)</p>
+    <p><strong>By Type</strong></p>
+    <p><em>Formats all ((type)) cards.</em> <em>[[http://wagn.org/wagn/formatting|Learn more about formatting.]]</em></p>
+    <blockquote>
+    <p>{{card's type+*tform|closed}}</p>
+    </blockquote>
+    <p>((SHOWS UP if simple or if hard formatted by name))</p>
+    <p><strong>By Name<br></strong></p>
+    <p><em>Formats any [[tag+plusses|plus card whose name ends in "+((tagname))"]]. [[http://wagn.org/wagn/formatting|Learn more about formatting.]]</em></p>
+    <blockquote>
+    <p>{{+*rform|closed}}</p>
+    </blockquote>
+    <p>((SHOWS UP if _self+*rform exists and is a Pointer - proposed; see http://wagn.org/wagn/add_plus_star_options_in_config_where_appropriate))</p>
+    <p><strong>Auto-complete and default type in Pointers</strong></p>
+    <p>Limits the set of cards that Pointer items will auto-complete to. If type is specified, that will be the default for cards created through the Pointer. [[http://wagn.org/wagn/Pointer|Learn more about Pointer auto-complete and default types]]</p>
+    <blockquote>
+    <p>{{+*options|closed}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <p>((SHOWS UP on type or simple cards))</p>
+    <h1>Help Text</h1>
+    <p>&nbsp;</p>
+    <p><strong>Editing Cards<br></strong></p>
+    <p><em>Help text appears when </em><em>any ((if type -&gt;&nbsp; [type] cards, or ))</em><em> [[_left+plusses|plus card whose name ends in "+((tag))"]] is created or edited. [[http://wagn.org/wagn/help_text|Learn more about help text]].<br></em></p>
+    <blockquote>
+    <p>{{+*edit|closed}}</p>
+    </blockquote>
+    <p><strong>Creating Cards<br></strong></p>
+    <p><em>Help text appears only when any ((if type -&gt;&nbsp; [type] cards, or )) </em><em>[[_left+plusses|</em><em>plus card whose name ends in </em><em> "+((tag))"]]</em><em> is created. (This overrides the editing help text above.)<br></em></p>
+    <blockquote>
+    <p>{{+*new|closed}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <p>((SHOWS UP on cards inheriting from Basic))</p>
+    <h1>Table of Contents<br></h1>
+    <p><em><br></em></p>
+    <p><em>Manually turn off the table of contents for ((self)). (By default all cards with at least 4 headers have tables of contents.)</em></p>
+    <blockquote>
+    <p>{{+*table of contents|closed}}</p>
+    </blockquote>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>((SHOWS UP on X+*rform of type Pointer))</p>
+    <h1>Options</h1>
+    <p>&nbsp;</p>
+    <p><em>This Search defines the pool of cards from which any [[Pointer]] whose name ends in ((left)) auto-completes. If it specifies a type, then any cards created through the Pointer will default to that type. [[http://wagn.org/wagn/Pointer|Learn more about Pointers]].</em></p>
+    <blockquote>
+    <p>{{+*options|closed}}</p>
     </blockquote>
     <p>&nbsp;</p>
   created_at: 2010-10-11 13:02:00.890286
@@ -1683,9 +1743,6 @@ revisions_186:
     <p>&nbsp;</p>
     </blockquote>
     <p>&nbsp;</p>
-    <p>[[http://wagn.org/wagn/configuration|About Wagn Configuration]]</p>
-    <p>[[http://wagn.org/wagn/Documentation|Other Documentation]]</p>
-    <p>[[http://wagn.org/wagn/Support|Support]]</p>
     <p>&nbsp;</p>
     <blockquote>
     <p><em></em></p>
@@ -2519,7 +2576,7 @@ revisions_308:
   content: |-
     <p>{{+description}}</p>
     <p>&nbsp;</p>
-    <h2>{{_self|name}} Cards</h2>
+    <h1>Accounts with the {{_self|name}} role<br></h1>
     <blockquote>
     <p>{{+*members}}</p>
     </blockquote>
@@ -3071,8 +3128,9 @@ revisions_140:
     <p>&nbsp;</p>
     <p>Unless [[*signup|approved automatically]], the <strong>request will be emailed to</strong>:</p>
     <blockquote>
-    <p>{{_left+*includers}}</p>
+    <p>{{+*to|closed;type:Phrase}}</p>
     </blockquote>
+    <p><strong>and the requester will be redirected here:</strong></p>
     <p>&nbsp;</p>
     <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span>HTTP:// <em>(YOUR WAGN'S DOMAIN)</em></span><em> </em>{{+*thanks}}</p>
   created_at: 2010-10-11 13:02:00.890286
@@ -3692,9 +3750,11 @@ revisions_064:
   content: |-
     <p>{{+description}}</p>
     <p>&nbsp;</p>
-    <h1>Accounts with the {{_self|name}} role<br></h1>
+    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
+    <p>&nbsp;</p>
+    <h2>{{_self|name}} Cards</h2>
     <blockquote>
-    <p>{{+*members}}</p>
+    <p>{{+*type cards}}</p>
     </blockquote>
   created_at: 2010-10-11 13:02:00.890286
 revisions_445: 
@@ -3703,12 +3763,13 @@ revisions_445:
   card_id: "488"
   id: "3733"
   content: |-
-    <p>To let users sign up with no approval process, allow "Anyone" to [[/card/options/Account_Request|create account requests]], and give "Anyone" the [[/admin/tasks |global permission]] to create accounts.&nbsp; Newly registered users will be sent an email with a password and the following details:</p>
+    <p>{{+description}}</p>
     <p>&nbsp;</p>
+    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
     <p>&nbsp;</p>
-    <h2>Email Subject<br></h2>
+    <h2>{{_self|name}} Cards</h2>
     <blockquote>
-    <p>{{*signup+*subject|type:Phrase}}</p>
+    <p>{{+*type cards}}</p>
     </blockquote>
   created_at: 2019-12-31 00:00:00
 revisions_208: 
@@ -3817,7 +3878,7 @@ revisions_068:
   content: |-
     <p>{{+description}}</p>
     <p>&nbsp;</p>
-    <p>[[/new/{{_self|name}}|add an {{_self|name}} card]]</p>
+    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
     <p>&nbsp;</p>
     <h2>{{_self|name}} Cards</h2>
     <blockquote>
@@ -3846,9 +3907,11 @@ revisions_069:
   content: |-
     <p>{{+description}}</p>
     <p>&nbsp;</p>
-    <h1>Accounts with the {{_self|name}} role<br></h1>
+    <p>[[/new/{{_self|name}}|add a {{_self|name}} card]]</p>
+    <p>&nbsp;</p>
+    <h2>{{_self|name}} Cards</h2>
     <blockquote>
-    <p>{{+*members}}</p>
+    <p>{{+*type cards}}</p>
     </blockquote>
   created_at: 2010-10-11 13:02:00.890286
 revisions_310: 

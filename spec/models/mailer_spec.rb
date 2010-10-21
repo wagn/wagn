@@ -24,7 +24,7 @@ describe Mailer do
       user =  ::User.find_by_login('sara')
       card =  Card["Sunglasses"]
       action = "edited"  
-      user.deliver_change_notice( card, action, card.name )
+      Mailer.deliver_change_notice( user, card, action, card.name )
     end
 
     it "deliver a message" do

@@ -58,8 +58,6 @@ class ApplicationController < ActionController::Base
     ## DEBUG
     ActiveRecord::Base.logger.debug("WAGN: per request setup")
     load_location
-    
-    Wagn::Hook.call :before_request, '*all', self
   end
 
   def wagn_layout

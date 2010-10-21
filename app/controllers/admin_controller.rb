@@ -2,7 +2,7 @@ class AdminController < ApplicationController
   layout 'application'
   
   def setup
-    raise(Wagn::Oops, "Already setup") if User.first_login
+    raise(Wagn::Oops, "Already setup") unless User.no_logins? && !User[:first]
     if request.post?  
       Card::User  # wtf - trigger loading of Card::User, otherwise it tries to use U
       User.as :wagbot do
@@ -12,6 +12,7 @@ class AdminController < ApplicationController
       if @user.errors.empty?
         @user.roles = [Role[:admin]]
         self.current_user = @user
+        User.cache.delete :no_logins
         flash[:notice] = "You're good to go!" 
         redirect_to '/'
       else
@@ -19,7 +20,7 @@ class AdminController < ApplicationController
       end
     else
       @card = Card.new( params[:card] || {} )
-      User.first_login = @user = User.new( params[:user] || {} )
+      @user = User.new( params[:user] || {} )
     end
   end
   

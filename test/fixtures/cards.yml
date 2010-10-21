@@ -880,7 +880,7 @@ cards_028:
   pattern_keys: 
   settings: 
   appender_type: 
-  key: "*account"
+  key: "*editor"
   extension_id: 
   created_at: 2010-10-11 13:02:00.853088
 cards_054: 
@@ -4130,7 +4130,7 @@ cards_261:
   pattern_keys: 
   settings: 
   appender_type: 
-  key: "*rform"
+  key: sample_basic
   extension_id: 
   created_at: 2010-10-11 13:02:08.23697
 cards_235: 

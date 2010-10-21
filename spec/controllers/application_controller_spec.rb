@@ -12,11 +12,4 @@ describe ApplicationController do
       @controller.send(:main_card?).should_not be_true
     end
   end
-  
-  describe "per_request_setup" do
-    it "invokes params hook" do
-      Wagn::Hook.should_receive(:call).with(:before_request, "*all", instance_of(ApplicationController))
-      @controller.send(:per_request_setup)
-    end
-  end
 end

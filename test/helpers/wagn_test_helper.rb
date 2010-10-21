@@ -7,10 +7,9 @@ module WagnTestHelper
     User.clear_cache
     
     # FIXME: should login as joe_user by default-- see what havoc it creates...
-    @user = User.current_user = User.admin
+    @user = User.current_user = User.find_by_login('wagbot')
 
-    #@user.update_attribute('crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c')
-    #@user.password="wagbot_pass"
+    @user.update_attribute('crypted_password', '610bb7b564d468ad896e0fe4c3c5c919ea5cf16c')
     @user.roles << Role.find_by_codename('admin')
     
     # setup admin while we're at it
@@ -66,14 +65,14 @@ module WagnTestHelper
       #tmp_controller = @controller
       #@controller = AccountController.new
       
-      post '/user/signin', :login=>login, :password=>pass
+      post '/account/signin', :login=>login, :password=>pass
       assert_response :redirect
       
       #@controller = tmp_controller
     end
     if block_given?
       yield
-      post "/user/signout",:controller=>'user'
+      post "/account/signout",:controller=>'account'
     end
   end
   

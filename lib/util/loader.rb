@@ -6,6 +6,7 @@ module Wagn
       @filename = filename 
       @builder = CardBuilder.new  
       @cards = {}
+      @cardinput = {}
       @authors = {}   
       @revisions = []
     end
@@ -28,11 +29,14 @@ module Wagn
                
         setup_import_user
         
+        warn "Loading cards hash"
+        load_cards
+
         warn "processing authors..."      
         process_authors
                                 
-        warn "processing titles..."
-        process_titles 
+        #warn "processing titles..."
+        #process_titles 
         
         warn "processing revisions..."
         process_revisions
@@ -58,31 +62,87 @@ module Wagn
       end
     end
       
+    def load_cards
+      # FIXME: you can't create a card without creating a revision,
+      # so we create a bunch of bogus Importer revisions
+      @revisions.each do |rev|
+	@cardinput[rev['name']] = rev
+      end
+    end
+
     def process_titles
       # FIXME: you can't create a card without creating a revision,
       # so we create a bunch of bogus Importer revisions
-      @revisions.collect {|r| r['name'] }.uniq.sort_by {|t| t.length}.each do |title|
-        @cards[title] = @builder.create_compound( title )
+      @revisions.sort_by {|r| r['name'].length}.each do |rev|
+        if not @cards[rev['name']]
+          create_card(rev)
+        end
+      end
+    end
+
+    def create_card(rev)
+      title = rev['name']
+      warn("process Ti: "+title)
+      c = @cards[title] = Card.find(:first, :conditions => "name='"+title+"'")
+      if not c
+        create_type(rev['type'])
+        warn("New card for name: "+title)
+        c = @cards[title] = Card.create!(:name => title, :type => rev['type'])
+        if not c
+          warn("New card not created: "+title)
+        end
+      end
+      c
+    end
+
+    def create_type(ctype)
+      warn("process Ty: "+ctype)
+      if not @cards[ctype]
+        c = @cards[ctype] = Card.find(:first, :conditions => "name='"+ctype+"'")
+        if not c
+          warn("New card type name: "+ctype)
+           
+          warn("create Ty: "+ctype)
+          c = @cards[ctype] = Card.create!(:name => ctype, :type => 'Cardtype')
+          c.save!
+          if not c
+            warn("New type card not created: "+ctype)
+          end
+        else
+          warn("Found type: "+ctype)
+        end
+      else
+        warn("Have type: "+ctype)
       end
     end
 
     def update_current_revisions 
       @cards.values.each do |c|
+        warn("Saving last "+c.card.name)
         c.current_revision = c.revisions(refresh=true).last
         c.save
       end
     end
     
     def process_revisions     
-      @revisions.sort_by{|r| r['date']}.each do |rev|
-        data = {
-          :card_id => @cards[rev['name']].id,
-          :content => rev['content'] || ''  ,
-          :created_at => rev['date'],
-          :created_by => @authors[rev['author']]
-        }      
-        # FIXME: should check if this might be a duplicate revision
-        Revision.create! data
+      @cardinput.values.sort_by{|r| r['name'].length}.each do |rev|
+        title = rev['name']
+        c=create_card(rev)
+        if not c.id
+         #warn("No id for card: "+title+" "+c.name+" "+c.id)
+         warn("No id for card: "+title+" "+c.id)
+        else
+          data = {
+            :card_id => c.id,
+            :type => rev['type'],
+            :content => rev['content'] || ''  ,
+            #:created_at => rev['date'],
+            :created_by => @authors[rev['author']]
+          }      
+          # FIXME: should check if this might be a duplicate revision
+          rc = Revision.create!(data).save
+          warn("revision added: "+title+" RC["+String(rc)+"] I:"+String(c.id)+"\nCont:"+rev['content'])
+        end
       end
     end
   end

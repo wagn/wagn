@@ -157,26 +157,16 @@ ActiveRecord::Schema.define(:version => 20100425222251) do
   end
 
   create_table "users", :force => true do |t|
-    t.string   "login",                :limit => 40
-    t.string   "email",                :limit => 100
-    t.string   "encrypted_password",   :limit => 40
-    t.string   "password_salt",        :limit => 42
+    t.string   "login",               :limit => 40
+    t.string   "email",               :limit => 100
+    t.string   "crypted_password",    :limit => 40
+    t.string   "salt",                :limit => 42
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "reset_password_token", :limit => 40
-    t.string   "status",                              :default => "request"
+    t.string   "password_reset_code", :limit => 40
+    t.string   "status",                             :default => "request"
     t.integer  "invite_sender_id"
     t.string   "identity_url"
-    t.string   "confirmation_token",   :limit => 20
-    t.datetime "confirmed_at"
-    t.datetime "confirmation_sent_at"
-    t.string   "remember_token",       :limit => 20
-    t.datetime "remember_created_at"
-    t.integer  "sign_in_count"
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip"
-    t.string   "last_sign_in_ip"
   end
 
   create_table "wiki_references", :force => true do |t|

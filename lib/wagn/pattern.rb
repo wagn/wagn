@@ -34,12 +34,6 @@ module Wagn
           end
         end.reverse.join(" ")
       end
-
-      def css_names card
-        @@subclasses.map do |sc|
-          sc.pattern_applies?(card) ? sc.css_name(card) : nil
-        end.compact.reverse.join(" ")
-      end
       
       def label name
         @@subclasses.map do |sc|

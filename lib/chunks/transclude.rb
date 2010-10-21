@@ -8,7 +8,7 @@ module Chunk
     
     def self.pattern() TRANSCLUDE_PATTERN end
   
-    def initialize(match_data, content)
+    def initialize(match_data, content, render_xml=false)
       super   
       #warn "FOUND TRANSCLUDE #{match_data} #{content}"
       @card_name, @options, @configs = self.class.parse(match_data)

@@ -6,7 +6,9 @@ class RevisionTest < ActiveSupport::TestCase
   end
   
   def test_revise
-    author1, author2 = User.find(:all, :limit=>2)
+    author1 = User.find_by_email('joe@user.com')
+    author2 = User.find_by_email('sara@user.com')
+    #author1, author2 = User.find(:all, :limit=>2)
     User.current_user = author1
     author1.roles << Role.find_by_codename('admin')
     author2.roles << Role.find_by_codename('admin')

@@ -73,12 +73,16 @@ module LocationHelper
  
   def link_to_page( text, title=nil, options={})
     title ||= text
-    url_options = (options[:type]) ? {:type=>options[:type]} : {}                              
-    if (options.delete(:include_domain)) 
-      link_to text, System.base_url + url_for_page(title, url_options) #, :only_path=>true )
+    url_options = (options[:type]) ? {:type=>options[:type]} : {}
+    url = url_for_page(title, url_options)
+    url = System.base_url + url if (options.delete(:include_domain)) 
+
+    #Rails.logger.info("link_to_page #{options.inspect}")
+    if options[:format] == :xml
+      %{<cardlink class="known-card" card="#{url}">#{title}</cardlink>}
     else
-      link_to text, url_for_page( title, url_options ), options
-    end
+      link_to text, url, options
+    end  
   end  
     
   def link_to_connector_update( text, highlight_group, connector_method, value, *method_value_pairs )

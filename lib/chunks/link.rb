@@ -1,4 +1,4 @@
-module Chunk  
+module Chunk
   class Link < Reference
     attr_accessor :link_text, :link_type, :card_name
     
@@ -9,8 +9,9 @@ module Chunk
 
     def self.pattern() WIKI_LINK end
 
-    def initialize(match_data, content)
+    def initialize(match_data, content, render_xml=false)
       super
+      @render_xml=render_xml
       @link_type = :show
       if @card_name = match_data[1] 
         # matched the [[..]]  case
@@ -25,7 +26,7 @@ module Chunk
     end
 
     def unmask_text
-      @unmask_text ||= card_link
+      @unmask_text ||= card_link(@render_xml)
     end
     
     def revert
@@ -33,25 +34,34 @@ module Chunk
       super
     end
 
-    def card_link
+    def card_link(render_xml=false)
       href = refcard_name
-      klass = 
+      if (klass = 
         case href
           when /^\//;    'internal-link'
           when /^https?:/; 'external-link'
           when /^mailto:/; 'email-link'
-          else
-            @link_text = @link_text.to_show(href)
-            if refcard
-              href = '/wagn/' + href.to_url_key
-              'known-card'
-            else
-              href = '/wagn/' + CGI.escape(Cardname.escape(href))
-              'wanted-card'
-            end
+        end)
+        if (render_xml)
+          %{<link class="#{klass}" href="#{href}">#{link_text}</link>}
+        else
+          %{<a class="#{klass}" href="#{href}">#{link_text}</a>}
         end
-      %{<a class="#{klass}" href="#{href}">#{link_text}</a>}
+      else
+        @link_text = @link_text.to_show(href)
+        klass = if refcard
+          href = href.to_url_key
+         'known-card'
+        else
+          href = CGI.escape(Cardname.escape(href)) unless render_xml
+          'wanted-card'
+        end
+        if render_xml
+          %{<cardlink class="#{klass}" card="/wagn/#{href}">#{link_text}</cardlink>}
+        else
+          %{<a class="#{klass}" href="/wagn/#{href}">#{link_text}</a>}
+        end
+      end
     end
-
   end
 end

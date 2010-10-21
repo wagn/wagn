@@ -7,7 +7,7 @@ require_dependency 'chunks/transclude'
 
 
 module ChunkManager
-  attr_reader :chunks_by_type, :chunks_by_id, :chunks, :chunk_id
+  attr_reader :chunks_by_type, :chunks_by_id, :chunks, :chunk_id, :render_xml
   unless defined? ACTIVE_CHUNKS
     ACTIVE_CHUNKS = [ 
       Literal::Pre,
@@ -26,7 +26,8 @@ module ChunkManager
     }
   end
   
-  def init_chunk_manager
+  def init_chunk_manager(render_xml=false)
+    @render_xml = render_xml
     @chunks_by_type = Hash.new
     ACTIVE_CHUNKS.each{|chunk_type| 
       @chunks_by_type[chunk_type] = Array.new 

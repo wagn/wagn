@@ -38,7 +38,7 @@ describe Slot, "" do
           div( :position => 1, :class => "card-slot") {
             div( :class => "card-header" )
             span( :class => "content")  {
-              p "Alpha"
+              #p "Alpha"
             }
           }
         end

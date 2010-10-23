@@ -158,7 +158,7 @@ module WagnHelper
   def cardtype_options
     Cardtype.createable_cardtypes.map do |cardtype|
       #next(nil) if cardtype[:codename] == 'User' #or cardtype[:codename] == 'InvitationRequest'
-      [cardtype[:codename], cardtype[:name]]
+      [cardtype[:name], cardtype[:name]]
     end.compact
   end
 

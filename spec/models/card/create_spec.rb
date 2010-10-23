@@ -135,10 +135,10 @@ describe Card, "types" do
     Card.create!(:type=>"foo_renamed",:name=>"so testy").class.should == Card::AFoo
   end
 
-  it "should accept classname as type" do
+  it "should accept classname as typecode" do
     ct = Card::Cardtype.create! :name=>"BFoo"
     ct.update_attributes! :name=>"BFooRenamed"
-    Card.create!(:type=>"BFoo",:name=>"testy").class.should == Card::BFoo
+    Card.create!(:typecode=>"BFoo",:name=>"testy").class.should == Card::BFoo
   end
   
   it "should accept cardtype name first when both are present" do

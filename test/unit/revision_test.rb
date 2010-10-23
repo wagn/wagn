@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 class RevisionTest < ActiveSupport::TestCase
   
   def setup
+    super
     setup_default_user
   end
   

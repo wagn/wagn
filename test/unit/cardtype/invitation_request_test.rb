@@ -3,6 +3,7 @@ class Card::InvitationRequestTest < ActiveSupport::TestCase
   
   
   def setup
+    super
     setup_default_user  
     # make sure all this stuff works as anonymous user
     ::User.current_user = ::User.find_by_login('anon')

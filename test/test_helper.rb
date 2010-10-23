@@ -35,9 +35,9 @@ unless defined? TEST_ROOT
     self.use_instantiated_fixtures  = false
 
     Wagn::Cache.new( Rails.cache, "#{System.host}/test" ).reset
-    Wagn::Cache.new( Rails.cache, "#{System.host}/cucumber" ).reset
 
     def setup
+      super
       # let the cache stick accross test-runs while profiling
       unless ActionController.const_defined?("PerformanceTest") and self.class.superclass == ActionController::PerformanceTest
         Wagn::Cache.reset_for_tests

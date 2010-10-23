@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/../../test_helper'
 class Card::CreateTest < ActiveSupport::TestCase
   
   def setup
+    super
     setup_default_user
   end
   def test_find_or_create_when_present

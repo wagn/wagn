@@ -4,6 +4,7 @@ class LinkTest < ActiveSupport::TestCase
   include ChunkTestHelper
   
   def setup
+    super
     setup_default_user
   end
   

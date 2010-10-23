@@ -3,6 +3,7 @@ class Card::RoleTest < ActiveSupport::TestCase
   
   
   def setup
+    super
     setup_default_user
   end
   

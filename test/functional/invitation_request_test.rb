@@ -8,6 +8,7 @@ class InvitationRequestTest < ActionController::TestCase
   include AuthenticatedTestHelper
   
   def setup
+    super
     get_renderer
     @controller = CardController.new
     @request    = ActionController::TestRequest.new

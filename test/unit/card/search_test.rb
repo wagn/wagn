@@ -1,7 +1,8 @@
 require File.dirname(__FILE__) + '/../../test_helper'
 class Card::BaseTest < ActiveSupport::TestCase
   
-  def setup           
+  def setup
+    super
     ::User.as(:u3)  # FIXME!!! wtf?  this works and :admin doesn't
   end
          

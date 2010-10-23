@@ -1,6 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 class WagnRubyTest < ActiveSupport::TestCase
   def setup
+    super
   end
   
   def test_hash_from_semicolon_attr_list  

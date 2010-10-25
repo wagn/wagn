@@ -77,7 +77,6 @@ class Card::BaseTest < ActiveSupport::TestCase
     User.as(:anon)
     b = Card.create!( :type=>"Fruit", :name=>'Banana' )
     b.multi_update({ "+peel" => { :content => "yellow" }})
-    p "Card.find_by_key = #{Card.find_by_key("Banana+peel".to_key)}"
     assert_equal "yellow", Card["Banana+peel"].current_revision.content
     assert_equal User[:wagbot].id, Card["Banana+peel"].created_by
   end

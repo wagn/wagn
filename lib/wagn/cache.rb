@@ -2,7 +2,17 @@ module Wagn
   class Cache
     class << self
       def initialize_on_startup
-        Card.cache = Wagn::Cache.new Rails.cache, system_prefix
+        if RAILS_ENV =~ /cucumber|test/
+          Card.cache = Wagn::Cache.new nil, system_prefix
+          if ENV['PRELOAD_CACHE_FOR_TESTS']
+            cards = Card.find(:all)
+            Card.preload(cards)
+            @@frozen = Marshal.dump(Card.cache.local)
+            p "initialize_on_startup : Card.cache.local['*includer']: #{Card.cache.local['*includer']}"
+          end
+        else
+          Card.cache = Wagn::Cache.new Rails.cache, system_prefix
+        end
       end
 
       def system_prefix
@@ -17,6 +27,8 @@ module Wagn
 
       def reset_for_tests
         reset_global
+        #  p "loading cache: #{@@frozen[0..50]}"
+        Card.cache.local = Marshal.load(@@frozen) if ENV['PRELOAD_CACHE_FOR_TESTS']
       end
 
       def generate_cache_id
@@ -43,7 +55,8 @@ module Wagn
       end
     end
 
-    attr_reader :prefix, :local, :store
+    attr_reader :prefix, :store
+    attr_accessor :local
 
     def initialize(store, system_prefix)
       @store = store
@@ -53,33 +66,46 @@ module Wagn
 
     def system_prefix=(system_prefix)
       @system_prefix = system_prefix
-      @system_prefix += '/' unless @system_prefix[-1] == '/'
-      @cache_id = @store.fetch(@system_prefix + "cache_id") do
-        self.class.generate_cache_id
+      if @store.nil?
+        @prefix = system_prefix + self.class.generate_cache_id + "/"
+      else
+        @system_prefix += '/' unless @system_prefix[-1] == '/'
+        @cache_id = @store.fetch(@system_prefix + "cache_id") do
+          self.class.generate_cache_id
+        end
+        @prefix   = @system_prefix + @cache_id + "/"
       end
-      @prefix = @system_prefix + @cache_id + "/"
     end
 
     def read key
+      return @local[key] unless @store
       fetch_local(key) do
         @store.read(@prefix + key)
       end
     end
 
     def write key, value
+      self.write_local(key, value)
+      @store.write(@prefix + key, value)  if @store
+    end
+
+    def write_local key, value
       @local[key] = value
-      @store.write(@prefix + key, value)
     end
 
     def fetch key, &block
       fetch_local(key) do
-        @store.fetch(@prefix + key, &block)
+        if @store
+          @store.fetch(@prefix + key, &block)
+        else
+          block.call
+        end
       end
     end
 
     def delete key
       @local.delete key
-      @store.delete(@prefix + key)
+      @store.delete(@prefix + key)  if @store
     end
 
     def dump
@@ -96,7 +122,7 @@ module Wagn
     def reset
       reset_local
       @cache_id = self.class.generate_cache_id
-      @store.write(@system_prefix + "cache_id", @cache_id)
+      @store.write(@system_prefix + "cache_id", @cache_id)  if @store
       @prefix = @system_prefix + @cache_id + "/"
     end
 

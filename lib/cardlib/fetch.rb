@@ -5,9 +5,7 @@
 
 
 # TODO:
-#  - implement pre-load api.  use in search to prevent reloading card during rendering
 #  - implement Slot#cache_action  (for footer, etc.) if necessary
-#  - review deprecation of CacheCard.set_cache_prefix  in wagn.rb
 #
 
 module Cardlib
@@ -44,7 +42,11 @@ module Cardlib
         p "   builtin_virtual: #{card.inspect}" if card && debug
 
         if perform_caching?
-          card ||= Card.cache.read( key )
+          card ||= begin
+            c = Card.cache.read( key )
+#            p (c ? "hit #{cardname}" : "miss #{cardname}")
+            c
+          end
           cacheable = true if card.nil?
           p "   cache.read: #{card.inspect}" if debug
         end
@@ -86,6 +88,16 @@ module Cardlib
       def fetch_or_new cardname, fetch_opts = {}, card_opts = {}
         card_opts[:name] = cardname
         fetch( cardname, fetch_opts ) || Card.new( card_opts )
+      end
+
+      def preload cards, opts = {}
+        cards.each do |card|
+          if opts[:local]
+            Card.cache.write_local(card.key, card)
+          else
+            Card.cache.write(card.key, card)
+          end
+        end
       end
 
       def exists?(name)

@@ -134,6 +134,23 @@ describe Card do
     end
   end
 
+  describe "#preload" do
+    it "loads a list of cards into the cache" do
+      a = Card.new(:name => "Appa")
+      Card.preload([a])
+      Card.should_not_receive(:find_by_key)
+      Card.fetch("Appa").should == a
+    end
+
+    it "with :local options loads a list of cards into the local cache only" do
+      a = Card.new(:name => "Appa")
+      Card.cache.store.should_not_receive(:read)
+      Card.cache.store.should_not_receive(:write)
+      Card.preload([a], :local => true)
+      Card.fetch("Appa").should == a
+    end
+  end
+
   describe "#exists?" do
     it "is true for cards that are there" do
       Card.exists?("A").should == true

@@ -119,14 +119,14 @@ describe Slot, "" do
     it "uses content setting" do
       @card = Card.new( :name=>"templated", :content => "bar" )
       config_card = Card.new(:name=>"templated+*self+*content", :content=>"Yoruba" )
-      @card.should_receive(:setting_card).twice.with("content").and_return(config_card)
+      @card.should_receive(:setting_card).with("content","default").and_return(config_card)
       Slot.new(@card).render(:naked_content).should == "Yoruba"
     end
     
     it "doesn't use content setting if default is present" do
       @card = Card.new( :name=>"templated", :content => "Bar" )
       config_card = Card.new(:name=>"templated+*self+*default", :content=>"Yoruba" )
-      @card.should_receive(:setting_card).with("content").and_return(config_card)
+      @card.should_receive(:setting_card).with("content", "default").and_return(config_card)
       Slot.new(@card).render(:naked_content).should == "Bar"
     end
     

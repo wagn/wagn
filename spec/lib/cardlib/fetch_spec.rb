@@ -111,6 +111,12 @@ describe Card do
         Card.should_not_receive(:find_by_key)
         Card.fetch("a+y")
       end
+      
+      it "should not be a new_record after being saved" do
+        Card.create!(:name=>'growing up')
+        card = Card.fetch('growing up')
+        card.new_record?.should be_false
+      end
     end
   end
 

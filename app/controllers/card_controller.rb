@@ -339,8 +339,8 @@ class CardController < ApplicationController
     # FIXME - shouldn't we bail here if we don't have anything to complete?
 
     options_card = 
-      (!params[:id].blank? &&
-       (pointer_card = Card.fetch_or_new(params[:id])) &&
+      (!params[:id].blank? and
+       (pointer_card = Card.fetch(params[:id])) and
        pointer_card.setting_card('options'))
 
     search_args = {  :complete=>complete, :limit=>8, :sort=>'name' }

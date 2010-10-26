@@ -31,10 +31,11 @@ module Cardlib
       self.hard_templatees.each {|c| expire(c) }
       self.dependents.each {|c| expire(c) }
       self.referencers.each {|c| expire(c) }
-      self.name_references.plot(:referencer).compact.each{|c| expire(c)}
+      self.name_referencers.each{|c| expire(c)}
       # FIXME: this will need review when we do the new defaults/templating system
       #if card.changed?(:content)
 
+      # this seems like oodles of unnecessary instantiations to me -efm
     end
     
     def expire(card)  

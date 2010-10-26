@@ -145,7 +145,7 @@ class System < ActiveRecord::Base
     end
     
     def always_ok?   
-      return false unless usr = User.current_user  
+      return false unless usr = User.current_user
       if (c = @@cache[:always][usr]).nil?
         @@cache[:always][usr] = usr.roles.detect { |r| r.codename == 'admin' } || false
       else

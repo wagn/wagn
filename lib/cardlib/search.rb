@@ -70,11 +70,7 @@ module Cardlib
       end
 
       def [](name) 
-        # DONT do find_virtual here-- it ends up happening all over the place--
-        # call it explicitly if that's what you want
-        #self.cache[name.to_s] ||= 
-        #self.find_by_name(name.to_s, :include=>:current_revision) #|| self.find_virtual(name.to_s)
-        self.find_by_name(name.to_s)
+         Card.fetch(name, :skip_virtual => true)
       end             
       
       # FIXME Hack to keep dynamic classes from breaking after application reload in development..

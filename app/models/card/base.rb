@@ -68,7 +68,7 @@ module Card
         Rails.logger.debug "Cardtype after_save resetting"
         ::Cardtype.reset_cache
       end
-      Rails.logger.debug "Card#after_save end"
+#      Rails.logger.debug "Card#after_save end"
       true
     end
         
@@ -86,7 +86,7 @@ module Card
     
     def set_defaults args
       # autoname
-      Rails.logger.debug "Card(#{name})#set_defaults begin"
+#      Rails.logger.debug "Card(#{name})#set_defaults begin"
       if args["name"].blank?
         ::User.as(:wagbot) do
           if ac = setting_card('autoname') and autoname_card = ac.card
@@ -127,7 +127,7 @@ module Card
       self.trash = false   
       self.key = name.to_key if name
       self.name='' if name.nil?
-      Rails.logger.debug "Card(#{name})#set_defaults end"
+#      Rails.logger.debug "Card(#{name})#set_defaults end"
       self
     end
 
@@ -301,15 +301,15 @@ module Card
     
     def multi_save(cards)
       Wagn::Hook.call :before_multi_save, self, cards
-      cards.each_pair do |name, opts|              
-        opts[:content] ||= ""   
+      cards.each_pair do |name, opts|
+        opts[:content] ||= ""
         # make sure blank content doesn't override pointee assignments if they are present
         if (opts['pointee'].present? or opts['pointees'].present?) 
           opts.delete('content')
         end                                                                               
         name = name.post_cgi.to_absolute(self.name)
         logger.info "multi update working on #{name}: #{opts.inspect}"
-        if card = Card[name]      
+        if card = Card[name]
           card.update_attributes(opts)
         elsif opts[:pointee].present? or opts[:pointees].present? or  
                 (opts[:content].present? and opts[:content].strip.present?)

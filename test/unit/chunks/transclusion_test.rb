@@ -9,6 +9,7 @@ class TransclusionTest < ActiveSupport::TestCase
   include ActionView::Helpers::TextHelper
   
   def setup
+    super
     setup_default_user
   end  
               

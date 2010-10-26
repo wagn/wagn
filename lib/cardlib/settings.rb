@@ -11,7 +11,7 @@ module Cardlib
     def setting_card setting_name, fallback=nil
       ## look for pattern
       Wagn::Pattern.set_names( self ).each do |name|
-        #next if setcard=Card.fetch(name) and setcard.virtual?
+        next unless Card.fetch(name, :skip_virtual=>true) 
         if value = Card.fetch( "#{name}+#{setting_name.to_star}" , :skip_virtual => true)
           return value
         elsif fallback and value2 = Card.fetch("#{name}+#{fallback.to_star}", :skip_virtual => true)

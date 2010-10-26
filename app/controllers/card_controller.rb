@@ -314,7 +314,7 @@ class CardController < ApplicationController
   end
 
   def unwatch 
-    watchers = Card.fetch_or_new( :name => @card.name + "+*watchers" )
+    watchers = Card.fetch_or_new( @card.name + "+*watchers" )
     watchers.remove_reference User.current_user.card.name
     #flash[:notice] = "You are no longer watching #{@card.name}"
     request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view

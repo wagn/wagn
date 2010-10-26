@@ -9,9 +9,11 @@ module Cardlib
     end
     
     def setting_card setting_name, fallback=nil
-      ## look for pattern
       Wagn::Pattern.set_names( self ).each do |name|
         next unless Card.fetch(name, :skip_virtual=>true) 
+        # optimization for cases where there are lots of settings lookups for many sets though few exist. 
+        # May cause problems if we wind up with Set in trash, since trunks aren't always getting pulled out when we
+        # create plus cards (like setting values)
         if value = Card.fetch( "#{name}+#{setting_name.to_star}" , :skip_virtual => true)
           return value
         elsif fallback and value2 = Card.fetch("#{name}+#{fallback.to_star}", :skip_virtual => true)

@@ -50,8 +50,7 @@ module Cardlib
       end
 
       def create_virtual(name, content, type='Basic', reader=Role[:anon])
-        c=Card.new(:name=>name, :content=>content, :type=>type ,:reader=>reader, :virtual=>true)
-        c
+        Card.new(:name=>name, :content=>content, :type=>type ,:reader=>reader, :virtual=>true, :skip_defaults=>true)
       end
       
       def count_by_wql(spec)       

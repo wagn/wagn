@@ -116,8 +116,8 @@ module Cardlib
    
     def set_reader(party)
       self.reader = party
-      if !party.anonymous?  
-        junctions.each do |dep|
+      if name.junction? && !party.anonymous?
+        junctions.each do |dep| #note: this could be faster with WQL, but I'm not sure this WQL actually works correctly
           unless authenticated?(party) and !dep.who_can(:read).anonymous?
             dep.permit :read, party  
             dep.save!

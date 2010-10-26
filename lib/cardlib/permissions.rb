@@ -109,9 +109,7 @@ module Cardlib
     end
     
     def who_can(operation)
-      #perm = permissions.reject { |perm| perm.task != operation.to_s }.first   
-      #perm && perm.party ? perm.party : nil
-      perm = Permission.find(:first, :conditions=>{:card_id=>self.id, :task=>operation.to_s })
+      perm = permissions.reject { |perm| perm.task != operation.to_s }.first   
       perm && Role[perm.party_id.to_i] 
     end 
     

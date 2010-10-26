@@ -1,6 +1,18 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 
+describe Role, "Authenticated User" do
+  before do
+    auth = Role[:auth]
+  end
+  
+  it "should cache roles" do
+    Role.should_not_receive(:find_by_codename)
+    Role[:auth]
+  end
+end
+
+
 describe User, "Anonymous User" do
   before do
     User.current_user = ::User['anon']

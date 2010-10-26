@@ -201,7 +201,7 @@ class Slot
 
   def wrap_main(content)
     return content if p=root.slot_options[:params] and p[:layout]=='none'
-    return content if p=slot_options[:params] and p[:format].to_sym == :xml
+    return content if p=slot_options[:params][:format] and p.to_sym == :xml
     %{<div id="main" context="main">#{content}</div>}
   end
   

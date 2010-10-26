@@ -142,13 +142,13 @@ class ApplicationController < ActionController::Base
     render :json=>(params[:callback] || "wadget") + '(' + str.to_json + ')'
   end
 
-  def render_update_slot(stuff="", &proc)
-    render_update_slot_element(name="", stuff, &proc)
+  def render_update_slot(stuff="", message=nil, &proc)
+    render_update_slot_element(name="", stuff, message, &proc)
   end
 
   # FIXME: this should be fixed to use a call to getSlotElement() instead of default
   # selectors, so that we can reject elements inside nested slots.
-  def render_update_slot_element(name, stuff="")
+  def render_update_slot_element(name, stuff="", message=nil)
     render :update do |page|
       page.extend(WagnHelper::MyCrappyJavascriptHack)
       elem_code = "getSlotFromContext('#{get_slot.context}')"
@@ -159,6 +159,7 @@ class ApplicationController < ActionController::Base
         target.update(stuff) unless stuff.empty?
         yield(page, target) if block_given?
       end
+      page.wagn.messenger.log(message) if message
     end
   end
 

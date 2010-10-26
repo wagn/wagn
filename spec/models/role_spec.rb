@@ -3,12 +3,18 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Role, "Authenticated User" do
   before do
-    auth = Role[:auth]
+    @auth = Role[:auth]
   end
   
-  it "should cache roles" do
+  it "should cache roles by codename" do
     Role.should_not_receive(:find_by_codename)
     Role[:auth]
+  end
+
+  it "should cache roles by id" do
+    Role[@auth.id]
+    Role.should_not_receive(:find)
+    Role[@auth.id]
   end
 end
 

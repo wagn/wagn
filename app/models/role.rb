@@ -66,7 +66,7 @@ class Role < ActiveRecord::Base
     end  
     
     def [](codename) 
-      self.cache[codename.to_s] ||= Role.find_by_codename(codename.to_s)
+      self.cache[codename.to_s] ||= Integer===codename ? Role.find(codename) : Role.find_by_codename(codename.to_s)
     end
   end
 end

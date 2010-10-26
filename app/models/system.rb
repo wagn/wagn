@@ -97,12 +97,6 @@ class System < ActiveRecord::Base
       lo_card
     end
    
-    def xml_layout_card(card, cardname)
-      User.as(:wagbot) do 
-        layout_from_url(cardname) or layout_from_setting(card)
-      end
-    end
-
     def image_setting(name)
       if content = setting(name) and content.match(/src=\"([^\"]+)/)
         $~[1]

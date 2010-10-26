@@ -47,7 +47,7 @@
 					<% end %> 
 				</span>
 			</div>
-      <% if inst=card.setting_card('add help') and params[:view]!='setting' %>
+      <% if inst=card.setting_card('add help', 'edit help') and params[:view]!='setting' %>
         <div class="instruction"><%= slot.subslot(inst).render :naked %></div>
 	    <% end %>
 
@@ -55,7 +55,7 @@
 			<div class="edit-area">
   			<div class="editor">  
 					<% #FIXME CONTENT: the hard template test can go away when we phase out the old sytem %>
-  				<% if card.content_templated? %>
+  				<% if card.content_template %>
   				  <%- slot.form = form %>
     			  <%= slot.render(:multi_edit)%>
   				<% else %>

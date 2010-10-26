@@ -86,7 +86,7 @@ module Card
     
     def set_defaults args
       # autoname
-#      Rails.logger.debug "Card(#{name})#set_defaults begin"
+      #Rails.logger.debug "Card(#{name})#set_defaults with args #{args.inspect} begin"
       if args["name"].blank?
         ::User.as(:wagbot) do
           if ac = setting_card('autoname') and autoname_card = ac.card
@@ -127,13 +127,13 @@ module Card
       self.trash = false   
       self.key = name.to_key if name
       self.name='' if name.nil?
-#      Rails.logger.debug "Card(#{name})#set_defaults end"
+      #Rails.logger.debug "Card(#{name})#set_defaults end"
       self
     end
 
     
     def default_permissions
-      source_card = setting_card('content')
+      source_card = setting_card('content', 'default')
       if source_card
         perms = source_card.card.permissions.reject { 
           |p| p.task == 'create' unless (type == 'Cardtype' or template?) 
@@ -205,7 +205,7 @@ module Card
           when args.delete('skip_type_lookup')
             'Basic'
           else
-            setting = Card::Basic.new(:name=> args['name'], :skip_defaults=>true ).setting_card('content')
+            setting = Card::Basic.new(:name=> args['name'], :skip_defaults=>true ).setting_card('content', 'default')
             setting ? setting.type : 'Basic'
           end
 

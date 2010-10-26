@@ -26,7 +26,7 @@ module Card
     
     def get_spec(params={})
       spec = ::User.as(:wagbot) do
-        spec_content = content_templated? ? setting('content') : self.content
+        spec_content = templated_content || self.content
         raise("Error in card '#{self.name}':can't run search with empty content") if spec_content.empty?
         JSON.parse( spec_content )   
       end

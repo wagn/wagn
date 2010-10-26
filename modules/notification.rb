@@ -14,6 +14,7 @@ module Notification
       watcher_watched_pairs.reject {|p| @trunk_watchers.include?(p.first) }.each do |watcher, watched|
         Mailer.deliver_change_notice( watcher, self, action, watched )
       end
+
       
       if nested_edit
         nested_edit.nested_notifications << [ name, action ]
@@ -26,13 +27,14 @@ module Notification
     
     def trunk_watcher_watched_pairs
       # do the watchers lookup before the transcluder test since it's faster.
-      if (name.junction? and 
-          pairs = Card.fetch_or_new("#{name.trunk_name}").watcher_watched_pairs and
+      if (name.junction? and
+          trunk_card = Card.fetch(name.trunk_name) and
+          pairs = trunk_card.watcher_watched_pairs and
           transcluders.include?(trunk))
         pairs
       else
         []
-      end
+      end      
     end
     
     def self.included(base)   
@@ -45,8 +47,8 @@ module Notification
 
     def watcher_watched_pairs
       author = User.current_user.card.name
-      (card_watchers.except(author).map {|watcher| [Card[watcher].extension,self.name] }  +
-        type_watchers.except(author).map {|watcher| [Card[watcher].extension,::Cardtype.name_for(self.type)]})
+      (card_watchers.except(author).map {|watcher| [Card.fetch(watcher).extension,self.name] }  +
+        type_watchers.except(author).map {|watcher| [Card.fetch(watcher).extension,::Cardtype.name_for(self.type)]})
     end
     
     def card_watchers 
@@ -58,7 +60,7 @@ module Notification
     end
     
     def pointees_from( cardname )
-      (c = Card.fetch_or_new(cardname)) ? c.pointees.reject{|x|x==''} : []
+      (c = Card.fetch(cardname)) ? c.pointees.reject{|x|x==''} : []
     end  
       
     def watchers

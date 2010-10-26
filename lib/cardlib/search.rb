@@ -30,7 +30,7 @@ module Cardlib
       
      def pattern_virtual(name)
         return nil unless name && name.junction?
-        if template = Card.new(:name=>name).setting_card('content') and template.hard_template? 
+        if template = Card.new(:name=>name, :skip_defaults=>true).setting_card('content','default') and template.hard_template? 
           User.as(:wagbot) do
             Card.create_virtual name, template.content, template.type
           end

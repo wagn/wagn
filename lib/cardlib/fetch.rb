@@ -13,6 +13,7 @@ module Cardlib
     mattr_accessor :cache
     mattr_accessor :debug
     self.debug = lambda {|x| false }
+    #self.debug = lambda {|name| name.to_key == 'cardtype+*watcher' }
 
     module ClassMethods
       def perform_caching?
@@ -34,12 +35,12 @@ module Cardlib
       # cards are not returned
       def fetch cardname, opts = {}
         debug = Cardlib::Fetch.debug.call(cardname)
-        p "fetch #{cardname}"  if debug
+        Rails.logger.debug "fetch #{cardname}"  if debug
         key = cardname.to_key
         cacheable = false
 
         card = Card.builtin_virtual( key ) unless opts[:skip_virtual]
-        p "   builtin_virtual: #{card.inspect}" if card && debug
+        Rails.logger.debug "   builtin_virtual: #{card.inspect}" if card && debug
 
         if perform_caching?
           card ||= begin
@@ -48,40 +49,39 @@ module Cardlib
             c
           end
           cacheable = true if card.nil?
-          p "   cache.read: #{card.inspect}" if debug
+          Rails.logger.debug "   cache.read: #{card.inspect}" if debug
         end
 
         card ||= begin
-          p "   find_by_key: #{card.inspect}" if debug
+          Rails.logger.debug "   find_by_key: #{card.inspect}" if debug
           Card.find_by_key( key )
         end
 
         if !opts[:skip_virtual] && (!card || card.missing? || card.trash? || card.builtin?)
           if virtual_card = Card.pattern_virtual( cardname )
             card = virtual_card
-            p "   pattern_virtual: #{card.inspect}" if debug
+            Rails.logger.debug "   pattern_virtual: #{card.inspect}" if debug
             card.missing = true
           end
         end
         card ||= begin
-           p "   new(missing): #{card.inspect}" if debug
-           Card.new( :name => cardname, :missing => true,
-                           :skip_type_lookup => true,
-                           :skip_defaults => true ) #unless opts[:skip_virtual]
+           Rails.logger.debug "   new(missing): #{card.inspect}" if debug
+           Card.new( :name => cardname, :skip_defaults    => true,
+                     :missing => true,  :skip_type_lookup => true ) 
         end
 
 
 
         if cacheable
           Card.cache.write key, card
-          p "   writing: #{card.inspect}" if debug
+          Rails.logger.debug "   writing: #{card.inspect}" if debug
         end
 
         if (card.missing? && !card.virtual?) || card.trash?
-          p "   final: nil"  if debug
+          Rails.logger.debug "   final: nil"  if debug
           return nil
         end
-        p "   final: #{card.inspect}"  if debug
+        Rails.logger.debug "   final: #{card.inspect}"  if debug
         card
       end
 

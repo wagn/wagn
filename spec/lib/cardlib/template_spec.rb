@@ -14,7 +14,7 @@ describe Card do
     end
   end
   
-  it "#content_templated?" do
+  it "#content_template" do
     pending
   end
   

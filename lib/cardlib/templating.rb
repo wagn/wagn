@@ -31,12 +31,16 @@ module Cardlib
     end
     
     def template
-      @template ||= setting_card('content')
+      @template ||= setting_card('content','default')
     end
     
-    def content_templated?
+    def content_template
       hard_template
-    end        
+    end
+    
+    def templated_content
+      card=hard_template and User.as(:wagbot){ card.content }
+    end
     
     private
     # FIXME: remove after adjusting expire_templatee_references to content_settings

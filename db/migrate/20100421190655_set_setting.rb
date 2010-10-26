@@ -34,7 +34,7 @@ class SetSetting < ActiveRecord::Migration
 <p>{{*thanks|closed}}</p>
 </blockquote>
 CONTENT
-      if card.content_templated?
+      if card.content_template
         Card.create! :name => "Setting+*self+*content", :content => content
       else
         card.content = content

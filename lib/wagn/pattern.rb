@@ -156,7 +156,7 @@ module Wagn
       end
       
       def pattern_applies? card
-        card.name and !card.virtual?
+        card.name and !card.virtual? and !card.new_record?
       end
       
       def set_name card

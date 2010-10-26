@@ -278,7 +278,7 @@ class Slot
       when :edit;  
         @state=:edit
         # FIXME CONTENT: the hard template test can go away when we phase out the old system.
-        if card.content_templated?
+        if card.content_template
           render(:multi_edit)
         else
           content_field(slot.form)
@@ -372,8 +372,7 @@ class Slot
     else
       cache_action('naked_content') do
         #passed_in_content = args.delete(:content) # Can we get away without this??
-        templated_content = card.content_templated? ? card.setting('content') : nil
-        renderer_content = templated_content || ""
+        renderer_content = card.templated_content || ""
         @renderer.render( card, renderer_content, update_refs=card.references_expired)
       end
     end

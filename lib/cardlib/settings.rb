@@ -1,24 +1,20 @@
 module Cardlib
   module Settings
-    Fallbacks = {
-      '*add help' => '*edit help',
-      '*content' => '*default'
-    }
     
-    def setting setting_name
-      card = setting_card setting_name
+    def setting setting_name, fallback=nil
+      card = setting_card setting_name, fallback
       card && begin
         User.as(:wagbot){ card.content }
       end
     end
     
-    def setting_card setting_name
+    def setting_card setting_name, fallback=nil
       ## look for pattern
       Wagn::Pattern.set_names( self ).each do |name|
         if sc = Card.fetch( "#{name}+#{setting_name.to_star}" , :skip_virtual => true)
           return sc
-        elsif fallback=Fallbacks[setting_name.to_star] and sc = Card.fetch("#{name}+#{fallback}", :skip_virtual => true)
-          return sc              
+        elsif fallback and sc2 = Card.fetch("#{name}+#{fallback.to_star}", :skip_virtual => true)
+          return sc2              
         end
       end
       return nil

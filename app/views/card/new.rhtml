@@ -8,7 +8,7 @@
 				  Oops! There's no <strong>card type</strong> called "<strong><%= @card.broken_type %></strong>".
 				</div>
 			<% end %>
-      <% if card.setting_card('add help') %> 
+      <% if card.setting_card('add help', 'edit help') %> 
 				<%# they'll go inside the card %>
   	  <% elsif !@card.name.blank? %>
   	    <div>Currently, there is no card named "<strong><%= @card.name %></strong>", but you're welcomed to create it.</div> <%#ENGLISH%>

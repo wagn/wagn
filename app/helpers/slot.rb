@@ -38,6 +38,7 @@ class Slot
     @card, @context, @action, @template, @format =
        card,context.to_s,action.to_s,template,(opts[:format] || :html).to_sym
     Slot.current_slot ||= self
+    #Rails.logger.debug("new slot C:#{context} A:#{action} F:#{opts[:format]}");
     
     @template ||= begin
       t = ActionView::Base.new( CardController.view_paths, {} )
@@ -55,7 +56,7 @@ class Slot
       :inclusion_view_overrides => nil,
       :params => {},
       :renderer => Renderer.new,
-      :base => nil
+      :base => nil,
     }.merge(opts)
     
     @renderer = @slot_options[:renderer]
@@ -200,6 +201,7 @@ class Slot
 
   def wrap_main(content)
     return content if p=root.slot_options[:params] and p[:layout]=='none'
+    return content if p=slot_options[:params] and p[:format].to_sym == :xml
     %{<div id="main" context="main">#{content}</div>}
   end
   

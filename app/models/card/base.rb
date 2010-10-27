@@ -392,7 +392,8 @@ module Card
       name.particle_names.map{|name| Card[name]} ##FIXME -- inefficient (though scarcely used...)    
     end
 
-    def junctions(args={})     
+    def junctions(args={})
+      return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point.  
       args[:conditions] = ["trash=?", false] unless args.has_key?(:conditions)
       args[:order] = 'id' unless args.has_key?(:order)    
       # aparently find f***s up your args. if you don't clone them, the next find is busted.
@@ -400,6 +401,7 @@ module Card
     end
 
     def dependents(*args) 
+      return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point. 
       junctions(*args).map { |r| [r ] + r.dependents(*args) }.flatten 
     end
 

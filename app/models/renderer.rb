@@ -11,7 +11,7 @@ class Renderer
     # card.content='' in set_card_defaults and if you make it nil a bunch of other
     # stuff breaks
     content = content.blank? ? card.content : content 
-    wiki_content = WikiContent.new(card, content, self, format == :xml)
+    wiki_content = WikiContent.new(card, content, self, format)
     update_references(card, wiki_content) if update_references
     wiki_content.render! 
   end

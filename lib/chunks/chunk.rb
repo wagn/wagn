@@ -21,9 +21,8 @@ module Chunk
     
     #attr_reader :text, :unmask_text, :unmask_mode
     attr_accessor :text, :unmask_text, :unmask_mode, :revision, :card
-    attr_reader :render_xml
     
-    def initialize(match_data, content, render_xml=false) 
+    def initialize(match_data, content) 
       @text = match_data[0] 
       @content = content
       @unmask_mode = :normal  
@@ -34,9 +33,9 @@ module Chunk
     # Each time the pattern is matched, create a new
     # chunk for it, and replace the occurance of the chunk
     # in this content with its mask.
-    def self.apply_to(content, render_xml=false)
+    def self.apply_to(content)
       content.gsub!( self.pattern ) do |match|	
-        new_chunk = self.new($~, content, render_xml)
+        new_chunk = self.new($~, content)
         content.add_chunk(new_chunk)
         new_chunk.mask
       end

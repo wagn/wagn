@@ -84,7 +84,7 @@ class URIChunk < Chunk::Abstract
 
   attr_reader :user, :host, :port, :path, :query, :fragment, :link_text
   
-  def self.apply_to(content, render_xml=false)
+  def self.apply_to(content)
     content.gsub!( self.pattern ) do |matched_text|
       chunk = self.new($~, content)                    
       card = chunk.card
@@ -98,7 +98,7 @@ class URIChunk < Chunk::Abstract
     end
   end
 
-  def initialize(match_data, content, render_xml=false)
+  def initialize(match_data, content)
     super
     @link_text = match_data[0]
     @suspicious_preceding_character = match_data[1]

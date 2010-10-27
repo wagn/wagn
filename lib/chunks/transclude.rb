@@ -40,7 +40,7 @@ module Chunk
           style[key] = value
         end
       end
-      options[:style] = style.map{|k,v| "#{k}:#{v};"}.join
+      options[:style] = style.map{|k,v| CGI.escapeHTML("#{k}:#{v};")}.join
       [name, options, configs]  
     end                        
     

@@ -29,6 +29,21 @@ describe Slot, "" do
       end
     end
     
+    describe "css in inclusion syntax" do
+      it "shows up" do
+        Slot.render_content("{{A|float:right}}").should be_html_with do
+          div(:style => 'float:right;') {}
+        end
+      end
+
+      # I want this test to show the explicit escaped HTML, but be_html_with seems to escape it already :-/
+      it "shows up with escaped HTML" do
+        Slot.render_content('{{A|float:<object class="subject">}}').should be_html_with do
+          div(:style => 'float:<object class="subject">;') {}
+        end
+      end
+    end
+    
     describe "views" do
       it "open" do
         mu = mock(:mu)

@@ -77,7 +77,7 @@ module Cardlib
       
       def name_referencers(rname = key)
         Card.find_by_sql(
-          "SELECT c.* FROM cards c JOIN wiki_references r ON c.id = r.card_id "+
+          "SELECT DISTINCT c.* FROM cards c JOIN wiki_references r ON c.id = r.card_id "+
           "WHERE (r.referenced_name = #{ActiveRecord::Base.connection.quote(rname.to_key)})"
         )
       end

@@ -28,7 +28,7 @@ module Notification
     def trunk_watcher_watched_pairs
       # do the watchers lookup before the transcluder test since it's faster.
       if (name.junction? and
-          trunk_card = Card.fetch(name.trunk_name) and
+          trunk_card = Card.fetch(name.trunk_name, :skip_virtual=>true) and
           pairs = trunk_card.watcher_watched_pairs and
           transcluders.include?(trunk))
         pairs
@@ -47,8 +47,8 @@ module Notification
 
     def watcher_watched_pairs
       author = User.current_user.card.name
-      (card_watchers.except(author).map {|watcher| [Card.fetch(watcher).extension,self.name] }  +
-        type_watchers.except(author).map {|watcher| [Card.fetch(watcher).extension,::Cardtype.name_for(self.type)]})
+      (card_watchers.except(author).map {|watcher| [Card.fetch(watcher, :skip_virtual=>true).extension,self.name] }  +
+        type_watchers.except(author).map {|watcher| [Card.fetch(watcher, :skip_virtual=>true).extension,::Cardtype.name_for(self.type)]})
     end
     
     def card_watchers 
@@ -60,7 +60,7 @@ module Notification
     end
     
     def pointees_from( cardname )
-      (c = Card.fetch(cardname)) ? c.pointees.reject{|x|x==''} : []
+      (c = Card.fetch(cardname, :skip_virtual=>true)) ? c.pointees.reject{|x|x==''} : []
     end  
       
     def watchers

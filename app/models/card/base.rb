@@ -274,7 +274,7 @@ module Card
           raise "missing permissions from find #{c.name}" if c.permissions.empty?
         else
           c = Card.new( args )
-          raise "missing permissions from new" if c.permissions.empty?
+          raise "missing permissions from new" if c.permissions.empty? && !args[:skip_defaults]
         end
 
         if c.trash
@@ -309,7 +309,7 @@ module Card
         end                                                                               
         name = name.post_cgi.to_absolute(self.name)
         logger.info "multi update working on #{name}: #{opts.inspect}"
-        if card = Card[name]
+        if card = Card.fetch(name, :skip_virtual=>true)
           card.update_attributes(opts)
         elsif opts[:pointee].present? or opts[:pointees].present? or  
                 (opts[:content].present? and opts[:content].strip.present?)

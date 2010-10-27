@@ -284,7 +284,7 @@ module WagnHelper
   end
   
   def layout_card(content)
-    Card.new(:name=>"**layout",:content=>content)
+    Card.new(:name=>"**layout",:content=>content, :skip_defaults=>true)
   end
   
   def render_layout_card(card)

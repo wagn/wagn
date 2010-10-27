@@ -35,7 +35,7 @@
 			  
 			  <span class="new-name">
 				  <span class="label">name:</span>
-				  <% if @card.name.blank? || Card[@card.name]%>
+				  <% if @card.name.blank? || Card.fetch(@card.name)%>
 						<span class="name-area">
 							<%= slot.name_field(form) %>
 					  </span>

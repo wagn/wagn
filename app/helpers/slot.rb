@@ -29,7 +29,7 @@ class Slot
       Slot.current_slot = nil
       view = opts.delete(:view)
       view = :naked unless view && !view.blank?
-      tmp_card = Card.new :name=>"__tmp_card__", :content => content 
+      tmp_card = Card.new :name=>"__tmp_card__", :content => content, :skip_defaults=>true
       Slot.new(tmp_card, "main_1", view, nil, opts).render(view)
     end
   end
@@ -420,7 +420,7 @@ class Slot
     tcard ||= (@state==:edit ?
       ( Card.find_by_name(fullname) || 
         Card.find_virtual(fullname) || 
-        Card.new(new_inclusion_card_args(tname, options))
+        Card.new(new_inclusion_card_args(tname, options)) 
       ) :
       ( slot_options[:base].respond_to?(:name) && slot_options[:base].name == fullname ?
         slot_options[:base] : Card.fetch_or_new(fullname)
@@ -476,7 +476,8 @@ class Slot
   def new_inclusion_card_args(tname, options)
     args = { 
       :name=>options[:fullname], 
-      :type=>options[:type] 
+      :type=>options[:type],
+      :skip_defaults=>true
     }
     if content=get_inclusion_content(tname)
       args[:content]=content 

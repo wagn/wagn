@@ -44,7 +44,7 @@ class AccountController < ApplicationController
 #  end
   
   def accept
-    @card = Card[params[:card][:key]] or raise(Wagn::NotFound, "Can't find this Account Request")  #ENGLISH
+    @card = Card.fetch(params[:card][:key], :skip_virtual=>true) or raise(Wagn::NotFound, "Can't find this Account Request")  #ENGLISH
     @user = @card.extension or raise(Wagn::Oops, "This card doesn't have an account to approve")  #ENGLISH
     System.ok?(:create_accounts) or raise(Wagn::PermissionDenied, "You need permission to create accounts")  #ENGLISH
     
@@ -63,7 +63,7 @@ class AccountController < ApplicationController
     
     @user, @card = request.post? ? 
       User.create_with_card( params[:user], params[:card] ) :
-      [User.new, Card.new]
+      [User.new, Card.new(:skip_defaults=>true)]
     if request.post? and @user.errors.empty?
       @user.send_account_info(params[:email])
       redirect_to (System.setting('*invite+*thanks') || '/')

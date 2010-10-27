@@ -127,7 +127,7 @@ module Wagn
         end
         
         %w{ *head *alert *foot *navbox *version *account_link *now }.each do |key|
-          Card.add_builtin( Card.new(:name=>key, :builtin=>true))
+          Card.add_builtin( Card.new(:name=>key, :builtin=>true, :skip_defaults=>true))
         end
       end
     end

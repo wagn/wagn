@@ -1,0 +1,8 @@
+<% unless @lay_card = System.xml_layout_card(@card, params[:layout]) %>
+  <% @lay_content = capture do %>
+{{_main}}
+  <% end %>
+  <% @lay_card = layout_card(@lay_content) %>
+<% end %>
+
+<%= render_layout_card(@lay_card) %>

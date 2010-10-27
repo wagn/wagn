@@ -13,9 +13,9 @@ ActionController::Routing::Routes.draw do |map|
 
   REST_METHODS = [:get, :post, :put, :delete]
 
-  map.connect 'xmlrest/:id', :conditions => { :method => REST_METHODS }, :controller=>'xmlrest', :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'method'
-
+  map.connect 'xmlrest/:id', :conditions => { :method => REST_METHODS }, :controller=>'card', :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'method'
   #map.connect_resource :xmlcard
+
   # these file requests should only get here if the file isn't present.
   # if we get a request for a file we don't have, don't waste any time on it.
   map.connect 'images/:foo.:format', :controller=>'application', :action=>'render_fast_404'

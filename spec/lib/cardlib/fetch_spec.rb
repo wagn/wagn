@@ -148,14 +148,14 @@ describe Card do
       Card.fetch("Appa").should == a
     end
 
-    it "with :local options loads a list of cards into the local cache only" do
-      Card.fetch("A").should_not be_nil
-      a = Card.new(:name => "Appa")
-      Card.cache.store.should_not_receive(:read)
-      Card.cache.store.should_not_receive(:write)
-      Card.preload([a], :local => true)
-      Card.fetch("Appa").should == a
-    end
+    #it "with :local options loads a list of cards into the local cache only" do
+    #  this test is meaningless as long as we have a nil store in testing env.
+    #  a = Card.new(:name => "Appa")
+    #  Card.cache.store.should_not_receive(:read)
+    #  Card.cache.store.should_not_receive(:write)
+    #  Card.preload([a], :local => true)
+    #  Card.fetch("Appa").should == a
+    #end
   end
 
   describe "#exists?" do

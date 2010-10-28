@@ -33,7 +33,13 @@ module Wagn
       end
     
       def pre_schema?
-        !(@@schema_initialized ||= ActiveRecord::Base.connection.select_value("select count(*) from cards").to_i > 2 )
+        begin
+          @@schema_initialized ||= ActiveRecord::Base.connection.select_value("select count(*) from cards").to_i > 2
+          !@@schema_initialized
+        rescue
+          ActiveRecord::Base.logger.info("\n----------- Schema Not Initialized -----------\n\n")
+          true
+        end
       end
 
       def load  

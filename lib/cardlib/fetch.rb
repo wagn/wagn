@@ -101,7 +101,7 @@ module Cardlib
       end
 
       def exists?(name)
-        fetch(name).present?
+        fetch(name, :skip_virtual=>true).present?
       end
 
     end

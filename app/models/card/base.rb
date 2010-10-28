@@ -51,7 +51,7 @@ module Card
     #before_validation_on_create :set_needed_defaults
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
-      :update_referencers, :allow_type_change, :virtual, :builtin, :broken_type, :skip_defaults
+      :update_referencers, :allow_type_change, :virtual, :builtin, :broken_type, :skip_defaults, :loaded_trunk
 
     # setup hooks on AR callbacks
     [:before_save, :before_create, :after_save, :after_create].each do |hookname| 
@@ -190,31 +190,23 @@ module Card
         # if the card is virtual or in the trash
         
         calling_class = self.name.split(/::/).last
-
         typetype = :codename
-        
         args['type'] =
           case
-          when args['typecode']
-            args.delete('typecode')
-          when calling_class != 'Base'
-            calling_class
-          when args['type']
-            typetype= :cardname
-            args['type']
-          when args.delete('skip_type_lookup')
-            'Basic'
+          when args['typecode'];                args.delete('typecode')
+          when calling_class != 'Base';         calling_class
+          when args['type'];                    typetype= :cardname;  args['type']
+          when args.delete('skip_type_lookup'); 'Basic'
           else
             setting = Card::Basic.new(:name=> args['name'], :skip_defaults=>true ).setting_card('content', 'default')
             setting ? setting.type : 'Basic'
           end
-
         card_class = Card.class_for( args['type'], typetype ) || (
           broken_type = args['type']; Card::Basic
         )
         args.delete('type') # create new card based on the class we've determined (not arg['type'])
 
-        
+
         new_card = card_class.ar_new args
         yield(new_card) if block_given?
         new_card.broken_type = broken_type if broken_type

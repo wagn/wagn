@@ -417,15 +417,13 @@ class Slot
     options[:fullname] = fullname = get_inclusion_fullname(tname,options)
     options[:showname] = tname.to_show(fullname)
     
-    tcard ||= (@state==:edit ?
-      ( Card.find_by_name(fullname) || 
-        Card.find_virtual(fullname) || 
-        Card.new(new_inclusion_card_args(tname, options)) 
-      ) :
-      ( slot_options[:base].respond_to?(:name) && slot_options[:base].name == fullname ?
-        slot_options[:base] : Card.fetch_or_new(fullname)
+    tcard ||= @state==:edit ? Card.fetch_or_new(fullname, {}, new_inclusion_card_args(tname, options) ) :
+    ## holy crap can we explain this?
+       ( slot_options[:base].respond_to?(:name) && slot_options[:base].name == fullname ?
+         slot_options[:base] : Card.fetch_or_new(fullname, :skip_defaults=>true )
       )
-    )
+    
+    tcard.loaded_trunk=card if tname =~ /^\+/
 
     tcontent = process_inclusion( tcard, options )
     tcontent = resize_image_content(tcontent, options[:size]) if options[:size]
@@ -475,7 +473,7 @@ class Slot
 
   def new_inclusion_card_args(tname, options)
     args = { 
-      :name=>options[:fullname], 
+#      :name=>options[:fullname], 
       :type=>options[:type],
       :skip_defaults=>true
     }

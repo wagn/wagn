@@ -138,11 +138,15 @@ module Wagn
       end
       
       def pattern_applies? card
-        card.name && card.name.junction? && card.left
+        card.name && card.name.junction? && left(card)
+      end
+      
+      def left card
+        card.loaded_trunk || card.left
       end
       
       def set_name card
-        "#{card.left.cardtype_name}+#{card.name.tag_name}+#{key}"
+        "#{left(card).cardtype_name}+#{card.name.tag_name}+#{key}"
       end
       
       def label name

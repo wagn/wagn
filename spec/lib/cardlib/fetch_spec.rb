@@ -149,6 +149,7 @@ describe Card do
     end
 
     it "with :local options loads a list of cards into the local cache only" do
+      Card.fetch("A").should_not be_nil
       a = Card.new(:name => "Appa")
       Card.cache.store.should_not_receive(:read)
       Card.cache.store.should_not_receive(:write)

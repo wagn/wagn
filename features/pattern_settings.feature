@@ -5,7 +5,7 @@ Feature: Set settings
   
   Background:
     Given I log in as Joe User
-    And I create card "*all+*add help" with content "say something spicy"
+    And I create card "*all+*edit help" with content "say something spicy"
 
   Scenario: default setting and plus card override
     Given I create Phrase card "color+*right+*add help" with content "If colorblind, leave blank"
@@ -14,10 +14,20 @@ Feature: Set settings
     When I go to new card "Test+color"      
     Then I should see "colorblind"
   
-  Scenario: rform Set
+  Scenario: *right Set
     Given I create Phrase card "cereal+*right+*add help" with content "I go poopoo for poco puffs"
     When I go to new card named "Test+cereal"
     Then I should see "poopoo"
+
+  Scenario: *type_plus_right Set
+    Given I create Phrase card "User+cereal+*type plus right+*edit help" with content "your favorite"
+    When I go to card  "Joe User+cereal"
+    Then I should see "your favorite"
+    When I create card "User+*type+*content" with content "{{+cereal}}"
+    And I edit "Joe User"
+    Then I should see "your favorite"
+    When I go to new User
+    Then I should see "your favorite"
 
   Scenario: Solo Set
     Given I create Pointer card "cereal+*self+*layout" with content "[[cereal layout]]" 

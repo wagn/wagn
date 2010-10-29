@@ -513,7 +513,9 @@ h2.headroom,
 body#wagn .card-slot.recent-changes h2 {
   margin-top: 15px;
 }
-
+.last-update {
+  color: #666;
+}
 
 
 /*-------------- STATES -----------*/

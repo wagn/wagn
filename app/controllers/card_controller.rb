@@ -77,7 +77,7 @@ class CardController < ApplicationController
     [:name, :type, :content].each {|key| @args.delete(key) unless a=@args[key] and !a.blank?} #filter blank args
 
     if @args[:name] and Card.exists?(@args[:name]) #card exists
-      render :text => "<span class=\"faint\">Oops, <strong>#{@args[:name]}</strong> was recently created! try reloading the page to edit it</span>" #ENGLISH
+      render :text => "<span>Oops, <strong>#{@args[:name]}</strong> was recently created! try reloading the page to edit it</span>" #ENGLISH
     else
       @card = Card.new @args                   
       render (request.xhr? ? 

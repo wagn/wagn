@@ -30,7 +30,7 @@
 	<%= "#{error.class.to_s}: #{error.message}" %><br/>
 	<%= card.content %>
 <%# elsif card.results.length==0 %>
-<!--  <span class="faint">Search returned no results</span> -->
+<!--  Search returned no results -->
 <% else  %>           	
 
 	<% partial = (card.name=='*recent changes') ? 'recent_changes' : 'card_list' %> 

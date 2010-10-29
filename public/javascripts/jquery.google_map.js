@@ -13,7 +13,7 @@
         } else {
           $(elem).html(      
             'Oops, "' + address + '" isnt a valid address' + 
-            '<div class="faint">Geocode was not successful for the following reason: ' + 
+            '<div>Geocode was not successful for the following reason: ' + 
               status + '</div>'
           );
         }

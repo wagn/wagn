@@ -4,7 +4,7 @@ module Wagn
       def initialize_on_startup
         if RAILS_ENV =~ /cucumber|test/
           Card.cache = Wagn::Cache.new nil, system_prefix
-          preload_cache_for_tests unless ENV['NO_PRELOAD_CACHE_FOR_TESTS']
+          preload_cache_for_tests if RAILS_ENV=='cucumber'
         else
           Card.cache = Wagn::Cache.new Rails.cache, system_prefix
         end
@@ -26,12 +26,12 @@ module Wagn
 
       def re_initialize_for_new_request
         Card.cache.system_prefix = system_prefix
-        reset_local unless (RAILS_ENV =~ /cucumber|test/ && !ENV['NO_PRELOAD_CACHE_FOR_TESTS'])
+        reset_local unless RAILS_ENV=='cucumber'
       end
 
       def reset_for_tests
         reset_global
-        Card.cache, Role.cache = Marshal.load(@@frozen) unless ENV['NO_PRELOAD_CACHE_FOR_TESTS']
+        Card.cache, Role.cache = Marshal.load(@@frozen) if RAILS_ENV=='cucumber'
       end
 
 

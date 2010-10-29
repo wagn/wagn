@@ -1,6 +1,84 @@
 --- 
 cards_010: 
   reader_type: Role
+  name: email config+*right+*content
+  created_at: 2010-04-20 17:40:18.238193 -06:00
+  tag_id: 317
+  indexed_content: "'cc':7 'bcc':8 'email':1A 'right':3A 'attach':11 'config':2A 'messag':10 'content':4A 'subject':9"
+  updated_at: 2010-05-02 03:12:56.976328 -06:00
+  pattern_spec_key: 
+  indexed_name: "'email':1 'right':3 'config':2 'content':4"
+  trash: false
+  codename: 
+  references_expired: 
+  reader_id: 3
+  pattern_keys: 
+  id: 373
+  current_revision_id: 3610
+  created_by: 3
+  type: Basic
+  trunk_id: 372
+  extension_type: 
+  updated_by: 4
+  settings: 
+  key: email_config+*right+*content
+  extension_id: 
+  appender_type: 
+  appender_id: 
+cards_011: 
+  reader_type: Role
+  name: "*cc+*right+*default"
+  created_at: 2010-04-20 17:58:34.097783 -06:00
+  tag_id: 318
+  indexed_content: "'cc':1A 'send':2A 'default':3A"
+  updated_at: 2010-05-02 03:11:41.651072 -06:00
+  pattern_spec_key: 
+  indexed_name: "'cc':1 'send':2 'default':3"
+  trash: false
+  codename: 
+  references_expired: 
+  reader_id: 3
+  pattern_keys: 
+  id: 380
+  current_revision_id: 3617
+  created_by: 3
+  type: Phrase
+  trunk_id: 379
+  extension_type: 
+  updated_by: 4
+  settings: 
+  key: "*cc+*right+*default"
+  extension_id: 
+  appender_type: 
+  appender_id: 
+cards_200: 
+  reader_type: Role
+  name: Anonymous
+  created_at: 2009-04-06 14:11:12.920280 -06:00
+  tag_id: 
+  indexed_content: "'edit':2 'made':3 'sign':9 'peopl':5 'anonym':1A,14 'credit':12 'account':20 'wagn.org':16 '/wagn/account|learn':17 'wagn.org/wagn/account':15"
+  updated_at: 2009-06-09 18:25:35.494326 -06:00
+  pattern_spec_key: 
+  indexed_name: "'anonym':1"
+  trash: false
+  codename: 
+  references_expired: 
+  reader_id: 3
+  pattern_keys: 
+  id: 15
+  current_revision_id: 2573
+  created_by: 1
+  type: Basic
+  trunk_id: 
+  extension_type: User
+  updated_by: 4
+  settings: 
+  key: anonymous
+  extension_id: 2
+  appender_type: 
+  appender_id: 
+cards_012: 
+  reader_type: Role
   name: "*from+*right+*default"
   created_at: 2010-04-20 17:58:21.141045 -06:00
   tag_id: 318
@@ -22,84 +100,6 @@ cards_010:
   updated_by: 4
   settings: 
   key: "*from+*right+*default"
-  extension_id: 
-  appender_type: 
-  appender_id: 
-cards_011: 
-  reader_type: Role
-  name: "*to+*right+*default"
-  created_at: 2010-04-20 17:57:57.115021 -06:00
-  tag_id: 318
-  indexed_content: "'send':2A 'default':3A"
-  updated_at: 2010-05-02 03:11:20.933891 -06:00
-  pattern_spec_key: 
-  indexed_name: "'send':2 'default':3"
-  trash: false
-  codename: 
-  references_expired: 
-  reader_id: 3
-  pattern_keys: 
-  id: 375
-  current_revision_id: 3612
-  created_by: 3
-  type: Phrase
-  trunk_id: 374
-  extension_type: 
-  updated_by: 4
-  settings: 
-  key: "*to+*right+*default"
-  extension_id: 
-  appender_type: 
-  appender_id: 
-cards_200: 
-  reader_type: Role
-  name: Account Request
-  created_at: 2009-04-06 14:11:12.920280 -06:00
-  tag_id: 
-  indexed_content: "'card':5 'type':4 'updat':7 'account':1A 'request':2A 'descript':3"
-  updated_at: 2009-06-09 18:42:00.444289 -06:00
-  pattern_spec_key: 
-  indexed_name: "'account':1 'request':2"
-  trash: false
-  codename: 
-  references_expired: 
-  reader_id: 3
-  pattern_keys: 
-  id: 12
-  current_revision_id: 2582
-  created_by: 1
-  type: Cardtype
-  trunk_id: 
-  extension_type: Cardtype
-  updated_by: 4
-  settings: 
-  key: account_request
-  extension_id: 6
-  appender_type: 
-  appender_id: 
-cards_012: 
-  reader_type: Role
-  name: "*send+*right+*default"
-  created_at: 2010-04-20 17:34:34.633760 -06:00
-  tag_id: 318
-  indexed_content: "'left':4 'send':1A 'email':5 'right':2A 'config':6 'default':3A"
-  updated_at: 2010-05-02 03:11:10.957322 -06:00
-  pattern_spec_key: 
-  indexed_name: "'send':1 'right':2 'default':3"
-  trash: false
-  codename: 
-  references_expired: 
-  reader_id: 3
-  pattern_keys: 
-  id: 368
-  current_revision_id: 3606
-  created_by: 3
-  type: Pointer
-  trunk_id: 364
-  extension_type: 
-  updated_by: 4
-  settings: 
-  key: "*send+*right+*default"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -131,105 +131,105 @@ cards_120:
   appender_id: 
 cards_201: 
   reader_type: Role
-  name: Image
+  name: Menu
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'add':6 '/new':3 'card':10,13,15 'imag':1A 'name':5,9,12 'self':4,8,11 'type':14 'descript':2"
-  updated_at: 2009-06-09 18:36:53.064865 -06:00
+  indexed_content: "'add':3 'card':5,13 'edit':15 'menu':1A 'click':8 'doubl':7 '/card/new':2 'double-click':6"
+  updated_at: 2009-06-09 18:15:35.280416 -06:00
   pattern_spec_key: 
-  indexed_name: "'imag':1"
+  indexed_name: "'menu':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 19
-  current_revision_id: 2579
+  id: 85
+  current_revision_id: 2565
   created_by: 1
-  type: Cardtype
+  type: Basic
   trunk_id: 
-  extension_type: Cardtype
+  extension_type: 
   updated_by: 4
   settings: 
-  key: image
-  extension_id: 11
+  key: menu
+  extension_id: 
   appender_type: 
   appender_id: 
 cards_013: 
   reader_type: Role
-  name: "*bcc+*right+*default"
-  created_at: 2010-04-20 17:58:52.554835 -06:00
+  name: "*to+*right+*default"
+  created_at: 2010-04-20 17:57:57.115021 -06:00
   tag_id: 318
-  indexed_content: "'bcc':1A 'send':2A 'default':3A"
-  updated_at: 2010-05-02 03:10:16.677321 -06:00
+  indexed_content: "'send':2A 'default':3A"
+  updated_at: 2010-05-02 03:11:20.933891 -06:00
   pattern_spec_key: 
-  indexed_name: "'bcc':1 'send':2 'default':3"
+  indexed_name: "'send':2 'default':3"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 383
-  current_revision_id: 3620
+  id: 375
+  current_revision_id: 3612
   created_by: 3
   type: Phrase
-  trunk_id: 382
+  trunk_id: 374
   extension_type: 
   updated_by: 4
   settings: 
-  key: "*bcc+*right+*default"
+  key: "*to+*right+*default"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_202: 
   reader_type: Role
-  name: Anonymous
+  name: Invite Success
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'edit':2 'made':3 'sign':9 'peopl':5 'anonym':1A,14 'credit':12 'account':20 'wagn.org':16 '/wagn/account|learn':17 'wagn.org/wagn/account':15"
-  updated_at: 2009-06-09 18:25:35.494326 -06:00
+  indexed_content: "'see':10 'way':9 'invit':1A,5 'thank':3 'account':11 'request':12 'success':2A"
+  updated_at: 2009-06-01 12:55:14.263141 -06:00
   pattern_spec_key: 
-  indexed_name: "'anonym':1"
+  indexed_name: "'invit':1 'success':2"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 15
-  current_revision_id: 2573
+  id: 68
+  current_revision_id: 2494
   created_by: 1
   type: Basic
   trunk_id: 
-  extension_type: User
+  extension_type: 
   updated_by: 4
   settings: 
-  key: anonymous
-  extension_id: 2
+  key: invite_success
+  extension_id: 
   appender_type: 
   appender_id: 
 cards_014: 
   reader_type: Role
-  name: "*subject+*right+*default"
-  created_at: 2010-04-20 18:05:48.295449 -06:00
+  name: "*send+*right+*default"
+  created_at: 2010-04-20 17:34:34.633760 -06:00
   tag_id: 318
-  indexed_content: "'right':2A 'default':3A 'subject':1A"
-  updated_at: 2010-05-02 03:10:04.636635 -06:00
+  indexed_content: "'left':4 'send':1A 'email':5 'right':2A 'config':6 'default':3A"
+  updated_at: 2010-05-02 03:11:10.957322 -06:00
   pattern_spec_key: 
-  indexed_name: "'right':2 'default':3 'subject':1"
+  indexed_name: "'send':1 'right':2 'default':3"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 391
-  current_revision_id: 3629
+  id: 368
+  current_revision_id: 3606
   created_by: 3
-  type: Phrase
-  trunk_id: 390
+  type: Pointer
+  trunk_id: 364
   extension_type: 
   updated_by: 4
   settings: 
-  key: "*subject+*right+*default"
+  key: "*send+*right+*default"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -287,53 +287,53 @@ cards_121:
   appender_id: 
 cards_203: 
   reader_type: Role
-  name: Menu
-  created_at: 2009-04-06 14:11:12.920280 -06:00
+  name: Form submission thanks
+  created_at: 2009-05-21 10:35:27.049376 -06:00
   tag_id: 
-  indexed_content: "'add':3 'card':5,13 'edit':15 'menu':1A 'click':8 'doubl':7 '/card/new':2 'double-click':6"
-  updated_at: 2009-06-09 18:15:35.280416 -06:00
+  indexed_content: "'form':1A,8 'thank':3A,4 'submit':6 'submiss':2A"
+  updated_at: 2009-05-21 10:35:27.049376 -06:00
   pattern_spec_key: 
-  indexed_name: "'menu':1"
+  indexed_name: "'form':1 'thank':3 'submiss':2"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 85
-  current_revision_id: 2565
-  created_by: 1
+  id: 200
+  current_revision_id: 2402
+  created_by: 4
   type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
   settings: 
-  key: menu
+  key: form_submission_thank
   extension_id: 
   appender_type: 
   appender_id: 
 cards_015: 
   reader_type: Role
-  name: "*attach+*right+*default"
-  created_at: 2010-04-20 17:59:32.317749 -06:00
+  name: "*bcc+*right+*default"
+  created_at: 2010-04-20 17:58:52.554835 -06:00
   tag_id: 318
-  indexed_content: "'send':2A 'attach':1A 'default':3A"
-  updated_at: 2010-05-02 03:09:53.215015 -06:00
+  indexed_content: "'bcc':1A 'send':2A 'default':3A"
+  updated_at: 2010-05-02 03:10:16.677321 -06:00
   pattern_spec_key: 
-  indexed_name: "'send':2 'attach':1 'default':3"
+  indexed_name: "'bcc':1 'send':2 'default':3"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 389
-  current_revision_id: 3626
+  id: 383
+  current_revision_id: 3620
   created_by: 3
-  type: Pointer
-  trunk_id: 388
+  type: Phrase
+  trunk_id: 382
   extension_type: 
   updated_by: 4
   settings: 
-  key: "*attach+*right+*default"
+  key: "*bcc+*right+*default"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -391,79 +391,79 @@ cards_122:
   appender_id: 
 cards_230: 
   reader_type: Role
-  name: "*links"
+  name: "*includers"
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'link':1A"
-  updated_at: 2009-04-09 15:47:08.045853 -06:00
+  indexed_content: "'includ':1A"
+  updated_at: 2009-04-09 15:46:04.913954 -06:00
   pattern_spec_key: 
-  indexed_name: "'link':1"
+  indexed_name: "'includ':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 43
-  current_revision_id: 43
+  id: 37
+  current_revision_id: 37
   created_by: 1
   type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
   settings: 
-  key: "*link"
+  key: "*includer"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_204: 
   reader_type: Role
-  name: Invite Success
+  name: "*account"
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'see':10 'way':9 'invit':1A,5 'thank':3 'account':11 'request':12 'success':2A"
-  updated_at: 2009-06-01 12:55:14.263141 -06:00
+  indexed_content: "'bot':15 'new':5 'see':21 'card':20,36,37 'titl':40 'type':35 'user':6,19 'wagn':14 'invit':3 'learn':29 'anonym':12 'associ':17 'account':1A,9,27,31,33,39 'default':8 'request':32,34 'wagn.org':24 '/account/invite':2 'wagn.org/wagn/account':23 '/wagn/account|documentation':25"
+  updated_at: 2009-05-04 14:32:57.633203 -06:00
   pattern_spec_key: 
-  indexed_name: "'invit':1 'success':2"
+  indexed_name: "'account':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 68
-  current_revision_id: 2494
+  id: 100
+  current_revision_id: 2358
   created_by: 1
   type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
   settings: 
-  key: invite_success
+  key: "*account"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_016: 
   reader_type: Role
-  name: "*default"
-  created_at: 2010-04-15 18:42:28.870567 -06:00
-  tag_id: 
-  indexed_content: "'default':1A"
-  updated_at: 2010-05-02 03:06:46.446266 -06:00
+  name: "*subject+*right+*default"
+  created_at: 2010-04-20 18:05:48.295449 -06:00
+  tag_id: 318
+  indexed_content: "'right':2A 'default':3A 'subject':1A"
+  updated_at: 2010-05-02 03:10:04.636635 -06:00
   pattern_spec_key: 
-  indexed_name: "'default':1"
+  indexed_name: "'right':2 'default':3 'subject':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 318
-  current_revision_id: 3197
-  created_by: 1
-  type: Setting
-  trunk_id: 
+  id: 391
+  current_revision_id: 3629
+  created_by: 3
+  type: Phrase
+  trunk_id: 390
   extension_type: 
   updated_by: 4
   settings: 
-  key: "*default"
+  key: "*subject+*right+*default"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -521,79 +521,79 @@ cards_123:
   appender_id: 
 cards_231: 
   reader_type: Role
-  name: "*inclusions"
+  name: "*community"
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'inclus':1A"
-  updated_at: 2009-04-09 15:46:30.803430 -06:00
+  indexed_content: "'communiti':1A"
+  updated_at: 2009-04-09 15:43:28.540124 -06:00
   pattern_spec_key: 
-  indexed_name: "'inclus':1"
+  indexed_name: "'communiti':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 41
-  current_revision_id: 41
+  id: 115
+  current_revision_id: 1253
   created_by: 1
   type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
   settings: 
-  key: "*inclusion"
+  key: "*community"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_205: 
   reader_type: Role
-  name: Form submission thanks
-  created_at: 2009-05-21 10:35:27.049376 -06:00
+  name: by create
+  created_at: 2009-04-27 23:08:41.560200 -06:00
   tag_id: 
-  indexed_content: "'form':1A,8 'thank':3A,4 'submit':6 'submiss':2A"
-  updated_at: 2009-05-21 10:35:27.049376 -06:00
+  indexed_content: "'creat':2A"
+  updated_at: 2009-04-27 23:08:41.560200 -06:00
   pattern_spec_key: 
-  indexed_name: "'form':1 'thank':3 'submiss':2"
+  indexed_name: "'creat':2"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 200
-  current_revision_id: 2402
+  id: 190
+  current_revision_id: 2290
   created_by: 4
   type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
   settings: 
-  key: form_submission_thank
+  key: by_create
   extension_id: 
   appender_type: 
   appender_id: 
 cards_017: 
   reader_type: Role
-  name: "*content"
-  created_at: 2010-04-15 18:42:28.310535 -06:00
-  tag_id: 
-  indexed_content: "'content':1A"
-  updated_at: 2010-05-02 03:06:29.897323 -06:00
+  name: "*attach+*right+*default"
+  created_at: 2010-04-20 17:59:32.317749 -06:00
+  tag_id: 318
+  indexed_content: "'send':2A 'attach':1A 'default':3A"
+  updated_at: 2010-05-02 03:09:53.215015 -06:00
   pattern_spec_key: 
-  indexed_name: "'content':1"
+  indexed_name: "'send':2 'attach':1 'default':3"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 317
-  current_revision_id: 3196
-  created_by: 1
-  type: Setting
-  trunk_id: 
+  id: 389
+  current_revision_id: 3626
+  created_by: 3
+  type: Pointer
+  trunk_id: 388
   extension_type: 
   updated_by: 4
   settings: 
-  key: "*content"
+  key: "*attach+*right+*default"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -677,79 +677,79 @@ cards_150:
   appender_id: 
 cards_232: 
   reader_type: Role
-  name: "*includers"
+  name: "*plusses"
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'includ':1A"
-  updated_at: 2009-04-09 15:46:04.913954 -06:00
+  indexed_content: "'pluss':1A"
+  updated_at: 2009-04-09 15:41:06.687384 -06:00
   pattern_spec_key: 
-  indexed_name: "'includ':1"
+  indexed_name: "'pluss':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 37
-  current_revision_id: 37
+  id: 110
+  current_revision_id: 1225
   created_by: 1
   type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
   settings: 
-  key: "*includer"
+  key: "*pluss"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_206: 
   reader_type: Role
-  name: "*account"
-  created_at: 2009-04-06 14:11:12.920280 -06:00
+  name: Administrator links
+  created_at: 2009-04-07 12:00:58.908559 -06:00
   tag_id: 
-  indexed_content: "'bot':15 'new':5 'see':21 'card':20,36,37 'titl':40 'type':35 'user':6,19 'wagn':14 'invit':3 'learn':29 'anonym':12 'associ':17 'account':1A,9,27,31,33,39 'default':8 'request':32,34 'wagn.org':24 '/account/invite':2 'wagn.org/wagn/account':23 '/wagn/account|documentation':25"
-  updated_at: 2009-05-04 14:32:57.633203 -06:00
+  indexed_content: "'link':2A 'role':9 'wagn':6 'config':3 'global':11 'account':7,8 'permiss':12 'configur':4 'administr':1A '/admin/tasks':10"
+  updated_at: 2009-04-27 22:09:19.526849 -06:00
   pattern_spec_key: 
-  indexed_name: "'account':1"
+  indexed_name: "'link':2 'administr':1"
   trash: false
   codename: 
   references_expired: 
-  reader_id: 3
+  reader_id: 1
   pattern_keys: 
-  id: 100
-  current_revision_id: 2358
-  created_by: 1
+  id: 151
+  current_revision_id: 2279
+  created_by: 3
   type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
   settings: 
-  key: "*account"
+  key: administrator_link
   extension_id: 
   appender_type: 
   appender_id: 
 cards_018: 
   reader_type: Role
-  name: "*attach+*right+*options"
-  created_at: 2010-04-26 16:57:52.162064 -06:00
-  tag_id: 86
-  indexed_content: "'file':5 'type':4 'right':2A 'attach':1A 'option':3A"
-  updated_at: 2010-04-26 16:57:52.162064 -06:00
+  name: "*default"
+  created_at: 2010-04-15 18:42:28.870567 -06:00
+  tag_id: 
+  indexed_content: "'default':1A"
+  updated_at: 2010-05-02 03:06:46.446266 -06:00
   pattern_spec_key: 
-  indexed_name: "'right':2 'attach':1 'option':3"
+  indexed_name: "'default':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 395
-  current_revision_id: 3732
-  created_by: 4
-  type: Search
-  trunk_id: 388
+  id: 318
+  current_revision_id: 3197
+  created_by: 1
+  type: Setting
+  trunk_id: 
   extension_type: 
   updated_by: 4
   settings: 
-  key: "*attach+*right+*option"
+  key: "*default"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -859,53 +859,53 @@ cards_151:
   appender_id: 
 cards_233: 
   reader_type: Role
-  name: "*community"
+  name: "*title"
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'communiti':1A"
-  updated_at: 2009-04-09 15:43:28.540124 -06:00
+  indexed_content: "'titl':1A 'wagn':3"
+  updated_at: 2009-04-08 10:23:29.112262 -06:00
   pattern_spec_key: 
-  indexed_name: "'communiti':1"
+  indexed_name: "'titl':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 115
-  current_revision_id: 1253
+  id: 55
+  current_revision_id: 1755
   created_by: 1
-  type: Basic
+  type: Phrase
   trunk_id: 
   extension_type: 
   updated_by: 3
   settings: 
-  key: "*community"
+  key: "*title"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_019: 
   reader_type: Role
-  name: "*invite"
-  created_at: 2009-04-06 14:11:12.920280 -06:00
+  name: "*content"
+  created_at: 2010-04-15 18:42:28.310535 -06:00
   tag_id: 
-  indexed_content: "'re':41 'new':17 'via':19 'send':37 'sign':4 'type':24,29,34 'user':6,18 'wagn':45 'creat':13 'email':20,21,26,31 'invit':1A,16,39 'taken':42 'thank':48 'domain':47 'global':10 'messag':27,28 'phrase':25,35 'account':14 'permiss':11 'subject':22,23 'plaintext':30 'signed-in':3 '/admin/tasks':9"
-  updated_at: 2010-04-26 14:38:07.328171 -06:00
+  indexed_content: "'content':1A"
+  updated_at: 2010-05-02 03:06:29.897323 -06:00
   pattern_spec_key: 
-  indexed_name: "'invit':1"
+  indexed_name: "'content':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 56
-  current_revision_id: 3722
+  id: 317
+  current_revision_id: 3196
   created_by: 1
-  type: Basic
+  type: Setting
   trunk_id: 
   extension_type: 
   updated_by: 4
   settings: 
-  key: "*invite"
+  key: "*content"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -1015,54 +1015,54 @@ cards_152:
   appender_id: 
 cards_207: 
   reader_type: Role
-  name: by create
-  created_at: 2009-04-27 23:08:41.560200 -06:00
+  name: by name
+  created_at: 2009-04-25 12:29:02.508051 -06:00
   tag_id: 
-  indexed_content: "'creat':2A"
-  updated_at: 2009-04-27 23:08:41.560200 -06:00
+  indexed_content: "'name':2A"
+  updated_at: 2009-04-25 12:29:02.508051 -06:00
   pattern_spec_key: 
-  indexed_name: "'creat':2"
+  indexed_name: "'name':2"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 190
-  current_revision_id: 2290
+  id: 184
+  current_revision_id: 2264
   created_by: 4
   type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
   settings: 
-  key: by_create
+  key: by_name
   extension_id: 
   appender_type: 
   appender_id: 
 cards_234: 
   reader_type: Role
-  name: "*plusses"
+  name: Anyone Signed In
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'pluss':1A"
-  updated_at: 2009-04-09 15:41:06.687384 -06:00
+  indexed_content: "'sign':2A 'anyon':1A"
+  updated_at: 2009-04-06 14:11:12.920280 -06:00
   pattern_spec_key: 
-  indexed_name: "'pluss':1"
+  indexed_name: "'sign':2 'anyon':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 110
-  current_revision_id: 1225
+  id: 9
+  current_revision_id: 9
   created_by: 1
-  type: Basic
+  type: Role
   trunk_id: 
-  extension_type: 
-  updated_by: 3
+  extension_type: Role
+  updated_by: 1
   settings: 
-  key: "*pluss"
-  extension_id: 
+  key: anyone_signed_in
+  extension_id: 2
   appender_type: 
   appender_id: 
 cards_046: 
@@ -1171,53 +1171,53 @@ cards_153:
   appender_id: 
 cards_208: 
   reader_type: Role
-  name: Administrator links
-  created_at: 2009-04-07 12:00:58.908559 -06:00
-  tag_id: 
-  indexed_content: "'link':2A 'role':9 'wagn':6 'config':3 'global':11 'account':7,8 'permiss':12 'configur':4 'administr':1A '/admin/tasks':10"
-  updated_at: 2009-04-27 22:09:19.526849 -06:00
-  pattern_spec_key: 
-  indexed_name: "'link':2 'administr':1"
-  trash: false
-  codename: 
-  references_expired: 
-  reader_id: 1
-  pattern_keys: 
-  id: 151
-  current_revision_id: 2279
-  created_by: 3
-  type: Basic
-  trunk_id: 
-  extension_type: 
-  updated_by: 4
-  settings: 
-  key: administrator_link
-  extension_id: 
-  appender_type: 
-  appender_id: 
-cards_235: 
-  reader_type: Role
-  name: "*title"
+  name: "*related"
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'titl':1A 'wagn':3"
-  updated_at: 2009-04-08 10:23:29.112262 -06:00
+  indexed_content: "'incom':2 'outgo':3 'pluss':4 'relat':1A 'communiti':5"
+  updated_at: 2009-04-24 15:34:53.111714 -06:00
   pattern_spec_key: 
-  indexed_name: "'titl':1"
+  indexed_name: "'relat':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 55
-  current_revision_id: 1755
+  id: 112
+  current_revision_id: 2008
+  created_by: 1
+  type: Pointer
+  trunk_id: 
+  extension_type: 
+  updated_by: 1
+  settings: 
+  key: "*related"
+  extension_id: 
+  appender_type: 
+  appender_id: 
+cards_235: 
+  reader_type: Role
+  name: "*home"
+  created_at: 2009-04-06 14:11:12.920280 -06:00
+  tag_id: 
+  indexed_content: "'home':1A,2"
+  updated_at: 2009-04-06 14:11:12.920280 -06:00
+  pattern_spec_key: 
+  indexed_name: "'home':1"
+  trash: false
+  codename: 
+  references_expired: 
+  reader_id: 3
+  pattern_keys: 
+  id: 77
+  current_revision_id: 113
   created_by: 1
   type: Phrase
   trunk_id: 
   extension_type: 
-  updated_by: 3
+  updated_by: 1
   settings: 
-  key: "*title"
+  key: "*home"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -1327,79 +1327,79 @@ cards_154:
   appender_id: 
 cards_180: 
   reader_type: Role
-  name: "*watchers+*right"
-  created_at: 2009-12-02 16:02:49.844298 -07:00
-  tag_id: 260
-  indexed_content: "'self':5 'right':3A,4 'watcher':1A"
-  updated_at: 2009-12-08 12:25:14.419319 -07:00
+  name: "*all+*table of contents"
+  created_at: 2009-12-03 16:11:05.789011 -07:00
+  tag_id: 89
+  indexed_content: "'4':5 'tabl':2A 'content':4A"
+  updated_at: 2009-12-07 09:25:05.929713 -07:00
   pattern_spec_key: 
-  indexed_name: "'right':3 'watcher':1"
+  indexed_name: "'tabl':2 'content':4"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 269
-  current_revision_id: 3010
-  created_by: 1
-  type: Set
-  trunk_id: 219
+  id: 279
+  current_revision_id: 3038
+  created_by: 4
+  type: Number
+  trunk_id: 274
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*watcher+*right"
+  key: "*all+*table_of_content"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_209: 
   reader_type: Role
-  name: by name
-  created_at: 2009-04-25 12:29:02.508051 -06:00
+  name: by update
+  created_at: 2009-04-24 11:32:57.487524 -06:00
   tag_id: 
-  indexed_content: "'name':2A"
-  updated_at: 2009-04-25 12:29:02.508051 -06:00
+  indexed_content: "'updat':2A"
+  updated_at: 2009-04-24 12:46:20.435843 -06:00
   pattern_spec_key: 
-  indexed_name: "'name':2"
+  indexed_name: "'updat':2"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 184
-  current_revision_id: 2264
+  id: 178
+  current_revision_id: 2087
   created_by: 4
   type: Basic
   trunk_id: 
   extension_type: 
-  updated_by: 4
+  updated_by: 3
   settings: 
-  key: by_name
+  key: by_update
   extension_id: 
   appender_type: 
   appender_id: 
 cards_236: 
   reader_type: Role
-  name: tags
+  name: "*editors"
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'tag':1A"
+  indexed_content: "'editor':1A"
   updated_at: 2009-04-06 14:11:12.920280 -06:00
   pattern_spec_key: 
-  indexed_name: "'tag':1"
+  indexed_name: "'editor':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 128
-  current_revision_id: 1407
+  id: 92
+  current_revision_id: 349
   created_by: 1
   type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
   settings: 
-  key: tag
+  key: "*editor"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -1509,54 +1509,54 @@ cards_155:
   appender_id: 
 cards_181: 
   reader_type: Role
-  name: Basic+*type
-  created_at: 2009-12-02 16:02:53.784523 -07:00
-  tag_id: 266
-  indexed_content: "'self':5 'type':3A,4 'basic':1A"
-  updated_at: 2009-12-08 12:25:13.115245 -07:00
-  pattern_spec_key: 
-  indexed_name: "'type':3 'basic':1"
-  trash: false
-  codename: 
-  references_expired: 1
-  reader_id: 3
-  pattern_keys: 
-  id: 273
-  current_revision_id: 3015
-  created_by: 1
-  type: Set
-  trunk_id: 3
-  extension_type: 
-  updated_by: 1
-  settings: 
-  key: basic+*type
-  extension_id: 
-  appender_type: 
-  appender_id: 
-cards_237: 
-  reader_type: Role
-  name: Administrator
+  name: Request Sent
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'administr':1A"
-  updated_at: 2009-04-06 14:11:12.920280 -06:00
+  indexed_content: "'sent':2A 'sign':6 'soon':22 'titl':9 'thank':3 'approv':19 'receiv':12 'someon':10 'account':17 'possibl':24 'request':1A,14"
+  updated_at: 2009-12-02 16:28:23.230087 -07:00
   pattern_spec_key: 
-  indexed_name: "'administr':1"
+  indexed_name: "'sent':2 'request':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 10
-  current_revision_id: 10
+  id: 109
+  current_revision_id: 3031
   created_by: 1
-  type: Role
+  type: Basic
   trunk_id: 
-  extension_type: Role
+  extension_type: 
+  updated_by: 4
+  settings: 
+  key: request_sent
+  extension_id: 
+  appender_type: 
+  appender_id: 
+cards_237: 
+  reader_type: Role
+  name: tags
+  created_at: 2009-04-06 14:11:12.920280 -06:00
+  tag_id: 
+  indexed_content: "'tag':1A"
+  updated_at: 2009-04-06 14:11:12.920280 -06:00
+  pattern_spec_key: 
+  indexed_name: "'tag':1"
+  trash: false
+  codename: 
+  references_expired: 
+  reader_id: 3
+  pattern_keys: 
+  id: 128
+  current_revision_id: 1407
+  created_by: 1
+  type: Basic
+  trunk_id: 
+  extension_type: 
   updated_by: 1
   settings: 
-  key: administrator
-  extension_id: 1
+  key: tag
+  extension_id: 
   appender_type: 
   appender_id: 
 cards_049: 
@@ -1613,80 +1613,80 @@ cards_075:
   appender_id: 
 cards_156: 
   reader_type: Role
-  name: "*input+*right+*input"
-  created_at: 2009-09-24 12:56:44.838727 -06:00
-  tag_id: 241
-  indexed_content: "'input':1A,3A 'right':2A 'select':4"
-  updated_at: 2009-12-22 07:48:22.340468 -07:00
+  name: "*add help+*right"
+  created_at: 2009-12-22 06:45:59.286685 -07:00
+  tag_id: 260
+  indexed_content: "'add':1A 'help':2A 'self':5 'right':3A,4"
+  updated_at: 2009-12-22 06:45:59.286685 -07:00
   pattern_spec_key: 
-  indexed_name: "'input':1,3 'right':2"
+  indexed_name: "'add':1 'help':2 'right':3"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 251
-  current_revision_id: 3176
+  id: 310
+  current_revision_id: 3140
   created_by: 4
-  type: Phrase
-  trunk_id: 268
+  type: Set
+  trunk_id: 309
   extension_type: 
   updated_by: 4
   settings: 
-  key: "*input+*right+*input"
+  key: "*add_help+*right"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_182: 
   reader_type: Role
-  name: "*all+*table of contents"
-  created_at: 2009-12-03 16:11:05.789011 -07:00
-  tag_id: 89
-  indexed_content: "'4':5 'tabl':2A 'content':4A"
-  updated_at: 2009-12-07 09:25:05.929713 -07:00
-  pattern_spec_key: 
-  indexed_name: "'tabl':2 'content':4"
-  trash: false
-  codename: 
-  references_expired: 
-  reader_id: 3
-  pattern_keys: 
-  id: 279
-  current_revision_id: 3038
-  created_by: 4
-  type: Number
-  trunk_id: 274
-  extension_type: 
-  updated_by: 1
-  settings: 
-  key: "*all+*table_of_content"
-  extension_id: 
-  appender_type: 
-  appender_id: 
-cards_238: 
-  reader_type: Role
-  name: "*plus cards"
-  created_at: 2009-04-06 14:11:12.920280 -06:00
+  name: "*type plus right"
+  created_at: 2009-12-02 16:02:47.684175 -07:00
   tag_id: 
-  indexed_content: "'card':2A 'plus':1A"
-  updated_at: 2009-04-06 14:11:12.920280 -06:00
+  indexed_content: "'plus':2A 'type':1A 'right':3A"
+  updated_at: 2009-12-02 16:03:03.817853 -07:00
   pattern_spec_key: 
-  indexed_name: "'card':2 'plus':1"
+  indexed_name: "'plus':2 'type':1 'right':3"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 33
-  current_revision_id: 33
+  id: 262
+  current_revision_id: 3003
   created_by: 1
   type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*plu_card"
+  key: "*type_plu_right"
   extension_id: 
+  appender_type: 
+  appender_id: 
+cards_238: 
+  reader_type: Role
+  name: Anyone
+  created_at: 2009-04-06 14:11:12.920280 -06:00
+  tag_id: 
+  indexed_content: "'anyon':1A"
+  updated_at: 2009-04-06 14:11:12.920280 -06:00
+  pattern_spec_key: 
+  indexed_name: "'anyon':1"
+  trash: false
+  codename: 
+  references_expired: 
+  reader_id: 3
+  pattern_keys: 
+  id: 8
+  current_revision_id: 8
+  created_by: 1
+  type: Role
+  trunk_id: 
+  extension_type: Role
+  updated_by: 1
+  settings: 
+  key: anyone
+  extension_id: 3
   appender_type: 
   appender_id: 
 cards_076: 
@@ -1717,79 +1717,79 @@ cards_076:
   appender_id: 
 cards_157: 
   reader_type: Role
-  name: "*add help+*right"
-  created_at: 2009-12-22 06:45:59.286685 -07:00
-  tag_id: 260
-  indexed_content: "'add':1A 'help':2A 'self':5 'right':3A,4"
-  updated_at: 2009-12-22 06:45:59.286685 -07:00
+  name: "*add help"
+  created_at: 2009-12-21 16:02:41.432917 -07:00
+  tag_id: 
+  indexed_content: "'add':1A 'help':2A"
+  updated_at: 2009-12-21 16:02:41.432917 -07:00
   pattern_spec_key: 
-  indexed_name: "'add':1 'help':2 'right':3"
+  indexed_name: "'add':1 'help':2"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 310
-  current_revision_id: 3140
-  created_by: 4
-  type: Set
-  trunk_id: 309
+  id: 309
+  current_revision_id: 3137
+  created_by: 1
+  type: Setting
+  trunk_id: 
   extension_type: 
-  updated_by: 4
+  updated_by: 1
   settings: 
-  key: "*add_help+*right"
+  key: "*add_help"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_183: 
   reader_type: Role
-  name: Request Sent
-  created_at: 2009-04-06 14:11:12.920280 -06:00
+  name: "*type"
+  created_at: 2009-12-02 16:02:48.740235 -07:00
   tag_id: 
-  indexed_content: "'sent':2A 'sign':6 'soon':22 'titl':9 'thank':3 'approv':19 'receiv':12 'someon':10 'account':17 'possibl':24 'request':1A,14"
-  updated_at: 2009-12-02 16:28:23.230087 -07:00
+  indexed_content: "'type':1A"
+  updated_at: 2009-12-02 16:03:00.696917 -07:00
   pattern_spec_key: 
-  indexed_name: "'sent':2 'request':1"
+  indexed_name: "'type':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 109
-  current_revision_id: 3031
-  created_by: 1
-  type: Basic
-  trunk_id: 
-  extension_type: 
-  updated_by: 4
-  settings: 
-  key: request_sent
-  extension_id: 
-  appender_type: 
-  appender_id: 
-cards_239: 
-  reader_type: Role
-  name: "*roles"
-  created_at: 2009-04-06 14:11:12.920280 -06:00
-  tag_id: 
-  indexed_content: "'role':1A"
-  updated_at: 2009-04-06 14:11:12.920280 -06:00
-  pattern_spec_key: 
-  indexed_name: "'role':1"
-  trash: false
-  codename: 
-  references_expired: 
-  reader_id: 3
-  pattern_keys: 
-  id: 96
-  current_revision_id: 353
+  id: 266
+  current_revision_id: 3007
   created_by: 1
   type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*role"
+  key: "*type"
+  extension_id: 
+  appender_type: 
+  appender_id: 
+cards_239: 
+  reader_type: Role
+  name: "*editing"
+  created_at: 2009-04-06 14:11:12.920280 -06:00
+  tag_id: 
+  indexed_content: "'edit':1A"
+  updated_at: 2009-04-06 14:11:12.920280 -06:00
+  pattern_spec_key: 
+  indexed_name: "'edit':1"
+  trash: false
+  codename: 
+  references_expired: 
+  reader_id: 3
+  pattern_keys: 
+  id: 138
+  current_revision_id: 1550
+  created_by: 1
+  type: Basic
+  trunk_id: 
+  extension_type: 
+  updated_by: 1
+  settings: 
+  key: "*editing"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -1821,53 +1821,53 @@ cards_077:
   appender_id: 
 cards_158: 
   reader_type: Role
-  name: "*add help"
-  created_at: 2009-12-21 16:02:41.432917 -07:00
+  name: "*accountable"
+  created_at: 2009-12-10 14:34:35.242745 -07:00
   tag_id: 
-  indexed_content: "'add':1A 'help':2A"
-  updated_at: 2009-12-21 16:02:41.432917 -07:00
+  indexed_content: "'account':1A"
+  updated_at: 2009-12-21 16:02:40.760879 -07:00
   pattern_spec_key: 
-  indexed_name: "'add':1 'help':2"
+  indexed_name: "'account':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 309
-  current_revision_id: 3137
-  created_by: 1
+  id: 291
+  current_revision_id: 3078
+  created_by: 4
   type: Setting
   trunk_id: 
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*add_help"
+  key: "*accountable"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_184: 
   reader_type: Role
-  name: "*type plus right"
-  created_at: 2009-12-02 16:02:47.684175 -07:00
+  name: "*self"
+  created_at: 2009-12-02 16:02:48.204205 -07:00
   tag_id: 
-  indexed_content: "'plus':2A 'type':1A 'right':3A"
-  updated_at: 2009-12-02 16:03:03.817853 -07:00
+  indexed_content: "'self':1A"
+  updated_at: 2009-12-02 16:03:00.592911 -07:00
   pattern_spec_key: 
-  indexed_name: "'plus':2 'type':1 'right':3"
+  indexed_name: "'self':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 262
-  current_revision_id: 3003
+  id: 264
+  current_revision_id: 3005
   created_by: 1
   type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*type_plu_right"
+  key: "*self"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -1899,53 +1899,53 @@ cards_078:
   appender_id: 
 cards_159: 
   reader_type: Role
-  name: "*accountable"
-  created_at: 2009-12-10 14:34:35.242745 -07:00
-  tag_id: 
-  indexed_content: "'account':1A"
-  updated_at: 2009-12-21 16:02:40.760879 -07:00
+  name: "*edit help+*right"
+  created_at: 2009-12-21 14:08:43.801121 -07:00
+  tag_id: 260
+  indexed_content: "'edit':1A 'help':2A 'self':5 'right':3A,4"
+  updated_at: 2009-12-21 14:08:43.801121 -07:00
   pattern_spec_key: 
-  indexed_name: "'account':1"
+  indexed_name: "'edit':1 'help':2 'right':3"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 291
-  current_revision_id: 3078
+  id: 305
+  current_revision_id: 3126
+  created_by: 3
+  type: Set
+  trunk_id: 82
+  extension_type: 
+  updated_by: 3
+  settings: 
+  key: "*edit_help+*right"
+  extension_id: 
+  appender_type: 
+  appender_id: 
+cards_185: 
+  reader_type: Role
+  name: "*option label"
+  created_at: 2009-09-24 13:16:03.688766 -06:00
+  tag_id: 
+  indexed_content: "'label':2A 'option':1A"
+  updated_at: 2009-12-02 16:02:58.396786 -07:00
+  pattern_spec_key: 
+  indexed_name: "'label':2 'option':1"
+  trash: false
+  codename: 
+  references_expired: 
+  reader_id: 3
+  pattern_keys: 
+  id: 252
+  current_revision_id: 3023
   created_by: 4
   type: Setting
   trunk_id: 
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*accountable"
-  extension_id: 
-  appender_type: 
-  appender_id: 
-cards_185: 
-  reader_type: Role
-  name: "*type"
-  created_at: 2009-12-02 16:02:48.740235 -07:00
-  tag_id: 
-  indexed_content: "'type':1A"
-  updated_at: 2009-12-02 16:03:00.696917 -07:00
-  pattern_spec_key: 
-  indexed_name: "'type':1"
-  trash: false
-  codename: 
-  references_expired: 
-  reader_id: 3
-  pattern_keys: 
-  id: 266
-  current_revision_id: 3007
-  created_by: 1
-  type: Basic
-  trunk_id: 
-  extension_type: 
-  updated_by: 1
-  settings: 
-  key: "*type"
+  key: "*option_label"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -1977,58 +1977,6 @@ cards_079:
   appender_id: 
 cards_186: 
   reader_type: Role
-  name: "*self"
-  created_at: 2009-12-02 16:02:48.204205 -07:00
-  tag_id: 
-  indexed_content: "'self':1A"
-  updated_at: 2009-12-02 16:03:00.592911 -07:00
-  pattern_spec_key: 
-  indexed_name: "'self':1"
-  trash: false
-  codename: 
-  references_expired: 
-  reader_id: 3
-  pattern_keys: 
-  id: 264
-  current_revision_id: 3005
-  created_by: 1
-  type: Basic
-  trunk_id: 
-  extension_type: 
-  updated_by: 1
-  settings: 
-  key: "*self"
-  extension_id: 
-  appender_type: 
-  appender_id: 
-cards_187: 
-  reader_type: Role
-  name: "*option label"
-  created_at: 2009-09-24 13:16:03.688766 -06:00
-  tag_id: 
-  indexed_content: "'label':2A 'option':1A"
-  updated_at: 2009-12-02 16:02:58.396786 -07:00
-  pattern_spec_key: 
-  indexed_name: "'label':2 'option':1"
-  trash: false
-  codename: 
-  references_expired: 
-  reader_id: 3
-  pattern_keys: 
-  id: 252
-  current_revision_id: 3023
-  created_by: 4
-  type: Setting
-  trunk_id: 
-  extension_type: 
-  updated_by: 1
-  settings: 
-  key: "*option_label"
-  extension_id: 
-  appender_type: 
-  appender_id: 
-cards_188: 
-  reader_type: Role
   name: "*options"
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
@@ -2053,7 +2001,7 @@ cards_188:
   extension_id: 
   appender_type: 
   appender_id: 
-cards_189: 
+cards_187: 
   reader_type: Role
   name: "*input"
   created_at: 2009-09-08 16:14:41.307709 -06:00
@@ -2079,55 +2027,107 @@ cards_189:
   extension_id: 
   appender_type: 
   appender_id: 
-cards_001: 
+cards_188: 
   reader_type: Role
-  name: "*all+*captcha"
-  created_at: 2009-12-02 16:02:55.932645 -07:00
-  tag_id: 256
-  indexed_content: "'0':3 'captcha':2A"
-  updated_at: 2010-07-23 12:50:06.172789 -06:00
+  name: "*layout"
+  created_at: 2009-10-20 16:34:41.704772 -06:00
+  tag_id: 
+  indexed_content: "'layout':1A"
+  updated_at: 2009-12-02 16:02:57.740748 -07:00
   pattern_spec_key: 
-  indexed_name: "'captcha':2"
+  indexed_name: "'layout':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 276
-  current_revision_id: 3769
+  id: 255
+  current_revision_id: 3019
   created_by: 1
-  type: Toggle
-  trunk_id: 274
+  type: Setting
+  trunk_id: 
   extension_type: 
-  updated_by: 3
+  updated_by: 1
   settings: 
-  key: "*all+*captcha"
+  key: "*layout"
+  extension_id: 
+  appender_type: 
+  appender_id: 
+cards_189: 
+  reader_type: Role
+  name: "*captcha"
+  created_at: 2009-11-03 10:21:52.664376 -07:00
+  tag_id: 
+  indexed_content: "'captcha':1A"
+  updated_at: 2009-12-02 16:02:57.608741 -07:00
+  pattern_spec_key: 
+  indexed_name: "'captcha':1"
+  trash: false
+  codename: 
+  references_expired: 
+  reader_id: 3
+  pattern_keys: 
+  id: 256
+  current_revision_id: 3021
+  created_by: 5
+  type: Setting
+  trunk_id: 
+  extension_type: 
+  updated_by: 1
+  settings: 
+  key: "*captcha"
+  extension_id: 
+  appender_type: 
+  appender_id: 
+cards_001: 
+  reader_type: Role
+  name: "*invite"
+  created_at: 2009-04-06 14:11:12.920280 -06:00
+  tag_id: 
+  indexed_content: "'re':41 'new':17 'via':19 'send':37 'sign':4 'type':24,29,34 'user':6,18 'wagn':45 'creat':13 'email':20,21,26,31 'invit':1A,16,39 'taken':42 'thank':48 'domain':47 'global':10 'messag':27,28 'phrase':25,35 'account':14 'permiss':11 'subject':22,23 'plaintext':30 'signed-in':3 '/admin/tasks':9"
+  updated_at: 2010-10-29 11:07:17.191648 -06:00
+  pattern_spec_key: 
+  indexed_name: "'invit':1"
+  trash: false
+  codename: 
+  references_expired: 
+  reader_id: 3
+  pattern_keys: 
+  id: 56
+  current_revision_id: 3722
+  created_by: 1
+  type: Basic
+  trunk_id: 
+  extension_type: 
+  updated_by: 1
+  settings: 
+  key: "*invite"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_002: 
   reader_type: Role
-  name: Cardtype+*type+*default
-  created_at: 2009-04-06 14:11:12.920280 -06:00
-  tag_id: 318
-  indexed_content: "'add':8 '/new':5 'card':12,15,17 'name':11,14 'self':6,10,13 'type':2A,16 'cardtyp':1A 'default':3A 'linknam':7 'descript':4"
-  updated_at: 2010-06-22 10:46:30.377045 -06:00
+  name: "*attach+*right+*options"
+  created_at: 2010-04-26 16:57:52.162064 -06:00
+  tag_id: 86
+  indexed_content: "'file':5 'type':4 'right':2A 'attach':1A 'option':3A"
+  updated_at: 2010-10-29 11:07:17.048298 -06:00
   pattern_spec_key: 
-  indexed_name: "'type':2 'cardtyp':1 'default':3"
+  indexed_name: "'right':2 'attach':1 'option':3"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 88
-  current_revision_id: 3767
-  created_by: 1
-  type: Basic
-  trunk_id: 320
-  extension_type: SoftTemplate
-  updated_by: 3
+  id: 395
+  current_revision_id: 3732
+  created_by: 4
+  type: Search
+  trunk_id: 388
+  extension_type: 
+  updated_by: 1
   settings: 
-  key: cardtype+*type+*default
+  key: "*attach+*right+*option"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -2137,7 +2137,7 @@ cards_003:
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
   indexed_content: "'0':85 'p':62 'h1':63 'h2':64 'hr':22,96 '100':3 'alt':86 'css':66,69 'img':81 'src':83 'top':39 'url':8 'auto':4 'bold':16 'code':24 'face':102 'fals':9,34,53 'font':101 'href':77 'ital':17 'left':44 'name':76,95 'none':71 'path':33 'size':99,103 'span':106 'titl':79,87 'true':6,48 'align':43,92,108 'class':82,97,107 'color':104 'locat':38,57 'relat':7 'resiz':5,47,51 'separ':18,23 'style':105,109 'theme':10,12,25,28,31,35,40,45,49,54,59 'valid':73 'width':2,90,98 'advanc':11,13,26,29,32,36,41,46,50,55,60 'border':84 'bottom':58 'extend':72 'height':91 'hspace':88 'layout':70 'noshad':100 'target':78 'tinymc':1A 'vspace':89 'bullist':20 'content':65 'element':74 'numlist':21 'onclick':80 'toolbar':37,42 'buttons1':14 'buttons2':27 'buttons3':30 'horizont':52 'blockquot':19 'onmouseov':93 'statusbar':56 '/card/view':68 'onmouseout':94 'blockformat':61 'formatselect':15 '/stylesheets/defaults.css':67"
-  updated_at: 2010-05-14 13:45:39.597608 -06:00
+  updated_at: 2010-10-29 11:07:16.821158 -06:00
   pattern_spec_key: 
   indexed_name: "'tinymc':1"
   trash: false
@@ -2151,7 +2151,7 @@ cards_003:
   type: PlainText
   trunk_id: 
   extension_type: 
-  updated_by: 4
+  updated_by: 1
   settings: 
   key: "*tiny_mce"
   extension_id: 
@@ -2185,27 +2185,27 @@ cards_110:
   appender_id: 
 cards_004: 
   reader_type: Role
-  name: "*account+*right+*content"
+  name: Cardtype+*type+*default
   created_at: 2009-04-06 14:11:12.920280 -06:00
-  tag_id: 317
-  indexed_content: "'ll':18 'card':12,23,25,42 'edit':46,48 'item':10,40 'left':4,8,13,38,43,47 'link':11 'list':28 'name':5,14,44 'role':7,9 'type':27 'chang':31,41 'email':20 'notif':37 'right':2A 'watch':16,39 'receiv':19 'whenev':21 'account':1A 'content':3A 'wagn.org':33 '/wagn/notification|learn':34 'wagn.org/wagn/notification':32"
-  updated_at: 2010-05-07 16:19:03.073748 -06:00
+  tag_id: 318
+  indexed_content: "'add':8 '/new':5 'card':12,15,17 'name':11,14 'self':6,10,13 'type':2A,16 'cardtyp':1A 'default':3A 'linknam':7 'descript':4"
+  updated_at: 2010-10-29 11:07:16.353492 -06:00
   pattern_spec_key: 
-  indexed_name: "'right':2 'account':1 'content':3"
+  indexed_name: "'type':2 'cardtyp':1 'default':3"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 119
-  current_revision_id: 3761
+  id: 88
+  current_revision_id: 3767
   created_by: 1
   type: Basic
-  trunk_id: 330
-  extension_type: HardTemplate
-  updated_by: 4
+  trunk_id: 320
+  extension_type: SoftTemplate
+  updated_by: 1
   settings: 
-  key: "*account+*right+*content"
+  key: cardtype+*type+*default
   extension_id: 
   appender_type: 
   appender_id: 
@@ -2263,27 +2263,27 @@ cards_111:
   appender_id: 
 cards_005: 
   reader_type: Role
-  name: "*input+*right+*options"
-  created_at: 2010-05-04 21:55:29.543284 -06:00
-  tag_id: 86
-  indexed_content: "'list':10 'name':4 'input':1A 'radio':7 'right':2A 'option':3A 'select':6 'checkbox':8 'multiselect':9"
-  updated_at: 2010-05-04 21:55:29.543284 -06:00
+  name: "*watchers"
+  created_at: 2009-06-18 10:56:06.393938 -06:00
+  tag_id: 
+  indexed_content: "'get':7 'card':3,13,15 'name':25 'show':4 'type':16 'chang':10 'email':8 'notif':22 'right':23 'watcher':1A 'www.wagn.org':18 '/wagn/notification|learn':19 'www.wagn.org/wagn/notification':17"
+  updated_at: 2010-10-29 11:07:15.399937 -06:00
   pattern_spec_key: 
-  indexed_name: "'input':1 'right':2 'option':3"
+  indexed_name: "'watcher':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 396
-  current_revision_id: 3759
-  created_by: 4
-  type: Search
-  trunk_id: 268
+  id: 219
+  current_revision_id: 3754
+  created_by: 5
+  type: Basic
+  trunk_id: 
   extension_type: 
-  updated_by: 4
+  updated_by: 1
   settings: 
-  key: "*input+*right+*option"
+  key: "*watcher"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -2341,27 +2341,27 @@ cards_112:
   appender_id: 
 cards_006: 
   reader_type: Role
-  name: Config
-  created_at: 2009-04-06 14:11:12.920280 -06:00
-  tag_id: 
-  indexed_content: "'bot':103,105,116 'css':193 'key':225 'may':53 'see':128 'set':21,22,28,32,36,42,48,52,67,72,84,90,134,233 'tab':114 'two':133 'via':111 'card':10,35,50,60,66,77,171,179 'come':100,123 'edit':221 'home':9,11 'html':196 'imag':16,20,240 'link':173,178,181 'logo':15,17 'name':4 'open':37 'site':3 'skin':201 'titl':5 'type':7,13,19,145,148,195,227,239 'user':147,156,160 'wagn':23,102,104,115,203 'allow':24 'appli':27,45,68,74,85 'basic':2 'chang':109 'close':6,12,18,92,117,146,149,159,163,167,182,194,205,214,226,238 'email':93,99,107,121,154 'googl':223,235 'group':33 'invit':129,157,158 'learn':186 'relat':120,141,153 'singl':59 'analyt':224,236 'config':1A,192 'custom':210,219 'differ':126 'follow':132 'import':136 'option':30,113 'phrase':8,14,228 'signup':161,162 'specif':56,89 'system':98 'tinymc':213 'account':94,119,140,143,152,164,169,190 'address':108,127 'cardtyp':142 'default':97 'favicon':237 'general':63 'request':144,165,166 'sidebar':204,212 'toolbar':222 'valuabl':168 'configur':29,95,138,150,189 'wagn.org':198,207,216,230 'administr':170,177,180 'account-rel':118,139,151 'www.wagn.org':184 '/wagn/skin|how':199 '/wagn/sidebar|how':208 '/wagn/tinymce|how':217 'wagn.org/wagn/skin':197 'wagn.org/wagn/sidebar':206 'wagn.org/wagn/tinymce':215 'www.wagn.org/wagn/account':183 '/wagn/google_analytics|how':231 'wagn.org/wagn/google_analytics':229 '/wagn/account#administering%20accounts':185"
-  updated_at: 2010-05-02 15:33:06.079101 -06:00
+  name: User+*type+*accountable
+  created_at: 2009-12-10 14:35:53.720478 -07:00
+  tag_id: 291
+  indexed_content: "'1':4 'type':2A 'user':1A 'account':3A"
+  updated_at: 2010-10-28 11:33:20.009167 -06:00
   pattern_spec_key: 
-  indexed_name: "'config':1"
+  indexed_name: "'type':2 'user':1 'account':3"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 73
-  current_revision_id: 3756
-  created_by: 1
-  type: Basic
-  trunk_id: 
+  id: 295
+  current_revision_id: 3083
+  created_by: 4
+  type: Toggle
+  trunk_id: 294
   extension_type: 
-  updated_by: 4
+  updated_by: 1
   settings: 
-  key: config
+  key: user+*type+*accountable
   extension_id: 
   appender_type: 
   appender_id: 
@@ -2419,53 +2419,53 @@ cards_113:
   appender_id: 
 cards_220: 
   reader_type: Role
-  name: File
+  name: Cardtype
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'add':6 '/new':3 'card':10,13,15 'file':1A 'name':5,9,12 'self':4,8,11 'type':14 'descript':2"
-  updated_at: 2009-04-24 11:22:20.806270 -06:00
+  indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'cardtyp':1A 'descript':2"
+  updated_at: 2009-04-24 11:18:02.672041 -06:00
   pattern_spec_key: 
-  indexed_name: "'file':1"
+  indexed_name: "'cardtyp':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 18
-  current_revision_id: 2067
+  id: 5
+  current_revision_id: 2060
   created_by: 1
   type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 4
   settings: 
-  key: file
-  extension_id: 10
+  key: cardtype
+  extension_id: 3
   appender_type: 
   appender_id: 
 cards_007: 
   reader_type: Role
-  name: "*watchers"
-  created_at: 2009-06-18 10:56:06.393938 -06:00
-  tag_id: 
-  indexed_content: "'get':7 'card':3,13,15 'name':25 'show':4 'type':16 'chang':10 'email':8 'notif':22 'right':23 'watcher':1A 'www.wagn.org':18 '/wagn/notification|learn':19 'www.wagn.org/wagn/notification':17"
-  updated_at: 2010-05-02 15:29:04.702171 -06:00
+  name: "*all+*captcha"
+  created_at: 2009-12-02 16:02:55.932645 -07:00
+  tag_id: 256
+  indexed_content: "'0':3 'captcha':2A"
+  updated_at: 2010-07-23 12:50:06.172789 -06:00
   pattern_spec_key: 
-  indexed_name: "'watcher':1"
+  indexed_name: "'captcha':2"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 219
-  current_revision_id: 3754
-  created_by: 5
-  type: Basic
-  trunk_id: 
+  id: 276
+  current_revision_id: 3769
+  created_by: 1
+  type: Toggle
+  trunk_id: 274
   extension_type: 
-  updated_by: 4
+  updated_by: 3
   settings: 
-  key: "*watcher"
+  key: "*all+*captcha"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -2549,53 +2549,53 @@ cards_140:
   appender_id: 
 cards_221: 
   reader_type: Role
-  name: Date
-  created_at: 2009-04-06 14:11:12.920280 -06:00
+  name: "*tagged"
+  created_at: 2009-04-24 10:30:47.286198 -06:00
   tag_id: 
-  indexed_content: "'add':6 '/new':3 'card':10,13,15 'date':1A 'name':5,9,12 'self':4,8,11 'type':14 'descript':2"
-  updated_at: 2009-04-24 11:21:58.400126 -06:00
+  indexed_content: "'tag':1A"
+  updated_at: 2009-04-24 10:30:47.286198 -06:00
   pattern_spec_key: 
-  indexed_name: "'date':1"
+  indexed_name: "'tag':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 17
-  current_revision_id: 2066
-  created_by: 1
-  type: Cardtype
+  id: 172
+  current_revision_id: 2013
+  created_by: 3
+  type: Basic
   trunk_id: 
-  extension_type: Cardtype
-  updated_by: 4
+  extension_type: 
+  updated_by: 3
   settings: 
-  key: date
-  extension_id: 9
+  key: "*tagged"
+  extension_id: 
   appender_type: 
   appender_id: 
 cards_008: 
   reader_type: Role
-  name: email config+*right+*content
-  created_at: 2010-04-20 17:40:18.238193 -06:00
+  name: "*account+*right+*content"
+  created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 317
-  indexed_content: "'cc':7 'bcc':8 'email':1A 'right':3A 'attach':11 'config':2A 'messag':10 'content':4A 'subject':9"
-  updated_at: 2010-05-02 03:12:56.976328 -06:00
+  indexed_content: "'ll':18 'card':12,23,25,42 'edit':46,48 'item':10,40 'left':4,8,13,38,43,47 'link':11 'list':28 'name':5,14,44 'role':7,9 'type':27 'chang':31,41 'email':20 'notif':37 'right':2A 'watch':16,39 'receiv':19 'whenev':21 'account':1A 'content':3A 'wagn.org':33 '/wagn/notification|learn':34 'wagn.org/wagn/notification':32"
+  updated_at: 2010-05-07 16:19:03.073748 -06:00
   pattern_spec_key: 
-  indexed_name: "'email':1 'right':3 'config':2 'content':4"
+  indexed_name: "'right':2 'account':1 'content':3"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 373
-  current_revision_id: 3610
-  created_by: 3
+  id: 119
+  current_revision_id: 3761
+  created_by: 1
   type: Basic
-  trunk_id: 372
-  extension_type: 
+  trunk_id: 330
+  extension_type: HardTemplate
   updated_by: 4
   settings: 
-  key: email_config+*right+*content
+  key: "*account+*right+*content"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -2705,79 +2705,79 @@ cards_141:
   appender_id: 
 cards_222: 
   reader_type: Role
-  name: Cardtype
-  created_at: 2009-04-06 14:11:12.920280 -06:00
+  name: "*incoming"
+  created_at: 2009-04-24 10:07:12.024148 -06:00
   tag_id: 
-  indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'cardtyp':1A 'descript':2"
-  updated_at: 2009-04-24 11:18:02.672041 -06:00
+  indexed_content: "'incom':1A"
+  updated_at: 2009-04-24 10:07:12.024148 -06:00
   pattern_spec_key: 
-  indexed_name: "'cardtyp':1"
+  indexed_name: "'incom':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 5
-  current_revision_id: 2060
-  created_by: 1
-  type: Cardtype
+  id: 170
+  current_revision_id: 1993
+  created_by: 4
+  type: Basic
   trunk_id: 
-  extension_type: Cardtype
+  extension_type: 
   updated_by: 4
   settings: 
-  key: cardtype
-  extension_id: 3
+  key: "*incoming"
+  extension_id: 
   appender_type: 
   appender_id: 
 cards_223: 
   reader_type: Role
-  name: "*tagged"
-  created_at: 2009-04-24 10:30:47.286198 -06:00
+  name: "*outgoing"
+  created_at: 2009-04-24 09:57:11.297342 -06:00
   tag_id: 
-  indexed_content: "'tag':1A"
-  updated_at: 2009-04-24 10:30:47.286198 -06:00
+  indexed_content: "'outgo':1A"
+  updated_at: 2009-04-24 09:57:11.297342 -06:00
   pattern_spec_key: 
-  indexed_name: "'tag':1"
+  indexed_name: "'outgo':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 172
-  current_revision_id: 2013
-  created_by: 3
+  id: 168
+  current_revision_id: 1988
+  created_by: 4
   type: Basic
   trunk_id: 
   extension_type: 
-  updated_by: 3
+  updated_by: 4
   settings: 
-  key: "*tagged"
+  key: "*outgoing"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_009: 
   reader_type: Role
-  name: "*cc+*right+*default"
-  created_at: 2010-04-20 17:58:34.097783 -06:00
-  tag_id: 318
-  indexed_content: "'cc':1A 'send':2A 'default':3A"
-  updated_at: 2010-05-02 03:11:41.651072 -06:00
+  name: Config
+  created_at: 2009-04-06 14:11:12.920280 -06:00
+  tag_id: 
+  indexed_content: "'bot':103,105,116 'css':193 'key':225 'may':53 'see':128 'set':21,22,28,32,36,42,48,52,67,72,84,90,134,233 'tab':114 'two':133 'via':111 'card':10,35,50,60,66,77,171,179 'come':100,123 'edit':221 'home':9,11 'html':196 'imag':16,20,240 'link':173,178,181 'logo':15,17 'name':4 'open':37 'site':3 'skin':201 'titl':5 'type':7,13,19,145,148,195,227,239 'user':147,156,160 'wagn':23,102,104,115,203 'allow':24 'appli':27,45,68,74,85 'basic':2 'chang':109 'close':6,12,18,92,117,146,149,159,163,167,182,194,205,214,226,238 'email':93,99,107,121,154 'googl':223,235 'group':33 'invit':129,157,158 'learn':186 'relat':120,141,153 'singl':59 'analyt':224,236 'config':1A,192 'custom':210,219 'differ':126 'follow':132 'import':136 'option':30,113 'phrase':8,14,228 'signup':161,162 'specif':56,89 'system':98 'tinymc':213 'account':94,119,140,143,152,164,169,190 'address':108,127 'cardtyp':142 'default':97 'favicon':237 'general':63 'request':144,165,166 'sidebar':204,212 'toolbar':222 'valuabl':168 'configur':29,95,138,150,189 'wagn.org':198,207,216,230 'administr':170,177,180 'account-rel':118,139,151 'www.wagn.org':184 '/wagn/skin|how':199 '/wagn/sidebar|how':208 '/wagn/tinymce|how':217 'wagn.org/wagn/skin':197 'wagn.org/wagn/sidebar':206 'wagn.org/wagn/tinymce':215 'www.wagn.org/wagn/account':183 '/wagn/google_analytics|how':231 'wagn.org/wagn/google_analytics':229 '/wagn/account#administering%20accounts':185"
+  updated_at: 2010-05-02 15:33:06.079101 -06:00
   pattern_spec_key: 
-  indexed_name: "'cc':1 'send':2 'default':3"
+  indexed_name: "'config':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 380
-  current_revision_id: 3617
-  created_by: 3
-  type: Phrase
-  trunk_id: 379
+  id: 73
+  current_revision_id: 3756
+  created_by: 1
+  type: Basic
+  trunk_id: 
   extension_type: 
   updated_by: 4
   settings: 
-  key: "*cc+*right+*default"
+  key: config
   extension_id: 
   appender_type: 
   appender_id: 
@@ -2887,27 +2887,27 @@ cards_142:
   appender_id: 
 cards_224: 
   reader_type: Role
-  name: "*incoming"
-  created_at: 2009-04-24 10:07:12.024148 -06:00
+  name: "*members"
+  created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'incom':1A"
-  updated_at: 2009-04-24 10:07:12.024148 -06:00
+  indexed_content: "'member':1A"
+  updated_at: 2009-04-09 16:34:46.720627 -06:00
   pattern_spec_key: 
-  indexed_name: "'incom':1"
+  indexed_name: "'member':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 170
-  current_revision_id: 1993
-  created_by: 4
+  id: 98
+  current_revision_id: 355
+  created_by: 1
   type: Basic
   trunk_id: 
   extension_type: 
-  updated_by: 4
+  updated_by: 3
   settings: 
-  key: "*incoming"
+  key: "*member"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -3017,27 +3017,27 @@ cards_143:
   appender_id: 
 cards_225: 
   reader_type: Role
-  name: "*outgoing"
-  created_at: 2009-04-24 09:57:11.297342 -06:00
-  tag_id: 
-  indexed_content: "'outgo':1A"
-  updated_at: 2009-04-24 09:57:11.297342 -06:00
+  name: "*account+*related"
+  created_at: 2009-04-06 14:11:12.920280 -06:00
+  tag_id: 112
+  indexed_content: "'relat':2A 'account':1A,3"
+  updated_at: 2009-04-09 16:11:44.586106 -06:00
   pattern_spec_key: 
-  indexed_name: "'outgo':1"
+  indexed_name: "'relat':2 'account':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 168
-  current_revision_id: 1988
-  created_by: 4
-  type: Basic
-  trunk_id: 
+  id: 118
+  current_revision_id: 1871
+  created_by: 1
+  type: Pointer
+  trunk_id: 100
   extension_type: 
-  updated_by: 4
+  updated_by: 3
   settings: 
-  key: "*outgoing"
+  key: "*account+*related"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -3147,53 +3147,53 @@ cards_144:
   appender_id: 
 cards_170: 
   reader_type: Role
-  name: "*thanks+*right"
-  created_at: 2009-12-08 12:25:06.766883 -07:00
+  name: "*option label+*right"
+  created_at: 2009-12-08 12:25:02.194622 -07:00
   tag_id: 260
-  indexed_content: "'right':2A 'thank':1A"
-  updated_at: 2009-12-12 14:05:34.382265 -07:00
+  indexed_content: "'label':2A 'right':3A 'option':1A"
+  updated_at: 2009-12-12 14:05:34.090249 -07:00
   pattern_spec_key: 
-  indexed_name: "'right':2 'thank':1"
+  indexed_name: "'label':2 'right':3 'option':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 288
-  current_revision_id: 3065
+  id: 286
+  current_revision_id: 3063
   created_by: 1
   type: Set
-  trunk_id: 61
+  trunk_id: 252
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*thank+*right"
+  key: "*option_label+*right"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_226: 
   reader_type: Role
-  name: "*members"
+  name: "*type cards"
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'member':1A"
-  updated_at: 2009-04-09 16:34:46.720627 -06:00
+  indexed_content: "'card':2A 'type':1A"
+  updated_at: 2009-04-09 15:52:29.237723 -06:00
   pattern_spec_key: 
-  indexed_name: "'member':1"
+  indexed_name: "'card':2 'type':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 98
-  current_revision_id: 355
+  id: 45
+  current_revision_id: 45
   created_by: 1
   type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
   settings: 
-  key: "*member"
+  key: "*type_card"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -3303,27 +3303,27 @@ cards_145:
   appender_id: 
 cards_171: 
   reader_type: Role
-  name: "*option label+*right"
-  created_at: 2009-12-08 12:25:02.194622 -07:00
+  name: "*table of contents+*right"
+  created_at: 2009-12-08 12:24:59.873941 -07:00
   tag_id: 260
-  indexed_content: "'label':2A 'right':3A 'option':1A"
-  updated_at: 2009-12-12 14:05:34.090249 -07:00
+  indexed_content: "'tabl':1A 'right':4A 'content':3A"
+  updated_at: 2009-12-12 14:05:33.898238 -07:00
   pattern_spec_key: 
-  indexed_name: "'label':2 'right':3 'option':1"
+  indexed_name: "'tabl':1 'right':4 'content':3"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 286
-  current_revision_id: 3063
+  id: 285
+  current_revision_id: 3061
   created_by: 1
   type: Set
-  trunk_id: 252
+  trunk_id: 89
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*option_label+*right"
+  key: "*table_of_content+*right"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -3355,27 +3355,27 @@ cards_038:
   appender_id: 
 cards_227: 
   reader_type: Role
-  name: "*account+*related"
+  name: "*linkers"
   created_at: 2009-04-06 14:11:12.920280 -06:00
-  tag_id: 112
-  indexed_content: "'relat':2A 'account':1A,3"
-  updated_at: 2009-04-09 16:11:44.586106 -06:00
+  tag_id: 
+  indexed_content: "'linker':1A"
+  updated_at: 2009-04-09 15:47:27.162942 -06:00
   pattern_spec_key: 
-  indexed_name: "'relat':2 'account':1"
+  indexed_name: "'linker':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 118
-  current_revision_id: 1871
+  id: 39
+  current_revision_id: 39
   created_by: 1
-  type: Pointer
-  trunk_id: 100
+  type: Basic
+  trunk_id: 
   extension_type: 
   updated_by: 3
   settings: 
-  key: "*account+*related"
+  key: "*linker"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -3459,27 +3459,27 @@ cards_146:
   appender_id: 
 cards_172: 
   reader_type: Role
-  name: "*table of contents+*right"
-  created_at: 2009-12-08 12:24:59.873941 -07:00
+  name: "*layout+*right"
+  created_at: 2009-12-08 12:24:58.777879 -07:00
   tag_id: 260
-  indexed_content: "'tabl':1A 'right':4A 'content':3A"
-  updated_at: 2009-12-12 14:05:33.898238 -07:00
+  indexed_content: "'right':2A 'layout':1A"
+  updated_at: 2009-12-12 14:05:33.750229 -07:00
   pattern_spec_key: 
-  indexed_name: "'tabl':1 'right':4 'content':3"
+  indexed_name: "'right':2 'layout':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 285
-  current_revision_id: 3061
+  id: 284
+  current_revision_id: 3060
   created_by: 1
   type: Set
-  trunk_id: 89
+  trunk_id: 255
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*table_of_content+*right"
+  key: "*layout+*right"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -3511,27 +3511,27 @@ cards_039:
   appender_id: 
 cards_228: 
   reader_type: Role
-  name: "*type cards"
+  name: "*links"
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'card':2A 'type':1A"
-  updated_at: 2009-04-09 15:52:29.237723 -06:00
+  indexed_content: "'link':1A"
+  updated_at: 2009-04-09 15:47:08.045853 -06:00
   pattern_spec_key: 
-  indexed_name: "'card':2 'type':1"
+  indexed_name: "'link':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 45
-  current_revision_id: 45
+  id: 43
+  current_revision_id: 43
   created_by: 1
   type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
   settings: 
-  key: "*type_card"
+  key: "*link"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -3589,27 +3589,27 @@ cards_147:
   appender_id: 
 cards_173: 
   reader_type: Role
-  name: "*layout+*right"
-  created_at: 2009-12-08 12:24:58.777879 -07:00
-  tag_id: 260
-  indexed_content: "'right':2A 'layout':1A"
-  updated_at: 2009-12-12 14:05:33.750229 -07:00
+  name: "*sidebar"
+  created_at: 2009-04-06 14:11:12.920280 -06:00
+  tag_id: 
+  indexed_content: "'link':5 'menu':2 'open':3,6 'sidebar':1A 'administr':4"
+  updated_at: 2009-12-12 14:05:19.649426 -07:00
   pattern_spec_key: 
-  indexed_name: "'right':2 'layout':1"
+  indexed_name: "'sidebar':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 284
-  current_revision_id: 3060
+  id: 81
+  current_revision_id: 2331
   created_by: 1
-  type: Set
-  trunk_id: 255
+  type: Basic
+  trunk_id: 
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*layout+*right"
+  key: "*sidebar"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -3641,27 +3641,27 @@ cards_066:
   appender_id: 
 cards_229: 
   reader_type: Role
-  name: "*linkers"
+  name: "*inclusions"
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'linker':1A"
-  updated_at: 2009-04-09 15:47:27.162942 -06:00
+  indexed_content: "'inclus':1A"
+  updated_at: 2009-04-09 15:46:30.803430 -06:00
   pattern_spec_key: 
-  indexed_name: "'linker':1"
+  indexed_name: "'inclus':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 39
-  current_revision_id: 39
+  id: 41
+  current_revision_id: 41
   created_by: 1
   type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
   settings: 
-  key: "*linker"
+  key: "*inclusion"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -3719,27 +3719,27 @@ cards_148:
   appender_id: 
 cards_174: 
   reader_type: Role
-  name: "*sidebar"
-  created_at: 2009-04-06 14:11:12.920280 -06:00
-  tag_id: 
-  indexed_content: "'link':5 'menu':2 'open':3,6 'sidebar':1A 'administr':4"
-  updated_at: 2009-12-12 14:05:19.649426 -07:00
+  name: User+*type
+  created_at: 2009-12-10 14:35:53.348457 -07:00
+  tag_id: 266
+  indexed_content: "'self':4 'type':2A,3 'user':1A"
+  updated_at: 2009-12-10 14:35:53.348457 -07:00
   pattern_spec_key: 
-  indexed_name: "'sidebar':1"
+  indexed_name: "'type':2 'user':1"
   trash: false
   codename: 
-  references_expired: 
+  references_expired: 1
   reader_id: 3
   pattern_keys: 
-  id: 81
-  current_revision_id: 2331
-  created_by: 1
-  type: Basic
-  trunk_id: 
+  id: 294
+  current_revision_id: 3082
+  created_by: 4
+  type: Set
+  trunk_id: 4
   extension_type: 
-  updated_by: 1
+  updated_by: 4
   settings: 
-  key: "*sidebar"
+  key: user+*type
   extension_id: 
   appender_type: 
   appender_id: 
@@ -3797,27 +3797,27 @@ cards_149:
   appender_id: 
 cards_175: 
   reader_type: Role
-  name: User+*type+*accountable
-  created_at: 2009-12-10 14:35:53.720478 -07:00
+  name: "*all+*accountable"
+  created_at: 2009-12-10 14:35:13.354178 -07:00
   tag_id: 291
-  indexed_content: "'1':4 'type':2A 'user':1A 'account':3A"
-  updated_at: 2009-12-10 14:35:53.720478 -07:00
+  indexed_content: "'0':3 'account':2A"
+  updated_at: 2009-12-10 14:35:21.086618 -07:00
   pattern_spec_key: 
-  indexed_name: "'type':2 'user':1 'account':3"
+  indexed_name: "'account':2"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 295
-  current_revision_id: 3083
+  id: 293
+  current_revision_id: 3081
   created_by: 4
   type: Toggle
-  trunk_id: 294
+  trunk_id: 274
   extension_type: 
   updated_by: 4
   settings: 
-  key: user+*type+*accountable
+  key: "*all+*accountable"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -3875,27 +3875,27 @@ cards_094:
   appender_id: 
 cards_176: 
   reader_type: Role
-  name: User+*type
-  created_at: 2009-12-10 14:35:53.348457 -07:00
-  tag_id: 266
-  indexed_content: "'self':4 'type':2A,3 'user':1A"
-  updated_at: 2009-12-10 14:35:53.348457 -07:00
+  name: "*css"
+  created_at: 2009-05-19 22:18:56.476994 -06:00
+  tag_id: 
+  indexed_content: "'x':19 '28':31 '67':28 'h1':47 'h2':48 'bar':33 'css':1A 'etc':59 'top':32 'url':15 'bodi':2,4,12 'card':22,57,61,66,69,80 'font':73 'imag':9 'main':21 'menu':38,41 'misc':78 'page':7 'text':3,36,46 'wagn':13 'color':5,11,35,37,43,49,55,76 'navig':84 'revis':83 'width':25,27,30 '222299':56 '333333':77 '335533':40 '444444':6 '664444':50 'c0d9c0':64 'cccccc':20 'credit':86 'dddddd':88 'eeeeee':44 'footer':81 'header':45,52,54,58,62,67,70 'normal':75 'repeat':18 'weight':74 'current':85 'h1.page':51 'h2.page':53 'primari':26 'sidebar':24 'repeat-x':17 'card-foot':79 'card-head':60,65,68 'secondari':29 'background':8,14,34,39,63,87 'font-weight':72 'revision-navig':82 '/images/body-bg.png':16"
+  updated_at: 2009-12-08 16:36:03.332594 -07:00
   pattern_spec_key: 
-  indexed_name: "'type':2 'user':1"
+  indexed_name: "'css':1"
   trash: false
   codename: 
-  references_expired: 1
+  references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 294
-  current_revision_id: 3082
+  id: 198
+  current_revision_id: 3074
   created_by: 4
-  type: Set
-  trunk_id: 4
+  type: HTML
+  trunk_id: 
   extension_type: 
   updated_by: 4
   settings: 
-  key: user+*type
+  key: "*css"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -3953,27 +3953,27 @@ cards_095:
   appender_id: 
 cards_177: 
   reader_type: Role
-  name: "*all+*accountable"
-  created_at: 2009-12-10 14:35:13.354178 -07:00
-  tag_id: 291
-  indexed_content: "'0':3 'account':2A"
-  updated_at: 2009-12-10 14:35:21.086618 -07:00
+  name: "*input+*right"
+  created_at: 2009-12-02 16:02:49.144258 -07:00
+  tag_id: 260
+  indexed_content: "'self':5 'input':1A 'right':3A,4"
+  updated_at: 2009-12-08 12:25:14.735337 -07:00
   pattern_spec_key: 
-  indexed_name: "'account':2"
+  indexed_name: "'input':1 'right':3"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 293
-  current_revision_id: 3081
-  created_by: 4
-  type: Toggle
-  trunk_id: 274
+  id: 268
+  current_revision_id: 3009
+  created_by: 1
+  type: Set
+  trunk_id: 241
   extension_type: 
-  updated_by: 4
+  updated_by: 1
   settings: 
-  key: "*all+*accountable"
+  key: "*input+*right"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -4005,27 +4005,27 @@ cards_096:
   appender_id: 
 cards_178: 
   reader_type: Role
-  name: "*css"
-  created_at: 2009-05-19 22:18:56.476994 -06:00
-  tag_id: 
-  indexed_content: "'x':19 '28':31 '67':28 'h1':47 'h2':48 'bar':33 'css':1A 'etc':59 'top':32 'url':15 'bodi':2,4,12 'card':22,57,61,66,69,80 'font':73 'imag':9 'main':21 'menu':38,41 'misc':78 'page':7 'text':3,36,46 'wagn':13 'color':5,11,35,37,43,49,55,76 'navig':84 'revis':83 'width':25,27,30 '222299':56 '333333':77 '335533':40 '444444':6 '664444':50 'c0d9c0':64 'cccccc':20 'credit':86 'dddddd':88 'eeeeee':44 'footer':81 'header':45,52,54,58,62,67,70 'normal':75 'repeat':18 'weight':74 'current':85 'h1.page':51 'h2.page':53 'primari':26 'sidebar':24 'repeat-x':17 'card-foot':79 'card-head':60,65,68 'secondari':29 'background':8,14,34,39,63,87 'font-weight':72 'revision-navig':82 '/images/body-bg.png':16"
-  updated_at: 2009-12-08 16:36:03.332594 -07:00
+  name: "*watchers+*right"
+  created_at: 2009-12-02 16:02:49.844298 -07:00
+  tag_id: 260
+  indexed_content: "'self':5 'right':3A,4 'watcher':1A"
+  updated_at: 2009-12-08 12:25:14.419319 -07:00
   pattern_spec_key: 
-  indexed_name: "'css':1"
+  indexed_name: "'right':3 'watcher':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 198
-  current_revision_id: 3074
-  created_by: 4
-  type: HTML
-  trunk_id: 
+  id: 269
+  current_revision_id: 3010
+  created_by: 1
+  type: Set
+  trunk_id: 219
   extension_type: 
-  updated_by: 4
+  updated_by: 1
   settings: 
-  key: "*css"
+  key: "*watcher+*right"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -4057,27 +4057,27 @@ cards_097:
   appender_id: 
 cards_179: 
   reader_type: Role
-  name: "*input+*right"
-  created_at: 2009-12-02 16:02:49.144258 -07:00
-  tag_id: 260
-  indexed_content: "'self':5 'input':1A 'right':3A,4"
-  updated_at: 2009-12-08 12:25:14.735337 -07:00
+  name: Basic+*type
+  created_at: 2009-12-02 16:02:53.784523 -07:00
+  tag_id: 266
+  indexed_content: "'self':5 'type':3A,4 'basic':1A"
+  updated_at: 2009-12-08 12:25:13.115245 -07:00
   pattern_spec_key: 
-  indexed_name: "'input':1 'right':3"
+  indexed_name: "'type':3 'basic':1"
   trash: false
   codename: 
-  references_expired: 
+  references_expired: 1
   reader_id: 3
   pattern_keys: 
-  id: 268
-  current_revision_id: 3009
+  id: 273
+  current_revision_id: 3015
   created_by: 1
   type: Set
-  trunk_id: 241
+  trunk_id: 3
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*input+*right"
+  key: basic+*type
   extension_id: 
   appender_type: 
   appender_id: 
@@ -4317,28 +4317,28 @@ cards_103:
   appender_id: 
 cards_210: 
   reader_type: Role
-  name: "*related"
+  name: Phrase
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'incom':2 'outgo':3 'pluss':4 'relat':1A 'communiti':5"
-  updated_at: 2009-04-24 15:34:53.111714 -06:00
+  indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'phrase':1A 'descript':2"
+  updated_at: 2009-04-24 11:25:57.561228 -06:00
   pattern_spec_key: 
-  indexed_name: "'relat':1"
+  indexed_name: "'phrase':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 112
-  current_revision_id: 2008
+  id: 52
+  current_revision_id: 2077
   created_by: 1
-  type: Pointer
+  type: Cardtype
   trunk_id: 
-  extension_type: 
-  updated_by: 1
+  extension_type: Cardtype
+  updated_by: 4
   settings: 
-  key: "*related"
-  extension_id: 
+  key: phrase
+  extension_id: 23
   appender_type: 
   appender_id: 
 cards_023: 
@@ -4421,28 +4421,28 @@ cards_130:
   appender_id: 
 cards_211: 
   reader_type: Role
-  name: by update
-  created_at: 2009-04-24 11:32:57.487524 -06:00
+  name: PlainText
+  created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'updat':2A"
-  updated_at: 2009-04-24 12:46:20.435843 -06:00
+  indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'descript':2 'plaintext':1A"
+  updated_at: 2009-04-24 11:25:43.420423 -06:00
   pattern_spec_key: 
-  indexed_name: "'updat':2"
+  indexed_name: "'plaintext':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 178
-  current_revision_id: 2087
-  created_by: 4
-  type: Basic
+  id: 22
+  current_revision_id: 2076
+  created_by: 1
+  type: Cardtype
   trunk_id: 
-  extension_type: 
-  updated_by: 3
+  extension_type: Cardtype
+  updated_by: 4
   settings: 
-  key: by_update
-  extension_id: 
+  key: plain_text
+  extension_id: 14
   appender_type: 
   appender_id: 
 cards_024: 
@@ -4551,28 +4551,28 @@ cards_131:
   appender_id: 
 cards_212: 
   reader_type: Role
-  name: Phrase
+  name: Pointer
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'phrase':1A 'descript':2"
-  updated_at: 2009-04-24 11:25:57.561228 -06:00
+  indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'pointer':1A 'descript':2"
+  updated_at: 2009-04-24 11:24:39.467909 -06:00
   pattern_spec_key: 
-  indexed_name: "'phrase':1"
+  indexed_name: "'pointer':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 52
-  current_revision_id: 2077
+  id: 47
+  current_revision_id: 2074
   created_by: 1
   type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 4
   settings: 
-  key: phrase
-  extension_id: 23
+  key: pointer
+  extension_id: 20
   appender_type: 
   appender_id: 
 cards_025: 
@@ -4681,53 +4681,53 @@ cards_132:
   appender_id: 
 cards_213: 
   reader_type: Role
-  name: PlainText
+  name: Search
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'descript':2 'plaintext':1A"
-  updated_at: 2009-04-24 11:25:43.420423 -06:00
+  indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'search':1A 'descript':2"
+  updated_at: 2009-04-24 11:24:04.889939 -06:00
   pattern_spec_key: 
-  indexed_name: "'plaintext':1"
+  indexed_name: "'search':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 22
-  current_revision_id: 2076
+  id: 30
+  current_revision_id: 2073
   created_by: 1
   type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 4
   settings: 
-  key: plain_text
-  extension_id: 14
+  key: search
+  extension_id: 19
   appender_type: 
   appender_id: 
 cards_240: 
   reader_type: Role
-  name: discussion
+  name: "*plus cards"
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'discuss':1A"
+  indexed_content: "'card':2A 'plus':1A"
   updated_at: 2009-04-06 14:11:12.920280 -06:00
   pattern_spec_key: 
-  indexed_name: "'discuss':1"
+  indexed_name: "'card':2 'plus':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 130
-  current_revision_id: 1409
+  id: 33
+  current_revision_id: 33
   created_by: 1
   type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
   settings: 
-  key: discussion
+  key: "*plu_card"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -4837,53 +4837,53 @@ cards_133:
   appender_id: 
 cards_214: 
   reader_type: Role
-  name: Pointer
+  name: Toggle
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'pointer':1A 'descript':2"
-  updated_at: 2009-04-24 11:24:39.467909 -06:00
+  indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'toggl':1A 'descript':2"
+  updated_at: 2009-04-24 11:23:22.666665 -06:00
   pattern_spec_key: 
-  indexed_name: "'pointer':1"
+  indexed_name: "'toggl':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 47
-  current_revision_id: 2074
+  id: 51
+  current_revision_id: 2072
   created_by: 1
   type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 4
   settings: 
-  key: pointer
-  extension_id: 20
+  key: toggle
+  extension_id: 22
   appender_type: 
   appender_id: 
 cards_241: 
   reader_type: Role
-  name: "*home"
+  name: discussion
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'home':1A,2"
+  indexed_content: "'discuss':1A"
   updated_at: 2009-04-06 14:11:12.920280 -06:00
   pattern_spec_key: 
-  indexed_name: "'home':1"
+  indexed_name: "'discuss':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 77
-  current_revision_id: 113
+  id: 130
+  current_revision_id: 1409
   created_by: 1
-  type: Phrase
+  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*home"
+  key: discussion
   extension_id: 
   appender_type: 
   appender_id: 
@@ -4993,80 +4993,80 @@ cards_134:
   appender_id: 
 cards_160: 
   reader_type: Role
-  name: "*edit help+*right"
-  created_at: 2009-12-21 14:08:43.801121 -07:00
-  tag_id: 260
-  indexed_content: "'edit':1A 'help':2A 'self':5 'right':3A,4"
-  updated_at: 2009-12-21 14:08:43.801121 -07:00
-  pattern_spec_key: 
-  indexed_name: "'edit':1 'help':2 'right':3"
-  trash: false
-  codename: 
-  references_expired: 
-  reader_id: 3
-  pattern_keys: 
-  id: 305
-  current_revision_id: 3126
-  created_by: 3
-  type: Set
-  trunk_id: 82
-  extension_type: 
-  updated_by: 3
-  settings: 
-  key: "*edit_help+*right"
-  extension_id: 
-  appender_type: 
-  appender_id: 
-cards_215: 
-  reader_type: Role
-  name: Search
-  created_at: 2009-04-06 14:11:12.920280 -06:00
+  name: Set
+  created_at: 2009-12-02 16:02:46.436104 -07:00
   tag_id: 
-  indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'search':1A 'descript':2"
-  updated_at: 2009-04-24 11:24:04.889939 -06:00
+  indexed_content: "'set':1A 'card':5,7 'name':4 'self':3 'type':6 'descript':2"
+  updated_at: 2009-12-20 12:29:16.276866 -07:00
   pattern_spec_key: 
-  indexed_name: "'search':1"
+  indexed_name: "'set':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 30
-  current_revision_id: 2073
+  id: 259
+  current_revision_id: 3090
   created_by: 1
   type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 4
   settings: 
-  key: search
-  extension_id: 19
+  key: set
+  extension_id: 24
   appender_type: 
   appender_id: 
-cards_242: 
+cards_215: 
   reader_type: Role
-  name: "*plus parts"
+  name: User
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'part':2A 'plus':1A"
-  updated_at: 2009-04-06 14:11:12.920280 -06:00
+  indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'user':1A 'descript':2"
+  updated_at: 2009-04-24 11:23:14.358192 -06:00
   pattern_spec_key: 
-  indexed_name: "'part':2 'plus':1"
+  indexed_name: "'user':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 35
-  current_revision_id: 35
+  id: 4
+  current_revision_id: 2071
   created_by: 1
-  type: Basic
+  type: Cardtype
   trunk_id: 
-  extension_type: 
+  extension_type: Cardtype
+  updated_by: 4
+  settings: 
+  key: user
+  extension_id: 2
+  appender_type: 
+  appender_id: 
+cards_242: 
+  reader_type: Role
+  name: Administrator
+  created_at: 2009-04-06 14:11:12.920280 -06:00
+  tag_id: 
+  indexed_content: "'administr':1A"
+  updated_at: 2009-04-06 14:11:12.920280 -06:00
+  pattern_spec_key: 
+  indexed_name: "'administr':1"
+  trash: false
+  codename: 
+  references_expired: 
+  reader_id: 3
+  pattern_keys: 
+  id: 10
+  current_revision_id: 10
+  created_by: 1
+  type: Role
+  trunk_id: 
+  extension_type: Role
   updated_by: 1
   settings: 
-  key: "*plu_part"
-  extension_id: 
+  key: administrator
+  extension_id: 1
   appender_type: 
   appender_id: 
 cards_028: 
@@ -5201,79 +5201,79 @@ cards_135:
   appender_id: 
 cards_161: 
   reader_type: Role
-  name: Set
-  created_at: 2009-12-02 16:02:46.436104 -07:00
+  name: "*thanks"
+  created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'set':1A 'card':5,7 'name':4 'self':3 'type':6 'descript':2"
-  updated_at: 2009-12-20 12:29:16.276866 -07:00
+  indexed_content: "'thank':1A"
+  updated_at: 2009-12-18 15:24:33.186958 -07:00
   pattern_spec_key: 
-  indexed_name: "'set':1"
+  indexed_name: "'thank':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 259
-  current_revision_id: 3090
+  id: 61
+  current_revision_id: 62
   created_by: 1
-  type: Cardtype
+  type: Setting
   trunk_id: 
-  extension_type: Cardtype
-  updated_by: 4
+  extension_type: 
+  updated_by: 3
   settings: 
-  key: set
-  extension_id: 24
+  key: "*thank"
+  extension_id: 
   appender_type: 
   appender_id: 
 cards_216: 
   reader_type: Role
-  name: Toggle
+  name: Number
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'toggl':1A 'descript':2"
-  updated_at: 2009-04-24 11:23:22.666665 -06:00
+  indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'number':1A 'descript':2"
+  updated_at: 2009-04-24 11:22:49.871926 -06:00
   pattern_spec_key: 
-  indexed_name: "'toggl':1"
+  indexed_name: "'number':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 51
-  current_revision_id: 2072
+  id: 20
+  current_revision_id: 2070
   created_by: 1
   type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 4
   settings: 
-  key: toggle
-  extension_id: 22
+  key: number
+  extension_id: 12
   appender_type: 
   appender_id: 
 cards_243: 
   reader_type: Role
-  name: Cards with accounts
+  name: "*roles"
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'card':1A 'type':5 'user':6 'extens':4 'account':3A"
+  indexed_content: "'role':1A"
   updated_at: 2009-04-06 14:11:12.920280 -06:00
   pattern_spec_key: 
-  indexed_name: "'card':1 'account':3"
+  indexed_name: "'role':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 101
-  current_revision_id: 486
+  id: 96
+  current_revision_id: 353
   created_by: 1
-  type: Search
+  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
   settings: 
-  key: card_with_account
+  key: "*role"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -5383,80 +5383,80 @@ cards_136:
   appender_id: 
 cards_162: 
   reader_type: Role
-  name: "*thanks"
-  created_at: 2009-04-06 14:11:12.920280 -06:00
+  name: "*all"
+  created_at: 2009-12-02 16:02:55.316610 -07:00
   tag_id: 
-  indexed_content: "'thank':1A"
-  updated_at: 2009-12-18 15:24:33.186958 -07:00
+  indexed_content: ""
+  updated_at: 2009-12-17 11:52:04.731074 -07:00
   pattern_spec_key: 
-  indexed_name: "'thank':1"
+  indexed_name: ""
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 61
-  current_revision_id: 62
+  id: 274
+  current_revision_id: 3088
   created_by: 1
-  type: Setting
+  type: Set
   trunk_id: 
   extension_type: 
-  updated_by: 3
+  updated_by: 1
   settings: 
-  key: "*thank"
+  key: "*all"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_217: 
   reader_type: Role
-  name: User
+  name: HTML
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'user':1A 'descript':2"
-  updated_at: 2009-04-24 11:23:14.358192 -06:00
+  indexed_content: "'add':6 '/new':3 'card':10,13,15 'html':1A 'name':5,9,12 'self':4,8,11 'type':14 'descript':2"
+  updated_at: 2009-04-24 11:22:32.538938 -06:00
   pattern_spec_key: 
-  indexed_name: "'user':1"
+  indexed_name: "'html':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 4
-  current_revision_id: 2071
+  id: 50
+  current_revision_id: 2068
   created_by: 1
   type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 4
   settings: 
-  key: user
-  extension_id: 2
+  key: html
+  extension_id: 21
   appender_type: 
   appender_id: 
 cards_244: 
   reader_type: Role
-  name: Anyone Signed In
+  name: "*plus parts"
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'sign':2A 'anyon':1A"
+  indexed_content: "'part':2A 'plus':1A"
   updated_at: 2009-04-06 14:11:12.920280 -06:00
   pattern_spec_key: 
-  indexed_name: "'sign':2 'anyon':1"
+  indexed_name: "'part':2 'plus':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 9
-  current_revision_id: 9
+  id: 35
+  current_revision_id: 35
   created_by: 1
-  type: Role
+  type: Basic
   trunk_id: 
-  extension_type: Role
+  extension_type: 
   updated_by: 1
   settings: 
-  key: anyone_signed_in
-  extension_id: 2
+  key: "*plu_part"
+  extension_id: 
   appender_type: 
   appender_id: 
 cards_056: 
@@ -5539,79 +5539,79 @@ cards_137:
   appender_id: 
 cards_163: 
   reader_type: Role
-  name: "*all"
-  created_at: 2009-12-02 16:02:55.316610 -07:00
+  name: "*table of contents"
+  created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: ""
-  updated_at: 2009-12-17 11:52:04.731074 -07:00
+  indexed_content: "'tabl':1A 'content':3A"
+  updated_at: 2009-12-17 09:22:46.664639 -07:00
   pattern_spec_key: 
-  indexed_name: ""
+  indexed_name: "'tabl':1 'content':3"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 274
-  current_revision_id: 3088
+  id: 89
+  current_revision_id: 311
   created_by: 1
-  type: Set
+  type: Setting
   trunk_id: 
   extension_type: 
-  updated_by: 1
+  updated_by: 3
   settings: 
-  key: "*all"
+  key: "*table_of_content"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_218: 
   reader_type: Role
-  name: Number
+  name: File
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'number':1A 'descript':2"
-  updated_at: 2009-04-24 11:22:49.871926 -06:00
+  indexed_content: "'add':6 '/new':3 'card':10,13,15 'file':1A 'name':5,9,12 'self':4,8,11 'type':14 'descript':2"
+  updated_at: 2009-04-24 11:22:20.806270 -06:00
   pattern_spec_key: 
-  indexed_name: "'number':1"
+  indexed_name: "'file':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 20
-  current_revision_id: 2070
+  id: 18
+  current_revision_id: 2067
   created_by: 1
   type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 4
   settings: 
-  key: number
-  extension_id: 12
+  key: file
+  extension_id: 10
   appender_type: 
   appender_id: 
 cards_245: 
   reader_type: Role
-  name: "*editing"
+  name: Cards with accounts
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'edit':1A"
+  indexed_content: "'card':1A 'type':5 'user':6 'extens':4 'account':3A"
   updated_at: 2009-04-06 14:11:12.920280 -06:00
   pattern_spec_key: 
-  indexed_name: "'edit':1"
+  indexed_name: "'card':1 'account':3"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 138
-  current_revision_id: 1550
+  id: 101
+  current_revision_id: 486
   created_by: 1
-  type: Basic
+  type: Search
   trunk_id: 
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*editing"
+  key: card_with_account
   extension_id: 
   appender_type: 
   appender_id: 
@@ -5695,80 +5695,80 @@ cards_138:
   appender_id: 
 cards_164: 
   reader_type: Role
-  name: "*table of contents"
+  name: "*request+*thanks"
   created_at: 2009-04-06 14:11:12.920280 -06:00
-  tag_id: 
-  indexed_content: "'tabl':1A 'content':3A"
-  updated_at: 2009-12-17 09:22:46.664639 -07:00
+  tag_id: 61
+  indexed_content: "'thank':2A 'request':1A '/wagn/request_sent':3"
+  updated_at: 2009-12-17 09:21:54.476437 -07:00
   pattern_spec_key: 
-  indexed_name: "'tabl':1 'content':3"
+  indexed_name: "'thank':2 'request':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 89
-  current_revision_id: 311
+  id: 108
+  current_revision_id: 2473
   created_by: 1
-  type: Setting
-  trunk_id: 
+  type: Phrase
+  trunk_id: 63
   extension_type: 
-  updated_by: 3
+  updated_by: 1
   settings: 
-  key: "*table_of_content"
+  key: "*request+*thank"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_190: 
   reader_type: Role
-  name: "*layout"
-  created_at: 2009-10-20 16:34:41.704772 -06:00
+  name: "*autoname"
+  created_at: 2009-09-16 14:34:57.743976 -06:00
   tag_id: 
-  indexed_content: "'layout':1A"
-  updated_at: 2009-12-02 16:02:57.740748 -07:00
+  indexed_content: "'autonam':1A"
+  updated_at: 2009-12-02 16:02:57.296723 -07:00
   pattern_spec_key: 
-  indexed_name: "'layout':1"
+  indexed_name: "'autonam':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 255
-  current_revision_id: 3019
-  created_by: 1
+  id: 247
+  current_revision_id: 2889
+  created_by: 4
   type: Setting
   trunk_id: 
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*layout"
+  key: "*autoname"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_219: 
   reader_type: Role
-  name: HTML
+  name: Date
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'add':6 '/new':3 'card':10,13,15 'html':1A 'name':5,9,12 'self':4,8,11 'type':14 'descript':2"
-  updated_at: 2009-04-24 11:22:32.538938 -06:00
+  indexed_content: "'add':6 '/new':3 'card':10,13,15 'date':1A 'name':5,9,12 'self':4,8,11 'type':14 'descript':2"
+  updated_at: 2009-04-24 11:21:58.400126 -06:00
   pattern_spec_key: 
-  indexed_name: "'html':1"
+  indexed_name: "'date':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 50
-  current_revision_id: 2068
+  id: 17
+  current_revision_id: 2066
   created_by: 1
   type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 4
   settings: 
-  key: html
-  extension_id: 21
+  key: date
+  extension_id: 9
   appender_type: 
   appender_id: 
 cards_246: 
@@ -5877,79 +5877,53 @@ cards_139:
   appender_id: 
 cards_165: 
   reader_type: Role
-  name: "*request+*thanks"
+  name: "*invite+*thanks"
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 61
-  indexed_content: "'thank':2A 'request':1A '/wagn/request_sent':3"
-  updated_at: 2009-12-17 09:21:54.476437 -07:00
+  indexed_content: "'invit':1A 'thank':2A '/wagn/invite_success':3"
+  updated_at: 2009-12-17 09:21:52.692336 -07:00
   pattern_spec_key: 
-  indexed_name: "'thank':2 'request':1"
+  indexed_name: "'invit':1 'thank':2"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 108
-  current_revision_id: 2473
+  id: 62
+  current_revision_id: 2474
   created_by: 1
   type: Phrase
-  trunk_id: 63
+  trunk_id: 56
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*request+*thank"
+  key: "*invite+*thank"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_191: 
   reader_type: Role
-  name: "*captcha"
-  created_at: 2009-11-03 10:21:52.664376 -07:00
-  tag_id: 
-  indexed_content: "'captcha':1A"
-  updated_at: 2009-12-02 16:02:57.608741 -07:00
+  name: "*all+*option label"
+  created_at: 2009-12-02 16:02:56.536680 -07:00
+  tag_id: 252
+  indexed_content: "'label':3A 'option':2A 'descript':4"
+  updated_at: 2009-12-02 16:02:56.536680 -07:00
   pattern_spec_key: 
-  indexed_name: "'captcha':1"
+  indexed_name: "'label':3 'option':2"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 256
-  current_revision_id: 3021
-  created_by: 5
-  type: Setting
-  trunk_id: 
-  extension_type: 
-  updated_by: 1
-  settings: 
-  key: "*captcha"
-  extension_id: 
-  appender_type: 
-  appender_id: 
-cards_247: 
-  reader_type: Role
-  name: "*editors"
-  created_at: 2009-04-06 14:11:12.920280 -06:00
-  tag_id: 
-  indexed_content: "'editor':1A"
-  updated_at: 2009-04-06 14:11:12.920280 -06:00
-  pattern_spec_key: 
-  indexed_name: "'editor':1"
-  trash: false
-  codename: 
-  references_expired: 
-  reader_id: 3
-  pattern_keys: 
-  id: 92
-  current_revision_id: 349
+  id: 277
+  current_revision_id: 3022
   created_by: 1
-  type: Basic
-  trunk_id: 
+  type: Phrase
+  trunk_id: 274
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*editor"
+  key: "*all+*option_label"
   extension_id: 
   appender_type: 
   appender_id: 
@@ -6007,80 +5981,54 @@ cards_085:
   appender_id: 
 cards_166: 
   reader_type: Role
-  name: "*invite+*thanks"
+  name: "*signup+*thanks"
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 61
-  indexed_content: "'invit':1A 'thank':2A '/wagn/invite_success':3"
-  updated_at: 2009-12-17 09:21:52.692336 -07:00
+  indexed_content: "'thank':2A 'signup':1A '/wagn/signup_success':3"
+  updated_at: 2009-12-17 09:21:50.732224 -07:00
   pattern_spec_key: 
-  indexed_name: "'invit':1 'thank':2"
+  indexed_name: "'thank':2 'signup':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 62
-  current_revision_id: 2474
+  id: 67
+  current_revision_id: 2472
   created_by: 1
   type: Phrase
-  trunk_id: 56
+  trunk_id: 66
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*invite+*thank"
+  key: "*signup+*thank"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_192: 
   reader_type: Role
-  name: "*autoname"
-  created_at: 2009-09-16 14:34:57.743976 -06:00
-  tag_id: 
-  indexed_content: "'autonam':1A"
-  updated_at: 2009-12-02 16:02:57.296723 -07:00
+  name: "*watchers+*right+*options"
+  created_at: 2009-07-03 10:54:09.205189 -06:00
+  tag_id: 86
+  indexed_content: "'type':5 'user':6 'right':3A 'option':4A 'watcher':1A"
+  updated_at: 2009-12-02 16:02:50.328326 -07:00
   pattern_spec_key: 
-  indexed_name: "'autonam':1"
+  indexed_name: "'right':3 'option':4 'watcher':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 247
-  current_revision_id: 2889
+  id: 221
+  current_revision_id: 2623
   created_by: 4
-  type: Setting
-  trunk_id: 
+  type: Search
+  trunk_id: 269
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*autoname"
+  key: "*watcher+*right+*option"
   extension_id: 
-  appender_type: 
-  appender_id: 
-cards_248: 
-  reader_type: Role
-  name: Anyone
-  created_at: 2009-04-06 14:11:12.920280 -06:00
-  tag_id: 
-  indexed_content: "'anyon':1A"
-  updated_at: 2009-04-06 14:11:12.920280 -06:00
-  pattern_spec_key: 
-  indexed_name: "'anyon':1"
-  trash: false
-  codename: 
-  references_expired: 
-  reader_id: 3
-  pattern_keys: 
-  id: 8
-  current_revision_id: 8
-  created_by: 1
-  type: Role
-  trunk_id: 
-  extension_type: Role
-  updated_by: 1
-  settings: 
-  key: anyone
-  extension_id: 3
   appender_type: 
   appender_id: 
 cards_086: 
@@ -6111,54 +6059,54 @@ cards_086:
   appender_id: 
 cards_167: 
   reader_type: Role
-  name: "*signup+*thanks"
-  created_at: 2009-04-06 14:11:12.920280 -06:00
-  tag_id: 61
-  indexed_content: "'thank':2A 'signup':1A '/wagn/signup_success':3"
-  updated_at: 2009-12-17 09:21:50.732224 -07:00
+  name: "*sidebar+*right"
+  created_at: 2009-12-08 12:25:11.443149 -07:00
+  tag_id: 260
+  indexed_content: "'right':2A 'sidebar':1A"
+  updated_at: 2009-12-12 14:05:34.646280 -07:00
   pattern_spec_key: 
-  indexed_name: "'thank':2 'signup':1"
+  indexed_name: "'right':2 'sidebar':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 67
-  current_revision_id: 2472
+  id: 290
+  current_revision_id: 3067
   created_by: 1
-  type: Phrase
-  trunk_id: 66
+  type: Set
+  trunk_id: 81
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*signup+*thank"
+  key: "*sidebar+*right"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_193: 
   reader_type: Role
-  name: "*all+*option label"
-  created_at: 2009-12-02 16:02:56.536680 -07:00
-  tag_id: 252
-  indexed_content: "'label':3A 'option':2A 'descript':4"
-  updated_at: 2009-12-02 16:02:56.536680 -07:00
+  name: Basic
+  created_at: 2009-04-06 14:11:12.920280 -06:00
+  tag_id: 
+  indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'basic':1A 'descript':2"
+  updated_at: 2009-11-03 10:29:01.848385 -07:00
   pattern_spec_key: 
-  indexed_name: "'label':3 'option':2"
+  indexed_name: "'basic':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 277
-  current_revision_id: 3022
+  id: 3
+  current_revision_id: 2065
   created_by: 1
-  type: Phrase
-  trunk_id: 274
-  extension_type: 
-  updated_by: 1
+  type: Cardtype
+  trunk_id: 
+  extension_type: Cardtype
+  updated_by: 5
   settings: 
-  key: "*all+*option_label"
-  extension_id: 
+  key: basic
+  extension_id: 1
   appender_type: 
   appender_id: 
 cards_087: 
@@ -6189,53 +6137,53 @@ cards_087:
   appender_id: 
 cards_168: 
   reader_type: Role
-  name: "*sidebar+*right"
-  created_at: 2009-12-08 12:25:11.443149 -07:00
+  name: "*autoname+*right"
+  created_at: 2009-12-08 12:25:08.774997 -07:00
   tag_id: 260
-  indexed_content: "'right':2A 'sidebar':1A"
-  updated_at: 2009-12-12 14:05:34.646280 -07:00
+  indexed_content: "'right':2A 'autonam':1A"
+  updated_at: 2009-12-12 14:05:34.510273 -07:00
   pattern_spec_key: 
-  indexed_name: "'right':2 'sidebar':1"
+  indexed_name: "'right':2 'autonam':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 290
-  current_revision_id: 3067
+  id: 289
+  current_revision_id: 3066
   created_by: 1
   type: Set
-  trunk_id: 81
+  trunk_id: 247
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*sidebar+*right"
+  key: "*autoname+*right"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_194: 
   reader_type: Role
-  name: "*watchers+*right+*options"
-  created_at: 2009-07-03 10:54:09.205189 -06:00
-  tag_id: 86
-  indexed_content: "'type':5 'user':6 'right':3A 'option':4A 'watcher':1A"
-  updated_at: 2009-12-02 16:02:50.328326 -07:00
+  name: Home
+  created_at: 2009-04-06 14:11:12.920280 -06:00
+  tag_id: 
+  indexed_content: "'get':8 'new':5 'set':11 'home':1A 'wagn':6,19 'photo':31 'start':9 'config':10 'import':13 'option':15 'welcom':2 'fmbgain':33 'configur':14,20 'document':24 'wagn.org':17,22,26 'www.flickr.com':29 'wagn.org/wagn/support':25 '/wagn/configuration|about':18 '/wagn/documentation|other':23 '/wagn/support|support]]</p>':27 'wagn.org/wagn/configuration':16 'wagn.org/wagn/documentation':21 '/photos/fmgbain/3122673091/|logo':30 'www.flickr.com/photos/fmgbain/3122673091':28"
+  updated_at: 2009-09-08 12:00:54.975680 -06:00
   pattern_spec_key: 
-  indexed_name: "'right':3 'option':4 'watcher':1"
+  indexed_name: "'home':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 221
-  current_revision_id: 2623
-  created_by: 4
-  type: Search
-  trunk_id: 269
+  id: 80
+  current_revision_id: 2877
+  created_by: 1
+  type: Basic
+  trunk_id: 
   extension_type: 
-  updated_by: 1
+  updated_by: 3
   settings: 
-  key: "*watcher+*right+*option"
+  key: home
   extension_id: 
   appender_type: 
   appender_id: 
@@ -6267,54 +6215,54 @@ cards_088:
   appender_id: 
 cards_169: 
   reader_type: Role
-  name: "*autoname+*right"
-  created_at: 2009-12-08 12:25:08.774997 -07:00
+  name: "*thanks+*right"
+  created_at: 2009-12-08 12:25:06.766883 -07:00
   tag_id: 260
-  indexed_content: "'right':2A 'autonam':1A"
-  updated_at: 2009-12-12 14:05:34.510273 -07:00
+  indexed_content: "'right':2A 'thank':1A"
+  updated_at: 2009-12-12 14:05:34.382265 -07:00
   pattern_spec_key: 
-  indexed_name: "'right':2 'autonam':1"
+  indexed_name: "'right':2 'thank':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 289
-  current_revision_id: 3066
+  id: 288
+  current_revision_id: 3065
   created_by: 1
   type: Set
-  trunk_id: 247
+  trunk_id: 61
   extension_type: 
   updated_by: 1
   settings: 
-  key: "*autoname+*right"
+  key: "*thank+*right"
   extension_id: 
   appender_type: 
   appender_id: 
 cards_195: 
   reader_type: Role
-  name: Basic
+  name: Role
   created_at: 2009-04-06 14:11:12.920280 -06:00
   tag_id: 
-  indexed_content: "'add':6 '/new':3 'card':10,13,15 'name':5,9,12 'self':4,8,11 'type':14 'basic':1A 'descript':2"
-  updated_at: 2009-11-03 10:29:01.848385 -07:00
+  indexed_content: "'add':4 'new':6 'card':10 'role':1A,7,8 'type':9 'descript':2 '/new/role':3"
+  updated_at: 2009-07-03 13:30:47.120434 -06:00
   pattern_spec_key: 
-  indexed_name: "'basic':1"
+  indexed_name: "'role':1"
   trash: false
   codename: 
   references_expired: 
   reader_id: 3
   pattern_keys: 
-  id: 3
-  current_revision_id: 2065
+  id: 7
+  current_revision_id: 2652
   created_by: 1
   type: Cardtype
   trunk_id: 
   extension_type: Cardtype
-  updated_by: 5
+  updated_by: 4
   settings: 
-  key: basic
-  extension_id: 1
+  key: role
+  extension_id: 5
   appender_type: 
   appender_id: 
 cards_089: 
@@ -6345,58 +6293,6 @@ cards_089:
   appender_id: 
 cards_196: 
   reader_type: Role
-  name: Home
-  created_at: 2009-04-06 14:11:12.920280 -06:00
-  tag_id: 
-  indexed_content: "'get':8 'new':5 'set':11 'home':1A 'wagn':6,19 'photo':31 'start':9 'config':10 'import':13 'option':15 'welcom':2 'fmbgain':33 'configur':14,20 'document':24 'wagn.org':17,22,26 'www.flickr.com':29 'wagn.org/wagn/support':25 '/wagn/configuration|about':18 '/wagn/documentation|other':23 '/wagn/support|support]]</p>':27 'wagn.org/wagn/configuration':16 'wagn.org/wagn/documentation':21 '/photos/fmgbain/3122673091/|logo':30 'www.flickr.com/photos/fmgbain/3122673091':28"
-  updated_at: 2009-09-08 12:00:54.975680 -06:00
-  pattern_spec_key: 
-  indexed_name: "'home':1"
-  trash: false
-  codename: 
-  references_expired: 
-  reader_id: 3
-  pattern_keys: 
-  id: 80
-  current_revision_id: 2877
-  created_by: 1
-  type: Basic
-  trunk_id: 
-  extension_type: 
-  updated_by: 3
-  settings: 
-  key: home
-  extension_id: 
-  appender_type: 
-  appender_id: 
-cards_197: 
-  reader_type: Role
-  name: Role
-  created_at: 2009-04-06 14:11:12.920280 -06:00
-  tag_id: 
-  indexed_content: "'add':4 'new':6 'card':10 'role':1A,7,8 'type':9 'descript':2 '/new/role':3"
-  updated_at: 2009-07-03 13:30:47.120434 -06:00
-  pattern_spec_key: 
-  indexed_name: "'role':1"
-  trash: false
-  codename: 
-  references_expired: 
-  reader_id: 3
-  pattern_keys: 
-  id: 7
-  current_revision_id: 2652
-  created_by: 1
-  type: Cardtype
-  trunk_id: 
-  extension_type: Cardtype
-  updated_by: 4
-  settings: 
-  key: role
-  extension_id: 5
-  appender_type: 
-  appender_id: 
-cards_198: 
-  reader_type: Role
   name: "*watching"
   created_at: 2009-07-03 11:43:20.496422 -06:00
   tag_id: 
@@ -6421,7 +6317,7 @@ cards_198:
   extension_id: 
   appender_type: 
   appender_id: 
-cards_199: 
+cards_197: 
   reader_type: Role
   name: "*logo"
   created_at: 2009-04-06 14:11:12.920280 -06:00
@@ -6445,5 +6341,57 @@ cards_199:
   settings: 
   key: "*logo"
   extension_id: 
+  appender_type: 
+  appender_id: 
+cards_198: 
+  reader_type: Role
+  name: Account Request
+  created_at: 2009-04-06 14:11:12.920280 -06:00
+  tag_id: 
+  indexed_content: "'card':5 'type':4 'updat':7 'account':1A 'request':2A 'descript':3"
+  updated_at: 2009-06-09 18:42:00.444289 -06:00
+  pattern_spec_key: 
+  indexed_name: "'account':1 'request':2"
+  trash: false
+  codename: 
+  references_expired: 
+  reader_id: 3
+  pattern_keys: 
+  id: 12
+  current_revision_id: 2582
+  created_by: 1
+  type: Cardtype
+  trunk_id: 
+  extension_type: Cardtype
+  updated_by: 4
+  settings: 
+  key: account_request
+  extension_id: 6
+  appender_type: 
+  appender_id: 
+cards_199: 
+  reader_type: Role
+  name: Image
+  created_at: 2009-04-06 14:11:12.920280 -06:00
+  tag_id: 
+  indexed_content: "'add':6 '/new':3 'card':10,13,15 'imag':1A 'name':5,9,12 'self':4,8,11 'type':14 'descript':2"
+  updated_at: 2009-06-09 18:36:53.064865 -06:00
+  pattern_spec_key: 
+  indexed_name: "'imag':1"
+  trash: false
+  codename: 
+  references_expired: 
+  reader_id: 3
+  pattern_keys: 
+  id: 19
+  current_revision_id: 2579
+  created_by: 1
+  type: Cardtype
+  trunk_id: 
+  extension_type: Cardtype
+  updated_by: 4
+  settings: 
+  key: image
+  extension_id: 11
   appender_type: 
   appender_id: 

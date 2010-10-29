@@ -2,6 +2,7 @@ module Wagn
   class Cache
     class << self
       def initialize_on_startup
+        @@preload = false
         if RAILS_ENV =~ /cucumber|test/
           Card.cache = Wagn::Cache.new nil, system_prefix
           preload_cache_for_tests if RAILS_ENV=='cucumber'
@@ -11,6 +12,7 @@ module Wagn
       end
       
       def preload_cache_for_tests
+        @@preload = true
         set_keys = ['*all','basic+*type','html+*type','*cardtype+*type','*sidebar+*self']
         set_keys.map{|k| [k, "#{k}+*content", "#{k}+*default"]}.flatten.each do |key|        
           Card.fetch key
@@ -26,12 +28,12 @@ module Wagn
 
       def re_initialize_for_new_request
         Card.cache.system_prefix = system_prefix
-        reset_local unless RAILS_ENV=='cucumber'
+        reset_local unless @@preload
       end
 
       def reset_for_tests
         reset_global
-        Card.cache, Role.cache = Marshal.load(@@frozen) if RAILS_ENV=='cucumber'
+        Card.cache, Role.cache = Marshal.load(@@frozen) if @@preload
       end
 
 

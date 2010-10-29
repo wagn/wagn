@@ -98,7 +98,7 @@ class Wql
       if query[:prepend] || query[:append]
         results = results.map do |card|
           cardname = [query[:prepend], card.name, query[:append]].compact.join('+')
-          Card.fetch cardname
+          Card.fetch_or_new cardname, {}, :skip_defaults=>true
         end
       end
       results

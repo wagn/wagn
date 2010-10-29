@@ -13,7 +13,7 @@ module Cardlib
     mattr_accessor :cache
     mattr_accessor :debug
     self.debug = lambda {|x| false }
-    #self.debug = lambda {|name| name.to_key == 'cardtype+*watcher' }
+#    self.debug = lambda {|name| name.to_key == '*sidebar+*self+*content' }
 
     module ClassMethods
       def perform_caching?
@@ -43,11 +43,7 @@ module Cardlib
         Rails.logger.debug "   builtin_virtual: #{card.inspect}" if card && debug
 
         if perform_caching?
-          card ||= begin
-            c = Card.cache.read( key )
-#            p (c ? "hit #{cardname}" : "miss #{cardname}")
-            c
-          end
+          card ||= Card.cache.read( key )
           cacheable = true if card.nil?
           Rails.logger.debug "   cache.read: #{card.inspect}" if debug
         end
@@ -66,8 +62,7 @@ module Cardlib
         end
         card ||= begin
            Rails.logger.debug "   new(missing): #{card.inspect}" if debug
-           Card.new( :name => cardname, :skip_defaults    => true,
-                     :missing => true,  :skip_type_lookup => true ) 
+           new_missing cardname
         end
 
 
@@ -98,6 +93,11 @@ module Cardlib
             Card.cache.write(card.key, card)
           end
         end
+      end
+
+      def new_missing cardname
+        Card.new( :name => cardname, :skip_defaults    => true,
+                   :missing => true,  :skip_type_lookup => true )
       end
 
       def exists?(name)

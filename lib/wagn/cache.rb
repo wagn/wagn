@@ -4,15 +4,19 @@ module Wagn
       def initialize_on_startup
         if RAILS_ENV =~ /cucumber|test/
           Card.cache = Wagn::Cache.new nil, system_prefix
-          if ENV['PRELOAD_CACHE_FOR_TESTS']
-            cards = Card.find(:all)
-            Card.preload(cards)
-            @@frozen = Marshal.dump(Card.cache.local)
-            p "initialize_on_startup : Card.cache.local['*includer']: #{Card.cache.local['*includer']}"
-          end
+          preload_cache_for_tests unless ENV['NO_PRELOAD_CACHE_FOR_TESTS']
         else
           Card.cache = Wagn::Cache.new Rails.cache, system_prefix
         end
+      end
+      
+      def preload_cache_for_tests
+        set_keys = ['*all','basic+*type','html+*type','*cardtype+*type','*sidebar+*self']
+        set_keys.map{|k| [k, "#{k}+*content", "#{k}+*default"]}.flatten.each do |key|        
+          Card.fetch key
+        end
+        Role[:auth]; Role[:anon]
+        @@frozen = Marshal.dump([Card.cache, Role.cache])
       end
 
       def system_prefix
@@ -22,14 +26,14 @@ module Wagn
 
       def re_initialize_for_new_request
         Card.cache.system_prefix = system_prefix
-        reset_local
+        reset_local unless (RAILS_ENV =~ /cucumber|test/ && !ENV['NO_PRELOAD_CACHE_FOR_TESTS'])
       end
 
       def reset_for_tests
         reset_global
-        #  p "loading cache: #{@@frozen[0..50]}"
-        Card.cache.local = Marshal.load(@@frozen) if ENV['PRELOAD_CACHE_FOR_TESTS']
+        Card.cache, Role.cache = Marshal.load(@@frozen) unless ENV['NO_PRELOAD_CACHE_FOR_TESTS']
       end
+
 
       def generate_cache_id
         ((Time.now.to_f * 100).to_i).to_s + ('a'..'z').to_a[rand(26)] + ('a'..'z').to_a[rand(26)]

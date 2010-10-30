@@ -27,7 +27,7 @@ namespace :wagn do
                 'select r.*from %s r join cards c on c.current_revision_id = r.id' :
                 'select * from %s'
               )
-              ActiveRecord::Base.connection.select_all "#{sql % table} order by id"
+              ActiveRecord::Base.connection.select_all( sql % table)
             end
           file.write data.inject({}) { |hash, record|
             hash["#{table}_#{i.succ!}"] = record

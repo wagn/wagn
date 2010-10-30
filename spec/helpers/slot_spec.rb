@@ -71,7 +71,7 @@ describe Slot, "" do
         Card.create! :name => "n+a", :type=>"Number", :content=>"10"
         Card.create! :name => "n+b", :type=>"Phrase", :content=>"say:\"what\""
         Card.create! :name => "n+c", :type=>"Number", :content=>"30"
-        Slot.render_content("{{n+*plus cards|array}}").should == %{["10", "say:\\"what\\"", "30"]}
+        Slot.render_content("{{n+*plus cards+by create|array}}").should == %{["10", "say:\\"what\\"", "30"]}
       end
 
       it "array (pointer card)" do

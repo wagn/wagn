@@ -344,8 +344,9 @@ class Slot
     end
     case card.type 
       when 'Search'
-        names = Wql.new(card.get_spec(:return => 'name_content')).run.keys
-        names.map{|x| subslot(Card.fetch_or_new(x)).render(:naked) }.inspect
+        card.search(:limit=>10000).map{ |x| subslot(x).render(:naked) }.inspect
+        #names = Wql.new(card.get_spec(:return => 'name_content')).run.keys
+        #names.map{|x| subslot(Card.fetch_or_new(x)).render(:naked) }.inspect
       when 'Pointer'
         card.pointees.map{|x| subslot(Card.fetch_or_new(x)).render(:naked) }.inspect
       else

@@ -13,7 +13,7 @@ module Cardlib
     mattr_accessor :cache
     mattr_accessor :debug
     self.debug = lambda {|x| false }
-#    self.debug = lambda {|name| name.to_key == '*sidebar+*self+*content' }
+    #self.debug = lambda {|name| name.to_key == '*recent_change' }
 
     module ClassMethods
       def perform_caching?
@@ -39,7 +39,7 @@ module Cardlib
         key = cardname.to_key
         cacheable = false
 
-        card = Card.builtin_virtual( key ) unless opts[:skip_virtual]
+        card = Card.builtin_virtual( cardname ) unless opts[:skip_virtual]
         Rails.logger.debug "   builtin_virtual: #{card.inspect}" if card && debug
 
         if perform_caching?

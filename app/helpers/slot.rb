@@ -133,13 +133,13 @@ class Slot
       css_class << " " + Wagn::Pattern.css_names( card ) if card
       
       if xml?
-	attributes = {
+        attributes = {
           :name => card.name.tag_name,
           :cardId   => (card && card.id),
-	  :type => card.type,
-	  :transclude => args[:match_str],
+          :type => card.type,
+          :transclude => args[:match_str],
           :class    => css_class,
-	}
+        }
         open_slot, close_slot = "<card ",  "</card>"
       else
         attributes = { 
@@ -234,7 +234,7 @@ class Slot
   end
 
   def render(action, args={})      
-    Rails.logger.debug "Slot(#{card.name}).render #{action}"
+    Rails.logger.info "Slot(#{card.name}).render #{action}"
     self.render_args = args.clone
     count_render unless [:name, :link].member?(action)
     ok_action = case
@@ -268,7 +268,7 @@ class Slot
       when :link;  # FIXME -- this processing should be unified with standard link processing imho
         opts = {:class=>"cardname-link #{(card.new_record? && !card.virtual?) ? 'wanted-card' : 'known-card'}"}
         opts[:type] = slot.type if slot.type 
-	opts[:format] = format
+        opts[:format] = format
         link_to_page card.name, card.name, opts
       when :name;     card.name
       when :key;      card.name.to_key
@@ -304,6 +304,10 @@ class Slot
       when :array;  render_array;
       when :raw; card.content
 
+      when :declare;
+	Rails.logger.info("Render declare "+card.inspect)
+	@state=:declare
+	content_field(slot.form)
 
     ###---(  EDIT VIEWS ) 
       when :edit;  
@@ -570,8 +574,8 @@ class Slot
     result = subslot.render(action, options)
     Slot.current_slot = old_slot
     result
-  rescue
-    %{<span class="inclusion-error">error rendering #{link_to_page card.name}</span>}
+  #rescue
+    #%{<span class="inclusion-error">error rendering #{link_to_page card.name}</span>}
   end   
   
   def method_missing(method_id, *args, &proc) 
@@ -625,6 +629,20 @@ class Slot
     eid << (area.blank? ? '' : "-#{area}")
   end
 
+  def declare_submenu(on)
+    div(:class=>'submenu') do
+      [[ :content,    true  ],
+       [ :name,       true, ],
+       ].map do |key,ok,args|
+
+        link_to_remote( key, 
+          { :url=>url_for("card/declare", args, key), :update => ([:name].member?(key) ? id('card-body') : id) }, 
+          :class=>(key==on ? 'on' : '') 
+        ) if ok
+      end.compact.join       
+     end  
+  end
+
   def edit_submenu(on)
     div(:class=>'submenu') do
       [[ :content,    true  ],
@@ -660,7 +678,7 @@ class Slot
     end
     s[:offset] = s[:offset] ? s[:offset].to_i : 0
   	s[:limit]  = s[:limit]  ? s[:limit].to_i  : (main_card? ? 50 : 20)
-	  s
+    s
   end
 
   def main_card?
@@ -687,15 +705,19 @@ class Slot
     if card.virtual?
       return %{<span class="card-menu faint">Virtual</span>\n}
     end
+    menu_options = %w{view changes options related edit}
+    if has_sol?(slot.card):
+      menu_options.push('declare')
+    end
+    top_option = menu_options.pop
     menu = %{<span class="card-menu">\n}
     menu << %{<span class="card-menu-left">\n}
-  	menu << link_to_menu_action('view')
-  	menu << link_to_menu_action('changes')
-  	menu << link_to_menu_action('options') 
-  	menu << link_to_menu_action('related')
+    menu_options.each do |opt|
+  	  menu << link_to_menu_action(opt)
+	end
   	menu << "</span>"
     
-  	menu << link_to_menu_action('edit') 
+  	menu << link_to_menu_action(top_option) 
   	
     
     menu << "</span>"

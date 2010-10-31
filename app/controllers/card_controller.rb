@@ -78,6 +78,22 @@ class CardController < ApplicationController
     (request.xhr? || params[:format]) ? render(:action=>'show') : render(:text=>'~~render main inclusion~~', :layout=>true)
   end
 
+  #----------------( Posting Currencies to Cards )
+  def declare
+    id = Cardname.unescape(params['id'] || '')
+    raise("Need a card to receive breaths") if (id.nil? or id.empty?)
+    @card = Card.find_by_id(id)
+    Rails.logger.info("Declare #{@card.name} #{@card.inspect}")
+    if has_sol?
+      Rails.logger.info("Declare render it "+@card.name)
+      if ['name'].member?(params[:attribute])
+        render :partial=>"card/declare/#{params[:attribute]}" 
+      end
+    else
+      raise "no sol?"
+    end
+  end
+
   #----------------( MODIFYING CARDS )
   
   # rest XML put/post
@@ -213,6 +229,7 @@ raise "XML error: #{doc} #{content}" unless doc.root
   #--------------( editing )
   
   def edit                                             
+    Rails.logger.info("Edit "+params.inspect)
     if ['name','type','codename'].member?(params[:attribute])
       render :partial=>"card/edit/#{params[:attribute]}" 
     end

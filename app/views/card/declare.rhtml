@@ -1,0 +1,13 @@
+<% hard_template = @card.hard_template %>
+
+<% get_slot.wrap( 'declare' ) do |slot| %>  
+	<%= slot.header %>
+	<style><%= ".SELF-#{@card.key.css_name} .declare-area .title-#{@card.name.css_name} { display: none; }" %></style>
+
+  <% div( :id=>slot.id('card-body'), :class=>'card-body') do %>  
+    <%= slot.render_partial 'card/declare/content' %>
+  <% end %>
+	
+	<%= slot.notice %>
+
+<% end %>

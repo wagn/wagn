@@ -705,7 +705,8 @@ class Slot
     if card.virtual?
       return %{<span class="card-menu faint">Virtual</span>\n}
     end
-    menu_options = card.menu_options(%w{view changes options related edit})
+    menu_options = card.menu_options(%w{view changes options related edit}).clone
+    Rails.logger.info("menu_options(#{menu_options.inspect})")
     top_option = menu_options.pop
     menu = %{<span class="card-menu">\n}
       menu << %{<span class="card-menu-left">\n}

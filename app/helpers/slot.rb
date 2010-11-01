@@ -305,9 +305,9 @@ class Slot
       when :raw; card.content
 
       when :declare;
-	Rails.logger.info("Render declare "+card.inspect)
-	@state=:declare
-	content_field(slot.form)
+        Rails.logger.info("Render declare "+card.inspect)
+        @state=:declare
+        content_field(slot.form)
 
     ###---(  EDIT VIEWS ) 
       when :edit;  
@@ -705,21 +705,15 @@ class Slot
     if card.virtual?
       return %{<span class="card-menu faint">Virtual</span>\n}
     end
-    menu_options = %w{view changes options related edit}
-    if has_sol?(slot.card):
-      menu_options.push('declare')
-    end
+    menu_options = card.menu_options(%w{view changes options related edit})
     top_option = menu_options.pop
     menu = %{<span class="card-menu">\n}
-    menu << %{<span class="card-menu-left">\n}
-    menu_options.each do |opt|
-  	  menu << link_to_menu_action(opt)
-	end
-  	menu << "</span>"
-    
-  	menu << link_to_menu_action(top_option) 
-  	
-    
+      menu << %{<span class="card-menu-left">\n}
+        menu_options.each do |opt|
+          menu << link_to_menu_action(opt)
+        end
+      menu << "</span>"
+      menu << link_to_menu_action(top_option) 
     menu << "</span>"
   end
 

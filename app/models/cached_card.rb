@@ -176,6 +176,7 @@ class CachedCard
   def created_at() get('created_at') { card.created_at } end
   def updated_at() get('updated_at') { card.updated_at } end
   def current_revision() get('current_revision') { card.current_revision } end
+  def menu_options(options) get('menu_options') { card.menu_options(options) } end
   def read_permission() 
     get('read_permission') { p = card.who_can(:read);  "#{p.class.to_s}:#{p.id}" }
   end       

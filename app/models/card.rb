@@ -41,6 +41,9 @@ module Card
       end
     end
 
+    def add_extension_tag(tag, options)
+      Card::Base.extension_tags[tag] = options
+    end
 
     def create_or_update args
       if c = Card[ args[:name] ]
@@ -102,5 +105,6 @@ module Card
       ActiveRecord::Base.logger.info log
     end
   end
+
 end  
 

@@ -16,6 +16,8 @@ module Card
     # FIXME:  this is ugly, but also useful sometimes... do in a more thoughtful way maybe?
     cattr_accessor :debug    
     Card::Base.debug = false
+    cattr_accessor :extension_tags
+    @@extension_tags = {}
 
 #    cattr_accessor :cache  
 #    self.cache = {}
@@ -517,6 +519,23 @@ module Card
       to_s
     end
      
+    def tag_extensions
+      extension_tags().keys.map do |tag|
+        if extcard = Card[name+JOINT+tag]
+          yield(tag, extcard) if block_given?
+	  tag
+	end
+      end.compact
+    end  
+  
+    def menu_options(options=[])
+      new_opts = ((tag_extensions().map do |tag, extcard|
+        extension_tags()[tag]
+      end).flatten.compact.map.to_s)
+      options.push(new_opts) if new_opts.length > 0
+      options
+    end
+
    protected
     def clear_drafts
       connection.execute(%{

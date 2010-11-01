@@ -629,20 +629,6 @@ class Slot
     eid << (area.blank? ? '' : "-#{area}")
   end
 
-  def declare_submenu(on)
-    div(:class=>'submenu') do
-      [[ :content,    true  ],
-       [ :name,       true, ],
-       ].map do |key,ok,args|
-
-        link_to_remote( key, 
-          { :url=>url_for("card/declare", args, key), :update => ([:name].member?(key) ? id('card-body') : id) }, 
-          :class=>(key==on ? 'on' : '') 
-        ) if ok
-      end.compact.join       
-     end  
-  end
-
   def edit_submenu(on)
     div(:class=>'submenu') do
       [[ :content,    true  ],

@@ -1,3 +1,20 @@
+=== 1.5.0
+* refactor CachedCard
+* handle HTML entity characters properly
+* handle Unicode characters properly
+* Ignore spaces after semicolons in inclusion
+* stop changing cardtype on creation
+* allow including twice, once in change view
+* stop filtering angle brackets when editing
+* fix paging on settings
+* rescue search when item breaks
+* fix adding settings in place in subtabs
+* fix post-done messages to show immediately
+* offer paging interface consistently
+* leave home card URL as just base URL
+* escape HTML in CSS in inclusions
+
+
 === 1.4.0 (April 22, 2010)
 * Content Settings
 * add flexible emailing

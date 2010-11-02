@@ -629,6 +629,36 @@ class Slot
     eid << (area.blank? ? '' : "-#{area}")
   end
 
+  def extension_submenu(tag, menu_name, on)
+    menu_name = menu_name.to_s
+    div(:class=>'submenu') do
+      foo = (extension_forms(tag, menu_name).map { |key|
+
+	Rails.logger.info("extension_submenu #{menu_name} #{key.inspect}::#{on.inspect}")
+        link_to_remote( key, 
+          { :url=>url_for("card/#{menu_name}", [], key), :update => ([:name].member?(key) ? id('card-body') : id) }, 
+          :class=>(key.to_sym==on ? 'on' : '') 
+        )
+      })
+      Rails.logger.info("esub: #{foo.inspect}")
+      foo.compact.join
+     end  
+  end
+
+  def extension_forms(tag, menu_name)
+    return unless extcard = @card.extcard(tag) and
+                  formcard = extcard.setting_card(menu_name.to_star) and
+                  formcard.is_a?(Card::Pointer)
+    formcard.pointees.map do |item|
+      if item =~ /\+([^\+]+)$/
+        tag = $~[1] || item
+Rails.logger.info("ef #{$~[1].inspect}[#{tag}] #{item}")
+        yield(tag) if block_given?
+        tag
+      end
+    end
+  end
+
   def edit_submenu(on)
     div(:class=>'submenu') do
       [[ :content,    true  ],

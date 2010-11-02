@@ -1,4 +1,4 @@
-<%= get_slot.declare_submenu(params[:inclusions] ? :inclusions : :content) %>
+<%= get_slot.extension_submenu('*sol', :declare, params[:inclusions] ? :inclusions : :declare) %>
 
 <% if params[:view] != 'setting' && inst = card.setting_card('declare help') %>
   <div class="instruction"><%= slot.subslot(inst).render :naked %></div>

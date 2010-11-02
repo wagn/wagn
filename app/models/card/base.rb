@@ -62,7 +62,6 @@ module Card
       end
     end
       
-        
     # apparently callbacks defined this way are called last.
     # that's what we want for this one.  
     def after_save 
@@ -73,6 +72,9 @@ module Card
       Rails.logger.debug "Card#after_save end"
       true
     end
+        
+    def has_ext?(tag) true if extcard(tag) end  
+    def extcard(tag) Card[name+JOINT+tag] end
         
     private
       belongs_to :reader, :polymorphic=>true  

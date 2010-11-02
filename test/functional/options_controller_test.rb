@@ -11,6 +11,7 @@ class OptionsControllerTest < ActionController::TestCase
   include AuthenticatedTestHelper
 
   def setup
+    super
     User.as :wagbot 
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new                                

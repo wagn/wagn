@@ -12,6 +12,7 @@ class CardActionTest < ActionController::IntegrationTest
   include LocationHelper
   
   def setup
+    super
     setup_default_user
     integration_login_as :joe_user
   end    

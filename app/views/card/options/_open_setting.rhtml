@@ -14,7 +14,7 @@ slot = get_slot
   </div>
 
   <% Wagn::Pattern.set_names(card).each do |set_name|%>
-    <%- value_card = CachedCard.get("#{set_name}+#{setting_name}") %>
+    <%- value_card = Card.fetch_or_new("#{set_name}+#{setting_name}") %>
   
     <div class="setting-row">
       <div class="value">

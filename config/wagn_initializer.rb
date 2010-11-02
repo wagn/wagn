@@ -33,12 +33,13 @@ module Wagn
       end
     
       def pre_schema?
-        @@schema_initialized ||= begin
-          ActiveRecord::Base.connection.select_all("select * from cards limit 3").size > 2
-        rescue Exception=>e
-          false
+        begin
+          @@schema_initialized ||= ActiveRecord::Base.connection.select_value("select count(*) from cards").to_i > 2
+          !@@schema_initialized
+        rescue
+          ActiveRecord::Base.logger.info("\n----------- Schema Not Initialized -----------\n\n")
+          true
         end
-        !@@schema_initialized
       end
 
       def load  
@@ -48,6 +49,7 @@ module Wagn
         load_cardtypes
         return if pre_schema?
         load_modules
+        Wagn::Cache.initialize_on_startup
         initialize_builtin_cards
         ActiveRecord::Base.logger.info("\n----------- Wagn Initialization Complete -----------\n\n")
       end
@@ -92,7 +94,8 @@ module Wagn
           include Cardlib::Settings
           include Cardlib::Settings::ClassMethods
           extend Cardlib::CardAttachment::ActMethods  
-        end                                      
+        end
+        Cardlib::Fetch # trigger autoload
       end
       
       def setup_multihost
@@ -104,8 +107,8 @@ module Wagn
             System.wagn_name = mapping.wagn_name
           end
           ActiveRecord::Base.connection.schema_search_path = ENV['WAGN']
-          CachedCard.set_cache_prefix "#{System.host}/#{RAILS_ENV}" 
-        end  
+          #Card.cache.system_prefix = Wagn::Cache.system_prefix
+        end
       end                 
       
       def load_cardtypes
@@ -130,10 +133,10 @@ module Wagn
         end
         
         %w{ *head *alert *foot *navbox *version *account_link *now }.each do |key|
-          Card.add_builtin( Card.new(:name=>key, :builtin=>true))
+          Card.add_builtin( Card.new(:name=>key, :builtin=>true, :skip_defaults=>true))
         end
       end
-    end   
+    end
   end
   
   # oof, this is not polished

@@ -4,7 +4,6 @@ describe "WikiReference" do
   before do
     #setup_default_user  
     User.as :wagbot
-    CachedCard.bump_global_seq
   end
 
   describe "references on hard templated cards should get updated" do
@@ -19,11 +18,13 @@ describe "WikiReference" do
     it "on template creation" do
       Card::Cardtype.create! :name=>"SpecialForm"
       Card::SpecialForm.create! :name=>"Form1", :content=>"foo"
-      Card["Form1"].references_expired.should be_nil
+      c = Card.find_by_name("Form1")
+      c.references_expired.should be_nil
       Card.create! :name=>"SpecialForm+*type+*content", :content=>"{{+bar}}"
       Card["Form1"].references_expired.should be_true
       Slot.new(Card["Form1"]).render(:naked_content)
-      Card["Form1"].references_expired.should be_nil
+      c = Card.find_by_name("Form1")
+      c.references_expired.should be_nil
       Card["Form1"].out_references.plot(:referenced_name).should == ["form1+bar"]
     end
 

@@ -7,26 +7,26 @@ describe Card do
   
   describe "setting data setup" do
     it "should make Set of +*type" do
-      Card::Cardtype.create! :name=>"SpecialForm"
-      Card.create!( :name=>"SpecialForm+*type" ).type.should == "Set"
+      Card::Cardtype.create! :name=>"SpeciForm"
+      Card.create!( :name=>"SpeciForm+*type" ).type.should == "Set"
     end
   end
 
   describe "#settings" do
     it "retrieves Set based value" do
       Card.create :name => "Book+*type+*add help", :content => "authorize"
-      Card.new( :type => "Book" ).setting('add help').should == "authorize"
+      Card.new( :type => "Book" ).setting('add help', 'edit help').should == "authorize"
     end                                          
     
     it "retrieves default values" do
       Card.create :name => "all Basic cards", :type => "Set", :content => "{\"type\": \"Basic\"}"  #defaults should work when other Sets are present
       Card.create :name => "*all+*add help", :content => "lobotomize"
-      Card.default_setting('add help').should == "lobotomize"
-      Card.new( :type => "Basic" ).setting('add help').should == "lobotomize"
+      Card.default_setting('add help', 'edit help').should == "lobotomize"
+      Card.new( :type => "Basic" ).setting('add help', 'edit help').should == "lobotomize"
     end                                                                 
     
     it "retrieves single values" do
-      Card.create :name => "banana+*self+*edit help", :content => "pebbles"
+      Card.create! :name => "banana+*self+*edit help", :content => "pebbles"
       Card["banana"].setting('edit help').should == "pebbles"
     end
   end
@@ -37,18 +37,18 @@ describe Card do
     end
     
     it "retrieves default setting" do
-      Card.new( :type => "Book" ).setting('add help').should == "edit any kind of card"
+      Card.new( :type => "Book" ).setting('add help', 'edit help').should == "edit any kind of card"
     end
     
     it "retrieves primary setting" do
       Card.create :name => "*all+*add help", :content => "add any kind of card"
-      Card.new( :type => "Book" ).setting('add help').should == "add any kind of card"
+      Card.new( :type => "Book" ).setting('add help', 'edit help').should == "add any kind of card"
     end
     
     it "retrieves more specific default setting" do
       Card.create :name => "*all+*add help", :content => "add any kind of card"
       Card.create :name => "*Book+*type+*edit help", :content => "edit a Book"
-      Card.new( :type => "Book" ).setting('add help').should == "add any kind of card"
+      Card.new( :type => "Book" ).setting('add help', 'edit help').should == "add any kind of card"
     end
   end
 
@@ -63,7 +63,7 @@ describe Card do
     end
     
     it "handles searches relative to context card" do
-      context_card = CachedCard.get("A") # refers to 'Z'
+      context_card = Card.fetch_or_new("A") # refers to 'Z'
       c = Card.new :name=>"foo", :type=>"Search", :content => %[{"referred_to_by":"_self"}]
       c.list_items( context_card ).should == ["Z"]
     end

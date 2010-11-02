@@ -50,7 +50,7 @@ class CardController < ApplicationController
 
     @card_name = Cardname.unescape(params['id'] || '')
     @card_name = System.site_title if (@card_name.nil? or @card_name.empty?) 
-    @card = CachedCard.get(@card_name)
+    @card =   Card.fetch_or_new(@card_name)
 
     if @card.new_record? && !@card.virtual?  # why doesnt !known? work here?
       params[:card]={:name=>@card_name, :type=>params[:type]}
@@ -161,8 +161,8 @@ raise "XML error: #{doc} #{content}" unless doc.root
     @args[:type] ||= params[:type] # for /new/:type shortcut 
     [:name, :type, :content].each {|key| @args.delete(key) unless a=@args[key] and !a.blank?} #filter blank args
 
-    if @args[:name] and CachedCard.exists?(@args[:name]) #card exists
-      render :text => "<span class=\"faint\">Oops, <strong>#{@args[:name]}</strong> was recently created! try reloading the page to edit it</span>" #ENGLISH
+    if @args[:name] and Card.exists?(@args[:name]) #card exists
+      render :text => "<span>Oops, <strong>#{@args[:name]}</strong> was recently created! try reloading the page to edit it</span>" #ENGLISH
     else
       @card = Card.new @args                   
       render (request.xhr? ? 
@@ -237,10 +237,6 @@ raise "XML error: #{doc} #{content}" unless doc.root
     
     case
     when params[:multi_edit]; @card.multi_update(params[:cards])
-      #if @card.type=='Pointer'
-      #  @card.pointees=params[:cards].keys.map{|n|n.post_cgi}
-      #  @card.save
-      #end 
     when card_args[:type];       @card.type=card_args.delete(:type); @card.save
       #can't do this via update attributes: " Can't mass-assign these protected attributes: type"
       #might be addressable via attr_accessors?
@@ -256,8 +252,7 @@ raise "XML error: #{doc} #{content}" unless doc.root
 
     handling_errors do
       @card = Card.find(@card.id)   # wtf?
-      flash[:notice] = "updated #{@card.name}"
-      request.xhr? ? render_update_slot(render_to_string(:action=>'show')) : render_show
+      request.xhr? ? render_update_slot(render_to_string(:action=>'show'), "updated #{@card.name}") : render_show
     end
   end
 
@@ -300,13 +295,13 @@ raise "XML error: #{doc} #{content}" unless doc.root
     @comment=@comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
     @card.comment = "<hr>#{@comment}<p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
     @card.save!
-    render_update_slot render_to_string(:action=>'show')
+    render_update_slot render_to_string(:action=>'show'), "comment saved"
   end
 
   def rollback
     load_card_and_revision
     @card.update_attributes! :content=>@revision.content
-    render_update_slot render_to_string(:action=>'show')
+    render_update_slot render_to_string(:action=>'show'), "content rolled back"
   end  
 
   #------------( deleting )
@@ -326,22 +321,22 @@ raise "XML error: #{doc} #{content}" unless doc.root
     
     captcha_ok = captcha_required? ? verify_captcha : true   
     unless captcha_ok
-      return render_update_slot( render_to_string(:partial=>'confirm_remove'))
+      return render_update_slot( render_to_string(:partial=>'confirm_remove'), "confirmation required")
     end
 
     @card.destroy
       
     if @card.errors.on(:confirmation_required)
-      return render_update_slot( render_to_string(:partial=>'confirm_remove'))
+      return render_update_slot( render_to_string(:partial=>'confirm_remove'), "errors on confirmation")
     end
 
     handling_errors do
       discard_locations_for(@card)
       render_update_slot do |page,target|
         if main_card?
+          flash[:notice] =  "#{@card.name} removed"
           page.wagn.messenger.note "#{@card.name} removed."
           page.redirect_to previous_location
-          flash[:notice] =  "#{@card.name} removed"
         else 
           target.replace %{<div class="faint">#{@card.name} was just removed</div>}
           page.wagn.messenger.note( "#{@card.name} removed. ")  
@@ -377,7 +372,7 @@ raise "XML error: #{doc} #{content}" unless doc.root
     sources = [@card.cardtype.name,nil]
     sources.unshift '*account' if @card.extension_type=='User' 
     @items = sources.map do |root| 
-      c = CachedCard[(root ? "#{root}+" : '') +'*related']
+      c = Card.fetch((root ? "#{root}+" : '') +'*related')
       c && c.type=='Pointer' && c.pointees
     end.flatten.compact
     @items << 'config'
@@ -405,17 +400,17 @@ raise "XML error: #{doc} #{content}" unless doc.root
     
     
   #-------- ( MISFIT METHODS )  
-  def watch 
-    watchers = Card.find_or_new( :name => @card.name + "+*watchers", :type => 'Pointer' )
+  def watch
+    watchers = Card.fetch_or_new( @card.name + "+*watchers", {}, :type => 'Pointer' )
     watchers.add_reference User.current_user.card.name
-    flash[:notice] = "You are now watching #{@card.name}"
+    #flash[:notice] = "You are now watching #{@card.name}"
     request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
   def unwatch 
-    watchers = Card.find_or_new( :name => @card.name + "+*watchers" )
+    watchers = Card.fetch_or_new( @card.name + "+*watchers" )
     watchers.remove_reference User.current_user.card.name
-    flash[:notice] = "You are no longer watching #{@card.name}"
+    #flash[:notice] = "You are no longer watching #{@card.name}"
     request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
@@ -438,8 +433,8 @@ raise "XML error: #{doc} #{content}" unless doc.root
     # FIXME - shouldn't we bail here if we don't have anything to complete?
 
     options_card = 
-      (!params[:id].blank? &&
-       (pointer_card = CachedCard.get(params[:id])) && 
+      (!params[:id].blank? and
+       (pointer_card = Card.fetch(params[:id])) and
        pointer_card.setting_card('options'))
 
     search_args = {  :complete=>complete, :limit=>8, :sort=>'name' }

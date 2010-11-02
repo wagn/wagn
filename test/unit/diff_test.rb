@@ -8,6 +8,7 @@ class DiffTest < ActiveSupport::TestCase
   include HTMLDiff
 
   def setup
+    super
     @builder = DiffBuilder.new('old', 'new')
   end
 

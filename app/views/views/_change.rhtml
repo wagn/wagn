@@ -3,7 +3,6 @@
   <% if rev = card.current_revision %>
   <%# this check should be unnecessary once we fix search result bug %>
     <span class="last-update">
-      <span class="faint updated">
         <%=
         case card.updated_at.to_s
           when card.created_at.to_s; 'added'
@@ -12,7 +11,6 @@
         end
         %> 
         <%= time_ago_in_words card.updated_at %> ago by <%#ENGLISH%>
-      </span> 
       <%= link_to_page card.updater.card.name, nil, :class=>'last-editor' %>
     </span>
   <% end %>

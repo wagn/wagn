@@ -43,12 +43,12 @@ class Renderer
   protected
   def update_references(card, rendering_result)
     WikiReference.delete_all ['card_id = ?', card.id]
-    
+
 	 if card.id and card.respond_to?('references_expired')
-    	card.connection.execute("update cards set references_expired=NULL where id=#{card.id}") 
+    	card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
     end
     rendering_result.find_chunks(Chunk::Reference).each do |chunk|
-      reference_type = 
+      reference_type =
         case chunk
           when Chunk::Link;       chunk.refcard ? LINK : WANTED_LINK
           when Chunk::Transclude; chunk.refcard ? TRANSCLUSION : WANTED_TRANSCLUSION
@@ -56,7 +56,7 @@ class Renderer
         end
       WikiReference.create!(
         :card_id=>card.id,
-        :referenced_name=>chunk.refcard_name.to_key, 
+        :referenced_name=>chunk.refcard_name.to_key,
         :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
         :link_type=>reference_type
       )

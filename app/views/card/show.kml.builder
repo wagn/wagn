@@ -9,10 +9,10 @@ xml.kml do
         end
         
     cards.each do |card| 
-      if geocard = CachedCard.get_real("#{card.name}+*geocode")    
+      if geocard = Card.fetch("#{card.name}+*geocode", :skip_virtual => true)
         xml.Placemark do
           xml.name card.name  
-          content_card = CachedCard.get("#{card.name}+*geodescription") || card
+          content_card = Card.fetch_or_new("#{card.name}+*geodescription") || card
           slot = get_slot(content_card, "main_1", "view")
           xml.description slot.render( :content )
           xml.Point do                                                  

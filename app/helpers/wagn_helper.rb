@@ -25,7 +25,7 @@ module WagnHelper
   # FIMXE: this one's a hack...
   def render_card(card, mode, args={})
     if String===card && name = card
-      raise("Card #{name} not present") unless card= (CachedCard.get(name) || Card[name] || Card.find_virtual(name))
+      raise("Card #{name} not present") unless card= (Card.fetch_or_new(name) || Card[name] || Card.find_virtual(name))
     end
     # FIXME: some cases we're called before Slot.current_slot is initialized.
     #  should we initialize here? or always do Slot.new?
@@ -158,7 +158,7 @@ module WagnHelper
   def cardtype_options
     Cardtype.createable_cardtypes.map do |cardtype|
       #next(nil) if cardtype[:codename] == 'User' #or cardtype[:codename] == 'InvitationRequest'
-      [cardtype[:codename], cardtype[:name]]
+      [cardtype[:name], cardtype[:name]]
     end.compact
   end
 
@@ -241,7 +241,7 @@ module WagnHelper
     return unless entries
     items = []
     items << navbox_item( :search, %{<a class="search-icon">&nbsp;</a>Search for: }, stub )
-    if !Cardtype.createable_cardtypes.empty? && !CachedCard.exists?(stub)
+    if !Cardtype.createable_cardtypes.empty? && !Card.exists?(stub)
       items << navbox_item( :new, %{<a class="plus-icon">&nbsp;</a>Add new card: }, stub )
     end
     items += entries.map do |entry| 
@@ -284,7 +284,7 @@ module WagnHelper
   end
   
   def layout_card(content)
-    Card.new(:name=>"**layout",:content=>content)
+    Card.new(:name=>"**layout",:content=>content, :skip_defaults=>true)
   end
   
   def render_layout_card(card)

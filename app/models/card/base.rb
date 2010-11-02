@@ -53,7 +53,7 @@ module Card
     #before_validation_on_create :set_needed_defaults
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
-      :update_referencers, :allow_type_change, :virtual, :builtin, :broken_type, :skip_defaults
+      :update_referencers, :allow_type_change, :virtual, :builtin, :broken_type, :skip_defaults, :loaded_trunk
 
     # setup hooks on AR callbacks
     [:before_save, :before_create, :after_save, :after_create].each do |hookname| 
@@ -69,7 +69,7 @@ module Card
         Rails.logger.debug "Cardtype after_save resetting"
         ::Cardtype.reset_cache
       end
-      Rails.logger.debug "Card#after_save end"
+#      Rails.logger.debug "Card#after_save end"
       true
     end
         
@@ -90,7 +90,7 @@ module Card
     
     def set_defaults args
       # autoname
-      Rails.logger.debug "Card(#{name})#set_defaults begin"
+      #Rails.logger.debug "Card(#{name})#set_defaults with args #{args.inspect} begin"
       if args["name"].blank?
         ::User.as(:wagbot) do
           if ac = setting_card('autoname') and autoname_card = ac.card
@@ -131,13 +131,13 @@ module Card
       self.trash = false   
       self.key = name.to_key if name
       self.name='' if name.nil?
-      Rails.logger.debug "Card(#{name})#set_defaults end"
+      #Rails.logger.debug "Card(#{name})#set_defaults end"
       self
     end
 
     
     def default_permissions
-      source_card = setting_card('content')
+      source_card = setting_card('content', 'default')
       if source_card
         perms = source_card.card.permissions.reject { 
           |p| p.task == 'create' unless (type == 'Cardtype' or template?) 
@@ -190,32 +190,27 @@ module Card
         args = {} if args.nil?
         args = args.stringify_keys
 
-        # FIXME: if a name is given, do we want to check 
-        # if the card is virtual or in the trash?
-
-        # set the type from the class we're called from 
-        calling_class = self.name.split(/::/).last
-        if calling_class != 'Base'
-          args['type'] = calling_class
-        end
-
-        # set type from settings
-        if !args['type']
-          default_card = Card::Basic.new({ 
-            :name=> args['name'], 
-            :type => "Basic",
-            :skip_defaults=>true 
-          }).setting_card('content')
-          args['type'] = default_card ? default_card.type : "Basic"
-        end
+        # FIXME: if a name is given, we want to check 
+        # if the card is virtual or in the trash
         
-        card_class = Card.class_for( args['type'] ) || (
+        calling_class = self.name.split(/::/).last
+        typetype = :codename
+        args['type'] =
+          case
+          when args['typecode'];                args.delete('typecode')
+          when calling_class != 'Base';         calling_class
+          when args['type'];                    typetype= :cardname;  args['type']
+          when args.delete('skip_type_lookup'); 'Basic'
+          else
+            setting = Card::Basic.new(:name=> args['name'], :skip_defaults=>true ).setting_card('content', 'default')
+            setting ? setting.type : 'Basic'
+          end
+        card_class = Card.class_for( args['type'], typetype ) || (
           broken_type = args['type']; Card::Basic
         )
+        args.delete('type') # create new card based on the class we've determined (not arg['type'])
 
-        # create the new card based on the class we've determined
-        args.delete('type')
-        
+
         new_card = card_class.ar_new args
         yield(new_card) if block_given?
         new_card.broken_type = broken_type if broken_type
@@ -275,7 +270,7 @@ module Card
           raise "missing permissions from find #{c.name}" if c.permissions.empty?
         else
           c = Card.new( args )
-          raise "missing permissions from new" if c.permissions.empty?
+          raise "missing permissions from new" if c.permissions.empty? && !args[:skip_defaults]
         end
 
         if c.trash
@@ -302,15 +297,15 @@ module Card
     
     def multi_save(cards)
       Wagn::Hook.call :before_multi_save, self, cards
-      cards.each_pair do |name, opts|              
-        opts[:content] ||= ""   
+      cards.each_pair do |name, opts|
+        opts[:content] ||= ""
         # make sure blank content doesn't override pointee assignments if they are present
         if (opts['pointee'].present? or opts['pointees'].present?) 
           opts.delete('content')
         end                                                                               
         name = name.post_cgi.to_absolute(self.name)
         logger.info "multi update working on #{name}: #{opts.inspect}"
-        if card = Card[name]      
+        if card = Card.fetch(name, :skip_virtual=>true)
           card.update_attributes(opts)
         elsif opts[:pointee].present? or opts[:pointees].present? or  
                 (opts[:content].present? and opts[:content].strip.present?)
@@ -393,7 +388,8 @@ module Card
       name.particle_names.map{|name| Card[name]} ##FIXME -- inefficient (though scarcely used...)    
     end
 
-    def junctions(args={})     
+    def junctions(args={})
+      return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point.  
       args[:conditions] = ["trash=?", false] unless args.has_key?(:conditions)
       args[:order] = 'id' unless args.has_key?(:order)    
       # aparently find f***s up your args. if you don't clone them, the next find is busted.
@@ -401,6 +397,7 @@ module Card
     end
 
     def dependents(*args) 
+      return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point. 
       junctions(*args).map { |r| [r ] + r.dependents(*args) }.flatten 
     end
 
@@ -447,7 +444,7 @@ module Card
     # I don't really like this.. 
     def attribute_card( attr_name )
       ::User.as :wagbot do
-        CachedCard.get_real( name + JOINT + attr_name )
+        Card.fetch( name + JOINT + attr_name , :skip_virtual => true)
       end
     end
      
@@ -549,7 +546,7 @@ module Card
     def clone_to_type( newtype )
       attrs = self.attributes_before_type_cast
       attrs['type'] = newtype 
-      Card.class_for(newtype).new do |record|
+      Card.class_for(newtype, :codename).new do |record|
         record.send :instance_variable_set, '@attributes', attrs
         record.send :instance_variable_set, '@new_record', false
         # FIXME: I don't really understand why it's running the validations on the new card?
@@ -690,8 +687,8 @@ module Card
           rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rec.right_template.type}"
         end        
         
-        # must be cardtype name or constant name
-        unless Card.class_for(value)
+        # must be cardtype name
+        unless Card.class_for(value, :codename)
           rec.errors.add :type, "won't work.  There's no cardtype named '#{value}'"
         end
       end

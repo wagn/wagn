@@ -18,11 +18,14 @@ module Wagn
       end
     
       def set_names card
-        @@cache[(card.name ||"") + (card.type||"")] ||= begin
-          @@subclasses.map do |sc|
-            sc.pattern_applies?(card) ? sc.set_name(card) : nil
-          end.compact
-        end
+        card.new_record? ? generate_set_names(card) : 
+          (@@cache[(card.name ||"") + (card.type||"")] ||= generate_set_names(card))
+      end
+      
+      def generate_set_names card
+        @@subclasses.map do |sc|
+          sc.pattern_applies?(card) ? sc.set_name(card) : nil
+        end.compact  
       end
 
       def css_names card
@@ -156,11 +159,15 @@ module Wagn
       end
       
       def pattern_applies? card
-        card.name && card.name.junction? && card.left
+        card.name && card.name.junction? && left(card)
+      end
+      
+      def left card
+        card.loaded_trunk || card.left
       end
       
       def set_name card
-        "#{card.left.cardtype_name}+#{card.name.tag_name}+#{key}"
+        "#{left(card).cardtype_name}+#{card.name.tag_name}+#{key}"
       end
       
       def label name
@@ -177,7 +184,7 @@ module Wagn
       end
       
       def pattern_applies? card
-        card.name and !card.virtual?
+        card.name and !card.virtual? and !card.new_record?
       end
       
       def set_name card

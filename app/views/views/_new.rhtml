@@ -22,7 +22,7 @@
 
 			<div class="card-header">
 			  <% if !request.xhr? && @args[:type] && !@card.broken_type %>
-			    <%= form.hidden_field :type %>
+			    <%= hidden_field_tag 'card[type]', @args[:type] %>
 			  <% else %>
   			  <span class="new-type">
   			    <span class="label"> type:</span>
@@ -35,7 +35,7 @@
 			  
 			  <span class="new-name">
 				  <span class="label">name:</span>
-				  <% if @card.name.blank? || Card[@card.name]%>
+				  <% if @card.name.blank? || Card.fetch(@card.name)%>
 						<span class="name-area">
 							<%= slot.name_field(form) %>
 					  </span>
@@ -47,7 +47,7 @@
 					<% end %> 
 				</span>
 			</div>
-      <% if inst=card.setting_card('add help') and params[:view]!='setting' %>
+      <% if inst=card.setting_card('add help', 'edit help') and params[:view]!='setting' %>
         <div class="instruction"><%= slot.subslot(inst).render :naked %></div>
 	    <% end %>
 
@@ -55,7 +55,7 @@
 			<div class="edit-area">
   			<div class="editor">  
 					<% #FIXME CONTENT: the hard template test can go away when we phase out the old sytem %>
-  				<% if card.content_templated? %>
+  				<% if card.content_template %>
   				  <%- slot.form = form %>
     			  <%= slot.render(:multi_edit)%>
   				<% else %>

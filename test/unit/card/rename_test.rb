@@ -9,6 +9,7 @@ class Card::RenameTest < ActiveSupport::TestCase
   end
   
   def setup
+    super
     ::User.as(:wagbot) do
       Card.create! :name => "chuck_wagn+chuck"   
       Card.create! :name => "Blue" 

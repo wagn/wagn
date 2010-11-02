@@ -4,6 +4,7 @@
   background: #fff;
   padding: 0px;
   -moz-border-radius: 8px;
+  border-radius: 8px;
   border: 1px solid #777;
   border-bottom: 2px solid #888;
   border-right: 2px solid #888;
@@ -25,6 +26,7 @@ html>body .card-slot {
   padding: 5px; 
   margin: 0px;
   -moz-border-radius: 6px 6px 0 0;
+  border-radius: 6px 6px 0 0;
   text-align: left;
 }
 .title-menu {
@@ -111,6 +113,7 @@ div:hover.card-header .card-menu-left {
   padding: 1px 5px;
   margin: 0px;
   -moz-border-radius: 4px 4px 0 0;
+  border-radius: 4px 4px 0 0;
 }
 .current {
   background: #bbb;
@@ -131,6 +134,7 @@ div:hover.card-header .card-menu-left {
   color: #777;
   padding-bottom: 3px;
   -moz-border-radius: 4px 4px 0 0;
+  border-radius: 4px 4px 0 0;
 }
 
 .card-header li {
@@ -153,6 +157,7 @@ div:hover.card-header .card-menu-left {
 .card-footer {
   clear: both;
   -moz-border-radius: 0px 0px 6px 6px;
+  border-radius: 0px 0px 6px 6px;
 }
 html>body  .card-footer .footer-content {
   display: none;
@@ -216,14 +221,8 @@ span:hover.open-missing {
 .transcluded h2 {
   background-color: inherit;
   -moz-border-radius: inherit;
+  border-radius: inherit;
 }
-
-/*  I can't find where this is used.  if you uncomment, please document -efm 
-.word .title { 
-  font-weight: normal 
-}
-*/
-
 
 
 /* note:   ".card-slot .transcluded div not(.editor)" was not working properly and was breaking nested block elements.  
@@ -260,6 +259,7 @@ span:hover.open-missing {
   font-weight: bold;
   color: #448;
   -moz-border-radius: 6px;
+  border-radius: 6px;
   padding: 1px 5px;
 }
 .edit-area {
@@ -513,7 +513,9 @@ h2.headroom,
 body#wagn .card-slot.recent-changes h2 {
   margin-top: 15px;
 }
-
+.last-update {
+  color: #666;
+}
 
 
 /*-------------- STATES -----------*/
@@ -524,6 +526,7 @@ body#wagn .card-slot.recent-changes h2 {
   margin: 1px 0px;
   padding: 0px !important;
   -moz-border-radius: 8px;
+  border-radius: 8px;
 }
 
 /* this was occasionally busting auto-completes on pointers:
@@ -548,6 +551,7 @@ body#wagn .card-slot.recent-changes h2 {
   border-bottom: 0px;
   border-color: #ccc;
   -moz-border-radius: 2px 8px 2px 2px !important;
+  border-radius: 2px 8px 2px 2px !important;
   padding: 0px;
   margin: 0px;
   line-height: 25px;  
@@ -564,6 +568,7 @@ body#wagn .card-slot.recent-changes h2 {
 .line .card-header {
   line-height: 15px;
   -moz-border-radius: 0px 6px 6px 0px;
+  border-radius: 0px 6px 6px 0px;
   padding-top: 4px;
   padding-bottom: 3px;
   margin-right: 4px;
@@ -644,14 +649,17 @@ body#wagn .card-slot.recent-changes h2 {
   border: 1px solid white;
   border-bottom: 1px solid #ccc;
   -moz-border-radius: 0px;
+  border-radius: 0px;
   margin: 0px;
 }
 .card-slot .card-slot .card-footer {
   -moz-border-radius: 0px;
+  border-radius: 0px;
 }
 .card-slot span:hover.card-slot {
   border: 1px solid #ddd;
   -moz-border-radius: 8px 8px 0 0;
+  border-radius: 8px 8px 0 0;
 }
 
 
@@ -664,6 +672,7 @@ body#wagn .card-slot.recent-changes h2 {
 .table-of-contents {
   background: #eee;
   -moz-border-radius: 10px;
+  border-radius: 10px;
   padding: 4px;
   margin: 5px 20px 20px 20px;
 }

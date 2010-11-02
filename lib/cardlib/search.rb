@@ -3,7 +3,11 @@ module Cardlib
     module ClassMethods
       @@builtins = {}
 
-      def find_builtin(name)
+      def find_virtual(name)
+        builtin_virtual(name) or pattern_virtual(name)
+      end
+
+      def builtin_virtual(name)
         key=name.to_key
         searches =  
           { '*recent_change' => %{ {"sort":"update", "dir":"desc", "view":"change"} },
@@ -18,16 +22,15 @@ module Cardlib
       
       def add_builtin(card)     
         card.builtin = true
+        card.missing = false
+        card.virtual = true
+        Card.cache.write(card.key, card)
         @@builtins[card.key] = card
       end
       
-      def find_virtual(name)  
-        find_builtin(name) or auto_card(name)
-      end
-
-      def auto_card(name)
+     def pattern_virtual(name)
         return nil unless name && name.junction?
-        if template = Card.new(:name=>name).setting_card('content') and template.hard_template? 
+        if template = Card.new(:name=>name, :skip_defaults=>true).setting_card('content','default') and template.hard_template? 
           User.as(:wagbot) do
             Card.create_virtual name, template.content, template.type
           end
@@ -47,8 +50,7 @@ module Cardlib
       end
 
       def create_virtual(name, content, type='Basic', reader=Role[:anon])
-        c=Card.new(:name=>name, :content=>content, :type=>type ,:reader=>reader, :virtual=>true)
-        c
+        Card.new(:name=>name, :content=>content, :type=>type ,:reader=>reader, :virtual=>true, :skip_defaults=>true)
       end
       
       def count_by_wql(spec)       
@@ -67,11 +69,7 @@ module Cardlib
       end
 
       def [](name) 
-        # DONT do find_virtual here-- it ends up happening all over the place--
-        # call it explicitly if that's what you want
-        #self.cache[name.to_s] ||= 
-        #self.find_by_name(name.to_s, :include=>:current_revision) #|| self.find_virtual(name.to_s)
-        self.find_by_name(name.to_s)
+         Card.fetch(name, :skip_virtual => true)
       end             
       
       # FIXME Hack to keep dynamic classes from breaking after application reload in development..

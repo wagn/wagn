@@ -18,7 +18,7 @@ config.action_controller.perform_caching             = true
 # ActionMailer::Base.deliveries array.
 config.action_mailer.delivery_method = :test
 
-config.log_level = :warn
+config.log_level = :debug
 
 config.gem "webrat"
 config.gem "cucumber"

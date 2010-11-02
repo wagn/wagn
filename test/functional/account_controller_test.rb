@@ -14,6 +14,7 @@ class AccountControllerTest < ActionController::TestCase
   
 
   def setup
+    super
     get_renderer
     @controller = AccountController.new
     @request    = ActionController::TestRequest.new

@@ -1,8 +1,7 @@
-
 <% cardname = (params[:card] ? params[:card][:name] : "") %>
 <h1 class="page-header">Missing Card</h1>
 
-<% get_slot(Card.new).wrap do |slot| %>
+<% get_slot(Card.new(:skip_defaults=>true)).wrap do |slot| %>
   <div class="content instruction"> 
     <p>There's no card named <strong><%= cardname %></strong>.</p> <%#ENGLISH%>
     <p><%= link_to "Sign In", '/account/signin' %> or <%= link_to 'Sign Up', '/account/signup' %> to create it.</p>

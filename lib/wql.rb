@@ -96,8 +96,9 @@ class Wql
     else
       results = Card.find_by_sql( sql )
       if query[:prepend] || query[:append]
-        results = results.map do |card|             
-          CachedCard.get [query[:prepend], card.name, query[:append]].compact.join('+')
+        results = results.map do |card|
+          cardname = [query[:prepend], card.name, query[:append]].compact.join('+')
+          Card.fetch_or_new cardname, {}, :skip_defaults=>true
         end
       end
       results
@@ -200,8 +201,8 @@ class Wql
 #   def to_card(relative_name)
 #     case relative_name
 #     when "_self";  root.card                                   
-#     when "_left";  CachedCard.get(root.card.name.parent_name)
-#     when "_right"; CachedCard.get(root.card.name.tag_name)
+#     when "_left";  Card.fetch_or_new(root.card.name.parent_name)
+#     when "_right"; Card.fetch_or_new(root.card.name.tag_name)
 #     end
 #   end
     
@@ -280,7 +281,7 @@ class Wql
     end          
     
     def found_by(val)
-      cards = (String===val ? [CachedCard.get(absolute_name(val))] : Wql.new(val).run)
+      cards = (String===val ? [Card.fetch_or_new(absolute_name(val))] : Wql.new(val).run)
       cards.each do |c|
         raise %{"found_by" value needs to be valid Search card #{c.inspect}} unless c && ['Search','Set'].include?(c.type)
         found_by_spec = CardSpec.new(c.get_spec).spec

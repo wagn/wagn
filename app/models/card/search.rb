@@ -20,14 +20,13 @@ module Card
       self.spec = get_spec(params.clone)
       raise("OH NO.. no limit") unless self.spec[:limit] 
       self.spec.delete(:limit) if spec[:limit].to_i <= 0
-      self.results = Card.search( self.spec ).map do |card|   
-        c = CachedCard.get(card.name, card)
-      end
+      # FIXME CACHE TODO: optimize by loading these into the cache.
+      self.results = Card.search( self.spec )
     end
     
     def get_spec(params={})
       spec = ::User.as(:wagbot) do
-        spec_content = content_templated? ? setting('content') : self.content
+        spec_content = templated_content || self.content
         raise("Error in card '#{self.name}':can't run search with empty content") if spec_content.empty?
         JSON.parse( spec_content )   
       end

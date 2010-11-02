@@ -63,9 +63,6 @@ describe Wql do
 
 
   describe "edited_by/edited" do
-    before { 
-      CachedCard.bump_global_seq
-    }
     it "should find card edited by joe using subspec" do
       Wql.new(:edited_by=>{:match=>"Joe User"}, :sort=>"name").run.should == [Card["JoeLater"], Card["JoeNow"]]
     end     
@@ -78,7 +75,7 @@ describe Wql do
   
     it "should not give duplicate results for multiple edits" do
       User.as(:joe_user){ c=Card["JoeNow"]; c.content="testagagin"; c.save!; c.content="test3"; c.save! }
-      Wql.new(:edited_by=>"Joe User", :sort=>"update", :limit=>2).run.map(&:name).should == ["JoeNow", "JoeLater"]
+      Wql.new(:edited_by=>"Joe User").run.map(&:name).sort.should == ["JoeLater","JoeNow"]
     end
   
     it "should find joe user among card's editors" do

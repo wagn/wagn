@@ -33,14 +33,14 @@ unless defined? TEST_ROOT
     # instantiated fixtures translates to a database query per test method),
     # then set this back to true.
     self.use_instantiated_fixtures  = false
-  
-    def setup  
+
+    Wagn::Cache.new( Rails.cache, "#{System.host}/test" ).reset
+
+    def setup
+      super
       # let the cache stick accross test-runs while profiling
       unless ActionController.const_defined?("PerformanceTest") and self.class.superclass == ActionController::PerformanceTest
-        CachedCard.set_cache_prefix "#{System.host}/cucumber"
-        CachedCard.bump_global_seq
-        CachedCard.set_cache_prefix "#{System.host}/test"
-        CachedCard.bump_global_seq
+        Wagn::Cache.reset_for_tests
       end
     end
   end

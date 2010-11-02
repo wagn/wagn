@@ -59,12 +59,6 @@ if defined?(ActiveRecord::Base)
   end
 end
 
-
-CachedCard.set_cache_prefix "#{System.host}/test"
-CachedCard.bump_global_seq
-CachedCard.set_cache_prefix "#{System.host}/cucumber"
-CachedCard.bump_global_seq
-
 Before do
-  CachedCard.bump_global_seq
+  Wagn::Cache.reset_for_tests
 end

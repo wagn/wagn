@@ -20,7 +20,7 @@
     				:url=>slot.url_for('card/view', args.merge(:offset=>[offset-limit,0].max)) 
     	%>
     <% end %>
-    <span class="faint"><%= first %> to <%= last %> of <%= total %></span>
+    <span class="paging-range"><%= first %> to <%= last %> of <%= total %></span>
     <% if last < total %>
     	<%= link_to_remote image_tag('next-page.png'), :update=>slot.id,
     	 			:url=>slot.url_for('card/view', args.merge(:offset=>last))

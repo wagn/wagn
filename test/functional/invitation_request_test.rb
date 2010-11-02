@@ -8,6 +8,7 @@ class InvitationRequestTest < ActionController::TestCase
   include AuthenticatedTestHelper
   
   def setup
+    super
     get_renderer
     @controller = CardController.new
     @request    = ActionController::TestRequest.new
@@ -22,7 +23,7 @@ class InvitationRequestTest < ActionController::TestCase
 
   def test_should_redirect_to_invitation_request_landing_card 
     post :create, :card=>{
-      :type=>"InvitationRequest",
+      :type=>"Account Request",
       :name=>"Word Third",
       :account=>{:email=>"jamaster@jay.net"},
       :content=>"Let me in!"
@@ -34,7 +35,7 @@ class InvitationRequestTest < ActionController::TestCase
   
   def test_should_create_invitation_request  
     post :create, :card=>{
-      :type=>"InvitationRequest", 
+      :type=>"Account Request", 
       :name=>"Word Third", 
       :account=>{:email=>"jamaster@jay.net"},
       :content=>"Let me in!"

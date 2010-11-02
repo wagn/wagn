@@ -19,7 +19,7 @@ class AdminController < ApplicationController
         flash[:notice] = "Durn, setup went awry..."
       end
     else
-      @card = Card.new( params[:card] || {} )
+      @card = Card.new( params[:card] || {} ) #should prolly skip defaults
       @user = User.new( params[:user] || {} )
     end
   end

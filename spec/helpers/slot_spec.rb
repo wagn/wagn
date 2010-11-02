@@ -29,16 +29,31 @@ describe Slot, "" do
       end
     end
     
+    describe "css in inclusion syntax" do
+      it "shows up" do
+        Slot.render_content("{{A|float:right}}").should be_html_with do
+          div(:style => 'float:right;') {}
+        end
+      end
+
+      # I want this test to show the explicit escaped HTML, but be_html_with seems to escape it already :-/
+      it "shows up with escaped HTML" do
+        Slot.render_content('{{A|float:<object class="subject">}}').should be_html_with do
+          div(:style => 'float:<object class="subject">;') {}
+        end
+      end
+    end
+    
     describe "views" do
       it "open" do
         mu = mock(:mu)
-        mu.should_receive(:generate).twice.and_return("1")
-        UUID.should_receive(:new).twice.and_return(mu)
+        mu.should_receive(:generate).and_return("1")
+        UUID.should_receive(:new).and_return(mu)
         Slot.render_content("{{A|open}}").should be_html_with do
           div( :position => 1, :class => "card-slot") {
             div( :class => "card-header" )
             span( :class => "content")  {
-              p "Alpha"
+              #p "Alpha"
             }
           }
         end
@@ -119,14 +134,14 @@ describe Slot, "" do
     it "uses content setting" do
       @card = Card.new( :name=>"templated", :content => "bar" )
       config_card = Card.new(:name=>"templated+*self+*content", :content=>"Yoruba" )
-      @card.should_receive(:setting_card).twice.with("content").and_return(config_card)
+      @card.should_receive(:setting_card).with("content","default").and_return(config_card)
       Slot.new(@card).render(:naked_content).should == "Yoruba"
     end
     
     it "doesn't use content setting if default is present" do
       @card = Card.new( :name=>"templated", :content => "Bar" )
       config_card = Card.new(:name=>"templated+*self+*default", :content=>"Yoruba" )
-      @card.should_receive(:setting_card).with("content").and_return(config_card)
+      @card.should_receive(:setting_card).with("content", "default").and_return(config_card)
       Slot.new(@card).render(:naked_content).should == "Bar"
     end
     

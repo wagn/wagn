@@ -29,7 +29,7 @@ class Slot
       Slot.current_slot = nil
       view = opts.delete(:view)
       view = :naked unless view && !view.blank?
-      tmp_card = Card.new :name=>"__tmp_card__", :content => content 
+      tmp_card = Card.new :name=>"__tmp_card__", :content => content, :skip_defaults=>true
       Slot.new(tmp_card, "main_1", view, nil, opts).render(view)
     end
   end
@@ -173,20 +173,9 @@ class Slot
     end
   end
   
-  def cache_action(cc_method) 
-    (if CachedCard===card 
-      card.send(cc_method) || begin
-        cached_card, @card = card, Card.find_by_key_and_trash(card.key, false)
-        if !@card
-          return "Oops! found cached card for #{card.key} but couln't find the real one"
-        end
-        content = yield(@card)
-        cached_card.send("#{cc_method}=", content.clone)  
-        content
-      end
-    else
-      yield(card)
-    end).clone
+  def cache_action(cc_method)
+    # FIXME: restore cacheing if necessary
+    yield
   end
   
   def wrap_content( content="" )
@@ -234,7 +223,7 @@ class Slot
   end
 
   def render(action, args={})      
-    Rails.logger.info "Slot(#{card.name}).render #{action}"
+    #Rails.logger.debug "Slot(#{card.name}).render #{action}"
     self.render_args = args.clone
     count_render unless [:name, :link].member?(action)
     ok_action = case
@@ -313,7 +302,7 @@ class Slot
       when :edit;  
         @state=:edit
         # FIXME CONTENT: the hard template test can go away when we phase out the old system.
-        if card.content_templated?
+        if card.content_template
           render(:multi_edit)
         else
           content_field(slot.form)
@@ -372,7 +361,7 @@ class Slot
   end
 
   def render_array
-    Rails.logger.debug "Slot(#{card.name}).render_array   root = #{root}"
+    #Rails.logger.debug "Slot(#{card.name}).render_array   root = #{root}"
     
     count_render
     if too_many_renders?
@@ -381,9 +370,9 @@ class Slot
     case card.type 
       when 'Search'
         names = Wql.new(card.get_spec(:return => 'name_content')).run.keys
-        names.map{|x| subslot(CachedCard.get(x)).render(:naked) }.inspect
+        names.map{|x| subslot(Card.fetch_or_new(x)).render(:naked) }.inspect
       when 'Pointer'
-        card.pointees.map{|x| subslot(CachedCard.get(x)).render(:naked) }.inspect
+        card.pointees.map{|x| subslot(Card.fetch_or_new(x)).render(:naked) }.inspect
       else
         [render_expanded_view_content].inspect
     end
@@ -408,9 +397,8 @@ class Slot
     else
       cache_action('naked_content') do
         #passed_in_content = args.delete(:content) # Can we get away without this??
-        templated_content = card.content_templated? ? card.setting('content') : nil
-        renderer_content = templated_content || ""
-        @renderer.render( card, renderer_content, update_refs=card.references_expired, format)
+        renderer_content = card.templated_content || ""
+        @renderer.render( card, renderer_content, update_refs=card.references_expired)
       end
     end
   end
@@ -456,15 +444,13 @@ class Slot
     options[:showname] = tname.to_show(fullname)
     options[:match_str] = match[1]+(match[3]||'')
     
-    tcard ||= (@state==:edit ?
-      ( Card.find_by_name(fullname) || 
-        Card.find_virtual(fullname) || 
-        Card.new(new_inclusion_card_args(tname, options))
-      ) :
-      ( slot_options[:base].respond_to?(:name) && slot_options[:base].name == fullname ?
-        slot_options[:base] : CachedCard.get(fullname)
+    tcard ||= @state==:edit ? Card.fetch_or_new(fullname, {}, new_inclusion_card_args(tname, options) ) :
+    ## holy crap can we explain this?
+       ( slot_options[:base].respond_to?(:name) && slot_options[:base].name == fullname ?
+         slot_options[:base] : Card.fetch_or_new(fullname, :skip_defaults=>true )
       )
-    )
+    
+    tcard.loaded_trunk=card if tname =~ /^\+/
 
     tcontent = process_inclusion( tcard, options )
     tcontent = resize_image_content(tcontent, options[:size]) if options[:size]
@@ -514,8 +500,9 @@ class Slot
 
   def new_inclusion_card_args(tname, options)
     args = { 
-      :name=>options[:fullname], 
-      :type=>options[:type] 
+#      :name=>options[:fullname], 
+      :type=>options[:type],
+      :skip_defaults=>true
     }
     if content=get_inclusion_content(tname)
       args[:content]=content 

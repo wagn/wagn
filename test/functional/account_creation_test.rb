@@ -20,14 +20,14 @@ class AccountCreationTest < ActionController::TestCase
   end
 
   def setup
+    super
     get_renderer
     @controller = AccountController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
     login_as :joe_user
-    CachedCard.bump_global_seq  
-    CachedCard.reset_cache
-  end     
+    Wagn::Cache.reset_for_tests
+  end
     
 # this is working in interface but I can't get it to work here:
 =begin

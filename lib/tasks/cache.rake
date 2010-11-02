@@ -1,7 +1,7 @@
 namespace :cache do
   desc "inc global seq to reset cache" 
   task :clear => :environment  do
-    CachedCard.bump_global_seq
+    Card.cache.reset
   end
   
   # to hit all the cards on the server (for cache population) do something like this:

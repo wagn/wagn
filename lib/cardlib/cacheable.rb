@@ -50,7 +50,7 @@ module Cardlib
     def list_cards context = nil
       case self.type
       when "Pointer";
-        self.list_items( context ).map{|cardname| CachedCard.get( cardname ) }
+        self.list_items( context ).map{|cardname| Card.fetch( cardname, :skip_virtual=>true ) }.compact
       when "Search";
         self.search(:limit => "", :_self=>(context ? context.name : self.name))
       else
@@ -77,7 +77,7 @@ module Cardlib
     end
 
     def left
-      CachedCard.get_real( name.trunk_name )
+      Card.fetch( name.trunk_name , :skip_virtual => true)
     end
     
     # FIXME: limit moved here from pointer card.

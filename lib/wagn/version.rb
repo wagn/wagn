@@ -1,9 +1,9 @@
 module Wagn
   module Version
     Major = '1'
-    Minor = '4'
+    Minor = '5'
     Tiny  = '0'
-    Eensie = ''
+    Eensie = nil
   
     class << self
       def full

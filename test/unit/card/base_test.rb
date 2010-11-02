@@ -2,8 +2,8 @@ require File.dirname(__FILE__) + '/../../test_helper'
 class Card::BaseTest < ActiveSupport::TestCase
   
   def setup
-    setup_default_user     
-    CachedCard.bump_global_seq
+    super
+    setup_default_user
   end
 
   def test_remove
@@ -34,12 +34,7 @@ class Card::BaseTest < ActiveSupport::TestCase
     alpha, beta = Card.create(:name=>'alpha'), Card.create(:name=>'beta')
     assert_nil alpha.attribute_card('beta')
     Card.create :name=>'alpha+beta'   
-    # Oh what a broken api...
-    if CachedCard.perform_caching
-      assert_instance_of CachedCard, alpha.attribute_card('beta')
-    else
-      assert_instance_of Card::Basic, alpha.attribute_card('beta')
-    end
+    assert_instance_of Card::Basic, alpha.attribute_card('beta')
   end
 
   def test_create
@@ -79,10 +74,10 @@ class Card::BaseTest < ActiveSupport::TestCase
   
   def test_multi_update_should_create_subcards_as_wagbot_if_missing_subcard_permissions
     # then repeat multiple update as above, as :anon
-    User.as(:anon) 
+    User.as(:anon)
     b = Card.create!( :type=>"Fruit", :name=>'Banana' )
     b.multi_update({ "+peel" => { :content => "yellow" }})
-    assert_equal "yellow", Card["Banana+peel"].current_revision.content   
+    assert_equal "yellow", Card["Banana+peel"].current_revision.content
     assert_equal User[:wagbot].id, Card["Banana+peel"].created_by
   end
   

@@ -3,6 +3,7 @@ class Card::RemoveTest < ActiveSupport::TestCase
   
 
   def setup
+    super
     setup_default_user
     @a = Card.find_by_name("A")
   end

@@ -53,16 +53,23 @@ namespace :test do
   #=begin  
     begin
       # assume we have a good database, ie. just migrated dev db.
+      puts "migrating database #{olddb}"
       puts `echo $RAILS_ENV; rake db:migrate`
+      puts "dumping schema"
       puts `rake db:schema:dump`
+      puts "setting database to wagn_test_template"
       set_database 'wagn_test_template'
       # Rake::Task['db:drop'].invoke
       # Rake::Task['db:create'].invoke
       # Rake::Task['db:schema:load'].invoke
       # Rake::Task['wagn:bootstrap:load'].invoke
+      puts "dropping database"
       puts `rake db:drop`
+      puts "creating database"
       puts `rake db:create`
+      puts "loading schema"
       puts `rake db:schema:load`
+      puts "loading bootstrap data"
       puts `rake wagn:bootstrap:load`       
   
       # I spent waay to long trying to do this in a less hacky way--  
@@ -107,7 +114,6 @@ namespace :test do
   
   desc "create sample data for testing"
   task :populate_template_database => :environment do        
-    CachedCard.perform_caching = false
     # setup test data here
     # additional test data auto-loaded from Test classes    
     # when I load these I don't want them to run as is the default; this is somewhat brutal..

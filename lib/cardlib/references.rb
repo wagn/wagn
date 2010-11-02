@@ -10,7 +10,7 @@ module Cardlib
 
       # FIXME: bogus blank default content is set on hard_templated cards...
       User.as(:wagbot) {
-        render_content = content_templated? ? setting('content') : self.content
+        render_content = templated_content || self.content
         Renderer.new.render(self, render_content, update_references=true)   
       }
       expire_templatee_references
@@ -24,22 +24,22 @@ module Cardlib
     def update_references_on_destroy
       WikiReference.update_on_destroy(self)
       expire_templatee_references
-    end     
-    
+    end
+
     def expire_cache
       expire(self)
+      self.hard_templatees.each {|c| expire(c) }
+      self.dependents.each {|c| expire(c) }
+      self.referencers.each {|c| expire(c) }
+      self.name_referencers.each{|c| expire(c)}
       # FIXME: this will need review when we do the new defaults/templating system
       #if card.changed?(:content)
 
-      self.hard_templatees.each {|c| expire(c) }     
-      self.dependents.each {|c| expire(c) }
-      self.referencers.each {|c| expire(c) }
-      self.name_references.plot(:referencer).compact.each{|c| expire(c)}  
+      # this seems like oodles of unnecessary instantiations to me -efm
     end
     
     def expire(card)  
-      #warn "expiring #{card.name}"
-      CachedCard.new(card.key).expire_all
+      Wagn::Cache.expire_card card.key
     end
     
     def self.included(base)   
@@ -77,7 +77,7 @@ module Cardlib
       
       def name_referencers(rname = key)
         Card.find_by_sql(
-          "SELECT c.* FROM cards c JOIN wiki_references r ON c.id = r.card_id "+
+          "SELECT DISTINCT c.* FROM cards c JOIN wiki_references r ON c.id = r.card_id "+
           "WHERE (r.referenced_name = #{ActiveRecord::Base.connection.quote(rname.to_key)})"
         )
       end

@@ -14,7 +14,7 @@ describe Card do
     end
   end
   
-  it "#content_templated?" do
+  it "#content_template" do
     pending
   end
   
@@ -27,7 +27,6 @@ end
 
 describe Card, "with right content template" do
   before do
-    CachedCard.reset_cache
     User.as :joe_user
     @bt = Card.create! :name=>"birthday+*right+*content", :type=>'Date', :content=>"Today!"
     @jb = Card.create! :name=>"Jim+birthday"
@@ -46,8 +45,6 @@ end
 
 describe Card, "with right default template" do
   before do 
-    CachedCard.reset_cache
-    CachedCard.bump_global_seq
     User.as :wagbot  do
       @bt = Card.create! :name=>"birthday+*right+*default", :type=>'Date', :content=>"Today!"
       @bt.permit(:comment, Role['auth']);  @bt.permit(:delete, Role['admin'])

@@ -46,7 +46,7 @@ class System < ActiveRecord::Base
 
     def setting(name)
       User.as :wagbot  do
-        card=CachedCard.get_real(name) and !card.content.strip.empty? and card.content
+        card=Card.fetch(name, :skip_virtual => true) and !card.content.strip.empty? and card.content
       end
     rescue
       nil
@@ -64,18 +64,17 @@ class System < ActiveRecord::Base
     
     def layout_from_url(cardname)
       return nil unless cardname.present? and 
-        lo_card = CachedCard.get_real(cardname) and 
+        lo_card = Card.fetch(cardname, :skip_virtual => true) and
         lo_card.ok?(:read)
       lo_card
     end
     
     def layout_from_setting(card)
-      card = CachedCard===card ? card.card : card #KLUDGE.  after CachedCard refactor we should get rid of this
       return unless setting_card = ((card && card.setting_card('layout')) or Card.default_setting_card('layout'))
       return unless setting_card.is_a?(Card::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.type == 'Pointer'        and
         layout_name=setting_card.pointee                  and
         !layout_name.nil?                                 and
-        lo_card = CachedCard.get_real(layout_name)    and
+        lo_card = Card.fetch(layout_name, :skip_virtual => true)    and
         lo_card.ok?(:read)
       lo_card
     end
@@ -163,7 +162,7 @@ class System < ActiveRecord::Base
     end
     
     def always_ok?   
-      return false unless usr = User.current_user  
+      return false unless usr = User.current_user
       if (c = @@cache[:always][usr]).nil?
         @@cache[:always][usr] = usr.roles.detect { |r| r.codename == 'admin' } || false
       else

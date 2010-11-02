@@ -304,10 +304,10 @@ class Slot
       when :array;  render_array;
       when :raw; card.content
 
-      when :declare;
-        Rails.logger.info("Render declare "+card.inspect)
-        @state=:declare
-        content_field(slot.form)
+      when :declare;  # FIXME generalize this test for all extension actions
+        Rails.logger.info("Render #{ok_action} #{card.name} : #{params.inspect} : #{args.inspect}")
+        @state=symbolize_param(:attribute) || :declare
+	extension_form(ok_action) # FIXME need to get tag from action
 
     ###---(  EDIT VIEWS ) 
       when :edit;  
@@ -632,31 +632,41 @@ class Slot
   def extension_submenu(tag, menu_name, on)
     menu_name = menu_name.to_s
     div(:class=>'submenu') do
-      foo = (extension_forms(tag, menu_name).map { |key|
-
-	Rails.logger.info("extension_submenu #{menu_name} #{key.inspect}::#{on.inspect}")
-        link_to_remote( key, 
-          { :url=>url_for("card/#{menu_name}", [], key), :update => ([:name].member?(key) ? id('card-body') : id) }, 
-          :class=>(key.to_sym==on ? 'on' : '') 
-        )
-      })
-      Rails.logger.info("esub: #{foo.inspect}")
-      foo.compact.join
+      extension_forms(tag, menu_name) do |keycard, tcard, ok, args|
+	key = keycard.name
+#Rails.logger.info("extension_submenu #{key.inspect}:#{on.inspect} #{menu_name} #{ok}::#{args.inspect}")
+        if ok 
+          link_to_remote( key, { :url=>url_for("card/#{menu_name}",args,key),
+             :update => id , :menu => key}, :class=>(key==on.to_s ? 'on' : '') )
+        end
+       end.compact.join
      end  
   end
 
   def extension_forms(tag, menu_name)
-    return unless extcard = @card.extcard(tag) and
+#Rails.logger.info("ef 1 #{tag.inspect} : #{menu_name.inspect}")
+    raise "foo" if tag.to_s == 'declare'
+    return unless extcard = @card.extcard(tag.to_s) and
                   formcard = extcard.setting_card(menu_name.to_star) and
                   formcard.is_a?(Card::Pointer)
     formcard.pointees.map do |item|
-      if item =~ /\+([^\+]+)$/
-        tag = $~[1] || item
-Rails.logger.info("ef #{$~[1].inspect}[#{tag}] #{item}")
-        yield(tag) if block_given?
-        tag
+      if c = CachedCard.get_real(item) and c = c.card and
+	 tag = (c.tag || c)
+       	block_given? ? yield(tag, c, true, []) : tag
       end
     end
+  end
+
+  def extension_form(action)
+    ext_tag = '*sol' if action == :declare
+    raise "No tag" unless ext_tag
+#Rails.logger.info("extension_form st: #{ext_tag}:#{@state}:")
+    which_form = @state.to_s
+    extension_forms(ext_tag, action.to_s) do |keycard, tcard, ok, args|
+#Rails.logger.info("extension_form: #{keycard.name}:#{tcard.name}:#{ok}")
+      which_form = tcard if keycard.name == @state.to_s
+    end
+    which_form.content
   end
 
   def edit_submenu(on)

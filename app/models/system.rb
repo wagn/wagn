@@ -86,12 +86,11 @@ class System < ActiveRecord::Base
     end
     
     def xml_layout_from_setting(card)
-      card = CachedCard===card ? card.card : card #KLUDGE.  after CachedCard refactor we should get rid of this
       return unless setting_card = ((card && card.setting_card('xml_layout')) or Card.default_setting_card('xml_layout'))
       return unless setting_card.is_a?(Card::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.type == 'Pointer'        and
         layout_name=setting_card.pointee                  and
         !layout_name.nil?                                 and
-        lo_card = CachedCard.get_real(layout_name)    and
+        lo_card = Card.fetch(layout_name, :skip_virtual => true)    and
         lo_card.ok?(:read)
       lo_card
     end

@@ -255,10 +255,11 @@ class Slot
     ###----------------( NAME)
     
       when :link;  # FIXME -- this processing should be unified with standard link processing imho
-        opts = {:class=>"cardname-link #{(card.new_record? && !card.virtual?) ? 'wanted-card' : 'known-card'}"}
+        opts = {:class=>"cardname-link #{(card.new_record? && !card.virtual?) ? 'wanted-card' : 'known-card'}", :format=>format}
         opts[:type] = slot.type if slot.type 
-        opts[:format] = format
-        link_to_page card.name, card.name, opts
+	if xml?  # FIXME -- and this isn't necessary if chunks does links
+          %{<link class="#{opts[:class]}" href="/wagn/#{card.name}">#{card.name}</link>}
+        else link_to_page card.name, card.name, opts end
       when :name;     card.name
       when :key;      card.name.to_key
       when :linkname; Cardname.escape(card.name)
@@ -398,7 +399,7 @@ class Slot
       cache_action('naked_content') do
         #passed_in_content = args.delete(:content) # Can we get away without this??
         renderer_content = card.templated_content || ""
-        @renderer.render( card, renderer_content, update_refs=card.references_expired)
+        @renderer.render( card, renderer_content, update_refs=card.references_expired, format)
       end
     end
   end
@@ -637,7 +638,7 @@ class Slot
                   formcard = extcard.setting_card(menu_name.to_star) and
                   formcard.is_a?(Card::Pointer)
     formcard.pointees.map do |item|
-      if c = CachedCard.get_real(item) and c = c.card and
+      if c = Card.fetch(item, :skip_virtual=>true) and
 	 tag = (c.tag || c)
        	block_given? ? yield(tag, c, true, []) : tag
       end

@@ -112,7 +112,7 @@ class CardController < ApplicationController
       end
     }
     if xml.name == 'card'
-      this_card = CachedCard.get(card_name)
+      this_card = Card.fetch(card_name)
       # no card and no new content, don't update
       unless no_card || this_card.new_record? && !card_content
         card_cc = this_card.content

@@ -128,7 +128,7 @@ class CardController < ApplicationController
   def put
     @card_name = Cardname.unescape(params['id'] || '')
     raise("Need a card name to put") if (@card_name.nil? or @card_name.empty?)
-    @card = CachedCard.get(@card_name)
+    @card = Card.fetch(@card_name)
 
     #raise("PUT #{params.to_yaml}\n")
     content = request.body.read

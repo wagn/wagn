@@ -633,7 +633,6 @@ class Slot
 
   def extension_forms(tag, menu_name)
 #Rails.logger.info("ef 1 #{tag.inspect} : #{menu_name.inspect}")
-    raise "foo" if tag.to_s == 'declare'
     return unless extcard = @card.extcard(tag.to_s) and
                   formcard = extcard.setting_card(menu_name.to_star) and
                   formcard.is_a?(Card::Pointer)
@@ -719,16 +718,16 @@ class Slot
     if card.virtual?
       return %{<span class="card-menu faint">Virtual</span>\n}
     end
-    menu_options = card.menu_options(%w{view changes options related edit}).clone
+    menu_options = card.menu_options([:view,:changes,:options,:related,:edit]).clone
     Rails.logger.info("menu_options(#{menu_options.inspect})")
     top_option = menu_options.pop
     menu = %{<span class="card-menu">\n}
       menu << %{<span class="card-menu-left">\n}
         menu_options.each do |opt|
-          menu << link_to_menu_action(opt)
+          menu << link_to_menu_action(opt.to_s)
         end
       menu << "</span>"
-      menu << link_to_menu_action(top_option) 
+      menu << link_to_menu_action(top_option.to_s) 
     menu << "</span>"
   end
 

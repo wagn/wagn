@@ -521,17 +521,53 @@ module Card
     def tag_extensions
       extension_tags().keys.map do |tag|
         if extcard = Card[name+JOINT+tag]
-          yield(tag, extcard) if block_given?
-	  tag
-	end
+Rails.logger.info("tag_ext #{name} + #{tag}")
+          yield(tag, extcard) if block_given? else tag
+        end
       end.compact
     end  
   
     def menu_options(options=[])
-      new_opts = ((tag_extensions().map do |tag, extcard|
-        extension_tags()[tag]
-      end).flatten.compact.map.to_s)
-      options.push(new_opts) if new_opts.length > 0
+      tag_extensions() do |tag, extcard|
+        new_options = extension_tags()[tag]
+        if Hash===new_options
+          new_options.each_pair do |where, what|
+raise "nothing to push #{where}" unless what
+            if where == :top
+              options.push(*what)
+            elsif where == :bottom
+              options.unshift(*what)
+            elsif Array === where
+              action = where.shift
+              location = where.shift
+              idx = 0
+              if Symbol===location
+                idx = options.index(location)
+              elsif Fixnum===location
+                idx = location
+                idx = options.length+idx+1 if idx<0
+              else raise "Location? #{location.class} #{location.inspect}"
+              end
+              if action == :before
+                idx = if idx then idx-1 else -1 end
+              elsif action == :after
+                idx = options.length unless idx
+              else raise "Action? #{action.inspect}"
+              end
+              idx = options.length if idx > options.length
+              if idx < 0
+                options.unshift(*what)
+              else
+                options[idx,0] = what
+              end
+            end
+          end
+	else
+          if Array===new_options and new_options.length > 0 or new_options
+            options.push(*new_options)
+	  end
+        end
+      end
       options
     end
 

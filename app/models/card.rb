@@ -39,7 +39,8 @@ module Card
       nil
     end
 
-    def add_extension_tag(tag, options)
+    def add_extension_tag(tag, *options)
+      options = options[0] if options.length == 1
       Card::Base.extension_tags[tag] = options
     end
 

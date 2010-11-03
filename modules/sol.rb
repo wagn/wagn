@@ -18,8 +18,7 @@ module Sol
   end
 
   def self.included(base)
-    #base.send :helper_method, :has_sol?
-    Card.add_extension_tag('*sol', [:declare])
+    Card.add_extension_tag('*sol', :declare)
   end
 
   def has_sol?() true if solcard end  

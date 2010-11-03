@@ -533,9 +533,9 @@ Rails.logger.info("tag_ext #{name} + #{tag}")
         if Hash===new_options
           new_options.each_pair do |where, what|
 raise "nothing to push #{where}" unless what
-            if where == :top
+            if where == :right
               options.push(*what)
-            elsif where == :bottom
+            elsif where == :left
               options.unshift(*what)
             elsif Array === where
               action = where.shift
@@ -548,9 +548,9 @@ raise "nothing to push #{where}" unless what
                 idx = options.length+idx+1 if idx<0
               else raise "Location? #{location.class} #{location.inspect}"
               end
-              if action == :before
+              if action == :left_of or action == :before
                 idx = if idx then idx-1 else -1 end
-              elsif action == :after
+              elsif action == :right_of or action == :after
                 idx = options.length unless idx
               else raise "Action? #{action.inspect}"
               end

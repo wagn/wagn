@@ -296,8 +296,11 @@ class Slot
 
       when :declare;  # FIXME generalize this test for all extension actions
         Rails.logger.info("Render #{ok_action} #{card.name} : #{params.inspect} : #{args.inspect}")
-        @state=symbolize_param(:attribute) || :declare
-	extension_form(ok_action) # FIXME need to get tag from action
+        @state= symbolize_param(:attribute) || :declare
+	Rails.logger.info("State? #{@state}")
+        args[:add_javascript]=true
+        hidden_field_tag( :multi_edit, true) +
+        expand_inclusions( extension_form(ok_action) ) # FIXME need to get tag from action
 
     ###---(  EDIT VIEWS ) 
       when :edit;  
@@ -546,7 +549,8 @@ class Slot
     subslot.requested_view = vmode = (options[:view] || :content).to_sym
     action = case
       when [:name, :link, :linkname].member?(vmode)  ; vmode
-      when state==:edit       ; card.virtual? ? :edit_auto : :edit_in_form   
+      when [:edit, :declare, :comment].member?(state)
+	   card.virtual? ? :edit_auto : :edit_in_form   
       when new_card                       
         case   
           when vmode==:naked  ; :blank
@@ -619,10 +623,11 @@ class Slot
 
   def extension_submenu(tag, menu_name, on)
     menu_name = menu_name.to_s
+Rails.logger.info("extension_sub #{tag} #{menu_name}, #{on}")
     div(:class=>'submenu') do
       extension_forms(tag, menu_name) do |keycard, tcard, ok, args|
 	key = keycard.name
-#Rails.logger.info("extension_submenu #{key.inspect}:#{on.inspect} #{menu_name} #{ok}::#{args.inspect}")
+Rails.logger.info("extension_submenu #{key.inspect}:#{on.inspect} #{menu_name} #{ok}::#{args.inspect}")
         if ok 
           link_to_remote( key, { :url=>url_for("card/#{menu_name}",args,key),
              :update => id , :menu => key}, :class=>(key==on.to_s ? 'on' : '') )
@@ -647,11 +652,11 @@ class Slot
   def extension_form(action)
     ext_tag = '*sol' if action == :declare
     raise "No tag" unless ext_tag
-#Rails.logger.info("extension_form st: #{ext_tag}:#{@state}:")
-    which_form = @state.to_s
+Rails.logger.info("extension_form st: #{ext_tag}:#{@state}:")
+    which_form = nil #@state.to_s
     extension_forms(ext_tag, action.to_s) do |keycard, tcard, ok, args|
-#Rails.logger.info("extension_form: #{keycard.name}:#{tcard.name}:#{ok}")
-      which_form = tcard if keycard.name == @state.to_s
+Rails.logger.info("extension_form: #{keycard.name}:#{tcard.name}:#{ok}")
+      which_form = tcard if keycard.name == @state.to_s or not which_form
     end
     which_form.content
   end

@@ -1,27 +1,37 @@
-module Sol
-  protected
+class Card::Sol
+  class << self
 
-  def receive_breath
-    @card ||= Card.new(params[:card])
-    if has_sol? and !breath_in(:model=>@card)
-      render_card_errors(@card)
-      return false
+    def receive_breath(card, cards)
+Rails.logger.info("RB #{self.inspect} ")
+      if sol = Card::Sol.new(card.name) and
+          !sol.breath_in(:incoming=>cards)
+        render_card_errors(sol)
+        return false
+      end
+      true
     end
-    true
-  end                  
-  
-  def breath_in
-    opts = {
-      :model => @card,
-    }.merge(args)
-    breath(opts) 
+
+    def new(args)
+      Rails.logger.info("initialize Card::Sol #{args.inspect}")
+      card = Card.fetch(args)
+      solcard = card.extcard('*sol') if card
+      card
+    end
+  end
+
+  attr_accessor :solcard
+
+  def breath_in(args)
+    opts = {}.merge(args)
+    Rails.logger.info("Breath in: #{opts.inspect}")  # breath(opts)
   end
 
   def self.included(base)
+	  Rails.logger.info("add_extension from Sol #{base.inspect}")
     Card.add_extension_tag('*sol', :declare)
   end
 
-  def has_sol?() true if solcard end  
+  def has_sol?() true if solcard end
   def solcard() extcard('*sol') end
 end
 
@@ -29,18 +39,11 @@ CardController.class_eval do
   #----------------( Posting Currencies to Cards )
   def declare
     id = Cardname.unescape(params['id'] || '')
-    raise("Need a card to receive declarations") if (id.nil? or id.empty?)
-    if @card = Card.find_by_id(id)
-    Rails.logger.info("Declare #{@card && @card.name} #{@card && @card.inspect}")
-      if @card.has_ext?('*sol')
-        Rails.logger.info("Declare render it "+@card.name)
-        if ['name'].member?(params[:attribute])
-          render :partial=>"card/declare/#{params[:attribute]}" 
-        end
-      else
-        raise "no sol? #{@card && @card.name}"
-      end
-    end
+    raise("Need a card to receive declarations") if id.nil? or
+                        id.empty?
+    raise("Can't find card") unless @card = Card.find_by_id(id) || Card.fetch(id)
+Rails.logger.info("Declare #{@card && @card.name} #{@card && @card.inspect}")
+    Card::Sol.receive_breath(@card, params['cards']) if params['multi_edit']
   end
 end
 

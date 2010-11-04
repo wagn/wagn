@@ -73,8 +73,14 @@ module Card
       true
     end
         
-    def has_ext?(tag) true if extcard(tag) end  
-    def extcard(tag) Card[name+JOINT+tag] end
+    def has_ext?(tag)
+	    raise "No card #{self}" unless self
+	    Rails.logger.info("has_ext? #{self.inspect}")
+	    true if extcard(tag) end  
+    def extcard(tag) 
+	    raise "No card #{self}" unless self
+	    Rails.logger.info("extcard #{self}")
+	    Card[name+JOINT+tag] end
         
     private
       belongs_to :reader, :polymorphic=>true  
@@ -521,7 +527,7 @@ module Card
     def tag_extensions
       extension_tags().keys.map do |tag|
         if extcard = Card[name+JOINT+tag]
-Rails.logger.info("tag_ext #{name} + #{tag}")
+Rails.logger.info("tag_ext #{name} + #{tag} #{extcard.name}")
           yield(tag, extcard) if block_given? else tag
         end
       end.compact
@@ -530,9 +536,9 @@ Rails.logger.info("tag_ext #{name} + #{tag}")
     def menu_options(options=[])
       tag_extensions() do |tag, extcard|
         new_options = extension_tags()[tag]
+#Rails.logger.info("menu_options N: #{tag} #{new_options}")
         if Hash===new_options
           new_options.each_pair do |where, what|
-raise "nothing to push #{where}" unless what
             if where == :right
               options.push(*what)
             elsif where == :left

@@ -221,14 +221,9 @@ class CardController < ApplicationController
   #------------( deleting )
 
   def remove  
-    if params[:card]
-      @card.confirm_destroy = params[:card][:confirm_destroy]
-    end        
-    
+    @card.confirm_destroy = params[:card][:confirm_destroy] if params[:card]
     captcha_ok = captcha_required? ? verify_captcha : true   
-    unless captcha_ok
-      return render_update_slot( render_to_string(:partial=>'confirm_remove'), "confirmation required")
-    end
+    return render_update_slot( render_to_string(:partial=>'confirm_remove'), "confirmation required") unless captcha_ok
 
     @card.destroy
       

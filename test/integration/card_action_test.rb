@@ -33,13 +33,13 @@ class CardActionTest < ActionController::IntegrationTest
   def test_comment      
     User.as(:wagbot)  do
       @a = Card.find_by_name("A")  
-      @a.permit('comment', Role.find_by_codename('anon'))
+      @a.permit('comment', Role[:anon])
       @a.save!
     end
     post "card/comment/#{@a.id}", :card => { :comment=>"how come" }
     assert_response :success
   end      
-  
+=begin  
   def test_create_role_card   
     integration_login_as :admin
     post( 'card/create', :card=>{:content=>"test", :type=>'Role', :name=>"Editor"})
@@ -64,17 +64,6 @@ class CardActionTest < ActionController::IntegrationTest
     assert_response 418
     assert_equal "testcontent2", Card["Editor"].content
   end
-
-  
-  def test_comment
-    @a = Card.find_by_name("A")  
-    User.as :wagbot  do
-      @a.permit :comment, Role.find_by_codename('anon')
-      @a.save
-    end
-    post "card/comment/#{@a.id}", :card => { :comment=>"how come" }
-    assert_response :success
-  end 
 
 
   def test_newcard_shows_edit_instructions
@@ -101,7 +90,7 @@ class CardActionTest < ActionController::IntegrationTest
     assert_response :success
     assert_tag :tag=>'div', :attributes=>{:class=>'error', :id=>'no-cardtype-error'}
   end
-
+=end
   # FIXME: this should probably be files in the spot for a remove test
   def test_removal_and_return_to_previous_undeleted_card_after_deletion
     t1 = t2 = nil

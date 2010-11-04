@@ -5,7 +5,7 @@ module Wagn
         @@preload = false
         if RAILS_ENV =~ /cucumber|test/
           Card.cache = Wagn::Cache.new nil, system_prefix
-          preload_cache_for_tests if RAILS_ENV=='cucumber'
+          preload_cache_for_tests if preload_cache?
         else
           Card.cache = Wagn::Cache.new Rails.cache, system_prefix
         end
@@ -20,6 +20,10 @@ module Wagn
         Role[:auth]; Role[:anon]
         @@frozen = Marshal.dump([Card.cache, Role.cache])
       end
+      
+      def preload_cache?
+        @@preload = (RAILS_ENV=='cucumber' || ENV['PRELOAD_CACHE'])
+      end
 
       def system_prefix
         cache_env = (RAILS_ENV == 'cucumber') ? 'test' : RAILS_ENV
@@ -28,12 +32,12 @@ module Wagn
 
       def re_initialize_for_new_request
         Card.cache.system_prefix = system_prefix
-        reset_local unless @@preload
+        reset_local unless preload_cache?
       end
 
       def reset_for_tests
         reset_global
-        Card.cache, Role.cache = Marshal.load(@@frozen) if @@preload
+        Card.cache, Role.cache = Marshal.load(@@frozen) if preload_cache?
       end
 
 

@@ -83,6 +83,7 @@ class WikiContent < String
             " " 
           end
         end
+        string.gsub!(/<\!--.*?-->/, '')
         string
       end
     

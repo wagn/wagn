@@ -5,7 +5,7 @@ describe "Permission", ActiveSupport::TestCase do
   before do
     User.as( :wagbot )
     @u1, @u2, @u3 = %w( u1 u2 u3 ).map do |x| ::User.find_by_login(x) end
-    @r1, @r2, @r3 = %w( r1 r2 r3 ).map do |x| ::Role.find_by_codename(x) end
+    @r1, @r2, @r3 = %w( r1 r2 r3 ).map do |x| ::Role[x] end
     @c1, @c2, @c3 = %w( c1 c2 c3 ).map do |x| Card.find_by_name(x) end
   end      
 
@@ -192,7 +192,7 @@ describe "Permission", ActiveSupport::TestCase do
        [@c1,@c2,@c3].each do |c| 
          c.update_attribute(:content, 'WeirdWord')
          c.save
-         c.permit(:read, Role.find_by_codename('anon'))    #fixme -- this should be done by setting the cardtype perms
+         c.permit(:read, Role[:anon])    #fixme -- this should be done by setting the cardtype perms
        end
        @c1.permit(:read,@u1); @c1.save
      end
@@ -215,7 +215,7 @@ describe "Permission", ActiveSupport::TestCase do
       [@c1,@c2,@c3].each do |c| 
         c.update_attribute(:content, 'WeirdWord')
         c.save
-        c.permit(:read, Role.find_by_codename('anon'))    
+        c.permit(:read, Role[:anon])    
       end
       @c1.permit(:read, @r1); @c1.save
     end
@@ -343,8 +343,8 @@ end
 describe Card, "updating permissions" do
   before do
     User.as :wagbot 
-    @anon = Role.find_by_codename 'anon'
-    @auth = Role.find_by_codename 'auth'
+    @anon = Role[:anon]
+    @auth = Role[:auth]
     @perms = [:read,:edit,:comment,:delete].map{|t| ::Permission.new(:task=>t.to_s, :party=>@anon)}
     @c = Card.find_by_name 'X'
     @c.permissions=@perms
@@ -369,7 +369,7 @@ describe Card, "Permit method on existing card" do
   before do
     User.as :wagbot 
     @c = Card.find_by_name 'X'
-    @r2 = Role.find_by_codename 'r2'
+    @r2 = Role['r2']
     @c.permit(:read, @r2)
     @c.save!
   end
@@ -397,7 +397,7 @@ describe Card, "Permit method on new card" do
   before do
     User.as :wagbot 
     @c = Card.create :name=>'New Bee'
-    @r2 = Role.find_by_codename 'r2'
+    @r2 = Role['r2']
     @c.permit(:read, @r2)
     @c.save
   end

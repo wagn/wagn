@@ -31,7 +31,7 @@ module Card
     end
    
    
-    belongs_to :trunk, :class_name=>'Card::Base', :foreign_key=>'trunk_id' #, :dependent=>:dependent
+    belongs_to :trunk, :class_name=>'Card::Base', :foreign_key=>'trunk_id', :conditions=>"trash is false" #, :dependent=>:dependent
     has_many   :right_junctions, :class_name=>'Card::Base', :foreign_key=>'trunk_id'#, :dependent=>:destroy  
 
     belongs_to :tag, :class_name=>'Card::Base', :foreign_key=>'tag_id' #, :dependent=>:destroy
@@ -101,12 +101,10 @@ module Card
       # if trunk and tag are new, they will be saved when the parent
       # card is saved.
       if simple? and name and name.junction? and name.valid_cardname? 
-        self.trunk = Card.find_or_new :name=>name.parent_name
-        self.tag =   Card.find_or_new :name=>name.tag_name
+        self.trunk = Card.fetch_or_new name.parent_name, {:skip_virtual=>true}
+        self.tag =   Card.fetch_or_new name.tag_name,    {:skip_virtual=>true}
         #puts "Found or Newed trunk #{self.trunk.name}"
         #puts "Found or Newed tag #{self.tag.name}"
-        raise Exception, "missing permissions on #{self.trunk.name}" if self.trunk.permissions.empty?
-        raise Exception, "missing permissions on #{self.tag.name}, #{self.tag.inspect}" if self.tag.permissions.empty?
       end
       
       # now that we have trunk and tag;
@@ -168,6 +166,9 @@ module Card
       end
     end
     
+    
+
+
         
     public
 
@@ -182,15 +183,22 @@ module Card
       alias_method :ar_new, :new
 
       def new(args={})
-        # standardize arguments ( why strings? )
         args = {} if args.nil?
         args = args.stringify_keys
-
-        # FIXME: if a name is given, we want to check 
-        # if the card is virtual or in the trash
         
+        card_class, broken_type = get_class(args)
+        new_card = card_class.ar_new args
+        
+        yield(new_card) if block_given?
+        new_card.broken_type = broken_type if broken_type
+        new_card.send( :set_defaults, args ) unless args['skip_defaults'] 
+        new_card
+      end 
+
+      def get_class(args={})
         calling_class = self.name.split(/::/).last
         typetype = :codename
+        
         args['type'] =
           case
           when args['typecode'];                args.delete('typecode')
@@ -201,82 +209,54 @@ module Card
             setting = Card::Basic.new(:name=> args['name'], :skip_defaults=>true ).setting_card('content', 'default')
             setting ? setting.type : 'Basic'
           end
+          
         card_class = Card.class_for( args['type'], typetype ) || (
           broken_type = args['type']; Card::Basic
         )
-        args.delete('type') # create new card based on the class we've determined (not arg['type'])
-
-
-        new_card = card_class.ar_new args
-        yield(new_card) if block_given?
-        new_card.broken_type = broken_type if broken_type
-        new_card.send( :set_defaults, args ) unless args['skip_defaults'] 
-        new_card
-      end 
-
+        args.delete('type')
+        return card_class, broken_type
+      end
+      
       def get_name_from_args(args={})
         args ||= {}
         args['name'] || (args['trunk'] && args['tag']  ? args["trunk"].name + "+" + args["tag"].name : "")
       end      
 
-      # FIXME: I hate hate hate hate this trash code.
-      def create_with_trash!(args={})   
-        args.stringify_keys!
-        if c = Card.find_by_key_and_trash(get_name_from_args(args).to_key, true)
-          args.merge('trash'=>false).each { |k,v|  c.send( "#{k}=", v ) }
-          c.send(:callback, :before_validation_on_create)
-          c.save!   
-          c
-        else
-          create_without_trash! args
-        end
+      def create_with_trash!(args)
+        c, args = create_prep(args)
+        c ? (c.save!; c) : create_without_trash!(args)
       end
       alias_method_chain :create!, :trash
 
-      def create_with_trash(args={})
+      def create_with_trash(args)
+        c, args = create_prep(args)
+        c ? (c.save; c) : create_without_trash(args)
+      end
+      alias_method_chain :create, :trash   
+      
+      # standardize args; if in trash, retrieve and prepare
+      def create_prep(args={})
         args.stringify_keys!
         if c = Card.find_by_key_and_trash(get_name_from_args(args).to_key, true)
           args.merge('trash'=>false).each { |k,v|  c.send( "#{k}=", v) }
           c.send(:callback, :before_validation_on_create)
-          c.save
-          c
-        else
-          create_without_trash args
         end
+        return c, args
       end
-      alias_method_chain :create, :trash   
       
       def default_class
         self==Card::Base ? Card.const_get( Card.default_cardtype_key ) : self
       end
       
       def find_or_create!(args={})
-        c = find_or_new(args); c.save!; c
+        raise "find or create must have name" unless args[:name]
+        c = Card.fetch_or_create(args[:name], {}, args)
       end
       
       def find_or_create(args={})
-        c = find_or_new(args); c.save; c
-      end
-      
-      def find_or_new(args={})
-        args.stringify_keys!
-        raise "Must specify :name to find_or_create" if args['name'].blank?
-        column = ActiveRecord::Base.connection.quote_column_name("key")  # really there's not a better way to do this?
-        if c = Card.find(:first, :conditions=>"#{column} = '#{args['name'].to_key}'")
-          raise "missing permissions from find #{c.name}" if c.permissions.empty?
-        else
-          c = Card.new( args )
-          raise "missing permissions from new" if c.permissions.empty? && !args[:skip_defaults]
-        end
-
-        if c.trash
-          ::User.as(:wagbot) do
-            c.content=''  
-            c.trash=false
-          end
-        end
-        c
-      end                      
+        raise "find or create must have name" unless args[:name]
+        c = Card.fetch_or_create(args[:name], {}, args)
+      end                  
     end
 
     def multi_create(cards)
@@ -553,26 +533,8 @@ module Card
       
 
     validates_presence_of :name
-
-    # FIXME what do these actually do?  is it expensive?  worth doing? 
-    #  especially the polymorphic ones..
-    #validates_associated :trunk
-    #validates_associated :tag   #-- breaks priority spec
     validates_associated :extension #1/2 ans:  this one runs the user validations on user cards. 
-  #  validates_associated :reader
-  #  validates_associated :writer 
-  #  validates_associated :appender   
-    
-    
-    # Freaky-- when enabled, this throws some Confirmation required errors on things that shouldn't be changing
-    # in the template_spec
-    #validates_each :trunk do |rec,attr,value|
-    #  if card = value
-    #    if !card.valid? 
-    #      rec.errors.add :trunk, card.errors.full_messages.join(',')
-    #    end
-    #  end
-    #end
+
 
     validates_each :name do |rec, attr, value|
       if rec.updates.for?(:name)

@@ -30,6 +30,20 @@ module Cardlib
     def set_name(newname)
       oldname = self.name_without_tracking
       self.name_without_tracking = newname 
+      
+      if newname.junction?
+        if !new_record? && newname.to_key != oldname.to_key
+          # move the current card out of the way, in case the new name will require
+          # re-creating a card with the current name, ie.  A -> A+B     
+          tmp_name = "tmp:" + UUID.new.generate      
+          connection.update %{update cards set #{quoted_comma_pair_list(connection, {:name=>"'#{tmp_name}'",:key=>"'#{tmp_name}'"})} where id=#{id}}
+        end
+        self.trunk = Card.find_or_create :name=>newname.parent_name
+        self.tag = Card.find_or_create :name=>newname.tag_name
+      else
+        self.trunk = self.tag = nil
+      end         
+      
       return if new_record?
       return if oldname==newname
           
@@ -45,18 +59,6 @@ module Cardlib
         ::Cardtype.reset_cache
       end
             
-      if newname.junction?
-        if newname.to_key != oldname.to_key
-          # move the current card out of the way, in case the new name will require
-          # re-creating a card with the current name, ie.  A -> A+B     
-          tmp_name = "tmp:" + UUID.new.generate      
-          connection.update %{update cards set #{quoted_comma_pair_list(connection, {:name=>"'#{tmp_name}'",:key=>"'#{tmp_name}'"})} where id=#{id}}
-        end
-        self.trunk = Card.find_or_create :name=>newname.parent_name
-        self.tag = Card.find_or_create :name=>newname.tag_name
-      else
-        self.trunk = self.tag = nil
-      end         
       @name_changed = true          
       @old_name = oldname
       @search_content_changed=true

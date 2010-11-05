@@ -84,6 +84,12 @@ module Cardlib
         card_opts[:name] = cardname
         fetch( cardname, fetch_opts ) || Card.new( card_opts )
       end
+      
+      def fetch_or_create cardname, fetch_opts = {}, card_opts = {}
+        card_opts[:name] = cardname
+        fetch_opts[:skip_virtual] ||= true
+        fetch( cardname, fetch_opts ) || Card.create( card_opts )
+      end
 
       def preload cards, opts = {}
         cards.each do |card|

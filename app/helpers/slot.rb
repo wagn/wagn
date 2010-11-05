@@ -295,9 +295,8 @@ class Slot
       when :raw; card.content
 
       when :declare;  # FIXME generalize this test for all extension actions
-        Rails.logger.info("Render #{ok_action} #{card.name} : #{params.inspect} : #{args.inspect}")
         @state= symbolize_param(:attribute) || :declare
-	Rails.logger.info("State? #{@state}")
+Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspect} : #{args.inspect}")
         args[:add_javascript]=true
         hidden_field_tag( :multi_edit, true) +
         expand_inclusions( extension_form(ok_action) ) # FIXME need to get tag from action
@@ -623,11 +622,11 @@ class Slot
 
   def extension_submenu(tag, menu_name, on)
     menu_name = menu_name.to_s
-Rails.logger.info("extension_sub #{tag} #{menu_name}, #{on}")
+#Rails.logger.info("extension_sub #{tag} #{menu_name}, #{on}")
     div(:class=>'submenu') do
       extension_forms(tag, menu_name) do |keycard, tcard, ok, args|
 	key = keycard.name
-Rails.logger.info("extension_submenu #{key.inspect}:#{on.inspect} #{menu_name} #{ok}::#{args.inspect}")
+#Rails.logger.info("extension_submenu #{key.inspect}:#{on.inspect} #{menu_name} #{ok}::#{args.inspect}")
         if ok 
           link_to_remote( key, { :url=>url_for("card/#{menu_name}",args,key),
              :update => id , :menu => key}, :class=>(key==on.to_s ? 'on' : '') )
@@ -652,10 +651,10 @@ Rails.logger.info("extension_submenu #{key.inspect}:#{on.inspect} #{menu_name} #
   def extension_form(action)
     ext_tag = '*sol' if action == :declare
     raise "No tag" unless ext_tag
-Rails.logger.info("extension_form st: #{ext_tag}:#{@state}:")
+#Rails.logger.info("extension_form st: #{ext_tag}:#{@state}:")
     which_form = nil #@state.to_s
     extension_forms(ext_tag, action.to_s) do |keycard, tcard, ok, args|
-Rails.logger.info("extension_form: #{keycard.name}:#{tcard.name}:#{ok}")
+#Rails.logger.info("extension_form: #{keycard.name}:#{tcard.name}:#{ok}")
       which_form = tcard if keycard.name == @state.to_s or not which_form
     end
     which_form.content
@@ -724,7 +723,7 @@ Rails.logger.info("extension_form: #{keycard.name}:#{tcard.name}:#{ok}")
       return %{<span class="card-menu faint">Virtual</span>\n}
     end
     menu_options = card.menu_options([:view,:changes,:options,:related,:edit]).clone
-    Rails.logger.info("menu_options(#{menu_options.inspect})")
+#Rails.logger.info("menu_options(#{menu_options.inspect})")
     top_option = menu_options.pop
     menu = %{<span class="card-menu">\n}
       menu << %{<span class="card-menu-left">\n}

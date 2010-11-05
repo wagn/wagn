@@ -1,38 +1,42 @@
-class Card::Sol
-  class << self
+module Sol
 
-    def receive_breath(card, cards)
-Rails.logger.info("RB #{self.inspect} ")
-      if sol = Card::Sol.new(card.name) and
-          !sol.breath_in(:incoming=>cards)
-        render_card_errors(sol)
-        return false
-      end
-      true
-    end
+  attr_reader :solcard
 
-    def new(args)
-      Rails.logger.info("initialize Card::Sol #{args.inspect}")
-      card = Card.fetch(args)
-      solcard = card.extcard('*sol') if card
-      card
+  def receive_breath(cards)
+    if sol = solcard and
+        !sol.integrate(sol.parse_fields(cards))
+      render_card_errors(sol)
+      return false
     end
+    true
   end
 
-  attr_accessor :solcard
+  def parse_fields(cards)
+    opts={}
+    ctxname = Regexp.escape(trunk.name) if trunk
+    solname = Regexp.escape(name)
+    cards.each_pair do |name, value|
+      name = name.post_cgi.to_absolute(name)
+      name.sub!(/^#{solname}\+/,'CTXSOL+') if ctxname
+      name.sub!(/^#{ctxname}\+/,'CTX+')
+      type, content = value[:type], value[:content]
+#Rails.logger.info("Post field: #{name} => #{type}::#{content}")
+      opts[name] = content
+    end
+    opts
+  end
 
-  def breath_in(args)
-    opts = {}.merge(args)
-    Rails.logger.info("Breath in: #{opts.inspect}")  # breath(opts)
+  def integrate(opts)
+    Rails.logger.info("Integrate breath to my context: #{opts.inspect}")
   end
 
   def self.included(base)
-	  Rails.logger.info("add_extension from Sol #{base.inspect}")
+#Rails.logger.info("add_extension from Sol #{base.inspect}")
     Card.add_extension_tag('*sol', :declare)
   end
 
   def has_sol?() true if solcard end
-  def solcard() extcard('*sol') end
+  def solcard() @solcard ||= extcard('*sol') end
 end
 
 CardController.class_eval do
@@ -41,11 +45,11 @@ CardController.class_eval do
     id = Cardname.unescape(params['id'] || '')
     raise("Need a card to receive declarations") if id.nil? or
                         id.empty?
-    raise("Can't find card") unless @card = Card.find_by_id(id) || Card.fetch(id)
+    raise("Can't find card") unless @card = Card.find_by_id(id)
 Rails.logger.info("Declare #{@card && @card.name} #{@card && @card.inspect}")
-    Card::Sol.receive_breath(@card, params['cards']) if params['multi_edit']
+    @card.receive_breath(params['cards']) if params['multi_edit']
   end
 end
 
-Card.send :include, Sol
+Card::Base.send :include, Sol
 

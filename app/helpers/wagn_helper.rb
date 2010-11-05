@@ -260,7 +260,6 @@ module WagnHelper
   def wagn_form_for(record_or_name_or_array, *args, &proc)
     options = args.extract_options!
   
-    Rails.logger.info("wagn_form_for #{record_or_name_or_array.inspect} : #{options.keys.inspect} : #{options[:attribute].inspect} : #{args}")
     case record_or_name_or_array
     when String, Symbol
       object_name = record_or_name_or_array
@@ -277,7 +276,6 @@ module WagnHelper
     end
   
     concat(form_remote_tag(options))
-    Rails.logger.info("wagn_form_for #{record_or_name_or_array.inspect} : #{options.keys.inspect} : #{options[:attribute].inspect} : #{args}")
     fields_for(object_name, *(args << options), &proc)
     if args.second[:update]
       concat hidden_field_tag('_update','true')

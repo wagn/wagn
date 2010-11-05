@@ -1,25 +1,23 @@
 <%= get_slot.extension_submenu('*sol', :declare, params[:attribute]||:declare) %>
-<% Rails.logger.info("attribute: #{params[:attribute]}") %>
-
 <% if params[:view] != 'setting' && inst = card.setting_card('declare help') %>
   <div class="instruction"><%= slot.subslot(inst).render :naked %></div>
 <% end %>
 
 <% div( :id=>slot.id('declare-area'), :class=>"declaror declare-area #{card.hard_template ? :templated : ''}" ) do %>
-<% Rails.logger.info("attribute: #{params[:attribute]}") %>
 
-	<% wagn_form_for :card, card,
-		:url=>"card/declare/#{card.name.to_url_key}?attribute=#{params[:attribute]||:declare}", :slot=>slot,
-           :html=>{ :class=>'form declaror',:onsubmit=>slot.save_function, :id=>(slot.context + '-form') } do |form| %>
-		<div>
-		  <% slot.form = form %> 
-		  <%= slot.render( :declare ) %>
-		</div>                  
-		<%= slot.half_captcha %>
-		<div class="declare-button-area">
-  		<%= button_to_function "Declare", "this.form.onsubmit()", :class=>'save-card-button' %>
-  		<%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function } %> 
-  	</div>
-		
-	<% end %>
+  <% wagn_form_for :card, card, :url=>"card/declare", :slot=>slot,
+      :html=>{ :class=>'form declaror',:onsubmit=>slot.save_function,
+      :id=>(slot.context + '-form') } do |form| %>
+    <div>
+      <% slot.form = form %>
+      <%= slot.render( :declare ) %>
+    </div>
+    <%= slot.half_captcha %>
+    <div class="declare-button-area">
+      <%= hidden_field_tag(:attribute,params[:attribute]||:declare ) %>
+      <%= button_to_function "Declare", "this.form.onsubmit()", :class=>'save-card-button' %>
+      <%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function } %>
+    </div>
+
+  <% end %>
 <% end %>

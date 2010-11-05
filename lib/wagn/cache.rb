@@ -12,7 +12,6 @@ module Wagn
       end
       
       def preload_cache_for_tests
-        @@preload = true
         set_keys = ['*all','basic+*type','html+*type','*cardtype+*type','*sidebar+*self']
         set_keys.map{|k| [k, "#{k}+*content", "#{k}+*default"]}.flatten.each do |key|        
           Card.fetch key
@@ -22,7 +21,7 @@ module Wagn
       end
       
       def preload_cache?
-        @@preload = (RAILS_ENV=='cucumber' || ENV['PRELOAD_CACHE'])
+        @@preload ||= ((RAILS_ENV=='cucumber') || ENV['PRELOAD_CACHE'])
       end
 
       def system_prefix

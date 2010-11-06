@@ -31,7 +31,7 @@ module Card
     end
    
    
-    belongs_to :trunk, :class_name=>'Card::Base', :foreign_key=>'trunk_id', :conditions=>"trash is false" #, :dependent=>:dependent
+    belongs_to :trunk, :class_name=>'Card::Base', :foreign_key=>'trunk_id' #, :dependent=>:dependent
     has_many   :right_junctions, :class_name=>'Card::Base', :foreign_key=>'trunk_id'#, :dependent=>:destroy  
 
     belongs_to :tag, :class_name=>'Card::Base', :foreign_key=>'tag_id' #, :dependent=>:destroy
@@ -86,38 +86,28 @@ module Card
     
     def set_defaults args
       # autoname
-      #Rails.logger.debug "Card(#{name})#set_defaults with args #{args.inspect} begin"
       if args["name"].blank?
         ::User.as(:wagbot) do
           if ac = setting_card('autoname') and autoname_card = ac.card
             self.name = autoname_card.content
-            autoname_card.content = autoname_card.content.next
+            autoname_card.content = autoname_card.content.next  #fixme, should give placeholder on new, do next and save on create
             autoname_card.save!
           end                                         
         end
       end
       
-      # auto-creation of left and right components
-      # if trunk and tag are new, they will be saved when the parent
-      # card is saved.
-      if simple? and name and name.junction? and name.valid_cardname? 
-        self.trunk = Card.fetch_or_new name.parent_name, {:skip_virtual=>true}
-        self.tag =   Card.fetch_or_new name.tag_name,    {:skip_virtual=>true}
-        #puts "Found or Newed trunk #{self.trunk.name}"
-        #puts "Found or Newed tag #{self.tag.name}"
+      # The followin ar only necessary for setting permissions.  Should remove once we have set/setting -based perms
+      if name and name.junction? and name.valid_cardname? 
+        self.trunk ||= Card.fetch_or_new name.parent_name, {:skip_virtual=>true}
+        self.tag   ||= Card.fetch_or_new name.tag_name,    {:skip_virtual=>true}
       end
       
-      # now that we have trunk and tag;
-      # handle default content and permissions
-      if new_record? and !virtual?
-        if !args['permissions']
-          self.permissions = default_permissions
-        end
+      self.permissions = default_permissions if !args['permissions']
 
-        ::User.as(:wagbot) do
-          if !args['content'] and self.content.blank? and default_card = setting_card('default')
-            self.content = default_card.content
-          end
+      #default content
+      ::User.as(:wagbot) do
+        if !args['content'] and self.content.blank? and default_card = setting_card('default')
+          self.content = default_card.content
         end
       end
       
@@ -477,7 +467,7 @@ module Card
     end
 
     def simple?() 
-      self.trunk.nil? 
+      name.simple? 
     end
     
     def junction?() !simple? end

@@ -50,7 +50,7 @@ module Card
                
     #before_validation_on_create :set_needed_defaults
     
-    attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, 
+    attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :from_trash,
       :update_referencers, :allow_type_change, :virtual, :builtin, :broken_type, :skip_defaults, :loaded_trunk
 
     # setup hooks on AR callbacks
@@ -82,7 +82,8 @@ module Card
       def on_type_change
       end  
       
-    protected        
+    public
+        
     
     def set_defaults args
       # autoname
@@ -118,7 +119,6 @@ module Card
       #Rails.logger.debug "Card(#{name})#set_defaults end"
       self
     end
-
     
     def default_permissions
       source_card = setting_card('content', 'default')
@@ -160,7 +160,6 @@ module Card
 
 
         
-    public
 
     # FIXME: this is here so that we can call .card  and get card whether it's cached or "real".
     # goes away with cached_card refactor
@@ -186,10 +185,16 @@ module Card
       end 
 
       def get_class(args={})
+        type, typetype = get_type(args)
+        card_class = Card.class_for( type, typetype ) || ( broken_type = type; Card::Basic)
+        return card_class, broken_type
+      end
+      
+      def get_type(args={})
         calling_class = self.name.split(/::/).last
         typetype = :codename
         
-        args['type'] =
+        type= 
           case
           when args['typecode'];                args.delete('typecode')
           when calling_class != 'Base';         calling_class
@@ -199,12 +204,9 @@ module Card
             setting = Card::Basic.new(:name=> args['name'], :skip_defaults=>true ).setting_card('content', 'default')
             setting ? setting.type : 'Basic'
           end
-          
-        card_class = Card.class_for( args['type'], typetype ) || (
-          broken_type = args['type']; Card::Basic
-        )
+        
         args.delete('type')
-        return card_class, broken_type
+        return type, typetype 
       end
       
       def get_name_from_args(args={})
@@ -214,7 +216,7 @@ module Card
 
       def create_with_trash!(args)
         c, args = create_prep(args)
-        c ? (c.save!; c) : create_without_trash!(args)
+        c ? (c.save!; puts "in create_with_trash!, extension = #{c.extension}"; c) : create_without_trash!(args)
       end
       alias_method_chain :create!, :trash
 
@@ -228,7 +230,11 @@ module Card
       def create_prep(args={})
         args.stringify_keys!
         if c = Card.find_by_key_and_trash(get_name_from_args(args).to_key, true)
-          args.merge('trash'=>false).each { |k,v|  c.send( "#{k}=", v) }
+          c.from_trash = true
+          type, typetype = Card.get_type(args)
+          c.type = (typetype == :cardname ? ::Cardtype.classname_for(type) : type) 
+          c.set_defaults args unless args[:skip_defaults]
+          args.each { |k,v|  c.send( "#{k}=", v) }
           c.send(:callback, :before_validation_on_create)
         end
         return c, args
@@ -289,6 +295,10 @@ module Card
         end
       end  
       Wagn::Hook.call :after_multi_save, self, cards
+    end
+
+    def new_card?
+      new_record? || from_trash
     end
 
     def destroy_with_trash(caller="")     
@@ -622,6 +632,7 @@ module Card
         unless Card.class_for(value, :codename)
           rec.errors.add :type, "won't work.  There's no cardtype named '#{value}'"
         end
+        
       end
     end  
   

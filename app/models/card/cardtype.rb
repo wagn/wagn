@@ -25,7 +25,7 @@
       newclass = Class.new( ::Card::Basic )
       ::Card.const_set class_name, newclass
       self.extension = ::Cardtype.create!( :class_name => class_name )
-      #self.extension
+      self.extension
     end
     
     def me_type

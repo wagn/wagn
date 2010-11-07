@@ -69,7 +69,7 @@ module Cardlib
     def approved?  
       self.operation_approved = true    
       self.permission_errors = []
-      if new_record?
+      if new_card?
         approve_create_me
       end
       updates.each_pair do |attr,value|
@@ -102,7 +102,7 @@ module Cardlib
 
 
     def permit(task, party) #assign permissions
-      ok! :permissions unless new_record?# might need stronger checks on new records 
+      ok! :permissions unless new_card?# might need stronger checks on new records 
       perms = self.permissions.reject { |p| p.task == task.to_s }
       perms << Permission.new(:task=>task.to_s, :party=>party)
       self.permissions= perms
@@ -161,7 +161,7 @@ module Cardlib
     end
     
     def approve_name
-      approve_task(:edit) unless new_record?     
+      approve_task(:edit) unless new_card?     
     end
     
     def approve_create     
@@ -183,7 +183,7 @@ module Cardlib
     end
 
     def approve_type
-      unless new_record?       
+      unless new_card?       
         approve_delete
 #        if right_template and right_template.hard_template? and right_template.type!=type and !allow_type_change
 #          deny_because you_cant( "change the type of this card -- it is hard templated by #{right_template.name}")
@@ -196,7 +196,7 @@ module Cardlib
     end
 
     def approve_content
-      unless new_record?
+      unless new_card?
         approve_edit
         if tmpl = hard_template 
           deny_because you_cant("change the content of this card -- it is hard templated by #{tmpl.name}")
@@ -206,7 +206,7 @@ module Cardlib
    
     def approve_permissions
       return if System.always_ok?
-      unless System.ok?(:set_card_permissions) or new_record?
+      unless System.ok?(:set_card_permissions) or new_card?
         #FIXME-perm.  on new cards we should check that permission has not been altered from default unless user can set permissions. 
         deny_because you_cant("set permissions" )
       end

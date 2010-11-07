@@ -68,7 +68,7 @@ module Cardlib
     def set_type(new_type)
       #warn "set type called on #{name} to #{new_type}"
       self.type_without_tracking = new_type 
-      return if new_record?
+      return if new_card?
       on_type_change # FIXME this should be a callback
       templatees = hard_templatees
       if !templatees.empty?

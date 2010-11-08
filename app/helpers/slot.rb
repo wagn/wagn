@@ -299,6 +299,8 @@ class Slot
 Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspect} : #{args.inspect}")
         args[:add_javascript]=true
         hidden_field_tag( :multi_edit, true) +
+        hidden_field_tag( :attribute, @state ) +
+        hidden_field_tag( :ctxsig, @card.solcard.signature) +
         expand_inclusions( extension_form(ok_action) ) # FIXME need to get tag from action
 
     ###---(  EDIT VIEWS ) 

@@ -97,7 +97,7 @@ module Card
         end
       end
       
-      # The followin ar only necessary for setting permissions.  Should remove once we have set/setting -based perms
+      # The following are only necessary for setting permissions.  Should remove once we have set/setting -based perms
       if name and name.junction? and name.valid_cardname? 
         self.trunk ||= Card.fetch_or_new name.parent_name, {:skip_virtual=>true}
         self.tag   ||= Card.fetch_or_new name.tag_name,    {:skip_virtual=>true}
@@ -112,6 +112,7 @@ module Card
         end
       end
       
+
       # misc defaults- trash, key, fallbacks
       self.trash = false   
       self.key = name.to_key if name
@@ -214,39 +215,13 @@ module Card
         args['name'] || (args['trunk'] && args['tag']  ? args["trunk"].name + "+" + args["tag"].name : "")
       end      
 
-      def create_with_trash!(args)
-        c, args = create_prep(args)
-        c ? (c.save!; puts "in create_with_trash!, extension = #{c.extension}"; c) : create_without_trash!(args)
-      end
-      alias_method_chain :create!, :trash
-
-      def create_with_trash(args)
-        c, args = create_prep(args)
-        c ? (c.save; c) : create_without_trash(args)
-      end
-      alias_method_chain :create, :trash   
-      
-      # standardize args; if in trash, retrieve and prepare
-      def create_prep(args={})
-        args.stringify_keys!
-        if c = Card.find_by_key_and_trash(get_name_from_args(args).to_key, true)
-          c.from_trash = true
-          type, typetype = Card.get_type(args)
-          c.type = (typetype == :cardname ? ::Cardtype.classname_for(type) : type) 
-          c.set_defaults args unless args[:skip_defaults]
-          args.each { |k,v|  c.send( "#{k}=", v) }
-          c.send(:callback, :before_validation_on_create)
-        end
-        return c, args
-      end
       
       def default_class
         self==Card::Base ? Card.const_get( Card.default_cardtype_key ) : self
       end
       
       def find_or_create!(args={})
-        raise "find or create must have name" unless args[:name]
-        c = Card.fetch_or_create(args[:name], {}, args)
+        find_or_create(args) || raise(RecordNotSaved)
       end
       
       def find_or_create(args={})
@@ -254,6 +229,31 @@ module Card
         c = Card.fetch_or_create(args[:name], {}, args)
       end                  
     end
+
+
+    def save_with_trash!
+      save || raise(RecordNotSaved)
+    end
+    alias_method_chain :save!, :trash
+
+    def save_with_trash(perform_checking=true)
+      Rails.logger.debug "calling save with trash on #{name}"
+      pull_from_trash if new_record?
+      save_without_trash(perform_checking)
+    end
+    alias_method_chain :save, :trash   
+    
+    # standardize args; if in trash, retrieve and prepare
+    def pull_from_trash
+      return unless key
+      return unless trashed_card = Card.find_by_key_and_trash(key, true) 
+      #could optimize to use fetch if we add :include_trashed_cards or something.  likely low ROI
+      self.id = trashed_card.id
+      self.from_trash = true
+      @new_record = false
+      self.send(:callback, :before_validation_on_create)
+    end
+    
 
     def multi_create(cards)
       Wagn::Hook.call :before_multi_create, self, cards
@@ -306,11 +306,10 @@ module Card
         errors.add(:destroy, "could not prepare card for destruction")
         return false 
       end  
-      deps = self.dependents       
+      deps = self.dependents
       self.update_attribute(:trash, true) 
       deps.each do |dep|
         next if dep.trash
-        #warn "DESTROY  #{caller} -> #{name} !! #{dep.name}"
         dep.confirm_destroy = true
         dep.destroy_with_trash("#{caller} -> #{name}")
       end
@@ -436,7 +435,7 @@ module Card
     end
 
     def known?
-      !(new_record? && !virtual?)
+      !(new_card? && !virtual?)
     end
     
     def virtual?
@@ -454,7 +453,7 @@ module Card
     def content   
       # FIXME: we keep having permissions break when looking up system cards- this isn't great but better than error.
       #unless name=~/^\*|\+\*/  
-        new_record? ? ok!(:create_me) : ok!(:read) # fixme-perm.  might need this, but it's breaking create...
+        new_card? ? ok!(:create_me) : ok!(:read) # fixme-perm.  might need this, but it's breaking create...
       #end
       current_revision ? current_revision.content : ""
     end   

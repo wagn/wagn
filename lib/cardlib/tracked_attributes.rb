@@ -31,8 +31,11 @@ module Cardlib
       oldname = self.name_without_tracking
       self.name_without_tracking = newname 
       
+      return if new_card?
+      return if oldname==newname
+
       if newname.junction?
-        if !new_record? && newname.to_key != oldname.to_key
+        if newname.to_key != oldname.to_key
           # move the current card out of the way, in case the new name will require
           # re-creating a card with the current name, ie.  A -> A+B     
           tmp_name = "tmp:" + UUID.new.generate      
@@ -43,11 +46,8 @@ module Cardlib
       else
         self.trunk = self.tag = nil
       end         
-      
-      return if new_record?
-      return if oldname==newname
-          
-      if existing_card = Card.find_by_key(newname.to_key)  and existing_card != self
+
+      if existing_card = Card.find_by_key(newname.to_key) and existing_card != self
         if existing_card.trash  
           existing_card.update_attributes! :name=>existing_card.name+"*trash", :confirm_rename=>true
         else                             
@@ -133,7 +133,7 @@ module Cardlib
       # set_content bails out if we call it on a new record because it needs the
       # card id to create the revision.  call it again now that we have the id.
       
-      #return unless new_record?  # because create callbacks are also called in type transitions
+      #return unless new_card?  # because create callbacks are also called in type transitions
       return if on_create_skip_revision
       set_content updates[:content]
       updates.clear :content 

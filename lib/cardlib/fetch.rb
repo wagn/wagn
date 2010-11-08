@@ -13,7 +13,7 @@ module Cardlib
     mattr_accessor :cache
     mattr_accessor :debug
     self.debug = lambda {|x| false }
-    #self.debug = lambda {|name| name.to_key == '*recent_change' }
+#    self.debug = lambda {|name| name.to_key == 'a' }
 
     module ClassMethods
       def perform_caching?
@@ -50,10 +50,10 @@ module Cardlib
 
         card ||= begin
           Rails.logger.debug "   find_by_key: #{card.inspect}" if debug
-          Card.find_by_key( key )
+          Card.find_by_key_and_trash( key, false )
         end
 
-        if !opts[:skip_virtual] && (!card || card.missing? || card.trash? || card.builtin?)
+        if !opts[:skip_virtual] && (!card || card.missing? || card.builtin?)
           if virtual_card = Card.pattern_virtual( cardname )
             card = virtual_card
             Rails.logger.debug "   pattern_virtual: #{card.inspect}" if debug
@@ -72,8 +72,8 @@ module Cardlib
           Rails.logger.debug "   writing: #{card.inspect}" if debug
         end
 
-        if (card.missing? && !card.virtual?) || card.trash?
-          Rails.logger.debug "   final: nil"  if debug
+        if card.missing? && !card.virtual?
+          Rails.logger.debug "   final: missing (nil)"  if debug
           return nil
         end
         Rails.logger.debug "   final: #{card.inspect}"  if debug

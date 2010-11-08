@@ -347,9 +347,9 @@ Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspec
 
   
   def render_expanded_view_content
-    @state = 'view'
+    @state = 'view' #unless xml?
     expand_inclusions(  cache_action('view_content') {  
-      xml? ? render_open_content : card.post_render( render_open_content) 
+      xml? ? render_naked_content : card.post_render( render_open_content) 
     })
   end
   
@@ -402,7 +402,9 @@ Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspec
     else
       cache_action('naked_content') do
         #passed_in_content = args.delete(:content) # Can we get away without this??
-        renderer_content = card.templated_content || ""
+        renderer_content = (if xml? then card.xml_templated_content 
+                                    else card.templated_content end) || ""
+Rails.logger.info("render_naked_content[#{card.name}]#{renderer_content}")
         @renderer.render( card, renderer_content, update_refs=card.references_expired, format)
       end
     end
@@ -720,7 +722,7 @@ Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspec
     @template.render :partial=>'card/header', :locals=>{ :card=>card, :slot=>self }
   end
 
-  def menu   
+  def menu
     if card.virtual?
       return %{<span class="card-menu faint">Virtual</span>\n}
     end

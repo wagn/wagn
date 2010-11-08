@@ -27,7 +27,9 @@ module Cardlib
     end
 
     def hard_template
-      (template && template.hard_template?) ? template : nil
+      if not @template or not @template.hard_template?
+         @template = setting_card('content')
+      end
     end
     
     def template
@@ -38,6 +40,12 @@ module Cardlib
       hard_template
     end
     
+    def xml_templated_content
+      @template ||= setting_card('xml_content')
+      card=@template and User.as(:wagbot){ card.content } or
+      templated_content
+    end
+
     def templated_content
       card=hard_template and User.as(:wagbot){ card.content }
     end

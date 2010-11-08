@@ -797,7 +797,7 @@ Rails.logger.info("render_naked_content[#{card.name}]#{renderer_content}")
 
 
   def cardtype_field(form,options={})
-    @template.select_tag('card[type]', cardtype_options_for_select(card.type), options) 
+    @template.select_tag('card[type]', cardtype_options_for_select(Cardtype.name_for(card.type)), options) 
   end
 
   def update_cardtype_function(options={})

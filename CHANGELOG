@@ -1,4 +1,4 @@
-=== 1.5.0
+=== 1.5.0 (November 5, 2010)
 * refactor CachedCard
 * handle HTML entity characters properly
 * handle Unicode characters properly

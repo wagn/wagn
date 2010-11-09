@@ -12,7 +12,7 @@ describe Card, "deleted card" do
     #pending
     Card.create(:name=>'A+*account')
     c = Card['A']
-    c.trash.should_not be_true
+    c.trash.should be_false
   end
 end 
 

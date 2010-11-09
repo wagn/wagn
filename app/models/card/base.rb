@@ -237,7 +237,6 @@ module Card
     alias_method_chain :save!, :trash
 
     def save_with_trash(perform_checking=true)
-      Rails.logger.debug "calling save with trash on #{name}"
       pull_from_trash if new_record?
       save_without_trash(perform_checking)
     end
@@ -249,7 +248,7 @@ module Card
       return unless trashed_card = Card.find_by_key_and_trash(key, true) 
       #could optimize to use fetch if we add :include_trashed_cards or something.  likely low ROI
       self.id = trashed_card.id
-      self.from_trash = true
+      self.from_trash = self.confirm_rename = true
       @new_record = false
       self.send(:callback, :before_validation_on_create)
     end

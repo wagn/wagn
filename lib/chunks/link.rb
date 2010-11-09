@@ -14,15 +14,12 @@ module Chunk
       @format = content.format
       @link_type = :show
       if @card_name = match_data[1] 
-        # matched the [[..]]  case
+        # matched the [[..(|..)?]]  case, 1=first slot, 3=sencond
         @link_text = match_data[  match_data[2] ? 3 : 1 ]
       else
-        # matched [..][..] case, 3=first slot, 5=second
-        @link_text = match_data[4]
-        @card_name = match_data[5]  #.gsub(/_/,' ')
+        # matched [..][..] case, 4=first slot, 5=second
+        @link_text, @card_name = match_data[4], match_data[5] #.gsub(/_/,' ')
       end
-      # FIXME
-      #@relative = match_data[2] || match_data[6] || false
     end
 
     def unmask_text
@@ -34,34 +31,5 @@ module Chunk
       super
     end
 
-    def card_link
-      href = refcard_name
-      if (klass = 
-        case href
-          when /^\//;    'internal-link'
-          when /^https?:/; 'external-link'
-          when /^mailto:/; 'email-link'
-        end)
-        if format == :xml
-          %{<link class="#{klass}" href="#{href}">#{link_text}</link>}
-        else
-          %{<a class="#{klass}" href="#{href}">#{link_text}</a>}
-        end
-      else
-        @link_text = @link_text.to_show(href)
-        klass = if refcard
-          href = href.to_url_key
-         'known-card'
-        else
-          href = CGI.escape(Cardname.escape(href)) unless format == :xml
-          'wanted-card'
-        end
-        if format == :xml
-          %{<cardlink class="#{klass}" card="/wagn/#{href}">#{link_text}</cardlink>}
-        else
-          %{<a class="#{klass}" href="/wagn/#{href}">#{link_text}</a>}
-        end
-      end
-    end
   end
 end

@@ -1,30 +1,28 @@
 module Chunk
   class Transclude < Reference
     attr_reader :stars
+    attr_accessor :format
     unless defined? TRANSCLUDE_PATTERN
       #  {{+name|attr:val;attr:val;attr:val}}
-      TRANSCLUDE_PATTERN = /\{\{(((#{'\\'+Cardname::JOINT})?[^\|]+?)\s*(\|([^\}]+?))?)\}\}/
+      TRANSCLUDE_PATTERN = /\{\{(([^\|]+?)\s*(\|([^\}]+?))?)\}\}/
     end         
     
     def self.pattern() TRANSCLUDE_PATTERN end
   
     def initialize(match_data, content)
       super   
+      @format = content.format
       #warn "FOUND TRANSCLUDE #{match_data} #{content}"
       @card_name, @options, @configs = self.class.parse(match_data)
-#      @relative = @options[:relative]
       @renderer = @content.renderer
       @card = @content.card or raise "No Card in Transclude Chunk!!"     
       @card_name.gsub!(/_self/,@card.name)
-      @unmask_text = @text 
     end
   
     def self.parse(match)
       name = match[2].strip
-      relative = match[3]
       options = {
         :tname   =>name,
-#        :relative=>relative, #does this do anything?
         :base  => 'self',
         :view  => nil,
         :item  => nil,
@@ -32,7 +30,7 @@ module Chunk
         :size  => nil,
       }
       style = {}
-      configs = Hash.new_from_semicolon_attr_list match[5]
+      configs = Hash.new_from_semicolon_attr_list match[4]
       configs.each_pair do |key, value|
         if options.key? key.to_sym
           options[key.to_sym] = value
@@ -44,6 +42,34 @@ module Chunk
       [name, options, configs]  
     end                        
     
+    def unmask_text(&block)
+      return @unmask_text if @unmask_text
+      return @card_name unless block_given?
+Rails.logger.info("unmask TR #{@card_name}::#{@options.inspect}")
+      ret = case @card_name
+      when /^\#\#/            ; return '' # invisible comment
+	       	                              # visible comment
+      when /^\#/||nil?||blank?; return "<!-- #{CGI.escapeHTML match[1]} -->"
+      else
+        case view = @options[:view] and view = view.to_sym
+        when :name;     refcard ? refcard.name : @card_name
+        when :key;      refcard_name.to_key
+	when :link;     card_link
+        when :linkname; Cardname.escape(refcard_name)
+        when :titled;   content_tag( :h1, less_fancy_title(refcard_name) ) + self.render( :content )
+        when :rss_titled;
+          # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
+          content_tag( :h2, less_fancy_title(refcard_name) ) + self.render( :expanded_view_content )
+
+        else
+Rails.logger.info("unmask TR: #{@card_name}::#{@options.compact.inspect}")
+          block.call(@card_name, @options)
+        end
+      end
+Rails.logger.info("unmask TR[#{ret}] V:#{view.inspect}")
+      ret
+    end
+
     def revert                             
       configs = @configs.to_semicolon_attr_list;  
       configs = "|#{configs}" unless configs.blank?

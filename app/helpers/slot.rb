@@ -13,17 +13,17 @@ class Slot
   cattr_accessor :max_char_count, :current_slot
   self.max_char_count = 200
   attr_reader :card, :action, :template, :format
-  attr_writer :form 
-  attr_accessor  :options_need_save, :state, :requested_view, :js_queue_initialized,  
-    :position, :renderer, :form, :superslot, :char_count, :item_format, :type, :renders, 
+  attr_writer :form
+  attr_accessor  :options_need_save, :state, :requested_view, :js_queue_initialized,
+    :position, :renderer, :form, :superslot, :char_count, :item_format, :type, :renders,
     :start_time, :skip_autosave, :config, :slot_options, :render_args, :context
 
-  VIEW_ALIASES = { 
+  VIEW_ALIASES = {
     :view => :open,
     :card => :open,
     :line => :closed,
   }
-       
+
   class << self
     def render_content content, opts = {}
       Slot.current_slot = nil
@@ -33,13 +33,13 @@ class Slot
       Slot.new(tmp_card, "main_1", view, nil, opts).render(view)
     end
   end
-   
+
   def initialize(card, context="main_1", action="view", template=nil, opts={} )
     @card, @context, @action, @template, @format =
        card,context.to_s,action.to_s,template,(opts[:format] || :html).to_sym
     Slot.current_slot ||= self
     #Rails.logger.debug("new slot C:#{context} A:#{action} F:#{opts[:format]}");
-    
+
     @template ||= begin
       t = ActionView::Base.new( CardController.view_paths, {} )
       t.helpers.send :include, CardController.master_helper_module
@@ -47,7 +47,7 @@ class Slot
       t
     end
     # FIXME: this and context should all be part of the context object, I think.
-    # In any case I had to use "slot_options" rather than just options to avoid confusion with lots of 
+    # In any case I had to use "slot_options" rather than just options to avoid confusion with lots of
     # local variables named options.
     @slot_options = {
       :relative_content => {},
@@ -58,12 +58,12 @@ class Slot
       :renderer => Renderer.new,
       :base => nil,
     }.merge(opts)
-    
+
     @renderer = @slot_options[:renderer]
     @context = "main_1" unless @context =~ /\_/
-    @position = @context.split('_').last    
+    @position = @context.split('_').last
     @char_count = 0
-    @subslots = []  
+    @subslots = []
     @state = 'view'
     @renders = {}
     @js_queue_initialized = {}
@@ -81,11 +81,11 @@ class Slot
     new_slot.state = @state
     new_slot.superslot = self
     new_slot.position = new_position
-    
-    @subslots << new_slot 
+
+    @subslots << new_slot
     new_slot
   end
-    
+
   def root
     superslot ? superslot.root : self
   end
@@ -97,52 +97,51 @@ class Slot
       block = Proc.new {}
       builder = options[:builder] || ActionView::Base.default_form_builder
       card.name.gsub!(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_record?  ##FIXME -- need to match other relative inclusions.
-      fields_for = builder.new("cards[#{card.name.pre_cgi}]", card, @template, options, block)       
+      fields_for = builder.new("cards[#{card.name.pre_cgi}]", card, @template, options, block)
     end
-  end    
-  
-  def full_field_name(field)   
-    form.text_field(field).match(/name=\"([^\"]*)\"/)[1] 
   end
 
- 
+  def full_field_name(field)
+    form.text_field(field).match(/name=\"([^\"]*)\"/)[1]
+  end
+
+
   def js
     @js ||= SlotJavascript.new(self)
   end
-         
+
   # FIXME: passing a block seems to only work in the templates and not from
   # internal slot calls, so I added the option passing internal content which
-  # makes all the ugly block_given? ifs..                                                 
-  def wrap(action="", args={}) 
-    render_slot = args.key?(:add_slot) ? args.delete(:add_slot) : !xhr? 
+  # makes all the ugly block_given? ifs..
+  def wrap(action="", args={})
+    render_slot = args.key?(:add_slot) ? args.delete(:add_slot) : !xhr?
     content = args.delete(:content)
-     
+
     open_slot, close_slot = "",""
 
     result = ""
     if render_slot
       case action.to_s
         when 'content';    css_class = 'transcluded'
-        when 'exception';  css_class = 'exception'    
+        when 'exception';  css_class = 'exception'
         else begin
-          css_class = 'card-slot '      
+          css_class = 'card-slot '
           css_class << (action=='closed' ? 'line' : 'paragraph')
         end
-      end       
-      
+      end
+
       css_class << " " + Wagn::Pattern.css_names( card ) if card
-      
+
       if xml?
         attributes = {
           :name => card.name.tag_name,
           :cardId   => (card && card.id),
           :type => card.type,
-          :transclude => args[:match_str],
           :class    => css_class,
         }
         open_slot, close_slot = "<card ",  "</card>"
       else
-        attributes = { 
+        attributes = {
           :cardId   => (card && card.id),
           :style    => args[:style],
           :view     => args[:view],
@@ -153,11 +152,11 @@ class Slot
         }
         open_slot, close_slot = "<div ", "</div>"
       end
-      
+
       open_slot += attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join + '>'
     end
-    
-    if block_given? 
+
+    if block_given?
       if (Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >= 2)
         args = nil
         @template.output_buffer ||= ''   # fixes error in CardControllerTest#test_changes
@@ -172,28 +171,28 @@ class Slot
       return open_slot + content + close_slot
     end
   end
-  
+
   def cache_action(cc_method)
     # FIXME: restore cacheing if necessary
     yield
   end
-  
+
   def wrap_content( content="" )
     if xml?
       content.to_s
     else
       %{<span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick">} +
-      content.to_s + 
-      %{</span>} #<!--[if IE]>&nbsp;<![endif]-->} 
-    end    
-  end    
+      content.to_s +
+      %{</span>} #<!--[if IE]>&nbsp;<![endif]-->}
+    end
+  end
 
   def wrap_main(content)
     return content if p=root.slot_options[:params] and p[:layout]=='none'
     return content if p=slot_options[:params][:format] and p.to_sym == :xml
     %{<div id="main" context="main">#{content}</div>}
   end
-  
+
   def deny_render?(action)
     case
       when [:deny_view, :edit_auto, :open_missing, :closed_missing].member?(action);
@@ -213,19 +212,20 @@ class Slot
   end
 
   def count_render
-    root.renders[card.name] ||= 1 
-    root.renders[card.name] += 1 
-  end
-  
-  def too_many_renders?
-    root.renders[card.name] ||= 1 
-    root.renders[card.name] > System.max_renders 
+    root.renders[card.name] ||= 1
+    root.renders[card.name] += 1
   end
 
-  def render(action, args={})      
+  def too_many_renders?
+    root.renders[card.name] ||= 1
+    root.renders[card.name] > System.max_renders
+  end
+
+  def render(action, args={})
     #Rails.logger.debug "Slot(#{card.name}).render #{action}"
     self.render_args = args.clone
-    count_render unless [:name, :link].member?(action)
+raise "should be handled in chunks" [:name, :link].member?(action)
+    count_render
     ok_action = case
       when too_many_renders?;   :too_many_renders
       when denial = deny_render?(action) ; denial
@@ -238,38 +238,23 @@ class Slot
     ###-----------( FULL )
       when :new
         w_content = render_partial('views/new')
-      
+
       when :open, :view, :card
         @state = :view; self.requested_view = 'open'
         w_action = 'open'
         w_content = render_partial('views/open')
 
-      when :closed, :line    
+      when :closed, :line
         @state = :line; w_action='closed'; self.requested_view = 'closed'
-        w_content = render_partial('views/closed')  # --> slot.wrap_content slot.render( :expanded_line_content )   
-         
-      when :setting  
+        w_content = render_partial('views/closed')  # --> slot.wrap_content slot.render( :expanded_line_content )
+
+      when :setting
         w_action = self.requested_view = 'content'
-        w_content = render_partial('views/setting')  
-      
-    ###----------------( NAME)
-    
-      when :link;  # FIXME -- this processing should be unified with standard link processing imho
-        opts = {:class=>"cardname-link #{(card.new_record? && !card.virtual?) ? 'wanted-card' : 'known-card'}", :format=>format}
-        opts[:type] = slot.type if slot.type 
-	if xml?  # FIXME -- and this isn't necessary if chunks does links
-          %{<link class="#{opts[:class]}" href="/wagn/#{card.name}">#{card.name}</link>}
-        else link_to_page card.name, card.name, opts end
-      when :name;     card.name
-      when :key;      card.name.to_key
-      when :linkname; Cardname.escape(card.name)
-      when :titled;   content_tag( :h1, less_fancy_title(card.name) ) + self.render( :content )
-      when :rss_titled;                                                         
-        # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
-        content_tag( :h2, less_fancy_title(card.name) ) + self.render( :expanded_view_content )
+        w_content = render_partial('views/setting')
 
+    ###----------------( NAME) (moved to chunks/transclude)
 
-   ###----------------( CHANGES)
+    ###----------------( CHANGES)
 
       when :change;
         w_action = self.requested_view = 'content'
@@ -277,15 +262,15 @@ class Slot
       when :rss_change
         w_action = self.requested_view = 'content'
         render_partial('views/change')
-        
 
-    ###---(  CONTENT VARIATIONS ) 
+
+    ###---(  CONTENT VARIATIONS )
       #-----( with transclusions processed )
       when :content
-        w_action = self.requested_view = 'content'  
+        w_action = self.requested_view = 'content'
         c = render_expanded_view_content
         w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c))
-          
+
       when :expanded_view_content, :naked, :bare; self.render_expanded_view_content
       when :expanded_line_content; self.render_expanded_line_content
       when :closed_content;  self.render_closed_content
@@ -301,10 +286,10 @@ Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspec
         hidden_field_tag( :multi_edit, true) +
         hidden_field_tag( :attribute, @state ) +
         hidden_field_tag( :ctxsig, @card.solcard.signature) +
-        expand_inclusions( extension_form(ok_action) ) # FIXME need to get tag from action
+        expanded_view( extension_form(ok_action) )
 
-    ###---(  EDIT VIEWS ) 
-      when :edit;  
+    ###---(  EDIT VIEWS )
+      when :edit;
         @state=:edit
         # FIXME CONTENT: the hard template test can go away when we phase out the old system.
         if card.content_template
@@ -312,23 +297,23 @@ Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspec
         else
           content_field(slot.form)
         end
-        
+
       when :multi_edit;
-        @state=:edit 
+        @state=:edit
         args[:add_javascript]=true
         hidden_field_tag( :multi_edit, true) +
-        expand_inclusions( render(:naked_content) )
+        expanded_view( render(:naked_content) )
 
       when :edit_in_form
         render_partial('views/edit_in_form', args.merge(:form=>form))
-    
-      ###---(  EXCEPTIONS ) 
-      
+
+      ###---(  EXCEPTIONS )
+
       when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing, :setting_missing
           xml? ? "<no_card status='#{ok_action}'>#{card.name}</no_card>" :
                  render_partial("views/#{ok_action}", args)
 
-      when :blank; 
+      when :blank;
         ""
 
       else; "<strong>#{card.name} - unknown card view: '#{ok_action}'</strong>"
@@ -337,7 +322,7 @@ Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspec
       args[:add_slot] = true unless args.key?(:add_slot)
       result = wrap(w_action, { :content=>w_content }.merge(args))
     end
-    
+
 #      result ||= "" #FIMXE: wtf?
     result << javascript_tag("setupLinksAndDoubleClicks();") if args[:add_javascript]
     result.strip
@@ -345,20 +330,22 @@ Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspec
     return "Permission error: #{e.message}"
   end
 
-  
+
   def render_expanded_view_content
     @state = 'view' #unless xml?
-    expand_inclusions(  cache_action('view_content') {  
-      xml? ? render_naked_content : card.post_render( render_open_content) 
-    })
+    expanded_view(
+      cache_action('view_content') {
+        xml? ? render_naked_content : card.post_render( render_open_content)
+      }
+    )
   end
-  
+
   def render_expanded_line_content
-    expand_inclusions(  cache_action('line_content') { render_closed_content } )
+    expanded_view(  cache_action('line_content') { render_closed_content } )
   end
-  
+
   def render_closed_content
-    if generic_card? 
+    if generic_card?
       truncatewords_with_closing_tags( render_open_content )
     else
       render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
@@ -367,12 +354,12 @@ Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspec
 
   def render_array
     #Rails.logger.debug "Slot(#{card.name}).render_array   root = #{root}"
-    
+
     count_render
     if too_many_renders?
-      return render_partial( 'views/too_many_renders' ) 
+      return render_partial( 'views/too_many_renders' )
     end
-    case card.type 
+    case card.type
       when 'Search'
         names = Wql.new(card.get_spec(:return => 'name_content')).run.keys
         names.map{|x| subslot(Card.fetch_or_new(x)).render(:naked) }.inspect
@@ -382,7 +369,7 @@ Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspec
         [render_expanded_view_content].inspect
     end
   end
-  
+
   def render_open_content
     if generic_card?
       render_naked_content
@@ -390,49 +377,44 @@ Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspec
       render_card_partial(:content)  # FIXME?: 'content' is inconsistent
     end
   end
-  
+
   def generic_card?
     # FIXME: this could be *much* better.  going for 80/20.
     card.type == 'Basic' || card.type == 'Phrase'
   end
-  
+
   def render_naked_content
     if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
-      template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}" 
+      template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
     else
       cache_action('naked_content') do
         #passed_in_content = args.delete(:content) # Can we get away without this??
-        renderer_content = (if xml? then card.xml_templated_content 
+        ## content templates
+        renderer_content = (if xml? then card.xml_templated_content
                                     else card.templated_content end) || ""
-Rails.logger.info("render_naked_content[#{card.name}]#{renderer_content}")
-        @renderer.render( card, renderer_content, update_refs=card.references_expired, format)
+#Rails.logger.info("render_naked_content[#{card.name}]#{renderer_content}")
+        @renderer.render( card, renderer_content,
+              update_refs=card.references_expired,
+	      format) { | tname, options| expand_card(tname, options) }
       end
     end
   end
 
-  def sterilize_inclusion(content)
-    content.gsub(/\{\{/,'{<bogus />{').gsub(/\}\}/,'}<bogus />}')
-    # KLUGILICIOIUS:  when don't want inclusions rendered, we can't leave the {{}} intact or an outer card 
-    # could expand them (often weirdly). The <bogus> thing seems to work ok for now.
+  def each_inclusion(content, &block)
+    @renderer.render(card,content,update_refs=card.references_expired,format) do
+      |tname, options| yield(tname, options)
+    end
   end
 
-  def expand_inclusions(content, args={})
-    if card.name.template_name? or (card.name.email_config_name? and !slot_options[:base])
-      return sterilize_inclusion(content) 
-    end
-    newcontent = content.gsub(Chunk::Transclude::TRANSCLUDE_PATTERN) do
-      expand_inclusion($~)
-    end
-    newcontent
-  end 
+  def expanded_view(content)
+    each_inclusion(content) { | tname, options| expand_card(tname, options) }
+  end
 
-  def expand_inclusion(match)   
-    return '' if (@state==:line && self.char_count > Slot.max_char_count) # Don't bother processing inclusion if we're already out of view
-    tname, options = Chunk::Transclude.parse(match)
+  def expand_card(tname, options)
+    # Don't bother processing inclusion if we're already out of view
+    return '' if (@state==:line && self.char_count > Slot.max_char_count)
     
     case tname
-    when /^\#\#/                 ; return ''                      #invisible comment
-    when /^\#/ || nil? || blank? ; return "<!-- #{CGI.escapeHTML match[1]} -->"    #visible comment
     when '_main'
       if content=slot_options[:main_content] and content!='~~render main inclusion~~'
         return wrap_main(slot_options[:main_content]) 
@@ -444,43 +426,77 @@ Rails.logger.info("render_naked_content[#{card.name}]#{renderer_content}")
       self.context = options[:context] = 'main'
       options[:view] ||= :open
     end  
+    
          
     options[:view] ||= (self.context == "layout_0" ? :naked : :content)
     options[:view] = get_inclusion_view(options[:view])
     options[:fullname] = fullname = get_inclusion_fullname(tname,options)
     options[:showname] = tname.to_show(fullname)
-    options[:match_str] = match[1]+(match[3]||'')
     
-    tcard ||= @state==:edit ? Card.fetch_or_new(fullname, {}, new_inclusion_card_args(tname, options) ) :
-    ## holy crap can we explain this?
-       ( slot_options[:base].respond_to?(:name) && slot_options[:base].name == fullname ?
-         slot_options[:base] : Card.fetch_or_new(fullname, :skip_defaults=>true )
-      )
-    
-    tcard.loaded_trunk=card if tname =~ /^\+/
+    tcard ||= case
+    when @state==:edit
+      Card.fetch_or_new(fullname, {}, new_inclusion_card_args(tname, options))
+    when slot_options[:base].respond_to?(:name) &&
+         slot_options[:base].name == fullname
+      slot_options[:base]
+    else
+      Card.fetch_or_new(fullname, :skip_defaults=>true)
+    end
 
-    tcontent = process_inclusion( tcard, options )
-    tcontent = resize_image_content(tcontent, options[:size]) if options[:size]
+    logger.info("EV=#{tname} options=#{options.inspect}")
+    subslot = subslot(tcard, options[:context])
+    old_slot, Slot.current_slot = Slot.current_slot, subslot
 
-    self.char_count += (tcontent ? tcontent.length : 0)  #should we be stripping html here?
-    tname=='_main' ? wrap_main(tcontent) : tcontent
+    # set item_format;  search cards access this variable when rendering their content.
+    subslot.item_format = options[:item] if options[:item]
+    subslot.type = options[:type] if options[:type]
+
+    # FIXME! need a different test here
+    new_card = tcard.new_record? && !tcard.virtual?
+
+    state = @state.to_sym
+    subslot.requested_view = vmode = (options[:view] || :content).to_sym
+    action = case
+   
+when [:name, :link, :linkname].member?(vmode)  ; raise "should be handled in chunks name[#{vmode}]"
+      when [:edit, :declare, :comment].member?(state)
+    tcard.virtual? ? :edit_auto : :edit_in_form
+      when new_card
+        case
+          when vmode==:naked  ; :blank
+          when vmode==:setting; :setting_missing
+          when state==:line   ; :closed_missing
+          else                ; :open_missing
+        end
+      when state==:line       ; :expanded_line_content
+      else                    ; vmode
+      end
+    logger.info("<transclusion_case: state=#{state} vmode=#{vmode} --> Action=#{action}, Format=#{format}, Option=#{options.inspect}")
+
+    result = subslot.render(action, options)
+    Slot.current_slot = old_slot
+    result = resize_image_content(result, options[:size]) if options[:size]
+    self.char_count += (result ? result.length : 0) #should we strip html here?
+    tname=='_main' ? wrap_main(result) : result
   rescue Card::PermissionDenied
     ''
+  #rescue
+    #%{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
   end
-  
+         
   def get_inclusion_fullname(name,options)
     fullname = name+'' #weird.  have to do this or the tname gets busted in the options hash!!
     sob = slot_options[:base]
     context = case
     when sob; (sob.respond_to?(:name) ? sob.name : sob)
-    when options[:base]=='parent' 
+    when options[:base]=='parent'
       card.parent_name
     else
       card.name
     end
     fullname = fullname.to_absolute(context)
     fullname.gsub!('_user') { User.current_user.cardname }
-    fullname = fullname.particle_names.map do |x| 
+    fullname = fullname.particle_names.map do |x|
       if x =~ /^_/ and root.slot_options[:params] and root.slot_options[:params][x]
         CGI.escapeHTML( root.slot_options[:params][x] )
       else x end
@@ -497,22 +513,22 @@ Rails.logger.info("render_naked_content[#{card.name}]#{renderer_content}")
   def get_inclusion_content(cardname)
     parameters = root.slot_options[:relative_content]
     content = parameters[cardname.gsub(/\+/,'_')]
-    
+
     # CLEANME This is a hack to get it so plus cards re-populate on failed signups
-    if parameters['cards'] and card_params = parameters['cards'][cardname.gsub('+','~plus~')]  
+    if parameters['cards'] and card_params = parameters['cards'][cardname.gsub('+','~plus~')]
       content = card_params['content']
-    end  
+    end
     content if content.present?  #not sure I get why this is necessary - efm
   end
 
   def new_inclusion_card_args(tname, options)
-    args = { 
-#      :name=>options[:fullname], 
+    args = {
+#      :name=>options[:fullname],
       :type=>options[:type],
       :skip_defaults=>true
     }
     if content=get_inclusion_content(tname)
-      args[:content]=content 
+      args[:content]=content
     end
     args
   end
@@ -521,59 +537,21 @@ Rails.logger.info("render_naked_content[#{card.name}]#{renderer_content}")
     size = (size.to_s == "full" ? "" : "_#{size}")
     content.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
   end
-     
+
   def render_partial( partial, locals={} )
     @template.render(:partial=>partial, :locals=>{ :card=>card, :slot=>self }.merge(locals))
   end
 
-  def card_partial(action) 
+  def card_partial(action)
     # FIXME: I like this method name better- maybe other calls should resolve here instead
     partial_for_action(action, card)
   end
-  
+
   def render_card_partial(action, locals={})
      render_partial card_partial(action), locals
   end
-  
-  def process_inclusion( card, options={} )  
-    #warn("<process_inclusion card=#{card.name} options=#{options.inspect}")
-    match_str = options[:match_str] || ''
-    subslot = subslot(card, options[:context])
-    old_slot, Slot.current_slot = Slot.current_slot, subslot
 
-    # set item_format;  search cards access this variable when rendering their content.
-    subslot.item_format = options[:item] if options[:item]
-    subslot.type = options[:type] if options[:type]
-                           
-    # FIXME! need a different test here   
-    new_card = card.new_record? && !card.virtual?
-    
-    state = @state.to_sym
-    subslot.requested_view = vmode = (options[:view] || :content).to_sym
-    action = case
-      when [:name, :link, :linkname].member?(vmode)  ; vmode
-      when [:edit, :declare, :comment].member?(state)
-	   card.virtual? ? :edit_auto : :edit_in_form   
-      when new_card                       
-        case   
-          when vmode==:naked  ; :blank
-          when vmode==:setting; :setting_missing
-          when state==:line   ; :closed_missing
-          else                ; :open_missing
-        end
-      when state==:line       ; :expanded_line_content
-      else                    ; vmode
-    end
-    logger.info("<transclusion_case: state=#{state} vmode=#{vmode} --> Action=#{action}, Format=#{format}, Option=#{options.inspect}")
-
-    result = subslot.render(action, options)
-    Slot.current_slot = old_slot
-    result
-  #rescue
-    #%{<span class="inclusion-error">error rendering #{link_to_page card.name}</span>}
-  end   
-  
-  def method_missing(method_id, *args, &proc) 
+  def method_missing(method_id, *args, &proc)
     # silence Rails 2.2.2 warning about binding argument to concat.  tried detecting rails 2.2
     # and removing the argument but it broken lots of integration tests.
     ActiveSupport::Deprecation.silence { @template.send(method_id, *args, &proc) }
@@ -583,8 +561,8 @@ Rails.logger.info("render_naked_content[#{card.name}]#{renderer_content}")
   def render_diff(card, *args)
     @renderer.render_diff(card, *args)
   end
-  
-  def notice 
+
+  def notice
     # this used to access controller.notice, but as near I can tell
     # nothing ever assigns to controller.notice, so I took it away.
     # entries in flash[:notice] would be more appropriate in the page-wide
@@ -593,27 +571,27 @@ Rails.logger.info("render_naked_content[#{card.name}]#{renderer_content}")
     %{<span class="notice"></span>}
   end
 
-  def id(area="") 
-    area, id = area.to_s, ""  
+  def id(area="")
+    area, id = area.to_s, ""
     id << "javascript:#{get(area)}"
-  end  
-  
+  end
+
   def parent
     "javascript:getSlotSpan(getSlotSpan(this).parentNode)"
-  end                       
-   
+  end
+
   def nested_context?
     context.split('_').length > 2
   end
-   
+
   def get(area="")
     area.empty? ? "getSlotSpan(this)" : "getSlotElement(this, '#{area}')"
   end
-   
-  def selector(area="")   
+
+  def selector(area="")
     "getSlotFromContext('#{context}')";
-  end             
- 
+  end
+
   def card_id
     (card.new_record? && card.name)  ? Cardname.escape(card.name) : card.id
   end
@@ -626,21 +604,18 @@ Rails.logger.info("render_naked_content[#{card.name}]#{renderer_content}")
 
   def extension_submenu(tag, menu_name, on)
     menu_name = menu_name.to_s
-#Rails.logger.info("extension_sub #{tag} #{menu_name}, #{on}")
     div(:class=>'submenu') do
       extension_forms(tag, menu_name) do |keycard, tcard, ok, args|
 	key = keycard.name
-#Rails.logger.info("extension_submenu #{key.inspect}:#{on.inspect} #{menu_name} #{ok}::#{args.inspect}")
-        if ok 
+        if ok
           link_to_remote( key, { :url=>url_for("card/#{menu_name}",args,key),
              :update => id , :menu => key}, :class=>(key==on.to_s ? 'on' : '') )
         end
        end.compact.join
-     end  
+     end
   end
 
   def extension_forms(tag, menu_name)
-#Rails.logger.info("ef 1 #{tag.inspect} : #{menu_name.inspect}")
     return unless extcard = @card.extcard(tag.to_s) and
                   formcard = extcard.setting_card(menu_name.to_star) and
                   formcard.is_a?(Card::Pointer)
@@ -655,10 +630,8 @@ Rails.logger.info("render_naked_content[#{card.name}]#{renderer_content}")
   def extension_form(action)
     ext_tag = '*sol' if action == :declare
     raise "No tag" unless ext_tag
-#Rails.logger.info("extension_form st: #{ext_tag}:#{@state}:")
     which_form = nil #@state.to_s
     extension_forms(ext_tag, action.to_s) do |keycard, tcard, ok, args|
-#Rails.logger.info("extension_form: #{keycard.name}:#{tcard.name}:#{ok}")
       which_form = tcard if keycard.name == @state.to_s or not which_form
     end
     which_form.content
@@ -673,25 +646,25 @@ Rails.logger.info("render_naked_content[#{card.name}]#{renderer_content}")
        [ :inclusions, !(card.out_transclusions.empty? || card.template? || card.hard_template),         {:inclusions=>true} ]
        ].map do |key,ok,args|
 
-        link_to_remote( key, 
-          { :url=>url_for("card/edit", args, key), :update => ([:name,:type,:codename].member?(key) ? id('card-body') : id) }, 
-          :class=>(key==on ? 'on' : '') 
+        link_to_remote( key,
+          { :url=>url_for("card/edit", args, key), :update => ([:name,:type,:codename].member?(key) ? id('card-body') : id) },
+          :class=>(key==on ? 'on' : '')
         ) if ok
-      end.compact.join       
-     end  
+      end.compact.join
+     end
   end
-  
+
   def options_submenu(on)
     div(:class=>'submenu') do
       [:permissions, :settings].map do |key|
-        link_to_remote( key, 
-          { :url=>url_for("card/options", {}, key), :update => id }, 
-          :class=>(key==on ? 'on' : '') 
+        link_to_remote( key,
+          { :url=>url_for("card/options", {}, key), :update => id },
+          :class=>(key==on ? 'on' : '')
         )
       end.join
     end
   end
-    
+
   def paging_params
     s = {}
     if p = root.slot_options[:params]
@@ -708,17 +681,17 @@ Rails.logger.info("render_naked_content[#{card.name}]#{renderer_content}")
 
   def url_for(url, args=nil, attribute=nil)
     # recently changed URI.escape to CGI.escape to address question mark issue, but I'm still concerned neither is perfect
-    # so long as we keep doing the weird Cardname.escape thing.  
+    # so long as we keep doing the weird Cardname.escape thing.
     url = "javascript:'/#{url}"
     url << "/#{escape_javascript(CGI.escape(card_id.to_s))}" if (card and card_id)
-    url << "/#{attribute}" if attribute   
+    url << "/#{attribute}" if attribute
     url << "?context='+getSlotContext(this)"
     url << "+'&' + getSlotOptions(this)"
     url << ("+'"+ args.map{|k,v| "&#{k}=#{escape_javascript(CGI.escape(v.to_s))}"}.join('') + "'") if args
     url
   end
 
-  def header 
+  def header
     @template.render :partial=>'card/header', :locals=>{ :card=>card, :slot=>self }
   end
 
@@ -735,20 +708,20 @@ Rails.logger.info("render_naked_content[#{card.name}]#{renderer_content}")
           menu << link_to_menu_action(opt.to_s)
         end
       menu << "</span>"
-      menu << link_to_menu_action(top_option.to_s) 
+      menu << link_to_menu_action(top_option.to_s)
     menu << "</span>"
   end
 
-  def footer 
-    render_partial 'card/footer' 
+  def footer
+    render_partial 'card/footer'
   end
-            
+
   def footer_links
-    cache_action('footer') { 
+    cache_action('footer') {
       render_partial( 'card/footer_links' )   # this is ugly reusing this cache code
     }
-  end     
-  
+  end
+
   def option( args={}, &proc)
     args[:label] ||= args[:name]
     args[:editable]= true unless args.has_key?(:editable)
@@ -797,32 +770,32 @@ Rails.logger.info("render_naked_content[#{card.name}]#{renderer_content}")
 
 
   def cardtype_field(form,options={})
-    @template.select_tag('card[type]', cardtype_options_for_select(Cardtype.name_for(card.type)), options) 
+    @template.select_tag('card[type]', cardtype_options_for_select(Cardtype.name_for(card.type)), options)
   end
 
   def update_cardtype_function(options={})
-    fn = ['File','Image'].include?(card.type) ? 
+    fn = ['File','Image'].include?(card.type) ?
             "Wagn.onSaveQueue['#{context}']=[];" :
-            "Wagn.runQueue(Wagn.onSaveQueue['#{context}']); "      
-    fn << remote_function( options )   
-  end
-     
-  def js_content_element 
-    @card.hard_template ? "" : ",getSlotElement(this,'form').elements['card[content]']" 
+            "Wagn.runQueue(Wagn.onSaveQueue['#{context}']); "
+    fn << remote_function( options )
   end
 
-  def content_field(form,options={})   
-    self.form = form              
+  def js_content_element
+    @card.hard_template ? "" : ",getSlotElement(this,'form').elements['card[content]']"
+  end
+
+  def content_field(form,options={})
+    self.form = form
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
-    editor_partial = (card.type=='Pointer' ? ((c=card.setting('input'))  ? c.gsub(/[\[\]]/,'') : 'list') : 'editor')    
-    pre_content + clear_queues + self.render_partial( card_partial(editor_partial), options ) + setup_autosave 
-  end                          
- 
+    editor_partial = (card.type=='Pointer' ? ((c=card.setting('input'))  ? c.gsub(/[\[\]]/,'') : 'list') : 'editor')
+    pre_content + clear_queues + self.render_partial( card_partial(editor_partial), options ) + setup_autosave
+  end
+
   def clear_queues
     queue_context = get_queue_context
 
-    return '' if root.js_queue_initialized.has_key?(queue_context) 
+    return '' if root.js_queue_initialized.has_key?(queue_context)
     root.js_queue_initialized[queue_context]=true
 
     javascript_tag(
@@ -831,19 +804,19 @@ Rails.logger.info("render_naked_content[#{card.name}]#{renderer_content}")
     )
   end
 
- 
-  def save_function 
+
+  def save_function
     "if(ds=Wagn.draftSavers['#{context}']){ds.stop()}; if (Wagn.runQueue(Wagn.onSaveQueue['#{context}'])) { } else {return false}"
   end
 
-  def cancel_function 
+  def cancel_function
     "if(ds=Wagn.draftSavers['#{context}']){ds.stop()}; Wagn.runQueue(Wagn.onCancelQueue['#{context}']);"
   end
 
   def xhr?
     controller && controller.request.xhr?
   end
-  
+
   def get_queue_context
     #FIXME: this looks like it won't work for arbitraritly nested forms.  1-level only
     @nested ? context.split('_')[0..-2].join('_') : context
@@ -853,8 +826,8 @@ Rails.logger.info("render_naked_content[#{card.name}]#{renderer_content}")
     # it seems as though code executed inline on ajax requests works fine
     # to initialize the editor, but when loading a full page it fails-- so
     # we run it in an onLoad queue.  the rest of this code we always run
-    # inline-- at least until that causes problems.    
-    
+    # inline-- at least until that causes problems.
+
     queue_context = get_queue_context
     code = ""
     if hooks[:setup]
@@ -862,23 +835,23 @@ Rails.logger.info("render_naked_content[#{card.name}]#{renderer_content}")
       code << hooks[:setup]
       code << "});\n" unless xhr?
     end
-    if hooks[:save]  
+    if hooks[:save]
       code << "Wagn.onSaveQueue['#{queue_context}'].push(function(){\n #{hooks[:save]} \n });\n"
     end
     if hooks[:cancel]
       code << "Wagn.onCancelQueue['#{queue_context}'].push(function(){\n #{hooks[:cancel]} \n });\n"
     end
     javascript_tag code
-  end                   
-  
+  end
+
   def setup_autosave
-    if @nested or skip_autosave 
+    if @nested or skip_autosave
       ""
     else
       javascript_tag "Wagn.setupAutosave('#{card.id}', '#{context}');\n"
     end
   end
-          
+
   def half_captcha
     if captcha_required?
       key = card.new_record? ? "new" : card.key
@@ -886,20 +859,20 @@ Rails.logger.info("render_naked_content[#{card.name}]#{renderer_content}")
         recaptcha_tags( :ajax=>true, :display=>{:theme=>'white'}, :id=>key)
     end
   end
-  
+
   def full_captcha
     if captcha_required?
-      key = card.new_record? ? "new" : card.key          
+      key = card.new_record? ? "new" : card.key
         recaptcha_tags( :ajax=>true, :display=>{:theme=>'white'}, :id=>key ) +
-          javascript_tag(   
+          javascript_tag(
             %{jQuery.getScript("http://api.recaptcha.net/js/recaptcha_ajax.js", function(){
-              document.getElementById('dynamic_recaptcha-#{key}').innerHTML='<span class="faint">loading captcha</span>'; 
+              document.getElementById('dynamic_recaptcha-#{key}').innerHTML='<span class="faint">loading captcha</span>';
               Recaptcha.create('#{ENV['RECAPTCHA_PUBLIC_KEY']}', document.getElementById('dynamic_recaptcha-#{key}'),RecaptchaOptions);
             });
           })
     end
   end
-  
+
   ### ------  from wagn_helper ----
   def partial_for_action( name, card=nil )
     # FIXME: this should look up the inheritance hierarchy, once we have one
@@ -923,6 +896,6 @@ Rails.logger.info("render_naked_content[#{card.name}]#{renderer_content}")
         "/types/basic/#{name}"
     end
   end
-  
-end   
+
+end
 

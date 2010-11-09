@@ -5,7 +5,7 @@ class Renderer
   include HTMLDiff
   include ReferenceTypes
 
-  def render( card, content=nil, update_references=false, format=:html)
+  def render( card, content=nil, update_references=false, format=:html, &block)
     # FIXME: this means if you had a card with content, but you WANTED to have it render 
     # the empty string you passed it, it won't work.  but we seem to need it because
     # card.content='' in set_card_defaults and if you make it nil a bunch of other
@@ -13,7 +13,7 @@ class Renderer
     content = content.blank? ? card.content : content 
     wiki_content = WikiContent.new(card, content, self, format)
     update_references(card, wiki_content) if update_references
-    wiki_content.render! 
+    wiki_content.render! &block
   end
 
   def render_diff( card, content1, content2 )

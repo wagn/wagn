@@ -28,7 +28,7 @@ module Sol
     # seach through revision history of this solcard for one, and return a rev.
     rev = current_revision
     if rev.content.match(/\bidsig="([^"]*)"/)
-      CGI.unescapteHTML($~[1])
+      CGI.unescapeHTML($~[1])
     else
       identity_sig
     end

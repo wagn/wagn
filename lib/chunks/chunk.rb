@@ -61,7 +61,6 @@ module Chunk
     def revert   
       @text
     end
-
   end
 
 end

@@ -19,20 +19,36 @@ module Chunk
       refcard_name
     end
 
-=begin  
-#I don't think this is begin used. 
-    protected
-      def card_link
-        href = CGI.escape(Cardname.escape(refcard_name))
-        klass = refcard ? 'known-card' : 'wanted-card'
-        %{<a class="#{klass}" href="/wagn/#{href}">#{link_text}</a>}
-      rescue Exception=>e
-        return "error rendering link"
+    def card_link
+      href = refcard_name
+      if (klass = 
+        case href
+          when /^\//;    'internal-link'
+          when /^https?:/; 'external-link'
+          when /^mailto:/; 'email-link'
+        end)
+        if format == :xml
+          %{<link class="#{klass}" href="#{href}">#{link_text}</link>}
+        else
+          %{<a class="#{klass}" href="#{href}">#{link_text}</a>}
+        end
+      else
+        lt = link_text.to_show(href)
+        klass = if refcard
+          href = href.to_url_key
+         'known-card'
+        else
+          href = CGI.escape(Cardname.escape(href)) unless format == :xml
+          'wanted-card'
+        end
+        if format == :xml
+          %{<cardlink class="#{klass}" card="/wagn/#{href}">#{lt}</cardlink>}
+        else
+          %{<a class="#{klass}" href="/wagn/#{href}">#{lt}</a>}
+        end
       end
-=end
-      
+    end
   end 
-   
 end 
 
 

@@ -124,11 +124,11 @@ class WikiContent < String
     @pre_rendered 
   end
 
-  def render!( revert = false )
+  def render!( revert = false, &block)
     pre_render!
     while (gsub!(MASK_RE[ACTIVE_CHUNKS]) do 
        chunk = @chunks_by_id[$~[1].to_i]
-       chunk.nil? ? $~[0] : ( revert ? chunk.revert : chunk.unmask_text )
+       chunk.nil? ? $~[0] : ( revert ? chunk.revert : chunk.unmask_text(&block) )
       end)
     end
     self

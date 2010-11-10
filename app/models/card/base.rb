@@ -142,6 +142,8 @@ module Card
           if trunk and tag
             #Rails.logger.debug "trunk = #{trunk.inspect} ....... who can read = #{trunk.who_can(:read)}"
             #Rails.logger.debug "tag = #{tag.inspect} ....... who can read = #{tag.who_can(:read)}"
+            
+            # HOT FIX.  FIXME (though this should be obviated soon)
             trunk_reader, tag_reader = trunk.who_can(:read), tag.who_can(:read)
             if !trunk_reader
               trunk.permissions = trunk.default_permissions

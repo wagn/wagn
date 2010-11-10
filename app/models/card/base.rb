@@ -452,7 +452,7 @@ module Card
     def content   
       # FIXME: we keep having permissions break when looking up system cards- this isn't great but better than error.
       #unless name=~/^\*|\+\*/  
-        new_card? ? ok!(:create_me) : ok!(:read) # fixme-perm.  might need this, but it's breaking create...
+        #new_card? ? ok!(:create_me) : ok!(:read) # fixme-perm.  might need this, but it's breaking create...
       #end
       current_revision ? current_revision.content : ""
     end   

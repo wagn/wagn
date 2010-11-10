@@ -23,8 +23,8 @@ class Card::RemoveTest < ActiveSupport::TestCase
     c = Card.create! :name=>"rta!+rtb"
     assert Card["rta!+rtb"]
     assert !Card["rta!+rtb"].trash
-    assert !Card.find(:first, :conditions=>"name=E'rtb*trash'")
-  end   
+    assert Card.find_by_key('rtb*trash').nil?  
+end   
   
   
   def test_multiple_trash_collision

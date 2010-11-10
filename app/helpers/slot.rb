@@ -420,7 +420,7 @@ class Slot
     tcard ||= @state==:edit ? Card.fetch_or_new(fullname, {}, new_inclusion_card_args(tname, options) ) :
     ## holy crap can we explain this?
        ( slot_options[:base].respond_to?(:name) && slot_options[:base].name == fullname ?
-         slot_options[:base] : Card.fetch_or_new(fullname, :skip_defaults=>true )
+         slot_options[:base] : Card.fetch_or_new(fullname, {}, :skip_defaults=>true )
       )
     
     tcard.loaded_trunk=card if tname =~ /^\+/

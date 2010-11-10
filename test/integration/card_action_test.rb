@@ -38,8 +38,8 @@ class CardActionTest < ActionController::IntegrationTest
     end
     post "card/comment/#{@a.id}", :card => { :comment=>"how come" }
     assert_response :success
-  end      
-=begin  
+  end
+
   def test_create_role_card   
     integration_login_as :admin
     post( 'card/create', :card=>{:content=>"test", :type=>'Role', :name=>"Editor"})
@@ -90,7 +90,7 @@ class CardActionTest < ActionController::IntegrationTest
     assert_response :success
     assert_tag :tag=>'div', :attributes=>{:class=>'error', :id=>'no-cardtype-error'}
   end
-=end
+
   # FIXME: this should probably be files in the spot for a remove test
   def test_removal_and_return_to_previous_undeleted_card_after_deletion
     t1 = t2 = nil

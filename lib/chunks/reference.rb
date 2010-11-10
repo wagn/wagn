@@ -27,10 +27,12 @@ module Chunk
           when /^https?:/; 'external-link'
           when /^mailto:/; 'email-link'
         end)
+	lt = link_text()
+#Rails.logger.info("external #{format} link[#{klass}] #{href}::#{lt}")
         if format == :xml
-          %{<link class="#{klass}" href="#{href}">#{link_text}</link>}
+          %{<link class="#{klass}" href="#{href}">#{lt}</link>}
         else
-          %{<a class="#{klass}" href="#{href}">#{link_text}</a>}
+          %{<a class="#{klass}" href="#{href}">#{lt}</a>}
         end
       else
         lt = link_text.to_show(href)

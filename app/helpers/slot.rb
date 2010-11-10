@@ -224,7 +224,7 @@ class Slot
   def render(action, args={})
     #Rails.logger.debug "Slot(#{card.name}).render #{action}"
     self.render_args = args.clone
-raise "should be handled in chunks" [:name, :link].member?(action)
+raise "should be handled in chunks" if [:name, :link].member?(action)
     count_render
     ok_action = case
       when too_many_renders?;   :too_many_renders

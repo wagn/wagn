@@ -140,9 +140,16 @@ module Card
           party = p.party
           
           if trunk and tag
+            #Rails.logger.debug "trunk = #{trunk.inspect} ....... who can read = #{trunk.who_can(:read)}"
+            #Rails.logger.debug "tag = #{tag.inspect} ....... who can read = #{tag.who_can(:read)}"
             trunk_reader, tag_reader = trunk.who_can(:read), tag.who_can(:read)
-            if !trunk_reader or !tag_reader
-              raise "bum permissions: #{trunk.name}:#{trunk_reader}, #{tag.name}:#{tag_reader}"
+            if !trunk_reader
+              trunk.permissions = trunk.default_permissions
+              trunk_reader = trunk.who_can(:read)
+            end
+            if !tag_reader
+              tag.permissions = tag.default_permissions
+              tag_reader = tag.who_can(:read)
             end
             if trunk_reader.anonymous? or (authenticated?(trunk_reader) and !tag_reader.anonymous?)
               party = tag_reader

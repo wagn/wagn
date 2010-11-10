@@ -242,11 +242,11 @@ module Card
     end
     alias_method_chain :save, :trash   
     
-    # standardize args; if in trash, retrieve and prepare
     def pull_from_trash
       return unless key
       return unless trashed_card = Card.find_by_key_and_trash(key, true) 
-      #could optimize to use fetch if we add :include_trashed_cards or something.  likely low ROI
+      #could optimize to use fetch if we add :include_trashed_cards or something.  
+      #likely low ROI, but would be nice to have interface to retrieve cards from trash...
       self.id = trashed_card.id
       self.from_trash = self.confirm_rename = true
       @new_record = false

@@ -271,7 +271,8 @@ raise "should be handled in chunks" if [:name, :link].member?(action)
         c = render_expanded_view_content
         w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c))
 
-      when :expanded_view_content, :naked, :bare; self.render_expanded_view_content
+      #when :expanded_view_content; self.render_expanded_view_content
+      when :expanded_view_content, :naked, :bare; self.render_open_content
       when :expanded_line_content; self.render_expanded_line_content
       when :closed_content;  self.render_closed_content
       when :open_content; self.render_open_content
@@ -302,7 +303,7 @@ Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspec
         @state=:edit
         args[:add_javascript]=true
         hidden_field_tag( :multi_edit, true) +
-        expanded_view( render(:naked_content) )
+        render(:naked_content)
 
       when :edit_in_form
         render_partial('views/edit_in_form', args.merge(:form=>form))
@@ -333,6 +334,7 @@ Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspec
 
   def render_expanded_view_content
     @state = 'view' #unless xml?
+    Rails.logger.info("render_expanded_view_content #{card.name}")
     expanded_view(
       cache_action('view_content') {
         xml? ? render_naked_content : card.post_render( render_open_content)
@@ -413,26 +415,26 @@ Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspec
   def expand_card(tname, options)
     # Don't bother processing inclusion if we're already out of view
     return '' if (@state==:line && self.char_count > Slot.max_char_count)
-    
+
     case tname
     when '_main'
       if content=slot_options[:main_content] and content!='~~render main inclusion~~'
-        return wrap_main(slot_options[:main_content]) 
-      end  
-      tcard=slot_options[:main_card] 
+        return wrap_main(slot_options[:main_content])
+      end
+      tcard=slot_options[:main_card]
       item  = symbolize_param(:item) and options[:item] = item
       pview = symbolize_param(:view) and options[:view] = pview
       pformat = symbolize_param(:format)||format and options[:format] = pformat
       self.context = options[:context] = 'main'
       options[:view] ||= :open
-    end  
-    
-         
+    end
+
+
     options[:view] ||= (self.context == "layout_0" ? :naked : :content)
     options[:view] = get_inclusion_view(options[:view])
     options[:fullname] = fullname = get_inclusion_fullname(tname,options)
     options[:showname] = tname.to_show(fullname)
-    
+
     tcard ||= case
     when @state==:edit
       Card.fetch_or_new(fullname, {}, new_inclusion_card_args(tname, options))
@@ -443,7 +445,16 @@ Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspec
       Card.fetch_or_new(fullname, :skip_defaults=>true)
     end
 
-    logger.info("EV=#{tname} options=#{options.inspect}")
+    result = process_inclusion(tcard, options)
+    result = resize_image_content(result, options[:size]) if options[:size]
+    self.char_count += (result ? result.length : 0) #should we strip html here?
+    tname=='_main' ? wrap_main(result) : result
+  rescue Card::PermissionDenied
+    ''
+  end
+
+  def process_inclusion(tcard, options)
+    logger.info("PINC=#{tcard.name} options=#{options.inspect}")
     subslot = subslot(tcard, options[:context])
     old_slot, Slot.current_slot = Slot.current_slot, subslot
 
@@ -457,7 +468,7 @@ Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspec
     state = @state.to_sym
     subslot.requested_view = vmode = (options[:view] || :content).to_sym
     action = case
-   
+
 when [:name, :link, :linkname].member?(vmode)  ; raise "should be handled in chunks name[#{vmode}]"
       when [:edit, :declare, :comment].member?(state)
     tcard.virtual? ? :edit_auto : :edit_in_form
@@ -475,15 +486,11 @@ when [:name, :link, :linkname].member?(vmode)  ; raise "should be handled in chu
 
     result = subslot.render(action, options)
     Slot.current_slot = old_slot
-    result = resize_image_content(result, options[:size]) if options[:size]
-    self.char_count += (result ? result.length : 0) #should we strip html here?
-    tname=='_main' ? wrap_main(result) : result
-  rescue Card::PermissionDenied
-    ''
+    result
   #rescue
     #%{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
   end
-         
+
   def get_inclusion_fullname(name,options)
     fullname = name+'' #weird.  have to do this or the tname gets busted in the options hash!!
     sob = slot_options[:base]
@@ -786,6 +793,7 @@ when [:name, :link, :linkname].member?(vmode)  ; raise "should be handled in chu
 
   def content_field(form,options={})
     self.form = form
+Rails.logger.info("content_field(#{form}, #{options.inspect})")
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
     editor_partial = (card.type=='Pointer' ? ((c=card.setting('input'))  ? c.gsub(/[\[\]]/,'') : 'list') : 'editor')

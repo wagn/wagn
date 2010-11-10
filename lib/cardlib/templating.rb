@@ -27,11 +27,9 @@ module Cardlib
     end
 
     def hard_template
-      if not @template or not @template.hard_template?
-         @template = setting_card('content')
-      end
+      (template && template.hard_template?) ? template : nil
     end
-    
+
     def template
       @template ||= setting_card('content','default')
     end
@@ -41,8 +39,8 @@ module Cardlib
     end
     
     def xml_templated_content
-      @template ||= setting_card('xml_content')
-      card=@template and User.as(:wagbot){ card.content } or
+      @xml_template ||= setting_card('xml_content')
+      card=@xml_template and User.as(:wagbot){ card.content } or
       templated_content
     end
 
@@ -55,6 +53,8 @@ module Cardlib
     def hard_templatee_wql
       if hard_template? and c=Card.fetch(name.trunk_name) and c.type == "Set"
         wql = c.get_spec
+	Rails.logger.info("hard_tempatee_wql[#{c.name}] #{wql.inspect}")
+	wql
       end
     end
 

@@ -21,16 +21,16 @@ module Cardlib
       name && name =~ /\*default/
     end
 
-	  def pointees( context = nil )
-	    User.as(:wagbot) do
-  	    links = content.split(/\n+/).map{ |x| x.gsub(/\[\[|\]\]/,'')}.map{|x|
-  	      context ? x.to_absolute(context) : x
-	      }
-	    end
-	  end
-	  
-	  def pointee
-	    pointees.first
+    def pointees( context = nil )
+      User.as(:wagbot) do
+        links = content.split(/\n+/).map{ |x| x.gsub(/\[\[|\]\]/,'')}.map{|x|
+          context ? x.to_absolute(context) : x
+        }
+      end
+    end
+    
+    def pointee
+      pointees.first
     end    
     
     # FIXME: maybe this should be methods in individual classes?
@@ -69,7 +69,7 @@ module Cardlib
       s=Slot.new(self, "main_1","view",nil, :base => context)
       # FIXME: maybe slot.rb should have an additional view for this.
       # ultimately we need to be able to process links and inclusions in an email/text friendly way
-      s.expand_inclusions(s.render(:naked_content))
+      s.render(:naked_content)
     end
 
     def cardtype_name

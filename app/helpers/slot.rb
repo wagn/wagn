@@ -29,7 +29,6 @@ class Slot
       Slot.current_slot = nil
       view = opts.delete(:view)
       view = :naked unless view && !view.blank?
-Rails.logger.info "render_content #{content}"
       tmp_card = Card.new :name=>"__tmp_card__", :content => content, :skip_defaults=>true
       Slot.new(tmp_card, "main_1", view, nil, opts).render(view)
     end
@@ -39,7 +38,6 @@ Rails.logger.info "render_content #{content}"
     @card, @context, @action, @template, @format =
        card,context.to_s,action.to_s,template,(opts[:format] || :html).to_sym
     Slot.current_slot ||= self
-Rails.logger.debug("new slot C:#{context} A:#{action} F:#{opts[:format]}");
 
     @template ||= begin
       t = ActionView::Base.new( CardController.view_paths, {} )
@@ -223,7 +221,7 @@ Rails.logger.debug("new slot C:#{context} A:#{action} F:#{opts[:format]}");
   end
 
   def render(action, args={})
-Rails.logger.debug "Slot(#{card.name}).render #{action}"
+    #Rails.logger.debug "Slot(#{card.name}).render #{action}"
     self.render_args = args.clone
 raise "should be handled in chunks" if [:name, :link].member?(action)
     count_render
@@ -274,7 +272,7 @@ raise "should be handled in chunks" if [:name, :link].member?(action)
 
       #when :expanded_view_content; self.render_expanded_view_content
       when :expanded_view_content, :open_content; render_open_content
-      when :naked_content, :naked, :bare;         render_open_content
+      when :naked_content, :naked, :bare;         render_naked_content
       when :expanded_line_content;                render_expanded_line_content
       when :closed_content;                       render_closed_content
       when :array;                                render_array
@@ -282,7 +280,6 @@ raise "should be handled in chunks" if [:name, :link].member?(action)
 
       when :declare;  # FIXME generalize this test for all extension actions
         @state= symbolize_param(:attribute) || :declare
-Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspect} : #{args.inspect}")
         args[:add_javascript]=true
         hidden_field_tag( :multi_edit, true) +
         hidden_field_tag( :attribute, @state ) +
@@ -335,7 +332,6 @@ raise "no result #{ok_action}" unless result
 
   def render_expanded_view_content
     @state = 'view' #unless xml?
-    Rails.logger.info("render_expanded_view_content #{card.name}")
     expand_inclusions(
       cache_action('view_content') {
         xml? ? render_naked_content : card.post_render( render_open_content)
@@ -356,8 +352,6 @@ raise "no result #{ok_action}" unless result
   end
 
   def render_array
-    Rails.logger.debug "Slot(#{card.name}).render_array T:#{card.type}  root = #{root}"
-
     count_render
     if too_many_renders?
       return render_partial( 'views/too_many_renders' )
@@ -369,8 +363,6 @@ raise "no result #{ok_action}" unless result
       when 'Pointer'
         card.pointees.map{|x| subslot(Card.fetch_or_new(x)).render(:naked) }.inspect
       else
-#raise "raise render_array T:#{card.type} N:#{card.name} C[#{card.content}]#{root.card.name}" if card.name == "n+a"
-Rails.logger.info "raise render_array T:#{card.type} N:#{card.name} C[#{card.content}]#{root.card.name}" if card.name == "n+a"
         [render_naked_content].inspect
     end
   end
@@ -390,24 +382,19 @@ Rails.logger.info "raise render_array T:#{card.type} N:#{card.name} C[#{card.con
 
   def render_naked
     if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
-      rs = template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
-Rails.logger.info("render_naked -> #{rs.inspect}")
-      rs
+      template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
     else
       cache_action('naked_content') do
         #passed_in_content = args.delete(:content) # Can we get away without this??
         ## content templates
         r_content = (xml? ? card.xml_templated_content : card.templated_content)
-        rs = block_given? ? yield(r_content||""):(r_content||card.content)
-Rails.logger.info("render_naked[#{card.name}][#{card.content} #{rs.inspect} (#{r_content.inspect})")
-        rs
+        block_given? ? yield(r_content||""):(r_content||card.content)
       end
     end
   end
 
   def render_naked_content
     render_naked do |r_content|
-Rails.logger.info("render_naked_content[#{card.name}]#{card.content}:#{r_content}")
       @renderer.render( slot_options[:base]||card, r_content,
             card.references_expired, format) do | tname, options|
         expand_card(tname, options)
@@ -458,7 +445,6 @@ Rails.logger.info("render_naked_content[#{card.name}]#{card.content}:#{r_content
       Card.fetch_or_new(fullname, :skip_defaults=>true)
     end
 b=slot_options[:base]
-Rails.logger.info("transclusion_Full:#{fullname}B[#{b.name}]T[#{tcard.name}]")
 
     #tcard.loaded_trunk=card if tname =~ /^\+/
     result = process_inclusion(tcard, options)
@@ -479,13 +465,12 @@ Rails.logger.info("transclusion_Full:#{fullname}B[#{b.name}]T[#{tcard.name}]")
 
     # FIXME! need a different test here
     new_card = tcard.new_record? && !tcard.virtual?
-Rails.logger.info("PINC[#{new_card}]#{tcard.content}:\nPINC:#{tcard.name} options=#{options.inspect}")
 
     state = @state.to_sym
     subslot.requested_view = vmode = (options[:view] || :content).to_sym
     action = case
 
-when [:name, :link, :linkname].member?(vmode)  ; raise "should be handled in chunks name[#{vmode}]"
+#when [:name, :link, :linkname].member?(vmode)  ; raise "should be handled in chunks name[#{vmode}]"
       when [:edit, :declare, :comment].member?(state)
     tcard.virtual? ? :edit_auto : :edit_in_form
       when new_card
@@ -498,7 +483,6 @@ when [:name, :link, :linkname].member?(vmode)  ; raise "should be handled in chu
       when state==:line       ; :expanded_line_content
       else                    ; vmode
       end
-Rails.logger.info("<transclusion_case: state=#{state} vmode=#{vmode} --> Action=#{action}, Format=#{format}, Option=#{options.inspect}")
 
     result = subslot.render(action, options)
     Slot.current_slot = old_slot
@@ -723,7 +707,6 @@ Rails.logger.info("<transclusion_case: state=#{state} vmode=#{vmode} --> Action=
       return %{<span class="card-menu faint">Virtual</span>\n}
     end
     menu_options = card.menu_options([:view,:changes,:options,:related,:edit]).clone
-#Rails.logger.info("menu_options(#{menu_options.inspect})")
     top_option = menu_options.pop
     menu = %{<span class="card-menu">\n}
       menu << %{<span class="card-menu-left">\n}
@@ -809,7 +792,6 @@ Rails.logger.info("<transclusion_case: state=#{state} vmode=#{vmode} --> Action=
 
   def content_field(form,options={})
     self.form = form
-Rails.logger.info("content_field(#{form}, #{options.inspect})")
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
     editor_partial = (card.type=='Pointer' ? ((c=card.setting('input'))  ? c.gsub(/[\[\]]/,'') : 'list') : 'editor')

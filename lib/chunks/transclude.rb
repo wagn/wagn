@@ -44,12 +44,10 @@ module Chunk
     
     def unmask_text(&block)
       return @unmask_text if @unmask_text
-      return @card_name unless block_given?
-Rails.logger.info("unmask TR #{@card_name}::#{@options.inspect}")
-      ret = case @card_name
+      case refcard_name
       when /^\#\#/            ; return '' # invisible comment
 	       	                              # visible comment
-      when /^\#/||nil?||blank?; return "<!-- #{CGI.escapeHTML match[1]} -->"
+      when /^\#/||nil?||blank?; return "<!-- #{CGI.escapeHTML @card_name} -->"
       else
         case view = @options[:view] and view = view.to_sym
         when :name;     refcard ? refcard.name : @card_name
@@ -62,12 +60,10 @@ Rails.logger.info("unmask TR #{@card_name}::#{@options.inspect}")
           content_tag( :h2, less_fancy_title(refcard_name) ) + self.render( :expanded_view_content )
 
         else
-Rails.logger.info("unmask TR: #{@card_name}::#{@options.compact.inspect}")
+          return @text unless block_given?
           block.call(@card_name, @options)
         end
       end
-Rails.logger.info("unmask TR[#{ret}] V:#{view.inspect}")
-      ret
     end
 
     def revert                             

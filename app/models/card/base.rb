@@ -86,6 +86,7 @@ module Card
         
     
     def set_defaults args
+      #Rails.logger.debug "Card(#{name})#set_defaults"
       # autoname
       if args["name"].blank?
         ::User.as(:wagbot) do
@@ -103,7 +104,7 @@ module Card
         self.tag   ||= Card.fetch_or_new name.tag_name,    {:skip_virtual=>true}
       end
       
-      self.permissions = default_permissions if !args['permissions']
+      self.set_default_permissions if !args['permissions']
 
       #default content
       ::User.as(:wagbot) do
@@ -117,11 +118,10 @@ module Card
       self.trash = false   
       self.key = name.to_key if name
       self.name='' if name.nil?
-      #Rails.logger.debug "Card(#{name})#set_defaults end"
       self
     end
     
-    def default_permissions
+    def set_default_permissions
       source_card = setting_card('content', 'default')
       if source_card
         perms = source_card.card.permissions.reject { 
@@ -135,29 +135,19 @@ module Card
       # We loop through and create copies of each permission object here because
       # direct copies end up re-assigning which card the permission objects are assigned to.
       # leads to painful errors.
-      perms.map do |p|  
+      self.permissions = perms.map do |p|  
         if p.task == 'read'
           party = p.party
           
           if trunk and tag
+            trunk_reader = (trunk.who_can(:read) || (trunk.set_default_permissions && trunk.who_can(:read)))
+            tag_reader   = (  tag.who_can(:read) || (  tag.set_default_permissions &&   tag.who_can(:read)))
             #Rails.logger.debug "trunk = #{trunk.inspect} ....... who can read = #{trunk.who_can(:read)}"
             #Rails.logger.debug "tag = #{tag.inspect} ....... who can read = #{tag.who_can(:read)}"
-            
-            # HOT FIX.  FIXME (though this should be obviated soon)
-            trunk_reader, tag_reader = trunk.who_can(:read), tag.who_can(:read)
-            if !trunk_reader
-              trunk.permissions = trunk.default_permissions
-              trunk_reader = trunk.who_can(:read)
-            end
-            if !tag_reader
-              tag.permissions = tag.default_permissions
-              tag_reader = tag.who_can(:read)
-            end
-            if trunk_reader.anonymous? or (authenticated?(trunk_reader) and !tag_reader.anonymous?)
-              party = tag_reader
-            else
-              party = trunk_reader
-            end
+            trunk_reader && tag_reader || raise("bum permissions: #{trunk.name}:#{trunk_reader}, #{tag.name}:#{tag_reader}")
+
+            tag_override = (trunk_reader.anonymous? || (authenticated?(trunk_reader) && !tag_reader.anonymous?))
+            party = (tag_override ? tag_reader : trunk_reader)
           end
           Permission.new :task=>p.task, :party=>party
         else
@@ -184,6 +174,7 @@ module Card
       def new(args={})
         args = {} if args.nil?
         args = args.stringify_keys
+        args['trash'] = false
         
         card_class, broken_type = get_class(args)
         new_card = card_class.ar_new args

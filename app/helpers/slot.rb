@@ -460,6 +460,7 @@ Rails.logger.info("render_naked_content[#{card.name}]#{card.content}:#{r_content
 b=slot_options[:base]
 Rails.logger.info("transclusion_Full:#{fullname}B[#{b.name}]T[#{tcard.name}]")
 
+    #tcard.loaded_trunk=card if tname =~ /^\+/
     result = process_inclusion(tcard, options)
     result = resize_image_content(result, options[:size]) if options[:size]
     self.char_count += (result ? result.length : 0) #should we strip html here?
@@ -812,9 +813,11 @@ Rails.logger.info("content_field(#{form}, #{options.inspect})")
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
     editor_partial = (card.type=='Pointer' ? ((c=card.setting('input'))  ? c.gsub(/[\[\]]/,'') : 'list') : 'editor')
-    pre_content + clear_queues + self.render_partial( card_partial(editor_partial), options ) + setup_autosave
-  end
-
+    User.as :wagbot do
+      pre_content + clear_queues + self.render_partial( card_partial(editor_partial), options ) + setup_autosave
+    end
+  end                          
+ 
   def clear_queues
     queue_context = get_queue_context
 

@@ -251,7 +251,7 @@ G * . . . .
 end
 
 
-describe Card, "New Connection Card with one restricted piece" do
+describe Card, "New plus card with one restricted piece" do
   before do
     User.as :wagbot 
     c = Card['c']

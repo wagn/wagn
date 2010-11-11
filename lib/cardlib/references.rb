@@ -38,7 +38,7 @@ module Cardlib
       # this seems like oodles of unnecessary instantiations to me -efm
     end
     
-    def expire(card)  
+    def expire(card)
       Wagn::Cache.expire_card card.key
     end
     

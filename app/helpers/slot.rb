@@ -383,6 +383,8 @@ raise "no result #{ok_action}" unless result
   def render_naked
     if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
       template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
+    elsif card.type == 'Ruby'
+      render_card_partial(:content)  # FIXME?: 'content' is inconsistent
     else
       cache_action('naked_content') do
         #passed_in_content = args.delete(:content) # Can we get away without this??

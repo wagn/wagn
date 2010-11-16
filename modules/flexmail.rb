@@ -45,14 +45,14 @@ class Flexmail
   # skip templated cards in create and handle them after multi-create,
   # so we have access to plus cards.
   Wagn::Hook.add :after_create, '*all' do |card|
-    if !card.hard_template  
+    if !card.hard_template
       Flexmail.deliver_mail_for card
     end
   end
 
   Wagn::Hook.add :after_multi_create, '*all' do |card|
     if card.hard_template
-      Flexmail.deliver_mail_for card 
+      Flexmail.deliver_mail_for card
     end
   end
   

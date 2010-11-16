@@ -12,7 +12,7 @@ module Cardlib
 
     # FIXME: content settings -- do we really need the reference expiration system?
     def expire_templatee_references
-	    return unless respond_to?('references_expired')
+      return unless respond_to?('references_expired')
       if wql=hard_templatee_wql
         condition = User.as(:wagbot) { Wql::CardSpec.build(wql.merge(:return=>"condition")).to_sql }
         card_ids_to_update = connection.select_rows("select id from cards t where #{condition}").map(&:first)
@@ -27,7 +27,7 @@ module Cardlib
     end
 
     def hard_template
-      (template && template.hard_template?) ? template : nil
+      (template && @template.hard_template?) ? @template : nil
     end
 
     def template
@@ -38,16 +38,13 @@ module Cardlib
       hard_template
     end
     
-    def xml_templated_content
-      @xml_template ||= setting_card('xml_content')
-      card=@xml_template and User.as(:wagbot){ card.content } or
-      templated_content
+    def templated_content(format=:html)
+      @template = setting_card('xml_content') if format == :xml
+      @template ||= template
+      return unless @template.hard_template?
+      @template and User.as(:wagbot) { @template.content }
     end
 
-    def templated_content
-      card=hard_template and User.as(:wagbot){ card.content }
-    end
-    
     private
     # FIXME: remove after adjusting expire_templatee_references to content_settings
     def hard_templatee_wql

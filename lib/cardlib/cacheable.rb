@@ -65,11 +65,11 @@ module Cardlib
     
     def contextual_content context = nil
       context ||= self
-      #context.content = self.content
-      s=Slot.new(self, "main_1","view",nil, :base => context)
-      # FIXME: maybe slot.rb should have an additional view for this.
-      # ultimately we need to be able to process links and inclusions in an email/text friendly way
-      s.render(:naked_content)
+      renderer = Renderer.new
+      ren = renderer.render( self, '', self.references_expired, :raw=>true)
+      res = renderer.render( context, ren, context.references_expired )
+Rails.logger.info("contextual_content[#{name}|#{context.name}] #{context} C:#{ren} Rs:#{res}")
+res
     end
 
     def cardtype_name

@@ -221,10 +221,9 @@ class Slot
   end
 
   def render(action, args={})
-    #Rails.logger.debug "Slot(#{card.name}).render #{action}"
+Rails.logger.debug "Slot(#{card.name}).render #{action} #{args.inspect}"
     self.render_args = args.clone
-raise "should be handled in chunks" if [:name, :link].member?(action)
-    count_render
+    count_render unless [:name, :link].member?(action)
     ok_action = case
       when too_many_renders?;   :too_many_renders
       when denial = deny_render?(action) ; denial
@@ -233,6 +232,9 @@ raise "should be handled in chunks" if [:name, :link].member?(action)
 
     w_content = nil
     result = case ok_action
+
+      when :name; card.name
+      when :link; raise "should be in chunks"
 
     ###-----------( FULL )
       when :new
@@ -272,14 +274,15 @@ raise "should be handled in chunks" if [:name, :link].member?(action)
 
       #when :expanded_view_content; self.render_expanded_view_content
       when :expanded_view_content, :open_content; render_open_content
-      when :naked_content, :naked, :bare;         render_naked_content
+      when :naked, :bare;                         render_naked
       when :expanded_line_content;                render_expanded_line_content
       when :closed_content;                       render_closed_content
       when :array;                                render_array
-      when :raw;                                  render_naked
+      when :raw, :naked_content;                  render_naked_content
 
       when :declare;  # FIXME generalize this test for all extension actions
         @state= symbolize_param(:attribute) || :declare
+Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspect} : #{args.inspect}")
         args[:add_javascript]=true
         hidden_field_tag( :multi_edit, true) +
         hidden_field_tag( :attribute, @state ) +
@@ -334,7 +337,7 @@ raise "no result #{ok_action}" unless result
     @state = 'view' #unless xml?
     expand_inclusions(
       cache_action('view_content') {
-        xml? ? render_naked_content : card.post_render( render_open_content)
+        xml? ? render_naked : card.post_render( render_open_content)
       }
     )
   end
@@ -352,6 +355,8 @@ raise "no result #{ok_action}" unless result
   end
 
   def render_array
+Rails.logger.debug "Slot(#{card.name}).render_array T:#{card.type}  root = #{root}"
+
     count_render
     if too_many_renders?
       return render_partial( 'views/too_many_renders' )
@@ -361,15 +366,17 @@ raise "no result #{ok_action}" unless result
         names = Wql.new(card.get_spec(:return => 'name_content')).run.keys
         names.map{|x| subslot(Card.fetch_or_new(x)).render(:naked) }.inspect
       when 'Pointer'
-        card.pointees.map{|x| subslot(Card.fetch_or_new(x)).render(:naked) }.inspect
+        card.pointees.map{|x|
+          subslot(Card.fetch_or_new(x)).render(:naked)
+       	}.inspect
       else
-        [render_naked_content].inspect
+        [render_naked].inspect
     end
   end
 
   def render_open_content
     if generic_card?
-      render_naked_content
+      render_naked
     else
       render_card_partial(:content)  # FIXME?: 'content' is inconsistent
     end
@@ -380,7 +387,7 @@ raise "no result #{ok_action}" unless result
     card.type == 'Basic' || card.type == 'Phrase' || card.type == 'Number'
   end
 
-  def render_naked
+  def render_naked_content
     if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
       template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
     elsif card.type == 'Ruby'
@@ -389,16 +396,16 @@ raise "no result #{ok_action}" unless result
       cache_action('naked_content') do
         #passed_in_content = args.delete(:content) # Can we get away without this??
         ## content templates
-        r_content = (xml? ? card.xml_templated_content : card.templated_content)
-        block_given? ? yield(r_content||""):(r_content||card.content)
+        renderer_content = card.templated_content(format)
+        block_given? ? yield(renderer_content||"") : renderer_content||card.content
       end
     end
   end
 
-  def render_naked_content
-    render_naked do |r_content|
+  def render_naked
+    render_naked_content do |r_content|
       @renderer.render( slot_options[:base]||card, r_content,
-            card.references_expired, format) do | tname, options|
+            update_refs=card.references_expired, format) do | tname, options|
         expand_card(tname, options)
       end
     end
@@ -446,9 +453,8 @@ raise "no result #{ok_action}" unless result
     else
       Card.fetch_or_new(fullname, :skip_defaults=>true)
     end
-b=slot_options[:base]
 
-    #tcard.loaded_trunk=card if tname =~ /^\+/
+    tcard.loaded_trunk=card if tname =~ /^\+/
     result = process_inclusion(tcard, options)
     result = resize_image_content(result, options[:size]) if options[:size]
     self.char_count += (result ? result.length : 0) #should we strip html here?
@@ -472,7 +478,8 @@ b=slot_options[:base]
     subslot.requested_view = vmode = (options[:view] || :content).to_sym
     action = case
 
-#when [:name, :link, :linkname].member?(vmode)  ; raise "should be handled in chunks name[#{vmode}]"
+      when [:name, :link, :linkname].member?(vmode)  ; vmode
+      #when [:name, :link, :linkname].member?(vmode)  ; raise "Should be handled in chunks"
       when [:edit, :declare, :comment].member?(state)
     tcard.virtual? ? :edit_auto : :edit_in_form
       when new_card
@@ -489,8 +496,8 @@ b=slot_options[:base]
     result = subslot.render(action, options)
     Slot.current_slot = old_slot
     result
-  #rescue
-    #%{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
+  rescue
+    %{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
   end
 
   def get_inclusion_fullname(name,options)
@@ -548,6 +555,7 @@ b=slot_options[:base]
   end
 
   def render_partial( partial, locals={} )
+Rails.logger.info("render_partial[#{partial}, #{locals.inspect}]")
     @template.render(:partial=>partial, :locals=>{ :card=>card, :slot=>self }.merge(locals))
   end
 
@@ -709,6 +717,7 @@ b=slot_options[:base]
       return %{<span class="card-menu faint">Virtual</span>\n}
     end
     menu_options = card.menu_options([:view,:changes,:options,:related,:edit]).clone
+#Rails.logger.info("menu_options(#{menu_options.inspect})")
     top_option = menu_options.pop
     menu = %{<span class="card-menu">\n}
       menu << %{<span class="card-menu-left">\n}
@@ -794,6 +803,7 @@ b=slot_options[:base]
 
   def content_field(form,options={})
     self.form = form
+Rails.logger.info("content_field(#{form}, #{options.inspect})")
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
     editor_partial = (card.type=='Pointer' ? ((c=card.setting('input'))  ? c.gsub(/[\[\]]/,'') : 'list') : 'editor')

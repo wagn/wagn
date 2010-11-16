@@ -1,7 +1,7 @@
 module Chunk
   class Transclude < Reference
     attr_reader :stars
-    attr_accessor :format
+    attr_accessor :format, :expand
     unless defined? TRANSCLUDE_PATTERN
       #  {{+name|attr:val;attr:val;attr:val}}
       TRANSCLUDE_PATTERN = /\{\{(([^\|]+?)\s*(\|([^\}]+?))?)\}\}/
@@ -12,9 +12,10 @@ module Chunk
     def initialize(match_data, content)
       super   
       @format = content.format
+      @expand = content.expand
       #warn "FOUND TRANSCLUDE #{match_data} #{content}"
       @card_name, @options, @configs = self.class.parse(match_data)
-      @renderer = @content.renderer
+      #@renderer = @content.renderer
       @card = @content.card or raise "No Card in Transclude Chunk!!"     
       @card_name.gsub!(/_self/,@card.name)
     end
@@ -44,6 +45,8 @@ module Chunk
     
     def unmask_text(&block)
       return @unmask_text if @unmask_text
+      Rails.logger.info "unmask raw #{@expand.inspect} #{@text}" unless @expand
+      return @text unless @expand
       case refcard_name
       when /^\#\#/            ; return '' # invisible comment
 	       	                              # visible comment
@@ -59,11 +62,41 @@ module Chunk
           # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
           content_tag( :h2, less_fancy_title(refcard_name) ) + self.render( :expanded_view_content )
 
+	#when :content, :naked, :naked_content; card.contextual_content
+	#when :array;
+	#when :open;
+
         else
-          return @text unless block_given?
+          #return @test unless block_given?
+          block ||= Proc.new do |tcard, opts|
+            case view
+            when :naked
+              card = Card.fetch(tcard)
+              return "<no card #{tcard}/>" unless card
+	      case card.type
+              when 'Search'
+                Wql.new(card.get_spec(:return => 'name_content')).run.keys.map do
+                  |x| renderer_content(Card.fetch_or_new(x))
+		end
+              when 'Pointer'
+                card.pointees.map do |x|
+	       	  renderer_content(Card.fetch_or_new(x))
+	        end
+	      else
+                renderer_content(card)
+	      end
+	    else
+              @text # just leave the {{}} coding, may need to handle more...
+	    end
+	  end
           block.call(@card_name, @options)
         end
       end
+    end
+
+    def renderer_content(card)
+      return "<no card #{@tcard}/>" unless card
+      card.templated_content(format) || card.content
     end
 
     def revert                             

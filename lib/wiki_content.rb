@@ -104,14 +104,21 @@ class WikiContent < String
   
   include ChunkManager
   attr_reader :revision, :not_rendered, :pre_rendered, :renderer, :card,
-     :format
+     :format, :expand
 
-  def initialize(card, content, renderer, format=:html)
+  def initialize(card, content, renderer, opts=:html)
     @not_rendered = @pre_rendered = nil
     @renderer = renderer
     @card = card or raise "No Card in Content!!"
     super(content)
-    @format=format
+    if Hash===opts
+      @expand = opts[:expand]
+      unless @expand
+        @expand = (@expand = opts[:raw]) ? (not @expand) : true
+      end
+      @format = opts[:format]
+    else @expand, @format = true, opts end
+    @format= Hash===format ? format[:format] : format
     init_chunk_manager()
     ACTIVE_CHUNKS.each{|chunk_type| chunk_type.apply_to(self)}
     @not_rendered = String.new(self)

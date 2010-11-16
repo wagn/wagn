@@ -22,10 +22,9 @@ module Card
 #    cattr_accessor :cache  
 #    self.cache = {}
 
-   
     [:before_validation, :before_validation_on_create, :after_validation, 
-      :after_validation_on_create, :before_save, :before_create, :after_create,
-      :after_save
+      :after_validation_on_create, :before_save, :before_create, :after_save,
+      :after_create,
     ].each do |callback|
       self.send(callback) do 
         Rails.logger.debug "Card#callback #{callback}"
@@ -52,11 +51,13 @@ module Card
                
     #before_validation_on_create :set_needed_defaults
     
-    attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :from_trash,
-      :update_referencers, :allow_type_change, :virtual, :builtin, :broken_type, :skip_defaults, :loaded_trunk
+    attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
+      :from_trash, :update_referencers, :allow_type_change, :virtual,
+      :builtin, :broken_type, :skip_defaults, :loaded_trunk
 
     # setup hooks on AR callbacks
-    [:before_save, :before_create, :after_save, :after_create].each do |hookname| 
+    # Note: :after_create is called from end of set_initial_content now
+    [:before_save, :before_create, :after_save ].each do |hookname| 
       self.send( hookname ) do |card|
         Wagn::Hook.call hookname, card
       end
@@ -236,7 +237,7 @@ module Card
       
       def find_or_create(args={})
         raise "find or create must have name" unless args[:name]
-        c = Card.fetch_or_create(args[:name], {}, args)
+        Card.fetch_or_create(args[:name], {}, args)
       end                  
     end
 
@@ -267,12 +268,14 @@ module Card
     def multi_create(cards)
       Wagn::Hook.call :before_multi_create, self, cards
       multi_save(cards)
+      Rails.logger.info "Card#callback after_multi_create"
       Wagn::Hook.call :after_multi_create, self
     end
     
     def multi_update(cards)
       Wagn::Hook.call :before_multi_update, self, cards
       multi_save(cards)
+      Rails.logger.info "Card#callback after_multi_update"
       Wagn::Hook.call :after_multi_update, self
     end
     
@@ -303,6 +306,7 @@ module Card
           end
         end
       end  
+      Rails.logger.info "Card#callback after_multi_save"
       Wagn::Hook.call :after_multi_save, self, cards
     end
 

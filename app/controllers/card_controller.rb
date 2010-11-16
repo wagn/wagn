@@ -237,7 +237,7 @@ raise "XML error: #{doc} #{content}" unless doc.root
     
     case
     when params[:multi_edit]; @card.multi_update(params[:cards])
-    when card_args[:type];       @card.type=card_args.delete(:type); @card.save
+    when card_args[:type]; @card.type=Cardtype.classname_for(card_args.delete(:type)); @card.save
       #can't do this via update attributes: " Can't mass-assign these protected attributes: type"
       #might be addressable via attr_accessors?
     else;   @card.update_attributes(card_args)

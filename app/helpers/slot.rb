@@ -472,14 +472,8 @@ class Slot
   end
 
   def new_inclusion_card_args(tname, options)
-    args = { 
-#      :name=>options[:fullname], 
-      :type=>options[:type],
-      :skip_defaults=>true
-    }
-    if content=get_inclusion_content(tname)
-      args[:content]=content 
-    end
+    args = { :type =>options[:type],  :permissions=>[] }
+    args[:content] = content       if content=get_inclusion_content(tname)
     args
   end
 

@@ -12,7 +12,6 @@ class RendererTest < ActiveSupport::TestCase
 
   def setup
     setup_default_user     
-    CachedCard.bump_global_seq
   end
 
   def test_replace_references_should_work_on_inclusions_inside_links       
@@ -50,11 +49,10 @@ ActionController::Base.logger.info("TEST:INFO:slot_link(#{card.name},#{card.clas
 
   def test_slot_render_xml
     card = newcard('Baines', '[[Nixon]]')
-    assert_equal '<cardref class="wanted-card" card="Nixon">Nixon</cardref>', slot_link(card,:xml)
+    assert_equal %{<card  type="Basic"  cardId="#{card.id}"  class="transcluded ALL TYPE-basic SELF-baine"  name="Baines" ><cardlink class="wanted-card" card="/wagn/Nixon">Nixon</cardlink></card>}, slot_link(card,:xml)
 
-    lbj_link = '<cardref class="known-card" card="Baines">Lyndon</cardref>'
-    
     card2 = newcard('Johnson', '[Lyndon][Baines]')
+    lbj_link = %{<card  type=\"Basic\"  cardId=\"#{card2.id}\"  class=\"transcluded ALL TYPE-basic SELF-johnson\"  name=\"Johnson\" ><cardlink class=\"known-card\" card=\"/wagn/Baines\">Lyndon</cardlink></card>}
     assert_equal(lbj_link, slot_link(card2,:xml))
     
     card2.content = '[[Baines|Lyndon]]'; card2.save
@@ -72,10 +70,10 @@ ActionController::Base.logger.info("TEST:INFO:slot_link(#{card.name},#{card.clas
 
   def test_slot_relative_card_xml
     cardA = newcard('Kennedy', '[[+Monroe]]')
-    assert_equal "<card  type=\"Basic\"  class=\"transcluded ALL TYPE-basic SELF-baine\"  cardId=\"2330\"  name=\"Baines\" ><cardlink class=\"wanted-card\" card=\"/wagn/Nixon\">Nixon</cardlink></card>", slot_link(cardA,:xml)
+    assert_equal %{<card  type="Basic"  cardId="#{cardA.id}"  class="transcluded ALL TYPE-basic SELF-kennedy"  name="Kennedy" ><cardlink class="wanted-card" card="/wagn/Kennedy+Monroe">+Monroe</cardlink></card>}, slot_link(cardA,:xml)
 
     cardB = newcard('Clinton', '[[Lewinsky+]]')
-    assert_equal '<cardref class="wanted-card" card="Lewinsky+Clinton">Lewinsky+</cardref>', slot_link(cardB,:xml)
+    assert_equal %{<card  type="Basic"  cardId="#{cardB.id}"  class="transcluded ALL TYPE-basic SELF-clinton"  name="Clinton" ><cardlink class="wanted-card" card="/wagn/Lewinsky+Clinton">Lewinsky+</cardlink></card>}, slot_link(cardB,:xml)
   end
 
   def test_slot_relative_url

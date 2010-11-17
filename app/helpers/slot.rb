@@ -345,6 +345,8 @@ raise "no result #{ok_action}" unless result
   end
 
   def render_array
+#Rails.logger.debug "Slot(#{card.name}).render_array T:#{card.type}  root = #{root}"
+
     count_render
     if too_many_renders?
       return render_partial( 'views/too_many_renders' )
@@ -431,7 +433,7 @@ raise "no result #{ok_action}" unless result
 
     tcard ||= case
     when @state==:edit
-      Card.fetch_or_new(fullname, {}, new_inclusion_card_args(tname, options))
+      Card.fetch_or_new(fullname, {}, new_inclusion_card_args(options))
     when slot_options[:base].respond_to?(:name)# &&
          #slot_options[:base].name == fullname
       slot_options[:base]
@@ -521,13 +523,12 @@ raise "no result #{ok_action}" unless result
     content if content.present?  #not sure I get why this is necessary - efm
   end
 
-  def new_inclusion_card_args(tname, options)
+  def new_inclusion_card_args(options)
     args = {
-#      :name=>options[:fullname],
       :type=>options[:type],
       :skip_defaults=>true
     }
-    if content=get_inclusion_content(tname)
+    if content=get_inclusion_content(options[:tname])
       args[:content]=content
     end
     args

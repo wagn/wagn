@@ -17,7 +17,6 @@ module Chunk
       @card_name, @options, @configs = self.class.parse(match_data)
       #@renderer = @content.renderer
       @card = @content.card or raise "No Card in Transclude Chunk!!"     
-      @card_name.gsub!(/_self/,@card.name)
     end
   
     def self.parse(match)

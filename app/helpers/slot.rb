@@ -221,7 +221,7 @@ class Slot
   end
 
   def render(action, args={})
-Rails.logger.debug "Slot(#{card.name}).render #{action} #{args.inspect}"
+#Rails.logger.debug "Slot(#{card.name}).render #{action} #{args.inspect}"
     self.render_args = args.clone
     count_render unless [:name, :link].member?(action)
     ok_action = case
@@ -268,12 +268,14 @@ Rails.logger.debug "Slot(#{card.name}).render #{action} #{args.inspect}"
     ###---(  CONTENT VARIATIONS )
       #-----( with transclusions processed )
       when :content
+        @state = 'view'
         w_action = self.requested_view = 'content'
-        c = render_expanded_view_content
-        w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c))
+        c = render_open_content
+        w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c ))
 
       #when :expanded_view_content; self.render_expanded_view_content
-      when :expanded_view_content, :open_content; render_open_content
+      when :expanded_view_content, :open_content;
+        card.post_render(render_open_content)
       when :naked, :bare;                         render_naked
       when :expanded_line_content;                render_expanded_line_content
       when :closed_content;                       render_closed_content
@@ -282,7 +284,6 @@ Rails.logger.debug "Slot(#{card.name}).render #{action} #{args.inspect}"
 
       when :declare;  # FIXME generalize this test for all extension actions
         @state= symbolize_param(:attribute) || :declare
-Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspect} : #{args.inspect}")
         args[:add_javascript]=true
         hidden_field_tag( :multi_edit, true) +
         hidden_field_tag( :attribute, @state ) +
@@ -302,8 +303,7 @@ Rails.logger.info("Render #{ok_action} #{card.name} #{@state} :: #{params.inspec
       when :multi_edit;
         @state=:edit
         args[:add_javascript]=true
-        hidden_field_tag( :multi_edit, true) +
-        render(:naked_content)
+        hidden_field_tag(:multi_edit, true) + render_naked
 
       when :edit_in_form
         render_partial('views/edit_in_form', args.merge(:form=>form))
@@ -332,16 +332,6 @@ raise "no result #{ok_action}" unless result
     return "Permission error: #{e.message}"
   end
 
-
-  def render_expanded_view_content
-    @state = 'view' #unless xml?
-    expand_inclusions(
-      cache_action('view_content') {
-        xml? ? render_naked : card.post_render( render_open_content)
-      }
-    )
-  end
-
   def render_expanded_line_content
     expand_inclusions(  cache_action('line_content') { render_closed_content } )
   end
@@ -355,8 +345,6 @@ raise "no result #{ok_action}" unless result
   end
 
   def render_array
-Rails.logger.debug "Slot(#{card.name}).render_array T:#{card.type}  root = #{root}"
-
     count_render
     if too_many_renders?
       return render_partial( 'views/too_many_renders' )
@@ -375,11 +363,8 @@ Rails.logger.debug "Slot(#{card.name}).render_array T:#{card.type}  root = #{roo
   end
 
   def render_open_content
-    if generic_card?
-      render_naked
-    else
-      render_card_partial(:content)  # FIXME?: 'content' is inconsistent
-    end
+    (generic_card? or xml?) ?           # FIXME?: 'content' is inconsistent
+      render_naked : render_card_partial(:content)
   end
 
   def generic_card?
@@ -492,7 +477,6 @@ Rails.logger.debug "Slot(#{card.name}).render_array T:#{card.type}  root = #{roo
       when state==:line       ; :expanded_line_content
       else                    ; vmode
       end
-
     result = subslot.render(action, options)
     Slot.current_slot = old_slot
     result
@@ -555,7 +539,6 @@ Rails.logger.debug "Slot(#{card.name}).render_array T:#{card.type}  root = #{roo
   end
 
   def render_partial( partial, locals={} )
-Rails.logger.info("render_partial[#{partial}, #{locals.inspect}]")
     @template.render(:partial=>partial, :locals=>{ :card=>card, :slot=>self }.merge(locals))
   end
 
@@ -803,7 +786,6 @@ Rails.logger.info("render_partial[#{partial}, #{locals.inspect}]")
 
   def content_field(form,options={})
     self.form = form
-Rails.logger.info("content_field(#{form}, #{options.inspect})")
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
     editor_partial = (card.type=='Pointer' ? ((c=card.setting('input'))  ? c.gsub(/[\[\]]/,'') : 'list') : 'editor')

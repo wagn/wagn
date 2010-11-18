@@ -105,7 +105,7 @@ class WikiContent < String
   include ChunkManager
   attr_reader :revision, :not_rendered, :pre_rendered, :renderer, :card, :expand
 
-  def initialize(card, content, renderer, opts=nil)
+  def initialize(card, content, renderer, opts=true)
     @not_rendered = @pre_rendered = nil
     @renderer = renderer
     @card = card or raise "No Card in Content!!"
@@ -116,19 +116,14 @@ class WikiContent < String
                 when opts.has_key?(:expand); opts[:expand]
                 when opts.has_key?(:raw); not opts[:raw]
                 end
-              when Array===opts
-                case
-                when opts.member?(:expand); true
-                when opts.member?(:raw);    false
+	      else
+                case Array===opts ? opts[0] : opts
+                when :expand; true
+                when :raw;    false
+		else opts
                 end
-	      when Symbol===opts
-                case opts
-		when :raw; false
-		when :expand; true
-		end
-              else true
               end
-
+    #Rails.logger.info "wiki_content #{@expand.inspect} #{opts.inspect}"
     init_chunk_manager()
     ACTIVE_CHUNKS.each{|chunk_type| chunk_type.apply_to(self)}
     @not_rendered = String.new(self)

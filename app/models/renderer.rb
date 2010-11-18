@@ -5,7 +5,7 @@ class Renderer
   include HTMLDiff
   include ReferenceTypes
 
-  def render( card, content=nil, update_references=false, opts=nil, &block)
+  def render( card, content=nil, update_references=false, opts=true, &block)
     # FIXME: this means if you had a card with content, but you WANTED to have it render 
     # the empty string you passed it, it won't work.  but we seem to need it because
     # card.content='' in set_card_defaults and if you make it nil a bunch of other

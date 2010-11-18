@@ -8,6 +8,7 @@ module Chunk
     
     def refcard_name
       @card_name = @card_name.to_absolute(base_card.name)
+Rails.logger.info "refcard_name #{base_card.name}:#{@card_name}"; @card_name
     end
     
     def refcard 
@@ -28,26 +29,17 @@ module Chunk
           when /^mailto:/; 'email-link'
         end)
 	lt = link_text()
-#Rails.logger.info("external #{format} link[#{klass}] #{href}::#{lt}")
-        if format == :xml
-          %{<link class="#{klass}" href="#{href}">#{lt}</link>}
-        else
-          %{<a class="#{klass}" href="#{href}">#{lt}</a>}
-        end
+        %{<a class="#{klass}" href="#{href}">#{lt}</a>}
       else
         lt = link_text.to_show(href)
         klass = if refcard
           href = href.to_url_key
          'known-card'
         else
-          href = CGI.escape(Cardname.escape(href)) unless format == :xml
+          href = CGI.escape(Cardname.escape(href))
           'wanted-card'
         end
-        if format == :xml
-          %{<cardlink class="#{klass}" card="/wagn/#{href}">#{lt}</cardlink>}
-        else
-          %{<a class="#{klass}" href="/wagn/#{href}">#{lt}</a>}
-        end
+        %{<a class="#{klass}" href="/wagn/#{href}">#{lt}</a>}
       end
     end
   end 

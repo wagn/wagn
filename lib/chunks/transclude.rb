@@ -1,7 +1,7 @@
 module Chunk
   class Transclude < Reference
     attr_reader :stars
-    attr_accessor :format, :expand
+    attr_accessor :expand
     unless defined? TRANSCLUDE_PATTERN
       #  {{+name|attr:val;attr:val;attr:val}}
       TRANSCLUDE_PATTERN = /\{\{(([^\|]+?)\s*(\|([^\}]+?))?)\}\}/
@@ -11,11 +11,9 @@ module Chunk
   
     def initialize(match_data, content)
       super   
-      @format = content.format
-      @expand = content.expand
       #warn "FOUND TRANSCLUDE #{match_data} #{content}"
       @card_name, @options, @configs = self.class.parse(match_data)
-      #@renderer = @content.renderer
+      @expand = content.expand
       @card = @content.card or raise "No Card in Transclude Chunk!!"     
     end
   
@@ -44,7 +42,6 @@ module Chunk
     
     def unmask_text(&block)
       return @unmask_text if @unmask_text
-      Rails.logger.info "unmask raw #{@expand.inspect} #{@text}" unless @expand
       return @text unless @expand
       case refcard_name
       when /^\#\#/            ; return '' # invisible comment
@@ -60,13 +57,7 @@ module Chunk
         when :rss_titled;
           # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
           content_tag( :h2, less_fancy_title(refcard_name) ) + self.render( :expanded_view_content )
-
-	#when :content, :naked, :naked_content; card.contextual_content
-	#when :array;
-	#when :open;
-
         else
-          #return @test unless block_given?
           block ||= Proc.new do |tcard, opts|
             case view
             when :naked
@@ -95,7 +86,7 @@ module Chunk
 
     def renderer_content(card)
       return "<no card #{@tcard}/>" unless card
-      card.templated_content(format) || card.content
+      card.templated_content || card.content
     end
 
     def revert                             

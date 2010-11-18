@@ -12,10 +12,10 @@ class Slot
 
   cattr_accessor :max_char_count, :current_slot
   self.max_char_count = 200
-  attr_reader :card, :action, :template, :format
+  attr_reader :card, :action, :template
   attr_writer :form
   attr_accessor  :options_need_save, :state, :requested_view, :js_queue_initialized,
-    :position, :renderer, :form, :superslot, :char_count, :item_format, :type, :renders,
+    :position, :renderer, :form, :superslot, :char_count, :item_view, :type, :renders,
     :start_time, :skip_autosave, :config, :slot_options, :render_args, :context
 
   VIEW_ALIASES = {
@@ -35,8 +35,7 @@ class Slot
   end
 
   def initialize(card, context="main_1", action="view", template=nil, opts={} )
-    @card, @context, @action, @template, @format =
-       card,context.to_s,action.to_s,template,(opts[:format] || :html).to_sym
+    @card,@context,@action,@template = card,context.to_s,action.to_s,template
     Slot.current_slot ||= self
 
     @template ||= begin
@@ -68,14 +67,12 @@ class Slot
     @js_queue_initialized = {}
   end
 
-  def xml?() @format == :xml end
-
   def subslot(card, context_base=nil, &proc)
     # Note that at this point the subslot context, and thus id, are
     # somewhat meaningless-- the subslot is only really used for tracking position.
     context_base ||= self.context
     new_position = @subslots.size + 1
-    new_slot = self.class.new(card, "#{context_base}_#{new_position}", @action, @template, :renderer=>@renderer, :format=>format)
+    new_slot = self.class.new(card, "#{context_base}_#{new_position}", @action, @template, :renderer=>@renderer)
 
     new_slot.state = @state
     new_slot.superslot = self
@@ -131,26 +128,16 @@ class Slot
 
       css_class << " " + Wagn::Pattern.css_names( card ) if card
 
-      if xml?
-        attributes = {
-          :name => card.name.tag_name,
-          :cardId   => (card && card.id),
-          :type => card.type,
-          :class    => css_class,
-        }
-        open_slot, close_slot = "<card ",  "</card>"
-      else
-        attributes = {
-          :cardId   => (card && card.id),
-          :style    => args[:style],
-          :view     => args[:view],
-          :item     => args[:item],
-          :base     => args[:base], # deprecated
-          :class    => css_class,
-          :position => UUID.new.generate.gsub(/^(\w+)0-(\w+)-(\w+)-(\w+)-(\w+)/,'\1')
-        }
-        open_slot, close_slot = "<div ", "</div>"
-      end
+      attributes = {
+        :cardId   => (card && card.id),
+        :style    => args[:style],
+        :view     => args[:view],
+        :item     => args[:item],
+        :base     => args[:base], # deprecated
+        :class    => css_class,
+        :position => UUID.new.generate.gsub(/^(\w+)0-(\w+)-(\w+)-(\w+)-(\w+)/,'\1')
+      }
+      open_slot, close_slot = "<div ", "</div>"
 
       open_slot += attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join + '>'
     end
@@ -177,18 +164,13 @@ class Slot
   end
 
   def wrap_content( content="" )
-    if xml?
-      content.to_s
-    else
-      %{<span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick">} +
-      content.to_s +
-      %{</span>} #<!--[if IE]>&nbsp;<![endif]-->}
-    end
+    %{<span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick">} +
+    content.to_s +
+    %{</span>} #<!--[if IE]>&nbsp;<![endif]-->}
   end
 
   def wrap_main(content)
     return content if p=root.slot_options[:params] and p[:layout]=='none'
-    return content if p=slot_options[:params][:format] and p.to_sym == :xml
     %{<div id="main" context="main">#{content}</div>}
   end
 
@@ -303,8 +285,7 @@ class Slot
       ###---(  EXCEPTIONS )
 
       when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing, :setting_missing
-          xml? ? "<no_card status='#{ok_action}'>#{card.name}</no_card>" :
-                 render_partial("views/#{ok_action}", args)
+        render_partial("views/#{ok_action}", args)
 
       when :blank;
         ""
@@ -356,7 +337,7 @@ raise "no result #{ok_action}" unless result
   end
 
   def render_open_content
-    (generic_card? or xml?) ?           # FIXME?: 'content' is inconsistent
+    generic_card? ?           # FIXME?: 'content' is inconsistent
       render_naked : render_card_partial(:content)
   end
 
@@ -374,7 +355,7 @@ raise "no result #{ok_action}" unless result
       cache_action('naked_content') do
         #passed_in_content = args.delete(:content) # Can we get away without this??
         ## content templates
-        renderer_content = card.templated_content(format)
+        renderer_content = card.templated_content
         block_given? ? yield(renderer_content||"") : renderer_content||card.content
       end
     end
@@ -383,14 +364,14 @@ raise "no result #{ok_action}" unless result
   def render_naked
     render_naked_content do |r_content|
       @renderer.render( slot_options[:base]||card, r_content,
-            update_refs=card.references_expired, format) do | tname, options|
+            update_refs=card.references_expired) do | tname, options|
         expand_card(tname, options)
       end
     end
   end
 
   def each_inclusion(content, &block)
-    @renderer.render(card,content,update_refs=card.references_expired,format) do
+    @renderer.render(card,content,update_refs=card.references_expired) do
       |tname, options| yield(tname, options)
     end
   end
@@ -411,7 +392,6 @@ raise "no result #{ok_action}" unless result
       tcard=slot_options[:main_card]
       item  = symbolize_param(:item) and options[:item] = item
       pview = symbolize_param(:view) and options[:view] = pview
-      pformat = symbolize_param(:format)||format and options[:format] = pformat
       self.context = options[:context] = 'main'
       options[:view] ||= :open
     end
@@ -445,8 +425,8 @@ raise "no result #{ok_action}" unless result
     subslot = subslot(tcard, options[:context])
     old_slot, Slot.current_slot = Slot.current_slot, subslot
 
-    # set item_format;  search cards access this variable when rendering their content.
-    subslot.item_format = options[:item] if options[:item]
+    # set item_view;  search cards access this variable when rendering their content.
+    subslot.item_view = options[:item] if options[:item]
     subslot.type = options[:type] if options[:type]
 
     # FIXME! need a different test here
@@ -473,8 +453,8 @@ raise "no result #{ok_action}" unless result
     result = subslot.render(action, options)
     Slot.current_slot = old_slot
     result
-  rescue
-    %{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
+  #rescue
+    #%{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
   end
 
   def get_inclusion_fullname(name,options)

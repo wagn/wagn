@@ -78,11 +78,7 @@ module LocationHelper
     url = System.base_url + url if (options.delete(:include_domain)) 
 
     #Rails.logger.info("link_to_page #{options.inspect}")
-    if options[:format] == :xml
-      %{<cardlink class="known-card" card="#{url}">#{title}</cardlink>}
-    else
-      link_to text, url, options
-    end  
+    link_to text, url, options
   end  
     
   def link_to_connector_update( text, highlight_group, connector_method, value, *method_value_pairs )

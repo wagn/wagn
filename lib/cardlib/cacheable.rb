@@ -66,7 +66,7 @@ module Cardlib
     def contextual_content context = nil
       context ||= self
       renderer = Renderer.new
-      ren = renderer.render( self, '', self.references_expired, :raw=>true)
+      ren = renderer.render( self, '', self.references_expired, :raw)
       res = renderer.render( context, ren, context.references_expired )
 Rails.logger.info("contextual_content[#{name}|#{context.name}] #{context} C:#{ren} Rs:#{res}")
 res

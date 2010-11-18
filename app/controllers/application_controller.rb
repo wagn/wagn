@@ -72,9 +72,6 @@ class ApplicationController < ActionController::Base
             end
         end
       } 
-      format.xml {
-        layout = 'xmlapp'
-      }
     end
     layout
   end

@@ -38,8 +38,7 @@ module Cardlib
       hard_template
     end
     
-    def templated_content(format=:html)
-      @template = setting_card('xml_content') if format == :xml
+    def templated_content
       @template ||= template
       return unless @template.hard_template?
       @template and User.as(:wagbot) { @template.content }

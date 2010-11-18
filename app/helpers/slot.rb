@@ -524,10 +524,7 @@ raise "no result #{ok_action}" unless result
   end
 
   def new_inclusion_card_args(options)
-    args = {
-      :type=>options[:type],
-      :skip_defaults=>true
-    }
+    args = { :type =>options[:type],  :permissions=>[] }
     if content=get_inclusion_content(options[:tname])
       args[:content]=content
     end

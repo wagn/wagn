@@ -106,19 +106,35 @@ class WikiContent < String
   attr_reader :revision, :not_rendered, :pre_rendered, :renderer, :card,
      :format, :expand
 
-  def initialize(card, content, renderer, opts=:html)
+  def initialize(card, content, renderer, opts=true)
     @not_rendered = @pre_rendered = nil
     @renderer = renderer
     @card = card or raise "No Card in Content!!"
     super(content)
+    @expand, @format = true, :html
     if Hash===opts
-      @expand = opts[:expand]
-      unless @expand
-        @expand = (@expand = opts[:raw]) ? (not @expand) : true
+      opts.each do |k, v|
+        case k
+        when :expand; @expand = v
+        when :raw;    @expand = v ? false : true
+        when :format; @format = v
+        end
       end
-      @format = opts[:format]
-    else @expand, @format = true, opts end
-    @format= Hash===format ? format[:format] : format
+    else
+      (Array===opts ? opts : [opts]).each do |v|
+        case
+        when :expand == v;   @expand = true
+        when :raw    == v;   @expand = false
+	when Symbol === v;
+		@format = v
+	when String === v;   @format = v.to_sym
+	else       
+	    	@expand = v
+        end
+      end 
+    end
+#Rails.logger.info "wiki_content #{@expand.inspect} #{@format.inspect} #{opts.inspect}"
+
     init_chunk_manager()
     ACTIVE_CHUNKS.each{|chunk_type| chunk_type.apply_to(self)}
     @not_rendered = String.new(self)

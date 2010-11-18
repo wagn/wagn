@@ -6,11 +6,6 @@ ID_REQS = { :id => /([^\.]*(\.(?!(#{FORMATS})))?)*/, :format=>FORMAT_PATTERN }
 
 ActionController::Routing::Routes.draw do |map|
 
-  REST_METHODS = [:get, :post, :put, :delete]
-
-  map.connect 'xmlrest/:id', :conditions => { :method => REST_METHODS }, :controller=>'card', :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'method'
-  #map.connect_resource :xmlcard
-
   # these file requests should only get here if the file isn't present.
   # if we get a request for a file we don't have, don't waste any time on it.
   #FAST 404s

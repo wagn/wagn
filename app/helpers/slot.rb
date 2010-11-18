@@ -223,7 +223,7 @@ class Slot
   def render(action, args={})
 #Rails.logger.debug "Slot(#{card.name}).render #{action} #{args.inspect}"
     self.render_args = args.clone
-    count_render unless [:name, :link].member?(action)
+    count_render
     ok_action = case
       when too_many_renders?;   :too_many_renders
       when denial = deny_render?(action) ; denial

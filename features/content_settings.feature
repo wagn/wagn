@@ -6,7 +6,8 @@ Feature: Content Settings
   Background:
     Given I log in as Joe User
     And I create Cardtype card "Movie"
-    And I create card "Movie+*type+*content" with content "{{+director}} {{+lead}}"
+    And I create card "Movie+*type+*content" with content "{{+director}} {{+lead}} {{+color}}"
+    And I create Phrase card "color+*right+*default" with content "true dat"
 
   Scenario: New card with templated content
     When I go to new Movie
@@ -25,7 +26,8 @@ Feature: Content Settings
       |G. Lucas|H. Ford|
     And I go to card "Star Wars"
     Then In the the main card content I should see "G. Lucas"
-    And In the the main card content I should see "H. Ford"    
+    And In the the main card content I should see "H. Ford"
+    And In the the main card content I should see "true dat"
     
   Scenario: Default on a ranking set
     Given I create card "Home Movie+*right+*default" with content "Watch this"

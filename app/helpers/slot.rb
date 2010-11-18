@@ -86,7 +86,7 @@ class Slot
   end
 
   def root
-    superslot ? superslot.root : self
+    @root ||= superslot ? superslot.root : self
   end
 
   def form
@@ -112,14 +112,10 @@ class Slot
   # FIXME: passing a block seems to only work in the templates and not from
   # internal slot calls, so I added the option passing internal content which
   # makes all the ugly block_given? ifs..
-  def wrap(action="", args={})
-    render_slot = args.key?(:add_slot) ? args.delete(:add_slot) : !xhr?
-    content = args.delete(:content)
+  def wrap(action="", args={}, content=nil)
+    result, open_slot, close_slot = "","", ""
 
-    open_slot, close_slot = "",""
-
-    result = ""
-    if render_slot
+    if render_slot = args.key?(:add_slot) ? args.delete(:add_slot) : !xhr?
       case action.to_s
         when 'content';    css_class = 'transcluded'
         when 'exception';  css_class = 'exception'
@@ -155,25 +151,18 @@ class Slot
       open_slot += attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join + '>'
     end
 
-    if block_given?
-      if (Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >= 2)
-        args = nil
-        @template.output_buffer ||= ''   # fixes error in CardControllerTest#test_changes
-      else
-        args = proc.binding
-      end
-      @template.concat open_slot, *args
-      yield(self)
-      @template.concat close_slot, *args
-      return ""
-    else
-      return open_slot + content + close_slot
-    end
-  end
+    return open_slot + content + close_slot if content
 
-  def cache_action(cc_method)
-    # FIXME: restore cacheing if necessary
-    yield
+    if (Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >= 2)
+      args = nil
+      @template.output_buffer ||= ''   # fixes error in CardControllerTest#test_changes
+    else
+      args = proc.binding
+    end
+    @template.concat open_slot, *args
+    yield(self)
+    @template.concat close_slot, *args
+    ""
   end
 
   def wrap_content( content="" )
@@ -247,7 +236,7 @@ class Slot
 
       when :closed, :line
         @state = :line; w_action='closed'; self.requested_view = 'closed'
-        w_content = render_partial('views/closed')  # --> slot.wrap_content slot.render( :expanded_line_content )
+        w_content = render_partial('views/closed')
 
       when :setting
         w_action = self.requested_view = 'content'
@@ -276,8 +265,8 @@ class Slot
       #when :expanded_view_content; self.render_expanded_view_content
       when :expanded_view_content, :open_content;
         card.post_render(render_open_content)
+      when :expanded_line_content;                render_closed_content
       when :naked, :bare;                         render_naked
-      when :expanded_line_content;                render_expanded_line_content
       when :closed_content;                       render_closed_content
       when :array;                                render_array
       when :raw, :naked_content;                  render_naked_content
@@ -313,7 +302,7 @@ class Slot
     end
     if w_content
       args[:add_slot] = true unless args.key?(:add_slot)
-      result = wrap(w_action, { :content=>w_content }.merge(args))
+      result = wrap(w_action, args, w_content)
     end
 
 #      result ||= "" #FIMXE: wtf?
@@ -322,10 +311,6 @@ raise "no result #{ok_action}" unless result
     result.strip
   rescue Card::PermissionDenied=>e
     return "Permission error: #{e.message}"
-  end
-
-  def render_expanded_line_content
-    expand_inclusions(  cache_action('line_content') { render_closed_content } )
   end
 
   def render_closed_content
@@ -371,32 +356,23 @@ raise "no result #{ok_action}" unless result
     elsif card.type == 'Ruby'
       render_card_partial(:content)  # FIXME?: 'content' is inconsistent
     else
-      cache_action('naked_content') do
-        #passed_in_content = args.delete(:content) # Can we get away without this??
-        ## content templates
-        renderer_content = card.templated_content(format)
-        block_given? ? yield(renderer_content||"") : renderer_content||card.content
-      end
+      #passed_in_content = args.delete(:content) # Can we get away without this??
+      ## content templates
+      renderer_content = card.templated_content
+      block_given? ? yield(renderer_content||"") : renderer_content||card.content
     end
   end
 
   def render_naked
     render_naked_content do |r_content|
       @renderer.render( slot_options[:base]||card, r_content,
-            update_refs=card.references_expired, format) do | tname, options|
-        expand_card(tname, options)
-      end
-    end
-  end
-
-  def each_inclusion(content, &block)
-    @renderer.render(card,content,update_refs=card.references_expired,format) do
-      |tname, options| yield(tname, options)
+            card.references_expired) {|c,o| expand_card(c,o)}
     end
   end
 
   def expand_inclusions(content)
-    each_inclusion(content) { | tname, options| expand_card(tname, options) }
+    @renderer.render(card, content,
+          card.references_expired) {|c,o| expand_card(c,o)}
   end
 
   def expand_card(tname, options)
@@ -670,9 +646,7 @@ raise "no result #{ok_action}" unless result
   end
 
   def footer_links
-    cache_action('footer') {
-      render_partial( 'card/footer_links' )   # this is ugly reusing this cache code
-    }
+    render_partial( 'card/footer_links' )   # this is ugly reusing this cache code
   end
 
   def option( args={}, &proc)

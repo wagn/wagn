@@ -63,10 +63,10 @@ module Cardlib
       self.list_cards(context).map{|x| x.list_cards(context) }.flatten.map{|x| x.list_items(context) }.flatten
     end
     
-    def contextual_content context = nil
+    def contextual_content context = nil, format=:html
       context ||= self
       renderer = Renderer.new
-      ren = renderer.render( self, '', self.references_expired, :raw=>true)
+      ren = renderer.render( self, '', self.references_expired, [:raw, format])
       res = renderer.render( context, ren, context.references_expired )
 Rails.logger.info("contextual_content[#{name}|#{context.name}] #{context} C:#{ren} Rs:#{res}")
 res

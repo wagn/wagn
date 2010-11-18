@@ -223,7 +223,7 @@ class Slot
   def render(action, args={})
 #Rails.logger.debug "Slot(#{card.name}).render #{action} #{args.inspect}"
     self.render_args = args.clone
-    count_render unless [:name, :link].member?(action)
+    count_render
     ok_action = case
       when too_many_renders?;   :too_many_renders
       when denial = deny_render?(action) ; denial
@@ -282,14 +282,6 @@ class Slot
       when :array;                                render_array
       when :raw, :naked_content;                  render_naked_content
 
-      when :declare;  # FIXME generalize this test for all extension actions
-        @state= symbolize_param(:attribute) || :declare
-        args[:add_javascript]=true
-        hidden_field_tag( :multi_edit, true) +
-        hidden_field_tag( :attribute, @state ) +
-        hidden_field_tag( :ctxsig, @card.solcard.signature) +
-        expand_inclusions( extension_form(ok_action) )
-
     ###---(  EDIT VIEWS )
       when :edit;
         @state=:edit
@@ -346,7 +338,6 @@ raise "no result #{ok_action}" unless result
 
   def render_array
 #Rails.logger.debug "Slot(#{card.name}).render_array T:#{card.type}  root = #{root}"
-
     count_render
     if too_many_renders?
       return render_partial( 'views/too_many_renders' )
@@ -467,8 +458,8 @@ raise "no result #{ok_action}" unless result
 
       when [:name, :link, :linkname].member?(vmode)  ; vmode
       #when [:name, :link, :linkname].member?(vmode)  ; raise "Should be handled in chunks"
-      when [:edit, :declare, :comment].member?(state)
-    tcard.virtual? ? :edit_auto : :edit_in_form
+      when :edit == state
+       tcard.virtual? ? :edit_auto : :edit_in_form
       when new_card
         case
           when vmode==:naked  ; :blank
@@ -603,41 +594,6 @@ raise "no result #{ok_action}" unless result
     eid << (area.blank? ? '' : "-#{area}")
   end
 
-  def extension_submenu(tag, menu_name, on)
-    menu_name = menu_name.to_s
-    div(:class=>'submenu') do
-      extension_forms(tag, menu_name) do |keycard, tcard, ok, args|
-	key = keycard.name
-        if ok
-          link_to_remote( key, { :url=>url_for("card/#{menu_name}",args,key),
-             :update => id , :menu => key}, :class=>(key==on.to_s ? 'on' : '') )
-        end
-       end.compact.join
-     end
-  end
-
-  def extension_forms(tag, menu_name)
-    return unless extcard = @card.extcard(tag.to_s) and
-                  formcard = extcard.setting_card(menu_name.to_star) and
-                  formcard.is_a?(Card::Pointer)
-    formcard.pointees.map do |item|
-      if c = Card.fetch(item, :skip_virtual=>true) and
-	 tag = (c.tag || c)
-       	block_given? ? yield(tag, c, true, []) : tag
-      end
-    end
-  end
-
-  def extension_form(action)
-    ext_tag = '*sol' if action == :declare
-    raise "No tag" unless ext_tag
-    which_form = nil #@state.to_s
-    extension_forms(ext_tag, action.to_s) do |keycard, tcard, ok, args|
-      which_form = tcard if keycard.name == @state.to_s or not which_form
-    end
-    which_form.content
-  end
-
   def edit_submenu(on)
     div(:class=>'submenu') do
       [[ :content,    true  ],
@@ -700,8 +656,7 @@ raise "no result #{ok_action}" unless result
     if card.virtual?
       return %{<span class="card-menu faint">Virtual</span>\n}
     end
-    menu_options = card.menu_options([:view,:changes,:options,:related,:edit]).clone
-#Rails.logger.info("menu_options(#{menu_options.inspect})")
+    menu_options = [:view,:changes,:options,:related,:edit]
     top_option = menu_options.pop
     menu = %{<span class="card-menu">\n}
       menu << %{<span class="card-menu-left">\n}

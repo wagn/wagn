@@ -16,8 +16,6 @@ module Card
     # FIXME:  this is ugly, but also useful sometimes... do in a more thoughtful way maybe?
     cattr_accessor :debug    
     Card::Base.debug = false
-    cattr_accessor :extension_tags
-    @@extension_tags = {}
 
 #    cattr_accessor :cache  
 #    self.cache = {}
@@ -503,59 +501,6 @@ module Card
       to_s
     end
      
-    def tag_extensions
-      extension_tags().keys.map do |tag|
-        if extcard = Card[name+JOINT+tag]
-Rails.logger.info("tag_ext #{name} + #{tag} #{extcard.name}")
-          yield(tag, extcard) if block_given? else tag
-        end
-      end.compact
-    end  
-  
-    def menu_options(options=[])
-      tag_extensions() do |tag, extcard|
-        new_options = extension_tags()[tag]
-#Rails.logger.info("menu_options N: #{tag} #{new_options}")
-        if Hash===new_options
-          new_options.each_pair do |where, what|
-            if where == :right
-              options.push(*what)
-            elsif where == :left
-              options.unshift(*what)
-            elsif Array === where
-              action = where.shift
-              location = where.shift
-              idx = 0
-              if Symbol===location
-                idx = options.index(location)
-              elsif Fixnum===location
-                idx = location
-                idx = options.length+idx+1 if idx<0
-              else raise "Location? #{location.class} #{location.inspect}"
-              end
-              if action == :left_of or action == :before
-                idx = if idx then idx-1 else -1 end
-              elsif action == :right_of or action == :after
-                idx = options.length unless idx
-              else raise "Action? #{action.inspect}"
-              end
-              idx = options.length if idx > options.length
-              if idx < 0
-                options.unshift(*what)
-              else
-                options[idx,0] = what
-              end
-            end
-          end
-	else
-          if Array===new_options and new_options.length > 0 or new_options
-            options.push(*new_options)
-	  end
-        end
-      end
-      options
-    end
-
    protected
     def clear_drafts
       connection.execute(%{

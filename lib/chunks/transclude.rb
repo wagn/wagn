@@ -14,7 +14,6 @@ module Chunk
       #warn "FOUND TRANSCLUDE #{match_data} #{content}"
       @card_name, @options, @configs = self.class.parse(match_data)
       @expand = content.expand
-      @card = @content.card or raise "No Card in Transclude Chunk!!"     
     end
   
     def self.parse(match)
@@ -60,6 +59,9 @@ module Chunk
         else
           block ||= Proc.new do |tcard, opts|
             case view
+          when nil
+              @card=Card.fetch_or_new(@card_name) if @card_name != @card.name
+              renderer_content(@card)
             when :naked
               card = Card.fetch(tcard)
               return "<no card #{tcard}/>" unless card

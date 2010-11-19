@@ -26,8 +26,8 @@ module Cardlib
       (template && template.right_template?) ? template : nil
     end
 
-    def hard_template
-      (template && @template.hard_template?) ? @template : nil
+    def hard_template(format=:html)
+      (template && @template.hard_template?(format)) ? @template : nil
     end
 
     def template
@@ -41,7 +41,7 @@ module Cardlib
     def templated_content(format=:html)
       @template = setting_card('xml_content') if format == :xml
       @template ||= template
-      return unless @template.hard_template?
+      return unless @template.hard_template?(format)
       @template and User.as(:wagbot) { @template.content }
     end
 
@@ -49,9 +49,7 @@ module Cardlib
     # FIXME: remove after adjusting expire_templatee_references to content_settings
     def hard_templatee_wql
       if hard_template? and c=Card.fetch(name.trunk_name) and c.type == "Set"
-        wql = c.get_spec
-	Rails.logger.info("hard_tempatee_wql[#{c.name}] #{wql.inspect}")
-	wql
+        c.get_spec
       end
     end
 

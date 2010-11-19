@@ -13,8 +13,8 @@ module Cardlib
       name && name =~ /\+\*right\+/
     end
        
-    def hard_template?
-      name && name =~ /\+\*content$/
+    def hard_template?(format=:html)
+      name && (name =~ /\+\*content$/ || format==:xml && name =~ /\+\*xml content$/)
     end
 
     def soft_template?
@@ -66,10 +66,8 @@ module Cardlib
     def contextual_content context = nil, format=:html
       context ||= self
       renderer = Renderer.new
-      ren = renderer.render( self, '', self.references_expired, [:raw, format])
-      res = renderer.render( context, ren, context.references_expired )
-Rails.logger.info("contextual_content[#{name}|#{context.name}] #{context} C:#{ren} Rs:#{res}")
-res
+      renderer.render( self, self.templated_content(format), self.references_expired, [:raw, format])
+      renderer.render( context, ren, context.references_expired, format )
     end
 
     def cardtype_name

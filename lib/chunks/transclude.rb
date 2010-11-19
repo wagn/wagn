@@ -18,7 +18,7 @@ module Chunk
       #@renderer = @content.renderer
       @card = @content.card or raise "No Card in Transclude Chunk!!"     
     end
-  
+
     def self.parse(match)
       name = match[2].strip
       options = {
@@ -44,7 +44,6 @@ module Chunk
     
     def unmask_text(&block)
       return @unmask_text if @unmask_text
-      Rails.logger.info "unmask raw #{@expand.inspect} #{@text}" unless @expand
       return @text unless @expand
       case refcard_name
       when /^\#\#/            ; return '' # invisible comment
@@ -66,9 +65,10 @@ module Chunk
 	#when :open;
 
         else
-          #return @test unless block_given?
           block ||= Proc.new do |tcard, opts|
             case view
+	    when nil
+              renderer_content(card)
             when :naked
               card = Card.fetch(tcard)
               return "<no card #{tcard}/>" unless card
@@ -85,9 +85,11 @@ module Chunk
                 renderer_content(card)
 	      end
 	    else
+#Rails.logger.info "transclude don't know that view #{@card.name}:#{@card_name} #{@options.inspect}"
               @text # just leave the {{}} coding, may need to handle more...
 	    end
 	  end
+#Rails.logger.info "transclude #{@card.name}:#{@card_name} #{@options.inspect}"
           block.call(@card_name, @options)
         end
       end

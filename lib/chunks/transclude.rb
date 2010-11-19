@@ -66,8 +66,9 @@ module Chunk
         else
           block ||= Proc.new do |tcard, opts|
             case view
-	    when nil
-              renderer_content(@card=Card[@card_name])
+            when nil
+              @card=Card.fetch_or_new(@card_name) if @card_name != @card.name
+              renderer_content(@card)
             when :naked
               card = Card.fetch(tcard)
               return "<no card #{tcard}/>" unless card

@@ -134,7 +134,6 @@ class WikiContent < String
       end 
     end
 #Rails.logger.info "wiki_content #{@expand.inspect} #{@format.inspect} #{opts.inspect}"
-
     init_chunk_manager()
     ACTIVE_CHUNKS.each{|chunk_type| chunk_type.apply_to(self)}
     @not_rendered = String.new(self)

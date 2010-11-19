@@ -366,13 +366,13 @@ raise "no result #{ok_action}" unless result
   def render_naked
     render_naked_content do |r_content|
       @renderer.render( slot_options[:base]||card, r_content,
-            card.references_expired) {|c,o| expand_card(c,o)}
+            card.references_expired, @format) {|c,o| expand_card(c,o)}
     end
   end
 
   def expand_inclusions(content)
     @renderer.render(card, content,
-          card.references_expired) {|c,o| expand_card(c,o)}
+          card.references_expired, @format) {|c,o| expand_card(c,o)}
   end
 
   def expand_card(tname, options)

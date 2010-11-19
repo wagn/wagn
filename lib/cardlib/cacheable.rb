@@ -66,8 +66,9 @@ module Cardlib
     def contextual_content context = nil, format=:html
       context ||= self
       renderer = Renderer.new
-      renderer.render( self, self.templated_content(format), self.references_expired, [:raw, format])
-      renderer.render( context, ren, context.references_expired, format )
+      prerender = renderer.render( self, self.templated_content(format),
+                                   self.references_expired, [:raw, format])
+      renderer.render( context, prerender, context.references_expired, format )
     end
 
     def cardtype_name

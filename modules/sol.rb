@@ -120,19 +120,19 @@ module Sol
   end
 
   def integrate(opts)
-    Rails.logger.info("Integrate breath to my context: #{opts.inspect}")
-
+#Rails.logger.info("Integrate breath to my context: #{opts.to_s}\nI:#{opts.inspect}")
     solcard.update_attributes(:content =>opts.to_s) # save xml to sol card content
   end
 
   def parse_fields(sig, br_name, cards)
     sn = solcard.name
     prefix = "(#{Regexp.escape(sn)}|#{Regexp.escape(sn.trunk_name)})\\+" if sn.junction?
-Rails.logger.info "parse_fields #{sn}:#{User.current_user.solcard.name}"
+    user_card = User.current_user.card
     br_opts = {:name=>br_name, :ctx=>sig,
-               :fromsig=>User.current_user.from_sig,
+               :fromsig=>user_card.from_sig,
                :tosig=>previous_idsig(sig)}
     #raise "sig changed" if br_opts[:oldsig] != to_sig
+#Rails.logger.info "parse_fields #{sn}:#{user_card.name}:#{user_card.solcard.name}"
     Builder::XmlMarkup.new.breath(br_opts) do |b|
       cards.each_pair do |name, value|
         name = name.post_cgi.to_absolute(name)
@@ -166,6 +166,9 @@ Rails.logger.info "parse_fields #{sn}:#{User.current_user.solcard.name}"
 
   def self.included(base)
     Card.add_extension_tag('*sol', :declare)
+    Wagn::Hook.add(:after_declare, '*all') do |card|
+Rails.logger.info "after_declare #{card.name} C:#{card.solcard.content}"
+    end
   end
 
   def has_sol?() true if solcard end
@@ -175,6 +178,7 @@ end
 CardController.class_eval do
   #----------------( Posting Currencies to Cards )
   def declare
+    Wagn::Hook.call :before_declare, '*all'
     card_args=params[:card] || {}
     unless @card
       Rails.logger.info("declare fetch card by id")
@@ -189,8 +193,9 @@ CardController.class_eval do
     old_revision_id = card_args.delete(:current_revision_id) || @current_revision_id
     rev_changed = (old_revision_id.to_i != @current_revision_id.to_i)
 
-#Rails.logger.info("Declare #{@card && @card.name} #{@card && @card.inspect}")
+#Rails.logger.info("Declare #{@card && @card.name}[#{@card}] #{@card && @card.inspect}")
     @card.receive_breath(params[:ctxsig],params[:attribute],params['cards']) if params['multi_edit']
+    Wagn::Hook.call :after_declare, @card
   end
 end
 

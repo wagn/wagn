@@ -189,6 +189,7 @@ module WagnHelper
   def div(*args, &block)   content_tag(:div, *args, &block);  end
 
   def pointer_item(content,view,type=nil)
+Rails.logger.info "pointer_item(#{content}, #{view}, #{type})"
     typeparam = case
       when type.is_a?(String); ";type:#{type}"
       when type.is_a?(Array);  ";type:#{type.second}"  #type spec is likely ["in", "Type1", "Type2"]

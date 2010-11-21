@@ -1,6 +1,6 @@
 <%- 
 slot = get_slot
-item = symbolize_param(:item) and slot.item_format = item
+item = symbolize_param(:item) and slot.item_view = item
 view = symbolize_param(:view) 
 view = :open if [:open,:card,:view, :closed, nil].member?(view)
 # pretty much none of this should be here.  

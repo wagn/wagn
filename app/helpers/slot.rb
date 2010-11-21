@@ -15,7 +15,7 @@ class Slot
   attr_reader :card, :action, :template, :format
   attr_writer :form
   attr_accessor  :options_need_save, :state, :requested_view, :js_queue_initialized,
-    :position, :renderer, :form, :superslot, :char_count, :item_format, :type, :renders,
+    :position, :renderer, :form, :superslot, :char_count, :item_view, :type, :renders,
     :start_time, :skip_autosave, :config, :slot_options, :render_args, :context
 
   VIEW_ALIASES = {
@@ -430,8 +430,8 @@ raise "no result #{ok_action}" unless result
     subslot = subslot(tcard, options[:context])
     old_slot, Slot.current_slot = Slot.current_slot, subslot
 
-    # set item_format;  search cards access this variable when rendering their content.
-    subslot.item_format = options[:item] if options[:item]
+    # set item_view;  search cards access this variable when rendering their content.
+    subslot.item_view = options[:item] if options[:item]
     subslot.type = options[:type] if options[:type]
 
     # FIXME! need a different test here

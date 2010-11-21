@@ -34,7 +34,7 @@
 <% else  %>           	
 
 	<% partial = (card.name=='*recent changes') ? 'recent_changes' : 'card_list' %> 
-	<% view = (slot.item_format || card.spec[:view] || (params[:item].blank? ? nil : params[:item]) || :closed).to_sym  %>
+	<% view = (slot.item_view || card.spec[:view] || (params[:item].blank? ? nil : params[:item]) || :closed).to_sym  %>
 	<%= render :partial=>"types/search/#{partial}", :locals=> { :view=>view, :card=>card,	:cards=>card.results, :context=>@context,
 	   :instruction=>instruction, :title=>title, :slot=>slot } %>
 <% end %>

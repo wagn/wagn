@@ -7,6 +7,18 @@ Feature: Pointer Inputs
     And I create Search card "friends+*right+*options" with content "{"type":"User"}"
     And I create Pointer card "friends+*right+*default"
    
+  Scenario: Basic Pointer Card renders right
+    When I create card "Foobar" with content "Hello"
+    And I create Pointer card "Foobaz" with content "[[Foobar]]"
+    And I go to card "Foobaz"
+    Then I should see "Hello"
+
+  Scenario: Basic Pointer Card renders right closed
+    When I create Pointer card "Foobaz" with content "[[Foobar]]"
+    And I create card "Foo" with content "{{foobaz|closed}}"
+    And I go to card "Foo"
+    Then I should not see "{{Foobar|link}}"
+
   Scenario: Creating a card with select input
     Given I create Phrase card "friends+*right+*input" with content "select"
     When I go to card "Joe User+friends"

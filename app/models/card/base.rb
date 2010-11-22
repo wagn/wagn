@@ -72,15 +72,6 @@ module Card
       true
     end
         
-    def has_ext?(tag)
-	    raise "No card #{self}" unless self
-	    Rails.logger.info("has_ext? #{self.inspect}")
-	    true if extcard(tag) end  
-    def extcard(tag) 
-	    raise "No card #{self}" unless self
-	    Rails.logger.info("extcard #{self}")
-	    Card[name+JOINT+tag] end
-        
     private
       belongs_to :reader, :polymorphic=>true  
       

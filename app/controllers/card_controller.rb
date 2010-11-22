@@ -306,14 +306,6 @@ raise "XML error: #{doc} #{content}" unless doc.root
 
   #------------( deleting )
 
-  def delete  
-    @card.destroy
-
-    if @card.errors.on(:confirmation_required)
-      return render_update_slot( render_to_string(:partial=>'confirm_remove'))
-    end
-  end
-    
   def remove  
     @card.confirm_destroy = params[:card][:confirm_destroy] if params[:card]
     captcha_ok = captcha_required? ? verify_captcha : true   

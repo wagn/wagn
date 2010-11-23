@@ -5,13 +5,19 @@ class Renderer
   include HTMLDiff
   include ReferenceTypes
 
+  attr_accessor :inclusion_map
+
+  def initialize(inclusion_map=nil)
+    @inclusion_map = inclusion_map
+  end
+
   def render( card, content=nil, update_references=false, opts=true, &block)
     # FIXME: this means if you had a card with content, but you WANTED to have it render 
     # the empty string you passed it, it won't work.  but we seem to need it because
     # card.content='' in set_card_defaults and if you make it nil a bunch of other
     # stuff breaks
     content = content.blank? ? card.content : content 
-    wiki_content = WikiContent.new(card, content, self, opts)
+    wiki_content = WikiContent.new(card, content, self, opts, inclusion_map)
     update_references(card, wiki_content) if update_references
     wiki_content.render! &block
   end

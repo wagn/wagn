@@ -54,10 +54,10 @@ class Slot
       :main_card => nil,
       :inclusion_view_overrides => nil,
       :params => {},
-      :renderer => Renderer.new,
       :base => nil,
     }.merge(opts)
 
+    @slot_options[:renderer] ||= Renderer.new(inclusion_map)
     @renderer = @slot_options[:renderer]
     @context = "main_1" unless @context =~ /\_/
     @position = @context.split('_').last
@@ -69,6 +69,14 @@ class Slot
   end
 
   def xml?() @format == :xml end
+
+  def inclusion_map
+    return unless map = root.slot_options[:inclusion_view_overrides]
+    VIEW_ALIASES.each_pair do |known, canonical|
+      map[known] = map[canonical] if map.has_key?(canonical)
+    end
+    map
+  end
 
   def subslot(card, context_base=nil, &proc)
     # Note that at this point the subslot context, and thus id, are
@@ -222,8 +230,8 @@ class Slot
     w_content = nil
     result = case ok_action
 
-      when :name; card.name
-      when :link; raise "should be in chunks"
+      #when :name; card.name
+      when :name, :link; raise "should be in chunks"
 
     ###-----------( FULL )
       when :new
@@ -315,7 +323,6 @@ class Slot
 
 #      result ||= "" #FIMXE: wtf?
     result << javascript_tag("setupLinksAndDoubleClicks();") if args[:add_javascript]
-raise "no result #{ok_action}" unless result
     result.strip
   rescue Card::PermissionDenied=>e
     return "Permission error: #{e.message}"
@@ -403,7 +410,6 @@ raise "no result #{ok_action}" unless result
 
 
     options[:view] ||= (self.context == "layout_0" ? :naked : :content)
-    options[:view] = get_inclusion_view(options[:view])
     options[:fullname] = fullname = get_inclusion_fullname(tname,options)
     options[:showname] = tname.to_show(fullname)
 
@@ -480,12 +486,6 @@ raise "no result #{ok_action}" unless result
       else x end
     end.join("+")
     fullname
-  end
-
-  def get_inclusion_view(view)
-    if map = root.slot_options[:inclusion_view_overrides] and translation = map[ canonicalize_view( view )]
-      translation
-    else; view; end
   end
 
   def get_inclusion_content(cardname)

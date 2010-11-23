@@ -120,7 +120,7 @@ describe Slot, "" do
     s = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :link } )
     s.render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/t2\">t2</a>"
 
-    s = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :expanded_view_content } )
+    s = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :naked } )
     s.render( :naked ).should == "boo"
   end
   

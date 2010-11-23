@@ -52,7 +52,9 @@ module Chunk
       refcard_name
       if view = @options[:view]
 	view = view.to_sym
-	view = inclusion_map[view] if inclusion_map and inclusion_map.key?(view)
+	if inclusion_map and inclusion_map.key?(view)
+	  view = @options[:view] = inclusion_map[view]
+	end
       end
       case view
       when :name;     refcard ? refcard.name : @card_name
@@ -88,6 +90,7 @@ module Chunk
             @text # just leave the {{}} coding, may need to handle more...
           end
         end
+#Rails.logger.info "transclude #{@card_name}, #{@options.inspect}"
         block.call(@card_name, @options)
       end
     end

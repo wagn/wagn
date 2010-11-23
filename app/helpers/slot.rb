@@ -296,7 +296,6 @@ class Slot
 
 #      result ||= "" #FIMXE: wtf?
     result << javascript_tag("setupLinksAndDoubleClicks();") if args[:add_javascript]
-raise "no result #{ok_action}" unless result
     result.strip
   rescue Card::PermissionDenied=>e
     return "Permission error: #{e.message}"

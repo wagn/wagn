@@ -37,11 +37,11 @@ ActiveRecord::Schema.define(:version => 20101123173512) do
 
   create_table "cards", :force => true do |t|
     t.integer  "trunk_id"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
     t.integer  "current_revision_id"
-    t.string   "name",                                   :null => false
-    t.string   "type",                                   :null => false
+    t.string   "name",                :null => false
+    t.string   "type",                :null => false
     t.integer  "extension_id"
     t.string   "extension_type"
     t.integer  "created_by"
@@ -49,8 +49,8 @@ ActiveRecord::Schema.define(:version => 20101123173512) do
     t.integer  "reader_id"
     t.string   "reader_type"
     t.integer  "tag_id"
-    t.string   "key",                                    :null => false
-    t.boolean  "trash",               :default => false, :null => false
+    t.string   "key",                 :null => false
+    t.boolean  "trash",               :null => false
     t.string   "appender_type"
     t.integer  "appender_id"
     t.integer  "references_expired"

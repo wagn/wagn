@@ -18,6 +18,11 @@ module Chunk
   
     def self.parse(match)
       name = match[2].strip
+      case name
+      when /^\#\#/; return [nil, {:comment=>''}] # invisible comment
+      when /^\#/||nil?||blank?  # visible comment
+        return [nil, {:comment=>"<!-- #{CGI.escapeHTML match[1]} -->"}]
+      end
       options = {
         :tname   =>name,
         :base  => 'self',
@@ -42,47 +47,44 @@ module Chunk
     def unmask_text(&block)
       return @unmask_text if @unmask_text
       return @text unless @expand
-      case refcard_name
-      when /^\#\#/            ; return '' # invisible comment
-	       	                              # visible comment
-      when /^\#/||nil?||blank?; return "<!-- #{CGI.escapeHTML @card_name} -->"
+      comment = @options[:comment]
+      return comment if comment
+      refcard_name
+      case view = @options[:view] and view = view.to_sym
+      when :name;     refcard ? refcard.name : @card_name
+      when :key;      refcard_name.to_key
+      when :link;     card_link
+      when :linkname; Cardname.escape(refcard_name)
+      when :titled;   content_tag( :h1, less_fancy_title(refcard_name) ) + self.render( :content )
+      when :rss_titled;
+        # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
+        content_tag( :h2, less_fancy_title(refcard_name) ) + self.render( :expanded_view_content )
       else
-        case view = @options[:view] and view = view.to_sym
-        when :name;     refcard ? refcard.name : @card_name
-        when :key;      refcard_name.to_key
-	when :link;     card_link
-        when :linkname; Cardname.escape(refcard_name)
-        when :titled;   content_tag( :h1, less_fancy_title(refcard_name) ) + self.render( :content )
-        when :rss_titled;
-          # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
-          content_tag( :h2, less_fancy_title(refcard_name) ) + self.render( :expanded_view_content )
-        else
-          block ||= Proc.new do |tcard, opts|
-            case view
-          when nil
-              @card=Card.fetch_or_new(@card_name) if @card_name != @card.name
-              renderer_content(@card)
-            when :naked
-              card = Card.fetch(tcard)
-              return "<no card #{tcard}/>" unless card
-	      case card.type
-              when 'Search'
-                Wql.new(card.get_spec(:return => 'name_content')).run.keys.map do
-                  |x| renderer_content(Card.fetch_or_new(x))
-		end
-              when 'Pointer'
-                card.pointees.map do |x|
-	       	  renderer_content(Card.fetch_or_new(x))
-	        end
-	      else
-                renderer_content(card)
-	      end
-	    else
-              @text # just leave the {{}} coding, may need to handle more...
-	    end
-	  end
-          block.call(@card_name, @options)
+        block ||= Proc.new do |tcard, opts|
+          case view
+        when nil
+            @card=Card.fetch_or_new(@card_name) if @card_name != @card.name
+            renderer_content(@card)
+          when :naked
+            card = Card.fetch(tcard)
+            return "<no card #{tcard}/>" unless card
+            case card.type
+            when 'Search'
+              Wql.new(card.get_spec(:return => 'name_content')).run.keys.map do
+                |x| renderer_content(Card.fetch_or_new(x))
+              end
+            when 'Pointer'
+              card.pointees.map do |x|
+                renderer_content(Card.fetch_or_new(x))
+              end
+            else
+              renderer_content(card)
+            end
+          else
+            @text # just leave the {{}} coding, may need to handle more...
+          end
         end
+        block.call(@card_name, @options)
       end
     end
 

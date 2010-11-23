@@ -128,7 +128,7 @@ module WagnHelper
     card.name.split(JOINT).join(formal_joint)
   end
 
-  def less_fancy_title(card)
+  def fancy_title(card)
     name = (String===card ? card : card.name)
     return name if name.simple?
     card_title_span(name.parent_name) + %{<span class="joint">#{JOINT}</span>} + card_title_span(name.tag_name)

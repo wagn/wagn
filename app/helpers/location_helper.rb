@@ -97,7 +97,7 @@ module LocationHelper
   end
   
   def card_title_span( title )
-    %{<span class="title-#{title.css_name} card">#{title}</span>}
+    %{<span class="namepart-#{title.css_name}">#{title}</span>}
   end
   
   def connector_function( name, *args )

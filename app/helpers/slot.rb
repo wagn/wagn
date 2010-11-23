@@ -242,10 +242,10 @@ class Slot
       when :name;     card.name
       when :key;      card.name.to_key
       when :linkname; Cardname.escape(card.name)
-      when :titled;   content_tag( :h1, less_fancy_title(card.name) ) + self.render( :content )
+      when :titled;   content_tag( :h1, fancy_title(card.name) ) + self.render( :content )
       when :rss_titled;                                                         
         # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
-        content_tag( :h2, less_fancy_title(card.name) ) + self.render( :expanded_view_content )
+        content_tag( :h2, fancy_title(card.name) ) + self.render( :expanded_view_content )
 
 
    ###----------------( CHANGES)

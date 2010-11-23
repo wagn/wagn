@@ -103,11 +103,13 @@ class WikiContent < String
   end
   
   include ChunkManager
-  attr_reader :revision, :not_rendered, :pre_rendered, :renderer, :card, :expand
+  attr_reader :revision, :not_rendered, :pre_rendered, :renderer, :card,
+    :expand, :inclusion_map
 
-  def initialize(card, content, renderer, opts=true)
+  def initialize(card, content, renderer, opts=true, inclusion_map=nil)
     @not_rendered = @pre_rendered = nil
     @renderer = renderer
+    @inclusion_map = inclusion_map
     @card = card or raise "No Card in Content!!"
     super(content)
     @expand = case

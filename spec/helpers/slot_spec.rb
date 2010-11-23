@@ -114,10 +114,14 @@ describe Slot, "" do
     # a little weird that we need :expanded_view_content  to get the version without
     # slot divs wrapped around it.
     s = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :name } )
-    s.render( :expanded_view_content ).should == "t2"
+    s.render( :naked ).should == "t2"
     
+    # similar to above, but use link
+    s = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :link } )
+    s.render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/t2\">t2</a>"
+
     s = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :expanded_view_content } )
-    s.render( :expanded_view_content ).should == "boo"
+    s.render( :naked ).should == "boo"
   end
   
   context "builtin card" do

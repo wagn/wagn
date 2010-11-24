@@ -18,7 +18,7 @@
   	    <% end %>                      
   	    to
 				<%= case @deny
-					when 'view', 'edit'  ; @deny+ " " + (card.name ? "<strong>#{less_fancy_title(card)}</strong>" : 'this card')
+					when 'view', 'edit'  ; @deny+ " " + (card.name ? "<strong>#{fancy_title(card)}</strong>" : 'this card')
 					when 'create'; "create #{@type} cards"
 					end 
 				%>

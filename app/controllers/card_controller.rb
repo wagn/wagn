@@ -1,16 +1,16 @@
 class CardController < ApplicationController
   helper :wagn, :card 
 
-  EDIT_ACTIONS =  [ :edit, :update, :rollback, :save_draft, :watch, :unwatch, ]
-  LOAD_ACTIONS = EDIT_ACTIONS + [ :changes, :comment, :denied, :options, :quick_update, :update_codename, :related, :remove, :delete ]
+  EDIT_ACTIONS =  [ :edit, :update, :rollback, :save_draft, :watch, :unwatch ]
+  LOAD_ACTIONS = EDIT_ACTIONS + [ :changes, :comment, :denied, :options, :quick_update, :update_codename, :related, :remove ]
 
   before_filter :load_card!, :only=>LOAD_ACTIONS
-  before_filter :load_card_with_cache, :only => [:line, :view, :open, :get ]
+  before_filter :load_card_with_cache, :only => [:line, :view, :open ]
 
   before_filter :view_ok,   :only=> LOAD_ACTIONS
-  before_filter :create_ok, :only=>[ :new, :create ]
+  before_filter :create_ok, :only=>[ :new, :create ]  
   before_filter :edit_ok,   :only=> EDIT_ACTIONS
-  before_filter :remove_ok, :only=>[ :remove, :delete ]          
+  before_filter :remove_ok, :only=>[ :remove ]          
   
   before_filter :require_captcha, :only => [ :create, :update, :comment, :quick_update ]
   
@@ -61,9 +61,11 @@ class CardController < ApplicationController
     
     @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
     ## fixme, we ought to be setting special titles (or all titles) in cards
-    request.xhr? ? render(:action=>'show') : render(:text=>'~~render main inclusion~~', :layout=>true)
+    (request.xhr? || params[:format]) ? render(:action=>'show') : render(:text=>'~~render main inclusion~~', :layout=>true)
   end
 
+  #----------------( MODIFYING CARDS )
+  
   #----------------( creating)                                                               
   def new
     Wagn::Hook.call :before_new, '*all', self
@@ -125,7 +127,6 @@ class CardController < ApplicationController
   #--------------( editing )
   
   def edit                                             
-    Rails.logger.info("Edit "+params.inspect)
     if ['name','type','codename'].member?(params[:attribute])
       render :partial=>"card/edit/#{params[:attribute]}" 
     end

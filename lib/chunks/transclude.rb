@@ -63,10 +63,10 @@ module Chunk
       when :key;      refcard_name.to_key
       when :link;     card_link
       when :linkname; Cardname.escape(refcard_name)
-      when :titled;   content_tag( :h1, less_fancy_title(refcard_name) ) + self.render( :content )
+      when :titled;   content_tag( :h1, fancy_title(refcard_name) ) + self.render( :content )
       when :rss_titled;
         # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
-        content_tag( :h2, less_fancy_title(refcard_name) ) + self.render( :expanded_view_content )
+        content_tag( :h2, fancy_title(refcard_name) ) + self.render( :expanded_view_content )
       else
 	#when :content, :naked, :naked_content; card.contextual_content
 	#when :array;

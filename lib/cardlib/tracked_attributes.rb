@@ -92,7 +92,9 @@ module Cardlib
       new_content ||= '' 
       
       # FIXME?: this code written under influence. may require adjustment
-      new_content =  WikiContent.clean_html!(new_content) if clean_html?
+      # Uncommenting this breaks spec/helpers/slot_spec.rb w/float:<object>..
+      #   it strips wiki content even in transcludes
+      #new_content =  WikiContent.clean_html!(new_content) if clean_html?
       
       clear_drafts if current_revision_id
       self.current_revision = Revision.create :card_id=>self.id, :content=>new_content

@@ -10,12 +10,12 @@ class Slot
     end
   end
 
-  cattr_accessor :max_char_count, :current_slot
+  cattr_accessor :current_slot, :max_char_count, :max_depth
   self.max_char_count = 200
+  self.max_depth = 10
   attr_reader :card, :action, :template
-  attr_writer :form
-  attr_accessor  :options_need_save, :state, :requested_view, :js_queue_initialized,
-    :position, :renderer, :form, :superslot, :char_count, :item_view, :type, :renders,
+  attr_accessor  :options_need_save, :state, :requested_view, :type, :item_view,
+    :position, :renderer, :form, :superslot, :js_queue_initialized, :depth,
     :start_time, :skip_autosave, :config, :slot_options, :render_args, :context
 
   VIEW_ALIASES = {
@@ -25,13 +25,11 @@ class Slot
   }
 
   class << self
-    def render_content content, opts = {}
-      Slot.current_slot = nil
-      view = opts.delete(:view)
-      view = :naked unless view && !view.blank?
-      tmp_card = Card.new :name=>"__tmp_card__", :content => content, :skip_defaults=>true
-      Slot.new(tmp_card, "main_1", view, nil, opts).render(view)
+    def wrap_main(content)
+      %{<div id="main" context="main">#{content}</div>}
     end
+
+    def view_aliases() VIEW_ALIASES end
   end
 
   def initialize(card, context="main_1", action="view", template=nil, opts={} )
@@ -47,32 +45,21 @@ class Slot
     # FIXME: this and context should all be part of the context object, I think.
     # In any case I had to use "slot_options" rather than just options to avoid confusion with lots of
     # local variables named options.
-    @slot_options = {
-      :relative_content => {},
-      :main_content => nil,
-      :main_card => nil,
-      :inclusion_view_overrides => nil,
+    slot_opts = {
       :params => {},
       :base => nil,
     }.merge(opts)
-
-    @slot_options[:renderer] ||= Renderer.new(inclusion_map)
-    @renderer = @slot_options[:renderer]
+#Rails.logger.info "Slot.new #{card.name}, #{context}, #{action}, #{template}, #{opts.inspect}"
+    slot_opts[:renderer] = @renderer =
+      (slot_opts[:renderer] or Renderer.new(context, slot_opts))
+    @slot_options = slot_opts
     @context = "main_1" unless @context =~ /\_/
     @position = @context.split('_').last
-    @char_count = 0
     @subslots = []
-    @state = 'view'
+    @state = :view
+    @depth = - max_depth
     @renders = {}
     @js_queue_initialized = {}
-  end
-
-  def inclusion_map
-    return unless map = root.slot_options[:inclusion_view_overrides]
-    VIEW_ALIASES.each_pair do |known, canonical|
-      map[known] = map[canonical] if map.has_key?(canonical)
-    end
-    map
   end
 
   def subslot(card, context_base=nil, &proc)
@@ -80,8 +67,9 @@ class Slot
     # somewhat meaningless-- the subslot is only really used for tracking position.
     context_base ||= self.context
     new_position = @subslots.size + 1
-    new_slot = self.class.new(card, "#{context_base}_#{new_position}", @action, @template, :renderer=>@renderer)
+    new_slot = self.class.new(card, "#{context_base}_#{new_position}", @action, @template, :renderer=>renderer)
 
+    new_slot.depth = @depth+1
     new_slot.state = @state
     new_slot.superslot = self
     new_slot.position = new_position
@@ -166,11 +154,6 @@ class Slot
     %{</span>} #<!--[if IE]>&nbsp;<![endif]-->}
   end
 
-  def wrap_main(content)
-    return content if p=root.slot_options[:params] and p[:layout]=='none'
-    %{<div id="main" context="main">#{content}</div>}
-  end
-
   def deny_render?(action)
     case
       when [:deny_view, :edit_auto, :open_missing, :closed_missing].member?(action);
@@ -189,22 +172,13 @@ class Slot
     VIEW_ALIASES[view.to_sym] || view
   end
 
-  def count_render
-    root.renders[card.name] ||= 1
-    root.renders[card.name] += 1
-  end
-
-  def too_many_renders?
-    root.renders[card.name] ||= 1
-    root.renders[card.name] > System.max_renders
-  end
+  def too_deep?() @depth >= 0 end
 
   def render(action, args={})
 #Rails.logger.debug "Slot(#{card.name}).render #{action} #{args.inspect}"
     self.render_args = args.clone
-    count_render
     ok_action = case
-      when too_many_renders?;   :too_many_renders
+      when too_deep?                     ; :too_many_renders
       when denial = deny_render?(action) ; denial
       else                               ; action
     end
@@ -247,7 +221,7 @@ class Slot
     ###---(  CONTENT VARIATIONS )
       #-----( with transclusions processed )
       when :content
-        @state = 'view'
+        @state = :view
         w_action = self.requested_view = 'content'
         c = render_open_content
         w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c ))
@@ -311,8 +285,7 @@ class Slot
 
   def render_array
 #Rails.logger.debug "Slot(#{card.name}).render_array T:#{card.type}  root = #{root}"
-    count_render
-    if too_many_renders?
+    if too_deep?
       return render_partial( 'views/too_many_renders' )
     end
     case card.type
@@ -353,54 +326,22 @@ class Slot
 
   def render_naked
     render_naked_content do |r_content|
-      @renderer.render( slot_options[:base]||card, r_content,
-            card.references_expired) {|c,o| expand_card(c,o)}
+      #renderer.render( slot_options[:base]||card, r_content) do |c,o|
+      renderer.render( card, r_content) do |cardname, opts|
+        renderer.expand_card(cardname, opts) do |tcard, options|
+          process_inclusion(tcard, options)
+	end
+      end
     end
   end
 
   def expand_inclusions(content)
-    @renderer.render(card, content,
-          card.references_expired) {|c,o| expand_card(c,o)}
-  end
-
-  def expand_card(tname, options)
-    # Don't bother processing inclusion if we're already out of view
-    return '' if (@state==:line && self.char_count > Slot.max_char_count)
-
-    case tname
-    when '_main'
-      if content=slot_options[:main_content] and content!='~~render main inclusion~~'
-        return wrap_main(slot_options[:main_content])
+#Rails.logger.info "expand_inclusions(#{content})"
+    renderer.render(card, content) do |cardname,opts|
+      renderer.expand_card(cardname,opts) do |tcard, opts|
+        renderer.inclusion(tcard, opts)
       end
-      tcard=slot_options[:main_card]
-      item  = symbolize_param(:item) and options[:item] = item
-      pview = symbolize_param(:view) and options[:view] = pview
-      self.context = options[:context] = 'main'
-      options[:view] ||= :open
     end
-
-
-    options[:view] ||= (self.context == "layout_0" ? :naked : :content)
-    options[:fullname] = fullname = get_inclusion_fullname(tname,options)
-    options[:showname] = tname.to_show(fullname)
-
-    tcard ||= case
-    when @state==:edit
-      Card.fetch_or_new(fullname, {}, new_inclusion_card_args(options))
-    when slot_options[:base].respond_to?(:name)# &&
-         #slot_options[:base].name == fullname
-      slot_options[:base]
-    else
-      Card.fetch_or_new(fullname, :skip_defaults=>true)
-    end
-
-    tcard.loaded_trunk=card if tname =~ /^\+/
-    result = process_inclusion(tcard, options)
-    result = resize_image_content(result, options[:size]) if options[:size]
-    self.char_count += (result ? result.length : 0) #should we strip html here?
-    tname=='_main' ? wrap_main(result) : result
-  rescue Card::PermissionDenied
-    ''
   end
 
   def process_inclusion(tcard, options)
@@ -414,7 +355,6 @@ class Slot
     # FIXME! need a different test here
     new_card = tcard.new_record? && !tcard.virtual?
 
-    state = @state.to_sym
     subslot.requested_view = vmode = (options[:view] || :content).to_sym
     action = case
 
@@ -423,6 +363,7 @@ class Slot
       when :edit == state
        tcard.virtual? ? :edit_auto : :edit_in_form
       when new_card
+raise "Missed _main?" if tcard.name == '_main'
         case
           when vmode==:naked  ; :blank
           when vmode==:setting; :setting_missing
@@ -435,52 +376,8 @@ class Slot
     result = subslot.render(action, options)
     Slot.current_slot = old_slot
     result
-  rescue
-    %{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
-  end
-
-  def get_inclusion_fullname(name,options)
-    fullname = name+'' #weird.  have to do this or the tname gets busted in the options hash!!
-    sob = slot_options[:base]
-    context = case
-    when sob; (sob.respond_to?(:name) ? sob.name : sob)
-    when options[:base]=='parent'
-      card.parent_name
-    else
-      card.name
-    end
-    fullname = fullname.to_absolute(context)
-    fullname.gsub!('_user') { User.current_user.cardname }
-    fullname = fullname.particle_names.map do |x|
-      if x =~ /^_/ and root.slot_options[:params] and root.slot_options[:params][x]
-        CGI.escapeHTML( root.slot_options[:params][x] )
-      else x end
-    end.join("+")
-    fullname
-  end
-
-  def get_inclusion_content(cardname)
-    parameters = root.slot_options[:relative_content]
-    content = parameters[cardname.gsub(/\+/,'_')]
-
-    # CLEANME This is a hack to get it so plus cards re-populate on failed signups
-    if parameters['cards'] and card_params = parameters['cards'][cardname.gsub('+','~plus~')]
-      content = card_params['content']
-    end
-    content if content.present?  #not sure I get why this is necessary - efm
-  end
-
-  def new_inclusion_card_args(options)
-    args = { :type =>options[:type],  :permissions=>[] }
-    if content=get_inclusion_content(options[:tname])
-      args[:content]=content
-    end
-    args
-  end
-
-  def resize_image_content(content, size)
-    size = (size.to_s == "full" ? "" : "_#{size}")
-    content.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
+#  rescue
+#    %{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
   end
 
   def render_partial( partial, locals={} )
@@ -504,7 +401,7 @@ class Slot
 
   #### --------------------  additional helpers ---------------- ###
   def render_diff(card, *args)
-    @renderer.render_diff(card, *args)
+    renderer.render_diff(card, *args)
   end
 
   def notice

@@ -106,7 +106,7 @@ class WikiContent < String
   attr_reader :revision, :not_rendered, :pre_rendered, :renderer, :card,
     :expand, :inclusion_map
 
-  def initialize(card, content, renderer, opts=true, inclusion_map=nil)
+  def initialize(card, content, renderer, opts=nil, inclusion_map=nil)
     @not_rendered = @pre_rendered = nil
     @renderer = renderer
     @inclusion_map = inclusion_map
@@ -121,11 +121,10 @@ class WikiContent < String
 	      else
                 case Array===opts ? opts[0] : opts
                 when :expand; true
-                when :raw;    false
-		else opts
+                when :raw, nil;    false
+		else true
                 end
               end
-    #Rails.logger.info "wiki_content #{@expand.inspect} #{opts.inspect}"
     init_chunk_manager()
     ACTIVE_CHUNKS.each{|chunk_type| chunk_type.apply_to(self)}
     @not_rendered = String.new(self)

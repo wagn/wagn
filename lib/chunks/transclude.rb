@@ -41,6 +41,7 @@ module Chunk
         end
       end
       options[:style] = style.map{|k,v| CGI.escapeHTML("#{k}:#{v};")}.join
+#Rails.logger.info "transclude parse(#{match[1]}) #{name}, #{options.inspect}, #{configs.inspect}"
       [name, options, configs]  
     end                        
     
@@ -112,7 +113,7 @@ module Chunk
       case @options[:base]
       when 'self'; @card
       when 'parent'; @card.trunk
-      else invalid_option(:base)
+      else card || invalid_option(:base)
       end
     end
     

@@ -1,6 +1,6 @@
 module Chunk
   class Transclude < Reference
-    attr_reader :stars, :expand, :inclusion_map
+    attr_reader :stars, :expand, :inclusion_map, :renderer, :options
     unless defined? TRANSCLUDE_PATTERN
       #  {{+name|attr:val;attr:val;attr:val}}
       TRANSCLUDE_PATTERN = /\{\{(([^\|]+?)\s*(\|([^\}]+?))?)\}\}/
@@ -12,8 +12,8 @@ module Chunk
       super   
       #warn "FOUND TRANSCLUDE #{match_data} #{content}"
       @card_name, @options, @configs = self.class.parse(match_data)
-      @expand = content.expand
-      @inclusion_map = content.inclusion_map
+      @renderer, @expand, @inclusion_map =
+         content.renderer, content.expand, content.inclusion_map
     end
   
     def self.parse(match)
@@ -41,21 +41,19 @@ module Chunk
         end
       end
       options[:style] = style.map{|k,v| CGI.escapeHTML("#{k}:#{v};")}.join
-#Rails.logger.info "transclude parse(#{match[1]}) #{name}, #{options.inspect}, #{configs.inspect}"
       [name, options, configs]  
     end                        
     
     def unmask_text(&block)
       return @unmask_text if @unmask_text
       return @text unless @expand
-      comment = @options[:comment]
-      return comment if comment
+      return options[:comment] if options.has_key?(:commint)
       refcard_name
       if view = @options[:view]
-	view = view.to_sym
-	if inclusion_map and inclusion_map.key?(view)
-	  view = @options[:view] = inclusion_map[view]
-	end
+        view = view.to_sym
+        if inclusion_map and inclusion_map.key?(view)
+          view = @options[:view] = inclusion_map[view]
+        end
       end
       case view
       when :name;     refcard ? refcard.name : @card_name
@@ -67,38 +65,8 @@ module Chunk
         # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
         content_tag( :h2, fancy_title(refcard_name) ) + self.render( :expanded_view_content )
       else
-        block ||= Proc.new do |tcard, opts|
-          case view
-        when nil
-            @card=Card.fetch_or_new(@card_name) if @card_name != @card.name
-            renderer_content(@card)
-          when :naked
-            card = Card.fetch(tcard)
-            return "<no card #{tcard}/>" unless card
-            case card.type
-            when 'Search'
-              Wql.new(card.get_spec(:return => 'name_content')).run.keys.map do
-                |x| renderer_content(Card.fetch_or_new(x))
-              end
-            when 'Pointer'
-              card.pointees.map do |x|
-                renderer_content(Card.fetch_or_new(x))
-              end
-            else
-              renderer_content(card)
-            end
-          else
-            @text # just leave the {{}} coding, may need to handle more...
-          end
-        end
-#Rails.logger.info "transclude #{@card_name}, #{@options.inspect}"
-        block.call(@card_name, @options)
+        yield @card_name, @options
       end
-    end
-
-    def renderer_content(card)
-      return "<no card #{@tcard}/>" unless card
-      card.templated_content || card.content
     end
 
     def revert                             

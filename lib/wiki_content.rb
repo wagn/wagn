@@ -121,7 +121,7 @@ class WikiContent < String
 	      else
                 case Array===opts ? opts[0] : opts
                 when :expand; true
-                when :raw, nil;    false
+                when :raw;    false
 		else true
                 end
               end

@@ -8,19 +8,19 @@ class Renderer
   cattr_accessor :max_char_count, :max_depth
   self.max_char_count = 200
   self.max_depth = 10
-  attr_reader :inclusion_map, :sob, :params, :layout, :context, :state
+  attr_reader :inclusion_map, :sob, :params, :layout, :context, :state, :card, :relative_content
   attr_accessor :char_count, :renders, :item_view, :view, :root, :main_content,
-      :main_card, :card, :depth, :type
+      :main_card, :depth, :type
 
   def initialize(context='main_1', opts=nil)
     @context = context
-#Rails.logger.info "Renderer.new #{context} #{opts.inspect}"
     if opts
       inclusion_map(opts.delete(:inclusion_view_overrides))
       @main_content = opts.delete(:main_content)
       @main_card = opts.delete(:main_card)
       @sob = opts[:base]
       @params = opts[:params]
+      @relative_content = opts[:relative_content]
     end
     @state = :view # when is is different?
     @char_count = 0
@@ -30,11 +30,12 @@ class Renderer
   end
 
 
-  def subrenderer(card, context)
+  def subrenderer(card, context=nil)
     sub = self.clone
-    raise "Too deep" unless ++sub.depth < 0
-    #@main_content = @main_card = nil
+    #raise "Too deep" unless ++sub.depth < 0
+    @main_content = @main_card = nil
     @char_count = 0
+    @sub.context = context if context
     @card = card
     sub
   end
@@ -50,7 +51,7 @@ class Renderer
     @inclusion_map
   end
 
-  def render( card, content=nil, opts=true, &block)
+  def render( card, content=nil, opts=nil, &block)
     # FIXME: this means if you had a card with content, but you WANTED to have it render 
     # the empty string you passed it, it won't work.  but we seem to need it because
     # card.content='' in set_card_defaults and if you make it nil a bunch of other
@@ -58,23 +59,90 @@ class Renderer
     @card = card
     update_refs = case
       when Symbol===opts
+        raw = true if opts == :raw
         opts == :skip_references ? false : 
-	  opts == :update_references ? true : nil
+          opts == :update_references ? true : nil
       when Hash===opts
         opts[:update_references] if opts[:update_references]
+        raw = true if opts[:raw]
         if @params = opts[:params]
           @item  = param.to_sym if param = params[:item]
           @view  = param.to_sym if param = params[:view]
         end
       when Array===opts
-        opts.member(:skip_references) ? false :
-        opts.member(:update_references) ? true : nil
+        raw = true if opts.member?(:raw)
+        opts.member?(:skip_references) ? false :
+        opts.member?(:update_references) ? true : nil
       end
     content = content.blank? ? card.content : content 
-    wiki_content = WikiContent.new(card, content, self, opts, inclusion_map)
-    update_refs = (card&&card.references_expired) if update_refs == nil
-    update_references(card, wiki_content) if update_refs
-    wiki_content.render! &block
+
+    block = default_block unless block
+    rproc = Proc.new do |scrd, renderer, content|
+        wiki_content = WikiContent.new(scrd,content,renderer,opts,inclusion_map)
+        if update_refs && card == scrd or (card&&card.references_expired)
+          renderer.update_references(card, wiki_content)
+        end
+        wiki_content.render! &block
+      end
+    unless raw
+      case card.type
+      when 'Search' 
+        return Wql.new(card.get_spec(:return => 'name_content')).run.
+                        keys.map {|x| pointee_subrender(x, &rproc)}.join
+      when 'Pointer'
+        return card.pointees.map {|x| pointee_subrender(x, &rproc)}.join
+      end
+    end
+    rproc.call(card, self, content, update_refs)
+  end
+
+  def default_block
+    Proc.new do |tname, opts|
+      @view = opts[:view].to_sym if view == nil and opts[:view] 
+      case view
+      when nil
+        @card = Card.fetch_or_new(tname) if tname != card.name
+        renderer_content(card)
+      when :naked
+       unless card = Card.fetch(tname)
+        "<no card #{tname}/>"
+       else
+        case card.type
+        when 'Search'
+          Wql.new(card.get_spec(:return => 'name_content')).run.keys.map do |x|
+          rendered(Card.fetch_or_new(x))
+          end.join
+        when 'Pointer'
+          card.pointees.map do |x|
+            rendered(Card.fetch_or_new(x))
+          end.join
+        else
+          renderer_content(card)
+        end
+       end
+      end
+    end
+  end
+
+  def rendered(card)
+    r_content = renderer_content(card)
+    case item_view || view
+    when :content, nil; r_content
+    else                render(card, r_content)
+    end
+  end
+
+  def renderer_content(card)
+    return "<no card #{self}/>" unless card
+    card.templated_content || card.content
+  end
+
+  def pointee_subrender(pointee, context=nil)
+    sub = subrenderer( subcard = Card.fetch_or_new(pointee) )
+    sub.context = context if context
+    sub.item_view = sub.view = item_view||view||:closed
+    content = subcard.templated_content || subcard.content
+    yield subcard, sub, content
   end
 
   def render_diff( card, content1, content2 )
@@ -102,6 +170,7 @@ class Renderer
   end
       
   def expand_card(tname, options)
+    return options[:comment] if options.has_key?(:comment)
     # Don't bother processing inclusion if we're already out of view
     return '' if (options[:state]==:line && self.char_count > Renderer.max_char_count)
 
@@ -111,6 +180,7 @@ class Renderer
         return layout == 'none' ? content : Slot.wrap_main(content)
       end
       tcard = @main_card
+      tname = tcard.name
       options[:item] = item_view
       options[:view] = view
       options[:context] = 'main'
@@ -163,7 +233,6 @@ class Renderer
       when :edit == state
        tcard.virtual? ? :edit_auto : :edit_in_form
       when new_card
-raise "Missed _main?" if tcard.name == '_main'
         case
           when vmode==:naked  ; :blank
           when vmode==:setting; :setting_missing
@@ -203,10 +272,10 @@ raise "Missed _main?" if tcard.name == '_main'
 
   def get_inclusion_content(cardname)
     #parameters = root.slot_options[:relative_content]
-    content = params[cardname.gsub(/\+/,'_')]
+    content = relative_content[cardname.gsub(/\+/,'_')]
 
     # CLEANME This is a hack to get it so plus cards re-populate on failed signups
-    if params['cards'] and card_params = params['cards'][cardname.gsub('+','~plus~')]
+    if relative_content['cards'] and card_params = relative_content['cards'][cardname.gsub('+','~plus~')]
       content = card_params['content']
     end
     content if content.present?  #not sure I get why this is necessary - efm
@@ -224,22 +293,22 @@ raise "Missed _main?" if tcard.name == '_main'
   def update_references(card, rendering_result)
     WikiReference.delete_all ['card_id = ?', card.id]
 
-	 if card.id and card.respond_to?('references_expired')
-    	card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
-    end
-    rendering_result.find_chunks(Chunk::Reference).each do |chunk|
-      reference_type =
-        case chunk
-          when Chunk::Link;       chunk.refcard ? LINK : WANTED_LINK
-          when Chunk::Transclude; chunk.refcard ? TRANSCLUSION : WANTED_TRANSCLUSION
-          else raise "Unknown chunk reference class #{chunk.class}"
-        end
-      WikiReference.create!(
-        :card_id=>card.id,
-        :referenced_name=>chunk.refcard_name.to_key,
-        :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
-        :link_type=>reference_type
-      )
+    if card.id and card.respond_to?('references_expired')
+      card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
+      rendering_result.find_chunks(Chunk::Reference).each do |chunk|
+        reference_type =
+          case chunk
+            when Chunk::Link;       chunk.refcard ? LINK : WANTED_LINK
+            when Chunk::Transclude; chunk.refcard ? TRANSCLUSION : WANTED_TRANSCLUSION
+            else raise "Unknown chunk reference class #{chunk.class}"
+          end
+
+        WikiReference.create!( :card_id=>card.id,
+          :referenced_name=>chunk.refcard_name.to_key,
+          :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
+          :link_type=>reference_type
+         )
+      end
     end
   end
 end

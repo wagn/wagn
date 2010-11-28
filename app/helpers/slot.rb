@@ -336,7 +336,6 @@ class Slot
   end
 
   def expand_inclusions(content)
-#Rails.logger.info "expand_inclusions(#{content})"
     renderer.render(card, content) do |cardname,opts|
       renderer.expand_card(cardname,opts) do |tcard, opts|
         renderer.inclusion(tcard, opts)

@@ -11,7 +11,7 @@ module Cardlib
       # FIXME: bogus blank default content is set on hard_templated cards...
       User.as(:wagbot) {
         render_content = self.templated_content || self.content
-        Renderer.new.render(self, render_content, :update_references)   
+        Renderer.new.render(self, render_content, [:raw, :update_references])   
       }
       expire_templatee_references
     end

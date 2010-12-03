@@ -10,13 +10,15 @@ class Slot
     end
   end
 
-  cattr_accessor :max_char_count, :current_slot
+  cattr_accessor :max_char_count, :current_slot, :max_depth
   self.max_char_count = 200
+  self.max_depth = 10
   attr_reader :card, :action, :template
   attr_writer :form
   attr_accessor  :options_need_save, :state, :requested_view, :js_queue_initialized,
     :position, :renderer, :form, :superslot, :char_count, :item_view, :type, :renders,
-    :start_time, :skip_autosave, :config, :slot_options, :render_args, :context
+    :start_time, :skip_autosave, :config, :slot_options, :render_args, :context,
+    :depth
 
   VIEW_ALIASES = {
     :view => :open,
@@ -53,6 +55,7 @@ class Slot
     @char_count = 0
     @subslots = []
     @state = 'view'
+    @depth = - max_depth
     @renders = {}
     @js_queue_initialized = {}
   end
@@ -72,6 +75,7 @@ class Slot
     new_position = @subslots.size + 1
     new_slot = self.class.new(card, "#{context_base}_#{new_position}", @action, @template, :renderer=>@renderer)
 
+    new_slot.depth = @depth+1
     new_slot.state = @state
     new_slot.superslot = self
     new_slot.position = new_position
@@ -179,22 +183,13 @@ class Slot
     VIEW_ALIASES[view.to_sym] || view
   end
 
-  def count_render
-    root.renders[card.name] ||= 1
-    root.renders[card.name] += 1
-  end
-
-  def too_many_renders?
-    root.renders[card.name] ||= 1
-    root.renders[card.name] > System.max_renders
-  end
+  def too_deep?() @depth >= 0 end
 
   def render(action, args={})
 #Rails.logger.debug "Slot(#{card.name}).render #{action} #{args.inspect}"
     self.render_args = args.clone
-    count_render
     ok_action = case
-      when too_many_renders?;   :too_many_renders
+      when too_deep?                     ; :too_deep
       when denial = deny_render?(action) ; denial
       else                               ; action
     end
@@ -271,7 +266,7 @@ class Slot
 
       ###---(  EXCEPTIONS )
 
-      when :deny_view, :edit_auto, :too_slow, :too_many_renders, :open_missing, :closed_missing, :setting_missing
+      when :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :setting_missing
         render_partial("views/#{ok_action}", args)
 
       when :blank;
@@ -301,9 +296,8 @@ class Slot
 
   def render_array
 #Rails.logger.debug "Slot(#{card.name}).render_array T:#{card.type}  root = #{root}"
-    count_render
-    if too_many_renders?
-      return render_partial( 'views/too_many_renders' )
+    if too_deep?
+      return render_partial( 'views/too_deep' )
     end
     case card.type
       when 'Search'

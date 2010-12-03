@@ -417,14 +417,12 @@ class Slot
     options[:fullname] = fullname = get_inclusion_fullname(tname,options)
     options[:showname] = tname.to_show(fullname)
     
-    tcard ||= @state==:edit ? Card.fetch_or_new(fullname, {}, new_inclusion_card_args(tname, options) ) :
+    tcard ||= @state==:edit ? Card.fetch_or_new(fullname, {}, new_inclusion_card_args(tname, options, card) ) :
     ## holy crap can we explain this?
        ( slot_options[:base].respond_to?(:name) && slot_options[:base].name == fullname ?
          slot_options[:base] : Card.fetch_or_new(fullname, {}, :skip_defaults=>true )
       )
     
-    tcard.loaded_trunk=card if tname =~ /^\+/
-
     tcontent = process_inclusion( tcard, options )
     tcontent = resize_image_content(tcontent, options[:size]) if options[:size]
 
@@ -471,8 +469,11 @@ class Slot
     content if content.present?  #not sure I get why this is necessary - efm
   end
 
-  def new_inclusion_card_args(tname, options)
+  def new_inclusion_card_args(tname, options, parent)
     args = { :type =>options[:type],  :permissions=>[] }
+    if tname =~ /^\+/
+      args[:loaded_trunk] = parent
+    end
     if content = get_inclusion_content(tname)
       args[:content] = content
     end

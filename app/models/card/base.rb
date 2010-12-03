@@ -457,6 +457,10 @@ module Card
       current_revision ? current_revision.content : ""
     end   
         
+    def renderer_content
+      templated_content || content
+    end
+
     def type
       read_attribute :type
     end
@@ -567,11 +571,6 @@ module Card
     validates_each :content do |rec, attr, value|
       if rec.updates.for?(:content)
         rec.send :validate_content, value
-        begin 
-          res = Renderer.new.render(rec, value, update_references=false)
-        rescue Exception=>e
-          rec.errors.add :content, "#{e.class}: #{e.message}"
-        end   
       end
     end
 

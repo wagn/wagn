@@ -1,6 +1,6 @@
 module Chunk
   class Transclude < Reference
-    attr_reader :stars, :expand, :inclusion_map
+    attr_reader :stars, :inclusion_map
     unless defined? TRANSCLUDE_PATTERN
       #  {{+name|attr:val;attr:val;attr:val}}
       TRANSCLUDE_PATTERN = /\{\{(([^\|]+?)\s*(\|([^\}]+?))?)\}\}/
@@ -12,7 +12,6 @@ module Chunk
       super   
       #warn "FOUND TRANSCLUDE #{match_data} #{content}"
       @card_name, @options, @configs = self.class.parse(match_data)
-      @expand = content.expand
       @inclusion_map = content.inclusion_map
     end
   
@@ -46,7 +45,6 @@ module Chunk
     
     def unmask_text(&block)
       return @unmask_text if @unmask_text
-      return @text unless @expand
       comment = @options[:comment]
       return comment if comment
       refcard_name

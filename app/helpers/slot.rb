@@ -24,16 +24,6 @@ class Slot
     :line => :closed,
   }
 
-  class << self
-    def render_content content, opts = {}
-      Slot.current_slot = nil
-      view = opts.delete(:view)
-      view = :naked unless view && !view.blank?
-      tmp_card = Card.new :name=>"__tmp_card__", :content => content, :skip_defaults=>true
-      Slot.new(tmp_card, "main_1", view, nil, opts).render(view)
-    end
-  end
-
   def initialize(card, context="main_1", action="view", template=nil, opts={} )
     @card,@context,@action,@template = card,context.to_s,action.to_s,template
     Slot.current_slot ||= self
@@ -353,14 +343,12 @@ class Slot
 
   def render_naked
     render_naked_content do |r_content|
-      @renderer.render( slot_options[:base]||card, r_content,
-            card.references_expired) {|c,o| expand_card(c,o)}
+      @renderer.render( slot_options[:base]||card, r_content) {|c,o| expand_card(c,o)}
     end
   end
 
   def expand_inclusions(content)
-    @renderer.render(card, content,
-          card.references_expired) {|c,o| expand_card(c,o)}
+    @renderer.render(card, content) {|c,o| expand_card(c,o)}
   end
 
   def expand_card(tname, options)

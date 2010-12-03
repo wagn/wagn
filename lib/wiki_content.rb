@@ -104,28 +104,14 @@ class WikiContent < String
   
   include ChunkManager
   attr_reader :revision, :not_rendered, :pre_rendered, :renderer, :card,
-    :expand, :inclusion_map
+    :inclusion_map
 
-  def initialize(card, content, renderer, opts=true, inclusion_map=nil)
+  def initialize(card, content, renderer, inclusion_map=nil)
     @not_rendered = @pre_rendered = nil
     @renderer = renderer
     @inclusion_map = inclusion_map
     @card = card or raise "No Card in Content!!"
     super(content)
-    @expand = case
-              when Hash===opts
-                case
-                when opts.has_key?(:expand); opts[:expand]
-                when opts.has_key?(:raw); not opts[:raw]
-                end
-	      else
-                case Array===opts ? opts[0] : opts
-                when :expand; true
-                when :raw;    false
-		else opts
-                end
-              end
-    #Rails.logger.info "wiki_content #{@expand.inspect} #{opts.inspect}"
     init_chunk_manager()
     ACTIVE_CHUNKS.each{|chunk_type| chunk_type.apply_to(self)}
     @not_rendered = String.new(self)

@@ -7,8 +7,9 @@ module Chunk
     end
     
     def refcard_name
-      return '' unless @card_name
-      @card_name = @card_name.to_absolute(base_card.name)
+      return '' unless card_name
+      @card_name = card_name.to_absolute(base_card.name)
+Rails.logger.info "refcard_name #{base_card.name}:#{card_name}"; card_name
     end
     
     def refcard 

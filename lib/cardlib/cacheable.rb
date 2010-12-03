@@ -66,9 +66,11 @@ module Cardlib
     def contextual_content context = nil
       context ||= self
       renderer = Renderer.new
+Rails.logger.info("contextual_content[#{name}|#{context.name}]")
       ren = renderer.render( self, '', :raw)
-      res = renderer.render( context, ren)
-#Rails.logger.info("contextual_content[#{name}|#{context.name}] #{context} C:#{ren} Rs:#{res}"); res
+Rails.logger.info("contextual_content[#{name}|#{context.name}] C:#{ren}")
+      res = renderer.render( context, ren ) #, :base=>context)
+Rails.logger.info("contextual_content[#{name}|#{context.name}] Rs:#{res}"); res
     end
 
     def cardtype_name

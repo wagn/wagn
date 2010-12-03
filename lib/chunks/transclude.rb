@@ -1,6 +1,6 @@
 module Chunk
   class Transclude < Reference
-    attr_reader :stars, :expand, :inclusion_map, :renderer, :options
+    attr_reader :stars, :expand, :inclusion_map, :renderer, :options, :base
     unless defined? TRANSCLUDE_PATTERN
       #  {{+name|attr:val;attr:val;attr:val}}
       TRANSCLUDE_PATTERN = /\{\{(([^\|]+?)\s*(\|([^\}]+?))?)\}\}/
@@ -12,8 +12,9 @@ module Chunk
       super   
       #warn "FOUND TRANSCLUDE #{match_data} #{content}"
       @card_name, @options, @configs = self.class.parse(match_data)
-      @renderer, @expand, @inclusion_map =
-         content.renderer, content.expand, content.inclusion_map
+Rails.logger.info "transclude init #{card_name} #{options.inspect} N#{@configs.inspect}"
+      @base, @renderer, @expand, @inclusion_map =
+         content.card, content.renderer, content.expand, content.inclusion_map
     end
   
     def self.parse(match)
@@ -45,18 +46,19 @@ module Chunk
     end                        
     
     def unmask_text(&block)
+Rails.logger.info "unmask_text #{options.inspect} E:#{expand} U:#{@unmask_text} T:#{text}"
       return @unmask_text if @unmask_text
-      return @text unless @expand
-      return options[:comment] if options.has_key?(:commint)
+      return text unless expand
+      return options[:comment] if options.has_key?(:comment)
       refcard_name
-      if view = @options[:view]
+      if view = options[:view]
         view = view.to_sym
         if inclusion_map and inclusion_map.key?(view)
-          view = @options[:view] = inclusion_map[view]
+          view = options[:view] = inclusion_map[view]
         end
       end
       case view
-      when :name;     refcard ? refcard.name : @card_name
+      when :name;     refcard ? refcard.name : card_name
       when :key;      refcard_name.to_key
       when :link;     card_link
       when :linkname; Cardname.escape(refcard_name)
@@ -65,28 +67,30 @@ module Chunk
         # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
         content_tag( :h2, fancy_title(refcard_name) ) + self.render( :expanded_view_content )
       else
-        yield @card_name, @options
+	      Rails.logger.info "unmask yields #{card_name} #{options.inspect}"
+        yield card_name, options
       end
     end
 
     def revert                             
       configs = @configs.to_semicolon_attr_list;  
       configs = "|#{configs}" unless configs.blank?
-      @text = "{{#{@card_name}#{configs}}}"
+      @text = "{{#{card_name}#{configs}}}"
       super
     end
     
     private
     def base_card 
-      case @options[:base]
-      when 'self'; @card
-      when 'parent'; @card.trunk
-      else card || invalid_option(:base)
+Rails.logger.info "base_card trans #{options[:base]} B#{base&&base.name} N#{card&&card.name}"
+      case options[:base]
+      when 'self'  ; card
+      when 'parent'; card.trunk
+      else           base || invalid_option(:base)
       end
     end
     
     def invalid_option(key)
-      raise Wagn::Oops, "Invalid argument {'#{key}': '#{@options[key]}'} in transclusion syntax"
+      raise Wagn::Oops, "Invalid argument {'#{key}': '#{options[key]}'} in transclusion syntax"
     end
 
   end

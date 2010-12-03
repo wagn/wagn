@@ -175,7 +175,7 @@ class Slot
   def too_deep?() @depth >= 0 end
 
   def render(action, args={})
-#Rails.logger.debug "Slot(#{card.name}).render #{action} #{args.inspect}"
+Rails.logger.debug "Slot(#{card.name}).render #{action} #{args.inspect}\nTrace#{Kernel.caller.slice(0,8).join("\n")}"
     self.render_args = args.clone
     ok_action = case
       when too_deep?                     ; :too_many_renders
@@ -320,30 +320,33 @@ class Slot
       #passed_in_content = args.delete(:content) # Can we get away without this??
       ## content templates
       renderer_content = card.templated_content
+if block_given?
+Rails.logger.info "render_naked_content yields #{renderer_content}" 
+else
+Rails.logger.info "render_naked_content returns #{renderer_content} CC:#{card.content}" 
+end
       block_given? ? yield(renderer_content||"") : renderer_content||card.content
     end
   end
 
   def render_naked
     render_naked_content do |r_content|
-      #renderer.render( slot_options[:base]||card, r_content) do |c,o|
+Rails.logger.info "RN1 #{r_content} Cd:#{card&&card.name}"
       renderer.render( card, r_content) do |cardname, opts|
+Rails.logger.info "RN2 #{cardname} #{opts.inspect}"
         renderer.expand_card(cardname, opts) do |tcard, options|
+Rails.logger.info "RN3 #{tcard} #{options.inspect}"
           process_inclusion(tcard, options)
 	end
       end
     end
   end
 
-  def expand_inclusions(content)
-    renderer.render(card, content) do |cardname,opts|
-      renderer.expand_card(cardname,opts) do |tcard, opts|
-        renderer.inclusion(tcard, opts)
-      end
-    end
-  end
+  def expand_inclusions(content) renderer.expand_inclusions(content) end
 
   def process_inclusion(tcard, options)
+#raise "process_inclusion SL (#{tcard.name}, #{options.inspect}"
+Rails.logger.info "process_inclusion SL (#{tcard.name}, #{options.inspect}"
     subslot = subslot(tcard, options[:context])
     old_slot, Slot.current_slot = Slot.current_slot, subslot
 

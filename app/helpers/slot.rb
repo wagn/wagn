@@ -301,12 +301,11 @@ class Slot
     end
     case card.type
       when 'Search'
-        names = Wql.new(card.get_spec(:return => 'name_content')).run.keys
-        names.map{|x| subslot(Card.fetch_or_new(x)).render(:naked) }.inspect
+        Wql.new(card.get_spec(:return => 'name_content')).run.keys.
+            map{|x| subslot(Card.fetch_or_new(x)).render(:naked)}.inspect
       when 'Pointer'
-        card.pointees.map{|x|
-          subslot(Card.fetch_or_new(x)).render(:naked)
-       	}.inspect
+        card.pointees.
+            map{|x| subslot(Card.fetch_or_new(x)).render(:naked)}.inspect
       else
         [render_naked].inspect
     end
@@ -351,7 +350,7 @@ class Slot
 
     case tname
     when '_main'
-      if content=slot_options[:main_content] and content!='~~render main inclusion~~'
+      if content=slot_options[:main_content] and not content.blank?
         return wrap_main(slot_options[:main_content])
       end
       tcard=slot_options[:main_card]
@@ -563,7 +562,7 @@ class Slot
       [:offset,:limit].each{|key| s[key] = p.delete(key)}
     end
     s[:offset] = s[:offset] ? s[:offset].to_i : 0
-  	s[:limit]  = s[:limit]  ? s[:limit].to_i  : (main_card? ? 50 : 20)
+    s[:limit]  = s[:limit]  ? s[:limit].to_i  : (main_card? ? 50 : 20)
     s
   end
 

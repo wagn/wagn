@@ -37,7 +37,7 @@ module Cardlib
     def list_items context = nil
       case self.type
       when "Pointer"
-        self.pointees( context ? context.name : nil )
+        self.pointees( context ? context.name : self.name )
       when "Search"
         self.list_cards(context).map {|card| card.name }
       when "File","NimbbVideo"

@@ -375,12 +375,12 @@ class Slot
     else
       Card.fetch_or_new(fullname, :skip_defaults=>true)
     end
-
+    
     tcard.loaded_trunk=card if tname =~ /^\+/
-    result = process_inclusion(tcard, options)
-    result = resize_image_content(result, options[:size]) if options[:size]
-    self.char_count += (result ? result.length : 0) #should we strip html here?
-    tname=='_main' ? wrap_main(result) : result
+    tcontent = process_inclusion(tcard, options)
+    tcontent = resize_image_content(tcontent, options[:size]) if options[:size]
+    self.char_count += (tcontent ? tcontent.length : 0) #should we strip html here?
+    tname=='_main' ? wrap_main(tcontent) : tcontent
   rescue Card::PermissionDenied
     ''
   end
@@ -454,6 +454,9 @@ class Slot
 
   def new_inclusion_card_args(options)
     args = { :type =>options[:type],  :permissions=>[] }
+    if options[:tname] =~ /^\+/
+      args[:loaded_trunk] = parent
+    end
     if content=get_inclusion_content(options[:tname])
       args[:content]=content
     end

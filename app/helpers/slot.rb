@@ -13,7 +13,7 @@ class Slot
   cattr_accessor :max_char_count, :current_slot, :max_depth
   self.max_char_count = 200
   self.max_depth = 10
-  attr_reader :card, :action, :template
+  attr_reader :card, :main_card, :main_content, :action, :template
   attr_writer :form
   attr_accessor  :options_need_save, :state, :requested_view, :js_queue_initialized,
     :position, :renderer, :form, :superslot, :char_count, :item_view, :type, :renders,
@@ -41,8 +41,6 @@ class Slot
     # local variables named options.
     @slot_options = {
       :relative_content => {},
-      :main_content => nil,
-      :main_card => nil,
       :inclusion_view_overrides => nil,
       :params => {},
       :base => nil,
@@ -186,7 +184,7 @@ class Slot
   def too_deep?() @depth >= 0 end
 
   def render(action, args={})
-#Rails.logger.debug "Slot(#{card.name}).render #{action} #{args.inspect}"
+#Rails.logger.debug "Slot(#{card.name}).render Rt:#{self == root} #{action} #{args.inspect}"
     self.render_args = args.clone
     ok_action = case
       when too_deep?                     ; :too_deep
@@ -199,6 +197,11 @@ class Slot
 
       #when :name; card.name
       when :name, :link; raise "should be in chunks"
+
+      when :layout
+	@main_card, mc = args.delete(:main_card), args.delete(:main_content)
+	@main_content = mc.blank? ? nil : wrap_main(mc)
+	expand_inclusions(card.renderer_content, main_card)
 
     ###-----------( FULL )
       when :new
@@ -340,8 +343,8 @@ class Slot
     end
   end
 
-  def expand_inclusions(content)
-    @renderer.render(card, content) {|c,o| expand_card(c,o)}
+  def expand_inclusions(content, render_card=nil)
+    @renderer.render(render_card||card, content) {|c,o| expand_card(c,o)}
   end
 
   def expand_card(tname, options)
@@ -350,10 +353,8 @@ class Slot
 
     case tname
     when '_main'
-      if content=slot_options[:main_content] and not content.blank?
-        return wrap_main(slot_options[:main_content])
-      end
-      tcard=slot_options[:main_card]
+      return root.main_content if root.main_content
+      tcard = root.main_card
       item  = symbolize_param(:item) and options[:item] = item
       pview = symbolize_param(:view) and options[:view] = pview
       self.context = options[:context] = 'main'

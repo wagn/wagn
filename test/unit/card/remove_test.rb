@@ -26,7 +26,6 @@ class Card::RemoveTest < ActiveSupport::TestCase
     assert Card.find_by_key('rtb*trash').nil?  
 end   
   
-  
   def test_multiple_trash_collision
     Card.create( :name => "alpha" ).destroy
     3.times do

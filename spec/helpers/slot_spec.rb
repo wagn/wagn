@@ -4,26 +4,32 @@ describe Slot, "" do
   before { User.as :joe_user }   
   describe "renders" do
     it "simple card links" do
-      Slot.render_content( "[[A]]" ).should == "<a class=\"known-card\" href=\"/wagn/A\">A</a>"  
+      c = Card.create :name => 'linkA', :content => "[[A]]"
+      Slot.new(c).render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/A\">A</a>"  
     end
     
     it "invisible comment inclusions as blank" do
-      Slot.render_content( "{{## now you see nothing}}" ).should == ''
+      c = Card.create :name => 'invisible', :content => "{{## now you see nothing}}"
+      Slot.new(c).render( :naked ).should == ''
     end
     
     it "visible comment inclusions as html comments" do
-      Slot.render_content( "{{# now you see me}}" ).should == '<!-- # now you see me -->'
-      Slot.render_content( "{{# -->}}" ).should == '<!-- # --&gt; -->'
+      c1 = Card.create :name => 'invisible', :content => "{{# now you see me}}"
+      c2 = Card.create :name => 'invisible', :content => "{{# -->}}"
+      Slot.new(c1).render( :naked ).should == '<!-- # now you see me -->'
+      Slot.new(c2).render( :naked ).should == '<!-- # --&gt; -->'
     end  
     
     it "image tags of different sizes" do
       Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}
-      Slot.render_content( "{{TestImage | naked; size:small }}" ).should == %{<img src="http://wagn.org/image53_small.jpg">} 
+      c = Card.create :name => 'Image1', :content => "{{TestImage | naked; size:small }}"
+      Slot.new(c).render( :naked ).should == %{<img src="http://wagn.org/image53_small.jpg">} 
     end
 
     describe "css classes" do
       it "are correct for open view" do
-        Slot.render_content("{{A|open}}").should be_html_with do
+        c = Card.create :name => 'Aopen', :content => "{{A|open}}"
+        Slot.new(c).render(:naked).should be_html_with do
           div( :class => "card-slot paragraph ALL TYPE-basic SELF-a") {}
         end
       end
@@ -31,14 +37,18 @@ describe Slot, "" do
     
     describe "css in inclusion syntax" do
       it "shows up" do
-        Slot.render_content("{{A|float:right}}").should be_html_with do
+        c = Card.create :name => 'Afloatright', :content => "{{A|float:right}}"
+        Slot.new(c).render( :naked ).should be_html_with do
           div(:style => 'float:right;') {}
         end
       end
 
       # I want this test to show the explicit escaped HTML, but be_html_with seems to escape it already :-/
       it "shows up with escaped HTML" do
-        Slot.render_content('{{A|float:<object class="subject">}}').should be_html_with do
+        c = User.as :wagbot do
+          Card.create :name => 'Afloat', :type => 'Html', :content => '{{A|float:<object class="subject">}}' 
+        end
+        Slot.new(c).render( :naked ).should be_html_with do
           div(:style => 'float:<object class="subject">;') {}
         end
       end
@@ -49,7 +59,8 @@ describe Slot, "" do
         mu = mock(:mu)
         mu.should_receive(:generate).and_return("1")
         UUID.should_receive(:new).and_return(mu)
-        Slot.render_content("{{A|open}}").should be_html_with do
+        c = Card.create :name => 'Aopen', :content => "{{A|open}}"
+        Slot.new(c).render( :naked ).should be_html_with do
           div( :position => 1, :class => "card-slot") {
             div( :class => "card-header" )
             span( :class => "content")  {
@@ -60,18 +71,21 @@ describe Slot, "" do
       end
       
       it "naked" do
-        Slot.render_content("{{A+B|naked}}").should == "AlphaBeta"
+        c = Card.create :name => 'ABnaked', :content => "{{A+B|naked}}"
+        Slot.new(c).render( :naked ).should == "AlphaBeta"
       end
       
       it "array (basic card)" do
-        Slot.render_content("{{A+B|array}}").should == %{["AlphaBeta"]}
+        c = Card.create :name => 'ABarray', :content => "{{A+B|array}}"
+        Slot.new(c).render( :naked ).should == %{["AlphaBeta"]}
       end
       
       it "array (search card)" do
         Card.create! :name => "n+a", :type=>"Number", :content=>"10"
         Card.create! :name => "n+b", :type=>"Phrase", :content=>"say:\"what\""
         Card.create! :name => "n+c", :type=>"Number", :content=>"30"
-        Slot.render_content("{{n+*plus cards|array}}").should == %{["10", "say:\\"what\\"", "30"]}
+        c = Card.create :name => 'nplusarray', :content => "{{n+*plus cards|array}}"
+        Slot.new(c).render( :naked ).should == %{["10", "say:\\"what\\"", "30"]}
       end
 
       it "array (pointer card)" do
@@ -79,12 +93,14 @@ describe Slot, "" do
         Card.create! :name => "n+b", :type=>"Number", :content=>"20"
         Card.create! :name => "n+c", :type=>"Number", :content=>"30"
         Card.create! :name => "npoint", :type=>"Pointer", :content => "[[n+a]]\n[[n+b]]\n[[n+c]]"
-        Slot.render_content("{{npoint|array}}").should == %q{["10", "20", "30"]}
+        c = Card.create :name => 'npointArray', :content => "{{npoint|array}}"
+        Slot.new(c).render( :naked ).should == %q{["10", "20", "30"]}
       end
 
       it "array doesn't go in infinite loop" do        
         Card.create! :name => "n+a", :content=>"{{n+a|array}}"
-        Slot.render_content("{{n+a|array}}").should =~ /Oops\!/
+        c = Card.create :name => 'naArray', :content => "{{n+a|array}}"
+        Slot.new(c).render( :naked ).should =~ /Oops\!/
       end
     end
     
@@ -96,16 +112,18 @@ describe Slot, "" do
   
   describe "cgi params" do
     it "renders params in card inclusions" do
-      result = Slot.render_content("{{_card+B|naked}}", :params=>{'_card' => "A"})
+      c = Card.create :name => 'cardNaked', :content => "{{_card+B|naked}}"
+      result = Slot.new(c, nil, nil, nil, :params=>{'_card' => "A"}).render(:naked)
       result.should == "AlphaBeta"
     end
-    
+
     it "should not change name if variable isn't present" do
-      Slot.render_content("{{_card+B|name}}").should == "_card+B"
+      c = Card.create :name => 'cardBname', :content => "{{_card+B|name}}"
+      Slot.new(c).render( :naked ).should == "_card+B"
     end
   end
 
-  it "should use inclusion view overrides" do  
+  it "should use inclusion view overrides" do
     # FIXME love to have these in a scenario so they don't load every time.
     t = Card.create! :name=>'t1', :content=>"{{t2|card}}"
     Card.create! :name => "t2", :content => "{{t3|view}}" 
@@ -114,10 +132,14 @@ describe Slot, "" do
     # a little weird that we need :expanded_view_content  to get the version without
     # slot divs wrapped around it.
     s = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :name } )
-    s.render( :expanded_view_content ).should == "t2"
+    s.render( :naked ).should == "t2"
     
-    s = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :expanded_view_content } )
-    s.render( :expanded_view_content ).should == "boo"
+    # similar to above, but use link
+    s = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :link } )
+    s.render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/t2\">t2</a>"
+
+    s = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :naked } )
+    s.render( :naked ).should == "boo"
   end
   
   context "builtin card" do

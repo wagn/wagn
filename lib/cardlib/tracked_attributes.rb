@@ -205,9 +205,12 @@ module Cardlib
         #puts "CALLING ALIAS METHOD CHAIN"
         #alias_method_chain :save, :tracking
         #alias_method_chain :save!, :tracking
-        
+ 
+      end
+      base.after_create() do |card|
+        Wagn::Hook.call :after_create, card
       end
     end    
-    
+
   end
 end

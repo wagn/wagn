@@ -131,6 +131,27 @@ module Wagn
     register_class self
   end
 
+#  class HasRightNamePattern < Pattern 
+#    class << self
+#      def key
+#        '*has right'
+#      end
+#      
+#      def pattern_applies? card
+#        card.name && card.name.junction?
+#      end
+#  
+#      def set_name card
+#        "#{card.name.tag_name}+#{key}"
+#      end
+#      
+#      def label name
+#        "Cards with plus card named +#{name.trunk_name}"
+#      end
+#    end
+#    register_class self
+#  end
+
   class LeftTypeRightNamePattern < Pattern                     
     class << self
       def key

@@ -61,7 +61,7 @@ class CardController < ApplicationController
     
     @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
     ## fixme, we ought to be setting special titles (or all titles) in cards
-    (request.xhr? || params[:format]) ? render(:action=>'show') : render(:text=>'~~render main inclusion~~', :layout=>true)
+    (request.xhr? || params[:format]) ? render(:action=>'show') : render(:text=>'', :layout=>true)
   end
 
   #----------------( MODIFYING CARDS )

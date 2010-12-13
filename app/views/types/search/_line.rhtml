@@ -28,7 +28,7 @@
 		<span class="faint">(<%= total %>)</span>
 		<div class="search-result-list">
   		<% query_results.each_with_index do |c,index| %>
-  			<div class="search-result-item"><%='name' == slot.item_format || params[:item] ? c.name : link_to_page( c.name ) %></div>
+  			<div class="search-result-item"><%='name' == slot.item_view || params[:item] ? c.name : link_to_page( c.name ) %></div>
   		<% end %>
 		</div>
 	<% end %>

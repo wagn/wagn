@@ -39,7 +39,6 @@ module Card
       nil
     end
 
-
     def create_or_update args
       if c = Card[ args[:name] ]
         c.update_attributes args
@@ -100,5 +99,6 @@ module Card
       ActiveRecord::Base.logger.info log
     end
   end
+
 end  
 

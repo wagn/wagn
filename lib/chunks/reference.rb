@@ -7,7 +7,9 @@ module Chunk
     end
     
     def refcard_name
+      return '' unless @card_name
       @card_name = @card_name.to_absolute(base_card.name)
+Rails.logger.info "refcard_name #{base_card.name}:#{@card_name}"; @card_name
     end
     
     def refcard 
@@ -19,20 +21,29 @@ module Chunk
       refcard_name
     end
 
-=begin  
-#I don't think this is begin used. 
-    protected
-      def card_link
-        href = CGI.escape(Cardname.escape(refcard_name))
-        klass = refcard ? 'known-card' : 'wanted-card'
-        %{<a class="#{klass}" href="/wagn/#{href}">#{link_text}</a>}
-      rescue Exception=>e
-        return "error rendering link"
+    def card_link
+      href = refcard_name
+      if (klass = 
+        case href
+          when /^\//;    'internal-link'
+          when /^https?:/; 'external-link'
+          when /^mailto:/; 'email-link'
+        end)
+	lt = link_text()
+        %{<a class="#{klass}" href="#{href}">#{lt}</a>}
+      else
+        lt = link_text.to_show(href)
+        klass = if refcard
+          href = href.to_url_key
+         'known-card'
+        else
+          href = CGI.escape(Cardname.escape(href))
+          'wanted-card'
+        end
+        %{<a class="#{klass}" href="/wagn/#{href}">#{lt}</a>}
       end
-=end
-      
+    end
   end 
-   
 end 
 
 

@@ -33,8 +33,8 @@ module Chunk
     # Each time the pattern is matched, create a new
     # chunk for it, and replace the occurance of the chunk
     # in this content with its mask.
-  	def self.apply_to(content)
-  	  content.gsub!( self.pattern ) do |match|	
+    def self.apply_to(content)
+      content.gsub!( self.pattern ) do |match|	
         new_chunk = self.new($~, content)
         content.add_chunk(new_chunk)
         new_chunk.mask
@@ -61,7 +61,6 @@ module Chunk
     def revert   
       @text
     end
-
   end
 
 end

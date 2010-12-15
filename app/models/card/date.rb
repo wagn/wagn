@@ -1,4 +1,4 @@
 module Card
-	class Date < Base
-	end
+  class Date < Base
+  end
 end

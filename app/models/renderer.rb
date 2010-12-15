@@ -54,8 +54,8 @@ class Renderer
   def _update_references(card, rendering_result)
     WikiReference.delete_all ['card_id = ?', card.id]
 
-	 if card.id and card.respond_to?('references_expired')
-    	card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
+    if card.id and card.respond_to?('references_expired')
+      card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
     end
     rendering_result.find_chunks(Chunk::Reference).each do |chunk|
       reference_type =

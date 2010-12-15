@@ -49,8 +49,6 @@ module Cardlib
     def hard_templatee_wql
       if hard_template? and c=Card.fetch(name.trunk_name) and c.type == "Set"
         wql = c.get_spec
-	Rails.logger.info("hard_tempatee_wql[#{c.name}] #{wql.inspect}")
-	wql
       end
     end
 

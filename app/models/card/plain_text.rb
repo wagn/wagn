@@ -1,7 +1,7 @@
 module Card
-	class PlainText < Base
+  class PlainText < Base
     #def post_render(content)
     #  "<pre>#{content}</pre>"
     #end
-	end
+  end
 end

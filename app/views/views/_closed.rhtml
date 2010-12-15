@@ -1,10 +1,10 @@
 <div class="card-header">
   <div class="title-menu">
-   	<%= link_to_remote fancy_title(card), 
-   	    {:url=>slot.url_for("card/open"), :update=>slot.id}, 
-   	    :title=>"open #{card.name}", :class=>'title right-arrow' %>
-  	<%= page_icon(card.name) %>
-  	&nbsp;		
+     <%= link_to_remote fancy_title(card), 
+         {:url=>slot.url_for("card/open"), :update=>slot.id}, 
+         :title=>"open #{card.name}", :class=>'title right-arrow' %>
+    <%= page_icon(card.name) %>
+    &nbsp;    
   </div>  
 </div>    
 <%= slot.wrap_content slot.render(:expanded_line_content) %>

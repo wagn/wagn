@@ -106,7 +106,7 @@ module Cardname
   end
   
   def to_absolute(context_name)
-    context_parts = context_name.split(JOINT)
+    context_parts = context_name && context_name.split(JOINT)
     # split wont give an item after trailing +
     # we add a space to force it
     (self+" ").split(JOINT).map do |part|

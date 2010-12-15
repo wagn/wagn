@@ -195,13 +195,13 @@ class Slot
     w_content = nil
     result = case ok_action
 
-      #when :name; card.name
-      when :name, :link; raise "should be in chunks"
+      when :name; card.name
+      when :link; Chunk::Reference.link_render(card.name, args)
 
       when :layout
-	@main_card, mc = args.delete(:main_card), args.delete(:main_content)
-	@main_content = mc.blank? ? nil : wrap_main(mc)
-	expand_inclusions(card.renderer_content, main_card)
+        @main_card, mc = args.delete(:main_card), args.delete(:main_content)
+        @main_content = mc.blank? ? nil : wrap_main(mc)
+        expand_inclusions(card.renderer_content, main_card)
 
     ###-----------( FULL )
       when :new

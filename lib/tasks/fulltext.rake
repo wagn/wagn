@@ -10,7 +10,7 @@ namespace :fulltext do
       schema = ENV['WAGN'].blank? ? "public" : ENV['WAGN']
 
        # NOTE: this will only work if the user running the migration has sudo priveleges
-		  tsearch_dir = System.postgres_tsearch_dir ? System.postgres_tsearch_dir : "#{System.postgres_src_dir}/contrib/tsearch2"
+                  tsearch_dir = System.postgres_tsearch_dir ? System.postgres_tsearch_dir : "#{System.postgres_src_dir}/contrib/tsearch2"
       cmd = "cat #{tsearch_dir}/tsearch2.sql | ruby -ne '$_.gsub!(/public/,\"\\\"#{schema}\\\"\"); print' | sudo -u postgres psql #{db}"
       `#{cmd}`
       cmd =  %{ echo "} + 

@@ -6,7 +6,7 @@
 
 <%= slot.form.hidden_field :content, :id=>"#{slot.editor_id}-content" %>
 <%= slot.editor_hooks :save=>%{
-	$('#{slot.editor_id}-content').value = $('#{date_id}').innerHTML; 
-	return true;
+  $('#{slot.editor_id}-content').value = $('#{date_id}').innerHTML; 
+  return true;
 } %>
 

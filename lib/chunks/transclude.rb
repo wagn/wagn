@@ -49,10 +49,10 @@ module Chunk
       return comment if comment
       refcard_name
       if view = @options[:view]
-	view = view.to_sym
-	if inclusion_map and inclusion_map.key?(view)
-	  view = @options[:view] = inclusion_map[view]
-	end
+        view = view.to_sym
+        if inclusion_map and inclusion_map.key?(view)
+          view = @options[:view] = inclusion_map[view]
+        end
       end
       case view
       when :name;     refcard ? refcard.name : @card_name

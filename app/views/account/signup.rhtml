@@ -25,30 +25,30 @@
         <%= f.hidden_field 'type'  %>
         <%- slot.form = f %>
         <%= error_messages_for :user %> 
-      	<table class="fieldset">
-      	  <%= slot.option_header 'Account Details' %><%#ENGLISH%>
-      	  <% slot.option(
+        <table class="fieldset">
+          <%= slot.option_header 'Account Details' %><%#ENGLISH%>
+          <% slot.option(
               :name=>"name", 
-          		:help=>"<strong>Unique name for your card</strong><br/>usually first and last name",
-          		:label=>"Name") do %>
-          	<%= f.text_field :name, {:class=>'new-card-name', :id=>"new-card-name-field"} %>
+              :help=>"<strong>Unique name for your card</strong><br/>usually first and last name",
+              :label=>"Name") do %>
+            <%= f.text_field :name, {:class=>'new-card-name', :id=>"new-card-name-field"} %>
           <% end %>   
-    	    <%= render :partial=>'account/email' %>
-    	    <%= slot.option_header 'About You' %>
-    	  </table>    
-	
-      	<div class="open-content">
-        	<%= slot.render :edit %>
+          <%= render :partial=>'account/email' %>
+          <%= slot.option_header 'About You' %>
+        </table>    
+  
+        <div class="open-content">
+          <%= slot.render :edit %>
         </div>
-  			<%= slot.full_captcha %>
-      	<div class="submit-tag">
-        	<%= submit_tag 'Submit' %>
+        <%= slot.full_captcha %>
+        <div class="submit-tag">
+          <%= submit_tag 'Submit' %>
         </div>
 
-    		<%= slot.notice %>
+        <%= slot.notice %>
   
-	
-    	<% end %>
+  
+      <% end %>
     </div>
   <% end %>
 </div>  

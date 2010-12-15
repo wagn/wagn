@@ -15,7 +15,7 @@
 <%= slot.editor_hooks :save=>%{              
   //slot = getSlotFromContext('#{eid}');
   //inputs = getSlotElements(slot, 'pointer-text');
-	inputs = Element.select( $('#{eid}-ul'), ".pointer-text");
+  inputs = Element.select( $('#{eid}-ul'), ".pointer-text");
   $('#{eid}-hidden-content').value = inputs.map(
     function(x){ return (x.value.strip() == '') ? '' : '[[' + x.value + ']]'}
   ).join("\\n");                                                     

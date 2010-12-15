@@ -1,7 +1,7 @@
 module Card      
   
-	class Search < Base  
-	  attr_accessor :self_cardname, :results, :spec
+  class Search < Base  
+    attr_accessor :self_cardname, :results, :spec
     before_save :escape_content
 
     def escape_content

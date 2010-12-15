@@ -4,9 +4,11 @@ module Chunk
     
     class << self
       def link_render(name, args)
-        klass, pathname = Card.fetch(name) ?
-          pathname = name.to_url_key, 'known-card' :
-          pathname = CGI.escape(Cardname.escape(name)), 'wanted-card'
+        if Card.fetch(name)
+          klass, pathname = name.to_url_key, 'known-card'
+        else
+          klass, pathname = CGI.escape(Cardname.escape(name)), 'wanted-card'
+        end
         %{<a class="#{klass}" href="/wagn/#{pathname}">#{name}</a>}
       end
     end

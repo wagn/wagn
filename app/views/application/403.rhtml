@@ -1,14 +1,14 @@
 <div class="exception">
-	<h2>Denied!</h2> <%#ENGLISH%>
+  <h2>Denied!</h2> <%#ENGLISH%>
   <p><%= @exception.message %>.</p>
-	<% if User.current_user.login=='anon' %>
-		<p>
-		  <%= link_to 'Sign in', '/account/signin' %> 
-		  <% if Card::InvitationRequest.create_ok? %>
-		    or <%= link_to 'Sign up', '/account/signup'%>
-		  <% end %>
-		</p>
-	<% end %>  
-	<p><em>403 Forbidden</em></p>
+  <% if User.current_user.login=='anon' %>
+    <p>
+      <%= link_to 'Sign in', '/account/signin' %> 
+      <% if Card::InvitationRequest.create_ok? %>
+        or <%= link_to 'Sign up', '/account/signup'%>
+      <% end %>
+    </p>
+  <% end %>  
+  <p><em>403 Forbidden</em></p>
 </div>
 

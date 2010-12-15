@@ -2,6 +2,17 @@ module Chunk
   class Reference < Abstract
     attr_reader :card_name, :card
     
+    class << self
+      def link_render(name, args)
+        if Card.fetch(name)
+          klass, pathname = name.to_url_key, 'known-card'
+        else
+          klass, pathname = CGI.escape(Cardname.escape(name)), 'wanted-card'
+        end
+        %{<a class="#{klass}" href="/wagn/#{pathname}">#{name}</a>}
+      end
+    end
+
     def base_card
       @card
     end
@@ -9,7 +20,6 @@ module Chunk
     def refcard_name
       return '' unless @card_name
       @card_name = @card_name.to_absolute(base_card.name)
-Rails.logger.info "refcard_name #{base_card.name}:#{@card_name}"; @card_name
     end
     
     def refcard 
@@ -29,7 +39,7 @@ Rails.logger.info "refcard_name #{base_card.name}:#{@card_name}"; @card_name
           when /^https?:/; 'external-link'
           when /^mailto:/; 'email-link'
         end)
-	lt = link_text()
+        lt = link_text()
         %{<a class="#{klass}" href="#{href}">#{lt}</a>}
       else
         lt = link_text.to_show(href)

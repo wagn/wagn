@@ -230,6 +230,7 @@ module Card
       end                  
     end
 
+    def is_collection?() false end
 
     def save_with_trash!
       save || raise(RecordNotSaved)

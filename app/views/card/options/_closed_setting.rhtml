@@ -11,8 +11,8 @@ value_card = card.setting_card(setting_name)
 
 <div class="setting">
   <%= link_to_remote setting_name, 
- 	    {:url=>slot.url_for("card/options", :attribute=>'open_setting', :setting=>setting_name), :update=>slot.id}, 
- 	    :title=>"open #{setting_name}", :class=>'title right-arrow' %>
-	<%= page_icon(setting_name) %>
+       {:url=>slot.url_for("card/options", :attribute=>'open_setting', :setting=>setting_name), :update=>slot.id}, 
+       :title=>"open #{setting_name}", :class=>'title right-arrow' %>
+  <%= page_icon(setting_name) %>
 </div>
 

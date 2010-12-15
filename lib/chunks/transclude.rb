@@ -49,10 +49,10 @@ module Chunk
       return comment if comment
       refcard_name
       if view = @options[:view]
-	view = view.to_sym
-	if inclusion_map and inclusion_map.key?(view)
-	  view = @options[:view] = inclusion_map[view]
-	end
+        view = view.to_sym
+        if inclusion_map and inclusion_map.key?(view)
+          view = @options[:view] = inclusion_map[view]
+        end
       end
       case view
       when :name;     refcard ? refcard.name : @card_name
@@ -72,14 +72,9 @@ module Chunk
           when :naked
             card = Card.fetch(tcard)
             return "<no card #{tcard}/>" unless card
-            case card.type
-            when 'Search'
-              Wql.new(card.get_spec(:return => 'name_content')).run.keys.map do
-                |x| renderer_content(Card.fetch_or_new(x))
-              end
-            when 'Pointer'
-              card.pointees.map do |x|
-                renderer_content(Card.fetch_or_new(x))
+            if card.is_collection?
+              card.each_name do |name|
+                renderer_content(Card.fetch_or_new(name))
               end
             else
               renderer_content(card)

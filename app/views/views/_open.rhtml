@@ -1,22 +1,22 @@
 <% if slot.action!='nude' %><%# FIXME: variable from slot.rb?  %>
-	<%= slot.header %>  
+  <%= slot.header %>  
 <% end %>
 
 <%= slot.wrap_content( slot.render(:expanded_view_content) ) %>
 
-<%= slot.notice %>	
+<%= slot.notice %>  
 <% if card.ok?(:comment) %> <%#and !card.hard_template %>
    <div class="comment-box">
    <% wagn_form_for :card, card, :url=>slot.url_for('card/comment') do |f| %>
      <%= f.text_area :comment, :rows=>3 %><br/>
-	  <% unless User.current_user.login != "anon" %>
-		  <% card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") %> <%#ENGLISH%>
-			<%= slot.half_captcha %>
-	    <label>My Name is:</label>
-		  <%= f.text_field :comment_author, {'onClick'=>"this.value=''" } %> 
-	  <% end %>
-	  <input type="submit" value="Comment"/>
-	<% end %>
+    <% unless User.current_user.login != "anon" %>
+      <% card.comment_author= (session[:comment_author] || params[:comment_author] || "Anonymous") %> <%#ENGLISH%>
+      <%= slot.half_captcha %>
+      <label>My Name is:</label>
+      <%= f.text_field :comment_author, {'onClick'=>"this.value=''" } %> 
+    <% end %>
+    <input type="submit" value="Comment"/>
+  <% end %>
    </div>
  <% end %>
 <%= slot.action=='nude' ? "" : slot.footer %>

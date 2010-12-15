@@ -7,78 +7,78 @@
 %>
 
 <% get_slot(nil).wrap("new", args) do |slot| %>   
-	<% @title = "New Card" %>  
-	
-  	<%= error_messages_for :card %>
+  <% @title = "New Card" %>  
+  
+    <%= error_messages_for :card %>
     <div class=cardnotice></div>   
                                             
-	  <% wagn_form_for :card, card, :url=>"card/create", 
-					:slot => slot,
-					:update => {
-						:success => slot.id,   
-						:failure => slot.id(:cardnotice),
-					},                                       
-					:html=>{ :class=>'form',:onsubmit=>slot.save_function	} do |form| %>
+    <% wagn_form_for :card, card, :url=>"card/create", 
+          :slot => slot,
+          :update => {
+            :success => slot.id,   
+            :failure => slot.id(:cardnotice),
+          },                                       
+          :html=>{ :class=>'form',:onsubmit=>slot.save_function  } do |form| %>
 
-			<div class="card-header">
-			  <% if !request.xhr? && @args[:type] && !@card.broken_type %>
-			    <%= hidden_field_tag 'card[type]', @args[:type] %>
-			  <% else %>
-  			  <span class="new-type">
-  			    <span class="label"> type:</span>
-					  <%= slot.cardtype_field form, :onchange=>slot.update_cardtype_function(   
-					        :url=>slot.url_for('card/new'), :update=>slot.id, 			    
-					        :with=>"Form.serialize(getSlotElement(this,'form'))" 
-					  ) %>
-				  </span>
-				<% end %>
-			  
-			  <span class="new-name">
-				  <span class="label">name:</span>
-				  <% if @card.name.blank? || Card.fetch(@card.name)%>
-						<span class="name-area">
-							<%= slot.name_field(form) %>
-					  </span>
-					<% else %>
-					  <%= form.hidden_field :name %>
-					  <span class="title">
-  					  <%= fancy_title(@card.name) %>
-  					</span>
-					<% end %> 
-				</span>
-			</div>
+      <div class="card-header">
+        <% if !request.xhr? && @args[:type] && !@card.broken_type %>
+          <%= hidden_field_tag 'card[type]', @args[:type] %>
+        <% else %>
+          <span class="new-type">
+            <span class="label"> type:</span>
+            <%= slot.cardtype_field form, :onchange=>slot.update_cardtype_function(   
+                  :url=>slot.url_for('card/new'), :update=>slot.id,           
+                  :with=>"Form.serialize(getSlotElement(this,'form'))" 
+            ) %>
+          </span>
+        <% end %>
+        
+        <span class="new-name">
+          <span class="label">name:</span>
+          <% if @card.name.blank? || Card.fetch(@card.name)%>
+            <span class="name-area">
+              <%= slot.name_field(form) %>
+            </span>
+          <% else %>
+            <%= form.hidden_field :name %>
+            <span class="title">
+              <%= fancy_title(@card.name) %>
+            </span>
+          <% end %> 
+        </span>
+      </div>
       <% if inst=card.setting_card('add help', 'edit help') and params[:view]!='setting' %>
         <div class="instruction"><%= slot.subslot(inst).render :naked %></div>
-	    <% end %>
+      <% end %>
 
-			
-			<div class="edit-area">
-  			<div class="editor">  
-					<% #FIXME CONTENT: the hard template test can go away when we phase out the old sytem %>
-  				<% if card.content_template %>
-  				  <%- slot.form = form %>
-    			  <%= slot.render(:multi_edit)%>
-  				<% else %>
-						<%# if default_content = card.setting('default') ; card.content = default_content; end %>
-  					<%= slot.content_field(form) %>
-  				<% end %>
-  			</div>
-  		 
-				<%= slot.half_captcha %>
-  		  <%= hidden_field_tag :view, params[:view] || :open %>
-  		  <div class="edit-button-area">
-    		
-    			<%= button_to_function 'Submit', "this.form.onsubmit()", :id=>'create-button'  %>
-						
-          <% if slot.xhr? %>						
-    				<%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function }  %> 
-    			<% else %>
-    		    <%= button_to_function 'Cancel',"document.location.href='#{previous_location}'" %> 
-  			<% end %>
-  			</div>
-  		</div>
-		<% end %>
+      
+      <div class="edit-area">
+        <div class="editor">  
+          <% #FIXME CONTENT: the hard template test can go away when we phase out the old sytem %>
+          <% if card.content_template %>
+            <%- slot.form = form %>
+            <%= slot.render(:multi_edit)%>
+          <% else %>
+            <%# if default_content = card.setting('default') ; card.content = default_content; end %>
+            <%= slot.content_field(form) %>
+          <% end %>
+        </div>
+       
+        <%= slot.half_captcha %>
+        <%= hidden_field_tag :view, params[:view] || :open %>
+        <div class="edit-button-area">
+        
+          <%= button_to_function 'Submit', "this.form.onsubmit()", :id=>'create-button'  %>
+            
+          <% if slot.xhr? %>            
+            <%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function }  %> 
+          <% else %>
+            <%= button_to_function 'Cancel',"document.location.href='#{previous_location}'" %> 
+        <% end %>
+        </div>
+      </div>
+    <% end %>
 
-	<%= slot.notice %>
+  <%= slot.notice %>
 <% end %>
 

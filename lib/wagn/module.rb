@@ -8,7 +8,7 @@ module Wagn
           begin
             require_dependency file  #"#{RAILS_ROOT}/modules/#{module_name}"
           rescue Exception=>e
-	    detail = e.backtrace.join("\n")
+            detail = e.backtrace.join("\n")
             raise "Error loading modules/#{module_name}: #{e.message}\n#{detail}"
           end
         end

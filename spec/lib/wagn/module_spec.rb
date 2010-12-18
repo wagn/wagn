@@ -12,7 +12,7 @@ describe Wagn::Module do
             end
           EOF
         end
-        Wagn.config.available_modules << file
+        Wagn::Config.config.available_modules << file
         Wagn::Module.load_all
         JBob.foo.should == "bar"
       ensure

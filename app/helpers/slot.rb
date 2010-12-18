@@ -197,6 +197,10 @@ class Slot
 
       when :name; card.name
       when :link; Chunk::Reference.link_render(card.name, args)
+      when :titled;   content_tag( :h1, fancy_title(card.name) ) + self.render( :content )
+      when :rss_titled;                                                         
+        # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
+        content_tag( :h2, fancy_title(card.name) ) + self.render( :expanded_view_content )
 
       when :layout
         @main_card, mc = args.delete(:main_card), args.delete(:main_content)
@@ -417,8 +421,15 @@ class Slot
     result = subslot.render(action, options)
     Slot.current_slot = old_slot
     result
-  rescue
-    %{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
+  rescue Exception=>e
+    case Wagn::Config.rails_config.log_level
+    when :debug
+Rails.logger.warn  %{<span class="inclusion-error">error rendering dbg #{link_to_page tcard.name} #{e.inspect}<br>
+Trace #{e.backtrace.join(" <br>\n")}</span> }
+    when :warn
+Rails.logger.warn  %{<span class="inclusion-error">error rendering warn #{link_to_page tcard.name}</span> #{e.inspect}}
+    else  %{<span class="inclusion-error">error rendering #{link_to_page tcard.name} #{CGI.escapeHTML(e.inspect)} (#{Wagn::Config.rails_config.log_level.inspect})</span>}
+    end
   end
 
   def get_inclusion_fullname(name,options)

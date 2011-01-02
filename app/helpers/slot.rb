@@ -265,7 +265,7 @@ class Slot
       when :multi_edit;
         @state=:edit
         args[:add_javascript]=true
-        hidden_field_tag(:multi_edit, true) + render_naked
+        hidden_field_tag(:multi_edit, true) + render_bare
 
       when :edit_in_form
         render_partial('views/edit_in_form', args.merge(:form=>form))
@@ -301,27 +301,26 @@ class Slot
   end
 
   def render_naked
+    if card.is_collection?
+      card.each_name { |name| subslot(Card.fetch_or_new(name)).render(:naked) }.inspect
+    else render_bare end
   end
+
   def render_array
 #Rails.logger.debug "Slot(#{card.name}).render_array T:#{card.type}  root = #{root}"
     if too_deep?
       return render_partial( 'views/too_deep' )
     end
-    case card.type
-      when 'Search'
-        Wql.new(card.get_spec(:return => 'name_content')).run.keys.
-            map{|x| subslot(Card.fetch_or_new(x)).render(:naked)}.inspect
-      when 'Pointer'
-        card.pointees.
-            map{|x| subslot(Card.fetch_or_new(x)).render(:naked)}.inspect
-      else
-        [render_naked].inspect
+    if card.is_collection?
+      card.each_name { |name| subslot(Card.fetch_or_new(name)).render(:naked) }.inspect
+    else
+      [render_bare].inspect
     end
   end
 
   def render_open_content
     generic_card? ?           # FIXME?: 'content' is inconsistent
-      render_naked : render_card_partial(:content)
+      render_bare : render_card_partial(:content)
   end
 
   def generic_card?

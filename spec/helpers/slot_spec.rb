@@ -78,7 +78,9 @@ describe Slot, "" do
       it "naked (search card)" do
         s = Card.create :type=>'Search', :name => 'Asearch', :content => %{{"type":"User"}}
         c = Card.create :name => 'AsearchNaked', :content => "{{Asearch|naked}}"
-        Slot.new(c).render( :naked ).should == %{}
+        d = Card.create :name => 'AsearchNaked1', :content => "{{Asearch|naked;item:name}}"
+        Slot.new(c).render( :naked ).should == %{["Mr. Buttz", "", "I got no account", "I'm number two", "", "I'm number one", "", "", "", ""]}
+        Slot.new(d).render( :naked ).should == %{"Mr. Buttz"}
       end
       
       it "name" do
@@ -93,7 +95,7 @@ describe Slot, "" do
       
       it "titled" do
         c = Card.create :name => 'ABtitled', :content => "{{A+B|titled}}"
-        Slot.new(c).render( :naked ).should match ( "^#{Regexp.escape( %{<h1><span class="namepart-a">A</span><span class="joint">+</span><span class="namepart-b">B</span></h1><div  class="transcluded ALL TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"  position="})}[^\"]*#{Regexp.escape(%{"  cardId="435" ><span class="content-content content editOnDoubleClick">AlphaBeta</span></div>})}$" )
+        Slot.new(c).render( :naked ).should match( "^#{Regexp.escape( %{<h1><span class="namepart-a">A</span><span class="joint">+</span><span class="namepart-b">B</span></h1><div  class="transcluded ALL TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"  position="})}[^\"]*#{Regexp.escape(%{"  cardId="435" ><span class="content-content content editOnDoubleClick">AlphaBeta</span></div>})}$" )
       end
       
       it "array (search card)" do

@@ -75,9 +75,20 @@ describe Slot, "" do
         Slot.new(c).render( :naked ).should == "AlphaBeta"
       end
       
-      it "array (basic card)" do
-        c = Card.create :name => 'ABarray', :content => "{{A+B|array}}"
-        Slot.new(c).render( :naked ).should == %{["AlphaBeta"]}
+      it "naked (search card)" do
+        s = Card.create :type=>'Search', :name => 'Asearch', :content => %{{"type":"User"}}
+        c = Card.create :name => 'AsearchNaked', :content => "{{Asearch|naked}}"
+        Slot.new(c).render( :naked ).should == %{}
+      end
+      
+      it "name" do
+        c = Card.create :name => 'ABname', :content => "{{A+B|name}}"
+        Slot.new(c).render( :naked ).should == %{A+B}
+      end
+      
+      it "link" do
+        c = Card.create :name => 'ABlink', :content => "{{A+B|link}}"
+        Slot.new(c).render( :naked ).should == %{<a class="known-card" href="/wagn/A+B">A+B</a>}
       end
       
       it "array (search card)" do

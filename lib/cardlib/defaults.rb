@@ -11,14 +11,6 @@ module Cardlib
     module ClassMethods 
 
     end
-    def queries
-      if !@queries
-        @queries = ['plus_cards', 'plussed_cards']
-        @queries << 'pieces' if !simple?
-        @queries << 'backlinks' if backlinks?
-      end
-      @queries
-    end
     
     # -- called by the rendering pipeline-- defined in datatypes
     def allow_duplicate_revisions
@@ -45,14 +37,5 @@ module Cardlib
       valid    
     end
     # --
-
-    protected
-    def backlinks
-      @backlinks ||= Card.find_by_wql("cards that link to cards where id=#{id}")
-    end
-
-    def backlinks?
-      !backlinks.empty?
-    end 
   end
 end

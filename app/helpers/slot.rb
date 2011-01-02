@@ -244,14 +244,13 @@ class Slot
         c = render_open_content
         w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c ))
 
-      #when :expanded_view_content; self.render_expanded_view_content
-      when :expanded_view_content, :open_content;
+      when :expanded_view_content, :open_content
         card.post_render(render_open_content)
-      when :expanded_line_content;                render_closed_content
-      when :naked, :bare;                         render_naked
-      when :closed_content;                       render_closed_content
+      when :naked;                                render_naked
+      when :closed_content, :expanded_line_content; render_closed_content
       when :array;                                render_array
       when :raw, :naked_content;                  render_naked_content
+      when :bare;                                 render_bare
 
     ###---(  EDIT VIEWS )
       when :edit;
@@ -301,6 +300,8 @@ class Slot
     end
   end
 
+  def render_naked
+  end
   def render_array
 #Rails.logger.debug "Slot(#{card.name}).render_array T:#{card.type}  root = #{root}"
     if too_deep?
@@ -341,7 +342,7 @@ class Slot
     end
   end
 
-  def render_naked
+  def render_bare
     render_naked_content do |r_content|
       @renderer.render( slot_options[:base]||card, r_content) {|c,o| expand_card(c,o)}
     end

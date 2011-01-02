@@ -91,6 +91,11 @@ describe Slot, "" do
         Slot.new(c).render( :naked ).should == %{<a class="known-card" href="/wagn/A+B">A+B</a>}
       end
       
+      it "titled" do
+        c = Card.create :name => 'ABtitled', :content => "{{A+B|titled}}"
+        Slot.new(c).render( :naked ).should match ( "^#{Regexp.escape( %{<h1><span class="namepart-a">A</span><span class="joint">+</span><span class="namepart-b">B</span></h1><div  class="transcluded ALL TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"  position="})}[^\"]*#{Regexp.escape(%{"  cardId="435" ><span class="content-content content editOnDoubleClick">AlphaBeta</span></div>})}$" )
+      end
+      
       it "array (search card)" do
         Card.create! :name => "n+a", :type=>"Number", :content=>"10"
         Card.create! :name => "n+b", :type=>"Phrase", :content=>"say:\"what\""

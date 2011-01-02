@@ -59,10 +59,6 @@ module Chunk
       when :key;      refcard_name.to_key
       when :link;     card_link
       when :linkname; Cardname.escape(refcard_name)
-      when :titled;   content_tag( :h1, fancy_title(refcard_name) ) + self.render( :content )
-      when :rss_titled;
-        # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
-        content_tag( :h2, fancy_title(refcard_name) ) + self.render( :expanded_view_content )
       else
         block ||= Proc.new do |tcard, opts|
           case view
@@ -83,7 +79,7 @@ module Chunk
             @text # just leave the {{}} coding, may need to handle more...
           end
         end
-#Rails.logger.info "transclude #{@card_name}, #{@options.inspect}"
+Rails.logger.debug "transclude #{@card_name}, #{@options.inspect}"
         block.call(@card_name, @options)
       end
     end

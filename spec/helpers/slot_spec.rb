@@ -2,6 +2,10 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Slot, "" do
   before { User.as :joe_user }
+  def simplify_html string
+    string.gsub(/\s*<!--[^>]*>\s*/, '').gsub(/\s*<\s*(\/?\w+)[^>]*>\s*/, '<\1>')
+  end
+
   describe "renders" do
     it "simple card links" do
       c = Card.create :name => 'linkA', :content => "[[A]]"
@@ -70,6 +74,11 @@ describe Slot, "" do
         end
       end
 
+      it "array (basic card)" do
+        c = Card.create :name => 'ABarray', :content => "{{A+B|array}}"
+        Slot.new(c).render( :naked ).should == %{["AlphaBeta"]}
+      end
+
       it "naked" do
         c = Card.create :name => 'ABnaked', :content => "{{A+B|naked}}"
         Slot.new(c).render( :naked ).should == "AlphaBeta"
@@ -77,7 +86,7 @@ describe Slot, "" do
 
       it "titled" do
         c = Card.create :name => 'ABtitled', :content => "{{A+B|titled}}"
-        Slot.new(c).render( :naked ).should match( "^#{Regexp.escape( %{<h1><span class="namepart-a">A</span><span class="joint">+</span><span class="namepart-b">B</span></h1><div  class="transcluded ALL TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"  position="})}[^\"]*#{Regexp.escape(%{"  cardId="435" ><span class="content-content content editOnDoubleClick">AlphaBeta</span></div>})}$" )
+        simplify_html(Slot.new(c).render( :naked )).should == "<h1><span>A</span><span>+</span><span>B</span></h1><div><span>AlphaBeta</span></div>"
       end
 
       it "name" do
@@ -95,8 +104,7 @@ describe Slot, "" do
         d = Card.create :name => 'AsearchNaked1', :content => "{{Asearch|naked;item:name}}"
         Slot.new(d).render( :naked ).should match( /\s+\<div class=\"search\-result\-item item\-name\"\>John\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>Sara\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>u3\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>u1\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>u2\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>No Count\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>Sample User\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>Joe User\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>Joe Admin\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>Joe Camel\<\/div\>/ )
         c = Card.create :name => 'AsearchNaked', :content => "{{Asearch|naked}}"
-Rails.logger.info "failing #{c.inspect}"
-        Slot.new(c).render( :naked ).should == %{}
+        simplify_html(Slot.new(c).render( :naked )).should == %{<div><div><div><span><span>--</span></span></div></div><div><div><span><span>--</span></span></div></div><div><div><span><span>--</span></span></div></div><div><div><span><span>--</span></span></div></div><div><div><span><span>--</span></span></div></div><div><div><span>I got no account</span></div></div><div><div><span><span>--</span></span></div></div><div><div><span>I'm number two</span></div></div><div><div><span>I'm number one</span></div></div><div><div><span>Mr. Buttz</span></div></div></div>}
       end
 
       it "array (search card)" do

@@ -246,11 +246,11 @@ class Slot
 
       when :expanded_view_content, :open_content
         card.post_render(render_open_content)
-      when :naked;                                render_naked
+      when :naked;                                render_open_content
       when :closed_content, :expanded_line_content; render_closed_content
       when :array;                                render_array
       when :raw, :naked_content;                  render_naked_content
-      when :bare;                                 render_bare
+      when :naked_bare, :bare;                    render_naked
 
     ###---(  EDIT VIEWS )
       when :edit;
@@ -265,7 +265,7 @@ class Slot
       when :multi_edit;
         @state=:edit
         args[:add_javascript]=true
-        hidden_field_tag(:multi_edit, true) + render_bare
+        hidden_field_tag(:multi_edit, true) + render_naked
 
       when :edit_in_form
         render_partial('views/edit_in_form', args.merge(:form=>form))
@@ -300,27 +300,21 @@ class Slot
     end
   end
 
-  def render_naked
-    if card.is_collection?
-      card.each_name { |name| subslot(Card.fetch_or_new(name)).render(:naked) }.inspect
-    else render_bare end
-  end
-
   def render_array
 #Rails.logger.debug "Slot(#{card.name}).render_array T:#{card.type}  root = #{root}"
     if too_deep?
       return render_partial( 'views/too_deep' )
     end
     if card.is_collection?
-      card.each_name { |name| subslot(Card.fetch_or_new(name)).render(:naked) }.inspect
+      card.each_name { |name| subslot(Card.fetch_or_new(name)).render(:naked_bare) }.inspect
     else
-      [render_bare].inspect
+      [render_naked].inspect
     end
   end
 
   def render_open_content
     generic_card? ?           # FIXME?: 'content' is inconsistent
-      render_bare : render_card_partial(:content)
+      render_naked : render_card_partial(:content)
   end
 
   def generic_card?
@@ -341,7 +335,7 @@ class Slot
     end
   end
 
-  def render_bare
+  def render_naked
     render_naked_content do |r_content|
       @renderer.render( slot_options[:base]||card, r_content) {|c,o| expand_card(c,o)}
     end
@@ -366,7 +360,7 @@ class Slot
     end
 
 
-    options[:view] ||= (self.context == "layout_0" ? :naked : :content)
+    options[:view] ||= (self.context == "layout_0" ? :naked_bare : :content)
     options[:fullname] = fullname = get_inclusion_fullname(tname,options)
     options[:showname] = tname.to_show(fullname)
 
@@ -410,13 +404,13 @@ class Slot
        tcard.virtual? ? :edit_auto : :edit_in_form
       when new_card
         case
-          when vmode==:naked  ; :blank
-          when vmode==:setting; :setting_missing
-          when state==:line   ; :closed_missing
-          else                ; :open_missing
+          when vmode==:naked_bare; :blank
+          when vmode==:setting   ; :setting_missing
+          when state==:line      ; :closed_missing
+          else                   ; :open_missing
         end
-      when state==:line       ; :expanded_line_content
-      else                    ; vmode
+      when state==:line          ; :expanded_line_content
+      else                       ; vmode
       end
     result = subslot.render(action, options)
     Slot.current_slot = old_slot

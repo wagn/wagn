@@ -244,14 +244,13 @@ class Slot
         c = render_open_content
         w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c ))
 
-      #when :expanded_view_content; self.render_expanded_view_content
-      when :expanded_view_content, :open_content;
+      when :expanded_view_content, :open_content
         card.post_render(render_open_content)
-      when :expanded_line_content;                render_closed_content
-      when :naked, :bare;                         render_naked
-      when :closed_content;                       render_closed_content
+      when :naked;                                render_open_content
+      when :closed_content, :expanded_line_content; render_closed_content
       when :array;                                render_array
       when :raw, :naked_content;                  render_naked_content
+      when :naked_bare, :bare;                    render_naked
 
     ###---(  EDIT VIEWS )
       when :edit;
@@ -306,15 +305,10 @@ class Slot
     if too_deep?
       return render_partial( 'views/too_deep' )
     end
-    case card.type
-      when 'Search'
-        Wql.new(card.get_spec(:return => 'name_content')).run.keys.
-            map{|x| subslot(Card.fetch_or_new(x)).render(:naked)}.inspect
-      when 'Pointer'
-        card.pointees.
-            map{|x| subslot(Card.fetch_or_new(x)).render(:naked)}.inspect
-      else
-        [render_naked].inspect
+    if card.is_collection?
+      card.each_name { |name| subslot(Card.fetch_or_new(name)).render(:naked_bare) }.inspect
+    else
+      [render_naked].inspect
     end
   end
 
@@ -366,7 +360,7 @@ class Slot
     end
 
 
-    options[:view] ||= (self.context == "layout_0" ? :naked : :content)
+    options[:view] ||= (self.context == "layout_0" ? :naked_bare : :content)
     options[:fullname] = fullname = get_inclusion_fullname(tname,options)
     options[:showname] = tname.to_show(fullname)
 
@@ -410,13 +404,13 @@ class Slot
        tcard.virtual? ? :edit_auto : :edit_in_form
       when new_card
         case
-          when vmode==:naked  ; :blank
-          when vmode==:setting; :setting_missing
-          when state==:line   ; :closed_missing
-          else                ; :open_missing
+          when vmode==:naked_bare; :blank
+          when vmode==:setting   ; :setting_missing
+          when state==:line      ; :closed_missing
+          else                   ; :open_missing
         end
-      when state==:line       ; :expanded_line_content
-      else                    ; vmode
+      when state==:line          ; :expanded_line_content
+      else                       ; vmode
       end
     result = subslot.render(action, options)
     Slot.current_slot = old_slot

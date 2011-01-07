@@ -133,7 +133,7 @@ describe Slot, "" do
 
     it "raw content" do
        @a = Card.new(:name=>'t', :content=>"{{A}}")
-      Slot.new(@a).render(:naked_content).should == "{{A}}"
+      Slot.new(@a).render(:get_raw).should == "{{A}}"
     end
   end
 
@@ -156,7 +156,7 @@ describe Slot, "" do
     Card.create! :name => "t2", :content => "{{t3|view}}"
     Card.create! :name => "t3", :content => "boo"
 
-    # a little weird that we need :expanded_view_content  to get the version without
+    # a little weird that we need :open_content  to get the version without
     # slot divs wrapped around it.
     s = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :name } )
     s.render( :naked ).should == "t2"
@@ -175,7 +175,7 @@ describe Slot, "" do
       template.should_receive(:render).with(:partial=>"builtin/builtin").and_return("Boo")
       builtin_card = Card.new( :name => "*builtin", :builtin=>true )
       slot = Slot.new( builtin_card, "main_1", "view", template  )
-      slot.render(:naked_content).should == "Boo"
+      slot.render(:get_raw).should == "Boo"
     end
   end
 
@@ -184,14 +184,14 @@ describe Slot, "" do
       @card = Card.new( :name=>"templated", :content => "bar" )
       config_card = Card.new(:name=>"templated+*self+*content", :content=>"Yoruba" )
       @card.should_receive(:setting_card).with("content","default").and_return(config_card)
-      Slot.new(@card).render(:naked_content).should == "Yoruba"
+      Slot.new(@card).render(:get_raw).should == "Yoruba"
     end
 
     it "doesn't use content setting if default is present" do
       @card = Card.new( :name=>"templated", :content => "Bar" )
       config_card = Card.new(:name=>"templated+*self+*default", :content=>"Yoruba" )
       @card.should_receive(:setting_card).with("content", "default").and_return(config_card)
-      Slot.new(@card).render(:naked_content).should == "Bar"
+      Slot.new(@card).render(:get_raw).should == "Bar"
     end
 
     # FIXME: this test is important but I can't figure out how it should be

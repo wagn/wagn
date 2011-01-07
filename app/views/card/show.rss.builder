@@ -18,10 +18,10 @@ xml.rss :version => "2.0" do
         xml.title card.name
         slot = get_slot(card, "main_1", "view", :inclusion_view_overrides => {
           :open => :rss_titled,
-          :content => :expanded_view_content,
+          :content => :open_content,
           :closed => :link
         })                    
-        xml.description slot.render( view_changes ? :rss_change : :expanded_view_content )
+        xml.description slot.render( view_changes ? :rss_change : :open_content )
         xml.pubDate card.updated_at.to_s(:rfc822) 
         xml.link card_url(card)
         xml.guid card_url(card)

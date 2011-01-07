@@ -458,7 +458,7 @@ module Card
       current_revision ? current_revision.content : ""
     end   
         
-    def renderer_content
+    def raw_content
       templated_content || content
     end
 

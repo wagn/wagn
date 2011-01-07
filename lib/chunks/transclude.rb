@@ -64,16 +64,16 @@ module Chunk
           case view
         when nil
             @card=Card.fetch_or_new(@card_name) if @card_name != @card.name
-            renderer_content(@card)
-          when :naked, :naked_bare
+            raw_content(@card)
+          when :naked, :get_raw
             card = Card.fetch(tcard)
             return "<no card #{tcard}/>" unless card
             if card.is_collection?
               card.each_name do |name|
-                renderer_content(Card.fetch_or_new(name))
+                raw_content(Card.fetch_or_new(name))
               end
             else
-              renderer_content(card)
+              raw_content(card)
             end
           else
             @text # just leave the {{}} coding, may need to handle more...
@@ -84,7 +84,7 @@ Rails.logger.debug "transclude #{@card_name}, #{@options.inspect}"
       end
     end
 
-    def renderer_content(card)
+    def raw_content(card)
       return "<no card #{@tcard}/>" unless card
       card.templated_content || card.content
     end

@@ -200,12 +200,12 @@ class Slot
       when :titled;   content_tag( :h1, fancy_title(card.name) ) + self.render( :content )
       when :rss_titled;                                                         
         # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
-        content_tag( :h2, fancy_title(card.name) ) + self.render( :expanded_view_content )
+        content_tag( :h2, fancy_title(card.name) ) + self.render( :open_content )
 
       when :layout
         @main_card, mc = args.delete(:main_card), args.delete(:main_content)
         @main_content = mc.blank? ? nil : wrap_main(mc)
-        expand_inclusions(card.renderer_content, main_card)
+        expand_inclusions(card.raw_content, main_card)
 
     ###-----------( FULL )
       when :new
@@ -241,16 +241,17 @@ class Slot
       when :content
         @state = 'view'
         w_action = self.requested_view = 'content'
-        c = render_open_content
+        c = render_content
         w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c ))
 
-      when :expanded_view_content, :open_content
-        card.post_render(render_open_content)
-      when :naked;                                render_open_content
-      when :closed_content, :expanded_line_content; render_closed_content
-      when :array;                                render_array
-      when :raw, :naked_content;                  render_naked_content
-      when :naked_bare, :bare;                    render_naked
+      when :open_content   ; card.post_render(render_content)
+      when :closed_content ; render_closed_content
+
+      when :naked, :bare   ; render_content
+      when :raw            ; get_raw
+        
+      when :array          ; render_array
+
 
     ###---(  EDIT VIEWS )
       when :edit;
@@ -265,7 +266,7 @@ class Slot
       when :multi_edit;
         @state=:edit
         args[:add_javascript]=true
-        hidden_field_tag(:multi_edit, true) + render_naked
+        hidden_field_tag(:multi_edit, true) + render_content
 
       when :edit_in_form
         render_partial('views/edit_in_form', args.merge(:form=>form))
@@ -294,7 +295,7 @@ class Slot
 
   def render_closed_content
     if generic_card?
-      truncatewords_with_closing_tags( render_open_content )
+      truncatewords_with_closing_tags( render_content )
     else
       render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
     end
@@ -306,15 +307,14 @@ class Slot
       return render_partial( 'views/too_deep' )
     end
     if card.is_collection?
-      card.each_name { |name| subslot(Card.fetch_or_new(name)).render(:naked_bare) }.inspect
+      card.each_name { |name| subslot(Card.fetch_or_new(name)).render(:get_raw) }.inspect
     else
-      [render_naked].inspect
+      [render_content].inspect
     end
   end
 
-  def render_open_content
-    generic_card? ?           # FIXME?: 'content' is inconsistent
-      render_naked : render_card_partial(:content)
+  def render_content
+    generic_card? ? render_generic : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
   end
 
   def generic_card?
@@ -322,21 +322,16 @@ class Slot
     card.type == 'Basic' || card.type == 'Phrase' || card.type == 'Number'
   end
 
-  def render_naked_content
+  def get_raw
     if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
       template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
-    elsif card.type == 'Ruby'
-      render_card_partial(:content)  # FIXME?: 'content' is inconsistent
     else
-      #passed_in_content = args.delete(:content) # Can we get away without this??
-      ## content templates
-      renderer_content = card.templated_content
-      block_given? ? yield(renderer_content||"") : renderer_content||card.content
+      block_given? ? yield(card.raw_content||"") : card.raw.content
     end
   end
 
-  def render_naked
-    render_naked_content do |r_content|
+  def render_generic
+    get_raw do |r_content|
       @renderer.render( slot_options[:base]||card, r_content) {|c,o| expand_card(c,o)}
     end
   end
@@ -360,7 +355,7 @@ class Slot
     end
 
 
-    options[:view] ||= (self.context == "layout_0" ? :naked_bare : :content)
+    options[:view] ||= (self.context == "layout_0" ? :get_raw : :content)
     options[:fullname] = fullname = get_inclusion_fullname(tname,options)
     options[:showname] = tname.to_show(fullname)
 
@@ -404,12 +399,12 @@ class Slot
        tcard.virtual? ? :edit_auto : :edit_in_form
       when new_card
         case
-          when vmode==:naked_bare; :blank
+          when vmode==:get_raw; :blank
           when vmode==:setting   ; :setting_missing
           when state==:line      ; :closed_missing
           else                   ; :open_missing
         end
-      when state==:line          ; :expanded_line_content
+      when state==:line          ; :closed_content
       else                       ; vmode
       end
     result = subslot.render(action, options)

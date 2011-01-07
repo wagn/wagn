@@ -8,5 +8,5 @@
   <%= slot.subslot(Card::Search.new(:name=>UUID.new.generate, 
      :content=>%{{"left":{"type":"Set","#{key=='*all' ? 'name' : 'right'}":"#{key}"}, 
                   "right":"#{card.name}","sort":"name"}} #, "left_plus":{"right":"*type"}}}
-     )).render :naked_bare %>
+     )).render :get_raw %>
 <% end %>

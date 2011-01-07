@@ -49,9 +49,7 @@ describe Slot, "" do
 
       # I want this test to show the explicit escaped HTML, but be_html_with seems to escape it already :-/
       it "shows up with escaped HTML" do
-        c = User.as :wagbot do
-          Card.create :name => 'Afloat', :type => 'Html', :content => '{{A|float:<object class="subject">}}'
-        end
+        c =Card.new :name => 'Afloat', :type => 'Html', :content => '{{A|float:<object class="subject">}}'
         Slot.new(c).render( :naked ).should be_html_with do
           div(:style => 'float:<object class="subject">;') {}
         end
@@ -133,7 +131,7 @@ describe Slot, "" do
 
     it "raw content" do
        @a = Card.new(:name=>'t', :content=>"{{A}}")
-      Slot.new(@a).render(:get_raw).should == "{{A}}"
+      Slot.new(@a).render(:raw).should == "{{A}}"
     end
   end
 
@@ -175,7 +173,7 @@ describe Slot, "" do
       template.should_receive(:render).with(:partial=>"builtin/builtin").and_return("Boo")
       builtin_card = Card.new( :name => "*builtin", :builtin=>true )
       slot = Slot.new( builtin_card, "main_1", "view", template  )
-      slot.render(:get_raw).should == "Boo"
+      slot.render(:raw).should == "Boo"
     end
   end
 
@@ -184,14 +182,14 @@ describe Slot, "" do
       @card = Card.new( :name=>"templated", :content => "bar" )
       config_card = Card.new(:name=>"templated+*self+*content", :content=>"Yoruba" )
       @card.should_receive(:setting_card).with("content","default").and_return(config_card)
-      Slot.new(@card).render(:get_raw).should == "Yoruba"
+      Slot.new(@card).render(:raw).should == "Yoruba"
     end
 
     it "doesn't use content setting if default is present" do
       @card = Card.new( :name=>"templated", :content => "Bar" )
       config_card = Card.new(:name=>"templated+*self+*default", :content=>"Yoruba" )
       @card.should_receive(:setting_card).with("content", "default").and_return(config_card)
-      Slot.new(@card).render(:get_raw).should == "Bar"
+      Slot.new(@card).render(:raw).should == "Bar"
     end
 
     # FIXME: this test is important but I can't figure out how it should be

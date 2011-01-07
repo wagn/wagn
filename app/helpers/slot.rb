@@ -307,7 +307,7 @@ class Slot
       return render_partial( 'views/too_deep' )
     end
     if card.is_collection?
-      card.each_name { |name| subslot(Card.fetch_or_new(name)).render(:get_raw) }.inspect
+      card.each_name { |name| subslot(Card.fetch_or_new(name)).render(:raw) }.inspect
     else
       [render_content].inspect
     end
@@ -326,7 +326,7 @@ class Slot
     if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
       template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
     else
-      block_given? ? yield(card.raw_content||"") : card.raw.content
+      block_given? ? yield(card.raw_content||"") : card.raw_content
     end
   end
 
@@ -355,7 +355,7 @@ class Slot
     end
 
 
-    options[:view] ||= (self.context == "layout_0" ? :get_raw : :content)
+    options[:view] ||= (self.context == "layout_0" ? :raw : :content)
     options[:fullname] = fullname = get_inclusion_fullname(tname,options)
     options[:showname] = tname.to_show(fullname)
 
@@ -399,7 +399,7 @@ class Slot
        tcard.virtual? ? :edit_auto : :edit_in_form
       when new_card
         case
-          when vmode==:get_raw; :blank
+          when vmode==:raw; :blank
           when vmode==:setting   ; :setting_missing
           when state==:line      ; :closed_missing
           else                   ; :open_missing

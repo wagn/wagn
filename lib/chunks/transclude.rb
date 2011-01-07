@@ -65,7 +65,7 @@ module Chunk
         when nil
             @card=Card.fetch_or_new(@card_name) if @card_name != @card.name
             raw_content(@card)
-          when :naked, :get_raw
+          when :naked, :raw
             card = Card.fetch(tcard)
             return "<no card #{tcard}/>" unless card
             if card.is_collection?

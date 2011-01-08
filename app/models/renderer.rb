@@ -47,17 +47,17 @@ class Renderer
   end
       
   def update_references(card)
-    _update_references( card, WikiContent.new(card, card.templated_content || card.content, self) )
+    _update_references( card, WikiContent.new(card, card.raw_content, self) )
   end
 
   protected
-  def _update_references(card, rendering_result)
+  def _update_references(card, raw_content)
     WikiReference.delete_all ['card_id = ?', card.id]
 
     if card.id and card.respond_to?('references_expired')
       card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
     end
-    rendering_result.find_chunks(Chunk::Reference).each do |chunk|
+    raw_content.find_chunks(Chunk::Reference).each do |chunk|
       reference_type =
         case chunk
           when Chunk::Link;       chunk.refcard ? LINK : WANTED_LINK

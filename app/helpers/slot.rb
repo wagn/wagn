@@ -248,6 +248,7 @@ class Slot
       when :closed_content ; render_closed_content
 
       when :naked, :bare   ; render_content
+      when :generic        ; render_generic
       when :raw            ; get_raw
         
       when :array          ; render_array

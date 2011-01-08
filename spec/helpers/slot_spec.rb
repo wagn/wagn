@@ -8,31 +8,31 @@ describe Slot, "" do
 
   describe "renders" do
     it "simple card links" do
-      c = Card.create :name => 'linkA', :content => "[[A]]"
+      c = Card.new :name => 'linkA', :content => "[[A]]"
       Slot.new(c).render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/A\">A</a>"
     end
 
     it "invisible comment inclusions as blank" do
-      c = Card.create :name => 'invisible', :content => "{{## now you see nothing}}"
+      c = Card.new :name => 'invisible', :content => "{{## now you see nothing}}"
       Slot.new(c).render( :naked ).should == ''
     end
 
     it "visible comment inclusions as html comments" do
-      c1 = Card.create :name => 'invisible', :content => "{{# now you see me}}"
-      c2 = Card.create :name => 'invisible', :content => "{{# -->}}"
+      c1 = Card.new :name => 'invisible', :content => "{{# now you see me}}"
+      c2 = Card.new :name => 'invisible', :content => "{{# -->}}"
       Slot.new(c1).render( :naked ).should == '<!-- # now you see me -->'
       Slot.new(c2).render( :naked ).should == '<!-- # --&gt; -->'
     end
 
     it "image tags of different sizes" do
       Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}
-      c = Card.create :name => 'Image1', :content => "{{TestImage | naked; size:small }}"
+      c = Card.new :name => 'Image1', :content => "{{TestImage | naked; size:small }}"
       Slot.new(c).render( :naked ).should == %{<img src="http://wagn.org/image53_small.jpg">}
     end
 
     describe "css classes" do
       it "are correct for open view" do
-        c = Card.create :name => 'Aopen', :content => "{{A|open}}"
+        c = Card.new :name => 'Aopen', :content => "{{A|open}}"
         Slot.new(c).render(:naked).should be_html_with do
           div( :class => "card-slot paragraph ALL TYPE-basic SELF-a") {}
         end
@@ -41,7 +41,7 @@ describe Slot, "" do
 
     describe "css in inclusion syntax" do
       it "shows up" do
-        c = Card.create :name => 'Afloatright', :content => "{{A|float:right}}"
+        c = Card.new :name => 'Afloatright', :content => "{{A|float:right}}"
         Slot.new(c).render( :naked ).should be_html_with do
           div(:style => 'float:right;') {}
         end
@@ -56,12 +56,26 @@ describe Slot, "" do
       end
     end
 
+
+    describe "inclusions" do
+      it "multi edit" do
+        c = Card.new :name => 'ABook', :type => 'Book'
+        Slot.new(c).render( :multi_edit ).should be_html_with do
+           input(:id=>"main_1_2-hidden-content", :name=>"cards[~plus~illustrator][content]", :type=>"hidden", :value=>"") {}
+	end
+      end
+      #it "raw" do
+      #end
+      #it "" do
+      #end
+    end
+
     describe "views" do
       it "open" do
         mu = mock(:mu)
         mu.should_receive(:generate).and_return("1")
         UUID.should_receive(:new).and_return(mu)
-        c = Card.create :name => 'Aopen', :content => "{{A|open}}"
+        c = Card.new :name => 'Aopen', :content => "{{A|open}}"
         Slot.new(c).render( :naked ).should be_html_with do
           div( :position => 1, :class => "card-slot") {
             div( :class => "card-header" )
@@ -73,35 +87,34 @@ describe Slot, "" do
       end
 
       it "array (basic card)" do
-        c = Card.create :name => 'ABarray', :content => "{{A+B|array}}"
+        c = Card.new :name => 'ABarray', :content => "{{A+B|array}}"
         Slot.new(c).render( :naked ).should == %{["AlphaBeta"]}
       end
 
       it "naked" do
-        c = Card.create :name => 'ABnaked', :content => "{{A+B|naked}}"
+        c = Card.new :name => 'ABnaked', :content => "{{A+B|naked}}"
         Slot.new(c).render( :naked ).should == "AlphaBeta"
       end
 
       it "titled" do
-        c = Card.create :name => 'ABtitled', :content => "{{A+B|titled}}"
+        c = Card.new :name => 'ABtitled', :content => "{{A+B|titled}}"
         simplify_html(Slot.new(c).render( :naked )).should == "<h1><span>A</span><span>+</span><span>B</span></h1><div><span>AlphaBeta</span></div>"
       end
-
-      it "name" do
-        c = Card.create :name => 'ABname', :content => "{{A+B|name}}"
+      it "name" do 
+        c = Card.new :name => 'ABname', :content => "{{A+B|name}}"
         Slot.new(c).render( :naked ).should == %{A+B}
       end
 
       it "link" do
-        c = Card.create :name => 'ABlink', :content => "{{A+B|link}}"
+        c = Card.new :name => 'ABlink', :content => "{{A+B|link}}"
         Slot.new(c).render( :naked ).should == %{<a class="known-card" href="/wagn/A+B">A+B</a>}
       end
 
       it "naked (search card)" do
-        s = Card.create :type=>'Search', :name => 'Asearch', :content => %{{"type":"User"}}
-        d = Card.create :name => 'AsearchNaked1', :content => "{{Asearch|naked;item:name}}"
+        s = Card.new :type=>'Search', :name => 'Asearch', :content => %{{"type":"User"}}
+        d = Card.new :name => 'AsearchNaked1', :content => "{{Asearch|naked;item:name}}"
         Slot.new(d).render( :naked ).should match( /\s+\<div class=\"search\-result\-item item\-name\"\>John\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>Sara\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>u3\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>u1\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>u2\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>No Count\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>Sample User\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>Joe User\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>Joe Admin\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>Joe Camel\<\/div\>/ )
-        c = Card.create :name => 'AsearchNaked', :content => "{{Asearch|naked}}"
+        c = Card.new :name => 'AsearchNaked', :content => "{{Asearch|naked}}"
         simplify_html(Slot.new(c).render( :naked )).should == %{<div><div><div><span><span>--</span></span></div></div><div><div><span><span>--</span></span></div></div><div><div><span><span>--</span></span></div></div><div><div><span><span>--</span></span></div></div><div><div><span><span>--</span></span></div></div><div><div><span>I got no account</span></div></div><div><div><span><span>--</span></span></div></div><div><div><span>I'm number two</span></div></div><div><div><span>I'm number one</span></div></div><div><div><span>Mr. Buttz</span></div></div></div>}
       end
 
@@ -109,7 +122,7 @@ describe Slot, "" do
         Card.create! :name => "n+a", :type=>"Number", :content=>"10"
         Card.create! :name => "n+b", :type=>"Phrase", :content=>"say:\"what\""
         Card.create! :name => "n+c", :type=>"Number", :content=>"30"
-        c = Card.create :name => 'nplusarray', :content => "{{n+*plus cards|array}}"
+        c = Card.new :name => 'nplusarray', :content => "{{n+*plus cards|array}}"
         Slot.new(c).render( :naked ).should == %{["10", "say:\\"what\\"", "30"]}
       end
 
@@ -118,13 +131,13 @@ describe Slot, "" do
         Card.create! :name => "n+b", :type=>"Number", :content=>"20"
         Card.create! :name => "n+c", :type=>"Number", :content=>"30"
         Card.create! :name => "npoint", :type=>"Pointer", :content => "[[n+a]]\n[[n+b]]\n[[n+c]]"
-        c = Card.create :name => 'npointArray', :content => "{{npoint|array}}"
+        c = Card.new :name => 'npointArray', :content => "{{npoint|array}}"
         Slot.new(c).render( :naked ).should == %q{["10", "20", "30"]}
       end
 
       it "array doesn't go in infinite loop" do
         Card.create! :name => "n+a", :content=>"{{n+a|array}}"
-        c = Card.create :name => 'naArray', :content => "{{n+a|array}}"
+        c = Card.new :name => 'naArray', :content => "{{n+a|array}}"
         Slot.new(c).render( :naked ).should =~ /Oops\!/
       end
     end
@@ -137,13 +150,13 @@ describe Slot, "" do
 
   describe "cgi params" do
     it "renders params in card inclusions" do
-      c = Card.create :name => 'cardNaked', :content => "{{_card+B|naked}}"
+      c = Card.new :name => 'cardNaked', :content => "{{_card+B|naked}}"
       result = Slot.new(c, nil, nil, nil, :params=>{'_card' => "A"}).render(:naked)
       result.should == "AlphaBeta"
     end
 
     it "should not change name if variable isn't present" do
-      c = Card.create :name => 'cardBname', :content => "{{_card+B|name}}"
+      c = Card.new :name => 'cardBname', :content => "{{_card+B|name}}"
       Slot.new(c).render( :naked ).should == "_card+B"
     end
   end

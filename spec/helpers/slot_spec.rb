@@ -62,12 +62,8 @@ describe Slot, "" do
         c = Card.new :name => 'ABook', :type => 'Book'
         Slot.new(c).render( :multi_edit ).should be_html_with do
            input(:id=>"main_1_2-hidden-content", :name=>"cards[~plus~illustrator][content]", :type=>"hidden", :value=>"") {}
-	end
+	      end
       end
-      #it "raw" do
-      #end
-      #it "" do
-      #end
     end
 
     describe "views" do
@@ -111,11 +107,11 @@ describe Slot, "" do
       end
 
       it "naked (search card)" do
-        s = Card.new :type=>'Search', :name => 'Asearch', :content => %{{"type":"User"}}
-        d = Card.new :name => 'AsearchNaked1', :content => "{{Asearch|naked;item:name}}"
-        Slot.new(d).render( :naked ).should match( /\s+\<div class=\"search\-result\-item item\-name\"\>John\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>Sara\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>u3\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>u1\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>u2\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>No Count\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>Sample User\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>Joe User\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>Joe Admin\<\/div\>\s+\<div class=\"search\-result\-item item\-name\"\>Joe Camel\<\/div\>/ )
-        c = Card.new :name => 'AsearchNaked', :content => "{{Asearch|naked}}"
-        simplify_html(Slot.new(c).render( :naked )).should == %{<div><div><div><span><span>--</span></span></div></div><div><div><span><span>--</span></span></div></div><div><div><span><span>--</span></span></div></div><div><div><span><span>--</span></span></div></div><div><div><span><span>--</span></span></div></div><div><div><span>I got no account</span></div></div><div><div><span><span>--</span></span></div></div><div><div><span>I'm number two</span></div></div><div><div><span>I'm number one</span></div></div><div><div><span>Mr. Buttz</span></div></div></div>}
+        s = Card.create :type=>'Search', :name => 'Asearch', :content => %{{"type":"User"}}
+        item_name = Card.new :name => 'AsearchNaked1', :content => "{{Asearch|naked;item:name}}"
+        Slot.new(item_name).render( :naked ).should match('search-result-item item-name')
+        item_closed = Card.new :name => 'AsearchNaked', :content => "{{Asearch|naked}}"
+        Slot.new(item_closed).render( :naked ).should match('search-result-item item-closed')
       end
 
       it "array (search card)" do
@@ -138,7 +134,7 @@ describe Slot, "" do
       it "array doesn't go in infinite loop" do
         Card.create! :name => "n+a", :content=>"{{n+a|array}}"
         c = Card.new :name => 'naArray', :content => "{{n+a|array}}"
-        Slot.new(c).render( :naked ).should =~ /Oops\!/
+        Slot.new(c).render( :naked ).should =~ /too deep/
       end
     end
 

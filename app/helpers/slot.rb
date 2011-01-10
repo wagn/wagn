@@ -345,8 +345,8 @@ class Slot
   end
 
   def expand_card(tname, options)
-    # Don't bother processing inclusion if we're already out of view
     return '' if (@state==:line && self.char_count > Slot.max_char_count)
+    # Don't bother processing inclusion if we're already out of view
 
     case tname
     when '_main'
@@ -354,10 +354,9 @@ class Slot
       tcard = root.main_card
       item  = symbolize_param(:item) and options[:item] = item
       pview = symbolize_param(:view) and options[:view] = pview
-      self.context = options[:context] = 'main'
+      options[:context] = 'main'
       options[:view] ||= :open
     end
-
 
     options[:view] ||= (self.context == "layout_0" ? :naked : :content)
     options[:fullname] = fullname = get_inclusion_fullname(tname,options)

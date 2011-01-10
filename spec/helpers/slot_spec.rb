@@ -60,9 +60,7 @@ describe Slot, "" do
     describe "inclusions" do
       it "multi edit" do
         c = Card.new :name => 'ABook', :type => 'Book'
-        Slot.new(c).render( :multi_edit ).should be_html_with do
-           input(:id=>"main_1_2-hidden-content", :name=>"cards[~plus~illustrator][content]", :type=>"hidden", :value=>"") {}
-	      end
+        Slot.new(c).render( :multi_edit ).should have_tag "input#main_1_2-hidden-content"
       end
     end
 

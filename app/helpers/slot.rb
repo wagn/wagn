@@ -377,7 +377,7 @@ class Slot
     tcontent = process_inclusion(tcard, options)
     tcontent = resize_image_content(tcontent, options[:size]) if options[:size]
     self.char_count += (tcontent ? tcontent.length : 0) #should we strip html here?
-    tname=='_main' ? wrap_main(tcontent) : self.context+tcontent
+    tname=='_main' ? wrap_main(tcontent) : tcontent
   rescue Card::PermissionDenied
     ''
   end

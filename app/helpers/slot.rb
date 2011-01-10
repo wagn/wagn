@@ -311,7 +311,7 @@ class Slot
       return render_partial( 'views/too_deep' )
     end
     if card.is_collection?
-      card.each_name { |name| subslot(Card.fetch_or_new(name)).render(:raw) }.inspect
+      card.each_name { |name| subslot(Card.fetch_or_new(name)).render(:naked) }.inspect
     else
       [render_content].inspect
     end
@@ -359,7 +359,7 @@ class Slot
     end
 
 
-    options[:view] ||= (self.context == "layout_0" ? :raw : :content)
+    options[:view] ||= (self.context == "layout_0" ? :naked : :content)
     options[:fullname] = fullname = get_inclusion_fullname(tname,options)
     options[:showname] = tname.to_show(fullname)
 
@@ -377,7 +377,7 @@ class Slot
     tcontent = process_inclusion(tcard, options)
     tcontent = resize_image_content(tcontent, options[:size]) if options[:size]
     self.char_count += (tcontent ? tcontent.length : 0) #should we strip html here?
-    tname=='_main' ? wrap_main(tcontent) : tcontent
+    tname=='_main' ? wrap_main(tcontent) : self.context+tcontent
   rescue Card::PermissionDenied
     ''
   end

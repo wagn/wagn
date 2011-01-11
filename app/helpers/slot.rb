@@ -196,13 +196,13 @@ class Slot
       else                               ; action
     end
 
-    w_content = nil
-    result = case ok_action
+    result = case canonicalize_view(ok_action)
 
-      when :name; card.name
-      when :link; Chunk::Reference.link_render(card.name, args)
-      when :titled;   content_tag( :h1, fancy_title(card.name) ) + self.render_content
-      when :rss_titled;                                                         
+      when :name   ; card.name
+      when :link   ; Chunk::Reference.link_render(card.name, args)
+      when :titled
+        content_tag( :h1, fancy_title(card.name) ) + self.render_content
+      when :rss_titled                                                         
         # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
         content_tag( :h2, fancy_title(card.name) ) + self.render( :open_content )
 
@@ -212,62 +212,31 @@ class Slot
         expand_inclusions(card.raw_content, main_card)
 
     ###-----------( FULL )
-      when :new
-        w_content = render_partial('views/new')
+      when :new             ; render_new(args)
+      when :open            ; render_open(args)
 
-      when :open, :view, :card
-        @state = :view; self.requested_view = 'open'
-        w_action = 'open'
-        w_content = render_partial('views/open')
-
-      when :closed, :line
-        @state = :line; w_action='closed'; self.requested_view = 'closed'
-        w_content = render_partial('views/closed')
-
-      when :setting
-        w_action = self.requested_view = 'content'
-        w_content = render_partial('views/setting')
-
+      when :closed          ; render_closed(args)
+      when :setting         ; render_setting(args)
     ###----------------( NAME) (moved to chunks/transclude)
 
     ###----------------( CHANGES)
-
-      when :change;
-        w_action = self.requested_view = 'content'
-        w_content = render_partial('views/change')
-      when :rss_change
-        w_action = self.requested_view = 'content'
-        render_partial('views/change')
-
+      when :change          ; render_change(args)
+      when :rss_change      ; render_rss_change
 
     ###---(  CONTENT VARIATIONS )
       #-----( with transclusions processed )
       when :content        ; render_content(args)
 
-      when :open_content   ; card.post_render(render_naked_content)
+      when :open_content   ; render_open_content
       when :closed_content ; render_closed_content
 
       when :naked, :bare   ; render_naked_content
       when :raw            ; get_raw
-        
       when :array          ; render_array
 
-
-    ###---(  EDIT VIEWS )
-      when :edit;
-        @state=:edit
-        # FIXME CONTENT: the hard template test can go away when we phase out the old system.
-        if card.content_template
-          render(:multi_edit)
-        else
-          content_field(slot.form)
-        end
-
-      when :multi_edit;
-        @state=:edit
-        args[:add_javascript]=true
-        hidden_field_tag(:multi_edit, true) + render_naked_content
-
+      ###---(  EDIT VIEWS )
+      when :edit           ; render_edit(args)
+      when :multi_edit     ; render_multi_edit(args)
       when :edit_in_form
         render_partial('views/edit_in_form', args.merge(:form=>form))
 
@@ -276,14 +245,9 @@ class Slot
       when :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :setting_missing
         render_partial("views/#{ok_action}", args)
 
-      when :blank;
-        ""
+      when :blank         ; ""
 
       else; "<strong>#{card.name} - unknown card view: '#{ok_action}'</strong>"
-    end
-    if w_content
-      args[:add_slot] = true unless args.key?(:add_slot)
-      result = wrap(w_action, args, w_content)
     end
 
 #      result ||= "" #FIMXE: wtf?
@@ -299,6 +263,53 @@ class Slot
     c = render_naked_content
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
     wrap('content', args, wrap_content(c))
+  end
+
+  def render_new(args={})
+    wrap('', args, render_partial('views/new'))
+  end
+
+  def render_open(args={})
+    @state = :view
+    self.requested_view = 'open'
+    wrap('open', args, render_partial('views/open'))
+  end
+
+  def render_closed(args={})
+    @state = :line
+    self.requested_view = 'closed'
+    wrap('closed', args, render_partial('views/closed'))
+  end
+
+  def render_setting(args={})
+    wrap( self.requested_view = 'content', args,
+          render_partial('views/setting') )
+  end
+
+  def render_edit(args={})
+    @state=:edit
+    # FIXME CONTENT: the hard template test can go away when we phase out the old system.
+    wrap('', args, card.content_template ?  render(:multi_edit) : content_field(slot.form))
+  end
+
+  def render_multi_edit(args={})
+    @state=:edit
+    args[:add_javascript]=true
+    wrap('', args, hidden_field_tag(:multi_edit, true) + render_naked_content)
+  end
+
+  def render_rss_change
+    self.requested_view = 'content'
+    render_partial('views/change')
+  end
+
+  def render_change(args={})
+    self.requested_view = 'content'
+    wrap('content', args, w_content = render_partial('views/change'))
+  end
+
+  def render_open_content
+    card.post_render(render_naked_content)
   end
 
   def render_closed_content

@@ -15,7 +15,7 @@
       :html=>{ :class=>'form editor',:onsubmit=>slot.save_function, :id=>(slot.context + '-form') } do |form| %>
     <div>
       <% slot.form = form %> 
-      <%= slot.render( params[:inclusions] ? :multi_edit : :edit ) %>
+      <%=  params[:inclusions] ? slot.render_multi_edit : slot.render_edit %>
     </div>                  
     <%= slot.half_captcha %>
     <div class="edit-button-area">

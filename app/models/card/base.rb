@@ -453,6 +453,10 @@ module Card
       true
     end
     
+    def generic?
+      false
+    end
+
     def content   
       new_card? ? ok!(:create_me) : ok!(:read) 
       current_revision ? current_revision.content : ""

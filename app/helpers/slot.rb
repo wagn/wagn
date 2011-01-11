@@ -242,7 +242,7 @@ class Slot
 
     ###---(  CONTENT VARIATIONS )
       #-----( with transclusions processed )
-      when :content        ; render_content
+      when :content        ; render_content(args)
 
       when :open_content   ; card.post_render(render_naked_content)
       when :closed_content ; render_closed_content
@@ -293,16 +293,16 @@ class Slot
     return "Permission error: #{e.message}"
   end
 
-  def render_content
+  def render_content(args={})
     @state = 'view'
     self.requested_view = 'content'
     c = render_naked_content
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
-    wrap('content', {}, wrap_content(c))
+    wrap('content', args, wrap_content(c))
   end
 
   def render_closed_content
-    if generic_card?
+    if card.generic?
       truncatewords_with_closing_tags( render_naked_content )
     else
       render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
@@ -322,12 +322,7 @@ class Slot
   end
 
   def render_naked_content
-    generic_card? ? render_generic : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
-  end
-
-  def generic_card?
-    # FIXME: this could be *much* better.  going for 80/20.
-    Card::Basic===card || Card::Phrase===card.type || Card::Number===card
+    card.generic? ? render_generic : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
   end
 
   def get_raw

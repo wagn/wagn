@@ -12,7 +12,7 @@ class Slot
 
   cattr_accessor :max_char_count, :current_slot, :max_depth
   self.max_char_count = 200
-  self.max_depth = 10
+  self.max_depth = 8
   attr_reader :card, :main_card, :main_content, :action, :template
   attr_writer :form
   attr_accessor  :options_need_save, :state, :requested_view, :js_queue_initialized,
@@ -56,6 +56,10 @@ class Slot
     @depth = - max_depth
     @renders = {}
     @js_queue_initialized = {}
+    
+    if card and card.is_collection? and item_param=@slot_options[:params][:item]
+      @item_view = item_param if !item_param.blank?
+    end
   end
 
   def inclusion_map
@@ -248,7 +252,6 @@ class Slot
       when :closed_content ; render_closed_content
 
       when :naked, :bare   ; render_content
-      when :generic        ; render_generic
       when :raw            ; get_raw
         
       when :array          ; render_array
@@ -308,7 +311,7 @@ class Slot
       return render_partial( 'views/too_deep' )
     end
     if card.is_collection?
-      card.each_name { |name| subslot(Card.fetch_or_new(name)).render(:raw) }.inspect
+      card.each_name { |name| subslot(Card.fetch_or_new(name)).render(:naked) }.inspect
     else
       [render_content].inspect
     end
@@ -342,8 +345,8 @@ class Slot
   end
 
   def expand_card(tname, options)
-    # Don't bother processing inclusion if we're already out of view
     return '' if (@state==:line && self.char_count > Slot.max_char_count)
+    # Don't bother processing inclusion if we're already out of view
 
     case tname
     when '_main'
@@ -351,12 +354,11 @@ class Slot
       tcard = root.main_card
       item  = symbolize_param(:item) and options[:item] = item
       pview = symbolize_param(:view) and options[:view] = pview
-      self.context = options[:context] = 'main'
+      options[:context] = 'main'
       options[:view] ||= :open
     end
 
-
-    options[:view] ||= (self.context == "layout_0" ? :raw : :content)
+    options[:view] ||= (self.context == "layout_0" ? :naked : :content)
     options[:fullname] = fullname = get_inclusion_fullname(tname,options)
     options[:showname] = tname.to_show(fullname)
 
@@ -412,14 +414,10 @@ class Slot
     Slot.current_slot = old_slot
     result
   rescue Exception=>e
-    case Wagn::Config.rails_config.log_level
-    when :debug
-Rails.logger.warn  %{<span class="inclusion-error">error rendering dbg #{link_to_page tcard.name} #{e.inspect}<br>
-Trace #{e.backtrace.join(" <br>\n")}</span> }
-    when :warn
-Rails.logger.warn  %{<span class="inclusion-error">error rendering warn #{link_to_page tcard.name}</span> #{e.inspect}}
-    else  %{<span class="inclusion-error">error rendering #{link_to_page tcard.name} #{CGI.escapeHTML(e.inspect)} (#{Wagn::Config.rails_config.log_level.inspect})</span>}
-    end
+    warn e.inspect
+    Rails.logger.info e.inspect
+    Rails.logger.debug e.backtrace.join "\n"
+    %{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
   end
 
   def get_inclusion_fullname(name,options)

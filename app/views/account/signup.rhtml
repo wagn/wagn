@@ -10,7 +10,7 @@
 
     <div class="instruction">
       <% if inst = card.setting_card('add help', 'edit help') %> 
-        <%= slot.subslot(inst).render :raw %>
+        <%= slot.subslot(inst).render :naked %>
       <% elsif !System.ok?(:create_accounts) %>
         <p><strong>All Account Requests are subject to review.</strong></p><%#ENGLISH%>
       <% else %>

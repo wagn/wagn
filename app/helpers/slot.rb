@@ -24,6 +24,7 @@ class Slot
     :view => :open,
     :card => :open,
     :line => :closed,
+    :bare => :naked,
   }
 
   def initialize(card, context="main_1", action="view", template=nil, opts={} )
@@ -105,7 +106,6 @@ class Slot
     form.text_field(field).match(/name=\"([^\"]*)\"/)[1]
   end
 
-
   def js
     @js ||= SlotJavascript.new(self)
   end
@@ -167,17 +167,23 @@ class Slot
     %{<div id="main" context="main">#{content}</div>}
   end
 
-  def deny_render?(action)
-    case
-      when [:deny_view, :edit_auto, :open_missing, :closed_missing].member?(action);
-        false
-      when card.new_record?
-        false # need create check...
-      when [:edit, :edit_in_form, :multi_edit].member?(action)
-        !card.ok?(:edit) and :deny_view #should be deny_edit
-      else
-        !card.ok?(:read) and :deny_view
+  def render_check(args)
+    ch_action = case
+    when too_deep?;  :too_deep 
+    when [:edit, :edit_in_form, :multi_edit].member?(action)
+      !card.ok?(:edit) and :deny_view #should be deny_edit
+    else
+      !card.ok?(:read) and :deny_view
     end
+    (ch_action and render_partial("views/#{ch_action}", args))
+  end
+
+  def render_deny(action, args)
+    if [ :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing,
+         :closed_missing, :setting_missing].member?(action)
+       render_partial("views/#{action}", args)
+    elsif card.new_record?; return # need create check...
+    else render_check(args) end
   end
 
   def canonicalize_view( view )
@@ -188,67 +194,45 @@ class Slot
   def too_deep?() @depth >= 0 end
 
   def render(action, args={})
-#Rails.logger.debug "Slot(#{card.name}).render Rt:#{self == root} #{action} #{args.inspect}"
+#Rails.logger.debug "Slot(#{card.name}).render #{card.generic?} #{action} #{args.inspect}"
     self.render_args = args.clone
-    ok_action = case
-      when too_deep?                     ; :too_deep
-      when denial = deny_render?(action) ; denial
-      else                               ; action
-    end
+    denial = render_deny(action, args)
+    return denial if denial
+    
+    result = case action = canonicalize_view(action)
+      # FIXME: we can refactor out the rest of these later
+      ###----------------( NAME) (FIXME move to chunks/transclude)
+        when :name   ; card.name
+        when :link   ; Chunk::Reference.link_render(card.name, args)
 
-    result = case canonicalize_view(ok_action)
+      ###----------------( SPECIAL )
+        when :titled
+          content_tag( :h1, fancy_title(card.name) ) + self.render_content
+        when :rss_titled                                                         
+          # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
+          content_tag( :h2, fancy_title(card.name) ) + self.render_open_content
+        when :layout
+          @main_card, mc = args.delete(:main_card), args.delete(:main_content)
+          @main_content = mc.blank? ? nil : wrap_main(mc)
+          expand_inclusions(card.raw_content, main_card)
 
-      when :name   ; card.name
-      when :link   ; Chunk::Reference.link_render(card.name, args)
-      when :titled
-        content_tag( :h1, fancy_title(card.name) ) + self.render_content
-      when :rss_titled                                                         
-        # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
-        content_tag( :h2, fancy_title(card.name) ) + self.render( :open_content )
-
-      when :layout
-        @main_card, mc = args.delete(:main_card), args.delete(:main_content)
-        @main_content = mc.blank? ? nil : wrap_main(mc)
-        expand_inclusions(card.raw_content, main_card)
-
-    ###-----------( FULL )
-      when :new             ; render_new(args)
-      when :open            ; render_open(args)
-
-      when :closed          ; render_closed(args)
-      when :setting         ; render_setting(args)
-    ###----------------( NAME) (moved to chunks/transclude)
-
-    ###----------------( CHANGES)
-      when :change          ; render_change(args)
-      when :rss_change      ; render_rss_change
-
-    ###---(  CONTENT VARIATIONS )
-      #-----( with transclusions processed )
-      when :content        ; render_content(args)
-
-      when :open_content   ; render_open_content
-      when :closed_content ; render_closed_content
-
-      when :naked, :bare   ; render_naked_content
-      when :raw            ; get_raw
-      when :array          ; render_array
+        when :naked          ; render_naked
+        when :raw            ; get_raw
 
       ###---(  EDIT VIEWS )
-      when :edit           ; render_edit(args)
-      when :multi_edit     ; render_multi_edit(args)
-      when :edit_in_form
-        render_partial('views/edit_in_form', args.merge(:form=>form))
+        when :edit_in_form
+          render_partial('views/edit_in_form', args.merge(:form=>form))
 
-      ###---(  EXCEPTIONS )
+        when :blank         ; ""
 
-      when :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :setting_missing
-        render_partial("views/#{ok_action}", args)
-
-      when :blank         ; ""
-
-      else; "<strong>#{card.name} - unknown card view: '#{ok_action}'</strong>"
-    end
+	else
+	  render_method = "render_#{action}".to_sym
+          if respond_to?(render_method)
+            self.send render_method, args
+          else
+            "<strong>#{card.name} - unknown card view: '#{action}' M:#{render_method.inspect}</strong>"
+          end
+        end
 
 #      result ||= "" #FIMXE: wtf?
     result << javascript_tag("setupLinksAndDoubleClicks();") if args[:add_javascript]
@@ -258,85 +242,111 @@ class Slot
   end
 
   def render_content(args={})
+    result = render_check(args)
+    return result if result
     @state = 'view'
     self.requested_view = 'content'
-    c = render_naked_content
+    c = render_naked
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
     wrap('content', args, wrap_content(c))
   end
 
   def render_new(args={})
+    result = render_check(args)
+    return result if result
     wrap('', args, render_partial('views/new'))
   end
 
   def render_open(args={})
+    result = render_check(args)
+    return result if result
     @state = :view
     self.requested_view = 'open'
     wrap('open', args, render_partial('views/open'))
   end
 
   def render_closed(args={})
+    result = render_check(args)
+    return result if result
     @state = :line
     self.requested_view = 'closed'
     wrap('closed', args, render_partial('views/closed'))
   end
 
   def render_setting(args={})
+    result = render_check(args)
+    return result if result
     wrap( self.requested_view = 'content', args,
           render_partial('views/setting') )
   end
 
   def render_edit(args={})
+    result = render_check(args)
+    return result if result
     @state=:edit
     # FIXME CONTENT: the hard template test can go away when we phase out the old system.
     wrap('', args, card.content_template ?  render(:multi_edit) : content_field(slot.form))
   end
 
   def render_multi_edit(args={})
+    result = render_check(args)
+    return result if result
     @state=:edit
     args[:add_javascript]=true
-    wrap('', args, hidden_field_tag(:multi_edit, true) + render_naked_content)
+    wrap('', args, hidden_field_tag(:multi_edit, true) + render_naked)
   end
 
-  def render_rss_change
+  def render_rss_change(args={})
+    result = render_check(args)
+    return result if result
     self.requested_view = 'content'
     render_partial('views/change')
   end
 
   def render_change(args={})
+    result = render_check(args)
+    return result if result
     self.requested_view = 'content'
     wrap('content', args, w_content = render_partial('views/change'))
   end
 
-  def render_open_content
-    card.post_render(render_naked_content)
+  def render_open_content(args={})
+    result = render_check(args)
+    return result if result
+    card.post_render(render_naked)
   end
 
-  def render_closed_content
+  def render_closed_content(args={})
+    result = render_check(args)
+    return result if result
     if card.generic?
-      truncatewords_with_closing_tags( render_naked_content )
+      truncatewords_with_closing_tags( render_naked )
     else
-      render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
+      render_card_partial(:line)   # in basic case: --> truncate( slot.render_open_content ))
     end
   end
 
-  def render_array
+  def render_array(args={})
+    result = render_check(args)
+    return result if result
 #Rails.logger.debug "Slot(#{card.name}).render_array T:#{card.type}  root = #{root}"
     if too_deep?
       return render_partial( 'views/too_deep' )
     end
     if card.is_collection?
-      card.each_name { |name| subslot(Card.fetch_or_new(name)).render(:naked) }.inspect
+      card.each_name { |name| subslot(Card.fetch_or_new(name)).render_core }.inspect
     else
-      [render_naked_content].inspect
+      [render_naked].inspect
     end
   end
 
-  def render_naked_content
-    card.generic? ? render_naked : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
+  def render_naked(args={})
+    #result = render_check(args)
+    #return result if result
+    card.generic? ? render_core : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
   end
 
-  def get_raw
+  def get_raw(args={})
     if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
       template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
     else
@@ -344,7 +354,9 @@ class Slot
     end
   end
 
-  def render_naked
+  def render_core(args={})
+    #result = render_check(args)
+    #return result if result
     get_raw do |r_content|
       @renderer.render( slot_options[:base]||card, r_content) {|c,o| expand_card(c,o)}
     end

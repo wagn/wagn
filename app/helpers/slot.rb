@@ -167,7 +167,7 @@ class Slot
     %{<div id="main" context="main">#{content}</div>}
   end
 
-  def render_check(args)
+  def render_check(action, args)
     ch_action = case
     when too_deep?;  :too_deep 
     when [:edit, :edit_in_form, :multi_edit].member?(action)
@@ -183,7 +183,7 @@ class Slot
          :closed_missing, :setting_missing].member?(action)
        render_partial("views/#{action}", args)
     elsif card.new_record?; return # need create check...
-    else render_check(args) end
+    else render_check(action, args) end
   end
 
   def canonicalize_view( view )
@@ -242,7 +242,7 @@ class Slot
   end
 
   def render_content(args={})
-    result = render_check(args)
+    result = render_check(:content, args)
     return result if result
     @state = 'view'
     self.requested_view = 'content'
@@ -252,13 +252,13 @@ class Slot
   end
 
   def render_new(args={})
-    result = render_check(args)
+    result = render_check(:new, args)
     return result if result
     wrap('', args, render_partial('views/new'))
   end
 
   def render_open(args={})
-    result = render_check(args)
+    result = render_check(:open, args)
     return result if result
     @state = :view
     self.requested_view = 'open'
@@ -266,7 +266,7 @@ class Slot
   end
 
   def render_closed(args={})
-    result = render_check(args)
+    result = render_check(:closed, args)
     return result if result
     @state = :line
     self.requested_view = 'closed'
@@ -274,22 +274,22 @@ class Slot
   end
 
   def render_setting(args={})
-    result = render_check(args)
+    result = render_check(:setting, args)
     return result if result
     wrap( self.requested_view = 'content', args,
           render_partial('views/setting') )
   end
 
   def render_edit(args={})
-    result = render_check(args)
+    result = render_check(:edit, args)
     return result if result
     @state=:edit
     # FIXME CONTENT: the hard template test can go away when we phase out the old system.
     wrap('', args, card.content_template ?  render(:multi_edit) : content_field(slot.form))
   end
 
-  def render_multi_edit(args={})
-    result = render_check(args)
+  def render_multi_edit( args={})
+    result = render_check(:multi_edit, args)
     return result if result
     @state=:edit
     args[:add_javascript]=true
@@ -297,27 +297,27 @@ class Slot
   end
 
   def render_rss_change(args={})
-    result = render_check(args)
+    result = render_check(:rss_change, args)
     return result if result
     self.requested_view = 'content'
     render_partial('views/change')
   end
 
   def render_change(args={})
-    result = render_check(args)
+    result = render_check(:change, args)
     return result if result
     self.requested_view = 'content'
     wrap('content', args, w_content = render_partial('views/change'))
   end
 
   def render_open_content(args={})
-    result = render_check(args)
+    result = render_check(:open_content, args)
     return result if result
     card.post_render(render_naked)
   end
 
   def render_closed_content(args={})
-    result = render_check(args)
+    result = render_check(:closed_content, args)
     return result if result
     if card.generic?
       truncatewords_with_closing_tags( render_naked )
@@ -327,7 +327,7 @@ class Slot
   end
 
   def render_array(args={})
-    result = render_check(args)
+    result = render_check(:check, args)
     return result if result
 #Rails.logger.debug "Slot(#{card.name}).render_array T:#{card.type}  root = #{root}"
     if too_deep?
@@ -341,8 +341,6 @@ class Slot
   end
 
   def render_naked(args={})
-    #result = render_check(args)
-    #return result if result
     card.generic? ? render_core : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
   end
 
@@ -355,8 +353,6 @@ class Slot
   end
 
   def render_core(args={})
-    #result = render_check(args)
-    #return result if result
     get_raw do |r_content|
       @renderer.render( slot_options[:base]||card, r_content) {|c,o| expand_card(c,o)}
     end

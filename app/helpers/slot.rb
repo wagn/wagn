@@ -322,7 +322,7 @@ class Slot
   end
 
   def render_naked_content
-    card.generic? ? render_generic : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
+    card.generic? ? render_naked : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
   end
 
   def get_raw
@@ -333,7 +333,7 @@ class Slot
     end
   end
 
-  def render_generic
+  def render_naked
     get_raw do |r_content|
       @renderer.render( slot_options[:base]||card, r_content) {|c,o| expand_card(c,o)}
     end

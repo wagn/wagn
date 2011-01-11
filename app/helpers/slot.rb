@@ -201,7 +201,7 @@ class Slot
 
       when :name; card.name
       when :link; Chunk::Reference.link_render(card.name, args)
-      when :titled;   content_tag( :h1, fancy_title(card.name) ) + self.render( :content )
+      when :titled;   content_tag( :h1, fancy_title(card.name) ) + self.render_content
       when :rss_titled;                                                         
         # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
         content_tag( :h2, fancy_title(card.name) ) + self.render( :open_content )
@@ -242,16 +242,12 @@ class Slot
 
     ###---(  CONTENT VARIATIONS )
       #-----( with transclusions processed )
-      when :content
-        @state = 'view'
-        w_action = self.requested_view = 'content'
-        c = render_content
-        w_content = wrap_content(((c.size < 10 && strip_tags(c).blank?) ? "<span class=\"faint\">--</span>" : c ))
+      when :content        ; render_content
 
-      when :open_content   ; card.post_render(render_content)
+      when :open_content   ; card.post_render(render_naked_content)
       when :closed_content ; render_closed_content
 
-      when :naked, :bare   ; render_content
+      when :naked, :bare   ; render_naked_content
       when :raw            ; get_raw
         
       when :array          ; render_array
@@ -270,7 +266,7 @@ class Slot
       when :multi_edit;
         @state=:edit
         args[:add_javascript]=true
-        hidden_field_tag(:multi_edit, true) + render_content
+        hidden_field_tag(:multi_edit, true) + render_naked_content
 
       when :edit_in_form
         render_partial('views/edit_in_form', args.merge(:form=>form))
@@ -297,9 +293,17 @@ class Slot
     return "Permission error: #{e.message}"
   end
 
+  def render_content
+    @state = 'view'
+    self.requested_view = 'content'
+    c = render_naked_content
+    c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
+    wrap('content', {}, wrap_content(c))
+  end
+
   def render_closed_content
     if generic_card?
-      truncatewords_with_closing_tags( render_content )
+      truncatewords_with_closing_tags( render_naked_content )
     else
       render_card_partial(:line)   # in basic case: --> truncate( slot.render( :open_content ))
     end
@@ -313,17 +317,17 @@ class Slot
     if card.is_collection?
       card.each_name { |name| subslot(Card.fetch_or_new(name)).render(:naked) }.inspect
     else
-      [render_content].inspect
+      [render_naked_content].inspect
     end
   end
 
-  def render_content
+  def render_naked_content
     generic_card? ? render_generic : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
   end
 
   def generic_card?
     # FIXME: this could be *much* better.  going for 80/20.
-    card.type == 'Basic' || card.type == 'Phrase' || card.type == 'Number'
+    Card::Basic===card || Card::Phrase===card.type || Card::Number===card
   end
 
   def get_raw

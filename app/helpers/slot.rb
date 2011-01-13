@@ -481,7 +481,7 @@ class Slot
 	alias_method #{method_id.inspect}, :_#{methd}
         alias_method_chain #{method_id.inspect}, :check
       }
-      send(method_id, args[0])
+      send(method_id, args[0]||{})
     else
     # silence Rails 2.2.2 warning about binding argument to concat.  tried detecting rails 2.2
     # and removing the argument but it broken lots of integration tests.

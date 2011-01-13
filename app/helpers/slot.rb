@@ -207,16 +207,16 @@ class Slot
 
       ###----------------( SPECIAL )
         when :titled
-          content_tag( :h1, fancy_title(card.name) ) + self.render_content
+          content_tag( :h1, fancy_title(card.name) ) + self._render_content
         when :rss_titled                                                         
           # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
-          content_tag( :h2, fancy_title(card.name) ) + self.render_open_content
+          content_tag( :h2, fancy_title(card.name) ) + self._render_open_content
         when :layout
           @main_card, mc = args.delete(:main_card), args.delete(:main_content)
           @main_content = mc.blank? ? nil : wrap_main(mc)
           expand_inclusions(card.raw_content, main_card)
 
-        when :naked          ; render_naked
+        when :naked          ; _render_naked
         when :raw            ; get_raw
 
       ###---(  EDIT VIEWS )
@@ -226,9 +226,9 @@ class Slot
         when :blank         ; ""
 
 	else
-	  render_method = "render_#{action}".to_sym
-          if respond_to?(render_method)
-            self.send render_method, args
+	  render_method = "render_#{action}"
+          if respond_to?('_'+render_method.to_s)
+            self.send render_method.to_sym, args
           else
             "<strong>#{card.name} - unknown card view: '#{action}' M:#{render_method.inspect}</strong>"
           end
@@ -241,107 +241,83 @@ class Slot
     return "Permission error: #{e.message}"
   end
 
-  def render_content(args={})
-    result = render_check(:content, args)
-    return result if result
+  def _render_content(args={})
     @state = 'view'
     self.requested_view = 'content'
-    c = render_naked
+    c = _render_naked
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
     wrap('content', args, wrap_content(c))
   end
 
-  def render_new(args={})
-    result = render_check(:new, args)
-    return result if result
+  def _render_new(args={})
     wrap('', args, render_partial('views/new'))
   end
 
-  def render_open(args={})
-    result = render_check(:open, args)
-    return result if result
+  def _render_open(args={})
     @state = :view
     self.requested_view = 'open'
     wrap('open', args, render_partial('views/open'))
   end
 
-  def render_closed(args={})
-    result = render_check(:closed, args)
-    return result if result
+  def _render_closed(args={})
     @state = :line
     self.requested_view = 'closed'
     wrap('closed', args, render_partial('views/closed'))
   end
 
-  def render_setting(args={})
-    result = render_check(:setting, args)
-    return result if result
+  def _render_setting(args={})
     wrap( self.requested_view = 'content', args,
           render_partial('views/setting') )
   end
 
-  def render_edit(args={})
-    result = render_check(:edit, args)
-    return result if result
+  def _render_edit(args={})
     @state=:edit
     # FIXME CONTENT: the hard template test can go away when we phase out the old system.
     wrap('', args, card.content_template ?  render(:multi_edit) : content_field(slot.form))
   end
 
-  def render_multi_edit( args={})
-    result = render_check(:multi_edit, args)
-    return result if result
+  def _render_multi_edit( args={})
     @state=:edit
     args[:add_javascript]=true
-    wrap('', args, hidden_field_tag(:multi_edit, true) + render_naked)
+    wrap('', args, hidden_field_tag(:multi_edit, true) + _render_naked)
   end
 
-  def render_rss_change(args={})
-    result = render_check(:rss_change, args)
-    return result if result
+  def _render_rss_change(args={})
     self.requested_view = 'content'
     render_partial('views/change')
   end
 
-  def render_change(args={})
-    result = render_check(:change, args)
-    return result if result
+  def _render_change(args={})
     self.requested_view = 'content'
     wrap('content', args, w_content = render_partial('views/change'))
   end
 
-  def render_open_content(args={})
-    result = render_check(:open_content, args)
-    return result if result
-    card.post_render(render_naked)
+  def _render_open_content(args={})
+    card.post_render(_render_naked)
   end
 
-  def render_closed_content(args={})
-    result = render_check(:closed_content, args)
-    return result if result
+  def _render_closed_content(args={})
     if card.generic?
-      truncatewords_with_closing_tags( render_naked )
+      truncatewords_with_closing_tags( _render_naked )
     else
-      render_card_partial(:line)   # in basic case: --> truncate( slot.render_open_content ))
+      render_card_partial(:line)   # in basic case: --> truncate( slot._render_open_content ))
     end
   end
 
-  def render_array(args={})
-    result = render_check(:check, args)
-    return result if result
+  def _render_array(args={})
 #Rails.logger.debug "Slot(#{card.name}).render_array T:#{card.type}  root = #{root}"
     if too_deep?
       return render_partial( 'views/too_deep' )
     end
     if card.is_collection?
-      card.each_name { |name| subslot(Card.fetch_or_new(name)).render_core }.inspect
+      card.each_name { |name| subslot(Card.fetch_or_new(name))._render_core }.inspect
     else
-      [render_naked].inspect
+      [_render_naked].inspect
     end
   end
 
-  def render_naked(args={})
-    card.generic? ? render_core : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
+  def _render_naked(args={})
+    card.generic? ? _render_core : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
   end
 
   def get_raw(args={})
@@ -352,7 +328,7 @@ class Slot
     end
   end
 
-  def render_core(args={})
+  def _render_core(args={})
     get_raw do |r_content|
       @renderer.render( slot_options[:base]||card, r_content) {|c,o| expand_card(c,o)}
     end
@@ -496,9 +472,21 @@ class Slot
   end
 
   def method_missing(method_id, *args, &proc)
+    if (methd = method_id.to_s) =~ /^render_/
+      class_eval %{
+        def #{methd}_with_check(args={})
+          render_check(#{method_id.inspect}, args) || 
+            send(:#{methd}_without_check, args)
+        end
+	alias_method #{method_id.inspect}, :_#{methd}
+        alias_method_chain #{method_id.inspect}, :check
+      }
+      send(method_id, args[0])
+    else
     # silence Rails 2.2.2 warning about binding argument to concat.  tried detecting rails 2.2
     # and removing the argument but it broken lots of integration tests.
-    ActiveSupport::Deprecation.silence { @template.send(method_id, *args, &proc) }
+      ActiveSupport::Deprecation.silence { @template.send(method_id, *args, &proc) }
+    end
   end
 
   #### --------------------  additional helpers ---------------- ###

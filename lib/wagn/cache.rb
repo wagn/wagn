@@ -1,4 +1,26 @@
 module Wagn
+  require 'tempfile'
+
+  Tempfile.class_eval do
+    # overwrite tempfiles implementation of attachment_fu. FIXME: why n is nil?
+    def make_tmpname(basename, n)
+      ext = nil
+      n = 0 if n.nil?
+      sprintf("%s%d-%d%s", basename.to_s.gsub(/\.\w+$/) { |s| ext = s; '' }, $$, n, ext)
+    end
+  end
+
+  ActiveSupport::Cache::FileStore.class_eval do
+    # escape special symbols \*"<>| additionaly to :?.
+    # All of them not allowed to use in ms windows file system
+    def real_file_path(name)
+      name = name.gsub('%','%25').gsub('?','%3F').gsub(':','%3A')
+      name = name.gsub('\\','%5C').gsub('*','%2A').gsub('"','%22')
+      name = name.gsub('<','%3C').gsub('>','%3E').gsub('|','%7C')
+      '%s/%s.cache' % [@cache_path, name ]
+    end
+  end
+
   class Cache
     class << self
       def initialize_on_startup

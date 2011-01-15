@@ -47,14 +47,14 @@ class Slot
       :params => {},
       :base => nil,
     }.merge(opts)
-
-    @slot_options[:renderer] ||= Renderer.new(inclusion_map)
-    @renderer = @slot_options[:renderer]
+#Rails.logger.info "Slot.new #{card.name}, #{context}, #{action}, #{template}, #{opts.inspect}"
+    slot_opts[:renderer] = @renderer =
+      (slot_opts[:renderer] or Renderer.new(context, slot_opts))
+    @slot_options = slot_opts
     @context = "main_1" unless @context =~ /\_/
     @position = @context.split('_').last
-    @char_count = 0
     @subslots = []
-    @state = 'view'
+    @state = :view
     @depth = - max_depth
     @renders = {}
     @js_queue_initialized = {}
@@ -64,20 +64,12 @@ class Slot
     end
   end
 
-  def inclusion_map
-    return unless map = root.slot_options[:inclusion_view_overrides]
-    VIEW_ALIASES.each_pair do |known, canonical|
-      map[known] = map[canonical] if map.has_key?(canonical)
-    end
-    map
-  end
-
   def subslot(card, context_base=nil, &proc)
     # Note that at this point the subslot context, and thus id, are
     # somewhat meaningless-- the subslot is only really used for tracking position.
     context_base ||= self.context
     new_position = @subslots.size + 1
-    new_slot = self.class.new(card, "#{context_base}_#{new_position}", @action, @template, :renderer=>@renderer)
+    new_slot = self.class.new(card, "#{context_base}_#{new_position}", @action, @template, :renderer=>renderer)
 
     new_slot.depth = @depth+1
     new_slot.state = @state
@@ -397,7 +389,11 @@ class Slot
     ''
   end
 
+  def expand_inclusions(content) renderer.expand_inclusions(content) end
+
   def process_inclusion(tcard, options)
+#raise "process_inclusion SL (#{tcard.name}, #{options.inspect}"
+Rails.logger.info "process_inclusion SL (#{tcard.name}, #{options.inspect}"
     subslot = subslot(tcard, options[:context])
     old_slot, Slot.current_slot = Slot.current_slot, subslot
 
@@ -408,7 +404,6 @@ class Slot
     # FIXME! need a different test here
     new_card = tcard.new_record? && !tcard.virtual?
 
-    state = @state.to_sym
     subslot.requested_view = vmode = (options[:view] || :content).to_sym
     action = case
 
@@ -417,6 +412,7 @@ class Slot
       when :edit == state
        tcard.virtual? ? :edit_auto : :edit_in_form
       when new_card
+raise "Missed _main?" if tcard.name == '_main'
         case
           when vmode==:raw; :blank
           when vmode==:setting   ; :setting_missing
@@ -502,7 +498,7 @@ Rails.logger.info "method_missing(#{method_id}, #{args.inspect}, #{proc.inspect}
 
   #### --------------------  additional helpers ---------------- ###
   def render_diff(card, *args)
-    @renderer.render_diff(card, *args)
+    renderer.render_diff(card, *args)
   end
 
   def notice

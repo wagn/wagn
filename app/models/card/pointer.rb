@@ -23,16 +23,16 @@ module Card
 	    name = setting('option label') || 'description'
 	    textcard = Card.fetch(option+'+'+name, :skip_virtual => true)
 	    textcard ? textcard.content : nil
-	  end
-	    
-	  def pointees=(items)
-	    items=items.values if Hash===items 
-	    self.content = [items].flatten.reject{|x|x.blank?}.map{|x| "[[#{x}]]"}.join("\n")
-    end  
-    
-    def pointee=(item)
-      self.pointees = [item]
-    end  
+	  end   
+	  
+	  #def pointees=(items)
+	  #  items=items.values if Hash===items 
+	  #  self.content = [items].flatten.reject{|x|x.blank?}.map{|x| "[[#{x}]]"}.join("\n")
+    #end  
+    #
+    #def pointee=(item)
+    #  self.pointees = [item]
+    #end  
 	  
 	  def item_type
 	    opt = options_card

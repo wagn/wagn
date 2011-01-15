@@ -1,4 +1,11 @@
-<% options = options_from_collection_for_select(card.options,:name,:name,slot.card.pointees) %>
-<%= select_tag slot.full_field_name(:pointees), options, :multiple=>true, :id=>"#{slot.context}-multiselect", :class=>'pointer-multiselect' %>    
+<%-
+  eid = slot.context
+  options = options_from_collection_for_select(card.options,:name,:name,slot.card.pointees)  
+%>
+<%= select_tag "#{eid}-multiselect", options, :multiple=>true, :id=>"#{eid}-multiselect", :class=>'pointer-multiselect' %>
+
+<%= slot.editor_hooks :save=>%{
+  setPointerContent('#{eid}', jQuery('##{eid}-multiselect').val() );  return true;
+} %>  
 
     

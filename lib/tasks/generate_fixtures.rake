@@ -1,4 +1,4 @@
-require 'lib/util/card_builder.rb'      
+require File.expand_path(File.dirname(__FILE__) + '/../util/card_builder.rb')
 
 
  

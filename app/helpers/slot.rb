@@ -92,6 +92,164 @@ class Slot
     @root ||= superslot ? superslot.root : self
   end
 
+
+  class << self
+    def procs( method_id, priv_name, final )
+      self.class_eval do 
+        define_method( priv_name, &final )
+        define_method( method_id ) do |*a,&b| a = a[0]||{}
+          render_check(method_id, a) || send(priv_name, a, &b)
+        end
+      end
+    end
+
+    define_method(:action) do |action, *opts, &final| opts = opts[0]||{}
+      inner = opts.delete(:method)
+      method_id = inner||"render_#{action}"
+      actions = @@render_actions||={}
+      actions[action] = priv_name = "_#{method_id}".to_sym
+      procs( method_id, priv_name, final )
+    end
+  end
+
+### ---- Core renders --- Keep these on top for dependencies
+  action(:raw, :method=>:get_raw) do |*a,&b| args = a[0]||{}
+    if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
+      template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
+    else card.raw_content end
+  end
+
+  action(:core) do |*a| args = a[0]||{}
+    expand_raw(args)
+  end
+
+  action(:naked) do |*a| args = a[0]||{}
+    card.generic? ? _render_core : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
+  end
+
+  action(:content) do |*a| args = a[0]||{}
+    @state = 'view'
+    self.requested_view = 'content'
+    c = _render_naked
+    c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
+    wrap('content', args, wrap_content(c))
+  end
+
+  action(:new) do |*a| args = a[0]||{}
+    wrap('', args, render_partial('views/new'))
+  end
+
+  action(:open) do |*a| args = a[0]||{}
+    @state = :view
+    self.requested_view = 'open'
+    wrap('open', args, render_partial('views/open'))
+  end
+
+  action(:closed) do |*a| args = a[0]||{}
+    @state = :line
+    self.requested_view = 'closed'
+    wrap('closed', args, render_partial('views/closed'))
+  end
+
+  action(:setting) do |*a| args = a[0]||{}
+    wrap( self.requested_view = 'content', args,
+          render_partial('views/setting') )
+  end
+
+  action(:edit) do |*a| args = a[0]||{}
+    @state=:edit
+    # FIXME CONTENT: the hard template test can go away when we phase out the old system.
+    wrap('', args, card.content_template ?  render(:multi_edit) : content_field(slot.form))
+  end
+
+  action(:multi_edit) do |*a| args = a[0]||{}
+    @state=:edit
+    args[:add_javascript]=true
+    wrap('', args, hidden_field_tag(:multi_edit, true) + _render_naked)
+  end
+
+  action(:rss_change) do |*a| args = a[0]||{}
+    self.requested_view = 'content'
+    render_partial('views/change')
+  end
+
+  action(:change) do |*a| args = a[0]||{}
+    self.requested_view = 'content'
+    wrap('content', args, w_content = render_partial('views/change'))
+  end
+
+  action(:open_content) do |*a| args = a[0]||{}
+    card.post_render(_render_naked)
+  end
+
+  action(:closed_content) do |*a| args = a[0]||{}
+    if card.generic?
+      truncatewords_with_closing_tags( _render_naked )
+    else
+      render_card_partial(:line)   # in basic case: --> truncate( slot._render_open_content ))
+    end
+  end
+
+  action(:array) do |*a| args = a[0]||{}
+    if card.is_collection?
+      card.each_name { |name| subslot(Card.fetch_or_new(name))._render_core }.inspect
+    else
+      [_render_naked].inspect
+    end
+  end
+
+###----------------( NAME) (FIXME move to chunks/transclude)
+  action(:name) do |*a| card.name end
+  action(:link) do |*a| args = a[0]||{}
+    Chunk::Reference.link_render(card.name, args)
+  end
+
+      ###----------------( SPECIAL )
+  action(:titled) do |*a| args = a[0]||{}
+    content_tag( :h1, fancy_title(card.name) ) + self._render_content
+  end
+
+  action(:rss_titled) do |*a| args = a[0]||{}
+    # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
+    content_tag( :h2, fancy_title(card.name) ) + self._render_open_content
+  end
+
+  action(:layout) do |*a| args = a[0]||{}
+    @main_card, mc = args.delete(:main_card), args.delete(:main_content)
+    @main_content = mc.blank? ? nil : wrap_main(mc)
+    expand_inclusions(card.raw_content, main_card)
+  end
+
+###---(  EDIT VIEWS )
+  action(:edit_in_form) do |*a| args = a[0]||{}
+    render_partial('views/edit_in_form', args.merge(:form=>form))
+  end
+
+  action(:blank) do |*a| "" end
+
+  #
+  # Now that all the actions are defined, not much left to render
+  #
+  def render(action, args={})
+#Rails.logger.debug "Slot(#{card.name}).render #{card.generic?} #{action} #{args.inspect}"
+    self.render_args = args.clone
+    denial = render_deny(action, args)
+    return denial if denial
+    
+    action = canonicalize_view(action)
+    result = if render_method = @@render_actions[action]
+        self.send(render_method, args)
+        #send(render_method, args)
+      else
+        "<strong>#{card.name} - unknown card view: '#{action}' M:#{render_method.inspect}</strong>"
+      end
+
+    result << javascript_tag("setupLinksAndDoubleClicks();") if args[:add_javascript]
+    result.strip
+  rescue Card::PermissionDenied=>e
+    return "Permission error: #{e.message}"
+  end
+
   def form
     @form ||= begin
       # NOTE this code is largely copied out of rails fields_for
@@ -198,167 +356,6 @@ class Slot
     r_content = _get_raw(args)
     @renderer.render( slot_options[:base]||card, r_content) {|c,o| expand_card(c,o)}
   end
-
-  class <<self
-    def procs( method_id, priv_name, final )
-      self.class_eval do 
-        define_method( priv_name, &final )
-        define_method( method_id ) do |*a,&b| a = a[0]||{}
-          render_check(method_id, a) || send(priv_name, a, &b)
-        end
-      end
-    end
-    define_method(:action) do |action, *opts, &final| opts = opts[0]||{}
-      inner = opts.delete(:method)
-      method_id = inner||"render_#{action}"
-      actions = @@render_actions||={}
-      actions[action] = priv_name = "_#{method_id}".to_sym
-      procs( method_id, priv_name, final )
-    end
-  end
-
-
-  action(:raw, :method=>:get_raw) do |*a,&b| args = a[0]||{}
-    if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
-      template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
-    else card.raw_content end
-  end
-
-  action(:core) do |*a| args = a[0]||{}
-    expand_raw(args) #
-  end
-
-  action(:naked) do |*a| args = a[0]||{}
-    card.generic? ? _render_core : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
-  end
-
-  action(:content) do |*a| args = a[0]||{}
-    @state = 'view'
-    self.requested_view = 'content'
-    c = _render_naked
-    c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
-    wrap('content', args, wrap_content(c))
-  end
-
-  action(:new) do |*a| args = a[0]||{}
-    wrap('', args, render_partial('views/new'))
-  end
-
-  action(:open) do |*a| args = a[0]||{}
-    @state = :view
-    self.requested_view = 'open'
-    wrap('open', args, render_partial('views/open'))
-  end
-
-  action(:closed) do |*a| args = a[0]||{}
-    @state = :line
-    self.requested_view = 'closed'
-    wrap('closed', args, render_partial('views/closed'))
-  end
-
-  action(:setting) do |*a| args = a[0]||{}
-    wrap( self.requested_view = 'content', args,
-          render_partial('views/setting') )
-  end
-
-  action(:edit) do |*a| args = a[0]||{}
-    @state=:edit
-    # FIXME CONTENT: the hard template test can go away when we phase out the old system.
-    wrap('', args, card.content_template ?  render(:multi_edit) : content_field(slot.form))
-  end
-
-  action(:multi_edit) do |*a| args = a[0]||{}
-    @state=:edit
-    args[:add_javascript]=true
-    wrap('', args, hidden_field_tag(:multi_edit, true) + _render_naked)
-  end
-
-  action(:rss_change) do |*a| args = a[0]||{}
-    self.requested_view = 'content'
-    render_partial('views/change')
-  end
-
-  action(:change) do |*a| args = a[0]||{}
-    self.requested_view = 'content'
-    wrap('content', args, w_content = render_partial('views/change'))
-  end
-
-  action(:open_content) do |*a| args = a[0]||{}
-    card.post_render(_render_naked)
-  end
-
-  action(:closed_content) do |*a| args = a[0]||{}
-    if card.generic?
-      truncatewords_with_closing_tags( _render_naked )
-    else
-      render_card_partial(:line)   # in basic case: --> truncate( slot._render_open_content ))
-    end
-  end
-
-  action(:array) do |*a| args = a[0]||{}
-    if card.is_collection?
-      card.each_name { |name| subslot(Card.fetch_or_new(name))._render_core }.inspect
-    else
-      [_render_naked].inspect
-    end
-  end
-
-
-
-  def render(action, args={})
-#Rails.logger.debug "Slot(#{card.name}).render #{card.generic?} #{action} #{args.inspect}"
-    self.render_args = args.clone
-    denial = render_deny(action, args)
-    return denial if denial
-    
-    result = case action = canonicalize_view(action)
-      # FIXME: we can refactor out the rest of these later
-      ###----------------( NAME) (FIXME move to chunks/transclude)
-        when :name   ; card.name
-        when :link   ; Chunk::Reference.link_render(card.name, args)
-
-      ###----------------( SPECIAL )
-        when :titled
-          content_tag( :h1, fancy_title(card.name) ) + self._render_content
-        when :rss_titled                                                         
-          # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
-          content_tag( :h2, fancy_title(card.name) ) + self._render_open_content
-        when :layout
-          @main_card, mc = args.delete(:main_card), args.delete(:main_content)
-          @main_content = mc.blank? ? nil : wrap_main(mc)
-          expand_inclusions(card.raw_content, main_card)
-
-        #when :naked          ; _render_naked
-        #when :raw            ; get_raw
-
-      ###---(  EDIT VIEWS )
-        when :edit_in_form
-          render_partial('views/edit_in_form', args.merge(:form=>form))
-
-        when :blank         ; ""
-
-        else
-          #render_method = "_render_#{action}"
-          if render_method = @@render_actions[action]
-Rails.logger.info ">>send #{self}>#{render_method} for #{action} #{args.inspect}"
-#debugger
-r=
-            self.send(render_method, args)
-            #send(render_method, args)
-Rails.logger.info ">>send #{self}>#{render_method} for #{action} #{args.inspect} R:#{r}"; r
-          else
-            "<strong>#{card.name} - unknown card view: '#{action}' M:#{render_method.inspect}</strong>"
-          end
-        end
-
-raise "no result" unless result
-#      result ||= "" #FIMXE: wtf?
-    result << javascript_tag("setupLinksAndDoubleClicks();") if args[:add_javascript]
-    result.strip
-  rescue Card::PermissionDenied=>e
-    return "Permission error: #{e.message}"
-  end
-
   def expand_inclusions(content, render_card=nil)
     @renderer.render(render_card||card, content) {|c,o| expand_card(c,o)}
   end

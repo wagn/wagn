@@ -50,7 +50,7 @@ ActiveRecord::Schema.define(:version => 20101110060129) do
     t.string   "reader_type"
     t.integer  "tag_id"
     t.string   "key",                                    :null => false
-    t.boolean  "trash",               :default => false, :null => false
+    t.boolean  "trash",                                  :null => false
     t.string   "appender_type"
     t.integer  "appender_id"
     t.integer  "references_expired"

@@ -3,10 +3,14 @@ require_dependency 'slot'
 module WagnHelper
   require_dependency 'wiki_content'
 
+  # FIXME: slot -> renderer (model)
+  # Put the initialization in the controller and we no longer care here
+  # whether it is a Slot or Renderer, and it will be from the parent class
   def slot
     Slot.current_slot
   end
   
+  # I think this is redundant now
   def card
     @card
   end
@@ -20,8 +24,10 @@ module WagnHelper
       when Slot.current_slot;  nil_given ? Slot.current_slot : Slot.current_slot.subslot(card)
       else Slot.current_slot = Slot.new(card,context,action,self,opts)
     end
+    controller.renderer = slot
   end
 
+=begin
   # FIMXE: this one's a hack...
   def render_card(card, mode, args={})
     if String===card && name = card
@@ -32,6 +38,7 @@ module WagnHelper
     subslot = Slot.current_slot ? Slot.current_slot.subslot(card) : Slot.new(card)
     subslot.render(mode.to_sym, args)
   end
+=end
 
   Droplet = Struct.new(:name, :link_options)
 
@@ -292,8 +299,7 @@ module WagnHelper
   
   def render_layout_card(lay_card)
     opts = {}; opts[:relative_content] = opts[:params] = params
-    Slot.new(lay_card, "layout_0", "view", self, opts).
-      render(:layout, :main_card=>@card, :main_content=>@content_for_layout)
+    Slot.new(lay_card, "layout_0", "view", self, opts).render(:layout, :main_card=>@card, :main_content=>@content_for_layout)
   end  
   
   def render_layout_content(content)

@@ -1,122 +1,47 @@
 require 'ruby-debug'
-class Slot
-  module NoControllerHelpers
-    def protect_against_forgery?
-      # FIXME
-      false
-    end
+class Slot < Renderer
 
-    def logged_in?
-      !(User.current_user.nil? || User.current_user.login == 'anon')
-    end
+  cattr_accessor :render_actions
+  attr_accessor  :options_need_save, :requested_view, :js_queue_initialized,
+    :position, :state, :start_time, :skip_autosave, :render_args
+
+  # This creates a separate class hash in the subclass
+  class << self
+    def actions() @@render_actions||={} end
+    alias current_slot current
+    alias current_slot= current=
   end
 
-  cattr_accessor :max_char_count, :current_slot, :max_depth
-  self.max_char_count = 200
-  self.max_depth = 8
-  attr_reader :card, :main_card, :main_content, :action, :template
-  attr_writer :form
-  attr_accessor  :options_need_save, :state, :requested_view, :js_queue_initialized,
-    :position, :renderer, :form, :superslot, :char_count, :item_view, :type, :renders,
-    :start_time, :skip_autosave, :config, :slot_options, :render_args, :context,
-    :depth
+  def action_method(key)
+    cls=self.class
+    cls.actions.has_key?(key) ? cls.actions[key] : super.class.actions[key]
+  end
 
-  VIEW_ALIASES = {
-    :view => :open,
-    :card => :open,
-    :line => :closed,
-    :bare => :naked,
-  }
-
+  # FIXME: simplify this to (card, opts)
   def initialize(card, context="main_1", action="view", template=nil, opts={} )
     @card,@context,@action,@template = card,context.to_s,action.to_s,template
     Slot.current_slot ||= self
 
-    @template ||= begin
-      t = ActionView::Base.new( CardController.view_paths, {} )
-      t.helpers.send :include, CardController.master_helper_module
-      t.helpers.send :include, NoControllerHelpers
-      t
-    end
-    # FIXME: this and context should all be part of the context object, I think.
-    # In any case I had to use "slot_options" rather than just options to avoid confusion with lots of
-    # local variables named options.
-    @slot_options = {
-      :relative_content => {},
-      :inclusion_view_overrides => nil,
-      :params => {},
-      :base => nil,
-    }.merge(opts)
 #Rails.logger.info "Slot.new #{card.name}, #{context}, #{action}, #{template}, #{opts.inspect}"
-    slot_opts[:renderer] = @renderer =
-      (slot_opts[:renderer] or Renderer.new(context, slot_opts))
-    @slot_options = slot_opts
+    super
     @context = "main_1" unless @context =~ /\_/
     @position = @context.split('_').last
     @subslots = []
     @state = :view
-    @depth = - max_depth
     @renders = {}
     @js_queue_initialized = {}
     
-    if card and card.is_collection? and item_param=@slot_options[:params][:item]
+    if card and card.is_collection? and item_param=params[:item]
       @item_view = item_param if !item_param.blank?
     end
   end
 
-  def subslot(card, context_base=nil, &proc)
-    # Note that at this point the subslot context, and thus id, are
-    # somewhat meaningless-- the subslot is only really used for tracking position.
-    context_base ||= self.context
-    new_position = @subslots.size + 1
-    new_slot = self.class.new(card, "#{context_base}_#{new_position}", @action, @template, :renderer=>renderer)
+### --- render action declarations --- wrapped views are defined for slots
 
-    new_slot.depth = @depth+1
-    new_slot.state = @state
-    new_slot.superslot = self
-    new_slot.position = new_position
-
-    @subslots << new_slot
-    new_slot
-  end
-
-  def root
-    @root ||= superslot ? superslot.root : self
-  end
-
-
-  class << self
-    def procs( method_id, priv_name, final )
-      self.class_eval do 
-        define_method( priv_name, &final )
-        define_method( method_id ) do |*a,&b| a = a[0]||{}
-          render_check(method_id, a) || send(priv_name, a, &b)
-        end
-      end
-    end
-
-    define_method(:action) do |action, *opts, &final| opts = opts[0]||{}
-      inner = opts.delete(:method)
-      method_id = inner||"render_#{action}"
-      actions = @@render_actions||={}
-      actions[action] = priv_name = "_#{method_id}".to_sym
-      procs( method_id, priv_name, final )
-    end
-  end
-
-### ---- Core renders --- Keep these on top for dependencies
-  action(:raw, :method=>:get_raw) do |*a,&b| args = a[0]||{}
-    if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
-      template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
-    else card.raw_content end
-  end
-
-  action(:core) do |*a| args = a[0]||{}
-    expand_raw(args)
-  end
-
-  action(:naked) do |*a| args = a[0]||{}
-    card.generic? ? _render_core : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
+  action(:layout) do |*a| args = a[0]||{}
+Rails.logger.info "_render_layout(#{args.inspect})"
+    @main_card, mc = args.delete(:main_card), args.delete(:main_content)
+    @main_content = mc.blank? ? _render_core : wrap_main(mc)
   end
 
   action(:content) do |*a| args = a[0]||{}
@@ -151,7 +76,7 @@ class Slot
   action(:edit) do |*a| args = a[0]||{}
     @state=:edit
     # FIXME CONTENT: the hard template test can go away when we phase out the old system.
-    wrap('', args, card.content_template ?  render(:multi_edit) : content_field(slot.form))
+    wrap('', args, card.content_template ?  _render_multi_edit() : content_field(slot.form))
   end
 
   action(:multi_edit) do |*a| args = a[0]||{}
@@ -160,56 +85,9 @@ class Slot
     wrap('', args, hidden_field_tag(:multi_edit, true) + _render_naked)
   end
 
-  action(:rss_change) do |*a| args = a[0]||{}
-    self.requested_view = 'content'
-    render_partial('views/change')
-  end
-
   action(:change) do |*a| args = a[0]||{}
     self.requested_view = 'content'
     wrap('content', args, w_content = render_partial('views/change'))
-  end
-
-  action(:open_content) do |*a| args = a[0]||{}
-    card.post_render(_render_naked)
-  end
-
-  action(:closed_content) do |*a| args = a[0]||{}
-    if card.generic?
-      truncatewords_with_closing_tags( _render_naked )
-    else
-      render_card_partial(:line)   # in basic case: --> truncate( slot._render_open_content ))
-    end
-  end
-
-  action(:array) do |*a| args = a[0]||{}
-    if card.is_collection?
-      card.each_name { |name| subslot(Card.fetch_or_new(name))._render_core }.inspect
-    else
-      [_render_naked].inspect
-    end
-  end
-
-###----------------( NAME) (FIXME move to chunks/transclude)
-  action(:name) do |*a| card.name end
-  action(:link) do |*a| args = a[0]||{}
-    Chunk::Reference.link_render(card.name, args)
-  end
-
-      ###----------------( SPECIAL )
-  action(:titled) do |*a| args = a[0]||{}
-    content_tag( :h1, fancy_title(card.name) ) + self._render_content
-  end
-
-  action(:rss_titled) do |*a| args = a[0]||{}
-    # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
-    content_tag( :h2, fancy_title(card.name) ) + self._render_open_content
-  end
-
-  action(:layout) do |*a| args = a[0]||{}
-    @main_card, mc = args.delete(:main_card), args.delete(:main_content)
-    @main_content = mc.blank? ? nil : wrap_main(mc)
-    expand_inclusions(card.raw_content, main_card)
   end
 
 ###---(  EDIT VIEWS )
@@ -217,45 +95,20 @@ class Slot
     render_partial('views/edit_in_form', args.merge(:form=>form))
   end
 
-  action(:blank) do |*a| "" end
+  def subslot(card, context_base=nil, &proc)
+    # Note that at this point the subslot context, and thus id, are
+    # somewhat meaningless-- the subslot is only really used for tracking position.
+    context_base ||= self.context
+    new_position = @subslots.size + 1
+    new_slot = subrenderer(card, "#{context_base}_#{new_position}")
 
-  #
-  # Now that all the actions are defined, not much left to render
-  #
-  def render(action, args={})
-#Rails.logger.debug "Slot(#{card.name}).render #{card.generic?} #{action} #{args.inspect}"
-    self.render_args = args.clone
-    denial = render_deny(action, args)
-    return denial if denial
-    
-    action = canonicalize_view(action)
-    result = if render_method = @@render_actions[action]
-        self.send(render_method, args)
-        #send(render_method, args)
-      else
-        "<strong>#{card.name} - unknown card view: '#{action}' M:#{render_method.inspect}</strong>"
-      end
+    new_slot.state = @state
+    new_slot.position = new_position
 
-    result << javascript_tag("setupLinksAndDoubleClicks();") if args[:add_javascript]
-    result.strip
-  rescue Card::PermissionDenied=>e
-    return "Permission error: #{e.message}"
+    @subslots << new_slot
+    new_slot
   end
 
-  def form
-    @form ||= begin
-      # NOTE this code is largely copied out of rails fields_for
-      options = {} # do I need any? #args.last.is_a?(Hash) ? args.pop : {}
-      block = Proc.new {}
-      builder = options[:builder] || ActionView::Base.default_form_builder
-      card.name.gsub!(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_record?  ##FIXME -- need to match other relative inclusions.
-      fields_for = builder.new("cards[#{card.name.pre_cgi}]", card, @template, options, block)
-    end
-  end
-
-  def full_field_name(field)
-    form.text_field(field).match(/name=\"([^\"]*)\"/)[1]
-  end
 
   def js
     @js ||= SlotJavascript.new(self)
@@ -297,13 +150,13 @@ class Slot
 
     if (Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >= 2)
       args = nil
-      @template.output_buffer ||= ''   # fixes error in CardControllerTest#test_changes
+      template.output_buffer ||= ''   # fixes error in CardControllerTest#test_changes
     else
       args = proc.binding
     end
-    @template.concat open_slot, *args
+    template.concat open_slot, *args
     yield(self)
-    @template.concat close_slot, *args
+    template.concat close_slot, *args
     ""
   end
 
@@ -314,42 +167,8 @@ class Slot
   end
 
   def wrap_main(content)
-    return content if p=root.slot_options[:params] and p[:layout]=='none'
+    return content if p=root.params and p[:layout]=='none'
     %{<div id="main" context="main">#{content}</div>}
-  end
-
-  def render_check(action, args)
-    ch_action = case
-    when too_deep?;  :too_deep 
-    when [:edit, :edit_in_form, :multi_edit].member?(action)
-      !card.ok?(:edit) and :deny_view #should be deny_edit
-    else
-      !card.ok?(:read) and :deny_view
-    end
-    (ch_action and render_partial("views/#{ch_action}", args))
-  end
-
-  def render_deny(action, args)
-    if [ :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing,
-         :closed_missing, :setting_missing].member?(action)
-       render_partial("views/#{action}", args)
-    elsif card.new_record?; return # need create check...
-    else render_check(action, args) end
-  end
-
-  def canonicalize_view( view )
-    view = view.to_sym
-    VIEW_ALIASES[view.to_sym] || view
-  end
-
-  def too_deep?() @depth >= 0 end
-
-  def expand_raw(args)
-    r_content = _get_raw(args)
-    @renderer.render( slot_options[:base]||card, r_content) {|c,o| expand_card(c,o)}
-  end
-  def expand_inclusions(content, render_card=nil)
-    @renderer.render(render_card||card, content) {|c,o| expand_card(c,o)}
   end
 
   def expand_card(tname, options)
@@ -373,9 +192,9 @@ class Slot
     tcard ||= case
     when @state==:edit
       Card.fetch_or_new(fullname, {}, new_inclusion_card_args(options))
-    when slot_options[:base].respond_to?(:name)# &&
-         #slot_options[:base].name == fullname
-      slot_options[:base]
+    when sob.respond_to?(:name)# &&
+         #sob.name == fullname
+      sob
     else
       Card.fetch_or_new(fullname, :skip_defaults=>true)
     end
@@ -388,8 +207,6 @@ class Slot
   rescue Card::PermissionDenied
     ''
   end
-
-  def expand_inclusions(content) renderer.expand_inclusions(content) end
 
   def process_inclusion(tcard, options)
 #raise "process_inclusion SL (#{tcard.name}, #{options.inspect}"
@@ -432,75 +249,7 @@ raise "Missed _main?" if tcard.name == '_main'
     %{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
   end
 
-  def get_inclusion_fullname(name,options)
-    fullname = name+'' #weird.  have to do this or the tname gets busted in the options hash!!
-    sob = slot_options[:base]
-    context = case
-    when sob; (sob.respond_to?(:name) ? sob.name : sob)
-    when options[:base]=='parent'
-      card.parent_name
-    else
-      card.name
-    end
-    fullname = fullname.to_absolute(context)
-    fullname.gsub!('_user') { User.current_user.cardname }
-    fullname = fullname.particle_names.map do |x|
-      if x =~ /^_/ and root.slot_options[:params] and root.slot_options[:params][x]
-        CGI.escapeHTML( root.slot_options[:params][x] )
-      else x end
-    end.join("+")
-    fullname
-  end
-
-  def get_inclusion_content(cardname)
-    parameters = root.slot_options[:relative_content]
-    content = parameters[cardname.gsub(/\+/,'_')]
-
-    # CLEANME This is a hack to get it so plus cards re-populate on failed signups
-    if parameters['cards'] and card_params = parameters['cards'][cardname.gsub('+','~plus~')]
-      content = card_params['content']
-    end
-    content if content.present?  #not sure I get why this is necessary - efm
-  end
-
-  def new_inclusion_card_args(options)
-    args = { :type =>options[:type],  :permissions=>[] }
-    if content=get_inclusion_content(options[:tname])
-      args[:content]=content
-    end
-    args
-  end
-
-  def resize_image_content(content, size)
-    size = (size.to_s == "full" ? "" : "_#{size}")
-    content.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
-  end
-
-  def render_partial( partial, locals={} )
-    @template.render(:partial=>partial, :locals=>{ :card=>card, :slot=>self }.merge(locals))
-  end
-
-  def card_partial(action)
-    # FIXME: I like this method name better- maybe other calls should resolve here instead
-    partial_for_action(action, card)
-  end
-
-  def render_card_partial(action, locals={})
-     render_partial card_partial(action), locals
-  end
-
-  def method_missing(method_id, *args, &proc)
-Rails.logger.info "method_missing(#{method_id}, #{args.inspect}, #{proc.inspect})"
-    # silence Rails 2.2.2 warning about binding argument to concat.  tried detecting rails 2.2
-    # and removing the argument but it broken lots of integration tests.
-    ActiveSupport::Deprecation.silence { @template.send(method_id, *args, &proc) }
-  end
-
   #### --------------------  additional helpers ---------------- ###
-  def render_diff(card, *args)
-    renderer.render_diff(card, *args)
-  end
-
   def notice
     # this used to access controller.notice, but as near I can tell
     # nothing ever assigns to controller.notice, so I took it away.
@@ -571,7 +320,7 @@ Rails.logger.info "method_missing(#{method_id}, #{args.inspect}, #{proc.inspect}
 
   def paging_params
     s = {}
-    if p = root.slot_options[:params]
+    if p = root.params
       [:offset,:limit].each{|key| s[key] = p.delete(key)}
     end
     s[:offset] = s[:offset] ? s[:offset].to_i : 0
@@ -596,7 +345,7 @@ Rails.logger.info "method_missing(#{method_id}, #{args.inspect}, #{proc.inspect}
   end
 
   def header
-    @template.render :partial=>'card/header', :locals=>{ :card=>card, :slot=>self }
+    template.render :partial=>'card/header', :locals=>{ :card=>card, :slot=>self }
   end
 
   def menu
@@ -671,7 +420,7 @@ Rails.logger.info "method_missing(#{method_id}, #{args.inspect}, #{proc.inspect}
 
 
   def cardtype_field(form,options={})
-    @template.select_tag('card[type]', cardtype_options_for_select(Cardtype.name_for(card.type)), options)
+    template.select_tag('card[type]', cardtype_options_for_select(Cardtype.name_for(card.type)), options)
   end
 
   def update_cardtype_function(options={})
@@ -776,29 +525,6 @@ Rails.logger.info "method_missing(#{method_id}, #{args.inspect}, #{proc.inspect}
     end
   end
 
-  ### ------  from wagn_helper ----
-  def partial_for_action( name, card=nil )
-    # FIXME: this should look up the inheritance hierarchy, once we have one
-    # wow this is a steaming heap of dung.
-    cardtype = (card ? card.type : 'Basic').underscore
-    if Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR <=1
-      finder.file_exists?("/types/#{cardtype}/_#{name}") ?
-        "/types/#{cardtype}/#{name}" :
-        "/types/basic/#{name}"
-    elsif   Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR > 2
-      ## This test works for .rhtml files but seems to fail on .html.erb
-      begin
-        @template.view_paths.find_template "types/#{cardtype}/_#{name}"
-        "types/#{cardtype}/#{name}"
-      rescue ActionView::MissingTemplate => e
-        "/types/basic/#{name}"
-      end
-    else
-      @template.view_paths.find { |template_path| template_path.paths.include?("types/#{cardtype}/_#{name}") } ?
-        "/types/#{cardtype}/#{name}" :
-        "/types/basic/#{name}"
-    end
-  end
 
 end
 

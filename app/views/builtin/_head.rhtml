@@ -14,7 +14,7 @@
 
 
   <title>
-    <%= @title || "#{controller.controller_name} - #{controller.action_name}" %>
+    <%= @title || "#{controller ? controller.controller_name : self} - #{controller && controller.action_name}" %>
     - <%= System.site_title %>
   </title>
   <%= stylesheet_link_merged :base %> 

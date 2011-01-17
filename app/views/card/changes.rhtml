@@ -28,7 +28,7 @@
 
   <div class="revision">                       
     <% if @show_diff and @previous_revision %>
-      <%= slot.render_diff( @card, @previous_revision.content, @revision.content ) %>
+      <%= slot.render_diff( @previous_revision.content, @revision.content ) %>
     <% else %>
       <%= @revision.content %>
     <% end %>

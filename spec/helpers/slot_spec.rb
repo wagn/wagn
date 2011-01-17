@@ -176,10 +176,12 @@ describe Slot, "" do
 
   context "builtin card" do
     it "should render layout partial with name of card" do
+      pending
       template = mock("template")
       template.should_receive(:render).with(:partial=>"builtin/builtin").and_return("Boo")
       builtin_card = Card.new( :name => "*builtin", :builtin=>true )
-      slot = Slot.new( builtin_card, "main_1", "view", template  )
+      slot = Slot.new( builtin_card, "main_1", "view"  )
+      slot.render_raw.should == "Boo"
       slot.render(:raw).should == "Boo"
     end
   end
@@ -221,7 +223,7 @@ describe Slot, "" do
       c = Card.create! :name=>"ChChChanges", :content => ""
       c.update_attributes :content => "A"
       c.update_attributes :content => "B"
-      r = Slot.new(c).render_diff( c, c.revisions[0].content, c.revisions[1].content )
+      r = Slot.new(c).render_diff( c.revisions[0].content, c.revisions[1].content )
       r.should == "<ins class=\"diffins\">A</ins>"
     end
   end

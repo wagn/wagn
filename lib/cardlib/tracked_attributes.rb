@@ -182,7 +182,7 @@ module Cardlib
             
             ActiveRecord::Base.logger.info("------------------ UPDATE REFERRER #{card.name}  ------------------------")
             next if card.hard_template
-            card.content = Renderer.new.replace_references( card, @old_name, name )
+            card.content = Renderer.new(card).replace_references( @old_name, name )
             card.save! unless card==self
           end
         end

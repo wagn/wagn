@@ -316,7 +316,7 @@ describe Card, "new permissions" do
 
   it "should let joe render content of new cards" do
     @c = Card.new
-    Renderer.new.render(@c).should == ''
+    Renderer.new(@c).render_card.should == ''
   end
 
 end

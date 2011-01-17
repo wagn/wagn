@@ -1,53 +1,135 @@
 require 'diff'
 require_dependency 'models/wiki_reference'
 
-class Renderer                
+class Renderer
+  module NoControllerHelpers
+    def protect_against_forgery?
+      # FIXME
+      false
+    end
+
+    def logged_in?
+      !(User.current_user.nil? || User.current_user.login == 'anon')
+    end
+  end
+
   include HTMLDiff
   include ReferenceTypes
 
-  cattr_accessor :max_char_count, :max_depth
+  VIEW_ALIASES = {
+    :view => :open,
+    :card => :open,
+    :line => :closed,
+    :bare => :naked,
+  }
+
+  cattr_accessor :max_char_count, :max_depth, :render_actions, :current
   self.max_char_count = 200
   self.max_depth = 10
-  attr_reader :inclusion_map, :sob, :params, :layout, :context, :state, :card, :relative_content
-  attr_accessor :char_count, :renders, :item_view, :view, :root, :main_content,
-      :main_card, :depth, :type
 
-  def initialize(context='main_1', opts=nil)
-    @context = context
-Rails.logger.info "Renderer.new[#{context}] #{opts.inspect}\nTrace #{Kernel.caller.slice(0,6).join("\n")}"
-    if opts
-      inclusion_map(opts.delete(:inclusion_view_overrides))
-      @main_content = opts.delete(:main_content)
-      @main_card = opts.delete(:main_card)
-      @sob = opts[:base]
-      @params = opts[:params]
-Rails.logger.info "Renderer _keyword #{params[:_keyword]}" if params.has_key? :_keyword
-      @relative_content = opts[:relative_content]
+  attr_reader :action, :inclusion_map, :params, :layout, :relative_content,
+      :template, :root
+  attr_accessor :card, :main_content, :main_card, :context, :char_count,
+      :depth, :form, :item_view, :view, :type, :sob
+
+  #
+  # Action definitions
+  #
+  #   When you declare:
+  #     action(:name) do |*a| args=a[0]||{} ... end
+  #
+  #   These methods are defined on the renderer
+  #
+  #     # The external api with checks, equivalent to
+  #     def render_name(args={} ... end
+  #     render_action(:name, args)
+  #       or
+  #     render('', args.merge(:view=>:name))
+  #
+  #     # The internal call that skips the checks
+  #     def _render_name(args={} ... end
+  #
+  #   Also to declare other names:
+  #     action(:action, :method=>:name) do ... end
+  #   for def name ... end and def _name ... end
+  #   and render(:action ...) -> name(...)
+  #
+  class << self
+    def procs( method_id, priv_name, final )
+      self.class_eval do
+        define_method( priv_name, &final )
+        define_method( method_id ) do |*a,&b| a = a[0]||{}
+          render_check(method_id, a) || send(priv_name, a, &b)
+        end
+      end
     end
-Rails.logger.info "main_card #{@main_card&&@main_card.name} #{main_content}"
-    @state = :view # when is is different?
+
+    define_method(:action) do |action, *opts, &final| opts = opts[0]||{}
+      inner = opts.delete(:method)
+      method_id = inner||"render_#{action}"
+      actions[action] = priv_name = "_#{method_id}".to_sym
+      procs( method_id, priv_name, final )
+    end
+
+    def renderer() @@current end # the current_renderer
+    def actions() @@render_actions||={} end
+    def view_aliases() VIEW_ALIASES end
+  end
+
+  def state()
+    case view
+    when :edit, :multi_edit; :edit
+    when :closed; :line
+    else :view
+    end
+  end
+  def actions() self.class.render_actions end
+  # root renderer class, no search in super
+  def action_method(key) self.class.actions[key] end
+
+  def initialize(card, context="main_1", action="view", template=nil, opts={} )
+    @card = card
+    @context = context
+    if opts
+      inclusion_map(      opts.delete(:inclusion_view_overrides) )
+      @main_content     = opts.delete(:main_content)
+      @main_card        = opts.delete(:main_card)
+      @sob              = opts.delete(:base)
+      @params           = opts[:params]||{}
+      @relative_content = opts.delete(:relative_content)||{}
+    end
+    @template ||= begin
+      t = ActionView::Base.new( CardController.view_paths, {} )
+      t.helpers.send :include, CardController.master_helper_module
+      t.helpers.send :include, NoControllerHelpers
+#Rails.logger.info "no controller #{caller.slice(0,10)*"\n"}" unless t.controller
+      t
+    end
     @char_count = 0
     @depth = - max_depth
     @root = self
     @layout = @params && @params[:layout]
-Rails.logger.info "Renderer.new:#{@main_content}:#{@main_card&&@main_card.name}:#{@sob}:#{@layout}::#{opts&&opts.inspect}"
   end
 
+  def too_deep?() @depth >= 0 end
 
-  def subrenderer(card, context=nil)
+  def subrenderer(subcard, context=nil, newsob=nil)
+    subcard = fetch_or_new(subcard) if String===subcard
     sub = self.clone
-    #raise "Too deep" unless ++sub.depth < 0
-    @main_content = @main_card = nil
-    @char_count = 0
-    @sub.context = context if context
-    @card = card
+    sub.depth = @depth+1
+    #raise "Too deep" if sub.too_deep?
+    sub.main_content = sub.main_card = nil
+    sub.char_count = 0
+    sub.sob = newsob if newsob
+    sub.context = context if context
+    sub.card = subcard
     sub
   end
 
   def inclusion_map(overrides=nil)
     return @inclusion_map if @inclusion_map
     return @inclusion_map unless @inclusion_map = overrides
-    Slot.view_aliases.each_pair do |known, canonical|
+    self.class.view_aliases.each_pair do |known, canonical|
       if @inclusion_map.has_key?(canonical)
         @inclusion_map[known] = @inclusion_map[canonical]
       end
@@ -55,210 +137,228 @@ Rails.logger.info "Renderer.new:#{@main_content}:#{@main_card&&@main_card.name}:
     @inclusion_map
   end
 
-  def render( card, content=nil, opts=nil, &block)
-    # FIXME: this means if you had a card with content, but you WANTED to have it render 
-    # the empty string you passed it, it won't work.  but we seem to need it because
-    # card.content='' in set_card_defaults and if you make it nil a bunch of other
-    # stuff breaks
-    @card = card
-Rails.logger.info "Renderer.render #{card.name}, #{content.inspect}, #{opts.inspect}, B:#{block_given?}"
-    update_refs = case
-      when Symbol===opts
-        raw = true if opts == :raw
-        opts == :skip_references ? false : 
-          opts == :update_references ? true : nil
-      when Hash===opts
-        opts[:update_references] if opts[:update_references]
-        raw = true if opts[:raw]
-        if base = opts[:base]
-          @sob = opts[:base]
-        end
-        if @params = opts[:params]
-          @item  = param.to_sym if param = params[:item]
-          @view  = param.to_sym if param = params[:view]
-        end
-      when Array===opts
-        raw = true if opts.member?(:raw)
-        opts.member?(:skip_references) ? false :
-        opts.member?(:update_references) ? true : nil
-      end
-    content = content.blank? ? card.content : content 
+  def render_card(content=nil, opts={}, &block)
+    return content unless card
+    content = card.content if content.blank?
+    if ctx=opts.delete(:render_base)
+      return subrenderer(ctx,nil,ctx).render_card(content, opts, block) if sob
+    end
 
-    #block = default_block unless block
-raise "no card" unless card
-    wiki_content = WikiContent.new(card, content, self, opts, inclusion_map)
-    if update_refs or card&&card.references_expired
-    #if update_refs && card == card or (card&&card.references_expired)
-      update_references(card, wiki_content)
+    block = default_block unless block_given?
+    wiki_content = WikiContent.new(card, content, self, inclusion_map)
+    if card&&card.references_expired
+      update_references(wiki_content)
     end
     wiki_content.render! do |tname, opts|
-      unless raw
-        full = opts[:fullname] = get_inclusion_fullname(card, tname, opts)
-        #if block_given?
-        #  block.call(tname, opts)
-        #else
-          @view = opts[:view].to_sym if view == nil and opts[:view] 
-Rails.logger.info "wiki_render! proc R#{raw}V>#{view.inspect} #{full} #{opts.inspect}"
-          rproc = Proc.new do |subcard, renderer, content|
-Rails.logger.info "rproc sub #{card.name}[#{card.type}] Sub:#{subcard&&subcard.name}[#{subcard.type}] C:#{content}"; o=
-            case subcard && subcard.type
-            when 'Search' 
-              Wql.new(subcard.get_spec(:return => 'name_content')).run.
-                          keys.map {|x| pointee_subrender(x, &rproc)}.join
-            when 'Pointer'
-              subcard.pointees.map {|x| pointee_subrender(x, &rproc)}.join
-            else rendered(subcard) end
-Rails.logger.info "rproc res #{o}"; o
-          end
-          case view
-          when nil
-Rails.logger.info "wiki_content proc nil view: #{card.name} : #{full}"
-            #tcard = Card.fetch_or_new(full) if full != card.name
-            #renderer_content(card)
-            rproc.call(card, self, renderer_content(card, content))
-            #expand_inclusions(content)
-            #block.call(full, opts)
-          when :naked
-            raise "<no card ? #{full}/>" unless card = Card.fetch(full)
-            #rproc.call(card, self, renderer_content(card))
-Rails.logger.info "rproc call #{card.name} C:#{content.inspect}"
-            rproc.call(card, self, renderer_content(card, content))
-	  else 
-Rails.logger.info "render! yields #{tname} #{opts.inspect}"
-            block.call(tname, opts)
-          end
-        #end
-      else
-raise "need block?" unless block_given?
-Rails.logger.info "render! yields2 #{tname} #{opts.inspect}"
-        block.call(tname, opts)
-      end
+      full = opts[:fullname] = get_inclusion_fullname(tname, opts)
+      @view = opts[:view].to_sym if view == nil and opts[:view]
+      expand_card(tname,opts,&block)
     end
   end
 
-###
-=begin
-  def default_block
-    Proc.new do |tname, opts|
-      @view = opts[:view].to_sym if view == nil and opts[:view] 
-Rails.logger.info "default_block[#{view.inspect}]#{tname} :: #{card.name} Opts:#{opts.inspect}"
-      case view
-      when nil
-        @card = Card.fetch_or_new(tname) if tname != card.name
-        renderer_content(card)
-      when :naked
-       unless card = Card.fetch(tname)
-        "<no card #{tname}/>"
-       else
-begin
-r= 
-        case card.type
-        when 'Search'
-Rails.logger.info "Search transclude #{tname} Spc:#{card.get_spec(:return => 'name_content').inspect}"
-          Wql.new(card.get_spec(:return => 'name_content')).run.keys.map do |x|
-Rails.logger.info "Search transclude #{tname}"
-Rails.logger.info "Search item transclude #{x}"
-          rendered(Card.fetch_or_new(x))
-          end.join
-        when 'Pointer'
-Rails.logger.info "Pointer transclude #{tname}"
-          card.pointees.map do |x|
-Rails.logger.info "Pointer item transclude #{x.name}"
-            rendered(Card.fetch_or_new(x))
-          end.join
-        else
-          renderer_content(card)
-        end
-Rails.logger.info "Search transclude res #{r}"; r
-rescue Exception => e
-Rails.logger.info "Error transclude :#{e.class}, #{e.message}, #{e.backtrace.join("\n")}"
-raise e
-end
-       end
-else Rails.logger.info "Can't do that view here #{view.inspect}"
-      #else raise "Can't do that view here #{view.inspect}"
-      end
+  def render_check(action, args)
+    ch_action = case
+    when too_deep?;  :too_deep
+    when [:edit, :edit_in_form, :multi_edit].member?(action)
+      !card.ok?(:edit) and :deny_view #should be deny_edit
+    else
+      !card.ok?(:read) and :deny_view
     end
-  end
-=end
-
-  def rendered(card)
-    r_content = renderer_content(card)
-o=
-    case item_view || view
-    when :content, nil; r_content
-    else                render(sob||card, r_content)
-    #else                render(card, r_content)
-    end
-Rails.logger.info "P/S rendered transclude #{card.name}|#{sob&&sob.name},#{view}I#{item_view} C:#{r_content} > #{o}"; o
+    (ch_action and render_partial("views/#{ch_action}", args))
   end
 
-  def renderer_content(card, content='')
-    return "<no card #{self}/>" unless card
-    #card.templated_content || card.content
-    card.templated_content || content.blank? ? card.content : content 
+  def render_deny(action, args)
+    if [ :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing,
+         :closed_missing, :setting_missing].member?(action)
+       render_partial("views/#{action}", args)
+    elsif card.new_record?; return # need create check...
+    else render_check(action, args) end
   end
 
-  def pointee_subrender(pointee, context=nil)
-    sub = subrenderer( subcard = Card.fetch_or_new(pointee) )
-Rails.logger.info "subrender #{pointee} #{card.name}, #{subcard.name}, #{sub.card.name}"
-    sub.context = context if context
-    sub.item_view = sub.view = item_view||view||:closed
-    content = subcard.templated_content || subcard.content
-#raise "loop? #{card.name}" if card == subcard
-Rails.logger.info "Sub[#{card.type}]#{sub.item_view} #{sub.view} #{view} #{subcard.name}::#{card.name} C:#{content} S:#{sub}"
-    yield subcard, sub, content
-  end
-####
-
-  def render_diff( card, content1, content2 )
-    c1 = WikiContent.new(card, content1, self).render!
-    c2 = WikiContent.new(card, content2, self).render!
-    diff c1, c2
+  def canonicalize_view( view )
+    view = view.to_sym
+    VIEW_ALIASES[view.to_sym] || view
   end
 
-  def replace_references( card, old_name, new_name )
-    #warn "replacing references...card name: #{card.name}, old name: #{old_name}, new_name: #{new_name}"
-    #content = content.blank? ? card.content : content 
-    wiki_content = WikiContent.new(card, card.content, self)
-
-    wiki_content.find_chunks(Chunk::Link).each do |chunk|
-      link_bound = chunk.card_name == chunk.link_text          
-      chunk.card_name.replace chunk.card_name.replace_part(old_name, new_name)
-      chunk.link_text = chunk.card_name if link_bound
-    end
-    
-    wiki_content.find_chunks(Chunk::Transclude).each do |chunk|
-      chunk.card_name.replace chunk.card_name.replace_part(old_name, new_name)
-    end
-
-    String.new wiki_content.unrender!  
-  end
-      
   def expand_inclusions(content)
-Rails.logger.info "expand_inclusions #{card.name} #{content}"
-    render(card, content) do |cardname,opts|
-      expand_card(cardname,opts) do |tcard, opts|
-Rails.logger.info "expand_inclusions #{tcard.name} #{opts.inspect}"
+    render_card(content) do |card,opts|
+      expand_card(card,opts) do |tcard, opts|
         process_inclusion(tcard, opts)
       end
     end
   end
 
-  def expand_card(tname, options)
+### ---- Core renders --- Keep these on top for dependencies
+  action(:raw, :method=>:get_raw) do |*a|
+    if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
+      template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
+    else card.raw_content end
+  end
+
+  action(:core) do |*a|
+    r_content = _get_raw
+    render_card(r_content) {|card, opts| expand_inclusions(_get_raw)}
+  end
+
+  action(:naked) do |*a|
+    card.generic? ? _render_core : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
+  end
+
+###----------------( NAME) (FIXME move to chunks/transclude)
+  action(:name) do |*a| card.name end
+  action(:link) do |*a| args = a[0]||{}
+    Chunk::Reference.link_render(card.name, args)
+  end
+
+  ### is this "wrapped" and need to be in slot.rb?
+  action(:open_content) do |*a|
+    card.post_render(_render_naked)
+  end
+
+  ### is this "wrapped" and need to be in slot.rb?
+  action(:closed_content) do |*a|
+    if card.generic?
+      truncatewords_with_closing_tags( _render_naked )
+    else
+      render_card_partial(:line)   # in basic case: --> truncate( slot._render_open_content ))
+    end
+  end
+
+###----------------( SPECIAL )
+  action(:array) do |*a|
+    if card.is_collection?
+      card.each_name { |name| subslot(Card.fetch_or_new(name))._render_core }.inspect
+    else
+      [_render_naked].inspect
+    end
+  end
+
+  action(:blank) do |*a| "" end
+
+  ### is this "wrapped" and need to be in slot.rb?
+  action(:titled) do |*a|
+    content_tag( :h1, fancy_title(card.name) ) + self._render_content
+  end
+
+  action(:rss_titled) do |*a|
+    # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
+    content_tag( :h2, fancy_title(card.name) ) + self._render_open_content
+  end
+
+  action(:rss_change) do |*a|
+    self.requested_view = 'content'
+    render_partial('views/change')
+  end
+
+  def render(action, args={})
+#Rails.logger.debug "Slot(#{card.name}).render #{card.generic?} #{action} #{args.inspect}"
+    self.render_args = args.clone
+    denial = render_deny(action, args)
+    return denial if denial
+
+    action = canonicalize_view(action)
+    result = if render_meth = action_method(action)
+        send(render_meth, args)
+      else
+        "<strong>#{card.name} - unknown card view: '#{action}' M:#{render_meth.inspect}</strong>"
+      end
+
+    result << javascript_tag("setupLinksAndDoubleClicks();") if args[:add_javascript]
+    result.strip
+  rescue Card::PermissionDenied=>e
+    return "Permission error: #{e.message}"
+  end
+
+  def form
+    @form ||= begin
+      # NOTE this code is largely copied out of rails fields_for
+      options = {} # do I need any? #args.last.is_a?(Hash) ? args.pop : {}
+      block = Proc.new {}
+      builder = options[:builder] || ActionView::Base.default_form_builder
+      card.name.gsub!(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_record?  ##FIXME -- need to match other relative inclusions.
+      fields_for = builder.new("cards[#{card.name.pre_cgi}]", card, template, options, block)
+    end
+  end
+
+  def full_field_name(field)
+    form.text_field(field).match(/name=\"([^\"]*)\"/)[1]
+  end
+
+  def resize_image_content(content, size)
+    size = (size.to_s == "full" ? "" : "_#{size}")
+    content.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
+  end
+
+  def render_partial( partial, locals={} )
+    template.render(:partial=>partial, :locals=>{ :card=>card, :slot=>self }.merge(locals))
+  end
+
+  def card_partial(action)
+    # FIXME: I like this method name better- maybe other calls should resolve here instead
+    partial_for_action(action, card)
+  end
+
+  def render_card_partial(action, locals={})
+     render_partial card_partial(action), locals
+  end
+
+  def method_missing(method_id, *args, &proc)
+    # silence Rails 2.2.2 warning about binding argument to concat.  tried detecting rails 2.2
+    # and removing the argument but it broken lots of integration tests.
+    ActiveSupport::Deprecation.silence { @template.send(method_id, *args, &proc) }
+  end
+
+  def default_block
+    Proc.new do |tname, opts|
+      @view = opts[:view].to_sym if view == nil and opts[:view]
+      render_meth = action_method(view||:content)
+      if card.is_collection?
+        render_meth = ivw if item_view and ivw=action_method(item_view)
+        card.each_name { |name| subrenderer(name).send(render_meth,opts) }.join
+      elsif render_meth
+        send(render_meth,opts)
+      else raise "Can't do that view here #{view.inspect}"
+      end
+    end
+  end
+
+  def render_diff( content1, content2 )
+    c1 = WikiContent.new(card, content1, self).render!
+    c2 = WikiContent.new(card, content2, self).render!
+    diff c1, c2
+  end
+
+  def replace_references( old_name, new_name )
+    #warn "replacing references...card name: #{card.name}, old name: #{old_name}, new_name: #{new_name}"
+    #content = content.blank? ? card.content : content
+    wiki_content = WikiContent.new(card, card.content, self)
+
+    wiki_content.find_chunks(Chunk::Link).each do |chunk|
+      link_bound = chunk.card_name == chunk.link_text
+      chunk.card_name.replace chunk.card_name.replace_part(old_name, new_name)
+      chunk.link_text = chunk.card_name if link_bound
+    end
+
+    wiki_content.find_chunks(Chunk::Transclude).each do |chunk|
+      chunk.card_name.replace chunk.card_name.replace_part(old_name, new_name)
+    end
+
+    String.new wiki_content.unrender!
+  end
+
+  def expand_card(tcard, options, &block)
+    block = default_block unless block
     return options[:comment] if options.has_key?(:comment)
-Rails.logger.info "expand_card(#{tname}, #{options.inspect}) #{options[:state]}:#{char_count}"
+    tname = if String===tcard; x=tcard;tcard=nil;x else tcard.name end
     # Don't bother processing inclusion if we're already out of view
     return '' if (options[:state]==:line && self.char_count > Renderer.max_char_count)
 
     if is_main = tname == '_main'
       if content = main_content and content != '~~render main inclusion~~'
-Rails.logger.info "expand_card _main #{tname} C:#{content}"
         return layout == 'none' ? content : Slot.wrap_main(content)
       end
       tcard = @main_card
       tname = tcard.name
-Rails.logger.info "expand_card _main2 #{tcard&&tcard.name} ST:#{state}"
       options[:item] = item_view
       options[:view] = view
       options[:context] = 'main'
@@ -266,37 +366,36 @@ Rails.logger.info "expand_card _main2 #{tcard&&tcard.name} ST:#{state}"
       @main_card = @main_content = nil
     end
 
+    tcard ||= begin
+        fullname = get_inclusion_fullname(tname,options)
+        case
+        when state ==:edit #FIXME: state?
+          Card.fetch_or_new(fullname, {}, new_inclusion_card_args(options))
+        when sob.respond_to?(:name);   sob
+        else
+          Card.fetch_or_new(fullname, :skip_defaults=>true)
+        end
+      end
+
     options[:view] ||= context == 'layout_0' ? :naked : :content
-    options[:fullname] = fullname = get_inclusion_fullname(card, tname,options)
+    options[:fullname] = fullname
     options[:showname] = tname.to_show(fullname)
 
-    tcard ||= case
-    when state ==:edit
-      Card.fetch_or_new(fullname, {}, new_inclusion_card_args(options))
-    when sob.respond_to?(:name);   sob
-    else
-      Card.fetch_or_new(fullname, :skip_defaults=>true)
-    end
-
     tcard.loaded_trunk=card if tname =~ /^\+/
-    result = yield(tcard, options)
+    result = block.call(tcard, options)
     result = resize_image_content(result, options[:size]) if options[:size]
     @char_count += (result ? result.length : 0) #should we strip html here?
-Rails.logger.info "tcard result #{result}" if is_main
     is_main ? Slot.wrap_main(result) : result
   rescue Card::PermissionDenied
     ''
   end
 
   def resize_image_content(content, size)
-Rails.logger.info "resize_image_content #{content} #{size}"
     size = (size.to_s == "full" ? "" : "_#{size}")
     content.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
   end
 
   def process_inclusion(tcard, options)
-#raise "process_inclusion(#{tcard.name}, #{options.inspect}"
-Rails.logger.info "process_inclusion(#{tcard.name}, #{options.inspect}"
     sub = subrenderer(tcard, options[:context])
     #old_slot, Slot.current_slot = Slot.current_slot, subslot
 
@@ -312,30 +411,24 @@ Rails.logger.info "process_inclusion(#{tcard.name}, #{options.inspect}"
 
       when [:name, :link, :linkname].member?(vmode)  ; vmode
       #when [:name, :link, :linkname].member?(vmode)  ; raise "Should be handled in chunks"
-      when :edit == state
+      when :edit == state #FIXME: state?
        tcard.virtual? ? :edit_auto : :edit_in_form
       when new_card
         case
           when vmode==:naked  ; :blank
           when vmode==:setting; :setting_missing
-          when state==:line   ; :closed_missing
+          when state==:line   ; :closed_missing #FIXME: state?
           else                ; :open_missing
         end
-      when state==:line       ; :expanded_line_content
+      when state==:line       ; :expanded_line_content #FIXME: state?
       else                    ; vmode
       end
-    #result =
-    ## content templates
-Rails.logger.info "S/P ? #{tcard.name} #{tcard.type}" if tcard.type == 'Pointer' or tcard.type == 'Search'
-    sub.render(tcard, card.templated_content || card.content, options)
-    #Slot.current_slot = old_slot
-    #result
+    sub.render_card('', options)
 #  rescue
 #    %{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
   end
 
-  def get_inclusion_fullname(card, name,options)
-Rails.logger.info "get_inclusion_fullname(#{card.name}, #{name}, #{options.inspect}"
+  def get_inclusion_fullname(name,options)
     fullname = name+'' #weird.  have to do this or the tname gets busted in the options hash!!
     context = case
     when sob; (sob.respond_to?(:name) ? sob.name : sob)
@@ -347,7 +440,6 @@ Rails.logger.info "get_inclusion_fullname(#{card.name}, #{name}, #{options.inspe
     fullname = fullname.to_absolute(context)
     fullname.gsub!('_user') { User.current_user.cardname }
     fullname = fullname.particle_names.map do |x|
-Rails.logger.info "param subs #{x} #{params.inspect} :: #{params and params[x]}" if x =~ /^_/
       if x =~ /^_/ and params and params[x]
         CGI.escapeHTML( params[x] )
       else x end
@@ -356,7 +448,6 @@ Rails.logger.info "param subs #{x} #{params.inspect} :: #{params and params[x]}"
   end
 
   def get_inclusion_content(cardname)
-    #parameters = root.slot_options[:relative_content]
     content = relative_content[cardname.gsub(/\+/,'_')]
 
     # CLEANME This is a hack to get it so plus cards re-populate on failed signups
@@ -374,13 +465,13 @@ Rails.logger.info "param subs #{x} #{params.inspect} :: #{params and params[x]}"
     args
   end
 
-  protected
-  def update_references(card, rendering_result)
-Rails.logger.info "update_references1 #{card.name}, #{rendering_result}"
+  def update_references(rendering_result=nil)
+    return unless card
     WikiReference.delete_all ['card_id = ?', card.id]
 
     if card.id and card.respond_to?('references_expired')
       card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
+      rendering_result ||= WikiContent.new(card, _get_raw, self)
       rendering_result.find_chunks(Chunk::Reference).each do |chunk|
         reference_type =
           case chunk
@@ -389,7 +480,6 @@ Rails.logger.info "update_references1 #{card.name}, #{rendering_result}"
             else raise "Unknown chunk reference class #{chunk.class}"
           end
 
-Rails.logger.info "update_reference: ID:#{card.id}, RN:#{chunk.refcard_name.to_key}, RCID:#{chunk.refcard ? chunk.refcard.id : nil}, LT:#{reference_type}"
 
         WikiReference.create!( :card_id=>card.id,
           :referenced_name=>chunk.refcard_name.to_key,
@@ -397,6 +487,30 @@ Rails.logger.info "update_reference: ID:#{card.id}, RN:#{chunk.refcard_name.to_k
           :link_type=>reference_type
          )
       end
+    end
+  end
+
+  ### ------  from wagn_helper ----
+  def partial_for_action( name, card=nil )
+    # FIXME: this should look up the inheritance hierarchy, once we have one
+    # wow this is a steaming heap of dung.
+    cardtype = (card ? card.type : 'Basic').underscore
+    if Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR <=1
+      finder.file_exists?("/types/#{cardtype}/_#{name}") ?
+        "/types/#{cardtype}/#{name}" :
+        "/types/basic/#{name}"
+    elsif   Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR > 2
+      ## This test works for .rhtml files but seems to fail on .html.erb
+      begin
+        @template.view_paths.find_template "types/#{cardtype}/_#{name}"
+        "types/#{cardtype}/#{name}"
+      rescue ActionView::MissingTemplate => e
+        "/types/basic/#{name}"
+      end
+    else
+      @template.view_paths.find { |template_path| template_path.paths.include?("types/#{cardtype}/_#{name}") } ?
+        "/types/#{cardtype}/#{name}" :
+        "/types/basic/#{name}"
     end
   end
 end

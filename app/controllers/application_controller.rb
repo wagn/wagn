@@ -10,6 +10,8 @@ class ApplicationController < ActionController::Base
 
   helper_method :main_card?
 
+  attr_accessor :renderer
+
   include ActionView::Helpers::TextHelper #FIXME: do we have to do this? its for strip_tags() in edit()
   include ActionView::Helpers::SanitizeHelper
 
@@ -125,6 +127,8 @@ class ApplicationController < ActionController::Base
     name = Cardname.unescape(id)
     card_params = params[:card] ? params[:card].clone : {}
     @card = Card.fetch_or_new(name, {}, card_params)
+    #get_slot(@card)
+    @card
   end
 
   def load_card_and_revision

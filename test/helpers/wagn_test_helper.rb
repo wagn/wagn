@@ -20,9 +20,9 @@ module WagnTestHelper
     #User.current_user = User.find_by_login('joe_user')
   end
  
-  def get_renderer()
+  def get_renderer
     require 'renderer'
-    Renderer.new
+    Renderer.new(Card.new(:name=>'dummy'))
   end
   
   def given_cards( *definitions )   
@@ -37,7 +37,7 @@ module WagnTestHelper
   # end
   
   def render( card )
-    Renderer.new.render(card)
+    Renderer.new(card).render_card
   end 
   
   def assert_difference(object, method = nil, difference = 1)

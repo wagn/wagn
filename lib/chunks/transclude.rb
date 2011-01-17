@@ -1,6 +1,6 @@
 module Chunk
   class Transclude < Reference
-    attr_reader :stars, :expand, :inclusion_map, :renderer, :options, :base
+    attr_reader :stars, :inclusion_map, :renderer, :options, :base
     unless defined? TRANSCLUDE_PATTERN
       #  {{+name|attr:val;attr:val;attr:val}}
       TRANSCLUDE_PATTERN = /\{\{(([^\|]+?)\s*(\|([^\}]+?))?)\}\}/
@@ -12,9 +12,8 @@ module Chunk
       super   
       #warn "FOUND TRANSCLUDE #{match_data} #{content}"
       @card_name, @options, @configs = self.class.parse(match_data)
-Rails.logger.info "transclude init #{card_name} #{options.inspect} N#{@configs.inspect}"
-      @base, @renderer, @expand, @inclusion_map =
-         content.card, content.renderer, content.expand, content.inclusion_map
+      @base, @renderer, @inclusion_map =
+         content.card, content.renderer, content.inclusion_map
     end
   
     def self.parse(match)
@@ -46,9 +45,7 @@ Rails.logger.info "transclude init #{card_name} #{options.inspect} N#{@configs.i
     end                        
     
     def unmask_text(&block)
-Rails.logger.info "unmask_text #{options.inspect} E:#{expand} U:#{@unmask_text} T:#{text}"
       return @unmask_text if @unmask_text
-      #return text unless expand
       comment = @options[:comment]
       return comment if comment
       refcard_name
@@ -78,7 +75,6 @@ Rails.logger.info "unmask_text #{options.inspect} E:#{expand} U:#{@unmask_text} 
     
     private
     def base_card 
-Rails.logger.info "base_card trans #{options[:base]} B#{base&&base.name} N#{card&&card.name}"
       case options[:base]
       when 'self'  ; card
       when 'parent'; card.trunk

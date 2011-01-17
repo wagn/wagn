@@ -106,31 +106,15 @@ class WikiContent < String
   attr_reader :revision, :not_rendered, :pre_rendered, :renderer, :card,
     :inclusion_map
 
-  def initialize(card, content, renderer, opts=nil, inclusion_map=nil)
+  def initialize(card, content, renderer, inclusion_map=nil)
     @not_rendered = @pre_rendered = nil
     @renderer = renderer
     @inclusion_map = inclusion_map
-    @expand = case
-              when Hash===opts
-                base = opts[:base] if opts.has_key?(:base)
-                case
-                when opts.has_key?(:expand); opts[:expand]
-                when opts.has_key?(:raw); not opts[:raw]
-		else true
-                end
-	      else
-                case Array===opts ? opts[0] : opts
-                when :expand; true
-                when :raw;    false
-		else true
-                end
-              end
-    #@card = base || card or raise "No Card in Content!!"
     @card = card or raise "No Card in Content!!"
     super(content)
     init_chunk_manager()
     ACTIVE_CHUNKS.each{|chunk_type| chunk_type.apply_to(self)}
-Rails.logger.info "wiki content init[#{expand}] #{card.name}, #{opts.inspect}, #{inclusion_map.inspect}\nTrace #{Kernel.caller.slice(0,6).join("\n")}"
+#Rails.logger.info "wiki content init #{card.name}, #{inclusion_map.inspect}\nTrace #{Kernel.caller.slice(0,6).join("\n")}"
     @not_rendered = String.new(self)
   end
 
@@ -148,7 +132,7 @@ Rails.logger.info "wiki content init[#{expand}] #{card.name}, #{opts.inspect}, #
        chunk.nil? ? $~[0] : ( revert ? chunk.revert : chunk.unmask_text(&block) )
       end)
     end
-Rails.logger.info "wiki render! #{@card.name} #{self.slice(0,80)}\nTrace #{Kernel.caller.slice(0,5).join("\n")}" unless revert
+#Rails.logger.info "wiki render! #{@card.name} #{self.slice(0,80)}\nTrace #{Kernel.caller.slice(0,5).join("\n")}" unless revert
     self
   end                    
   

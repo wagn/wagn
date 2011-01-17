@@ -17,7 +17,7 @@
     <% if @current=='config' %>
       <%= slot.expand_inclusions render(:partial=>'config') %>
     <% else %>
-       <%= render_card( "#{card.name}+#{@current}", :content ) %>
+	    <%= render_card( "{{#{card.name}+#{@current}}}" ) %>
      <% end %>
   </div>
   

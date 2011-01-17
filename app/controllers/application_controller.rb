@@ -17,7 +17,7 @@ class ApplicationController < ActionController::Base
 
   before_filter :per_request_setup, :except=>[:render_fast_404]
 
-  # OPTIMIZE: render_fast_404 still isn't that fast (?18reqs/sec) 
+  # OPTIMIZE: render_fast_404 still isn't that fast (?18reqs/sec)
   # can we turn sessions off for it and see if that helps?
   layout :wagn_layout, :except=>[:render_fast_404]
 
@@ -54,7 +54,7 @@ class ApplicationController < ActionController::Base
     # FIXME: this is a bit of a kluge.. several things stores as cattrs in modules
     # that need to be reset with every request (in addition to current user)
     System.request = request
-    #System.time = Time.now.to_f              
+    #System.time = Time.now.to_f
     ## DEBUG
     ActiveRecord::Base.logger.debug("WAGN: per request setup")
     load_location
@@ -73,7 +73,7 @@ class ApplicationController < ActionController::Base
               'application'
             end
         end
-      } 
+      }
     end
     layout
   end
@@ -140,7 +140,7 @@ class ApplicationController < ActionController::Base
 
   # ----------( rendering methods ) -------------
 
-  # dormant code.  
+  # dormant code.
   def render_jsonp(args)
     str = render_to_string args
     render :json=>(params[:callback] || "wadget") + '(' + str.to_json + ')'
@@ -193,7 +193,7 @@ class ApplicationController < ActionController::Base
     # Create used this scroll
     #<%= javascript_tag 'scroll(0,0)'
 
-    #errors.each{|attr,msg| puts "#{attr} - #{msg}" }      
+    #errors.each{|attr,msg| puts "#{attr} - #{msg}" }
     # getNextElement() will crawl up nested slots until it finds one with a notice div
 
     on_error_js = ""
@@ -221,6 +221,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-end            
+end
 
-  
+

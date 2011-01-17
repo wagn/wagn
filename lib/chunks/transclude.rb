@@ -61,7 +61,6 @@ module Chunk
       when :link;     card_link
       when :linkname; Cardname.escape(refcard_name)
       else
-	      Rails.logger.info "unmask yields #{card_name} #{options.inspect}"
         yield card_name, options
       end
     end

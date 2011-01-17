@@ -1,7 +1,7 @@
-<% tagname = card.name.tag_name 
+<% tagname = card.name.tag_name
    type = card.cardtype
 %>
-       
+
 <h1>Watchers</h1> <%#ENGLISH%>
 <p>&nbsp;</p>
 <% if card.type == "Cardtype" %>
@@ -11,9 +11,9 @@
   <strong>People watching "<%= card.name %>"</strong>
   <p>Watchers receive email when <%= card.name %> is changed.</p>
 <% end %>
-<p><a href="http://wagn.org/wagn/Notification">Learn more about notifications</a></p>                                                  
+<p><a href="http://wagn.org/wagn/Notification">Learn more about notifications</a></p>
 <blockquote>
-  <p>{{+*watchers}}</p>  
+  <p>{{+*watchers}}</p>
 </blockquote>
 
 

@@ -1,10 +1,10 @@
-<%- 
+<%-
 setting_name = params[:setting]
 slot = get_slot
 %>
 <div class="open-set-setting">
 
-  <div class="instruction setting-description">  
+  <div class="instruction setting-description">
     <%= slot.expand_inclusions "{{#{setting_name}+*right+*edit help}}" %>
   </div>
 
@@ -15,7 +15,7 @@ slot = get_slot
 
   <% Wagn::Pattern.set_names(card).each do |set_name|%>
     <%- value_card = Card.fetch_or_new("#{set_name}+#{setting_name}") %>
-  
+
     <div class="setting-row">
       <div class="value">
         <%= slot.subslot(value_card).render((value_card.new_record? ? :setting_missing : :setting), :view=>'setting') %>
@@ -24,8 +24,8 @@ slot = get_slot
         <%= link_to_page Wagn::Pattern.label(set_name), set_name %>
       </div>
     </div>
-  
-  
+
+
   <% end %>
 </div>
 

@@ -1,6 +1,6 @@
 <div>
-<a href="<%= @card_url %>"><%= @card.name %></a> 
-  was just 
+<a href="<%= @card_url %>"><%= @card.name %></a>
+  was just
   <%- if @action=='edited' -%>
     <a href="<%= @change_url %>"><%= @action %></a>
   <%- else -%>
@@ -23,8 +23,8 @@
 <br/>
 
 <div>See the card: <%= @card_url %></div>
-               
-<div> 
+
+<div>
   You received this email because you're watching "<%= @watched %>". <br/>
-  <a href="<%= @unwatch_url %>">Unwatch</a> to stop receiving these emails.  
+  <a href="<%= @unwatch_url %>">Unwatch</a> to stop receiving these emails.
 </div>

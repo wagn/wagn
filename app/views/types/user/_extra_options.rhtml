@@ -1,12 +1,12 @@
 <% if System.ok? :assign_user_roles %>
  <%= render :partial=>'options/option', :locals=>{
      :name=>'roles',
-     :label=>'Roles', 
+     :label=>'Roles',
      :field=>link_to_remote( "User Roles", #ENGLISH
-       :url=>{ :controller=>'options', :action=>'roles', :id=>params[:id], 
+       :url=>{ :controller=>'options', :action=>'roles', :id=>params[:id],
                :context=>slot.context
              }, :update=>slot.id
-     ), 
+     ),
      :help=>''
    }
  %>

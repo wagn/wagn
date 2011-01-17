@@ -70,8 +70,8 @@ module Cardlib
         Renderer.new(context).render_card( r1=renderer.get_raw, {:render_base=>context} )
         #renderer.render_card( r1=renderer.get_raw, {:render_base=>context} )
       else
-	#renderer.render_card( r1= renderer.get_raw )
-	renderer.render_card( r1= renderer.get_raw, {:render_base=>self} )
+        #renderer.render_card( r1= renderer.get_raw )
+        renderer.render_card( r1= renderer.get_raw, {:render_base=>self} )
       end
     end
 

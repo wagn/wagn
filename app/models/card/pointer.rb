@@ -1,9 +1,9 @@
 module Card
   class Pointer < Base
 
-    def cacheable?
-      false
-    end
+    def cacheable?()     false end
+    def is_collection?() true  end
+
 
     def add_reference( cardname )
       unless pointees.include? cardname
@@ -20,7 +20,7 @@ module Card
     end
 
     def pointees( context = nil )
-      User.as(:wagbot) do
+      ::User.as(:wagbot) do
         links = content.split(/\n+/).map{ |x| x.gsub(/\[\[|\]\]/,'')}.map{|x|
           context ? x.to_absolute(context) : x
         }
@@ -36,7 +36,11 @@ module Card
 	    textcard = Card.fetch(option+'+'+name, :skip_virtual => true)
 	    textcard ? textcard.content : nil
 	  end   
-	  
+
+    def each_name
+      card.pointees.map { |name| yield(name) }
+    end
+
 	  def item_type
 	    opt = options_card
 	    opt ? opt.get_spec[:type] : nil

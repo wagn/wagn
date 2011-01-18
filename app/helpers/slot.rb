@@ -114,7 +114,7 @@ class Slot
   end
 
 ### ---- Core renders --- Keep these on top for dependencies
-  view(:raw, :method=>:get_raw) do |*a,&b| args = a[0]||{}
+  view(:raw, :method=>:get_raw) do |*a| args = a[0]||{}
     if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
       template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
     else card.raw_content end

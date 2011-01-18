@@ -97,13 +97,13 @@ class Slot
     def procs( method_id, priv_name, final )
       self.class_eval do 
         define_method( priv_name, &final )
-        define_method( method_id ) do |*a,&b| a = a[0]||{}
-          render_check(method_id, a) || send(priv_name, a, &b)
+        define_method( method_id ) do |*args| 
+          render_check(method_id, args) || send(priv_name, args)
         end
       end
     end
 
-    define_method(:action) do |*a, &final| action,opts = a[0],a[1]||{}
+    def view(action, opts={}, &final)
       inner = opts.delete(:method)
       method_id = inner||"render_#{action}"
       actions = @@render_actions||={}
@@ -113,21 +113,21 @@ class Slot
   end
 
 ### ---- Core renders --- Keep these on top for dependencies
-  action(:raw, :method=>:get_raw) do |*a,&b| args = a[0]||{}
+  view(:raw, :method=>:get_raw) do |*a,&b| args = a[0]||{}
     if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
       template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
     else card.raw_content end
   end
 
-  action(:core) do |*a| args = a[0]||{}
+  view(:core) do |*a| args = a[0]||{}
     expand_raw(args)
   end
 
-  action(:naked) do |*a| args = a[0]||{}
+  view(:naked) do |*a| args = a[0]||{}
     card.generic? ? _render_core : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
   end
 
-  action(:content) do |*a| args = a[0]||{}
+  view(:content) do |*a| args = a[0]||{}
     @state = 'view'
     self.requested_view = 'content'
     c = _render_naked
@@ -135,54 +135,54 @@ class Slot
     wrap('content', args, wrap_content(c))
   end
 
-  action(:new) do |*a| args = a[0]||{}
+  view(:new) do |*a| args = a[0]||{}
     wrap('', args, render_partial('views/new'))
   end
 
-  action(:open) do |*a| args = a[0]||{}
+  view(:open) do |*a| args = a[0]||{}
     @state = :view
     self.requested_view = 'open'
     wrap('open', args, render_partial('views/open'))
   end
 
-  action(:closed) do |*a| args = a[0]||{}
+  view(:closed) do |*a| args = a[0]||{}
     @state = :line
     self.requested_view = 'closed'
     wrap('closed', args, render_partial('views/closed'))
   end
 
-  action(:setting) do |*a| args = a[0]||{}
+  view(:setting) do |*a| args = a[0]||{}
     wrap( self.requested_view = 'content', args,
           render_partial('views/setting') )
   end
 
-  action(:edit) do |*a| args = a[0]||{}
+  view(:edit) do |*a| args = a[0]||{}
     @state=:edit
     # FIXME CONTENT: the hard template test can go away when we phase out the old system.
     wrap('', args, card.content_template ?  render(:multi_edit) : content_field(slot.form))
   end
 
-  action(:multi_edit) do |*a| args = a[0]||{}
+  view(:multi_edit) do |*a| args = a[0]||{}
     @state=:edit
     args[:add_javascript]=true
     wrap('', args, hidden_field_tag(:multi_edit, true) + _render_naked)
   end
 
-  action(:rss_change) do |*a| args = a[0]||{}
+  view(:rss_change) do |*a| args = a[0]||{}
     self.requested_view = 'content'
     render_partial('views/change')
   end
 
-  action(:change) do |*a| args = a[0]||{}
+  view(:change) do |*a| args = a[0]||{}
     self.requested_view = 'content'
     wrap('content', args, w_content = render_partial('views/change'))
   end
 
-  action(:open_content) do |*a| args = a[0]||{}
+  view(:open_content) do |*a| args = a[0]||{}
     card.post_render(_render_naked)
   end
 
-  action(:closed_content) do |*a| args = a[0]||{}
+  view(:closed_content) do |*a| args = a[0]||{}
     if card.generic?
       truncatewords_with_closing_tags( _render_naked )
     else
@@ -190,7 +190,7 @@ class Slot
     end
   end
 
-  action(:array) do |*a| args = a[0]||{}
+  view(:array) do |*a| args = a[0]||{}
     if card.is_collection?
       card.each_name { |name| subslot(Card.fetch_or_new(name))._render_core }.inspect
     else
@@ -199,33 +199,33 @@ class Slot
   end
 
 ###----------------( NAME) (FIXME move to chunks/transclude)
-  action(:name) do |*a| card.name end
-  action(:link) do |*a| args = a[0]||{}
+  view(:name) do |*a| card.name end
+  view(:link) do |*a| args = a[0]||{}
     Chunk::Reference.link_render(card.name, args)
   end
 
       ###----------------( SPECIAL )
-  action(:titled) do |*a| args = a[0]||{}
+  view(:titled) do |*a| args = a[0]||{}
     content_tag( :h1, fancy_title(card.name) ) + self._render_content
   end
 
-  action(:rss_titled) do |*a| args = a[0]||{}
+  view(:rss_titled) do |*a| args = a[0]||{}
     # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
     content_tag( :h2, fancy_title(card.name) ) + self._render_open_content
   end
 
-  action(:layout) do |*a| args = a[0]||{}
+  view(:layout) do |*a| args = a[0]||{}
     @main_card, mc = args.delete(:main_card), args.delete(:main_content)
     @main_content = mc.blank? ? nil : wrap_main(mc)
     expand_inclusions(card.raw_content, main_card)
   end
 
 ###---(  EDIT VIEWS )
-  action(:edit_in_form) do |*a| args = a[0]||{}
+  view(:edit_in_form) do |*a| args = a[0]||{}
     render_partial('views/edit_in_form', args.merge(:form=>form))
   end
 
-  action(:blank) do |*a| "" end
+  view(:blank) do |*a| "" end
 
   #
   # Now that all the actions are defined, not much left to render

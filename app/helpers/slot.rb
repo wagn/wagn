@@ -261,11 +261,7 @@ class Slot
       fields_for = builder.new("cards[#{card.name.pre_cgi}]", card, @template, options, block)
     end
   end
-
-  def full_field_name(field)
-    form.text_field(field).match(/name=\"([^\"]*)\"/)[1]
-  end
-
+   
   def js
     @js ||= SlotJavascript.new(self)
   end
@@ -694,9 +690,8 @@ Rails.logger.info "method_missing(#{method_id}, #{args.inspect}, #{proc.inspect}
     self.form = form
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
-    editor_partial = (card.type=='Pointer' ? ((c=card.setting('input'))  ? c.gsub(/[\[\]]/,'') : 'list') : 'editor')
     User.as :wagbot do
-      pre_content + clear_queues + self.render_partial( card_partial(editor_partial), options ) + setup_autosave
+      pre_content + clear_queues + self.render_partial( card_partial('editor'), options ) + setup_autosave
     end
   end                          
  

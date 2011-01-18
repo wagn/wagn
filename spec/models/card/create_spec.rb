@@ -61,9 +61,9 @@ describe Card, "created by Card.new " do
     @c.name.should == 'Old Card'
   end
   
-  it "should not override content set by pointees with default content" do
+  it "should not override explicit content with default content" do
     Card.create! :name => "blue+*right+*default", :content => "joe", :type=>"Pointer"
-    c = Card.new :name => "Lady+blue", :pointees => "Jimmy"
+    c = Card.new :name => "Lady+blue", :content => "[[Jimmy]]"
     c.content.should == "[[Jimmy]]"
   end
 end

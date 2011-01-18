@@ -19,19 +19,7 @@ module Cardlib
 
     def soft_template?
       name && name =~ /\*default/
-    end
-
-    def pointees( context = nil )
-      User.as(:wagbot) do
-        links = content.split(/\n+/).map{ |x| x.gsub(/\[\[|\]\]/,'')}.map{|x|
-          context ? x.to_absolute(context) : x
-        }
-      end
-    end
-    
-    def pointee
-      pointees.first
-    end    
+    end   
     
     # FIXME: maybe this should be methods in individual classes?
     def list_items context = nil

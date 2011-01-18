@@ -274,15 +274,14 @@ module Card
       cards.each_pair do |name, opts|
         opts[:content] ||= ""
         # make sure blank content doesn't override pointee assignments if they are present
-        if (opts['pointee'].present? or opts['pointees'].present?) 
-          opts.delete('content')
-        end                                                                               
+        #if (opts['pointee'].present? or opts['pointees'].present?) 
+        #  opts.delete('content')
+        #end                                                                               
         name = name.post_cgi.to_absolute(self.name)
         logger.info "multi update working on #{name}: #{opts.inspect}"
         if card = Card.fetch(name, :skip_virtual=>true)
           card.update_attributes(opts)
-        elsif opts[:pointee].present? or opts[:pointees].present? or  
-                (opts[:content].present? and opts[:content].strip.present?)
+        elsif opts[:content].present? and opts[:content].strip.present?
           opts[:name] = name                
           if ::Cardtype.create_ok?( self.type ) && !::Cardtype.create_ok?( Card.new(opts).type )
             ::User.as(:wagbot) { Card.create(opts) }
@@ -461,7 +460,7 @@ module Card
       new_card? ? ok!(:create_me) : ok!(:read) 
       current_revision ? current_revision.content : ""
     end   
-        
+
     def raw_content
       templated_content || content
     end

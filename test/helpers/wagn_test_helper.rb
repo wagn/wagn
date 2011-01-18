@@ -20,7 +20,7 @@ module WagnTestHelper
     #User.current_user = User.find_by_login('joe_user')
   end
  
-  def get_renderer
+  def get_renderer()
     require 'renderer'
     Renderer.new(Card.new(:name=>'dummy'))
   end
@@ -36,8 +36,10 @@ module WagnTestHelper
   #   ::Card.find_by_name(name)
   # end
   
-  def render( card )
-    Renderer.new(card).render_card
+  def render_card( card )
+#r=    Renderer.new(card)
+#Rails.logger.info "render_card( #{card} ) #{r}"
+    Renderer.new(card).render_view()
   end 
   
   def assert_difference(object, method = nil, difference = 1)

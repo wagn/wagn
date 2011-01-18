@@ -103,7 +103,7 @@ class Slot
       end
     end
 
-    define_method(:action) do |action, *opts, &final| opts = opts[0]||{}
+    define_method(:action) do |*a, &final| action,opts = a[0],a[1]||{}
       inner = opts.delete(:method)
       method_id = inner||"render_#{action}"
       actions = @@render_actions||={}

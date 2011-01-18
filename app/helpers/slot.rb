@@ -97,7 +97,8 @@ class Slot
     def procs( method_id, priv_name, final )
       self.class_eval do 
         define_method( priv_name, &final )
-        define_method( method_id ) do |*args| 
+        define_method( method_id ) do |*args|
+          args = args[0]||{} 
           render_check(method_id, args) || send(priv_name, args)
         end
       end

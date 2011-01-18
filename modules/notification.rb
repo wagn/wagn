@@ -52,15 +52,15 @@ module Notification
     end
     
     def card_watchers 
-      pointees_from("#{name}+*watchers")
+      items_from("#{name}+*watchers")
     end
     
     def type_watchers
-      pointees_from(::Cardtype.name_for( self.type ) + "+*watchers" )
+      items_from(::Cardtype.name_for( self.type ) + "+*watchers" )
     end
     
-    def pointees_from( cardname )
-      (c = Card.fetch(cardname, :skip_virtual=>true)) ? c.pointees.reject{|x|x==''} : []
+    def items_from( cardname )
+      (c = Card.fetch(cardname, :skip_virtual=>true)) ? c.items.reject{|x|x==''} : []
     end  
       
     def watchers

@@ -27,7 +27,6 @@ module WagnHelper
     controller.renderer = slot
   end
 
-=begin
   # FIMXE: this one's a hack...
   def render_card(card, mode, args={})
     if String===card && name = card
@@ -38,7 +37,6 @@ module WagnHelper
     subslot = Slot.current_slot ? Slot.current_slot.subslot(card) : Slot.new(card)
     subslot.render(mode.to_sym, args)
   end
-=end
 
   Droplet = Struct.new(:name, :link_options)
 

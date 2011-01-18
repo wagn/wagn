@@ -199,7 +199,8 @@ setupLinksAndDoubleClicks = function() {
   jQuery(".comment-box, .TYPE-pointer", ".editOnDoubleClick").dblclick(function(event){
     event.stopPropagation();
   });
-}                  
+}
+
 
 setupCreateOnClick=function(container) {
 //  console.log("setting up creates");
@@ -511,6 +512,22 @@ var attachmentOnChangeUpdateParent = function(attachment_uuid, filename) {
   
   // for now, don't let users submit while the image is in process of uploading.
 	deactivateSubmit(attachment_uuid);  
+}
+
+
+setPointerContent=function(eid, items) {
+  content_field = $(eid + '-hidden-content');
+  list = (items instanceof Array) ? items : [items]; 
+  content_field.value = list.map(
+    function(x){
+      if ((x==null) || (x.strip()=='')) {
+        return '';
+      } else {
+        return '[[' + x + ']]';
+      }
+    }
+  ).join("\n");
+  //alert('value = ' + content_field.value);
 }
 
 

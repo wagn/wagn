@@ -1,2 +1,9 @@
-<% options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]} %>
-<%= slot.form.select :pointees, options, {}, :id=>"#{slot.context}-select", :class=>'pointer-select' %>
+<%- 
+  eid = slot.context
+  options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]} 
+%>
+<%= select_tag :pointer, options_for_select(options, card.first), :id=>"#{eid}-select", :class=>'pointer-select' %>
+
+<%= slot.editor_hooks :save=>%{
+  setPointerContent('#{eid}', $('#{eid}-select').value); return true;
+} %>

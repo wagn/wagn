@@ -36,7 +36,7 @@ class Renderer
   # Action definitions
   #
   #   When you declare:
-  #     action(:name) do |*a| args=a[0]||{} ... end
+  #     view(:name) do |*a| args=a[0]||{} ... end
   #
   #   These methods are defined on the renderer
   #
@@ -50,7 +50,7 @@ class Renderer
   #     def _render_name(args={} ... end
   #
   #   Also to declare other names:
-  #     action(:action, :method=>:name) do ... end
+  #     view(:action, :method=>:name) do ... end
   #   for def name ... end and def _name ... end
   #   and render(:action ...) -> name(...)
   #
@@ -58,13 +58,13 @@ class Renderer
     def procs( method_id, priv_name, final )
       self.class_eval do
         define_method( priv_name, &final )
-        define_method( method_id ) do |*a,&b| a = a[0]||{}
-          render_check(method_id, a) || send(priv_name, a, &b)
+        define_method( method_id ) do |*args|
+          render_check(method_id, args) || send(priv_name, args)
         end
       end
     end
 
-    define_method(:action) do |action, *opts, &final| opts = opts[0]||{}
+    def view(action, opts={}, &final)
       inner = opts.delete(:method)
       method_id = inner||"render_#{action}"
       actions[action] = priv_name = "_#{method_id}".to_sym
@@ -137,11 +137,11 @@ class Renderer
     @inclusion_map
   end
 
-  def render_card(content=nil, opts={}, &block)
+  def render_view(content=nil, opts={}, &block)
     return content unless card
     content = card.content if content.blank?
     if ctx=opts.delete(:render_base)
-      return subrenderer(ctx,nil,ctx).render_card(content, opts, block) if sob
+      return subrenderer(ctx,nil,ctx).render_view(content, opts, block) if sob
     end
 
     block = default_block unless block_given?
@@ -181,7 +181,7 @@ class Renderer
   end
 
   def expand_inclusions(content)
-    render_card(content) do |card,opts|
+    render_view(content) do |card,opts|
       expand_card(card,opts) do |tcard, opts|
         process_inclusion(tcard, opts)
       end
@@ -189,34 +189,34 @@ class Renderer
   end
 
 ### ---- Core renders --- Keep these on top for dependencies
-  action(:raw, :method=>:get_raw) do |*a|
+  view(:raw, :method=>:get_raw) do |*a|
     if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
       template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
     else card.raw_content end
   end
 
-  action(:core) do |*a|
+  view(:core) do |*a|
     r_content = _get_raw
-    render_card(r_content) {|card, opts| expand_inclusions(_get_raw)}
+    render_view(r_content) {|card, opts| expand_inclusions(_get_raw)}
   end
 
-  action(:naked) do |*a|
+  view(:naked) do |*a|
     card.generic? ? _render_core : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
   end
 
 ###----------------( NAME) (FIXME move to chunks/transclude)
-  action(:name) do |*a| card.name end
-  action(:link) do |*a| args = a[0]||{}
+  view(:name) do |*a| card.name end
+  view(:link) do |*a| args = a[0]||{}
     Chunk::Reference.link_render(card.name, args)
   end
 
   ### is this "wrapped" and need to be in slot.rb?
-  action(:open_content) do |*a|
+  view(:open_content) do |*a|
     card.post_render(_render_naked)
   end
 
   ### is this "wrapped" and need to be in slot.rb?
-  action(:closed_content) do |*a|
+  view(:closed_content) do |*a|
     if card.generic?
       truncatewords_with_closing_tags( _render_naked )
     else
@@ -225,7 +225,7 @@ class Renderer
   end
 
 ###----------------( SPECIAL )
-  action(:array) do |*a|
+  view(:array) do |*a|
     if card.is_collection?
       card.each_name { |name| subslot(Card.fetch_or_new(name))._render_core }.inspect
     else
@@ -233,19 +233,19 @@ class Renderer
     end
   end
 
-  action(:blank) do |*a| "" end
+  view(:blank) do |*a| "" end
 
   ### is this "wrapped" and need to be in slot.rb?
-  action(:titled) do |*a|
+  view(:titled) do |*a|
     content_tag( :h1, fancy_title(card.name) ) + self._render_content
   end
 
-  action(:rss_titled) do |*a|
+  view(:rss_titled) do |*a|
     # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
     content_tag( :h2, fancy_title(card.name) ) + self._render_open_content
   end
 
-  action(:rss_change) do |*a|
+  view(:rss_change) do |*a|
     self.requested_view = 'content'
     render_partial('views/change')
   end
@@ -278,10 +278,6 @@ class Renderer
       card.name.gsub!(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_record?  ##FIXME -- need to match other relative inclusions.
       fields_for = builder.new("cards[#{card.name.pre_cgi}]", card, template, options, block)
     end
-  end
-
-  def full_field_name(field)
-    form.text_field(field).match(/name=\"([^\"]*)\"/)[1]
   end
 
   def resize_image_content(content, size)
@@ -423,7 +419,7 @@ class Renderer
       when state==:line       ; :expanded_line_content #FIXME: state?
       else                    ; vmode
       end
-    sub.render_card('', options)
+    sub.render_view('', options)
 #  rescue
 #    %{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
   end

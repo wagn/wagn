@@ -38,13 +38,13 @@ class Slot < Renderer
 
 ### --- render action declarations --- wrapped views are defined for slots
 
-  action(:layout) do |*a| args = a[0]||{}
+  view(:layout) do |*a| args = a[0]||{}
 Rails.logger.info "_render_layout(#{args.inspect})"
     @main_card, mc = args.delete(:main_card), args.delete(:main_content)
     @main_content = mc.blank? ? _render_core : wrap_main(mc)
   end
 
-  action(:content) do |*a| args = a[0]||{}
+  view(:content) do |*a| args = a[0]||{}
     @state = 'view'
     self.requested_view = 'content'
     c = _render_naked
@@ -52,46 +52,46 @@ Rails.logger.info "_render_layout(#{args.inspect})"
     wrap('content', args, wrap_content(c))
   end
 
-  action(:new) do |*a| args = a[0]||{}
+  view(:new) do |*a| args = a[0]||{}
     wrap('', args, render_partial('views/new'))
   end
 
-  action(:open) do |*a| args = a[0]||{}
+  view(:open) do |*a| args = a[0]||{}
     @state = :view
     self.requested_view = 'open'
     wrap('open', args, render_partial('views/open'))
   end
 
-  action(:closed) do |*a| args = a[0]||{}
+  view(:closed) do |*a| args = a[0]||{}
     @state = :line
     self.requested_view = 'closed'
     wrap('closed', args, render_partial('views/closed'))
   end
 
-  action(:setting) do |*a| args = a[0]||{}
+  view(:setting) do |*a| args = a[0]||{}
     wrap( self.requested_view = 'content', args,
           render_partial('views/setting') )
   end
 
-  action(:edit) do |*a| args = a[0]||{}
+  view(:edit) do |*a| args = a[0]||{}
     @state=:edit
     # FIXME CONTENT: the hard template test can go away when we phase out the old system.
     wrap('', args, card.content_template ?  _render_multi_edit() : content_field(slot.form))
   end
 
-  action(:multi_edit) do |*a| args = a[0]||{}
+  view(:multi_edit) do |*a| args = a[0]||{}
     @state=:edit
     args[:add_javascript]=true
     wrap('', args, hidden_field_tag(:multi_edit, true) + _render_naked)
   end
 
-  action(:change) do |*a| args = a[0]||{}
+  view(:change) do |*a| args = a[0]||{}
     self.requested_view = 'content'
     wrap('content', args, w_content = render_partial('views/change'))
   end
 
 ###---(  EDIT VIEWS )
-  action(:edit_in_form) do |*a| args = a[0]||{}
+  view(:edit_in_form) do |*a| args = a[0]||{}
     render_partial('views/edit_in_form', args.merge(:form=>form))
   end
 
@@ -438,9 +438,8 @@ raise "Missed _main?" if tcard.name == '_main'
     self.form = form
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
-    editor_partial = (card.type=='Pointer' ? ((c=card.setting('input'))  ? c.gsub(/[\[\]]/,'') : 'list') : 'editor')
     User.as :wagbot do
-      pre_content + clear_queues + self.render_partial( card_partial(editor_partial), options ) + setup_autosave
+      pre_content + clear_queues + self.render_partial( card_partial('editor'), options ) + setup_autosave
     end
   end                          
  

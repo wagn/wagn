@@ -515,9 +515,9 @@ var attachmentOnChangeUpdateParent = function(attachment_uuid, filename) {
 }
 
 
-setPointerContent=function(eid, pointees) {
+setPointerContent=function(eid, items) {
   content_field = $(eid + '-hidden-content');
-  list = (pointees instanceof Array) ? pointees : [pointees]; 
+  list = (items instanceof Array) ? items : [items]; 
   content_field.value = list.map(
     function(x){
       if ((x==null) || (x.strip()=='')) {

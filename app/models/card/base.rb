@@ -273,8 +273,8 @@ module Card
       Wagn::Hook.call :before_multi_save, self, cards
       cards.each_pair do |name, opts|
         opts[:content] ||= ""
-        # make sure blank content doesn't override pointee assignments if they are present
-        #if (opts['pointee'].present? or opts['pointees'].present?) 
+        # make sure blank content doesn't override first assignments if they are present
+        #if (opts['first'].present? or opts['items'].present?) 
         #  opts.delete('content')
         #end                                                                               
         name = name.post_cgi.to_absolute(self.name)

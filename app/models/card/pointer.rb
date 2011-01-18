@@ -4,43 +4,36 @@ module Card
     def cacheable?()     false end
     def is_collection?() true  end
 
-
-    def add_reference( cardname )
-      unless pointees.include? cardname
-        self.content = (pointees + [cardname]).reject{|x|x.blank?}.map{|x| "[[#{x}]]" }.join("\n")
-        save!
-      end
-    end 
-	                                   
-	  def remove_reference( cardname ) 
-	    if pointees.include? cardname
-  	    self.content = (pointees - [cardname]).map{|x| "[[#{x}]]"}.join("\n")
-  	    save!
-	    end
-    end
-
-    def pointees( context = nil )
+    def items( context = nil )
       ::User.as(:wagbot) do
         links = content.split(/\n+/).map{ |x| x.gsub(/\[\[|\]\]/,'')}.map{|x|
           context ? x.to_absolute(context) : x
         }
       end
     end
-    
-    def pointee
-      pointees.first
-    end
-	    
-	  def option_text(option)
-	    name = setting('option label') || 'description'
-	    textcard = Card.fetch(option+'+'+name, :skip_virtual => true)
-	    textcard ? textcard.content : nil
-	  end   
 
     def each_name
-      card.pointees.map { |name| yield(name) }
+      items.map { |name| yield(name) }
     end
 
+    def first
+      items.first
+    end
+
+    def add_item( cardname )
+      unless items.include? cardname
+        self.content = (items + [cardname]).reject{|x|x.blank?}.map{|x| "[[#{x}]]" }.join("\n")
+        save!
+      end
+    end 
+	                                   
+	  def drop_item( cardname ) 
+	    if items.include? cardname
+  	    self.content = (items - [cardname]).map{|x| "[[#{x}]]"}.join("\n")
+  	    save!
+	    end
+    end
+    
 	  def item_type
 	    opt = options_card
 	    opt ? opt.get_spec[:type] : nil
@@ -55,8 +48,10 @@ module Card
       (oc=self.options_card) ? oc.search(:limit=>limit) : Card.search(:sort=>'alpha',:limit=>limit)
     end
 
-#    def autoname
-#      System.setting("#{self.name.tag_name}+*autoname")
-#    end
+	  def option_text(option)
+	    name = setting('option label') || 'description'
+	    textcard = Card.fetch(option+'+'+name, :skip_virtual => true)
+	    textcard ? textcard.content : nil
+	  end
   end
 end

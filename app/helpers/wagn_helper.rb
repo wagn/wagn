@@ -265,27 +265,10 @@ module WagnHelper
     end
   end
 
-  def wagn_form_for(record_or_name_or_array, *args, &proc)
-    options = args.extract_options!
-
-    case record_or_name_or_array
-    when String, Symbol
-      object_name = record_or_name_or_array
-    when Array
-      object = record_or_name_or_array.last
-      object_name = ActionController::RecordIdentifier.singular_class_name(object)
-      apply_form_for_options!(record_or_name_or_array, options)
-      args.unshift object
-    else
-      object      = record_or_name_or_array
-      object_name = ActionController::RecordIdentifier.singular_class_name(record_or_name_or_array)
-      apply_form_for_options!(object, options)
-      args.unshift object
-    end
-
+  def form_for_card(options={}, &proc)
     concat(form_remote_tag(options))
-    fields_for(object_name, *(args << options), &proc)
-    if args.second[:update]
+    fields_for(:card, options, &proc)
+    if options[:update]
       concat hidden_field_tag('_update','true')
     end
     concat('</form>')

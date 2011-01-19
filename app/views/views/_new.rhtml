@@ -12,13 +12,10 @@
     <%= error_messages_for :card %>
     <div class=cardnotice></div>
 
-    <% wagn_form_for :card, card, :url=>"card/create",
+    <% form_for_card(:url=>"card/create",
           :slot => slot,
-          :update => {
-            :success => slot.id,
-            :failure => slot.id(:cardnotice),
-          },
-          :html=>{ :class=>'form',:onsubmit=>slot.save_function  } do |form| %>
+          :update => {:success => slot.id, :failure => slot.id(:cardnotice)},
+          :html=>{:class=>'form', :onsubmit=>slot.save_function}) do |form| %>
 
       <div class="card-header">
         <% if !request.xhr? && @args[:type] && !@card.broken_type %>
@@ -57,7 +54,7 @@
           <% #FIXME CONTENT: the hard template test can go away when we phase out the old sytem %>
           <% if card.content_template %>
             <%- slot.form = form %>
-            <%= slot.render_multi_edit %>
+	    <%= slot.render_multi_edit %>
           <% else %>
             <%# if default_content = card.setting('default') ; card.content = default_content; end %>
             <%= slot.content_field(form) %>

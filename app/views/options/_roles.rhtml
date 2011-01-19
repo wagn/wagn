@@ -6,8 +6,8 @@
   :label=>"#{@card.name}'s Roles"
 }%>
 
-<%# wagn_form_for :card, @card, :url=>{:controller=>'options', :action=>'update_roles', :id=>@card.id},
-    :update => slot.id do |form| %>
+<%# form_for_card(:url=>{:controller=>'options', :action=>'update_roles', :id=>@card.id},
+    :update => slot.id) do |form| %>
   <%= slot.option_header 'User Roles' %>
     <% if System.ok? :assign_user_roles %>
       <% slot.option(option_args) do %>

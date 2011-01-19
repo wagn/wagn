@@ -52,15 +52,10 @@ module Cardlib
     end
     
     def contextual_content context = nil
-      renderer=Renderer.new(self)
-      if context
-        #Renderer.new(context).render_view( r1= renderer.get_raw )
-        Renderer.new(context).render_view( r1=renderer.get_raw, {:render_base=>context} )
-        #renderer.render_view( r1=renderer.get_raw, {:render_base=>context} )
-      else
-        #renderer.render_view( r1= renderer.get_raw )
-        renderer.render_view( r1= renderer.get_raw, {:render_base=>self} )
-      end
+      renderer = if context
+        Renderer.new(context, {:base=>self} )
+        else Renderer.new(self) end
+      renderer.render_view
     end
 
     def cardtype_name

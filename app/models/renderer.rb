@@ -30,18 +30,18 @@ class Renderer
   attr_reader :action, :inclusion_map, :params, :layout, :relative_content,
       :template, :root
   attr_accessor :card, :main_content, :main_card, :context, :char_count,
-      :depth, :form, :item_view, :view, :type, :sob
+      :depth, :form, :item_view, :view, :type, :base_card
 
   #
   # Action definitions
   #
   #   When you declare:
-  #     view(:name) do |*a| args=a[0]||{} ... end
+  #     view(:name) do |args|
   #
   #   These methods are defined on the renderer
   #
   #     # The external api with checks, equivalent to
-  #     def render_name(args={} ... end
+  #     def render_name(args={}) ... end
   #     render_action(:name, args)
   #       or
   #     render('', args.merge(:view=>:name))
@@ -55,37 +55,40 @@ class Renderer
   #   and render(:action ...) -> name(...)
   #
   class << self
-    def procs( method_id, priv_name, final )
-      self.class_eval do
-        define_method( priv_name, &final )
-        define_method( method_id ) do |*args|
+    def view(action, opts={}, &final)
+      inner = opts.delete(:method)
+      method_id = inner||"render_#{action}"
+      actions[action] = priv_name = "_#{method_id}".to_sym
+      class_eval do
+        priv_final="_final#{priv_name}"
+        define_method( priv_final, &final )
+        define_method( priv_name ) do |*a, &blk| args = a[0]||{}
+	  begin
+            send(priv_final, args, &blk)
+	  rescue ArgumentError =>e
+	  end
+	end
+
+        define_method( method_id ) do |*a| args = a[0]||{}
           render_check(method_id, args) || send(priv_name, args)
         end
       end
     end
 
-    def view(action, opts={}, &final)
-      inner = opts.delete(:method)
-      method_id = inner||"render_#{action}"
-      actions[action] = priv_name = "_#{method_id}".to_sym
-      procs( method_id, priv_name, final )
-    end
-
-    def renderer() @@current end # the current_renderer
+    def renderer() @@current end
     def actions() @@render_actions||={} end
     def view_aliases() VIEW_ALIASES end
   end
 
   def state()
-    case view
-    when :edit, :multi_edit; :edit
-    when :closed; :line
-    else :view
+    @state ||= case view
+      when :edit, :multi_edit; :edit
+      when :closed; :line
+      else :view
     end
   end
   def actions() self.class.render_actions end
-  # root renderer class, no search in super
-  def action_method(key) self.class.actions[key] end
+  def action_method(key) self.class.actions[key] end # root renderer class, no super
 
   def initialize(card, context="main_1", action="view", template=nil, opts={} )
     @card = card
@@ -94,7 +97,7 @@ class Renderer
       inclusion_map(      opts.delete(:inclusion_view_overrides) )
       @main_content     = opts.delete(:main_content)
       @main_card        = opts.delete(:main_card)
-      @sob              = opts.delete(:base)
+      @base_card              = opts.delete(:base)
       @params           = opts[:params]||{}
       @relative_content = opts.delete(:relative_content)||{}
     end
@@ -102,7 +105,6 @@ class Renderer
       t = ActionView::Base.new( CardController.view_paths, {} )
       t.helpers.send :include, CardController.master_helper_module
       t.helpers.send :include, NoControllerHelpers
-#Rails.logger.info "no controller #{caller.slice(0,10)*"\n"}" unless t.controller
       t
     end
     @char_count = 0
@@ -113,14 +115,15 @@ class Renderer
 
   def too_deep?() @depth >= 0 end
 
-  def subrenderer(subcard, context=nil, newsob=nil)
+  def subrenderer(subcard, context=nil)
+    if subcard; bcard=nil
+    else bcard, subcard = subcard, base_card end
     subcard = fetch_or_new(subcard) if String===subcard
     sub = self.clone
+    sub.base_card = bcard if bcard
     sub.depth = @depth+1
-    #raise "Too deep" if sub.too_deep?
     sub.main_content = sub.main_card = nil
     sub.char_count = 0
-    sub.sob = newsob if newsob
     sub.context = context if context
     sub.card = subcard
     sub
@@ -138,21 +141,23 @@ class Renderer
   end
 
   def render_view(content=nil, opts={}, &block)
+#Rails.logger.info "render_view #{card&&card.name}, #{content.inspect}, #{opts.inspect}, B:#{block_given?}\nTrace #{caller.slice(0,12)*"\n"}"
     return content unless card
     content = card.content if content.blank?
-    if ctx=opts.delete(:render_base)
-      return subrenderer(ctx,nil,ctx).render_view(content, opts, block) if sob
-    end
 
-    block = default_block unless block_given?
-    wiki_content = WikiContent.new(card, content, self, inclusion_map)
-    if card&&card.references_expired
-      update_references(wiki_content)
-    end
-    wiki_content.render! do |tname, opts|
-      full = opts[:fullname] = get_inclusion_fullname(tname, opts)
-      @view = opts[:view].to_sym if view == nil and opts[:view]
-      expand_card(tname,opts,&block)
+    if base_card
+      subrenderer.render_view(content, opts, &block)
+    else
+      block = default_block unless block_given?
+      wiki_content = WikiContent.new(card, content, self, inclusion_map)
+      if card&&card.references_expired
+        update_references(wiki_content)
+      end
+      wiki_content.render! do |tname, opts|
+        full = opts[:fullname] = get_inclusion_fullname(tname, opts)
+        @view = opts[:view].to_sym if view == nil and opts[:view]
+        expand_card(tname,opts,&block)
+      end
     end
   end
 
@@ -189,34 +194,35 @@ class Renderer
   end
 
 ### ---- Core renders --- Keep these on top for dependencies
-  view(:raw, :method=>:get_raw) do |*a|
+  view(:raw, :method=>:get_raw) do |args|
     if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
       template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
     else card.raw_content end
   end
 
-  view(:core) do |*a|
-    r_content = _get_raw
-    render_view(r_content) {|card, opts| expand_inclusions(_get_raw)}
+  view(:core) do |args|
+    render_view(_get_raw) do |tcard, opts|
+      expand_inclusions(subrenderer(tcard)._get_raw(opts))
+    end
   end
 
-  view(:naked) do |*a|
+  view(:naked) do |args|
     card.generic? ? _render_core : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
   end
 
 ###----------------( NAME) (FIXME move to chunks/transclude)
-  view(:name) do |*a| card.name end
-  view(:link) do |*a| args = a[0]||{}
+  view(:name) do |args| card.name end
+  view(:link) do |args|
     Chunk::Reference.link_render(card.name, args)
   end
 
   ### is this "wrapped" and need to be in slot.rb?
-  view(:open_content) do |*a|
+  view(:open_content) do |args|
     card.post_render(_render_naked)
   end
 
   ### is this "wrapped" and need to be in slot.rb?
-  view(:closed_content) do |*a|
+  view(:closed_content) do |args|
     if card.generic?
       truncatewords_with_closing_tags( _render_naked )
     else
@@ -225,7 +231,7 @@ class Renderer
   end
 
 ###----------------( SPECIAL )
-  view(:array) do |*a|
+  view(:array) do |args|
     if card.is_collection?
       card.each_name { |name| subslot(Card.fetch_or_new(name))._render_core }.inspect
     else
@@ -233,19 +239,19 @@ class Renderer
     end
   end
 
-  view(:blank) do |*a| "" end
+  view(:blank) do |args| "" end
 
   ### is this "wrapped" and need to be in slot.rb?
-  view(:titled) do |*a|
+  view(:titled) do |args|
     content_tag( :h1, fancy_title(card.name) ) + self._render_content
   end
 
-  view(:rss_titled) do |*a|
+  view(:rss_titled) do |args|
     # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
     content_tag( :h2, fancy_title(card.name) ) + self._render_open_content
   end
 
-  view(:rss_change) do |*a|
+  view(:rss_change) do |args|
     self.requested_view = 'content'
     render_partial('views/change')
   end
@@ -367,7 +373,7 @@ class Renderer
         case
         when state ==:edit #FIXME: state?
           Card.fetch_or_new(fullname, {}, new_inclusion_card_args(options))
-        when sob.respond_to?(:name);   sob
+        when base_card.respond_to?(:name);   base_card
         else
           Card.fetch_or_new(fullname, :skip_defaults=>true)
         end
@@ -427,7 +433,7 @@ class Renderer
   def get_inclusion_fullname(name,options)
     fullname = name+'' #weird.  have to do this or the tname gets busted in the options hash!!
     context = case
-    when sob; (sob.respond_to?(:name) ? sob.name : sob)
+    when base_card; (base_card.respond_to?(:name) ? base_card.name : base_card)
     when options[:base]=='parent'
       card.parent_name
     else
@@ -510,5 +516,4 @@ class Renderer
     end
   end
 end
-
 

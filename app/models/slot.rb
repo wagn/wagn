@@ -1,4 +1,3 @@
-require 'ruby-debug'
 class Slot < Renderer
 
   cattr_accessor :render_actions
@@ -13,8 +12,7 @@ class Slot < Renderer
   end
 
   def action_method(key)
-    cls=self.class
-    cls.actions.has_key?(key) ? cls.actions[key] : super.class.actions[key]
+    (cls=self.class).actions.has_key?(key) ? cls.actions[key] : super
   end
 
   # FIXME: simplify this to (card, opts)
@@ -30,7 +28,7 @@ class Slot < Renderer
     @state = :view
     @renders = {}
     @js_queue_initialized = {}
-    
+
     if card and card.is_collection? and item_param=params[:item]
       @item_view = item_param if !item_param.blank?
     end
@@ -38,60 +36,66 @@ class Slot < Renderer
 
 ### --- render action declarations --- wrapped views are defined for slots
 
-  view(:layout) do |*a| args = a[0]||{}
-Rails.logger.info "_render_layout(#{args.inspect})"
+  view(:layout) do |args|
     @main_card, mc = args.delete(:main_card), args.delete(:main_content)
     @main_content = mc.blank? ? _render_core : wrap_main(mc)
   end
 
-  view(:content) do |*a| args = a[0]||{}
+  view(:content) do |args|
     @state = 'view'
     self.requested_view = 'content'
     c = _render_naked
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
-    wrap('content', args, wrap_content(c))
+    wrap('content', args) {  wrap_content(c) }
   end
 
-  view(:new) do |*a| args = a[0]||{}
-    wrap('', args, render_partial('views/new'))
+  view(:new) do |args|
+    wrap('', args) { render_partial('views/new') }
   end
 
-  view(:open) do |*a| args = a[0]||{}
+  view(:open) do |args|
     @state = :view
     self.requested_view = 'open'
-    wrap('open', args, render_partial('views/open'))
+    wrap('open', args) { render_partial('views/open') }
   end
 
-  view(:closed) do |*a| args = a[0]||{}
+  view(:closed) do |args|
     @state = :line
     self.requested_view = 'closed'
-    wrap('closed', args, render_partial('views/closed'))
+    wrap('closed', args) { render_partial('views/closed') }
   end
 
-  view(:setting) do |*a| args = a[0]||{}
-    wrap( self.requested_view = 'content', args,
-          render_partial('views/setting') )
+  view(:setting) do |args|
+    wrap( self.requested_view = 'content', args) do
+      render_partial('views/setting')
+    end
   end
 
-  view(:edit) do |*a| args = a[0]||{}
+  view(:edit) do |args|
     @state=:edit
     # FIXME CONTENT: the hard template test can go away when we phase out the old system.
-    wrap('', args, card.content_template ?  _render_multi_edit() : content_field(slot.form))
+    wrap('', args) do
+      card.content_template ?  _render_multi_edit() : content_field(slot.form)
+    end
   end
 
-  view(:multi_edit) do |*a| args = a[0]||{}
+  view(:multi_edit) do |args|
     @state=:edit
     args[:add_javascript]=true
-    wrap('', args, hidden_field_tag(:multi_edit, true) + _render_naked)
+    wrap('', args) do
+      hidden_field_tag(:multi_edit, true) + _render_naked
+    end
   end
 
-  view(:change) do |*a| args = a[0]||{}
+  view(:change) do |args|
     self.requested_view = 'content'
-    wrap('content', args, w_content = render_partial('views/change'))
+    wrap('content', args) do
+      w_content = render_partial('views/change')
+    end
   end
 
 ###---(  EDIT VIEWS )
-  view(:edit_in_form) do |*a| args = a[0]||{}
+  view(:edit_in_form) do |args|
     render_partial('views/edit_in_form', args.merge(:form=>form))
   end
 
@@ -117,9 +121,7 @@ Rails.logger.info "_render_layout(#{args.inspect})"
   # FIXME: passing a block seems to only work in the templates and not from
   # internal slot calls, so I added the option passing internal content which
   # makes all the ugly block_given? ifs..
-  def wrap(action="", args={}, content=nil)
-    result, open_slot, close_slot = "","", ""
-
+  def wrap(action='', args = {})
     if render_slot = args.key?(:add_slot) ? args.delete(:add_slot) : !xhr?
       case action.to_s
         when 'content';    css_class = 'transcluded'
@@ -141,23 +143,19 @@ Rails.logger.info "_render_layout(#{args.inspect})"
         :class    => css_class,
         :position => UUID.new.generate.gsub(/^(\w+)0-(\w+)-(\w+)-(\w+)-(\w+)/,'\1')
       }
-      open_slot, close_slot = "<div ", "</div>"
 
-      open_slot += attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join + '>'
-    end
+      "<div " + attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join + '>'
+    else "" end +
 
-    return open_slot + content + close_slot if content
-
+=begin
     if (Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >= 2)
       args = nil
       template.output_buffer ||= ''   # fixes error in CardControllerTest#test_changes
     else
       args = proc.binding
     end
-    template.concat open_slot, *args
-    yield(self)
-    template.concat close_slot, *args
-    ""
+=end
+    yield(self) + (render_slot ? "</div>" : "")
   end
 
   def wrap_content( content="" )
@@ -192,13 +190,13 @@ Rails.logger.info "_render_layout(#{args.inspect})"
     tcard ||= case
     when @state==:edit
       Card.fetch_or_new(fullname, {}, new_inclusion_card_args(options))
-    when sob.respond_to?(:name)# &&
-         #sob.name == fullname
-      sob
+    when base_card.respond_to?(:name)# &&
+         #base_card.name == fullname
+      base_card
     else
       Card.fetch_or_new(fullname, :skip_defaults=>true)
     end
-    
+
     tcard.loaded_trunk=card if tname =~ /^\+/
     tcontent = process_inclusion(tcard, options)
     tcontent = resize_image_content(tcontent, options[:size]) if options[:size]
@@ -209,8 +207,6 @@ Rails.logger.info "_render_layout(#{args.inspect})"
   end
 
   def process_inclusion(tcard, options)
-#raise "process_inclusion SL (#{tcard.name}, #{options.inspect}"
-Rails.logger.info "process_inclusion SL (#{tcard.name}, #{options.inspect}"
     subslot = subslot(tcard, options[:context])
     old_slot, Slot.current_slot = Slot.current_slot, subslot
 
@@ -229,7 +225,6 @@ Rails.logger.info "process_inclusion SL (#{tcard.name}, #{options.inspect}"
       when :edit == state
        tcard.virtual? ? :edit_auto : :edit_in_form
       when new_card
-raise "Missed _main?" if tcard.name == '_main'
         case
           when vmode==:raw; :blank
           when vmode==:setting   ; :setting_missing
@@ -372,7 +367,8 @@ raise "Missed _main?" if tcard.name == '_main'
     render_partial( 'card/footer_links' )   # this is ugly reusing this cache code
   end
 
-  def option( args={}, &proc)
+  def option( *args, &proc)
+    args = args[0]||{} #unless Hash===args
     args[:label] ||= args[:name]
     args[:editable]= true unless args.has_key?(:editable)
     self.options_need_save = true if args[:editable]
@@ -418,7 +414,6 @@ raise "Missed _main?" if tcard.name == '_main'
     form.text_field( :name, { :class=>'field card-name-field', :autocomplete=>'off'}.merge(options))
   end
 
-
   def cardtype_field(form,options={})
     template.select_tag('card[type]', cardtype_options_for_select(Cardtype.name_for(card.type)), options)
   end
@@ -441,8 +436,8 @@ raise "Missed _main?" if tcard.name == '_main'
     User.as :wagbot do
       pre_content + clear_queues + self.render_partial( card_partial('editor'), options ) + setup_autosave
     end
-  end                          
- 
+  end
+
   def clear_queues
     queue_context = get_queue_context
 

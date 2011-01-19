@@ -1,7 +1,7 @@
 <%= slot.options_submenu(:permissions) %>
 
 <%- locals = {:card=>@card, :slot=>slot, :extension=>@card.extension } %>
-<% wagn_form_for :card, @card, :url=>slot.url_for('options/update') do |form| %>
+<% form_for_card :url=>slot.url_for('options/update') do |form| %>
   <table class="fieldset">
     <%= render :partial=>'options/permissions', :locals=>locals %>
     <% if card.extension_type == 'User' and (edit_user_context(card)=='user' or System.ok?(:administrate_users)) %>

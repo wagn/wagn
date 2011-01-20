@@ -26,16 +26,16 @@ module Literal
   end
 
   # A literal chunk that protects 'code' and 'pre' tags from wiki rendering.
-  class Pre < AbstractLiteral
-    unless defined? PRE_PATTERN
-      PRE_PATTERN = /\/\*(.*?)\*\//
-    end
-    def self.pattern() PRE_PATTERN end
-
-    def initialize(match_data, content)
-      super
-      @unmask_text = "<code>#{match_data[1]}</code>"
-    end
+  #class Pre < AbstractLiteral
+  #  unless defined? PRE_PATTERN
+  #    PRE_PATTERN = /\/\*(.*?)\*\//
+  #  end
+  #  def self.pattern() PRE_PATTERN end
+  #
+  #  def initialize(match_data, content)
+  #    super
+  #    @unmask_text = "<code>#{match_data[1]}</code>"
+  #  end
 
 
 #    unless defined? PRE_BLOCKS

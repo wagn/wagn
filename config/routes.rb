@@ -1,4 +1,4 @@
-FORMATS = "html|json|xml|rss|kml" unless defined? FORMATS
+FORMATS = "html|json|xml|rss|kml|css|txt|text" unless defined? FORMATS
 FORMAT_PATTERN = /#{FORMATS}/ unless defined? FORMAT_PATTERN   
 
 # This regexp solves issues with cards with periods in the name.  Also makes it so you don't have to write separate routes for

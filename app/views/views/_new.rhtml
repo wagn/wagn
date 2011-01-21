@@ -1,13 +1,15 @@
 <%
    args={}
+   params = slot.params
    [:add_slot, :view].each {|x| args[x] = params[x] if params[x]}
    # when new is called from an "Add <Cardname>" inclusion, there is no existing slot,
    #  so we pass an argument to create one.  eventually, the "Add <Cardname>" view should have
    #  a slot so that this isn't necessary
 %>
 
-<% get_slot(nil).wrap("new", args) do |slot| %>
+<% slot.wrap("new", args) do |slot| %>
     <% @title = "New Card" %>
+    <% @card = slot.card %>
 
     <%= error_messages_for :card %>
     <div class=cardnotice></div>
@@ -18,7 +20,7 @@
           :html=>{:class=>'form', :onsubmit=>slot.save_function}) do |form| %>
 
       <div class="card-header">
-        <% if !request.xhr? && @args[:type] && !@card.broken_type %>
+        <% if (request and !request.xhr?) && @args[:type] && !@card.broken_type %>
           <%= hidden_field_tag 'card[type]', @args[:type] %>
         <% else %>
           <span class="new-type">

@@ -10,9 +10,12 @@ Feature: Content Settings
     And I create Phrase card "color+*right+*default" with content "true dat"
 
   Scenario: New card with templated content
+    When I edit "Movie+*type+*content"
+    And I should see "{{+lead}}"
     When I go to new Movie
     Then I should see "+director"
     And I should see "+lead"
+    And I should see "[~plus~lead]"
   
   Scenario: Create and edit templated card
     When I create Movie card "Star Wars" with plusses:

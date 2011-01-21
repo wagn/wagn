@@ -208,7 +208,17 @@ describe Slot, "" do
       @card = Card.new( :name=>"templated", :content => "bar" )
       config_card = Card.new(:name=>"templated+*self+*content", :content=>"Yoruba" )
       @card.should_receive(:setting_card).with("content","default").and_return(config_card)
-      Slot.new(@card).render(:raw).should == "Yoruba"
+      Slot.new(@card).get_raw.should == "Yoruba"
+      @card.should_receive(:setting_card).with("add help","edit help")
+      Slot.new(@card).render_new.should == ""
+    end
+
+    it "uses render content setting" do
+      @card = Card.new( :name=>"templated", :content => "bar" )
+      Card.new(:name=>"templated+*self+*content", :content=>"Yoruba" )
+      config_card = Card.new(:name=>"templated+*self+*add help", :content=>"Help me" )
+      @card.should_receive(:setting_card).with("add help","edit help").and_return(config_card)
+      Slot.new(@card).render_new.should == ""
     end
 
     it "doesn't use content setting if default is present" do

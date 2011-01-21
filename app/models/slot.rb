@@ -2,7 +2,7 @@ class Slot < Renderer
 
   cattr_accessor :render_actions
   attr_accessor  :options_need_save, :requested_view, :js_queue_initialized,
-    :position, :state, :start_time, :skip_autosave, :render_args
+    :position, :start_time, :skip_autosave, :render_args
 
   # This creates a separate class hash in the subclass
   class << self
@@ -24,7 +24,6 @@ class Slot < Renderer
     super
     @context = "main_1" unless @context =~ /\_/
     @position = @context.split('_').last
-    @subslots = []
     @state = :view
     @renders = {}
     @js_queue_initialized = {}
@@ -38,13 +37,13 @@ class Slot < Renderer
 
   view(:layout) do |args|
     @main_card, mc = args.delete(:main_card), args.delete(:main_content)
-    @main_content = mc.blank? ? _render_core : wrap_main(mc)
+    @main_content = mc.blank? ? _render_core(args) : wrap_main(mc)
   end
 
   view(:content) do |args|
     @state = 'view'
     self.requested_view = 'content'
-    c = _render_naked
+    c = _render_naked(args)
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
     wrap('content', args) {  wrap_content(c) }
   end
@@ -75,7 +74,7 @@ class Slot < Renderer
     @state=:edit
     # FIXME CONTENT: the hard template test can go away when we phase out the old system.
     wrap('', args) do
-      card.content_template ?  _render_multi_edit() : content_field(slot.form)
+      card.content_template ?  _render_multi_edit(args) : content_field(slot.form)
     end
   end
 
@@ -83,7 +82,7 @@ class Slot < Renderer
     @state=:edit
     args[:add_javascript]=true
     wrap('', args) do
-      hidden_field_tag(:multi_edit, true) + _render_naked
+      hidden_field_tag(:multi_edit, true) + _render_naked(args)
     end
   end
 
@@ -98,21 +97,6 @@ class Slot < Renderer
   view(:edit_in_form) do |args|
     render_partial('views/edit_in_form', args.merge(:form=>form))
   end
-
-  def subslot(card, context_base=nil, &proc)
-    # Note that at this point the subslot context, and thus id, are
-    # somewhat meaningless-- the subslot is only really used for tracking position.
-    context_base ||= self.context
-    new_position = @subslots.size + 1
-    new_slot = subrenderer(card, "#{context_base}_#{new_position}")
-
-    new_slot.state = @state
-    new_slot.position = new_position
-
-    @subslots << new_slot
-    new_slot
-  end
-
 
   def js
     @js ||= SlotJavascript.new(self)
@@ -167,81 +151,6 @@ class Slot < Renderer
   def wrap_main(content)
     return content if p=root.params and p[:layout]=='none'
     %{<div id="main" context="main">#{content}</div>}
-  end
-
-  def expand_card(tname, options)
-    return '' if (@state==:line && self.char_count > Slot.max_char_count)
-    # Don't bother processing inclusion if we're already out of view
-
-    case tname
-    when '_main'
-      return root.main_content if root.main_content
-      tcard = root.main_card
-      item  = symbolize_param(:item) and options[:item] = item
-      pview = symbolize_param(:view) and options[:view] = pview
-      options[:context] = 'main'
-      options[:view] ||= :open
-    end
-
-    options[:view] ||= (self.context == "layout_0" ? :naked : :content)
-    options[:fullname] = fullname = get_inclusion_fullname(tname,options)
-    options[:showname] = tname.to_show(fullname)
-
-    tcard ||= case
-    when @state==:edit
-      Card.fetch_or_new(fullname, {}, new_inclusion_card_args(options))
-    when base_card.respond_to?(:name)# &&
-         #base_card.name == fullname
-      base_card
-    else
-      Card.fetch_or_new(fullname, :skip_defaults=>true)
-    end
-
-    tcard.loaded_trunk=card if tname =~ /^\+/
-    tcontent = process_inclusion(tcard, options)
-    tcontent = resize_image_content(tcontent, options[:size]) if options[:size]
-    self.char_count += (tcontent ? tcontent.length : 0) #should we strip html here?
-    tname=='_main' ? wrap_main(tcontent) : tcontent
-  rescue Card::PermissionDenied
-    ''
-  end
-
-  def process_inclusion(tcard, options)
-    subslot = subslot(tcard, options[:context])
-    old_slot, Slot.current_slot = Slot.current_slot, subslot
-
-    # set item_view;  search cards access this variable when rendering their content.
-    subslot.item_view = options[:item] if options[:item]
-    subslot.type = options[:type] if options[:type]
-
-    # FIXME! need a different test here
-    new_card = tcard.new_record? && !tcard.virtual?
-
-    subslot.requested_view = vmode = (options[:view] || :content).to_sym
-    action = case
-
-      when [:name, :link, :linkname].member?(vmode)  ; vmode
-      #when [:name, :link, :linkname].member?(vmode)  ; raise "Should be handled in chunks"
-      when :edit == state
-       tcard.virtual? ? :edit_auto : :edit_in_form
-      when new_card
-        case
-          when vmode==:raw; :blank
-          when vmode==:setting   ; :setting_missing
-          when state==:line      ; :closed_missing
-          else                   ; :open_missing
-        end
-      when state==:line          ; :closed_content
-      else                       ; vmode
-      end
-    result = subslot.render(action, options)
-    Slot.current_slot = old_slot
-    result
-  rescue Exception=>e
-    warn e.inspect
-    Rails.logger.info e.inspect
-    Rails.logger.debug e.backtrace.join "\n"
-    %{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
   end
 
   #### --------------------  additional helpers ---------------- ###
@@ -518,7 +427,7 @@ class Slot < Renderer
           })
     end
   end
-
-
 end
+
+
 

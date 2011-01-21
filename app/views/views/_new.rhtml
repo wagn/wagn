@@ -1,13 +1,14 @@
 <%
    args={}
-   params = slot.params
+   @slot = get_slot
+   @params = @slot.params
    [:add_slot, :view].each {|x| args[x] = params[x] if params[x]}
    # when new is called from an "Add <Cardname>" inclusion, there is no existing slot,
    #  so we pass an argument to create one.  eventually, the "Add <Cardname>" view should have
    #  a slot so that this isn't necessary
 %>
 
-<% slot.wrap("new", args) do |slot| %>
+<% @slot.wrap("new", args) do |slot| %>
     <% @title = "New Card" %>
     <% @card = slot.card %>
 

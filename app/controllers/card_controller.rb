@@ -46,19 +46,21 @@ class CardController < ApplicationController
     end
     return if !view_ok # if view is not ok, it will render denied. return so we dont' render twice
 
-    # rss causes infinite memory suck in rails 2.1.2.  
-    unless Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >=2
-      respond_to do |format|
-        format.rss { raise("Sorry, RSS is broken in rails < 2.2") }
-        format.html {}
-      end
-    end
-    render_show
+   render_show
   end
 
   def render_show
     Wagn::Hook.call :before_show, '*all', self
-    
+
+    # rss causes infinite memory suck in rails 2.1.2.  
+    respond_to do |format|
+      format.rss do
+         raise("Sorry, RSS is broken in rails < 2.2") unless Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >=2
+      end
+      format.html {}
+      format.css {}
+    end
+        
     @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
     ## fixme, we ought to be setting special titles (or all titles) in cards
     (request.xhr? || params[:format]) ? render(:action=>'show') : render(:text=>'', :layout=>true)

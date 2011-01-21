@@ -19,7 +19,7 @@
   </title>
   <%= stylesheet_link_merged :base %> 
   <%- if star_css_card = Card.fetch('*css', :skip_virtual => true) %>
-    <link href="/*css.text" <%# star_css_card.current_revision_id %> media="screen" type="text/css" rel="stylesheet" />
+    <link href="/*css.css?<%= star_css_card.current_revision_id %>" media="screen" type="text/css" rel="stylesheet" />
   <%- end %>
   
   <%#= asset_manager can do alternate media but it has to be a separate call anyway %>

@@ -458,9 +458,9 @@ class Wql
         when :count; "count(*)"
         when :first; "#{table_alias}.*"
         when :ids;   "id"
-        when :name_content;
-          sql.joins << "join revisions r on r.card_id = #{table_alias}.id"
-          "#{table_alias}.name, r.content"
+#        when :name_content;
+#          sql.joins << "join revisions r on r.card_id = #{table_alias}.id"
+#          "#{table_alias}.name, r.content"
         when :codename; 
           sql.joins << "join cardtypes as extension on extension.id=#{table_alias}.extension_id "
           'extension.class_name'

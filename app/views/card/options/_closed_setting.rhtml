@@ -5,7 +5,7 @@ value_card = card.setting_card(setting_name)
 %>
 <div class="value line">
   <% if value_card %>
-    <span class="content"><%= slot.subslot(value_card).render :closed_content %></span>
+    <span class="content"><%= slot.subrenderer(value_card).render :closed_content %></span>
   <% end %>
 </div>
 

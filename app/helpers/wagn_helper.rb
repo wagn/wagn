@@ -21,7 +21,7 @@ module WagnHelper
     card ||= @card; context||=@context; action||=@action
     opts[:relative_content] = opts[:params] = params
     slot = case
-      when Slot.current_slot;  nil_given ? Slot.current_slot : Slot.current_slot.subslot(card)
+      when Slot.current_slot;  nil_given ? Slot.current_slot : Slot.current_slot.subrenderer(card)
       else Slot.current_slot = Slot.new(card,context,action,self,opts)
     end
     controller.renderer = slot
@@ -34,8 +34,8 @@ module WagnHelper
     end
     # FIXME: some cases we're called before Slot.current_slot is initialized.
     #  should we initialize here? or always do Slot.new?
-    subslot = Slot.current_slot ? Slot.current_slot.subslot(card) : Slot.new(card)
-    subslot.render(mode.to_sym, args)
+    subrenderer = Slot.current_slot ? Slot.current_slot.subrenderer(card) : Slot.new(card)
+    subrenderer.render(mode.to_sym, args)
   end
 
   Droplet = Struct.new(:name, :link_options)

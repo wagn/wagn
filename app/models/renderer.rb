@@ -30,7 +30,8 @@ class Renderer
   attr_reader :action, :inclusion_map, :params, :layout, :relative_content,
       :template, :root
   attr_accessor :card, :main_content, :main_card, :context, :char_count,
-      :depth, :form, :item_view, :view, :type, :base, :state, :sub_count
+      :depth, :form, :item_view, :view, :type, :base, :state, :sub_count,
+      :render_args
 
   #
   # Action definitions
@@ -72,7 +73,6 @@ class Renderer
       end
     end
 
-    def renderer() @@current end
     def actions() @@render_actions||={} end
     def view_aliases() VIEW_ALIASES end
   end
@@ -392,7 +392,7 @@ class Renderer
 
   def process_inclusion(tcard, options)
     sub = subrenderer(tcard, options[:context])
-    #old_slot, Slot.current_slot = Slot.current_slot, subslot
+    old_renderer, @@current = @@current, sub
 
     # set item_view;  search cards access this variable when rendering their content.
     sub.item_view = options[:item] if options[:item]
@@ -418,7 +418,9 @@ class Renderer
       when state==:line       ; :close_content
       else                    ; vmode
       end
-    sub.render(action, options)
+    result = sub.render(action, options)
+    @@current = old_renderer
+    result
 #  rescue
 #    %{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
   end
@@ -508,5 +510,6 @@ class Renderer
         "/types/basic/#{name}"
     end
   end
+
 end
 

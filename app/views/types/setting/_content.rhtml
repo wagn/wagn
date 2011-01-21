@@ -5,7 +5,7 @@
 <% Wagn::Pattern.subclasses.reverse.each do |set_class| %>
   <%- key = set_class.key %>
   <h2 class="values-for-setting"><%= key=='*all' ? '*all' : "+#{key}"%></h2>
-  <%= slot.subslot(Card::Search.new(:name=>UUID.new.generate,
+  <%= slot.subrenderer(Card::Search.new(:name=>UUID.new.generate,
      :content=>%{{"left":{"type":"Set","#{key=='*all' ? 'name' : 'right'}":"#{key}"},
                   "right":"#{card.name}","sort":"name"}} #, "left_plus":{"right":"*type"}}}
      )).render :content %>

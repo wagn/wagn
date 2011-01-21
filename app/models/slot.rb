@@ -2,7 +2,7 @@ class Slot < Renderer
 
   cattr_accessor :render_actions
   attr_accessor  :options_need_save, :requested_view, :js_queue_initialized,
-    :position, :start_time, :skip_autosave, :render_args
+    :position, :start_time, :skip_autosave
 
   # This creates a separate class hash in the subclass
   class << self

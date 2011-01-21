@@ -1,9 +1,8 @@
 <div class="card-header">   
-	<%= slot.menu %>
-	
-	<div class="title-menu">
-      <%= slot.link_to_action fancy_title(card), 'line', 
-  					{}, :class=>"line-link title down-arrow", :title=>"close #{card.name}" %> 
+  <%= slot.menu %>
+
+  <div class="title-menu">
+      <%= slot.link_to_action fancy_title(card), 'line', {}, :class=>"line-link title down-arrow", :title=>"close #{card.name}" %> 
 
     <% unless card.type=='Basic' %>
       <span class="cardtype">

@@ -1,7 +1,7 @@
 <span class="card-links">
   <span class="link-list">
     <span>Cards:</span> <%= card.name.piece_names.map { |c| link_to_page c }.join(', ') %> 
-  </span>                     
+  </span>
 	<% if card.cached_revision %>
     <span class="last-editor">
       <span>Last Editor:</span> <%= link_to_page card.cached_revision.created_by.card.name %> <%#ENGLISH%>

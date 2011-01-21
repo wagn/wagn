@@ -134,7 +134,7 @@ module Cardlib
       # card id to create the revision.  call it again now that we have the id.
       
       #return unless new_card?  # because create callbacks are also called in type transitions
-      return if on_create_skip_revision
+      #return if on_create_skip_revision
       set_content updates[:content]
       updates.clear :content 
       # normally the save would happen after set_content. in this case, update manually:
@@ -198,16 +198,18 @@ module Cardlib
       #puts "AFTER CREATE: #{base.after_create}"
       #base.before_save = base.before_save                           
       base.after_save :cascade_name_changes   
-      base.class_eval do 
-        attr_accessor :on_create_skip_revision,
-           :on_update_allow_duplicate_revisions
+      #base.class_eval do 
+       # attr_accessor :on_create_skip_revision
         #
         #puts "CALLING ALIAS METHOD CHAIN"
         #alias_method_chain :save, :tracking
         #alias_method_chain :save!, :tracking
-        
+ 
+      #end
+      base.after_create() do |card|
+        Wagn::Hook.call :after_create, card
       end
     end    
-    
+
   end
 end

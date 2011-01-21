@@ -5,15 +5,21 @@ class Renderer
   include HTMLDiff
   include ReferenceTypes
 
-  def render( card, content=nil, update_references=false)
+  attr_accessor :inclusion_map
+
+  def initialize(inclusion_map=nil)
+    @inclusion_map = inclusion_map
+  end
+
+  def render( card, content=nil, &block)
     # FIXME: this means if you had a card with content, but you WANTED to have it render 
     # the empty string you passed it, it won't work.  but we seem to need it because
     # card.content='' in set_card_defaults and if you make it nil a bunch of other
     # stuff breaks
     content = content.blank? ? card.content : content 
-    wiki_content = WikiContent.new(card, content, self)
-    update_references(card, wiki_content) if update_references
-    wiki_content.render! 
+    wiki_content = WikiContent.new(card, content, self, inclusion_map)
+    _update_references(card, wiki_content) if card.references_expired
+    wiki_content.render! &block
   end
 
   def render_diff( card, content1, content2 )
@@ -40,14 +46,18 @@ class Renderer
     String.new wiki_content.unrender!  
   end
       
+  def update_references(card)
+    _update_references( card, WikiContent.new(card, card.raw_content, self) )
+  end
+
   protected
-  def update_references(card, rendering_result)
+  def _update_references(card, raw_content)
     WikiReference.delete_all ['card_id = ?', card.id]
 
-	 if card.id and card.respond_to?('references_expired')
-    	card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
+    if card.id and card.respond_to?('references_expired')
+      card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
     end
-    rendering_result.find_chunks(Chunk::Reference).each do |chunk|
+    raw_content.find_chunks(Chunk::Reference).each do |chunk|
       reference_type =
         case chunk
           when Chunk::Link;       chunk.refcard ? LINK : WANTED_LINK

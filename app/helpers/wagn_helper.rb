@@ -188,13 +188,16 @@ module WagnHelper
   def span(*args, &block)  content_tag(:span, *args, &block);  end
   def div(*args, &block)   content_tag(:div, *args, &block);  end
 
-  def pointer_item(content,view,type=nil)
+  def pointer_item(slot,view)
+    card = slot.card
+    content = card.content
+    type = card.item_type
     typeparam = case
       when type.is_a?(String); ";type:#{type}"
       when type.is_a?(Array);  ";type:#{type.second}"  #type spec is likely ["in", "Type1", "Type2"]
       else ""
     end
-    content.gsub(/\[\[/,"<div class=\"pointer-item item-#{view}\">{{").gsub(/\]\]/,"|#{view}#{typeparam}}}</div>") 
+    slot.expand_inclusions content.gsub(/\[\[/,"<div class=\"pointer-item item-#{view}\">{{").gsub(/\]\]/,"|#{view}#{typeparam}}}</div>") 
   end
   
   ## -----------
@@ -225,10 +228,10 @@ module WagnHelper
     content_tag( :form, :id=>"navbox_form", :action=>"/search", :onsubmit=>"return navboxOnSubmit(this)" ) do         
       content_tag( :span, :id=>"navbox_background" ) do
         %{<a id="navbox_image" title="Search" onClick="navboxOnSubmit($('navbox_form'))">&nbsp;</a>}  + text_field_tag("navbox", params[:_keyword] || '', :id=>"navbox_field", :autocomplete=>"off") +
-  		    navbox_complete_field('navbox_field') 
+        navbox_complete_field('navbox_field') 
       end
     end
-	end                                      
+  end                                      
     
   def navbox_complete_field(fieldname, card_id='')
     content_tag("div", "", :id => "#{fieldname}_auto_complete", :class => "auto_complete") +
@@ -287,13 +290,10 @@ module WagnHelper
     Card.new(:name=>"**layout",:content=>content, :skip_defaults=>true)
   end
   
-  def render_layout_card(card)
-    opts = {
-      :main_content => @content_for_layout,
-      :main_card => @card
-    }
-    opts[:relative_content] = opts[:params] = params
-    Slot.new(card, "layout_0", "view", self, opts).render(:naked)
+  def render_layout_card(lay_card)
+    opts = {}; opts[:relative_content] = opts[:params] = params
+    Slot.new(lay_card, "layout_0", "view", self, opts).
+      render(:layout, :main_card=>@card, :main_content=>@content_for_layout)
   end  
   
   def render_layout_content(content)
@@ -303,11 +303,11 @@ module WagnHelper
   # ------------( helpers ) --------------
   def edit_user_context(card)
     if System.ok?(:administrate_users)
-    	'admin'
+      'admin'
     elsif current_user == card.extension
-    	'user'
+      'user'
     else
-    	'public'
+      'public'
     end
   end
 end       

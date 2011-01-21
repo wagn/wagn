@@ -61,7 +61,7 @@ class CardController < ApplicationController
     
     @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
     ## fixme, we ought to be setting special titles (or all titles) in cards
-    (request.xhr? || params[:format]) ? render(:action=>'show') : render(:text=>'~~render main inclusion~~', :layout=>true)
+    (request.xhr? || params[:format]) ? render(:action=>'show') : render(:text=>'', :layout=>true)
   end
 
   #----------------( MODIFYING CARDS )
@@ -274,7 +274,7 @@ class CardController < ApplicationController
     sources.unshift '*account' if @card.extension_type=='User' 
     @items = sources.map do |root| 
       c = Card.fetch((root ? "#{root}+" : '') +'*related')
-      c && c.type=='Pointer' && c.pointees
+      c && c.type=='Pointer' && c.items
     end.flatten.compact
     @items << 'config'
     @current = params[:attribute] || @items.first.to_key
@@ -303,14 +303,14 @@ class CardController < ApplicationController
   #-------- ( MISFIT METHODS )  
   def watch
     watchers = Card.fetch_or_new( @card.name + "+*watchers", {:skip_virtual=>true}, :type => 'Pointer' )
-    watchers.add_reference User.current_user.card.name
+    watchers.add_item User.current_user.card.name
     #flash[:notice] = "You are now watching #{@card.name}"
     request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
   def unwatch 
     watchers = Card.fetch_or_new( @card.name + "+*watchers", {:skip_virtual=>true} )
-    watchers.remove_reference User.current_user.card.name
+    watchers.drop_item User.current_user.card.name
     #flash[:notice] = "You are no longer watching #{@card.name}"
     request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end

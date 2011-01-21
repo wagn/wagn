@@ -20,10 +20,9 @@ module Card
 #    cattr_accessor :cache  
 #    self.cache = {}
 
-   
     [:before_validation, :before_validation_on_create, :after_validation, 
-      :after_validation_on_create, :before_save, :before_create, :after_create,
-      :after_save
+      :after_validation_on_create, :before_save, :before_create, :after_save,
+      :after_create,
     ].each do |callback|
       self.send(callback) do 
         Rails.logger.debug "Card#callback #{callback}"
@@ -50,17 +49,18 @@ module Card
                
     #before_validation_on_create :set_needed_defaults
     
-    attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :from_trash, :blank_revision,
-      :update_referencers, :allow_type_change, :virtual, :builtin, :broken_type, :skip_defaults, :loaded_trunk
+    attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
+      :from_trash, :update_referencers, :allow_type_change, :virtual,
+      :builtin, :broken_type, :skip_defaults, :loaded_trunk, :blank_revision
 
     # setup hooks on AR callbacks
-    [:before_save, :before_create, :after_save, :after_create].each do |hookname| 
+    # Note: :after_create is called from end of set_initial_content now
+    [:before_save, :before_create, :after_save ].each do |hookname| 
       self.send( hookname ) do |card|
         Wagn::Hook.call hookname, card
       end
     end
       
-        
     # apparently callbacks defined this way are called last.
     # that's what we want for this one.  
     def after_save 
@@ -226,10 +226,11 @@ module Card
       
       def find_or_create(args={})
         raise "find or create must have name" unless args[:name]
-        c = Card.fetch_or_create(args[:name], {}, args)
+        Card.fetch_or_create(args[:name], {}, args)
       end                  
     end
 
+    def is_collection?() false end
 
     def save_with_trash!
       save || raise(RecordNotSaved)
@@ -257,12 +258,14 @@ module Card
     def multi_create(cards)
       Wagn::Hook.call :before_multi_create, self, cards
       multi_save(cards)
+      Rails.logger.info "Card#callback after_multi_create"
       Wagn::Hook.call :after_multi_create, self
     end
     
     def multi_update(cards)
       Wagn::Hook.call :before_multi_update, self, cards
       multi_save(cards)
+      Rails.logger.info "Card#callback after_multi_update"
       Wagn::Hook.call :after_multi_update, self
     end
     
@@ -270,16 +273,15 @@ module Card
       Wagn::Hook.call :before_multi_save, self, cards
       cards.each_pair do |name, opts|
         opts[:content] ||= ""
-        # make sure blank content doesn't override pointee assignments if they are present
-        if (opts['pointee'].present? or opts['pointees'].present?) 
-          opts.delete('content')
-        end                                                                               
+        # make sure blank content doesn't override first assignments if they are present
+        #if (opts['first'].present? or opts['items'].present?) 
+        #  opts.delete('content')
+        #end                                                                               
         name = name.post_cgi.to_absolute(self.name)
         logger.info "multi update working on #{name}: #{opts.inspect}"
         if card = Card.fetch(name, :skip_virtual=>true)
           card.update_attributes(opts)
-        elsif opts[:pointee].present? or opts[:pointees].present? or  
-                (opts[:content].present? and opts[:content].strip.present?)
+        elsif opts[:content].present? and opts[:content].strip.present?
           opts[:name] = name                
           if ::Cardtype.create_ok?( self.type ) && !::Cardtype.create_ok?( Card.new(opts).type )
             ::User.as(:wagbot) { Card.create(opts) }
@@ -293,6 +295,7 @@ module Card
           end
         end
       end  
+      Rails.logger.info "Card#callback after_multi_save"
       Wagn::Hook.call :after_multi_save, self, cards
     end
 
@@ -449,6 +452,10 @@ module Card
       true
     end
     
+    def generic?
+      false
+    end
+
     def content   
       new_card? ? ok!(:create_me) : ok!(:read)
       cached_revision.new_record? ? "" : cached_revision.content
@@ -469,6 +476,10 @@ module Card
       @blank_revision ||= Revision.new
     end
     
+    def raw_content
+      templated_content || content
+    end
+
     def type
       read_attribute :type
     end
@@ -579,11 +590,6 @@ module Card
     validates_each :content do |rec, attr, value|
       if rec.updates.for?(:content)
         rec.send :validate_content, value
-        begin 
-          res = Renderer.new.render(rec, value, update_references=false)
-        rescue Exception=>e
-          rec.errors.add :content, "#{e.class}: #{e.message}"
-        end   
       end
     end
 

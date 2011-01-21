@@ -36,6 +36,9 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':id.:format', :controller=> 'card', :action=>'show', :requirements=>ID_REQS
   map.connect '*id', :controller=>'application', :action=>'render_404'
  
+# Devise is user
+#map.devise_for :users
+
  
 end
                      

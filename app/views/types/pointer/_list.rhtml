@@ -1,23 +1,18 @@
 <%- 
   eid = slot.context 
-  pointees = card.pointees
-  pointees = [''] if pointees.empty?
+  items = card.items
+  items = [''] if items.empty?
 %>
 
-<%= slot.form.hidden_field :content, :id=>"#{eid}-hidden-content" %>
 <ul id="<%=eid%>-ul" class="pointer">
-  <% pointees.each_with_index do |link, index| %>
+  <% items.each_with_index do |link, index| %>
     <%= render :partial=>'/types/pointer/field', :locals=>{ :eid=>eid, :card=>card, :index=>index, :link=>link } %>
   <% end %>
-  <%= render :partial=>'types/pointer/add_item', :locals=>{ :eid=>eid, :card=>card, :index=>pointees.length } %>
+  <%= render :partial=>'types/pointer/add_item', :locals=>{ :eid=>eid, :card=>card, :index=>items.length } %>
 </ul>
 
-<%= slot.editor_hooks :save=>%{              
-  //slot = getSlotFromContext('#{eid}');
-  //inputs = getSlotElements(slot, 'pointer-text');
-	inputs = Element.select( $('#{eid}-ul'), ".pointer-text");
-  $('#{eid}-hidden-content').value = inputs.map(
-    function(x){ return (x.value.strip() == '') ? '' : '[[' + x.value + ']]'}
-  ).join("\\n");                                                     
+<%= slot.editor_hooks :save=>%{
+	items = Element.select( $('#{eid}-ul'), ".pointer-text").map(function(x){ return x.value; });
+  setPointerContent('#{eid}', items);
   return true;
 } %>

@@ -1,7 +1,7 @@
 module Card
-	class HTML < Basic
+  class HTML < Basic
     def clean_html?
       false
     end
-	end
+  end
 end

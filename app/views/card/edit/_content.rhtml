@@ -5,24 +5,24 @@
 <% end %>
 
 <% if card.hard_template and card.hard_template.ok? :read %>
-	<div class="instruction">
+  <div class="instruction">
    Formatted by a <%= link_to_page 'form card', card.hard_template.name %>.  <%#ENGLISH%>
-	</div>
+  </div>
 <% end %>
 
 <% div( :id=>slot.id('edit-area'), :class=>"editor edit-area #{card.hard_template ? :templated : ''}" ) do %>
   <% wagn_form_for :card, card, :url=>"card/update/#{card.name.to_url_key}",:slot=>slot,
-			:html=>{ :class=>'form editor',:onsubmit=>slot.save_function, :id=>(slot.context + '-form') } do |form| %>
-		<div>
-		  <% slot.form = form %> 
-		  <%= slot.render( params[:inclusions] ? :multi_edit : :edit ) %>
-		</div>                  
-		<%= slot.half_captcha %>
-		<div class="edit-button-area">
-  		<%= button_to_remote "Delete", { :url=>slot.url_for("card/remove") }, :style=>'float:right'	%>			
-  		<%= button_to_function "Save", "this.form.onsubmit()", :class=>'save-card-button' %>
-  		<%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function } %> 
-  	</div>
-		
-	<% end %>
+      :html=>{ :class=>'form editor',:onsubmit=>slot.save_function, :id=>(slot.context + '-form') } do |form| %>
+    <div>
+      <% slot.form = form %> 
+      <%=  params[:inclusions] ? slot.render_multi_edit : slot.render_edit %>
+    </div>                  
+    <%= slot.half_captcha %>
+    <div class="edit-button-area">
+      <%= button_to_remote "Delete", { :url=>slot.url_for("card/remove") }, :style=>'float:right'  %>      
+      <%= button_to_function "Save", "this.form.onsubmit()", :class=>'save-card-button' %>
+      <%= slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function } %> 
+    </div>
+    
+  <% end %>
 <% end %>

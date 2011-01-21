@@ -1,7 +1,9 @@
+<%- eid = slot.context %>
 <div class="pointer-radio-list">
   <% slot.card.options.each do |option| %> 
     <div class="pointer-radio">
-  		<%= slot.form.radio_button :pointee, option.name, :id=>"#{slot.context}-radio-#{option.key}", :class=>'pointer-radio-button' %>
+  		<%= radio_button_tag "#{eid}-radio", option.name, option.name==card.first,
+  		 :id=>"#{eid}-radio-#{option.key}", :class=>'pointer-radio-button' %>
   		<span class="pointer-radio-label">
   		  <span class="radio-option-name"><%= option.name %></span>
   		  <% if description = card.option_text(option.name) %>
@@ -11,3 +13,7 @@
   	</div>         
   <% end %>
 </div>
+
+<%= slot.editor_hooks :save=>%{
+  setPointerContent('#{eid}', jQuery('input[name=#{eid}-radio]:checked').val() ); return true;
+} %>

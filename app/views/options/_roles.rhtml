@@ -16,12 +16,12 @@
           <div style="white-space: nowrap">
             <%# role.inspect %>
             <%= check_box_tag "user_roles[%s]" % role.id, 1,
-     	          user_roles.member?(role) ? true : false %>
-      	    <%= link_to_page role.card.name %> 
-      	  </div>
-     	  <% end %>
+                 user_roles.member?(role) ? true : false %>
+            <%= link_to_page role.card.name %> 
+          </div>
+         <% end %>
 
-  	  <% end %>
+      <% end %>
     <% else%>
       <% slot.option(option_args) do %>
         <% if user_roles.empty? %>

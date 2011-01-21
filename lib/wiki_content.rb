@@ -103,14 +103,16 @@ class WikiContent < String
   end
   
   include ChunkManager
-  attr_reader :revision, :not_rendered, :pre_rendered, :renderer, :card
+  attr_reader :revision, :not_rendered, :pre_rendered, :renderer, :card,
+    :inclusion_map
 
-  def initialize(card, content, renderer)
+  def initialize(card, content, renderer, inclusion_map=nil)
     @not_rendered = @pre_rendered = nil
     @renderer = renderer
+    @inclusion_map = inclusion_map
     @card = card or raise "No Card in Content!!"
     super(content)
-    init_chunk_manager
+    init_chunk_manager()
     ACTIVE_CHUNKS.each{|chunk_type| chunk_type.apply_to(self)}
     @not_rendered = String.new(self)
   end
@@ -122,11 +124,11 @@ class WikiContent < String
     @pre_rendered 
   end
 
-  def render!( revert = false )
+  def render!( revert = false, &block)
     pre_render!
     while (gsub!(MASK_RE[ACTIVE_CHUNKS]) do 
        chunk = @chunks_by_id[$~[1].to_i]
-       chunk.nil? ? $~[0] : ( revert ? chunk.revert : chunk.unmask_text )
+       chunk.nil? ? $~[0] : ( revert ? chunk.revert : chunk.unmask_text(&block) )
       end)
     end
     self

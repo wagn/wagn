@@ -60,8 +60,11 @@ describe Slot, "" do
     describe "inclusions" do
       it "multi edit" do
         c = Card.new :name => 'ABook', :type => 'Book'
-Rails.logger.info "failing mulit_edit #{c}\n#{Slot.new(c).render(:multi_edit)}"
-        Slot.new(c).render( :multi_edit ).should have_tag "input#main_1_2-hidden-content"
+        Slot.new(c).render( :multi_edit ).should be_html_with do
+          div :class => "field-in-multi" do
+            input :name=>"cards[~plus~illustrator][content]", :type => 'hidden'
+          end
+        end
       end
     end
 
@@ -71,7 +74,6 @@ Rails.logger.info "failing mulit_edit #{c}\n#{Slot.new(c).render(:multi_edit)}"
         mu.should_receive(:generate).and_return("1")
         UUID.should_receive(:new).and_return(mu)
         c = Card.new :name => 'Aopen', :content => "{{A|open}}"
-Rails.logger.info "failing open #{c}"
         Slot.new(c).render( :naked ).should be_html_with do
           div( :position => 1, :class => "card-slot") {
             div( :class => "card-header" )
@@ -106,12 +108,23 @@ Rails.logger.info "failing open #{c}"
         Slot.new(c).render( :naked ).should == %{<a class="known-card" href="/wagn/A+B">A+B</a>}
       end
 
+#Rails.logger.info "failing naked(search card) #{c_open}\nRenders:#{Slot.new(c_open).render_naked}\nRenders end"
       it "naked (search card)" do
-        s = Card.create :type=>'Search', :name => 'Asearch', :content => %{{"type":"User"}}
-        item_name = Card.new :name => 'AsearchNaked1', :content => "{{Asearch|naked;item:name}}"
-        Slot.new(item_name).render( :naked ).should match('search-result-item item-name')
-        item_closed = Card.new :name => 'AsearchNaked', :content => "{{Asearch|naked}}"
-        Slot.new(item_closed).render( :naked ).should match('search-result-item item-closed')
+       s = Card.create :type=>'Search', :name=>'Asearch', :content=>%{{"type":"User"}}
+       cname = Card.new :name=>'AsearchNaked1',
+                        :content=>"{{Asearch|naked;item:name}}"
+       Slot.new(cname).render_naked.should match('search-result-item item-name')
+
+       copen = Card.new :name => 'AsearchNaked1',
+                        :content => "{{Asearch|naked;item:open}}"
+       Slot.new(copen).render_naked.should match('search-result-item item-open')
+
+       cclosed = Card.new :name => 'AsearchNaked',
+                          :content => "{{Asearch|item:closed}}"
+       Slot.new(cclosed).render_naked.should match('search-result-item item-closed')
+
+       c = Card.new :name => 'AsearchNaked', :content => "{{Asearch|naked}}"
+       Slot.new(c).render_naked.should match('search-result-item item-closed')
       end
 
       it "array (search card)" do
@@ -128,7 +141,6 @@ Rails.logger.info "failing open #{c}"
         Card.create! :name => "n+c", :type=>"Number", :content=>"30"
         Card.create! :name => "npoint", :type=>"Pointer", :content => "[[n+a]]\n[[n+b]]\n[[n+c]]"
         c = Card.new :name => 'npointArray', :content => "{{npoint|array}}"
-Rails.logger.info "failing here"
         Slot.new(c).render( :naked ).should == %q{["10", "20", "30"]}
       end
 
@@ -216,7 +228,7 @@ Rails.logger.info "failing here"
       result = Slot.new(@card).render(:edit)
       result.should be_html_with do
         div :class => "edit_in_multi" do
-          #input :name=>"cards[~plus~alpha][content]", :type => 'hidden'
+          input :name=>"cards[~plus~alpha][content]", :type => 'hidden'
         end
       end
     end

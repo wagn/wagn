@@ -35,9 +35,6 @@
   <% partial = (card.name=='*recent changes') ? 'recent_changes' : 'card_list'
      view = (slot.item_view || card.spec[:view] || :closed).to_sym
   %>
-  <%
-Rails.logger.info "search content #{view}, #{partial} #{card}, #{slot}"
-  %>
   <%= render :partial=>"types/search/#{partial}", :locals=>
       { :view=>view,
         :card=>card,

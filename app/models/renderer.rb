@@ -23,7 +23,7 @@ class Renderer
     :bare => :naked,
   }
 
-  cattr_accessor :max_char_count, :max_depth, :render_actions, :current
+  cattr_accessor :max_char_count, :max_depth, :render_actions, :current_slot
   self.max_char_count = 200
   self.max_depth = 10
 
@@ -31,7 +31,7 @@ class Renderer
       :template, :root
   attr_accessor :card, :main_content, :main_card, :context, :char_count,
       :depth, :form, :item_view, :view, :type, :base, :state, :sub_count,
-      :render_args
+      :render_args, :requested_view
 
   #
   # Action definitions
@@ -163,8 +163,7 @@ class Renderer
   end
 
   def canonicalize_view( view )
-    view = view.to_sym
-    VIEW_ALIASES[view.to_sym] || view
+    (view and view.to_sym and v=VIEW_ALIASES[view.to_sym]) ? v : view
   end
 
   def expand_inclusions(content)
@@ -241,7 +240,7 @@ class Renderer
   end
 
   view(:rss_change) do |args|
-    self.requested_view = 'content'
+    requested_view = 'content'
     render_partial('views/change')
   end
 
@@ -392,7 +391,7 @@ class Renderer
 
   def process_inclusion(tcard, options)
     sub = subrenderer(tcard, options[:context])
-    old_renderer, @@current = @@current, sub
+    old_renderer, Renderer.current_slot = Renderer.current_slot, sub
 
     # set item_view;  search cards access this variable when rendering their content.
     sub.item_view = options[:item] if options[:item]
@@ -401,7 +400,7 @@ class Renderer
     new_card = tcard.new_record? && !tcard.virtual?
 
     vmode = (options[:view] || :content).to_sym
-    sub.requested_view = vmode if sub.respond_to?(:requested_view)
+    sub.requested_view = vmode
     action = case
 
       when [:name, :link, :linkname].member?(vmode)  ; vmode
@@ -419,7 +418,7 @@ class Renderer
       else                    ; vmode
       end
     result = sub.render(action, options)
-    @@current = old_renderer
+    Renderer.current_slot = old_renderer
     result
 #  rescue
 #    %{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
@@ -511,5 +510,16 @@ class Renderer
     end
   end
 
+  def paging_params
+    s = {}
+    if p = root.params
+      [:offset,:limit].each{|key| s[key] = p.delete(key)}
+    end
+    s[:offset] = s[:offset] ? s[:offset].to_i : 0
+    s[:limit]  = s[:limit]  ? s[:limit].to_i  : (main_card? ? 50 : 20)
+    s
+  end
+
+  def main_card?() context=~/^main_\d$/ end
 end
 

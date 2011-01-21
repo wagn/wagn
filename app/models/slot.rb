@@ -1,14 +1,12 @@
 class Slot < Renderer
 
   cattr_accessor :render_actions
-  attr_accessor  :options_need_save, :requested_view, :js_queue_initialized,
+  attr_accessor  :options_need_save, :js_queue_initialized,
     :position, :start_time, :skip_autosave
 
   # This creates a separate class hash in the subclass
   class << self
     def actions() @@render_actions||={} end
-    alias current_slot current
-    alias current_slot= current=
   end
 
   def action_method(key)
@@ -18,7 +16,7 @@ class Slot < Renderer
   # FIXME: simplify this to (card, opts)
   def initialize(card, context="main_1", action="view", template=nil, opts={} )
     @card,@context,@action,@template = card,context.to_s,action.to_s,template
-    Slot.current_slot ||= self
+    Renderer.current_slot ||= self
 
 #Rails.logger.info "Slot.new #{card.name}, #{context}, #{action}, #{template}, #{opts.inspect}"
     super
@@ -42,7 +40,7 @@ class Slot < Renderer
 
   view(:content) do |args|
     @state = 'view'
-    self.requested_view = 'content'
+    requested_view = 'content'
     c = _render_naked(args)
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
     wrap('content', args) {  wrap_content(c) }
@@ -54,18 +52,18 @@ class Slot < Renderer
 
   view(:open) do |args|
     @state = :view
-    self.requested_view = 'open'
+    requested_view = 'open'
     wrap('open', args) { render_partial('views/open') }
   end
 
   view(:closed) do |args|
     @state = :line
-    self.requested_view = 'closed'
+    requested_view = 'closed'
     wrap('closed', args) { render_partial('views/closed') }
   end
 
   view(:setting) do |args|
-    wrap( self.requested_view = 'content', args) do
+    wrap( requested_view = 'content', args) do
       render_partial('views/setting')
     end
   end
@@ -87,7 +85,7 @@ class Slot < Renderer
   end
 
   view(:change) do |args|
-    self.requested_view = 'content'
+    requested_view = 'content'
     wrap('content', args) do
       w_content = render_partial('views/change')
     end
@@ -143,7 +141,7 @@ class Slot < Renderer
   end
 
   def wrap_content( content="" )
-    %{<span class="#{canonicalize_view(self.requested_view)}-content content editOnDoubleClick">} +
+    %{<span class="#{canonicalize_view(requested_view)}-content content editOnDoubleClick">} +
     content.to_s +
     %{</span>} #<!--[if IE]>&nbsp;<![endif]-->}
   end
@@ -220,20 +218,6 @@ class Slot < Renderer
         )
       end.join
     end
-  end
-
-  def paging_params
-    s = {}
-    if p = root.params
-      [:offset,:limit].each{|key| s[key] = p.delete(key)}
-    end
-    s[:offset] = s[:offset] ? s[:offset].to_i : 0
-    s[:limit]  = s[:limit]  ? s[:limit].to_i  : (main_card? ? 50 : 20)
-    s
-  end
-
-  def main_card?
-    context=~/^main_\d$/
   end
 
   def url_for(url, args=nil, attribute=nil)

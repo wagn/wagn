@@ -48,7 +48,7 @@ class ApplicationController < ActionController::Base
     @context = params[:context] || 'main_1'
     @action = params[:action]
 
-    Slot.current_slot = nil
+    Renderer.current_slot = nil
 
     # reset class caches
     # FIXME: this is a bit of a kluge.. several things stores as cattrs in modules

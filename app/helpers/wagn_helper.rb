@@ -7,7 +7,7 @@ module WagnHelper
   # Put the initialization in the controller and we no longer care here
   # whether it is a Slot or Renderer, and it will be from the parent class
   def slot
-    Slot.current_slot
+    Renderer.current_slot
   end
 
   # I think this is redundant now
@@ -21,10 +21,10 @@ module WagnHelper
     card ||= @card; context||=@context; action||=@action
     opts[:relative_content] = opts[:params] = params
     slot = case
-      when Slot.current_slot;  nil_given ? Slot.current_slot : Slot.current_slot.subrenderer(card)
-      else Slot.current_slot = Slot.new(card,context,action,self,opts)
+      when Renderer.current_slot;  nil_given ? Renderer.current_slot : Renderer.current_slot.subrenderer(card)
+      else Renderer.current_slot = Slot.new(card,context,action,self,opts)
     end
-    controller.renderer = slot
+    controller and controller.renderer = slot or slot
   end
 
   # FIMXE: this one's a hack...
@@ -74,7 +74,7 @@ module WagnHelper
     if options[:url] =~ /^javascript\:/
       function << options[:url].gsub(/^javascript\:/,'')
     elsif options[:slot]
-      function << Slot.current_slot.url_for(options[:url]).gsub(/^javascript\:/,'')
+      function << Renderer.current_slot.url_for(options[:url]).gsub(/^javascript\:/,'')
     else
       url_options = options[:url]
       url_options = url_options.merge(:escape => false) if url_options.is_a?(Hash)

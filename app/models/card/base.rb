@@ -50,7 +50,7 @@ module Card
                
     #before_validation_on_create :set_needed_defaults
     
-    attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :from_trash,
+    attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :from_trash, :blank_revision,
       :update_referencers, :allow_type_change, :virtual, :builtin, :broken_type, :skip_defaults, :loaded_trunk
 
     # setup hooks on AR callbacks
@@ -450,10 +450,25 @@ module Card
     end
     
     def content   
-      new_card? ? ok!(:create_me) : ok!(:read) 
-      current_revision ? current_revision.content : ""
+      new_card? ? ok!(:create_me) : ok!(:read)
+      cached_revision.new_record? ? "" : cached_revision.content
     end   
-        
+    
+    def cached_revision
+      case
+      when (@cached_revision and @cached_revision.id==current_revision_id); 
+      when (@cached_revision=Card.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
+      else
+        @cached_revision = current_revision || get_blank_revision
+        Card.cache.write("#{key}-content", @cached_revision)
+      end
+      @cached_revision
+    end
+    
+    def get_blank_revision
+      @blank_revision ||= Revision.new
+    end
+    
     def type
       read_attribute :type
     end

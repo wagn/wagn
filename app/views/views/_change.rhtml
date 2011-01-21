@@ -1,6 +1,6 @@
 <div class="change-view">
   <%= link_to_page card.name, nil, :class=>'change-card' %> 
-  <% if rev = card.current_revision %>
+  <% if rev = card.cached_revision %>
   <%# this check should be unnecessary once we fix search result bug %>
     <span class="last-update">
         <%=

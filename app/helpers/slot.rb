@@ -202,7 +202,7 @@ class Slot
 ###----------------( NAME) (FIXME move to chunks/transclude)
   view(:name) do |*a| card.name end
   view(:link) do |*a| args = a[0]||{}
-    Chunk::Reference.link_render(card.name, args)
+    Chunk::Reference.standard_card_link(card.name)
   end
 
       ###----------------( SPECIAL )

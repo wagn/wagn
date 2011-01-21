@@ -185,15 +185,7 @@ class Renderer
   end
 
   view(:naked) do |args|
-    if card.generic? 
-	    a=
-      _render_core(args)
-    else 
-	    b=
-      render_card_partial(:content)  # FIXME?: 'content' is inconsistent
-    end
-	    
-    #card.generic? ? _render_core(args, &blk) : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
+    card.generic? ? _render_core(args) : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
   end
 
 ###----------------( NAME) (FIXME move to chunks/transclude)

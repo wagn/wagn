@@ -51,7 +51,7 @@ module Wagn
           :session_key => db[RAILS_ENV]['session_key'],
           :secret      => db[RAILS_ENV]['secret']
         }
-	@@rails_config = rails_config
+        @@rails_config = rails_config
         set_default_config Config.new(rails_config)
       end
 

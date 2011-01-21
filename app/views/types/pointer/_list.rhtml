@@ -12,7 +12,7 @@
 </ul>
 
 <%= slot.editor_hooks :save=>%{
-	items = Element.select( $('#{eid}-ul'), ".pointer-text").map(function(x){ return x.value; });
+  items = Element.select( $('#{eid}-ul'), ".pointer-text").map(function(x){ return x.value; });
   setPointerContent('#{eid}', items);
   return true;
 } %>

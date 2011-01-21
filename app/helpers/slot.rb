@@ -242,10 +242,10 @@ class Slot
       when :name;     card.name
       when :key;      card.name.to_key
       when :linkname; Cardname.escape(card.name)
-      when :titled;   content_tag( :h1, less_fancy_title(card.name) ) + self.render( :content )
+      when :titled;   content_tag( :h1, fancy_title(card.name) ) + self.render( :content )
       when :rss_titled;                                                         
         # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
-        content_tag( :h2, less_fancy_title(card.name) ) + self.render( :expanded_view_content )
+        content_tag( :h2, fancy_title(card.name) ) + self.render( :expanded_view_content )
 
 
    ###----------------( CHANGES)
@@ -418,14 +418,12 @@ class Slot
     options[:fullname] = fullname = get_inclusion_fullname(tname,options)
     options[:showname] = tname.to_show(fullname)
     
-    tcard ||= @state==:edit ? Card.fetch_or_new(fullname, {}, new_inclusion_card_args(tname, options) ) :
+    tcard ||= @state==:edit ? Card.fetch_or_new(fullname, {}, new_inclusion_card_args(tname, options, card) ) :
     ## holy crap can we explain this?
        ( slot_options[:base].respond_to?(:name) && slot_options[:base].name == fullname ?
-         slot_options[:base] : Card.fetch_or_new(fullname, :skip_defaults=>true )
+         slot_options[:base] : Card.fetch_or_new(fullname, {}, :skip_defaults=>true )
       )
     
-    tcard.loaded_trunk=card if tname =~ /^\+/
-
     tcontent = process_inclusion( tcard, options )
     tcontent = resize_image_content(tcontent, options[:size]) if options[:size]
 
@@ -472,14 +470,13 @@ class Slot
     content if content.present?  #not sure I get why this is necessary - efm
   end
 
-  def new_inclusion_card_args(tname, options)
-    args = { 
-#      :name=>options[:fullname], 
-      :type=>options[:type],
-      :skip_defaults=>true
-    }
-    if content=get_inclusion_content(tname)
-      args[:content]=content 
+  def new_inclusion_card_args(tname, options, parent)
+    args = { :type =>options[:type],  :permissions=>[] }
+    if tname =~ /^\+/
+      args[:loaded_trunk] = parent
+    end
+    if content = get_inclusion_content(tname)
+      args[:content] = content
     end
     args
   end
@@ -722,7 +719,7 @@ class Slot
 
 
   def cardtype_field(form,options={})
-    @template.select_tag('card[type]', cardtype_options_for_select(card.type), options) 
+    @template.select_tag('card[type]', cardtype_options_for_select(Cardtype.name_for(card.type)), options) 
   end
 
   def update_cardtype_function(options={})
@@ -740,8 +737,10 @@ class Slot
     self.form = form              
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
-    editor_partial = (card.type=='Pointer' ? ((c=card.setting('input'))  ? c.gsub(/[\[\]]/,'') : 'list') : 'editor')    
-    pre_content + clear_queues + self.render_partial( card_partial(editor_partial), options ) + setup_autosave 
+    editor_partial = (card.type=='Pointer' ? ((c=card.setting('input'))  ? c.gsub(/[\[\]]/,'') : 'list') : 'editor')
+    User.as :wagbot do
+      pre_content + clear_queues + self.render_partial( card_partial(editor_partial), options ) + setup_autosave
+    end
   end                          
  
   def clear_queues

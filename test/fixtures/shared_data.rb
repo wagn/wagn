@@ -35,7 +35,6 @@ class SharedData
       request_card = Card::InvitationRequest.create! :name=>"Sample InvitationRequest" #, :email=>"invitation@request.com"  
       Cardtype.find(:all).each do |ct|
         next if ['User','InvitationRequest','Set'].include? ct.codename
-        puts "CODENAME: #{ct.codename}"
         Card.create! :type=>ct.codename, :name=>"Sample #{ct.codename}"
       end
       # data for role_test.rb

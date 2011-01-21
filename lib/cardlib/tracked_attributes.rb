@@ -30,21 +30,10 @@ module Cardlib
     def set_name(newname)
       oldname = self.name_without_tracking
       self.name_without_tracking = newname 
-      return if new_record?
+      
+      return if new_card?
       return if oldname==newname
-          
-      if existing_card = Card.find_by_key(newname.to_key)  and existing_card != self
-        if existing_card.trash  
-          existing_card.update_attributes! :name=>existing_card.name+"*trash", :confirm_rename=>true
-        else                             
-          # note -- this happens when changing to a name variant.  any special handling needed?
-        end
-      end
-            
-      if type=='Cardtype'
-        ::Cardtype.reset_cache
-      end
-            
+
       if newname.junction?
         if newname.to_key != oldname.to_key
           # move the current card out of the way, in case the new name will require
@@ -57,6 +46,19 @@ module Cardlib
       else
         self.trunk = self.tag = nil
       end         
+
+      if existing_card = Card.find_by_key(newname.to_key) and existing_card != self
+        if existing_card.trash  
+          existing_card.update_attributes! :name=>existing_card.name+"*trash", :confirm_rename=>true
+        else                             
+          # note -- this happens when changing to a name variant.  any special handling needed?
+        end
+      end
+            
+      if type=='Cardtype'
+        ::Cardtype.reset_cache
+      end
+            
       @name_changed = true          
       @old_name = oldname
       @search_content_changed=true
@@ -66,7 +68,7 @@ module Cardlib
     def set_type(new_type)
       #warn "set type called on #{name} to #{new_type}"
       self.type_without_tracking = new_type 
-      return if new_record?
+      return if new_card?
       on_type_change # FIXME this should be a callback
       templatees = hard_templatees
       if !templatees.empty?
@@ -131,7 +133,7 @@ module Cardlib
       # set_content bails out if we call it on a new record because it needs the
       # card id to create the revision.  call it again now that we have the id.
       
-      #return unless new_record?  # because create callbacks are also called in type transitions
+      #return unless new_card?  # because create callbacks are also called in type transitions
       return if on_create_skip_revision
       set_content updates[:content]
       updates.clear :content 

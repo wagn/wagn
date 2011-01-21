@@ -151,7 +151,7 @@ class CardController < ApplicationController
     
     case
     when params[:multi_edit]; @card.multi_update(params[:cards])
-    when card_args[:type];       @card.type=card_args.delete(:type); @card.save
+    when card_args[:type]; @card.type=Cardtype.classname_for(card_args.delete(:type)); @card.save
       #can't do this via update attributes: " Can't mass-assign these protected attributes: type"
       #might be addressable via attr_accessors?
     else;   @card.update_attributes(card_args)
@@ -221,14 +221,9 @@ class CardController < ApplicationController
   #------------( deleting )
 
   def remove  
-    if params[:card]
-      @card.confirm_destroy = params[:card][:confirm_destroy]
-    end        
-    
+    @card.confirm_destroy = params[:card][:confirm_destroy] if params[:card]
     captcha_ok = captcha_required? ? verify_captcha : true   
-    unless captcha_ok
-      return render_update_slot( render_to_string(:partial=>'confirm_remove'), "confirmation required")
-    end
+    return render_update_slot( render_to_string(:partial=>'confirm_remove'), "confirmation required") unless captcha_ok
 
     @card.destroy
       
@@ -307,14 +302,14 @@ class CardController < ApplicationController
     
   #-------- ( MISFIT METHODS )  
   def watch
-    watchers = Card.fetch_or_new( @card.name + "+*watchers", {}, :type => 'Pointer' )
+    watchers = Card.fetch_or_new( @card.name + "+*watchers", {:skip_virtual=>true}, :type => 'Pointer' )
     watchers.add_reference User.current_user.card.name
     #flash[:notice] = "You are now watching #{@card.name}"
     request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
   def unwatch 
-    watchers = Card.fetch_or_new( @card.name + "+*watchers" )
+    watchers = Card.fetch_or_new( @card.name + "+*watchers", {:skip_virtual=>true} )
     watchers.remove_reference User.current_user.card.name
     #flash[:notice] = "You are no longer watching #{@card.name}"
     request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
@@ -340,7 +335,7 @@ class CardController < ApplicationController
 
     options_card = 
       (!params[:id].blank? and
-       (pointer_card = Card.fetch(params[:id])) and
+       (pointer_card = Card.fetch_or_new(params[:id], {}, :skip_defaults=>true)) and
        pointer_card.setting_card('options'))
 
     search_args = {  :complete=>complete, :limit=>8, :sort=>'name' }

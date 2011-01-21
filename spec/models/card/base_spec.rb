@@ -63,10 +63,10 @@ describe Card do
     end  
   end
 
-  describe "#find_or_new" do
+  describe "#fetch_or_new" do
     context "when card not found" do
       it "new should have permissions" do
-        c=Card.find_or_new(:name=>"Bilboa")
+        c=Card.fetch_or_new "Bilboa"
         c.permissions.should_not be_empty
       end
     end

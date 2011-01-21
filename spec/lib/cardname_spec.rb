@@ -113,7 +113,7 @@ describe Cardname do
 
 
   describe "#to_url_key" do
-    cardnames = ["GrassCommons.org", 'Oh you @##', "Alice's Restaurant!"]
+    cardnames = ["GrassCommons.org", 'Oh you @##', "Alice's Restaurant!", "PB &amp; J", "Mañana"]
   
     cardnames.each do |name| 
       it "should have the same key as the name" do

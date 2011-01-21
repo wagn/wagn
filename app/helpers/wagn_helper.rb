@@ -25,7 +25,7 @@ module WagnHelper
   # FIMXE: this one's a hack...
   def render_card(card, mode, args={})
     if String===card && name = card
-      raise("Card #{name} not present") unless card= (Card.fetch_or_new(name) || Card[name] || Card.find_virtual(name))
+      raise("Card #{name} not present") unless card=Card.fetch(name)
     end
     # FIXME: some cases we're called before Slot.current_slot is initialized.
     #  should we initialize here? or always do Slot.new?
@@ -128,7 +128,7 @@ module WagnHelper
     card.name.split(JOINT).join(formal_joint)
   end
 
-  def less_fancy_title(card)
+  def fancy_title(card)
     name = (String===card ? card : card.name)
     return name if name.simple?
     card_title_span(name.parent_name) + %{<span class="joint">#{JOINT}</span>} + card_title_span(name.tag_name)

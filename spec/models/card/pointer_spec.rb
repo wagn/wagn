@@ -47,7 +47,7 @@ describe Card::Pointer do
      
   context "watching" do
     it "not break on permissions" do
-      watchers = Card.find_or_new( :name => "Home+*watchers" )
+      watchers = Card.fetch_or_new "Home+*watchers"
       watchers.add_reference User.current_user.card.name
       assert_equal '[[Joe User]]', watchers.content
     end

@@ -122,7 +122,8 @@ html>body #alerts { /* not in IE  (won't do fixed position) */
   right: 0px;
   display: block;
   background: #eee;
-    -border-radius: 8px 0px 0px 0px;
+  moz-border-radius: 8px 0px 0px 0px;
+  border-radius: 8px 0px 0px 0px;
   border: 1px solid #ccc;
   border-bottom: 0px;
   border-right: 0px;

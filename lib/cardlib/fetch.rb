@@ -13,7 +13,7 @@ module Cardlib
     mattr_accessor :cache
     mattr_accessor :debug
     self.debug = lambda {|x| false }
-#    self.debug = lambda {|name| name.to_key == '*sidebar+*self+*content' }
+#    self.debug = lambda {|name| name.to_key == 'a' }
 
     module ClassMethods
       def perform_caching?
@@ -39,7 +39,7 @@ module Cardlib
         key = cardname.to_key
         cacheable = false
 
-        card = Card.builtin_virtual( key ) unless opts[:skip_virtual]
+        card = Card.builtin_virtual( cardname ) unless opts[:skip_virtual]
         Rails.logger.debug "   builtin_virtual: #{card.inspect}" if card && debug
 
         if perform_caching?
@@ -73,7 +73,7 @@ module Cardlib
         end
 
         if (card.missing? && !card.virtual?) || card.trash?
-          Rails.logger.debug "   final: nil"  if debug
+          Rails.logger.debug "   final: missing (nil)"  if debug
           return nil
         end
         Rails.logger.debug "   final: #{card.inspect}"  if debug
@@ -83,6 +83,12 @@ module Cardlib
       def fetch_or_new cardname, fetch_opts = {}, card_opts = {}
         card_opts[:name] = cardname
         fetch( cardname, fetch_opts ) || Card.new( card_opts )
+      end
+      
+      def fetch_or_create cardname, fetch_opts = {}, card_opts = {}
+        card_opts[:name] = cardname
+        fetch_opts[:skip_virtual] ||= true
+        fetch( cardname, fetch_opts ) || Card.create( card_opts )
       end
 
       def preload cards, opts = {}

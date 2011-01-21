@@ -34,6 +34,11 @@ class WikiContentTest < ActiveSupport::TestCase
     assert_equal '<p>',   WikiContent.clean_html!('<p font="blah">')  
   end
   
+  def test_clean_should_remove_comments
+    assert_equal 'yo', WikiContent.clean_html!('<!-- not me -->yo')
+    assert_equal 'joe', WikiContent.clean_html!('<!-- not me -->joe<!-- not me -->')
+  end
+  
   def test_links
     assert_equal '[[ethan]]', WikiContent.process_links!('<a href="ethan">ethan</a>')
     assert_equal '[[ethan]] and [lewis][Lew]', WikiContent.process_links!('<a href="ethan">ethan</a> and <a href="Lew">lewis</a>')

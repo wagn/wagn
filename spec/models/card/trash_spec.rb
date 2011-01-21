@@ -9,10 +9,10 @@ describe Card, "deleted card" do
     @c.trash.should be_true
   end
   it "should come out of the trash when a plus card is created" do
-    pending
+    #pending
     Card.create(:name=>'A+*account')
     c = Card['A']
-    c.trash.should_not be_true
+    c.trash.should be_false
   end
 end 
 

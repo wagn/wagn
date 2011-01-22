@@ -49,9 +49,8 @@ class Wql
     :sort   => "",
     :dir    => "",
     :limit  => "",
-    :offset => "",  
-#    :group_tagging  => "",
-    :return => :list,
+    :offset => "",
+    :return => :card,
     :join   => :and,
     :view   => nil    # handled in interface-- ignore here
   }
@@ -89,21 +88,36 @@ class Wql
   end
   
   def run
-    if query[:return] == "name_content"
-      ActiveRecord::Base.connection.select_all( sql ).inject({}) do |h,x|
-        h[x["name"]] = x["content"]; h
-      end
-    else
-      results = Card.find_by_sql( sql )
-      if query[:prepend] || query[:append]
-        results = results.map do |card|
-          cardname = [query[:prepend], card.name, query[:append]].compact.join('+')
+    rows = ActiveRecord::Base.connection.select_all( sql )
+    case (query[:return] || :card)
+    when :card
+      rows.map do |row|
+        if query[:prepend] || query[:append]
+          cardname = [query[:prepend], row['name'], query[:append]].compact.join('+')
           Card.fetch_or_new cardname, {}, :skip_defaults=>true
+        else
+          Card.fetch row['name'], :skip_virtual=>true
         end
       end
-      results
+    else
+      rows.map { |row| row[query[:return].to_s] }
     end
-  end
+  end  
+    
+    #if query[:return] == "name_content"
+    #  ActiveRecord::Base.connection.select_all( sql ).inject({}) do |h,x|
+    #    h[x["name"]] = x["content"]; h
+    #  end
+    #else
+    #  results = Card.find_by_sql( sql )
+    #  if query[:prepend] || query[:append]
+    #    results = results.map do |card|
+    #      cardname = [query[:prepend], card.name, query[:append]].compact.join('+')
+    #      Card.fetch_or_new cardname, {}, :skip_defaults=>true
+    #    end
+    #  end
+    #  results
+    #end
   
   class Spec 
     attr_accessor :spec
@@ -172,7 +186,7 @@ class Wql
       #warn("<br>before clean #{(Hash===spec ? spec : spec.spec).keys}<br>")
       @query = clean(query.clone)
       @spec = @query.deep_clone
-      #warn("after clean #{@spec.inspect}<br>")
+      #warn("after clean #{@spec.inspect}")
       
       @sql = SqlStatement.new
       self
@@ -441,14 +455,16 @@ class Wql
       # Default fields/return handling   
       return "(" + sql.conditions.last + ")" if @mods[:return]==:condition     
       sql.fields.unshift case @mods[:return]
-        when :condition; 
+        #when :condition; 
+        when :card; "#{table_alias}.name"
+        when :name; "#{table_alias}.name"
         when :list; "#{table_alias}.*"
         when :count; "count(*)"
         when :first; "#{table_alias}.*"
         when :ids;   "id"
-        when :name_content;
-          sql.joins << "join revisions r on r.card_id = #{table_alias}.id"
-          "#{table_alias}.name, r.content"
+#        when :name_content;
+#          sql.joins << "join revisions r on r.card_id = #{table_alias}.id"
+#          "#{table_alias}.name, r.content"
         when :codename; 
           sql.joins << "join cardtypes as extension on extension.id=#{table_alias}.extension_id "
           'extension.class_name'

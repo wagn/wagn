@@ -202,7 +202,7 @@ class Slot
 ###----------------( NAME) (FIXME move to chunks/transclude)
   view(:name) do |*a| card.name end
   view(:link) do |*a| args = a[0]||{}
-    Chunk::Reference.link_render(card.name, args)
+    Chunk::Reference.standard_card_link(card.name)
   end
 
       ###----------------( SPECIAL )
@@ -353,6 +353,7 @@ class Slot
     r_content = _get_raw(args)
     @renderer.render( slot_options[:base]||card, r_content) {|c,o| expand_card(c,o)}
   end
+  
   def expand_inclusions(content, render_card=nil)
     @renderer.render(render_card||card, content) {|c,o| expand_card(c,o)}
   end

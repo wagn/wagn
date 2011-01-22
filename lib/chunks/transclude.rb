@@ -57,7 +57,7 @@ module Chunk
       case view
       when :name;     refcard ? refcard.name : @card_name
       when :key;      refcard_name.to_key
-      when :link;     card_link
+      when :link;     html_link
       when :linkname; Cardname.escape(refcard_name)
       else
         block ||= Proc.new do |tcard, opts|

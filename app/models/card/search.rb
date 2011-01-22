@@ -27,8 +27,8 @@ module Card
     def is_collection?() true end
 
     def each_name
-      Wql.new(card.get_spec(:return => 'name_content')).run.keys.map do
-        |name| yield(name)
+      Wql.new(card.get_spec).run.map do
+        |card| yield(card.name)
       end
     end
 

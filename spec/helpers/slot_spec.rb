@@ -116,7 +116,7 @@ describe Slot, "" do
         Card.create! :name => "n+a", :type=>"Number", :content=>"10"
         Card.create! :name => "n+b", :type=>"Phrase", :content=>"say:\"what\""
         Card.create! :name => "n+c", :type=>"Number", :content=>"30"
-        c = Card.new :name => 'nplusarray', :content => "{{n+*plus cards|array}}"
+        c = Card.new :name => 'nplusarray', :content => "{{n+*plus cards+by create|array}}"
         Slot.new(c).render( :naked ).should == %{["10", "say:\\"what\\"", "30"]}
       end
 

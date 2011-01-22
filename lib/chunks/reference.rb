@@ -3,13 +3,15 @@ module Chunk
     attr_reader :card_name, :card
     
     class << self
-      def link_render(name, args)
-        if Card.fetch(name)
-          klass, pathname = name.to_url_key, 'known-card'
-        else
-          klass, pathname = CGI.escape(Cardname.escape(name)), 'wanted-card'
-        end
-        %{<a class="#{klass}" href="/wagn/#{pathname}">#{name}</a>}
+      def standard_card_link(name)
+        card_link(name, name, Card.fetch(name))
+      end
+      
+      def card_link(name, text, known)
+        href, klass = known ? 
+          [name.to_url_key                   , 'known-card' ] : 
+          [CGI.escape(Cardname.escape(name)) , 'wanted-card']
+        %{<a class="#{klass}" href="/wagn/#{href}">#{text}</a>}
       end
     end
 
@@ -31,7 +33,8 @@ module Chunk
       refcard_name
     end
 
-    def card_link
+
+    def html_link
       href = refcard_name
       if (klass = 
         case href
@@ -42,15 +45,7 @@ module Chunk
         lt = link_text()
         %{<a class="#{klass}" href="#{href}">#{lt}</a>}
       else
-        lt = link_text.to_show(href)
-        klass = if refcard
-          href = href.to_url_key
-         'known-card'
-        else
-          href = CGI.escape(Cardname.escape(href))
-          'wanted-card'
-        end
-        %{<a class="#{klass}" href="/wagn/#{href}">#{lt}</a>}
+        self.class.card_link(href, link_text.to_show(href), refcard)
       end
     end
   end 

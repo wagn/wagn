@@ -14,12 +14,9 @@ class Slot < Renderer
   end
 
   # FIXME: simplify this to (card, opts)
-  def initialize(card, context="main_1", action="view", template=nil, opts={} )
-    @card,@context,@action,@template = card,context.to_s,action.to_s,template
-    Renderer.current_slot ||= self
-
-#Rails.logger.info "Slot.new #{card.name}, #{context}, #{action}, #{template}, #{opts.inspect}"
+  def initialize(card, opts=nil)
     super
+    Renderer.current_slot ||= self
     @context = "main_1" unless @context =~ /\_/
     @position = @context.split('_').last
     @state = :view
@@ -392,7 +389,7 @@ class Slot < Renderer
   end
 
   def half_captcha
-    if captcha_required?
+    if controller && captcha_required?
       key = card.new_record? ? "new" : card.key
       javascript_tag(%{loadScript("http://api.recaptcha.net/js/recaptcha_ajax.js")}) +
         recaptcha_tags( :ajax=>true, :display=>{:theme=>'white'}, :id=>key)

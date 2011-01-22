@@ -12,6 +12,26 @@ describe Slot, "" do
       Slot.new(c).render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/A\">A</a>"
     end
 
+    it "renders name with with layout" do
+
+      c = Card.new :name => 'nameA', :content => "{{A|name}}"
+      Slot.new(c, 'main_1').render_layout.should be_html_with do
+        html { body {
+          p {"A"}
+        }}
+      end
+      c = Card.new :name => 'openA', :content => "{{A|open}}"
+      Slot.new(c, :context=>'main_1', :view=>'open').render_layout.should be_html_with do
+        body() {
+          div(:class=>"title-menu") {
+            a(:href=>"/wagn/A", :class=>"page-icon", :title=>"Go to: A") { }
+          }
+          span(:class=>"open-content content editOnDoubleClick") {
+            a(:class=>"known-card", :href=>"/wagn/Z") { }
+          }
+        }
+      end
+    end
     it "invisible comment inclusions as blank" do
       c = Card.new :name => 'invisible', :content => "{{## now you see nothing}}"
       Slot.new(c).render( :naked ).should == ''
@@ -160,7 +180,7 @@ describe Slot, "" do
   describe "cgi params" do
     it "renders params in card inclusions" do
       c = Card.new :name => 'cardNaked', :content => "{{_card+B|naked}}"
-      result = Slot.new(c, nil, nil, nil, :params=>{'_card' => "A"}).render(:naked)
+      result = Slot.new(c, :params=>{'_card' => "A"}).render_naked
       result.should == "AlphaBeta"
     end
 
@@ -178,14 +198,14 @@ describe Slot, "" do
 
     # a little weird that we need :open_content  to get the version without
     # slot divs wrapped around it.
-    s = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :name } )
+    s = Slot.new(t, :inclusion_view_overrides=>{ :open => :name } )
     s.render( :naked ).should == "t2"
 
     # similar to above, but use link
-    s = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :link } )
+    s = Slot.new(t, :inclusion_view_overrides=>{ :open => :link } )
     s.render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/t2\">t2</a>"
 
-    s = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :naked } )
+    s = Slot.new(t, :inclusion_view_overrides=>{ :open => :naked } )
     s.render( :naked ).should == "boo"
   end
 
@@ -195,7 +215,7 @@ describe Slot, "" do
       template = mock("template")
       template.should_receive(:render).with(:partial=>"builtin/builtin").and_return("Boo")
       builtin_card = Card.new( :name => "*builtin", :builtin=>true )
-      slot = Slot.new( builtin_card, "main_1", "view"  )
+      slot = Slot.new( builtin_card )
       slot.render_raw.should == "Boo"
       slot.render(:raw).should == "Boo"
       slot = Slot.new( Card["*head"], "main_1", "view"  )
@@ -205,20 +225,27 @@ describe Slot, "" do
 
   context "with content settings" do
     it "uses content setting" do
+      pending
       @card = Card.new( :name=>"templated", :content => "bar" )
       config_card = Card.new(:name=>"templated+*self+*content", :content=>"Yoruba" )
       @card.should_receive(:setting_card).with("content","default").and_return(config_card)
       Slot.new(@card).get_raw.should == "Yoruba"
+      @card.should_receive(:setting_card).with("content","default").and_return(config_card)
       @card.should_receive(:setting_card).with("add help","edit help")
-      Slot.new(@card).render_new.should == ""
+      Slot.new(@card).render_new.should be_html_with do
+        html { div(:class=>"unknown-class-name") {}}
+      end
     end
 
     it "uses render content setting" do
       @card = Card.new( :name=>"templated", :content => "bar" )
       Card.new(:name=>"templated+*self+*content", :content=>"Yoruba" )
       config_card = Card.new(:name=>"templated+*self+*add help", :content=>"Help me" )
-      @card.should_receive(:setting_card).with("add help","edit help").and_return(config_card)
-      Slot.new(@card).render_new.should == ""
+      #@card.should_receive(:setting_card).with("content","default").and_return(config_card)
+      #@card.should_receive(:setting_card).with("add help","edit help").and_return(config_card)
+      Slot.new(@card).render_new.should be_html_with do
+        dix { "Yorba"}
+      end
     end
 
     it "doesn't use content setting if default is present" do
@@ -231,13 +258,16 @@ describe Slot, "" do
     # FIXME: this test is important but I can't figure out how it should be
     # working.
     it "uses content setting in edit" do
-      pending
+Rails.logger.info "failing start"
       config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )
+Rails.logger.info "failing new templated"
       @card = Card.new( :name=>"templated", :content => "Bar" )
-      #@card.should_receive(:setting_card).at_least(:twice).with("content").and_return(config_card)
+      @card.should_receive(:setting_card).with("content", "default").and_return(config_card)
+Rails.logger.info "failing new about to render #{@card}"
       result = Slot.new(@card).render(:edit)
+Rails.logger.info "failing done"
       result.should be_html_with do
-        div :class => "edit_in_multi" do
+        div :class => "field-in-multi" do
           input :name=>"cards[~plus~alpha][content]", :type => 'hidden'
         end
       end

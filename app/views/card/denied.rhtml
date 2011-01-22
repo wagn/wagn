@@ -1,7 +1,7 @@
 <%
   # these are member variables because you can't pass locals to an action, only to partials
   @type   ||= 'Basic'   # only really need for create
-  @deny   ||= (@card ? 'edit' : 'create')
+  @deny   ||= (card ? 'edit' : 'create')
   @skip_slot_header ||= false
 %>
 

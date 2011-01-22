@@ -1,11 +1,11 @@
 xml.instruct! :xml, :version => "1.0"
 xml.kml do
   xml.Document do
-    cards = if Card::Search === @card
-          @card.search( :limit => 25, :_keyword=>params[:_keyword] )
-          @card.results
+    cards = if Card::Search === card
+          card.search( :limit => 25, :_keyword=>params[:_keyword] )
+          card.results
         else
-          [@card]
+          [card]
         end
 
     cards.each do |card|

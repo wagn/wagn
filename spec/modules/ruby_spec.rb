@@ -20,7 +20,7 @@ describe "Ruby Cardtype" do
 
   it "should keep different ruby cards straight" do
     card = Card.create! :name => "final", :content => "{{a1test|naked}}" 
-    Slot.new(card, "main_1" ).render(:naked ).should == "7, 9"
+    Slot.new(card, :context=>"main_1" ).render(:naked ).should == "7, 9"
   end
   
 end

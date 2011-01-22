@@ -1,17 +1,17 @@
 xml.instruct! :xml, :version => "1.0"
 xml.rss :version => "2.0" do
   xml.channel do
-    xml.title  System.site_title + " : " + @card.name.gsub(/^\*/,'')
+    xml.title  System.site_title + " : " + card.name.gsub(/^\*/,'')
     xml.description ""
-    xml.link card_url(@card)
+    xml.link card_url(card)
 
-    cards = if Card::Search === @card
-      @card.search( :limit => 25, :_keyword=>params[:_keyword] )
-      @card.results
+    cards = if Card::Search === card
+      card.search( :limit => 25, :_keyword=>params[:_keyword] )
+      card.results
     else
-      [@card]
+      [card]
     end
-    view_changes = (@card.name=='*recent changes')
+    view_changes = (card.name=='*recent changes')
 
     cards.each do |card|
       xml.item do
@@ -27,7 +27,7 @@ xml.rss :version => "2.0" do
         xml.guid card_url(card)
       end
     end
-    #xml.atom :link, :href=>card_url(@card), :rel=>"self", :type=>"application/rss+xml"
+    #xml.atom :link, :href=>card_url(card), :rel=>"self", :type=>"application/rss+xml"
   end
 end
 

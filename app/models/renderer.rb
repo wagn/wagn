@@ -80,17 +80,17 @@ class Renderer
   def actions() self.class.render_actions end
   def action_method(key) self.class.actions[key] end # root renderer class, no super
 
-  def initialize(card, context="main_1", action="view", template=nil, opts={} )
+  def initialize(card, opts=nil)
     @card = card
-    @context = context
     if opts
-      inclusion_map(      opts[:inclusion_view_overrides] )
-      @main_content     = opts[:main_content]
-      @main_card        = opts[:main_card]
-      @base             = opts[:base]
-      @params           = opts[:params]||{}
-      @relative_content = opts[:relative_content]||{}
+      [:main_content, :main_card, :base, :action, :context, :template,
+        :params, :relative_content].
+          map {|s| instance_variable_set "@#{s}", opts[s]}
+      inclusion_map( opts[:inclusion_view_overrides] )
     end
+    @params ||= {}
+    @relative_content ||= {}
+    @action ||= 'view'
     @template ||= begin
       t = ActionView::Base.new( CardController.view_paths, {} )
       t.helpers.send :include, CardController.master_helper_module
@@ -345,7 +345,7 @@ class Renderer
       tcard = root.main_card
       tname = tcard.name
       item  = symbolize_param(:item) and options[:item] = item
-      pview = symbolize_param(:view) and options[:view] = pview
+      pview = (@action or symbolize_param(:view)) and options[:view] = pview
       options[:context] = 'main'
       options[:view] ||= :open
     end

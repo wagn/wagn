@@ -1,4 +1,4 @@
-<%-  @card.update_referencers ||= false %>
+<%-  card.update_referencers ||= false %>
 
 
 <% get_slot.wrap('name') do |slot| %>
@@ -13,7 +13,7 @@
 
       <% if @confirm==true %>
 
-        <% if dependents = @card.dependents and !dependents.empty? %>
+        <% if dependents = card.dependents and !dependents.empty? %>
           <div class="instruction">
             <div>This will change the names of these cards, too:</div> <%#ENGLISH%>
             <ul>
@@ -24,7 +24,7 @@
           </div>
         <% end %>
 
-         <% if children = @card.extended_referencers and !children.empty? %>
+         <% if children = card.extended_referencers and !children.empty? %>
           <h2>References</h2>
           <div class="instruction">
             <div>Renaming could break old links and inclusions on these cards:</div> <%#ENGLISH%>

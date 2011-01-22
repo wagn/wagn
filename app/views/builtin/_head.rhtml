@@ -1,14 +1,14 @@
   <%# ------- Title -------------%>
   <link rel="shortcut icon" href="<%= System.favicon %>" />
 
-  <% if @card and !@card.new_record? and @card.ok? :edit %>
-    <link rel="alternate" type="application/x-wiki" title="Edit this page!" href="/card/edit/<%= @card.key %>"/>
+  <% if card and !card.new_record? and card.ok? :edit %>
+    <link rel="alternate" type="application/x-wiki" title="Edit this page!" href="/card/edit/<%= card.key %>"/>
   <% end %>
 
-  <% if @card and @card.name == "*search" %>
+  <% if card and card.name == "*search" %>
     <link rel="alternate" type="application/rss+xml" title="RSS" href="/search/<%= params[:_keyword] %>.rss" />
-  <% elsif @card and Card::Search === @card %>
-    <link rel="alternate" type="application/rss+xml" title="RSS" href="<%= url_for_page( @card.name, :format=>:rss ) %>" />
+  <% elsif card and Card::Search === card %>
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="<%= url_for_page( card.name, :format=>:rss ) %>" />
   <% end %>
 
 

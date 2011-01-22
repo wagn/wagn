@@ -6,23 +6,25 @@ module WagnHelper
   # FIXME: slot -> renderer (model)
   # Put the initialization in the controller and we no longer care here
   # whether it is a Slot or Renderer, and it will be from the parent class
-  def slot
-    Renderer.current_slot
-  end
-
-  # I think this is redundant now
-  def card
-    @card
+  def slot() Renderer.current_slot end
+  def card() @card ||= slot.card end
+  def params()
+    if controller 
+      controller.params 
+    else
+      slot and slot.params
+    end
   end
 
   # FIXME: I think all this slot initialization should happen in controllers
   def get_slot(card=nil, context=nil, action=nil, opts={})
     nil_given = card.nil?
     card ||= @card; context||=@context; action||=@action
-    opts[:relative_content] = opts[:params] = params
+    opts[:relative_content] = opts[:params] = (controller and params) or {}
     slot = case
       when Renderer.current_slot;  nil_given ? Renderer.current_slot : Renderer.current_slot.subrenderer(card)
-      else Renderer.current_slot = Slot.new(card,context,action,self,opts)
+      else Renderer.current_slot = Slot.new( card,
+            opts.merge(:context=>context, :action=>action, :tempalte=>self) )
     end
     controller and controller.renderer = slot or slot
   end
@@ -280,7 +282,9 @@ module WagnHelper
 
   def render_layout_card(lay_card)
     opts = {}; opts[:relative_content] = opts[:params] = params
-    Slot.new(lay_card, "layout_0", "view", self, opts).render(:layout, :main_card=>@card, :main_content=>@content_for_layout)
+    Slot.new(lay_card,
+       opts.merge(:context=>"layout_0", :action=>"view", :template=>self)).
+         render(:layout, :main_card=>@card, :main_content=>@content_for_layout)
   end
 
   def render_layout_content(content)

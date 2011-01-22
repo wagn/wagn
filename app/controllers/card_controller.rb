@@ -37,12 +37,16 @@ class CardController < ApplicationController
     @card_name = Cardname.unescape(params['id'] || '')
     @card_name = System.site_title if (@card_name.nil? or @card_name.empty?) 
     @card =   Card.fetch_or_new(@card_name)
-
-    if @card.new_record? && !@card.virtual?  # why doesnt !known? work here?
-      params[:card]={:name=>@card_name, :type=>params[:type]}
-      return ( Card::Basic.create_ok? ? self.new : render(:action=>'missing') )
-    else
-      save_location
+    
+    respond_to do |format|
+      format.html do
+        if @card.new_record? && !@card.virtual?  # why doesnt !known? work here?
+          params[:card]={:name=>@card_name, :type=>params[:type]}
+          return ( Card::Basic.create_ok? ? self.new : render(:action=>'missing') )
+        else
+          save_location
+        end
+      end
     end
     return if !view_ok # if view is not ok, it will render denied. return so we dont' render twice
 
@@ -283,7 +287,7 @@ class CardController < ApplicationController
       c = Card.fetch((root ? "#{root}+" : '') +'*related')
       c && c.type=='Pointer' && c.items
     end.flatten.compact
-    @items << 'config'
+#    @items << 'config'
     @current = params[:attribute] || @items.first.to_key
   end
 

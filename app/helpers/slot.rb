@@ -621,10 +621,6 @@ Rails.logger.info "method_missing(#{method_id}, #{args.inspect}, #{proc.inspect}
     render_partial 'card/footer'
   end
 
-  def footer_links
-    render_partial( 'card/footer_links' )   # this is ugly reusing this cache code
-  end
-
   def option( args={}, &proc)
     args[:label] ||= args[:name]
     args[:editable]= true unless args.has_key?(:editable)
@@ -691,7 +687,7 @@ Rails.logger.info "method_missing(#{method_id}, #{args.inspect}, #{proc.inspect}
     self.form = form
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
-    User.as :wagbot do
+    User.as :wagbot do #Why is this done as wagbot???  dodgy.
       pre_content + clear_queues + self.render_partial( card_partial('editor'), options ) + setup_autosave
     end
   end                          

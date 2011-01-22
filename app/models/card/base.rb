@@ -419,11 +419,11 @@ module Card
     end
     
     # I don't really like this.. 
-    def attribute_card( attr_name )
-      ::User.as :wagbot do
-        Card.fetch( name + JOINT + attr_name , :skip_virtual => true)
-      end
-    end
+    #def attribute_card( attr_name )
+    #  ::User.as :wagbot do
+    #    Card.fetch( name + JOINT + attr_name , :skip_virtual => true)
+    #  end
+    #end
      
     def revised_at
       current_revision ? current_revision.updated_at : Time.now

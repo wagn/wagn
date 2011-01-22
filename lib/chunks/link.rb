@@ -22,7 +22,7 @@ module Chunk
     end
 
     def unmask_text
-      @unmask_text ||= card_link
+      @unmask_text ||= html_link
     end
     
     def revert

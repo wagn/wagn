@@ -16,11 +16,19 @@ class ApplicationController < ActionController::Base
   include ActionView::Helpers::SanitizeHelper
 
   before_filter :per_request_setup, :except=>[:render_fast_404]
-
-  # OPTIMIZE: render_fast_404 still isn't that fast (?18reqs/sec)
+ # after_filter :set_encoding
+  # OPTIMIZE: render_fast_404 still isn't that fast (?18reqs/sec) 
   # can we turn sessions off for it and see if that helps?
   layout :wagn_layout, :except=>[:render_fast_404]
-
+  
+  
+ # def set_encoding
+ #   respond_to do |format|
+ #     format.text {  headers['Content-Type'] ||= 'text/css' }
+ #     format.css {  headers['Content-Type'] ||= 'text/css' }
+ #   end  
+ # end
+  
   BUILTIN_LAYOUTS = %w{ blank noside simple pre none }
 
 

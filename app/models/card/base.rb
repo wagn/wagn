@@ -51,7 +51,7 @@ module Card
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
       :from_trash, :update_referencers, :allow_type_change, :virtual,
-      :builtin, :broken_type, :skip_defaults, :loaded_trunk
+      :builtin, :broken_type, :skip_defaults, :loaded_trunk, :blank_revision
 
     # setup hooks on AR callbacks
     # Note: :after_create is called from end of set_initial_content now
@@ -419,11 +419,11 @@ module Card
     end
     
     # I don't really like this.. 
-    def attribute_card( attr_name )
-      ::User.as :wagbot do
-        Card.fetch( name + JOINT + attr_name , :skip_virtual => true)
-      end
-    end
+    #def attribute_card( attr_name )
+    #  ::User.as :wagbot do
+    #    Card.fetch( name + JOINT + attr_name , :skip_virtual => true)
+    #  end
+    #end
      
     def revised_at
       current_revision ? current_revision.updated_at : Time.now
@@ -457,10 +457,25 @@ module Card
     end
 
     def content   
-      new_card? ? ok!(:create_me) : ok!(:read) 
-      current_revision ? current_revision.content : ""
+      new_card? ? ok!(:create_me) : ok!(:read)
+      cached_revision.new_record? ? "" : cached_revision.content
     end   
-
+    
+    def cached_revision
+      case
+      when (@cached_revision and @cached_revision.id==current_revision_id); 
+      when (@cached_revision=Card.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
+      else
+        @cached_revision = current_revision || get_blank_revision
+        Card.cache.write("#{key}-content", @cached_revision)
+      end
+      @cached_revision
+    end
+    
+    def get_blank_revision
+      @blank_revision ||= Revision.new
+    end
+    
     def raw_content
       templated_content || content
     end

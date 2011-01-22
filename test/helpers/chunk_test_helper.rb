@@ -12,7 +12,7 @@ module ChunkTestHelper
     def card
     end
     
-    def card_link(*); end
+    def html_link(*); end
   end
 
   # Asserts that test_text doesn't match the chunk_type

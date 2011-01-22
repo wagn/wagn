@@ -52,7 +52,7 @@ module Cardlib
     end
     
     def contextual_content context = nil
-      Renderer.new(context).expand_inclusions(Renderer.new(self)._get_raw)
+      Renderer.new(context).expand_inclusions(Renderer.new(self)._render_raw)
     end
 
     def cardtype_name

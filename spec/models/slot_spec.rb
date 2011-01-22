@@ -5,15 +5,28 @@ describe Slot, "" do
   def simplify_html string
     string.gsub(/\s*<!--[^>]*>\s*/, '').gsub(/\s*<\s*(\/?\w+)[^>]*>\s*/, '<\1>')
   end
+  
+  def simple_render(content)
+    @card ||= Card.new
+    @card.content=content
+    Slot.new(@card).render(:naked)
+  end
 
-  describe "renders" do
+  describe "processes content" do
     it "simple card links" do
-      c = Card.new :name => 'linkA', :content => "[[A]]"
-      Slot.new(c).render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/A\">A</a>"
+      simple_render("[[A]]").should=="<a class=\"known-card\" href=\"/wagn/A\">A</a>"
     end
 
-    it "renders name with with layout" do
+    it "invisible comment inclusions as blank" do
+      simple_render("{{## now you see nothing}}").should==''
+    end
+    
+    it "visible comment inclusions as html comments" do
+      simple_render("{{# now you see me}}").should == '<!-- # now you see me -->'
+      simple_render("{{# -->}}").should == '<!-- # --&gt; -->'
+    end
 
+    it "renders name with layout" do
       c = Card.new :name => 'nameA', :content => "{{A|name}}"
       Slot.new(c, 'main_1').render_layout.should be_html_with do
         html { body {
@@ -32,17 +45,8 @@ describe Slot, "" do
         }
       end
     end
-    it "invisible comment inclusions as blank" do
-      c = Card.new :name => 'invisible', :content => "{{## now you see nothing}}"
-      Slot.new(c).render( :naked ).should == ''
-    end
 
-    it "visible comment inclusions as html comments" do
-      c1 = Card.new :name => 'invisible', :content => "{{# now you see me}}"
-      c2 = Card.new :name => 'invisible', :content => "{{# -->}}"
-      Slot.new(c1).render( :naked ).should == '<!-- # now you see me -->'
-      Slot.new(c2).render( :naked ).should == '<!-- # --&gt; -->'
-    end
+
 
     it "image tags of different sizes" do
       Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}
@@ -229,7 +233,7 @@ describe Slot, "" do
       @card = Card.new( :name=>"templated", :content => "bar" )
       config_card = Card.new(:name=>"templated+*self+*content", :content=>"Yoruba" )
       @card.should_receive(:setting_card).with("content","default").and_return(config_card)
-      Slot.new(@card).get_raw.should == "Yoruba"
+      Slot.new(@card).render_raw.should == "Yoruba"
       @card.should_receive(:setting_card).with("content","default").and_return(config_card)
       @card.should_receive(:setting_card).with("add help","edit help")
       Slot.new(@card).render_new.should be_html_with do
@@ -244,7 +248,7 @@ describe Slot, "" do
       #@card.should_receive(:setting_card).with("content","default").and_return(config_card)
       #@card.should_receive(:setting_card).with("add help","edit help").and_return(config_card)
       Slot.new(@card).render_new.should be_html_with do
-        dix { "Yorba"}
+        div { "Yorba"}
       end
     end
 

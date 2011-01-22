@@ -135,8 +135,6 @@ class ApplicationController < ActionController::Base
     name = Cardname.unescape(id)
     card_params = params[:card] ? params[:card].clone : {}
     @card = Card.fetch_or_new(name, {}, card_params)
-    #get_slot(@card)
-    @card
   end
 
   def load_card_and_revision

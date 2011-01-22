@@ -33,8 +33,7 @@ class Renderer
       :depth, :form, :item_view, :view, :type, :base, :state, :sub_count,
       :render_args, :requested_view
 
-  #
-  # Action definitions
+  # View definitions
   #
   #   When you declare:
   #     view(:name) do |args|
@@ -128,7 +127,7 @@ class Renderer
     @inclusion_map
   end
 
-  def render_view(content=nil, opts={}, &block)
+  def process_content(content=nil, opts={}, &block)
     return content unless card
     content = card.content if content.blank?
 
@@ -167,21 +166,20 @@ class Renderer
   end
 
   def expand_inclusions(content)
-    render_view(content) do |tcard,opts|
+    process_content(content) do |tcard,opts|
       expand_card(tcard, opts)
     end
   end
 
 ### ---- Core renders --- Keep these on top for dependencies
-  view(:raw, :method=>:get_raw) do
+  view(:raw) do
     if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
       template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
     else card.raw_content end
   end
 
   view(:core) do |args|
-    render_view(_get_raw, args)
-    #expand_inclusions(_get_raw)
+    process_content(_render_raw, args)
   end
 
   view(:naked) do |args|
@@ -459,7 +457,7 @@ class Renderer
 
     if card.id and card.respond_to?('references_expired')
       card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
-      rendering_result ||= WikiContent.new(card, _get_raw, self)
+      rendering_result ||= WikiContent.new(card, _render_raw, self)
       rendering_result.find_chunks(Chunk::Reference).each do |chunk|
         reference_type =
           case chunk

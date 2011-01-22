@@ -245,10 +245,10 @@ describe CardController do
         assert_template 'missing'
       end
       
-      it "invokes before_show hook" do
-        Wagn::Hook.should_receive(:call).with(:before_show, "*all", instance_of(CardController))
-        get :show, {:id=>'Sample_Basic'}
-      end
+      #it "invokes before_show hook" do
+      #  Wagn::Hook.should_receive(:call).with(:before_show, "*all", instance_of(CardController))
+      #  get :show, {:id=>'Sample_Basic'}
+      #end
     end
     
     

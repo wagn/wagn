@@ -50,20 +50,25 @@ class CardController < ApplicationController
   end
 
   def render_show
-    Wagn::Hook.call :before_show, '*all', self
+    #Wagn::Hook.call :before_show, '*all', self
 
-    # rss causes infinite memory suck in rails 2.1.2.  
     respond_to do |format|
       format.rss do
          raise("Sorry, RSS is broken in rails < 2.2") unless Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >=2
+         # rss causes infinite memory suck in rails 2.1.2.  
+         render :action=>'show'
       end
-      format.html {}
-      format.css {}
+      format.txt  { render :text=>@card.content }
+      format.css  { render :text=>Slot.new(@card).render(:naked) }
+      #format.kml  { render :action=>'show'}
+      format.xml  { render :text=>'XML not yet supported'}
+      format.json { render :text=>'JSON not yet supported'}
+      format.html do
+        @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
+        ## fixme, we ought to be setting special titles (or all titles) in cards
+        request.xhr? ? render(:action=>'show') : render(:text=>'', :layout=>true)
+      end
     end
-        
-    @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
-    ## fixme, we ought to be setting special titles (or all titles) in cards
-    (request.xhr? || params[:format]) ? render(:action=>'show') : render(:text=>'', :layout=>true)
   end
 
   #----------------( MODIFYING CARDS )

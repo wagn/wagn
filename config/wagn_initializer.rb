@@ -168,7 +168,8 @@ module Wagn
       end
       
       def register_mimetypes
-        Mime::Type.register "text/css", :css
+        Mime::Type.register "text/css",         :css
+        Mime::Type.register_alias "text/plain", :txt
       end
     end
   end

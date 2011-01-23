@@ -45,11 +45,11 @@ class TransclusionTest < ActiveSupport::TestCase
      specialtype = Card::Cardtype.create :name=>'SpecialType'
 
      specialtype_template = specialtype.connect template, "{{#{JOINT}age}}" 
-     assert_equal "{{#{JOINT}age}}", render_card(specialtype_template)
+     assert_equal "{{#{JOINT}age}}", render_test_card(specialtype_template)
      wooga = Card::SpecialType.create :name=>'Wooga'
      # card = card('Wooga')  #wtf?
      wooga_age = wooga.connect( age, "39" )
-     assert_text_equal  span(wooga_age, "39"), render_card(wooga)
+     assert_text_equal  span(wooga_age, "39"), render_test_card(wooga)
      assert_text_equal ['Wooga'], wooga_age.transcluders.plot(:name)
    end
 

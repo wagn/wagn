@@ -234,7 +234,7 @@ class Renderer
     render_partial('views/change')
   end
 
-  def render(action, args={}, &block)
+  def render(action=:view, args={}, &block)
     self.render_args = args.clone
     denial = render_deny(action, args)
     return denial if denial

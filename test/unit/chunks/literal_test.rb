@@ -21,13 +21,13 @@ class LiteralTest < ActiveSupport::TestCase
   
   def test_escape_link
     card = newcard('link howto', 'write this: \[[text]]')
-    assert_equal('write this: <span>[</span>[text]]', render_card(card) )
+    assert_equal('write this: <span>[</span>[text]]', render_test_card(card) )
 
   end
   
   def test_escape_inclusion
     card = newcard('inclusion howto', 'write this: \{{cardname}}')
-    assert_equal('write this: <span>{</span>{cardname}}', render_card(card) )
+    assert_equal('write this: <span>{</span>{cardname}}', render_test_card(card) )
   end
   
 end                                                                      

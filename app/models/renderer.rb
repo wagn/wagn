@@ -138,7 +138,7 @@ class Renderer
     wiki_content.render! do |tname, opts|
       full = opts[:fullname] = get_inclusion_fullname(tname, opts)
       @view = opts[:view].to_sym if view == nil and opts[:view]
-      expand_card(tname,opts,&block)
+      expand_card(tname,opts)#,&block)
     end
   end
 
@@ -166,9 +166,9 @@ class Renderer
   end
 
   def expand_inclusions(content)
-    process_content(content) do |tcard,opts|
-      expand_card(tcard, opts)
-    end
+    process_content(content) #do |tcard,opts|
+#      expand_card(tcard, opts)
+#    end
   end
 
 ### ---- Core renders --- Keep these on top for dependencies
@@ -326,19 +326,19 @@ class Renderer
     String.new wiki_content.unrender!
   end
 
-  def expand_card(tcard, options, &block)
-    unless block_given?
-      block = Proc.new do |tcard, opts|
-        process_inclusion(tcard, opts)
-      end
-    end
+  def expand_card(tcard, options)#, &block)
+    #unless block_given?
+    #  block = Proc.new do |tcard, opts|
+    #    process_inclusion(tcard, opts)
+    #  end
+    #end
 
     return options[:comment] if options.has_key?(:comment)
     tname = if String===tcard; x=tcard;tcard=nil;x else tcard.name end
     # Don't bother processing inclusion if we're already out of view
     return '' if (state==:line && self.char_count > Renderer.max_char_count)
 
-    if is_main = tname == '_main'
+    if is_main = tname=='_main'
       return root.main_content if root.main_content
       tcard = root.main_card
       tname = tcard.name
@@ -364,7 +364,7 @@ class Renderer
     options[:showname] = tname.to_show(fullname)
 
     tcard.loaded_trunk=card if tname =~ /^\+/
-    result = block.call(tcard, options)
+    result = process_inclusion(tcard, options)
     result = resize_image_content(result, options[:size]) if options[:size]
     @char_count += (result ? result.length : 0) #should we strip html here?
     (is_main and respond_to?(:wrap_main)) ? self.wrap_main(result) : result
@@ -410,8 +410,8 @@ class Renderer
     result = sub.render(action, options)
     Renderer.current_slot = old_renderer
     result
-#  rescue
-#    %{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
+  rescue
+    %{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
   end
 
   def get_inclusion_fullname(name,options)

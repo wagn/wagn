@@ -230,7 +230,7 @@ class Renderer
   end
 
   view(:rss_change) do |args|
-    requested_view = 'content'
+    self.requested_view = 'content'
     render_partial('views/change')
   end
 
@@ -343,7 +343,7 @@ class Renderer
       tcard = root.main_card
       tname = tcard.name
       item  = symbolize_param(:item) and options[:item] = item
-      pview = (@action or symbolize_param(:view)) and options[:view] = pview
+      pview = symbolize_param(:view) and options[:view] = pview
       options[:context] = 'main'
       options[:view] ||= :open
     end
@@ -371,6 +371,11 @@ class Renderer
     #result
   rescue Card::PermissionDenied
     ''
+  end
+
+  def symbolize_param(param)
+    val = params[param]
+    (val && !val.to_s.empty?) ? val.to_sym : nil
   end
 
   def resize_image_content(content, size)
@@ -437,7 +442,7 @@ class Renderer
     content = relative_content[cardname.gsub(/\+/,'_')]
 
     # CLEANME This is a hack to get it so plus cards re-populate on failed signups
-    if relative_content['cards'] and card_params = relative_content['cards'][cardname.gsub('+','~plus~')]
+    if relative_content['cards'] and card_params = relative_content['cards'][cardname.pre_cgi]
       content = card_params['content']
     end
     content if content.present?  #not sure I get why this is necessary - efm

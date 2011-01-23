@@ -24,7 +24,7 @@ module WagnHelper
     slot = case
       when Renderer.current_slot;  nil_given ? Renderer.current_slot : Renderer.current_slot.subrenderer(card)
       else Renderer.current_slot = Slot.new( card,
-            opts.merge(:context=>context, :action=>action, :tempalte=>self) )
+            opts.merge(:context=>context, :action=>action, :template=>self) )
     end
     controller and controller.renderer = slot or slot
   end

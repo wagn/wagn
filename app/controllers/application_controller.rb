@@ -35,6 +35,8 @@ class ApplicationController < ActionController::Base
   protected
 
   def per_request_setup
+    Slot.xhr=request.xhr?
+    
     if System.multihost
       if mapping = MultihostMapping.find_by_requested_host(request.host) || MultihostMapping.find_by_requested_host("")
         System.base_url = "http://" + mapping.canonical_host

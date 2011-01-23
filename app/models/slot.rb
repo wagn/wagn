@@ -1,6 +1,6 @@
 class Slot < Renderer
 
-  cattr_accessor :render_actions
+  cattr_accessor :render_actions, :xhr
   attr_accessor  :options_need_save, :js_queue_initialized,
     :position, :start_time, :skip_autosave
 
@@ -38,7 +38,7 @@ class Slot < Renderer
 
   view(:content) do |args|
     @state = :view
-    requested_view = 'content'
+    self.requested_view = 'content'
     c = _render_naked(args)
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
     wrap('content', args) {  wrap_content(c) }
@@ -50,18 +50,18 @@ class Slot < Renderer
 
   view(:open) do |args|
     @state = :view
-    requested_view = 'open'
+    self.requested_view = 'open'
     wrap('open', args) { render_partial('views/open') }
   end
 
   view(:closed) do |args|
     @state = :line
-    requested_view = 'closed'
+    self.requested_view = 'closed'
     wrap('closed', args) { render_partial('views/closed') }
   end
 
   view(:setting) do |args|
-    wrap( requested_view = 'content', args) do
+    wrap( self.requested_view = 'content', args) do
       render_partial('views/setting')
     end
   end
@@ -69,23 +69,23 @@ class Slot < Renderer
   view(:edit) do |args|
     @state=:edit
     # FIXME CONTENT: the hard template test can go away when we phase out the old system.
-    wrap('', args) do
+    #wrap('', args) do
       card.content_template ?  _render_multi_edit(args) : content_field(slot.form)
-    end
+    #end
   end
 
   view(:multi_edit) do |args|
     @state=:edit
     args[:add_javascript]=true
-    wrap('', args) do
+    #wrap('', args) do
       hidden_field_tag(:multi_edit, true) + _render_naked(args)
-    end
+    #end
   end
 
   view(:change) do |args|
-    requested_view = 'content'
+    self.requested_view = 'content'
     wrap('content', args) do
-      w_content = render_partial('views/change')
+      render_partial('views/change')
     end
   end
 
@@ -126,15 +126,6 @@ class Slot < Renderer
 
       "<div " + attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join + '>'
     else "" end +
-
-=begin
-    if (Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >= 2)
-      args = nil
-      template.output_buffer ||= ''   # fixes error in CardControllerTest#test_changes
-    else
-      args = proc.binding
-    end
-=end
     yield(self) + (render_slot ? "</div>" : "")
   end
 
@@ -351,7 +342,7 @@ class Slot < Renderer
   end
 
   def xhr?
-    controller && controller.request.xhr?
+    @@xhr
   end
 
   def get_queue_context

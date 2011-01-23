@@ -32,11 +32,12 @@ class Slot < Renderer
 
   view(:layout) do |args|
     @main_card, mc = args.delete(:main_card), args.delete(:main_content)
-    @main_content = mc.blank? ? _render_core(args) : wrap_main(mc)
+    @main_content = mc.blank? ? nil : wrap_main(mc)
+    _render_core(args)
   end
 
   view(:content) do |args|
-    @state = 'view'
+    @state = :view
     requested_view = 'content'
     c = _render_naked(args)
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?

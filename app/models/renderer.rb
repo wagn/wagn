@@ -23,7 +23,8 @@ class Renderer
     :bare => :naked,
   }
 
-  cattr_accessor :max_char_count, :max_depth, :render_actions, :current_slot
+  cattr_accessor :max_char_count, :max_depth, :render_actions,
+    :current_slot, :xhr
   self.max_char_count = 200
   self.max_depth = 10
 
@@ -78,6 +79,7 @@ class Renderer
 
   def actions() self.class.render_actions end
   def action_method(key) self.class.actions[key] end # root renderer class, no super
+  def xhr?() @@xhr end
 
   def initialize(card, opts=nil)
     @card = card

@@ -316,7 +316,9 @@ describe Card, "new permissions" do
 
   it "should let joe render content of new cards" do
     @c = Card.new
-    Renderer.new(@c).render_view.should == ''
+    Slot.new(@c).render.should be_html_with do
+      span(:class=>"open-content content editOnDoubleClick") {}
+    end
   end
 
 end

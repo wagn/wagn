@@ -250,10 +250,12 @@ describe Slot, "" do
       @card = Card.new( :name=>"templated", :content => "bar" )
       Card.new(:name=>"templated+*self+*content", :content=>"Yoruba" )
       config_card = Card.new(:name=>"templated+*self+*add help", :content=>"Help me" )
-      #@card.should_receive(:setting_card).with("content","default").and_return(config_card)
-      #@card.should_receive(:setting_card).with("add help","edit help").and_return(config_card)
+      @card.should_receive(:setting_card).with("content","default").and_return(config_card)
+      @card.should_receive(:setting_card).with("add help","edit help").and_return(config_card)
       Slot.new(@card).render_new.should be_html_with do
-        div { "Yorba"}
+        span(:class=>"edit-in-multi") {
+          # FIXME: should match the name attribute of an input field here
+        }
       end
     end
 

@@ -1,6 +1,6 @@
 class Slot < Renderer
 
-  cattr_accessor :render_actions, :xhr
+  cattr_accessor :render_actions
   attr_accessor  :options_need_save, :js_queue_initialized,
     :position, :start_time, :skip_autosave
 
@@ -339,10 +339,6 @@ class Slot < Renderer
 
   def cancel_function
     "if(ds=Wagn.draftSavers['#{context}']){ds.stop()}; Wagn.runQueue(Wagn.onCancelQueue['#{context}']);"
-  end
-
-  def xhr?
-    @@xhr
   end
 
   def get_queue_context

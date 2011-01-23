@@ -6,32 +6,36 @@ describe Slot, "" do
     string.gsub(/\s*<!--[^>]*>\s*/, '').gsub(/\s*<\s*(\/?\w+)[^>]*>\s*/, '<\1>')
   end
   
-  def simple_render(content)
+  def render_content(content, view=:naked)
     @card ||= Card.new
     @card.content=content
-    Slot.new(@card).render(:naked)
+    Slot.new(@card).render(view)
   end
+
+  def render_card(name, view=:naked)
+    @card = Card.fetch(name)
+    Slot.new(@card).render(view)
+  end
+
 
   describe "processes content" do
     it "simple card links" do
-      simple_render("[[A]]").should=="<a class=\"known-card\" href=\"/wagn/A\">A</a>"
+      render_content("[[A]]").should=="<a class=\"known-card\" href=\"/wagn/A\">A</a>"
     end
 
     it "invisible comment inclusions as blank" do
-      simple_render("{{## now you see nothing}}").should==''
+      render_content("{{## now you see nothing}}").should==''
     end
     
     it "visible comment inclusions as html comments" do
-      simple_render("{{# now you see me}}").should == '<!-- # now you see me -->'
-      simple_render("{{# -->}}").should == '<!-- # --&gt; -->'
+      render_content("{{# now you see me}}").should == '<!-- # now you see me -->'
+      render_content("{{# -->}}").should == '<!-- # --&gt; -->'
     end
 
     it "renders name with layout" do
       c = Card.new :name => 'nameA', :content => "{{A|name}}"
       Slot.new(c, 'main_1').render_layout.should be_html_with do
-        html { body {
-          p {"A"}
-        }}
+        html { body { p {"A"} } }
       end
       c = Card.new :name => 'openA', :content => "{{A|open}}"
       Slot.new(c, :context=>'main_1', :view=>'open').render_layout.should be_html_with do
@@ -109,8 +113,9 @@ describe Slot, "" do
       end
 
       it "array (basic card)" do
-        c = Card.new :name => 'ABarray', :content => "{{A+B|array}}"
-        Slot.new(c).render( :naked ).should == %{["AlphaBeta"]}
+        #c = Card.new :name => 'ABarray', :content => "{{A+B|array}}"
+        #Slot.new(c).render( :naked ).should == %{["AlphaBeta"]}
+        render_card('A+B', :array).should==%{["AlphaBeta"]}
       end
 
       it "naked" do

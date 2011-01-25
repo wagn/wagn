@@ -21,6 +21,8 @@ describe Slot, "" do
   describe "processes content" do
     it "simple card links" do
       render_content("[[A]]").should=="<a class=\"known-card\" href=\"/wagn/A\">A</a>"
+      Renderer.new(Card['A']).render_link().should=="<a class=\"known-card\" href=\"/wagn/A\">A</a>"
+      Slot.new(Card['A']).render_link().should=="<a class=\"known-card\" href=\"/wagn/A\">A</a>"
     end
 
     it "invisible comment inclusions as blank" do

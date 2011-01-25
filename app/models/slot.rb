@@ -33,12 +33,12 @@ class Slot < Renderer
   view(:layout) do |args|
     @main_card, mc = args.delete(:main_card), args.delete(:main_content)
     @main_content = mc.blank? ? nil : wrap_main(mc)
-    _render_core(args)
+    _render_core
   end
 
   view(:content) do |args|
     @state = :view
-    self.requested_view = args[:action] = 'content'
+    self.requested_view = 'content'
     c = _render_naked(args)
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
     wrap(args) {  wrap_content(c) }
@@ -56,12 +56,12 @@ class Slot < Renderer
 
   view(:closed) do |args|
     @state = :line
-    self.requested_view = args[:action] = 'closed'
+    self.requested_view = 'closed'
     wrap(args) { render_partial('views/closed') }
   end
 
   view(:setting) do |args|
-    self.requested_view = args[:action] = 'content'
+    self.requested_view = 'content'
     wrap( args) { render_partial('views/setting') }
   end
 
@@ -78,7 +78,7 @@ class Slot < Renderer
   end
 
   view(:change) do |args|
-    self.requested_view = args[:action] = 'content'
+    self.requested_view = 'content'
     wrap(args) { render_partial('views/change') }
   end
 
@@ -94,10 +94,10 @@ class Slot < Renderer
   # FIXME: passing a block seems to only work in the templates and not from
   # internal slot calls, so I added the option passing internal content which
   # makes all the ugly block_given? ifs..
-  def wrap(args = {}, &block)
+  def wrap(args = {})
     return yield if !( args.key?(:add_slot) ? args.delete(:add_slot) : !xhr? )
     
-    css_class = case args[:action].to_s
+    css_class = case action
       when 'content'  ;  'transcluded'
       when 'exception';  'exception'
       when 'closed'   ;  'card-slot line'

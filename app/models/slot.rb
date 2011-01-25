@@ -94,8 +94,10 @@ class Slot < Renderer
   # FIXME: passing a block seems to only work in the templates and not from
   # internal slot calls, so I added the option passing internal content which
   # makes all the ugly block_given? ifs..
+
   def wrap(args = {})
-    return yield if !( args.key?(:add_slot) ? args.delete(:add_slot) : !xhr? )
+    render_wrap = ( args.key?(:add_slot) ? args.delete(:add_slot) : !skip_outer_wrap_for_ajax? )
+    return yield if !render_wrap
     
     css_class = case action
       when 'content'  ;  'transcluded'
@@ -112,7 +114,13 @@ class Slot < Renderer
     }
     [:style, :view, :item, :base].each { |key| attributes[key] = args[key] }
     
+    
     div( attributes ) { yield }
+  end
+
+  def skip_outer_wrap_for_ajax?
+    # we often skip the outermost slot in ajax calls because the slot is already there.
+    ajax_call? && outer_level?
   end
 
   def wrap_content( content="" )
@@ -341,9 +349,9 @@ class Slot < Renderer
     queue_context = get_queue_context
     code = ""
     if hooks[:setup]
-      code << "Wagn.onLoadQueue.push(function(){\n" unless xhr?
+      code << "Wagn.onLoadQueue.push(function(){\n" unless ajax_call?
       code << hooks[:setup]
-      code << "});\n" unless xhr?
+      code << "});\n" unless ajax_call?
     end
     if hooks[:save]
       code << "Wagn.onSaveQueue['#{queue_context}'].push(function(){\n #{hooks[:save]} \n });\n"

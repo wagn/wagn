@@ -199,40 +199,40 @@ Rails.logger.info "_render_naked( #{args.inspect} )"
   end
 
   ### is this "wrapped" and need to be in slot.rb?
-  view(:open_content) do |args, &blk|
-    card.post_render(_render_naked(args, &blk))
+  view(:open_content) do |args|
+    card.post_render(_render_naked(args) { yield })
   end
 
   ### is this "wrapped" and need to be in slot.rb?
-  view(:closed_content) do |args, &blk|
+  view(:closed_content) do |args|
     if card.generic?
-      truncatewords_with_closing_tags( _render_naked(args, &blk) )
+      truncatewords_with_closing_tags( _render_naked(args) { yield } )
     else
       render_card_partial(:line)   # in basic case: --> truncate( slot._render_open_content ))
     end
   end
 
 ###----------------( SPECIAL )
-  view(:array) do |args, &blk|
+  view(:array) do |args|
     if card.is_collection?
       (card.each_name do |name|
-        subrenderer(name)._render_core(args, &blk)
+        subrenderer(name)._render_core(args) { yield }
       end.inspect)
     else
-      [_render_naked(args, &blk)].inspect
+      [_render_naked(args) { yield }].inspect
     end
   end
 
   view(:blank) do |args| "" end
 
   ### is this "wrapped" and need to be in slot.rb?
-  view(:titled) do |args, &blk|
-    content_tag( :h1, fancy_title(card.name) ) + self._render_content(args, &blk)
+  view(:titled) do |args|
+    content_tag( :h1, fancy_title(card.name) ) + self._render_content(args) { yield }
   end
 
-  view(:rss_titled) do |args, &blk|
+  view(:rss_titled) do |args|
     # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
-    content_tag( :h2, fancy_title(card.name) ) + self._render_open_content(args, &blk)
+    content_tag( :h2, fancy_title(card.name) ) + self._render_open_content(args) { yield }
   end
 
   view(:rss_change) do |args|

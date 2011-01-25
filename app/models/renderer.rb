@@ -63,12 +63,12 @@ class Renderer
       class_eval do
         priv_final="_final#{priv_name}"
         define_method( priv_final, &final )
-        define_method( priv_name ) do |*a, &blk| args = a[0]||{}
-          send(priv_final, args, &blk)
+        define_method( priv_name ) do |*a| args = a[0]||{}
+          send(priv_final, args, &proc)
         end
 
-        define_method( method_id ) do |*a, &blk| args = a[0]||{}
-          render_check(method_id, args) || send(priv_name, args, &blk)
+        define_method( method_id ) do |*a| args = a[0]||{}
+          render_check(method_id, args) || send(priv_name, args, &proc)
         end
       end
     end
@@ -175,16 +175,19 @@ class Renderer
 
 ### ---- Core renders --- Keep these on top for dependencies
   view(:raw) do
+Rails.logger.info "_render_raw"
     if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
       template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
     else card.raw_content end
   end
 
   view(:core) do |args|
+Rails.logger.info "_render_core( #{args.inspect} )"
     process_content(_render_raw, args)
   end
 
   view(:naked) do |args|
+Rails.logger.info "_render_naked( #{args.inspect} )"
     card.generic? ? _render_core(args) : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
   end
 

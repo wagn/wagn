@@ -24,7 +24,7 @@ class Renderer
   }
 
   cattr_accessor :max_char_count, :max_depth, :render_actions,
-    :current_slot, :xhr
+    :current_slot, :superslot, :xhr
   self.max_char_count = 200
   self.max_depth = 10
 
@@ -267,10 +267,10 @@ Rails.logger.info "_render_naked( #{args.inspect} )"
 
     result << javascript_tag("setupLinksAndDoubleClicks();") if args[:add_javascript]
     result.strip
-  rescue Exception=>e
-          Rails.logger.info "Error #{e.inspect} #{e.backtrace*"\n"}"
-  #rescue Card::PermissionDenied=>e
-  #  return "Permission error: #{e.message}"
+#rescue Exception=>e
+#Rails.logger.info "Error #{e.inspect} #{e.backtrace*"\n"}"
+  rescue Card::PermissionDenied=>e
+    return "Permission error: #{e.message}"
   end
 
   def form_for_multi
@@ -394,7 +394,7 @@ Rails.logger.info "_render_naked( #{args.inspect} )"
 
   def process_inclusion(tcard, options)
     sub = subrenderer(tcard, options[:context])
-    old_renderer, Renderer.current_slot = Renderer.current_slot, sub
+    oldrenderer, Renderer.current_slot = (Renderer.superslot = Renderer.current_slot), sub
 
     # set item_view;  search cards access this variable when rendering their content.
     sub.item_view = options[:item] if options[:item]
@@ -421,9 +421,10 @@ Rails.logger.info "_render_naked( #{args.inspect} )"
       else                    ; vmode
       end
     result = sub.render(action, options)
-    Renderer.current_slot = old_renderer
+    Renderer.superslot, Renderer.current_slot = Renderer.current_slot, oldrenderer
     result
-  rescue
+  rescue Exception=>e
+Rails.logger.info "inclusion-error #{e.inspect}\nTrace #{e.backtrace*"\n"}"
     %{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
   end
 

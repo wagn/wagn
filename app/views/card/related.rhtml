@@ -1,4 +1,4 @@
-<%  get_slot.wrap(:related) do |slot| %>
+<%  wrap_slot do |slot| %>
   <%= slot.header %>
 
   <% div(:class=>'submenu') do
@@ -14,11 +14,7 @@
   <%= slot.notice %>
 
   <div class="open-content related">
-    <% if @current=='config' %>
-      <%= slot.expand_inclusions render(:partial=>'config') %>
-    <% else %>
-      <%= render_view( "{{#{card.name}+#{@current}}}" ) %>
-     <% end %>
+    <%= render_view( "{{#{card.name}+#{@current}}}" ) %>
   </div>
 
   <%= javascript_tag("setupLinksAndDoubleClicks();") %>

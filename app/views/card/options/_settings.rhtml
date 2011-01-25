@@ -9,7 +9,7 @@
     <% next if ['*autoname','*thanks','*add help'].member?(setting.name) %>
     <% next if (card.type!='Pointer' and ['*input','*options','*option label'].member?(setting.name))%>
     <div class="setting-row">
-      <% slot.subrenderer(card).wrap(:setting, :add_slot=>true) do |ss| %>
+      <% wrap_slot(slot.subrenderer(card), :add_slot=>true) do |ss| %>
         <%= ss.render_partial 'card/options/closed_setting', :setting=>setting %>
       <% end %>
     </div>

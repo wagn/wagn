@@ -38,60 +38,53 @@ class Slot < Renderer
 
   view(:content) do |args|
     @state = :view
-    self.requested_view = 'content'
+    self.requested_view = args[:action] = 'content'
     c = _render_naked(args)
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
-    wrap('content', args) {  wrap_content(c) }
+    wrap(args) {  wrap_content(c) }
   end
 
   view(:new) do |args|
-    wrap('', args) { render_partial('views/new') }
+    wrap(args) { render_partial('views/new') }
   end
 
   view(:open) do |args|
     @state = :view
     self.requested_view = 'open'
-    wrap('open', args) { render_partial('views/open') }
+    wrap(args) { render_partial('views/open') }
   end
 
   view(:closed) do |args|
     @state = :line
-    self.requested_view = 'closed'
-    wrap('closed', args) { render_partial('views/closed') }
+    self.requested_view = args[:action] = 'closed'
+    wrap(args) { render_partial('views/closed') }
   end
 
   view(:setting) do |args|
-    wrap( self.requested_view = 'content', args) do
-      render_partial('views/setting')
-    end
+    self.requested_view = args[:action] = 'content'
+    wrap( args) { render_partial('views/setting') }
   end
 
   view(:edit) do |args|
     @state=:edit
-    # FIXME CONTENT: the hard template test can go away when we phase out the old system.
-    #wrap('', args) do
-      card.content_template ?  _render_multi_edit(args) : content_field(slot.form)
-    #end
+    card.content_template ?  _render_multi_edit(args) : content_field(slot.form)
   end
 
   view(:multi_edit) do |args|
     @state=:edit
     args[:add_javascript]=true
-    #wrap('', args) do
-      hidden_field_tag(:multi_edit, true) + _render_naked(args)
-    #end
+    @form = form_for_multi
+    hidden_field_tag(:multi_edit, true) + _render_naked(args)
   end
 
   view(:change) do |args|
-    self.requested_view = 'content'
-    wrap('content', args) do
-      render_partial('views/change')
-    end
+    self.requested_view = args[:action] = 'content'
+    wrap(args) { render_partial('views/change') }
   end
 
 ###---(  EDIT VIEWS )
   view(:edit_in_form) do |args|
-    render_partial('views/edit_in_form', args.merge(:form=>form))
+    render_partial('views/edit_in_form', args.merge(:form=>form_for_multi))
   end
 
   def js
@@ -101,32 +94,25 @@ class Slot < Renderer
   # FIXME: passing a block seems to only work in the templates and not from
   # internal slot calls, so I added the option passing internal content which
   # makes all the ugly block_given? ifs..
-  def wrap(action='', args = {})
-    if render_slot = args.key?(:add_slot) ? args.delete(:add_slot) : !xhr?
-      case action.to_s
-        when 'content';    css_class = 'transcluded'
-        when 'exception';  css_class = 'exception'
-        else begin
-          css_class = 'card-slot '
-          css_class << (action=='closed' ? 'line' : 'paragraph')
-        end
-      end
-
-      css_class << " " + Wagn::Pattern.css_names( card ) if card
-
-      attributes = {
-        :cardId   => (card && card.id),
-        :style    => args[:style],
-        :view     => args[:view],
-        :item     => args[:item],
-        :base     => args[:base], # deprecated
-        :class    => css_class,
-        :position => UUID.new.generate.gsub(/^(\w+)0-(\w+)-(\w+)-(\w+)-(\w+)/,'\1')
-      }
-
-      "<div " + attributes.map{ |key,value| value && %{ #{key}="#{value}" }  }.join + '>'
-    else "" end +
-    yield(self) + (render_slot ? "</div>" : "")
+  def wrap(args = {}, &block)
+    return yield if !( args.key?(:add_slot) ? args.delete(:add_slot) : !xhr? )
+    
+    css_class = case args[:action].to_s
+      when 'content'  ;  'transcluded'
+      when 'exception';  'exception'
+      when 'closed'   ;  'card-slot line'
+      else            ;  'card-slot paragraph'
+    end 
+    css_class << " " + Wagn::Pattern.css_names( card ) if card
+    
+    attributes = {
+      :class    => css_class,
+      :cardId   => (card && card.id),
+      :position => UUID.new.generate.gsub(/^(\w+)0-(\w+)-(\w+)-(\w+)-(\w+)/,'\1')
+    }
+    [:style, :view, :item, :base].each { |key| attributes[key] = args[key] }
+    
+    div( attributes ) { yield }
   end
 
   def wrap_content( content="" )

@@ -1,4 +1,4 @@
-<% get_slot.wrap('remove') do |slot| %>
+<% wrap_slot do |slot| %>
   <%= slot.header %>
   <% form_for_card :url=>slot.url_for("card/remove") do |f| %>
     <div class="content open-content">

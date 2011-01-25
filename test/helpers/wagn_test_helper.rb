@@ -36,9 +36,9 @@ module WagnTestHelper
   #   ::Card.find_by_name(name)
   # end
   
-  def render_test_card( card )
-#Rails.logger.info "render_test_card( #{card} )"
-    Renderer.new(card).render_naked()
+
+  def render_card( card )
+    Renderer.new(card).process_content()
   end 
   
   def assert_difference(object, method = nil, difference = 1)

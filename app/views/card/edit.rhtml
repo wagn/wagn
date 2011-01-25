@@ -1,6 +1,4 @@
-<% hard_template = card.hard_template %>
-
-<% get_slot.wrap( 'edit' ) do |slot| %>
+<% wrap_slot do |slot| %>
   <%= slot.header %>
   <style><%= ".SELF-#{card.key.css_name} .edit-area .namepart-#{card.name.css_name} { display: none; }" %></style>
 
@@ -9,5 +7,4 @@
   <% end %>
 
   <%= slot.notice %>
-
 <% end %>

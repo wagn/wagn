@@ -1,17 +1,13 @@
 <%
    args={}
-   get_slot unless slot
-   @params = slot.params
-   [:add_slot, :view].each {|x| args[x] = @params[x] if @params[x]}
+   [:add_slot, :view].each {|x| args[x] = params[x] if params[x]}
    # when new is called from an "Add <Cardname>" inclusion, there is no existing slot,
    #  so we pass an argument to create one.  eventually, the "Add <Cardname>" view should have
    #  a slot so that this isn't necessary
 %>
 
-<% slot.wrap("new", args) do |slot| %>
+<% wrap_slot(get_slot(card), args) do |slot| %>
     <% @title = "New Card" %>
-    <% card = slot.card %>
-
     <%= error_messages_for :card %>
     <div class=cardnotice></div>
 
@@ -47,7 +43,7 @@
           <% end %>
         </span>
       </div>
-      <% if inst=card.setting_card('add help', 'edit help') and @params[:view]!='setting' %>
+      <% if inst=card.setting_card('add help', 'edit help') and params[:view]!='setting' %>
         <div class="instruction"><%= slot.subrenderer(inst).render_naked %></div>
       <% end %>
 
@@ -65,7 +61,7 @@
         </div>
 
         <%= slot.half_captcha %>
-        <%= hidden_field_tag :view, @params[:view] || :open %>
+        <%= hidden_field_tag :view, params[:view] || :open %>
         <div class="edit-button-area">
 
           <%= button_to_function 'Submit', "this.form.onsubmit()", :id=>'create-button'  %>

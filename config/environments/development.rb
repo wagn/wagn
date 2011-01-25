@@ -20,7 +20,7 @@ config.action_view.debug_rjs                         = true
 config.action_mailer.raise_delivery_errors = false
 
    
-config.log_level = :debug
+config.log_level = :info
 
 if File.exists?(File.join(RAILS_ROOT,'tmp', 'debug.txt'))
   require 'ruby-debug'

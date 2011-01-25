@@ -31,7 +31,7 @@ class Renderer
   attr_reader :action, :inclusion_map, :params, :layout, :relative_content,
       :template, :root
   attr_accessor :card, :main_content, :main_card, :context, :char_count,
-      :depth, :form, :item_view, :view, :type, :base, :state, :sub_count,
+      :depth, :item_view, :form, :view, :type, :base, :state, :sub_count,
       :render_args, :requested_view
 
   # View definitions
@@ -269,15 +269,17 @@ class Renderer
   #  return "Permission error: #{e.message}"
   end
 
+  def form_for_multi
+    Rails.logger.info "card = #{card.inspect}"
+    options = {} # do I need any? #args.last.is_a?(Hash) ? args.pop : {}
+    block = Proc.new {}
+    builder = options[:builder] || ActionView::Base.default_form_builder
+    card.name.gsub!(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_record?  ##FIXME -- need to match other relative inclusions.
+    fields_for = builder.new("cards[#{card.name.pre_cgi}]", card, template, options, block)
+  end
+
   def form
-    @form ||= begin
-      # NOTE this code is largely copied out of rails fields_for
-      options = {} # do I need any? #args.last.is_a?(Hash) ? args.pop : {}
-      block = Proc.new {}
-      builder = options[:builder] || ActionView::Base.default_form_builder
-      card.name.gsub!(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_record?  ##FIXME -- need to match other relative inclusions.
-      fields_for = builder.new("cards[#{card.name.pre_cgi}]", card, template, options, block)
-    end
+    @form ||= form_for_multi
   end
 
   def resize_image_content(content, size)

@@ -267,7 +267,7 @@ module WagnHelper
     end
   end
 
-  def form_for_card(options={}, &proc)
+  def form_for_card(options={}, &proc)    
     concat(form_remote_tag(options))
     fields_for(:card, options, &proc)
     if options[:update]
@@ -291,6 +291,10 @@ module WagnHelper
     render_layout_card layout_card(content)
   end
 
+  def wrap_slot(slot=nil, args={}, &block)
+    slot ||= get_slot
+    concat( slot.wrap(args) { capture{ yield(slot) } } )
+  end
   # ------------( helpers ) --------------
   def edit_user_context(card)
     if System.ok?(:administrate_users)

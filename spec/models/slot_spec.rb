@@ -246,37 +246,34 @@ describe Slot, "" do
       end
     end
 
-    it "uses render content setting" do
-      @card = Card.new( :name=>"templated", :content => "bar" )
-      Card.new(:name=>"templated+*self+*content", :content=>"Yoruba" )
-      config_card = Card.new(:name=>"templated+*self+*add help", :content=>"Help me" )
-      @card.should_receive(:setting_card).with("content","default").and_return(config_card)
-      @card.should_receive(:setting_card).with("add help","edit help").and_return(config_card)
-      Slot.new(@card).render_new.should be_html_with do
-        span(:class=>"edit-in-multi") {
-          # FIXME: should match the name attribute of an input field here
+    it "uses content and help setting in new" do
+      content_card = Card.create!(:name=>"Phrase+*type+*content", :content=>"{{+Yoruba}}" )
+      help_card    = Card.create!(:name=>"Phrase+*type+*add help", :content=>"Help me dude" )
+      card = Card.new(:type=>'Phrase')
+      card.should_receive(:setting_card).with("content","default").and_return(content_card)
+      card.should_receive(:setting_card).with("add help","edit help").and_return(help_card)
+      Slot.new(card).render_new.should be_html_with do
+        div(:class=>"field-in-multi") {
+          input :name=>"cards[~plus~Yoruba][content]", :type => 'hidden'
         }
       end
     end
 
-    it "doesn't use content setting if default is present" do
-      @card = Card.new( :name=>"templated", :content => "Bar" )
-      config_card = Card.new(:name=>"templated+*self+*default", :content=>"Yoruba" )
-      @card.should_receive(:setting_card).with("content", "default").and_return(config_card)
-      Slot.new(@card).render(:raw).should == "Bar"
+    it "doesn't use content setting if default is present" do  #this seems more like a settings test
+      content_card = Card.create!(:name=>"Phrase+*type+*content", :content=>"Content Foo" )
+      default_card = Card.create!(:name=>"Phrase+*type+*default", :content=>"Default Bar" )
+      @card = Card.new( :name=>"templated", :type=>'Phrase' )
+      @card.should_receive(:setting_card).with("content", "default").and_return(default_card)
+      Slot.new(@card).render(:raw).should == "Default Bar"
     end
 
     # FIXME: this test is important but I can't figure out how it should be
     # working.
     it "uses content setting in edit" do
-Rails.logger.info "failing start"
       config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )
-Rails.logger.info "failing new templated"
       @card = Card.new( :name=>"templated", :content => "Bar" )
       @card.should_receive(:setting_card).with("content", "default").and_return(config_card)
-Rails.logger.info "failing new about to render #{@card}"
       result = Slot.new(@card).render(:edit)
-Rails.logger.info "failing done"
       result.should be_html_with do
         div :class => "field-in-multi" do
           input :name=>"cards[~plus~alpha][content]", :type => 'hidden'

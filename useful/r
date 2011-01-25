@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ "$1" == 'cuc' ] ; then
+  env RAILS_ENV=test rake cucumber > cuc.out 2>&1
+elif [ "$1" == 'spc' ] ; then
+  env RAILS_ENV=test rake spec > spc.out 2>&1
+else 
+  env RAILS_ENV=test rake test > tst.out  2>&1
+fi
+

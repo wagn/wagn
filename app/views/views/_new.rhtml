@@ -8,7 +8,7 @@
    #  a slot so that this isn't necessary
 %>
 
-<% wrap_slot(nil, args) do |slot| %>
+<% wrap_slot(get_slot(card), args) do |slot| %>
     <% @title = "New Card" %>
     <%= error_messages_for :card %>
     <div class=cardnotice></div>

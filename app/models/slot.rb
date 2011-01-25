@@ -73,6 +73,7 @@ class Slot < Renderer
   view(:multi_edit) do |args|
     @state=:edit
     args[:add_javascript]=true
+    @form = form_for_multi
     hidden_field_tag(:multi_edit, true) + _render_naked(args)
   end
 
@@ -83,7 +84,7 @@ class Slot < Renderer
 
 ###---(  EDIT VIEWS )
   view(:edit_in_form) do |args|
-    render_partial('views/edit_in_form', args.merge(:form=>form))
+    render_partial('views/edit_in_form', args.merge(:form=>form_for_multi))
   end
 
   def js
@@ -96,7 +97,7 @@ class Slot < Renderer
   def wrap(args = {}, &block)
     return yield if !( args.key?(:add_slot) ? args.delete(:add_slot) : !xhr? )
     
-    css_class = case action.to_s
+    css_class = case args[:action].to_s
       when 'content'  ;  'transcluded'
       when 'exception';  'exception'
       when 'closed'   ;  'card-slot line'

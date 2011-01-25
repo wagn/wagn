@@ -267,7 +267,7 @@ module WagnHelper
     end
   end
 
-  def form_for_card(options={}, &proc)
+  def form_for_card(options={}, &proc)    
     concat(form_remote_tag(options))
     fields_for(:card, options, &proc)
     if options[:update]

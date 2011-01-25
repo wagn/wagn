@@ -5,7 +5,7 @@
   @skip_slot_header ||= false
 %>
 
-<% get_slot.wrap do |slot| %>
+<% wrap_slot do |slot| %>
   <%= slot.header unless @skip_slot_header %>
     <div id="denied" class="instruction open-content">
       <h1>Ooo.  Sorry, but...</h1>  <%#ENGLISH%>

@@ -39,7 +39,7 @@ module WagnTestHelper
   def render_card( card )
 #r=    Renderer.new(card)
 #Rails.logger.info "render_card( #{card} ) #{r}"
-    Renderer.new(card).render_view()
+    Renderer.new(card).process_content()
   end 
   
   def assert_difference(object, method = nil, difference = 1)

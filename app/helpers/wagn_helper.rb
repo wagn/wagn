@@ -30,6 +30,7 @@ module WagnHelper
   end
 
   # FIMXE: this one's a hack...
+=begin
   def render_card(card, mode, args={})
     if String===card && name = card
       raise("Card #{name} not present") unless card=Card.fetch(name)
@@ -39,6 +40,7 @@ module WagnHelper
     subrenderer = Slot.current_slot ? Slot.current_slot.subrenderer(card) : Slot.new(card)
     subrenderer.render(mode.to_sym, args)
   end
+=end
 
   Droplet = Struct.new(:name, :link_options)
 

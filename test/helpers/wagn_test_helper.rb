@@ -37,7 +37,7 @@ module WagnTestHelper
   # end
   
 
-  def render_card( card )
+  def render_test_card( card )
     Renderer.new(card).process_content()
   end 
   

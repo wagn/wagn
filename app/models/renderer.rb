@@ -63,12 +63,13 @@ class Renderer
       class_eval do
         priv_final="_final#{priv_name}"
         define_method( priv_final, &final )
-        define_method( priv_name ) do |*a| args = a[0]||{}
-          send(priv_final, args, &proc)
+        define_method( priv_name ) do |*a| a = [{}] if a.empty?
+          send(priv_final, *a) { yield }
         end
 
-        define_method( method_id ) do |*a| args = a[0]||{}
-          render_check(method_id, args) || send(priv_name, args, &proc)
+        define_method( method_id ) do |*a| a = [{}] if a.empty?
+          return chk if chk = render_check(method_id, *a)
+          send(priv_name, *a) { yield }
         end
       end
     end

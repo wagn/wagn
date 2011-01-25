@@ -319,7 +319,7 @@ describe Card, "new permissions" do
     Slot.new(@c).render.should be_html_with do
       span(:class=>"open-content content editOnDoubleClick") {}
     end
-g  end
+  end
 
 end
 

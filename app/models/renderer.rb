@@ -424,7 +424,8 @@ Rails.logger.info "_render_naked( #{args.inspect} )"
     Renderer.superslot, Renderer.current_slot = Renderer.current_slot, oldrenderer
     result
   rescue Exception=>e
-Rails.logger.info "inclusion-error #{e.inspect}\nTrace #{e.backtrace*"\n"}"
+    Rails.logger.info "inclusion-error #{e.inspect}"
+    Rails.logger.debug "inclusion-error #{e.inspect}\nTrace:\n#{e.backtrace*"\n"}"
     %{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
   end
 

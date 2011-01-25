@@ -113,11 +113,9 @@ describe Slot, "" do
       end
 
       it "array (basic card)" do
-        #c = Card.new :name => 'ABarray', :content => "{{A+B|array}}"
-        #Slot.new(c).render( :naked ).should == %{["AlphaBeta"]}
         render_card('A+B', :array).should==%{["AlphaBeta"]}
       end
-
+      
       it "naked" do
         c = Card.new :name => 'ABnaked', :content => "{{A+B|naked}}"
         Slot.new(c).render( :naked ).should == "AlphaBeta"

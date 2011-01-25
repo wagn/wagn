@@ -291,9 +291,9 @@ module WagnHelper
     render_layout_card layout_card(content)
   end
 
-  def wrap_slot(slot=nil, *args, &block)
+  def wrap_slot(slot=nil, args={}, &block)
     slot ||= get_slot
-    concat( slot.wrap(*args) { capture{ yield(slot) } } )
+    concat( slot.wrap(args) { capture{ yield(slot) } } )
   end
   # ------------( helpers ) --------------
   def edit_user_context(card)

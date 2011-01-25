@@ -14,7 +14,7 @@ else
 end
 %>
 
-<%= slot.render(view, :add_javascript=>true, :add_slot=>false, :view=>view, :showname=>nil ) %>
+<%= slot.render(view, :add_javascript=>true, :view=>view, :showname=>nil ) %>
 <% if view == :open %>
   <%= javascript_tag("Wagn.line_to_paragraph(getSlotFromContext('#{@context}'))") %>
 <% elsif view == :closed %>

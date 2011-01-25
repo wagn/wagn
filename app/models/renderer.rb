@@ -176,34 +176,23 @@ class Renderer
 
 ### ---- Core renders --- Keep these on top for dependencies
   view(:raw) do
-Rails.logger.info "_render_raw"
     if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
       template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
     else card.raw_content end
   end
-
-  view(:core) do |args|
-Rails.logger.info "_render_core( #{args.inspect} )"
-    process_content(_render_raw, args)
-  end
-
+  view(:core) do process_content(_render_raw) end
   view(:naked) do |args|
-Rails.logger.info "_render_naked( #{args.inspect} )"
-    card.generic? ? _render_core(args) : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
+    card.generic? ? _render_core : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
   end
 
 ###----------------( NAME) (FIXME move to chunks/transclude)
-  view(:name) do |args| card.name end
-  view(:link) do |args|
-    Chunk::Reference.link_render(card.name, args)
-  end
+  view(:name) do card.name end
+  view(:link) do Chunk::Reference.standard_card_link(card.name) end
 
-  ### is this "wrapped" and need to be in slot.rb?
   view(:open_content) do |args|
     card.post_render(_render_naked(args) { yield })
   end
 
-  ### is this "wrapped" and need to be in slot.rb?
   view(:closed_content) do |args|
     if card.generic?
       truncatewords_with_closing_tags( _render_naked(args) { yield } )
@@ -216,14 +205,14 @@ Rails.logger.info "_render_naked( #{args.inspect} )"
   view(:array) do |args|
     if card.is_collection?
       (card.each_name do |name|
-        subrenderer(name)._render_core(args) { yield }
+        subrenderer(name)._render_core { yield }
       end.inspect)
     else
       [_render_naked(args) { yield }].inspect
     end
   end
 
-  view(:blank) do |args| "" end
+  view(:blank) do "" end
 
   ### is this "wrapped" and need to be in slot.rb?
   view(:titled) do |args|
@@ -235,7 +224,7 @@ Rails.logger.info "_render_naked( #{args.inspect} )"
     content_tag( :h2, fancy_title(card.name) ) + self._render_open_content(args) { yield }
   end
 
-  view(:rss_change) do |args|
+  view(:rss_change) do
     self.requested_view = 'content'
     render_partial('views/change')
   end
@@ -424,7 +413,7 @@ Rails.logger.info "_render_naked( #{args.inspect} )"
     Renderer.superslot, Renderer.current_slot = Renderer.current_slot, oldrenderer
     result
   rescue Exception=>e
-Rails.logger.info "inclusion-error #{e.inspect}\nTrace #{e.backtrace*"\n"}"
+#Rails.logger.info "inclusion-error #{e.inspect}\nTrace #{e.backtrace*"\n"}"
     %{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
   end
 

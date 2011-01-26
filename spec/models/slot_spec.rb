@@ -29,6 +29,16 @@ describe Slot, "" do
       render_content("{{## now you see nothing}}").should==''
     end
     
+    it "missing relative inclusion is relative" do
+      c = Card.new :name => 'bad_include', :content => "{{+bad name missing}}"
+Rails.logger.info "failing #{c}"
+      Slot.new(c).render.should be_html_with do
+        html { body {
+          span(:cardname=>"+bad name missing") {}
+        } }
+      end
+    end
+    
     it "visible comment inclusions as html comments" do
       render_content("{{# now you see me}}").should == '<!-- # now you see me -->'
       render_content("{{# -->}}").should == '<!-- # --&gt; -->'

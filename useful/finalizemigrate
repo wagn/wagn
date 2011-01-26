@@ -1,0 +1,4 @@
+rake wagn:bootstrap:dump
+rake test:generate_fixtures
+env RELOAD_TEST_DATA=true rake db:test:prepare
+

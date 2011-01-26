@@ -1,0 +1,13 @@
+#!/bin/bash -xv
+
+rake db:drop
+rake db:create
+rake wagn:create
+rake db:migrate VERSION=20101123173512 --trace
+rake db:migrate --trace
+
+env RAILS_ENV=test rake db:drop
+env RAILS_ENV=test rake db:create
+env RELOAD_TEST_DATA=true rake db:test:prepare
+mysql -uwagn_dev -pwdev_lppwpw play_test < testmig.sql
+

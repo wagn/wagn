@@ -167,7 +167,7 @@ Rails.logger.info "calling #{priv_name}"
   end
 
   def canonicalize_view( view )
-    (view and view.to_sym and v=VIEW_ALIASES[view.to_sym]) ? v : view
+    (view and v=VIEW_ALIASES[view.to_sym]) ? v : view
   end
 
   def expand_inclusions(content)
@@ -344,9 +344,9 @@ Rails.logger.info("rendering closed content for #{card.name}: #{args.inspect}")
     return '' if (state==:line && self.char_count > Renderer.max_char_count)
 
     if is_main = tname=='_main'
-      return root.main_content if root.main_content
-      return 'MAIN' if @depth > 0
-      tcard = root.main_card
+      tcard, tcont = root.main_card, root.main_content
+      return tcont if tcont
+      return 'MAIN' unless @depth == 0 and tcard
       tname = tcard.name
       item  = symbolize_param(:item) and options[:item] = item
       pview = symbolize_param(:view) and options[:view] = pview

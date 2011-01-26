@@ -38,7 +38,7 @@ class Slot < Renderer
 
   view(:content) do |args|
     @state = :view
-    self.requested_view = 'content'
+    self.requested_view = args[:action] = 'content'
     c = _render_naked(args)
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
     wrap(args) {  wrap_content(c) }
@@ -56,12 +56,12 @@ class Slot < Renderer
 
   view(:closed) do |args|
     @state = :line
-    self.requested_view = 'closed'
+    self.requested_view = args[:action] = 'closed'
     wrap(args) { render_partial('views/closed') }
   end
 
   view(:setting) do |args|
-    self.requested_view = 'content'
+    self.requested_view = args[:action] = 'content'
     wrap( args) { render_partial('views/setting') }
   end
 
@@ -78,7 +78,7 @@ class Slot < Renderer
   end
 
   view(:change) do |args|
-    self.requested_view = 'content'
+    self.requested_view = args[:action] = 'content'
     wrap(args) { render_partial('views/change') }
   end
 
@@ -99,7 +99,7 @@ class Slot < Renderer
     render_wrap = ( args.key?(:add_slot) ? args.delete(:add_slot) : !skip_outer_wrap_for_ajax? )
     return yield if !render_wrap
     
-    css_class = case action
+    css_class = case args[:action].to_s
       when 'content'  ;  'transcluded'
       when 'exception';  'exception'
       when 'closed'   ;  'card-slot line'

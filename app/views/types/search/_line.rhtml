@@ -1,10 +1,4 @@
-<%
-  p, level= slot, 0
-  while  p = p.superslot #p.state=='line' &&
-    level +=1
-  end
-%>
-<% if level > 2 %>
+<% if slot.depth > 2 %>
   ...
 <% else %>
 

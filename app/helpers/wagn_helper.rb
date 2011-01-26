@@ -7,7 +7,6 @@ module WagnHelper
   # Put the initialization in the controller and we no longer care here
   # whether it is a Slot or Renderer, and it will be from the parent class
   def slot() Renderer.current_slot end
-  def superslot() Renderer.superslot end
   def card() @card ||= slot.card end
   def params()
     if controller 
@@ -25,7 +24,6 @@ module WagnHelper
     slot = case
       when Renderer.current_slot;  nil_given ? Renderer.current_slot : Renderer.current_slot.subrenderer(card)
       else
-        Renderer.superslot = nil
         Renderer.current_slot = Slot.new( card,
             opts.merge(:context=>context, :action=>action, :template=>self) )
     end

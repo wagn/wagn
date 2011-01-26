@@ -2,6 +2,7 @@ require_dependency 'slot'
 
 module WagnHelper
   require_dependency 'wiki_content'
+  include HTMLDiff
 
   # FIXME: slot -> renderer (model)
   # Put the initialization in the controller and we no longer care here

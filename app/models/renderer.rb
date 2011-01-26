@@ -13,7 +13,6 @@ class Renderer
     end
   end
 
-  include HTMLDiff
   include ReferenceTypes
 
   VIEW_ALIASES = {
@@ -132,7 +131,7 @@ Rails.logger.info "calling #{priv_name}"
     @inclusion_map
   end
 
-  def process_content(content=nil, opts={}, &block)
+  def process_content(content=nil, opts={})
     return content unless card
     content = card.content if content.blank?
 
@@ -143,7 +142,7 @@ Rails.logger.info "calling #{priv_name}"
     wiki_content.render! do |tname, opts|
       full = opts[:fullname] = get_inclusion_fullname(tname, opts)
       @view = opts[:view].to_sym if view == nil and opts[:view]
-      expand_card(tname,opts)#,&block)
+      expand_card(tname,opts) { yield }
     end
   end
 
@@ -237,7 +236,7 @@ Rails.logger.info("rendering closed content for #{card.name}: #{args.inspect}")
     render_partial('views/change')
   end
 
-  def render(action=:view, args={}, &block)
+  def render(action=:view, args={})
     self.render_args = args.clone
     denial = render_deny(action, args)
     return denial if denial
@@ -253,11 +252,11 @@ Rails.logger.info("rendering closed content for #{card.name}: #{args.inspect}")
 =begin
         if card.is_collection?
           render_meth = action if item_view and action=action_method(item_view)
-          card.each_name { |name| subrenderer(name).send(render_meth, args, &block) }.join
+          card.each_name { |name| subrenderer(name).send(render_meth, args) {yield} }.join
         else
         end
 =end
-          send(render_meth, args, &block)
+          send(render_meth, args) { yield }
       else
         "<strong>#{card.name} - unknown card view: '#{action}' M:#{render_meth.inspect}</strong>"
       end
@@ -307,12 +306,6 @@ Rails.logger.info("rendering closed content for #{card.name}: #{args.inspect}")
     ActiveSupport::Deprecation.silence { @template.send(method_id, *args, &proc) }
   end
 
-  def render_diff( content1, content2 )
-    c1 = WikiContent.new(card, content1, self).render!
-    c2 = WikiContent.new(card, content2, self).render!
-    diff c1, c2
-  end
-
   def replace_references( old_name, new_name )
     #warn "replacing references...card name: #{card.name}, old name: #{old_name}, new_name: #{new_name}"
     #content = content.blank? ? card.content : content
@@ -331,13 +324,7 @@ Rails.logger.info("rendering closed content for #{card.name}: #{args.inspect}")
     String.new wiki_content.unrender!
   end
 
-  def expand_card(tcard, options)#, &block)
-    #unless block_given?
-    #  block = Proc.new do |tcard, opts|
-    #    process_inclusion(tcard, opts)
-    #  end
-    #end
-
+  def expand_card(tcard, options)
     return options[:comment] if options.has_key?(:comment)
     tname = if String===tcard; x=tcard;tcard=nil;x else tcard.name end
     # Don't bother processing inclusion if we're already out of view

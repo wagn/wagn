@@ -183,8 +183,13 @@ Rails.logger.info "calling #{priv_name}"
     else card.raw_content end
   end
   view(:core) do process_content(_render_raw) end
+
   view(:naked) do |args|
-    card.generic? ? _render_core : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
+    case
+      when card.name.template_name?  ;  _render_raw
+      when card.generic?             ;  _render_core
+      else render_card_partial(:content)
+    end
   end
 
 ###----------------( NAME) (FIXME move to chunks/transclude)
@@ -340,6 +345,7 @@ Rails.logger.info("rendering closed content for #{card.name}: #{args.inspect}")
 
     if is_main = tname=='_main'
       return root.main_content if root.main_content
+      return 'MAIN' if @depth > 0
       tcard = root.main_card
       tname = tcard.name
       item  = symbolize_param(:item) and options[:item] = item

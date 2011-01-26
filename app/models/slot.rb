@@ -32,7 +32,7 @@ class Slot < Renderer
 
   view(:layout) do |args|
     @main_card, mc = args.delete(:main_card), args.delete(:main_content)
-    @main_content = mc.blank? ? nil : wrap_main(mc)
+    @main_content = (mc.blank? || mc.nil?) ? nil : wrap_main(mc)
     _render_core
   end
 

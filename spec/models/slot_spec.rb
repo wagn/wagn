@@ -13,7 +13,7 @@ describe Slot, "" do
   end
 
   def render_card(name, view=:naked)
-    @card = Card.fetch(name)
+    @card = Card.fetch_or_new(name)
     Slot.new(@card).render(view)
   end
 
@@ -52,7 +52,16 @@ describe Slot, "" do
       end
     end
 
+    it "renders layout card without recursing" do
+      User.as :wagbot
+      layout_card = Card.create(:name=>'tmp layout', :type=>'Html', :content=>"Mainly {{_main|naked}}")
+      Slot.new(layout_card).render(:layout, :main_card=>layout_card).should == %{Mainly <div id="main" context="main">Mainly MAIN</div>}
+    end
 
+    it "renders templates as raw" do
+      template = Card.new(:name=>'A+*right+*content', :content=>'[[link]] {{inclusion}}')
+      Slot.new(template).render(:naked).should == '[[link]] {{inclusion}}'
+    end
 
     it "image tags of different sizes" do
       Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}

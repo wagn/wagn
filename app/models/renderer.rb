@@ -411,7 +411,7 @@ Rails.logger.info("rendering closed content for #{card.name}: #{args.inspect}")
   rescue Exception=>e
     Rails.logger.info "inclusion-error #{e.inspect}"
     Rails.logger.debug "inclusion-error #{e.inspect}\nTrace:\n#{e.backtrace*"\n"}"
-    %{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
+    %{<span class="inclusion-error">error rendering #{link_to_page tcard.name, nil, :title=>CGI.escapeHTML(e.inspect)}</span>}
   end
 
   def get_inclusion_fullname(name,options)

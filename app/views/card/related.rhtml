@@ -14,7 +14,7 @@
   <%= slot.notice %>
 
   <div class="open-content related">
-    <%= render_view( "{{#{card.name}+#{@current}}}" ) %>
+    <%= Slot.new(Card.fetch("#{card.name}+#{@current}")).render :content %>
   </div>
 
   <%= javascript_tag("setupLinksAndDoubleClicks();") %>

@@ -24,7 +24,7 @@ class Renderer
   }
 
   cattr_accessor :max_char_count, :max_depth, :render_actions,
-    :current_slot, :superslot, :xhr
+    :current_slot, :ajax_call
   self.max_char_count = 200
   self.max_depth = 10
 
@@ -64,6 +64,7 @@ class Renderer
         priv_final="_final#{priv_name}"
         define_method( priv_final, &final )
         define_method( priv_name ) do |*a| a = [{}] if a.empty?
+Rails.logger.info "calling #{priv_name}"
           send(priv_final, *a) { yield }
         end
 
@@ -80,7 +81,8 @@ class Renderer
 
   def actions() self.class.render_actions end
   def action_method(key) self.class.actions[key] end # root renderer class, no super
-  def xhr?() @@xhr end
+  def ajax_call?() @@ajax_call end
+  def outer_level?() @depth == 0 end
 
   def initialize(card, opts=nil)
     @card = card
@@ -100,12 +102,12 @@ class Renderer
       t
     end
     @sub_count = @char_count = 0
-    @depth = - max_depth
+    @depth = 0
     @root = self
     @layout = @params && @params[:layout]
   end
 
-  def too_deep?() @depth >= 0 end
+  def too_deep?() @depth >= max_depth end
 
   def subrenderer(subcard, ctx_base=nil)
     subcard = Card.fetch_or_new(subcard) if String===subcard
@@ -181,8 +183,13 @@ class Renderer
     else card.raw_content end
   end
   view(:core) do process_content(_render_raw) end
+
   view(:naked) do |args|
-    card.generic? ? _render_core : render_card_partial(:content)  # FIXME?: 'content' is inconsistent
+    case
+      when card.name.template_name?  ;  _render_raw
+      when card.generic?             ;  _render_core
+      else render_card_partial(:content)
+    end
   end
 
 ###----------------( NAME) (FIXME move to chunks/transclude)
@@ -194,6 +201,7 @@ class Renderer
   end
 
   view(:closed_content) do |args|
+Rails.logger.info("rendering closed content for #{card.name}: #{args.inspect}")
     if card.generic?
       truncatewords_with_closing_tags( _render_naked(args) { yield } )
     else
@@ -337,6 +345,7 @@ class Renderer
 
     if is_main = tname=='_main'
       return root.main_content if root.main_content
+      return 'MAIN' if @depth > 0
       tcard = root.main_card
       tname = tcard.name
       item  = symbolize_param(:item) and options[:item] = item
@@ -383,7 +392,7 @@ class Renderer
 
   def process_inclusion(tcard, options)
     sub = subrenderer(tcard, options[:context])
-    oldrenderer, Renderer.current_slot = (Renderer.superslot = Renderer.current_slot), sub
+    oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
 
     # set item_view;  search cards access this variable when rendering their content.
     sub.item_view = options[:item] if options[:item]
@@ -406,14 +415,15 @@ class Renderer
           when state==:line   ; :closed_missing
           else                ; :open_missing
         end
-      when state==:line       ; :close_content
+      when state==:line       ; :closed_content
       else                    ; vmode
       end
     result = sub.render(action, options)
-    Renderer.superslot, Renderer.current_slot = Renderer.current_slot, oldrenderer
+    Renderer.current_slot = oldrenderer
     result
   rescue Exception=>e
-#Rails.logger.info "inclusion-error #{e.inspect}\nTrace #{e.backtrace*"\n"}"
+    Rails.logger.info "inclusion-error #{e.inspect}"
+    Rails.logger.debug "inclusion-error #{e.inspect}\nTrace:\n#{e.backtrace*"\n"}"
     %{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
   end
 

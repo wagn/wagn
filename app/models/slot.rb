@@ -32,13 +32,13 @@ class Slot < Renderer
 
   view(:layout) do |args|
     @main_card, mc = args.delete(:main_card), args.delete(:main_content)
-    @main_content = mc.blank? ? nil : wrap_main(mc)
+    @main_content = (mc.blank? || mc.nil?) ? nil : wrap_main(mc)
     _render_core
   end
 
   view(:content) do |args|
     @state = :view
-    self.requested_view = 'content'
+    self.requested_view = args[:action] = 'content'
     c = _render_naked(args)
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
     wrap(args) {  wrap_content(c) }
@@ -56,12 +56,12 @@ class Slot < Renderer
 
   view(:closed) do |args|
     @state = :line
-    self.requested_view = 'closed'
+    self.requested_view = args[:action] = 'closed'
     wrap(args) { render_partial('views/closed') }
   end
 
   view(:setting) do |args|
-    self.requested_view = 'content'
+    self.requested_view = args[:action] = 'content'
     wrap( args) { render_partial('views/setting') }
   end
 
@@ -78,7 +78,7 @@ class Slot < Renderer
   end
 
   view(:change) do |args|
-    self.requested_view = 'content'
+    self.requested_view = args[:action] = 'content'
     wrap(args) { render_partial('views/change') }
   end
 
@@ -94,10 +94,12 @@ class Slot < Renderer
   # FIXME: passing a block seems to only work in the templates and not from
   # internal slot calls, so I added the option passing internal content which
   # makes all the ugly block_given? ifs..
+
   def wrap(args = {})
-    return yield if !( args.key?(:add_slot) ? args.delete(:add_slot) : !xhr? )
+    render_wrap = ( args.key?(:add_slot) ? args.delete(:add_slot) : !skip_outer_wrap_for_ajax? )
+    return yield if !render_wrap
     
-    css_class = case action
+    css_class = case args[:action].to_s
       when 'content'  ;  'transcluded'
       when 'exception';  'exception'
       when 'closed'   ;  'card-slot line'
@@ -112,7 +114,13 @@ class Slot < Renderer
     }
     [:style, :view, :item, :base].each { |key| attributes[key] = args[key] }
     
+    
     div( attributes ) { yield }
+  end
+
+  def skip_outer_wrap_for_ajax?
+    # we often skip the outermost slot in ajax calls because the slot is already there.
+    ajax_call? && outer_level?
   end
 
   def wrap_content( content="" )
@@ -341,9 +349,9 @@ class Slot < Renderer
     queue_context = get_queue_context
     code = ""
     if hooks[:setup]
-      code << "Wagn.onLoadQueue.push(function(){\n" unless xhr?
+      code << "Wagn.onLoadQueue.push(function(){\n" unless ajax_call?
       code << hooks[:setup]
-      code << "});\n" unless xhr?
+      code << "});\n" unless ajax_call?
     end
     if hooks[:save]
       code << "Wagn.onSaveQueue['#{queue_context}'].push(function(){\n #{hooks[:save]} \n });\n"

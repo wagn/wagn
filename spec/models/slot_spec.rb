@@ -303,6 +303,7 @@ Rails.logger.info "failing #{c}"
 
   describe "diff" do
     it "should not overwrite empty content with current" do
+      pending # render_diff no longer exists, this is all in the changes partial now
       User.as(:wagbot)
       c = Card.create! :name=>"ChChChanges", :content => ""
       c.update_attributes :content => "A"

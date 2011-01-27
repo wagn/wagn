@@ -31,8 +31,7 @@ describe Slot, "" do
     
     it "missing relative inclusion is relative" do
       c = Card.new :name => 'bad_include', :content => "{{+bad name missing}}"
-Rails.logger.info "failing #{c}"
-      Slot.new(c).render(:naked).match(Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
+      Slot.new(c).render(:naked).match (Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
     end
     
     it "visible comment inclusions as html comments" do
@@ -59,11 +58,23 @@ Rails.logger.info "failing #{c}"
     end
 
     it "renders layout card without recursing" do
-      User.as :wagbot
-      layout_card = Card.create(:name=>'tmp layout', :type=>'Html', :content=>"Mainly {{_main|naked}}")
-      Slot.new(layout_card).render(:layout, :main_card=>layout_card).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
+      User.as :wagbot do
+        layout_card = Card.create(:name=>'tmp layout', :type=>'Html', :content=>"Mainly {{_main|naked}}")
+        Slot.new(layout_card).render(:layout, :main_card=>layout_card).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
+      end
     end
 
+    it "renders deny" do
+      restricted_card =
+      User.as( :wagbot ) do
+        card = Card.create(:name=>'Joe no see me', :type=>'Html', :content=>'secret')
+        card.permit(:read, Role[:admin])
+        card.save
+        card
+      end
+      Slot.new(restricted_card).render(:core).should be_html_with { span(:class=>'denied') }
+    end
+    
     it "renders templates as raw" do
       template = Card.new(:name=>'A+*right+*content', :content=>'[[link]] {{inclusion}}')
       Slot.new(template).render(:naked).should == '[[link]] {{inclusion}}'

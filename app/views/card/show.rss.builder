@@ -21,8 +21,8 @@ xml.rss :version => "2.0" do
           :content => :open_content,
           :closed => :link
         })
-        xml.description view_changes ? slot.render_rss_change : slot.render_open_content )
-        xml.pubDate card.updated_at.to_s(:rfc822)  #fails on virtual cards, which don't have "updated at" -- should use "now"
+        xml.description view_changes ? slot.render_rss_change : slot.render_open_content
+        xml.pubDate card.revised_at.to_s(:rfc822)  #updated_at fails on virtual cards, because not all to_s's take args (just actual dates)
         xml.link card_url(card)
         xml.guid card_url(card)
       end

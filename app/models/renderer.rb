@@ -63,11 +63,16 @@ class Renderer
         priv_final="_final#{priv_name}"
         define_method( priv_final, &final )
         define_method( priv_name ) do |*a| a = [{}] if a.empty?
+          a[0][:view] ||= action  
+          # this variable name is highly confusing; it means the view to return to after an edit.  it's about persistence
+          # should do better.
           send(priv_final, *a) { yield }
         end
 
-        define_method( method_id ) do |*a| a = [{}] if a.empty?
-          return chk if chk = render_check(method_id, *a)
+        define_method( method_id ) do |*a|
+          if refusal=render_check(method_id)
+            return refusal
+          end
           send(priv_name, *a) { yield }
         end
       end
@@ -145,7 +150,7 @@ class Renderer
     end
   end
 
-  def render_check(action, args)
+  def render_check(action)
     ch_action = case
     when too_deep?;  :too_deep
     when card.new_card?; false # causes errors to check in current system.  
@@ -155,7 +160,7 @@ class Renderer
     else
       !card.ok?(:read) and :deny_view
     end
-    (ch_action and render_partial("views/#{ch_action}", args))
+    (ch_action and render_partial("views/#{ch_action}"))
   end
 
   def render_deny(action, args)
@@ -163,7 +168,7 @@ class Renderer
          :closed_missing, :setting_missing].member?(action)
        render_partial("views/#{action}", args)
     elsif card.new_record?; return # need create check...
-    else render_check(action, args) end
+    else render_check(action) end
   end
 
   def canonicalize_view( view )

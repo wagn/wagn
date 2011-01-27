@@ -1,21 +1,21 @@
 class OptionsController < ApplicationController
-  helper :wagn, :card 
+  helper :wagn, :card
   before_filter :load_card
 
   def update
-    if perms=params[:permissions] 
+    if perms=params[:permissions]
       @card.permissions=perms.keys.map do |task|
-        party = 
+        party =
           case perms[task]
             when ''        ; nil
             when 'personal'; @card.personal_user
-            else           ; Role.find(perms[task])          
+            else           ; Role.find(perms[task])
           end
         Permission.new :task=>task, :party=>party
       end
       @card.save!
     end
-    
+
     if params[:save_roles]
       System.ok! :assign_user_roles
       role_hash = params[:user_roles] || {}
@@ -30,11 +30,11 @@ class OptionsController < ApplicationController
     flash[:notice] ||= "Got it!  Your changes have been saved."  #ENGLISH
     render_update_slot render_to_string(:template=>'card/options')
   end
-  
+
   def new_account
     System.ok!(:create_accounts) && @card.ok?(:edit)
   end
-  
+
   def create_account
     System.ok!(:create_accounts) && @card.ok?(:edit)
     email_args = { :subject => "Your new #{System.site_title} account.",   #ENGLISH
@@ -43,7 +43,7 @@ class OptionsController < ApplicationController
     raise ActiveRecord::RecordInvalid.new(@user) if !@user.errors.empty?
     @extension = User.new(:email=>@user.email)
     flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
-    render_update_slot render_to_string(:template=>'card/options')        
+    render_update_slot render_to_string(:template=>'card/options')
   end
 
 

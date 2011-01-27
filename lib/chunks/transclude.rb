@@ -1,6 +1,6 @@
 module Chunk
   class Transclude < Reference
-    attr_reader :stars, :inclusion_map
+    attr_reader :stars, :inclusion_map, :renderer, :options, :base
     unless defined? TRANSCLUDE_PATTERN
       #  {{+name|attr:val;attr:val;attr:val}}
       TRANSCLUDE_PATTERN = /\{\{(([^\|]+?)\s*(\|([^\}]+?))?)\}\}/
@@ -12,7 +12,8 @@ module Chunk
       super   
       #warn "FOUND TRANSCLUDE #{match_data} #{content}"
       @card_name, @options, @configs = self.class.parse(match_data)
-      @inclusion_map = content.inclusion_map
+      @base, @renderer, @inclusion_map =
+         content.card, content.renderer, content.inclusion_map
     end
   
     def self.parse(match)
@@ -29,6 +30,7 @@ module Chunk
         :item  => nil,
         :type  => nil,
         :size  => nil,
+        :unmask => match[1]
       }
       style = {}
       configs = Hash.new_from_semicolon_attr_list match[4]
@@ -55,58 +57,33 @@ module Chunk
         end
       end
       case view
-      when :name;     refcard ? refcard.name : @card_name
+      when :name;     refcard ? refcard.name : card_name
       when :key;      refcard_name.to_key
       when :link;     html_link
       when :linkname; Cardname.escape(refcard_name)
       else
-        block ||= Proc.new do |tcard, opts|
-          case view
-          when nil
-            @card=Card.fetch_or_new(@card_name) if @card_name != @card.name
-            raw_content(@card)
-          when :naked, :raw
-            card = Card.fetch(tcard)
-            return "<no card #{tcard}/>" unless card
-            if card.is_collection?
-              card.each_name do |name|
-                raw_content(Card.fetch_or_new(name))
-              end
-            else
-              raw_content(card)
-            end
-          else
-            @text # just leave the {{}} coding, may need to handle more...
-          end
-        end
-Rails.logger.debug "transclude #{@card_name}, #{@options.inspect}"
-        block.call(@card_name, @options)
+        yield options
       end
-    end
-
-    def raw_content(card)
-      return "<no card #{@tcard}/>" unless card
-      card.templated_content || card.content
     end
 
     def revert                             
       configs = @configs.to_semicolon_attr_list;  
       configs = "|#{configs}" unless configs.blank?
-      @text = "{{#{@card_name}#{configs}}}"
+      @text = "{{#{card_name}#{configs}}}"
       super
     end
     
     private
     def base_card 
-      case @options[:base]
-      when 'self'; @card
-      when 'parent'; @card.trunk
-      else invalid_option(:base)
+      case options[:base]
+      when 'self'  ; card
+      when 'parent'; card.trunk
+      else           base || invalid_option(:base)
       end
     end
     
     def invalid_option(key)
-      raise Wagn::Oops, "Invalid argument {'#{key}': '#{@options[key]}'} in transclusion syntax"
+      raise Wagn::Oops, "Invalid argument {'#{key}': '#{options[key]}'} in transclusion syntax"
     end
 
   end

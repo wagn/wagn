@@ -22,7 +22,7 @@ module WagnTestHelper
  
   def get_renderer()
     require 'renderer'
-    Renderer.new
+    Renderer.new(Card.new(:name=>'dummy'))
   end
   
   def given_cards( *definitions )   
@@ -36,8 +36,9 @@ module WagnTestHelper
   #   ::Card.find_by_name(name)
   # end
   
-  def render( card )
-    Renderer.new.render(card)
+
+  def render_test_card( card )
+    Renderer.new(card).process_content()
   end 
   
   def assert_difference(object, method = nil, difference = 1)

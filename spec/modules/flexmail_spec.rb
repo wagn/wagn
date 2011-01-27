@@ -100,7 +100,7 @@ describe Flexmail do
         
         Rails.logger.level = ActiveSupport::BufferedLogger::Severity::DEBUG
         Mailer.should_receive(:deliver_flexmail).with(hash_including(:message=>"this had betta work"))
-        Card.create! :name => "ToYou", :type => "Email", :content => "had betta work"
+        Card.create!(:name => "ToYou", :type => "Email", :content => "had betta work")
       end
       
     end

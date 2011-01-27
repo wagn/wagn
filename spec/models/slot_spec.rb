@@ -5,23 +5,79 @@ describe Slot, "" do
   def simplify_html string
     string.gsub(/\s*<!--[^>]*>\s*/, '').gsub(/\s*<\s*(\/?\w+)[^>]*>\s*/, '<\1>')
   end
+  
+  def render_content(content, view=:naked)
+    @card ||= Card.new
+    @card.content=content
+    Slot.new(@card).render(view)
+  end
 
-  describe "renders" do
+  def render_card(name, view=:naked)
+    @card = Card.fetch_or_new(name)
+    Slot.new(@card).render(view)
+  end
+
+
+  describe "processes content" do
     it "simple card links" do
-      c = Card.new :name => 'linkA', :content => "[[A]]"
-      Slot.new(c).render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/A\">A</a>"
+      render_content("[[A]]").should=="<a class=\"known-card\" href=\"/wagn/A\">A</a>"
+      Renderer.new(Card['A']).render_link().should=="<a class=\"known-card\" href=\"/wagn/A\">A</a>"
+      Slot.new(Card['A']).render_link().should=="<a class=\"known-card\" href=\"/wagn/A\">A</a>"
     end
 
     it "invisible comment inclusions as blank" do
-      c = Card.new :name => 'invisible', :content => "{{## now you see nothing}}"
-      Slot.new(c).render( :naked ).should == ''
+      render_content("{{## now you see nothing}}").should==''
+    end
+    
+    it "missing relative inclusion is relative" do
+      c = Card.new :name => 'bad_include', :content => "{{+bad name missing}}"
+      Slot.new(c).render(:naked).match (Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
+    end
+    
+    it "visible comment inclusions as html comments" do
+      render_content("{{# now you see me}}").should == '<!-- # now you see me -->'
+      render_content("{{# -->}}").should == '<!-- # --&gt; -->'
     end
 
-    it "visible comment inclusions as html comments" do
-      c1 = Card.new :name => 'invisible', :content => "{{# now you see me}}"
-      c2 = Card.new :name => 'invisible', :content => "{{# -->}}"
-      Slot.new(c1).render( :naked ).should == '<!-- # now you see me -->'
-      Slot.new(c2).render( :naked ).should == '<!-- # --&gt; -->'
+    it "renders name with layout" do
+      c = Card.new :name => 'nameA', :content => "{{A|name}}"
+      Slot.new(c, 'main_1').render_layout.should be_html_with do
+        html { body { p {"A"} } }
+      end
+      c = Card.new :name => 'openA', :content => "{{A|open}}"
+      Slot.new(c, :context=>'main_1', :view=>'open').render_layout.should be_html_with do
+        body() {
+          div(:class=>"title-menu") {
+            a(:href=>"/wagn/A", :class=>"page-icon", :title=>"Go to: A") { }
+          }
+          span(:class=>"open-content content editOnDoubleClick") {
+            a(:class=>"known-card", :href=>"/wagn/Z") { }
+          }
+        }
+      end
+    end
+
+    it "renders layout card without recursing" do
+      User.as :wagbot do
+        layout_card = Card.create(:name=>'tmp layout', :type=>'Html', :content=>"Mainly {{_main|naked}}")
+        Slot.new(layout_card).render(:layout, :main_card=>layout_card).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
+      end
+    end
+
+    it "renders deny" do
+      restricted_card =
+      User.as( :wagbot ) do
+        card = Card.create(:name=>'Joe no see me', :type=>'Html', :content=>'secret')
+        card.permit(:read, Role[:admin])
+        card.save
+        card
+      end
+      Slot.new(restricted_card).render(:core).should be_html_with { span(:class=>'denied') }
+    end
+    
+    it "renders templates as raw" do
+      template = Card.new(:name=>'A+*right+*content', :content=>'[[link]] {{inclusion}}')
+      Slot.new(template).render(:naked).should == '[[link]] {{inclusion}}'
     end
 
     it "image tags of different sizes" do
@@ -60,7 +116,11 @@ describe Slot, "" do
     describe "inclusions" do
       it "multi edit" do
         c = Card.new :name => 'ABook', :type => 'Book'
-        Slot.new(c).render( :multi_edit ).should have_tag "input#main_1_2-hidden-content"
+        Slot.new(c).render( :multi_edit ).should be_html_with do
+          div :class => "field-in-multi" do
+            input :name=>"cards[~plus~illustrator][content]", :type => 'hidden'
+          end
+        end
       end
     end
 
@@ -81,10 +141,9 @@ describe Slot, "" do
       end
 
       it "array (basic card)" do
-        c = Card.new :name => 'ABarray', :content => "{{A+B|array}}"
-        Slot.new(c).render( :naked ).should == %{["AlphaBeta"]}
+        render_card('A+B', :array).should==%{["AlphaBeta"]}
       end
-
+      
       it "naked" do
         c = Card.new :name => 'ABnaked', :content => "{{A+B|naked}}"
         Slot.new(c).render( :naked ).should == "AlphaBeta"
@@ -104,12 +163,23 @@ describe Slot, "" do
         Slot.new(c).render( :naked ).should == %{<a class="known-card" href="/wagn/A+B">A+B</a>}
       end
 
+#Rails.logger.info "failing naked(search card) #{c_open}\nRenders:#{Slot.new(c_open).render_naked}\nRenders end"
       it "naked (search card)" do
-        s = Card.create :type=>'Search', :name => 'Asearch', :content => %{{"type":"User"}}
-        item_name = Card.new :name => 'AsearchNaked1', :content => "{{Asearch|naked;item:name}}"
-        Slot.new(item_name).render( :naked ).should match('search-result-item item-name')
-        item_closed = Card.new :name => 'AsearchNaked', :content => "{{Asearch|naked}}"
-        Slot.new(item_closed).render( :naked ).should match('search-result-item item-closed')
+       s = Card.create :type=>'Search', :name=>'Asearch', :content=>%{{"type":"User"}}
+       cname = Card.new :name=>'AsearchNaked1',
+                        :content=>"{{Asearch|naked;item:name}}"
+       Slot.new(cname).render_naked.should match('search-result-item item-name')
+
+       copen = Card.new :name => 'AsearchNaked1',
+                        :content => "{{Asearch|naked;item:open}}"
+       Slot.new(copen).render_naked.should match('search-result-item item-open')
+
+       cclosed = Card.new :name => 'AsearchNaked',
+                          :content => "{{Asearch|item:closed}}"
+       Slot.new(cclosed).render_naked.should match('search-result-item item-closed')
+
+       c = Card.new :name => 'AsearchNaked', :content => "{{Asearch|naked}}"
+       Slot.new(c).render_naked.should match('search-result-item item-closed')
       end
 
       it "array (search card)" do
@@ -145,7 +215,7 @@ describe Slot, "" do
   describe "cgi params" do
     it "renders params in card inclusions" do
       c = Card.new :name => 'cardNaked', :content => "{{_card+B|naked}}"
-      result = Slot.new(c, nil, nil, nil, :params=>{'_card' => "A"}).render(:naked)
+      result = Slot.new(c, :params=>{'_card' => "A"}).render_naked
       result.should == "AlphaBeta"
     end
 
@@ -163,53 +233,76 @@ describe Slot, "" do
 
     # a little weird that we need :open_content  to get the version without
     # slot divs wrapped around it.
-    s = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :name } )
+    s = Slot.new(t, :inclusion_view_overrides=>{ :open => :name } )
     s.render( :naked ).should == "t2"
 
     # similar to above, but use link
-    s = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :link } )
+    s = Slot.new(t, :inclusion_view_overrides=>{ :open => :link } )
     s.render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/t2\">t2</a>"
 
-    s = Slot.new(t, "main_1", "view", nil, :inclusion_view_overrides=>{ :open => :naked } )
+    s = Slot.new(t, :inclusion_view_overrides=>{ :open => :naked } )
     s.render( :naked ).should == "boo"
   end
 
   context "builtin card" do
     it "should render layout partial with name of card" do
+      pending
       template = mock("template")
       template.should_receive(:render).with(:partial=>"builtin/builtin").and_return("Boo")
       builtin_card = Card.new( :name => "*builtin", :builtin=>true )
-      slot = Slot.new( builtin_card, "main_1", "view", template  )
+      slot = Slot.new( builtin_card )
+      slot.render_raw.should == "Boo"
       slot.render(:raw).should == "Boo"
+      slot = Slot.new( Card["*head"], "main_1", "view"  )
+      slot.render(:naked).should == ''
     end
   end
 
   context "with content settings" do
     it "uses content setting" do
+      pending
       @card = Card.new( :name=>"templated", :content => "bar" )
       config_card = Card.new(:name=>"templated+*self+*content", :content=>"Yoruba" )
       @card.should_receive(:setting_card).with("content","default").and_return(config_card)
-      Slot.new(@card).render(:raw).should == "Yoruba"
+      Slot.new(@card).render_raw.should == "Yoruba"
+      @card.should_receive(:setting_card).with("content","default").and_return(config_card)
+      @card.should_receive(:setting_card).with("add help","edit help")
+      Slot.new(@card).render_new.should be_html_with do
+        html { div(:class=>"unknown-class-name") {}}
+      end
     end
 
-    it "doesn't use content setting if default is present" do
-      @card = Card.new( :name=>"templated", :content => "Bar" )
-      config_card = Card.new(:name=>"templated+*self+*default", :content=>"Yoruba" )
-      @card.should_receive(:setting_card).with("content", "default").and_return(config_card)
-      Slot.new(@card).render(:raw).should == "Bar"
+    it "uses content and help setting in new" do
+      content_card = Card.create!(:name=>"Phrase+*type+*content", :content=>"{{+Yoruba}}" )
+      help_card    = Card.create!(:name=>"Phrase+*type+*add help", :content=>"Help me dude" )
+      card = Card.new(:type=>'Phrase')
+      card.should_receive(:setting_card).with("content","default").and_return(content_card)
+      card.should_receive(:setting_card).with("add help","edit help").and_return(help_card)
+      Slot.new(card).render_new.should be_html_with do
+        div(:class=>"field-in-multi") {
+          input :name=>"cards[~plus~Yoruba][content]", :type => 'hidden'
+        }
+      end
+    end
+
+    it "doesn't use content setting if default is present" do  #this seems more like a settings test
+      content_card = Card.create!(:name=>"Phrase+*type+*content", :content=>"Content Foo" )
+      default_card = Card.create!(:name=>"Phrase+*type+*default", :content=>"Default Bar" )
+      @card = Card.new( :name=>"templated", :type=>'Phrase' )
+      @card.should_receive(:setting_card).with("content", "default").and_return(default_card)
+      Slot.new(@card).render(:raw).should == "Default Bar"
     end
 
     # FIXME: this test is important but I can't figure out how it should be
     # working.
     it "uses content setting in edit" do
-      pending
       config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )
       @card = Card.new( :name=>"templated", :content => "Bar" )
-      #@card.should_receive(:setting_card).at_least(:twice).with("content").and_return(config_card)
+      @card.should_receive(:setting_card).with("content", "default").and_return(config_card)
       result = Slot.new(@card).render(:edit)
       result.should be_html_with do
-        div :class => "edit_in_multi" do
-          #input :name=>"cards[~plus~alpha][content]", :type => 'hidden'
+        div :class => "field-in-multi" do
+          input :name=>"cards[~plus~alpha][content]", :type => 'hidden'
         end
       end
     end
@@ -217,11 +310,12 @@ describe Slot, "" do
 
   describe "diff" do
     it "should not overwrite empty content with current" do
+      pending # render_diff no longer exists, this is all in the changes partial now
       User.as(:wagbot)
       c = Card.create! :name=>"ChChChanges", :content => ""
       c.update_attributes :content => "A"
       c.update_attributes :content => "B"
-      r = Slot.new(c).render_diff( c, c.revisions[0].content, c.revisions[1].content )
+      r = Slot.new(c).render_diff( c.revisions[0].content, c.revisions[1].content )
       r.should == "<ins class=\"diffins\">A</ins>"
     end
   end

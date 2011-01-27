@@ -10,6 +10,8 @@ class ApplicationController < ActionController::Base
 
   helper_method :main_card?
 
+  attr_accessor :renderer
+
   include ActionView::Helpers::TextHelper #FIXME: do we have to do this? its for strip_tags() in edit()
   include ActionView::Helpers::SanitizeHelper
 
@@ -33,6 +35,8 @@ class ApplicationController < ActionController::Base
   protected
 
   def per_request_setup
+    Slot.ajax_call=request.xhr?
+    
     if System.multihost
       if mapping = MultihostMapping.find_by_requested_host(request.host) || MultihostMapping.find_by_requested_host("")
         System.base_url = "http://" + mapping.canonical_host
@@ -54,13 +58,13 @@ class ApplicationController < ActionController::Base
     @context = params[:context] || 'main_1'
     @action = params[:action]
 
-    Slot.current_slot = nil
+    Renderer.current_slot = nil
 
     # reset class caches
     # FIXME: this is a bit of a kluge.. several things stores as cattrs in modules
     # that need to be reset with every request (in addition to current user)
     System.request = request
-    #System.time = Time.now.to_f              
+    #System.time = Time.now.to_f
     ## DEBUG
     ActiveRecord::Base.logger.debug("WAGN: per request setup")
     load_location
@@ -79,7 +83,7 @@ class ApplicationController < ActionController::Base
               'application'
             end
         end
-      } 
+      }
     end
     layout
   end
@@ -144,7 +148,7 @@ class ApplicationController < ActionController::Base
 
   # ----------( rendering methods ) -------------
 
-  # dormant code.  
+  # dormant code.
   def render_jsonp(args)
     str = render_to_string args
     render :json=>(params[:callback] || "wadget") + '(' + str.to_json + ')'
@@ -197,7 +201,7 @@ class ApplicationController < ActionController::Base
     # Create used this scroll
     #<%= javascript_tag 'scroll(0,0)'
 
-    #errors.each{|attr,msg| puts "#{attr} - #{msg}" }      
+    #errors.each{|attr,msg| puts "#{attr} - #{msg}" }
     # getNextElement() will crawl up nested slots until it finds one with a notice div
 
     on_error_js = ""
@@ -225,6 +229,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-end            
+end
 
-  
+

@@ -1,19 +1,19 @@
-<%-  @card.update_referencers ||= false %>
+<%-  card.update_referencers ||= false %>
 
 
-<% get_slot.wrap('name') do |slot| %>
-  
+<% wrap_slot do |slot| %>
+
   <%= slot.edit_submenu :name %>
-      
-  <% div(:class=>'edit-area edit-name' ) do %>  
-     <h2>Change Name</h2>  
-    <% wagn_form_for :card, @card, :url=>slot.url_for('card/update'), 
+
+  <% div(:class=>'edit-area edit-name' ) do %>
+     <h2>Change Name</h2>
+    <% form_for_card :url=>slot.url_for('card/update'),
         :update=>{:success=>slot.id('card-body'), :failure=>"javascript:getNextElement(this,'notice')" }do |f| %>
       <div>to <%= slot.name_field(f) %></div>
-              
+
       <% if @confirm==true %>
-        
-        <% if dependents = @card.dependents and !dependents.empty? %>
+
+        <% if dependents = card.dependents and !dependents.empty? %>
           <div class="instruction">
             <div>This will change the names of these cards, too:</div> <%#ENGLISH%>
             <ul>
@@ -22,9 +22,9 @@
               <% end. join ', ' %>
             </ul>
           </div>
-        <% end %>          
+        <% end %>
 
-         <% if children = @card.extended_referencers and !children.empty? %>
+         <% if children = card.extended_referencers and !children.empty? %>
           <h2>References</h2>
           <div class="instruction">
             <div>Renaming could break old links and inclusions on these cards:</div> <%#ENGLISH%>
@@ -42,11 +42,11 @@
               </div>
             </div>
           </div>
-        <% end %>        
-        <%= f.hidden_field 'confirm_rename' %> 
+        <% end %>
+        <%= f.hidden_field 'confirm_rename' %>
       <% end %>
-      
-      <%= slot.half_captcha %>      
+
+      <%= slot.half_captcha %>
        <%= submit_tag 'Rename' %>
       <%= button_to_remote 'Cancel', :url=>slot.url_for('card/edit'), :update=>slot.id() %>
     <% end %>

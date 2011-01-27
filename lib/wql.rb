@@ -139,7 +139,9 @@ class Wql
     
     def match_prep(v,cardspec=self)
       cxn ||= ActiveRecord::Base.connection
+      if v=='_keyword' 
       v=cardspec.root.params['_keyword'] if v=='_keyword' 
+Rails.logger.info "wql_match_prep _keyword (#{v.inspect}" end
       v.strip!#FIXME - breaks if v is nil
       [cxn, v]
     end
@@ -420,9 +422,11 @@ class Wql
 
     
     def count(val)
+Rails.logger.info "count(#{val.inspect})"
       raise(Wagn::WqlError, "count works only on outermost spec") if @parent
       join_spec = { :id=>SqlCond.new("#{table_alias}.id") } 
       val.each do |relation, subspec|
+Rails.logger.info "count iter(#{relation.inspect} #{subspec.inspect})"
         subquery = CardSpec.build(:_parent=>self, :return=>:count, relation.to_sym=>join_spec).merge(subspec).to_sql
         sql.fields << "#{subquery} as #{relation}_count"
       end

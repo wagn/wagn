@@ -92,6 +92,8 @@ module Cardlib
       new_content ||= '' 
       
       # FIXME?: this code written under influence. may require adjustment
+      # Uncommenting this breaks spec/helpers/slot_spec.rb w/float:<object>..
+      #   it strips wiki content even in transcludes
       new_content =  WikiContent.clean_html!(new_content) if clean_html?
       
       clear_drafts if current_revision_id
@@ -180,7 +182,7 @@ module Cardlib
             
             ActiveRecord::Base.logger.info("------------------ UPDATE REFERRER #{card.name}  ------------------------")
             next if card.hard_template
-            card.content = Renderer.new.replace_references( card, @old_name, name )
+            card.content = Renderer.new(card).replace_references( @old_name, name )
             card.save! unless card==self
           end
         end

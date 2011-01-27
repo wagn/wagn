@@ -10,7 +10,7 @@
 -%>
 
 <% paging = capture do %>
-  <%= render :partial=>'/types/search/paging', :locals=>{:card=>card} %>
+  <%= render :partial=>'/types/search/paging', :locals=>{:card=>card, :slot=>slot} %>
 <% end %>
 
 <% if !title.empty? %> 
@@ -30,7 +30,9 @@
   <%= paging %>
   <div class="search-result-list">
     <% cards.each do |c| %>       
-      <div class="search-result-item item-<%= view %>"><%= slot.process_inclusion(c, {:view=>view, :showname=>c.name }) %></div>
+      <div class="search-result-item item-<%= view %>">
+        <%= slot.subrenderer(c).render view, :showname=>c.name %>
+      </div>
     <% end %>     
   </div>
   <%= paging %>

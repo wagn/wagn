@@ -1,25 +1,19 @@
-<% 
-  p, level= slot, 0
-  while  p = p.superslot #p.state=='line' &&
-    level +=1 
-  end
-%>   
-<% if level > 2 %>
+<% if slot.depth > 2 %>
   ...
 <% else %>
-   
+
   <%
   # FIXME: so not DRY.  cut-n-paste from search/_content
   s = slot.paging_params #params[:s] || {}
   begin
-    query_results = card.search( s )  
+    query_results = card.search( s )
     total = card.count
   rescue Exception=>e
     error = e
     query_results = nil
   end
   %>
-  <% if query_results.nil? %>   
+  <% if query_results.nil? %>
     <%= "#{error.class.to_s}: #{error.message}" %><br/>
     <%= card.content %>
   <% elsif query_results.length==0 %>
@@ -32,5 +26,5 @@
       <% end %>
     </div>
   <% end %>
-                              
+
 <% end %>

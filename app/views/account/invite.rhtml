@@ -4,7 +4,7 @@ subject = email[:subject] || System.setting('*invite+*subject') || ''
 message = email[:message] || System.setting('*invite+*message') || ''
 message.substitute!(
   :invitor => User.current_user.card.name + " (#{current_user.email})",
-  :invitee => @card.name || ''
+  :invitee => card.name || ''
 )
 
 div_id = "main-body"
@@ -14,7 +14,7 @@ context = 'invitation'
 <h1 class="page-header">Invite A Friend</h1> <%#ENGLISH%>
 
 
-<% get_slot.wrap(@action) do |slot| %>
+<% wrap_slot do |slot| %>
 
   <span style="display:none;" class="editor_context"><%= context %></span>
   <iframe id="iframe-<%= div_id %>" height="0" width="0" frameborder="0"></iframe>
@@ -29,7 +29,7 @@ context = 'invitation'
     <%= error_messages_for :user %>
 
     <table class="fieldset">
-      <% if @card.name.blank? %>
+      <% if card.name.blank? %>
         <tr>
           <td class="label"><label for="name">Name</label></td>
           <td class="field">
@@ -45,7 +45,7 @@ context = 'invitation'
         
       <% else %>
         <tr><td colspan="3" class="accept-request-intro" style="text-align: center"> 
-          <em>Accept Account Request from:<em> <strong><%= link_to_page @card.name %></strong><%#ENGLISH%>
+          <em>Accept Account Request from:<em> <strong><%= link_to_page card.name %></strong><%#ENGLISH%>
           <%= hidden_field( :card, :key ) %>
           <%= hidden_field( :user, :email ) %>
           

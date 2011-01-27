@@ -3,11 +3,11 @@
 <%- option_args = {
   :name=>"roles", 
   :help=>%{ <span class="small">"#{ link_to_page 'Roles' }" determine which #{ System.ok?(:set_global_permissions) ? link_to( 'global permissions', '/admin/tasks') : 'global permissions'} a user has access to, as well as card-specific permissions like read, view, comment, and delete.  You can only change a user's roles if you have the global "assign user roles" permission. </span>}, #ENGLISH
-  :label=>"#{@card.name}'s Roles"
+  :label=>"#{card.name}'s Roles"
 }%>
 
-<%# wagn_form_for :card, @card, :url=>{:controller=>'options', :action=>'update_roles', :id=>@card.id},
-    :update => slot.id do |form| %>
+<%# form_for_card(:url=>{:controller=>'options', :action=>'update_roles', :id=>card.id},
+    :update => slot.id) do |form| %>
   <%= slot.option_header 'User Roles' %>
     <% if System.ok? :assign_user_roles %>
       <% slot.option(option_args) do %>

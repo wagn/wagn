@@ -1,13 +1,10 @@
-<% hard_template = @card.hard_template %>
-
-<% get_slot.wrap( 'edit' ) do |slot| %>  
+<% wrap_slot do |slot| %>
   <%= slot.header %>
-  <style><%= ".SELF-#{@card.key.css_name} .edit-area .namepart-#{@card.name.css_name} { display: none; }" %></style>
+  <style><%= ".SELF-#{card.key.css_name} .edit-area .namepart-#{card.name.css_name} { display: none; }" %></style>
 
-  <% div( :id=>slot.id('card-body'), :class=>'card-body') do %>  
+  <% div( :id=>slot.id('card-body'), :class=>'card-body') do %>
     <%= slot.render_partial 'card/edit/content' %>
   <% end %>
-  
-  <%= slot.notice %>
 
+  <%= slot.notice %>
 <% end %>

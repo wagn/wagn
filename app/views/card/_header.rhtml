@@ -1,8 +1,8 @@
-<div class="card-header">   
+<div class="card-header">
   <%= slot.menu %>
 
   <div class="title-menu">
-      <%= slot.link_to_action fancy_title(card), 'line', {}, :class=>"line-link title down-arrow", :title=>"close #{card.name}" %> 
+      <%= slot.link_to_action fancy_title(card), 'line', {}, :class=>"line-link title down-arrow", :title=>"close #{card.name}" %>
 
     <% unless card.type=='Basic' %>
       <span class="cardtype">
@@ -12,6 +12,6 @@
 
     <%= page_icon(card.name) %>&nbsp;
   </div>
-  
+
   <style type="text/css"><%= ".SELF-#{card.key.css_name} .content .namepart-#{card.name.css_name} { display: none; }" %></style>
-</div>       
+</div>

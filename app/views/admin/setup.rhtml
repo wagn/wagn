@@ -2,7 +2,7 @@
 
 <%= error_messages_for :user %>
 
-<% get_slot(card).wrap('account-request') do |slot| %>
+<% wrap_slot(get_slot(card)) do |slot| %>
 
   <div class="open-content">
     <h2 class="page-header">To get started, set up an account. </h2><%#ENGLISH%>
@@ -16,7 +16,7 @@
           :label=>"Name") do %>
         <%= text_field :card, :name %>
       <% end %>
-      <%= render :partial=>'account/edit', :locals=>{:slot=>slot, :card=>@card} %>
+      <%= render :partial=>'account/edit', :locals=>{:slot=>slot, :card=>card} %>
     </table>
       <%= submit_tag 'Create' %>
     <% end %>

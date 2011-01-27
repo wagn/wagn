@@ -6,11 +6,11 @@
   <h1 class="page-header">Sign Up</h1><%#ENGLISH%>
 
 
-  <% get_slot(card).wrap('account-request') do |slot| %>
+  <% wrap_slot(get_slot(card)) do |slot| %>
 
     <div class="instruction">
       <% if inst = card.setting_card('add help', 'edit help') %> 
-        <%= slot.subslot(inst).render :naked %>
+        <%= slot.subrenderer(inst).render :naked %>
       <% elsif !System.ok?(:create_accounts) %>
         <p><strong>All Account Requests are subject to review.</strong></p><%#ENGLISH%>
       <% else %>
@@ -20,7 +20,7 @@
 
     <div class="content">
     
-      <% form_for :card, @card, :action=>'signup', :html=>{ :onsubmit=>"Wagn.runQueue(Wagn.onSaveQueue['main_1'])"} do |f| %>
+      <% form_for :card, card, :action=>'signup', :html=>{ :onsubmit=>"Wagn.runQueue(Wagn.onSaveQueue['main_1'])"} do |f| %>
         <%= hidden_field_tag 'element', "#{div_id}"  %>
         <%= f.hidden_field 'type'  %>
         <%- slot.form = f %>

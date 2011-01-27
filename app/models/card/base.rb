@@ -426,7 +426,7 @@ module Card
     #end
      
     def revised_at
-      current_revision ? current_revision.updated_at : Time.now
+      cached_revision ? cached_revision.updated_at : Time.now
     end
 
     # Dynamic Attributes ------------------------------------------------------        

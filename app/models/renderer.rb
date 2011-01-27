@@ -70,7 +70,9 @@ class Renderer
         end
 
         define_method( method_id ) do |*a|
-          return chk if chk = render_check(method_id)
+          if refusal=render_check(method_id)
+            return refusal
+          end
           send(priv_name, *a) { yield }
         end
       end

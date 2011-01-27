@@ -32,11 +32,7 @@ describe Slot, "" do
     it "missing relative inclusion is relative" do
       c = Card.new :name => 'bad_include', :content => "{{+bad name missing}}"
 Rails.logger.info "failing #{c}"
-      Slot.new(c).render.should be_html_with do
-        html { body {
-          span(:cardname=>"+bad name missing") {}
-        } }
-      end
+      Slot.new(c).render(:naked).match(Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
     end
     
     it "visible comment inclusions as html comments" do

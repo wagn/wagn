@@ -138,10 +138,10 @@ class Renderer
     if card&&card.references_expired
       update_references(wiki_content)
     end
-    wiki_content.render! do |tname, opts|
-      full = opts[:fullname] = get_inclusion_fullname(tname, opts)
+    wiki_content.render! do |opts|
+#      full = opts[:fullname] = get_inclusion_fullname(tname, opts)
       @view = opts[:view].to_sym if view == nil and opts[:view]
-      expand_card(tname,opts) { yield }
+      expand_inclusion(opts) { yield }
     end
   end
 
@@ -171,9 +171,7 @@ class Renderer
   end
 
   def expand_inclusions(content)
-    process_content(content) #do |tcard,opts|
-#      expand_card(tcard, opts)
-#    end
+    process_content(content) 
   end
 
 ### ---- Core renders --- Keep these on top for dependencies
@@ -324,12 +322,14 @@ class Renderer
     String.new wiki_content.unrender!
   end
 
-  def expand_card(tcard, options)
+  def expand_inclusion(options)
+
     return options[:comment] if options.has_key?(:comment)
-    tname = if String===tcard; x=tcard;tcard=nil;x else tcard.name end
+    #tname = if String===tcard; x=tcard;tcard=nil;x else tcard.name end
     # Don't bother processing inclusion if we're already out of view
     return '' if (state==:line && self.char_count > Renderer.max_char_count)
 
+    tname=options[:tname]
     if is_main = tname=='_main'
       tcard, tcont = root.main_card, root.main_content
       return tcont if tcont
@@ -341,20 +341,19 @@ class Renderer
       options[:view] ||= :open
     end
 
-    tcard ||= begin
-        fullname = get_inclusion_fullname(tname,options)
-        case
-        when state ==:edit
-          Card.fetch_or_new(fullname, {}, new_inclusion_card_args(options))
-        when base.respond_to?(:name);   base
-        else
-          Card.fetch_or_new(fullname, :skip_defaults=>true)
-        end
-      end
-
     options[:view] ||= context == 'layout_0' ? :naked : :content
-    options[:fullname] = fullname
+    options[:fullname] = fullname = get_inclusion_fullname(tname,options)
     options[:showname] = tname.to_show(fullname)
+
+    tcard ||= begin
+      case
+      when state ==:edit   ;  Card.fetch_or_new(fullname, {}, new_inclusion_card_args(options))
+      when base.respond_to?(:name);   base
+      else                 ;  Card.fetch_or_new(fullname, :skip_defaults=>true)
+      end
+    end
+
+#warn "tname = #{tname};  expand card options = #{options.inspect}"
 
     tcard.loaded_trunk=card if tname =~ /^\+/
     result = process_inclusion(tcard, options)

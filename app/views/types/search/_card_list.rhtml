@@ -31,7 +31,6 @@
   <div class="search-result-list">
     <% cards.each do |c| %>       
       <div class="search-result-item item-<%= view %>">
-        <%# slot.expand_card(c, {:view=>view, :showname=>c.name }) %>
         <%= slot.subrenderer(c).render view, :showname=>c.name %>
       </div>
     <% end %>     

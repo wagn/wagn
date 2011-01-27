@@ -63,7 +63,6 @@ class Renderer
         priv_final="_final#{priv_name}"
         define_method( priv_final, &final )
         define_method( priv_name ) do |*a| a = [{}] if a.empty?
-Rails.logger.info "calling #{priv_name}"
           send(priv_final, *a) { yield }
         end
 
@@ -149,6 +148,8 @@ Rails.logger.info "calling #{priv_name}"
   def render_check(action, args)
     ch_action = case
     when too_deep?;  :too_deep
+    when card.new_card?; false # causes errors to check in current system.  
+      #should remove this and add create check after we settingize permissions
     when [:edit, :edit_in_form, :multi_edit].member?(action)
       !card.ok?(:edit) and :deny_view #should be deny_edit
     else
@@ -200,7 +201,6 @@ Rails.logger.info "calling #{priv_name}"
   end
 
   view(:closed_content) do |args|
-Rails.logger.info("rendering closed content for #{card.name}: #{args.inspect}")
     if card.generic?
       truncatewords_with_closing_tags( _render_naked(args) { yield } )
     else
@@ -333,7 +333,7 @@ Rails.logger.info("rendering closed content for #{card.name}: #{args.inspect}")
     if is_main = tname=='_main'
       tcard, tcont = root.main_card, root.main_content
       return tcont if tcont
-      return 'MAIN' unless @depth == 0 and tcard
+      return '{{_main}}' unless @depth == 0 and tcard
       tname = tcard.name
       item  = symbolize_param(:item) and options[:item] = item
       pview = symbolize_param(:view) and options[:view] = pview

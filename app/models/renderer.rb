@@ -333,7 +333,7 @@ class Renderer
     if is_main = tname=='_main'
       tcard, tcont = root.main_card, root.main_content
       return tcont if tcont
-      return '{{_main}}' unless @depth == 0 and tcard
+      return "{{#{options[:unmask]}}}" || '{{_main}}' unless @depth == 0 and tcard
       tname = tcard.name
       item  = symbolize_param(:item) and options[:item] = item
       pview = symbolize_param(:view) and options[:view] = pview

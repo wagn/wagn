@@ -30,6 +30,7 @@ module Chunk
         :item  => nil,
         :type  => nil,
         :size  => nil,
+        :unmask => match[1]
       }
       style = {}
       configs = Hash.new_from_semicolon_attr_list match[4]

@@ -30,7 +30,7 @@
       <div class="search-result-list">
         <% cards_by_day[day].each do |card| %>
           <div class="search-result-item item-<%= view %>">
-            <%= slot.expand_card(card, {:view=>view, :showname=>card.name }) %>
+            <%= slot.subrenderer(c).render view, :showname=>c.name %>
           </div>
         <% end %>
       </div>

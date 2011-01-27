@@ -13,7 +13,6 @@ class Renderer
     end
   end
 
-  include HTMLDiff
   include ReferenceTypes
 
   VIEW_ALIASES = {
@@ -64,7 +63,6 @@ class Renderer
         priv_final="_final#{priv_name}"
         define_method( priv_final, &final )
         define_method( priv_name ) do |*a| a = [{}] if a.empty?
-Rails.logger.info "calling #{priv_name}"
           send(priv_final, *a) { yield }
         end
 
@@ -132,7 +130,7 @@ Rails.logger.info "calling #{priv_name}"
     @inclusion_map
   end
 
-  def process_content(content=nil, opts={}, &block)
+  def process_content(content=nil, opts={})
     return content unless card
     content = card.content if content.blank?
 
@@ -140,16 +138,18 @@ Rails.logger.info "calling #{priv_name}"
     if card&&card.references_expired
       update_references(wiki_content)
     end
-    wiki_content.render! do |tname, opts|
-      full = opts[:fullname] = get_inclusion_fullname(tname, opts)
+    wiki_content.render! do |opts|
+#      full = opts[:fullname] = get_inclusion_fullname(tname, opts)
       @view = opts[:view].to_sym if view == nil and opts[:view]
-      expand_card(tname,opts)#,&block)
+      expand_inclusion(opts) { yield }
     end
   end
 
   def render_check(action, args)
     ch_action = case
     when too_deep?;  :too_deep
+    when card.new_card?; false # causes errors to check in current system.  
+      #should remove this and add create check after we settingize permissions
     when [:edit, :edit_in_form, :multi_edit].member?(action)
       !card.ok?(:edit) and :deny_view #should be deny_edit
     else
@@ -167,13 +167,11 @@ Rails.logger.info "calling #{priv_name}"
   end
 
   def canonicalize_view( view )
-    (view and view.to_sym and v=VIEW_ALIASES[view.to_sym]) ? v : view
+    (view and v=VIEW_ALIASES[view.to_sym]) ? v : view
   end
 
   def expand_inclusions(content)
-    process_content(content) #do |tcard,opts|
-#      expand_card(tcard, opts)
-#    end
+    process_content(content) 
   end
 
 ### ---- Core renders --- Keep these on top for dependencies
@@ -201,7 +199,6 @@ Rails.logger.info "calling #{priv_name}"
   end
 
   view(:closed_content) do |args|
-Rails.logger.info("rendering closed content for #{card.name}: #{args.inspect}")
     if card.generic?
       truncatewords_with_closing_tags( _render_naked(args) { yield } )
     else
@@ -237,7 +234,7 @@ Rails.logger.info("rendering closed content for #{card.name}: #{args.inspect}")
     render_partial('views/change')
   end
 
-  def render(action=:view, args={}, &block)
+  def render(action=:view, args={})
     self.render_args = args.clone
     denial = render_deny(action, args)
     return denial if denial
@@ -253,11 +250,11 @@ Rails.logger.info("rendering closed content for #{card.name}: #{args.inspect}")
 =begin
         if card.is_collection?
           render_meth = action if item_view and action=action_method(item_view)
-          card.each_name { |name| subrenderer(name).send(render_meth, args, &block) }.join
+          card.each_name { |name| subrenderer(name).send(render_meth, args) {yield} }.join
         else
         end
 =end
-          send(render_meth, args, &block)
+          send(render_meth, args) { yield }
       else
         "<strong>#{card.name} - unknown card view: '#{action}' M:#{render_meth.inspect}</strong>"
       end
@@ -307,12 +304,6 @@ Rails.logger.info("rendering closed content for #{card.name}: #{args.inspect}")
     ActiveSupport::Deprecation.silence { @template.send(method_id, *args, &proc) }
   end
 
-  def render_diff( content1, content2 )
-    c1 = WikiContent.new(card, content1, self).render!
-    c2 = WikiContent.new(card, content2, self).render!
-    diff c1, c2
-  end
-
   def replace_references( old_name, new_name )
     #warn "replacing references...card name: #{card.name}, old name: #{old_name}, new_name: #{new_name}"
     #content = content.blank? ? card.content : content
@@ -331,22 +322,18 @@ Rails.logger.info("rendering closed content for #{card.name}: #{args.inspect}")
     String.new wiki_content.unrender!
   end
 
-  def expand_card(tcard, options)#, &block)
-    #unless block_given?
-    #  block = Proc.new do |tcard, opts|
-    #    process_inclusion(tcard, opts)
-    #  end
-    #end
+  def expand_inclusion(options)
 
     return options[:comment] if options.has_key?(:comment)
-    tname = if String===tcard; x=tcard;tcard=nil;x else tcard.name end
+    #tname = if String===tcard; x=tcard;tcard=nil;x else tcard.name end
     # Don't bother processing inclusion if we're already out of view
     return '' if (state==:line && self.char_count > Renderer.max_char_count)
 
+    tname=options[:tname]
     if is_main = tname=='_main'
-      return root.main_content if root.main_content
-      return 'MAIN' if @depth > 0
-      tcard = root.main_card
+      tcard, tcont = root.main_card, root.main_content
+      return tcont if tcont
+      return "{{#{options[:unmask]}}}" || '{{_main}}' unless @depth == 0 and tcard
       tname = tcard.name
       item  = symbolize_param(:item) and options[:item] = item
       pview = symbolize_param(:view) and options[:view] = pview
@@ -354,20 +341,19 @@ Rails.logger.info("rendering closed content for #{card.name}: #{args.inspect}")
       options[:view] ||= :open
     end
 
-    tcard ||= begin
-        fullname = get_inclusion_fullname(tname,options)
-        case
-        when state ==:edit
-          Card.fetch_or_new(fullname, {}, new_inclusion_card_args(options))
-        when base.respond_to?(:name);   base
-        else
-          Card.fetch_or_new(fullname, :skip_defaults=>true)
-        end
-      end
-
     options[:view] ||= context == 'layout_0' ? :naked : :content
-    options[:fullname] = fullname
+    options[:fullname] = fullname = get_inclusion_fullname(tname,options)
     options[:showname] = tname.to_show(fullname)
+
+    tcard ||= begin
+      case
+      when state ==:edit   ;  Card.fetch_or_new(fullname, {}, new_inclusion_card_args(options))
+      when base.respond_to?(:name);   base
+      else                 ;  Card.fetch_or_new(fullname, :skip_defaults=>true)
+      end
+    end
+
+#warn "tname = #{tname};  expand card options = #{options.inspect}"
 
     tcard.loaded_trunk=card if tname =~ /^\+/
     result = process_inclusion(tcard, options)
@@ -424,7 +410,7 @@ Rails.logger.info("rendering closed content for #{card.name}: #{args.inspect}")
   rescue Exception=>e
     Rails.logger.info "inclusion-error #{e.inspect}"
     Rails.logger.debug "inclusion-error #{e.inspect}\nTrace:\n#{e.backtrace*"\n"}"
-    %{<span class="inclusion-error">error rendering #{link_to_page tcard.name}</span>}
+    %{<span class="inclusion-error">error rendering #{link_to_page tcard.name, nil, :title=>CGI.escapeHTML(e.inspect)}</span>}
   end
 
   def get_inclusion_fullname(name,options)

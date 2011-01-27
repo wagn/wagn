@@ -30,6 +30,7 @@ module Chunk
         :item  => nil,
         :type  => nil,
         :size  => nil,
+        :unmask => match[1]
       }
       style = {}
       configs = Hash.new_from_semicolon_attr_list match[4]
@@ -61,7 +62,7 @@ module Chunk
       when :link;     html_link
       when :linkname; Cardname.escape(refcard_name)
       else
-        yield card_name, options
+        yield options
       end
     end
 

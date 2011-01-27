@@ -10,7 +10,7 @@
 -%>
 
 <% paging = capture do %>
-  <%= render :partial=>'/types/search/paging', :locals=>{:card=>card} %>
+  <%= render :partial=>'/types/search/paging', :locals=>{:card=>card, :slot=>slot} %>
 <% end %>
 
 <% if !title.empty? %> 

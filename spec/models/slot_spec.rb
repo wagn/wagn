@@ -32,11 +32,7 @@ describe Slot, "" do
     it "missing relative inclusion is relative" do
       c = Card.new :name => 'bad_include', :content => "{{+bad name missing}}"
 Rails.logger.info "failing #{c}"
-      Slot.new(c).render.should be_html_with do
-        html { body {
-          span(:cardname=>"+bad name missing") {}
-        } }
-      end
+      Slot.new(c).render(:naked).match(Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
     end
     
     it "visible comment inclusions as html comments" do
@@ -65,7 +61,7 @@ Rails.logger.info "failing #{c}"
     it "renders layout card without recursing" do
       User.as :wagbot
       layout_card = Card.create(:name=>'tmp layout', :type=>'Html', :content=>"Mainly {{_main|naked}}")
-      Slot.new(layout_card).render(:layout, :main_card=>layout_card).should == %{Mainly <div id="main" context="main">Mainly MAIN</div>}
+      Slot.new(layout_card).render(:layout, :main_card=>layout_card).should == %{Mainly <div id="main" context="main">Mainly {{_main}}</div>}
     end
 
     it "renders templates as raw" do

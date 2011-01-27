@@ -61,7 +61,7 @@ module Chunk
       when :link;     html_link
       when :linkname; Cardname.escape(refcard_name)
       else
-        yield card_name, options
+        yield options
       end
     end
 

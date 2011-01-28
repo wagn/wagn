@@ -1,9 +1,0 @@
-#!/bin/bash -xv
-
-rake db:drop
-rake db:create
-rake wagn:create
-rake db:migrate VERSION=20101123173512 --trace
-
-rake db:migrate --trace
-

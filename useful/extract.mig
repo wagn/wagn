@@ -1,2 +1,0 @@
-
-egrep -v "^ *#" db/migrate/20101207064600_codename_to_id.rb |egrep "^  *execute" |cut -d\" -f2 | grep -v cdtype

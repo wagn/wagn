@@ -1,3 +1,0 @@
-#!/bin/bash
-
-grep failur tst.out spc.out ; grep scenarios cuc.out

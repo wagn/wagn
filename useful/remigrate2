@@ -1,7 +1,0 @@
-#!/bin/bash -xv
-
-env RAILS_ENV=test rake db:drop
-env RAILS_ENV=test rake db:create
-env RELOAD_TEST_DATA=true rake db:test:prepare
-mysql -uwagn_dev -pwdev_lppwpw play_test < testmig.sql
-

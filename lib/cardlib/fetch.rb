@@ -5,7 +5,7 @@
 
 
 # TODO:
-#  - implement Slot#cache_action  (for footer, etc.) if necessary
+#  - implement Renderer#cache_action  (for footer, etc.) if necessary
 #
 
 module Cardlib

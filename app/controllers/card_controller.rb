@@ -61,7 +61,7 @@ class CardController < ApplicationController
          render :action=>'show'
       end
       format.txt  { render :text=>@card.content }
-      format.css  { render :text=>Slot.new(@card).render(:naked) }
+      format.css  { render :text=>Renderer.new(@card).render(:naked) }
       format.kml  { render :action=>'show'}
       format.xml  { render :text=>'XML not yet supported'}
       format.json { render :text=>'JSON not yet supported'}

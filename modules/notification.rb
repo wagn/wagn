@@ -68,7 +68,7 @@ module Notification
     end
   end    
 
-  module SlotHelperMethods     
+  module RendererHelperMethods
     def watch_link 
       return "" unless logged_in?   
       return "" if card.virtual? 
@@ -121,7 +121,7 @@ module Notification
   
   def self.init
     Card::Base.send :include, CardMethods
-    Slot.send :include, SlotHelperMethods
+    Renderer.send :include, RendererHelperMethods
   end   
 end    
 

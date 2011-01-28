@@ -1,4 +1,4 @@
-class Slot < Renderer
+class RichHtmlRenderer < Renderer
 
   cattr_accessor :render_actions
   attr_accessor  :options_need_save, :js_queue_initialized,
@@ -7,16 +7,20 @@ class Slot < Renderer
   # This creates a separate class hash in the subclass
   class << self
     def actions() @@render_actions||={} end
+
+    def new(card, opts=nil)
+      new_renderer = self.allocate
+      new_renderer.send :initialize, card, opts
+      new_renderer
+    end
   end
 
   def action_method(key)
     (cls=self.class).actions.has_key?(key) ? cls.actions[key] : super
   end
 
-  # FIXME: simplify this to (card, opts)
   def initialize(card, opts=nil)
     super
-    Renderer.current_slot ||= self
     @context = "main_1" unless @context =~ /\_/
     @position = @context.split('_').last
     @state = :view

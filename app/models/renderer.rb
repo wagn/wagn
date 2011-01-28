@@ -1,5 +1,6 @@
-require 'diff'
+require_dependency 'rich_html_renderer'
 require_dependency 'models/wiki_reference'
+require 'diff'
 
 class Renderer
   module NoControllerHelpers
@@ -22,13 +23,17 @@ class Renderer
     :bare => :naked,
   }
 
+  RENDERERS = {
+    :html => :RichHtmlRenderer,
+  }
+
   cattr_accessor :max_char_count, :max_depth, :render_actions,
     :current_slot, :ajax_call
   self.max_char_count = 200
   self.max_depth = 10
 
   attr_reader :action, :inclusion_map, :params, :layout, :relative_content,
-      :template, :root
+      :template, :root, :format
   attr_accessor :card, :main_content, :main_card, :context, :char_count,
       :depth, :item_view, :form, :view, :type, :base, :state, :sub_count,
       :render_args, :requested_view
@@ -78,26 +83,34 @@ class Renderer
       end
     end
 
+    def new(card, opts=nil)
+      fmt = (opts and opts[:format]) ? opts[:format] : :html
+      if RENDERERS.has_key?(fmt)
+        Renderer.const_get(RENDERERS[fmt]).new(card, opts)
+      else
+        new_renderer = self.allocate
+        new_renderer.send :initialize, card, opts
+        new_renderer
+      end
+    end
+
     def actions() @@render_actions||={} end
     def view_aliases() VIEW_ALIASES end
   end
 
-  def actions() self.class.render_actions end
-  def action_method(key) self.class.actions[key] end # root renderer class, no super
-  def ajax_call?() @@ajax_call end
-  def outer_level?() @depth == 0 end
-
   def initialize(card, opts=nil)
+    Renderer.current_slot ||= self
     @card = card
     if opts
       [:main_content, :main_card, :base, :action, :context, :template,
-        :params, :relative_content].
+        :params, :relative_content, :format].
           map {|s| instance_variable_set "@#{s}", opts[s]}
       inclusion_map( opts[:inclusion_view_overrides] )
     end
     @params ||= {}
     @relative_content ||= {}
     @action ||= 'view'
+    @format ||= :html
     @template ||= begin
       t = ActionView::Base.new( CardController.view_paths, {} )
       t.helpers.send :include, CardController.master_helper_module
@@ -109,6 +122,12 @@ class Renderer
     @root = self
     @layout = @params && @params[:layout]
   end
+
+  def actions() self.class.render_actions end
+  def action_method(key) self.class.actions[key] end # root renderer class, no super
+  def ajax_call?() @@ajax_call end
+  def outer_level?() @depth == 0 end
+
 
   def too_deep?() @depth >= max_depth end
 
@@ -252,23 +271,16 @@ class Renderer
     end
 
     result = if render_meth = action_method(action)
-=begin
-        if card.is_collection?
-          render_meth = action if item_view and action=action_method(item_view)
-          card.each_name { |name| subrenderer(name).send(render_meth, args) {yield} }.join
-        else
-        end
-=end
-          send(render_meth, args) { yield }
+        send(render_meth, args) { yield }
       else
         "<strong>#{card.name} - unknown card view: '#{action}' M:#{render_meth.inspect}</strong>"
       end
 
     result << javascript_tag("setupLinksAndDoubleClicks();") if args[:add_javascript]
     result.strip
-#rescue Exception=>e
-#Rails.logger.info "Error #{e.inspect} #{e.backtrace*"\n"}"
-  rescue Card::PermissionDenied=>e
+  rescue Exception=>e
+    Rails.logger.debug "Error #{e.inspect} #{e.backtrace*"\n"}"
+    raise e unless Card::PermissionDenied===e
     return "Permission error: #{e.message}"
   end
 

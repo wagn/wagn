@@ -1,4 +1,4 @@
-require_dependency 'slot'
+require_dependency 'rich_html_renderer'
 
 module WagnHelper
   require_dependency 'wiki_content'
@@ -7,6 +7,8 @@ module WagnHelper
   # FIXME: slot -> renderer (model)
   # Put the initialization in the controller and we no longer care here
   # whether it is a Slot or Renderer, and it will be from the parent class
+  #   Now: Always a Renderer, and the subclass is selected by:
+  #     :format => :html (default and only -> RichHtmlRenderer (was Slot))
   def slot() Renderer.current_slot end
   def card() @card ||= slot.card end
   def params()
@@ -25,7 +27,7 @@ module WagnHelper
     slot = case
       when Renderer.current_slot;  nil_given ? Renderer.current_slot : Renderer.current_slot.subrenderer(card)
       else
-        Renderer.current_slot = Slot.new( card,
+        Renderer.current_slot = Renderer.new( card,
             opts.merge(:context=>context, :action=>action, :template=>self) )
     end
     controller and controller.renderer = slot or slot
@@ -37,9 +39,9 @@ module WagnHelper
     if String===card && name = card
       raise("Card #{name} not present") unless card=Card.fetch(name)
     end
-    # FIXME: some cases we're called before Slot.current_slot is initialized.
-    #  should we initialize here? or always do Slot.new?
-    subrenderer = Slot.current_slot ? Slot.current_slot.subrenderer(card) : Slot.new(card)
+    # FIXME: some cases we're called before Renderer.current_slot is initialized.
+    #  should we initialize here? or always do Renderer.new?
+    subrenderer = Renderer.current_slot ? Renderer.current_slot.subrenderer(card) : Renderer.new(card)
     subrenderer.render(mode.to_sym, args)
   end
 =end
@@ -286,7 +288,7 @@ module WagnHelper
 
   def render_layout_card(lay_card)
     opts = {}; opts[:relative_content] = opts[:params] = params
-    Slot.new(lay_card,
+    Renderer.new(lay_card,
        opts.merge(:context=>"layout_0", :action=>"view", :template=>self)).
          render(:layout, :main_card=>@card, :main_content=>@content_for_layout)
   end

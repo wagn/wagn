@@ -240,6 +240,7 @@ class Renderer
   end
 
   def render(action=:view, args={})
+    args[:view] ||= action
     self.render_args = args.clone
     denial = render_deny(action, args)
     return denial if denial
@@ -252,22 +253,13 @@ class Renderer
     end
 
     result = if render_meth = action_method(action)
-=begin
-        if card.is_collection?
-          render_meth = action if item_view and action=action_method(item_view)
-          card.each_name { |name| subrenderer(name).send(render_meth, args) {yield} }.join
-        else
-        end
-=end
-          send(render_meth, args) { yield }
+        send(render_meth, args) { yield }
       else
         "<strong>#{card.name} - unknown card view: '#{action}' M:#{render_meth.inspect}</strong>"
       end
 
     result << javascript_tag("setupLinksAndDoubleClicks();") if args[:add_javascript]
     result.strip
-#rescue Exception=>e
-#Rails.logger.info "Error #{e.inspect} #{e.backtrace*"\n"}"
   rescue Card::PermissionDenied=>e
     return "Permission error: #{e.message}"
   end

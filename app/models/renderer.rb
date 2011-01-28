@@ -224,11 +224,6 @@ class Renderer
 
   view(:blank) do "" end
 
-  ### is this "wrapped" and need to be in slot.rb?
-  view(:titled) do |args|
-    content_tag( :h1, fancy_title(card.name) ) + self._render_content(args) { yield }
-  end
-
   view(:rss_titled) do |args|
     # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
     content_tag( :h2, fancy_title(card.name) ) + self._render_open_content(args) { yield }
@@ -349,8 +344,6 @@ class Renderer
       else                 ;  Card.fetch_or_new(fullname, :skip_defaults=>true)
       end
     end
-
-#warn "tname = #{tname};  expand card options = #{options.inspect}"
 
     tcard.loaded_trunk=card if tname =~ /^\+/
     result = process_inclusion(tcard, options)

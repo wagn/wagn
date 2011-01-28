@@ -150,9 +150,15 @@ describe Slot, "" do
       end
 
       it "titled" do
-        c = Card.new :name => 'ABtitled', :content => "{{A+B|titled}}"
-        simplify_html(Slot.new(c).render( :naked )).should == "<h1><span>A</span><span>+</span><span>B</span></h1><div><span>AlphaBeta</span></div>"
+        render_card('A+B', :titled).should be_html_with do
+          div( :view=>'titled') { 
+            [ h1 { [ span{'A'}, span{'+'}, span{'B'} ] },
+              span(:class=>'titled-content'){'AlphaBeta'}
+            ] 
+          }
+        end
       end
+      
       it "name" do 
         c = Card.new :name => 'ABname', :content => "{{A+B|name}}"
         Slot.new(c).render( :naked ).should == %{A+B}

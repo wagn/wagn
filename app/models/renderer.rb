@@ -380,6 +380,7 @@ class Renderer
     # set item_view;  search cards access this variable when rendering their content.
     sub.item_view = options[:item] if options[:item]
     sub.type = options[:type] if options[:type]
+    options[:showname] ||= tcard.name
 
     new_card = tcard.new_record? && !tcard.virtual?
 

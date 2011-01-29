@@ -29,8 +29,6 @@
 <% if card.results.nil? %>
   <%= "#{error.class.to_s}: #{error.message}" %><br/>
   <%= card.content %>
-<%# elsif card.results.length==0 %>
-<!--  Search returned no results -->
 <% else  %>
   <% partial = (card.name=='*recent changes') ? 'recent_changes' : 'card_list'
      view = (slot.item_view || card.spec[:view] || :closed).to_sym

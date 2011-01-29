@@ -7,6 +7,10 @@
   <h2 class="values-for-setting"><%= key=='*all' ? '*all' : "+#{key}"%></h2>
   <%= slot.subrenderer(Card::Search.new(:name=>UUID.new.generate,
      :content=>%{{"left":{"type":"Set","#{key=='*all' ? 'name' : 'right'}":"#{key}"},
+<<<<<<< HEAD
                   "right":"#{card.name}","sort":"name"}} #, "left_plus":{"right":"*type"}}}
+=======
+                  "right":"#{card.name}","sort":"name","limit":"100"}} #, "left_plus":{"right":"*type"}}}
+>>>>>>> a67aebe3286fe59ebda7bfc3d6ec8e469a6e0ae4
      )).render :content %>
 <% end %>

@@ -224,11 +224,6 @@ class Renderer
 
   view(:blank) do "" end
 
-  ### is this "wrapped" and need to be in slot.rb?
-  view(:titled) do |args|
-    content_tag( :h1, fancy_title(card.name) ) + self._render_content(args) { yield }
-  end
-
   view(:rss_titled) do |args|
     # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
     content_tag( :h2, fancy_title(card.name) ) + self._render_open_content(args) { yield }
@@ -240,6 +235,7 @@ class Renderer
   end
 
   def render(action=:view, args={})
+    args[:view] ||= action
     self.render_args = args.clone
     denial = render_deny(action, args)
     return denial if denial
@@ -252,22 +248,13 @@ class Renderer
     end
 
     result = if render_meth = action_method(action)
-=begin
-        if card.is_collection?
-          render_meth = action if item_view and action=action_method(item_view)
-          card.each_name { |name| subrenderer(name).send(render_meth, args) {yield} }.join
-        else
-        end
-=end
-          send(render_meth, args) { yield }
+        send(render_meth, args) { yield }
       else
         "<strong>#{card.name} - unknown card view: '#{action}' M:#{render_meth.inspect}</strong>"
       end
 
     result << javascript_tag("setupLinksAndDoubleClicks();") if args[:add_javascript]
     result.strip
-#rescue Exception=>e
-#Rails.logger.info "Error #{e.inspect} #{e.backtrace*"\n"}"
   rescue Card::PermissionDenied=>e
     return "Permission error: #{e.message}"
   end
@@ -358,8 +345,6 @@ class Renderer
       end
     end
 
-#warn "tname = #{tname};  expand card options = #{options.inspect}"
-
     tcard.loaded_trunk=card if tname =~ /^\+/
     result = process_inclusion(tcard, options)
     result = resize_image_content(result, options[:size]) if options[:size]
@@ -388,6 +373,7 @@ class Renderer
     # set item_view;  search cards access this variable when rendering their content.
     sub.item_view = options[:item] if options[:item]
     sub.type = options[:type] if options[:type]
+    options[:showname] ||= tcard.name
 
     new_card = tcard.new_record? && !tcard.virtual?
 

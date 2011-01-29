@@ -31,7 +31,7 @@
   <div class="search-result-list">
     <% cards.each do |c| %>       
       <div class="search-result-item item-<%= view %>">
-        <%= slot.subrenderer(c).render view, :showname=>c.name %>
+        <%= slot.process_inclusion(c, :view=>view) %>
       </div>
     <% end %>     
   </div>

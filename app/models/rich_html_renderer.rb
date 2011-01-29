@@ -1,12 +1,12 @@
 class RichHtmlRenderer < Renderer
 
-  cattr_accessor :render_actions
+  cattr_accessor :set_actions
   attr_accessor  :options_need_save, :js_queue_initialized,
     :position, :start_time, :skip_autosave
 
   # This creates a separate class hash in the subclass
   class << self
-    def actions() @@render_actions||={} end
+    def actions() @@set_actions||={} end
 
     def new(card, opts=nil)
       new_renderer = self.allocate
@@ -15,8 +15,8 @@ class RichHtmlRenderer < Renderer
     end
   end
 
-  def action_method(key)
-    (cls=self.class).actions.has_key?(key) ? cls.actions[key] : super
+  def set_action(key)
+    RichHtmlRenderer.actions[key] or super
   end
 
   def initialize(card, opts=nil)
@@ -62,6 +62,10 @@ class RichHtmlRenderer < Renderer
     @state = :line
     self.requested_view = args[:action] = 'closed'
     wrap(args) { render_partial('views/closed') }
+  end
+
+  view(:titled) do |args|
+    content_tag( :h1, fancy_title(card.name) ) + self._render_content(args) { yield }
   end
 
   view(:setting) do |args|

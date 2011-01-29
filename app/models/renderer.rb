@@ -27,8 +27,8 @@ class Renderer
     :html => :RichHtmlRenderer,
   }
 
-  cattr_accessor :max_char_count, :max_depth, :render_actions,
-    :current_slot, :ajax_call
+  cattr_accessor :max_char_count, :max_depth, :set_actions,
+    :current_slot, :ajax_call, :fallback_methods
   self.max_char_count = 200
   self.max_depth = 10
 
@@ -60,10 +60,14 @@ class Renderer
   #   and render(:action ...) -> name(...)
   #
   class << self
-    def view(action, opts={}, &final)
+    def view(action, set='*all', opts={}, &final)
+      @@fallback_methods ||= {}
+      @@set_actions ||= {}
+      fallback_methods[action] = opts[:fallback_method]||:naked
       inner = opts.delete(:method)
       method_id = inner||"render_#{action}"
-      actions[action] = priv_name = "_#{method_id}".to_sym
+      raise "Bad set key #{set}" unless Wagn::Pattern.is_set?(set)
+      @@set_actions["#{set}+#{action}"] = priv_name = "_#{method_id}".to_sym
       class_eval do
         priv_final="_final#{priv_name}"
         define_method( priv_final, &final )
@@ -94,7 +98,7 @@ class Renderer
       end
     end
 
-    def actions() @@render_actions||={} end
+    def set_action(key) Renderer.set_actions[key] end
     def view_aliases() VIEW_ALIASES end
   end
 
@@ -123,11 +127,8 @@ class Renderer
     @layout = @params && @params[:layout]
   end
 
-  def actions() self.class.render_actions end
-  def action_method(key) self.class.actions[key] end # root renderer class, no super
   def ajax_call?() @@ajax_call end
   def outer_level?() @depth == 0 end
-
 
   def too_deep?() @depth >= max_depth end
 
@@ -207,6 +208,7 @@ class Renderer
   view(:core) do process_content(_render_raw) end
 
   view(:naked) do |args|
+
     case
       when card.name.template_name?  ;  _render_raw
       when card.generic?             ;  _render_core
@@ -242,11 +244,6 @@ class Renderer
   end
 
   view(:blank) do "" end
-
-  ### is this "wrapped" and need to be in slot.rb?
-  view(:titled) do |args|
-    content_tag( :h1, fancy_title(card.name) ) + self._render_content(args) { yield }
-  end
 
   view(:rss_titled) do |args|
     # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
@@ -284,6 +281,14 @@ class Renderer
     return "Permission error: #{e.message}"
   end
 
+  def action_method(action)
+    Wagn::Pattern.set_names( card ).each do |setname|
+      meth = self.class.set_action("#{setname}+#{action}")
+      return meth if meth
+    end
+    return @@fallback_methods[action]
+  end # root renderer class, no super
+  
   def form_for_multi
     Rails.logger.info "card = #{card.inspect}"
     options = {} # do I need any? #args.last.is_a?(Hash) ? args.pop : {}

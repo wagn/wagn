@@ -206,8 +206,9 @@ module WagnHelper
     content = card.content
     type = card.item_type
     typeparam = case
+      when !card.new_card?   ; ""
       when type.is_a?(String); ";type:#{type}"
-      when type.is_a?(Array);  ";type:#{type.second}"  #type spec is likely ["in", "Type1", "Type2"]
+      when type.is_a?(Array) ; ";type:#{type.second}"  #type spec is likely ["in", "Type1", "Type2"]
       else ""
     end
     slot.expand_inclusions content.gsub(/\[\[/,"<div class=\"pointer-item item-#{view}\">{{").gsub(/\]\]/,"|#{view}#{typeparam}}}</div>")

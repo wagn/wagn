@@ -48,6 +48,15 @@ class RichHtmlRenderer < Renderer
     wrap(args) {  wrap_content(c) }
   end
 
+  view(:titled) do |args|
+    self.requested_view = 'titled'
+    args[:action] = 'content'
+    wrap(args) do
+      content_tag( :h1, fancy_title(card.name) ) + 
+      wrap_content(_render_naked(args))
+    end
+  end
+
   view(:new) do |args|
     wrap(args) { render_partial('views/new') }
   end

@@ -256,6 +256,7 @@ class Renderer
   end
 
   def render(action=:view, args={})
+    args[:view] ||= action
     self.render_args = args.clone
     denial = render_deny(action, args)
     return denial if denial
@@ -375,8 +376,6 @@ class Renderer
       end
     end
 
-#warn "tname = #{tname};  expand card options = #{options.inspect}"
-
     tcard.loaded_trunk=card if tname =~ /^\+/
     result = process_inclusion(tcard, options)
     result = resize_image_content(result, options[:size]) if options[:size]
@@ -405,6 +404,7 @@ class Renderer
     # set item_view;  search cards access this variable when rendering their content.
     sub.item_view = options[:item] if options[:item]
     sub.type = options[:type] if options[:type]
+    options[:showname] ||= tcard.name
 
     new_card = tcard.new_record? && !tcard.virtual?
 

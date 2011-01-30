@@ -41,33 +41,30 @@ class Renderer
   # View definitions
   #
   #   When you declare:
-  #     view(:name) do |args|
+  #     view(:view_name, "<set pattern>") do |args|
   #
-  #   These methods are defined on the renderer
+  #   Methods are defined on the renderer
   #
   #     # The external api with checks, equivalent to
   #     def render_name(args={}) ... end
-  #     render_action(:name, args)
-  #       or
-  #     render('', args.merge(:view=>:name))
+  #     render(_<name>)(:view_name, args)
   #
   #     # The internal call that skips the checks
-  #     def _render_name(args={} ... end
+  #     def _render(_<name>)(args={} ... end
   #
-  #   Also to declare other names:
-  #     view(:action, :method=>:name) do ... end
-  #   for def name ... end and def _name ... end
-  #   and render(:action ...) -> name(...)
+  #   Where <name> is the pattern key (i.e. '<type card>+type' of
+  #     for patterns other than AllPattern ('*all')
   #
   class << self
     def view(action, set='*all', opts={}, &final)
       @@fallback_methods ||= {}
       @@set_actions ||= {}
       fallback_methods[action] = opts[:fallback_method]||:naked
-      inner = opts.delete(:method)
-      method_id = inner||"render_#{action}"
-      raise "Bad set key #{set}" unless Wagn::Pattern.is_set?(set)
+      raise "Pattern? #{set}" unless pattern_key=Wagn::Pattern.subclass_key(set)
+      pattern_key = pattern_key == '*all' ? '' : '_'+pattern_key
+      method_id = "render#{pattern_key}_#{action}"
       @@set_actions["#{set}+#{action}"] = priv_name = "_#{method_id}".to_sym
+Rails.logger.info "view( #{action} ) #{method_id}"
       class_eval do
         priv_final="_final#{priv_name}"
         define_method( priv_final, &final )

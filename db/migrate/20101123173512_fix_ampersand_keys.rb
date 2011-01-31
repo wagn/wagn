@@ -1,12 +1,14 @@
 class FixAmpersandKeys < ActiveRecord::Migration
   def self.up
     User.as :wagbot
-    Card.find(:all, :conditions=>"name like '%&%'").each do |card|
-      begin
-        card.update_attribute(:key, card.name.to_key)
-      rescue
-        puts "ampersand key migration failed on #{card.name}"
-      end
+    cards = Card.find(:all, :conditions=>"name like '%&%'")
+    cards.each do |card|
+   #   begin
+   #     name = card.name
+   #     card.update_attribute(:key, name.to_key)
+   #   rescue
+   #     puts "ampersand key migration failed on #{name}"
+   #   end
     end
   end
 

@@ -3,6 +3,7 @@ class MakeStarCssReadableByAnyone < ActiveRecord::Migration
     User.as(:wagbot) do
       if card = Card['*css']
         card.permit :read, Role[:anon]
+        card.save!
       end
     end
   end

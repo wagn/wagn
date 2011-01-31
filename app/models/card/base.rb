@@ -221,7 +221,7 @@ module Card
       end
       
       def find_or_create!(args={})
-        find_or_create(args) || raise(RecordNotSaved)
+        find_or_create(args) || raise(ActiveRecord::RecordNotSaved)
       end
       
       def find_or_create(args={})
@@ -233,7 +233,7 @@ module Card
     def is_collection?() false end
 
     def save_with_trash!
-      save || raise(RecordNotSaved)
+      save || raise(ActiveRecord::RecordNotSaved)
     end
     alias_method_chain :save!, :trash
 

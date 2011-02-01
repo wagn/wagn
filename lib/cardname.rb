@@ -111,6 +111,7 @@ module Cardname
     # we add a space to force it
     (self+" ").split(JOINT).map do |part|
       new_part = case part.strip
+        when /^_user$/i;  (user=User.current_user) ? user.cardname : part
         when /^(_self|_whole|_)$/i; context_name
         when /^_left$/i;            context_name.trunk_name
         when /^_right$/i;           context_name.tag_name

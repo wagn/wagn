@@ -1,8 +1,9 @@
-#!/bin/bash -xv
+#!/bin/bash
+
+cp config/cruise.env.rb config/environment.rb
 
 if [ ! -f config/wagn.rb ]; then
   cp config/cruise.wagn.rb config/wagn.rb
-  cp config/cruise.env.rb config/environment.rb
 
   git update-index --assume-unchanged .gitignore config/environment.rb
   git config --global alias.co checkout

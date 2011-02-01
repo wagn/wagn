@@ -2,36 +2,47 @@ require_dependency 'slot'
 
 module WagnHelper
   require_dependency 'wiki_content'
+  include HTMLDiff
 
-  def slot
-    Slot.current_slot
+  # FIXME: slot -> renderer (model)
+  # Put the initialization in the controller and we no longer care here
+  # whether it is a Slot or Renderer, and it will be from the parent class
+  def slot() Renderer.current_slot end
+  def card() @card ||= slot.card end
+  def params()
+    if controller 
+      controller.params 
+    else
+      slot and slot.params
+    end
   end
-  
-  def card
-    @card
-  end
-  
+
   # FIXME: I think all this slot initialization should happen in controllers
   def get_slot(card=nil, context=nil, action=nil, opts={})
     nil_given = card.nil?
     card ||= @card; context||=@context; action||=@action
-    opts[:relative_content] = opts[:params] = params  
+    opts[:relative_content] = opts[:params] = (controller and params) or {}
     slot = case
-      when Slot.current_slot;  nil_given ? Slot.current_slot : Slot.current_slot.subslot(card)
-      else Slot.current_slot = Slot.new(card,context,action,self,opts)
+      when Renderer.current_slot;  nil_given ? Renderer.current_slot : Renderer.current_slot.subrenderer(card)
+      else
+        Renderer.current_slot = Slot.new( card,
+            opts.merge(:context=>context, :action=>action, :template=>self) )
     end
+    controller and controller.renderer = slot or slot
   end
 
   # FIMXE: this one's a hack...
+=begin
   def render_card(card, mode, args={})
     if String===card && name = card
       raise("Card #{name} not present") unless card=Card.fetch(name)
     end
     # FIXME: some cases we're called before Slot.current_slot is initialized.
     #  should we initialize here? or always do Slot.new?
-    subslot = Slot.current_slot ? Slot.current_slot.subslot(card) : Slot.new(card)
-    subslot.render(mode.to_sym, args)
+    subrenderer = Slot.current_slot ? Slot.current_slot.subrenderer(card) : Slot.new(card)
+    subrenderer.render(mode.to_sym, args)
   end
+=end
 
   Droplet = Struct.new(:name, :link_options)
 
@@ -68,8 +79,8 @@ module WagnHelper
 
     if options[:url] =~ /^javascript\:/
       function << options[:url].gsub(/^javascript\:/,'')
-    elsif options[:slot] 
-      function << Slot.current_slot.url_for(options[:url]).gsub(/^javascript\:/,'')
+    elsif options[:slot]
+      function << Renderer.current_slot.url_for(options[:url]).gsub(/^javascript\:/,'')
     else
       url_options = options[:url]
       url_options = url_options.merge(:escape => false) if url_options.is_a?(Hash)
@@ -84,7 +95,7 @@ module WagnHelper
     function = "if (confirm('#{escape_javascript(options[:confirm])}')) { #{function}; }" if options[:confirm]
 
     return function
-  end    
+  end
 
   def truncatewords_with_closing_tags(input, words = 25, truncate_string = "...")
     if input.nil? then return end
@@ -193,25 +204,26 @@ module WagnHelper
     content = card.content
     type = card.item_type
     typeparam = case
+      when !card.new_card?   ; ""
       when type.is_a?(String); ";type:#{type}"
-      when type.is_a?(Array);  ";type:#{type.second}"  #type spec is likely ["in", "Type1", "Type2"]
+      when type.is_a?(Array) ; ";type:#{type.second}"  #type spec is likely ["in", "Type1", "Type2"]
       else ""
     end
-    slot.expand_inclusions content.gsub(/\[\[/,"<div class=\"pointer-item item-#{view}\">{{").gsub(/\]\]/,"|#{view}#{typeparam}}}</div>") 
+    slot.expand_inclusions content.gsub(/\[\[/,"<div class=\"pointer-item item-#{view}\">{{").gsub(/\]\]/,"|#{view}#{typeparam}}}</div>")
   end
-  
+
   ## -----------
 
   def google_analytics
     User.as(:wagbot)  do
       if ga_key = System.setting("*google analytics key")
         %{
-          <script type="text/javascript">    
+          <script type="text/javascript">
             // make sure this is only run once:  it may be called twice in the case that you are viewing a *layout page
             if (typeof(pageTracker)=='undefined') {
               var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
               document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-            }              
+            }
           </script>
           <script type="text/javascript">
             pageTracker = _gat._getTracker('#{ga_key}');
@@ -220,19 +232,19 @@ module WagnHelper
         }
       end
     end
-  end        
-  
-  # ---------------( NAVBOX ) -----------------------------------    
+  end
+
+  # ---------------( NAVBOX ) -----------------------------------
 
   def navbox
-    content_tag( :form, :id=>"navbox_form", :action=>"/search", :onsubmit=>"return navboxOnSubmit(this)" ) do         
+    content_tag( :form, :id=>"navbox_form", :action=>"/search", :onsubmit=>"return navboxOnSubmit(this)" ) do
       content_tag( :span, :id=>"navbox_background" ) do
         %{<a id="navbox_image" title="Search" onClick="navboxOnSubmit($('navbox_form'))">&nbsp;</a>}  + text_field_tag("navbox", params[:_keyword] || '', :id=>"navbox_field", :autocomplete=>"off") +
-  		    navbox_complete_field('navbox_field') 
+        navbox_complete_field('navbox_field')
       end
     end
-	end                                      
-    
+  end
+
   def navbox_complete_field(fieldname, card_id='')
     content_tag("div", "", :id => "#{fieldname}_auto_complete", :class => "auto_complete") +
     auto_complete_field(fieldname, { :url =>"/card/auto_complete_for_navbox/#{card_id.to_s}",
@@ -247,70 +259,55 @@ module WagnHelper
     if !Cardtype.createable_cardtypes.empty? && !Card.exists?(stub)
       items << navbox_item( :new, %{<a class="plus-icon">&nbsp;</a>Add new card: }, stub )
     end
-    items += entries.map do |entry| 
+    items += entries.map do |entry|
       navbox_item( :goto, %{<a class="page-icon">&nbsp;</a>Go to: }, entry[field], stub )
     end
     content_tag("ul", items.uniq)
   end
-            
+
   def navbox_item( css_class, label, name, stub=nil )
     stub ||= name
     content_tag('li', :class=>"#{css_class}" ) do
       content_tag('span', label, :class=>"informal") + highlight(name, stub)
     end
   end
-            
-  def wagn_form_for(record_or_name_or_array, *args, &proc)
-    options = args.extract_options!
-  
-    case record_or_name_or_array
-    when String, Symbol
-      object_name = record_or_name_or_array
-    when Array
-      object = record_or_name_or_array.last
-      object_name = ActionController::RecordIdentifier.singular_class_name(object)
-      apply_form_for_options!(record_or_name_or_array, options)
-      args.unshift object
-    else
-      object      = record_or_name_or_array
-      object_name = ActionController::RecordIdentifier.singular_class_name(record_or_name_or_array)
-      apply_form_for_options!(object, options)
-      args.unshift object
-    end
-  
+
+  def form_for_card(options={}, &proc)    
     concat(form_remote_tag(options))
-    fields_for(object_name, *(args << options), &proc)
-    if args.second[:update]
+    fields_for(:card, options, &proc)
+    if options[:update]
       concat hidden_field_tag('_update','true')
     end
     concat('</form>')
   end
-  
+
   def layout_card(content)
     Card.new(:name=>"**layout",:content=>content, :skip_defaults=>true)
   end
-  
-  def render_layout_card(card)
-    opts = {
-      :main_content => @content_for_layout,
-      :main_card => @card
-    }
-    opts[:relative_content] = opts[:params] = params
-    Slot.new(card, "layout_0", "view", self, opts).render(:naked)
-  end  
-  
+
+  def render_layout_card(lay_card)
+    opts = {}; opts[:relative_content] = opts[:params] = params
+    Slot.new(lay_card,
+       opts.merge(:context=>"layout_0", :action=>"view", :template=>self)).
+         render(:layout, :main_card=>@card, :main_content=>@content_for_layout)
+  end
+
   def render_layout_content(content)
     render_layout_card layout_card(content)
   end
-  
+
+  def wrap_slot(slot=nil, args={}, &block)
+    slot ||= get_slot
+    concat( slot.wrap(args) { capture{ yield(slot) } } )
+  end
   # ------------( helpers ) --------------
   def edit_user_context(card)
     if System.ok?(:administrate_users)
-    	'admin'
+      'admin'
     elsif current_user == card.extension
-    	'user'
+      'user'
     else
-    	'public'
+      'public'
     end
   end
-end       
+end

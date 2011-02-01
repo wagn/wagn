@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101123173512) do
+ActiveRecord::Schema.define(:version => 20110131190836) do
 
   create_table "card_files", :force => true do |t|
     t.string   "filename"
@@ -59,7 +59,6 @@ ActiveRecord::Schema.define(:version => 20101123173512) do
     t.string   "settings"
     t.string   "codename"
     t.string   "pattern_keys"
-    t.string   "pattern_spec_key"
   end
 
   add_index "cards", ["extension_id", "extension_type"], :name => "cards_extension_index"
@@ -67,7 +66,6 @@ ActiveRecord::Schema.define(:version => 20101123173512) do
   add_index "cards", ["key"], :name => "cards_key_uniq", :unique => true
   add_index "cards", ["name"], :name => "cards_name_index"
   add_index "cards", ["name"], :name => "cards_name_uniq", :unique => true
-  add_index "cards", ["pattern_spec_key"], :name => "index_cards_on_pattern_spec_key"
   add_index "cards", ["reader_id"], :name => "card_reader_id_index"
   add_index "cards", ["reader_type"], :name => "card_reader_type_index"
   add_index "cards", ["tag_id"], :name => "index_cards_on_tag_id"

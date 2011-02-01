@@ -2,11 +2,25 @@ module Chunk
   class Reference < Abstract
     attr_reader :card_name, :card
     
+    class << self
+      def standard_card_link(name)
+        card_link(name, name, Card.fetch(name))
+      end
+      
+      def card_link(name, text, known)
+        href, klass = known ? 
+          [name.to_url_key                   , 'known-card' ] : 
+          [CGI.escape(Cardname.escape(name)) , 'wanted-card']
+        %{<a class="#{klass}" href="/wagn/#{href}">#{text}</a>}
+      end
+    end
+
     def base_card
       @card
     end
     
     def refcard_name
+      return '' unless @card_name
       @card_name = @card_name.to_absolute(base_card.name)
     end
     
@@ -19,7 +33,8 @@ module Chunk
       refcard_name
     end
 
-    def card_link
+
+    def html_link
       href = refcard_name
       if (klass = 
         case href

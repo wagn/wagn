@@ -11,7 +11,7 @@
   </div>
 
   <% if inst = card.setting_card('edit help') %>
-    <%- ss = slot.subslot(inst); ss.state= :view %>
+    <%- ss = slot.subrenderer(inst); ss.state= :view %>
     <div class="instruction"><%= ss.render :naked %></div>
   <% end %>
 

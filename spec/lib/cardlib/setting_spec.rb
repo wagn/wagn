@@ -74,7 +74,7 @@ describe Card do
   end
   
   describe "#extended_list" do
-    it "returns pointee's content for pointer setting" do
+    it "returns item's content for pointer setting" do
       c = Card.new(:name=>"foo", :type=>"Pointer", :content => "[[Z]]")
       c.extended_list.should == ["I'm here to be referenced to"]
     end

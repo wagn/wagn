@@ -7,7 +7,7 @@ Feature: Google maps
     Given I log in as Joe User
     # FIXME: this is creating a card with content '[[street address]]\n'  (missing zip)
     #  test passes but this is weird.
-    And I create card "*geocode" with content 
+    And I create Pointer card "*geocode" with content 
       """
       [[street address]]
       [[zip]]

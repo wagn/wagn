@@ -1,4 +1,4 @@
-<%= slot.render :naked %> <%#ENGLISH%>
+<%= slot.render_core %> <%#ENGLISH%>
                           
 <div class="invite-links help instruction">
 <p><strong><%= card.name %></strong> asked for an invitation on <%= format_date(card.created_at) %></p>
@@ -7,7 +7,7 @@
     <%= link_to "Invite #{card.name}", {:controller=>'account', :action=>'accept', :card=>{:key=>card.key} }  %>         
   <% end %> 
   <% if logged_in? and card.ok?(:delete) %>
-   <%= link_to_remote "Deny #{card.name}", { :url=>slot.url_for("card/remove") } %>	
+   <%= link_to_remote "Deny #{card.name}", { :url=>slot.url_for("card/remove") } %>  
   <% end %>
 </p>
 </div>

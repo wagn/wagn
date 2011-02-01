@@ -106,7 +106,7 @@ class WikiContent < String
   attr_reader :revision, :not_rendered, :pre_rendered, :renderer, :card,
      :format, :expand, :inclusion_map
 
-  def initialize(card, content, renderer, opts=true, inclusion_map=nil)
+  def initialize(card, content, renderer, inclusion_map=nil)
     @not_rendered = @pre_rendered = nil
     @renderer = renderer
     @inclusion_map = inclusion_map
@@ -137,6 +137,7 @@ class WikiContent < String
 #Rails.logger.info "wiki_content #{@expand.inspect} #{@format.inspect} #{opts.inspect}"
     init_chunk_manager()
     ACTIVE_CHUNKS.each{|chunk_type| chunk_type.apply_to(self)}
+#Rails.logger.info "wiki content init #{card.name}, #{inclusion_map.inspect}\nTrace #{Kernel.caller.slice(0,6).join("\n")}"
     @not_rendered = String.new(self)
   end
 
@@ -154,6 +155,7 @@ class WikiContent < String
        chunk.nil? ? $~[0] : ( revert ? chunk.revert : chunk.unmask_text(&block) )
       end)
     end
+#Rails.logger.info "wiki render! #{@card.name} #{self.slice(0,80)}\nTrace #{Kernel.caller.slice(0,5).join("\n")}" unless revert
     self
   end                    
   

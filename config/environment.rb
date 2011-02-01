@@ -10,7 +10,7 @@ require File.join(File.dirname(__FILE__), 'wagn_initializer')
   
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence those specified here
-RAILS_GEM_VERSION = '2.3.5' unless defined? RAILS_GEM_VERSION  
+  #RAILS_GEM_VERSION = '2.3.9' unless defined? RAILS_GEM_VERSION  
      
   Wagn::Initializer.set_default_rails_config config
 
@@ -21,7 +21,7 @@ RAILS_GEM_VERSION = '2.3.5' unless defined? RAILS_GEM_VERSION
 
   # Force all environments to use the same logger level 
   # (by default production uses :info, the others :debug)
-  # config.log_level = :debug
+  #config.log_level = :debug
 
   # Use SQL instead of Active Record's schema dumper when creating the test database.
   # This is necessary if your schema can't be completely dumped by the schema dumper, 

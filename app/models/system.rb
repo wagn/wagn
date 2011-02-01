@@ -72,7 +72,7 @@ class System < ActiveRecord::Base
     def layout_from_setting(card)
       return unless setting_card = ((card && card.setting_card('layout')) or Card.default_setting_card('layout'))
       return unless setting_card.is_a?(Card::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.type == 'Pointer'        and
-        layout_name=setting_card.pointee                  and
+        layout_name=setting_card.first                  and
         !layout_name.nil?                                 and
         lo_card = Card.fetch(layout_name, :skip_virtual => true)    and
         lo_card.ok?(:read)

@@ -51,7 +51,7 @@ module Card
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
       :from_trash, :update_referencers, :allow_type_change, :virtual,
-      :builtin, :broken_type, :skip_defaults, :loaded_trunk
+      :builtin, :broken_type, :skip_defaults, :loaded_trunk, :blank_revision
 
     # setup hooks on AR callbacks
     # Note: :after_create is called from end of set_initial_content now
@@ -221,7 +221,7 @@ module Card
       end
       
       def find_or_create!(args={})
-        find_or_create(args) || raise(RecordNotSaved)
+        find_or_create(args) || raise(ActiveRecord::RecordNotSaved)
       end
       
       def find_or_create(args={})
@@ -230,9 +230,10 @@ module Card
       end                  
     end
 
+    def is_collection?() false end
 
     def save_with_trash!
-      save || raise(RecordNotSaved)
+      save || raise(ActiveRecord::RecordNotSaved)
     end
     alias_method_chain :save!, :trash
 
@@ -272,16 +273,15 @@ module Card
       Wagn::Hook.call :before_multi_save, self, cards
       cards.each_pair do |name, opts|
         opts[:content] ||= ""
-        # make sure blank content doesn't override pointee assignments if they are present
-        if (opts['pointee'].present? or opts['pointees'].present?) 
-          opts.delete('content')
-        end                                                                               
+        # make sure blank content doesn't override first assignments if they are present
+        #if (opts['first'].present? or opts['items'].present?) 
+        #  opts.delete('content')
+        #end                                                                               
         name = name.post_cgi.to_absolute(self.name)
         logger.info "multi update working on #{name}: #{opts.inspect}"
         if card = Card.fetch(name, :skip_virtual=>true)
           card.update_attributes(opts)
-        elsif opts[:pointee].present? or opts[:pointees].present? or  
-                (opts[:content].present? and opts[:content].strip.present?)
+        elsif opts[:content].present? and opts[:content].strip.present?
           opts[:name] = name                
           if ::Cardtype.create_ok?( self.type ) && !::Cardtype.create_ok?( Card.new(opts).type )
             ::User.as(:wagbot) { Card.create(opts) }
@@ -419,14 +419,14 @@ module Card
     end
     
     # I don't really like this.. 
-    def attribute_card( attr_name )
-      ::User.as :wagbot do
-        Card.fetch( name + JOINT + attr_name , :skip_virtual => true)
-      end
-    end
+    #def attribute_card( attr_name )
+    #  ::User.as :wagbot do
+    #    Card.fetch( name + JOINT + attr_name , :skip_virtual => true)
+    #  end
+    #end
      
     def revised_at
-      current_revision ? current_revision.updated_at : Time.now
+      cached_revision ? cached_revision.updated_at : Time.now
     end
 
     # Dynamic Attributes ------------------------------------------------------        
@@ -452,11 +452,34 @@ module Card
       true
     end
     
+    def generic?
+      false
+    end
+
     def content   
-      new_card? ? ok!(:create_me) : ok!(:read) 
-      current_revision ? current_revision.content : ""
+      new_card? ? ok!(:create_me) : ok!(:read)
+      cached_revision.new_record? ? "" : cached_revision.content
     end   
-        
+    
+    def cached_revision
+      case
+      when (@cached_revision and @cached_revision.id==current_revision_id); 
+      when (@cached_revision=Card.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
+      else
+        @cached_revision = current_revision || get_blank_revision
+        Card.cache.write("#{key}-content", @cached_revision)
+      end
+      @cached_revision
+    end
+    
+    def get_blank_revision
+      @blank_revision ||= Revision.new
+    end
+    
+    def raw_content
+      templated_content || content
+    end
+
     def type
       read_attribute :type
     end
@@ -567,11 +590,6 @@ module Card
     validates_each :content do |rec, attr, value|
       if rec.updates.for?(:content)
         rec.send :validate_content, value
-        begin 
-          res = Renderer.new.render(rec, value, update_references=false)
-        rescue Exception=>e
-          rec.errors.add :content, "#{e.class}: #{e.message}"
-        end   
       end
     end
 

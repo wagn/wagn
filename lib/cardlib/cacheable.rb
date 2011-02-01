@@ -19,25 +19,13 @@ module Cardlib
 
     def soft_template?
       name && name =~ /\*default/
-    end
-
-    def pointees( context = nil )
-      User.as(:wagbot) do
-        links = content.split(/\n+/).map{ |x| x.gsub(/\[\[|\]\]/,'')}.map{|x|
-          context ? x.to_absolute(context) : x
-        }
-      end
-    end
-    
-    def pointee
-      pointees.first
-    end    
+    end   
     
     # FIXME: maybe this should be methods in individual classes?
     def list_items context = nil
       case self.type
       when "Pointer"
-        self.pointees( context ? context.name : nil )
+        self.items( context ? context.name : self.name )
       when "Search"
         self.list_cards(context).map {|card| card.name }
       when "File","NimbbVideo"
@@ -63,12 +51,8 @@ module Cardlib
       self.list_cards(context).map{|x| x.list_cards(context) }.flatten.map{|x| x.list_items(context) }.flatten
     end
     
-    def contextual_content context = nil, format=:html
-      context ||= self
-      renderer = Renderer.new
-      prerender = renderer.render( self, self.templated_content(format),
-                                   self.references_expired, [:raw, format])
-      renderer.render( context, prerender, context.references_expired, format )
+    def contextual_content context = nil
+      Renderer.new(context).expand_inclusions(Renderer.new(self)._render_raw)
     end
 
     def cardtype_name

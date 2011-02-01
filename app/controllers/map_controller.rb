@@ -20,7 +20,7 @@
 
 class MapController < ApplicationController
   layout nil
-  
+
   def show
     content = []
     Card.search(:right=>'related patterns').each do |card|

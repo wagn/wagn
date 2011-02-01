@@ -56,14 +56,7 @@ module Chunk
           view = @options[:view] = inclusion_map[view]
         end
       end
-      case view
-      when :name;     refcard ? refcard.name : card_name
-      when :key;      refcard_name.to_key
-      when :link;     html_link
-      when :linkname; Cardname.escape(refcard_name)
-      else
-        yield options
-      end
+      yield options
     end
 
     def revert                             

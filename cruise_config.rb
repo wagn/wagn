@@ -19,7 +19,7 @@ Project.configure do |project|
 
   # Build the project by invoking shell script "build_my_app.sh".
   # We copy build_wagn.sh up from the root .cruise dir
-  project.build_command = '../../build_wagn.sh'
+  project.build_command = './script/build_wagn.sh'
 
   # Ping Subversion for new revisions every 5 minutes (default: 30 seconds)
   # project.scheduler.polling_interval = 5.minutes

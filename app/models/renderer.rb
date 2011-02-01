@@ -442,7 +442,6 @@ Rails.logger.info "view( #{action} ) #{method_id}"
       card.name
     end
     fullname = fullname.to_absolute(context)
-    fullname.gsub!('_user') { User.current_user.cardname }
     fullname = fullname.particle_names.map do |x|
       if x =~ /^_/ and params and params[x]
         CGI.escapeHTML( params[x] )

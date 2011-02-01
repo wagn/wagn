@@ -164,6 +164,16 @@ describe Renderer, "" do
         Renderer.new(c).render( :naked ).should == %{A+B}
       end
 
+      it "user name" do
+        c = Card.new :name => 'Userlink', :content => "{{_user|name}}"
+        Slot.new(c).render( :naked ).should == "Joe User"
+      end
+
+      it "user link" do
+        c = Card.new :name => 'Userlink', :content => "{{_user|link}}"
+        Slot.new(c).render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/Joe_User\">Joe User</a>"
+      end
+
       it "link" do
         c = Card.new :name => 'ABlink', :content => "{{A+B|link}}"
         Renderer.new(c).render( :naked ).should == %{<a class="known-card" href="/wagn/A+B">A+B</a>}

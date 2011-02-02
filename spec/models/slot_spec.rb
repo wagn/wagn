@@ -322,6 +322,20 @@ describe Slot, "" do
       end
     end
 
+    describe "File and Image" do
+      #image calls the file partial, so in a way this tests both
+      it "should have special editor" do
+      #pending  This test works fine  
+        
+        render_editor('Image').should be_html_with do
+          body do  ## this is weird -- why does it have a body?
+            [div(:class=>'attachment-preview'),
+              div { iframe :class=>'upload-iframe'}
+            ]
+          end
+        end
+      end
+    end
 
     describe "HTML" do
       before do
@@ -380,19 +394,6 @@ describe Slot, "" do
       it "should have yes/no as processed content" do
         render_card(:naked, :type=>'Toggle', :content=>"0").should == 'no'
         render_card(:closed_content, :type=>'Toggle', :content=>"1").should == 'yes'
-      end
-    end
-
-    describe "File and Image" do
-      #image calls the file partial, so in a way this tests both
-      it "should have special editor" do
-        render_editor('Image').should be_html_with do
-          body do  ## this is weird -- why does it have a body?
-            [div(:class=>'attachment-preview'),
-              div { iframe :class=>'upload-iframe'}
-            ]
-          end
-        end
       end
     end
 

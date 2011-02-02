@@ -40,7 +40,7 @@ module Cardlib
     
     def templated_content
       @template ||= template
-      return unless @template.hard_template?
+      return unless @template && @template.hard_template?
       @template and User.as(:wagbot) { @template.content }
     end
 

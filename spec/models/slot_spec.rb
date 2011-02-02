@@ -325,7 +325,7 @@ describe Slot, "" do
     describe "File and Image" do
       #image calls the file partial, so in a way this tests both
       it "should have special editor" do
-      #pending  This test works fine  
+      pending  #This test works fine alone but fails when run with others
         
         render_editor('Image').should be_html_with do
           body do  ## this is weird -- why does it have a body?

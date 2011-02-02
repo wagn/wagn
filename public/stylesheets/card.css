@@ -755,6 +755,12 @@ div.search-result-list .search-result-item {
   padding: 5px;
 }
 
+/*-----------( Toggle ) -----------*/
+
+.TYPE-toggle .content {
+  font-style: italic;
+}
+
 /*----------- (Invitation Request)--------------*/
 
 .invite-links {

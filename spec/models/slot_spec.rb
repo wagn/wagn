@@ -6,7 +6,6 @@ describe Slot, "" do
     string.gsub(/\s*<!--[^>]*>\s*/, '').gsub(/\s*<\s*(\/?\w+)[^>]*>\s*/, '<\1>')
   end
   
-=begin
 
   describe "processes content" do
     it "simple card links" do
@@ -315,7 +314,7 @@ describe Slot, "" do
       r.should == "<ins class=\"diffins\">A</ins>"
     end
   end
-=end  
+
   describe "Cards of type" do
     describe "Date" do
       it "should have special editor" do
@@ -339,9 +338,9 @@ describe Slot, "" do
     end
     
     describe "Account Request" do
-      pending # was seeing this error: undefined method `xpath_with_callback' for nil:NilClass
-      # probably means we need to set up legitimate Account Request with user info
       it "should have a special section for approving requests" do
+        pending # was seeing this error: undefined method `xpath_with_callback' for nil:NilClass
+        # probably means we need to set up legitimate Account Request with user info
         render_card(:naked, :type=>'Account Request').should be_html_with { div :class=>'invite-links' }
       end
     end

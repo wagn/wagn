@@ -30,7 +30,7 @@ describe Renderer, "" do
     
     it "missing relative inclusion is relative" do
       c = Card.new :name => 'bad_include', :content => "{{+bad name missing}}"
-      Renderer.new(c).render(:naked).match (Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
+      Renderer.new(c).render(:naked).match(Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
     end
     
     it "visible comment inclusions as html comments" do
@@ -149,10 +149,10 @@ describe Renderer, "" do
       end
 
       it "titled" do
-        render_card(:titled, :name=>'A+B').should be_html_with do
+        Renderer.new(Card['A+B']).render(:titled).should be_html_with do
           div( :view=>'titled') { 
-            [ h1 { [ span{'A'}, span{'+'}, span{'B'} ] },
-              span(:class=>'titled-content'){'AlphaBeta'}
+            [ h1 { [ span(:class=>"namepart-a") { text('A') }, span(:class=>"joint"){ text('+') }, span(:class=>"namepart-b"){ text('B')} ] },
+              span(:class=>'titled-content'){text('AlphaBeta')}
             ] 
           }
         end
@@ -168,7 +168,6 @@ describe Renderer, "" do
         Renderer.new(c).render( :naked ).should == %{<a class="known-card" href="/wagn/A+B">A+B</a>}
       end
 
-#Rails.logger.info "failing naked(search card) #{c_open}\nRenders:#{Renderer.new(c_open).render_naked}\nRenders end"
       it "naked (search card)" do
        s = Card.create :type=>'Search', :name=>'Asearch', :content=>%{{"type":"User"}}
        cname = Card.new :name=>'AsearchNaked1',

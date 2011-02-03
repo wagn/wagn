@@ -64,7 +64,6 @@ class Renderer
       pattern_key = pattern_key == '*all' ? '' : '_'+pattern_key
       method_id = "render#{pattern_key}_#{action}"
       @@set_actions["#{set}+#{action}"] = priv_name = "_#{method_id}".to_sym
-Rails.logger.info "view( #{action} ) #{method_id}"
       class_eval do
         priv_final="_final#{priv_name}"
         define_method( priv_final, &final )
@@ -202,18 +201,18 @@ Rails.logger.info "view( #{action} ) #{method_id}"
       template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
     else card.raw_content end
   end
+
   view(:core) do process_content(_render_raw) end
 
   view(:naked) do |args|
-
     case
-      when card.name.template_name?  ;  _render_raw
-      when card.generic?             ;  _render_core
+      when card.name.template_name?  ; _render_raw
+      when card.generic?             ; _render_core
       else render_card_partial(:content)
     end
   end
 
-###----------------( NAME) (FIXME move to chunks/transclude)
+###----------------( NAME)
   view(:name) do card.name end
   view(:link) do Chunk::Reference.standard_card_link(card.name) end
 
@@ -410,7 +409,6 @@ Rails.logger.info "view( #{action} ) #{method_id}"
     action = case
 
       when [:name, :link, :linkname].member?(vmode)  ; vmode
-      #when [:name, :link, :linkname].member?(vmode)  ; raise "Should be handled in chunks"
       when :edit == state
        tcard.virtual? ? :edit_auto : :edit_in_form
       when new_card

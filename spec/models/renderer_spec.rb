@@ -17,7 +17,6 @@ describe Renderer, "" do
     Renderer.new(@card).render(view)
   end
 
-
   describe "processes content" do
     it "simple card links" do
       render_content("[[A]]").should=="<a class=\"known-card\" href=\"/wagn/A\">A</a>"
@@ -141,7 +140,7 @@ describe Renderer, "" do
       end
 
       it "array (basic card)" do
-        render_card('A+B', :array).should==%{["AlphaBeta"]}
+        render_card(:array, :name=>'boing', :content=>'yoing').should==%{["yoing"]}
       end
       
       it "naked" do
@@ -150,7 +149,7 @@ describe Renderer, "" do
       end
 
       it "titled" do
-        render_card('A+B', :titled).should be_html_with do
+        render_card(:titled, :name=>'A+B').should be_html_with do
           div( :view=>'titled') { 
             [ h1 { [ span{'A'}, span{'+'}, span{'B'} ] },
               span(:class=>'titled-content'){'AlphaBeta'}
@@ -162,16 +161,6 @@ describe Renderer, "" do
       it "name" do 
         c = Card.new :name => 'ABname', :content => "{{A+B|name}}"
         Renderer.new(c).render( :naked ).should == %{A+B}
-      end
-
-      it "user name" do
-        c = Card.new :name => 'Userlink', :content => "{{_user|name}}"
-        Slot.new(c).render( :naked ).should == "Joe User"
-      end
-
-      it "user link" do
-        c = Card.new :name => 'Userlink', :content => "{{_user|link}}"
-        Slot.new(c).render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/Joe_User\">Joe User</a>"
       end
 
       it "link" do
@@ -335,5 +324,109 @@ describe Renderer, "" do
       r.should == "<ins class=\"diffins\">A</ins>"
     end
   end
+
+  describe "Cards of type" do
+    describe "Date" do
+      it "should have special editor" do
+        render_editor('Date').should be_html_with { a :class=>'date-editor-link'}
+      end
+    end
+
+    describe "File and Image" do
+      #image calls the file partial, so in a way this tests both
+      it "should have special editor" do
+      pending  #This test works fine alone but fails when run with others
+        
+        render_editor('Image').should be_html_with do
+          body do  ## this is weird -- why does it have a body?
+            [div(:class=>'attachment-preview'),
+              div { iframe :class=>'upload-iframe'}
+            ]
+          end
+        end
+      end
+    end
+
+    describe "HTML" do
+      before do
+        User.as :wagbot
+      end
+      
+      it "should have special editor" do
+        render_editor('Html').should be_html_with { textarea :rows=>'30' }
+      end
+      
+      it "should not render any content in closed view" do
+        render_card(:closed_content, :type=>'Html', :content=>"<strong>Lions and Tigers</strong>").should == ''
+      end
+    end
+    
+    describe "Account Request" do
+      it "should have a special section for approving requests" do
+        pending # was seeing this error: undefined method `xpath_with_callback' for nil:NilClass
+        # probably means we need to set up legitimate Account Request with user info
+        render_card(:naked, :type=>'Account Request').should be_html_with { div :class=>'invite-links' }
+      end
+    end
+
+    describe "Number" do
+      it "should have special editor" do
+        render_editor('Number').should be_html_with { input :type=>'text' }
+      end
+    end
+    
+    describe "Phrase" do
+      it "should have special editor" do
+        render_editor('Phrase').should be_html_with { input :type=>'text', :class=>'phrasebox'}
+      end
+    end
+
+    describe "Plain Text" do
+      it "should have special editor" do
+        render_editor('Plain Text').should be_html_with { textarea :rows=>'3' }
+      end
+      
+      it "should have special content that converts newlines to <br>'s" do
+        render_card(:naked, :type=>'Plain Text', :content=>"a\nb").should == 'a<br/>b'
+      end
+
+      it "should have special content that escapes HTML" do
+        pending
+        render_card(:naked, :type=>'Plain Text', :content=>"<b></b>").should == '&lt;b&gt;&lt;/b&gt;'
+      end
+    end
+    
+    describe "Toggle" do
+      it "should have special editor" do
+        render_editor('Toggle').should be_html_with { input :type=>'checkbox' }
+      end
+      
+      it "should have yes/no as processed content" do
+        render_card(:naked, :type=>'Toggle', :content=>"0").should == 'no'
+        render_card(:closed_content, :type=>'Toggle', :content=>"1").should == 'yes'
+      end
+    end
+
+    
+  end
+  
+  def render_editor(type)
+    card = Card.create(:name=>"my favority #{type} + rand(4)", :type=>type)
+    Slot.new(card).render(:edit)
+  end
+  
+  def render_content(content, view=:naked)
+    @card ||= Card.new
+    @card.content=content
+    Slot.new(@card).render(view)
+  end
+
+  def render_card(view, card_args)
+    card_args[:name] ||= "Tempo Rary"
+    card = Card.new(card_args.merge(:skip_defaults=>true))
+    Slot.new(card).render(view)
+  end
+  
+  
 end
 

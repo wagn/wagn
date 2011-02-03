@@ -233,7 +233,7 @@ module Card
     def is_collection?() false end
 
     def save_with_trash!
-      save_without_trash! # || raise(ActiveRecord::RecordNotSaved)
+      save || raise(ActiveRecord::RecordNotSaved)
     end
     alias_method_chain :save!, :trash
 

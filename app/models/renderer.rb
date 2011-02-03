@@ -260,7 +260,7 @@ class Renderer
   end
 
   def form_for_multi
-    Rails.logger.info "card = #{card.inspect}"
+    #Rails.logger.info "card = #{card.inspect}"
     options = {} # do I need any? #args.last.is_a?(Hash) ? args.pop : {}
     block = Proc.new {}
     builder = options[:builder] || ActionView::Base.default_form_builder

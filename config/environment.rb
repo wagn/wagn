@@ -11,7 +11,7 @@ require File.join(File.dirname(__FILE__), 'wagn_initializer')
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence those specified here
   #RAILS_GEM_VERSION = '2.3.9' unless defined? RAILS_GEM_VERSION  
-     
+  
   Wagn::Initializer.set_default_rails_config config
 
   # Skip frameworks you're not going to use
@@ -39,3 +39,6 @@ Rails::Initializer.run do |config|
   # select a store for the rails/card cache
 end
    
+Mime::Type.register 'text/css', :css
+Mime::Type.register_alias 'text/plain', :txt
+Mime::Type.register 'application/vnd.google-earth.kml+xml', :kml

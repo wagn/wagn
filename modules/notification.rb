@@ -3,8 +3,8 @@ module Notification
     def send_notifications 
       action = case  
         when trash;  'deleted'
-        when updated_at.to_i==created_at.to_i; 'added'
-        when updated_at.to_i==current_revision.created_at.to_i;  'edited'  
+        when updated_at.to_s==created_at.to_s; 'added'
+        when updated_at.to_s==current_revision.created_at.to_s;  'edited'  
         else; 'updated'
       end
       

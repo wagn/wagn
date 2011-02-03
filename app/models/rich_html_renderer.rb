@@ -73,10 +73,6 @@ class RichHtmlRenderer < Renderer
     wrap(args) { render_partial('views/closed') }
   end
 
-  view(:titled) do |args|
-    content_tag( :h1, fancy_title(card.name) ) + self._render_content(args) { yield }
-  end
-
   view(:setting) do |args|
     self.requested_view = args[:action] = 'content'
     wrap( args) { render_partial('views/setting') }

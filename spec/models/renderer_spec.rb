@@ -412,19 +412,19 @@ describe Renderer, "" do
   
   def render_editor(type)
     card = Card.create(:name=>"my favority #{type} + rand(4)", :type=>type)
-    Slot.new(card).render(:edit)
+    Renderer.new(card).render(:edit)
   end
   
   def render_content(content, view=:naked)
     @card ||= Card.new
     @card.content=content
-    Slot.new(@card).render(view)
+    Renderer.new(@card).render(view)
   end
 
   def render_card(view, card_args)
     card_args[:name] ||= "Tempo Rary"
     card = Card.new(card_args.merge(:skip_defaults=>true))
-    Slot.new(card).render(view)
+    Renderer.new(card).render(view)
   end
   
   

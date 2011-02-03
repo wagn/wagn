@@ -92,12 +92,14 @@ class Wql
     case (query[:return] || :card)
     when :card
       rows.map do |row|
-        if query[:prepend] || query[:append]
-          cardname = [query[:prepend], row['name'], query[:append]].compact.join('+')
-          Card.fetch_or_new cardname, {}, :skip_defaults=>true
-        else
-          Card.fetch row['name'], :skip_virtual=>true
-        end
+        card=
+          if query[:prepend] || query[:append]
+            cardname = [query[:prepend], row['name'], query[:append]].compact.join('+')
+            Card.fetch_or_new cardname, {}, :skip_defaults=>true
+          else
+            Card.fetch row['name'], :skip_virtual=>true
+          end
+        card.nil? ? Card.find_by_name_and_trash(row['name'],false).repair_key : card
       end
     else
       rows.map { |row| row[query[:return].to_s] }
@@ -139,9 +141,8 @@ class Wql
     
     def match_prep(v,cardspec=self)
       cxn ||= ActiveRecord::Base.connection
-      if v=='_keyword' 
       v=cardspec.root.params['_keyword'] if v=='_keyword' 
-Rails.logger.info "wql_match_prep _keyword (#{v.inspect}" end
+#Rails.logger.info "wql_match_prep _keyword (#{v.inspect}" v=='_keyword'
       v.strip!#FIXME - breaks if v is nil
       [cxn, v]
     end

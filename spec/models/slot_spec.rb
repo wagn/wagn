@@ -148,10 +148,9 @@ describe Slot, "" do
         end
       end
       
-      it "name" do 
-        c = Card.new :name => 'ABname', :content => "{{A+B|name}}"
-        Slot.new(c).render( :naked ).should == %{A+B}
-      end
+      it("name"    ) { render_card(:name).should      == 'Tempo Rary' }
+      it("key"     ) { render_card(:key).should       == 'tempo_rary' }
+      it("linkname") { render_card(:linkname).should  == 'Tempo_Rary' }
 
       it "link" do
         c = Card.new :name => 'ABlink', :content => "{{A+B|link}}"
@@ -412,7 +411,7 @@ describe Slot, "" do
     Slot.new(@card).render(view)
   end
 
-  def render_card(view, card_args)
+  def render_card(view, card_args={})
     card_args[:name] ||= "Tempo Rary"
     card = Card.new(card_args.merge(:skip_defaults=>true))
     Slot.new(card).render(view)

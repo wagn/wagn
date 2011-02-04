@@ -353,9 +353,10 @@ describe Slot, "" do
     
     describe "Account Request" do
       it "should have a special section for approving requests" do
-        pending # was seeing this error: undefined method `xpath_with_callback' for nil:NilClass
-        # probably means we need to set up legitimate Account Request with user info
-        render_card(:naked, :type=>'Account Request').should be_html_with { div :class=>'invite-links' }
+        pending
+        #I can't get this working.  I keep getting this url_for error -- from a line that doesn't call url_for
+        card = Card.create!(:name=>'Big Bad Wolf', :type=>'Account Request')
+        Slot.new(card).render(:naked).should be_html_with { div :class=>'invite-links' }
       end
     end
 

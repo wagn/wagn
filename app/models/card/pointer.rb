@@ -1,7 +1,6 @@
 module Card
   class Pointer < Base
 
-    def cacheable?()     false end
     def is_collection?() true  end
 
     def items( context = nil )

@@ -230,8 +230,6 @@ module Card
       end                  
     end
 
-    def is_collection?() false end
-
     def save_with_trash!
       save || raise(ActiveRecord::RecordNotSaved)
     end
@@ -382,7 +380,7 @@ module Card
       (dependents + [self]).plot(:referencers).flatten.uniq
     end
 
-    def card
+    def card  ## is this still necessary or just legacy from CachedCards?
       self
     end
 
@@ -448,14 +446,6 @@ module Card
       @builtin
     end
     
-    def clean_html?
-      true
-    end
-    
-    def generic?
-      false
-    end
-
     def content   
       new_card? ? ok!(:create_me) : ok!(:read)
       cached_revision.new_record? ? "" : cached_revision.content

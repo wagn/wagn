@@ -27,7 +27,7 @@ class Renderer
     :html => :RichHtmlRenderer,
   }
 
-  cattr_accessor :max_char_count, :max_depth, :set_actions,
+  cattr_accessor :max_char_count, :max_depth, :set_views,
     :current_slot, :ajax_call, :fallback_methods
   self.max_char_count = 200
   self.max_depth = 10
@@ -56,29 +56,32 @@ class Renderer
   #     for patterns other than AllPattern ('*all')
   #
   class << self
-    def view(action, set='*all', opts={}, &final)
-      @@fallback_methods ||= {}
-      @@set_actions ||= {}
-      fallback_methods[action] = opts[:fallback_method]||:naked
-      raise "Pattern? #{set}" unless pattern_key=Wagn::Pattern.subclass_key(set)
-      pattern_key = pattern_key == '*all' ? '' : '_'+pattern_key
-      method_id = "render#{pattern_key}_#{action}"
-      @@set_actions["#{set}+#{action}"] = priv_name = "_#{method_id}".to_sym
+    def view(view, set='*all', opts={}, &final)
+      @@set_views, @@fallback_methods = {},{} unless @@set_views
+      fallback_methods[view] = opts[:fallback_method] if opts.has_key?(:fallback_method)
+      raise "Should be a set: #{set}" unless pattern_key=Wagn::Pattern.subclass_key(set)
+      method_id = "render_#{pattern_key.blank? ? view.to_s : "#{pattern_key}_#{view}"}"
+      raise "Attempt to redefine view: #{view} #{set} #{method_id}" if @@set_views.has_key?(method_id)
+
+      priv_name = @@set_views[method_id] = "_#{method_id}".to_sym
       class_eval do
-        priv_final="_final#{priv_name}"
-        define_method( priv_final, &final )
+
+        define_method( method_id.sub(/^render/,'_final'), &final )
         define_method( priv_name ) do |*a| a = [{}] if a.empty?
-          a[0][:view] ||= action  
-          # this variable name is highly confusing; it means the view to return to after an edit.  it's about persistence
-          # should do better.
-          send(priv_final, *a) { yield }
+          a[0][:view] ||= view  
+          # this variable name is highly confusing (:view); it means the view to return
+          # to after an edit.  it's about persistence. should do better.
+          final_meth = view_method( view ).to_s.sub(/^_render/,'_final')
+          send(final_meth.to_sym, *a) { yield }
         end
 
         define_method( method_id ) do |*a|
           if refusal=render_check(method_id)
             return refusal
           end
-          send(priv_name, *a) { yield }
+
+raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_method( view )
+          send(view_method( view ), *a) { yield }
         end
       end
     end
@@ -94,7 +97,8 @@ class Renderer
       end
     end
 
-    def set_action(key) Renderer.set_actions[key] end
+    def set_view(key)
+      Renderer.set_views[key] end
     def view_aliases() VIEW_ALIASES end
   end
 
@@ -196,12 +200,7 @@ class Renderer
   end
 
 ### ---- Core renders --- Keep these on top for dependencies
-  view(:raw) do
-    if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
-      template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
-    else card.raw_content end
-  end
-
+  view(:raw) do card.raw_content end
   view(:core) do process_content(_render_raw) end
 
   view(:naked) do |args|
@@ -264,7 +263,7 @@ class Renderer
       else :view
     end
 
-    result = if render_meth = action_method(action)
+    result = if render_meth = view_method(action)
         send(render_meth, args) { yield }
       else
         "<strong>#{card.name} - unknown card view: '#{action}' M:#{render_meth.inspect}</strong>"
@@ -278,13 +277,15 @@ class Renderer
     return "Permission error: #{e.message}"
   end
 
-  def action_method(action)
+  def view_method(view)
     Wagn::Pattern.set_names( card ).each do |setname|
-      meth = self.class.set_action("#{setname}+#{action}")
+      setname = setname.sub(/all/,'').gsub(/(\+|^)_*\*/,'_').to_key
+      setname = setname.blank? ? view.to_s : "#{setname}_#{view}"
+      meth = self.class.set_view("render_#{setname}")
       return meth if meth
     end
-    return @@fallback_methods[action]
-  end # root renderer class, no super
+    return @@fallback_methods[view]
+  end
   
   def form_for_multi
     Rails.logger.info "card = #{card.inspect}"
@@ -325,7 +326,6 @@ class Renderer
 
   def replace_references( old_name, new_name )
     #warn "replacing references...card name: #{card.name}, old name: #{old_name}, new_name: #{new_name}"
-    #content = content.blank? ? card.content : content
     wiki_content = WikiContent.new(card, card.content, self)
 
     wiki_content.find_chunks(Chunk::Link).each do |chunk|
@@ -344,7 +344,7 @@ class Renderer
   def expand_inclusion(options)
 
     return options[:comment] if options.has_key?(:comment)
-    #tname = if String===tcard; x=tcard;tcard=nil;x else tcard.name end
+
     # Don't bother processing inclusion if we're already out of view
     return '' if (state==:line && self.char_count > Renderer.max_char_count)
 
@@ -377,7 +377,6 @@ class Renderer
     result = resize_image_content(result, options[:size]) if options[:size]
     @char_count += (result ? result.length : 0) #should we strip html here?
     (is_main and respond_to?(:wrap_main)) ? self.wrap_main(result) : result
-    #result
   rescue Card::PermissionDenied
     ''
   end
@@ -426,7 +425,7 @@ class Renderer
     result
   rescue Exception=>e
     Rails.logger.info "inclusion-error #{e.inspect}"
-    Rails.logger.debug "inclusion-error #{e.inspect}\nTrace:\n#{e.backtrace*"\n"}"
+    Rails.logger.debug "Trace:\n#{e.backtrace*"\n"}"
     %{<span class="inclusion-error">error rendering #{link_to_page((tcard ? tcard.name : 'unknown card'), nil, :title=>CGI.escapeHTML(e.inspect))}</span>}
   end
 

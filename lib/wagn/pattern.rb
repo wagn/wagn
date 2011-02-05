@@ -18,8 +18,9 @@ module Wagn
       end
 
       def subclass_key(name)
-        return name == AllPattern.key ? AllPattern.key : nil if name.simple?
-        @@subclasses.map { |sc| return name.to_key if sc.key==name.tag_name }
+        return name == AllPattern.key ? '' : nil if name.simple?
+        @@subclasses.map { |sc| return name.gsub(/(\+|^)\*/,'_').to_key if sc.key==name.tag_name }
+        nil
       end
 
       def set_names card

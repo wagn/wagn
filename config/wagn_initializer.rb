@@ -80,7 +80,7 @@ module Wagn
         load_modules
         register_mimetypes
         Wagn::Cache.initialize_on_startup
-        initialize_builtin_cards
+        Renderer.create_builtins
         ActiveRecord::Base.logger.info("\n----------- Wagn Initialization Complete -----------\n\n")
       end
 
@@ -156,17 +156,6 @@ module Wagn
         Wagn::Module.load_all
       end
 
-      def initialize_builtin_cards
-        ## DEBUG
-        File.open("#{RAILS_ROOT}/log/wagn.log","w") do |f|
-          f.puts "Wagn::Initializer.initialize_builtin_cards"
-        end
-
-        %w{ *head *alert *foot *navbox *version *account_link *now }.each do |key|
-          Card.add_builtin( Card.new(:name=>key, :builtin=>true, :skip_defaults=>true))
-        end
-      end
-      
       def register_mimetypes
         Mime::Type.register 'text/css', :css
         Mime::Type.register_alias 'text/plain', :txt

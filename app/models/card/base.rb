@@ -51,7 +51,7 @@ module Card
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
       :from_trash, :update_referencers, :allow_type_change, :virtual,
-      :builtin, :broken_type, :skip_defaults, :loaded_trunk, :blank_revision
+      :broken_type, :skip_defaults, :loaded_trunk, :blank_revision
 
     # setup hooks on AR callbacks
     # Note: :after_create is called from end of set_initial_content now
@@ -441,12 +441,8 @@ module Card
     end
     
     def virtual?
-      @virtual || @builtin
+      @virtual
     end    
-    
-    def builtin?
-      @builtin
-    end
     
     def clean_html?
       true

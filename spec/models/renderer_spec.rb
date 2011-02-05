@@ -1,4 +1,5 @@
 require File.dirname(__FILE__) + '/../spec_helper'
+require File.dirname(__FILE__) + '/../spec_renderer_helper'
 
 describe Renderer, "" do
   before { User.as :joe_user }
@@ -248,17 +249,48 @@ describe Renderer, "" do
     s.render( :naked ).should == "boo"
   end
 
-  context "builtin card" do
+  context "test builtin cards" do
     it "should render layout partial with name of card" do
-      pending
       template = mock("template")
-      template.should_receive(:render).with(:partial=>"builtin/builtin").and_return("Boo")
-      builtin_card = Card.new( :name => "*builtin", :builtin=>true )
-      slot = Renderer.new( builtin_card )
-      slot.render_raw.should == "Boo"
-      slot.render(:raw).should == "Boo"
-      slot = Renderer.new( Card["*head"], "main_1", "view"  )
-      slot.render(:naked).should == ''
+      template.should_not_receive(:render).with(:partial=>"builtin/builtin").and_return("Boo")
+      c = Card.fetch_or_new( '*builtin' )
+      c.save
+      renderer = Renderer.new( c )
+      renderer.render_raw.should == "Boo"
+      renderer.render(:raw).should == "Boo"
+      c = Card.fetch_or_new( '*head' ); c.save
+      renderer = Renderer.new( c, :context=>"main_1", :view=>"view"  )
+      renderer.render(:naked).should be_html_with do
+        link(:rel=>'alternate', :title=>'Edit this page!', :href=>'/card/edit/*head') {}
+      end
+    end
+
+    it "should render internal builtins" do
+      render_card(:naked, :content=>%{
+<div>
+  <span name="head">
+    Head:{{*head|naked}}
+  </span>
+  <span name="now">
+    Now:{{*now}}
+  </span>
+  <span name="version">
+    Version:{{*version|naked}}
+  </span>
+  <span name="foot">
+    Foot:{{*foot|naked}}
+  </span>
+</div>
+      }).should be_html_with do
+        div {
+          #span(:name=>'head') do
+            #link(:rel=>'alternate', :title=>'Edit this page!', :href=>'/card/edit/*head') {}
+          #end
+          span(:name=>'now') { text( Time.now.strftime('%A, %B %d, %Y') ) }
+          span(:name=>'version') { text( "Version:#{Wagn::Version.full}" ) }
+          span(:name=>"foot") { script(type="text/javascript") {} }
+        }
+      end
     end
   end
 
@@ -425,7 +457,6 @@ describe Renderer, "" do
     card = Card.new(card_args.merge(:skip_defaults=>true))
     Renderer.new(card).render(view)
   end
-  
   
 end
 

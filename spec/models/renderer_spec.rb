@@ -13,11 +13,6 @@ describe Renderer, "" do
     Renderer.new(@card).render(view)
   end
 
-  def render_card(name, view=:naked)
-    @card = Card.fetch_or_new(name)
-    Renderer.new(@card).render(view)
-  end
-
   describe "processes content" do
     it "simple card links" do
       render_content("[[A]]").should=="<a class=\"known-card\" href=\"/wagn/A\">A</a>"
@@ -159,10 +154,9 @@ describe Renderer, "" do
         end
       end
       
-      it "name" do 
-        c = Card.new :name => 'ABname', :content => "{{A+B|name}}"
-        Renderer.new(c).render( :naked ).should == %{A+B}
-      end
+      it("name"    ) { render_card(:name).should      == 'Tempo Rary' }
+      it("key"     ) { render_card(:key).should       == 'tempo_rary' }
+      it("linkname") { render_card(:linkname).should  == 'Tempo_Rary' }
 
       it "link" do
         c = Card.new :name => 'ABlink', :content => "{{A+B|link}}"
@@ -394,9 +388,10 @@ describe Renderer, "" do
     
     describe "Account Request" do
       it "should have a special section for approving requests" do
-        pending # was seeing this error: undefined method `xpath_with_callback' for nil:NilClass
-        # probably means we need to set up legitimate Account Request with user info
-        render_card(:naked, :type=>'Account Request').should be_html_with { div :class=>'invite-links' }
+        pending
+        #I can't get this working.  I keep getting this url_for error -- from a line that doesn't call url_for
+        card = Card.create!(:name=>'Big Bad Wolf', :type=>'Account Request')
+        Slot.new(card).render(:naked).should be_html_with { div :class=>'invite-links' }
       end
     end
 
@@ -452,11 +447,10 @@ describe Renderer, "" do
     Renderer.new(@card).render(view)
   end
 
-  def render_card(view, card_args)
+  def render_card(view, card_args={})
     card_args[:name] ||= "Tempo Rary"
     card = Card.new(card_args.merge(:skip_defaults=>true))
     Renderer.new(card).render(view)
   end
   
 end
-

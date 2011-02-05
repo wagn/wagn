@@ -212,8 +212,9 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
   end
 
 ###----------------( NAME)
-  view(:name) do card.name end
-  view(:link) do Chunk::Reference.standard_card_link(card.name) end
+  view(:name)     do card.name end
+  view(:link)     do Chunk::Reference.standard_card_link(card.name) end
+  view(:linkname) do card.name.to_url_key end
 
   view(:open_content) do |args|
     card.post_render(_render_naked(args) { yield })
@@ -288,7 +289,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
   end
   
   def form_for_multi
-    Rails.logger.info "card = #{card.inspect}"
+    #Rails.logger.info "card = #{card.inspect}"
     options = {} # do I need any? #args.last.is_a?(Hash) ? args.pop : {}
     block = Proc.new {}
     builder = options[:builder] || ActionView::Base.default_form_builder

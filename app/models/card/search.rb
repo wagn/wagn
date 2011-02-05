@@ -4,12 +4,10 @@ module Card
     attr_accessor :self_cardname, :results, :spec
     before_save :escape_content
 
+    def is_collection?() true end
+
     def escape_content
       self.content = CGI::unescapeHTML( URI.unescape(content) )
-    end
-
-    def cacheable?
-      name.template_name?
     end
 
     def count(params={})
@@ -24,9 +22,7 @@ module Card
       self.results = Card.search( self.spec )
     end
 
-    def is_collection?() true end
-
-    def each_name
+    def each_name  ## FIXME - this should just alter the spec to have it return name rather than instantiating all the cards!!
       Wql.new(card.get_spec).run.map do
         |card| yield(card.name)
       end

@@ -1,4 +1,6 @@
 require 'lib/util/card_builder.rb'
+#require 'renderer'
+
 module WagnTestHelper
       
   include CardBuilderMethods
@@ -21,7 +23,6 @@ module WagnTestHelper
   end
  
   def get_renderer()
-    require 'renderer'
     Renderer.new(Card.new(:name=>'dummy'))
   end
   

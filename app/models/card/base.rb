@@ -207,7 +207,7 @@ module Card
           end
         
         args.delete('type')
-        return type, typetype 
+        return type, typetype
       end
       
       def get_name_from_args(args={})
@@ -229,8 +229,6 @@ module Card
         Card.fetch_or_create(args[:name], {}, args)
       end                  
     end
-
-    def is_collection?() false end
 
     def save_with_trash!
       save || raise(ActiveRecord::RecordNotSaved)
@@ -382,7 +380,7 @@ module Card
       (dependents + [self]).plot(:referencers).flatten.uniq
     end
 
-    def card
+    def card  ## is this still necessary or just legacy from CachedCards?
       self
     end
 
@@ -433,7 +431,7 @@ module Card
     def skip_defaults?
       # when Calling Card.new don't set defaults.  this is for performance reasons when loading
       # missing cards. 
-      !!skip_defaults
+      !!skip_defaults  ##ok.  but this line is bizarre.
     end
 
     def known?
@@ -448,14 +446,6 @@ module Card
       @builtin
     end
     
-    def clean_html?
-      true
-    end
-    
-    def generic?
-      false
-    end
-
     def content   
       new_card? ? ok!(:create_me) : ok!(:read)
       cached_revision.new_record? ? "" : cached_revision.content
@@ -514,6 +504,25 @@ module Card
     def mocha_inspect
       to_s
     end
+
+    def repair_key
+      ::User.as :wagbot do
+        correct_key = name.to_key
+        current_key = key
+        return self if current_key==correct_key
+
+        saved =   ( self.key  = correct_key and self.save! )
+        saved ||= ( self.name = current_key and self.save! )
+
+        saved ? self.dependents.each { |c| c.repair_key } : self.name = "BROKEN KEY: #{name}"
+        self
+      end
+    rescue
+      self
+    end
+
+
+
      
    protected
     def clear_drafts
@@ -539,7 +548,9 @@ module Card
         self.errors.add attr, err
       end
     end
-       
+    
+    
+    
     # Because of the way it chains methods, 'tracks' needs to come after
     # all the basic method definitions, and validations have to come after
     # that because they depend on some of the tracking methods.

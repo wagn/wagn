@@ -1,4 +1,4 @@
 module Card
-  class Ruby < Base
+  class Toggle < Base
   end
 end

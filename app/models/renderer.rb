@@ -195,9 +195,11 @@ class Renderer
     end
   end
 
-###----------------( NAME) (FIXME move to chunks/transclude)
-  view(:name) do card.name end
-  view(:link) do Chunk::Reference.standard_card_link(card.name) end
+###----------------( NAME) 
+  view(:name)     { card.name             }
+  view(:key)      { card.key              }
+  view(:linkname) { card.name.to_url_key  }
+  view(:link)     { Chunk::Reference.standard_card_link(card.name) }
 
   view(:open_content) do |args|
     card.post_render(_render_naked(args) { yield })
@@ -260,7 +262,7 @@ class Renderer
   end
 
   def form_for_multi
-    Rails.logger.info "card = #{card.inspect}"
+    #Rails.logger.info "card = #{card.inspect}"
     options = {} # do I need any? #args.last.is_a?(Hash) ? args.pop : {}
     block = Proc.new {}
     builder = options[:builder] || ActionView::Base.default_form_builder

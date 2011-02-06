@@ -83,7 +83,7 @@ class Slot < Renderer
     @state=:edit
     args[:add_javascript]=true
     @form = form_for_multi
-    hidden_field_tag(:multi_edit, true) + _render_naked(args)
+    hidden_field_tag(:multi_edit, true) + _render_core(args)
   end
 
   view(:change) do |args|

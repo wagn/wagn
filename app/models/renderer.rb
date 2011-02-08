@@ -56,7 +56,7 @@ class Renderer
   #     for patterns other than AllPattern ('*all')
   #
   class << self
-    def view(view, set='*all', opts={}, &final)
+    def view(view, opts={}, &final)
       @@set_views, @@fallback_methods = {},{} unless @@set_views
       fallback_methods[view] = opts[:fallback_method] if opts.has_key?(:fallback_method)
       raise "Should be a set: #{set}" unless pattern_key=Wagn::Pattern.subclass_key(set)

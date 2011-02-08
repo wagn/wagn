@@ -1,14 +1,14 @@
 class Renderer
 
-  view(:raw, '*recent_change+*self') do
+  view(:raw, :name=>'*recent_change') do
     %{{"sort":"update", "dir":"desc", "view":"change"}}
   end
 
-  view(:raw, '*search+*self') do
+  view(:raw, :name=>'*search') do
     %{{"match":"_keyword", "sort":"relevance"}}
   end
 
-  view(:raw, '*broken_link+*self') do
+  view(:raw, :name=>'*broken_link') do
     %{{"link_to":"_none"}}
   end
 end

@@ -12,7 +12,7 @@ Rails.logger.info "create builtin cards #{name}"
   end
 
   # Declare built-in views
-  view(:core, "*account+*self") do
+  view(:core, :name=>'*account') do
     #ENGLISH
     %{<span id="logging">#{
      if logged_in?
@@ -30,19 +30,19 @@ Rails.logger.info "create builtin cards #{name}"
     }</span>}
   end
 
-  view(:core, '*alerts+*self') do
+  view(:core, :name=>'*alerts') do
     %{<div id="alerts">
   <div id="notice">#{ flash[:notice] }</div>
   <div id="error">#{ flash[:warning] }#{ flash[:error] }</div>  
 </div>}
   end
 
-  view(:core, '*foot+*self') do
+  view(:core, :name=>'*foot') do
     javascript_include_tag "/tinymce/jscripts/tiny_mce/tiny_mce.js" +
     (google_analytics or '')
   end
 
-  view(:core, '*head+*self') do
+  view(:core, :name=>'*head') do
     # ------- Title -------------
     %{<link rel="shortcut icon" href="#{ System.favicon }" />#{
       if card and !card.new_record? and card.ok? :edit
@@ -72,7 +72,7 @@ Rails.logger.info "create builtin cards #{name}"
     }
   end
 
-  view(:core, '*navbox+*self') do
+  view(:core, :name=>'*navbox') do
     #ENGLISH
     %{<form id="navbox_form" action="/search" onsubmit="return navboxOnSubmit(this)">
   <span id="navbox_background">
@@ -83,7 +83,10 @@ Rails.logger.info "create builtin cards #{name}"
 </form>}
   end
 
-  view(:core,'*now+*self') do Time.now.strftime('%A, %B %d, %Y %I:%M %p %Z') end
-  view(:core,'*version+*self') do Wagn::Version.full end
+  view(:core, :name=>'*now') do
+    Time.now.strftime('%A, %B %d, %Y %I:%M %p %Z')
+  end
+
+  view(:core, :name=>'*version') do Wagn::Version.full end
 
 end

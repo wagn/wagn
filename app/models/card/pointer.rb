@@ -35,7 +35,7 @@ module Card
     
     def item_type
       opt = options_card
-      opt ? opt.get_spec[:type] : nil
+      opt ? opt.spec[:type] : nil
     end
     
     def options_card

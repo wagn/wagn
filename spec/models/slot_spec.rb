@@ -57,8 +57,48 @@ describe Slot, "" do
        User.as :wagbot do
          card = Card['A+B']
          layout_card = Card['Default Layout']
-         Slot.new(layout_card).render(:layout, :main_card=>card).should == 
-           '' ## should look for all the standard buildins
+         Slot.new(layout_card).render(:layout, :main_card=>card).should be_html_with do 
+      html() {
+        head() {
+        title() {
+          text('- My Wagn')
+          }
+        }
+
+        body(:id=>"wagn") {
+          div(:id=>"menu") {
+            a(:class=>"internal-link", :href=>"/") { text('Home') }
+            a(:class=>"internal-link", :href=>"/recent") { text('Recent') }
+      
+        #<div base=\"self\" class=\"transcluded ALL TYPE-basic\" position=\"545d0f2\" style=\"\" view=\"content\">
+          form(:id=>"navbox_form", :action=>"/search") {
+          a(:id=>"navbox_image", :title=>"Search") {}
+            input(:name=>"navbox") {}
+          }
+      #</span></div> <span class=\"inclusion-error\">error rendering <a href=\"/wagn/*account_link\" title=\"#&lt;ActionView::TemplateError: 
+        }
+      
+          #<div id=\"primary\">
+            #<div id=\"main\" context=\"main\"><div base=\"self\" cardId=\"435\" class=\"card-slot paragraph ALL TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b\" position=\"546336a\" style=\"\" view=\"open\">
+      
+          a(:href=>"/wagn/A+B", :class=>"page-icon", :title=>"Go to: A+B") {}
+        #</div>
+
+        span(:class=>"open-content content editOnDoubleClick") { text('AlphaBeta') }
+        
+      span(:class=>"notice") {}
+      
+        div(:class=>"card-footer") {
+          span(:class=>"watch-link") {
+            a(:title=>"get emails about changes to A+B") { text("watch") }
+          }
+        }
+        div(:id=>"secondary") {}
+
+        div(:id=>"credit") { [ text("Wheeled by"), a() { text('Wagn') } ] }
+        }
+      }
+         end
       end
     end
 
@@ -277,15 +317,12 @@ describe Slot, "" do
   <span name="foot">
     Foot:{{*foot|naked}}
   </span>
-</div>} ).should be_html_with do
+</div>} ).should be_html_with   do
       div {
-        span(:name=>'head') do
-          link(:rel=>'alternate', :title=>'Edit this page!', :href=>'/card/edit/*head') {}
-        end
-        # FIXME: can't figure out how to do a match on part of text
-        #span(/^\s*#{Time.now.strftime('%A, %B %d, %Y')}/, :name=>'now') {}
-        span( "Version:#{Wagn::Version.full}", :name=>'version') {}
-        span(:name=>"foot") { script(:type=>"text/javascript") {} }
+        span(:name=>'head')    { link(:rel=>'shortcut icon') {} }
+        span(:name=>'now')     { text(Time.now.strftime('%A, %B %d, %Y')) }
+        span(:name=>'version') { text("Version:#{Wagn::Version.full}") }
+        span(:name=>"foot")    { script(:type=>"text/javascript") {} }
       }
     end
   end

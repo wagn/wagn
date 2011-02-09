@@ -9,8 +9,10 @@ class FixStarContentAndDefaultPerms < ActiveRecord::Migration
       
         if card = Card[name]
           card.permit('read',  Role[:anon])
+          card.save!
         end
-        
+      rescue
+        puts "trouble saving #{card.name}"
       end
     end    
   end

@@ -36,7 +36,7 @@ class Renderer
       :template, :root, :format
   attr_accessor :card, :main_content, :main_card, :context, :char_count,
       :depth, :item_view, :form, :view, :type, :base, :state, :sub_count,
-      :render_args, :requested_view
+      :render_args, :requested_view, :layout, :flash, :show_view
 
   # View definitions
   #
@@ -59,23 +59,37 @@ class Renderer
     def view(view, opts={}, &final)
       @@set_views, @@fallback_methods = {},{} unless @@set_views
       fallback_methods[view] = opts[:fallback_method] if opts.has_key?(:fallback_method)
-      raise "Should be a set: #{set}" unless pattern_key=Wagn::Pattern.subclass_key(set)
-      method_id = "render_#{pattern_key.blank? ? view.to_s : "#{pattern_key}_#{view}"}"
+
+      def arg(a) opts.delete(a).gsub('+','_').to_key end
+      pattern_key = case
+        when name = arg(:name); '_self_'+name
+        when type = arg(:type); '_type_'+type
+        when (type = arg(:ltype)) and opts.has_key(:right);
+          "_ltype_rt_#{type}_#{arg(:right)}"
+        when right = arg(:right); '_right_'+right
+        else ''
+        end
+      raise "Error extra args #{opts.inspect}" unless opts.empty?
+      method_id = "render#{pattern_key}_#{view}"
+
+Rails.logger.info "view declared: #{view}, #{set}, #{pattern_key.inspect}, #{method_id}"
       raise "Attempt to redefine view: #{view} #{set} #{method_id}" if @@set_views.has_key?(method_id)
 
       priv_name = @@set_views[method_id] = "_#{method_id}".to_sym
+Rails.logger.info "define methods: #{method_id}, #{priv_name}, #{method_id.sub(/^render/,'_final')}"
       class_eval do
 
         define_method( method_id.sub(/^render/,'_final'), &final )
         define_method( priv_name ) do |*a| a = [{}] if a.empty?
           a[0][:view] ||= view  
-          # this variable name is highly confusing (:view); it means the view to return
-          # to after an edit.  it's about persistence. should do better.
+          # this variable name is highly confusing (:view); it means the view to
+          # return to after an edit.  it's about persistence. should do better.
           final_meth = view_method( view ).to_s.sub(/^_render/,'_final')
           send(final_meth.to_sym, *a) { yield }
         end
 
         define_method( method_id ) do |*a|
+#Rails.logger.info "#{method_id}: #{card&&card.name}, #{a.inspect} #{caller.slice(0,4)*"\n"}"
           if refusal=render_check(method_id)
             return refusal
           end
@@ -97,20 +111,35 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
       end
     end
 
-    def set_view(key)
-      Renderer.set_views[key] end
+    def set_view(key) Renderer.set_views[key] end
     def view_aliases() VIEW_ALIASES end
   end
+
+  FORMAT2VIEW = {
+    :txt => :raw,
+    :css => :naked,
+    :kml => :show, # partial
+    :xml => nil,
+    :json => nil,
+    :xhr => :naked,
+    :html => :layout
+  }
+
+=begin
+        ## fixme, we ought to be setting special titles (or all titles) in cards
+        request.xhr? ? render(:action=>'show') : render(:text=>'', :layout=>true)
+=end
 
   def initialize(card, opts=nil)
     Renderer.current_slot ||= self
     @card = card
     if opts
       [:main_content, :main_card, :base, :action, :context, :template,
-        :params, :relative_content, :format].
+        :params, :relative_content, :format, :flash, :layout].
           map {|s| instance_variable_set "@#{s}", opts[s]}
-      inclusion_map( opts[:inclusion_view_overrides] )
     end
+    inclusion_map( opts )
+    @show_view = FORMAT2VIEW[format]
     @params ||= {}
     @relative_content ||= {}
     @action ||= 'view'
@@ -124,7 +153,11 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     @sub_count = @char_count = 0
     @depth = 0
     @root = self
-    @layout = @params && @params[:layout]
+    if layout == :xhr
+      @layout = 'none'
+    elsif @params && @params[:layout]
+      @layout = @params[:layout]
+    end
   end
 
   def ajax_call?() @@ajax_call end
@@ -144,9 +177,10 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     sub
   end
 
-  def inclusion_map(overrides=nil)
+  def inclusion_map(opts)
     return @inclusion_map if @inclusion_map
-    return @inclusion_map unless @inclusion_map = overrides
+    return @inclusion_map = self.class.view_aliases unless opts and
+      @inclusion_map = opts[:inclusion_view_overrides]
     self.class.view_aliases.each_pair do |known, canonical|
       if @inclusion_map.has_key?(canonical)
         @inclusion_map[known] = @inclusion_map[canonical]
@@ -213,6 +247,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
 
 ###----------------( NAME)
   view(:name)     do card.name end
+  view(:key)      do card.key end
   view(:link)     do Chunk::Reference.standard_card_link(card.name) end
   view(:linkname) do card.name.to_url_key end
 
@@ -252,6 +287,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
   end
 
   def render(action=:view, args={})
+raise "???" if Hash===action
     args[:view] ||= action
     self.render_args = args.clone
     denial = render_deny(action, args)
@@ -283,8 +319,10 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
       setname = setname.sub(/all/,'').gsub(/(\+|^)_*\*/,'_').to_key
       setname = setname.blank? ? view.to_s : "#{setname}_#{view}"
       meth = self.class.set_view("render_#{setname}")
+Rails.logger.info "view_method( #{setname}, #{view} ) #{meth}" if meth
       return meth if meth
     end
+#Rails.logger.info "view_method( #{view} ) F: #{@@fallback_methods[view]}\nTrace #{caller.slice(0,6)*"\n"}"
     return @@fallback_methods[view]
   end
   

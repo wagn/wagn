@@ -93,8 +93,8 @@ class Renderer
       [:main_content, :main_card, :base, :action, :context, :template,
         :params, :relative_content].
           map {|s| instance_variable_set "@#{s}", opts[s]}
-      inclusion_map( opts[:inclusion_view_overrides] )
     end
+    inclusion_map( opts )
     @params ||= {}
     @relative_content ||= {}
     @action ||= 'view'
@@ -124,9 +124,10 @@ class Renderer
     sub
   end
 
-  def inclusion_map(overrides=nil)
-    return @inclusion_map if @inclusion_map
-    return @inclusion_map unless @inclusion_map = overrides
+  def inclusion_map(opts=nil)
+    return @inclusion_map if @inclusion_map and not opts
+    return @inclusion_map = self.class.view_aliases unless opts and
+      (@inclusion_map = opts[:inclusion_view_overrides])
     self.class.view_aliases.each_pair do |known, canonical|
       if @inclusion_map.has_key?(canonical)
         @inclusion_map[known] = @inclusion_map[canonical]

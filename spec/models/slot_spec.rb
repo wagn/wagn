@@ -461,6 +461,13 @@ describe Slot, "" do
       end
     end
     
+    describe "Search" do
+      it "should handle returning 'count'" do
+        render_card(:naked, :type=>'Search', :content=>%{{ "type":"User", "return":"count"}}).should == '10'
+      end
+    end
+    
+    
     describe "Toggle" do
       it "should have special editor" do
         render_editor('Toggle').should be_html_with { input :type=>'checkbox' }

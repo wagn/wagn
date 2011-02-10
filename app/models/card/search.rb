@@ -11,20 +11,30 @@ module Card
     end
 
     def count(params={})
-      Card.count_by_wql( (params.empty? && spec) ? spec : get_spec(params) )
+      Card.count_by_wql( spec(params) )
     end
 
     def search( params={} )
-      self.spec = get_spec(params.clone)
-      raise("OH NO.. no limit") unless self.spec[:limit]
-      self.spec.delete(:limit) if spec[:limit].to_i <= 0
+      spec(params)
+      raise("OH NO.. no limit") unless @spec[:limit]
+      @spec.delete(:limit) if @spec[:limit].to_i <= 0
       # FIXME CACHE TODO: optimize by loading these into the cache.
-      self.results = Card.search( self.spec )
+      self.results = Card.search( @spec )
     end
 
-    def each_name  ## FIXME - this should just alter the spec to have it return name rather than instantiating all the cards!!
+    def each_name  
+      ## FIXME - this should just alter the spec to have it return name rather than instantiating all the cards!!  
+      ## (but need to handle prepend/append)
       Wql.new(card.get_spec).run.map do
         |card| yield(card.name)
+      end
+    end
+    
+    def spec(params={})
+      if params.empty? && @spec
+        @spec
+      else
+        @spec = get_spec(params.clone)
       end
     end
 

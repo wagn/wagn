@@ -1977,23 +1977,23 @@ cards_188:
 cards_189: 
   reader_type: Role
   name: Basic+*type
-  created_at: 2009-12-02 16:02:53.784523 -07:00
-  tag_id: 266
+  created_at: 2009-12-07 17:06:21.821993 -07:00
+  tag_id: 13160
   indexed_content: "'self':5 'type':3A,4 'basic':1A"
-  updated_at: 2009-12-08 12:25:13.115245 -07:00
+  updated_at: 2009-12-07 19:54:54.597300 -07:00
   indexed_name: "'type':3 'basic':1"
   trash: false
   codename: 
   references_expired: 1
-  reader_id: 3
+  reader_id: 1
   pattern_keys: 
-  id: 273
-  current_revision_id: 3015
-  created_by: 1
+  id: 13201
+  current_revision_id: 69004
+  created_by: 9
   type: Set
-  trunk_id: 3
+  trunk_id: 240
   extension_type: 
-  updated_by: 1
+  updated_by: 9
   settings: 
   key: basic+*type
   extension_id: 
@@ -2002,23 +2002,23 @@ cards_189:
 cards_001: 
   reader_type: Role
   name: "*all+*table of contents"
-  created_at: 2009-12-03 16:11:05.789011 -07:00
-  tag_id: 89
-  indexed_content: "'0':5 'tabl':2A 'content':4A"
-  updated_at: 2011-02-02 19:49:22.212001 -07:00
+  created_at: 2009-12-07 17:20:31.452538 -07:00
+  tag_id: 1028
+  indexed_content: "'4':5 'tabl':2A 'content':4A"
+  updated_at: 2009-12-08 12:46:39.201144 -07:00
   indexed_name: "'tabl':2 'content':4"
   trash: false
   codename: 
   references_expired: 
-  reader_id: 3
+  reader_id: 1
   pattern_keys: 
-  id: 279
-  current_revision_id: 3871
-  created_by: 4
+  id: 13208
+  current_revision_id: 69143
+  created_by: 9
   type: Number
-  trunk_id: 274
+  trunk_id: 13203
   extension_type: 
-  updated_by: 4
+  updated_by: 9
   settings: 
   key: "*all+*table_of_content"
   extension_id: 
@@ -2027,23 +2027,23 @@ cards_001:
 cards_002: 
   reader_type: Role
   name: "*community+*right+*content"
-  created_at: 2009-04-06 14:11:12.920280 -06:00
-  tag_id: 317
-  indexed_content: "'tab':19 'tag':38,42,45 'item':9,29 'left':4,7,11,14,27,31,34,37,39,44 'link':10,30 'nake':20 'name':40 'open':36 'notif':26 'relat':18 'right':2A 'editor':5,6,8 'content':3A 'discuss':32,33,35 'watcher':12,13,15,28 'instruct':16 'wagn.org':22 'communiti':1A '/wagn/notification|learn':23 'wagn.org/wagn/notification':21"
-  updated_at: 2011-01-31 10:51:00.631015 -07:00
+  created_at: 2009-04-23 15:03:12.137981 -06:00
+  tag_id: 14566
+  indexed_content: "'tag':18,22,25 'item':9 'left':4,7,11,14,17,19,24 'link':10 'name':20 'open':16 'right':2A 'editor':5,6,8 'content':3A 'discuss':12,13,15 'communiti':1A"
+  updated_at: 2010-04-16 22:31:38.694890 -06:00
   indexed_name: "'right':2 'content':3 'communiti':1"
   trash: false
   codename: 
   references_expired: 
-  reader_id: 3
+  reader_id: 1
   pattern_keys: 
-  id: 116
-  current_revision_id: 3870
-  created_by: 1
+  id: 7958
+  current_revision_id: 42950
+  created_by: 9
   type: Basic
-  trunk_id: 340
+  trunk_id: 14716
   extension_type: HardTemplate
-  updated_by: 3
+  updated_by: 9
   settings: 
   key: "*community+*right+*content"
   extension_id: 
@@ -2102,23 +2102,23 @@ cards_110:
 cards_004: 
   reader_type: Role
   name: watcher instructions for related tab+*right+*content
-  created_at: 2011-01-20 01:38:32.941827 -07:00
+  created_at: 2011-01-31 12:20:11.587361 -07:00
   tag_id: 317
-  indexed_content: "'tab':5A 'left':12 'name':13 'chang':15 'email':10 'peopl':8 'relat':4A 'right':6A 'receiv':9 'content':7A 'watcher':1A 'instruct':2A"
-  updated_at: 2011-01-31 10:49:52.797732 -07:00
-  indexed_name: "'tab':5 'relat':4 'right':6 'content':7 'watcher':1 'instruct':2"
+  indexed_content: 
+  updated_at: 2011-01-31 12:20:12.062207 -07:00
+  indexed_name: 
   trash: false
   codename: 
   references_expired: 
-  reader_id: 3
+  reader_id: 5
   pattern_keys: 
-  id: 402
-  current_revision_id: 3867
-  created_by: 4
+  id: 16130
+  current_revision_id: 84276
+  created_by: 9
   type: Phrase
-  trunk_id: 401
+  trunk_id: 16129
   extension_type: 
-  updated_by: 3
+  updated_by: 9
   settings: 
   key: watcher_instruction_for_related_tab+*right+*content
   extension_id: 
@@ -2202,23 +2202,23 @@ cards_005:
 cards_031: 
   reader_type: Role
   name: "*default"
-  created_at: 2010-04-15 18:42:28.870567 -06:00
+  created_at: 2010-04-16 22:25:34.722865 -06:00
   tag_id: 
   indexed_content: "'default':1A"
-  updated_at: 2010-05-02 03:06:46.446266 -06:00
+  updated_at: 2010-04-16 22:25:34.722865 -06:00
   indexed_name: "'default':1"
   trash: false
   codename: 
   references_expired: 
-  reader_id: 3
+  reader_id: 2
   pattern_keys: 
-  id: 318
-  current_revision_id: 3197
-  created_by: 1
+  id: 14595
+  current_revision_id: 74855
+  created_by: 9
   type: Setting
   trunk_id: 
   extension_type: 
-  updated_by: 4
+  updated_by: 9
   settings: 
   key: "*default"
   extension_id: 
@@ -2277,23 +2277,23 @@ cards_006:
 cards_032: 
   reader_type: Role
   name: "*content"
-  created_at: 2010-04-15 18:42:28.310535 -06:00
+  created_at: 2010-04-14 11:32:39.948142 -06:00
   tag_id: 
   indexed_content: "'content':1A"
-  updated_at: 2010-05-02 03:06:29.897323 -06:00
+  updated_at: 2010-05-10 13:17:29.346044 -06:00
   indexed_name: "'content':1"
   trash: false
   codename: 
   references_expired: 
-  reader_id: 3
+  reader_id: 1
   pattern_keys: 
-  id: 317
-  current_revision_id: 3196
-  created_by: 1
+  id: 14566
+  current_revision_id: 74757
+  created_by: 6
   type: Setting
   trunk_id: 
   extension_type: 
-  updated_by: 4
+  updated_by: 7
   settings: 
   key: "*content"
   extension_id: 
@@ -3427,23 +3427,23 @@ cards_146:
 cards_172: 
   reader_type: Role
   name: "*all"
-  created_at: 2009-12-02 16:02:55.316610 -07:00
+  created_at: 2009-12-07 17:06:24.173807 -07:00
   tag_id: 
   indexed_content: ""
-  updated_at: 2009-12-17 11:52:04.731074 -07:00
+  updated_at: 2009-12-17 11:57:53.366557 -07:00
   indexed_name: ""
   trash: false
   codename: 
   references_expired: 
-  reader_id: 3
+  reader_id: 1
   pattern_keys: 
-  id: 274
-  current_revision_id: 3088
-  created_by: 1
+  id: 13203
+  current_revision_id: 69665
+  created_by: 9
   type: Set
   trunk_id: 
   extension_type: 
-  updated_by: 1
+  updated_by: 9
   settings: 
   key: "*all"
   extension_id: 
@@ -6127,23 +6127,23 @@ cards_194:
 cards_088: 
   reader_type: Role
   name: "*all+*default"
-  created_at: 2009-04-06 14:11:12.920280 -06:00
-  tag_id: 318
+  created_at: 2007-09-27 10:39:57.453742 -06:00
+  tag_id: 14595
   indexed_content: "'default':2A"
-  updated_at: 2010-04-17 12:09:07.634862 -06:00
+  updated_at: 2010-04-17 12:34:06.381436 -06:00
   indexed_name: "'default':2"
   trash: false
   codename: 
   references_expired: 
-  reader_id: 3
+  reader_id: 1
   pattern_keys: 
-  id: 28
-  current_revision_id: 28
+  id: 906
+  current_revision_id: 6658
   created_by: 1
   type: Basic
-  trunk_id: 274
+  trunk_id: 13203
   extension_type: SoftTemplate
-  updated_by: 1
+  updated_by: 9
   settings: 
   key: "*all+*default"
   extension_id: 

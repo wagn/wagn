@@ -1,6 +1,6 @@
 <span id="logging"> <%#ENGLISH%>
   <% if logged_in? %>
-    <%= link_to "My Card: #{current_user.card.name}", '/me', :id=>'my-card-link' %>
+    <%= link_to "My Card: #{User.current_user.card.name}", '/me', :id=>'my-card-link' %>
     <% if System.ok?(:create_accounts) %>
       <%= link_to 'Invite a Friend', {:controller=>'account', :action=>'invite'}, :id=>'invite-a-friend-link' %>
     <% end %>   

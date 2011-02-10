@@ -55,7 +55,16 @@ describe Renderer, "" do
     it "renders layout card without recursing" do
       User.as :wagbot do
         layout_card = Card.create(:name=>'tmp layout', :type=>'Html', :content=>"Mainly {{_main|naked}}")
-        Renderer.new(layout_card).render(:layout, :main_card=>layout_card).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
+         Renderer.new(layout_card).render(:layout, :main_card=>layout_card).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
+       end
+     end
+ 
+     it "renders layout card elements" do
+       User.as :wagbot do
+         card = Card['A+B']
+         layout_card = Card['Default Layout']
+         Renderer.new(layout_card).render(:layout, :main_card=>card).should == 
+           '' ## should look for all the standard buildins
       end
     end
 
@@ -285,6 +294,34 @@ describe Renderer, "" do
           span(:name=>"foot") { script(type="text/javascript") {} }
         }
       end
+    end
+  end
+ 
+  it "should render internal builtins" do
+    render_card( :naked, :content=>%{
+<div>
+  <span name="head">
+    Head:{{*head|naked}}
+  </span>
+  <span name="now">
+    Now:{{*now}}
+  </span>
+  <span name="version">
+    Version:{{*version|naked}}
+  </span>
+  <span name="foot">
+    Foot:{{*foot|naked}}
+  </span>
+</div>} ).should be_html_with do
+      div {
+        span(:name=>'head') do
+          link(:rel=>'alternate', :title=>'Edit this page!', :href=>'/card/edit/*head') {}
+        end
+        # FIXME: can't figure out how to do a match on part of text
+        #span(/^\s*#{Time.now.strftime('%A, %B %d, %Y')}/, :name=>'now') {}
+        span( "Version:#{Wagn::Version.full}", :name=>'version') {}
+        span(:name=>"foot") { script(:type=>"text/javascript") {} }
+      }
     end
   end
 

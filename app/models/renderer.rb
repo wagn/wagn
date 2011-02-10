@@ -177,10 +177,10 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     sub
   end
 
-  def inclusion_map(opts)
-    return @inclusion_map if @inclusion_map
+  def inclusion_map(opts=nil)
+    return @inclusion_map if @inclusion_map and not opts
     return @inclusion_map = self.class.view_aliases unless opts and
-      @inclusion_map = opts[:inclusion_view_overrides]
+      (@inclusion_map = opts[:inclusion_view_overrides])
     self.class.view_aliases.each_pair do |known, canonical|
       if @inclusion_map.has_key?(canonical)
         @inclusion_map[known] = @inclusion_map[canonical]

@@ -7,9 +7,9 @@ module Cardlib
       
         cattr_accessor :attachment_model
         attr_accessor :attachment_id
-    	  after_save :update_attachment
-  	                                  
-    	  self.attachment_model = klass
+           after_save :update_attachment
+  
+           self.attachment_model = klass
       end
     end
 

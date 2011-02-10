@@ -1,7 +1,4 @@
 module Card
-	class Ruby < Base
-    def cacheable?
-      false
-    end
-	end
+  class Ruby < Base
+  end
 end

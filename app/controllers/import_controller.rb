@@ -1,7 +1,7 @@
 class ImportController < ApplicationController
-  def index           
+  def index
   end
-  
+
   def import
     if Cardlib::Import.csv( :cardtype=>params[:cardtype], :data=>params[:data] )
       flash[:notice] = "Imported. Woooo!"

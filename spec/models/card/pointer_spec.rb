@@ -5,42 +5,42 @@ describe Card::Pointer do
     User.as :joe_user
   end
   
-  context "add_reference" do
+  context "add_item" do
     it "add to empty ref list" do
       @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>""
-      @pointer.add_reference "John"
+      @pointer.add_item "John"
       assert_equal "[[John]]", @pointer.content
     end
 
     it "add to existing ref list" do
       @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>"[[Jane]]"
-      @pointer.add_reference "John"
+      @pointer.add_item "John"
       assert_equal "[[Jane]]\n[[John]]", @pointer.content
     end
     
     it "not add duplicate entries" do
       @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>"[[Jane]]"
-      @pointer.add_reference "Jane"
+      @pointer.add_item "Jane"
       assert_equal "[[Jane]]", @pointer.content
     end
   end       
   
-  context "remove_reference" do
+  context "drop_item" do
     it "remove the link" do
       @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>"[[Jane]]\n[[John]]"
-      @pointer.remove_reference "Jane" 
+      @pointer.drop_item "Jane" 
       assert_equal "[[John]]", @pointer.content
     end                                
     
     it "not fail on non-existent reference" do
       @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>"[[Jane]]\n[[John]]"
-      @pointer.remove_reference "Bigfoot" 
+      @pointer.drop_item "Bigfoot" 
       assert_equal "[[Jane]]\n[[John]]", @pointer.content
     end
 
     it "remove the last link" do
       @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>"[[Jane]]"
-      @pointer.remove_reference "Jane"
+      @pointer.drop_item "Jane"
       assert_equal "", @pointer.content
     end
   end
@@ -48,7 +48,7 @@ describe Card::Pointer do
   context "watching" do
     it "not break on permissions" do
       watchers = Card.fetch_or_new "Home+*watchers"
-      watchers.add_reference User.current_user.card.name
+      watchers.add_item User.current_user.card.name
       assert_equal '[[Joe User]]', watchers.content
     end
   end

@@ -1,20 +1,20 @@
 <%-
   cards   ||= []
-	duplicates ||= []
+  duplicates ||= []
   context ||= 'default'
   title   ||= ''
   instruction ||= nil  
-	view  ||= :closed    
-#	raise("invalid view") unless [:open, :closed, :content, :name, :link, :change].include?(view)
-	
+  view  ||= :closed    
+#  raise("invalid view") unless [:open, :closed, :content, :name, :link, :change].include?(view)
+  
 -%>
 
 <% paging = capture do %>
-  <%= render :partial=>'/types/search/paging', :locals=>{:card=>card} %>
+  <%= render :partial=>'/types/search/paging', :locals=>{:card=>card, :slot=>slot} %>
 <% end %>
 
 <% if !title.empty? %> 
-	<% @title=title %>
+  <% @title=title %>
   <h1 class="page-header"><%= title %></h1>
 <% end %>       
 
@@ -28,12 +28,14 @@
   <div class="search-no-results"></div>
 <% else %>    
   <%= paging %>
-	<div class="search-result-list">
-		<% cards.each do |c| %>     	
-			<div class="search-result-item item-<%= view %>"><%= slot.process_inclusion(c, {:view=>view, :showname=>c.name }) %></div>
-		<% end %>     
-	</div>
-	<%= paging %>
+  <div class="search-result-list">
+    <% cards.each do |c| %>       
+      <div class="search-result-item item-<%= view %>">
+        <%= slot.process_inclusion(c, :view=>view) %>
+      </div>
+    <% end %>     
+  </div>
+  <%= paging %>
   
 <% end %>
 

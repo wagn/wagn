@@ -16,7 +16,7 @@ namespace :db do
         else
           print "Updating references for '#{batch.first.name}' to '#{batch.last.name}' ... "; $stdout.flush
           batch.each do |card|
-            Renderer.new.render(card,"",update_references=true)
+            Renderer.new(card).update_references
           end
           count_updated+=batchsize
           puts "done.  \t\t#{count_updated} total updated"

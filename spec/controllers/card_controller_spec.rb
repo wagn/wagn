@@ -128,6 +128,22 @@ describe CardController do
         Card.find_by_name("sss").should_not be_nil
         Card.find_by_name("sss+text").should_not be_nil
       end
+
+      it "creates card with hard template" do
+        pending
+        Card.create!(:name=>"Fruit+*type+*content", :content=>"{{+kind}} {{+color}} {{+is citrus}} {{+edible}}")
+        post :create, "card"=>{"name"=>"sssHT", "type"=>"Fruit"},
+         "cards"=>{"~plus~kind"=>{"content"=>"<p>apple</p>"}}, 
+         "cards"=>{"~plus~color"=>{"content"=>"<p>red</p>"}}, 
+         "cards"=>{"~plus~is citrus"=>{"content"=>"<p>false</p>"}}, 
+         "cards"=>{"~plus~edible"=>{"content"=>"<p>true</p>"}}, 
+         "content_to_replace"=>"",
+         "context"=>"main_1", 
+         "multi_edit"=>"true", "view"=>"open"
+        assert_response 418    
+        Card.find_by_name("sssHT").should_not be_nil
+        Card.find_by_name("sssHT+kind").should_not be_nil
+      end
     end
    
     it "renders errors if create fails" do
@@ -245,10 +261,10 @@ describe CardController do
         assert_template 'missing'
       end
       
-      it "invokes before_show hook" do
-        Wagn::Hook.should_receive(:call).with(:before_show, "*all", instance_of(CardController))
-        get :show, {:id=>'Sample_Basic'}
-      end
+      #it "invokes before_show hook" do
+      #  Wagn::Hook.should_receive(:call).with(:before_show, "*all", instance_of(CardController))
+      #  get :show, {:id=>'Sample_Basic'}
+      #end
     end
     
     

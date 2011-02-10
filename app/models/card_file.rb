@@ -7,7 +7,7 @@ class CardFile < ActiveRecord::Base
   
   def preview
     "<a href=\"#{public_filename}\">#{filename}</a>"
-	end
+  end
 
   def bucket_name
     (System.multihost ? "#{System.wagn_name}." : "") + s3_config[:bucket_name]

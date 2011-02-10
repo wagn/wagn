@@ -61,7 +61,6 @@ module Wagn
         Card.cache, Role.cache = Marshal.load(@@frozen) if preload_cache?
       end
 
-
       def generate_cache_id
         ((Time.now.to_f * 100).to_i).to_s + ('a'..'z').to_a[rand(26)] + ('a'..'z').to_a[rand(26)]
       end
@@ -111,12 +110,14 @@ module Wagn
     def read key
       return @local[key] unless @store
       fetch_local(key) do
+        #        Marshal.load(@store.read(@prefix + key))
         @store.read(@prefix + key)
       end
     end
 
     def write key, value
       self.write_local(key, value)
+      #@store.write(@prefix + key, Marshal.dump(value))  if @store
       @store.write(@prefix + key, value)  if @store
     end
 

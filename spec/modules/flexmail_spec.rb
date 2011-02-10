@@ -55,8 +55,9 @@ describe Flexmail do
       c.permit(:create, Role[:anon])
       c.permit(:read,   Role[:auth]) 
       c.save!
-      Card.create! :name=>'Trigger+*tform', :extension_type=>'HardTemplate', :content=>''
+      Card.create! :name=>'Trigger+*type+*content', :content=>''
       Card::Pointer.create! :name => "Trigger+*type+*send", :content => "[[mailconfig]]"
+
       User.as :anon
     end
         
@@ -99,7 +100,7 @@ describe Flexmail do
         
         Rails.logger.level = ActiveSupport::BufferedLogger::Severity::DEBUG
         Mailer.should_receive(:deliver_flexmail).with(hash_including(:message=>"this had betta work"))
-        c = Card.create! :name => "ToYou", :type => "Email", :content => "had betta work"
+        Card.create!(:name => "ToYou", :type => "Email", :content => "had betta work")
       end
       
     end

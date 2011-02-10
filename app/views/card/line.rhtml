@@ -1,2 +1,2 @@
-<%= get_slot.render(:line, :add_slot =>!slot.xhr?, :add_javascript=>true ) %>
+<%= get_slot.render(:closed, :add_javascript=>true ) %>
 <%= javascript_tag("Wagn.paragraph_to_line(getSlotFromContext('#{@context}'))") %>

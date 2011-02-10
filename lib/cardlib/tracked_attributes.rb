@@ -92,6 +92,8 @@ module Cardlib
       new_content ||= '' 
       
       # FIXME?: this code written under influence. may require adjustment
+      # Uncommenting this breaks spec/helpers/slot_spec.rb w/float:<object>..
+      #   it strips wiki content even in transcludes
       new_content =  WikiContent.clean_html!(new_content) if clean_html?
       
       clear_drafts if current_revision_id
@@ -134,7 +136,7 @@ module Cardlib
       # card id to create the revision.  call it again now that we have the id.
       
       #return unless new_card?  # because create callbacks are also called in type transitions
-      return if on_create_skip_revision
+      #return if on_create_skip_revision
       set_content updates[:content]
       updates.clear :content 
       # normally the save would happen after set_content. in this case, update manually:
@@ -180,7 +182,7 @@ module Cardlib
             
             ActiveRecord::Base.logger.info("------------------ UPDATE REFERRER #{card.name}  ------------------------")
             next if card.hard_template
-            card.content = Renderer.new.replace_references( card, @old_name, name )
+            card.content = Renderer.new(card).replace_references( @old_name, name )
             card.save! unless card==self
           end
         end
@@ -198,16 +200,18 @@ module Cardlib
       #puts "AFTER CREATE: #{base.after_create}"
       #base.before_save = base.before_save                           
       base.after_save :cascade_name_changes   
-      base.class_eval do 
-        attr_accessor :on_create_skip_revision,
-           :on_update_allow_duplicate_revisions
+      #base.class_eval do 
+       # attr_accessor :on_create_skip_revision
         #
         #puts "CALLING ALIAS METHOD CHAIN"
         #alias_method_chain :save, :tracking
         #alias_method_chain :save!, :tracking
-        
+ 
+      #end
+      base.after_create() do |card|
+        Wagn::Hook.call :after_create, card
       end
     end    
-    
+
   end
 end

@@ -20,10 +20,9 @@ module Card
 #    cattr_accessor :cache  
 #    self.cache = {}
 
-   
     [:before_validation, :before_validation_on_create, :after_validation, 
-      :after_validation_on_create, :before_save, :before_create, :after_create,
-      :after_save
+      :after_validation_on_create, :before_save, :before_create, :after_save,
+      :after_create,
     ].each do |callback|
       self.send(callback) do 
         Rails.logger.debug "Card#callback #{callback}"
@@ -50,17 +49,18 @@ module Card
                
     #before_validation_on_create :set_needed_defaults
     
-    attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :from_trash,
-      :update_referencers, :allow_type_change, :virtual, :builtin, :broken_type, :skip_defaults, :loaded_trunk
+    attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
+      :from_trash, :update_referencers, :allow_type_change, :virtual,
+      :builtin, :broken_type, :skip_defaults, :loaded_trunk, :blank_revision
 
     # setup hooks on AR callbacks
-    [:before_save, :before_create, :after_save, :after_create].each do |hookname| 
+    # Note: :after_create is called from end of set_initial_content now
+    [:before_save, :before_create, :after_save ].each do |hookname| 
       self.send( hookname ) do |card|
         Wagn::Hook.call hookname, card
       end
     end
       
-        
     # apparently callbacks defined this way are called last.
     # that's what we want for this one.  
     def after_save 
@@ -207,7 +207,7 @@ module Card
           end
         
         args.delete('type')
-        return type, typetype 
+        return type, typetype
       end
       
       def get_name_from_args(args={})
@@ -221,18 +221,17 @@ module Card
       end
       
       def find_or_create!(args={})
-        find_or_create(args) || raise(RecordNotSaved)
+        find_or_create(args) || raise(ActiveRecord::RecordNotSaved)
       end
       
       def find_or_create(args={})
         raise "find or create must have name" unless args[:name]
-        c = Card.fetch_or_create(args[:name], {}, args)
+        Card.fetch_or_create(args[:name], {}, args)
       end                  
     end
 
-
     def save_with_trash!
-      save || raise(RecordNotSaved)
+      save || raise(ActiveRecord::RecordNotSaved)
     end
     alias_method_chain :save!, :trash
 
@@ -257,12 +256,14 @@ module Card
     def multi_create(cards)
       Wagn::Hook.call :before_multi_create, self, cards
       multi_save(cards)
+      Rails.logger.info "Card#callback after_multi_create"
       Wagn::Hook.call :after_multi_create, self
     end
     
     def multi_update(cards)
       Wagn::Hook.call :before_multi_update, self, cards
       multi_save(cards)
+      Rails.logger.info "Card#callback after_multi_update"
       Wagn::Hook.call :after_multi_update, self
     end
     
@@ -270,16 +271,15 @@ module Card
       Wagn::Hook.call :before_multi_save, self, cards
       cards.each_pair do |name, opts|
         opts[:content] ||= ""
-        # make sure blank content doesn't override pointee assignments if they are present
-        if (opts['pointee'].present? or opts['pointees'].present?) 
-          opts.delete('content')
-        end                                                                               
+        # make sure blank content doesn't override first assignments if they are present
+        #if (opts['first'].present? or opts['items'].present?) 
+        #  opts.delete('content')
+        #end                                                                               
         name = name.post_cgi.to_absolute(self.name)
         logger.info "multi update working on #{name}: #{opts.inspect}"
         if card = Card.fetch(name, :skip_virtual=>true)
           card.update_attributes(opts)
-        elsif opts[:pointee].present? or opts[:pointees].present? or  
-                (opts[:content].present? and opts[:content].strip.present?)
+        elsif opts[:content].present? and opts[:content].strip.present?
           opts[:name] = name                
           if ::Cardtype.create_ok?( self.type ) && !::Cardtype.create_ok?( Card.new(opts).type )
             ::User.as(:wagbot) { Card.create(opts) }
@@ -293,6 +293,7 @@ module Card
           end
         end
       end  
+      Rails.logger.info "Card#callback after_multi_save"
       Wagn::Hook.call :after_multi_save, self, cards
     end
 
@@ -379,7 +380,7 @@ module Card
       (dependents + [self]).plot(:referencers).flatten.uniq
     end
 
-    def card
+    def card  ## is this still necessary or just legacy from CachedCards?
       self
     end
 
@@ -416,21 +417,21 @@ module Card
     end
     
     # I don't really like this.. 
-    def attribute_card( attr_name )
-      ::User.as :wagbot do
-        Card.fetch( name + JOINT + attr_name , :skip_virtual => true)
-      end
-    end
+    #def attribute_card( attr_name )
+    #  ::User.as :wagbot do
+    #    Card.fetch( name + JOINT + attr_name , :skip_virtual => true)
+    #  end
+    #end
      
     def revised_at
-      current_revision ? current_revision.updated_at : Time.now
+      cached_revision ? cached_revision.updated_at : Time.now
     end
 
     # Dynamic Attributes ------------------------------------------------------        
     def skip_defaults?
       # when Calling Card.new don't set defaults.  this is for performance reasons when loading
       # missing cards. 
-      !!skip_defaults
+      !!skip_defaults  ##ok.  but this line is bizarre.
     end
 
     def known?
@@ -445,15 +446,30 @@ module Card
       @builtin
     end
     
-    def clean_html?
-      true
+    def content   
+      new_card? ? ok!(:create_me) : ok!(:read)
+      cached_revision.new_record? ? "" : cached_revision.content
+    end   
+    
+    def cached_revision
+      case
+      when (@cached_revision and @cached_revision.id==current_revision_id); 
+      when (@cached_revision=Card.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
+      else
+        @cached_revision = current_revision || get_blank_revision
+        Card.cache.write("#{key}-content", @cached_revision)
+      end
+      @cached_revision
     end
     
-    def content   
-      new_card? ? ok!(:create_me) : ok!(:read) 
-      current_revision ? current_revision.content : ""
-    end   
-        
+    def get_blank_revision
+      @blank_revision ||= Revision.new
+    end
+    
+    def raw_content
+      templated_content || content
+    end
+
     def type
       read_attribute :type
     end
@@ -488,6 +504,25 @@ module Card
     def mocha_inspect
       to_s
     end
+
+    def repair_key
+      ::User.as :wagbot do
+        correct_key = name.to_key
+        current_key = key
+        return self if current_key==correct_key
+
+        saved =   ( self.key  = correct_key and self.save! )
+        saved ||= ( self.name = current_key and self.save! )
+
+        saved ? self.dependents.each { |c| c.repair_key } : self.name = "BROKEN KEY: #{name}"
+        self
+      end
+    rescue
+      self
+    end
+
+
+
      
    protected
     def clear_drafts
@@ -513,7 +548,9 @@ module Card
         self.errors.add attr, err
       end
     end
-       
+    
+    
+    
     # Because of the way it chains methods, 'tracks' needs to come after
     # all the basic method definitions, and validations have to come after
     # that because they depend on some of the tracking methods.
@@ -564,11 +601,6 @@ module Card
     validates_each :content do |rec, attr, value|
       if rec.updates.for?(:content)
         rec.send :validate_content, value
-        begin 
-          res = Renderer.new.render(rec, value, update_references=false)
-        rescue Exception=>e
-          rec.errors.add :content, "#{e.class}: #{e.message}"
-        end   
       end
     end
 

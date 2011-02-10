@@ -60,7 +60,12 @@ module Cardlib
     def save_with_permissions!
       Rails.logger.debug "Card#save_with_permissions!"
       if approved?
+begin
         save_without_permissions!
+rescue Exception => e
+  Rails.logger.info "save_with_perm:#{e.message} #{name} #{Kernel.caller.join("\n")}"
+  raise e
+end
       else
         raise ::Card::PermissionDenied.new(self)
       end

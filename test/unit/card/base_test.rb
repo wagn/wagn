@@ -30,12 +30,12 @@ class Card::BaseTest < ActiveSupport::TestCase
     #assert_equal 0, Card::Basic.find_all_by_trash(false).size
   end
 
-  def test_attribute_card
-    alpha, beta = Card.create(:name=>'alpha'), Card.create(:name=>'beta')
-    assert_nil alpha.attribute_card('beta')
-    Card.create :name=>'alpha+beta'   
-    assert_instance_of Card::Basic, alpha.attribute_card('beta')
-  end
+  #def test_attribute_card
+  #  alpha, beta = Card.create(:name=>'alpha'), Card.create(:name=>'beta')
+  #  assert_nil alpha.attribute_card('beta')
+  #  Card.create :name=>'alpha+beta'   
+  #  assert_instance_of Card::Basic, alpha.attribute_card('beta')
+  #end
 
   def test_create
     alpha = Card::Basic.new :name=>'alpha', :content=>'alpha'

@@ -1,18 +1,18 @@
 class InvitationError < StandardError; end
 
 class AccountController < ApplicationController
-  before_filter :login_required, :only => [ :invite, :update ] 
+  before_filter :login_required, :only => [ :invite, :update ]
   helper :wagn
-  
+
   def signup
     raise(Wagn::Oops, "You have to sign out before signing up for a new Account") if logged_in?  #ENGLISH
-    raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless Card::InvitationRequest.create_ok? #ENGLISH 
+    raise(Wagn::PermissionDenied, "Sorry, no Signup allowed") unless Card::InvitationRequest.create_ok? #ENGLISH
 
     user_args = (params[:user]||{}).merge(:status=>'pending').symbolize_keys
     @user = User.new( user_args ) #does not validate password
     card_args = (params[:card]||{}).merge(:typecode=>'InvitationRequest')
     @card = Card.new( card_args )
-    
+
     return unless request.post?
     return unless (captcha_required? ? verify_captcha(:model=>@user) : true)
 
@@ -20,11 +20,11 @@ class AccountController < ApplicationController
     return unless @user.errors.empty?
     @user, @card = User.create_with_card( user_args, card_args )
     return unless @user.errors.empty?
-              
+
     User.as :wagbot  do ## in case user doesn't have permission for included cardtypes.  For now letting signup proceed even if there are errors on multi-update
-      @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards]  
+      @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards]
     end
-  
+
     if System.ok?(:create_accounts)       #complete the signup now
       email_args = { :message => System.setting('*signup+*message') || "Thanks for signing up to #{System.site_title}!",  #ENGLISH
                      :subject => System.setting('*signup+*subject') || "Account info for #{System.site_title}!" }  #ENGLISH
@@ -37,17 +37,17 @@ class AccountController < ApplicationController
       redirect_to (System.setting('*request+*thanks') || '/')
     end
   end
-  
+
 #  def thanks(card_name)
 #    thanks = System.setting(card_name)
 #    thanks
 #  end
-  
+
   def accept
     @card = Card.fetch(params[:card][:key], :skip_virtual=>true) or raise(Wagn::NotFound, "Can't find this Account Request")  #ENGLISH
     @user = @card.extension or raise(Wagn::Oops, "This card doesn't have an account to approve")  #ENGLISH
     System.ok?(:create_accounts) or raise(Wagn::PermissionDenied, "You need permission to create accounts")  #ENGLISH
-    
+
     if request.post?
       @user.accept(params[:email])
       if @user.errors.empty? #SUCCESS
@@ -57,11 +57,11 @@ class AccountController < ApplicationController
     end
     render :action=>'invite'
   end
-  
+
   def invite
     System.ok?(:create_accounts) or raise(Wagn::PermissionDenied, "You need permission to create")  #ENGLISH
-    
-    @user, @card = request.post? ? 
+
+    @user, @card = request.post? ?
       User.create_with_card( params[:user], params[:card] ) :
       [User.new, Card.new(:skip_defaults=>true)]
     if request.post? and @user.errors.empty?
@@ -70,7 +70,7 @@ class AccountController < ApplicationController
       #p @user.errors.full_messages.join('. ')
     end
   end
-  
+
 
   def signin
     #if false and using_open_id?
@@ -86,7 +86,7 @@ class AccountController < ApplicationController
     flash[:notice] = "You have been logged out." #ENGLISH
     redirect_to '/'  # previous_location here can cause infinite loop.  ##  Really?  Shouldn't.  -efm
   end
-  
+
   def forgot_password
     return unless request.post?
     @user = User.find_by_email(params[:email].downcase)
@@ -98,35 +98,35 @@ class AccountController < ApplicationController
       render :action=>'signin', :status=>403
     else
       @user.generate_password
-      @user.save!                       
+      @user.save!
       subject = "Password Reset"  #ENGLISH
       message = "You have been given a new temporary password.  " +  #ENGLISH
          "Please update your password once you've logged in. "
       Mailer.deliver_account_info(@user, subject, message)
       flash[:notice] = "A new temporary password has been set on your account and sent to your email address"  #ENGLISH
       redirect_to previous_location
-    end  
+    end
   end
-        
+
 
 
   def update
     load_card
-    @user = @card.extension or raise("extension gotta be a user")    #ENGLISH      
-    element_id = params[:element]           
-    
+    @user = @card.extension or raise("extension gotta be a user")    #ENGLISH
+    element_id = params[:element]
+
     if @user.update_attributes params[:user]
       render :update do |page|
         page.wagn.card.find("#{element_id}").continue_save()
-      end 
-    else  
+      end
+    else
       error_message = render_to_string :inline=>'<%= error_messages_for :user %>'
       render :update do |page|
         page.wagn.messenger.note "Update user failed" + error_message  #ENGLISH
-        
+
       end
-    end    
-  end  
+    end
+  end
 
   def deny_all  ## DEPRECATED:  this method will not be long for this world.
     if System.ok?(:administrate_users)
@@ -136,14 +136,14 @@ class AccountController < ApplicationController
       redirect_to '/wagn/Account_Request'
     end
   end
-  
+
   def empty_trash ## DEPRECATED:  this method will not be long for this world.
     if System.ok?(:administrate_users)
       User.find_all_by_status('blocked').each do |user|
         card=Card.find_by_extension_type_and_extension_id('User',user.id)
         user.destroy                if (!card or card.trash)
         card.destroy_without_trash  if (card and card.trash)
-      end 
+      end
       redirect_to '/wagn/Account_Request'
     end
   end
@@ -171,7 +171,7 @@ class AccountController < ApplicationController
         "You need to have an account on Wagn already and set the OpenId in your options")
       return
     end
-       
+
     warn "GOING TO SERVER"
     authenticate_with_open_id do |result, identity_url|
       if result.successful?
@@ -181,8 +181,8 @@ class AccountController < ApplicationController
         failed_login result.message
       end
     end
-  end   
-  
+  end
+
   def authenticate_with_open_id(identity_url = params[:openid_url], options = {}, &block) #:doc:
     if params[:open_id_complete].nil?
       begin_open_id_authentication(normalize_url(identity_url), options, &block)
@@ -190,9 +190,9 @@ class AccountController < ApplicationController
       complete_open_id_authentication(&block)
     end
   end
-=end  
+=end
 
-  private  
+  private
 
     def successful_login
       flash[:notice] = "Welcome to #{System.site_title}"  #ENGLISH
@@ -203,5 +203,5 @@ class AccountController < ApplicationController
       flash[:warning] = message
       render :action=>'signin', :status=>403
     end
-        
+
 end

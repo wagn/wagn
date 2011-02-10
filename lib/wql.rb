@@ -49,9 +49,8 @@ class Wql
     :sort   => "",
     :dir    => "",
     :limit  => "",
-    :offset => "",  
-#    :group_tagging  => "",
-    :return => :list,
+    :offset => "",
+    :return => :card,
     :join   => :and,
     :view   => nil    # handled in interface-- ignore here
   }
@@ -89,21 +88,38 @@ class Wql
   end
   
   def run
-    if query[:return] == "name_content"
-      ActiveRecord::Base.connection.select_all( sql ).inject({}) do |h,x|
-        h[x["name"]] = x["content"]; h
+    rows = ActiveRecord::Base.connection.select_all( sql )
+    case (query[:return] || :card)
+    when :card
+      rows.map do |row|
+        card=
+          if query[:prepend] || query[:append]
+            cardname = [query[:prepend], row['name'], query[:append]].compact.join('+')
+            Card.fetch_or_new cardname, {}, :skip_defaults=>true
+          else
+            Card.fetch row['name'], :skip_virtual=>true
+          end
+        card.nil? ? Card.find_by_name_and_trash(row['name'],false).repair_key : card
       end
     else
-      results = Card.find_by_sql( sql )
-      if query[:prepend] || query[:append]
-        results = results.map do |card|
-          cardname = [query[:prepend], card.name, query[:append]].compact.join('+')
-          Card.fetch_or_new cardname, {}, :skip_defaults=>true
-        end
-      end
-      results
+      rows.map { |row| row[query[:return].to_s] }
     end
-  end
+  end  
+    
+    #if query[:return] == "name_content"
+    #  ActiveRecord::Base.connection.select_all( sql ).inject({}) do |h,x|
+    #    h[x["name"]] = x["content"]; h
+    #  end
+    #else
+    #  results = Card.find_by_sql( sql )
+    #  if query[:prepend] || query[:append]
+    #    results = results.map do |card|
+    #      cardname = [query[:prepend], card.name, query[:append]].compact.join('+')
+    #      Card.fetch_or_new cardname, {}, :skip_defaults=>true
+    #    end
+    #  end
+    #  results
+    #end
   
   class Spec 
     attr_accessor :spec
@@ -126,6 +142,7 @@ class Wql
     def match_prep(v,cardspec=self)
       cxn ||= ActiveRecord::Base.connection
       v=cardspec.root.params['_keyword'] if v=='_keyword' 
+#Rails.logger.info "wql_match_prep _keyword (#{v.inspect}" v=='_keyword'
       v.strip!#FIXME - breaks if v is nil
       [cxn, v]
     end
@@ -172,7 +189,7 @@ class Wql
       #warn("<br>before clean #{(Hash===spec ? spec : spec.spec).keys}<br>")
       @query = clean(query.clone)
       @spec = @query.deep_clone
-      #warn("after clean #{@spec.inspect}<br>")
+      #warn("after clean #{@spec.inspect}")
       
       @sql = SqlStatement.new
       self
@@ -406,9 +423,11 @@ class Wql
 
     
     def count(val)
+Rails.logger.info "count(#{val.inspect})"
       raise(Wagn::WqlError, "count works only on outermost spec") if @parent
       join_spec = { :id=>SqlCond.new("#{table_alias}.id") } 
       val.each do |relation, subspec|
+Rails.logger.info "count iter(#{relation.inspect} #{subspec.inspect})"
         subquery = CardSpec.build(:_parent=>self, :return=>:count, relation.to_sym=>join_spec).merge(subspec).to_sql
         sql.fields << "#{subquery} as #{relation}_count"
       end
@@ -441,14 +460,16 @@ class Wql
       # Default fields/return handling   
       return "(" + sql.conditions.last + ")" if @mods[:return]==:condition     
       sql.fields.unshift case @mods[:return]
-        when :condition; 
+        #when :condition; 
+        when :card; "#{table_alias}.name"
+        when :name; "#{table_alias}.name"
         when :list; "#{table_alias}.*"
         when :count; "count(*)"
         when :first; "#{table_alias}.*"
         when :ids;   "id"
-        when :name_content;
-          sql.joins << "join revisions r on r.card_id = #{table_alias}.id"
-          "#{table_alias}.name, r.content"
+#        when :name_content;
+#          sql.joins << "join revisions r on r.card_id = #{table_alias}.id"
+#          "#{table_alias}.name, r.content"
         when :codename; 
           sql.joins << "join cardtypes as extension on extension.id=#{table_alias}.extension_id "
           'extension.class_name'
@@ -514,7 +535,7 @@ class Wql
                              
       # Misc
       sql.tables = "cards #{table_alias}"
-      sql.conditions << "#{table_alias}.trash='f'"
+      sql.conditions << "#{table_alias}.trash is false"
       sql.limit = @mods[:limit].blank? ? "" : "LIMIT #{@mods[:limit].to_i}"
       sql.offset = @mods[:offset].blank? ? "" : "OFFSET #{@mods[:offset].to_i}"
       

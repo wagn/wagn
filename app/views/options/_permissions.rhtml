@@ -7,9 +7,9 @@
 <% for task in tasks %>
   <% editable = card.ok? :permissions  %>
   <% slot.option(:name=>task.to_s+"er", 
-			:help=>"...can #{task == :comment ? 'comment on' : task} #{task == :create ? card.name+' cards' : 'this card'}", #ENGLISH
-			:label=>"", :editable=>editable) do %>
-		 <% who_can = card.who_can(task) %>
+      :help=>"...can #{task == :comment ? 'comment on' : task} #{task == :create ? card.name+' cards' : 'this card'}", #ENGLISH
+      :label=>"", :editable=>editable) do %>
+     <% who_can = card.who_can(task) %>
      <% if editable %>
        <span id="<%= params[:element] %>-<%= task %>-select">
          <%= select_tag "permissions[#{task}]", permission_options_for( card, task, who_can) %>

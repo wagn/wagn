@@ -1,3 +1,19 @@
+== 1.5.2 (February 1, 2011)
+* see http://www.wagn.org/wagn/Wagn_1_5+2
+* refactor inclusion processing
+* Make Slot a Model and Renderer Subclass
+* better handling of RSS feeds of Searches returning Virtual cards
+* process markup on items in forms that are Pointers
+* translate Pointer content in JavaScript
+* remove config subtab
+* fix layout=noside
+* fix *options on new cards
+* simple url for text pages like css
+* make rendering limits catch recursions only
+* speed up tests
+* recreate trashed cards when plus card is created
+* right part of trashed card can't rename to plus card
+
 === 1.5.1 (November 19, 2010)
 * refactored / debugged trash handling
 * fixes to cardname/codename cardtype bugs

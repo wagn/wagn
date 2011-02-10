@@ -19,25 +19,13 @@ module Cardlib
 
     def soft_template?
       name && name =~ /\*default/
-    end
-
-	  def pointees( context = nil )
-	    User.as(:wagbot) do
-  	    links = content.split(/\n+/).map{ |x| x.gsub(/\[\[|\]\]/,'')}.map{|x|
-  	      context ? x.to_absolute(context) : x
-	      }
-	    end
-	  end
-	  
-	  def pointee
-	    pointees.first
-    end    
+    end   
     
     # FIXME: maybe this should be methods in individual classes?
     def list_items context = nil
       case self.type
       when "Pointer"
-        self.pointees( context ? context.name : self.name )
+        self.items( context ? context.name : self.name )
       when "Search"
         self.list_cards(context).map {|card| card.name }
       when "File","NimbbVideo"
@@ -64,12 +52,7 @@ module Cardlib
     end
     
     def contextual_content context = nil
-      context ||= self
-      #context.content = self.content
-      s=Slot.new(self, "main_1","view",nil, :base => context)
-      # FIXME: maybe slot.rb should have an additional view for this.
-      # ultimately we need to be able to process links and inclusions in an email/text friendly way
-      s.expand_inclusions(s.render(:naked_content))
+      Renderer.new(context).expand_inclusions(Renderer.new(self)._render_raw)
     end
 
     def cardtype_name

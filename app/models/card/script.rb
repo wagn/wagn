@@ -1,7 +1,4 @@
 module Card
-	class Script < Base         
-    def cacheable?
-      false
-    end
-	end
+  class Script < Base
+  end
 end

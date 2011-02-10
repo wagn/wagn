@@ -24,8 +24,7 @@ class Card::RemoveTest < ActiveSupport::TestCase
     assert Card["rta!+rtb"]
     assert !Card["rta!+rtb"].trash
     assert Card.find_by_key('rtb*trash').nil?  
-end   
-  
+  end   
   
   def test_multiple_trash_collision
     Card.create( :name => "alpha" ).destroy

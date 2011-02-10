@@ -12,6 +12,7 @@ module Notification
       @trunk_watchers = @trunk_watcher_watched_pairs.map(&:first)
       
       watcher_watched_pairs.reject {|p| @trunk_watchers.include?(p.first) }.each do |watcher, watched|
+        next unless watcher
         Mailer.deliver_change_notice( watcher, self, action, watched )
       end
 
@@ -19,7 +20,8 @@ module Notification
       if nested_edit
         nested_edit.nested_notifications << [ name, action ]
       else
-        @trunk_watcher_watched_pairs.each do |watcher, watched|
+        @trunk_watcher_watched_pairs.compact.each do |watcher, watched|
+          next unless watcher
           Mailer.deliver_change_notice( watcher, self.trunk, 'updated', watched, [[name, action]], self )
         end
       end
@@ -52,15 +54,15 @@ module Notification
     end
     
     def card_watchers 
-      pointees_from("#{name}+*watchers")
+      items_from("#{name}+*watchers")
     end
     
     def type_watchers
-      pointees_from(::Cardtype.name_for( self.type ) + "+*watchers" )
+      items_from(::Cardtype.name_for( self.type ) + "+*watchers" )
     end
     
-    def pointees_from( cardname )
-      (c = Card.fetch(cardname, :skip_virtual=>true)) ? c.pointees.reject{|x|x==''} : []
+    def items_from( cardname )
+      (c = Card.fetch(cardname, :skip_virtual=>true)) ? c.items.reject{|x|x==''} : []
     end  
       
     def watchers
@@ -94,12 +96,13 @@ module Notification
       me = User.current_user.card.name   
 
       if card.card_watchers.include?(me) or card.type != 'Cardtype' && card.watchers.include?(me)
-  			slot.link_to_action( "unwatch#{type_link}", 'unwatch', {:update=>slot.id("watch-link")},{
-  			  :title => "stop getting emails about changes to #{card.name}#{type_msg}"})
-  		else
-  			slot.link_to_action( "watch#{type_link}", 'watch', {:update=>slot.id("watch-link")},{
-          :title=>"get emails about changes to #{card.name}#{type_msg}" })
-  		end
+        slot.link_to_action( "unwatch#{type_link}", 'unwatch', {:update=>slot.id("watch-link")},{
+   :title => "stop getting emails about changes to #{card.name}#{type_msg}"})
+      else
+       slot.link_to_action( "watch#{type_link}", 'watch',
+         {:update=>slot.id("watch-link")},
+         {:title=>"get emails about changes to #{card.name}#{type_msg}" } )
+      end
     end
   end
 

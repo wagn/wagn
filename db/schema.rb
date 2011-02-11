@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110209295746) do
+ActiveRecord::Schema.define(:version => 20110209395915) do
 
   create_table "card_files", :force => true do |t|
     t.string   "filename"
@@ -37,11 +37,11 @@ ActiveRecord::Schema.define(:version => 20110209295746) do
 
   create_table "cards", :force => true do |t|
     t.integer  "trunk_id"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
     t.integer  "current_revision_id"
-    t.string   "name",                                   :null => false
-    t.string   "type",                                   :null => false
+    t.string   "name",                :null => false
+    t.string   "type",                :null => false
     t.integer  "extension_id"
     t.string   "extension_type"
     t.integer  "created_by"
@@ -49,8 +49,8 @@ ActiveRecord::Schema.define(:version => 20110209295746) do
     t.integer  "reader_id"
     t.string   "reader_type"
     t.integer  "tag_id"
-    t.string   "key",                                    :null => false
-    t.boolean  "trash",               :default => false, :null => false
+    t.string   "key",                 :null => false
+    t.boolean  "trash",               :null => false
     t.string   "appender_type"
     t.integer  "appender_id"
     t.integer  "references_expired"
@@ -59,7 +59,6 @@ ActiveRecord::Schema.define(:version => 20110209295746) do
     t.string   "settings"
     t.string   "codename"
     t.string   "pattern_keys"
-    t.string   "pattern_spec_key"
   end
 
   add_index "cards", ["extension_id", "extension_type"], :name => "cards_extension_index"
@@ -67,7 +66,6 @@ ActiveRecord::Schema.define(:version => 20110209295746) do
   add_index "cards", ["key"], :name => "cards_key_uniq", :unique => true
   add_index "cards", ["name"], :name => "cards_name_index"
   add_index "cards", ["name"], :name => "cards_name_uniq", :unique => true
-  add_index "cards", ["pattern_spec_key"], :name => "index_cards_on_pattern_spec_key"
   add_index "cards", ["reader_id"], :name => "card_reader_id_index"
   add_index "cards", ["reader_type"], :name => "card_reader_type_index"
   add_index "cards", ["tag_id"], :name => "index_cards_on_tag_id"

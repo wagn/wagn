@@ -1,4 +1,5 @@
 <div id="alerts">
+  <% flash = {:notice=>'notice', :warning=>'warning', :error=>'error'} unless @controller %>
   <div id="notice"><%= flash[:notice] %></div>
   <div id="error"><%= flash[:warning] %><%= flash[:error] %></div>  
 </div>

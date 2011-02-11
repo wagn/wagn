@@ -464,7 +464,7 @@ Rails.logger.info "count iter(#{relation.inspect} #{subspec.inspect})"
         when :card; "#{table_alias}.name"
         when :name; "#{table_alias}.name"
         when :list; "#{table_alias}.*"
-        when :count; "count(*)"
+        when :count; "count(*) as count"
         when :first; "#{table_alias}.*"
         when :ids;   "id"
 #        when :name_content;

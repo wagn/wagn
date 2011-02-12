@@ -412,7 +412,7 @@ class Renderer
     context = case
     when base; (base.respond_to?(:name) ? base.name : base)
     when options[:base]=='parent'
-      card.parent_name
+      card.name.parent_name
     else
       card.name
     end

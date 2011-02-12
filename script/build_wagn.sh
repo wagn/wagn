@@ -35,17 +35,17 @@ for db_config in config/cruise.*.database.yml; do
   echo DB: $db_config
 
   echo -n "Starting test/* at: "; date
-  if ! env RAILS_ENV=test rake test --trace 2>&1     |./script/test_filter | tee tst.out; then
+  if ! env RAILS_ENV=test rake test --trace 2>&1 | tee tst.out; then
     exit $?
   fi
 
   echo -n "Starting spec at: "; date
-  if ! env RAILS_ENV=test rake spec --trace 2>&1     |./script/test_filter | tee spc.out; then
+  if ! env RAILS_ENV=test rake spec --trace 2>&1 | tee spc.out; then
     exit $?
   fi
 
   echo -n "Starting cucumber at: "; date
-  if ! env RAILS_ENV=test rake cucumber --trace 2>&1 |./script/test_filter | tee cuc.out; then
+  if ! env RAILS_ENV=test rake cucumber --trace 2>&1 | tee cuc.out; then
     exit $?
   fi
 done

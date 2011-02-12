@@ -557,6 +557,7 @@ describe Slot do
       end
     end
 
+    # also need one for *alerts
   end  
 
 

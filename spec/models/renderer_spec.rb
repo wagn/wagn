@@ -6,12 +6,6 @@ describe Renderer, "" do
   def simplify_html string
     string.gsub(/\s*<!--[^>]*>\s*/, '').gsub(/\s*<\s*(\/?\w+)[^>]*>\s*/, '<\1>')
   end
-  
-  def render_content(content, view=:naked)
-    @card ||= Card.new
-    @card.content=content
-    Renderer.new(@card).render(view)
-  end
 
 #~~~~~~~~~~~~ special syntax ~~~~~~~~~~~#
 
@@ -23,35 +17,12 @@ describe Renderer, "" do
     it "invisible comment inclusions as blank" do
       render_content("{{## now you see nothing}}").should==''
     end
-    
-    it "missing relative inclusion is relative" do
-      c = Card.new :name => 'bad_include', :content => "{{+bad name missing}}"
-      Renderer.new(c).render(:naked).match(Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
-    end
-    
+
     it "visible comment inclusions as html comments" do
       render_content("{{# now you see me}}").should == '<!-- # now you see me -->'
       render_content("{{# -->}}").should == '<!-- # --&gt; -->'
     end
 
-    it "renders name with layout" do
-      c = Card.new :name => 'nameA', :content => "{{A|name}}"
-      Renderer.new(c, 'main_1').render_layout.should be_html_with do
-        html { body { p {"A"} } }
-      end
-      c = Card.new :name => 'openA', :content => "{{A|open}}"
-      Renderer.new(c, :context=>'main_1', :view=>'open').render_layout.should be_html_with do
-        body() {
-          div(:class=>"title-menu") {
-            a(:href=>"/wagn/A", :class=>"page-icon", :title=>"Go to: A") { }
-          }
-          span(:class=>"open-content content editOnDoubleClick") {
-            a(:class=>"known-card", :href=>"/wagn/Z") { }
-          }
-        }
-      end
-    end
-    
     it "css in inclusion syntax in wrapper" do
       c = Card.new :name => 'Afloatright', :content => "{{A|float:right}}"
       Slot.new(c).render( :naked ).should be_html_with do
@@ -66,7 +37,7 @@ describe Renderer, "" do
         div(:style => 'float:<object class="subject">;') {}
       end
     end
-    
+
     context "CGI variables" do
       it "substituted when present" do
         c = Card.new :name => 'cardNaked', :content => "{{_card+B|naked}}"
@@ -81,38 +52,79 @@ describe Renderer, "" do
          Renderer.new(layout_card).render(:layout, :main_card=>layout_card).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
       end
     end
+
+    it "renders layout card without recursing" do
+      User.as :wagbot do
+        layout_card = Card.create(:name=>'tmp layout', :type=>'Html', :content=>"Mainly {{_main|naked}}")
+        Slot.new(layout_card).render(:layout, :main_card=>layout_card).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
+      end
+    end
  
     it "renders layout card elements" do
       User.as :wagbot do
         card = Card['A+B']
         layout_card = Card['Default Layout']
-        Renderer.new(layout_card).render(:layout, :main_card=>card).should == 
-          '' ## should look for all the standard buildins
+        Slot.new(layout_card).render(:layout, :main_card=>card).should be_html_with do 
+     html() {
+       head() {
+       title() {
+         text('- My Wagn')
+         }
+       }
+
+       body(:id=>"wagn") {
+         div(:id=>"menu") {
+           a(:class=>"internal-link", :href=>"/") { text('Home') }
+           a(:class=>"internal-link", :href=>"/recent") { text('Recent') }
+
+       #<div base=\"self\" class=\"transcluded ALL TYPE-basic\" position=\"545d0f2\" style=\"\" view=\"content\">
+         form(:id=>"navbox_form", :action=>"/search") {
+         a(:id=>"navbox_image", :title=>"Search") {}
+           input(:name=>"navbox") {}
+         }
+     #</span></div> <span class=\"inclusion-error\">error rendering <a href=\"/wagn/*account_link\" title=\"#&lt;ActionView::TemplateError: 
+       }
+
+         #<div id=\"primary\">
+           #<div id=\"main\" context=\"main\"><div base=\"self\" cardId=\"435\" class=\"card-slot paragraph ALL TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b\" position=\"546336a\" style=\"\" view=\"open\">
+
+         a(:href=>"/wagn/A+B", :class=>"page-icon", :title=>"Go to: A+B") {}
+       #</div>
+
+       span(:class=>"open-content content editOnDoubleClick") { text('AlphaBeta') }
+
+     span(:class=>"notice") {}
+
+       div(:class=>"card-footer") {
+         span(:class=>"watch-link") {
+           a(:title=>"get emails about changes to A+B") { text("watch") }
+         }
+       }
+       div(:id=>"secondary") {}
+
+       div(:id=>"credit") { [ text("Wheeled by"), a() { text('Wagn') } ] }
+       }
+     }
+        end
       end
     end
-
-    it "not substituted when absent" do
-      c = Card.new :name => 'cardBname', :content => "{{_card+B|name}}"
-      Slot.new(c).render( :naked ).should == "_card+B"
-    end
   end
-
 
 #~~~~~~~~~~~~ Error handling ~~~~~~~~~~~~~~~~~~#
 
   context "Error handling" do
-    
+
     it "prevents infinite loops" do
       Card.create! :name => "n+a", :content=>"{{n+a|array}}"
       c = Card.new :name => 'naArray', :content => "{{n+a|array}}"
       Renderer.new(c).render( :naked ).should =~ /too deep/
     end
-    
+
     it "missing relative inclusion is relative" do
       c = Card.new :name => 'bad_include', :content => "{{+bad name missing}}"
       Renderer.new(c).render(:naked).match(Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
     end
-    
+
     it "renders deny for unpermitted cards" do
       restricted_card =
       User.as( :wagbot ) do
@@ -122,12 +134,18 @@ describe Renderer, "" do
         card
       end
       Renderer.new(restricted_card).render(:core).should be_html_with { span(:class=>'denied') }
-    end
-    
-    it "renders templates as raw" do
-      template = Card.new(:name=>'A+*right+*content', :content=>'[[link]] {{inclusion}}')
-      Renderer.new(template).render(:naked).should == '[[link]] {{inclusion}}'
-    end
+    end      
+  end
+
+#~~~~~~~~~~~~~ Standard views ~~~~~~~~~~~~~~~~#
+# (*all sets)
+
+
+  context "handles view" do
+
+    it("name"    ) { render_card(:name).should      == 'Tempo Rary' }
+    it("key"     ) { render_card(:key).should       == 'tempo_rary' }
+    it("linkname") { render_card(:linkname).should  == 'Tempo_Rary' }
 
     it "image tags of different sizes" do
       Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}
@@ -144,21 +162,8 @@ describe Renderer, "" do
       end
     end
 
-    describe "css in inclusion syntax" do
-      it "shows up" do
-        c = Card.new :name => 'Afloatright', :content => "{{A|float:right}}"
-        Renderer.new(c).render( :naked ).should be_html_with do
-          div(:style => 'float:right;') {}
-        end
-      end
-
-      # I want this test to show the explicit escaped HTML, but be_html_with seems to escape it already :-/
-      it "shows up with escaped HTML" do
-        c =Card.new :name => 'Afloat', :type => 'Html', :content => '{{A|float:<object class="subject">}}'
-        Renderer.new(c).render( :naked ).should be_html_with do
-          div(:style => 'float:<object class="subject">;') {}
-        end
-      end
+    it "naked" do
+      render_card(:naked, :name=>'A+B').should == "AlphaBeta"
     end
 
     it "content" do
@@ -189,8 +194,6 @@ describe Renderer, "" do
         }
       end
     end
-    
-
 
     context "full wrapping" do
       before do
@@ -199,7 +202,7 @@ describe Renderer, "" do
         UUID.should_receive(:new).and_return(mu)
         @ocslot = Renderer.new(Card['A'])
       end
-      
+
       it "should have the appropriate attributes on open" do
         @ocslot.render_open.should be_html_with do
           div( :position => 1, :view=>'open', :class => "card-slot paragraph ALL TYPE-basic SELF-a") {
@@ -210,21 +213,6 @@ describe Renderer, "" do
         end
       end
       
-      it "naked" do
-        c = Card.new :name => 'ABnaked', :content => "{{A+B|naked}}"
-        Renderer.new(c).render( :naked ).should == "AlphaBeta"
-      end
-
-      it "titled" do
-        Renderer.new(Card['A+B']).render(:titled).should be_html_with do
-          div( :view=>'titled') { 
-            [ h1 { [ span(:class=>"namepart-a") { text('A') }, span(:class=>"joint"){ text('+') }, span(:class=>"namepart-b"){ text('B')} ] },
-              span(:class=>'titled-content'){text('AlphaBeta')}
-            ] 
-          }
-        end
-      end
-
       it "should have the appropriate attributes on closed" do
         @ocslot.render_closed.should be_html_with do
           div( :position => 1, :view=>'closed', :class => "card-slot line ALL TYPE-basic SELF-a") {
@@ -234,63 +222,12 @@ describe Renderer, "" do
           }
         end
       end
-      
-      it("name"    ) { render_card(:name).should      == 'Tempo Rary' }
-      it("key"     ) { render_card(:key).should       == 'tempo_rary' }
-      it("linkname") { render_card(:linkname).should  == 'Tempo_Rary' }
-
-      it "link" do
-        c = Card.new :name => 'ABlink', :content => "{{A+B|link}}"
-        Renderer.new(c).render( :naked ).should == %{<a class="known-card" href="/wagn/A+B">A+B</a>}
-      end
 
       it "should add javascript when requested" do
         @ocslot.render(:closed, :add_javascript=>true).should match('script type="text/javascript"')
       end
     end
     
-    
-    it "naked (search card)" do
-      s = Card.create :type=>'Search', :name=>'Asearch', :content=>%{{"type":"User"}}
-      cname = Card.new :name=>'AsearchNaked1',
-                       :content=>"{{Asearch|naked;item:name}}"
-      Renderer.new(cname).render_naked.should match('search-result-item item-name')
-
-      copen = Card.new :name => 'AsearchNaked1',
-                       :content => "{{Asearch|naked;item:open}}"
-      Renderer.new(copen).render_naked.should match('search-result-item item-open')
-
-      cclosed = Card.new :name => 'AsearchNaked',
-                         :content => "{{Asearch|item:closed}}"
-      Renderer.new(cclosed).render_naked.should match('search-result-item item-closed')
-
-      c = Card.new :name => 'AsearchNaked', :content => "{{Asearch|naked}}"
-      Renderer.new(c).render_naked.should match('search-result-item item-closed')
-    end
-
-    it "array (search card)" do
-      Card.create! :name => "n+a", :type=>"Number", :content=>"10"
-      Card.create! :name => "n+b", :type=>"Phrase", :content=>"say:\"what\""
-      Card.create! :name => "n+c", :type=>"Number", :content=>"30"
-      c = Card.new :name => 'nplusarray', :content => "{{n+*plus cards+by create|array}}"
-      Renderer.new(c).render( :naked ).should == %{["10", "say:\\"what\\"", "30"]}
-    end
-
-    it "array (pointer card)" do
-      Card.create! :name => "n+a", :type=>"Number", :content=>"10"
-      Card.create! :name => "n+b", :type=>"Number", :content=>"20"
-      Card.create! :name => "n+c", :type=>"Number", :content=>"30"
-      Card.create! :name => "npoint", :type=>"Pointer", :content => "[[n+a]]\n[[n+b]]\n[[n+c]]"
-      c = Card.new :name => 'npointArray', :content => "{{npoint|array}}"
-      Renderer.new(c).render( :naked ).should == %q{["10", "20", "30"]}
-    end
-
-    it "array doesn't go in infinite loop" do
-      Card.create! :name => "n+a", :content=>"{{n+a|array}}"
-      c = Card.new :name => 'naArray', :content => "{{n+a|array}}"
-      Renderer.new(c).render( :naked ).should =~ /too deep/
-    end
-
     context "layout" do
       before do
         @layout_card = Card.create(:name=>'tmp layout')
@@ -309,7 +246,7 @@ describe Renderer, "" do
         result.should match(/card-header/)
         result.should match(/Joe User/)
       end  
-      
+
       it "should render custom view of main" do
         @layout_card.content='Hey {{_main|name}}'
         result = Renderer.new(@layout_card).render(:layout, :main_card=>@main_card)
@@ -327,14 +264,6 @@ describe Renderer, "" do
         result = Renderer.new(@layout_card).render(:layout, :main_content=>'and Goodbye')
         result.should match(/Hello.*and Goodbye/)
       end
-        
-       #  it "renders layout card elements" do
-       #    User.as :wagbot do
-       #      card = Card['A+B']
-       #      layout_card = Card['Default Layout']
-       #      Renderer.new(layout_card).render(:layout, :main_card=>card).should be html_with '' ## should look for all the standard buildins
-       #      end
-       #    end
 
     end
 
@@ -377,21 +306,26 @@ describe Renderer, "" do
       Slot.new(c).render( :naked ).should == %q{["10", "20", "30"]}
     end
 
+    it "should use inclusion view overrides" do
+      # FIXME love to have these in a scenario so they don't load every time.
+      t = Card.create! :name=>'t1', :content=>"{{t2|card}}"
+      Card.create! :name => "t2", :content => "{{t3|view}}"
+      Card.create! :name => "t3", :content => "boo"
 
-    # a little weird that we need :open_content  to get the version without
-    # slot divs wrapped around it.
-    s = Renderer.new(t, :inclusion_view_overrides=>{ :open => :name } )
-    s.render( :naked ).should == "t2"
+      # a little weird that we need :open_content  to get the version without
+      # slot divs wrapped around it.
+      s = Slot.new(t, :inclusion_view_overrides=>{ :open => :name } )
+      s.render( :naked ).should == "t2"
 
-    # similar to above, but use link
-    s = Renderer.new(t, :inclusion_view_overrides=>{ :open => :link } )
-    s.render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/t2\">t2</a>"
-
-    s = Renderer.new(t, :inclusion_view_overrides=>{ :open => :naked } )
-    s.render( :naked ).should == "boo"
+      # similar to above, but use link
+      s = Slot.new(t, :inclusion_view_overrides=>{ :open => :link } )
+      s.render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/t2\">t2</a>"
+      s = Slot.new(t, :inclusion_view_overrides=>{ :open => :naked } )
+      s.render( :naked ).should == "boo"
+    end
   end
-
-  context "test builtin cards" do
+ 
+  context "builtin card" do
     it "should render layout partial with name of card" do
       template = mock("template")
       template.should_not_receive(:render).with(:partial=>"builtin/builtin").and_return("Boo")
@@ -406,9 +340,9 @@ describe Renderer, "" do
         link(:rel=>'alternate', :title=>'Edit this page!', :href=>'/card/edit/*head') {}
       end
     end
-
+ 
     it "should render internal builtins" do
-      render_card(:naked, :content=>%{
+      render_card( :naked, :content=>%{
 <div>
   <span name="head">
     Head:{{*head|naked}}
@@ -422,47 +356,19 @@ describe Renderer, "" do
   <span name="foot">
     Foot:{{*foot|naked}}
   </span>
-</div>
-      }).should be_html_with do
+</div>} ).should be_html_with   do
         div {
-          #span(:name=>'head') do
-            #link(:rel=>'alternate', :title=>'Edit this page!', :href=>'/card/edit/*head') {}
-          #end
-          span(:name=>'now') { text( Time.now.strftime('%A, %B %d, %Y') ) }
-          span(:name=>'version') { text( "Version:#{Wagn::Version.full}" ) }
-          span(:name=>"foot") { script(type="text/javascript") {} }
+          span(:name=>'head')    { link(:rel=>'shortcut icon') {} }
+          span(:name=>'now') {
+            div(:view=>'content') {
+              span() { text(Time.now.strftime('%A, %B %d, %Y %I:%M %p %Z')) }
+            }
+          }
+          span(:name=>'version') { text("Version:#{Wagn::Version.full}") }
+          span(:name=>"foot")    { script(:type=>"text/javascript") {} }
         }
       end
     end
-  end
- 
-  it "should render internal builtins" do
-    render_card( :naked, :content=>%{
-<div>
-  <span name="head">
-    Head:{{*head|naked}}
-  </span>
-  <span name="now">
-    Now:{{*now}}
-  </span>
-  <span name="version">
-    Version:{{*version|naked}}
-  </span>
-  <span name="foot">
-    Foot:{{*foot|naked}}
-  </span>
-</div>} ).should be_html_with do
-      div {
-        span(:name=>'head') do
-          link(:rel=>'alternate', :title=>'Edit this page!', :href=>'/card/edit/*head') {}
-        end
-        # FIXME: can't figure out how to do a match on part of text
-        #span(/^\s*#{Time.now.strftime('%A, %B %d, %Y')}/, :name=>'now') {}
-        span( "Version:#{Wagn::Version.full}", :name=>'version') {}
-        span(:name=>"foot") { script(:type=>"text/javascript") {} }
-      }
-    end
-
   end
 
 #~~~~~~~~~~~~~  content views 
@@ -474,8 +380,8 @@ describe Renderer, "" do
       template = Card.new(:name=>'A+*right+*content', :content=>'[[link]] {{inclusion}}')
       Slot.new(template).render(:naked).should == '[[link]] {{inclusion}}'
     end
-    
-    
+
+
     it "uses content setting" do
       pending
       @card = Card.new( :name=>"templated", :content => "bar" )
@@ -523,19 +429,6 @@ describe Renderer, "" do
         end
       end
     end
-  end
-
-  describe "diff" do
-    it "should not overwrite empty content with current" do
-      pending # render_diff no longer exists, this is all in the changes partial now
-      User.as(:wagbot)
-      c = Card.create! :name=>"ChChChanges", :content => ""
-      c.update_attributes :content => "A"
-      c.update_attributes :content => "B"
-      r = Renderer.new(c).render_diff( c.revisions[0].content, c.revisions[1].content )
-      r.should == "<ins class=\"diffins\">A</ins>"
-    end
-    
     it "are used in multi edit calls" do
       c = Card.new :name => 'ABook', :type => 'Book'
       Slot.new(c).render( :multi_edit ).should be_html_with do
@@ -544,7 +437,7 @@ describe Renderer, "" do
         end
       end
     end
-    
+
   end
 
 #~~~~~~~~~~~~~~~ Cardtype Views ~~~~~~~~~~~~~~~~~#
@@ -561,7 +454,7 @@ describe Renderer, "" do
       #image calls the file partial, so in a way this tests both
       it "should have special editor" do
       pending  #This test works fine alone but fails when run with others
-        
+
         render_editor('Image').should be_html_with do
           body do  ## this is weird -- why does it have a body?
             [div(:class=>'attachment-preview'),
@@ -571,8 +464,7 @@ describe Renderer, "" do
         end
       end
     end
-    
-    
+
     context "Image" do
       it "should handle size argument in inclusion syntax" do
         Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}
@@ -580,22 +472,21 @@ describe Renderer, "" do
         Slot.new(c).render( :naked ).should == %{<img src="http://wagn.org/image53_small.jpg">}
       end
     end
-    
 
     context "HTML" do
       before do
         User.as :wagbot
       end
-      
+
       it "should have special editor" do
         render_editor('Html').should be_html_with { textarea :rows=>'30' }
       end
-      
+
       it "should not render any content in closed view" do
         render_card(:closed_content, :type=>'Html', :content=>"<strong>Lions and Tigers</strong>").should == ''
       end
     end
-    
+
     context "Account Request" do
       it "should have a special section for approving requests" do
         pending
@@ -610,7 +501,7 @@ describe Renderer, "" do
         render_editor('Number').should be_html_with { input :type=>'text' }
       end
     end
-    
+
     context "Phrase" do
       it "should have special editor" do
         render_editor('Phrase').should be_html_with { input :type=>'text', :class=>'phrasebox'}
@@ -621,7 +512,7 @@ describe Renderer, "" do
       it "should have special editor" do
         render_editor('Plain Text').should be_html_with { textarea :rows=>'3' }
       end
-      
+
       it "should have special content that converts newlines to <br>'s" do
         render_card(:naked, :type=>'Plain Text', :content=>"a\nb").should == 'a<br/>b'
       end
@@ -631,34 +522,34 @@ describe Renderer, "" do
         render_card(:naked, :type=>'Plain Text', :content=>"<b></b>").should == '&lt;b&gt;&lt;/b&gt;'
       end
     end
-    
+
     context "Search" do
       it "should wrap search items with correct view class" do
         Card.create :type=>'Search', :name=>'Asearch', :content=>%{{"type":"User"}}        
-        
+
         render_content("{{Asearch|naked;item:name}}").should match('search-result-item item-name')
         render_content("{{Asearch|naked;item:open}}").should match('search-result-item item-open')
         render_content("{{Asearch|naked}}").should match('search-result-item item-closed')
       end
-      
+
       it "should handle returning 'count'" do
         render_card(:naked, :type=>'Search', :content=>%{{ "type":"User", "return":"count"}}).should == '10'
       end
     end
-    
+
     context "Toggle" do
       it "should have special editor" do
         render_editor('Toggle').should be_html_with { input :type=>'checkbox' }
       end
-      
+
       it "should have yes/no as processed content" do
         render_card(:naked, :type=>'Toggle', :content=>"0").should == 'no'
         render_card(:closed_content, :type=>'Toggle', :content=>"1").should == 'yes'
       end
     end    
   end
-  
-  
+
+
   # ~~~~~~~~~~~~~~~~~ Builtins Views ~~~~~~~~~~~~~~~~~~~
   # ( *self sets )
 
@@ -707,15 +598,15 @@ describe Renderer, "" do
     end
 
   end  
-  
+
 
 #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
-  
+
   def render_editor(type)
     card = Card.create(:name=>"my favority #{type} + rand(4)", :type=>type)
     Renderer.new(card).render(:edit)
   end
-  
+
   def render_content(content, view=:naked)
     @card ||= Card.new(:name=>"Tempo Rary 2", :skip_defaults=>true)
     @card.content=content

@@ -17,11 +17,29 @@ module Wagn
         @@subclasses
       end
 
-      def subclass_key(name)
-        return name == AllPattern.key ? '' : nil if name.simple?
-        @@subclasses.map { |sc| return name.gsub(/(\+|^)\*/,'_').to_key if sc.key==name.tag_name }
-        nil
+      def pattern_key(opts)
+        subclasses.each do |pattern_class|
+          if pk = pattern_class.pattern_key(opts)
+            return pk
+          end
+        end
       end
+
+      def set_keys card
+r=
+        card.new_record? ? generate_set_keys(card) :
+          (@@cache[(card.name ||"") + (card.type||"")] ||= generate_set_names(card))
+Rails.logger.info "set_keys #{card&&card.name} #{r.inspect}"; r
+      end
+
+      def generate_set_keys card
+raise "no card" unless card
+        @@subclasses.map do |sc|
+Rails.logger.info "generate_set_keys #{card.name} #{card.type} #{sc.pattern_applies?(card) && sc.set_name(card)}, #{sc.inspect}"
+          sc.pattern_applies?(card) ? sc.set_name(card) : nil
+        end.compact
+      end
+
 
       def set_names card
         card.new_record? ? generate_set_names(card) :
@@ -30,6 +48,7 @@ module Wagn
 
       def generate_set_names card
         @@subclasses.map do |sc|
+#Rails.logger.info "generate__sets #{card.name} #{card.type} #{sc.pattern_applies?(card) && sc.set_name(card)}, #{sc.inspect}"
           sc.pattern_applies?(card) ? sc.set_name(card) : nil
         end.compact
       end
@@ -84,6 +103,10 @@ module Wagn
         key
       end
 
+      def pattern_key(opts)
+        opts.empty? && ''
+      end
+
       # def css_name card
       #   "ALL"
       # end
@@ -109,6 +132,12 @@ module Wagn
         "#{card.cardtype_name}+#{key}"
       end
 
+      def pattern_key(opts)
+        if opts.has_key?(:type)
+          '_'+opts.delete(:type).gsub(/^\*/,'').gsub('+','_').to_key+'_type'
+        end
+      end
+
       def label name
         "All #{name.trunk_name} cards"
       end
@@ -129,6 +158,13 @@ module Wagn
       def set_name card
         "#{card.name.tag_name}+#{key}"
       end
+
+      def pattern_key(opts)
+        if opts.has_key?(:right)
+          '_'+opts.delete(:right).gsub(/^\*/,'').gsub('+','_').to_key+'_right'
+        end
+      end
+
 
       def label name
         "Cards ending in +#{name.trunk_name}"
@@ -152,7 +188,17 @@ module Wagn
       end
 
       def set_name card
-        "#{left(card).cardtype_name}+#{card.name.tag_name}+#{key}"
+        "#{left(card).cardtype_name}+#{card.name.tag_name}+_ltype_rt"
+      end
+
+      def pattern_key(opts)
+        if opts.has_key?(:ltype) and opts.has_key?(:right)
+          %{_#{
+            opts.delete(:ltype).gsub('+','_').gsub(/^\*/,'').to_key
+          }_#{
+            opts.delete(:right).gsub('+','_').gsub(/^\*/,'').to_key
+          }_ltype_rt}
+        end
       end
 
       def label name
@@ -169,11 +215,18 @@ module Wagn
       end
 
       def pattern_applies? card
+Rails.logger.info "pattern_applies? ( #{card.name} #{!card.virtual?} #{!card.new_record?} )\nTrace #{caller*"\n"}" if card.name =~ /^recent/
         card.name and !card.virtual? and !card.new_record?
       end
 
       def set_name card
         "#{card.name}+#{key}"
+      end
+
+      def pattern_key(opts)
+        if opts.has_key?(:name)
+          '_'+opts.delete(:name).gsub('+','_').gsub(/^\*/,'').to_key+'_self'
+        end
       end
 
       def label name

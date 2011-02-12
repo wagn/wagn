@@ -58,27 +58,22 @@ class System < ActiveRecord::Base
 
     def layout_card(card, cardname)
       User.as(:wagbot) do 
-        layout_from_url(cardname) or layout_from_setting(card)
+        case
+          when ( cardname.present? and 
+            lo_card = Card.fetch(cardname, :skip_virtual => true) and
+            lo_card.ok?(:read))         ; lo_card
+          when ( ( setting_card = ((card && card.setting_card('layout')) or
+                                   Card.default_setting_card('layout')) ) and
+            #throwing lots of warnings, cucumber: setting_card.type == 'Pointer'
+            setting_card.is_a?(Card::Pointer) and
+            layout_name=setting_card.first and !layout_name.nil? and
+            lo_card = Card.fetch(layout_name, :skip_virtual => true) and
+            lo_card.ok?(:read) )          ; lo_card
+          when block_given?             ; yield cardname
+          end
       end
     end
     
-    def layout_from_url(cardname)
-      return nil unless cardname.present? and 
-        lo_card = Card.fetch(cardname, :skip_virtual => true) and
-        lo_card.ok?(:read)
-      lo_card
-    end
-    
-    def layout_from_setting(card)
-      return unless setting_card = ((card && card.setting_card('layout')) or Card.default_setting_card('layout'))
-      return unless setting_card.is_a?(Card::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.type == 'Pointer'        and
-        layout_name=setting_card.first                  and
-        !layout_name.nil?                                 and
-        lo_card = Card.fetch(layout_name, :skip_virtual => true)    and
-        lo_card.ok?(:read)
-      lo_card
-    end
-   
     def image_setting(name)
       if content = setting(name) and content.match(/src=\"([^\"]+)/)
         $~[1]

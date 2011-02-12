@@ -57,34 +57,41 @@ class Renderer
   #
   class << self
     def view(view, opts={}, &final)
-      @@set_views, @@fallback_methods = {},{} unless @@set_views
+      unless pattern_key =  Wagn::Pattern.pattern_key(opts) and opts.empty?
+        raise "Bad Pattern opts: #{pattern_key.inspect} #{opts.inspect}"
+      end
+
+      def inherit_method(view, pattern_key)
+        'render' + pattern_key + '_'+ 
+          case view.to_sym
+          when :naked; 'core'
+          when :core; 'raw'
+          else return nil
+          end
+      end
       fallback_methods[view] = opts[:fallback_method] if opts.has_key?(:fallback_method)
 
-      def arg(a) opts.delete(a).gsub('+','_').to_key end
-      pattern_key = case
-        when name = arg(:name); '_self_'+name
-        when type = arg(:type); '_type_'+type
-        when (type = arg(:ltype)) and opts.has_key(:right);
-          "_ltype_rt_#{type}_#{arg(:right)}"
-        when right = arg(:right); '_right_'+right
-        else ''
-        end
-      raise "Error extra args #{opts.inspect}" unless opts.empty?
-      method_id = "render#{pattern_key}_#{view}"
-
-Rails.logger.info "view declared: #{view}, #{set}, #{pattern_key.inspect}, #{method_id}"
+     # setname = setname.sub(/all/,'').gsub(/(\+|^)_*\*/,'_').to_key
+     # setname = setname.blank? ? view.to_s : "#{setname}_#{view}"
+     # meth = self.class.set_view("render_#{setname}")
+      method_id = "render#{pattern_key}_#{view.to_s}"
       raise "Attempt to redefine view: #{view} #{set} #{method_id}" if @@set_views.has_key?(method_id)
-
       priv_name = @@set_views[method_id] = "_#{method_id}".to_sym
-Rails.logger.info "define methods: #{method_id}, #{priv_name}, #{method_id.sub(/^render/,'_final')}"
+      while imethod = inherit_method(view, pattern_key) and
+            not @@set_views.has_key?(imethod) do
+Rails.logger.info "inherit #{imethod} #{priv_name}"
+        @@set_views[imethod] = priv_name
+      end
       class_eval do
 
+Rails.logger.info "view decl: #{method_id}, #{priv_name}"
         define_method( method_id.sub(/^render/,'_final'), &final )
         define_method( priv_name ) do |*a| a = [{}] if a.empty?
           a[0][:view] ||= view  
           # this variable name is highly confusing (:view); it means the view to
           # return to after an edit.  it's about persistence. should do better.
           final_meth = view_method( view ).to_s.sub(/^_render/,'_final')
+Rails.logger.info " in #{priv_name}: #{view}, #{final_meth}"
           send(final_meth.to_sym, *a) { yield }
         end
 
@@ -99,6 +106,8 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
         end
       end
     end
+
+      @@set_views, @@fallback_methods = {},{} unless @@set_views
 
     def new(card, opts=nil)
       fmt = (opts and opts[:format]) ? opts[:format] : :html
@@ -125,10 +134,10 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     :html => :layout
   }
 
-=begin
-        ## fixme, we ought to be setting special titles (or all titles) in cards
-        request.xhr? ? render(:action=>'show') : render(:text=>'', :layout=>true)
-=end
+  # Fragment left over from controller, I think this is all handled ?
+  #   for :xhr, render_show => :naked, :html render_show => :layout
+  #   all other formats should be mapped (?? what about :kml => :show ?)
+  #format == :xhr ? render(:action=>'show') : render(:text=>'', :layout=>true)
 
   def initialize(card, opts=nil)
     Renderer.current_slot ||= self
@@ -239,6 +248,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
 
   view(:naked) do |args|
     case
+      when !card                     ; _render_blank
       when card.name.template_name?  ; _render_raw
       when card.generic?             ; _render_core
       else render_card_partial(:content)
@@ -315,14 +325,14 @@ raise "???" if Hash===action
   end
 
   def view_method(view)
+    return "_render_#{view}" unless card
     Wagn::Pattern.set_names( card ).each do |setname|
       setname = setname.sub(/all/,'').gsub(/(\+|^)_*\*/,'_').to_key
       setname = setname.blank? ? view.to_s : "#{setname}_#{view}"
       meth = self.class.set_view("render_#{setname}")
-Rails.logger.info "view_method( #{setname}, #{view} ) #{meth}" if meth
+Rails.logger.info "view_method( #{setname} )  #{meth} "
       return meth if meth
     end
-#Rails.logger.info "view_method( #{view} ) F: #{@@fallback_methods[view]}\nTrace #{caller.slice(0,6)*"\n"}"
     return @@fallback_methods[view]
   end
   

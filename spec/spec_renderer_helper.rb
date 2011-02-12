@@ -1,6 +1,6 @@
 class Renderer
   # declare a test builtin
-  view(:raw, '*builtin+*self') do
+  view(:raw, :name=>'*builtin') do
     'Boo'
   end
 end

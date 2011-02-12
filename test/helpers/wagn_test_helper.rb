@@ -80,6 +80,7 @@ module WagnTestHelper
   
   def post_invite(options = {})
     action = options[:action] || :invite
+Rails.logger.info "post invite #{action} #{options.inspect}"
     post action, 
       :user => { :email => 'new@user.com' }.merge(options[:user]||{}),
       :card => { :name => "New User" }.merge(options[:card]||{}),

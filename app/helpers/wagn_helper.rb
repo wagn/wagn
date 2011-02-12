@@ -282,21 +282,6 @@ module WagnHelper
     concat('</form>')
   end
 
-  def layout_card(content)
-    Card.new(:name=>"**layout",:content=>content, :skip_defaults=>true)
-  end
-
-  def render_layout_card(lay_card)
-    opts = {}; opts[:relative_content] = opts[:params] = params
-    Renderer.new(lay_card,
-       opts.merge(:context=>"layout_0", :action=>"view", :template=>self)).
-         render(:layout, :main_card=>@card, :main_content=>@content_for_layout)
-  end
-
-  def render_layout_content(content)
-    render_layout_card layout_card(content)
-  end
-
   def wrap_slot(slot=nil, args={}, &block)
     slot ||= get_slot
     concat( slot.wrap(args) { capture{ yield(slot) } } )

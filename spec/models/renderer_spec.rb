@@ -25,7 +25,7 @@ describe Renderer, "" do
 
     it "css in inclusion syntax in wrapper" do
       c = Card.new :name => 'Afloatright', :content => "{{A|float:right}}"
-      Slot.new(c).render( :naked ).should be_html_with do
+      Renderer.new(c).render( :naked ).should be_html_with do
         div(:style => 'float:right;') {}
       end
     end
@@ -33,7 +33,7 @@ describe Renderer, "" do
     # I want this test to show the explicit escaped HTML, but be_html_with seems to escape it already :-/
     it "HTML in inclusion systnax as escaped" do
       c =Card.new :name => 'Afloat', :type => 'Html', :content => '{{A|float:<object class="subject">}}'
-      Slot.new(c).render( :naked ).should be_html_with do
+      Renderer.new(c).render( :naked ).should be_html_with do
         div(:style => 'float:<object class="subject">;') {}
       end
     end
@@ -41,7 +41,7 @@ describe Renderer, "" do
     context "CGI variables" do
       it "substituted when present" do
         c = Card.new :name => 'cardNaked', :content => "{{_card+B|naked}}"
-        result = Slot.new(c, :params=>{'_card' => "A"}).render_naked
+        result = Renderer.new(c, :params=>{'_card' => "A"}).render_naked
         result.should == "AlphaBeta"
       end
     end
@@ -56,15 +56,15 @@ describe Renderer, "" do
     it "renders layout card without recursing" do
       User.as :wagbot do
         layout_card = Card.create(:name=>'tmp layout', :type=>'Html', :content=>"Mainly {{_main|naked}}")
-        Slot.new(layout_card).render(:layout, :main_card=>layout_card).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
+        Renderer.new(layout_card).render(:layout, :main_card=>layout_card).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
       end
     end
- 
+
     it "renders layout card elements" do
       User.as :wagbot do
         card = Card['A+B']
         layout_card = Card['Default Layout']
-        Slot.new(layout_card).render(:layout, :main_card=>card).should be_html_with do 
+        Renderer.new(layout_card).render(:layout, :main_card=>card).should be_html_with do 
      html() {
        head() {
        title() {
@@ -184,7 +184,7 @@ describe Renderer, "" do
         end
       end
     end
-    
+
     it "titled" do
       render_card(:titled, :name=>'A+B').should be_html_with do
         div( :view=>'titled') { 
@@ -212,7 +212,7 @@ describe Renderer, "" do
           }
         end
       end
-      
+
       it "should have the appropriate attributes on closed" do
         @ocslot.render_closed.should be_html_with do
           div( :position => 1, :view=>'closed', :class => "card-slot line ALL TYPE-basic SELF-a") {
@@ -227,21 +227,22 @@ describe Renderer, "" do
         @ocslot.render(:closed, :add_javascript=>true).should match('script type="text/javascript"')
       end
     end
-    
+
     context "layout" do
       before do
         @layout_card = Card.create(:name=>'tmp layout')
+        c = Card['*all+*layout'] and c.content = '[[tmp layout]]'
         @main_card = Card.fetch('Joe User')
       end
 
       it "should default to naked view for non-main inclusions when context is layout_0" do
         @layout_card.content = "Hi {{A}}"
-        Slot.new(@layout_card, :context=>'layout_0').render(:layout).should match('Hi Alpha')
+        Renderer.new(@main_card, :context=>'layout_0').render(:layout).should match('Hi Alpha')
       end
 
       it "should default to open view for main card" do
         @layout_card.content='Open up {{_main}}'
-        result = Renderer.new(@layout_card).render(:layout, :main_card=>@main_card)
+        result = Renderer.new(@main_card).render_layout
         result.should match(/Open up/)
         result.should match(/card-header/)
         result.should match(/Joe User/)
@@ -249,19 +250,19 @@ describe Renderer, "" do
 
       it "should render custom view of main" do
         @layout_card.content='Hey {{_main|name}}'
-        result = Renderer.new(@layout_card).render(:layout, :main_card=>@main_card)
+        result = Renderer.new(@main_card).render_layout
         result.should match(/Hey.*div.*Joe User/)
         result.should_not match(/card-header/)
       end
 
       it "shouldn't recurse" do
         @layout_card.content="Mainly {{_main|naked}}"
-        Renderer.new(@layout_card).render(:layout, :main_card=>@layout_card).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
+        Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
       end
 
       it "should handle non-card content" do
         @layout_card.content='Hello {{_main}}'
-        result = Renderer.new(@layout_card).render(:layout, :main_content=>'and Goodbye')
+        result = Renderer.new(nil).render(:layout, :main_content=>'and Goodbye')
         result.should match(/Hello.*and Goodbye/)
       end
 
@@ -303,7 +304,7 @@ describe Renderer, "" do
       Card.create! :name => "n+c", :type=>"Number", :content=>"30"
       Card.create! :name => "npoint", :type=>"Pointer", :content => "[[n+a]]\n[[n+b]]\n[[n+c]]"
       c = Card.new :name => 'npointArray', :content => "{{npoint|array}}"
-      Slot.new(c).render( :naked ).should == %q{["10", "20", "30"]}
+      Renderer.new(c).render( :naked ).should == %q{["10", "20", "30"]}
     end
 
     it "should use inclusion view overrides" do
@@ -314,17 +315,17 @@ describe Renderer, "" do
 
       # a little weird that we need :open_content  to get the version without
       # slot divs wrapped around it.
-      s = Slot.new(t, :inclusion_view_overrides=>{ :open => :name } )
+      s = Renderer.new(t, :inclusion_view_overrides=>{ :open => :name } )
       s.render( :naked ).should == "t2"
 
       # similar to above, but use link
-      s = Slot.new(t, :inclusion_view_overrides=>{ :open => :link } )
+      s = Renderer.new(t, :inclusion_view_overrides=>{ :open => :link } )
       s.render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/t2\">t2</a>"
-      s = Slot.new(t, :inclusion_view_overrides=>{ :open => :naked } )
+      s = Renderer.new(t, :inclusion_view_overrides=>{ :open => :naked } )
       s.render( :naked ).should == "boo"
     end
   end
- 
+
   context "builtin card" do
     it "should render layout partial with name of card" do
       template = mock("template")
@@ -340,7 +341,7 @@ describe Renderer, "" do
         link(:rel=>'alternate', :title=>'Edit this page!', :href=>'/card/edit/*head') {}
       end
     end
- 
+
     it "should render internal builtins" do
       render_card( :naked, :content=>%{
 <div>
@@ -378,7 +379,7 @@ describe Renderer, "" do
   context "Content settings" do
     it "are rendered as raw" do
       template = Card.new(:name=>'A+*right+*content', :content=>'[[link]] {{inclusion}}')
-      Slot.new(template).render(:naked).should == '[[link]] {{inclusion}}'
+      Renderer.new(template).render(:naked).should == '[[link]] {{inclusion}}'
     end
 
 
@@ -431,7 +432,7 @@ describe Renderer, "" do
     end
     it "are used in multi edit calls" do
       c = Card.new :name => 'ABook', :type => 'Book'
-      Slot.new(c).render( :multi_edit ).should be_html_with do
+      Renderer.new(c).render( :multi_edit ).should be_html_with do
         div :class => "field-in-multi" do
           input :name=>"cards[~plus~illustrator][content]", :type => 'hidden'
         end
@@ -469,7 +470,7 @@ describe Renderer, "" do
       it "should handle size argument in inclusion syntax" do
         Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}
         c = Card.new :name => 'Image1', :content => "{{TestImage | naked; size:small }}"
-        Slot.new(c).render( :naked ).should == %{<img src="http://wagn.org/image53_small.jpg">}
+        Renderer.new(c).render( :naked ).should == %{<img src="http://wagn.org/image53_small.jpg">}
       end
     end
 
@@ -492,7 +493,7 @@ describe Renderer, "" do
         pending
         #I can't get this working.  I keep getting this url_for error -- from a line that doesn't call url_for
         card = Card.create!(:name=>'Big Bad Wolf', :type=>'Account Request')
-        Slot.new(card).render(:naked).should be_html_with { div :class=>'invite-links' }
+        Renderer.new(card).render(:naked).should be_html_with { div :class=>'invite-links' }
       end
     end
 
@@ -614,15 +615,22 @@ describe Renderer, "" do
   end
 
   def render_card(view, card_args={})
+Rails.logger.info "render_card #{view} #{card_args.inspect}"
     card = begin
       if card_args[:name]
+c=
         Card.fetch(card_args[:name])
+Rails.logger.info "found it: #{(c&&c.name).inspect}"; c
       else
         card_args[:name] ||= "Tempo Rary"
-        card = Card.new(card_args.merge(:skip_defaults=>true))
+        card_args[:skip_defaults]=true
+        c = Card.new(card_args)
+Rails.logger.info "made it: (#{card_args.inspect}) #{(c&&c.name).inspect}"; c
       end
     end
+r=
     Renderer.new(card).render(view)
+Rails.logger.info "render_card(#{card&&card.name}, #{view}) => #{r}"; r
   end
-  
+
 end

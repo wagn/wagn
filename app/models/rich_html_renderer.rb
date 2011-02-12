@@ -34,11 +34,85 @@ class RichHtmlRenderer < Renderer
 
 ### --- render action declarations --- wrapped views are defined for slots
 
+  # these initialize the content of missing builtin layouts
+  LAYOUTS = { 'default' => %{
+<!DOCTYPE HTML>
+<html>
+  <head> {{*head|naked}} </head>
+
+  <body id="wagn">
+    <div id="menu">
+      [[/ | Home]]   [[/recent | Recent]]   {{*navbox:naked}} {{*account links:naked}}
+    </div>
+
+    <div id="primary"> {{_main}} </div>
+
+    <div id="secondary">
+      <div id="logo">[[/ | {{*logo}}]]</div>
+      {{*sidebar|naked}}
+      <div id="credit"><a href="http://www.wagn.org" title="Wagn {{*version|bare}}">Wagn.</a> We're on it.</div> <%#ENGLISH%>
+      {{*alerts|naked}}
+    </div>
+
+    {{*foot|naked}}
+  </body>
+</html> },
+
+        'blank' => %{
+<!DOCTYPE HTML>
+<html>
+  <head> {{*head}} </head>
+  <body id="wagn"> {{_main}} {{*foot}} </body>
+</html> },
+
+        'simple' => %{
+<!DOCTYPE HTML>
+<html>
+  <head> {{*head}} </head>
+  <body> {{_main}} {{*foot}} </body>
+</html> },
+
+        'none' => '{{_main}}',
+
+        'noside' => %{
+<!DOCTYPE HTML>
+<html>
+  <head> {{*head}} </head>
+
+  <body id="wagn" class="noside">
+    <div id="menu">
+      [[/ | Home]]   [[/recent | Recent]]   {{*navbox}} {{*account links}}
+    </div>
+
+    <div>
+      {{*alerts}}
+      {{_main}}
+      <div id="credit">Wheeled by [[http://www.wagn.org|Wagn]] v. {{*version}}</div> <%#ENGLISH%>
+    </div>
+
+    {{*foot}}
+  </body>
+</html> },
+
+        'pre' => %{
+<!DOCTYPE HTML>
+<html> <body><pre>{{_main|raw}}</pre></body> </html> },
+
+}
+
   view(:layout) do |args|
-    @main_card, mc = args.delete(:main_card), args.delete(:main_content)
-    @main_content = (mc.blank? || mc.nil?) ? nil : wrap_main(mc)
-    _render_core
-  end
+    layout = (params[:layout] || args[:layout]).to_s
+    unless lcard=System.layout_card(card, layout) or lcont=LAYOUTS[layout] and 
+        Card.new(:name=>'*'+layout, :content=>lcont, :skip_defaults=>true)
+      raise "No default content for layout: #{layout}"
+    end
+
+    args[:relative_content] = args[:params] = params
+    args.merge(:context=>"layout_0", :action=>"view", :template=>self)
+    @main_card, @card, @main_content = card, lcard, lcont
+Rails.logger.info "_final_layout #{main_card&&main_card.name} #{@card&&@card.name} #{layout} #{args.inspect} LC:#{@main_content}"
+    _render_naked(args)
+  end # view(:layout)
 
   view(:content) do |args|
     @state = :view

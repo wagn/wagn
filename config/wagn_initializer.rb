@@ -26,7 +26,6 @@ module Wagn
     end
   end
 
-
   class Initializer
     class << self
       def set_default_config config
@@ -80,7 +79,7 @@ module Wagn
         load_modules
         register_mimetypes
         Wagn::Cache.initialize_on_startup
-        Renderer.create_builtins
+        create_builtins
         ActiveRecord::Base.logger.info("\n----------- Wagn Initialization Complete -----------\n\n")
       end
 
@@ -148,6 +147,20 @@ module Wagn
             require_dependency "card/#{cardtype}"
           rescue Exception=>e
             raise "Error loading card/#{cardtype}: #{e.message}"
+          end
+        end
+      end
+
+    
+
+  # make sure builtin cards exist
+      def create_builtins
+        User.as :wagbot do
+          %w{ *account_link *alerts *foot *head *navbox *now *version 
+              *recent_change *search *broken_link }.map do |name|
+Rails.logger.info "create builtin cards #{name}"
+            c=Card.fetch_or_new(name)
+            c.save
           end
         end
       end

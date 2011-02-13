@@ -330,7 +330,7 @@ raise "???" if Hash===action
       setname = setname.sub(/all/,'').gsub(/(\+|^)_*\*/,'_').to_key
       setname = setname.blank? ? view.to_s : "#{setname}_#{view}"
       meth = self.class.set_view("render_#{setname}")
-Rails.logger.info "view_method( #{setname} )  #{meth} "
+#Rails.logger.info "view_method( #{setname} )  #{meth} "
       return meth if meth
     end
     return @@fallback_methods[view]

@@ -26,16 +26,12 @@ module Wagn
       end
 
       def set_keys card
-r=
         card.new_record? ? generate_set_keys(card) :
           (@@cache[(card.name ||"") + (card.type||"")] ||= generate_set_names(card))
-Rails.logger.info "set_keys #{card&&card.name} #{r.inspect}"; r
       end
 
       def generate_set_keys card
-raise "no card" unless card
         @@subclasses.map do |sc|
-Rails.logger.info "generate_set_keys #{card.name} #{card.type} #{sc.pattern_applies?(card) && sc.set_name(card)}, #{sc.inspect}"
           sc.pattern_applies?(card) ? sc.set_name(card) : nil
         end.compact
       end
@@ -48,7 +44,6 @@ Rails.logger.info "generate_set_keys #{card.name} #{card.type} #{sc.pattern_appl
 
       def generate_set_names card
         @@subclasses.map do |sc|
-#Rails.logger.info "generate__sets #{card.name} #{card.type} #{sc.pattern_applies?(card) && sc.set_name(card)}, #{sc.inspect}"
           sc.pattern_applies?(card) ? sc.set_name(card) : nil
         end.compact
       end
@@ -201,6 +196,16 @@ Rails.logger.info "generate_set_keys #{card.name} #{card.type} #{sc.pattern_appl
         end
       end
 
+      def pattern_key(opts)
+        if opts.has_key?(:ltype) and opts.has_key?(:right)
+          %{_ltype_rt_#{
+            opts.delete(:ltype).gsub('+','_').to_key
+          }_#{
+            opts.delete(:right).gsub('+','_').to_key
+          }}
+        end
+      end
+
       def label name
         "Any #{name.trunk_name.trunk_name} card plus #{name.trunk_name.tag_name}"
       end
@@ -215,7 +220,6 @@ Rails.logger.info "generate_set_keys #{card.name} #{card.type} #{sc.pattern_appl
       end
 
       def pattern_applies? card
-Rails.logger.info "pattern_applies? ( #{card.name} #{!card.virtual?} #{!card.new_record?} )\nTrace #{caller*"\n"}" if card.name =~ /^recent/
         card.name and !card.virtual? and !card.new_record?
       end
 

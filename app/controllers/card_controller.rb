@@ -62,6 +62,7 @@ class CardController < ApplicationController
       [ :xml, :json ].each { |f| format.send f { render :text=>'#{f} not yet supported'} }
     end
 
+    params[:title] = %{#{controller_name} - #{action_name}}
     Renderer.new(@card, :layout=>request.xhr? ? :xhr : wagn_layout,
       :format=>format, :flash=>flash, :params=>params).render(:show)
   end

@@ -57,9 +57,7 @@ class Renderer
 
   <title> #{
     (@card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name) ||
-     #{ #@controller ? @controller.controller_name :
-     self } - #{ # @controller && @controller.action_name } -
-  System.site_title } </title>
+      params[:title] } - #{ System.site_title } </title>
     #{ stylesheet_link_merged(:base) }#{
        if star_css_card = Card.fetch('*css', :skip_virtual => true)
     %{<link href="/*css.css?<%= star_css_card.current_revision_id %>" media="screen" type="text/css" rel="stylesheet" />}

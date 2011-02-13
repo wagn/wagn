@@ -342,6 +342,37 @@ describe Renderer, "" do
       end
     end
 
+    it "should use inclusion view overrides" do
+      # FIXME love to have these in a scenario so they don't load every time.
+      t = Card.create! :name=>'t1', :content=>"{{t2|card}}"
+      Card.create! :name => "t2", :content => "{{t3|view}}"
+      Card.create! :name => "t3", :content => "boo"
+
+      # a little weird that we need :open_content  to get the version without
+      # slot divs wrapped around it.
+      s = Slot.new(t, :inclusion_view_overrides=>{ :open => :name } )
+      s.render( :naked ).should == "t2"
+
+      # similar to above, but use link
+      s = Slot.new(t, :inclusion_view_overrides=>{ :open => :link } )
+      s.render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/t2\">t2</a>"
+      s = Slot.new(t, :inclusion_view_overrides=>{ :open => :naked } )
+      s.render( :naked ).should == "boo"
+    end
+
+  context "builtin card" do
+    it "should render layout partial with name of card" do
+      pending
+      template = mock("template")
+      template.should_receive(:render).with(:partial=>"builtin/builtin").and_return("Boo")
+      builtin_card = Card.new( :name => "*builtin", :builtin=>true )
+      slot = Slot.new( builtin_card )
+      slot.render_raw.should == "Boo"
+      slot.render(:raw).should == "Boo"
+      slot = Slot.new( Card["*head"], "main_1", "view"  )
+      slot.render(:naked).should == 'something'
+    end
+ 
     it "should render internal builtins" do
       render_card( :naked, :content=>%{
 <div>

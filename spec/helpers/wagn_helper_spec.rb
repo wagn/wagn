@@ -22,7 +22,7 @@ CONTENT
   truncatewords_with_closing_tags(content).should== %{<div>Favicons are the little icons that appear in browser tabs,} +
   %{ and Wagn lets you set yours to whatever you like</div>  &nbsp; } +
   %{ <h1>Examples</h1> <blockquote> <div>Here's the</div></blockquote>} +
-  %{<span class=\"closed-content-ellipses\"> ...</span>}
+  %{<span class=\"closed-content-ellipses\">...</span>}
 
   end
 end

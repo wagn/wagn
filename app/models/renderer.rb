@@ -63,7 +63,8 @@ class Renderer
         priv_final="_final#{priv_name}"
         define_method( priv_final, &final )
         define_method( priv_name ) do |*a| a = [{}] if a.empty?
-          a[0][:view] ||= action  
+          a[0][:view] ||= action
+          #Rails.logger.info "#{priv_name} called on #{card.name}"
           # this variable name is highly confusing; it means the view to return to after an edit.  it's about persistence
           # should do better.
           send(priv_final, *a) { yield }
@@ -207,6 +208,7 @@ class Renderer
   end
 
   view(:closed_content) do |args|
+    @state = :line
     if card.generic?
       truncatewords_with_closing_tags( _render_naked(args) { yield } )
     else

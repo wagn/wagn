@@ -112,16 +112,14 @@ module WagnHelper
 
     # match tags with or without self closing (ie. <foo />)
     wordstring.scan(/\<([^\>\s\/]+)[^\>]*?\>/).each { |t| tags.unshift(t[0]) }
-
     # match tags with self closing and mark them as closed
     wordstring.scan(/\<([^\>\s\/]+)[^\>]*?\/\>/).each { |t| if !(x=tags.index(t[0])).nil? then tags.slice!(x) end }
-
     # match close tags
-    wordstring.scan(/\<\/([^\>\s\/]+)[^\>]*?\>/).each { |t|  if !(x=tags.index(t[0])).nil? then tags.slice!(x) end  }
+    wordstring.scan(/\<\/([^\>\s\/]+)[^\>]*?\>/).each { |t|  if !(x=tags.rindex(t[0])).nil? then tags.slice!(x) end  }
 
     tags.each {|t| wordstring += "</#{t}>" }
 
-    wordstring +='<span style="color:#666"> ...</span>' if wordlist.length > l
+    wordstring +='<span class="closed-content-ellipses">...</span>' if wordlist.length > l
 #    wordstring += '...' if wordlist.length > l
     wordstring.gsub! /<[\/]?br[\s\/]*>/, ' ' ## Also a hack -- get rid of <br>'s -- they make line view ugly.
     wordstring.gsub! /<[\/]?p[^>]*>/, ' ' ## Also a hack -- get rid of <br>'s -- they make line view ugly.

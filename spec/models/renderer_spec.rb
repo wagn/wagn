@@ -632,6 +632,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       end
     end
 
+    # also need one for *alerts
   end  
 
 

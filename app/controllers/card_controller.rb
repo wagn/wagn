@@ -52,19 +52,22 @@ class CardController < ApplicationController
   end
 
   def render_show
-    fmt = responds_to do |format|
+    respond_to do |format|
       format.rss do
          raise("Sorry, RSS is broken in rails < 2.2") unless Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >=2
          # rss causes infinite memory suck in rails 2.1.2.  
          render :action=>'show'
       end
-      [ :txt, :css, :kml, :html ].each { |f| format.send f { f } }
-      [ :xml, :json ].each { |f| format.send f { render :text=>'#{f} not yet supported'} }
+      format.xml do render :text=>'xml not yet supported' end
+      format.json do render :text=>'json not yet supported' end
+      [:txt, :css, :kml, :html].each do |f|
+        format.send f do 
+          params[:title] = %{#{controller_name} - #{action_name}}
+          Renderer.new(@card, :layout=>request.xhr? ? :xhr : wagn_layout,
+            :format=>format, :flash=>flash, :params=>params).render(:show)
+        end
+      end
     end
-
-    params[:title] = %{#{controller_name} - #{action_name}}
-    Renderer.new(@card, :layout=>request.xhr? ? :xhr : wagn_layout,
-      :format=>format, :flash=>flash, :params=>params).render(:show)
   end
 
   #----------------( MODIFYING CARDS )

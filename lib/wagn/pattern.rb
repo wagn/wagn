@@ -18,10 +18,8 @@ module Wagn
       end
 
       def pattern_key(opts)
-        subclasses.each do |pattern_class|
-          if pk = pattern_class.pattern_key(opts)
-            return pk
-          end
+        subclasses.each do |pclass|
+          if pk=pclass.pattern_key(opts); return pk end
         end
       end
 
@@ -31,36 +29,36 @@ module Wagn
       end
 
       def generate_set_keys card
-        @@subclasses.map do |sc|
-          sc.pattern_applies?(card) ? sc.set_name(card) : nil
+        @@subclasses.map do |pclass|
+          pclass.pattern_applies?(card) and pclass.set_name(card) 
         end.compact
       end
 
 
       def set_names card
+r=
         card.new_record? ? generate_set_names(card) :
           (@@cache[(card.name ||"") + (card.type||"")] ||= generate_set_names(card))
+Rails.logger.info "set_names #{card&&card.name} #{r.inspect}"; r
       end
 
       def generate_set_names card
-        @@subclasses.map do |sc|
-          sc.pattern_applies?(card) ? sc.set_name(card) : nil
+raise "no card" unless card
+        @@subclasses.map do |pclass|
+          pclass.pattern_applies?(card) and
+          pclass.set_name(card) or nil
         end.compact
       end
 
       def css_names card
-        set_names(card).map do |sn|
-          if sn == "*all"
-            "ALL"
-          else
-            sn.tag_name.gsub(' ','_').gsub('*','').upcase + '-' + sn.trunk_name.css_name
-          end
-        end.reverse.join(" ")
+        @@subclasses.map do |pclass|
+          pclass.pattern_applies?(card) and pclass.css_name(card) or nil
+        end.compact.reverse.join(" ")
       end
 
       def label name
-        @@subclasses.map do |sc|
-          return sc.label(name) if sc.match(name)
+        @@subclasses.map do |pclass|
+          return pclass.label(name) if pclass.match(name)
         end
         return nil
       end
@@ -69,10 +67,10 @@ module Wagn
         name.tag_name==self.key
       end
 
-      # def css_name card
-      #   sn = set_name card
-      #   sn.tag_name.gsub(' ','_').gsub('*','').upcase + '-' + sn.trunk_name.css_name
-      # end
+      def css_name card
+        sn = set_name card
+        sn.tag_name.gsub(' ','_').gsub('*','').upcase + '-' + sn.trunk_name.css_name
+      end
     end
 
     attr_reader :spec
@@ -80,7 +78,6 @@ module Wagn
     def initialize spec
       @spec = spec
     end
-
 
   end
 
@@ -102,9 +99,9 @@ module Wagn
         opts.empty? && ''
       end
 
-      # def css_name card
-      #   "ALL"
-      # end
+      def css_name card
+        "ALL"
+      end
 
       def label name
         'All Cards'
@@ -129,7 +126,7 @@ module Wagn
 
       def pattern_key(opts)
         if opts.has_key?(:type)
-          '_'+opts.delete(:type).gsub(/^\*/,'').gsub('+','_').to_key+'_type'
+          '_'+opts.delete(:type).gsub('+','_').to_key+'_type'
         end
       end
 
@@ -156,7 +153,7 @@ module Wagn
 
       def pattern_key(opts)
         if opts.has_key?(:right)
-          '_'+opts.delete(:right).gsub(/^\*/,'').gsub('+','_').to_key+'_right'
+          '_'+opts.delete(:right).gsub('+','_').to_key+'_right'
         end
       end
 
@@ -183,17 +180,11 @@ module Wagn
       end
 
       def set_name card
-        "#{left(card).cardtype_name}+#{card.name.tag_name}+_ltype_rt"
+        "#{left(card).cardtype_name}+#{card.name.tag_name}+*type plus right"
       end
 
-      def pattern_key(opts)
-        if opts.has_key?(:ltype) and opts.has_key?(:right)
-          %{_#{
-            opts.delete(:ltype).gsub('+','_').gsub(/^\*/,'').to_key
-          }_#{
-            opts.delete(:right).gsub('+','_').gsub(/^\*/,'').to_key
-          }_ltype_rt}
-        end
+      def css_name card
+        'LTYPE_RIGHT-' + set_name(card).trunk_name.css_name
       end
 
       def pattern_key(opts)
@@ -229,7 +220,7 @@ module Wagn
 
       def pattern_key(opts)
         if opts.has_key?(:name)
-          '_'+opts.delete(:name).gsub('+','_').gsub(/^\*/,'').to_key+'_self'
+          '_'+opts.delete(:name).gsub('+','_').to_key+'_self'
         end
       end
 

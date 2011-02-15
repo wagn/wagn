@@ -26,12 +26,12 @@ class Renderer
   view(:core, :name=>'*alerts') do
     %{<div id="alerts">
   <div id="notice"> flash[:notice] </div>
-  <div id="error"> flash[:warning] flash[:error]</div>  
+  <div id="error"> flash[:warning] flash[:error]</div>
 </div>}
 =begin
     %{<div id="alerts">
   <div id="notice">#{ @template.flash[:notice] }</div>
-  <div id="error">#{ @template.flash[:warning] }#{ @template.flash[:error] }</div>  
+  <div id="error">#{ @template.flash[:warning] }#{ @template.flash[:error] }</div>
 </div>}
 =end
   end
@@ -84,10 +84,22 @@ class Renderer
     }
   end
 
-  view(:core, :name=>'*now') do
-    Time.now.strftime('%A, %B %d, %Y %I:%M %p %Z')
-  end
-
+  view(:core, :name=>'*now') do Time.now.strftime('%A, %B %d, %Y %I:%M %p %Z') end
   view(:core, :name=>'*version') do Wagn::Version.full end
+  view(:content, :type=>'basic') do _render_core end
+  view(:line, :type=>'basic') do truncatewords_with_closing_tags( _render_core ) end
 
+  view(:editor, :type=>'basic') do
+    %{#{
+      javascript_include_tag "/tinymce/jscripts/tiny_mce/tiny_mce.js" } #{
+      eid, raw_id = context, context+'-raw-content'
+      form.hidden_field :content, :id=>"#{eid}-hidden-content"}#{
+      text_area_tag :content_to_replace, card.content, :rows=>3, :id=>"#{eid}-tinymce"}#{
+      editor_hooks :setup=> %{setTimeout((function(){
+  tinyMCE.init({mode: "exact",elements: "#{eid}-tinymce",#{System.setting('*tiny mce') || ''}})
+  tinyMCE.execInstanceCommand( '#{eid}-tinymce', 'mceFocus' );
+}),50); 
+  }, :save=> %{t = tinyMCE.getInstanceById( '#{eid}-tinymce' ); $('#{eid}-hidden-content').value = t.getContent(); return true;} 
+    }}
+  end
 end

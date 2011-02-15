@@ -96,11 +96,11 @@ module Notification
       me = User.current_user.card.name   
 
       if card.card_watchers.include?(me) or card.type != 'Cardtype' && card.watchers.include?(me)
-        slot.link_to_action( "unwatch#{type_link}", 'unwatch', {:update=>slot.id("watch-link")},{
+        link_to_action( "unwatch#{type_link}", 'unwatch', {:update=>id("watch-link")},{
    :title => "stop getting emails about changes to #{card.name}#{type_msg}"})
       else
-       slot.link_to_action( "watch#{type_link}", 'watch',
-         {:update=>slot.id("watch-link")},
+       link_to_action( "watch#{type_link}", 'watch',
+         {:update=>id("watch-link")},
          {:title=>"get emails about changes to #{card.name}#{type_msg}" } )
       end
     end

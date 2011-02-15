@@ -28,8 +28,8 @@ class RendererTest < ActiveSupport::TestCase
 
   def slot_link(card, format=:html)
     render = Renderer.new(card, :context=>"nocontext", :format=>format).render(:content)
-ActionController::Base.logger.info("TEST:INFO:slot_link(#{card.name},#{card.class})")
     m = render.match(/<(cardref|link|a) class.*<\/(cardref|link|a)>/)
+Rails.logger.info("slot_link(#{card.name},#{card.class}) #{m}, #{m.inspect} R:#{render}")
     (m.to_s != "") ? m.to_s : render
   end
 

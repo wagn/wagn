@@ -54,6 +54,7 @@ module LocationHelper
     end
     # shaved order of magnitude off footer rendering
     # vs. url_for( :action=> .. )
+Rails.logger.info "url_for_page( #{title}, #{format}, #{vars}"
     "/wagn/#{title.to_url_key}#{format}#{vars}"
   end
 

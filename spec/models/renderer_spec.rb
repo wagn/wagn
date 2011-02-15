@@ -10,6 +10,14 @@ describe Renderer, "" do
 #~~~~~~~~~~~~ special syntax ~~~~~~~~~~~#
 
   context "special syntax handling should render" do
+    before do
+      User.as :wagbot do
+        @layout_card = Card.create(:name=>'tmp layout', :type=>'Html', :content=>"Mainly {{_main|naked}}")
+        @layout_card.save
+        c = Card['*all+*layout'] and c.content = '[[tmp layout]]'
+      end
+    end
+
     it "simple card links" do
       render_content("[[A]]").should=="<a class=\"known-card\" href=\"/wagn/A\">A</a>"
     end
@@ -47,24 +55,14 @@ describe Renderer, "" do
     end
 
     it "renders layout card without recursing" do
-      User.as :wagbot do
-        layout_card = Card.create(:name=>'tmp layout', :type=>'Html', :content=>"Mainly {{_main|naked}}")
-         Renderer.new(layout_card).render(:layout, :main_card=>layout_card).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
-      end
-    end
-
-    it "renders layout card without recursing" do
-      User.as :wagbot do
-        layout_card = Card.create(:name=>'tmp layout', :type=>'Html', :content=>"Mainly {{_main|naked}}")
-        Renderer.new(layout_card).render(:layout, :main_card=>layout_card).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
-      end
+      Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
     end
 
     it "renders layout card elements" do
       User.as :wagbot do
         card = Card['A+B']
-        layout_card = Card['Default Layout']
-        Renderer.new(layout_card).render(:layout, :main_card=>card).should be_html_with do 
+        #layout_card = Card['Default Layout']
+        Renderer.new(card).render(:layout).should be_html_with do 
      html() {
        head() {
        title() {
@@ -86,7 +84,7 @@ describe Renderer, "" do
        }
 
          #<div id=\"primary\">
-           #<div id=\"main\" context=\"main\"><div base=\"self\" cardId=\"435\" class=\"card-slot paragraph ALL TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b\" position=\"546336a\" style=\"\" view=\"open\">
+           #<div id=\"main\" context=\"main\"><div base=\"self\" cardId=\"435\" class=\"card-slot paragraph ALL TYPE-basic RIGHT-b LTYPE_RIGHT-basic-b SELF-a-b\" position=\"546336a\" style=\"\" view=\"open\">
 
          a(:href=>"/wagn/A+B", :class=>"page-icon", :title=>"Go to: A+B") {}
        #</div>
@@ -168,7 +166,7 @@ describe Renderer, "" do
 
     it "content" do
       render_card(:content, :name=>'A+B').should be_html_with {
-        div( :class=>'transcluded ALL TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b', :view=>'content') {
+        div( :class=>'transcluded ALL TYPE-basic RIGHT-b LTYPE_RIGHT-basic-b SELF-a-b', :view=>'content') {
           span( :class=>'content-content content')
         }
       }
@@ -236,12 +234,16 @@ describe Renderer, "" do
       end
 
       it "should default to naked view for non-main inclusions when context is layout_0" do
+Rails.logger.info "layout_card content"
         @layout_card.content = "Hi {{A}}"
-        Renderer.new(@main_card, :context=>'layout_0').render(:layout).should match('Hi Alpha')
+        @layout_card.save
+Rails.logger.info "layout_card content #{@layout_card.content}"
+        Renderer.new(@main_card).render(:layout).should match('Hi Alpha')
       end
 
       it "should default to open view for main card" do
         @layout_card.content='Open up {{_main}}'
+        @layout_card.save
         result = Renderer.new(@main_card).render_layout
         result.should match(/Open up/)
         result.should match(/card-header/)
@@ -250,6 +252,7 @@ describe Renderer, "" do
 
       it "should render custom view of main" do
         @layout_card.content='Hey {{_main|name}}'
+        @layout_card.save
         result = Renderer.new(@main_card).render_layout
         result.should match(/Hey.*div.*Joe User/)
         result.should_not match(/card-header/)
@@ -257,11 +260,13 @@ describe Renderer, "" do
 
       it "shouldn't recurse" do
         @layout_card.content="Mainly {{_main|naked}}"
+        @layout_card.save
         Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
       end
 
       it "should handle non-card content" do
         @layout_card.content='Hello {{_main}}'
+        @layout_card.save
         result = Renderer.new(nil).render(:layout, :main_content=>'and Goodbye')
         result.should match(/Hello.*and Goodbye/)
       end
@@ -350,26 +355,25 @@ describe Renderer, "" do
 
       # a little weird that we need :open_content  to get the version without
       # slot divs wrapped around it.
-      s = Slot.new(t, :inclusion_view_overrides=>{ :open => :name } )
+      s = Renderer.new(t, :inclusion_view_overrides=>{ :open => :name } )
       s.render( :naked ).should == "t2"
 
       # similar to above, but use link
-      s = Slot.new(t, :inclusion_view_overrides=>{ :open => :link } )
+      s = Renderer.new(t, :inclusion_view_overrides=>{ :open => :link } )
       s.render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/t2\">t2</a>"
-      s = Slot.new(t, :inclusion_view_overrides=>{ :open => :naked } )
+      s = Renderer.new(t, :inclusion_view_overrides=>{ :open => :naked } )
       s.render( :naked ).should == "boo"
     end
 
-  context "builtin card" do
     it "should render layout partial with name of card" do
       pending
       template = mock("template")
       template.should_receive(:render).with(:partial=>"builtin/builtin").and_return("Boo")
       builtin_card = Card.new( :name => "*builtin", :builtin=>true )
-      slot = Slot.new( builtin_card )
+      slot = Renderer.new( builtin_card )
       slot.render_raw.should == "Boo"
       slot.render(:raw).should == "Boo"
-      slot = Slot.new( Card["*head"], "main_1", "view"  )
+      slot = Renderer.new( Card["*head"], "main_1", "view"  )
       slot.render(:naked).should == 'something'
     end
  
@@ -448,8 +452,6 @@ describe Renderer, "" do
       Renderer.new(@card).render(:raw).should == "Default Bar"
     end
 
-    # FIXME: this test is important but I can't figure out how it should be
-    # working.
     it "are used in edit forms" do
       config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )
       @card = Card.new( :name=>"templated", :content => "Bar" )
@@ -461,6 +463,7 @@ describe Renderer, "" do
         end
       end
     end
+
     it "are used in multi edit calls" do
       c = Card.new :name => 'ABook', :type => 'Book'
       Renderer.new(c).render( :multi_edit ).should be_html_with do

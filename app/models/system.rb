@@ -61,15 +61,19 @@ class System < ActiveRecord::Base
         case
           when ( cardname.present? and 
             lo_card = Card.fetch(cardname, :skip_virtual => true) and
-            lo_card.ok?(:read))         ; lo_card
-          when ( ( setting_card = ((card && card.setting_card('layout')) or
-                                   Card.default_setting_card('layout')) ) and
+            lo_card.ok?(:read))         ;
+Rails.logger.info "layout_card cd(#{card}, #{cardname}) #{lo_card}"
+            lo_card
+          when ( (setting_card = (card && card.setting_card('layout') or
+                                   Card.default_setting_card('layout'))) and
             #throwing lots of warnings, cucumber: setting_card.type == 'Pointer'
             setting_card.is_a?(Card::Pointer) and
             layout_name=setting_card.first and !layout_name.nil? and
             lo_card = Card.fetch(layout_name, :skip_virtual => true) and
-            lo_card.ok?(:read) )          ; lo_card
-          when block_given?             ; yield cardname
+            lo_card.ok?(:read) )          ;
+Rails.logger.info "layout_card st(#{card}, #{cardname}) #{lo_card}"; lo_card
+          when block_given?             ;
+            yield cardname
           end
       end
     end

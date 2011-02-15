@@ -13,7 +13,7 @@ class Renderer
   end
 
   view(:raw, :type=>'search') do
-    s = slot.paging_params
+    s = paging_params
 
     instruction =
       case
@@ -41,7 +41,7 @@ class Renderer
       if card.results.nil?
         %{"#{error.class.to_s}: #{error.message}" <br/>#{ card.content }}
       else 
-        view = (slot.item_view || card.spec[:view] || :closed).to_sym
+        view = (item_view || card.spec[:view] || :closed).to_sym
         if card.name=='*recent changes'
           recent_changes_part
         else
@@ -50,7 +50,7 @@ class Renderer
       end
   end
 
-  def recent_changes_part
+  view(:recent_changes, :type=>'search') do
     cards ||= []
     view  ||= :change
 
@@ -81,17 +81,19 @@ class Renderer
     <div class="search-result-list">#{
          cards_by_day[day].each do |card| %{
       <div class="search-result-item item-#{ view }">#{
-           slot.process_inclusion(card, :view=>view) }
+           process_inclusion(card, :view=>view) }
       </div>}
-         end.join}
-    </div>}
-      end.join}#{
-      paging }
+         end * ' '}
+    </div>#{
+         paging }
   </div>
 </div>
-  } end
+    }
+      end * "\n"
+    }}
+  end
 
-  def card_list_part 
+  view(:card_list, :type=>'search') do
     # partial => 'card_list'
     cards   ||= []
     duplicates ||= []
@@ -119,23 +121,23 @@ class Renderer
   <div class="search-result-list"> #{
       cards.each do |c|
         %{<div class="search-result-item item-#{ view }">#{
-        slot.process_inclusion(c, :view=>view) }</div>}
+        process_inclusion(c, :view=>view) }</div>}
       end.join }
   </div>#{ paging }}
     end
   end
 
-  def paging_part
+  view(:paging, :type=>'search') do
     s = card.spec
     offset, limit = s[:offset].to_i, s[:limit].to_i
     first,last = offset+1,offset+card.results.length 
     total = card.count
  
-    args = slot.params
+    args = params
     args[:limit] = limit
 
-    args[:requested_view] = slot.requested_view 
-    args[:item] = slot.item_view || args[:item]
+    args[:requested_view] = requested_view 
+    args[:item] = item_view || args[:item]
     args[:_keyword] = s[:_keyword] if s[:_keyword]
 
     %{
@@ -144,16 +146,123 @@ class Renderer
         %{
 <span class="paging">#{
         if first > 1
-          link_to_remote image_tag('prev-page.png'), :update=>slot.id,
-            :url=>slot.url_for('card/view', args.merge(:offset=>[offset-limit,0].max)) 
+          link_to_remote image_tag('prev-page.png'), :update=>id,
+            :url=>url_for('card/view', args.merge(:offset=>[offset-limit,0].max)) 
         end}
   <span class="paging-range">#{ first } to #{ last } of #{ total }</span>#{
         if last < total
-          link_to_remote image_tag('next-page.png'), :update=>slot.id,
-             :url=>slot.url_for('card/view', args.merge(:offset=>last))
+          link_to_remote image_tag('next-page.png'), :update=>id,
+             :url=>url_for('card/view', args.merge(:offset=>last))
         end}
   </span>}
       end}
 <!-- /paging -->}
+  end
+
+  view(:content, :type=>'search') do
+    s = paging_params
+
+    instruction = case
+      when card.name=='*search'
+        s[:_keyword] ||= params[:_keyword]
+        %{Cards matching keyword: <strong class="keyword">#{params[:_keyword]}</strong>}
+        # when cue = card.attribute_card('*cue'); cue
+      else; nil
+      end
+
+    title = case card.name
+      when '*search'; 'Search Results' #ENGLISH
+      when '*broken links'; 'Cards with Broken Links'
+      else; ''
+      end
+
+    begin
+      spec = card.spec
+      card.search( s )
+    rescue Exception=>e
+      error = e
+    end
+
+    s.inspect + card.results.nil? ?
+      %{#{error.class.to_s}: #{error.message}<br/>#{card.content}} :
+      spec[:return] =='count' ?  card.results : begin
+        partial = (card.name=='*recent changes') ? 'recent_changes' : 'card_list'
+        view = (item_view || card.spec[:view] || :closed).to_sym
+        render :partial=>"types/search/#{partial}", :locals=>
+         { :view=>view,
+           :card=>card,
+           :cards=>card.results,
+           :context=>@context,
+           :instruction=>instruction,
+           :title=>title,
+           :slot=>slot }
+      end
+  end
+
+  view(:editor, :type=>'search') do form.text_area :content, :rows=>3 end
+
+  view(:line, :type=>'search') do
+    if depth > 2
+      #...
+    else
+      # FIXME: so not DRY.  cut-n-paste from search/_content
+      s = paging_params #params[:s] || {}
+      begin
+        query_results = card.search( s )
+        total = card.count
+      rescue Exception=>e
+        error = e
+        query_results = nil
+      end
+      if query_results.nil?
+        %{"#{error.class.to_s}: #{error.message}"<br/>#{card.content}}
+      elsif query_results.length==0
+        '<span class="faint">(0)</span>'
+      else
+        %{<span class="faint">(#{ total })</span>
+        <div class="search-result-list">
+          #{query_results.each_with_index do |c,index|
+            %{<div class="search-result-item">#{'name' == item_view || params[:item] ? c.name : link_to_page( c.name ) }</div>}
+          end*"\n"}
+        </div>}
+      end
+    end
+  end
+
+  view(:tag_cloud, :type=>'search') do
+    cards ||= []
+    link_to ||= 'page'  # other options is 'connect'
+    tag_cloud = {}
+    category_list = %w[1 2 3 4 5]
+    droplets = []
+    return if cards.empty?
+
+    # this does scaling by rank(X), where X is what we ordered by in wql.
+    # if we wanted proportionate to X, we'd need to get X returned as part of
+    # the cards, which has implications for wql; namely we'd need to be able to
+    # return additional fields.
+    cards.reverse.each_with_index do |tag, index|
+      tag_cloud[tag] = index
+    end
+
+    max, min = 0, 0
+    tag_cloud.each_value do |count|
+      max = count if count > max
+      min = count if count < min
+    end
+
+    divisor = ((max - min) / category_list.size) + 1
+
+    droplets = cards.sort_by {|c| c.name.downcase } .map do |card|
+      category = category_list[(tag_cloud[card] - min) / divisor]
+      options = { :class=>"cloud-#{category}" }
+      WagnHelper::Droplet.new(card.name, options)
+    end
+    %{
+<div class="cloud">#{
+      for droplet in droplets 
+        flexlink link_to, droplet.name,  droplet.link_options
+      end * "\n" }
+</div>}
   end
 end

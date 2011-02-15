@@ -1,0 +1,12 @@
+class Renderer
+  view(:editor, :type=>'date') do
+    %{<div>#{ date_id = context +'date' }#{
+      link_text = card.content.blank? ? (t=Time.now(); [t.year , t.mon, t.day].join('-')) : card.content 
+      link_to_function link_text, "scwShow($('#{date_id}'), scwID('#{date_id}'));", :id=>date_id, :class=>'date-editor-link' }
+</div>
+#{
+      form.hidden_field :content, :id=>"#{editor_id}-content"}#{
+      editor_hooks :save=>%{$('#{editor_id}-content').value = $('#{date_id}').innerHTML; return true;} }
+    }
+  end
+end

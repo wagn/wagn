@@ -1,4 +1,4 @@
-require_dependency 'rich_html_renderer'
+#require_dependency 'rich_html_renderer'
 require_dependency 'models/wiki_reference'
 require 'diff'
 
@@ -56,58 +56,54 @@ class Renderer
   #     for patterns other than AllPattern ('*all')
   #
   class << self
+    def view_alias(view, opts={}, *alias_views)
+      method_id, pkey =  get_pattern(view, opts)
+      alias_views.each do |aview|
+Rails.logger.info "aliased #{view} #{pkey} #{aview}"
+        priv_name(method_id, pkey, aview)
+      end
+    end
+
     def view(view, opts={}, &final)
-      unless pattern_key =  Wagn::Pattern.pattern_key(opts) and opts.empty?
-        raise "Bad Pattern opts: #{pattern_key.inspect} #{opts.inspect}"
-      end
-
-      def inherit_method(view, pattern_key)
-        'render' + pattern_key + '_'+ 
-          case view.to_sym
-          when :naked; 'core'
-          when :core; 'raw'
-          else return nil
-          end
-      end
+      method_id, pkey =  get_pattern(view, opts)
       fallback_methods[view] = opts[:fallback_method] if opts.has_key?(:fallback_method)
-
-     # setname = setname.sub(/all/,'').gsub(/(\+|^)_*\*/,'_').to_key
-     # setname = setname.blank? ? view.to_s : "#{setname}_#{view}"
-     # meth = self.class.set_view("render_#{setname}")
-      method_id = "render#{pattern_key}_#{view.to_s}"
-      raise "Attempt to redefine view: #{view} #{set} #{method_id}" if @@set_views.has_key?(method_id)
-      priv_name = @@set_views[method_id] = "_#{method_id}".to_sym
-      while imethod = inherit_method(view, pattern_key) and
-            not @@set_views.has_key?(imethod) do
-Rails.logger.info "inherit #{imethod} #{priv_name}"
-        @@set_views[imethod] = priv_name
-      end
       class_eval do
-
-Rails.logger.info "view decl: #{method_id}, #{priv_name}"
         define_method( method_id.sub(/^render/,'_final'), &final )
-        define_method( priv_name ) do |*a| a = [{}] if a.empty?
-          a[0][:view] ||= view  
+
+        define_method( priv_name(method_id, pkey, view) ) do
+          |*a| a = [{}] if a.empty?
           # this variable name is highly confusing (:view); it means the view to
           # return to after an edit.  it's about persistence. should do better.
+          a[0][:view] ||= view  
           final_meth = view_method( view ).to_s.sub(/^_render/,'_final')
-Rails.logger.info " in #{priv_name}: #{view}, #{final_meth}"
+Rails.logger.info " in #{caller(0).first}[#{card}] #{view}, #{final_meth}"
           send(final_meth.to_sym, *a) { yield }
         end
 
         define_method( method_id ) do |*a|
-#Rails.logger.info "#{method_id}: #{card&&card.name}, #{a.inspect} #{caller.slice(0,4)*"\n"}"
-          if refusal=render_check(method_id)
-            return refusal
-          end
-
+          if refusal=render_check(method_id); return refusal end
 raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_method( view )
           send(view_method( view ), *a) { yield }
         end
       end
     end
 
-      @@set_views, @@fallback_methods = {},{} unless @@set_views
+    def get_pattern(view,opts)
+      unless pkey =  Wagn::Pattern.pattern_key(opts) and opts.empty?
+        raise "Bad Pattern opts: #{pkey.inspect} #{opts.inspect}"
+      end
+      return "render#{pkey}_#{view.to_s}", pkey
+    end
+
+    def priv_name(method_id, pkey, nview)
+      nmethod = "render#{pkey}_#{nview}"
+      if @@set_views.has_key?(nmethod)
+        raise "Attempt to redefine view: #{nview}, #{pkey}, #{nmethod}"
+      end
+      @@set_views[nmethod] = "_#{method_id}".to_sym
+    end
+
+    @@set_views, @@fallback_methods = {},{} unless @@set_views
 
     def new(card, opts=nil)
       fmt = (opts and opts[:format]) ? opts[:format] : :html
@@ -202,56 +198,53 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     return content unless card
     content = card.content if content.blank?
 
+Rails.logger.info "process_content(#{content}, #{card&&card.content}) #{card&&card.name}"
+
     wiki_content = WikiContent.new(card, content, self, inclusion_map)
-    if card&&card.references_expired
-      update_references(wiki_content)
-    end
+    update_references(wiki_content) if card.references_expired
+
     wiki_content.render! do |opts|
-#      full = opts[:fullname] = get_inclusion_fullname(tname, opts)
       @view = opts[:view].to_sym if view == nil and opts[:view]
       expand_inclusion(opts) { yield }
     end
   end
+  alias expand_inclusions process_content
 
   def render_check(action)
     ch_action = case
-    when too_deep?;  :too_deep
-    when card.new_card?; false # causes errors to check in current system.  
-      #should remove this and add create check after we settingize permissions
-    when [:edit, :edit_in_form, :multi_edit].member?(action)
-      !card.ok?(:edit) and :deny_view #should be deny_edit
-    else
-      !card.ok?(:read) and :deny_view
-    end
-    (ch_action and render_partial("views/#{ch_action}"))
+      when too_deep?      ; :too_deep
+      when !card          ; false
+      when card.new_card? ; false # causes errors to check in current system.  
+        #should remove this and add create check after we settingize permissions
+      when [:edit, :edit_in_form, :multi_edit].member?(action)
+        !card.ok?(:edit) and :deny_view #should be deny_edit
+      else
+        !card.ok?(:read) and :deny_view
+      end
+      ch_action and render_view_action ch_action
   end
 
   def render_deny(action, args)
     if [ :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing,
          :closed_missing, :setting_missing].member?(action)
-       render_partial("views/#{action}", args)
-    elsif card.new_record?; return # need create check...
-    else render_check(action) end
+       render_view_action action, args
+    elsif card && card.new_record?; return # need create check...
+    else render_check action end
   end
 
   def canonicalize_view( view )
     (view and v=VIEW_ALIASES[view.to_sym]) ? v : view
   end
 
-  def expand_inclusions(content)
-    process_content(content) 
-  end
-
 ### ---- Core renders --- Keep these on top for dependencies
-  view(:raw) do card.raw_content end
+  view(:raw) do card ? card.raw_content : _render_blank end
   view(:core) do process_content(_render_raw) end
 
   view(:naked) do |args|
     case
-      when !card                     ; _render_blank
       when card.name.template_name?  ; _render_raw
       when card.generic?             ; _render_core
-      else render_card_partial(:content)
+      else render_card_action(:content)
     end
   end
 
@@ -269,7 +262,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     if card.generic?
       truncatewords_with_closing_tags( _render_naked(args) { yield } )
     else
-      render_card_partial(:line)   # in basic case: --> truncate( slot._render_open_content ))
+      render_card_action(:line)   # in basic case: --> truncate( slot._render_open_content ))
     end
   end
 
@@ -293,7 +286,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
 
   view(:rss_change) do
     self.requested_view = 'content'
-    render_partial('views/change')
+    render_view_action('change')
   end
 
   def render(action=:view, args={})
@@ -311,6 +304,7 @@ raise "???" if Hash===action
     end
 
     result = if render_meth = view_method(action)
+Rails.logger.info "render(#{action}) #{render_meth}"
         send(render_meth, args) { yield }
       else
         "<strong>#{card.name} - unknown card view: '#{action}' M:#{render_meth.inspect}</strong>"
@@ -327,10 +321,19 @@ raise "???" if Hash===action
   def view_method(view)
     return "_render_#{view}" unless card
     Wagn::Pattern.set_names( card ).each do |setname|
-      setname = setname.sub(/all/,'').gsub(/(\+|^)_*\*/,'_').to_key
+Rails.logger.info "view_method1( #{setname} )"
+      setname = setname.sub('*all','')
+Rails.logger.info "view_method2( #{setname} )"
+      setname = setname.
+        sub(/\*(type|self|right|type plus right)/,'\1')
+Rails.logger.info "view_method3( #{setname} )"
+      setname = setname.
+        gsub(/(\+|^)_*/,'_').to_key
+Rails.logger.info "view_method4( #{setname} )"
       setname = setname.blank? ? view.to_s : "#{setname}_#{view}"
+Rails.logger.info "view_method5( #{setname} )"
       meth = self.class.set_view("render_#{setname}")
-#Rails.logger.info "view_method( #{setname} )  #{meth} "
+Rails.logger.info "view_methodF( #{setname} )  #{meth} "
       return meth if meth
     end
     return @@fallback_methods[view]
@@ -354,17 +357,17 @@ raise "???" if Hash===action
     content.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
   end
 
-  def render_partial( partial, locals={} )
-    template.render(:partial=>partial, :locals=>{ :card=>card, :slot=>self }.merge(locals))
+  def render_action( action, locals={} )
+    locals = {:card=>card, :slot=>self }.merge(locals)
+    # ...
   end
 
-  def card_partial(action)
-    # FIXME: I like this method name better- maybe other calls should resolve here instead
-    partial_for_action(action, card)
+  def render_view_action(action)
+    render_action "views/#{action}"
   end
 
-  def render_card_partial(action, locals={})
-     render_partial card_partial(action), locals
+  def render_card_action(action, locals={})
+     render_action action_for(action, card), locals
   end
 
   def method_missing(method_id, *args, &proc)
@@ -539,28 +542,12 @@ raise "???" if Hash===action
     end
   end
 
-  ### ------  from wagn_helper ----
-  def partial_for_action( name, card=nil )
+  def action_for( name, card=nil )
     # FIXME: this should look up the inheritance hierarchy, once we have one
     # wow this is a steaming heap of dung.
     cardtype = (card ? card.type : 'Basic').underscore
-    if Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR <=1
-      finder.file_exists?("/types/#{cardtype}/_#{name}") ?
-        "/types/#{cardtype}/#{name}" :
-        "/types/basic/#{name}"
-    elsif   Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR > 2
-      ## This test works for .rhtml files but seems to fail on .html.erb
-      begin
-        @template.view_paths.find_template "types/#{cardtype}/_#{name}"
-        "types/#{cardtype}/#{name}"
-      rescue ActionView::MissingTemplate => e
-        "/types/basic/#{name}"
-      end
-    else
-      @template.view_paths.find { |template_path| template_path.paths.include?("types/#{cardtype}/_#{name}") } ?
-        "/types/#{cardtype}/#{name}" :
-        "/types/basic/#{name}"
-    end
+    cardclass = card ? card.class_for : Basic
+    cardclass.action_template(name)
   end
 
   def paging_params
@@ -575,4 +562,3 @@ raise "???" if Hash===action
 
   def main_card?() context=~/^main_\d$/ end
 end
-

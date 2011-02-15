@@ -102,16 +102,24 @@ class RichHtmlRenderer < Renderer
 
   view(:layout) do |args|
     layout = (params[:layout] || args[:layout]).to_s
-    unless lcard=System.layout_card(card, layout) or lcont=LAYOUTS[layout] and 
-        Card.new(:name=>'*'+layout, :content=>lcont, :skip_defaults=>true)
+    if args.has_key?(:main_content)
+      @main_content = args.delete(:main_content)
+Rails.logger.info "_final_layout MC#{main_content}"
+    end
+    if !(lcard=System.layout_card(card, layout) or lcont=LAYOUTS[layout] and
+            Card.new(:name=>'*'+layout, :content=>lcont, :skip_defaults=>true))
       raise "No default content for layout: #{layout}"
     end
 
     args[:relative_content] = args[:params] = params
-    args.merge(:context=>"layout_0", :action=>"view", :template=>self)
-    @main_card, @card, @main_content = card, lcard, lcont
-Rails.logger.info "_final_layout #{main_card&&main_card.name} #{@card&&@card.name} #{layout} #{args.inspect} LC:#{@main_content}"
-    _render_naked(args)
+    @main_card, @card = card, lcard
+    args[:context] = context
+    lcont ||= _render_raw(args)
+    args[:context]="layout_0"
+    args[:action]="view"
+    args[:template]=self
+Rails.logger.info "_final_layout #{main_card} Cd:#{card} #{args.inspect} LC#{lcont}"
+    process_content(lcont, args)
   end # view(:layout)
 
   view(:content) do |args|
@@ -171,7 +179,26 @@ Rails.logger.info "_final_layout #{main_card&&main_card.name} #{@card&&@card.nam
 
 ###---(  EDIT VIEWS )
   view(:edit_in_form) do |args|
-    render_partial('views/edit_in_form', args.merge(:form=>form_for_multi))
+Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
+    %{
+<div class="edit-area in-multi RIGHT-#{ card.name.tag_name.to_key.css_name }">
+  <div class="label-in-multi">
+    <span class="title">
+      #{ link_to_page(fancy_title(args[:showname] || card), (card.new_record? ? card.name.tag_name : card.name)) }
+    </span>
+  </div>     
+  
+  <div class="field-in-multi">
+    #{ slot.content_field( form, :nested=>true ) }
+    #{ card.new_record? ? slot.form.hidden_field(:type) : '' }
+  </div>
+  #{if inst = card.setting_card('edit help')
+    ss = slot.subrenderer(inst); ss.state= :view
+    %{<div class="instruction">#{ ss.render :naked }</div>}
+  end}
+  <div style="clear:both"></div>
+</div>
+    }
   end
 
   def js
@@ -397,7 +424,7 @@ Rails.logger.info "_final_layout #{main_card&&main_card.name} #{@card&&@card.nam
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
     User.as :wagbot do
-      pre_content + clear_queues + self.render_partial( card_partial('editor'), options ) + setup_autosave
+      pre_content + clear_queues + self.render_action( 'editor', options ) + setup_autosave
     end
   end
 

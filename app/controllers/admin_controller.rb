@@ -44,5 +44,16 @@ class AdminController < ApplicationController
     flash[:notice] = 'permissions saved'
     redirect_to :action=>'tasks'
   end
+  
+  def clear_cache
+    response = 
+      if System.always_ok?
+        Card.cache.reset
+        'Cache cleared'
+      else
+        "You don't have permission to clear the cache"
+      end
+    render :text =>response, :layout=> true  
+  end
 
 end

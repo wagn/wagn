@@ -60,7 +60,7 @@ class CardController < ApplicationController
          # rss causes infinite memory suck in rails 2.1.2.  
          render :action=>'show'
       end
-      format.txt  { render :text=>@card.content }
+      format.txt  { render :text=>@card.raw_content }
       format.css  { render :text=>Slot.new(@card).render(:naked) }
       format.kml  { render :action=>'show'}
       format.xml  { render :text=>'XML not yet supported'}

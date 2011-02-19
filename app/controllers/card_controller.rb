@@ -20,7 +20,7 @@ class CardController < ApplicationController
     if User.no_logins?
       redirect_to '/admin/setup'
     else
-      params['id'] = System.setting('*home')
+      params['id'] = System.setting('*home').to_url_key
       show
     end
   end

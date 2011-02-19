@@ -331,9 +331,10 @@ class Renderer
       tcard, tcont = root.main_card, root.main_content
       return tcont if tcont
       return "{{#{options[:unmask]}}}" || '{{_main}}' unless @depth == 0 and tcard
+
       tname = tcard.name
-      item  = symbolize_param(:item) and options[:item] = item
-      pview = symbolize_param(:view) and options[:view] = pview
+      [:item, :view, :size].each{ |key| val=symbolize_param(key) and options[key]=val }
+      # main card uses these CGI options as inclusion args      
       options[:context] = 'main'
       options[:view] ||= :open
     end

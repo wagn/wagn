@@ -10,7 +10,7 @@
     <%= card.new_record? ? slot.form.hidden_field(:type) : '' %>
   </div>
 
-  <% if inst = card.setting_card('edit help') %>
+  <% if inst = (card.new_card? ? card.setting_card('add help','edit help') : card.setting_card('edit help') %>
     <%- ss = slot.subrenderer(inst); ss.state= :view %>
     <div class="instruction"><%= ss.render :naked %></div>
   <% end %>

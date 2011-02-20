@@ -202,6 +202,7 @@ class Renderer
   view(:key)      { card.key              }
   view(:linkname) { card.name.to_url_key  }
   view(:link)     { Chunk::Reference.standard_card_link(card.name) }
+  view(:url)      { "#{System.base_url}/wagn/#{_render_linkname}"}
 
   view(:open_content) do |args|
     card.post_render(_render_naked(args) { yield })
@@ -345,13 +346,12 @@ class Renderer
 
     tcard ||= begin
       case
-      when state ==:edit   ;  Card.fetch_or_new(fullname, {}, new_inclusion_card_args(options))
+      when state ==:edit   ;  Card.fetch_or_new(fullname, {}, new_inclusion_card_args(tname, options))
       when base.respond_to?(:name);   base
       else                 ;  Card.fetch_or_new(fullname, :skip_defaults=>true)
       end
     end
 
-    tcard.loaded_trunk=card if tname =~ /^\+/
     result = process_inclusion(tcard, options)
     result = resize_image_content(result, options[:size]) if options[:size]
     @char_count += (result ? result.length : 0) #should we strip html here?
@@ -438,8 +438,9 @@ class Renderer
     content if content.present?  #not sure I get why this is necessary - efm
   end
 
-  def new_inclusion_card_args(options)
+  def new_inclusion_card_args(tname, options)
     args = { :type =>options[:type],  :permissions=>[] }
+    args[:loaded_trunk]=card if tname =~ /^\+/
     if content=get_inclusion_content(options[:tname])
       args[:content]=content
     end

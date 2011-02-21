@@ -325,9 +325,12 @@ class CardController < ApplicationController
   end
 
   def auto_complete_for_navbox
-    @stub = params['navbox']
-    @items = Card.search( :complete=>@stub, :limit=>8, :sort=>'name' )
-    render :inline => "<%= navbox_result @items, 'name', @stub %>"
+    if @stub = params['navbox']
+      @items = Card.search( :complete=>@stub, :limit=>8, :sort=>'name' )
+      render :inline=> "<%= navbox_result @items, 'name', @stub %>"
+    else
+      render :inline=> ''
+    end
   end
 
   def auto_complete_for_card_name

@@ -15,11 +15,5 @@ class Renderer
 }
   end
 
-  # assumes we have a card with datatype query...
-  #args = card.options_from_content
-  view(:editor , :type=>'set') do form.text_area :content, :rows=>3 end
-
-  view(:line , :type=>'set') do
-    render :partial=> 'types/search/line', :locals=>{ :slot=>slot, :card=>card }
-  end
+  view_alias(:line , {:type=>:search}, {:type=>:set})
 end

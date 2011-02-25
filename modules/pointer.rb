@@ -40,7 +40,6 @@ class Renderer
     part_view = (c = card.setting('input')) ? c.gsub(/[\[\]]/,'') : 'list'
     form.hidden_field :content, :id=>"#{context}-hidden-content" +
     render(part_view)
-    #render :partial=>"/types/pointer/#{partial}", :locals=>{ :card=>card, :slot=>slot}
   end
 
   view(:field, :type=>'pointer') do
@@ -53,8 +52,7 @@ class Renderer
       result += link_to_function 'X', "$('#{eid}-pointer-li-#{index}').remove()", :class=>'delete'
     end
     if link== :add
-      result += render_add_item(:eid=>eid, :card=>card, :index=>index)
-      #result += render :partial=>'types/pointer/add_item', :locals=>{ :eid=>eid, :card=>card, :index=>index }
+      result += render_add_item
     end
     result
   end
@@ -72,11 +70,9 @@ class Renderer
 
     %{<ul id="#{eid}-ul" class="pointer"> #{
       items.each_with_index do |link, index| 
-        render_field( :eid=>eid, :card=>card, :index=>index, :link=>link )
-        #render :partial=>'/types/pointer/field', :locals=>{ :eid=>eid, :card=>card, :index=>index, :link=>link }
+        render_field( :eid=>eid, :index=>index )
   end*"\n"} #{
-      render_add_item( :eid=>eid, :card=>card, :index=>items.length )
-      #render :partial=>'types/pointer/add_item', :locals=>{ :eid=>eid, :card=>card, :index=>items.length }
+      render_add_item( :eid=>eid, :index=>items.length )
   }
 </ul>
 

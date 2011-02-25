@@ -4,7 +4,7 @@ class Renderer
   # Declare built-in views
   view(:core, :name=>'*account link') do
     #ENGLISH
-    %{ ######## ACCOUNT #########
+    %{
 <span id="logging">#{
      if logged_in?
        @template.link_to "My Card: #{User.current_user.card.name}",
@@ -23,18 +23,12 @@ class Renderer
     }</span>}
   end
 
-  view(:core, :name=>'*alerts') do
-    %{<div id="alerts">
+  view(:core, :name=>'*alerts') do %{
+<div id="alerts">
   <div id="notice"> flash[:notice] </div>
   <div id="error"> flash[:warning] flash[:error]</div>
-</div>}
-=begin
-    %{<div id="alerts">
-  <div id="notice">#{ @template.flash[:notice] }</div>
-  <div id="error">#{ @template.flash[:warning] }#{ @template.flash[:error] }</div>
-</div>}
-=end
-  end
+</div>
+} end
 
   view(:core, :name=>'*foot') do
     javascript_include_tag "/tinymce/jscripts/tiny_mce/tiny_mce.js" +
@@ -43,7 +37,7 @@ class Renderer
 
   view(:core, :name=>'*head') do
     # ------- Title -------------
-    %{ ############## HEADING ##########
+    %{
 <link rel="shortcut icon" href="#{ System.favicon }" />#{
       if card and !card.new_record? and card.ok? :edit
         %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="/card/edit/#{ card.key }"/>}
@@ -68,12 +62,12 @@ class Renderer
         key = System.setting("*google_ajax_api_key") ?
          %{<script type="text/javascript" src="http://www.google.com/jsapi?key=<%= key %>"></script>} : ''
        }
-     }
+}
   end
 
   view(:core, :name=>'*navbox') do
     #ENGLISH
-    %{ ####### NAVBOX #####
+    %{
 <form id="navbox_form" action="/search" onsubmit="return navboxOnSubmit(this)">
   <span id="navbox_background">
     <a id="navbox_image" title="Search" onClick="navboxOnSubmit($('navbox_form'))">&nbsp;</a>

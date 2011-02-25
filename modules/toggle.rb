@@ -7,9 +7,6 @@ class Renderer
       end
   end
 
-  view(:editor, :type=>'toggle') do form.check_box :content end
-
-  view(:line, :type=>'toggle') do
-    render :partial=> 'types/toggle/content', :locals=>{ :slot=>slot, :card=>card }
-  end
+  view(:editor, :type=>'toggle') do form.check_box(:content) end
+  view_alias(:content, {:type=>'toggle'}, :line)
 end

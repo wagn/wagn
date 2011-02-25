@@ -94,7 +94,6 @@ class Renderer
   end
 
   view(:card_list, :type=>'search') do
-    # partial => 'card_list'
     cards   ||= []
     duplicates ||= []
     context ||= 'default'
@@ -186,20 +185,11 @@ class Renderer
     s.inspect + card.results.nil? ?
       %{#{error.class.to_s}: #{error.message}<br/>#{card.content}} :
       spec[:return] =='count' ?  card.results : begin
-        partial = (card.name=='*recent changes') ? 'recent_changes' : 'card_list'
+        part = (card.name=='*recent changes') ? 'recent_changes' : 'card_list'
         view = (item_view || card.spec[:view] || :closed).to_sym
-        render :partial=>"types/search/#{partial}", :locals=>
-         { :view=>view,
-           :card=>card,
-           :cards=>card.results,
-           :context=>@context,
-           :instruction=>instruction,
-           :title=>title,
-           :slot=>slot }
+        render(part, :cards=>card.results, :instruction=>instruction, :title=>title)
       end
   end
-
-  view(:editor, :type=>'search') do form.text_area :content, :rows=>3 end
 
   view(:line, :type=>'search') do
     if depth > 2

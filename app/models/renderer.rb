@@ -25,10 +25,11 @@ class Renderer
 
   RENDERERS = {
     :html => :RichHtmlRenderer,
+    #:xml => :XmlFormater
   }
 
   cattr_accessor :max_char_count, :max_depth, :set_views,
-    :current_slot, :ajax_call, :fallback_methods
+    :current_slot, :ajax_call, :fallback
   self.max_char_count = 200
   self.max_depth = 10
 
@@ -56,34 +57,48 @@ class Renderer
   #     for patterns other than AllPattern ('*all')
   #
   class << self
-    def view_alias(view, opts={}, *alias_views)
-      method_id, pkey =  get_pattern(view, opts)
-      alias_views.each do |aview|
-Rails.logger.info "aliased #{view} #{pkey} #{aview}"
-        priv_name(method_id, pkey, aview)
+    def view_alias(view, opts={}, *aliases)
+      view_key = get_pattern(view, opts)
+      aliases.each do |aview|
+        case aview
+        when String
+        when Symbol; aview_key = aview.to_s
+        when Hash
+          aview_key = get_pattern(aview[:view]||view, aview)
+        else raise "Bad view #{aview.inspect}"
+        end
+
+Rails.logger.info "aliased #{view} #{aview.inspect} > #{aview_key}"
+        register_view(view_key, aview_key)
+Rails.logger.info "reg_alias(#{view_key}, #{view}) > #{aview.inspect} :: #{aview_key}"
       end
     end
 
     def view(view, opts={}, &final)
-      method_id, pkey =  get_pattern(view, opts)
-      fallback_methods[view] = opts[:fallback_method] if opts.has_key?(:fallback_method)
+      fallback[view] = opts.delete(:fallback) if opts.has_key?(:fallback)
+      view_key = get_pattern(view, opts)
       class_eval do
-        define_method( method_id.sub(/^render/,'_final'), &final )
+        define_method( "_final_#{view_key}", &final )
+        register_view(view_key, view_key)
+Rails.logger.info "reg_view(#{view_key.inspect}, #{view.inspect})"
 
-        define_method( priv_name(method_id, pkey, view) ) do
-          |*a| a = [{}] if a.empty?
-          # this variable name is highly confusing (:view); it means the view to
-          # return to after an edit.  it's about persistence. should do better.
-          a[0][:view] ||= view  
-          final_meth = view_method( view ).to_s.sub(/^_render/,'_final')
+        if view_key == view
+Rails.logger.info "define base view: _render_#{view}, render_#{view}"
+          define_method( "_render_#{view}" ) do |*a| a = [{}] if a.empty?
+            # this variable name is highly confusing (:view); it means the view to
+            # return to after an edit.  it's about persistence. should do better.
+            a[0][:view] ||= view  
+            final_meth = view_method( view )
 Rails.logger.info " in #{caller(0).first}[#{card}] #{view}, #{final_meth}"
-          send(final_meth.to_sym, *a) { yield }
-        end
+raise "??? #{view.inspect}" unless final_meth
+            send(final_meth, *a) { yield }
+          end
 
-        define_method( method_id ) do |*a|
-          if refusal=render_check(method_id); return refusal end
+          define_method( "render_#{view}" ) do |*a|
+            if refusal=render_check(method_id); return refusal end
 raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_method( view )
-          send(view_method( view ), *a) { yield }
+            send( "_render_#{view}", *a) { yield }
+          end
         end
       end
     end
@@ -92,18 +107,17 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
       unless pkey =  Wagn::Pattern.pattern_key(opts) and opts.empty?
         raise "Bad Pattern opts: #{pkey.inspect} #{opts.inspect}"
       end
-      return "render#{pkey}_#{view.to_s}", pkey
+      return (pkey.blank? ? view : "#{pkey}_#{view}").to_sym
     end
 
-    def priv_name(method_id, pkey, nview)
-      nmethod = "render#{pkey}_#{nview}"
-      if @@set_views.has_key?(nmethod)
-        raise "Attempt to redefine view: #{nview}, #{pkey}, #{nmethod}"
+    def register_view(view_key, nview_key)
+      if @@set_views.has_key?(nview_key)
+        raise "Attempt to redefine view: #{nview_key}, #{view_key}"
       end
-      @@set_views[nmethod] = "_#{method_id}".to_sym
+      @@set_views[nview_key.to_sym] = "_final_#{view_key}".to_sym
     end
 
-    @@set_views, @@fallback_methods = {},{} unless @@set_views
+    @@set_views, @@fallback = {},{} unless @@set_views
 
     def new(card, opts=nil)
       fmt = (opts and opts[:format]) ? opts[:format] : :html
@@ -116,7 +130,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
       end
     end
 
-    def set_view(key) Renderer.set_views[key] end
+    def set_view(key) Renderer.set_views[key.to_sym] end
     def view_aliases() VIEW_ALIASES end
   end
 
@@ -320,24 +334,13 @@ Rails.logger.info "render(#{action}) #{render_meth}"
   end
 
   def view_method(view)
-    return "_render_#{view}" unless card
-    Wagn::Pattern.set_names( card ).each do |setname|
-Rails.logger.info "view_method1( #{setname} )"
-      setname = setname.sub('*all','')
-Rails.logger.info "view_method2( #{setname} )"
-      setname = setname.
-        sub(/\*(type|self|right|type plus right)/,'\1')
-Rails.logger.info "view_method3( #{setname} )"
-      setname = setname.
-        gsub(/(\+|^)_*/,'_').to_key
-Rails.logger.info "view_method4( #{setname} )"
-      setname = setname.blank? ? view.to_s : "#{setname}_#{view}"
-Rails.logger.info "view_method5( #{setname} )"
-      meth = self.class.set_view("render_#{setname}")
-Rails.logger.info "view_methodF( #{setname} )  #{meth} "
+    return "_final_#{view}" unless card
+    Wagn::Pattern.codenames(card, view) do |setname|
+      meth = self.class.set_view(setname)
+Rails.logger.info "view_method( #{setname} )  #{meth}"
       return meth if meth
     end
-    return @@fallback_methods[view]
+    return @@fallback[view]
   end
   
   def form_for_multi

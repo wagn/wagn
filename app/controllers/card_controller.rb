@@ -134,7 +134,8 @@ class CardController < ApplicationController
 
   def edit
     if ['name','type','codename'].member?(params[:attribute])
-      render :partial=>"card/edit/#{params[:attribute]}"
+      #render :partial=>"card/edit/#{params[:attribute]}"
+      render_cardedit(:part=>params[:attribute])
     end
   end
 
@@ -167,7 +168,8 @@ class CardController < ApplicationController
       # If there is confirmation error and *only* that error
       @confirm = (@card.confirm_rename=true)
       @card.update_referencers = true
-      return render(:partial=>'card/edit/name', :status=>200)
+      #return render(:partial=>'card/edit/name', :status=>200)
+      return render_cardedit(:part=>:name, :status=>200)
     end
 
     handling_errors do
@@ -265,7 +267,8 @@ class CardController < ApplicationController
 
   def options
     @extension = @card.extension
-    render :partial=>"card/options/#{params[:attribute]}" if params[:setting] and
+    render_options(:part=>params[:attribute]) if params[:setting] and
+    #render :partial=>"card/options/#{params[:attribute]}" if params[:setting] and
       ['closed_setting','open_setting'].include?(params[:attribute])
   end
 
@@ -352,9 +355,11 @@ class CardController < ApplicationController
 
 
   # doesn't really seem to fit here.  may want to add new controller if methods accrue?
+  # Yeah, now it really doesn't go here, but where?
   def add_field # for pointers only
     load_card if params[:id]
-    render :partial=>'types/pointer/field', :locals=>params.merge({:link=>:add,:card=>@card})
+    #render :partial=>'types/pointer/field', :locals=>params.merge({:link=>:add,:card=>@card})
+    Renderer.new(@card).render_field(:link=>:add)
   end
 
 end

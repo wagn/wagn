@@ -9,6 +9,11 @@ module WagnHelper
   # whether it is a Slot or Renderer, and it will be from the parent class
   #   Now: Always a Renderer, and the subclass is selected by:
   #     :format => :html (default and only -> RichHtmlRenderer (was Slot))
+  def slot() raise "slot is now self #{self}" end
+  def get_slot(card=nil, context=nil, action=nil, opts={})
+    raise "get_slot? #{card}, #{context}, #{action}, #{opts.inspect}"
+  end
+=begin
   def slot() Renderer.current_slot end
   def card() @card ||= slot.card end
   def params()
@@ -31,18 +36,6 @@ module WagnHelper
             opts.merge(:context=>context, :action=>action, :template=>self) )
     end
     controller and controller.renderer = slot or slot
-  end
-
-  # FIMXE: this one's a hack...
-=begin
-  def render_card(card, mode, args={})
-    if String===card && name = card
-      raise("Card #{name} not present") unless card=Card.fetch(name)
-    end
-    # FIXME: some cases we're called before Renderer.current_slot is initialized.
-    #  should we initialize here? or always do Renderer.new?
-    subrenderer = Renderer.current_slot ? Renderer.current_slot.subrenderer(card) : Renderer.new(card)
-    subrenderer.render(mode.to_sym, args)
   end
 =end
 
@@ -280,9 +273,9 @@ module WagnHelper
     concat('</form>')
   end
 
-  def wrap_slot(slot=nil, args={}, &block)
-    slot ||= get_slot
-    concat( slot.wrap(args) { capture{ yield(slot) } } )
+  def wrap_slot(renderer=nil, args={}, &block)
+    renderer ||= self
+    concat( renderer.wrap(args) { capture{ yield } } )
   end
   # ------------( helpers ) --------------
   def edit_user_context(card)

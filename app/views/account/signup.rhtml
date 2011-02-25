@@ -6,11 +6,11 @@
   <h1 class="page-header">Sign Up</h1><%#ENGLISH%>
 
 
-  <% wrap_slot(get_slot(card)) do |slot| %>
+  <% wrap_slot do %>
 
     <div class="instruction">
-      <% if inst = card.setting_card('add help', 'edit help') %> 
-        <%= slot.subrenderer(inst).render :naked %>
+      <% if inst = @card.setting_card('add help', 'edit help') %> 
+        <%= subrenderer(inst).render :naked %>
       <% elsif !System.ok?(:create_accounts) %>
         <p><strong>All Account Requests are subject to review.</strong></p><%#ENGLISH%>
       <% else %>
@@ -20,32 +20,32 @@
 
     <div class="content">
     
-      <% form_for :card, card, :action=>'signup', :html=>{ :onsubmit=>"Wagn.runQueue(Wagn.onSaveQueue['main_1'])"} do |f| %>
+      <% form_for :card, @card, :action=>'signup', :html=>{ :onsubmit=>"Wagn.runQueue(Wagn.onSaveQueue['main_1'])"} do |f| %>
         <%= hidden_field_tag 'element', "#{div_id}"  %>
         <%= f.hidden_field 'type'  %>
-        <%- slot.form = f %>
+        <%- form = f %>
         <%= error_messages_for :user %> 
         <table class="fieldset">
-          <%= slot.option_header 'Account Details' %><%#ENGLISH%>
-          <% slot.option(
+          <%= option_header 'Account Details' %><%#ENGLISH%>
+          <% option(
               :name=>"name", 
               :help=>"<strong>Unique name for your card</strong><br/>usually first and last name",
               :label=>"Name") do %>
             <%= f.text_field :name, {:class=>'new-card-name', :id=>"new-card-name-field"} %>
           <% end %>   
           <%= render :partial=>'account/email' %>
-          <%= slot.option_header 'About You' %>
+          <%= option_header 'About You' %>
         </table>    
   
         <div class="open-content">
-          <%= slot.render_edit %>
+          <%= render_edit %>
         </div>
-        <%= slot.full_captcha %>
+        <%= full_captcha %>
         <div class="submit-tag">
           <%= submit_tag 'Submit' %>
         </div>
 
-        <%= slot.notice %>
+        <%= notice %>
   
   
       <% end %>

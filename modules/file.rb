@@ -15,4 +15,6 @@ class Renderer
       form.hidden_field("content", :id=>"#{attachment_uuid}-content")
     #= editor_hooks :save=>%{ //FIXME: handle the case that the upload isn't finished. }
   end
+
+  view_alias :editor, {:type=>:file}, {:type=>:image}
 end

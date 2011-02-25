@@ -1,8 +1,8 @@
 <%- subtab = params[:attribute] || 'permissions' %>
-<% wrap_slot do |slot| %>
-  <%= slot.header %>
+<% wrap_slot do %>
+  <%= header %>
   <div class="options-body">
-    <%= slot.render_partial "card/options/#{subtab}" %>
+    <%= render_options :part=>subtab %>
   </div>
   <span class="notice"><%= flash[:notice] %></span>
 <% end %>

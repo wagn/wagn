@@ -93,9 +93,8 @@ unless defined? TEST_ROOT
         args[:users] ||= { :anon=>200 }
         args[:cardtypes] ||= ['Basic']
         if args[:cardtypes]==:all 
-          cardtypes_defined_in_code =  Dir["app/cardtypes/*.rb"].map {|x| x.match(/\/([^\/\.]+)\.rb$/)[1].camelize }
-          cardtypes_loaded_in_fixtures = YAML.load_file('test/fixtures/cardtypes.yml').collect {|k,v| v['class_name']}                   
-          args[:cardtypes] = cardtypes_defined_in_code & cardtypes_loaded_in_fixtures
+          args[:cardtypes] = YAML.load_file('test/fixtures/cardtypes.yml').collect {|k,v| v['class_name']}                   
+Rails.logger.info "render_test all types: #{args[:cardtypes].inspect}"
         end
 
         args[:users].each_pair do |user,status|
@@ -106,6 +105,7 @@ unless defined? TEST_ROOT
 
             title = url.gsub(/:id/,'').gsub(/\//,'_') + "_#{cardtype}"
             login = (user=='anon' ? '' : "integration_login_as '#{user}'")
+Rails.logger.info "test_def #{title} #{user} #{status} #{url} #{cardtype}"
             test_def = %{
               def test_render_#{title}_#{user}_#{status} 
                 #{login}

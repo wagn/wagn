@@ -1,5 +1,4 @@
 class Renderer
-Rails.logger.info "setting view decls #{caller.slice(0,20)*"\n"}"
   view(:content, :type=>'setting') do
     %{<div class="instruction">#{
       expand_inclusions "{{+*right+*edit help}}"} </div>#{

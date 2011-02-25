@@ -7,7 +7,7 @@
 <% end %>
 <% slot.option(
     :name=>"password", 
-      :help=> card.extension ? "If left blank, password will remain the same" : '', #ENGLISH
+      :help=> @card.extension ? "If left blank, password will remain the same" : '', #ENGLISH
       :label=>"Password") do %>
     <%= password_field :extension, :password %>
 <% end %>
@@ -22,7 +22,7 @@
   <%#= text_field :extension, :identity_url %>
 <%# end %>
 
-<% if card.extension and System.ok?(:administrate_users) and !extension.built_in? %>
+<% if @card.extension and System.ok?(:administrate_users) and !extension.built_in? %>
    <% slot.option(
       :name=>"block_user", 
        :help=>"Blocking a user prevents them from signing in", #ENGLISH

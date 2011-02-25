@@ -34,6 +34,14 @@ module Wagn
         end.compact
       end
 
+      def codenames card, view
+        @@subclasses.map do |pclass|
+          pclass.pattern_applies?(card) and codename = pclass.codename(card)
+          next unless codename
+          codename = (codename.blank? ? view : "#{codename}_#{view}").to_sym
+          block_given? ? yield(codename) : codename
+        end
+      end
 
       def set_names card
 r=
@@ -95,6 +103,8 @@ raise "no card" unless card
         key
       end
 
+      def codename(card) '' end
+
       def pattern_key(opts)
         opts.empty? && ''
       end
@@ -124,9 +134,11 @@ raise "no card" unless card
         "#{card.cardtype_name}+#{key}"
       end
 
+      def codename(card) "#{card.cardtype_name}_type" end #FIXME codename
+
       def pattern_key(opts)
         if opts.has_key?(:type)
-          '_'+opts.delete(:type).gsub('+','_').to_key+'_type'
+          opts.delete(:type).to_s.gsub('+','_').to_key+'_type'
         end
       end
 
@@ -151,9 +163,11 @@ raise "no card" unless card
         "#{card.name.tag_name}+#{key}"
       end
 
+      def codename(card) "#{card.name.tag_name}_right" end
+
       def pattern_key(opts)
         if opts.has_key?(:right)
-          '_'+opts.delete(:right).gsub('+','_').to_key+'_right'
+          opts.delete(:right).to_s.gsub('+','_').to_key+'_right'
         end
       end
 
@@ -183,17 +197,19 @@ raise "no card" unless card
         "#{left(card).cardtype_name}+#{card.name.tag_name}+*type plus right"
       end
 
+      def codename(card) "#{left(card).cardtype_name}_#{card.name.tag_name}_ltype_rt" end
+
       def css_name card
         'LTYPE_RIGHT-' + set_name(card).trunk_name.css_name
       end
 
       def pattern_key(opts)
         if opts.has_key?(:ltype) and opts.has_key?(:right)
-          %{_ltype_rt_#{
-            opts.delete(:ltype).gsub('+','_').to_key
+          %{#{
+            opts.delete(:ltype).to_s.gsub('+','_').to_key
           }_#{
-            opts.delete(:right).gsub('+','_').to_key
-          }}
+            opts.delete(:right).to_s.gsub('+','_').to_key
+          }_ltype_rt}
         end
       end
 
@@ -218,9 +234,11 @@ raise "no card" unless card
         "#{card.name}+#{key}"
       end
 
+      def codename(card) "#{card.name}_self" end
+
       def pattern_key(opts)
         if opts.has_key?(:name)
-          '_'+opts.delete(:name).gsub('+','_').to_key+'_self'
+          opts.delete(:name).to_s.gsub('+','_').to_key+'_self'
         end
       end
 

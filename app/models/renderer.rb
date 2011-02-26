@@ -204,6 +204,15 @@ class Renderer
   view(:link)     { Chunk::Reference.standard_card_link(card.name) }
   view(:url)      { "#{System.base_url}/wagn/#{_render_linkname}"}
 
+## DEPRECATED DEPRECATED
+# this is a quick fix, will soon be replaced by view override
+
+  view(:when_created)     { card.created_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
+  view(:when_last_edited) { card.updated_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
+
+##
+
+
   view(:open_content) do |args|
     card.post_render(_render_naked(args) { yield })
   end

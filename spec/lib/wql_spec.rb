@@ -85,6 +85,33 @@ describe Wql do
     end
   end
 
+  describe "created_by/creator_of" do
+    before do
+      User.as(:joe_user){ Card.create :name=>'Create Test', :content=>'sufficiently distinctive'}
+    end
+    
+    it "should find Joe User as the card's creator" do
+      Wql.new(:creator_of=>'Create Test').run.first.name.should == 'Joe User'
+    end
+    
+    it "should find card created by Joe User" do
+      Wql.new(:created_by=>'Joe User', :eq=>'sufficiently distinctive').run.first.name.should == 'Create Test'
+    end
+  end
+
+  describe "last_edited_by/last_editor_of" do
+    before do
+      User.as(:joe_user){ c=Card.fetch('A'); c.content='peculicious'; c.save!}
+    end
+    
+    it "should find Joe User as the card's last editor" do
+      Wql.new(:last_editor_of=>'A').run.first.name.should == 'Joe User'
+    end
+    
+    it "should find card created by Joe User" do
+      Wql.new(:last_edited_by=>'Joe User', :eq=>'peculicious').run.first.name.should == 'A'
+    end
+  end
 
   describe "keyword" do
     before { User.as :joe_user }

@@ -25,9 +25,9 @@ from cards t0 order by count desc limit 10;
 
 class Wql    
   ATTRIBUTES = {
-    :basic=> %w{ name type content id key extension_type extension_id },
+    :basic=> %w{ name type content id key extension_type extension_id updated_by },
     :system => %w{ trunk_id tag_id },
-    :semi_relational=> %w{ edited_by edited member_of member role found_by },
+    :semi_relational=> %w{ edited_by edited last_editor_of last_edited_by creator_of created_by member_of member role found_by },
     :relational => %w{ part left right plus left_plus right_plus },  
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
     :special => %w{ or match complete not count and },
@@ -84,10 +84,11 @@ class Wql
   end
   
   def sql
-    @cs.to_sql
+    @sql ||= @cs.to_sql
   end
   
   def run
+    #warn sql
     rows = ActiveRecord::Base.connection.select_all( sql )
     case (query[:return] || :card)
     when :card
@@ -387,10 +388,37 @@ class Wql
     end          
     
     def edited_by(val)
-      #user_id = ((c = Card::User[val]) ? c.extension_id : 0)
       extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val).to_sql
       sql.joins << "join (select distinct card_id from revisions r " +
         "where created_by in #{extension_select} ) ru on ru.card_id=#{table_alias}.id"
+    end
+    
+    def created_by(val)
+      extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val)
+      @spec[:created_by] = ValueSpec.new( [:in, extension_select], self )
+      # explicitly set @spec val here because created_by is both name of relationship and name of field.  probably should handle differently
+    end
+    
+    def creator_of(val)
+      inner_spec = CardSpec.build(:return=>'created_by', :_parent=>self).merge(val)      
+      merge({
+        :extension_id => ValueSpec.new(['in',inner_spec],self),
+        :extension_type => 'User'
+      })
+    end
+
+    def last_edited_by(val)
+      extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val)
+      merge (:updated_by => ValueSpec.new( [:in, extension_select], self ) )
+      # explicitly set @spec val here because created_by is both name of relationship and name of field.  probably should handle differently
+    end
+    
+    def last_editor_of(val)
+      inner_spec = CardSpec.build(:return=>'updated_by', :_parent=>self).merge(val)      
+      merge({
+        :extension_id => ValueSpec.new(['in',inner_spec],self),
+        :extension_type => 'User'
+      })
     end
     
     def edited(val)

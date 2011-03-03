@@ -262,11 +262,20 @@ Rails.logger.info "process_content(#{content}, #{card&&card.content}) #{card&&ca
     end
   end
 
-###----------------( NAME)
-  view(:name)     do card.name end
-  view(:key)      do card.key end
-  view(:link)     do Chunk::Reference.standard_card_link(card.name) end
-  view(:linkname) do card.name.to_url_key end
+###----------------( NAME) 
+  view(:name)     { card.name             }
+  view(:key)      { card.key              }
+  view(:linkname) { card.name.to_url_key  }
+  view(:link)     { Chunk::Reference.standard_card_link(card.name) }
+  view(:url)      { "#{System.base_url}/wagn/#{_render_linkname}"}
+
+## DEPRECATED DEPRECATED
+# this is a quick fix, will soon be replaced by view override
+
+  view(:when_created)     { card.created_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
+  view(:when_last_edited) { card.updated_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
+
+##
 
   view(:open_content) do |args|
     card.post_render(_render_naked(args) { yield })
@@ -409,9 +418,10 @@ Rails.logger.info "view_method( #{setname} )  #{meth}"
       tcard, tcont = root.main_card, root.main_content
       return tcont if tcont
       return "{{#{options[:unmask]}}}" || '{{_main}}' unless @depth == 0 and tcard
+
       tname = tcard.name
-      item  = symbolize_param(:item) and options[:item] = item
-      pview = symbolize_param(:view) and options[:view] = pview
+      [:item, :view, :size].each{ |key| val=symbolize_param(key) and options[key]=val }
+      # main card uses these CGI options as inclusion args      
       options[:context] = 'main'
       options[:view] ||= :open
     end
@@ -422,13 +432,12 @@ Rails.logger.info "view_method( #{setname} )  #{meth}"
 
     tcard ||= begin
       case
-      when state ==:edit   ;  Card.fetch_or_new(fullname, {}, new_inclusion_card_args(options))
+      when state ==:edit   ;  Card.fetch_or_new(fullname, {}, new_inclusion_card_args(tname, options))
       when base.respond_to?(:name);   base
       else                 ;  Card.fetch_or_new(fullname, :skip_defaults=>true)
       end
     end
 
-    tcard.loaded_trunk=card if tname =~ /^\+/
     result = process_inclusion(tcard, options)
     result = resize_image_content(result, options[:size]) if options[:size]
     @char_count += (result ? result.length : 0) #should we strip html here?
@@ -513,8 +522,9 @@ Rails.logger.info "view_method( #{setname} )  #{meth}"
     content if content.present?  #not sure I get why this is necessary - efm
   end
 
-  def new_inclusion_card_args(options)
+  def new_inclusion_card_args(tname, options)
     args = { :type =>options[:type],  :permissions=>[] }
+    args[:loaded_trunk]=card if tname =~ /^\+/
     if content=get_inclusion_content(options[:tname])
       args[:content]=content
     end

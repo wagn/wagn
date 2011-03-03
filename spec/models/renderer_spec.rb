@@ -144,6 +144,7 @@ describe Renderer, "" do
     it("name"    ) { render_card(:name).should      == 'Tempo Rary' }
     it("key"     ) { render_card(:key).should       == 'tempo_rary' }
     it("linkname") { render_card(:linkname).should  == 'Tempo_Rary' }
+    it("url"     ) { render_card(:url).should       == System.base_url + '/wagn/Tempo_Rary' }
 
     it "image tags of different sizes" do
       Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}
@@ -452,7 +453,8 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       Renderer.new(@card).render(:raw).should == "Default Bar"
     end
 
-    it "are used in edit forms" do
+    
+    it "should be used in edit forms" do
       config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )
       @card = Card.new( :name=>"templated", :content => "Bar" )
       @card.should_receive(:setting_card).with("content", "default").and_return(config_card)
@@ -463,14 +465,17 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
         end
       end
     end
-
-    it "are used in multi edit calls" do
-      c = Card.new :name => 'ABook', :type => 'Book'
-      Renderer.new(c).render( :multi_edit ).should be_html_with do
+    
+    it "work on type-plus-right sets edit calls" do
+      Card.create(:name=>'Book+illustrator+*type plus right+*default', :content=>'Zamma Flamma')
+      c = Card.new :name => 'Yo Buddddy', :type => 'Book'
+      result = Slot.new(c).render( :multi_edit )
+      result.should be_html_with do
         div :class => "field-in-multi" do
           input :name=>"cards[~plus~illustrator][content]", :type => 'hidden'
         end
       end
+      result.should match('Zamma Flamma')
     end
 
   end

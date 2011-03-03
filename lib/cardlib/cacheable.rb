@@ -18,7 +18,7 @@ module Cardlib
     end
 
     def soft_template?
-      name && name =~ /\*default/
+      name && name =~ /\*default$/
     end   
     
     # FIXME: maybe this should be methods in individual classes?
@@ -28,7 +28,7 @@ module Cardlib
         self.items( context ? context.name : self.name )
       when "Search"
         self.list_cards(context).map {|card| card.name }
-      when "File","NimbbVideo"
+      when "File"
         [self.name]
       else
         self.content.split(/[,\n]/)
@@ -52,7 +52,7 @@ module Cardlib
     end
     
     def contextual_content context = nil
-      Renderer.new(context).expand_inclusions(Renderer.new(self)._render_raw)
+      Slot.new(context).expand_inclusions(Slot.new(self)._render_raw)
     end
 
     def cardtype_name

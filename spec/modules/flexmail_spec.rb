@@ -49,7 +49,7 @@ describe Flexmail do
       Card::Search.create!  :name => "mailconfig+*from", :content => %{ {"left":"_left", "right":"email"} }
       Card::Search.create!  :name => "subject search+*right+*content", :content => %{{"referred_to_by":"_self+subject"}}
       Card.create!  :name => "mailconfig+*subject", :content => "{{+subject search|naked;item:naked}}"
-      Card.create! :name => "mailconfig+*message", :content => "Oughta get fancier"
+      Card.create! :name => "mailconfig+*message", :content => "Triggered by {{_self|name}} and its wonderful content: {{_self|naked}}"
       Card.create! :name => "mailconfig+*attach", :type=>"Pointer", :content => "[[_self+attachment]]"
       c = Card::Cardtype.create! :name=>'Trigger'
       c.permit(:create, Role[:anon])
@@ -74,7 +74,7 @@ describe Flexmail do
         :bcc => "",
         :cc => '',
         :subject => "a very nutty thang",
-        :message => "Oughta get fancier",
+        :message => "Triggered by Banana Trigger and its wonderful content: data content",
         :attach => ['Banana Trigger+attachment']
       }]
     end

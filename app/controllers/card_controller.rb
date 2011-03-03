@@ -52,7 +52,8 @@ class CardController < ApplicationController
   end
 
   def render_show
-    #Wagn::Hook.call :before_show, '*all', self
+    @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
+    ## fixme, we ought to be setting special titles (or all titles) in cards
 
     respond_to do |format|
       format.rss do
@@ -65,11 +66,7 @@ class CardController < ApplicationController
       format.kml  { render :action=>'show'}
       format.xml  { render :text=>'XML not yet supported'}
       format.json { render :text=>'JSON not yet supported'}
-      format.html do
-        @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
-        ## fixme, we ought to be setting special titles (or all titles) in cards
-        request.xhr? ? render(:action=>'show') : render(:text=>'', :layout=>true)
-      end
+      format.html { request.xhr? ? render(:action=>'show') : render(:text=>'', :layout=>true) }
     end
   end
 

@@ -4,7 +4,7 @@ module Card
     def is_collection?() true  end
 
     def items( context = nil )
-      ::User.as(:wagbot) do
+      ::User.as(:wagbot) do ## why is this a wagbot thing?
         links = content.split(/\n+/).map{ |x| x.gsub(/\[\[|\]\]/,'')}.map{|x|
           context ? x.to_absolute(context) : x
         }

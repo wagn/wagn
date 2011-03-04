@@ -409,7 +409,7 @@ class Wql
 
     def last_edited_by(val)
       extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val)
-      merge (:updated_by => ValueSpec.new( [:in, extension_select], self ) )
+      merge(:updated_by => ValueSpec.new( [:in, extension_select], self ) )
       # explicitly set @spec val here because created_by is both name of relationship and name of field.  probably should handle differently
     end
     

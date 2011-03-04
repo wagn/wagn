@@ -122,10 +122,10 @@ module Card
     end
     
     def set_default_permissions
-      source_card = setting_card('content', 'default')
+      source_card = setting_card('content', 'default')  #not sure why "template" doesn't work here.
       if source_card
         perms = source_card.card.permissions.reject { 
-          |p| p.task == 'create' unless (type == 'Cardtype' or template?) 
+          |p| p.task == 'create' unless (type=='Cardtype' or template?) 
         }
       else
         #raise( "Missing permission configuration for #{name}" ) unless source_card && !source_card.permissions.empty?
@@ -202,7 +202,7 @@ module Card
           when args['type'];                    typetype= :cardname;  args['type']
           when args.delete('skip_type_lookup'); 'Basic'
           else
-            setting = Card::Basic.new(:name=> args['name'], :skip_defaults=>true ).setting_card('content', 'default')
+            setting = Card::Basic.new(:name=> args['name'], :skip_defaults=>true ).template
             setting ? setting.type : 'Basic'
           end
         

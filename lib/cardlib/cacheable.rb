@@ -1,25 +1,7 @@
 module Cardlib
   module Cacheable
     
-    def template?
-      name && name.template_name?
-    end
-       
-    def type_template?
-      name && name =~ /\+\*type\+/
-    end
 
-    def right_template?
-      name && name =~ /\+\*right\+/
-    end
-       
-    def hard_template?
-      name && name =~ /\+\*content$/
-    end
-
-    def soft_template?
-      name && name =~ /\*default$/
-    end   
     
     # FIXME: maybe this should be methods in individual classes?
     def list_items context = nil
@@ -52,7 +34,7 @@ module Cardlib
     end
     
     def contextual_content context = nil
-      Slot.new(context).expand_inclusions(Slot.new(self)._render_raw)
+      Slot.new(context).process_content(Slot.new(self)._render_raw)
     end
 
     def cardtype_name

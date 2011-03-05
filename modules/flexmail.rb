@@ -2,7 +2,7 @@ class Flexmail
   class << self
     def configs_for card
       if send_card = card.setting_card('send')
-        items = User.as(:wagbot){ send_card.list_items }
+        items = User.as(:wagbot){ send_card.item_names }
         items.map do |email_config|
           config = {}
           [:to, :from, :cc, :bcc, :attach].each do |field|

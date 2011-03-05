@@ -17,20 +17,23 @@ module Cardlib
       content
     end
     
-    def clean_html?
-      true
+    def clean_html?()  true   end
+    def generic?()     false  end
+    def collection?()  false  end
+
+    def item_names(args={})
+      self.content.split /[,\n]/
     end
     
-    def generic?
-      false
+    def item_cards(args={})
+      [self]
     end
     
-    def is_collection?() 
-      false 
-    end    
+    #not sure this belongs here...
+    def each_name
+      item_names.map { |name| yield(name) }
+    end
 
-
-    #This definitely doesn't belong here.
     def valid_number?( string )
       valid = true
       begin

@@ -280,7 +280,7 @@ class CardController < ApplicationController
     sources.unshift '*account' if @card.extension_type=='User'
     @items = sources.map do |root|
       c = Card.fetch((root ? "#{root}+" : '') +'*related')
-      c && c.type=='Pointer' && c.items
+      c && c.item_names
     end.flatten.compact
 #    @items << 'config'
     @current = params[:attribute] || @items.first.to_key
@@ -348,7 +348,7 @@ class CardController < ApplicationController
        pointer_card.setting_card('options'))
 
     search_args = {  :complete=>complete, :limit=>8, :sort=>'name' }
-    @items = options_card ? options_card.search(search_args) : Card.search(search_args)
+    @items = options_card ? options_card.item_cards(search_args) : Card.search(search_args)
 
     render :inline => "<%= auto_complete_result @items, 'name' %>"
   end

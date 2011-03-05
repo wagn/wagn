@@ -52,20 +52,20 @@ describe Card do
     end
   end
 
-  describe "#list_items" do
+  describe "#item_names" do
     it "returns item for each line of basic content" do
-      Card.new( :name=>"foo", :content => "X\nY" ).list_items.should == ["X","Y"]
+      Card.new( :name=>"foo", :content => "X\nY" ).item_names.should == ["X","Y"]
     end
 
     it "returns list of card names for search" do
       c = Card.new( :name=>"foo", :type=>"Search", :content => %[{"name":"Z"}])
-      c.list_items.should == ["Z"]
+      c.item_names.should == ["Z"]
     end
     
     it "handles searches relative to context card" do
-      context_card = Card.fetch_or_new("A") # refers to 'Z'
+      # note: A refers to 'Z'
       c = Card.new :name=>"foo", :type=>"Search", :content => %[{"referred_to_by":"_self"}]
-      c.list_items( context_card ).should == ["Z"]
+      c.item_names( :context=>'A' ).should == ["Z"]
     end
   end
 

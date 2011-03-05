@@ -100,7 +100,7 @@ module Card
       
       # The following are only necessary for setting permissions.  Should remove once we have set/setting -based perms
       if name and name.junction? and name.valid_cardname? 
-        self.trunk ||= Card.fetch_or_new name.parent_name, {:skip_virtual=>true}
+        self.trunk ||= Card.fetch_or_new name.left_name, {:skip_virtual=>true}
         self.tag   ||= Card.fetch_or_new name.tag_name,    {:skip_virtual=>true}
       end
       
@@ -348,12 +348,15 @@ module Card
       self.confirm_destroy = true
       destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
     end
+
      
     # Extended associations ----------------------------------------
 
-    def right
-      tag
-    end
+
+    def left()  Card.fetch( name.trunk_name, :skip_virtual=> true) end
+    def right() Card.fetch( name.tag_name,   :skip_virtual=> true) end
+    def cardtype_name() ::Cardtype.name_for( self.type )             end
+    
     
     def pieces
       simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq 

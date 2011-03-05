@@ -228,7 +228,7 @@ class Renderer
 
 ###----------------( SPECIAL )
   view(:array) do |args|
-    if card.is_collection?
+    if card.collection?
       (card.each_name do |name|
         subrenderer(name)._render_core { yield }
       end.inspect)
@@ -424,7 +424,7 @@ class Renderer
     context = case
     when base; (base.respond_to?(:name) ? base.name : base)
     when options[:base]=='parent'
-      card.name.parent_name
+      card.name.left_name
     else
       card.name
     end

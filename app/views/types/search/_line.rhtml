@@ -6,7 +6,7 @@
   # FIXME: so not DRY.  cut-n-paste from search/_content
   s = slot.paging_params #params[:s] || {}
   begin
-    query_results = card.search( s )
+    query_results = card.item_cards( s )
     total = card.count
   rescue Exception=>e
     error = e

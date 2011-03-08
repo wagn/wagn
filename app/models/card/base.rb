@@ -202,8 +202,10 @@ module Card
           when args['type'];                    typetype= :cardname;  args['type']
           when args.delete('skip_type_lookup'); 'Basic'
           else
-            setting = Card::Basic.new(:name=> args['name'], :skip_defaults=>true ).template
-            setting ? setting.type : 'Basic'
+            dummy = Card::Basic.new(:name=> args['name'], :skip_defaults=>true )
+            dummy.loaded_trunk = args['loaded_trunk'] if args['loaded_trunk']
+            pattern = dummy.template
+            pattern ? pattern.type : 'Basic'
           end
         
         args.delete('type')

@@ -207,8 +207,8 @@ class Renderer
 ## DEPRECATED DEPRECATED
 # this is a quick fix, will soon be replaced by view override
 
-  view(:when_created)     { card.created_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
-  view(:when_last_edited) { card.updated_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
+  view(:when_created)     { card.new_card? ? '' : card.create.strftime('%A, %B %d, %Y %I:%M %p %Z')  }
+  view(:when_last_edited) { card.new_card? ? '' : card.updated_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
 
 ##
 

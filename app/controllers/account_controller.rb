@@ -128,25 +128,25 @@ class AccountController < ApplicationController
     end
   end
 
-  def deny_all  ## DEPRECATED:  this method will not be long for this world.
-    if System.ok?(:administrate_users)
-      Card::InvitationRequest.find_all_by_trash(false).each do |card|
-        card.destroy
-      end
-      redirect_to '/wagn/Account_Request'
-    end
-  end
-
-  def empty_trash ## DEPRECATED:  this method will not be long for this world.
-    if System.ok?(:administrate_users)
-      User.find_all_by_status('blocked').each do |user|
-        card=Card.find_by_extension_type_and_extension_id('User',user.id)
-        user.destroy                if (!card or card.trash)
-        card.destroy_without_trash  if (card and card.trash)
-      end
-      redirect_to '/wagn/Account_Request'
-    end
-  end
+#  def deny_all  ## DEPRECATED:  this method will not be long for this world.
+#    if System.ok?(:administrate_users)
+#      Card::InvitationRequest.find_all_by_trash(false).each do |card|
+#        card.destroy
+#      end
+#      redirect_to '/wagn/Account_Request'
+#    end
+#  end
+#
+#  def empty_trash ## DEPRECATED:  this method will not be long for this world.
+#    if System.ok?(:administrate_users)
+#      User.find_all_by_status('blocked').each do |user|
+#        card=Card.find_by_extension_type_and_extension_id('User',user.id)
+#        user.destroy                if (!card or card.trash)
+#        card.destroy_without_trash  if (card and card.trash)
+#      end
+#      redirect_to '/wagn/Account_Request'
+#    end
+#  end
 
   protected
   def password_authentication(login, password)

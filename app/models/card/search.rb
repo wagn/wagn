@@ -19,6 +19,10 @@ module Card
       Card.search(@spec).map{ |card| card.name}
     end
 
+    def item_type
+      spec[:type]
+    end
+
     def count(params={})
       Card.count_by_wql( spec(params) )
     end

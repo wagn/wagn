@@ -4,7 +4,11 @@ module Card
     def collection?() true  end
 
     def item_cards( args={} )
-      item_names(args).map {|name| Card.fetch(name) }.compact
+      if args[:complete]
+        Wql.new({:referred_to_by=>name}.merge args).run
+      else
+        item_names(args).map {|name| Card.fetch_or_new(name,{},:skip_defaults=>true) }.compact
+      end
     end
 
     def item_names( args={} )
@@ -14,8 +18,10 @@ module Card
       }
     end
 
-    def first
-      item_names.first
+    def item_type
+      opt = options_card
+      return nil if (!opt || opt==self)  #fixme, need better recursion prevention
+      opt.item_type
     end
 
     def add_item( cardname )
@@ -30,11 +36,6 @@ module Card
         self.content = (item_names - [cardname]).map{|x| "[[#{x}]]"}.join("\n")
         save!
       end
-    end
-    
-    def item_type
-      opt = options_card
-      opt ? opt.spec[:type] : nil
     end
     
     def options_card

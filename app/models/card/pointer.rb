@@ -12,9 +12,9 @@ module Card
     end
 
     def item_names( args={} )
-      context = args[:context]
+      context = args[:context] || self.name
       links = content.split(/\n+/).map{ |x| x.gsub(/\[\[|\]\]/,'')}.map{|x|
-        context ? x.to_absolute(context) : x
+        context==:raw ? x : x.to_absolute(context)
       }
     end
 

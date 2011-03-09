@@ -22,7 +22,7 @@ module Cardlib
     def collection?()  false  end
 
     def item_names(args={})
-      self.content.split /[,\n]/
+      self.raw_content.split /[,\n]/
     end
     
     def item_cards(args={})

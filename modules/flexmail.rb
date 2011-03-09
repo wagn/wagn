@@ -5,6 +5,7 @@ class Flexmail
         items = User.as(:wagbot){ send_card.item_names }
         items.map do |email_config|
           config = {}
+          
           [:to, :from, :cc, :bcc, :attach].each do |field|
             config[field] = if_card("#{email_config}+*#{field}") do |c|
               # configuration can be anything visible to configurer
@@ -14,6 +15,7 @@ class Flexmail
               end
             end.else("")
           end
+          
           [:subject, :message].each do |field|
             config[field] = if_card("#{email_config}+*#{field}") do |c|
               User.as( c.card.updater ) do
@@ -21,6 +23,7 @@ class Flexmail
               end
             end.else("")
           end
+          
           config[:subject] = strip_html(config[:subject]).strip
           config
         end

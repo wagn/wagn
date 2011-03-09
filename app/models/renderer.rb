@@ -229,12 +229,12 @@ class Renderer
 ###----------------( SPECIAL )
   view(:array) do |args|
     if card.collection?
-      card.item_names.each do |name|
-        subrenderer(name)._render_core { yield }
-      end.inspect
+      card.item_cards(:limit=>0).map do |item_card|
+        subrenderer(item_card)._render_naked
+      end
     else
-      [_render_naked(args) { yield }].inspect
-    end
+      [_render_naked(args) { yield }]
+    end.inspect
   end
 
   view(:blank) do "" end

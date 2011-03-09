@@ -28,11 +28,6 @@ module Cardlib
     def item_cards(args={})
       [self]
     end
-    
-    #not sure this belongs here...
-    def each_name
-      item_names.map { |name| yield(name) }
-    end
 
     def valid_number?( string )
       valid = true

@@ -229,9 +229,9 @@ class Renderer
 ###----------------( SPECIAL )
   view(:array) do |args|
     if card.collection?
-      (card.each_name do |name|
+      card.item_names.each do |name|
         subrenderer(name)._render_core { yield }
-      end.inspect)
+      end.inspect
     else
       [_render_naked(args) { yield }].inspect
     end

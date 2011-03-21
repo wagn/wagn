@@ -25,7 +25,7 @@ module Cardlib
       self.raw_content.split /[,\n]/
     end
     
-    def item_cards(args={})
+    def item_cards(args={})  ## FIXME this is inconsistent with item_names
       [self]
     end
 

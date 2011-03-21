@@ -8,6 +8,8 @@ class AdminController < ApplicationController
       User.as :wagbot do
         @user, @card = User.create_with_card( params[:extension].merge({:login=>'first'}), params[:card] )
       end
+      
+      set_default_request_recipient
 
       if @user.errors.empty?
         @user.roles = [Role[:admin]]
@@ -54,6 +56,15 @@ class AdminController < ApplicationController
         "You don't have permission to clear the cache"
       end
     render :text =>response, :layout=> true  
+  end
+
+  private
+  
+  def set_default_request_recipient
+    to_card = Card.fetch_or_new('*request+*to')
+    to_card.content=params[:extension][:email]
+    to_card.save
+  rescue
   end
 
 end

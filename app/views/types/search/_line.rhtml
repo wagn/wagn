@@ -16,6 +16,8 @@
   <% if query_results.nil? %>
     <%= "#{error.class.to_s}: #{error.message}" %><br/>
     <%= card.content %>
+  <% elsif card.spec[:return] =='count'  %>
+    <%= query_results %>
   <% elsif query_results.length==0 %>
     <span class="faint">(0)</span>
   <% else %>

@@ -212,7 +212,7 @@ module Card
         return type, typetype
       end
       
-      def get_name_from_args(args={})
+      def get_name_from_args(args={}) #please tell me this is no longer necessary
         args ||= {}
         args['name'] || (args['trunk'] && args['tag']  ? args["trunk"].name + "+" + args["tag"].name : "")
       end      

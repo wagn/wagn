@@ -4,7 +4,13 @@ module Cardlib
     def extended_list context = nil
       context = (context ? context.name : self.name)
       args={ :limit=>'' }
-      self.item_cards(args.merge(:context=>context)).map{|x| x.item_cards(args) }.flatten.map{|y| y.item_names(args) }.flatten
+      self.item_cards(args.merge(:context=>context)).map do |x| 
+        x.item_cards(args) 
+      end.flatten.map do |x| 
+        x.item_cards(args)
+      end.flatten.map do |y|
+        y.item_names(args)
+      end.flatten
       # this could go on and on..
     end
     

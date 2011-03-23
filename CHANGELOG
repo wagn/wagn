@@ -1,5 +1,5 @@
 == 1.5.3 (March 23, 2011)
-* see 
+* see http://www.wagn.org/wagn/Wagn_1.5+3
 * stop interpreting self as triggering card past first level
 * let plus-star-options cards be a Pointer
 * respect type plus right on new cards of type

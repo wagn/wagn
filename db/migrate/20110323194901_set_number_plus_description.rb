@@ -1,4 +1,4 @@
-div>class SetNumberPlusDescription < ActiveRecord::Migration
+class SetNumberPlusDescription < ActiveRecord::Migration
   def self.up 
     User.as(:wagbot) do
       card = Card.find_or_new :name=>"Number+description", :type=>"Basic"

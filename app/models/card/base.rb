@@ -229,7 +229,13 @@ module Card
       def find_or_create(args={})
         raise "find or create must have name" unless args[:name]
         Card.fetch_or_create(args[:name], {}, args)
-      end                  
+      end
+      
+      def find_or_new(args={})
+        raise "find_or_new must have name" unless args[:name]
+        Card.fetch_or_new(args[:name], {}, args)
+      end
+                          
     end
 
     def save_with_trash!

@@ -7,6 +7,7 @@ class AdminController < ApplicationController
       Card::User  # wtf - trigger loading of Card::User, otherwise it tries to use U
       User.as :wagbot do
         @user, @card = User.create_with_card( params[:extension].merge({:login=>'first'}), params[:card] )
+        set_default_request_recipient
       end
 
       if @user.errors.empty?
@@ -54,6 +55,14 @@ class AdminController < ApplicationController
         "You don't have permission to clear the cache"
       end
     render :text =>response, :layout=> true  
+  end
+
+  private
+  
+  def set_default_request_recipient
+    to_card = Card.fetch_or_new('*request+*to')
+    to_card.content=params[:extension][:email]
+    to_card.save
   end
 
 end

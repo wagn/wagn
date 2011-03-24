@@ -219,7 +219,7 @@ class Wql
 #   def to_card(relative_name)
 #     case relative_name
 #     when "_self";  root.card                                   
-#     when "_left";  Card.fetch_or_new(root.card.name.parent_name)
+#     when "_left";  Card.fetch_or_new(root.card.name.left_name)
 #     when "_right"; Card.fetch_or_new(root.card.name.tag_name)
 #     end
 #   end
@@ -233,8 +233,8 @@ class Wql
 
       query.each do |key,val|
         case key.to_s
-        when '_self'    ; @selfname         = query.delete(key)
-        when '_parent'  ; @parent           = query.delete(key) 
+        when 'context'  ; @selfname         = query.delete(key)
+        when '_parent'  ; @parent           = query.delete(key)   ## HATE this parent business.  LEFT!
         when /^_\w+$/   ; @params[key.to_s] = query.delete(key)
         end
       end
@@ -409,7 +409,7 @@ class Wql
 
     def last_edited_by(val)
       extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val)
-      merge (:updated_by => ValueSpec.new( [:in, extension_select], self ) )
+      merge(:updated_by => ValueSpec.new( [:in, extension_select], self ) )
       # explicitly set @spec val here because created_by is both name of relationship and name of field.  probably should handle differently
     end
     

@@ -1,6 +1,6 @@
 <%- 
   eid = slot.context 
-  items = card.items
+  items = card.item_names(:context=>:raw)
   items = [''] if items.empty?
 %>
 

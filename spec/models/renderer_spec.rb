@@ -467,12 +467,13 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
     end
     
     it "work on type-plus-right sets edit calls" do
-      Card.create(:name=>'Book+illustrator+*type plus right+*default', :content=>'Zamma Flamma')
+      Card.create(:name=>'Book+author+*type plus right+*default', :type=>'Phrase', :content=>'Zamma Flamma')
       c = Card.new :name => 'Yo Buddddy', :type => 'Book'
       result = Slot.new(c).render( :multi_edit )
       result.should be_html_with do
         div :class => "field-in-multi" do
-          input :name=>"cards[~plus~illustrator][content]", :type => 'hidden'
+          [ input( :name=>"cards[~plus~author][content]", :type=>'text', :value=>'Zamma Flamma' ),
+            input( :name=>"cards[~plus~author][type]", :type => 'hidden', :value=>'Phrase') ]
         end
       end
       result.should match('Zamma Flamma')

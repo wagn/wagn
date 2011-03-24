@@ -51,14 +51,14 @@ module Cardname
   end
     
   def piece_names
-    simple? ? [self] : ([self] + parent_name.piece_names + tag_name.piece_names).uniq
+    simple? ? [self] : ([self] + left_name.piece_names + tag_name.piece_names).uniq
   end
   
   def particle_names
     split(JOINT)
   end
   
-  def parent_name
+  def left_name
     simple? ? nil : trunk_name
   end
 

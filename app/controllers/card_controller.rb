@@ -20,7 +20,7 @@ class CardController < ApplicationController
     if User.no_logins?
       redirect_to '/admin/setup'
     else
-      params['id'] = System.setting('*home').to_url_key
+      params['id'] = (System.setting('*home') || 'Home').to_url_key
       show
     end
   end
@@ -52,6 +52,9 @@ class CardController < ApplicationController
   end
 
   def render_show
+    @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
+    ## fixme, we ought to be setting special titles (or all titles) in cards
+
     respond_to do |format|
       format.rss do
          raise("Sorry, RSS is broken in rails < 2.2") unless Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >=2
@@ -62,7 +65,6 @@ class CardController < ApplicationController
       format.json do render :text=>'json not yet supported' end
       [:txt, :css, :kml, :html].each do |f|
         format.send f do 
-          params[:title] = %{#{controller_name} - #{action_name}}
           Renderer.new(@card, :layout=>request.xhr? ? :xhr : wagn_layout,
             :format=>format, :flash=>flash, :params=>params).render(:show)
         end
@@ -283,7 +285,7 @@ class CardController < ApplicationController
     sources.unshift '*account' if @card.extension_type=='User'
     @items = sources.map do |root|
       c = Card.fetch((root ? "#{root}+" : '') +'*related')
-      c && c.type=='Pointer' && c.items
+      c && c.item_names
     end.flatten.compact
 #    @items << 'config'
     @current = params[:attribute] || @items.first.to_key
@@ -351,7 +353,7 @@ class CardController < ApplicationController
        pointer_card.setting_card('options'))
 
     search_args = {  :complete=>complete, :limit=>8, :sort=>'name' }
-    @items = options_card ? options_card.search(search_args) : Card.search(search_args)
+    @items = options_card ? options_card.item_cards(search_args) : Card.search(search_args)
 
     render :inline => "<%= auto_complete_result @items, 'name' %>"
   end

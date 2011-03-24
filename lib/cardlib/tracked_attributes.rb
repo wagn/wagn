@@ -41,7 +41,7 @@ module Cardlib
           tmp_name = "tmp:" + UUID.new.generate      
           connection.update %{update cards set #{quoted_comma_pair_list(connection, {:name=>"'#{tmp_name}'",:key=>"'#{tmp_name}'"})} where id=#{id}}
         end
-        self.trunk = Card.find_or_create :name=>newname.parent_name
+        self.trunk = Card.find_or_create :name=>newname.left_name
         self.tag = Card.find_or_create :name=>newname.tag_name
       else
         self.trunk = self.tag = nil

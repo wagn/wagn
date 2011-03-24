@@ -62,7 +62,9 @@ module Notification
     end
     
     def items_from( cardname )
-      (c = Card.fetch(cardname, :skip_virtual=>true)) ? c.items.reject{|x|x==''} : []
+      User.as :wagbot do
+        (c = Card.fetch(cardname, :skip_virtual=>true)) ? c.item_names.reject{|x|x==''} : []
+      end
     end  
       
     def watchers

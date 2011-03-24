@@ -272,8 +272,8 @@ Rails.logger.info "process_content(#{content}, #{card&&card.content}) #{card&&ca
 ## DEPRECATED DEPRECATED
 # this is a quick fix, will soon be replaced by view override
 
-  view(:when_created)     { card.created_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
-  view(:when_last_edited) { card.updated_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
+  view(:when_created)     { card.new_card? ? '' : card.created_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
+  view(:when_last_edited) { card.new_card? ? '' : card.updated_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
 
 ##
 
@@ -292,13 +292,13 @@ Rails.logger.info "process_content(#{content}, #{card&&card.content}) #{card&&ca
 
 ###----------------( SPECIAL )
   view(:array) do |args|
-    if card.is_collection?
-      (card.each_name do |name|
-        subrenderer(name)._render_core { yield }
-      end.inspect)
+    if card.collection?
+      card.item_cards(:limit=>0).map do |item_card|
+        subrenderer(item_card)._render_naked
+      end
     else
-      [_render_naked(args) { yield }].inspect
-    end
+      [_render_naked(args) { yield }]
+    end.inspect
   end
 
   view(:blank) do "" end
@@ -499,7 +499,7 @@ Rails.logger.info "view_method( #{setname} )  #{meth}"
     context = case
     when base; (base.respond_to?(:name) ? base.name : base)
     when options[:base]=='parent'
-      card.name.parent_name
+      card.name.left_name
     else
       card.name
     end

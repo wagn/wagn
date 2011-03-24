@@ -135,7 +135,7 @@ module WagnHelper
   def fancy_title(card)
     name = (String===card ? card : card.name)
     return name if name.simple?
-    card_title_span(name.parent_name) + %{<span class="joint">#{JOINT}</span>} + card_title_span(name.tag_name)
+    card_title_span(name.left_name) + %{<span class="joint">#{JOINT}</span>} + card_title_span(name.tag_name)
   end
 
   def title_tag_names(card)

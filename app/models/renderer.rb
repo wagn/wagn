@@ -62,7 +62,9 @@ class Renderer
       aliases.each do |aview|
         case aview
         when String
-        when Symbol; aview_key = aview.to_s
+        when Symbol
+          aview_key = view_key.to_s
+          aview_key = aview_key.sub(/_#{view}$/, "_#{aview}").to_sym
         when Hash
           aview_key = get_pattern(aview[:view]||view, aview)
         else raise "Bad view #{aview.inspect}"

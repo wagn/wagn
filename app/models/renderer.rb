@@ -95,7 +95,7 @@ raise "??? #{view.inspect}" unless final_meth
           end
 
           define_method( "render_#{view}" ) do |*a|
-            if refusal=render_check(method_id); return refusal end
+            if refusal=render_check(view); return refusal end
 raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_method( view )
             send( "_render_#{view}", *a) { yield }
           end
@@ -384,6 +384,7 @@ Rails.logger.info "view_method( #{setname} )  #{meth}"
   end
 
   def method_missing(method_id, *args, &proc)
+Rails.logger.debug "method missing: #{method_id}"
     # silence Rails 2.2.2 warning about binding argument to concat.  tried detecting rails 2.2
     # and removing the argument but it broken lots of integration tests.
     ActiveSupport::Deprecation.silence { @template.send(method_id, *args, &proc) }

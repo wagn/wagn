@@ -62,7 +62,13 @@ class Renderer
       aliases.each do |aview|
         case aview
         when String
-        when Symbol; aview_key = aview.to_s
+        when Symbol
+          aview_key = if view_key == view
+              aview.to_sym
+            else
+              view_key.to_s.sub(/_#{view}$/, "_#{aview}").to_sym
+            end
+          Rails.logger.info("view_alias #{aview_key}, #{view} > #{aview}")
         when Hash
           aview_key = get_pattern(aview[:view]||view, aview)
         else raise "Bad view #{aview.inspect}"
@@ -251,7 +257,13 @@ Rails.logger.info "process_content(#{content}, #{card&&card.content}) #{card&&ca
   end
 
 ### ---- Core renders --- Keep these on top for dependencies
+
+  # update_references based on _render_refs, which is the same as 
+  # _render_raw, except that you don't need to alias :refs as often
+  # speeding up the process when there can't be any reference changes
+  # (builtins, etc.)
   view(:raw) do card ? card.raw_content : _render_blank end
+  view(:refs) do card.respond_to?('references_expired') ? card.raw_content : '' end
   view(:core) do process_content(_render_raw) end
 
   view(:naked) do |args|
@@ -523,9 +535,9 @@ Rails.logger.debug "method missing: #{method_id}"
     return unless card
     WikiReference.delete_all ['card_id = ?', card.id]
 
-    if card.id and card.respond_to?('references_expired')
+    if card.id
       card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
-      rendering_result ||= WikiContent.new(card, _render_raw, self)
+      rendering_result ||= WikiContent.new(card, _render_refs, self)
       rendering_result.find_chunks(Chunk::Reference).each do |chunk|
         reference_type =
           case chunk

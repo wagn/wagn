@@ -228,6 +228,7 @@ module WagnHelper
 
   # ---------------( NAVBOX ) -----------------------------------
 
+=begin (moved to builtin def)
   def navbox
     content_tag( :form, :id=>"navbox_form", :action=>"/search", :onsubmit=>"return navboxOnSubmit(this)" ) do
       content_tag( :span, :id=>"navbox_background" ) do
@@ -263,6 +264,7 @@ module WagnHelper
       content_tag('span', label, :class=>"informal") + highlight(name, stub)
     end
   end
+=end
 
   def form_for_card(options={}, &proc)    
     concat(form_remote_tag(options))

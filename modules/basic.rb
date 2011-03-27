@@ -22,6 +22,7 @@ class Renderer
      end
     }</span>}
   end
+  view_alias(:core, {:name=>'*account link'}, :raw)
 
   view(:core, :name=>'*alerts') do %{
 <div id="alerts">
@@ -29,11 +30,13 @@ class Renderer
   <div id="error"> flash[:warning] flash[:error]</div>
 </div>
 } end
+  view_alias(:core, {:name=>'*alerts'}, :raw)
 
   view(:core, :name=>'*foot') do
     javascript_include_tag "/tinymce/jscripts/tiny_mce/tiny_mce.js" +
     (google_analytics or '')
   end
+  view_alias(:core, {:name=>'*foot'}, :raw)
 
   view(:core, :name=>'*head') do
     # ------- Title -------------
@@ -64,8 +67,10 @@ class Renderer
        }
 }
   end
+  view_alias(:core, {:name=>'*head'}, :raw)
 
   view(:core, :name=>'*navbox') do
+    Rails.logger.info("Builtin *navbox")
     #ENGLISH
     %{
 <form id="navbox_form" action="/search" onsubmit="return navboxOnSubmit(this)">
@@ -77,9 +82,13 @@ class Renderer
 </form>
     }
   end
+  view_alias(:core, {:name=>'*navbox'}, :raw)
 
   view(:core, :name=>'*now') do Time.now.strftime('%A, %B %d, %Y %I:%M %p %Z') end
+  view_alias(:core, {:name=>'*now'}, :raw)
   view(:core, :name=>'*version') do Wagn::Version.full end
+  view_alias(:core, {:name=>'*version'}, :raw)
+
   view(:content, :type=>'basic') do _render_core end
   view(:line, :type=>'basic') do truncatewords_with_closing_tags( _render_core ) end
 

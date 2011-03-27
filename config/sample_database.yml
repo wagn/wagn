@@ -16,7 +16,7 @@ development:
   username: root
   password: 
   host: localhost
-  key: wagn_development
+  session_key: wagn_development
   secret: YrDOFOmYJyFg2tTZykCbZjWYQUbKBt
 
 # Warning: The database defined as 'test' will be erased and
@@ -28,7 +28,7 @@ test:
   username: root
   password: 
   host: localhost
-  key: wagn_test
+  session_key: wagn_test
   secret: YrDOFOmYJyFg2tTZykCbZjWYQUbKBt
 
 production:
@@ -37,5 +37,5 @@ production:
   username: root
   password: 
   host: localhost
-  key: wagn_production
+  session_key: wagn_production
   secret: Pl8qJNFc8mo1yt1xtHOmfUGHOPEutu

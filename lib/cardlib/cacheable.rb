@@ -15,7 +15,7 @@ module Cardlib
     end
     
     def contextual_content context = nil
-      Slot.new(context).process_content(Slot.new(self)._render_raw)
+      RichHtmlRenderer.new(context).process_content(Renderer.new(self)._render_raw)
     end
   end
 end

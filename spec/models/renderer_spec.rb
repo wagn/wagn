@@ -213,6 +213,7 @@ describe Renderer, "" do
       end
 
       it "should have the appropriate attributes on closed" do
+        Rails.logger.debug "\nBEFORE TEST~~~~~~~~~~~~~~~~~~~~~~~~~\n"
         @ocslot.render_closed.should be_html_with do
           div( :position => 1, :view=>'closed', :class => "card-slot line ALL TYPE-basic SELF-a") {
             [ div( :class => "card-header" ) { div( :class=>'title-menu')},
@@ -469,7 +470,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
     it "work on type-plus-right sets edit calls" do
       Card.create(:name=>'Book+author+*type plus right+*default', :type=>'Phrase', :content=>'Zamma Flamma')
       c = Card.new :name => 'Yo Buddddy', :type => 'Book'
-      result = Slot.new(c).render( :multi_edit )
+      result = RichHtmlRenderer.new(c).render( :multi_edit )
       result.should be_html_with do
         div :class => "field-in-multi" do
           [ input( :name=>"cards[~plus~author][content]", :type=>'text', :value=>'Zamma Flamma' ),

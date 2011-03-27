@@ -255,11 +255,7 @@ Rails.logger.info "process_content(#{content}, #{card&&card.content}) #{card&&ca
   view(:core) do process_content(_render_raw) end
 
   view(:naked) do |args|
-    case
-      when card.name.template_name?  ; _render_raw
-      when card.generic?             ; _render_core
-      else render_card_action(:content)
-    end
+    card.name.template_name? ? _render_raw : _render_core
   end
 
 ###----------------( NAME) 
@@ -283,11 +279,7 @@ Rails.logger.info "process_content(#{content}, #{card&&card.content}) #{card&&ca
 
   view(:closed_content) do |args|
     @state = :line
-    if card.generic?
-      truncatewords_with_closing_tags( _render_naked(args) { yield } )
-    else
-      render_card_action(:line)   # in basic case: --> truncate( slot._render_open_content ))
-    end
+    truncatewords_with_closing_tags( _render_naked(args) { yield } )
   end
 
 ###----------------( SPECIAL )
@@ -370,17 +362,12 @@ Rails.logger.info "view_method( #{setname} )  #{meth}"
     content.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
   end
 
-  def render_action( action, locals={} )
-    locals = {:card=>card, :slot=>self }.merge(locals)
-    # ...
+  def render_partial( partial, locals={} )
+    template.render(:partial=>partial, :locals=>{ :card=>card, :slot=>self }.merge(locals))
   end
 
-  def render_view_action(action)
-    render_action "views/#{action}"
-  end
-
-  def render_card_action(action, locals={})
-     render_action action_for(action, card), locals
+  def render_view_action(action, locals={})
+    render_partial "views/#{action}", locals
   end
 
   def method_missing(method_id, *args, &proc)
@@ -555,14 +542,6 @@ Rails.logger.debug "method missing: #{method_id}"
          )
       end
     end
-  end
-
-  def action_for( name, card=nil )
-    # FIXME: this should look up the inheritance hierarchy, once we have one
-    # wow this is a steaming heap of dung.
-    cardtype = (card ? card.type : 'Basic').underscore
-    cardclass = card ? card.class_for : Basic
-    cardclass.action_template(name)
   end
 
   def paging_params

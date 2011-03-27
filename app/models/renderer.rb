@@ -572,7 +572,7 @@ Rails.logger.info "view_method( #{setname} )  #{meth}"
     # FIXME: this should look up the inheritance hierarchy, once we have one
     # wow this is a steaming heap of dung.
     cardtype = (card ? card.type : 'Basic').underscore
-    cardclass = card ? card.class_for : Basic
+    cardclass = Card.class_for(cardtype)
     cardclass.action_template(name)
   end
 

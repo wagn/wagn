@@ -165,6 +165,19 @@ Rails.logger.info "_final_layout #{main_card} Cd:#{card} #{args.inspect} LC#{lco
     card.content_template ?  _render_multi_edit(args) : content_field(self.form)
   end
 
+  view(:editor) do |args|
+    eid, raw_id = context, context+'-raw-content'
+    form.hidden_field( :content, :id=>"#{eid}-hidden-content" ) +
+    text_area_tag( :content_to_replace, card.content, :rows=>3, :id=>"#{eid}-tinymce" ) +
+    editor_hooks( :setup=> %{setTimeout((function(){
+  tinyMCE.init({mode: "exact",elements: "#{eid}-tinymce",#{System.setting('*tiny mce') || ''}})
+  tinyMCE.execInstanceCommand( '#{eid}-tinymce', 'mceFocus' );
+}),50); 
+  }, 
+      :save=> %{t = tinyMCE.getInstanceById( '#{eid}-tinymce' ); $('#{eid}-hidden-content').value = t.getContent(); return true;})
+    
+  end
+
   view(:multi_edit) do |args|
     @state=:edit
     args[:add_javascript]=true
@@ -189,11 +202,11 @@ Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
   </div>     
   
   <div class="field-in-multi">
-    #{ slot.content_field( form, :nested=>true ) }
-    #{ card.new_record? ? slot.form.hidden_field(:type) : '' }
+    #{ self.content_field( form, :nested=>true ) }
+    #{ card.new_record? ? self.form.hidden_field(:type) : '' }
   </div>
   #{if inst = card.setting_card('edit help')
-    ss = slot.subrenderer(inst); ss.state= :view
+    ss = self.subrenderer(inst); ss.state= :view
     %{<div class="instruction">#{ ss.render :naked }</div>}
   end}
   <div style="clear:both"></div>
@@ -330,8 +343,11 @@ Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
   end
 
   def header
-    template.render :partial=>'card/header', :locals=>{ :card=>card, :slot=>self }
-    #render_header
+    render_partial('card/header')
+  end
+  
+  def footer
+    render_partial('card/footer')
   end
 
   def menu

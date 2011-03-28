@@ -12,7 +12,7 @@ class Renderer
     %{{"link_to":"_none"}}
   end
 
-  view(:raw, :type=>'search') do
+  view(:naked, :type=>'search') do
     s = paging_params
 
     instruction =
@@ -32,7 +32,7 @@ class Renderer
       end
 
     begin
-      card.search( s )
+      card.item_cards( s )
     rescue Exception=>e
       error = e
     end

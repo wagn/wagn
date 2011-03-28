@@ -216,7 +216,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
 
   def process_content(content=nil, opts={})
     return content unless card
-    content = card.content if content.blank?
+    content = card.raw_content if content.blank?
 
 Rails.logger.info "process_content(#{content}, #{card&&card.content}) #{card&&card.name}"
 

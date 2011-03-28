@@ -624,6 +624,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
     context "*navbox" do
       it "should have a form" do
         render_card(:raw, :name=>'*navbox').should be_html_with { form :id=>'navbox_form' }
+        #render_card(:raw, :name=>'*navbox').should == 'foobar'
       end
     end
 

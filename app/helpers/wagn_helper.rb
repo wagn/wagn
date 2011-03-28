@@ -244,6 +244,7 @@ module WagnHelper
       :after_update_element => "navboxAfterUpdate"
      }.update({}))
   end
+=end
 
   def navbox_result(entries, field, stub)
     return unless entries
@@ -264,7 +265,6 @@ module WagnHelper
       content_tag('span', label, :class=>"informal") + highlight(name, stub)
     end
   end
-=end
 
   def form_for_card(options={}, &proc)    
     concat(form_remote_tag(options))

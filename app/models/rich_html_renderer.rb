@@ -162,7 +162,7 @@ Rails.logger.info "_final_layout #{main_card} Cd:#{card} #{args.inspect} LC#{lco
 
   view(:edit) do |args|
     @state=:edit
-    card.content_template ?  _render_multi_edit(args) : content_field(self.form)
+    card.content_template ?  _render_multi_edit(args) : content_field(form)
   end
 
   view(:editor) do |args|

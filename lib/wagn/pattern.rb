@@ -16,10 +16,18 @@ module Wagn
       def subclasses
         @@subclasses
       end
+      
+      def method_keys card
+        @@subclasses.map do |pclass| 
+          pclass.pattern_applies?(card) ? pclass.method_key(card) : nil
+        end.compact
+      end
 
-      def pattern_key(opts)
-        subclasses.each do |pclass|
-          if pk=pclass.pattern_key(opts); return pk end
+      def method_key(opts)
+        @@subclasses.each do |pclass|
+          if !pclass.opt_keys.map{|key| opts.has_key?(key)}.member? false; 
+            return pclass.method_key_from_opts(opts) 
+          end
         end
       end
 
@@ -34,14 +42,14 @@ module Wagn
         end.compact
       end
 
-      def codenames card, view
-        @@subclasses.map do |pclass|
-          pclass.pattern_applies?(card) and codename = pclass.codename(card)
-          next unless codename
-          codename = (codename.blank? ? view : "#{codename}_#{view}").to_sym
-          block_given? ? yield(codename) : codename
-        end
-      end
+#      def codenames card, view
+#        @@subclasses.map do |pclass|
+#          pclass.pattern_applies?(card) and codename = pclass.codename(card)
+#          next unless codename
+#          codename = (codename.blank? ? view : "#{codename}_#{view}").to_sym
+#          block_given? ? yield(codename) : codename
+#        end
+#      end
 
       def set_names card
 r=
@@ -94,6 +102,10 @@ raise "no card" unless card
       def key
         '*all'
       end
+      
+      def opt_keys
+        []
+      end
 
       def pattern_applies? card
         true
@@ -103,10 +115,12 @@ raise "no card" unless card
         key
       end
 
-      def codename(card) '' end
+      def method_key card
+        ''
+      end
 
-      def pattern_key(opts)
-        opts.empty? && ''
+      def method_key_from_opts(opts)
+        ''
       end
 
       def css_name card
@@ -126,6 +140,10 @@ raise "no card" unless card
         '*type'
       end
 
+      def opt_keys
+        [:type]
+      end
+
       def pattern_applies? card
         true
       end
@@ -134,12 +152,12 @@ raise "no card" unless card
         "#{card.cardtype_name}+#{key}"
       end
 
-      def codename(card) "#{card.cardtype_name}_type" end #FIXME codename
+      def method_key card
+        method_key_from_opts :type=>card.cardtype_name
+      end
 
-      def pattern_key(opts)
-        if opts.has_key?(:type)
-          opts.delete(:type).to_s.gsub('+','_').to_key+'_type'
-        end
+      def method_key_from_opts(opts)
+        opts[:type].to_s.css_name+'_type'
       end
 
       def label name
@@ -155,6 +173,10 @@ raise "no card" unless card
         '*right'
       end
 
+      def opt_keys
+        [:right]
+      end
+
       def pattern_applies? card
         card.name && card.name.junction?
       end
@@ -163,14 +185,13 @@ raise "no card" unless card
         "#{card.name.tag_name}+#{key}"
       end
 
-      def codename(card) "#{card.name.tag_name}_right" end
-
-      def pattern_key(opts)
-        if opts.has_key?(:right)
-          opts.delete(:right).to_s.gsub('+','_').to_key+'_right'
-        end
+      def method_key card
+        method_key_from_opts :right=>card.name.tag_name
       end
 
+      def method_key_from_opts(opts)
+        opts[:right].to_s.css_name+'_right'
+      end
 
       def label name
         "Cards ending in +#{name.trunk_name}"
@@ -185,6 +206,10 @@ raise "no card" unless card
         '*type plus right'
       end
 
+      def opt_keys
+        [:ltype, :right]
+      end
+
       def pattern_applies? card
         card.name && card.name.junction? && left(card)
       end
@@ -197,20 +222,16 @@ raise "no card" unless card
         "#{left(card).cardtype_name}+#{card.name.tag_name}+*type plus right"
       end
 
-      def codename(card) "#{left(card).cardtype_name}_#{card.name.tag_name}_ltype_rt" end
-
       def css_name card
         'LTYPE_RIGHT-' + set_name(card).trunk_name.css_name
       end
 
-      def pattern_key(opts)
-        if opts.has_key?(:ltype) and opts.has_key?(:right)
-          %{#{
-            opts.delete(:ltype).to_s.gsub('+','_').to_key
-          }_#{
-            opts.delete(:right).to_s.gsub('+','_').to_key
-          }_ltype_rt}
-        end
+      def method_key card
+        method_key_from_opts :ltype=>left(card).cardtype_name, :right=>card.name.tag_name
+      end
+
+      def method_key_from_opts(opts)
+        %{#{opts[:ltype].to_s.css_name}_#{opts[:right].to_s.css_name}_typeplusright}
       end
 
       def label name
@@ -229,17 +250,21 @@ raise "no card" unless card
       def pattern_applies? card
         card.name and !card.virtual? and !card.new_record?
       end
+      
+      def opt_keys
+        [:name]
+      end
 
       def set_name card
         "#{card.name}+#{key}"
       end
+      
+      def method_key card
+        method_key_from_opts :name=>card.name
+      end
 
-      def codename(card) "#{card.name}_self" end
-
-      def pattern_key(opts)
-        if opts.has_key?(:name)
-          opts.delete(:name).to_s.gsub('+','_').to_key+'_self'
-        end
+      def method_key_from_opts opts
+        opts[:name].to_s.css_name+'_self'
       end
 
       def label name

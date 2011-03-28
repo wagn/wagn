@@ -89,13 +89,13 @@ Rails.logger.info "reg_alias(#{view_key}, #{view}) > #{aview.inspect} :: #{aview
 Rails.logger.info "reg_view(#{view_key.inspect}, #{view.inspect})"
 
         if view_key == view
-Rails.logger.info "define base view: _render_#{view}, render_#{view}"
+Rails.logger.debug "define base view: _render_#{view}, render_#{view}"
           define_method( "_render_#{view}" ) do |*a| a = [{}] if a.empty?
             # this variable name is highly confusing (:view); it means the view to
             # return to after an edit.  it's about persistence. should do better.
             a[0][:view] ||= view  
             final_meth = view_method( view )
-Rails.logger.info " in #{caller(0).first}[#{card}] #{view}, #{final_meth}"
+Rails.logger.debug " in #{caller(0).first}[#{card}] #{view}, #{final_meth}"
 raise "??? #{view.inspect}" unless final_meth
             send(final_meth, *a) { yield }
           end
@@ -110,7 +110,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     end
 
     def get_pattern(view,opts)
-      unless pkey =  Wagn::Pattern.pattern_key(opts) and opts.empty?
+      unless pkey =  Wagn::Pattern.method_key(opts) #and opts.empty?
         raise "Bad Pattern opts: #{pkey.inspect} #{opts.inspect}"
       end
       return (pkey.blank? ? view : "#{pkey}_#{view}").to_sym
@@ -348,9 +348,12 @@ Rails.logger.info "render(#{action}) #{render_meth}"
 
   def view_method(view)
     return "_final_#{view}" unless card
-    Wagn::Pattern.codenames(card, view) do |setname|
-      meth = self.class.set_view(setname)
-Rails.logger.info "view_method( #{setname} )  #{meth}"
+Rails.logger.debug "method keys for #{card.name}: #{Wagn::Pattern.method_keys(card).inspect}"
+    
+    Wagn::Pattern.method_keys(card).each do |method_key|
+      
+      meth = self.class.set_view(method_key.blank? ? view : "#{method_key}_#{view}")
+Rails.logger.info "view_method( #{method_key} )  #{meth}"
       return meth if meth
     end
     return @@fallback[view]

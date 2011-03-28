@@ -90,4 +90,12 @@ class Renderer
   view_alias(:core, {:name=>'*version'}, :raw)
 
 
+  private
+  def navbox_complete_field(fieldname, card_id='')
+    content_tag("div", "", :id => "#{fieldname}_auto_complete", :class => "auto_complete") +
+    auto_complete_field(fieldname, { :url =>"/card/auto_complete_for_navbox/#{card_id.to_s}",
+      :after_update_element => "navboxAfterUpdate"
+     }.update({}))
+  end
+
 end

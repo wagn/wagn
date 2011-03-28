@@ -1,6 +1,6 @@
 class Renderer
-  view(:content, :type=>'toggle') do
-    case card.content.to_i
+  view(:naked, :type=>'toggle') do
+    case card.raw_content.to_i
       when 1; 'yes'
       when 0; 'no'
       else  ; '?'
@@ -8,5 +8,5 @@ class Renderer
   end
 
   view(:editor, :type=>'toggle') do form.check_box(:content) end
-  view_alias(:content, {:type=>'toggle'}, :line)
+  #view_alias(:content, {:type=>'toggle'}, :line)
 end

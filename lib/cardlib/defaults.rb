@@ -17,20 +17,18 @@ module Cardlib
       content
     end
     
-    def clean_html?
-      true
+    def clean_html?()  true   end
+    def generic?()     false  end
+    def collection?()  false  end
+
+    def item_names(args={})
+      self.raw_content.split /[,\n]/
     end
     
-    def generic?
-      false
+    def item_cards(args={})  ## FIXME this is inconsistent with item_names
+      [self]
     end
-    
-    def is_collection?() 
-      false 
-    end    
 
-
-    #This definitely doesn't belong here.
     def valid_number?( string )
       valid = true
       begin

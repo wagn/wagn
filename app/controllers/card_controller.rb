@@ -20,7 +20,7 @@ class CardController < ApplicationController
     if User.no_logins?
       redirect_to '/admin/setup'
     else
-      params['id'] = System.setting('*home')
+      params['id'] = (System.setting('*home') || 'Home').to_url_key
       show
     end
   end
@@ -52,7 +52,8 @@ class CardController < ApplicationController
   end
 
   def render_show
-    #Wagn::Hook.call :before_show, '*all', self
+    @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
+    ## fixme, we ought to be setting special titles (or all titles) in cards
 
     respond_to do |format|
       format.rss do
@@ -60,16 +61,12 @@ class CardController < ApplicationController
          # rss causes infinite memory suck in rails 2.1.2.  
          render :action=>'show'
       end
-      format.txt  { render :text=>@card.content }
+      format.txt  { render :text=>@card.raw_content }
       format.css  { render :text=>Slot.new(@card).render(:naked) }
       format.kml  { render :action=>'show'}
       format.xml  { render :text=>'XML not yet supported'}
       format.json { render :text=>'JSON not yet supported'}
-      format.html do
-        @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
-        ## fixme, we ought to be setting special titles (or all titles) in cards
-        request.xhr? ? render(:action=>'show') : render(:text=>'', :layout=>true)
-      end
+      format.html { request.xhr? ? render(:action=>'show') : render(:text=>'', :layout=>true) }
     end
   end
 
@@ -283,7 +280,7 @@ class CardController < ApplicationController
     sources.unshift '*account' if @card.extension_type=='User'
     @items = sources.map do |root|
       c = Card.fetch((root ? "#{root}+" : '') +'*related')
-      c && c.type=='Pointer' && c.items
+      c && c.item_names
     end.flatten.compact
 #    @items << 'config'
     @current = params[:attribute] || @items.first.to_key
@@ -325,9 +322,12 @@ class CardController < ApplicationController
   end
 
   def auto_complete_for_navbox
-    @stub = params['navbox']
-    @items = Card.search( :complete=>@stub, :limit=>8, :sort=>'name' )
-    render :inline => "<%= navbox_result @items, 'name', @stub %>"
+    if @stub = params['navbox']
+      @items = Card.search( :complete=>@stub, :limit=>8, :sort=>'name' )
+      render :inline=> "<%= navbox_result @items, 'name', @stub %>"
+    else
+      render :inline=> ''
+    end
   end
 
   def auto_complete_for_card_name
@@ -348,7 +348,7 @@ class CardController < ApplicationController
        pointer_card.setting_card('options'))
 
     search_args = {  :complete=>complete, :limit=>8, :sort=>'name' }
-    @items = options_card ? options_card.search(search_args) : Card.search(search_args)
+    @items = options_card ? options_card.item_cards(search_args) : Card.search(search_args)
 
     render :inline => "<%= auto_complete_result @items, 'name' %>"
   end

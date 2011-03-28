@@ -63,7 +63,8 @@ class Renderer
         priv_final="_final#{priv_name}"
         define_method( priv_final, &final )
         define_method( priv_name ) do |*a| a = [{}] if a.empty?
-          a[0][:view] ||= action  
+          a[0][:view] ||= action
+          #Rails.logger.info "#{priv_name} called on #{card.name}"
           # this variable name is highly confusing; it means the view to return to after an edit.  it's about persistence
           # should do better.
           send(priv_final, *a) { yield }
@@ -201,12 +202,23 @@ class Renderer
   view(:key)      { card.key              }
   view(:linkname) { card.name.to_url_key  }
   view(:link)     { Chunk::Reference.standard_card_link(card.name) }
+  view(:url)      { "#{System.base_url}/wagn/#{_render_linkname}"}
+
+## DEPRECATED DEPRECATED
+# this is a quick fix, will soon be replaced by view override
+
+  view(:when_created)     { card.new_card? ? '' : card.created_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
+  view(:when_last_edited) { card.new_card? ? '' : card.updated_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
+
+##
+
 
   view(:open_content) do |args|
     card.post_render(_render_naked(args) { yield })
   end
 
   view(:closed_content) do |args|
+    @state = :line
     if card.generic?
       truncatewords_with_closing_tags( _render_naked(args) { yield } )
     else
@@ -216,13 +228,13 @@ class Renderer
 
 ###----------------( SPECIAL )
   view(:array) do |args|
-    if card.is_collection?
-      (card.each_name do |name|
-        subrenderer(name)._render_core { yield }
-      end.inspect)
+    if card.collection?
+      card.item_cards(:limit=>0).map do |item_card|
+        subrenderer(item_card)._render_naked
+      end
     else
-      [_render_naked(args) { yield }].inspect
-    end
+      [_render_naked(args) { yield }]
+    end.inspect
   end
 
   view(:blank) do "" end
@@ -329,9 +341,10 @@ class Renderer
       tcard, tcont = root.main_card, root.main_content
       return tcont if tcont
       return "{{#{options[:unmask]}}}" || '{{_main}}' unless @depth == 0 and tcard
+
       tname = tcard.name
-      item  = symbolize_param(:item) and options[:item] = item
-      pview = symbolize_param(:view) and options[:view] = pview
+      [:item, :view, :size].each{ |key| val=symbolize_param(key) and options[key]=val }
+      # main card uses these CGI options as inclusion args      
       options[:context] = 'main'
       options[:view] ||= :open
     end
@@ -342,13 +355,12 @@ class Renderer
 
     tcard ||= begin
       case
-      when state ==:edit   ;  Card.fetch_or_new(fullname, {}, new_inclusion_card_args(options))
+      when state ==:edit   ;  Card.fetch_or_new(fullname, {}, new_inclusion_card_args(tname, options))
       when base.respond_to?(:name);   base
       else                 ;  Card.fetch_or_new(fullname, :skip_defaults=>true)
       end
     end
 
-    tcard.loaded_trunk=card if tname =~ /^\+/
     result = process_inclusion(tcard, options)
     result = resize_image_content(result, options[:size]) if options[:size]
     @char_count += (result ? result.length : 0) #should we strip html here?
@@ -412,7 +424,7 @@ class Renderer
     context = case
     when base; (base.respond_to?(:name) ? base.name : base)
     when options[:base]=='parent'
-      card.parent_name
+      card.name.left_name
     else
       card.name
     end
@@ -435,8 +447,9 @@ class Renderer
     content if content.present?  #not sure I get why this is necessary - efm
   end
 
-  def new_inclusion_card_args(options)
+  def new_inclusion_card_args(tname, options)
     args = { :type =>options[:type],  :permissions=>[] }
+    args[:loaded_trunk]=card if tname =~ /^\+/
     if content=get_inclusion_content(options[:tname])
       args[:content]=content
     end

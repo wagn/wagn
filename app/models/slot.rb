@@ -23,7 +23,7 @@ class Slot < Renderer
     @renders = {}
     @js_queue_initialized = {}
 
-    if card and card.is_collection? and item_param=params[:item]
+    if card and card.collection? and item_param=params[:item]
       @item_view = item_param if !item_param.blank?
     end
   end

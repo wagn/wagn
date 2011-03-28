@@ -1,4 +1,16 @@
 --- 
+roles_006: 
+  codename: r2
+  tasks: 
+  id: "6"
+roles_007: 
+  codename: r3
+  tasks: 
+  id: "7"
+roles_008: 
+  codename: r4
+  tasks: 
+  id: "8"
 roles_001: 
   codename: admin
   tasks: 
@@ -11,3 +23,11 @@ roles_003:
   codename: anon
   tasks: 
   id: "3"
+roles_004: 
+  codename: Sample Role
+  tasks: 
+  id: "4"
+roles_005: 
+  codename: r1
+  tasks: 
+  id: "5"

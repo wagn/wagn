@@ -90,7 +90,7 @@ class Wql
   def run
     #warn sql
     rows = ActiveRecord::Base.connection.select_all( sql )
-    case (query[:return] || :card)
+    case (query[:return] || :card).to_sym
     when :card
       rows.map do |row|
         card=
@@ -102,7 +102,10 @@ class Wql
           end
         card.nil? ? Card.find_by_name_and_trash(row['name'],false).repair_key : card
       end
+    when :count
+      rows.first['count']
     else
+      warn "in run else.  #{query[:return]}"
       rows.map { |row| row[query[:return].to_s] }
     end
   end  

@@ -1,6 +1,6 @@
 class Renderer
   view(:content, :type=>'invitation_request') do
-    _render_core + #ENGLISH
+    _render_naked + #ENGLISH
     if !card.new_card? # this if is not really necessary yet, but conceptually correct
       %{<div class="invite-links help instruction">
   <div><strong>#{card.name}</strong> asked for an invitation on #{ format_date(card.created_at) }</div>

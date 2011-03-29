@@ -187,7 +187,7 @@ Rails.logger.info "_final_layout #{main_card} Cd:#{card} #{args.inspect} LC#{lco
     @state=:edit
     args[:add_javascript]=true
     @form = form_for_multi
-    hidden_field_tag(:multi_edit, true) + _render_core(args)
+    hidden_field_tag(:multi_edit, true) + _render_naked(args)
   end
 
   view(:change) do |args|
@@ -197,6 +197,7 @@ Rails.logger.info "_final_layout #{main_card} Cd:#{card} #{args.inspect} LC#{lco
 
 ###---(  EDIT VIEWS )
   view(:edit_in_form) do |args|
+    form = form_for_multi
 Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
     %{
 <div class="edit-area in-multi RIGHT-#{ card.name.tag_name.to_key.css_name }">
@@ -208,7 +209,7 @@ Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
   
   <div class="field-in-multi">
     #{ self.content_field( form, :nested=>true ) }
-    #{ card.new_record? ? self.form.hidden_field(:type) : '' }
+    #{ card.new_record? ? form.hidden_field(:type) : '' }
   </div>
   #{if inst = card.setting_card('edit help')
     ss = self.subrenderer(inst); ss.state= :view

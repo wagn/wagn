@@ -83,7 +83,7 @@ describe Renderer, "" do
         card.save
         card
       end
-      Renderer.new(restricted_card).render(:core).should be_html_with { span(:class=>'denied') }
+      Renderer.new(restricted_card).render(:naked).should be_html_with { span(:class=>'denied') }
     end      
   end
 

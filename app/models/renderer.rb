@@ -264,10 +264,8 @@ Rails.logger.info "process_content(#{content}, #{card&&card.content}) #{card&&ca
   # (builtins, etc.)
   view(:raw) do card ? card.raw_content : _render_blank end
   view(:refs) do card.respond_to?('references_expired') ? card.raw_content : '' end
-  view(:core) do process_content(_render_raw) end
-
   view(:naked) do |args|
-    card.name.template_name? ? _render_raw : _render_core
+    card.name.template_name? ? _render_raw : process_content(_render_raw)
   end
 
 ###----------------( NAME) 

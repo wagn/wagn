@@ -1,5 +1,4 @@
 class Renderer
-  # CGI.escapeHTML(_render_core).gsub(/\n/,'<br/>')
   view(:naked, :type=>'plain_text') do process_content(_render_raw).gsub(/\n/, '<br/>') end
   view(:editor, :type=>'plain_text') do form.text_area :content, :rows=>3 end
   view_alias( :editor, {:type=>'plain_text'},

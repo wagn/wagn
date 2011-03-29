@@ -8,5 +8,5 @@ class Renderer
   end
 
   view(:editor, :type=>'toggle') do form.check_box(:content) end
-  #view_alias(:content, {:type=>'toggle'}, :line)
+
 end

@@ -28,7 +28,7 @@ class Renderer
 })
   end
 
-  view(:content, :type=>'pointer') do
+  view(:naked, :type=>'pointer') do
     %{<div class="pointer-list"> #{
       pointer_item(slot, (item_view||'closed')) }
 </div> #{ 
@@ -57,7 +57,7 @@ class Renderer
     result
   end
 
-  view(:line, :type=>'pointer') do
+  view(:closed_content, :type=>'pointer') do
     %{<div class="pointer-list">} +
     pointer_item(slot, ('name'==item_view || params[:item] ? 'name' : 'link')) +
     '</div>'

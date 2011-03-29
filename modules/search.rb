@@ -12,49 +12,49 @@ class Renderer
     %{{"link_to":"_none"}}
   end
 
-  view(:naked, :type=>'search') do
-    s = paging_params
-
-    instruction =
-      case
-        when card.name=='*search'
-          s[:_keyword] ||= params[:_keyword]
-          %{Cards matching keyword: <strong class="keyword">#{params[:_keyword]}</strong>}
-          # when cue = card.attribute_card('*cue'); cue
-        else; nil
-      end
-
-    title =
-      case card.name
-        when '*search'; 'Search Results' #ENGLISH
-        when '*broken links'; 'Cards with Broken Links'
-        else; ''
-      end
-
-    begin
-      card.item_cards( s )
-    rescue Exception=>e
-      error = e
-    end
-
-    s.inspect +
-      if card.results.nil?
-        %{"#{error.class.to_s}: #{error.message}" <br/>#{ card.content }}
-      else 
-        view = (item_view || card.spec[:view] || :closed).to_sym
-        if card.name=='*recent changes'
-          recent_changes_part
-        else
-          card_list_part
-        end
-      end
-  end
+ # view(:naked, :type=>'search') do
+ #   s = paging_params
+ #
+ #   instruction =
+ #     case
+ #       when card.name=='*search'
+ #         s[:_keyword] ||= params[:_keyword]
+ #         %{Cards matching keyword: <strong class="keyword">#{params[:_keyword]}</strong>}
+ #         # when cue = card.attribute_card('*cue'); cue
+ #       else; nil
+ #     end
+ #
+ #   title =
+ #     case card.name
+ #       when '*search'; 'Search Results' #ENGLISH
+ #       when '*broken links'; 'Cards with Broken Links'
+ #       else; ''
+ #     end
+ #
+ #   begin
+ #     card.item_cards( s )
+ #   rescue Exception=>e
+ #     error = e
+ #   end
+ #
+ #   s.inspect +
+ #     if card.results.nil?
+ #       %{"#{error.class.to_s}: #{error.message}" <br/>#{ card.content }}
+ #     else 
+ #       view = (item_view || card.spec[:view] || :closed).to_sym
+ #       if card.name=='*recent changes'
+ #         render_recent_changes
+ #       else
+ #         render_card_list
+ #       end
+ #     end
+ # end
 
   view(:recent_changes, :type=>'search') do
     cards ||= []
     view  ||= :change
 
-    paging = paging_part
+    paging = render(:paging)
     %{
 <h1 class="page-header"><%= @title %></h1>
 <div class="card-slot recent-changes">
@@ -102,7 +102,7 @@ class Renderer
     view  ||= :closed    
     #  raise("invalid view") unless [:open, :closed, :content, :name, :link, :change].include?(view)
 
-    paging = paging_part
+    paging = render(:paging)
 
     # now the result string ...
     if !title.empty?
@@ -158,7 +158,7 @@ class Renderer
 <!-- /paging -->}
   end
 
-  view(:content, :type=>'search') do
+  view(:naked, :type=>'search') do
     s = paging_params
 
     instruction = case
@@ -177,21 +177,24 @@ class Renderer
 
     begin
       spec = card.spec
-      card.search( s )
+      card.item_cards( s )
     rescue Exception=>e
       error = e
     end
 
-    s.inspect + card.results.nil? ?
-      %{#{error.class.to_s}: #{error.message}<br/>#{card.content}} :
-      spec[:return] =='count' ?  card.results : begin
-        part = (card.name=='*recent changes') ? 'recent_changes' : 'card_list'
-        view = (item_view || card.spec[:view] || :closed).to_sym
-        render(part, :cards=>card.results, :instruction=>instruction, :title=>title)
-      end
+    case
+    when card.results.nil?
+      %{#{error.class.to_s}: #{error.message}<br/>#{card.content}}
+    when spec[:return] =='count'
+      card.results
+    else
+      part = (card.name=='*recent changes') ? 'recent_changes' : 'card_list'
+      view = (item_view || card.spec[:view] || :closed).to_sym
+      render(part, :cards=>card.results, :instruction=>instruction, :title=>title)
+    end
   end
 
-  view(:line, :type=>'search') do
+  view(:closed_content, :type=>'search') do
     if depth > 2
       #...
     else
@@ -219,40 +222,40 @@ class Renderer
     end
   end
 
-  view(:tag_cloud, :type=>'search') do
-    cards ||= []
-    link_to ||= 'page'  # other options is 'connect'
-    tag_cloud = {}
-    category_list = %w[1 2 3 4 5]
-    droplets = []
-    return if cards.empty?
-
-    # this does scaling by rank(X), where X is what we ordered by in wql.
-    # if we wanted proportionate to X, we'd need to get X returned as part of
-    # the cards, which has implications for wql; namely we'd need to be able to
-    # return additional fields.
-    cards.reverse.each_with_index do |tag, index|
-      tag_cloud[tag] = index
-    end
-
-    max, min = 0, 0
-    tag_cloud.each_value do |count|
-      max = count if count > max
-      min = count if count < min
-    end
-
-    divisor = ((max - min) / category_list.size) + 1
-
-    droplets = cards.sort_by {|c| c.name.downcase } .map do |card|
-      category = category_list[(tag_cloud[card] - min) / divisor]
-      options = { :class=>"cloud-#{category}" }
-      WagnHelper::Droplet.new(card.name, options)
-    end
-    %{
-<div class="cloud">#{
-      for droplet in droplets 
-        flexlink link_to, droplet.name,  droplet.link_options
-      end * "\n" }
-</div>}
-  end
+#  view(:tag_cloud, :type=>'search') do
+#    cards ||= []
+#    link_to ||= 'page'  # other options is 'connect'
+#    tag_cloud = {}
+#    category_list = %w[1 2 3 4 5]
+#    droplets = []
+#    return if cards.empty?
+#
+#    # this does scaling by rank(X), where X is what we ordered by in wql.
+#    # if we wanted proportionate to X, we'd need to get X returned as part of
+#    # the cards, which has implications for wql; namely we'd need to be able to
+#    # return additional fields.
+#    cards.reverse.each_with_index do |tag, index|
+#      tag_cloud[tag] = index
+#    end
+#
+#    max, min = 0, 0
+#    tag_cloud.each_value do |count|
+#      max = count if count > max
+#      min = count if count < min
+#    end
+#
+#    divisor = ((max - min) / category_list.size) + 1
+#
+#    droplets = cards.sort_by {|c| c.name.downcase } .map do |card|
+#      category = category_list[(tag_cloud[card] - min) / divisor]
+#      options = { :class=>"cloud-#{category}" }
+#      WagnHelper::Droplet.new(card.name, options)
+#    end
+#    %{
+#<div class="cloud">#{
+#      for droplet in droplets 
+#        flexlink link_to, droplet.name,  droplet.link_options
+#      end * "\n" }
+#</div>}
+#  end
 end

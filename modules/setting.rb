@@ -1,5 +1,5 @@
 class Renderer
-  view(:content, :type=>'setting') do
+  view(:naked, :type=>'setting') do
     %{<div class="instruction">#{
       expand_inclusions "{{+*right+*edit help}}"} </div>#{
 
@@ -13,7 +13,7 @@ class Renderer
      end * "\n"}}
   end
 
-  view(:line, :type=>'setting') do
+  view(:closed_content, :type=>'setting') do
     %{<div class="instruction">#{expand_inclusions "{{+*right+*edit help}}"}</div>}
   end
 end

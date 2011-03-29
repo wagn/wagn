@@ -1,5 +1,5 @@
 class Renderer
-  view(:content , :type=>'set') do
+  view(:naked , :type=>'set') do
     %{<div class="instruction">#{
       Wagn::Pattern.label(card.name)}
 </div>
@@ -15,5 +15,5 @@ class Renderer
 }
   end
 
-  view_alias(:line , {:type=>:search}, {:type=>:set})
+  view_alias(:closed_content , {:type=>:search}, {:type=>:set})
 end

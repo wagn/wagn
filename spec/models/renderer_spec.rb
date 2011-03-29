@@ -58,54 +58,6 @@ describe Renderer, "" do
       Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
     end
 
-    it "renders layout card elements" do
-      User.as :wagbot do
-        card = Card['A+B']
-        #layout_card = Card['Default Layout']
-        Renderer.new(card).render(:layout).should be_html_with do 
-     html() {
-       head() {
-       title() {
-         text('- My Wagn')
-         }
-       }
-
-       body(:id=>"wagn") {
-         div(:id=>"menu") {
-           a(:class=>"internal-link", :href=>"/") { text('Home') }
-           a(:class=>"internal-link", :href=>"/recent") { text('Recent') }
-
-       #<div base=\"self\" class=\"transcluded ALL TYPE-basic\" position=\"545d0f2\" style=\"\" view=\"content\">
-         form(:id=>"navbox_form", :action=>"/search") {
-         a(:id=>"navbox_image", :title=>"Search") {}
-           input(:name=>"navbox") {}
-         }
-     #</span></div> <span class=\"inclusion-error\">error rendering <a href=\"/wagn/*account_link\" title=\"#&lt;ActionView::TemplateError: 
-       }
-
-         #<div id=\"primary\">
-           #<div id=\"main\" context=\"main\"><div base=\"self\" cardId=\"435\" class=\"card-slot paragraph ALL TYPE-basic RIGHT-b LTYPE_RIGHT-basic-b SELF-a-b\" position=\"546336a\" style=\"\" view=\"open\">
-
-         a(:href=>"/wagn/A+B", :class=>"page-icon", :title=>"Go to: A+B") {}
-       #</div>
-
-       span(:class=>"open-content content editOnDoubleClick") { text('AlphaBeta') }
-
-     span(:class=>"notice") {}
-
-       div(:class=>"card-footer") {
-         span(:class=>"watch-link") {
-           a(:title=>"get emails about changes to A+B") { text("watch") }
-         }
-       }
-       div(:id=>"secondary") {}
-
-       div(:id=>"credit") { [ text("Wheeled by"), a() { text('Wagn') } ] }
-       }
-     }
-        end
-      end
-    end
   end
 
 #~~~~~~~~~~~~ Error handling ~~~~~~~~~~~~~~~~~~#
@@ -225,6 +177,82 @@ describe Renderer, "" do
 
       it "should add javascript when requested" do
         @ocslot.render(:closed, :add_javascript=>true).should match('script type="text/javascript"')
+      end
+    end
+
+    context "Simple page with Default Layout" do
+      before do
+        User.as :wagbot do
+          card = Card['A+B']
+          @simple_page = RichHtmlRenderer.new(card).render(:layout)
+          end
+      end
+
+
+# looks like be_html_with does weird things with head and body??
+#      it "renders body with id" do
+#        @simple_page.should be_html_with do
+#          body(:id=>"wagn") {}
+#        end
+#      end
+#
+#      it "renders head" do
+#        @simple_page.should be_html_with do
+#          head() {
+#            title() {
+#              text('- My Wagn')
+#            }
+#          }
+#        end
+#      end
+        
+      it "renders top menu" do
+        @simple_page.should be_html_with do
+          div(:id=>"menu") {
+            a(:class=>"internal-link", :href=>"/") { text('Home') }
+            a(:class=>"internal-link", :href=>"/recent") { text('Recent') }
+
+          #<div base=\"self\" class=\"transcluded ALL TYPE-basic\" position=\"545d0f2\" style=\"\" view=\"content\">
+            form(:id=>"navbox_form", :action=>"/search") {
+              a(:id=>"navbox_image", :title=>"Search") {}
+              input(:name=>"navbox") {}
+            }
+          }
+        end
+      end
+        
+      it "renders card header" do
+        @simple_page.should be_html_with do
+          a(:href=>"/wagn/A+B", :class=>"page-icon", :title=>"Go to: A+B") {}
+        end
+      end
+
+      it "renders card content" do
+        @simple_page.should be_html_with do
+          span(:class=>"open-content content editOnDoubleClick") { text('AlphaBeta') }
+        end
+      end
+
+      it "renders notice info" do
+        @simple_page.should be_html_with do
+          span(:class=>"notice") {}
+        end
+      end
+
+      it "renders card footer" do
+        @simple_page.should be_html_with do
+          div(:class=>"card-footer") {
+            span(:class=>"watch-link") {
+              a(:title=>"get emails about changes to A+B") { text("watch") }
+            }
+          }
+        end
+      end
+
+      it "renders card credit" do
+        @simple_page.should be_html_with do
+          div(:id=>"credit") { [ text("Wheeled by"), a() { text('Wagn') } ] }
+        end
       end
     end
 
@@ -439,7 +467,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       card = Card.new(:type=>'Phrase')
       card.should_receive(:setting_card).with("content","default").and_return(content_card)
       card.should_receive(:setting_card).with("add help","edit help").and_return(help_card)
-      Renderer.new(card).render_new.should be_html_with do
+      RichHtmlRenderer.new(card).render_new.should be_html_with do
         div(:class=>"field-in-multi") {
           input :name=>"cards[~plus~Yoruba][content]", :type => 'hidden'
         }

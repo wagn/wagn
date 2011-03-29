@@ -10,7 +10,7 @@ class Shellbox
 end
 
 class Renderer
-  view(:content, :type=>'script') do
+  view(:naked, :type=>'script') do
     command = expand_inclusions( card.content )
     begin
       if System.enable_server_cards
@@ -23,7 +23,7 @@ class Renderer
     end
   end
 
-  view(:content, :type=>'ruby') do
+  view(:naked, :type=>'ruby') do
     ruby = expand_inclusions( card.content )
     begin
       if System.enable_ruby_cards

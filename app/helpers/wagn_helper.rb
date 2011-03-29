@@ -276,7 +276,7 @@ module WagnHelper
   end
 
   def wrap_slot(renderer=nil, args={}, &block)
-    renderer ||= self
+    renderer ||= Renderer.current_slot
     concat( renderer.wrap(args) { capture{ yield } } )
   end
   # ------------( helpers ) --------------

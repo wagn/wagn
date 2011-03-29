@@ -2,7 +2,7 @@
 class Renderer
 
   # Declare built-in views
-  view(:core, :name=>'*account link') do
+  view(:raw, :name=>'*account link') do
     #ENGLISH
     %{
 <span id="logging">#{
@@ -22,23 +22,23 @@ class Renderer
      end
     }</span>}
   end
-  view_alias(:core, {:name=>'*account link'}, :raw)
+  view_alias(:raw, {:name=>'*account link'}, :naked)
 
-  view(:core, :name=>'*alerts') do %{
+  view(:raw, :name=>'*alerts') do %{
 <div id="alerts">
   <div id="notice"> flash[:notice] </div>
   <div id="error"> flash[:warning] flash[:error]</div>
 </div>
 } end
-  view_alias(:core, {:name=>'*alerts'}, :raw)
+  view_alias(:raw, {:name=>'*alerts'}, :naked)
 
-  view(:core, :name=>'*foot') do
+  view(:raw, :name=>'*foot') do
     javascript_include_tag "/tinymce/jscripts/tiny_mce/tiny_mce.js" +
     (google_analytics or '')
   end
-  view_alias(:core, {:name=>'*foot'}, :raw)
+  view_alias(:raw, {:name=>'*foot'}, :naked)
 
-  view(:core, :name=>'*head') do
+  view(:raw, :name=>'*head') do
     # ------- Title -------------
     %{
 <link rel="shortcut icon" href="#{ System.favicon }" />#{
@@ -67,9 +67,9 @@ class Renderer
        }
 }
   end
-  view_alias(:core, {:name=>'*head'}, :raw)
+  view_alias(:raw, {:name=>'*head'}, :naked)
 
-  view(:core, :name=>'*navbox') do
+  view(:raw, :name=>'*navbox') do
     Rails.logger.info("Builtin *navbox")
     #ENGLISH
     %{
@@ -87,12 +87,12 @@ class Renderer
 </form>
     }
   end
-  view_alias(:core, {:name=>'*navbox'}, :raw)
+  view_alias(:raw, {:name=>'*navbox'}, :naked)
 
-  view(:core, :name=>'*now') do Time.now.strftime('%A, %B %d, %Y %I:%M %p %Z') end
-  view_alias(:core, {:name=>'*now'}, :raw)
-  view(:core, :name=>'*version') do Wagn::Version.full end
-  view_alias(:core, {:name=>'*version'}, :raw)
+  view(:raw, :name=>'*now') do Time.now.strftime('%A, %B %d, %Y %I:%M %p %Z') end
+  view_alias(:raw, {:name=>'*now'}, :naked)
+  view(:raw, :name=>'*version') do Wagn::Version.full end
+  view_alias(:raw, {:name=>'*version'}, :naked)
 
 
   private

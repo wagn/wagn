@@ -1,12 +1,12 @@
 <%
    args={}
-   [:add_slot, :view].each {|x| args[x] = params[x] if params[x]}
+   [:add_slot, :view].each {|x| args[x] = params[x] if @controller && params[x]}
    # when new is called from an "Add <Cardname>" inclusion, there is no existing slot,
    #  so we pass an argument to create one.  eventually, the "Add <Cardname>" view should have
    #  a slot so that this isn't necessary
 %>
 
-<% wrap_slot(nil, args) do %>
+<% wrap_slot(nil, args) do %> 
     <% @title = "New Card" %>
     <%= error_messages_for :card %>
     <div class=cardnotice></div>

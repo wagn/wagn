@@ -12,100 +12,72 @@ class Renderer
     %{{"link_to":"_none"}}
   end
 
- # view(:naked, :type=>'search') do
- #   s = paging_params
- #
- #   instruction =
- #     case
- #       when card.name=='*search'
- #         s[:_keyword] ||= params[:_keyword]
- #         %{Cards matching keyword: <strong class="keyword">#{params[:_keyword]}</strong>}
- #         # when cue = card.attribute_card('*cue'); cue
- #       else; nil
- #     end
- #
- #   title =
- #     case card.name
- #       when '*search'; 'Search Results' #ENGLISH
- #       when '*broken links'; 'Cards with Broken Links'
- #       else; ''
- #     end
- #
- #   begin
- #     card.item_cards( s )
- #   rescue Exception=>e
- #     error = e
- #   end
- #
- #   s.inspect +
- #     if card.results.nil?
- #       %{"#{error.class.to_s}: #{error.message}" <br/>#{ card.content }}
- #     else 
- #       view = (item_view || card.spec[:view] || :closed).to_sym
- #       if card.name=='*recent changes'
- #         render_recent_changes
- #       else
- #         render_card_list
- #       end
- #     end
- # end
+  view(:naked, :type=>'search') do
+    begin
+      card.item_cards( paging_params )
+    rescue Exception=>e
+      error = e
+    end
 
-  view(:recent_changes, :type=>'search') do
-    cards ||= []
-    view  ||= :change
-
-    paging = render(:paging)
-    %{
-<h1 class="page-header"><%= @title %></h1>
-<div class="card-slot recent-changes">
-  <div class="open-content">#{
-      paging }#{
-      cards_by_day = Hash.new { |h, day| h[day] = [] }
-      cards.each do |card|
-        #FIXME - tis UGLY, we're getting cached cards, so get the real card to call
-        # revised_at on.  the cards should already be there from the search results.
-        #- yeah, also seems like this should be some sort of card list option. -efm
-        real_card = card.respond_to?(:card) ? card.card : card
-        begin
-          day = Date.new(real_card.updated_at.year, real_card.updated_at.month, real_card.updated_at.day)
-        rescue Exception=>e
-          day = Date.today
-          card.content = "(error getting date)"
-        end
-        cards_by_day[day] << card
-      end
-      cards_by_day.keys.sort.reverse.each do |day| 
-        %{
-    <h2>#{
-        format_date(day, include_time = false) }</h2>
-    <div class="search-result-list">#{
-         cards_by_day[day].each do |card| %{
-      <div class="search-result-item item-#{ view }">#{
-           process_inclusion(card, :view=>view) }
-      </div>}
-         end * ' '}
-    </div>#{
-         paging }
-  </div>
-</div>
-    }
-      end * "\n"
-    }}
+    case
+    when card.results.nil?
+      %{#{error.class.to_s}: #{error.message}<br/>#{card.content}}
+    when card.spec[:return] =='count'
+      card.results
+    else
+      render('card_list')
+    end
   end
 
+  view(:closed_content, :type=>'search') do
+    return "#..." if depth > 2
+    begin
+      card.item_cards( paging_params )
+      total = card.count
+    rescue Exception=>e
+      error = e
+      card.results = nil
+    end
+
+    if card.results.nil?
+      %{"#{error.class.to_s}: #{error.message}"<br/>#{card.content}}
+    elsif card.spec[:return] =='count'
+      card.results
+    elsif card.results.length==0
+      '<span class="faint">(0)</span>'
+    else
+      %{<span class="faint">(#{ total })</span>
+      <div class="search-result-list">
+        #{card.results.each_with_index do |c,index|
+          %{<div class="search-result-item">#{'name' == item_view || params[:item] ? c.name : link_to_page( c.name ) }</div>}
+        end*"\n"}
+      </div>}
+    end
+  end
+
+
   view(:card_list, :type=>'search') do
-    cards   ||= []
-    duplicates ||= []
-    context ||= 'default'
-    title   ||= ''
-    instruction ||= nil  
-    view  ||= :closed    
-    #  raise("invalid view") unless [:open, :closed, :content, :name, :link, :change].include?(view)
+    cards = card.results
+    @item_view ||= (card.spec[:view]) || :closed
+
+    instruction = case
+      when card.name=='*search'
+        s[:_keyword] ||= params[:_keyword]
+        %{Cards matching keyword: <strong class="keyword">#{params[:_keyword]}</strong>}
+        # when cue = card.attribute_card('*cue'); cue
+      else; nil
+      end
+
+    title = case card.name
+      when '*search'; 'Search Results' #ENGLISH
+      when '*broken links'; 'Cards with Broken Links'
+      else; nil
+      end
 
     paging = render(:paging)
 
     # now the result string ...
-    if !title.empty?
+    if title
       @title=title
       %{<h1 class="page-header">#{ title }</h1>}
     else '' end +
@@ -118,13 +90,60 @@ class Renderer
       %{<div class="search-no-results"></div>}
     else %{#{paging}
   <div class="search-result-list"> #{
-      cards.each do |c|
-        %{<div class="search-result-item item-#{ view }">#{
-        process_inclusion(c, :view=>view) }</div>}
+      cards.map do |c|
+        %{<div class="search-result-item item-#{ @item_view }">#{
+        process_inclusion(c, :view=>@item_view) }</div>}
       end.join }
   </div>#{ paging }}
     end
   end
+
+
+
+
+  view(:card_list, :name=>'*recent changes') do
+    cards ||= []
+    @item_view ||= (card.spec[:view]) || :change
+
+    cards_by_day = Hash.new { |h, day| h[day] = [] }
+    cards.each do |card|
+      #FIXME - tis UGLY, we're getting cached cards, so get the real card to call
+      # revised_at on.  the cards should already be there from the search results.
+      #- yeah, also seems like this should be some sort of card list option. -efm
+      real_card = card.respond_to?(:card) ? card.card : card
+      begin
+        day = Date.new(real_card.updated_at.year, real_card.updated_at.month, real_card.updated_at.day)
+      rescue Exception=>e
+        day = Date.today
+        card.content = "(error getting date)"
+      end
+      cards_by_day[day] << card
+    end
+
+    paging = render(:paging)
+%{<h1 class="page-header"><%= @title %></h1>
+<div class="card-slot recent-changes">
+  <div class="open-content">
+    #{ paging }
+  } +
+    cards_by_day.keys.sort.reverse.map do |day| 
+      
+%{  <h2>#{format_date(day, include_time = false) }</h2>
+    <div class="search-result-list">} +
+         cards_by_day[day].map do |card| %{
+      <div class="search-result-item item-#{ @item_view }">#{
+           process_inclusion(card, :view=>@item_view) }
+      </div>}
+         end.join(' ') + %{
+    </div>
+      #{ paging }
+  </div>
+</div>
+}
+    end * "\n"
+  end
+
+
 
   view(:paging, :type=>'search') do
     s = card.spec
@@ -158,69 +177,7 @@ class Renderer
 <!-- /paging -->}
   end
 
-  view(:naked, :type=>'search') do
-    s = paging_params
 
-    instruction = case
-      when card.name=='*search'
-        s[:_keyword] ||= params[:_keyword]
-        %{Cards matching keyword: <strong class="keyword">#{params[:_keyword]}</strong>}
-        # when cue = card.attribute_card('*cue'); cue
-      else; nil
-      end
-
-    title = case card.name
-      when '*search'; 'Search Results' #ENGLISH
-      when '*broken links'; 'Cards with Broken Links'
-      else; ''
-      end
-
-    begin
-      spec = card.spec
-      card.item_cards( s )
-    rescue Exception=>e
-      error = e
-    end
-
-    case
-    when card.results.nil?
-      %{#{error.class.to_s}: #{error.message}<br/>#{card.content}}
-    when spec[:return] =='count'
-      card.results
-    else
-      part = (card.name=='*recent changes') ? 'recent_changes' : 'card_list'
-      view = (item_view || card.spec[:view] || :closed).to_sym
-      render(part, :cards=>card.results, :instruction=>instruction, :title=>title)
-    end
-  end
-
-  view(:closed_content, :type=>'search') do
-    if depth > 2
-      #...
-    else
-      # FIXME: so not DRY.  cut-n-paste from search/_content
-      s = paging_params #params[:s] || {}
-      begin
-        query_results = card.search( s )
-        total = card.count
-      rescue Exception=>e
-        error = e
-        query_results = nil
-      end
-      if query_results.nil?
-        %{"#{error.class.to_s}: #{error.message}"<br/>#{card.content}}
-      elsif query_results.length==0
-        '<span class="faint">(0)</span>'
-      else
-        %{<span class="faint">(#{ total })</span>
-        <div class="search-result-list">
-          #{query_results.each_with_index do |c,index|
-            %{<div class="search-result-item">#{'name' == item_view || params[:item] ? c.name : link_to_page( c.name ) }</div>}
-          end*"\n"}
-        </div>}
-      end
-    end
-  end
 
 #  view(:tag_cloud, :type=>'search') do
 #    cards ||= []

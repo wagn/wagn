@@ -25,6 +25,7 @@ class Renderer
 
   RENDERERS = {
     :html => :RichHtmlRenderer,
+    :css => :TextRenderer
     #:xml => :XmlFormater
   }
 
@@ -42,20 +43,19 @@ class Renderer
   # View definitions
   #
   #   When you declare:
-  #     view(:view_name, "<set pattern>") do |args|
+  #     view(:view_name, "<set>") do |args|
   #
   #   Methods are defined on the renderer
   #
-  #     # The external api with checks, equivalent to
-  #     def render_name(args={}) ... end
-  #     render(_<name>)(:view_name, args)
+  #   The external api with checks:
+  #     render(_setname)_viewname(args)
   #
-  #     # The internal call that skips the checks
-  #     def _render(_<name>)(args={} ... end
+  #   Equivalent to:
+  #     render(:viewname, args)
   #
-  #   Where <name> is the pattern key (i.e. '<type card>+type' of
-  #     for patterns other than AllPattern ('*all')
-  #
+  #   The internal call that skips the checks:
+  #     _render(_setname)_viewname(args)
+  #  #
   class << self
     def view_alias(view, opts={}, *aliases)
       view_key = get_pattern(view, opts)
@@ -126,7 +126,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     @@set_views, @@fallback = {},{} unless @@set_views
 
     def new(card, opts=nil)
-      fmt = (opts and opts[:format]) ? opts[:format] : :html
+      fmt = (opts and opts[:format]) ? opts[:format].to_sym : :html
       if RENDERERS.has_key?(fmt)
         Renderer.const_get(RENDERERS[fmt]).new(card, opts)
       else
@@ -136,17 +136,16 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
       end
     end
 
-    def set_view(key) Renderer.set_views[key.to_sym] end
+    def set_view(key) @@set_views[key.to_sym] end
     def view_aliases() VIEW_ALIASES end
   end
 
-  FORMAT2VIEW = {
+  FORMAT2VIEW = {  
     :txt => :raw,
     :css => :naked,
     :kml => :show, # partial
     :xml => nil,
     :json => nil,
-    :xhr => :naked,
     :html => :layout
   }
 
@@ -350,7 +349,7 @@ Rails.logger.debug "method keys for #{card.name}: #{Wagn::Pattern.method_keys(ca
     
     Wagn::Pattern.method_keys(card).each do |method_key|
       
-      meth = self.class.set_view(method_key.blank? ? view : "#{method_key}_#{view}")
+      meth = self.class.set_view(method_key.blank? ? view.to_s : "#{method_key}_#{view}")
 Rails.logger.info "view_method( #{method_key} )  #{meth}"
       return meth if meth
     end

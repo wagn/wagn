@@ -170,6 +170,7 @@ Rails.logger.info "_final_layout #{main_card} Cd:#{card} #{args.inspect} LC#{lco
     card.content_template ?  _render_multi_edit(args) : content_field(form)
   end
 
+
   view(:editor) do |args|
     eid, raw_id = context, context+'-raw-content'
     form.hidden_field( :content, :id=>"#{eid}-hidden-content" ) +
@@ -219,6 +220,16 @@ Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
 </div>
     }
   end
+
+  view(:show) do |args|
+    if ajax_call?
+      self.render( params[:view] || :open)
+    else
+      self.render_layout
+    end
+  end
+
+
 
   def js
     @js ||= SlotJavascript.new(self)

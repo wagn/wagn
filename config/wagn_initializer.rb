@@ -159,8 +159,8 @@ module Wagn
           %w{ *account_link *alerts *foot *head *navbox *now *version 
               *recent_change *search *broken_link }.map do |name|
 Rails.logger.info "create builtin cards #{name}"
-            c=Card.fetch_or_new(name)
-            c.save
+            c = Card.fetch_or_new(name,{},:skip_defaults=>true)
+            #c.save if card.new_card?
           end
         end
       end

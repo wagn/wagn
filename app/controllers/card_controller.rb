@@ -64,9 +64,12 @@ class CardController < ApplicationController
       format.xml do render :text=>'xml not yet supported' end
       format.json do render :text=>'json not yet supported' end
       [:txt, :css, :kml, :html].each do |f|
-        format.send f do 
-          Renderer.new(@card, :layout=>request.xhr? ? :xhr : wagn_layout,
-            :format=>format, :flash=>flash, :params=>params).render(:show)
+        format.send f do
+          render(:text=>
+            Renderer.new(@card, 
+              :format=>f, :flash=>flash, :params=>params
+            ).render(:show)
+          )
         end
       end
     end

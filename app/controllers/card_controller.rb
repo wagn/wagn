@@ -136,8 +136,8 @@ class CardController < ApplicationController
 
   def edit
     if ['name','type','codename'].member?(params[:attribute])
-      #render :partial=>"card/edit/#{params[:attribute]}"
-      render_cardedit(:part=>params[:attribute])
+      render :partial=>"card/edit/#{params[:attribute]}"
+      #render_cardedit(:part=>params[:attribute])
     end
   end
 
@@ -170,8 +170,8 @@ class CardController < ApplicationController
       # If there is confirmation error and *only* that error
       @confirm = (@card.confirm_rename=true)
       @card.update_referencers = true
-      #return render(:partial=>'card/edit/name', :status=>200)
-      return render_cardedit(:part=>:name, :status=>200)
+      return render(:partial=>'card/edit/name', :status=>200)
+      #return render_cardedit(:part=>:name, :status=>200)
     end
 
     handling_errors do
@@ -269,8 +269,8 @@ class CardController < ApplicationController
 
   def options
     @extension = @card.extension
-    render_options(:part=>params[:attribute]) if params[:setting] and
-    #render :partial=>"card/options/#{params[:attribute]}" if params[:setting] and
+#    render_options(:part=>params[:attribute]) if params[:setting] and
+    render :partial=>"card/options/#{params[:attribute]}" if params[:setting] and
       ['closed_setting','open_setting'].include?(params[:attribute])
   end
 

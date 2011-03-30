@@ -105,7 +105,6 @@ class Wql
     when :count
       rows.first['count']
     else
-      warn "in run else.  #{query[:return]}"
       rows.map { |row| row[query[:return].to_s] }
     end
   end  

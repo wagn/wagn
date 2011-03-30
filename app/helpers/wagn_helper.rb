@@ -9,11 +9,11 @@ module WagnHelper
   # whether it is a Slot or Renderer, and it will be from the parent class
   #   Now: Always a Renderer, and the subclass is selected by:
   #     :format => :html (default and only -> RichHtmlRenderer (was Slot))
-  def slot() raise "slot is now self #{self}" end
-  def get_slot(card=nil, context=nil, action=nil, opts={})
-    raise "get_slot? #{card}, #{context}, #{action}, #{opts.inspect}"
-  end
-=begin
+#  def slot() raise "slot is now self #{self}" end
+#  def get_slot(card=nil, context=nil, action=nil, opts={})
+#    raise "get_slot? #{card}, #{context}, #{action}, #{opts.inspect}"
+#  end
+#=begin
   def slot() Renderer.current_slot end
   def card() @card ||= slot.card end
   def params()
@@ -37,7 +37,7 @@ module WagnHelper
     end
     controller and controller.renderer = slot or slot
   end
-=end
+#=end
 
   Droplet = Struct.new(:name, :link_options)
 
@@ -276,8 +276,8 @@ module WagnHelper
   end
 
   def wrap_slot(renderer=nil, args={}, &block)
-    renderer ||= Renderer.current_slot
-    concat( renderer.wrap(args) { capture{ yield } } )
+    renderer = Renderer.current_slot || get_slot
+    concat( renderer.wrap(args) { capture{ yield(slot) } } )
   end
   # ------------( helpers ) --------------
   def edit_user_context(card)

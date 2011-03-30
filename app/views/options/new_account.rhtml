@@ -1,5 +1,5 @@
-<% wrap_slot do %>
-  <% form_for_card :url=>url_for('options/create_account') do |form| %>
+<% wrap_slot do |slot| %>
+  <% form_for_card :url=>slot.url_for('options/create_account') do |form| %>
     <table class="fieldset">
       <%= render :partial=>'account/email' %>
       <tr><td colspan="3" style><p>

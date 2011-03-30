@@ -74,8 +74,15 @@ class Renderer
         else raise "Bad view #{aview.inspect}"
         end
 
-Rails.logger.info "aliased #{view} #{aview.inspect} > #{aview_key}"
-        register_view(view_key, aview_key)
+Rails.logger.info "defining aliased view #{view} #{aview.inspect} > #{aview_key}"
+        class_eval do
+          define_method( "_final_#{aview_key}".to_sym ) do
+            Rails.logger.debug "ALIAS call: #{aview_key} called, calling #{view_key}"
+            send("_final_#{view_key}")
+          end
+        end
+
+        #register_view(view_key, aview_key)
 Rails.logger.info "reg_alias(#{view_key}, #{view}) > #{aview.inspect} :: #{aview_key}"
       end
     end
@@ -85,8 +92,8 @@ Rails.logger.info "reg_alias(#{view_key}, #{view}) > #{aview.inspect} :: #{aview
       view_key = get_pattern(view, opts)
       class_eval do
         define_method( "_final_#{view_key}", &final )
-        register_view(view_key, view_key)
-Rails.logger.info "reg_view(#{view_key.inspect}, #{view.inspect})"
+        #register_view(view_key, view_key)
+Rails.logger.info "reg_view(_final_#{view_key}, #{view.inspect})"
 
         if view_key == view
 Rails.logger.debug "define base view: _render_#{view}, render_#{view}"
@@ -126,10 +133,12 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     @@set_views, @@fallback = {},{} unless @@set_views
 
     def new(card, opts=nil)
-      fmt = (opts and opts[:format]) ? opts[:format].to_sym : :html
-      if RENDERERS.has_key?(fmt)
+      fmt = (opts && opts[:format] ? opts[:format].to_sym : :html)
+      if self==Renderer && RENDERERS.has_key?(fmt)
+        #warn "format = #{fmt}"
         Renderer.const_get(RENDERERS[fmt]).new(card, opts)
       else
+        #warn "self = #{self}, fmt = #{fmt}, #{self==Renderer}, #{RENDERERS.has_key?(fmt)} "
         new_renderer = self.allocate
         new_renderer.send :initialize, card, opts
         new_renderer
@@ -328,7 +337,9 @@ raise "???" if Hash===action
       else :view
     end
 
-    result = if render_meth = view_method(action)
+Rails.logger.info "calling view method(#{action}) #{card.inspect}"
+    result = 
+      if render_meth = view_method(action)
 Rails.logger.info "render(#{action}) #{render_meth}"
         send(render_meth, args) { yield }
       else
@@ -349,9 +360,9 @@ Rails.logger.debug "method keys for #{card.name}: #{Wagn::Pattern.method_keys(ca
     
     Wagn::Pattern.method_keys(card).each do |method_key|
       
-      meth = self.class.set_view(method_key.blank? ? view.to_s : "#{method_key}_#{view}")
+      meth = "_final_"+(method_key.blank? ? "#{view}" : "#{method_key}_#{view}")
 Rails.logger.info "view_method( #{method_key} )  #{meth}"
-      return meth if meth
+      return meth if respond_to?(meth.to_sym)
     end
     return @@fallback[view]
   end

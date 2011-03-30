@@ -22,6 +22,7 @@ class Renderer
      end
     }</span>}
   end
+  
   view_alias(:raw, {:name=>'*account link'}, :naked)
 
   view(:raw, :name=>'*alerts') do %{
@@ -40,32 +41,33 @@ class Renderer
 
   view(:raw, :name=>'*head') do
     # ------- Title -------------
-    %{
-<link rel="shortcut icon" href="#{ System.favicon }" />#{
-      if card and !card.new_record? and card.ok? :edit
-        %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="/card/edit/#{ card.key }"/>}
-      end}#{
+    %{<link rel="shortcut icon" href="#{ System.favicon }" />} +
+    if card and !card.new_record? and card.ok? :edit
+      %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="/card/edit/#{ card.key }"/>}
+    else; ''; end +
 
-      if card and card.name == "*search"
-        %{<link rel="alternate" type="application/rss+xml" title="RSS" href="/search/<%= params[:_keyword] %>.rss" />}
-      elsif card and Card::Search === card
-        %{<link rel="alternate" type="application/rss+xml" title="RSS" href="#{ @template.url_for_page( card.name, :format=>:rss )} " />}
-      end}
-
-  <title> #{
-    (@card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name) ||
-      params[:title] } - #{ System.site_title } </title>
-    #{ stylesheet_link_merged(:base) }#{
-       if star_css_card = Card.fetch('*css', :skip_virtual => true)
-    %{<link href="/*css.css?<%= star_css_card.current_revision_id %>" media="screen" type="text/css" rel="stylesheet" />}
-       end}#{#asset_manager can do alternate media but has to be a separate call
-        %{ stylesheet_link_tag 'print', :media=>'print' } +
+    if card and card.name == "*search"
+      %{<link rel="alternate" type="application/rss+xml" title="RSS" href="/search/<%= params[:_keyword] %>.rss" />}
+    elsif card and Card::Search === card
+      %{<link rel="alternate" type="application/rss+xml" title="RSS" href="#{ @template.url_for_page( card.name, :format=>:rss )} " />}
+    else; ''; end +
+    
+    "<title>#{params[:title]} - #{ System.site_title }</title>" +
+    
+    stylesheet_link_merged(:base) +
+    
+    if star_css_card = Card.fetch('*css', :skip_virtual => true)
+      %{<link href="/*css.css?#{ star_css_card.current_revision_id }" media="screen" type="text/css" rel="stylesheet" />}
+    else; ''; end +
+    #{#asset_manager can do alternate media but has to be a separate call
+    
+    stylesheet_link_tag( 'print', :media=>'print' ) +
         # tried javascript at bottom, much breakage
-        javascript_include_merged(:base) +
-        key = System.setting("*google_ajax_api_key") ?
-         %{<script type="text/javascript" src="http://www.google.com/jsapi?key=<%= key %>"></script>} : ''
-       }
-}
+    "#{javascript_include_merged(:base)}" +
+    key = System.setting("*google_ajax_api_key") ?
+       %{<script type="text/javascript" src="http://www.google.com/jsapi?key=<%= key %>"></script>} : ''
+
+
   end
   view_alias(:raw, {:name=>'*head'}, :naked)
 

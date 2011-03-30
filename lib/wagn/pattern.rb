@@ -248,7 +248,9 @@ raise "no card" unless card
       end
 
       def pattern_applies? card
-        card.name and !card.virtual? and !card.new_record?
+        #FIXME!!! we do not want these to stay commented out, but they need to be there so that patterns on builtins can be recognized for now. 
+        # soon those cards should actually exist.
+        card.name #and !card.virtual? and !card.new_record?
       end
       
       def opt_keys

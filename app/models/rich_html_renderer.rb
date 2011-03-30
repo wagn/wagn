@@ -7,12 +7,6 @@ class RichHtmlRenderer < Renderer
   # This creates a separate class hash in the subclass
   class << self
     def actions() @@set_actions||={} end
-
-    def new(card, opts=nil)
-      new_renderer = self.allocate
-      new_renderer.send :initialize, card, opts
-      new_renderer
-    end
   end
 
   def set_action(key)

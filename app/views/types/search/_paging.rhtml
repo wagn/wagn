@@ -4,7 +4,7 @@
  first,last = offset+1,offset+card.results.length 
  total = card.count
  
- args = slot.params
+ args = slot.params.clone
  args[:limit] = limit
 
  args[:requested_view] = slot.requested_view 

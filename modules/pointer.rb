@@ -12,7 +12,7 @@ class Renderer
     eid = context
     card.options.each do |option|
       %{<div class="pointer-checkbox"> #{
-        check_box_tag "#{eid}-checkbox", option.name, card.items.include?(option.name),
+        check_box_tag "#{eid}-checkbox", option.name, card.item_names.include?(option.name),
       { :id=>"#{eid}-checkbox-#{option.key}", :class=>'pointer-checkbox-button' } }
   <span class="pointer-checkbox-label">
     <span class="checkbox-option-name"><%= option.name %></span>
@@ -65,27 +65,26 @@ class Renderer
 
   view(:list, :type=>'pointer') do
     eid = context 
-    items = card.items
+    items = card.item_names
     items = [''] if items.empty?
 
-    %{<ul id="#{eid}-ul" class="pointer"> #{
-      items.each_with_index do |link, index| 
-        render_field( :eid=>eid, :index=>index )
-  end*"\n"} #{
-      render_add_item( :eid=>eid, :index=>items.length )
-  }
-</ul>
+    %{<ul id="#{eid}-ul" class="pointer"> }+
+    items.each_with_index do |link, index| 
+      render_field( :eid=>eid, :index=>index )
+    end.join("\n")+
+    render_add_item( :eid=>eid, :index=>items.length ) +
+    '</ul>'+
 
-#{ editor_hooks :save=>%{
-  items = Element.select( $('#{eid}-ul'), ".pointer-text").map(function(x){ return x.value; });
-  setPointerContent('#{eid}', items);
-  return true;
-} }}
+    editor_hooks( :save=>%{
+      items = Element.select( $('#{eid}-ul'), ".pointer-text").map(function(x){ return x.value; });
+      setPointerContent('#{eid}', items);
+      return true;
+    } )
   end
 
   view(:multiselect, :type=>'pointer') do
     eid = context
-    options = options_from_collection_for_select(card.options,:name,:name,card.items)
+    options = options_from_collection_for_select(card.options,:name,:name,card.item_names)
 
     select_tag("#{eid}-multiselect", options, :multiple=>true, :id=>"#{eid}-multiselect", :class=>'pointer-multiselect') +
 

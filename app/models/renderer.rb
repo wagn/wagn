@@ -48,10 +48,10 @@ class Renderer
   #   Methods are defined on the renderer
   #
   #   The external api with checks:
-  #     render(_setname)_viewname(args)
-  #
-  #   Equivalent to:
   #     render(:viewname, args)
+  #
+  #   Roughly equivalent to:
+  #     render(_setname)_viewname(args)
   #
   #   The internal call that skips the checks:
   #     _render(_setname)_viewname(args)

@@ -54,6 +54,12 @@ class CardController < ApplicationController
   def render_show
     @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
     ## fixme, we ought to be setting special titles (or all titles) in cards
+    
+    render(:text=>render_show_text)
+  end
+  
+  def render_show_text
+    request.format = :html if !params[:format]
 
     respond_to do |format|
       format.rss do
@@ -65,15 +71,14 @@ class CardController < ApplicationController
       format.json do render :text=>'json not yet supported' end
       [:txt, :css, :kml, :html].each do |f|
         format.send f do
-          render(:text=>
-            Renderer.new(@card, 
-              :format=>f, :flash=>flash, :params=>params
-            ).render(:show)
-          )
+          Renderer.new(@card, 
+            :format=>f, :flash=>flash, :params=>params
+          ).render(:show)
         end
       end
     end
   end
+  
 
   #----------------( MODIFYING CARDS )
 
@@ -222,13 +227,13 @@ class CardController < ApplicationController
     @comment=@comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
     @card.comment = "<hr>#{@comment}<p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
     @card.save!
-    render_update_slot render_to_string(:action=>'show'), "comment saved"
+    render_update_slot render_to_string(:text=>render_show_text), "comment saved"
   end
 
   def rollback
     load_card_and_revision
     @card.update_attributes! :content=>@revision.content
-    render_update_slot render_to_string(:action=>'show'), "content rolled back"
+    render_update_slot render_to_string(:text=>render_show_text), "content rolled back"
   end
 
   #------------( deleting )

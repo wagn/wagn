@@ -101,7 +101,7 @@ Rails.logger.info "render_test all types: #{args[:cardtypes].inspect}"
           user = user.to_s
 
           args[:cardtypes].each do |cardtype|    
-            next if cardtype=~ /Cardtype|UserForm/
+            next if cardtype=~ /Cardtype|UserForm|Set|Fruit|Optic|Book/
 
             title = url.gsub(/:id/,'').gsub(/\//,'_') + "_#{cardtype}"
             login = (user=='anon' ? '' : "integration_login_as '#{user}'")

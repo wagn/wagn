@@ -151,7 +151,7 @@ class Renderer
     first,last = offset+1,offset+card.results.length 
     total = card.count
  
-    args = params
+    args = params.clone
     args[:limit] = limit
 
     args[:requested_view] = requested_view 

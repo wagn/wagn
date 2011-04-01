@@ -55,7 +55,8 @@ class CardController < ApplicationController
     @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
     ## fixme, we ought to be setting special titles (or all titles) in cards
     
-    render(:text=>render_show_text)
+    text = render_show_text
+    render(:text=>text)
   end
   
   def render_show_text
@@ -65,18 +66,19 @@ class CardController < ApplicationController
       format.rss do
          raise("Sorry, RSS is broken in rails < 2.2") unless Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >=2
          # rss causes infinite memory suck in rails 2.1.2.  
-         render :action=>'show'
+         @text = render_to_string(:action=>'show')
       end
       format.xml do render :text=>'xml not yet supported' end
       format.json do render :text=>'json not yet supported' end
       [:txt, :css, :kml, :html].each do |f|
         format.send f do
-          Renderer.new(@card, 
+          @text = Renderer.new(@card, 
             :format=>f, :flash=>flash, :params=>params
           ).render(:show)
         end
       end
     end
+    @text
   end
   
 
@@ -372,7 +374,7 @@ class CardController < ApplicationController
   def add_field # for pointers only
     load_card if params[:id]
     #render :partial=>'types/pointer/field', :locals=>params.merge({:link=>:add,:card=>@card})
-    Renderer.new(@card).render_field(:link=>:add)
+    Renderer.new(@card).render(:field, :link=>:add)
   end
 
 end

@@ -1,11 +1,14 @@
 class Renderer
   view(:add_item, :type=>'pointer') do
     #ENGLISH
-    if !card or !card.limit or card.limit.to_i > (index.to_i+1)
-      %{<li id="#{eid}-add"> #{
-        link_to_remote 'Add another', :url=>%{javascript:urlForAddField('#{
-          card ? card.key : ''}','#{eid}')}, :update=>%{#{eid}-ul}, :position=>:bottom }}
-    end
+#    if !card #or !card.limit or card.limit.to_i > (index.to_i+1)
+      %{<li id="#{context}-add">} +
+      link_to_remote( 'Add another',
+        :url=>%{javascript:urlForAddField('#{card ? card.key : ''}','#{context}')},
+        :update=>%{#{context}-ul},
+        :position=>:bottom
+      )
+#    else '' end
   end
 
   view(:checkbox, :type=>'pointer') do
@@ -38,21 +41,20 @@ class Renderer
 
   view(:editor, :type=>'pointer') do
     part_view = (c = card.setting('input')) ? c.gsub(/[\[\]]/,'') : 'list'
-    form.hidden_field :content, :id=>"#{context}-hidden-content" +
+    form.hidden_field( :content, :id=>"#{context}-hidden-content") +
     render(part_view)
   end
 
-  view(:field, :type=>'pointer') do
-    value = (link== :add ? '' : link )
-    result = %{
-<li id="#{ eid }-pointer-li-#{ index }" class="pointer-li">
-#{ text_field_tag "pointer[#{index}]", value, :id=>"#{eid}_pointer_text_#{index}", :class=>'pointer-text'} } +
-    cardname_auto_complete("#{eid}_pointer_text_#{index}", (card && card.key))
-    unless card && card.limit==1
-      result += link_to_function 'X', "$('#{eid}-pointer-li-#{index}').remove()", :class=>'delete'
-    end
-    if link== :add
-      result += render_add_item
+  view(:field, :type=>'pointer') do |args|
+    value = (args[:link]== :add ? '' : args[:link] )
+    index = args[:index]
+    
+    result = %{<li id="#{ context }-pointer-li-#{ index }" class="pointer-li">}+
+    text_field_tag("pointer[#{index}]", value, :id=>"#{context}_pointer_text_#{index}", :class=>'pointer-text') +
+    cardname_auto_complete("#{context}_pointer_text_#{index}", (card && card.key))
+    result += link_to_function 'X', "$('#{context}-pointer-li-#{index}').remove()", :class=>'delete'
+    if args[:link]== :add
+      result += render(:add_item)
     end
     result
   end
@@ -64,32 +66,30 @@ class Renderer
   end
 
   view(:list, :type=>'pointer') do
-    eid = context 
     items = card.item_names
     items = [''] if items.empty?
 
-    %{<ul id="#{eid}-ul" class="pointer"> }+
+    result = %{<ul id="#{context}-ul" class="pointer"> }
     items.each_with_index do |link, index| 
-      render_field( :eid=>eid, :index=>index )
-    end.join("\n")+
-    render_add_item( :eid=>eid, :index=>items.length ) +
+      result += render(:field, :link=>link, :index=>index )
+    end
+    result += render(:add_item, :index=>items.length ) +
     '</ul>'+
 
     editor_hooks( :save=>%{
-      items = Element.select( $('#{eid}-ul'), ".pointer-text").map(function(x){ return x.value; });
-      setPointerContent('#{eid}', items);
+      items = Element.select( $('#{context}-ul'), ".pointer-text").map(function(x){ return x.value; });
+      setPointerContent('#{context}', items);
       return true;
     } )
   end
 
   view(:multiselect, :type=>'pointer') do
-    eid = context
     options = options_from_collection_for_select(card.options,:name,:name,card.item_names)
 
-    select_tag("#{eid}-multiselect", options, :multiple=>true, :id=>"#{eid}-multiselect", :class=>'pointer-multiselect') +
+    select_tag("#{context}-multiselect", options, :multiple=>true, :id=>"#{context}-multiselect", :class=>'pointer-multiselect') +
 
     editor_hooks(:save=>%{
-  setPointerContent('#{eid}', jQuery('##{eid}-multiselect').val() );  return true;})
+  setPointerContent('#{context}', jQuery('##{context}-multiselect').val() );  return true;})
   end
 
   view(:radio, :type=>'pointer') do

@@ -224,9 +224,9 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
 
   def process_content(content=nil, opts={})
     return content unless card
-    content = card.raw_content if content.blank?
+    content = card.content if content.blank?
 
-Rails.logger.info "process_content(#{content}, #{card&&card.content}) #{card&&card.name}"
+Rails.logger.info "process_content(#{content}, #{card&&card.content}),  #{card&&card.name}"
 
     wiki_content = WikiContent.new(card, content, self, inclusion_map)
     update_references(wiki_content) if card.references_expired

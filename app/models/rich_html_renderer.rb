@@ -219,7 +219,7 @@ Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
     if ajax_call?
       self.render( params[:view] || :open)
     else
-      self.render_layout
+      val = self.render_layout
     end
   end
 

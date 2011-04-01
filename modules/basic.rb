@@ -4,23 +4,20 @@ class Renderer
   # Declare built-in views
   view(:raw, :name=>'*account link') do
     #ENGLISH
-    %{
-<span id="logging">#{
+    text = '<span id="logging">'
      if logged_in?
-       @template.link_to "My Card: #{User.current_user.card.name}",
-                                '/me',             :id=>'my-card-link'
+       text += @template.link_to( "My Card: #{User.current_user.card.name}", '/me', :id=>'my-card-link')
        if System.ok?(:create_accounts)
-         @template.link_to 'Invite a Friend',
-                                '/account/invite', :id=>'invite-a-friend-link'
+         text += @template.link_to('Invite a Friend', '/account/invite', :id=>'invite-a-friend-link')
        end
-       @template.link_to   'Sign out', '/account/signout', :id=>'signout-link'
+       text += @template.link_to('Sign out', '/account/signout', :id=>'signout-link')
      else
        if Card::InvitationRequest.create_ok?
-         @template.link_to 'Sign up', '/account/signup',   :id=>'signup-link'
+         text+= @template.link_to( 'Sign up', '/account/signup',   :id=>'signup-link' )
        end
-       @template.link_to   'Sign in', '/account/signin',   :id=>'signin-link'
+       text += @template.link_to( 'Sign in', '/account/signin',   :id=>'signin-link' )
      end
-    }</span>}
+    text + '</span>'
   end
   
   view_alias(:raw, {:name=>'*account link'}, :naked)

@@ -462,6 +462,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
     end
 
     it "are used in new card forms" do
+      User.as :joe_admin
       content_card = Card.create!(:name=>"Phrase+*type+*content", :content=>"{{+Yoruba}}" )
       help_card    = Card.create!(:name=>"Phrase+*type+*add help", :content=>"Help me dude" )
       card = Card.new(:type=>'Phrase')

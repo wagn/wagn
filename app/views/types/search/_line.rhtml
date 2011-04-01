@@ -6,7 +6,7 @@
   # FIXME: so not DRY.  cut-n-paste from search/_content
   s = slot.paging_params #params[:s] || {}
   begin
-    query_results = card.search( s )
+    query_results = card.item_cards( s )
     total = card.count
   rescue Exception=>e
     error = e
@@ -16,6 +16,8 @@
   <% if query_results.nil? %>
     <%= "#{error.class.to_s}: #{error.message}" %><br/>
     <%= card.content %>
+  <% elsif card.spec[:return] =='count'  %>
+    <%= query_results %>
   <% elsif query_results.length==0 %>
     <span class="faint">(0)</span>
   <% else %>

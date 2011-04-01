@@ -100,7 +100,7 @@ module Card
       
       # The following are only necessary for setting permissions.  Should remove once we have set/setting -based perms
       if name and name.junction? and name.valid_cardname? 
-        self.trunk ||= Card.fetch_or_new name.parent_name, {:skip_virtual=>true}
+        self.trunk ||= Card.fetch_or_new name.left_name, {:skip_virtual=>true}
         self.tag   ||= Card.fetch_or_new name.tag_name,    {:skip_virtual=>true}
       end
       
@@ -122,10 +122,10 @@ module Card
     end
     
     def set_default_permissions
-      source_card = setting_card('content', 'default')
+      source_card = setting_card('content', 'default')  #not sure why "template" doesn't work here.
       if source_card
         perms = source_card.card.permissions.reject { 
-          |p| p.task == 'create' unless (type == 'Cardtype' or template?) 
+          |p| p.task == 'create' unless (type=='Cardtype' or template?) 
         }
       else
         #raise( "Missing permission configuration for #{name}" ) unless source_card && !source_card.permissions.empty?
@@ -202,15 +202,17 @@ module Card
           when args['type'];                    typetype= :cardname;  args['type']
           when args.delete('skip_type_lookup'); 'Basic'
           else
-            setting = Card::Basic.new(:name=> args['name'], :skip_defaults=>true ).setting_card('content', 'default')
-            setting ? setting.type : 'Basic'
+            dummy = Card::Basic.new(:name=> args['name'], :skip_defaults=>true )
+            dummy.loaded_trunk = args['loaded_trunk'] if args['loaded_trunk']
+            pattern = dummy.template
+            pattern ? pattern.type : 'Basic'
           end
         
         args.delete('type')
         return type, typetype
       end
       
-      def get_name_from_args(args={})
+      def get_name_from_args(args={}) #please tell me this is no longer necessary
         args ||= {}
         args['name'] || (args['trunk'] && args['tag']  ? args["trunk"].name + "+" + args["tag"].name : "")
       end      
@@ -227,7 +229,13 @@ module Card
       def find_or_create(args={})
         raise "find or create must have name" unless args[:name]
         Card.fetch_or_create(args[:name], {}, args)
-      end                  
+      end
+      
+      def find_or_new(args={})
+        raise "find_or_new must have name" unless args[:name]
+        Card.fetch_or_new(args[:name], {}, args)
+      end
+                          
     end
 
     def save_with_trash!
@@ -348,12 +356,15 @@ module Card
       self.confirm_destroy = true
       destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
     end
+
      
     # Extended associations ----------------------------------------
 
-    def right
-      tag
-    end
+
+    def left()  Card.fetch( name.trunk_name, :skip_virtual=> true) end
+    def right() Card.fetch( name.tag_name,   :skip_virtual=> true) end
+    def cardtype_name() ::Cardtype.name_for( self.type )             end
+    
     
     def pieces
       simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq 
@@ -424,7 +435,11 @@ module Card
     #end
      
     def revised_at
-      cached_revision ? cached_revision.updated_at : Time.now
+      if cached_revision && rtime = cached_revision.updated_at
+        rtime
+      else
+        Time.now
+      end
     end
 
     # Dynamic Attributes ------------------------------------------------------        
@@ -452,14 +467,18 @@ module Card
     end   
     
     def cached_revision
-      case
-      when (@cached_revision and @cached_revision.id==current_revision_id); 
-      when (@cached_revision=Card.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
-      else
-        @cached_revision = current_revision || get_blank_revision
-        Card.cache.write("#{key}-content", @cached_revision)
-      end
-      @cached_revision
+      return current_revision || get_blank_revision
+
+      # commenting out the following for now.  suspect it may be behind caching issues.
+      
+      # case
+      # when (@cached_revision and @cached_revision.id==current_revision_id); 
+      # when (@cached_revision=Card.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
+      # else
+      #   @cached_revision = current_revision || get_blank_revision
+      #   Card.cache.write("#{key}-content", @cached_revision)
+      # end
+      # @cached_revision
     end
     
     def get_blank_revision

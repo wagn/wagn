@@ -175,5 +175,3 @@ module Wagn
     end
   end
 end
-
-

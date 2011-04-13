@@ -507,7 +507,7 @@ describe Slot do
 #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
   
   def render_editor(type)
-    card = Card.create(:name=>"my favority #{type} + rand(4)", :type=>type)
+    card = Card.create(:name=>"my favority #{type} + #{rand(4)}", :type=>type)
     Slot.new(card).render(:edit)
   end
   

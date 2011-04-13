@@ -76,13 +76,14 @@ class Slot < Renderer
 
   view(:edit) do |args|
     @state=:edit
-    card.content_template ?  _render_multi_edit(args) : content_field(slot.form)
+    card.content_template ?  _render_multi_edit(args) : content_field(self.form)
   end
 
   view(:multi_edit) do |args|
     @state=:edit
     args[:add_javascript]=true
-    @form = form_for_multi
+#    warn "in multi_edit calling form_for_multi.  card = #{self.root.card.inspect}"
+    @form = self.form_for_multi
     hidden_field_tag(:multi_edit, true) + _render_core(args)
   end
 

@@ -510,13 +510,7 @@ describe Slot do
 #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
   
   def render_editor(type)
-    card = nil
-    User.as(:wagbot) do
-      card = Card.create!(:name=>"my favority #{type} + rand(4)", :type=>type)
-    end
-    
-    warn "card created in render_editor: #{card.inspect}"
-    
+    card = Card.create(:name=>"my favority #{type} + #{rand(4)}", :type=>type)
     Slot.new(card).render(:edit)
   end
   

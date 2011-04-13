@@ -123,12 +123,13 @@ class System < ActiveRecord::Base
       #warn party.inspect
       party.class.name == 'Role' ? 
          role_ok?(party.id) :
-          (party == User.current_user)      
+          (party == User.as_user)      
     end
     
     # FIXME stick this in session? cache it somehow??
     def ok_hash
-      usr = User.current_user
+      usr = User.as_user
+      #warn "user = #{usr.inspect}"
       if (h = @@cache[:ok_hash][usr]).nil?
         @@cache[:ok_hash][usr] = begin
           ok = {}
@@ -145,7 +146,7 @@ class System < ActiveRecord::Base
     end
     
     def always_ok?   
-      return false unless usr = User.current_user
+      return false unless usr = User.as_user
       if (c = @@cache[:always][usr]).nil?
         @@cache[:always][usr] = usr.roles.detect { |r| r.codename == 'admin' } || false
       else

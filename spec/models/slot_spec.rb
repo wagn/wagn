@@ -1,7 +1,10 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Slot do
-  before { User.as :joe_user }
+  before do
+    User.current_user = :joe_user
+  end
+    
   def simplify_html string
     string.gsub(/\s*<!--[^>]*>\s*/, '').gsub(/\s*<\s*(\/?\w+)[^>]*>\s*/, '<\1>')
   end
@@ -378,7 +381,7 @@ describe Slot do
 
     context "HTML" do
       before do
-        User.as :wagbot
+        User.current_user = :wagbot
       end
       
       it "should have special editor" do
@@ -507,7 +510,13 @@ describe Slot do
 #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
   
   def render_editor(type)
-    card = Card.create(:name=>"my favority #{type} + rand(4)", :type=>type)
+    card = nil
+    User.as(:wagbot) do
+      card = Card.create!(:name=>"my favority #{type} + rand(4)", :type=>type)
+    end
+    
+    warn "card created in render_editor: #{card.inspect}"
+    
     Slot.new(card).render(:edit)
   end
   

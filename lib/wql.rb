@@ -506,11 +506,10 @@ Rails.logger.info "count iter(#{relation.inspect} #{subspec.inspect})"
       
       # Permissions       
       t = table_alias
-      #unless User.current_user.login.to_s=='wagbot' #
       unless System.always_ok? or (Wql.root_perms_only && !root?)
         user_roles = [Role[:anon].id]
-        unless User.current_user.login.to_s=='anon'
-          user_roles += [Role[:auth].id] + User.current_user.roles.map(&:id)
+        unless User.as_user.login.to_s=='anon'
+          user_roles += [Role[:auth].id] + User.as_user.roles.map(&:id)
         end                                                                
         user_roles = user_roles.map(&:to_s).join(',')
         # type!=User is about 6x faster than type='Role'...

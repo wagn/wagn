@@ -77,7 +77,7 @@ end
 
 describe Card, "created without permission" do
   before do
-    User.as :anonymous
+    User.current_user = :anonymous
   end
    
   # FIXME:  this one should pass.  unfortunately when I tried to fix it it started looking like the clean solution 

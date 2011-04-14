@@ -3,6 +3,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe Slot do
   before do
     User.current_user = :joe_user
+    Renderer.current_slot = nil
   end
     
   def simplify_html string

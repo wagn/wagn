@@ -2,7 +2,11 @@ require File.dirname(__FILE__) + '/../spec_helper'
 require File.dirname(__FILE__) + '/../spec_renderer_helper'
 
 describe Renderer, "" do
-  before { User.as :joe_user }
+  before do
+    User.current_user = :joe_user
+    Renderer.current_slot = nil
+  end
+    
   def simplify_html string
     string.gsub(/\s*<!--[^>]*>\s*/, '').gsub(/\s*<\s*(\/?\w+)[^>]*>\s*/, '<\1>')
   end
@@ -546,7 +550,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
 
     context "HTML" do
       before do
-        User.as :wagbot
+        User.current_user = :wagbot
       end
 
       it "should have special editor" do
@@ -676,7 +680,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
 #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
 
   def render_editor(type)
-    card = Card.create(:name=>"my favority #{type} + rand(4)", :type=>type)
+    card = Card.create(:name=>"my favority #{type} + #{rand(4)}", :type=>type)
     Renderer.new(card).render(:edit)
   end
 

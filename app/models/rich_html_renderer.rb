@@ -175,7 +175,6 @@ Rails.logger.info "_final_layout #{main_card} Cd:#{card} #{args.inspect} LC#{lco
 }),50); 
   }, 
       :save=> %{t = tinyMCE.getInstanceById( '#{eid}-tinymce' ); $('#{eid}-hidden-content').value = t.getContent(); return true;})
-    
   end
 
   view(:multi_edit) do |args|

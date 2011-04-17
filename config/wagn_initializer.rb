@@ -177,5 +177,3 @@ Rails.logger.info "create builtin cards #{name}"
     end
   end
 end
-
-

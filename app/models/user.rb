@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :name
-  cattr_accessor :current_user
+  cattr_accessor :current_user, :as_user
   
   has_and_belongs_to_many :roles
   belongs_to :invite_sender, :class_name=>'User', :foreign_key=>'invite_sender_id'
@@ -37,22 +37,30 @@ class User < ActiveRecord::Base
     end
     
     def current_user=(user)
-      @@current_user = user
+      @@as_user = nil
+      @@current_user = user.class==User ? user : User[user]
     end
    
     def as(given_user)
-      tmp_user = self.current_user
-      self.current_user = given_user.class==User ? given_user : User[given_user]
+      tmp_user = @@as_user
+      @@as_user = given_user.class==User ? given_user : User[given_user]
+      self.current_user = @@as_user if @@current_user.nil?
+      
+      #warn "\nas called: @@as_user = #{@@as_user.inspect}\n"
       if block_given?
         value = yield
-        self.current_user = tmp_user
+        @@as_user = tmp_user
         return value
       else
-        current_user
+        #fail "BLOCK REQUIRED with User#as"
       end
     end
     
-    
+    def as_user
+      #warn "\nas_user called: @@as_user = #{@@as_user.inspect}\n"
+      @@as_user || self.current_user
+    end
+      
     # FIXME: args=params.  should be less coupled..
     def create_with_card(user_args, card_args, email_args={})
       @card = (Hash===card_args ? Card.new({'typecode'=>'User'}.merge(card_args)) : card_args) 

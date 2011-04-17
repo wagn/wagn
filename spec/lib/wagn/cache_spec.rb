@@ -80,8 +80,10 @@ describe Wagn::Cache do
       @store = ActiveSupport::Cache::FileStore.new cache_path
 
       # TODO @store.clear
-      require 'FileUtils'
       cache_path = cache_path + "/prefix"
+      p = Pathname.new(cache_path)
+      p.mkdir if !p.exist?
+
       root_dirs = Dir.entries(cache_path).reject{|f| ['.', '..'].include?(f)}
       files_to_remove = root_dirs.collect{|f| File.join(cache_path, f)}
       FileUtils.rm_r(files_to_remove)
@@ -99,7 +101,7 @@ describe Wagn::Cache do
       end
     end
 
-    describe "#basic operations with none latin symbols" do
+    describe "#basic operations with non-latin symbols" do
       it "should work" do
         @cache.write('(汉语漢語 Hànyǔ; 华语華語 Huáyǔ; 中文 Zhōngwén', "foo")
         @cache.write('русский', "foo")

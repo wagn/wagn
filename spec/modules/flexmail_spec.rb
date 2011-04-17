@@ -3,16 +3,17 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe Flexmail do
   describe "#email_config_cardnames" do
     it "handles relative names" do
-      User.as :wagbot
-      Card::Pointer.create! :name=>'emailtest+*right+*send', :content=>'[[_left+email_config]]'
-      trigger_card = Card.new(:name=>'Huckleberry+emailtest')
-      Flexmail.email_config_cardnames(trigger_card).first.should=='emailtest+*right+email_config'
+      User.as :wagbot do
+        Card::Pointer.create! :name=>'emailtest+*right+*send', :content=>'[[_left+email_config]]'
+        trigger_card = Card.new(:name=>'Huckleberry+emailtest')
+        Flexmail.email_config_cardnames(trigger_card).first.should=='emailtest+*right+email_config'
+      end
     end
   end
   
   describe ".configs_for" do
     before do
-      User.as :wagbot
+      User.current_user = :wagbot
       Card.create! :name => "mailconfig+*to", :content => "joe@user.com"
       Card.create! :name => "mailconfig+*from", :content => "from@user.com"
       Card.create! :name => "mailconfig+*subject", :content => "Subject of the mail"

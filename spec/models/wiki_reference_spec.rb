@@ -9,7 +9,7 @@ describe "WikiReference" do
   describe "references on hard templated cards should get updated" do
     it "on templatee creation" do
       Card::UserForm.create! :name=>"JoeForm"
-      Slot.new(Card["JoeForm"]).render(:naked)
+      Renderer.new(Card["JoeForm"]).render(:naked)
       assert_equal ["joe_form+age", "joe_form+name", "joe_form+description"].sort,
         Card["JoeForm"].out_references.plot(:referenced_name).sort     
       Card["JoeForm"].references_expired.should_not == true
@@ -22,7 +22,7 @@ describe "WikiReference" do
       c.references_expired.should be_nil
       Card.create! :name=>"SpecialForm+*type+*content", :content=>"{{+bar}}"
       Card["Form1"].references_expired.should be_true
-      Slot.new(Card["Form1"]).render(:naked)
+      Renderer.new(Card["Form1"]).render(:naked)
       c = Card.find_by_name("Form1")
       c.references_expired.should be_nil
       Card["Form1"].out_references.plot(:referenced_name).should == ["form1+bar"]
@@ -34,7 +34,7 @@ describe "WikiReference" do
       tmpl.content = "{{+monkey}} {{+banana}} {{+fruit}}"; 
       tmpl.save!
       Card["JoeForm"].references_expired.should be_true
-      Slot.new(Card["JoeForm"]).render(:naked)
+      Renderer.new(Card["JoeForm"]).render(:naked)
       assert_equal ["joe_form+monkey", "joe_form+banana", "joe_form+fruit"].sort,
         Card["JoeForm"].out_references.plot(:referenced_name).sort     
       Card["JoeForm"].references_expired.should_not == true

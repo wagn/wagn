@@ -1,4 +1,4 @@
-require_dependency 'slot'
+require_dependency 'rich_html_renderer'
 
 module WagnHelper
   require_dependency 'wiki_content'
@@ -7,6 +7,13 @@ module WagnHelper
   # FIXME: slot -> renderer (model)
   # Put the initialization in the controller and we no longer care here
   # whether it is a Slot or Renderer, and it will be from the parent class
+  #   Now: Always a Renderer, and the subclass is selected by:
+  #     :format => :html (default and only -> RichHtmlRenderer (was Slot))
+#  def slot() raise "slot is now self #{self}" end
+#  def get_slot(card=nil, context=nil, action=nil, opts={})
+#    raise "get_slot? #{card}, #{context}, #{action}, #{opts.inspect}"
+#  end
+#=begin
   def slot() Renderer.current_slot end
   def card() @card ||= slot.card end
   def params()
@@ -25,24 +32,12 @@ module WagnHelper
     slot = case
       when Renderer.current_slot;  nil_given ? Renderer.current_slot : Renderer.current_slot.subrenderer(card)
       else
-        Renderer.current_slot = Slot.new( card,
+        Renderer.current_slot = Renderer.new( card,
             opts.merge(:context=>context, :action=>action, :template=>self) )
     end
     controller and controller.renderer = slot or slot
   end
-
-  # FIMXE: this one's a hack...
-=begin
-  def render_card(card, mode, args={})
-    if String===card && name = card
-      raise("Card #{name} not present") unless card=Card.fetch(name)
-    end
-    # FIXME: some cases we're called before Slot.current_slot is initialized.
-    #  should we initialize here? or always do Slot.new?
-    subrenderer = Slot.current_slot ? Slot.current_slot.subrenderer(card) : Slot.new(card)
-    subrenderer.render(mode.to_sym, args)
-  end
-=end
+#=end
 
   Droplet = Struct.new(:name, :link_options)
 
@@ -140,7 +135,7 @@ module WagnHelper
   def fancy_title(card)
     name = (String===card ? card : card.name)
     return name if name.simple?
-    card_title_span(name.parent_name) + %{<span class="joint">#{JOINT}</span>} + card_title_span(name.tag_name)
+    card_title_span(name.left_name) + %{<span class="joint">#{JOINT}</span>} + card_title_span(name.tag_name)
   end
 
   def title_tag_names(card)
@@ -233,6 +228,7 @@ module WagnHelper
 
   # ---------------( NAVBOX ) -----------------------------------
 
+=begin (moved to builtin def)
   def navbox
     content_tag( :form, :id=>"navbox_form", :action=>"/search", :onsubmit=>"return navboxOnSubmit(this)" ) do
       content_tag( :span, :id=>"navbox_background" ) do
@@ -248,6 +244,7 @@ module WagnHelper
       :after_update_element => "navboxAfterUpdate"
      }.update({}))
   end
+=end
 
   def navbox_result(entries, field, stub)
     return unless entries
@@ -278,24 +275,9 @@ module WagnHelper
     concat('</form>')
   end
 
-  def layout_card(content)
-    Card.new(:name=>"**layout",:content=>content, :skip_defaults=>true)
-  end
-
-  def render_layout_card(lay_card)
-    opts = {}; opts[:relative_content] = opts[:params] = params
-    Slot.new(lay_card,
-       opts.merge(:context=>"layout_0", :action=>"view", :template=>self)).
-         render(:layout, :main_card=>@card, :main_content=>@content_for_layout)
-  end
-
-  def render_layout_content(content)
-    render_layout_card layout_card(content)
-  end
-
-  def wrap_slot(slot=nil, args={}, &block)
-    slot ||= get_slot
-    concat( slot.wrap(args) { capture{ yield(slot) } } )
+  def wrap_slot(renderer=nil, args={}, &block)
+    renderer = Renderer.current_slot || get_slot
+    concat( renderer.wrap(args) { capture{ yield(slot) } } )
   end
   # ------------( helpers ) --------------
   def edit_user_context(card)

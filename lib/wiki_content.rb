@@ -114,7 +114,7 @@ class WikiContent < String
     super(content)
     init_chunk_manager()
     ACTIVE_CHUNKS.each{|chunk_type| chunk_type.apply_to(self)}
-#Rails.logger.info "wiki content init #{card.name}, #{inclusion_map.inspect}\nTrace #{Kernel.caller.slice(0,6).join("\n")}"
+Rails.logger.info "wiki content init #{card.name}, #{inclusion_map.inspect} C:#{content}" #\nTrace #{Kernel.caller.slice(0,6).join("\n")}"
     @not_rendered = String.new(self)
   end
 

@@ -25,4 +25,3 @@ Project.configure do |project|
   # project.scheduler.polling_interval = 5.minutes
 
 end
-

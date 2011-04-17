@@ -1,4 +1,4 @@
-<%
+  <%
    args={}
    [:add_slot, :view].each {|x| args[x] = params[x] if params[x]}
    # when new is called from an "Add <Cardname>" inclusion, there is no existing slot,
@@ -53,7 +53,7 @@
           <% #FIXME CONTENT: the hard template test can go away when we phase out the old sytem %>
           <% if card.content_template %>
             <%- slot.form = form %>
-            <%= slot.render_multi_edit %>
+            <%= slot.render(:multi_edit) %>
           <% else %>
             <%# if default_content = card.setting('default') ; card.content = default_content; end %>
             <%= slot.content_field(form) %>

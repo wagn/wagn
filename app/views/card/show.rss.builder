@@ -6,7 +6,7 @@ xml.rss :version => "2.0" do
     xml.link card_url(card)
 
     cards = if Card::Search === card
-      card.search( :limit => 25, :_keyword=>params[:_keyword] )
+      card.item_cards( :limit => 25, :_keyword=>params[:_keyword] )
       card.results
     else
       [card]

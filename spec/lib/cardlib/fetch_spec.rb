@@ -23,9 +23,9 @@ describe Card do
       Card.fetch("A").should be_nil
     end
 
-    it "returns and does not cache builtin cards" do
+    it "returns and caches builtin cards" do
       Card.fetch("*head").should be_instance_of(Card::Basic)
-      Card.cache.read("*head").should be_nil
+      Card.cache.read("*head").should_not be_nil
     end
 
     it "returns virtual cards and caches them as missing" do
@@ -77,6 +77,7 @@ describe Card do
         User.as :wagbot
       end
 
+=begin
       it "prefers builtin virtual card to db cards" do
         Card.add_builtin(Card.new(:name => "ghost", :content => "Builtin Content"))
         Card.cache.read("ghost").virtual?.should be_true
@@ -86,6 +87,7 @@ describe Card do
         card.content.should == "Builtin Content"
         card.virtual?.should be_true
       end
+=end
 
       it "prefers db cards to pattern virtual cards" do
         Card.create!(:name => "y+*right+*content", :content => "Formatted Content")

@@ -26,7 +26,6 @@ module Wagn
     end
   end
 
-
   class Initializer
     class << self
       def set_default_config config
@@ -80,7 +79,7 @@ module Wagn
         load_modules
         register_mimetypes
         Wagn::Cache.initialize_on_startup
-        initialize_builtin_cards
+        create_builtins
         ActiveRecord::Base.logger.info("\n----------- Wagn Initialization Complete -----------\n\n")
       end
 
@@ -152,6 +151,20 @@ module Wagn
         end
       end
 
+    
+
+  # make sure builtin cards exist
+      def create_builtins
+        User.as :wagbot do
+          %w{ *account_link *alerts *foot *head *navbox *now *version 
+              *recent_change *search *broken_link }.map do |name|
+Rails.logger.info "create builtin cards #{name}"
+            c = Card.fetch_or_new(name,{},:skip_defaults=>true)
+            #c.save if c.new_card?
+          end
+        end
+      end
+
       def load_modules
         Wagn::Module.load_all
       end
@@ -161,19 +174,6 @@ module Wagn
         Mime::Type.register_alias 'text/plain', :txt
         Mime::Type.register 'application/vnd.google-earth.kml+xml', :kml
       end
-      
-      def initialize_builtin_cards
-        ## DEBUG
-        File.open("#{RAILS_ROOT}/log/wagn.log","w") do |f|
-          f.puts "Wagn::Initializer.initialize_builtin_cards"
-        end
-
-        %w{ *head *alert *foot *navbox *version *account_link *now }.each do |key|
-          Card.add_builtin( Card.new(:name=>key, :builtin=>true, :skip_defaults=>true))
-        end
-      end
     end
   end
 end
-
-

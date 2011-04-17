@@ -143,7 +143,7 @@ describe Card do
 
   describe ".create_or_update" do
     before do
-      User.as :wagbot
+      User.current_user = :wagbot
     end
       
     it "creates cards that aren't there" do

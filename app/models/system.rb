@@ -55,10 +55,12 @@ class System < ActiveRecord::Base
     def toggle(val)
       val == '1'
     end
-
+    
     def layout_card(card, cardname)
       User.as(:wagbot) do 
-        layout_from_url(cardname) or layout_from_setting(card)
+        layout_from_url(cardname) or 
+        layout_from_setting(card) or
+        (block_given? and yield(cardname))
       end
     end
     
@@ -72,13 +74,13 @@ class System < ActiveRecord::Base
     def layout_from_setting(card)
       return unless setting_card = ((card && card.setting_card('layout')) or Card.default_setting_card('layout'))
       return unless setting_card.is_a?(Card::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.type == 'Pointer'        and
-        layout_name=setting_card.first                  and
-        !layout_name.nil?                                 and
+        layout_name=setting_card.item_names.first     and
+        !layout_name.nil?                             and
         lo_card = Card.fetch(layout_name, :skip_virtual => true)    and
         lo_card.ok?(:read)
       lo_card
     end
-   
+    
     def image_setting(name)
       if content = setting(name) and content.match(/src=\"([^\"]+)/)
         $~[1]
@@ -123,12 +125,13 @@ class System < ActiveRecord::Base
       #warn party.inspect
       party.class.name == 'Role' ? 
          role_ok?(party.id) :
-          (party == User.current_user)      
+          (party == User.as_user)      
     end
     
     # FIXME stick this in session? cache it somehow??
     def ok_hash
-      usr = User.current_user
+      usr = User.as_user
+      #warn "user = #{usr.inspect}"
       if (h = @@cache[:ok_hash][usr]).nil?
         @@cache[:ok_hash][usr] = begin
           ok = {}
@@ -145,7 +148,7 @@ class System < ActiveRecord::Base
     end
     
     def always_ok?   
-      return false unless usr = User.current_user
+      return false unless usr = User.as_user
       if (c = @@cache[:always][usr]).nil?
         @@cache[:always][usr] = usr.roles.detect { |r| r.codename == 'admin' } || false
       else

@@ -16,7 +16,7 @@ module Cardlib
   module Permissions
     # Permissions --------------------------------------------------------------
     def ydhpt
-      "#{User.current_user.login}, You don't have permission to"
+      "#{::User.current_user.cardname}, You don't have permission to"
     end
 
     

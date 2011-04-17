@@ -1,3 +1,25 @@
+== 1.5.3 (March 23, 2011)
+* see http://www.wagn.org/wagn/Wagn_1.5+3
+* stop interpreting self as triggering card past first level
+* let plus-star-options cards be a Pointer
+* respect type plus right on new cards of type
+* add WQL for account relationship w last edit and creation
+* add when_created and when_last_edited views
+* hard-code main page to "Home" if no *home
+* fix *count in closed view
+* add url view
+* enable size in URLs
+* stop showing db content of formatted cards with dot-txt
+* Increase search card edit box size
+* order cards in sets by name
+* delinks plus-card labels in multi-edit
+* fix *type-plus-right with default on multi-edit
+* default Account Request email to first account creator
+* add URL to clear cache
+* interpret spaces in *home as underscores
+* secret deny all url for cleanups
+* show *new when relevant in multi-edit
+
 == 1.5.2 (February 1, 2011)
 * see http://www.wagn.org/wagn/Wagn_1_5+2
 * refactor inclusion processing

@@ -40,14 +40,13 @@ end
 describe User, "Admin User" do
   before do
     User.current_user = ::User[:wagbot]
-
   end
   it "should ok admin role" do System.role_ok?(Role['admin'].id).should be_true end
 end
 
 describe User, 'Joe User' do
   before do
-    User.as :joe_user
+    User.current_user = :joe_user
     User.cache.delete 'joe_user'
     @ju = User.current_user
     @r1 = Role.find_by_codename 'r1'

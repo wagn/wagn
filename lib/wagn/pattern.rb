@@ -52,10 +52,10 @@ module Wagn
 #      end
 
       def set_names card
-r=
+#r=
         card.new_record? ? generate_set_names(card) :
           (@@cache[(card.name ||"") + (card.type||"")] ||= generate_set_names(card))
-Rails.logger.info "set_names #{card&&card.name} #{r.inspect}"; r
+#Rails.logger.debug "set_names #{card&&card.name} #{r.inspect}"; r
       end
 
       def generate_set_names card
@@ -250,7 +250,7 @@ raise "no card" unless card
       def pattern_applies? card
         #FIXME!!! we do not want these to stay commented out, but they need to be there so that patterns on builtins can be recognized for now. 
         # soon those cards should actually exist.
-        card.name #and !card.virtual? and !card.new_record?
+        card.name and !card.virtual? and !card.new_card?
       end
       
       def opt_keys

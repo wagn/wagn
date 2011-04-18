@@ -68,13 +68,13 @@ class Renderer
             else
               view_key.to_s.sub(/_#{view}$/, "_#{aview}").to_sym
             end
-          Rails.logger.info("view_alias #{aview_key}, #{view} > #{aview}")
+#Rails.logger.info("view_alias #{aview_key}, #{view} > #{aview}")
         when Hash
           aview_key = get_pattern(aview[:view]||view, aview)
         else raise "Bad view #{aview.inspect}"
         end
 
-Rails.logger.info "defining aliased view #{view} #{aview.inspect} > #{aview_key}"
+#Rails.logger.debug "defining aliased view #{view} #{aview.inspect} > #{aview_key}"
         class_eval do
           define_method( "_final_#{aview_key}".to_sym ) do
             Rails.logger.debug "ALIAS call: #{aview_key} called, calling #{view_key}"
@@ -83,7 +83,7 @@ Rails.logger.info "defining aliased view #{view} #{aview.inspect} > #{aview_key}
         end
 
         #register_view(view_key, aview_key)
-Rails.logger.info "reg_alias(#{view_key}, #{view}) > #{aview.inspect} :: #{aview_key}"
+#Rails.logger.debug "reg_alias(#{view_key}, #{view}) > #{aview.inspect} :: #{aview_key}"
       end
     end
 
@@ -93,16 +93,16 @@ Rails.logger.info "reg_alias(#{view_key}, #{view}) > #{aview.inspect} :: #{aview
       class_eval do
         define_method( "_final_#{view_key}", &final )
         #register_view(view_key, view_key)
-Rails.logger.info "reg_view(_final_#{view_key}, #{view.inspect})"
+#Rails.logger.debug "reg_view(_final_#{view_key}, #{view.inspect})"
 
         if view_key == view
-Rails.logger.debug "define base view: _render_#{view}, render_#{view}"
+#Rails.logger.debug "define base view: _render_#{view}, render_#{view}"
           define_method( "_render_#{view}" ) do |*a| a = [{}] if a.empty?
             # this variable name is highly confusing (:view); it means the view to
             # return to after an edit.  it's about persistence. should do better.
             a[0][:view] ||= view  
             final_meth = view_method( view )
-Rails.logger.debug " in #{caller(0).first}[#{card}] #{view}, #{final_meth}"
+#Rails.logger.debug " in #{caller(0).first}[#{card}] #{view}, #{final_meth}"
 raise "??? #{view.inspect}" unless final_meth
             send(final_meth, *a) { yield }
           end
@@ -226,7 +226,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     return content unless card
     content = card.content if content.blank?
 
-Rails.logger.info "process_content(#{content}, #{card&&card.content}),  #{card&&card.name}"
+#Rails.logger.debug "process_content(#{content}, #{card&&card.content}),  #{card&&card.name}"
 
     wiki_content = WikiContent.new(card, content, self, inclusion_map)
     update_references(wiki_content) if card.references_expired
@@ -337,10 +337,10 @@ raise "???" if Hash===action
       else :view
     end
 
-Rails.logger.info "calling view method(#{action}) #{card.inspect}"
+#Rails.logger.debug "calling view method(#{action}) #{card.inspect}"
     result = 
       if render_meth = view_method(action)
-Rails.logger.info "render(#{action}) #{render_meth}"
+#Rails.logger.debug "render(#{action}) #{render_meth}"
         send(render_meth, args) { yield }
       else
         "<strong>#{card.name} - unknown card view: '#{action}' M:#{render_meth.inspect}</strong>"
@@ -356,19 +356,19 @@ Rails.logger.info "render(#{action}) #{render_meth}"
 
   def view_method(view)
     return "_final_#{view}" unless card
-Rails.logger.debug "method keys for #{card.name}: #{Wagn::Pattern.method_keys(card).inspect}"
+#Rails.logger.debug "method keys for #{card.name}: #{Wagn::Pattern.method_keys(card).inspect}"
     
     Wagn::Pattern.method_keys(card).each do |method_key|
       
       meth = "_final_"+(method_key.blank? ? "#{view}" : "#{method_key}_#{view}")
-Rails.logger.info "view_method( #{method_key} )  #{meth}"
+#Rails.logger.debug "view_method( #{method_key} )  #{meth}"
       return meth if respond_to?(meth.to_sym)
     end
     return @@fallback[view]
   end
   
   def form_for_multi
-    #Rails.logger.info "card = #{card.inspect}"
+    #Rails.logger.debug "card = #{card.inspect}"
     options = {} # do I need any? #args.last.is_a?(Hash) ? args.pop : {}
     block = Proc.new {}
     builder = options[:builder] || ActionView::Base.default_form_builder

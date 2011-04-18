@@ -78,6 +78,7 @@ class System < ActiveRecord::Base
         !layout_name.nil?                             and
         lo_card = Card.fetch(layout_name, :skip_virtual => true)    and
         lo_card.ok?(:read)
+#Rails.logger.debug "found layout card:#{lo_card.inspect}"
       lo_card
     end
     

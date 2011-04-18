@@ -43,7 +43,7 @@ module Chunk
           when /^mailto:/; 'email-link'
         end)
         lt = link_text()
-Rails.logger.info "html_link #{href} LT:#{lt}"
+#Rails.logger.debug "html_link #{href} LT:#{lt}"
         %{<a class="#{klass}" href="#{href}">#{lt}</a>}
       else
         self.class.card_link(href, link_text.to_show(href), refcard)

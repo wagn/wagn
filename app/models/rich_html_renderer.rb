@@ -98,7 +98,7 @@ class RichHtmlRenderer < Renderer
     lname = (params[:layout] || args[:layout]).to_s
     if lcard=System.layout_card(card, lname)
       lcont=lcard.content
-    elsif lcont=LAYOUTS[lname]
+    elsif lcont=LAYOUTS[lname] || LAYOUTS['default']
       lcard = Card.new(:name=>'*'+lname, :content=>lcont, :skip_defaults=>true)
     else
       raise "No default content for layout: #{lname}"
@@ -107,7 +107,7 @@ class RichHtmlRenderer < Renderer
 
     if args.has_key?(:main_content)
       @main_content = args.delete(:main_content)
-Rails.logger.info "_final_layout MC#{main_content}"
+#Rails.logger.debug "_final_layout MC#{main_content}"
     end
 
 
@@ -117,7 +117,7 @@ Rails.logger.info "_final_layout MC#{main_content}"
     #lcont ||= _render_raw(args)
     args[:action]="view"
     #args[:template]=self
-Rails.logger.info "_final_layout #{main_card} Cd:#{card} #{args.inspect} LC#{lcont}"
+#Rails.logger.debug "_final_layout #{main_card} Cd:#{card} #{args.inspect} LC#{lcont}"
     process_content(lcont, args)
   end # view(:layout)
   

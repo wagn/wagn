@@ -177,6 +177,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     @relative_content ||= {}
     @action ||= 'view'
     @format ||= :html
+    @flash ||= {}
     @template ||= begin
       t = ActionView::Base.new( CardController.view_paths, {} )
       t.helpers.send :include, CardController.master_helper_module

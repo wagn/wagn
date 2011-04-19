@@ -24,8 +24,8 @@ class Renderer
 
   view(:raw, :name=>'*alerts') do %{
 <div id="alerts">
-  <div id="notice"> flash[:notice] </div>
-  <div id="error"> flash[:warning] flash[:error]</div>
+  <div id="notice">#{flash[:notice]} </div>
+  <div id="error">#{flash[:warning]}#{flash[:error]}</div>
 </div>
 } end
   view_alias(:raw, {:name=>'*alerts'}, :naked)

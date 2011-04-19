@@ -677,6 +677,15 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
   end  
 
 
+#~~~~~~~~~ special views
+
+  context "open missing" do
+    it "should use the showname" do
+      render_content('{{+cardipoo|open}}').match(/Add \<strong\>\+cardipoo/ ).should_not be_nil
+    end
+  end
+
+
 #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
 
   def render_editor(type)

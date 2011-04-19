@@ -38,7 +38,7 @@ class Renderer
       :template, :root, :format
   attr_accessor :card, :main_content, :main_card, :context, :char_count,
       :depth, :item_view, :form, :view, :type, :base, :state, :sub_count,
-      :render_args, :requested_view, :layout, :flash, :show_view
+      :render_args, :requested_view, :layout, :flash, :showname
 
   # View definitions
   #
@@ -172,7 +172,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
           map {|s| instance_variable_set "@#{s}", opts[s]}
     end
     inclusion_map( opts )
-    @show_view = FORMAT2VIEW[format]
+#    @show_view = FORMAT2VIEW[format]
     @params ||= {}
     @relative_content ||= {}
     @action ||= 'view'
@@ -438,7 +438,7 @@ Rails.logger.debug "method missing: #{method_id}"
 
     options[:view] ||= context == 'layout_0' ? :naked : :content
     options[:fullname] = fullname = get_inclusion_fullname(tname,options)
-    options[:showname] = tname.to_show(fullname)
+    self.showname = tname.to_show(fullname)
 
     tcard ||= begin
       case
@@ -478,7 +478,7 @@ Rails.logger.debug "method missing: #{method_id}"
     # set item_view;  search cards access this variable when rendering their content.
     sub.item_view = options[:item] if options[:item]
     sub.type = options[:type] if options[:type]
-    options[:showname] ||= tcard.name
+    self.showname ||= tcard.name
 
     new_card = tcard.new_record? && !tcard.virtual?
 

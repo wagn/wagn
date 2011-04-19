@@ -26,11 +26,15 @@ module WagnHelper
 
   # FIXME: I think all this slot initialization should happen in controllers
   def get_slot(card=nil, context=nil, action=nil, opts={})
+    
+Rails.logger.info "get_slot called.  context = #{context}, @context = #{@context}"
     nil_given = card.nil?
     card ||= @card; context||=@context; action||=@action
     opts[:relative_content] = opts[:params] = (controller and params) or {}
     slot = case
-      when Renderer.current_slot;  nil_given ? Renderer.current_slot : Renderer.current_slot.subrenderer(card)
+      when Renderer.current_slot
+#Rails.logger.info "current slot already exists.  nil_given = #{nil_given}"
+        nil_given ? Renderer.current_slot : Renderer.current_slot.subrenderer(card)
       else
         Renderer.current_slot = Renderer.new( card,
             opts.merge(:context=>context, :action=>action, :template=>self) )

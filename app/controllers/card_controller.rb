@@ -186,7 +186,7 @@ class CardController < ApplicationController
 
     handling_errors do
       @card = Card.find(@card.id)   # wtf?
-      request.xhr? ? render_update_slot(render_to_string(:action=>'show'), "updated #{@card.name}") : render_show
+      request.xhr? ? render_update_slot(render_show_text, "updated #{@card.name}") : render_show
     end
   end
 

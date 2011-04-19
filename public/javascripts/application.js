@@ -254,7 +254,6 @@ getSlotFromContext=function(context){
   a = context.split('_');
   outer_context=a.shift();
   element = $(outer_context);
-  element = $(outer_context);
   while(a.size() > 0) {
     pos = a.shift();      
     // FIXME: this probably a better way to get 

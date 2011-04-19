@@ -163,7 +163,7 @@ class ApplicationController < ActionController::Base
   def render_update_slot_element(name, stuff="", message=nil)
     render :update do |page|
       page.extend(WagnHelper::MyCrappyJavascriptHack)
-      elem_code = "getSlotFromContext('#{get_slot.context}')"
+      elem_code = "getSlotFromContext('#{params[:context]}')"
       unless name.empty?
         elem_code = "getSlotElement(#{elem_code}, '#{name}')"
       end

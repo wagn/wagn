@@ -1,11 +1,15 @@
 class AddBuiltins < ActiveRecord::Migration
   def self.builtin_list
-    %w{ *account_link *alerts *foot *head *navbox *now *version 
-        *recent_change *search *broken_link }
+    %w{ *alerts *foot *head *navbox *now *version } << "*account links"
   end
 
   def self.up
     User.current_user = :wagbot
+    
+    Card.create! :name=>'*recent', :type=>'Search', :content=>%{{"sort":"update", "dir":"desc", "view":"change"}}
+    Card.create! :name=>'*search', :type=>'Search', :content=>%{{"match":"_keyword", "sort":"relevance"}}
+    Card.create! :name=>'*missing link', :type=>'Search', :content=>%{{"link_to":"_none"}}
+    
     builtin_list.each do |name|
       c = Card.fetch_or_create(name)
     end
@@ -13,7 +17,7 @@ class AddBuiltins < ActiveRecord::Migration
 
   def self.down
     User.current_user = :wagbot
-    builtin_list.each do |name|
+    (builtin_list + %w{ *recent *search } << '*missing link').each do |name|
       if c = Card.fetch(name)
         c.destroy!
       end

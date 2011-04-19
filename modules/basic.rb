@@ -49,7 +49,7 @@ class Renderer
       %{<link rel="alternate" type="application/rss+xml" title="RSS" href="#{ @template.url_for_page( card.name, :format=>:rss )} " />}
     else; ''; end +
     
-    "<title>#{params[:title]} - #{ System.site_title }</title>" +
+    "<title>#{root.card && root.card.name ? "#{root.card.name} - " : ''}#{ System.site_title }</title>" +
     
     stylesheet_link_merged(:base) +
     

@@ -570,13 +570,15 @@ Rails.logger.debug "method missing: #{method_id}"
   end
 
   def paging_params
-    s = {}
-    if p = root.params
-      [:offset,:limit].each{|key| s[key] = p.delete(key)}
+    @paging_params ||= begin
+      s = {}
+      if p = root.params
+        [:offset,:limit,:_keyword].each{|key| s[key] = p.delete(key)}
+      end
+      s[:offset] = s[:offset] ? s[:offset].to_i : 0
+      s[:limit]  = s[:limit]  ? s[:limit].to_i  : (main_card? ? 50 : 20)
+      s
     end
-    s[:offset] = s[:offset] ? s[:offset].to_i : 0
-    s[:limit]  = s[:limit]  ? s[:limit].to_i  : (main_card? ? 50 : 20)
-    s
   end
 
   def main_card?() context=~/^main_\d$/ end

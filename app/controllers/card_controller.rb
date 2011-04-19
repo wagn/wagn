@@ -52,11 +52,7 @@ class CardController < ApplicationController
   end
 
   def render_show
-    @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
-    ## fixme, we ought to be setting special titles (or all titles) in cards
-    
-    text = render_show_text
-    render(:text=>text)
+    render(:text=>render_show_text)
   end
   
   def render_show_text

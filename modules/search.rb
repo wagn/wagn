@@ -1,17 +1,5 @@
 
 class Renderer
-  define_view(:raw, :name=>'*recent_change') do
-    %{{"sort":"update", "dir":"desc", "view":"change"}}
-  end
-
-  define_view(:raw, :name=>'*search') do
-    %{{"match":"_keyword", "sort":"relevance"}}
-  end
-
-  define_view(:raw, :name=>'*broken_link') do
-    %{{"link_to":"_none"}}
-  end
-
   define_view(:naked, :type=>'search') do
     begin
       card.item_cards( paging_params )
@@ -60,19 +48,11 @@ class Renderer
     cards = card.results
     @item_view ||= (card.spec[:view]) || :closed
 
-    instruction = case
-      when card.name=='*search'
-        s[:_keyword] ||= params[:_keyword]
-        %{Cards matching keyword: <strong class="keyword">#{params[:_keyword]}</strong>}
-        # when cue = card.attribute_card('*cue'); cue
-      else; nil
-      end
-
-    title = case card.name
-      when '*search'; 'Search Results' #ENGLISH
-      when '*broken links'; 'Cards with Broken Links'
-      else; nil
-      end
+    instruction, title = nil,nil
+    if card.name=='*search'
+      instruction = %{Cards matching keyword: <strong class="keyword">#{paging_params[:_keyword]}</strong>} #ENGLISH
+      title = 'Search Results' #ENGLISH
+    end
 
     paging = render(:paging)
 
@@ -101,8 +81,8 @@ class Renderer
 
 
 
-  define_view(:card_list, :name=>'*recent changes') do
-    cards ||= []
+  define_view(:card_list, :name=>'*recent') do
+    cards = card.results
     @item_view ||= (card.spec[:view]) || :change
 
     cards_by_day = Hash.new { |h, day| h[day] = [] }
@@ -121,7 +101,7 @@ class Renderer
     end
 
     paging = render(:paging)
-%{<h1 class="page-header"><%= @title %></h1>
+%{<h1 class="page-header">Recent Changes</h1>
 <div class="card-slot recent-changes">
   <div class="open-content">
     #{ paging }
@@ -131,16 +111,16 @@ class Renderer
 %{  <h2>#{format_date(day, include_time = false) }</h2>
     <div class="search-result-list">} +
          cards_by_day[day].map do |card| %{
-      <div class="search-result-item item-#{ @item_view }">#{
-           process_inclusion(card, :view=>@item_view) }
+      <div class="search-result-item item-#{ @item_view }">
+           #{process_inclusion(card, :view=>@item_view) }
       </div>}
          end.join(' ') + %{
     </div>
+    } end.join("\n") + %{    
       #{ paging }
   </div>
 </div>
 }
-    end * "\n"
   end
 
 

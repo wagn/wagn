@@ -36,7 +36,7 @@ class RichHtmlRenderer < Renderer
 
   <body id="wagn">
     <div id="menu">
-      [[/ | Home]]   [[/recent | Recent]]   {{*navbox:naked}} {{*account links:naked}}
+      [[/ | Home]]   [[/recent | Recent]]   {{*navbox|naked}} {{*account links|naked}}
     </div>
 
     <div id="primary"> {{_main}} </div>
@@ -44,7 +44,7 @@ class RichHtmlRenderer < Renderer
     <div id="secondary">
       <div id="logo">[[/ | {{*logo}}]]</div>
       {{*sidebar|naked}}
-      <div id="credit"><a href="http://www.wagn.org" title="Wagn {{*version|bare}}">Wagn.</a> We're on it.</div> <%#ENGLISH%>
+      <div id="credit"><a href="http://www.wagn.org" title="Wagn {{*version|bare}}">Wagn.</a> We're on it.</div>
       {{*alerts|naked}}
     </div>
 
@@ -81,7 +81,7 @@ class RichHtmlRenderer < Renderer
     <div>
       {{*alerts}}
       {{_main}}
-      <div id="credit">Wheeled by [[http://www.wagn.org|Wagn]] v. {{*version}}</div> <%#ENGLISH%>
+      <div id="credit">Wheeled by [[http://www.wagn.org|Wagn]] v. {{*version}}</div>
     </div>
 
     {{*foot}}
@@ -95,31 +95,49 @@ class RichHtmlRenderer < Renderer
 }
 
   define_view(:layout) do |args|
-    lname = (params[:layout] || args[:layout]).to_s
-    if lcard=System.layout_card(card, lname)
-      lcont=lcard.content
-    elsif lcont=LAYOUTS[lname] || LAYOUTS['default']
-      lcard = Card.new(:name=>'*'+lname, :content=>lcont, :skip_defaults=>true)
+    if @main_content = args.delete(:main_content)
+      @card = Card.fetch_or_new('*all+*default',{},:skip_defaults=>true)
     else
-      raise "No default content for layout: #{lname}"
-    end
+      @main_card = card
+    end  
 
-
-    if args.has_key?(:main_content)
-      @main_content = args.delete(:main_content)
-#Rails.logger.debug "_final_layout MC#{main_content}"
-    end
-
-
-    args[:relative_content] = args[:params] = params
-    @main_card, @card = card, lcard
+    layout_content = get_layout_content(args)
+    
     args[:context] = self.context = "layout_0"
-    #lcont ||= _render_raw(args)
-    args[:action]="view"
-    #args[:template]=self
-#Rails.logger.debug "_final_layout #{main_card} Cd:#{card} #{args.inspect} LC#{lcont}"
-    process_content(lcont, args)
-  end # define_view(:layout)
+    args[:action]="view"  
+    args[:relative_content] = args[:params] = params 
+
+    process_content(layout_content, args)
+  end
+  
+  def get_layout_content(args)
+    case
+      when (params[:layout] || args[:layout]) ;  layout_from_name
+      when card                               ;  layout_from_card
+      else                                    ;  LAYOUTS['default']
+    end
+  end
+  
+  def layout_from_name
+    lname = (params[:layout] || args[:layout]).to_s
+    lcard = Card.fetch(lname, :skip_virtual=>true)
+    case
+      when lcard && lcard.ok?(:read)         ; lcard.content
+      when hardcoded_layout = LAYOUTS[lname] ; hardcoded_layout
+      else  ; "<h1>Unknown layout: #{lname}</h1>Built-in Layouts: #{LAYOUTS.keys.join(', ')}"
+    end
+  end
+
+  def layout_from_card
+    return unless setting_card = (card.setting_card('layout') or Card.default_setting_card('layout'))
+    return unless setting_card.is_a?(Card::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.type == 'Pointer'        and
+      layout_name=setting_card.item_names.first     and
+      !layout_name.nil?                             and
+      lo_card = Card.fetch(layout_name, :skip_virtual => true)    and
+      lo_card.ok?(:read)
+    lo_card.content
+  end
+  
   
   define_view(:content) do |args|
     @state = :view

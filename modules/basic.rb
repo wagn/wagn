@@ -69,7 +69,7 @@ class Renderer
   view_alias(:raw, {:name=>'*head'}, :naked)
 
   define_view(:raw, :name=>'*navbox') do
-    Rails.logger.info("Builtin *navbox")
+#Rails.logger.debug("Builtin *navbox")
     #ENGLISH
     %{
 <form id="navbox_form" action="/search" onsubmit="return navboxOnSubmit(this)">

@@ -94,7 +94,7 @@ class RichHtmlRenderer < Renderer
 
 }
 
-  view(:layout) do |args|
+  define_view(:layout) do |args|
     lname = (params[:layout] || args[:layout]).to_s
     if lcard=System.layout_card(card, lname)
       lcont=lcard.content
@@ -119,9 +119,9 @@ class RichHtmlRenderer < Renderer
     #args[:template]=self
 #Rails.logger.debug "_final_layout #{main_card} Cd:#{card} #{args.inspect} LC#{lcont}"
     process_content(lcont, args)
-  end # view(:layout)
+  end # define_view(:layout)
   
-  view(:content) do |args|
+  define_view(:content) do |args|
     @state = :view
     self.requested_view = args[:action] = 'content'
     c = _render_naked(args)
@@ -129,7 +129,7 @@ class RichHtmlRenderer < Renderer
     wrap(args) {  wrap_content(c) }
   end
 
-  view(:titled) do |args|
+  define_view(:titled) do |args|
     self.requested_view = 'titled'
     args[:action] = 'content'
     wrap(args) do
@@ -138,34 +138,34 @@ class RichHtmlRenderer < Renderer
     end
   end
 
-  view(:new) do |args|
+  define_view(:new) do |args|
     wrap(args) { render_partial('views/new') }
   end
 
-  view(:open) do |args|
+  define_view(:open) do |args|
     @state = :view
     self.requested_view = 'open'
     wrap(args) { render_partial('views/open') }
   end
 
-  view(:closed) do |args|
+  define_view(:closed) do |args|
     @state = :line
     self.requested_view = args[:action] = 'closed'
     wrap(args) { render_partial('views/closed') }
   end
 
-  view(:setting) do |args|
+  define_view(:setting) do |args|
     self.requested_view = args[:action] = 'content'
     wrap( args) { render_partial('views/setting') }
   end
 
-  view(:edit) do |args|
+  define_view(:edit) do |args|
     @state=:edit
     card.content_template ?  _render_multi_edit(args) : content_field(form)
   end
 
 
-  view(:editor) do |args|
+  define_view(:editor) do |args|
     eid, raw_id = context, context+'-raw-content'
     form.hidden_field( :content, :id=>"#{eid}-hidden-content" ) +
     text_area_tag( :content_to_replace, card.content, :rows=>3, :id=>"#{eid}-tinymce" ) +
@@ -177,20 +177,20 @@ class RichHtmlRenderer < Renderer
       :save=> %{t = tinyMCE.getInstanceById( '#{eid}-tinymce' ); $('#{eid}-hidden-content').value = t.getContent(); return true;})
   end
 
-  view(:multi_edit) do |args|
+  define_view(:multi_edit) do |args|
     @state=:edit
     args[:add_javascript]=true
     @form = form_for_multi
     hidden_field_tag(:multi_edit, true) + _render_naked(args)
   end
 
-  view(:change) do |args|
+  define_view(:change) do |args|
     self.requested_view = args[:action] = 'content'
     wrap(args) { render_partial('views/change') }
   end
 
 ###---(  EDIT VIEWS )
-  view(:edit_in_form) do |args|
+  define_view(:edit_in_form) do |args|
     form = form_for_multi
 Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
     %{
@@ -214,7 +214,7 @@ Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
     }
   end
 
-  view(:show) do |args|
+  define_view(:show) do |args|
     if ajax_call?
       self.render( params[:view] || :open)
     else

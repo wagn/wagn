@@ -1,5 +1,5 @@
 class Renderer
-  view(:editor, :type=>'file') do
+  define_view(:editor, :type=>'file') do
     attachment_model_name = card.class.attachment_model.name.underscore
     attachment_uuid = (0..29).to_a.map {|x| rand(10)}
     skip_autosave = true 

@@ -43,7 +43,7 @@ class Renderer
   # View definitions
   #
   #   When you declare:
-  #     view(:view_name, "<set>") do |args|
+  #     define_view(:view_name, "<set>") do |args|
   #
   #   Methods are defined on the renderer
   #
@@ -87,7 +87,7 @@ class Renderer
       end
     end
 
-    def view(view, opts={}, &final)
+    def define_view(view, opts={}, &final)
       fallback[view] = opts.delete(:fallback) if opts.has_key?(:fallback)
       view_key = get_pattern(view, opts)
       class_eval do
@@ -271,38 +271,38 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
   # _render_raw, except that you don't need to alias :refs as often
   # speeding up the process when there can't be any reference changes
   # (builtins, etc.)
-  view(:raw) do card ? card.raw_content : _render_blank end
-  view(:refs) do card.respond_to?('references_expired') ? card.raw_content : '' end
-  view(:naked) do |args|
+  define_view(:raw) do card ? card.raw_content : _render_blank end
+  define_view(:refs) do card.respond_to?('references_expired') ? card.raw_content : '' end
+  define_view(:naked) do |args|
     card.name.template_name? ? _render_raw : process_content(_render_raw)
   end
 
 ###----------------( NAME) 
-  view(:name)     { card.name             }
-  view(:key)      { card.key              }
-  view(:linkname) { card.name.to_url_key  }
-  view(:link)     { Chunk::Reference.standard_card_link(card.name) }
-  view(:url)      { "#{System.base_url}/wagn/#{_render_linkname}"}
+  define_view(:name)     { card.name             }
+  define_view(:key)      { card.key              }
+  define_view(:linkname) { card.name.to_url_key  }
+  define_view(:link)     { Chunk::Reference.standard_card_link(card.name) }
+  define_view(:url)      { "#{System.base_url}/wagn/#{_render_linkname}"}
 
 ## DEPRECATED DEPRECATED
 # this is a quick fix, will soon be replaced by view override
 
-  view(:when_created)     { card.new_card? ? '' : card.created_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
-  view(:when_last_edited) { card.new_card? ? '' : card.updated_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
+  define_view(:when_created)     { card.new_card? ? '' : card.created_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
+  define_view(:when_last_edited) { card.new_card? ? '' : card.updated_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
 
 ##
 
-  view(:open_content) do |args|
+  define_view(:open_content) do |args|
     card.post_render(_render_naked(args) { yield })
   end
 
-  view(:closed_content) do |args|
+  define_view(:closed_content) do |args|
     @state = :line
     truncatewords_with_closing_tags( _render_naked(args) { yield } )
   end
 
 ###----------------( SPECIAL )
-  view(:array) do |args|
+  define_view(:array) do |args|
     if card.collection?
       card.item_cards(:limit=>0).map do |item_card|
         subrenderer(item_card)._render_naked
@@ -312,14 +312,14 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     end.inspect
   end
 
-  view(:blank) do "" end
+  define_view(:blank) do "" end
 
-  view(:rss_titled) do |args|
+  define_view(:rss_titled) do |args|
     # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
     content_tag( :h2, fancy_title(card.name) ) + self._render_open_content(args) { yield }
   end
 
-  view(:rss_change) do
+  define_view(:rss_change) do
     self.requested_view = 'content'
     render_view_action('change')
   end

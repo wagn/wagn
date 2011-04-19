@@ -1,5 +1,5 @@
 class TextRenderer < Renderer
-  view(:show) do |args|
+  define_view(:show) do |args|
     render_naked
   end
 end

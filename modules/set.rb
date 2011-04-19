@@ -1,5 +1,5 @@
 class Renderer
-  view(:naked , :type=>'set') do
+  define_view(:naked , :type=>'set') do
     %{<div class="instruction">#{
       Wagn::Pattern.label(card.name)}
 </div>

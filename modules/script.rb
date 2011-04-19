@@ -10,7 +10,7 @@ class Shellbox
 end
 
 class Renderer
-  view(:naked, :type=>'script') do
+  define_view(:naked, :type=>'script') do
     command = expand_inclusions( card.content )
     begin
       if System.enable_server_cards
@@ -23,7 +23,7 @@ class Renderer
     end
   end
 
-  view(:naked, :type=>'ruby') do
+  define_view(:naked, :type=>'ruby') do
     ruby = expand_inclusions( card.content )
     begin
       if System.enable_ruby_cards
@@ -44,7 +44,7 @@ class Renderer
     end
   end
 
-  view(:editor, :type=>'date') do
+  define_view(:editor, :type=>'date') do
     date_id = "#{self.context}+'date'"
     link_text = card.content.blank? ? (t=Time.now(); [t.year , t.mon, t.day].join('-')) : card.content
     '<div>' +
@@ -54,5 +54,5 @@ class Renderer
     editor_hooks( :save=>%{$('#{editor_id}-content').value = $('#{date_id}').innerHTML; return true;} )
   end
 
-  view(:editor, :type=>'ruby') do form.text_area :content end
+  define_view(:editor, :type=>'ruby') do form.text_area :content end
 end

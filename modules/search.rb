@@ -1,18 +1,18 @@
 
 class Renderer
-  view(:raw, :name=>'*recent_change') do
+  define_view(:raw, :name=>'*recent_change') do
     %{{"sort":"update", "dir":"desc", "view":"change"}}
   end
 
-  view(:raw, :name=>'*search') do
+  define_view(:raw, :name=>'*search') do
     %{{"match":"_keyword", "sort":"relevance"}}
   end
 
-  view(:raw, :name=>'*broken_link') do
+  define_view(:raw, :name=>'*broken_link') do
     %{{"link_to":"_none"}}
   end
 
-  view(:naked, :type=>'search') do
+  define_view(:naked, :type=>'search') do
     begin
       card.item_cards( paging_params )
     rescue Exception=>e
@@ -29,7 +29,7 @@ class Renderer
     end
   end
 
-  view(:closed_content, :type=>'search') do
+  define_view(:closed_content, :type=>'search') do
     return "#..." if depth > 2
     begin
       card.item_cards( paging_params )
@@ -56,7 +56,7 @@ class Renderer
   end
 
 
-  view(:card_list, :type=>'search') do
+  define_view(:card_list, :type=>'search') do
     cards = card.results
     @item_view ||= (card.spec[:view]) || :closed
 
@@ -101,7 +101,7 @@ class Renderer
 
 
 
-  view(:card_list, :name=>'*recent changes') do
+  define_view(:card_list, :name=>'*recent changes') do
     cards ||= []
     @item_view ||= (card.spec[:view]) || :change
 
@@ -145,7 +145,7 @@ class Renderer
 
 
 
-  view(:paging, :type=>'search') do
+  define_view(:paging, :type=>'search') do
     s = card.spec
     offset, limit = s[:offset].to_i, s[:limit].to_i
     first,last = offset+1,offset+card.results.length 
@@ -179,7 +179,7 @@ class Renderer
 
 
 
-#  view(:tag_cloud, :type=>'search') do
+#  define_view(:tag_cloud, :type=>'search') do
 #    cards ||= []
 #    link_to ||= 'page'  # other options is 'connect'
 #    tag_cloud = {}

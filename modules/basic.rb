@@ -2,7 +2,7 @@
 class Renderer
 
   # Declare built-in views
-  view(:raw, :name=>'*account link') do
+  define_view(:raw, :name=>'*account link') do
     #ENGLISH
     text = '<span id="logging">'
      if logged_in?
@@ -22,7 +22,7 @@ class Renderer
   
   view_alias(:raw, {:name=>'*account link'}, :naked)
 
-  view(:raw, :name=>'*alerts') do %{
+  define_view(:raw, :name=>'*alerts') do %{
 <div id="alerts">
   <div id="notice">#{flash[:notice]} </div>
   <div id="error">#{flash[:warning]}#{flash[:error]}</div>
@@ -30,13 +30,13 @@ class Renderer
 } end
   view_alias(:raw, {:name=>'*alerts'}, :naked)
 
-  view(:raw, :name=>'*foot') do
+  define_view(:raw, :name=>'*foot') do
     javascript_include_tag "/tinymce/jscripts/tiny_mce/tiny_mce.js" +
     (google_analytics or '')
   end
   view_alias(:raw, {:name=>'*foot'}, :naked)
 
-  view(:raw, :name=>'*head') do
+  define_view(:raw, :name=>'*head') do
     # ------- Title -------------
     %{<link rel="shortcut icon" href="#{ System.favicon }" />} +
     if card and !card.new_record? and card.ok? :edit
@@ -68,7 +68,7 @@ class Renderer
   end
   view_alias(:raw, {:name=>'*head'}, :naked)
 
-  view(:raw, :name=>'*navbox') do
+  define_view(:raw, :name=>'*navbox') do
     Rails.logger.info("Builtin *navbox")
     #ENGLISH
     %{
@@ -88,9 +88,9 @@ class Renderer
   end
   view_alias(:raw, {:name=>'*navbox'}, :naked)
 
-  view(:raw, :name=>'*now') do Time.now.strftime('%A, %B %d, %Y %I:%M %p %Z') end
+  define_view(:raw, :name=>'*now') do Time.now.strftime('%A, %B %d, %Y %I:%M %p %Z') end
   view_alias(:raw, {:name=>'*now'}, :naked)
-  view(:raw, :name=>'*version') do Wagn::Version.full end
+  define_view(:raw, :name=>'*version') do Wagn::Version.full end
   view_alias(:raw, {:name=>'*version'}, :naked)
 
 

@@ -1,5 +1,5 @@
 class Renderer
-  view(:naked, :type=>'invitation_request') do
+  define_view(:naked, :type=>'invitation_request') do
     _render_naked + #ENGLISH
     if !card.new_card? # this if is not really necessary yet, but conceptually correct
       %{<div class="invite-links help instruction">

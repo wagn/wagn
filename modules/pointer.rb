@@ -1,5 +1,5 @@
 class Renderer
-  view(:add_item, :type=>'pointer') do
+  define_view(:add_item, :type=>'pointer') do
     #ENGLISH
 #    if !card #or !card.limit or card.limit.to_i > (index.to_i+1)
       %{<li id="#{context}-add">} +
@@ -11,7 +11,7 @@ class Renderer
 #    else '' end
   end
 
-  view(:checkbox, :type=>'pointer') do
+  define_view(:checkbox, :type=>'pointer') do
     eid = context
     card.options.each do |option|
       %{<div class="pointer-checkbox"> #{
@@ -31,7 +31,7 @@ class Renderer
 })
   end
 
-  view(:naked, :type=>'pointer') do
+  define_view(:naked, :type=>'pointer') do
     %{<div class="pointer-list"> #{
       pointer_item(slot, (item_view||'closed')) }
 </div> #{ 
@@ -39,13 +39,13 @@ class Renderer
     }} #ENGLISH
   end
 
-  view(:editor, :type=>'pointer') do
+  define_view(:editor, :type=>'pointer') do
     part_view = (c = card.setting('input')) ? c.gsub(/[\[\]]/,'') : 'list'
     form.hidden_field( :content, :id=>"#{context}-hidden-content") +
     render(part_view)
   end
 
-  view(:field, :type=>'pointer') do |args|
+  define_view(:field, :type=>'pointer') do |args|
     value = (args[:link]== :add ? '' : args[:link] )
     index = args[:index]
     
@@ -59,13 +59,13 @@ class Renderer
     result
   end
 
-  view(:closed_content, :type=>'pointer') do
+  define_view(:closed_content, :type=>'pointer') do
     %{<div class="pointer-list">} +
     pointer_item(slot, ('name'==item_view || params[:item] ? 'name' : 'link')) +
     '</div>'
   end
 
-  view(:list, :type=>'pointer') do
+  define_view(:list, :type=>'pointer') do
     items = card.item_names
     items = [''] if items.empty?
 
@@ -83,7 +83,7 @@ class Renderer
     } )
   end
 
-  view(:multiselect, :type=>'pointer') do
+  define_view(:multiselect, :type=>'pointer') do
     options = options_from_collection_for_select(card.options,:name,:name,card.item_names)
 
     select_tag("#{context}-multiselect", options, :multiple=>true, :id=>"#{context}-multiselect", :class=>'pointer-multiselect') +
@@ -92,7 +92,7 @@ class Renderer
   setPointerContent('#{context}', jQuery('##{context}-multiselect').val() );  return true;})
   end
 
-  view(:radio, :type=>'pointer') do
+  define_view(:radio, :type=>'pointer') do
     eid = context
     %{
 <div class="pointer-radio-list"> #{
@@ -116,7 +116,7 @@ class Renderer
     }}
   end
 
-  view(:select, :type=>'pointer') do
+  define_view(:select, :type=>'pointer') do
     eid = context
     options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]} 
     select_tag("#{eid}-select", options_for_select(options, card.first), :id=>"#{eid}-select", :class=>'pointer-select') +

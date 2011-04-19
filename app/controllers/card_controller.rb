@@ -105,9 +105,10 @@ class CardController < ApplicationController
     end
   end
 
-  def denial
-    render :template=>'/card/denied', :status => 403
-  end
+  # no longer in use, righ?
+  #def denial
+  #  render :template=>'/card/denied', :status => 403
+  #end
 
   def create
     @card = Card.create params[:card]
@@ -303,20 +304,21 @@ class CardController < ApplicationController
 
   #------------------( views )
 
-
-  [:open_missing, :closed_missing].each do |method|
-    define_method( method ) do
-      load_card
-      params[:view] = method
-      if id = params[:replace]
-        render_update_slot do |page, target|
-          target.update render_to_string(:action=>'show')
-        end
-      else
-        render_show
-      end
-    end
-  end
+  #  I don't think these are used any more.  If they are, they shouldn't be!
+  #
+  #[:open_missing, :closed_missing].each do |method|
+  #  define_method( method ) do
+  #    load_card
+  #    params[:view] = method
+  #    if id = params[:replace]
+  #      render_update_slot do |page, target|
+  #        target.update render_to_string(:action=>'show')
+  #      end
+  #    else
+  #      render_show
+  #    end
+  #  end
+  #end
 
 
 
@@ -369,8 +371,8 @@ class CardController < ApplicationController
   end
 
 
-  # doesn't really seem to fit here.  may want to add new controller if methods accrue?
-  # Yeah, now it really doesn't go here, but where?
+  # this should all happen in javascript
+  
   def add_field # for pointers only
     load_card if params[:id]
     #render :partial=>'types/pointer/field', :locals=>params.merge({:link=>:add,:card=>@card})

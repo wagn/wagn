@@ -467,9 +467,9 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
 
     it "are used in new card forms" do
       User.as :joe_admin
-      content_card = Card.create!(:name=>"Phrase+*type+*content", :content=>"{{+Yoruba}}" )
-      help_card    = Card.create!(:name=>"Phrase+*type+*add help", :content=>"Help me dude" )
-      card = Card.new(:type=>'Phrase')
+      content_card = Card.create!(:name=>"Cardtype E+*type+*content", :content=>"{{+Yoruba}}" )
+      help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
+      card = Card.new(:type=>'Cardtype E')
       card.should_receive(:setting_card).with("content","default").and_return(content_card)
       card.should_receive(:setting_card).with("add help","edit help").and_return(help_card)
       RichHtmlRenderer.new(card).render_new.should be_html_with do

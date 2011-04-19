@@ -419,16 +419,14 @@ Rails.logger.debug "method missing: #{method_id}"
   end
 
   def expand_inclusion(options)
-
     return options[:comment] if options.has_key?(:comment)
-
     # Don't bother processing inclusion if we're already out of view
     return '' if (state==:line && self.char_count > Renderer.max_char_count)
 
     tname=options[:tname]
     if is_main = tname=='_main'
       tcard, tcont = root.main_card, root.main_content
-      return tcont if tcont
+      return self.wrap_main(tcont) if tcont
       return "{{#{options[:unmask]}}}" || '{{_main}}' unless @depth == 0 and tcard
 
       tname = tcard.name
@@ -453,9 +451,13 @@ Rails.logger.debug "method missing: #{method_id}"
     result = process_inclusion(tcard, options)
     result = resize_image_content(result, options[:size]) if options[:size]
     @char_count += (result ? result.length : 0) #should we strip html here?
-    (is_main and respond_to?(:wrap_main)) ? self.wrap_main(result) : result
+    is_main ? self.wrap_main(result) : result
   rescue Card::PermissionDenied
     ''
+  end
+
+  def wrap_main(content)
+    content  #no wrapping in base renderer
   end
 
   def symbolize_param(param)
@@ -557,7 +559,6 @@ Rails.logger.debug "method missing: #{method_id}"
             when Chunk::Transclude; chunk.refcard ? TRANSCLUSION : WANTED_TRANSCLUSION
             else raise "Unknown chunk reference class #{chunk.class}"
           end
-
 
         WikiReference.create!( :card_id=>card.id,
           :referenced_name=>chunk.refcard_name.to_key,

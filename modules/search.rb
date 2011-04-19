@@ -58,7 +58,6 @@ class Renderer
 
     # now the result string ...
     if title
-      @title=title
       %{<h1 class="page-header">#{ title }</h1>}
     else '' end +
     if instruction; %{

@@ -61,7 +61,7 @@ class Renderer
 
   define_view(:closed_content, :type=>'pointer') do
     %{<div class="pointer-list">} +
-    pointer_item(slot, ('name'==item_view || params[:item] ? 'name' : 'link')) +
+    pointer_item(self, ('name'==item_view || params[:item] ? 'name' : 'link')) +
     '</div>'
   end
 

@@ -36,12 +36,6 @@ module Wagn
         #rails_config.active_record.observers = :card_observer
         rails_config.cache_store = :file_store, "#{RAILS_ROOT}/tmp/cache"
         rails_config.frameworks -= [ :action_web_service ]
-        rails_config.gem "uuid"
-        rails_config.gem "json"
-        rails_config.gem "htmlentities"
-        unless ENV['RUN_CODE_RUN']
-          rails_config.gem "hoptoad_notifier"
-        end
         require 'yaml'
         require 'erb'
         database_configuration_file = "#{RAILS_ROOT}/config/database.yml"

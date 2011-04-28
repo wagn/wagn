@@ -71,7 +71,7 @@ module Wagn
         load_cardtypes
         return if pre_schema?
         load_modules
-        register_mimetypes
+#        register_mimetypes
         Wagn::Cache.initialize_on_startup
         #create_builtins
         ActiveRecord::Base.logger.info("\n----------- Wagn Initialization Complete -----------\n\n")
@@ -162,11 +162,8 @@ module Wagn
         Wagn::Module.load_all
       end
 
-      def register_mimetypes
-        Mime::Type.register 'text/css', :css
-        Mime::Type.register_alias 'text/plain', :txt
-        Mime::Type.register 'application/vnd.google-earth.kml+xml', :kml
-      end
+#      def register_mimetypes
+#      end
     end
   end
 end

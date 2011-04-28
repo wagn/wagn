@@ -96,7 +96,7 @@ class RichHtmlRenderer < Renderer
 
   define_view(:layout) do |args|
     if @main_content = args.delete(:main_content)
-      @card = Card.fetch_or_new('*all+*default',{},:skip_defaults=>true)
+      @card = Card.fetch_or_new('*placeholder',{},:skip_defaults=>true)
     else
       @main_card = card
     end  
@@ -106,7 +106,7 @@ class RichHtmlRenderer < Renderer
     args[:context] = self.context = "layout_0"
     args[:action]="view"  
     args[:relative_content] = args[:params] = params 
-
+    
     process_content(layout_content, args)
   end
   

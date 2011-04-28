@@ -37,7 +37,9 @@ class Renderer
   view_alias(:raw, {:name=>'*foot'}, :naked)
 
   define_view(:raw, :name=>'*head') do
-    # ------- Title -------------
+    title = (root.card && root.card.name)
+    title = params[:action] if title.nil? || title == '*placeholder'
+    
     %{<link rel="shortcut icon" href="#{ System.favicon }" />} +
     if card and !card.new_record? and card.ok? :edit
       %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="/card/edit/#{ card.key }"/>}
@@ -49,7 +51,7 @@ class Renderer
       %{<link rel="alternate" type="application/rss+xml" title="RSS" href="#{ @template.url_for_page( card.name, :format=>:rss )} " />}
     else; ''; end +
     
-    "<title>#{root.card && root.card.name ? "#{root.card.name} - " : ''}#{ System.site_title }</title>" +
+    "<title>#{title ? "#{title} - " : ''}#{ System.site_title }</title>" +
     
     stylesheet_link_merged(:base) +
     

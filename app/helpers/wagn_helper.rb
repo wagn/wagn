@@ -26,8 +26,7 @@ module WagnHelper
 
   # FIXME: I think all this slot initialization should happen in controllers
   def get_slot(card=nil, context=nil, action=nil, opts={})
-    
-Rails.logger.info "get_slot called.  context = #{context}, @context = #{@context}"
+#Rails.logger.info "get_slot called.  context = #{context}, @context = #{@context}"
     nil_given = card.nil?
     card ||= @card; context||=@context; action||=@action
     opts[:relative_content] = opts[:params] = (controller and params) or {}

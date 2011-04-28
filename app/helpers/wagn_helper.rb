@@ -207,27 +207,6 @@ module WagnHelper
     slot.expand_inclusions content.gsub(/\[\[/,"<div class=\"pointer-item item-#{view}\">{{").gsub(/\]\]/,"|#{view}#{typeparam}}}</div>")
   end
 
-  ## -----------
-
-  def google_analytics
-    User.as(:wagbot)  do
-      if ga_key = System.setting("*google analytics key")
-        %{
-          <script type="text/javascript">
-            // make sure this is only run once:  it may be called twice in the case that you are viewing a *layout page
-            if (typeof(pageTracker)=='undefined') {
-              var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-              document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-            }
-          </script>
-          <script type="text/javascript">
-            pageTracker = _gat._getTracker('#{ga_key}');
-            pageTracker._trackPageview();
-          </script>
-        }
-      end
-    end
-  end
 
   # ---------------( NAVBOX ) -----------------------------------
 

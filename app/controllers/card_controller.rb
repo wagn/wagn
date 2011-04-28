@@ -38,8 +38,7 @@ class CardController < ApplicationController
     @card_name = System.site_title if (@card_name.nil? or @card_name.empty?)
     @card =   Card.fetch_or_new(@card_name)
 
-    unless params[:format]
-      #this isn't right because it skips on .html, but respond_to was causing double render errors...
+    if params[:format].nil? || params[:format].to_sym==:html
       if @card.new_record? && !@card.virtual?  # why doesnt !known? work here?
         params[:card]={:name=>@card_name, :type=>params[:type]}
         return ( Card::Basic.create_ok? ? self.new : render(:action=>'missing') )

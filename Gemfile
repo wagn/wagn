@@ -51,7 +51,7 @@ group :test do
   gem 'spork', '>=0.5.7'
   gem 'assert2', '0.5.5'
   gem 'webrat', '>=0.7.0'
-  gem 'rspec', '>=1.3.0', :require => 'spec'
+  gem 'rspec', '>=1.3.0' #, :require => 'spec'
   gem 'rspec-rails', '>=1.3.2'
   gem 'email_spec', '0.6.2'
   gem 'gherkin', '>=2.2.8'

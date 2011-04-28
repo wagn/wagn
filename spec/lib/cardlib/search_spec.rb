@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-A_JOINEES = ["B", "C", "D", "E", "F"]
+#A_JOINEES = ["B", "C", "D", "E", "F"]
 
 describe Cardlib::Search do
 =begin Do we still need this test, but refactored a little?

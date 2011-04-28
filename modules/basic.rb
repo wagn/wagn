@@ -22,6 +22,8 @@ class Renderer
   
   view_alias(:raw, {:name=>'*account link'}, :naked)
 
+
+
   define_view(:raw, :name=>'*alerts') do %{
 <div id="alerts">
   <div id="notice">#{flash[:notice]} </div>
@@ -30,45 +32,67 @@ class Renderer
 } end
   view_alias(:raw, {:name=>'*alerts'}, :naked)
 
+
+
   define_view(:raw, :name=>'*foot') do
     javascript_include_tag "/tinymce/jscripts/tiny_mce/tiny_mce.js" +
-    (google_analytics or '')
+    User.as(:wagbot)  do
+      if ga_key = System.setting("*google analytics key")
+        %{
+          <script type="text/javascript">
+            // make sure this is only run once:  it may be called twice in the case that you are viewing a *layout page
+            if (typeof(pageTracker)=='undefined') {
+              var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+              document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+            }
+          </script>
+          <script type="text/javascript">
+            pageTracker = _gat._getTracker('#{ga_key}');
+            pageTracker._trackPageview();
+          </script>
+        }
+      else; ''; end
+    end
   end
   view_alias(:raw, {:name=>'*foot'}, :naked)
 
+
+
   define_view(:raw, :name=>'*head') do
-    title = (root.card && root.card.name)
+    rcard = root.card
+    title = rcard.name
     title = params[:action] if title.nil? || title == '*placeholder'
-    
-    %{<link rel="shortcut icon" href="#{ System.favicon }" />} +
-    if card and !card.new_record? and card.ok? :edit
-      %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="/card/edit/#{ card.key }"/>}
-    else; ''; end +
 
-    if card and card.name == "*search"
-      %{<link rel="alternate" type="application/rss+xml" title="RSS" href="/search/<%= params[:_keyword] %>.rss" />}
-    elsif card and Card::Search === card
-      %{<link rel="alternate" type="application/rss+xml" title="RSS" href="#{ @template.url_for_page( card.name, :format=>:rss )} " />}
-    else; ''; end +
+    bits = [
+      "<title>#{title ? "#{title} - " : ''}#{ System.site_title }</title>",
+      %{<link rel="shortcut icon" href="#{ System.favicon }" />}
+    ]
     
-    "<title>#{title ? "#{title} - " : ''}#{ System.site_title }</title>" +
+    #Universal Edit Button
+    if !rcard.new_record? && rcard.ok?(:edit)
+      bits << %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="/card/edit/#{ rcard.name.to_url_key }"/>}
+    end
     
-    stylesheet_link_merged(:base) +
+    # RSS
+    if Card::Search === rcard
+      rss_href = rcard.name=='*search' ? "/search/#{ params[:_keyword] }.rss" : @template.url_for_page( rcard.name, :format=>:rss )
+      bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{rss_href} />}
+    end
     
+    # CSS
+    bits += [stylesheet_link_merged(:base), stylesheet_link_tag( 'print', :media=>'print') ]
     if star_css_card = Card.fetch('*css', :skip_virtual => true)
-      %{<link href="/*css.css?#{ star_css_card.current_revision_id }" media="screen" type="text/css" rel="stylesheet" />}
-    else; ''; end +
-    #{#asset_manager can do alternate media but has to be a separate call
+      bits << %{<link href="/*css.css?#{ star_css_card.current_revision_id }" media="screen" type="text/css" rel="stylesheet" />}
+    end
+
+    #Javscript
+    bits << javascript_include_merged(:base)
     
-    stylesheet_link_tag( 'print', :media=>'print' ) +
-        # tried javascript at bottom, much breakage
-    "#{javascript_include_merged(:base)}" +
-    key = System.setting("*google_ajax_api_key") ?
-       %{<script type="text/javascript" src="http://www.google.com/jsapi?key=<%= key %>"></script>} : ''
-
-
+    bits.join("\n")
   end
   view_alias(:raw, {:name=>'*head'}, :naked)
+
+
 
   define_view(:raw, :name=>'*navbox') do
 #Rails.logger.debug("Builtin *navbox")

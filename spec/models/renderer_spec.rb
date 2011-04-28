@@ -123,7 +123,7 @@ describe Renderer, "" do
 
     it "content" do
       render_card(:content, :name=>'A+B').should be_html_with {
-        div( :class=>'transcluded ALL TYPE-basic RIGHT-b LTYPE_RIGHT-basic-b SELF-a-b', :view=>'content') {
+        div( :class=>'transcluded ALL TYPE-basic RIGHT-b LTYPE_RIGHT-basic-b SELF-a-b', :home_view=>'content') {
           span( :class=>'content-content content')
         }
       }
@@ -142,7 +142,7 @@ describe Renderer, "" do
 
     it "titled" do
       render_card(:titled, :name=>'A+B').should be_html_with do
-        div( :view=>'titled') { 
+        div( :home_view=>'titled') { 
           [ h1 { [ span{'A'}, span{'+'}, span{'B'} ] },
             span(:class=>'titled-content'){'AlphaBeta'}
           ] 
@@ -159,8 +159,8 @@ describe Renderer, "" do
       end
 
       it "should have the appropriate attributes on open" do
-        @ocslot.render_open.should be_html_with do
-          div( :position => 1, :view=>'open', :class => "card-slot paragraph ALL TYPE-basic SELF-a") {
+        @ocslot.render(:open).should be_html_with do
+          div( :position => 1, :home_view=>'open', :class => "card-slot paragraph ALL TYPE-basic SELF-a") {
             [ div( :class => "card-header" ) { div( :class=>'title-menu')},
               span( :class => "open-content content")  { }
             ]
@@ -170,8 +170,8 @@ describe Renderer, "" do
 
       it "should have the appropriate attributes on closed" do
         Rails.logger.debug "\nBEFORE TEST~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-        @ocslot.render_closed.should be_html_with do
-          div( :position => 1, :view=>'closed', :class => "card-slot line ALL TYPE-basic SELF-a") {
+        @ocslot.render(:closed).should be_html_with do
+          div( :position => 1, :home_view=>'closed', :class => "card-slot line ALL TYPE-basic SELF-a") {
             [ div( :class => "card-header" ) { div( :class=>'title-menu')},
               span( :class => "closed-content content")  { }
             ]
@@ -404,7 +404,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
         div {
           span(:name=>'head')    { }
           span(:name=>'now') {
-            div(:view=>'content') {
+            div(:home_view=>'content') {
               span() { text(Time.now.strftime('%A, %B %d, %Y %I:%M %p %Z')) }
             }
           }

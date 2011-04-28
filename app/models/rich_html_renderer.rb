@@ -140,10 +140,12 @@ class RichHtmlRenderer < Renderer
   
   
   define_view(:content) do |args|
+    Rails.logger.info "args upon calling :content: #{args.inspect}"
     @state = :view
     self.requested_view = args[:action] = 'content'
     c = _render_naked(args)
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
+    Rails.logger.info "args after render_naked, before wrap: #{args.inspect}"
     wrap(args) {  wrap_content(c) }
   end
 
@@ -234,7 +236,7 @@ Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
 
   define_view(:show) do |args|
     if ajax_call?
-      self.render( params[:view] || :open)
+      self.render( params[:view] || params[:home_view] || :open)
     else
       val = self.render_layout
     end

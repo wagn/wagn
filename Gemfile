@@ -37,6 +37,7 @@ gem 'json', '1.4.6'
 group :hosting do
   gem 'hoptoad_notifier', '>=2.3.12'
   gem 'aws-s3','>=0.6.2'
+  gem 'newrelic_rpm', '>=2.14.1'
 end
 
 

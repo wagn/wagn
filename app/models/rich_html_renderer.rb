@@ -267,7 +267,7 @@ Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
       :cardId   => (card && card.id),
       :position => UUID.new.generate.gsub(/^(\w+)0-(\w+)-(\w+)-(\w+)-(\w+)/,'\1')
     }
-    [:style, :view, :item, :base].each { |key| attributes[key] = args[key] }
+    [:style, :home_view, :item, :base].each { |key| attributes[key] = args[key] }
     
     
     div( attributes ) { yield }
@@ -435,7 +435,7 @@ Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
 
   def link_to_action( text, to_action, remote_opts={}, html_opts={})
     link_to_remote text, {
-      :url=>url_for("card/#{to_action}"),
+      :url=>url_for("card/#{to_action}", remote_opts),
       :update => id
     }.merge(remote_opts), html_opts
   end

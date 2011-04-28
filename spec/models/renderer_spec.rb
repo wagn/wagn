@@ -366,20 +366,6 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
   end
 
   context "builtin card" do
-    it "should render layout partial with name of card" do
-      #template = mock("template")
-      #template.should_not_receive(:render).with(:partial=>"builtin/builtin").and_return("Boo")
-      #c = Card.fetch_or_new( '*builtin' )
-      #c.save
-      #renderer = Renderer.new( c )
-      #renderer.render_raw.should == "Boo"
-      #renderer.render(:raw).should == "Boo"
-      c = Card.fetch( '*head' )
-      renderer = Renderer.new( c, :context=>"main_1", :view=>"view"  )
-      renderer.render(:naked).should be_html_with do
-        a(:rel=>'alternate', :title=>'Edit this page!', :href=>'/card/edit/*head') {}
-      end
-    end
 
     it "should use inclusion view overrides" do
       # FIXME love to have these in a scenario so they don't load every time.
@@ -397,18 +383,6 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       s.render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/t2\">t2</a>"
       s = Renderer.new(t, :inclusion_view_overrides=>{ :open => :naked } )
       s.render( :naked ).should == "boo"
-    end
-
-    it "should render layout partial with name of card" do
-      pending
-      template = mock("template")
-      template.should_receive(:render).with(:partial=>"builtin/builtin").and_return("Boo")
-      builtin_card = Card.new( :name => "*builtin", :builtin=>true )
-      slot = Renderer.new( builtin_card )
-      slot.render_raw.should == "Boo"
-      slot.render(:raw).should == "Boo"
-      slot = Renderer.new( Card["*head"], "main_1", "view"  )
-      slot.render(:naked).should == 'something'
     end
  
     it "should render internal builtins" do
@@ -428,13 +402,13 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
   </span>
 </div>} ).should be_html_with   do
         div {
-          span(:name=>'head')    { link(:rel=>'shortcut icon') {} }
+          span(:name=>'head')    { }
           span(:name=>'now') {
             div(:view=>'content') {
               span() { text(Time.now.strftime('%A, %B %d, %Y %I:%M %p %Z')) }
             }
           }
-          span(:name=>'version') { text("Version:#{Wagn::Version.full}") }
+          span(:name=>'version') { "Version:#{Wagn::Version.full}" }
           span(:name=>"foot")    { script(:type=>"text/javascript") {} }
         }
       end

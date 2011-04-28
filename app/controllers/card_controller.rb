@@ -73,6 +73,9 @@ class CardController < ApplicationController
         end
       end
     end
+    if params[:js]
+      @text += %{<script type="javascript">Wagn.#{params[:js]}(getSlotFromContext('#{@context}'))</script>}
+    end
     @text
   end
   

@@ -37,7 +37,7 @@ class Renderer
   attr_reader :action, :inclusion_map, :params, :layout, :relative_content,
       :template, :root, :format
   attr_accessor :card, :main_content, :main_card, :context, :char_count,
-      :depth, :item_view, :form, :view, :type, :base, :state, :sub_count,
+      :depth, :item_view, :form, :home_view, :type, :base, :state, :sub_count,
       :render_args, :requested_view, :layout, :flash, :showname
 
   # View definitions
@@ -98,9 +98,7 @@ class Renderer
         if view_key == view
 #Rails.logger.debug "define base view: _render_#{view}, render_#{view}"
           define_method( "_render_#{view}" ) do |*a| a = [{}] if a.empty?
-            # this variable name is highly confusing (:view); it means the view to
-            # return to after an edit.  it's about persistence. should do better.
-            a[0][:view] ||= view  
+            a[0][:home_view] ||= view  
             final_meth = view_method( view )
 #Rails.logger.debug " in #{caller(0).first}[#{card}] #{view}, #{final_meth}"
 raise "??? #{view.inspect}" unless final_meth
@@ -204,7 +202,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     self.sub_count += 1
     sub = self.clone
     sub.depth = @depth+1
-    sub.view = sub.item_view = sub.main_content = sub.main_card = nil
+    sub.home_view = sub.item_view = sub.main_content = sub.main_card = nil
     sub.sub_count = sub.char_count = 0
     sub.context = "#{ctx_base||context}_#{sub_count}"
     sub.card = subcard
@@ -233,7 +231,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     update_references(wiki_content) if card.references_expired
 
     wiki_content.render! do |opts|
-      @view = opts[:view].to_sym if view == nil and opts[:view]
+      @home_view = opts[:view].to_sym if @home_view.nil? and opts[:view]
       expand_inclusion(opts) { yield }
     end
   end

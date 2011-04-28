@@ -12,7 +12,7 @@ gem 'rake', '0.8.7'
 
 gem 'htmlentities', '4.2.1'
 gem 'macaddr', '1.0.0'
-gem 'uuid', '2.3.1'
+gem 'uuid', '2.2.0'
 gem 'json', '1.4.6'
 
 #gem 'ruby-openid', '2.1.8'
@@ -29,14 +29,15 @@ gem 'json', '1.4.6'
 # gem 'mysql', '2.8.1',                      :group=>'mysql'
 
 
+
 # ~~~~~~~~~~~~~~~~~~~~~ #
 # DEVELOPMENT & TESTING #
 # ~~~~~~~~~~~~~~~~~~~~~ #
 
-gem 'hoptoad_notifier', '2.1.3', :group=>'developer'
-
-# note, hoptoad is primarily for efficiently processing error messages in production mode,
-# not for use with the development environment.  That's why the group is "developer", not "development"
+group :hosting do
+  gem 'hoptoad_notifier', '>=2.3.12'
+  gem 'aws-s3','>=0.6.2'
+end
 
 
 group :test do
@@ -45,7 +46,7 @@ group :test do
   
   gem 'term-ansicolor', '1.0.5'
   gem 'nokogiri', '>=1.4.1'
-  gem 'timecop', '0.3.5'
+  gem 'timecop', '>0.2.1'
   gem 'spork', '>=0.5.7'
   gem 'assert2', '0.5.5'
   gem 'webrat', '>=0.7.0'
@@ -53,7 +54,7 @@ group :test do
   gem 'rspec-rails', '>=1.3.2'
   gem 'email_spec', '0.6.2'
   gem 'gherkin', '>=2.2.8'
-  gem 'cucumber', '0.9.2'
+  gem 'cucumber', '>=0.9.2'
   gem 'cucumber-rails', '0.3.2'
   gem 'database_cleaner', '0.5.0'
   

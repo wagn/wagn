@@ -15,5 +15,9 @@ class Renderer
 }
   end
 
+  define_view(:editor, :type=>'set') do 
+    'Cannot currently edit Sets' #ENGLISH
+  end
+
   view_alias(:closed_content , {:type=>:search}, {:type=>:set})
 end

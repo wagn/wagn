@@ -1,5 +1,6 @@
 .idea/
 .rvmrc
+.bundle
 config/amazon_s3.yml
 config/database.yml
 config/newrelic.yml

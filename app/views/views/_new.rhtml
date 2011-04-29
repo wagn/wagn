@@ -53,7 +53,7 @@
         <div class="editor">
           <% #FIXME CONTENT: the hard template test can go away when we phase out the old sytem %>
           <% if card.content_template %>
-            <%- s.form = form %>
+            <%#- s.form = form %>
             <%= s.render(:multi_edit) %>
           <% else %>
             <%# if default_content = card.setting('default') ; card.content = default_content; end %>

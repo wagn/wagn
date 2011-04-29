@@ -22,6 +22,8 @@ class Renderer
       e.message
     end
   end
+  
+  view_alias( :editor, {:type=>'plain_text'},  {:type=>'script'} )
 
   define_view(:naked, :type=>'ruby') do
     ruby = expand_inclusions( card.content )
@@ -44,15 +46,7 @@ class Renderer
     end
   end
 
-  define_view(:editor, :type=>'date') do
-    date_id = "#{self.context}+'date'"
-    link_text = card.content.blank? ? (t=Time.now(); [t.year , t.mon, t.day].join('-')) : card.content
-    '<div>' +
-    link_to_function( link_text, "scwShow($('#{date_id}'), scwID('#{date_id}'));", :id=>date_id, :class=>'date-editor-link' ) +
-    '</div>' +
-    form.hidden_field( :content, :id=>"#{editor_id}-content" ) +
-    editor_hooks( :save=>%{$('#{editor_id}-content').value = $('#{date_id}').innerHTML; return true;} )
+  define_view(:editor, :type=>'ruby') do
+    form.text_area :content
   end
-
-  define_view(:editor, :type=>'ruby') do form.text_area :content end
 end

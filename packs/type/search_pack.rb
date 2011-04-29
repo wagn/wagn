@@ -16,6 +16,10 @@ class Renderer
       render('card_list')
     end
   end
+  
+  define_view(:editor, :type=>'search') do
+    form.text_area :content, :rows=>10
+  end
 
   define_view(:closed_content, :type=>'search') do
     return "#..." if depth > 2

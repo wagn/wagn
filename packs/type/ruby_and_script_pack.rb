@@ -11,7 +11,7 @@ end
 
 class Renderer
   define_view(:naked, :type=>'script') do
-    command = expand_inclusions( card.content )
+    command = process_content( card.content )
     begin
       if System.enable_server_cards
         Shellbox.new.run( command )
@@ -26,7 +26,7 @@ class Renderer
   view_alias( :editor, {:type=>'plain_text'},  {:type=>'script'} )
 
   define_view(:naked, :type=>'ruby') do
-    ruby = expand_inclusions( card.content )
+    ruby = process_content( card.content )
     begin
       if System.enable_ruby_cards
         s = Sandbox.new(4)

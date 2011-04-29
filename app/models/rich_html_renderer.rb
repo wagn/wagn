@@ -529,7 +529,7 @@ Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
   end
 
   def setup_autosave
-    if @nested or skip_autosave
+    if @nested or @skip_autosave
       ""
     else
       javascript_tag "Wagn.setupAutosave('#{card.id}', '#{context}');\n"

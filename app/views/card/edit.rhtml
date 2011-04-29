@@ -3,7 +3,7 @@
   <style><%= ".SELF-#{card.key.css_name} .edit-area .namepart-#{card.name.css_name} { display: none; }" %></style>
 
   <% div( :id=>slot.id('card-body'), :class=>'card-body') do %>
-    <%= slot.render_partial 'card/edit/content' %>
+    <%= slot.render_partial 'card/edit/content', :locals=>{:slot=>slot} %>
   <% end %>
 
   <%= slot.notice %>

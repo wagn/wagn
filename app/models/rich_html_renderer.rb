@@ -199,7 +199,7 @@ class RichHtmlRenderer < Renderer
 
   define_view(:multi_edit) do |args|
     @state=:edit
-    args[:add_javascript]=true
+    args[:add_javascript]=true #necessary?
     @form = form_for_multi
     hidden_field_tag(:multi_edit, true) + _render_naked(args)
   end
@@ -545,16 +545,17 @@ Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
   end
 
   def full_captcha
-    if captcha_required?
-      key = card.new_record? ? "new" : card.key
-        recaptcha_tags( :ajax=>true, :display=>{:theme=>'white'}, :id=>key ) +
-          javascript_tag(
-            %{jQuery.getScript("http://api.recaptcha.net/js/recaptcha_ajax.js", function(){
-              document.getElementById('dynamic_recaptcha-#{key}').innerHTML='<span class="faint">loading captcha</span>';
-              Recaptcha.create('#{ENV['RECAPTCHA_PUBLIC_KEY']}', document.getElementById('dynamic_recaptcha-#{key}'),RecaptchaOptions);
-            });
-          })
-    end
+    return if !captcha_required?
+    return "Captcha turned on but no RECAPTCHA key configured" unless recaptcha_key = ENV['RECAPTCHA_PUBLIC_KEY']
+  
+    card_key = card.new_record? ? "new" : card.key
+    recaptcha_tags( :ajax=>true, :display=>{:theme=>'white'}, :id=>card_key ) +
+    javascript_tag(
+      %{jQuery.getScript("http://api.recaptcha.net/js/recaptcha_ajax.js", function(){
+        document.getElementById('dynamic_recaptcha-#{card_key}').innerHTML='<span class="faint">loading captcha</span>';
+        Recaptcha.create('#{recaptcha_key}', document.getElementById('dynamic_recaptcha-#{card_key}'),RecaptchaOptions);
+      });
+    })
   end
 end
 

@@ -449,8 +449,7 @@ Rails.logger.debug "method missing: #{method_id}"
       end
     end
 
-    Rails.logger.info " expanding card #{tcard.name}.  view is currently: #{options[:view]}"
-
+    #Rails.logger.info " expanding card #{tcard.name}.  view is currently: #{options[:view]}"
 
     result = process_inclusion(tcard, options)
     result = resize_image_content(result, options[:size]) if options[:size]

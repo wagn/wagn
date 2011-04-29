@@ -7,6 +7,7 @@ class Renderer
       end
   end
 
-  define_view(:editor, :type=>'toggle') do form.check_box(:content) end
-
+  define_view(:editor, :type=>'toggle') do
+    form.check_box(:content)
+  end
 end

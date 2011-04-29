@@ -29,7 +29,7 @@ module Wagn
   class Initializer
     class << self
       def set_default_config config
-        config.available_modules = Dir["#{RAILS_ROOT}/modules/*.rb"]
+        config.available_modules = Dir["#{RAILS_ROOT}/modules/*.rb"] + Dir["#{RAILS_ROOT}/packs/*/*_pack.rb"]
       end
 
       def set_default_rails_config rails_config

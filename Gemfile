@@ -29,16 +29,26 @@ gem 'postgres', '0.7.9.2008.01.28',        :group=>'postgres'
 gem 'mysql', '2.8.1',                      :group=>'mysql'
 
 
+# ~~~~~~~~~~~~~~ #
+# IMAGE HANDLING #
+# ~~~~~~~~~~~~~~ #
 
-# ~~~~~~~~~~~~~~~~~~~~~ #
-# DEVELOPMENT & TESTING #
-# ~~~~~~~~~~~~~~~~~~~~~ #
+gem 'image_science', '1.2.1', :group=>'image_science'
+#gem 'rmagick', '>=2.13.1',    :group=>'rmagick'
+
+# ~~~~~~~ #
+# HOSTING #
+# ~~~~~~~ #
 
 group :hosting do
   gem 'hoptoad_notifier', '>=2.3.12'
   gem 'aws-s3','>=0.6.2'
   gem 'newrelic_rpm', '>=2.14.1'
 end
+
+# ~~~~~~~ #
+# TESTING #
+# ~~~~~~~ #
 
 
 group :test do

@@ -41,11 +41,16 @@ class CardController < ApplicationController
     if params[:format].nil? || params[:format].to_sym==:html
       if @card.new_record? && !@card.virtual?  # why doesnt !known? work here?
         params[:card]={:name=>@card_name, :type=>params[:type]}
-        return ( Card::Basic.create_ok? ? self.new : render(:action=>'missing') )
+        return case
+          when ::Cardtype.create_ok?(params[:type] || 'Basic')  ;  self.new
+          when logged_in?                                       ;  render :action=>'denied'
+          else                                                  ;  render :action=>'missing' 
+          end
       else
         save_location
       end
     end
+    
     return if !view_ok # if view is not ok, it will render denied. return so we dont' render twice
     render_show
   end

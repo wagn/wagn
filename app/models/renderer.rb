@@ -25,7 +25,8 @@ class Renderer
 
   RENDERERS = {
     :html => :RichHtmlRenderer,
-    :css => :TextRenderer
+    :css => :TextRenderer,
+    :kml => :KmlRenderer
     #:xml => :XmlFormater
   }
 

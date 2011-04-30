@@ -551,7 +551,7 @@ Rails.logger.info "count iter(#{relation.inspect} #{subspec.inspect})"
           when 'content'
             sql.joins << "join revisions r2 on r2.id=#{self.table_alias}.current_revision_id"
             "lower(r2.content) #{dir}"
-          when "relevance";  
+          when "relevance" 
             if !sql.relevance_fields.empty?
               sql.fields << sql.relevance_fields
               "name_rank desc, content_rank desc" 

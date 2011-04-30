@@ -530,3 +530,6 @@ Rails.logger.debug "method missing: #{method_id}"
 
   def main_card?() context=~/^main_\d$/ end
 end
+
+class KmlRenderer < Renderer
+end

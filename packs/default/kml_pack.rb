@@ -1,4 +1,4 @@
-class KmlRenderer < Renderer
+class KmlRenderer
   define_view(:show) do
     xml = Builder::XmlMarkup.new
     xml.instruct! :xml, :version => "1.0"

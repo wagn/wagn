@@ -544,8 +544,9 @@ Rails.logger.info "count iter(#{relation.inspect} #{subspec.inspect})"
         sql.order << case order_key
           when "update"; "#{table_alias}.updated_at #{dir}"
           when "create"; "#{table_alias}.created_at #{dir}"
-          when /^(name|alpha)$/;  "#{table_alias}.key #{dir}"  
           when "count";  "count(*) #{dir}, #{table_alias}.name asc"
+          when /^(name|alpha)$/
+            "TRIM( LEADING 'a ' FROM TRIM( LEADING 'an ' FROM TRIM( LEADING 'the ' FROM LOWER( #{table_alias}.key )))) #{dir}"  
           when 'content'
             sql.joins << "join revisions r2 on r2.id=#{self.table_alias}.current_revision_id"
             "lower(r2.content) #{dir}"

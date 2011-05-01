@@ -35,7 +35,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def per_request_setup
-    Slot.ajax_call=request.xhr?
+    Renderer.ajax_call=request.xhr?
     
     if System.multihost
       if mapping = MultihostMapping.find_by_requested_host(request.host) || MultihostMapping.find_by_requested_host("")
@@ -163,7 +163,7 @@ class ApplicationController < ActionController::Base
   def render_update_slot_element(name, stuff="", message=nil)
     render :update do |page|
       page.extend(WagnHelper::MyCrappyJavascriptHack)
-      elem_code = "getSlotFromContext('#{get_slot.context}')"
+      elem_code = "getSlotFromContext('#{params[:context]}')"
       unless name.empty?
         elem_code = "getSlotElement(#{elem_code}, '#{name}')"
       end
@@ -206,7 +206,7 @@ class ApplicationController < ActionController::Base
 
     on_error_js = ""
 
-    if captcha_required?
+    if captcha_required? && ENV['RECAPTCHA_PUBLIC_KEY']
       key = @card.new_record? ? "new" : @card.name.to_key
       on_error_js << %{ document.getElementById('dynamic_recaptcha-#{key}').innerHTML='<span class="faint">loading captcha</span>'; }
       on_error_js << %{ Recaptcha.create('#{ENV['RECAPTCHA_PUBLIC_KEY']}', document.getElementById('dynamic_recaptcha-#{key}'),RecaptchaOptions); }

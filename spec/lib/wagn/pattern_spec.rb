@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+  require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../../pattern_spec_helper')
 
 describe Wagn::Pattern do
@@ -25,6 +25,17 @@ describe Wagn::Pattern do
       ]
     end
   end
+
+  describe :method_keys do
+    it "returns self, type, all for simple cards" do
+      card = Card.new( :name => "AnewCard" )
+      Wagn::Pattern.method_keys( card).should == [ "basic_type",""]
+      card.save!
+      card = Card.fetch("AnewCard")
+      Wagn::Pattern.method_keys( card).should == [ "anew_card_self","basic_type",""]
+    end
+    
+  end
   
   describe :css_names do
     it "returns self, type, all for simple cards" do
@@ -37,10 +48,10 @@ describe Wagn::Pattern do
 
     it "returns set names for junction cards" do
       card=Card.new( :name=>"Illiad+author" )
-      Wagn::Pattern.css_names( card ).should == "ALL TYPE-basic RIGHT-author TYPE_PLUS_RIGHT-book-author"
+      Wagn::Pattern.css_names( card ).should == "ALL TYPE-basic RIGHT-author LTYPE_RIGHT-book-author"
       card.save!
       card = Card.fetch("Illiad+author")      
-      Wagn::Pattern.css_names( card ).should == "ALL TYPE-basic RIGHT-author TYPE_PLUS_RIGHT-book-author SELF-illiad-author"
+      Wagn::Pattern.css_names( card ).should == "ALL TYPE-basic RIGHT-author LTYPE_RIGHT-book-author SELF-illiad-author"
     end
   end
   

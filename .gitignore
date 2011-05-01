@@ -1,5 +1,6 @@
 .idea/
 .rvmrc
+.bundle
 config/amazon_s3.yml
 config/database.yml
 config/newrelic.yml
@@ -20,3 +21,6 @@ script/performance/*.session
 test/unit/tmp_test.rb
 tmp/*
 vendor/plugins/
+/nbproject/
+/*.project
+*.sqlite3

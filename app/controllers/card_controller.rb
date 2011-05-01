@@ -20,7 +20,7 @@ class CardController < ApplicationController
     if User.no_logins?
       redirect_to '/admin/setup'
     else
-      params['id'] = System.setting('*home')
+      params['id'] = (System.setting('*home') || 'Home').to_url_key
       show
     end
   end
@@ -38,40 +38,53 @@ class CardController < ApplicationController
     @card_name = System.site_title if (@card_name.nil? or @card_name.empty?)
     @card =   Card.fetch_or_new(@card_name)
 
-    unless params[:format]
-      #this isn't right because it skips on .html, but respond_to was causing double render errors...
+    if params[:format].nil? || params[:format].to_sym==:html
       if @card.new_record? && !@card.virtual?  # why doesnt !known? work here?
         params[:card]={:name=>@card_name, :type=>params[:type]}
-        return ( Card::Basic.create_ok? ? self.new : render(:action=>'missing') )
+        return case
+          when ::Cardtype.create_ok?(params[:type] || 'Basic')  ;  self.new
+          when logged_in?                                       ;  render :action=>'denied'
+          else                                                  ;  render :action=>'missing' 
+          end
       else
         save_location
       end
     end
+    
     return if !view_ok # if view is not ok, it will render denied. return so we dont' render twice
     render_show
   end
 
   def render_show
-    #Wagn::Hook.call :before_show, '*all', self
+    render(:text=>render_show_text)
+  end
+  
+  def render_show_text
+    request.format = :html if !params[:format]
 
     respond_to do |format|
       format.rss do
          raise("Sorry, RSS is broken in rails < 2.2") unless Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >=2
          # rss causes infinite memory suck in rails 2.1.2.  
-         render :action=>'show'
+         @text = render_to_string(:action=>'show')
       end
-      format.txt  { render :text=>@card.content }
-      format.css  { render :text=>Slot.new(@card).render(:naked) }
-      format.kml  { render :action=>'show'}
-      format.xml  { render :text=>'XML not yet supported'}
-      format.json { render :text=>'JSON not yet supported'}
-      format.html do
-        @title = @card.name=='*recent changes' ? 'Recently Changed Cards' : @card.name
-        ## fixme, we ought to be setting special titles (or all titles) in cards
-        request.xhr? ? render(:action=>'show') : render(:text=>'', :layout=>true)
+      format.xml do render :text=>'xml not yet supported' end
+      format.json do render :text=>'json not yet supported' end
+      [:txt, :css, :kml, :html].each do |f|
+        format.send f do
+          @text = Renderer.new(@card, 
+            :format=>f, :flash=>flash, :params=>params
+          ).render(:show)
+        end
       end
     end
+    if params[:js]
+      # this is ugly, but needs to happen for now for opening / closing
+      @text += %{<script type="javascript">Wagn.#{params[:js]}(getSlotFromContext('#{@context}'))</script>}
+    end
+    @text
   end
+  
 
   #----------------( MODIFYING CARDS )
 
@@ -96,9 +109,10 @@ class CardController < ApplicationController
     end
   end
 
-  def denial
-    render :template=>'/card/denied', :status => 403
-  end
+  # no longer in use, righ?
+  #def denial
+  #  render :template=>'/card/denied', :status => 403
+  #end
 
   def create
     @card = Card.create params[:card]
@@ -138,6 +152,7 @@ class CardController < ApplicationController
   def edit
     if ['name','type','codename'].member?(params[:attribute])
       render :partial=>"card/edit/#{params[:attribute]}"
+      #render_cardedit(:part=>params[:attribute])
     end
   end
 
@@ -171,11 +186,12 @@ class CardController < ApplicationController
       @confirm = (@card.confirm_rename=true)
       @card.update_referencers = true
       return render(:partial=>'card/edit/name', :status=>200)
+      #return render_cardedit(:part=>:name, :status=>200)
     end
 
     handling_errors do
       @card = Card.find(@card.id)   # wtf?
-      request.xhr? ? render_update_slot(render_to_string(:action=>'show'), "updated #{@card.name}") : render_show
+      request.xhr? ? render_update_slot(render_show_text, "updated #{@card.name}") : render_show
     end
   end
 
@@ -218,13 +234,13 @@ class CardController < ApplicationController
     @comment=@comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
     @card.comment = "<hr>#{@comment}<p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
     @card.save!
-    render_update_slot render_to_string(:action=>'show'), "comment saved"
+    render_update_slot render_to_string(:text=>render_show_text), "comment saved"
   end
 
   def rollback
     load_card_and_revision
     @card.update_attributes! :content=>@revision.content
-    render_update_slot render_to_string(:action=>'show'), "content rolled back"
+    render_update_slot render_to_string(:text=>render_show_text), "content rolled back"
   end
 
   #------------( deleting )
@@ -268,6 +284,7 @@ class CardController < ApplicationController
 
   def options
     @extension = @card.extension
+#    render_options(:part=>params[:attribute]) if params[:setting] and
     render :partial=>"card/options/#{params[:attribute]}" if params[:setting] and
       ['closed_setting','open_setting'].include?(params[:attribute])
   end
@@ -283,7 +300,7 @@ class CardController < ApplicationController
     sources.unshift '*account' if @card.extension_type=='User'
     @items = sources.map do |root|
       c = Card.fetch((root ? "#{root}+" : '') +'*related')
-      c && c.type=='Pointer' && c.items
+      c && c.item_names
     end.flatten.compact
 #    @items << 'config'
     @current = params[:attribute] || @items.first.to_key
@@ -291,20 +308,21 @@ class CardController < ApplicationController
 
   #------------------( views )
 
-
-  [:open_missing, :closed_missing].each do |method|
-    define_method( method ) do
-      load_card
-      params[:view] = method
-      if id = params[:replace]
-        render_update_slot do |page, target|
-          target.update render_to_string(:action=>'show')
-        end
-      else
-        render_show
-      end
-    end
-  end
+  #  I don't think these are used any more.  If they are, they shouldn't be!
+  #
+  #[:open_missing, :closed_missing].each do |method|
+  #  define_method( method ) do
+  #    load_card
+  #    params[:view] = method
+  #    if id = params[:replace]
+  #      render_update_slot do |page, target|
+  #        target.update render_to_string(:action=>'show')
+  #      end
+  #    else
+  #      render_show
+  #    end
+  #  end
+  #end
 
 
 
@@ -325,9 +343,12 @@ class CardController < ApplicationController
   end
 
   def auto_complete_for_navbox
-    @stub = params['navbox']
-    @items = Card.search( :complete=>@stub, :limit=>8, :sort=>'name' )
-    render :inline => "<%= navbox_result @items, 'name', @stub %>"
+    if @stub = params['navbox']
+      @items = Card.search( :complete=>@stub, :limit=>8, :sort=>'name' )
+      render :inline=> "<%= navbox_result @items, 'name', @stub %>"
+    else
+      render :inline=> ''
+    end
   end
 
   def auto_complete_for_card_name
@@ -348,16 +369,18 @@ class CardController < ApplicationController
        pointer_card.setting_card('options'))
 
     search_args = {  :complete=>complete, :limit=>8, :sort=>'name' }
-    @items = options_card ? options_card.search(search_args) : Card.search(search_args)
+    @items = options_card ? options_card.item_cards(search_args) : Card.search(search_args)
 
     render :inline => "<%= auto_complete_result @items, 'name' %>"
   end
 
 
-  # doesn't really seem to fit here.  may want to add new controller if methods accrue?
+  # this should all happen in javascript
+  
   def add_field # for pointers only
     load_card if params[:id]
-    render :partial=>'types/pointer/field', :locals=>params.merge({:link=>:add,:card=>@card})
+    #render :partial=>'types/pointer/field', :locals=>params.merge({:link=>:add,:card=>@card})
+    Renderer.new(@card).render(:field, :link=>:add)
   end
 
 end

@@ -134,13 +134,13 @@ describe Cardname do
     end
   end         
   
-  describe "#parent_name" do
+  describe "#left_name" do
     it "returns nil for non junction" do
-      "a".parent_name.should == nil
+      "a".left_name.should == nil
     end
     
     it "returns parent for parent" do
-      "a+b+c+d".parent_name.should == "a+b+c"
+      "a+b+c+d".left_name.should == "a+b+c"
     end
   end
 

@@ -1,25 +1,7 @@
 module Cardlib
   module Search
     module ClassMethods
-      @@builtins = {}
 
-      def find_virtual(name)
-        builtin_virtual(name) or pattern_virtual(name)
-      end
-
-      def builtin_virtual(name)
-        key=name.to_key
-        searches =  
-          { '*recent_change' => %{ {"sort":"update", "dir":"desc", "view":"change"} },
-            '*search'        => %{ {"match":"_keyword", "sort":"relevance"        } },
-            '*broken_link'   => %{ {"link_to":"_none"                             } },
-          }
-        case 
-          when searches[key]; create_virtual(name, searches[key], 'Search')
-          when @@builtins[key]; @@builtins[key]
-        end
-      end
-      
       def add_builtin(card)     
         card.builtin = true
         card.missing = false
@@ -30,7 +12,7 @@ module Cardlib
       
      def pattern_virtual(name)
         return nil unless name && name.junction?
-        if template = Card.new(:name=>name, :skip_defaults=>true).setting_card('content','default') and template.hard_template? 
+        if template = Card.new(:name=>name, :skip_defaults=>true).template and template.hard_template? 
           User.as(:wagbot) do
             Card.create_virtual name, template.content, template.type
           end
@@ -44,6 +26,7 @@ module Cardlib
           return nil
         end
       end
+      alias find_virtual pattern_virtual
 
       def retrieve_extension_attribute( cardname, attr_name )
         c = Card.find_by_name(cardname) and e = c.extension and e.send(attr_name)

@@ -33,12 +33,12 @@ describe Card, "with right content template" do
   end       
  
   it "should have default content" do
-    Slot.new(@jb).render(:raw).should == 'Today!'
+    Renderer.new(@jb).render(:raw).should == 'Today!'
   end        
   
   it "should change content with template" do
     @bt.content = "Tomorrow"; @bt.save!
-    Slot.new( Card['Jim+birthday']).render(:raw).should == 'Tomorrow'
+    Renderer.new( Card['Jim+birthday']).render(:raw).should == 'Tomorrow'
   end 
 end
 
@@ -78,7 +78,7 @@ describe Card, "templating" do
   end       
   
   it "*right setting should override *type setting" do
-    Slot.new(@jb).render(:raw).should == 'Today!'
+    Renderer.new(@jb).render(:raw).should == 'Today!'
   end
 end
 
@@ -89,7 +89,7 @@ describe Card, "with type content template" do
   end       
   
   it "should return templated content even if content is passed in" do
-    Slot.new(Card.new(:type=>'Date', :content=>'')).render(:raw).should == 'Tomorrow'
+    Renderer.new(Card.new(:type=>'Date', :content=>'')).render(:raw).should == 'Tomorrow'
   end
 end
 

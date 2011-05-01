@@ -94,7 +94,7 @@ When /^(.*) deletes? "([^\"]*)"$/ do |username, cardname|
 end
 
 When /I wait a sec/ do
-  sleep 0.1
+  sleep 1
 end
 
 Then /what/ do

@@ -17,12 +17,10 @@ class RichHtmlRenderer
   
 
   define_view(:content) do |args|
-    Rails.logger.info "args upon calling :content: #{args.inspect}"
     @state = :view
     self.requested_view = args[:action] = 'content'
     c = _render_naked(args)
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
-    Rails.logger.info "args after render_naked, before wrap: #{args.inspect}"
     wrap(args) {  wrap_content(c) }
   end
 

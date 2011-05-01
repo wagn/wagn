@@ -88,7 +88,7 @@ class Wql
   end
   
   def run
-    #warn sql
+#    warn "query: #{query.inspect}\n\n sql: #{sql}"
     rows = ActiveRecord::Base.connection.select_all( sql )
     case (query[:return] || :card).to_sym
     when :card

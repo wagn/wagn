@@ -37,8 +37,8 @@ class Renderer
   
   
   define_view(:raw, :name=>'*foot') do
-    User.as(:wagbot) do
-      javascript_include_tag "/tinymce/jscripts/tiny_mce/tiny_mce.js" +
+    value = User.as(:wagbot) do
+      javascript_include_tag("/tinymce/jscripts/tiny_mce/tiny_mce.js") +
       if ga_key = System.setting("*google analytics key")
         %{
           <script type="text/javascript">
@@ -55,6 +55,8 @@ class Renderer
         }
       else; ''; end
     end
+    warn "value = #{value}"
+    value
   end
   view_alias(:raw, {:name=>'*foot'}, :naked)
 

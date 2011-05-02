@@ -239,7 +239,7 @@ module Card
     end
 
     def save_with_trash!
-      save || raise(ActiveRecord::RecordNotSaved)
+      save || raise(errors.full_messages.join('. '))
     end
     alias_method_chain :save!, :trash
 

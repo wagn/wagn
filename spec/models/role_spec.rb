@@ -42,6 +42,11 @@ describe User, "Admin User" do
     User.current_user = ::User[:wagbot]
   end
   it "should ok admin role" do System.role_ok?(Role['admin'].id).should be_true end
+  
+  it "should have correct parties" do
+    User.current_user.parties.sort.should == ['administrator','wagn_bot']
+  end
+    
 end
 
 describe User, 'Joe User' do
@@ -62,6 +67,13 @@ describe User, 'Joe User' do
   it "should save new roles and reload correctly" do
     @ju.roles=[@r1]
     @ju = User.find_by_login 'joe_user'
-    @ju.roles.length.should==1
+    @ju.roles.length.should==1  
+    @ju.parties.sort.should == ['joe_user', 'r1']
   end
+  
+  it "should be 'among' itself" do
+    @ju.among?(['joe_user']).should == true
+    @ju.among?(['faker1','joe_user','faker2']).should == true
+  end
+  
 end

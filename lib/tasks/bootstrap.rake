@@ -126,23 +126,30 @@ namespace :wagn do
         end
       end
 
+      User.current_user = :wagbot
+
+      perm_rules = {
+        '*all' => { :create=>:auth, :update => :auth, :delete => :auth, :comment=>nil },
+        'Role+*type'            => { :create=>:admin },
+        'Html+*type'            => { :create=>:admin },
+        'Account Request+*type' => { :create=>:anon  },
+        'discussion+*right'     => { :comment=>:anon },
+      }
+      
+      perm_rules.each_key do |set|
+        perm_rules[set].each_key do |setting|
+          val = perm_rules[set][setting]
+          c = Card.create!(
+            :name=> "#{set}+#{setting}",
+            :type=> 'Pointer',
+            :content=>(val.nil? ? '' : "#{[[Role[val].card.name]]}")
+          )
+          warn "saved #{c.name} with content #{c.content}"
+        end
+      end
+
     end
-    
   end
 end
-         
-           
-=begin    #
-    # special cases:  
-  
-    discussion+*rform (comment)
-    Account Request (create - anon?)
-    HTML (create - anon) ??
-    *to / *from (delete)
-    *context, *to, *title, Account Request+*type+*content, *invite+*thanks, *signup+*thanks, *from (edit by admin)      
-    Administrator links        
-    # 
-
-=end    
 
 

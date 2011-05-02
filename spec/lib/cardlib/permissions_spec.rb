@@ -337,10 +337,38 @@ describe Card, "default permissions" do
   end
   
   it "should let joe view basic cards" do
-    User.as :joe_user
+#    User.as :joe_user
     @c.ok?(:read).should be_true
   end
+  
 end
+
+
+
+describe Card, "settings based permissions" do
+  before do
+    User.as :wagbot
+    @delete_setting_card = Card.fetch_or_new '*all+*delete'
+    @delete_setting_card.type = 'Pointer'
+    @delete_setting_card.content = '[[Joe_User]]'
+    @delete_setting_card.save!
+  end
+  
+  it "should handle delete as a setting" do
+    c = Card.new :name=>'whatever'
+    c.who_can(:delete).should == ['joe_user']
+    User.as :joe_user
+    c.ok?(:delete).should == true
+    User.as :u1
+    c.ok?(:delete).should == false
+    User.as :anon
+    c.ok?(:delete).should == false
+    User.as :wagbot
+    c.ok?(:delete).should == true #because administrator
+  end
+end
+
+
 
 describe Card, "updating permissions" do
   before do

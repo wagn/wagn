@@ -107,6 +107,16 @@ class User < ActiveRecord::Base
     #end
   end 
 
+  def among? test_parties
+    parties.each do |party|
+      return true if test_parties.member? party
+    end
+    false
+  end
+
+  def parties
+    @parties ||= [self,roles].flatten.map{|p| p.card.key }
+  end
   ## INSTANCE METHODS
 
   def save_with_card(card)

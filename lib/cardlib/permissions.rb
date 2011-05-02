@@ -12,7 +12,6 @@ module Cardlib
   end
        
   
-  
   module Permissions
     # Permissions --------------------------------------------------------------
     def ydhpt
@@ -60,12 +59,12 @@ module Cardlib
     def save_with_permissions!
       Rails.logger.debug "Card#save_with_permissions!"
       if approved?
-begin
-        save_without_permissions!
-rescue Exception => e
-  Rails.logger.info "save_with_perm:#{e.message} #{name} #{Kernel.caller.join("\n")}"
-  raise e
-end
+        begin
+          save_without_permissions!
+        rescue Exception => e
+          Rails.logger.info "save_with_perm:#{e.message} #{name} #{Kernel.caller.join("\n")}"
+          raise e
+        end
       else
         raise ::Card::PermissionDenied.new(self)
       end
@@ -114,10 +113,12 @@ end
     end
     
     def who_can(operation)
-      perm = permissions.reject { |perm| perm.task != operation.to_s }.first   
-      perm && perm.party #? perm.party : nil
-      #perm = Permission.find(:first, :conditions=>{:card_id=>self.id, :task=>operation.to_s })
-      #perm && Role[perm.party_id.to_i] 
+#      if [:delete,:comment].member? operation
+#        setting_card(operation.to_s).item_names.map &:to_key
+#      else
+        perm = permissions.reject { |perm| perm.task != operation.to_s }.first   
+        perm && perm.party #? perm.party : nil
+#      end
     end 
     
     def personal_user
@@ -141,7 +142,13 @@ end
     def lets_user(operation)
       party =  who_can(operation)
       return true if (System.always_ok? and operation != :comment)
-      System.party_ok? party
+      
+      if Array === party
+        # eventually this should be the only case.
+        User.as_user.among? party
+      else
+        System.party_ok? party
+      end
     end  
     
     def approve_read
@@ -188,12 +195,7 @@ end
     end
 
     def approve_type
-      unless new_card?       
-        approve_delete
-#        if right_template and right_template.hard_template? and right_template.type!=type and !allow_type_change
-#          deny_because you_cant( "change the type of this card -- it is hard templated by #{right_template.name}")
-#        end
-      end
+      approve_delete if !new_card?       
       new_self = clone_to_type( type ) 
       unless Cardtype.create_ok?(new_self.type)
         deny_because you_cant("create #{new_self.cardtype.name} cards")

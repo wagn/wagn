@@ -25,11 +25,11 @@ module PermissionSpecHelper
   end
   
   def assert_locked( card, msg='' )
-    assert_equal false, card.ok?(:edit), msg
+    assert_equal false, card.ok?(:update), msg
   end
   
   def assert_not_locked( card, msg='' )
-    assert_equal true, card.ok?(:edit), msg
+    assert_equal true, card.ok?(:update), msg
   end
 end
 
@@ -40,7 +40,7 @@ module Card
   class Base
     def writeable_by(user)
       ::User.as(user) do
-        ok? :edit
+        ok? :update
       end
     end
     

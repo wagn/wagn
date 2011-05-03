@@ -9,7 +9,7 @@ class CardController < ApplicationController
 
   before_filter :view_ok,   :only=> LOAD_ACTIONS
   before_filter :create_ok, :only=>[ :new, :create ]
-  before_filter :edit_ok,   :only=> EDIT_ACTIONS
+  before_filter :update_ok,   :only=> EDIT_ACTIONS
   before_filter :remove_ok, :only=>[ :remove ]
 
   before_filter :require_captcha, :only => [ :create, :update, :comment, :quick_update ]

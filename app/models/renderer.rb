@@ -246,7 +246,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
       when card.new_card? ; false # causes errors to check in current system.  
         #should remove this and add create check after we settingize permissions
       when [:edit, :edit_in_form, :multi_edit].member?(action)
-        !card.ok?(:edit) and :deny_view #should be deny_edit
+        !card.ok?(:update) and :deny_view #should be deny_edit
       else
         !card.ok?(:read) and :deny_view
       end

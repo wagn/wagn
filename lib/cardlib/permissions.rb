@@ -113,7 +113,7 @@ module Cardlib
     end
     
     def who_can(operation)
-      if [:delete,:comment].member? operation
+      if [:delete,:comment, :comment].member? operation
         setting_card(operation.to_s).item_names.map &:to_key
       else
         perm = permissions.reject { |perm| perm.task != operation.to_s }.first   
@@ -164,8 +164,8 @@ module Cardlib
       deny_because you_cant("create #{self.type} cards") unless Cardtype.create_ok?(self.type)
     end
 
-    def approve_edit
-      approve_task(:edit)
+    def approve_update
+      approve_task(:update)
     end
     
     def approve_delete
@@ -173,7 +173,7 @@ module Cardlib
     end
     
     def approve_name
-      approve_task(:edit) unless new_card?     
+      approve_task(:update) unless new_card?     
     end
     
     def approve_create     
@@ -204,7 +204,7 @@ module Cardlib
 
     def approve_content
       unless new_card?
-        approve_edit
+        approve_update
         if tmpl = hard_template 
           deny_because you_cant("change the content of this card -- it is hard templated by #{tmpl.name}")
         end

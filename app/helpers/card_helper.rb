@@ -52,7 +52,7 @@ module CardHelper
   end
 
   def rollback
-    if @card.ok?(:edit) && !(@card.current_revision==@revision)
+    if @card.ok?(:update) && !(@card.current_revision==@revision)
       link_to_remote 'Save as current',
         :url => { :action=>'rollback', :id=>@card.id, :rev=>@revision_number, :context=>@context }
     end

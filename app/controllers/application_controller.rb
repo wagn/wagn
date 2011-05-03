@@ -103,8 +103,8 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def edit_ok
-    @card.ok?(:edit) || render_denied('edit')
+  def update_ok
+    @card.ok?(:update) || render_denied('edit')
   end
 
   def create_ok

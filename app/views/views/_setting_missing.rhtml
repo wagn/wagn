@@ -1,7 +1,7 @@
 <%-
   attributes = %{ class="createOnClick" home_view="setting" cardid="" position="#{slot.position}" cardname="#{h card.name}" type="" }
 %>
-<% if card.ok?(:edit) %>
+<% if card.ok?(:update) %>
   <![if !IE]><span <%= attributes %> ><![endif]>
   <!--[if IE]><div <%= attributes %> style="display:inline" ><![endif]--> 
     <a class="setting-missing edit-link">add</a>

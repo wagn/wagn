@@ -126,6 +126,9 @@ namespace :wagn do
         end
       end
 
+      Card.cache.reset if Card.cache  #this isn't working.  might need to reload more?
+      
+
       User.current_user = :wagbot
 
       perm_rules = {
@@ -135,16 +138,16 @@ namespace :wagn do
         'Account Request+*type' => { :create=>:anon  },
         'discussion+*right'     => { :comment=>:anon },
       }
-      
+      Rails.logger.info ('creating the bastards')
       perm_rules.each_key do |set|
         perm_rules[set].each_key do |setting|
           val = perm_rules[set][setting]
           c = Card.create!(
-            :name=> "#{set}+#{setting}",
+            :name=> "#{set}+*#{setting}",
             :type=> 'Pointer',
             :content=>(val.nil? ? '' : "#{[[Role[val].card.name]]}")
           )
-          warn "saved #{c.name} with content #{c.content}"
+          Rails.logger.info "saved #{c.name} with content #{c.content}"
         end
       end
 

@@ -115,7 +115,7 @@ class User < ActiveRecord::Base
   end
 
   def parties
-    @parties ||= [self,roles].flatten.map{|p| p.card.key }
+    @parties ||= [self,all_roles].flatten.map{|p| p.card.key }
   end
   ## INSTANCE METHODS
 

@@ -28,9 +28,9 @@ end
 describe Card, "comment addition" do
   before do
     User.as :wagbot 
-    @c = Card.find_by_name("basicname")
+    Card.create :name => 'basicname+*self+*comment', :content=>'[[Anyone Signed In]]'
+    @c = Card.fetch "basicname"
     @c.comment = " and more"
-    @c.permit(:comment, Role.find(:first)) 
     @c.save!
   end
   

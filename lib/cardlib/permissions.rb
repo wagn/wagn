@@ -113,12 +113,12 @@ module Cardlib
     end
     
     def who_can(operation)
-#      if [:delete,:comment].member? operation
-#        setting_card(operation.to_s).item_names.map &:to_key
-#      else
+      if [:delete,:comment].member? operation
+        setting_card(operation.to_s).item_names.map &:to_key
+      else
         perm = permissions.reject { |perm| perm.task != operation.to_s }.first   
         perm && perm.party #? perm.party : nil
-#      end
+      end
     end 
     
     def personal_user

@@ -124,6 +124,8 @@ module Card
     def set_default_permissions
       source_card = setting_card('content', 'default')  #not sure why "template" doesn't work here.
       if source_card
+#        Rails.logger.info "source for #{self.name} = #{source_card.inspect}"
+        
         perms = source_card.card.permissions.reject { 
           |p| p.task == 'create' unless (type=='Cardtype' or template?) 
         }
@@ -135,6 +137,7 @@ module Card
       # We loop through and create copies of each permission object here because
       # direct copies end up re-assigning which card the permission objects are assigned to.
       # leads to painful errors.
+#      Rails.logger.info "perms for #{self.name} = #{perms.inspect}"
       self.permissions = perms.map do |p|  
         if p.task == 'read'
           party = p.party
@@ -154,6 +157,7 @@ module Card
           Permission.new :task=>p.task, :party_id=>p.party_id, :party_type=>p.party_type
         end
       end
+#      Rails.logger.info "permissions for #{self.name} = #{self.permissions.inspect}"
     end
     
     

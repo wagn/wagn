@@ -44,7 +44,7 @@ describe User, "Admin User" do
   it "should ok admin role" do System.role_ok?(Role['admin'].id).should be_true end
   
   it "should have correct parties" do
-    User.current_user.parties.sort.should == ['administrator','wagn_bot']
+    User.current_user.parties.sort.should == ['administrator', "anyone", "anyone_signed_in",'wagn_bot']
   end
     
 end
@@ -68,7 +68,7 @@ describe User, 'Joe User' do
     @ju.roles=[@r1]
     @ju = User.find_by_login 'joe_user'
     @ju.roles.length.should==1  
-    @ju.parties.sort.should == ['joe_user', 'r1']
+    @ju.parties.sort.should == ["anyone", "anyone_signed_in", 'joe_user', 'r1']
   end
   
   it "should be 'among' itself" do

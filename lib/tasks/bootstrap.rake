@@ -132,7 +132,7 @@ namespace :wagn do
       User.current_user = :wagbot
 
       perm_rules = {
-        '*all' => { :create=>:auth, :update => :auth, :edit=> :auth, :delete => :auth, :comment=>nil },
+        '*all' => { :create=>:auth, :update => :auth, :delete => :auth, :comment=>nil },
         'Role+*type'            => { :create=>:admin },
         'Html+*type'            => { :create=>:admin },
         'Account Request+*type' => { :create=>:anon  },

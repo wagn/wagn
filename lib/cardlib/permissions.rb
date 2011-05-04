@@ -113,7 +113,7 @@ module Cardlib
     end
     
     def who_can(operation)
-      if [:delete,:comment, :comment].member? operation
+      if [:delete, :update, :comment].member? operation
         setting_card(operation.to_s).item_names.map &:to_key
       else
         perm = permissions.reject { |perm| perm.task != operation.to_s }.first   

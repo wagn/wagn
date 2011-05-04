@@ -388,7 +388,7 @@ module Card
 
     def dependents(*args) 
       return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point. 
-      junctions(*args).map { |r| [r ] + r.dependents(*args) }.flatten 
+      junctions(*args).map { |r| [r] +  r.dependents(*args) }.flatten 
     end
 
     def extended_referencers

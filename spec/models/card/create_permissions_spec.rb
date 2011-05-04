@@ -4,7 +4,6 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 describe Card, "sets permissions correctly by default" do
   before do
     User.as :joe_user
-    #@defaults = [:read,:edit,:comment,:delete].map{|t| Permission.new(:task=>t.to_s, :party=>::Role.find_by_codename('auth'))}
     @c = Card.create! :name=>"temp card"
   end
   

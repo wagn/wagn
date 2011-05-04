@@ -80,9 +80,12 @@ describe "Permission", ActiveSupport::TestCase do
     @u2.roles = [ @r1, @r3 ]
     @u3.roles = [ @r1, @r2, @r3 ]
 
-    ::User.as(:wagbot) { 
-      @c1.permit(:edit, @u1); @c1.save
-      @c2.permit(:edit, @u2); @c2.save 
+    ::User.as(:wagbot) {
+      [1,2,3].each do |num|
+        Card.create(:name=>"c#{num}+*self+*update", :type=>'Pointer', :content=>"[[u#{num}]]")
+      end 
+#      @c1.permit(:edit, @u1); @c1.save
+#      @c2.permit(:edit, @u2); @c2.save 
     }
  
     assert_not_locked_from( @u1, @c1 )
@@ -112,9 +115,12 @@ describe "Permission", ActiveSupport::TestCase do
   end
 
   it "write group permissions" do
-    @c1.permit(:edit,@r1); @c1.save
-    @c2.permit(:edit,@r2); @c2.save
-    @c3.permit(:edit,@r3); @c3.save
+    [1,2,3].each do |num|
+      Card.create(:name=>"c#{num}+*self+*update", :type=>'Pointer', :content=>"[[r#{num}]]")
+    end
+    #@c1.permit(:edit,@r1); @c1.save
+    #@c2.permit(:edit,@r2); @c2.save
+    #@c3.permit(:edit,@r3); @c3.save
     
     @u3.roles = [ @r1 ]  #not :admin here
 
@@ -123,6 +129,7 @@ describe "Permission", ActiveSupport::TestCase do
       c2(r2)  T  T  F
       c3(r3)  T  F  F
     }
+#    warn "@c1 who_can update #{@c1.who_can(:update).inspect}"
     assert_equal true,  @c1.writeable_by(@u1), "c1 writeable by u1"
     assert_equal true,  @c1.writeable_by(@u2), "c1 writeable by u2" 
     assert_equal true,  @c1.writeable_by(@u3), "c1 writeable by u3" 

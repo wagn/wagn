@@ -28,14 +28,16 @@ module Cardlib
     
     protected 
     def set_name(newname)
-      oldname = self.name_without_tracking
+      @old_name = self.name_without_tracking
       self.name_without_tracking = newname 
-      return if oldname==newname
+      return if @old_name==newname
+    
 
       if newname.junction?
-        if !new_card? && newname.to_key != oldname.to_key
+        if !new_card? && newname.to_key != @old_name.to_key
           # move the current card out of the way, in case the new name will require
-          # re-creating a card with the current name, ie.  A -> A+B     
+          # re-creating a card with the current name, ie.  A -> A+B 
+          Wagn::Cache.expire_card(@old_name.to_key)
           tmp_name = "tmp:" + UUID.new.generate      
           connection.update %{update cards set #{quoted_comma_pair_list(connection, {:name=>"'#{tmp_name}'",:key=>"'#{tmp_name}'"})} where id=#{id}}
         end
@@ -55,10 +57,8 @@ module Cardlib
       end
             
       ::Cardtype.reset_cache if type=='Cardtype'
-      @name_changed = true          
-      @old_name = oldname
+      @name_changed = true
       @search_content_changed=true
-      Wagn::Cache.expire_card(@old_name.to_key)
     end
 
     def set_type(new_type)

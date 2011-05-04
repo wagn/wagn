@@ -67,11 +67,10 @@ describe CardController, "with captcha enabled requires captcha on" do
       #FIXME it would be nice if there were a simpler idiom for this     
       c = Card['Basic']
       c.permit(:create,Role[:anon])
-      c.save! 
-      Card.create :name=>'A+*self+*delete', :type=>'Pointer', :content=>'[[Anyone]]'
-      a = Card.fetch 'A'
-      a.permit(:edit, Role[:anon])
-      a.save!
+      c.save!
+      %w{ update delete }.each do |op| 
+        Card.create :name=>"A+*self+*#{op}", :type=>'Pointer', :content=>'[[Anyone]]'
+      end
     end
   end
 

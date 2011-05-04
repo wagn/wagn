@@ -8,7 +8,6 @@ class OptionsController < ApplicationController
         party =
           case perms[task]
             when ''        ; nil
-            when 'personal'; @card.personal_user
             else           ; Role.find(perms[task])
           end
         Permission.new :task=>task, :party=>party

@@ -24,7 +24,8 @@ describe CardController, "captcha_required?" do
   before do
     User.as :wagbot do
       Card["*all+*captcha"].update_attributes! :content=>"1"
-      c=Card["Book"];c.permit(:create, Role[:anon]);c.save! 
+      Card.create :name=>'Book+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
+#      c=Card["Book"];c.permit(:create, Role[:anon]);c.save! 
       Card.create :name=>"Book+*type+*captcha", :content => "1"  
     end
   end
@@ -65,9 +66,7 @@ describe CardController, "with captcha enabled requires captcha on" do
     User.as(:wagbot) do
       Card["*all+*captcha"].update_attributes! :content=>"1"
       #FIXME it would be nice if there were a simpler idiom for this     
-      c = Card['Basic']
-      c.permit(:create,Role[:anon])
-      c.save!
+      Card.create :name=>'Basic+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
       %w{ update delete }.each do |op| 
         Card.create :name=>"A+*self+*#{op}", :type=>'Pointer', :content=>'[[Anyone]]'
       end
@@ -86,13 +85,13 @@ describe AccountController, "with captcha enabled" do
     User.as(:wagbot) do
       Card["*all+*captcha"].update_attributes! :content=>"1"
       #FIXME it would be nice if there were a simpler idiom for this     
-      c = Card['Basic']
-      c.permit(:create,Role[:anon])
-      c.save!       
-      a = Card['A']
-      a.permit(:delete,Role[:anon])
-      a.permit(:edit, Role[:anon])
-      a.save!
+#      c = Card['Basic']
+#      c.permit(:create,Role[:anon])
+#      c.save!       
+#      a = Card['A']
+#      a.permit(:delete,Role[:anon])
+#      a.permit(:edit, Role[:anon])
+#      a.save!
     end
   end
 

@@ -266,14 +266,14 @@ module Card
     
 
     def multi_create(cards)
-      Wagn::Hook.call :before_multi_create, self, cards
+#      Wagn::Hook.call :before_multi_create, self, cards
       multi_save(cards)
       Rails.logger.info "Card#callback after_multi_create"
       Wagn::Hook.call :after_multi_create, self
     end
     
     def multi_update(cards)
-      Wagn::Hook.call :before_multi_update, self, cards
+#      Wagn::Hook.call :before_multi_update, self, cards
       multi_save(cards)
       Rails.logger.info "Card#callback after_multi_update"
       Wagn::Hook.call :after_multi_update, self
@@ -292,8 +292,9 @@ module Card
         if card = Card.fetch(name, :skip_virtual=>true)
           card.update_attributes(opts)
         elsif opts[:content].present? and opts[:content].strip.present?
-          opts[:name] = name                
-          if ::Cardtype.create_ok?( self.type ) && !::Cardtype.create_ok?( Card.new(opts).type )
+          opts[:name] = name
+#          ::User.as(:wagbot) { Card.create(opts) }
+          if self.ok?(:create) && !(Card.new(opts).ok? :create)
             ::User.as(:wagbot) { Card.create(opts) }
           else
             Card.create(opts)
@@ -462,7 +463,7 @@ module Card
     end    
     
     def content   
-      new_card? ? ok!(:create_me) : ok!(:read)
+      new_card? ? ok!(:create) : ok!(:read)
       cached_revision.new_record? ? "" : cached_revision.content
     end   
     

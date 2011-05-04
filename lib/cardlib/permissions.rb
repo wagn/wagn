@@ -20,16 +20,9 @@ module Cardlib
 
     
     module ClassMethods 
-      def create_ok?()   
-        ::Cardtype.create_ok?(  self.name.gsub(/.*::/,'') )
-      end
-      def create_ok!()   
-        user, type = ::User.current_user.cardname, self.name.gsub(/.*::/,'')
-
-        unless self.create_ok?        
-          msg = "You don't have permission to create #{type} cards" 
-          raise Wagn::PermissionDenied.new(msg) 
-        end
+      def create_ok?()
+        self.new.ok? :create
+#        ::Cardtype.create_ok?(  self.name.gsub(/.*::/,'') )
       end
     end
 
@@ -74,7 +67,7 @@ module Cardlib
       self.operation_approved = true    
       self.permission_errors = []
       if new_card?
-        approve_create_me
+        approve_create
       end
       updates.each_pair do |attr,value|
         send("approve_#{attr}")
@@ -113,25 +106,17 @@ module Cardlib
     end
     
     def who_can(operation)
-      if [:delete, :update, :comment].member? operation
-        setting_card(operation.to_s).item_names.map &:to_key
+      if [:create, :update, :delete, :comment].member? operation
+        User.as(:wagbot ) { setting_card(operation.to_s).item_names.map &:to_key }
       else
         perm = permissions.reject { |perm| perm.task != operation.to_s }.first   
         perm && perm.party #? perm.party : nil
       end
     end 
-    
-    def personal_user
-      return nil if simple?
-      #warn "personal user tag: #{tag.extension}  #{tag.extension.class == ::User}"
-      return tag.extension if tag.extension.class == ::User 
-      return trunk.personal_user 
-    end
-    
+        
     protected
     def you_cant(what)
       "#{ydhpt} #{what}"
-      # => you_cant " #{what}"
     end
     
     def deny_because(why)    
@@ -143,14 +128,32 @@ module Cardlib
       party =  who_can(operation)
       return true if (System.always_ok? and operation != :comment)
       
+      
       if Array === party
+#        warn "parties = #{party.inspect}.  User parties = #{User.current_user.parties.inspect}"
         # eventually this should be the only case.
         User.as_user.among? party
       else
         System.party_ok? party
       end
     end  
-    
+
+
+    def approve_task(operation, verb=nil)           
+      verb ||= operation.to_s
+      #testee = template.hard_template? ? trunk : self
+      testee = self
+
+#      warn "result from lets_user = #{testee.lets_user( operation ) }" 
+      deny_because("#{ydhpt} #{verb} this card") unless testee.lets_user( operation ) 
+    end
+
+
+    def approve_create
+      #warn "approving create for #{name} with type #{type} by user #{User.current_user.login}" 
+      approve_task(:create)
+    end
+
     def approve_read
       if reader_type=='Role'
         (self.operation_approved = false) unless System.role_ok?(reader_id)
@@ -159,47 +162,23 @@ module Cardlib
         (self.operation_approved = false) unless testee.lets_user( :read ) 
       end
     end
-       
-    def approve_create_me  
-      deny_because you_cant("create #{self.type} cards") unless Cardtype.create_ok?(self.type)
-    end
-
-    def approve_update
-      approve_task(:update)
-    end
     
-    def approve_delete
-      approve_task(:delete)
+    def approve_update()  approve_task(:update)  end
+    def approve_delete()  approve_task(:delete)  end
+
+    def approve_comment
+      approve_task(:comment, 'comment on')
+      deny_because("No comments allowed on template cards")       if template?  
+      deny_because("No comments allowed on hard templated cards") if hard_template
     end
     
     def approve_name
       approve_task(:update) unless new_card?     
     end
     
-    def approve_create     
-      raise "must be a cardtype card" unless self.type == 'Cardtype'
-      deny_because you_cant("create #{self.name} cards") unless Cardtype.create_ok?(Cardtype.classname_for(self.name))    
-    end
-                                    
-    def approve_comment
-      approve_task(:comment, 'comment on')
-      deny_because("No comments allowed on template cards")       if template?  
-      deny_because("No comments allowed on hard templated cards") if hard_template
-    end
-
-    def approve_task(operation, verb=nil) #read, edit, comment, delete           
-      verb ||= operation.to_s
-      #testee = template.hard_template? ? trunk : self
-      testee = self
-      deny_because("#{ydhpt} #{verb} this card") unless testee.lets_user( operation ) 
-    end
-
     def approve_type
-      approve_delete if !new_card?       
-      new_self = clone_to_type( type ) 
-      unless Cardtype.create_ok?(new_self.type)
-        deny_because you_cant("create #{new_self.cardtype.name} cards")
-      end
+      approve_delete if !new_card?
+      approve_create
     end
 
     def approve_content

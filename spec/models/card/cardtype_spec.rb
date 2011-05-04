@@ -43,13 +43,13 @@ describe "Card::Cardtype" do
       @card.type.should == 'Basic'      
     end
     
-    it "creates cardtype model and permission" do
+    it "creates cardtype model" do
       @card.type = 'Cardtype'
       @card.save!    
       Cardtype.name_for('Cookie').should == 'Cookie'
       @card=Card['Cookie']
       assert_instance_of Cardtype, @card.extension
-      Permission.find_by_card_id_and_task(@card.id, 'create').should_not be_nil
+#      Permission.find_by_card_id_and_task(@card.id, 'create').should_not be_nil
       assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).type
     end
   end
@@ -190,9 +190,10 @@ describe User, "Joe User" do
     User.as :wagbot 
     @r3 = Role[:r3]
 
-    @ctf = Card['Cardtype F']
-    @ctf.permit(:create, @r3)
-    @ctf.save!
+    Card.create :name=>'Cardtype F+*type+*create', :type=>'Pointer', :content=>'[[r3]]'
+    
+#    @ctf.permit(:create, @r3)
+#    @ctf.save!
 
     User.as :joe_user
     @user = User[:joe_user]
@@ -204,7 +205,7 @@ describe User, "Joe User" do
     @user.roles.member?(@r3).should be_false
   end
   it "should ponder creating a card of Cardtype F, but find that he lacks create permissions" do
-    @ctf.ok?(:create).should be_false
+    Card.new(:type=>'Cardtype F').ok?(:create).should be_false
   end
   it "should not find Cardtype F on its list of createable cardtypes" do
     @cardtype_names.member?('Cardtype F').should be_false

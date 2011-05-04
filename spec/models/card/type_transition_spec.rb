@@ -87,9 +87,13 @@ end
 
 
 describe Card, "type transition approve create" do
+  before do
+    Card.create :name=>'Cardtype B+*type+*create', :type=>'Pointer', :content=>'[[r1]]'
+  end
+  
   it "should have errors" do
     lambda { change_card_to_type("basicname", "CardtypeB") }.should raise_error(Wagn::PermissionDenied)
-  end     
+  end
 
   it "should be the original type" do
     lambda { change_card_to_type("basicname", "CardtypeB") }
@@ -120,9 +124,9 @@ describe Card, "clone to type"  do
   end
 end
                 
-describe Card, "type transition approve destroy" do
+describe Card, "type transition approve type" do
   it "should have errors" do
-    lambda { change_card_to_type("type-a-card", "Basic") }.should raise_error(Wagn::PermissionDenied)
+    lambda {change_card_to_type("type-a-card", "Basic")}.should raise_error(Wagn::PermissionDenied)
   end
               
   it "should still be the original type" do

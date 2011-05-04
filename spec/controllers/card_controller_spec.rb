@@ -169,6 +169,11 @@ describe CardController do
    
     it "redirects to home if not readable and thanks not specified" do
       # Fruits (from shared_data) are anon creatable but not readable
+      
+      #remove me after regenerating test data
+      Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
+      
+      
       login_as :anon
       post :create, "card" => { "type"=>"Fruit", :name=>"papaya" }
       assert_template "ajax_redirect"
@@ -203,6 +208,9 @@ describe CardController do
     end
     
     it "new should work for creatable nonviewable cardtype" do
+      #remove me after regenerating test data
+      Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
+      
       login_as(:anon)     
       get :new, :type=>"Fruit"
       assert_response :success

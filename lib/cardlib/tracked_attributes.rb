@@ -31,6 +31,8 @@ module Cardlib
       @old_name = self.name_without_tracking
       self.name_without_tracking = newname 
       return if @old_name==newname
+      Wagn::Cache.expire_card(newname.to_key) if newname
+      
     
 
       if newname.junction?
@@ -103,10 +105,6 @@ module Cardlib
     
     def set_permissions(perms)
       self.updates.clear(:permissions)
-      if type=='Cardtype' and !perms.detect{|p| p.task=='create'}
-        party = Role.find( Cardtype.create_party_for( 'Basic' ) )
-        perms << Permission.new(:task=>'create', :party=>party, :card_id=>self.id )
-      end
       self.permissions_without_tracking = perms.reject {|p| p.party==nil }
       perms.each do |p| 
         set_reader( p.party ) if p.task == 'read'

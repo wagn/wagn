@@ -110,8 +110,9 @@ class SharedData
 
     ::User.current_user = :wagbot 
     Card.create!(:name=>"AdminNow", :content=>"test") 
-    bt.permit(:create, Role['r1']); bt.save!  # set it so that Joe User can't create this type
     
+    Card.create :name=>'Cardtype B+*type+*create', :type=>'Pointer', :content=>'[[r1]]'
+        
     Card.create! :type=>"Cardtype", :name=>"Book"
     Card.create! :name=>"Book+*type+*content", :content=>"by {{+author}}, design by {{+illustrator}}"
     Card.create! :name => "Illiad", :type=>"Book"
@@ -151,7 +152,7 @@ class SharedData
     
     ## --------- Fruit: creatable by anon but not readable ---
     f = Card.create! :type=>"Cardtype", :name=>"Fruit"
-    f.permit(:create, Role[:anon])       
+    Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
     f.permit(:read, Role[:admin])   
     f.save!
 

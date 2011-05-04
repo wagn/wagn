@@ -198,8 +198,10 @@ class XmlrestControllerTest < ActionController::TestCase
   def test_should_redirect_to_thanks_on_create_without_read_permission
     # 1st setup anonymously create-able cardtype
     User.as(:joe_admin)
+    
+    #remove me after regenerating test data
     f = Card.create! :type=>"Cardtype", :name=>"Fruit"
-    f.permit(:create, Role[:anon])
+    Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
     f.permit(:read, Role[:admin])
     f.save!
 
@@ -221,8 +223,10 @@ class XmlrestControllerTest < ActionController::TestCase
   def test_should_redirect_to_card_on_create_main_card
     # 1st setup anonymously create-able cardtype
     User.as(:joe_admin)
+    
+    #remove me after regenerating test data 
     f = Card.create! :type=>"Cardtype", :name=>"Fruit"
-    f.permit(:create, Role[:anon])
+    Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
     f.permit(:read, Role[:anon])
     f.save!
 
@@ -249,10 +253,12 @@ class XmlrestControllerTest < ActionController::TestCase
 
   def test_new_should_not_for_creatable_nonviewable_cardtype
     User.as(:joe_admin)
+    
+    #remove me after regenerating test data
     f = Card.create! :type=>"Cardtype", :name=>"Fruit"
-    f.permit(:create, Role[:anon])
+    Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
     f.permit(:read, Role[:auth])
-    f.permit(:edit, Role[:admin])
+#    f.permit(:edit, Role[:admin])
     f.save!
 
     ff = Card.create! :name=>"Fruit+*tform"

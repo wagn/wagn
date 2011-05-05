@@ -2,13 +2,13 @@ class Renderer
   define_view(:raw, :name=>'*now') do
     Time.now.strftime('%A, %B %d, %Y %I:%M %p %Z')
   end
-  view_alias(:raw, {:name=>'*now'}, :naked)
+  alias_view(:raw, {:name=>'*now'}, :naked)
 
 
   define_view(:raw, :name=>'*version') do
     Wagn::Version.full
   end
-  view_alias(:raw, {:name=>'*version'}, :naked)
+  alias_view(:raw, {:name=>'*version'}, :naked)
 
   
   define_view(:raw, :name=>'*alerts') do
@@ -17,5 +17,5 @@ class Renderer
       div(:id=>"error")  { "#{flash[:warning]}#{flash[:error]}" }
     end
   end
-  view_alias(:raw, {:name=>'*alerts'}, :naked)
+  alias_view(:raw, {:name=>'*alerts'}, :naked)
 end

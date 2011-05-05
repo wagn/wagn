@@ -40,13 +40,15 @@ class RichHtmlRenderer
   define_view(:open) do |args|
     @state = :view
     self.requested_view = 'open'
-    wrap(args) { render_partial('views/open') }
+    wrap(args) { render_partial('views/open') } +
+    open_close_js
   end
 
   define_view(:closed) do |args|
     @state = :line
     self.requested_view = args[:action] = 'closed'
-    wrap(args) { render_partial('views/closed') }
+    wrap(args) { render_partial('views/closed') } + 
+    open_close_js
   end
 
   define_view(:setting) do |args|
@@ -116,5 +118,5 @@ Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
     else
       val = self.render_layout
     end
-  end
+  end  
 end

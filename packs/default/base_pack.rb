@@ -7,9 +7,10 @@ class Renderer
   # (builtins, etc.)
   define_view(:raw) do card ? card.raw_content : _render_blank end
   define_view(:refs) do card.respond_to?('references_expired') ? card.raw_content : '' end
-  define_view(:naked) do |args|
+  define_view(:naked) do #|args|
     card.name.template_name? ? _render_raw : process_content(_render_raw)
   end
+  alias_view(:naked, {}, :show)
 
 ###----------------( NAME) 
   define_view(:name)     { card.name             }
@@ -48,13 +49,5 @@ class Renderer
 
   define_view(:blank) do "" end
 
-  define_view(:rss_titled) do |args|
-    # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
-    content_tag( :h2, fancy_title(card.name) ) + self._render_open_content(args) { yield }
-  end
 
-  define_view(:rss_change) do
-    self.requested_view = 'content'
-    render_view_action('change')
-  end
 end

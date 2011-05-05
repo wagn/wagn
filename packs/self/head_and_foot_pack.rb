@@ -31,7 +31,7 @@ class Renderer
     
     bits.join("\n")
   end
-  view_alias(:raw, {:name=>'*head'}, :naked)
+  alias_view(:raw, {:name=>'*head'}, :naked)
   
   
   
@@ -56,6 +56,6 @@ class Renderer
       else; ''; end
     end
   end
-  view_alias(:raw, {:name=>'*foot'}, :naked)
+  alias_view(:raw, {:name=>'*foot'}, :naked)
 
 end

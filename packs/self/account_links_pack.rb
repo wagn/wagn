@@ -12,5 +12,5 @@ class Renderer
       end
     end
   end
-  view_alias(:raw, {:name=>'*account link'}, :naked)
+  alias_view(:raw, {:name=>'*account link'}, :naked)
 end

@@ -10,7 +10,10 @@ class Renderer
   define_view(:naked) do #|args|
     card.name.template_name? ? _render_raw : process_content(_render_raw)
   end
-  alias_view(:naked, {}, :show)
+  alias_view(:naked, {}, :show, :content)
+  define_view(:titled) do
+    card.name + "\n\n" + _render_naked
+  end
 
 ###----------------( NAME) 
   define_view(:name)     { card.name             }

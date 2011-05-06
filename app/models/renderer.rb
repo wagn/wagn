@@ -134,12 +134,10 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
       if self==Renderer
         fmt = (opts[:format] ? opts[:format].to_sym : :html)
         renderer_name = (RENDERERS.has_key?(fmt) ? RENDERERS[fmt] : fmt.to_s.capitalize).to_s + 'Renderer'
-        Rails.logger.info "renderer_name = #{renderer_name}"
         if Object.const_defined?( renderer_name)
           return Object.const_get( renderer_name ).new(card, opts) 
         end
       end
-      #warn "self = #{self}, fmt = #{fmt}, #{self==Renderer}, #{RENDERERS.has_key?(fmt)} "
       new_renderer = self.allocate
       new_renderer.send :initialize, card, opts
       new_renderer

@@ -1,4 +1,13 @@
 class RichHtmlRenderer
+  define_view(:show) do
+    if ajax_call?
+      view = params[:view] || params[:home_view] || :open
+      self.render(view , :add_javascript=>true)
+    else
+      self.render_layout
+    end
+  end
+  
   define_view(:layout) do |args|
     if @main_content = args.delete(:main_content)
       @card = Card.fetch_or_new('*placeholder',{},:skip_defaults=>true)
@@ -111,12 +120,5 @@ Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
     }
   end
 
-  define_view(:show) do |args|
-    if ajax_call?
-      view = params[:view] || params[:home_view] || :open
-      self.render(view , :add_javascript=>true)
-    else
-      val = self.render_layout
-    end
-  end  
+
 end

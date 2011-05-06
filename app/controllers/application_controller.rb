@@ -43,7 +43,7 @@ class ApplicationController < ActionController::Base
         System.wagn_name = mapping.wagn_name
         ActiveRecord::Base.connection.schema_search_path = mapping.wagn_name
       else
-        return render_fast_404
+        return render_fast_404(request.host)
       end
     end
 

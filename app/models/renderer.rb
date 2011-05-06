@@ -522,11 +522,11 @@ raise "???" if Hash===action
   def main_card?() context=~/^main_\d$/ end
 end
 
+class TextRenderer < Renderer
+end
 class KmlRenderer < Renderer
 end
 class RssRenderer < RichHtmlRenderer
 end
-class TextRenderer < Renderer
-end
-class EmailHtmlRenderer < Renderer
+class EmailHtmlRenderer < RichHtmlRenderer
 end

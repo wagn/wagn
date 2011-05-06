@@ -50,7 +50,8 @@ class ApplicationController < ActionController::Base
     Wagn::Cache.re_initialize_for_new_request
     # Set/Redirect to Canonical Domain
     if request.raw_host_with_port != System.host and RAILS_ENV=="production"
-      return redirect_to("http://#{System.host}#{request.path}")
+      query_string = request.query_string.empty? ? '' : "?#{request.query_string}"
+      return redirect_to("http://#{System.host}#{request.path}#{query_string}")
     end
 
     User.current_user = current_user || User.find_by_login('anon')

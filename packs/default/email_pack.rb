@@ -1,0 +1,3 @@
+class EmailHtmlRenderer
+  
+end

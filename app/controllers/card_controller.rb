@@ -61,28 +61,15 @@ class CardController < ApplicationController
   
   def render_show_text
     request.format = :html if !params[:format]
-
     respond_to do |format|
-      format.rss do
-         raise("Sorry, RSS is broken in rails < 2.2") unless Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >=2
-         # rss causes infinite memory suck in rails 2.1.2.  
-         @text = render_to_string(:action=>'show')
-      end
-      format.xml do render :text=>'xml not yet supported' end
-      format.json do render :text=>'json not yet supported' end
-      [:txt, :css, :kml, :html].each do |f|
+      FORMATS.split('|').each do |f|
         format.send f do
-          @text = Renderer.new(@card, 
+          return Renderer.new(@card, 
             :format=>f, :flash=>flash, :params=>params
           ).render(:show)
         end
       end
     end
-    if params[:js]
-      # this is ugly, but needs to happen for now for opening / closing
-      @text += %{<script type="javascript">Wagn.#{params[:js]}(getSlotFromContext('#{@context}'))</script>}
-    end
-    @text
   end
   
 

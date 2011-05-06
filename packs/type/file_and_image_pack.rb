@@ -20,5 +20,5 @@ class Renderer
     #= editor_hooks :save=>%{ //FIXME: handle the case that the upload isn't finished. }
   end
 
-  view_alias :editor, {:type=>:file}, {:type=>:image}
+  alias_view :editor, {:type=>:file}, {:type=>:image}
 end

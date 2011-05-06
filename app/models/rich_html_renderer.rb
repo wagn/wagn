@@ -410,12 +410,14 @@ class RichHtmlRenderer < Renderer
     javascript_tag code
   end
 
+  def open_close_js
+    return '' if !params[:js]
+    javascript_tag %{Wagn.#{params[:js]}(getSlotFromContext('#{params[:context]}'))}
+  end
+
   def setup_autosave
-    if @nested or @skip_autosave
-      ""
-    else
-      javascript_tag "Wagn.setupAutosave('#{card.id}', '#{context}');\n"
-    end
+    return '' if @nested or @skip_autosave
+    javascript_tag "Wagn.setupAutosave('#{card.id}', '#{context}');\n"
   end
 
   def half_captcha

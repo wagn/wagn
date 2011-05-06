@@ -24,10 +24,9 @@ class Renderer
   }
 
   RENDERERS = {
-    :html => :RichHtmlRenderer,
-    :css => :TextRenderer,
-    :kml => :KmlRenderer
-    #:xml => :XmlFormater
+    :html => :RichHtml,
+    :css  => :Text,
+    :txt  => :Text
   }
 
   cattr_accessor :max_char_count, :max_depth, :set_views,
@@ -58,7 +57,7 @@ class Renderer
   #     _render(_setname)_viewname(args)
   #  #
   class << self
-    def view_alias(view, opts={}, *aliases)
+    def alias_view(view, opts={}, *aliases)
       view_key = get_pattern(view, opts)
       aliases.each do |aview|
         case aview
@@ -69,7 +68,7 @@ class Renderer
             else
               view_key.to_s.sub(/_#{view}$/, "_#{aview}").to_sym
             end
-#Rails.logger.info("view_alias #{aview_key}, #{view} > #{aview}")
+#Rails.logger.info("alias_view #{aview_key}, #{view} > #{aview}")
         when Hash
           aview_key = get_pattern(aview[:view]||view, aview)
         else raise "Bad view #{aview.inspect}"
@@ -131,31 +130,23 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
 
     @@set_views, @@fallback = {},{} unless @@set_views
 
-    def new(card, opts=nil)
-      fmt = (opts && opts[:format] ? opts[:format].to_sym : :html)
-      if self==Renderer && RENDERERS.has_key?(fmt)
-        #warn "format = #{fmt}"
-        Renderer.const_get(RENDERERS[fmt]).new(card, opts)
-      else
-        #warn "self = #{self}, fmt = #{fmt}, #{self==Renderer}, #{RENDERERS.has_key?(fmt)} "
-        new_renderer = self.allocate
-        new_renderer.send :initialize, card, opts
-        new_renderer
+    def new(card, opts={})
+      if self==Renderer
+        fmt = (opts[:format] ? opts[:format].to_sym : :html)
+        renderer_name = (RENDERERS.has_key?(fmt) ? RENDERERS[fmt] : fmt.to_s.capitalize).to_s + 'Renderer'
+        if Object.const_defined?( renderer_name)
+          return Object.const_get( renderer_name ).new(card, opts) 
+        end
       end
+      new_renderer = self.allocate
+      new_renderer.send :initialize, card, opts
+      new_renderer
     end
 
     def set_view(key) @@set_views[key.to_sym] end
     def view_aliases() VIEW_ALIASES end
   end
 
-  FORMAT2VIEW = {  
-    :txt => :raw,
-    :css => :naked,
-    :kml => :show, # partial
-    :xml => nil,
-    :json => nil,
-    :html => :layout
-  }
 
   # Fragment left over from controller, I think this is all handled ?
   #   for :xhr, render_show => :naked, :html render_show => :layout
@@ -338,7 +329,7 @@ raise "???" if Hash===action
   end
 
   def method_missing(method_id, *args, &proc)
-Rails.logger.debug "method missing: #{method_id}"
+    Rails.logger.debug "method missing: #{method_id}"
     # silence Rails 2.2.2 warning about binding argument to concat.  tried detecting rails 2.2
     # and removing the argument but it broken lots of integration tests.
     ActiveSupport::Deprecation.silence { @template.send(method_id, *args, &proc) }
@@ -531,5 +522,11 @@ Rails.logger.debug "method missing: #{method_id}"
   def main_card?() context=~/^main_\d$/ end
 end
 
+class TextRenderer < Renderer
+end
 class KmlRenderer < Renderer
+end
+class RssRenderer < RichHtmlRenderer
+end
+class EmailHtmlRenderer < RichHtmlRenderer
 end

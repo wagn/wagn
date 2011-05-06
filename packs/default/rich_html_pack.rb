@@ -1,4 +1,13 @@
 class RichHtmlRenderer
+  define_view(:show) do
+    if ajax_call?
+      view = params[:view] || params[:home_view] || :open
+      self.render(view , :add_javascript=>true)
+    else
+      self.render_layout
+    end
+  end
+  
   define_view(:layout) do |args|
     if @main_content = args.delete(:main_content)
       @card = Card.fetch_or_new('*placeholder',{},:skip_defaults=>true)
@@ -17,12 +26,10 @@ class RichHtmlRenderer
   
 
   define_view(:content) do |args|
-    Rails.logger.info "args upon calling :content: #{args.inspect}"
     @state = :view
     self.requested_view = args[:action] = 'content'
     c = _render_naked(args)
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
-    Rails.logger.info "args after render_naked, before wrap: #{args.inspect}"
     wrap(args) {  wrap_content(c) }
   end
 
@@ -42,13 +49,15 @@ class RichHtmlRenderer
   define_view(:open) do |args|
     @state = :view
     self.requested_view = 'open'
-    wrap(args) { render_partial('views/open') }
+    wrap(args) { render_partial('views/open') } +
+    open_close_js
   end
 
   define_view(:closed) do |args|
     @state = :line
     self.requested_view = args[:action] = 'closed'
-    wrap(args) { render_partial('views/closed') }
+    wrap(args) { render_partial('views/closed') } + 
+    open_close_js
   end
 
   define_view(:setting) do |args|
@@ -111,12 +120,5 @@ Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
     }
   end
 
-  define_view(:show) do |args|
-    if ajax_call?
-      view = params[:view] || params[:home_view] || :open
-      self.render(view , :add_javascript=>true)
-    else
-      val = self.render_layout
-    end
-  end
+
 end

@@ -22,5 +22,5 @@ class Renderer
   end
 
 
-  view_alias(:closed_content , {:type=>:search}, {:type=>:set})
+  alias_view(:closed_content , {:type=>:search}, {:type=>:set})
 end

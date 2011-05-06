@@ -23,7 +23,7 @@ class Renderer
     end
   end
   
-  view_alias( :editor, {:type=>'plain_text'},  {:type=>'script'} )
+  alias_view( :editor, {:type=>'plain_text'},  {:type=>'script'} )
 
   define_view(:naked, :type=>'ruby') do
     ruby = process_content( card.content )

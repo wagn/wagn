@@ -239,7 +239,7 @@ module Card
     end
 
     def save_with_trash!
-      save || raise(ActiveRecord::RecordNotSaved)
+      save || raise(errors.full_messages.join('. '))
     end
     alias_method_chain :save!, :trash
 
@@ -679,7 +679,9 @@ module Card
     end  
   
     validates_each :key do |rec, attr, value|
-      unless value == rec.name.to_key
+      if value.empty?
+        rec.errors.add :key, "key cannot be blank"
+      elsif value != rec.name.to_key
         rec.errors.add :key, "wrong key '#{value}' for name #{rec.name}"
       end
     end

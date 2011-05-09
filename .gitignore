@@ -5,6 +5,7 @@ config/amazon_s3.yml
 config/database.yml
 config/newrelic.yml
 config/wagn.rb
+config/cruise*
 coverage
 log/*
 pkg

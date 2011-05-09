@@ -6,6 +6,7 @@ if [ ! -f config/wagn.rb ]; then
   export WAGN_CI_MODE=scratch
   cp config/cruise.wagn.rb config/wagn.rb
 else
+  export WAGN_CI_MODE=pre
   echo -e "USING PRE-EXISTING DATABASE\n to regenerate, delete config/wagn.rb"
 fi
 

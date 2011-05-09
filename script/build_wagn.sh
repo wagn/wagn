@@ -12,12 +12,11 @@ fi
 
 for db_config in config/cruise.*.database.yml; do
   echo -e "~~~~~~\nDATABASE CONFIGURATION: $db_config\n~~~~~~~"
+  cp $db_config config/database.yml
   
   if [ $WAGN_CI_MODE = scratch ]; then
-    cp $db_config config/database.yml
     echo "creating wagn database"
     rake wagn:create --trace
-#    env RAILS_ENV=test rake db:create
     echo "reloading test data"
     env RELOAD_TEST_DATA=true rake db:test:prepare
   fi

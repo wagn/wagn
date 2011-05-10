@@ -552,12 +552,14 @@ end
 
 class TextRenderer < Renderer
 end
+
 class KmlRenderer < Renderer
 end
+
 class RssRenderer < RichHtmlRenderer
+  def full_uri(relative_uri)  System.base_url + relative_uri  end
 end
+
 class EmailHtmlRenderer < RichHtmlRenderer
-  def full_uri(relative_uri)
-    System.base_url + relative_uri
-  end
+  def full_uri(relative_uri)  System.base_url + relative_uri  end
 end

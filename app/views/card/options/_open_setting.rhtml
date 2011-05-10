@@ -18,7 +18,7 @@ slot = get_slot
 
     <div class="setting-row">
       <div class="value">
-        <%= slot.subrenderer(value_card).render((value_card.new_record? ? :setting_missing : :setting), :view=>:setting ) %>
+        <%= slot.subrenderer(value_card).render((value_card.new_record? ? :setting_missing : :setting), :home_view=>:setting ) %>
       </div>
       <div class="set">
         <%= link_to_page Wagn::Pattern.label(set_name), set_name %>

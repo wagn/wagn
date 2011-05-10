@@ -133,7 +133,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     def new(card, opts={})
       if self==Renderer
         fmt = (opts[:format] ? opts[:format].to_sym : :html)
-        renderer_name = (RENDERERS.has_key?(fmt) ? RENDERERS[fmt] : fmt.to_s.capitalize).to_s + 'Renderer'
+        renderer_name = (RENDERERS.has_key?(fmt) ? RENDERERS[fmt] : fmt.to_s.camelize).to_s + 'Renderer'
         if Object.const_defined?( renderer_name)
           return Object.const_get( renderer_name ).new(card, opts) 
         end
@@ -524,16 +524,23 @@ raise "???" if Hash===action
     
   def build_link(href, text)
     klass = case href
-      when /^\//;      'internal-link'
       when /^https?:/; 'external-link'
       when /^mailto:/; 'email-link'
+      when /^\//
+        href = full_uri(href)      
+        'internal-link'
       else
         known_card = !!Card.fetch(href)
         text = text.to_show(href)
         href = '/wagn/' + (known_card ? href.to_url_key : CGI.escape(Cardname.escape(href)))
+        href = full_uri(href)
         known_card ? 'known-card' : 'wanted-card'
     end
     %{<a class="#{klass}" href="#{href}">#{text}</a>}      
+  end
+  
+  def full_uri(relative_uri)
+    relative_uri
   end
 
   
@@ -546,4 +553,7 @@ end
 class RssRenderer < RichHtmlRenderer
 end
 class EmailHtmlRenderer < RichHtmlRenderer
+  def full_uri(relative_uri)
+    System.base_url + relative_uri
+  end
 end

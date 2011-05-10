@@ -1,3 +1,2 @@
 class EmailHtmlRenderer
-  
 end

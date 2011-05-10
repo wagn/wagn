@@ -17,7 +17,7 @@ class Flexmail
         [:subject, :message].each do |field|
           config[field] = if_card("#{email_config}+*#{field}") do |c|
             User.as( c.card.updater ) do
-              c.contextual_content(card)
+              c.contextual_content(card, :format=>'email_html')
             end
           end.else("")
         end

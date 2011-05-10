@@ -230,6 +230,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
   end
   alias expand_inclusions process_content
 
+
   def render_check(action)
     ch_action = case
       when too_deep?      ; :too_deep
@@ -520,6 +521,22 @@ raise "???" if Hash===action
   end
 
   def main_card?() context=~/^main_\d$/ end
+    
+  def build_link(href, text)
+    klass = case href
+      when /^\//;      'internal-link'
+      when /^https?:/; 'external-link'
+      when /^mailto:/; 'email-link'
+      else
+        known_card = !!Card.fetch(href)
+        text = text.to_show(href)
+        href = '/wagn/' + (known_card ? href.to_url_key : CGI.escape(Cardname.escape(href)))
+        known_card ? 'known-card' : 'wanted-card'
+    end
+    %{<a class="#{klass}" href="#{href}">#{text}</a>}      
+  end
+
+  
 end
 
 class TextRenderer < Renderer

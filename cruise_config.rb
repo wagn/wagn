@@ -22,5 +22,5 @@ end
 # 1. You can override settings in this cruise_config.rb file in [cruise data]/projects/your_project/cruise_config.rb
 # 2. You should set up database.yml content in files that follow this pattern:  config/cruise.[name].database.yml
 # 3. You should set up wagn.rb content in a file named config/cruise.wagn.rb
-# 4. By default the databases are not regenerated from scratch each time you run the integration test.  
+# 4. By default the databases are not regenerated from scratch each time you run the integration tests.  
 #    To trigger re-creation, you will need to remove config/wagn.rb

@@ -22,6 +22,10 @@ class Renderer
     :line => :closed,
     :bare => :naked,
   }
+  
+  UNDENIABLE_VIEWS = [ 
+    :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :setting_missing
+  ]
 
   RENDERERS = {
     :html => :RichHtml,
@@ -106,7 +110,7 @@ raise "??? #{view.inspect}" unless final_meth
           end
 
           define_method( "render_#{view}" ) do |*a|
-            if refusal=render_check(view); return refusal end
+            if refusal=render_check(view, *a); return refusal end
 raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_method( view )
             send( "_render_#{view}", *a) { yield }
           end
@@ -231,7 +235,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
   alias expand_inclusions process_content
 
 
-  def render_check(action)
+  def render_check(action, args={})
     ch_action = case
       when too_deep?      ; :too_deep
       when !card          ; false
@@ -242,15 +246,15 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
       else
         !card.ok?(:read) and :deny_view
       end
-      ch_action and render_view_action ch_action
+      ch_action and render(ch_action, args)
   end
 
-  def render_deny(action, args)
-    if [ :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing,
-         :closed_missing, :setting_missing].member?(action)
-       render_view_action action, args
-    elsif card && card.new_record?; return # need create check...
-    else render_check action end
+  def render_deny(action, args={})
+    case
+    when UNDENIABLE_VIEWS.member?(action); return
+    when card && card.new_record?;         return # need create check...
+    else render_check action, args
+    end
   end
 
   def canonicalize_view( view )

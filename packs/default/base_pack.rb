@@ -52,5 +52,10 @@ class Renderer
 
   define_view(:blank) do "" end
 
+  [ :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :setting_missing ].each do |view|
+    define_view(view) do |args|
+      render_view_action view, args
+    end
+  end
 
 end

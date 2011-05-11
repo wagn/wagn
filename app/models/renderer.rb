@@ -555,9 +555,7 @@ class TextRenderer < Renderer
     super card,opts
     
     if format=='css' && controller
-      h = controller.response.headers
-      h["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
-      h["Pragma"] = "no-cache"
+      controller.response.headers["Cache-Control"] = "public"
     end
   end
 end

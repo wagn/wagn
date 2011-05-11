@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 module CaptchaExampleGroupMethods
   def require_captcha_on(action, params)
+    ENV['RECAPTCHA_PUBLIC_KEY'] = 'not nil'
     it action.to_s do
       require_captcha!
       post action, params    

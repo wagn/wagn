@@ -1,8 +1,0 @@
-<%#ENGLISH%>
-<%# if !card or !card.limit or card.limit.to_i > (index.to_i+1) %>
-  <li id="<%=eid%>-add">
-  <%= link_to_remote 'Add another', 
-      :url=>"javascript:urlForAddField('#{card ? card.key : ''}','#{eid}')", 
-      :update=>"#{eid}-ul",
-      :position=>:bottom %>
-<%# end %>

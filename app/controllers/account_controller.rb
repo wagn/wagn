@@ -14,7 +14,7 @@ class AccountController < ApplicationController
     @card = Card.new( card_args )
 
     return unless request.post?
-    return unless (captcha_required? ? verify_captcha(:model=>@user) : true)
+    return unless (captcha_required? && ENV['RECAPTCHA_PUBLIC_KEY'] ? verify_captcha(:model=>@user) : true)
 
     Wagn::Hook.call( :account_controller_create, @card, self, params, @user )
     return unless @user.errors.empty?

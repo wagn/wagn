@@ -1,4 +1,4 @@
-require 'lib/util/card_builder.rb'      
+require File.expand_path(File.dirname(__FILE__) + '/../util/card_builder.rb')
 
 
  
@@ -37,6 +37,7 @@ namespace :test do
   ##  setting it by hand after fixture generation.  
   desc "recreate test fixtures from fresh db"
   task :generate_fixtures => :environment do  
+    Rake::Task['cache:clear']
     # env gets auto-set to 'test' somehow.
     # but we need development to get the right schema dumped. 
     ENV['RAILS_ENV'] = 'development'

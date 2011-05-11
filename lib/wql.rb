@@ -88,9 +88,9 @@ class Wql
   end
   
   def run
-    #warn sql
+#    warn "query: #{query.inspect}\n\n sql: #{sql}"
     rows = ActiveRecord::Base.connection.select_all( sql )
-    case (query[:return] || :card)
+    case (query[:return] || :card).to_sym
     when :card
       rows.map do |row|
         card=
@@ -102,6 +102,8 @@ class Wql
           end
         card.nil? ? Card.find_by_name_and_trash(row['name'],false).repair_key : card
       end
+    when :count
+      rows.first['count']
     else
       rows.map { |row| row[query[:return].to_s] }
     end
@@ -143,7 +145,7 @@ class Wql
     def match_prep(v,cardspec=self)
       cxn ||= ActiveRecord::Base.connection
       v=cardspec.root.params['_keyword'] if v=='_keyword' 
-#Rails.logger.info "wql_match_prep _keyword (#{v.inspect}" v=='_keyword'
+#Rails.logger.debug "wql_match_prep _keyword (#{v.inspect}" v=='_keyword'
       v.strip!#FIXME - breaks if v is nil
       [cxn, v]
     end
@@ -540,14 +542,14 @@ Rails.logger.info "count iter(#{relation.inspect} #{subspec.inspect})"
         dir = @mods[:dir].blank? ? (DEFAULT_ORDER_DIRS[order_key]||'desc') : @mods[:dir]
         sql.order = "ORDER BY "
         sql.order << case order_key
-          when "update"; "#{table_alias}.updated_at #{dir}"
-          when "create"; "#{table_alias}.created_at #{dir}"
-          when /^(name|alpha)$/;  "#{table_alias}.key #{dir}"  
-          when "count";  "count(*) #{dir}, #{table_alias}.name asc"
+          when "update";          "#{table_alias}.updated_at #{dir}"
+          when "create";          "#{table_alias}.created_at #{dir}"
+          when "count" ;          "count(*) #{dir}, #{table_alias}.name asc"
+          when /^(name|alpha)$/;  "LOWER( #{table_alias}.key ) #{dir}"
           when 'content'
             sql.joins << "join revisions r2 on r2.id=#{self.table_alias}.current_revision_id"
             "lower(r2.content) #{dir}"
-          when "relevance";  
+          when "relevance" 
             if !sql.relevance_fields.empty?
               sql.fields << sql.relevance_fields
               "name_rank desc, content_rank desc" 

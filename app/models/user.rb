@@ -223,12 +223,15 @@ class User < ActiveRecord::Base
   end
 
   def password_required?
-     !built_in? && !pending? && not_openid? && (crypted_password.blank? or not password.blank?)
+     !built_in? && 
+     !pending?  && 
+     #not_openid? && 
+     (crypted_password.blank? or not password.blank?)
   end
  
-  def not_openid?
-    identity_url.blank?
-  end
+#  def not_openid?
+#    identity_url.blank?
+#  end
 
 end
 

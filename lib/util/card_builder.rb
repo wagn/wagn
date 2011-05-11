@@ -3,6 +3,7 @@ module CardBuilderMethods
   WAGBOT_ID = 1
 
   def newcard(name, content="")
+Rails.logger.info "newcard(#{name}, #{content})"
     ::Card::Basic.create! :name=>name, :content=>content
   end
   

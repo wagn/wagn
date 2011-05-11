@@ -728,7 +728,7 @@ body#wagn .card-slot.recent-changes h2 {
 div.pointer-list,
 div.search-result-list {
   list-style: none;
-  padding: 5px 10px;
+  padding: 5px 0;
   margin: 0;
 }
 

@@ -1,9 +1,0 @@
-<%- 
-  eid = slot.context
-  options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]} 
-%>
-<%= select_tag "#{eid}-select", options_for_select(options, card.item_names.first), :id=>"#{eid}-select", :class=>'pointer-select' %>
-
-<%= slot.editor_hooks :save=>%{
-  setPointerContent('#{eid}', $('#{eid}-select').value); return true;
-} %>

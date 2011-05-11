@@ -76,13 +76,7 @@ class ApplicationController < ActionController::Base
     respond_to do |format|
       format.html {
         unless request.xhr?
-          layout = case
-            when BUILTIN_LAYOUTS.include?(params[:layout]);
-              params[:layout]
-#            when params[:layout] == 'none'; nil
-            else
-              'application'
-            end
+          layout = 'application'
         end
       }
     end

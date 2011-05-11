@@ -18,7 +18,7 @@ class Renderer
         check_box_tag "#{eid}-checkbox", option.name, card.item_names.include?(option.name),
       { :id=>"#{eid}-checkbox-#{option.key}", :class=>'pointer-checkbox-button' } }
   <span class="pointer-checkbox-label">
-    <span class="checkbox-option-name"><%= option.name %></span>
+    <span class="checkbox-option-name">#{option.name}</span>
     #{description = card.option_text(option.name) ?  %{
       <div class="checkbox-option-description">#{ description }</div>} : '' }
   </span>

@@ -3,7 +3,7 @@
 Project.configure do |project|
   
   # Send email notifications about broken and fixed builds to email1@your.site, email2@your.site (default: send to nobody)
-  #project.email_notifier.emails = ['email1@your.site', 'email2@your.site']
+  # project.email_notifier.emails = ['email1@your.site', 'email2@your.site']
 
   # Build the project by invoking rake task 'custom'
   # project.rake_task = 'custom'
@@ -24,3 +24,4 @@ end
 # 3. You should set up wagn.rb content in a file named config/cruise.wagn.rb
 # 4. By default the databases are not regenerated from scratch each time you run the integration tests.  
 #    To trigger re-creation, you will need to remove config/wagn.rb
+

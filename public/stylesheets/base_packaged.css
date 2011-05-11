@@ -197,7 +197,7 @@ body#wagn .card-slot.recent-changes h2 {margin-top: 15px}
 .phrasebox {width: 98%}
 .content .paging img {float: none !important; padding: 0px 3px; margin: 0px}
 .search-no-results:after {content:'0 results'}
-div.pointer-list, div.search-result-list {list-style: none; padding: 5px 10px; margin: 0}
+div.pointer-list, div.search-result-list {list-style: none; padding: 5px 0; margin: 0}
 div.pointer-list .pointer-item, div.search-result-list .search-result-item {margin: 0}
 .search-result-item.item-link, .pointer-item.item-link, .search-result-item.item-name, .pointer-item.item-name {display: block; text-indent: -15px; padding-left: 15px}
 .radio-option-description, .checkbox-option-description {margin-left: 40px}

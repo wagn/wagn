@@ -13,7 +13,7 @@ class Renderer
 
   define_view(:checkbox, :type=>'pointer') do
     eid = context
-    card.options.each do |option|
+    card.options.map do |option|
       %{<div class="pointer-checkbox"> #{
         check_box_tag "#{eid}-checkbox", option.name, card.item_names.include?(option.name),
       { :id=>"#{eid}-checkbox-#{option.key}", :class=>'pointer-checkbox-button' } }
@@ -96,10 +96,10 @@ class Renderer
     eid = context
     %{
 <div class="pointer-radio-list"> #{
-      card.options.each do |option|
+      card.options.map do |option|
         %{
   <div class="pointer-radio">#{
-          radio_button_tag "#{eid}-radio", option.name, option.name==card.first,
+          radio_button_tag "#{eid}-radio", option.name, option.name==card.item_names.first,
        :id=>"#{eid}-radio-#{option.key}", :class=>'pointer-radio-button'}
     <span class="pointer-radio-label">
       <span class="radio-option-name">#{ option.name }</span>#{
@@ -119,7 +119,7 @@ class Renderer
   define_view(:select, :type=>'pointer') do
     eid = context
     options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]} 
-    select_tag("#{eid}-select", options_for_select(options, card.first), :id=>"#{eid}-select", :class=>'pointer-select') +
+    select_tag("#{eid}-select", options_for_select(options, card.item_names.first), :id=>"#{eid}-select", :class=>'pointer-select') +
 
     editor_hooks(:save=>%{ setPointerContent('#{eid}', $('#{eid}-select').value); return true; })
   end

@@ -39,7 +39,7 @@ class Renderer
   self.max_depth = 10
 
   attr_reader :action, :inclusion_map, :params, :layout, :relative_content,
-      :template, :root, :format
+      :template, :root, :format, :controller
   attr_accessor :card, :main_content, :main_card, :context, :char_count,
       :depth, :item_view, :form, :type, :base, :state, :sub_count,
       :render_args, :requested_view, :layout, :flash, :showname
@@ -161,8 +161,8 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     Renderer.current_slot ||= self
     @card = card
     if opts
-      [:main_content, :main_card, :base, :action, :context, :template,
-        :params, :relative_content, :format, :flash, :layout].
+      [ :main_content, :main_card, :base, :action, :context, :template,
+        :params, :relative_content, :format, :flash, :layout, :controller].
           map {|s| instance_variable_set "@#{s}", opts[s]}
     end
     inclusion_map( opts )
@@ -551,6 +551,15 @@ raise "???" if Hash===action
 end
 
 class TextRenderer < Renderer
+  def initialize card, opts
+    super card,opts
+    
+    if format=='css' && controller
+      h = controller.response.headers
+      h["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
+      h["Pragma"] = "no-cache"
+    end
+  end
 end
 
 class KmlRenderer < Renderer

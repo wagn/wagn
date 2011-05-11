@@ -65,7 +65,7 @@ class CardController < ApplicationController
       FORMATS.split('|').each do |f|
         format.send f do
           return Renderer.new(@card, 
-            :format=>f, :flash=>flash, :params=>params
+            :format=>f, :flash=>flash, :params=>params, :controller=>self
           ).render(:show)
         end
       end

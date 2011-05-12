@@ -15,7 +15,10 @@ module Cardlib
     end
     
     def contextual_content(context_card=nil, renderer_args={})
-      Renderer.new(context_card, renderer_args).process_content(Renderer.new(self)._render_raw)
+      renderer_args[:not_current] = true
+      Renderer.new(context_card, renderer_args).process_content(
+        Renderer.new(self, :not_current=>true)._render_raw
+      )
     end
   end
 end

@@ -423,15 +423,17 @@ class RichHtmlRenderer < Renderer
   end
 
   def half_captcha
-    if controller && captcha_required?
-      key = card.new_record? ? "new" : card.key
-      javascript_tag(%{loadScript("http://api.recaptcha.net/js/recaptcha_ajax.js")}) +
-        recaptcha_tags( :ajax=>true, :display=>{:theme=>'white'}, :id=>key)
-    end
+    return if !controller.captcha_required?
+    return "Captcha turned on but no RECAPTCHA key configured" unless ENV['RECAPTCHA_PUBLIC_KEY']
+    
+    key = card.new_record? ? "new" : card.key
+    javascript_tag(%{loadScript("http://api.recaptcha.net/js/recaptcha_ajax.js")}) +
+      recaptcha_tags( :ajax=>true, :display=>{:theme=>'white'}, :id=>key)
   end
 
+
   def full_captcha
-    return if !captcha_required?
+    return if !controller.captcha_required?
     return "Captcha turned on but no RECAPTCHA key configured" unless recaptcha_key = ENV['RECAPTCHA_PUBLIC_KEY']
   
     card_key = card.new_record? ? "new" : card.key

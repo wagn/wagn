@@ -158,7 +158,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
   #format == :xhr ? render(:action=>'show') : render(:text=>'', :layout=>true)
 
   def initialize(card, opts=nil)
-    Renderer.current_slot ||= self
+    Renderer.current_slot ||= self unless(opts[:not_current])
     @card = card
     if opts
       [ :main_content, :main_card, :base, :action, :context, :template,

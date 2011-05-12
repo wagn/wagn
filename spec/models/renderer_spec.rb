@@ -495,7 +495,6 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
   context "cards of type" do
     context "Date" do
       it "should have special editor" do
-        pending #not sure why this one is breaking - started breaking when I moved methods over to pack_spec_helper
         render_editor('Date').should be_html_with { a :class=>'date-editor-link'}
       end
     end

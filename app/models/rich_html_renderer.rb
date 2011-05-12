@@ -423,7 +423,7 @@ class RichHtmlRenderer < Renderer
   end
 
   def half_captcha
-    return if !controller.captcha_required?
+    return unless controller && controller.captcha_required?
     return "Captcha turned on but no RECAPTCHA key configured" unless ENV['RECAPTCHA_PUBLIC_KEY']
     
     key = card.new_record? ? "new" : card.key
@@ -433,7 +433,7 @@ class RichHtmlRenderer < Renderer
 
 
   def full_captcha
-    return if !controller.captcha_required?
+    return unless controller && controller.captcha_required?
     return "Captcha turned on but no RECAPTCHA key configured" unless recaptcha_key = ENV['RECAPTCHA_PUBLIC_KEY']
   
     card_key = card.new_record? ? "new" : card.key

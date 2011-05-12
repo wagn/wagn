@@ -40,7 +40,7 @@ class Renderer
     else
       %{<span class="faint">(#{ total })</span>
       <div class="search-result-list">
-        #{card.results.each_with_index do |c,index|
+        #{card.results.map do |c|
           %{<div class="search-result-item">#{'name' == item_view || params[:item] ? c.name : link_to_page( c.name ) }</div>}
         end*"\n"}
       </div>}

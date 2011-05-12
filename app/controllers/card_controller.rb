@@ -366,8 +366,9 @@ class CardController < ApplicationController
   
   def add_field # for pointers only
     load_card if params[:id]
+    @card ||= Card.new(:type=>'Pointer', :skip_defaults=>true)
     #render :partial=>'types/pointer/field', :locals=>params.merge({:link=>:add,:card=>@card})
-    Renderer.new(@card).render(:field, :link=>:add)
+    render(:text => Renderer.new(@card).render(:field, :link=>:add, :index=>params[:index]) )
   end
 
 end

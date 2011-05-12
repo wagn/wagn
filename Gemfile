@@ -34,7 +34,7 @@ gem 'mysql', '2.8.1',                      :group=>'mysql'
 # ~~~~~~~~~~~~~~ #
 
 gem 'image_science', '1.2.1', :group=>'image_science'
-#gem 'rmagick', '>=2.13.1',    :group=>'rmagick'
+gem 'rmagick', '>=2.13.1',    :group=>'rmagick'
 
 # ~~~~~~~ #
 # HOSTING #

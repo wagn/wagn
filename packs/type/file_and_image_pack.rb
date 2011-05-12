@@ -5,7 +5,7 @@ class Renderer
     self.skip_autosave = true
     # WEIRD: when I didn't check for new_record?, create would come up with random old attachment previews
     div( :class=>"attachment-preview", :id=>"#{attachment_uuid}-preview") do
-      !card.new_record? && card.attachment ? card.attachment.preview : ''
+      !card.new_card? && card.attachment ? card.attachment.preview : ''
     end +
     
     div do

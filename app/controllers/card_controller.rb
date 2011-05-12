@@ -61,8 +61,13 @@ class CardController < ApplicationController
   
   def render_show_text
     request.format = :html if !params[:format]
+    
+    known_formats = FORMATS.split('|')
+    f_ext = request.parameters[:format]
+    return "unknown format: #{f_ext}" if !known_formats.member?( f_ext )
+    
     respond_to do |format|
-      FORMATS.split('|').each do |f|
+      known_formats.each do |f|
         format.send f do
           return Renderer.new(@card, 
             :format=>f, :flash=>flash, :params=>params, :controller=>self

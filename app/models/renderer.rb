@@ -187,6 +187,10 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
       @layout = @params[:layout]
     end
   end
+  
+  def session
+    @controller ? @controller.session : {}
+  end
 
   def ajax_call?() @@ajax_call end
   def outer_level?() @depth == 0 end

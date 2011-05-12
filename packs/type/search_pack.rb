@@ -22,7 +22,7 @@ class Renderer
   end
 
   define_view(:closed_content, :type=>'search') do
-    return "#..." if depth > 2
+    return "..." if depth > 2
     begin
       card.item_cards( paging_params )
       total = card.count

@@ -143,7 +143,7 @@ module Wagn
             raise "Error loading card/#{cardtype}: #{e.message}"
           end
         end
-        ::Cardtype.load_cache 
+        ::Cardtype.load_cache unless ['test','cucumber'].member? ENV['RAILS_ENV']
         # we have to do this for now to make sure all the cardtype classes get initialized correctly, 
         # especially those with types that share names with ruby classes used elsewhere
         # eg. Date -> Card::Date (not just "Date").

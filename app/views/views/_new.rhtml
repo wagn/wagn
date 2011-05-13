@@ -1,7 +1,7 @@
 <%
    args={}
    slot ||= get_slot(card)
-   [:add_slot, :view].each {|x| args[x] = params[x] if params[x]}
+   [:add_slot, :home_view].each {|x| args[x] = params[x] if params[x]}
    # when new is called from an "Add <Cardname>" inclusion, there is no existing slot,
    #  so we pass an argument to create one.  eventually, the "Add <Cardname>" view should have
    #  a slot so that this isn't necessary
@@ -61,7 +61,7 @@
           <% end %>
         </div>
 
-        <%= s.half_captcha %>
+        <%= s.captcha_tags %>
         <%= hidden_field_tag :view, params[:view] || :open %>
         <div class="edit-button-area">
 

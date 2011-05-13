@@ -14,8 +14,11 @@ module Cardlib
       # this could go on and on..
     end
     
-    def contextual_content context = nil
-      RichHtmlRenderer.new(context).process_content(Renderer.new(self)._render_raw)
+    def contextual_content(context_card=nil, renderer_args={})
+      renderer_args[:not_current] = true
+      Renderer.new(context_card, renderer_args).process_content(
+        Renderer.new(self, :not_current=>true)._render_raw
+      )
     end
   end
 end

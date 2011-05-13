@@ -33,7 +33,10 @@ gem 'mysql', '2.8.1',                      :group=>'mysql'
 # IMAGE HANDLING #
 # ~~~~~~~~~~~~~~ #
 
-gem 'image_science', '1.2.1', :group=>'image_science'
+group :image_science do
+  gem 'image_science', '1.2.1'
+  gem 'RubyInline', '3.8.4'
+end
 #gem 'rmagick', '>=2.13.1',    :group=>'rmagick'
 
 # ~~~~~~~ #

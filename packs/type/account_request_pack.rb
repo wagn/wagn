@@ -6,12 +6,12 @@ class Renderer
     ].compact
     
     process_content(_render_raw) + 
-    if !card.new_card? # this if is not really necessary yet, but conceptually correct
+    if !card.new_card?
       div( :class=>"invite-links help instruction" ) do
         div { "<strong>#{card.name}</strong> requested an account on #{ format_date(card.created_at) }" } +
         (!links.empty? ? div { links.join } : '')
       end
-    end
+    else; ''; end
   end
 end
 

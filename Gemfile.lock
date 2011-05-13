@@ -1,6 +1,9 @@
 GEM
   remote: http://rubygems.org/
   specs:
+    RubyInline (3.8.4)
+      ZenTest
+    ZenTest (4.5.0)
     actionmailer (2.3.5)
       actionpack (= 2.3.5)
     actionpack (2.3.5)
@@ -91,6 +94,7 @@ PLATFORMS
   x86-mingw32
 
 DEPENDENCIES
+  RubyInline (= 3.8.4)
   assert2 (= 0.5.5)
   aws-s3 (>= 0.6.2)
   cucumber (>= 0.9.2)

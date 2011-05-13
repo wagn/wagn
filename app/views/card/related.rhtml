@@ -14,7 +14,7 @@
   <%= slot.notice %>
 
   <div class="open-content related">
-    <%= Slot.new(Card.fetch("#{card.name}+#{@current}")).render :content %>
+    <%= slot.subrenderer(Card.fetch_or_new("#{card.name}+#{@current}", {}, :skip_defaults=>true)).render :content %>
   </div>
 
   <%= javascript_tag("setupLinksAndDoubleClicks();") %>

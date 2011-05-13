@@ -30,11 +30,12 @@ module Card
     end
     
     def class_for(name, field='codename')
-      Card.const_get(
-        field.to_sym == :codename ? name :
+      class_id = ( field.to_sym == :codename ? name :
           ( cardname = ::Cardtype.name_for_key(name.to_key) and
-            ::Cardtype.classname_for( cardname ) )
+            ::Cardtype.classname_for(cardname) ) 
       )
+      klass = Card.const_get(class_id)
+      klass = klass.allocate.is_a?(Card::Base) ? klass : card_const_set(class_id)            
     rescue Exception=>e
       nil
     end

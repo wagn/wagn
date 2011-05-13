@@ -1,6 +1,6 @@
 class TextRenderer
   define_view :show do
-    self.render(params[:view] || :titled)
+    self.render(params[:view] || :naked)
   end
   
   define_view :naked do

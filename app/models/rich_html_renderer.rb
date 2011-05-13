@@ -96,10 +96,12 @@ class RichHtmlRenderer < Renderer
 
 
   def get_layout_content(args)
-    case
-      when (params[:layout] || args[:layout]) ;  layout_from_name
-      when card                               ;  layout_from_card
-      else                                    ;  LAYOUTS['default']
+    User.as(:wagbot) do
+      case
+        when (params[:layout] || args[:layout]) ;  layout_from_name
+        when card                               ;  layout_from_card
+        else                                    ;  LAYOUTS['default']
+      end
     end
   end
 
@@ -420,25 +422,22 @@ class RichHtmlRenderer < Renderer
     javascript_tag "Wagn.setupAutosave('#{card.id}', '#{context}');\n"
   end
 
-  def half_captcha
-    if controller && captcha_required?
-      key = card.new_record? ? "new" : card.key
-      javascript_tag(%{loadScript("http://api.recaptcha.net/js/recaptcha_ajax.js")}) +
-        recaptcha_tags( :ajax=>true, :display=>{:theme=>'white'}, :id=>key)
-    end
-  end
 
-  def full_captcha
-    return if !captcha_required?
+  def captcha_tags(opts={})
+    return unless controller && controller.captcha_required?
     return "Captcha turned on but no RECAPTCHA key configured" unless recaptcha_key = ENV['RECAPTCHA_PUBLIC_KEY']
-  
+    
+    js_lib_uri = "http://api.recaptcha.net/js/recaptcha_ajax.js"
     card_key = card.new_record? ? "new" : card.key
-    recaptcha_tags( :ajax=>true, :display=>{:theme=>'white'}, :id=>card_key ) +
+    recaptcha_tags( :ajax=>true, :display=>{:theme=>'white'}, :id=>card_key) +
     javascript_tag(
-      %{jQuery.getScript("http://api.recaptcha.net/js/recaptcha_ajax.js", function(){
-        document.getElementById('dynamic_recaptcha-#{card_key}').innerHTML='<span class="faint">loading captcha</span>';
-        Recaptcha.create('#{recaptcha_key}', document.getElementById('dynamic_recaptcha-#{card_key}'),RecaptchaOptions);
-      });
-    })
+      opts[:full] ?
+        %{jQuery.getScript("#{js_lib_uri}", function(){
+            document.getElementById('dynamic_recaptcha-#{card_key}').innerHTML='<span class="faint">loading captcha</span>';
+            Recaptcha.create('#{recaptcha_key}', document.getElementById('dynamic_recaptcha-#{card_key}'),RecaptchaOptions);
+          });
+        } :
+        %{loadScript("#{js_lib_uri}")}
+    )
   end
 end

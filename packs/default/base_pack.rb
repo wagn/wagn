@@ -19,7 +19,7 @@ class Renderer
   define_view(:name)     { card.name             }
   define_view(:key)      { card.key              }
   define_view(:linkname) { card.name.to_url_key  }
-  define_view(:link)     { Chunk::Reference.standard_card_link(card.name) }
+  define_view(:link)     { build_link(card.name, card.name) }
   define_view(:url)      { "#{System.base_url}/wagn/#{_render_linkname}"}
 
 ## DEPRECATED DEPRECATED
@@ -52,5 +52,10 @@ class Renderer
 
   define_view(:blank) do "" end
 
+  [ :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :setting_missing ].each do |view|
+    define_view(view) do |args|
+      render_view_action view, args
+    end
+  end
 
 end

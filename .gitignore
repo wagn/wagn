@@ -5,6 +5,7 @@ config/amazon_s3.yml
 config/database.yml
 config/newrelic.yml
 config/wagn.rb
+config/cruise*
 coverage
 log/*
 pkg
@@ -12,10 +13,8 @@ public/card_files
 public/card_images
 public/file
 public/image
-public/javascripts/base*
 public/javascripts/inline-console.js
 public_scripts
-public/stylesheets/base*
 public/stylesheets/local.css
 script/performance/*.session
 test/unit/tmp_test.rb

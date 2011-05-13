@@ -542,12 +542,10 @@ Rails.logger.info "count iter(#{relation.inspect} #{subspec.inspect})"
         dir = @mods[:dir].blank? ? (DEFAULT_ORDER_DIRS[order_key]||'desc') : @mods[:dir]
         sql.order = "ORDER BY "
         sql.order << case order_key
-          when "update"; "#{table_alias}.updated_at #{dir}"
-          when "create"; "#{table_alias}.created_at #{dir}"
-          when "count";  "count(*) #{dir}, #{table_alias}.name asc"
-          when /^(name|alpha)$/
-            # ENGLISH
-            "TRIM( LEADING 'a ' FROM TRIM( LEADING 'an ' FROM TRIM( LEADING 'the ' FROM LOWER( #{table_alias}.key )))) #{dir}"  
+          when "update";          "#{table_alias}.updated_at #{dir}"
+          when "create";          "#{table_alias}.created_at #{dir}"
+          when "count" ;          "count(*) #{dir}, #{table_alias}.name asc"
+          when /^(name|alpha)$/;  "LOWER( #{table_alias}.key ) #{dir}"
           when 'content'
             sql.joins << "join revisions r2 on r2.id=#{self.table_alias}.current_revision_id"
             "lower(r2.content) #{dir}"

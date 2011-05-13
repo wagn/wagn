@@ -43,14 +43,15 @@ class ApplicationController < ActionController::Base
         System.wagn_name = mapping.wagn_name
         ActiveRecord::Base.connection.schema_search_path = mapping.wagn_name
       else
-        return render_fast_404
+        return render_fast_404(request.host)
       end
     end
 
     Wagn::Cache.re_initialize_for_new_request
     # Set/Redirect to Canonical Domain
     if request.raw_host_with_port != System.host and RAILS_ENV=="production"
-      return redirect_to("http://#{System.host}#{request.path}")
+      query_string = request.query_string.empty? ? '' : "?#{request.query_string}"
+      return redirect_to("http://#{System.host}#{request.path}#{query_string}")
     end
 
     User.current_user = current_user || User.find_by_login('anon')
@@ -75,13 +76,7 @@ class ApplicationController < ActionController::Base
     respond_to do |format|
       format.html {
         unless request.xhr?
-          layout = case
-            when BUILTIN_LAYOUTS.include?(params[:layout]);
-              params[:layout]
-#            when params[:layout] == 'none'; nil
-            else
-              'application'
-            end
+          layout = 'application'
         end
       }
     end

@@ -223,7 +223,7 @@ raise "no card" unless card
       end
 
       def css_name card
-        'LTYPE_RIGHT-' + set_name(card).trunk_name.css_name
+        'TYPE_PLUS_RIGHT-' + set_name(card).trunk_name.css_name
       end
 
       def method_key card

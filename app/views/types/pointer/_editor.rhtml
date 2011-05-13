@@ -1,3 +1,0 @@
-<%- partial = (c = card.setting('input')) ? c.gsub(/[\[\]]/,'') : 'list' %>
-<%= slot.form.hidden_field :content, :id=>"#{slot.context}-hidden-content" %>
-<%= render :partial=>"/types/pointer/#{partial}", :locals=>{ :card=>card, :slot=>slot} %>

@@ -51,7 +51,7 @@ module Card
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
       :from_trash, :update_referencers, :allow_type_change, :virtual,
-      :builtin, :broken_type, :skip_defaults, :loaded_trunk, :blank_revision
+      :broken_type, :skip_defaults, :loaded_trunk, :blank_revision
 
     # setup hooks on AR callbacks
     # Note: :after_create is called from end of set_initial_content now
@@ -239,7 +239,7 @@ module Card
     end
 
     def save_with_trash!
-      save || raise(ActiveRecord::RecordNotSaved)
+      save || raise(errors.full_messages.join('. '))
     end
     alias_method_chain :save!, :trash
 
@@ -361,8 +361,13 @@ module Card
     # Extended associations ----------------------------------------
 
 
-    def left()  Card.fetch( name.trunk_name, :skip_virtual=> true) end
-    def right() Card.fetch( name.tag_name,   :skip_virtual=> true) end
+    def left
+      Card.fetch name.trunk_name, :skip_virtual=> true
+    end
+    def right
+      Card.fetch name.tag_name,   :skip_virtual=> true
+    end
+    
     def cardtype_name() ::Cardtype.name_for( self.type )             end
     
     
@@ -454,12 +459,8 @@ module Card
     end
     
     def virtual?
-      @virtual || @builtin
+      @virtual
     end    
-    
-    def builtin?
-      @builtin
-    end
     
     def content   
       new_card? ? ok!(:create_me) : ok!(:read)
@@ -683,7 +684,9 @@ module Card
     end  
   
     validates_each :key do |rec, attr, value|
-      unless value == rec.name.to_key
+      if value.empty?
+        rec.errors.add :key, "key cannot be blank"
+      elsif value != rec.name.to_key
         rec.errors.add :key, "wrong key '#{value}' for name #{rec.name}"
       end
     end

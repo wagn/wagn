@@ -21,7 +21,7 @@ Rails::Initializer.run do |config|
 
   # Force all environments to use the same logger level 
   # (by default production uses :info, the others :debug)
-  #config.log_level = :debug
+  # config.log_level = :info
 
   # Use SQL instead of Active Record's schema dumper when creating the test database.
   # This is necessary if your schema can't be completely dumped by the schema dumper, 
@@ -38,7 +38,3 @@ Rails::Initializer.run do |config|
   # See Rails::Configuration for more options   
   # select a store for the rails/card cache
 end
-   
-#Mime::Type.register 'text/css', :css
-#Mime::Type.register_alias 'text/plain', :txt
-#Mime::Type.register 'application/vnd.google-earth.kml+xml', :kml

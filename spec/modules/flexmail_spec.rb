@@ -3,16 +3,17 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe Flexmail do
   describe "#email_config_cardnames" do
     it "handles relative names" do
-      User.as :wagbot
-      Card::Pointer.create! :name=>'emailtest+*right+*send', :content=>'[[_left+email_config]]'
-      trigger_card = Card.new(:name=>'Huckleberry+emailtest')
-      Flexmail.email_config_cardnames(trigger_card).first.should=='emailtest+*right+email_config'
+      User.as :wagbot do
+        Card::Pointer.create! :name=>'emailtest+*right+*send', :content=>'[[_left+email_config]]'
+        trigger_card = Card.new(:name=>'Huckleberry+emailtest')
+        Flexmail.email_config_cardnames(trigger_card).first.should=='emailtest+*right+email_config'
+      end
     end
   end
   
   describe ".configs_for" do
     before do
-      User.as :wagbot
+      User.current_user = :wagbot
       Card.create! :name => "mailconfig+*to", :content => "joe@user.com"
       Card.create! :name => "mailconfig+*from", :content => "from@user.com"
       Card.create! :name => "mailconfig+*subject", :content => "Subject of the mail"
@@ -90,21 +91,23 @@ describe Flexmail do
     end
         
     it "returns list with correct hash for card with configs" do
-      c = Card::Trigger.create :name => "Banana Trigger", :content => "data content"
+      System.base_url = 'http://a.com'
+      c = Card::Trigger.create :name => "Banana Trigger", :content => "data content [[A]]"
       c.multi_create( 
         '~plus~email'=>{:content=>'gary@gary.com'},
         '~plus~subject'=>{:type=>'Pointer', :content=>'[[default subject]]'},
         '~plus~attachment' => {:type=>'File', :content=>"notreally.txt" }
       )
-      Flexmail.configs_for(c).should == [{
-        :to => "bob@bob.com",
-        :from => "gary@gary.com",
-        :bcc => "",
-        :cc => '',
-        :subject => "a very nutty thang",
-        :message => "Triggered by Banana Trigger and its wonderful content: data content",
-        :attach => ['Banana Trigger+attachment']
-      }]
+      conf = Flexmail.configs_for(c).first
+      
+      conf[:to     ].should == "bob@bob.com"
+      conf[:from   ].should == "gary@gary.com"
+      conf[:bcc    ].should == ''
+      conf[:cc     ].should == ''
+      conf[:subject].should == "a very nutty thang"
+      conf[:attach ].should == ['Banana Trigger+attachment']
+      conf[:message].should == "Triggered by Banana Trigger and its wonderful content: data content " +
+        '<a class="known-card" href="http://a.com/wagn/A">A</a>'
     end
   end
 

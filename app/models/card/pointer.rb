@@ -5,7 +5,7 @@ module Card
 
     def item_cards( args={} )
       if args[:complete]
-        Wql.new({:referred_to_by=>name}.merge args).run
+        Wql.new({:referred_to_by=>name}.merge(args)).run
       else
         item_names(args).map {|name| Card.fetch_or_new(name,{},:skip_defaults=>true) }.compact
       end

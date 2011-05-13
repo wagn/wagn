@@ -1,4 +1,4 @@
-require_dependency 'slot'
+require_dependency 'rich_html_renderer'
 
 module WagnHelper
   require_dependency 'wiki_content'
@@ -7,6 +7,13 @@ module WagnHelper
   # FIXME: slot -> renderer (model)
   # Put the initialization in the controller and we no longer care here
   # whether it is a Slot or Renderer, and it will be from the parent class
+  #   Now: Always a Renderer, and the subclass is selected by:
+  #     :format => :html (default and only -> RichHtmlRenderer (was Slot))
+#  def slot() raise "slot is now self #{self}" end
+#  def get_slot(card=nil, context=nil, action=nil, opts={})
+#    raise "get_slot? #{card}, #{context}, #{action}, #{opts.inspect}"
+#  end
+#=begin
   def slot() Renderer.current_slot end
   def card() @card ||= slot.card end
   def params()
@@ -19,30 +26,21 @@ module WagnHelper
 
   # FIXME: I think all this slot initialization should happen in controllers
   def get_slot(card=nil, context=nil, action=nil, opts={})
+#Rails.logger.info "get_slot called.  context = #{context}, @context = #{@context}"
     nil_given = card.nil?
     card ||= @card; context||=@context; action||=@action
     opts[:relative_content] = opts[:params] = (controller and params) or {}
     slot = case
-      when Renderer.current_slot;  nil_given ? Renderer.current_slot : Renderer.current_slot.subrenderer(card)
+      when Renderer.current_slot
+#Rails.logger.info "current slot already exists.  nil_given = #{nil_given}"
+        nil_given ? Renderer.current_slot : Renderer.current_slot.subrenderer(card)
       else
-        Renderer.current_slot = Slot.new( card,
-            opts.merge(:context=>context, :action=>action, :template=>self) )
+        Renderer.current_slot = Renderer.new( card,
+            opts.merge(:context=>context, :action=>action, :template=>self, :controller=>@controller) )
     end
     controller and controller.renderer = slot or slot
   end
-
-  # FIMXE: this one's a hack...
-=begin
-  def render_card(card, mode, args={})
-    if String===card && name = card
-      raise("Card #{name} not present") unless card=Card.fetch(name)
-    end
-    # FIXME: some cases we're called before Slot.current_slot is initialized.
-    #  should we initialize here? or always do Slot.new?
-    subrenderer = Slot.current_slot ? Slot.current_slot.subrenderer(card) : Slot.new(card)
-    subrenderer.render(mode.to_sym, args)
-  end
-=end
+#=end
 
   Droplet = Struct.new(:name, :link_options)
 
@@ -209,30 +207,10 @@ module WagnHelper
     slot.expand_inclusions content.gsub(/\[\[/,"<div class=\"pointer-item item-#{view}\">{{").gsub(/\]\]/,"|#{view}#{typeparam}}}</div>")
   end
 
-  ## -----------
-
-  def google_analytics
-    User.as(:wagbot)  do
-      if ga_key = System.setting("*google analytics key")
-        %{
-          <script type="text/javascript">
-            // make sure this is only run once:  it may be called twice in the case that you are viewing a *layout page
-            if (typeof(pageTracker)=='undefined') {
-              var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-              document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-            }
-          </script>
-          <script type="text/javascript">
-            pageTracker = _gat._getTracker('#{ga_key}');
-            pageTracker._trackPageview();
-          </script>
-        }
-      end
-    end
-  end
 
   # ---------------( NAVBOX ) -----------------------------------
 
+=begin (moved to builtin def)
   def navbox
     content_tag( :form, :id=>"navbox_form", :action=>"/search", :onsubmit=>"return navboxOnSubmit(this)" ) do
       content_tag( :span, :id=>"navbox_background" ) do
@@ -248,6 +226,7 @@ module WagnHelper
       :after_update_element => "navboxAfterUpdate"
      }.update({}))
   end
+=end
 
   def navbox_result(entries, field, stub)
     return unless entries
@@ -278,24 +257,9 @@ module WagnHelper
     concat('</form>')
   end
 
-  def layout_card(content)
-    Card.new(:name=>"**layout",:content=>content, :skip_defaults=>true)
-  end
-
-  def render_layout_card(lay_card)
-    opts = {}; opts[:relative_content] = opts[:params] = params
-    Slot.new(lay_card,
-       opts.merge(:context=>"layout_0", :action=>"view", :template=>self)).
-         render(:layout, :main_card=>@card, :main_content=>@content_for_layout)
-  end
-
-  def render_layout_content(content)
-    render_layout_card layout_card(content)
-  end
-
-  def wrap_slot(slot=nil, args={}, &block)
-    slot ||= get_slot
-    concat( slot.wrap(args) { capture{ yield(slot) } } )
+  def wrap_slot(renderer=nil, args={}, &block)
+    renderer ||= (Renderer.current_slot || get_slot)
+    concat( renderer.wrap(args) { capture{ yield(renderer) } } )
   end
   # ------------( helpers ) --------------
   def edit_user_context(card)

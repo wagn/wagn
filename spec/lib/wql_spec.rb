@@ -5,6 +5,11 @@ A_JOINEES = ["B", "C", "D", "E", "F"]
 CARDS_MATCHING_TWO = ["Two","One+Two","One+Two+Three","Joe User","*plusses+*right+*content"].sort    
 
 describe Wql do
+  before do
+    User.current_user = :joe_user
+  end
+  
+  
   describe 'append' do
     it "should find real cards" do
       Wql.new(:name=>[:in, 'C', 'D', 'F'], :append=>'A' ).run.plot(:name).sort.should == ["C+A", "D+A", "F+A"]
@@ -34,9 +39,6 @@ describe Wql do
   end
 
   describe "symbolization" do
-    before {
-      User.as :joe_user
-    }
     it "should handle array values" do
       query = {'plus'=>['tags',{'refer_to'=>'cookies'}]}
       Wql.new(query).query.should== {:plus=>['tags',{:refer_to=>'cookies'}]}
@@ -55,7 +57,6 @@ describe Wql do
 
 
   describe "not" do 
-    before { User.as :joe_user }
     it "should exclude cards matching not criteria" do
       s = Wql.new(:plus=>"A", :not=>{:plus=>"A+B"}).run.plot(:name).sort.should==%w{ B D E F }    
     end
@@ -87,7 +88,8 @@ describe Wql do
 
   describe "created_by/creator_of" do
     before do
-      User.as(:joe_user){ Card.create :name=>'Create Test', :content=>'sufficiently distinctive'}
+      User.current_user = User[:joe_user]
+      Card.create :name=>'Create Test', :content=>'sufficiently distinctive'
     end
     
     it "should find Joe User as the card's creator" do
@@ -101,7 +103,8 @@ describe Wql do
 
   describe "last_edited_by/last_editor_of" do
     before do
-      User.as(:joe_user){ c=Card.fetch('A'); c.content='peculicious'; c.save!}
+      User.current_user = User[:joe_user]
+      c=Card.fetch('A'); c.content='peculicious'; c.save!
     end
     
     it "should find Joe User as the card's last editor" do
@@ -114,14 +117,12 @@ describe Wql do
   end
 
   describe "keyword" do
-    before { User.as :joe_user }
     it "should escape nonword characters" do
       Wql.new( :match=>"two :(!").run.map(&:name).sort.should==CARDS_MATCHING_TWO
     end
   end
 
   describe "search count" do
-    before { User.as :joe_user }
     it "should count search" do
       s = Card::Search.create! :name=>"ksearch", :content=>'{"match":"_keyword"}'
       s.count("_keyword"=>"two").should==CARDS_MATCHING_TWO.length
@@ -130,7 +131,6 @@ describe Wql do
 
     
   describe "cgi_params" do
-    before { User.as :joe_user }
   #  it "should match content from cgi with explicit content setting" do
   #    Wql.new( :content=>[:match, "_keyword"], :_keyword=>"two").run.plot(:name).sort.should==CARDS_MATCHING_TWO
   #  end
@@ -143,7 +143,6 @@ describe Wql do
 
 
   describe "content equality" do 
-    before { User.as :joe_user }
     it "should match content explicitly" do
       Wql.new( :content=>['=',"I'm number two"] ).run.plot(:name).should==["Joe User"]
     end
@@ -154,9 +153,6 @@ describe Wql do
 
 
   describe "links" do     
-    before do
-      User.as :joe_user
-    end
 
     it("should handle refer_to")      { Wql.new( :refer_to=>'Z').run.plot(:name).sort.should == %w{ A B } }
     it("should handle link_to")       { Wql.new( :link_to=>'Z').run.plot(:name).should == %w{ A } }
@@ -167,7 +163,6 @@ describe Wql do
   end
   
   describe "relative links" do
-    before { User.as :joe_user }
     it("should handle relative refer_to")  { Wql.new( :refer_to=>'_self', :context=>'Z').run.plot(:name).sort.should == %w{ A B } }
   end
 
@@ -178,17 +173,12 @@ describe Wql do
         c.permit(:read, Role['r1'])
         c.save!
       end
-      User.as :joe_user do
-        Wql.new( :plus=>"A" ).run.plot(:name).sort.should == %w{ B D E F }
-      end
+      Wql.new( :plus=>"A" ).run.plot(:name).sort.should == %w{ B D E F }
     end
   end
 
   describe "basics" do
-    before do
-      User.as :joe_user
-    end
-  
+
     it "should find plus cards" do
       Wql.new( :plus=>"A" ).run.plot(:name).sort.should == A_JOINEES
     end
@@ -217,8 +207,6 @@ describe Wql do
   end
 
   describe "type" do  
-    before { User.as :joe_user }
-  
     user_cards =  ["Joe Admin", "Joe Camel", "Joe User", "John", "No Count", "Sample User", "Sara", "u1", "u2", "u3"].sort
   
     it "should find cards of this type" do
@@ -242,8 +230,6 @@ describe Wql do
   #end
 
   describe "trash handling" do   
-    before { User.as :joe_user }
-  
     it "should not find cards in the trash" do 
       Card["A+B"].destroy!
       Wql.new( :left=>"A" ).run.plot(:name).sort.should == ["A+C", "A+D", "A+E"]
@@ -254,8 +240,6 @@ describe Wql do
 
 
   describe "order" do
-    before { User.as :joe_user }
-
     it "should sort by create" do  
       Card.create! :type=>"Cardtype", :name=>"Nudetype"
       Card.create! :type=>"Nudetype", :name=>"nfirst", :content=>"a"
@@ -267,8 +251,10 @@ describe Wql do
     end  
 
       it "should sort by name" do
-        Wql.new( :name=> %w{ in B Z A Y C X }, :sort=>"alpha", :dir=>"desc" ).run.plot(:name).should ==  %w{ Z Y X C B A }
-        Wql.new( :name=> %w{ in B Z A Y C X }, :sort=>"name", :dir=>"desc" ).run.plot(:name).should ==  %w{ Z Y X C B A }
+        Wql.new( :name=> %w{ in B Z A Y C X }, :sort=>"alpha", :dir=>"desc" ).run.map(&:name).should ==  %w{ Z Y X C B A }
+        Wql.new( :name=> %w{ in B Z A Y C X }, :sort=>"name", :dir=>"desc"  ).run.map(&:name).should ==  %w{ Z Y X C B A }
+        #Card.create! :name => 'the alphabet'
+        #Wql.new( :name=>["in", "B", "C", "the alphabet"], :sort=>"name").run.map(&:name).should ==  ["the alphabet", "B", "C"]
       end
 
       it "should sort by content" do
@@ -297,8 +283,6 @@ describe Wql do
 
 
   describe "match" do 
-    before { User.as :joe_user }
-  
     it "should reach content and name via shortcut" do
       Wql.new( :match=>"two").run.plot(:name).sort.should==CARDS_MATCHING_TWO
     end
@@ -330,7 +314,7 @@ describe Wql do
   #=end
   describe "found_by" do
     before do
-      User.as :wagbot 
+      User.current_user = :wagbot 
       Card.create(:name=>'Simple Search', :type=>'Search', :content=>'{"name":"A"}')
     end 
 
@@ -354,8 +338,6 @@ describe Wql do
   #=end
 
   describe "relative" do
-    before { User.as :joe_user }
-
     it "should clean wql" do
       wql = Wql.new( :part=>"_self",:context=>'A' )
       wql.query[:part].should == 'A'
@@ -394,8 +376,6 @@ describe Wql do
   
   
   describe "nested permissions" do
-    before { User.as :joe_user }
-
     it "are generated by default" do
       Wql.new( { :left=>{:name=>"X"}}).sql.should match(
         "^#{Regexp.escape("(select t.name from cards t  where t.trunk_id in (select id from cards tx  where tx.name = ")}E?#{Regexp.escape("'X' and  (tx.reader_type!='User' and tx.reader_id IN (3,2))  and tx.trash is false    ) and  (t.reader_type!='User' and t.reader_id IN (3,2))  and t.trash is false  ORDER BY t.updated_at desc  )")}$" )

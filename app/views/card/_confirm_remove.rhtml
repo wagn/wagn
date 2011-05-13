@@ -12,7 +12,7 @@
         </ul>
       <% end %>
       <%= error_messages_for :card %>
-      <%= slot.full_captcha %>
+      <%= slot.captcha_tags :full=>true %>
       <%= hidden_field_tag 'card[confirm_destroy]', 'true' %>
       <%= submit_tag 'Yes, get rid of it' %>
       <%= slot.button_to_action "Cancel", 'view' %>

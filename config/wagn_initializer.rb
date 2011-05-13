@@ -143,6 +143,11 @@ module Wagn
             raise "Error loading card/#{cardtype}: #{e.message}"
           end
         end
+        ::Cardtype.load_cache 
+        # we have to do this for now to make sure all the cardtype classes get initialized correctly, 
+        # especially those with types that share names with ruby classes used elsewhere
+        # eg. Date -> Card::Date (not just "Date").
+        # eg2. Task (custom cardtype), which needs to be loaded as Card::Task, not Rake::Task
       end
 
     

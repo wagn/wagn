@@ -361,8 +361,13 @@ module Card
     # Extended associations ----------------------------------------
 
 
-    def left()  Card.fetch( name.trunk_name, :skip_virtual=> true) end
-    def right() Card.fetch( name.tag_name,   :skip_virtual=> true) end
+    def left
+      Card.fetch name.trunk_name, :skip_virtual=> true
+    end
+    def right
+      Card.fetch name.tag_name,   :skip_virtual=> true
+    end
+    
     def cardtype_name() ::Cardtype.name_for( self.type )             end
     
     

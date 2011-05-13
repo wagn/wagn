@@ -34,6 +34,11 @@ class Cardtype < ActiveRecord::Base
             "should have party_type 'Role' not '#{rec['party_type']}'"
         end
       end
+
+      @@cache[:class_names].values.sort.each do |name|
+        Rails.logger.info "class_for(#{name})"        
+        Card.class_for(name)
+      end
     end
 
     def name_for_key?(key)

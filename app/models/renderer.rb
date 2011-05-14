@@ -207,7 +207,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     sub = self.clone
     sub.depth = @depth+1
     #sub.home_view = 
-    sub.item_view = sub.main_content = sub.main_card = nil
+    sub.item_view = sub.main_content = sub.main_card = sub.showname = nil
     sub.sub_count = sub.char_count = 0
     sub.context = "#{ctx_base||context}_#{sub_count}"
     sub.card = subcard

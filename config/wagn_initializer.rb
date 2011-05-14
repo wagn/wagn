@@ -41,7 +41,7 @@ module Wagn
         database_configuration_file = "#{RAILS_ROOT}/config/database.yml"
         db = YAML::load(ERB.new(IO.read(database_configuration_file)).result)
         rails_config.action_controller.session = {
-          :session_key => db[RAILS_ENV]['session_key'],
+          :key => db[RAILS_ENV]['session_key'],
           :secret      => db[RAILS_ENV]['secret']
         }
         @@rails_config = rails_config

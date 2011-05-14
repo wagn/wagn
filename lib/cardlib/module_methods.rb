@@ -64,8 +64,7 @@ module Cardlib
     rescue NameError => e   
       ::Cardtype.load_cache if ::Cardtype.cache.empty?
       classnames = ::Cardtype.cache[:card_names]
-      raise e unless (classnames.has_key?( class_id.to_s ) and klass = card_const_set(class_id))
-      klass
+      raise e unless classnames.has_key?( class_id.to_s ) and card_const_set(class_id)
     end
      
     def generate_codename_for(cardname)

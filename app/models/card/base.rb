@@ -149,9 +149,9 @@ module Card
             tag_override = (trunk_reader.anonymous? || (authenticated?(trunk_reader) && !tag_reader.anonymous?))
             party = (tag_override ? tag_reader : trunk_reader)
           end
-          Permission.new :task=>p.task, :party=>party
+          ::Permission.new :task=>p.task, :party=>party
         else
-          Permission.new :task=>p.task, :party_id=>p.party_id, :party_type=>p.party_type
+          ::Permission.new :task=>p.task, :party_id=>p.party_id, :party_type=>p.party_type
         end
       end
     end

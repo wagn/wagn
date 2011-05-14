@@ -1,7 +1,7 @@
 class Renderer
   define_view(:naked, :type=>'account_request') do
     links = [ #ENGLISH
-      (link_to( "Invite #{card.name}", "/account/accept/#{card.key}/", :class=>'invitation-link') if System.ok?(:create_accounts)   ),
+      (link_to( "Invite #{card.name}", "/account/accept?card[key]=#{card.name.to_url_key}", :class=>'invitation-link') if System.ok?(:create_accounts)   ),
       (link_to_remote( "Deny #{card.name}", { :url=>url_for("card/remove") } )                    if logged_in? && card.ok?(:delete))
     ].compact
     

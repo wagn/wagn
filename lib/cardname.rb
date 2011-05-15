@@ -98,7 +98,7 @@ module Cardname
   end
 
   def to_show(absolute)
-    (self =~/_(left|right|whole|self|user)/) ? absolute : self
+    (self =~/\b_(left|right|whole|self|user|\d+|L*R?)\b/) ? absolute : self
   end
 
   def to_star

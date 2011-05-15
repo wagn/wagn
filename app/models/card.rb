@@ -35,7 +35,7 @@ module Card
             ::Cardtype.classname_for(cardname) ) 
       )
       klass = Card.const_get(class_id)
-      klass = klass.allocate.is_a?(Card::Base) ? klass : card_const_set(class_id)            
+      klass.allocate.is_a?(Card::Base) ? klass : card_const_set(class_id)
     rescue Exception=>e
       nil
     end

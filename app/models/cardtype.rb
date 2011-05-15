@@ -36,7 +36,6 @@ class Cardtype < ActiveRecord::Base
       end
 
       @@cache[:class_names].values.sort.each do |name|
-        Rails.logger.info "class_for(#{name})"        
         Card.class_for(name)
       end
     end

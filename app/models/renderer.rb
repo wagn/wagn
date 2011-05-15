@@ -206,8 +206,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     self.sub_count += 1
     sub = self.clone
     sub.depth = @depth+1
-    #sub.home_view = 
-    sub.item_view = sub.main_content = sub.main_card = nil
+    sub.item_view = sub.main_content = sub.main_card = sub.showname = nil
     sub.sub_count = sub.char_count = 0
     sub.context = "#{ctx_base||context}_#{sub_count}"
     sub.card = subcard
@@ -387,7 +386,7 @@ raise "???" if Hash===action
 
     options[:home_view] = options[:view] ||= context == 'layout_0' ? :naked : :content
     options[:fullname] = fullname = get_inclusion_fullname(tname,options)
-    self.showname = tname.to_show(fullname)
+    options[:showname] = tname.to_show(fullname)
 
     tcard ||= begin
       case
@@ -429,7 +428,7 @@ raise "???" if Hash===action
     # set item_view;  search cards access this variable when rendering their content.
     sub.item_view = options[:item] if options[:item]
     sub.type = options[:type] if options[:type]
-    self.showname ||= tcard.name
+    sub.showname = options[:showname] || tcard.name
 
     new_card = tcard.new_record? && !tcard.virtual?
 

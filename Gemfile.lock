@@ -91,7 +91,7 @@ DEPENDENCIES
   json (>= 1.4.6)
   macaddr (>= 1.0.0)
   mysql (~> 2.8.1)
-  newrelic_rpm (>= 2.14.1)
+  newrelic_rpm (>= 2.10.5)
   nokogiri (= 1.4.1)
   postgres (~> 0.7.9.2008.01.28)
   rack (>= 1.1.0)

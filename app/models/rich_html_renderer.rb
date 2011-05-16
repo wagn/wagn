@@ -1,4 +1,7 @@
+
 class RichHtmlRenderer < Renderer
+
+  include Recaptcha::ClientHelper
 
   cattr_accessor :set_actions
   attr_accessor  :options_need_save, :js_queue_initialized,

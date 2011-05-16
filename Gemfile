@@ -15,8 +15,8 @@ gem 'htmlentities', '~>4.2.1'
 gem 'macaddr', '~>1.0.0'
 gem 'uuid', '~>2.2.0'
 gem 'json', '~>1.4.6'
-gem 'userstamp', '~>2.0.1'
 
+#gem 'userstamp', '~>2.0.1'
 #gem 'ruby-openid', '2.1.8'
 
 

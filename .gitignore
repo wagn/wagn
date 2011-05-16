@@ -19,7 +19,6 @@ public/stylesheets/local.css
 script/performance/*.session
 test/unit/tmp_test.rb
 tmp/*
-vendor/plugins/
 /nbproject/
 /*.project
 *.sqlite3

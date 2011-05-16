@@ -1,5 +1,6 @@
 #!/bin/bash
 
+git submodule update --init
 bundle install
 
 if [ ! -f config/wagn.rb ]; then

@@ -1,0 +1,26 @@
+common: &common
+  adapter: mysql
+  username: root
+  password: password
+  host: localhost
+  secret: YrDOFOmYJyFg2tTZykCbZjWYQUbKBt
+
+development:
+  database: wagn_development
+  session_key: wagn_development
+  <<: *common
+
+test:
+  database: wagn_test
+  session_key: wagn_test
+  <<: *common
+
+cucumber:
+  database: wagn_test
+  session_key: wagn_test
+  <<: *common
+
+production:
+  database: wagn_production
+  session_key: wagn_production
+  <<: *common

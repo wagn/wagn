@@ -62,7 +62,7 @@
         </div>
 
         <%= s.captcha_tags %>
-        <%= hidden_field_tag :view, params[:view] || :open %>
+        <%= hidden_field_tag :home_view, params[:home_view] || :open %>
         <div class="edit-button-area">
 
           <%= button_to_function 'Submit', "this.form.onsubmit()", :id=>'create-button'  %>

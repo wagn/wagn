@@ -99,7 +99,7 @@ class RichHtmlRenderer
 ###---(  EDIT VIEWS )
   define_view(:edit_in_form) do |args|
     form = form_for_multi
-Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
+#Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
     %{
 <div class="edit-area in-multi RIGHT-#{ card.name.tag_name.to_key.css_name }">
   <div class="label-in-multi">

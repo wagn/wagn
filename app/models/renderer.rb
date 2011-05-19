@@ -102,7 +102,6 @@ class Renderer
         if view_key == view
 #Rails.logger.debug "define base view: _render_#{view}, render_#{view}"
           define_method( "_render_#{view}" ) do |*a| a = [{}] if a.empty?
-            #a[0][:home_view] ||= view  
             final_meth = view_method( view )
 #Rails.logger.debug " in #{caller(0).first}[#{card}] #{view}, #{final_meth}"
 raise "??? #{view.inspect}" unless final_meth
@@ -235,7 +234,6 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     update_references(wiki_content) if card.references_expired
 
     wiki_content.render! do |opts|
-#      @home_view = opts[:view].to_sym if @home_view.nil? and opts[:view]
       expand_inclusion(opts) { yield }
     end
   end
@@ -424,8 +422,6 @@ raise "???" if Hash===action
   def process_inclusion(tcard, options)
     sub = subrenderer(tcard, options[:context])
     oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
-
-    # set item_view;  search cards access this variable when rendering their content.
     sub.item_view = options[:item] if options[:item]
     sub.type = options[:type] if options[:type]
     sub.showname = options[:showname] || tcard.name
@@ -434,7 +430,7 @@ raise "???" if Hash===action
 
     vmode = (options[:view] || :content).to_sym
     sub.requested_view = vmode
-    action = case
+    subview = case
 
       when [:name, :link, :linkname].member?(vmode)  ; vmode
       when :edit == state
@@ -449,7 +445,7 @@ raise "???" if Hash===action
       when state==:line       ; :closed_content
       else                    ; vmode
       end
-    result = sub.render(action, options)
+    result = sub.render(subview, options)
     Renderer.current_slot = oldrenderer
     result
   rescue Exception=>e

@@ -108,11 +108,11 @@ Object.extend(Wagn, {
       Element.addClassName( elem, 'card');
     })
   },
-  line_to_paragraph: function(element) {
+  to_open: function(element) {
     Element.removeClassName(element,'line');
     Element.addClassName(element,'paragraph');
   },
-  paragraph_to_line: function(element) {
+  to_closed: function(element) {
     Element.removeClassName(element, 'paragraph');
     Element.addClassName(element, 'line');
   }
@@ -231,7 +231,7 @@ editTransclusion=function(element){
    url =  '/card/edit/'+card_id+'?context='+getSlotContext(element) + '&' + getSlotOptions(element);
    new Ajax.Updater(span, url, {
      asynchronous: true, evalScripts: true, 
-     onSuccess: function(){  Wagn.line_to_paragraph(span) }
+     onSuccess: function(){  Wagn.to_open(span) }
    });
 }
 

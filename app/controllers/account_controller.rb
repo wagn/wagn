@@ -14,7 +14,7 @@ class AccountController < ApplicationController
     @card = Card.new( card_args )
 
     return unless request.post?
-    return unless (captcha_required? ? verify_captcha(:model=>@user) : true)
+    return unless (captcha_required? && ENV['RECAPTCHA_PUBLIC_KEY'] ? verify_captcha(:model=>@user) : true)
 
     Wagn::Hook.call( :account_controller_create, @card, self, params, @user )
     return unless @user.errors.empty?
@@ -22,7 +22,7 @@ class AccountController < ApplicationController
     return unless @user.errors.empty?
 
     User.as :wagbot  do ## in case user doesn't have permission for included cardtypes.  For now letting signup proceed even if there are errors on multi-update
-      @card.multi_update(params[:cards]) if params[:multi_edit] and params[:cards]
+      @card.multi_create(params[:cards]) if params[:multi_edit] and params[:cards]
     end
 
     if System.ok?(:create_accounts)       #complete the signup now
@@ -44,6 +44,7 @@ class AccountController < ApplicationController
 #  end
 
   def accept
+    raise(Wagn::Oops, "I don't understand whom to accept") unless params[:card]
     @card = Card.fetch(params[:card][:key], :skip_virtual=>true) or raise(Wagn::NotFound, "Can't find this Account Request")  #ENGLISH
     @user = @card.extension or raise(Wagn::Oops, "This card doesn't have an account to approve")  #ENGLISH
     System.ok?(:create_accounts) or raise(Wagn::PermissionDenied, "You need permission to create accounts")  #ENGLISH
@@ -128,25 +129,25 @@ class AccountController < ApplicationController
     end
   end
 
-  def deny_all  ## DEPRECATED:  this method will not be long for this world.
-    if System.ok?(:administrate_users)
-      Card::InvitationRequest.find_all_by_trash(false).each do |card|
-        card.destroy
-      end
-      redirect_to '/wagn/Account_Request'
-    end
-  end
-
-  def empty_trash ## DEPRECATED:  this method will not be long for this world.
-    if System.ok?(:administrate_users)
-      User.find_all_by_status('blocked').each do |user|
-        card=Card.find_by_extension_type_and_extension_id('User',user.id)
-        user.destroy                if (!card or card.trash)
-        card.destroy_without_trash  if (card and card.trash)
-      end
-      redirect_to '/wagn/Account_Request'
-    end
-  end
+#  def deny_all  ## DEPRECATED:  this method will not be long for this world.
+#    if System.ok?(:administrate_users)
+#      Card::InvitationRequest.find_all_by_trash(false).each do |card|
+#        card.destroy
+#      end
+#      redirect_to '/wagn/Account_Request'
+#    end
+#  end
+#
+#  def empty_trash ## DEPRECATED:  this method will not be long for this world.
+#    if System.ok?(:administrate_users)
+#      User.find_all_by_status('blocked').each do |user|
+#        card=Card.find_by_extension_type_and_extension_id('User',user.id)
+#        user.destroy                if (!card or card.trash)
+#        card.destroy_without_trash  if (card and card.trash)
+#      end
+#      redirect_to '/wagn/Account_Request'
+#    end
+#  end
 
   protected
   def password_authentication(login, password)

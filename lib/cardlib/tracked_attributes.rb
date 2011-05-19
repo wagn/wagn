@@ -30,23 +30,22 @@ module Cardlib
     def set_name(newname)
       oldname = self.name_without_tracking
       self.name_without_tracking = newname 
-      
-      return if new_card?
       return if oldname==newname
 
       if newname.junction?
-        if newname.to_key != oldname.to_key
+        if !new_card? && newname.to_key != oldname.to_key
           # move the current card out of the way, in case the new name will require
           # re-creating a card with the current name, ie.  A -> A+B     
           tmp_name = "tmp:" + UUID.new.generate      
           connection.update %{update cards set #{quoted_comma_pair_list(connection, {:name=>"'#{tmp_name}'",:key=>"'#{tmp_name}'"})} where id=#{id}}
         end
-        self.trunk = Card.find_or_create :name=>newname.parent_name
-        self.tag = Card.find_or_create :name=>newname.tag_name
+        self.trunk = Card.fetch_or_create( newname.left_name, :skip_virtual=>true )
+        self.tag   = Card.fetch_or_create( newname.tag_name,  :skip_virtual=>true )
       else
         self.trunk = self.tag = nil
       end         
 
+      return if new_card?
       if existing_card = Card.find_by_key(newname.to_key) and existing_card != self
         if existing_card.trash  
           existing_card.update_attributes! :name=>existing_card.name+"*trash", :confirm_rename=>true
@@ -55,10 +54,7 @@ module Cardlib
         end
       end
             
-      if type=='Cardtype'
-        ::Cardtype.reset_cache
-      end
-            
+      ::Cardtype.reset_cache if type=='Cardtype'
       @name_changed = true          
       @old_name = oldname
       @search_content_changed=true
@@ -182,7 +178,7 @@ module Cardlib
             
             ActiveRecord::Base.logger.info("------------------ UPDATE REFERRER #{card.name}  ------------------------")
             next if card.hard_template
-            card.content = Renderer.new(card).replace_references( @old_name, name )
+            card.content = Renderer.new(card, :not_current=>true).replace_references( @old_name, name )
             card.save! unless card==self
           end
         end

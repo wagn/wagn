@@ -20,13 +20,6 @@ config.action_mailer.delivery_method = :test
 
 config.log_level = :debug
 
-config.gem "webrat"
-config.gem "cucumber"
-config.gem 'timecop'
-config.gem 'spork'
-config.gem 'nokogiri'
-config.gem 'assert2'
-
 # FIXME: these should be in the list here, but at the moment including them busts actually running the tests.
 # config.gem 'rspec'        
 # config.gem 'rspec-rails'

@@ -2,19 +2,6 @@ module Chunk
   class Reference < Abstract
     attr_reader :card_name, :card
     
-    class << self
-      def standard_card_link(name)
-        card_link(name, name, Card.fetch(name))
-      end
-      
-      def card_link(name, text, known)
-        href, klass = known ? 
-          [name.to_url_key                   , 'known-card' ] : 
-          [CGI.escape(Cardname.escape(name)) , 'wanted-card']
-        %{<a class="#{klass}" href="/wagn/#{href}">#{text}</a>}
-      end
-    end
-
     def base_card
       @card
     end
@@ -25,7 +12,6 @@ module Chunk
     end
     
     def refcard 
-#      name =  refcard_name.gsub(/_/,' ')   
       @refcard ||= Card.fetch(refcard_name)
     end
       
@@ -33,6 +19,8 @@ module Chunk
       refcard_name
     end
 
+=begin Probably still need this someplace
+<<<<<<< HEAD
 
     def html_link
       href = refcard_name
@@ -64,7 +52,12 @@ module Chunk
           %{<a class="#{klass}" href="/wagn/#{href}">#{lt}</a>}
         end
       end
+=======
+=end
+    def render_link
+      @content.renderer.build_link(refcard_name, link_text)
     end
+
   end 
 end 
 

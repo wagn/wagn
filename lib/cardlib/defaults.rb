@@ -1,32 +1,34 @@
 module Cardlib
   module Defaults
+    
+    #a place for frequently overridden methods.
+    
     def self.included(base)   
       super 
       base.extend(ClassMethods)   
       base.class_eval do
-#        class_inheritable_accessor :editor_type, :description
-#        set_editor_type "RichText"
       end
-    end      
-    module ClassMethods 
-
     end
     
-    # -- called by the rendering pipeline-- defined in datatypes
-    def allow_duplicate_revisions
-      false
+    module ClassMethods  #not doing anything now but leaving around for future use.
     end
-        
-    def cacheable?
-      return true
-    end
-    
+            
     def post_render( content )
-      # FIXME-- client code shouldn't have to know to do this i don't think?
-      # content.replace(newcontent) 
       content
     end
     
+    def clean_html?()  true   end
+    def generic?()     false  end
+    def collection?()  false  end
+
+    def item_names(args={})
+      self.raw_content.split /[,\n]/
+    end
+    
+    def item_cards(args={})  ## FIXME this is inconsistent with item_names
+      [self]
+    end
+
     def valid_number?( string )
       valid = true
       begin

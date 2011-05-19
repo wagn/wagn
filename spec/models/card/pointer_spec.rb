@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 describe Card::Pointer do
   before do
-    User.as :joe_user
+    User.current_user = :joe_user
   end
   
   context "add_item" do

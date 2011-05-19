@@ -40,7 +40,7 @@
         <div class="open-content">
           <%= slot.render_edit %>
         </div>
-        <%= slot.full_captcha %>
+        <%= slot.captcha_tags :full=>true %>
         <div class="submit-tag">
           <%= submit_tag 'Submit' %>
         </div>

@@ -25,9 +25,9 @@ from cards t0 order by count desc limit 10;
 
 class Wql    
   ATTRIBUTES = {
-    :basic=> %w{ name type content id key extension_type extension_id },
+    :basic=> %w{ name type content id key extension_type extension_id updated_by },
     :system => %w{ trunk_id tag_id },
-    :semi_relational=> %w{ edited_by edited member_of member role found_by },
+    :semi_relational=> %w{ edited_by edited last_editor_of last_edited_by creator_of created_by member_of member role found_by },
     :relational => %w{ part left right plus left_plus right_plus },  
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
     :special => %w{ or match complete not count and },
@@ -84,21 +84,26 @@ class Wql
   end
   
   def sql
-    @cs.to_sql
+    @sql ||= @cs.to_sql
   end
   
   def run
+#    warn "query: #{query.inspect}\n\n sql: #{sql}"
     rows = ActiveRecord::Base.connection.select_all( sql )
-    case (query[:return] || :card)
+    case (query[:return] || :card).to_sym
     when :card
       rows.map do |row|
-        if query[:prepend] || query[:append]
-          cardname = [query[:prepend], row['name'], query[:append]].compact.join('+')
-          Card.fetch_or_new cardname, {}, :skip_defaults=>true
-        else
-          Card.fetch row['name'], :skip_virtual=>true
-        end
+        card=
+          if query[:prepend] || query[:append]
+            cardname = [query[:prepend], row['name'], query[:append]].compact.join('+')
+            Card.fetch_or_new cardname, {}, :skip_defaults=>true
+          else
+            Card.fetch row['name'], :skip_virtual=>true
+          end
+        card.nil? ? Card.find_by_name_and_trash(row['name'],false).repair_key : card
       end
+    when :count
+      rows.first['count']
     else
       rows.map { |row| row[query[:return].to_s] }
     end
@@ -139,9 +144,8 @@ class Wql
     
     def match_prep(v,cardspec=self)
       cxn ||= ActiveRecord::Base.connection
-      if v=='_keyword' 
       v=cardspec.root.params['_keyword'] if v=='_keyword' 
-Rails.logger.info "wql_match_prep _keyword (#{v.inspect}" end
+#Rails.logger.debug "wql_match_prep _keyword (#{v.inspect}" v=='_keyword'
       v.strip!#FIXME - breaks if v is nil
       [cxn, v]
     end
@@ -217,7 +221,7 @@ Rails.logger.info "wql_match_prep _keyword (#{v.inspect}" end
 #   def to_card(relative_name)
 #     case relative_name
 #     when "_self";  root.card                                   
-#     when "_left";  Card.fetch_or_new(root.card.name.parent_name)
+#     when "_left";  Card.fetch_or_new(root.card.name.left_name)
 #     when "_right"; Card.fetch_or_new(root.card.name.tag_name)
 #     end
 #   end
@@ -231,8 +235,8 @@ Rails.logger.info "wql_match_prep _keyword (#{v.inspect}" end
 
       query.each do |key,val|
         case key.to_s
-        when '_self'    ; @selfname         = query.delete(key)
-        when '_parent'  ; @parent           = query.delete(key) 
+        when 'context'  ; @selfname         = query.delete(key)
+        when '_parent'  ; @parent           = query.delete(key)   ## HATE this parent business.  LEFT!
         when /^_\w+$/   ; @params[key.to_s] = query.delete(key)
         end
       end
@@ -386,10 +390,37 @@ Rails.logger.info "wql_match_prep _keyword (#{v.inspect}" end
     end          
     
     def edited_by(val)
-      #user_id = ((c = Card::User[val]) ? c.extension_id : 0)
       extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val).to_sql
       sql.joins << "join (select distinct card_id from revisions r " +
         "where created_by in #{extension_select} ) ru on ru.card_id=#{table_alias}.id"
+    end
+    
+    def created_by(val)
+      extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val)
+      @spec[:created_by] = ValueSpec.new( [:in, extension_select], self )
+      # explicitly set @spec val here because created_by is both name of relationship and name of field.  probably should handle differently
+    end
+    
+    def creator_of(val)
+      inner_spec = CardSpec.build(:return=>'created_by', :_parent=>self).merge(val)      
+      merge({
+        :extension_id => ValueSpec.new(['in',inner_spec],self),
+        :extension_type => 'User'
+      })
+    end
+
+    def last_edited_by(val)
+      extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val)
+      merge(:updated_by => ValueSpec.new( [:in, extension_select], self ) )
+      # explicitly set @spec val here because created_by is both name of relationship and name of field.  probably should handle differently
+    end
+    
+    def last_editor_of(val)
+      inner_spec = CardSpec.build(:return=>'updated_by', :_parent=>self).merge(val)      
+      merge({
+        :extension_id => ValueSpec.new(['in',inner_spec],self),
+        :extension_type => 'User'
+      })
     end
     
     def edited(val)
@@ -463,7 +494,7 @@ Rails.logger.info "count iter(#{relation.inspect} #{subspec.inspect})"
         when :card; "#{table_alias}.name"
         when :name; "#{table_alias}.name"
         when :list; "#{table_alias}.*"
-        when :count; "count(*)"
+        when :count; "count(*) as count"
         when :first; "#{table_alias}.*"
         when :ids;   "id"
 #        when :name_content;
@@ -477,11 +508,10 @@ Rails.logger.info "count iter(#{relation.inspect} #{subspec.inspect})"
       
       # Permissions       
       t = table_alias
-      #unless User.current_user.login.to_s=='wagbot' #
       unless System.always_ok? or (Wql.root_perms_only && !root?)
         user_roles = [Role[:anon].id]
-        unless User.current_user.login.to_s=='anon'
-          user_roles += [Role[:auth].id] + User.current_user.roles.map(&:id)
+        unless User.as_user.login.to_s=='anon'
+          user_roles += [Role[:auth].id] + User.as_user.roles.map(&:id)
         end                                                                
         user_roles = user_roles.map(&:to_s).join(',')
         # type!=User is about 6x faster than type='Role'...
@@ -512,14 +542,14 @@ Rails.logger.info "count iter(#{relation.inspect} #{subspec.inspect})"
         dir = @mods[:dir].blank? ? (DEFAULT_ORDER_DIRS[order_key]||'desc') : @mods[:dir]
         sql.order = "ORDER BY "
         sql.order << case order_key
-          when "update"; "#{table_alias}.updated_at #{dir}"
-          when "create"; "#{table_alias}.created_at #{dir}"
-          when /^(name|alpha)$/;  "#{table_alias}.key #{dir}"  
-          when "count";  "count(*) #{dir}, #{table_alias}.name asc"
+          when "update";          "#{table_alias}.updated_at #{dir}"
+          when "create";          "#{table_alias}.created_at #{dir}"
+          when "count" ;          "count(*) #{dir}, #{table_alias}.name asc"
+          when /^(name|alpha)$/;  "LOWER( #{table_alias}.key ) #{dir}"
           when 'content'
             sql.joins << "join revisions r2 on r2.id=#{self.table_alias}.current_revision_id"
             "lower(r2.content) #{dir}"
-          when "relevance";  
+          when "relevance" 
             if !sql.relevance_fields.empty?
               sql.fields << sql.relevance_fields
               "name_rank desc, content_rank desc" 
@@ -534,7 +564,7 @@ Rails.logger.info "count iter(#{relation.inspect} #{subspec.inspect})"
                              
       # Misc
       sql.tables = "cards #{table_alias}"
-      sql.conditions << "#{table_alias}.trash='f'"
+      sql.conditions << "#{table_alias}.trash is false"
       sql.limit = @mods[:limit].blank? ? "" : "LIMIT #{@mods[:limit].to_i}"
       sql.offset = @mods[:offset].blank? ? "" : "OFFSET #{@mods[:offset].to_i}"
       

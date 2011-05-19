@@ -1,41 +1,26 @@
-# MySQL (default setup).  Versions 4.1 and 5.0 are recommended.
-#
-# Install the MySQL driver:
-#   gem install postgresql
-# On MacOS X:
-#   gem install postgresql -- --include=/usr/local/lib
-# On Windows:
-#   There is no gem for Windows.  Install postgresql.so from RubyForApache.
-#   http://rubyforge.org/projects/rubyforapache
-#
-# And be sure to use new-style password hashing:
-#   http://dev.postgresql.com/doc/refman/5.0/en/old-client.html
-development:
+common: &common
   adapter: mysql
-  database: wagn_development
   username: root
-  password: 
+  password: password
   host: localhost
-  session_key: wagn_development
   secret: YrDOFOmYJyFg2tTZykCbZjWYQUbKBt
 
-# Warning: The database defined as 'test' will be erased and
-# re-generated from your development database when you run 'rake'.
-# Do not set this db to the same as development or production.
+development:
+  database: wagn_development
+  session_key: wagn_development
+  <<: *common
+
 test:
-  adapter: mysql
   database: wagn_test
-  username: root
-  password: 
-  host: localhost
   session_key: wagn_test
-  secret: YrDOFOmYJyFg2tTZykCbZjWYQUbKBt
+  <<: *common
+
+cucumber:
+  database: wagn_test
+  session_key: wagn_test
+  <<: *common
 
 production:
-  adapter: mysql
   database: wagn_production
-  username: root
-  password: 
-  host: localhost
   session_key: wagn_production
-  secret: Pl8qJNFc8mo1yt1xtHOmfUGHOPEutu
+  <<: *common

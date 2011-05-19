@@ -130,7 +130,6 @@ module Cardlib
     protected
     def you_cant(what)
       "#{ydhpt} #{what}"
-      # => you_cant " #{what}"
     end
     
     def deny_because(why)    
@@ -159,6 +158,7 @@ module Cardlib
 
     def approve_edit
       approve_task(:edit)
+      approve_read if operation_approved
     end
     
     def approve_delete

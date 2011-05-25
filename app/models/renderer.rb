@@ -428,7 +428,7 @@ raise "???" if Hash===action
 
     new_card = tcard.new_record? && !tcard.virtual?
 
-    vmode = (options[:view] || :content).to_sym
+    vmode = options[:home_view] = (options[:view] || :content).to_sym
     sub.requested_view = vmode
     subview = case
 

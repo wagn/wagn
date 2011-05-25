@@ -12,8 +12,12 @@ class Renderer
     )).render(:content) +
     '<br />' + #YUCK!
 
-    content_tag(:h2, 'Cards in Set') + # ENGLISH
-    subrenderer(Card.fetch_or_new("#{card.name}+by update")).render(:content)
+    content_tag(:h2, 'Cards in Set') +  # ENGLISH
+    begin
+      s2 = subrenderer(Card.fetch_or_new("#{card.name}+by update"))
+      s2.item_view = :link
+      s2.render(:content)
+    end
   end
 
 

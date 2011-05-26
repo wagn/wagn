@@ -24,7 +24,7 @@ class Renderer
   }
   
   UNDENIABLE_VIEWS = [ 
-    :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :setting_missing
+    :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :setting_missing, :name, :link, :url
   ]
 
   RENDERERS = {

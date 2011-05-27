@@ -61,7 +61,6 @@ class Wql
     "alpha" => "asc", # DEPRECATED
     "name" => "asc",
     "content" => "asc",
-    #"plusses" => "desc",
     "relevance" => "desc"
   }
 
@@ -338,20 +337,24 @@ class Wql
       @fields||={}; @fields[name]||=0; @fields[name]+=1
       "#{name}:#{@fields[name]}"
     end
-
-    #def type(val)
-    #  merge field(:type) => subspec(val, { :return=>:codename })
-    #end
     
     def cond(val); #noop      
     end
     
     def and(val)
-      merge val
+      subcondition(val)
     end
     
     def or(val)
-      merge :cond => CardSpec.build(:join=>:or, :return=>:condition, :_parent=>self).merge(val)
+      subcondition(val, :join=>:or)
+    end
+    
+    def subcondition(val, args={})
+      args = { :return=>:condition, :_parent=>self }.merge(args)
+      cardspec = CardSpec.build( args )
+      merge :cond => cardspec.merge(val)
+      self.sql.joins += cardspec.sql.joins 
+      self.sql.relevance_fields += cardspec.sql.relevance_fields
     end
     
     def not(val)
@@ -391,8 +394,8 @@ class Wql
     
     def edited_by(val)
       extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val).to_sql
-      sql.joins << "join (select distinct card_id from revisions r " +
-        "where created_by in #{extension_select} ) ru on ru.card_id=#{table_alias}.id"
+      sql.joins << "join (select distinct card_id from revisions r4 " +
+        "where r4.created_by in #{extension_select} ) ra on ra.card_id=#{table_alias}.id"
     end
     
     def created_by(val)
@@ -424,8 +427,8 @@ class Wql
     end
     
     def edited(val)
-      inner_spec = CardSpec.build(:return=>'ru.created_by', :_parent=>self).merge(val)
-      inner_spec.sql.joins << "join (select distinct card_id, created_by from revisions r  ) ru on ru.card_id=#{inner_spec.table_alias}.id"
+      inner_spec = CardSpec.build(:return=>'ra2.created_by', :_parent=>self).merge(val)
+      inner_spec.sql.joins << "join (select distinct card_id, created_by from revisions r5  ) ra2 on ra2.card_id=#{inner_spec.table_alias}.id"
       
       merge({
         :extension_id => ValueSpec.new(['in',inner_spec],self),
@@ -443,8 +446,8 @@ class Wql
     end
 
     def member(val)
-      inner_spec = CardSpec.build(:return=>'ru.role_id', :extension_type=>'User', :_parent=>self).merge(val)
-      inner_spec.sql.joins << "join roles_users ru on ru.user_id = #{inner_spec.table_alias}.extension_id"
+      inner_spec = CardSpec.build(:return=>'ru2.role_id', :extension_type=>'User', :_parent=>self).merge(val)
+      inner_spec.sql.joins << "join roles_users ru2 on ru2.user_id = #{inner_spec.table_alias}.extension_id"
       merge({
         :extension_id => ValueSpec.new(['in',inner_spec],self),
         :extension_type => 'Role'
@@ -453,11 +456,11 @@ class Wql
 
     
     def count(val)
-Rails.logger.info "count(#{val.inspect})"
+Rails.logger.debug "count(#{val.inspect})"
       raise(Wagn::WqlError, "count works only on outermost spec") if @parent
       join_spec = { :id=>SqlCond.new("#{table_alias}.id") } 
       val.each do |relation, subspec|
-Rails.logger.info "count iter(#{relation.inspect} #{subspec.inspect})"
+Rails.logger.debug "count iter(#{relation.inspect} #{subspec.inspect})"
         subquery = CardSpec.build(:_parent=>self, :return=>:count, relation.to_sym=>join_spec).merge(subspec).to_sql
         sql.fields << "#{subquery} as #{relation}_count"
       end
@@ -475,7 +478,6 @@ Rails.logger.info "count iter(#{relation.inspect} #{subspec.inspect})"
     def subspec(spec, additions={ :return=>'id' }, negate=false)   
       additions = additions.merge(:_parent=>self)
       join = negate ? 'not in' : 'in'
-      #warn "#{self}.subspec(#{additions}, #{spec})"
       ValueSpec.new([join,CardSpec.build(additions).merge(spec)], self)
     end 
     
@@ -497,9 +499,6 @@ Rails.logger.info "count iter(#{relation.inspect} #{subspec.inspect})"
         when :count; "count(*) as count"
         when :first; "#{table_alias}.*"
         when :ids;   "id"
-#        when :name_content;
-#          sql.joins << "join revisions r on r.card_id = #{table_alias}.id"
-#          "#{table_alias}.name, r.content"
         when :codename; 
           sql.joins << "join cardtypes as extension on extension.id=#{table_alias}.extension_id "
           'extension.class_name'
@@ -517,24 +516,6 @@ Rails.logger.info "count iter(#{relation.inspect} #{subspec.inspect})"
         # type!=User is about 6x faster than type='Role'...
         sql.conditions << %{ (#{t}.reader_type!='User' and #{t}.reader_id IN (#{user_roles})) }
       end
-
-=begin      
-      if !@mods[:group_tagging].blank?
-        card_class = @mods[:group_tagging] 
-        fields = Card::Base.columns.map {|c| "#{table_alias}.#{c.name}"}.join(", ")
-                              
-        raise("too many existing fields") if sql.fields.length > 1
-        sql.fields[0] = fields
-        
-        join = " join cards c2 on c2.tag_id=#{table_alias}.id  " 
-        join += " join cards c3 on c2.trunk_id=c3.id and c3.type=#{quote(card_class)}"  unless card_class==:any
-        sql.joins << join
-        
-        sql.group = "GROUP BY #{fields}"
-        @mods[:sort] = 'count'
-        @mods[:dir] = 'desc'
-      end
-=end
             
       # Order 
       unless @parent or @mods[:return]==:count
@@ -642,8 +623,8 @@ Rails.logger.info "count iter(#{relation.inspect} #{subspec.inspect})"
       
       case field
       when "content"
-        @cardspec.sql.joins << "join revisions r on r.id=#{@cardspec.table_alias}.current_revision_id"
-        field = 'r.content'
+        @cardspec.sql.joins << "join revisions r3 on r3.id=#{@cardspec.table_alias}.current_revision_id"
+        field = 'r3.content'
       when "type"
         v = [v].flatten.map do |val| 
           Cardtype.classname_for(  val.is_a?(Card::Base) ? val.name : val  )

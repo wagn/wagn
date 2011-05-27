@@ -58,7 +58,7 @@ describe Wql do
 
   describe "not" do 
     it "should exclude cards matching not criteria" do
-      s = Wql.new(:plus=>"A", :not=>{:plus=>"A+B"}).run.plot(:name).sort.should==%w{ B D E F }    
+      s = Wql.new(:plus=>"A", :not=>{:plus=>"A+B"}).run.plot(:name).sort.should==%w{ B D E F }
     end
   end
 
@@ -299,6 +299,12 @@ describe Wql do
   describe "and" do
     it "should act as a simple passthrough" do
       Wql.new(:and=>{:match=>'two'}).run.plot(:name).sort.should==CARDS_MATCHING_TWO
+    end
+    
+    it "should work within 'or'" do
+      results = Wql.new(:or=>{:name=>'Z', :and=>{:left=>'A', :right=>'C'}}).run
+      results.length.should == 2
+      results.map(&:name).sort.should == ['A+C','Z']
     end
   end
 

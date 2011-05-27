@@ -24,6 +24,10 @@ class Cardtype < ActiveRecord::Base
         @@cache[:card_names][rec['class_name']] = rec['name'];   
         @@cache[:class_names][rec['key']] = rec['class_name']
       end
+
+      @@cache[:class_names].values.sort.each do |name|
+        Card.class_for(name)
+      end
     end
 
     def name_for_key?(key)

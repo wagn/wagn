@@ -41,8 +41,8 @@ module Wagn
         database_configuration_file = "#{RAILS_ROOT}/config/database.yml"
         db = YAML::load(ERB.new(IO.read(database_configuration_file)).result)
         rails_config.action_controller.session = {
-          :session_key => db[RAILS_ENV]['session_key'],
-          :secret      => db[RAILS_ENV]['secret']
+          :key    => db[RAILS_ENV]['session_key'],
+          :secret => db[RAILS_ENV]['secret']
         }
         @@rails_config = rails_config
         set_default_config Config.new(rails_config)
@@ -143,6 +143,11 @@ module Wagn
             raise "Error loading card/#{cardtype}: #{e.message}"
           end
         end
+        ::Cardtype.load_cache unless ['test','cucumber'].member? ENV['RAILS_ENV']
+        # we have to do this for now to make sure all the cardtype classes get initialized correctly, 
+        # especially those with types that share names with ruby classes used elsewhere
+        # eg. Date -> Card::Date (not just "Date").
+        # eg2. Task (custom cardtype), which needs to be loaded as Card::Task, not Rake::Task
       end
 
     

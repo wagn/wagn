@@ -7,24 +7,21 @@ class Renderer
   # (builtins, etc.)
   define_view(:raw) do card ? card.raw_content : _render_blank end
   define_view(:refs) do card.respond_to?('references_expired') ? card.raw_content : '' end
-  define_view(:naked) do |args|
+  define_view(:naked) do #|args|
     card.name.template_name? ? _render_raw : process_content(_render_raw)
+  end
+  alias_view(:naked, {}, :show, :content)
+  define_view(:titled) do
+    card.name + "\n\n" + _render_naked
   end
 
 ###----------------( NAME) 
   define_view(:name)     { card.name             }
   define_view(:key)      { card.key              }
   define_view(:linkname) { card.name.to_url_key  }
-  define_view(:link)     { Chunk::Reference.standard_card_link(card.name) }
+  define_view(:link)     { build_link(card.name, card.name) }
   define_view(:url)      { "#{System.base_url}/wagn/#{_render_linkname}"}
 
-## DEPRECATED DEPRECATED
-# this is a quick fix, will soon be replaced by view override
-
-  define_view(:when_created)     { card.new_card? ? '' : card.created_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
-  define_view(:when_last_edited) { card.new_card? ? '' : card.updated_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
-
-##
 
   define_view(:open_content) do |args|
     card.post_render(_render_naked(args) { yield })
@@ -48,13 +45,14 @@ class Renderer
 
   define_view(:blank) do "" end
 
-  define_view(:rss_titled) do |args|
-    # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
-    content_tag( :h2, fancy_title(card.name) ) + self._render_open_content(args) { yield }
+  [ :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :setting_missing ].each do |view|
+    define_view(view) do |args|
+      render_view_action view, args
+    end
   end
 
-  define_view(:rss_change) do
-    self.requested_view = 'content'
-    render_view_action('change')
-  end
+  ## DEPRECATED
+  # this is a quick fix, will soon be replaced by view override
+  define_view(:when_created)     { card.new_card? ? '' : card.created_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
+  define_view(:when_last_edited) { card.new_card? ? '' : card.updated_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
 end

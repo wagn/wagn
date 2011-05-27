@@ -38,7 +38,3 @@ Rails::Initializer.run do |config|
   # See Rails::Configuration for more options   
   # select a store for the rails/card cache
 end
-   
-#Mime::Type.register 'text/css', :css
-#Mime::Type.register_alias 'text/plain', :txt
-#Mime::Type.register 'application/vnd.google-earth.kml+xml', :kml

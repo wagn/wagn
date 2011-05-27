@@ -22,12 +22,15 @@ class Renderer
     :line => :closed,
     :bare => :naked,
   }
+  
+  UNDENIABLE_VIEWS = [ 
+    :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :setting_missing, :name, :link, :url
+  ]
 
   RENDERERS = {
-    :html => :RichHtmlRenderer,
-    :css => :TextRenderer,
-    :kml => :KmlRenderer
-    #:xml => :XmlFormater
+    :html => :RichHtml,
+    :css  => :Text,
+    :txt  => :Text
   }
 
   cattr_accessor :max_char_count, :max_depth, :set_views,
@@ -36,7 +39,7 @@ class Renderer
   self.max_depth = 10
 
   attr_reader :action, :inclusion_map, :params, :layout, :relative_content,
-      :template, :root, :format
+      :template, :root, :format, :controller
   attr_accessor :card, :main_content, :main_card, :context, :char_count,
       :depth, :item_view, :form, :type, :base, :state, :sub_count,
       :render_args, :requested_view, :layout, :flash, :showname
@@ -58,7 +61,7 @@ class Renderer
   #     _render(_setname)_viewname(args)
   #  #
   class << self
-    def view_alias(view, opts={}, *aliases)
+    def alias_view(view, opts={}, *aliases)
       view_key = get_pattern(view, opts)
       aliases.each do |aview|
         case aview
@@ -69,7 +72,7 @@ class Renderer
             else
               view_key.to_s.sub(/_#{view}$/, "_#{aview}").to_sym
             end
-#Rails.logger.info("view_alias #{aview_key}, #{view} > #{aview}")
+#Rails.logger.info("alias_view #{aview_key}, #{view} > #{aview}")
         when Hash
           aview_key = get_pattern(aview[:view]||view, aview)
         else raise "Bad view #{aview.inspect}"
@@ -99,7 +102,6 @@ class Renderer
         if view_key == view
 #Rails.logger.debug "define base view: _render_#{view}, render_#{view}"
           define_method( "_render_#{view}" ) do |*a| a = [{}] if a.empty?
-            #a[0][:home_view] ||= view  
             final_meth = view_method( view )
 #Rails.logger.debug " in #{caller(0).first}[#{card}] #{view}, #{final_meth}"
 raise "??? #{view.inspect}" unless final_meth
@@ -107,7 +109,7 @@ raise "??? #{view.inspect}" unless final_meth
           end
 
           define_method( "render_#{view}" ) do |*a|
-            if refusal=render_check(view); return refusal end
+            if refusal=render_check(view, *a); return refusal end
 raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_method( view )
             send( "_render_#{view}", *a) { yield }
           end
@@ -131,31 +133,23 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
 
     @@set_views, @@fallback = {},{} unless @@set_views
 
-    def new(card, opts=nil)
-      fmt = (opts && opts[:format] ? opts[:format].to_sym : :html)
-      if self==Renderer && RENDERERS.has_key?(fmt)
-        #warn "format = #{fmt}"
-        Renderer.const_get(RENDERERS[fmt]).new(card, opts)
-      else
-        #warn "self = #{self}, fmt = #{fmt}, #{self==Renderer}, #{RENDERERS.has_key?(fmt)} "
-        new_renderer = self.allocate
-        new_renderer.send :initialize, card, opts
-        new_renderer
+    def new(card, opts={})
+      if self==Renderer
+        fmt = (opts[:format] ? opts[:format].to_sym : :html)
+        renderer_name = (RENDERERS.has_key?(fmt) ? RENDERERS[fmt] : fmt.to_s.camelize).to_s + 'Renderer'
+        if Object.const_defined?( renderer_name)
+          return Object.const_get( renderer_name ).new(card, opts) 
+        end
       end
+      new_renderer = self.allocate
+      new_renderer.send :initialize, card, opts
+      new_renderer
     end
 
     def set_view(key) @@set_views[key.to_sym] end
     def view_aliases() VIEW_ALIASES end
   end
 
-  FORMAT2VIEW = {  
-    :txt => :raw,
-    :css => :naked,
-    :kml => :show, # partial
-    :xml => nil,
-    :json => nil,
-    :html => :layout
-  }
 
   # Fragment left over from controller, I think this is all handled ?
   #   for :xhr, render_show => :naked, :html render_show => :layout
@@ -163,34 +157,42 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
   #format == :xhr ? render(:action=>'show') : render(:text=>'', :layout=>true)
 
   def initialize(card, opts=nil)
-    Renderer.current_slot ||= self
+    Renderer.current_slot ||= self unless(opts[:not_current])
     @card = card
     if opts
-      [:main_content, :main_card, :base, :action, :context, :template,
-        :params, :relative_content, :format, :flash, :layout].
+      [ :main_content, :main_card, :base, :action, :context, :template,
+        :params, :relative_content, :format, :flash, :layout, :controller].
           map {|s| instance_variable_set "@#{s}", opts[s]}
     end
     inclusion_map( opts )
-#    @show_view = FORMAT2VIEW[format]
-    @params ||= {}
+
     @relative_content ||= {}
     @action ||= 'view'
     @format ||= :html
+    
+    #not sure these are necessary now that we're handling controller.  would prefer not to have to pass them in...    
+    @params ||= {}
     @flash ||= {}
+    
     @template ||= begin
       t = ActionView::Base.new( CardController.view_paths, {} )
       t.helpers.send :include, CardController.master_helper_module
       t.helpers.send :include, NoControllerHelpers
       t
     end
+    @template.controller = @controller
     @sub_count = @char_count = 0
     @depth = 0
     @root = self
-    if layout == :xhr
-      @layout = 'none'
-    elsif @params && @params[:layout]
-      @layout = @params[:layout]
-    end
+#    if layout == :xhr
+#      @layout = 'none'
+#    elsif @params && @params[:layout]
+#      @layout = @params[:layout]
+#    end
+  end
+  
+  def session
+    @controller ? @controller.session : {}
   end
 
   def ajax_call?() @@ajax_call end
@@ -203,8 +205,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     self.sub_count += 1
     sub = self.clone
     sub.depth = @depth+1
-    #sub.home_view = 
-    sub.item_view = sub.main_content = sub.main_card = nil
+    sub.item_view = sub.main_content = sub.main_card = sub.showname = nil
     sub.sub_count = sub.char_count = 0
     sub.context = "#{ctx_base||context}_#{sub_count}"
     sub.card = subcard
@@ -233,13 +234,13 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     update_references(wiki_content) if card.references_expired
 
     wiki_content.render! do |opts|
-#      @home_view = opts[:view].to_sym if @home_view.nil? and opts[:view]
       expand_inclusion(opts) { yield }
     end
   end
   alias expand_inclusions process_content
 
-  def render_check(action)
+
+  def render_check(action, args={})
     ch_action = case
       when too_deep?      ; :too_deep
       when !card          ; false
@@ -250,15 +251,15 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
       else
         !card.ok?(:read) and :deny_view
       end
-      ch_action and render_view_action ch_action
+      ch_action and render(ch_action, args)
   end
 
-  def render_deny(action, args)
-    if [ :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing,
-         :closed_missing, :setting_missing].member?(action)
-       render_view_action action, args
-    elsif card && card.new_record?; return # need create check...
-    else render_check action end
+  def render_deny(action, args={})
+    case
+    when UNDENIABLE_VIEWS.member?(action); return
+    when card && card.new_record?;         return # need create check...
+    else render_check action, args
+    end
   end
 
   def canonicalize_view( view )
@@ -338,7 +339,7 @@ raise "???" if Hash===action
   end
 
   def method_missing(method_id, *args, &proc)
-Rails.logger.debug "method missing: #{method_id}"
+    Rails.logger.debug "method missing: #{method_id}"
     # silence Rails 2.2.2 warning about binding argument to concat.  tried detecting rails 2.2
     # and removing the argument but it broken lots of integration tests.
     ActiveSupport::Deprecation.silence { @template.send(method_id, *args, &proc) }
@@ -383,7 +384,7 @@ Rails.logger.debug "method missing: #{method_id}"
 
     options[:home_view] = options[:view] ||= context == 'layout_0' ? :naked : :content
     options[:fullname] = fullname = get_inclusion_fullname(tname,options)
-    self.showname = tname.to_show(fullname)
+    options[:showname] = tname.to_show(fullname)
 
     tcard ||= begin
       case
@@ -421,17 +422,15 @@ Rails.logger.debug "method missing: #{method_id}"
   def process_inclusion(tcard, options)
     sub = subrenderer(tcard, options[:context])
     oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
-
-    # set item_view;  search cards access this variable when rendering their content.
     sub.item_view = options[:item] if options[:item]
     sub.type = options[:type] if options[:type]
-    self.showname ||= tcard.name
+    sub.showname = options[:showname] || tcard.name
 
     new_card = tcard.new_record? && !tcard.virtual?
 
-    vmode = (options[:view] || :content).to_sym
+    vmode = options[:home_view] = (options[:view] || :content).to_sym
     sub.requested_view = vmode
-    action = case
+    subview = case
 
       when [:name, :link, :linkname].member?(vmode)  ; vmode
       when :edit == state
@@ -446,7 +445,7 @@ Rails.logger.debug "method missing: #{method_id}"
       when state==:line       ; :closed_content
       else                    ; vmode
       end
-    result = sub.render(action, options)
+    result = sub.render(subview, options)
     Renderer.current_slot = oldrenderer
     result
   rescue Exception=>e
@@ -529,7 +528,48 @@ Rails.logger.debug "method missing: #{method_id}"
   end
 
   def main_card?() context=~/^main_\d$/ end
+    
+  def build_link(href, text)
+    klass = case href
+      when /^https?:/; 'external-link'
+      when /^mailto:/; 'email-link'
+      when /^\//
+        href = full_uri(href)      
+        'internal-link'
+      else
+        known_card = !!Card.fetch(href)
+        text = text.to_show(href)
+        href = '/wagn/' + (known_card ? href.to_url_key : CGI.escape(Cardname.escape(href)))
+        href = full_uri(href)
+        known_card ? 'known-card' : 'wanted-card'
+    end
+    %{<a class="#{klass}" href="#{href}">#{text}</a>}      
+  end
+  
+  def full_uri(relative_uri)
+    relative_uri
+  end
+
+  
+end
+
+class TextRenderer < Renderer
+  def initialize card, opts
+    super card,opts
+    
+    if format=='css' && controller
+      controller.response.headers["Cache-Control"] = "public"
+    end
+  end
 end
 
 class KmlRenderer < Renderer
+end
+
+class RssRenderer < RichHtmlRenderer
+  def full_uri(relative_uri)  System.base_url + relative_uri  end
+end
+
+class EmailHtmlRenderer < RichHtmlRenderer
+  def full_uri(relative_uri)  System.base_url + relative_uri  end
 end

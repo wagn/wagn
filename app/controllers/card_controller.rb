@@ -61,28 +61,20 @@ class CardController < ApplicationController
   
   def render_show_text
     request.format = :html if !params[:format]
-
+    
+    known_formats = FORMATS.split('|')
+    f_ext = request.parameters[:format]
+    return "unknown format: #{f_ext}" if !known_formats.member?( f_ext )
+    
     respond_to do |format|
-      format.rss do
-         raise("Sorry, RSS is broken in rails < 2.2") unless Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR >=2
-         # rss causes infinite memory suck in rails 2.1.2.  
-         @text = render_to_string(:action=>'show')
-      end
-      format.xml do render :text=>'xml not yet supported' end
-      format.json do render :text=>'json not yet supported' end
-      [:txt, :css, :kml, :html].each do |f|
+      known_formats.each do |f|
         format.send f do
-          @text = Renderer.new(@card, 
-            :format=>f, :flash=>flash, :params=>params
+          return Renderer.new(@card, 
+            :format=>f, :flash=>flash, :params=>params, :controller=>self
           ).render(:show)
         end
       end
     end
-    if params[:js]
-      # this is ugly, but needs to happen for now for opening / closing
-      @text += %{<script type="javascript">Wagn.#{params[:js]}(getSlotFromContext('#{@context}'))</script>}
-    end
-    @text
   end
   
 
@@ -386,8 +378,9 @@ class CardController < ApplicationController
   
   def add_field # for pointers only
     load_card if params[:id]
+    @card ||= Card.new(:type=>'Pointer', :skip_defaults=>true)
     #render :partial=>'types/pointer/field', :locals=>params.merge({:link=>:add,:card=>@card})
-    Renderer.new(@card).render(:field, :link=>:add)
+    render(:text => Renderer.new(@card, :context=>params[:eid]).render(:field, :link=>:add, :index=>params[:index]) )
   end
 
 end

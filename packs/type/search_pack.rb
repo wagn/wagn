@@ -22,7 +22,7 @@ class Renderer
   end
 
   define_view(:closed_content, :type=>'search') do
-    return "#..." if depth > 2
+    return "..." if depth > 2
     begin
       card.item_cards( paging_params )
       total = card.count
@@ -40,7 +40,7 @@ class Renderer
     else
       %{<span class="faint">(#{ total })</span>
       <div class="search-result-list">
-        #{card.results.each_with_index do |c,index|
+        #{card.results.map do |c|
           %{<div class="search-result-item">#{'name' == item_view || params[:item] ? c.name : link_to_page( c.name ) }</div>}
         end*"\n"}
       </div>}

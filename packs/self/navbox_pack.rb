@@ -17,7 +17,7 @@ class Renderer
 </form>
     }
   end
-  view_alias(:raw, {:name=>'*navbox'}, :naked)
+  alias_view(:raw, {:name=>'*navbox'}, :naked)
 
 
   private

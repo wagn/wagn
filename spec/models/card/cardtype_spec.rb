@@ -99,6 +99,7 @@ describe Card, ".class_for" do
   it "should find valid types" do
     Card.class_for('basic', :cardname).should == Card::Basic
     Card.class_for('Cardtype', :codename).should == Card::Cardtype
+    Card.class_for('Date').should == Card::Date
   end
   
   it "should return nil for invalid type" do

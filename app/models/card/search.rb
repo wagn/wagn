@@ -42,8 +42,8 @@ module Card
         JSON.parse( spec_content )
       end
       spec[:context] ||= (name.junction? ? name.left_name : name)
-      spec.merge! params
       spec.symbolize_keys!
+      spec.merge! params.symbolize_keys
       spec
     end
     

@@ -366,8 +366,13 @@ module Card
     # Extended associations ----------------------------------------
 
 
-    def left()  Card.fetch( name.trunk_name, :skip_virtual=> true) end
-    def right() Card.fetch( name.tag_name,   :skip_virtual=> true) end
+    def left
+      Card.fetch name.trunk_name, :skip_virtual=> true
+    end
+    def right
+      Card.fetch name.tag_name,   :skip_virtual=> true
+    end
+    
     def cardtype_name() ::Cardtype.name_for( self.type )             end
     
     
@@ -468,18 +473,16 @@ module Card
     end   
     
     def cached_revision
-      return current_revision || get_blank_revision
-
-      # commenting out the following for now.  suspect it may be behind caching issues.
+      #return current_revision || get_blank_revision
       
-      # case
-      # when (@cached_revision and @cached_revision.id==current_revision_id); 
-      # when (@cached_revision=Card.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
-      # else
-      #   @cached_revision = current_revision || get_blank_revision
-      #   Card.cache.write("#{key}-content", @cached_revision)
-      # end
-      # @cached_revision
+      case
+      when (@cached_revision and @cached_revision.id==current_revision_id); 
+      when (@cached_revision=Card.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
+      else
+        @cached_revision = current_revision || get_blank_revision
+        Card.cache.write("#{key}-content", @cached_revision)
+      end
+      @cached_revision
     end
     
     def get_blank_revision
@@ -684,7 +687,9 @@ module Card
     end  
   
     validates_each :key do |rec, attr, value|
-      unless value == rec.name.to_key
+      if value.empty?
+        rec.errors.add :key, "key cannot be blank"
+      elsif value != rec.name.to_key
         rec.errors.add :key, "wrong key '#{value}' for name #{rec.name}"
       end
     end

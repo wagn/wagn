@@ -27,6 +27,10 @@ describe Cardname do
       "grass".to_key.should == 'grass'    
     end
     
+    it "should not singularize letter 'S'" do
+      'S'.to_key.should == 's'
+    end
+    
     it "should handle unicode characters" do
       "Mañana".to_key.should == 'mañana'
     end
@@ -37,7 +41,7 @@ describe Cardname do
     
     it "should allow numbers" do
       "3way".to_key.should == '3way'
-    end  
+    end
     
     it "should handle html entities" do
       "Jean-fran&ccedil;ois Noubel".to_key.should == 'jean_françoi_noubel'

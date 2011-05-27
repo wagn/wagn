@@ -5,21 +5,27 @@ class KmlRenderer
     
     xml.kml do
       xml.Document do
-      
-        cards = if Card::Search === card
-              card.item_cards( :limit => 25, :_keyword=>params[:_keyword] )
-              card.results
-            else
-              [card]
-            end
+        
+        cardnames = User.as(:wagbot) do
+          # Note: we use wagbot to find all the applicable cards, but not for the geocode or description cards
+          # This is a workaround so that folks can have maps so long as their geocode cards are publicly viewable.
+          # needs deeper redesign
+          if Card::Search === card
+            card.item_cards( :return=>:name, :limit=>1000, :_keyword=>params[:_keyword] )
+            card.results
+          else
+            [card.name]
+          end
+        end
 
-        cards.each do |card|
-          if geocard = Card.fetch("#{card.name}+*geocode", :skip_virtual => true)
+        cardnames.each do |cardname|
+          geocard = Card.fetch("#{cardname}+*geocode", :skip_virtual => true)
+          if geocard && geocard.ok?(:read)
             xml.Placemark do
-              xml.name card.name
-              content_card = Card.fetch_or_new("#{card.name}+*geodescription") || card
-              #slot = get_slot(content_card, "main_1", "view")
-              xml.description Renderer.new(content_card).render_naked
+              xml.name cardname
+              if desc_card = Card.fetch("#{cardname}+*geodescription") and desc_card.ok? :read
+                xml.description Renderer.new(desc_card).render_naked
+              end
               xml.Point do
                 # apparently the google API likes them in the opposite order for static maps.
                 # since we don't have code in the static maps address, we store them that way.

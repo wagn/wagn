@@ -11,7 +11,7 @@ class AddBuiltins < ActiveRecord::Migration
     Card.create! :name=>'*missing link', :type=>'Search', :content=>%{{"link_to":"_none"}}
     
     builtin_list.each do |name|
-      c = Card.fetch_or_create(name)
+      Card.create! :name=>name
     end
   end
 

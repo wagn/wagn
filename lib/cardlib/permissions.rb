@@ -40,29 +40,30 @@ module Cardlib
       destroy_without_permissions!
     end
 
-    def save_with_permissions(perform_checking=true)
-      Rails.logger.debug "Card#save_with_permissions"
-      if perform_checking && approved? || !perform_checking
-        save_without_permissions(perform_checking)
-      else
-        raise ::Card::PermissionDenied.new(self)
-      end
+    def save_with_permissions(perform_checking = true)  #checking is needed for update_attribute, evidently.  not sure I like it...
+      Rails.logger.debug "Card#save_with_permissions!"
+      run_checked_save :save_without_permissions, perform_checking
+    end
+     
+    def save_with_permissions!(perform_checking = true)
+      Rails.logger.debug "Card#save_with_permissions!", perform_checking
+      run_checked_save :save_without_permissions!
     end 
     
-    def save_with_permissions!
-      Rails.logger.debug "Card#save_with_permissions!"
-      if approved?
+    def run_checked_save(method, perform_checking = true)
+      if !perform_checking || approved?
         begin
-          save_without_permissions!
+          self.send(method)
         rescue Exception => e
-          Rails.logger.info "save_with_perm:#{e.message} #{name} #{Kernel.caller.join("\n")}"
-          raise e
+          name.piece_names.each{|piece| Wagn::Cache.expire_card(piece.to_key)}
+          Rails.logger.info "#{method}:#{e.message} #{name} #{Kernel.caller.join("\n")}"
+          raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace}"
         end
       else
         raise ::Card::PermissionDenied.new(self)
       end
     end
- 
+    
     def approved?  
       self.operation_approved = true    
       self.permission_errors = []
@@ -148,9 +149,7 @@ module Cardlib
       deny_because("#{ydhpt} #{verb} this card") unless testee.lets_user( operation ) 
     end
 
-
     def approve_create
-      #warn "approving create for #{name} with type #{type} by user #{User.current_user.login}" 
       approve_task(:create)
     end
 
@@ -163,8 +162,14 @@ module Cardlib
       end
     end
     
-    def approve_update()  approve_task(:update)  end
-    def approve_delete()  approve_task(:delete)  end
+    def approve_update
+      approve_task(:update)
+      approve_read if operation_approved
+    end
+    
+    def approve_delete
+      approve_task(:delete)
+    end
 
     def approve_comment
       approve_task(:comment, 'comment on')

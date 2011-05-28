@@ -32,7 +32,7 @@ class Wql
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
     :special => %w{ or match complete not count and },
     :ignore => %w{ prepend append },
-    :pass => %w{ cond:0 cond:1 cond:2 cond:3 }
+    :pass => %w{ cond }
   }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
   # put into form: { :content=>:basic, :left=>:relational, etc.. }
 
@@ -87,7 +87,7 @@ class Wql
   end
   
   def run
-    #Rails.logger.info "query: #{query.inspect}\n\n sql: #{sql}"
+    #warn "query: #{query.inspect}\n\n sql: #{sql}"
     rows = ActiveRecord::Base.connection.select_all( sql )
     case (query[:return] || :card).to_sym
     when :card
@@ -291,7 +291,7 @@ class Wql
           when :referential;  self.refspec(key, spec.delete(key))
           when :ignore; spec.delete(key)
           when :pass; # for :cond  ie. raw sql condition to be ANDed
-          else raise("Invalid attribute #{key}") unless key.to_s.match(/(type|id)\:\d+/)
+          else raise("Invalid attribute #{key}") unless key.to_s.match(/(type|id|cond)\:\d+/)
         end                      
       end
       
@@ -325,12 +325,12 @@ class Wql
             v.split(/\s+/).map{ |x| %{#{f} #{cxn.match(quote("[[:<:]]#{x}[[:>:]]"))}} }.join(" AND ")
           end.join(" OR ") + ')'
         end
-      merge :'cond:3'=>SqlCond.new(cond)
+      merge field(:cond)=>SqlCond.new(cond)
     end
     
     def complete(val)
       no_plus_card = (val=~/\+/ ? '' : "and tag_id is null")  #FIXME -- this should really be more nuanced -- it breaks down after one plus
-      merge :'cond:2' => SqlCond.new(" lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}")
+      merge field(:cond) => SqlCond.new(" lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}")
     end
 
     def field(name)
@@ -351,9 +351,8 @@ class Wql
     
     def subcondition(val, args={})
       args = { :return=>:condition, :_parent=>self }.merge(args)
-      key = "cond:#{args.keys.length}".to_sym
       cardspec = CardSpec.build( args )
-      merge  key => cardspec.merge(val)
+      merge field(:cond) => cardspec.merge(val)
       self.sql.joins += cardspec.sql.joins 
       self.sql.relevance_fields += cardspec.sql.relevance_fields
     end
@@ -371,7 +370,8 @@ class Wql
     end
     
     def part(val) 
-      merge :or=>{ :tag_id => val.clone, :trunk_id => val }
+      subval = { :tag_id => val.clone, :trunk_id => val }
+      subcondition(subval, :join=>:or)
     end  
     
     def right_plus(val) 
@@ -387,10 +387,11 @@ class Wql
     def plus(val)
       #warn "GOT PLUS: #{val}"
       part_spec, connection_spec = val.is_a?(Array) ? val : [ val, {} ]
-      merge :or=>{
+      subval = {
         field(:id) => subspec(connection_spec, :return=>'trunk_id', :tag_id=>part_spec.clone),
         field(:id) => subspec(connection_spec, :return=>'tag_id', :trunk_id=>part_spec)
       }
+      subcondition(subval, :join=>:or)
     end          
     
     def edited_by(val)

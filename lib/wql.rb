@@ -388,8 +388,8 @@ class Wql
       #warn "GOT PLUS: #{val}"
       part_spec, connection_spec = val.is_a?(Array) ? val : [ val, {} ]
       subval = {
-        field(:id) => subspec(connection_spec, :return=>'trunk_id', :tag_id=>part_spec.clone),
-        field(:id) => subspec(connection_spec, :return=>'tag_id', :trunk_id=>part_spec)
+        field(:id) => subspec(connection_spec.deep_clone, :return=>'trunk_id', :tag_id=>part_spec.deep_clone),
+        field(:id) => subspec(connection_spec,            :return=>'tag_id', :trunk_id=>part_spec)
       }
       subcondition(subval, :join=>:or)
     end          

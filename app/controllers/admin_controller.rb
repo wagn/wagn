@@ -46,6 +46,12 @@ class AdminController < ApplicationController
     redirect_to :action=>'tasks'
   end
   
+  def show_cache
+    key = params[:id].to_key
+    @cache_card = Card.fetch(key)
+    @db_card = Card.find_by_key(key)
+  end
+  
   def clear_cache
     response = 
       if System.always_ok?

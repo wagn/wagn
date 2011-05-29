@@ -468,18 +468,16 @@ module Card
     end   
     
     def cached_revision
-      return current_revision || get_blank_revision
-
-      # commenting out the following for now.  suspect it may be behind caching issues.
+      #return current_revision || get_blank_revision
       
-      # case
-      # when (@cached_revision and @cached_revision.id==current_revision_id); 
-      # when (@cached_revision=Card.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
-      # else
-      #   @cached_revision = current_revision || get_blank_revision
-      #   Card.cache.write("#{key}-content", @cached_revision)
-      # end
-      # @cached_revision
+      case
+      when (@cached_revision and @cached_revision.id==current_revision_id); 
+      when (@cached_revision=Card.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
+      else
+        @cached_revision = current_revision || get_blank_revision
+        Card.cache.write("#{key}-content", @cached_revision)
+      end
+      @cached_revision
     end
     
     def get_blank_revision

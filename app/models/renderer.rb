@@ -522,7 +522,12 @@ raise "???" if Hash===action
         [:offset,:limit,:_keyword].each{|key| s[key] = p.delete(key)}
       end
       s[:offset] = s[:offset] ? s[:offset].to_i : 0
-      s[:limit]  = s[:limit]  ? s[:limit].to_i  : (main_card? ? 50 : 20)
+      if s[:limit]
+        s[:limit] = s[:limit].to_i
+      else
+        s.delete(:limit)
+        s[:default_limit] = (main_card? ? 50 : 20) #can be overridden by card value
+      end
       s
     end
   end

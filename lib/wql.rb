@@ -548,7 +548,7 @@ Rails.logger.debug "count iter(#{relation.inspect} #{subspec.inspect})"
       # Misc
       sql.tables = "cards #{table_alias}"
       sql.conditions << "#{table_alias}.trash is false"
-      sql.limit = @mods[:limit].blank? ? "" : "LIMIT #{@mods[:limit].to_i}"
+      sql.limit = (@mods[:limit].to_i <= 0) ? "" : "LIMIT #{@mods[:limit].to_i}"
       sql.offset = @mods[:offset].blank? ? "" : "OFFSET #{@mods[:offset].to_i}"
       
       sql.to_s

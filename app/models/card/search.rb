@@ -6,17 +6,15 @@ module Card
     def collection?() true end
 
     def item_cards(params={})
-      spec(params)
-      raise("OH NO.. no limit") unless @spec[:limit]
-      @spec.delete(:limit) if @spec[:limit].to_i <= 0
-      self.results = Card.search( @spec )
+      s = spec(params)
+      raise("OH NO.. no limit") unless s[:limit] #can be 0 or less to force no limit
+      self.results = Card.search( s )
     end
 
     def item_names(params={})
-      spec(params)
       ## FIXME - this should just alter the spec to have it return name rather than instantiating all the cards!!  
       ## (but need to handle prepend/append)
-      Card.search(@spec).map{ |card| card.name}
+      Card.search(spec(params)).map{ |card| card.name}
     end
 
     def item_type
@@ -28,22 +26,21 @@ module Card
     end
 
     def spec(params={})
-      if params.empty? && @spec
-        @spec
-      else
-        @spec = get_spec(params.clone)
-      end
+      @spec ||= {}
+      @spec[params.to_s] ||= get_spec(params.clone)
     end
 
     def get_spec(params={})
-      spec = ::User.as(:wagbot) do ## why is this a wagbot thing?
+      spec = ::User.as(:wagbot) do ## why is this a wagbot thing?  can't deny search content??
         spec_content = raw_content
         raise("Error in card '#{self.name}':can't run search with empty content") if spec_content.empty?
         JSON.parse( spec_content )
       end
+      spec.symbolize_keys!.merge! params.symbolize_keys
+      if default_limit = spec.delete(:default_limit) and !spec[:limit]
+        spec[:limit] = default_limit
+      end
       spec[:context] ||= (name.junction? ? name.left_name : name)
-      spec.symbolize_keys!
-      spec.merge! params.symbolize_keys
       spec
     end
     

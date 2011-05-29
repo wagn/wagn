@@ -21,7 +21,7 @@ describe CardController do
     
     it "should recognize .rss on /recent" do
       params_from(:get, "/recent.rss").should == {:controller=>"card", :view=>"content", :action=>"show", 
-        :id=>"*recent", :format=>"rss"
+        :id=>"*recent_changes", :format=>"rss"
       }
     end
     
@@ -46,14 +46,14 @@ describe CardController do
     ["/wagn",""].each do |prefix|
       describe "routes prefixed with '#{prefix}'" do
         it "should recognize .rss format" do
-          params_from(:get, "#{prefix}/*recent.rss").should == {
-            :controller=>"card", :action=>"show", :id=>"*recent", :format=>"rss"
+          params_from(:get, "#{prefix}/*recent_changes.rss").should == {
+            :controller=>"card", :action=>"show", :id=>"*recent_changes", :format=>"rss"
           }
         end           
     
         it "should recognize .xml format" do
-          params_from(:get, "#{prefix}/*recent.xml").should == {
-            :controller=>"card", :action=>"show", :id=>"*recent", :format=>"xml"
+          params_from(:get, "#{prefix}/*recent_changes.xml").should == {
+            :controller=>"card", :action=>"show", :id=>"*recent_changes", :format=>"xml"
           }
         end           
 

@@ -35,7 +35,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def per_request_setup
-    Renderer.ajax_call=request.xhr?
+    Slot.ajax_call=request.xhr?
     
     if System.multihost
       if mapping = MultihostMapping.find_by_requested_host(request.host) || MultihostMapping.find_by_requested_host("")
@@ -43,15 +43,14 @@ class ApplicationController < ActionController::Base
         System.wagn_name = mapping.wagn_name
         ActiveRecord::Base.connection.schema_search_path = mapping.wagn_name
       else
-        return render_fast_404(request.host)
+        return render_fast_404
       end
     end
 
     Wagn::Cache.re_initialize_for_new_request
     # Set/Redirect to Canonical Domain
     if request.raw_host_with_port != System.host and RAILS_ENV=="production"
-      query_string = request.query_string.empty? ? '' : "?#{request.query_string}"
-      return redirect_to("http://#{System.host}#{request.path}#{query_string}")
+      return redirect_to("http://#{System.host}#{request.path}")
     end
 
     User.current_user = current_user || User.find_by_login('anon')
@@ -76,7 +75,13 @@ class ApplicationController < ActionController::Base
     respond_to do |format|
       format.html {
         unless request.xhr?
-          layout = 'application'
+          layout = case
+            when BUILTIN_LAYOUTS.include?(params[:layout]);
+              params[:layout]
+#            when params[:layout] == 'none'; nil
+            else
+              'application'
+            end
         end
       } 
       format.xml {
@@ -161,7 +166,7 @@ class ApplicationController < ActionController::Base
   def render_update_slot_element(name, stuff="", message=nil)
     render :update do |page|
       page.extend(WagnHelper::MyCrappyJavascriptHack)
-      elem_code = "getSlotFromContext('#{params[:context]}')"
+      elem_code = "getSlotFromContext('#{get_slot.context}')"
       unless name.empty?
         elem_code = "getSlotElement(#{elem_code}, '#{name}')"
       end
@@ -204,7 +209,7 @@ class ApplicationController < ActionController::Base
 
     on_error_js = ""
 
-    if captcha_required? && ENV['RECAPTCHA_PUBLIC_KEY']
+    if captcha_required?
       key = @card.new_record? ? "new" : @card.name.to_key
       on_error_js << %{ document.getElementById('dynamic_recaptcha-#{key}').innerHTML='<span class="faint">loading captcha</span>'; }
       on_error_js << %{ Recaptcha.create('#{ENV['RECAPTCHA_PUBLIC_KEY']}', document.getElementById('dynamic_recaptcha-#{key}'),RecaptchaOptions); }

@@ -23,7 +23,7 @@ module Chunk
     end
 
     def unmask_text
-      @unmask_text ||= render_link
+      @unmask_text ||= html_link
     end
     
     def revert

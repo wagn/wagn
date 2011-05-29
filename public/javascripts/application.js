@@ -215,7 +215,7 @@ setupCreateOnClick=function(container) {
       ie = (Prototype.Browser.IE ? '&ie=true' : '');
       new Ajax.Request('/card/new?add_slot=true&context='+getSlotContext(element), {
         asynchronous: true, evalScripts: true,     
-        parameters: "card[type]=" + encodeURIComponent(card_type) + "&card[name]="+encodeURIComponent(card_name)+"&home_view="+slot_span.getAttributeNode('home_view').value+ie,
+        parameters: "card[type]=" + encodeURIComponent(card_type) + "&card[name]="+encodeURIComponent(card_name)+"&view="+slot_span.getAttributeNode('view').value+ie,
         onSuccess: function(request){ slot_span.replace(request.responseText) },
         onFailure: function(request){ slot_span.replace(request.responseText) }
       });
@@ -253,6 +253,7 @@ getOuterSlot=function(element){
 getSlotFromContext=function(context){
   a = context.split('_');
   outer_context=a.shift();
+  element = $(outer_context);
   element = $(outer_context);
   while(a.size() > 0) {
     pos = a.shift();      
@@ -337,7 +338,7 @@ getSlotOptions=function(element){
   if (span=getSlotSpan(element)) {   
     var n=null; var item=''; var view='';
     options = $A([]);
-    if (n=span.getAttributeNode('home_view')) {  if (n.value != '') { options.push("home_view="+n.value) }};
+    if (n=span.getAttributeNode('view')) {  if (n.value != '') { options.push("view="+n.value) }};
     if (n=span.getAttributeNode('item')) {  if (n.value != '') { options.push("item="+n.value) }};
     return options.join("&");
   }

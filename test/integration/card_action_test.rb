@@ -72,9 +72,7 @@ class CardActionTest < ActionController::IntegrationTest
       {"YFoo+*type+*edit help"  => "instruct-me"}
     )
     get 'card/new', :card => {:type=>'YFoo'}
-Rails.logger.info "failing 3"
     assert_tag :tag=>'div', :attributes=>{ :class=>"instruction" },  :content=>/instruct-me/ 
-Rails.logger.info "failing 4"
   end
 
   def test_newcard_works_with_fuzzy_renamed_cardtype
@@ -90,9 +88,7 @@ Rails.logger.info "failing 4"
   def test_newcard_gives_reasonable_error_for_invalid_cardtype
     get 'card/new', :card => { :type=>'bananamorph' }       
     assert_response :success
-Rails.logger.info "failing 1"
     assert_tag :tag=>'div', :attributes=>{:class=>'error', :id=>'no-cardtype-error'}
-Rails.logger.info "failing 2"
   end
 
   # FIXME: this should probably be files in the spot for a remove test

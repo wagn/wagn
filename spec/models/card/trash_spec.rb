@@ -33,10 +33,7 @@ describe User, "with revisions" do
 end
 
 describe User, "without revisions" do
-  before do 
-    User.as :wagbot
-    @c = Card.create! :name=>'User Must Die', :type=>'User'
-  end
+  before do User.as :wagbot ; @c = Card.find_by_name("Sample User"); end
   it "should be removable" do
     @c.destroy!.should be_true
   end

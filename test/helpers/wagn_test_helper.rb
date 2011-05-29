@@ -1,6 +1,4 @@
 require 'lib/util/card_builder.rb'
-#require 'renderer'
-
 module WagnTestHelper
       
   include CardBuilderMethods
@@ -23,6 +21,7 @@ module WagnTestHelper
   end
  
   def get_renderer()
+    require 'renderer'
     Renderer.new(Card.new(:name=>'dummy'))
   end
   
@@ -80,7 +79,6 @@ module WagnTestHelper
   
   def post_invite(options = {})
     action = options[:action] || :invite
-Rails.logger.info "post invite #{action} #{options.inspect}"
     post action, 
       :user => { :email => 'new@user.com' }.merge(options[:user]||{}),
       :card => { :name => "New User" }.merge(options[:card]||{}),

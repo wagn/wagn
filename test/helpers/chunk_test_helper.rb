@@ -3,19 +3,16 @@ module ChunkTestHelper
   # It provides a easy way to test whether a chunk matches a particular string
   # and any the values of any fields that should be set after a match.
   class ContentStub < String
-    attr_reader :renderer
-    
     include ChunkManager
     def initialize(str)
       super
-      @renderer = RichHtmlRenderer.new(nil)
       init_chunk_manager
     end             
     
     def card
     end
     
-    def render_link(*); end
+    def html_link(*); end
   end
 
   # Asserts that test_text doesn't match the chunk_type

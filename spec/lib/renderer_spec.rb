@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Renderer do
   before do
-    User.current_user = :wagbot
+    User.as :wagbot
   end
   
   it "replace references should work on inclusions inside links" do       

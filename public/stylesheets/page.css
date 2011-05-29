@@ -28,7 +28,7 @@
 #menu div {
   display: inline;
 }
-#menu #logging {  /* signing in and out */
+#logging {  /* signing in and out */
   position: absolute;
   right: 0.5%;
   top: 2px;

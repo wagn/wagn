@@ -1,4 +1,3 @@
-require_dependency 'renderer'
 module Wagn
   class Module
     class << self

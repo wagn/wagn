@@ -51,14 +51,14 @@ module Cardname
   end
     
   def piece_names
-    simple? ? [self] : ([self] + left_name.piece_names + tag_name.piece_names).uniq
+    simple? ? [self] : ([self] + parent_name.piece_names + tag_name.piece_names).uniq
   end
   
   def particle_names
     split(JOINT)
   end
   
-  def left_name
+  def parent_name
     simple? ? nil : trunk_name
   end
 
@@ -98,7 +98,7 @@ module Cardname
   end
 
   def to_show(absolute)
-    (self =~/\b_(left|right|whole|self|user|\d+|L*R?)\b/) ? absolute : self
+    (self =~/_(left|right|whole|self|user)/) ? absolute : self
   end
 
   def to_star

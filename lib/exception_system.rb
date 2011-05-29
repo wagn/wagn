@@ -22,10 +22,8 @@ module ExceptionSystem
   end
      
   # these called by exception_notifier    
-  def render_fast_404(host=nil)
-    message = "<h1>404 Page Not Found</h1>"
-    message += "Unknown host: #{host}" if host
-    render :text=>message, :layout=>false, :status=>404
+  def render_fast_404()
+    render :text=>"404 not found", :layout=>nil, :status=>404
   end
   
   

@@ -77,7 +77,7 @@ end
 
 describe Card, "created without permission" do
   before do
-    User.current_user = :anonymous
+    User.as :anonymous
   end
    
   # FIXME:  this one should pass.  unfortunately when I tried to fix it it started looking like the clean solution 
@@ -99,7 +99,6 @@ describe Card, ".class_for" do
   it "should find valid types" do
     Card.class_for('basic', :cardname).should == Card::Basic
     Card.class_for('Cardtype', :codename).should == Card::Cardtype
-    Card.class_for('Date').should == Card::Date
   end
   
   it "should return nil for invalid type" do

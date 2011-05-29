@@ -1,0 +1,14 @@
+<% @lay_content = capture do %>
+<!DOCTYPE HTML>
+<html>
+  <head>
+    {{*head}}
+  </head>
+
+  <body id="wagn">
+    {{_main}}
+    {{*foot}}
+  </body>
+</html>
+<% end %>
+<%= render_layout_content(@lay_content) %>

@@ -11,7 +11,7 @@ require File.join(File.dirname(__FILE__), 'wagn_initializer')
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence those specified here
   #RAILS_GEM_VERSION = '2.3.9' unless defined? RAILS_GEM_VERSION  
-  
+     
   Wagn::Initializer.set_default_rails_config config
 
   # Skip frameworks you're not going to use
@@ -21,7 +21,7 @@ Rails::Initializer.run do |config|
 
   # Force all environments to use the same logger level 
   # (by default production uses :info, the others :debug)
-  # config.log_level = :info
+  #config.log_level = :debug
 
   # Use SQL instead of Active Record's schema dumper when creating the test database.
   # This is necessary if your schema can't be completely dumped by the schema dumper, 
@@ -38,3 +38,4 @@ Rails::Initializer.run do |config|
   # See Rails::Configuration for more options   
   # select a store for the rails/card cache
 end
+   

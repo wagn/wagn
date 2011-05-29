@@ -17,7 +17,7 @@
       <% slot.form = form %>
       <%=  params[:inclusions] ? slot.render_multi_edit : slot.render_edit %>
     </div>
-    <%= slot.captcha_tags %>
+    <%= slot.half_captcha %>
     <div class="edit-button-area">
       <%= button_to_remote "Delete", { :url=>slot.url_for("card/remove") }, :style=>'float:right'  %>
       <%= button_to_function "Save", "this.form.onsubmit()", :class=>'save-card-button' %>

@@ -64,45 +64,38 @@ class Card::BaseTest < ActiveSupport::TestCase
   end
           
 
-  def test_multi_update_should_create_subcards
-    User.current_user = :joe_user
-    User.as(:joe_user) do
-      b = Card.create!( :name=>'Banana' )
-      b.multi_update({ "+peel" => { :content => "yellow" }})
-      assert_equal "yellow", Card["Banana+peel"].content   
-      assert_equal User[:joe_user].id, Card["Banana+peel"].created_by
-    end
+  def test_multi_update_should_create_subcards  
+    User.as(:joe_user)
+    b = Card.create!( :name=>'Banana' )
+    b.multi_update({ "+peel" => { :content => "yellow" }})
+    assert_equal "yellow", Card["Banana+peel"].content   
+    assert_equal User[:joe_user].id, Card["Banana+peel"].created_by
   end
   
   def test_multi_update_should_create_subcards_as_wagbot_if_missing_subcard_permissions
     # then repeat multiple update as above, as :anon
-    User.current_user = :anon
-    assert_equal false, Card.fetch('Basic').ok?(:create)
+    User.as(:anon)
     b = Card.create!( :type=>"Fruit", :name=>'Banana' )
     b.multi_update({ "+peel" => { :content => "yellow" }})
     assert_equal "yellow", Card["Banana+peel"].current_revision.content
-    assert_equal User[:anon].id, Card["Banana+peel"].created_by
+    assert_equal User[:wagbot].id, Card["Banana+peel"].created_by
   end
   
   def test_multi_update_should_not_create_cards_if_missing_main_card_permissions
-    b = nil
-    User.as(:joe_user) do
-      b = Card.create!( :name=>'Banana' )
-    end
-    User.as(:anon) do
-      assert_raises( Card::PermissionDenied ) do
-        b.multi_update({ "+peel" => { :content => "yellow" }})
-      end
+    User.as(:joe_user)
+    b = Card.create!( :name=>'Banana' )
+    User.as(:anon) 
+    assert_raises( Card::PermissionDenied ) do
+      b.multi_update({ "+peel" => { :content => "yellow" }})
     end
   end
 
 
   def test_create_without_read_permission
-    User.as(:anon) do
-      c = Card.create! :name=>"Banana", :type=>"Fruit", :content=>"mush"
-      assert_raises Card::PermissionDenied do
-        Card['Banana'].content
-      end
+    User.as(:anon)     
+    c = Card.create! :name=>"Banana", :type=>"Fruit", :content=>"mush"
+    assert_raises Card::PermissionDenied do
+      Card['Banana'].content
     end
   end
   

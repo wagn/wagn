@@ -47,25 +47,23 @@ module Cardlib
       true
     end
   
-    def card_const_set(class_id)
-      newclass = Class.new( Card::Basic )
-      const_set class_id, newclass
-      # FIXME: is this necessary?
-      if observers = Card::Base.instance_variable_get('@observer_peers')
-        observers.each do |o|
-          newclass.add_observer(o)
-        end
-      end
-      newclass
-    end
-  
     def const_missing( class_id )
       super
     rescue NameError => e   
       ::Cardtype.load_cache if ::Cardtype.cache.empty?
-      classnames = ::Cardtype.cache[:card_names]
-      raise e unless (classnames.has_key?( class_id.to_s ) and klass = card_const_set(class_id))
-      klass
+      if ::Cardtype.cache[:card_names].has_key?( class_id.to_s )
+        newclass = Class.new( Card::Basic )
+        const_set class_id, newclass
+        # FIXME: is this necessary?
+        if observers = Card::Base.instance_variable_get('@observer_peers')
+          observers.each do |o|
+            newclass.add_observer(o)
+          end
+        end
+        return newclass
+      else
+        raise e
+      end
     end
      
     def generate_codename_for(cardname)

@@ -33,7 +33,7 @@ end
   
 describe "On Card Changes" do
   before do
-    User.current_user = :john           
+    User.as(:john)           
     Timecop.travel(FUTURE)  # make sure we're ahead of all the test data
   end
   

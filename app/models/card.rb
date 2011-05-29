@@ -8,8 +8,8 @@ module Card
   class << self
     # This is just taking inventory of all the stuff we call on Card
     # that is defined in Card::Base.  interesting.
-    # %w[ auto_card quoted_table_name find subclasses add_observer
-    #     new create create! find_by_key find_by_key_and_trash find_by_name
+    # %w[ auto_card quoted_table_name add_builtin find subclasses add_observer
+    #     find_builtin new create create! find_by_key find_by_key_and_trash find_by_name
     #     find_virtual create_virtual search find_by_sql find_by_type_and_trash
     #     find_or_create update_all retrieve_extension_attribute count_by_wql find_or_new
     #     count default_setting default_setting_card 
@@ -30,12 +30,11 @@ module Card
     end
     
     def class_for(name, field='codename')
-      class_id = ( field.to_sym == :codename ? name :
+      Card.const_get(
+        field.to_sym == :codename ? name :
           ( cardname = ::Cardtype.name_for_key(name.to_key) and
-            ::Cardtype.classname_for(cardname) ) 
+            ::Cardtype.classname_for( cardname ) )
       )
-      klass = Card.const_get(class_id)
-      klass.allocate.is_a?(Card::Base) ? klass : card_const_set(class_id)
     rescue Exception=>e
       nil
     end

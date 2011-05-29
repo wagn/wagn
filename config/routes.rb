@@ -21,8 +21,8 @@ ActionController::Routing::Routes.draw do |map|
   
   map.connect 'wagn/:id.:format', :controller => 'card', :action=>'show', :requirements=> ID_REQS
 
-  map.connect 'recent',           :controller => 'card', :action=>'show', :id=>'*recent', :view=>'content'
-  map.connect 'recent.:format',   :controller => 'card', :action=>'show', :id=>'*recent', :view=>'content', :format=>FORMAT_PATTERN
+  map.connect 'recent',           :controller => 'card', :action=>'show', :id=>'*recent_changes', :view=>'content'
+  map.connect 'recent.:format',   :controller => 'card', :action=>'show', :id=>'*recent_changes', :view=>'content', :format=>FORMAT_PATTERN
   map.connect 'search/:_keyword.:format',           :requirements=>{ :_keyword => /([^\.]*(\.(?!(#{FORMATS})))?)*/, :format=>FORMAT_PATTERN },
                                   :controller => 'card', :action=>'show', :id=>'*search', :view=>'content'   
   map.connect 'new/:type',        :controller => 'card', :action=>'new'

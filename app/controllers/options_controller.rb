@@ -43,7 +43,6 @@ class OptionsController < ApplicationController
     raise ActiveRecord::RecordInvalid.new(@user) if !@user.errors.empty?
     @extension = User.new(:email=>@user.email)
     flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
-    #render_update_slot render_options
     render_update_slot render_to_string(:template=>'card/options')
   end
 

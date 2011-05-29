@@ -46,7 +46,7 @@
         <%= f.hidden_field 'confirm_rename' %>
       <% end %>
 
-      <%= slot.captcha_tags %>
+      <%= slot.half_captcha %>
        <%= submit_tag 'Rename' %>
       <%= button_to_remote 'Cancel', :url=>slot.url_for('card/edit'), :update=>slot.id() %>
     <% end %>

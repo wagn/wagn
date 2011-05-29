@@ -5,7 +5,7 @@
 
 
 # TODO:
-#  - implement Renderer#cache_action  (for footer, etc.) if necessary
+#  - implement Slot#cache_action  (for footer, etc.) if necessary
 #
 
 module Cardlib
@@ -39,6 +39,9 @@ module Cardlib
         key = cardname.to_key
         cacheable = false
 
+        card = Card.builtin_virtual( cardname ) unless opts[:skip_virtual]
+        Rails.logger.debug "   builtin_virtual: #{card.inspect}" if card && debug
+
         if perform_caching?
           card ||= Card.cache.read( key )
           cacheable = true if card.nil?
@@ -50,7 +53,7 @@ module Cardlib
           Card.find_by_key( key )
         end
 
-        if !opts[:skip_virtual] && (!card || card.missing? || card.trash?)
+        if !opts[:skip_virtual] && (!card || card.missing? || card.trash? || card.builtin?)
           if virtual_card = Card.pattern_virtual( cardname )
             card = virtual_card
             Rails.logger.debug "   pattern_virtual: #{card.inspect}" if debug

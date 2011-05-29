@@ -51,10 +51,8 @@ namespace :wagn do
         :cards    =>',created_by=1, updated_by=1',  
         :revisions=>',created_by=1' 
       }
-      require 'time'
-      now = Time.new.strftime("%Y-%m-%d %H:%M:%S")
       %w{ users cards wiki_references revisions }.each do |table|
-        ActiveRecord::Base.connection.update("update #{table} set created_at='#{now}', updated_at='#{now}' #{extra_sql[table.to_sym] || ''};")
+        ActiveRecord::Base.connection.update("update #{table} set created_at=now(), updated_at=now() #{extra_sql[table.to_sym] || ''};")
       end
     
       #CLEAN UP wiki references.  NOTE, this might bust in mysql?  test!

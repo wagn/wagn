@@ -22,16 +22,37 @@ OPTION B: INSTALL VIA GIT
   
     1. Get the source
           git clone git://github.com/wagn/wagn.git 
-    2. Install gems:
-        A. Install "bundler" gem:  gem install bundler
-        B. Install other gems using bundler: bundle install  
-        (more details at)
-    3. In the config directory:
-        A. copy sample_database.yml to database.yml
-        B. copy sample_wagn.rb to wagn.rb
-    4. configure config/database.yml for your database.
+          cd wagn; git submodule update --init
+    2. In the config directory:
+          copy sample_database.yml to database.yml
+          copy sample_wagn.rb to wagn.rb
+    3. configure config/database.yml for your database.
+    4. run rake gems:install (See note about rspec below)
     5. run rake wagn:create
     6. run ./script/server
+    
+  As of Wagn v 1.x it is required to gem install rspec (rspec was moved from vendor to gem)
  
  
-For more information, see http://wagn.org/installation
+ 
+SERVER TWEAKS / PROBLEM SOLVING
+   
+  ~ Trouble?
+  If you're having trouble with your database setup see http://wagn.org/Installation+database 
+   
+  ~ Running on a different port or url
+  Wagn by default assumes you'll be running it at http://localhost:3000
+  If this isn't the case, edit config/wagn.rb and set System.base_url = http://yoursite:yourport
+   
+  ~ Mail
+  see http://wagn.org/Installation+mail setup
+   
+  ~ Security
+  If your wagn will be publicly accessible you should change the session_key and secret fields in config/database.yml
+   
+  ~ Production
+  Before running Wagn in production, you need to compile your js and css assets by running
+  rake RAILS_ENV=production asset:packager:build_all
+   
+  ~ Site Customization
+  Most of Wagn's settings can be set through the web interface. Follow sidebar links to set up your home page, logos, security, etc.

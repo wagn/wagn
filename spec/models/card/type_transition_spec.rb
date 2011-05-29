@@ -1,29 +1,29 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
 module Card  
-  class CardtypeA < Basic  
+  class CardtypeA < Base  
     def approve_delete 
       deny_because("not allowed to delete card a")
     end
   end
 
-  class CardtypeB < Basic                              
+  class CardtypeB < Base                              
     # create restricted in test_data
   end
   
-  class CardtypeC < Basic
+  class CardtypeC < Base
     def validate_type_change
       errors.add :destroy_error, "card c is indestructible"
     end
   end
   
-  class CardtypeD < Basic 
+  class CardtypeD < Base 
     def valid?
       errors.add :create_error, "card d always has errors"
     end
   end
   
-  class CardtypeE < Basic           
+  class CardtypeE < Base           
     cattr_accessor :count
     @@count = 2
     def on_type_change
@@ -32,7 +32,7 @@ module Card
     def decrement_count() self.class.count -= 1; end
   end
   
-  class CardtypeF < Basic
+  class CardtypeF < Base
     cattr_accessor :count
     @@count = 2
     before_create :increment_count

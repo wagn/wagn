@@ -54,7 +54,6 @@ module LocationHelper
     end
     # shaved order of magnitude off footer rendering
     # vs. url_for( :action=> .. )
-#Rails.logger.debug "url_for_page( #{title}, #{format}, #{vars}"
     "/wagn/#{title.to_url_key}#{format}#{vars}"
   end
 
@@ -78,14 +77,14 @@ module LocationHelper
     url = url_for_page(title, url_options)
     url = System.base_url + url if (options.delete(:include_domain))
 
+    #Rails.logger.info("link_to_page #{options.inspect}")
     if options[:format] == :xml
       %{<cardlink class="known-card" card="#{url}">#{title}</cardlink>}
     else
-    #Rails.logger.debug("link_to_page #{options.inspect}")
       link_to text, url, options
-    end
-  end
-
+    end  
+  end  
+    
   def link_to_connector_update( text, highlight_group, connector_method, value, *method_value_pairs )
     #warn "method_value_pairs: #{method_value_pairs.inspect}"
     extra_calls = method_value_pairs.size > 0 ? ".#{method_value_pairs[0]}('#{method_value_pairs[1]}')" : ''

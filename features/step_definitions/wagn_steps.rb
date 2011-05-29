@@ -93,10 +93,6 @@ When /^(.*) deletes? "([^\"]*)"$/ do |username, cardname|
   end
 end
 
-When /I wait a sec/ do
-  sleep 1
-end
-
 Then /what/ do
   save_and_open_page
 end

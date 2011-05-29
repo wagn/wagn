@@ -1,7 +1,7 @@
 module AuthenticatedSystem
   protected
   def logged_in?
-    current_user && current_user.login != 'anon'
+    current_user
   end
 
   # Accesses the current user from the session.

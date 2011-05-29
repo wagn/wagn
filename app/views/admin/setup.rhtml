@@ -2,7 +2,7 @@
 
 <%= error_messages_for :user %>
 
-<% wrap_slot do |slot| %>
+<% wrap_slot(get_slot(card)) do |slot| %>
 
   <div class="open-content">
     <h2 class="page-header">To get started, set up an account. </h2><%#ENGLISH%>

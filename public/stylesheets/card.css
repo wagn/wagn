@@ -636,14 +636,11 @@ body#wagn .card-slot.recent-changes h2 {
 }
 .change-view .last-update {
   float:right;
-  text-align: right;
 }
 .change-view .last-edited {
   color: #7a7;
 }
-.change-view .last-editor {
-  white-space: nowrap;
-}
+
 
 /*----------- Nested ---------*/
 
@@ -728,7 +725,7 @@ body#wagn .card-slot.recent-changes h2 {
 div.pointer-list,
 div.search-result-list {
   list-style: none;
-  padding: 5px 0;
+  padding: 5px 10px;
   margin: 0;
 }
 
@@ -756,12 +753,6 @@ div.search-result-list .search-result-item {
 .paragraph .TYPE-image .content {
 /*  overflow: auto;  */
   padding: 5px;
-}
-
-/*-----------( Toggle ) -----------*/
-
-.TYPE-toggle .content {
-  font-style: italic;
 }
 
 /*----------- (Invitation Request)--------------*/

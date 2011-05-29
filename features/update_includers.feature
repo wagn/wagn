@@ -42,13 +42,11 @@ Feature: Update Includer cards
       |color|flavor|
       |yellow|sweet|
     And Joe Camel is watching "Banana+color"
-    And I wait a sec
     When I edit "Banana" with plusses:
       |color|flavor|
       |spotted|mushy|
     Then Joe Camel should be notified that "Joe User edited \"Banana\+color\""    
     When Joe Camel is watching "Banana"
-    And I wait a sec
     And I edit "Banana" with plusses:
       |color|flavor|
       |spotted|mushy|

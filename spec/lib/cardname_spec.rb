@@ -27,10 +27,6 @@ describe Cardname do
       "grass".to_key.should == 'grass'    
     end
     
-    it "should not singularize letter 'S'" do
-      'S'.to_key.should == 's'
-    end
-    
     it "should handle unicode characters" do
       "Mañana".to_key.should == 'mañana'
     end
@@ -41,7 +37,7 @@ describe Cardname do
     
     it "should allow numbers" do
       "3way".to_key.should == '3way'
-    end
+    end  
     
     it "should handle html entities" do
       "Jean-fran&ccedil;ois Noubel".to_key.should == 'jean_françoi_noubel'
@@ -138,13 +134,13 @@ describe Cardname do
     end
   end         
   
-  describe "#left_name" do
+  describe "#parent_name" do
     it "returns nil for non junction" do
-      "a".left_name.should == nil
+      "a".parent_name.should == nil
     end
     
     it "returns parent for parent" do
-      "a+b+c+d".left_name.should == "a+b+c"
+      "a+b+c+d".parent_name.should == "a+b+c"
     end
   end
 

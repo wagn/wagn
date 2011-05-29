@@ -1,9 +1,8 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-#A_JOINEES = ["B", "C", "D", "E", "F"]
+A_JOINEES = ["B", "C", "D", "E", "F"]
 
 describe Cardlib::Search do
-=begin Do we still need this test, but refactored a little?
   describe ".find_builtin" do
     it "should retrieve cards added by add_builtin" do
       Card.add_builtin( Card.new(:name=>"*ghost", :content=>"X"))
@@ -19,7 +18,6 @@ describe Cardlib::Search do
       end
     end
   end
-=end
   
   describe ".find_virtual" do
     before { User.as :joe_user }

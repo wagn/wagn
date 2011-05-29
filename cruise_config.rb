@@ -1,9 +1,18 @@
 # Project-specific configuration for CruiseControl.rb
 
+begin
+require 'config/wagn_cruise.rb'
+rescue LoadError
+end
+
+class WagnCruise
+end
+
 Project.configure do |project|
   
   # Send email notifications about broken and fixed builds to email1@your.site, email2@your.site (default: send to nobody)
-  # project.email_notifier.emails = ['email1@your.site', 'email2@your.site']
+  project.email_notifier.emails = WagnCruise.respond_to?(:email_list) ?
+     WagnCruise.email_list : ['gerryg@inbox.com']
 
   # Build the project by invoking rake task 'custom'
   # project.rake_task = 'custom'
@@ -14,14 +23,6 @@ Project.configure do |project|
 
   # Ping Subversion for new revisions every 5 minutes (default: 30 seconds)
   # project.scheduler.polling_interval = 5.minutes
+
 end
-
-
-# Using cruise with Wagn:
-#
-# 1. You can override settings in this cruise_config.rb file in [cruise data]/projects/your_project/cruise_config.rb
-# 2. You should set up database.yml content in files that follow this pattern:  config/cruise.[name].database.yml
-# 3. You should set up wagn.rb content in a file named config/cruise.wagn.rb
-# 4. By default the databases are not regenerated from scratch each time you run the integration tests.  
-#    To trigger re-creation, you will need to remove config/wagn.rb
 

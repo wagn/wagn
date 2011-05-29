@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+  require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 require File.expand_path(File.dirname(__FILE__) + '/../../pattern_spec_helper')
 
 describe Wagn::Pattern do
@@ -24,6 +24,17 @@ describe Wagn::Pattern do
         "Book+author+*type plus right","author+*right","Basic+*type","*all"
       ]
     end
+  end
+
+  describe :method_keys do
+    it "returns self, type, all for simple cards" do
+      card = Card.new( :name => "AnewCard" )
+      Wagn::Pattern.method_keys( card).should == [ "basic_type",""]
+      card.save!
+      card = Card.fetch("AnewCard")
+      Wagn::Pattern.method_keys( card).should == [ "anew_card_self","basic_type",""]
+    end
+    
   end
   
   describe :css_names do

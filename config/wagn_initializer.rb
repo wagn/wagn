@@ -26,30 +26,23 @@ module Wagn
     end
   end
 
-
   class Initializer
     class << self
       def set_default_config config
-        config.available_modules = Dir["#{RAILS_ROOT}/modules/*.rb"]
+        config.available_modules = Dir["#{RAILS_ROOT}/modules/*.rb"] + Dir["#{RAILS_ROOT}/packs/*/*_pack.rb"]
       end
 
       def set_default_rails_config rails_config
         #rails_config.active_record.observers = :card_observer
         rails_config.cache_store = :file_store, "#{RAILS_ROOT}/tmp/cache"
         rails_config.frameworks -= [ :action_web_service ]
-        rails_config.gem "uuid"
-        rails_config.gem "json"
-        rails_config.gem "htmlentities"
-        unless ENV['RUN_CODE_RUN']
-          rails_config.gem "hoptoad_notifier"
-        end
         require 'yaml'
         require 'erb'
         database_configuration_file = "#{RAILS_ROOT}/config/database.yml"
         db = YAML::load(ERB.new(IO.read(database_configuration_file)).result)
         rails_config.action_controller.session = {
-          :session_key => db[RAILS_ENV]['session_key'],
-          :secret      => db[RAILS_ENV]['secret']
+          :key    => db[RAILS_ENV]['session_key'],
+          :secret => db[RAILS_ENV]['secret']
         }
         @@rails_config = rails_config
         set_default_config Config.new(rails_config)
@@ -78,9 +71,9 @@ module Wagn
         load_cardtypes
         return if pre_schema?
         load_modules
-        register_mimetypes
+#        register_mimetypes
         Wagn::Cache.initialize_on_startup
-        initialize_builtin_cards
+        #create_builtins
         ActiveRecord::Base.logger.info("\n----------- Wagn Initialization Complete -----------\n\n")
       end
 
@@ -150,28 +143,32 @@ module Wagn
             raise "Error loading card/#{cardtype}: #{e.message}"
           end
         end
+        ::Cardtype.load_cache unless ['test','cucumber'].member? ENV['RAILS_ENV']
+        # we have to do this for now to make sure all the cardtype classes get initialized correctly, 
+        # especially those with types that share names with ruby classes used elsewhere
+        # eg. Date -> Card::Date (not just "Date").
+        # eg2. Task (custom cardtype), which needs to be loaded as Card::Task, not Rake::Task
       end
+
+    
+
+  # make sure builtin cards exist
+#      def create_builtins
+#        User.as :wagbot do
+#          %w{ *account_link *alerts *foot *head *navbox *now *version 
+#              *recent_change *search *broken_link }.map do |name|
+##Rails.logger.debug "create builtin cards #{name}"
+#            c = Card.fetch_or_create(name)
+#          end
+#        end
+#      end
 
       def load_modules
         Wagn::Module.load_all
       end
 
-      def initialize_builtin_cards
-        ## DEBUG
-        File.open("#{RAILS_ROOT}/log/wagn.log","w") do |f|
-          f.puts "Wagn::Initializer.initialize_builtin_cards"
-        end
-
-        %w{ *head *alert *foot *navbox *version *account_link *now }.each do |key|
-          Card.add_builtin( Card.new(:name=>key, :builtin=>true, :skip_defaults=>true))
-        end
-      end
-      
-      def register_mimetypes
-        Mime::Type.register 'text/css', :css
-        Mime::Type.register_alias 'text/plain', :txt
-        Mime::Type.register 'application/vnd.google-earth.kml+xml', :kml
-      end
+#      def register_mimetypes
+#      end
     end
   end
 end

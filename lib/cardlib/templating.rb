@@ -1,7 +1,22 @@
 module Cardlib 
   module Templating  
 
-    #-----( ... and I govern these cards )
+    def template?()       name && name.template_name?        end
+    def hard_template?()  name && name =~ /\+\*content$/     end
+    def soft_template?()  name && name =~ /\*default$/       end
+    def type_template?()  template? && name =~ /\+\*type\+/  end
+    def right_template?() template? && name =~ /\+\*right\+/ end
+
+    def template()         @template ||= setting_card('content','default')          end
+    def right_template()   (template && template.right_template?) ? template : nil  end
+    def hard_template()    (template && @template.hard_template?) ? @template : nil end
+    def content_template() hard_template                                            end
+
+    def templated_content
+      return unless template && template.hard_template?
+      User.as(:wagbot) { template.content }
+    end
+
     def hard_templatees
       if wql=hard_templatee_wql
         User.as(:wagbot)  {  Wql.new(wql).run  }
@@ -22,34 +37,11 @@ module Cardlib
       end
     end
 
-    def right_template
-      (template && template.right_template?) ? template : nil
-    end
-
-    def hard_template(format=:html)
-      (template && @template.hard_template?(format)) ? @template : nil
-    end
-
-    def template
-      @template ||= setting_card('content','default')
-    end
-    
-    def content_template
-      hard_template
-    end
-    
-    def templated_content(format=:html)
-      @template = setting_card('xml_content') if format == :xml
-      @template ||= template
-      return unless @template.hard_template?(format)
-      @template and User.as(:wagbot) { @template.content }
-    end
-
     private
     # FIXME: remove after adjusting expire_templatee_references to content_settings
     def hard_templatee_wql
       if hard_template? and c=Card.fetch(name.trunk_name) and c.type == "Set"
-        c.get_spec
+        wql = c.get_spec
       end
     end
 

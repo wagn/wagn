@@ -1,7 +1,6 @@
 module Card
-
   class Search < Base
-    attr_accessor :self_cardname, :results, :spec
+    attr_accessor :results, :spec
     before_save :escape_content
 
     def collection?() true end
@@ -18,16 +17,12 @@ module Card
       Card.search(spec(params)).map{ |card| card.name}
     end
 
-    def count(params={})
-      Card.count_by_wql( (params.empty? && spec) ? spec : get_spec(params) )
+    def item_type
+      spec[:type]
     end
 
-    def search( params={} )
-      self.spec = get_spec(params.clone)
-      raise("OH NO.. no limit") unless self.spec[:limit]
-      self.spec.delete(:limit) if spec[:limit].to_i <= 0
-      # FIXME CACHE TODO: optimize by loading these into the cache.
-      self.results = Card.search( self.spec )
+    def count(params={})
+      Card.count_by_wql( spec(params) )
     end
 
     def spec(params={})
@@ -48,5 +43,10 @@ module Card
       spec[:context] ||= (name.junction? ? name.left_name : name)
       spec
     end
+    
+    def escape_content
+      self.content = CGI::unescapeHTML( URI.unescape(content) )
+    end
+    
   end
 end

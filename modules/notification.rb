@@ -62,7 +62,9 @@ module Notification
     end
     
     def items_from( cardname )
-      (c = Card.fetch(cardname, :skip_virtual=>true)) ? c.items.reject{|x|x==''} : []
+      User.as :wagbot do
+        (c = Card.fetch(cardname, :skip_virtual=>true)) ? c.item_names.reject{|x|x==''} : []
+      end
     end  
       
     def watchers
@@ -70,7 +72,7 @@ module Notification
     end
   end    
 
-  module SlotHelperMethods     
+  module RendererHelperMethods
     def watch_link 
       return "" unless logged_in?   
       return "" if card.virtual? 
@@ -96,11 +98,11 @@ module Notification
       me = User.current_user.card.name   
 
       if card.card_watchers.include?(me) or card.type != 'Cardtype' && card.watchers.include?(me)
-        slot.link_to_action( "unwatch#{type_link}", 'unwatch', {:update=>slot.id("watch-link")},{
+        link_to_action( "unwatch#{type_link}", 'unwatch', {:update=>id("watch-link")},{
    :title => "stop getting emails about changes to #{card.name}#{type_msg}"})
       else
-       slot.link_to_action( "watch#{type_link}", 'watch',
-         {:update=>slot.id("watch-link")},
+       link_to_action( "watch#{type_link}", 'watch',
+         {:update=>id("watch-link")},
          {:title=>"get emails about changes to #{card.name}#{type_msg}" } )
       end
     end
@@ -123,7 +125,7 @@ module Notification
   
   def self.init
     Card::Base.send :include, CardMethods
-    Slot.send :include, SlotHelperMethods
+    Renderer.send :include, RendererHelperMethods
   end   
 end    
 

@@ -19,7 +19,7 @@ Feature: Google maps
     And I create card "Ethan's House+zip" with content "80524"    
 
   Scenario: I look at the KML for a search
-    When I go to url "/wagn/House+*type_cards.kml"
+    When I go to url "/wagn/House+*type+by_name.kml"
     Then I should see "Welcome to Ft Collins!"
 
 

@@ -1,7 +1,15 @@
 #primary {
   width: 100%
 }
-#secondary, #alerts, #menu, .card-menu {
+#topmenu,
+#secondary,
+#alerts,
+#menu,
+.card-menu,
+.cardtype,
+.open-missing,
+.add-edit-item,
+.card-footer {
   display: none !important;
 }
 .title {

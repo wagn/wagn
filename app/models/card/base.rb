@@ -51,7 +51,7 @@ module Card
     
     attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
       :from_trash, :update_referencers, :allow_type_change, :virtual,
-      :builtin, :broken_type, :skip_defaults, :loaded_trunk, :blank_revision
+      :broken_type, :skip_defaults, :loaded_trunk, :blank_revision
 
     # setup hooks on AR callbacks
     # Note: :after_create is called from end of set_initial_content now
@@ -100,7 +100,7 @@ module Card
       
       # The following are only necessary for setting permissions.  Should remove once we have set/setting -based perms
       if name and name.junction? and name.valid_cardname? 
-        self.trunk ||= Card.fetch_or_new name.parent_name, {:skip_virtual=>true}
+        self.trunk ||= Card.fetch_or_new name.left_name, {:skip_virtual=>true}
         self.tag   ||= Card.fetch_or_new name.tag_name,    {:skip_virtual=>true}
       end
       
@@ -122,10 +122,10 @@ module Card
     end
     
     def set_default_permissions
-      source_card = setting_card('content', 'default')
+      source_card = setting_card('content', 'default')  #not sure why "template" doesn't work here.
       if source_card
         perms = source_card.card.permissions.reject { 
-          |p| p.task == 'create' unless (type == 'Cardtype' or template?) 
+          |p| p.task == 'create' unless (type=='Cardtype' or template?) 
         }
       else
         #raise( "Missing permission configuration for #{name}" ) unless source_card && !source_card.permissions.empty?
@@ -202,15 +202,17 @@ module Card
           when args['type'];                    typetype= :cardname;  args['type']
           when args.delete('skip_type_lookup'); 'Basic'
           else
-            setting = Card::Basic.new(:name=> args['name'], :skip_defaults=>true ).setting_card('content', 'default')
-            setting ? setting.type : 'Basic'
+            dummy = Card::Basic.new(:name=> args['name'], :skip_defaults=>true )
+            dummy.loaded_trunk = args['loaded_trunk'] if args['loaded_trunk']
+            pattern = dummy.template
+            pattern ? pattern.type : 'Basic'
           end
         
         args.delete('type')
-        return type, typetype 
+        return type, typetype
       end
       
-      def get_name_from_args(args={})
+      def get_name_from_args(args={}) #please tell me this is no longer necessary
         args ||= {}
         args['name'] || (args['trunk'] && args['tag']  ? args["trunk"].name + "+" + args["tag"].name : "")
       end      
@@ -227,13 +229,17 @@ module Card
       def find_or_create(args={})
         raise "find or create must have name" unless args[:name]
         Card.fetch_or_create(args[:name], {}, args)
-      end                  
+      end
+      
+      def find_or_new(args={})
+        raise "find_or_new must have name" unless args[:name]
+        Card.fetch_or_new(args[:name], {}, args)
+      end
+                          
     end
 
-    def is_collection?() false end
-
     def save_with_trash!
-      save || raise(ActiveRecord::RecordNotSaved)
+      save || raise(errors.full_messages.join('. '))
     end
     alias_method_chain :save!, :trash
 
@@ -350,12 +356,20 @@ module Card
       self.confirm_destroy = true
       destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
     end
+
      
     # Extended associations ----------------------------------------
 
-    def right
-      tag
+
+    def left
+      Card.fetch name.trunk_name, :skip_virtual=> true
     end
+    def right
+      Card.fetch name.tag_name,   :skip_virtual=> true
+    end
+    
+    def cardtype_name() ::Cardtype.name_for( self.type )             end
+    
     
     def pieces
       simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq 
@@ -382,7 +396,7 @@ module Card
       (dependents + [self]).plot(:referencers).flatten.uniq
     end
 
-    def card
+    def card  ## is this still necessary or just legacy from CachedCards?
       self
     end
 
@@ -426,14 +440,18 @@ module Card
     #end
      
     def revised_at
-      cached_revision ? cached_revision.updated_at : Time.now
+      if cached_revision && rtime = cached_revision.updated_at
+        rtime
+      else
+        Time.now
+      end
     end
 
     # Dynamic Attributes ------------------------------------------------------        
     def skip_defaults?
       # when Calling Card.new don't set defaults.  this is for performance reasons when loading
       # missing cards. 
-      !!skip_defaults
+      !!skip_defaults  ##ok.  but this line is bizarre.
     end
 
     def known?
@@ -441,21 +459,9 @@ module Card
     end
     
     def virtual?
-      @virtual || @builtin
+      @virtual
     end    
     
-    def builtin?
-      @builtin
-    end
-    
-    def clean_html?
-      true
-    end
-    
-    def generic?
-      false
-    end
-
     def content   
       new_card? ? ok!(:create_me) : ok!(:read)
       cached_revision.new_record? ? "" : cached_revision.content
@@ -516,6 +522,25 @@ module Card
     def mocha_inspect
       to_s
     end
+
+    def repair_key
+      ::User.as :wagbot do
+        correct_key = name.to_key
+        current_key = key
+        return self if current_key==correct_key
+
+        saved =   ( self.key  = correct_key and self.save! )
+        saved ||= ( self.name = current_key and self.save! )
+
+        saved ? self.dependents.each { |c| c.repair_key } : self.name = "BROKEN KEY: #{name}"
+        self
+      end
+    rescue
+      self
+    end
+
+
+
      
    protected
     def clear_drafts
@@ -541,7 +566,9 @@ module Card
         self.errors.add attr, err
       end
     end
-       
+    
+    
+    
     # Because of the way it chains methods, 'tracks' needs to come after
     # all the basic method definitions, and validations have to come after
     # that because they depend on some of the tracking methods.
@@ -655,7 +682,9 @@ module Card
     end  
   
     validates_each :key do |rec, attr, value|
-      unless value == rec.name.to_key
+      if value.empty?
+        rec.errors.add :key, "key cannot be blank"
+      elsif value != rec.name.to_key
         rec.errors.add :key, "wrong key '#{value}' for name #{rec.name}"
       end
     end

@@ -1,7 +1,0 @@
-<form id="navbox_form" action="/search" onsubmit="return navboxOnSubmit(this)">
-  <span id="navbox_background">
-    <a id="navbox_image" title="Search" onClick="navboxOnSubmit($('navbox_form'))">&nbsp;</a> <%#ENGLISH%>
-    <input type="text" name="navbox" value="<%= params[:_keyword] || '' %>" id="navbox_field" autocomplete="off" />
-     <%= navbox_complete_field('navbox_field') %>
-  </span>
-</form>

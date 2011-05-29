@@ -1,5 +1,6 @@
-require 'diff'
+#require_dependency 'rich_html_renderer'
 require_dependency 'models/wiki_reference'
+require 'diff'
 
 class Renderer
   module NoControllerHelpers
@@ -32,43 +33,67 @@ class Renderer
     :txt  => :Text
   }
 
-  cattr_accessor :max_char_count, :max_depth, :render_actions,
-    :current_slot, :ajax_call
+  cattr_accessor :max_char_count, :max_depth, :set_views,
+    :current_slot, :ajax_call, :fallback
   self.max_char_count = 200
   self.max_depth = 10
 
   attr_reader :action, :inclusion_map, :params, :layout, :relative_content,
-      :template, :root
+      :template, :root, :format, :controller
   attr_accessor :card, :main_content, :main_card, :context, :char_count,
-      :depth, :item_view, :form, :view, :type, :base, :state, :sub_count,
-      :render_args, :requested_view
+      :depth, :item_view, :form, :type, :base, :state, :sub_count,
+      :render_args, :requested_view, :layout, :flash, :showname
 
   # View definitions
   #
   #   When you declare:
-  #     view(:name) do |args|
+  #     define_view(:view_name, "<set>") do |args|
   #
-  #   These methods are defined on the renderer
+  #   Methods are defined on the renderer
   #
-  #     # The external api with checks, equivalent to
-  #     def render_name(args={}) ... end
-  #     render_action(:name, args)
-  #       or
-  #     render('', args.merge(:view=>:name))
+  #   The external api with checks:
+  #     render(:viewname, args)
   #
-  #     # The internal call that skips the checks
-  #     def _render_name(args={} ... end
+  #   Roughly equivalent to:
+  #     render(_setname)_viewname(args)
   #
-  #   Also to declare other names:
-  #     view(:action, :method=>:name) do ... end
-  #   for def name ... end and def _name ... end
-  #   and render(:action ...) -> name(...)
-  #
+  #   The internal call that skips the checks:
+  #     _render(_setname)_viewname(args)
+  #  #
   class << self
-    def view(action, opts={}, &final)
-      inner = opts.delete(:method)
-      method_id = inner||"render_#{action}"
-      actions[action] = priv_name = "_#{method_id}".to_sym
+    def alias_view(view, opts={}, *aliases)
+      view_key = get_pattern(view, opts)
+      aliases.each do |aview|
+        case aview
+        when String
+        when Symbol
+          aview_key = if view_key == view
+              aview.to_sym
+            else
+              view_key.to_s.sub(/_#{view}$/, "_#{aview}").to_sym
+            end
+#Rails.logger.info("alias_view #{aview_key}, #{view} > #{aview}")
+        when Hash
+          aview_key = get_pattern(aview[:view]||view, aview)
+        else raise "Bad view #{aview.inspect}"
+        end
+
+#Rails.logger.debug "defining aliased view #{view} #{aview.inspect} > #{aview_key}"
+        class_eval do
+          define_method( "_final_#{aview_key}".to_sym ) do
+            Rails.logger.debug "ALIAS call: #{aview_key} called, calling #{view_key}"
+            send("_final_#{view_key}")
+          end
+        end
+
+        #register_view(view_key, aview_key)
+#Rails.logger.debug "reg_alias(#{view_key}, #{view}) > #{aview.inspect} :: #{aview_key}"
+      end
+    end
+
+    def define_view(view, opts={}, &final)
+      fallback[view] = opts.delete(:fallback) if opts.has_key?(:fallback)
+      view_key = get_pattern(view, opts)
       class_eval do
         define_method( "_final_#{view_key}", &final )
         #register_view(view_key, view_key)
@@ -89,47 +114,89 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
             send( "_render_#{view}", *a) { yield }
           end
         end
-
-        define_method( method_id ) do |*a|
-          if refusal=render_check(method_id)
-            return refusal
-          end
-          send(priv_name, *a) { yield }
-        end
       end
     end
 
-    def actions() @@render_actions||={} end
+    def get_pattern(view,opts)
+      unless pkey =  Wagn::Pattern.method_key(opts) #and opts.empty?
+        raise "Bad Pattern opts: #{pkey.inspect} #{opts.inspect}"
+      end
+      return (pkey.blank? ? view : "#{pkey}_#{view}").to_sym
+    end
+
+    def register_view(view_key, nview_key)
+      if @@set_views.has_key?(nview_key)
+        raise "Attempt to redefine view: #{nview_key}, #{view_key}"
+      end
+      @@set_views[nview_key.to_sym] = "_final_#{view_key}".to_sym
+    end
+
+    @@set_views, @@fallback = {},{} unless @@set_views
+
+    def new(card, opts={})
+      if self==Renderer
+        fmt = (opts[:format] ? opts[:format].to_sym : :html)
+        renderer_name = (RENDERERS.has_key?(fmt) ? RENDERERS[fmt] : fmt.to_s.camelize).to_s + 'Renderer'
+        if Object.const_defined?( renderer_name)
+          return Object.const_get( renderer_name ).new(card, opts) 
+        end
+      end
+      new_renderer = self.allocate
+      new_renderer.send :initialize, card, opts
+      new_renderer
+    end
+
+    def set_view(key) @@set_views[key.to_sym] end
     def view_aliases() VIEW_ALIASES end
   end
 
-  def actions() self.class.render_actions end
-  def action_method(key) self.class.actions[key] end # root renderer class, no super
-  def ajax_call?() @@ajax_call end
-  def outer_level?() @depth == 0 end
+
+  # Fragment left over from controller, I think this is all handled ?
+  #   for :xhr, render_show => :naked, :html render_show => :layout
+  #   all other formats should be mapped (?? what about :kml => :show ?)
+  #format == :xhr ? render(:action=>'show') : render(:text=>'', :layout=>true)
 
   def initialize(card, opts=nil)
+    Renderer.current_slot ||= self unless(opts[:not_current])
     @card = card
     if opts
-      [:main_content, :main_card, :base, :action, :context, :template,
-        :params, :relative_content].
+      [ :main_content, :main_card, :base, :action, :context, :template,
+        :params, :relative_content, :format, :flash, :layout, :controller].
           map {|s| instance_variable_set "@#{s}", opts[s]}
-      inclusion_map( opts[:inclusion_view_overrides] )
     end
-    @params ||= {}
+    inclusion_map( opts )
+
     @relative_content ||= {}
     @action ||= 'view'
+    @format ||= :html
+    
+    #not sure these are necessary now that we're handling controller.  would prefer not to have to pass them in...    
+    @params ||= {}
+    @flash ||= {}
+    
     @template ||= begin
       t = ActionView::Base.new( CardController.view_paths, {} )
       t.helpers.send :include, CardController.master_helper_module
       t.helpers.send :include, NoControllerHelpers
       t
     end
+    @template.controller = @controller
     @sub_count = @char_count = 0
     @depth = 0
     @root = self
-    @layout = @params && @params[:layout]
+#    if layout == :xhr
+#      @layout = 'none'
+#    elsif @params && @params[:layout]
+#      @layout = @params[:layout]
+#    end
   end
+  
+  def session
+    @controller ? @controller.session : {}
+  end
+
+  def ajax_call?() @@ajax_call end
+  def outer_level?() @depth == 0 end
 
   def too_deep?() @depth >= max_depth end
 
@@ -138,16 +205,17 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     self.sub_count += 1
     sub = self.clone
     sub.depth = @depth+1
-    sub.view = sub.item_view = sub.main_content = sub.main_card = nil
+    sub.item_view = sub.main_content = sub.main_card = sub.showname = nil
     sub.sub_count = sub.char_count = 0
     sub.context = "#{ctx_base||context}_#{sub_count}"
     sub.card = subcard
     sub
   end
 
-  def inclusion_map(overrides=nil)
-    return @inclusion_map if @inclusion_map
-    return @inclusion_map unless @inclusion_map = overrides
+  def inclusion_map(opts=nil)
+    return @inclusion_map if @inclusion_map and not opts
+    return @inclusion_map = self.class.view_aliases unless opts and
+      (@inclusion_map = opts[:inclusion_view_overrides])
     self.class.view_aliases.each_pair do |known, canonical|
       if @inclusion_map.has_key?(canonical)
         @inclusion_map[known] = @inclusion_map[canonical]
@@ -160,101 +228,49 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     return content unless card
     content = card.content if content.blank?
 
+#Rails.logger.debug "process_content(#{content}, #{card&&card.content}),  #{card&&card.name}"
+
     wiki_content = WikiContent.new(card, content, self, inclusion_map)
-    if card&&card.references_expired
-      update_references(wiki_content)
-    end
+    update_references(wiki_content) if card.references_expired
+
     wiki_content.render! do |opts|
       expand_inclusion(opts) { yield }
     end
   end
+  alias expand_inclusions process_content
 
-  def render_check(action)
+
+  def render_check(action, args={})
     ch_action = case
-    when too_deep?;  :too_deep
-    when card.new_card?; false # causes errors to check in current system.  
-      #should remove this and add create check after we settingize permissions
-    when [:edit, :edit_in_form, :multi_edit].member?(action)
-      !card.ok?(:edit) and :deny_view #should be deny_edit
-    else
-      !card.ok?(:read) and :deny_view
-    end
-    (ch_action and render_partial("views/#{ch_action}"))
+      when too_deep?      ; :too_deep
+      when !card          ; false
+      when card.new_card? ; false # causes errors to check in current system.  
+        #should remove this and add create check after we settingize permissions
+      when [:edit, :edit_in_form, :multi_edit].member?(action)
+        !card.ok?(:edit) and :deny_view #should be deny_edit
+      else
+        !card.ok?(:read) and :deny_view
+      end
+      ch_action and render(ch_action, args)
   end
 
-  def render_deny(action, args)
-    if [ :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing,
-         :closed_missing, :setting_missing].member?(action)
-       render_partial("views/#{action}", args)
-    elsif card.new_record?; return # need create check...
-    else render_check(action) end
+  def render_deny(action, args={})
+    case
+    when UNDENIABLE_VIEWS.member?(action); return
+    when card && card.new_record?;         return # need create check...
+    else render_check action, args
+    end
   end
 
   def canonicalize_view( view )
     (view and v=VIEW_ALIASES[view.to_sym]) ? v : view
   end
 
-  def expand_inclusions(content)
-    process_content(content) 
-  end
 
-### ---- Core renders --- Keep these on top for dependencies
-  view(:raw) do
-    if card.virtual? and card.builtin?  # virtual? test will filter out cached cards (which won't respond to builtin)
-      template.render :partial => "builtin/#{card.name.gsub(/\*/,'')}"
-    else card.raw_content end
-  end
-  view(:core) do process_content(_render_raw) end
-
-  view(:naked) do |args|
-    case
-      when card.name.template_name?  ;  _render_raw
-      when card.generic?             ;  _render_core
-      else render_card_partial(:content)
-    end
-  end
-
-###----------------( NAME) (FIXME move to chunks/transclude)
-  view(:name) do card.name end
-  view(:link) do Chunk::Reference.standard_card_link(card.name) end
-
-  view(:open_content) do |args|
-    card.post_render(_render_naked(args) { yield })
-  end
-
-  view(:closed_content) do |args|
-    if card.generic?
-      truncatewords_with_closing_tags( _render_naked(args) { yield } )
-    else
-      render_card_partial(:line)   # in basic case: --> truncate( slot._render_open_content ))
-    end
-  end
-
-###----------------( SPECIAL )
-  view(:array) do |args|
-    if card.is_collection?
-      (card.each_name do |name|
-        subrenderer(name)._render_core { yield }
-      end.inspect)
-    else
-      [_render_naked(args) { yield }].inspect
-    end
-  end
-
-  view(:blank) do "" end
-
-  view(:rss_titled) do |args|
-    # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
-    content_tag( :h2, fancy_title(card.name) ) + self._render_open_content(args) { yield }
-  end
-
-  view(:rss_change) do
-    self.requested_view = 'content'
-    render_partial('views/change')
-  end
 
   def render(action=:view, args={})
-    args[:view] ||= action
+raise "???" if Hash===action
+    args[:home_view] ||= action
     self.render_args = args.clone
     denial = render_deny(action, args)
     return denial if denial
@@ -266,7 +282,10 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
       else :view
     end
 
-    result = if render_meth = action_method(action)
+#Rails.logger.debug "calling view method(#{action}) #{card.inspect}"
+    result = 
+      if render_meth = view_method(action)
+#Rails.logger.debug "render(#{action}) #{render_meth}"
         send(render_meth, args) { yield }
       else
         "<strong>#{card.name} - unknown card view: '#{action}' M:#{render_meth.inspect}</strong>"
@@ -274,12 +293,27 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
 
     result << javascript_tag("setupLinksAndDoubleClicks();") if args[:add_javascript]
     result.strip
-  rescue Card::PermissionDenied=>e
+  rescue Exception=>e
+    Rails.logger.debug "Error #{e.inspect} #{e.backtrace*"\n"}"
+    raise e unless Card::PermissionDenied===e
     return "Permission error: #{e.message}"
   end
 
+  def view_method(view)
+    return "_final_#{view}" unless card
+#Rails.logger.debug "method keys for #{card.name}: #{Wagn::Pattern.method_keys(card).inspect}"
+    
+    Wagn::Pattern.method_keys(card).each do |method_key|
+      
+      meth = "_final_"+(method_key.blank? ? "#{view}" : "#{method_key}_#{view}")
+#Rails.logger.debug "view_method( #{method_key} )  #{meth}"
+      return meth if respond_to?(meth.to_sym)
+    end
+    return @@fallback[view]
+  end
+  
   def form_for_multi
-    Rails.logger.info "card = #{card.inspect}"
+    #Rails.logger.debug "card = #{card.inspect}"
     options = {} # do I need any? #args.last.is_a?(Hash) ? args.pop : {}
     block = Proc.new {}
     builder = options[:builder] || ActionView::Base.default_form_builder
@@ -300,16 +334,12 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     template.render(:partial=>partial, :locals=>{ :card=>card, :slot=>self }.merge(locals))
   end
 
-  def card_partial(action)
-    # FIXME: I like this method name better- maybe other calls should resolve here instead
-    partial_for_action(action, card)
-  end
-
-  def render_card_partial(action, locals={})
-     render_partial card_partial(action), locals
+  def render_view_action(action, locals={})
+    render_partial "views/#{action}", locals
   end
 
   def method_missing(method_id, *args, &proc)
+    Rails.logger.debug "method missing: #{method_id}"
     # silence Rails 2.2.2 warning about binding argument to concat.  tried detecting rails 2.2
     # and removing the argument but it broken lots of integration tests.
     ActiveSupport::Deprecation.silence { @template.send(method_id, *args, &proc) }
@@ -317,7 +347,6 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
 
   def replace_references( old_name, new_name )
     #warn "replacing references...card name: #{card.name}, old name: #{old_name}, new_name: #{new_name}"
-    #content = content.blank? ? card.content : content
     wiki_content = WikiContent.new(card, card.content, self)
 
     wiki_content.find_chunks(Chunk::Link).each do |chunk|
@@ -334,44 +363,49 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
   end
 
   def expand_inclusion(options)
-
     return options[:comment] if options.has_key?(:comment)
-    #tname = if String===tcard; x=tcard;tcard=nil;x else tcard.name end
     # Don't bother processing inclusion if we're already out of view
     return '' if (state==:line && self.char_count > Renderer.max_char_count)
 
     tname=options[:tname]
     if is_main = tname=='_main'
       tcard, tcont = root.main_card, root.main_content
-      return tcont if tcont
+      return self.wrap_main(tcont) if tcont
       return "{{#{options[:unmask]}}}" || '{{_main}}' unless @depth == 0 and tcard
+
       tname = tcard.name
-      item  = symbolize_param(:item) and options[:item] = item
-      pview = symbolize_param(:view) and options[:view] = pview
+      [:item, :view, :size].each{ |key| val=symbolize_param(key) and options[key]=val }
+      # main card uses these CGI options as inclusion args      
       options[:context] = 'main'
       options[:view] ||= :open
     end
 
-    options[:view] ||= context == 'layout_0' ? :naked : :content
+    #Rails.logger.info " expanding.  view is currently: #{options[:view]}"
+
+    options[:home_view] = options[:view] ||= context == 'layout_0' ? :naked : :content
     options[:fullname] = fullname = get_inclusion_fullname(tname,options)
     options[:showname] = tname.to_show(fullname)
 
     tcard ||= begin
       case
-      when state ==:edit   ;  Card.fetch_or_new(fullname, {}, new_inclusion_card_args(options))
+      when state ==:edit   ;  Card.fetch_or_new(fullname, {}, new_inclusion_card_args(tname, options))
       when base.respond_to?(:name);   base
       else                 ;  Card.fetch_or_new(fullname, :skip_defaults=>true)
       end
     end
 
-    tcard.loaded_trunk=card if tname =~ /^\+/
+    #Rails.logger.info " expanding card #{tcard.name}.  view is currently: #{options[:view]}"
+
     result = process_inclusion(tcard, options)
     result = resize_image_content(result, options[:size]) if options[:size]
     @char_count += (result ? result.length : 0) #should we strip html here?
-    (is_main and respond_to?(:wrap_main)) ? self.wrap_main(result) : result
-    #result
+    is_main ? self.wrap_main(result) : result
   rescue Card::PermissionDenied
     ''
+  end
+
+  def wrap_main(content)
+    content  #no wrapping in base renderer
   end
 
   def symbolize_param(param)
@@ -390,7 +424,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
     sub.item_view = options[:item] if options[:item]
     sub.type = options[:type] if options[:type]
-    options[:showname] ||= tcard.name
+    sub.showname = options[:showname] || tcard.name
 
     new_card = tcard.new_record? && !tcard.virtual?
 
@@ -399,7 +433,6 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     subview = case
 
       when [:name, :link, :linkname].member?(vmode)  ; vmode
-      #when [:name, :link, :linkname].member?(vmode)  ; raise "Should be handled in chunks"
       when :edit == state
        tcard.virtual? ? :edit_auto : :edit_in_form
       when new_card
@@ -417,8 +450,8 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     result
   rescue Exception=>e
     Rails.logger.info "inclusion-error #{e.inspect}"
-    Rails.logger.debug "inclusion-error #{e.inspect}\nTrace:\n#{e.backtrace*"\n"}"
-    %{<span class="inclusion-error">error rendering #{link_to_page tcard.name, nil, :title=>CGI.escapeHTML(e.inspect)}</span>}
+    Rails.logger.debug "Trace:\n#{e.backtrace*"\n"}"
+    %{<span class="inclusion-error">error rendering #{link_to_page((tcard ? tcard.name : 'unknown card'), nil, :title=>CGI.escapeHTML(e.inspect))}</span>}
   end
 
   def get_inclusion_fullname(name,options)
@@ -426,7 +459,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     context = case
     when base; (base.respond_to?(:name) ? base.name : base)
     when options[:base]=='parent'
-      card.parent_name
+      card.name.left_name
     else
       card.name
     end
@@ -449,8 +482,9 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     content if content.present?  #not sure I get why this is necessary - efm
   end
 
-  def new_inclusion_card_args(options)
+  def new_inclusion_card_args(tname, options)
     args = { :type =>options[:type],  :permissions=>[] }
+    args[:loaded_trunk]=card if tname =~ /^\+/
     if content=get_inclusion_content(options[:tname])
       args[:content]=content
     end
@@ -461,9 +495,9 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     return unless card
     WikiReference.delete_all ['card_id = ?', card.id]
 
-    if card.id and card.respond_to?('references_expired')
+    if card.id
       card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
-      rendering_result ||= WikiContent.new(card, _render_raw, self)
+      rendering_result ||= WikiContent.new(card, _render_refs, self)
       rendering_result.find_chunks(Chunk::Reference).each do |chunk|
         reference_type =
           case chunk
@@ -471,7 +505,6 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
             when Chunk::Transclude; chunk.refcard ? TRANSCLUSION : WANTED_TRANSCLUSION
             else raise "Unknown chunk reference class #{chunk.class}"
           end
-
 
         WikiReference.create!( :card_id=>card.id,
           :referenced_name=>chunk.refcard_name.to_key,
@@ -482,22 +515,11 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     end
   end
 
-  ### ------  from wagn_helper ----
-  def partial_for_action( name, card=nil )
-    # FIXME: this should look up the inheritance hierarchy, once we have one
-    # wow this is a steaming heap of dung.
-    cardtype = (card ? card.type : 'Basic').underscore
-    if Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR <=1
-      finder.file_exists?("/types/#{cardtype}/_#{name}") ?
-        "/types/#{cardtype}/#{name}" :
-        "/types/basic/#{name}"
-    elsif   Rails::VERSION::MAJOR >=2 && Rails::VERSION::MINOR > 2
-      ## This test works for .rhtml files but seems to fail on .html.erb
-      begin
-        @template.view_paths.find_template "types/#{cardtype}/_#{name}"
-        "types/#{cardtype}/#{name}"
-      rescue ActionView::MissingTemplate => e
-        "/types/basic/#{name}"
+  def paging_params
+    @paging_params ||= begin
+      s = {}
+      if p = root.params
+        [:offset,:limit,:_keyword].each{|key| s[key] = p.delete(key)}
       end
       s[:offset] = s[:offset] ? s[:offset].to_i : 0
       if s[:limit]
@@ -526,18 +548,33 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
         href = full_uri(href)
         known_card ? 'known-card' : 'wanted-card'
     end
+    %{<a class="#{klass}" href="#{href}">#{text}</a>}      
+  end
+  
+  def full_uri(relative_uri)
+    relative_uri
   end
 
-  def paging_params
-    s = {}
-    if p = root.params
-      [:offset,:limit].each{|key| s[key] = p.delete(key)}
-    end
-    s[:offset] = s[:offset] ? s[:offset].to_i : 0
-    s[:limit]  = s[:limit]  ? s[:limit].to_i  : (main_card? ? 50 : 20)
-    s
-  end
-
-  def main_card?() context=~/^main_\d$/ end
+  
 end
 
+class TextRenderer < Renderer
+  def initialize card, opts
+    super card,opts
+    
+    if format=='css' && controller
+      controller.response.headers["Cache-Control"] = "public"
+    end
+  end
+end
+
+class KmlRenderer < Renderer
+end
+
+class RssRenderer < RichHtmlRenderer
+  def full_uri(relative_uri)  System.base_url + relative_uri  end
+end
+
+class EmailHtmlRenderer < RichHtmlRenderer
+  def full_uri(relative_uri)  System.base_url + relative_uri  end
+end

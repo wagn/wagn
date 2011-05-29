@@ -7,6 +7,7 @@ class AdminController < ApplicationController
       Card::User  # wtf - trigger loading of Card::User, otherwise it tries to use U
       User.as :wagbot do
         @user, @card = User.create_with_card( params[:extension].merge({:login=>'first'}), params[:card] )
+        set_default_request_recipient
       end
 
       if @user.errors.empty?

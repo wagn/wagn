@@ -16,7 +16,7 @@ module Cardlib
   module Permissions
     # Permissions --------------------------------------------------------------
     def ydhpt
-      "#{User.current_user.login}, You don't have permission to"
+      "#{::User.current_user.cardname}, You don't have permission to"
     end
 
     
@@ -48,13 +48,14 @@ module Cardlib
       destroy_without_permissions!
     end
 
-    def save_with_permissions(perform_checking=true)
-      Rails.logger.debug "Card#save_with_permissions"
-      if perform_checking && approved? || !perform_checking
-        save_without_permissions(perform_checking)
-      else
-        raise ::Card::PermissionDenied.new(self)
-      end
+    def save_with_permissions(perform_checking = true)  #checking is needed for update_attribute, evidently.  not sure I like it...
+      Rails.logger.debug "Card#save_with_permissions!"
+      run_checked_save :save_without_permissions, perform_checking
+    end
+     
+    def save_with_permissions!(perform_checking = true)
+      Rails.logger.debug "Card#save_with_permissions!", perform_checking
+      run_checked_save :save_without_permissions!
     end 
     
     def run_checked_save(method, perform_checking = true)
@@ -70,7 +71,7 @@ module Cardlib
         raise ::Card::PermissionDenied.new(self)
       end
     end
- 
+    
     def approved?  
       self.operation_approved = true    
       self.permission_errors = []

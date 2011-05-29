@@ -1,5 +1,5 @@
 namespace :cache do
-  desc "inc global seq to reset cache" 
+  desc "reset cache" 
   task :clear => :environment  do
     Card.cache.reset
   end

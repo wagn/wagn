@@ -57,7 +57,7 @@ describe Wql do
   describe "not" do 
     before { User.as :joe_user }
     it "should exclude cards matching not criteria" do
-      s = Wql.new(:plus=>"A", :not=>{:plus=>"A+B"}).run.plot(:name).sort.should==%w{ B D E F }    
+      Wql.new(:plus=>"A", :not=>{:plus=>"A+B"}).run.plot(:name).sort.should==%w{ B D E F }
     end
   end
 
@@ -287,9 +287,19 @@ describe Wql do
     it "should act as a simple passthrough" do
       Wql.new(:and=>{:match=>'two'}).run.plot(:name).sort.should==CARDS_MATCHING_TWO
     end
+    
+    it "should work within 'or'" do
+      results = Wql.new(:or=>{:name=>'Z', :and=>{:left=>'A', :right=>'C'}}).run
+      results.length.should == 2
+      results.map(&:name).sort.should == ['A+C','Z']
+    end
   end
-
-
+  
+  describe "or" do
+    it "should work with :plus" do
+      Wql.new(:plus=>"A", :or=>{:name=>'B', :match=>'K'}).run.plot(:name).sort.should==%w{ B }
+    end
+  end
 
   describe "offset" do
     it "should not break count" do
@@ -344,7 +354,7 @@ describe Wql do
     it "should find plus cards for _self" do
       Wql.new( :plus=>"_self", :_self=>"A" ).run.plot(:name).sort.should == A_JOINEES
     end
-
+    
     it "should find plus cards for _left" do   
       # this test fails in mysql when running the full suite 
       # (although not when running the individual test )

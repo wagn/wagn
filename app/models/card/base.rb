@@ -462,6 +462,8 @@ module Card
     end   
     
     def cached_revision
+      #return current_revision || get_blank_revision
+      
       case
       when (@cached_revision and @cached_revision.id==current_revision_id); 
       when (@cached_revision=Card.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);

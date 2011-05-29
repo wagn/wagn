@@ -1,3 +1,57 @@
+== 1.6.0 (May 18, 2011)
+* see http://www.wagn.org/wagn/Wagn_1.6
+* implement view modules
+* improve flexmail for bulk mailing
+* use absolute URLs in rss
+* add EmailHtmlRenderer
+* add TextRenderer
+* add RSS renderer
+* handle card parts when creating previously virtual cards
+* make account requests trigger flexmail
+* fix error msg when signed in wo perm to add Basic
+* stop requiring hoptoad
+* implement partial absolutization
+* carry over cgi arguments when redirecting domain name
+* validate the presence of a key
+
+== 1.5.3 (March 23, 2011)
+* see http://www.wagn.org/wagn/Wagn_1.5+3
+* stop interpreting self as triggering card past first level
+* let plus-star-options cards be a Pointer
+* respect type plus right on new cards of type
+* add WQL for account relationship w last edit and creation
+* add when_created and when_last_edited views
+* hard-code main page to "Home" if no *home
+* fix *count in closed view
+* add url view
+* enable size in URLs
+* stop showing db content of formatted cards with dot-txt
+* Increase search card edit box size
+* order cards in sets by name
+* delinks plus-card labels in multi-edit
+* fix *type-plus-right with default on multi-edit
+* default Account Request email to first account creator
+* add URL to clear cache
+* interpret spaces in *home as underscores
+* secret deny all url for cleanups
+* show *new when relevant in multi-edit
+
+== 1.5.2 (February 1, 2011)
+* see http://www.wagn.org/wagn/Wagn_1_5+2
+* refactor inclusion processing
+* Make Slot a Model and Renderer Subclass
+* better handling of RSS feeds of Searches returning Virtual cards
+* process markup on items in forms that are Pointers
+* translate Pointer content in JavaScript
+* remove config subtab
+* fix layout=noside
+* fix *options on new cards
+* simple url for text pages like css
+* make rendering limits catch recursions only
+* speed up tests
+* recreate trashed cards when plus card is created
+* right part of trashed card can't rename to plus card
+
 === 1.5.1 (November 19, 2010)
 * refactored / debugged trash handling
 * fixes to cardname/codename cardtype bugs

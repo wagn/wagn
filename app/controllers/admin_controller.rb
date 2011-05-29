@@ -44,5 +44,30 @@ class AdminController < ApplicationController
     flash[:notice] = 'permissions saved'
     redirect_to :action=>'tasks'
   end
+  
+  def show_cache
+    key = params[:id].to_key
+    @cache_card = Card.fetch(key)
+    @db_card = Card.find_by_key(key)
+  end
+  
+  def clear_cache
+    response = 
+      if System.always_ok?
+        Card.cache.reset
+        'Cache cleared'
+      else
+        "You don't have permission to clear the cache"
+      end
+    render :text =>response, :layout=> true  
+  end
+
+  private
+  
+  def set_default_request_recipient
+    to_card = Card.fetch_or_new('*request+*to')
+    to_card.content=params[:extension][:email]
+    to_card.save
+  end
 
 end

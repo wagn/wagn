@@ -52,16 +52,14 @@
         <div class="editor">
           <% #FIXME CONTENT: the hard template test can go away when we phase out the old sytem %>
           <% if card.content_template %>
-            <%- slot.form = form %>
-            <%= slot.render_multi_edit %>
+            <%= s.render(:multi_edit) %>
           <% else %>
-            <%# if default_content = card.setting('default') ; card.content = default_content; end %>
-            <%= slot.content_field(form) %>
+            <%= s.content_field(form) %>
           <% end %>
         </div>
 
-        <%= slot.half_captcha %>
-        <%= hidden_field_tag :view, params[:view] || :open %>
+        <%= s.captcha_tags %>
+        <%= hidden_field_tag :home_view, params[:home_view] || :open %>
         <div class="edit-button-area">
 
           <%= button_to_function 'Submit', "this.form.onsubmit()", :id=>'create-button'  %>

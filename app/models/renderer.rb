@@ -21,6 +21,16 @@ class Renderer
     :line => :closed,
     :bare => :naked,
   }
+  
+  UNDENIABLE_VIEWS = [ 
+    :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :setting_missing, :name, :link, :url
+  ]
+
+  RENDERERS = {
+    :html => :RichHtml,
+    :css  => :Text,
+    :txt  => :Text
+  }
 
   cattr_accessor :max_char_count, :max_depth, :render_actions,
     :current_slot, :ajax_call
@@ -60,13 +70,24 @@ class Renderer
       method_id = inner||"render_#{action}"
       actions[action] = priv_name = "_#{method_id}".to_sym
       class_eval do
-        priv_final="_final#{priv_name}"
-        define_method( priv_final, &final )
-        define_method( priv_name ) do |*a| a = [{}] if a.empty?
-          a[0][:view] ||= action  
-          # this variable name is highly confusing; it means the view to return to after an edit.  it's about persistence
-          # should do better.
-          send(priv_final, *a) { yield }
+        define_method( "_final_#{view_key}", &final )
+        #register_view(view_key, view_key)
+#Rails.logger.debug "reg_view(_final_#{view_key}, #{view.inspect})"
+
+        if view_key == view
+#Rails.logger.debug "define base view: _render_#{view}, render_#{view}"
+          define_method( "_render_#{view}" ) do |*a| a = [{}] if a.empty?
+            final_meth = view_method( view )
+#Rails.logger.debug " in #{caller(0).first}[#{card}] #{view}, #{final_meth}"
+raise "??? #{view.inspect}" unless final_meth
+            send(final_meth, *a) { yield }
+          end
+
+          define_method( "render_#{view}" ) do |*a|
+            if refusal=render_check(view, *a); return refusal end
+raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_method( view )
+            send( "_render_#{view}", *a) { yield }
+          end
         end
 
         define_method( method_id ) do |*a|
@@ -144,8 +165,6 @@ class Renderer
       update_references(wiki_content)
     end
     wiki_content.render! do |opts|
-#      full = opts[:fullname] = get_inclusion_fullname(tname, opts)
-      @view = opts[:view].to_sym if view == nil and opts[:view]
       expand_inclusion(opts) { yield }
     end
   end
@@ -369,17 +388,15 @@ class Renderer
   def process_inclusion(tcard, options)
     sub = subrenderer(tcard, options[:context])
     oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
-
-    # set item_view;  search cards access this variable when rendering their content.
     sub.item_view = options[:item] if options[:item]
     sub.type = options[:type] if options[:type]
     options[:showname] ||= tcard.name
 
     new_card = tcard.new_record? && !tcard.virtual?
 
-    vmode = (options[:view] || :content).to_sym
+    vmode = options[:home_view] = (options[:view] || :content).to_sym
     sub.requested_view = vmode
-    action = case
+    subview = case
 
       when [:name, :link, :linkname].member?(vmode)  ; vmode
       #when [:name, :link, :linkname].member?(vmode)  ; raise "Should be handled in chunks"
@@ -395,7 +412,7 @@ class Renderer
       when state==:line       ; :closed_content
       else                    ; vmode
       end
-    result = sub.render(action, options)
+    result = sub.render(subview, options)
     Renderer.current_slot = oldrenderer
     result
   rescue Exception=>e
@@ -482,10 +499,32 @@ class Renderer
       rescue ActionView::MissingTemplate => e
         "/types/basic/#{name}"
       end
-    else
-      @template.view_paths.find { |template_path| template_path.paths.include?("types/#{cardtype}/_#{name}") } ?
-        "/types/#{cardtype}/#{name}" :
-        "/types/basic/#{name}"
+      s[:offset] = s[:offset] ? s[:offset].to_i : 0
+      if s[:limit]
+        s[:limit] = s[:limit].to_i
+      else
+        s.delete(:limit)
+        s[:default_limit] = (main_card? ? 50 : 20) #can be overridden by card value
+      end
+      s
+    end
+  end
+
+  def main_card?() context=~/^main_\d$/ end
+    
+  def build_link(href, text)
+    klass = case href
+      when /^https?:/; 'external-link'
+      when /^mailto:/; 'email-link'
+      when /^\//
+        href = full_uri(href)      
+        'internal-link'
+      else
+        known_card = !!Card.fetch(href)
+        text = text.to_show(href)
+        href = '/wagn/' + (known_card ? href.to_url_key : CGI.escape(Cardname.escape(href)))
+        href = full_uri(href)
+        known_card ? 'known-card' : 'wanted-card'
     end
   end
 

@@ -1,7 +1,8 @@
 class RichHtmlRenderer
   define_view(:show) do
     if ajax_call?
-      view = params[:view] || params[:home_view] || :open
+      home_view = params[:home_view]=='closed' ? :open : params[:home_view]
+      view = params[:view] || home_view || :open
       self.render(view , :add_javascript=>true)
     else
       self.render_layout
@@ -50,14 +51,14 @@ class RichHtmlRenderer
     @state = :view
     self.requested_view = 'open'
     wrap(args) { render_partial('views/open') } +
-    open_close_js
+    open_close_js(:to_open)
   end
 
   define_view(:closed) do |args|
     @state = :line
     self.requested_view = args[:action] = 'closed'
     wrap(args) { render_partial('views/closed') } + 
-    open_close_js
+    open_close_js(:to_closed)
   end
 
   define_view(:setting) do |args|
@@ -98,7 +99,7 @@ class RichHtmlRenderer
 ###---(  EDIT VIEWS )
   define_view(:edit_in_form) do |args|
     form = form_for_multi
-Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
+#Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
     %{
 <div class="edit-area in-multi RIGHT-#{ card.name.tag_name.to_key.css_name }">
   <div class="label-in-multi">

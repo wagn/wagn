@@ -57,15 +57,15 @@ module Cardlib
       end
     end 
     
-    def save_with_permissions!
-      Rails.logger.debug "Card#save_with_permissions!"
-      if approved?
-begin
-        save_without_permissions!
-rescue Exception => e
-  Rails.logger.info "save_with_perm:#{e.message} #{name} #{Kernel.caller.join("\n")}"
-  raise e
-end
+    def run_checked_save(method, perform_checking = true)
+      if !perform_checking || approved?
+        begin
+          self.send(method)
+        rescue Exception => e
+          name.piece_names.each{|piece| Wagn::Cache.expire_card(piece.to_key)}
+          Rails.logger.info "#{method}:#{e.message} #{name} #{Kernel.caller.join("\n")}"
+          raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace}"
+        end
       else
         raise ::Card::PermissionDenied.new(self)
       end
@@ -130,7 +130,6 @@ end
     protected
     def you_cant(what)
       "#{ydhpt} #{what}"
-      # => you_cant " #{what}"
     end
     
     def deny_because(why)    
@@ -159,6 +158,7 @@ end
 
     def approve_edit
       approve_task(:edit)
+      approve_read if operation_approved
     end
     
     def approve_delete

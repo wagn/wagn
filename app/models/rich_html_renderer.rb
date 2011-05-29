@@ -1,4 +1,3 @@
-
 class RichHtmlRenderer < Renderer
 
   include Recaptcha::ClientHelper
@@ -415,9 +414,9 @@ class RichHtmlRenderer < Renderer
     javascript_tag code
   end
 
-  def open_close_js
-    return '' if !params[:js]
-    javascript_tag %{Wagn.#{params[:js]}(getSlotFromContext('#{params[:context]}'))}
+  def open_close_js(js_method)
+    return '' if !ajax_call? || @depth!=0
+    javascript_tag %{Wagn.#{js_method}(getSlotFromContext('#{params[:context]}'))}
   end
 
   def setup_autosave

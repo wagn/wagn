@@ -5,33 +5,32 @@ class RssRenderer
     xml.instruct! :xml, :version => "1.0"
 
     xml.rss :version => "2.0" do
-      'wooBO'
-    end
-    xml.channel do
-      xml.title  System.site_title + " : " + card.name.gsub(/^\*/,'')
-      xml.description ""
-      xml.link card_url(card)
-      begin
+      xml.channel do
+        xml.title  System.site_title + " : " + card.name.gsub(/^\*/,'')
+        xml.description ""
+        xml.link card_url(card)
+        begin
 
-        cards = if Card::Search === card
-          card.item_cards( :limit => 25, :_keyword=>params[:_keyword] )
-          card.results
-        else
-          [card]
-        end
-        view_changes = (card.name=='*recent')
-
-        cards.each do |card|
-          xml.item do
-            xml.title card.name
-            xml.description view_changes ? render_change : render_open_content
-            xml.pubDate card.revised_at.to_s(:rfc822)  #updated_at fails on virtual cards, because not all to_s's take args (just actual dates)
-            xml.link card_url(card)
-            xml.guid card_url(card)
+          cards = if Card::Search === card
+            card.item_cards( :limit => 25, :_keyword=>params[:_keyword] )
+            card.results
+          else
+            [card]
           end
+          view_changes = (card.name=='*recent')
+
+          cards.each do |card|
+            xml.item do
+              xml.title card.name
+              xml.description view_changes ? render_change : render_open_content
+              xml.pubDate card.revised_at.to_s(:rfc822)  #updated_at fails on virtual cards, because not all to_s's take args (just actual dates)
+              xml.link card_url(card)
+              xml.guid card_url(card)
+            end
+          end
+        rescue Exception=>e
+          xml.error "\n\nERROR rendering RSS: #{e.inspect}\n\n #{e.backtrace}"
         end
-      rescue Exception=>e
-        xml.error "\n\nERROR rendering RSS: #{e.inspect}\n\n #{e.backtrace}"
       end
     end
   end

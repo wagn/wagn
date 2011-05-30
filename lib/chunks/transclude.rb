@@ -1,6 +1,6 @@
 module Chunk
   class Transclude < Reference
-    attr_reader :stars, :format, :expand, :inclusion_map, :renderer, :options, :base
+    attr_reader :stars, :inclusion_map, :renderer, :options, :base
     unless defined? TRANSCLUDE_PATTERN
       #  {{+name|attr:val;attr:val;attr:val}}
       TRANSCLUDE_PATTERN = /\{\{(([^\|]+?)\s*(\|([^\}]+?))?)\}\}/
@@ -10,8 +10,6 @@ module Chunk
   
     def initialize(match_data, content)
       super   
-      @format = content.format
-      @expand = content.expand
       #warn "FOUND TRANSCLUDE #{match_data} #{content}"
       @card_name, @options, @configs = self.class.parse(match_data)
       @base, @renderer, @inclusion_map =

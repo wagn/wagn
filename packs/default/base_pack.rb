@@ -22,7 +22,6 @@ class Renderer
   define_view(:link)     { build_link(card.name, card.name) }
   define_view(:url)      { "#{System.base_url}/wagn/#{_render_linkname}"}
 
-
   define_view(:open_content) do |args|
     card.post_render(_render_naked(args) { yield })
   end

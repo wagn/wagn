@@ -244,6 +244,7 @@ describe CardController do
     describe "#show" do
       it "works for basic request" do
         get :show, {:id=>'Sample_Basic'}
+        response.should have_tag('body')
         assert_response :success
         'Sample Basic'.should == assigns['card'].name
       end

@@ -27,7 +27,7 @@ class RendererTest < ActiveSupport::TestCase
   end
 
   def slot_link(card, format=nil)
-    render = Slot.new(card, :context=>"nocontext", :format=>format).render(:content)
+    render = Renderer.new(card, :context=>"nocontext", :format=>format).render(:content)
 ActionController::Base.logger.info("TEST:INFO:slot_link(#{card.name},#{card.class})")
     m = render.match(/<(cardref|link|a) class.*<\/(cardref|link|a)>/)
     (m.to_s != "") ? m.to_s : render
@@ -77,8 +77,9 @@ ActionController::Base.logger.info("TEST:INFO:slot_link(#{card.name},#{card.clas
   end
 
   def test_slot_relative_url
-    card3 = newcard('recent changes', '[[/recent]]')
-    assert_equal '<a class="internal-link" href="/recent">/recent</a>', slot_link(card3)
+    card3 = newcard('recent changes', '[[/recent|Recent]]')
+    assert_equal '<a class="internal-link" href="/recent">Recent</a>', slot_link(card3)
+    card3 = newcard('rc2', '[[/recent]]')
   end
   
   def test_slot_external

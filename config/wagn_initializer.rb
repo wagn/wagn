@@ -143,11 +143,13 @@ module Wagn
             raise "Error loading card/#{cardtype}: #{e.message}"
           end
         end
-        ::Cardtype.load_cache unless ['test','cucumber'].member? ENV['RAILS_ENV']
-        # we have to do this for now to make sure all the cardtype classes get initialized correctly, 
+#        ::Cardtype.load_cache unless ['test','cucumber'].member? ENV['RAILS_ENV']
+        # we were doing this to make sure all the cardtype classes get initialized correctly, 
         # especially those with types that share names with ruby classes used elsewhere
         # eg. Date -> Card::Date (not just "Date").
         # eg2. Task (custom cardtype), which needs to be loaded as Card::Task, not Rake::Task
+        #
+        # BUT!... it had to be commented out because it was breaking when run pre-schema.
       end
 
     

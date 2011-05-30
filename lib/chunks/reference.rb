@@ -1,6 +1,6 @@
 module Chunk
   class Reference < Abstract
-    attr_reader :card_name, :card, :renderer
+    attr_reader :card_name, :card
     
     def base_card
       @card
@@ -12,7 +12,6 @@ module Chunk
     end
     
     def refcard 
-#      name =  refcard_name.gsub(/_/,' ')   
       @refcard ||= Card.fetch(refcard_name)
     end
       
@@ -20,10 +19,10 @@ module Chunk
       refcard_name
     end
 
-
     def render_link
       @content.renderer.build_link(refcard_name, link_text)
     end
+
   end 
 end 
 

@@ -1,18 +1,17 @@
 class CardController < ApplicationController
   helper :wagn, :card
 
-  EDIT_ACTIONS =  [ :edit, :update, :rollback, :save_draft, :watch, :unwatch,
-                    :put, :post ]
-  LOAD_ACTIONS = EDIT_ACTIONS + [ :changes, :comment, :denied, :options, :quick_update, :update_codename, :related, :remove, :delete ]
+  EDIT_ACTIONS =  [ :edit, :update, :rollback, :save_draft, :watch, :unwatch ]
+  LOAD_ACTIONS = EDIT_ACTIONS + [ :changes, :comment, :denied, :options, :quick_update, :update_codename, :related, :remove ]
 
   before_filter :load_card!, :only=>LOAD_ACTIONS
-  before_filter :load_card_with_cache, :only => [:line, :view, :open, :get ]
+  before_filter :load_card_with_cache, :only => [:line, :view, :open ]
 
   before_filter :view_ok,   :only=> LOAD_ACTIONS
-  before_filter :create_ok, :only=>[ :new, :create, :put, :post ]
+  before_filter :create_ok, :only=>[ :new, :create ]
   before_filter :edit_ok,   :only=> EDIT_ACTIONS
-  before_filter :remove_ok, :only=>[ :remove, :delete ]          
-  
+  before_filter :remove_ok, :only=>[ :remove ]
+
   before_filter :require_captcha, :only => [ :create, :update, :comment, :quick_update ]
 
   #----------( Special cards )
@@ -31,16 +30,7 @@ class CardController < ApplicationController
   end
 
   #---------( VIEWING CARDS )
-    
-  def method
-    method = request.method
-    if REST_METHODS.member?(method)
-      self.send(method)
-    else
-      raise("Not a REST method #{method}")
-    end
-  end
-  
+
   def show
     params[:_keyword] && params[:_keyword].gsub!('_',' ') ## this will be unnecessary soon.
 
@@ -55,15 +45,15 @@ class CardController < ApplicationController
           when ::Cardtype.create_ok?(params[:type] || 'Basic')  ;  self.new
           when logged_in?                                       ;  render :action=>'denied'
           else                                                  ;  render :action=>'missing' 
-        end
+          end
       else
         save_location
       end
     end
+    
     return if !view_ok # if view is not ok, it will render denied. return so we dont' render twice
     render_show
   end
-  alias :get :show
 
   def render_show
     render(:text=>render_show_text)
@@ -75,7 +65,7 @@ class CardController < ApplicationController
     known_formats = FORMATS.split('|')
     f_ext = request.parameters[:format]
     return "unknown format: #{f_ext}" if !known_formats.member?( f_ext )
-
+    
     respond_to do |format|
       known_formats.each do |f|
         format.send f do
@@ -86,81 +76,11 @@ class CardController < ApplicationController
       end
     end
   end
+  
 
   #----------------( MODIFYING CARDS )
-  # rest XML put/post
-  def read_xml(xml, card_name, card_updates, f)
-    card_content=''
-    no_card=false
-    #raise("Should be card, #{card_name}") if xml.name != 'card'
-    raise("No xml?, #{card_name}") unless xml
-    xml.each_child { |e|
-      if REXML::Element===e
-        if e.name == 'card'
-          sub_cname = card_name+'+'+e.attribute('name').to_s
-          t= e.attribute('transclude') || 'no transclude attribute'
-          card_content += "{{#{t}}}"
-          read_xml(e, sub_cname, card_updates, f)
-        else
-          e.name == 'no_card' && no_card=true
-          card_content += '<'+e.expanded_name
-          e.attributes.each_attribute do |attr|
-            card_content += " "
-            attr.write( card_content )
-          end unless e.attributes.empty?
-          if e.children.empty?
-            card_content += "/>"
-          else    
-            card_content += '>'+read_xml(e, card_name, card_updates, f)+
-                            '</'+e.expanded_name+'>'
-          end
-        end
-      else
-        #f.write_text(e, card_content)
-        e.write(card_content)
-      end
-    }
-    if xml.name == 'card'
-      this_card = Card.fetch(card_name)
-      # no card and no new content, don't update
-      unless no_card || this_card.new_record? && !card_content
-        card_cc = this_card.content
-        this_name = this_card.name
-        if card_content != card_cc
-          card_updates[card_name] = {:content => card_content}
-        end
-      end
-    end
-    card_content
-  end
 
-  def put
-    @card_name = Cardname.unescape(params['id'] || '')
-    raise("Need a card name to put") if (@card_name.nil? or @card_name.empty?)
-    @card = Card.fetch(@card_name)
-
-    #raise("PUT #{params.to_yaml}\n")
-    content = request.body.read
-    doc = REXML::Document.new(content)
-raise "XML error: #{doc} #{content}" unless doc.root
-    #f = REXML::Formatters::Transitive.new
-    card_updates = Hash.new
-    read_xml(doc.root, @card_name, card_updates, nil)
-    if !card_updates.empty?
-      @card.multi_update card_updates 
-    end
-  end
-  
-  def post
-    return render(:action=>"missing", :format=>:xml)  unless params[:card]
-  
-    @card = Card.create params[:card]        
-    if params[:multi_edit] and params[:cards] and !@card.errors.present?
-      @card.multi_create(params[:cards]) 
-    end
-  end
-  
-  #----------------( creating)                                                               
+  #----------------( creating)
   def new
     Wagn::Hook.call :before_new, '*all', self
 
@@ -180,6 +100,11 @@ raise "XML error: #{doc} #{content}" unless doc.root
       )
     end
   end
+
+  # no longer in use, righ?
+  #def denial
+  #  render :template=>'/card/denied', :status => 403
+  #end
 
   def create
     @card = Card.create params[:card]
@@ -215,11 +140,11 @@ raise "XML error: #{doc} #{content}" unless doc.root
 
 
   #--------------( editing )
-  
-  def edit                                             
-    Rails.logger.info("Edit "+params.inspect)
+
+  def edit
     if ['name','type','codename'].member?(params[:attribute])
       render :partial=>"card/edit/#{params[:attribute]}"
+      #render_cardedit(:part=>params[:attribute])
     end
   end
 
@@ -253,6 +178,7 @@ raise "XML error: #{doc} #{content}" unless doc.root
       @confirm = (@card.confirm_rename=true)
       @card.update_referencers = true
       return render(:partial=>'card/edit/name', :status=>200)
+      #return render_cardedit(:part=>:name, :status=>200)
     end
 
     handling_errors do
@@ -311,15 +237,7 @@ raise "XML error: #{doc} #{content}" unless doc.root
 
   #------------( deleting )
 
-  def delete  
-    @card.destroy
-
-    if @card.errors.on(:confirmation_required)
-      return render_update_slot( render_to_string(:partial=>'confirm_remove'))
-    end
-  end
-    
-  def remove  
+  def remove
     @card.confirm_destroy = params[:card][:confirm_destroy] if params[:card]
     captcha_ok = captcha_required? ? verify_captcha : true
     return render_update_slot( render_to_string(:partial=>'confirm_remove'), "confirmation required") unless captcha_ok
@@ -358,6 +276,7 @@ raise "XML error: #{doc} #{content}" unless doc.root
 
   def options
     @extension = @card.extension
+#    render_options(:part=>params[:attribute]) if params[:setting] and
     render :partial=>"card/options/#{params[:attribute]}" if params[:setting] and
       ['closed_setting','open_setting'].include?(params[:attribute])
   end
@@ -378,6 +297,26 @@ raise "XML error: #{doc} #{content}" unless doc.root
 #    @items << 'config'
     @current = params[:attribute] || @items.first.to_key
   end
+
+  #------------------( views )
+
+  #  I don't think these are used any more.  If they are, they shouldn't be!
+  #
+  #[:open_missing, :closed_missing].each do |method|
+  #  define_method( method ) do
+  #    load_card
+  #    params[:view] = method
+  #    if id = params[:replace]
+  #      render_update_slot do |page, target|
+  #        target.update render_to_string(:action=>'show')
+  #      end
+  #    else
+  #      render_show
+  #    end
+  #  end
+  #end
+
+
 
 
   #-------- ( MISFIT METHODS )
@@ -429,6 +368,7 @@ raise "XML error: #{doc} #{content}" unless doc.root
 
 
   # this should all happen in javascript
+  
   def add_field # for pointers only
     load_card if params[:id]
     @card ||= Card.new(:type=>'Pointer', :skip_defaults=>true)

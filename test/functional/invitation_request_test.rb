@@ -55,11 +55,13 @@ class InvitationRequestTest < ActionController::TestCase
   end
  
   def test_should_destroy_and_block_user  
+Rails.logger.info("failing 1")
     login_as :joe_user
     # FIXME: should test agains mocks here, instead of re-testing the model...
     post :remove, :id=>Card.find_by_name('Ron Request').id
     assert_equal nil, Card.find_by_name('Ron Request')
     assert_equal 'blocked', ::User.find_by_email('ron@request.com').status
+Rails.logger.info("failing 2")
   end
   
 =begin DOES NOT AUTOMATICALLY HAPPEN ANY MORE.

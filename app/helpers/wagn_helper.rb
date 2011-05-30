@@ -7,6 +7,13 @@ module WagnHelper
   # FIXME: slot -> renderer (model)
   # Put the initialization in the controller and we no longer care here
   # whether it is a Slot or Renderer, and it will be from the parent class
+  #   Now: Always a Renderer, and the subclass is selected by:
+  #     :format => :html (default and only -> RichHtmlRenderer (was Slot))
+#  def slot() raise "slot is now self #{self}" end
+#  def get_slot(card=nil, context=nil, action=nil, opts={})
+#    raise "get_slot? #{card}, #{context}, #{action}, #{opts.inspect}"
+#  end
+#=begin
   def slot() Renderer.current_slot end
   def card() @card ||= slot.card end
   def params()
@@ -19,17 +26,21 @@ module WagnHelper
 
   # FIXME: I think all this slot initialization should happen in controllers
   def get_slot(card=nil, context=nil, action=nil, opts={})
+#Rails.logger.info "get_slot called.  context = #{context}, @context = #{@context}"
     nil_given = card.nil?
     card ||= @card; context||=@context; action||=@action
     opts[:relative_content] = opts[:params] = (controller and params) or {}
     slot = case
-      when Renderer.current_slot;  nil_given ? Renderer.current_slot : Renderer.current_slot.subrenderer(card)
+      when Renderer.current_slot
+#Rails.logger.info "current slot already exists.  nil_given = #{nil_given}"
+        nil_given ? Renderer.current_slot : Renderer.current_slot.subrenderer(card)
       else
         Renderer.current_slot = Renderer.new( card,
             opts.merge(:context=>context, :action=>action, :template=>self, :controller=>@controller) )
     end
     controller and controller.renderer = slot or slot
   end
+#=end
 
   Droplet = Struct.new(:name, :link_options)
 
@@ -97,10 +108,8 @@ module WagnHelper
 
     # match tags with or without self closing (ie. <foo />)
     wordstring.scan(/\<([^\>\s\/]+)[^\>]*?\>/).each { |t| tags.unshift(t[0]) }
-
     # match tags with self closing and mark them as closed
     wordstring.scan(/\<([^\>\s\/]+)[^\>]*?\/\>/).each { |t| if !(x=tags.index(t[0])).nil? then tags.slice!(x) end }
-
     # match close tags
     wordstring.scan(/\<\/([^\>\s\/]+)[^\>]*?\>/).each { |t|  if !(x=tags.rindex(t[0])).nil? then tags.slice!(x) end  }
 
@@ -197,6 +206,27 @@ module WagnHelper
     end
     slot.expand_inclusions content.gsub(/\[\[/,"<div class=\"pointer-item item-#{view}\">{{").gsub(/\]\]/,"|#{view}#{typeparam}}}</div>")
   end
+
+
+  # ---------------( NAVBOX ) -----------------------------------
+
+=begin (moved to builtin def)
+  def navbox
+    content_tag( :form, :id=>"navbox_form", :action=>"/search", :onsubmit=>"return navboxOnSubmit(this)" ) do
+      content_tag( :span, :id=>"navbox_background" ) do
+        %{<a id="navbox_image" title="Search" onClick="navboxOnSubmit($('navbox_form'))">&nbsp;</a>}  + text_field_tag("navbox", params[:_keyword] || '', :id=>"navbox_field", :autocomplete=>"off") +
+        navbox_complete_field('navbox_field')
+      end
+    end
+  end
+
+  def navbox_complete_field(fieldname, card_id='')
+    content_tag("div", "", :id => "#{fieldname}_auto_complete", :class => "auto_complete") +
+    auto_complete_field(fieldname, { :url =>"/card/auto_complete_for_navbox/#{card_id.to_s}",
+      :after_update_element => "navboxAfterUpdate"
+     }.update({}))
+  end
+=end
 
   def navbox_result(entries, field, stub)
     return unless entries

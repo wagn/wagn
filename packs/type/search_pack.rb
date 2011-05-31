@@ -134,7 +134,7 @@ class Renderer
     s = card.spec(paging_params)
     offset, limit = s[:offset].to_i, s[:limit].to_i
     first,last = offset+1,offset+card.results.length 
-    total = card.count
+    total = card.count(paging_params)
  
     args = params.clone
     args[:limit] = limit

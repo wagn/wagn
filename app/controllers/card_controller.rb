@@ -89,6 +89,7 @@ class CardController < ApplicationController
     @args[:name] ||= params[:id] # for ajax (?)
     @args[:type] ||= params[:type] # for /new/:type shortcut
     [:name, :type, :content].each {|key| @args.delete(key) unless a=@args[key] and !a.blank?} #filter blank args
+    @args.delete(:attachment_id) # was breaking changes to and away from image / file.  should refactor so this is unnecessary.
 
     if @args[:name] and Card.exists?(@args[:name]) #card exists
       render :text => "<span>Oops, <strong>#{@args[:name]}</strong> was recently created! try reloading the page to edit it</span>" #ENGLISH

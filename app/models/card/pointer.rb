@@ -43,8 +43,8 @@ module Card
       (card && card.collection?) ? card : nil
     end
 
-    def options(limit=50)
-      (oc=self.options_card) ? oc.item_cards(:limit=>limit) : Card.search(:sort=>'alpha',:limit=>limit)
+    def options
+      (oc=self.options_card) ? oc.item_cards(:default_limit=>50) : Card.search(:sort=>'alpha',:limit=>50)
     end
 
     def option_text(option)

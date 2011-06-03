@@ -103,7 +103,7 @@ class Renderer
 #Rails.logger.debug "define base view: _render_#{view}, render_#{view}"
           define_method( "_render_#{view}" ) do |*a| a = [{}] if a.empty?
             final_meth = view_method( view )
-#Rails.logger.debug " in #{caller(0).first}[#{card}] #{view}, #{final_meth}"
+Rails.logger.debug " in #{caller(0).first}[#{card}] #{view}, #{final_meth} [#{self.class}]"
 raise "??? #{view.inspect}" unless final_meth
             send(final_meth, *a) { yield }
           end
@@ -233,6 +233,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     wiki_content = WikiContent.new(card, content, self, inclusion_map)
     update_references(wiki_content) if card.references_expired
 
+#Rails.logger.debug "process_content 2(#{wiki_content})"
     wiki_content.render! do |opts|
       expand_inclusion(opts) { yield }
     end
@@ -331,6 +332,7 @@ raise "???" if Hash===action
   end
 
   def render_partial( partial, locals={} )
+    Rails.logger.info "render_partial #{Kernel.caller.slice(0,10)*"\n"}"
     template.render(:partial=>partial, :locals=>{ :card=>card, :slot=>self }.merge(locals))
   end
 
@@ -363,6 +365,7 @@ raise "???" if Hash===action
   end
 
   def expand_inclusion(options)
+    Rails.logger.info "expand_inclusion: #{options}"
     return options[:comment] if options.has_key?(:comment)
     # Don't bother processing inclusion if we're already out of view
     return '' if (state==:line && self.char_count > Renderer.max_char_count)
@@ -380,7 +383,7 @@ raise "???" if Hash===action
       options[:view] ||= :open
     end
 
-    #Rails.logger.info " expanding.  view is currently: #{options[:view]}"
+    Rails.logger.info " expanding.  view is currently: #{options[:view]}"
 
     options[:home_view] = options[:view] ||= context == 'layout_0' ? :naked : :content
     options[:fullname] = fullname = get_inclusion_fullname(tname,options)
@@ -548,6 +551,7 @@ raise "???" if Hash===action
         href = full_uri(href)
         known_card ? 'known-card' : 'wanted-card'
     end
+    Rails.logger.info("regular build_link #{href}")
     %{<a class="#{klass}" href="#{href}">#{text}</a>}      
   end
   

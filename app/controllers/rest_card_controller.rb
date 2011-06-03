@@ -1,17 +1,15 @@
 require 'card_controller' 
+require 'rexml/document'
 
-class XmlCardController < CardController
+class RestCardController < CardController
   helper :wagn, :card
  
-  EDIT_ACTIONS = [ :put, :post ]
-  LOAD_ACTIONS = EDIT_ACTIONS + [ :delete ]
- 
-  before_filter :load_card!, :only=> LOAD_ACTIONS
+  before_filter :load_card!, :only=> [ :put, :get ]
   before_filter :load_card_with_cache, :only => [:get]
  
-  before_filter :view_ok,   :only=> LOAD_ACTIONS
-  before_filter :create_ok, :only=> [ :put, :post ]
-  before_filter :edit_ok,   :only=> EDIT_ACTIONS
+  before_filter :view_ok,   :only=> [ :get, :put, :delete ]
+  before_filter :create_ok, :only=> [ :post ]
+  before_filter :edit_ok,   :only=> [ :put ]
   before_filter :remove_ok, :only=> [ :delete ]          
  
     
@@ -27,7 +25,8 @@ class XmlCardController < CardController
   alias :get :show
  
   # rest XML put/post
-  def read_xml(xml, card_name, card_updates, f)
+  # Need to split off envelope code somehome
+  def read_xml(xml, card_name, card_updates=nil)
     card_content=''
     no_card=false
     #raise("Should be card, #{card_name}") if xml.name != 'card'
@@ -35,10 +34,14 @@ class XmlCardController < CardController
     xml.each_child { |e|
       if REXML::Element===e
         if e.name == 'card'
-          sub_cname = card_name+'+'+e.attribute('name').to_s
+          sub_cname = if (card_name.nil? or card_name.empty?)
+              @card_name = e.attribute('name').to_s
+            else
+              card_name+'+'+e.attribute('name').to_s
+            end
           t= e.attribute('transclude') || 'no transclude attribute'
           card_content += "{{#{t}}}"
-          read_xml(e, sub_cname, card_updates, f)
+          read_xml(e, sub_cname, card_updates)
         else
           e.name == 'no_card' && no_card=true
           card_content += '<'+e.expanded_name
@@ -49,7 +52,7 @@ class XmlCardController < CardController
           if e.children.empty?
             card_content += "/>"
           else    
-            card_content += '>'+read_xml(e, card_name, card_updates, f)+
+            card_content += '>'+read_xml(e, card_name, card_updates)+
                             '</'+e.expanded_name+'>'
           end
         end
@@ -59,7 +62,7 @@ class XmlCardController < CardController
       end
     }
     if xml.name == 'card'
-      this_card = Card.fetch(card_name)
+      this_card = Card.fetch_or_new(card_name)
       # no card and no new content, don't update
       unless no_card || this_card.new_record? && !card_content
         card_cc = this_card.content
@@ -80,21 +83,28 @@ class XmlCardController < CardController
     #raise("PUT #{params.to_yaml}\n")
     content = request.body.read
     doc = REXML::Document.new(content)
+Rails.logger.info "XML parse[#{@card_name}] #{doc} #{content}"
 raise "XML error: #{doc} #{content}" unless doc.root
     #f = REXML::Formatters::Transitive.new
     card_updates = Hash.new
-    read_xml(doc.root, @card_name, card_updates, nil)
+    read_xml(doc.root, @card_name, card_updates)
     if !card_updates.empty?
       @card.multi_update card_updates 
     end
   end
   
   def post
-    return render(:action=>"missing", :format=>:xml)  unless params[:card]
-  
-    @card = Card.create params[:card]        
-    if params[:multi_edit] and params[:cards] and !@card.errors.present?
-      @card.multi_create(params[:cards]) 
+    @card_name = Cardname.unescape(params['id'] || '')
+    #return render(:action=>"missing", :format=>:xml)  unless params[:card]
+    content = request.body.read
+    doc = REXML::Document.new(content)
+Rails.logger.info "XML parse[#{@card_name}] #{doc} #{content}"
+raise "XML error: #{doc} #{content}" unless doc.root
+    #f = REXML::Formatters::Transitive.new
+    card_updates = Hash.new
+    read_xml(doc.root, @card_name, card_create)
+    if !card_updates.empty?
+      Card.create card_create 
     end
   end
   

@@ -107,9 +107,13 @@ class CardController < ApplicationController
   #end
 
   def create
-    @card = Card.create params[:card]
-    if params[:multi_edit] and params[:cards] and !@card.errors.present?
-      @card.multi_create(params[:cards])
+    if card_params = params[:card]
+      Rails.logger.info "controller create #{params.inspect}, #{card_params.inspect}"
+      params[:multi_edit] and card_params[:cards] = params[:cards]
+      Rails.logger.info "controller create #{params.inspect}, #{card_params.inspect}"
+      @card = Card.create card_params
+    else
+      raise "No card parameters on create"
     end
 
     # according to rails / prototype docs:

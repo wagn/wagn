@@ -89,6 +89,7 @@ describe CardController do
       }
       assert_response 418
       assert_instance_of Card::Basic, Card.find_by_name("NewCardFoo")
+      #Card::Base.should_receive(:save) # The concept needs work, what model methodes should we expect?
       Card.find_by_name("NewCardFoo").content.should == "Bananas"
     end
     
@@ -109,16 +110,19 @@ describe CardController do
 
     context "multi-create" do
       it "catches missing name error" do
+        Rails.logger.info "failing 1"
         post :create, "card"=>{"name"=>"", "type"=>"Fruit"},
          "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
          "content_to_replace"=>"",
          "context"=>"main_1", 
          "multi_edit"=>"true", "view"=>"open"
+        Rails.logger.info "failing 2"
         assigns['card'].errors["name"].should == "can't be blank"
         assert_response 422
       end
 
       it "creates card and plus cards" do
+        Rails.logger.info "failing a1"
         post :create, "card"=>{"name"=>"sss", "type"=>"Fruit"},
          "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
          "content_to_replace"=>"",
@@ -126,7 +130,9 @@ describe CardController do
          "multi_edit"=>"true", "view"=>"open"
         assert_response 418    
         Card.find_by_name("sss").should_not be_nil
+        Rails.logger.info "failing a2"
         Card.find_by_name("sss+text").should_not be_nil
+        Rails.logger.info "failing a3"
       end
 
       it "creates card with hard template" do

@@ -93,7 +93,7 @@ describe Flexmail do
     it "returns list with correct hash for card with configs" do
       System.base_url = 'http://a.com'
       c = Card::Trigger.create :name => "Banana Trigger", :content => "data content [[A]]"
-      c.multi_create( 
+      c.create( 
         '~plus~email'=>{:content=>'gary@gary.com'},
         '~plus~subject'=>{:type=>'Pointer', :content=>'[[default subject]]'},
         '~plus~attachment' => {:type=>'File', :content=>"notreally.txt" }
@@ -149,10 +149,10 @@ describe Flexmail do
         Card.create :name => "Banana+emailtest"
       end
       
-      it "calls to mailer on Card#multi_create" do
+      it "calls to mailer on Card#create" do
         Mailer.should_receive(:deliver_flexmail).with(hash_including(:to=>"joe@user.com"))
         c = Card.create :name => "Illiodity", :type=>"Book"
-        c.multi_create( {"~author" => {"name" => "Bukowski" }})
+        c.create( {"~author" => {"name" => "Bukowski" }})
       end
     end
   end

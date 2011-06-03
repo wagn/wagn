@@ -11,19 +11,6 @@ class XmlRenderer
     wrap(args) { _render_naked(args) }
   end
 
-  define_view(:titled) do |args|
-    self.requested_view = 'titled'
-    args[:action] = 'content'
-    wrap(args) do
-      content_tag( :h1, fancy_title(card.name) ) + 
-      _render_naked(args)
-    end
-  end
-
-  define_view(:new) do |args|
-    wrap(args) { render_partial('views/new') }
-  end
-
   define_view(:open) do |args|
     @state = :view
     self.requested_view = 'open'
@@ -43,59 +30,10 @@ class XmlRenderer
     wrap( args) { render_partial('views/setting') }
   end
 
-  define_view(:edit) do |args|
-    @state=:edit
-    card.content_template ?  _render_multi_edit(args) : content_field(form)
-  end
-
-
-  define_view(:editor) do |args|
-    eid, raw_id = context, context+'-raw-content'
-    form.hidden_field( :content, :id=>"#{eid}-hidden-content" ) +
-    text_area_tag( :content_to_replace, card.content, :rows=>3, :id=>"#{eid}-tinymce" ) +
-    editor_hooks( :setup=> %{setTimeout((function(){
-  tinyMCE.init({mode: "exact",elements: "#{eid}-tinymce",#{System.setting('*tiny mce') || ''}})
-  tinyMCE.execInstanceCommand( '#{eid}-tinymce', 'mceFocus' );
-}),50); 
-  }, 
-      :save=> %{t = tinyMCE.getInstanceById( '#{eid}-tinymce' ); $('#{eid}-hidden-content').value = t.getContent(); return true;})
-  end
-
-  define_view(:multi_edit) do |args|
-    @state=:edit
-    args[:add_javascript]=true #necessary?
-    @form = form_for_multi
-    hidden_field_tag(:multi_edit, true) + _render_naked(args)
-  end
-
-  define_view(:change) do |args|
-    self.requested_view = args[:action] = 'content'
-    wrap(args) { render_partial('views/change') }
-  end
-
-###---(  EDIT VIEWS )
-  define_view(:edit_in_form) do |args|
-    form = form_for_multi
-#Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
-    %{
-<div class="edit-area in-multi RIGHT-#{ card.name.tag_name.to_key.css_name }">
-  <div class="label-in-multi">
-    <span class="title">
-      #{ link_to_page(fancy_title(self.showname || card), (card.new_record? ? card.name.tag_name : card.name)) }
-    </span>
-  </div>     
-  
-  <div class="field-in-multi">
-    #{ self.content_field( form, :nested=>true ) }
-    #{ card.new_record? ? form.hidden_field(:type) : '' }
-  </div>
-  #{if inst = card.setting_card('edit help')
-    ss = self.subrenderer(inst); ss.state= :view
-    %{<div class="instruction">#{ ss.render :naked }</div>}
-  end}
-  <div style="clear:both"></div>
-</div>
-    }
+  [ :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :setting_missing ].each do |view|
+    define_view(view) do |args|
+       %{<no_card status="#{view}">#{card.name}</no_card>}
+    end
   end
 
 

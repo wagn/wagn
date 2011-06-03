@@ -41,6 +41,7 @@ module Card
     end
 
     def create_or_update args
+      Rails.logger.debug "create_or_update #{args.inspect}"
       if c = Card[ args[:name] ]
         c.update_attributes args
         c

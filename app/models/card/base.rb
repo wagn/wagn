@@ -21,7 +21,7 @@ module Card
 #    self.cache = {}
 
     [:before_validation, :before_validation_on_create, :after_validation, 
-      :after_validation_on_create, :before_save, :before_create, :after_save,
+      :after_validation_on_create, :before_save, :after_save,
       :after_create,
     ].each do |callback|
       self.send(callback) do 
@@ -236,6 +236,35 @@ module Card
         Card.fetch_or_new(args[:name], {}, args)
       end
                           
+      def update(args={})
+        cards = args.delete(:cards)
+        card = args.delete(:card) && Card.find(card) || Card.find(args)
+        Rails.logger.info "Card#update #{card}, #{args.inspect}"
+        raise "Update on missing card" if card.nil? or card.new_card?
+        Wagn::Hook.call :before_update, card
+        if cards
+          Rails.logger.info "call multi_save#{card.inspect}\nCards:#{cards.inspect}"
+          card.multi_save(cards)
+        end
+        Wagn::Hook.call :after_update, card
+        card
+      end
+
+      def create(args={})
+        args.symbolize_keys!
+        Rails.logger.info "Card create #{args.inspect}"
+        cards = args.delete(:cards)
+        card = args.delete(:card) && super(card) || super
+        Wagn::Hook.call :before_create, card
+        Rails.logger.info "Card create #{card}, #{args.inspect}, Cards:#{cards.inspect}"
+        raise "No base card." unless card
+        if cards
+          Rails.logger.info "call multi_save#{card.inspect}\nCards:#{cards.inspect}"
+          card.multi_save(cards)
+        end
+        Wagn::Hook.call :after_create, card
+        card
+      end
     end
 
     def save_with_trash!
@@ -258,14 +287,6 @@ module Card
       self.from_trash = self.confirm_rename = true
       @new_record = false
       self.send(:callback, :before_validation_on_create)
-    end
-    
-
-    def multi_create(cards)
-      Wagn::Hook.call :before_multi_create, self, cards
-      multi_save(cards)
-      Rails.logger.info "Card#callback after_multi_create"
-      Wagn::Hook.call :after_multi_create, self
     end
     
     def multi_update(cards)

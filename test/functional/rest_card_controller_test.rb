@@ -1,11 +1,13 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 # Re-raise errors caught by the controller.
-class XmlrestController
-  def rescue_action(e) raise e end
+class RestCardController
+  def rescue_action(e)
+    Rails.logger.info "Rescue #{e.inspect}: Trace: #{e.backtrace*"\n"}"
+    raise e end
 end
 
-class XmlrestControllerTest < ActionController::TestCase
+class RestCardControllerTest < ActionController::TestCase
 
   include AuthenticatedTestHelper
 
@@ -14,7 +16,7 @@ class XmlrestControllerTest < ActionController::TestCase
     @user = User[:joe_user]
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
-    @controller = XmlrestController.new
+    @controller = RestCardController.new
     @simple_card = Card['Sample Basic']
     @combo_card = Card['A+B']
     login_as(:joe_user)
@@ -22,9 +24,9 @@ class XmlrestControllerTest < ActionController::TestCase
 
 #=begin
   def test_create_cardtype_card
-    post :post, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
+    post :post, :format=>:xml, :lint=>true, :input=>'<card name="Editor" type="Cardtype">test>'
     assert assigns['card']
-    assert_response 418
+    assert_response 200
     assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
     # this assertion fails under autotest when running the whole suite,
     # passes under rake test.
@@ -33,7 +35,7 @@ class XmlrestControllerTest < ActionController::TestCase
 
 =begin
 #assert_restful_routes_for (controller_name, options = {}) {|options[:options] if block_given?| ...}
-#    assert_restful_routes_for XmlrestController
+#    assert_restful_routes_for RestCardController
   def test_create_a_restful_routes
 #def test_with_collection_actions
     actions = { 'a' => :get, 'b' => :put, 'c' => :post, 'd' => :delete }
@@ -61,7 +63,7 @@ class XmlrestControllerTest < ActionController::TestCase
 #
 #  def test_update_cardtype_no_stripping
 #    User.as :joe_user
-#    post :update, {:id=>@simple_card.id, :card=>{ :type=>"CardtypeA",:content=>"<br/>" } }
+#    post :update, {:id=>@simple_card.id, :format=>:xml, :card=>{ :type=>"CardtypeA",:content=>"<br/>" } }
 #    #assert_equal "boo", assigns['card'].content
 #    assert_equal "<br/>", assigns['card'].content
 #    assert_response :success, "changed card type"
@@ -70,7 +72,7 @@ class XmlrestControllerTest < ActionController::TestCase
 #
 #  def test_update_cardtype_with_stripping
 #    User.as :joe_user
-#    post :edit, {:id=>@simple_card.id, :card=>{ :type=>"Date",:content=>"<br/>" } }
+#    post :edit, {:id=>@simple_card.id, :format=>:xml, :card=>{ :type=>"Date",:content=>"<br/>" } }
 #    #assert_equal "boo", assigns['card'].content
 #    assert_response :success, "changed card type"
 #    assert_equal "", assigns['card'].content
@@ -81,13 +83,13 @@ class XmlrestControllerTest < ActionController::TestCase
 
 
   def test_new_with_name
-    post :post, :card=>{:name=>"BananaBread"}
+    post :post, :format=>:xml, :card=>{:name=>"BananaBread"}
     assert_response :success, "response should succeed"
     assert_equal 'BananaBread', assigns['card'].name, "@card.name should == BananaBread"
   end
 
   def test_new_with_existing_card
-    post :post, :card=>{:name=>"A"}
+    post :post, :format=>:xml, :card=>{:name=>"A"}
     assert_response :success, "response should succeed"
   end
 
@@ -112,7 +114,7 @@ class XmlrestControllerTest < ActionController::TestCase
 
   def test_update
     put :put, { :id=>@simple_card.id,
-      :card=>{:current_revision_id=>@simple_card.current_revision.id, :content=>'brand new content' }} #, {:user=>@user.id}
+      :format=>:xml, :card=>{:current_revision_id=>@simple_card.current_revision.id, :content=>'brand new content' }} #, {:user=>@user.id}
     assert_response :success, "edited card"
     assert_equal 'brand new content', Card['Sample Basic'].content, "content was updated"
   end
@@ -137,19 +139,20 @@ class XmlrestControllerTest < ActionController::TestCase
   end
 
   def test_new_with_cardtype
-    post :post, :card => {:type=>'Date'}
+    post :post, :format=>:xml, :card => {:type=>'Date'}
     assert_response :success, "response should succeed"
     assert_equal 'Date', assigns['card'].type, "@card type should == Date"
   end
 
   def test_create
-    post :post, :card => {
-      :name=>"NewCardFoo",
-      :type=>"Basic",
-      :content=>"Bananas"
-    }
-    assert_response 418
+    Rails.logger.info "failing 0"
+    Rack::MockRequest.new(ActionController::Dispatcher.new()).
+      post("/rest/", :format=>:xml, :lint=>true, :input=>'<card type="Basic" name="NewCardFoo">Bananas</card>')
+    #{ :name=>"NewCardFoo", :type=>"Basic", :content=>"Bananas" }
+    assert_response 200
+    Rails.logger.info "failing 1"
     assert_instance_of Card::Basic, Card.find_by_name("NewCardFoo")
+    Rails.logger.info "failing 2"
     assert_equal "Bananas", Card.find_by_name("NewCardFoo").content
   end
 
@@ -164,36 +167,39 @@ class XmlrestControllerTest < ActionController::TestCase
   def test_recreate_from_trash
     @c = Card.create! :name=>"Problem", :content=>"boof"
     @c.destroy!
-    post :post, :card=>{
+    post :post, :format=>:xml, :card=>{
       "name"=>"Problem",
       "type"=>"Phrase",
       "content"=>"noof"
     }
-    assert_response 418
+    assert_response 200
     assert_instance_of Card::Phrase, Card.find_by_name("Problem")
   end
 
   def test_multi_create_without_name
-    post :post, "card"=>{"name"=>"", "type"=>"Form"},
+    post :post, :format=>:xml, :card=>{"name"=>"", "type"=>"Form"},
      "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}},
      "content_to_replace"=>"",
      "context"=>"main_1",
      "multi_edit"=>"true", "view"=>"open"
     assert_equal "can't be blank", assigns['card'].errors["name"]
-    assert_response 422
+    assert_response 200
   end
 
 
+=begin
+Need to convert the 
   def test_multi_create
-    post :post, "card"=>{"name"=>"sss", "type"=>"Form"},
+    post :post, :format=>:xml, :card=>{"name"=>"sss", "type"=>"Form"},
      "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}},
      "content_to_replace"=>"",
      "context"=>"main_1",
      "multi_edit"=>"true", "view"=>"open"
-    assert_response 418
+    assert_response 200
     assert Card.find_by_name("sss")
     assert Card.find_by_name("sss+text")
   end
+=end
 
   def test_should_redirect_to_thanks_on_create_without_read_permission
     # 1st setup anonymously create-able cardtype
@@ -210,7 +216,7 @@ class XmlrestControllerTest < ActionController::TestCase
     Card.create! :name=>"Fruit+*thanks", :type=>"Phrase", :content=>"/wagn/sweet"
 
     login_as(:anon)
-    post :post, :card => {
+    post :post, :format=>:xml, :card => {
       :name=>"Banana", :type=>"Fruit", :content=>"mush"
     }
     assert_equal "/wagn/sweet", assigns["redirect_location"]
@@ -231,7 +237,7 @@ class XmlrestControllerTest < ActionController::TestCase
     ff.save!
 
     login_as(:anon)
-    post :post, :context=>"main_1", :card => {
+    post :post, :context=>"main_1", :format=>:xml, :card => {
       :name=>"Banana", :type=>"Fruit", :content=>"mush"
     }
     assert_equal "/wagn/Banana", assigns["redirect_location"]
@@ -268,7 +274,7 @@ class XmlrestControllerTest < ActionController::TestCase
   def test_rename_without_update_references_should_work
     User.as :joe_user
     f = Card.create! :type=>"Cardtype", :name=>"Fruit"
-    put :put, :id => f.id, :card => {
+    put :put, :id => f.id, :format=>:xml, :card => {
       :confirm_rename => true,
       :name => "Newt",
       :update_referencers => "false",

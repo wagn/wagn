@@ -15,6 +15,7 @@ describe RestCardController do
   describe "#create" do
     before do
       login_as :joe_user
+      @joe_id = User.current_user.id
     end
 
     # FIXME: several of these tests go all the way to DB,
@@ -22,7 +23,7 @@ describe RestCardController do
     #  maybe think about refactoring to use mocks etc. to reduce
     #  test dependencies.
     it "creates cards" do
-      post(:post, {:format=>:xml, :input=>%{<card name="NewCardFoo" type="Basic">Bananas</card>}}, {:user=>3})
+      post(:post, {:format=>:xml, :input=>%{<card name="NewCardFoo" type="Basic">Bananas</card>}}, {:user=>@joe_id})
       assert_response 200
       assert_instance_of Card::Basic, Card.find_by_name("NewCardFoo")
       #Card::Base.should_receive(:save) # The concept needs work, what model methodes should we expect?
@@ -30,28 +31,25 @@ describe RestCardController do
     end
     
     it "creates cardtype cards" do
-      post :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
+      post :post, :format => :xml, :input=>%{<card type="Cardtype" :name="Editor">test</card>}
       assigns['card'].should_not be_nil
-      assert_response 418
+      assert_response 200
       assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
     end
     
     it "pulls deleted cards from trash" do
       @c = Card.create! :name=>"Problem", :content=>"boof"
       @c.destroy!
-      post :create, :card=>{"name"=>"Problem","type"=>"Phrase","content"=>"noof"}
-      assert_response 418
+      post :post, :format=>:xml, :input=>%{<card name="Problem" type="Phrase">noof</card>}
+      assert_response 200
       assert_instance_of Card::Phrase, Card.find_by_name("Problem")
     end
 
     context "multi-create" do
       it "catches missing name error" do
-        post :create, "card"=>{"name"=>"", "type"=>"Fruit"},
-         "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
-         "content_to_replace"=>"",
-         "context"=>"main_1", 
-         "multi_edit"=>"true", "view"=>"open"
-        assigns['card'].errors["name"].should == "can't be blank"
+        post :post, :format=>:xml, :input=> %{<card name="" type="Fruit">
+          <card name="~plus~text"><p>abraid</p></card></card>}
+        #assigns['card'].errors["name"].should == "can't be blank"
         assert_response 422
       end
 

@@ -13,8 +13,7 @@ describe Card do
   
   describe "#create" do 
     it "calls :before_save, :before_create, :after_save, and :after_create hooks" do
-      Wagn::Hook.should_receive(:call).with(:before_create, instance_of(Hash))
-      [:before_save, :after_save, :after_create].each do |hookname|
+      [:before_create, :before_save, :after_save, :after_create].each do |hookname|
         Wagn::Hook.should_receive(:call).with(hookname, instance_of(Card::Basic))
       end 
       User.as :wagbot do

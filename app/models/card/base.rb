@@ -55,7 +55,7 @@ module Card
 
     # setup hooks on AR callbacks
     # Note: :after_create is called from end of set_initial_content now
-    [:before_save, :before_create, :after_save ].each do |hookname| 
+    [:before_save, :after_save ].each do |hookname| 
       self.send( hookname ) do |card|
         Wagn::Hook.call hookname, card
       end
@@ -237,13 +237,14 @@ module Card
       end
                           
       def update(args={})
+        #Rails.logger.info "Card#update #{args.inspect}"
         cards = args.delete(:cards)
-        card = args.delete(:card) && Card.find(card) || Card.find(args)
-        Rails.logger.info "Card#update #{card}, #{args.inspect}"
+        card = args.delete(:card) && Card.fetch(card[:name]) || Card.fetch(args[:name])
+        #Rails.logger.info "Card#update #{card}, #{cards.inspect} A:#{args.inspect}"
         raise "Update on missing card" if card.nil? or card.new_card?
         Wagn::Hook.call :before_update, card
         if cards
-          Rails.logger.info "call multi_save#{card.inspect}\nCards:#{cards.inspect}"
+          #Rails.logger.info "call multi_save#{card.inspect}\nCards:#{cards.inspect}"
           card.multi_save(cards)
         end
         Wagn::Hook.call :after_update, card
@@ -252,17 +253,16 @@ module Card
 
       def create(args={})
         args.symbolize_keys!
-        Rails.logger.info "Card create #{args.inspect}"
         cards = args.delete(:cards)
         card = args.delete(:card) && super(card) || super
+        #Rails.logger.info "Card create #{args.inspect} #{card.name} Cds:#{cards.inspect}"
         Wagn::Hook.call :before_create, card
-        Rails.logger.info "Card create #{card}, #{args.inspect}, Cards:#{cards.inspect}"
+        #Rails.logger.info "Card create #{card}, #{args.inspect}, Cards:#{cards.inspect}"
         raise "No base card." unless card
         if cards
-          Rails.logger.info "call multi_save#{card.inspect}\nCards:#{cards.inspect}"
+          #Rails.logger.info "call multi_save#{card.inspect}\nCards:#{cards.inspect}"
           card.multi_save(cards)
         end
-        Wagn::Hook.call :after_create, card
         card
       end
     end
@@ -289,15 +289,17 @@ module Card
       self.send(:callback, :before_validation_on_create)
     end
     
+=begin
     def multi_update(cards)
       Wagn::Hook.call :before_multi_update, self, cards
       multi_save(cards)
       Rails.logger.info "Card#callback after_multi_update"
       Wagn::Hook.call :after_multi_update, self
     end
+=end
     
     def multi_save(cards)
-      Wagn::Hook.call :before_multi_save, self, cards
+      #Wagn::Hook.call :before_multi_save, self, cards
       cards.each_pair do |name, opts|
         opts[:content] ||= ""
         # make sure blank content doesn't override first assignments if they are present
@@ -323,7 +325,7 @@ module Card
         end
       end  
       Rails.logger.info "Card#callback after_multi_save"
-      Wagn::Hook.call :after_multi_save, self, cards
+      #Wagn::Hook.call :after_multi_save, self, cards
     end
 
     def new_card?

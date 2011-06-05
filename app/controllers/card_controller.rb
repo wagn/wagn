@@ -170,7 +170,7 @@ class CardController < ApplicationController
     @card_args = card_args
 
     case
-    when params[:multi_edit]; @card.multi_update(params[:cards])
+    when params[:multi_edit]; @card.multi_save(params[:cards])
     when card_args[:type]; @card.type=Cardtype.classname_for(card_args.delete(:type)); @card.save
       #can't do this via update attributes: " Can't mass-assign these protected attributes: type"
       #might be addressable via attr_accessors?

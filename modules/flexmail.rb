@@ -45,13 +45,12 @@ class Flexmail
     end
   end  
 
+  Wagn::Hook.add :after_update, '*all' do |card|
+    Flexmail.deliver_mail_for card
+  end
 
-  # skip templated cards in create and handle them after multi-create,
-  # so we have access to plus cards.
   Wagn::Hook.add :after_create, '*all' do |card|
-    if !card.hard_template
-      Flexmail.deliver_mail_for card
-    end
+    Flexmail.deliver_mail_for card
   end
 
   # The Mailer method and mail template are defined in the standard rails locations

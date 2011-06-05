@@ -26,52 +26,46 @@ class RestCardController < CardController
  
   # rest XML put/post
   # Need to split off envelope code somehome
-  def read_xml(xml, card_name, card_updates=nil)
-    card_content=''
-    no_card=false
-    #raise("Should be card, #{card_name}") if xml.name != 'card'
+  def read_xml(xml, card_name, updates)
+    out_xml = REXML::Document.new('')
+    out_xml = out_xml.add_element('e')
+    no_card = false
+    if (root_card=card_name.nil?) or card_name.empty?
+      card_name = @card_name = xml.attribute('name').to_s
+    end
     raise("No xml?, #{card_name}") unless xml
-    xml.each_child { |e|
+    xml.each_child do |e|
       if REXML::Element===e
         if e.name == 'card'
-          sub_cname = if (card_name.nil? or card_name.empty?)
-              @card_name = e.attribute('name').to_s
-            else
-              card_name+'+'+e.attribute('name').to_s
-            end
-          t= e.attribute('transclude') || 'no transclude attribute'
-          card_content += "{{#{t}}}"
-          read_xml(e, sub_cname, card_updates)
+          sub_cname = card_name+'+'+e.attribute('name').to_s
+          read_xml(e, sub_cname, updates)
         else
           e.name == 'no_card' && no_card=true
-          card_content += '<'+e.expanded_name
-          e.attributes.each_attribute do |attr|
-            card_content += " "
-            attr.write( card_content )
-          end unless e.attributes.empty?
-          if e.children.empty?
-            card_content += "/>"
-          else    
-            card_content += '>'+read_xml(e, card_name, card_updates)+
-                            '</'+e.expanded_name+'>'
-          end
+          out_xml.add_element(REXML::Element.new(e.expanded_name), e.attributes)
         end
       else
-        #f.write_text(e, card_content)
-        e.write(card_content)
-      end
-    }
-    if xml.name == 'card'
-      this_card = Card.fetch_or_new(card_name)
-      # no card and no new content, don't update
-      unless no_card || this_card.new_record? && !card_content
-        card_cc = this_card.content
-        this_name = this_card.name
-        if card_content != card_cc
-          card_updates[card_name] = {:content => card_content}
-        end
+        out_xml.add(e)
       end
     end
+    card_content = out_xml.to_s[3..-5]
+    this_update = {:name=>card_name}
+    this_type = xml.attribute('type').to_s
+    this_card = Card.fetch_or_new(card_name)
+    this_update[:type] = this_type if this_type != this_card.type
+    # no card and no new content, don't update
+    #Rails.logger.info "uptest[#{root_card}} #{no_card || this_card.new_record? && card_content.blank?}"
+    if !(no_card || this_card.new_record? &&
+         card_content.blank?) && card_content != this_card.content
+      this_update[:content] = card_content
+    end
+    #Rails.logger.info "XML post card: #{this_update.inspect} C:#{card_content}"
+    if root_card
+      raise "Bad element #{xml.name}" unless xml.name == 'card'
+      updates.merge!(this_update)
+    else
+      updates[card_name] = this_update
+    end
+    #Rails.logger.info "updates: #{card_content} #{updates.inspect}"
     card_content
   end
 
@@ -83,29 +77,62 @@ class RestCardController < CardController
     #raise("PUT #{params.to_yaml}\n")
     content = request.body.read
     doc = REXML::Document.new(content)
-Rails.logger.info "XML parse[#{@card_name}] #{doc} #{content}"
-raise "XML error: #{doc} #{content}" unless doc.root
+    raise "XML error: #{doc} #{content}" unless doc.root
     #f = REXML::Formatters::Transitive.new
-    card_updates = Hash.new
-    read_xml(doc.root, @card_name, card_updates)
+    read_xml(doc.root, @card_name, card_updates={})
     if !card_updates.empty?
-      @card.multi_update card_updates 
+      @card.multi_save card_updates 
     end
   end
   
   def post
-    @card_name = Cardname.unescape(params['id'] || '')
+    request.format = :xml if !params[:format]
+    Rails.logger.debug "POST[#{params.inspect}] #{request.format.inspect}"
     #return render(:action=>"missing", :format=>:xml)  unless params[:card]
-    content = request.body.read
-    doc = REXML::Document.new(content)
-Rails.logger.info "XML parse[#{@card_name}] #{doc} #{content}"
-raise "XML error: #{doc} #{content}" unless doc.root
-    #f = REXML::Formatters::Transitive.new
-    card_updates = Hash.new
-    read_xml(doc.root, @card_name, card_create)
-    if !card_updates.empty?
-      Card.create card_create 
+=begin
+    respond_to do |format|
+Rails.logger.info "r2 #{format.inspect}"
+      format.xml do
+=end
+        content = request.body.read
+        doc = REXML::Document.new(content)
+        raise "XML error: #{doc} #{content}" unless doc.root
+        read_xml(doc.root, @card_name, card_create={})
+        Card.create card_create 
+=begin
+      end
+      format.html do
+        @card_name = Cardname.unescape(params['id'] || '')
+        if card_create = params[:card]
+          Rails.logger.info "controller create #{params.inspect}, #{card_create.inspect}"
+          params[:multi_edit] and card_create[:cards] = params[:cards]
+          Rails.logger.info "controller create #{params.inspect}, #{card_create.inspect}"
+          @card = Card.create card_create
+        else
+          raise "No card parameters on create"
+        end
+
+        # according to rails / prototype docs:
+        # :success: [...] the HTTP status code is in the 2XX range.
+        # :failure: [...] the HTTP status code is not in the 2XX range.
+
+        # however on 302 ie6 does not update the :failure area, rather it sets the :success area to blank..
+        # for now, to get the redirect notice to go in the failure slot where we want it,
+        # we've chosen to render with the (418) 'teapot' failure status:
+        # http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+        handling_errors do
+          @thanks = Wagn::Hook.call( :redirect_after_create, @card ).first ||
+            @card.setting('thanks')
+          case
+            when @thanks.present?;               ajax_redirect_to @thanks
+            when @card.ok?(:read) && main_card?; ajax_redirect_to url_for_page( @card.name )
+            when @card.ok?(:read);               render_show
+            else                                 ajax_redirect_to "/"
+          end
+        end
+      end
     end
+=end
   end
   
   #----------------( creating)

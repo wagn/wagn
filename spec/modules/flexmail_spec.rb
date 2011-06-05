@@ -93,11 +93,10 @@ describe Flexmail do
     it "returns list with correct hash for card with configs" do
       System.base_url = 'http://a.com'
       c = Card::Trigger.create :name => "Banana Trigger", :content => "data content [[A]]"
-      c.create( 
+      Card.update(:name => "Banana Trigger", :cards=> { 
         '~plus~email'=>{:content=>'gary@gary.com'},
         '~plus~subject'=>{:type=>'Pointer', :content=>'[[default subject]]'},
-        '~plus~attachment' => {:type=>'File', :content=>"notreally.txt" }
-      )
+        '~plus~attachment' => {:type=>'File', :content=>"notreally.txt" } })
       conf = Flexmail.configs_for(c).first
       
       conf[:to     ].should == "bob@bob.com"
@@ -120,7 +119,7 @@ describe Flexmail do
       end
     
       it "calls to mailer on Card#create" do
-        Mailer.should_receive(:deliver_flexmail).with(hash_including(:to=>"joe@user.com"))
+        Mailer.should_receive(:deliver_flexmail).at_least(:once).with(hash_including(:to=>"joe@user.com"))
         Card.create :name => "Banana+emailtest"
       end
       
@@ -150,9 +149,9 @@ describe Flexmail do
       end
       
       it "calls to mailer on Card#create" do
-        Mailer.should_receive(:deliver_flexmail).with(hash_including(:to=>"joe@user.com"))
+        Mailer.should_receive(:deliver_flexmail).at_least(:once).with(hash_including(:to=>"joe@user.com"))
         c = Card.create :name => "Illiodity", :type=>"Book"
-        c.create( {"~author" => {"name" => "Bukowski" }})
+        Card.update(:name=>"Illiodity", :cards=> {"~author" => {"name" => "Bukowski"}})
       end
     end
   end

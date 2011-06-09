@@ -16,12 +16,7 @@ module Wagn
       def subclasses
         @@subclasses
       end
-      
-      def method_keys card
-        @@subclasses.map do |pclass| 
-          pclass.pattern_applies?(card) ? pclass.method_key(card) : nil
-        end.compact
-      end
+
 
       def method_key(opts)
         @@subclasses.each do |pclass|
@@ -31,41 +26,16 @@ module Wagn
         end
       end
 
-      def set_keys card
-        card.new_record? ? generate_set_keys(card) :
-          (@@cache[(card.name ||"") + (card.type||"")] ||= generate_set_names(card))
+      def generate_cache_key card
+        name = card.name
+        left = (name && name.junction?) ? (card.loaded_trunk || card.left) : nil
+        left_key = left ? left.type : ''
+        cache_key = "#{name}-#{card.type}-#{left_key}-#{card.new_card?}"
       end
-
-      def generate_set_keys card
-        @@subclasses.map do |pclass|
-          pclass.pattern_applies?(card) and pclass.set_name(card) 
-        end.compact
-      end
-
-#      def codenames card, view
-#        @@subclasses.map do |pclass|
-#          pclass.pattern_applies?(card) and codename = pclass.codename(card)
-#          next unless codename
-#          codename = (codename.blank? ? view : "#{codename}_#{view}").to_sym
-#          block_given? ? yield(codename) : codename
-#        end
-#      end
 
       def set_names card
-        left = (card.name && card.name.junction?) ? (card.loaded_trunk || card.left) : nil
-        left_key = left ? left.type : ''
-        cache_key = "#{card.name}-#{card.type}-#{left_key}-#{card.new_card?}"
-        if names = Card.cache.read(cache_key)
-          names
-        else
-          names = generate_set_names(card)
-          Card.cache.write(cache_key, names)
-          names
-        end
-          
-#        card.new_record? ? generate_set_names(card) : 
-#          (@@cache[(card.name ||"") + (card.type||"")] ||= generate_set_names(card))
-#Rails.logger.debug "set_names #{card&&card.name} #{r.inspect}"; r
+        cache_key = "SETNAMES-#{generate_cache_key card}"
+        Card.cache.read(cache_key) or Card.cache.write(cache_key, generate_set_names(card))
       end
 
       def generate_set_names card
@@ -75,6 +45,18 @@ raise "no card" unless card
           pclass.set_name(card) or nil
         end.compact
       end
+
+      def method_keys card
+        cache_key = "METHODKEYS-#{generate_cache_key card}"
+        Card.cache.read(cache_key) or Card.cache.write(cache_key, generate_method_keys(card))
+      end
+
+      def generate_method_keys card
+        @@subclasses.map do |pclass| 
+          pclass.pattern_applies?(card) ? pclass.method_key(card) : nil
+        end.compact
+      end
+
 
       def css_names card
         @@subclasses.map do |pclass|
@@ -188,7 +170,8 @@ raise "no card" unless card
       end
 
       def pattern_applies? card
-        card.name && card.name.junction?
+        name = card.name
+        name && name.junction?
       end
 
       def set_name card
@@ -221,7 +204,8 @@ raise "no card" unless card
       end
 
       def pattern_applies? card
-        card.name && card.name.junction? && left(card)
+        name = card.name
+        name && name.junction? && left(card)
       end
 
       def left card

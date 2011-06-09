@@ -516,19 +516,23 @@ raise "???" if Hash===action
   end
 
   def paging_params
-    @paging_params ||= begin
-      s = {}
-      if p = root.params
-        [:offset,:limit,:_keyword].each{|key| s[key] = p.delete(key)}
+    if ajax_call? && @depth > 0
+      {:default_limit=>20}  #important that paging calls not pass variables to included searches
+    else
+      @paging_params ||= begin
+        s = {}
+        if p = root.params
+          [:offset,:limit,:_keyword].each{|key| s[key] = p.delete(key)}
+        end
+        s[:offset] = s[:offset] ? s[:offset].to_i : 0
+        if s[:limit]
+          s[:limit] = s[:limit].to_i
+        else
+          s.delete(:limit)
+          s[:default_limit] = (main_card? ? 50 : 20) #can be overridden by card value
+        end
+        s
       end
-      s[:offset] = s[:offset] ? s[:offset].to_i : 0
-      if s[:limit]
-        s[:limit] = s[:limit].to_i
-      else
-        s.delete(:limit)
-        s[:default_limit] = (main_card? ? 50 : 20) #can be overridden by card value
-      end
-      s
     end
   end
 

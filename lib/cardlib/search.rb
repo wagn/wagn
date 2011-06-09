@@ -29,7 +29,7 @@ module Cardlib
       alias find_virtual pattern_virtual
 
       def retrieve_extension_attribute( cardname, attr_name )
-        c = Card.find_by_name(cardname) and e = c.extension and e.send(attr_name)
+        c = Card.fetch(cardname) and e = c.extension and e.send(attr_name)
       end
 
       def create_virtual(name, content, type='Basic', reader=Role[:anon])

@@ -4,6 +4,7 @@ class Renderer
     begin
       card.item_cards( paging_params )
     rescue Exception=>e
+      Rails.logger.info "Search Error (:naked) #{e.inspect} #{e.backtrace*"\n"}"
       error = e
     end
 
@@ -27,6 +28,7 @@ class Renderer
       card.item_cards( paging_params )
       total = card.count
     rescue Exception=>e
+      Rails.logger.info "Search Error (:closed_content) #{e.inspect} #{e.backtrace*"\n"}"
       error = e
       card.results = nil
     end
@@ -129,10 +131,10 @@ class Renderer
 
 
   define_view(:paging, :type=>'search') do
-    s = card.spec
+    s = card.spec(paging_params)
     offset, limit = s[:offset].to_i, s[:limit].to_i
     first,last = offset+1,offset+card.results.length 
-    total = card.count
+    total = card.count(paging_params)
  
     args = params.clone
     args[:limit] = limit

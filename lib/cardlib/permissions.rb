@@ -63,6 +63,7 @@ module Cardlib
         begin
           self.send(method)
         rescue Exception => e
+          name.piece_names.each{|piece| Wagn::Cache.expire_card(piece.to_key)}
           Rails.logger.info "#{method}:#{e.message} #{name} #{Kernel.caller.join("\n")}"
           raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace}"
         end

@@ -12,8 +12,8 @@ module Cardlib
   module Fetch
     mattr_accessor :cache
     mattr_accessor :debug
-    self.debug = lambda {|x| false }
-#    self.debug = lambda {|name| name.to_key == 'a' }
+    self.debug = false #lambda {|x| false }
+    #self.debug = lambda {|name| name.to_key == 'a+y' }
 
     module ClassMethods
       def perform_caching?
@@ -34,7 +34,7 @@ module Cardlib
       # cards in the trash are added to the cache just as other cards are.  By default, missing? and trash?
       # cards are not returned
       def fetch cardname, opts = {}
-        debug = Cardlib::Fetch.debug.call(cardname)
+        #debug = Cardlib::Fetch.debug.call(cardname)
         Rails.logger.debug "fetch #{cardname}"  if debug
         key = cardname.to_key
         cacheable = false
@@ -47,10 +47,11 @@ module Cardlib
 
         card ||= begin
           Rails.logger.debug "   find_by_key: #{card.inspect}" if debug
+#          Card.find_by_key_and_trash( key , false )
           Card.find_by_key( key )
         end
-
-        if !opts[:skip_virtual] && (!card || card.missing? || card.trash?)
+                
+        if !opts[:skip_virtual] && (!card || card.missing? || card.trash)
           if virtual_card = Card.pattern_virtual( cardname )
             card = virtual_card
             Rails.logger.debug "   pattern_virtual: #{card.inspect}" if debug
@@ -69,7 +70,7 @@ module Cardlib
           Rails.logger.debug "   writing: #{card.inspect}" if debug
         end
 
-        if (card.missing? && !card.virtual?) || card.trash?
+        if (card.missing? && !card.virtual?) || card.trash
           Rails.logger.debug "   final: missing (nil)"  if debug
           return nil
         end

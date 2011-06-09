@@ -92,12 +92,9 @@ class Renderer
 
     cards_by_day = Hash.new { |h, day| h[day] = [] }
     cards.each do |card|
-      #FIXME - tis UGLY, we're getting cached cards, so get the real card to call
-      # revised_at on.  the cards should already be there from the search results.
-      #- yeah, also seems like this should be some sort of card list option. -efm
-      real_card = card.respond_to?(:card) ? card.card : card
       begin
-        day = Date.new(real_card.updated_at.year, real_card.updated_at.month, real_card.updated_at.day)
+        stamp = card.updated_at
+        day = Date.new(stamp.year, stamp.month, stamp.day)
       rescue Exception=>e
         day = Date.today
         card.content = "(error getting date)"

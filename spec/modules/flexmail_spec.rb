@@ -91,23 +91,25 @@ describe Flexmail do
     end
         
     it "returns list with correct hash for card with configs" do
-      System.base_url = 'http://a.com'
-      c = Card::Trigger.create :name => "Banana Trigger", :content => "data content [[A]]"
-      c.multi_create( 
-        '~plus~email'=>{:content=>'gary@gary.com'},
-        '~plus~subject'=>{:type=>'Pointer', :content=>'[[default subject]]'},
-        '~plus~attachment' => {:type=>'File', :content=>"notreally.txt" }
-      )
-      conf = Flexmail.configs_for(c).first
+      User.as :wagbot do
+        System.base_url = 'http://a.com'
+        c = Card::Trigger.create :name => "Banana Trigger", :content => "data content [[A]]"
+        c.multi_create( 
+          '~plus~email'=>{:content=>'gary@gary.com'},
+          '~plus~subject'=>{:type=>'Pointer', :content=>'[[default subject]]'},
+          '~plus~attachment' => {:type=>'File', :content=>"notreally.txt" }
+        )
+        conf = Flexmail.configs_for(c).first
       
-      conf[:to     ].should == "bob@bob.com"
-      conf[:from   ].should == "gary@gary.com"
-      conf[:bcc    ].should == ''
-      conf[:cc     ].should == ''
-      conf[:subject].should == "a very nutty thang"
-      conf[:attach ].should == ['Banana Trigger+attachment']
-      conf[:message].should == "Triggered by Banana Trigger and its wonderful content: data content " +
-        '<a class="known-card" href="http://a.com/wagn/A">A</a>'
+        conf[:to     ].should == "bob@bob.com"
+        conf[:from   ].should == "gary@gary.com"
+        conf[:bcc    ].should == ''
+        conf[:cc     ].should == ''
+        conf[:subject].should == "a very nutty thang"
+        conf[:attach ].should == ['Banana Trigger+attachment']
+        conf[:message].should == "Triggered by Banana Trigger and its wonderful content: data content " +
+          '<a class="known-card" href="http://a.com/wagn/A">A</a>'
+      end
     end
   end
 

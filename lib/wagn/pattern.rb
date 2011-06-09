@@ -52,9 +52,19 @@ module Wagn
 #      end
 
       def set_names card
-#r=
-        card.new_record? ? generate_set_names(card) :
-          (@@cache[(card.name ||"") + (card.type||"")] ||= generate_set_names(card))
+        left = (card.name && card.name.junction?) ? (card.loaded_trunk || card.left) : nil
+        left_key = left ? left.type : ''
+        cache_key = "#{card.name}-#{card.type}-#{left_key}-#{card.new_card?}"
+        if names = Card.cache.read(cache_key)
+          names
+        else
+          names = generate_set_names(card)
+          Card.cache.write(cache_key, names)
+          names
+        end
+          
+#        card.new_record? ? generate_set_names(card) : 
+#          (@@cache[(card.name ||"") + (card.type||"")] ||= generate_set_names(card))
 #Rails.logger.debug "set_names #{card&&card.name} #{r.inspect}"; r
       end
 

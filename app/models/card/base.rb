@@ -465,7 +465,7 @@ module Card
     end
     
     def virtual?
-      !!self.virtual
+      @virtual
     end    
     
     def content   

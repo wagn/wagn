@@ -4,6 +4,7 @@ class Renderer
     begin
       card.item_cards( paging_params )
     rescue Exception=>e
+      Rails.logger.info "Search Error (:naked) #{e.inspect} #{e.backtrace*"\n"}"
       error = e
     end
 
@@ -27,6 +28,7 @@ class Renderer
       card.item_cards( paging_params )
       total = card.count
     rescue Exception=>e
+      Rails.logger.info "Search Error (:closed_content) #{e.inspect} #{e.backtrace*"\n"}"
       error = e
       card.results = nil
     end
@@ -90,12 +92,9 @@ class Renderer
 
     cards_by_day = Hash.new { |h, day| h[day] = [] }
     cards.each do |card|
-      #FIXME - tis UGLY, we're getting cached cards, so get the real card to call
-      # revised_at on.  the cards should already be there from the search results.
-      #- yeah, also seems like this should be some sort of card list option. -efm
-      real_card = card.respond_to?(:card) ? card.card : card
       begin
-        day = Date.new(real_card.updated_at.year, real_card.updated_at.month, real_card.updated_at.day)
+        stamp = card.updated_at
+        day = Date.new(stamp.year, stamp.month, stamp.day)
       rescue Exception=>e
         day = Date.today
         card.content = "(error getting date)"
@@ -129,10 +128,10 @@ class Renderer
 
 
   define_view(:paging, :type=>'search') do
-    s = card.spec
+    s = card.spec(paging_params)
     offset, limit = s[:offset].to_i, s[:limit].to_i
     first,last = offset+1,offset+card.results.length 
-    total = card.count
+    total = card.count(paging_params)
  
     args = params.clone
     args[:limit] = limit

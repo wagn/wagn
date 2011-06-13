@@ -160,7 +160,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     Renderer.current_slot ||= self unless(opts[:not_current])
     @card = card
     if opts
-      [ :main_content, :main_card, :base, :action, :context, :template,
+      [ :main_content, :main_card, :base, :action, :context,
         :params, :relative_content, :format, :flash, :layout, :controller].
           map {|s| instance_variable_set "@#{s}", opts[s]}
     end
@@ -174,21 +174,19 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
     @params ||= {}
     @flash ||= {}
     
+    @sub_count = @char_count = 0
+    @depth = 0
+    @root = self
+  end
+
+  def template
     @template ||= begin
       t = ActionView::Base.new( CardController.view_paths, {} )
       t.helpers.send :include, CardController.master_helper_module
       t.helpers.send :include, NoControllerHelpers
+      t.controller = @controller
       t
     end
-    @template.controller = @controller
-    @sub_count = @char_count = 0
-    @depth = 0
-    @root = self
-#    if layout == :xhr
-#      @layout = 'none'
-#    elsif @params && @params[:layout]
-#      @layout = @params[:layout]
-#    end
   end
   
   def session
@@ -213,15 +211,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
   end
 
   def inclusion_map(opts=nil)
-    return @inclusion_map if @inclusion_map and not opts
-    return @inclusion_map = self.class.view_aliases unless opts and
-      (@inclusion_map = opts[:inclusion_view_overrides])
-    self.class.view_aliases.each_pair do |known, canonical|
-      if @inclusion_map.has_key?(canonical)
-        @inclusion_map[known] = @inclusion_map[canonical]
-      end
-    end
-    @inclusion_map
+    self.class.view_aliases
   end
 
   def process_content(content=nil, opts={})
@@ -342,7 +332,7 @@ raise "???" if Hash===action
     Rails.logger.debug "method missing: #{method_id}"
     # silence Rails 2.2.2 warning about binding argument to concat.  tried detecting rails 2.2
     # and removing the argument but it broken lots of integration tests.
-    ActiveSupport::Deprecation.silence { @template.send(method_id, *args, &proc) }
+    ActiveSupport::Deprecation.silence { template.send(method_id, *args, &proc) }
   end
 
   def replace_references( old_name, new_name )
@@ -516,14 +506,23 @@ raise "???" if Hash===action
   end
 
   def paging_params
-    @paging_params ||= begin
-      s = {}
-      if p = root.params
-        [:offset,:limit,:_keyword].each{|key| s[key] = p.delete(key)}
+    if ajax_call? && @depth > 0
+      {:default_limit=>20}  #important that paging calls not pass variables to included searches
+    else
+      @paging_params ||= begin
+        s = {}
+        if p = root.params
+          [:offset,:limit,:_keyword].each{|key| s[key] = p.delete(key)}
+        end
+        s[:offset] = s[:offset] ? s[:offset].to_i : 0
+        if s[:limit]
+          s[:limit] = s[:limit].to_i
+        else
+          s.delete(:limit)
+          s[:default_limit] = (main_card? ? 50 : 20) #can be overridden by card value
+        end
+        s
       end
-      s[:offset] = s[:offset] ? s[:offset].to_i : 0
-      s[:limit]  = s[:limit]  ? s[:limit].to_i  : (main_card? ? 50 : 20)
-      s
     end
   end
 

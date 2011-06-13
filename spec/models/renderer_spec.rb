@@ -346,6 +346,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       Renderer.new(c).render( :naked ).should == %q{["10", "20", "30"]}
     end
 
+=begin
     it "should use inclusion view overrides" do
       # FIXME love to have these in a scenario so they don't load every time.
       t = Card.create! :name=>'t1', :content=>"{{t2|card}}"
@@ -363,10 +364,11 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       s = Renderer.new(t, :inclusion_view_overrides=>{ :open => :naked } )
       s.render( :naked ).should == "boo"
     end
+=end
   end
 
   context "builtin card" do
-
+=begin
     it "should use inclusion view overrides" do
       # FIXME love to have these in a scenario so they don't load every time.
       t = Card.create! :name=>'t1', :content=>"{{t2|card}}"
@@ -384,6 +386,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       s = Renderer.new(t, :inclusion_view_overrides=>{ :open => :naked } )
       s.render( :naked ).should == "boo"
     end
+=end
  
     it "should render internal builtins" do
       render_card( :naked, :content=>%{

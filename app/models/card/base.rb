@@ -98,13 +98,16 @@ module Card
         end
       end
       
-      # The following are only necessary for setting permissions.  Should remove once we have set/setting -based perms
-      if name and name.junction? and name.valid_cardname? 
-        self.trunk ||= Card.fetch_or_new name.left_name, {:skip_virtual=>true}
-        self.tag   ||= Card.fetch_or_new name.tag_name,    {:skip_virtual=>true}
-      end
       
-      self.set_default_permissions if !args['permissions']
+      if !args['permissions']
+      # The following are only necessary for setting permissions.  Should remove once we have set/setting -based perms
+        if name and name.junction? and name.valid_cardname? 
+          self.trunk ||= Card.fetch_or_new name.left_name, {:skip_virtual=>true}
+          self.tag   ||= Card.fetch_or_new name.tag_name,    {:skip_virtual=>true}
+        end
+      
+        self.set_default_permissions 
+      end
 
       #default content
       ::User.as(:wagbot) do
@@ -205,11 +208,14 @@ module Card
           when calling_class != 'Base';         calling_class
           when args['type'];                    typetype= :cardname;  args['type']
           when args.delete('skip_type_lookup'); 'Basic'
-          else
-            dummy = Card::Basic.new(:name=> args['name'], :skip_defaults=>true )
+          when args['name']
+            dummy = Card::Basic.ar_new(:name=> args['name'])
+#            dummy = Card::Basic.new(:name=> args['name'], :skip_defaults=>true )
             dummy.loaded_trunk = args['loaded_trunk'] if args['loaded_trunk']
             pattern = dummy.template
             pattern ? pattern.type : 'Basic'
+          else
+            'Basic'
           end
         
         args.delete('type')
@@ -373,7 +379,7 @@ module Card
       Card.fetch name.tag_name,   :skip_virtual=> true
     end
     
-    def cardtype_name() ::Cardtype.name_for( self.type )             end
+    def cardtype_name() ::Cardtype.name_for( self.type )  end
     
     
     def pieces

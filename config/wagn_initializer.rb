@@ -70,6 +70,7 @@ module Wagn
         setup_multihost
         load_cardtypes
         return if pre_schema?
+        load_cardtype_cache
         load_modules
 #        register_mimetypes
         Wagn::Cache.initialize_on_startup
@@ -143,14 +144,15 @@ module Wagn
             raise "Error loading card/#{cardtype}: #{e.message}"
           end
         end
+      end
+
+      def load_cardtype_cache
         ::Cardtype.load_cache unless ['test','cucumber'].member? ENV['RAILS_ENV']
-        # we have to do this for now to make sure all the cardtype classes get initialized correctly, 
+        # we were doing this to make sure all the cardtype classes get initialized correctly, 
         # especially those with types that share names with ruby classes used elsewhere
         # eg. Date -> Card::Date (not just "Date").
         # eg2. Task (custom cardtype), which needs to be loaded as Card::Task, not Rake::Task
       end
-
-    
 
   # make sure builtin cards exist
 #      def create_builtins

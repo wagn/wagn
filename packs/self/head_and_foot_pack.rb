@@ -16,7 +16,7 @@ class Renderer
     
     # RSS
     if Card::Search === rcard
-      rss_href = rcard.name=='*search' ? "/search/#{ params[:_keyword] }.rss" : @template.url_for_page( rcard.name, :format=>:rss )
+      rss_href = rcard.name=='*search' ? "/search/#{ params[:_keyword] }.rss" : template.url_for_page( rcard.name, :format=>:rss )
       bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{rss_href} />}
     end
     

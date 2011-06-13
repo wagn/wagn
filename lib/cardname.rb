@@ -89,8 +89,12 @@ module Cardname
   end
   
   def decode_html
-    coder = HTMLEntities.new
-    coder.decode(self)
+    if self.match(/\&/)
+      coder = HTMLEntities.new
+      coder.decode(self)
+    else
+      self
+    end
   end
 
   def css_name

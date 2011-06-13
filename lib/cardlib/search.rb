@@ -12,7 +12,7 @@ module Cardlib
       
      def pattern_virtual(name)
         return nil unless name && name.junction?
-        if template = Card.new(:name=>name, :skip_defaults=>true).template and template.hard_template? 
+        if template = Card::Basic.ar_new(:name=>name, :skip_defaults=>true).template and template.hard_template? 
           User.as(:wagbot) do
             Card.create_virtual name, template.content, template.type
           end
@@ -29,11 +29,11 @@ module Cardlib
       alias find_virtual pattern_virtual
 
       def retrieve_extension_attribute( cardname, attr_name )
-        c = Card.find_by_name(cardname) and e = c.extension and e.send(attr_name)
+        c = Card.fetch(cardname) and e = c.extension and e.send(attr_name)
       end
 
       def create_virtual(name, content, type='Basic', reader=Role[:anon])
-        Card.new(:name=>name, :content=>content, :type=>type ,:reader=>reader, :virtual=>true, :skip_defaults=>true)
+        Card.new(:name=>name, :content=>content, :typecode=>type ,:reader=>reader, :virtual=>true, :skip_defaults=>true)
       end
       
       def count_by_wql(spec)       

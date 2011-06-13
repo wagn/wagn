@@ -119,6 +119,7 @@ module Wagn
       self.write_local(key, value)
       #@store.write(@prefix + key, Marshal.dump(value))  if @store
       @store.write(@prefix + key, value)  if @store
+      value
     end
 
     def write_local key, value

@@ -46,8 +46,8 @@ module Cardlib
     end
      
     def save_with_permissions!(perform_checking = true)
-      Rails.logger.debug "Card#save_with_permissions!", perform_checking
-      run_checked_save :save_without_permissions!
+      Rails.logger.debug "Card#save_with_permissions!"
+      run_checked_save :save_without_permissions!, perform_checking
     end 
     
     def run_checked_save(method, perform_checking = true)

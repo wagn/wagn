@@ -1,4 +1,5 @@
-module Cardlib
+module Wagn
+ module Cardlib
   module Settings
     
     def setting setting_name, fallback=nil
@@ -41,4 +42,5 @@ module Cardlib
     end
 
   end
+ end
 end

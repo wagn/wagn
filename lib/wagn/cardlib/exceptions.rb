@@ -1,4 +1,5 @@
-module Cardlib          
+module Wagn
+ module Cardlib          
   module Exceptions
     class PermissionDenied < Wagn::Exceptions::PermissionDenied
       attr_reader :card
@@ -12,6 +13,7 @@ module Cardlib
       end
     end
   end
+ end
 end
 
 

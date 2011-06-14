@@ -8,7 +8,8 @@
 #  - implement Renderer#cache_action  (for footer, etc.) if necessary
 #
 
-module Cardlib
+module Wagn
+ module Cardlib
   module Fetch
     mattr_accessor :cache
     mattr_accessor :debug
@@ -116,11 +117,12 @@ module Cardlib
       end
     end
   end
+ end
 end
 
-Card.extend Cardlib::Fetch::ClassMethods
+Card.extend Wagn::Cardlib::Fetch::ClassMethods
 Card::Base.class_eval do
-  include Cardlib::Fetch::InstanceMethods
+  include Wagn::Cardlib::Fetch::InstanceMethods
   attr_accessor :missing
 end
 

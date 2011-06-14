@@ -1,4 +1,5 @@
-module Cardlib                        
+module Wagn
+ module Cardlib                        
   class ::Card::PermissionDenied < Wagn::PermissionDenied
     attr_reader :card
     def initialize(card)
@@ -230,4 +231,5 @@ module Cardlib
       end
     end
   end
+ end
 end

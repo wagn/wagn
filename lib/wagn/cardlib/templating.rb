@@ -1,4 +1,5 @@
-module Cardlib 
+module Wagn
+ module Cardlib 
   module Templating  
 
     def template?()       name && name.template_name?        end
@@ -46,4 +47,5 @@ module Cardlib
     end
 
   end
+ end
 end

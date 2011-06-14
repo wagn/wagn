@@ -1,4 +1,5 @@
-module Cardlib
+module Wagn
+ module Cardlib
   module Search
     module ClassMethods
 
@@ -93,4 +94,5 @@ module Cardlib
     end
 
   end
+ end
 end

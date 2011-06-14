@@ -98,7 +98,7 @@ module Wagn
         Cardname
 
         Wagn.send :include, Wagn::Exceptions
-        Card.send :include, Cardlib::Exceptions
+        Card.send :include, Wagn::Cardlib::Exceptions
 
         ActiveRecord::Base.class_eval do
           include Cardlib::ActsAsCardExtension

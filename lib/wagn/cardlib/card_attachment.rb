@@ -1,4 +1,5 @@
-module Cardlib
+module Wagn
+ module Cardlib
   module CardAttachment
     module ActMethods
       def card_attachment(klass)
@@ -28,5 +29,6 @@ module Cardlib
       end
     end
   end
+ end
 end
 

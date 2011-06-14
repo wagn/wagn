@@ -1,4 +1,5 @@
-module Cardlib
+module Wagn
+ module Cardlib
   module AttributeTracking
     class Updates
       include Enumerable
@@ -105,4 +106,5 @@ module Cardlib
       base.extend(ClassMethods)
     end
   end
+ end
 end

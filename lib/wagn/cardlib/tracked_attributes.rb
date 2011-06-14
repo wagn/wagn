@@ -1,4 +1,5 @@
-module Cardlib
+module Wagn
+ module Cardlib
   module TrackedAttributes 
      
     def set_tracked_attributes  
@@ -210,4 +211,5 @@ module Cardlib
     end    
 
   end
+ end
 end

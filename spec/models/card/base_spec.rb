@@ -80,7 +80,7 @@ describe Card do
     end
   
     it "should have updates" do
-      Cardlib::AttributeTracking::Updates.should === @c.updates
+      Wagn::Cardlib::AttributeTracking::Updates.should === @c.updates
     end
   
     it "should return original value" do

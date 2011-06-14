@@ -1,4 +1,5 @@
-module Cardlib
+module Wagn
+ module Cardlib
   module Defaults
     
     #a place for frequently overridden methods.
@@ -40,4 +41,5 @@ module Cardlib
     end
     # --
   end
+ end
 end

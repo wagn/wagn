@@ -1,4 +1,5 @@
-module Cardlib
+module Wagn
+ module Cardlib
   module ModuleMethods    
     # create, and create! copied from activerecord.
     # make sure we call Card.new  before dropping to 
@@ -88,9 +89,10 @@ module Cardlib
       "Basic"
     end
   end    
+ end
 end
 
-Card.extend Cardlib::ModuleMethods
+Card.extend Wagn::Cardlib::ModuleMethods
 
 class HardTemplate
   def self.find(*args)

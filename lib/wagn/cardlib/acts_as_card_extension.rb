@@ -1,4 +1,5 @@
-module Cardlib
+module Wagn
+ module Cardlib
   module ActsAsCardExtension
     def self.append_features(base)
       super
@@ -24,4 +25,5 @@ module Cardlib
       end
     end
   end
+ end
 end

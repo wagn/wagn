@@ -1,4 +1,5 @@
-module Cardlib
+module Wagn
+ module Cardlib
   module Cacheable
     
     def extended_list context = nil
@@ -21,4 +22,5 @@ module Cardlib
       )
     end
   end
+ end
 end

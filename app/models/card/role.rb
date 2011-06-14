@@ -1,4 +1,5 @@
-class Card::Role < Card::Basic
+module Card::Role
+  include Card::Basic
   before_create :create_extension
   
   def create_extension

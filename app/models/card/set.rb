@@ -1,2 +1,3 @@
-class Card::Set < Card::Search
+module Card::Set
+  include Card::Search
 end

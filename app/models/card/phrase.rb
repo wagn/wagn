@@ -1,4 +1,4 @@
-class Card::Phrase < Card
+module Card::Phrase
   def generic?
     true
   end

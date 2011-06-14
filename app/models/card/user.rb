@@ -1,4 +1,6 @@
-class Card::User < Card::Basic
+module Card::User
+  include Card::Basic
+
   attr_accessor :email
   
   def codename

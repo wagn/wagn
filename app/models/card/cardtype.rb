@@ -1,23 +1,32 @@
-class Card::Cardtype < Card::Basic
+module Card::Cardtype
+  include Card::Basic
 
-  before_validation_on_create :create_extension, :reset_cardtype_cache
-  before_destroy :validate_destroy, :destroy_extension   # order is important!
-  after_destroy :reset_cardtype_cache
-  after_save :reset_cardtype_cache
+  # ??? extend the created card's class with these?
+  class ::Card
+    class_eval do
+      before_validation_on_create :create_extension, :reset_cardtype_cache
+      before_destroy :validate_destroy, :destroy_extension   # order is important!
+      after_destroy :reset_cardtype_cache
+      after_save :reset_cardtype_cache
+    end
+  end
                                      
   def codename
     extension ? extension.class_name : nil
   end
 
-  def set_codename(codename)
+  #def set_codename(codename)
+  def codename=(codename)
     extension.class_name = codename
     extension.save
   end
 
+=begin
   def approve_codename
   end
   
   tracks :codename
+=end
 
   def create_extension
     class_name = ::Card.generate_codename_for(name)

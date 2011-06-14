@@ -1,3 +1,3 @@
-class Card::Image < Card 
+module Card::Image
   card_attachment CardImage
 end

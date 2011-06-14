@@ -1,4 +1,4 @@
-class Card::Pointer < Card
+module Card::Pointer
 
   def collection?() true  end
 

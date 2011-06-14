@@ -1,4 +1,4 @@
-class Card::Basic < Card
+module Card::Basic
   def generic?
     true
   end
@@ -42,5 +42,5 @@ class Card::Basic < Card
     end.join("\n")
     "<ol>" + list + "</ol>"
   end
-
 end
+

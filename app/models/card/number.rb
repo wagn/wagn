@@ -1,4 +1,4 @@
-class Card::Number < Card
+module Card::Number
   def generic?
     true
   end

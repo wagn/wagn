@@ -1,5 +1,5 @@
 
-class Card::Search < Card
+module Card::Search
   attr_accessor :results, :spec
   before_save :escape_content
 

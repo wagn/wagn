@@ -61,8 +61,8 @@ class Card < ActiveRecord::Base
   #before_validation_on_create :set_needed_defaults
     
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
-    :from_trash, :update_referencers, :allow_type_change, :virtual,
-  :broken_type, :skip_defaults, :loaded_trunk, :blank_revision
+    :from_trash, :update_referencers, :allow_cardtype_change, :virtual,
+  :broken_cardtype, :skip_defaults, :loaded_trunk, :blank_revision
 
   # setup hooks on AR callbacks
   # Note: :after_create is called from end of set_initial_content now
@@ -75,7 +75,7 @@ class Card < ActiveRecord::Base
   # apparently callbacks defined this way are called last.
   # that's what we want for this one.  
   def after_save 
-    if card.type == 'Cardtype'
+    if card.cardtype == 'Cardtype'
       Rails.logger.debug "Cardtype after_save resetting"
       ::Cardtype.reset_cache
     end
@@ -90,7 +90,7 @@ class Card < ActiveRecord::Base
       ActiveRecord::Base.logger.info(msg)
     end
     
-    def on_type_change
+    def on_cardtype_change
     end  
     
   public
@@ -139,7 +139,7 @@ class Card < ActiveRecord::Base
     source_card = setting_card('content', 'default')  #not sure why "template" doesn't work here.
     if source_card
       perms = source_card.card.permissions.reject { 
-        |p| p.task == 'create' unless (type=='Cardtype' or template?) 
+        |p| p.task == 'create' unless (cardtype=='Cardtype' or template?) 
       }
     else
       #raise( "Missing permission configuration for #{name}" ) unless source_card && !source_card.permissions.empty?
@@ -190,27 +190,27 @@ class Card < ActiveRecord::Base
       args = args.stringify_keys
       args['trash'] = false
       
-      card_class, broken_type = get_class(args)
+      card_class, broken_cardtype = get_class(args)
       new_card = card_class.ar_new args
       
       yield(new_card) if block_given?
-      new_card.broken_type = broken_type if broken_type
+      new_card.broken_cardtype = broken_cardtype if broken_cardtype
       new_card.send( :set_defaults, args ) unless args['skip_defaults'] 
       new_card
     end 
 
     def get_class(args={})
-      type, typetype = get_type(args)
-      card_class = Card.class_for( type, typetype ) || ( broken_type = type; Card::Basic)
-      return card_class, broken_type
+      cardtype, typetype = get_cardtype(args)
+      card_class = Card.class_for( cardtype, typetype ) || ( broken_cardtype = cardtype; Card::Basic)
+      return card_class, broken_cardtype
     end
     
-    def get_type(args={})
+    def get_cardtype(args={})
       calling_class = self.name.split(/::/).last
       typetype = :codename
       
       skip_type = args.delete('skip_type_lookup')
-      type= 
+      cardtype= 
         case
         when args['typecode'];         args.delete('typecode')
         when calling_class != 'Base';  calling_class
@@ -221,13 +221,13 @@ class Card < ActiveRecord::Base
 #            dummy = Card::Basic.new(:name=> args['name'], :skip_defaults=>true )
           dummy.loaded_trunk = args['loaded_trunk'] if args['loaded_trunk']
           pattern = dummy.template
-          pattern ? pattern.type : 'Basic'
+          pattern ? pattern.cardtype : 'Basic'
         else
           'Basic'
         end
       
       args.delete('type')
-      return type, typetype
+      return cardtype, typetype
     end
     
     def get_name_from_args(args={}) #please tell me this is no longer necessary
@@ -307,7 +307,7 @@ class Card < ActiveRecord::Base
         card.update_attributes(opts)
       elsif opts[:content].present? and opts[:content].strip.present?
         opts[:name] = name                
-        if ::Cardtype.create_ok?( self.type ) && !::Cardtype.create_ok?( Card.new(opts).type )
+        if ::Cardtype.create_ok?( self.cardtype ) && !::Cardtype.create_ok?( Card.new(opts).cardtype )
           ::User.as(:wagbot) { Card.create(opts) }
         else
           Card.create(opts)
@@ -387,8 +387,9 @@ class Card < ActiveRecord::Base
   end
   
   def cardtype_name()
-    Rails.logger.info "No type: #{self}, #{Kernel.caller*"\n"}" unless self.type
-    ::Cardtype.name_for( self.type||'Basic' )  end
+    raise "No type: #{self.inspect}" unless self.cardtype
+    Rails.logger.info "No cardtype: #{self}, #{Kernel.caller*"\n"}" unless self.cardtype
+    ::Cardtype.name_for( self.cardtype||'Basic' )  end
   
   
   def pieces
@@ -422,8 +423,8 @@ class Card < ActiveRecord::Base
 
   def cardtype
     @cardtype ||= begin
-      ct = ::Cardtype.find_by_class_name( self.type )
-      raise("Error in #{self.name}: No cardtype for #{self.type}")  unless ct
+      ct = ::Cardtype.find_by_class_name( self.cardtype )
+      raise("Error in #{self.name}: No cardtype for #{self.cardtype}")  unless ct
       ct.card
     end
   end  
@@ -508,8 +509,8 @@ class Card < ActiveRecord::Base
     templated_content || content
   end
 
-  def type
-    read_attribute :type
+  def cardtype
+    read_attribute :cardtype
   end
 
   def codename
@@ -518,7 +519,7 @@ class Card < ActiveRecord::Base
   end
 
   def class_name
-    raise "class_name is Deprecated. use type instead"
+    raise "class_name is Deprecated. use cardtype instead"
   end
   
   def name_from_parts
@@ -570,6 +571,7 @@ class Card < ActiveRecord::Base
   end
 
   
+=begin
   def clone_to_type( newtype )
     attrs = self.attributes_before_type_cast
     attrs['type'] = newtype 
@@ -586,13 +588,14 @@ class Card < ActiveRecord::Base
       self.errors.add attr, err
     end
   end
+=end
   
   
   
   # Because of the way it chains methods, 'tracks' needs to come after
   # all the basic method definitions, and validations have to come after
   # that because they depend on some of the tracking methods.
-  tracks :name, :content, :type, :comment, :permissions#, :reader, :writer, :appender
+  tracks :name, :content, :cardtype, :comment, :permissions#, :reader, :writer, :appender
 
   def name_with_key_sync=(name)
     name ||= ""
@@ -665,37 +668,39 @@ class Card < ActiveRecord::Base
   end
   
   
-  validates_each :type do |rec, attr, value|  
+  validates_each :cardtype do |rec, attr, value|  
     # validate on update
-    if rec.updates.for?(:type) and !rec.new_record?
+    if rec.updates.for?(:cardtype) and !rec.new_record?
       
       # invalid to change type when cards of this type exists
-      if rec.type == 'Cardtype' and rec.extension and ::Card.find_by_type(rec.extension.codename)
-        rec.errors.add :type, "can't be changed to #{value} for #{rec.name} because #{rec.name} is a Cardtype and cards of this type still exist"
+      if rec.cardtype == 'Cardtype' and rec.extension and ::Card.find_by_cardtype(rec.extension.codename)
+        rec.errors.add :cardtype, "can't be changed to #{value} for #{rec.name} because #{rec.name} is a Cardtype and cards of this type still exist"
       end
   
-      rec.send :validate_type_change
+      rec.send :validate_cardtype_change
+=begin
       newcard = rec.send :clone_to_type, value
       newcard.valid?  # run all validations...
       rec.send :copy_errors_from, newcard
+=end
     end
 
     # validate on update and create 
-    if rec.updates.for?(:type) or rec.new_record?
+    if rec.updates.for?(:cardtype) or rec.new_record?
       # invalid type recorded on create
-      if rec.broken_type
-        rec.errors.add :type, "won't work.  There's no cardtype named '#{rec.broken_type}'"
+      if rec.broken_cardtype
+        rec.errors.add :cardtype, "won't work.  There's no cardtype named '#{rec.broken_cardtype}'"
       end
       
       # invalid to change type when type is hard_templated
       if (rec.right_template and rec.right_template.hard_template? and 
-        value!=rec.right_template.type and !rec.allow_type_change)
-        rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rec.right_template.type}"
+        value!=rec.right_template.cardtype and !rec.allow_cardtype_change)
+        rec.errors.add :cardtype, "can't be changed because #{rec.name} is hard tag templated to #{rec.right_template.cardtype}"
       end        
       
       # must be cardtype name
       unless Card.class_for(value, :codename)
-        rec.errors.add :type, "won't work.  There's no cardtype named '#{value}'"
+        rec.errors.add :cardtype, "won't work.  There's no cardtype named '#{value}'"
       end
       
     end
@@ -785,7 +790,7 @@ class Card < ActiveRecord::Base
                 end
                 card_args = {
                   :name => plus_card_name, 
-                  :type => "Pointer",  
+                  :cardtype => "Pointer",  
                   :content => plus_data.map{|x| "[[#{x}]]" }.join("\n")
                 }
                 Card.send options[:plus_strategy], card_args

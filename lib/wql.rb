@@ -629,7 +629,7 @@ Rails.logger.debug "count iter(#{relation.inspect} #{subspec.inspect})"
         field = 'r3.content'
       when "type"
         v = [v].flatten.map do |val| 
-          Cardtype.classname_for(  val.is_a?(Card::Base) ? val.name : val  )
+          Cardtype.classname_for(  val.is_a?(Card) ? val.name : val  )
         end
         v = v[0] if v.length==1
       when "cond"

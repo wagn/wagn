@@ -15,7 +15,7 @@ class GoogleMapsAddon
   end
 end                     
 
-class Card::Base
+class Card
   after_save :update_geocode
   
   def update_geocode 

@@ -47,8 +47,9 @@ module Wagn
         end
 
         card ||= begin
-          Rails.logger.debug "   find_by_key: #{card.inspect}" if debug
+          Rails.logger.debug "   find_by_key: #{card.inspect}" #if debug
           #Card.find_by_key_and_trash( key , false )
+          debugger
           Card.find_by_key( key )
         end
                 
@@ -121,7 +122,7 @@ module Wagn
 end
 
 Card.extend Wagn::Cardlib::Fetch::ClassMethods
-Card::Base.class_eval do
+Card.class_eval do
   include Wagn::Cardlib::Fetch::InstanceMethods
   attr_accessor :missing
 end

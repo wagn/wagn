@@ -34,7 +34,7 @@ describe Card, "anonymous create permissions" do
     User.as :anon
   end
   it "should not allow someone not signed in to create Basic Cards" do
-    Card::Base.create_ok?.should_not be_true
+    Card.create_ok?.should_not be_true
   end
 end
         

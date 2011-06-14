@@ -1,5 +1,3 @@
-module Card
-  class Image < Base 
-    card_attachment CardImage
-  end
+class Card::Image < Card 
+  card_attachment CardImage
 end

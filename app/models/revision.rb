@@ -1,5 +1,5 @@
 class Revision < ActiveRecord::Base
-  belongs_to :card, :class_name=>"Card::Base", :foreign_key=>'card_id'
+  belongs_to :card, :class_name=>"Card", :foreign_key=>'card_id'
   belongs_to :created_by, :class_name=>"User", :foreign_key=>"created_by"
   
   def author() created_by; end

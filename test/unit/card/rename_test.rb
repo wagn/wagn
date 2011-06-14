@@ -142,10 +142,10 @@ class Card::RenameTest < ActiveSupport::TestCase
   private
   
   def with_debugging
-    Card::Base.debug = true             
+    Card.debug = true             
     yield
   ensure
-    Card::Base.debug = nil
+    Card.debug = nil
   end
   
   def name_invariant_attributes( card )

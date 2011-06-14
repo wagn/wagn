@@ -18,7 +18,7 @@ class Cardtype < ActiveRecord::Base
         :create_parties => {},
       }
 
-      Card::Base.connection.select_all(%{
+      Card.connection.select_all(%{
         select distinct ct.class_name, c.name, c.key, p.party_type, p.party_id 
         from cardtypes ct 
         join cards c on c.extension_id=ct.id and c.type='Cardtype'    
@@ -52,6 +52,7 @@ class Cardtype < ActiveRecord::Base
     
     def name_for(classname)
       load_cache if @@cache.empty?
+      Rails.logger.debug "name_for (#{classname.inspect}) #{@@cache[:card_names].inspect}"
       @@cache[:card_names][classname] || raise("No card name for class #{classname}") 
     end
 

@@ -95,30 +95,32 @@ module Wagn
       end
 
       def load_cardlib
-        Cardname
+        require_dependency 'card'
+        #Cardname
 
-        Wagn.send :include, Wagn::Exceptions
-        Card.send :include, Wagn::Cardlib::Exceptions
+        #Wagn.send :include, Wagn::Exceptions
+        #Card.send :include, Wagn::Cardlib::Exceptions
 
-        ActiveRecord::Base.class_eval do
-          include Cardlib::ActsAsCardExtension
-          include Cardlib::AttributeTracking
-        end
+        #ActiveRecord::Base.class_eval do
+        #  include Wagn::Cardlib::ActsAsCardExtension
+        #  include Wagn::Cardlib::AttributeTracking
+        #end
 
-        Cardlib::ModuleMethods #load
+        #Cardlib::ModuleMethods #load
 
-        Card::Base.class_eval do
-          include Cardlib::TrackedAttributes
-          include Cardlib::Templating
-          include Cardlib::Defaults
-          include Cardlib::Permissions
-          include Cardlib::Search
-          include Cardlib::References
-          include Cardlib::Cacheable
-          include Cardlib::Settings
-          include Cardlib::Settings::ClassMethods
-          extend Cardlib::CardAttachment::ActMethods
-        end
+        #Card.class_eval do
+        #Card.class_eval do
+        #  include Cardlib::TrackedAttributes
+        #  include Cardlib::Templating
+        #  include Cardlib::Defaults
+        #  include Cardlib::Permissions
+        #  include Cardlib::Search
+        #  include Cardlib::References
+        #  include Cardlib::Cacheable
+        #  include Cardlib::Settings
+        #  include Cardlib::Settings::ClassMethods
+        #  extend Cardlib::CardAttachment::ActMethods
+        #end
         Cardlib::Fetch # trigger autoload
       end
 
@@ -141,7 +143,7 @@ module Wagn
           begin
             require_dependency "card/#{cardtype}"
           rescue Exception=>e
-            raise "Error loading card/#{cardtype}: #{e.message}"
+            raise "Error loading card/#{cardtype}: #{e.message}\nTrace #{e.backtrace*"\n"}"
           end
         end
       end

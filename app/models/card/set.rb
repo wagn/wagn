@@ -1,4 +1,2 @@
-module Card
-  class Set < Search
-  end
+class Card::Set < Card::Search
 end

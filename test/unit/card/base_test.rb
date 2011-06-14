@@ -47,7 +47,7 @@ class Card::BaseTest < ActiveSupport::TestCase
   
   # just a sanity check that we don't have broken data to start with
   def test_fixtures
-    Card::Base.find(:all).each do |p|
+    Card.find(:all).each do |p|
       assert_instance_of String, p.name
     end
   end

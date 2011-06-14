@@ -1,7 +1,5 @@
-module Card
-  class HTML < Base
-    def clean_html?
-      false
-    end
+class Card::HTML < Card
+  def clean_html?
+    false
   end
 end

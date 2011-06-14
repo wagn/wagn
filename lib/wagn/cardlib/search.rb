@@ -85,7 +85,7 @@ module Wagn
 
     def self.append_features(base)   
       super
-      Card::Base.extend(ClassMethods)
+      Card.extend(ClassMethods)
       Card.extend(ClassMethods)    
       base.after_save :update_search_index
       base.class_eval do

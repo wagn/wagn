@@ -1,7 +1,5 @@
-module Card
-  class Phrase < Base
-    def generic?
-      true
-    end
+class Card::Phrase < Card
+  def generic?
+    true
   end
 end

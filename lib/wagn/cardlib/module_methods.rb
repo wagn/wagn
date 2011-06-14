@@ -52,7 +52,7 @@ module Wagn
       newclass = Class.new( Card::Basic )
       const_set class_id, newclass
       # FIXME: is this necessary?
-      if observers = Card::Base.instance_variable_get('@observer_peers')
+      if observers = Card.instance_variable_get('@observer_peers')
         observers.each do |o|
           newclass.add_observer(o)
         end

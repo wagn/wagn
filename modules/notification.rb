@@ -124,7 +124,7 @@ module Notification
   end
   
   def self.init
-    Card::Base.send :include, CardMethods
+    Card.send :include, CardMethods
     Renderer.send :include, RendererHelperMethods
   end   
 end    

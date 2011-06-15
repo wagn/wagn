@@ -196,7 +196,6 @@ end
 def change_card_to_type(name, type)
   User.as :joe_user do
     card = Card.fetch(name)
-    warn "#{card.name} already exists.  current type = #{card.type} changing to type: #{type}"
     card.type = type;  
     card.save
     card

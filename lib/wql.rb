@@ -485,8 +485,8 @@ Rails.logger.debug "count iter(#{relation.inspect} #{subspec.inspect})"
       
       # Permissions       
       t = table_alias
-      unless System.always_ok? or (Wql.root_perms_only && !root?)
-        sql.conditions << %{ (#{t}.reader_rule_id IN (#{::User.as_user.read_rule_ids.join ','})) }
+      unless System.always_ok? or (Wql.root_perms_only && !root?) #or ENV['BOOTSTRAP_DUMP'] == 'true'
+        sql.conditions << %{ (#{t}.read_rule_id IN (#{::User.as_user.read_rule_ids.join ','})) }
       end
             
       # Order 

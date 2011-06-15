@@ -14,6 +14,7 @@ namespace :wagn do
     desc "dump db to bootstrap fixtures"
     #note: users, roles, and role_users have been manually edited
     task :dump => :environment do
+      #ENV['BOOTSTRAP_DUMP'] = 'true'
       %w{ cards revisions wiki_references cardtypes }.each do |table|
         i = "000"
         File.open("#{RAILS_ROOT}/db/bootstrap/#{table}.yml", 'w') do |file|
@@ -39,7 +40,7 @@ namespace :wagn do
   
   
     desc "load bootstrap fixtures into db"
-    task :load => :environment do     
+    task :load => :environment do
       ENV['BOOTSTRAP_LOAD'] = 'true'
       require 'active_record/fixtures'                         
       #ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
@@ -110,11 +111,12 @@ namespace :wagn do
       end
       Card.cache.reset if Card.cache  #necessary?
 
-      puts 'updating reader fields'
+      puts 'updating read_rule fields'
       Card.find(:all).each do |card|
+        read_rule = card.setting_card('read')
         card.update_attributes(
-          :reader_rule_id => card.setting_card('read').id,
-          :reader_key     => card.generate_reader_key
+          :read_rule_id   => read_rule.id,
+          :read_rule_class=> read_rule.name.trunk_name.tag_name
         )
       end
       ENV['BOOTSTRAP_LOAD'] = 'false'

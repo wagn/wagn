@@ -8,7 +8,7 @@ describe "reader rules" do
   
   it "should be *all+*read by default" do
     card = Card.fetch('Home')
-    card.reader_rule_id.should == Card.fetch('*all+*read').id
+    card.read_rule_id.should == Card.fetch('*all+*read').id
     card.who_can(:read).should == ['anyone']
     User.as(:anon){ card.ok?(:read).should be_true }
   end
@@ -16,7 +16,7 @@ describe "reader rules" do
   it "should update to role ('Anyone Signed In')" do
     @perm_card.save!
     card = Card.fetch('Home')
-    card.reader_rule_id.should == @perm_card.id
+    card.read_rule_id.should == @perm_card.id
     card.who_can(:read).should == ['anyone_signed_in']
     User.as(:anon){ card.ok?(:read).should be_false }
   end
@@ -26,7 +26,7 @@ describe "reader rules" do
       card = Card.fetch('Home')
       @perm_card.content = '[[Joe Admin]]'
       @perm_card.save!
-      card.reader_rule_id.should == @perm_card.id
+      card.read_rule_id.should == @perm_card.id
       card.who_can(:read).should == ['joe_admin']
       User.as(:anon)      { card.ok?(:read).should be_false }
       User.as(:joe_user)  { card.ok?(:read).should be_false }
@@ -61,7 +61,7 @@ describe "Permission", ActiveSupport::TestCase do
 
   it "reader setting" do
     Card.find(:all).each do |c|
-      c.setting_card(:read).id.should == c.reader_rule_id
+      c.setting_card(:read).id.should == c.read_rule_id
     end
   end
 

@@ -21,21 +21,6 @@ module Cardlib
       end
     end
 
-#    def generate_reader_key
-#      group, indiv = [], [] 
-#      who_can(:read).each do |key|
-#        c = Card.fetch(key, :skip_virtual=>true)
-#        case
-#        when c.type == 'Role';           group << c.id
-#        when c.extension_type == 'User'; indiv << c.id
-#        end 
-#      end
-#      rkey = ''
-#      rkey += "G#{group.sort.join ','}" if !group.empty?
-#      rkey += "I#{indiv.sort.join ','}" if !indiv.empty?
-#      rkey
-#    end
-
     def ydhpt
       "#{::User.current_user.cardname}, You don't have permission to"
     end
@@ -130,8 +115,7 @@ module Cardlib
     def lets_user(operation)
       return true if (System.always_ok? and operation != :comment)
       User.as_user.among?( who_can(operation) )
-    end  
-
+    end
 
     def approve_task(operation, verb=nil)           
       verb ||= operation.to_s
@@ -145,8 +129,8 @@ module Cardlib
     def approve_read
       return true if System.always_ok?
       
-      self.reader_rule_id ||= self.setting_card('read').id
-      ok = User.as_user.read_rule_ids.member?(self.reader_rule_id) 
+      self.read_rule_id ||= self.setting_card('read').id
+      ok = User.as_user.read_rule_ids.member?(self.read_rule_id) 
         
       deny_because(you_cant "read this card") unless ok
     end
@@ -183,7 +167,6 @@ module Cardlib
   
     def approve_content
       unless new_card?
-        #approve_update
         if tmpl = hard_template 
           deny_because you_cant("change the content of this card -- it is hard templated by #{tmpl.name}")
         end
@@ -192,33 +175,35 @@ module Cardlib
     
     
     public
+
     def set_read_rule
-      self.reader_rule_id = setting_card('read').id
+      return if ENV['BOOTSTRAP_LOAD'] == 'true'
+      read_rule = setting_card('read')
+      self.read_rule_id = read_rule.id
+      self.read_rule_class = read_rule.name.trunk_name.tag_name
     end
+
     def update_ruled_cards
-#      return if ENV['BOOTSTRAP_LOAD'] == 'true'
+      return if ENV['BOOTSTRAP_LOAD'] == 'true'
       if name.junction? && name.tag_name=='*read'
         Card.fetch(name.trunk_name).item_names.each do |item_name|
           User.as :wagbot do #maybe not necessary for update_attributes?
-            Card.fetch(item_name).update_attributes!(:reader_rule_id => self.id)
+            Card.fetch(item_name).update_attributes!(:read_rule_id => self.id)
             Card.cache.delete(item_name.to_key)
           end
         end
       end
-      
     end
-   
     
     def self.included(base)   
       super
-#      base.before_create.unshift Proc.new{|rec|  warn "*******before create triggered on #{rec.name}"; rec.ok? :create }
-#      base.before_update.unshift Proc.new{|rec| rec.ok? :update }
-#      base.before_destroy.unshift Proc.new{|rec| rec.ok? :delete }
       base.extend(ClassMethods)
       base.before_save.unshift Proc.new{|rec| rec.set_read_rule }
       base.after_save.unshift  Proc.new{|rec| rec.update_ruled_cards }
       base.alias_method_chain :save, :permissions
       base.alias_method_chain :save!, :permissions
+      base.alias_method_chain :destroy, :permissions
+      base.alias_method_chain :destroy!, :permissions
       
       base.class_eval do           
         attr_accessor :operation_approved, :permission_errors

@@ -215,14 +215,12 @@ module Card
     
 
     def multi_create(cards)
-#      Wagn::Hook.call :before_multi_create, self, cards
       multi_save(cards)
       Rails.logger.info "Card#callback after_multi_create"
       Wagn::Hook.call :after_multi_create, self
     end
     
     def multi_update(cards)
-#      Wagn::Hook.call :before_multi_update, self, cards
       multi_save(cards)
       Rails.logger.info "Card#callback after_multi_update"
       Wagn::Hook.call :after_multi_update, self
@@ -314,16 +312,9 @@ module Card
      
     # Extended associations ----------------------------------------
 
-
-    def left
-      Card.fetch name.trunk_name, :skip_virtual=> true
-    end
-    def right
-      Card.fetch name.tag_name,   :skip_virtual=> true
-    end
-    
-    def cardtype_name() ::Cardtype.name_for( self.type )  end
-    
+    def left()   Card.fetch name.trunk_name, :skip_virtual=> true end
+    def right()  Card.fetch name.tag_name,   :skip_virtual=> true end
+    def cardtype_name() ::Cardtype.name_for( self.type )          end
     
     def pieces
       simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq 
@@ -385,13 +376,6 @@ module Card
         revisions[revision_index - 1]
       end
     end
-    
-    # I don't really like this.. 
-    #def attribute_card( attr_name )
-    #  ::User.as :wagbot do
-    #    Card.fetch( name + JOINT + attr_name , :skip_virtual => true)
-    #  end
-    #end
      
     def revised_at
       if cached_revision && rtime = cached_revision.updated_at
@@ -405,16 +389,14 @@ module Card
     def skip_defaults?
       # when Calling Card.new don't set defaults.  this is for performance reasons when loading
       # missing cards. 
-      !!skip_defaults  ##ok.  but this line is bizarre.
+      !!skip_defaults  
     end
 
-    def known?
-      !(new_card? && !virtual?)
-    end
-    
-    def virtual?
-      @virtual
-    end    
+    def known?(   )   !(new_card? && !virtual?)  end
+    def virtual?( )   @virtual                   end    
+    def simple?(  )   name.simple?               end
+    def junction?()   !simple?                   end
+    def type(     )   read_attribute :type       end
     
     def content   
       new_card? ? ok!(:create) : ok!(:read)
@@ -423,7 +405,6 @@ module Card
     
     def cached_revision
       #return current_revision || get_blank_revision
-      
       case
       when (@cached_revision and @cached_revision.id==current_revision_id); 
       when (@cached_revision=Card.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
@@ -442,10 +423,6 @@ module Card
       templated_content || content
     end
 
-    def type
-      read_attribute :type
-    end
-  
     def codename
       return nil unless extension and extension.respond_to?(:codename)
       extension.codename
@@ -458,12 +435,6 @@ module Card
     def name_from_parts
       simple? ? name : (trunk.name_from_parts + '+' + tag.name_from_parts)
     end
-
-    def simple?() 
-      name.simple? 
-    end
-    
-    def junction?() !simple? end
        
     def authenticated?(party)
       party==::Role[:auth]
@@ -473,7 +444,7 @@ module Card
       "#<#{self.class.name}:#{self.attributes['name']}>"
     end
 
-    def mocha_inspect
+    def mocha_inspect  #what does this mean?
       to_s
     end
 
@@ -493,10 +464,9 @@ module Card
       self
     end
 
-
-
      
    protected
+   
     def clear_drafts
       connection.execute(%{
         delete from revisions where card_id=#{id} and id > #{current_revision_id} 
@@ -633,14 +603,16 @@ module Card
     def validate_type_change  
     end
     
+    def validate_content( content )
+    end
+    
     def destroy_extension
       extension.destroy if extension
       extension = nil
       true
     end
     
-    def validate_content( content )
-    end
+
     
   end
 end

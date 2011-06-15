@@ -32,8 +32,8 @@ module Cardlib
         c = Card.fetch(cardname) and e = c.extension and e.send(attr_name)
       end
 
-      def create_virtual(name, content, type='Basic', reader=Role[:anon])
-        Card.new(:name=>name, :content=>content, :typecode=>type ,:reader=>reader, :virtual=>true, :skip_defaults=>true)
+      def create_virtual(name, content, type='Basic')
+        Card.new(:name=>name, :content=>content, :typecode=>type, :virtual=>true, :skip_defaults=>true)
       end
       
       def count_by_wql(spec)       

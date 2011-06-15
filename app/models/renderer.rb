@@ -473,7 +473,7 @@ raise "???" if Hash===action
   end
 
   def new_inclusion_card_args(tname, options)
-    args = { :type =>options[:type],  :permissions=>[] }
+    args = { :type =>options[:type] }
     args[:loaded_trunk]=card if tname =~ /^\+/
     if content=get_inclusion_content(options[:tname])
       args[:content]=content

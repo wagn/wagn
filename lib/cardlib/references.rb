@@ -6,6 +6,7 @@ module Cardlib
     protected   
     
     def update_references_on_create  
+      return if ENV['BOOTSTRAP_LOAD'] == 'true'
       WikiReference.update_on_create(self)  
 
       # FIXME: bogus blank default content is set on hard_templated cards...
@@ -16,6 +17,7 @@ module Cardlib
     end
     
     def update_references_on_update
+      return if ENV['BOOTSTRAP_LOAD'] == 'true'
       Renderer.new(self, :not_current=>true).update_references 
       expire_templatee_references
     end

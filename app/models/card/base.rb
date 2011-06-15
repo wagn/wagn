@@ -73,8 +73,6 @@ module Card
     end
         
     private
-      belongs_to :reader, :polymorphic=>true  
-      
       def log(msg)
         ActiveRecord::Base.logger.info(msg)
       end
@@ -98,79 +96,25 @@ module Card
         end
       end
       
-      
-      if !args['permissions']
-      # The following are only necessary for setting permissions.  Should remove once we have set/setting -based perms
-        if name and name.junction? and name.valid_cardname? 
-          self.trunk ||= Card.fetch_or_new name.left_name, {:skip_virtual=>true}
-          self.tag   ||= Card.fetch_or_new name.tag_name,    {:skip_virtual=>true}
-        end
-      
-        self.set_default_permissions 
-      end
-
       #default content
       ::User.as(:wagbot) do
         if !args['content'] and self.content.blank? and default_card = setting_card('default')
           self.content = default_card.content
         end
       end
-      
 
-      # misc defaults- trash, key, fallbacks
+      # misc defaults- read_rule_id, trash, key, fallbacks
+      self.reader_rule_id = setting_card('read').id
       self.trash = false   
       self.key = name.to_key if name
       self.name='' if name.nil?
       self
     end
     
-    def set_default_permissions
-      source_card = setting_card('content', 'default')  #not sure why "template" doesn't work here.
-      if source_card
-#        Rails.logger.info "source for #{self.name} = #{source_card.inspect}"
-        
-        perms = source_card.card.permissions.reject { 
-          |p| p.task == 'create' unless (type=='Cardtype' or template?) 
-        }
-      else
-        #raise( "Missing permission configuration for #{name}" ) unless source_card && !source_card.permissions.empty?
-        perms = [:read,:edit,:delete].map{|t| ::Permission.new(:task=>t.to_s, :party=>::Role[:auth])}
-      end
-    
-      # We loop through and create copies of each permission object here because
-      # direct copies end up re-assigning which card the permission objects are assigned to.
-      # leads to painful errors.
-#      Rails.logger.info "perms for #{self.name} = #{perms.inspect}"
-      self.permissions = perms.map do |p|  
-        if p.task == 'read'
-          party = p.party
-          
-          if trunk and tag
-            trunk_reader = (trunk.who_can(:read) || (trunk.set_default_permissions && trunk.who_can(:read)))
-            tag_reader   = (  tag.who_can(:read) || (  tag.set_default_permissions &&   tag.who_can(:read)))
-            #Rails.logger.debug "trunk = #{trunk.inspect} ....... who can read = #{trunk.who_can(:read)}"
-            #Rails.logger.debug "tag = #{tag.inspect} ....... who can read = #{tag.who_can(:read)}"
-            trunk_reader && tag_reader || raise("bum permissions: #{trunk.name}:#{trunk_reader}, #{tag.name}:#{tag_reader}")
-
-            tag_override = (trunk_reader.anonymous? || (authenticated?(trunk_reader) && !tag_reader.anonymous?))
-            party = (tag_override ? tag_reader : trunk_reader)
-          end
-          Permission.new :task=>p.task, :party=>party
-        else
-          Permission.new :task=>p.task, :party_id=>p.party_id, :party_type=>p.party_type
-        end
-      end
-#      Rails.logger.info "permissions for #{self.name} = #{self.permissions.inspect}"
-    end
-    
-    
-
-
-        
 
     # FIXME: this is here so that we can call .card  and get card whether it's cached or "real".
     # goes away with cached_card refactor
-    def card
+    def card  #GETRIDOFME!
       self
     end
     
@@ -583,7 +527,7 @@ module Card
     # Because of the way it chains methods, 'tracks' needs to come after
     # all the basic method definitions, and validations have to come after
     # that because they depend on some of the tracking methods.
-    tracks :name, :content, :type, :comment, :permissions#, :reader, :writer, :appender
+    tracks :name, :content, :type, :comment 
 
     def name_with_key_sync=(name)
       name ||= ""
@@ -630,28 +574,6 @@ module Card
     validates_each :content do |rec, attr, value|
       if rec.updates.for?(:content)
         rec.send :validate_content, value
-      end
-    end
-
-    # private cards can't be connected to private cards with a different group
-    validates_each :permissions do |rec, attr, value|
-      if rec.updates.for?(:permissions)
-        rec.errors.add :permissions, 'Insufficient permissions specifications' if value.length < 3
-        reader,err = nil, nil
-        value.each do |p|  #fixme-perm -- ugly - no alibi
-          unless %w{ create read edit comment delete }.member?(p.task.to_s)
-            rec.errors.add :permissions, "No such permission: #{p.task}"
-          end
-          if p.task == 'read' then reader = p.party end
-          if p.party == nil and p.task!='comment'
-            rec.errors.add :permission, "#{p.task} party can't be set to nil"
-          end
-        end
-
-
-        if err
-          rec.errors.add :permissions, "can't set read permissions on #{rec.name} to #{reader.cardname} because #{err}"
-        end
       end
     end
     

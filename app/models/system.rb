@@ -89,20 +89,6 @@ class System < ActiveRecord::Base
       end
     end
     
-    def role_ok?(role_id)
-      return true if always_ok?
-      ok_hash[:role_ids].key? role_id
-    end
-    
-    def party_ok?(party)
-      return false if party.nil?
-      return true if always_ok?
-      #warn party.inspect
-      party.class.name == 'Role' ? 
-         role_ok?(party.id) :
-          (party == User.as_user)      
-    end
-    
     # FIXME stick this in session? cache it somehow??
     def ok_hash
       usr = User.as_user

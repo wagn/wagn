@@ -3,28 +3,21 @@ module Cardlib
      
     def set_tracked_attributes  
       Rails.logger.debug "Card(#{name})#set_tracked_attributes begin"
-      updates.each_pair do |attr, value| 
+      updates.each_pair do |attr, value|
         if send("set_#{attr}", value )
           updates.clear attr
         end
-        #warn "SET CHANGED #{attr.to_sym.inspect}"    
-        @changed ||={}; @changed[attr.to_sym]=true 
       end
+      set_reader_fields  #not sure this really belongs here?
       Rails.logger.debug "Card(#{name})#set_tracked_attributes end"
     end
     
     
-    # this method conflicts with ActiveRecord since Rails 2.1.0
-    # the only references I see are in cache_spec, so removing for now
-=begin    
-    def changed?(field) 
-      #return false
-      #if updates.emtpy?
-      @changed ||={}; 
-      #warn "GET CHAGNED #{field.inspect}"    
-      !!(@changed[field] && !updates.for?(field))
+    def set_reader_fields
+      return if ENV['BOOTSTRAP_LOAD'] == 'true'
+      self.reader_rule_id = setting_card('read').id
     end
-=end
+ 
     
     protected 
     def set_name(newname)
@@ -82,7 +75,6 @@ module Cardlib
       newcard.send(:callback, :before_create)
       #newcard.send(:callback, :after_create)
       self.extension = newcard.extension
-      self.set_permissions self.permissions.collect{|x| x}
     end
     
     def set_content(new_content)  
@@ -101,27 +93,6 @@ module Cardlib
              
     def set_comment(new_comment)    
       set_content( content + new_comment )
-    end
-    
-    def set_permissions(perms)
-      self.updates.clear(:permissions)
-      self.permissions_without_tracking = perms.reject {|p| p.party==nil }
-      perms.each do |p| 
-        set_reader( p.party ) if p.task == 'read'
-      end      
-      return true
-    end
-   
-    def set_reader(party)
-      self.reader = party
-      if !party.anonymous?
-        junctions.each do |dep| #note: this could be faster with WQL, but I'm not sure this WQL actually works correctly
-          unless authenticated?(party) and !dep.who_can(:read).anonymous?
-            dep.permit :read, party  
-            dep.save!
-          end
-        end
-      end
     end
  
     def set_initial_content  

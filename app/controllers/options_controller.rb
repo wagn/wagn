@@ -3,17 +3,6 @@ class OptionsController < ApplicationController
   before_filter :load_card
 
   def update
-    if perms=params[:permissions]
-      @card.permissions=perms.keys.map do |task|
-        party =
-          case perms[task]
-            when ''        ; nil
-            else           ; Role.find(perms[task])
-          end
-        Permission.new :task=>task, :party=>party
-      end
-      @card.save!
-    end
 
     if params[:save_roles]
       System.ok! :assign_user_roles

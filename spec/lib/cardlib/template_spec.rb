@@ -47,8 +47,6 @@ describe Card, "with right default template" do
   before do 
     User.as :wagbot  do
       @bt = Card.create! :name=>"birthday+*right+*default", :type=>'Date', :content=>"Today!"
-      @bt.permit(:comment, Role['auth']);  @bt.permit(:delete, Role['admin'])
-      @bt.save!
     end
     User.as :joe_user                                         
     @jb = Card.create! :name=>"Jim+birthday"
@@ -60,12 +58,6 @@ describe Card, "with right default template" do
   
   it "should have default content" do
     Card['Jim+birthday'].content.should == 'Today!'
-  end
-  
-  it "should have default permissions" do
-    [:read, :edit, :comment, :delete].each do |task| 
-      @jb.who_can(task).should== @bt.who_can(task)
-    end
   end
 end
 

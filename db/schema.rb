@@ -59,6 +59,8 @@ ActiveRecord::Schema.define(:version => 20110511221913) do
     t.string   "settings"
     t.string   "codename"
     t.string   "pattern_keys"
+    t.string   "reader_key"
+    t.integer  "reader_rule_id"
   end
 
   add_index "cards", ["extension_id", "extension_type"], :name => "cards_extension_index"

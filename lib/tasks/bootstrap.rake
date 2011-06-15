@@ -40,7 +40,7 @@ namespace :wagn do
   
     desc "load bootstrap fixtures into db"
     task :load => :environment do     
-      
+      ENV['BOOTSTRAP_LOAD'] = 'true'
       require 'active_record/fixtures'                         
       #ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
       Dir.glob(File.join(RAILS_ROOT, 'db', 'bootstrap', '*.{yml,csv}')).each do |fixture_file|
@@ -64,34 +64,6 @@ namespace :wagn do
       )
 
       #config_cards = %w{ *context *to *title account_request+*type+*content account_request+*type+*default *invite+*thank *signup+*thank *from }
-      permset = (ENV['PERMISSIONS'] || :standard).to_sym
-      
-      permission = {
-        :standard=>{
-         :default=> {:read=>:anon, :edit=>:auth, :delete=>:auth, :create=>:auth, :comment=>nil},
-         :star=> {:edit=>:admin, :delete=>:admin},
-         '*all+*default' => {:edit=>:auth, :delete=>:auth},
-         'role'=> {:create=>:admin},
-         'html'=> {:create=>:admin},
-         'account_request' => {:create=>:anon},
-#         'account_request+*tform' {:read=>:admin},
-         'administrator_link'=> {:read=>:admin},
-         'discussion+*right+*default'=> {:comment=>:anon},
-         '*watcher' => {:edit=>:auth},
-         '*watcher+*right+*default' => {:edit=>:auth}
-        },
-        :openedit=>{
-         :default=> {:read=>:anon, :edit=>:anon, :delete=>:auth, :create=>:anon, :comment=>nil},
-         :star=> {:edit=>:admin, :delete=>:admin},
-         'role'=> {:create=>:admin},
-         'html'=> {:create=>:admin},
-         'html+*type+*default'=> {:edit=>:admin},
-         'administrator_link'=> {:read=>:admin},
-         'discussion+*right+*default'=> {:comment=>:anon},
-         '*watcher' => {:edit=>:auth},
-         '*watcher+*right+*default' => {:edit=>:auth}
-        }
-      } 
       
     
       role_ids = {}
@@ -99,57 +71,53 @@ namespace :wagn do
         role_ids[role.codename.to_sym] = role.id
       end
 
-      perms = permission[permset]
-      default = perms[:default]
-    
-      ActiveRecord::Base.connection.delete( 'delete from permissions')
-      ActiveRecord::Base.connection.select_all( 'select * from cards' ).each do |card|
-        key = card['key']
-        cardset = perms[key] || {}
-        starset = (key =~ /^\*/ ? perms[:star] : {})
-          
-        default.keys.each do |ttask|
-          next if ttask== :create and card['type'] != 'Cardtype'
-          codename = cardset[ttask] || starset[ttask] || default[ttask]
-          next unless codename
-          party_id = role_ids[codename]
-          
-          ActiveRecord::Base.connection.update(
-            "INSERT into permissions (card_id, task, party_type, party_id) "+
-            "VALUES (#{card['id']}, '#{ttask}', 'Role', #{party_id} )"
-          )
-          if ttask== :read
-            ActiveRecord::Base.connection.update(
-              "UPDATE cards set reader_type='Role', reader_id=#{party_id} where id=#{card['id']}"
-            )
-          end
-        end
-      end
-
-      Card.cache.reset if Card.cache  #this isn't working.  might need to reload more?
-      
-
+      Wagn::Cache.initialize_on_startup
+      Card.cache.reset if Card.cache  #necessary?
       User.current_user = :wagbot
+      #         :star=> {:edit=>:admin, :delete=>:admin},
+      #          'administrator_link'=> {:read=>:admin},
+      #         '*watcher' => {:edit=>:auth},
+      #         '*watcher+*right+*default' => {:edit=>:auth}
 
       perm_rules = {
-        '*all' => { :create=>:auth, :update => :auth, :delete => :auth, :comment=>nil },
+        '*all' => { :create=>:auth, :read=>:anon, :update => :auth, :delete => :auth, :comment=>nil },
         'Role+*type'            => { :create=>:admin },
         'Html+*type'            => { :create=>:admin },
         'Account Request+*type' => { :create=>:anon  },
         'discussion+*right'     => { :comment=>:anon },
+        'Administrator links+*self'=> { :read=>:admin },
       }
-      Rails.logger.info ('creating the bastards')
+
+      puts 'creating permission cards'
       perm_rules.each_key do |set|
         perm_rules[set].each_key do |setting|
           val = perm_rules[set][setting]
+          role_card = Role[val].card if val
           c = Card.create!(
             :name=> "#{set}+*#{setting}",
             :type=> 'Pointer',
-            :content=>(val.nil? ? '' : "#{[[Role[val].card.name]]}")
+            :content=>(val.nil? ? '' : "[[#{role_card.name}]]")
           )
-          Rails.logger.info "saved #{c.name} with content #{c.content}"
+          if val
+            WikiReference.create(
+              :card_id=>c.id, 
+              :referenced_name=>role_card.key,
+              :referenced_card_id=>role_card.id,
+              :link_type => 'L' 
+            )
+          end
         end
       end
+      Card.cache.reset if Card.cache  #necessary?
+
+      puts 'updating reader fields'
+      Card.find(:all).each do |card|
+        card.update_attributes(
+          :reader_rule_id => card.setting_card('read').id,
+          :reader_key     => card.generate_reader_key
+        )
+      end
+      ENV['BOOTSTRAP_LOAD'] = 'false'
 
     end
   end

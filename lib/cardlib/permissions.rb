@@ -14,18 +14,31 @@ module Cardlib
   
   module Permissions
     # Permissions --------------------------------------------------------------
-    def ydhpt
-      "#{::User.current_user.cardname}, You don't have permission to"
-    end
 
-    
     module ClassMethods 
       def create_ok?()
         self.new.ok? :create
-#        ::Cardtype.create_ok?(  self.name.gsub(/.*::/,'') )
       end
     end
 
+#    def generate_reader_key
+#      group, indiv = [], [] 
+#      who_can(:read).each do |key|
+#        c = Card.fetch(key, :skip_virtual=>true)
+#        case
+#        when c.type == 'Role';           group << c.id
+#        when c.extension_type == 'User'; indiv << c.id
+#        end 
+#      end
+#      rkey = ''
+#      rkey += "G#{group.sort.join ','}" if !group.empty?
+#      rkey += "I#{indiv.sort.join ','}" if !indiv.empty?
+#      rkey
+#    end
+
+    def ydhpt
+      "#{::User.current_user.cardname}, You don't have permission to"
+    end
     
     def destroy_with_permissions
       ok! :delete
@@ -97,21 +110,12 @@ module Cardlib
     def ok!(operation)
       raise ::Card::PermissionDenied.new(self) unless ok?(operation);  true
     end
-
-
-    def permit(task, party) #assign permissions
-      ok! :permissions unless new_card?# might need stronger checks on new records 
-      perms = self.permissions.reject { |p| p.task == task.to_s }
-      perms << Permission.new(:task=>task.to_s, :party=>party)
-      self.permissions= perms
-    end
     
     def who_can(operation)
-      if [:create, :update, :delete, :comment].member? operation
-        User.as(:wagbot ) { setting_card(operation.to_s).item_names.map &:to_key }
-      else
-        perm = permissions.reject { |perm| perm.task != operation.to_s }.first   
-        perm && perm.party #? perm.party : nil
+      User.as(:wagbot ) do
+        opcard = setting_card(operation.to_s)
+        ok_names = opcard ? opcard.item_names : []
+        ok_names.map &:to_key
       end
     end 
         
@@ -119,7 +123,7 @@ module Cardlib
     def you_cant(what)
       "#{ydhpt} #{what}"
     end
-    
+        
     def deny_because(why)    
       [why].flatten.each {|err| permission_errors << err }
       self.operation_approved = false
@@ -128,25 +132,13 @@ module Cardlib
     def lets_user(operation)
       party =  who_can(operation)
       return true if (System.always_ok? and operation != :comment)
-      
-      
-      if Array === party
-#        warn "parties = #{party.inspect}.  User parties = #{User.current_user.parties.inspect}"
-        # eventually this should be the only case.
-        User.as_user.among? party
-      else
-        System.party_ok? party
-      end
+      User.as_user.among? party
     end  
 
 
     def approve_task(operation, verb=nil)           
       verb ||= operation.to_s
-      #testee = template.hard_template? ? trunk : self
-      testee = self
-
-#      warn "result from lets_user = #{testee.lets_user( operation ) }" 
-      deny_because("#{ydhpt} #{verb} this card") unless testee.lets_user( operation ) 
+      deny_because("#{ydhpt} #{verb} this card") unless self.lets_user( operation ) 
     end
 
     def approve_create
@@ -154,12 +146,7 @@ module Cardlib
     end
 
     def approve_read
-      if reader_type=='Role'
-        (self.operation_approved = false) unless System.role_ok?(reader_id)
-      else
-        testee = template? ? trunk : self
-        (self.operation_approved = false) unless testee.lets_user( :read ) 
-      end
+      User.as_user.read_rule_ids.member?(self.reader_rule_id)
     end
     
     def approve_update
@@ -195,23 +182,12 @@ module Cardlib
       end
     end
    
-    def approve_permissions
-      return if System.always_ok?
-      unless System.ok?(:set_card_permissions) or new_card?
-        #FIXME-perm.  on new cards we should check that permission has not been altered from default unless user can set permissions. 
-        deny_because you_cant("set permissions" )
-      end
-    end
     
     def self.included(base)   
       super
       base.extend(ClassMethods)
       base.class_eval do           
         attr_accessor :operation_approved, :permission_errors
-        alias_method_chain :destroy, :permissions  
-        alias_method_chain :destroy!, :permissions  
-        alias_method_chain :save, :permissions
-        alias_method_chain :save!, :permissions
       end
     end
   end

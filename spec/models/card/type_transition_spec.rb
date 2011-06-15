@@ -35,7 +35,7 @@ module Card
   class CardtypeF < Basic
     cattr_accessor :count
     @@count = 2
-    before_create :increment_count
+    before_validation_on_create :increment_count
     def increment_count() self.class.count += 1; end
   end
 
@@ -123,17 +123,19 @@ describe Card, "clone to type"  do
     @b.new_record?.should == false
   end
 end
-                
+
+=begin  - NOT currently checking delete permissions on card type change                  
 describe Card, "type transition approve type" do
   it "should have errors" do
     lambda {change_card_to_type("type-a-card", "Basic")}.should raise_error(Wagn::PermissionDenied)
   end
               
   it "should still be the original type" do
-    lambda { change_card_to_type("type-a-card", "Basic") }
+    change_card_to_type("type-a-card", "Basic")
     Card.find_by_name("type-a-card").type.should == 'CardtypeA'
   end
 end
+=end
 
 describe Card, "type transition validate_destroy" do  
   before do @c = change_card_to_type("type-c-card", 'Basic') end
@@ -176,6 +178,7 @@ end
 
 describe Card, "type transition create callback" do
   before do 
+    Card.create(:name=>'Basic+*type+*delete', :type=>'Pointer', :content=>"[[Anyone Signed in]]")
     Card::CardtypeF.count = 2
     @c = change_card_to_type("basicname", 'CardtypeF') 
   end
@@ -191,13 +194,13 @@ end
 
 
 def change_card_to_type(name, type)
-  User.as :joe_user
-  card = Card.find_by_name(name)
-  card.type = type;  
-  card.save
-  # FIXME FIXME FIXME:  this doesn't work!  something about inheritance column?
-  # card.update_attributes :type=>type
-  card
+  User.as :joe_user do
+    card = Card.fetch(name)
+    warn "#{card.name} already exists.  current type = #{card.type} changing to type: #{type}"
+    card.type = type;  
+    card.save
+    card
+  end
 end
 
 

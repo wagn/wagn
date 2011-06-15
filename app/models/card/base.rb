@@ -103,8 +103,7 @@ module Card
         end
       end
 
-      # misc defaults- read_rule_id, trash, key, fallbacks
-      self.reader_rule_id = setting_card('read').id
+      # misc defaults- trash, key, fallbacks
       self.trash = false   
       self.key = name.to_key if name
       self.name='' if name.nil?
@@ -537,7 +536,7 @@ module Card
     alias_method_chain :name=, :key_sync
       
 
-    validates_presence_of :name
+    validates_presence_of :name, :on=>:save
     validates_associated :extension #1/2 ans:  this one runs the user validations on user cards. 
 
 

@@ -77,12 +77,10 @@ module Cardlib
       end
     end
     
-    def approved?  
+    def approved?
       self.operation_approved = true    
       self.permission_errors = []
-      if new_card?
-        approve_create
-      end
+      new_card? ? ok?(:create) : ok?(:update)
       updates.each_pair do |attr,value|
         send("approve_#{attr}")
       end         
@@ -137,7 +135,7 @@ module Cardlib
 
     def approve_task(operation, verb=nil)           
       verb ||= operation.to_s
-      deny_because("#{ydhpt} #{verb} this card") unless self.lets_user( operation ) 
+      deny_because(you_cant "#{verb} this card") unless self.lets_user( operation ) 
     end
 
     def approve_create
@@ -145,14 +143,12 @@ module Cardlib
     end
 
     def approve_read
-      #if name == 'Home'
-      #  warn "approving read for #{name}.  as_user = #{User.as_user.login}"
-      #  warn " read_rule_ids = #{User.as_user.read_rule_ids.inspect}; "
-      #  warn "  reader_rule_id = #{self.reader_rule_id}}"
-      #end
       return true if System.always_ok?
-      ok = User.as_user.read_rule_ids.member?(self.reader_rule_id)
-      deny_because("#{ydhpt} read this card") unless ok
+      
+      self.reader_rule_id ||= self.setting_card('read').id
+      ok = User.as_user.read_rule_ids.member?(self.reader_rule_id) 
+        
+      deny_because(you_cant "read this card") unless ok
     end
     
     def approve_update
@@ -170,18 +166,24 @@ module Cardlib
       deny_because("No comments allowed on hard templated cards") if hard_template
     end
     
-    def approve_name
-      approve_task(:update) unless new_card?     
-    end
     
     def approve_type
-      approve_delete if !new_card?
-      approve_create
+      case
+      when !cardtype_name
+        deny_because("No such type")
+      when !lets_user(:create)
+        deny_because you_cant("change to this type (need create permission)"  )
+      end
+      #NOTE: we used to check for delete permissions on previous type, but this would really need to happen before the name gets changes 
+      #(hence before the tracked_attributes stuff is run)
     end
 
+    def approve_name
+    end
+  
     def approve_content
       unless new_card?
-        approve_update
+        #approve_update
         if tmpl = hard_template 
           deny_because you_cant("change the content of this card -- it is hard templated by #{tmpl.name}")
         end
@@ -190,15 +192,15 @@ module Cardlib
     
     
     public
-    def set_read_rules
-      return if ENV['BOOTSTRAP_LOAD'] == 'true'
+    def set_read_rule
       self.reader_rule_id = setting_card('read').id
+    end
+    def update_ruled_cards
+#      return if ENV['BOOTSTRAP_LOAD'] == 'true'
       if name.junction? && name.tag_name=='*read'
-        #warn "found a read setting card: #{name}"
         Card.fetch(name.trunk_name).item_names.each do |item_name|
-          User.as :wagbot do
+          User.as :wagbot do #maybe not necessary for update_attributes?
             Card.fetch(item_name).update_attributes!(:reader_rule_id => self.id)
-            #warn "updating #{item_name}'s reader_rule_id to #{self.id}"
             Card.cache.delete(item_name.to_key)
           end
         end
@@ -209,8 +211,15 @@ module Cardlib
     
     def self.included(base)   
       super
+#      base.before_create.unshift Proc.new{|rec|  warn "*******before create triggered on #{rec.name}"; rec.ok? :create }
+#      base.before_update.unshift Proc.new{|rec| rec.ok? :update }
+#      base.before_destroy.unshift Proc.new{|rec| rec.ok? :delete }
       base.extend(ClassMethods)
-      base.after_save.unshift Proc.new{|rec| rec.set_read_rules }
+      base.before_save.unshift Proc.new{|rec| rec.set_read_rule }
+      base.after_save.unshift  Proc.new{|rec| rec.update_ruled_cards }
+      base.alias_method_chain :save, :permissions
+      base.alias_method_chain :save!, :permissions
+      
       base.class_eval do           
         attr_accessor :operation_approved, :permission_errors
       end

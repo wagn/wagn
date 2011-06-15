@@ -1,11 +1,11 @@
 class AddReaderSettingFields < ActiveRecord::Migration
   def self.up
-    add_column :cards, :reader_key, :string
-    add_column :cards, :reader_rule_id, :integer
+    add_column :cards, :read_rule_class, :string
+    add_column :cards, :read_rule_id, :integer
   end
 
   def self.down
-    drop_column :cards, :reader_key, :string
-    drop_column :cards, :reader_rule_id, :integer
+    remove_column :cards, :read_rule_class
+    remove_column :cards, :read_rule_id
   end
 end

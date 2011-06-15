@@ -88,11 +88,14 @@ describe Wql do
 
   describe "created_by/creator_of" do
     before do
-      User.current_user = User[:joe_user]
-      Card.create :name=>'Create Test', :content=>'sufficiently distinctive'
+      User.as :joe_user do
+        Card.create :name=>'Create Test', :content=>'sufficiently distinctive'
+      end
     end
     
     it "should find Joe User as the card's creator" do
+      c = Card.fetch 'Create Test'
+      warn "create test has reader_rule_id #{c.name}, #{c.reader_rule_id}"
       Wql.new(:creator_of=>'Create Test').run.first.name.should == 'Joe User'
     end
     

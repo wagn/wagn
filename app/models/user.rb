@@ -112,6 +112,7 @@ class User < ActiveRecord::Base
 
 
   def among? test_parties
+    Rails.logger.info "among called.  user = #{self.login}, parties = #{parties.inspect}, test_parties = #{test_parties.inspect}"
     parties.each do |party|
       return true if test_parties.member? party
     end

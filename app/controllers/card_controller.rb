@@ -113,8 +113,10 @@ class CardController < ApplicationController
 
   def create
     @card = Card.new params[:card]
+    Rails.logger.info "who_can :create = #{@card.who_can :create}"
     return render_denied('create') if !@card.ok? :create
     @card.save
+    
     
     if params[:multi_edit] and params[:cards] and !@card.errors.present?
       @card.multi_create(params[:cards])

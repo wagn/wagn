@@ -1,6 +1,6 @@
 module Card
   class Role < Basic
-    before_create :create_extension
+    before_validation_on_create :create_extension
     
     def create_extension
       self.extension = ::Role.create( :codename => name )

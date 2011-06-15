@@ -66,7 +66,7 @@ module Cardlib
       end
       newcard = self.clone_to_type(new_type)
       newcard.send(:callback, :before_validation_on_create)
-      newcard.send(:callback, :before_create)
+      #newcard.send(:callback, :before_create)
       #newcard.send(:callback, :after_create)
       self.extension = newcard.extension
     end
@@ -93,11 +93,10 @@ module Cardlib
       #Rails.logger.debug "Card(#{name})#set_initial_content start"
       # set_content bails out if we call it on a new record because it needs the
       # card id to create the revision.  call it again now that we have the id.
-      
-      #return unless new_card?  # because create callbacks are also called in type transitions
-      #return if on_create_skip_revision
+
       set_content updates[:content]
       updates.clear :content 
+
       # normally the save would happen after set_content. in this case, update manually:
       connection.update(
         "update cards set current_revision_id=#{current_revision_id} where id=#{id}",

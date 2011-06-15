@@ -8,16 +8,10 @@ module Cardlib
           updates.clear attr
         end
       end
-      set_reader_fields  #not sure this really belongs here?
       Rails.logger.debug "Card(#{name})#set_tracked_attributes end"
     end
     
     
-    def set_reader_fields
-      return if ENV['BOOTSTRAP_LOAD'] == 'true'
-      self.reader_rule_id = setting_card('read').id
-    end
- 
     
     protected 
     def set_name(newname)
@@ -162,17 +156,7 @@ module Cardlib
       super 
       base.after_create :set_initial_content 
       base.before_save.unshift Proc.new{|rec| rec.set_tracked_attributes }
-      #puts "AFTER CREATE: #{base.after_create}"
-      #base.before_save = base.before_save                           
       base.after_save :cascade_name_changes   
-      #base.class_eval do 
-       # attr_accessor :on_create_skip_revision
-        #
-        #puts "CALLING ALIAS METHOD CHAIN"
-        #alias_method_chain :save, :tracking
-        #alias_method_chain :save!, :tracking
- 
-      #end
       base.after_create() do |card|
         Wagn::Hook.call :after_create, card
       end

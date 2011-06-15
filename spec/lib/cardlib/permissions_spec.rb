@@ -1,25 +1,37 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 require File.expand_path(File.dirname(__FILE__) + '/../../permission_spec_helper')
 
-describe "reader keys" do
+describe "reader rules" do
   before do
-    User.as(:wagbot) do
-      @card = Card.fetch('Home')
-      @perm_card = Card.create(:name=>'Home+*self+*read', :type=>'Pointer', :content=>'[[Anyone]]')
-      @anyone_id = Card.fetch('Anyone').id
-      @anon_id = Card.fetch('Anonymous').id
-    end
+    @perm_card =  Card.new(:name=>'Home+*self+*read', :type=>'Pointer', :content=>'[[Anyone Signed In]]')
   end
   
-  it "should handle role" do
-    @card.generate_reader_key.should == "G#{@anyone_id}"
+  it "should be *all+*read by default" do
+    card = Card.fetch('Home')
+    card.reader_rule_id.should == Card.fetch('*all+*read').id
+    card.who_can(:read).should == ['anyone']
+    User.as(:anon){ card.ok?(:read).should be_true }
   end
   
-  it "should handle user" do
+  it "should update to role ('Anyone Signed In')" do
+    @perm_card.save!
+    card = Card.fetch('Home')
+    card.reader_rule_id.should == @perm_card.id
+    card.who_can(:read).should == ['anyone_signed_in']
+    User.as(:anon){ card.ok?(:read).should be_false }
+  end
+  
+  it "should update to user ('Joe Admin')" do
     User.as(:wagbot) do
-      @perm_card.content = '[[Anonymous]]'
+      card = Card.fetch('Home')
+      @perm_card.content = '[[Joe Admin]]'
       @perm_card.save!
-      @card.generate_reader_key.should == "I#{@anon_id}"
+      card.reader_rule_id.should == @perm_card.id
+      card.who_can(:read).should == ['joe_admin']
+      User.as(:anon)      { card.ok?(:read).should be_false }
+      User.as(:joe_user)  { card.ok?(:read).should be_false }
+      User.as(:joe_admin) { card.ok?(:read).should be_true }
+      User.as(:wagbot)    { card.ok?(:read).should be_true }
     end
   end
   
@@ -35,13 +47,13 @@ describe "Permission", ActiveSupport::TestCase do
 
 
   it "checking ok read should not add to errors" do
-    h = nil
     User.as(:joe_admin) do
-      h = Card.create! :name=>"Hidden"
+      Card.create! :name=>"Hidden"
       Card.create(:name=>'Hidden+*self+*read', :type=>'Pointer', :content=>'[[Anyone Signed In]]')
     end
   
     User.as(:anon) do
+      h = Card.fetch('Hidden')
       h.ok?(:read).should == false
       h.errors.empty?.should_not == nil
     end

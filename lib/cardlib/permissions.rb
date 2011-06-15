@@ -130,9 +130,8 @@ module Cardlib
     end
 
     def lets_user(operation)
-      party =  who_can(operation)
       return true if (System.always_ok? and operation != :comment)
-      User.as_user.among? party
+      User.as_user.among?( who_can(operation) )
     end  
 
 
@@ -146,7 +145,14 @@ module Cardlib
     end
 
     def approve_read
-      User.as_user.read_rule_ids.member?(self.reader_rule_id)
+      #if name == 'Home'
+      #  warn "approving read for #{name}.  as_user = #{User.as_user.login}"
+      #  warn " read_rule_ids = #{User.as_user.read_rule_ids.inspect}; "
+      #  warn "  reader_rule_id = #{self.reader_rule_id}}"
+      #end
+      return true if System.always_ok?
+      ok = User.as_user.read_rule_ids.member?(self.reader_rule_id)
+      deny_because("#{ydhpt} read this card") unless ok
     end
     
     def approve_update
@@ -181,11 +187,30 @@ module Cardlib
         end
       end
     end
+    
+    
+    public
+    def set_read_rules
+      return if ENV['BOOTSTRAP_LOAD'] == 'true'
+      self.reader_rule_id = setting_card('read').id
+      if name.junction? && name.tag_name=='*read'
+        #warn "found a read setting card: #{name}"
+        Card.fetch(name.trunk_name).item_names.each do |item_name|
+          User.as :wagbot do
+            Card.fetch(item_name).update_attributes!(:reader_rule_id => self.id)
+            #warn "updating #{item_name}'s reader_rule_id to #{self.id}"
+            Card.cache.delete(item_name.to_key)
+          end
+        end
+      end
+      
+    end
    
     
     def self.included(base)   
       super
       base.extend(ClassMethods)
+      base.after_save.unshift Proc.new{|rec| rec.set_read_rules }
       base.class_eval do           
         attr_accessor :operation_approved, :permission_errors
       end

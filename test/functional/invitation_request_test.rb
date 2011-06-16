@@ -61,26 +61,5 @@ class InvitationRequestTest < ActionController::TestCase
     assert_equal nil, Card.find_by_name('Ron Request')
     assert_equal 'blocked', ::User.find_by_email('ron@request.com').status
   end
-  
-=begin DOES NOT AUTOMATICALLY HAPPEN ANY MORE.
-   def test_should_send_notification
-      User.as :wagbot  do
-        Card.create :name=>'*invite+*to', :content=> 'test@user.com'
-      end
-  #    System.invite_request_alert_email = 'test@user.com' if System.invite_request_alert_email.blank?
-      assert_difference ActionMailer::Base.deliveries, :size do
-        post :create, :card => {
-          :type=>"InvitationRequest", 
-          :name=>"Word Third",
-          :account=>{:email=>"jamaster@jay.net"},
-          :content=>"Let me in!"
-        }  
-      end     
-      mail = ActionMailer::Base.deliveries[-1]
-      pattern = /(http:[^\"]+)/
-      assert_match pattern, mail.body
-      mail.body =~ pattern
-      assert_equal "http://#{System.host}#{@controller.send(:url_for_page, "Word Third")}", $~[0]
-    end
-=end
+ 
 end

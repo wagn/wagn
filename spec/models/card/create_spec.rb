@@ -6,7 +6,7 @@ describe Card::Cardtype, ".create with :codename" do
     User.as :joe_user
   end
   it "should work" do
-    Card::Cardtype.create!(:name=>"Foo Type", :codename=>"foo").type.should=='Cardtype'
+    Card::Cardtype.create!(:name=>"Foo Type", :codename=>"foo").cardtype.should=='Cardtype'
   end
 end            
 
@@ -23,7 +23,7 @@ describe Card, ".create_these" do
   
   it 'should create cards of a given type' do
     Card.create_these "Cardtype:Footype" => "" 
-    Card["Footype"].type.should == "Cardtype"
+    Card["Footype"].cardtype.should == "Cardtype"
   end   
   
   it 'should take a hash of type:name=>content pairs' do
@@ -49,7 +49,7 @@ describe Card, "created by Card.new " do
   end
   
   it "should have attribute_tracking updates" do
-    Wagn::Cardlib::AttributeTracking::Updates.should === @c.updates
+    Wagn::Card::AttributeTracking::Updates.should === @c.updates
   end
   
   it "should return original value for name" do

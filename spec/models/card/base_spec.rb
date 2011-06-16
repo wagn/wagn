@@ -19,11 +19,11 @@ describe Card do
       end
   
       it "c should have cardtype basic" do
-        @c.type.should == 'Basic'
+        @c.cardtype.should == 'Basic'
       end
   
       it "d should have cardtype Date" do
-        @d.type.should == 'Date'
+        @d.cardtype.should == 'Date'
       end
     end
 
@@ -80,7 +80,7 @@ describe Card do
     end
   
     it "should have updates" do
-      Wagn::Cardlib::AttributeTracking::Updates.should === @c.updates
+      Wagn::Card::AttributeTracking::Updates.should === @c.updates
     end
   
     it "should return original value" do
@@ -188,7 +188,7 @@ describe Card do
         "+H" => { :type => "Phrase", :content=>"boo" }
       })
       Card["G+H"].content.should == "boo"
-      Card["G+H"].type.should == "Phrase"
+      Card["G+H"].cardtype.should == "Phrase"
     end
   end
 end

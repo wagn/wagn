@@ -16,7 +16,7 @@ cards_272:
   current_revision_id: "2290"
   id: "190"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -41,7 +41,7 @@ cards_082:
   current_revision_id: "5306"
   id: "116"
   extension_type: HardTemplate
-  type: Basic
+  cardtype: Basic
   trunk_id: "340"
   settings: 
   updated_by: "1"
@@ -66,7 +66,7 @@ cards_225:
   current_revision_id: "2570"
   id: "211"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "9"
   settings: 
   updated_by: "1"
@@ -91,7 +91,7 @@ cards_035:
   current_revision_id: "3612"
   id: "375"
   extension_type: 
-  type: Phrase
+  cardtype: Phrase
   trunk_id: "374"
   settings: 
   updated_by: "1"
@@ -116,7 +116,7 @@ cards_273:
   current_revision_id: "3232"
   id: "341"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "178"
   settings: 
   updated_by: "1"
@@ -141,7 +141,7 @@ cards_083:
   current_revision_id: "3615"
   id: "378"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -166,7 +166,7 @@ cards_226:
   current_revision_id: "4841"
   id: "406"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "20"
   settings: 
   updated_by: "1"
@@ -191,7 +191,7 @@ cards_036:
   current_revision_id: "3575"
   id: "367"
   extension_type: 
-  type: Number
+  cardtype: Number
   trunk_id: "366"
   settings: 
   updated_by: "1"
@@ -216,7 +216,7 @@ cards_274:
   current_revision_id: "3574"
   id: "366"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "278"
   settings: 
   updated_by: "1"
@@ -241,7 +241,7 @@ cards_084:
   current_revision_id: "3240"
   id: "347"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "41"
   settings: 
   updated_by: "1"
@@ -266,7 +266,7 @@ cards_227:
   current_revision_id: "5486"
   id: "47"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -291,7 +291,7 @@ cards_037:
   current_revision_id: "2604"
   id: "217"
   extension_type: SoftTemplate
-  type: Image
+  cardtype: Image
   trunk_id: "331"
   settings: 
   updated_by: "1"
@@ -316,7 +316,7 @@ cards_275:
   current_revision_id: "5252"
   id: "431"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -341,7 +341,7 @@ cards_085:
   current_revision_id: "3088"
   id: "274"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -366,7 +366,7 @@ cards_228:
   current_revision_id: "5601"
   id: "93"
   extension_type: HardTemplate
-  type: Search
+  cardtype: Search
   trunk_id: "352"
   settings: 
   updated_by: "1"
@@ -391,7 +391,7 @@ cards_038:
   current_revision_id: "237"
   id: "82"
   extension_type: 
-  type: Setting
+  cardtype: Setting
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -416,7 +416,7 @@ cards_276:
   current_revision_id: "5479"
   id: "17"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -441,7 +441,7 @@ cards_086:
   current_revision_id: "2877"
   id: "80"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -466,7 +466,7 @@ cards_229:
   current_revision_id: "311"
   id: "89"
   extension_type: 
-  type: Setting
+  cardtype: Setting
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -491,7 +491,7 @@ cards_039:
   current_revision_id: "5612"
   id: "450"
   extension_type: 
-  type: Search
+  cardtype: Search
   trunk_id: "449"
   settings: 
   updated_by: "1"
@@ -516,7 +516,7 @@ cards_277:
   current_revision_id: "3061"
   id: "285"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "89"
   settings: 
   updated_by: "1"
@@ -541,7 +541,7 @@ cards_087:
   current_revision_id: "349"
   id: "92"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -566,7 +566,7 @@ cards_278:
   current_revision_id: "3230"
   id: "340"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "115"
   settings: 
   updated_by: "1"
@@ -591,7 +591,7 @@ cards_088:
   current_revision_id: "5302"
   id: "83"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "315"
   settings: 
   updated_by: "1"
@@ -616,7 +616,7 @@ cards_279:
   current_revision_id: "3513"
   id: "364"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "363"
   settings: 
   updated_by: "1"
@@ -641,7 +641,7 @@ cards_089:
   current_revision_id: "3609"
   id: "372"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "371"
   settings: 
   updated_by: "1"
@@ -666,7 +666,7 @@ cards_330:
   current_revision_id: "5681"
   id: "506"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -691,7 +691,7 @@ cards_140:
   current_revision_id: "3794"
   id: "365"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "364"
   settings: 
   updated_by: "1"
@@ -716,7 +716,7 @@ cards_331:
   current_revision_id: "5682"
   id: "507"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -741,7 +741,7 @@ cards_141:
   current_revision_id: "3266"
   id: "306"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "305"
   settings: 
   updated_by: "1"
@@ -766,7 +766,7 @@ cards_332:
   current_revision_id: "5683"
   id: "508"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -791,7 +791,7 @@ cards_142:
   current_revision_id: "3002"
   id: "261"
   extension_type: HardTemplate
-  type: Set
+  cardtype: Set
   trunk_id: "324"
   settings: 
   updated_by: "1"
@@ -816,7 +816,7 @@ cards_380:
   current_revision_id: "5733"
   id: "556"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "555"
   settings: 
   updated_by: "1"
@@ -841,7 +841,7 @@ cards_190:
   current_revision_id: "3023"
   id: "252"
   extension_type: 
-  type: Setting
+  cardtype: Setting
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -866,7 +866,7 @@ cards_333:
   current_revision_id: "5684"
   id: "509"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -891,7 +891,7 @@ cards_143:
   current_revision_id: "3082"
   id: "294"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "4"
   settings: 
   updated_by: "1"
@@ -916,7 +916,7 @@ cards_381:
   current_revision_id: "5734"
   id: "557"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "556"
   settings: 
   updated_by: "1"
@@ -941,7 +941,7 @@ cards_191:
   current_revision_id: "37"
   id: "37"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -966,7 +966,7 @@ cards_334:
   current_revision_id: "5685"
   id: "510"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -991,7 +991,7 @@ cards_144:
   current_revision_id: "5555"
   id: "66"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1016,7 +1016,7 @@ cards_382:
   current_revision_id: "5735"
   id: "558"
   extension_type: 
-  type: Book
+  cardtype: Book
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1041,7 +1041,7 @@ cards_192:
   current_revision_id: "4977"
   id: "151"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1066,7 +1066,7 @@ cards_335:
   current_revision_id: "5686"
   id: "511"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1091,7 +1091,7 @@ cards_145:
   current_revision_id: "5470"
   id: "5"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1116,7 +1116,7 @@ cards_383:
   current_revision_id: "5736"
   id: "559"
   extension_type: User
-  type: User
+  cardtype: User
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1141,7 +1141,7 @@ cards_193:
   current_revision_id: "1253"
   id: "115"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1166,7 +1166,7 @@ cards_336:
   current_revision_id: "5687"
   id: "512"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1191,7 +1191,7 @@ cards_146:
   current_revision_id: "3754"
   id: "219"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1216,7 +1216,7 @@ cards_384:
   current_revision_id: "5737"
   id: "560"
   extension_type: User
-  type: User
+  cardtype: User
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1241,7 +1241,7 @@ cards_194:
   current_revision_id: "4928"
   id: "53"
   extension_type: 
-  type: PlainText
+  cardtype: PlainText
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1266,7 +1266,7 @@ cards_337:
   current_revision_id: "5688"
   id: "513"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1291,7 +1291,7 @@ cards_147:
   current_revision_id: "3480"
   id: "249"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "289"
   settings: 
   updated_by: "1"
@@ -1316,7 +1316,7 @@ cards_385:
   current_revision_id: "5738"
   id: "561"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1341,7 +1341,7 @@ cards_195:
   current_revision_id: "3246"
   id: "352"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "92"
   settings: 
   updated_by: "1"
@@ -1366,7 +1366,7 @@ cards_338:
   current_revision_id: "5689"
   id: "514"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "509"
   settings: 
   updated_by: "1"
@@ -1391,7 +1391,7 @@ cards_148:
   current_revision_id: "28"
   id: "28"
   extension_type: SoftTemplate
-  type: Basic
+  cardtype: Basic
   trunk_id: "274"
   settings: 
   updated_by: "1"
@@ -1416,7 +1416,7 @@ cards_386:
   current_revision_id: "5739"
   id: "562"
   extension_type: 
-  type: Pointer
+  cardtype: Pointer
   trunk_id: "561"
   settings: 
   updated_by: "1"
@@ -1441,7 +1441,7 @@ cards_196:
   current_revision_id: "1225"
   id: "110"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1466,7 +1466,7 @@ cards_339:
   current_revision_id: "5690"
   id: "515"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1491,7 +1491,7 @@ cards_149:
   current_revision_id: "3079"
   id: "292"
   extension_type: SoftTemplate
-  type: Toggle
+  cardtype: Toggle
   trunk_id: "307"
   settings: 
   updated_by: "1"
@@ -1516,7 +1516,7 @@ cards_387:
   current_revision_id: "5740"
   id: "563"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1541,7 +1541,7 @@ cards_197:
   current_revision_id: "4915"
   id: "374"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "64"
   settings: 
   updated_by: "1"
@@ -1566,7 +1566,7 @@ cards_198:
   current_revision_id: "1755"
   id: "55"
   extension_type: 
-  type: Phrase
+  cardtype: Phrase
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1591,7 +1591,7 @@ cards_200:
   current_revision_id: "1550"
   id: "138"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1616,7 +1616,7 @@ cards_010:
   current_revision_id: "5627"
   id: "299"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "268"
   settings: 
   updated_by: "1"
@@ -1641,7 +1641,7 @@ cards_388:
   current_revision_id: "5741"
   id: "564"
   extension_type: 
-  type: Pointer
+  cardtype: Pointer
   trunk_id: "563"
   settings: 
   updated_by: "1"
@@ -1666,7 +1666,7 @@ cards_199:
   current_revision_id: "4913"
   id: "376"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "137"
   settings: 
   updated_by: "1"
@@ -1691,7 +1691,7 @@ cards_201:
   current_revision_id: "9"
   id: "9"
   extension_type: Role
-  type: Role
+  cardtype: Role
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1716,7 +1716,7 @@ cards_011:
   current_revision_id: "2266"
   id: "185"
   extension_type: HardTemplate
-  type: Search
+  cardtype: Search
   trunk_id: "336"
   settings: 
   updated_by: "1"
@@ -1741,7 +1741,7 @@ cards_389:
   current_revision_id: "5742"
   id: "565"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1766,7 +1766,7 @@ cards_202:
   current_revision_id: "4894"
   id: "379"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "378"
   settings: 
   updated_by: "1"
@@ -1791,7 +1791,7 @@ cards_012:
   current_revision_id: "5593"
   id: "462"
   extension_type: 
-  type: Phrase
+  cardtype: Phrase
   trunk_id: "268"
   settings: 
   updated_by: "1"
@@ -1816,7 +1816,7 @@ cards_250:
   current_revision_id: "5588"
   id: "100"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -1841,7 +1841,7 @@ cards_060:
   current_revision_id: "3244"
   id: "351"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "138"
   settings: 
   updated_by: "1"
@@ -1866,7 +1866,7 @@ cards_203:
   current_revision_id: "5608"
   id: "36"
   extension_type: HardTemplate
-  type: Search
+  cardtype: Search
   trunk_id: "349"
   settings: 
   updated_by: "1"
@@ -1891,7 +1891,7 @@ cards_013:
   current_revision_id: "3769"
   id: "276"
   extension_type: 
-  type: Toggle
+  cardtype: Toggle
   trunk_id: "274"
   settings: 
   updated_by: "1"
@@ -1916,7 +1916,7 @@ cards_251:
   current_revision_id: "2472"
   id: "67"
   extension_type: 
-  type: Phrase
+  cardtype: Phrase
   trunk_id: "66"
   settings: 
   updated_by: "1"
@@ -1941,7 +1941,7 @@ cards_061:
   current_revision_id: "2890"
   id: "248"
   extension_type: SoftTemplate
-  type: Phrase
+  cardtype: Phrase
   trunk_id: "289"
   settings: 
   updated_by: "1"
@@ -1966,7 +1966,7 @@ cards_204:
   current_revision_id: "4892"
   id: "382"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "381"
   settings: 
   updated_by: "1"
@@ -1991,7 +1991,7 @@ cards_014:
   current_revision_id: "3225"
   id: "336"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "184"
   settings: 
   updated_by: "1"
@@ -2016,7 +2016,7 @@ cards_252:
   current_revision_id: "3008"
   id: "267"
   extension_type: HardTemplate
-  type: Set
+  cardtype: Set
   trunk_id: "327"
   settings: 
   updated_by: "1"
@@ -2041,7 +2041,7 @@ cards_062:
   current_revision_id: "3137"
   id: "309"
   extension_type: 
-  type: Setting
+  cardtype: Setting
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -2066,7 +2066,7 @@ cards_205:
   current_revision_id: "5607"
   id: "34"
   extension_type: HardTemplate
-  type: Search
+  cardtype: Search
   trunk_id: "350"
   settings: 
   updated_by: "1"
@@ -2091,7 +2091,7 @@ cards_015:
   current_revision_id: "2264"
   id: "184"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -2116,7 +2116,7 @@ cards_253:
   current_revision_id: "3199"
   id: "320"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "5"
   settings: 
   updated_by: "1"
@@ -2141,7 +2141,7 @@ cards_063:
   current_revision_id: "3021"
   id: "256"
   extension_type: 
-  type: Setting
+  cardtype: Setting
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -2166,7 +2166,7 @@ cards_206:
   current_revision_id: "4888"
   id: "388"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "387"
   settings: 
   updated_by: "1"
@@ -2191,7 +2191,7 @@ cards_016:
   current_revision_id: "2879"
   id: "242"
   extension_type: 
-  type: Pointer
+  cardtype: Pointer
   trunk_id: "268"
   settings: 
   updated_by: "1"
@@ -2216,7 +2216,7 @@ cards_254:
   current_revision_id: "2581"
   id: "216"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "12"
   settings: 
   updated_by: "1"
@@ -2241,7 +2241,7 @@ cards_064:
   current_revision_id: "5490"
   id: "4"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -2266,7 +2266,7 @@ cards_207:
   current_revision_id: "5606"
   id: "40"
   extension_type: HardTemplate
-  type: Search
+  cardtype: Search
   trunk_id: "345"
   settings: 
   updated_by: "1"
@@ -2291,7 +2291,7 @@ cards_017:
   current_revision_id: "2291"
   id: "191"
   extension_type: HardTemplate
-  type: Search
+  cardtype: Search
   trunk_id: "335"
   settings: 
   updated_by: "1"
@@ -2316,7 +2316,7 @@ cards_255:
   current_revision_id: "5291"
   id: "427"
   extension_type: 
-  type: Search
+  cardtype: Search
   trunk_id: "426"
   settings: 
   updated_by: "1"
@@ -2341,7 +2341,7 @@ cards_065:
   current_revision_id: "5334"
   id: "442"
   extension_type: 
-  type: Number
+  cardtype: Number
   trunk_id: "441"
   settings: 
   updated_by: "1"
@@ -2366,7 +2366,7 @@ cards_208:
   current_revision_id: "4872"
   id: "408"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "52"
   settings: 
   updated_by: "1"
@@ -2391,7 +2391,7 @@ cards_018:
   current_revision_id: "5592"
   id: "461"
   extension_type: 
-  type: Pointer
+  cardtype: Pointer
   trunk_id: "268"
   settings: 
   updated_by: "1"
@@ -2416,7 +2416,7 @@ cards_256:
   current_revision_id: "5482"
   id: "19"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -2441,7 +2441,7 @@ cards_066:
   current_revision_id: "2093"
   id: "180"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "5"
   settings: 
   updated_by: "1"
@@ -2466,7 +2466,7 @@ cards_209:
   current_revision_id: "3214"
   id: "330"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "100"
   settings: 
   updated_by: "1"
@@ -2491,7 +2491,7 @@ cards_019:
   current_revision_id: "5538"
   id: "278"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -2516,7 +2516,7 @@ cards_257:
   current_revision_id: "3066"
   id: "289"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "247"
   settings: 
   updated_by: "1"
@@ -2541,7 +2541,7 @@ cards_067:
   current_revision_id: "3624"
   id: "387"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -2566,7 +2566,7 @@ cards_258:
   current_revision_id: "2494"
   id: "68"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -2591,7 +2591,7 @@ cards_068:
   current_revision_id: "3243"
   id: "350"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "33"
   settings: 
   updated_by: "1"
@@ -2616,7 +2616,7 @@ cards_259:
   current_revision_id: "3209"
   id: "327"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "266"
   settings: 
   updated_by: "1"
@@ -2641,7 +2641,7 @@ cards_069:
   current_revision_id: "3078"
   id: "291"
   extension_type: 
-  type: Setting
+  cardtype: Setting
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -2666,7 +2666,7 @@ cards_310:
   current_revision_id: "5661"
   id: "486"
   extension_type: 
-  type: Image
+  cardtype: Image
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -2691,7 +2691,7 @@ cards_120:
   current_revision_id: "3006"
   id: "265"
   extension_type: HardTemplate
-  type: Set
+  cardtype: Set
   trunk_id: "326"
   settings: 
   updated_by: "1"
@@ -2716,7 +2716,7 @@ cards_311:
   current_revision_id: "5662"
   id: "487"
   extension_type: 
-  type: Phrase
+  cardtype: Phrase
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -2741,7 +2741,7 @@ cards_121:
   current_revision_id: "5643"
   id: "468"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -2766,7 +2766,7 @@ cards_312:
   current_revision_id: "5663"
   id: "488"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -2791,7 +2791,7 @@ cards_122:
   current_revision_id: "5573"
   id: "297"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "259"
   settings: 
   updated_by: "1"
@@ -2816,7 +2816,7 @@ cards_360:
   current_revision_id: "5712"
   id: "537"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -2841,7 +2841,7 @@ cards_170:
   current_revision_id: "1871"
   id: "118"
   extension_type: 
-  type: Pointer
+  cardtype: Pointer
   trunk_id: "100"
   settings: 
   updated_by: "1"
@@ -2866,7 +2866,7 @@ cards_313:
   current_revision_id: "5664"
   id: "489"
   extension_type: 
-  type: Date
+  cardtype: Date
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -2891,7 +2891,7 @@ cards_123:
   current_revision_id: "3859"
   id: "397"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -2916,7 +2916,7 @@ cards_361:
   current_revision_id: "5713"
   id: "538"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -2941,7 +2941,7 @@ cards_171:
   current_revision_id: "5420"
   id: "437"
   extension_type: 
-  type: Phrase
+  cardtype: Phrase
   trunk_id: "436"
   settings: 
   updated_by: "1"
@@ -2966,7 +2966,7 @@ cards_314:
   current_revision_id: "5665"
   id: "490"
   extension_type: 
-  type: Number
+  cardtype: Number
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -2991,7 +2991,7 @@ cards_124:
   current_revision_id: "3482"
   id: "359"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "358"
   settings: 
   updated_by: "1"
@@ -3016,7 +3016,7 @@ cards_362:
   current_revision_id: "5714"
   id: "539"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -3041,7 +3041,7 @@ cards_172:
   current_revision_id: "5200"
   id: "420"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "419"
   settings: 
   updated_by: "1"
@@ -3066,7 +3066,7 @@ cards_315:
   current_revision_id: "5666"
   id: "491"
   extension_type: 
-  type: PlainText
+  cardtype: PlainText
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -3091,7 +3091,7 @@ cards_125:
   current_revision_id: "3208"
   id: "326"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "264"
   settings: 
   updated_by: "1"
@@ -3116,7 +3116,7 @@ cards_363:
   current_revision_id: "5715"
   id: "540"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -3141,7 +3141,7 @@ cards_173:
   current_revision_id: "3500"
   id: "254"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "286"
   settings: 
   updated_by: "1"
@@ -3166,7 +3166,7 @@ cards_316:
   current_revision_id: "5667"
   id: "492"
   extension_type: 
-  type: HTML
+  cardtype: HTML
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -3191,7 +3191,7 @@ cards_126:
   current_revision_id: "5642"
   id: "467"
   extension_type: 
-  type: Search
+  cardtype: Search
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -3216,7 +3216,7 @@ cards_364:
   current_revision_id: "5716"
   id: "541"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -3241,7 +3241,7 @@ cards_174:
   current_revision_id: "3251"
   id: "355"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "128"
   settings: 
   updated_by: "1"
@@ -3266,7 +3266,7 @@ cards_317:
   current_revision_id: "5668"
   id: "493"
   extension_type: Role
-  type: Role
+  cardtype: Role
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -3291,7 +3291,7 @@ cards_127:
   current_revision_id: "5572"
   id: "298"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "278"
   settings: 
   updated_by: "1"
@@ -3316,7 +3316,7 @@ cards_365:
   current_revision_id: "5717"
   id: "542"
   extension_type: 
-  type: CardtypeA
+  cardtype: CardtypeA
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -3341,7 +3341,7 @@ cards_175:
   current_revision_id: "3171"
   id: "275"
   extension_type: 
-  type: Pointer
+  cardtype: Pointer
   trunk_id: "274"
   settings: 
   updated_by: "1"
@@ -3366,7 +3366,7 @@ cards_318:
   current_revision_id: "5669"
   id: "494"
   extension_type: 
-  type: File
+  cardtype: File
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -3391,7 +3391,7 @@ cards_128:
   current_revision_id: "5478"
   id: "405"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "3"
   settings: 
   updated_by: "1"
@@ -3416,7 +3416,7 @@ cards_366:
   current_revision_id: "5718"
   id: "543"
   extension_type: 
-  type: CardtypeB
+  cardtype: CardtypeB
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -3441,7 +3441,7 @@ cards_176:
   current_revision_id: "3003"
   id: "262"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -3466,7 +3466,7 @@ cards_319:
   current_revision_id: "5670"
   id: "495"
   extension_type: 
-  type: Search
+  cardtype: Search
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -3491,7 +3491,7 @@ cards_129:
   current_revision_id: "3814"
   id: "401"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "397"
   settings: 
   updated_by: "1"
@@ -3516,7 +3516,7 @@ cards_367:
   current_revision_id: "5719"
   id: "544"
   extension_type: 
-  type: CardtypeC
+  cardtype: CardtypeC
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -3541,7 +3541,7 @@ cards_177:
   current_revision_id: "39"
   id: "39"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -3566,7 +3566,7 @@ cards_368:
   current_revision_id: "5720"
   id: "545"
   extension_type: 
-  type: CardtypeD
+  cardtype: CardtypeD
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -3591,7 +3591,7 @@ cards_178:
   current_revision_id: "5411"
   id: "392"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "372"
   settings: 
   updated_by: "1"
@@ -3616,7 +3616,7 @@ cards_369:
   current_revision_id: "5721"
   id: "546"
   extension_type: 
-  type: CardtypeE
+  cardtype: CardtypeE
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -3641,7 +3641,7 @@ cards_179:
   current_revision_id: "3512"
   id: "304"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "302"
   settings: 
   updated_by: "1"
@@ -3666,7 +3666,7 @@ cards_230:
   current_revision_id: "3040"
   id: "280"
   extension_type: SoftTemplate
-  type: Pointer
+  cardtype: Pointer
   trunk_id: "284"
   settings: 
   updated_by: "1"
@@ -3691,7 +3691,7 @@ cards_040:
   current_revision_id: "5516"
   id: "88"
   extension_type: SoftTemplate
-  type: Basic
+  cardtype: Basic
   trunk_id: "320"
   settings: 
   updated_by: "1"
@@ -3716,7 +3716,7 @@ cards_231:
   current_revision_id: "3608"
   id: "371"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -3741,7 +3741,7 @@ cards_041:
   current_revision_id: "5396"
   id: "449"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "448"
   settings: 
   updated_by: "1"
@@ -3766,7 +3766,7 @@ cards_232:
   current_revision_id: "2571"
   id: "210"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "8"
   settings: 
   updated_by: "1"
@@ -3791,7 +3791,7 @@ cards_042:
   current_revision_id: "3606"
   id: "368"
   extension_type: 
-  type: Pointer
+  cardtype: Pointer
   trunk_id: "364"
   settings: 
   updated_by: "1"
@@ -3816,7 +3816,7 @@ cards_280:
   current_revision_id: "5250"
   id: "429"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "428"
   settings: 
   updated_by: "1"
@@ -3841,7 +3841,7 @@ cards_090:
   current_revision_id: "3239"
   id: "346"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "43"
   settings: 
   updated_by: "1"
@@ -3866,7 +3866,7 @@ cards_233:
   current_revision_id: "3867"
   id: "402"
   extension_type: 
-  type: Phrase
+  cardtype: Phrase
   trunk_id: "401"
   settings: 
   updated_by: "1"
@@ -3891,7 +3891,7 @@ cards_043:
   current_revision_id: "5511"
   id: "453"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "452"
   settings: 
   updated_by: "1"
@@ -3916,7 +3916,7 @@ cards_281:
   current_revision_id: "3060"
   id: "284"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "255"
   settings: 
   updated_by: "1"
@@ -3941,7 +3941,7 @@ cards_091:
   current_revision_id: "2624"
   id: "222"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -3966,7 +3966,7 @@ cards_234:
   current_revision_id: "5485"
   id: "22"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -3991,7 +3991,7 @@ cards_044:
   current_revision_id: "5395"
   id: "448"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4016,7 +4016,7 @@ cards_282:
   current_revision_id: "2008"
   id: "112"
   extension_type: 
-  type: Pointer
+  cardtype: Pointer
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4041,7 +4041,7 @@ cards_092:
   current_revision_id: "353"
   id: "96"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4066,7 +4066,7 @@ cards_235:
   current_revision_id: "5598"
   id: "95"
   extension_type: HardTemplate
-  type: Search
+  cardtype: Search
   trunk_id: "351"
   settings: 
   updated_by: "1"
@@ -4091,7 +4091,7 @@ cards_045:
   current_revision_id: "3620"
   id: "383"
   extension_type: 
-  type: Phrase
+  cardtype: Phrase
   trunk_id: "382"
   settings: 
   updated_by: "1"
@@ -4116,7 +4116,7 @@ cards_283:
   current_revision_id: "2054"
   id: "169"
   extension_type: HardTemplate
-  type: Basic
+  cardtype: Basic
   trunk_id: "339"
   settings: 
   updated_by: "1"
@@ -4141,7 +4141,7 @@ cards_093:
   current_revision_id: "5297"
   id: "436"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "435"
   settings: 
   updated_by: "1"
@@ -4166,7 +4166,7 @@ cards_236:
   current_revision_id: "2473"
   id: "108"
   extension_type: 
-  type: Phrase
+  cardtype: Phrase
   trunk_id: "63"
   settings: 
   updated_by: "1"
@@ -4191,7 +4191,7 @@ cards_046:
   current_revision_id: "1521"
   id: "137"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4216,7 +4216,7 @@ cards_284:
   current_revision_id: "5249"
   id: "428"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4241,7 +4241,7 @@ cards_094:
   current_revision_id: "3238"
   id: "345"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "39"
   settings: 
   updated_by: "1"
@@ -4266,7 +4266,7 @@ cards_237:
   current_revision_id: "2930"
   id: "257"
   extension_type: SoftTemplate
-  type: Toggle
+  cardtype: Toggle
   trunk_id: "302"
   settings: 
   updated_by: "1"
@@ -4291,7 +4291,7 @@ cards_047:
   current_revision_id: "3218"
   id: "331"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "19"
   settings: 
   updated_by: "1"
@@ -4316,7 +4316,7 @@ cards_285:
   current_revision_id: "2331"
   id: "81"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4341,7 +4341,7 @@ cards_095:
   current_revision_id: "2618"
   id: "79"
   extension_type: 
-  type: Image
+  cardtype: Image
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4366,7 +4366,7 @@ cards_238:
   current_revision_id: "3206"
   id: "324"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "260"
   settings: 
   updated_by: "1"
@@ -4391,7 +4391,7 @@ cards_048:
   current_revision_id: "3140"
   id: "310"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "309"
   settings: 
   updated_by: "1"
@@ -4416,7 +4416,7 @@ cards_286:
   current_revision_id: "2087"
   id: "178"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4441,7 +4441,7 @@ cards_096:
   current_revision_id: "10"
   id: "10"
   extension_type: Role
-  type: Role
+  cardtype: Role
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4466,7 +4466,7 @@ cards_239:
   current_revision_id: "2574"
   id: "212"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "51"
   settings: 
   updated_by: "1"
@@ -4491,7 +4491,7 @@ cards_049:
   current_revision_id: "2878"
   id: "241"
   extension_type: 
-  type: Setting
+  cardtype: Setting
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4516,7 +4516,7 @@ cards_287:
   current_revision_id: "3229"
   id: "339"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "168"
   settings: 
   updated_by: "1"
@@ -4541,7 +4541,7 @@ cards_097:
   current_revision_id: "1270"
   id: "117"
   extension_type: SoftTemplate
-  type: Pointer
+  cardtype: Pointer
   trunk_id: "343"
   settings: 
   updated_by: "1"
@@ -4566,7 +4566,7 @@ cards_100:
   current_revision_id: "3235"
   id: "343"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "112"
   settings: 
   updated_by: "1"
@@ -4591,7 +4591,7 @@ cards_288:
   current_revision_id: "3318"
   id: "69"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4616,7 +4616,7 @@ cards_098:
   current_revision_id: "2573"
   id: "15"
   extension_type: User
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4641,7 +4641,7 @@ cards_101:
   current_revision_id: "2565"
   id: "85"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4666,7 +4666,7 @@ cards_289:
   current_revision_id: "5246"
   id: "426"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "425"
   settings: 
   updated_by: "1"
@@ -4691,7 +4691,7 @@ cards_099:
   current_revision_id: "8"
   id: "8"
   extension_type: Role
-  type: Role
+  cardtype: Role
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4716,7 +4716,7 @@ cards_102:
   current_revision_id: "35"
   id: "35"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4741,7 +4741,7 @@ cards_103:
   current_revision_id: "1881"
   id: "99"
   extension_type: HardTemplate
-  type: Search
+  cardtype: Search
   trunk_id: "342"
   settings: 
   updated_by: "1"
@@ -4766,7 +4766,7 @@ cards_340:
   current_revision_id: "5691"
   id: "516"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4791,7 +4791,7 @@ cards_150:
   current_revision_id: "3081"
   id: "293"
   extension_type: 
-  type: Toggle
+  cardtype: Toggle
   trunk_id: "274"
   settings: 
   updated_by: "1"
@@ -4816,7 +4816,7 @@ cards_104:
   current_revision_id: "1409"
   id: "130"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4841,7 +4841,7 @@ cards_341:
   current_revision_id: "5692"
   id: "517"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "515"
   settings: 
   updated_by: "1"
@@ -4866,7 +4866,7 @@ cards_151:
   current_revision_id: "5469"
   id: "259"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4891,7 +4891,7 @@ cards_105:
   current_revision_id: "33"
   id: "33"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4916,7 +4916,7 @@ cards_342:
   current_revision_id: "5693"
   id: "518"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4941,7 +4941,7 @@ cards_152:
   current_revision_id: "5214"
   id: "77"
   extension_type: 
-  type: Phrase
+  cardtype: Phrase
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4966,7 +4966,7 @@ cards_106:
   current_revision_id: "5649"
   id: "474"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -4991,7 +4991,7 @@ cards_390:
   current_revision_id: "5743"
   id: "566"
   extension_type: 
-  type: Pointer
+  cardtype: Pointer
   trunk_id: "565"
   settings: 
   updated_by: "1"
@@ -5016,7 +5016,7 @@ cards_343:
   current_revision_id: "5694"
   id: "519"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "517"
   settings: 
   updated_by: "1"
@@ -5041,7 +5041,7 @@ cards_153:
   current_revision_id: "3083"
   id: "295"
   extension_type: 
-  type: Toggle
+  cardtype: Toggle
   trunk_id: "294"
   settings: 
   updated_by: "1"
@@ -5066,7 +5066,7 @@ cards_107:
   current_revision_id: "1696"
   id: "146"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -5091,7 +5091,7 @@ cards_391:
   current_revision_id: "5744"
   id: "567"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -5116,7 +5116,7 @@ cards_344:
   current_revision_id: "5695"
   id: "520"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -5141,7 +5141,7 @@ cards_154:
   current_revision_id: "3490"
   id: "281"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "284"
   settings: 
   updated_by: "1"
@@ -5166,7 +5166,7 @@ cards_108:
   current_revision_id: "5648"
   id: "473"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -5191,7 +5191,7 @@ cards_392:
   current_revision_id: "5745"
   id: "568"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "565"
   settings: 
   updated_by: "1"
@@ -5216,7 +5216,7 @@ cards_345:
   current_revision_id: "5696"
   id: "521"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "520"
   settings: 
   updated_by: "1"
@@ -5241,7 +5241,7 @@ cards_155:
   current_revision_id: "3133"
   id: "307"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "291"
   settings: 
   updated_by: "1"
@@ -5266,7 +5266,7 @@ cards_109:
   current_revision_id: "5647"
   id: "472"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -5291,7 +5291,7 @@ cards_393:
   current_revision_id: "5746"
   id: "569"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -5316,7 +5316,7 @@ cards_346:
   current_revision_id: "5697"
   id: "522"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -5341,7 +5341,7 @@ cards_156:
   current_revision_id: "3009"
   id: "268"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "241"
   settings: 
   updated_by: "1"
@@ -5366,7 +5366,7 @@ cards_394:
   current_revision_id: "5747"
   id: "570"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -5391,7 +5391,7 @@ cards_347:
   current_revision_id: "5698"
   id: "523"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "521"
   settings: 
   updated_by: "1"
@@ -5416,7 +5416,7 @@ cards_157:
   current_revision_id: "5549"
   id: "301"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "300"
   settings: 
   updated_by: "1"
@@ -5441,7 +5441,7 @@ cards_395:
   current_revision_id: "5748"
   id: "571"
   extension_type: 
-  type: Pointer
+  cardtype: Pointer
   trunk_id: "570"
   settings: 
   updated_by: "1"
@@ -5466,7 +5466,7 @@ cards_348:
   current_revision_id: "5699"
   id: "524"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -5491,7 +5491,7 @@ cards_158:
   current_revision_id: "5421"
   id: "440"
   extension_type: 
-  type: Phrase
+  cardtype: Phrase
   trunk_id: "439"
   settings: 
   updated_by: "1"
@@ -5516,7 +5516,7 @@ cards_396:
   current_revision_id: "5749"
   id: "572"
   extension_type: 
-  type: Optic
+  cardtype: Optic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -5541,7 +5541,7 @@ cards_349:
   current_revision_id: "5700"
   id: "525"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "509"
   settings: 
   updated_by: "1"
@@ -5566,7 +5566,7 @@ cards_159:
   current_revision_id: "5203"
   id: "221"
   extension_type: 
-  type: Search
+  cardtype: Search
   trunk_id: "269"
   settings: 
   updated_by: "1"
@@ -5591,7 +5591,7 @@ cards_397:
   current_revision_id: "5750"
   id: "573"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -5616,7 +5616,7 @@ cards_400:
   current_revision_id: "5753"
   id: "576"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "575"
   settings: 
   updated_by: "1"
@@ -5641,7 +5641,7 @@ cards_210:
   current_revision_id: "5605"
   id: "44"
   extension_type: HardTemplate
-  type: Search
+  cardtype: Search
   trunk_id: "346"
   settings: 
   updated_by: "1"
@@ -5666,7 +5666,7 @@ cards_020:
   current_revision_id: "3610"
   id: "373"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "372"
   settings: 
   updated_by: "1"
@@ -5691,7 +5691,7 @@ cards_398:
   current_revision_id: "5751"
   id: "574"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "572"
   settings: 
   updated_by: "1"
@@ -5716,7 +5716,7 @@ cards_401:
   current_revision_id: "5754"
   id: "577"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -5741,7 +5741,7 @@ cards_211:
   current_revision_id: "4871"
   id: "215"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "18"
   settings: 
   updated_by: "1"
@@ -5766,7 +5766,7 @@ cards_021:
   current_revision_id: "3224"
   id: "335"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "190"
   settings: 
   updated_by: "1"
@@ -5791,7 +5791,7 @@ cards_399:
   current_revision_id: "5752"
   id: "575"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "539"
   settings: 
   updated_by: "1"
@@ -5816,7 +5816,7 @@ cards_402:
   current_revision_id: "5755"
   id: "578"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "577"
   settings: 
   updated_by: "1"
@@ -5841,7 +5841,7 @@ cards_212:
   current_revision_id: "2094"
   id: "181"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "4"
   settings: 
   updated_by: "1"
@@ -5866,7 +5866,7 @@ cards_022:
   current_revision_id: "5621"
   id: "223"
   extension_type: HardTemplate
-  type: Search
+  cardtype: Search
   trunk_id: "329"
   settings: 
   updated_by: "1"
@@ -5891,7 +5891,7 @@ cards_403:
   current_revision_id: "5756"
   id: "579"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "578"
   settings: 
   updated_by: "1"
@@ -5916,7 +5916,7 @@ cards_213:
   current_revision_id: "3213"
   id: "329"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "222"
   settings: 
   updated_by: "1"
@@ -5941,7 +5941,7 @@ cards_023:
   current_revision_id: "5524"
   id: "213"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "47"
   settings: 
   updated_by: "1"
@@ -5966,7 +5966,7 @@ cards_260:
   current_revision_id: "3233"
   id: "342"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "98"
   settings: 
   updated_by: "1"
@@ -5991,7 +5991,7 @@ cards_070:
   current_revision_id: "5489"
   id: "51"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -6016,7 +6016,7 @@ cards_214:
   current_revision_id: "5604"
   id: "42"
   extension_type: HardTemplate
-  type: Search
+  cardtype: Search
   trunk_id: "347"
   settings: 
   updated_by: "1"
@@ -6041,7 +6041,7 @@ cards_024:
   current_revision_id: "3617"
   id: "380"
   extension_type: 
-  type: Phrase
+  cardtype: Phrase
   trunk_id: "379"
   settings: 
   updated_by: "1"
@@ -6066,7 +6066,7 @@ cards_261:
   current_revision_id: "3201"
   id: "321"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "7"
   settings: 
   updated_by: "1"
@@ -6091,7 +6091,7 @@ cards_071:
   current_revision_id: "5333"
   id: "441"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "73"
   settings: 
   updated_by: "1"
@@ -6116,7 +6116,7 @@ cards_215:
   current_revision_id: "5488"
   id: "30"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -6141,7 +6141,7 @@ cards_025:
   current_revision_id: "2336"
   id: "171"
   extension_type: HardTemplate
-  type: Basic
+  cardtype: Basic
   trunk_id: "334"
   settings: 
   updated_by: "1"
@@ -6166,7 +6166,7 @@ cards_262:
   current_revision_id: "2653"
   id: "225"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "7"
   settings: 
   updated_by: "1"
@@ -6191,7 +6191,7 @@ cards_072:
   current_revision_id: "3621"
   id: "384"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -6216,7 +6216,7 @@ cards_216:
   current_revision_id: "4869"
   id: "407"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "22"
   settings: 
   updated_by: "1"
@@ -6241,7 +6241,7 @@ cards_026:
   current_revision_id: "1541"
   id: "1"
   extension_type: User
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -6266,7 +6266,7 @@ cards_263:
   current_revision_id: "5290"
   id: "430"
   extension_type: 
-  type: Search
+  cardtype: Search
   trunk_id: "429"
   settings: 
   updated_by: "1"
@@ -6291,7 +6291,7 @@ cards_073:
   current_revision_id: "3242"
   id: "349"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "35"
   settings: 
   updated_by: "1"
@@ -6316,7 +6316,7 @@ cards_217:
   current_revision_id: "2408"
   id: "202"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "50"
   settings: 
   updated_by: "1"
@@ -6341,7 +6341,7 @@ cards_027:
   current_revision_id: "3172"
   id: "314"
   extension_type: 
-  type: HTML
+  cardtype: HTML
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -6366,7 +6366,7 @@ cards_264:
   current_revision_id: "5481"
   id: "50"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -6391,7 +6391,7 @@ cards_074:
   current_revision_id: "3126"
   id: "305"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "82"
   settings: 
   updated_by: "1"
@@ -6416,7 +6416,7 @@ cards_218:
   current_revision_id: "2430"
   id: "205"
   extension_type: SoftTemplate
-  type: Phrase
+  cardtype: Phrase
   trunk_id: "288"
   settings: 
   updated_by: "1"
@@ -6441,7 +6441,7 @@ cards_028:
   current_revision_id: "5619"
   id: "395"
   extension_type: 
-  type: Search
+  cardtype: Search
   trunk_id: "388"
   settings: 
   updated_by: "1"
@@ -6466,7 +6466,7 @@ cards_265:
   current_revision_id: "3065"
   id: "288"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "61"
   settings: 
   updated_by: "1"
@@ -6491,7 +6491,7 @@ cards_075:
   current_revision_id: "2889"
   id: "247"
   extension_type: 
-  type: Setting
+  cardtype: Setting
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -6516,7 +6516,7 @@ cards_219:
   current_revision_id: "5603"
   id: "38"
   extension_type: HardTemplate
-  type: Search
+  cardtype: Search
   trunk_id: "348"
   settings: 
   updated_by: "1"
@@ -6541,7 +6541,7 @@ cards_029:
   current_revision_id: "5521"
   id: "456"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "455"
   settings: 
   updated_by: "1"
@@ -6566,7 +6566,7 @@ cards_266:
   current_revision_id: "2402"
   id: "200"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -6591,7 +6591,7 @@ cards_076:
   current_revision_id: "1407"
   id: "128"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -6616,7 +6616,7 @@ cards_267:
   current_revision_id: "2089"
   id: "179"
   extension_type: HardTemplate
-  type: Search
+  cardtype: Search
   trunk_id: "341"
   settings: 
   updated_by: "1"
@@ -6641,7 +6641,7 @@ cards_077:
   current_revision_id: "5322"
   id: "198"
   extension_type: 
-  type: HTML
+  cardtype: HTML
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -6666,7 +6666,7 @@ cards_268:
   current_revision_id: "3485"
   id: "357"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "356"
   settings: 
   updated_by: "1"
@@ -6691,7 +6691,7 @@ cards_078:
   current_revision_id: "3618"
   id: "381"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -6716,7 +6716,7 @@ cards_269:
   current_revision_id: "5253"
   id: "432"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "431"
   settings: 
   updated_by: "1"
@@ -6741,7 +6741,7 @@ cards_079:
   current_revision_id: "3241"
   id: "348"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "37"
   settings: 
   updated_by: "1"
@@ -6766,7 +6766,7 @@ cards_320:
   current_revision_id: "5671"
   id: "496"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -6791,7 +6791,7 @@ cards_130:
   current_revision_id: "3263"
   id: "308"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "307"
   settings: 
   updated_by: "1"
@@ -6816,7 +6816,7 @@ cards_321:
   current_revision_id: "5672"
   id: "497"
   extension_type: 
-  type: Toggle
+  cardtype: Toggle
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -6841,7 +6841,7 @@ cards_131:
   current_revision_id: "3004"
   id: "263"
   extension_type: HardTemplate
-  type: Set
+  cardtype: Set
   trunk_id: "325"
   settings: 
   updated_by: "1"
@@ -6866,7 +6866,7 @@ cards_322:
   current_revision_id: "5673"
   id: "498"
   extension_type: User
-  type: User
+  cardtype: User
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -6891,7 +6891,7 @@ cards_132:
   current_revision_id: "5641"
   id: "466"
   extension_type: 
-  type: Search
+  cardtype: Search
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -6916,7 +6916,7 @@ cards_323:
   current_revision_id: "5674"
   id: "499"
   extension_type: User
-  type: User
+  cardtype: User
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -6941,7 +6941,7 @@ cards_133:
   current_revision_id: "5566"
   id: "63"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -6966,7 +6966,7 @@ cards_370:
   current_revision_id: "5722"
   id: "547"
   extension_type: 
-  type: CardtypeF
+  cardtype: CardtypeF
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -6991,7 +6991,7 @@ cards_180:
   current_revision_id: "1410"
   id: "131"
   extension_type: SoftTemplate
-  type: Basic
+  cardtype: Basic
   trunk_id: "354"
   settings: 
   updated_by: "1"
@@ -7016,7 +7016,7 @@ cards_324:
   current_revision_id: "5675"
   id: "500"
   extension_type: User
-  type: User
+  cardtype: User
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7041,7 +7041,7 @@ cards_134:
   current_revision_id: "5472"
   id: "3"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7066,7 +7066,7 @@ cards_371:
   current_revision_id: "5725"
   id: "548"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7091,7 +7091,7 @@ cards_181:
   current_revision_id: "43"
   id: "43"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7116,7 +7116,7 @@ cards_325:
   current_revision_id: "5676"
   id: "501"
   extension_type: Role
-  type: Role
+  cardtype: Role
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7141,7 +7141,7 @@ cards_135:
   current_revision_id: "3811"
   id: "399"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "398"
   settings: 
   updated_by: "1"
@@ -7166,7 +7166,7 @@ cards_372:
   current_revision_id: "5726"
   id: "549"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7191,7 +7191,7 @@ cards_182:
   current_revision_id: "5403"
   id: "439"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "438"
   settings: 
   updated_by: "1"
@@ -7216,7 +7216,7 @@ cards_326:
   current_revision_id: "5677"
   id: "502"
   extension_type: Role
-  type: Role
+  cardtype: Role
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7241,7 +7241,7 @@ cards_136:
   current_revision_id: "3264"
   id: "311"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "310"
   settings: 
   updated_by: "1"
@@ -7266,7 +7266,7 @@ cards_373:
   current_revision_id: "5727"
   id: "550"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "549"
   settings: 
   updated_by: "1"
@@ -7291,7 +7291,7 @@ cards_183:
   current_revision_id: "5199"
   id: "419"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7316,7 +7316,7 @@ cards_327:
   current_revision_id: "5678"
   id: "503"
   extension_type: Role
-  type: Role
+  cardtype: Role
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7341,7 +7341,7 @@ cards_137:
   current_revision_id: "3207"
   id: "325"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "262"
   settings: 
   updated_by: "1"
@@ -7366,7 +7366,7 @@ cards_374:
   current_revision_id: "5728"
   id: "551"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "550"
   settings: 
   updated_by: "1"
@@ -7391,7 +7391,7 @@ cards_184:
   current_revision_id: "3250"
   id: "354"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "130"
   settings: 
   updated_by: "1"
@@ -7416,7 +7416,7 @@ cards_328:
   current_revision_id: "5679"
   id: "504"
   extension_type: Role
-  type: Role
+  cardtype: Role
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7441,7 +7441,7 @@ cards_138:
   current_revision_id: "5557"
   id: "56"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7466,7 +7466,7 @@ cards_375:
   current_revision_id: "5729"
   id: "552"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "3"
@@ -7491,7 +7491,7 @@ cards_185:
   current_revision_id: "3005"
   id: "264"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7516,7 +7516,7 @@ cards_329:
   current_revision_id: "5680"
   id: "505"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7541,7 +7541,7 @@ cards_139:
   current_revision_id: "5471"
   id: "12"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7566,7 +7566,7 @@ cards_376:
   current_revision_id: "5730"
   id: "553"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "3"
@@ -7591,7 +7591,7 @@ cards_186:
   current_revision_id: "41"
   id: "41"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7616,7 +7616,7 @@ cards_377:
   current_revision_id: "5731"
   id: "554"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7641,7 +7641,7 @@ cards_187:
   current_revision_id: "5404"
   id: "438"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7666,7 +7666,7 @@ cards_378:
   current_revision_id: "5711"
   id: "536"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7691,7 +7691,7 @@ cards_188:
   current_revision_id: "5196"
   id: "182"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "30"
   settings: 
   updated_by: "1"
@@ -7716,7 +7716,7 @@ cards_001:
   current_revision_id: "3260"
   id: "358"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "317"
   settings: 
   updated_by: "1"
@@ -7741,7 +7741,7 @@ cards_379:
   current_revision_id: "5732"
   id: "555"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7766,7 +7766,7 @@ cards_189:
   current_revision_id: "3101"
   id: "300"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "86"
   settings: 
   updated_by: "1"
@@ -7791,7 +7791,7 @@ cards_002:
   current_revision_id: "3007"
   id: "266"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7816,7 +7816,7 @@ cards_240:
   current_revision_id: "3868"
   id: "400"
   extension_type: 
-  type: Phrase
+  cardtype: Phrase
   trunk_id: "399"
   settings: 
   updated_by: "1"
@@ -7841,7 +7841,7 @@ cards_050:
   current_revision_id: "5510"
   id: "452"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "12"
   settings: 
   updated_by: "1"
@@ -7866,7 +7866,7 @@ cards_003:
   current_revision_id: "3628"
   id: "390"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "384"
   settings: 
   updated_by: "1"
@@ -7891,7 +7891,7 @@ cards_241:
   current_revision_id: "5296"
   id: "435"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7916,7 +7916,7 @@ cards_051:
   current_revision_id: "5393"
   id: "446"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "445"
   settings: 
   updated_by: "1"
@@ -7941,7 +7941,7 @@ cards_004:
   current_revision_id: "3177"
   id: "315"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "81"
   settings: 
   updated_by: "1"
@@ -7966,7 +7966,7 @@ cards_242:
   current_revision_id: "5484"
   id: "52"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -7991,7 +7991,7 @@ cards_052:
   current_revision_id: "3629"
   id: "391"
   extension_type: 
-  type: Phrase
+  cardtype: Phrase
   trunk_id: "390"
   settings: 
   updated_by: "1"
@@ -8016,7 +8016,7 @@ cards_005:
   current_revision_id: "5611"
   id: "447"
   extension_type: 
-  type: Search
+  cardtype: Search
   trunk_id: "446"
   settings: 
   updated_by: "1"
@@ -8041,7 +8041,7 @@ cards_243:
   current_revision_id: "5597"
   id: "119"
   extension_type: HardTemplate
-  type: Basic
+  cardtype: Basic
   trunk_id: "330"
   settings: 
   updated_by: "1"
@@ -8066,7 +8066,7 @@ cards_053:
   current_revision_id: "3001"
   id: "260"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8091,7 +8091,7 @@ cards_006:
   current_revision_id: "3248"
   id: "353"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "96"
   settings: 
   updated_by: "1"
@@ -8116,7 +8116,7 @@ cards_290:
   current_revision_id: "2013"
   id: "172"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8141,7 +8141,7 @@ cards_244:
   current_revision_id: "2474"
   id: "62"
   extension_type: 
-  type: Phrase
+  cardtype: Phrase
   trunk_id: "56"
   settings: 
   updated_by: "1"
@@ -8166,7 +8166,7 @@ cards_054:
   current_revision_id: "2609"
   id: "220"
   extension_type: SoftTemplate
-  type: Pointer
+  cardtype: Pointer
   trunk_id: "269"
   settings: 
   updated_by: "1"
@@ -8191,7 +8191,7 @@ cards_007:
   current_revision_id: "266"
   id: "86"
   extension_type: 
-  type: Setting
+  cardtype: Setting
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8216,7 +8216,7 @@ cards_291:
   current_revision_id: "2022"
   id: "173"
   extension_type: HardTemplate
-  type: Search
+  cardtype: Search
   trunk_id: "338"
   settings: 
   updated_by: "1"
@@ -8241,7 +8241,7 @@ cards_245:
   current_revision_id: "3123"
   id: "302"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "256"
   settings: 
   updated_by: "1"
@@ -8266,7 +8266,7 @@ cards_055:
   current_revision_id: "3019"
   id: "255"
   extension_type: 
-  type: Setting
+  cardtype: Setting
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8291,7 +8291,7 @@ cards_008:
   current_revision_id: "3478"
   id: "363"
   extension_type: 
-  type: Setting
+  cardtype: Setting
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8316,7 +8316,7 @@ cards_292:
   current_revision_id: "5245"
   id: "425"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8341,7 +8341,7 @@ cards_246:
   current_revision_id: "3198"
   id: "319"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "50"
   settings: 
   updated_by: "1"
@@ -8366,7 +8366,7 @@ cards_056:
   current_revision_id: "5497"
   id: "87"
   extension_type: 
-  type: Pointer
+  cardtype: Pointer
   trunk_id: "300"
   settings: 
   updated_by: "1"
@@ -8391,7 +8391,7 @@ cards_009:
   current_revision_id: "5640"
   id: "465"
   extension_type: 
-  type: Search
+  cardtype: Search
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8416,7 +8416,7 @@ cards_293:
   current_revision_id: "1993"
   id: "170"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8441,7 +8441,7 @@ cards_247:
   current_revision_id: "2576"
   id: "214"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "19"
   settings: 
   updated_by: "1"
@@ -8466,7 +8466,7 @@ cards_057:
   current_revision_id: "5392"
   id: "445"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8491,7 +8491,7 @@ cards_294:
   current_revision_id: "3228"
   id: "338"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "172"
   settings: 
   updated_by: "1"
@@ -8516,7 +8516,7 @@ cards_248:
   current_revision_id: "5292"
   id: "433"
   extension_type: 
-  type: Search
+  cardtype: Search
   trunk_id: "432"
   settings: 
   updated_by: "1"
@@ -8541,7 +8541,7 @@ cards_058:
   current_revision_id: "3626"
   id: "389"
   extension_type: 
-  type: Pointer
+  cardtype: Pointer
   trunk_id: "388"
   settings: 
   updated_by: "1"
@@ -8566,7 +8566,7 @@ cards_295:
   current_revision_id: "1988"
   id: "168"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8591,7 +8591,7 @@ cards_249:
   current_revision_id: "5483"
   id: "20"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8616,7 +8616,7 @@ cards_059:
   current_revision_id: "66"
   id: "64"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8641,7 +8641,7 @@ cards_296:
   current_revision_id: "2210"
   id: "111"
   extension_type: HardTemplate
-  type: Basic
+  cardtype: Basic
   trunk_id: "337"
   settings: 
   updated_by: "1"
@@ -8666,7 +8666,7 @@ cards_297:
   current_revision_id: "355"
   id: "98"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8691,7 +8691,7 @@ cards_300:
   current_revision_id: "5651"
   id: "476"
   extension_type: User
-  type: User
+  cardtype: User
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8716,7 +8716,7 @@ cards_110:
   current_revision_id: "3197"
   id: "318"
   extension_type: 
-  type: Setting
+  cardtype: Setting
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8741,7 +8741,7 @@ cards_298:
   current_revision_id: "3226"
   id: "337"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "110"
   settings: 
   updated_by: "1"
@@ -8766,7 +8766,7 @@ cards_301:
   current_revision_id: "5652"
   id: "477"
   extension_type: User
-  type: User
+  cardtype: User
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8791,7 +8791,7 @@ cards_111:
   current_revision_id: "5646"
   id: "471"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8816,7 +8816,7 @@ cards_299:
   current_revision_id: "5650"
   id: "475"
   extension_type: User
-  type: User
+  cardtype: User
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8841,7 +8841,7 @@ cards_302:
   current_revision_id: "5653"
   id: "478"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8866,7 +8866,7 @@ cards_112:
   current_revision_id: "486"
   id: "101"
   extension_type: 
-  type: Search
+  cardtype: Search
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8891,7 +8891,7 @@ cards_350:
   current_revision_id: "5701"
   id: "526"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8916,7 +8916,7 @@ cards_160:
   current_revision_id: "3494"
   id: "90"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "285"
   settings: 
   updated_by: "1"
@@ -8941,7 +8941,7 @@ cards_303:
   current_revision_id: "5654"
   id: "479"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8966,7 +8966,7 @@ cards_113:
   current_revision_id: "3196"
   id: "317"
   extension_type: 
-  type: Setting
+  cardtype: Setting
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -8991,7 +8991,7 @@ cards_351:
   current_revision_id: "5702"
   id: "527"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "509"
   settings: 
   updated_by: "1"
@@ -9016,7 +9016,7 @@ cards_161:
   current_revision_id: "3253"
   id: "356"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "318"
   settings: 
   updated_by: "1"
@@ -9041,7 +9041,7 @@ cards_304:
   current_revision_id: "5655"
   id: "480"
   extension_type: User
-  type: InvitationRequest
+  cardtype: InvitationRequest
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -9066,7 +9066,7 @@ cards_114:
   current_revision_id: "5645"
   id: "470"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -9091,7 +9091,7 @@ cards_352:
   current_revision_id: "5703"
   id: "528"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -9116,7 +9116,7 @@ cards_162:
   current_revision_id: "3203"
   id: "322"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "321"
   settings: 
   updated_by: "1"
@@ -9141,7 +9141,7 @@ cards_305:
   current_revision_id: "5656"
   id: "481"
   extension_type: 
-  type: User
+  cardtype: User
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -9166,7 +9166,7 @@ cards_115:
   current_revision_id: "5581"
   id: "458"
   extension_type: 
-  type: Number
+  cardtype: Number
   trunk_id: "330"
   settings: 
   updated_by: "1"
@@ -9191,7 +9191,7 @@ cards_353:
   current_revision_id: "5704"
   id: "529"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "509"
   settings: 
   updated_by: "1"
@@ -9216,7 +9216,7 @@ cards_163:
   current_revision_id: "3010"
   id: "269"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "219"
   settings: 
   updated_by: "1"
@@ -9241,7 +9241,7 @@ cards_306:
   current_revision_id: "5657"
   id: "482"
   extension_type: User
-  type: User
+  cardtype: User
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -9266,7 +9266,7 @@ cards_116:
   current_revision_id: "3871"
   id: "279"
   extension_type: 
-  type: Number
+  cardtype: Number
   trunk_id: "274"
   settings: 
   updated_by: "1"
@@ -9291,7 +9291,7 @@ cards_354:
   current_revision_id: "5705"
   id: "530"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "524"
   settings: 
   updated_by: "1"
@@ -9316,7 +9316,7 @@ cards_164:
   current_revision_id: "5539"
   id: "454"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "366"
   settings: 
   updated_by: "1"
@@ -9341,7 +9341,7 @@ cards_307:
   current_revision_id: "5658"
   id: "483"
   extension_type: 
-  type: InvitationRequest
+  cardtype: InvitationRequest
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -9366,7 +9366,7 @@ cards_117:
   current_revision_id: "5644"
   id: "469"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -9391,7 +9391,7 @@ cards_355:
   current_revision_id: "5706"
   id: "531"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "526"
   settings: 
   updated_by: "1"
@@ -9416,7 +9416,7 @@ cards_165:
   current_revision_id: "5201"
   id: "421"
   extension_type: 
-  type: Search
+  cardtype: Search
   trunk_id: "420"
   settings: 
   updated_by: "1"
@@ -9441,7 +9441,7 @@ cards_308:
   current_revision_id: "5659"
   id: "484"
   extension_type: 
-  type: Pointer
+  cardtype: Pointer
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -9466,7 +9466,7 @@ cards_118:
   current_revision_id: "5578"
   id: "73"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -9491,7 +9491,7 @@ cards_356:
   current_revision_id: "5707"
   id: "532"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -9516,7 +9516,7 @@ cards_166:
   current_revision_id: "3495"
   id: "250"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "288"
   settings: 
   updated_by: "1"
@@ -9541,7 +9541,7 @@ cards_119:
   current_revision_id: "3810"
   id: "398"
   extension_type: 
-  type: Phrase
+  cardtype: Phrase
   trunk_id: "5"
   settings: 
   updated_by: "1"
@@ -9566,7 +9566,7 @@ cards_357:
   current_revision_id: "5708"
   id: "533"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "532"
   settings: 
   updated_by: "1"
@@ -9591,7 +9591,7 @@ cards_167:
   current_revision_id: "1408"
   id: "129"
   extension_type: SoftTemplate
-  type: Pointer
+  cardtype: Pointer
   trunk_id: "355"
   settings: 
   updated_by: "1"
@@ -9616,7 +9616,7 @@ cards_309:
   current_revision_id: "5660"
   id: "485"
   extension_type: 
-  type: Setting
+  cardtype: Setting
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -9641,7 +9641,7 @@ cards_358:
   current_revision_id: "5709"
   id: "534"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "514"
   settings: 
   updated_by: "1"
@@ -9666,7 +9666,7 @@ cards_168:
   current_revision_id: "2403"
   id: "201"
   extension_type: SoftTemplate
-  type: Basic
+  cardtype: Basic
   trunk_id: "319"
   settings: 
   updated_by: "1"
@@ -9691,7 +9691,7 @@ cards_359:
   current_revision_id: "5710"
   id: "535"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -9716,7 +9716,7 @@ cards_169:
   current_revision_id: "3031"
   id: "109"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -9741,7 +9741,7 @@ cards_220:
   current_revision_id: "5487"
   id: "7"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -9766,7 +9766,7 @@ cards_030:
   current_revision_id: "3614"
   id: "377"
   extension_type: 
-  type: Phrase
+  cardtype: Phrase
   trunk_id: "376"
   settings: 
   updated_by: "1"
@@ -9791,7 +9791,7 @@ cards_221:
   current_revision_id: "4846"
   id: "409"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "17"
   settings: 
   updated_by: "1"
@@ -9816,7 +9816,7 @@ cards_031:
   current_revision_id: "3223"
   id: "334"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "170"
   settings: 
   updated_by: "1"
@@ -9841,7 +9841,7 @@ cards_222:
   current_revision_id: "2516"
   id: "147"
   extension_type: 
-  type: Basic
+  cardtype: Basic
   trunk_id: "10"
   settings: 
   updated_by: "1"
@@ -9866,7 +9866,7 @@ cards_032:
   current_revision_id: "3178"
   id: "316"
   extension_type: 
-  type: Search
+  cardtype: Search
   trunk_id: "284"
   settings: 
   updated_by: "1"
@@ -9891,7 +9891,7 @@ cards_270:
   current_revision_id: "5480"
   id: "18"
   extension_type: Cardtype
-  type: Cardtype
+  cardtype: Cardtype
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -9916,7 +9916,7 @@ cards_080:
   current_revision_id: "62"
   id: "61"
   extension_type: 
-  type: Setting
+  cardtype: Setting
   trunk_id: 
   settings: 
   updated_by: "1"
@@ -9941,7 +9941,7 @@ cards_223:
   current_revision_id: "2901"
   id: "253"
   extension_type: SoftTemplate
-  type: Phrase
+  cardtype: Phrase
   trunk_id: "286"
   settings: 
   updated_by: "1"
@@ -9966,7 +9966,7 @@ cards_033:
   current_revision_id: "5613"
   id: "97"
   extension_type: HardTemplate
-  type: Search
+  cardtype: Search
   trunk_id: "353"
   settings: 
   updated_by: "1"
@@ -9991,7 +9991,7 @@ cards_271:
   current_revision_id: "3063"
   id: "286"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "252"
   settings: 
   updated_by: "1"
@@ -10016,7 +10016,7 @@ cards_081:
   current_revision_id: "3022"
   id: "277"
   extension_type: 
-  type: Phrase
+  cardtype: Phrase
   trunk_id: "274"
   settings: 
   updated_by: "1"
@@ -10041,7 +10041,7 @@ cards_224:
   current_revision_id: "3033"
   id: "91"
   extension_type: 
-  type: Number
+  cardtype: Number
   trunk_id: "285"
   settings: 
   updated_by: "1"
@@ -10066,7 +10066,7 @@ cards_034:
   current_revision_id: "5520"
   id: "455"
   extension_type: 
-  type: Set
+  cardtype: Set
   trunk_id: "259"
   settings: 
   updated_by: "1"

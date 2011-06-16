@@ -21,7 +21,7 @@ describe GoogleMapsAddon do
       GoogleMapsAddon.should_receive(:geocode).with("519 Peterson St 80524").and_return('40.581144, -105.071947')
       Card.create! :name=>"Ethan's House+street address", :content => "519 Peterson St 80524"
       Card["Ethan's House+*geocode"].should_not be_nil 
-      Card["Ethan's House+*geocode"].type.should == 'Phrase'
+      Card["Ethan's House+*geocode"].cardtype.should == 'Phrase'
       Card["Ethan's House+*geocode"].content.should == '40.581144, -105.071947'
     end
   end

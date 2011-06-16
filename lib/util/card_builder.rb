@@ -41,8 +41,8 @@ Rails.logger.info "newcard(#{name}, #{content})"
       )
 
       if c = Card.find_by_name(username)
-        if c.type=='Basic'
-          c.type='User'
+        if c.cardtype=='Basic'
+          c.cardtype='User'
         else
           raise "Can't create user card for #{username}: already points to different user"
         end

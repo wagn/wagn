@@ -1,6 +1,8 @@
 module Card::Role
   include Card::Basic
-  before_create :create_extension
+  def self.append_features(base)
+    base.send :before_create, :create_extension
+  end
   
   def create_extension
     self.extension = ::Role.create( :codename => name )

@@ -7,10 +7,9 @@ source 'http://rubygems.org'
 
 # must have all of these
 
-gem 'rails', '2.3.11'
+gem 'rails', '~>2.3.9'
 gem 'rack', '>=1.1.0'
 gem 'rake', '>=0.8.7'
-gem 'rdoc'
 
 gem 'htmlentities', '~>4.2.1'
 gem 'macaddr', '~>1.0.0'

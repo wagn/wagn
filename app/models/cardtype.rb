@@ -1,4 +1,5 @@
 class Cardtype < ActiveRecord::Base
+  self.extend Wagn::Card::ActsAsCardExtension 
   acts_as_card_extension  
   cattr_reader :cache
   #  before_filter :load_cache_if_empty, :only=>[:name_for, :class_name_for, :create_party_for, :createable_cardtypes, :create_ok? ]
@@ -21,7 +22,7 @@ class Cardtype < ActiveRecord::Base
       Card.connection.select_all(%{
         select distinct ct.class_name, c.name, c.key, p.party_type, p.party_id 
         from cardtypes ct 
-        join cards c on c.extension_id=ct.id and c.type='Cardtype'    
+        join cards c on c.extension_id=ct.id and c.cardtype='Cardtype'    
         join permissions p on p.card_id=c.id and p.task='create' 
       }).each do |rec|
         @@cache[:card_keys][rec['key']] = rec['name']

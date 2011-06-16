@@ -26,7 +26,7 @@ class CardController < ApplicationController
   end
 
   def mine
-    redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(User.current_user.card.name)
+    redirect_to :controller=>'card',:action=>'show', :id=>Wagn::Cardname.escape(User.current_user.card.name)
   end
 
   #---------( VIEWING CARDS )
@@ -34,7 +34,7 @@ class CardController < ApplicationController
   def show
     params[:_keyword] && params[:_keyword].gsub!('_',' ') ## this will be unnecessary soon.
 
-    @card_name = Cardname.unescape(params['id'] || '')
+    @card_name = Wagn::Cardname.unescape(params['id'] || '')
     @card_name = System.site_title if (@card_name.nil? or @card_name.empty?)
     @card =   Card.fetch_or_new(@card_name)
 
@@ -168,7 +168,7 @@ class CardController < ApplicationController
 
     case
     when params[:multi_edit]; @card.multi_update(params[:cards])
-    when card_args[:type]; @card.type=Cardtype.classname_for(card_args.delete(:type)); @card.save
+    when card_args[:type]; @card.cardtype=Cardtype.classname_for(card_args.delete(:type)); @card.save
       #can't do this via update attributes: " Can't mass-assign these protected attributes: type"
       #might be addressable via attr_accessors?
     else;   @card.update_attributes(card_args)

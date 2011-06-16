@@ -1,8 +1,9 @@
-module Cardname   
+module Wagn::Cardname   
   CARD_KEYS = {}
   require 'htmlentities'
 
   JOINT = '+'
+#JOINT=Cardname::JOINT
   CARDNAME_BANNED_CHARACTERS = [ JOINT, '/', '~', '|']
 
   FORMAL_JOINT = " <span class=\"wiki-joint\">#{JOINT}</span> "   
@@ -130,11 +131,12 @@ module Cardname
       new_part.empty? ? context_name : new_part
     end.join(JOINT)
   end
+  def append_features(base)
+    String.include Wagn::Cardname::ClassMethods
+  end
 end    
                
 # pollute the main namespace because we use it sooo much
-JOINT=Cardname::JOINT
 
 class String
-  include Cardname
 end

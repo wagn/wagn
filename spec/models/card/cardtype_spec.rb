@@ -40,17 +40,17 @@ describe "Card::Cardtype" do
   describe "conversion to cardtype" do
     before do
       @card = Card.create!(:name=>'Cookie')
-      @card.type.should == 'Basic'      
+      @card.cardtype.should == 'Basic'      
     end
     
     it "creates cardtype model and permission" do
-      @card.type = 'Cardtype'
+      @card.cardtype = 'Cardtype'
       @card.save!    
       Cardtype.name_for('Cookie').should == 'Cookie'
       @card=Card['Cookie']
       assert_instance_of Cardtype, @card.extension
       Permission.find_by_card_id_and_task(@card.id, 'create').should_not be_nil
-      assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).type
+      assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).cardtype
     end
   end
   
@@ -114,7 +114,7 @@ describe Card, "Card changed to become a Cardtype" do
   before do
     User.as :wagbot 
     @a = Card['A']
-    @a.type = 'Cardtype'
+    @a.cardtype = 'Cardtype'
     @a.save!
   end
   it "should have a create permission set" do
@@ -131,11 +131,11 @@ describe Card, "Normal card with junctions" do
     @a.junctions.length.should > 0
   end
   it "should successfull have its type changed" do
-    @a.type = 'Number'; @a.save!
-    Card['A'].type.should== 'Number'
+    @a.cardtype = 'Number'; @a.save!
+    Card['A'].cardtype.should== 'Number'
   end
   it "should still have its junctions after changing type" do
-    @a.type = 'CardtypeE'; @a.save!
+    @a.cardtype = 'CardtypeE'; @a.save!
     Card['A'].junctions.length.should > 0
   end
 end
@@ -174,12 +174,12 @@ describe Card, "Wannabe Cardtype Card" do
   before do
     User.as :wagbot 
     @card = Card.create! :name=> 'convertible'
-    @card.type='Cardtype'
+    @card.cardtype='Cardtype'
     @card.save!
     
   end
   it "should successfully change its type to a Cardtype" do
-    Card['convertible'].type.should=='Cardtype'
+    Card['convertible'].cardtype.should=='Cardtype'
   end
   it "should have an extension" do
     Card['convertible'].extension.should_not== nil
@@ -240,10 +240,10 @@ describe Card::Cardtype do
   
   it "should handle changing away from Cardtype" do
     ctg = Card.create! :name=>"CardtypeG", :type=>"Cardtype"
-    ctg.type = 'Basic'
+    ctg.cardtype = 'Basic'
     ctg.save!
     ctg = Card["CardtypeG"]
-    ctg.type.should == 'Basic'
+    ctg.cardtype.should == 'Basic'
     ctg.extension.should == nil
   end
 end

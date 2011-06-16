@@ -29,13 +29,13 @@ module Wagn
       def generate_cache_key card
         name = card.name
         left = (name && name.junction?) ? (card.loaded_trunk || card.left) : nil
-        left_key = left ? left.type : ''
-        cache_key = "#{name}-#{card.type}-#{left_key}-#{card.new_card?}"
+        left_key = left ? left.cardtype : ''
+        cache_key = "#{name}-#{card.cardtype}-#{left_key}-#{card.new_card?}"
       end
 
       def set_names card
         cache_key = "SETNAMES-#{generate_cache_key card}"
-        Card.cache.read(cache_key) or Card.cache.write(cache_key, generate_set_names(card))
+        ::Card.cache.read(cache_key) or ::Card.cache.write(cache_key, generate_set_names(card))
       end
 
       def generate_set_names card
@@ -48,7 +48,7 @@ raise "no card" unless card
 
       def method_keys card
         cache_key = "METHODKEYS-#{generate_cache_key card}"
-        Card.cache.read(cache_key) or Card.cache.write(cache_key, generate_method_keys(card))
+        ::Card.cache.read(cache_key) or ::Card.cache.write(cache_key, generate_method_keys(card))
       end
 
       def generate_method_keys card

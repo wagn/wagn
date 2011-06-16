@@ -1,3 +1,3 @@
 module Card::Set
-  include Card::Search
+  Card.send :include, Card::Search
 end

@@ -65,7 +65,7 @@ class XmlrestControllerTest < ActionController::TestCase
 #    #assert_equal "boo", assigns['card'].content
 #    assert_equal "<br/>", assigns['card'].content
 #    assert_response :success, "changed card type"
-#    assert_equal "CardtypeA", Card['Sample Basic'].type
+#    assert_equal "CardtypeA", Card['Sample Basic'].cardtype
 #  end
 #
 #  def test_update_cardtype_with_stripping
@@ -74,7 +74,7 @@ class XmlrestControllerTest < ActionController::TestCase
 #    #assert_equal "boo", assigns['card'].content
 #    assert_response :success, "changed card type"
 #    assert_equal "", assigns['card'].content
-#    assert_equal "Date", Card['Sample Basic'].type
+#    assert_equal "Date", Card['Sample Basic'].cardtype
 #  end
 
 
@@ -133,13 +133,13 @@ class XmlrestControllerTest < ActionController::TestCase
   def test_new_without_cardtype
     post :post
     assert_response :success, "response should succeed"
-    assert_equal 'Basic', assigns['card'].type, "@card type should == Basic"
+    assert_equal 'Basic', assigns['card'].cardtype, "@card type should == Basic"
   end
 
   def test_new_with_cardtype
     post :post, :card => {:type=>'Date'}
     assert_response :success, "response should succeed"
-    assert_equal 'Date', assigns['card'].type, "@card type should == Date"
+    assert_equal 'Date', assigns['card'].cardtype, "@card type should == Date"
   end
 
   def test_create

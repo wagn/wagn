@@ -46,12 +46,8 @@ module Wagn
         }
         @@rails_config = rails_config
         set_default_config Config.new(rails_config)
-      end
 
-      def run
-        ActionController::Dispatcher.prepare_dispatch do
-          Wagn::Initializer.load
-        end
+        Initializer.load
       end
 
       def pre_schema?
@@ -64,18 +60,22 @@ module Wagn
         end
       end
 
+      require 'action_controller'
+
       def load
+        ::ActionController::Dispatcher.to_prepare do
         load_config
-        load_cardlib
+        #load_cardlib # now loads with card
         setup_multihost
         load_cardtypes
         return if pre_schema?
         load_cardtype_cache
         load_modules
-#        register_mimetypes
+#       register_mimetypes
         Wagn::Cache.initialize_on_startup
         #create_builtins
         ActiveRecord::Base.logger.info("\n----------- Wagn Initialization Complete -----------\n\n")
+        end
       end
 
       def load_config
@@ -83,6 +83,7 @@ module Wagn
         # FIXME: this has to be here because System is both a config store and a model-- which means
         # in development mode it gets reloaded so we lose the config settings.  The whole config situation
         # needs an overhaul
+        STDERR << "Load config ...\n"
         if File.exists? "#{RAILS_ROOT}/config/sample_wagn.rb"
           require_dependency "#{RAILS_ROOT}/config/sample_wagn.rb"
         end
@@ -94,35 +95,37 @@ module Wagn
         System.base_url.gsub!(/\/$/,'')
       end
 
+=begin
       def load_cardlib
-        require_dependency 'card'
-        #Cardname
+        equire_dependency 'card'
+        Cardname
 
-        #Wagn.send :include, Wagn::Exceptions
-        #Card.send :include, Wagn::Cardlib::Exceptions
+        Wagn.send :include, Wagn::Exceptions
+        Card.send :include, Wagn::Cardlib::Exceptions
 
-        #ActiveRecord::Base.class_eval do
-        #  include Wagn::Cardlib::ActsAsCardExtension
-        #  include Wagn::Cardlib::AttributeTracking
-        #end
+        ActiveRecord::Base.class_eval do
+          include Wagn::Cardlib::ActsAsCardExtension
+          include Wagn::Cardlib::AttributeTracking
+        end
 
-        #Cardlib::ModuleMethods #load
+        Cardlib::ModuleMethods #load
 
-        #Card.class_eval do
-        #Card.class_eval do
-        #  include Cardlib::TrackedAttributes
-        #  include Cardlib::Templating
-        #  include Cardlib::Defaults
-        #  include Cardlib::Permissions
-        #  include Cardlib::Search
-        #  include Cardlib::References
-        #  include Cardlib::Cacheable
-        #  include Cardlib::Settings
-        #  include Cardlib::Settings::ClassMethods
-        #  extend Cardlib::CardAttachment::ActMethods
-        #end
+        Card.class_eval do
+        Card.class_eval do
+          include Cardlib::TrackedAttributes
+          include Cardlib::Templating
+          include Cardlib::Defaults
+          include Cardlib::Permissions
+          include Cardlib::Search
+          include Cardlib::References
+          include Cardlib::Cacheable
+          include Cardlib::Settings
+          include Cardlib::Settings::ClassMethods
+          extend Cardlib::CardAttachment::ActMethods
+        end
         Cardlib::Fetch # trigger autoload
       end
+=end
 
       def setup_multihost
         # set schema for multihost wagns   (make sure this is AFTER loading wagn.rb duh)
@@ -133,7 +136,7 @@ module Wagn
             System.wagn_name = mapping.wagn_name
           end
           ActiveRecord::Base.connection.schema_search_path = ENV['WAGN']
-          #Card.cache.system_prefix = Wagn::Cache.system_prefix
+          ::Card.cache.system_prefix = Wagn::Cache.system_prefix
         end
       end
 

@@ -1,6 +1,7 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-module Card  
+class Card  
+=begin
   class CardtypeA < Basic  
     def approve_delete 
       deny_because("not allowed to delete card a")
@@ -38,6 +39,7 @@ module Card
     before_create :increment_count
     def increment_count() self.class.count += 1; end
   end
+=end
 
 end   
 
@@ -56,7 +58,7 @@ describe Card, "with role" do
   it "should lose role extension upon changing type" do
     # this test fails on a permission error in Mysql
     pending
-    @role.type = 'Basic'
+    @role.cardtype = 'Basic'
     @role.save
     @role.extension.should == nil
   end
@@ -75,7 +77,7 @@ describe Card, "with account" do
   end
 
   it "should allow type changes" do
-    @joe.type.should == 'Basic'
+    @joe.cardtype.should == 'Basic'
   end
 
 
@@ -93,7 +95,7 @@ describe Card, "type transition approve create" do
 
   it "should be the original type" do
     lambda { change_card_to_type("basicname", "CardtypeB") }
-    Card.find_by_name("basicname").type.should == 'Basic'
+    Card.find_by_name("basicname").cardtype.should == 'Basic'
   end
 end
 
@@ -107,7 +109,7 @@ describe Card, "clone to type"  do
   end  
   
   it "should have the new type" do
-    @b.type.should == 'CardtypeA'
+    @b.cardtype.should == 'CardtypeA'
     @b.class.should == Card::CardtypeA
   end
   
@@ -127,7 +129,7 @@ describe Card, "type transition approve destroy" do
               
   it "should still be the original type" do
     lambda { change_card_to_type("type-a-card", "Basic") }
-    Card.find_by_name("type-a-card").type.should == 'CardtypeA'
+    Card.find_by_name("type-a-card").cardtype.should == 'CardtypeA'
   end
 end
 
@@ -139,7 +141,7 @@ describe Card, "type transition validate_destroy" do
   end
   
   it "should retain original type" do
-    Card.find_by_name("type_c_card").type.should == 'CardtypeC'
+    Card.find_by_name("type_c_card").cardtype.should == 'CardtypeC'
   end
 end
 
@@ -151,7 +153,7 @@ describe Card, "type transition validate_create" do
   end
   
   it "should retain original type" do
-    Card.find_by_name("basicname").type.should == 'Basic'
+    Card.find_by_name("basicname").cardtype.should == 'Basic'
   end
 end
 
@@ -166,7 +168,7 @@ describe Card, "type transition destroy callback" do
   end
   
   it "should change type of the card" do
-    Card.find_by_name("type-e-card").type.should == 'Basic'
+    Card.find_by_name("type-e-card").cardtype.should == 'Basic'
   end
 end
 
@@ -181,7 +183,7 @@ describe Card, "type transition create callback" do
   end
   
   it "should change type of card" do
-    Card.find_by_name("basicname").type.should == 'CardtypeF'
+    Card.find_by_name("basicname").cardtype.should == 'CardtypeF'
   end
 end                
 
@@ -189,7 +191,7 @@ end
 def change_card_to_type(name, type)
   User.as :joe_user
   card = Card.find_by_name(name)
-  card.type = type;  
+  card.cardtype = type;  
   card.save
   # FIXME FIXME FIXME:  this doesn't work!  something about inheritance column?
   # card.update_attributes :type=>type

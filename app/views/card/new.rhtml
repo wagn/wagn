@@ -1,6 +1,6 @@
 <div id="new-card">
   <% if !request.post? %>
-    <h1 class="page-header">New <%= card.type != 'Basic' ? card.cardtype.name : '' %> Card</h1>
+    <h1 class="page-header">New <%= card.cardtype != 'Basic' ? card.cardtype.name : '' %> Card</h1>
 
     <% @instruction = capture do %>
       <% if card.broken_type %>

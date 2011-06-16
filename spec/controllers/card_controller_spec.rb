@@ -292,13 +292,13 @@ describe CardController do
     it "new without cardtype" do
       post :new   
       assert_response :success, "response should succeed"                     
-      assert_equal 'Basic', assigns['card'].type, "@card type should == Basic"
+      assert_equal 'Basic', assigns['card'].cardtype, "@card type should == Basic"
     end
 
     it "new with cardtype" do
       post :new, :card => {:type=>'Date'}   
       assert_response :success, "response should succeed"                     
-      assert_equal 'Date', assigns['card'].type, "@card type should == Date"
+      assert_equal 'Date', assigns['card'].cardtype, "@card type should == Date"
     end        
 
     it "remove" do
@@ -341,7 +341,7 @@ describe CardController do
       #assert_equal "boo", assigns['card'].content
       assert_response :success, "changed card type"   
       assigns['card'].content  .should == ""
-      Card['Sample Basic'].type.should == "Date"
+      Card['Sample Basic'].cardtype.should == "Date"
     end
 
 
@@ -356,7 +356,7 @@ describe CardController do
     #    #assert_equal "boo", assigns['card'].content
     #    assert_equal "<br/>", assigns['card'].content
     #    assert_response :success, "changed card type"   
-    #    assert_equal "CardtypeA", Card['Sample Basic'].type
+    #    assert_equal "CardtypeA", Card['Sample Basic'].cardtype
     #  end 
     # 
   end

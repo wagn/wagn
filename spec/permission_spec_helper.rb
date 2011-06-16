@@ -36,25 +36,23 @@ end
 ActiveSupport::TestCase.send :include, PermissionSpecHelper
 
 
-module Card
-  class Base
-    def writeable_by(user)
-      ::User.as(user) do
-        ok? :edit
-      end
+class Card
+  def writeable_by(user)
+    ::User.as(user) do
+      ok? :edit
     end
-    
-    def readable_by(user)
-      ::User.as(user) do
-        ok? :read
-      end
-    end
-    
-    def appendable_by(user)
-      ::User.as(user) do
-        ok? :append
-      end
-    end 
   end
+    
+  def readable_by(user)
+    ::User.as(user) do
+      ok? :read
+    end
+  end
+    
+  def appendable_by(user)
+    ::User.as(user) do
+      ok? :append
+    end
+  end 
 end
  

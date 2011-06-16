@@ -1,7 +1,9 @@
 
 module Card::Search
-  attr_accessor :results, :spec
-  before_save :escape_content
+  def self.append_features(base)
+    base.class_eval { attr_accessor :results, :spec }
+    base.send :before_save, :escape_content
+  end
 
   def collection?() true end
 

@@ -1,7 +1,9 @@
 module Card::InvitationRequest
   attr_accessor :account  ## is this used??
 
-  before_destroy :block_user
+  def self.append_features(base)
+    base.send :before_destroy, :block_user
+  end
     
   private
  

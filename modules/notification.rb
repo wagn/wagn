@@ -50,7 +50,7 @@ module Notification
     def watcher_watched_pairs
       author = User.current_user.card.name
       (card_watchers.except(author).map {|watcher| [Card.fetch(watcher, :skip_virtual=>true).extension,self.name] }  +
-        type_watchers.except(author).map {|watcher| [Card.fetch(watcher, :skip_virtual=>true).extension,::Cardtype.name_for(self.type)]})
+        type_watchers.except(author).map {|watcher| [Card.fetch(watcher, :skip_virtual=>true).extension,::Cardtype.name_for(self.cardtype)]})
     end
     
     def card_watchers 
@@ -58,7 +58,7 @@ module Notification
     end
     
     def type_watchers
-      items_from(::Cardtype.name_for( self.type ) + "+*watchers" )
+      items_from(::Cardtype.name_for( self.cardtype ) + "+*watchers" )
     end
     
     def items_from( cardname )
@@ -77,7 +77,7 @@ module Notification
       return "" unless logged_in?   
       return "" if card.virtual? 
       me = User.current_user.card.name          
-      if card.type == "Cardtype"
+      if card.cardtype == "Cardtype"
         (card.type_watchers.include?(me) ? "#{watching_type_cards} | " : "") +  watch_unwatch
       else
         if card.type_watchers.include?(me) 
@@ -89,15 +89,15 @@ module Notification
     end
 
     def watching_type_cards
-      "watching #{link_to_page(Cardtype.name_for(card.type))} cards"      # can I parse this and get the link to happen? that wud r@wk.
+      "watching #{link_to_page(Cardtype.name_for(card.cardtype))} cards"      # can I parse this and get the link to happen? that wud r@wk.
     end
 
     def watch_unwatch      
-      type_link = (card.type == "Cardtype") ? " #{card.name} cards" : ""
-      type_msg = (card.type == "Cardtype") ? " cards" : ""    
+      type_link = (card.cardtype == "Cardtype") ? " #{card.name} cards" : ""
+      type_msg = (card.cardtype == "Cardtype") ? " cards" : ""    
       me = User.current_user.card.name   
 
-      if card.card_watchers.include?(me) or card.type != 'Cardtype' && card.watchers.include?(me)
+      if card.card_watchers.include?(me) or card.cardtype != 'Cardtype' && card.watchers.include?(me)
         link_to_action( "unwatch#{type_link}", 'unwatch', {:update=>id("watch-link")},{
    :title => "stop getting emails about changes to #{card.name}#{type_msg}"})
       else

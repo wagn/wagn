@@ -1,17 +1,12 @@
 
-Wagn.send :include, Wagn::Exceptions
-#Card.send :include, Wagn::Cardlib::Exceptions
-
-ActiveRecord::Base.class_eval do
-  include Wagn::Cardlib::ActsAsCardExtension
-  include Wagn::Cardlib::AttributeTracking
-end
-
 class Card < ActiveRecord::Base
-  Cardname
+  def destroy!
+    # FIXME: do we want to overide confirmation by setting confirm_destroy=true here?
+    self.confirm_destroy = true
+    destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
+  end
+  include Wagn::Card::Model
 
-  Wagn::Cardlib::ModuleMethods #load
-  
   #
   # == Associations
   #  
@@ -28,7 +23,7 @@ class Card < ActiveRecord::Base
   cattr_accessor :debug    
   Card.debug = false
 
-#  cattr_accessor :cache  
+  cattr_accessor :cache  
 #  self.cache = {}
 
   [:before_validation, :before_validation_on_create, :after_validation, 
@@ -369,11 +364,6 @@ class Card < ActiveRecord::Base
   end
   alias_method_chain :destroy, :validation
   
-  def destroy!
-    # FIXME: do we want to overide confirmation by setting confirm_destroy=true here?
-    self.confirm_destroy = true
-    destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
-  end
 
    
   # Extended associations ----------------------------------------
@@ -611,7 +601,7 @@ class Card < ActiveRecord::Base
 
   validates_each :name do |rec, attr, value|
     if rec.updates.for?(:name)
-      rec.errors.add :name, "may not contain any of the following characters: #{Cardname::CARDNAME_BANNED_CHARACTERS[1..-1].join ' '} " unless value.valid_cardname?
+      rec.errors.add :name, "may not contain any of the following characters: #{Wagn::Cardname::CARDNAME_BANNED_CHARACTERS[1..-1].join ' '} " unless value.valid_cardname?
       # this is to protect against using a junction card as a tag-- although it is technically possible now.
       rec.errors.add :name, "#{value} in use as a tag" if (value.junction? and rec.simple? and rec.left_junctions.size>0)
 
@@ -808,16 +798,6 @@ class Card < ActiveRecord::Base
     end
   end
 
-  include Wagn::Cardlib::TrackedAttributes
-  include Wagn::Cardlib::Templating
-  include Wagn::Cardlib::Defaults
-  include Wagn::Cardlib::Permissions
-  include Wagn::Cardlib::Search
-  include Wagn::Cardlib::References
-  include Wagn::Cardlib::Cacheable
-  include Wagn::Cardlib::Settings
-  include Wagn::Cardlib::Settings::ClassMethods
-  extend Wagn::Cardlib::CardAttachment::ActMethods
 end  
 
 module CardData

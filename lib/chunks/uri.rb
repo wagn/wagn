@@ -88,7 +88,7 @@ class URIChunk < Chunk::Abstract
     content.gsub!( self.pattern ) do |matched_text|
       chunk = self.new($~, content)                    
       card = chunk.card
-      if chunk.avoid_autolinking? || (card && card.type=='HTML')
+      if chunk.avoid_autolinking? || (card && card.cardtype=='HTML')
         # do not substitute nor register the chunk
         matched_text
       else

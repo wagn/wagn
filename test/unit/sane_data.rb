@@ -10,8 +10,8 @@ class SaneDataTest < ActiveSupport::TestCase
       assert_instance_of Card::Cardtype, ct.card, "#{ct.class_name} has card"
     end
     Card.find(:all).each do |c|
-      assert_instance_of Card::Cardtype, c.cardtype, "#{c.type} #{c.name} has cardtype card"
-      assert_instance_of Cardtype, c.cardtype.extension, "#{c.type} #{c.name} cardtype card has extension"
+      assert_instance_of Card::Cardtype, c.cardtype, "#{c.cardtype} #{c.name} has cardtype card"
+      assert_instance_of Cardtype, c.cardtype.extension, "#{c.cardtype} #{c.name} cardtype card has extension"
     end
     Role.find(:all).each do |r|
       assert_instance_of Card::Role, r.card, "Role #{r.codename} has extension"

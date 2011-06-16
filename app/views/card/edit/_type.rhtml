@@ -6,7 +6,7 @@
        <% form_for_card :url=>slot.url_for('card/update'),
            :update=>{:success=>slot.id('card-body'), :failure=>"javascript:getNextElement(this,'notice')" } do |f| %>
          <%= slot.captcha_tags %>
-         <% if card.type == 'Cardtype' and card.extension and !Card.search(:type=>card.name).empty? %>
+         <% if card.cardtype == 'Cardtype' and card.extension and !Card.search(:type=>card.name).empty? %>
           <div>Sorry, you can't make this card anything other than a Cardtype so long as there are <strong><%= card.name %></strong> cards.</div>  <%#ENGLISH%>
         <% else %>
            <div> to <%= slot.cardtype_field f, :onchange=>'this.form.onsubmit();' %></div>

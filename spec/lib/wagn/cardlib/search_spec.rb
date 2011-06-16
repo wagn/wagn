@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../../../spec_helper'
 
 #A_JOINEES = ["B", "C", "D", "E", "F"]
 
-describe Wagn::Cardlib::Search do
+describe Wagn::Card::Search do
 =begin Do we still need this test, but refactored a little?
   describe ".find_builtin" do
     it "should retrieve cards added by add_builtin" do
@@ -27,7 +27,7 @@ describe Wagn::Cardlib::Search do
     it "should find cards with *right+*content specified" do
       Card::Search.create! :name=>"testsearch+*right+*content", :content=>'{"plus":"_self"}', :type => 'Search'
       c = Card.find_virtual("A+testsearch")
-      c.type.should == 'Search'
+      c.cardtype.should == 'Search'
       c.content.should ==  "{\"plus\":\"_self\"}"
     end
   end

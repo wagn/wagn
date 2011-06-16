@@ -48,7 +48,7 @@ describe "WikiReference" do
     newcard("Yellow")
     Card["Yellow"].referencers.plot(:name).sort.should == %w{ Banana Submarine Sun }
     y=Card["Yellow"];  
-    y.type="UserForm"; 
+    y.cardtype="UserForm"; 
     y.save!
     Card["Yellow"].referencers.plot(:name).sort.should == %w{ Banana Submarine Sun }
   end

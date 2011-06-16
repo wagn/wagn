@@ -55,7 +55,7 @@ class AdminController < ApplicationController
   def clear_cache
     response = 
       if System.always_ok?
-        Card.cache.reset
+        ::Card.cache.reset
         'Cache cleared'
       else
         "You don't have permission to clear the cache"

@@ -35,6 +35,44 @@ describe "reader rules" do
     end
   end
   
+  it "should revert to more general rule when more specific rule is deleted" do
+    @perm_card.save!
+    @perm_card.destroy!
+    card = Card.fetch('Home')
+    card.read_rule_id.should == Card.fetch('*all+*read').id
+  end
+
+  it "should revert to more general rule when more specific rule is renamed" do
+    @perm_card.save!
+    @perm_card.name = 'Something else+*self+*read'
+    @perm_card.confirm_rename = true
+    @perm_card.save!
+    
+    card = Card.fetch('Home')
+    card.read_rule_id.should == Card.fetch('*all+*read').id
+  end
+
+  it "should not be overruled by a more general rule added later" do
+    @perm_card.save!
+    c= Card.fetch('Home')
+    c.type = 'Phrase'
+    c.save!
+    Card.create(:name=>'Phrase+*type+*read', :type=>'Pointer', :content=>'[[Joe User]]')
+    
+    card = Card.fetch('Home')
+    card.read_rule_id.should == @perm_card.id  
+  end
+  
+  it "should get updated when trunk type change makes type-plus-right apply" do
+    @perm_card.name = "Phrase+B+*type plus right+*read"
+    @perm_card.save!
+    Card.fetch('A+B').read_rule_id.should == Card.fetch('*all+*read').id
+    c = Card.fetch('A')
+    c.type = 'Phrase'
+    c.save!
+    Card.fetch('A+B').read_rule_id.should == @perm_card.id
+  end
+  
 end
 
 describe "Permission", ActiveSupport::TestCase do

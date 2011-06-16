@@ -178,18 +178,50 @@ module Cardlib
 
     def set_read_rule
       return if ENV['BOOTSTRAP_LOAD'] == 'true'
+      # avoid doing this on simple content saves?
       read_rule = setting_card('read')
       self.read_rule_id = read_rule.id
       self.read_rule_class = read_rule.name.trunk_name.tag_name
+      #find all cards with me as trunk and update their read_rule
+      if !new_card? && updates.for(:type)
+        User.as :wagbot do
+          Card.search(:left=>self.name).each do |plus_card|
+            plus_card.update_read_rule plus_card.setting_card('read')
+          end
+        end
+        # skip if updates.for(:name)?  Because will already be resaved???
+      end
+    end
+    
+    def update_read_rule(rule)
+      update_attributes!(
+        :read_rule_id => rule.id,
+        :read_rule_class => rule.name.trunk_name.tag_name
+      )
+      Card.cache.delete(self.key)
     end
 
     def update_ruled_cards
       return if ENV['BOOTSTRAP_LOAD'] == 'true'
       if name.junction? && name.tag_name=='*read'
-        Card.fetch(name.trunk_name).item_names.each do |item_name|
-          User.as :wagbot do #maybe not necessary for update_attributes?
-            Card.fetch(item_name).update_attributes!(:read_rule_id => self.id)
-            Card.cache.delete(item_name.to_key)
+        User.as :wagbot do
+          in_set = {}
+          rule_classes = Wagn::Pattern.subclasses.map &:key
+          rule_class_index = rule_classes.index self.name.trunk_name.tag_name
+
+          #first update all cards in set that aren't governed by narrower rule
+          Card.fetch(name.trunk_name).item_cards(:limit=>0).each do |item_card|
+            in_set[item_card.key] = true
+            next if rule_classes.index(item_card.read_rule_class) < rule_class_index
+            item_card.update_read_rule(self)
+          end
+
+          #then find all cards with me as read_rule_id that were not just updated and regenerate their read_rules
+          if !new_card?
+            Card.find_all_by_read_rule_id_and_trash(self.id, false).each do |was_ruled|
+              next if in_set[was_ruled.key]
+              was_ruled.update_read_rule was_ruled.setting_card('read')
+            end
           end
         end
       end

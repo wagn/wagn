@@ -67,7 +67,7 @@ module Wagn
         load_config
         #load_cardlib # now loads with card
         setup_multihost
-        load_cardtypes
+        #load_cardtypes
         return if pre_schema?
         load_cardtype_cache
         load_modules
@@ -140,6 +140,7 @@ module Wagn
         end
       end
 
+=begin
       def load_cardtypes
         Dir["#{RAILS_ROOT}/app/models/card/*.rb"].sort.each do |cardtype|
           cardtype.gsub!(/.*\/([^\/]*)$/, '\1')
@@ -150,6 +151,7 @@ module Wagn
           end
         end
       end
+=end
 
       def load_cardtype_cache
         ::Cardtype.load_cache unless ['test','cucumber'].member? ENV['RAILS_ENV']

@@ -36,9 +36,9 @@ class Cardtype < ActiveRecord::Base
         end
       end
 
-      @@cache[:class_names].values.sort.each do |name|
-        Card.class_for(name)
-      end
+      #@@cache[:class_names].values.sort.each do |name|
+      #  Card.class_for(name)
+      #end
     end
 
     def name_for_key?(key)

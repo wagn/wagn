@@ -63,18 +63,18 @@ module Wagn
       require 'action_controller'
 
       def load
-        ::ActionController::Dispatcher.to_prepare do
-        load_config
-        #load_cardlib # now loads with card
-        setup_multihost
-        #load_cardtypes
-        return if pre_schema?
-        load_cardtype_cache
-        load_modules
-#       register_mimetypes
-        Wagn::Cache.initialize_on_startup
-        #create_builtins
-        ActiveRecord::Base.logger.info("\n----------- Wagn Initialization Complete -----------\n\n")
+        ::ActionController::Dispatcher.to_prepare do |*args|
+          load_config
+          #load_cardlib # now loads with card
+          setup_multihost
+          #load_cardtypes
+          return if pre_schema?
+          load_cardtype_cache
+          load_modules
+#         register_mimetypes
+          Wagn::Cache.initialize_on_startup
+          #create_builtins
+          ActiveRecord::Base.logger.info("\n----------- Wagn Initialization Complete -----------\n\n")
         end
       end
 

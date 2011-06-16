@@ -2,6 +2,7 @@
 class Card < ActiveRecord::Base
   def destroy!
     # FIXME: do we want to overide confirmation by setting confirm_destroy=true here?
+    # This is aliased in Permissions, which could be related to the above comment
     self.confirm_destroy = true
     destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
   end
@@ -165,39 +166,47 @@ class Card < ActiveRecord::Base
     end
   end
   
-  
-
-
-      
-
-  # FIXME: this is here so that we can call .card  and get card whether it's cached or "real".
-  # goes away with cached_card refactor
   def card
+    Rails.logger.info "DEPRECATED: no need to do .card, use self #{Kernel.caller[0..4]*"\n"}"
     self
   end
   
   # Creation & Destruction --------------------------------------------------
+  #alias_method :ar_new, :new
+
+  def initialize(args={})
+    args = {} if args.nil?
+    args = args.stringify_keys
+    args['trash'] = false
+      
+    cardtype = get_type(args)
+    #new_card = card_class.ar_new args
+      
+    yield(new_card) if block_given?
+    set_defaults( args ) unless args['skip_defaults'] 
+    super
+  end 
+
   class << self
-    alias_method :ar_new, :new
+    def get_type(args={})
+      include_type(get_cardtype(args))
+    end
+    
+    def include_type(cardtype, typetype)
+      #card_class = Card.class_for( cardtype, typetype ) || ( broken_cardtype = cardtype; Card::Basic)
+      mod = Card.const_get 'Wagn::Card::Type::'+( #module_id =
+            if typetype.to_sym == :codename
+              cardtype
+            else
+              typecardname = ::Cardtype.name_for_key(cardtype.to_key) and
+              ::Cardtype.classname_for(typecardname)
+            end
+      )
 
-    def new(args={})
-      args = {} if args.nil?
-      args = args.stringify_keys
-      args['trash'] = false
-      
-      card_class, broken_cardtype = get_class(args)
-      new_card = card_class.ar_new args
-      
-      yield(new_card) if block_given?
-      new_card.broken_cardtype = broken_cardtype if broken_cardtype
-      new_card.send( :set_defaults, args ) unless args['skip_defaults'] 
-      new_card
-    end 
-
-    def get_class(args={})
-      cardtype, typetype = get_cardtype(args)
-      card_class = Card.class_for( cardtype, typetype ) || ( broken_cardtype = cardtype; Card::Basic)
-      return card_class, broken_cardtype
+      #mod.allocate.is_a?(Card) ? mod : card_const_set(module_id)
+      include mod
+    rescue Exception=>e
+      nil
     end
     
     def get_cardtype(args={})
@@ -230,7 +239,6 @@ class Card < ActiveRecord::Base
       args['name'] || (args['trunk'] && args['tag']  ? args["trunk"].name + "+" + args["tag"].name : "")
     end      
 
-    
     def default_class
       self==Card ? Card.const_get( Card.default_cardtype_key ) : self
     end
@@ -689,7 +697,7 @@ class Card < ActiveRecord::Base
       end        
       
       # must be cardtype name
-      unless Card.class_for(value, :codename)
+      unless Card.include_type(value, :codename)
         rec.errors.add :cardtype, "won't work.  There's no cardtype named '#{value}'"
       end
       
@@ -726,6 +734,7 @@ class Card < ActiveRecord::Base
   end
   
   class << self
+=begin
     def class_for(name, field='codename')
       class_id = ( field.to_sym == :codename ? name :
           ( cardname = ::Cardtype.name_for_key(name.to_key) and
@@ -736,6 +745,7 @@ class Card < ActiveRecord::Base
     rescue Exception=>e
       nil
     end
+=end
 
     def create_or_update args
       if c = Card[ args[:name] ]

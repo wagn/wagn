@@ -15,7 +15,6 @@ class SharedData
     Card::User.create! :name=>"Joe Camel", :extension=>joe_camel, :content => "Mr. Buttz"    
 
     #bt = Card.find_by_name 'Basic+*type+*default'
-    #fail "oh god #{bt.permissions.inspect}" if bt.permissions.empty?
 
     # generic, shared attribute card
     color = Card::Basic.create! :name=>"color"
@@ -145,7 +144,6 @@ class SharedData
     
     
     ## --------- create templated permissions -------------
-    #r1 = Role.find_by_codename 'r1'
     ctt = Card.create! :name=> 'Cardtype E+*type+*default'
     
     

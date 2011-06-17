@@ -18,7 +18,8 @@ class Cardtype < ActiveRecord::Base
 
       Card::Base.connection.select_all(%{
         select distinct ct.class_name, c.name, c.key
-        from cardtypes ct join cards c on c.extension_id=ct.id and c.type='Cardtype'    
+        from cardtypes ct join cards c on c.extension_id=ct.id and c.type='Cardtype'
+        where c.trash is false
       }).each do |rec|
         @@cache[:card_keys][rec['key']] = rec['name']
         @@cache[:card_names][rec['class_name']] = rec['name'];   
@@ -60,7 +61,6 @@ class Cardtype < ActiveRecord::Base
     end   
     
     def create_ok?( card_name )
-#      load_cache if @@cache.empty?
       Card.new( :type=>card_name, :skip_defaults=> true).ok? :create
     end
   end        

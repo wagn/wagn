@@ -17,9 +17,6 @@ module Card
     cattr_accessor :debug    
     Card::Base.debug = false
 
-#    cattr_accessor :cache  
-#    self.cache = {}
-
     [:before_validation, :before_validation_on_create, :after_validation, 
       :after_validation_on_create, :before_save, :before_create, :after_save,
       :after_create,
@@ -43,7 +40,7 @@ module Card
 
     belongs_to :updater, :class_name=>'::User', :foreign_key=>'updated_by'
 
-    has_many :permissions, :foreign_key=>'card_id' #, :dependent=>:delete_all
+#    has_many :permissions, :foreign_key=>'card_id' #, :dependent=>:delete_all
 
     before_destroy :destroy_extension
                

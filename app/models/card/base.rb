@@ -390,9 +390,10 @@ module Card
     end
 
     def known?(   )   !(new_card? && !virtual?)  end
-    def virtual?( )   @virtual                   end    
-    def simple?(  )   name.simple?               end
-    def junction?()   !simple?                   end
+    def virtual?( )   @virtual                   end
+    def simple?(  )   n=name and n.simple?       end
+    def junction?()   n=name and n.junction?     end
+    def star?(    )   n=name and n.star?         end
     def type(     )   read_attribute :type       end
     
     def content   

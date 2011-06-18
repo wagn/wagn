@@ -122,7 +122,7 @@ describe Renderer, "" do
 
     it "content" do
       render_card(:content, :name=>'A+B').should be_html_with {
-        div( :class=>'transcluded ALL TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b', :home_view=>'content') {
+        div( :class=>'transcluded ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b', :home_view=>'content') {
           span( :class=>'content-content content')
         }
       }

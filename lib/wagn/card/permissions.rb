@@ -54,17 +54,18 @@ module Wagn::Card::Permissions
 
   def save_with_permissions!(perform_checking = true)
     Rails.logger.debug "Card#save_with_permissions! #{Kernel.caller[0..15]*"\n"}"
-    run_checked_save :save_without_permisions!, perform_checking
+    run_checked_save :save_without_permissions!, perform_checking
   end 
 
   def run_checked_save(method, perform_checking = true)
     if !perform_checking || approved?
       begin
         Rails.logger.info "rcs #{method}"
+        debugger if name == 'ThisMyCard'
         self.send(method)
       rescue Exception => e
         name.piece_names.each{|piece| Wagn::Cache.expire_card(piece.to_key)}
-        Rails.logger.info "#{method}:#{e.message} #{name} #{Kernel.caller.join("\n")}"
+        Rails.logger.info "#{method}:#{e.message} #{name} #{Kernel.caller*"\n"}"
         raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace*"\n"}"
       end
     else
@@ -228,7 +229,7 @@ module Wagn::Card::Permissions
       attr_accessor :operation_approved, :permission_errors
       alias_method_chain :destroy, :permissions  
       alias_method_chain :destroy!, :permissions  
-      STDERR << "aliases save/permissions\n"
+      #STDERR << "aliases save/permissions\n"
       alias_method_chain :save, :permissions
       alias_method_chain :save!, :permissions
     end

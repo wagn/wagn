@@ -27,6 +27,7 @@ module Wagn::Card::TrackedAttributes
   
   protected 
   def set_name(newname)
+    Rails.logger.debug "set_name<#{self}>(#{newname})" # #{self.name_without_tracking}"
     oldname = self.name_without_tracking
     self.name_without_tracking = newname 
     return if oldname==newname

@@ -29,14 +29,15 @@ module Notification
     
     def trunk_watcher_watched_pairs
       # do the watchers lookup before the transcluder test since it's faster.
-      if (name.junction? and
-          trunk_card = Card.fetch(name.trunk_name, :skip_virtual=>true) and
+      if name.junction?
+        Rails.logger.debug "trunk_watcher_pairs #{name}, #{name.trunk_name.inspect}"
+        if (trunk_card = Card.fetch(tname=name.trunk_name, :skip_virtual=>true) and
           pairs = trunk_card.watcher_watched_pairs and
-          transcluders.include?(trunk))
-        pairs
-      else
-        []
-      end      
+          transcluders.include?(tname))
+          return pairs
+        end      
+      end
+      []
     end
     
     def self.included(base)   

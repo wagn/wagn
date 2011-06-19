@@ -65,10 +65,10 @@ module Wagn::Card::AttributeTracking
           class_eval %{
             def #{field}
               v=read_attribute '#{field}'
-              Rails.logger.warn ">#{field}: "+v; v
             end
           }
         end
+              #Rails.logger.warn ">#{field}: "+(v ? v.to_s : ''); v
         
         unless self.method_defined? "#{field}="
           warn "defining #{field}="

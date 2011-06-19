@@ -71,14 +71,14 @@ module Wagn
         STDERR << "Loaded config\n"
         setup_multihost
         STDERR << "setup multihost\n"
-        load_cardtype_cache
-        STDERR << "Loaded ct cache\n"
         load_modules
         STDERR << "Load Mods\n"
-        Wagn::Cache.initialize_on_startup
-        STDERR << "Done wit ios\n"
         return if Initializer.pre_schema?
         STDERR << "Post Schema\n"
+        Wagn::Cache.initialize_on_startup
+        STDERR << "Done wit initialize on startup\n"
+#        load_cardtype_cache
+#        STDERR << "Loaded ct cache\n"
         check_builtins
         ActiveRecord::Base.logger.info("\n----------- Wagn Initialization Complete -----------\n\n")
       end

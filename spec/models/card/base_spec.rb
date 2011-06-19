@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 describe Card do
   describe "test data" do
     it "should be findable by name" do
-      Card.find_by_name("Wagn Bot").class.should == Card::Basic
+      Card.find_by_name("Wagn Bot").class.should == Card
     end
   end
 
@@ -11,7 +11,7 @@ describe Card do
     context "with name" do
       before do
         @c = Card.new :name=>"Ceee"
-        @d = Card::Date.new
+        @d = Card.new :typecode=>'Date'
       end
   
       it "c should have name before_typecast" do
@@ -19,11 +19,11 @@ describe Card do
       end
   
       it "c should have cardtype basic" do
-        @c.cardtype.should == 'Basic'
+        @c.typecode.should == 'Basic'
       end
   
       it "d should have cardtype Date" do
-        @d.cardtype.should == 'Date'
+        @d.typecode.should == 'Date'
       end
     end
 
@@ -49,7 +49,7 @@ describe Card do
     end
   
     it "should not have errors"        do @b.errors.size.should == 0        end
-    it "should have the right class"   do @c.class.should    == Card::Basic end
+    it "should have the right class"   do @c.class.should    == Card        end
     it "should have the right key"     do @c.key.should      == "new_card"  end
     it "should have the right name"    do @c.name.should     == "New Card"  end
     it "should have the right content" do @c.content.should  == "Great Content" end
@@ -59,7 +59,7 @@ describe Card do
     end
 
     it "should be findable by name" do
-      Card.find_by_name("New Card").class.should == Card::Basic
+      Card.find_by_name("New Card").class.should == Card
     end  
   end
 
@@ -76,7 +76,7 @@ describe Card do
   describe "attribute tracking for new card" do
     before(:each) do
       User.as :wagbot 
-      @c = Card::Basic.new :name=>"New Card", :content=>"Great Content"
+      @c = Card.new :name=>"New Card", :content=>"Great Content"
     end
   
     it "should have updates" do
@@ -188,7 +188,7 @@ describe Card do
         "+H" => { :type => "Phrase", :content=>"boo" }
       })
       Card["G+H"].content.should == "boo"
-      Card["G+H"].cardtype.should == "Phrase"
+      Card["G+H"].typecode.should == "Phrase"
     end
   end
 end

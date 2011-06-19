@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-class Card  
 =begin
+module Wagn::Card  
   class CardtypeA < Basic  
     def approve_delete 
       deny_because("not allowed to delete card a")
@@ -13,7 +13,7 @@ class Card
   end
   
   class CardtypeC < Basic
-    def validate_type_change
+    def validate_typecode_change
       errors.add :destroy_error, "card c is indestructible"
     end
   end
@@ -36,19 +36,18 @@ class Card
   class CardtypeF < Basic
     cattr_accessor :count
     @@count = 2
-    before_create :increment_count
+    before_validation_on_create :increment_count
     def increment_count() self.class.count += 1; end
   end
+
+end
 =end
-
-end   
-
 
 
 describe Card, "with role" do
   before do
     User.as :wagbot 
-    @role = Card::Role.find(:first)
+    @role = Card.search(:type=>'Role')[0]
   end
   
   it "should have a role extension" do
@@ -58,7 +57,7 @@ describe Card, "with role" do
   it "should lose role extension upon changing type" do
     # this test fails on a permission error in Mysql
     pending
-    @role.cardtype = 'Basic'
+    @role.typecode = 'Basic'
     @role.save
     @role.extension.should == nil
   end
@@ -77,9 +76,8 @@ describe Card, "with account" do
   end
 
   it "should allow type changes" do
-    @joe.cardtype.should == 'Basic'
+    @joe.typecode.should == 'Basic'
   end
-
 
   it "should not lose account on card change" do
     @joe.extension.should_not == nil
@@ -89,18 +87,22 @@ end
 
 
 describe Card, "type transition approve create" do
+  before do
+    Card.create :name=>'Cardtype B+*type+*create', :type=>'Pointer', :content=>'[[r1]]'
+  end
+  
   it "should have errors" do
     lambda { change_card_to_type("basicname", "CardtypeB") }.should raise_error(Wagn::PermissionDenied)
-  end     
+  end
 
   it "should be the original type" do
     lambda { change_card_to_type("basicname", "CardtypeB") }
-    Card.find_by_name("basicname").cardtype.should == 'Basic'
+    Card.find_by_name("basicname").typecode.should == 'Basic'
   end
 end
 
 
-
+=begin
 describe Card, "clone to type"  do
   before do
     User.as :wagbot 
@@ -109,8 +111,7 @@ describe Card, "clone to type"  do
   end  
   
   it "should have the new type" do
-    @b.cardtype.should == 'CardtypeA'
-    @b.class.should == Card::CardtypeA
+    @b.typecode.should == 'CardtypeA'
   end
   
   it "should have the same id" do
@@ -121,17 +122,17 @@ describe Card, "clone to type"  do
     @b.new_record?.should == false
   end
 end
-                
-describe Card, "type transition approve destroy" do
+describe Card, "type transition approve type" do
   it "should have errors" do
-    lambda { change_card_to_type("type-a-card", "Basic") }.should raise_error(Wagn::PermissionDenied)
+    lambda {change_card_to_type("type-a-card", "Basic")}.should raise_error(Wagn::PermissionDenied)
   end
               
   it "should still be the original type" do
-    lambda { change_card_to_type("type-a-card", "Basic") }
-    Card.find_by_name("type-a-card").cardtype.should == 'CardtypeA'
+    change_card_to_type("type-a-card", "Basic")
+    Card.find_by_name("type-a-card").typecode.should == 'CardtypeA'
   end
 end
+=end
 
 describe Card, "type transition validate_destroy" do  
   before do @c = change_card_to_type("type-c-card", 'Basic') end
@@ -141,7 +142,7 @@ describe Card, "type transition validate_destroy" do
   end
   
   it "should retain original type" do
-    Card.find_by_name("type_c_card").cardtype.should == 'CardtypeC'
+    Card.find_by_name("type_c_card").typecode.should == 'CardtypeC'
   end
 end
 
@@ -153,49 +154,49 @@ describe Card, "type transition validate_create" do
   end
   
   it "should retain original type" do
-    Card.find_by_name("basicname").cardtype.should == 'Basic'
+    Card.find_by_name("basicname").typecode.should == 'Basic'
   end
 end
 
 describe Card, "type transition destroy callback" do
   before do
-    Card::CardtypeE.count = 2
+    Card.search(:return=>'count', :type=>'CardtypeE').should == 2
     @c = change_card_to_type("type-e-card", "Basic") 
   end
   
   it "should decrement counter in before destroy" do
-    Card::CardtypeE.count.should == 1
+    Card.search(:return=>'count', :type=>'CardtypeE').should == 1
   end
   
   it "should change type of the card" do
-    Card.find_by_name("type-e-card").cardtype.should == 'Basic'
+    Card.find_by_name("type-e-card").typecode.should == 'Basic'
   end
 end
 
 describe Card, "type transition create callback" do
   before do 
-    Card::CardtypeF.count = 2
+    Card.create(:name=>'Basic+*type+*delete', :type=>'Pointer', :content=>"[[Anyone Signed in]]")
+    Card.search(:return=>'count', :type=>'CardtypeF').should == 1
     @c = change_card_to_type("basicname", 'CardtypeF') 
   end
     
   it "should increment counter"  do
-    Card::CardtypeF.count.should == 3
+    Card.search(:return=>'count', :type=>'CardtypeF').should == 3
   end
   
   it "should change type of card" do
-    Card.find_by_name("basicname").cardtype.should == 'CardtypeF'
+    Card.find_by_name("basicname").typecode.should == 'CardtypeF'
   end
 end                
 
 
-def change_card_to_type(name, type)
-  User.as :joe_user
-  card = Card.find_by_name(name)
-  card.cardtype = type;  
-  card.save
-  # FIXME FIXME FIXME:  this doesn't work!  something about inheritance column?
-  # card.update_attributes :type=>type
-  card
+def change_card_to_type(name, typecode)
+  User.as :joe_user do
+    card = Card.fetch(name)
+    card.typecode = typecode;  
+    card.save
+    card
+  end
 end
 
 

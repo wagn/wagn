@@ -77,10 +77,10 @@ module Wagn::Card::TrackedAttributes
       end
     end
     #newcard = self.clone_to_type(new_type)
-    newcard.send(:callback, :before_validation_on_create)
-    newcard.send(:callback, :before_create)
+    self.send(:callback, :before_validation_on_create)
+    self.send(:callback, :before_create)
     #newcard.send(:callback, :after_create)
-    self.extension = newcard.extension
+    self.extension = self.extension
     self.set_permissions self.permissions.collect{|x| x}
   end
   

@@ -2,10 +2,9 @@ module Card::Cardtype
   include Card::Basic
 
   # ??? extend the created card's class with these?
-  class ::Card
-    class_eval do
-      #before_validation_on_create :has_extension, :reset_cardtype_cache
-      before_validation_on_create :reset_cardtype_cache
+  def self.included(base)
+    self.class_eval do
+      before_validation_on_create :create_extension, :reset_cardtype_cache
       before_destroy :validate_destroy, :destroy_extension   # order is important!
       after_destroy :reset_cardtype_cache
       after_save :reset_cardtype_cache
@@ -30,10 +29,8 @@ module Card::Cardtype
 =end
 
   def create_extension
-    class_name = ::Card.generate_codename_for(name)
-    newclass = Class.new( ::Card::Basic )
-    ::Card.const_set class_name, newclass
-    self.extension = ::Cardtype.create!( :class_name => class_name )
+    codename = ::Card.generate_codename_for(name)
+    self.extension = ::Cardtype.create!( :class_name => codename )
     self.extension
   end
   
@@ -72,7 +69,7 @@ module Card::Cardtype
   # end
   
   
-  def validate_type_change
+  def validate_typecode_change
     validate_destroy
   end
   

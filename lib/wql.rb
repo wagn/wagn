@@ -102,7 +102,7 @@ class Wql
         card.nil? ? Card.find_by_name_and_trash(row['name'],false).repair_key : card
       end
     when :count
-      rows.first['count']
+      rows.first['count'].to_i
     else
       rows.map { |row| row[query[:return].to_s] }
     end
@@ -628,6 +628,7 @@ Rails.logger.debug "count iter(#{relation.inspect} #{subspec.inspect})"
         @cardspec.sql.joins << "join revisions r3 on r3.id=#{@cardspec.table_alias}.current_revision_id"
         field = 'r3.content'
       when "type"
+        field = 'typecode'
         v = [v].flatten.map do |val| 
           Cardtype.classname_for(  val.is_a?(Card) ? val.name : val  )
         end

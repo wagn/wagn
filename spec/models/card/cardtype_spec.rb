@@ -114,7 +114,7 @@ describe Card, "Card changed to become a Cardtype" do
   before do
     User.as :wagbot 
     @a = Card['A']
-    @a.cardtype = 'Cardtype'
+    @a.type = 'Cardtype'
     @a.save!
   end
   it "should have a create permission set" do

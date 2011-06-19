@@ -195,13 +195,17 @@ class Card
     args['trash'] = false
       
     typetype=nil
-    skip_lookup = args.delete('skip_type_lookup') and args[:typecode]='Basic' or
-       typetype = get_typecode(args)
+    if skip_lookup = args.delete('skip_type_lookup')
+      args[:typecode]='Basic'
+    else
+      typetype = get_typecode(args)
+    end
+    
     Rails.logger.debug "Card.initialize #{skip_lookup}, #{args.inspect}, #{typetype}"
 
     super
     unless skip_lookup
-      args['name'] and not typetype and pattern = template and typecode = pattern.typecode
+      args['name'] and not typetype and pattern=template and typecode = pattern.typecode
       include_typecode(typetype)
     end
     #new_card = card_class.ar_new args
@@ -282,7 +286,6 @@ class Card
     #debugger
     Card.include_type(typecode, typetype)
     Rails.logger.info "create_extension? #{respond_to?(:create_extension)}, #{typecode}"
-    create_extension if respond_to?(:create_extension)
   end
 
   def reset_cardtype_cache() end
@@ -741,7 +744,7 @@ class Card
     true
   end
 
-  def validate_type_change  
+  def validate_typecode_change  
   end
   
   def destroy_extension
@@ -810,7 +813,7 @@ class Card
                 end
                 card_args = {
                   :name => plus_card_name, 
-                  :cardtype => "Pointer",  
+                  :typecode => "Pointer",  
                   :content => plus_data.map{|x| "[[#{x}]]" }.join("\n")
                 }
                 Card.send options[:plus_strategy], card_args

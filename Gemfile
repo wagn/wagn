@@ -64,7 +64,7 @@ group :test do
   gem 'win32-process', '0.6.5', :platforms => ['mingw', 'mswin']
   
   gem 'term-ansicolor', '1.0.5'
-  gem 'nokogiri', '>=1.4.1'
+  gem 'nokogiri', '1.4.1'
   gem 'timecop', '>=0.2.1'
   gem 'spork', '>=0.5.7'
   gem 'assert2', '0.5.5'

@@ -35,7 +35,7 @@ class System < ActiveRecord::Base
    
     def host
       # FIXME: hacking this so users don't have to update config.  will want to fix later 
-      System.base_url.gsub(/^http:\/\//,'')
+      System.base_url ? System.base_url.gsub(/^http:\/\//,'') : ''
     end
     
     def attachment_storage

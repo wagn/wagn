@@ -1,7 +1,7 @@
 module Card::Role
   include Card::Basic
   def self.append_features(base)
-    base.send :before_create, :create_extension
+    #base.send :before_create, :create_extension
   end
   
   def create_extension

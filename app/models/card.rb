@@ -1,11 +1,31 @@
 
 class Card < ActiveRecord::Base
+end
+require 'wiki_reference'
+require 'wagn/card/model'
+
+class Card
   def destroy!
     # FIXME: do we want to overide confirmation by setting confirm_destroy=true here?
     # This is aliased in Permissions, which could be related to the above comment
     self.confirm_destroy = true
     destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
   end
+
+  def save_with_trash!
+    save_without_trash! ||
+      raise(errors.full_messages.join('. '))
+  end
+  alias_method_chain :save!, :trash
+
+  def save_with_trash(perform_checking=true)
+    pull_from_trash if new_record?
+    #save_no_trash(perform_checking)
+    save_without_trash(perform_checking)
+  end
+  alias_method_chain :save, :trash   
+  STDERR << "aliased save/trash Trace #{Kernel.caller[0..10]*"\n"}\n";
+  
   include Wagn::Card::Model
 
   #
@@ -25,6 +45,7 @@ class Card < ActiveRecord::Base
   Card.debug = false
 
   cattr_accessor :cache  
+  def self.cache() @@cache || Wagn::Cache.new(Rails.cache) end
 #  self.cache = {}
 
   [:before_validation, :before_validation_on_create, :after_validation, 
@@ -57,8 +78,8 @@ class Card < ActiveRecord::Base
   #before_validation_on_create :set_needed_defaults
     
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
-    :from_trash, :update_referencers, :allow_cardtype_change, :virtual,
-  :broken_cardtype, :skip_defaults, :loaded_trunk, :blank_revision
+    :from_trash, :update_referencers, :allow_typecode_change, :virtual,
+  :skip_defaults, :loaded_trunk, :blank_revision, :has_extension
 
   # setup hooks on AR callbacks
   # Note: :after_create is called from end of set_initial_content now
@@ -68,17 +89,26 @@ class Card < ActiveRecord::Base
     end
   end
     
+  # create_extension was happening before type incudes, so save the even here
+  def has_extension
+    @has_extionsion=true
+  end
+
   # apparently callbacks defined this way are called last.
   # that's what we want for this one.  
   def after_save 
-    if card.cardtype == 'Cardtype'
+    if card.typecode == 'Cardtype'
       Rails.logger.debug "Cardtype after_save resetting"
       ::Cardtype.reset_cache
     end
 #      Rails.logger.debug "Card#after_save end"
+    update_attachment
     true
   end
       
+  def update_attachment # the module definition overrides this for card_attachements
+  end
+
   private
     belongs_to :reader, :polymorphic=>true  
     
@@ -86,7 +116,7 @@ class Card < ActiveRecord::Base
       ActiveRecord::Base.logger.info(msg)
     end
     
-    def on_cardtype_change
+    def on_typecode_change
     end  
     
   public
@@ -135,7 +165,7 @@ class Card < ActiveRecord::Base
     source_card = setting_card('content', 'default')  #not sure why "template" doesn't work here.
     if source_card
       perms = source_card.card.permissions.reject { 
-        |p| p.task == 'create' unless (cardtype=='Cardtype' or template?) 
+        |p| p.task == 'create' unless (typecode=='Cardtype' or template?) 
       }
     else
       #raise( "Missing permission configuration for #{name}" ) unless source_card && !source_card.permissions.empty?
@@ -179,69 +209,49 @@ class Card < ActiveRecord::Base
     args = args.stringify_keys
     args['trash'] = false
       
-    cardtype = get_type(args)
+    typetype=nil
+    skip_lookup = args.delete('skip_type_lookup') and args[:typecode]='Basic' or
+       typetype = get_typecode(args)
+    Rails.logger.debug "Card.initialize #{skip_lookup}, #{args.inspect}, #{typetype}"
+
+    super
+    unless skip_lookup
+      args['name'] and not typetype and pattern = template and typecode = pattern.typecode
+      include_typecode(typetype)
+    end
     #new_card = card_class.ar_new args
       
     yield(new_card) if block_given?
     set_defaults( args ) unless args['skip_defaults'] 
-    super
   end 
 
   class << self
-    def get_type(args={})
-      include_type(get_cardtype(args))
-    end
-    
-    def include_type(cardtype, typetype)
-      #card_class = Card.class_for( cardtype, typetype ) || ( broken_cardtype = cardtype; Card::Basic)
+    def include_type(typecode, typetype=:codename)
+      #card_class = Card.class_for( typecode, typetype ) || ( broken_cardtype = typecode; Card::Basic)
       mod = Card.const_get 'Wagn::Card::Type::'+( #module_id =
             if typetype.to_sym == :codename
-              cardtype
+              typecode
             else
-              typecardname = ::Cardtype.name_for_key(cardtype.to_key) and
+              typecardname = ::Cardtype.name_for_key(typecode.to_key) and
               ::Cardtype.classname_for(typecardname)
             end
       )
 
       #mod.allocate.is_a?(Card) ? mod : card_const_set(module_id)
-      include mod
+      include mod if mod
     rescue Exception=>e
       nil
     end
-    
-    def get_cardtype(args={})
-      calling_class = self.name.split(/::/).last
-      typetype = :codename
-      
-      skip_type = args.delete('skip_type_lookup')
-      cardtype= 
-        case
-        when args['typecode'];         args.delete('typecode')
-        when calling_class != 'Base';  calling_class
-        when args['type'];             typetype= :cardname;  args['type']
-        when skip_type;                'Basic'
-        when args['name']
-          dummy = Card::Basic.ar_new(:name=> args['name'])
-#            dummy = Card::Basic.new(:name=> args['name'], :skip_defaults=>true )
-          dummy.loaded_trunk = args['loaded_trunk'] if args['loaded_trunk']
-          pattern = dummy.template
-          pattern ? pattern.cardtype : 'Basic'
-        else
-          'Basic'
-        end
-      
-      args.delete('type')
-      return cardtype, typetype
-    end
-    
     def get_name_from_args(args={}) #please tell me this is no longer necessary
       args ||= {}
       args['name'] || (args['trunk'] && args['tag']  ? args["trunk"].name + "+" + args["tag"].name : "")
     end      
 
+=begin
     def default_class
-      self==Card ? Card.const_get( Card.default_cardtype_key ) : self
+      self==Card ? Card.const_get( Card.default_typecode_key ) : self
     end
+=end
     
     def find_or_create!(args={})
       find_or_create(args) || raise(ActiveRecord::RecordNotSaved)
@@ -259,17 +269,29 @@ class Card < ActiveRecord::Base
                         
   end
 
-  def save_with_trash!
-    save || raise(errors.full_messages.join('. '))
+  def get_typecode(args={})
+    loaded_trunk = args['loaded_trunk'] if args['loaded_trunk']
+    typetype = :cardname if args['type'] and args['typecode'] = args.delete('type')
+    args['typecode'] = 'Basic' unless args['typecode']
+    Rails.logger.debug "get_typecode(#{args.inspect}) #{typetype}"
+    typetype
   end
-  alias_method_chain :save!, :trash
 
-  def save_with_trash(perform_checking=true)
-    pull_from_trash if new_record?
-    save_without_trash(perform_checking)
+  def include_typecode(typetype=:codename)
+    Card.include_type(typecode, typetype)
+    Rails.logger.info "create_extension? #{respond_to?(:create_extension)}, #{typecode}"
+    create_extension if respond_to?(:create_extension)
   end
-  alias_method_chain :save, :trash   
-  
+
+  def reset_cardtype_cache() end
+
+=begin
+  def typecode=(tc)
+    # do the includes (how do you 'undo' current includes, or do you need to?
+    write_attribute :typecode, tc
+  end
+=end
+
   def pull_from_trash
     return unless key
     return unless trashed_card = Card.find_by_key_and_trash(key, true) 
@@ -310,7 +332,7 @@ class Card < ActiveRecord::Base
         card.update_attributes(opts)
       elsif opts[:content].present? and opts[:content].strip.present?
         opts[:name] = name                
-        if ::Cardtype.create_ok?( self.cardtype ) && !::Cardtype.create_ok?( Card.new(opts).cardtype )
+        if ::Cardtype.create_ok?( self.typecode ) && !::Cardtype.create_ok?( Card.new(opts).typecode )
           ::User.as(:wagbot) { Card.create(opts) }
         else
           Card.create(opts)
@@ -385,9 +407,10 @@ class Card < ActiveRecord::Base
   end
   
   def cardtype_name()
-    raise "No type: #{self.inspect}" unless self.cardtype
-    Rails.logger.info "No cardtype: #{self}, #{Kernel.caller*"\n"}" unless self.cardtype
-    ::Cardtype.name_for( self.cardtype||'Basic' )  end
+    #raise "No type: #{self.inspect}" unless self.typecode
+    typecode or return 'Basic'
+    #Rails.logger.info "No cardtype: #{self}, #{Kernel.caller*"\n"}" unless typecode
+    ::Cardtype.name_for( typecode )  end
   
   
   def pieces
@@ -419,10 +442,10 @@ class Card < ActiveRecord::Base
     self
   end
 
-  def cardtype
-    @cardtype ||= begin
-      ct = ::Cardtype.find_by_class_name( self.cardtype )
-      raise("Error in #{self.name}: No cardtype for #{self.cardtype}")  unless ct
+  def typecode
+    @typecode ||= begin
+      ct = ::Cardtype.find_by_class_name( self.typecode )
+      raise("Error in #{self.name}: No cardtype for #{self.typecode}")  unless ct
       ct.card
     end
   end  
@@ -507,8 +530,8 @@ class Card < ActiveRecord::Base
     templated_content || content
   end
 
-  def cardtype
-    read_attribute :cardtype
+  def typecode
+    read_attribute :typecode
   end
 
   def codename
@@ -588,12 +611,10 @@ class Card < ActiveRecord::Base
   end
 =end
   
-  
-  
   # Because of the way it chains methods, 'tracks' needs to come after
   # all the basic method definitions, and validations have to come after
   # that because they depend on some of the tracking methods.
-  tracks :name, :content, :cardtype, :comment, :permissions#, :reader, :writer, :appender
+  tracks :name, :content, :typecode, :comment, :permissions#, :reader, :writer, :appender
 
   def name_with_key_sync=(name)
     name ||= ""
@@ -666,16 +687,16 @@ class Card < ActiveRecord::Base
   end
   
   
-  validates_each :cardtype do |rec, attr, value|  
+  validates_each :typecode do |rec, attr, value|  
     # validate on update
-    if rec.updates.for?(:cardtype) and !rec.new_record?
+    if rec.updates.for?(:typecode) and !rec.new_record?
       
       # invalid to change type when cards of this type exists
-      if rec.cardtype == 'Cardtype' and rec.extension and ::Card.find_by_cardtype(rec.extension.codename)
-        rec.errors.add :cardtype, "can't be changed to #{value} for #{rec.name} because #{rec.name} is a Cardtype and cards of this type still exist"
+      if rec.typecode == 'Cardtype' and rec.extension and ::Card.find_by_typecode(rec.extension.codename)
+        rec.errors.add :typecode, "can't be changed to #{value} for #{rec.name} because #{rec.name} is a Cardtype and cards of this type still exist"
       end
   
-      rec.send :validate_cardtype_change
+      rec.send :validate_typecode_change
 =begin
       newcard = rec.send :clone_to_type, value
       newcard.valid?  # run all validations...
@@ -684,23 +705,19 @@ class Card < ActiveRecord::Base
     end
 
     # validate on update and create 
-    if rec.updates.for?(:cardtype) or rec.new_record?
+    if rec.updates.for?(:typecode) or rec.new_record?
       # invalid type recorded on create
-      if rec.broken_cardtype
-        rec.errors.add :cardtype, "won't work.  There's no cardtype named '#{rec.broken_cardtype}'"
-      end
+      #if rec.broken_cardtype
+      #  rec.errors.add :typecode, "won't work.  There's no cardtype named '#{rec.broken_cardtype}'"
+      #end
       
       # invalid to change type when type is hard_templated
-      if (rec.right_template and rec.right_template.hard_template? and 
-        value!=rec.right_template.cardtype and !rec.allow_cardtype_change)
-        rec.errors.add :cardtype, "can't be changed because #{rec.name} is hard tag templated to #{rec.right_template.cardtype}"
+      if (rt = rec.right_template and rt.hard_template? and 
+        value!=rt.typecode and !rec.allow_typecode_change)
+        rec.errors.add :typecode, "can't be changed because #{rec.name} is hard tag templated to #{rec.right_template.typecode}"
       end        
       
-      # must be cardtype name
-      unless Card.include_type(value, :codename)
-        rec.errors.add :cardtype, "won't work.  There's no cardtype named '#{value}'"
-      end
-      
+      Card.include_type(value, :codename)
     end
   end  
 

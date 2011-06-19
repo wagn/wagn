@@ -23,7 +23,7 @@
         <% else %>
           <span class="new-type">
             <span class="label"> type:</span>
-            <%= s.cardtype_field form, :onchange=>s.update_cardtype_function(
+            <%= s.typecode_field form, :onchange=>s.update_typecode_function(
                   :url=>s.url_for('card/new'), :update=>s.id,
                   :with=>"Form.serialize(getSlotElement(this,'form'))"
             ) %>

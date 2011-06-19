@@ -1,4 +1,6 @@
-#require_dependency 'rich_html_renderer'
+class Renderer
+end
+require_dependency 'rich_html_renderer'
 require_dependency 'models/wiki_reference'
 require 'diff'
 

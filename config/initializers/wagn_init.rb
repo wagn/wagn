@@ -1,0 +1,2 @@
+
+Wagn::Initializer.load

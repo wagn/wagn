@@ -1,7 +1,8 @@
 
-include Wagn::Cardname # loads string methods for cardnames
+Wagn.send :include, Wagn::Exceptions
 
-module Wagn::Card::Model
+module Wagn::Card
+ module Model
   def self.append_features(base)
     base.extend Wagn::Card::ModuleMethods
     base.superclass.extend Wagn::Card::ActsAsCardExtension
@@ -18,11 +19,11 @@ module Wagn::Card::Model
     base.send :include, Wagn::Card::Settings
     base.send :include, Wagn::Card::Fetch
   end
-  
+
   # Does the model need the packs? I don't think so ...
   #include Wagn::Pack
+ end
 end
 
-Wagn.send :include, Wagn::Exceptions
 
 

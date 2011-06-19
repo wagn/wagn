@@ -2,7 +2,7 @@ module Wagn::Card::References
   protected   
   
   def update_references_on_create  
-    WikiReference.update_on_create(self)  
+    ::WikiReference.update_on_create(self)  
 
     # FIXME: bogus blank default content is set on hard_templated cards...
     User.as(:wagbot) {
@@ -17,7 +17,7 @@ module Wagn::Card::References
   end
 
   def update_references_on_destroy
-    WikiReference.update_on_destroy(self)
+    ::WikiReference.update_on_destroy(self)
     expire_templatee_references
   end
 
@@ -46,11 +46,11 @@ module Wagn::Card::References
       has_many :in_references,:class_name=>'WikiReference', :foreign_key=>'referenced_card_id'
       has_many :out_references,:class_name=>'WikiReference', :foreign_key=>'card_id', :dependent=>:destroy
 
-      has_many :in_transclusions, :class_name=>'WikiReference', :foreign_key=>'referenced_card_id',:conditions=>["link_type in (?,?)",WikiReference::TRANSCLUSION, WikiReference::WANTED_TRANSCLUSION]
-      has_many :out_transclusions,:class_name=>'WikiReference', :foreign_key=>'card_id',           :conditions=>["link_type in (?,?)",WikiReference::TRANSCLUSION, WikiReference::WANTED_TRANSCLUSION]
+      has_many :in_transclusions, :class_name=>'WikiReference', :foreign_key=>'referenced_card_id',:conditions=>["link_type in (?,?)",::WikiReference::TRANSCLUSION, ::WikiReference::WANTED_TRANSCLUSION]
+      has_many :out_transclusions,:class_name=>'WikiReference', :foreign_key=>'card_id',           :conditions=>["link_type in (?,?)",::WikiReference::TRANSCLUSION, ::WikiReference::WANTED_TRANSCLUSION]
 
-      has_many :in_links, :class_name=>'WikiReference', :foreign_key=>'referenced_card_id',:conditions=>["link_type=?",WikiReference::LINK]
-      has_many :out_links,:class_name=>'WikiReference', :foreign_key=>'card_id',:conditions=>["link_type=?",WikiReference::LINK]
+      has_many :in_links, :class_name=>'WikiReference', :foreign_key=>'referenced_card_id',:conditions=>["link_type=?",::WikiReference::LINK]
+      has_many :out_links,:class_name=>'WikiReference', :foreign_key=>'card_id',:conditions=>["link_type=?",::WikiReference::LINK]
 
       has_many :referencers, :through=>:in_references
       has_many :referencees, :through=>:out_references

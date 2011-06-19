@@ -1,8 +1,7 @@
 module Card::File
-  include Wagn::Cardlib::CardAttachment
-  extend Wagn::Cardlib::CardAttachment::ActMethods
+  include Wagn::Card::CardAttachment
 
-  card_attachment ::CardFile
+  card_attachment CardFile
   
   def item_names(args={})
     [self.name]

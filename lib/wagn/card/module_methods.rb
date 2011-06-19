@@ -1,4 +1,5 @@
-module Wagn::Card::ModuleMethods    
+module Wagn::Card
+ module ModuleMethods    
 
   def create_these( *args )                                                                                  
     definitions = args.size > 1 ? args : (args.first.inject([]) {|a,p| a.push({p.first=>p.last}); a })
@@ -58,9 +59,10 @@ module Wagn::Card::ModuleMethods
     false
   end
    
-  def default_cardtype_key
+  def default_typecode_key
     "Basic"
   end
+ end
 end    
 
 =begin

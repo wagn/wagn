@@ -21,13 +21,13 @@ module Wagn::Card::Permissions
   
   module ClassMethods 
     def create_ok?()   
-      ::Cardtype.create_ok?(  self.name.gsub(/.*::/,'') )
+      ::Cardtype.create_ok?(typecode)
     end
     def create_ok!()   
-      user, type = ::User.current_user.cardname, self.name.gsub(/.*::/,'')
+      user = ::User.current_user.cardname 
 
       unless self.create_ok?        
-        msg = "You don't have permission to create #{type} cards" 
+        msg = "You don't have permission to create #{typecode} cards" 
         raise Wagn::PermissionDenied.new(msg) 
       end
     end
@@ -48,23 +48,24 @@ module Wagn::Card::Permissions
   end
 
   def save_with_permissions(perform_checking = true)  #checking is needed for update_attribute, evidently.  not sure I like it...
-    Rails.logger.debug "Card#save_with_permissions!"
+    Rails.logger.debug "Card#save_with_permissions snt" # #{Kernel.caller[0..15]*"\n"}"
     run_checked_save :save_without_permissions, perform_checking
   end
-   
+
   def save_with_permissions!(perform_checking = true)
-    Rails.logger.debug "Card#save_with_permissions!", perform_checking
-    run_checked_save :save_without_permissions!
+    Rails.logger.debug "Card#save_with_permissions! #{Kernel.caller[0..15]*"\n"}"
+    run_checked_save :save_without_permisions!, perform_checking
   end 
-  
+
   def run_checked_save(method, perform_checking = true)
     if !perform_checking || approved?
       begin
+        Rails.logger.info "rcs #{method}"
         self.send(method)
       rescue Exception => e
         name.piece_names.each{|piece| Wagn::Cache.expire_card(piece.to_key)}
         Rails.logger.info "#{method}:#{e.message} #{name} #{Kernel.caller.join("\n")}"
-        raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace}"
+        raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace*"\n"}"
       end
     else
       raise ::Card::PermissionDenied.new(self)
@@ -153,7 +154,7 @@ module Wagn::Card::Permissions
   end
      
   def approve_create_me  
-    deny_because you_cant("create #{self.cardtype} cards") unless Cardtype.create_ok?(self.cardtype)
+    deny_because you_cant("create #{self.typecode} cards") unless Cardtype.create_ok?(typecode)
   end
 
   def approve_edit
@@ -170,8 +171,8 @@ module Wagn::Card::Permissions
   end
   
   def approve_create     
-    raise "must be a cardtype card" unless self.cardtype == 'Cardtype'
-    deny_because you_cant("create #{self.name} cards") unless Cardtype.create_ok?(Cardtype.classname_for(self.name))    
+    raise "must be a cardtype card" unless self.typecode == 'Cardtype'
+    deny_because you_cant("create #{self.name} cards") unless Cardtype.create_ok?(nil, name)    
   end
                                   
   def approve_comment
@@ -187,17 +188,20 @@ module Wagn::Card::Permissions
     deny_because("#{ydhpt} #{verb} this card") unless testee.lets_user( operation ) 
   end
 
-  def approve_type
+  def approve_typecode
     unless new_card?       
       approve_delete
-#        if right_template and right_template.hard_template? and right_template.cardtype!=type and !allow_type_change
+#        if right_template and right_template.hard_template? and right_template.typecode!=type and !allow_type_change
 #          deny_because you_cant( "change the type of this card -- it is hard templated by #{right_template.name}")
 #        end
     end
+    # include_type(typecode), but we need to do this after the type is changed
+=begin
     new_self = clone_to_type( type ) 
-    unless Cardtype.create_ok?(new_self.cardtype)
-      deny_because you_cant("create #{new_self.cardtype.name} cards")
+    unless Cardtype.create_ok?(new_self.typecode)
+      deny_because you_cant("create #{new_self.typecode.name} cards")
     end
+=end
   end
 
   def approve_content
@@ -224,6 +228,7 @@ module Wagn::Card::Permissions
       attr_accessor :operation_approved, :permission_errors
       alias_method_chain :destroy, :permissions  
       alias_method_chain :destroy!, :permissions  
+      STDERR << "aliases save/permissions\n"
       alias_method_chain :save, :permissions
       alias_method_chain :save!, :permissions
     end

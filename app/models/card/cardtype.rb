@@ -4,7 +4,8 @@ module Card::Cardtype
   # ??? extend the created card's class with these?
   class ::Card
     class_eval do
-      before_validation_on_create :create_extension, :reset_cardtype_cache
+      #before_validation_on_create :has_extension, :reset_cardtype_cache
+      before_validation_on_create :reset_cardtype_cache
       before_destroy :validate_destroy, :destroy_extension   # order is important!
       after_destroy :reset_cardtype_cache
       after_save :reset_cardtype_cache

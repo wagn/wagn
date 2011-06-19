@@ -53,24 +53,25 @@ module Wagn::Card::TrackedAttributes
       end
     end
           
-    ::Cardtype.reset_cache if cardtype=='Cardtype'
+    ::Cardtype.reset_cache if typecode=='Cardtype'
     @name_changed = true          
     @old_name = oldname
     @search_content_changed=true
     Wagn::Cache.expire_card(@old_name.to_key)
   end
 
-  def set_cardtype(new_cardtype)
-    #warn "set cardtype called on #{name} to #{new_cardtype}"
-    self.cardtype_without_tracking = new_cardtype 
+  def set_typecode(new_typecode)
+    new_typecode = 'Basic' unless new_typecode
+    Rails.logger.warn "set typecode called on #{name} to #{new_typecode}"
+    self.typecode_without_tracking = new_typecode 
     return if new_card?
-    on_cardtype_change # FIXME this should be a callback
+    on_typecode_change # FIXME this should be a callback
     templatees = hard_templatees
     if !templatees.empty?
       #warn "going through hard templatees"  
       templatees.each do |tee|
-        tee.allow_cardtype_change = true  #FIXME? this is a hacky way around the standard validation
-        tee.cardtype = new_cardtype
+        tee.allow_typecode_change = true  #FIXME? this is a hacky way around the standard validation
+        tee.typecode = new_typecode
         tee.save!
       end
     end
@@ -102,7 +103,7 @@ module Wagn::Card::TrackedAttributes
   
   def set_permissions(perms)
     self.updates.clear(:permissions)
-    if cardtype=='Cardtype' and !perms.detect{|p| p.task=='create'}
+    if typecode=='Cardtype' and !perms.detect{|p| p.task=='create'}
       party = Role.find( Cardtype.create_party_for( 'Basic' ) )
       perms << Permission.new(:task=>'create', :party=>party, :card_id=>self.id )
     end
@@ -135,6 +136,7 @@ module Wagn::Card::TrackedAttributes
     set_content updates[:content]
     updates.clear :content 
     # normally the save would happen after set_content. in this case, update manually:
+    Rails.logger.debug "set_initial_content #{current_revision_id} #{name}"
     connection.update(
       "update cards set current_revision_id=#{current_revision_id} where id=#{id}",
       "Card Update"

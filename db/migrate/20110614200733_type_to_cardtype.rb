@@ -1,9 +1,9 @@
 class TypeToCardtype < ActiveRecord::Migration
   def self.up
-    rename_column :cards, :type, :cardtype
+    rename_column :cards, :type, :typecode
   end
 
   def self.down
-    rename_column :cards, :cardtype, :type
+    rename_column :cards, :typecode, :type
   end
 end

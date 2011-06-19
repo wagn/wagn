@@ -1,29 +1,33 @@
 module Wagn::Card::CardAttachment
   def self.append_features(base)
-    base.extend(ClassMethods)
+    Rails.logger.info "add act methods for attachements #{base} #{self}"
+    base.extend(ActMethods)
   end
 
-  module ClassMethods
+  module ActMethods
     def card_attachment(klass)
-      extend ClassMethods unless (class << self; included_modules; end).include?(ClassMethods)
+      #extend ClassMethods unless (class << self; included_modules; end).include?(ClassMethods)
       include InstanceMethods unless included_modules.include?(InstanceMethods)
     
-      cattr_accessor :attachment_model
+      mattr_accessor :attachment_model
       attr_accessor :attachment_id
-         after_save :update_attachment
+      Rails.logger.info "card_attachement(#{klass}) #{self}"
+      #after_save :update_attachment moved to Card (with null update to override)
 
-         self.attachment_model = klass
+      self.attachment_model = klass
     end
   end
 
-  def update_attachment
-    if attachment_id and !attachment_id.blank?
-      attachment_model.find( attachment_id ).update_attribute :revision_id, current_revision_id
+  module InstanceMethods
+    def update_attachment
+      if attachment_id and !attachment_id.blank?
+        attachment_model.find( attachment_id ).update_attribute :revision_id, current_revision_id
+      end
     end
-  end
 
-  def attachment
-    attachment_model.find_by_revision_id( current_revision_id )
+    def attachment
+      attachment_model.find_by_revision_id( current_revision_id )
+    end
   end
 end
 

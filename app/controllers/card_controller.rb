@@ -154,6 +154,7 @@ class CardController < ApplicationController
     #fail "card params required" unless params[:card] or params[:cards]
 
     # ~~~ REFACTOR! -- this conflict management handling is sloppy
+    Rails.logger.debug "update set current_revision #{@card.name}, #{@card.current_revision}"
     @current_revision_id = @card.current_revision.id
     old_revision_id = card_args.delete(:current_revision_id) || @current_revision_id
     if old_revision_id.to_i != @current_revision_id.to_i
@@ -168,7 +169,7 @@ class CardController < ApplicationController
 
     case
     when params[:multi_edit]; @card.multi_update(params[:cards])
-    when card_args[:type]; @card.cardtype=Cardtype.classname_for(card_args.delete(:type)); @card.save
+    when card_args[:type]; @card.typecode=Cardtype.classname_for(card_args.delete(:type)); @card.save
       #can't do this via update attributes: " Can't mass-assign these protected attributes: type"
       #might be addressable via attr_accessors?
     else;   @card.update_attributes(card_args)
@@ -289,7 +290,7 @@ class CardController < ApplicationController
   end
 
   def related
-    sources = [@card.cardtype.name,nil]
+    sources = [@card.typecode.name,nil]
     sources.unshift '*account' if @card.extension_type=='User'
     @items = sources.map do |root|
       c = Card.fetch((root ? "#{root}+" : '') +'*related')

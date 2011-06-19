@@ -1,4 +1,5 @@
-require_dependency 'rich_html_renderer'
+#require_dependency 'rich_html_renderer'
+require 'diff'
 
 module WagnHelper
   require_dependency 'wiki_content'
@@ -162,16 +163,16 @@ module WagnHelper
   end
 
   ## ----- for Linkers ------------------
-  def cardtype_options
-    Cardtype.createable_cardtypes.map do |cardtype|
-      #next(nil) if cardtype[:codename] == 'User' #or cardtype[:codename] == 'InvitationRequest'
-      [cardtype[:name], cardtype[:name]]
+  def typecode_options
+    Cardtype.createable_typecodes.map do |typecode|
+      #next(nil) if typecode[:codename] == 'User' #or typecode[:codename] == 'InvitationRequest'
+      [typecode[:name], typecode[:name]]
     end.compact
   end
 
-  def cardtype_options_for_select(selected=Card.default_cardtype_key)
+  def typecode_options_for_select(selected=Card.default_typecode_key)
     #warn "SELECTED = #{selected}"
-    options_from_collection_for_select(cardtype_options, :first, :last, selected)
+    options_from_collection_for_select(typecode_options, :first, :last, selected)
   end
 
 
@@ -232,7 +233,7 @@ module WagnHelper
     return unless entries
     items = []
     items << navbox_item( :search, %{<a class="search-icon">&nbsp;</a>Search for: }, stub )
-    if !Cardtype.createable_cardtypes.empty? && !Card.exists?(stub)
+    if !Cardtype.createable_typecodes.empty? && !Card.exists?(stub)
       items << navbox_item( :new, %{<a class="plus-icon">&nbsp;</a>Add new card: }, stub )
     end
     items += entries.map do |entry|

@@ -1,4 +1,8 @@
+require 'active_support'
+require 'active_record'
+
 module Wagn
+
   # oof, this is not polished
   class Config
     def initialize(config)
@@ -29,7 +33,6 @@ module Wagn
   class Initializer
     class << self
       def set_default_config config
-        config.available_modules = Dir["#{RAILS_ROOT}/modules/*.rb"] + Dir["#{RAILS_ROOT}/packs/*/*_pack.rb"]
       end
 
       def set_default_rails_config rails_config
@@ -47,35 +50,37 @@ module Wagn
         @@rails_config = rails_config
         set_default_config Config.new(rails_config)
 
-        Initializer.load
+        #Initializer.load
       end
 
       def pre_schema?
+        STDERR << "Pre schema\n"
         begin
           @@schema_initialized ||= ActiveRecord::Base.connection.select_value("select count(*) from cards").to_i > 2
           !@@schema_initialized
-        rescue
-          ActiveRecord::Base.logger.info("\n----------- Schema Not Initialized -----------\n\n")
+        rescue Exception => e
+          STDERR << "\n-------- Schema not initialized--------\nError: #{e}\n\n"# Trace #{e.backtrace*"\n"}"
+          #ActiveRecord::Base.logger.info("\n----------- Schema Not Initialized -----------\n\n")
           true
         end
       end
 
-      require 'action_controller'
-
       def load
-        ::ActionController::Dispatcher.to_prepare do |*args|
-          load_config
-          #load_cardlib # now loads with card
-          setup_multihost
-          #load_cardtypes
-          return if pre_schema?
-          load_cardtype_cache
-          load_modules
-#         register_mimetypes
-          Wagn::Cache.initialize_on_startup
-          #create_builtins
-          ActiveRecord::Base.logger.info("\n----------- Wagn Initialization Complete -----------\n\n")
-        end
+
+        load_config
+        STDERR << "Loaded config\n"
+        setup_multihost
+        STDERR << "setup multihost\n"
+        load_cardtype_cache
+        STDERR << "Loaded ct cache\n"
+        load_modules
+        STDERR << "Load Mods\n"
+        Wagn::Cache.initialize_on_startup
+        STDERR << "Done wit ios\n"
+        return if Initializer.pre_schema?
+        STDERR << "Post Schema\n"
+        check_builtins
+        ActiveRecord::Base.logger.info("\n----------- Wagn Initialization Complete -----------\n\n")
       end
 
       def load_config
@@ -162,17 +167,21 @@ module Wagn
       end
 
   # make sure builtin cards exist
-#      def create_builtins
-#        User.as :wagbot do
-#          %w{ *account_link *alerts *foot *head *navbox *now *version 
-#              *recent_change *search *broken_link }.map do |name|
-##Rails.logger.debug "create builtin cards #{name}"
-#            c = Card.fetch_or_create(name)
-#          end
-#        end
-#      end
+      def check_builtins
+=begin
+        User.as :wagbot do
+          %w{ *account_link *alerts *foot *head *navbox *now *version 
+              *recent_change *search *broken_link }.map do |name|
+#Rails.logger.debug "create builtin cards #{name}"
+            c = Card[name]
+            Rails.logger.info "Warning missing builtin card: #{name}" if c.nil?
+          end
+        end
+=end
+      end
 
       def load_modules
+        %w{modules/*.rb packs/**/*_pack.rb}.each { |d| Wagn::Module.dir(File.expand_path( "../../#{d}/",__FILE__)) }
         Wagn::Module.load_all
       end
 

@@ -7,7 +7,9 @@ class Card::BaseTest < ActiveSupport::TestCase
   end
 
   def test_remove
+    Rails.logger.info "failing 1.0"
     forba = Card.create! :name=>"Forba"
+    Rails.logger.info "failing 1.1"
     torga = Card.create! :name=>"TorgA"
     torgb = Card.create! :name=>"TorgB"
     torgc = Card.create! :name=>"TorgC"
@@ -38,10 +40,14 @@ class Card::BaseTest < ActiveSupport::TestCase
   #end
 
   def test_create
-    alpha = Card::Basic.new :name=>'alpha', :content=>'alpha'
+    Rails.logger.info "failing 0"
+    alpha = Card.new :name=>'alpha', :content=>'alpha'
+    Rails.logger.info "failing 1"
     assert_equal 'alpha', alpha.content
     alpha.save
+    Rails.logger.info "failing 2"
     assert_stable(alpha)
+    Rails.logger.info "failing 3"
   end
   
   
@@ -53,7 +59,7 @@ class Card::BaseTest < ActiveSupport::TestCase
   end
 
   def test_find_by_name
-    card = Card::Basic.create( :name=>"ThisMyCard", :content=>"Contentification is cool" )
+    card = Card.create( :name=>"ThisMyCard", :content=>"Contentification is cool" )
     assert_equal card, Card.find_by_name("ThisMyCard")
   end
  
@@ -99,6 +105,7 @@ class Card::BaseTest < ActiveSupport::TestCase
 
   def test_create_without_read_permission
     User.as(:anon) do
+      Rails.logger.info "failing too deep"
       c = Card.create! :name=>"Banana", :type=>"Fruit", :content=>"mush"
       assert_raises Card::PermissionDenied do
         Card['Banana'].content

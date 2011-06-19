@@ -119,7 +119,7 @@ class RichHtmlRenderer < Renderer
 
   def layout_from_card
     return unless setting_card = (card.setting_card('layout') or Card.default_setting_card('layout'))
-    return unless setting_card.is_a?(Card::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.cardtype == 'Pointer'        and
+    return unless setting_card.is_a?(Card::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.typecode == 'Pointer'        and
       layout_name=setting_card.item_names.first     and
       !layout_name.nil?                             and
       lo_card = Card.fetch(layout_name, :skip_virtual => true)    and
@@ -223,8 +223,8 @@ class RichHtmlRenderer < Renderer
     div(:class=>'submenu') do
       [[ :content,    true  ],
        [ :name,       true, ],
-       [ :type,       !(card.type_template? || (card.cardtype=='Cardtype' and ct=card.me_type and !ct.find_all_by_trash(false).empty?))],
-       [ :codename,   (System.always_ok? && card.cardtype=='Cardtype')],
+       [ :type,       !(card.type_template? || (card.typecode=='Cardtype' and ct=card.me_type and !ct.find_all_by_trash(false).empty?))],
+       [ :codename,   (System.always_ok? && card.typecode=='Cardtype')],
        [ :inclusions, !(card.out_transclusions.empty? || card.template? || card.hard_template),         {:inclusions=>true} ]
        ].map do |key,ok,args|
 
@@ -342,12 +342,12 @@ class RichHtmlRenderer < Renderer
     form.text_field( :name, { :class=>'field card-name-field', :autocomplete=>'off'}.merge(options))
   end
 
-  def cardtype_field(form,options={})
-    template.select_tag('card[type]', cardtype_options_for_select(Cardtype.name_for(card.cardtype)), options)
+  def typecode_field(form,options={})
+    template.select_tag('card[type]', typecode_options_for_select(Cardtype.name_for(card.typecode)), options)
   end
 
-  def update_cardtype_function(options={})
-    fn = ['File','Image'].include?(card.cardtype) ?
+  def update_typecode_function(options={})
+    fn = ['File','Image'].include?(card.typecode) ?
             "Wagn.onSaveQueue['#{context}']=[];" :
             "Wagn.runQueue(Wagn.onSaveQueue['#{context}']); "
     fn << remote_function( options )

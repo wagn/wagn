@@ -99,6 +99,7 @@ module Wagn::Card::Fetch
     end
 
     def new_missing cardname
+      Rails.logger.info "fetch new_missing #{cardname}"
       Card.new( :name => cardname, :skip_defaults    => true,
                  :missing => true,  :skip_type_lookup => true )
     end
@@ -110,7 +111,7 @@ module Wagn::Card::Fetch
   end
 
   def self.append_features(base)
-    Rails.logger.info "append_features(#{base}) S:#{self}"
+    #Rails.logger.info "append_features(#{base}) S:#{self}"
     base.extend Wagn::Card::Fetch::ClassMethods
     base.class_eval {
       attr_accessor :missing

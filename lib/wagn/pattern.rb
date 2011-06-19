@@ -29,8 +29,8 @@ module Wagn
       def generate_cache_key card
         name = card.name
         left = (name && name.junction?) ? (card.loaded_trunk || card.left) : nil
-        left_key = left ? left.cardtype : ''
-        cache_key = "#{name}-#{card.cardtype}-#{left_key}-#{card.new_card?}"
+        left_key = left ? left.typecode : ''
+        cache_key = "#{name}-#{card.typecode}-#{left_key}-#{card.new_card?}"
       end
 
       def set_names card

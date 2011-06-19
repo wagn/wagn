@@ -26,12 +26,13 @@ module Wagn
       def initialize_on_startup
         @@preload = false
         if RAILS_ENV =~ /cucumber|test/
-          ::Card.cache = Wagn::Cache.new nil, system_prefix
+          ::Card.cache = Wagn::Cache.new
           preload_cache_for_tests if preload_cache?
         else
-          ::Card.cache = Wagn::Cache.new Rails.cache, system_prefix
+          ::Card.cache = Wagn::Cache.new Rails.cache
         end
       end
+      #alias re_initialize_for_new_request initialize_on_startup
       
       def preload_cache_for_tests
         set_keys = ['*all','basic+*type','html+*type','*cardtype+*type','*sidebar+*self']
@@ -76,11 +77,11 @@ module Wagn
         Role.reset_cache
         System.reset_cache
         Wagn::Pattern.reset_cache
-        ::Card.cache.reset_local
+        ::Card.cache && ::Card.cache.reset_local
       end
 
       def reset_global
-        ::Card.cache.reset
+        ::Card.cache && ::Card.cache.reset
         reset_local
       end
     end
@@ -88,10 +89,10 @@ module Wagn
     attr_reader :prefix, :store
     attr_accessor :local
 
-    def initialize(store, system_prefix)
+    def initialize(store=nil, system_prefix=nil)
       @store = store
       @local = Hash.new
-      self.system_prefix = system_prefix
+      self.system_prefix = system_prefix || Wagn::Cache.system_prefix
     end
 
     def system_prefix=(system_prefix)

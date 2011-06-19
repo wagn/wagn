@@ -1,5 +1,8 @@
 
 module Card::Search
+  def included(base)
+    Rails.logger.debug "search included#{base}"
+  end
   def self.append_features(base)
     base.class_eval { attr_accessor :results, :spec }
     #base.send :before_save, :escape_content
@@ -16,6 +19,7 @@ module Card::Search
   def item_names(params={})
     ## FIXME - this should just alter the spec to have it return name rather than instantiating all the cards!!  
     ## (but need to handle prepend/append)
+    Rails.logger.debug "search item_names #{params.inspect}"
     Card.search(spec(params)).map{ |card| card.name}
   end
 

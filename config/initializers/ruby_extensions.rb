@@ -116,7 +116,6 @@ end
 #module Wagn::Cardname   
 # pollute the main namespace because we use it sooo much
 class String
-  include Wagn::Cardname
   CARD_KEYS = {}
   require 'htmlentities'
   

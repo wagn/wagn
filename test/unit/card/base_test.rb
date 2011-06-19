@@ -7,9 +7,7 @@ class Card::BaseTest < ActiveSupport::TestCase
   end
 
   def test_remove
-    Rails.logger.info "failing 1.0"
     forba = Card.create! :name=>"Forba"
-    Rails.logger.info "failing 1.1"
     torga = Card.create! :name=>"TorgA"
     torgb = Card.create! :name=>"TorgB"
     torgc = Card.create! :name=>"TorgC"
@@ -40,14 +38,10 @@ class Card::BaseTest < ActiveSupport::TestCase
   #end
 
   def test_create
-    Rails.logger.info "failing 0"
     alpha = Card.new :name=>'alpha', :content=>'alpha'
-    Rails.logger.info "failing 1"
     assert_equal 'alpha', alpha.content
     alpha.save
-    Rails.logger.info "failing 2"
     assert_stable(alpha)
-    Rails.logger.info "failing 3"
   end
   
   
@@ -73,8 +67,11 @@ class Card::BaseTest < ActiveSupport::TestCase
   def test_multi_update_should_create_subcards
     User.current_user = :joe_user
     User.as(:joe_user) do
+    Rails.logger.info "failing 1"
       b = Card.create!( :name=>'Banana' )
+    Rails.logger.info "failing 2"
       b.multi_update({ "+peel" => { :content => "yellow" }})
+    Rails.logger.info "failing 3"
       assert_equal "yellow", Card["Banana+peel"].content   
       assert_equal User[:joe_user].id, Card["Banana+peel"].created_by
     end
@@ -105,7 +102,6 @@ class Card::BaseTest < ActiveSupport::TestCase
 
   def test_create_without_read_permission
     User.as(:anon) do
-      Rails.logger.info "failing too deep"
       c = Card.create! :name=>"Banana", :type=>"Fruit", :content=>"mush"
       assert_raises Card::PermissionDenied do
         Card['Banana'].content

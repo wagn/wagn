@@ -48,7 +48,7 @@ class Cardtype < ActiveRecord::Base
 
     def name_for_key(key)
       load_cache if @@cache.empty?
-      @@cache[:card_keys][key] || raise("No card name for key #{key}")
+      @@cache[:card_keys][key] || 'Basic' #raise("No card name for key #{key}")
     end
     
     def name_for(classname)

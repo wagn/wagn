@@ -34,7 +34,7 @@ module Wagn::Card::Fetch
     # cards are not returned
     def fetch cardname, opts = {}
       #debug = Card::Fetch.debug.call(cardname)
-      Rails.logger.debug "fetch #{cardname}"  if debug
+      Rails.logger.debug "fetch #{cardname.inspect} \nTrace #{Kernel.caller[0..10]*"\n"}" unless String===cardname # if debug
       key = cardname.to_key
       cacheable = false
 

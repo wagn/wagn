@@ -577,9 +577,12 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
 
     context "Search" do
       it "should wrap search items with correct view class" do
+        Rails.logger.info "failing 0"
         Card.create :type=>'Search', :name=>'Asearch', :content=>%{{"type":"User"}}        
 
-        render_content("{{Asearch|naked;item:name}}").should match('search-result-item item-name')
+        c=render_content("{{Asearch|naked;item:name}}")
+        Rails.logger.info "failing #{c.inspect}"
+        c.should match('search-result-item item-name')
         render_content("{{Asearch|naked;item:open}}").should match('search-result-item item-open')
         render_content("{{Asearch|naked}}").should match('search-result-item item-closed')
       end

@@ -11,21 +11,6 @@ class Card
     self.confirm_destroy = true
     destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
   end
-
-  def save_with_trash!
-    save_without_trash! ||
-      raise(errors.full_messages.join('. '))
-  end
-  alias_method_chain :save!, :trash
-
-  def save_with_trash(perform_checking=true)
-    pull_from_trash if new_record?
-    #save_no_trash(perform_checking)
-    save_without_trash(perform_checking)
-  end
-  alias_method_chain :save, :trash   
-  STDERR << "aliased save/trash Trace #{Kernel.caller[0..40]*"\n"}\n";
-  
   include Wagn::Card::Model
 
   #
@@ -227,17 +212,21 @@ class Card
 
   class << self
     def include_type(typecode, typetype=:codename)
+      Rails.logger.debug "include_type(#{typecode}, #{typetype})"
       #card_class = Card.class_for( typecode, typetype ) || ( broken_cardtype = typecode; Card::Basic)
-      mod = Card.const_get 'Wagn::Card::Type::'+( #module_id =
+      debugger if typecode == 'Search'
+      #mod = Card.const_get 'Wagn::Card::Type::'+( #module_id =
+      module_id =
             if typetype.to_sym == :codename
               typecode
             else
               typecardname = ::Cardtype.name_for_key(typecode.to_key) and
               ::Cardtype.classname_for(typecardname)
             end
-      )
+      mod = Card.const_get module_id
 
       #mod.allocate.is_a?(Card) ? mod : card_const_set(module_id)
+      Rails.logger.debug "include_type(#{typecode}, #{typetype}) #{mod.inspect}"
       include mod if mod
     rescue Exception=>e
       nil
@@ -269,6 +258,17 @@ class Card
                         
   end
 
+  def save_with_trash!
+    save || raise(errors.full_messages.join('. '))
+  end
+  alias_method_chain :save!, :trash
+
+  def save_with_trash(perform_checking=true)
+    pull_from_trash if new_record?
+    save_without_trash(perform_checking)
+  end
+  alias_method_chain :save, :trash   
+
   def get_typecode(args={})
     loaded_trunk = args['loaded_trunk'] if args['loaded_trunk']
     typetype = :cardname if args['type'] and args['typecode'] = args.delete('type')
@@ -278,6 +278,8 @@ class Card
   end
 
   def include_typecode(typetype=:codename)
+    Rails.logger.info "include_typecode #{typecode} #{typetype}"
+    #debugger
     Card.include_type(typecode, typetype)
     Rails.logger.info "create_extension? #{respond_to?(:create_extension)}, #{typecode}"
     create_extension if respond_to?(:create_extension)
@@ -717,6 +719,7 @@ class Card
         rec.errors.add :typecode, "can't be changed because #{rec.name} is hard tag templated to #{rec.right_template.typecode}"
       end        
       
+      Rails.logger.debug "include for updates #{rec.name} #{value}"
       Card.include_type(value, :codename)
     end
   end  

@@ -24,7 +24,7 @@ class Card
     save_without_trash(perform_checking)
   end
   alias_method_chain :save, :trash   
-  STDERR << "aliased save/trash Trace #{Kernel.caller[0..10]*"\n"}\n";
+  STDERR << "aliased save/trash Trace #{Kernel.caller[0..40]*"\n"}\n";
   
   include Wagn::Card::Model
 

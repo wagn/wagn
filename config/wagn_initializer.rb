@@ -181,8 +181,7 @@ module Wagn
       end
 
       def load_modules
-        %w{modules/*.rb packs/**/*_pack.rb}.each { |d| Wagn::Module.dir(File.expand_path( "../../#{d}/",__FILE__)) }
-        Wagn::Module.load_all
+        %w{modules/*.rb packs/**/*_pack.rb}.each { |d| Wagn::Pack.dir(File.expand_path( "../../#{d}/",__FILE__)) }
       end
 
 #      def register_mimetypes

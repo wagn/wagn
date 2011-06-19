@@ -7,7 +7,7 @@ source 'http://rubygems.org'
 
 # must have all of these
 
-gem 'rails', '~>2.3.9'
+gem 'rails', '2.3.11'
 gem 'rack', '>=1.1.0'
 gem 'rake', '>=0.8.7'
 

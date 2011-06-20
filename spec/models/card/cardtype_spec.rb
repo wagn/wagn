@@ -1,16 +1,16 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe "Card::Cardtype" do
+describe "Card (Cardtype)" do
   
   before do
     User.as :joe_user
   end
   
   it "should not allow cardtype remove when instances present" do
-    Card::Cardtype.create :name=>'City'
-    city = Card::Cardtype.find_by_name('City')
-    Card::City.create :name=>'Sparta'
-    Card::City.create :name=>'Eugene'
+    Card.create :name=>'City', :type=>'Cardtype'
+    city = Card.fetch('City')
+    Card.create :name=>'Sparta', :type=>'City'
+    Card.create :name=>'Eugene', :type=>'City'
     assert_equal ['Eugene','Sparta'], Card.search(:type=>'City').plot(:name).sort
     assert_raises Wagn::Oops do
       city.destroy!
@@ -20,19 +20,19 @@ describe "Card::Cardtype" do
   end
   
   it "remove cardtype" do
-    Card::Cardtype.create! :name=>'County'
-    city = Card::Cardtype.find_by_name('County')
+    Card.create! :name=>'County', :type=>'Cardtype'
+    c = Card.find_by_name('County')
     #warn "extension: #{city.extension}"
-    city.destroy
+    c.destroy
     Cardtype.find_by_class_name('County').should == nil
   end
   
   it "cardtype creation and dynamic cardtype" do
     assert_raises( NameError ) do
-      Card::BananaPudding.create :name=>"figgy"
+      Card.create :name=>"figgy", :type=>'BananaPudding'
     end
-    assert Card::Cardtype.create( :name=>'BananaPudding' ).class.include?(Card::Cardtype)
-    assert_instance_of Cardtype, Card.find_by_name("BananaPudding").extension
+    assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).typecode == 'Cardtype'
+    assert_instance_of Cardtype, Card.fetch("BananaPudding").extension
     assert_instance_of Cardtype, Cardtype.find_by_class_name("BananaPudding")    
     # you have to have a module to include or it's just a Basic (typecode fielde excepted)
     #assert_instance_of Card::BananaPudding, Card::BananaPudding.create( :name=>"figgy" )
@@ -41,23 +41,23 @@ describe "Card::Cardtype" do
   describe "conversion to cardtype" do
     before do
       @card = Card.create!(:name=>'Cookie')
-      @card.cardtype.should == 'Basic'      
+      @card.typecode.should == 'Basic'      
     end
     
     it "creates cardtype model and permission" do
-      @card.cardtype = 'Cardtype'
+      @card.typecode = 'Cardtype'
       @card.save!    
       Cardtype.name_for('Cookie').should == 'Cookie'
       @card=Card['Cookie']
       assert_instance_of Cardtype, @card.extension
       Permission.find_by_card_id_and_task(@card.id, 'create').should_not be_nil
-      assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).cardtype
+      assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).typecode
     end
   end
   
   it "cardtype" do
     Card.find(:all).each do |card|
-      assert card.cardtype.class.include?(Card::Cardtype)
+      assert !card.type_card.nil?
     end
   end
   
@@ -96,26 +96,11 @@ describe Card, "created without permission" do
 end
 
 
-describe Card, ".class_for" do
-  it "should find valid types" do
-    Card.class_for('basic', :cardname).should == Card::Basic
-    Card.class_for('Cardtype', :codename).should == Card::Cardtype
-    Card.class_for('Date').should == Card::Date
-  end
-  
-  it "should return nil for invalid type" do
-    Card.class_for("mumbo-jumbo", :cardname).should be_nil
-    Card.class_for('$d_foo#adfa', :codename).should be_nil
-  end
- 
-end
-
-
 describe Card, "Card changed to become a Cardtype" do
   before do
     User.as :wagbot 
     @a = Card['A']
-    @a.type = 'Cardtype'
+    @a.typecode = 'Cardtype'
     @a.save!
   end
   it "should have a create permission set" do
@@ -132,11 +117,11 @@ describe Card, "Normal card with junctions" do
     @a.junctions.length.should > 0
   end
   it "should successfull have its type changed" do
-    @a.cardtype = 'Number'; @a.save!
-    Card['A'].cardtype.should== 'Number'
+    @a.typecode = 'Number'; @a.save!
+    Card['A'].typecode.should== 'Number'
   end
   it "should still have its junctions after changing type" do
-    @a.cardtype = 'CardtypeE'; @a.save!
+    @a.typecode = 'CardtypeE'; @a.save!
     Card['A'].junctions.length.should > 0
   end
 end
@@ -145,9 +130,9 @@ end
 describe Card, "Recreated Card" do
   before do
     User.as :wagbot 
-    @ct = Card::Cardtype.create! :name=>'Species'
+    @ct = Card.create! :name=>'Species', :type=>'Cardtype'
     @ct.destroy!
-    @ct = Card::Cardtype.create! :name=>'Species'
+    @ct = Card.create! :name=>'Species', :type=>'Cardtype'
   end
   
   it "should have a cardtype extension" do
@@ -159,7 +144,7 @@ end
 describe Card, "New Cardtype" do
   before do
     User.as :wagbot 
-    @ct = Card::Cardtype.create! :name=>'Animal'
+    @ct = Card.create! :name=>'Animal', :type=>'Cardtype'
   end
   
   it "should have create permissions" do
@@ -175,12 +160,12 @@ describe Card, "Wannabe Cardtype Card" do
   before do
     User.as :wagbot 
     @card = Card.create! :name=> 'convertible'
-    @card.cardtype='Cardtype'
+    @card.typecode='Cardtype'
     @card.save!
     
   end
   it "should successfully change its type to a Cardtype" do
-    Card['convertible'].cardtype.should=='Cardtype'
+    Card['convertible'].typecode.should=='Cardtype'
   end
   it "should have an extension" do
     Card['convertible'].extension.should_not== nil
@@ -224,12 +209,12 @@ describe Card, "Cardtype with Existing Cards" do
     @ct = Card['Basic']
   end
   it "should have existing cards of that type" do
-    @ct.me_type.find(:all).should_not be_empty
+    Card.search(:type=>@ct.name).should_not be_empty
   end
 
   it "should raise an error when you try to delete it" do
     @ct.destroy
-    @ct.errors.on(:type).should_not be_empty
+    @ct.errors.on(:typecode).should_not be_empty
   end
 end
 
@@ -241,10 +226,10 @@ describe Card::Cardtype do
   
   it "should handle changing away from Cardtype" do
     ctg = Card.create! :name=>"CardtypeG", :type=>"Cardtype"
-    ctg.cardtype = 'Basic'
+    ctg.typecode = 'Basic'
     ctg.save!
     ctg = Card["CardtypeG"]
-    ctg.cardtype.should == 'Basic'
+    ctg.typecode.should == 'Basic'
     ctg.extension.should == nil
   end
 end

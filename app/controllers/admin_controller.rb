@@ -4,7 +4,7 @@ class AdminController < ApplicationController
   def setup
     raise(Wagn::Oops, "Already setup") unless User.no_logins? && !User[:first]
     if request.post?
-      Card::User  # wtf - trigger loading of Card::User, otherwise it tries to use U
+      #Card::User  # wtf - trigger loading of Card::User, otherwise it tries to use U
       User.as :wagbot do
         @user, @card = User.create_with_card( params[:extension].merge({:login=>'first'}), params[:card] )
         set_default_request_recipient

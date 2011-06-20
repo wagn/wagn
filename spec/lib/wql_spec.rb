@@ -124,7 +124,7 @@ describe Wql do
 
   describe "search count" do
     it "should count search" do
-      s = Card::Search.create! :name=>"ksearch", :content=>'{"match":"_keyword"}'
+      s = Card.create! :name=>"ksearch", :type=>'Search', :content=>'{"match":"_keyword"}'
       s.count("_keyword"=>"two").should==CARDS_MATCHING_TWO.length
     end
   end
@@ -332,7 +332,7 @@ describe Wql do
       Wql.new(:found_by=>'Simple Search').run.first.name.should=='A'
     end
     it "should find cards returned by virtual cards" do
-      Wql.new(:found_by=>'Image+*type+by name').run.plot(:name).sort.should==Card::Image.find(:all).plot(:name).sort
+      Wql.new(:found_by=>'Image+*type+by name').run.plot(:name).sort.should==Card.search(:type=>'Image').plot(:name).sort
     end
     it "should play nicely with other properties and relationships" do
       Wql.new(:plus=>{:found_by=>'Simple Search'}).run.map(&:name).sort.should==Wql.new(:plus=>{:name=>'A'}).run.map(&:name).sort

@@ -401,7 +401,8 @@ class Card
     #raise "No type: #{self.inspect}" unless self.typecode
     typecode or return 'Basic'
     #Rails.logger.info "No cardtype: #{self}, #{Kernel.caller*"\n"}" unless typecode
-    ::Cardtype.name_for( typecode )  end
+    ::Cardtype.name_for( typecode )
+  end
   
   
   def pieces
@@ -432,14 +433,17 @@ class Card
   def card  ## is this still necessary or just legacy from CachedCards?
     self
   end
+  
+  def type_card
+    ct = ::Cardtype.find_by_class_name( self.typecode )
+    raise("Error in #{self.name}: No cardtype for #{self.typecode}")  unless ct
+    ct.card
+  end
 
-  def typecode
-    @typecode ||= begin
-      ct = ::Cardtype.find_by_class_name( self.typecode )
-      raise("Error in #{self.name}: No cardtype for #{self.typecode}")  unless ct
-      ct.card
-    end
-  end  
+#  def typecode
+#    @typecode ||= begin
+#    end
+#  end  
   
   def drafts
     revisions.find(:all, :conditions=>["id > ?", current_revision_id])

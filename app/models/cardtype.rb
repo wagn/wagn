@@ -67,7 +67,7 @@ class Cardtype < ActiveRecord::Base
       @@cache[:create_parties][class_name] || raise("No create party for class #{class_name}") 
     end    
     
-    def createable_cardtypes  
+    def createable_typecodes  
       load_cache if @@cache.empty?
       @@cache[:card_names].collect do |class_name,card_name|
         next if ['InvitationRequest','Setting','Set'].include?(class_name)

@@ -6,7 +6,7 @@ describe Card::Cardtype, ".create with :codename" do
     User.as :joe_user
   end
   it "should work" do
-    Card::Cardtype.create!(:name=>"Foo Type", :codename=>"foo").cardtype.should=='Cardtype'
+    Card.create!(:name=>"Foo Type", :codename=>"foo", :type=>'Cardtype').typecode.should=='Cardtype'
   end
 end            
 
@@ -23,7 +23,7 @@ describe Card, ".create_these" do
   
   it 'should create cards of a given type' do
     Card.create_these "Cardtype:Footype" => "" 
-    Card["Footype"].cardtype.should == "Cardtype"
+    Card["Footype"].typecode.should == "Cardtype"
   end   
   
   it 'should take a hash of type:name=>content pairs' do
@@ -129,27 +129,27 @@ describe Card, "types" do
   end
   
   it "should accept cardtype name and casespace variant as type" do
-    ct = Card::Cardtype.create! :name=>"AFoo"
+    ct = Card.create! :name=>"AFoo", :type=>'Cardtype'
     ct.update_attributes! :name=>"FooRenamed"
-    Card.create!(:type=>"FooRenamed",:name=>"testy").class.should == Card::AFoo
-    Card.create!(:type=>"foo_renamed",:name=>"so testy").class.should == Card::AFoo
+    Card.create!(:type=>"FooRenamed",:name=>"testy").typecode.should == 'AFoo'
+    Card.create!(:type=>"foo_renamed",:name=>"so testy").typecode.should == 'AFoo'
   end
 
   it "should accept classname as typecode" do
-    ct = Card::Cardtype.create! :name=>"BFoo"
+    ct = Card.create! :name=>"BFoo", :type=>'Cardtype'
     ct.update_attributes! :name=>"BFooRenamed"
-    Card.create!(:typecode=>"BFoo",:name=>"testy").class.should == Card::BFoo
+    Card.create!(:typecode=>"BFoo",:name=>"testy").typecode.should == 'BFoo'
   end
   
   it "should accept cardtype name first when both are present" do
-    ct = Card::Cardtype.create! :name=>"CFoo"
+    ct = Card.create! :name=>"CFoo", :type=>'Cardtype'
     ct.update_attributes! :name=>"CFooRenamed"
-    Card::Cardtype.create! :name=>"CFoo"
-    Card.create!(:type=>"CFoo",:name=>"testy").class.should == Card::CFoo1
+    Card.create! :name=>"CFoo", :type=>'Cardtype'
+    Card.create!(:type=>"CFoo",:name=>"testy").typecode.should == 'CFoo1'
   end
   
   it "should raise a validation error if a bogus type is given" do
-    ct = Card::Cardtype.create! :name=>"DFoo"
+    ct = Card.create! :name=>"DFoo", :type=>'Cardtype'
     c = Card.new(:type=>"$d_foo#adfa",:name=>"more testy")
     c.valid?.should be_false
     c.errors_on(:type).should_not be_empty

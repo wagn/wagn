@@ -18,8 +18,6 @@ class RichHtmlRenderer
 
     layout_content = get_layout_content(args)
     
-    warn "got layout_content : #{layout_content}"
-    
     args[:context] = self.context = "layout_0"
     args[:action]="view"  
     args[:relative_content] = args[:params] = params 

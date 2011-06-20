@@ -1,7 +1,7 @@
 module Card::InvitationRequest
   attr_accessor :account  ## is this used??
 
-  def self.append_features(base)
+  def self.included(base)
     base.send :before_destroy, :block_user
   end
     

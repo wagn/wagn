@@ -1,7 +1,7 @@
 module Card::Cardtype
   include Card::Basic
 
-  # ??? extend the created card's class with these?
+  # extend the created card's class
   def self.included(base)
     self.class_eval do
       before_validation_on_create :create_extension, :reset_cardtype_cache

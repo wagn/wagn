@@ -96,6 +96,22 @@ describe Card, "created without permission" do
 end
 
 
+=begin don't reall need this now
+describe Card, ".class_for" do
+  it "should find valid types" do
+    Card.class_for('basic', :cardname).should == Card
+    Card.class_for('Cardtype', :codename).should == Card::Cardtype
+    Card.class_for('Date').should == Card::Date
+  end
+  
+  it "should return nil for invalid type" do
+    Card.class_for("mumbo-jumbo", :cardname).should be_nil
+    Card.class_for('$d_foo#adfa', :codename).should be_nil
+  end
+ 
+end
+=end
+
 describe Card, "Card changed to become a Cardtype" do
   before do
     User.as :wagbot 

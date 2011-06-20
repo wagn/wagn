@@ -20,7 +20,7 @@ describe Card, "in trash" do
   it "should be retrieved by find_or_create" do
     Card.create(:name=>"Betty").destroy
     Card.find_or_create(:name=>"Betty")
-    Card["Betty"].should be_instance_of(Card::Basic)
+    Card["Betty"].should be_instance_of(Card)
   end
 end
 

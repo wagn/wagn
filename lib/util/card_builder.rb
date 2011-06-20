@@ -4,7 +4,7 @@ module CardBuilderMethods
 
   def newcard(name, content="")
 Rails.logger.info "newcard(#{name}, #{content})"
-    ::Card::Basic.create! :name=>name, :content=>content
+    ::Card.create! :name=>name, :content=>content
   end
   
   def card_content( cardname )
@@ -12,7 +12,7 @@ Rails.logger.info "newcard(#{name}, #{content})"
   end      
 
   def create_cards( card_names )
-    card_names.collect {|name| Card::Basic.create :name=>name }
+    card_names.collect {|name| Card.create :name=>name }
   end
 
   def create_users( user_names )
@@ -20,7 +20,7 @@ Rails.logger.info "newcard(#{name}, #{content})"
   end
   
   def create_roles( role_names )
-    role_names.collect {|name| Card::Role.create( :name=>name ).extension }
+    role_names.collect {|name| Card.create( :typecode=>'Role', :name=>name ).extension }
   end
 
   def create_user( username )

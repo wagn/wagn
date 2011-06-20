@@ -90,7 +90,7 @@ namespace :test do
     puts ">> preparing test database"
     puts `rake db:test:load`
     puts ">> loading test fixtures"
-    puts `rake db:fixtures:load ::Rails.env=test`
+    puts `rake db:fixtures:load RAILS_ENV=test`
     
     #Rake::Task['db:test:prepare'].invoke
   #=end

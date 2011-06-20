@@ -70,7 +70,7 @@ module Cardlib
     end
     
     def update_search_index     
-      return unless (@search_content_changed && 
+      return unless (@name_or_content_changed && 
           System.enable_postgres_fulltext && Card.columns.plot(:name).include?("indexed_content"))
       
       connection.execute %{
@@ -78,7 +78,7 @@ module Cardlib
         to_tsvector( (select content from revisions where id=cards.current_revision_id) ) ),
         indexed_name = to_tsvector( name ) where id=#{self.id}
       }
-      @search_content_changed = false
+      @name_or_content_changed = false
       true
     end
 

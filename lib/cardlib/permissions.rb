@@ -95,13 +95,27 @@ module Cardlib
     end
     
     def who_can(operation)
-      User.as(:wagbot ) do
-        opcard = setting_card(operation.to_s)
-        ok_names = opcard ? opcard.item_names : []
-        ok_names.map &:to_key
-      end
+      rule_card(operation).first.item_names.map &:to_key
     end 
-        
+    
+    def rule_card(operation)
+      opcard = setting_card(operation.to_s)
+      if !opcard && !System.always_ok?
+        raise ::Card::PermissionDenied.new("No #{operation} setting card for #{name}") 
+      end
+      
+      rcard = begin
+        User.as :wagbot do
+          if opcard.raw_content == '_left' && self.junction?
+            Card.fetch_or_new(name.trunk_name, {:skip_virtual=>true}, :skip_defaults=>true).rule_card(operation).first
+          else
+            opcard
+          end
+        end
+      end
+      return rcard, opcard.name.trunk_name.tag_name
+    end
+    
     protected
     def you_cant(what)
       "#{ydhpt} #{what}"
@@ -129,7 +143,7 @@ module Cardlib
     def approve_read
       return true if System.always_ok?
       
-      self.read_rule_id ||= self.setting_card('read').id
+      self.read_rule_id ||= rule_card(:read).id
       ok = User.as_user.read_rule_ids.member?(self.read_rule_id) 
         
       deny_because(you_cant "read this card") unless ok
@@ -179,49 +193,66 @@ module Cardlib
     def set_read_rule
       return if ENV['BOOTSTRAP_LOAD'] == 'true'
       # avoid doing this on simple content saves?
-      read_rule = setting_card('read')
-      self.read_rule_id = read_rule.id
-      self.read_rule_class = read_rule.name.trunk_name.tag_name
-      #find all cards with me as trunk and update their read_rule
-      if !new_card? && updates.for(:type)
+      rcard, rclass = rule_card(:read)
+      self.read_rule_id = rcard.id
+      self.read_rule_class = rclass
+      
+      #find all cards with me as trunk and update their read_rule (because of *type plus right)
+      # skip if name is updated because will already be resaved
+      if !new_card? && updates.for(:type) #&& !updates.for(:name)
         User.as :wagbot do
           Card.search(:left=>self.name).each do |plus_card|
-            plus_card.update_read_rule plus_card.setting_card('read')
+            plus_card.update_read_rule
           end
         end
-        # skip if updates.for(:name)?  Because will already be resaved???
       end
     end
     
-    def update_read_rule(rule)
+    def update_read_rule
+      rcard, rclass = rule_card(:read)
       update_attributes!(
-        :read_rule_id => rule.id,
-        :read_rule_class => rule.name.trunk_name.tag_name
+        :read_rule_id => rcard.id,
+        :read_rule_class => rclass
       )
+      return if ENV['BOOTSTRAP_LOAD'] == 'true'
+      # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
+      User.as :wagbot do
+        Card.search(:left=>self.name).each do |plus_card|
+          if plus_card.setting(:read) == '_left'
+            plus_card.update_read_rule
+          end
+        end
+      end
       Card.cache.delete(self.key)
     end
 
     def update_ruled_cards
       return if ENV['BOOTSTRAP_LOAD'] == 'true'
-      if name.junction? && name.tag_name=='*read'
-        User.as :wagbot do
-          in_set = {}
+      if name.junction? && name.tag_name=='*read' && @name_or_content_changed
+        Wagn::Cache.expire_card self.key #probably shouldn't be necessary, 
+        # but was sometimes getting cached version when card should be in the trash.
+        # could be related to other bugs?
+        in_set = {}
+        if !(self.trash)
           rule_classes = Wagn::Pattern.subclasses.map &:key
           rule_class_index = rule_classes.index self.name.trunk_name.tag_name
+          return 'not a proper rule card' unless rule_class_index
 
           #first update all cards in set that aren't governed by narrower rule
-          Card.fetch(name.trunk_name).item_cards(:limit=>0).each do |item_card|
-            in_set[item_card.key] = true
-            next if rule_classes.index(item_card.read_rule_class) < rule_class_index
-            item_card.update_read_rule(self)
-          end
-
-          #then find all cards with me as read_rule_id that were not just updated and regenerate their read_rules
-          if !new_card?
-            Card.find_all_by_read_rule_id_and_trash(self.id, false).each do |was_ruled|
-              next if in_set[was_ruled.key]
-              was_ruled.update_read_rule was_ruled.setting_card('read')
+          User.as :wagbot do
+            Card.fetch(name.trunk_name).item_cards(:limit=>0).each do |item_card|
+              in_set[item_card.key] = true
+              next if rule_classes.index(item_card.read_rule_class) < rule_class_index
+              item_card.update_read_rule
             end
+          end
+        end
+
+        #then find all cards with me as read_rule_id that were not just updated and regenerate their read_rules
+        if !new_record?
+          Card.find_all_by_read_rule_id_and_trash(self.id, false).each do |was_ruled|  #optimize with WQL / fetch?
+            next if in_set[was_ruled.key]
+            was_ruled.update_read_rule# was_ruled.rule_card(:read)
           end
         end
       end

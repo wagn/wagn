@@ -75,13 +75,13 @@ namespace :wagn do
       Wagn::Cache.initialize_on_startup
       Card.cache.reset if Card.cache  #necessary?
       User.current_user = :wagbot
-      #         :star=> {:edit=>:admin, :delete=>:admin},
-      #          'administrator_link'=> {:read=>:admin},
-      #         '*watcher' => {:edit=>:auth},
-      #         '*watcher+*right+*default' => {:edit=>:auth}
 
       perm_rules = {
         '*all' => { :create=>:auth, :read=>:anon, :update => :auth, :delete => :auth, :comment=>nil },
+        '*all plus' => { :create=>:left, :read=>:left, :update => :left, :delete => :left },
+        '*star'                 => { :edit => :admin, :delete => :admin },
+        '*rstar'                => { :edit => :admin, :delete => :admin },
+        'watcher+*right'        => { :edit => :auth  },
         'Role+*type'            => { :create=>:admin },
         'Html+*type'            => { :create=>:admin },
         'Account Request+*type' => { :create=>:anon  },
@@ -93,13 +93,16 @@ namespace :wagn do
       perm_rules.each_key do |set|
         perm_rules[set].each_key do |setting|
           val = perm_rules[set][setting]
-          role_card = Role[val].card if val
-          c = Card.create!(
-            :name=> "#{set}+*#{setting}",
-            :type=> 'Pointer',
-            :content=>(val.nil? ? '' : "[[#{role_card.name}]]")
-          )
-          if val
+          role_card = nil
+          content = case val
+            when :left  ;  '_left'
+            when nil    ;  ''
+            else
+              role_card = Role[val].card if val
+              "[[#{role_card.name}]]"
+            end
+          c = Card.create! :name=> "#{set}+*#{setting}", :type=> 'Pointer', :content=>content
+          if role_card
             WikiReference.create(
               :card_id=>c.id, 
               :referenced_name=>role_card.key,
@@ -113,14 +116,9 @@ namespace :wagn do
 
       puts 'updating read_rule fields'
       Card.find(:all).each do |card|
-        read_rule = card.setting_card('read')
-        card.update_attributes(
-          :read_rule_id   => read_rule.id,
-          :read_rule_class=> read_rule.name.trunk_name.tag_name
-        )
+        card.update_read_rule
       end
       ENV['BOOTSTRAP_LOAD'] = 'false'
-
     end
   end
 end

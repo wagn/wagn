@@ -270,7 +270,6 @@ module Card
         dep.confirm_destroy = true
         dep.destroy_with_trash("#{caller} -> #{name}")
       end
-
       callback(:after_destroy) 
       true
     end

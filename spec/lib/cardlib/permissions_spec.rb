@@ -63,7 +63,7 @@ describe "reader rules" do
     card.read_rule_id.should == @perm_card.id  
   end
   
-  it "should get updated when trunk type change makes type-plus-right apply" do
+  it "should get updated when trunk type change makes type-plus-right apply / unapply" do
     @perm_card.name = "Phrase+B+*type plus right+*read"
     @perm_card.save!
     Card.fetch('A+B').read_rule_id.should == Card.fetch('*all+*read').id
@@ -73,7 +73,44 @@ describe "reader rules" do
     Card.fetch('A+B').read_rule_id.should == @perm_card.id
   end
   
+  it "should work with relative settings" do
+    @perm_card.save!
+    all_plus = Card.fetch_or_create('*all plus+*read', {}, :content=>'_left')
+    c = Card.new(:name=>'Home+Heart')
+    c.who_can(:read).should == ['anyone_signed_in']
+    c.rule_card(:read).first.id.should == @perm_card.id
+    c.save
+    c.read_rule_id.should == @perm_card.id
+  end
+  
+  it "should get updated when relative settings change" do
+    all_plus = Card.fetch_or_create('*all plus+*read', {}, :content=>'_left')
+    c = Card.new(:name=>'Home+Heart')
+    c.who_can(:read).should == ['anyone']
+    c.rule_card(:read).first.id.should == Card.fetch('*all+*read').id
+    c.save
+    c.read_rule_id.should == Card.fetch('*all+*read').id
+    @perm_card.save!
+    c2 = Card.fetch('Home+Heart')
+    c2.who_can(:read).should == ['anyone_signed_in']
+    c2.read_rule_id.should == @perm_card.id
+    Card.fetch('Home+Heart').read_rule_id.should == @perm_card.id
+    User.as(:wagbot){ @perm_card.destroy }
+    Card.fetch('Home').read_rule_id.should == Card.fetch('*all+*read').id
+    Card.fetch('Home+Heart').read_rule_id.should == Card.fetch('*all+*read').id
+  end
+  
+  it "should insure that class overrides work with relative settings" do
+    all_plus = Card.fetch_or_create('*all plus+*read', {}, :content=>'_left')
+    @perm_card.save
+    c = Card.create(:name=>'Home+Heart')
+    c.read_rule_id.should == @perm_card.id
+    r = Card.create(:name=>'Heart+*right+*read', :type=>'Pointer', :content=>'[[Administrator]]')
+    Card.fetch('Home+Heart').read_rule_id.should == r.id
+  end
 end
+
+
 
 describe "Permission", ActiveSupport::TestCase do
   before do
@@ -99,7 +136,7 @@ describe "Permission", ActiveSupport::TestCase do
 
   it "reader setting" do
     Card.find(:all).each do |c|
-      c.setting_card(:read).id.should == c.read_rule_id
+      c.rule_card(:read).first.id.should == c.read_rule_id
     end
   end
 

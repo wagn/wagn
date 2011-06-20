@@ -45,7 +45,7 @@ end
 describe Card, "created by Card.new " do
   before(:each) do     
     User.as :wagbot 
-    @c = Card::Basic.new :name=>"New Card", :content=>"Great Content"
+    @c = Card.new :name=>"New Card", :content=>"Great Content"
   end
   
   it "should have attribute_tracking updates" do
@@ -78,7 +78,7 @@ describe Card, "created by Card.create with valid attributes" do
   end
 
   it "should not have errors"        do @b.errors.size.should == 0        end
-  it "should have the right class"   do @c.class.should    == Card::Basic end
+  it "should have the right class"   do @c.class.should    == Card end
   it "should have the right key"     do @c.key.should      == "new_card"  end
   it "should have the right name"    do @c.name.should     == "New Card"  end
   it "should have the right content" do @c.content.should  == "Great Content" end
@@ -88,7 +88,7 @@ describe Card, "created by Card.create with valid attributes" do
   end
 
   it "should be findable by name" do
-    Card.find_by_name("New Card").class.should == Card::Basic
+    Card.find_by_name("New Card").class.should == Card
   end  
 end
 
@@ -103,15 +103,15 @@ describe Card, "create junction" do
   end
 
   it "should create junction card" do
-    Card.find_by_name("Peach+Pear").class.should == Card::Basic
+    Card.find_by_name("Peach+Pear").class.should == Card
   end
 
   it "should create trunk card" do
-    Card.find_by_name("Peach").class.should == Card::Basic
+    Card.find_by_name("Peach").class.should == Card
   end
 
   it "should create tag card" do
-    Card.find_by_name("Pear").class.should == Card::Basic
+    Card.find_by_name("Pear").class.should == Card
   end
 end
        

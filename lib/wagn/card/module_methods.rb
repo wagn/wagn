@@ -22,6 +22,7 @@ module Wagn::Card
     true
   end
 
+=begin
   def card_const_set(class_id)
     newclass = Class.new( Card::Basic )
     const_set class_id, newclass
@@ -42,6 +43,7 @@ module Wagn::Card
     raise e unless (classnames.has_key?( class_id.to_s ) and klass = card_const_set(class_id))
     klass
   end
+=end
    
   def generate_codename_for(cardname)
     codename = cardname.gsub(/^\W+|\W+$/,'').gsub(/\W+/,'_').camelize   

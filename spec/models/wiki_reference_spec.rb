@@ -183,7 +183,7 @@ describe "WikiReference" do
 
   # This test doesn't make much sense to me... LWH
   it "revise changes references from wanted to linked for new cards" do
-    new_card = Card::Basic.create(:name=>'NewCard')
+    new_card = Card.create(:name=>'NewCard')
     new_card.revise('Reference to [[WantedCard]], and to [[WantedCard2]]', Time.now, User.find_by_login('quentin'), 
         get_renderer)
     
@@ -194,7 +194,7 @@ describe "WikiReference" do
     references[1].referenced_name.should == 'WantedCard2'
     references[1].link_type.should == WikiReference::WANTED_PAGE
 
-    wanted_card = Card::Basic.create(:name=>'WantedCard')
+    wanted_card = Card.create(:name=>'WantedCard')
     wanted_card.revise('And here it is!', Time.now, User.find_by_login('quentin'), get_renderer)
 
     # link type stored for NewCard -> WantedCard reference should change from WANTED to LINKED
@@ -209,7 +209,7 @@ describe "WikiReference" do
 =end
   private
   def newcard(name, content="")
-    ::Card::Basic.create! :name=>name, :content=>content
+    ::Card.create! :name=>name, :content=>content
   end
 
 end

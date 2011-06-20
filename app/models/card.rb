@@ -198,11 +198,13 @@ class Card
     
     Rails.logger.debug "Card.initialize #{skip_lookup}, #{args.inspect}, #{typetype}"
 
+    att_id = args.delete('attachment_id')
     super
     unless skip_lookup
       args['name'] and not typetype and pattern=template and typecode = pattern.typecode
       include_typecode(typetype)
     end
+    self.attachment_id = att_id if att_id # now that we have modules, we have this field
     #new_card = card_class.ar_new args
       
     yield(new_card) if block_given?

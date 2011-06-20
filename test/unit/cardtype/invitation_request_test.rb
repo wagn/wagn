@@ -11,13 +11,13 @@ class Card::InvitationRequestTest < ActiveSupport::TestCase
   
  
   def test_should_require_name
-    @card = Card::InvitationRequest.create :account=>{ :email=>"bunny@hop.com" }
+    @card = Card.create  :typecode=>'InvitationRequest', :account=>{ :email=>"bunny@hop.com" }
     assert @card.errors.on(:name)
   end
   
 
   def test_should_require_unique_name
-    @card = Card::InvitationRequest.create :name=>"Joe User", :account=>{ :email=>"jamaster@jay.net" }, :content=>"Let me in!"
+    @card = Card.create :typecode=>'InvitationRequest', :name=>"Joe User", :account=>{ :email=>"jamaster@jay.net" }, :content=>"Let me in!"
     assert @card.errors.on(:name)
   end
 

@@ -189,7 +189,7 @@ describe Renderer, "" do
         User.as :wagbot do
           card = Card['A+B']
           @simple_page = RichHtmlRenderer.new(card).render(:layout)
-          end
+        end
       end
 
 

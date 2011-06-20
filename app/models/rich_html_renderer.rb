@@ -108,6 +108,7 @@ class RichHtmlRenderer < Renderer
   end
 
   def layout_from_name
+    warn "getting layout from name"
     lname = (params[:layout] || args[:layout]).to_s
     lcard = Card.fetch(lname, :skip_virtual=>true)
     case
@@ -118,7 +119,10 @@ class RichHtmlRenderer < Renderer
   end
 
   def layout_from_card
+    warn "getting layout from card"
     return unless setting_card = (card.setting_card('layout') or Card.default_setting_card('layout'))
+    warn "found setting card: #{setting_card.inspect}"
+    warn "found layout name: #{setting_card.item_names.first}"
     return unless setting_card.is_a?(Card::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.typecode == 'Pointer'        and
       layout_name=setting_card.item_names.first     and
       !layout_name.nil?                             and

@@ -31,10 +31,11 @@ describe "Card::Cardtype" do
     assert_raises( NameError ) do
       Card::BananaPudding.create :name=>"figgy"
     end
-    assert_instance_of Card::Cardtype, Card::Cardtype.create( :name=>'BananaPudding' )
+    assert Card::Cardtype.create( :name=>'BananaPudding' ).class.include?(Card::Cardtype)
     assert_instance_of Cardtype, Card.find_by_name("BananaPudding").extension
     assert_instance_of Cardtype, Cardtype.find_by_class_name("BananaPudding")    
-    assert_instance_of Card::BananaPudding, Card::BananaPudding.create( :name=>"figgy" )
+    # you have to have a module to include or it's just a Basic (typecode fielde excepted)
+    #assert_instance_of Card::BananaPudding, Card::BananaPudding.create( :name=>"figgy" )
   end
 
   describe "conversion to cardtype" do
@@ -56,7 +57,7 @@ describe "Card::Cardtype" do
   
   it "cardtype" do
     Card.find(:all).each do |card|
-      assert_instance_of Card::Cardtype, card.cardtype
+      assert card.cardtype.class.include?(Card::Cardtype)
     end
   end
   

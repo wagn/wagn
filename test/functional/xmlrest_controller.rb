@@ -25,7 +25,7 @@ class XmlrestControllerTest < ActionController::TestCase
     post :post, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
     assert assigns['card']
     assert_response 418
-    assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
+    assert Card.find_by_name('Editor').class.include?(Card::Cardtype)
     # this assertion fails under autotest when running the whole suite,
     # passes under rake test.
     # assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor')
@@ -149,7 +149,7 @@ class XmlrestControllerTest < ActionController::TestCase
       :content=>"Bananas"
     }
     assert_response 418
-    assert_instance_of Card::Basic, Card.find_by_name("NewCardFoo")
+    assert_instance_of Card, Card.find_by_name("NewCardFoo")
     assert_equal "Bananas", Card.find_by_name("NewCardFoo").content
   end
 
@@ -170,7 +170,7 @@ class XmlrestControllerTest < ActionController::TestCase
       "content"=>"noof"
     }
     assert_response 418
-    assert_instance_of Card::Phrase, Card.find_by_name("Problem")
+    assert Card.find_by_name("Problem").class.include?(Card::Phrase)
   end
 
   def test_multi_create_without_name

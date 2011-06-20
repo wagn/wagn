@@ -44,7 +44,7 @@ class InvitationRequestTest < ActionController::TestCase
     @card =  Card.find_by_name("Word Third")   
     @user = @card.extension
     
-    assert_instance_of Card::InvitationRequest, @card
+    assert @card.class.include?(Card::InvitationRequest)
 
     # this now happens only when created via account controller
     

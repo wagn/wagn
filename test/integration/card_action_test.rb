@@ -44,14 +44,15 @@ class CardActionTest < ActionController::IntegrationTest
     integration_login_as :admin
     post( 'card/create', :card=>{:content=>"test", :type=>'Role', :name=>"Editor"})
     assert_response 418
-    assert_instance_of Card::Role, Card.find_by_name('Editor')
+
+    assert Card.find_by_name('Editor').class.include?(Card::Role)
     assert_instance_of Role, Role.find_by_codename('Editor')
   end
 
   def test_create_cardtype_card
     post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor2"} )
     assert_response 418
-    assert_instance_of Card::Cardtype, Card.find_by_name('Editor2')
+    assert Card.find_by_name('Editor2').class.include?(Card::Cardtype)
     assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor2')
   end
 

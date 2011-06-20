@@ -1,6 +1,8 @@
 require File.dirname(__FILE__) + '/../spec_helper' 
 
+
 describe "WikiReference" do
+  
   before do
     #setup_default_user  
     User.as :wagbot
@@ -8,7 +10,7 @@ describe "WikiReference" do
 
   describe "references on hard templated cards should get updated" do
     it "on templatee creation" do
-      Card::UserForm.create! :name=>"JoeForm"
+      Card.create! :name=>"JoeForm", :type=>'UserForm'
       Renderer.new(Card["JoeForm"]).render(:naked)
       assert_equal ["joe_form+age", "joe_form+name", "joe_form+description"].sort,
         Card["JoeForm"].out_references.plot(:referenced_name).sort     
@@ -16,8 +18,8 @@ describe "WikiReference" do
     end         
 
     it "on template creation" do
-      Card::Cardtype.create! :name=>"SpecialForm"
-      Card::SpecialForm.create! :name=>"Form1", :content=>"foo"
+      Card.create! :name=>"SpecialForm", :type=>'Cardtype'
+      Card.create! :name=>"Form1", :type=>'SpecialForm', :content=>"foo"
       c = Card.find_by_name("Form1")
       c.references_expired.should be_nil
       Card.create! :name=>"SpecialForm+*type+*content", :content=>"{{+bar}}"
@@ -29,7 +31,7 @@ describe "WikiReference" do
     end
 
     it "on template update" do
-      Card::UserForm.create! :name=>"JoeForm"
+      Card.create! :name=>"JoeForm", :type=>'UserForm'
       tmpl = Card["UserForm+*type+*content"]
       tmpl.content = "{{+monkey}} {{+banana}} {{+fruit}}"; 
       tmpl.save!
@@ -48,7 +50,7 @@ describe "WikiReference" do
     newcard("Yellow")
     Card["Yellow"].referencers.plot(:name).sort.should == %w{ Banana Submarine Sun }
     y=Card["Yellow"];  
-    y.cardtype="UserForm"; 
+    y.typecode="UserForm"; 
     y.save!
     Card["Yellow"].referencers.plot(:name).sort.should == %w{ Banana Submarine Sun }
   end
@@ -56,11 +58,11 @@ describe "WikiReference" do
   
   it "container transclusion" do
     bob_city = Card.create :name=>'bob+city' 
-    Card.create :name=>'address+*right+*default',:content=>"{{#{JOINT}city|base:parent}}"
+    Card.create :name=>'address+*right+*default',:content=>"{{+city|base:parent}}"
     bob_address = Card.create :name=>'bob+address'
     
-    bob_address.transcludees.plot(:name).should == ["bob#{JOINT}city"]
-    bob_city.transcluders.plot(:name).should == ["bob#{JOINT}address"]
+    bob_address.transcludees.plot(:name).should == ["bob+city"]
+    bob_city.transcluders.plot(:name).should == ["bob+address"]
   end
 
 
@@ -76,27 +78,27 @@ describe "WikiReference" do
   it "should update references on rename when requested" do
     watermelon = newcard('watermelon', 'mmmm')
     watermelon_seeds = newcard('watermelon+seeds', 'black')
-    lew = newcard('Lew', "likes [[watermelon]] and [[watermelon#{JOINT}seeds|seeds]]")
+    lew = newcard('Lew', "likes [[watermelon]] and [[watermelon+seeds|seeds]]")
 
     watermelon = Card['watermelon']
     watermelon.update_referencers = true
     watermelon.confirm_rename = true
     watermelon.name="grapefruit"
     watermelon.save!
-    lew.reload.content.should == "likes [[grapefruit]] and [[grapefruit#{JOINT}seeds|seeds]]"
+    lew.reload.content.should == "likes [[grapefruit]] and [[grapefruit+seeds|seeds]]"
   end
   
   it "should not update references when not requested" do
     watermelon = newcard('watermelon', 'mmmm')
     watermelon_seeds = newcard('watermelon+seeds', 'black')
-    lew = newcard('Lew', "likes [[watermelon]] and [[watermelon#{JOINT}seeds|seeds]]")
+    lew = newcard('Lew', "likes [[watermelon]] and [[watermelon+seeds|seeds]]")
 
     watermelon = Card['watermelon']
     watermelon.update_referencers = false
     watermelon.confirm_rename = true
     watermelon.name="grapefruit"
     watermelon.save!
-    lew.reload.content.should == "likes [[watermelon]] and [[watermelon#{JOINT}seeds|seeds]]"
+    lew.reload.content.should == "likes [[watermelon]] and [[watermelon+seeds|seeds]]"
     w = ReferenceTypes::WANTED_LINK
     assert_equal [w,w], lew.out_references.plot(:link_type), "links should be Wanted"
   end
@@ -117,13 +119,13 @@ describe "WikiReference" do
   end
     
   it "template transclusion" do
-    cardtype = Card::Cardtype.create! :name=>"ColorType", :content=>""
-    Card.create! :name=>"ColorType+*type+*content", :content=>"{{#{JOINT}rgb}}"
-    green = Card::ColorType.create! :name=>"green"
+    cardtype = Card.create! :name=>"ColorType", :type=>'Cardtype', :content=>""
+    Card.create! :name=>"ColorType+*type+*content", :content=>"{{+rgb}}"
+    green = Card.create! :name=>"green", :type=>'ColorType'
     rgb = newcard 'rgb'
     green_rgb = Card.create! :name => "green+rgb", :content=>"#00ff00"
     
-    green.reload.transcludees.plot(:name).should == ["green#{JOINT}rgb"]
+    green.reload.transcludees.plot(:name).should == ["green+rgb"]
     green_rgb.reload.transcluders.plot(:name).should == ['green']
   end
 

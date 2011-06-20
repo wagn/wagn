@@ -1,3 +1,6 @@
 module Card::Set
-  Card.send :include, Card::Search
+  def self.included(base)
+    Rails.logger.debug "including Set -> Search #{self} #{base}"
+    base.send :include, Card::Search
+  end
 end

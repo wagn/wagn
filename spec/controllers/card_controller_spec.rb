@@ -88,15 +88,17 @@ describe CardController do
         :content=>"Bananas"
       }
       assert_response 418
-      assert_instance_of Card::Basic, Card.find_by_name("NewCardFoo")
-      Card.find_by_name("NewCardFoo").content.should == "Bananas"
+      c=Card.find_by_name("NewCardFoo")
+      assert c.class.include?(Card::Basic)
+      c.content.should == "Bananas"
     end
     
     it "creates cardtype cards" do
       post :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
       assigns['card'].should_not be_nil
       assert_response 418
-      assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
+      c=Card.find_by_name("Editor")
+      assert c.class.include?(Card::Cardtype)
     end
     
     it "pulls deleted cards from trash" do
@@ -104,7 +106,8 @@ describe CardController do
       @c.destroy!
       post :create, :card=>{"name"=>"Problem","type"=>"Phrase","content"=>"noof"}
       assert_response 418
-      assert_instance_of Card::Phrase, Card.find_by_name("Problem")
+      c=Card.find_by_name("Problem")
+      assert c.class.include?(Card::Phrase)
     end
 
     context "multi-create" do
@@ -255,8 +258,11 @@ describe CardController do
       end
 
       it "handles nonexistent card without create permissions" do
+        Rails.logger.debug "failing 0"
         login_as :anon
+        Rails.logger.debug "failing 1"
         get :show, {:id=>'Sample_Fako'}
+        Rails.logger.debug "failing 2"
         assert_response :success   
         assert_template 'missing'
       end
@@ -289,16 +295,16 @@ describe CardController do
       end
     end
 
-    it "new without cardtype" do
+    it "new without typecode" do
       post :new   
       assert_response :success, "response should succeed"                     
-      assert_equal 'Basic', assigns['card'].cardtype, "@card type should == Basic"
+      assert_equal 'Basic', assigns['card'].typecode, "@card type should == Basic"
     end
 
-    it "new with cardtype" do
+    it "new with typecode" do
       post :new, :card => {:type=>'Date'}   
       assert_response :success, "response should succeed"                     
-      assert_equal 'Date', assigns['card'].cardtype, "@card type should == Date"
+      assert_equal 'Date', assigns['card'].typecode, "@card type should == Date"
     end        
 
     it "remove" do
@@ -335,13 +341,13 @@ describe CardController do
       assert_template 'missing'
     end
 
-    it "update cardtype with stripping" do
+    it "update typecode with stripping" do
       User.as :joe_user                                               
       post :update, {:id=>@simple_card.id, :card=>{ :type=>"Date",:content=>"<br/>" } }
       #assert_equal "boo", assigns['card'].content
       assert_response :success, "changed card type"   
       assigns['card'].content  .should == ""
-      Card['Sample Basic'].cardtype.should == "Date"
+      Card['Sample Basic'].typecode.should == "Date"
     end
 
 
@@ -356,7 +362,7 @@ describe CardController do
     #    #assert_equal "boo", assigns['card'].content
     #    assert_equal "<br/>", assigns['card'].content
     #    assert_response :success, "changed card type"   
-    #    assert_equal "CardtypeA", Card['Sample Basic'].cardtype
+    #    assert_equal "CardtypeA", Card['Sample Basic'].typecode
     #  end 
     # 
   end

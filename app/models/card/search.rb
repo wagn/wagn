@@ -1,11 +1,9 @@
 
 module Card::Search
-  def included(base)
+  def self.included(base)
     Rails.logger.debug "search included#{base}"
-  end
-  def self.append_features(base)
     base.class_eval { attr_accessor :results, :spec }
-    #base.send :before_save, :escape_content
+    base.send :before_save, :escape_content
   end
 
   def collection?() true end

@@ -61,7 +61,6 @@ module Wagn::Card::Permissions
     if !perform_checking || approved?
       begin
         Rails.logger.info "rcs #{method}"
-        debugger if name == 'ThisMyCard'
         self.send(method)
       rescue Exception => e
         name.piece_names.each{|piece| Wagn::Cache.expire_card(piece.to_key)}
@@ -104,6 +103,7 @@ module Wagn::Card::Permissions
   end  
   
   def ok!(operation)
+    debugger unless ok?(operation)
     raise ::Card::PermissionDenied.new(self) unless ok?(operation);  true
   end
 
@@ -172,6 +172,7 @@ module Wagn::Card::Permissions
   end
   
   def approve_create     
+    Rails.logger.debug "approve_create #{self.typecode} #{name}"
     raise "must be a cardtype card" unless self.typecode == 'Cardtype'
     deny_because you_cant("create #{self.name} cards") unless Cardtype.create_ok?(nil, name)    
   end

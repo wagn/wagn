@@ -3,7 +3,7 @@
     <h1 class="page-header">New <%= card.typecode != 'Basic' ? card.typecode.name : '' %> Card</h1>
 
     <% @instruction = capture do %>
-      <% if card.broken_type %>
+      <% if false #card.broken_type %>
         <div class="error" id="no-cardtype-error">
           Oops! There's no <strong>card type</strong> called "<strong><%= card.broken_type %></strong>".
         </div>

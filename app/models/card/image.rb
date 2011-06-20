@@ -1,4 +1,6 @@
 module Card::Image
-  include Wagn::Card::CardAttachment
-  card_attachment CardImage
+  def self.included(base)
+    base.include Wagn::Card::CardAttachment
+    base.card_attachment CardImage
+  end
 end

@@ -18,7 +18,7 @@
           :html=>{:class=>'form', :onsubmit=>s.save_function}) do |form| %>
 
       <div class="card-header">
-        <% if (request and !request.xhr?) && @args[:type] && !card.broken_type %>
+        <% if (request and !request.xhr?) && @args[:type] #&& !card.broken_type %>
           <%= hidden_field_tag 'card[type]', @args[:type] %>
         <% else %>
           <span class="new-type">

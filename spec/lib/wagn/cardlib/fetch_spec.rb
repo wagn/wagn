@@ -3,10 +3,10 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper')
 describe Card do
   describe ".fetch" do
     it "returns and caches existing cards" do
-      Card.fetch("A").should be_instance_of(Card::Basic)
-      Card.cache.read("a").should be_instance_of(Card::Basic)
+      Card.fetch("A").should be_instance_of(Card)
+      Card.cache.read("a").should be_instance_of(Card)
       Card.should_not_receive(:find_by_key)
-      Card.fetch("A").should be_instance_of(Card::Basic)
+      Card.fetch("A").should be_instance_of(Card)
     end
 
     it "returns nil and caches missing cards" do
@@ -24,14 +24,14 @@ describe Card do
     end
 
     it "returns and caches builtin cards" do
-      Card.fetch("*head").should be_instance_of(Card::Basic)
+      Card.fetch("*head").should be_instance_of(Card)
       Card.cache.read("*head").should_not be_nil
     end
 
     it "returns virtual cards and caches them as missing" do
       User.as(:wagbot)
       card = Card.fetch("Joe User+*email")
-      card.should be_instance_of(Card::Basic)
+      card.should be_instance_of(Card)
       card.name.should == "Joe User+*email"
       card.content.should == 'joe@user.com'
       cached_card = Card.cache.read("joe_user+*email")
@@ -51,7 +51,7 @@ describe Card do
       User.as :wagbot
 
       a = Card.fetch("A")
-      a.should be_instance_of(Card::Basic)
+      a.should be_instance_of(Card)
 
       # expires the saved card
       Card.cache.should_receive(:delete).with('a')
@@ -126,19 +126,20 @@ describe Card do
   describe "#fetch_or_new" do
     it "returns a new card if it doesn't find one" do
       new_card = Card.fetch_or_new("Never Seen Me Before")
-      new_card.should be_instance_of(Card::Basic)
+      new_card.should be_instance_of(Card)
       new_card.new_record?.should be_true
     end
 
     it "returns a card if it finds one" do
       new_card = Card.fetch_or_new("A+B")
-      new_card.should be_instance_of(Card::Basic)
+      new_card.should be_instance_of(Card)
       new_card.new_record?.should be_false
     end
 
     it "takes a second hash of options as new card options" do
       new_card = Card.fetch_or_new("Never Before", {}, :type => "Image")
-      new_card.should be_instance_of(Card::Image)
+      new_card.should be_instance_of(Card)
+      new_card.class.include?(Card::Image).should be_true
       new_card.new_record?.should be_true
     end
   end

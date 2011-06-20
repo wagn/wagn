@@ -64,7 +64,7 @@ class Card
     
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
     :from_trash, :update_referencers, :allow_typecode_change, :virtual,
-  :skip_defaults, :loaded_trunk, :blank_revision, :has_extension
+  :skip_defaults, :loaded_trunk, :blank_revision
 
   # setup hooks on AR callbacks
   # Note: :after_create is called from end of set_initial_content now
@@ -74,11 +74,6 @@ class Card
     end
   end
     
-  # create_extension was happening before type incudes, so save the even here
-  def has_extension
-    @has_extionsion=true
-  end
-
   # apparently callbacks defined this way are called last.
   # that's what we want for this one.  
   def after_save 
@@ -216,23 +211,23 @@ class Card
 
   class << self
     def include_type(typecode, typetype=:codename)
+      typetype=:codename unless typetype
       Rails.logger.debug "include_type(#{typecode}, #{typetype})"
-      #card_class = Card.class_for( typecode, typetype ) || ( broken_cardtype = typecode; Card::Basic)
-      debugger if typecode == 'Search'
       #mod = Card.const_get 'Wagn::Card::Type::'+( #module_id =
-      module_id =
-            if typetype.to_sym == :codename
+      module_id = if typetype.to_sym == :codename
               typecode
             else
               typecardname = ::Cardtype.name_for_key(typecode.to_key) and
               ::Cardtype.classname_for(typecardname)
             end
-      mod = Card.const_get module_id
+      # 'Set' is defined in Rails someplace
+      #mod = Card.const_get(module_id == 'Set' ? 'Search' : module_id)
+      mod = self.const_get(module_id)
 
-      #mod.allocate.is_a?(Card) ? mod : card_const_set(module_id)
-      Rails.logger.debug "include_type(#{typecode}, #{typetype}) #{mod.inspect}"
+      Rails.logger.debug "include_typex(#{typecode}, #{typetype}) #{module_id}, #{mod.inspect}"
       include mod if mod
     rescue Exception=>e
+      Rails.logger.info "exception #{e} #{e.backtrace[0..3]*"\n"}"
       nil
     end
     def get_name_from_args(args={}) #please tell me this is no longer necessary
@@ -283,19 +278,10 @@ class Card
 
   def include_typecode(typetype=:codename)
     Rails.logger.info "include_typecode #{typecode} #{typetype}"
-    #debugger
     Card.include_type(typecode, typetype)
-    Rails.logger.info "create_extension? #{respond_to?(:create_extension)}, #{typecode}"
   end
 
   def reset_cardtype_cache() end
-
-=begin
-  def typecode=(tc)
-    # do the includes (how do you 'undo' current includes, or do you need to?
-    write_attribute :typecode, tc
-  end
-=end
 
   def pull_from_trash
     return unless key

@@ -4,7 +4,6 @@ class Renderer
     error=nil
     begin
       Rails.logger.info "Search :naked #{card&&card.name} #{Kernel.caller[0..5]*"\n"}"
-      debugger
       card.item_cards( paging_params )
     rescue Exception=>e
       Rails.logger.info "Search Error (:naked) #{e.inspect} #{e.backtrace*"\n"}"

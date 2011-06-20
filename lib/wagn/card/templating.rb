@@ -42,7 +42,8 @@ module Wagn::Card::Templating
   private
   # FIXME: remove after adjusting expire_templatee_references to content_settings
   def hard_templatee_wql
-    if hard_template? and c=Card.fetch(name.trunk_name) and c.typecode == "Set"
+    if hard_template? and c=Card.fetch(name.trunk_name) and c.class.include?(Card::Set)
+      #Rails.logger.debug "hard_templatee_wql #{c.name}:#{c.class.include?(Card::Search)}, #{c.class.include?(Card::Set)}" #unless c.class.include?('Search')
       wql = c.get_spec
     end
   end

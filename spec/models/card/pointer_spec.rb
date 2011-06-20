@@ -5,6 +5,11 @@ describe Card::Pointer do
     User.current_user = :joe_user
   end
   
+  context "item_names" do
+    p = Card.new(:type=>'Pointer', :content=>"[[Busy]]\n[[Body]]")
+    p.item_names.should == ['Busy', 'Body']
+  end
+  
   context "add_item" do
     it "add to empty ref list" do
       @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>""

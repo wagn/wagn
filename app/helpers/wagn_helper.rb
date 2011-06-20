@@ -129,7 +129,7 @@ module WagnHelper
   end
 
   def formal_joint
-    " <span class=\"wiki-joint\">#{JOINT}</span> "
+    " <span class=\"wiki-joint\">+</span> "
   end
 
   def formal_title(card)
@@ -139,11 +139,11 @@ module WagnHelper
   def fancy_title(card)
     name = (String===card ? card : card.name)
     return name if name.simple?
-    card_title_span(name.left_name) + %{<span class="joint">#{JOINT}</span>} + card_title_span(name.tag_name)
+    card_title_span(name.left_name) + %{<span class="joint">+</span>} + card_title_span(name.tag_name)
   end
 
   def title_tag_names(card)
-    card.name.split(JOINT)
+    card.name.split('+')
   end
 
 

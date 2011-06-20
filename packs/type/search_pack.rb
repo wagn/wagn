@@ -15,7 +15,7 @@ class Renderer
     when card.results.nil?
       %{No results? #{error.class.to_s}: #{error&&error.message}<br/>#{card.content}}
     when card.spec[:return] =='count'
-      card.results
+      card.results.to_s
     else
       render('card_list')
     end
@@ -39,7 +39,7 @@ class Renderer
     if card.results.nil?
       %{"#{error.class.to_s}: #{error.message}"<br/>#{card.content}}
     elsif card.spec[:return] =='count'
-      card.results
+      card.results.to_s
     elsif card.results.length==0
       '<span class="faint">(0)</span>'
     else

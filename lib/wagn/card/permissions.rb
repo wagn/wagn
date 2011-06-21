@@ -19,17 +19,18 @@ module Wagn::Card::Permissions
   end
 
   
-  module ClassMethods 
-    def create_ok?()   
-      ::Cardtype.create_ok?(typecode)
-    end
-    def create_ok!()   
-      user = ::User.current_user.cardname 
+  #module ClassMethods 
+  #end
 
-      unless self.create_ok?        
-        msg = "You don't have permission to create #{typecode} cards" 
-        raise Wagn::PermissionDenied.new(msg) 
-      end
+  def create_ok?()   
+    ::Cardtype.create_ok?(typecode)
+  end
+  def create_ok!()   
+    user = ::User.current_user.cardname 
+
+    unless create_ok?        
+      msg = "You don't have permission to create #{typecode} cards" 
+      raise Wagn::PermissionDenied.new(msg) 
     end
   end
 
@@ -228,7 +229,7 @@ module Wagn::Card::Permissions
   
   def self.included(base)   
     super
-    base.extend(ClassMethods)
+    #base.extend(ClassMethods)
     base.class_eval do           
       attr_accessor :operation_approved, :permission_errors
       alias_method_chain :destroy, :permissions  

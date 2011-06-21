@@ -49,8 +49,7 @@ module Wagn::Card::TrackedAttributes
     if existing_card = Card.find_by_key(newname.to_key) and existing_card != self
       if existing_card.trash  
         existing_card.update_attributes! :name=>existing_card.name+"*trash", :confirm_rename=>true
-      else                             
-        # note -- this happens when changing to a name variant.  any special handling needed?
+      #else note -- else case happens when changing to a name variant.  any special handling needed?
       end
     end
           
@@ -62,8 +61,10 @@ module Wagn::Card::TrackedAttributes
   end
 
   def set_typecode(new_typecode)
-    new_typecode ||= 'Basic' #shouldn't be here, should it?
-    Rails.logger.warn "set typecode called on #{name} to #{new_typecode}"
+    Rails.logger.debug "set_typecde No type code for #{name}, #{typecode}" unless new_typecode
+    new_typecode = 'Basic' unless new_typecode
+    return if new_typecode == typecode
+    Rails.logger.warn "set typecode called on #{name} to #{new_typecode} #{Kernel.caller[0..5]*"\n"}"
     self.typecode_without_tracking = new_typecode 
     return if new_card?
     on_typecode_change # FIXME this should be a callback
@@ -79,9 +80,13 @@ module Wagn::Card::TrackedAttributes
     #newcard = self.clone_to_type(new_type)
 #    self.send(:callback, :before_validation_on_create)
 #    self.send(:callback, :before_create)
+
     #newcard.send(:callback, :after_create)
-    self.extension = self.extension
-    self.set_permissions self.permissions.collect{|x| x}
+    #self.extension = self.extension
+    #self.set_permissions self.permissions.collect{|x| x}
+    # do we need to "undo" and loaded modules?  Maybe reload defaults?
+    Card.include_type_mods(typecode)
+    
   end
   
   def set_content(new_content)  
@@ -191,7 +196,7 @@ module Wagn::Card::TrackedAttributes
     true
   end
              
-  def self.append_features(base)
+  def self.included(base)
     super 
     base.after_create :set_initial_content 
     base.before_save.unshift Proc.new{|rec| rec.set_tracked_attributes }

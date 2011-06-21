@@ -144,8 +144,11 @@ describe Card, "types" do
   end
 
   it "should accept classname as typecode" do
+    Rails.logger.info "failing create cardtype BFoo"
     ct = Card.create! :name=>"BFoo", :type=>'Cardtype'
+    Rails.logger.info "failing change typename"
     ct.update_attributes! :name=>"BFooRenamed"
+    Rails.logger.info "failing create with typecode"
     Card.create!(:typecode=>"BFoo",:name=>"testy").typecode.should == 'BFoo'
   end
   

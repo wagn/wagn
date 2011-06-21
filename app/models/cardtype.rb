@@ -8,10 +8,12 @@ class Cardtype < ActiveRecord::Base
   
   class << self
     def reset_cache
+      Rails.logger.debug "reset_cardtype_cache"
       @@cache={}
     end
     
     def load_cache
+      Rails.logger.debug "load_cardtype_cache"
       @@cache = {   
         :card_keys => {},
         :card_names => {},
@@ -22,7 +24,7 @@ class Cardtype < ActiveRecord::Base
       Card.connection.select_all(%{
         select distinct ct.class_name, c.name, c.key, p.party_type, p.party_id 
         from cardtypes ct 
-        join cards c on c.extension_id=ct.id and c.typecode='Cardtype'    
+        join cards c on c.extension_id=ct.id and c.extension_type='Cardtype'    
         join permissions p on p.card_id=c.id and p.task='create' 
       }).each do |rec|
         @@cache[:card_keys][rec['key']] = rec['name']
@@ -43,23 +45,29 @@ class Cardtype < ActiveRecord::Base
 
     def name_for_key?(key)
       load_cache if @@cache.empty?      
+      Rails.logger.debug "name_for_key (#{key.inspect}) #{@@cache[:card_keys].inspect}"
       @@cache[:card_keys].has_key?(key)
     end
 
     def name_for_key(key)
       load_cache if @@cache.empty?
-      @@cache[:card_keys][key] || 'Basic' #raise("No card name for key #{key}")
+      Rails.logger.debug "name_for_key (#{key.inspect}) #{@@cache[:card_keys].inspect}"
+      @@cache[:card_keys][key] || raise("No card name for key #{key}")
     end
     
+    # this is the only one that goes code (as camelized typecode) to name
     def name_for(classname)
       load_cache if @@cache.empty?
-      Rails.logger.debug "name_for (#{classname.inspect}) #{@@cache[:card_names].inspect}"
-      @@cache[:card_names][classname] || 'Basic' # raise("No card name for class #{classname}") 
+      @@cache[:card_names][classname] || begin
+      Rails.logger.debug "name_for (#{classname.inspect}) #{@@cache[:card_names].inspect}"; nil
+     # raise("No card name for class #{classname}") 
+      end
     end
 
     def classname_for(card_name) 
       load_cache if @@cache.empty?
-      @@cache[:class_names][card_name.to_key] || nil #raise("No class name for cardtype name #{card_name}") 
+      Rails.logger.debug "classname_for #{card_name} #{card_name.to_key}, #{@@cache[:class_names][card_name.to_key].inspect}"
+      @@cache[:class_names][card_name.to_key] || raise("No class name for cardtype name #{card_name}") 
     end
     
     def create_party_for(class_name)

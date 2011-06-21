@@ -64,7 +64,7 @@ class Card
     
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
     :from_trash, :update_referencers, :allow_typecode_change, :virtual,
-  :skip_defaults, :loaded_trunk, :blank_revision
+  :skip_defaults, :loaded_trunk, :blank_revision, :broken_cardtype
 
   # setup hooks on AR callbacks
   # Note: :after_create is called from end of set_initial_content now
@@ -77,7 +77,7 @@ class Card
   # apparently callbacks defined this way are called last.
   # that's what we want for this one.  
   def after_save 
-    if card.typecode == 'Cardtype'
+    if self.typecode == 'Cardtype'
       Rails.logger.debug "Cardtype after_save resetting"
       ::Cardtype.reset_cache
     end
@@ -201,8 +201,12 @@ class Card
     super
 
     @loaded_trunk = args['loaded_trunk'] if args['loaded_trunk']
-    self.typecode ||= template.typecode
-    Card.include_type_module(@typecode)
+    #self.typecode ||= template.typecode || 'Basic'
+    unless self.typecode
+      typecode = template.typecode
+      debugger unless typecode
+    end
+    Card.include_type_module(typecode)
 
     self.attachment_id = att_id if att_id # now that we have modules, we have this field
       
@@ -407,11 +411,6 @@ class Card
     ct.card
   end
 
-#  def typecode
-#    @typecode ||= begin
-#    end
-#  end  
-  
   def drafts
     revisions.find(:all, :conditions=>["id > ?", current_revision_id])
   end
@@ -493,7 +492,7 @@ class Card
   end
 
   def typecode
-    read_attribute :typecode
+    @typecode ||= read_attribute :typecode
   end
 
   def codename
@@ -669,9 +668,9 @@ class Card
     # validate on update and create 
     if rec.updates.for?(:typecode) or rec.new_record?
       # invalid type recorded on create
-      #if rec.broken_cardtype
-      #  rec.errors.add :typecode, "won't work.  There's no cardtype named '#{rec.broken_cardtype}'"
-      #end
+      if rec.broken_cardtype
+        rec.errors.add :typecode, "won't work.  There's no cardtype named '#{rec.broken_cardtype}'"
+      end
       
       # invalid to change type when type is hard_templated
       if (rt = rec.right_template and rt.hard_template? and 

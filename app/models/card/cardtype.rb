@@ -2,14 +2,16 @@ module Card::Cardtype
   include Card::Basic
 
   # extend the created card's class
-  def self.append_features(base)
-    super
-    base.before_create :create_extension, :reset_cardtype_cache
-    base.before_destroy :validate_destroy, :destroy_extension   # order is important!
-    base.after_destroy :reset_cardtype_cache
-    base.after_save :reset_cardtype_cache
+  def self.included(base)
+    base.class_eval do
+      before_validation_on_create :create_extension, :reset_cardtype_cache
+      before_destroy :validate_destroy, :destroy_extension   # order is important!
+      after_destroy :reset_cardtype_cache
+      after_save :reset_cardtype_cache
+    end
   end
                                      
+  # codename should not change, but let't remove this with the codename refactor
   def codename
     extension ? extension.class_name : nil
   end
@@ -28,9 +30,11 @@ module Card::Cardtype
 =end
 
   def create_extension
+    Rails.logger.info "Cardtype extension #{name} #{codename}"
+    return if extension
     codename = ::Card.generate_codename_for(name)
-    self.extension = ::Cardtype.create!( :class_name => codename )
-    self.extension
+    Rails.logger.info "Cardtype extension #{name} #{codename}"
+    extension = ::Cardtype.create!( :class_name => codename )
   end
   
   def me_type

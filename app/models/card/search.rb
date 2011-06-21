@@ -1,7 +1,6 @@
 
 module Card::Search
   def self.included(base)
-    Rails.logger.debug "search included#{base}"
     base.class_eval { attr_accessor :results }
     base.send :before_save, :escape_content
   end

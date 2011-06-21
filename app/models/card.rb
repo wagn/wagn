@@ -33,6 +33,7 @@ class Card
   def self.cache() @@cache || Wagn::Cache.new(Rails.cache) end
 #  self.cache = {}
 
+=begin
   [:before_validation, :before_validation_on_create, :after_validation, 
     :after_validation_on_create, :before_save, :before_create, :after_save,
     :after_create,
@@ -41,7 +42,7 @@ class Card
       Rails.logger.debug "Card#callback #{callback}"
     end
   end
-   
+=end   
    
   belongs_to :trunk, :class_name=>'Card', :foreign_key=>'trunk_id' #, :dependent=>:dependent
   has_many   :right_junctions, :class_name=>'Card', :foreign_key=>'trunk_id'#, :dependent=>:destroy  
@@ -204,27 +205,32 @@ class Card
     self.typecode ||= template.typecode
     fail "NO TYPECODE" unless self.typecode
 
-    singleton = class << self; self end
-    singleton.include_type_module(typecode)
-#    warn "typecode = #{typecode}; include? = #{singleton.include? Card::Cardtype}; respond_to? = #{self.respond_to? :queries}"
-
     self.attachment_id = att_id if att_id # now that we have modules, we have this field
       
     yield(new_card) if block_given?
     set_defaults( args ) unless args['skip_defaults'] 
   end 
 
-
+  #this will get called by find, fetch, etc.
+  def after_initialize
+    return unless typecode
+    singleton = class << self; self end
+    singleton.include_type_module(typecode)
+  end
 
   class << self
     def include_type_module(typecode)
-      mod = Card.const_get(typecode)
+      mod = Card.const_get(typecode) 
+      #      mod = Card.const_get("::Card::#{typecode}") 
+      # need ::Card part (or something similar) to make sure, eg, it gets Card::Date, not just Date
+      # FIXME actually, that got rid of the error but caused lots of other problems with normal cards.  weird...
 
-      Rails.logger.debug "include_type module: #{typecode}, #{mod.inspect}"
+#      warn "include_type module: #{typecode}, #{mod.inspect}"
 #      singleton = class << self; self end
 #      singleton.send :include, mod if mod
       include mod if mod
     rescue Exception=>e
+      return unless mod
       warn "Error including module (#{typecode}, #{mod.inspect}) #{e} #{e.backtrace[0..3]*"\n"}"
       nil
     end

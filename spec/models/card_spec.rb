@@ -11,6 +11,33 @@ describe Card do
     end
   end
   
+  describe "module inclusion" do
+    before do
+      @c = Card.new :type=>'Search', :name=>'Module Inclusion Test Card'
+    end
+    
+    it "gets needed methods after new" do
+      @c.respond_to?( :get_spec ).should be_true
+    end
+    
+    it "gets needed methods after save" do
+      @c.save!
+      @c.respond_to?( :get_spec ).should be_true
+    end
+    
+    it "gets needed methods after find" do
+      @c.save!
+      c = Card.find_by_name(@c.name)
+      c.respond_to?( :get_spec ).should be_true
+    end
+    
+    it "gets needed methods after fetch" do
+      @c.save!
+      c = Card.fetch(@c.name)
+      c.respond_to?( :get_spec ).should be_true
+    end
+  end
+  
   describe "#create" do 
     it "calls :before_save, :before_create, :after_save, and :after_create hooks" do
       [:before_save, :before_create, :after_save, :after_create].each do |hookname|

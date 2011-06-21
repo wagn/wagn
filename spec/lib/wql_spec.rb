@@ -325,7 +325,7 @@ describe Wql do
   describe "found_by" do
     before do
       User.current_user = :wagbot 
-      Card.create(:name=>'Simple Search', :type=>'Search', :content=>'{"name":"A"}')
+      c = Card.create(:name=>'Simple Search', :type=>'Search', :content=>'{"name":"A"}')
     end 
 
     it "should find cards returned by search of given name" do

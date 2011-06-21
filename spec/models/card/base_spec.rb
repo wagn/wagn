@@ -11,7 +11,7 @@ describe Card do
     context "with name" do
       before do
         @c = Card.new :name=>"Ceee"
-        @d = Card.new :typecode=>'Date'
+        @d = Card.new :type=>'Date'
       end
   
       it "c should have name before_typecast" do

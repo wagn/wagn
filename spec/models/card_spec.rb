@@ -37,6 +37,21 @@ describe Card do
       c.respond_to?( :get_spec ).should be_true
     end
   end
+
+  describe "pointer module inclusion" do
+    before do
+      @c_args = { :name=>'Home+*watchers' }
+    end
+    
+    it "gets needed methods with explicit pointer setting" do
+      Card.new(@c_args.merge(:type=>'Pointer')).respond_to?(:add_item).should be_true
+    end
+    
+    it "gets needed methods with implicit pointer setting (from template)" do
+      Card.new(@c_args).respond_to?(:add_item).should be_true
+    end
+  end
+
   
   describe "#create" do 
     it "calls :before_save, :before_create, :after_save, and :after_create hooks" do

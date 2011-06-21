@@ -62,7 +62,7 @@ module Wagn::Card::TrackedAttributes
   end
 
   def set_typecode(new_typecode)
-    new_typecode = 'Basic' unless new_typecode
+    new_typecode ||= 'Basic' #shouldn't be here, should it?
     Rails.logger.warn "set typecode called on #{name} to #{new_typecode}"
     self.typecode_without_tracking = new_typecode 
     return if new_card?
@@ -77,8 +77,8 @@ module Wagn::Card::TrackedAttributes
       end
     end
     #newcard = self.clone_to_type(new_type)
-    self.send(:callback, :before_validation_on_create)
-    self.send(:callback, :before_create)
+#    self.send(:callback, :before_validation_on_create)
+#    self.send(:callback, :before_create)
     #newcard.send(:callback, :after_create)
     self.extension = self.extension
     self.set_permissions self.permissions.collect{|x| x}

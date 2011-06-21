@@ -61,7 +61,7 @@ module Wagn::Card::AttributeTracking
 
       fields.each do |field|   
         unless self.method_defined? field
-          warn "defining #{field}"
+          #warn "defining #{field}"
           class_eval %{
             def #{field}
               v=read_attribute '#{field}'
@@ -71,7 +71,7 @@ module Wagn::Card::AttributeTracking
               #Rails.logger.warn ">#{field}: "+(v ? v.to_s : ''); v
         
         unless self.method_defined? "#{field}="
-          warn "defining #{field}="
+          #warn "defining #{field}="
           class_eval %{
             def #{field}=(value)
               write_attribute '#{field}', value

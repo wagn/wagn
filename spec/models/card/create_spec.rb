@@ -129,11 +129,15 @@ describe Card, "types" do
   end
   
   it "should accept cardtype name and casespace variant as type" do
+    warn "create_spec test starting"
     ct = Card.create! :name=>"AFoo", :type=>'Cardtype'
-    ct.update_attributes! :name=>"FooRenamed"
+    ct.typecode.should == 'Cardtype'
+    ct = Card.fetch('AFoo')
+    Card.fetch('AFoo').extension.class_name.should == 'AFoo'
+    ct.update_attributes! :name=>"FooRenamed", :confirm_rename=>true
     Card.fetch('FooRenamed').typecode.should == 'Cardtype'
-    Card.fetch('FooRenamed').extension.class_name.should == 'Cardtype'
-    
+    Card.fetch('FooRenamed').extension.class_name.should == 'AFoo'
+   
     ::Cardtype.reset_cache
     Card.create!(:type=>"FooRenamed",:name=>"testy").typecode.should == 'AFoo'
     Card.create!(:type=>"foo_renamed",:name=>"so testy").typecode.should == 'AFoo'

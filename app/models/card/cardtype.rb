@@ -2,13 +2,12 @@ module Card::Cardtype
   include Card::Basic
 
   # extend the created card's class
-  def self.included(base)
-    self.class_eval do
-      before_validation_on_create :create_extension, :reset_cardtype_cache
-      before_destroy :validate_destroy, :destroy_extension   # order is important!
-      after_destroy :reset_cardtype_cache
-      after_save :reset_cardtype_cache
-    end
+  def self.append_features(base)
+    super
+    base.before_create :create_extension, :reset_cardtype_cache
+    base.before_destroy :validate_destroy, :destroy_extension   # order is important!
+    base.after_destroy :reset_cardtype_cache
+    base.after_save :reset_cardtype_cache
   end
                                      
   def codename

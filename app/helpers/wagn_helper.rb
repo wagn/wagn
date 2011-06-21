@@ -164,9 +164,8 @@ module WagnHelper
 
   ## ----- for Linkers ------------------
   def typecode_options
-    Cardtype.createable_typecodes.map do |typecode|
-      #next(nil) if typecode[:codename] == 'User' #or typecode[:codename] == 'InvitationRequest'
-      [typecode[:name], typecode[:name]]
+    Cardtype.createable_types.map do |type|
+      [type[:name], type[:name]]
     end.compact
   end
 
@@ -233,7 +232,7 @@ module WagnHelper
     return unless entries
     items = []
     items << navbox_item( :search, %{<a class="search-icon">&nbsp;</a>Search for: }, stub )
-    if !Cardtype.createable_typecodes.empty? && !Card.exists?(stub)
+    if !Cardtype.createable_types.empty? && !Card.exists?(stub)
       items << navbox_item( :new, %{<a class="plus-icon">&nbsp;</a>Add new card: }, stub )
     end
     items += entries.map do |entry|

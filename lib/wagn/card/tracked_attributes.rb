@@ -78,7 +78,9 @@ module Wagn::Card::TrackedAttributes
       end
     end
     #newcard = self.clone_to_type(new_type)
-#    self.send(:callback, :before_validation_on_create)
+    self.after_initialize
+    self.before_validation_on_create
+    ::Cardtype.reset_cache
 #    self.send(:callback, :before_create)
 
     #newcard.send(:callback, :after_create)

@@ -50,7 +50,6 @@ describe "Card (Cardtype)" do
       Cardtype.name_for('Cookie').should == 'Cookie'
       @card=Card['Cookie']
       assert_instance_of Cardtype, @card.extension
-      Permission.find_by_card_id_and_task(@card.id, 'create').should_not be_nil
       assert_equal 'Cookie', Card.create!( :name=>'Oreo', :type=>'Cookie' ).typecode
     end
   end
@@ -112,17 +111,6 @@ describe Card, ".class_for" do
 end
 =end
 
-describe Card, "Card changed to become a Cardtype" do
-  before do
-    User.as :wagbot 
-    @a = Card['A']
-    @a.typecode = 'Cardtype'
-    @a.save!
-  end
-  it "should have a create permission set" do
-    Card['A'].who_can(:create).should_not == nil
-  end
-end
 
 describe Card, "Normal card with junctions" do
   before do
@@ -200,7 +188,7 @@ describe User, "Joe User" do
     User.as :joe_user
     @user = User[:joe_user]
     Cardtype.reset_cache
-    @cardtype_names = Cardtype.createable_typecodes#.map{ |ct| ct[:name] }
+    @cardtype_names = Cardtype.createable_types.map{ |ct| ct[:name] }
   end
 
   it "should not have r3 permissions" do

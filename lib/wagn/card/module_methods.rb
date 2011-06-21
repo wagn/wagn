@@ -56,10 +56,8 @@ module Wagn::Card
     codename
   end
   
-  def codename_unavailable?(name)
-    const_defined?(name) || Module.const_get(name)
-  rescue
-    false
+  def codename_unavailable?(codename)
+    Card.find_by_codename(codename) || ::Cardtype.find_by_class_name(codename)
   end
    
   def default_typecode_key

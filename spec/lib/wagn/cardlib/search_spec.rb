@@ -27,7 +27,7 @@ describe Wagn::Card::Search do
     it "should find cards with *right+*content specified" do
       Card.create! :name=>"testsearch+*right+*content", :content=>'{"plus":"_self"}', :type => 'Search'
       c = Card.find_virtual("A+testsearch")
-      c.cardtype.should == 'Search'
+      c.typecode.should == 'Search'
       c.content.should ==  "{\"plus\":\"_self\"}"
     end
   end

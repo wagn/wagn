@@ -5,9 +5,6 @@ module Card::Cardtype
   def self.included(base)
 #    warn "included called for Cardtype."
     base.class_eval do
-#      before_create :create_extension, :reset_cardtype_cache
-      before_destroy :validate_destroy, :destroy_extension   # order is important!
-      after_destroy :reset_cardtype_cache
       after_save :reset_cardtype_cache
     end
   end
@@ -23,12 +20,6 @@ module Card::Cardtype
     extension.save
   end
 
-=begin
-  def approve_codename
-  end
-  
-  tracks :codename
-=end
 
   def before_validation_on_create
     create_extension
@@ -52,12 +43,16 @@ module Card::Cardtype
   # FIXME -- the current system of caching cardtypes is not "thread safe":
   # multiple running ruby servers could get out of sync re: available cardtypes  
 
-  def reset_cardtype_cache
-    ## DEBUG
-    File.open("#{RAILS_ROOT}/log/wagn.log","w") do |f|
-      f.puts "--reset cardtype cache"
-    end
-    
+  def before_destroy
+    validate_destroy
+    destroy_extension
+  end
+
+  def after_destroy
+    reset_cardtype_cache
+  end
+  
+  def reset_cardtype_cache    
     ::Cardtype.send(:reset_cache)
   rescue
   end

@@ -2,7 +2,6 @@ class Cardtype < ActiveRecord::Base
   self.extend Wagn::Card::ActsAsCardExtension 
   acts_as_card_extension  
   cattr_reader :cache
-  #  before_filter :load_cache_if_empty, :only=>[:name_for, :class_name_for, :create_party_for, :createable_typecodes, :create_ok? ]
   
   @@cache={}
   
@@ -75,7 +74,7 @@ class Cardtype < ActiveRecord::Base
       @@cache[:create_parties][class_name] || raise("No create party for class #{class_name}") 
     end    
     
-    def createable_typecodes  
+    def createable_types  
       load_cache if @@cache.empty?
       @@cache[:card_names].collect do |class_name,card_name|
         next if ['InvitationRequest','Setting','Set'].include?(class_name)

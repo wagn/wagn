@@ -189,6 +189,7 @@ class Card
     args = args.stringify_keys
     args['trash'] = false
       
+    Rails.logger.debug "Card.initialize #{args.inspect}"
     args['typecode'] ||= case
     when type_name = args.delete('type');  ::Cardtype.classname_for(type_name)
     when args.delete('skip_type_lookup');  'Basic'
@@ -196,7 +197,6 @@ class Card
     else                                ;  'Basic'
     end 
 
-    #Rails.logger.debug "Card.initialize #{skip_lookup}, #{args.inspect}, #{typetype}"
     att_id = args.delete('attachment_id')
 
     super
@@ -205,6 +205,7 @@ class Card
     
     self.typecode ||= template.typecode
     fail "NO TYPECODE" unless self.typecode
+    Rails.logger.debug "Card.initialize #{typecode.inspect} #{args.inspect}"
     include_singleton_modules
 
     self.attachment_id = att_id if att_id # now that we have modules, we have this field
@@ -225,10 +226,11 @@ class Card
 
   class << self
     def include_type_module(typecode)
-      mod = Card.const_get(typecode) 
-      #      mod = Card.const_get("::Card::#{typecode}") 
-      # need ::Card part (or something similar) to make sure, eg, it gets Card::Date, not just Date
-      # FIXME actually, that got rid of the error but caused lots of other problems with normal cards.  weird...
+      #mod = Card.const_get(typecode) 
+      con = (mod=Card.const_get(typecode.to_sym)).to_s.split('::')
+      Rails.logger.debug "include_type_module(#{typecode}) #{con.inspect}, #{mod.inspect}"
+      return if con.length != 2 or con[0] != 'Card'
+      Rails.logger.debug "include_type_module(#{typecode}) #{mod.inspect}"
       include mod if mod
     rescue Exception=>e
       return unless mod

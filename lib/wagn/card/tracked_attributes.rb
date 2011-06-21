@@ -61,10 +61,10 @@ module Wagn::Card::TrackedAttributes
   end
 
   def set_typecode(new_typecode)
-    Rails.logger.debug "set_typecde No type code for #{name}, #{typecode}" unless new_typecode
-    new_typecode = 'Basic' unless new_typecode
-    return if new_typecode == typecode
-    Rails.logger.warn "set typecode called on #{name} to #{new_typecode} #{Kernel.caller[0..5]*"\n"}"
+#    Rails.logger.debug "set_typecde No type code for #{name}, #{typecode}" unless new_typecode
+#    new_typecode = 'Basic' unless new_typecode
+#    return if new_typecode == typecode
+#    Rails.logger.warn "set typecode called on #{name} to #{new_typecode} #{Kernel.caller[0..5]*"\n"}"
     self.typecode_without_tracking = new_typecode 
     return if new_card?
     on_typecode_change # FIXME this should be a callback
@@ -85,7 +85,7 @@ module Wagn::Card::TrackedAttributes
     #self.extension = self.extension
     #self.set_permissions self.permissions.collect{|x| x}
     # do we need to "undo" and loaded modules?  Maybe reload defaults?
-    Card.include_type_mods(typecode)
+    #Card.include_type_mods(typecode)
     
   end
   

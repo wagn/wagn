@@ -8,7 +8,8 @@ module Wagn::Card
       input.each do |key, content|
         type, name = (key =~ /\:/ ? key.split(':') : ['Basic',key])   
         final_args.merge! :name=>name, :type=>type, :content=>content
-      end         
+      end
+#      warn "final args for create_these: #{final_args.inspect}"    
       Card.create! final_args
     end
   end

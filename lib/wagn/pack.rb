@@ -9,7 +9,7 @@ module Wagn::Pack
 
     def dir(newdir)
       dirs << newdir
-      STDERR << "dir[#{dirs.inspect}]\n"
+      #STDERR << "dir[#{dirs.inspect}]\n"
       @@dirs
     end
 

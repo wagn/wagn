@@ -54,7 +54,7 @@ module Wagn
       end
 
       def pre_schema?
-        STDERR << "Pre schema\n"
+#        STDERR << "Pre schema\n"
         begin
           @@schema_initialized ||= ActiveRecord::Base.connection.select_value("select count(*) from cards").to_i > 2
           !@@schema_initialized
@@ -88,7 +88,7 @@ module Wagn
         # FIXME: this has to be here because System is both a config store and a model-- which means
         # in development mode it gets reloaded so we lose the config settings.  The whole config situation
         # needs an overhaul
-        STDERR << "Load config ...\n"
+        #STDERR << "Load config ...\n"
         if File.exists? "#{RAILS_ROOT}/config/sample_wagn.rb"
           require_dependency "#{RAILS_ROOT}/config/sample_wagn.rb"
         end

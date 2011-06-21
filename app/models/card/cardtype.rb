@@ -3,6 +3,7 @@ module Card::Cardtype
 
   # extend the created card's class
   def self.included(base)
+    warn "included called for Cardtype.  base = #{base.inspect}"
     base.class_eval do
       before_validation_on_create :create_extension, :reset_cardtype_cache
       before_destroy :validate_destroy, :destroy_extension   # order is important!
@@ -30,7 +31,7 @@ module Card::Cardtype
 =end
 
   def create_extension
-    Rails.logger.info "Cardtype extension #{name} #{codename}"
+    warn "Cardtype extension #{name} #{codename}"
     return if extension
     codename = ::Card.generate_codename_for(name)
     Rails.logger.info "Cardtype extension #{name} #{codename}"

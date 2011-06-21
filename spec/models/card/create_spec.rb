@@ -8,7 +8,9 @@ describe Card::Cardtype, ".create with :codename" do
   it "should work" do
     Card.create!(:name=>"Foo Type", :codename=>"foo", :type=>'Cardtype').typecode.should=='Cardtype'
   end
-end            
+end
+
+
 
 describe Card, ".create_these" do
   it 'should create basic cards given name and content' do 
@@ -20,7 +22,7 @@ describe Card, ".create_these" do
     c = Card.create_these "testing_name" => "testing_content" 
     c.first.content.should == "testing_content"
   end
-  
+
   it 'should create cards of a given type' do
     Card.create_these "Cardtype:Footype" => "" 
     Card["Footype"].typecode.should == "Cardtype"
@@ -39,7 +41,6 @@ describe Card, ".create_these" do
   end
 end
 
- 
 
 
 describe Card, "created by Card.new " do
@@ -114,8 +115,6 @@ describe Card, "create junction" do
     Card.find_by_name("Pear").class.should == Card
   end
 end
-       
-
 
 
 
@@ -129,11 +128,10 @@ describe Card, "types" do
   end
   
   it "should accept cardtype name and casespace variant as type" do
-    warn "create_spec test starting"
     ct = Card.create! :name=>"AFoo", :type=>'Cardtype'
     ct.typecode.should == 'Cardtype'
     ct = Card.fetch('AFoo')
-    Card.fetch('AFoo').extension.class_name.should == 'AFoo'
+    ct.extension.class_name.should == 'AFoo'
     ct.update_attributes! :name=>"FooRenamed", :confirm_rename=>true
     Card.fetch('FooRenamed').typecode.should == 'Cardtype'
     Card.fetch('FooRenamed').extension.class_name.should == 'AFoo'
@@ -142,7 +140,6 @@ describe Card, "types" do
     Card.create!(:type=>"FooRenamed",:name=>"testy").typecode.should == 'AFoo'
     Card.create!(:type=>"foo_renamed",:name=>"so testy").typecode.should == 'AFoo'
   end
-
   it "should accept classname as typecode" do
     Rails.logger.info "failing create cardtype BFoo"
     ct = Card.create! :name=>"BFoo", :type=>'Cardtype'
@@ -165,6 +162,5 @@ describe Card, "types" do
     c.valid?.should be_false
     c.errors_on(:type).should_not be_empty
   end
-  
-end
-             
+end          
+

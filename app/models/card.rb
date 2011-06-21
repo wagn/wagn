@@ -201,12 +201,12 @@ class Card
     super
 
     @loaded_trunk = args['loaded_trunk'] if args['loaded_trunk']
-    #self.typecode ||= template.typecode || 'Basic'
-    unless self.typecode
-      typecode = template.typecode
-      debugger unless typecode
-    end
-    Card.include_type_module(typecode)
+    self.typecode ||= template.typecode
+    fail "NO TYPECODE" unless self.typecode
+
+    singleton = class << self; self end
+    singleton.include_type_module(typecode)
+    warn "typecode = #{typecode}; include? = #{singleton.include? Card::Cardtype}; respond_to? = #{self.respond_to? :queries}"
 
     self.attachment_id = att_id if att_id # now that we have modules, we have this field
       
@@ -214,14 +214,18 @@ class Card
     set_defaults( args ) unless args['skip_defaults'] 
   end 
 
+
+
   class << self
     def include_type_module(typecode)
-      mod = self.const_get(typecode)
+      mod = Card.const_get(typecode)
 
       Rails.logger.debug "include_type module: #{typecode}, #{mod.inspect}"
+#      singleton = class << self; self end
+#      singleton.send :include, mod if mod
       include mod if mod
     rescue Exception=>e
-      Rails.logger.debug "exception #{e} #{e.backtrace[0..3]*"\n"}"
+      warn "Error including module (#{typecode}, #{mod.inspect}) #{e} #{e.backtrace[0..3]*"\n"}"
       nil
     end
     
@@ -679,7 +683,7 @@ class Card
       end        
       
       Rails.logger.debug "include for updates #{rec.name} #{value}"
-      Card.include_type_module(value)
+#      include_type_module(value)
     end
   end  
 

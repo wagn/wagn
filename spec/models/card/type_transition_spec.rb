@@ -1,47 +1,44 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-=begin
-module Wagn::Card  
-  class CardtypeA < Basic  
-    def approve_delete 
-      deny_because("not allowed to delete card a")
-    end
+module Card::CardtypeA 
+  def approve_delete 
+    deny_because("not allowed to delete card a")
   end
-
-  class CardtypeB < Basic                              
-    # create restricted in test_data
-  end
-  
-  class CardtypeC < Basic
-    def validate_typecode_change
-      errors.add :destroy_error, "card c is indestructible"
-    end
-  end
-  
-  class CardtypeD < Basic 
-    def valid?
-      errors.add :create_error, "card d always has errors"
-    end
-  end
-  
-  class CardtypeE < Basic           
-    cattr_accessor :count
-    @@count = 2
-    def on_type_change
-      decrement_count
-    end
-    def decrement_count() self.class.count -= 1; end
-  end
-  
-  class CardtypeF < Basic
-    cattr_accessor :count
-    @@count = 2
-    before_validation_on_create :increment_count
-    def increment_count() self.class.count += 1; end
-  end
-
 end
-=end
+
+#  class CardtypeB < Basic                              
+    # create restricted in test_data
+#  end
+  
+module Card::CardtypeC
+  def validate_typecode_change
+    errors.add :destroy_error, "card c is indestructible"
+  end
+end
+
+module Card::CardtypeD
+  def valid?
+    errors.add :create_error, "card d always has errors"
+  end
+end
+
+module Card::CardtypeE
+#  cattr_accessor :count
+  @@count = 2
+  def on_type_change
+    decrement_count
+  end
+  def decrement_count() @@count -= 1; end
+end
+
+module Card::CardtypeF
+#  cattr_accessor :count
+  @@count = 2
+  def before_validation_on_create 
+    increment_count
+  end
+  def increment_count() @@count += 1; end
+end
 
 
 describe Card, "with role" do
@@ -193,7 +190,7 @@ end
 def change_card_to_type(name, typecode)
   User.as :joe_user do
     card = Card.fetch(name)
-    card.typecode = typecode;  
+    card.typecode = typecode;
     card.save
     card
   end

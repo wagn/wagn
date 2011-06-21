@@ -46,7 +46,9 @@ describe "Card (Cardtype)" do
     
     it "creates cardtype model and permission" do
       @card.typecode = 'Cardtype'
-      @card.save!    
+      @card.save!
+      @card.extension.class_name.should == 'Cookie'
+      ::Cardtype.reset_cache
       Cardtype.name_for('Cookie').should == 'Cookie'
       @card=Card['Cookie']
       assert_instance_of Cardtype, @card.extension
@@ -71,7 +73,9 @@ describe Card, "codename_generation" do
   
   it "should create incremented classnames when first choice is taken" do
     Card.generate_codename_for("User").should == "User1"
-    Card.generate_codename_for('Process').should == 'Process1'
+    Card.generate_codename_for("Basic").should == "Basic1"
+    Card.generate_codename_for("Novelicious").should == "Novelicious"
+#    Card.generate_codename_for('Process').should == 'Process1'
   end
 end                  
 

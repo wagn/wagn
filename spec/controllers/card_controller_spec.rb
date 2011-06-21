@@ -89,7 +89,7 @@ describe CardController do
       }
       assert_response 418
       c=Card.find_by_name("NewCardFoo")
-      assert c.class.include?(Card::Basic)
+      assert c.typecode == 'Basic'
       c.content.should == "Bananas"
     end
     
@@ -98,7 +98,7 @@ describe CardController do
       assigns['card'].should_not be_nil
       assert_response 418
       c=Card.find_by_name("Editor")
-      assert c.class.include?(Card::Cardtype)
+      assert c.typecode == 'Cardtype'
     end
     
     it "pulls deleted cards from trash" do
@@ -107,7 +107,7 @@ describe CardController do
       post :create, :card=>{"name"=>"Problem","type"=>"Phrase","content"=>"noof"}
       assert_response 418
       c=Card.find_by_name("Problem")
-      assert c.class.include?(Card::Phrase)
+      assert c.typecode == 'Phrase'
     end
 
     context "multi-create" do
@@ -170,7 +170,7 @@ describe CardController do
       assigns["redirect_location"].should ==  "/wagn/Joe+boop"
     end
    
-    it "redirects to home if not readable and thanks not specified" do
+    it "redirects to home if not createable and thanks not specified" do
       # Fruits (from shared_data) are anon creatable but not readable
       login_as :anon
       post :create, "card" => { "type"=>"Fruit", :name=>"papaya" }

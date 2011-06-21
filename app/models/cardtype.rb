@@ -21,20 +21,14 @@ class Cardtype < ActiveRecord::Base
       }
 
       Card.connection.select_all(%{
-        select distinct ct.class_name, c.name, c.key, p.party_type, p.party_id 
+        select distinct ct.class_name, c.name, c.key
         from cardtypes ct 
         join cards c on c.extension_id=ct.id and c.extension_type='Cardtype'    
-        join permissions p on p.card_id=c.id and p.task='create' 
       }).each do |rec|
         @@cache[:card_keys][rec['key']] = rec['name']
         @@cache[:card_names][rec['class_name']] = rec['name'];   
         @@cache[:class_names][rec['key']] = rec['class_name']
-        @@cache[:create_parties][rec['class_name']] = rec['party_id']
         ## error check
-        unless rec['party_type'] == 'Role'
-          raise "Bad Data: create permission for #{rec['class_name']} " +
-            "should have party_type 'Role' not '#{rec['party_type']}'"
-        end
       end
 
       #@@cache[:class_names].values.sort.each do |name|
@@ -58,7 +52,7 @@ class Cardtype < ActiveRecord::Base
     def name_for(classname)
       load_cache if @@cache.empty?
       @@cache[:card_names][classname] || begin
-      Rails.logger.debug "name_for (#{classname.inspect}) #{@@cache[:card_names].inspect}"; nil
+        Rails.logger.debug "name_for (#{classname.inspect}) #{@@cache[:card_names].inspect}"; nil
      # raise("No card name for class #{classname}") 
       end
     end
@@ -70,8 +64,7 @@ class Cardtype < ActiveRecord::Base
     end
     
     def create_party_for(class_name)
-      load_cache if @@cache.empty?
-      @@cache[:create_parties][class_name] || raise("No create party for class #{class_name}") 
+      return Role[:auth].id
     end    
     
     def createable_types  
@@ -86,7 +79,7 @@ class Cardtype < ActiveRecord::Base
     def create_ok?(typecode, cardname=nil)
       typecode = classname_for(cardname)||'Basic' unless typecode
       load_cache if @@cache.empty?
-      System.role_ok?(@@cache[:create_parties][typecode].to_i)
+      System.role_ok?(create_party_for(typecode))
     end
   end        
   

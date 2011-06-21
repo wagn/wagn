@@ -97,7 +97,7 @@ class Card
       ActiveRecord::Base.logger.info(msg)
     end
     
-    def on_typecode_change
+    def on_type_change
     end  
     
   public
@@ -202,8 +202,10 @@ class Card
     super
 
     @loaded_trunk = args['loaded_trunk'] if args['loaded_trunk']
+    
     self.typecode ||= template.typecode
     fail "NO TYPECODE" unless self.typecode
+    include_singleton_modules
 
     self.attachment_id = att_id if att_id # now that we have modules, we have this field
       
@@ -211,8 +213,11 @@ class Card
     set_defaults( args ) unless args['skip_defaults'] 
   end 
 
-  #this will get called by find, fetch, etc.
-  def after_initialize
+  def after_find
+    include_singleton_modules
+  end
+  
+  def include_singleton_modules
     return unless typecode
     singleton = class << self; self end
     singleton.include_type_module(typecode)
@@ -224,10 +229,6 @@ class Card
       #      mod = Card.const_get("::Card::#{typecode}") 
       # need ::Card part (or something similar) to make sure, eg, it gets Card::Date, not just Date
       # FIXME actually, that got rid of the error but caused lots of other problems with normal cards.  weird...
-
-#      warn "include_type module: #{typecode}, #{mod.inspect}"
-#      singleton = class << self; self end
-#      singleton.send :include, mod if mod
       include mod if mod
     rescue Exception=>e
       return unless mod
@@ -272,7 +273,7 @@ class Card
     self.id = trashed_card.id
     self.from_trash = self.confirm_rename = true
     @new_record = false
-    self.send(:callback, :before_validation_on_create)
+    self.before_validation_on_create
   end
   
 

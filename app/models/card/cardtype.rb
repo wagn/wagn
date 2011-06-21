@@ -22,6 +22,7 @@ module Card::Cardtype
 
 
   def before_validation_on_create
+    fail "create extension called" if name == 'BFooRenamed'
     create_extension
   end
 

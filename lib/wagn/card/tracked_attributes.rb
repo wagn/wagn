@@ -2,12 +2,11 @@ module Wagn::Card::TrackedAttributes
    
   def set_tracked_attributes  
     Rails.logger.debug "Card(#{name})#set_tracked_attributes begin"
-    updates.each_pair do |attr, value| 
-      if send("set_#{attr}", value )
-        updates.clear attr
+    updates.each_pair do |attrib, value| 
+      if send("set_#{attrib}", value )
+        updates.clear attrib
       end
-      #warn "SET CHANGED #{attr.to_sym.inspect}"    
-      @changed ||={}; @changed[attr.to_sym]=true 
+      @changed ||={}; @changed[attrib.to_sym]=true 
     end
     Rails.logger.debug "Card(#{name})#set_tracked_attributes end"
   end
@@ -58,16 +57,15 @@ module Wagn::Card::TrackedAttributes
     @old_name = oldname
     @search_content_changed=true
     Wagn::Cache.expire_card(@old_name.to_key)
+    true
   end
 
   def set_typecode(new_typecode)
 #    Rails.logger.debug "set_typecde No type code for #{name}, #{typecode}" unless new_typecode
 #    new_typecode = 'Basic' unless new_typecode
 #    return if new_typecode == typecode
-#    warn "set typecode called on #{name} to #{new_typecode} #{Kernel.caller[0..5]*"\n"}"
     self.typecode_without_tracking= new_typecode 
-#    warn "typecode=#{typecode}, twt = #{self.typecode_without_tracking}, new_typecode = #{new_typecode}"
-    return if new_card?
+    return true if new_card?
     on_type_change # FIXME this should be a callback
     templatees = hard_templatees
     if !templatees.empty?
@@ -91,7 +89,7 @@ module Wagn::Card::TrackedAttributes
     #self.set_permissions self.permissions.collect{|x| x}
     # do we need to "undo" and loaded modules?  Maybe reload defaults?
     #Card.include_type_mods(typecode)
-    
+    true
   end
   
   def set_content(new_content)  
@@ -110,6 +108,7 @@ module Wagn::Card::TrackedAttributes
            
   def set_comment(new_comment)    
     set_content( content + new_comment )
+    true
   end
   
   def set_permissions(perms)

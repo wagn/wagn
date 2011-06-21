@@ -32,9 +32,9 @@ module Wagn::Card::AttributeTracking
         @updates = {}
       else
         attr_names.each do |attr|    
-          #puts "DELETNG: #{attr}"
+          #warn "DELETNG: #{attr}"
           @updates.delete(attr.to_s)
-          #puts "ATTRS AFTER DEL: #{@updates.inspect}"
+          #warn "ATTRS AFTER DEL: #{self.for(:typecode)}"
         end
       end
     end

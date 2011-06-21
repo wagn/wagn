@@ -53,14 +53,14 @@ class Cardtype < ActiveRecord::Base
       load_cache if @@cache.empty?
       @@cache[:card_names][classname] || begin
         Rails.logger.debug "name_for (#{classname.inspect}) #{@@cache[:card_names].inspect}"; nil
-     # raise("No card name for class #{classname}") 
+        raise("No card name for class #{classname}") 
       end
     end
 
     def classname_for(card_name) 
       load_cache if @@cache.empty?
       Rails.logger.debug "classname_for #{card_name} #{card_name.to_key}, #{@@cache[:class_names][card_name.to_key].inspect}"
-      @@cache[:class_names][card_name.to_key] || raise("No class name for cardtype name #{card_name}") 
+      @@cache[:class_names][card_name.to_key] || raise(NameError, "No class name for cardtype name #{card_name}") 
     end
     
     def create_party_for(class_name)

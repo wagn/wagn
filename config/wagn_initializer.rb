@@ -68,15 +68,15 @@ module Wagn
       def load
 
         load_config
-        STDERR << "Loaded config\n"
+#        STDERR << "Loaded config\n"
         setup_multihost
-        STDERR << "setup multihost\n"
+#        STDERR << "setup multihost\n"
         load_modules
-        STDERR << "Load Mods\n"
+#        STDERR << "Load Mods\n"
         return if Initializer.pre_schema?
-        STDERR << "Post Schema\n"
+#        STDERR << "Post Schema\n"
         Wagn::Cache.initialize_on_startup
-        STDERR << "Done wit initialize on startup\n"
+#        STDERR << "Done wit initialize on startup\n"
 #        load_cardtype_cache
 #        STDERR << "Loaded ct cache\n"
         check_builtins

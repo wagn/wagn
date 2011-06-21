@@ -214,10 +214,10 @@ class Card
     def include_type_module(typecode)
       mod = self.const_get(typecode)
 
-      Rails.logger.debug "include_typex(#{typecode}, #{typetype}) #{module_id}, #{mod.inspect}"
+      Rails.logger.debug "include_type module: #{typecode}, #{mod.inspect}"
       include mod if mod
     rescue Exception=>e
-      Rails.logger.info "exception #{e} #{e.backtrace[0..3]*"\n"}"
+      Rails.logger.debug "exception #{e} #{e.backtrace[0..3]*"\n"}"
       nil
     end
     

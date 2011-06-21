@@ -135,7 +135,6 @@ class Card
     
 
     # misc defaults- trash, key, fallbacks
-    self.trash = false   
     self.key = name.to_key if name
     self.name='' if name.nil?
     self
@@ -189,42 +188,31 @@ class Card
     args = args.stringify_keys
     args['trash'] = false
       
-    typetype=nil
-    if skip_lookup = args.delete('skip_type_lookup')
-      args[:typecode]='Basic'
-    else
-      typetype = get_typecode(args)
-    end
-    
-    Rails.logger.debug "Card.initialize #{skip_lookup}, #{args.inspect}, #{typetype}"
+    args['typecode'] ||= case
+    when type_name = args.delete('type');  ::Cardtype.classname_for(type_name)
+    when args.delete('skip_type_lookup');  'Basic'
+    when args['name']                   ;  nil  #lookup after super
+    else                                ;  'Basic'
+    end 
 
+    #Rails.logger.debug "Card.initialize #{skip_lookup}, #{args.inspect}, #{typetype}"
     att_id = args.delete('attachment_id')
+
     super
-    unless skip_lookup
-      args['name'] and not typetype and pattern=template and typecode = pattern.typecode
-      include_typecode(typetype)
-    end
+
+    @loaded_trunk = args['loaded_trunk'] if args['loaded_trunk']
+    self.typecode ||= template.typecode
+    Card.include_type_module(@typecode)
+
     self.attachment_id = att_id if att_id # now that we have modules, we have this field
-    #new_card = card_class.ar_new args
       
     yield(new_card) if block_given?
     set_defaults( args ) unless args['skip_defaults'] 
   end 
 
   class << self
-    def include_type(typecode, typetype=:codename)
-      typetype=:codename unless typetype
-      Rails.logger.debug "include_type(#{typecode}, #{typetype})"
-      #mod = Card.const_get 'Wagn::Card::Type::'+( #module_id =
-      module_id = if typetype.to_sym == :codename
-              typecode
-            else
-              typecardname = ::Cardtype.name_for_key(typecode.to_key) and
-              ::Cardtype.classname_for(typecardname)
-            end
-      # 'Set' is defined in Rails someplace
-      #mod = Card.const_get(module_id == 'Set' ? 'Search' : module_id)
-      mod = self.const_get(module_id)
+    def include_type_module(typecode)
+      mod = self.const_get(typecode)
 
       Rails.logger.debug "include_typex(#{typecode}, #{typetype}) #{module_id}, #{mod.inspect}"
       include mod if mod
@@ -232,16 +220,6 @@ class Card
       Rails.logger.info "exception #{e} #{e.backtrace[0..3]*"\n"}"
       nil
     end
-    def get_name_from_args(args={}) #please tell me this is no longer necessary
-      args ||= {}
-      args['name'] || (args['trunk'] && args['tag']  ? args["trunk"].name + "+" + args["tag"].name : "")
-    end      
-
-=begin
-    def default_class
-      self==Card ? Card.const_get( Card.default_typecode_key ) : self
-    end
-=end
     
     def find_or_create!(args={})
       find_or_create(args) || raise(ActiveRecord::RecordNotSaved)
@@ -269,19 +247,6 @@ class Card
     save_without_trash(perform_checking)
   end
   alias_method_chain :save, :trash   
-
-  def get_typecode(args={})
-    loaded_trunk = args['loaded_trunk'] if args['loaded_trunk']
-    typetype = :cardname if args['type'] and args['typecode'] = args.delete('type')
-    args['typecode'] = 'Basic' unless args['typecode']
-    Rails.logger.debug "get_typecode(#{args.inspect}) #{typetype}"
-    typetype
-  end
-
-  def include_typecode(typetype=:codename)
-    Rails.logger.info "include_typecode #{typecode} #{typetype}"
-    Card.include_type(typecode, typetype)
-  end
 
   def reset_cardtype_cache() end
 
@@ -715,7 +680,7 @@ class Card
       end        
       
       Rails.logger.debug "include for updates #{rec.name} #{value}"
-      Card.include_type(value, :codename)
+      Card.include_type_module(value)
     end
   end  
 

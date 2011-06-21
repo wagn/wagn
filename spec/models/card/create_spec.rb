@@ -131,6 +131,10 @@ describe Card, "types" do
   it "should accept cardtype name and casespace variant as type" do
     ct = Card.create! :name=>"AFoo", :type=>'Cardtype'
     ct.update_attributes! :name=>"FooRenamed"
+    Card.fetch('FooRenamed').typecode.should == 'Cardtype'
+    Card.fetch('FooRenamed').extension.class_name.should == 'Cardtype'
+    
+    ::Cardtype.reset_cache
     Card.create!(:type=>"FooRenamed",:name=>"testy").typecode.should == 'AFoo'
     Card.create!(:type=>"foo_renamed",:name=>"so testy").typecode.should == 'AFoo'
   end

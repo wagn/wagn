@@ -206,7 +206,7 @@ class Card
 
     singleton = class << self; self end
     singleton.include_type_module(typecode)
-    warn "typecode = #{typecode}; include? = #{singleton.include? Card::Cardtype}; respond_to? = #{self.respond_to? :queries}"
+#    warn "typecode = #{typecode}; include? = #{singleton.include? Card::Cardtype}; respond_to? = #{self.respond_to? :queries}"
 
     self.attachment_id = att_id if att_id # now that we have modules, we have this field
       

@@ -1,5 +1,6 @@
 --- 
 cards_010: 
+  typecode: Search
   reader_type: Role
   name: "*search"
   read_rule_class: 
@@ -16,7 +17,6 @@ cards_010:
   id: 466
   current_revision_id: 5641
   created_by: 1
-  type: Search
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -27,6 +27,7 @@ cards_010:
   read_rule_id: 
   appender_id: 
 cards_011: 
+  typecode: Search
   reader_type: Role
   name: "*recent"
   read_rule_class: 
@@ -43,7 +44,6 @@ cards_011:
   id: 465
   current_revision_id: 5640
   created_by: 1
-  type: Search
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -54,6 +54,7 @@ cards_011:
   read_rule_id: 
   appender_id: 
 cards_200: 
+  typecode: Search
   reader_type: Role
   name: by name+*right+*content
   read_rule_class: 
@@ -70,7 +71,6 @@ cards_200:
   id: 185
   current_revision_id: 2266
   created_by: 4
-  type: Search
   trunk_id: 336
   extension_type: HardTemplate
   updated_by: 1
@@ -81,6 +81,7 @@ cards_200:
   read_rule_id: 
   appender_id: 
 cards_012: 
+  typecode: Basic
   reader_type: Role
   name: "*input+*right+*edit help"
   read_rule_class: 
@@ -97,7 +98,6 @@ cards_012:
   id: 299
   current_revision_id: 5627
   created_by: 3
-  type: Basic
   trunk_id: 268
   extension_type: 
   updated_by: 4
@@ -108,6 +108,7 @@ cards_012:
   read_rule_id: 
   appender_id: 
 cards_120: 
+  typecode: Toggle
   reader_type: Role
   name: "*all+*captcha"
   read_rule_class: 
@@ -124,7 +125,6 @@ cards_120:
   id: 276
   current_revision_id: 3769
   created_by: 1
-  type: Toggle
   trunk_id: 274
   extension_type: 
   updated_by: 3
@@ -135,6 +135,7 @@ cards_120:
   read_rule_id: 
   appender_id: 
 cards_201: 
+  typecode: Set
   reader_type: Role
   name: by name+*right
   read_rule_class: 
@@ -151,7 +152,6 @@ cards_201:
   id: 336
   current_revision_id: 3225
   created_by: 1
-  type: Set
   trunk_id: 184
   extension_type: 
   updated_by: 1
@@ -162,6 +162,7 @@ cards_201:
   read_rule_id: 
   appender_id: 
 cards_013: 
+  typecode: Phrase
   reader_type: Role
   name: "*input+*right+*input"
   read_rule_class: 
@@ -178,7 +179,6 @@ cards_013:
   id: 462
   current_revision_id: 5593
   created_by: 4
-  type: Phrase
   trunk_id: 268
   extension_type: 
   updated_by: 4
@@ -189,6 +189,7 @@ cards_013:
   read_rule_id: 
   appender_id: 
 cards_202: 
+  typecode: Search
   reader_type: Role
   name: by create+*right+*content
   read_rule_class: 
@@ -205,7 +206,6 @@ cards_202:
   id: 191
   current_revision_id: 2291
   created_by: 4
-  type: Search
   trunk_id: 335
   extension_type: HardTemplate
   updated_by: 1
@@ -216,6 +216,7 @@ cards_202:
   read_rule_id: 
   appender_id: 
 cards_014: 
+  typecode: Pointer
   reader_type: Role
   name: "*input+*right+*default"
   read_rule_class: 
@@ -232,7 +233,6 @@ cards_014:
   id: 242
   current_revision_id: 2879
   created_by: 4
-  type: Pointer
   trunk_id: 268
   extension_type: 
   updated_by: 4
@@ -243,6 +243,7 @@ cards_014:
   read_rule_id: 
   appender_id: 
 cards_040: 
+  typecode: Basic
   reader_type: Role
   name: Setting+*self+*content
   read_rule_class: 
@@ -259,7 +260,6 @@ cards_040:
   id: 454
   current_revision_id: 5539
   created_by: 4
-  type: Basic
   trunk_id: 366
   extension_type: 
   updated_by: 3
@@ -270,6 +270,7 @@ cards_040:
   read_rule_id: 
   appender_id: 
 cards_121: 
+  typecode: Basic
   reader_type: Role
   name: email config+*right+*content
   read_rule_class: 
@@ -286,7 +287,6 @@ cards_121:
   id: 373
   current_revision_id: 3610
   created_by: 3
-  type: Basic
   trunk_id: 372
   extension_type: 
   updated_by: 4
@@ -297,6 +297,7 @@ cards_121:
   read_rule_id: 
   appender_id: 
 cards_203: 
+  typecode: Set
   reader_type: Role
   name: by create+*right
   read_rule_class: 
@@ -313,7 +314,6 @@ cards_203:
   id: 335
   current_revision_id: 3224
   created_by: 1
-  type: Set
   trunk_id: 190
   extension_type: 
   updated_by: 1
@@ -324,6 +324,7 @@ cards_203:
   read_rule_id: 
   appender_id: 
 cards_015: 
+  typecode: Pointer
   reader_type: Role
   name: "*input+*right+*options"
   read_rule_class: 
@@ -340,7 +341,6 @@ cards_015:
   id: 461
   current_revision_id: 5592
   created_by: 4
-  type: Pointer
   trunk_id: 268
   extension_type: 
   updated_by: 4
@@ -351,6 +351,7 @@ cards_015:
   read_rule_id: 
   appender_id: 
 cards_041: 
+  typecode: Cardtype
   reader_type: Role
   name: Setting
   read_rule_class: 
@@ -367,7 +368,6 @@ cards_041:
   id: 278
   current_revision_id: 5538
   created_by: 1
-  type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 3
@@ -378,6 +378,7 @@ cards_041:
   read_rule_id: 
   appender_id: 
 cards_122: 
+  typecode: Phrase
   reader_type: Role
   name: "*cc+*right+*default"
   read_rule_class: 
@@ -394,7 +395,6 @@ cards_122:
   id: 380
   current_revision_id: 3617
   created_by: 3
-  type: Phrase
   trunk_id: 379
   extension_type: 
   updated_by: 4
@@ -405,6 +405,7 @@ cards_122:
   read_rule_id: 
   appender_id: 
 cards_230: 
+  typecode: HTML
   reader_type: Role
   name: Default Layout
   read_rule_class: 
@@ -421,7 +422,6 @@ cards_230:
   id: 314
   current_revision_id: 3172
   created_by: 4
-  type: HTML
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -432,6 +432,7 @@ cards_230:
   read_rule_id: 
   appender_id: 
 cards_204: 
+  typecode: Basic
   reader_type: Role
   name: "*incoming+*right+*content"
   read_rule_class: 
@@ -448,7 +449,6 @@ cards_204:
   id: 171
   current_revision_id: 2336
   created_by: 4
-  type: Basic
   trunk_id: 334
   extension_type: HardTemplate
   updated_by: 1
@@ -459,6 +459,7 @@ cards_204:
   read_rule_id: 
   appender_id: 
 cards_016: 
+  typecode: Search
   reader_type: Role
   name: "*watching+*right+*content"
   read_rule_class: 
@@ -475,7 +476,6 @@ cards_016:
   id: 223
   current_revision_id: 5621
   created_by: 4
-  type: Search
   trunk_id: 329
   extension_type: HardTemplate
   updated_by: 4
@@ -486,6 +486,7 @@ cards_016:
   read_rule_id: 
   appender_id: 
 cards_042: 
+  typecode: Basic
   reader_type: Role
   name: Pointer+description
   read_rule_class: 
@@ -502,7 +503,6 @@ cards_042:
   id: 213
   current_revision_id: 5524
   created_by: 4
-  type: Basic
   trunk_id: 47
   extension_type: 
   updated_by: 4
@@ -513,6 +513,7 @@ cards_042:
   read_rule_id: 
   appender_id: 
 cards_123: 
+  typecode: Phrase
   reader_type: Role
   name: "*from+*right+*default"
   read_rule_class: 
@@ -529,7 +530,6 @@ cards_123:
   id: 377
   current_revision_id: 3614
   created_by: 3
-  type: Phrase
   trunk_id: 376
   extension_type: 
   updated_by: 4
@@ -540,6 +540,7 @@ cards_123:
   read_rule_id: 
   appender_id: 
 cards_231: 
+  typecode: Search
   reader_type: Role
   name: "*layout+*right+*options"
   read_rule_class: 
@@ -556,7 +557,6 @@ cards_231:
   id: 316
   current_revision_id: 3178
   created_by: 4
-  type: Search
   trunk_id: 284
   extension_type: 
   updated_by: 4
@@ -567,6 +567,7 @@ cards_231:
   read_rule_id: 
   appender_id: 
 cards_205: 
+  typecode: Set
   reader_type: Role
   name: "*incoming+*right"
   read_rule_class: 
@@ -583,7 +584,6 @@ cards_205:
   id: 334
   current_revision_id: 3223
   created_by: 1
-  type: Set
   trunk_id: 170
   extension_type: 
   updated_by: 1
@@ -594,6 +594,7 @@ cards_205:
   read_rule_id: 
   appender_id: 
 cards_017: 
+  typecode: Search
   reader_type: Role
   name: "*attach+*right+*options"
   read_rule_class: 
@@ -610,7 +611,6 @@ cards_017:
   id: 395
   current_revision_id: 5619
   created_by: 4
-  type: Search
   trunk_id: 388
   extension_type: 
   updated_by: 4
@@ -621,6 +621,7 @@ cards_017:
   read_rule_id: 
   appender_id: 
 cards_043: 
+  typecode: Basic
   reader_type: Role
   name: Set+*self+*content
   read_rule_class: 
@@ -637,7 +638,6 @@ cards_043:
   id: 456
   current_revision_id: 5521
   created_by: 4
-  type: Basic
   trunk_id: 455
   extension_type: 
   updated_by: 4
@@ -648,6 +648,7 @@ cards_043:
   read_rule_id: 
   appender_id: 
 cards_124: 
+  typecode: Phrase
   reader_type: Role
   name: "*to+*right+*default"
   read_rule_class: 
@@ -664,7 +665,6 @@ cards_124:
   id: 375
   current_revision_id: 3612
   created_by: 3
-  type: Phrase
   trunk_id: 374
   extension_type: 
   updated_by: 4
@@ -675,6 +675,7 @@ cards_124:
   read_rule_id: 
   appender_id: 
 cards_150: 
+  typecode: Number
   reader_type: Role
   name: Setting+*self+*table of contents
   read_rule_class: 
@@ -691,7 +692,6 @@ cards_150:
   id: 367
   current_revision_id: 3575
   created_by: 4
-  type: Number
   trunk_id: 366
   extension_type: 
   updated_by: 1
@@ -702,6 +702,7 @@ cards_150:
   read_rule_id: 
   appender_id: 
 cards_232: 
+  typecode: Setting
   reader_type: Role
   name: "*edit help"
   read_rule_class: 
@@ -718,7 +719,6 @@ cards_232:
   id: 82
   current_revision_id: 237
   created_by: 1
-  type: Setting
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -729,6 +729,7 @@ cards_232:
   read_rule_id: 
   appender_id: 
 cards_206: 
+  typecode: Image
   reader_type: Role
   name: Image+*right+*default
   read_rule_class: 
@@ -745,7 +746,6 @@ cards_206:
   id: 217
   current_revision_id: 2604
   created_by: 4
-  type: Image
   trunk_id: 331
   extension_type: SoftTemplate
   updated_by: 1
@@ -756,6 +756,7 @@ cards_206:
   read_rule_id: 
   appender_id: 
 cards_018: 
+  typecode: Search
   reader_type: Role
   name: "*roles+*right+*content"
   read_rule_class: 
@@ -772,7 +773,6 @@ cards_018:
   id: 97
   current_revision_id: 5613
   created_by: 1
-  type: Search
   trunk_id: 353
   extension_type: HardTemplate
   updated_by: 4
@@ -783,6 +783,7 @@ cards_018:
   read_rule_id: 
   appender_id: 
 cards_044: 
+  typecode: Set
   reader_type: Role
   name: Set+*self
   read_rule_class: 
@@ -799,7 +800,6 @@ cards_044:
   id: 455
   current_revision_id: 5520
   created_by: 4
-  type: Set
   trunk_id: 259
   extension_type: 
   updated_by: 4
@@ -810,6 +810,7 @@ cards_044:
   read_rule_id: 
   appender_id: 
 cards_070: 
+  typecode: Basic
   reader_type: Role
   name: "*when last edited"
   read_rule_class: 
@@ -826,7 +827,6 @@ cards_070:
   id: 438
   current_revision_id: 5404
   created_by: 4
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -837,6 +837,7 @@ cards_070:
   read_rule_id: 
   appender_id: 
 cards_125: 
+  typecode: Pointer
   reader_type: Role
   name: "*send+*right+*default"
   read_rule_class: 
@@ -853,7 +854,6 @@ cards_125:
   id: 368
   current_revision_id: 3606
   created_by: 3
-  type: Pointer
   trunk_id: 364
   extension_type: 
   updated_by: 4
@@ -864,6 +864,7 @@ cards_125:
   read_rule_id: 
   appender_id: 
 cards_151: 
+  typecode: Set
   reader_type: Role
   name: "*subject+*right"
   read_rule_class: 
@@ -880,7 +881,6 @@ cards_151:
   id: 390
   current_revision_id: 3628
   created_by: 3
-  type: Set
   trunk_id: 384
   extension_type: 
   updated_by: 3
@@ -891,6 +891,7 @@ cards_151:
   read_rule_id: 
   appender_id: 
 cards_233: 
+  typecode: Set
   reader_type: Role
   name: "*sidebar+*self"
   read_rule_class: 
@@ -907,7 +908,6 @@ cards_233:
   id: 315
   current_revision_id: 3177
   created_by: 4
-  type: Set
   trunk_id: 81
   extension_type: 
   updated_by: 4
@@ -918,6 +918,7 @@ cards_233:
   read_rule_id: 
   appender_id: 
 cards_019: 
+  typecode: Search
   reader_type: Role
   name: "*referred to by+*right+*content"
   read_rule_class: 
@@ -934,7 +935,6 @@ cards_019:
   id: 450
   current_revision_id: 5612
   created_by: 4
-  type: Search
   trunk_id: 449
   extension_type: 
   updated_by: 4
@@ -945,6 +945,7 @@ cards_019:
   read_rule_id: 
   appender_id: 
 cards_045: 
+  typecode: Basic
   reader_type: Role
   name: Cardtype+*type+*content
   read_rule_class: 
@@ -961,7 +962,6 @@ cards_045:
   id: 88
   current_revision_id: 5516
   created_by: 1
-  type: Basic
   trunk_id: 320
   extension_type: SoftTemplate
   updated_by: 4
@@ -972,6 +972,7 @@ cards_045:
   read_rule_id: 
   appender_id: 
 cards_071: 
+  typecode: Set
   reader_type: Role
   name: "*referred to by+*right"
   read_rule_class: 
@@ -988,7 +989,6 @@ cards_071:
   id: 449
   current_revision_id: 5396
   created_by: 4
-  type: Set
   trunk_id: 448
   extension_type: 
   updated_by: 4
@@ -999,6 +999,7 @@ cards_071:
   read_rule_id: 
   appender_id: 
 cards_126: 
+  typecode: Phrase
   reader_type: Role
   name: "*bcc+*right+*default"
   read_rule_class: 
@@ -1015,7 +1016,6 @@ cards_126:
   id: 383
   current_revision_id: 3620
   created_by: 3
-  type: Phrase
   trunk_id: 382
   extension_type: 
   updated_by: 4
@@ -1026,6 +1026,7 @@ cards_126:
   read_rule_id: 
   appender_id: 
 cards_152: 
+  typecode: Basic
   reader_type: Role
   name: "*from"
   read_rule_class: 
@@ -1042,7 +1043,6 @@ cards_152:
   id: 137
   current_revision_id: 1521
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -1053,6 +1053,7 @@ cards_152:
   read_rule_id: 
   appender_id: 
 cards_207: 
+  typecode: Set
   reader_type: Role
   name: Image+*right
   read_rule_class: 
@@ -1069,7 +1070,6 @@ cards_207:
   id: 331
   current_revision_id: 3218
   created_by: 1
-  type: Set
   trunk_id: 19
   extension_type: 
   updated_by: 1
@@ -1080,6 +1080,7 @@ cards_207:
   read_rule_id: 
   appender_id: 
 cards_260: 
+  typecode: Setting
   reader_type: Role
   name: "*input"
   read_rule_class: 
@@ -1096,7 +1097,6 @@ cards_260:
   id: 241
   current_revision_id: 2878
   created_by: 4
-  type: Setting
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -1107,6 +1107,7 @@ cards_260:
   read_rule_id: 
   appender_id: 
 cards_234: 
+  typecode: Set
   reader_type: Role
   name: "*add help+*right"
   read_rule_class: 
@@ -1123,7 +1124,6 @@ cards_234:
   id: 310
   current_revision_id: 3140
   created_by: 4
-  type: Set
   trunk_id: 309
   extension_type: 
   updated_by: 4
@@ -1134,6 +1134,7 @@ cards_234:
   read_rule_id: 
   appender_id: 
 cards_046: 
+  typecode: Basic
   reader_type: Role
   name: Account Request+*self+*content
   read_rule_class: 
@@ -1150,7 +1151,6 @@ cards_046:
   id: 453
   current_revision_id: 5511
   created_by: 4
-  type: Basic
   trunk_id: 452
   extension_type: 
   updated_by: 4
@@ -1161,6 +1161,7 @@ cards_046:
   read_rule_id: 
   appender_id: 
 cards_072: 
+  typecode: Basic
   reader_type: Role
   name: "*referred to by"
   read_rule_class: 
@@ -1177,7 +1178,6 @@ cards_072:
   id: 448
   current_revision_id: 5395
   created_by: 4
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -1188,6 +1188,7 @@ cards_072:
   read_rule_id: 
   appender_id: 
 cards_127: 
+  typecode: Phrase
   reader_type: Role
   name: "*subject+*right+*default"
   read_rule_class: 
@@ -1204,7 +1205,6 @@ cards_127:
   id: 391
   current_revision_id: 3629
   created_by: 3
-  type: Phrase
   trunk_id: 390
   extension_type: 
   updated_by: 4
@@ -1215,6 +1215,7 @@ cards_127:
   read_rule_id: 
   appender_id: 
 cards_153: 
+  typecode: Basic
   reader_type: Role
   name: "*right"
   read_rule_class: 
@@ -1231,7 +1232,6 @@ cards_153:
   id: 260
   current_revision_id: 3001
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -1242,6 +1242,7 @@ cards_153:
   read_rule_id: 
   appender_id: 
 cards_208: 
+  typecode: Pointer
   reader_type: Role
   name: "*watchers+*right+*default"
   read_rule_class: 
@@ -1258,7 +1259,6 @@ cards_208:
   id: 220
   current_revision_id: 2609
   created_by: 5
-  type: Pointer
   trunk_id: 269
   extension_type: SoftTemplate
   updated_by: 1
@@ -1269,6 +1269,7 @@ cards_208:
   read_rule_id: 
   appender_id: 
 cards_261: 
+  typecode: Setting
   reader_type: Role
   name: "*layout"
   read_rule_class: 
@@ -1285,7 +1286,6 @@ cards_261:
   id: 255
   current_revision_id: 3019
   created_by: 1
-  type: Setting
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -1296,6 +1296,7 @@ cards_261:
   read_rule_id: 
   appender_id: 
 cards_235: 
+  typecode: Setting
   reader_type: Role
   name: "*add help"
   read_rule_class: 
@@ -1312,7 +1313,6 @@ cards_235:
   id: 309
   current_revision_id: 3137
   created_by: 1
-  type: Setting
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -1323,6 +1323,7 @@ cards_235:
   read_rule_id: 
   appender_id: 
 cards_047: 
+  typecode: Set
   reader_type: Role
   name: Account Request+*self
   read_rule_class: 
@@ -1339,7 +1340,6 @@ cards_047:
   id: 452
   current_revision_id: 5510
   created_by: 4
-  type: Set
   trunk_id: 12
   extension_type: 
   updated_by: 4
@@ -1350,6 +1350,7 @@ cards_047:
   read_rule_id: 
   appender_id: 
 cards_073: 
+  typecode: Set
   reader_type: Role
   name: "*refers to+*right"
   read_rule_class: 
@@ -1366,7 +1367,6 @@ cards_073:
   id: 446
   current_revision_id: 5393
   created_by: 4
-  type: Set
   trunk_id: 445
   extension_type: 
   updated_by: 4
@@ -1377,6 +1377,7 @@ cards_073:
   read_rule_id: 
   appender_id: 
 cards_128: 
+  typecode: Pointer
   reader_type: Role
   name: "*attach+*right+*default"
   read_rule_class: 
@@ -1393,7 +1394,6 @@ cards_128:
   id: 389
   current_revision_id: 3626
   created_by: 3
-  type: Pointer
   trunk_id: 388
   extension_type: 
   updated_by: 4
@@ -1404,6 +1404,7 @@ cards_128:
   read_rule_id: 
   appender_id: 
 cards_154: 
+  typecode: Basic
   reader_type: Role
   name: "*to"
   read_rule_class: 
@@ -1420,7 +1421,6 @@ cards_154:
   id: 64
   current_revision_id: 66
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -1431,6 +1431,7 @@ cards_154:
   read_rule_id: 
   appender_id: 
 cards_180: 
+  typecode: Set
   reader_type: Role
   name: "*editing+*right"
   read_rule_class: 
@@ -1447,7 +1448,6 @@ cards_180:
   id: 351
   current_revision_id: 3244
   created_by: 1
-  type: Set
   trunk_id: 138
   extension_type: 
   updated_by: 1
@@ -1458,6 +1458,7 @@ cards_180:
   read_rule_id: 
   appender_id: 
 cards_209: 
+  typecode: Phrase
   reader_type: Role
   name: "*autoname+*right+*default"
   read_rule_class: 
@@ -1474,7 +1475,6 @@ cards_209:
   id: 248
   current_revision_id: 2890
   created_by: 4
-  type: Phrase
   trunk_id: 289
   extension_type: SoftTemplate
   updated_by: 1
@@ -1485,6 +1485,7 @@ cards_209:
   read_rule_id: 
   appender_id: 
 cards_262: 
+  typecode: Setting
   reader_type: Role
   name: "*captcha"
   read_rule_class: 
@@ -1501,7 +1502,6 @@ cards_262:
   id: 256
   current_revision_id: 3021
   created_by: 5
-  type: Setting
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -1512,6 +1512,7 @@ cards_262:
   read_rule_id: 
   appender_id: 
 cards_236: 
+  typecode: Setting
   reader_type: Role
   name: "*accountable"
   read_rule_class: 
@@ -1528,7 +1529,6 @@ cards_236:
   id: 291
   current_revision_id: 3078
   created_by: 4
-  type: Setting
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -1539,6 +1539,7 @@ cards_236:
   read_rule_id: 
   appender_id: 
 cards_048: 
+  typecode: Pointer
   reader_type: Role
   name: "*options+*right+*default"
   read_rule_class: 
@@ -1555,7 +1556,6 @@ cards_048:
   id: 87
   current_revision_id: 5497
   created_by: 1
-  type: Pointer
   trunk_id: 300
   extension_type: 
   updated_by: 4
@@ -1566,6 +1566,7 @@ cards_048:
   read_rule_id: 
   appender_id: 
 cards_074: 
+  typecode: Basic
   reader_type: Role
   name: "*refers to"
   read_rule_class: 
@@ -1582,7 +1583,6 @@ cards_074:
   id: 445
   current_revision_id: 5392
   created_by: 4
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -1593,6 +1593,7 @@ cards_074:
   read_rule_id: 
   appender_id: 
 cards_129: 
+  typecode: Basic
   reader_type: Role
   name: Cardtype+description
   read_rule_class: 
@@ -1609,7 +1610,6 @@ cards_129:
   id: 180
   current_revision_id: 2093
   created_by: 4
-  type: Basic
   trunk_id: 5
   extension_type: 
   updated_by: 1
@@ -1620,6 +1620,7 @@ cards_129:
   read_rule_id: 
   appender_id: 
 cards_155: 
+  typecode: Basic
   reader_type: Role
   name: "*attach"
   read_rule_class: 
@@ -1636,7 +1637,6 @@ cards_155:
   id: 387
   current_revision_id: 3624
   created_by: 3
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -1647,6 +1647,7 @@ cards_155:
   read_rule_id: 
   appender_id: 
 cards_181: 
+  typecode: Set
   reader_type: Role
   name: "*plus cards+*right"
   read_rule_class: 
@@ -1663,7 +1664,6 @@ cards_181:
   id: 350
   current_revision_id: 3243
   created_by: 1
-  type: Set
   trunk_id: 33
   extension_type: 
   updated_by: 1
@@ -1674,6 +1674,7 @@ cards_181:
   read_rule_id: 
   appender_id: 
 cards_263: 
+  typecode: Setting
   reader_type: Role
   name: "*autoname"
   read_rule_class: 
@@ -1690,7 +1691,6 @@ cards_263:
   id: 247
   current_revision_id: 2889
   created_by: 4
-  type: Setting
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -1701,6 +1701,7 @@ cards_263:
   read_rule_id: 
   appender_id: 
 cards_237: 
+  typecode: Set
   reader_type: Role
   name: "*edit help+*right"
   read_rule_class: 
@@ -1717,7 +1718,6 @@ cards_237:
   id: 305
   current_revision_id: 3126
   created_by: 3
-  type: Set
   trunk_id: 82
   extension_type: 
   updated_by: 3
@@ -1728,6 +1728,7 @@ cards_237:
   read_rule_id: 
   appender_id: 
 cards_049: 
+  typecode: Cardtype
   reader_type: Role
   name: User
   read_rule_class: 
@@ -1744,7 +1745,6 @@ cards_049:
   id: 4
   current_revision_id: 5490
   created_by: 1
-  type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 3
@@ -1755,6 +1755,7 @@ cards_049:
   read_rule_id: 
   appender_id: 
 cards_075: 
+  typecode: Number
   reader_type: Role
   name: Config+*self+*table of contents
   read_rule_class: 
@@ -1771,7 +1772,6 @@ cards_075:
   id: 442
   current_revision_id: 5334
   created_by: 4
-  type: Number
   trunk_id: 441
   extension_type: 
   updated_by: 4
@@ -1782,6 +1782,7 @@ cards_075:
   read_rule_id: 
   appender_id: 
 cards_156: 
+  typecode: Basic
   reader_type: Role
   name: "*subject"
   read_rule_class: 
@@ -1798,7 +1799,6 @@ cards_156:
   id: 384
   current_revision_id: 3621
   created_by: 3
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -1809,6 +1809,7 @@ cards_156:
   read_rule_id: 
   appender_id: 
 cards_182: 
+  typecode: Set
   reader_type: Role
   name: "*plus parts+*right"
   read_rule_class: 
@@ -1825,7 +1826,6 @@ cards_182:
   id: 349
   current_revision_id: 3242
   created_by: 1
-  type: Set
   trunk_id: 35
   extension_type: 
   updated_by: 1
@@ -1836,6 +1836,7 @@ cards_182:
   read_rule_id: 
   appender_id: 
 cards_290: 
+  typecode: Role
   reader_type: Role
   name: Administrator
   read_rule_class: 
@@ -1852,7 +1853,6 @@ cards_290:
   id: 10
   current_revision_id: 10
   created_by: 1
-  type: Role
   trunk_id: 
   extension_type: Role
   updated_by: 1
@@ -1863,6 +1863,7 @@ cards_290:
   read_rule_id: 
   appender_id: 
 cards_264: 
+  typecode: Phrase
   reader_type: Role
   name: "*all+*option label"
   read_rule_class: 
@@ -1879,7 +1880,6 @@ cards_264:
   id: 277
   current_revision_id: 3022
   created_by: 1
-  type: Phrase
   trunk_id: 274
   extension_type: 
   updated_by: 1
@@ -1890,6 +1890,7 @@ cards_264:
   read_rule_id: 
   appender_id: 
 cards_238: 
+  typecode: Setting
   reader_type: Role
   name: "*thanks"
   read_rule_class: 
@@ -1906,7 +1907,6 @@ cards_238:
   id: 61
   current_revision_id: 62
   created_by: 1
-  type: Setting
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -1917,6 +1917,7 @@ cards_238:
   read_rule_id: 
   appender_id: 
 cards_076: 
+  typecode: Set
   reader_type: Role
   name: Config+*self
   read_rule_class: 
@@ -1933,7 +1934,6 @@ cards_076:
   id: 441
   current_revision_id: 5333
   created_by: 4
-  type: Set
   trunk_id: 73
   extension_type: 
   updated_by: 4
@@ -1944,6 +1944,7 @@ cards_076:
   read_rule_id: 
   appender_id: 
 cards_157: 
+  typecode: Basic
   reader_type: Role
   name: "*bcc"
   read_rule_class: 
@@ -1960,7 +1961,6 @@ cards_157:
   id: 381
   current_revision_id: 3618
   created_by: 3
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -1971,6 +1971,7 @@ cards_157:
   read_rule_id: 
   appender_id: 
 cards_183: 
+  typecode: Set
   reader_type: Role
   name: "*includers+*right"
   read_rule_class: 
@@ -1987,7 +1988,6 @@ cards_183:
   id: 348
   current_revision_id: 3241
   created_by: 1
-  type: Set
   trunk_id: 37
   extension_type: 
   updated_by: 1
@@ -1998,6 +1998,7 @@ cards_183:
   read_rule_id: 
   appender_id: 
 cards_291: 
+  typecode: Basic
   reader_type: Role
   name: "*roles"
   read_rule_class: 
@@ -2014,7 +2015,6 @@ cards_291:
   id: 96
   current_revision_id: 353
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -2025,6 +2025,7 @@ cards_291:
   read_rule_id: 
   appender_id: 
 cards_265: 
+  typecode: Basic
   reader_type: Role
   name: Home
   read_rule_class: 
@@ -2041,7 +2042,6 @@ cards_265:
   id: 80
   current_revision_id: 2877
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -2052,6 +2052,7 @@ cards_265:
   read_rule_id: 
   appender_id: 
 cards_239: 
+  typecode: Set
   reader_type: Role
   name: "*all"
   read_rule_class: 
@@ -2068,7 +2069,6 @@ cards_239:
   id: 274
   current_revision_id: 3088
   created_by: 1
-  type: Set
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -2079,6 +2079,7 @@ cards_239:
   read_rule_id: 
   appender_id: 
 cards_077: 
+  typecode: HTML
   reader_type: Role
   name: "*css"
   read_rule_class: 
@@ -2095,7 +2096,6 @@ cards_077:
   id: 198
   current_revision_id: 5322
   created_by: 4
-  type: HTML
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -2106,6 +2106,7 @@ cards_077:
   read_rule_id: 
   appender_id: 
 cards_158: 
+  typecode: Basic
   reader_type: Role
   name: "*cc"
   read_rule_class: 
@@ -2122,7 +2123,6 @@ cards_158:
   id: 378
   current_revision_id: 3615
   created_by: 3
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -2133,6 +2133,7 @@ cards_158:
   read_rule_id: 
   appender_id: 
 cards_184: 
+  typecode: Set
   reader_type: Role
   name: "*inclusions+*right"
   read_rule_class: 
@@ -2149,7 +2150,6 @@ cards_184:
   id: 347
   current_revision_id: 3240
   created_by: 1
-  type: Set
   trunk_id: 41
   extension_type: 
   updated_by: 1
@@ -2160,6 +2160,7 @@ cards_184:
   read_rule_id: 
   appender_id: 
 cards_292: 
+  typecode: Basic
   reader_type: Role
   name: "*editing"
   read_rule_class: 
@@ -2176,7 +2177,6 @@ cards_292:
   id: 138
   current_revision_id: 1550
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -2187,6 +2187,7 @@ cards_292:
   read_rule_id: 
   appender_id: 
 cards_266: 
+  typecode: Basic
   reader_type: Role
   name: "*watching"
   read_rule_class: 
@@ -2203,7 +2204,6 @@ cards_266:
   id: 222
   current_revision_id: 2624
   created_by: 4
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -2214,6 +2214,7 @@ cards_266:
   read_rule_id: 
   appender_id: 
 cards_078: 
+  typecode: Basic
   reader_type: Role
   name: "*community+*right+*content"
   read_rule_class: 
@@ -2230,7 +2231,6 @@ cards_078:
   id: 116
   current_revision_id: 5306
   created_by: 1
-  type: Basic
   trunk_id: 340
   extension_type: HardTemplate
   updated_by: 4
@@ -2241,6 +2241,7 @@ cards_078:
   read_rule_id: 
   appender_id: 
 cards_159: 
+  typecode: Set
   reader_type: Role
   name: email config+*right
   read_rule_class: 
@@ -2257,7 +2258,6 @@ cards_159:
   id: 372
   current_revision_id: 3609
   created_by: 3
-  type: Set
   trunk_id: 371
   extension_type: 
   updated_by: 3
@@ -2268,6 +2268,7 @@ cards_159:
   read_rule_id: 
   appender_id: 
 cards_185: 
+  typecode: Set
   reader_type: Role
   name: "*links+*right"
   read_rule_class: 
@@ -2284,7 +2285,6 @@ cards_185:
   id: 346
   current_revision_id: 3239
   created_by: 1
-  type: Set
   trunk_id: 43
   extension_type: 
   updated_by: 1
@@ -2295,6 +2295,7 @@ cards_185:
   read_rule_id: 
   appender_id: 
 cards_293: 
+  typecode: Basic
   reader_type: Role
   name: tags
   read_rule_class: 
@@ -2311,7 +2312,6 @@ cards_293:
   id: 128
   current_revision_id: 1407
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -2322,6 +2322,7 @@ cards_293:
   read_rule_id: 
   appender_id: 
 cards_267: 
+  typecode: Image
   reader_type: Role
   name: "*logo"
   read_rule_class: 
@@ -2338,7 +2339,6 @@ cards_267:
   id: 79
   current_revision_id: 2618
   created_by: 1
-  type: Image
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -2349,6 +2349,7 @@ cards_267:
   read_rule_id: 
   appender_id: 
 cards_079: 
+  typecode: Basic
   reader_type: Role
   name: "*sidebar+*self+*edit help"
   read_rule_class: 
@@ -2365,7 +2366,6 @@ cards_079:
   id: 83
   current_revision_id: 5302
   created_by: 1
-  type: Basic
   trunk_id: 315
   extension_type: 
   updated_by: 4
@@ -2376,6 +2376,7 @@ cards_079:
   read_rule_id: 
   appender_id: 
 cards_186: 
+  typecode: Set
   reader_type: Role
   name: "*linkers+*right"
   read_rule_class: 
@@ -2392,7 +2393,6 @@ cards_186:
   id: 345
   current_revision_id: 3238
   created_by: 1
-  type: Set
   trunk_id: 39
   extension_type: 
   updated_by: 1
@@ -2403,6 +2403,7 @@ cards_186:
   read_rule_id: 
   appender_id: 
 cards_294: 
+  typecode: Role
   reader_type: Role
   name: Anyone Signed In
   read_rule_class: 
@@ -2419,7 +2420,6 @@ cards_294:
   id: 9
   current_revision_id: 9
   created_by: 1
-  type: Role
   trunk_id: 
   extension_type: Role
   updated_by: 1
@@ -2430,6 +2430,7 @@ cards_294:
   read_rule_id: 
   appender_id: 
 cards_268: 
+  typecode: Basic
   reader_type: Role
   name: Anonymous
   read_rule_class: 
@@ -2446,7 +2447,6 @@ cards_268:
   id: 15
   current_revision_id: 2573
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: User
   updated_by: 4
@@ -2457,6 +2457,7 @@ cards_268:
   read_rule_id: 
   appender_id: 
 cards_187: 
+  typecode: Pointer
   reader_type: Role
   name: "*related+*right+*default"
   read_rule_class: 
@@ -2473,7 +2474,6 @@ cards_187:
   id: 117
   current_revision_id: 1270
   created_by: 1
-  type: Pointer
   trunk_id: 343
   extension_type: SoftTemplate
   updated_by: 1
@@ -2484,6 +2484,7 @@ cards_187:
   read_rule_id: 
   appender_id: 
 cards_295: 
+  typecode: Basic
   reader_type: Role
   name: "*plus cards"
   read_rule_class: 
@@ -2500,7 +2501,6 @@ cards_295:
   id: 33
   current_revision_id: 33
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -2511,6 +2511,7 @@ cards_295:
   read_rule_id: 
   appender_id: 
 cards_269: 
+  typecode: Basic
   reader_type: Role
   name: Menu
   read_rule_class: 
@@ -2527,7 +2528,6 @@ cards_269:
   id: 85
   current_revision_id: 2565
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -2538,6 +2538,7 @@ cards_269:
   read_rule_id: 
   appender_id: 
 cards_188: 
+  typecode: Set
   reader_type: Role
   name: "*related+*right"
   read_rule_class: 
@@ -2554,7 +2555,6 @@ cards_188:
   id: 343
   current_revision_id: 3235
   created_by: 1
-  type: Set
   trunk_id: 112
   extension_type: 
   updated_by: 1
@@ -2565,6 +2565,7 @@ cards_188:
   read_rule_id: 
   appender_id: 
 cards_296: 
+  typecode: Role
   reader_type: Role
   name: Anyone
   read_rule_class: 
@@ -2581,7 +2582,6 @@ cards_296:
   id: 8
   current_revision_id: 8
   created_by: 1
-  type: Role
   trunk_id: 
   extension_type: Role
   updated_by: 1
@@ -2592,6 +2592,7 @@ cards_296:
   read_rule_id: 
   appender_id: 
 cards_189: 
+  typecode: Search
   reader_type: Role
   name: "*members+*right+*content"
   read_rule_class: 
@@ -2608,7 +2609,6 @@ cards_189:
   id: 99
   current_revision_id: 1881
   created_by: 1
-  type: Search
   trunk_id: 342
   extension_type: HardTemplate
   updated_by: 1
@@ -2619,6 +2619,7 @@ cards_189:
   read_rule_id: 
   appender_id: 
 cards_297: 
+  typecode: Basic
   reader_type: Role
   name: description
   read_rule_class: 
@@ -2635,7 +2636,6 @@ cards_297:
   id: 146
   current_revision_id: 1696
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -2646,6 +2646,7 @@ cards_297:
   read_rule_id: 
   appender_id: 
 cards_298: 
+  typecode: Basic
   reader_type: Role
   name: "*plus parts"
   read_rule_class: 
@@ -2662,7 +2663,6 @@ cards_298:
   id: 35
   current_revision_id: 35
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -2673,6 +2673,7 @@ cards_298:
   read_rule_id: 
   appender_id: 
 cards_001: 
+  typecode: Search
   reader_type: Role
   name: "*watchers+*right+*options"
   read_rule_class: 
@@ -2689,7 +2690,6 @@ cards_001:
   id: 221
   current_revision_id: 5713
   created_by: 4
-  type: Search
   trunk_id: 269
   extension_type: 
   updated_by: 3
@@ -2700,6 +2700,7 @@ cards_001:
   read_rule_id: 
   appender_id: 
 cards_002: 
+  typecode: Basic
   reader_type: Role
   name: "*account links"
   read_rule_class: 
@@ -2716,7 +2717,6 @@ cards_002:
   id: 474
   current_revision_id: 5649
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -2727,6 +2727,7 @@ cards_002:
   read_rule_id: 
   appender_id: 
 cards_003: 
+  typecode: Basic
   reader_type: Role
   name: "*version"
   read_rule_class: 
@@ -2743,7 +2744,6 @@ cards_003:
   id: 473
   current_revision_id: 5648
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -2754,6 +2754,7 @@ cards_003:
   read_rule_id: 
   appender_id: 
 cards_110: 
+  typecode: Setting
   reader_type: Role
   name: "*default"
   read_rule_class: 
@@ -2770,7 +2771,6 @@ cards_110:
   id: 318
   current_revision_id: 3197
   created_by: 1
-  type: Setting
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -2781,6 +2781,7 @@ cards_110:
   read_rule_id: 
   appender_id: 
 cards_004: 
+  typecode: Basic
   reader_type: Role
   name: "*now"
   read_rule_class: 
@@ -2797,7 +2798,6 @@ cards_004:
   id: 472
   current_revision_id: 5647
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -2808,6 +2808,7 @@ cards_004:
   read_rule_id: 
   appender_id: 
 cards_030: 
+  typecode: Basic
   reader_type: Role
   name: "*account"
   read_rule_class: 
@@ -2824,7 +2825,6 @@ cards_030:
   id: 100
   current_revision_id: 5588
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -2835,6 +2835,7 @@ cards_030:
   read_rule_id: 
   appender_id: 
 cards_111: 
+  typecode: Setting
   reader_type: Role
   name: "*content"
   read_rule_class: 
@@ -2851,7 +2852,6 @@ cards_111:
   id: 317
   current_revision_id: 3196
   created_by: 1
-  type: Setting
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -2862,6 +2862,7 @@ cards_111:
   read_rule_id: 
   appender_id: 
 cards_005: 
+  typecode: Basic
   reader_type: Role
   name: "*navbox"
   read_rule_class: 
@@ -2878,7 +2879,6 @@ cards_005:
   id: 471
   current_revision_id: 5646
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -2889,6 +2889,7 @@ cards_005:
   read_rule_id: 
   appender_id: 
 cards_031: 
+  typecode: Search
   reader_type: Role
   name: Cards with accounts
   read_rule_class: 
@@ -2905,7 +2906,6 @@ cards_031:
   id: 101
   current_revision_id: 486
   created_by: 1
-  type: Search
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -2916,6 +2916,7 @@ cards_031:
   read_rule_id: 
   appender_id: 
 cards_112: 
+  typecode: Number
   reader_type: Role
   name: "*all+*table of contents"
   read_rule_class: 
@@ -2932,7 +2933,6 @@ cards_112:
   id: 279
   current_revision_id: 3871
   created_by: 4
-  type: Number
   trunk_id: 274
   extension_type: 
   updated_by: 4
@@ -2943,6 +2943,7 @@ cards_112:
   read_rule_id: 
   appender_id: 
 cards_006: 
+  typecode: Basic
   reader_type: Role
   name: "*head"
   read_rule_class: 
@@ -2959,7 +2960,6 @@ cards_006:
   id: 470
   current_revision_id: 5645
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -2970,6 +2970,7 @@ cards_006:
   read_rule_id: 
   appender_id: 
 cards_032: 
+  typecode: Number
   reader_type: Role
   name: "*account+*right+*table of contents"
   read_rule_class: 
@@ -2986,7 +2987,6 @@ cards_032:
   id: 458
   current_revision_id: 5581
   created_by: 4
-  type: Number
   trunk_id: 330
   extension_type: 
   updated_by: 4
@@ -2997,6 +2997,7 @@ cards_032:
   read_rule_id: 
   appender_id: 
 cards_113: 
+  typecode: Phrase
   reader_type: Role
   name: Cardtype+watcher instructions for related tab
   read_rule_class: 
@@ -3013,7 +3014,6 @@ cards_113:
   id: 398
   current_revision_id: 3810
   created_by: 4
-  type: Phrase
   trunk_id: 5
   extension_type: 
   updated_by: 3
@@ -3024,6 +3024,7 @@ cards_113:
   read_rule_id: 
   appender_id: 
 cards_220: 
+  typecode: Set
   reader_type: Role
   name: "*self+*right+*content"
   read_rule_class: 
@@ -3040,7 +3041,6 @@ cards_220:
   id: 265
   current_revision_id: 3006
   created_by: 1
-  type: Set
   trunk_id: 326
   extension_type: HardTemplate
   updated_by: 1
@@ -3051,6 +3051,7 @@ cards_220:
   read_rule_id: 
   appender_id: 
 cards_007: 
+  typecode: Basic
   reader_type: Role
   name: "*foot"
   read_rule_class: 
@@ -3067,7 +3068,6 @@ cards_007:
   id: 469
   current_revision_id: 5644
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -3078,6 +3078,7 @@ cards_007:
   read_rule_id: 
   appender_id: 
 cards_033: 
+  typecode: Basic
   reader_type: Role
   name: Config
   read_rule_class: 
@@ -3094,7 +3095,6 @@ cards_033:
   id: 73
   current_revision_id: 5578
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -3105,6 +3105,7 @@ cards_033:
   read_rule_id: 
   appender_id: 
 cards_114: 
+  typecode: Basic
   reader_type: Role
   name: watcher instructions for related tab
   read_rule_class: 
@@ -3121,7 +3122,6 @@ cards_114:
   id: 397
   current_revision_id: 3859
   created_by: 4
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -3132,6 +3132,7 @@ cards_114:
   read_rule_id: 
   appender_id: 
 cards_140: 
+  typecode: Basic
   reader_type: Role
   name: "*content+*right+*edit help"
   read_rule_class: 
@@ -3148,7 +3149,6 @@ cards_140:
   id: 359
   current_revision_id: 3482
   created_by: 4
-  type: Basic
   trunk_id: 358
   extension_type: 
   updated_by: 1
@@ -3159,6 +3159,7 @@ cards_140:
   read_rule_id: 
   appender_id: 
 cards_221: 
+  typecode: Set
   reader_type: Role
   name: "*self+*right"
   read_rule_class: 
@@ -3175,7 +3176,6 @@ cards_221:
   id: 326
   current_revision_id: 3208
   created_by: 1
-  type: Set
   trunk_id: 264
   extension_type: 
   updated_by: 1
@@ -3186,6 +3186,7 @@ cards_221:
   read_rule_id: 
   appender_id: 
 cards_008: 
+  typecode: Basic
   reader_type: Role
   name: "*alerts"
   read_rule_class: 
@@ -3202,7 +3203,6 @@ cards_008:
   id: 468
   current_revision_id: 5643
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -3213,6 +3213,7 @@ cards_008:
   read_rule_id: 
   appender_id: 
 cards_034: 
+  typecode: Basic
   reader_type: Role
   name: Set+description
   read_rule_class: 
@@ -3229,7 +3230,6 @@ cards_034:
   id: 297
   current_revision_id: 5573
   created_by: 4
-  type: Basic
   trunk_id: 259
   extension_type: 
   updated_by: 3
@@ -3240,6 +3240,7 @@ cards_034:
   read_rule_id: 
   appender_id: 
 cards_060: 
+  typecode: Cardtype
   reader_type: Role
   name: Date
   read_rule_class: 
@@ -3256,7 +3257,6 @@ cards_060:
   id: 17
   current_revision_id: 5479
   created_by: 1
-  type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 3
@@ -3267,6 +3267,7 @@ cards_060:
   read_rule_id: 
   appender_id: 
 cards_115: 
+  typecode: Set
   reader_type: Role
   name: watcher instructions for related tab+*right
   read_rule_class: 
@@ -3283,7 +3284,6 @@ cards_115:
   id: 401
   current_revision_id: 3814
   created_by: 4
-  type: Set
   trunk_id: 397
   extension_type: 
   updated_by: 4
@@ -3294,6 +3294,7 @@ cards_115:
   read_rule_id: 
   appender_id: 
 cards_141: 
+  typecode: Basic
   reader_type: Role
   name: "*accountable+*right+*edit help"
   read_rule_class: 
@@ -3310,7 +3311,6 @@ cards_141:
   id: 308
   current_revision_id: 3263
   created_by: 3
-  type: Basic
   trunk_id: 307
   extension_type: 
   updated_by: 1
@@ -3321,6 +3321,7 @@ cards_141:
   read_rule_id: 
   appender_id: 
 cards_222: 
+  typecode: Set
   reader_type: Role
   name: "*type plus right+*right+*content"
   read_rule_class: 
@@ -3337,7 +3338,6 @@ cards_222:
   id: 263
   current_revision_id: 3004
   created_by: 1
-  type: Set
   trunk_id: 325
   extension_type: HardTemplate
   updated_by: 1
@@ -3348,6 +3348,7 @@ cards_222:
   read_rule_id: 
   appender_id: 
 cards_223: 
+  typecode: Set
   reader_type: Role
   name: "*type plus right+*right"
   read_rule_class: 
@@ -3364,7 +3365,6 @@ cards_223:
   id: 325
   current_revision_id: 3207
   created_by: 1
-  type: Set
   trunk_id: 262
   extension_type: 
   updated_by: 1
@@ -3375,6 +3375,7 @@ cards_223:
   read_rule_id: 
   appender_id: 
 cards_009: 
+  typecode: Search
   reader_type: Role
   name: "*missing link"
   read_rule_class: 
@@ -3391,7 +3392,6 @@ cards_009:
   id: 467
   current_revision_id: 5642
   created_by: 1
-  type: Search
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -3402,6 +3402,7 @@ cards_009:
   read_rule_id: 
   appender_id: 
 cards_035: 
+  typecode: Basic
   reader_type: Role
   name: Setting+description
   read_rule_class: 
@@ -3418,7 +3419,6 @@ cards_035:
   id: 298
   current_revision_id: 5572
   created_by: 4
-  type: Basic
   trunk_id: 278
   extension_type: 
   updated_by: 3
@@ -3429,6 +3429,7 @@ cards_035:
   read_rule_id: 
   appender_id: 
 cards_061: 
+  typecode: Basic
   reader_type: Role
   name: Basic+description
   read_rule_class: 
@@ -3445,7 +3446,6 @@ cards_061:
   id: 405
   current_revision_id: 5478
   created_by: 4
-  type: Basic
   trunk_id: 3
   extension_type: 
   updated_by: 3
@@ -3456,6 +3456,7 @@ cards_061:
   read_rule_id: 
   appender_id: 
 cards_116: 
+  typecode: Set
   reader_type: Role
   name: Cardtype+watcher instructions for related tab+*type plus right
   read_rule_class: 
@@ -3472,7 +3473,6 @@ cards_116:
   id: 399
   current_revision_id: 3811
   created_by: 4
-  type: Set
   trunk_id: 398
   extension_type: 
   updated_by: 4
@@ -3483,6 +3483,7 @@ cards_116:
   read_rule_id: 
   appender_id: 
 cards_142: 
+  typecode: Basic
   reader_type: Role
   name: "*add help+*right+*edit help"
   read_rule_class: 
@@ -3499,7 +3500,6 @@ cards_142:
   id: 311
   current_revision_id: 3264
   created_by: 4
-  type: Basic
   trunk_id: 310
   extension_type: 
   updated_by: 1
@@ -3510,6 +3510,7 @@ cards_142:
   read_rule_id: 
   appender_id: 
 cards_250: 
+  typecode: Set
   reader_type: Role
   name: User+*type
   read_rule_class: 
@@ -3526,7 +3527,6 @@ cards_250:
   id: 294
   current_revision_id: 3082
   created_by: 4
-  type: Set
   trunk_id: 4
   extension_type: 
   updated_by: 4
@@ -3537,6 +3537,7 @@ cards_250:
   read_rule_id: 
   appender_id: 
 cards_224: 
+  typecode: Set
   reader_type: Role
   name: "*right+*right+*content"
   read_rule_class: 
@@ -3553,7 +3554,6 @@ cards_224:
   id: 261
   current_revision_id: 3002
   created_by: 1
-  type: Set
   trunk_id: 324
   extension_type: HardTemplate
   updated_by: 1
@@ -3564,6 +3564,7 @@ cards_224:
   read_rule_id: 
   appender_id: 
 cards_036: 
+  typecode: Basic
   reader_type: Role
   name: "*request"
   read_rule_class: 
@@ -3580,7 +3581,6 @@ cards_036:
   id: 63
   current_revision_id: 5566
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -3591,6 +3591,7 @@ cards_036:
   read_rule_id: 
   appender_id: 
 cards_062: 
+  typecode: Cardtype
   reader_type: Role
   name: Basic
   read_rule_class: 
@@ -3607,7 +3608,6 @@ cards_062:
   id: 3
   current_revision_id: 5472
   created_by: 1
-  type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 3
@@ -3618,6 +3618,7 @@ cards_062:
   read_rule_id: 
   appender_id: 
 cards_117: 
+  typecode: Basic
   reader_type: Role
   name: "*send+*right+*edit help"
   read_rule_class: 
@@ -3634,7 +3635,6 @@ cards_117:
   id: 365
   current_revision_id: 3794
   created_by: 3
-  type: Basic
   trunk_id: 364
   extension_type: 
   updated_by: 4
@@ -3645,6 +3645,7 @@ cards_117:
   read_rule_id: 
   appender_id: 
 cards_143: 
+  typecode: Basic
   reader_type: Role
   name: "*edit help+*right+*edit help"
   read_rule_class: 
@@ -3661,7 +3662,6 @@ cards_143:
   id: 306
   current_revision_id: 3266
   created_by: 3
-  type: Basic
   trunk_id: 305
   extension_type: 
   updated_by: 1
@@ -3672,6 +3672,7 @@ cards_143:
   read_rule_id: 
   appender_id: 
 cards_251: 
+  typecode: Toggle
   reader_type: Role
   name: "*all+*accountable"
   read_rule_class: 
@@ -3688,7 +3689,6 @@ cards_251:
   id: 293
   current_revision_id: 3081
   created_by: 4
-  type: Toggle
   trunk_id: 274
   extension_type: 
   updated_by: 4
@@ -3699,6 +3699,7 @@ cards_251:
   read_rule_id: 
   appender_id: 
 cards_225: 
+  typecode: Toggle
   reader_type: Role
   name: "*accountable+*right+*default"
   read_rule_class: 
@@ -3715,7 +3716,6 @@ cards_225:
   id: 292
   current_revision_id: 3079
   created_by: 4
-  type: Toggle
   trunk_id: 307
   extension_type: SoftTemplate
   updated_by: 1
@@ -3726,6 +3726,7 @@ cards_225:
   read_rule_id: 
   appender_id: 
 cards_037: 
+  typecode: Basic
   reader_type: Role
   name: "*invite"
   read_rule_class: 
@@ -3742,7 +3743,6 @@ cards_037:
   id: 56
   current_revision_id: 5557
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -3753,6 +3753,7 @@ cards_037:
   read_rule_id: 
   appender_id: 
 cards_063: 
+  typecode: Cardtype
   reader_type: Role
   name: Account Request
   read_rule_class: 
@@ -3769,7 +3770,6 @@ cards_063:
   id: 12
   current_revision_id: 5471
   created_by: 1
-  type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 3
@@ -3780,6 +3780,7 @@ cards_063:
   read_rule_id: 
   appender_id: 
 cards_118: 
+  typecode: Basic
   reader_type: Role
   name: "*watchers"
   read_rule_class: 
@@ -3796,7 +3797,6 @@ cards_118:
   id: 219
   current_revision_id: 3754
   created_by: 5
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -3807,6 +3807,7 @@ cards_118:
   read_rule_id: 
   appender_id: 
 cards_144: 
+  typecode: Basic
   reader_type: Role
   name: "*autoname+*right+*edit help"
   read_rule_class: 
@@ -3823,7 +3824,6 @@ cards_144:
   id: 249
   current_revision_id: 3480
   created_by: 4
-  type: Basic
   trunk_id: 289
   extension_type: 
   updated_by: 1
@@ -3834,6 +3834,7 @@ cards_144:
   read_rule_id: 
   appender_id: 
 cards_170: 
+  typecode: Basic
   reader_type: Role
   name: "*all+*default"
   read_rule_class: 
@@ -3850,7 +3851,6 @@ cards_170:
   id: 28
   current_revision_id: 28
   created_by: 1
-  type: Basic
   trunk_id: 274
   extension_type: SoftTemplate
   updated_by: 1
@@ -3861,6 +3861,7 @@ cards_170:
   read_rule_id: 
   appender_id: 
 cards_252: 
+  typecode: Set
   reader_type: Role
   name: "*input+*right"
   read_rule_class: 
@@ -3877,7 +3878,6 @@ cards_252:
   id: 268
   current_revision_id: 3009
   created_by: 1
-  type: Set
   trunk_id: 241
   extension_type: 
   updated_by: 1
@@ -3888,6 +3888,7 @@ cards_252:
   read_rule_id: 
   appender_id: 
 cards_226: 
+  typecode: Set
   reader_type: Role
   name: "*accountable+*right"
   read_rule_class: 
@@ -3904,7 +3905,6 @@ cards_226:
   id: 307
   current_revision_id: 3133
   created_by: 3
-  type: Set
   trunk_id: 291
   extension_type: 
   updated_by: 1
@@ -3915,6 +3915,7 @@ cards_226:
   read_rule_id: 
   appender_id: 
 cards_064: 
+  typecode: Cardtype
   reader_type: Role
   name: Cardtype
   read_rule_class: 
@@ -3931,7 +3932,6 @@ cards_064:
   id: 5
   current_revision_id: 5470
   created_by: 1
-  type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 3
@@ -3942,6 +3942,7 @@ cards_064:
   read_rule_id: 
   appender_id: 
 cards_090: 
+  typecode: Basic
   reader_type: Role
   name: "*last edited"
   read_rule_class: 
@@ -3958,7 +3959,6 @@ cards_090:
   id: 425
   current_revision_id: 5245
   created_by: 4
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -3969,6 +3969,7 @@ cards_090:
   read_rule_id: 
   appender_id: 
 cards_119: 
+  typecode: Toggle
   reader_type: Role
   name: User+*type+*accountable
   read_rule_class: 
@@ -3985,7 +3986,6 @@ cards_119:
   id: 295
   current_revision_id: 3083
   created_by: 4
-  type: Toggle
   trunk_id: 294
   extension_type: 
   updated_by: 1
@@ -3996,6 +3996,7 @@ cards_119:
   read_rule_id: 
   appender_id: 
 cards_145: 
+  typecode: Basic
   reader_type: Role
   name: "*layout+*right+*edit help"
   read_rule_class: 
@@ -4012,7 +4013,6 @@ cards_145:
   id: 281
   current_revision_id: 3490
   created_by: 4
-  type: Basic
   trunk_id: 284
   extension_type: 
   updated_by: 1
@@ -4023,6 +4023,7 @@ cards_145:
   read_rule_id: 
   appender_id: 
 cards_171: 
+  typecode: Set
   reader_type: Role
   name: "*content+*right"
   read_rule_class: 
@@ -4039,7 +4040,6 @@ cards_171:
   id: 358
   current_revision_id: 3260
   created_by: 4
-  type: Set
   trunk_id: 317
   extension_type: 
   updated_by: 4
@@ -4050,6 +4050,7 @@ cards_171:
   read_rule_id: 
   appender_id: 
 cards_038: 
+  typecode: Basic
   reader_type: Role
   name: "*signup"
   read_rule_class: 
@@ -4066,7 +4067,6 @@ cards_038:
   id: 66
   current_revision_id: 5555
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -4077,6 +4077,7 @@ cards_038:
   read_rule_id: 
   appender_id: 
 cards_253: 
+  typecode: Set
   reader_type: Role
   name: "*watchers+*right"
   read_rule_class: 
@@ -4093,7 +4094,6 @@ cards_253:
   id: 269
   current_revision_id: 3010
   created_by: 1
-  type: Set
   trunk_id: 219
   extension_type: 
   updated_by: 1
@@ -4104,6 +4104,7 @@ cards_253:
   read_rule_id: 
   appender_id: 
 cards_227: 
+  typecode: Basic
   reader_type: Role
   name: Role+*type+*content
   read_rule_class: 
@@ -4120,7 +4121,6 @@ cards_227:
   id: 322
   current_revision_id: 3203
   created_by: 1
-  type: Basic
   trunk_id: 321
   extension_type: 
   updated_by: 1
@@ -4131,6 +4131,7 @@ cards_227:
   read_rule_id: 
   appender_id: 
 cards_065: 
+  typecode: Cardtype
   reader_type: Role
   name: Set
   read_rule_class: 
@@ -4147,7 +4148,6 @@ cards_065:
   id: 259
   current_revision_id: 5469
   created_by: 1
-  type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 3
@@ -4158,6 +4158,7 @@ cards_065:
   read_rule_id: 
   appender_id: 
 cards_091: 
+  typecode: Phrase
   reader_type: Role
   name: "*home"
   read_rule_class: 
@@ -4174,7 +4175,6 @@ cards_091:
   id: 77
   current_revision_id: 5214
   created_by: 1
-  type: Phrase
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -4185,6 +4185,7 @@ cards_091:
   read_rule_id: 
   appender_id: 
 cards_146: 
+  typecode: Basic
   reader_type: Role
   name: "*table of contents+*right+*edit help"
   read_rule_class: 
@@ -4201,7 +4202,6 @@ cards_146:
   id: 90
   current_revision_id: 3494
   created_by: 1
-  type: Basic
   trunk_id: 285
   extension_type: 
   updated_by: 1
@@ -4212,6 +4212,7 @@ cards_146:
   read_rule_id: 
   appender_id: 
 cards_172: 
+  typecode: Set
   reader_type: Role
   name: "*default+*right"
   read_rule_class: 
@@ -4228,7 +4229,6 @@ cards_172:
   id: 356
   current_revision_id: 3253
   created_by: 4
-  type: Set
   trunk_id: 318
   extension_type: 
   updated_by: 4
@@ -4239,6 +4239,7 @@ cards_172:
   read_rule_id: 
   appender_id: 
 cards_039: 
+  typecode: Basic
   reader_type: Role
   name: "*options+*right+*edit help"
   read_rule_class: 
@@ -4255,7 +4256,6 @@ cards_039:
   id: 301
   current_revision_id: 5549
   created_by: 3
-  type: Basic
   trunk_id: 300
   extension_type: 
   updated_by: 4
@@ -4266,6 +4266,7 @@ cards_039:
   read_rule_id: 
   appender_id: 
 cards_280: 
+  typecode: Pointer
   reader_type: Role
   name: "*account+*related"
   read_rule_class: 
@@ -4282,7 +4283,6 @@ cards_280:
   id: 118
   current_revision_id: 1871
   created_by: 1
-  type: Pointer
   trunk_id: 100
   extension_type: 
   updated_by: 3
@@ -4293,6 +4293,7 @@ cards_280:
   read_rule_id: 
   appender_id: 
 cards_254: 
+  typecode: Basic
   reader_type: Role
   name: Request Sent
   read_rule_class: 
@@ -4309,7 +4310,6 @@ cards_254:
   id: 109
   current_revision_id: 3031
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -4320,6 +4320,7 @@ cards_254:
   read_rule_id: 
   appender_id: 
 cards_228: 
+  typecode: Basic
   reader_type: Role
   name: HTML+*type+*default
   read_rule_class: 
@@ -4336,7 +4337,6 @@ cards_228:
   id: 201
   current_revision_id: 2403
   created_by: 4
-  type: Basic
   trunk_id: 319
   extension_type: SoftTemplate
   updated_by: 1
@@ -4347,6 +4347,7 @@ cards_228:
   read_rule_id: 
   appender_id: 
 cards_092: 
+  typecode: Search
   reader_type: Role
   name: "*count+*right+*content"
   read_rule_class: 
@@ -4363,7 +4364,6 @@ cards_092:
   id: 421
   current_revision_id: 5201
   created_by: 4
-  type: Search
   trunk_id: 420
   extension_type: 
   updated_by: 4
@@ -4374,6 +4374,7 @@ cards_092:
   read_rule_id: 
   appender_id: 
 cards_147: 
+  typecode: Basic
   reader_type: Role
   name: "*thanks+*right+*edit help"
   read_rule_class: 
@@ -4390,7 +4391,6 @@ cards_147:
   id: 250
   current_revision_id: 3495
   created_by: 4
-  type: Basic
   trunk_id: 288
   extension_type: 
   updated_by: 1
@@ -4401,6 +4401,7 @@ cards_147:
   read_rule_id: 
   appender_id: 
 cards_173: 
+  typecode: Pointer
   reader_type: Role
   name: tags+*right+*default
   read_rule_class: 
@@ -4417,7 +4418,6 @@ cards_173:
   id: 129
   current_revision_id: 1408
   created_by: 1
-  type: Pointer
   trunk_id: 355
   extension_type: SoftTemplate
   updated_by: 1
@@ -4428,6 +4428,7 @@ cards_173:
   read_rule_id: 
   appender_id: 
 cards_066: 
+  typecode: Phrase
   reader_type: Role
   name: "*when last edited+*right+*content"
   read_rule_class: 
@@ -4444,7 +4445,6 @@ cards_066:
   id: 440
   current_revision_id: 5421
   created_by: 4
-  type: Phrase
   trunk_id: 439
   extension_type: 
   updated_by: 3
@@ -4455,6 +4455,7 @@ cards_066:
   read_rule_id: 
   appender_id: 
 cards_281: 
+  typecode: Basic
   reader_type: Role
   name: "*linkers"
   read_rule_class: 
@@ -4471,7 +4472,6 @@ cards_281:
   id: 39
   current_revision_id: 39
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -4482,6 +4482,7 @@ cards_281:
   read_rule_id: 
   appender_id: 
 cards_255: 
+  typecode: Basic
   reader_type: Role
   name: "*type plus right"
   read_rule_class: 
@@ -4498,7 +4499,6 @@ cards_255:
   id: 262
   current_revision_id: 3003
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -4509,6 +4509,7 @@ cards_255:
   read_rule_id: 
   appender_id: 
 cards_229: 
+  typecode: Pointer
   reader_type: Role
   name: "*all+*layout"
   read_rule_class: 
@@ -4525,7 +4526,6 @@ cards_229:
   id: 275
   current_revision_id: 3171
   created_by: 1
-  type: Pointer
   trunk_id: 274
   extension_type: 
   updated_by: 1
@@ -4536,6 +4536,7 @@ cards_229:
   read_rule_id: 
   appender_id: 
 cards_093: 
+  typecode: Set
   reader_type: Role
   name: "*count+*right"
   read_rule_class: 
@@ -4552,7 +4553,6 @@ cards_093:
   id: 420
   current_revision_id: 5200
   created_by: 4
-  type: Set
   trunk_id: 419
   extension_type: 
   updated_by: 4
@@ -4563,6 +4563,7 @@ cards_093:
   read_rule_id: 
   appender_id: 
 cards_148: 
+  typecode: Basic
   reader_type: Role
   name: "*option label+*right+*edit help"
   read_rule_class: 
@@ -4579,7 +4580,6 @@ cards_148:
   id: 254
   current_revision_id: 3500
   created_by: 4
-  type: Basic
   trunk_id: 286
   extension_type: 
   updated_by: 1
@@ -4590,6 +4590,7 @@ cards_148:
   read_rule_id: 
   appender_id: 
 cards_174: 
+  typecode: Set
   reader_type: Role
   name: tags+*right
   read_rule_class: 
@@ -4606,7 +4607,6 @@ cards_174:
   id: 355
   current_revision_id: 3251
   created_by: 1
-  type: Set
   trunk_id: 128
   extension_type: 
   updated_by: 1
@@ -4617,6 +4617,7 @@ cards_174:
   read_rule_id: 
   appender_id: 
 cards_067: 
+  typecode: Phrase
   reader_type: Role
   name: "*when created+*right+*content"
   read_rule_class: 
@@ -4633,7 +4634,6 @@ cards_067:
   id: 437
   current_revision_id: 5420
   created_by: 4
-  type: Phrase
   trunk_id: 436
   extension_type: 
   updated_by: 3
@@ -4644,6 +4644,7 @@ cards_067:
   read_rule_id: 
   appender_id: 
 cards_282: 
+  typecode: Basic
   reader_type: Role
   name: "*links"
   read_rule_class: 
@@ -4660,7 +4661,6 @@ cards_282:
   id: 43
   current_revision_id: 43
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -4671,6 +4671,7 @@ cards_282:
   read_rule_id: 
   appender_id: 
 cards_256: 
+  typecode: Basic
   reader_type: Role
   name: "*type"
   read_rule_class: 
@@ -4687,7 +4688,6 @@ cards_256:
   id: 266
   current_revision_id: 3007
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -4698,6 +4698,7 @@ cards_256:
   read_rule_id: 
   appender_id: 
 cards_149: 
+  typecode: Basic
   reader_type: Role
   name: "*captcha+*right+*edit help"
   read_rule_class: 
@@ -4714,7 +4715,6 @@ cards_149:
   id: 304
   current_revision_id: 3512
   created_by: 3
-  type: Basic
   trunk_id: 302
   extension_type: 
   updated_by: 1
@@ -4725,6 +4725,7 @@ cards_149:
   read_rule_id: 
   appender_id: 
 cards_175: 
+  typecode: Basic
   reader_type: Role
   name: discussion+*right+*default
   read_rule_class: 
@@ -4741,7 +4742,6 @@ cards_175:
   id: 131
   current_revision_id: 1410
   created_by: 1
-  type: Basic
   trunk_id: 354
   extension_type: SoftTemplate
   updated_by: 1
@@ -4752,6 +4752,7 @@ cards_175:
   read_rule_id: 
   appender_id: 
 cards_068: 
+  typecode: Basic
   reader_type: Role
   name: email config+*right+*edit help
   read_rule_class: 
@@ -4768,7 +4769,6 @@ cards_068:
   id: 392
   current_revision_id: 5411
   created_by: 3
-  type: Basic
   trunk_id: 372
   extension_type: 
   updated_by: 4
@@ -4779,6 +4779,7 @@ cards_068:
   read_rule_id: 
   appender_id: 
 cards_094: 
+  typecode: Basic
   reader_type: Role
   name: "*count"
   read_rule_class: 
@@ -4795,7 +4796,6 @@ cards_094:
   id: 419
   current_revision_id: 5199
   created_by: 4
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -4806,6 +4806,7 @@ cards_094:
   read_rule_id: 
   appender_id: 
 cards_283: 
+  typecode: Basic
   reader_type: Role
   name: "*inclusions"
   read_rule_class: 
@@ -4822,7 +4823,6 @@ cards_283:
   id: 41
   current_revision_id: 41
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -4833,6 +4833,7 @@ cards_283:
   read_rule_id: 
   appender_id: 
 cards_257: 
+  typecode: Basic
   reader_type: Role
   name: "*self"
   read_rule_class: 
@@ -4849,7 +4850,6 @@ cards_257:
   id: 264
   current_revision_id: 3005
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -4860,6 +4860,7 @@ cards_257:
   read_rule_id: 
   appender_id: 
 cards_176: 
+  typecode: Set
   reader_type: Role
   name: discussion+*right
   read_rule_class: 
@@ -4876,7 +4877,6 @@ cards_176:
   id: 354
   current_revision_id: 3250
   created_by: 1
-  type: Set
   trunk_id: 130
   extension_type: 
   updated_by: 1
@@ -4887,6 +4887,7 @@ cards_176:
   read_rule_id: 
   appender_id: 
 cards_069: 
+  typecode: Set
   reader_type: Role
   name: "*when last edited+*right"
   read_rule_class: 
@@ -4903,7 +4904,6 @@ cards_069:
   id: 439
   current_revision_id: 5403
   created_by: 4
-  type: Set
   trunk_id: 438
   extension_type: 
   updated_by: 4
@@ -4914,6 +4914,7 @@ cards_069:
   read_rule_id: 
   appender_id: 
 cards_095: 
+  typecode: Basic
   reader_type: Role
   name: Search+description
   read_rule_class: 
@@ -4930,7 +4931,6 @@ cards_095:
   id: 182
   current_revision_id: 5196
   created_by: 3
-  type: Basic
   trunk_id: 30
   extension_type: 
   updated_by: 3
@@ -4941,6 +4941,7 @@ cards_095:
   read_rule_id: 
   appender_id: 
 cards_284: 
+  typecode: Basic
   reader_type: Role
   name: "*includers"
   read_rule_class: 
@@ -4957,7 +4958,6 @@ cards_284:
   id: 37
   current_revision_id: 37
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -4968,6 +4968,7 @@ cards_284:
   read_rule_id: 
   appender_id: 
 cards_258: 
+  typecode: Setting
   reader_type: Role
   name: "*option label"
   read_rule_class: 
@@ -4984,7 +4985,6 @@ cards_258:
   id: 252
   current_revision_id: 3023
   created_by: 4
-  type: Setting
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -4995,6 +4995,7 @@ cards_258:
   read_rule_id: 
   appender_id: 
 cards_177: 
+  typecode: Set
   reader_type: Role
   name: "*options+*right"
   read_rule_class: 
@@ -5011,7 +5012,6 @@ cards_177:
   id: 300
   current_revision_id: 3101
   created_by: 3
-  type: Set
   trunk_id: 86
   extension_type: 
   updated_by: 1
@@ -5022,6 +5022,7 @@ cards_177:
   read_rule_id: 
   appender_id: 
 cards_096: 
+  typecode: Basic
   reader_type: Role
   name: Administrator links
   read_rule_class: 
@@ -5038,7 +5039,6 @@ cards_096:
   id: 151
   current_revision_id: 4977
   created_by: 3
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -5049,6 +5049,7 @@ cards_096:
   read_rule_id: 
   appender_id: 
 cards_285: 
+  typecode: Basic
   reader_type: Role
   name: "*community"
   read_rule_class: 
@@ -5065,7 +5066,6 @@ cards_285:
   id: 115
   current_revision_id: 1253
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -5076,6 +5076,7 @@ cards_285:
   read_rule_id: 
   appender_id: 
 cards_259: 
+  typecode: Setting
   reader_type: Role
   name: "*options"
   read_rule_class: 
@@ -5092,7 +5093,6 @@ cards_259:
   id: 86
   current_revision_id: 266
   created_by: 1
-  type: Setting
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -5103,6 +5103,7 @@ cards_259:
   read_rule_id: 
   appender_id: 
 cards_178: 
+  typecode: Set
   reader_type: Role
   name: "*roles+*right"
   read_rule_class: 
@@ -5119,7 +5120,6 @@ cards_178:
   id: 353
   current_revision_id: 3248
   created_by: 1
-  type: Set
   trunk_id: 96
   extension_type: 
   updated_by: 1
@@ -5130,6 +5130,7 @@ cards_178:
   read_rule_id: 
   appender_id: 
 cards_097: 
+  typecode: PlainText
   reader_type: Role
   name: "*tinyMCE"
   read_rule_class: 
@@ -5146,7 +5147,6 @@ cards_097:
   id: 53
   current_revision_id: 4928
   created_by: 1
-  type: PlainText
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -5157,6 +5157,7 @@ cards_097:
   read_rule_id: 
   appender_id: 
 cards_286: 
+  typecode: Basic
   reader_type: Role
   name: "*plusses"
   read_rule_class: 
@@ -5173,7 +5174,6 @@ cards_286:
   id: 110
   current_revision_id: 1225
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -5184,6 +5184,7 @@ cards_286:
   read_rule_id: 
   appender_id: 
 cards_179: 
+  typecode: Set
   reader_type: Role
   name: "*editors+*right"
   read_rule_class: 
@@ -5200,7 +5201,6 @@ cards_179:
   id: 352
   current_revision_id: 3246
   created_by: 1
-  type: Set
   trunk_id: 92
   extension_type: 
   updated_by: 1
@@ -5211,6 +5211,7 @@ cards_179:
   read_rule_id: 
   appender_id: 
 cards_098: 
+  typecode: Set
   reader_type: Role
   name: "*to+*right"
   read_rule_class: 
@@ -5227,7 +5228,6 @@ cards_098:
   id: 374
   current_revision_id: 4915
   created_by: 3
-  type: Set
   trunk_id: 64
   extension_type: 
   updated_by: 4
@@ -5238,6 +5238,7 @@ cards_098:
   read_rule_id: 
   appender_id: 
 cards_287: 
+  typecode: Phrase
   reader_type: Role
   name: "*title"
   read_rule_class: 
@@ -5254,7 +5255,6 @@ cards_287:
   id: 55
   current_revision_id: 1755
   created_by: 1
-  type: Phrase
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -5265,6 +5265,7 @@ cards_287:
   read_rule_id: 
   appender_id: 
 cards_099: 
+  typecode: Set
   reader_type: Role
   name: "*from+*right"
   read_rule_class: 
@@ -5281,7 +5282,6 @@ cards_099:
   id: 376
   current_revision_id: 4913
   created_by: 3
-  type: Set
   trunk_id: 137
   extension_type: 
   updated_by: 4
@@ -5292,6 +5292,7 @@ cards_099:
   read_rule_id: 
   appender_id: 
 cards_288: 
+  typecode: Basic
   reader_type: Role
   name: "*editors"
   read_rule_class: 
@@ -5308,7 +5309,6 @@ cards_288:
   id: 92
   current_revision_id: 349
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -5319,6 +5319,7 @@ cards_288:
   read_rule_id: 
   appender_id: 
 cards_289: 
+  typecode: Basic
   reader_type: Role
   name: discussion
   read_rule_class: 
@@ -5335,7 +5336,6 @@ cards_289:
   id: 130
   current_revision_id: 1409
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -5346,6 +5346,7 @@ cards_289:
   read_rule_id: 
   appender_id: 
 cards_100: 
+  typecode: Set
   reader_type: Role
   name: "*cc+*right"
   read_rule_class: 
@@ -5362,7 +5363,6 @@ cards_100:
   id: 379
   current_revision_id: 4894
   created_by: 3
-  type: Set
   trunk_id: 378
   extension_type: 
   updated_by: 4
@@ -5373,6 +5373,7 @@ cards_100:
   read_rule_id: 
   appender_id: 
 cards_020: 
+  typecode: Search
   reader_type: Role
   name: "*refers to+*right+*content"
   read_rule_class: 
@@ -5389,7 +5390,6 @@ cards_020:
   id: 447
   current_revision_id: 5611
   created_by: 4
-  type: Search
   trunk_id: 446
   extension_type: 
   updated_by: 4
@@ -5400,6 +5400,7 @@ cards_020:
   read_rule_id: 
   appender_id: 
 cards_101: 
+  typecode: Set
   reader_type: Role
   name: "*bcc+*right"
   read_rule_class: 
@@ -5416,7 +5417,6 @@ cards_101:
   id: 382
   current_revision_id: 4892
   created_by: 3
-  type: Set
   trunk_id: 381
   extension_type: 
   updated_by: 4
@@ -5427,6 +5427,7 @@ cards_101:
   read_rule_id: 
   appender_id: 
 cards_021: 
+  typecode: Search
   reader_type: Role
   name: "*plus parts+*right+*content"
   read_rule_class: 
@@ -5443,7 +5444,6 @@ cards_021:
   id: 36
   current_revision_id: 5608
   created_by: 1
-  type: Search
   trunk_id: 349
   extension_type: HardTemplate
   updated_by: 4
@@ -5454,6 +5454,7 @@ cards_021:
   read_rule_id: 
   appender_id: 
 cards_102: 
+  typecode: Set
   reader_type: Role
   name: "*attach+*right"
   read_rule_class: 
@@ -5470,7 +5471,6 @@ cards_102:
   id: 388
   current_revision_id: 4888
   created_by: 3
-  type: Set
   trunk_id: 387
   extension_type: 
   updated_by: 4
@@ -5481,6 +5481,7 @@ cards_102:
   read_rule_id: 
   appender_id: 
 cards_022: 
+  typecode: Search
   reader_type: Role
   name: "*plus cards+*right+*content"
   read_rule_class: 
@@ -5497,7 +5498,6 @@ cards_022:
   id: 34
   current_revision_id: 5607
   created_by: 1
-  type: Search
   trunk_id: 350
   extension_type: HardTemplate
   updated_by: 4
@@ -5508,6 +5508,7 @@ cards_022:
   read_rule_id: 
   appender_id: 
 cards_103: 
+  typecode: Basic
   reader_type: Role
   name: Phrase+description
   read_rule_class: 
@@ -5524,7 +5525,6 @@ cards_103:
   id: 408
   current_revision_id: 4872
   created_by: 4
-  type: Basic
   trunk_id: 52
   extension_type: 
   updated_by: 3
@@ -5535,6 +5535,7 @@ cards_103:
   read_rule_id: 
   appender_id: 
 cards_210: 
+  typecode: Set
   reader_type: Role
   name: "*account+*right"
   read_rule_class: 
@@ -5551,7 +5552,6 @@ cards_210:
   id: 330
   current_revision_id: 3214
   created_by: 1
-  type: Set
   trunk_id: 100
   extension_type: 
   updated_by: 1
@@ -5562,6 +5562,7 @@ cards_210:
   read_rule_id: 
   appender_id: 
 cards_023: 
+  typecode: Search
   reader_type: Role
   name: "*linkers+*right+*content"
   read_rule_class: 
@@ -5578,7 +5579,6 @@ cards_023:
   id: 40
   current_revision_id: 5606
   created_by: 1
-  type: Search
   trunk_id: 345
   extension_type: HardTemplate
   updated_by: 4
@@ -5589,6 +5589,7 @@ cards_023:
   read_rule_id: 
   appender_id: 
 cards_104: 
+  typecode: Basic
   reader_type: Role
   name: File+description
   read_rule_class: 
@@ -5605,7 +5606,6 @@ cards_104:
   id: 215
   current_revision_id: 4871
   created_by: 4
-  type: Basic
   trunk_id: 18
   extension_type: 
   updated_by: 3
@@ -5616,6 +5616,7 @@ cards_104:
   read_rule_id: 
   appender_id: 
 cards_130: 
+  typecode: Basic
   reader_type: Role
   name: User+description
   read_rule_class: 
@@ -5632,7 +5633,6 @@ cards_130:
   id: 181
   current_revision_id: 2094
   created_by: 4
-  type: Basic
   trunk_id: 4
   extension_type: 
   updated_by: 1
@@ -5643,6 +5643,7 @@ cards_130:
   read_rule_id: 
   appender_id: 
 cards_211: 
+  typecode: Set
   reader_type: Role
   name: "*watching+*right"
   read_rule_class: 
@@ -5659,7 +5660,6 @@ cards_211:
   id: 329
   current_revision_id: 3213
   created_by: 1
-  type: Set
   trunk_id: 222
   extension_type: 
   updated_by: 1
@@ -5670,6 +5670,7 @@ cards_211:
   read_rule_id: 
   appender_id: 
 cards_024: 
+  typecode: Search
   reader_type: Role
   name: "*links+*right+*content"
   read_rule_class: 
@@ -5686,7 +5687,6 @@ cards_024:
   id: 44
   current_revision_id: 5605
   created_by: 1
-  type: Search
   trunk_id: 346
   extension_type: HardTemplate
   updated_by: 4
@@ -5697,6 +5697,7 @@ cards_024:
   read_rule_id: 
   appender_id: 
 cards_050: 
+  typecode: Cardtype
   reader_type: Role
   name: Toggle
   read_rule_class: 
@@ -5713,7 +5714,6 @@ cards_050:
   id: 51
   current_revision_id: 5489
   created_by: 1
-  type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 3
@@ -5724,6 +5724,7 @@ cards_050:
   read_rule_id: 
   appender_id: 
 cards_105: 
+  typecode: Basic
   reader_type: Role
   name: PlainText+description
   read_rule_class: 
@@ -5740,7 +5741,6 @@ cards_105:
   id: 407
   current_revision_id: 4869
   created_by: 4
-  type: Basic
   trunk_id: 22
   extension_type: 
   updated_by: 3
@@ -5751,6 +5751,7 @@ cards_105:
   read_rule_id: 
   appender_id: 
 cards_131: 
+  typecode: Basic
   reader_type: Role
   name: HTML+description
   read_rule_class: 
@@ -5767,7 +5768,6 @@ cards_131:
   id: 202
   current_revision_id: 2408
   created_by: 4
-  type: Basic
   trunk_id: 50
   extension_type: 
   updated_by: 1
@@ -5778,6 +5778,7 @@ cards_131:
   read_rule_id: 
   appender_id: 
 cards_212: 
+  typecode: Phrase
   reader_type: Role
   name: "*thanks+*right+*default"
   read_rule_class: 
@@ -5794,7 +5795,6 @@ cards_212:
   id: 205
   current_revision_id: 2430
   created_by: 4
-  type: Phrase
   trunk_id: 288
   extension_type: SoftTemplate
   updated_by: 1
@@ -5805,6 +5805,7 @@ cards_212:
   read_rule_id: 
   appender_id: 
 cards_025: 
+  typecode: Search
   reader_type: Role
   name: "*inclusions+*right+*content"
   read_rule_class: 
@@ -5821,7 +5822,6 @@ cards_025:
   id: 42
   current_revision_id: 5604
   created_by: 1
-  type: Search
   trunk_id: 347
   extension_type: HardTemplate
   updated_by: 4
@@ -5832,6 +5832,7 @@ cards_025:
   read_rule_id: 
   appender_id: 
 cards_051: 
+  typecode: Cardtype
   reader_type: Role
   name: Search
   read_rule_class: 
@@ -5848,7 +5849,6 @@ cards_051:
   id: 30
   current_revision_id: 5488
   created_by: 1
-  type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 3
@@ -5859,6 +5859,7 @@ cards_051:
   read_rule_id: 
   appender_id: 
 cards_106: 
+  typecode: Basic
   reader_type: Role
   name: Date+description
   read_rule_class: 
@@ -5875,7 +5876,6 @@ cards_106:
   id: 409
   current_revision_id: 4846
   created_by: 4
-  type: Basic
   trunk_id: 17
   extension_type: 
   updated_by: 4
@@ -5886,6 +5886,7 @@ cards_106:
   read_rule_id: 
   appender_id: 
 cards_132: 
+  typecode: Basic
   reader_type: Role
   name: Administrator+description
   read_rule_class: 
@@ -5902,7 +5903,6 @@ cards_132:
   id: 147
   current_revision_id: 2516
   created_by: 1
-  type: Basic
   trunk_id: 10
   extension_type: 
   updated_by: 1
@@ -5913,6 +5913,7 @@ cards_132:
   read_rule_id: 
   appender_id: 
 cards_213: 
+  typecode: Phrase
   reader_type: Role
   name: "*option label+*right+*default"
   read_rule_class: 
@@ -5929,7 +5930,6 @@ cards_213:
   id: 253
   current_revision_id: 2901
   created_by: 4
-  type: Phrase
   trunk_id: 286
   extension_type: SoftTemplate
   updated_by: 1
@@ -5940,6 +5940,7 @@ cards_213:
   read_rule_id: 
   appender_id: 
 cards_240: 
+  typecode: Setting
   reader_type: Role
   name: "*table of contents"
   read_rule_class: 
@@ -5956,7 +5957,6 @@ cards_240:
   id: 89
   current_revision_id: 311
   created_by: 1
-  type: Setting
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -5967,6 +5967,7 @@ cards_240:
   read_rule_id: 
   appender_id: 
 cards_026: 
+  typecode: Search
   reader_type: Role
   name: "*includers+*right+*content"
   read_rule_class: 
@@ -5983,7 +5984,6 @@ cards_026:
   id: 38
   current_revision_id: 5603
   created_by: 1
-  type: Search
   trunk_id: 348
   extension_type: HardTemplate
   updated_by: 4
@@ -5994,6 +5994,7 @@ cards_026:
   read_rule_id: 
   appender_id: 
 cards_052: 
+  typecode: Cardtype
   reader_type: Role
   name: Role
   read_rule_class: 
@@ -6010,7 +6011,6 @@ cards_052:
   id: 7
   current_revision_id: 5487
   created_by: 1
-  type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 3
@@ -6021,6 +6021,7 @@ cards_052:
   read_rule_id: 
   appender_id: 
 cards_107: 
+  typecode: Basic
   reader_type: Role
   name: Number+description
   read_rule_class: 
@@ -6037,7 +6038,6 @@ cards_107:
   id: 406
   current_revision_id: 4841
   created_by: 4
-  type: Basic
   trunk_id: 20
   extension_type: 
   updated_by: 4
@@ -6048,6 +6048,7 @@ cards_107:
   read_rule_id: 
   appender_id: 
 cards_133: 
+  typecode: Basic
   reader_type: Role
   name: Anyone Signed In+description
   read_rule_class: 
@@ -6064,7 +6065,6 @@ cards_133:
   id: 211
   current_revision_id: 2570
   created_by: 4
-  type: Basic
   trunk_id: 9
   extension_type: 
   updated_by: 1
@@ -6075,6 +6075,7 @@ cards_133:
   read_rule_id: 
   appender_id: 
 cards_214: 
+  typecode: Number
   reader_type: Role
   name: "*table of contents+*right+*default"
   read_rule_class: 
@@ -6091,7 +6092,6 @@ cards_214:
   id: 91
   current_revision_id: 3033
   created_by: 1
-  type: Number
   trunk_id: 285
   extension_type: 
   updated_by: 1
@@ -6102,6 +6102,7 @@ cards_214:
   read_rule_id: 
   appender_id: 
 cards_241: 
+  typecode: Phrase
   reader_type: Role
   name: "*request+*thanks"
   read_rule_class: 
@@ -6118,7 +6119,6 @@ cards_241:
   id: 108
   current_revision_id: 2473
   created_by: 1
-  type: Phrase
   trunk_id: 63
   extension_type: 
   updated_by: 1
@@ -6129,6 +6129,7 @@ cards_241:
   read_rule_id: 
   appender_id: 
 cards_027: 
+  typecode: Search
   reader_type: Role
   name: "*editors+*right+*content"
   read_rule_class: 
@@ -6145,7 +6146,6 @@ cards_027:
   id: 93
   current_revision_id: 5601
   created_by: 1
-  type: Search
   trunk_id: 352
   extension_type: HardTemplate
   updated_by: 4
@@ -6156,6 +6156,7 @@ cards_027:
   read_rule_id: 
   appender_id: 
 cards_053: 
+  typecode: Cardtype
   reader_type: Role
   name: Pointer
   read_rule_class: 
@@ -6172,7 +6173,6 @@ cards_053:
   id: 47
   current_revision_id: 5486
   created_by: 1
-  type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 3
@@ -6183,6 +6183,7 @@ cards_053:
   read_rule_id: 
   appender_id: 
 cards_108: 
+  typecode: Phrase
   reader_type: Role
   name: watcher instructions for related tab+*right+*content
   read_rule_class: 
@@ -6199,7 +6200,6 @@ cards_108:
   id: 402
   current_revision_id: 3867
   created_by: 4
-  type: Phrase
   trunk_id: 401
   extension_type: 
   updated_by: 1
@@ -6210,6 +6210,7 @@ cards_108:
   read_rule_id: 
   appender_id: 
 cards_134: 
+  typecode: Basic
   reader_type: Role
   name: Anyone+description
   read_rule_class: 
@@ -6226,7 +6227,6 @@ cards_134:
   id: 210
   current_revision_id: 2571
   created_by: 4
-  type: Basic
   trunk_id: 8
   extension_type: 
   updated_by: 1
@@ -6237,6 +6237,7 @@ cards_134:
   read_rule_id: 
   appender_id: 
 cards_160: 
+  typecode: Basic
   reader_type: Role
   name: email config
   read_rule_class: 
@@ -6253,7 +6254,6 @@ cards_160:
   id: 371
   current_revision_id: 3608
   created_by: 3
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -6264,6 +6264,7 @@ cards_160:
   read_rule_id: 
   appender_id: 
 cards_215: 
+  typecode: Pointer
   reader_type: Role
   name: "*layout+*right+*default"
   read_rule_class: 
@@ -6280,7 +6281,6 @@ cards_215:
   id: 280
   current_revision_id: 3040
   created_by: 4
-  type: Pointer
   trunk_id: 284
   extension_type: SoftTemplate
   updated_by: 1
@@ -6291,6 +6291,7 @@ cards_215:
   read_rule_id: 
   appender_id: 
 cards_242: 
+  typecode: Phrase
   reader_type: Role
   name: "*invite+*thanks"
   read_rule_class: 
@@ -6307,7 +6308,6 @@ cards_242:
   id: 62
   current_revision_id: 2474
   created_by: 1
-  type: Phrase
   trunk_id: 56
   extension_type: 
   updated_by: 1
@@ -6318,6 +6318,7 @@ cards_242:
   read_rule_id: 
   appender_id: 
 cards_028: 
+  typecode: Search
   reader_type: Role
   name: "*editing+*right+*content"
   read_rule_class: 
@@ -6334,7 +6335,6 @@ cards_028:
   id: 95
   current_revision_id: 5598
   created_by: 1
-  type: Search
   trunk_id: 351
   extension_type: HardTemplate
   updated_by: 4
@@ -6345,6 +6345,7 @@ cards_028:
   read_rule_id: 
   appender_id: 
 cards_054: 
+  typecode: Cardtype
   reader_type: Role
   name: PlainText
   read_rule_class: 
@@ -6361,7 +6362,6 @@ cards_054:
   id: 22
   current_revision_id: 5485
   created_by: 1
-  type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 3
@@ -6372,6 +6372,7 @@ cards_054:
   read_rule_id: 
   appender_id: 
 cards_080: 
+  typecode: Set
   reader_type: Role
   name: "*when created+*right"
   read_rule_class: 
@@ -6388,7 +6389,6 @@ cards_080:
   id: 436
   current_revision_id: 5297
   created_by: 4
-  type: Set
   trunk_id: 435
   extension_type: 
   updated_by: 4
@@ -6399,6 +6399,7 @@ cards_080:
   read_rule_id: 
   appender_id: 
 cards_109: 
+  typecode: Phrase
   reader_type: Role
   name: Cardtype+watcher instructions for related tab+*type plus right+*content
   read_rule_class: 
@@ -6415,7 +6416,6 @@ cards_109:
   id: 400
   current_revision_id: 3868
   created_by: 4
-  type: Phrase
   trunk_id: 399
   extension_type: 
   updated_by: 1
@@ -6426,6 +6426,7 @@ cards_109:
   read_rule_id: 
   appender_id: 
 cards_135: 
+  typecode: Basic
   reader_type: Role
   name: Toggle+description
   read_rule_class: 
@@ -6442,7 +6443,6 @@ cards_135:
   id: 212
   current_revision_id: 2574
   created_by: 4
-  type: Basic
   trunk_id: 51
   extension_type: 
   updated_by: 1
@@ -6453,6 +6453,7 @@ cards_135:
   read_rule_id: 
   appender_id: 
 cards_161: 
+  typecode: Set
   reader_type: Role
   name: "*right+*right"
   read_rule_class: 
@@ -6469,7 +6470,6 @@ cards_161:
   id: 324
   current_revision_id: 3206
   created_by: 1
-  type: Set
   trunk_id: 260
   extension_type: 
   updated_by: 1
@@ -6480,6 +6480,7 @@ cards_161:
   read_rule_id: 
   appender_id: 
 cards_216: 
+  typecode: Toggle
   reader_type: Role
   name: "*captcha+*right+*default"
   read_rule_class: 
@@ -6496,7 +6497,6 @@ cards_216:
   id: 257
   current_revision_id: 2930
   created_by: 4
-  type: Toggle
   trunk_id: 302
   extension_type: SoftTemplate
   updated_by: 1
@@ -6507,6 +6507,7 @@ cards_216:
   read_rule_id: 
   appender_id: 
 cards_243: 
+  typecode: Phrase
   reader_type: Role
   name: "*signup+*thanks"
   read_rule_class: 
@@ -6523,7 +6524,6 @@ cards_243:
   id: 67
   current_revision_id: 2472
   created_by: 1
-  type: Phrase
   trunk_id: 66
   extension_type: 
   updated_by: 1
@@ -6534,6 +6534,7 @@ cards_243:
   read_rule_id: 
   appender_id: 
 cards_029: 
+  typecode: Basic
   reader_type: Role
   name: "*account+*right+*content"
   read_rule_class: 
@@ -6550,7 +6551,6 @@ cards_029:
   id: 119
   current_revision_id: 5597
   created_by: 1
-  type: Basic
   trunk_id: 330
   extension_type: HardTemplate
   updated_by: 4
@@ -6561,6 +6561,7 @@ cards_029:
   read_rule_id: 
   appender_id: 
 cards_055: 
+  typecode: Cardtype
   reader_type: Role
   name: Phrase
   read_rule_class: 
@@ -6577,7 +6578,6 @@ cards_055:
   id: 52
   current_revision_id: 5484
   created_by: 1
-  type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 3
@@ -6588,6 +6588,7 @@ cards_055:
   read_rule_id: 
   appender_id: 
 cards_081: 
+  typecode: Basic
   reader_type: Role
   name: "*when created"
   read_rule_class: 
@@ -6604,7 +6605,6 @@ cards_081:
   id: 435
   current_revision_id: 5296
   created_by: 4
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -6615,6 +6615,7 @@ cards_081:
   read_rule_id: 
   appender_id: 
 cards_136: 
+  typecode: Basic
   reader_type: Role
   name: Image+description
   read_rule_class: 
@@ -6631,7 +6632,6 @@ cards_136:
   id: 214
   current_revision_id: 2576
   created_by: 4
-  type: Basic
   trunk_id: 19
   extension_type: 
   updated_by: 1
@@ -6642,6 +6642,7 @@ cards_136:
   read_rule_id: 
   appender_id: 
 cards_162: 
+  typecode: Set
   reader_type: Role
   name: HTML+*type
   read_rule_class: 
@@ -6658,7 +6659,6 @@ cards_162:
   id: 319
   current_revision_id: 3198
   created_by: 1
-  type: Set
   trunk_id: 50
   extension_type: 
   updated_by: 1
@@ -6669,6 +6669,7 @@ cards_162:
   read_rule_id: 
   appender_id: 
 cards_217: 
+  typecode: Set
   reader_type: Role
   name: "*captcha+*right"
   read_rule_class: 
@@ -6685,7 +6686,6 @@ cards_217:
   id: 302
   current_revision_id: 3123
   created_by: 3
-  type: Set
   trunk_id: 256
   extension_type: 
   updated_by: 1
@@ -6696,6 +6696,7 @@ cards_217:
   read_rule_id: 
   appender_id: 
 cards_270: 
+  typecode: Basic
   reader_type: Role
   name: Invite Success
   read_rule_class: 
@@ -6712,7 +6713,6 @@ cards_270:
   id: 68
   current_revision_id: 2494
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -6723,6 +6723,7 @@ cards_270:
   read_rule_id: 
   appender_id: 
 cards_244: 
+  typecode: Set
   reader_type: Role
   name: "*autoname+*right"
   read_rule_class: 
@@ -6739,7 +6740,6 @@ cards_244:
   id: 289
   current_revision_id: 3066
   created_by: 1
-  type: Set
   trunk_id: 247
   extension_type: 
   updated_by: 1
@@ -6750,6 +6750,7 @@ cards_244:
   read_rule_id: 
   appender_id: 
 cards_056: 
+  typecode: Cardtype
   reader_type: Role
   name: Number
   read_rule_class: 
@@ -6766,7 +6767,6 @@ cards_056:
   id: 20
   current_revision_id: 5483
   created_by: 1
-  type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 3
@@ -6777,6 +6777,7 @@ cards_056:
   read_rule_id: 
   appender_id: 
 cards_082: 
+  typecode: Search
   reader_type: Role
   name: "*created+*right+*content"
   read_rule_class: 
@@ -6793,7 +6794,6 @@ cards_082:
   id: 433
   current_revision_id: 5292
   created_by: 4
-  type: Search
   trunk_id: 432
   extension_type: 
   updated_by: 4
@@ -6804,6 +6804,7 @@ cards_082:
   read_rule_id: 
   appender_id: 
 cards_137: 
+  typecode: Basic
   reader_type: Role
   name: Account Request+description
   read_rule_class: 
@@ -6820,7 +6821,6 @@ cards_137:
   id: 216
   current_revision_id: 2581
   created_by: 4
-  type: Basic
   trunk_id: 12
   extension_type: 
   updated_by: 1
@@ -6831,6 +6831,7 @@ cards_137:
   read_rule_id: 
   appender_id: 
 cards_163: 
+  typecode: Set
   reader_type: Role
   name: Cardtype+*type
   read_rule_class: 
@@ -6847,7 +6848,6 @@ cards_163:
   id: 320
   current_revision_id: 3199
   created_by: 1
-  type: Set
   trunk_id: 5
   extension_type: 
   updated_by: 1
@@ -6858,6 +6858,7 @@ cards_163:
   read_rule_id: 
   appender_id: 
 cards_218: 
+  typecode: Set
   reader_type: Role
   name: "*type+*right+*content"
   read_rule_class: 
@@ -6874,7 +6875,6 @@ cards_218:
   id: 267
   current_revision_id: 3008
   created_by: 1
-  type: Set
   trunk_id: 327
   extension_type: HardTemplate
   updated_by: 1
@@ -6885,6 +6885,7 @@ cards_218:
   read_rule_id: 
   appender_id: 
 cards_271: 
+  typecode: Basic
   reader_type: Role
   name: Form submission thanks
   read_rule_class: 
@@ -6901,7 +6902,6 @@ cards_271:
   id: 200
   current_revision_id: 2402
   created_by: 4
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -6912,6 +6912,7 @@ cards_271:
   read_rule_id: 
   appender_id: 
 cards_245: 
+  typecode: Set
   reader_type: Role
   name: "*thanks+*right"
   read_rule_class: 
@@ -6928,7 +6929,6 @@ cards_245:
   id: 288
   current_revision_id: 3065
   created_by: 1
-  type: Set
   trunk_id: 61
   extension_type: 
   updated_by: 1
@@ -6939,6 +6939,7 @@ cards_245:
   read_rule_id: 
   appender_id: 
 cards_057: 
+  typecode: Cardtype
   reader_type: Role
   name: Image
   read_rule_class: 
@@ -6955,7 +6956,6 @@ cards_057:
   id: 19
   current_revision_id: 5482
   created_by: 1
-  type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 3
@@ -6966,6 +6966,7 @@ cards_057:
   read_rule_id: 
   appender_id: 
 cards_083: 
+  typecode: Search
   reader_type: Role
   name: "*last edited+*right+*content"
   read_rule_class: 
@@ -6982,7 +6983,6 @@ cards_083:
   id: 427
   current_revision_id: 5291
   created_by: 4
-  type: Search
   trunk_id: 426
   extension_type: 
   updated_by: 4
@@ -6993,6 +6993,7 @@ cards_083:
   read_rule_id: 
   appender_id: 
 cards_138: 
+  typecode: Basic
   reader_type: Role
   name: Role+description
   read_rule_class: 
@@ -7009,7 +7010,6 @@ cards_138:
   id: 225
   current_revision_id: 2653
   created_by: 4
-  type: Basic
   trunk_id: 7
   extension_type: 
   updated_by: 1
@@ -7020,6 +7020,7 @@ cards_138:
   read_rule_id: 
   appender_id: 
 cards_164: 
+  typecode: Set
   reader_type: Role
   name: Role+*type
   read_rule_class: 
@@ -7036,7 +7037,6 @@ cards_164:
   id: 321
   current_revision_id: 3201
   created_by: 1
-  type: Set
   trunk_id: 7
   extension_type: 
   updated_by: 1
@@ -7047,6 +7047,7 @@ cards_164:
   read_rule_id: 
   appender_id: 
 cards_190: 
+  typecode: Set
   reader_type: Role
   name: "*members+*right"
   read_rule_class: 
@@ -7063,7 +7064,6 @@ cards_190:
   id: 342
   current_revision_id: 3233
   created_by: 1
-  type: Set
   trunk_id: 98
   extension_type: 
   updated_by: 1
@@ -7074,6 +7074,7 @@ cards_190:
   read_rule_id: 
   appender_id: 
 cards_219: 
+  typecode: Set
   reader_type: Role
   name: "*type+*right"
   read_rule_class: 
@@ -7090,7 +7091,6 @@ cards_219:
   id: 327
   current_revision_id: 3209
   created_by: 1
-  type: Set
   trunk_id: 266
   extension_type: 
   updated_by: 1
@@ -7101,6 +7101,7 @@ cards_219:
   read_rule_id: 
   appender_id: 
 cards_272: 
+  typecode: Basic
   reader_type: Role
   name: by create
   read_rule_class: 
@@ -7117,7 +7118,6 @@ cards_272:
   id: 190
   current_revision_id: 2290
   created_by: 4
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -7128,6 +7128,7 @@ cards_272:
   read_rule_id: 
   appender_id: 
 cards_246: 
+  typecode: Set
   reader_type: Role
   name: "*option label+*right"
   read_rule_class: 
@@ -7144,7 +7145,6 @@ cards_246:
   id: 286
   current_revision_id: 3063
   created_by: 1
-  type: Set
   trunk_id: 252
   extension_type: 
   updated_by: 1
@@ -7155,6 +7155,7 @@ cards_246:
   read_rule_id: 
   appender_id: 
 cards_058: 
+  typecode: Cardtype
   reader_type: Role
   name: HTML
   read_rule_class: 
@@ -7171,7 +7172,6 @@ cards_058:
   id: 50
   current_revision_id: 5481
   created_by: 1
-  type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 3
@@ -7182,6 +7182,7 @@ cards_058:
   read_rule_id: 
   appender_id: 
 cards_084: 
+  typecode: Search
   reader_type: Role
   name: "*creator+*right+*content"
   read_rule_class: 
@@ -7198,7 +7199,6 @@ cards_084:
   id: 430
   current_revision_id: 5290
   created_by: 4
-  type: Search
   trunk_id: 429
   extension_type: 
   updated_by: 4
@@ -7209,6 +7209,7 @@ cards_084:
   read_rule_id: 
   appender_id: 
 cards_139: 
+  typecode: Basic
   reader_type: Role
   name: "*default+*right+*edit help"
   read_rule_class: 
@@ -7225,7 +7226,6 @@ cards_139:
   id: 357
   current_revision_id: 3485
   created_by: 4
-  type: Basic
   trunk_id: 356
   extension_type: 
   updated_by: 1
@@ -7236,6 +7236,7 @@ cards_139:
   read_rule_id: 
   appender_id: 
 cards_165: 
+  typecode: Setting
   reader_type: Role
   name: "*send"
   read_rule_class: 
@@ -7252,7 +7253,6 @@ cards_165:
   id: 363
   current_revision_id: 3478
   created_by: 3
-  type: Setting
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -7263,6 +7263,7 @@ cards_165:
   read_rule_id: 
   appender_id: 
 cards_191: 
+  typecode: Search
   reader_type: Role
   name: by update+*right+*content
   read_rule_class: 
@@ -7279,7 +7280,6 @@ cards_191:
   id: 179
   current_revision_id: 2089
   created_by: 4
-  type: Search
   trunk_id: 341
   extension_type: HardTemplate
   updated_by: 1
@@ -7290,6 +7290,7 @@ cards_191:
   read_rule_id: 
   appender_id: 
 cards_273: 
+  typecode: Basic
   reader_type: Role
   name: by name
   read_rule_class: 
@@ -7306,7 +7307,6 @@ cards_273:
   id: 184
   current_revision_id: 2264
   created_by: 4
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -7317,6 +7317,7 @@ cards_273:
   read_rule_id: 
   appender_id: 
 cards_247: 
+  typecode: Set
   reader_type: Role
   name: "*table of contents+*right"
   read_rule_class: 
@@ -7333,7 +7334,6 @@ cards_247:
   id: 285
   current_revision_id: 3061
   created_by: 1
-  type: Set
   trunk_id: 89
   extension_type: 
   updated_by: 1
@@ -7344,6 +7344,7 @@ cards_247:
   read_rule_id: 
   appender_id: 
 cards_059: 
+  typecode: Cardtype
   reader_type: Role
   name: File
   read_rule_class: 
@@ -7360,7 +7361,6 @@ cards_059:
   id: 18
   current_revision_id: 5480
   created_by: 1
-  type: Cardtype
   trunk_id: 
   extension_type: Cardtype
   updated_by: 3
@@ -7371,6 +7371,7 @@ cards_059:
   read_rule_id: 
   appender_id: 
 cards_085: 
+  typecode: Set
   reader_type: Role
   name: "*created+*right"
   read_rule_class: 
@@ -7387,7 +7388,6 @@ cards_085:
   id: 432
   current_revision_id: 5253
   created_by: 4
-  type: Set
   trunk_id: 431
   extension_type: 
   updated_by: 4
@@ -7398,6 +7398,7 @@ cards_085:
   read_rule_id: 
   appender_id: 
 cards_166: 
+  typecode: Set
   reader_type: Role
   name: Setting+*self
   read_rule_class: 
@@ -7414,7 +7415,6 @@ cards_166:
   id: 366
   current_revision_id: 3574
   created_by: 4
-  type: Set
   trunk_id: 278
   extension_type: 
   updated_by: 4
@@ -7425,6 +7425,7 @@ cards_166:
   read_rule_id: 
   appender_id: 
 cards_192: 
+  typecode: Set
   reader_type: Role
   name: by update+*right
   read_rule_class: 
@@ -7441,7 +7442,6 @@ cards_192:
   id: 341
   current_revision_id: 3232
   created_by: 1
-  type: Set
   trunk_id: 178
   extension_type: 
   updated_by: 1
@@ -7452,6 +7452,7 @@ cards_192:
   read_rule_id: 
   appender_id: 
 cards_274: 
+  typecode: Pointer
   reader_type: Role
   name: "*related"
   read_rule_class: 
@@ -7468,7 +7469,6 @@ cards_274:
   id: 112
   current_revision_id: 2008
   created_by: 1
-  type: Pointer
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -7479,6 +7479,7 @@ cards_274:
   read_rule_id: 
   appender_id: 
 cards_248: 
+  typecode: Set
   reader_type: Role
   name: "*layout+*right"
   read_rule_class: 
@@ -7495,7 +7496,6 @@ cards_248:
   id: 284
   current_revision_id: 3060
   created_by: 1
-  type: Set
   trunk_id: 255
   extension_type: 
   updated_by: 1
@@ -7506,6 +7506,7 @@ cards_248:
   read_rule_id: 
   appender_id: 
 cards_086: 
+  typecode: Basic
   reader_type: Role
   name: "*created"
   read_rule_class: 
@@ -7522,7 +7523,6 @@ cards_086:
   id: 431
   current_revision_id: 5252
   created_by: 4
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -7533,6 +7533,7 @@ cards_086:
   read_rule_id: 
   appender_id: 
 cards_167: 
+  typecode: Set
   reader_type: Role
   name: "*send+*right"
   read_rule_class: 
@@ -7549,7 +7550,6 @@ cards_167:
   id: 364
   current_revision_id: 3513
   created_by: 3
-  type: Set
   trunk_id: 363
   extension_type: 
   updated_by: 3
@@ -7560,6 +7560,7 @@ cards_167:
   read_rule_id: 
   appender_id: 
 cards_193: 
+  typecode: Set
   reader_type: Role
   name: "*community+*right"
   read_rule_class: 
@@ -7576,7 +7577,6 @@ cards_193:
   id: 340
   current_revision_id: 3230
   created_by: 1
-  type: Set
   trunk_id: 115
   extension_type: 
   updated_by: 1
@@ -7587,6 +7587,7 @@ cards_193:
   read_rule_id: 
   appender_id: 
 cards_275: 
+  typecode: Basic
   reader_type: Role
   name: by update
   read_rule_class: 
@@ -7603,7 +7604,6 @@ cards_275:
   id: 178
   current_revision_id: 2087
   created_by: 4
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -7614,6 +7614,7 @@ cards_275:
   read_rule_id: 
   appender_id: 
 cards_249: 
+  typecode: Basic
   reader_type: Role
   name: "*sidebar"
   read_rule_class: 
@@ -7630,7 +7631,6 @@ cards_249:
   id: 81
   current_revision_id: 2331
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -7641,6 +7641,7 @@ cards_249:
   read_rule_id: 
   appender_id: 
 cards_087: 
+  typecode: Set
   reader_type: Role
   name: "*creator+*right"
   read_rule_class: 
@@ -7657,7 +7658,6 @@ cards_087:
   id: 429
   current_revision_id: 5250
   created_by: 4
-  type: Set
   trunk_id: 428
   extension_type: 
   updated_by: 4
@@ -7668,6 +7668,7 @@ cards_087:
   read_rule_id: 
   appender_id: 
 cards_168: 
+  typecode: Basic
   reader_type: Role
   name: Wagn Bot
   read_rule_class: 
@@ -7684,7 +7685,6 @@ cards_168:
   id: 1
   current_revision_id: 1541
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: User
   updated_by: 3
@@ -7695,6 +7695,7 @@ cards_168:
   read_rule_id: 
   appender_id: 
 cards_194: 
+  typecode: Basic
   reader_type: Role
   name: "*outgoing+*right+*content"
   read_rule_class: 
@@ -7711,7 +7712,6 @@ cards_194:
   id: 169
   current_revision_id: 2054
   created_by: 4
-  type: Basic
   trunk_id: 339
   extension_type: HardTemplate
   updated_by: 1
@@ -7722,6 +7722,7 @@ cards_194:
   read_rule_id: 
   appender_id: 
 cards_276: 
+  typecode: Basic
   reader_type: Role
   name: "*tagged"
   read_rule_class: 
@@ -7738,7 +7739,6 @@ cards_276:
   id: 172
   current_revision_id: 2013
   created_by: 3
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -7749,6 +7749,7 @@ cards_276:
   read_rule_id: 
   appender_id: 
 cards_088: 
+  typecode: Basic
   reader_type: Role
   name: "*creator"
   read_rule_class: 
@@ -7765,7 +7766,6 @@ cards_088:
   id: 428
   current_revision_id: 5249
   created_by: 4
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -7776,6 +7776,7 @@ cards_088:
   read_rule_id: 
   appender_id: 
 cards_169: 
+  typecode: Basic
   reader_type: Role
   name: Signup Success
   read_rule_class: 
@@ -7792,7 +7793,6 @@ cards_169:
   id: 69
   current_revision_id: 3318
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -7803,6 +7803,7 @@ cards_169:
   read_rule_id: 
   appender_id: 
 cards_195: 
+  typecode: Set
   reader_type: Role
   name: "*outgoing+*right"
   read_rule_class: 
@@ -7819,7 +7820,6 @@ cards_195:
   id: 339
   current_revision_id: 3229
   created_by: 1
-  type: Set
   trunk_id: 168
   extension_type: 
   updated_by: 1
@@ -7830,6 +7830,7 @@ cards_195:
   read_rule_id: 
   appender_id: 
 cards_277: 
+  typecode: Basic
   reader_type: Role
   name: "*incoming"
   read_rule_class: 
@@ -7846,7 +7847,6 @@ cards_277:
   id: 170
   current_revision_id: 1993
   created_by: 4
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -7857,6 +7857,7 @@ cards_277:
   read_rule_id: 
   appender_id: 
 cards_089: 
+  typecode: Set
   reader_type: Role
   name: "*last edited+*right"
   read_rule_class: 
@@ -7873,7 +7874,6 @@ cards_089:
   id: 426
   current_revision_id: 5246
   created_by: 4
-  type: Set
   trunk_id: 425
   extension_type: 
   updated_by: 4
@@ -7884,6 +7884,7 @@ cards_089:
   read_rule_id: 
   appender_id: 
 cards_196: 
+  typecode: Search
   reader_type: Role
   name: "*tagged+*right+*content"
   read_rule_class: 
@@ -7900,7 +7901,6 @@ cards_196:
   id: 173
   current_revision_id: 2022
   created_by: 3
-  type: Search
   trunk_id: 338
   extension_type: HardTemplate
   updated_by: 1
@@ -7911,6 +7911,7 @@ cards_196:
   read_rule_id: 
   appender_id: 
 cards_278: 
+  typecode: Basic
   reader_type: Role
   name: "*outgoing"
   read_rule_class: 
@@ -7927,7 +7928,6 @@ cards_278:
   id: 168
   current_revision_id: 1988
   created_by: 4
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 4
@@ -7938,6 +7938,7 @@ cards_278:
   read_rule_id: 
   appender_id: 
 cards_197: 
+  typecode: Set
   reader_type: Role
   name: "*tagged+*right"
   read_rule_class: 
@@ -7954,7 +7955,6 @@ cards_197:
   id: 338
   current_revision_id: 3228
   created_by: 1
-  type: Set
   trunk_id: 172
   extension_type: 
   updated_by: 1
@@ -7965,6 +7965,7 @@ cards_197:
   read_rule_id: 
   appender_id: 
 cards_279: 
+  typecode: Basic
   reader_type: Role
   name: "*members"
   read_rule_class: 
@@ -7981,7 +7982,6 @@ cards_279:
   id: 98
   current_revision_id: 355
   created_by: 1
-  type: Basic
   trunk_id: 
   extension_type: 
   updated_by: 3
@@ -7992,6 +7992,7 @@ cards_279:
   read_rule_id: 
   appender_id: 
 cards_198: 
+  typecode: Basic
   reader_type: Role
   name: "*plusses+*right+*content"
   read_rule_class: 
@@ -8008,7 +8009,6 @@ cards_198:
   id: 111
   current_revision_id: 2210
   created_by: 1
-  type: Basic
   trunk_id: 337
   extension_type: HardTemplate
   updated_by: 1
@@ -8019,6 +8019,7 @@ cards_198:
   read_rule_id: 
   appender_id: 
 cards_199: 
+  typecode: Set
   reader_type: Role
   name: "*plusses+*right"
   read_rule_class: 
@@ -8035,7 +8036,6 @@ cards_199:
   id: 337
   current_revision_id: 3226
   created_by: 1
-  type: Set
   trunk_id: 110
   extension_type: 
   updated_by: 1

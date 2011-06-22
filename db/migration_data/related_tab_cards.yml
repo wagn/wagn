@@ -22,7 +22,7 @@
     <blockquote>
     <p>{{_left+*plus parts}}</p>
     </blockquote>
-  - HardTemplate
+  - 
 - - "*references+*rform"
   - Basic
   - |-
@@ -46,11 +46,11 @@
     <p>{{_left+*includers}}</p>
     </blockquote>
     <p>&nbsp;</p>
-  - HardTemplate
+  - 
 - - "*related+*rform"
   - Pointer
   - ""
-  - SoftTemplate
+  - 
 - - Cardtype+*related
   - Pointer
   - "[[*type]]"
@@ -70,7 +70,7 @@
     <p>{{_left+*type cards}}</p>
     </blockquote>
     <p>&nbsp;</p>
-  - HardTemplate
+  - 
 - - "*account+*related"
   - Pointer
   - "[[*account]]"
@@ -86,21 +86,21 @@
     <blockquote>
     <p>{{_left +*editing}}</p>
     </blockquote>
-  - HardTemplate
+  - 
 - - "*editing+*rform"
   - Search
   - |-
     {"edited_by": "_self",
      "view": "change"}
-  - HardTemplate
+  - 
 - - "*editors+*rform"
   - Search
   - "{\"edited\": \"_self\"} "
-  - HardTemplate
+  - 
 - - "*members+*rform"
   - Search
   - "{\"member_of\": \"_self\", \"sort\":\"name\"}"
-  - HardTemplate
+  - 
 - - Role+*tform
   - Basic
   - |-
@@ -110,11 +110,11 @@
     <blockquote>
     <p>{{+*members}}</p>
     </blockquote>
-  - HardTemplate
+  - 
 - - "*options+*rform"
   - Search
   - "{}"
-  - SoftTemplate
+  - 
 - - "*community+*rform"
   - Basic
   - |-
@@ -131,7 +131,7 @@
     <p>{{+tags}}</p>
     </blockquote>
     <p>&nbsp;</p>
-  - HardTemplate
+  - 
 - - "*table of contents+*edit"
   - Basic
   - <p>use "off" or "on" to force a table setting.</p>
@@ -139,8 +139,8 @@
 - - "*table of contents+*rform"
   - PlainText
   - "off"
-  - SoftTemplate
+  - 
 - - tags+*rform
   - Pointer
   - ""
-  - SoftTemplate
+  - 

@@ -1,7 +1,7 @@
 module Card::Role
   include Card::Basic
   
-  def before_validation_on_create
+  def before_create
     create_extension
   end
   

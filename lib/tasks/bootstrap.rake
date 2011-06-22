@@ -101,7 +101,7 @@ namespace :wagn do
               role_card = Role[val].card if val
               "[[#{role_card.name}]]"
             end
-          c = Card.create! :name=> "#{set}+*#{setting}", :type=> 'Pointer', :content=>content
+          c = Card.create! :name=> "#{set}+*#{setting}", :typecode=> 'Pointer', :content=>content
           if role_card
             WikiReference.create(
               :card_id=>c.id, 
@@ -112,8 +112,8 @@ namespace :wagn do
           end
         end
       end
-      Card.cache.reset if Card.cache  #necessary?
-
+      Card.cache.reset if Card.cache
+      
       puts 'updating read_rule fields'
       Card.find(:all).each do |card|
         card.update_read_rule

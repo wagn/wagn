@@ -27,14 +27,16 @@ module Wagn::Card::TrackedAttributes
   protected 
   def set_name(newname)
     #warn "set_name<#{self}>(#{newname})" # #{self.name_without_tracking}"
-    oldname = self.name_without_tracking
+    @old_name = self.name_without_tracking
     self.name_without_tracking = newname 
-    return if oldname==newname
-
+    return if @old_name==newname
+    Wagn::Cache.expire_card(newname.to_key) if newname
+    
     if newname.junction?
-      if !new_card? && newname.to_key != oldname.to_key
+      if !new_card? && newname.to_key != @old_name.to_key
         # move the current card out of the way, in case the new name will require
-        # re-creating a card with the current name, ie.  A -> A+B     
+        # re-creating a card with the current name, ie.  A -> A+B
+        Wagn::Cache.expire_card(@old_name.to_key)
         tmp_name = "tmp:" + UUID.new.generate      
         connection.update %{update cards set #{quoted_comma_pair_list(connection, {:name=>"'#{tmp_name}'",:key=>"'#{tmp_name}'"})} where id=#{id}}
       end
@@ -53,11 +55,10 @@ module Wagn::Card::TrackedAttributes
     end
           
     ::Cardtype.reset_cache if typecode=='Cardtype'
-    @name_changed = true          
-    @old_name = oldname
-    @search_content_changed=true
     Wagn::Cache.expire_card(@old_name.to_key)
-    true
+    @old_name = oldname
+    @name_changed = true          
+    @name_or_content_changed=true
   end
 
   def set_typecode(new_typecode)
@@ -111,38 +112,11 @@ module Wagn::Card::TrackedAttributes
     true
   end
   
-  def set_permissions(perms)
-    self.updates.clear(:permissions)
-    if typecode=='Cardtype' and !perms.detect{|p| p.task=='create'}
-      party = Role.find( Cardtype.create_party_for( 'Basic' ) )
-      perms << Permission.new(:task=>'create', :party=>party, :card_id=>self.id )
-    end
-    self.permissions_without_tracking = perms.reject {|p| p.party==nil }
-    perms.each do |p| 
-      set_reader( p.party ) if p.task == 'read'
-    end      
-    return true
-  end
- 
-  def set_reader(party)
-    self.reader = party
-    if !party.anonymous?
-      junctions.each do |dep| #note: this could be faster with WQL, but I'm not sure this WQL actually works correctly
-        unless authenticated?(party) and !dep.who_can(:read).anonymous?
-          dep.permit :read, party  
-          dep.save!
-        end
-      end
-    end
-  end
- 
   def set_initial_content  
     #Rails.logger.debug "Card(#{name})#set_initial_content start"
     # set_content bails out if we call it on a new record because it needs the
     # card id to create the revision.  call it again now that we have the id.
     
-    #return unless new_card?  # because create callbacks are also called in type transitions
-    #return if on_create_skip_revision
     set_content updates[:content]
     updates.clear :content 
     # normally the save would happen after set_content. in this case, update manually:
@@ -204,17 +178,7 @@ module Wagn::Card::TrackedAttributes
     super 
     base.after_create :set_initial_content 
     base.before_save.unshift Proc.new{|rec| rec.set_tracked_attributes }
-    #puts "AFTER CREATE: #{base.after_create}"
-    #base.before_save = base.before_save                           
     base.after_save :cascade_name_changes   
-    #base.class_eval do 
-     # attr_accessor :on_create_skip_revision
-      #
-      #puts "CALLING ALIAS METHOD CHAIN"
-      #alias_method_chain :save, :tracking
-      #alias_method_chain :save!, :tracking
- 
-    #end
     base.after_create() do |card|
       Wagn::Hook.call :after_create, card
     end

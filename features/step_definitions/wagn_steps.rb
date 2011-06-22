@@ -33,7 +33,7 @@ Given /^the pointer (.*) contains "([^\"]*)"$/ do |cardname, content|
 end
 
 Given /I harden "([^\"]*)"/ do |cardname|
-  Card[cardname].update_attribute :extension_type, "HardTemplate"
+  Card[cardname].update_attribute :extension_type, ""
 end
 
 When /^(.*) edits? "([^\"]*)"$/ do |username, cardname|

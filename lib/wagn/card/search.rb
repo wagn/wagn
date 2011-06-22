@@ -31,8 +31,8 @@ module Wagn::Card::Search
       c = Card.fetch(cardname) and e = c.extension and e.send(attr_name)
     end
 
-    def create_virtual(name, content, type='Basic', reader=Role[:anon])
-      Card.new(:name=>name, :content=>content, :typecode=>type ,:reader=>reader, :virtual=>true, :skip_defaults=>true)
+    def create_virtual(name, content, type='Basic')
+      Card.new(:name=>name, :content=>content, :typecode=>type, :virtual=>true, :skip_defaults=>true)
     end
     
     def count_by_wql(spec)       
@@ -69,7 +69,7 @@ module Wagn::Card::Search
   end
   
   def update_search_index     
-    return unless (@search_content_changed && 
+    return unless (@name_or_content_changed && 
         System.enable_postgres_fulltext && Card.columns.plot(:name).include?("indexed_content"))
     
     connection.execute %{
@@ -77,7 +77,7 @@ module Wagn::Card::Search
       to_tsvector( (select content from revisions where id=cards.current_revision_id) ) ),
       indexed_name = to_tsvector( name ) where id=#{self.id}
     }
-    @search_content_changed = false
+    @name_or_content_changed = false
     true
   end
 

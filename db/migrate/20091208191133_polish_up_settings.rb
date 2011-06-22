@@ -16,7 +16,7 @@ class PolishUpSettings < ActiveRecord::Migration
     Card.find_or_create(:name=>'*captcha+*rform', :type=>'Toggle', :content=>'1')
     
     (%w{ *type *self *right }<<'*type plus right').each do |setclassname|
-      Card["#{setclassname}+*rform"].update_attribute :extension_type, 'HardTemplate'      
+      Card["#{setclassname}+*rform"].update_attribute :extension_type, ''      
     end
   end
 

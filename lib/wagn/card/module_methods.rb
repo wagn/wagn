@@ -23,29 +23,6 @@ module Wagn::Card
     true
   end
 
-=begin
-  def card_const_set(class_id)
-    newclass = Class.new( Card::Basic )
-    const_set class_id, newclass
-    # FIXME: is this necessary?
-    if observers = Card.instance_variable_get('@observer_peers')
-      observers.each do |o|
-        newclass.add_observer(o)
-      end
-    end
-    newclass
-  end
-
-  def const_missing( class_id )
-    super
-  rescue NameError => e   
-    ::Cardtype.load_cache if ::Cardtype.cache.empty?
-    classnames = ::Cardtype.cache[:card_names]
-    raise e unless (classnames.has_key?( class_id.to_s ) and klass = card_const_set(class_id))
-    klass
-  end
-=end
-   
   def generate_codename_for(cardname)
     codename = cardname.gsub(/^\W+|\W+$/,'').gsub(/\W+/,'_').camelize   
     base, i = codename, 1
@@ -66,16 +43,4 @@ module Wagn::Card
  end
 end    
 
-=begin
-Card.extend Wagn::Card::ModuleMethods
 
-class HardTemplate
-def self.find(*args)
-end
-end
-
-class SoftTemplate
-def self.find(*args)
-end
-end
-=end

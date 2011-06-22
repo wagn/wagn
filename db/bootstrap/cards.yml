@@ -72,7 +72,7 @@ cards_200:
   current_revision_id: 2266
   created_by: 4
   trunk_id: 336
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: by_name+*right+*content
@@ -207,7 +207,7 @@ cards_202:
   current_revision_id: 2291
   created_by: 4
   trunk_id: 335
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: by_create+*right+*content
@@ -450,7 +450,7 @@ cards_204:
   current_revision_id: 2336
   created_by: 4
   trunk_id: 334
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: "*incoming+*right+*content"
@@ -477,7 +477,7 @@ cards_016:
   current_revision_id: 5621
   created_by: 4
   trunk_id: 329
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 4
   settings: 
   key: "*watching+*right+*content"
@@ -747,7 +747,7 @@ cards_206:
   current_revision_id: 2604
   created_by: 4
   trunk_id: 331
-  extension_type: SoftTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: image+*right+*default
@@ -774,7 +774,7 @@ cards_018:
   current_revision_id: 5613
   created_by: 1
   trunk_id: 353
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 4
   settings: 
   key: "*role+*right+*content"
@@ -963,7 +963,7 @@ cards_045:
   current_revision_id: 5516
   created_by: 1
   trunk_id: 320
-  extension_type: SoftTemplate
+  extension_type: 
   updated_by: 4
   settings: 
   key: cardtype+*type+*content
@@ -1260,7 +1260,7 @@ cards_208:
   current_revision_id: 2609
   created_by: 5
   trunk_id: 269
-  extension_type: SoftTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: "*watcher+*right+*default"
@@ -1476,7 +1476,7 @@ cards_209:
   current_revision_id: 2890
   created_by: 4
   trunk_id: 289
-  extension_type: SoftTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: "*autoname+*right+*default"
@@ -2055,11 +2055,11 @@ cards_239:
   typecode: Set
   reader_type: Role
   name: "*all"
-  read_rule_class: 
-  created_at: 2009-12-02 16:02:55.316610 -07:00
+  read_rule_class: "*all"
+  created_at: 2011-06-22 15:49:26 -06:00
   tag_id: 
   indexed_content: ""
-  updated_at: 2009-12-17 11:52:04.731074 -07:00
+  updated_at: 2011-06-22 15:49:28.758814 -06:00
   indexed_name: ""
   trash: false
   codename: 
@@ -2076,7 +2076,7 @@ cards_239:
   key: "*all"
   extension_id: 
   appender_type: 
-  read_rule_id: 
+  read_rule_id: 499
   appender_id: 
 cards_077: 
   typecode: HTML
@@ -2232,7 +2232,7 @@ cards_078:
   current_revision_id: 5306
   created_by: 1
   trunk_id: 340
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 4
   settings: 
   key: "*community+*right+*content"
@@ -2475,7 +2475,7 @@ cards_187:
   current_revision_id: 1270
   created_by: 1
   trunk_id: 343
-  extension_type: SoftTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: "*related+*right+*default"
@@ -2610,7 +2610,7 @@ cards_189:
   current_revision_id: 1881
   created_by: 1
   trunk_id: 342
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: "*member+*right+*content"
@@ -3042,7 +3042,7 @@ cards_220:
   current_revision_id: 3006
   created_by: 1
   trunk_id: 326
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: "*self+*right+*content"
@@ -3339,7 +3339,7 @@ cards_222:
   current_revision_id: 3004
   created_by: 1
   trunk_id: 325
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: "*type_plu_right+*right+*content"
@@ -3555,7 +3555,7 @@ cards_224:
   current_revision_id: 3002
   created_by: 1
   trunk_id: 324
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: "*right+*right+*content"
@@ -3717,7 +3717,7 @@ cards_225:
   current_revision_id: 3079
   created_by: 4
   trunk_id: 307
-  extension_type: SoftTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: "*accountable+*right+*default"
@@ -3838,10 +3838,10 @@ cards_170:
   reader_type: Role
   name: "*all+*default"
   read_rule_class: 
-  created_at: 2009-04-06 14:11:12.920280 -06:00
+  created_at: 2011-06-22 15:49:26 -06:00
   tag_id: 318
   indexed_content: "'default':2A"
-  updated_at: 2010-04-17 12:09:07.634862 -06:00
+  updated_at: 2011-06-22 15:49:26 -06:00
   indexed_name: "'default':2"
   trash: false
   codename: 
@@ -3852,7 +3852,7 @@ cards_170:
   current_revision_id: 28
   created_by: 1
   trunk_id: 274
-  extension_type: SoftTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: "*all+*default"
@@ -4027,10 +4027,10 @@ cards_171:
   reader_type: Role
   name: "*content+*right"
   read_rule_class: 
-  created_at: 2010-04-16 21:15:06.887799 -06:00
+  created_at: 2011-06-22 15:49:26 -06:00
   tag_id: 260
   indexed_content: "'right':2A 'content':1A"
-  updated_at: 2010-04-16 21:15:06.887799 -06:00
+  updated_at: 2011-06-22 15:49:26 -06:00
   indexed_name: "'right':2 'content':1"
   trash: false
   codename: 
@@ -4039,10 +4039,10 @@ cards_171:
   pattern_keys: 
   id: 358
   current_revision_id: 3260
-  created_by: 4
+  created_by: 1
   trunk_id: 317
   extension_type: 
-  updated_by: 4
+  updated_by: 1
   settings: 
   key: "*content+*right"
   extension_id: 
@@ -4338,7 +4338,7 @@ cards_228:
   current_revision_id: 2403
   created_by: 4
   trunk_id: 319
-  extension_type: SoftTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: html+*type+*default
@@ -4419,7 +4419,7 @@ cards_173:
   current_revision_id: 1408
   created_by: 1
   trunk_id: 355
-  extension_type: SoftTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: tag+*right+*default
@@ -4743,7 +4743,7 @@ cards_175:
   current_revision_id: 1410
   created_by: 1
   trunk_id: 354
-  extension_type: SoftTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: discussion+*right+*default
@@ -5445,7 +5445,7 @@ cards_021:
   current_revision_id: 5608
   created_by: 1
   trunk_id: 349
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 4
   settings: 
   key: "*plu_part+*right+*content"
@@ -5499,7 +5499,7 @@ cards_022:
   current_revision_id: 5607
   created_by: 1
   trunk_id: 350
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 4
   settings: 
   key: "*plu_card+*right+*content"
@@ -5580,7 +5580,7 @@ cards_023:
   current_revision_id: 5606
   created_by: 1
   trunk_id: 345
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 4
   settings: 
   key: "*linker+*right+*content"
@@ -5688,7 +5688,7 @@ cards_024:
   current_revision_id: 5605
   created_by: 1
   trunk_id: 346
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 4
   settings: 
   key: "*link+*right+*content"
@@ -5796,7 +5796,7 @@ cards_212:
   current_revision_id: 2430
   created_by: 4
   trunk_id: 288
-  extension_type: SoftTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: "*thank+*right+*default"
@@ -5823,7 +5823,7 @@ cards_025:
   current_revision_id: 5604
   created_by: 1
   trunk_id: 347
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 4
   settings: 
   key: "*inclusion+*right+*content"
@@ -5931,7 +5931,7 @@ cards_213:
   current_revision_id: 2901
   created_by: 4
   trunk_id: 286
-  extension_type: SoftTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: "*option_label+*right+*default"
@@ -5985,7 +5985,7 @@ cards_026:
   current_revision_id: 5603
   created_by: 1
   trunk_id: 348
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 4
   settings: 
   key: "*includer+*right+*content"
@@ -6147,7 +6147,7 @@ cards_027:
   current_revision_id: 5601
   created_by: 1
   trunk_id: 352
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 4
   settings: 
   key: "*editor+*right+*content"
@@ -6282,7 +6282,7 @@ cards_215:
   current_revision_id: 3040
   created_by: 4
   trunk_id: 284
-  extension_type: SoftTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: "*layout+*right+*default"
@@ -6336,7 +6336,7 @@ cards_028:
   current_revision_id: 5598
   created_by: 1
   trunk_id: 351
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 4
   settings: 
   key: "*editing+*right+*content"
@@ -6457,10 +6457,10 @@ cards_161:
   reader_type: Role
   name: "*right+*right"
   read_rule_class: 
-  created_at: 2010-04-15 18:42:42.523344 -06:00
+  created_at: 2011-06-22 15:49:26 -06:00
   tag_id: 260
   indexed_content: "'right':1A,2A"
-  updated_at: 2010-04-20 16:39:21.051719 -06:00
+  updated_at: 2011-06-22 15:49:26 -06:00
   indexed_name: "'right':1,2"
   trash: false
   codename: 
@@ -6498,7 +6498,7 @@ cards_216:
   current_revision_id: 2930
   created_by: 4
   trunk_id: 302
-  extension_type: SoftTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: "*captcha+*right+*default"
@@ -6552,7 +6552,7 @@ cards_029:
   current_revision_id: 5597
   created_by: 1
   trunk_id: 330
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 4
   settings: 
   key: "*account+*right+*content"
@@ -6835,10 +6835,10 @@ cards_163:
   reader_type: Role
   name: Cardtype+*type
   read_rule_class: 
-  created_at: 2010-04-15 18:42:31.166698 -06:00
+  created_at: 2011-06-22 15:49:26 -06:00
   tag_id: 266
   indexed_content: "'type':2A 'cardtyp':1A"
-  updated_at: 2010-04-20 16:39:20.555691 -06:00
+  updated_at: 2011-06-22 15:49:26 -06:00
   indexed_name: "'type':2 'cardtyp':1"
   trash: false
   codename: 
@@ -6876,7 +6876,7 @@ cards_218:
   current_revision_id: 3008
   created_by: 1
   trunk_id: 327
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: "*type+*right+*content"
@@ -7281,7 +7281,7 @@ cards_191:
   current_revision_id: 2089
   created_by: 4
   trunk_id: 341
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: by_update+*right+*content
@@ -7713,7 +7713,7 @@ cards_194:
   current_revision_id: 2054
   created_by: 4
   trunk_id: 339
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: "*outgoing+*right+*content"
@@ -7902,7 +7902,7 @@ cards_196:
   current_revision_id: 2022
   created_by: 3
   trunk_id: 338
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: "*tagged+*right+*content"
@@ -8010,7 +8010,7 @@ cards_198:
   current_revision_id: 2210
   created_by: 1
   trunk_id: 337
-  extension_type: HardTemplate
+  extension_type: 
   updated_by: 1
   settings: 
   key: "*pluss+*right+*content"

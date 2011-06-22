@@ -99,38 +99,6 @@ describe Card, "type transition approve create" do
 end
 
 
-=begin
-describe Card, "clone to type"  do
-  before do
-    User.as :wagbot 
-    @a = Card.find_by_name("basicname")
-    @b = @a.send(:clone_to_type, "CardtypeA") 
-  end  
-  
-  it "should have the new type" do
-    @b.typecode.should == 'CardtypeA'
-  end
-  
-  it "should have the same id" do
-    @b.id.should == @a.id
-  end 
-  
-  it "should not be a new record" do
-    @b.new_record?.should == false
-  end
-end
-describe Card, "type transition approve type" do
-  it "should have errors" do
-    lambda {change_card_to_type("type-a-card", "Basic")}.should raise_error(Wagn::PermissionDenied)
-  end
-              
-  it "should still be the original type" do
-    change_card_to_type("type-a-card", "Basic")
-    Card.find_by_name("type-a-card").typecode.should == 'CardtypeA'
-  end
-end
-=end
-
 describe Card, "type transition validate_destroy" do  
   before do @c = change_card_to_type("type-c-card", 'Basic') end
   
@@ -178,7 +146,7 @@ describe Card, "type transition create callback" do
   end
     
   it "should increment counter"  do
-    Card.search(:return=>'count', :type=>'CardtypeF').should == 3
+    Card.search(:return=>'count', :type=>'CardtypeF').should == 2
   end
   
   it "should change type of card" do

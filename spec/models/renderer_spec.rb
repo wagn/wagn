@@ -80,14 +80,13 @@ describe Renderer, "" do
     end
 
     it "renders deny for unpermitted cards" do
-      restricted_card =
       User.as( :wagbot ) do
-        card = Card.create(:name=>'Joe no see me', :type=>'Html', :content=>'secret')
-        card.permit(:read, Role[:admin])
-        card.save
-        card
+        Card.create(:name=>'Joe no see me', :type=>'Html', :content=>'secret')
+        Card.create(:name=>'Joe no see me+*self+*read', :type=>'Pointer', :content=>'[[Administrator]]')
       end
-      Renderer.new(restricted_card).render(:naked).should be_html_with { span(:class=>'denied') }
+      User.as :joe_user do
+        Renderer.new(Card.fetch('Joe no see me')).render(:naked).should be_html_with { span(:class=>'denied') }
+      end
     end      
   end
 
@@ -123,7 +122,7 @@ describe Renderer, "" do
 
     it "content" do
       render_card(:content, :name=>'A+B').should be_html_with {
-        div( :class=>'transcluded ALL TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b', :home_view=>'content') {
+        div( :class=>'transcluded ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b', :home_view=>'content') {
           span( :class=>'content-content content')
         }
       }

@@ -1,7 +1,8 @@
 module Card::Role
   include Card::Basic
-  def self.included(base)
-    base.send :before_create, :create_extension
+  
+  def before_validation_on_create
+    create_extension
   end
   
   def create_extension

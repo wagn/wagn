@@ -74,11 +74,6 @@ describe Card, "dependent removal" do
   it "should not be findable by name" do
     Card.find_by_name("A+B+C").should == nil
   end                                           
-
-  it "should still have permissions" do
-    @c.permissions.should_not be_empty
-  end
-
 end
                        
 describe Card, "rename to trashed name" do
@@ -119,10 +114,6 @@ describe Card, "sent to trash" do
     @c.revisions.length.should == 1
     @c.current_revision.content.should == 'basiccontent'
   end           
-  
-  it "should still have permissions" do
-    @c.permissions.should_not be_empty
-  end
 end
 
 describe Card, "revived from trash" do
@@ -188,14 +179,3 @@ describe Card, "junction revival" do
     @c.content.should == 'revived content'
   end
 end    
-
-
-#=end
-         
-# FIXME OH FIXME
-# if a tightly restricted card "Foo" is trashed, then someone with lesser permissions tries to
-# create "Foo" they'll get permission denied and it won't make ANY sense. 
-
-# FIXME  is this fixed now??? -efm
-# if you destroy a card "Foo" of Cardtype A, then create card "Foo" of cardtype  Basic, it should
-# create that basic card as long as you have permissions to create basic cards.

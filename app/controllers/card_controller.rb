@@ -8,8 +8,8 @@ class CardController < ApplicationController
   before_filter :load_card_with_cache, :only => [:line, :view, :open ]
 
   before_filter :view_ok,   :only=> LOAD_ACTIONS
-  before_filter :create_ok, :only=>[ :new, :create ]
-  before_filter :edit_ok,   :only=> EDIT_ACTIONS
+#  before_filter :create_ok, :only=>[ :new, :create ]
+  before_filter :update_ok,   :only=> EDIT_ACTIONS
   before_filter :remove_ok, :only=>[ :remove ]
 
   before_filter :require_captcha, :only => [ :create, :update, :comment, :quick_update ]
@@ -42,9 +42,9 @@ class CardController < ApplicationController
       if @card.new_record? && !@card.virtual?  # why doesnt !known? work here?
         params[:card]={:name=>@card_name, :type=>params[:type]}
         return case
-          when ::Cardtype.create_ok?(params[:type] || 'Basic')  ;  self.new
-          when logged_in?                                       ;  render :action=>'denied'
-          else                                                  ;  render :action=>'missing' 
+          when @card.ok?(:create) ;  self.new
+          when logged_in?         ;  render :action=>'denied'
+          else                    ;  render :action=>'missing' 
           end
       else
         save_location
@@ -95,10 +95,14 @@ class CardController < ApplicationController
       render :text => "<span>Oops, <strong>#{@args[:name]}</strong> was recently created! try reloading the page to edit it</span>" #ENGLISH
     else
       @card = Card.new @args
-      render (request.xhr? ?
-        {:partial=>'views/new', :locals=>{ :card=>@card }} : #ajax
-        {:action=> 'new'} #normal
-      )
+      if @card.ok? :create
+        render (request.xhr? ?
+          {:partial=>'views/new', :locals=>{ :card=>@card }} : #ajax
+          {:action=> 'new'} #normal
+        )
+      else
+        render_denied('create')
+      end
     end
   end
 
@@ -108,7 +112,12 @@ class CardController < ApplicationController
   #end
 
   def create
-    @card = Card.create params[:card]
+    @card = Card.new params[:card]
+    Rails.logger.info "who_can :create = #{@card.who_can :create}"
+    return render_denied('create') if !@card.ok? :create
+    @card.save
+    
+    
     if params[:multi_edit] and params[:cards] and !@card.errors.present?
       @card.multi_create(params[:cards])
     end

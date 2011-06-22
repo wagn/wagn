@@ -98,18 +98,18 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def edit_ok
-    @card.ok?(:edit) || render_denied('edit')
+  def update_ok
+    @card.ok?(:update) || render_denied('edit')
   end
 
-  def create_ok
-    return true
-    @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
-    @skip_slot_header = true
-    #p "CREATE OK: #{@type}"
-    typecode = Cardtype.classname_for(@type) || 'Basic'
-    Cardtype.create_ok?(typecode) || render_denied('create')
-  end
+
+ #def create_ok
+ #  @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
+ #  @skip_slot_header = true
+ #  #p "CREATE OK: #{@type}"
+ #  t = Card.class_for(@type, :cardname) || Card::Basic
+ #  t.create_ok? || render_denied('create')
+ #end
 
   def remove_ok
     @card.ok!(:delete) || render_denied('delete')

@@ -16,12 +16,7 @@ class System < ActiveRecord::Base
     :base_url, :max_render_time, :max_renders,   # Common; docs in sample_wagn.rb
     :enable_ruby_cards, :enable_server_cards,    # Uncommon; Check Security risks before enabling these cardtypes (wagn.org ref url?)
     :enable_postgres_fulltext, :postgres_src_dir, :postgres_tsearch_dir, # Optimize PostgreSQL performance
-    :multihost,:wagn_name,
-    # In development / nonfunctional
-    :google_maps_api_key,    
-    # Deprecated
-    :site_name, :invitation_email_body, :invitation_email_subject, :invitation_request_email, :invite_request_alert_email 
-    # Crap?  :admin_user_defaults, :debug_wql, :pagesize, :time, 
+    :multihost,:wagn_name
     
     
   class << self
@@ -89,20 +84,6 @@ class System < ActiveRecord::Base
       end
     end
     
-    def role_ok?(role_id)
-      return true if always_ok?
-      ok_hash[:role_ids].key? role_id
-    end
-    
-    def party_ok?(party)
-      return false if party.nil?
-      return true if always_ok?
-      #warn party.inspect
-      party.class.name == 'Role' ? 
-         role_ok?(party.id) :
-          (party == User.as_user)      
-    end
-    
     # FIXME stick this in session? cache it somehow??
     def ok_hash
       usr = User.as_user
@@ -132,13 +113,7 @@ class System < ActiveRecord::Base
     end
   end 
 
-  @@role_tasks = %w{
-    set_global_permissions
-    set_card_permissions
-    administrate_users
-    create_accounts
-    assign_user_roles
-  }
+  @@role_tasks = %w{ administrate_users create_accounts assign_user_roles }
   
 end        
 

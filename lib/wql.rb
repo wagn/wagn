@@ -1,29 +1,5 @@
-=begin
-
-# this one sucks:
-select type, name, 
-(
-  select count(*) from cards    
-  WHERE cards.trash='f' AND cards.id in (
-    select trunk_id from cards    
-    WHERE cards.trash='f' AND cards.tag_id in (
-      select id from cards WHERE cards.trash='f' AND cards.id=t0.id
-    )   
-  ) 
-) as count 
-from cards t0 order by count desc limit 10;
-
+class Wql
   
-# this one works:
-  
- select id, trunk_id, created_at, value, updated_at, current_revision_id, name, type, extension_id, extension_type, sealed, created_by, updated_by, priority, plus_sidebar, reader_id, writer_id, reader_type, writer_type, old_tag_id, tag_id, key, trash, appender_type, appender_id, indexed_content, indexed_name, count(*) 
- from cards join cards c2 on c2.tag_id=cards.id 
- group by cards.*
- order by count(*) desc limit 10;  
-  
-=end
-
-class Wql    
   ATTRIBUTES = {
     :basic=> %w{ name type content id key extension_type extension_id updated_by },
     :system => %w{ trunk_id tag_id },
@@ -509,14 +485,8 @@ Rails.logger.debug "count iter(#{relation.inspect} #{subspec.inspect})"
       
       # Permissions       
       t = table_alias
-      unless System.always_ok? or (Wql.root_perms_only && !root?)
-        user_roles = [Role[:anon].id]
-        unless User.as_user.login.to_s=='anon'
-          user_roles += [Role[:auth].id] + User.as_user.roles.map(&:id)
-        end                                                                
-        user_roles = user_roles.map(&:to_s).join(',')
-        # type!=User is about 6x faster than type='Role'...
-        sql.conditions << %{ (#{t}.reader_type!='User' and #{t}.reader_id IN (#{user_roles})) }
+      unless System.always_ok? or (Wql.root_perms_only && !root?) #or ENV['BOOTSTRAP_DUMP'] == 'true'
+        sql.conditions << %{ (#{t}.read_rule_id IN (#{::User.as_user.read_rule_ids.join ','})) }
       end
             
       # Order 

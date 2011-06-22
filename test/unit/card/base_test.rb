@@ -79,6 +79,9 @@ class Card::BaseTest < ActiveSupport::TestCase
   
   def test_multi_update_should_create_subcards_as_wagbot_if_missing_subcard_permissions
     # then repeat multiple update as above, as :anon
+    #remove me after regenerating test data
+    Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
+    
     User.current_user = :anon
     assert_equal false, Card.fetch('Basic').ok?(:create)
     b = Card.create!( :type=>"Fruit", :name=>'Banana' )
@@ -101,8 +104,8 @@ class Card::BaseTest < ActiveSupport::TestCase
 
 
   def test_create_without_read_permission
+    c = Card.create! :name=>"Banana", :type=>"Fruit", :content=>"mush"
     User.as(:anon) do
-      c = Card.create! :name=>"Banana", :type=>"Fruit", :content=>"mush"
       assert_raises Card::PermissionDenied do
         Card['Banana'].content
       end

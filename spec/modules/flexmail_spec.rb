@@ -80,10 +80,8 @@ describe Flexmail do
       Card.create!  :name => "mailconfig+*subject", :content => "{{+subject search|naked;item:naked}}"
       Card.create! :name => "mailconfig+*message", :content => "Triggered by {{_self|name}} and its wonderful content: {{_self|naked}}"
       Card.create! :name => "mailconfig+*attach", :type=>"Pointer", :content => "[[_self+attachment]]"
-      c = Card.create! :name=>'Trigger', :type=>'Cardtype'
-      c.permit(:create, Role[:anon])
-      c.permit(:read,   Role[:auth]) 
-      c.save!
+      Card.create! :name=>'Trigger', :type=>'Cardtype'
+      Card.create :name=>'Trigger+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
       Card.create! :name=>'Trigger+*type+*content', :content=>''
       Card.create! :name => "Trigger+*type+*send", :content => "[[mailconfig]]", :type=>'Pointer'
 

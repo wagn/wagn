@@ -239,7 +239,7 @@ raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_meth
       when card.new_card? ; false # causes errors to check in current system.  
         #should remove this and add create check after we settingize permissions
       when [:edit, :edit_in_form, :multi_edit].member?(action)
-        !card.ok?(:edit) and :deny_view #should be deny_edit
+        !card.ok?(:update) and :deny_view #should be deny_edit
       else
         !card.ok?(:read) and :deny_view
       end
@@ -475,7 +475,7 @@ raise "???" if Hash===action
   end
 
   def new_inclusion_card_args(tname, options)
-    args = { :type =>options[:type],  :permissions=>[] }
+    args = { :type =>options[:type] }
     args[:loaded_trunk]=card if tname =~ /^\+/
     if content=get_inclusion_content(options[:tname])
       args[:content]=content

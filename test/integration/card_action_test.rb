@@ -32,11 +32,9 @@ class CardActionTest < ActionController::IntegrationTest
 
   def test_comment      
     User.as(:wagbot)  do
-      @a = Card.find_by_name("A")  
-      @a.permit('comment', Role[:anon])
-      @a.save!
+      Card.create :name=>'A+*self+*comment', :type=>'Pointer', :content=>'[[Anyone]]'
     end
-    post "card/comment/#{@a.id}", :card => { :comment=>"how come" }
+    post "card/comment/A", :card => { :comment=>"how come" }
     assert_response :success
   end
 

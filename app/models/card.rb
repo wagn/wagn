@@ -57,7 +57,7 @@ class Card
 
   belongs_to :updater, :class_name=>'::User', :foreign_key=>'updated_by'
 
-  has_many :permissions, :foreign_key=>'card_id' #, :dependent=>:delete_all
+  #has_many :permissions, :foreign_key=>'card_id' #, :dependent=>:delete_all
 
   before_destroy :destroy_extension
                
@@ -116,64 +116,17 @@ class Card
       end
     end
     
-    
-    if !args['permissions']
-    # The following are only necessary for setting permissions.  Should remove once we have set/setting -based perms
-      if name and name.junction? and name.valid_cardname? 
-        self.trunk ||= Card.fetch_or_new name.left_name, {:skip_virtual=>true}
-        self.tag   ||= Card.fetch_or_new name.tag_name,    {:skip_virtual=>true}
-      end
-    
-      self.set_default_permissions 
-    end
-
     #default content
     ::User.as(:wagbot) do
-      if !args['content'] and self.content.blank? and default_card = setting_card('default')
+      if !args['content'] and self.content.blank? and default_card = setting_card('content','default')
         self.content = default_card.content
       end
     end
-    
 
     # misc defaults- trash, key, fallbacks
     self.key = name.to_key if name
     self.name='' if name.nil?
     self
-  end
-  
-  def set_default_permissions
-    source_card = setting_card('content', 'default')  #not sure why "template" doesn't work here.
-    if source_card
-      perms = source_card.card.permissions.reject { 
-        |p| p.task == 'create' unless (typecode=='Cardtype' or template?) 
-      }
-    else
-      #raise( "Missing permission configuration for #{name}" ) unless source_card && !source_card.permissions.empty?
-      perms = [:read,:edit,:delete].map{|t| ::Permission.new(:task=>t.to_s, :party=>::Role[:auth])}
-    end
-  
-    # We loop through and create copies of each permission object here because
-    # direct copies end up re-assigning which card the permission objects are assigned to.
-    # leads to painful errors.
-    self.permissions = perms.map do |p|  
-      if p.task == 'read'
-        party = p.party
-        
-        if trunk and tag
-          trunk_reader = (trunk.who_can(:read) || (trunk.set_default_permissions && trunk.who_can(:read)))
-          tag_reader   = (  tag.who_can(:read) || (  tag.set_default_permissions &&   tag.who_can(:read)))
-          #Rails.logger.debug "trunk = #{trunk.inspect} ....... who can read = #{trunk.who_can(:read)}"
-          #Rails.logger.debug "tag = #{tag.inspect} ....... who can read = #{tag.who_can(:read)}"
-          trunk_reader && tag_reader || raise("bum permissions: #{trunk.name}:#{trunk_reader}, #{tag.name}:#{tag_reader}")
-
-          tag_override = (trunk_reader.anonymous? || (authenticated?(trunk_reader) && !tag_reader.anonymous?))
-          party = (tag_override ? tag_reader : trunk_reader)
-        end
-        Permission.new :task=>p.task, :party=>party
-      else
-        Permission.new :task=>p.task, :party_id=>p.party_id, :party_type=>p.party_type
-      end
-    end
   end
   
   def card
@@ -310,8 +263,9 @@ class Card
       if card = Card.fetch(name, :skip_virtual=>true)
         card.update_attributes(opts)
       elsif opts[:content].present? and opts[:content].strip.present?
-        opts[:name] = name                
-        if ::Cardtype.create_ok?( self.typecode ) && !::Cardtype.create_ok?( Card.new(opts).typecode )
+        opts[:name] = name
+#          ::User.as(:wagbot) { Card.create(opts) }
+        if self.ok?(:create) && !(Card.new(opts).ok? :create)
           ::User.as(:wagbot) { Card.create(opts) }
         else
           Card.create(opts)
@@ -474,16 +428,14 @@ class Card
     !!skip_defaults  ##ok.  but this line is bizarre.
   end
 
-  def known?
-    !(new_card? && !virtual?)
-  end
-  
-  def virtual?
-    @virtual
-  end    
+  def known?(   )   !(new_card? && !virtual?)  end
+  def virtual?( )   @virtual                   end
+  def simple?(  )   n=name and n.simple?       end
+  def junction?()   n=name and n.junction?     end
+  def star?(    )   n=name and n.star?         end
   
   def content   
-    new_card? ? ok!(:create_me) : ok!(:read)
+    new_card? ? ok!(:create) : ok!(:read)
     cached_revision.new_record? ? "" : cached_revision.content
   end   
   
@@ -524,12 +476,6 @@ class Card
   def name_from_parts
     simple? ? name : (trunk.name_from_parts + '+' + tag.name_from_parts)
   end
-
-  def simple?() 
-    name.simple? 
-  end
-  
-  def junction?() !simple? end
      
   def authenticated?(party)
     party==::Role[:auth]
@@ -592,7 +538,7 @@ class Card
   # Because of the way it chains methods, 'tracks' needs to come after
   # all the basic method definitions, and validations have to come after
   # that because they depend on some of the tracking methods.
-  tracks :name, :content, :typecode, :comment, :permissions#, :reader, :writer, :appender
+  tracks :name, :typecode, :content, :comment
 
   def name_with_key_sync=(name)
     name ||= ""
@@ -641,29 +587,6 @@ class Card
       rec.send :validate_content, value
     end
   end
-
-  # private cards can't be connected to private cards with a different group
-  validates_each :permissions do |rec, attr, value|
-    if rec.updates.for?(:permissions)
-      rec.errors.add :permissions, 'Insufficient permissions specifications' if value.length < 3
-      reader,err = nil, nil
-      value.each do |p|  #fixme-perm -- ugly - no alibi
-        unless %w{ create read edit comment delete }.member?(p.task.to_s)
-          rec.errors.add :permissions, "No such permission: #{p.task}"
-        end
-        if p.task == 'read' then reader = p.party end
-        if p.party == nil and p.task!='comment'
-          rec.errors.add :permission, "#{p.task} party can't be set to nil"
-        end
-      end
-
-
-      if err
-        rec.errors.add :permissions, "can't set read permissions on #{rec.name} to #{reader.cardname} because #{err}"
-      end
-    end
-  end
-  
   
   validates_each :typecode do |rec, attr, value|  
     # validate on update
@@ -729,86 +652,5 @@ class Card
   def validate_content( content )
   end
   
-  class << self
-=begin
-    def class_for(name, field='codename')
-      class_id = ( field.to_sym == :codename ? name :
-          ( cardname = ::Cardtype.name_for_key(name.to_key) and
-            ::Cardtype.classname_for(cardname) ) 
-      )
-      klass = Card.const_get(class_id)
-      klass.allocate.is_a?(Card) ? klass : card_const_set(class_id)
-    rescue Exception=>e
-      nil
-    end
-=end
-
-    def create_or_update args
-      if c = Card[ args[:name] ]
-        c.update_attributes args
-        c
-      else
-        c= Card.new args
-        c.save!
-        #Card.create! args
-        c
-      end
-    end
-
-    def save_all_log_entry( name, content, prefix="\t" )
-      "Card SaveAll: #{prefix}#{name}, " + (content||"").gsub("\n","")[0..50] + "\n"
-    end
-    
-    def save_all data, opts = {}
-      options = {
-        :strategy => :create_or_update,  # :find_or_new, :create!, :update
-        :plus_strategy => :create_or_update
-      }.merge( opts )
-
-      data.extend CardData
-      plusses = data.extract_plus_data!
-
-      log = ""
-      time = Benchmark.measure do 
-        Card.transaction do
-          base_card = Card.send options[:strategy], data
-
-          plusses.each do |plus_name, plus_data|
-            plus_card_name = base_card.name + plus_name
-            case plus_data
-              when String;  
-                Card.send options[:plus_strategy], :name=> plus_card_name, :content => plus_data
-                log << save_all_log_entry( plus_card_name, plus_data)
-
-              when Array;
-                if block_given?
-                  plus_data = plus_data..map{|x| yield(plus_name, x) }
-                end
-                card_args = {
-                  :name => plus_card_name, 
-                  :typecode => "Pointer",  
-                  :content => plus_data.map{|x| "[[#{x}]]" }.join("\n")
-                }
-                Card.send options[:plus_strategy], card_args
-                log << save_all_log_entry( card_args[:name], card_args[:content])
-              when Hash;
-                plus_data[:name] ||= plus_card_name
-                Card.send options[:plus_strategy], plus_data
-                log << save_all_log_entry( plus_data[:name], plus_data[:content])
-            end
-          end
-        end
-      end
-      log = save_all_log_entry( data[:name], data[:content], prefix="(+#{plusses.size}, #{sprintf("%.3f",time.real)}s)  ") + log
-      ActiveRecord::Base.logger.info log
-    end
-  end
-
 end  
-
-module CardData
-  def extract_plus_data!
-    keys.inject({}) {|h,k| h[k] = delete(k) if k =~ /^\+/; h }
-  end
-end
 

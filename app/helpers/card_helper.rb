@@ -4,34 +4,10 @@ module CardHelper
     party ? party.card.name : 'Nobody'
   end
 
-  def permission_options_for(card,task,party)
-    container = []
-    container<< ['No one',''] if task == :comment
-    pu = card.personal_user
-    if pu and card.ok? :permissions
-      ptitle = (pu == User.current_user) ? "Me (#{pu.card.name})" : pu.card.name
-      container<<[ptitle,'personal']
-    end
-    possible_roles = System.ok?(:set_card_permissions) ? Role.find(:all) : [] #User.current_user
-    container+= container_from_roles( possible_roles )
-
-    selected =
-      case party.class.to_s
-      when 'NilClass' ; ''
-      when 'User'     ; 'personal'
-      else            ; party.id
-      end
-
-#    warn "party class = #{party.class}; selected = #{selected}"
-
-    options_for_select container, selected
-  end
-
   def selected_from(party)
     c = party.class
     case c
     when NilClass; ''
-    when User; 'personal'
     else; party.id
     end
   end
@@ -52,7 +28,7 @@ module CardHelper
   end
 
   def rollback
-    if @card.ok?(:edit) && !(@card.current_revision==@revision)
+    if @card.ok?(:update) && !(@card.current_revision==@revision)
       link_to_remote 'Save as current',
         :url => { :action=>'rollback', :id=>@card.id, :rev=>@revision_number, :context=>@context }
     end

@@ -15,7 +15,6 @@ class SharedData
     Card.create! :typecode=>'User', :name=>"Joe Camel", :extension=>joe_camel, :content => "Mr. Buttz"    
 
     #bt = Card.find_by_name 'Basic+*type+*default'
-    #fail "oh god #{bt.permissions.inspect}" if bt.permissions.empty?
 
     # generic, shared attribute card
     color = Card.create! :name=>"color"
@@ -24,6 +23,7 @@ class SharedData
     # data for testing users and invitation requests 
     System.invite_request_alert_email = nil
     ron_request = Card.create! :typecode=>'InvitationRequest', :name=>"Ron Request"  #, :email=>"ron@request.com"
+
     User.create_with_card({:email=>'ron@request.com', :password=>'ron_pass', :password_confirmation=>'ron_pass'}, ron_request)
 
     no_count = Card.create! :typecode=>'User', :name=>"No Count", :content=>"I got no account"
@@ -110,8 +110,9 @@ class SharedData
 
     ::User.current_user = :wagbot 
     Card.create!(:name=>"AdminNow", :content=>"test") 
-    bt.permit(:create, Role['r1']); bt.save!  # set it so that Joe User can't create this type
     
+    Card.create :name=>'Cardtype B+*type+*create', :type=>'Pointer', :content=>'[[r1]]'
+        
     Card.create! :type=>"Cardtype", :name=>"Book"
     Card.create! :name=>"Book+*type+*content", :content=>"by {{+author}}, design by {{+illustrator}}"
     Card.create! :name => "Illiad", :type=>"Book"
@@ -145,20 +146,13 @@ class SharedData
     
     
     ## --------- create templated permissions -------------
-    #r1 = Role.find_by_codename 'r1'
     ctt = Card.create! :name=> 'Cardtype E+*type+*default'
     
     
     ## --------- Fruit: creatable by anon but not readable ---
     f = Card.create! :type=>"Cardtype", :name=>"Fruit"
-    f.permit(:create, Role[:anon])       
-    f.permit(:read, Role[:admin])   
-    f.save!
-
-    ff = Card.create! :name=>"Fruit+*type+*default"
-    ff.permit(:read, Role[:admin])
-    ff.save!
-
+    Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anyone]]'
+    Card.create :name=>'Fruit+*type+*read', :type=>'Pointer', :content=>'[[Administrator]]'
       
   end
 end  

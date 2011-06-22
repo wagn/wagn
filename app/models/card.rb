@@ -65,7 +65,7 @@ class Card
     
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
     :from_trash, :update_referencers, :allow_typecode_change, :virtual,
-  :skip_defaults, :loaded_trunk, :blank_revision, :broken_cardtype
+    :broken_type, :skip_defaults, :loaded_trunk, :blank_revision
 
   # setup hooks on AR callbacks
   # Note: :after_create is called from end of set_initial_content now
@@ -191,7 +191,13 @@ class Card
       
     Rails.logger.debug "Card.initialize #{args.inspect}"
     args['typecode'] ||= case
-    when type_name = args.delete('type');  ::Cardtype.classname_for(type_name)
+    when type_name = args.delete('type')
+      begin
+        ::Cardtype.classname_for(type_name)
+      rescue
+        args['broken_type'] = type_name
+        'Basic'
+      end
     when args.delete('skip_type_lookup');  'Basic'
     when args['name']                   ;  nil  #lookup after super
     else                                ;  'Basic'
@@ -201,16 +207,14 @@ class Card
 
     super
 
-    @loaded_trunk = args['loaded_trunk'] if args['loaded_trunk']
-    
+    self.loaded_trunk = args['loaded_trunk'] if args['loaded_trunk']
     self.typecode ||= template.typecode
     fail "NO TYPECODE" unless self.typecode
-    Rails.logger.debug "Card.initialize #{typecode.inspect} #{args.inspect}"
+
+    #Rails.logger.debug "Card.initialize #{typecode.inspect} #{args.inspect}"
     include_singleton_modules
 
     self.attachment_id = att_id if att_id # now that we have modules, we have this field
-      
-    yield(new_card) if block_given?
     set_defaults( args ) unless args['skip_defaults'] 
   end 
 
@@ -664,7 +668,7 @@ class Card
   validates_each :typecode do |rec, attr, value|  
     # validate on update
     if rec.updates.for?(:typecode) and !rec.new_record?
-      
+            
       # invalid to change type when cards of this type exists
       if rec.typecode == 'Cardtype' and rec.extension and ::Card.find_by_typecode(rec.extension.codename)
         rec.errors.add :typecode, "can't be changed to #{value} for #{rec.name} because #{rec.name} is a Cardtype and cards of this type still exist"
@@ -681,8 +685,8 @@ class Card
     # validate on update and create 
     if rec.updates.for?(:typecode) or rec.new_record?
       # invalid type recorded on create
-      if rec.broken_cardtype
-        rec.errors.add :typecode, "won't work.  There's no cardtype named '#{rec.broken_cardtype}'"
+      if rec.broken_type
+        rec.errors.add :typecode, "won't work.  There's no cardtype named '#{rec.broken_type}'"
       end
       
       # invalid to change type when type is hard_templated

@@ -83,7 +83,7 @@ class CardController < ApplicationController
   #----------------( creating)
   def new
     Wagn::Hook.call :before_new, '*all', self
-
+    
     #normalize args
     @args = (params[:card] ||= {})
     @args[:name] ||= params[:id] # for ajax (?)

@@ -142,7 +142,6 @@ describe Card, "types" do
   end
   it "should accept classname as typecode" do
     ct = Card.create! :name=>"BFoo", :type=>'Cardtype'
-    warn "change name of card.  #{ct.updates.for(:typecode)}"
     ct.update_attributes! :name=>"BFooRenamed"
     ct.extension.class_name.should == 'BFoo'
     Rails.logger.info "failing create with typecode"
@@ -160,7 +159,7 @@ describe Card, "types" do
     ct = Card.create! :name=>"DFoo", :type=>'Cardtype'
     c = Card.new(:type=>"$d_foo#adfa",:name=>"more testy")
     c.valid?.should be_false
-    c.errors_on(:type).should_not be_empty
+    c.errors_on(:typecode).should_not be_empty
   end
 end          
 

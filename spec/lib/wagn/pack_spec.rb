@@ -7,7 +7,7 @@ describe Wagn::Pack do
         file = "#{RAILS_ROOT}/modules/dummy_spec_module.rb"
         File.open(file, "w") do |f|
           f.write <<-EOF
-            class JBob < Wagn::Pack
+            module JBob 
               def self.foo(); "bar"; end
             end
           EOF

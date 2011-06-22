@@ -52,10 +52,7 @@ describe Card::Pointer do
      
   context "watching" do
     it "not break on permissions" do
-      warn '~~~~~~~~~before fetch_or_new'
-#      Card.new :name=>'Home+*watchers'
       watchers = Card.fetch_or_new "Home+*watchers"
-      warn '~~~~~~~~~before fetch_or_new'
       watchers.typecode.should == 'Pointer'
       watchers.add_item User.current_user.card.name
       assert_equal '[[Joe User]]', watchers.content

@@ -72,8 +72,8 @@ describe Flexmail do
       end
       
       User.as :wagbot
-      Card.create!  :name => 'Bobs addy', :content=>'bob@bob.com', :type=>'Pointer'
-      Card.create!  :name => 'default subject', :content=>'a very nutty thang', :type=>'Pointer'
+      Card.create!  :name => 'Bobs addy', :content=>'bob@bob.com', :type=>'Phrase'
+      Card.create!  :name => 'default subject', :content=>'a very nutty thang', :type=>'Phrase'
       Card.create!  :name => "mailconfig+*to", :content => %{ {"key":"bob_addy"} }, :type=>'Search'
       Card.create!  :name => "mailconfig+*from", :content => %{ {"left":"_left", "right":"email"} }, :type=>'Search'
       Card.create!  :name => "subject search+*right+*content", :content => %{{"referred_to_by":"_self+subject"}}, :type=>'Search'

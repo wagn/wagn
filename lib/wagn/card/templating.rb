@@ -11,7 +11,7 @@ module Wagn::Card::Templating
       setting_card('content','default')
   end
   def right_template()   (template && template.right_template?) ? template : nil  end
-  def hard_template()    (template && @template.hard_template?) ? @template : nil end
+  def hard_template()    (template && template.hard_template?)  ? template : nil  end
   def content_template() hard_template                                            end
 
   def templated_content

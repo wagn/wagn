@@ -11,13 +11,13 @@ end
 #  end
   
 module Card::CardtypeC
-  def validate_typecode_change
+  def self.validate_typecode_change
     errors.add :destroy_error, "card c is indestructible"
   end
 end
 
 module Card::CardtypeD
-  def valid?
+  def self.valid?
     errors.add :create_error, "card d always has errors"
   end
 end

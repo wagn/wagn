@@ -467,12 +467,13 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
     
     it "should be used in edit forms" do
       config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )
-      @card = Card.new( :name=>"templated", :content => "Bar" )
+      @card = Card.fetch('templated')# :name=>"templated", :content => "Bar" )
+      @card.content = 'Bar'
       @card.should_receive(:setting_card).with("content", "default").and_return(config_card)
       result = Renderer.new(@card).render(:edit)
       result.should be_html_with do
         div :class => "field-in-multi" do
-          input :name=>"cards[~plus~alpha][content]", :type => 'hidden'
+          input :name=>"cards[templated~plus~alpha][content]", :type => 'hidden'
         end
       end
     end
@@ -484,7 +485,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       result.should be_html_with do
         div :class => "field-in-multi" do
           [ input( :name=>"cards[~plus~author][content]", :type=>'text', :value=>'Zamma Flamma' ),
-            input( :name=>"cards[~plus~author][type]", :type => 'hidden', :value=>'Phrase') ]
+            input( :name=>"cards[~plus~author][typecode]", :type => 'hidden', :value=>'Phrase') ]
         end
       end
       result.should match('Zamma Flamma')

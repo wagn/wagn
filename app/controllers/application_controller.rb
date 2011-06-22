@@ -103,6 +103,7 @@ class ApplicationController < ActionController::Base
   end
 
   def create_ok
+    return true
     @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
     @skip_slot_header = true
     #p "CREATE OK: #{@type}"

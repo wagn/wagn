@@ -455,10 +455,10 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       end
     end
 
-    it "skips *content if *default is present" do  #this seems more like a settings test
+    it "skips *content if narrower *default is present" do  #this seems more like a settings test
       content_card = Card.create!(:name=>"Phrase+*type+*content", :content=>"Content Foo" )
-      default_card = Card.create!(:name=>"Phrase+*type+*default", :content=>"Default Bar" )
-      @card = Card.new( :name=>"templated", :type=>'Phrase' )
+      default_card = Card.create!(:name=>"templated+*right+*default", :content=>"Default Bar" )
+      @card = Card.new( :name=>"test+templated", :type=>'Phrase' )
       @card.should_receive(:setting_card).with("content", "default").and_return(default_card)
       Renderer.new(@card).render(:raw).should == "Default Bar"
     end
@@ -468,7 +468,6 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )
       @card = Card.fetch('templated')# :name=>"templated", :content => "Bar" )
       @card.content = 'Bar'
-      @card.should_receive(:setting_card).with("content", "default").and_return(config_card)
       result = Renderer.new(@card).render(:edit)
       result.should be_html_with do
         div :class => "field-in-multi" do

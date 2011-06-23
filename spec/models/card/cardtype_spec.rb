@@ -22,7 +22,6 @@ describe "Card (Cardtype)" do
   it "remove cardtype" do
     Card.create! :name=>'County', :type=>'Cardtype'
     c = Card.find_by_name('County')
-    #warn "extension: #{city.extension}"
     c.destroy
     Cardtype.find_by_class_name('County').should == nil
   end

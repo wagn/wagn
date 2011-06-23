@@ -3,6 +3,7 @@ class Card < ActiveRecord::Base
 end
 require 'wiki_reference'
 require 'wagn/card/model'
+require 'app/models/card/role.rb'
 
 class Card
   def destroy!
@@ -177,6 +178,7 @@ class Card
   
   def include_singleton_modules
     return unless typecode
+    #warn "include sing mod for #{name}"
     singleton = class << self; self end
     singleton.include_type_module(typecode)
   end
@@ -185,13 +187,12 @@ class Card
     def include_type_module(typecode)
       #mod = Card.const_get(typecode) 
       con = (mod=Card.const_get(typecode.to_sym)).to_s.split('::')
-      Rails.logger.debug "include_type_module(#{typecode}) #{con.inspect}, #{mod.inspect}"
       return if con.length != 2 or con[0] != 'Card'
-      Rails.logger.debug "include_type_module(#{typecode}) #{mod.inspect}"
+      #warn  "include_type_module(#{typecode}) #{mod.inspect}" if typecode == 'Role'
       include mod if mod
     rescue Exception=>e
       return unless mod
-      warn "Error including module (#{typecode}, #{mod.inspect}) #{e} #{e.backtrace[0..3]*"\n"}"
+      Rails.logger.info "Error including module (#{typecode}, #{mod.inspect}) #{e} #{e.backtrace[0..3]*"\n"}"
       nil
     end
     

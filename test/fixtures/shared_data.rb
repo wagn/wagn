@@ -1,9 +1,16 @@
 require 'timecop'    
 
+Dir["#{RAILS_ROOT}/app/models/card/*.rb"].sort.each do |cardtype|
+  require_dependency cardtype
+end
+
 class SharedData   
   FUTURE = Time.local(2020,1,1,0,0,0)  
+  
+  
   def self.add_test_data
     ::User.current_user = :wagbot
+
     joe_user = ::User.create! :login=>"joe_user",:email=>'joe@user.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>User[:wagbot]
     Card.create! :typecode=>'User', :name=>"Joe User", :extension=>joe_user, :content => "I'm number two"    
     
@@ -46,7 +53,17 @@ class SharedData
     Card.create! :typecode=>'User', :name=>"u2", :extension=>u2
     Card.create! :typecode=>'User', :name=>"u3", :extension=>u3
 
-    r1 = Card.create!( :typecode=>'Role', :name=>'r1' ).extension
+    Card::Role
+    Card::Cardtype
+
+    puts "START DEBUG 1"
+    cr1 = Card.create!( :typecode=>'Role', :name=>'r1' )
+    r1 = cr1.extension
+    puts "cr1 = #{cr1.inspect}"
+    puts "r1 = #{r1.inspect}"
+    puts "END DEBUG 1"
+
+#    r1 = Card.create!( :typecode=>'Role', :name=>'r1' ).extension
     r2 = Card.create!( :typecode=>'Role', :name=>'r2' ).extension
     r3 = Card.create!( :typecode=>'Role', :name=>'r3' ).extension
     r4 = Card.create!( :typecode=>'Role', :name=>'r4' ).extension
@@ -76,7 +93,9 @@ class SharedData
     c12345 = Card.create:name=>"Four+One+Five"
 
     # for wql & permissions 
+    puts "START DEBUG 2"
     %w{ A+C A+D A+E C+A D+A F+A A+B+C }.each do |name| Card.create!(:name=>name)  end 
+    puts "END DEBUG 2"
 
     Card.create! :typecode=>'Cardtype', :name=>"Cardtype A", :codename=>"CardtypeA"
     bt = Card.create! :typecode=>'Cardtype', :name=>"Cardtype B", :codename=>"CardtypeB"
@@ -86,7 +105,9 @@ class SharedData
     Card.create! :typecode=>'Cardtype', :name=>"Cardtype F", :codename=>"CardtypeF"
 
     Card.create! :name=>'basicname', :content=>'basiccontent'
+    puts "START DEBUG 3"
     Card.create! :typecode=>'CardtypeA', :name=>"type-a-card", :content=>"type_a_content"
+    puts "END DEBUG 3"
     Card.create! :typecode=>'CardtypeB', :name=>"type-b-card", :content=>"type_b_content"
     Card.create! :typecode=>'CardtypeC', :name=>"type-c-card", :content=>"type_c_content"
     Card.create! :typecode=>'CardtypeD', :name=>"type-d-card", :content=>"type_d_content"
@@ -153,6 +174,5 @@ class SharedData
     f = Card.create! :type=>"Cardtype", :name=>"Fruit"
     Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anyone]]'
     Card.create :name=>'Fruit+*type+*read', :type=>'Pointer', :content=>'[[Administrator]]'
-      
   end
 end  

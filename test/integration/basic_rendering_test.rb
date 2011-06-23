@@ -12,7 +12,7 @@ class BasicRenderingTest < ActionController::IntegrationTest
   # later should have cardtype-specific permissions settings
   test_render "card/edit/:id"           , :users=>{ :anon=>403, :admin=>200 }, :cardtypes=>:all
   test_render "card/new"                , :users=>{ :anon=>403, :joe_user=>200 }
-  test_render "connection/new/:id"      , :users=>{ :anon=>200, :joe_user=>200 }
+#  test_render "connection/new/:id"      , :users=>{ :anon=>200, :joe_user=>200 }
   
 =begin  
 

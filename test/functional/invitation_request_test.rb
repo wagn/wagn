@@ -22,10 +22,9 @@ class InvitationRequestTest < ActionController::TestCase
  
 
   def test_should_redirect_to_invitation_request_landing_card 
-    post :create, :card=>{
+    post :create, :user=>{:email=>"jamaster@jay.net"}, :card=>{
       :type=>"Account Request",
       :name=>"Word Third",
-      :account=>{:email=>"jamaster@jay.net"},
       :content=>"Let me in!"
     }  
     assert_response 418
@@ -34,17 +33,16 @@ class InvitationRequestTest < ActionController::TestCase
   
   
   def test_should_create_invitation_request  
-    post :create, :card=>{
+    post :create, :user=>{:email=>"jamaster@jay.net"}, :card=>{
       :type=>"Account Request", 
       :name=>"Word Third", 
-      :account=>{:email=>"jamaster@jay.net"},
       :content=>"Let me in!"
-    }  
+    }
 
     @card =  Card.find_by_name("Word Third")   
     @user = @card.extension
     
-    assert @card.class.include?(Card::InvitationRequest)
+    assert_equal @card.typecode, 'InvitationRequest'
 
     # this now happens only when created via account controller
     

@@ -1,10 +1,8 @@
 module Card::InvitationRequest
-  attr_accessor :account  ## is this used??
-
-  def self.included(base)
-    base.send :before_destroy, :block_user
+  def before_destroy
+    block_user
   end
-    
+
   private
  
   def block_user

@@ -9,7 +9,7 @@ class Card::RoleTest < ActiveSupport::TestCase
   
   def test_role_creation
     @c=Card.create( :typecode=>'Role', :name=>'BananaMaster' )  
-    assert @c.class.include?(Card::Role)  
+    assert @c.typecode=='Role'  
     assert_instance_of ::Role, @c.extension, "extension immediate"
     assert_instance_of ::Role, Card.find_by_name("BananaMaster").extension, "extension after save"
   end

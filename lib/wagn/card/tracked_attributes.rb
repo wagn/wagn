@@ -103,7 +103,7 @@ module Wagn::Card::TrackedAttributes
     
     clear_drafts if current_revision_id
     self.current_revision = Revision.create :card_id=>self.id, :content=>new_content
-    @search_content_changed = true
+    @name_or_content_changed = true
   end
            
   def set_comment(new_comment)    

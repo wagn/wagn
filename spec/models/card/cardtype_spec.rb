@@ -27,9 +27,6 @@ describe "Card (Cardtype)" do
   end
   
   it "cardtype creation and dynamic cardtype" do
-    assert_raises( NameError ) do
-      Card.create :name=>"figgy", :type=>'BananaPudding'
-    end
     assert Card.create( :name=>'BananaPudding', :type=>'Cardtype' ).typecode == 'Cardtype'
     assert_instance_of Cardtype, Card.fetch("BananaPudding").extension
     assert_instance_of Cardtype, Cardtype.find_by_class_name("BananaPudding")    

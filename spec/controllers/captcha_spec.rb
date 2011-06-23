@@ -95,9 +95,12 @@ describe AccountController, "with captcha enabled" do
     end
   end
 
-  require_captcha_on( :signup, 
-                      :card => 
-                      { :name => "Bob", :type=>"InvitationRequest" },
-                      :user => { :email => "bob@user.com" })
+  User.as :anon do
+    require_captcha_on( 
+      :signup, 
+      :card => { :name => "Bob", :type=>"Account Request" },
+      :user => { :email => "bob@user.com" }
+    )
+  end
 
 end

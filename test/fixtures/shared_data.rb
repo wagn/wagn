@@ -53,17 +53,7 @@ class SharedData
     Card.create! :typecode=>'User', :name=>"u2", :extension=>u2
     Card.create! :typecode=>'User', :name=>"u3", :extension=>u3
 
-    Card::Role
-    Card::Cardtype
-
-    puts "START DEBUG 1"
-    cr1 = Card.create!( :typecode=>'Role', :name=>'r1' )
-    r1 = cr1.extension
-    puts "cr1 = #{cr1.inspect}"
-    puts "r1 = #{r1.inspect}"
-    puts "END DEBUG 1"
-
-#    r1 = Card.create!( :typecode=>'Role', :name=>'r1' ).extension
+    r1 = Card.create!( :typecode=>'Role', :name=>'r1' ).extension
     r2 = Card.create!( :typecode=>'Role', :name=>'r2' ).extension
     r3 = Card.create!( :typecode=>'Role', :name=>'r3' ).extension
     r4 = Card.create!( :typecode=>'Role', :name=>'r4' ).extension
@@ -93,9 +83,7 @@ class SharedData
     c12345 = Card.create:name=>"Four+One+Five"
 
     # for wql & permissions 
-    puts "START DEBUG 2"
     %w{ A+C A+D A+E C+A D+A F+A A+B+C }.each do |name| Card.create!(:name=>name)  end 
-    puts "END DEBUG 2"
 
     Card.create! :typecode=>'Cardtype', :name=>"Cardtype A", :codename=>"CardtypeA"
     bt = Card.create! :typecode=>'Cardtype', :name=>"Cardtype B", :codename=>"CardtypeB"
@@ -105,9 +93,7 @@ class SharedData
     Card.create! :typecode=>'Cardtype', :name=>"Cardtype F", :codename=>"CardtypeF"
 
     Card.create! :name=>'basicname', :content=>'basiccontent'
-    puts "START DEBUG 3"
     Card.create! :typecode=>'CardtypeA', :name=>"type-a-card", :content=>"type_a_content"
-    puts "END DEBUG 3"
     Card.create! :typecode=>'CardtypeB', :name=>"type-b-card", :content=>"type_b_content"
     Card.create! :typecode=>'CardtypeC', :name=>"type-c-card", :content=>"type_c_content"
     Card.create! :typecode=>'CardtypeD', :name=>"type-d-card", :content=>"type_d_content"

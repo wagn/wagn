@@ -55,7 +55,7 @@ describe "reader rules" do
   it "should not be overruled by a more general rule added later" do
     @perm_card.save!
     c= Card.fetch('Home')
-    c.type = 'Phrase'
+    c.typecode = 'Phrase'
     c.save!
     Card.create(:name=>'Phrase+*type+*read', :type=>'Pointer', :content=>'[[Joe User]]')
     
@@ -68,7 +68,7 @@ describe "reader rules" do
     @perm_card.save!
     Card.fetch('A+B').read_rule_id.should == Card.fetch('*all+*read').id
     c = Card.fetch('A')
-    c.type = 'Phrase'
+    c.typecode = 'Phrase'
     c.save!
     Card.fetch('A+B').read_rule_id.should == @perm_card.id
   end
@@ -332,7 +332,7 @@ describe Card, "settings based permissions" do
   before do
     User.as :wagbot
     @delete_setting_card = Card.fetch_or_new '*all+*delete'
-    @delete_setting_card.type = 'Pointer'
+    @delete_setting_card.typecode = 'Pointer'
     @delete_setting_card.content = '[[Joe_User]]'
     @delete_setting_card.save!
   end

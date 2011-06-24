@@ -226,8 +226,7 @@ module Wagn::Card::Permissions
   end
 
   def update_ruled_cards
-
-#    return if ENV['BOOTSTRAP_LOAD'] == 'true'
+    return if ENV['BOOTSTRAP_LOAD'] == 'true'
     if name.junction? && name.tag_name=='*read' && @name_or_content_changed
       Wagn::Cache.expire_card self.key #probably shouldn't be necessary, 
       # but was sometimes getting cached version when card should be in the trash.

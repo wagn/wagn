@@ -32,8 +32,6 @@ module Wagn
 
   class Initializer
     class << self
-      def set_default_config config
-      end
 
       def set_default_rails_config rails_config
         #rails_config.active_record.observers = :card_observer
@@ -47,10 +45,7 @@ module Wagn
           :key    => db[RAILS_ENV]['session_key'],
           :secret => db[RAILS_ENV]['secret']
         }
-        @@rails_config = rails_config
-        set_default_config Config.new(rails_config)
-
-        #Initializer.load
+        Config.new(rails_config)
       end
 
       def pre_schema?
@@ -65,11 +60,16 @@ module Wagn
         end
       end
 
+      #def preload
+      #  load_config
+      #  load_modules
+      #end
+
       def load
 
-        load_config
+        return unless load_config
 #        STDERR << "Loaded config\n"
-        setup_multihost
+        #setup_multihost
 #        STDERR << "setup multihost\n"
         load_modules
 #        STDERR << "Load Mods\n"
@@ -84,6 +84,11 @@ module Wagn
       end
 
       def load_config
+        ::Rails
+        unless Module.const_defined?(:Rails)
+          STDERR << "bail, no Rails yet\n"
+          return
+        end
         System
         # FIXME: this has to be here because System is both a config store and a model-- which means
         # in development mode it gets reloaded so we lose the config settings.  The whole config situation
@@ -98,6 +103,7 @@ module Wagn
 
         # Configuration cleanup: Make sure System.base_url doesn't end with a /
         System.base_url.gsub!(/\/$/,'')
+        true
       end
 
 =begin
@@ -182,6 +188,11 @@ module Wagn
 
       def load_modules
         %w{modules/*.rb packs/**/*_pack.rb}.each { |d| Wagn::Pack.dir(File.expand_path( "../../#{d}/",__FILE__)) }
+        begin
+          Wagn::Pack.load_all
+        rescue Exception => e
+          Rails.logger.info "Load error #{e}"
+        end
       end
 
 #      def register_mimetypes

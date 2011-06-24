@@ -99,8 +99,13 @@ module Wagn::Card::Permissions
   
   def rule_card(operation)
     opcard = setting_card(operation.to_s)
-    if !opcard && (!System.always_ok? || ENV['BOOTSTRAP_LOAD'] == 'true')
-      raise ::Card::PermissionDenied.new("No #{operation} setting card for #{name}") 
+    if !opcard && (!System.always_ok? || ENV['BOOTSTRAP_LOAD'] != 'true')
+      # ??? new needs a card, not a string?
+      #raise ::Card::PermissionDenied.new("No #{operation} setting card for #{name}") 
+      Rails.logger.debug detail="rule_card(#{operation}) #{opcard&&opcard.name}, #{System.always_ok?}, #{ENV['BOOTSTRAP_LOAD']} >>>"
+      raise Wagn::Oops.new("No #{operation} setting card for #{name} :: #{detail}") 
+    elsif !opcard
+      return nil, ''
     end
     
     rcard = begin
@@ -209,6 +214,7 @@ module Wagn::Card::Permissions
   
   def update_read_rule
     rcard, rclass = rule_card(:read)
+    return unless rcard
     update_attributes!(
       :read_rule_id => rcard.id,
       :read_rule_class => rclass
@@ -241,7 +247,7 @@ module Wagn::Card::Permissions
         User.as :wagbot do
           Card.fetch(name.trunk_name).item_cards(:limit=>0).each do |item_card|
             in_set[item_card.key] = true
-            next if rule_classes.index(item_card.read_rule_class) < rule_class_index
+            next if (x=rule_classes.index(item_card.read_rule_class))&& x < rule_class_index
             item_card.update_read_rule
           end
         end

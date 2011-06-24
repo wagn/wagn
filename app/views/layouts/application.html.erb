@@ -1,1 +1,4 @@
-<%= Renderer.new(nil, :params=>params, :flash=>flash, :controller=>@controller)._render_layout(:main_content=>@content_for_layout) %>
+<%= r=Renderer.new(nil, :params=>params, :flash=>flash, :controller=>@controller)
+c=@content_for_layout
+Rails.logger.debug "application template: #{r}, #{c}"
+r._render_layout(:main_content=>c) %>

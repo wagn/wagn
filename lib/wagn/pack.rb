@@ -14,7 +14,7 @@ module Wagn::Pack
     end
 
     def load_all 
-      #STDERR << "available_modules = #{@@dirs.inspect}\n"
+      Rails.logger.info "load_all available_modules = #{@@dirs.inspect}\n"
       if dirs.empty?
         #STDERR << "No mods registered: #{Kernel.caller*"\n"}"
       end

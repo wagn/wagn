@@ -17,9 +17,15 @@ Rails::Initializer.run do |config|
 
   begin
     Wagn::Initializer.set_default_rails_config config
-    Wagn::Initializer.load
+    #Wagn::Initializer.load
   rescue Exception => e
     STDERR << "Error in initialization? #{e}\n#{e.backtrace[0..10]*"\n"}\n"
+  end
+
+  STDERR << "Loaded? #{Module.const_defined?(:Rails)}\n"
+  ActionController::Dispatcher.to_prepare do
+    STDERR << "\n\nto_prepare #{Kernel.caller*"\n"}\n>>>end\n\n"
+    Wagn::Initializer.run
   end
 
   # Skip frameworks you're not going to use

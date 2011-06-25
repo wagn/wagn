@@ -1,4 +1,4 @@
-#require 'card'
+
 
 module Wagn::Pack
   mattr_accessor :dirs
@@ -34,3 +34,4 @@ module Wagn::Pack
   end
 end
 
+require 'card'

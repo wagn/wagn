@@ -43,7 +43,7 @@ module Wagn::Card::Search
     end
 
     def search(spec) 
-      Wql.new(spec).run
+      ::Wql.new(spec).run
     end
 
     def find_by_name( name, opts={} ) 

@@ -46,6 +46,8 @@ module Wagn
           :secret => db[RAILS_ENV]['secret']
         }
         Config.new(rails_config)
+
+        load_config
       end
 
       def pre_schema?
@@ -60,19 +62,16 @@ module Wagn
         end
       end
 
-      #def preload
-      #  load_config
-      #  load_modules
-      #end
-
       def load
-
-        return unless load_config
-#        STDERR << "Loaded config\n"
-        #setup_multihost
-#        STDERR << "setup multihost\n"
+        #STDERR << "Load Mods\n"
+        Rails.logger.info("\n----------- Wagn Load Complete -----------\n\n")
+        setup_multihost
         load_modules
-#        STDERR << "Load Mods\n"
+        #Card.send :include, Wagn::Pack
+      end
+
+      def run
+        Card.send :include, Wagn::Pack
         return if Initializer.pre_schema?
 #        STDERR << "Post Schema\n"
         Wagn::Cache.initialize_on_startup
@@ -80,20 +79,15 @@ module Wagn
 #        load_cardtype_cache
 #        STDERR << "Loaded ct cache\n"
         check_builtins
-        ActiveRecord::Base.logger.info("\n----------- Wagn Initialization Complete -----------\n\n")
+        STDERR << "\n----------- Wagn Initialization Complete -----------\n\n"
       end
 
       def load_config
-        ::Rails
-        unless Module.const_defined?(:Rails)
-          STDERR << "bail, no Rails yet\n"
-          return
-        end
-        System
+        #System Now wagn.rb just loads a module to be included after load
         # FIXME: this has to be here because System is both a config store and a model-- which means
         # in development mode it gets reloaded so we lose the config settings.  The whole config situation
         # needs an overhaul
-        #STDERR << "Load config ...\n"
+        STDERR << "Load config ...\n"
         if File.exists? "#{RAILS_ROOT}/config/sample_wagn.rb"
           require_dependency "#{RAILS_ROOT}/config/sample_wagn.rb"
         end
@@ -102,41 +96,9 @@ module Wagn
         end
 
         # Configuration cleanup: Make sure System.base_url doesn't end with a /
-        System.base_url.gsub!(/\/$/,'')
-        true
+        # (needs to go someplace else)
+        #System.base_url.gsub!(/\/$/,'')
       end
-
-=begin
-      def load_cardlib
-        equire_dependency 'card'
-        Cardname
-
-        Wagn.send :include, Wagn::Exceptions
-        Card.send :include, Wagn::Cardlib::Exceptions
-
-        ActiveRecord::Base.class_eval do
-          include Wagn::Cardlib::ActsAsCardExtension
-          include Wagn::Cardlib::AttributeTracking
-        end
-
-        Cardlib::ModuleMethods #load
-
-        Card.class_eval do
-        Card.class_eval do
-          include Cardlib::TrackedAttributes
-          include Cardlib::Templating
-          include Cardlib::Defaults
-          include Cardlib::Permissions
-          include Cardlib::Search
-          include Cardlib::References
-          include Cardlib::Cacheable
-          include Cardlib::Settings
-          include Cardlib::Settings::ClassMethods
-          extend Cardlib::CardAttachment::ActMethods
-        end
-        Cardlib::Fetch # trigger autoload
-      end
-=end
 
       def setup_multihost
         # set schema for multihost wagns   (make sure this is AFTER loading wagn.rb duh)
@@ -187,11 +149,13 @@ module Wagn
       end
 
       def load_modules
+        require_dependency "wagn/pack.rb"
         %w{modules/*.rb packs/**/*_pack.rb}.each { |d| Wagn::Pack.dir(File.expand_path( "../../#{d}/",__FILE__)) }
         begin
           Wagn::Pack.load_all
         rescue Exception => e
-          Rails.logger.info "Load error #{e}"
+          STDERR << "Load error #{e} #{e.backtrace[0..10]*"\n"}\n"
+          #Rails.logger.info "Load error #{e}"
         end
       end
 

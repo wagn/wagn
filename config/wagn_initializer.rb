@@ -72,11 +72,12 @@ class Wagn::Initializer
     end
 
     def run
-      #load_modules
+      STDERR << "\n----------- Wagn Load Starting -----------\n\n"
+      load_modules
+      STDERR << "\n----------- Wagn Run Starting ---\n#{Kernel.caller*"\n"}\n--------\n\n"
       return if pre_schema?
-#        STDERR << "Post Schema\n"
+      #STDERR << "Post Schema\n"
       Wagn::Cache.initialize_on_startup
-#        STDERR << "Done wit initialize on startup\n"
 #        load_cardtype_cache
 #        STDERR << "Loaded ct cache\n"
       check_builtins

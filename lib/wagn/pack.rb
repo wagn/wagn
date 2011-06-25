@@ -34,4 +34,5 @@ module Wagn::Pack
   end
 end
 
+STDERR << "\n---- Pack loaded, load card? #{Module.const_defined?(:Card)} ---\n\n"
 require 'card'

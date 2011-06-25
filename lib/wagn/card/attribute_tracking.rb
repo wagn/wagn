@@ -100,8 +100,9 @@ module Wagn::Card::AttributeTracking
     end
   end
   
-  def self.append_features(base)
-    super
+  def self.included(base)
+    STDERR << "attribute tracking includes(#{base}) #{self}\n\n"
+    #super
     base.extend(ClassMethods)
   end
 end

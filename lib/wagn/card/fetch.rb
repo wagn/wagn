@@ -110,8 +110,8 @@ module Wagn::Card::Fetch
 
   end
 
-  def self.append_features(base)
-    #Rails.logger.info "append_features(#{base}) S:#{self}"
+  def self.included(base)
+    #Rails.logger.info "included(#{base}) S:#{self}"
     base.extend Wagn::Card::Fetch::ClassMethods
     base.class_eval {
       attr_accessor :missing

@@ -33,7 +33,7 @@ module Wagn::Card::Settings
     end
   end
     
-  def self.append_features(base)
+  def self.included(base)
     super
     base.extend(ClassMethods)
   end

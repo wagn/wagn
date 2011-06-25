@@ -64,15 +64,15 @@ class Wagn::Initializer
     end
 
     def load
-      #STDERR << "Load Mods\n"
-      Rails.logger.info("\n----------- Wagn Load Complete -----------\n\n")
       setup_multihost
-      #Card.send :include, Wagn::Pack
+
       load_modules
+      STDERR << "\n----------- Wagn Load Complete -----------\n\n"
+      #Rails.logger.info("\n----------- Wagn Load Complete -----------\n\n")
     end
 
     def run
-      load_modules
+      #load_modules
       return if pre_schema?
 #        STDERR << "Post Schema\n"
       Wagn::Cache.initialize_on_startup
@@ -153,13 +153,16 @@ class Wagn::Initializer
       
       #STDERR << "load_modules(#{self}) #{[:Wagn, :Card].map {|s| "#{s}->#{self.const_defined?(s)}"}*", "}, #{Wagn.const_defined?(:Pack)}\n"
       STDERR << "load_modules #{self.inspect}, #{Wagn.const_defined?(:Pack)}\nTrace #{Kernel.caller*"\n"}\n\n"
-      unless Wagn.const_defined?(:Pack)
+      if Wagn.const_defined?(:Pack)
+        Card.send :include, Wagn::Card::Model
+        STDERR << "load_modules (sent include again) #{Wagn.const_defined?(:Pack)}\n\n"
+      else
         STDERR << "load_modules 1\n"
         require_dependency "wagn/pack.rb"
         STDERR << "load_modules 2\n"
         %w{modules/*.rb packs/**/*_pack.rb}.each { |d| Wagn::Pack.dir(File.expand_path( "../../#{d}/",__FILE__)) }
         STDERR << "load_modules 3\n"
-        STDERR << "load_modules #{self.inspect}, #{Wagn.const_defined?(:Pack)}, #{::Card.include?(Wagn::Pack)}\n"
+        STDERR << "load_modules #{self.inspect}, #{Wagn.const_defined?(:Pack)}, #{::Card.include?(Wagn::Card::Model)}\n"
         begin
           Wagn::Pack.load_all
         rescue Exception => e
@@ -167,7 +170,6 @@ class Wagn::Initializer
           #Rails.logger.info "Load error #{e}"
         end
       end
-      Card.send :include, Wagn::Pack
     end
 
 #    def register_mimetypes

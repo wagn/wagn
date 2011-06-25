@@ -81,7 +81,7 @@ module Wagn::Card::Search
     true
   end
 
-  def self.append_features(base)   
+  def self.included(base)   
     super
     Card.extend(ClassMethods)
     base.after_save :update_search_index

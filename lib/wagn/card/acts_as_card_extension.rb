@@ -1,7 +1,7 @@
 module Wagn::Card::ActsAsCardExtension
   # extend with this one, just class methods
 =begin
-def self.append_features(base)
+def self.included(base)
   super
   base.extend(ClassMethods)
 end

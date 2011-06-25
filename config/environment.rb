@@ -22,12 +22,6 @@ Rails::Initializer.run do |config|
     STDERR << "Error in initialization? #{e}\n#{e.backtrace[0..10]*"\n"}\n"
   end
 
-  STDERR << "Loaded? #{Module.const_defined?(:Rails)}\n"
-  ActionController::Dispatcher.to_prepare do
-    STDERR << "\n\nto_prepare\n\n"
-    Wagn::Initializer.run
-  end
-
   # Skip frameworks you're not going to use
 
   # Add additional load paths for your own custom dirs
@@ -52,3 +46,10 @@ Rails::Initializer.run do |config|
   # See Rails::Configuration for more options   
   # select a store for the rails/card cache
 end
+
+  STDERR << "Loaded? #{Module.const_defined?(:Rails)}\n"
+  ActionController::Dispatcher.to_prepare do
+    STDERR << "\n\nto_prepare\n\n"
+    Wagn::Initializer.run
+  end
+

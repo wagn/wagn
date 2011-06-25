@@ -7,7 +7,7 @@ module Wagn
     RecursiveTransclude = Class.new Error
     WqlError            = Class.new Error
   end
-  def self.append_features(base)
+  def self.included(base)
     Card.extend Exceptions
     base.extend Exceptions
   end

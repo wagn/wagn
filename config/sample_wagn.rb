@@ -1,4 +1,4 @@
-module WagnLocal
+module Wagn::Local
   def self.included(base)
     base.base_url = "http://localhost:3000/"
     base.max_renders = 8

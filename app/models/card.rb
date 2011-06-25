@@ -447,7 +447,12 @@ class Card
     when (@cached_revision and @cached_revision.id==current_revision_id); 
     when (@cached_revision=Card.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
     else
-      @cached_revision = current_revision || get_blank_revision
+      Rails.logger.debug "cached_revision #{@cached_revision}"
+      cr = current_revision
+      Rails.logger.debug "cached_revision #{cr}"
+      cr ||= get_blank_revision
+      Rails.logger.debug "cached_revision #{cr}"
+      @cached_revision = cr
       Card.cache.write("#{key}-content", @cached_revision)
     end
     @cached_revision

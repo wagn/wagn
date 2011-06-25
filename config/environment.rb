@@ -24,7 +24,7 @@ Rails::Initializer.run do |config|
 
   STDERR << "Loaded? #{Module.const_defined?(:Rails)}\n"
   ActionController::Dispatcher.to_prepare do
-    STDERR << "\n\nto_prepare #{Kernel.caller*"\n"}\n>>>end\n\n"
+    STDERR << "\n\nto_prepare\n\n"
     Wagn::Initializer.run
   end
 

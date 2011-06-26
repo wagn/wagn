@@ -69,8 +69,6 @@ class Wagn::Initializer
       load_modules
       return if pre_schema?
       Wagn::Cache.initialize_on_startup
-#     load_cardtype_cache
-      check_builtins
       STDERR << "----------- Wagn Initialization Complete -----------\n\n\n"
     end
 
@@ -83,7 +81,6 @@ class Wagn::Initializer
       if File.exists? "#{RAILS_ROOT}/config/wagn.rb"
         require_dependency "#{RAILS_ROOT}/config/wagn.rb"
       end
-
     end
 
     def setup_multihost
@@ -97,28 +94,6 @@ class Wagn::Initializer
         ActiveRecord::Base.connection.schema_search_path = ENV['WAGN']
         ::Card.cache.system_prefix = Wagn::Cache.system_prefix
       end
-    end
-
-    def load_cardtype_cache
-      ::Cardtype.load_cache unless ['test','cucumber'].member? ENV['RAILS_ENV']
-      # we were doing this to make sure all the cardtype classes get initialized correctly, 
-      # especially those with types that share names with ruby classes used elsewhere
-      # eg. Date -> Card::Date (not just "Date").
-      # eg2. Task (custom cardtype), which needs to be loaded as Card::Task, not Rake::Task
-    end
-
-  # make sure builtin cards exist
-    def check_builtins
-=begin
-      User.as :wagbot do
-        %w{ *account_link *alerts *foot *head *navbox *now *version 
-            *recent_change *search *broken_link }.map do |name|
-#Rails.logger.debug "create builtin cards #{name}"
-          c = Card[name]
-          Rails.logger.info "Warning missing builtin card: #{name}" if c.nil?
-        end
-      end
-=end
     end
 
     def load_modules

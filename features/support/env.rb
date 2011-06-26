@@ -60,5 +60,6 @@ if defined?(ActiveRecord::Base)
 end
 
 Before do
+  Wagn::Initialize.run
   Wagn::Cache.reset_for_tests
 end

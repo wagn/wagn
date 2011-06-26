@@ -32,7 +32,6 @@ class CardController < ApplicationController
   #---------( VIEWING CARDS )
 
   def show
-    debugger
     params[:_keyword] && params[:_keyword].gsub!('_',' ') ## this will be unnecessary soon.
 
     @card_name = Wagn::Cardname.unescape(params['id'] || '')

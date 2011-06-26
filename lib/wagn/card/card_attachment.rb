@@ -1,6 +1,6 @@
 module Wagn::Card::CardAttachment
   def self.included(base)
-    Rails.logger.info "add act methods for attachements #{base} #{self}"
+    #Rails.logger.info "add act methods for attachements #{base} #{self}"
     base.extend(ActMethods)
   end
 
@@ -11,7 +11,7 @@ module Wagn::Card::CardAttachment
     
       mattr_accessor :attachment_model
       attr_accessor :attachment_id
-      Rails.logger.info "card_attachement(#{klass}) #{self}"
+      #Rails.logger.info "card_attachement(#{klass}) #{self}"
       #after_save :update_attachment moved to Card (with null update to override)
 
       self.attachment_model = klass

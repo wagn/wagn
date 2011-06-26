@@ -1,15 +1,15 @@
 module Wagn::Card::TrackedAttributes 
    
   def set_tracked_attributes  
-    Rails.logger.debug "Card(#{name})#set_tracked_attributes begin"
+    #Rails.logger.debug "Card(#{name})#set_tracked_attributes begin"
     updates.each_pair do |attrib, value| 
-      Rails.logger.debug "updates #{attrib} = #{value}"
+      #Rails.logger.debug "updates #{attrib} = #{value}"
       if send("set_#{attrib}", value )
         updates.clear attrib
       end
       @changed ||={}; @changed[attrib.to_sym]=true 
     end
-    Rails.logger.debug "Card(#{name})#set_tracked_attributes end"
+    #Rails.logger.debug "Card(#{name})#set_tracked_attributes end"
   end
   
   
@@ -80,16 +80,12 @@ module Wagn::Card::TrackedAttributes
     
     
     #newcard = self.clone_to_type(new_type)
+    # do we need to "undo" and loaded modules?  Maybe reload defaults?
     self.include_singleton_modules
     self.before_validation_on_create
     ::Cardtype.reset_cache
 #    self.send(:callback, :before_create)
 
-    #newcard.send(:callback, :after_create)
-    #self.extension = self.extension
-    #self.set_permissions self.permissions.collect{|x| x}
-    # do we need to "undo" and loaded modules?  Maybe reload defaults?
-    #Card.include_type_mods(typecode)
     true
   end
   

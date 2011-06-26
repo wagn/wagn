@@ -8,19 +8,11 @@
 require File.join(File.dirname(__FILE__), 'boot')
 require File.join(File.dirname(__FILE__), 'wagn_initializer')
   
-#Wagn::Initializer.preload
-
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence those specified here
   #RAILS_GEM_VERSION = '2.3.9' unless defined? RAILS_GEM_VERSION  
-  
 
-  begin
-    Wagn::Initializer.set_default_rails_config config
-    #Wagn::Initializer.load
-  rescue Exception => e
-    STDERR << "Error in initialization? #{e}\n#{e.backtrace[0..10]*"\n"}\n"
-  end
+  Wagn::Initializer.set_default_rails_config config
 
   # Skip frameworks you're not going to use
 
@@ -47,9 +39,9 @@ Rails::Initializer.run do |config|
   # select a store for the rails/card cache
 end
 
-  STDERR << "Loaded? #{Module.const_defined?(:Rails)}\n"
-  ActionController::Dispatcher.to_prepare do
-    STDERR << "\n\nto_prepare\n\n"
-    Wagn::Initializer.run
-  end
+#STDERR << "Loaded? #{Module.const_defined?(:Rails)}\n"
+ActionController::Dispatcher.to_prepare do
+  #STDERR << "\n\nto_prepare\n\n"
+  Wagn::Initializer.run
+end
 

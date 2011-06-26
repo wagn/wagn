@@ -1,2 +1,2 @@
-STDERR << "wagn_init load ..\n"
+#STDERR << "wagn_init load ..\n"
 Wagn::Initializer.load

@@ -3,6 +3,7 @@ module Wagn::Card::TrackedAttributes
   def set_tracked_attributes  
     Rails.logger.debug "Card(#{name})#set_tracked_attributes begin"
     updates.each_pair do |attrib, value| 
+      Rails.logger.debug "updates #{attrib} = #{value}"
       if send("set_#{attrib}", value )
         updates.clear attrib
       end

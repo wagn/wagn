@@ -32,6 +32,7 @@ class Wagn::Config
 end
 
 class Wagn::Initializer
+  cattr_accessor :mods_loaded
   class << self
 
     def set_default_rails_config rails_config
@@ -72,7 +73,7 @@ class Wagn::Initializer
     end
 
     def run
-      STDERR << "\n----------- Wagn Load Starting -----------\n\n"
+      STDERR << "\n----------- Wagn Reload Starting -----------\n\n"
       load_modules
       STDERR << "\n----------- Wagn Run Starting ---\n#{Kernel.caller*"\n"}\n--------\n\n"
       return if pre_schema?
@@ -153,13 +154,17 @@ class Wagn::Initializer
     def load_modules
       
       #STDERR << "load_modules(#{self}) #{[:Wagn, :Card].map {|s| "#{s}->#{self.const_defined?(s)}"}*", "}, #{Wagn.const_defined?(:Pack)}\n"
-      STDERR << "load_modules #{self.inspect}, #{Wagn.const_defined?(:Pack)}\nTrace #{Kernel.caller*"\n"}\n\n"
-      if Wagn.const_defined?(:Pack)
-        Card.send :include, Wagn::Card::Model
+      STDERR << "load_modules #{mods_loaded}, #{Wagn.const_defined?(:Pack)}\nTrace #{Kernel.caller*"\n"}\n\n"
+      unless Wagn.const_defined?(:Pack)
+        #Card.send :include, Wagn::Card::Model
         STDERR << "load_modules (sent include again) #{Wagn.const_defined?(:Pack)}\n\n"
-      else
+        debugger
         STDERR << "load_modules 1\n"
         require_dependency "wagn/pack.rb"
+      end
+      #else
+      return if mods_loaded
+      mods_loaded = true
         STDERR << "load_modules 2\n"
         %w{modules/*.rb packs/**/*_pack.rb}.each { |d| Wagn::Pack.dir(File.expand_path( "../../#{d}/",__FILE__)) }
         STDERR << "load_modules 3\n"
@@ -170,7 +175,7 @@ class Wagn::Initializer
           STDERR << "Load error #{e} #{e.backtrace[0..10]*"\n"}\n"
           #Rails.logger.info "Load error #{e}"
         end
-      end
+      #end
     end
 
 #    def register_mimetypes

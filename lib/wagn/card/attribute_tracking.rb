@@ -53,6 +53,7 @@ module Wagn::Card::AttributeTracking
   module ClassMethods 
     # Important! Tracking should be declared *after* associations
     def tracks(*fields)
+      Rails.logger.debug "tracks(#{fields.inspect})"
       class_eval do
         def updates
           @updates ||= Updates.new(self)
@@ -101,8 +102,7 @@ module Wagn::Card::AttributeTracking
   end
   
   def self.included(base)
-    STDERR << "attribute tracking includes(#{base}) #{self}\n\n"
-    #super
+    super
     base.extend(ClassMethods)
   end
 end

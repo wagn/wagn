@@ -1,11 +1,11 @@
 
 class Card < ActiveRecord::Base
-end
-require 'wiki_reference'
-require 'wagn/card/model'
-require 'app/models/card/role.rb'
-
-class Card
+#end
+#require 'wiki_reference'
+#require 'wagn/card/model'
+#require 'app/models/card/role.rb'
+#
+#class Card
   def destroy!
     # FIXME: do we want to overide confirmation by setting confirm_destroy=true here?
     # This is aliased in Permissions, which could be related to the above comment
@@ -437,7 +437,11 @@ class Card
   
   def content   
     new_card? ? ok!(:create) : ok!(:read)
-    cached_revision.new_record? ? "" : cached_revision.content
+    cached_revision.new_record? ? "" :
+     begin
+       Rails.logger.info "get revision content ..."
+       cached_revision.content
+     end
   end   
   
   def cached_revision
@@ -450,6 +454,7 @@ class Card
       Rails.logger.debug "cached_revision #{@cached_revision}"
       cr = current_revision || get_blank_revision
       Rails.logger.debug "cached_revision #{cr}"
+      debugger if cr.nil?
       @cached_revision = cr
       Card.cache.write("#{key}-content", @cached_revision)
     end

@@ -67,7 +67,7 @@ class Wagn::Initializer
     def load
       setup_multihost
 
-      load_modules
+      #load_modules
       STDERR << "\n----------- Wagn Load Complete -----------\n\n"
       #Rails.logger.info("\n----------- Wagn Load Complete -----------\n\n")
     end

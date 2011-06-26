@@ -442,7 +442,7 @@ class Card < ActiveRecord::Base
        Rails.logger.info "get revision content ..."
        cached_revision.content
      end
-  end   
+  end
   
   def cached_revision
     #return current_revision || get_blank_revision

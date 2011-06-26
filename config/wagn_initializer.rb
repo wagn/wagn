@@ -58,7 +58,7 @@ class Wagn::Initializer
         @@schema_initialized ||= ActiveRecord::Base.connection.select_value("select count(*) from cards").to_i > 2
         !@@schema_initialized
       rescue Exception => e
-        STDERR << "\n-------- Schema not initialized--------\nError: #{e}\n\n"# Trace #{e.backtrace*"\n"}"
+        STDERR << "\n-------- Schema not initialized--------"# Trace #{e.backtrace*"\n"}"
         #ActiveRecord::Base.logger.info("\n----------- Schema Not Initialized -----------\n\n")
         true
       end
@@ -75,7 +75,7 @@ class Wagn::Initializer
     def run
       STDERR << "\n----------- Wagn Reload Starting -----------\n\n"
       load_modules
-      STDERR << "\n----------- Wagn Run Starting ---\n#{Kernel.caller*"\n"}\n--------\n\n"
+      STDERR << "\n----------- Wagn Run Starting -----------\n\n"
       return if pre_schema?
       #STDERR << "Post Schema\n"
       Wagn::Cache.initialize_on_startup
@@ -158,7 +158,6 @@ class Wagn::Initializer
       unless Wagn.const_defined?(:Pack)
         #Card.send :include, Wagn::Card::Model
         STDERR << "load_modules (sent include again) #{Wagn.const_defined?(:Pack)}\n\n"
-        debugger
         STDERR << "load_modules 1\n"
         require_dependency "wagn/pack.rb"
       end

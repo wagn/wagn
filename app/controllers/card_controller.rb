@@ -32,13 +32,12 @@ class CardController < ApplicationController
   #---------( VIEWING CARDS )
 
   def show
-    debugger
     params[:_keyword] && params[:_keyword].gsub!('_',' ') ## this will be unnecessary soon.
 
     @card_name = Wagn::Cardname.unescape(params['id'] || '')
     @card_name = System.site_title if (@card_name.nil? or @card_name.empty?)
-    @card =   Card.fetch_or_new(@card_name)
-
+    @card =   Card.fetch_or_new(@card_name)    
+      
     if params[:format].nil? || params[:format].to_sym==:html
       if @card.new_record? && !@card.virtual?  # why doesnt !known? work here?
         params[:card]={:name=>@card_name, :type=>params[:type]}
@@ -83,9 +82,6 @@ class CardController < ApplicationController
 
   #----------------( creating)
   def new
-    Wagn::Hook.call :before_new, '*all', self
-    
-    #normalize args
     @args = (params[:card] ||= {})
     @args[:name] ||= params[:id] # for ajax (?)
     @args[:type] ||= params[:type] # for /new/:type shortcut

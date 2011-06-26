@@ -224,12 +224,6 @@ describe CardController do
       get :new, :card=>{:name=>"A"}
       assert_response :success, "response should succeed"
     end
-    
-    it "invokes before_new hook" do
-      login_as :joe_user
-      Wagn::Hook.should_receive(:call).with(:before_new, "*all", instance_of(CardController))
-      get :new,:card=>{:name=>"A"}
-    end
   end
 
   describe "unit tests" do

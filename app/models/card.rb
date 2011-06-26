@@ -437,11 +437,7 @@ class Card < ActiveRecord::Base
   
   def content   
     new_card? ? ok!(:create) : ok!(:read)
-    cached_revision.new_record? ? "" :
-     begin
-       Rails.logger.info "get revision content ..."
-       cached_revision.content
-     end
+    cached_revision.new_record? ? "" : cached_revision.content
   end
   
   def cached_revision
@@ -451,11 +447,7 @@ class Card < ActiveRecord::Base
     when (@cached_revision and @cached_revision.id==current_revision_id); 
     when (@cached_revision=Card.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
     else
-      Rails.logger.debug "cached_revision #{@cached_revision}"
-      cr = current_revision || get_blank_revision
-      Rails.logger.debug "cached_revision #{cr}"
-      debugger if cr.nil?
-      @cached_revision = cr
+      @cached_revision = current_revision || get_blank_revision
       Card.cache.write("#{key}-content", @cached_revision)
     end
     @cached_revision

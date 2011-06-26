@@ -6,7 +6,7 @@ require 'assert2/xhtml'
 
 Spork.prefork do
   require File.expand_path(File.dirname(__FILE__) + "/../config/wagn_initializer")
-  #Spork.trap_class_method(Wagn::Initializer,"load")
+  Spork.trap_class_method(Wagn::Initializer,"load")
 
   require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
   require 'spec'

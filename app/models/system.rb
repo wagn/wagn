@@ -115,7 +115,6 @@ class System < ActiveRecord::Base
 
   @@role_tasks = %w{ administrate_users create_accounts assign_user_roles }
   
-  Rails.logger.info "Loading system model"
   include Wagn::Local
 end        
 

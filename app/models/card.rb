@@ -1,11 +1,5 @@
 
 class Card < ActiveRecord::Base
-#end
-#require 'wiki_reference'
-#require 'wagn/card/model'
-#require 'app/models/card/role.rb'
-#
-#class Card
   def destroy!
     # FIXME: do we want to overide confirmation by setting confirm_destroy=true here?
     # This is aliased in Permissions, which could be related to the above comment
@@ -143,7 +137,7 @@ class Card < ActiveRecord::Base
     args = args.stringify_keys
     args['trash'] = false
       
-    Rails.logger.debug "Card.initialize #{args.inspect}"
+    #Rails.logger.debug "Card.initialize #{args.inspect}"
     args['typecode'] ||= case
     when type_name = args.delete('type')
       begin
@@ -185,10 +179,8 @@ class Card < ActiveRecord::Base
 
   class << self
     def include_type_module(typecode)
-      #mod = Card.const_get(typecode) 
       con = (mod=Card.const_get(typecode.to_sym)).to_s.split('::')
       return if con.length != 2 or con[0] != 'Card'
-      #warn  "include_type_module(#{typecode}) #{mod.inspect}" if typecode == 'Role'
       include mod if mod
     rescue Exception=>e
       return unless mod
@@ -343,7 +335,6 @@ class Card < ActiveRecord::Base
   def cardtype_name()
     #raise "No type: #{self.inspect}" unless self.typecode
     typecode or return 'Basic'
-    #Rails.logger.info "No cardtype: #{self}, #{Kernel.caller*"\n"}" unless typecode
     ::Cardtype.name_for( typecode )
   end
   
@@ -599,11 +590,6 @@ class Card < ActiveRecord::Base
       end
   
       rec.send :validate_typecode_change
-=begin
-      newcard = rec.send :clone_to_type, value
-      newcard.valid?  # run all validations...
-      rec.send :copy_errors_from, newcard
-=end
     end
 
     # validate on update and create 
@@ -619,8 +605,6 @@ class Card < ActiveRecord::Base
         rec.errors.add :typecode, "can't be changed because #{rec.name} is hard tag templated to #{rec.right_template.typecode}"
       end        
       
-      Rails.logger.debug "include for updates #{rec.name} #{value}"
-#      include_type_module(value)
     end
   end  
 

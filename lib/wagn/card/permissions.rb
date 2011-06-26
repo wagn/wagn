@@ -99,10 +99,8 @@ module Wagn::Card::Permissions
   
   def rule_card(operation)
     opcard = setting_card(operation.to_s)
-    if !opcard && (!System.always_ok? || ENV['BOOTSTRAP_LOAD'] != 'true')
-      raise Wagn::Oops.new("No #{operation} setting card for #{name} :: #{detail}") 
-    elsif !opcard
-      return nil, ''
+    if !opcard && (!System.always_ok? || ENV['BOOTSTRAP_LOAD'] == 'true')
+      raise ::Card::PermissionDenied.new("No #{operation} setting card for #{name}") 
     end
     
     rcard = begin

@@ -59,6 +59,9 @@ end
 # TESTING #
 # ~~~~~~~ #
 
+group :debug do
+  gem 'ruby-debug'
+end
 
 group :test do
   gem 'win32console', '1.3.0', :platforms => ['mingw', 'mswin']

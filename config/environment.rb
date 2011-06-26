@@ -44,3 +44,4 @@ ActionController::Dispatcher.to_prepare do
   Wagn::Initializer.run
 end
 
+Wagn::Initializer.load_modules

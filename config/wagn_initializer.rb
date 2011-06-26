@@ -59,7 +59,9 @@ class Wagn::Initializer
     def load
       setup_multihost
 
-      #load_modules
+      if ENV['RAILS_ENV'] == 'cucumber'
+        #ActionController::Dispatcher.to_prepare { run }
+      end
       STDERR << "----------- Wagn Load Complete -----------\n"
       #Rails.logger.info("\n----------- Wagn Load Complete -----------\n\n")
     end
@@ -97,6 +99,7 @@ class Wagn::Initializer
     end
 
     def load_modules
+      Card
       #STDERR << "load_modules Pack load #{Wagn.const_defined?(:Pack)}\n\n"
       require_dependency "wagn/pack.rb"
       %w{modules/*.rb packs/**/*_pack.rb}.each { |d| Wagn::Pack.dir(File.expand_path( "../../#{d}/",__FILE__)) }

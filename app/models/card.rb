@@ -170,8 +170,9 @@ class Card < ActiveRecord::Base
   
   def include_singleton_modules
     return unless typecode
-    #warn "include singleton mod for #{name}"
+#    warn "include singleton mod for #{name}"
     singleton.include_type_module(typecode)
+    after_include if respond_to? :after_include
   end
 
   def singleton
@@ -181,10 +182,12 @@ class Card < ActiveRecord::Base
   class << self
     def include_type_module(typecode)
       typecode = typecode.to_sym
-      mod = begin eval "Wagn::Set::Type::#{typecode}"
-            rescue NameError => e
-              nil
-            end
+      mod = begin 
+        eval "Wagn::Set::Type::#{typecode}"
+      rescue NameError => e
+        nil
+      end
+#      warn "including #{mod}"
       include mod if mod
 #    rescue Exception=>e
 #      return unless mod

@@ -1,7 +1,7 @@
 module Card::File
-  include Wagn::Card::CardAttachment
-
-  card_attachment CardFile
+  def after_initialize
+    self.class.card_attachment CardFile
+  end
   
   def item_names(args={})
     [self.name]

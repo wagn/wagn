@@ -397,13 +397,6 @@ class Card < ActiveRecord::Base
       revisions[revision_index - 1]
     end
   end
-  
-  # I don't really like this.. 
-  #def attribute_card( attr_name )
-  #  ::User.as :wagbot do
-  #    Card.fetch( name + JOINT + attr_name , :skip_virtual => true)
-  #  end
-  #end
    
   def revised_at
     if cached_revision && rtime = cached_revision.updated_at

@@ -1,4 +1,4 @@
-module Card::Html
+module Wagn::Model::Type::Html
   def clean_html?
     false
   end

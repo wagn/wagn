@@ -1,4 +1,4 @@
-module Card::Basic
+module Wagn::Model::Type::Basic
   def generic?
     true
   end

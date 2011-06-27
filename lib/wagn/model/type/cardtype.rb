@@ -1,5 +1,5 @@
-module Card::Cardtype
-  include Card::Basic
+module Wagn::Model::Type::Cardtype
+  include Wagn::Model::Type::Basic
 
   # extend the created card's class
   def self.included(base)

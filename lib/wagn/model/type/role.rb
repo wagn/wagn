@@ -1,5 +1,5 @@
-module Card::Role
-  include Card::Basic
+module Wagn::Model::Type::Role
+  include Wagn::Model::Type::Basic
   
   def before_validation_on_create
     create_extension

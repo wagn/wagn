@@ -1,4 +1,4 @@
-module Card::InvitationRequest
+module Wagn::Model::Type::InvitationRequest
   def before_destroy
     block_user
   end

@@ -1,4 +1,4 @@
-module Card::File
+module Wagn::Model::Type::File
   include Wagn::Model::CardAttachment
 
   card_attachment CardFile

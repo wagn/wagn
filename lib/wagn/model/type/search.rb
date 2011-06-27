@@ -1,5 +1,5 @@
 
-module Card::Search
+module Wagn::Model::Type::Search
   def self.included(base)
     base.class_eval { attr_accessor :results }
     base.send :before_save, :escape_content

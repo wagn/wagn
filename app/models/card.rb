@@ -179,8 +179,16 @@ class Card < ActiveRecord::Base
 
   class << self
     def include_type_module(typecode)
-      con = (mod=Card.const_get(typecode.to_sym)).to_s.split('::')
-      return if con.length != 2 or con[0] != 'Card'
+      typecode = typecode.to_sym
+      con = (mod=Wagn::Model::Type.const_get(typecode)).to_s.split('::')
+      if con.length != 4 or con[2] != 'Type'
+        Rails.logger.info "Different const?#{typecode}, #{mod}"
+        #Wagn::Model::Type.send :remove_const, typecode
+        con = (mod=Wagn::Model::Type.const_missing(typecode)).to_s.split('::')
+        if con.length != 4 or con[2] != 'Type'
+          Rails.logger.info "Different const2 ?#{typecode}, #{mod}"
+        end
+      end
       include mod if mod
     rescue Exception=>e
       return unless mod

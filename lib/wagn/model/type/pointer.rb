@@ -1,4 +1,4 @@
-module Card::Pointer
+module Wagn::Model::Type::Pointer
 
   def collection?() true  end
 

@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
 # FIXME this shouldn't be here
-describe Card::Cardtype, ".create with :codename" do
+describe Wagn::Model::Type::Cardtype, ".create with :codename" do
   before do
     User.as :joe_user
   end

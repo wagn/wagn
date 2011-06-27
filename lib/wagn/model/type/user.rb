@@ -1,5 +1,5 @@
-module Card::User
-  include Card::Basic
+module Wagn::Model::Type::User
+  include Wagn::Model::Type::Basic
 
   attr_accessor :email
   

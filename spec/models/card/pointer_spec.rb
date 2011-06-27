@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe Card::Pointer do
+describe Wagn::Model::Type::Pointer do
   before do
     User.current_user = :joe_user
   end

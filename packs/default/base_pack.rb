@@ -19,7 +19,7 @@ class Renderer
   define_view(:name)     { card.name             }
   define_view(:key)      { card.key              }
   define_view(:linkname) { card.name.to_url_key  }
-  define_view(:link)     { build_link(card.name, card.name) }
+  define_view(:link)     { name=card.name; build_link(name, name) }
   define_view(:url)      { "#{System.base_url}/wagn/#{_render_linkname}"}
 
   define_view(:open_content) do |args|

@@ -2,5 +2,3 @@
 #require 'ruby-debug';
 require File.dirname(__FILE__) + '/../config/boot';
 require 'commands/server';
-
-#debugger if ENV['RAILS_ENV'] == 'development'

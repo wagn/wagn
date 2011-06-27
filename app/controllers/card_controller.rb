@@ -8,8 +8,8 @@ class CardController < ApplicationController
   before_filter :load_card_with_cache, :only => [:line, :view, :open ]
 
   before_filter :view_ok,   :only=> LOAD_ACTIONS
-  before_filter :create_ok, :only=>[ :new, :create ]
-  before_filter :edit_ok,   :only=> EDIT_ACTIONS
+#  before_filter :create_ok, :only=>[ :new, :create ]
+  before_filter :update_ok,   :only=> EDIT_ACTIONS
   before_filter :remove_ok, :only=>[ :remove ]
 
   before_filter :require_captcha, :only => [ :create, :update, :comment, :quick_update ]
@@ -26,7 +26,7 @@ class CardController < ApplicationController
   end
 
   def mine
-    redirect_to :controller=>'card',:action=>'show', :id=>Cardname.escape(User.current_user.card.name)
+    redirect_to :controller=>'card',:action=>'show', :id=>Wagn::Cardname.escape(User.current_user.card.name)
   end
 
   #---------( VIEWING CARDS )
@@ -34,17 +34,17 @@ class CardController < ApplicationController
   def show
     params[:_keyword] && params[:_keyword].gsub!('_',' ') ## this will be unnecessary soon.
 
-    @card_name = Cardname.unescape(params['id'] || '')
+    @card_name = Wagn::Cardname.unescape(params['id'] || '')
     @card_name = System.site_title if (@card_name.nil? or @card_name.empty?)
-    @card =   Card.fetch_or_new(@card_name)
-
+    @card =   Card.fetch_or_new(@card_name)    
+      
     if params[:format].nil? || params[:format].to_sym==:html
       if @card.new_record? && !@card.virtual?  # why doesnt !known? work here?
         params[:card]={:name=>@card_name, :type=>params[:type]}
         return case
-          when ::Cardtype.create_ok?(params[:type] || 'Basic')  ;  self.new
-          when logged_in?                                       ;  render :action=>'denied'
-          else                                                  ;  render :action=>'missing' 
+          when @card.ok?(:create) ;  self.new
+          when logged_in?         ;  render :action=>'denied'
+          else                    ;  render :action=>'missing' 
           end
       else
         save_location
@@ -82,22 +82,24 @@ class CardController < ApplicationController
 
   #----------------( creating)
   def new
-    Wagn::Hook.call :before_new, '*all', self
-
-    #normalize args
     @args = (params[:card] ||= {})
     @args[:name] ||= params[:id] # for ajax (?)
     @args[:type] ||= params[:type] # for /new/:type shortcut
     [:name, :type, :content].each {|key| @args.delete(key) unless a=@args[key] and !a.blank?} #filter blank args
+    @args.delete(:attachment_id) # was breaking changes to and away from image / file.  should refactor so this is unnecessary.
 
     if @args[:name] and Card.exists?(@args[:name]) #card exists
       render :text => "<span>Oops, <strong>#{@args[:name]}</strong> was recently created! try reloading the page to edit it</span>" #ENGLISH
     else
       @card = Card.new @args
-      render (request.xhr? ?
-        {:partial=>'views/new', :locals=>{ :card=>@card }} : #ajax
-        {:action=> 'new'} #normal
-      )
+      if @card.ok? :create
+        render (request.xhr? ?
+          {:partial=>'views/new', :locals=>{ :card=>@card }} : #ajax
+          {:action=> 'new'} #normal
+        )
+      else
+        render_denied('create')
+      end
     end
   end
 
@@ -157,6 +159,7 @@ class CardController < ApplicationController
     #fail "card params required" unless params[:card] or params[:cards]
 
     # ~~~ REFACTOR! -- this conflict management handling is sloppy
+    Rails.logger.debug "update set current_revision #{@card.name}, #{@card.current_revision}"
     @current_revision_id = @card.current_revision.id
     old_revision_id = card_args.delete(:current_revision_id) || @current_revision_id
     if old_revision_id.to_i != @current_revision_id.to_i
@@ -292,7 +295,7 @@ class CardController < ApplicationController
   end
 
   def related
-    sources = [@card.cardtype.name,nil]
+    sources = [@card.typecode.name,nil]
     sources.unshift '*account' if @card.extension_type=='User'
     @items = sources.map do |root|
       c = Card.fetch((root ? "#{root}+" : '') +'*related')

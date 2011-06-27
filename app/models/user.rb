@@ -107,6 +107,31 @@ class User < ActiveRecord::Base
     #end
   end 
 
+
+#~~~~~~~ Instance
+
+
+  def among? test_parties
+    #Rails.logger.info "among called.  user = #{self.login}, parties = #{parties.inspect}, test_parties = #{test_parties.inspect}"
+    parties.each do |party|
+      return true if test_parties.member? party
+    end
+    false
+  end
+
+  def parties
+    @parties ||= [self,all_roles].flatten.map{|p| p.card.key }
+  end
+  
+  def read_rule_ids
+    @read_rule_ids = begin
+      party_keys = ['in'] + parties
+      self.class.as(:wagbot) do
+        Card.search(:right=>'*read', :refer_to=>{:key=>party_keys}).map &:id
+      end
+    end
+  end
+  
   ## INSTANCE METHODS
 
   def save_with_card(card)
@@ -130,8 +155,7 @@ class User < ActiveRecord::Base
 
   def accept(email_args)
     User.as :wagbot  do #what permissions does approver lack?  Should we check for them?
-      card.type = 'User'  # change from Invite Request -> User
-      card.permit :edit, Card.new(:type=>'User').who_can(:edit) #give default user permissions
+      card.typecode = 'User'  # change from Invite Request -> User
       self.status='active'
       self.invite_sender = ::User.current_user
       generate_password

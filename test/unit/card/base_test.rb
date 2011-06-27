@@ -27,18 +27,18 @@ class Card::BaseTest < ActiveSupport::TestCase
     #while card = Card.find(:first,:conditions=>["type not in (?,?,?) and trash=?", 'InvitationRequest','User','Cardtype',false] )
     #  card.destroy!
     #end
-    #assert_equal 0, Card::Basic.find_all_by_trash(false).size
+    #assert_equal 0, Card.find_all_by_trash(false).size
   end
 
   #def test_attribute_card
   #  alpha, beta = Card.create(:name=>'alpha'), Card.create(:name=>'beta')
   #  assert_nil alpha.attribute_card('beta')
   #  Card.create :name=>'alpha+beta'   
-  #  assert_instance_of Card::Basic, alpha.attribute_card('beta')
+  #  assert_instance_of Card, alpha.attribute_card('beta')
   #end
 
   def test_create
-    alpha = Card::Basic.new :name=>'alpha', :content=>'alpha'
+    alpha = Card.new :name=>'alpha', :content=>'alpha'
     assert_equal 'alpha', alpha.content
     alpha.save
     assert_stable(alpha)
@@ -47,13 +47,13 @@ class Card::BaseTest < ActiveSupport::TestCase
   
   # just a sanity check that we don't have broken data to start with
   def test_fixtures
-    Card::Base.find(:all).each do |p|
+    Card.find(:all).each do |p|
       assert_instance_of String, p.name
     end
   end
 
   def test_find_by_name
-    card = Card::Basic.create( :name=>"ThisMyCard", :content=>"Contentification is cool" )
+    card = Card.create( :name=>"ThisMyCard", :content=>"Contentification is cool" )
     assert_equal card, Card.find_by_name("ThisMyCard")
   end
  
@@ -76,6 +76,9 @@ class Card::BaseTest < ActiveSupport::TestCase
   
   def test_multi_update_should_create_subcards_as_wagbot_if_missing_subcard_permissions
     # then repeat multiple update as above, as :anon
+    #remove me after regenerating test data
+    Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
+    
     User.current_user = :anon
     assert_equal false, Card.fetch('Basic').ok?(:create)
     b = Card.create!( :type=>"Fruit", :name=>'Banana' )
@@ -98,8 +101,8 @@ class Card::BaseTest < ActiveSupport::TestCase
 
 
   def test_create_without_read_permission
+    c = Card.create! :name=>"Banana", :type=>"Fruit", :content=>"mush"
     User.as(:anon) do
-      c = Card.create! :name=>"Banana", :type=>"Fruit", :content=>"mush"
       assert_raises Card::PermissionDenied do
         Card['Banana'].content
       end

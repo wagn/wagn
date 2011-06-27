@@ -1,4 +1,5 @@
-require 'rubygems'
+require File.expand_path('../../config/preinitializer',__FILE__)
+#require 'rubygems'
 require 'spork'
 ENV["RAILS_ENV"] = "test"
 require 'assert2/xhtml'
@@ -20,6 +21,8 @@ Spork.prefork do
   # need to restart spork for it take effect.
   # This file is copied to ~/spec when you run 'ruby script/generate rspec'
   # from the project root directory.
+
+  Wagn::Initializer.run
 
   Spec::Runner.configure do |config|
     # If you're not using ActiveRecord you should remove these

@@ -77,14 +77,13 @@ class Mailer < ActionMailer::Base
               a.body = f.read
             end
           end
-        elsif c = Card[cardname] and c.type == "NimbbVideo"
+        elsif c = Card[cardname] and c.typecode == "NimbbVideo"
           attachment "video/x-flv" do |a|
             guid = User.as(:wagbot){ c.content }
             video_url = "http://api.nimbb.com/Video/Download.aspx?" +         
               "key=#{Wagn.config.nimbb_public_key}&" + 
               "code=#{Wagn.config.nimbb_private_key}&" + 
               "guid=#{guid}"
-            debugger
             open( video_url ) do |v|
               a.filename "video-#{guid}.flv"
               a.body = v.read

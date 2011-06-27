@@ -1,18 +1,21 @@
 
 class Renderer
   define_view(:naked, :type=>'search') do
+    error=nil
     begin
+      Rails.logger.info "Search :naked #{card&&card.name} #{Kernel.caller[0..5]*"\n"}"
       card.item_cards( paging_params )
     rescue Exception=>e
       Rails.logger.info "Search Error (:naked) #{e.inspect} #{e.backtrace*"\n"}"
       error = e
     end
 
+    Rails.logger.info "Search naked R #{card&&card.name} #{card.results.inspect}"
     case
     when card.results.nil?
-      %{#{error.class.to_s}: #{error.message}<br/>#{card.content}}
+      %{No results? #{error.class.to_s}: #{error&&error.message}<br/>#{card.content}}
     when card.spec[:return] =='count'
-      card.results
+      card.results.to_s
     else
       render('card_list')
     end
@@ -36,7 +39,7 @@ class Renderer
     if card.results.nil?
       %{"#{error.class.to_s}: #{error.message}"<br/>#{card.content}}
     elsif card.spec[:return] =='count'
-      card.results
+      card.results.to_s
     elsif card.results.length==0
       '<span class="faint">(0)</span>'
     else
@@ -92,12 +95,9 @@ class Renderer
 
     cards_by_day = Hash.new { |h, day| h[day] = [] }
     cards.each do |card|
-      #FIXME - tis UGLY, we're getting cached cards, so get the real card to call
-      # revised_at on.  the cards should already be there from the search results.
-      #- yeah, also seems like this should be some sort of card list option. -efm
-      real_card = card.respond_to?(:card) ? card.card : card
       begin
-        day = Date.new(real_card.updated_at.year, real_card.updated_at.month, real_card.updated_at.day)
+        stamp = card.updated_at
+        day = Date.new(stamp.year, stamp.month, stamp.day)
       rescue Exception=>e
         day = Date.today
         card.content = "(error getting date)"
@@ -134,7 +134,7 @@ class Renderer
     s = card.spec(paging_params)
     offset, limit = s[:offset].to_i, s[:limit].to_i
     first,last = offset+1,offset+card.results.length 
-    total = card.count
+    total = card.count(paging_params)
  
     args = params.clone
     args[:limit] = limit

@@ -16,12 +16,7 @@ module Wagn
       def subclasses
         @@subclasses
       end
-      
-      def method_keys card
-        @@subclasses.map do |pclass| 
-          pclass.pattern_applies?(card) ? pclass.method_key(card) : nil
-        end.compact
-      end
+
 
       def method_key(opts)
         @@subclasses.each do |pclass|
@@ -31,31 +26,16 @@ module Wagn
         end
       end
 
-      def set_keys card
-        card.new_record? ? generate_set_keys(card) :
-          (@@cache[(card.name ||"") + (card.type||"")] ||= generate_set_names(card))
+      def generate_cache_key card
+        name = card.name
+        left = (name && name.junction?) ? (card.loaded_trunk || card.left) : nil
+        left_key = left ? left.typecode : ''
+        cache_key = "#{name}-#{card.typecode}-#{left_key}-#{card.new_card?}"
       end
-
-      def generate_set_keys card
-        @@subclasses.map do |pclass|
-          pclass.pattern_applies?(card) and pclass.set_name(card) 
-        end.compact
-      end
-
-#      def codenames card, view
-#        @@subclasses.map do |pclass|
-#          pclass.pattern_applies?(card) and codename = pclass.codename(card)
-#          next unless codename
-#          codename = (codename.blank? ? view : "#{codename}_#{view}").to_sym
-#          block_given? ? yield(codename) : codename
-#        end
-#      end
 
       def set_names card
-#r=
-        card.new_record? ? generate_set_names(card) :
-          (@@cache[(card.name ||"") + (card.type||"")] ||= generate_set_names(card))
-#Rails.logger.debug "set_names #{card&&card.name} #{r.inspect}"; r
+        cache_key = "SETNAMES-#{generate_cache_key card}"
+        Card.cache.read(cache_key) or Card.cache.write(cache_key, generate_set_names(card))
       end
 
       def generate_set_names card
@@ -65,6 +45,18 @@ raise "no card" unless card
           pclass.set_name(card) or nil
         end.compact
       end
+
+      def method_keys card
+        cache_key = "METHODKEYS-#{generate_cache_key card}"
+        Card.cache.read(cache_key) or Card.cache.write(cache_key, generate_method_keys(card))
+      end
+
+      def generate_method_keys card
+        @@subclasses.map do |pclass| 
+          pclass.pattern_applies?(card) ? pclass.method_key(card) : nil
+        end.compact
+      end
+
 
       def css_names card
         @@subclasses.map do |pclass|
@@ -99,100 +91,93 @@ raise "no card" unless card
 
   class AllPattern < Pattern
     class << self
-      def key
-        '*all'
-      end
-      
-      def opt_keys
-        []
-      end
-
-      def pattern_applies? card
-        true
-      end
-
-      def set_name card
-        key
-      end
-
-      def method_key card
-        ''
-      end
-
-      def method_key_from_opts(opts)
-        ''
-      end
-
-      def css_name card
-        "ALL"
-      end
-
-      def label name
-        'All Cards'
-      end
+      def key()                       '*all'       end
+      def opt_keys()                   []           end
+      def pattern_applies?(card)       true         end
+      def set_name(card)               key          end
+      def method_key(card)             ''           end
+      def method_key_from_opts(opts)   ''           end
+      def css_name(card)               "ALL"        end
+      def label(name)                  'All Cards'  end
+    end
+    register_class self
+  end
+  
+  class AllPlusPattern < Pattern
+    class << self
+      def key()                        '*all plus'                 end
+      def opt_keys()                   [:all_plus]                 end
+      def pattern_applies?(card)       card.junction?              end
+      def set_name(card)               key                         end
+      def method_key(card)             'all_plus'                  end
+      def method_key_from_opts(opts)   'all_plus'                  end
+      def css_name(card)               "ALL_PLUS"                  end
+      def label(name)                  'All Plus Cards'            end
     end
     register_class self
   end
 
   class TypePattern < Pattern
     class << self
-      def key
-        '*type'
-      end
-
-      def opt_keys
-        [:type]
-      end
-
-      def pattern_applies? card
-        true
-      end
-
-      def set_name card
-        "#{card.cardtype_name}+#{key}"
-      end
-
+      def key()                        '*type'                        end
+      def opt_keys()                   [:type]                        end
+      def pattern_applies?(card)       true                           end
+      def set_name(card)              "#{card.cardtype_name}+#{key}"  end
+      def label(name)                 "All #{name.trunk_name} cards"  end
       def method_key card
         method_key_from_opts :type=>card.cardtype_name
       end
-
       def method_key_from_opts(opts)
         opts[:type].to_s.css_name+'_type'
-      end
-
-      def label name
-        "All #{name.trunk_name} cards"
       end
     end
     register_class self
   end
 
+  class StarPattern < Pattern
+    class << self
+      def key()                        '*star'                 end
+      def opt_keys()                   [:star]                 end
+      def pattern_applies?(card)       card.star?              end
+      def set_name(card)               key                     end
+      def method_key(card)             'star'                  end
+      def method_key_from_opts(opts)   'star'                  end
+      def css_name(card)               "STAR"                  end
+      def label(name)                  'Star Cards'            end
+    end
+    register_class self
+  end
+
+  class RstarPattern < Pattern
+    class << self
+      def key()                        '*rstar'                        end
+      def opt_keys()                   [:rstar]                        end
+      def method_key(card)             'star'                          end
+      def method_key_from_opts(opts)   'star'                          end
+      def set_name(card)               "#{card.name.tag_name}+#{key}"  end
+      def pattern_applies? card
+        card.junction? && card.name.tag_name.star?
+      end
+      def label name
+        "Cards ending in +(Star Card)"
+      end
+    end
+    register_class self
+  end
+
+
   class RightNamePattern < Pattern
     class << self
-      def key
-        '*right'
-      end
-
-      def opt_keys
-        [:right]
-      end
-
-      def pattern_applies? card
-        card.name && card.name.junction?
-      end
-
-      def set_name card
-        "#{card.name.tag_name}+#{key}"
-      end
-
+      def key()                          '*right'                        end
+      def opt_keys()                     [:right]                        end
+      def pattern_applies?(card)         card.junction?                  end
+      def set_name(card)                 "#{card.name.tag_name}+#{key}"  end
       def method_key card
         method_key_from_opts :right=>card.name.tag_name
       end
-
       def method_key_from_opts(opts)
         opts[:right].to_s.css_name+'_right'
       end
-
       def label name
         "Cards ending in +#{name.trunk_name}"
       end
@@ -211,7 +196,7 @@ raise "no card" unless card
       end
 
       def pattern_applies? card
-        card.name && card.name.junction? && left(card)
+        card.junction? && !!(left(card))
       end
 
       def left card

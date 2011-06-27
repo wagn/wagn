@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe Cardname do
+describe Wagn::Cardname do
   
   describe "#to_key" do
     it "should remove spaces" do

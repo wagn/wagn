@@ -1,4 +1,5 @@
-require_dependency 'rich_html_renderer'
+#require_dependency 'rich_html_renderer'
+require 'diff'
 
 module WagnHelper
   require_dependency 'wiki_content'
@@ -128,7 +129,7 @@ module WagnHelper
   end
 
   def formal_joint
-    " <span class=\"wiki-joint\">#{JOINT}</span> "
+    " <span class=\"wiki-joint\">+</span> "
   end
 
   def formal_title(card)
@@ -138,11 +139,11 @@ module WagnHelper
   def fancy_title(card)
     name = (String===card ? card : card.name)
     return name if name.simple?
-    card_title_span(name.left_name) + %{<span class="joint">#{JOINT}</span>} + card_title_span(name.tag_name)
+    card_title_span(name.left_name) + %{<span class="joint">+</span>} + card_title_span(name.tag_name)
   end
 
   def title_tag_names(card)
-    card.name.split(JOINT)
+    card.name.split('+')
   end
 
 
@@ -162,16 +163,15 @@ module WagnHelper
   end
 
   ## ----- for Linkers ------------------
-  def cardtype_options
-    Cardtype.createable_cardtypes.map do |cardtype|
-      #next(nil) if cardtype[:codename] == 'User' #or cardtype[:codename] == 'InvitationRequest'
-      [cardtype[:name], cardtype[:name]]
+  def typecode_options
+    Cardtype.createable_types.map do |type|
+      [type[:name], type[:name]]
     end.compact
   end
 
-  def cardtype_options_for_select(selected=Card.default_cardtype_key)
+  def typecode_options_for_select(selected=Card.default_typecode_key)
     #warn "SELECTED = #{selected}"
-    options_from_collection_for_select(cardtype_options, :first, :last, selected)
+    options_from_collection_for_select(typecode_options, :first, :last, selected)
   end
 
 
@@ -232,7 +232,7 @@ module WagnHelper
     return unless entries
     items = []
     items << navbox_item( :search, %{<a class="search-icon">&nbsp;</a>Search for: }, stub )
-    if !Cardtype.createable_cardtypes.empty? && !Card.exists?(stub)
+    if !Cardtype.createable_types.empty? && !Card.exists?(stub)
       items << navbox_item( :new, %{<a class="plus-icon">&nbsp;</a>Add new card: }, stub )
     end
     items += entries.map do |entry|

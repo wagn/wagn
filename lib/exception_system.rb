@@ -1,3 +1,7 @@
+module Wagn
+  include Exceptions
+end
+
 module ExceptionSystem
   def rescue_action( exception )
     Rails.logger.info %{rescue_action #{exception} BT:#{exception.backtrace*"\n"}}
@@ -63,5 +67,4 @@ module ExceptionSystem
     request.xhr?
   end
   
-
 end

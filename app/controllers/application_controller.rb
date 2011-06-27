@@ -98,17 +98,18 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def edit_ok
-    @card.ok?(:edit) || render_denied('edit')
+  def update_ok
+    @card.ok?(:update) || render_denied('edit')
   end
 
-  def create_ok
-    @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
-    @skip_slot_header = true
-    #p "CREATE OK: #{@type}"
-    t = Card.class_for(@type, :cardname) || Card::Basic
-    t.create_ok? || render_denied('create')
-  end
+
+ #def create_ok
+ #  @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
+ #  @skip_slot_header = true
+ #  #p "CREATE OK: #{@type}"
+ #  t = Card.class_for(@type, :cardname) || Card::Basic
+ #  t.create_ok? || render_denied('create')
+ #end
 
   def remove_ok
     @card.ok!(:delete) || render_denied('delete')
@@ -130,7 +131,7 @@ class ApplicationController < ActionController::Base
   def load_card(cache=false)
     return @card=nil unless id = params[:id]
     return (@card=Card.find(id)) if id =~ /^\d+$/
-    name = Cardname.unescape(id)
+    name = Wagn::Cardname.unescape(id)
     card_params = params[:card] ? params[:card].clone : {}
     @card = Card.fetch_or_new(name, {}, card_params)
   end
@@ -172,6 +173,8 @@ class ApplicationController < ActionController::Base
   end
 
   def render_denied(action = '')
+    Rails.logger.debug "~~~~~~~~~~~~~~~~~in render_denied for #{action}"
+    
     @deny = action
     render :controller=>'card', :action=>'denied', :status=>403
     return false
@@ -203,7 +206,7 @@ class ApplicationController < ActionController::Base
     on_error_js = ""
 
     if captcha_required? && ENV['RECAPTCHA_PUBLIC_KEY']
-      key = @card.new_record? ? "new" : @card.name.to_key
+      key = card.new_record? ? "new" : card.name.to_key
       on_error_js << %{ document.getElementById('dynamic_recaptcha-#{key}').innerHTML='<span class="faint">loading captcha</span>'; }
       on_error_js << %{ Recaptcha.create('#{ENV['RECAPTCHA_PUBLIC_KEY']}', document.getElementById('dynamic_recaptcha-#{key}'),RecaptchaOptions); }
     end

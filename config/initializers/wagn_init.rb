@@ -1,1 +1,2 @@
-Wagn::Initializer.run
+#STDERR << "wagn_init load ..\n"
+Wagn::Initializer.load

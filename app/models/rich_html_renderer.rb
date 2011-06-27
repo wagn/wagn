@@ -108,6 +108,7 @@ class RichHtmlRenderer < Renderer
   end
 
   def layout_from_name
+    warn "getting layout from name"
     lname = (params[:layout] || args[:layout]).to_s
     lcard = Card.fetch(lname, :skip_virtual=>true)
     case
@@ -119,7 +120,7 @@ class RichHtmlRenderer < Renderer
 
   def layout_from_card
     return unless setting_card = (card.setting_card('layout') or Card.default_setting_card('layout'))
-    return unless setting_card.is_a?(Card::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.type == 'Pointer'        and
+    return unless setting_card.is_a?(Wagn::Model::Type::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.typecode == 'Pointer'        and
       layout_name=setting_card.item_names.first     and
       !layout_name.nil?                             and
       lo_card = Card.fetch(layout_name, :skip_virtual => true)    and
@@ -210,7 +211,7 @@ class RichHtmlRenderer < Renderer
   end
 
   def card_id
-    (card.new_record? && card.name)  ? Cardname.escape(card.name) : card.id
+    (card.new_record? && card.name)  ? Wagn::Cardname.escape(card.name) : card.id
   end
 
   def editor_id(area="")
@@ -223,8 +224,8 @@ class RichHtmlRenderer < Renderer
     div(:class=>'submenu') do
       [[ :content,    true  ],
        [ :name,       true, ],
-       [ :type,       !(card.type_template? || (card.type=='Cardtype' and ct=card.me_type and !ct.find_all_by_trash(false).empty?))],
-       [ :codename,   (System.always_ok? && card.type=='Cardtype')],
+       [ :type,       !(card.type_template? || (card.typecode=='Cardtype' and ct=card.me_type and !ct.find_all_by_trash(false).empty?))],
+       [ :codename,   (System.always_ok? && card.typecode=='Cardtype')],
        [ :inclusions, !(card.out_transclusions.empty? || card.template? || card.hard_template),         {:inclusions=>true} ]
        ].map do |key,ok,args|
 
@@ -295,21 +296,20 @@ class RichHtmlRenderer < Renderer
   end
 =end
 
-  def option( *args, &proc)
-    args = args[0]||{} #unless Hash===args
+
+
+  def option( content, args )
     args[:label] ||= args[:name]
     args[:editable]= true unless args.has_key?(:editable)
     self.options_need_save = true if args[:editable]
-    concat %{<tr>
+    %{<tr>
       <td class="inline label"><label for="#{args[:name]}">#{args[:label]}</label></td>
       <td class="inline field">
-    }, proc.binding
-    yield
-    concat %{
+    } + content + %{
       </td>
       <td class="help">#{args[:help]}</td>
       </tr>
-    }, proc.binding
+    }
   end
 
   def option_header(title)
@@ -342,12 +342,12 @@ class RichHtmlRenderer < Renderer
     form.text_field( :name, { :class=>'field card-name-field', :autocomplete=>'off'}.merge(options))
   end
 
-  def cardtype_field(form,options={})
-    template.select_tag('card[type]', cardtype_options_for_select(Cardtype.name_for(card.type)), options)
+  def typecode_field(form,options={})
+    template.select_tag('card[type]', typecode_options_for_select(Cardtype.name_for(card.typecode)), options)
   end
 
-  def update_cardtype_function(options={})
-    fn = ['File','Image'].include?(card.type) ?
+  def update_typecode_function(options={})
+    fn = ['File','Image'].include?(card.typecode) ?
             "Wagn.onSaveQueue['#{context}']=[];" :
             "Wagn.runQueue(Wagn.onSaveQueue['#{context}']); "
     fn << remote_function( options )

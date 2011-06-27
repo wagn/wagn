@@ -7,7 +7,7 @@ class Renderer
         (System.ok?(:create_accounts) ? link_to('Invite a Friend', '/account/invite', :id=>'invite-a-friend-link') : '') +
         link_to('Sign out', '/account/signout', :id=>'signout-link')
       else
-        (Card::InvitationRequest.create_ok? ? link_to( 'Sign up', '/account/signup',   :id=>'signup-link' ) : '') +
+        (Card.new(:typecode=>'InvitationRequest').ok?(:create) ? link_to( 'Sign up', '/account/signup',   :id=>'signup-link' ) : '') +
         link_to( 'Sign in', '/account/signin',   :id=>'signin-link' )
       end
     end

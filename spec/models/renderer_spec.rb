@@ -80,14 +80,13 @@ describe Renderer, "" do
     end
 
     it "renders deny for unpermitted cards" do
-      restricted_card =
       User.as( :wagbot ) do
-        card = Card.create(:name=>'Joe no see me', :type=>'Html', :content=>'secret')
-        card.permit(:read, Role[:admin])
-        card.save
-        card
+        Card.create(:name=>'Joe no see me', :type=>'Html', :content=>'secret')
+        Card.create(:name=>'Joe no see me+*self+*read', :type=>'Pointer', :content=>'[[Administrator]]')
       end
-      Renderer.new(restricted_card).render(:naked).should be_html_with { span(:class=>'denied') }
+      User.as :joe_user do
+        Renderer.new(Card.fetch('Joe no see me')).render(:naked).should be_html_with { span(:class=>'denied') }
+      end
     end      
   end
 
@@ -123,7 +122,7 @@ describe Renderer, "" do
 
     it "content" do
       render_card(:content, :name=>'A+B').should be_html_with {
-        div( :class=>'transcluded ALL TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b', :home_view=>'content') {
+        div( :class=>'transcluded ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b', :home_view=>'content') {
           span( :class=>'content-content content')
         }
       }
@@ -189,7 +188,7 @@ describe Renderer, "" do
         User.as :wagbot do
           card = Card['A+B']
           @simple_page = RichHtmlRenderer.new(card).render(:layout)
-          end
+        end
       end
 
 
@@ -346,6 +345,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       Renderer.new(c).render( :naked ).should == %q{["10", "20", "30"]}
     end
 
+=begin
     it "should use inclusion view overrides" do
       # FIXME love to have these in a scenario so they don't load every time.
       t = Card.create! :name=>'t1', :content=>"{{t2|card}}"
@@ -363,10 +363,11 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       s = Renderer.new(t, :inclusion_view_overrides=>{ :open => :naked } )
       s.render( :naked ).should == "boo"
     end
+=end
   end
 
   context "builtin card" do
-
+=begin
     it "should use inclusion view overrides" do
       # FIXME love to have these in a scenario so they don't load every time.
       t = Card.create! :name=>'t1', :content=>"{{t2|card}}"
@@ -384,6 +385,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       s = Renderer.new(t, :inclusion_view_overrides=>{ :open => :naked } )
       s.render( :naked ).should == "boo"
     end
+=end
  
     it "should render internal builtins" do
       render_card( :naked, :content=>%{
@@ -453,10 +455,10 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       end
     end
 
-    it "skips *content if *default is present" do  #this seems more like a settings test
+    it "skips *content if narrower *default is present" do  #this seems more like a settings test
       content_card = Card.create!(:name=>"Phrase+*type+*content", :content=>"Content Foo" )
-      default_card = Card.create!(:name=>"Phrase+*type+*default", :content=>"Default Bar" )
-      @card = Card.new( :name=>"templated", :type=>'Phrase' )
+      default_card = Card.create!(:name=>"templated+*right+*default", :content=>"Default Bar" )
+      @card = Card.new( :name=>"test+templated", :type=>'Phrase' )
       @card.should_receive(:setting_card).with("content", "default").and_return(default_card)
       Renderer.new(@card).render(:raw).should == "Default Bar"
     end
@@ -464,12 +466,12 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
     
     it "should be used in edit forms" do
       config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )
-      @card = Card.new( :name=>"templated", :content => "Bar" )
-      @card.should_receive(:setting_card).with("content", "default").and_return(config_card)
+      @card = Card.fetch('templated')# :name=>"templated", :content => "Bar" )
+      @card.content = 'Bar'
       result = Renderer.new(@card).render(:edit)
       result.should be_html_with do
         div :class => "field-in-multi" do
-          input :name=>"cards[~plus~alpha][content]", :type => 'hidden'
+          input :name=>"cards[templated~plus~alpha][content]", :type => 'hidden'
         end
       end
     end
@@ -481,7 +483,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       result.should be_html_with do
         div :class => "field-in-multi" do
           [ input( :name=>"cards[~plus~author][content]", :type=>'text', :value=>'Zamma Flamma' ),
-            input( :name=>"cards[~plus~author][type]", :type => 'hidden', :value=>'Phrase') ]
+            input( :name=>"cards[~plus~author][typecode]", :type => 'hidden', :value=>'Phrase') ]
         end
       end
       result.should match('Zamma Flamma')
@@ -574,9 +576,12 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
 
     context "Search" do
       it "should wrap search items with correct view class" do
+        Rails.logger.info "failing 0"
         Card.create :type=>'Search', :name=>'Asearch', :content=>%{{"type":"User"}}        
 
-        render_content("{{Asearch|naked;item:name}}").should match('search-result-item item-name')
+        c=render_content("{{Asearch|naked;item:name}}")
+        Rails.logger.info "failing #{c.inspect}"
+        c.should match('search-result-item item-name')
         render_content("{{Asearch|naked;item:open}}").should match('search-result-item item-open')
         render_content("{{Asearch|naked}}").should match('search-result-item item-closed')
       end

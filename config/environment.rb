@@ -38,4 +38,15 @@ Rails::Initializer.run do |config|
   # See Rails::Configuration for more options   
   # select a store for the rails/card cache
 end
+<<<<<<< HEAD
    
+=======
+
+#STDERR << "Loaded? #{Module.const_defined?(:Rails)}\n"
+ActionController::Dispatcher.to_prepare do
+  #STDERR << "\n\nto_prepare\n\n"
+  Wagn::Initializer.run
+end
+
+Wagn::Initializer.load_modules
+>>>>>>> cardlib

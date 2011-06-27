@@ -33,7 +33,7 @@ Given /^the pointer (.*) contains "([^\"]*)"$/ do |cardname, content|
 end
 
 Given /I harden "([^\"]*)"/ do |cardname|
-  Card[cardname].update_attribute :extension_type, "HardTemplate"
+  Card[cardname].update_attribute :extension_type, ""
 end
 
 When /^(.*) edits? "([^\"]*)"$/ do |username, cardname|
@@ -119,7 +119,7 @@ def create_card(username,cardtype,cardname,content="")
     # Fixme - need better error handling here-- the following raise
     # at least keeps us from going on to the next step if the create bombs
     # but it doesn't report the reason for the failure.
-    raise "Creating #{cardname} failed" unless Card[cardname]
+    raise "Creating #{cardname} failed (u=#{username}, t=#{cardtype}  )" unless Card[cardname]
   end
 end
 

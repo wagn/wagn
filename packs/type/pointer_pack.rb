@@ -66,7 +66,7 @@ class Renderer
   end
 
   define_view(:list, :type=>'pointer') do
-    items = card.item_names
+    items = card.item_names(:context=>:raw)
     items = [''] if items.empty?
 
     result = %{<ul id="#{context}-ul" class="pointer"> }

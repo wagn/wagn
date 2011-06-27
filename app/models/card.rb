@@ -170,8 +170,9 @@ class Card < ActiveRecord::Base
   
   def include_singleton_modules
     return unless typecode
-    #warn "include singleton mod for #{name}"
+#    warn "include singleton mod for #{name}"
     singleton.include_type_module(typecode)
+    after_include if respond_to? :after_include
   end
 
   def singleton

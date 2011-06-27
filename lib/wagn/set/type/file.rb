@@ -1,5 +1,5 @@
 module Wagn::Set::Type::File
-  def after_initialize
+  def after_include
     self.class.card_attachment CardFile
   end
   

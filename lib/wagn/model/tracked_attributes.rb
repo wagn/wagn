@@ -1,15 +1,15 @@
 module Wagn::Model::TrackedAttributes 
    
   def set_tracked_attributes  
-    #Rails.logger.debug "Card(#{name})#set_tracked_attributes begin"
+    Rails.logger.debug "Card(#{name})#set_tracked_attributes begin"
     updates.each_pair do |attrib, value| 
-      #Rails.logger.debug "updates #{attrib} = #{value}"
+      Rails.logger.debug "updates #{attrib} = #{value}"
       if send("set_#{attrib}", value )
         updates.clear attrib
       end
       @changed ||={}; @changed[attrib.to_sym]=true 
     end
-    #Rails.logger.debug "Card(#{name})#set_tracked_attributes end"
+    Rails.logger.debug "Card(#{name})#set_tracked_attributes end"
   end
   
   
@@ -173,7 +173,9 @@ module Wagn::Model::TrackedAttributes
   def self.included(base)
     super 
     base.after_create :set_initial_content 
-    base.before_save.unshift Proc.new{|rec| rec.set_tracked_attributes }
+    base.before_save.unshift Proc.new{|rec|
+     Rails.logger.debug "before_save #{rec} set_traked_attr"
+     rec.set_tracked_attributes }
     base.after_save :cascade_name_changes   
     base.after_create() do |card|
       Wagn::Hook.call :after_create, card

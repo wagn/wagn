@@ -27,7 +27,7 @@ class Wagn::Config
 end
 =end
 
-module Wagn::Initializer
+module Wagn::Configuration
   def wagn_load
     # set_rails_config
     #rails_config.active_record.observers = :card_observer

@@ -6,7 +6,8 @@ require 'assert2/xhtml'
 
 Spork.prefork do
   require File.expand_path(File.dirname(__FILE__) + "/../config/wagn_initializer")
-  Spork.trap_class_method(Wagn::Initializer,"load")
+  # how do you trap a module method, and de we still need this?
+  #Spork.trap_class_method(Wagn::Configuration,"wagn_load")
 
   require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
   require 'spec'
@@ -22,7 +23,7 @@ Spork.prefork do
   # This file is copied to ~/spec when you run 'ruby script/generate rspec'
   # from the project root directory.
 
-  #Wagn::Initializer.wagn_run
+  #Wagn::Configuration.wagn_run
 
   Spec::Runner.configure do |config|
     # If you're not using ActiveRecord you should remove these

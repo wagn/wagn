@@ -25,11 +25,11 @@ describe Card do
       @c.respond_to?( :get_spec ).should be_true
     end
     
-    it "gets needed methods after find" do
-      @c.save!
-      c = Card.find_by_name(@c.name)
-      c.respond_to?( :get_spec ).should be_true
-    end
+#    it "gets needed methods after find" do
+#      @c.save!
+#      c = Card.find_by_name(@c.name)
+#      c.respond_to?( :get_spec ).should be_true
+#    end
     
     it "gets needed methods after fetch" do
       @c.save!

@@ -141,6 +141,11 @@ When /^(?:|I )attach the file "([^"]*)" to "([^"]*)"$/ do |path, field|
 end
 
 Then /^(?:|I )should see "([^"]*)"$/ do |text|
+  ['House', 'House+*type', 'House+*type+by name'].map do |name|
+    c = Card.fetch(name)
+    Rails.logger.info "who can read #{name}? #{c&&c.who_can(:read)}"
+  end
+
   if response.respond_to? :should
     response.should contain(text)
   else

@@ -112,10 +112,8 @@ class Card < ActiveRecord::Base
     end
     
     #default content
-    ::User.as(:wagbot) do
-      if !args['content'] and self.content.blank? and default_card = setting_card('content','default')
-        self.content = default_card.content
-      end
+    if !args['content'] and self.content.blank? and default_card = setting_card('content','default')
+      self.content = default_card.content
     end
 
     # misc defaults- trash, key, fallbacks
@@ -160,20 +158,21 @@ class Card < ActiveRecord::Base
     fail "NO TYPECODE" unless self.typecode
 
     #Rails.logger.debug "Card.initialize #{typecode.inspect} #{args.inspect}"
-    include_singleton_modules
+    include_singleton_modules unless virtual?
 
     attachment_id= att_id if att_id # now that we have modules, we have this field
     set_defaults( args ) unless args['skip_defaults'] 
   end 
 
-  def after_find
+  def after_fetch
     include_singleton_modules
   end
   
   def include_singleton_modules
     return unless typecode
-    #warn "include singleton mod for #{name}"
+#    warn "include singleton mod for #{name}"
     singleton.include_type_module(typecode)
+    after_include if respond_to? :after_include
   end
 
   def singleton
@@ -182,17 +181,13 @@ class Card < ActiveRecord::Base
 
   class << self
     def include_type_module(typecode)
+      raise "Bad typecode #{typecode}" if typecode.to_s =~ /\W/
       typecode = typecode.to_sym
-      mod = begin eval "Wagn::Set::Type::#{typecode}"
-            rescue NameError => e
-              nil
-            end
-      #warn "including mod = #{mod}"
-      include mod if mod
-    rescue Exception=>e
-      return unless mod
-      Rails.logger.info "Error including module (#{typecode}, #{mod.inspect}) #{e} #{e.backtrace[0..3]*"\n"}"
-      nil
+      begin
+        include eval "Wagn::Set::Type::#{typecode}"
+      rescue NameError => e
+        nil
+      end
     end
     
 
@@ -430,7 +425,7 @@ class Card < ActiveRecord::Base
     when (@cached_revision and @cached_revision.id==current_revision_id); 
     when (@cached_revision=Card.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
     else
-      @cached_revision = current_revision || get_blank_revision
+      @cached_revision = current_revision_id ? Revision.find(current_revision_id) : get_blank_revision
       Card.cache.write("#{key}-content", @cached_revision)
     end
     @cached_revision

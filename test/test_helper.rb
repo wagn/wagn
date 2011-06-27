@@ -34,7 +34,7 @@ unless defined? TEST_ROOT
     # then set this back to true.
     self.use_instantiated_fixtures  = false
 
-    Wagn::Initializer.run
+    #Wagn::Initializer.wagn_run
     Wagn::Cache.new( Rails.cache, "#{System.host}/test" ).reset
 
     def setup

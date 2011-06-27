@@ -22,7 +22,7 @@ Spork.prefork do
   # This file is copied to ~/spec when you run 'ruby script/generate rspec'
   # from the project root directory.
 
-  Wagn::Initializer.run
+  #Wagn::Initializer.wagn_run
 
   Spec::Runner.configure do |config|
     # If you're not using ActiveRecord you should remove these

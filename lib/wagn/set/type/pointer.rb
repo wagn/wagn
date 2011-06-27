@@ -1,4 +1,4 @@
-module Wagn::Model::Type::Pointer
+module Wagn::Set::Type::Pointer
 
   def collection?() true  end
 

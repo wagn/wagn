@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + '/../../test_helper'
-class Wagn::Model::Type::ImageTest < ActiveSupport::TestCase       
+class Wagn::Set::Type::ImageTest < ActiveSupport::TestCase       
   # required to use ActionController::TestUploadedFile 
   require 'action_controller'
   require 'action_controller/test_process.rb'
@@ -17,7 +17,7 @@ class Wagn::Model::Type::ImageTest < ActiveSupport::TestCase
       
     card_image = CardImage.create :uploaded_data => ActionController::TestUploadedFile.new(path, mimetype) 
     @c=Card.create( :name => "Bananamaster", :typecode=>'Image', :attachment_id=>card_image.id )
-    @c.class.include?(Wagn::Model::Type::Image)
+    @c.class.include?(Wagn::Set::Type::Image)
   end
   
 end

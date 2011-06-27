@@ -162,7 +162,7 @@ class Card < ActiveRecord::Base
     #Rails.logger.debug "Card.initialize #{typecode.inspect} #{args.inspect}"
     include_singleton_modules
 
-    self.attachment_id = att_id if att_id # now that we have modules, we have this field
+    attachment_id= att_id if att_id # now that we have modules, we have this field
     set_defaults( args ) unless args['skip_defaults'] 
   end 
 
@@ -172,23 +172,22 @@ class Card < ActiveRecord::Base
   
   def include_singleton_modules
     return unless typecode
-    #warn "include sing mod for #{name}"
-    singleton = class << self; self end
+    #warn "include singleton mod for #{name}"
     singleton.include_type_module(typecode)
+  end
+
+  def singleton
+    class << self; self end
   end
 
   class << self
     def include_type_module(typecode)
       typecode = typecode.to_sym
-      con = (mod=Wagn::Model::Type.const_get(typecode)).to_s.split('::')
-      if con.length != 4 or con[2] != 'Type'
-        Rails.logger.info "Different const?#{typecode}, #{mod}"
-        #Wagn::Model::Type.send :remove_const, typecode
-        con = (mod=Wagn::Model::Type.const_missing(typecode)).to_s.split('::')
-        if con.length != 4 or con[2] != 'Type'
-          Rails.logger.info "Different const2 ?#{typecode}, #{mod}"
-        end
-      end
+      mod = begin eval "Wagn::Set::Type::#{typecode}"
+            rescue NameError => e
+              nil
+            end
+      #warn "including mod = #{mod}"
       include mod if mod
     rescue Exception=>e
       return unless mod
@@ -196,6 +195,7 @@ class Card < ActiveRecord::Base
       nil
     end
     
+
     def find_or_create!(args={})
       find_or_create(args) || raise(ActiveRecord::RecordNotSaved)
     end
@@ -255,22 +255,13 @@ class Card < ActiveRecord::Base
     Wagn::Hook.call :before_multi_save, self, cards
     cards.each_pair do |name, opts|
       opts[:content] ||= ""
-      # make sure blank content doesn't override first assignments if they are present
-      #if (opts['first'].present? or opts['items'].present?) 
-      #  opts.delete('content')
-      #end                                                                               
       name = name.post_cgi.to_absolute(self.name)
-      logger.info "multi update working on #{name}: #{opts.inspect}"
+      #logger.info "multi update working on #{name}: #{opts.inspect}"
       if card = Card.fetch(name, :skip_virtual=>true)
         card.update_attributes(opts)
       elsif opts[:content].present? and opts[:content].strip.present?
         opts[:name] = name
-#          ::User.as(:wagbot) { Card.create(opts) }
-        if self.ok?(:create) && !(Card.new(opts).ok? :create)
-          ::User.as(:wagbot) { Card.create(opts) }
-        else
-          Card.create(opts)
-        end
+        card = Card.create(opts)
       end
       if card and !card.errors.empty?
         card.errors.each do |field, err|
@@ -405,13 +396,6 @@ class Card < ActiveRecord::Base
       revisions[revision_index - 1]
     end
   end
-  
-  # I don't really like this.. 
-  #def attribute_card( attr_name )
-  #  ::User.as :wagbot do
-  #    Card.fetch( name + JOINT + attr_name , :skip_virtual => true)
-  #  end
-  #end
    
   def revised_at
     if cached_revision && rtime = cached_revision.updated_at
@@ -435,7 +419,7 @@ class Card < ActiveRecord::Base
   def star?(    )   n=name and n.star?         end
   
   def content   
-    new_card? ? ok!(:create) : ok!(:read)
+    #ok!(:read) if !new_card?
     cached_revision.new_record? ? "" : cached_revision.content
   end
   

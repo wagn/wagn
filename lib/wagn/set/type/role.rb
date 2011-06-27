@@ -1,5 +1,5 @@
-module Wagn::Model::Type::Role
-  include Wagn::Model::Type::Basic
+module Wagn::Set::Type::Role
+  include Wagn::Set::Type::Basic
   
   def before_validation_on_create
     create_extension

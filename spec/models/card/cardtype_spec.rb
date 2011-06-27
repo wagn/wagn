@@ -223,7 +223,7 @@ describe Card, "Cardtype with Existing Cards" do
 end
 
 
-describe Wagn::Model::Type::Cardtype do
+describe Wagn::Set::Type::Cardtype do
   before do
     User.as :wagbot
   end

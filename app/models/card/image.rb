@@ -1,5 +1,5 @@
 module Card::Image
-  include Wagn::Card::CardAttachment
+  include Wagn::Model::CardAttachment
 
   card_attachment CardImage
 end

@@ -1,6 +1,6 @@
 require 'csv'
 
-class Wagn::Card::Import
+class Wagn::Model::Import
   class << self
     def csv(opts={})
       csv = CSV.parse(opts[:data])

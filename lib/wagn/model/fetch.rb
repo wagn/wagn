@@ -8,7 +8,7 @@
 #  - implement Renderer#cache_action  (for footer, etc.) if necessary
 #
 
-module Wagn::Card::Fetch
+module Wagn::Model::Fetch
   mattr_accessor :cache
   mattr_accessor :debug
   self.debug = false #lambda {|x| false }
@@ -112,7 +112,7 @@ module Wagn::Card::Fetch
 
   def self.included(base)
     #Rails.logger.info "included(#{base}) S:#{self}"
-    base.extend Wagn::Card::Fetch::ClassMethods
+    base.extend Wagn::Model::Fetch::ClassMethods
     base.class_eval {
       attr_accessor :missing
       alias :missing? :missing

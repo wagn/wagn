@@ -1,4 +1,4 @@
-class ::Card::PermissionDenied < Wagn::PermissionDenied
+class Card::PermissionDenied < Wagn::PermissionDenied
   attr_reader :card
   def initialize(card)
     @card = card
@@ -12,7 +12,7 @@ end
        
   
   
-module Wagn::Card::Permissions
+module Wagn::Model::Permissions
 
   module ClassMethods 
     def create_ok?()
@@ -57,7 +57,7 @@ module Wagn::Card::Permissions
         raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace}"
       end
     else
-      raise ::Card::PermissionDenied.new(self)
+      raise Card::PermissionDenied.new(self)
     end
   end
   
@@ -90,7 +90,7 @@ module Wagn::Card::Permissions
   end  
   
   def ok!(operation)
-    raise ::Card::PermissionDenied.new(self) unless ok?(operation);  true
+    raise Card::PermissionDenied.new(self) unless ok?(operation);  true
   end
   
   def who_can(operation)
@@ -100,7 +100,7 @@ module Wagn::Card::Permissions
   def rule_card(operation)
     opcard = setting_card(operation.to_s)
     if !opcard && (!System.always_ok? || ENV['BOOTSTRAP_LOAD'] == 'true')
-      raise ::Card::PermissionDenied.new("No #{operation} setting card for #{name}") 
+      raise Card::PermissionDenied.new("No #{operation} setting card for #{name}") 
     end
     
     rcard = begin

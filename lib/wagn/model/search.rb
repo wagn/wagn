@@ -1,4 +1,4 @@
-module Wagn::Card::Search
+module Wagn::Model::Search
   module ClassMethods
 
     def add_builtin(card)     

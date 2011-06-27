@@ -1,4 +1,4 @@
-module Wagn::Card::TrackedAttributes 
+module Wagn::Model::TrackedAttributes 
    
   def set_tracked_attributes  
     #Rails.logger.debug "Card(#{name})#set_tracked_attributes begin"

@@ -1,4 +1,4 @@
-module Wagn::Card::ActsAsCardExtension
+module Wagn::Model::ActsAsCardExtension
 
   def acts_as_card_extension( options = {})
     has_one :card, :as=>:extension

@@ -211,7 +211,7 @@ describe "WikiReference" do
 =end
   private
   def newcard(name, content="")
-    ::Card.create! :name=>name, :content=>content
+    Card.create! :name=>name, :content=>content
   end
 
 end

@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../../../spec_helper'
 
 #A_JOINEES = ["B", "C", "D", "E", "F"]
 
-describe Wagn::Card::Search do
+describe Wagn::Model::Search do
 =begin Do we still need this test, but refactored a little?
   describe ".find_builtin" do
     it "should retrieve cards added by add_builtin" do

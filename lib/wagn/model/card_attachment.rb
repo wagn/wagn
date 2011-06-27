@@ -1,4 +1,4 @@
-module Wagn::Card::CardAttachment
+module Wagn::Model::CardAttachment
   def self.included(base)
     #Rails.logger.info "add act methods for attachements #{base} #{self}"
     base.extend(ActMethods)

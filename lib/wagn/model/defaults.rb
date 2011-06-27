@@ -1,4 +1,4 @@
-module Wagn::Card::Defaults
+module Wagn::Model::Defaults
   
   #a place for frequently overridden methods.
   

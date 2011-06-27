@@ -1,4 +1,4 @@
-module Wagn::Card::References
+module Wagn::Model::References
   protected   
   
   def update_references_on_create

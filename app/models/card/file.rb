@@ -1,5 +1,5 @@
 module Card::File
-  include Wagn::Card::CardAttachment
+  include Wagn::Model::CardAttachment
 
   card_attachment CardFile
   

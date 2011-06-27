@@ -1,4 +1,4 @@
-module Wagn::Card::Templating  
+module Wagn::Model::Templating  
 
   def template?()       name && name.template_name?        end
   def hard_template?()  name && name =~ /\+\*content$/     end

@@ -27,7 +27,7 @@ module Card::Cardtype
 
   def create_extension
     return unless typecode == 'Cardtype'  #hack
-    codename = ::Card.generate_codename_for(name)
+    codename = Card.generate_codename_for(name)
     Rails.logger.info "Cardtype extension #{name} #{codename}"
     self.extension = ::Cardtype.create!( :class_name => codename )
   end
@@ -77,7 +77,7 @@ module Card::Cardtype
   end
   
   def validate_destroy
-    if extension and ::Card.find_by_typecode_and_trash( extension.codename, false ) 
+    if extension and Card.find_by_typecode_and_trash( extension.codename, false ) 
       errors.add :typecode, "can't be altered because #{name} is a Cardtype and cards of this type still exist"
     end
     super

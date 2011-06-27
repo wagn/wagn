@@ -1,4 +1,4 @@
-module Wagn::Card::Cacheable
+module Wagn::Model::Cacheable
   
   def extended_list context = nil
     context = (context ? context.name : self.name)

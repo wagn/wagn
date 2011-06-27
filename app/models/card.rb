@@ -6,7 +6,7 @@ class Card < ActiveRecord::Base
     self.confirm_destroy = true
     destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
   end
-  include Wagn::Card::Model
+  include Wagn::Model
 
   #
   # == Associations

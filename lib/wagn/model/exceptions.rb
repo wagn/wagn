@@ -1,4 +1,4 @@
-module Wagn::Card::Exceptions
+module Wagn::Model::Exceptions
   class PermissionDenied < Wagn::Exceptions::PermissionDenied
     attr_reader :card
     def initialize(card)

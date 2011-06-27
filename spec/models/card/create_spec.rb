@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
 # FIXME this shouldn't be here
-describe Card::Cardtype, ".create with :codename" do
+describe Wagn::Model::Type::Cardtype, ".create with :codename" do
   before do
     User.as :joe_user
   end
@@ -50,7 +50,7 @@ describe Card, "created by Card.new " do
   end
   
   it "should have attribute_tracking updates" do
-    Wagn::Card::AttributeTracking::Updates.should === @c.updates
+    Wagn::AttributeTracking::Updates.should === @c.updates
   end
   
   it "should return original value for name" do

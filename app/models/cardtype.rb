@@ -1,5 +1,5 @@
 class Cardtype < ActiveRecord::Base
-  self.extend Wagn::Card::ActsAsCardExtension 
+  self.extend Wagn::Model::ActsAsCardExtension 
   acts_as_card_extension  
   cattr_reader :cache
   

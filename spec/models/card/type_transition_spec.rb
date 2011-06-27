@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-module Card::CardtypeA 
+module Wagn::Model::Type::CardtypeA 
   def approve_delete 
     deny_because("not allowed to delete card a")
   end
@@ -10,19 +10,19 @@ end
     # create restricted in test_data
 #  end
   
-module Card::CardtypeC
+module Wagn::Model::Type::CardtypeC
   def self.validate_typecode_change
     errors.add :destroy_error, "card c is indestructible"
   end
 end
 
-module Card::CardtypeD
+module Wagn::Model::Type::CardtypeD
   def self.valid?
     errors.add :create_error, "card d always has errors"
   end
 end
 
-module Card::CardtypeE
+module Wagn::Model::Type::CardtypeE
 #  cattr_accessor :count
   @@count = 2
   def on_type_change
@@ -31,7 +31,7 @@ module Card::CardtypeE
   def decrement_count() @@count -= 1; end
 end
 
-module Card::CardtypeF
+module Wagn::Model::Type::CardtypeF
 #  cattr_accessor :count
   @@count = 2
   def before_validation_on_create 

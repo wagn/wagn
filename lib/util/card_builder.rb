@@ -4,7 +4,7 @@ module CardBuilderMethods
 
   def newcard(name, content="")
 Rails.logger.info "newcard(#{name}, #{content})"
-    ::Card.create! :name=>name, :content=>content
+    Card.create! :name=>name, :content=>content
   end
   
   def card_content( cardname )

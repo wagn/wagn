@@ -120,7 +120,7 @@ class RichHtmlRenderer < Renderer
 
   def layout_from_card
     return unless setting_card = (card.setting_card('layout') or Card.default_setting_card('layout'))
-    return unless setting_card.is_a?(Card::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.typecode == 'Pointer'        and
+    return unless setting_card.is_a?(Wagn::Model::Type::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.typecode == 'Pointer'        and
       layout_name=setting_card.item_names.first     and
       !layout_name.nil?                             and
       lo_card = Card.fetch(layout_name, :skip_virtual => true)    and

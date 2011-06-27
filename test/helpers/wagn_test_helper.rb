@@ -34,7 +34,7 @@ module WagnTestHelper
   # 
   # 
   # def card( name )
-  #   ::Card.find_by_name(name)
+  #   Card.find_by_name(name)
   # end
   
 

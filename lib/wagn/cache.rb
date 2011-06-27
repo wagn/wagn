@@ -26,10 +26,10 @@ module Wagn
       def initialize_on_startup
         @@preload = false
         if RAILS_ENV =~ /cucumber|test/
-          ::Card.cache = Wagn::Cache.new
+          Card.cache = Wagn::Cache.new
           preload_cache_for_tests if preload_cache?
         else
-          ::Card.cache = Wagn::Cache.new Rails.cache
+          Card.cache = Wagn::Cache.new Rails.cache
         end
       end
       #alias re_initialize_for_new_request initialize_on_startup
@@ -37,10 +37,10 @@ module Wagn
       def preload_cache_for_tests
         set_keys = ['*all','basic+*type','html+*type','*cardtype+*type','*sidebar+*self']
         set_keys.map{|k| [k, "#{k}+*content", "#{k}+*default"]}.flatten.each do |key|        
-          ::Card.fetch key
+          Card.fetch key
         end
         Role[:auth]; Role[:anon]
-        @@frozen = Marshal.dump([::Card.cache, Role.cache])
+        @@frozen = Marshal.dump([Card.cache, Role.cache])
       end
       
       def preload_cache?
@@ -53,13 +53,13 @@ module Wagn
       end
 
       def re_initialize_for_new_request
-        ::Card.cache.system_prefix = system_prefix
+        Card.cache.system_prefix = system_prefix
         reset_local unless preload_cache?
       end
 
       def reset_for_tests
         reset_global
-        ::Card.cache, Role.cache = Marshal.load(@@frozen) if preload_cache?
+        Card.cache, Role.cache = Marshal.load(@@frozen) if preload_cache?
       end
 
       def generate_cache_id
@@ -67,7 +67,7 @@ module Wagn
       end
 
       def expire_card(key)
-        ::Card.cache.delete key
+        Card.cache.delete key
       end
 
       private
@@ -77,11 +77,11 @@ module Wagn
         Role.reset_cache
         System.reset_cache
         Wagn::Pattern.reset_cache
-        ::Card.cache && ::Card.cache.reset_local
+        Card.cache && Card.cache.reset_local
       end
 
       def reset_global
-        ::Card.cache && ::Card.cache.reset
+        Card.cache && Card.cache.reset
         reset_local
       end
     end

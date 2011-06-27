@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + '/../../test_helper'
-class Wagn::Model::Type::RoleTest < ActiveSupport::TestCase
+class Wagn::Set::Type::RoleTest < ActiveSupport::TestCase
   
   
   def setup

@@ -1,4 +1,4 @@
-module Wagn::Model::Type::Basic
+module Wagn::Set::Type::Basic
   def generic?
     true
   end

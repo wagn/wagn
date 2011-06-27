@@ -162,7 +162,7 @@ class Card < ActiveRecord::Base
     #Rails.logger.debug "Card.initialize #{typecode.inspect} #{args.inspect}"
     include_singleton_modules
 
-    self.attachment_id = att_id if att_id # now that we have modules, we have this field
+    attachment_id= att_id if att_id # now that we have modules, we have this field
     set_defaults( args ) unless args['skip_defaults'] 
   end 
 
@@ -183,15 +183,10 @@ class Card < ActiveRecord::Base
   class << self
     def include_type_module(typecode)
       typecode = typecode.to_sym
-      con = (mod=Wagn::Model::Type.const_get(typecode)).to_s.split('::')
-      if con.length != 4 or con[2] != 'Type'
-        Rails.logger.info "Different const?#{typecode}, #{mod}"
-        #Wagn::Model::Type.send :remove_const, typecode
-        con = (mod=Wagn::Model::Type.const_missing(typecode)).to_s.split('::')
-        if con.length != 4 or con[2] != 'Type'
-          Rails.logger.info "Different const2 ?#{typecode}, #{mod}"
-        end
-      end
+      mod = begin eval "Wagn::Set::Type::#{typecode}"
+            rescue NameError => e
+              nil
+            end
       #warn "including mod = #{mod}"
       include mod if mod
     rescue Exception=>e

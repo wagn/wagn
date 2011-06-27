@@ -1,4 +1,4 @@
-module Card::File
+module Wagn::Model::Type::File
   def after_initialize
     self.class.card_attachment CardFile
   end

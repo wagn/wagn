@@ -295,21 +295,20 @@ class RichHtmlRenderer < Renderer
   end
 =end
 
-  def option( *args, &proc)
-    args = args[0]||{} #unless Hash===args
+
+
+  def option( content, args )
     args[:label] ||= args[:name]
     args[:editable]= true unless args.has_key?(:editable)
     self.options_need_save = true if args[:editable]
-    concat %{<tr>
+    %{<tr>
       <td class="inline label"><label for="#{args[:name]}">#{args[:label]}</label></td>
       <td class="inline field">
-    }, proc.binding
-    yield
-    concat %{
+    } + content + %{
       </td>
       <td class="help">#{args[:help]}</td>
       </tr>
-    }, proc.binding
+    }
   end
 
   def option_header(title)

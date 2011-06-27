@@ -21,8 +21,10 @@ class AccountController < ApplicationController
     @user, @card = User.create_with_card( user_args, card_args )
     return unless @user.errors.empty?
 
-    User.as :wagbot  do ## in case user doesn't have permission for included cardtypes.  For now letting signup proceed even if there are errors on multi-update
-      Card.create(:card=>@card, :cards=>params[:cards]) if params[:multi_edit] and params[:cards]
+    if params[:multi_edit] and params[:cards]
+      User.as :wagbot  do ## in case user doesn't have permission for included cardtypes.  For now letting signup proceed even if there are errors on multi-update
+        Card.create(:card=>@card, :cards=>params[:cards])
+      end
     end
 
     if System.ok?(:create_accounts)       #complete the signup now

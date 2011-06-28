@@ -189,7 +189,7 @@ class CardController < ApplicationController
     end
 
     handling_errors do
-      @card = Card.find(@card.id)   # wtf?
+      @card = Card.fetch(@card.name)   # wtf?
       request.xhr? ? render_update_slot(render_show_text, "updated #{@card.name}") : render_show
     end
   end

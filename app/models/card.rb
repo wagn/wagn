@@ -181,18 +181,13 @@ class Card < ActiveRecord::Base
 
   class << self
     def include_type_module(typecode)
+      raise "Bad typecode #{typecode}" if typecode.to_s =~ /\W/
       typecode = typecode.to_sym
-      mod = begin 
-        eval "Wagn::Set::Type::#{typecode}"
+      begin
+        include eval "Wagn::Set::Type::#{typecode}"
       rescue NameError => e
         nil
       end
-#      warn "including #{mod}"
-      include mod if mod
-#    rescue Exception=>e
-#      return unless mod
-#      Rails.logger.info "Error including module (#{typecode}, #{mod.inspect}) #{e} #{e.backtrace[0..3]*"\n"}"
-#      nil
     end
     
 

@@ -158,14 +158,15 @@ class Card < ActiveRecord::Base
     self.typecode ||= template.typecode
     fail "NO TYPECODE" unless self.typecode
 
-    #Rails.logger.debug "Card.initialize #{typecode.inspect} #{args.inspect}"
-    singleton_class.include_type_module(typecode) unless virtual?
+    #Rails.logger.info "get moduels for #{typecode.inspect} #{args.inspect}" unless virtual? || missing?
+    singleton_class.include_type_module(typecode) unless virtual? || missing?
 
     attachment_id= att_id if att_id # now that we have modules, we have this field
     set_defaults( args ) unless args['skip_defaults'] 
   end 
 
   def after_fetch
+    #Rails.logger.info "After fetch: #{name}"
     singleton_class.include_type_module(typecode)
   end
   
@@ -179,6 +180,7 @@ class Card < ActiveRecord::Base
 
   class << self
     def include_type_module(typecode)
+      #Rails.logger.info "include set #{typecode} called  #{Kernel.caller[0..4]*"\n"}"
       return unless typecode
       raise "Bad typecode #{typecode}" if typecode.to_s =~ /\W/
       typecode = typecode.to_sym

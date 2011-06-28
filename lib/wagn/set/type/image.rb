@@ -1,5 +1,7 @@
 module Wagn::Set::Type::Image  
-  def after_include
-    self.class.card_attachment CardImage
+  def self.included(base)
+    super
+    Rails.logger.debug "included(#{base}) #{self}"
+    base.class_eval { card_attachment CardImage }
   end
 end

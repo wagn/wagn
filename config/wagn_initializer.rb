@@ -3,42 +3,17 @@ require 'active_record'
 
 module Wagn end
 
-=begin
-# oof, this is not polished
-class Wagn::Config
-  def initialize(config)
-    @@rails_config = config
-    @@config = self
-    @data = {}
-  end
-
-  def method_missing(meth, *args)
-    if meth.to_s =~ /^(.*)\=$/
-      @data[$~[1]] = args[0]
-    else
-      @data[meth.to_s]
-    end
-  end
-
-  class <<self
-    def config() @@config end
-    def rails_config() @@rails_config end
-  end
-end
-=end
-
 module Wagn::Configuration
   def wagn_load
     # set_rails_config
     #rails_config.active_record.observers = :card_observer
-    cache_store = :file_store, "#{RAILS_ROOT}/tmp/cache"
-    STDERR << "frameworks #{self.frameworks.inspect}\n"
+    self.cache_store = :file_store, "#{RAILS_ROOT}/tmp/cache"
     self.frameworks -= [ :action_web_service ]
     require 'yaml'
     require 'erb'
     database_configuration_file = "#{RAILS_ROOT}/config/database.yml"
     db = YAML::load(ERB.new(IO.read(database_configuration_file)).result)
-    action_controller.session = {
+    self.action_controller.session = {
       :key    => db[RAILS_ENV]['session_key'],
       :secret => db[RAILS_ENV]['secret']
     }
@@ -55,6 +30,7 @@ module Wagn::Configuration
     end
     ###
 
+    # this needs to happen later, when System is loading or something
     #wagn_setup_multihost
 
     STDERR << "----------- Wagn Load Complete -----------\n"

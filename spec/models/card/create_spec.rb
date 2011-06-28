@@ -159,7 +159,7 @@ describe Card, "types" do
     ct = Card.create! :name=>"DFoo", :type=>'Cardtype'
     c = Card.new(:type=>"$d_foo#adfa",:name=>"more testy")
     c.valid?.should be_false
-    c.errors_on(:typecode).should_not be_empty
+    c.errors_on(:type).should_not be_empty
   end
 end          
 

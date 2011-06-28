@@ -64,6 +64,10 @@ module Wagn::Set::Type::Cardtype
     validate_destroy && destroy_extension && reset_cardtype_cache
   end
 
+  def validate_type_change
+    validate_destroy
+  end
+
   private
   
   # def ensure_not_in_use
@@ -72,17 +76,14 @@ module Wagn::Set::Type::Cardtype
   #     return false
   #   end
   # end
-  
-  
-  def validate_typecode_change
-    validate_destroy
-  end
-  
+    
   def validate_destroy
     if extension and Card.find_by_typecode_and_trash( extension.codename, false ) 
-      errors.add :typecode, "can't be altered because #{name} is a Cardtype and cards of this type still exist"
+      errors.add :cardtype, "can't be altered because #{name} is a Cardtype and cards of this type still exist"
+      false
+    else
+      true
     end
-    super
   end
   
   

@@ -5,7 +5,7 @@ describe "Card (Cardtype)" do
   before do
     User.as :joe_user
   end
-  
+
   it "should not allow cardtype remove when instances present" do
     Card.create :name=>'City', :type=>'Cardtype'
     city = Card.fetch('City')
@@ -92,23 +92,6 @@ describe Card, "created without permission" do
     }.should_not change(Cardtype, :count) 
   end
 end
-
-
-=begin don't reall need this now
-describe Card, ".class_for" do
-  it "should find valid types" do
-    Card.class_for('basic', :cardname).should == Card
-    Card.class_for('Cardtype', :codename).should == Card::Cardtype
-    Card.class_for('Date').should == Card::Date
-  end
-  
-  it "should return nil for invalid type" do
-    Card.class_for("mumbo-jumbo", :cardname).should be_nil
-    Card.class_for('$d_foo#adfa', :codename).should be_nil
-  end
- 
-end
-=end
 
 
 describe Card, "Normal card with junctions" do
@@ -218,7 +201,7 @@ describe Card, "Cardtype with Existing Cards" do
 
   it "should raise an error when you try to delete it" do
     @ct.destroy
-    @ct.errors.on(:typecode).should_not be_empty
+    @ct.errors.on(:cardtype).should_not be_empty
   end
 end
 

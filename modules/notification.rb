@@ -1,6 +1,6 @@
 module Notification   
   module CardMethods
-    def send_notifications 
+    def send_notifications
       action = case  
         when trash;  'deleted'
         when updated_at.to_s==created_at.to_s; 'added'
@@ -30,12 +30,12 @@ module Notification
     def trunk_watcher_watched_pairs
       # do the watchers lookup before the transcluder test since it's faster.
       if name.junction?
-        Rails.logger.debug "trunk_watcher_pairs #{name}, #{name.trunk_name.inspect}"
-        if (trunk_card = Card.fetch(tname=name.trunk_name, :skip_virtual=>true) and
+        #Rails.logger.debug "trunk_watcher_pairs #{name}, #{name.trunk_name.inspect}"
+        if trunk_card = Card.fetch(tname=name.trunk_name, :skip_virtual=>true) and
           pairs = trunk_card.watcher_watched_pairs and
-          transcluders.include?(tname))
+          transcluders.map(&:key).member?(tname.to_key)
           return pairs
-        end      
+        end
       end
       []
     end

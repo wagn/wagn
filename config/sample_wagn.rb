@@ -3,6 +3,7 @@ module Wagn::Local
   def self.included(base)
     self.local(base)
     System.base_url.gsub!(/\/$/,'')
+    Wagn::Cache.initialize_on_startup
   end
 
   # Override this in config/wagn.rb

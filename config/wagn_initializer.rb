@@ -66,7 +66,6 @@ module Wagn::Configuration
       STDERR << "----------- Wagn Reload Starting -----------\n"
       wagn_load_modules
       return if wagn_pre_schema?
-      Wagn::Cache.initialize_on_startup
       STDERR << "----------- Wagn Initialization Complete -----------\n\n\n"
     end
 

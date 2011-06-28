@@ -25,7 +25,6 @@ class Card < ActiveRecord::Base
   Card.debug = false
 
   cattr_accessor :cache  
-  def self.cache() @@cache || Wagn::Cache.new(Rails.cache) end
 #  self.cache = {}
 
 =begin

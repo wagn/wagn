@@ -81,7 +81,7 @@ module Wagn::Model::TrackedAttributes
     
     #newcard = self.clone_to_type(new_type)
     # do we need to "undo" and loaded modules?  Maybe reload defaults?
-    self.include_singleton_modules
+    singleton_class.include_type_module(typecode)
     self.before_validation_on_create
     ::Cardtype.reset_cache
 #    self.send(:callback, :before_create)

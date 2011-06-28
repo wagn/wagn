@@ -689,7 +689,7 @@ module Card
   
     validates_each :key do |rec, attr, value|
       if value.empty?
-        rec.errors.add :key, "key cannot be blank"
+        rec.errors.add :key, "cannot be blank"
       elsif value != rec.name.to_key
         rec.errors.add :key, "wrong key '#{value}' for name #{rec.name}"
       end

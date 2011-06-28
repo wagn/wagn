@@ -27,7 +27,7 @@
         <%= error_messages_for :user %> 
         <table class="fieldset">
           <%= slot.option_header 'Account Details' %><%#ENGLISH%>
-          <%- new_name_field = capture do %><%= text_field :name, {:class=>'new-card-name', :id=>"new-card-name-field"} %><% end %>
+          <%- new_name_field = capture do %><%= f.text_field :name, {:class=>'new-card-name', :id=>"new-card-name-field"} %><% end %>
           <%= slot.option( new_name_field,
               :name=>"name", 
               :help=>"<strong>Unique name for your card</strong><br/>usually first and last name",

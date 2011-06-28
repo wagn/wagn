@@ -111,6 +111,7 @@ module Wagn::Model::Fetch
   end
 
   def self.included(base)
+    super
     #Rails.logger.info "included(#{base}) S:#{self}"
     base.extend Wagn::Model::Fetch::ClassMethods
     base.class_eval {

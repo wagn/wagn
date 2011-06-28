@@ -1,6 +1,8 @@
 
 module Wagn::Set::Type::Search
   def self.included(base)
+    super
+    Rails.logger.debug "included(#{base}) #{self}"
     base.class_eval { attr_accessor :results }
     base.send :before_save, :escape_content
   end

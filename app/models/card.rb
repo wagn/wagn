@@ -64,11 +64,13 @@ class Card < ActiveRecord::Base
 
   # setup hooks on AR callbacks
   # Note: :after_create is called from end of set_initial_content now
+=begin
   [:before_save, :before_create, :after_save ].each do |hookname| 
     self.send( hookname ) do |card|
       Wagn::Hook.call hookname, card
     end
   end
+=end
     
   # apparently callbacks defined this way are called last.
   # that's what we want for this one.  
@@ -158,36 +160,30 @@ class Card < ActiveRecord::Base
     fail "NO TYPECODE" unless self.typecode
 
     #Rails.logger.debug "Card.initialize #{typecode.inspect} #{args.inspect}"
-    include_singleton_modules unless virtual?
+    singleton_class.include_type_module(typecode) unless virtual?
 
     attachment_id= att_id if att_id # now that we have modules, we have this field
     set_defaults( args ) unless args['skip_defaults'] 
   end 
 
   def after_fetch
-    include_singleton_modules
+    singleton_class.include_type_module(typecode)
   end
   
+=begin
   def include_singleton_modules
-    return unless typecode
 #    warn "include singleton mod for #{name}"
-    singleton.include_type_module(typecode)
-    after_include if respond_to? :after_include
+    singleton_class.include_type_module(typecode)
+    #after_include if respond_to? :after_include
   end
-
-  def singleton
-    class << self; self end
-  end
+=end
 
   class << self
     def include_type_module(typecode)
+      return unless typecode
       raise "Bad typecode #{typecode}" if typecode.to_s =~ /\W/
       typecode = typecode.to_sym
-      begin
-        include eval "Wagn::Set::Type::#{typecode}"
-      rescue NameError => e
-        nil
-      end
+      suppress(NameError) { include eval "Wagn::Set::Type::#{typecode}" }
     end
     
 

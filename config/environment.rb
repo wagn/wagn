@@ -11,7 +11,8 @@ require File.join(File.dirname(__FILE__), 'wagn_initializer')
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence those specified here
 
-  Wagn::Initializer.set_default_rails_config config
+  config.extend Wagn::Configuration
+  #Wagn::Initializer.set_default_rails_config config
 
   # Skip frameworks you're not going to use
 
@@ -36,12 +37,14 @@ Rails::Initializer.run do |config|
   
   # See Rails::Configuration for more options   
   # select a store for the rails/card cache
+
+  config.wagn_load
 end
 
 #STDERR << "Loaded? #{Module.const_defined?(:Rails)}\n"
 ActionController::Dispatcher.to_prepare do
   #STDERR << "\n\nto_prepare\n\n"
-  Wagn::Initializer.run
+  Wagn::Configuration.wagn_run
 end
 
-Wagn::Initializer.load_modules
+Wagn::Configuration.wagn_load_modules

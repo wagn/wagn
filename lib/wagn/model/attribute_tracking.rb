@@ -7,7 +7,7 @@ module Wagn::Model::AttributeTracking
     end
     
     def add(attribute, new_value) 
-      warn "ADD #{attribute} #{new_value}" 
+      #warn "ADD #{attribute} #{new_value}" 
       attribute=attribute.to_s
       if attribute=="content" && new_value=="balogna"
         if @woop==1

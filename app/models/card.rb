@@ -64,12 +64,14 @@ class Card < ActiveRecord::Base
 
   # setup hooks on AR callbacks
   # Note: :after_create is called from end of set_initial_content now
-  [:before_save, :before_create, :after_save ].each do |hookname|
+=begin
+  [:before_save, :before_create, :after_save ].each do |hookname| 
     self.send( hookname ) do |card|
       Wagn::Hook.call hookname, card
     end
   end
-
+=end
+    
   # apparently callbacks defined this way are called last.
   # that's what we want for this one.
   def after_save
@@ -112,10 +114,8 @@ class Card < ActiveRecord::Base
     end
 
     #default content
-    ::User.as(:wagbot) do
-      if !args['content'] and self.content.blank? and default_card = setting_card('content','default')
-        self.content = default_card.content
-      end
+    if !args['content'] and self.content.blank? and default_card = setting_card('content','default')
+      self.content = default_card.content
     end
 
     # misc defaults- trash, key, fallbacks
@@ -160,40 +160,29 @@ class Card < ActiveRecord::Base
     fail "NO TYPECODE" unless self.typecode
 
     #Rails.logger.debug "Card.initialize #{typecode.inspect} #{args.inspect}"
-    include_singleton_modules
+    singleton_class.include_type_module(typecode) unless virtual?
 
-    self.attachment_id = att_id if att_id # now that we have modules, we have this field
-    set_defaults( args ) unless args['skip_defaults']
+    attachment_id= att_id if att_id # now that we have modules, we have this field
+    set_defaults( args ) unless args['skip_defaults'] 
+  end 
+
+  def after_fetch
+    singleton_class.include_type_module(typecode)
   end
-
-  def after_find
-    include_singleton_modules
-  end
-
+=begin
   def include_singleton_modules
-    return unless typecode
-    #warn "include sing mod for #{name}"
-    singleton = class << self; self end
-    singleton.include_type_module(typecode)
+#    warn "include singleton mod for #{name}"
+    singleton_class.include_type_module(typecode)
+    #after_include if respond_to? :after_include
   end
+=end
 
   class << self
     def include_type_module(typecode)
+      return unless typecode
+      raise "Bad typecode #{typecode}" if typecode.to_s =~ /\W/
       typecode = typecode.to_sym
-      con = (mod=Wagn::Model::Type.const_get(typecode)).to_s.split('::')
-      if con.length != 4 or con[2] != 'Type'
-        Rails.logger.info "Different const?#{typecode}, #{mod}"
-        #Wagn::Model::Type.send :remove_const, typecode
-        con = (mod=Wagn::Model::Type.const_missing(typecode)).to_s.split('::')
-        if con.length != 4 or con[2] != 'Type'
-          Rails.logger.info "Different const2 ?#{typecode}, #{mod}"
-        end
-      end
-      include mod if mod
-    rescue Exception=>e
-      return unless mod
-      Rails.logger.info "Error including module (#{typecode}, #{mod.inspect}) #{e} #{e.backtrace[0..3]*"\n"}"
-      nil
+      suppress(NameError) { include eval "Wagn::Set::Type::#{typecode}" }
     end
 
     def find_or_create!(args={})
@@ -255,22 +244,13 @@ class Card < ActiveRecord::Base
     Wagn::Hook.call :before_multi_save, self, cards
     cards.each_pair do |name, opts|
       opts[:content] ||= ""
-      # make sure blank content doesn't override first assignments if they are present
-      #if (opts['first'].present? or opts['items'].present?)
-      #  opts.delete('content')
-      #end
       name = name.post_cgi.to_absolute(self.name)
-      logger.info "multi update working on #{name}: #{opts.inspect}"
+      #logger.info "multi update working on #{name}: #{opts.inspect}"
       if card = Card.fetch(name, :skip_virtual=>true)
         card.update_attributes(opts)
       elsif opts[:content].present? and opts[:content].strip.present?
         opts[:name] = name
-#          ::User.as(:wagbot) { Card.create(opts) }
-        if self.ok?(:create) && !(Card.new(opts).ok? :create)
-          ::User.as(:wagbot) { Card.create(opts) }
-        else
-          Card.create(opts)
-        end
+        card = Card.create(opts)
       end
       if card and !card.errors.empty?
         card.errors.each do |field, err|
@@ -404,13 +384,6 @@ class Card < ActiveRecord::Base
     end
   end
 
-  # I don't really like this..
-  #def attribute_card( attr_name )
-  #  ::User.as :wagbot do
-  #    Card.fetch( name + JOINT + attr_name , :skip_virtual => true)
-  #  end
-  #end
-
   def revised_at
     if cached_revision && rtime = cached_revision.updated_at
       rtime
@@ -431,9 +404,9 @@ class Card < ActiveRecord::Base
   def simple?(  )   n=name and n.simple?       end
   def junction?()   n=name and n.junction?     end
   def star?(    )   n=name and n.star?         end
-
-  def content
-    new_card? ? ok!(:create) : ok!(:read)
+  
+  def content   
+    #ok!(:read) if !new_card?
     cached_revision.new_record? ? "" : cached_revision.content
   end
 
@@ -444,7 +417,7 @@ class Card < ActiveRecord::Base
     when (@cached_revision and @cached_revision.id==current_revision_id);
     when (@cached_revision=Card.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
     else
-      @cached_revision = current_revision || get_blank_revision
+      @cached_revision = current_revision_id ? Revision.find(current_revision_id) : get_blank_revision
       Card.cache.write("#{key}-content", @cached_revision)
     end
     @cached_revision

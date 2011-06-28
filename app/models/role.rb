@@ -1,7 +1,3 @@
-module Wagn::Model::Type
-  module Role end
-end
-
 class Role < ActiveRecord::Base
   acts_as_card_extension
   has_and_belongs_to_many :users
@@ -23,7 +19,7 @@ class Role < ActiveRecord::Base
     end
   end
   alias_method :users, :users_with_special_roles
-  
+    
   def task_list
     (self.tasks || '').split ","
   end

@@ -1,4 +1,4 @@
-module Wagn::Model::Type::Phrase
+module Wagn::Set::Type::Phrase
   def generic?
     true
   end

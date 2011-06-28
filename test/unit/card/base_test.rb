@@ -76,9 +76,7 @@ class Card::BaseTest < ActiveSupport::TestCase
   
   def test_multi_update_should_create_subcards_as_wagbot_if_missing_subcard_permissions
     # then repeat multiple update as above, as :anon
-    #remove me after regenerating test data
-    Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
-    
+    Card.create(:name=>'peel')
     User.current_user = :anon
     assert_equal false, Card.fetch('Basic').ok?(:create)
     b = Card.create!( :type=>"Fruit", :name=>'Banana' )
@@ -86,7 +84,7 @@ class Card::BaseTest < ActiveSupport::TestCase
     assert_equal "yellow", Card["Banana+peel"].current_revision.content
     assert_equal User[:anon].id, Card["Banana+peel"].created_by
   end
-  
+
   def test_multi_update_should_not_create_cards_if_missing_main_card_permissions
     b = nil
     User.as(:joe_user) do
@@ -104,30 +102,32 @@ class Card::BaseTest < ActiveSupport::TestCase
     c = Card.create! :name=>"Banana", :type=>"Fruit", :content=>"mush"
     User.as(:anon) do
       assert_raises Card::PermissionDenied do
-        Card['Banana'].content
+        c.ok! :read
       end
     end
   end
   
 
   private 
-    def assert_simple_card( card )
-      assert !card.name.nil?, "name not null"
-      assert !card.name.empty?, "name not empty"
-      assert_instance_of Revision, card.current_revision
-      #assert_instance_of User, card.created_by
-    end
-    
-    def assert_samecard( card1, card2 )
-      assert_equal card1.current_revision, card2.current_revision
-      assert_equal card1.tag, card2.tag
-    end
-   
-    def assert_stable( card1 )
-      card2 = Card.find_by_name(card1.name)
-      assert_simple_card( card1 )
-      assert_simple_card( card2 )
-      assert_samecard( card1, card2 )
-    end
+  
+  def assert_simple_card( card )
+    assert !card.name.nil?, "name not null"
+    assert !card.name.empty?, "name not empty"
+    rev = card.current_revision
+    assert_instance_of Revision, rev
+    assert_instance_of User, rev.created_by
+  end
+  
+  def assert_samecard( card1, card2 )
+    assert_equal card1.current_revision, card2.current_revision
+    assert_equal card1.tag, card2.tag
+  end
+ 
+  def assert_stable( card1 )
+    card2 = Card.find_by_name(card1.name)
+    assert_simple_card( card1 )
+    assert_simple_card( card2 )
+    assert_samecard( card1, card2 )
+  end
 end
 

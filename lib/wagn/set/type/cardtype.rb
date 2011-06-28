@@ -1,8 +1,10 @@
-module Wagn::Model::Type::Cardtype
-  include Wagn::Model::Type::Basic
+module Wagn::Set::Type::Cardtype
+  include Wagn::Set::Type::Basic
 
   # extend the created card's class
   def self.included(base)
+    super
+    Rails.logger.debug "included(#{base}) #{self}"
 #    warn "included called for Cardtype."
     base.class_eval do
       after_save :reset_cardtype_cache

@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe Wagn::Model::Type::Pointer do
+describe Wagn::Set::Type::Pointer do
   before do
     User.current_user = :joe_user
   end

@@ -12,7 +12,7 @@ Feature: Flexmail
       {{+name}} {{+email}} {{+Testimony}} {{+recipients}}
       """
     And I create Search card "search test+*right+*content" with content "{"type":"User"}"
-    And I create email card "Testemailconfig"
+    And I create Basic card "Testemailconfig"
       And I create Search card "Testemailconfig+*to" with content
         """
         {"referred_to_by":{"left":"_self","right":"recipients"}}

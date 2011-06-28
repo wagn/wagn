@@ -108,6 +108,12 @@ describe "reader rules" do
     r = Card.create(:name=>'Heart+*right+*read', :type=>'Pointer', :content=>'[[Administrator]]')
     Card.fetch('Home+Heart').read_rule_id.should == r.id
   end
+  
+  it "should work on virtual+virtual cards" do
+    c = Card.fetch('Number+*type+by name')
+    c.ok?(:read).should be_true
+  end
+  
 end
 
 

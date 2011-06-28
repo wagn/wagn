@@ -99,6 +99,7 @@ module Wagn::Model::Permissions
   
   def rule_card(operation)
     opcard = setting_card(operation.to_s)
+    
     if !opcard && (!System.always_ok? || ENV['BOOTSTRAP_LOAD'] == 'true')
       raise Card::PermissionDenied.new("No #{operation} setting card for #{name}") 
     end
@@ -106,7 +107,7 @@ module Wagn::Model::Permissions
     rcard = begin
       User.as :wagbot do
         if opcard.raw_content == '_left' && self.junction?
-          Card.fetch_or_new(name.trunk_name, {:skip_virtual=>true}, :skip_defaults=>true).rule_card(operation).first
+          Card.fetch_or_new(name.trunk_name, :skip_virtual=>true, :skip_defaults=>true).rule_card(operation).first
         else
           opcard
         end
@@ -140,11 +141,9 @@ module Wagn::Model::Permissions
   end
 
   def approve_read
-    return true if System.always_ok?
-    
-    self.read_rule_id ||= rule_card(:read).id
+    return true if System.always_ok?    
+    self.read_rule_id ||= rule_card(:read).first.id
     ok = User.as_user.read_rule_ids.member?(self.read_rule_id) 
-      
     deny_because(you_cant "read this card") unless ok
   end
   
@@ -168,7 +167,7 @@ module Wagn::Model::Permissions
     case
     when !cardtype_name
       deny_because("No such type")
-    when !lets_user(:create)
+    when !new_card? && !lets_user(:create)
       deny_because you_cant("change to this type (need create permission)"  )
     end
     #NOTE: we used to check for delete permissions on previous type, but this would really need to happen before the name gets changes 

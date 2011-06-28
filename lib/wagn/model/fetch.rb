@@ -73,6 +73,7 @@ module Wagn::Model::Fetch
         Rails.logger.debug "   final: missing (nil)"  if debug
         return nil
       end
+      card.after_fetch
       Rails.logger.debug "   final: #{card.inspect}"  if debug
       card
     end
@@ -99,7 +100,6 @@ module Wagn::Model::Fetch
     end
 
     def new_missing cardname
-      Rails.logger.info "fetch new_missing #{cardname}"
       Card.new( :name => cardname, :skip_defaults    => true,
                  :missing => true,  :skip_type_lookup => true )
     end
@@ -111,6 +111,7 @@ module Wagn::Model::Fetch
   end
 
   def self.included(base)
+    super
     #Rails.logger.info "included(#{base}) S:#{self}"
     base.extend Wagn::Model::Fetch::ClassMethods
     base.class_eval {

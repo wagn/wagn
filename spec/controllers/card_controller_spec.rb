@@ -112,19 +112,17 @@ describe CardController do
 
     context "multi-create" do
       it "catches missing name error" do
-        Rails.logger.info "failing 1"
         post :create, "card"=>{"name"=>"", "type"=>"Fruit"},
          "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
          "content_to_replace"=>"",
          "context"=>"main_1", 
          "multi_edit"=>"true", "view"=>"open"
-        Rails.logger.info "failing 2"
-        assigns['card'].errors["name"].should == "can't be blank"
+        assigns['card'].errors[:key].should == "key cannot be blank"
+        assigns['card'].errors[:name].should == "can't be blank"
         assert_response 422
       end
 
       it "creates card and plus cards" do
-        Rails.logger.info "failing a1"
         post :create, "card"=>{"name"=>"sss", "type"=>"Fruit"},
          "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
          "content_to_replace"=>"",
@@ -132,9 +130,7 @@ describe CardController do
          "multi_edit"=>"true", "view"=>"open"
         assert_response 418    
         Card.find_by_name("sss").should_not be_nil
-        Rails.logger.info "failing a2"
         Card.find_by_name("sss+text").should_not be_nil
-        Rails.logger.info "failing a3"
       end
 
       it "creates card with hard template" do
@@ -266,11 +262,8 @@ describe CardController do
       end
 
       it "handles nonexistent card without create permissions" do
-        Rails.logger.debug "failing 0"
         login_as :anon
-        Rails.logger.debug "failing 1"
         get :show, {:id=>'Sample_Fako'}
-        Rails.logger.debug "failing 2"
         assert_response :success   
         assert_template 'missing'
       end

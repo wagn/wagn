@@ -63,8 +63,6 @@ module Wagn::Model::TrackedAttributes
 
   def set_typecode(new_typecode)
 #    Rails.logger.debug "set_typecde No type code for #{name}, #{typecode}" unless new_typecode
-#    new_typecode = 'Basic' unless new_typecode
-#    return if new_typecode == typecode
     self.typecode_without_tracking= new_typecode 
     return true if new_card?
     on_type_change # FIXME this should be a callback
@@ -78,14 +76,10 @@ module Wagn::Model::TrackedAttributes
       end
     end
     
-    
-    #newcard = self.clone_to_type(new_type)
     # do we need to "undo" and loaded modules?  Maybe reload defaults?
     singleton_class.include_type_module(typecode)
     self.before_validation_on_create
     ::Cardtype.reset_cache
-#    self.send(:callback, :before_create)
-
     true
   end
   

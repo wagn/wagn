@@ -1,6 +1,6 @@
 class Renderer
   define_view(:editor, :type=>'file') do
-    attachment_model_name = card.class.attachment_model.name.underscore
+    attachment_model_name = card.attachment_model.name.underscore
     attachment_uuid = (0..29).to_a.map {|x| rand(10)}
     self.skip_autosave = true
     # WEIRD: when I didn't check for new_record?, create would come up with random old attachment previews

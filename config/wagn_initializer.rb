@@ -37,6 +37,7 @@ module Wagn::Configuration
     #Rails.logger.info("\n----------- Wagn Load Complete -----------\n\n")
   end
 
+  class << self
   def wagn_pre_schema?
     begin
       @schema_initialized ||= ActiveRecord::Base.connection.select_value("select count(*) from cards").to_i > 2
@@ -61,12 +62,10 @@ module Wagn::Configuration
     end
   end
 
-  class << self
     def wagn_run
       STDERR << "----------- Wagn Reload Starting -----------\n"
       wagn_load_modules
       return if wagn_pre_schema?
-      Wagn::Cache.initialize_on_startup
       STDERR << "----------- Wagn Initialization Complete -----------\n\n\n"
     end
 

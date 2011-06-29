@@ -11,7 +11,7 @@ module Wagn::Model::Search
     
     def pattern_virtual(name)
       return nil unless name && name.junction?
-      if template = Card.new(:name=>name, :skip_defaults=>true).template and template.hard_template? 
+      if template = Card.new(:name=>name, :virtual=>true, :skip_defaults=>true).template and template.hard_template? 
         User.as(:wagbot) do
           Card.create_virtual name, template.content, template.typecode
         end

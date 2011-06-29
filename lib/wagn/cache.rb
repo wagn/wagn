@@ -22,6 +22,7 @@ module Wagn
   end
 
   class Cache
+    
     class << self
       def initialize_on_startup
         @@preload = false
@@ -32,12 +33,11 @@ module Wagn
           Card.cache = Wagn::Cache.new Rails.cache
         end
       end
-      #alias re_initialize_for_new_request initialize_on_startup
       
       def preload_cache_for_tests
-        set_keys = ['*all','basic+*type','html+*type','*cardtype+*type','*sidebar+*self']
-        set_keys.map{|k| [k, "#{k}+*content", "#{k}+*default"]}.flatten.each do |key|        
-          Card.fetch key
+        set_keys = ['*all','*all plus','basic+*type','html+*type','*cardtype+*type','*sidebar+*self']
+        set_keys.map{|k| [k,"#{k}+*content", "#{k}+*default", "#{k}+*read", ]}.flatten.each do |key|        
+          Card.fetch key, :skip_virtual=>true, :skip_after_fetch=>true
         end
         Role[:auth]; Role[:anon]
         @@frozen = Marshal.dump([Card.cache, Role.cache])
@@ -77,11 +77,11 @@ module Wagn
         Role.reset_cache
         System.reset_cache
         Wagn::Pattern.reset_cache
-        Card.cache && Card.cache.reset_local
+        Card.cache.reset_local
       end
 
       def reset_global
-        Card.cache && Card.cache.reset
+        Card.cache.reset
         reset_local
       end
     end
@@ -150,10 +150,12 @@ module Wagn
     end
 
     def reset_local
+      Rails.logger.info "reset_local called"
       @local = {}
     end
 
     def reset
+      Rails.logger.info "reset called"
       reset_local
       @cache_id = self.class.generate_cache_id
       @store.write(@system_prefix + "cache_id", @cache_id)  if @store

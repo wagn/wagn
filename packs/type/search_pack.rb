@@ -3,14 +3,11 @@ class Renderer
   define_view(:naked, :type=>'search') do
     error=nil
     begin
-      Rails.logger.info "Search :naked #{card&&card.name} #{Kernel.caller[0..5]*"\n"}"
       card.item_cards( paging_params )
     rescue Exception=>e
-      Rails.logger.info "Search Error (:naked) #{e.inspect} #{e.backtrace*"\n"}"
       error = e
     end
 
-    Rails.logger.info "Search naked R #{card&&card.name} #{card.results.inspect}"
     case
     when card.results.nil?
       %{No results? #{error.class.to_s}: #{error&&error.message}<br/>#{card.content}}
@@ -31,7 +28,6 @@ class Renderer
       card.item_cards( paging_params )
       total = card.count
     rescue Exception=>e
-      Rails.logger.info "Search Error (:closed_content) #{e.inspect} #{e.backtrace*"\n"}"
       error = e
       card.results = nil
     end

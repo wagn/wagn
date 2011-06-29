@@ -24,8 +24,7 @@ class Card < ActiveRecord::Base
   cattr_accessor :debug
   Card.debug = false
 
-  cattr_accessor :cache
-  def self.cache() @@cache || Wagn::Cache.new(Rails.cache) end
+  cattr_accessor :cache  
 #  self.cache = {}
 
 =begin
@@ -159,14 +158,15 @@ class Card < ActiveRecord::Base
     self.typecode ||= template.typecode
     fail "NO TYPECODE" unless self.typecode
 
-    #Rails.logger.debug "Card.initialize #{typecode.inspect} #{args.inspect}"
-    singleton_class.include_type_module(typecode) unless virtual?
+    #Rails.logger.info "get moduels for #{typecode.inspect} #{args.inspect}" unless virtual? || missing?
+    singleton_class.include_type_module(typecode) unless virtual? || missing?
 
     attachment_id= att_id if att_id # now that we have modules, we have this field
     set_defaults( args ) unless args['skip_defaults'] 
   end 
 
   def after_fetch
+    #Rails.logger.info "After fetch: #{name}"
     singleton_class.include_type_module(typecode)
   end
 =begin
@@ -179,6 +179,7 @@ class Card < ActiveRecord::Base
 
   class << self
     def include_type_module(typecode)
+      #Rails.logger.info "include set #{typecode} called  #{Kernel.caller[0..4]*"\n"}"
       return unless typecode
       raise "Bad typecode #{typecode}" if typecode.to_s =~ /\W/
       typecode = typecode.to_sym
@@ -432,7 +433,7 @@ class Card < ActiveRecord::Base
   end
 
   def typecode
-    @typecode ||= read_attribute :typecode
+    read_attribute :typecode
   end
 
   def codename
@@ -562,28 +563,29 @@ class Card < ActiveRecord::Base
   validates_each :typecode do |rec, attr, value|
     # validate on update
     if rec.updates.for?(:typecode) and !rec.new_record?
-
-      # invalid to change type when cards of this type exists
-      if rec.typecode == 'Cardtype' and rec.extension and ::Card.find_by_typecode(rec.extension.codename)
-        rec.errors.add :typecode, "can't be changed to #{value} for #{rec.name} because #{rec.name} is a Cardtype and cards of this type still exist"
+            
+      if !rec.validate_type_change
+        rec.errors.add :type, "of #{rec.name} can't be changed; errors changing from #{rec.cardtype_name}"        
       end
-
-      rec.send :validate_typecode_change
+  
+      if c = Card.new(:name=>'*validation dummy', :typecode=>value) and !c.valid?
+        rec.errors.add :type, "of #{rec.name } can't be changed; errors creating new #{value}: #{c.errors.full_messages.join(', ')}"
+      end      
     end
 
     # validate on update and create
     if rec.updates.for?(:typecode) or rec.new_record?
       # invalid type recorded on create
       if rec.broken_type
-        rec.errors.add :typecode, "won't work.  There's no cardtype named '#{rec.broken_type}'"
+        rec.errors.add :type, "won't work.  There's no cardtype named '#{rec.broken_type}'"
       end
 
       # invalid to change type when type is hard_templated
       if (rt = rec.right_template and rt.hard_template? and
         value!=rt.typecode and !rec.allow_typecode_change)
-        rec.errors.add :typecode, "can't be changed because #{rec.name} is hard tag templated to #{rec.right_template.typecode}"
-      end
-
+        rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rec.right_template.cardtype_name}"
+      end        
+      
     end
   end
 
@@ -594,19 +596,8 @@ class Card < ActiveRecord::Base
       rec.errors.add :key, "wrong key '#{value}' for name #{rec.name}"
     end
   end
-
-  def validate_destroy
-    if extension_type=='User' and extension and Revision.find_by_created_by( extension.id )
-      errors.add :destroy, "Edits have been made with #{name}'s user account.<br>  Deleting this card would mess up our revision records."
-      return false
-    end
-    #should collect errors from dependent destroys here.
-    true
-  end
-
-  def validate_typecode_change
-  end
-
+   
+  
   def destroy_extension
     extension.destroy if extension
     extension = nil
@@ -616,5 +607,19 @@ class Card < ActiveRecord::Base
   def validate_content( content )
   end
 
-end
+  public
+  def validate_type_change
+    true
+  end
+  
+  def validate_destroy    
+    if extension_type=='User' and extension and Revision.find_by_created_by( extension.id )
+      errors.add :destroy, "Edits have been made with #{name}'s user account.<br>  Deleting this card would mess up our revision records."
+      return false
+    end           
+    #should collect errors from dependent destroys here.  
+    true
+  end
+  
+end  
 

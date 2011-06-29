@@ -1,5 +1,9 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
+class Card
+  cattr_accessor :count
+end
+
 module Wagn::Set::Type::CardtypeA 
   def approve_delete 
     deny_because("not allowed to delete card a")
@@ -11,33 +15,31 @@ end
 #  end
   
 module Wagn::Set::Type::CardtypeC
-  def self.validate_typecode_change
+  def validate_type_change
     errors.add :destroy_error, "card c is indestructible"
   end
 end
 
 module Wagn::Set::Type::CardtypeD
-  def self.valid?
+  def valid?
     errors.add :create_error, "card d always has errors"
+    errors.empty?
   end
 end
 
 module Wagn::Set::Type::CardtypeE
-#  cattr_accessor :count
-  @@count = 2
+
   def on_type_change
     decrement_count
   end
-  def decrement_count() @@count -= 1; end
+  def decrement_count() Card.count -= 1; end
 end
 
 module Wagn::Set::Type::CardtypeF
-#  cattr_accessor :count
-  @@count = 2
-  def before_validation_on_create 
+  def before_validation_on_create
     increment_count
   end
-  def increment_count() @@count += 1; end
+  def increment_count() Card.count += 1; end
 end
 
 
@@ -85,7 +87,9 @@ end
 
 describe Card, "type transition approve create" do
   before do
-    Card.create :name=>'Cardtype B+*type+*create', :type=>'Pointer', :content=>'[[r1]]'
+    User.as :wagbot do
+      Card.create :name=>'Cardtype B+*type+*create', :type=>'Pointer', :content=>'[[r1]]'
+    end
   end
   
   it "should have errors" do
@@ -115,7 +119,7 @@ describe Card, "type transition validate_create" do
   before do @c = change_card_to_type("basicname", "CardtypeD") end
   
   it "should have errors" do
-    @c.errors.on(:create_error).should == "card d always has errors"
+    @c.errors.on(:type).match(/card d always has errors/).should be_true
   end
   
   it "should retain original type" do
@@ -125,12 +129,12 @@ end
 
 describe Card, "type transition destroy callback" do
   before do
-    Card.search(:return=>'count', :type=>'CardtypeE').should == 2
+    Card.count = 2
     @c = change_card_to_type("type-e-card", "Basic") 
   end
   
   it "should decrement counter in before destroy" do
-    Card.search(:return=>'count', :type=>'CardtypeE').should == 1
+    Card.count.should == 1
   end
   
   it "should change type of the card" do
@@ -140,13 +144,17 @@ end
 
 describe Card, "type transition create callback" do
   before do 
-    Card.create(:name=>'Basic+*type+*delete', :type=>'Pointer', :content=>"[[Anyone Signed in]]")
-    Card.search(:return=>'count', :type=>'CardtypeF').should == 1
+    User.as :wagbot do
+      Card.create(:name=>'Basic+*type+*delete', :type=>'Pointer', :content=>"[[Anyone Signed in]]")
+    end
+    Card.count = 2
     @c = change_card_to_type("basicname", 'CardtypeF') 
   end
     
   it "should increment counter"  do
-    Card.search(:return=>'count', :type=>'CardtypeF').should == 2
+    Card.count.should == 4
+    #currently before_validation_on_create is called twice on a type change; once in the actual validation of a new dummmy card of the new type, 
+    #and once when setting the typecode.  the former makes sense; the latter seems hackish to me.
   end
   
   it "should change type of card" do

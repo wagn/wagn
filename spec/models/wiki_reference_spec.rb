@@ -57,12 +57,11 @@ describe "WikiReference" do
 
   
   it "container transclusion" do
-    bob_city = Card.create :name=>'bob+city' 
-    Card.create :name=>'address+*right+*default',:content=>"{{+city|base:parent}}"
-    bob_address = Card.create :name=>'bob+address'
-    
-    bob_address.transcludees.plot(:name).should == ["bob+city"]
-    bob_city.transcluders.plot(:name).should == ["bob+address"]
+    Card.create :name=>'bob+city' 
+    Card.create :name=>'address+*right+*default',:content=>"{{_L+city}}"
+    Card.create :name=>'bob+address'
+    Card.fetch('bob+address').transcludees.plot(:name).should == ["bob+city"]
+    Card.fetch('bob+city').transcluders.plot(:name).should == ["bob+address"]
   end
 
 

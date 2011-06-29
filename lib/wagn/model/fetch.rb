@@ -73,7 +73,7 @@ module Wagn::Model::Fetch
         Rails.logger.debug "   final: missing (nil)"  if debug
         return nil
       end
-      card.after_fetch
+      card.after_fetch unless opts[:skip_after_fetch]
       Rails.logger.debug "   final: #{card.inspect}"  if debug
       card
     end

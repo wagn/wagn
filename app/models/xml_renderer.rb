@@ -36,7 +36,7 @@ class XmlRenderer < Renderer
       else
         known_card = !!Card.fetch(href)
         text = text.to_show(href)
-        href = '/wagn/' + (known_card ? href.to_url_key : CGI.escape(Cardname.escape(href)))
+        href = '/wagn/' + (known_card ? href.to_url_key : CGI.escape(Wagn::Cardname.escape(href)))
         href = full_uri(href)
         return %{<cardlink class="#{
                     known_card ? 'known-card' : 'wanted-card'

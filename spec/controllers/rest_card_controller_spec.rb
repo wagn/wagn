@@ -204,13 +204,13 @@ describe RestCardController do
     it "new without cardtype" do
       post :new   
       assert_response :success, "response should succeed"                     
-      assert_equal 'Basic', assigns['card'].type, "@card type should == Basic"
+      assert_equal 'Basic', assigns['card'].typecode, "@card type should == Basic"
     end
 
     it "new with cardtype" do
       post :new, :card => {:type=>'Date'}   
       assert_response :success, "response should succeed"                     
-      assert_equal 'Date', assigns['card'].type, "@card type should == Date"
+      assert_equal 'Date', assigns['card'].typecode, "@card type should == Date"
     end        
 
     it "remove" do
@@ -253,7 +253,7 @@ describe RestCardController do
       #assert_equal "boo", assigns['card'].content
       assert_response :success, "changed card type"   
       assigns['card'].content  .should == ""
-      Card['Sample Basic'].type.should == "Date"
+      Card['Sample Basic'].typecode.should == "Date"
     end
 
 

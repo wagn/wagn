@@ -12,7 +12,16 @@ module PackSpecHelper
     Renderer.new(@card,args).render(:naked)
   end
 
-  def render_card(view, card_args={})
+  def xml_render_content(content, args={})
+    args[:format] = :xml
+    render_content(content, args)
+  end
+
+  def xml_render_card(view, card_args={})
+    render_card(view, card_args, :format=>:xml)
+  end
+
+  def render_card(view, card_args={}, args={})
 Rails.logger.info "render_card #{view} #{card_args.inspect}"
     card = begin
       if card_args[:name]
@@ -27,8 +36,8 @@ Rails.logger.info "made it: (#{card_args.inspect}) #{(c&&c.name).inspect}"; c
       end
     end
 r=
-    Renderer.new(card).render(view)
-Rails.logger.info "render_card(#{card&&card.name}, #{view}) => #{r}"; r
+    Renderer.new(card, args).render(view)
+Rails.logger.info "render_card(#{card&&card.name}, #{view}, #{args.inspect}) => #{r}"; r
   end
 end
 

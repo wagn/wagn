@@ -57,7 +57,7 @@ class XmlRenderer < Renderer
     attributes = {
       :name => card.name.tag_name,
       :cardId   => (card && card.id),
-      :type => card.type,
+      :type     => card.typecode,
       :class    => css_class,
     }
     [:style, :home_view, :item, :base].each { |key| attributes[key] = args[key] }
@@ -155,7 +155,7 @@ class XmlRenderer < Renderer
 
   def layout_from_card
     return unless setting_card = (card.setting_card('layout') or Card.default_setting_card('layout'))
-    return unless setting_card.is_a?(Card::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.type == 'Pointer'        and
+    return unless setting_card.is_a?(Card::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.typecode == 'Pointer'        and
       layout_name=setting_card.item_names.first     and
       !layout_name.nil?                             and
       lo_card = Card.fetch(layout_name, :skip_virtual => true)    and
@@ -230,8 +230,8 @@ class XmlRenderer < Renderer
     div(:class=>'submenu') do
       [[ :content,    true  ],
        [ :name,       true, ],
-       [ :type,       !(card.type_template? || (card.type=='Cardtype' and ct=card.me_type and !ct.find_all_by_trash(false).empty?))],
-       [ :codename,   (System.always_ok? && card.type=='Cardtype')],
+       [ :type,       !(card.type_template? || (card.typecode=='Cardtype' and ct=card.me_type and !ct.find_all_by_trash(false).empty?))],
+       [ :codename,   (System.always_ok? && card.typecode=='Cardtype')],
        [ :inclusions, !(card.out_transclusions.empty? || card.template? || card.hard_template),         {:inclusions=>true} ]
        ].map do |key,ok,args|
 
@@ -350,11 +350,11 @@ class XmlRenderer < Renderer
   end
 
   def cardtype_field(form,options={})
-    template.select_tag('card[type]', cardtype_options_for_select(Cardtype.name_for(card.type)), options)
+    template.select_tag('card[type]', cardtype_options_for_select(Cardtype.name_for(card.typecode)), options)
   end
 
   def update_cardtype_function(options={})
-    fn = ['File','Image'].include?(card.type) ?
+    fn = ['File','Image'].include?(card.typecode) ?
             "Wagn.onSaveQueue['#{context}']=[];" :
             "Wagn.runQueue(Wagn.onSaveQueue['#{context}']); "
     fn << remote_function( options )

@@ -69,7 +69,7 @@ class CardController < ApplicationController
     respond_to do |format|
       known_formats.each do |f|
         format.send f do
-          return Renderer.new(@card, 
+          return Wagn::Renderer.new(@card, 
             :format=>f, :flash=>flash, :params=>params, :controller=>self
           ).render(:show)
         end
@@ -380,7 +380,7 @@ class CardController < ApplicationController
     load_card if params[:id]
     @card ||= Card.new(:type=>'Pointer', :skip_defaults=>true)
     #render :partial=>'types/pointer/field', :locals=>params.merge({:link=>:add,:card=>@card})
-    render(:text => Renderer.new(@card, :context=>params[:eid]).render(:field, :link=>:add, :index=>params[:index]) )
+    render(:text => Wagn::Renderer.new(@card, :context=>params[:eid]).render(:field, :link=>:add, :index=>params[:index]) )
   end
 
 end

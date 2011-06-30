@@ -1,4 +1,4 @@
-class Renderer
+class Wagn::Renderer
   define_view(:naked , :type=>'set') do
     div( :class=>'instruction' ) do
       Wagn::Pattern.label card.name

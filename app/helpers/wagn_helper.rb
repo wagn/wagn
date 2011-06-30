@@ -9,13 +9,13 @@ module WagnHelper
   # Put the initialization in the controller and we no longer care here
   # whether it is a Slot or Renderer, and it will be from the parent class
   #   Now: Always a Renderer, and the subclass is selected by:
-  #     :format => :html (default and only -> RichHtmlRenderer (was Slot))
+  #     :format => :html (default and only -> Wagn::Renderer::RichHtml (was Slot))
 #  def slot() raise "slot is now self #{self}" end
 #  def get_slot(card=nil, context=nil, action=nil, opts={})
 #    raise "get_slot? #{card}, #{context}, #{action}, #{opts.inspect}"
 #  end
 #=begin
-  def slot() Renderer.current_slot end
+  def slot() Wagn::Renderer.current_slot end
   def card() @card ||= slot.card end
   def params()
     if controller 
@@ -32,11 +32,11 @@ module WagnHelper
     card ||= @card; context||=@context; action||=@action
     opts[:relative_content] = opts[:params] = (controller and params) or {}
     slot = case
-      when Renderer.current_slot
+      when Wagn::Renderer.current_slot
 #Rails.logger.info "current slot already exists.  nil_given = #{nil_given}"
-        nil_given ? Renderer.current_slot : Renderer.current_slot.subrenderer(card)
+        nil_given ? Wagn::Renderer.current_slot : Wagn::Renderer.current_slot.subrenderer(card)
       else
-        Renderer.current_slot = Renderer.new( card,
+        Wagn::Renderer.current_slot = Wagn::Renderer.new( card,
             opts.merge(:context=>context, :action=>action, :template=>self, :controller=>@controller) )
     end
     controller and controller.renderer = slot or slot
@@ -79,7 +79,7 @@ module WagnHelper
     if options[:url] =~ /^javascript\:/
       function << options[:url].gsub(/^javascript\:/,'')
     elsif options[:slot]
-      function << Renderer.current_slot.url_for(options[:url]).gsub(/^javascript\:/,'')
+      function << Wagn::Renderer.current_slot.url_for(options[:url]).gsub(/^javascript\:/,'')
     else
       url_options = options[:url]
       url_options = url_options.merge(:escape => false) if url_options.is_a?(Hash)
@@ -258,7 +258,7 @@ module WagnHelper
   end
 
   def wrap_slot(renderer=nil, args={}, &block)
-    renderer ||= (Renderer.current_slot || get_slot)
+    renderer ||= (Wagn::Renderer.current_slot || get_slot)
     concat( renderer.wrap(args) { capture{ yield(renderer) } } )
   end
   # ------------( helpers ) --------------

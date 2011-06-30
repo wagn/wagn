@@ -35,7 +35,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def per_request_setup
-    Renderer.ajax_call=request.xhr?
+    Wagn::Renderer.ajax_call=request.xhr?
     
     if System.multihost
       if mapping = MultihostMapping.find_by_requested_host(request.host) || MultihostMapping.find_by_requested_host("")
@@ -59,7 +59,7 @@ class ApplicationController < ActionController::Base
     @context = params[:context] || 'main_1'
     @action = params[:action]
 
-    Renderer.current_slot = nil
+    Wagn::Renderer.current_slot = nil
 
     # reset class caches
     # FIXME: this is a bit of a kluge.. several things stores as cattrs in modules

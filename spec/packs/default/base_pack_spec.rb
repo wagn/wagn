@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../pack_spec_helper'
 
 #~~~~~~~~~ ERROR HANDLING
 
-describe Renderer do
+describe Wagn::Renderer do
   it "should render deny_view when user lacks read permissions" do
     c = Card.fetch('Administrator links')
     c.who_can(:read).should == ['administrator']

@@ -1,4 +1,4 @@
-class Renderer
+class Wagn::Renderer
   ### ---- Core renders --- Keep these on top for dependencies
 
   # update_references based on _render_refs, which is the same as 

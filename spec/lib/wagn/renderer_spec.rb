@@ -1,10 +1,10 @@
-require File.dirname(__FILE__) + '/../spec_helper'
-require File.dirname(__FILE__) + '/../packs/pack_spec_helper'
+require File.dirname(__FILE__) + '/../../spec_helper'
+require File.dirname(__FILE__) + '/../../packs/pack_spec_helper'
 
-describe Renderer, "" do
+describe Wagn::Renderer, "" do
   before do
     User.current_user = :joe_user
-    Renderer.current_slot = nil
+    Wagn::Renderer.current_slot = nil
   end
     
   def simplify_html string
@@ -37,7 +37,7 @@ describe Renderer, "" do
 
     it "css in inclusion syntax in wrapper" do
       c = Card.new :name => 'Afloatright', :content => "{{A|float:right}}"
-      Renderer.new(c).render( :naked ).should be_html_with do
+      Wagn::Renderer.new(c).render( :naked ).should be_html_with do
         div(:style => 'float:right;') {}
       end
     end
@@ -45,7 +45,7 @@ describe Renderer, "" do
     # I want this test to show the explicit escaped HTML, but be_html_with seems to escape it already :-/
     it "HTML in inclusion systnax as escaped" do
       c =Card.new :name => 'Afloat', :type => 'Html', :content => '{{A|float:<object class="subject">}}'
-      Renderer.new(c).render( :naked ).should be_html_with do
+      Wagn::Renderer.new(c).render( :naked ).should be_html_with do
         div(:style => 'float:<object class="subject">;') {}
       end
     end
@@ -53,13 +53,13 @@ describe Renderer, "" do
     context "CGI variables" do
       it "substituted when present" do
         c = Card.new :name => 'cardNaked', :content => "{{_card+B|naked}}"
-        result = Renderer.new(c, :params=>{'_card' => "A"}).render_naked
+        result = Wagn::Renderer.new(c, :params=>{'_card' => "A"}).render_naked
         result.should == "AlphaBeta"
       end
     end
 
     it "renders layout card without recursing" do
-      Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
+      Wagn::Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
     end
 
   end
@@ -71,12 +71,12 @@ describe Renderer, "" do
     it "prevents infinite loops" do
       Card.create! :name => "n+a", :content=>"{{n+a|array}}"
       c = Card.new :name => 'naArray', :content => "{{n+a|array}}"
-      Renderer.new(c).render( :naked ).should =~ /too deep/
+      Wagn::Renderer.new(c).render( :naked ).should =~ /too deep/
     end
 
     it "missing relative inclusion is relative" do
       c = Card.new :name => 'bad_include', :content => "{{+bad name missing}}"
-      Renderer.new(c).render(:naked).match(Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
+      Wagn::Renderer.new(c).render(:naked).match(Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
     end
 
     it "renders deny for unpermitted cards" do
@@ -85,7 +85,7 @@ describe Renderer, "" do
         Card.create(:name=>'Joe no see me+*self+*read', :type=>'Pointer', :content=>'[[Administrator]]')
       end
       User.as :joe_user do
-        Renderer.new(Card.fetch('Joe no see me')).render(:naked).should be_html_with { span(:class=>'denied') }
+        Wagn::Renderer.new(Card.fetch('Joe no see me')).render(:naked).should be_html_with { span(:class=>'denied') }
       end
     end      
   end
@@ -104,13 +104,13 @@ describe Renderer, "" do
     it "image tags of different sizes" do
       Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}
       c = Card.new :name => 'Image1', :content => "{{TestImage | naked; size:small }}"
-      Renderer.new(c).render( :naked ).should == %{<img src="http://wagn.org/image53_small.jpg">}
+      Wagn::Renderer.new(c).render( :naked ).should == %{<img src="http://wagn.org/image53_small.jpg">}
     end
 
     describe "css classes" do
       it "are correct for open view" do
         c = Card.new :name => 'Aopen', :content => "{{A|open}}"
-        Renderer.new(c).render(:naked).should be_html_with do
+        Wagn::Renderer.new(c).render(:naked).should be_html_with do
           div( :class => "card-slot paragraph ALL TYPE-basic SELF-a") {}
         end
       end
@@ -131,7 +131,7 @@ describe Renderer, "" do
     describe "inclusions" do
       it "multi edit" do
         c = Card.new :name => 'ABook', :type => 'Book'
-        Renderer.new(c).render( :multi_edit ).should be_html_with do
+        Wagn::Renderer.new(c).render( :multi_edit ).should be_html_with do
           div :class => "field-in-multi" do
             input :name=>"cards[~plus~illustrator][content]", :type => 'hidden'
           end
@@ -154,7 +154,7 @@ describe Renderer, "" do
         mu = mock(:mu)
         mu.should_receive(:generate).and_return("1")
         UUID.should_receive(:new).and_return(mu)
-        @ocslot = Renderer.new(Card['A'])
+        @ocslot = Wagn::Renderer.new(Card['A'])
       end
 
       it "should have the appropriate attributes on open" do
@@ -187,7 +187,7 @@ describe Renderer, "" do
       before do
         User.as :wagbot do
           card = Card['A+B']
-          @simple_page = RichHtmlRenderer.new(card).render(:layout)
+          @simple_page = Wagn::Renderer::RichHtml.new(card).render(:layout)
         end
       end
 
@@ -271,13 +271,13 @@ Rails.logger.info "layout_card content"
         @layout_card.content = "Hi {{A}}"
         @layout_card.save
 Rails.logger.info "layout_card content #{@layout_card.content}"
-        Renderer.new(@main_card).render(:layout).should match('Hi Alpha')
+        Wagn::Renderer.new(@main_card).render(:layout).should match('Hi Alpha')
       end
 
       it "should default to open view for main card" do
         @layout_card.content='Open up {{_main}}'
         @layout_card.save
-        result = Renderer.new(@main_card).render_layout
+        result = Wagn::Renderer.new(@main_card).render_layout
         result.should match(/Open up/)
         result.should match(/card-header/)
         result.should match(/Joe User/)
@@ -286,7 +286,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       it "should render custom view of main" do
         @layout_card.content='Hey {{_main|name}}'
         @layout_card.save
-        result = Renderer.new(@main_card).render_layout
+        result = Wagn::Renderer.new(@main_card).render_layout
         result.should match(/Hey.*div.*Joe User/)
         result.should_not match(/card-header/)
       end
@@ -294,13 +294,13 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       it "shouldn't recurse" do
         @layout_card.content="Mainly {{_main|naked}}"
         @layout_card.save
-        Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
+        Wagn::Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
       end
 
       it "should handle non-card content" do
         @layout_card.content='Hello {{_main}}'
         @layout_card.save
-        result = Renderer.new(nil).render(:layout, :main_content=>'and Goodbye')
+        result = Wagn::Renderer.new(nil).render(:layout, :main_content=>'and Goodbye')
         result.should match(/Hello.*and Goodbye/)
       end
 
@@ -308,7 +308,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
 
     it "raw content" do
        @a = Card.new(:name=>'t', :content=>"{{A}}")
-      Renderer.new(@a).render(:raw).should == "{{A}}"
+      Wagn::Renderer.new(@a).render(:raw).should == "{{A}}"
     end
 
     it "array (basic card)" do
@@ -319,13 +319,13 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
   describe "cgi params" do
     it "renders params in card inclusions" do
       c = Card.new :name => 'cardNaked', :content => "{{_card+B|naked}}"
-      result = Renderer.new(c, :params=>{'_card' => "A"}).render_naked
+      result = Wagn::Renderer.new(c, :params=>{'_card' => "A"}).render_naked
       result.should == "AlphaBeta"
     end
 
     it "should not change name if variable isn't present" do
       c = Card.new :name => 'cardBname', :content => "{{_card+B|name}}"
-      Renderer.new(c).render( :naked ).should == "_card+B"
+      Wagn::Renderer.new(c).render( :naked ).should == "_card+B"
     end
 
     it "array (search card)" do
@@ -333,7 +333,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       Card.create! :name => "n+b", :type=>"Phrase", :content=>"say:\"what\""
       Card.create! :name => "n+c", :type=>"Number", :content=>"30"
       c = Card.new :name => 'nplusarray', :content => "{{n+*plus cards+by create|array}}"
-      Renderer.new(c).render( :naked ).should == %{["10", "say:\\"what\\"", "30"]}
+      Wagn::Renderer.new(c).render( :naked ).should == %{["10", "say:\\"what\\"", "30"]}
     end
 
     it "array (pointer card)" do
@@ -342,7 +342,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       Card.create! :name => "n+c", :type=>"Number", :content=>"30"
       Card.create! :name => "npoint", :type=>"Pointer", :content => "[[n+a]]\n[[n+b]]\n[[n+c]]"
       c = Card.new :name => 'npointArray', :content => "{{npoint|array}}"
-      Renderer.new(c).render( :naked ).should == %q{["10", "20", "30"]}
+      Wagn::Renderer.new(c).render( :naked ).should == %q{["10", "20", "30"]}
     end
 
 =begin
@@ -354,13 +354,13 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
 
       # a little weird that we need :open_content  to get the version without
       # slot divs wrapped around it.
-      s = Renderer.new(t, :inclusion_view_overrides=>{ :open => :name } )
+      s = Wagn::Renderer.new(t, :inclusion_view_overrides=>{ :open => :name } )
       s.render( :naked ).should == "t2"
 
       # similar to above, but use link
-      s = Renderer.new(t, :inclusion_view_overrides=>{ :open => :link } )
+      s = Wagn::Renderer.new(t, :inclusion_view_overrides=>{ :open => :link } )
       s.render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/t2\">t2</a>"
-      s = Renderer.new(t, :inclusion_view_overrides=>{ :open => :naked } )
+      s = Wagn::Renderer.new(t, :inclusion_view_overrides=>{ :open => :naked } )
       s.render( :naked ).should == "boo"
     end
 =end
@@ -376,13 +376,13 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
 
       # a little weird that we need :open_content  to get the version without
       # slot divs wrapped around it.
-      s = Renderer.new(t, :inclusion_view_overrides=>{ :open => :name } )
+      s = Wagn::Renderer.new(t, :inclusion_view_overrides=>{ :open => :name } )
       s.render( :naked ).should == "t2"
 
       # similar to above, but use link
-      s = Renderer.new(t, :inclusion_view_overrides=>{ :open => :link } )
+      s = Wagn::Renderer.new(t, :inclusion_view_overrides=>{ :open => :link } )
       s.render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/t2\">t2</a>"
-      s = Renderer.new(t, :inclusion_view_overrides=>{ :open => :naked } )
+      s = Wagn::Renderer.new(t, :inclusion_view_overrides=>{ :open => :naked } )
       s.render( :naked ).should == "boo"
     end
 =end
@@ -424,7 +424,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
   context "Content settings" do
     it "are rendered as raw" do
       template = Card.new(:name=>'A+*right+*content', :content=>'[[link]] {{inclusion}}')
-      Renderer.new(template).render(:naked).should == '[[link]] {{inclusion}}'
+      Wagn::Renderer.new(template).render(:naked).should == '[[link]] {{inclusion}}'
     end
 
 
@@ -433,10 +433,10 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       @card = Card.new( :name=>"templated", :content => "bar" )
       config_card = Card.new(:name=>"templated+*self+*content", :content=>"Yoruba" )
       @card.should_receive(:setting_card).with("content","default").and_return(config_card)
-      Renderer.new(@card).render_raw.should == "Yoruba"
+      Wagn::Renderer.new(@card).render_raw.should == "Yoruba"
       @card.should_receive(:setting_card).with("content","default").and_return(config_card)
       @card.should_receive(:setting_card).with("add help","edit help")
-      Renderer.new(@card).render_new.should be_html_with do
+      Wagn::Renderer.new(@card).render_new.should be_html_with do
         html { div(:class=>"unknown-class-name") {}}
       end
     end
@@ -448,7 +448,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       card = Card.new(:type=>'Cardtype E')
       card.should_receive(:setting_card).with("content","default").and_return(content_card)
       card.should_receive(:setting_card).with("add help","edit help").and_return(help_card)
-      RichHtmlRenderer.new(card).render_new.should be_html_with do
+      Wagn::Renderer::RichHtml.new(card).render_new.should be_html_with do
         div(:class=>"field-in-multi") {
           input :name=>"cards[~plus~Yoruba][content]", :type => 'hidden'
         }
@@ -460,7 +460,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       default_card = Card.create!(:name=>"templated+*right+*default", :content=>"Default Bar" )
       @card = Card.new( :name=>"test+templated", :type=>'Phrase' )
       @card.should_receive(:setting_card).with("content", "default").and_return(default_card)
-      Renderer.new(@card).render(:raw).should == "Default Bar"
+      Wagn::Renderer.new(@card).render(:raw).should == "Default Bar"
     end
 
     
@@ -468,7 +468,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )
       @card = Card.fetch('templated')# :name=>"templated", :content => "Bar" )
       @card.content = 'Bar'
-      result = Renderer.new(@card).render(:edit)
+      result = Wagn::Renderer.new(@card).render(:edit)
       result.should be_html_with do
         div :class => "field-in-multi" do
           input :name=>"cards[templated~plus~alpha][content]", :type => 'hidden'
@@ -479,7 +479,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
     it "work on type-plus-right sets edit calls" do
       Card.create(:name=>'Book+author+*type plus right+*default', :type=>'Phrase', :content=>'Zamma Flamma')
       c = Card.new :name => 'Yo Buddddy', :type => 'Book'
-      result = RichHtmlRenderer.new(c).render( :multi_edit )
+      result = Wagn::Renderer::RichHtml.new(c).render( :multi_edit )
       result.should be_html_with do
         div :class => "field-in-multi" do
           [ input( :name=>"cards[~plus~author][content]", :type=>'text', :value=>'Zamma Flamma' ),
@@ -520,7 +520,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       it "should handle size argument in inclusion syntax" do
         Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}
         c = Card.new :name => 'Image1', :content => "{{TestImage | naked; size:small }}"
-        Renderer.new(c).render( :naked ).should == %{<img src="http://wagn.org/image53_small.jpg">}
+        Wagn::Renderer.new(c).render( :naked ).should == %{<img src="http://wagn.org/image53_small.jpg">}
       end
     end
 
@@ -543,7 +543,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
         pending
         #I can't get this working.  I keep getting this url_for error -- from a line that doesn't call url_for
         card = Card.create!(:name=>'Big Bad Wolf', :type=>'Account Request')
-        Renderer.new(card).render(:naked).should be_html_with { div :class=>'invite-links' }
+        Wagn::Renderer.new(card).render(:naked).should be_html_with { div :class=>'invite-links' }
       end
     end
 
@@ -664,5 +664,16 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
     end
   end
 
+
+  context "replace refs" do
+    before do
+      User.current_user = :wagbot
+    end
+  
+    it "replace references should work on inclusions inside links" do       
+      card = Card.create!(:name=>"test", :content=>"[[test{{test}}]]"  )    
+      assert_equal "[[test{{best}}]]", Wagn::Renderer.new(card).replace_references("test", "best" )
+    end                                                                                                
+  end
 
 end

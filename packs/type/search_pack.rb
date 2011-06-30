@@ -1,5 +1,5 @@
 
-class Renderer
+class Wagn::Renderer
   define_view(:naked, :type=>'search') do
     error=nil
     begin

@@ -8,7 +8,7 @@ class RestCardController < CardController
   before_filter :load_card_with_cache, :only => [:get]
  
   before_filter :view_ok,   :only=> [ :get, :put, :delete ]
-  before_filter :create_ok, :only=> [ :post ]
+  #before_filter :create_ok, :only=> [ :post ]
   before_filter :edit_ok,   :only=> [ :put ]
   before_filter :remove_ok, :only=> [ :delete ]          
  
@@ -48,24 +48,26 @@ class RestCardController < CardController
       end
     end
     card_content = out_xml.to_s[3..-5]
-    this_update = {:name=>card_name}
-    this_type = xml.attribute('type').to_s
-    this_card = Card.fetch_or_new(card_name)
-    this_update[:type] = this_type if this_type != this_card.type
+    this_update = {:name=>nil, :type=>this_type = xml.attribute('type').to_s}
+    unless card_name.blank?
+      this_update = {:name=>card_name} unless card_name.blank?
+      this_card = Card.fetch_or_new(card_name)
+      this_update.delete(:type) unless this_type != this_card.cardtype_name
     # no card and no new content, don't update
     #Rails.logger.info "uptest[#{root_card}} #{no_card || this_card.new_record? && card_content.blank?}"
-    if !(no_card || this_card.new_record? &&
-         card_content.blank?) && card_content != this_card.content
-      this_update[:content] = card_content
+      if !(no_card || this_card.new_record? &&
+           card_content.blank?) && card_content != this_card.content
+        this_update[:content] = card_content
+      end
     end
-    #Rails.logger.info "XML post card: #{this_update.inspect} C:#{card_content}"
+    Rails.logger.info "XML post card: #{this_update.inspect} C:#{card_content}"
     if root_card
       raise "Bad element #{xml.name}" unless xml.name == 'card'
       updates.merge!(this_update)
     else
       updates[card_name] = this_update
     end
-    #Rails.logger.info "updates: #{card_content} #{updates.inspect}"
+    Rails.logger.info "updates: #{card_content} #{updates.inspect}"
     card_content
   end
 
@@ -98,6 +100,7 @@ Rails.logger.info "r2 #{format.inspect}"
         doc = REXML::Document.new(content)
         raise "XML error: #{doc} #{content}" unless doc.root
         read_xml(doc.root, @card_name, card_create={})
+        Rails.logger.debug "post #{card_create.inspect}"
         Card.create card_create 
 =begin
       end

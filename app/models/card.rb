@@ -136,7 +136,7 @@ class Card < ActiveRecord::Base
     args = args.stringify_keys
     args['trash'] = false
 
-    #Rails.logger.debug "Card.initialize #{args.inspect}"
+    Rails.logger.debug "Card.initialize #{args.inspect}"
     args['typecode'] ||= case
     when type_name = args.delete('type')
       begin
@@ -197,10 +197,10 @@ class Card < ActiveRecord::Base
       args.symbolize_keys!
       cards = args.delete(:cards)
       card = args.delete(:card) && super(card) || super
-      #Rails.logger.info "Card create #{args.inspect} #{card.name} Cds:#{cards.inspect}"
+      #Rails.logger.debug "Card create #{args.inspect} #{card.name} Cds:#{cards.inspect}"
       Wagn::Hook.call :before_create, card
-      #Rails.logger.info "Card create #{card}, #{args.inspect}, Cards:#{cards.inspect}"
-      raise "No base card." unless card
+      Rails.logger.debug "Card create #{card&&card.name}, #{args.inspect}, Cards:#{cards.inspect}"
+      raise "No base card." unless card or card.name.blank?
       if cards
         #Rails.logger.info "call multi_save#{card.inspect}\nCards:#{cards.inspect}"
         card.multi_save(cards)

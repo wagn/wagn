@@ -25,7 +25,7 @@ describe RestCardController do
     it "creates cards" do
       post(:post, {:format=>:xml, :input=>%{<card name="NewCardFoo" type="Basic">Bananas</card>}}, {:user=>@joe_id})
       assert_response 200
-      assert_instance_of Card::Basic, Card.find_by_name("NewCardFoo")
+      assert_instance_of Card, Card.find_by_name("NewCardFoo")
       #Card::Base.should_receive(:save) # The concept needs work, what model methodes should we expect?
       Card.find_by_name("NewCardFoo").content.should == "Bananas"
     end
@@ -42,14 +42,17 @@ describe RestCardController do
       @c.destroy!
       post :post, :format=>:xml, :input=>%{<card name="Problem" type="Phrase">noof</card>}
       assert_response 200
-      assert_instance_of Card::Phrase, Card.find_by_name("Problem")
+      assert_instance_of Card, c=Card.find_by_name("Problem")
+      assert c.typecode, 'Phrase'
     end
 
     context "multi-create" do
       it "catches missing name error" do
         post :post, :format=>:xml, :input=> %{<card name="" type="Fruit">
           <card name="~plus~text"><p>abraid</p></card></card>}
-        #assigns['card'].errors["name"].should == "can't be blank"
+        Rails.logger.info "failing name-error #{(a=assigns['card'] and a.errors.full_essages).inspect}"
+        assigns['card'].should_not be_nil
+        assigns['card'].errors["name"].should == "can't be blank"
         assert_response 422
       end
 

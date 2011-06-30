@@ -1,4 +1,4 @@
-class RssRenderer
+class Wagn::Renderer::Rss
   define_view(:show) do
     
     xml = Builder::XmlMarkup.new

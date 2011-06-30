@@ -1,4 +1,4 @@
-class Renderer
+class Wagn::Renderer
   define_view(:raw, :name=>'*head') do
     rcard = root.card  # should probably be more explicit that this is really the *main* card.
     title = rcard.name

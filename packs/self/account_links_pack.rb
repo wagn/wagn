@@ -1,4 +1,4 @@
-class Renderer
+class Wagn::Renderer
   define_view(:raw, :name=>'*account links') do
     #ENGLISH
     span(:id=>'logging') do

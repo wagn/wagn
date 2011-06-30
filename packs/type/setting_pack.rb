@@ -1,4 +1,4 @@
-class Renderer
+class Wagn::Renderer
   define_view(:naked, :type=>'setting') do
     div( :class=>'instruction') do
       process_content "{{+*right+*edit help}}"

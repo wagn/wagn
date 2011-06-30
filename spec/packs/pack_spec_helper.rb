@@ -3,13 +3,13 @@ module PackSpecHelper
 
   def render_editor(type)
     card = Card.create(:name=>"my favority #{type} + #{rand(4)}", :type=>type)
-    Renderer.new(card).render(:edit)
+    Wagn::Renderer.new(card).render(:edit)
   end
 
   def render_content(content, args={})
     @card ||= Card.new(:name=>"Tempo Rary 2", :skip_defaults=>true)
     @card.content=content
-    Renderer.new(@card,args).render(:naked)
+    Wagn::Renderer.new(@card,args).render(:naked)
   end
 
   def xml_render_content(content, args={})
@@ -35,9 +35,9 @@ Rails.logger.info "found it: #{(c&&c.name).inspect}"; c
 Rails.logger.info "made it: (#{card_args.inspect}) #{(c&&c.name).inspect}"; c
       end
     end
-r=
-    Renderer.new(card, args).render(view)
-Rails.logger.info "render_card(#{card&&card.name}, #{view}, #{args.inspect}) => #{r}"; r
+#r=
+    Wagn::Renderer.new(card, args).render(view)
+#Rails.logger.info "render_card(#{card&&card.name}, #{view}, #{args.inspect}) => #{r}"; r
   end
 end
 

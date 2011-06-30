@@ -1,4 +1,5 @@
-class XmlRenderer < Renderer
+module Wagn
+ class Renderer::Xml < Renderer
 
   cattr_accessor :set_actions
   attr_accessor  :options_need_save, :js_queue_initialized,
@@ -10,7 +11,7 @@ class XmlRenderer < Renderer
   end
 
   def set_action(key)
-    RichHtmlRenderer.actions[key] or super
+    Renderer::Xml.actions[key] or super
   end
 
   def initialize(card, opts=nil)
@@ -450,4 +451,5 @@ class XmlRenderer < Renderer
     )
   end
 =end
+ end
 end

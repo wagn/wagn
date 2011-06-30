@@ -1,4 +1,5 @@
-class RichHtmlRenderer < Renderer
+module Wagn
+ class Renderer::RichHtml < Renderer
 
   include Recaptcha::ClientHelper
 
@@ -12,7 +13,7 @@ class RichHtmlRenderer < Renderer
   end
 
   def set_action(key)
-    RichHtmlRenderer.actions[key] or super
+    Renderer::RichHtml.actions[key] or super
   end
 
   def initialize(card, opts=nil)
@@ -442,4 +443,5 @@ class RichHtmlRenderer < Renderer
         %{loadScript("#{js_lib_uri}")}
     )
   end
+ end
 end

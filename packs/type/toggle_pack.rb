@@ -1,4 +1,4 @@
-class Renderer
+class Wagn::Renderer
   define_view(:naked, :type=>'toggle') do
     case card.raw_content.to_i
       when 1; 'yes'

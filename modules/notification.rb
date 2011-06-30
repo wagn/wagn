@@ -126,7 +126,7 @@ module Notification
   
   def self.init
     Card.send :include, CardMethods
-    Renderer.send :include, RendererHelperMethods
+    Wagn::Renderer.send :include, RendererHelperMethods
   end   
 end    
 

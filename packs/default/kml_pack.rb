@@ -1,4 +1,5 @@
-class KmlRenderer
+module Wagn
+ class Renderer::Kml
   define_view(:show) do
     xml = Builder::XmlMarkup.new
     xml.instruct! :xml, :version => "1.0"
@@ -38,4 +39,5 @@ class KmlRenderer
       end
     end
   end
+ end
 end

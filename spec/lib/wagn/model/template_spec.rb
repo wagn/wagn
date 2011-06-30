@@ -33,12 +33,12 @@ describe Card, "with right content template" do
   end       
  
   it "should have default content" do
-    Renderer.new(@jb).render(:raw).should == 'Today!'
+    Wagn::Renderer.new(@jb).render(:raw).should == 'Today!'
   end        
   
   it "should change content with template" do
     @bt.content = "Tomorrow"; @bt.save!
-    Renderer.new( Card['Jim+birthday']).render(:raw).should == 'Tomorrow'
+    Wagn::Renderer.new( Card['Jim+birthday']).render(:raw).should == 'Tomorrow'
   end 
 end
 
@@ -70,7 +70,7 @@ describe Card, "templating" do
   end       
   
   it "*right setting should override *type setting" do
-    Renderer.new(@jb).render(:raw).should == 'Today!'
+    Wagn::Renderer.new(@jb).render(:raw).should == 'Today!'
   end
 end
 
@@ -81,7 +81,7 @@ describe Card, "with type content template" do
   end       
   
   it "should return templated content even if content is passed in" do
-    Renderer.new(Card.new(:type=>'Date', :content=>'')).render(:raw).should == 'Tomorrow'
+    Wagn::Renderer.new(Card.new(:type=>'Date', :content=>'')).render(:raw).should == 'Tomorrow'
   end
 end
 

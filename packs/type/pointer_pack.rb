@@ -1,4 +1,4 @@
-class Renderer
+class Wagn::Renderer
   define_view(:add_item, :type=>'pointer') do
     #ENGLISH
 #    if !card #or !card.limit or card.limit.to_i > (index.to_i+1)

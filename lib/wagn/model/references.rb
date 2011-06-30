@@ -7,14 +7,14 @@ module Wagn::Model::References
 
     # FIXME: bogus blank default content is set on hard_templated cards...
     User.as(:wagbot) {
-      Renderer.new(self, :not_current=>true).update_references
+      Wagn::Renderer.new(self, :not_current=>true).update_references
     }
     expire_templatee_references
   end
   
   def update_references_on_update
     return if ENV['BOOTSTRAP_LOAD'] == 'true'
-    Renderer.new(self, :not_current=>true).update_references 
+    Wagn::Renderer.new(self, :not_current=>true).update_references 
     expire_templatee_references
   end
 

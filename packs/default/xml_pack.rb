@@ -1,6 +1,6 @@
-require 'xml_renderer'
+require 'wagn/renderer/xml'
 
-class XmlRenderer
+class Wagn::Renderer::Xml
   define_view(:show) do
     self.render_content #???
   end

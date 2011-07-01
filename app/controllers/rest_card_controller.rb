@@ -83,7 +83,8 @@ class RestCardController < CardController
     #f = REXML::Formatters::Transitive.new
     read_xml(doc.root, @card_name, card_updates={})
     if !card_updates.empty?
-      @card.multi_save card_updates 
+      Card.update(@card.id, card_updates)
+      #@card.multi_save card_updates 
     end
   end
   

@@ -59,7 +59,7 @@ class Card < ActiveRecord::Base
 
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
     :from_trash, :update_referencers, :allow_typecode_change, :virtual,
-    :broken_type, :skip_defaults, :loaded_trunk, :blank_revision
+    :broken_type, :skip_defaults, :loaded_trunk, :blank_revision, :cards
 
   # setup hooks on AR callbacks
   # Note: :after_create is called from end of set_initial_content now
@@ -74,6 +74,8 @@ class Card < ActiveRecord::Base
   # apparently callbacks defined this way are called last.
   # that's what we want for this one.
   def after_save
+    #Rails.logger.info "after_initialize Cards: #{cards.inspect}" # if cards
+    Rails.logger.info "After save: #{self}, #{name} Cs:#{cards.inspect}"
     if self.typecode == 'Cardtype'
       Rails.logger.debug "Cardtype after_save resetting"
       ::Cardtype.reset_cache
@@ -81,6 +83,11 @@ class Card < ActiveRecord::Base
 #      Rails.logger.debug "Card#after_save end"
     update_attachment
     true
+  end
+
+  def after_initialize
+    Rails.logger.info "After init: #{self}, #{name}, Cs:#{cards.inspect}"
+  #  Rails.logger.info "after_initialize Cards: #{cards.inspect}" # if cards
   end
 
   def update_attachment # the module definition overrides this for card_attachements
@@ -166,48 +173,40 @@ class Card < ActiveRecord::Base
   end 
 
   def after_fetch
-    #Rails.logger.info "After fetch: #{name}"
+    Rails.logger.info "After fetch: #{self}, #{singleton_class}, #{typecode}"
     singleton_class.include_type_module(typecode)
   end
-=begin
-  def include_singleton_modules
-#    warn "include singleton mod for #{name}"
-    singleton_class.include_type_module(typecode)
-    #after_include if respond_to? :after_include
+
+  def before_save
+    Wagn::Hook.call :before_save, card
+    Rails.logger.info "save#{card.inspect} :: Cards:#{cards.inspect}"
+    if cards
+      Rails.logger.info "multi_save#{card.inspect}\nCards:#{cards.inspect}"
+      Wagn::Hook.call :before_multi_save, self, cards
+      cards.each_pair do |name, opts|
+        opts[:content] ||= ""
+        name = name.post_cgi.to_absolute(self.name)
+        #logger.info "multi update working on #{name}: #{opts.inspect}"
+        if card = Card.fetch(name, :skip_virtual=>true)
+          card.update_attributes(opts)
+        elsif opts[:content].present? and opts[:content].strip.present?
+          opts[:name] = name
+          card = Card.create(opts)
+        end
+        if card and !card.errors.empty?
+          card.errors.each do |field, err|
+            self.errors.add card.name, err
+          end
+        end
+      end
+      Rails.logger.info "Card#callback after_multi_save"
+      Wagn::Hook.call :after_multi_save, self, cards
+    end
+    Wagn::Hook.call :after_save, card
+    card
   end
-=end
 
   class << self
-    def update(args={})
-      #Rails.logger.info "Card#update #{args.inspect}"
-      cards = args.delete(:cards)
-      card = args.delete(:card) && Card.fetch(card[:name]) || Card.fetch(args[:name])
-      #Rails.logger.info "Card#update #{card}, #{cards.inspect} A:#{args.inspect}"
-      raise "Update on missing card" if card.nil? or card.new_card?
-      Wagn::Hook.call :before_update, card
-      if cards
-        #Rails.logger.info "call multi_save#{card.inspect}\nCards:#{cards.inspect}"
-        card.multi_save(cards)
-      end
-      Wagn::Hook.call :after_update, card
-      card
-    end
-
-    def create(args={})
-      args.symbolize_keys!
-      cards = args.delete(:cards)
-      card = args.delete(:card) && super(card) || super
-      #Rails.logger.debug "Card create #{args.inspect} #{card.name} Cds:#{cards.inspect}"
-      Wagn::Hook.call :before_create, card
-      Rails.logger.debug "Card create #{card&&card.name}, #{args.inspect}, Cards:#{cards.inspect}"
-      raise "No base card." unless card or card.name.blank?
-      if cards
-        #Rails.logger.info "call multi_save#{card.inspect}\nCards:#{cards.inspect}"
-        card.multi_save(cards)
-      end
-      card
-    end
-
     def include_type_module(typecode)
       #Rails.logger.info "include set #{typecode} called  #{Kernel.caller[0..4]*"\n"}"
       return unless typecode
@@ -257,6 +256,7 @@ class Card < ActiveRecord::Base
   end
 
 
+=begin
   def multi_create(cards)
     Wagn::Hook.call :before_multi_create, self, cards
     multi_save(cards)
@@ -270,7 +270,9 @@ class Card < ActiveRecord::Base
     Rails.logger.info "Card#callback after_multi_update"
     Wagn::Hook.call :after_multi_update, self
   end
+=end
 
+#protected
   def multi_save(cards)
     Wagn::Hook.call :before_multi_save, self, cards
     cards.each_pair do |name, opts|

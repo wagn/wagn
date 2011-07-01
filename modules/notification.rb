@@ -109,6 +109,7 @@ module Notification
     end
   end
 
+  #FIXME: multi_update/save are refactored out, so are these hooks
   Wagn::Hook.add :before_multi_save, '*all' do |card, multi_card_params|
     multi_card_params.each_pair do |name, opts|
       opts[:nested_edit] = card

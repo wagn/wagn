@@ -74,6 +74,28 @@ class Card < ActiveRecord::Base
   # apparently callbacks defined this way are called last.
   # that's what we want for this one.
   def after_save
+    if cards
+      Rails.logger.info "multi_save (after_save)#{card.inspect}\nCards:#{cards.inspect}"
+      Wagn::Hook.call :before_multi_save, self, cards
+      cards.each_pair do |name, opts|
+        opts[:content] ||= ""
+        name = name.post_cgi.to_absolute(self.name)
+        #logger.info "multi update working on #{name}: #{opts.inspect}"
+        if card = Card.fetch(name, :skip_virtual=>true)
+          card.update_attributes(opts)
+        elsif opts[:content].present? and opts[:content].strip.present?
+          opts[:name] = name
+          card = Card.create(opts)
+        end
+        if card and !card.errors.empty?
+          card.errors.each do |field, err|
+            self.errors.add card.name, err
+          end
+        end
+      end
+      Rails.logger.info "Card#callback after_multi_save"
+      Wagn::Hook.call :after_multi_save, self, cards
+    end
     #Rails.logger.info "after_initialize Cards: #{cards.inspect}" # if cards
     Rails.logger.info "After save: #{self}, #{name} Cs:#{cards.inspect}"
     if self.typecode == 'Cardtype'
@@ -180,28 +202,6 @@ class Card < ActiveRecord::Base
   def before_save
     Wagn::Hook.call :before_save, card
     Rails.logger.info "save#{card.inspect} :: Cards:#{cards.inspect}"
-    if cards
-      Rails.logger.info "multi_save#{card.inspect}\nCards:#{cards.inspect}"
-      Wagn::Hook.call :before_multi_save, self, cards
-      cards.each_pair do |name, opts|
-        opts[:content] ||= ""
-        name = name.post_cgi.to_absolute(self.name)
-        #logger.info "multi update working on #{name}: #{opts.inspect}"
-        if card = Card.fetch(name, :skip_virtual=>true)
-          card.update_attributes(opts)
-        elsif opts[:content].present? and opts[:content].strip.present?
-          opts[:name] = name
-          card = Card.create(opts)
-        end
-        if card and !card.errors.empty?
-          card.errors.each do |field, err|
-            self.errors.add card.name, err
-          end
-        end
-      end
-      Rails.logger.info "Card#callback after_multi_save"
-      Wagn::Hook.call :after_multi_save, self, cards
-    end
     Wagn::Hook.call :after_save, card
     card
   end

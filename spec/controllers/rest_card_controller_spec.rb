@@ -50,7 +50,6 @@ describe RestCardController do
       it "catches missing name error" do
         post :post, :format=>:xml, :input=> %{<card name="" type="Fruit">
           <card name="~plus~text"><p>abraid</p></card></card>}
-        Rails.logger.info "failing name-error #{(a=assigns['card'] and a.errors.full_essages).inspect}"
         assigns['card'].should_not be_nil
         assigns['card'].errors["name"].should == "can't be blank"
         assert_response 422

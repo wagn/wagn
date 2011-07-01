@@ -6,7 +6,7 @@ describe Wagn::Renderer, "" do
     User.current_user = :joe_user
     Wagn::Renderer.current_slot = nil
   end
-    
+
   def simplify_html string
     string.gsub(/\s*<!--[^>]*>\s*/, '').gsub(/\s*<\s*(\/?\w+)[^>]*>\s*/, '<\1>')
   end
@@ -87,7 +87,7 @@ describe Wagn::Renderer, "" do
       User.as :joe_user do
         Wagn::Renderer.new(Card.fetch('Joe no see me')).render(:naked).should be_html_with { span(:class=>'denied') }
       end
-    end      
+    end
   end
 
 #~~~~~~~~~~~~~ Standard views ~~~~~~~~~~~~~~~~#
@@ -141,10 +141,10 @@ describe Wagn::Renderer, "" do
 
     it "titled" do
       render_card(:titled, :name=>'A+B').should be_html_with do
-        div( :home_view=>'titled') { 
+        div( :home_view=>'titled') {
           [ h1 { [ span{'A'}, span{'+'}, span{'B'} ] },
             span(:class=>'titled-content'){'AlphaBeta'}
-          ] 
+          ]
         }
       end
     end
@@ -208,7 +208,7 @@ describe Wagn::Renderer, "" do
 #          }
 #        end
 #      end
-        
+
       it "renders top menu" do
         @simple_page.should be_html_with do
           div(:id=>"menu") {
@@ -223,7 +223,7 @@ describe Wagn::Renderer, "" do
           }
         end
       end
-        
+
       it "renders card header" do
         @simple_page.should be_html_with do
           a(:href=>"/wagn/A+B", :class=>"page-icon", :title=>"Go to: A+B") {}
@@ -281,7 +281,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
         result.should match(/Open up/)
         result.should match(/card-header/)
         result.should match(/Joe User/)
-      end  
+      end
 
       it "should render custom view of main" do
         @layout_card.content='Hey {{_main|name}}'
@@ -386,7 +386,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       s.render( :naked ).should == "boo"
     end
 =end
- 
+
     it "should render internal builtins" do
       render_card( :naked, :content=>%{
 <div>
@@ -417,8 +417,8 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
     end
   end
 
-#~~~~~~~~~~~~~  content views 
-# includes some *right stuff 
+#~~~~~~~~~~~~~  content views
+# includes some *right stuff
 
 
   context "Content settings" do
@@ -463,7 +463,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       Wagn::Renderer.new(@card).render(:raw).should == "Default Bar"
     end
 
-    
+
     it "should be used in edit forms" do
       config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )
       @card = Card.fetch('templated')# :name=>"templated", :content => "Bar" )
@@ -475,7 +475,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
         end
       end
     end
-    
+
     it "work on type-plus-right sets edit calls" do
       Card.create(:name=>'Book+author+*type plus right+*default', :type=>'Phrase', :content=>'Zamma Flamma')
       c = Card.new :name => 'Yo Buddddy', :type => 'Book'
@@ -576,11 +576,8 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
 
     context "Search" do
       it "should wrap search items with correct view class" do
-        Rails.logger.info "failing 0"
-        Card.create :type=>'Search', :name=>'Asearch', :content=>%{{"type":"User"}}        
-
+        Card.create :type=>'Search', :name=>'Asearch', :content=>%{{"type":"User"}}
         c=render_content("{{Asearch|naked;item:name}}")
-        Rails.logger.info "failing #{c.inspect}"
         c.should match('search-result-item item-name')
         render_content("{{Asearch|naked;item:open}}").should match('search-result-item item-open')
         render_content("{{Asearch|naked}}").should match('search-result-item item-closed')
@@ -600,7 +597,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
         render_card(:naked, :type=>'Toggle', :content=>"0").should == 'no'
         render_card(:closed_content, :type=>'Toggle', :content=>"1").should == 'yes'
       end
-    end    
+    end
   end
 
 
@@ -653,7 +650,7 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
     end
 
     # also need one for *alerts
-  end  
+  end
 
 
 #~~~~~~~~~ special views
@@ -669,11 +666,11 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
     before do
       User.current_user = :wagbot
     end
-  
-    it "replace references should work on inclusions inside links" do       
-      card = Card.create!(:name=>"test", :content=>"[[test{{test}}]]"  )    
+
+    it "replace references should work on inclusions inside links" do
+      card = Card.create!(:name=>"test", :content=>"[[test{{test}}]]"  )
       assert_equal "[[test{{best}}]]", Wagn::Renderer.new(card).replace_references("test", "best" )
-    end                                                                                                
+    end
   end
 
 end

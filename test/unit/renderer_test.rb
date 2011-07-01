@@ -93,7 +93,6 @@ class Wagn::RendererTest < ActiveSupport::TestCase
   
   def test_slot_external_xml
     card4 = newcard('google link', '[[http://google.com]]')
-    Rails.logger.info "failing here"
     assert_equal '<link class="external-link" href="http://google.com">http://google.com</link>', slot_link(card4,:xml)
   end
   

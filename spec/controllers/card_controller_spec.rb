@@ -128,7 +128,7 @@ describe CardController do
          "content_to_replace"=>"",
          "context"=>"main_1", 
          "multi_edit"=>"true", "view"=>"open"
-        assert_response 422  # was 418, is that important?    
+        assert_response 418
         Card.find_by_name("sss").should_not be_nil
         Card.find_by_name("sss+text").should_not be_nil
       end

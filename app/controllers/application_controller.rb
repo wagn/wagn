@@ -120,7 +120,6 @@ class ApplicationController < ActionController::Base
   def load_card!
     load_card
     return @card if @card && @card.known?
-    Rails.logger.info "load_card error Trace: #{Kernel.caller.slice(0,10)*"\n"}"
     raise Wagn::NotFound, "We looked everywhere but found no such card (#{params[:id]})."
   end
 

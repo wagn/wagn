@@ -75,7 +75,7 @@ class Card < ActiveRecord::Base
   # that's what we want for this one.
   def after_save
     if cards
-      Rails.logger.info "multi_save (after_save)#{card.inspect}\nCards:#{cards.inspect}"
+      #Rails.logger.info "after_save #{card.inspect}\nCards:#{cards.inspect}"
       Wagn::Hook.call :before_multi_save, self, cards
       cards.each_pair do |name, opts|
         opts[:content] ||= ""
@@ -93,13 +93,13 @@ class Card < ActiveRecord::Base
           end
         end
       end
-      Rails.logger.info "Card#callback after_multi_save"
+      #Rails.logger.info "Card#callback after_multi_save"
       Wagn::Hook.call :after_multi_save, self, cards
     end
     #Rails.logger.info "after_initialize Cards: #{cards.inspect}" # if cards
-    Rails.logger.info "After save: #{self}, #{name} Cs:#{cards.inspect}"
+    #Rails.logger.info "After save: #{self}, #{name} Cs:#{cards.inspect}"
     if self.typecode == 'Cardtype'
-      Rails.logger.debug "Cardtype after_save resetting"
+      #Rails.logger.debug "Cardtype after_save resetting"
       ::Cardtype.reset_cache
     end
 #      Rails.logger.debug "Card#after_save end"
@@ -108,7 +108,7 @@ class Card < ActiveRecord::Base
   end
 
   def after_initialize
-    Rails.logger.info "After init: #{self}, #{name}, Cs:#{cards.inspect}"
+    #Rails.logger.info "After init: #{self}, #{name}, Cs:#{cards.inspect}"
   #  Rails.logger.info "after_initialize Cards: #{cards.inspect}" # if cards
   end
 
@@ -165,7 +165,7 @@ class Card < ActiveRecord::Base
     args = args.stringify_keys
     args['trash'] = false
 
-    Rails.logger.debug "Card.initialize #{args.inspect}"
+    #Rails.logger.debug "Card.initialize #{args.inspect}"
     args['typecode'] ||= case
     when type_name = args.delete('type')
       begin
@@ -194,15 +194,8 @@ class Card < ActiveRecord::Base
   end 
 
   def after_fetch
-    Rails.logger.info "After fetch: #{self}, #{singleton_class}, #{typecode}"
+    #Rails.logger.info "After fetch: #{self}, #{singleton_class}, #{typecode}"
     singleton_class.include_type_module(typecode)
-  end
-
-  def before_save
-    Wagn::Hook.call :before_save, card
-    Rails.logger.info "save#{card.inspect} :: Cards:#{cards.inspect}"
-    Wagn::Hook.call :after_save, card
-    card
   end
 
   class << self
@@ -252,46 +245,6 @@ class Card < ActiveRecord::Base
     self.from_trash = self.confirm_rename = true
     @new_record = false
     self.before_validation_on_create
-  end
-
-
-=begin
-  def multi_create(cards)
-    Wagn::Hook.call :before_multi_create, self, cards
-    multi_save(cards)
-    Rails.logger.info "Card#callback after_multi_create"
-    Wagn::Hook.call :after_multi_create, self
-  end
-
-  def multi_update(cards)
-    Wagn::Hook.call :before_multi_update, self, cards
-    multi_save(cards)
-    Rails.logger.info "Card#callback after_multi_update"
-    Wagn::Hook.call :after_multi_update, self
-  end
-=end
-
-#protected
-  def multi_save(cards)
-    Wagn::Hook.call :before_multi_save, self, cards
-    cards.each_pair do |name, opts|
-      opts[:content] ||= ""
-      name = name.post_cgi.to_absolute(self.name)
-      #logger.info "multi update working on #{name}: #{opts.inspect}"
-      if card = Card.fetch(name, :skip_virtual=>true)
-        card.update_attributes(opts)
-      elsif opts[:content].present? and opts[:content].strip.present?
-        opts[:name] = name
-        card = Card.create(opts)
-      end
-      if card and !card.errors.empty?
-        card.errors.each do |field, err|
-          self.errors.add card.name, err
-        end
-      end
-    end
-    Rails.logger.info "Card#callback after_multi_save"
-    Wagn::Hook.call :after_multi_save, self, cards
   end
 
   def new_card?

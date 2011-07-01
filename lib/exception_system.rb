@@ -4,7 +4,6 @@ end
 
 module ExceptionSystem
   def rescue_action( exception )
-    Rails.logger.info %{rescue_action #{exception} BT:#{exception.backtrace*"\n"}}
     log_error(exception) if logger
     erase_results if performed?
     status = exception_status(exception)

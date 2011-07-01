@@ -19,7 +19,6 @@ module Chunk
         # matched [..][..] case, 4=first slot, 5=second
         @link_text, @card_name = match_data[4], match_data[5] #.gsub(/_/,' ')
       end
-      Rails.logger.debug("link chunk #{@link_text}, #{@card_name}, #{@link_type}")
     end
 
     def unmask_text

@@ -116,7 +116,7 @@ class WikiContent < String
        chunk.nil? ? $~[0] : ( revert ? chunk.revert : chunk.unmask_text(&block) )
       end)
     end
-Rails.logger.debug "wiki render! #{@card.name} #{self.slice(0,80)}\nTrace #{Kernel.caller.slice(0,5).join("\n")}" unless revert
+#Rails.logger.debug "wiki render! #{@card.name} #{self.slice(0,80)}\nTrace #{Kernel.caller.slice(0,5).join("\n")}" unless revert
     self
   end                    
   

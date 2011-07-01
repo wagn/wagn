@@ -15,7 +15,7 @@ module Chunk
       @base, @renderer, @inclusion_map =
          content.card, content.renderer, content.inclusion_map
     end
-
+  
     def self.parse(match)
       name = match[2].strip
       case name
@@ -58,15 +58,6 @@ module Chunk
       end
       yield options
     end
-=begin # we may want to add this back, saving the code here
-      case view
-      when :name;     refcard ? refcard.name : card_name
-      when :key;      refcard_name.to_key
-      when :link;     html_link
-      when :linkname; Cardname.escape(refcard_name)
-      else
-      end
-=end
 
     def revert                             
       configs = @configs.to_semicolon_attr_list;  

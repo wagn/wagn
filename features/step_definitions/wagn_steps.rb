@@ -115,7 +115,9 @@ def create_card(username,cardtype,cardname,content="")
   logged_in_as(username) do
     visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"   
     yield if block_given?
+    Rails.logger.info "failing test before sub"
     click_button("Submit") 
+    Rails.logger.info "failing test after sub"
     # Fixme - need better error handling here-- the following raise
     # at least keeps us from going on to the next step if the create bombs
     # but it doesn't report the reason for the failure.

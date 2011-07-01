@@ -110,9 +110,10 @@ class CardController < ApplicationController
 
   def create
     if card_params = params[:card]
-      Rails.logger.info "controller create #{params.inspect}, #{card_params.inspect}"
+      raise "why? #{Kernel.caller*"\n"}" if card_params[:cards]
+      Rails.logger.info "controller create1 #{card_params.inspect}"
       params[:multi_edit] and card_params[:cards] = params[:cards]
-      Rails.logger.info "controller create #{params.inspect}, #{card_params.inspect}"
+      Rails.logger.info "controller create #{card_params.inspect}"
       @card = Card.create card_params
     else
       raise "No card parameters on create"

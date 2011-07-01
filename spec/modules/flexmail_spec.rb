@@ -91,7 +91,10 @@ describe Flexmail do
     it "returns list with correct hash for card with configs" do
       User.as :wagbot do
         System.base_url = 'http://a.com'
-        c = Card.create_or_update(:name => "Banana Trigger", :content => "data content [[A]]", :type=>'Trigger',
+        c = Card.create(:name => "Banana Trigger", :content => "data content [[A]]", :type=>'Trigger')
+        #c = Card.create(:name => "Banana Trigger", :content => "data content [[A]]", :type=>'Trigger',
+        assert c.id
+        Card.update(c.id,
               :cards=> {'~plus~email'=>{:content=>'gary@gary.com'},
               '~plus~subject'=>{:type=>'Pointer', :content=>'[[default subject]]'},
               '~plus~attachment' => {:type=>'File', :content=>"notreally.txt" } })

@@ -183,7 +183,6 @@ class Card < ActiveRecord::Base
 
     super
 
-    self.loaded_trunk = args['loaded_trunk'] if args['loaded_trunk']
     self.typecode ||= template.typecode
     fail "NO TYPECODE" unless self.typecode
 

@@ -104,6 +104,7 @@ class Card < ActiveRecord::Base
     end
 #      Rails.logger.debug "Card#after_save end"
     update_attachment
+    Wagn::Hook.call :after_save, self
     true
   end
 

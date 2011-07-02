@@ -50,9 +50,10 @@ describe RestCardController do
       it "catches missing name error" do
         post :post, :format=>:xml, :input=> %{<card name="" type="Fruit">
           <card name="~plus~text"><p>abraid</p></card></card>}
+        Rails.logger.info "failing assigns: #{assigns.inspect}"
+        assert_response 422
         assigns['card'].should_not be_nil
         assigns['card'].errors["name"].should == "can't be blank"
-        assert_response 422
       end
 
       it "creates card and plus cards" do

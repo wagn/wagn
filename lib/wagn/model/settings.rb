@@ -1,9 +1,7 @@
 module Wagn::Model::Settings
   def setting setting_name, fallback=nil
     card = setting_card setting_name, fallback
-    card && begin
-      User.as(:wagbot){ card.content }
-    end
+    card && card.content
   end
   
   def setting_card setting_name, fallback=nil

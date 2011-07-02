@@ -1,4 +1,3 @@
-
 class Card < ActiveRecord::Base
   def destroy!
     # FIXME: do we want to overide confirmation by setting confirm_destroy=true here?
@@ -106,20 +105,21 @@ class Card < ActiveRecord::Base
     # autoname
     if args["name"].blank?
       ::User.as(:wagbot) do
-        if ac = setting_card('autoname') and autoname_card = ac.card
+        if autoname_card = setting_card('autoname')
           self.name = autoname_card.content
           autoname_card.content = autoname_card.content.next  #fixme, should give placeholder on new, do next and save on create
           autoname_card.save!
         end                                         
       end
     end
-    
+
     #default content
-    if !args['content'] and self.content.blank? and default_card = setting_card('content','default')
-      self.content = default_card.content
+    if (self.content.nil? || self.content.blank?) 
+      self.content = setting('content', 'default')
     end
 
     # misc defaults- trash, key, fallbacks
+    self.trash = false
     self.key = name.to_key if name
     self.name='' if name.nil?
     self
@@ -133,39 +133,58 @@ class Card < ActiveRecord::Base
   # Creation & Destruction --------------------------------------------------
   #alias_method :ar_new, :new
 
+  
+
   def initialize(args={})
     args = {} if args.nil?
     args = args.stringify_keys
-    args['trash'] = false
-    #args.delete['id']
     
-    #Rails.logger.debug "Card.initialize #{args.inspect}"
-    args['typecode'] ||= case
-    when type_name = args.delete('type')
-      begin
-        ::Cardtype.classname_for(type_name)
-      rescue
-        args['broken_type'] = type_name
-        'Basic'
-      end
-    when args.delete('skip_type_lookup');  'Basic'
-    when args['name']                   ;  nil  #lookup after super
-    else                                ;  'Basic'
-    end 
+    args.delete 'id' #took out slow handling of protected fields.  now just this one.
+    typename, skip_type_lookup, att_id = ['type', 'skip_type_lookup', 'attachment_id'].map{|k| args.delete k }
 
-    att_id = args.delete('attachment_id')
+    @attributes = get_attributes #was getting this from column defs.  very slow.  
+    @attributes_cache = {}
+    @new_record = true
+    self.send :attributes=, args, false
+#    result = yield self if block_given?
+    self.typecode = get_typecode(name, typename, skip_type_lookup) if !args['typecode']
+#    self.trash = false #needs not to be set in @attributes; breaks recovery from trash
 
-    super
-
-    self.typecode ||= template.typecode
-    fail "NO TYPECODE" unless self.typecode
-
-    #Rails.logger.info "get moduels for #{typecode.inspect} #{args.inspect}" unless virtual? || missing?
     singleton_class.include_type_module(typecode) unless virtual? || missing?
 
     attachment_id= att_id if att_id # now that we have modules, we have this field
     set_defaults( args ) unless args['skip_defaults'] 
-  end 
+
+    callback(:after_initialize) if respond_to_without_attributes?(:after_initialize)
+    self
+  end
+  
+  def get_typecode(name, typename, skip_type_lookup)
+    case
+    when typename
+      begin
+        ::Cardtype.classname_for(typename)
+      rescue
+        self.broken_type = typename
+        'Basic'
+      end
+    when skip_type_lookup; 'Basic'
+    when name            ; self.template.typecode || 'Basic'
+    else                 ; 'Basic'
+    end 
+  end
+
+
+  def get_attributes
+    @attributes ||= {"typecode"=>nil, "name"=>nil, "read_rule_class"=>nil, 
+      "created_at"=>nil, "indexed_content"=>nil, "tag_id"=>nil, "indexed_name"=>nil, "updated_at"=>nil,
+      "codename"=>nil, "trash"=>nil, "references_expired"=>nil, "reader_id"=>nil, 
+      "created_by"=>nil, "current_revision_id"=>nil, "extension_type"=>nil, "trunk_id"=>nil, 
+      "updated_by"=>nil, "key"=>nil, "extension_id"=>nil, "read_rule_id"=>nil
+    }
+  end
+
+    
 
   def after_fetch
     #Rails.logger.info "After fetch: #{name}"

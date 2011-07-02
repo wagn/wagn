@@ -137,7 +137,8 @@ class Card < ActiveRecord::Base
     args = {} if args.nil?
     args = args.stringify_keys
     args['trash'] = false
-      
+    #args.delete['id']
+    
     #Rails.logger.debug "Card.initialize #{args.inspect}"
     args['typecode'] ||= case
     when type_name = args.delete('type')

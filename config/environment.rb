@@ -41,10 +41,8 @@ Rails::Initializer.run do |config|
   config.wagn_load
 end
 
-#STDERR << "Loaded? #{Module.const_defined?(:Rails)}\n"
 ActionController::Dispatcher.to_prepare do
-  #STDERR << "\n\nto_prepare\n\n"
   Wagn::Configuration.wagn_run
 end
 
-Wagn::Configuration.wagn_load_modules
+Wagn::Configuration.wagn_run

@@ -580,7 +580,6 @@ class Card < ActiveRecord::Base
       rec.errors.add :key, "wrong key '#{value}' for name #{rec.name}"
     end
   end
-   
   
   def destroy_extension
     extension.destroy if extension

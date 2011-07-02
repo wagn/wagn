@@ -62,12 +62,11 @@ module Wagn::Model::AttributeTracking
 
       fields.each do |field|   
         unless self.method_defined? field
-          #warn "defining #{field}"
-          class_eval %{
-            def #{field}
-              v=read_attribute '#{field}'
-            end
-          }
+          access = "read_attribute('#{field}')"
+          if cache_attribute?(field.to_s) 
+            access = "@attributes_cache['#{field}'] ||= #{access}"
+          end
+          class_eval "def #{field}; #{access}; end"
         end
         #Rails.logger.warn ">#{field}: "+(v ? v.to_s : ''); v
         

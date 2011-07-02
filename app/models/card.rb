@@ -61,6 +61,8 @@ class Card < ActiveRecord::Base
     :from_trash, :update_referencers, :allow_typecode_change, :virtual,
     :broken_type, :skip_defaults, :loaded_trunk, :blank_revision
 
+  cache_attributes('name', 'typecode', 'trash')
+
   # setup hooks on AR callbacks
   # Note: :after_create is called from end of set_initial_content now
 =begin
@@ -182,7 +184,6 @@ class Card < ActiveRecord::Base
       #Rails.logger.info "include set #{typecode} called  #{Kernel.caller[0..4]*"\n"}"
       return unless typecode
       raise "Bad typecode #{typecode}" if typecode.to_s =~ /\W/
-      typecode = typecode.to_sym
       suppress(NameError) { include eval "Wagn::Set::Type::#{typecode}" }
     end
     
@@ -435,10 +436,6 @@ class Card < ActiveRecord::Base
     templated_content || content
   end
 
-  def typecode
-    read_attribute :typecode
-  end
-
   def codename
     return nil unless extension and extension.respond_to?(:codename)
     extension.codename
@@ -622,6 +619,12 @@ class Card < ActiveRecord::Base
     #should collect errors from dependent destroys here.  
     true
   end
+  
+  def trash
+    t = @attributes_cache['trash']
+    t.nil? ? (@attributes_cache['trash'] = Card.columns_hash['trash'].type_cast(@attributes['trash'])) : t
+  end
+  
   
 end  
 

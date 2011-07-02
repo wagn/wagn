@@ -1,5 +1,3 @@
-#require 'wagn/renderer'
-
 module Wagn
  class Renderer::Xml < Renderer
 

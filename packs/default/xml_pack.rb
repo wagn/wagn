@@ -1,6 +1,4 @@
-require 'wagn/renderer/xml'
-
-class Wagn::Renderer::Xml
+class Wagn::Renderer::Xml < Wagn::Renderer
   define_view(:layout) do |args|
     if @main_content = args.delete(:main_content)
       @card = Card.fetch_or_new('*placeholder',{},:skip_defaults=>true)
@@ -24,25 +22,25 @@ class Wagn::Renderer::Xml
   define_view(:content) do |args|
     @state = :view
     self.requested_view = args[:action] = 'content'
-    wrap(args) { _render_naked(args) }
+    self.wrap(args) { _render_naked(args) }
   end
 
   define_view(:open) do |args|
     @state = :view
     self.requested_view = 'open'
-    wrap(args) { _render_naked(args) }
+    self.wrap(args) { _render_naked(args) }
   end
 
   define_view(:closed) do |args|
     @state = :line
     self.requested_view = args[:action] = 'closed'
-    wrap(args) { _render_line(args) }
+    self.wrap(args) { _render_line(args) }
   end
 
 =begin
   define_view(:setting) do |args|
     self.requested_view = args[:action] = 'content'
-    wrap( args) { render_partial('views/setting') }
+    self.wrap( args) { render_partial('views/setting') }
   end
 =end
 

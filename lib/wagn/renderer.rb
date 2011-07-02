@@ -332,7 +332,7 @@ module Wagn
     end
   
     def method_missing(method_id, *args, &proc)
-      Rails.logger.debug "method missing: #{method_id}"
+      #Rails.logger.debug "method missing: #{method_id}"
       # silence Rails 2.2.2 warning about binding argument to concat.  tried detecting rails 2.2
       # and removing the argument but it broken lots of integration tests.
       ActiveSupport::Deprecation.silence { template.send(method_id, *args, &proc) }

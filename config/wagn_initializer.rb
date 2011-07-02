@@ -33,40 +33,40 @@ module Wagn::Configuration
     # this needs to happen later, when System is loading or something
     #wagn_setup_multihost
 
-    STDERR << "----------- Wagn Load Complete -----------\n"
+    STDERR << "----------- Wagn Loaded -----------\n"
     #Rails.logger.info("\n----------- Wagn Load Complete -----------\n\n")
   end
 
   class << self
-  def wagn_pre_schema?
-    begin
-      @schema_initialized ||= ActiveRecord::Base.connection.select_value("select count(*) from cards").to_i > 2
-      !@schema_initialized
-    rescue Exception => e
-      STDERR << "\n-------- Schema not initialized--------"# Trace #{e.backtrace*"\n"}"
-      #ActiveRecord::Base.logger.info("\n----------- Schema Not Initialized -----------\n\n")
-      true
-    end
-  end
-
-  def wagn_setup_multihost
-    # set schema for multihost wagns   (make sure this is AFTER loading wagn.rb duh)
-    #ActiveRecord::Base.logger.info("------- multihost = #{System.multihost} and WAGN_NAME= #{ENV['WAGN']} -------")
-    if System.multihost and ENV['WAGN']
-      if mapping = MultihostMapping.find_by_wagn_name(ENV['WAGN'])
-        System.base_url = "http://" + mapping.canonical_host
-        System.wagn_name = mapping.wagn_name
+    def wagn_pre_schema?
+      begin
+        @schema_initialized ||= ActiveRecord::Base.connection.select_value("select count(*) from cards").to_i > 2
+        !@schema_initialized
+      rescue Exception => e
+        STDERR << "\n-------- Schema not initialized--------"# Trace #{e.backtrace*"\n"}"
+        #ActiveRecord::Base.logger.info("\n----------- Schema Not Initialized -----------\n\n")
+        true
       end
-      ActiveRecord::Base.connection.schema_search_path = ENV['WAGN']
-      Card.cache.system_prefix = Wagn::Cache.system_prefix
     end
-  end
+
+    def wagn_setup_multihost
+      # set schema for multihost wagns   (make sure this is AFTER loading wagn.rb duh)
+      #ActiveRecord::Base.logger.info("------- multihost = #{System.multihost} and WAGN_NAME= #{ENV['WAGN']} -------")
+      if System.multihost and ENV['WAGN']
+        if mapping = MultihostMapping.find_by_wagn_name(ENV['WAGN'])
+          System.base_url = "http://" + mapping.canonical_host
+          System.wagn_name = mapping.wagn_name
+        end
+        ActiveRecord::Base.connection.schema_search_path = ENV['WAGN']
+        Card.cache.system_prefix = Wagn::Cache.system_prefix
+      end
+    end
 
     def wagn_run
-      STDERR << "----------- Wagn Reload Starting -----------\n"
       wagn_load_modules
-      return if wagn_pre_schema?
-      STDERR << "----------- Wagn Initialization Complete -----------\n\n\n"
+      Wagn::Cache.initialize_on_startup
+      
+      Rails.logger.info << "----------- Wagn Rolling -----------\n\n\n"
     end
 
     def wagn_load_modules

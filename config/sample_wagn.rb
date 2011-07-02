@@ -3,7 +3,7 @@ module Wagn::Local
   def self.included(base)
     self.local(base)
     System.base_url.gsub!(/\/$/,'')
-    Wagn::Cache.initialize_on_startup
+    #warn "cache ios in wagn:local #{Kernel.caller[0..4]*"\n"}"
   end
 
   # Override this in config/wagn.rb

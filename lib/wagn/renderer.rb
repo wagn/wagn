@@ -1,7 +1,3 @@
-class Wagn::Renderer
-end
-require_dependency 'wagn/renderer/rich_html'
-require_dependency 'models/wiki_reference'
 require 'diff'
 
 module Wagn
@@ -63,7 +59,7 @@ module Wagn
     #   The internal call that skips the checks:
     #     _render(_setname)_viewname(args)
     #  #
-    class << self
+    module DefineView
       def alias_view(view, opts={}, *aliases)
         view_key = get_pattern(view, opts)
         aliases.each do |aview|
@@ -119,7 +115,11 @@ module Wagn
           end
         end
       end
+    end
   
+    extend DefineView
+
+    class <<self
       def get_pattern(view,opts)
         unless pkey =  Wagn::Pattern.method_key(opts) #and opts.empty?
           raise "Bad Pattern opts: #{pkey.inspect} #{opts.inspect}"

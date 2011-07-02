@@ -1,6 +1,12 @@
 module Wagn
  class Renderer::Xml < Renderer
 
+  LAYOUTS = { 'default' => %{
+<carddoc>
+{{_main}}
+</carddoc>
+} }
+
   cattr_accessor :set_actions
   attr_accessor  :options_need_save, :js_queue_initialized,
     :position, :start_time, :skip_autosave
@@ -65,6 +71,37 @@ module Wagn
     
     content_tag(:card, attributes ) { yield }
   end
+
+  def get_layout_content(args)
+    User.as(:wagbot) do
+      case
+        when (params[:layout] || args[:layout]) ;  layout_from_name
+        when card                               ;  layout_from_card
+        else                                    ;  LAYOUTS['default']
+      end
+    end
+  end
+
+  def layout_from_name
+    lname = (params[:layout] || args[:layout]).to_s
+    lcard = Card.fetch(lname, :skip_virtual=>true)
+    case
+      when lcard && lcard.ok?(:read)         ; lcard.content
+      when hardcoded_layout = LAYOUTS[lname] ; hardcoded_layout
+      else  ; "<h1>Unknown layout: #{lname}</h1>Built-in Layouts: #{LAYOUTS.keys.join(', ')}"
+    end
+  end
+
+  def layout_from_card
+    return unless setting_card = (card.setting_card('layout') or Card.default_setting_card('layout'))
+    return unless setting_card.typecode == 'Pointer'           and
+      layout_name=setting_card.item_names.first                and
+      !layout_name.nil?                                        and
+      lo_card = Card.fetch(layout_name, :skip_virtual => true) and
+      lo_card.ok?(:read)
+    lo_card.content
+  end
+
 
 =begin
   # these initialize the content of missing builtin layouts
@@ -133,36 +170,6 @@ module Wagn
 
  }
 
-
-  def get_layout_content(args)
-    User.as(:wagbot) do
-      case
-        when (params[:layout] || args[:layout]) ;  layout_from_name
-        when card                               ;  layout_from_card
-        else                                    ;  LAYOUTS['default']
-      end
-    end
-  end
-
-  def layout_from_name
-    lname = (params[:layout] || args[:layout]).to_s
-    lcard = Card.fetch(lname, :skip_virtual=>true)
-    case
-      when lcard && lcard.ok?(:read)         ; lcard.content
-      when hardcoded_layout = LAYOUTS[lname] ; hardcoded_layout
-      else  ; "<h1>Unknown layout: #{lname}</h1>Built-in Layouts: #{LAYOUTS.keys.join(', ')}"
-    end
-  end
-
-  def layout_from_card
-    return unless setting_card = (card.setting_card('layout') or Card.default_setting_card('layout'))
-    return unless setting_card.is_a?(Card::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.typecode == 'Pointer'        and
-      layout_name=setting_card.item_names.first     and
-      !layout_name.nil?                             and
-      lo_card = Card.fetch(layout_name, :skip_virtual => true)    and
-      lo_card.ok?(:read)
-    lo_card.content
-  end
 
 
 

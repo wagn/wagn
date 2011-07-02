@@ -62,8 +62,6 @@ module Wagn::Model::Fetch
          new_missing cardname
       end
 
-
-
       if cacheable
         Card.cache.write key, card
         Rails.logger.debug "   writing: #{card.inspect}" if debug

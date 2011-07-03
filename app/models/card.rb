@@ -114,15 +114,14 @@ class Card < ActiveRecord::Base
     end
 
     #default content
-    if (self.content.nil? || self.content.blank?) 
+    if (self.content.nil? || self.content.blank?)
       self.content = setting('content', 'default')
     end
 
     # misc defaults- trash, key, fallbacks
     self.trash = false
     self.key = name.to_key if name
-    self.name='' if name.nil?
-    self
+#    self.name='' if name.nil?
   end
   
   def card
@@ -142,7 +141,7 @@ class Card < ActiveRecord::Base
     args.delete 'id' #took out slow handling of protected fields.  now just this one.
     typename, skip_type_lookup, att_id = ['type', 'skip_type_lookup', 'attachment_id'].map{|k| args.delete k }
 
-    @attributes = get_attributes #was getting this from column defs.  very slow.  
+    @attributes = get_attributes   
     @attributes_cache = {}
     @new_record = true
     self.send :attributes=, args, false
@@ -176,11 +175,11 @@ class Card < ActiveRecord::Base
 
 
   def get_attributes
-    @attributes ||= {"typecode"=>nil, "name"=>nil, "read_rule_class"=>nil, 
-      "created_at"=>nil, "indexed_content"=>nil, "tag_id"=>nil, "indexed_name"=>nil, "updated_at"=>nil,
-      "codename"=>nil, "trash"=>nil, "references_expired"=>nil, "reader_id"=>nil, 
-      "created_by"=>nil, "current_revision_id"=>nil, "extension_type"=>nil, "trunk_id"=>nil, 
-      "updated_by"=>nil, "key"=>nil, "extension_id"=>nil, "read_rule_id"=>nil
+    #was getting this from column defs.  very slow.
+    @attributes ||= {"name"=>"", "key"=>"", "codename"=>nil, "typecode"=>nil, "current_revision_id"=>nil,
+      "trunk_id"=>nil,  "tag_id"=>nil, "indexed_content"=>nil,"indexed_name"=>nil, "references_expired"=>nil,
+      "read_rule_class"=>nil, "read_rule_id"=>nil, "extension_type"=>nil,"extension_id"=>nil,
+      "created_at"=>nil, "created_by"=>nil, "updated_at"=>nil,"updated_by"=>nil, "trash"=>nil
     }
   end
 

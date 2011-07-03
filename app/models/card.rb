@@ -317,7 +317,7 @@ class Card < ActiveRecord::Base
 
 
   def left
-    Card.fetch name.trunk_name, :skip_virtual=> true
+    Card.fetch name.trunk_name, :skip_virtual=> true, :skip_after_fetch=>true
   end
   def right
     Card.fetch name.tag_name,   :skip_virtual=> true

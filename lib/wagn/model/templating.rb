@@ -6,9 +6,9 @@ module Wagn::Model::Templating
   def type_template?()  template? && name =~ /\+\*type\+/  end
   def right_template?() template? && name =~ /\+\*right\+/ end
 
-  def template()
-    @template ||=
-      setting_card('content','default')
+  def template(reset = false)
+    @template = reset ? setting_card('content','default') : (@template || setting_card('content','default'))
+#    @template ||= setting_card('content','default')
   end
   def right_template()   (template && template.right_template?) ? template : nil  end
   def hard_template()    (template && template.hard_template?)  ? template : nil  end
@@ -16,7 +16,7 @@ module Wagn::Model::Templating
 
   def templated_content
     return unless template && template.hard_template?
-    User.as(:wagbot) { template.content }
+    template.content
   end
 
   def hard_templatees

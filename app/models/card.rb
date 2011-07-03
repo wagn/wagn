@@ -88,7 +88,7 @@ class Card < ActiveRecord::Base
       
   
   def set_defaults args
-    #Rails.logger.debug "Card(#{name})#set_defaults"
+    #warn "Card(#{name})#set_defaults"
     # autoname
     if args["name"].blank? and autoname_card = setting_card('autoname')
       User.as(:wagbot) do
@@ -103,10 +103,8 @@ class Card < ActiveRecord::Base
       self.content = setting('content', 'default')
     end
 
-    # misc defaults- trash, key, fallbacks
-    self.trash = false
     self.key = name.to_key if name
-#    self.name='' if name.nil?
+    self.trash=false
   end
   
   def card
@@ -120,38 +118,29 @@ class Card < ActiveRecord::Base
   
 
   def initialize(args={})
+    #warn "initializing with args: #{args.inspect}"
     args ||= {}
-    args = args.stringify_keys #some day someone will have to explain to me why this is different from args.stringify_keys!.  Evidently it is.
-    args.delete 'id' #took out slow handling of protected fields.  now just this one.
-    typename, skip_defaults, skip_type_lookup = ['type', 'skip_defaults', 'skip_type_lookup'].map{|k| args.delete k }
+    args = args.stringify_keys # evidently different from args.stringify_keys!
+    args.delete 'id' # replaces slow handling of protected fields
+    typename, skip_defaults = ['type', 'skip_defaults'].map{|k| args.delete k }
 
     @attributes = get_attributes   
     @attributes_cache = {}
     @new_record = true
     self.send :attributes=, args, false
-    self.typecode = get_typecode(args['name'], typename, skip_type_lookup) if !args['typecode']
+    self.typecode = get_typecode(args['name'], typename) unless args['typecode']
 
-    singleton_class.include_type_module(typecode) unless virtual? || missing?
-
+    include_set_modules unless missing?
     set_defaults( args ) unless skip_defaults
-
     callback(:after_initialize) if respond_to_without_attributes?(:after_initialize)
     self
   end
   
-  def get_typecode(name, typename, skip_type_lookup)
-    case
-    when typename
-      begin
-        ::Cardtype.classname_for(typename)
-      rescue
-        self.broken_type = typename
-        'Basic'
-      end
-    when skip_type_lookup; 'Basic'
-    when name            ; self.template.typecode || 'Basic'
-    else                 ; 'Basic'
-    end 
+  def get_typecode(name, typename)
+    begin ; return Cardtype.classname_for(typename) if typename
+    rescue; self.broken_type = typename
+    end
+    (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
   end
 
 
@@ -167,8 +156,11 @@ class Card < ActiveRecord::Base
     
 
   def after_fetch
-    #Rails.logger.info "After fetch: #{name}"
-    singleton_class.include_type_module(typecode)
+    include_set_modules
+  end
+  
+  def include_set_modules
+    singleton_class.include_type_module(typecode)  
   end
   
 =begin
@@ -561,7 +553,7 @@ class Card < ActiveRecord::Base
       # invalid to change type when type is hard_templated
       if (rt = rec.right_template and rt.hard_template? and 
         value!=rt.typecode and !rec.allow_typecode_change)
-        rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rec.right_template.cardtype_name}"
+        rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rt.cardtype_name}"
       end        
       
     end

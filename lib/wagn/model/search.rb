@@ -9,17 +9,22 @@ module Wagn::Model::Search
       @@builtins[card.key] = card
     end
     
-    def pattern_virtual(name)
+    def pattern_virtual(name, cached_card=nil)
       return nil unless name && name.junction?
-      if template = Card.new(:name=>name, :virtual=>true, :typecode=>'Basic', :skip_defaults=>true).template and template.hard_template? 
-        User.as(:wagbot) do
-          Card.create_virtual name, template.content, template.typecode
+      cached_card = nil if cached_card && cached_card.trash
+      test_card = cached_card || Card.new(:name=>name, :missing=>true, :typecode=>'Basic', :skip_defaults=>true)
+      if template=test_card.template(reset=true) and template.hard_template? 
+        args=[name, template.content, template.typecode]
+        if cached_card
+          cached_attrs = [:name, :content, :typecode].map{|attr| cached_card.send(attr)}
+          return cached_card if args==cached_attrs
         end
+        Card.new_virtual name, template.content, template.typecode
       elsif System.ok?(:administrate_users) and name.tag_name =~ /^\*(email)$/
         attr_name = $~[1]
         content = Card.retrieve_extension_attribute( name.trunk_name, attr_name ) || ""
         User.as(:wagbot) do
-          Card.create_virtual name, content  
+          Card.new_virtual name, content  
         end
       else
         return nil
@@ -31,8 +36,8 @@ module Wagn::Model::Search
       c = Card.fetch(cardname) and e = c.extension and e.send(attr_name)
     end
 
-    def create_virtual(name, content, type='Basic')
-      Card.new(:name=>name, :content=>content, :typecode=>type, :virtual=>true, :skip_defaults=>true)
+    def new_virtual(name, content, type='Basic')
+      Card.new(:name=>name, :content=>content, :typecode=>type, :missing=>true, :virtual=>true, :skip_defaults=>true)
     end
     
     def count_by_wql(spec)       

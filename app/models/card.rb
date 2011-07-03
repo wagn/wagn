@@ -90,13 +90,11 @@ class Card < ActiveRecord::Base
   def set_defaults args
     #Rails.logger.debug "Card(#{name})#set_defaults"
     # autoname
-    if args["name"].blank?
-      ::User.as(:wagbot) do
-        if autoname_card = setting_card('autoname')
-          self.name = autoname_card.content
-          autoname_card.content = autoname_card.content.next  #fixme, should give placeholder on new, do next and save on create
-          autoname_card.save!
-        end                                         
+    if args["name"].blank? and autoname_card = setting_card('autoname')
+      User.as(:wagbot) do
+        self.name = autoname_card.content
+        autoname_card.content = autoname_card.content.next  #fixme, should give placeholder on new, do next and save on create
+        autoname_card.save!
       end
     end
 
@@ -131,7 +129,7 @@ class Card < ActiveRecord::Base
     @attributes_cache = {}
     @new_record = true
     self.send :attributes=, args, false
-    self.typecode = get_typecode(name, typename, skip_type_lookup) if !args['typecode']
+    self.typecode = get_typecode(args['name'], typename, skip_type_lookup) if !args['typecode']
 
     singleton_class.include_type_module(typecode) unless virtual? || missing?
 

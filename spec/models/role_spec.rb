@@ -18,7 +18,7 @@ describe Role, "Authenticated User" do
   end
 end
 
-
+=begin
 describe User, "Anonymous User" do
   before do
     User.current_user = ::User['anon']
@@ -35,19 +35,23 @@ describe User, "Authenticated User" do
   it "should ok anon role" do System.role_ok?(Role['anon'].id).should be_true end
   it "should ok auth role" do System.role_ok?(Role['auth'].id).should be_true end
 end
-
+=end
 
 describe User, "Admin User" do
   before do
     User.current_user = ::User[:wagbot]
-
   end
-  it "should ok admin role" do System.role_ok?(Role['admin'].id).should be_true end
+#  it "should ok admin role" do System.role_ok?(Role['admin'].id).should be_true end
+  
+  it "should have correct parties" do
+    User.current_user.parties.sort.should == ['administrator', "anyone", "anyone_signed_in",'wagn_bot']
+  end
+    
 end
 
 describe User, 'Joe User' do
   before do
-    User.as :joe_user
+    User.current_user = :joe_user
     User.cache.delete 'joe_user'
     @ju = User.current_user
     @r1 = Role.find_by_codename 'r1'
@@ -63,6 +67,13 @@ describe User, 'Joe User' do
   it "should save new roles and reload correctly" do
     @ju.roles=[@r1]
     @ju = User.find_by_login 'joe_user'
-    @ju.roles.length.should==1
+    @ju.roles.length.should==1  
+    @ju.parties.sort.should == ["anyone", "anyone_signed_in", 'joe_user', 'r1']
   end
+  
+  it "should be 'among' itself" do
+    @ju.among?(['joe_user']).should == true
+    @ju.among?(['faker1','joe_user','faker2']).should == true
+  end
+  
 end

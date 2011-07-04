@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :name
-  cattr_accessor :current_user
+  cattr_accessor :current_user, :as_user
   
   has_and_belongs_to_many :roles
   belongs_to :invite_sender, :class_name=>'User', :foreign_key=>'invite_sender_id'
@@ -37,22 +37,30 @@ class User < ActiveRecord::Base
     end
     
     def current_user=(user)
-      @@current_user = user
+      @@as_user = nil
+      @@current_user = user.class==User ? user : User[user]
     end
    
     def as(given_user)
-      tmp_user = self.current_user
-      self.current_user = given_user.class==User ? given_user : User[given_user]
+      tmp_user = @@as_user
+      @@as_user = given_user.class==User ? given_user : User[given_user]
+      self.current_user = @@as_user if @@current_user.nil?
+      
+      #warn "\nas called: @@as_user = #{@@as_user.inspect}\n"
       if block_given?
         value = yield
-        self.current_user = tmp_user
+        @@as_user = tmp_user
         return value
       else
-        current_user
+        #fail "BLOCK REQUIRED with User#as"
       end
     end
     
-    
+    def as_user
+      #warn "\nas_user called: @@as_user = #{@@as_user.inspect}\n"
+      @@as_user || self.current_user
+    end
+      
     # FIXME: args=params.  should be less coupled..
     def create_with_card(user_args, card_args, email_args={})
       @card = (Hash===card_args ? Card.new({'typecode'=>'User'}.merge(card_args)) : card_args) 
@@ -99,6 +107,31 @@ class User < ActiveRecord::Base
     #end
   end 
 
+
+#~~~~~~~ Instance
+
+
+  def among? test_parties
+    #Rails.logger.info "among called.  user = #{self.login}, parties = #{parties.inspect}, test_parties = #{test_parties.inspect}"
+    parties.each do |party|
+      return true if test_parties.member? party
+    end
+    false
+  end
+
+  def parties
+    @parties ||= [self,all_roles].flatten.map{|p| p.card.key }
+  end
+  
+  def read_rule_ids
+    @read_rule_ids ||= begin
+      party_keys = ['in'] + parties
+      self.class.as(:wagbot) do
+        Card.search(:right=>'*read', :refer_to=>{:key=>party_keys}).map &:id
+      end
+    end
+  end
+  
   ## INSTANCE METHODS
 
   def save_with_card(card)
@@ -122,8 +155,7 @@ class User < ActiveRecord::Base
 
   def accept(email_args)
     User.as :wagbot  do #what permissions does approver lack?  Should we check for them?
-      card.type = 'User'  # change from Invite Request -> User
-      card.permit :edit, Card.new(:type=>'User').who_can(:edit) #give default user permissions
+      card.typecode = 'User'  # change from Invite Request -> User
       self.status='active'
       self.invite_sender = ::User.current_user
       generate_password
@@ -215,12 +247,15 @@ class User < ActiveRecord::Base
   end
 
   def password_required?
-     !built_in? && !pending? && not_openid? && (crypted_password.blank? or not password.blank?)
+     !built_in? && 
+     !pending?  && 
+     #not_openid? && 
+     (crypted_password.blank? or not password.blank?)
   end
  
-  def not_openid?
-    identity_url.blank?
-  end
+#  def not_openid?
+#    identity_url.blank?
+#  end
 
 end
 

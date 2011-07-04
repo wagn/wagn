@@ -1,20 +1,49 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Flexmail do  
+describe Flexmail do
+  describe "#email_config_cardnames" do
+    it "handles relative names" do
+      User.as :wagbot do
+        Card.create! :name=>'emailtest+*right+*send', :content=>'[[_left+email_config]]', :type=>'Pointer'
+        trigger_card = Card.new(:name=>'Huckleberry+emailtest')
+        Flexmail.email_config_cardnames(trigger_card).first.should=='emailtest+*right+email_config'
+      end
+    end
+  end
+  
   describe ".configs_for" do
     before do
-      User.as :wagbot
+      User.current_user = :wagbot
       Card.create! :name => "mailconfig+*to", :content => "joe@user.com"
       Card.create! :name => "mailconfig+*from", :content => "from@user.com"
       Card.create! :name => "mailconfig+*subject", :content => "Subject of the mail"
+      Card.create! :name => "emailtest+*right+*send", :content => "[[mailconfig]]"
     end
     
     it "returns empty list for card with no configs" do
       Flexmail.configs_for( Card.new( :name => "random" )).should == []
     end
     
+    it "takes Pointer value for extended_list fields" do
+      Card.create! :name => "mailconfig+*cc", :content => "[[mailconfig+*to]]", :type=>'Pointer'
+      c = Card.new(:name=>'Passion Fruit+emailtest')
+      Flexmail.configs_for(c)[0][:cc].should == 'joe@user.com'
+    end
+    
+    it "handles *email cards" do
+      User.as(:wagbot) do
+        Card.create! :name => "mailconfig+*cc", :content => "[[Joe User+*email]]", :type=>'Pointer'
+        Card.create! :name => "mailconfig+*bcc", :content => '{"name":"Joe Admin","append":"*email"}', :type=>'Search'
+      end
+      User.as(:joe_user) do
+        c = Card.new(:name=>'Kiwi+emailtest')
+        conf = Flexmail.configs_for(c)[0]
+        conf[:cc].should == 'joe@user.com'
+        conf[:bcc].should == 'joe@admin.com'
+      end
+    end        
+    
     it "returns list with correct hash for card with configs" do
-      Card.create! :name => "emailtest+*right+*send", :content => "[[mailconfig]]"
       Card.create! :name => "mailconfig+*message", :content => "It's true that {{_left+story|naked}}"
       c = Card.create :name=>'Banana+story', :content=>"I was born a poor black seed"
       c = Card.create :name => "Banana+emailtest", :content => "data content"
@@ -43,40 +72,43 @@ describe Flexmail do
       end
       
       User.as :wagbot
-      Card::Phrase.create!  :name => 'Bobs addy', :content=>'bob@bob.com'
-      Card::Phrase.create!  :name => 'default subject', :content=>'a very nutty thang'
-      Card::Search.create!  :name => "mailconfig+*to", :content => %{ {"key":"bob_addy"} }
-      Card::Search.create!  :name => "mailconfig+*from", :content => %{ {"left":"_left", "right":"email"} }
-      Card::Search.create!  :name => "subject search+*right+*content", :content => %{{"referred_to_by":"_self+subject"}}
+      Card.create!  :name => 'Bobs addy', :content=>'bob@bob.com', :type=>'Phrase'
+      Card.create!  :name => 'default subject', :content=>'a very nutty thang', :type=>'Phrase'
+      Card.create!  :name => "mailconfig+*to", :content => %{ {"key":"bob_addy"} }, :type=>'Search'
+      Card.create!  :name => "mailconfig+*from", :content => %{ {"left":"_left", "right":"email"} }, :type=>'Search'
+      Card.create!  :name => "subject search+*right+*content", :content => %{{"referred_to_by":"_self+subject"}}, :type=>'Search'
       Card.create!  :name => "mailconfig+*subject", :content => "{{+subject search|naked;item:naked}}"
-      Card.create! :name => "mailconfig+*message", :content => "Oughta get fancier"
+      Card.create! :name => "mailconfig+*message", :content => "Triggered by {{_self|name}} and its wonderful content: {{_self|naked}}"
       Card.create! :name => "mailconfig+*attach", :type=>"Pointer", :content => "[[_self+attachment]]"
-      c = Card::Cardtype.create! :name=>'Trigger'
-      c.permit(:create, Role[:anon])
-      c.permit(:read,   Role[:auth]) 
-      c.save!
+      Card.create! :name=>'Trigger', :type=>'Cardtype'
+      Card.create :name=>'Trigger+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
       Card.create! :name=>'Trigger+*type+*content', :content=>''
-      Card::Pointer.create! :name => "Trigger+*type+*send", :content => "[[mailconfig]]"
+      Card.create! :name => "Trigger+*type+*send", :content => "[[mailconfig]]", :type=>'Pointer'
 
       User.as :anon
     end
         
     it "returns list with correct hash for card with configs" do
-      c = Card::Trigger.create :name => "Banana Trigger", :content => "data content"
-      c.multi_create( 
-        '~plus~email'=>{:content=>'gary@gary.com'},
-        '~plus~subject'=>{:type=>'Pointer', :content=>'[[default subject]]'},
-        '~plus~attachment' => {:type=>'File', :content=>"notreally.txt" }
-      )
-      Flexmail.configs_for(c).should == [{
-        :to => "bob@bob.com",
-        :from => "gary@gary.com",
-        :bcc => "",
-        :cc => '',
-        :subject => "a very nutty thang",
-        :message => "Oughta get fancier",
-        :attach => ['Banana Trigger+attachment']
-      }]
+      User.as :wagbot do
+        System.base_url = 'http://a.com'
+        c = Card.create(:name => "Banana Trigger", :content => "data content [[A]]", :type=>'Trigger')
+        #c = Card.create(:name => "Banana Trigger", :content => "data content [[A]]", :type=>'Trigger',
+        assert c.id
+        Card.update(c.id,
+              :cards=> {'~plus~email'=>{:content=>'gary@gary.com'},
+              '~plus~subject'=>{:type=>'Pointer', :content=>'[[default subject]]'},
+              '~plus~attachment' => {:type=>'File', :content=>"notreally.txt" } })
+        conf = Flexmail.configs_for(c).first
+      
+        conf[:to     ].should == "bob@bob.com"
+        conf[:from   ].should == "gary@gary.com"
+        conf[:bcc    ].should == ''
+        conf[:cc     ].should == ''
+        conf[:subject].should == "a very nutty thang"
+        conf[:attach ].should == ['Banana Trigger+attachment']
+        conf[:message].should == "Triggered by Banana Trigger and its wonderful content: data content " +
+          '<a class="known-card" href="http://a.com/wagn/A">A</a>'
+      end
     end
   end
 
@@ -89,7 +121,7 @@ describe Flexmail do
       end
     
       it "calls to mailer on Card#create" do
-        Mailer.should_receive(:deliver_flexmail).with(hash_including(:to=>"joe@user.com"))
+        Mailer.should_receive(:deliver_flexmail).at_least(:once).with(hash_including(:to=>"joe@user.com"))
         Card.create :name => "Banana+emailtest"
       end
       
@@ -100,7 +132,7 @@ describe Flexmail do
         
         Rails.logger.level = ActiveSupport::BufferedLogger::Severity::DEBUG
         Mailer.should_receive(:deliver_flexmail).with(hash_including(:message=>"this had betta work"))
-        Card.create! :name => "ToYou", :type => "Email", :content => "had betta work"
+        Card.create!(:name => "ToYou", :type => "Email", :content => "had betta work")
       end
       
     end
@@ -118,10 +150,10 @@ describe Flexmail do
         Card.create :name => "Banana+emailtest"
       end
       
-      it "calls to mailer on Card#multi_create" do
-        Mailer.should_receive(:deliver_flexmail).with(hash_including(:to=>"joe@user.com"))
+      it "calls to mailer on Card#create" do
+        Mailer.should_receive(:deliver_flexmail).at_least(:once).with(hash_including(:to=>"joe@user.com"))
         c = Card.create :name => "Illiodity", :type=>"Book"
-        c.multi_create( {"~author" => {"name" => "Bukowski" }})
+        Card.update(c.id, :cards=> {"~author" => {"name" => "Bukowski"}})
       end
     end
   end

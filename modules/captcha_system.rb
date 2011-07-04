@@ -1,5 +1,4 @@
 module CaptchaSystem
-  protected
   def require_captcha  
     @card ||= Card.new(params[:card])
     if captcha_required? and !verify_captcha(:model=>@card)

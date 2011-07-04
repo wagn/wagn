@@ -6,12 +6,12 @@
   <%# if !@card.hard_template %>
     <%#= @content %>
   <%# end %>
-  <%# slot =  Slot.new(@card, 'bogus_1', 'view', self) %>
-  <%#- a = slot.expand_inclusions(slot.render(:naked_content)) %>
+  <%# slot =  Wagn::Renderer.new(@card, 'bogus_1', 'view', self) %>
+  <%#- a = slot.expand_inclusions(slot.render_naked) %>
   <%# warn "email content: #{a}" %>
   <%#= a %>
 
-<div><%= link_to "See this request", @url %></div> 
+<div><%= link_to "See this request", @url %></div>
 </div><%= link_to 'See all account requests', :host=>System.host, :controller=>'card', :action=>'show', :id=>"account_request" %></div>
 
 

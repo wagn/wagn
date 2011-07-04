@@ -10,7 +10,7 @@ module ChunkManager
   attr_reader :chunks_by_type, :chunks_by_id, :chunks, :chunk_id
   unless defined? ACTIVE_CHUNKS
     ACTIVE_CHUNKS = [ 
-      Literal::Pre,
+#      Literal::Pre,
       Literal::Escape,
       Chunk::Transclude,
       Chunk::Link,

@@ -1,6 +1,6 @@
 module Chunk
   class Transclude < Reference
-    attr_reader :stars, :format, :expand, :inclusion_map
+    attr_reader :stars, :inclusion_map, :renderer, :options, :base
     unless defined? TRANSCLUDE_PATTERN
       #  {{+name|attr:val;attr:val;attr:val}}
       TRANSCLUDE_PATTERN = /\{\{(([^\|]+?)\s*(\|([^\}]+?))?)\}\}/
@@ -10,14 +10,12 @@ module Chunk
   
     def initialize(match_data, content)
       super   
-      @format = content.format
-      @expand = content.expand
       #warn "FOUND TRANSCLUDE #{match_data} #{content}"
       @card_name, @options, @configs = self.class.parse(match_data)
-      #@renderer = @content.renderer
-      @inclusion_map = content.inclusion_map
+      @base, @renderer, @inclusion_map =
+         content.card, content.renderer, content.inclusion_map
     end
-
+  
     def self.parse(match)
       name = match[2].strip
       case name
@@ -32,6 +30,7 @@ module Chunk
         :item  => nil,
         :type  => nil,
         :size  => nil,
+        :unmask => match[1]
       }
       style = {}
       configs = Hash.new_from_semicolon_attr_list match[4]
@@ -48,82 +47,36 @@ module Chunk
     
     def unmask_text(&block)
       return @unmask_text if @unmask_text
-      return @text unless @expand
       comment = @options[:comment]
       return comment if comment
       refcard_name
       if view = @options[:view]
-	view = view.to_sym
-	if inclusion_map and inclusion_map.key?(view)
-	  view = @options[:view] = inclusion_map[view]
-	end
-      end
-      case view
-      when :name;     refcard ? refcard.name : @card_name
-      when :key;      refcard_name.to_key
-      when :link;     card_link
-      when :linkname; Cardname.escape(refcard_name)
-      when :titled;   content_tag( :h1, fancy_title(refcard_name) ) + self.render( :content )
-      when :rss_titled;
-        # content includes wrap  (<object>, etc.) , which breaks at least safari rss reader.
-        content_tag( :h2, fancy_title(refcard_name) ) + self.render( :expanded_view_content )
-      else
-	#when :content, :naked, :naked_content; card.contextual_content
-	#when :array;
-	#when :open;
-
-        block ||= Proc.new do |tcard, opts|
-          case view
-        when nil
-            @card=Card.fetch_or_new(@card_name) if @card_name != @card.name
-            renderer_content(@card)
-          when :naked
-            card = Card.fetch(tcard)
-            return "<no card #{tcard}/>" unless card
-            case card.type
-            when 'Search'
-              Wql.new(card.get_spec(:return => 'name_content')).run.keys.map do
-                |x| renderer_content(Card.fetch_or_new(x))
-              end
-            when 'Pointer'
-              card.pointees.map do |x|
-                renderer_content(Card.fetch_or_new(x))
-              end
-            else
-              renderer_content(card)
-            end
-          else
-            @text # just leave the {{}} coding, may need to handle more...
-          end
+        view = view.to_sym
+        if inclusion_map and inclusion_map.key?(view)
+          view = @options[:view] = inclusion_map[view]
         end
-#Rails.logger.info "transclude #{@card_name}, #{@options.inspect}"
-        block.call(@card_name, @options)
       end
-    end
-
-    def renderer_content(card)
-      return "<no card #{@tcard}/>" unless card
-      card.templated_content(format) || card.content
+      yield options
     end
 
     def revert                             
       configs = @configs.to_semicolon_attr_list;  
       configs = "|#{configs}" unless configs.blank?
-      @text = "{{#{@card_name}#{configs}}}"
+      @text = "{{#{card_name}#{configs}}}"
       super
     end
     
     private
     def base_card 
-      case @options[:base]
-      when 'self'; @card
-      when 'parent'; @card.trunk
-      else invalid_option(:base)
+      case options[:base]
+      when 'self'  ; card
+      when 'parent'; card.trunk
+      else           base || invalid_option(:base)
       end
     end
     
     def invalid_option(key)
-      raise Wagn::Oops, "Invalid argument {'#{key}': '#{@options[key]}'} in transclusion syntax"
+      raise Wagn::Oops, "Invalid argument {'#{key}': '#{options[key]}'} in transclusion syntax"
     end
 
   end

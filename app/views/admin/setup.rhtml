@@ -2,7 +2,7 @@
 
 <%= error_messages_for :user %>
 
-<% get_slot(card).wrap('account-request') do |slot| %>
+<% wrap_slot do |slot| %>
 
   <div class="open-content">
     <h2 class="page-header">To get started, set up an account. </h2><%#ENGLISH%>
@@ -10,13 +10,14 @@
     <% form_tag :id=>params[:id], :action => "setup" do %>
 
     <table class="fieldset">
-      <% slot.option(
-          :name=>"name", 
-      		:help=>"<strong>Title for user's card</strong><br/> Usually a full name.", #ENGLISH
-      		:label=>"Name") do %>
-      	<%= text_field :card, :name %>
+      <%- option_content = capture do %>
+        <%= text_field :card, :name %>
       <% end %>
-      <%= render :partial=>'account/edit', :locals=>{:slot=>slot, :card=>@card} %>
+      <%= slot.option(option_content, 
+          :name=>"name", 
+          :help=>"<strong>Title for user's card</strong><br/> Usually a full name.", #ENGLISH
+          :label=>"Name") %>
+      <%= render :partial=>'account/edit', :locals=>{:slot=>slot, :card=>card} %>
     </table>
       <%= submit_tag 'Create' %>
     <% end %>

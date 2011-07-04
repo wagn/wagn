@@ -88,7 +88,7 @@ class URIChunk < Chunk::Abstract
     content.gsub!( self.pattern ) do |matched_text|
       chunk = self.new($~, content)                    
       card = chunk.card
-      if chunk.avoid_autolinking? || (card && card.type=='HTML')
+      if chunk.avoid_autolinking? || (card && card.typecode=='Html')
         # do not substitute nor register the chunk
         matched_text
       else
@@ -104,8 +104,7 @@ class URIChunk < Chunk::Abstract
     @suspicious_preceding_character = match_data[1]
     @original_scheme, @user, @host, @port, @path, @query, @fragment = match_data[2..-1]
     treat_trailing_character
-    css_class = scheme=='mailto' ? 'email' : 'external'
-    @unmask_text = "<a class=\"#{css_class}-link\" href=\"#{uri}\">#{link_text}</a>#{@trailing_punctuation}"
+    @unmask_text = "#{@content.renderer.build_link(uri,link_text)}#{@trailing_punctuation}"
   end
 
   def avoid_autolinking?

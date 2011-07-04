@@ -1,11 +1,11 @@
-<% if card.ok?(:edit) %>
-	<span class="edit-link">
-		<%= slot.link_to_action('edit','edit') %>
-	</span>
+<% if card.ok?(:update) %>
+  <span class="edit-link">
+    <%= slot.link_to_action('edit','edit') %>
+  </span>
 <% end %>
 <div class="line">
   <span class="content">
-    <%= slot.render( :expanded_line_content ) %>
+    <%= slot.render_closed_content %>
   </span>
 </div>
 

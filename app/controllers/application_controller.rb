@@ -10,35 +10,48 @@ class ApplicationController < ActionController::Base
 
   helper_method :main_card?
 
+  attr_accessor :renderer
+
   include ActionView::Helpers::TextHelper #FIXME: do we have to do this? its for strip_tags() in edit()
   include ActionView::Helpers::SanitizeHelper
 
   before_filter :per_request_setup, :except=>[:render_fast_404]
-
+ # after_filter :set_encoding
   # OPTIMIZE: render_fast_404 still isn't that fast (?18reqs/sec) 
   # can we turn sessions off for it and see if that helps?
   layout :wagn_layout, :except=>[:render_fast_404]
-
+  
+  
+ # def set_encoding
+ #   respond_to do |format|
+ #     format.text {  headers['Content-Type'] ||= 'text/css' }
+ #     format.css {  headers['Content-Type'] ||= 'text/css' }
+ #   end  
+ # end
+  
   BUILTIN_LAYOUTS = %w{ blank noside simple pre none }
 
 
   protected
 
   def per_request_setup
+    Wagn::Renderer.ajax_call=request.xhr?
+    
     if System.multihost
       if mapping = MultihostMapping.find_by_requested_host(request.host) || MultihostMapping.find_by_requested_host("")
         System.base_url = "http://" + mapping.canonical_host
         System.wagn_name = mapping.wagn_name
         ActiveRecord::Base.connection.schema_search_path = mapping.wagn_name
       else
-        return render_fast_404
+        return render_fast_404(request.host)
       end
     end
 
     Wagn::Cache.re_initialize_for_new_request
     # Set/Redirect to Canonical Domain
     if request.raw_host_with_port != System.host and RAILS_ENV=="production"
-      return redirect_to("http://#{System.host}#{request.path}")
+      query_string = request.query_string.empty? ? '' : "?#{request.query_string}"
+      return redirect_to("http://#{System.host}#{request.path}#{query_string}")
     end
 
     User.current_user = current_user || User.find_by_login('anon')
@@ -46,13 +59,13 @@ class ApplicationController < ActionController::Base
     @context = params[:context] || 'main_1'
     @action = params[:action]
 
-    Slot.current_slot = nil
+    Wagn::Renderer.current_slot = nil
 
     # reset class caches
     # FIXME: this is a bit of a kluge.. several things stores as cattrs in modules
     # that need to be reset with every request (in addition to current user)
     System.request = request
-    #System.time = Time.now.to_f              
+    #System.time = Time.now.to_f
     ## DEBUG
     ActiveRecord::Base.logger.debug("WAGN: per request setup")
     load_location
@@ -63,17 +76,8 @@ class ApplicationController < ActionController::Base
     respond_to do |format|
       format.html {
         unless request.xhr?
-          layout = case
-            when BUILTIN_LAYOUTS.include?(params[:layout]);
-              params[:layout]
-#            when params[:layout] == 'none'; nil
-            else
-              'application'
-            end
+          layout = 'application'
         end
-      } 
-      format.xml {
-        layout = 'xmlapp'
       }
     end
     layout
@@ -94,17 +98,18 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def edit_ok
-    @card.ok?(:edit) || render_denied('edit')
+  def update_ok
+    @card.ok?(:update) || render_denied('edit')
   end
 
-  def create_ok
-    @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
-    @skip_slot_header = true
-    #p "CREATE OK: #{@type}"
-    t = Card.class_for(@type, :cardname) || Card::Basic
-    t.create_ok? || render_denied('create')
-  end
+
+ #def create_ok
+ #  @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
+ #  @skip_slot_header = true
+ #  #p "CREATE OK: #{@type}"
+ #  t = Card.class_for(@type, :cardname) || Card::Basic
+ #  t.create_ok? || render_denied('create')
+ #end
 
   def remove_ok
     @card.ok!(:delete) || render_denied('delete')
@@ -124,8 +129,8 @@ class ApplicationController < ActionController::Base
 
   def load_card(cache=false)
     return @card=nil unless id = params[:id]
-    return (@card=Card.find(id)) if id =~ /^\d+$/
-    name = Cardname.unescape(id)
+    return (@card=Card.find(id); @card.after_fetch; @card) if id =~ /^\d+$/
+    name = Wagn::Cardname.unescape(id)
     card_params = params[:card] ? params[:card].clone : {}
     @card = Card.fetch_or_new(name, {}, card_params)
   end
@@ -139,7 +144,7 @@ class ApplicationController < ActionController::Base
 
   # ----------( rendering methods ) -------------
 
-  # dormant code.  
+  # dormant code.
   def render_jsonp(args)
     str = render_to_string args
     render :json=>(params[:callback] || "wadget") + '(' + str.to_json + ')'
@@ -154,7 +159,7 @@ class ApplicationController < ActionController::Base
   def render_update_slot_element(name, stuff="", message=nil)
     render :update do |page|
       page.extend(WagnHelper::MyCrappyJavascriptHack)
-      elem_code = "getSlotFromContext('#{get_slot.context}')"
+      elem_code = "getSlotFromContext('#{params[:context]}')"
       unless name.empty?
         elem_code = "getSlotElement(#{elem_code}, '#{name}')"
       end
@@ -167,6 +172,8 @@ class ApplicationController < ActionController::Base
   end
 
   def render_denied(action = '')
+    Rails.logger.debug "~~~~~~~~~~~~~~~~~in render_denied for #{action}"
+    
     @deny = action
     render :controller=>'card', :action=>'denied', :status=>403
     return false
@@ -192,13 +199,13 @@ class ApplicationController < ActionController::Base
     # Create used this scroll
     #<%= javascript_tag 'scroll(0,0)'
 
-    #errors.each{|attr,msg| puts "#{attr} - #{msg}" }      
+    #errors.each{|attr,msg| puts "#{attr} - #{msg}" }
     # getNextElement() will crawl up nested slots until it finds one with a notice div
 
     on_error_js = ""
 
-    if captcha_required?
-      key = @card.new_record? ? "new" : @card.name.to_key
+    if captcha_required? && ENV['RECAPTCHA_PUBLIC_KEY']
+      key = card.new_record? ? "new" : card.name.to_key
       on_error_js << %{ document.getElementById('dynamic_recaptcha-#{key}').innerHTML='<span class="faint">loading captcha</span>'; }
       on_error_js << %{ Recaptcha.create('#{ENV['RECAPTCHA_PUBLIC_KEY']}', document.getElementById('dynamic_recaptcha-#{key}'),RecaptchaOptions); }
     end
@@ -220,6 +227,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-end            
+end
 
-  
+

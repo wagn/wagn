@@ -21,7 +21,7 @@ describe CardController do
     
     it "should recognize .rss on /recent" do
       params_from(:get, "/recent.rss").should == {:controller=>"card", :view=>"content", :action=>"show", 
-        :id=>"*recent_changes", :format=>"rss"
+        :id=>"*recent", :format=>"rss"
       }
     end
     
@@ -46,14 +46,14 @@ describe CardController do
     ["/wagn",""].each do |prefix|
       describe "routes prefixed with '#{prefix}'" do
         it "should recognize .rss format" do
-          params_from(:get, "#{prefix}/*recent_changes.rss").should == {
-            :controller=>"card", :action=>"show", :id=>"*recent_changes", :format=>"rss"
+          params_from(:get, "#{prefix}/*recent.rss").should == {
+            :controller=>"card", :action=>"show", :id=>"*recent", :format=>"rss"
           }
         end           
     
         it "should recognize .xml format" do
-          params_from(:get, "#{prefix}/*recent_changes.xml").should == {
-            :controller=>"card", :action=>"show", :id=>"*recent_changes", :format=>"xml"
+          params_from(:get, "#{prefix}/*recent.xml").should == {
+            :controller=>"card", :action=>"show", :id=>"*recent", :format=>"xml"
           }
         end           
 
@@ -88,15 +88,17 @@ describe CardController do
         :content=>"Bananas"
       }
       assert_response 418
-      assert_instance_of Card::Basic, Card.find_by_name("NewCardFoo")
-      Card.find_by_name("NewCardFoo").content.should == "Bananas"
+      c=Card.find_by_name("NewCardFoo")
+      assert c.typecode == 'Basic'
+      c.content.should == "Bananas"
     end
     
     it "creates cardtype cards" do
       post :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
       assigns['card'].should_not be_nil
       assert_response 418
-      assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
+      c=Card.find_by_name("Editor")
+      assert c.typecode == 'Cardtype'
     end
     
     it "pulls deleted cards from trash" do
@@ -104,7 +106,8 @@ describe CardController do
       @c.destroy!
       post :create, :card=>{"name"=>"Problem","type"=>"Phrase","content"=>"noof"}
       assert_response 418
-      assert_instance_of Card::Phrase, Card.find_by_name("Problem")
+      c=Card.find_by_name("Problem")
+      assert c.typecode == 'Phrase'
     end
 
     context "multi-create" do
@@ -114,7 +117,8 @@ describe CardController do
          "content_to_replace"=>"",
          "context"=>"main_1", 
          "multi_edit"=>"true", "view"=>"open"
-        assigns['card'].errors["name"].should == "can't be blank"
+        assigns['card'].errors[:key].should == "key cannot be blank"
+        assigns['card'].errors[:name].should == "can't be blank"
         assert_response 422
       end
 
@@ -124,9 +128,25 @@ describe CardController do
          "content_to_replace"=>"",
          "context"=>"main_1", 
          "multi_edit"=>"true", "view"=>"open"
-        assert_response 418    
+        assert_response 418
         Card.find_by_name("sss").should_not be_nil
         Card.find_by_name("sss+text").should_not be_nil
+      end
+
+      it "creates card with hard template" do
+        pending
+        Card.create!(:name=>"Fruit+*type+*content", :content=>"{{+kind}} {{+color}} {{+is citrus}} {{+edible}}")
+        post :create, "card"=>{"name"=>"sssHT", "type"=>"Fruit"},
+         "cards"=>{"~plus~kind"=>{"content"=>"<p>apple</p>"}}, 
+         "cards"=>{"~plus~color"=>{"content"=>"<p>red</p>"}}, 
+         "cards"=>{"~plus~is citrus"=>{"content"=>"<p>false</p>"}}, 
+         "cards"=>{"~plus~edible"=>{"content"=>"<p>true</p>"}}, 
+         "content_to_replace"=>"",
+         "context"=>"main_1", 
+         "multi_edit"=>"true", "view"=>"open"
+        assert_response 418    
+        Card.find_by_name("sssHT").should_not be_nil
+        Card.find_by_name("sssHT+kind").should_not be_nil
       end
     end
    
@@ -151,8 +171,13 @@ describe CardController do
       assigns["redirect_location"].should ==  "/wagn/Joe+boop"
     end
    
-    it "redirects to home if not readable and thanks not specified" do
+    it "redirects to home if not createable and thanks not specified" do
       # Fruits (from shared_data) are anon creatable but not readable
+      
+      #remove me after regenerating test data
+      Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
+      
+      
       login_as :anon
       post :create, "card" => { "type"=>"Fruit", :name=>"papaya" }
       assert_template "ajax_redirect"
@@ -187,6 +212,9 @@ describe CardController do
     end
     
     it "new should work for creatable nonviewable cardtype" do
+      #remove me after regenerating test data
+      Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
+      
       login_as(:anon)     
       get :new, :type=>"Fruit"
       assert_response :success
@@ -196,12 +224,6 @@ describe CardController do
     it "new with existing card" do
       get :new, :card=>{:name=>"A"}
       assert_response :success, "response should succeed"
-    end
-    
-    it "invokes before_new hook" do
-      login_as :joe_user
-      Wagn::Hook.should_receive(:call).with(:before_new, "*all", instance_of(CardController))
-      get :new,:card=>{:name=>"A"}
     end
   end
 
@@ -228,6 +250,7 @@ describe CardController do
     describe "#show" do
       it "works for basic request" do
         get :show, {:id=>'Sample_Basic'}
+        response.should have_tag('body')
         assert_response :success
         'Sample Basic'.should == assigns['card'].name
       end
@@ -245,10 +268,10 @@ describe CardController do
         assert_template 'missing'
       end
       
-      it "invokes before_show hook" do
-        Wagn::Hook.should_receive(:call).with(:before_show, "*all", instance_of(CardController))
-        get :show, {:id=>'Sample_Basic'}
-      end
+      #it "invokes before_show hook" do
+      #  Wagn::Hook.should_receive(:call).with(:before_show, "*all", instance_of(CardController))
+      #  get :show, {:id=>'Sample_Basic'}
+      #end
     end
     
     
@@ -273,16 +296,16 @@ describe CardController do
       end
     end
 
-    it "new without cardtype" do
+    it "new without typecode" do
       post :new   
       assert_response :success, "response should succeed"                     
-      assert_equal 'Basic', assigns['card'].type, "@card type should == Basic"
+      assert_equal 'Basic', assigns['card'].typecode, "@card type should == Basic"
     end
 
-    it "new with cardtype" do
+    it "new with typecode" do
       post :new, :card => {:type=>'Date'}   
       assert_response :success, "response should succeed"                     
-      assert_equal 'Date', assigns['card'].type, "@card type should == Date"
+      assert_equal 'Date', assigns['card'].typecode, "@card type should == Date"
     end        
 
     it "remove" do
@@ -319,13 +342,13 @@ describe CardController do
       assert_template 'missing'
     end
 
-    it "update cardtype with stripping" do
+    it "update typecode with stripping" do
       User.as :joe_user                                               
       post :update, {:id=>@simple_card.id, :card=>{ :type=>"Date",:content=>"<br/>" } }
       #assert_equal "boo", assigns['card'].content
       assert_response :success, "changed card type"   
       assigns['card'].content  .should == ""
-      Card['Sample Basic'].type.should == "Date"
+      Card['Sample Basic'].typecode.should == "Date"
     end
 
 
@@ -340,7 +363,7 @@ describe CardController do
     #    #assert_equal "boo", assigns['card'].content
     #    assert_equal "<br/>", assigns['card'].content
     #    assert_response :success, "changed card type"   
-    #    assert_equal "CardtypeA", Card['Sample Basic'].type
+    #    assert_equal "CardtypeA", Card['Sample Basic'].typecode
     #  end 
     # 
   end

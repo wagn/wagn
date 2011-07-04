@@ -1,6 +1,6 @@
 module Notification   
   module CardMethods
-    def send_notifications 
+    def send_notifications
       action = case  
         when trash;  'deleted'
         when updated_at.to_s==created_at.to_s; 'added'
@@ -12,6 +12,7 @@ module Notification
       @trunk_watchers = @trunk_watcher_watched_pairs.map(&:first)
       
       watcher_watched_pairs.reject {|p| @trunk_watchers.include?(p.first) }.each do |watcher, watched|
+        next unless watcher
         Mailer.deliver_change_notice( watcher, self, action, watched )
       end
 
@@ -19,7 +20,8 @@ module Notification
       if nested_edit
         nested_edit.nested_notifications << [ name, action ]
       else
-        @trunk_watcher_watched_pairs.each do |watcher, watched|
+        @trunk_watcher_watched_pairs.compact.each do |watcher, watched|
+          next unless watcher
           Mailer.deliver_change_notice( watcher, self.trunk, 'updated', watched, [[name, action]], self )
         end
       end
@@ -27,14 +29,15 @@ module Notification
     
     def trunk_watcher_watched_pairs
       # do the watchers lookup before the transcluder test since it's faster.
-      if (name.junction? and
-          trunk_card = Card.fetch(name.trunk_name, :skip_virtual=>true) and
+      if name.junction?
+        #Rails.logger.debug "trunk_watcher_pairs #{name}, #{name.trunk_name.inspect}"
+        if trunk_card = Card.fetch(tname=name.trunk_name, :skip_virtual=>true) and
           pairs = trunk_card.watcher_watched_pairs and
-          transcluders.include?(trunk))
-        pairs
-      else
-        []
-      end      
+          transcluders.map(&:key).member?(tname.to_key)
+          return pairs
+        end
+      end
+      []
     end
     
     def self.included(base)   
@@ -48,19 +51,21 @@ module Notification
     def watcher_watched_pairs
       author = User.current_user.card.name
       (card_watchers.except(author).map {|watcher| [Card.fetch(watcher, :skip_virtual=>true).extension,self.name] }  +
-        type_watchers.except(author).map {|watcher| [Card.fetch(watcher, :skip_virtual=>true).extension,::Cardtype.name_for(self.type)]})
+        type_watchers.except(author).map {|watcher| [Card.fetch(watcher, :skip_virtual=>true).extension,::Cardtype.name_for(self.typecode)]})
     end
     
     def card_watchers 
-      pointees_from("#{name}+*watchers")
+      items_from("#{name}+*watchers")
     end
     
     def type_watchers
-      pointees_from(::Cardtype.name_for( self.type ) + "+*watchers" )
+      items_from(::Cardtype.name_for( self.typecode ) + "+*watchers" )
     end
     
-    def pointees_from( cardname )
-      (c = Card.fetch(cardname, :skip_virtual=>true)) ? c.pointees.reject{|x|x==''} : []
+    def items_from( cardname )
+      User.as :wagbot do
+        (c = Card.fetch(cardname, :skip_virtual=>true)) ? c.item_names.reject{|x|x==''} : []
+      end
     end  
       
     def watchers
@@ -68,12 +73,12 @@ module Notification
     end
   end    
 
-  module SlotHelperMethods     
+  module RendererHelperMethods
     def watch_link 
       return "" unless logged_in?   
       return "" if card.virtual? 
       me = User.current_user.card.name          
-      if card.type == "Cardtype"
+      if card.typecode == "Cardtype"
         (card.type_watchers.include?(me) ? "#{watching_type_cards} | " : "") +  watch_unwatch
       else
         if card.type_watchers.include?(me) 
@@ -85,24 +90,26 @@ module Notification
     end
 
     def watching_type_cards
-      "watching #{link_to_page(Cardtype.name_for(card.type))} cards"      # can I parse this and get the link to happen? that wud r@wk.
+      "watching #{link_to_page(Cardtype.name_for(card.typecode))} cards"      # can I parse this and get the link to happen? that wud r@wk.
     end
 
     def watch_unwatch      
-      type_link = (card.type == "Cardtype") ? " #{card.name} cards" : ""
-      type_msg = (card.type == "Cardtype") ? " cards" : ""    
+      type_link = (card.typecode == "Cardtype") ? " #{card.name} cards" : ""
+      type_msg = (card.typecode == "Cardtype") ? " cards" : ""    
       me = User.current_user.card.name   
 
-      if card.card_watchers.include?(me) or card.type != 'Cardtype' && card.watchers.include?(me)
-  			slot.link_to_action( "unwatch#{type_link}", 'unwatch', {:update=>slot.id("watch-link")},{
-  			  :title => "stop getting emails about changes to #{card.name}#{type_msg}"})
-  		else
-  			slot.link_to_action( "watch#{type_link}", 'watch', {:update=>slot.id("watch-link")},{
-          :title=>"get emails about changes to #{card.name}#{type_msg}" })
-  		end
+      if card.card_watchers.include?(me) or card.typecode != 'Cardtype' && card.watchers.include?(me)
+        link_to_action( "unwatch#{type_link}", 'unwatch', {:update=>id("watch-link")},{
+   :title => "stop getting emails about changes to #{card.name}#{type_msg}"})
+      else
+       link_to_action( "watch#{type_link}", 'watch',
+         {:update=>id("watch-link")},
+         {:title=>"get emails about changes to #{card.name}#{type_msg}" } )
+      end
     end
   end
 
+  #FIXME: multi_update/save are refactored out, so are these hooks
   Wagn::Hook.add :before_multi_save, '*all' do |card, multi_card_params|
     multi_card_params.each_pair do |name, opts|
       opts[:nested_edit] = card
@@ -119,8 +126,8 @@ module Notification
   end
   
   def self.init
-    Card::Base.send :include, CardMethods
-    Slot.send :include, SlotHelperMethods
+    Card.send :include, CardMethods
+    Wagn::Renderer.send :include, RendererHelperMethods
   end   
 end    
 

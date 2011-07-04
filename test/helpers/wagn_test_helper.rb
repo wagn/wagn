@@ -1,4 +1,6 @@
 require 'lib/util/card_builder.rb'
+#require 'renderer'
+
 module WagnTestHelper
       
   include CardBuilderMethods
@@ -21,8 +23,7 @@ module WagnTestHelper
   end
  
   def get_renderer()
-    require 'renderer'
-    Renderer.new
+    Wagn::Renderer.new(Card.new(:name=>'dummy'))
   end
   
   def given_cards( *definitions )   
@@ -33,11 +34,12 @@ module WagnTestHelper
   # 
   # 
   # def card( name )
-  #   ::Card.find_by_name(name)
+  #   Card.find_by_name(name)
   # end
   
-  def render( card )
-    Renderer.new.render(card)
+
+  def render_test_card( card )
+    Wagn::Renderer.new(card).process_content()
   end 
   
   def assert_difference(object, method = nil, difference = 1)
@@ -78,6 +80,7 @@ module WagnTestHelper
   
   def post_invite(options = {})
     action = options[:action] || :invite
+Rails.logger.info "post invite #{action} #{options.inspect}"
     post action, 
       :user => { :email => 'new@user.com' }.merge(options[:user]||{}),
       :card => { :name => "New User" }.merge(options[:card]||{}),

@@ -1,0 +1,25 @@
+#!/usr/local/bin/ruby
+
+STDOUT.sync = true
+errors_filename = "./log/err.out"
+err_out = File.new(errors_filename, "a")
+
+ARGF.each_line do |l|
+  error_section = false
+  if error_section
+    error_section=false if l =~ /^\s*$/
+  elsif l =~ /^\s*\d+\)\s*$/
+    error_section = true
+  elsif l =~ /^\*{40,}$/ or
+        l =~ /^be removed from a future version of RSpec\.$/ or
+        l =~ /^\* simple_matcher is deprecated\.$/ or
+        l =~ /^\* please use Matcher DSL \(http\:\/\/rspec\.rubyforge\.org\/rspec\/1\.3.0\/classes\/Spec\/Matchers\.html\) instead\.$/
+    err_out << l if err_out
+    next
+  elsif l =~ /^([\.\[\]F\*\s]*)((\/| \(called from create_or_update_thumbnail|DEPRECATION WARN|The \{\{key\}\} interpolation syntax in|from \/).*\n?$)/
+    STDOUT << $1
+    err_out << $2 if err_out
+    next
+  end
+  STDOUT << l
+end

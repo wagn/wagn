@@ -7,7 +7,7 @@ Feature: Google maps
     Given I log in as Joe User
     # FIXME: this is creating a card with content '[[street address]]\n'  (missing zip)
     #  test passes but this is weird.
-    And I create card "*geocode" with content 
+    And I create Pointer card "*geocode" with content 
       """
       [[street address]]
       [[zip]]
@@ -19,7 +19,7 @@ Feature: Google maps
     And I create card "Ethan's House+zip" with content "80524"    
 
   Scenario: I look at the KML for a search
-    When I go to url "/wagn/House+*type_cards.kml"
+    When I go to url "/wagn/House+*type+by_name.kml"
     Then I should see "Welcome to Ft Collins!"
 
 

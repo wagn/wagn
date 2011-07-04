@@ -10,7 +10,7 @@ module Attributer
     end
     
     def add_attribute( card, attr ) 
-      c = Card::Base.find_or_create("#{card.name}+#{attr}", :content=>DEFAULT_CONTENT)
+      c = Card.find_or_create("#{card.name}+#{attr}", :content=>DEFAULT_CONTENT)
       if c.content.gsub(/<br>/,'') =~ /^\s*$/
         c.content = DEFAULT_CONTENT
         c.save

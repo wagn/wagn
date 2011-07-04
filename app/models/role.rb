@@ -19,7 +19,7 @@ class Role < ActiveRecord::Base
     end
   end
   alias_method :users, :users_with_special_roles
-  
+    
   def task_list
     (self.tasks || '').split ","
   end

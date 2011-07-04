@@ -108,11 +108,11 @@ Object.extend(Wagn, {
       Element.addClassName( elem, 'card');
     })
   },
-  line_to_paragraph: function(element) {
+  to_open: function(element) {
     Element.removeClassName(element,'line');
     Element.addClassName(element,'paragraph');
   },
-  paragraph_to_line: function(element) {
+  to_closed: function(element) {
     Element.removeClassName(element, 'paragraph');
     Element.addClassName(element, 'line');
   }
@@ -199,7 +199,8 @@ setupLinksAndDoubleClicks = function() {
   jQuery(".comment-box, .TYPE-pointer", ".editOnDoubleClick").dblclick(function(event){
     event.stopPropagation();
   });
-}                  
+}
+
 
 setupCreateOnClick=function(container) {
 //  console.log("setting up creates");
@@ -214,7 +215,7 @@ setupCreateOnClick=function(container) {
       ie = (Prototype.Browser.IE ? '&ie=true' : '');
       new Ajax.Request('/card/new?add_slot=true&context='+getSlotContext(element), {
         asynchronous: true, evalScripts: true,     
-        parameters: "card[type]=" + encodeURIComponent(card_type) + "&card[name]="+encodeURIComponent(card_name)+"&view="+slot_span.getAttributeNode('view').value+ie,
+        parameters: "card[type]=" + encodeURIComponent(card_type) + "&card[name]="+encodeURIComponent(card_name)+"&home_view="+slot_span.getAttributeNode('home_view').value+ie,
         onSuccess: function(request){ slot_span.replace(request.responseText) },
         onFailure: function(request){ slot_span.replace(request.responseText) }
       });
@@ -230,7 +231,7 @@ editTransclusion=function(element){
    url =  '/card/edit/'+card_id+'?context='+getSlotContext(element) + '&' + getSlotOptions(element);
    new Ajax.Updater(span, url, {
      asynchronous: true, evalScripts: true, 
-     onSuccess: function(){  Wagn.line_to_paragraph(span) }
+     onSuccess: function(){  Wagn.to_open(span) }
    });
 }
 
@@ -252,7 +253,6 @@ getOuterSlot=function(element){
 getSlotFromContext=function(context){
   a = context.split('_');
   outer_context=a.shift();
-  element = $(outer_context);
   element = $(outer_context);
   while(a.size() > 0) {
     pos = a.shift();      
@@ -337,7 +337,7 @@ getSlotOptions=function(element){
   if (span=getSlotSpan(element)) {   
     var n=null; var item=''; var view='';
     options = $A([]);
-    if (n=span.getAttributeNode('view')) {  if (n.value != '') { options.push("view="+n.value) }};
+    if (n=span.getAttributeNode('home_view')) {  if (n.value != '') { options.push("home_view="+n.value) }};
     if (n=span.getAttributeNode('item')) {  if (n.value != '') { options.push("item="+n.value) }};
     return options.join("&");
   }
@@ -511,6 +511,22 @@ var attachmentOnChangeUpdateParent = function(attachment_uuid, filename) {
   
   // for now, don't let users submit while the image is in process of uploading.
 	deactivateSubmit(attachment_uuid);  
+}
+
+
+setPointerContent=function(eid, items) {
+  content_field = $(eid + '-hidden-content');
+  list = (items instanceof Array) ? items : [items]; 
+  content_field.value = list.map(
+    function(x){
+      if ((x==null) || (x.strip()=='')) {
+        return '';
+      } else {
+        return '[[' + x + ']]';
+      }
+    }
+  ).join("\n");
+  //alert('value = ' + content_field.value);
 }
 
 

@@ -5,7 +5,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 # test because it has a very special code path that is really very limited.  It gets
 # internal links expanded in html or xml style, and prety much ignores any other output.
 #
-class RendererTest < ActiveSupport::TestCase
+class Wagn::RendererTest < ActiveSupport::TestCase
   include ChunkTestHelper
   
   #attr_accessor :controller
@@ -16,7 +16,7 @@ class RendererTest < ActiveSupport::TestCase
 
   def test_replace_references_should_work_on_inclusions_inside_links       
     card = Card.create!(:name=>"test", :content=>"[[test{{test}}]]"  )    
-    assert_equal "[[test{{best}}]]", Renderer.new.replace_references( card, "test", "best" )
+    assert_equal "[[test{{best}}]]", Wagn::Renderer.new(card).replace_references( "test", "best" )
   end
 
   def controller
@@ -26,10 +26,14 @@ class RendererTest < ActiveSupport::TestCase
     @controller
   end
 
-  def slot_link(card, format=nil)
-ActionController::Base.logger.info("TEST:INFO:slot_link(#{card.name},#{card.class}) F:#{format}")
-    render = Slot.new(card, "nocontext", "view", nil, {:format=>format}).render(:content)
-    m = render.match(/<(cardref|link|a) class.*<\/(cardref|link|a)>/)
+  def slot_link(card, format=:html)
+    render = Wagn::Renderer.new(card, :context=>"nocontext", :format=>format).render(:content)
+    m = render.match(/<(cardlink|link|a) class.*<\/(cardlink|link|a)>/)
+#Rails.logger.info("slot_link(#{card.name},#{card.class}) #{m}, #{m.inspect} R:#{render}")
+    #<card cardId="817" class="transcluded ALL TYPE-basic SELF-kennedy" home_view="content" name="Kennedy" type="Basic">
+    #<cardlink class="wanted-card" card="/wagn/Kennedy%2BMonroe">+Monroe</cardlink>
+    #</card>
+    #
     (m.to_s != "") ? m.to_s : render
   end
 
@@ -49,10 +53,10 @@ ActionController::Base.logger.info("TEST:INFO:slot_link(#{card.name},#{card.clas
 
   def test_slot_render_xml
     card = newcard('Baines', '[[Nixon]]')
-    assert_equal %{<card  type="Basic"  cardId="#{card.id}"  class="transcluded ALL TYPE-basic SELF-baine"  name="Baines" ><cardlink class="wanted-card" card="/wagn/Nixon">Nixon</cardlink></card>}, slot_link(card,:xml)
+    assert_equal %{<cardlink class="wanted-card" card="/wagn/Nixon">Nixon</cardlink>}, slot_link(card,:xml)
 
     card2 = newcard('Johnson', '[Lyndon][Baines]')
-    lbj_link = %{<card  type=\"Basic\"  cardId=\"#{card2.id}\"  class=\"transcluded ALL TYPE-basic SELF-johnson\"  name=\"Johnson\" ><cardlink class=\"known-card\" card=\"/wagn/Baines\">Lyndon</cardlink></card>}
+    lbj_link = %{<cardlink class=\"known-card\" card=\"/wagn/Baines\">Lyndon</cardlink>}
     assert_equal(lbj_link, slot_link(card2,:xml))
     
     card2.content = '[[Baines|Lyndon]]'; card2.save
@@ -70,15 +74,16 @@ ActionController::Base.logger.info("TEST:INFO:slot_link(#{card.name},#{card.clas
 
   def test_slot_relative_card_xml
     cardA = newcard('Kennedy', '[[+Monroe]]')
-    assert_equal %{<card  type="Basic"  cardId="#{cardA.id}"  class="transcluded ALL TYPE-basic SELF-kennedy"  name="Kennedy" ><cardlink class="wanted-card" card="/wagn/Kennedy+Monroe">+Monroe</cardlink></card>}, slot_link(cardA,:xml)
+    assert_equal %{<cardlink class="wanted-card" card="/wagn/Kennedy%2BMonroe">+Monroe</cardlink>}, slot_link(cardA,:xml)
 
     cardB = newcard('Clinton', '[[Lewinsky+]]')
-    assert_equal %{<card  type="Basic"  cardId="#{cardB.id}"  class="transcluded ALL TYPE-basic SELF-clinton"  name="Clinton" ><cardlink class="wanted-card" card="/wagn/Lewinsky+Clinton">Lewinsky+</cardlink></card>}, slot_link(cardB,:xml)
+    assert_equal %{<cardlink class="wanted-card" card="/wagn/Lewinsky%2BClinton">Lewinsky+</cardlink>}, slot_link(cardB,:xml)
   end
 
   def test_slot_relative_url
-    card3 = newcard('recent changes', '[[/recent]]')
-    assert_equal '<a class="internal-link" href="/recent">/recent</a>', slot_link(card3)
+    card3 = newcard('recent changes', '[[/recent|Recent]]')
+    assert_equal '<a class="internal-link" href="/recent">Recent</a>', slot_link(card3)
+    card3 = newcard('rc2', '[[/recent]]')
   end
   
   def test_slot_external

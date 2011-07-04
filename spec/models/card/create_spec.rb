@@ -1,14 +1,16 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
 # FIXME this shouldn't be here
-describe Card::Cardtype, ".create with :codename" do
+describe Wagn::Set::Type::Cardtype, ".create with :codename" do
   before do
     User.as :joe_user
   end
   it "should work" do
-    Card::Cardtype.create!(:name=>"Foo Type", :codename=>"foo").type.should=='Cardtype'
+    Card.create!(:name=>"Foo Type", :codename=>"foo", :type=>'Cardtype').typecode.should=='Cardtype'
   end
-end            
+end
+
+
 
 describe Card, ".create_these" do
   it 'should create basic cards given name and content' do 
@@ -20,10 +22,10 @@ describe Card, ".create_these" do
     c = Card.create_these "testing_name" => "testing_content" 
     c.first.content.should == "testing_content"
   end
-  
+
   it 'should create cards of a given type' do
     Card.create_these "Cardtype:Footype" => "" 
-    Card["Footype"].type.should == "Cardtype"
+    Card["Footype"].typecode.should == "Cardtype"
   end   
   
   it 'should take a hash of type:name=>content pairs' do
@@ -39,17 +41,16 @@ describe Card, ".create_these" do
   end
 end
 
- 
 
 
 describe Card, "created by Card.new " do
   before(:each) do     
     User.as :wagbot 
-    @c = Card::Basic.new :name=>"New Card", :content=>"Great Content"
+    @c = Card.new :name=>"New Card", :content=>"Great Content"
   end
   
   it "should have attribute_tracking updates" do
-    Cardlib::AttributeTracking::Updates.should === @c.updates
+    Wagn::Model::AttributeTracking::Updates.should === @c.updates
   end
   
   it "should return original value for name" do
@@ -61,9 +62,9 @@ describe Card, "created by Card.new " do
     @c.name.should == 'Old Card'
   end
   
-  it "should not override content set by pointees with default content" do
+  it "should not override explicit content with default content" do
     Card.create! :name => "blue+*right+*default", :content => "joe", :type=>"Pointer"
-    c = Card.new :name => "Lady+blue", :pointees => "Jimmy"
+    c = Card.new :name => "Lady+blue", :content => "[[Jimmy]]"
     c.content.should == "[[Jimmy]]"
   end
 end
@@ -78,7 +79,7 @@ describe Card, "created by Card.create with valid attributes" do
   end
 
   it "should not have errors"        do @b.errors.size.should == 0        end
-  it "should have the right class"   do @c.class.should    == Card::Basic end
+  it "should have the right class"   do @c.class.should    == Card end
   it "should have the right key"     do @c.key.should      == "new_card"  end
   it "should have the right name"    do @c.name.should     == "New Card"  end
   it "should have the right content" do @c.content.should  == "Great Content" end
@@ -88,7 +89,7 @@ describe Card, "created by Card.create with valid attributes" do
   end
 
   it "should be findable by name" do
-    Card.find_by_name("New Card").class.should == Card::Basic
+    Card.find_by_name("New Card").class.should == Card
   end  
 end
 
@@ -103,19 +104,17 @@ describe Card, "create junction" do
   end
 
   it "should create junction card" do
-    Card.find_by_name("Peach+Pear").class.should == Card::Basic
+    Card.find_by_name("Peach+Pear").class.should == Card
   end
 
   it "should create trunk card" do
-    Card.find_by_name("Peach").class.should == Card::Basic
+    Card.find_by_name("Peach").class.should == Card
   end
 
   it "should create tag card" do
-    Card.find_by_name("Pear").class.should == Card::Basic
+    Card.find_by_name("Pear").class.should == Card
   end
 end
-       
-
 
 
 
@@ -129,31 +128,37 @@ describe Card, "types" do
   end
   
   it "should accept cardtype name and casespace variant as type" do
-    ct = Card::Cardtype.create! :name=>"AFoo"
-    ct.update_attributes! :name=>"FooRenamed"
-    Card.create!(:type=>"FooRenamed",:name=>"testy").class.should == Card::AFoo
-    Card.create!(:type=>"foo_renamed",:name=>"so testy").class.should == Card::AFoo
+    ct = Card.create! :name=>"AFoo", :type=>'Cardtype'
+    ct.typecode.should == 'Cardtype'
+    ct = Card.fetch('AFoo')
+    ct.extension.class_name.should == 'AFoo'
+    ct.update_attributes! :name=>"FooRenamed", :confirm_rename=>true
+    Card.fetch('FooRenamed').typecode.should == 'Cardtype'
+    Card.fetch('FooRenamed').extension.class_name.should == 'AFoo'
+   
+    ::Cardtype.reset_cache
+    Card.create!(:type=>"FooRenamed",:name=>"testy").typecode.should == 'AFoo'
+    Card.create!(:type=>"foo_renamed",:name=>"so testy").typecode.should == 'AFoo'
   end
-
   it "should accept classname as typecode" do
-    ct = Card::Cardtype.create! :name=>"BFoo"
+    ct = Card.create! :name=>"BFoo", :type=>'Cardtype'
     ct.update_attributes! :name=>"BFooRenamed"
-    Card.create!(:typecode=>"BFoo",:name=>"testy").class.should == Card::BFoo
+    ct.extension.class_name.should == 'BFoo'
+    Card.create!(:typecode=>"BFoo",:name=>"testy").typecode.should == 'BFoo'
   end
   
   it "should accept cardtype name first when both are present" do
-    ct = Card::Cardtype.create! :name=>"CFoo"
+    ct = Card.create! :name=>"CFoo", :type=>'Cardtype'
     ct.update_attributes! :name=>"CFooRenamed"
-    Card::Cardtype.create! :name=>"CFoo"
-    Card.create!(:type=>"CFoo",:name=>"testy").class.should == Card::CFoo1
+    Card.create! :name=>"CFoo", :type=>'Cardtype'
+    Card.create!(:type=>"CFoo",:name=>"testy").typecode.should == 'CFoo1'
   end
   
   it "should raise a validation error if a bogus type is given" do
-    ct = Card::Cardtype.create! :name=>"DFoo"
+    ct = Card.create! :name=>"DFoo", :type=>'Cardtype'
     c = Card.new(:type=>"$d_foo#adfa",:name=>"more testy")
     c.valid?.should be_false
     c.errors_on(:type).should_not be_empty
   end
-  
-end
-             
+end          
+

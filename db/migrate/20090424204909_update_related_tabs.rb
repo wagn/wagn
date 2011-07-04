@@ -17,7 +17,7 @@ class UpdateRelatedTabs < ActiveRecord::Migration
     end
     
     if c=Card['*tagged+*rform']
-      c.extension_type='HardTemplate'
+      c.extension_type=''
       c.save!
     end
   end

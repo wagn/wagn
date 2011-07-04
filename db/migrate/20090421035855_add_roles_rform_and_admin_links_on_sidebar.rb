@@ -3,7 +3,7 @@ class AddRolesRformAndAdminLinksOnSidebar < ActiveRecord::Migration
     User.as :wagbot
     
     if c=Card['*roles+*rform']
-      c.extension_type='HardTemplate'
+      c.extension_type=''
       c.save
     end
     if c=Card['Administrator links']

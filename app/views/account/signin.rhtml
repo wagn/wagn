@@ -1,6 +1,6 @@
 <div id="sign-in" class="content">
   <h1 class="page-header">Sign In</h1><%#ENGLISH%>
-	
+  
   <% form_tag :action=>'signin' do %>
     <p><label for="login">Email</label></p>
     <p><%= text_field_tag 'login', params[:login], :id=>'login_field' %></p>
@@ -9,7 +9,7 @@
     <p><%= submit_tag 'Sign me in' %></p>
   <% end %>
   <p>&nbsp;</p>                          
-	
+  
   <h2 class="page-header">Forgot your password?</h2><%#ENGLISH%>
   <%= error_messages_for 'user' %>
   <% form_tag :action=>'forgot_password' do %>
@@ -20,11 +20,11 @@
   <% end %>
   <p>&nbsp;</p>
   
-  <% if Card::InvitationRequest.create_ok? %>
+  <% if Card.new(:typecode=>'InvitationRequest').ok?(:create) %>
     <h2 class="page-header">Need an Account?</h2><%#ENGLISH%>
     <p><%= link_to 'Sign Up!', :action=>'signup' %></p>
   <% end %>
-	
+  
   <%= javascript_tag( "$('login_field').focus()" ) %>
 
 

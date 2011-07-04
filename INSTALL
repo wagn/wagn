@@ -1,64 +1,37 @@
 See http://wagn.org/wagn/Installation for the latest version of these instructions.
 
-YOU WILL NEED
 
-A RubyonRails environment, including either Postgres or Mysql (SQLite support coming soon). If you don't have a preferred Rails environment, try InstantRails, and then see the Installation+instant rails.
-
-    NOTE: Things are working well in Rails 2.1.2; so far there are some problems with Rails 2.2.
-
-You will also need to install some gems: json_pure, ruby-openid, and cached_model.
-
-    sudo gem install json_pure
-    sudo gem install ruby-openid
-    sudo gem install cached_model
-
-
-GET THE CODE
-
-To get the latest code, you will need to use git:
-
-    git clone git://github.com/wagn/wagn.git
-    git submodule init
-    git submodule update
-
-    NOTE: We have switched all new development to git - maintaining the sync with svn proved too much maintenance.  You can still download Wagn from RubyForge.org, but we will only be posting major releases there.  The last release posted was Wagn 0.10+1.
+OPTION A: QUICK START
+(recommended for trial)
+ 
+  You will need: ruby (1.8.6+) and either Postgres or Mysql, and the appropriate ruby gems for your database.
+  
+    1. Download the latest stable release from RubyForge: http://rubyforge.org/frs/?group_id=3630
+    2. untar or unzip the package
+    3. configure config/database.yml for your database. (defaults work with default mysql install)
+    4. run rake wagn:create
+    5. run ./script/server
 
  
-CONFIGURE WAGN
-
-   1. In the config directory, copy sample_wagn.rb to wagn.rb
-   2. In wagn.rb set: System.base_url= final URL (what users will really type in their browser)
-   3. to get mail working, see Installation+mail setup
-
  
-CONFIGURE YOUR DATABASE
-
-   1. In the config directory, copy sample_database.yml to database.yml
-   2. In database.yml set
-      adapter: ( mysql or postgresql )
-      user: ( your db user. root often works for default mysql installs )
-   3. If you're running a public wagn, change the session_key and secret fields
-   4. Create the database: rake db:create
-   5. set up the database: rake db:migrate   
-
-If you have trouble with step 3 or 4 check out Installation+database details
-
+OPTION B: INSTALL VIA GIT
+(recommended for active sites)
  
-START IT UP
-
-   1. Start the server: ./script/server
-   2. Point your browser to http://localhost:3000 (or your System.base_url above).
-
+  We recommend installing via git for sites in active use in order to get access to the most recent code and to make upgrades easier.
+  You will need: git, Rails 2.3.5 and either Postgres or Mysql and the appropriate gems for your database.
+  
+    1. Get the source
+          git clone git://github.com/wagn/wagn.git 
+    2. Install gems:
+        A. Install "bundler" gem:  gem install bundler
+        B. Install other gems using bundler: bundle install  
+        (more details at)
+    3. In the config directory:
+        A. copy sample_database.yml to database.yml
+        B. copy sample_wagn.rb to wagn.rb
+    4. configure config/database.yml for your database.
+    5. run rake wagn:create
+    6. run ./script/server
  
-CONFIGURE YOUR WAGN
-
-
-Now that your Wagn is running, read configuration to set up its home page, logos, security, etc.
-
  
-PRODUCTION
-
-
-To run Wagn in production, you need to compile your js and css assets. this is done as follows:
-
-rake RAILS_ENV=production asset:packager:build_all
+For more information, see http://wagn.org/installation

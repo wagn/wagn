@@ -1,4 +1,4 @@
-FORMATS = "html|json|xml|rss|kml" unless defined? FORMATS
+FORMATS = "html|json|xml|rss|kml|css|txt|text" unless defined? FORMATS
 FORMAT_PATTERN = /#{FORMATS}/ unless defined? FORMAT_PATTERN   
 
 # This regexp solves issues with cards with periods in the name.  Also makes it so you don't have to write separate routes for
@@ -8,8 +8,8 @@ ActionController::Routing::Routes.draw do |map|
 
   REST_METHODS = [:get, :post, :put, :delete]
 
-  map.connect 'xmlrest/:id', :conditions => { :method => REST_METHODS }, :controller=>'card', :format=>'xml', :requirements=>{ :id=>/.*/}, :action=> 'method'
-  #map.connect_resource :xmlcard
+  map.connect 'rest/:id.:format', :conditions => { :method => REST_METHODS }, :controller=>'rest_card', :requirements=>{ :id=>/.*/}, :action=> 'method'
+  #map.connect_resource :rest_card
 
   # these file requests should only get here if the file isn't present.
   # if we get a request for a file we don't have, don't waste any time on it.
@@ -21,8 +21,8 @@ ActionController::Routing::Routes.draw do |map|
   
   map.connect 'wagn/:id.:format', :controller => 'card', :action=>'show', :requirements=> ID_REQS
 
-  map.connect 'recent',           :controller => 'card', :action=>'show', :id=>'*recent_changes', :view=>'content'
-  map.connect 'recent.:format',   :controller => 'card', :action=>'show', :id=>'*recent_changes', :view=>'content', :format=>FORMAT_PATTERN
+  map.connect 'recent',           :controller => 'card', :action=>'show', :id=>'*recent', :view=>'content'
+  map.connect 'recent.:format',   :controller => 'card', :action=>'show', :id=>'*recent', :view=>'content', :format=>FORMAT_PATTERN
   map.connect 'search/:_keyword.:format',           :requirements=>{ :_keyword => /([^\.]*(\.(?!(#{FORMATS})))?)*/, :format=>FORMAT_PATTERN },
                                   :controller => 'card', :action=>'show', :id=>'*search', :view=>'content'   
   map.connect 'new/:type',        :controller => 'card', :action=>'new'

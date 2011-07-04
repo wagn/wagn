@@ -24,34 +24,34 @@ describe RestCardController do
     #  test dependencies.
     it "creates cards" do
       post(:post, {:format=>:xml, :input=>%{<card name="NewCardFoo" type="Basic">Bananas</card>}}, {:user=>@joe_id})
-      assert_response 200
       assert_instance_of Card, Card.find_by_name("NewCardFoo")
       #Card::Base.should_receive(:save) # The concept needs work, what model methodes should we expect?
       Card.find_by_name("NewCardFoo").content.should == "Bananas"
+      assert_response 418
     end
     
     it "creates cardtype cards" do
-      post :post, :format => :xml, :input=>%{<card type="Cardtype" :name="Editor">test</card>}
-      #assigns['card'].should_not be_nil
-      assert_response 200
-      assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
+      post :post, :format => :xml, :input=>%{<card type="Cardtype" name="Editor">test</card>}
+      assigns['card'].should_not be_nil
+      assert_response 418
+      c=Card.find_by_name('Editor')
+      assert_instance_of Card, c
+      assert c.typecode == 'Cardtype'
     end
     
     it "pulls deleted cards from trash" do
       @c = Card.create! :name=>"Problem", :content=>"boof"
       @c.destroy!
       post :post, :format=>:xml, :input=>%{<card name="Problem" type="Phrase">noof</card>}
-      assert_response 200
+      assert_response 418
       assert_instance_of Card, c=Card.find_by_name("Problem")
       assert c.typecode, 'Phrase'
     end
 
     context "multi-create" do
       it "catches missing name error" do
-        Rails.logger.info "failing 0"
         post :post, :format=>:xml, :input=> %{<card name="" type="Fruit">
           <card name="~plus~text"><p>abraid</p></card></card>}
-        Rails.logger.info "failing assigns: #{assigns['card'].inspect}"
         assigns['card'].should_not be_nil
         assigns['card'].errors["name"].should == "can't be blank"
         assert_response 422

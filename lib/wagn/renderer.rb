@@ -214,7 +214,7 @@ module Wagn
     end
   
     def inclusion_map(opts=nil)
-      self.class.view_aliases
+      VIEW_ALIASES
     end
   
     def process_content(content=nil, opts={})

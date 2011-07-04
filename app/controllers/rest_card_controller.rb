@@ -32,12 +32,14 @@ class RestCardController < CardController
     no_card = false
     if (root_card=card_name.nil?) or card_name.empty?
       card_name = @card_name = xml.attribute('name').to_s
+      card_type = xml.attribute('type').to_s
     end
     raise("No xml?, #{card_name}") unless xml
     xml.each_child do |e|
       if REXML::Element===e
         if e.name == 'card'
           sub_cname = card_name+'+'+e.attribute('name').to_s
+          sub_type = e.attribute('type').to_s
           read_xml(e, sub_cname, updates)
         else
           e.name == 'no_card' && no_card=true
@@ -54,20 +56,21 @@ class RestCardController < CardController
       this_card = Card.fetch_or_new(card_name)
       this_update.delete(:type) unless this_type != this_card.cardtype_name
     # no card and no new content, don't update
-    Rails.logger.info "uptest[#{root_card}} #{no_card || this_card.new_record? && card_content.blank?}"
+    #Rails.logger.info "uptest[#{root_card}} #{no_card || this_card.new_record? && card_content.blank?}"
       if !(no_card || this_card.new_record? &&
            card_content.blank?) && card_content != this_card.content
         this_update[:content] = card_content
       end
     end
-    Rails.logger.info "XML post card: #{this_update.inspect} C:#{card_content}"
+    #Rails.logger.info "XML post card: #{this_update.inspect} C:#{card_content}"
     if root_card
       raise "Bad element #{xml.name}" unless xml.name == 'card'
       updates.merge!(this_update)
+      updates[:type]=card_type if card_type
     else
       updates[card_name] = this_update
     end
-    Rails.logger.info "updates: #{card_content} #{updates.inspect}"
+    #Rails.logger.info "updates: #{card_content} #{updates.inspect}"
     card_content
   end
 
@@ -90,7 +93,7 @@ class RestCardController < CardController
   
   def post
     request.format = :xml if !params[:format]
-    Rails.logger.debug "POST(rest)[#{params.inspect}] #{request.format}"
+    #Rails.logger.debug "POST(rest)[#{params.inspect}] #{request.format}"
     #return render(:action=>"missing", :format=>:xml)  unless params[:card]
 =begin
     respond_to do |format|
@@ -102,8 +105,9 @@ class RestCardController < CardController
         raise "XML error: #{doc} #{content}" unless doc.root
         read_xml(doc.root, @card_name, card_create={})
         #card_create.delete(:name) if card_create[:name].nil?
+        #Rails.logger.debug "postb #{@card&&@card.name}:: #{card_create.inspect}"; @card
         @card = Card.create card_create 
-        Rails.logger.debug "posta #{@card&&@card.name}"; @card
+        #Rails.logger.debug "posta #{@card&&@card.name}"; @card
 =begin
       end
       format.html do

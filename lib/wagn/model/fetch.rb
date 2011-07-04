@@ -67,7 +67,7 @@ module Wagn::Model::Fetch
       end
 
       if (card.missing? && (!card.virtual? || opts[:skip_virtual])) || card.trash
-        warn "   final: missing (nil)"  if debug
+        Rails.logger.debug "   final: missing (nil)"  if debug
         return nil
       end
       card.after_fetch unless opts[:skip_after_fetch]

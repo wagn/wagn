@@ -11,6 +11,7 @@ module Wagn::Model
     base.send :include, Wagn::Model::CardAttachment
     base.send :include, Wagn::Model::Exceptions
     base.send :include, Wagn::Model::TrackedAttributes
+    base.send :include, Wagn::Model::Extensions
     base.send :include, Wagn::Model::Templating
     base.send :include, Wagn::Model::Defaults
     base.send :include, Wagn::Model::Permissions

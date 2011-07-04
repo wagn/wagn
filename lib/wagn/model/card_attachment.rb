@@ -2,12 +2,12 @@ module Wagn::Model::CardAttachment
   def self.included(base)
     super
     #Rails.logger.debug "add act methods for attachements #{base} #{self}"
-    base.extend(ActMethods)
+    base.extend(CardMethods)
   end
 
   mattr_accessor :attachment_model
 
-  module ActMethods
+  module CardMethods
 
     def card_attachment(klass)
       include InstanceMethods unless included_modules.include?(InstanceMethods)

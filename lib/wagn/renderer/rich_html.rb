@@ -271,10 +271,26 @@ module Wagn
   end
 
   def menu
-    if card.virtual?
-      return %{<span class="card-menu faint">Virtual</span>\n}
+    return %{<span class="card-menu faint">Virtual</span>\n} if card.virtual?
+    menu_options = card.menu_options([:view,:changes,:options,:related,:edit]).clone
+    #Rails.logger.info("menu_options(#{menu_options.inspect})")
+    top_option = menu_options.pop
+    menu = %{<span class="card-menu">\n}
+    menu << %{<span class="card-menu-left">\n}
+    menu_options.each do |opt|
+      menu << link_to_menu_action(opt.to_s)
     end
-    menu_options = [:view,:changes,:options,:related,:edit]
+    menu << "</span>"
+    menu << link_to_menu_action(top_option.to_s)
+    menu << "</span>"
+  end
+
+  MENU_DEFAULT = [:view,:changes,:options,:related,:edit]
+  def menu_options(opts) opts end
+
+  def menu
+    return %{<span class="card-menu faint">Virtual</span>\n} if card.virtual?
+    menu_options = card.menu_options(MENU_DEFAULT).clone
     top_option = menu_options.pop
     menu = %{<span class="card-menu">\n}
       menu << %{<span class="card-menu-left">\n}

@@ -23,8 +23,6 @@ class Card < ActiveRecord::Base
   cattr_accessor :debug, :cache
   Card.debug = false
 
-  cattr_accessor :extension_tags
-
   belongs_to :trunk, :class_name=>'Card', :foreign_key=>'trunk_id' #, :dependent=>:dependent
   has_many   :right_junctions, :class_name=>'Card', :foreign_key=>'trunk_id'#, :dependent=>:destroy
 
@@ -292,76 +290,6 @@ class Card < ActiveRecord::Base
   end
   def right
     Card.fetch name.tag_name,   :skip_virtual=> true
-  end
-
-  def add_extension_tag(tag, *options)
-    options = options[0] if options.length == 1
-    Card.extension_tags[tag] = options
-  end
-
-  def has_ext?(tag)
-    raise "No card #{self}" unless self
-    Rails.logger.info("has_ext? #{self.inspect}")
-    true if extcard(tag)
-  end
-
-  def extcard(tag) 
-    raise "No card #{self}" unless self
-    Rails.logger.info("extcard #{self}")
-    Card[name+JOINT+tag]
-  end
-     
-  def tag_extensions
-    extension_tags().keys.map do |tag|
-      if extcard = Card[name+JOINT+tag]
-        Rails.logger.info("tag_ext #{name} + #{tag} #{extcard.name}")
-        yield(tag, extcard) if block_given? else tag
-      end
-    end.compact
-  end  
-        
-  def menu_options(options=[])
-    tag_extensions() do |tag, extcard|
-      new_options = extension_tags()[tag]
-      Rails.logger.info("menu_options N: #{tag} #{new_options}")
-      if Hash===new_options
-        new_options.each_pair do |where, what|
-          if where == :right
-            options.push(*what)
-          elsif where == :left
-            options.unshift(*what)
-          elsif Array === where
-            action = where.shift
-            location = where.shift
-            idx = 0
-            if Symbol===location
-              idx = options.index(location)
-            elsif Fixnum===location
-              idx = location
-              idx = options.length+idx+1 if idx<0
-            else raise "Location? #{location.class} #{location.inspect}"
-            end
-            if action == :left_of or action == :before
-              idx = if idx then idx-1 else -1 end
-            elsif action == :right_of or action == :after
-              idx = options.length unless idx
-            else raise "Action? #{action.inspect}"
-            end
-            idx = options.length if idx > options.length
-            if idx < 0
-              options.unshift(*what)
-            else
-              options[idx,0] = what
-            end
-          end
-        end
-      else
-        if Array===new_options and new_options.length > 0 or new_options
-          options.push(*new_options)
-        end
-      end
-    end
-    options
   end
 
 

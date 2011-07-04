@@ -95,9 +95,8 @@ class User < ActiveRecord::Base
       Digest::SHA1.hexdigest("#{salt}--#{password}--")
     end    
     
-    def [](login)
-      login=login.to_s
-      login.blank? ? nil : (self.cache[login] ||= User.find_by_login(login)) 
+    def [](key)
+      self.cache[key.to_s] ||= (Integer===key ? find(key) : find_by_login(key.to_s))
     end
 
     def no_logins?

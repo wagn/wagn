@@ -133,7 +133,7 @@ module WagnHelper
   end
 
   def formal_title(card)
-    card.name.split(JOINT).join(formal_joint)
+    card.name.split('+').join(formal_joint)
   end
 
   def fancy_title(card)

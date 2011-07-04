@@ -35,7 +35,7 @@ class Card < ActiveRecord::Base
 
   belongs_to :extension, :polymorphic=>true
 
-  belongs_to :updater, :class_name=>'::User', :foreign_key=>'updated_by'
+#  belongs_to :updater, :class_name=>'::User', :foreign_key=>'updated_by'
 
   #has_many :permissions, :foreign_key=>'card_id' #, :dependent=>:delete_all
 
@@ -48,16 +48,10 @@ class Card < ActiveRecord::Base
     :attachment_id #should build flexible handling for this kind of set-specific attr
 
   cache_attributes('name', 'typecode', 'trash')
-
-  # setup hooks on AR callbacks
-  # Note: :after_create is called from end of set_initial_content now
-=begin
-  [:before_save, :before_create, :after_save ].each do |hookname| 
-    self.send( hookname ) do |card|
-      Wagn::Hook.call hookname, card
-    end
+  
+  def updater
+    User[updated_by]
   end
-=end
     
   # apparently callbacks defined this way are called last.
   # that's what we want for this one.  
@@ -106,12 +100,7 @@ class Card < ActiveRecord::Base
     self.key = name.to_key if name
     self.trash=false
   end
-  
-  def card
-    Rails.logger.info "DEPRECATED: no need to do .card, use self #{Kernel.caller[0..4]*"\n"}"
-    self
-  end
-  
+    
   # Creation & Destruction --------------------------------------------------
   #alias_method :ar_new, :new
 

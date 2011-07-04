@@ -54,7 +54,7 @@ class ApplicationController < ActionController::Base
       return redirect_to("http://#{System.host}#{request.path}#{query_string}")
     end
 
-    User.current_user = current_user || User.find_by_login('anon')
+    User.current_user = current_user || User[:anon]
 
     @context = params[:context] || 'main_1'
     @action = params[:action]

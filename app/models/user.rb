@@ -33,7 +33,7 @@ class User < ActiveRecord::Base
   class << self
     # CURRENT USER
     def current_user
-      @@current_user ||= find_by_login('anon')  
+      @@current_user ||= User[:anon]  
     end
     
     def current_user=(user)
@@ -107,7 +107,6 @@ class User < ActiveRecord::Base
     #end
   end 
 
-
 #~~~~~~~ Instance
 
 
@@ -179,6 +178,7 @@ class User < ActiveRecord::Base
     @cached_roles ||= (login=='anon' ? [Role[:anon]] : 
       roles + [Role[:anon], Role[:auth]])
   end  
+  
 
   def active?
     status=='active'

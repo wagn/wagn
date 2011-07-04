@@ -63,10 +63,12 @@ describe Wagn::Renderer::Xml, "" do
       @layout_card.save
       Wagn::Renderer::Xml.new(@layout_card).render(:layout).should be_html_with do
         body do
-          text('Mainly')
-          card( :id=>"main", :context=>"main") do
-            text('Mainly {{_main|naked}}')
+         p do
+          text('Mainly ')
+          card( :base=>"self", :type=>"HTML") do
+            text('Mainly {{_main}}')
           end
+         end
         end
       end
     end
@@ -260,20 +262,6 @@ describe Wagn::Renderer::Xml, "" do
       Wagn::Renderer::Xml.new(template).render(:naked).should == '[[link]] {{inclusion}}'
     end
 
-
-    it "uses content setting" do
-      pending
-      @card = Card.new( :name=>"templated", :content => "bar" )
-      config_card = Card.new(:name=>"templated+*self+*content", :content=>"Yoruba" )
-      @card.should_receive(:setting_card).with("content","default").and_return(config_card)
-      Wagn::Renderer::Xml.new(@card).render_raw.should == "Yoruba"
-      @card.should_receive(:setting_card).with("content","default").and_return(config_card)
-      @card.should_receive(:setting_card).with("add help","edit help")
-      Wagn::Renderer::Xml.new(@card).render_new.should be_html_with do
-        html { div(:class=>"unknown-class-name") {}}
-      end
-    end
-
     it "skips *content if narrower *default is present" do  #this seems more like a settings test
       content_card = Card.create!(:name=>"Phrase+*type+*content", :content=>"Content Foo" )
       default_card = Card.create!(:name=>"templated+*right+*default", :content=>"Default Bar" )
@@ -297,7 +285,7 @@ describe Wagn::Renderer::Xml, "" do
     context "File and Image" do
       #image calls the file partial, so in a way this tests both
       it "should have special editor" do
-      pending  #This test works fine alone but fails when run with others
+      #pending  #This test works fine alone but fails when run with others
 
         render_editor('Image').should be_html_with do
           body do  ## this is weird -- why does it have a body?
@@ -331,15 +319,6 @@ describe Wagn::Renderer::Xml, "" do
       end
     end
 
-    context "Account Request" do
-      it "should have a special section for approving requests" do
-        pending
-        #I can't get this working.  I keep getting this url_for error -- from a line that doesn't call url_for
-        card = Card.create!(:name=>'Big Bad Wolf', :type=>'Account Request')
-        Wagn::Renderer::Xml.new(card).render(:naked).should be_html_with { div :class=>'invite-links' }
-      end
-    end
-
     context "Number" do
       it "should have special editor" do
         render_editor('Number').should be_html_with { input :type=>'text' }
@@ -359,11 +338,6 @@ describe Wagn::Renderer::Xml, "" do
 
       it "should have special content that converts newlines to <br>'s" do
         render_card(:naked, :type=>'Plain Text', :content=>"a\nb").should == 'a<br/>b'
-      end
-
-      it "should have special content that escapes HTML" do
-        pending
-        render_card(:naked, :type=>'Plain Text', :content=>"<b></b>").should == '&lt;b&gt;&lt;/b&gt;'
       end
     end
 

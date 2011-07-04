@@ -1,3 +1,5 @@
+Wagn::Renderer::Xml
+
 class Wagn::Renderer::Xml < Wagn::Renderer
   define_view(:layout) do |args|
     if @main_content = args.delete(:main_content)

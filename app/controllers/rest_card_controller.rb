@@ -54,7 +54,7 @@ class RestCardController < CardController
       this_card = Card.fetch_or_new(card_name)
       this_update.delete(:type) unless this_type != this_card.cardtype_name
     # no card and no new content, don't update
-    #Rails.logger.info "uptest[#{root_card}} #{no_card || this_card.new_record? && card_content.blank?}"
+    Rails.logger.info "uptest[#{root_card}} #{no_card || this_card.new_record? && card_content.blank?}"
       if !(no_card || this_card.new_record? &&
            card_content.blank?) && card_content != this_card.content
         this_update[:content] = card_content
@@ -90,53 +90,55 @@ class RestCardController < CardController
   
   def post
     request.format = :xml if !params[:format]
-    Rails.logger.debug "POST[#{params.inspect}] #{request.format.inspect}"
+    Rails.logger.debug "POST(rest)[#{params.inspect}] #{request.format}"
     #return render(:action=>"missing", :format=>:xml)  unless params[:card]
 =begin
     respond_to do |format|
-Rails.logger.info "r2 #{format.inspect}"
       format.xml do
+    Rails.logger.debug "POST(xml)[#{params.inspect}] #{request.format}"
 =end
         content = request.body.read
         doc = REXML::Document.new(content)
         raise "XML error: #{doc} #{content}" unless doc.root
         read_xml(doc.root, @card_name, card_create={})
-        Rails.logger.debug "post #{card_create.inspect}"
-        Card.create card_create 
+        #card_create.delete(:name) if card_create[:name].nil?
+        @card = Card.create card_create 
+        Rails.logger.debug "posta #{@card&&@card.name}"; @card
 =begin
       end
       format.html do
+    Rails.logger.debug "POST(html)[#{params.inspect}] #{request.format}"
         @card_name = Cardname.unescape(params['id'] || '')
         if card_create = params[:card]
-          Rails.logger.info "controller create #{params.inspect}, #{card_create.inspect}"
           params[:multi_edit] and card_create[:cards] = params[:cards]
-          Rails.logger.info "controller create #{params.inspect}, #{card_create.inspect}"
           @card = Card.create card_create
         else
           raise "No card parameters on create"
         end
-
-        # according to rails / prototype docs:
-        # :success: [...] the HTTP status code is in the 2XX range.
-        # :failure: [...] the HTTP status code is not in the 2XX range.
-
-        # however on 302 ie6 does not update the :failure area, rather it sets the :success area to blank..
-        # for now, to get the redirect notice to go in the failure slot where we want it,
-        # we've chosen to render with the (418) 'teapot' failure status:
-        # http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-        handling_errors do
-          @thanks = Wagn::Hook.call( :redirect_after_create, @card ).first ||
-            @card.setting('thanks')
-          case
-            when @thanks.present?;               ajax_redirect_to @thanks
-            when @card.ok?(:read) && main_card?; ajax_redirect_to url_for_page( @card.name )
-            when @card.ok?(:read);               render_show
-            else                                 ajax_redirect_to "/"
-          end
-        end
       end
     end
 =end
+
+    # according to rails / prototype docs:
+    # :success: [...] the HTTP status code is in the 2XX range.
+    # :failure: [...] the HTTP status code is not in the 2XX range.
+
+    # however on 302 ie6 does not update the :failure area, rather it sets the :success area to blank..
+    # for now, to get the redirect notice to go in the failure slot where we want it,
+    # we've chosen to render with the (418) 'teapot' failure status:
+    # http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+    if @card
+      handling_errors do
+        @thanks = Wagn::Hook.call( :redirect_after_create, @card ).first ||
+          @card.setting('thanks')
+        case
+          when @thanks.present?;               ajax_redirect_to @thanks
+          when @card.ok?(:read) && main_card?; ajax_redirect_to url_for_page( @card.name )
+          when @card.ok?(:read);               render_show
+          else                                 ajax_redirect_to "/"
+        end
+      end
+    end
   end
   
   #----------------( creating)

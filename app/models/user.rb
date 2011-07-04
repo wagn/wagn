@@ -124,7 +124,7 @@ class User < ActiveRecord::Base
   end
   
   def read_rule_ids
-    @read_rule_ids = begin
+    @read_rule_ids ||= begin
       party_keys = ['in'] + parties
       self.class.as(:wagbot) do
         Card.search(:right=>'*read', :refer_to=>{:key=>party_keys}).map &:id

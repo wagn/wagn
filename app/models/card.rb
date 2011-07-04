@@ -1,4 +1,3 @@
-
 class Card < ActiveRecord::Base
   def destroy!
     # FIXME: do we want to overide confirmation by setting confirm_destroy=true here?
@@ -21,22 +20,8 @@ class Card < ActiveRecord::Base
   set_table_name 'cards'
 
   # FIXME:  this is ugly, but also useful sometimes... do in a more thoughtful way maybe?
-  cattr_accessor :debug
+  cattr_accessor :debug, :cache
   Card.debug = false
-
-  cattr_accessor :cache  
-#  self.cache = {}
-
-=begin
-  [:before_validation, :before_validation_on_create, :after_validation,
-    :after_validation_on_create, :before_save, :before_create, :after_save,
-    :after_create,
-  ].each do |callback|
-    self.send(callback) do
-      Rails.logger.debug "Card#callback #{callback}"
-    end
-  end
-=end
 
   belongs_to :trunk, :class_name=>'Card', :foreign_key=>'trunk_id' #, :dependent=>:dependent
   has_many   :right_junctions, :class_name=>'Card', :foreign_key=>'trunk_id'#, :dependent=>:destroy
@@ -54,12 +39,11 @@ class Card < ActiveRecord::Base
   #has_many :permissions, :foreign_key=>'card_id' #, :dependent=>:delete_all
 
   before_destroy :destroy_extension
-
-  #before_validation_on_create :set_needed_defaults
-
+    
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
     :from_trash, :update_referencers, :allow_typecode_change, :virtual,
-    :broken_type, :skip_defaults, :loaded_trunk, :blank_revision, :cards
+    :broken_type, :loaded_trunk, :blank_revision, :cards,
+    :attachment_id #should build flexible handling for this kind of set-specific attr
 
   cache_attributes('name', 'typecode', 'trash')
 
@@ -132,27 +116,23 @@ class Card < ActiveRecord::Base
 
 
   def set_defaults args
-    #Rails.logger.debug "Card(#{name})#set_defaults"
+    #warn "Card(#{name})#set_defaults"
     # autoname
-    if args["name"].blank?
-      ::User.as(:wagbot) do
-        if ac = setting_card('autoname') and autoname_card = ac.card
-          self.name = autoname_card.content
-          autoname_card.content = autoname_card.content.next  #fixme, should give placeholder on new, do next and save on create
-          autoname_card.save!
-        end
+    if args["name"].blank? and autoname_card = setting_card('autoname')
+      User.as(:wagbot) do
+        self.name = autoname_card.content
+        autoname_card.content = autoname_card.content.next  #fixme, should give placeholder on new, do next and save on create
+        autoname_card.save!
       end
     end
 
     #default content
-    if !args['content'] and self.content.blank? and default_card = setting_card('content','default')
-      self.content = default_card.content
+    if (self.content.nil? || self.content.blank?)
+      self.content = setting('content', 'default')
     end
 
-    # misc defaults- trash, key, fallbacks
     self.key = name.to_key if name
-    self.name='' if name.nil?
-    self
+    self.trash=false
   end
 
   def card
@@ -161,46 +141,52 @@ class Card < ActiveRecord::Base
   end
 
   # Creation & Destruction --------------------------------------------------
-  #alias_method :ar_new, :new
 
   def initialize(args={})
-    args = {} if args.nil?
-    args = args.stringify_keys
-    args['trash'] = false
+    #warn "initializing with args: #{args.inspect}"
+    args ||= {}
+    args = args.stringify_keys # evidently different from args.stringify_keys!
+    args.delete 'id' # replaces slow handling of protected fields
+    typename, skip_defaults = ['type', 'skip_defaults'].map{|k| args.delete k }
 
-    #Rails.logger.debug "Card.initialize #{args.inspect}"
-    args['typecode'] ||= case
-    when type_name = args.delete('type')
-      begin
-        ::Cardtype.classname_for(type_name)
-      rescue
-        args['broken_type'] = type_name
-        'Basic'
-      end
-    when args.delete('skip_type_lookup');  'Basic'
-    when args['name']                   ;  nil  #lookup after super
-    else                                ;  'Basic'
+    @attributes = get_attributes   
+    @attributes_cache = {}
+    @new_record = true
+    self.send :attributes=, args, false
+    self.typecode = get_typecode(args['name'], typename) unless args['typecode']
+
+    include_set_modules unless missing?
+    set_defaults( args ) unless skip_defaults
+    callback(:after_initialize) if respond_to_without_attributes?(:after_initialize)
+    self
+  end
+  
+  def get_typecode(name, typename)
+    begin ; return Cardtype.classname_for(typename) if typename
+    rescue; self.broken_type = typename
     end
-
-    att_id = args.delete('attachment_id')
-
-    super
-
-    self.typecode ||= template.typecode
-    fail "NO TYPECODE" unless self.typecode
-
-    #Rails.logger.info "get moduels for #{typecode.inspect} #{args.inspect}" unless virtual? || missing?
-    singleton_class.include_type_module(typecode) unless virtual? || missing?
-
-    attachment_id= att_id if att_id # now that we have modules, we have this field
-    set_defaults( args ) unless args['skip_defaults'] 
-  end 
-
-  def after_fetch
-    #Rails.logger.info "After fetch: #{self}, #{singleton_class}, #{typecode}"
-    singleton_class.include_type_module(typecode)
+    (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
   end
 
+
+  def get_attributes
+    #was getting this from column defs.  very slow.
+    @attributes ||= {"name"=>"", "key"=>"", "codename"=>nil, "typecode"=>nil, "current_revision_id"=>nil,
+      "trunk_id"=>nil,  "tag_id"=>nil, "indexed_content"=>nil,"indexed_name"=>nil, "references_expired"=>nil,
+      "read_rule_class"=>nil, "read_rule_id"=>nil, "extension_type"=>nil,"extension_id"=>nil,
+      "created_at"=>nil, "created_by"=>nil, "updated_at"=>nil,"updated_by"=>nil, "trash"=>nil
+    }
+  end
+
+
+  def after_fetch
+    include_set_modules
+  end
+  
+  def include_set_modules
+    singleton_class.include_type_module(typecode)  
+  end
+  
   class << self
     def include_type_module(typecode)
       #Rails.logger.info "include set #{typecode} called  #{Kernel.caller[0..4]*"\n"}"
@@ -299,7 +285,7 @@ class Card < ActiveRecord::Base
 
 
   def left
-    Card.fetch name.trunk_name, :skip_virtual=> true
+    Card.fetch name.trunk_name, :skip_virtual=> true, :skip_after_fetch=>true
   end
   def right
     Card.fetch name.tag_name,   :skip_virtual=> true
@@ -460,34 +446,12 @@ class Card < ActiveRecord::Base
   end
 
 
-
-
  protected
   def clear_drafts
     connection.execute(%{
       delete from revisions where card_id=#{id} and id > #{current_revision_id}
     })
   end
-
-
-=begin
-  def clone_to_type( newtype )
-    attrs = self.attributes_before_type_cast
-    attrs['type'] = newtype
-    Card.class_for(newtype, :codename).new do |record|
-      record.send :instance_variable_set, '@attributes', attrs
-      record.send :instance_variable_set, '@new_record', false
-      # FIXME: I don't really understand why it's running the validations on the new card?
-      record.allow_type_change = allow_type_change
-    end
-  end
-
-  def copy_errors_from( card )
-    card.errors.each do |attr, err|
-      self.errors.add attr, err
-    end
-  end
-=end
 
   # Because of the way it chains methods, 'tracks' needs to come after
   # all the basic method definitions, and validations have to come after
@@ -565,7 +529,7 @@ class Card < ActiveRecord::Base
       # invalid to change type when type is hard_templated
       if (rt = rec.right_template and rt.hard_template? and
         value!=rt.typecode and !rec.allow_typecode_change)
-        rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rec.right_template.cardtype_name}"
+        rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rt.cardtype_name}"
       end        
       
     end

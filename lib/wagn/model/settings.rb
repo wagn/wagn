@@ -1,20 +1,19 @@
 module Wagn::Model::Settings
   def setting setting_name, fallback=nil
     card = setting_card setting_name, fallback
-    card && begin
-      User.as(:wagbot){ card.content }
-    end
+    card && card.content
   end
   
   def setting_card setting_name, fallback=nil
+    fetch_args = {:skip_virtual=>true, :skip_after_fetch=>true}
     Wagn::Pattern.set_names( self ).each do |name|
-      next unless Card.fetch(name, :skip_virtual=>true, :skip_after_fetch=>true) 
+      next unless Card.fetch(name, fetch_args) 
       # optimization for cases where there are lots of settings lookups for many sets though few exist. 
       # May cause problems if we wind up with Set in trash, since trunks aren't always getting pulled out when we
       # create plus cards (like setting values)
-      if value = Card.fetch( "#{name}+#{setting_name.to_s.to_star}" , :skip_virtual => true)
+      if value = Card.fetch( "#{name}+#{setting_name.to_s.to_star}", fetch_args)
         return value
-      elsif fallback and value2 = Card.fetch("#{name}+#{fallback.to_s.to_star}", :skip_virtual => true)
+      elsif fallback and value2 = Card.fetch("#{name}+#{fallback.to_s.to_star}", fetch_args)
         return value2              
       end
     end

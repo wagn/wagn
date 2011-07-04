@@ -51,10 +51,9 @@ module Wagn::Model::Fetch
       end
               
       if !opts[:skip_virtual] && (!card || card.missing? || card.trash)
-        if virtual_card = Card.pattern_virtual( cardname )
+        if virtual_card = Card.pattern_virtual( cardname, card )
           card = virtual_card
           Rails.logger.debug "   pattern_virtual: #{card.inspect}" if debug
-          card.missing = true
         end
       end
       card ||= begin
@@ -67,8 +66,8 @@ module Wagn::Model::Fetch
         Rails.logger.debug "   writing: #{card.inspect}" if debug
       end
 
-      if (card.missing? && !card.virtual?) || card.trash
-        Rails.logger.debug "   final: missing (nil)"  if debug
+      if (card.missing? && (!card.virtual? || opts[:skip_virtual])) || card.trash
+        warn "   final: missing (nil)"  if debug
         return nil
       end
       card.after_fetch unless opts[:skip_after_fetch]
@@ -98,8 +97,7 @@ module Wagn::Model::Fetch
     end
 
     def new_missing cardname
-      Card.new( :name => cardname, :skip_defaults    => true,
-                 :missing => true,  :skip_type_lookup => true )
+      Card.new(:name=>cardname, :typecode=>'Basic', :skip_defaults=>true, :missing=>true)
     end
 
     def exists?(name)

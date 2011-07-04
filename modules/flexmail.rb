@@ -30,6 +30,7 @@ class Flexmail
     def email_config_cardnames card
       event_card = card.setting_card('send')
       return [] unless event_card
+      event_card.after_fetch
       User.as(:wagbot){ event_card.item_names }
     end
     

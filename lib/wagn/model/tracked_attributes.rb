@@ -41,8 +41,8 @@ module Wagn::Model::TrackedAttributes
         tmp_name = "tmp:" + UUID.new.generate      
         connection.update %{update cards set #{quoted_comma_pair_list(connection, {:name=>"'#{tmp_name}'",:key=>"'#{tmp_name}'"})} where id=#{id}}
       end
-      self.trunk = Card.fetch_or_create( newname.left_name, :skip_virtual=>true )
-      self.tag   = Card.fetch_or_create( newname.tag_name,  :skip_virtual=>true )
+      self.trunk = Card.fetch_or_create( newname.left_name)
+      self.tag   = Card.fetch_or_create( newname.tag_name )
     else
       self.trunk = self.tag = nil
     end         

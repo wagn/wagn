@@ -108,6 +108,22 @@ describe Card do
         card.content.should == "Formatted Content"
       end
 
+      it "should recognize pattern overrides" do
+        Card.create!(:name => "y+*right+*content", :content => "Right Content")
+        card = Card.fetch("a+y")
+        card.virtual?.should be_true
+        card.content.should == "Right Content"
+        tpr = Card.create!(:name => "Basic+y+*type plus right+*content", :content => "Type Plus Right Content")
+        card = Card.fetch("a+y")
+        card.virtual?.should be_true
+        card.content.should == "Type Plus Right Content"
+        tpr.destroy!
+        card = Card.fetch("a+y")
+        card.virtual?.should be_true
+        card.content.should == "Right Content"
+        
+      end
+
       it "should not hit the database for every pattern_virtual lookup" do
         Card.create!(:name => "y+*right+*content", :content => "Formatted Content")
         Card.fetch("a+y")

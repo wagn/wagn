@@ -1,5 +1,5 @@
 =begin
-  Wagn module Sol -- Metacurrency flows for Wagn
+  module Wagn::Sol -- Metacurrency flows for Wagn
 
   This can be generalized just a little and be suitable for adding to almost
   any content management system with user editable content.
@@ -106,9 +106,19 @@ end
   and this may still be a workable fallback when the Hook.call doesn't
   provide this function.
 =end
-module Sol
 
-  attr_reader :solcard
+module Wagn::Sol
+  include Wagn::Set::Type::Basic
+
+  def self.included(base)
+    super
+    base.class_eval { attr_reader :solcard }
+    base.add_extension_tag('*sol', :declare)
+    Wagn::Hook.add(:after_declare, '*all') do |card|
+Rails.logger.info "after_declare #{card.name} C:#{card.solcard.content}"
+    end
+    CardController.include ControllerMethods
+  end
 
   def receive_breath(sig,br_name,cards)
     if solcard and
@@ -164,40 +174,30 @@ module Sol
     end
   end
 
-  def self.included(base)
-    Card.add_extension_tag('*sol', :declare)
-    Wagn::Hook.add(:after_declare, '*all') do |card|
-Rails.logger.info "after_declare #{card.name} C:#{card.solcard.content}"
-    end
-  end
-
   def has_sol?() true if solcard end
   def solcard() @solcard ||= extcard('*sol') end
-end
 
-CardController.class_eval do
-  #----------------( Posting Currencies to Cards )
-  def declare
-    Wagn::Hook.call :before_declare, '*all'
-    card_args=params[:card] || {}
-    unless @card
-      Rails.logger.info("declare fetch card by id")
-      id = Cardname.unescape(params['id'] || '')
-      raise("Need a card to receive declarations") if id.nil? or id.empty?
-      raise("Can't find card") unless @card = Card.find_by_id(id) #FIXME fetch
-    end
-    raise "no card #{card_args.inspect}" unless @card
+  module ControllerMethods
+    #----------------( Posting Currencies to Cards )
+    def declare
+      Wagn::Hook.call :before_declare, '*all'
+      card_args=params[:card] || {}
+      unless @card
+        Rails.logger.info("declare fetch card by id")
+        id = Cardname.unescape(params['id'] || '')
+        raise("Need a card to receive declarations") if id.nil? or id.empty?
+        raise("Can't find card") unless @card = Card.find_by_id(id) #FIXME fetch
+      end
+      raise "no card #{card_args.inspect}" unless @card
 
-    # This can supliment the signature checking ...
-    @current_revision_id = @card.current_revision.id
-    old_revision_id = card_args.delete(:current_revision_id) || @current_revision_id
-    rev_changed = (old_revision_id.to_i != @current_revision_id.to_i)
+      # This can supliment the signature checking ...
+      @current_revision_id = @card.current_revision.id
+      old_revision_id = card_args.delete(:current_revision_id) || @current_revision_id
+      rev_changed = (old_revision_id.to_i != @current_revision_id.to_i)
 
 #Rails.logger.info("Declare #{@card && @card.name}[#{@card}] #{@card && @card.inspect}")
-    @card.receive_breath(params[:ctxsig],params[:attribute],params['cards']) if params['multi_edit']
-    Wagn::Hook.call :after_declare, @card
+      @card.receive_breath(params[:ctxsig],params[:attribute],params['cards']) if params['multi_edit']
+      Wagn::Hook.call :after_declare, @card
+    end
   end
 end
-
-Card::Base.send :include, Sol
-

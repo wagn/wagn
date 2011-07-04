@@ -27,15 +27,22 @@ class User < ActiveRecord::Base
   before_validation :downcase_email!
   before_save :encrypt_password
   
-  cattr_accessor :cache  
-  self.cache = {}
   
   class << self
-    # CURRENT USER
-    def current_user
-      @@current_user ||= find_by_login('anon')  
+    def cache
+      @@cache ||= {}
+      @@cache[System.wagn_name] ||= {}
     end
     
+    def reset_cache
+      @@cache ||= {}
+      @@cache[System.wagn_name] = {}
+    end
+    
+    def current_user
+      @@current_user ||= User[:anon]  
+    end
+
     def current_user=(user)
       @@as_user = nil
       @@current_user = user.class==User ? user : User[user]
@@ -94,19 +101,10 @@ class User < ActiveRecord::Base
     end
 
     def no_logins?
-      self.cache[:no_logins] ||= User.count < 3
+      c = self.cache
+      c.has_key?(:no_logins) ? c[:no_logins] : c[:no_logins] = (User.count < 3)
     end
-    
-    def clear_cache
-      self.cache = {}
-    end
-
-    # OPENID - on hold
-    #def find_or_create_by_identity_url(url)
-    #  self.find_by_identity_url(url) || User.create_with_card(:identity_url=>url)
-    #end
   end 
-
 
 #~~~~~~~ Instance
 
@@ -179,6 +177,7 @@ class User < ActiveRecord::Base
     @cached_roles ||= (login=='anon' ? [Role[:anon]] : 
       roles + [Role[:anon], Role[:auth]])
   end  
+  
 
   def active?
     status=='active'

@@ -380,7 +380,8 @@ class Card < ActiveRecord::Base
   
   def content   
     #ok!(:read) if !new_card?
-    cached_revision.new_record? ? "" : cached_revision.content
+    c = cached_revision
+    c.new_record? ? "" : c.content
   end
 
   def cached_revision

@@ -106,11 +106,11 @@ class System < ActiveRecord::Base
     def always_ok?   
       return false unless usr = User.as_user
       if (c = @@cache[:always][usr]).nil?
-        @@cache[:always][usr] = usr.roles.detect { |r| r.codename == 'admin' } || false
+        @@cache[:always][usr] = usr.all_roles.detect { |r| r.codename == 'admin' } || false
       else
         c
       end
-    end
+    end    
   end 
 
   @@role_tasks = %w{ administrate_users create_accounts assign_user_roles }

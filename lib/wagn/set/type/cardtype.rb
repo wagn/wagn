@@ -1,14 +1,8 @@
 module Wagn::Set::Type::Cardtype
   include Wagn::Set::Type::Basic
-
-  # extend the created card's class
-  def self.included(base)
-    super
-    Rails.logger.debug "included(#{base}) #{self}"
-#    warn "included called for Cardtype."
-    base.class_eval do
-      after_save :reset_cardtype_cache
-    end
+  
+  def after_save
+    reset_cardtype_cache
   end
                                      
   # codename should not change, but let't remove this with the codename refactor
@@ -54,9 +48,8 @@ module Wagn::Set::Type::Cardtype
     reset_cardtype_cache
   end
   
-  def reset_cardtype_cache    
-    ::Cardtype.send(:reset_cache)
-  rescue
+  def reset_cardtype_cache
+    Cardtype.reset_cache
   end
 
   

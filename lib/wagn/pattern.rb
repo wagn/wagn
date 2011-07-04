@@ -2,11 +2,16 @@ module Wagn
   class Pattern
     @@subclasses = []
     cattr_accessor :key
-    @@cache = {}
 
     class << self
+      def cache
+        @@cache ||= {}
+        @@cache[System.wagn_name] ||= {}
+      end
+
       def reset_cache
-        @@cache = {}
+        @@cache ||= {}
+        @@cache[System.wagn_name] = {}
       end
 
       def register_class klass
@@ -35,7 +40,7 @@ module Wagn
 
       def set_names card
         cache_key = "SETNAMES-#{generate_cache_key card}"
-        @@cache[cache_key] ||= generate_set_names(card)
+        self.cache[cache_key] ||= generate_set_names(card)
       end
 
       def generate_set_names card
@@ -48,7 +53,7 @@ raise "no card" unless card
 
       def method_keys card
         cache_key = "METHODKEYS-#{generate_cache_key card}"
-        @@cache[cache_key] ||= generate_method_keys(card)
+        self.cache[cache_key] ||= generate_method_keys(card)
       end
 
       def generate_method_keys card

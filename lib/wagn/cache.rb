@@ -71,15 +71,14 @@ module Wagn
 
       private
       def reset_local
-        User.clear_cache if System.multihost
-        Cardtype.reset_cache
-        Role.reset_cache
-        System.reset_cache
-        Wagn::Pattern.reset_cache
         Card.cache.reset_local
       end
 
       def reset_global
+        System.reset_cache
+        Wagn::Pattern.reset_cache
+        Cardtype.reset_cache
+        Role.reset_cache
         Card.cache.reset
         reset_local
       end
@@ -149,12 +148,10 @@ module Wagn
     end
 
     def reset_local
-      Rails.logger.info "reset_local called"
       @local = {}
     end
 
     def reset
-      Rails.logger.info "reset called"
       reset_local
       @cache_id = self.class.generate_cache_id
       @store.write(@system_prefix + "cache_id", @cache_id)  if @store

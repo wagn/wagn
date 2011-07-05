@@ -83,7 +83,7 @@
  
 Module Sol
   def self.included(base)
-    Card.add_extension_tag('*sol', :declare)
+    Card.register_trait('*sol', :declare)
   end
 end
 
@@ -112,71 +112,66 @@ module Wagn::Sol
 
   def self.included(base)
     super
-    base.class_eval { attr_reader :solcard }
-    base.add_extension_tag('*sol', :declare)
+    base.register_trait('*sol', :declare)
+=begin
     Wagn::Hook.add(:after_declare, '*all') do |card|
 Rails.logger.info "after_declare #{card.name} C:#{card.solcard.content}"
     end
+=end
     CardController.include ControllerMethods
   end
 
-  def receive_breath(sig,br_name,cards)
-    if solcard and
-        !integrate(parse_fields(sig, br_name,cards))
-      render_card_errors(solcard)
-      return false
+  def receive_breath(sig,breath_name,cards)
+    if integrate(parse_fields(sig, breath_name,cards))
+      true
+    else
+      render_card_errors(self)
+      false
     end
-    true
   end
 
   def integrate(opts)
 #Rails.logger.info("Integrate breath to my context: #{opts.to_s}\nI:#{opts.inspect}")
-    solcard.update_attributes(:content =>opts.to_s) # save xml to sol card content
+    update_attributes(:content =>opts.to_s) # save xml to sol card content
   end
 
-  def parse_fields(sig, br_name, cards)
-    sn = solcard.name
-    prefix = "(#{Regexp.escape(sn)}|#{Regexp.escape(sn.trunk_name)})\\+" if sn.junction?
-    user_card = User.current_user.card
-    br_opts = {:name=>br_name, :ctx=>sig,
-               :fromsig=>user_card.from_sig,
+  # trasforms "declaration multi-form into xml output
+  def parse_fields(sig, breath_name, cards)
+    prefix = "(#{Regexp.escape(name)}|#{Regexp.escape(name.trunk_name)})\\+" if name.junction?
+    unless user_sol = User.current_user.card and user_sol=user_sol.trait_card('*sol')
+      raise "Sending user has no sol card"
+    end
+    breath_attrs = {:name=>breath_name, :ctx=>sig,
+               :fromsig=>user_sol.from_sig,
                :tosig=>previous_idsig(sig)}
-    #raise "sig changed" if br_opts[:oldsig] != to_sig
-#Rails.logger.info "parse_fields #{sn}:#{user_card.name}:#{user_card.solcard.name}"
-    Builder::XmlMarkup.new.breath(br_opts) do |b|
-      cards.each_pair do |name, value|
-        name = name.post_cgi.to_absolute(name)
-        symbol = name.sub(/^#{prefix}/,'').gsub(/\+/,'_')
+    #raise "sig changed" if breath_attrs[:oldsig] != to_sig
+#Rails.logger.info "parse_fields #{name}:#{user_card.name}:#{user_card.solcard.name}"
+    Builder::XmlMarkup.new.breath(breath_attrs) do |b|
+      cards.each_pair do |nm, value|
+        nm = nm.post_cgi.to_absolute(nm)
+        symbol = nm.sub(/^#{prefix}/,'').gsub(/\+/,'_')
         type, content = value[:type], value[:content]
         b.tag!(symbol, content)
       end
     end
   end
 
-  def signature
-    # compute sha1 signature of content
-    solcard ? Digest::SHA1.hexdigest(solcard.content) : ""
-  end
-
-  def to_sig() @to_sig ||= identity_sig end
-  def from_sig() @from_sig ||= identity_sig end
-  def identity_sig
-    Digest::SHA1.hexdigest solcard.contextual_content(solcard, :xml)
-  end
+  # compute sha1 signature of content
+  def signature()    Digest::SHA1.hexdigest(content) end
+  def to_sig()       @to_sig ||= identity_sig end
+  def from_sig()     @from_sig ||= identity_sig end
+  def identity_sig() Digest::SHA1.hexdigest contextual_content(self, :xml) end
 
   def previous_idsig(sig)
     # seach through revision history of this solcard for one, and return a rev.
     rev = current_revision
-    if rev.content.match(/\bidsig="([^"]*)"/)
-      CGI.unescapeHTML($~[1])
-    else
-      to_sig
-    end
+    rev.content.match(/\bidsig="([^"]*)"/) ?  CGI.unescapeHTML($~[1]) : to_sig
   end
 
-  def has_sol?() true if solcard end
-  def solcard() @solcard ||= extcard('*sol') end
+  #def has_sol?() true if solcard end
+  #def solcard() @solcard ||= extcard('*sol') end
 
+  # ??? How should we add actions?  This is for the post of declaration form.
   module ControllerMethods
     #----------------( Posting Currencies to Cards )
     def declare

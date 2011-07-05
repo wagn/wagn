@@ -286,7 +286,7 @@ module Wagn
   end
 
   MENU_DEFAULT = [:view,:changes,:options,:related,:edit]
-  def menu_options(opts) opts end
+  #def menu_options(opts) opts end
 
   def menu
     return %{<span class="card-menu faint">Virtual</span>\n} if card.virtual?

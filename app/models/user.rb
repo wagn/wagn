@@ -36,17 +36,9 @@ class User < ActiveRecord::Base
     end
     
     def reset_cache(key=nil)
-      if key
-        if u = self[key]
-          self.cache[u.id   ]={}
-          self.cache[u.login]={}
-        end
-      else
-        @@cache ||= {}
-        @@cache[System.wagn_name] = {}
-      end
+      @@cache ||= {}
+      @@cache[System.wagn_name] = {}
     end
-
     
     def current_user
       @@current_user ||= User[:anon]  
@@ -113,7 +105,7 @@ class User < ActiveRecord::Base
 #~~~~~~~ Instance
 
   def reset_instance_cache
-    self.class.reset_cache(id)
+    User.cache[id.to_s] = User.cache[login] = nil
   end
 
   def among? test_parties
@@ -177,7 +169,7 @@ class User < ActiveRecord::Base
   end  
 
   def all_roles
-    @cached_roles ||= (login=='anon' ? [Role[:anon]] : 
+    @all_roles ||= (login=='anon' ? [Role[:anon]] : 
       roles(force_reload=true) + [Role[:anon], Role[:auth]])
   end  
   

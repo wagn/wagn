@@ -7,7 +7,7 @@ module AuthenticatedSystem
   # Accesses the current user from the session.
   def current_user
     #session[:user]    
-    @current_user ||= session[:user] ? User.find_by_id(session[:user]) : nil
+    @current_user ||= session[:user] ? User[session[:user]] : nil
   end
 
   # Store the given user in the session.

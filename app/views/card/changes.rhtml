@@ -7,7 +7,7 @@
 
   <div class="revision-header">
     <span class="revision-title"><%= @revision.title %></span> <%#ENGLISH%>
-    posted by <%= link_to_page @revision.created_by.card.name %>
+    posted by <%= link_to_page @revision.author.card.name %>
     on <%= format_date(@revision.created_at) %>
     <% if !card.drafts.empty? %>
       <p class="autosave-alert">

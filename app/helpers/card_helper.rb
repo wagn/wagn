@@ -4,19 +4,6 @@ module CardHelper
     party ? party.card.name : 'Nobody'
   end
 
-  def selected_from(party)
-    c = party.class
-    case c
-    when NilClass; ''
-    else; party.id
-    end
-  end
-
-  def container_from_roles( roles )
-    #user = User.current_user
-    roles.collect {|c| [c.cardname, c.id] }.sort {|a,b| a.last<=>b.last}
-  end
-
   # navigation for revisions -
   # --------------------------------------------------
   def revision_link( text, revision, name, accesskey='', mode=nil )

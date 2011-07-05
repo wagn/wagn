@@ -21,22 +21,11 @@ class Role < ActiveRecord::Base
     end  
     
     def [](key)
-      self.cache[key.to_s] ||= (Integer===key ? Role.find(key) : Role.find_by_codename(key.to_s))
+      Rails.logger.debug "looking up Role (#{key}) via []"  
+      self.cache[key.to_s] ||= (Integer===key ? find(key) : find_by_codename(key.to_s))
     end
   end
-    
-  alias_method :users_without_special_roles, :users
-  def users_with_special_roles
-    if codename=='auth'
-      User.active_users
-    elsif codename=='anon'
-      User.active_users + [self.class.anonymous_user]
-    else
-      users_without_special_roles
-    end
-  end
-  alias_method :users, :users_with_special_roles
-    
+        
   def task_list
     (self.tasks || '').split ","
   end

@@ -59,11 +59,7 @@ module Wagn
     def get_user(rev)
       id = rev.attributes['created_by']
       if !@author_names[id]
-	if rev.created_by.card
-        @author_names[id] = rev.created_by.card.name
-	else
-	warn("no card for user: "+String(id))
-	end
+        @author_names[id] = rev.author.card.name
       end
       @author_names[id]
     end

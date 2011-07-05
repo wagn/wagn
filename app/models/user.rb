@@ -26,6 +26,7 @@ class User < ActiveRecord::Base
   
   before_validation :downcase_email!
   before_save :encrypt_password
+  after_save :reset_instance_cache
   
   
   class << self
@@ -34,7 +35,7 @@ class User < ActiveRecord::Base
       @@cache[System.wagn_name] ||= {}
     end
     
-    def reset_cache
+    def reset_cache(key=nil)
       @@cache ||= {}
       @@cache[System.wagn_name] = {}
     end
@@ -45,12 +46,12 @@ class User < ActiveRecord::Base
 
     def current_user=(user)
       @@as_user = nil
-      @@current_user = user.class==User ? user : User[user]
+      @@current_user = user.class==User ? User[user.id] : User[user]
     end
    
     def as(given_user)
       tmp_user = @@as_user
-      @@as_user = given_user.class==User ? given_user : User[given_user]
+      @@as_user = given_user.class==User ? User[given_user.id] : User[given_user]
       self.current_user = @@as_user if @@current_user.nil?
       
       #warn "\nas called: @@as_user = #{@@as_user.inspect}\n"
@@ -80,10 +81,6 @@ class User < ActiveRecord::Base
       [@user, @card]
     end
 
-    def active_users
-      self.find(:all, :conditions=>"status='active'")
-    end 
-    
     # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
     def authenticate(email, password)
       u = self.find_by_email(email.strip.downcase)
@@ -95,9 +92,8 @@ class User < ActiveRecord::Base
       Digest::SHA1.hexdigest("#{salt}--#{password}--")
     end    
     
-    def [](login)
-      login=login.to_s
-      login.blank? ? nil : (self.cache[login] ||= User.find_by_login(login)) 
+    def [](key)
+      self.cache[key.to_s] ||= (Integer===key ? find(key) : find_by_login(key.to_s))
     end
 
     def no_logins?
@@ -108,6 +104,9 @@ class User < ActiveRecord::Base
 
 #~~~~~~~ Instance
 
+  def reset_instance_cache
+    User.cache[id.to_s] = User.cache[login] = nil
+  end
 
   def among? test_parties
     #Rails.logger.info "among called.  user = #{self.login}, parties = #{parties.inspect}, test_parties = #{test_parties.inspect}"
@@ -147,10 +146,6 @@ class User < ActiveRecord::Base
   rescue  
   end
       
-  def cardname
-    @cardname ||= card.name
-  end
-
   def accept(email_args)
     User.as :wagbot  do #what permissions does approver lack?  Should we check for them?
       card.typecode = 'User'  # change from Invite Request -> User
@@ -174,8 +169,8 @@ class User < ActiveRecord::Base
   end  
 
   def all_roles
-    @cached_roles ||= (login=='anon' ? [Role[:anon]] : 
-      roles + [Role[:anon], Role[:auth]])
+    @all_roles ||= (login=='anon' ? [Role[:anon]] : 
+      roles(force_reload=true) + [Role[:anon], Role[:auth]])
   end  
   
 

@@ -3,7 +3,6 @@ class OptionsController < ApplicationController
   before_filter :load_card
 
   def update
-
     if params[:save_roles]
       System.ok! :assign_user_roles
       role_hash = params[:user_roles] || {}

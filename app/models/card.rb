@@ -37,7 +37,7 @@ class Card < ActiveRecord::Base
 
 #  belongs_to :updater, :class_name=>'::User', :foreign_key=>'updated_by'
 
-  #has_many :permissions, :foreign_key=>'card_id' #, :dependent=>:delete_all
+  has_many :permissions, :foreign_key=>'card_id' #, :dependent=>:delete_all
 
   before_destroy :destroy_extension
                

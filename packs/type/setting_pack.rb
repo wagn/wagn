@@ -7,7 +7,8 @@ class Wagn::Renderer
     Wagn::Pattern.subclasses.reverse.map do |set_class|
       key = set_class.key
       content_tag(:h2, (key=='*all' ? '*all' : "+#{key}"), :class=>'values-for-setting') +
-      subrenderer(Card::Search.new(
+      subrenderer(Card.new(
+        :type =>'Search',
         :name=>UUID.new.generate,
         :content=>%~
           { "left":{

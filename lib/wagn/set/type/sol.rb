@@ -118,24 +118,22 @@ module Wagn::Sol
 Rails.logger.info "after_declare #{card.name} C:#{card.solcard.content}"
     end
 =end
-    CardController.include ControllerMethods
+
+    base.class_eval { attr_accessor :ctxsig, :attribute }
   end
 
-  def receive_breath(sig,breath_name,cards)
-    if integrate(parse_fields(sig, breath_name,cards))
-      true
-    else
-      render_card_errors(self)
-      false
-    end
+  def receive_breath(sig, breath_name, cards)
+    raise Wagn::FinishAction if integrate(parse_fields(sig, breath_name, cards))
+
+    errors[:breath].add "Error integrating breath"
   end
 
-  def integrate(opts)
-#Rails.logger.info("Integrate breath to my context: #{opts.to_s}\nI:#{opts.inspect}")
-    update_attributes(:content =>opts.to_s) # save xml to sol card content
+  def integrate(xml)
+#Rails.logger.info("Integrate breath to my context: #{xml.to_s}\nI:#{xml.inspect}")
+    update_attributes(:content =>xml.to_s) # save xml to sol card content
   end
 
-  # trasforms "declaration multi-form into xml output
+  # transforms "declaration" multi-form into xml output
   def parse_fields(sig, breath_name, cards)
     prefix = "(#{Regexp.escape(name)}|#{Regexp.escape(name.trunk_name)})\\+" if name.junction?
     unless user_sol = User.current_user.card and user_sol=user_sol.trait_card('*sol')
@@ -168,31 +166,16 @@ Rails.logger.info "after_declare #{card.name} C:#{card.solcard.content}"
     rev.content.match(/\bidsig="([^"]*)"/) ?  CGI.unescapeHTML($~[1]) : to_sig
   end
 
-  #def has_sol?() true if solcard end
-  #def solcard() @solcard ||= extcard('*sol') end
-
-  # ??? How should we add actions?  This is for the post of declaration form.
-  module ControllerMethods
-    #----------------( Posting Currencies to Cards )
-    def declare
-      Wagn::Hook.call :before_declare, '*all'
-      card_args=params[:card] || {}
-      unless @card
-        Rails.logger.info("declare fetch card by id")
-        id = Cardname.unescape(params['id'] || '')
-        raise("Need a card to receive declarations") if id.nil? or id.empty?
-        raise("Can't find card") unless @card = Card.find_by_id(id) #FIXME fetch
-      end
-      raise "no card #{card_args.inspect}" unless @card
-
-      # This can supliment the signature checking ...
-      @current_revision_id = @card.current_revision.id
-      old_revision_id = card_args.delete(:current_revision_id) || @current_revision_id
-      rev_changed = (old_revision_id.to_i != @current_revision_id.to_i)
-
+  #----------------( Posting Currencies to Cards )
+  # 
+  def before_save_with_breath
+    if ctxsig and attribute and cards
+      #Wagn::Hook.call :before_declare, '*all'
 #Rails.logger.info("Declare #{@card && @card.name}[#{@card}] #{@card && @card.inspect}")
-      @card.receive_breath(params[:ctxsig],params[:attribute],params['cards']) if params['multi_edit']
-      Wagn::Hook.call :after_declare, @card
+      receive_breath(ctxsig, attribute, cards)
+      #Wagn::Hook.call :after_declare, self
     end
+    before_save_without_breath
   end
+  alias_method_chain :before_save, :breath
 end

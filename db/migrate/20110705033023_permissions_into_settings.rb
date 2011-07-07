@@ -1,9 +1,10 @@
 class PermissionsIntoSettings < ActiveRecord::Migration
   def self.up
     User.as :wagbot
+    Wagn::Cache.reset_global
     ENV['BOOTSTRAP_LOAD'] = 'true'
     
-    execute "update cards set extension_type='' where extension_type in('SoftTemplate','HardTemplate')"
+    execute "update cards set extension_type=null where extension_type in('SoftTemplate','HardTemplate')"
     
     [:create, :read, :update, :delete, :comment].each do |setting|
       Card.create :name=>"*#{setting}", :type=>'Setting'
@@ -28,6 +29,7 @@ class PermissionsIntoSettings < ActiveRecord::Migration
       puts "updating types for #{task}"
       if task == :create
         Card.search(:type=>'Cardtype').each do |typecard|
+          next if typecard.key == 'html'
           begin
             create_role_for_type = typecard.permissions.reject { |perm| perm.task != 'create' }.first.party
           rescue
@@ -41,6 +43,7 @@ class PermissionsIntoSettings < ActiveRecord::Migration
       end
       
       Card.search(:type=>'Cardtype', :created_by=>{:not=>{:name=>["in","Wagn Bot","Admin"]}}).map do |typecard|
+        next if typecard.key == 'html'
         type_ext = typecard.extension
         if type_ext.nil?
           puts "DATA ERROR: #{typecard.name} has no extension"
@@ -92,10 +95,18 @@ class PermissionsIntoSettings < ActiveRecord::Migration
   
   def self.create_rule(set, task, party)
     puts "create rule for #{set}, #{task}:  #{party}"
-    Card.create(
+    c = Card.create(
       :name=>"#{set}+*#{task.to_s=='edit' ? 'update' : task}",
       :type=>'Pointer',
       :content=>(party=='_left' ? party : "[[#{party.cardname}]]")
+    )
+    return if party=='_left'
+    role_card = party.card
+    WikiReference.create(
+      :card_id=>c.id, 
+      :referenced_name=>role_card.key,
+      :referenced_card_id=>role_card.id,
+      :link_type => 'L' 
     )
   end
 end

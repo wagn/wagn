@@ -69,7 +69,7 @@ class Card < ActiveRecord::Base
   end
 
   private
-    belongs_to :reader, :polymorphic=>true  
+#    belongs_to :reader, :polymorphic=>true  
     
     def log(msg)
       ActiveRecord::Base.logger.info(msg)

@@ -6,14 +6,14 @@ class Wagn::Renderer
 
     Wagn::Pattern.subclasses.reverse.map do |set_class|
       key = set_class.key
-      content_tag(:h2, (key=='*all' ? '*all' : "+#{key}"), :class=>'values-for-setting') +
+      content_tag(:h2, (set_class.trunkless? ? '' : '+') + key, :class=>'values-for-setting') +
       subrenderer(Card.new(
         :type =>'Search',
-        :name=>UUID.new.generate,
+        :skip_defaults=>true,
         :content=>%~
           { "left":{
               "type":"Set",
-              "#{key=='*all' ? 'name' : 'right'}":"#{key}"
+              "#{set_class.trunkless? ? 'name' : 'right'}":"#{key}"
             },
             "right":"#{card.name}","sort":"name","limit":"100"
           }

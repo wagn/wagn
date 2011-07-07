@@ -6,8 +6,9 @@ class Wagn::Renderer
     '<br />' + #YUCK!
 
     content_tag(:h2, 'Settings') + # ENGLISH
-    subrenderer(Card::Search.new(
-      :name=>UUID.new.generate, 
+    subrenderer(Card.new(
+      :type=>'Search',
+      :skip_defaults=>true,
       :content=>%{{"prepend":"#{card.name}", "type":"Setting", "sort":"name", "limit":"100"}} 
     )).render(:content) +
     '<br />' + #YUCK!

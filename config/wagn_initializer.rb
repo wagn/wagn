@@ -27,7 +27,7 @@ module Wagn::Configuration
       wagn_setup_multihost
       wagn_load_modules
       Wagn::Cache.initialize_on_startup
-      Rails.logger.info << "----------- Wagn Rolling -----------\n\n\n"
+      STDERR << "----------- Wagn Rolling -----------\n\n\n"
     end
 
     def wagn_load_config

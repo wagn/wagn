@@ -41,7 +41,7 @@ class ApplicationController < ActionController::Base
     end
     Wagn::Cache.re_initialize_for_new_request
     canonicalize_domain
-
+    
     User.current_user = current_user || User[:anon]
 
     @context = params[:context] || 'main_1'

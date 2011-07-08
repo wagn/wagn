@@ -31,6 +31,7 @@ module Wagn
         else
           Card.cache = Wagn::Cache.new Rails.cache
         end
+        Card.cache.system_prefix = system_prefix
       end
       
       def preload_cache?

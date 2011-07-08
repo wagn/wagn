@@ -232,8 +232,6 @@ module Wagn::Model::Permissions
         end
       end
     end
-    
-    Card.cache.delete(self.key)
     Card.record_timestamps = Card.record_userstamps = true    
   rescue
     Card.record_timestamps = Card.record_userstamps = true

@@ -68,10 +68,14 @@ class PermissionsIntoSettings < ActiveRecord::Migration
       next if card.star?
       base_name = card.name.gsub(/^(.*)\+\*right\+\*(content|default)$/, '\1')
       [:read, :edit, :delete, :comment].each do |task|
-        could = card.who_could(task)
-        can = Card.new(:name=>"XXXXXHONK+#{base_name}", :skip_defaults=>true).who_can(task==:edit ? :update : task)
-        if could && could != can
-          create_rule "#{base_name}+*right", task, Card.fetch(could.first)
+        begin
+          could = card.who_could(task)
+          can = Card.new(:name=>"XXXXXHONK+#{base_name}", :skip_defaults=>true).who_can(task==:edit ? :update : task)
+          if could && could != can
+            create_rule "#{base_name}+*right", task, Card.fetch(could.first, :skip_after_fetch=>true)
+          end
+        rescue
+          puts "FAILURE creating #{card.name}+*right"
         end
       end
     end
@@ -79,34 +83,38 @@ class PermissionsIntoSettings < ActiveRecord::Migration
     puts "creating *self set perms"
     wagn_dot_org = !!(Card.fetch('GC Staff') && Card.fetch('Wagn Is'))
     wdo_reserved_list = ['Deck','Report','Report1','Note','Lead','Client','Projects','Registration',
-      'Grant Application','Meeting','TechNote','ProjectStatus']
-    Card.find(:all, :conditions=>'trash is false', :order=>'tag_id is not null, tag_id').each do |card|
+      'Grant Application','Meeting','TechNote','ProjectStatus','Company']
+    
+    Card.find(:all, :conditions=>'tag_id is null and trash is false').each do |card|
       next if card.star?
+      next if wagn_dot_org && wdo_reserved_list.member?( card.typecode )
       tag_name = card.name.tag_name 
-      next if tag_name.star?
-      next if tag_name=='description' and l=card.left and l.typecode == 'Cardtype'
-      if wagn_dot_org 
-        next if wdo_reserved_list.member? card.typecode
-        next if l=card.left and wdo_reserved_list.member? l.typecode
-      end
       [:read, :edit, :delete, :comment].each do |task|
-        could = card.who_could(task)
-        can = card.who_can(task==:edit ? :update : task)
-        if could && could != can
-          create_rule "#{card.name}+*self", task, Card.fetch(could.first)
+        begin
+          could = card.who_could(task)
+          can = card.who_can(task==:edit ? :update : task)
+          if could && could != can
+            create_rule "#{card.name}+*self", task, Card.fetch(could.first, :skip_after_fetch=>true)
+          end
+        rescue
+          puts "FAILURE creating #{card.name}+*self"
         end
       end
     end
     
       
     puts 'updating read_rule fields'
-    Card.find(:all).each do |card|
+    failed_read_rules = []
+    Card.find(:all, :conditions=>'trash is false').each do |card|
       begin
         card.update_read_rule
       rescue
-        puts "FAILURE - did not update read rule for #{card.name}"
+        failed_read_rules << card.name
+#        puts "FAILURE - did not update read rule for #{card.name}"
       end
     end
+    
+    puts "FAILED - read rule updates failed on the following cards:\n#{failed_read_rules.inspect}"
 
     ENV['BOOTSTRAP_LOAD'] = 'false'
   end

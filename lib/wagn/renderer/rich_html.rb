@@ -270,23 +270,7 @@ module Wagn
     render_partial('card/footer')
   end
 
-  def menu
-    return %{<span class="card-menu faint">Virtual</span>\n} if card.virtual?
-    menu_options = card.menu_options([:view,:changes,:options,:related,:edit]).clone
-    #Rails.logger.info("menu_options(#{menu_options.inspect})")
-    top_option = menu_options.pop
-    menu = %{<span class="card-menu">\n}
-    menu << %{<span class="card-menu-left">\n}
-    menu_options.each do |opt|
-      menu << link_to_menu_action(opt.to_s)
-    end
-    menu << "</span>"
-    menu << link_to_menu_action(top_option.to_s)
-    menu << "</span>"
-  end
-
   MENU_DEFAULT = [:view,:changes,:options,:related,:edit]
-  #def menu_options(opts) opts end
 
   def menu
     return %{<span class="card-menu faint">Virtual</span>\n} if card.virtual?
@@ -348,12 +332,10 @@ module Wagn
   end
 
   def button_to_action( text, to_action, remote_opts={}, html_opts={})
-    if remote_opts.delete(:replace)
-      r_opts =  { :url=>url_for("card/#{to_action}", :replace=>id ) }.merge(remote_opts)
-    else
-      r_opts =  { :url=>url_for("card/#{to_action}" ), :update => id }.merge(remote_opts)
-    end
-    button_to_remote( text, r_opts, html_opts )
+    button_to_remote( text, 
+      { :url=>url_for("card/#{to_action}",
+        ((remote_opts.delete(:replace)) ? :replace : :update)=>id ) }.
+             merge(remote_opts), html_opts )
   end
 
   def name_field(form,options={})

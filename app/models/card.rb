@@ -132,7 +132,7 @@ class Card < ActiveRecord::Base
   # Creation & Destruction --------------------------------------------------
 
   def initialize(args={})
-    #Rails.logger.warn "initializing with args: #{args.inspect}"
+    Rails.logger.warn "initializing with args: #{args.inspect}"
     args ||= {}
     args = args.stringify_keys # evidently different from args.stringify_keys!
     args.delete 'id' # replaces slow handling of protected fields
@@ -143,7 +143,7 @@ class Card < ActiveRecord::Base
     @new_record = true
     self.send :attributes=, args, false
     self.typecode = get_typecode(args['name'], typename) unless args['typecode']
-    #Rails.logger.warn "initialize typecode: #{self.typecode.inspect}"
+    #Rails.logger.warn "initialize typecode[#{name}] #{self.typecode.inspect}"
 
     include_set_modules unless missing?
     set_defaults( args ) unless skip_defaults

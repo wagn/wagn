@@ -95,8 +95,7 @@ module Wagn
         view_key = get_pattern(view, opts)
         class_eval do
           define_method( "_final_#{view_key}", &final )
-          #register_view(view_key, view_key)
-  #Rails.logger.debug "reg_view(_final_#{view_key}, #{view.inspect})"
+  Rails.logger.debug "reg_view(_final_#{view_key}, #{view.inspect})"
   
           if view_key == view
   #Rails.logger.debug "define base view: _render_#{view}, render_#{view}"

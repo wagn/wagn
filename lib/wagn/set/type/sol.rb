@@ -107,12 +107,14 @@ end
   provide this function.
 =end
 
-module Wagn::Sol
+Rails.logger.debug "loading Sol #{self}"
+module Wagn::Set::Type::Sol
   include Wagn::Set::Type::Basic
 
   def self.included(base)
     super
     base.register_trait('*sol', :declare)
+    Rails.logger.debug "including Sol #{base}"
 =begin
     Wagn::Hook.add(:after_declare, '*all') do |card|
 Rails.logger.info "after_declare #{card.name} C:#{card.solcard.content}"
@@ -120,12 +122,22 @@ Rails.logger.info "after_declare #{card.name} C:#{card.solcard.content}"
 =end
 
     base.class_eval { attr_accessor :ctxsig, :attribute }
+    base.send :before_save, :receive_breath
+    #----------------( Posting Currencies to Cards )
+    # 
+Rails.logger.debug "Loading sol module ..."
   end
 
-  def receive_breath(sig, breath_name, cards)
-    raise Wagn::FinishAction if integrate(parse_fields(sig, breath_name, cards))
+  def receive_breath
+Rails.logger.debug "receive_breath, sol module ..."
+    if ctxsig and attribute and cards
+      #Wagn::Hook.call :before_declare, rec
+#Rails.logger.info("Declare #{rec && rec.name}[#{rec}] #{rec && rec.inspect}")
+      #Wagn::Hook.call :after_declare, rec
+      raise Wagn::FinishAction if integrate(parse_fields(ctxsig, attribute, cards))
 
-    errors[:breath].add "Error integrating breath"
+      errors[:breath].add "Error integrating breath"
+    end
   end
 
   def integrate(xml)
@@ -166,16 +178,4 @@ Rails.logger.info "after_declare #{card.name} C:#{card.solcard.content}"
     rev.content.match(/\bidsig="([^"]*)"/) ?  CGI.unescapeHTML($~[1]) : to_sig
   end
 
-  #----------------( Posting Currencies to Cards )
-  # 
-  def before_save_with_breath
-    if ctxsig and attribute and cards
-      #Wagn::Hook.call :before_declare, '*all'
-#Rails.logger.info("Declare #{@card && @card.name}[#{@card}] #{@card && @card.inspect}")
-      receive_breath(ctxsig, attribute, cards)
-      #Wagn::Hook.call :after_declare, self
-    end
-    before_save_without_breath
-  end
-  alias_method_chain :before_save, :breath
 end

@@ -101,7 +101,11 @@ class PermissionsIntoSettings < ActiveRecord::Migration
       
     puts 'updating read_rule fields'
     Card.find(:all).each do |card|
-      card.update_read_rule
+      begin
+        card.update_read_rule
+      rescue
+        puts "FAILURE - did not update read rule for #{card.name}"
+      end
     end
 
     ENV['BOOTSTRAP_LOAD'] = 'false'

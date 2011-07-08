@@ -79,9 +79,9 @@ namespace :wagn do
       perm_rules = {
         '*all' => { :create=>:auth, :read=>:anon, :update => :auth, :delete => :auth, :comment=>nil },
         '*all plus' => { :create=>:left, :read=>:left, :update => :left, :delete => :left },
-        '*star'                 => { :edit => :admin, :delete => :admin },
-        '*rstar'                => { :edit => :admin, :delete => :admin },
-        'watcher+*right'        => { :edit => :auth  },
+        '*star'                 => { :create=>:admin, :update => :admin, :delete => :admin },
+        '*rstar'                => { :create=>:admin, :update => :admin, :delete => :admin },
+        '*watcher+*right'       => { :create=>:auth,  :update => :auth  },
         'Role+*type'            => { :create=>:admin },
         'Html+*type'            => { :create=>:admin },
         'Account Request+*type' => { :create=>:anon  },

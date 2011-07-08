@@ -15,7 +15,7 @@ class Wagn::Renderer
     end
     
     # RSS
-    if Card::Search === rcard
+    if rcard.typecode == 'Search'
       rss_href = rcard.name=='*search' ? "/search/#{ params[:_keyword] }.rss" : template.url_for_page( rcard.name, :format=>:rss )
       bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{rss_href} />}
     end

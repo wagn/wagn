@@ -71,23 +71,29 @@ class PermissionsIntoSettings < ActiveRecord::Migration
         could = card.who_could(task)
         can = Card.new(:name=>"XXXXXHONK+#{base_name}", :skip_defaults=>true).who_can(task==:edit ? :update : task)
         if could && could != can
-          create_rule "#{base_name}+*right", task, Card.fetch(could.first).extension
+          create_rule "#{base_name}+*right", task, Card.fetch(could.first)
         end
       end
     end
     
     puts "creating *self set perms"
-    Card.find(:all).each do |card|
+    wagn_dot_org = !!(Card.fetch('GC Staff') && Card.fetch('Wagn Is'))
+    wdo_reserved_list = ['Deck','Report','Report1','Note','Lead','Client','Projects','Registration',
+      'Grant Application','Meeting','TechNote','ProjectStatus']
+    Card.find(:all, :conditions=>'trash is false', :order=>'tag_id is not null, tag_id').each do |card|
       next if card.star?
       tag_name = card.name.tag_name 
       next if tag_name.star?
       next if tag_name=='description' and l=card.left and l.typecode == 'Cardtype'
+      if wagn_dot_org 
+        next if wdo_reserved_list.member? card.typecode
+        next if l=card.left and wdo_reserved_list.member? l.typecode
+      end
       [:read, :edit, :delete, :comment].each do |task|
         could = card.who_could(task)
         can = card.who_can(task==:edit ? :update : task)
         if could && could != can
-          create_rule "#{card.name}+*self", task, Card.fetch(could.first).extension
-#          puts "oddball: #{task.to_s.upcase} #{card.name} was #{could}, now #{can}"
+          create_rule "#{card.name}+*self", task, Card.fetch(could.first)
         end
       end
     end
@@ -114,7 +120,7 @@ class PermissionsIntoSettings < ActiveRecord::Migration
     #puts "\nSQL = #{sql}\n"
     rows = ActiveRecord::Base.connection.select_all(sql)
     if rows.empty?
-      puts "nothing found for #{task}, #{where}"
+      #puts "nothing found for #{task}, #{where}"
       return false
     end
     party_id = rows.first['party_id']
@@ -123,8 +129,23 @@ class PermissionsIntoSettings < ActiveRecord::Migration
   end
   
   def self.create_rule(set, task, party)
-    content = String===party ? party : "[[#{party.cardname}]]"
-    puts "create rule for #{set}, #{task.to_s.upcase}:  #{content}"
+    content = case
+      when party.nil?
+        puts "CREATE_RULE FAILED: cannot accept nil party: #{set}, #{task}"
+        return false
+      when String===party; party
+      when Card=== party;
+        role = party.extension
+        if role.nil?
+          puts "CREATE_RULE FAILED: cannot find extension for #{party.name}: #{set}, #{task}"
+          return false
+        end
+        "[[#{role.cardname}]]"
+      else
+         "[[#{party.cardname}]]"
+      end
+      
+    puts "- create rule for #{set}, #{task.to_s.upcase}:  #{content}"
     c = Card.create(
       :name=>"#{set}+*#{task.to_s=='edit' ? 'update' : task}",
       :type=>'Pointer',

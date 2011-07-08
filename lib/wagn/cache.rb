@@ -35,7 +35,7 @@ module Wagn
       end
       
       def preload_cache?
-        @@preload ||= (RAILS_ENV=='cucumber')
+        RAILS_ENV=='cucumber'
       end
       
       def preload_cache_for_tests

@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
   def per_request_setup
     Wagn::Renderer.ajax_call=request.xhr?
     if System.multihost
-      MultihostMapping.map_from_request(request) or render_fast_404(request.host)
+      MultihostMapping.map_from_request(request) or return render_fast_404(request.host)
     end
     Wagn::Cache.re_initialize_for_new_request
     canonicalize_domain

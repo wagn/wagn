@@ -22,8 +22,15 @@ module Wagn::Configuration
   end
 
   class << self
+    def wagn_run
+      wagn_load_config
+      wagn_setup_multihost
+      wagn_load_modules
+      Wagn::Cache.initialize_on_startup
+      Rails.logger.info << "----------- Wagn Rolling -----------\n\n\n"
+    end
+
     def wagn_load_config
-      #called directly from System on load.  must run before setup_multihost (wagn_run)
       STDERR << "Load config ...\n"
       config_dir = "#{RAILS_ROOT}/config/"
       ['sample_wagn.rb','wagn.rb'].each do |filename|
@@ -32,13 +39,6 @@ module Wagn::Configuration
       System.base_url.gsub!(/\/$/,'')
     end
     
-    def wagn_run
-      wagn_setup_multihost
-      wagn_load_modules
-      Wagn::Cache.initialize_on_startup
-      Rails.logger.info << "----------- Wagn Rolling -----------\n\n\n"
-    end
-
     def wagn_setup_multihost
       if System.multihost and wagn_name=ENV['WAGN']
         Rails.logger.info("------- Multihost.  Wagn Name = #{ENV['WAGN']} -------")

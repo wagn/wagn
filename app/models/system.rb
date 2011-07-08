@@ -114,6 +114,5 @@ class System < ActiveRecord::Base
   end 
 
   @@role_tasks = %w{ administrate_users create_accounts assign_user_roles }
-  Wagn::Configuration.wagn_load_config
 end        
 

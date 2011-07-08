@@ -10,7 +10,7 @@ class MultihostMapping < ActiveRecord::Base
     end
     
     def map_from_request(request)
-      mapping = find_by_requested_host(request.host || '') or return false
+      mapping = find_by_requested_host(request.host) or return false
       wagn_name = System.wagn_name = mapping.wagn_name
       set_base_url(mapping)
       set_connection(wagn_name)

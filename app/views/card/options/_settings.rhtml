@@ -17,7 +17,11 @@
 
   <% if card.typecode=='Cardtype' %>
     <h2 class="settings-for-set">Settings for <%= Wagn::Pattern.label("#{card.name}+*type")%></h2> <%#ENGLISH%>
-    <%= slot.subrenderer(Card::Search.new(:name=>UUID.new.generate,:content=>%{{"prepend":"#{card.name}+*type", "type":"Setting", "sort":"name"}}
+    <%= slot.subrenderer(
+      Card.new(
+        :type=>'Search',
+        :skip_defaults=>true,
+        :content=>%{{"prepend":"#{card.name}+*type", "type":"Setting", "sort":"name"}}
       )).render :content %>
   <% end %>
 

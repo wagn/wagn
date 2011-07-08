@@ -69,12 +69,6 @@ module Wagn
         Card.cache.delete key
       end
 
-      private
-      def reset_local
-        Card.cache.reset_local
-        System.reset_cache
-      end
-
       def reset_global
         User.reset_cache
         Role.reset_cache
@@ -83,6 +77,13 @@ module Wagn
         Card.cache.reset
         reset_local
       end
+
+      private
+      def reset_local
+        Card.cache.reset_local
+        System.reset_cache
+      end
+
     end
 
     attr_reader :prefix, :store

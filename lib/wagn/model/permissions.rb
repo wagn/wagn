@@ -97,11 +97,18 @@ module Wagn::Model::Permissions
     rule_card(operation).first.item_names.map &:to_key
   end 
   
+  
+  def who_could(operation)
+    perm = permissions.reject { |perm| perm.task != operation.to_s }.first   
+    perm && [perm.party.card.key] 
+  end
+  
   def rule_card(operation)
     opcard = setting_card(operation.to_s)
     
     if !opcard && (!System.always_ok? || ENV['BOOTSTRAP_LOAD'] == 'true')
-      raise Card::PermissionDenied.new("No #{operation} setting card for #{name}") 
+      errors.add :permission_denied, "No #{operation} setting card for #{name}"      
+      raise Card::PermissionDenied.new(self) 
     end
     
     rcard = begin
@@ -207,21 +214,30 @@ module Wagn::Model::Permissions
   end
   
   def update_read_rule
+    Card.record_timestamps = Card.record_userstamps = false
+
     rcard, rclass = rule_card(:read)
     update_attributes!(
       :read_rule_id => rcard.id,
       :read_rule_class => rclass
     )
-    return if ENV['BOOTSTRAP_LOAD'] == 'true'
+    
+    unless ENV['BOOTSTRAP_LOAD'] == 'true' 
     # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
-    User.as :wagbot do
-      Card.search(:left=>self.name).each do |plus_card|
-        if plus_card.setting(:read) == '_left'
-          plus_card.update_read_rule
+      User.as :wagbot do
+        Card.search(:left=>self.name).each do |plus_card|
+          if plus_card.setting(:read) == '_left'
+            plus_card.update_read_rule
+          end
         end
       end
     end
+    
     Card.cache.delete(self.key)
+    Card.record_timestamps = Card.record_userstamps = true    
+  rescue
+    Card.record_timestamps = Card.record_userstamps = true
+    raise
   end
 
   def update_ruled_cards

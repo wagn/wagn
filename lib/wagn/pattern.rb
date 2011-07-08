@@ -84,8 +84,13 @@ raise "no card" unless card
         sn = set_name card
         sn.tag_name.gsub(' ','_').gsub('*','').upcase + '-' + sn.trunk_name.css_name
       end
+      
+      def trunkless?
+        false
+      end
     end
-
+    
+    
     attr_reader :spec
 
     def initialize spec
@@ -104,6 +109,7 @@ raise "no card" unless card
       def method_key_from_opts(opts)   ''           end
       def css_name(card)               "ALL"        end
       def label(name)                  'All Cards'  end
+      def trunkless?()                 true         end
     end
     register_class self
   end
@@ -118,6 +124,7 @@ raise "no card" unless card
       def method_key_from_opts(opts)   'all_plus'                  end
       def css_name(card)               "ALL_PLUS"                  end
       def label(name)                  'All Plus Cards'            end
+      def trunkless?()                 true         end
     end
     register_class self
   end
@@ -149,6 +156,7 @@ raise "no card" unless card
       def method_key_from_opts(opts)   'star'                  end
       def css_name(card)               "STAR"                  end
       def label(name)                  'Star Cards'            end
+      def trunkless?()                 true                    end
     end
     register_class self
   end
@@ -160,6 +168,7 @@ raise "no card" unless card
       def method_key(card)             'star'                          end
       def method_key_from_opts(opts)   'star'                          end
       def set_name(card)               "#{card.name.tag_name}+#{key}"  end
+      def trunkless?()                 true                            end
       def pattern_applies? card
         card.junction? && card.name.tag_name.star?
       end

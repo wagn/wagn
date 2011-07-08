@@ -10,13 +10,6 @@
     <div id="denied" class="instruction open-content">
       <h1>Ooo.  Sorry, but...</h1>  <%#ENGLISH%>
 
-
-      render check on <%= slot.card.name %>
-       ok? <%= slot.card.ok? :read %> 
-       who_can: <%= slot.card.who_can :read %>
-
-      
-
       <p>
         <% if User.current_user.anonymous? %>
           You have to <%= link_to "sign in", '/account/signin' %>

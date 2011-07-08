@@ -121,9 +121,11 @@ end
 describe "Permission", ActiveSupport::TestCase do
   before do
     User.as( :wagbot )
-    @u1, @u2, @u3 = %w( u1 u2 u3 ).map do |x| ::User.find_by_login(x) end
+    User.reset_cache
+    Role.reset_cache
+    @u1, @u2, @u3 = %w( u1 u2 u3 ).map do |x| ::User[x] end
     @r1, @r2, @r3 = %w( r1 r2 r3 ).map do |x| ::Role[x] end
-    @c1, @c2, @c3 = %w( c1 c2 c3 ).map do |x| Card.find_by_name(x) end
+    @c1, @c2, @c3 = %w( c1 c2 c3 ).map do |x| Card.fetch(x) end
   end      
 
 

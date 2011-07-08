@@ -1,7 +1,7 @@
 namespace :cache do
   desc "reset cache" 
   task :clear => :environment  do
-    Card.cache.reset
+    Wagn::Cache.reset_global
   end
   
   # to hit all the cards on the server (for cache population) do something like this:

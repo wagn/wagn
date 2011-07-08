@@ -11,7 +11,7 @@ module Wagn
           # Note: we use wagbot to find all the applicable cards, but not for the geocode or description cards
           # This is a workaround so that folks can have maps so long as their geocode cards are publicly viewable.
           # needs deeper redesign
-          if Card::Search === card
+          if card.typecode=='Search'
             card.item_cards( :return=>:name, :limit=>1000, :_keyword=>params[:_keyword] )
             card.results
           else

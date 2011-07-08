@@ -36,7 +36,7 @@ class Card < ActiveRecord::Base
 
 #  belongs_to :updater, :class_name=>'::User', :foreign_key=>'updated_by'
 
-  #has_many :permissions, :foreign_key=>'card_id' #, :dependent=>:delete_all
+  has_many :permissions, :foreign_key=>'card_id' #, :dependent=>:delete_all
 
   before_destroy :destroy_extension
     
@@ -97,8 +97,8 @@ class Card < ActiveRecord::Base
   end
 
   private
-    belongs_to :reader, :polymorphic=>true
-
+#    belongs_to :reader, :polymorphic=>true  
+    
     def log(msg)
       Rails.logger.info(msg)
     end

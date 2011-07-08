@@ -11,7 +11,7 @@ class Wagn::Renderer::Rss
         xml.link card_url(card)
         begin
 
-          cards = if Card::Search === card
+          cards = if card.typecode == 'Search'
             card.item_cards( :limit => 25, :_keyword=>params[:_keyword] )
             card.results
           else

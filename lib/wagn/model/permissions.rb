@@ -97,11 +97,18 @@ module Wagn::Model::Permissions
     rule_card(operation).first.item_names.map &:to_key
   end 
   
+  
+  def who_could(operation)
+    perm = permissions.reject { |perm| perm.task != operation.to_s }.first   
+    perm && [perm.party.card.key] 
+  end
+  
   def rule_card(operation)
     opcard = setting_card(operation.to_s)
     
     if !opcard && (!System.always_ok? || ENV['BOOTSTRAP_LOAD'] == 'true')
-      raise Card::PermissionDenied.new("No #{operation} setting card for #{name}") 
+      errors.add :permission_denied, "No #{operation} setting card for #{name}"      
+      raise Card::PermissionDenied.new(self) 
     end
     
     rcard = begin

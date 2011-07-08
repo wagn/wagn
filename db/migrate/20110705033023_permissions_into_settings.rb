@@ -16,7 +16,7 @@ class PermissionsIntoSettings < ActiveRecord::Migration
     end
     
     [:create, :update, :delete].each do |task|
-      ['*star','*rstar','HTML+*type'].each do |set|
+      ['*star','*rstar','HTML+*type', 'Cardtype+description+*type plus right' ].each do |set|
         create_rule(set, task, Role[:admin])
       end
     end
@@ -47,8 +47,8 @@ class PermissionsIntoSettings < ActiveRecord::Migration
       create_rule("#{typecard.name}+*type",'create', create_role_for_type)
     end
 
+    puts "creating *type set perms"
     [:read, :edit, :delete, :comment].each do |task|
-      puts "updating types for #{task}"
       Card.search(:type=>'Cardtype', :created_by=>{:not=>{:name=>["in","Wagn Bot","Admin"]}}).map do |typecard|
         next if typecard.key == 'html'
         type_ext = typecard.extension
@@ -62,30 +62,43 @@ class PermissionsIntoSettings < ActiveRecord::Migration
         end
       end
     end
-    
-    puts "updating comment tags"
-    rows = ActiveRecord::Base.connection.select_all(
-      %{ select t.name as tag_name, t.id as tag_id, count(*) from cards c 
-        join permissions p on c.id=p.card_id 
-        join cards t on c.tag_id = t.id 
-        where task = 'comment' group by t.name, t.id
-        having count(*) > 1   })
-    rows.each do |row|
-      tag_name, tag_id = row['tag_name'], row['tag_id']
-      tag_party = most_common_party(:comment, " tag_id = #{tag_id}")
-      if tag_party and !tag_party.blank?
-        create_rule("#{tag_name}+*right",:comment, tag_party)
+
+    puts "creating *right set perms"
+    Card.find(:all, :conditions=>"(name like '%*right+*content' or name like '%right+*default') and trash is false").each do |card|
+      next if card.star?
+      base_name = card.name.gsub(/^(.*)\+\*right\+\*(content|default)$/, '\1')
+      [:read, :edit, :delete, :comment].each do |task|
+        could = card.who_could(task)
+        can = Card.new(:name=>"XXXXXHONK+#{base_name}", :skip_defaults=>true).who_can(task==:edit ? :update : task)
+        if could && could != can
+          create_rule "#{base_name}+*right", task, Card.fetch(could.first).extension
+        end
       end
     end
     
-#    puts 'updating read_rule fields'
-#    Card.find(:all).each do |card|
-#      card.update_read_rule
-#    end
+    puts "creating *self set perms"
+    Card.find(:all).each do |card|
+      next if card.star?
+      tag_name = card.name.tag_name 
+      next if tag_name.star?
+      next if tag_name=='description' and l=card.left and l.typecode == 'Cardtype'
+      [:read, :edit, :delete, :comment].each do |task|
+        could = card.who_could(task)
+        can = card.who_can(task==:edit ? :update : task)
+        if could && could != can
+          create_rule "#{card.name}+*self", task, Card.fetch(could.first).extension
+#          puts "oddball: #{task.to_s.upcase} #{card.name} was #{could}, now #{can}"
+        end
+      end
+    end
+    
+      
+    puts 'updating read_rule fields'
+    Card.find(:all).each do |card|
+      card.update_read_rule
+    end
 
     ENV['BOOTSTRAP_LOAD'] = 'false'
-  # FIGURE OUT COMMENTS 
-  # DEAL WITH ODDBALLS 
   end
 
   def self.down
@@ -96,7 +109,7 @@ class PermissionsIntoSettings < ActiveRecord::Migration
     #note - the weird subselect is necessary to get zero counts on comments.
     sql =   %{ select count(*) as count, party_id from cards c left join
           (select card_id, party_id from permissions where task='#{task}') as p
-        on p.card_id = c.id where #{where}
+        on p.card_id = c.id where #{where} and trash is false
         group by party_id order by count desc; }
     #puts "\nSQL = #{sql}\n"
     rows = ActiveRecord::Base.connection.select_all(sql)
@@ -110,11 +123,12 @@ class PermissionsIntoSettings < ActiveRecord::Migration
   end
   
   def self.create_rule(set, task, party)
-    puts "create rule for #{set}, #{task}:  #{party}"
+    content = String===party ? party : "[[#{party.cardname}]]"
+    puts "create rule for #{set}, #{task.to_s.upcase}:  #{content}"
     c = Card.create(
       :name=>"#{set}+*#{task.to_s=='edit' ? 'update' : task}",
       :type=>'Pointer',
-      :content=>(String===party ? party : "[[#{party.cardname}]]")
+      :content=>content
     )
     return if String===party
     role_card = party.card

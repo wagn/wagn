@@ -1,5 +1,5 @@
 =begin
-  module Wagn::Sol -- Metacurrency flows for Wagn
+  module Wagn::Set::Rstar::Xsol -- Metacurrency flows for Wagn
 
   This can be generalized just a little and be suitable for adding to almost
   any content management system with user editable content.
@@ -107,9 +107,7 @@ end
   provide this function.
 =end
 
-Rails.logger.debug "loading Sol #{self}"
-module Wagn::Set::Type::Sol
-  include Wagn::Set::Type::Basic
+module Wagn::Set::Rstar::Xsol
 
   def self.included(base)
     super

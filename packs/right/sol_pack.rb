@@ -1,6 +1,6 @@
 class Wagn::Renderer::RichHtml
   # from app/view/card/_declare.rhtml
-  define_view(:declare_form, :type=>'Sol') do
+  define_view(:declare_form, :right=>'*sol') do
     @form = form_for_multi
     @state= symbolize_param(:attribute) || :declare
     trait_submenu(:declare, params[:attribute]||:declare) +
@@ -32,7 +32,7 @@ class Wagn::Renderer::RichHtml
 
 
   # from app/view/card/declare.rhtml
-  #define_view(:declare, :type=>'Sol') do
+  #define_view(:declare, :right=>'*sol') do
   define_view(:declare) do |args|
     tcard = @card.trait_card('*sol')
     raise "No card" unless tcard

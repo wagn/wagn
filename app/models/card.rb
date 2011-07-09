@@ -168,23 +168,12 @@ class Card < ActiveRecord::Base
     }
   end
 
-
-  def after_fetch
-    include_set_modules
-  end
-  
   def include_set_modules
-    singleton_class.include_type_module(typecode)  
+    Wagn::Pattern.rule_modules(self) {|m| singleton_class.send :include, m }
   end
+  alias after_fetch  include_set_modules
   
   class << self
-    def include_type_module(typecode)
-      #Rails.logger.info "include set #{typecode} called  #{Kernel.caller[0..4]*"\n"}"
-      return unless typecode
-      raise "Bad typecode #{typecode}" if typecode.to_s =~ /\W/
-      suppress(NameError) { include eval "Wagn::Set::Type::#{typecode}" }
-    end
-
     def find_or_create!(args={})
       find_or_create(args) || raise(ActiveRecord::RecordNotSaved)
     end

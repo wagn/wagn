@@ -2,20 +2,20 @@ class Wagn::Renderer::RichHtml
   # from app/view/card/_declare.rhtml
   define_view(:declare_form, :right=>'*sol') do
     @form = form_for_multi
-    @state= symbolize_param(:attribute) || :declare
-    trait_submenu(:declare, params[:attribute]||:declare) +
+    @state=:edit
+    trait_submenu(:declare, (card.attribute||=:declare)) +
     (params[:view] != 'setting' && inst = card.setting_card('declare help') ?
       %{<div class="instruction">#{slot.subslot(inst).render :naked }</div>} : '') +
 
     #div( :id=>slot.id('declare-area'), :class=>"declaror declare-area #{card.hard_template ? :templated : ''}" ) do
 
     hidden_field_tag( :multi_edit, true) +
-    hidden_field_tag( :attribute, @state ) +
+    hidden_field_tag( :attribute, card.attribute ) +
     hidden_field_tag( :ctxsig, card.signature) +
-    expand_inclusions( trait_form(@state) ) +
+    expand_inclusions( trait_form(card.attribute) ) +
     %{</div>#{ #slot.half_captcha
       }<div class="declare-button-area">#{
-        hidden_field_tag(:attribute,params[:attribute]||:declare )}#{
+        hidden_field_tag(:attribute, card.attribute )}#{
         button_to_function "Declare", "this.form.onsubmit()", :class=>'save-card-button' }#{
         slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function }
       }</div>}
@@ -38,12 +38,11 @@ class Wagn::Renderer::RichHtml
     raise "No card" unless tcard
 
     wrap( args ) do
-      %{#{header
-      }<style>#{
-        ".SELF-#{tcard.key.css_name
+      %{#{slot.header
+      }<style>.SELF-#{tcard.key.css_name
       } .declare-area .title-#{
         tcard.name.css_name
-      } { display: none; }" }</style>} +
+      } { display: none; }</style>} +
 
       div( :id=>id('card-body'), :class=>'card-body') do
         Rails.logger.debug "render declare sub #{tcard&&tcard.name}"
@@ -82,13 +81,13 @@ class Wagn::Renderer::RichHtml
     end
   end
 
-  # and this
   def trait_form(action)
-    forms = trait_forms(action.to_s)
+    forms = trait_forms(action=action.to_s)
     return forms if String === forms
-    Rails.logger.info "trait_form(#{action}) #{forms.inspect}"
-    if form = forms.find { |k| k.tag_name == @state.to_s } and
-       form = Card.fetch(form)
+    Rails.logger.info "trait_form(#{action.inspect}) #{forms.inspect}"
+    if form = forms.find { |k|
+      Rails.logger.info "trait_search(#{action.inspect}) #{card.attribute.inspect}, #{k.tag_name.inspect} #{forms.inspect}"
+      k.tag_name == action } and form = Card.fetch(form)
       form.content
     else
       "No form card #{@state} #{card&&card.name}"

@@ -1,24 +1,34 @@
 class Wagn::Renderer::RichHtml
   # from app/view/card/_declare.rhtml
-  define_view(:declare_form, :right=>'*sol') do
+  define_view(:declare_form, :right=>'*sol') do |args|
     @form = form_for_multi
     @state=:edit
-    trait_submenu(:declare, (card.attribute||=:declare)) +
-    (params[:view] != 'setting' && inst = card.setting_card('declare help') ?
-      %{<div class="instruction">#{slot.subslot(inst).render :naked }</div>} : '') +
-
-    #div( :id=>slot.id('declare-area'), :class=>"declaror declare-area #{card.hard_template ? :templated : ''}" ) do
-
-    hidden_field_tag( :multi_edit, true) +
-    hidden_field_tag( :attribute, card.attribute ) +
-    hidden_field_tag( :ctxsig, card.signature) +
-    expand_inclusions( trait_form(card.attribute) ) +
-    %{</div>#{ #slot.half_captcha
-      }<div class="declare-button-area">#{
-        hidden_field_tag(:attribute, card.attribute )}#{
-        button_to_function "Declare", "this.form.onsubmit()", :class=>'save-card-button' }#{
-        slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function }
-      }</div>}
+    %{#{div( :id=>slot.id('declar-area'),
+             :class=>"declaror declar-area #{card.hard_template ? :templated : ''}" ) do
+      form_for_card :url=>"card/update/#{card.name.to_url_key}",
+                    :slot=>slot, :html=>{ :class=>'form editor',
+                    :onsubmit=>slot.save_function,
+                    :id=>(slot.context + '-form') } do |form|
+        concat %{<div>#{
+          slot.form = form
+          trait_submenu(:declare, (card.attribute||=:declare))}#{
+          #(args[:view] != 'setting' && inst = card.setting_card('declare help') ?
+             #%{<div class="instruction">#{slot.subslot(inst).render :naked }</div>} : '') +
+          hidden_field_tag( :multi_edit, true)}#{
+          hidden_field_tag( :attribute, card.attribute )}#{
+          hidden_field_tag( :ctxsig, card.signature)}#{
+          expand_inclusions( trait_form(card.attribute) )
+          }</div>#{
+          slot.captcha_tags
+          }<div class="declare-button-area">#{
+          hidden_field_tag(:attribute, card.attribute )}#{
+          button_to_function "Declare", "this.form.onsubmit()", :class=>'save-card-button' }#{
+          slot.button_to_action 'Cancel', 'view', { :before=>slot.cancel_function }
+          }</div>
+        }
+      end
+    end
+  }}
   end
 
 =begin

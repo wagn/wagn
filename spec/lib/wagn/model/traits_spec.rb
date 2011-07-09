@@ -72,8 +72,11 @@ describe Card do
       (r=Wagn::Renderer::RichHtml.new(c).render(:declare)).should_not match(/Missing setting/)
       r.should_not match(/Setting not a Pointer/)
       r.should_not match(/No form card/)
-      r.should match(/form card content/) #be_html_with do
-      #end
+      r.should be_html_with do
+        form(:action=>"card/update/B+*sol") do
+          input(:type=>'foo') {}
+        end
+      end
     end
   end
   

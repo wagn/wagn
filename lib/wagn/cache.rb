@@ -31,13 +31,15 @@ module Wagn
         else
           Card.cache = Wagn::Cache.new Rails.cache
         end
+        Card.cache.system_prefix = system_prefix
       end
       
       def preload_cache?
-        @@preload ||= (RAILS_ENV=='cucumber')
+        RAILS_ENV=='cucumber'
       end
       
       def preload_cache_for_tests
+        return unless preload_cache?
         set_keys = ['*all','*all plus','basic+*type','html+*type','*cardtype+*type','*sidebar+*self']
         set_keys.map{|k| [k,"#{k}+*content", "#{k}+*default", "#{k}+*read", ]}.flatten.each do |key|        
           Card.fetch key, :skip_virtual=>true, :skip_after_fetch=>true

@@ -36,39 +36,28 @@ class ApplicationController < ActionController::Base
 
   def per_request_setup
     Wagn::Renderer.ajax_call=request.xhr?
-    
     if System.multihost
-      if mapping = MultihostMapping.find_by_requested_host(request.host) || MultihostMapping.find_by_requested_host("")
-        System.base_url = "http://" + mapping.canonical_host
-        System.wagn_name = mapping.wagn_name
-        ActiveRecord::Base.connection.schema_search_path = mapping.wagn_name
-      else
-        return render_fast_404(request.host)
-      end
+      MultihostMapping.map_from_request(request) or return render_fast_404(request.host)
     end
-
     Wagn::Cache.re_initialize_for_new_request
-    # Set/Redirect to Canonical Domain
-    if request.raw_host_with_port != System.host and RAILS_ENV=="production"
-      query_string = request.query_string.empty? ? '' : "?#{request.query_string}"
-      return redirect_to("http://#{System.host}#{request.path}#{query_string}")
-    end
-
+    canonicalize_domain
+    
     User.current_user = current_user || User[:anon]
 
     @context = params[:context] || 'main_1'
     @action = params[:action]
 
     Wagn::Renderer.current_slot = nil
-
-    # reset class caches
-    # FIXME: this is a bit of a kluge.. several things stores as cattrs in modules
-    # that need to be reset with every request (in addition to current user)
     System.request = request
-    #System.time = Time.now.to_f
-    ## DEBUG
     ActiveRecord::Base.logger.debug("WAGN: per request setup")
     load_location
+  end
+  
+  def canonicalize_domain
+    if RAILS_ENV=="production" and request.raw_host_with_port != System.host
+      query_string = request.query_string.empty? ? '' : "?#{request.query_string}"
+      return redirect_to("http://#{System.host}#{request.path}#{query_string}")
+    end
   end
 
   def wagn_layout

@@ -150,7 +150,7 @@ module Wagn::Model::Permissions
   def approve_read
     return true if System.always_ok?    
     self.read_rule_id ||= rule_card(:read).first.id
-    ok = User.as_user.read_rule_ids.member?(self.read_rule_id) 
+    ok = User.as_user.read_rule_ids.member?(self.read_rule_id.to_i) 
     deny_because(you_cant "read this card") unless ok
   end
   
@@ -232,8 +232,6 @@ module Wagn::Model::Permissions
         end
       end
     end
-    
-    Card.cache.delete(self.key)
     Card.record_timestamps = Card.record_userstamps = true    
   rescue
     Card.record_timestamps = Card.record_userstamps = true

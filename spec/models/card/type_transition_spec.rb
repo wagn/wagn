@@ -28,6 +28,9 @@ module Wagn::Set::Type::CardtypeD
 end
 
 module Wagn::Set::Type::CardtypeE
+  def self.included(base)
+    Card.count = 2
+  end
 
   def on_type_change
     decrement_count
@@ -36,6 +39,9 @@ module Wagn::Set::Type::CardtypeE
 end
 
 module Wagn::Set::Type::CardtypeF
+  def self.included(base)
+    Card.count = 2
+  end
   def before_validation_on_create
     increment_count
   end
@@ -129,7 +135,6 @@ end
 
 describe Card, "type transition destroy callback" do
   before do
-    Card.count = 2
     @c = change_card_to_type("type-e-card", "Basic") 
   end
   
@@ -147,14 +152,11 @@ describe Card, "type transition create callback" do
     User.as :wagbot do
       Card.create(:name=>'Basic+*type+*delete', :type=>'Pointer', :content=>"[[Anyone Signed in]]")
     end
-    Card.count = 2
     @c = change_card_to_type("basicname", 'CardtypeF') 
   end
     
   it "should increment counter"  do
-    Card.count.should == 4
-    #currently before_validation_on_create is called twice on a type change; once in the actual validation of a new dummmy card of the new type, 
-    #and once when setting the typecode.  the former makes sense; the latter seems hackish to me.
+    Card.count.should == 3
   end
   
   it "should change type of card" do

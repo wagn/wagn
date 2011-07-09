@@ -35,7 +35,7 @@ class User < ActiveRecord::Base
       @@cache[System.wagn_name] ||= {}
     end
     
-    def reset_cache(key=nil)
+    def reset_cache
       @@cache ||= {}
       @@cache[System.wagn_name] = {}
     end

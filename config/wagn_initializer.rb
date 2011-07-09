@@ -17,56 +17,33 @@ module Wagn::Configuration
       :key    => db[RAILS_ENV]['session_key'],
       :secret => db[RAILS_ENV]['secret']
     }
-    #Wagn::Config.new(rails_config)
-
-    #wagn_load_config
-    #System Now wagn.rb just loads a module to be included after load
-    STDERR << "Load config ...\n"
-    if File.exists? "#{RAILS_ROOT}/config/sample_wagn.rb"
-      require_dependency "#{RAILS_ROOT}/config/sample_wagn.rb"
-    end
-    if File.exists? "#{RAILS_ROOT}/config/wagn.rb"
-      require_dependency "#{RAILS_ROOT}/config/wagn.rb"
-    end
-    ###
-
-    # this needs to happen later, when System is loading or something
-    #wagn_setup_multihost
-
     STDERR << "----------- Wagn Loaded -----------\n"
     #Rails.logger.info("\n----------- Wagn Load Complete -----------\n\n")
   end
 
   class << self
-    def wagn_pre_schema?
-      begin
-        @schema_initialized ||= ActiveRecord::Base.connection.select_value("select count(*) from cards").to_i > 2
-        !@schema_initialized
-      rescue Exception => e
-        STDERR << "\n-------- Schema not initialized--------"# Trace #{e.backtrace*"\n"}"
-        #ActiveRecord::Base.logger.info("\n----------- Schema Not Initialized -----------\n\n")
-        true
-      end
-    end
-
-    def wagn_setup_multihost
-      # set schema for multihost wagns   (make sure this is AFTER loading wagn.rb duh)
-      #ActiveRecord::Base.logger.info("------- multihost = #{System.multihost} and WAGN_NAME= #{ENV['WAGN']} -------")
-      if System.multihost and ENV['WAGN']
-        if mapping = MultihostMapping.find_by_wagn_name(ENV['WAGN'])
-          System.base_url = "http://" + mapping.canonical_host
-          System.wagn_name = mapping.wagn_name
-        end
-        ActiveRecord::Base.connection.schema_search_path = ENV['WAGN']
-        Card.cache.system_prefix = Wagn::Cache.system_prefix
-      end
-    end
-
     def wagn_run
+      wagn_load_config
+      wagn_setup_multihost
       wagn_load_modules
       Wagn::Cache.initialize_on_startup
-      
-      Rails.logger.info << "----------- Wagn Rolling -----------\n\n\n"
+      STDERR << "----------- Wagn Rolling -----------\n\n\n"
+    end
+
+    def wagn_load_config
+      STDERR << "Load config ...\n"
+      config_dir = "#{RAILS_ROOT}/config/"
+      ['sample_wagn.rb','wagn.rb'].each do |filename|
+        require_dependency config_dir+filename if File.exists? config_dir+filename
+      end
+      System.base_url.gsub!(/\/$/,'')
+    end
+    
+    def wagn_setup_multihost
+      if System.multihost and wagn_name=ENV['WAGN']
+        Rails.logger.info("------- Multihost.  Wagn Name = #{ENV['WAGN']} -------")
+        MultihostMapping.map_from_environment(wagn_name)
+      end
     end
 
     def wagn_load_modules

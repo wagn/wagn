@@ -114,7 +114,5 @@ class System < ActiveRecord::Base
   end 
 
   @@role_tasks = %w{ administrate_users create_accounts assign_user_roles }
-  
-  include Wagn::Local
 end        
 

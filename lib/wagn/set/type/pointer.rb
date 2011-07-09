@@ -39,6 +39,7 @@ module Wagn::Set::Type::Pointer
   
   def options_card
     card = self.setting_card('options')
+    card.after_fetch if card
     (card && card.collection?) ? card : nil
   end
 

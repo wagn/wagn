@@ -42,13 +42,13 @@ class Wagn::Renderer::RichHtml
 
 
   # from app/view/card/declare.rhtml
-  #define_view(:declare, :right=>'*sol') do
+  #define_view(:declare, :trait=>'*sol') do
   define_view(:declare) do |args|
     tcard = @card.trait_card('*sol')
     raise "No card" unless tcard
 
     wrap( args ) do
-      %{#{slot.header
+      %{#{#slot.header  I don't understand why this doesn't work here?
       }<style>.SELF-#{tcard.key.css_name
       } .declare-area .title-#{
         tcard.name.css_name

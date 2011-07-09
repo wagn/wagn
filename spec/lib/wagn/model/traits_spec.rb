@@ -74,7 +74,11 @@ describe Card do
       r.should_not match(/No form card/)
       r.should be_html_with do
         form(:action=>"card/update/B+*sol") do
-          input(:type=>'foo') {}
+          input(:id=>"attribute", :name=>"attribute", :type=>"hidden", :value=>"declare") {}
+          input(:name=>"ctxsig", :type=>"hidden") {}
+          div(:class=>"field-in-multi") {
+              input(:id=>"main_1_1_2-hidden-content", :name=>"cards[B~plus~*sol~plus~bar][content]", :type=>"hidden") {}
+          }
         end
       end
     end

@@ -25,7 +25,7 @@ class XmlrestControllerTest < ActionController::TestCase
     post :post, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
     assert assigns['card']
     assert_response 418
-    assert_instance_of Card::Cardtype, Card.find_by_name('Editor')
+    assert Card.find_by_name('Editor').class.include?(Wagn::Set::Type::Cardtype)
     # this assertion fails under autotest when running the whole suite,
     # passes under rake test.
     # assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor')
@@ -65,7 +65,7 @@ class XmlrestControllerTest < ActionController::TestCase
 #    #assert_equal "boo", assigns['card'].content
 #    assert_equal "<br/>", assigns['card'].content
 #    assert_response :success, "changed card type"
-#    assert_equal "CardtypeA", Card['Sample Basic'].type
+#    assert_equal "CardtypeA", Card['Sample Basic'].cardtype
 #  end
 #
 #  def test_update_cardtype_with_stripping
@@ -74,7 +74,7 @@ class XmlrestControllerTest < ActionController::TestCase
 #    #assert_equal "boo", assigns['card'].content
 #    assert_response :success, "changed card type"
 #    assert_equal "", assigns['card'].content
-#    assert_equal "Date", Card['Sample Basic'].type
+#    assert_equal "Date", Card['Sample Basic'].cardtype
 #  end
 
 
@@ -133,13 +133,13 @@ class XmlrestControllerTest < ActionController::TestCase
   def test_new_without_cardtype
     post :post
     assert_response :success, "response should succeed"
-    assert_equal 'Basic', assigns['card'].type, "@card type should == Basic"
+    assert_equal 'Basic', assigns['card'].cardtype, "@card type should == Basic"
   end
 
   def test_new_with_cardtype
     post :post, :card => {:type=>'Date'}
     assert_response :success, "response should succeed"
-    assert_equal 'Date', assigns['card'].type, "@card type should == Date"
+    assert_equal 'Date', assigns['card'].cardtype, "@card type should == Date"
   end
 
   def test_create
@@ -149,7 +149,7 @@ class XmlrestControllerTest < ActionController::TestCase
       :content=>"Bananas"
     }
     assert_response 418
-    assert_instance_of Card::Basic, Card.find_by_name("NewCardFoo")
+    assert_instance_of Card, Card.find_by_name("NewCardFoo")
     assert_equal "Bananas", Card.find_by_name("NewCardFoo").content
   end
 
@@ -170,7 +170,7 @@ class XmlrestControllerTest < ActionController::TestCase
       "content"=>"noof"
     }
     assert_response 418
-    assert_instance_of Card::Phrase, Card.find_by_name("Problem")
+    assert Card.find_by_name("Problem").class.include?(Wagn::Set::Type::Phrase)
   end
 
   def test_multi_create_without_name
@@ -198,8 +198,10 @@ class XmlrestControllerTest < ActionController::TestCase
   def test_should_redirect_to_thanks_on_create_without_read_permission
     # 1st setup anonymously create-able cardtype
     User.as(:joe_admin)
+    
+    #remove me after regenerating test data
     f = Card.create! :type=>"Cardtype", :name=>"Fruit"
-    f.permit(:create, Role[:anon])
+    Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
     f.permit(:read, Role[:admin])
     f.save!
 
@@ -221,8 +223,10 @@ class XmlrestControllerTest < ActionController::TestCase
   def test_should_redirect_to_card_on_create_main_card
     # 1st setup anonymously create-able cardtype
     User.as(:joe_admin)
+    
+    #remove me after regenerating test data 
     f = Card.create! :type=>"Cardtype", :name=>"Fruit"
-    f.permit(:create, Role[:anon])
+    Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
     f.permit(:read, Role[:anon])
     f.save!
 
@@ -249,10 +253,12 @@ class XmlrestControllerTest < ActionController::TestCase
 
   def test_new_should_not_for_creatable_nonviewable_cardtype
     User.as(:joe_admin)
+    
+    #remove me after regenerating test data
     f = Card.create! :type=>"Cardtype", :name=>"Fruit"
-    f.permit(:create, Role[:anon])
+    Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
     f.permit(:read, Role[:auth])
-    f.permit(:edit, Role[:admin])
+#    f.permit(:edit, Role[:admin])
     f.save!
 
     ff = Card.create! :name=>"Fruit+*tform"

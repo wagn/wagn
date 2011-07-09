@@ -1,4 +1,4 @@
-class Renderer
+class Wagn::Renderer
   define_view(:naked, :type=>'account_request') do
     links = [ #ENGLISH
       (link_to( "Invite #{card.name}", "/account/accept?card[key]=#{card.name.to_url_key}", :class=>'invitation-link') if System.ok?(:create_accounts)   ),

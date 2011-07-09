@@ -22,30 +22,32 @@ module Wagn
   end
 
   class Cache
+    
     class << self
       def initialize_on_startup
-        @@preload = false
-        if RAILS_ENV =~ /cucumber|test/
-          Card.cache = Wagn::Cache.new nil, system_prefix
-          preload_cache_for_tests if preload_cache?
+        if RAILS_ENV =~ /^cucumber|test$/
+          Card.cache = Wagn::Cache.new
+          preload_cache_for_tests
         else
-          Card.cache = Wagn::Cache.new Rails.cache, system_prefix
+          Card.cache = Wagn::Cache.new Rails.cache
         end
+        Card.cache.system_prefix = system_prefix
+      end
+      
+      def preload_cache?
+        RAILS_ENV=='cucumber'
       end
       
       def preload_cache_for_tests
-        set_keys = ['*all','basic+*type','html+*type','*cardtype+*type','*sidebar+*self']
-        set_keys.map{|k| [k, "#{k}+*content", "#{k}+*default"]}.flatten.each do |key|        
-          Card.fetch key
+        return unless preload_cache?
+        set_keys = ['*all','*all plus','basic+*type','html+*type','*cardtype+*type','*sidebar+*self']
+        set_keys.map{|k| [k,"#{k}+*content", "#{k}+*default", "#{k}+*read", ]}.flatten.each do |key|        
+          Card.fetch key, :skip_virtual=>true, :skip_after_fetch=>true
         end
         Role[:auth]; Role[:anon]
         @@frozen = Marshal.dump([Card.cache, Role.cache])
       end
       
-      def preload_cache?
-        @@preload ||= ((RAILS_ENV=='cucumber') || ENV['PRELOAD_CACHE'])
-      end
-
       def system_prefix
         cache_env = (RAILS_ENV == 'cucumber') ? 'test' : RAILS_ENV
         "#{System.host}/#{cache_env}"
@@ -57,7 +59,7 @@ module Wagn
       end
 
       def reset_for_tests
-        reset_global
+        reset_local
         Card.cache, Role.cache = Marshal.load(@@frozen) if preload_cache?
       end
 
@@ -69,29 +71,30 @@ module Wagn
         Card.cache.delete key
       end
 
-      private
-      def reset_local
-        User.clear_cache if System.multihost
-        Cardtype.reset_cache
-        Role.reset_cache
-        System.reset_cache
-        Wagn::Pattern.reset_cache
-        Card.cache.reset_local
-      end
-
       def reset_global
+        User.reset_cache
+        Role.reset_cache
+        Wagn::Pattern.reset_cache
+        Cardtype.reset_cache
         Card.cache.reset
         reset_local
       end
+
+      private
+      def reset_local
+        Card.cache.reset_local
+        System.reset_cache
+      end
+
     end
 
     attr_reader :prefix, :store
     attr_accessor :local
 
-    def initialize(store, system_prefix)
+    def initialize(store=nil, system_prefix=nil)
       @store = store
       @local = Hash.new
-      self.system_prefix = system_prefix
+      self.system_prefix = system_prefix || Wagn::Cache.system_prefix
     end
 
     def system_prefix=(system_prefix)
@@ -171,4 +174,3 @@ module Wagn
   end
 end
 
-Card.send :mattr_accessor, :cache

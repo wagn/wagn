@@ -1,8 +1,13 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe Card::Pointer do
+describe Wagn::Set::Type::Pointer do
   before do
     User.current_user = :joe_user
+  end
+  
+  context "item_names" do
+#    p = Card.new(:type=>'Pointer', :content=>"[[Busy]]\n[[Body]]")
+#    p.item_names.should == ['Busy', 'Body']
   end
   
   context "add_item" do
@@ -48,6 +53,7 @@ describe Card::Pointer do
   context "watching" do
     it "not break on permissions" do
       watchers = Card.fetch_or_new "Home+*watchers"
+      watchers.typecode.should == 'Pointer'
       watchers.add_item User.current_user.card.name
       assert_equal '[[Joe User]]', watchers.content
     end

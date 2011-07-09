@@ -1,5 +1,5 @@
 module WqlTestHelper
-  class Card::Base
+  class Card
     def right_junctions_for_test
       right_junctions.sort_by {|x| x.name }
     end

@@ -9,7 +9,7 @@ class Shellbox
   end
 end
 
-class Renderer
+class Wagn::Renderer
   define_view(:naked, :type=>'script') do
     command = process_content( card.content )
     begin

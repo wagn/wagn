@@ -1,6 +1,6 @@
 class AddToggleAndPhrase < ActiveRecord::Migration
   def self.up     
-    Card::Base.reset_column_information
+    Card.reset_column_information
     Card::Basic.reset_column_information
     Card::Cardtype.reset_column_information
     if User.as :wagbot 

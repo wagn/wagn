@@ -6,7 +6,7 @@ module WagnTestHelper
   include CardBuilderMethods
  
   def setup_default_user
-    User.clear_cache
+    User.reset_cache
     
     # FIXME: should login as joe_user by default-- see what havoc it creates...
     @user = User.current_user = User.find_by_login('wagbot')
@@ -23,7 +23,7 @@ module WagnTestHelper
   end
  
   def get_renderer()
-    Renderer.new(Card.new(:name=>'dummy'))
+    Wagn::Renderer.new(Card.new(:name=>'dummy'))
   end
   
   def given_cards( *definitions )   
@@ -34,12 +34,12 @@ module WagnTestHelper
   # 
   # 
   # def card( name )
-  #   ::Card.find_by_name(name)
+  #   Card.find_by_name(name)
   # end
   
 
   def render_test_card( card )
-    Renderer.new(card).process_content()
+    Wagn::Renderer.new(card).process_content()
   end 
   
   def assert_difference(object, method = nil, difference = 1)
@@ -54,7 +54,7 @@ module WagnTestHelper
   
 
   def integration_login_as(user)
-    User.clear_cache
+    User.reset_cache
     
     case user.to_s 
       when 'anon'; #do nothing

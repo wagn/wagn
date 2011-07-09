@@ -1,4 +1,4 @@
-class Renderer
+class Wagn::Renderer
   define_view(:add_item, :type=>'pointer') do
     #ENGLISH
 #    if !card #or !card.limit or card.limit.to_i > (index.to_i+1)
@@ -33,7 +33,7 @@ class Renderer
 
   define_view(:naked, :type=>'pointer') do
     %{<div class="pointer-list"> #{
-      pointer_item(slot, (item_view||'closed')) }
+      pointer_item(self, (item_view||'closed')) }
 </div> #{ 
       link_to_function 'add/edit', %{editTransclusion(this)}, :class=>'add-edit-item'
     }} #ENGLISH

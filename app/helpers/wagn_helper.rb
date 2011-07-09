@@ -1,4 +1,5 @@
-require_dependency 'rich_html_renderer'
+#require_dependency 'rich_html_renderer'
+require 'diff'
 
 module WagnHelper
   require_dependency 'wiki_content'
@@ -8,13 +9,13 @@ module WagnHelper
   # Put the initialization in the controller and we no longer care here
   # whether it is a Slot or Renderer, and it will be from the parent class
   #   Now: Always a Renderer, and the subclass is selected by:
-  #     :format => :html (default and only -> RichHtmlRenderer (was Slot))
+  #     :format => :html (default and only -> Wagn::Renderer::RichHtml (was Slot))
 #  def slot() raise "slot is now self #{self}" end
 #  def get_slot(card=nil, context=nil, action=nil, opts={})
 #    raise "get_slot? #{card}, #{context}, #{action}, #{opts.inspect}"
 #  end
 #=begin
-  def slot() Renderer.current_slot end
+  def slot() Wagn::Renderer.current_slot end
   def card() @card ||= slot.card end
   def params()
     if controller 
@@ -31,11 +32,11 @@ module WagnHelper
     card ||= @card; context||=@context; action||=@action
     opts[:relative_content] = opts[:params] = (controller and params) or {}
     slot = case
-      when Renderer.current_slot
+      when Wagn::Renderer.current_slot
 #Rails.logger.info "current slot already exists.  nil_given = #{nil_given}"
-        nil_given ? Renderer.current_slot : Renderer.current_slot.subrenderer(card)
+        nil_given ? Wagn::Renderer.current_slot : Wagn::Renderer.current_slot.subrenderer(card)
       else
-        Renderer.current_slot = Renderer.new( card,
+        Wagn::Renderer.current_slot = Wagn::Renderer.new( card,
             opts.merge(:context=>context, :action=>action, :template=>self, :controller=>@controller) )
     end
     controller and controller.renderer = slot or slot
@@ -78,7 +79,7 @@ module WagnHelper
     if options[:url] =~ /^javascript\:/
       function << options[:url].gsub(/^javascript\:/,'')
     elsif options[:slot]
-      function << Renderer.current_slot.url_for(options[:url]).gsub(/^javascript\:/,'')
+      function << Wagn::Renderer.current_slot.url_for(options[:url]).gsub(/^javascript\:/,'')
     else
       url_options = options[:url]
       url_options = url_options.merge(:escape => false) if url_options.is_a?(Hash)
@@ -128,21 +129,21 @@ module WagnHelper
   end
 
   def formal_joint
-    " <span class=\"wiki-joint\">#{JOINT}</span> "
+    " <span class=\"wiki-joint\">+</span> "
   end
 
   def formal_title(card)
-    card.name.split(JOINT).join(formal_joint)
+    card.name.split('+').join(formal_joint)
   end
 
   def fancy_title(card)
     name = (String===card ? card : card.name)
     return name if name.simple?
-    card_title_span(name.left_name) + %{<span class="joint">#{JOINT}</span>} + card_title_span(name.tag_name)
+    card_title_span(name.left_name) + %{<span class="joint">+</span>} + card_title_span(name.tag_name)
   end
 
   def title_tag_names(card)
-    card.name.split(JOINT)
+    card.name.split('+')
   end
 
 
@@ -162,16 +163,15 @@ module WagnHelper
   end
 
   ## ----- for Linkers ------------------
-  def cardtype_options
-    Cardtype.createable_cardtypes.map do |cardtype|
-      #next(nil) if cardtype[:codename] == 'User' #or cardtype[:codename] == 'InvitationRequest'
-      [cardtype[:name], cardtype[:name]]
+  def typecode_options
+    Cardtype.createable_types.map do |type|
+      [type[:name], type[:name]]
     end.compact
   end
 
-  def cardtype_options_for_select(selected=Card.default_cardtype_key)
+  def typecode_options_for_select(selected=Card.default_typecode_key)
     #warn "SELECTED = #{selected}"
-    options_from_collection_for_select(cardtype_options, :first, :last, selected)
+    options_from_collection_for_select(typecode_options, :first, :last, selected)
   end
 
 
@@ -232,7 +232,7 @@ module WagnHelper
     return unless entries
     items = []
     items << navbox_item( :search, %{<a class="search-icon">&nbsp;</a>Search for: }, stub )
-    if !Cardtype.createable_cardtypes.empty? && !Card.exists?(stub)
+    if !Cardtype.createable_types.empty? && !Card.exists?(stub)
       items << navbox_item( :new, %{<a class="plus-icon">&nbsp;</a>Add new card: }, stub )
     end
     items += entries.map do |entry|
@@ -258,7 +258,7 @@ module WagnHelper
   end
 
   def wrap_slot(renderer=nil, args={}, &block)
-    renderer ||= (Renderer.current_slot || get_slot)
+    renderer ||= (Wagn::Renderer.current_slot || get_slot)
     concat( renderer.wrap(args) { capture{ yield(renderer) } } )
   end
   # ------------( helpers ) --------------

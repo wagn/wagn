@@ -1,4 +1,4 @@
-class Renderer
+class Wagn::Renderer
   define_view(:naked , :type=>'set') do
     div( :class=>'instruction' ) do
       Wagn::Pattern.label card.name
@@ -6,8 +6,9 @@ class Renderer
     '<br />' + #YUCK!
 
     content_tag(:h2, 'Settings') + # ENGLISH
-    subrenderer(Card::Search.new(
-      :name=>UUID.new.generate, 
+    subrenderer(Card.new(
+      :type=>'Search',
+      :skip_defaults=>true,
       :content=>%{{"prepend":"#{card.name}", "type":"Setting", "sort":"name", "limit":"100"}} 
     )).render(:content) +
     '<br />' + #YUCK!

@@ -1,18 +1,18 @@
 
-class Renderer
+class Wagn::Renderer
   define_view(:naked, :type=>'search') do
+    error=nil
     begin
       card.item_cards( paging_params )
     rescue Exception=>e
-      Rails.logger.info "Search Error (:naked) #{e.inspect} #{e.backtrace*"\n"}"
       error = e
     end
 
     case
     when card.results.nil?
-      %{#{error.class.to_s}: #{error.message}<br/>#{card.content}}
+      %{No results? #{error.class.to_s}: #{error&&error.message}<br/>#{card.content}}
     when card.spec[:return] =='count'
-      card.results
+      card.results.to_s
     else
       render('card_list')
     end
@@ -28,7 +28,6 @@ class Renderer
       card.item_cards( paging_params )
       total = card.count
     rescue Exception=>e
-      Rails.logger.info "Search Error (:closed_content) #{e.inspect} #{e.backtrace*"\n"}"
       error = e
       card.results = nil
     end
@@ -36,7 +35,7 @@ class Renderer
     if card.results.nil?
       %{"#{error.class.to_s}: #{error.message}"<br/>#{card.content}}
     elsif card.spec[:return] =='count'
-      card.results
+      card.results.to_s
     elsif card.results.length==0
       '<span class="faint">(0)</span>'
     else

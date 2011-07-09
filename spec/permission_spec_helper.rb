@@ -25,36 +25,34 @@ module PermissionSpecHelper
   end
   
   def assert_locked( card, msg='' )
-    assert_equal false, card.ok?(:edit), msg
+    assert_equal false, card.ok?(:update), msg
   end
   
   def assert_not_locked( card, msg='' )
-    assert_equal true, card.ok?(:edit), msg
+    assert_equal true, card.ok?(:update), msg
   end
 end
 
 ActiveSupport::TestCase.send :include, PermissionSpecHelper
 
 
-module Card
-  class Base
-    def writeable_by(user)
-      ::User.as(user) do
-        ok? :edit
-      end
+class Card
+  def writeable_by(user)
+    ::User.as(user) do
+      ok? :update
     end
-    
-    def readable_by(user)
-      ::User.as(user) do
-        ok? :read
-      end
-    end
-    
-    def appendable_by(user)
-      ::User.as(user) do
-        ok? :append
-      end
-    end 
   end
+    
+  def readable_by(user)
+    ::User.as(user) do
+      ok? :read
+    end
+  end
+    
+  def appendable_by(user)
+    ::User.as(user) do
+      ok? :append
+    end
+  end 
 end
  

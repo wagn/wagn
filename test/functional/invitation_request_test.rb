@@ -22,10 +22,9 @@ class InvitationRequestTest < ActionController::TestCase
  
 
   def test_should_redirect_to_invitation_request_landing_card 
-    post :create, :card=>{
+    post :create, :user=>{:email=>"jamaster@jay.net"}, :card=>{
       :type=>"Account Request",
       :name=>"Word Third",
-      :account=>{:email=>"jamaster@jay.net"},
       :content=>"Let me in!"
     }  
     assert_response 418
@@ -34,17 +33,16 @@ class InvitationRequestTest < ActionController::TestCase
   
   
   def test_should_create_invitation_request  
-    post :create, :card=>{
+    post :create, :user=>{:email=>"jamaster@jay.net"}, :card=>{
       :type=>"Account Request", 
       :name=>"Word Third", 
-      :account=>{:email=>"jamaster@jay.net"},
       :content=>"Let me in!"
-    }  
+    }
 
     @card =  Card.find_by_name("Word Third")   
     @user = @card.extension
     
-    assert_instance_of Card::InvitationRequest, @card
+    assert_equal @card.typecode, 'InvitationRequest'
 
     # this now happens only when created via account controller
     
@@ -57,30 +55,9 @@ class InvitationRequestTest < ActionController::TestCase
   def test_should_destroy_and_block_user  
     login_as :joe_user
     # FIXME: should test agains mocks here, instead of re-testing the model...
-    post :remove, :id=>Card.find_by_name('Ron Request').id
-    assert_equal nil, Card.find_by_name('Ron Request')
+    post :remove, :id=>Card.fetch('Ron Request').id
+    assert_equal nil, Card.fetch('Ron Request')
     assert_equal 'blocked', ::User.find_by_email('ron@request.com').status
   end
-  
-=begin DOES NOT AUTOMATICALLY HAPPEN ANY MORE.
-   def test_should_send_notification
-      User.as :wagbot  do
-        Card.create :name=>'*invite+*to', :content=> 'test@user.com'
-      end
-  #    System.invite_request_alert_email = 'test@user.com' if System.invite_request_alert_email.blank?
-      assert_difference ActionMailer::Base.deliveries, :size do
-        post :create, :card => {
-          :type=>"InvitationRequest", 
-          :name=>"Word Third",
-          :account=>{:email=>"jamaster@jay.net"},
-          :content=>"Let me in!"
-        }  
-      end     
-      mail = ActionMailer::Base.deliveries[-1]
-      pattern = /(http:[^\"]+)/
-      assert_match pattern, mail.body
-      mail.body =~ pattern
-      assert_equal "http://#{System.host}#{@controller.send(:url_for_page, "Word Third")}", $~[0]
-    end
-=end
+ 
 end

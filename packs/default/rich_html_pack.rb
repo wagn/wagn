@@ -1,4 +1,4 @@
-class RichHtmlRenderer
+class Wagn::Renderer::RichHtml
   define_view(:show) do
     if ajax_call?
       home_view = params[:home_view]=='closed' ? :open : params[:home_view]
@@ -68,6 +68,7 @@ class RichHtmlRenderer
 
   define_view(:edit) do |args|
     @state=:edit
+#    warn "card #{card.name} at view(:edit) = #{card.inspect}\ncard.content_template = #{card.content_template.inspect}"
     card.content_template ?  _render_multi_edit(args) : content_field(form)
   end
 
@@ -110,7 +111,7 @@ class RichHtmlRenderer
   
   <div class="field-in-multi">
     #{ self.content_field( form, :nested=>true ) }
-    #{ card.new_record? ? form.hidden_field(:type) : '' }
+    #{ card.new_record? ? form.hidden_field(:typecode) : '' }
   </div>
   #{if inst = card.setting_card('edit help')
     ss = self.subrenderer(inst); ss.state= :view

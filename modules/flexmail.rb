@@ -46,10 +46,6 @@ class Flexmail
     end
   end  
 
-  Wagn::Hook.add :after_update, '*all' do |card|
-    Flexmail.deliver_mail_for card
-  end
-
   Wagn::Hook.add :after_create, '*all' do |card|
     Flexmail.deliver_mail_for card
   end

@@ -24,13 +24,12 @@ module Wagn
 
       def rule_modules(card)
         @@subclasses.reverse.each do |subclass|
-          if subclass.pattern_applies?(card) and
-               mod = subclass.rule_module(card) and
-               mod =~ /::\w+$/ #and
-           Rails.logger.debug "rule_modules #{mod}"
-           if const = suppress(NameError) { eval( mod ) }
+          if subclass.pattern_applies?(card)     and
+                mod = subclass.rule_module(card) and
+                mod =~ /::\w+$/                  and
+              const = suppress(NameError) { eval( mod ) }
             yield const
-           end end
+          end
         end
       end
 
@@ -187,7 +186,7 @@ raise "no card" unless card
       def rule_module(card)
         return unless tagcard = Card.fetch(card.name.tag_name) and
                        tagkey = tagcard.key.gsub(/^\*/,'X')
-        Rails.logger.debug "rule_module RStar #{tagkey.camelcase}"
+        #Rails.logger.debug "rule_module RStar #{tagkey.camelcase}"
         "Wagn::Set::Rstar::#{tagkey.camelcase}" end
     end
     register_class self
@@ -204,11 +203,10 @@ raise "no card" unless card
       def method_key_from_opts(opts)   opts[:right].to_s.css_name+'_right'; end
       def label(name)                "Cards ending in +#{name.trunk_name}"; end
       def rule_module(card)
+        # this should be codename based
         return unless tagcard = Card.fetch(card.name.tag_name) and
                        tagkey = tagcard.key.gsub(/^\*/,'X')
-        Rails.logger.debug "rule_module Rname #{tagkey.camelcase}"
-        # this should be codename based, but it doesn't even work ...
-        #"Wagn::Set::Right::#{card.tag.codename.camelcase}"
+        #Rails.logger.debug "rule_module Rname #{tagkey.camelcase}"
         "Wagn::Set::Right::#{tagkey.camelcase}"
       end
     end
@@ -238,7 +236,7 @@ raise "no card" unless card
         return unless tagcard = Card.fetch(card.name.tag_name) and
                        tagkey = tagcard.key.gsub(/^\*/,'X')
 
-        Rails.logger.debug "rule_module LtypeRname #{left(card).typecode} #{tagkey.camelcase}"
+        #Rails.logger.debug "rule_module LtypeRname #{left(card).typecode} #{tagkey.camelcase}"
         "Wagn::Set::LTypeRight::#{left(card).typecode.camelcase+
                                   tagkey.camelcase}"
       end

@@ -5,11 +5,6 @@ module Wagn::Set::Type::Cardtype
     super
     base.send :after_save, :reset_cardtype_cache
   end
-  #def after_save_with_reset_cardtype_cache
-  #  reset_cardtype_cache
-  #  after_save_without_reset_cardtype_cache
-  #end
-  #alias_method_chain :after_save, :reset_cardtype_cache
                                      
   # codename should not change, but let't remove this with the codename refactor
   def codename

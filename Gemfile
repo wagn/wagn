@@ -18,7 +18,8 @@ gem 'json', '~>1.4.6'
 #gem 'userstamp', '~>2.0.1'
 
 #gem 'ruby-openid', '~>2.1.8'
-
+gem 'devise', '~>1.0.9'
+gem 'warden', '~>0.10.1'
 
 # ~~~~~~~~~ #
 # DATABASES #

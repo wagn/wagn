@@ -5,6 +5,8 @@ FORMAT_PATTERN = /#{FORMATS}/ unless defined? FORMAT_PATTERN
 ID_REQS = { :id => /([^\.]*(\.(?!(#{FORMATS})))?)*/, :format=>FORMAT_PATTERN }
 
 ActionController::Routing::Routes.draw do |map|
+  map.devise_for :accounts
+
 
   REST_METHODS = [:get, :post, :put, :delete]
 

@@ -44,7 +44,7 @@ class Card < ActiveRecord::Base
     self
   end
 
-
+  private
   def get_attributes
     #was getting this from column defs.  very slow.
     @attributes ||= {"name"=>"", "key"=>"", "codename"=>nil, "typecode"=>nil, "current_revision_id"=>nil,
@@ -85,63 +85,12 @@ class Card < ActiveRecord::Base
     self.trash=false
   end
   
-
-
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # INITIALIZATION METHODS
-
-    
-
-  def after_fetch
-    include_set_modules
-  end
   
+  
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # CLASS METHODS
 
-  def updater
-    User[updated_by]
-  end
-
-  def destroy!
-    # FIXME: do we want to overide confirmation by setting confirm_destroy=true here?
-    # This is aliased in Permissions, which could be related to the above comment
-    self.confirm_destroy = true
-    destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
-  end
-    
-  # apparently callbacks defined this way are called last.
-  # that's what we want for this one.  
-  def after_save 
-    if self.typecode == 'Cardtype'
-      Rails.logger.debug "Cardtype after_save resetting"
-      ::Cardtype.reset_cache
-    end
-#      Rails.logger.debug "Card#after_save end"
-    update_attachment
-    true
-  end
-      
-  def update_attachment # the module definition overrides this for card_attachements
-  end
-
-  private
-#    belongs_to :reader, :polymorphic=>true  
-    
-    def log(msg)
-      ActiveRecord::Base.logger.info(msg)
-    end
-    
-    def on_type_change
-    end  
-    
   public
-      
-
-
-
-
-
-
-
   class << self
     def include_type_module(typecode)
       #Rails.logger.info "include set #{typecode} called  #{Kernel.caller[0..4]*"\n"}"
@@ -150,22 +99,26 @@ class Card < ActiveRecord::Base
       suppress(NameError) { include eval "Wagn::Set::Type::#{typecode}" }
     end
     
-
-    def find_or_create!(args={})
+    def find_or_create!(args={})  # DEPRECATED
       find_or_create(args) || raise(ActiveRecord::RecordNotSaved)
     end
     
-    def find_or_create(args={})
+    def find_or_create(args={})  # DEPRECATED
+      Rails.logger.info "DEPRECATED: Card#find_or_create; please use Card#fetch_or_create"
       raise "find or create must have name" unless args[:name]
       Card.fetch_or_create(args[:name], {}, args)
     end
     
-    def find_or_new(args={})
+    def find_or_new(args={}) #DEPRECATED
+      Rails.logger.info "DEPRECATED: Card#find_or_new; please use Card#fetch_or_new"
       raise "find_or_new must have name" unless args[:name]
       Card.fetch_or_new(args[:name], {}, args)
     end
-                        
   end
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # STANDARD SAVING
+
 
   def save_with_trash!
     save || raise(errors.full_messages.join('. '))
@@ -190,7 +143,22 @@ class Card < ActiveRecord::Base
     @new_record = false
     self.before_validation_on_create
   end
+
+  # FIXME Should be in modules
+  def after_save 
+    if self.typecode == 'Cardtype'
+      Rails.logger.debug "Cardtype after_save resetting"
+      ::Cardtype.reset_cache
+    end
+#      Rails.logger.debug "Card#after_save end"
+    update_attachment
+    true
+  end
   
+
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # MULTI STUFF (not long for this world)
 
   def multi_create(cards)
     Wagn::Hook.call :before_multi_create, self, cards
@@ -228,9 +196,11 @@ class Card < ActiveRecord::Base
     Wagn::Hook.call :after_multi_save, self, cards
   end
 
-  def new_card?
-    new_record? || from_trash
-  end
+
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # DESTROY
+  
 
   def destroy_with_trash(caller="")     
     if callback(:before_destroy) == false
@@ -251,8 +221,7 @@ class Card < ActiveRecord::Base
   alias_method_chain :destroy, :trash
           
   def destroy_with_validation
-    errors.clear 
-    
+    errors.clear
     validate_destroy
     
     if !dependents.empty? && !confirm_destroy
@@ -266,13 +235,87 @@ class Card < ActiveRecord::Base
       end
     end
 
-    if errors.empty?
-      destroy_without_validation
-    else
-      return false
-    end
+    errors.empty? ? destroy_without_validation : false
   end
   alias_method_chain :destroy, :validation
+
+
+  def destroy!
+    # FIXME: do we want to overide confirmation by setting confirm_destroy=true here?
+    self.confirm_destroy = true
+    destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
+  end
+
+
+
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # CONTENT / REVISIONS
+
+
+  def content
+    c = cached_revision
+    c.new_record? ? "" : c.content
+  end
+
+  def cached_revision
+    #return current_revision || Revision.new
+    case
+    when (@cached_revision and @cached_revision.id==current_revision_id); 
+    when (@cached_revision=Card.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
+    else
+      @cached_revision = current_revision_id ? Revision.find(current_revision_id) : Revision.new
+      Card.cache.write("#{key}-content", @cached_revision)
+    end
+    @cached_revision
+  end
+
+  def previous_revision(revision)
+    rev_index = revisions.each_with_index do |rev, index| 
+      rev.id == revision.id ? (break index) : nil 
+    end
+    (rev_index.nil? || rev_index==0) ? nil : revisions[rev_index - 1]
+  end
+   
+  def revised_at
+    (cached_revision && cached_revision.updated_at) || Time.now
+  end
+
+  def updater
+    User[updated_by]
+  end
+
+    
+
+      
+  def update_attachment # the module definition overrides this for card_attachements
+  end
+
+  def on_type_change
+  end  
+      
+  def after_fetch
+    include_set_modules
+  end
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  def new_card?
+    new_record? || from_trash
+  end
+
+
   
 
    
@@ -337,35 +380,9 @@ class Card < ActiveRecord::Base
     revisions.create(:content=>content)
   end
 
-  def previous_revision(revision)
-    revision_index = revisions.each_with_index do |rev, index| 
-      if rev.id == revision.id 
-        break index 
-      else
-        nil
-      end
-    end
-    if revision_index.nil? or revision_index == 0
-      nil
-    else
-      revisions[revision_index - 1]
-    end
-  end
-   
-  def revised_at
-    if cached_revision && rtime = cached_revision.updated_at
-      rtime
-    else
-      Time.now
-    end
-  end
+
 
   # Dynamic Attributes ------------------------------------------------------        
-  def skip_defaults?
-    # when Calling Card.new don't set defaults.  this is for performance reasons when loading
-    # missing cards. 
-    !!skip_defaults  ##ok.  but this line is bizarre.
-  end
 
   def known?(   )   !(new_card? && !virtual?)  end
   def virtual?( )   @virtual                   end
@@ -373,28 +390,9 @@ class Card < ActiveRecord::Base
   def junction?()   n=name and n.junction?     end
   def star?(    )   n=name and n.star?         end
   
-  def content   
-    #ok!(:read) if !new_card?
-    c = cached_revision
-    c.new_record? ? "" : c.content
-  end
   
-  def cached_revision
-    #return current_revision || get_blank_revision
-    
-    case
-    when (@cached_revision and @cached_revision.id==current_revision_id); 
-    when (@cached_revision=Card.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
-    else
-      @cached_revision = current_revision_id ? Revision.find(current_revision_id) : get_blank_revision
-      Card.cache.write("#{key}-content", @cached_revision)
-    end
-    @cached_revision
-  end
+
   
-  def get_blank_revision
-    @blank_revision ||= Revision.new
-  end
   
   def raw_content
     templated_content || content
@@ -466,7 +464,10 @@ class Card < ActiveRecord::Base
     self.name_without_key_sync = name
   end
   alias_method_chain :name=, :key_sync
-    
+
+
+
+
 
   validates_presence_of :name
   validates_associated :extension #1/2 ans:  this one runs the user validations on user cards. 
@@ -487,7 +488,6 @@ class Card < ActiveRecord::Base
         condition_sql << " AND cards.id <> ?" 
         condition_params << rec.id
       end
-      warn "validating name for #{rec.name};  condition_params = #{condition_params.inspect}"
       if c = Card.find(:first, :conditions=>[condition_sql, *condition_params])
         rec.errors.add :name, "must be unique-- A card named '#{c.name}' already exists"
       end

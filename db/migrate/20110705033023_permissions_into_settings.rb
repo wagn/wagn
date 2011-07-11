@@ -102,6 +102,7 @@ class PermissionsIntoSettings < ActiveRecord::Migration
           could = card.who_could(task)
           can = card.who_can(task==:edit ? :update : task)
           if could && could != can
+            card.repair_key if card.key != card.name.to_key
             new_rule = create_rule "#{card.name}+*self", task, Card.fetch(could.first, :skip_after_fetch=>true)
             execute "update cards set read_rule_id=#{new_rule.id}, read_rule_class='*self' " + 
               " where trash is false and id=#{card.id}" if task == :read
@@ -120,11 +121,13 @@ class PermissionsIntoSettings < ActiveRecord::Migration
     Card.find(:all, :conditions=>'trash is false').each do |card|
       begin
         rule = card.setting_card('*read')
-        next if rule.name.tag_name = card.read_rule_class
+        next if rule.name.trunk_name.tag_name == card.read_rule_class
+        card.repair_key if card.key != card.name.to_key
         puts "updating read rule for #{card.name};  rule tag_name = #{rule.name.tag_name}, read_rule_class = #{card.read_rule_class}"
         card.update_read_rule
         success_count+=1
-      rescue
+      rescue Exception=>e
+        fail "FAILURE creating #{card.name}+*self:\n  #{e.inspect}\n\n"
         failed_read_rules << card.name
 #        puts "FAILURE - did not update read rule for #{card.name}"
       end

@@ -1,28 +1,6 @@
 class Card < ActiveRecord::Base
-  def destroy!
-    # FIXME: do we want to overide confirmation by setting confirm_destroy=true here?
-    # This is aliased in Permissions, which could be related to the above comment
-    self.confirm_destroy = true
-    destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
-  end
-  include Wagn::Model
-
-  #
-  # == Associations
-  #  
-  # Given cards A, B and A+B     
-  # 
-  # trunk::  from the point of f of A+B,  A is the trunk  
-  # tag::  from the point of view of A+B,  B is the tag
-  # left_junctions:: from the point of view of B, A+B is a left_junction (the A+ part is on the left)  
-  # right_junctions:: from the point of view of A, A+B is a right_junction (the +B part is on the right)  
-  #
-  set_table_name 'cards'
-                                         
-  # FIXME:  this is ugly, but also useful sometimes... do in a more thoughtful way maybe?
   cattr_accessor :debug, :cache
   Card.debug = false
-
    
   belongs_to :trunk, :class_name=>'Card', :foreign_key=>'trunk_id' #, :dependent=>:dependent
   has_many   :right_junctions, :class_name=>'Card', :foreign_key=>'trunk_id'#, :dependent=>:destroy  
@@ -34,23 +12,100 @@ class Card < ActiveRecord::Base
   has_many   :revisions, :order => 'id', :foreign_key=>'card_id'
 
   belongs_to :extension, :polymorphic=>true
-
-#  belongs_to :updater, :class_name=>'::User', :foreign_key=>'updated_by'
+  before_destroy :destroy_extension
 
   has_many :permissions, :foreign_key=>'card_id' #, :dependent=>:delete_all
-
-  before_destroy :destroy_extension
-               
     
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
     :from_trash, :update_referencers, :allow_typecode_change, :virtual,
     :broken_type, :loaded_trunk, :blank_revision, 
     :attachment_id #should build flexible handling for this kind of set-specific attr
 
-  cache_attributes('name', 'typecode', 'trash')
+  cache_attributes('name', 'typecode', 'trash')    
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # INITIALIZATION METHODS
   
+  def initialize(args={})
+    args ||= {}
+    args = args.stringify_keys # evidently different from args.stringify_keys!
+    args.delete 'id' # replaces slow handling of protected fields
+    typename, skip_defaults = ['type', 'skip_defaults'].map{|k| args.delete k }
+
+    @attributes = get_attributes   
+    @attributes_cache = {}
+    @new_record = true
+    self.send :attributes=, args, false
+    self.typecode = get_typecode(args['name'], typename) unless args['typecode']
+
+    include_set_modules unless missing?
+    set_defaults( args ) unless skip_defaults
+    callback(:after_initialize) if respond_to_without_attributes?(:after_initialize)
+    self
+  end
+
+
+  def get_attributes
+    #was getting this from column defs.  very slow.
+    @attributes ||= {"name"=>"", "key"=>"", "codename"=>nil, "typecode"=>nil, "current_revision_id"=>nil,
+      "trunk_id"=>nil,  "tag_id"=>nil, "indexed_content"=>nil,"indexed_name"=>nil, "references_expired"=>nil,
+      "read_rule_class"=>nil, "read_rule_id"=>nil, "extension_type"=>nil,"extension_id"=>nil,
+      "created_at"=>nil, "created_by"=>nil, "updated_at"=>nil,"updated_by"=>nil, "trash"=>nil
+    }
+  end
+
+
+  def get_typecode(name, typename)
+    begin ; return Cardtype.classname_for(typename) if typename
+    rescue; self.broken_type = typename
+    end
+    (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
+  end
+
+
+  def include_set_modules
+    singleton_class.include_type_module(typecode)  
+  end
+
+  
+  def set_defaults args
+    if args["name"].blank? and autoname_card = setting_card('autoname')
+      User.as(:wagbot) do
+        self.name = autoname_card.content
+        autoname_card.content = autoname_card.content.next  #fixme, should give placeholder on new, do next and save on create
+        autoname_card.save!
+      end
+    end
+
+    if (self.content.nil? || self.content.blank?)
+      self.content = setting('content', 'default')
+    end
+
+    self.key = name.to_key if name
+    self.trash=false
+  end
+  
+
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # INITIALIZATION METHODS
+
+    
+
+  def after_fetch
+    include_set_modules
+  end
+  
+
   def updater
     User[updated_by]
+  end
+
+  def destroy!
+    # FIXME: do we want to overide confirmation by setting confirm_destroy=true here?
+    # This is aliased in Permissions, which could be related to the above comment
+    self.confirm_destroy = true
+    destroy or raise Wagn::Oops, "Destroy failed: #{errors.full_messages.join(',')}"
   end
     
   # apparently callbacks defined this way are called last.
@@ -80,85 +135,12 @@ class Card < ActiveRecord::Base
     
   public
       
-  
-  def set_defaults args
-    #warn "Card(#{name})#set_defaults"
-    # autoname
-    if args["name"].blank? and autoname_card = setting_card('autoname')
-      User.as(:wagbot) do
-        self.name = autoname_card.content
-        autoname_card.content = autoname_card.content.next  #fixme, should give placeholder on new, do next and save on create
-        autoname_card.save!
-      end
-    end
-
-    #default content
-    if (self.content.nil? || self.content.blank?)
-      self.content = setting('content', 'default')
-    end
-
-    self.key = name.to_key if name
-    self.trash=false
-  end
-    
-  # Creation & Destruction --------------------------------------------------
-  #alias_method :ar_new, :new
-
-  
-
-  def initialize(args={})
-    #warn "initializing with args: #{args.inspect}"
-    args ||= {}
-    args = args.stringify_keys # evidently different from args.stringify_keys!
-    args.delete 'id' # replaces slow handling of protected fields
-    typename, skip_defaults = ['type', 'skip_defaults'].map{|k| args.delete k }
-
-    @attributes = get_attributes   
-    @attributes_cache = {}
-    @new_record = true
-    self.send :attributes=, args, false
-    self.typecode = get_typecode(args['name'], typename) unless args['typecode']
-
-    include_set_modules unless missing?
-    set_defaults( args ) unless skip_defaults
-    callback(:after_initialize) if respond_to_without_attributes?(:after_initialize)
-    self
-  end
-  
-  def get_typecode(name, typename)
-    begin ; return Cardtype.classname_for(typename) if typename
-    rescue; self.broken_type = typename
-    end
-    (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
-  end
 
 
-  def get_attributes
-    #was getting this from column defs.  very slow.
-    @attributes ||= {"name"=>"", "key"=>"", "codename"=>nil, "typecode"=>nil, "current_revision_id"=>nil,
-      "trunk_id"=>nil,  "tag_id"=>nil, "indexed_content"=>nil,"indexed_name"=>nil, "references_expired"=>nil,
-      "read_rule_class"=>nil, "read_rule_id"=>nil, "extension_type"=>nil,"extension_id"=>nil,
-      "created_at"=>nil, "created_by"=>nil, "updated_at"=>nil,"updated_by"=>nil, "trash"=>nil
-    }
-  end
 
-    
 
-  def after_fetch
-    include_set_modules
-  end
-  
-  def include_set_modules
-    singleton_class.include_type_module(typecode)  
-  end
-  
-=begin
-  def include_singleton_modules
-#    warn "include singleton mod for #{name}"
-    singleton_class.include_type_module(typecode)
-    #after_include if respond_to? :after_include
-  end
-=end
+
+
 
   class << self
     def include_type_module(typecode)
@@ -467,6 +449,12 @@ class Card < ActiveRecord::Base
     })
   end
 
+
+
+
+  include Wagn::Model
+
+
   # Because of the way it chains methods, 'tracks' needs to come after
   # all the basic method definitions, and validations have to come after
   # that because they depend on some of the tracking methods.
@@ -492,11 +480,14 @@ class Card < ActiveRecord::Base
 
       # validate uniqueness of name
       condition_sql = "cards.key = ? and trash=?"
-      condition_params = [ value.to_key, false ]   
+      condition_params = [ value.to_key, false ]
+      
+       
       unless rec.new_record?
         condition_sql << " AND cards.id <> ?" 
         condition_params << rec.id
       end
+      warn "validating name for #{rec.name};  condition_params = #{condition_params.inspect}"
       if c = Card.find(:first, :conditions=>[condition_sql, *condition_params])
         rec.errors.add :name, "must be unique-- A card named '#{c.name}' already exists"
       end
@@ -584,7 +575,6 @@ class Card < ActiveRecord::Base
     t = @attributes_cache['trash']
     t.nil? ? (@attributes_cache['trash'] = Card.columns_hash['trash'].type_cast(@attributes['trash'])) : t
   end
-  
   
 end  
 

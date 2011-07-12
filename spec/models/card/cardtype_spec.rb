@@ -175,7 +175,7 @@ describe User, "Joe User" do
     User.as :joe_user
     @user = User[:joe_user]
     Cardtype.reset_cache
-    @cardtype_names = Cardtype.createable_types.map{ |ct| ct[:name] }
+    @typenames = Cardtype.createable_types.map{ |ct| ct[:name] }
   end
 
   it "should not have r3 permissions" do
@@ -185,10 +185,10 @@ describe User, "Joe User" do
     Card.new(:type=>'Cardtype F').ok?(:create).should be_false
   end
   it "should not find Cardtype F on its list of createable cardtypes" do
-    @cardtype_names.member?('Cardtype F').should be_false
+    @typenames.member?('Cardtype F').should be_false
   end
   it "should find Basic on its list of createable cardtypes" do
-    @cardtype_names.member?('Basic').should be_true
+    @typenames.member?('Basic').should be_true
   end
   
 end

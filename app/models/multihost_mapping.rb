@@ -1,12 +1,7 @@
 class MultihostMapping < ActiveRecord::Base
   set_table_name 'public.multihost_mappings'
-  @@cache = {}
   
   class << self
-    def reset_cache
-      @@cache = {:name=>{},:host=>{}}
-    end
-    
     def map_from_name(wagn_name)
       System.wagn_name = wagn_name or fail "map_from_name called without name"
       @@cache[:name][wagn_name] ||= begin
@@ -23,6 +18,10 @@ class MultihostMapping < ActiveRecord::Base
       set_base_url(mapping)
       set_connection(wagn_name)
     end
+
+    def reset_cache
+      @@cache = {:name=>{},:host=>{}}
+    end
     
     private
     
@@ -34,5 +33,7 @@ class MultihostMapping < ActiveRecord::Base
       ActiveRecord::Base.connection.schema_search_path = wagn_name
     end
   end
+  
+  reset_cache
 end
 

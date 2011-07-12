@@ -5,8 +5,6 @@ module Wagn end
 
 module Wagn::Configuration
   def wagn_load
-    # set_rails_config
-    #rails_config.active_record.observers = :card_observer
     self.cache_store = :file_store, "#{RAILS_ROOT}/tmp/cache"
     self.frameworks -= [ :action_web_service ]
     require 'yaml'
@@ -18,7 +16,6 @@ module Wagn::Configuration
       :secret => db[RAILS_ENV]['secret']
     }
     STDERR << "----------- Wagn Loaded -----------\n"
-    #Rails.logger.info("\n----------- Wagn Load Complete -----------\n\n")
   end
 
   class << self
@@ -27,11 +24,11 @@ module Wagn::Configuration
       wagn_setup_multihost
       wagn_load_modules
       Wagn::Cache.initialize_on_startup
-      STDERR << "----------- Wagn Rolling -----------\n\n\n"
+      Rails.logger.info << "----------- Wagn Rolling -----------\n\n\n"
     end
 
     def wagn_load_config
-      STDERR << "Load config ...\n"
+      Rails.logger.debug << "Load config ...\n"
       config_dir = "#{RAILS_ROOT}/config/"
       ['sample_wagn.rb','wagn.rb'].each do |filename|
         require_dependency config_dir+filename if File.exists? config_dir+filename

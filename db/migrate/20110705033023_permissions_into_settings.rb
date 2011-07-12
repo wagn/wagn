@@ -82,7 +82,7 @@ class PermissionsIntoSettings < ActiveRecord::Migration
           if could && could != can
             new_rule = create_rule "#{base_name}+*right", task, Card.fetch(could.first, :skip_after_fetch=>true)
             execute "update cards set read_rule_id=#{new_rule.id}, read_rule_class='*right' " + 
-              " where trash is false and tag_id=#{card.id}" if task == :read
+              " where trash is false and tag_id=#{Card[base_name].id}" if task == :read
           end
         rescue
           puts "FAILURE creating #{card.name}+*right"

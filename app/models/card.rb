@@ -283,6 +283,11 @@ class Card < ActiveRecord::Base
       correct_key = name.to_key
       current_key = key
       return self if current_key==correct_key
+      
+      if key_blocker = find_by_key_and_trash(correct_key, true)
+        key_blocker.name = key_blocker.name + "*trash#{rand(4)}"
+        key_blocker.save
+      end
 
       saved =   ( self.key  = correct_key and self.save! )
       saved ||= ( self.name = current_key and self.save! )
@@ -291,6 +296,7 @@ class Card < ActiveRecord::Base
       self
     end
   rescue
+    Rails.logger.debug "FAILED TO REPAIR BROKEN KEY: #{key}"
     self
   end
 

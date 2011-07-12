@@ -4,6 +4,6 @@ describe "Render", ActiveSupport::TestCase do
   include RubyProf::Test
   
   it "render" do
-    Renderer.new( Card.new( :name => "hi", :content => "{{+plus1}} {{+plus2}} {{+plus3}}" )).render :naked
+    Wagn::Renderer.new( Card.new( :name => "hi", :content => "{{+plus1}} {{+plus2}} {{+plus3}}" )).render :naked
   end
 end

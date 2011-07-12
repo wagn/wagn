@@ -15,7 +15,7 @@
     <p>{{_left+tags}}</p>
     </blockquote>
     <p>&nbsp;</p>
-  - HardTemplate
+  - 
 - - "*outgoing+*rform"
   - Basic
   - |-
@@ -33,7 +33,7 @@
     <blockquote>
     <p>{{_left+tags}}</p>
     </blockquote>
-  - HardTemplate
+  - 
 - - "*plusses+*rform"
   - Basic
   - |-
@@ -48,7 +48,7 @@
     <blockquote>
     <p>{{_left+*plus parts}}</p>
     </blockquote>
-  - HardTemplate
+  - 
 - - "*incoming+*rform"
   - Basic
   - |-
@@ -66,11 +66,11 @@
     <blockquote>
     <p>{{_left+*tagged}}</p>
     </blockquote>
-  - HardTemplate
+  - 
 - - "*tagged+*rform"
   - Search
   - "{\"right_plus\":[\"tags\", {\"refer_to\":\"_self\"}]}"
-  - HardTemplate
+  - 
 - - "*related"
   - Pointer
   - |-

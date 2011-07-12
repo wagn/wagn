@@ -1,4 +1,4 @@
-class RssRenderer
+class Wagn::Renderer::Rss
   define_view(:show) do
     
     xml = Builder::XmlMarkup.new
@@ -11,7 +11,7 @@ class RssRenderer
         xml.link card_url(card)
         begin
 
-          cards = if Card::Search === card
+          cards = if card.typecode == 'Search'
             card.item_cards( :limit => 25, :_keyword=>params[:_keyword] )
             card.results
           else

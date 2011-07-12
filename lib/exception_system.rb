@@ -1,3 +1,7 @@
+module Wagn
+  include Exceptions
+end
+
 module ExceptionSystem
   def rescue_action( exception )
     log_error(exception) if logger
@@ -62,5 +66,4 @@ module ExceptionSystem
     request.xhr?
   end
   
-
 end

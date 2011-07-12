@@ -5,7 +5,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 # test because it has a very special code path that is really very limited.  It gets
 # internal links expanded in html or xml style, and prety much ignores any other output.
 #
-class RendererTest < ActiveSupport::TestCase
+class Wagn::RendererTest < ActiveSupport::TestCase
   include ChunkTestHelper
   
   #attr_accessor :controller
@@ -16,7 +16,7 @@ class RendererTest < ActiveSupport::TestCase
 
   def test_replace_references_should_work_on_inclusions_inside_links       
     card = Card.create!(:name=>"test", :content=>"[[test{{test}}]]"  )    
-    assert_equal "[[test{{best}}]]", Renderer.new(card).replace_references( "test", "best" )
+    assert_equal "[[test{{best}}]]", Wagn::Renderer.new(card).replace_references( "test", "best" )
   end
 
   def controller
@@ -27,7 +27,7 @@ class RendererTest < ActiveSupport::TestCase
   end
 
   def slot_link(card, format=:html)
-    render = Renderer.new(card, :context=>"nocontext", :format=>format).render(:content)
+    render = Wagn::Renderer.new(card, :context=>"nocontext", :format=>format).render(:content)
     m = render.match(/<(cardref|link|a) class.*<\/(cardref|link|a)>/)
 Rails.logger.info("slot_link(#{card.name},#{card.class}) #{m}, #{m.inspect} R:#{render}")
     (m.to_s != "") ? m.to_s : render

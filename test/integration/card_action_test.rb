@@ -32,11 +32,9 @@ class CardActionTest < ActionController::IntegrationTest
 
   def test_comment      
     User.as(:wagbot)  do
-      @a = Card.find_by_name("A")  
-      @a.permit('comment', Role[:anon])
-      @a.save!
+      Card.create :name=>'A+*self+*comment', :type=>'Pointer', :content=>'[[Anyone]]'
     end
-    post "card/comment/#{@a.id}", :card => { :comment=>"how come" }
+    post "card/comment/A", :card => { :comment=>"how come" }
     assert_response :success
   end
 
@@ -44,14 +42,15 @@ class CardActionTest < ActionController::IntegrationTest
     integration_login_as :admin
     post( 'card/create', :card=>{:content=>"test", :type=>'Role', :name=>"Editor"})
     assert_response 418
-    assert_instance_of Card::Role, Card.find_by_name('Editor')
+
+    assert Card.find_by_name('Editor').typecode == 'Role'
     assert_instance_of Role, Role.find_by_codename('Editor')
   end
 
   def test_create_cardtype_card
     post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor2"} )
     assert_response 418
-    assert_instance_of Card::Cardtype, Card.find_by_name('Editor2')
+    assert Card.find_by_name('Editor2').typecode == 'Cardtype'
     assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor2')
   end
 

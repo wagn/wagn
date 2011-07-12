@@ -1,4 +1,4 @@
-class Renderer
+class Wagn::Renderer
   define_view(:raw, :name=>'*head') do
     rcard = root.card  # should probably be more explicit that this is really the *main* card.
     title = rcard.name
@@ -10,13 +10,13 @@ class Renderer
     ]
     
     #Universal Edit Button
-    if !rcard.new_record? && rcard.ok?(:edit)
+    if !rcard.new_record? && rcard.ok?(:update)
       bits << %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="/card/edit/#{ rcard.name.to_url_key }"/>}
     end
     
     # RSS
-    if Card::Search === rcard
-      rss_href = rcard.name=='*search' ? "/search/#{ params[:_keyword] }.rss" : @template.url_for_page( rcard.name, :format=>:rss )
+    if rcard.typecode == 'Search'
+      rss_href = rcard.name=='*search' ? "/search/#{ params[:_keyword] }.rss" : template.url_for_page( rcard.name, :format=>:rss )
       bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{rss_href} />}
     end
     

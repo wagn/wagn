@@ -1,29 +1,5 @@
-=begin
-
-# this one sucks:
-select type, name, 
-(
-  select count(*) from cards    
-  WHERE cards.trash='f' AND cards.id in (
-    select trunk_id from cards    
-    WHERE cards.trash='f' AND cards.tag_id in (
-      select id from cards WHERE cards.trash='f' AND cards.id=t0.id
-    )   
-  ) 
-) as count 
-from cards t0 order by count desc limit 10;
-
+class Wql
   
-# this one works:
-  
- select id, trunk_id, created_at, value, updated_at, current_revision_id, name, type, extension_id, extension_type, sealed, created_by, updated_by, priority, plus_sidebar, reader_id, writer_id, reader_type, writer_type, old_tag_id, tag_id, key, trash, appender_type, appender_id, indexed_content, indexed_name, count(*) 
- from cards join cards c2 on c2.tag_id=cards.id 
- group by cards.*
- order by count(*) desc limit 10;  
-  
-=end
-
-class Wql    
   ATTRIBUTES = {
     :basic=> %w{ name type content id key extension_type extension_id updated_by },
     :system => %w{ trunk_id tag_id },
@@ -56,6 +32,7 @@ class Wql
   }
       
   DEFAULT_ORDER_DIRS =  {
+    "id" => "asc",
     "update" => "desc",
     "create" => "asc",
     "alpha" => "asc", # DEPRECATED
@@ -102,7 +79,7 @@ class Wql
         card.nil? ? Card.find_by_name_and_trash(row['name'],false).repair_key : card
       end
     when :count
-      rows.first['count']
+      rows.first['count'].to_i
     else
       rows.map { |row| row[query[:return].to_s] }
     end
@@ -302,7 +279,7 @@ class Wql
     def found_by(val)
       cards = (String===val ? [Card.fetch_or_new(absolute_name(val))] : Wql.new(val).run)
       cards.each do |c|
-        raise %{"found_by" value needs to be valid Search card #{c.inspect}} unless c && ['Search','Set'].include?(c.type)
+        raise %{"found_by" value needs to be valid Search card #{c.inspect}} unless c && ['Search','Set'].include?(c.typecode)
         found_by_spec = CardSpec.new(c.get_spec).spec
         merge(field(:id) => subspec(found_by_spec))
       end
@@ -509,14 +486,8 @@ Rails.logger.debug "count iter(#{relation.inspect} #{subspec.inspect})"
       
       # Permissions       
       t = table_alias
-      unless System.always_ok? or (Wql.root_perms_only && !root?)
-        user_roles = [Role[:anon].id]
-        unless User.as_user.login.to_s=='anon'
-          user_roles += [Role[:auth].id] + User.as_user.roles.map(&:id)
-        end                                                                
-        user_roles = user_roles.map(&:to_s).join(',')
-        # type!=User is about 6x faster than type='Role'...
-        sql.conditions << %{ (#{t}.reader_type!='User' and #{t}.reader_id IN (#{user_roles})) }
+      unless System.always_ok? or (Wql.root_perms_only && !root?) #or ENV['BOOTSTRAP_DUMP'] == 'true'
+        sql.conditions << %{ (#{t}.read_rule_id IN (#{::User.as_user.read_rule_ids.join ','})) }
       end
             
       # Order 
@@ -525,6 +496,7 @@ Rails.logger.debug "count iter(#{relation.inspect} #{subspec.inspect})"
         dir = @mods[:dir].blank? ? (DEFAULT_ORDER_DIRS[order_key]||'desc') : @mods[:dir]
         sql.order = "ORDER BY "
         sql.order << case order_key
+          when "id";              "#{table_alias}.id #{dir}"
           when "update";          "#{table_alias}.updated_at #{dir}"
           when "create";          "#{table_alias}.created_at #{dir}"
           when "count" ;          "count(*) #{dir}, #{table_alias}.name asc"
@@ -628,8 +600,9 @@ Rails.logger.debug "count iter(#{relation.inspect} #{subspec.inspect})"
         @cardspec.sql.joins << "join revisions r3 on r3.id=#{@cardspec.table_alias}.current_revision_id"
         field = 'r3.content'
       when "type"
+        field = 'typecode'
         v = [v].flatten.map do |val| 
-          Cardtype.classname_for(  val.is_a?(Card::Base) ? val.name : val  )
+          Cardtype.classname_for(  val.is_a?(Card) ? val.name : val  )
         end
         v = v[0] if v.length==1
       when "cond"

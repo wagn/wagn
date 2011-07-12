@@ -1,16 +1,24 @@
 class MultihostMapping < ActiveRecord::Base
   set_table_name 'public.multihost_mappings'
+  @@cache = {}
   
   class << self
-    def map_from_environment(wagn_name)
-      System.wagn_name = wagn_name or fail "cannot map from environment without WAGN environmental variable"
-      mapping = find_by_wagn_name(wagn_name) or fail "unknown wagn: #{wagn_name}"
-      set_base_url(mapping)
+    def reset_cache
+      @@cache = {:name=>{},:host=>{}}
+    end
+    
+    def map_from_name(wagn_name)
+      System.wagn_name = wagn_name or fail "map_from_name called without name"
+      @@cache[:name][wagn_name] ||= begin
+        find_by_wagn_name(wagn_name) or fail "unknown wagn: #{wagn_name}"
+      end
+      set_base_url(@@cache[:name][wagn_name])
       set_connection(wagn_name)
     end
     
     def map_from_request(request)
-      mapping = find_by_requested_host(request.host) or return false
+      @@cache[:host][request.host] ||= find_by_requested_host(request.host)
+      mapping=@@cache[:host][request.host] or return false
       wagn_name = System.wagn_name = mapping.wagn_name
       set_base_url(mapping)
       set_connection(wagn_name)

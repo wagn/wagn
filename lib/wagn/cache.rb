@@ -76,6 +76,7 @@ module Wagn
         Role.reset_cache
         Wagn::Pattern.reset_cache
         Cardtype.reset_cache
+        MultihostMapping.reset_cache
         Card.cache.reset
         reset_local
       end

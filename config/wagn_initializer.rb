@@ -42,7 +42,7 @@ module Wagn::Configuration
     def wagn_setup_multihost
       if System.multihost and wagn_name=ENV['WAGN']
         Rails.logger.info("------- Multihost.  Wagn Name = #{ENV['WAGN']} -------")
-        MultihostMapping.map_from_environment(wagn_name)
+        MultihostMapping.map_from_name(wagn_name)
       end
     end
 

@@ -44,6 +44,10 @@ class Card < ActiveRecord::Base
     self
   end
 
+  def new_card?()  new_record? || from_trash  end
+  def known?()    !(new_card? && !virtual?)   end
+  def virtual?()   @virtual                   end
+
   private
   def get_attributes
     #was getting this from column defs.  very slow.
@@ -54,7 +58,6 @@ class Card < ActiveRecord::Base
     }
   end
 
-
   def get_typecode(name, typename)
     begin ; return Cardtype.classname_for(typename) if typename
     rescue; self.broken_type = typename
@@ -62,11 +65,9 @@ class Card < ActiveRecord::Base
     (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
   end
 
-
   def include_set_modules
     singleton_class.include_type_module(typecode)  
   end
-
   
   def set_defaults args
     if args["name"].blank? and autoname_card = setting_card('autoname')
@@ -200,9 +201,8 @@ class Card < ActiveRecord::Base
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # DESTROY
-  
-
-  def destroy_with_trash(caller="")     
+ 
+   def destroy_with_trash(caller="")     
     if callback(:before_destroy) == false
       errors.add(:destroy, "could not prepare card for destruction")
       return false 
@@ -247,15 +247,81 @@ class Card < ActiveRecord::Base
   end
 
 
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # NAME / RELATED NAMES
+
+
+  def simple?(  )   n=name and n.simple?       end
+  def junction?()   n=name and n.junction?     end
+  def star?(    )   n=name and n.star?         end
+
+  def left()      Card.fetch( name.trunk_name, :skip_virtual=> true, :skip_after_fetch=>true )  end
+  def right()     Card.fetch name.tag_name,   :skip_virtual=> true                              end
+  def pieces()    simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq                  end
+  def particles() name.particle_names.map{|name| Card.fetch name}                               end
+
+  def junctions(args={})
+    return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point.  
+    args[:conditions] = ["trash=?", false] unless args.has_key?(:conditions)
+    args[:order] = 'id' unless args.has_key?(:order)    
+    # aparently find f***s up your args. if you don't clone them, the next find is busted.
+    left_junctions.find(:all, args.clone) + right_junctions.find(:all, args.clone)
+  end
+
+  def dependents(*args) 
+    return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point. 
+    junctions(*args).map { |r| [r ] + r.dependents(*args) }.flatten 
+  end
+
+  def codename
+    return nil unless extension and extension.respond_to?(:codename)
+    extension.codename
+  end
+
+  def repair_key
+    ::User.as :wagbot do
+      correct_key = name.to_key
+      current_key = key
+      return self if current_key==correct_key
+
+      saved =   ( self.key  = correct_key and self.save! )
+      saved ||= ( self.name = current_key and self.save! )
+
+      saved ? self.dependents.each { |c| c.repair_key } : self.name = "BROKEN KEY: #{name}"
+      self
+    end
+  rescue
+    self
+  end
+
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # TYPE
+
+  def type_card
+    ct = ::Cardtype.find_by_class_name( self.typecode )
+    raise("Error in #{self.name}: No cardtype for #{self.typecode}")  unless ct
+    ct.card
+  end
+  
+  def cardtype_name()
+    #raise "No type: #{self.inspect}" unless self.typecode
+    typecode or return 'Basic'
+    ::Cardtype.name_for( typecode )
+  end
+  
 
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # CONTENT / REVISIONS
 
-
   def content
     c = cached_revision
     c.new_record? ? "" : c.content
+  end
+
+  def raw_content
+    templated_content || content
   end
 
   def cached_revision
@@ -285,92 +351,6 @@ class Card < ActiveRecord::Base
     User[updated_by]
   end
 
-    
-
-      
-  def update_attachment # the module definition overrides this for card_attachements
-  end
-
-  def on_type_change
-  end  
-      
-  def after_fetch
-    include_set_modules
-  end
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-  def new_card?
-    new_record? || from_trash
-  end
-
-
-  
-
-   
-  # Extended associations ----------------------------------------
-
-
-  def left
-    Card.fetch name.trunk_name, :skip_virtual=> true, :skip_after_fetch=>true
-  end
-  def right
-    Card.fetch name.tag_name,   :skip_virtual=> true
-  end
-  
-  def cardtype_name()
-    #raise "No type: #{self.inspect}" unless self.typecode
-    typecode or return 'Basic'
-    ::Cardtype.name_for( typecode )
-  end
-  
-  
-  def pieces
-    simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq 
-  end
-  
-  def particles
-    name.particle_names.map{|name| Card[name]} ##FIXME -- inefficient (though scarcely used...)    
-  end
-
-  def junctions(args={})
-    return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point.  
-    args[:conditions] = ["trash=?", false] unless args.has_key?(:conditions)
-    args[:order] = 'id' unless args.has_key?(:order)    
-    # aparently find f***s up your args. if you don't clone them, the next find is busted.
-    left_junctions.find(:all, args.clone) + right_junctions.find(:all, args.clone)
-  end
-
-  def dependents(*args) 
-    return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point. 
-    junctions(*args).map { |r| [r ] + r.dependents(*args) }.flatten 
-  end
-
-  def extended_referencers
-    (dependents + [self]).plot(:referencers).flatten.uniq
-  end
-
-  def card  ## is this still necessary or just legacy from CachedCards?
-    self
-  end
-  
-  def type_card
-    ct = ::Cardtype.find_by_class_name( self.typecode )
-    raise("Error in #{self.name}: No cardtype for #{self.typecode}")  unless ct
-    ct.card
-  end
-
   def drafts
     revisions.find(:all, :conditions=>["id > ?", current_revision_id])
   end
@@ -380,72 +360,44 @@ class Card < ActiveRecord::Base
     revisions.create(:content=>content)
   end
 
-
-
-  # Dynamic Attributes ------------------------------------------------------        
-
-  def known?(   )   !(new_card? && !virtual?)  end
-  def virtual?( )   @virtual                   end
-  def simple?(  )   n=name and n.simple?       end
-  def junction?()   n=name and n.junction?     end
-  def star?(    )   n=name and n.star?         end
-  
-  
-
-  
-  
-  def raw_content
-    templated_content || content
-  end
-
-  def codename
-    return nil unless extension and extension.respond_to?(:codename)
-    extension.codename
-  end
-
-  def class_name
-    raise "class_name is Deprecated. use cardtype instead"
-  end
-  
-  def name_from_parts
-    simple? ? name : (trunk.name_from_parts + '+' + tag.name_from_parts)
-  end
-     
-  def authenticated?(party)
-    party==::Role[:auth]
-  end
-
-  def to_s
-    "#<#{self.class.name}:#{self.attributes['name']}>"
-  end
-
-  def mocha_inspect
-    to_s
-  end
-
-  def repair_key
-    ::User.as :wagbot do
-      correct_key = name.to_key
-      current_key = key
-      return self if current_key==correct_key
-
-      saved =   ( self.key  = correct_key and self.save! )
-      saved ||= ( self.name = current_key and self.save! )
-
-      saved ? self.dependents.each { |c| c.repair_key } : self.name = "BROKEN KEY: #{name}"
-      self
-    end
-  rescue
-    self
-  end
-
-
- protected
+  protected
   def clear_drafts
-    connection.execute(%{
-      delete from revisions where card_id=#{id} and id > #{current_revision_id} 
-    })
+    connection.execute(%{delete from revisions where card_id=#{id} and id > #{current_revision_id} })
   end
+  
+  public
+  
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # METHODS FOR OVERRIDE
+
+  def update_attachment() end # the module definition overrides this for card_attachements
+  def post_render( content )  content  end
+  def clean_html?()  true   end
+  def collection?()  false  end
+  def on_type_change() end
+
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # MISCELLANEOUS
+  
+  def to_s()  "#<#{self.class.name}:#{self.attributes['name']}>" end
+  def mocha_inspect()     to_s                                   end
+
+  def extended_referencers
+    (dependents + [self]).plot(:referencers).flatten.uniq
+  end
+      
+  def after_fetch
+    include_set_modules
+  end
+
+  def trash
+    t = @attributes_cache['trash']
+    t.nil? ? (@attributes_cache['trash'] = Card.columns_hash['trash'].type_cast(@attributes['trash'])) : t
+  end
+
+
 
 
 
@@ -467,7 +419,20 @@ class Card < ActiveRecord::Base
 
 
 
+  def validate_type_change
+    true
+  end
+  
+  def validate_destroy    
+    if extension_type=='User' and extension and Revision.find_by_created_by( extension.id )
+      errors.add :destroy, "Edits have been made with #{name}'s user account.<br>  Deleting this card would mess up our revision records."
+      return false
+    end           
+    #should collect errors from dependent destroys here.  
+    true
+  end
 
+  protected
 
   validates_presence_of :name
   validates_associated :extension #1/2 ans:  this one runs the user validations on user cards. 
@@ -556,25 +521,5 @@ class Card < ActiveRecord::Base
   
   def validate_content( content )
   end
-
-  public
-  def validate_type_change
-    true
-  end
-  
-  def validate_destroy    
-    if extension_type=='User' and extension and Revision.find_by_created_by( extension.id )
-      errors.add :destroy, "Edits have been made with #{name}'s user account.<br>  Deleting this card would mess up our revision records."
-      return false
-    end           
-    #should collect errors from dependent destroys here.  
-    true
-  end
-  
-  def trash
-    t = @attributes_cache['trash']
-    t.nil? ? (@attributes_cache['trash'] = Card.columns_hash['trash'].type_cast(@attributes['trash'])) : t
-  end
-  
 end  
 

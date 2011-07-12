@@ -1,7 +1,4 @@
 module Wagn::Set::Type::Basic
-  def generic?
-    true
-  end
 
   def post_render(content)
     #warn "CALLED POST RENDER: #{content}"

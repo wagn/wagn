@@ -388,9 +388,6 @@ class Card < ActiveRecord::Base
     (dependents + [self]).plot(:referencers).flatten.uniq
   end
       
-  def after_fetch
-    include_set_modules
-  end
 
   def trash
     t = @attributes_cache['trash']
@@ -419,9 +416,8 @@ class Card < ActiveRecord::Base
 
 
 
-  def validate_type_change
-    true
-  end
+  def validate_type_change()        true  end
+  def validate_content( content )         end
   
   def validate_destroy    
     if extension_type=='User' and extension and Revision.find_by_created_by( extension.id )
@@ -431,6 +427,13 @@ class Card < ActiveRecord::Base
     #should collect errors from dependent destroys here.  
     true
   end
+  def destroy_extension
+    extension.destroy if extension
+    extension = nil
+    true
+  end
+  
+  
 
   protected
 
@@ -479,11 +482,9 @@ class Card < ActiveRecord::Base
   validates_each :typecode do |rec, attr, value|  
     # validate on update
     if rec.updates.for?(:typecode) and !rec.new_record?
-            
       if !rec.validate_type_change
         rec.errors.add :type, "of #{rec.name} can't be changed; errors changing from #{rec.cardtype_name}"        
       end
-  
       if c = Card.new(:name=>'*validation dummy', :typecode=>value) and !c.valid?
         rec.errors.add :type, "of #{rec.name } can't be changed; errors creating new #{value}: #{c.errors.full_messages.join(', ')}"
       end      
@@ -495,13 +496,11 @@ class Card < ActiveRecord::Base
       if rec.broken_type
         rec.errors.add :type, "won't work.  There's no cardtype named '#{rec.broken_type}'"
       end
-      
       # invalid to change type when type is hard_templated
       if (rt = rec.right_template and rt.hard_template? and 
         value!=rt.typecode and !rec.allow_typecode_change)
         rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rt.cardtype_name}"
       end        
-      
     end
   end  
 
@@ -513,13 +512,5 @@ class Card < ActiveRecord::Base
     end
   end
   
-  def destroy_extension
-    extension.destroy if extension
-    extension = nil
-    true
-  end
-  
-  def validate_content( content )
-  end
 end  
 

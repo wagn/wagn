@@ -15,10 +15,6 @@ module Wagn::Model::Fetch
   #self.debug = lambda {|name| name.to_key == 'a+y' }
 
   module ClassMethods
-    def perform_caching?
-      true
-    end
-
 
     # === fetch
     #
@@ -34,45 +30,22 @@ module Wagn::Model::Fetch
     # cards in the trash are added to the cache just as other cards are.  By default, missing? and trash?
     # cards are not returned
     def fetch cardname, opts = {}
-      #debug = Card::Fetch.debug.call(cardname)
-      Rails.logger.debug "fetch #{cardname.inspect} \nTrace #{Kernel.caller[0..10]*"\n"}" unless String===cardname # if debug
       key = cardname.to_key
       cacheable = false
 
-      if perform_caching?
-        card ||= Card.cache.read( key )
-        cacheable = true if card.nil?
-        Rails.logger.debug "   cache.read: #{card.inspect}" if debug
-      end
-
-      card ||= begin
-        Rails.logger.debug "   find_by_key: #{key.inspect}" #if debug
-        #Card.find_by_key_and_trash( key , false )
-        Card.find_by_key( key )
-      end
+      card = Card.cache.read( key )
+      cacheable = true if card.nil?
+      card ||= find_by_key( key )
               
       if !opts[:skip_virtual] && (!card || card.missing? || card.trash)
-        if virtual_card = Card.pattern_virtual( cardname, card )
-          card = virtual_card
-          Rails.logger.debug "   pattern_virtual: #{card.inspect}" if debug
-        end
+        card = fetch_virtual( cardname, card )
       end
-      card ||= begin
-         Rails.logger.debug "   new(missing): #{card.inspect}" if debug
-         new_missing cardname
-      end
+      
+      card ||= new_missing cardname
+      Card.cache.write( key, card ) if cacheable
+      return nil if (card.missing? && (!card.virtual? || opts[:skip_virtual])) || card.trash
 
-      if cacheable
-        Card.cache.write key, card
-        Rails.logger.debug "   writing: #{card.inspect}" if debug
-      end
-
-      if (card.missing? && (!card.virtual? || opts[:skip_virtual])) || card.trash
-        Rails.logger.debug "   final: missing (nil)"  if debug
-        return nil
-      end
       card.after_fetch unless opts[:skip_after_fetch]
-      Rails.logger.debug "   final: #{card.inspect}"  if debug
       card
     end
 
@@ -86,27 +59,49 @@ module Wagn::Model::Fetch
       fetch_opts[:skip_virtual] ||= true
       fetch( cardname, fetch_opts ) || Card.create( card_opts )
     end
-
-
-    def preload cards, opts = {}
-      cards.each do |card|
-        if opts[:local]
-          Card.cache.write_local(card.key, card)
-        else
-          Card.cache.write(card.key, card)
+    
+    def fetch_virtual(name, cached_card=nil)
+      return nil unless name && name.junction?
+      cached_card = nil if cached_card && cached_card.trash
+      test_card = cached_card || Card.new(:name=>name, :missing=>true, :typecode=>'Basic', :skip_defaults=>true)
+      if template=test_card.template(reset=true) and template.hard_template? 
+        args=[name, template.content, template.typecode]
+        if cached_card
+          cached_attrs = [:name, :content, :typecode].map{|attr| cached_card.send(attr)}
+          return cached_card if args==cached_attrs
         end
+        new_virtual name, template.content, template.typecode
+      elsif System.ok?(:administrate_users) and name.tag_name =~ /^\*(email)$/
+        attr_name = $~[1]
+        content = retrieve_extension_attribute( name.trunk_name, attr_name ) || ""
+        new_virtual name, content  
+      else
+        return nil
       end
     end
 
+    def retrieve_extension_attribute( cardname, attr_name )
+      c = fetch(cardname) and e=c.extension and e.send(attr_name)
+    end
+
+    def new_virtual(name, content, type='Basic')
+      new(:name=>name, :content=>content, :typecode=>type, :missing=>true, :virtual=>true, :skip_defaults=>true)
+    end
+
     def new_missing cardname
-      Card.new(:name=>cardname, :typecode=>'Basic', :skip_defaults=>true, :missing=>true)
+      new(:name=>cardname, :typecode=>'Basic', :skip_defaults=>true, :missing=>true)
     end
 
     def exists?(name)
       fetch(name, :skip_virtual=>true).present?
     end
-
   end
+
+
+  def after_fetch
+    include_set_modules
+  end
+
 
   def self.included(base)
     super

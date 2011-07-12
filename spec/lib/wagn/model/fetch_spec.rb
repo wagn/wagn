@@ -112,7 +112,7 @@ describe Card do
         
       end
 
-      it "should not hit the database for every pattern_virtual lookup" do
+      it "should not hit the database for every fetch_virtual lookup" do
         Card.create!(:name => "y+*right+*content", :content => "Formatted Content")
         Card.fetch("a+y")
         Card.should_not_receive(:find_by_key)
@@ -148,22 +148,15 @@ describe Card do
     end
   end
 
-  describe "#preload" do
-    it "loads a list of cards into the cache" do
-      a = Card.new(:name => "Appa")
-      Card.preload([a])
-      Card.should_not_receive(:find_by_key)
-      Card.fetch("Appa").should == a
-    end
+  describe "#fetch_virtual" do
+    before { User.as :joe_user }
 
-    #it "with :local options loads a list of cards into the local cache only" do
-    #  this test is meaningless as long as we have a nil store in testing env.
-    #  a = Card.new(:name => "Appa")
-    #  Card.cache.store.should_not_receive(:read)
-    #  Card.cache.store.should_not_receive(:write)
-    #  Card.preload([a], :local => true)
-    #  Card.fetch("Appa").should == a
-    #end
+    it "should find cards with *right+*content specified" do
+      Card.create! :name=>"testsearch+*right+*content", :content=>'{"plus":"_self"}', :type => 'Search'
+      c = Card.fetch_virtual("A+testsearch")
+      c.typecode.should == 'Search'
+      c.content.should ==  "{\"plus\":\"_self\"}"
+    end
   end
 
   describe "#exists?" do

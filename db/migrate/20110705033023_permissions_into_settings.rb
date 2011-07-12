@@ -5,7 +5,9 @@ class PermissionsIntoSettings < ActiveRecord::Migration
     Wagn::Cache.reset_global
     ENV['BOOTSTRAP_LOAD'] = 'true'
     
+    #some data cleanup for integrity issues that were causing problems here and there.
     execute "update cards set extension_type=null where extension_type in('SoftTemplate','HardTemplate')"
+    execute "update cards set typecode='Basic' where not exists (select * from cardtypes where class_name = typecode)"
     
     ['all plus', 'star', 'rstar'].each do |set|
       Card.create :name=>"*#{set}", :type=>'Set'

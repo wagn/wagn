@@ -23,15 +23,10 @@ class Card < ActiveRecord::Base
     :broken_type, :loaded_trunk, :blank_revision, :cards,
     :attachment_id #should build flexible handling for this kind of set-specific attr
 
-  def updater
-    User[updated_by]
-  end
-    
-  # apparently callbacks defined this way are called last.
-  # that's what we want for this one.
+  # FIXME Should be in modules
   def after_save
     if cards
-      #Rails.logger.info "after_save #{card.inspect}\nCards:#{cards.inspect}"
+      #Rails.logger.info "after_save Cards:#{cards.inspect}"
       Wagn::Hook.call :before_multi_save, self, cards
       cards.each_pair do |name, opts|
         opts[:content] ||= ""
@@ -69,24 +64,7 @@ class Card < ActiveRecord::Base
   #  Rails.logger.info "after_initialize Cards: #{cards.inspect}" # if cards
   end
 
-  def update_attachment # the module definition overrides this for card_attachements
-  end
-
-  private
-#    belongs_to :reader, :polymorphic=>true  
-    
-    def log(msg)
-      Rails.logger.info(msg)
-    end
-
-    def on_type_change
-    end
-
-  public
-
   cache_attributes('name', 'typecode', 'trash')    
-
-  # Creation & Destruction --------------------------------------------------
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # INITIALIZATION METHODS
@@ -205,18 +183,6 @@ class Card < ActiveRecord::Base
     @new_record = false
     self.before_validation_on_create
   end
-
-  # FIXME Should be in modules
-  def after_save 
-    if self.typecode == 'Cardtype'
-      Rails.logger.debug "Cardtype after_save resetting"
-      ::Cardtype.reset_cache
-    end
-#      Rails.logger.debug "Card#after_save end"
-    update_attachment
-    true
-  end
-  
 
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

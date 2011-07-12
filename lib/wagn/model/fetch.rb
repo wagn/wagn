@@ -19,6 +19,7 @@ module Wagn::Model::Fetch
       true
     end
 
+
     # === fetch
     #
     # looks for cards in
@@ -85,6 +86,7 @@ module Wagn::Model::Fetch
       fetch_opts[:skip_virtual] ||= true
       fetch( cardname, fetch_opts ) || Card.create( card_opts )
     end
+
 
     def preload cards, opts = {}
       cards.each do |card|

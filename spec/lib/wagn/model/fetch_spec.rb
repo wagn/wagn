@@ -77,18 +77,6 @@ describe Card do
         User.as :wagbot
       end
 
-=begin
-      it "prefers builtin virtual card to db cards" do
-        Card.add_builtin(Card.new(:name => "ghost", :content => "Builtin Content"))
-        Card.cache.read("ghost").virtual?.should be_true
-        Card.create!(:name => "ghost", :content => "DB Content")
-#        Card.cache.read("ghost").should be_nil
-        card = Card.fetch("ghost")
-        card.content.should == "Builtin Content"
-        card.virtual?.should be_true
-      end
-=end
-
       it "prefers db cards to pattern virtual cards" do
         Card.create!(:name => "y+*right+*content", :content => "Formatted Content")
         Card.create!(:name => "a+y", :content => "DB Content")

@@ -69,21 +69,6 @@ class Card < ActiveRecord::Base
   #  Rails.logger.info "after_initialize Cards: #{cards.inspect}" # if cards
   end
 
-  def update_attachment # the module definition overrides this for card_attachements
-  end
-
-  private
-#    belongs_to :reader, :polymorphic=>true  
-    
-    def log(msg)
-      ActiveRecord::Base.logger.info(msg)
-    end
-
-    def on_type_change
-    end
-
-  public
-
   cache_attributes('name', 'typecode', 'trash')    
 
   # Creation & Destruction --------------------------------------------------
@@ -370,10 +355,6 @@ class Card < ActiveRecord::Base
    
   def revised_at
     (cached_revision && cached_revision.updated_at) || Time.now
-  end
-
-  def updater
-    User[updated_by]
   end
 
   def drafts

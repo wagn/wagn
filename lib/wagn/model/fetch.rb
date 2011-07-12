@@ -1,12 +1,7 @@
 # = Card#fetch
 #
 # A multipurpose retrieval operator that incorporates caching, "virtual" card retrieval
-#
 
-
-# TODO:
-#  - implement Renderer#cache_action  (for footer, etc.) if necessary
-#
 
 module Wagn::Model::Fetch
   mattr_accessor :cache
@@ -20,9 +15,8 @@ module Wagn::Model::Fetch
     #
     # looks for cards in
     #   - cache
-    #   - builtin cards
-    #   - virtual cards
     #   - database
+    #   - virtual cards
     #
     # if a card is not in the cache and is found in the database, it is added to the cache
     # if a card is not found in the database, a card of that name is created and added to cache with

@@ -175,3 +175,18 @@ class PermissionsIntoSettings < ActiveRecord::Migration
     c
   end
 end
+
+class Permission < ActiveRecord::Base
+  belongs_to :party, :polymorphic=>true
+  belongs_to :card
+end
+
+
+class Card
+  has_many :permissions, :foreign_key=>'card_id' 
+  
+  def who_could(operation)
+    perm = permissions.reject { |perm| perm.task != operation.to_s }.first   
+    perm && [perm.party.card.key] 
+  end
+end

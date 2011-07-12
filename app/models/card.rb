@@ -14,7 +14,6 @@ class Card < ActiveRecord::Base
   belongs_to :extension, :polymorphic=>true
   before_destroy :destroy_extension
 
-  has_many :permissions, :foreign_key=>'card_id' #, :dependent=>:delete_all
     
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
     :from_trash, :update_referencers, :allow_typecode_change, :virtual,

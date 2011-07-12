@@ -97,11 +97,7 @@ module Wagn::Model::Permissions
     rule_card(operation).first.item_names.map &:to_key
   end 
   
-  
-  def who_could(operation)
-    perm = permissions.reject { |perm| perm.task != operation.to_s }.first   
-    perm && [perm.party.card.key] 
-  end
+
   
   def rule_card(operation)
     opcard = setting_card(operation.to_s)

@@ -30,8 +30,12 @@ class PermissionsIntoSettings < ActiveRecord::Migration
       where = " name not like '*%' and tag_id is null "
       where += " and party_id is not null " if task == :create
       all_role[task] = most_common_party(task, where)
-      create_rule('*all',task, all_role[task])
-      create_rule('*all plus', task, '_left')
+      all_rule = create_rule('*all',task, all_role[task])
+      all_plus_rule = create_rule('*all plus', task, '_left')
+      if task == :read
+        execute "update cards set read_rule_id=#{all_rule.id}, read_rule_class='*all' where trash is false and tag_id is null"
+        execute "update cards set read_rule_id=#{all_rule.id}, read_rule_class='*all plus' where trash is false and tag_id is not null"
+      end
     end
     
     puts "updating types for create"
@@ -58,7 +62,9 @@ class PermissionsIntoSettings < ActiveRecord::Migration
         end
         if top_role_for_type = most_common_party(task, "name not like '*%' and tag_id is null and typecode='#{type_ext.class_name}'")
           next if !top_role_for_type || top_role_for_type==all_role[task]
-          create_rule("#{typecard.name}+*type",task,top_role_for_type)
+          new_rule = create_rule("#{typecard.name}+*type",task,top_role_for_type)
+          execute "update cards set read_rule_id=#{new_rule.id}, read_rule_class='*type' " + 
+            " where trash is false and typecode='#{type_ext.class_name}'" if task == :read
         end
       end
     end
@@ -72,7 +78,9 @@ class PermissionsIntoSettings < ActiveRecord::Migration
           could = card.who_could(task)
           can = Card.new(:name=>"XXXXXHONK+#{base_name}", :skip_defaults=>true).who_can(task==:edit ? :update : task)
           if could && could != can
-            create_rule "#{base_name}+*right", task, Card.fetch(could.first, :skip_after_fetch=>true)
+            new_rule = create_rule "#{base_name}+*right", task, Card.fetch(could.first, :skip_after_fetch=>true)
+            execute "update cards set read_rule_id=#{new_rule.id}, read_rule_class='*right' " + 
+              " where trash is false and tag_id=#{card.id}" if task == :read
           end
         rescue
           puts "FAILURE creating #{card.name}+*right"
@@ -94,10 +102,14 @@ class PermissionsIntoSettings < ActiveRecord::Migration
           could = card.who_could(task)
           can = card.who_can(task==:edit ? :update : task)
           if could && could != can
-            create_rule "#{card.name}+*self", task, Card.fetch(could.first, :skip_after_fetch=>true)
+            card.repair_key if card.key != card.name.to_key
+            new_rule = create_rule "#{card.name}+*self", task, Card.fetch(could.first, :skip_after_fetch=>true)
+            execute "update cards set read_rule_id=#{new_rule.id}, read_rule_class='*self' " + 
+              " where trash is false and id=#{card.id}" if task == :read
+            
           end
-        rescue
-          puts "FAILURE creating #{card.name}+*self"
+        rescue Exception=>e
+          fail "FAILURE creating #{card.name}+*self:\n  #{e.inspect}\n\n"
         end
       end
     end
@@ -105,15 +117,23 @@ class PermissionsIntoSettings < ActiveRecord::Migration
       
     puts 'updating read_rule fields'
     failed_read_rules = []
+    success_count = 0
     Card.find(:all, :conditions=>'trash is false').each do |card|
       begin
+        rule = card.setting_card('*read')
+        next if rule.name.trunk_name.tag_name == card.read_rule_class
+        card.repair_key if card.key != card.name.to_key
+        puts "updating read rule for #{card.name};  rule tag_name = #{rule.name.tag_name}, read_rule_class = #{card.read_rule_class}"
         card.update_read_rule
-      rescue
+        success_count+=1
+      rescue Exception=>e
+        fail "FAILURE creating #{card.name}+*self:\n  #{e.inspect}\n\n"
         failed_read_rules << card.name
 #        puts "FAILURE - did not update read rule for #{card.name}"
       end
     end
     
+    puts "successfully updated read rules for #{success_count} cards"
     puts "FAILED - read rule updates failed on the following cards:\n#{failed_read_rules.inspect}"
 
     ENV['BOOTSTRAP_LOAD'] = 'false'
@@ -163,7 +183,7 @@ class PermissionsIntoSettings < ActiveRecord::Migration
       :type=>'Pointer',
       :content=>content
     )
-    return if String===party
+    return c if String===party
     role_card = party.card
     WikiReference.create(
       :card_id=>c.id, 
@@ -171,5 +191,6 @@ class PermissionsIntoSettings < ActiveRecord::Migration
       :referenced_card_id=>role_card.id,
       :link_type => 'L' 
     )
+    c
   end
 end

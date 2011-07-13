@@ -109,33 +109,10 @@ class PermissionsIntoSettings < ActiveRecord::Migration
             
           end
         rescue Exception=>e
-          fail "FAILURE creating #{card.name}+*self:\n  #{e.inspect}\n\n"
+          fail "FAILURE creating #{card.name}+*self:\n  #{e.inspect}\n#{e.backtrace}\n"
         end
       end
     end
-    
-      
-    puts 'updating read_rule fields'
-    failed_read_rules = []
-    success_count = 0
-    Card.find(:all, :conditions=>'trash is false').each do |card|
-      begin
-        rule = card.setting_card('*read')
-        next if rule.name.trunk_name.tag_name == card.read_rule_class
-        card.repair_key if card.key != card.name.to_key
-        puts "updating read rule for #{card.name};  rule tag_name = #{rule.name.tag_name}, read_rule_class = #{card.read_rule_class}"
-        card.update_read_rule
-        success_count+=1
-      rescue Exception=>e
-        fail "FAILURE creating #{card.name}+*self:\n  #{e.inspect}\n\n"
-        failed_read_rules << card.name
-#        puts "FAILURE - did not update read rule for #{card.name}"
-      end
-    end
-    
-    puts "successfully updated read rules for #{success_count} cards"
-    puts "FAILED - read rule updates failed on the following cards:\n#{failed_read_rules.inspect}"
-
     ENV['BOOTSTRAP_LOAD'] = 'false'
   end
 
@@ -161,12 +138,14 @@ class PermissionsIntoSettings < ActiveRecord::Migration
   end
   
   def self.create_rule(set, task, party)
+    role_card = nil
     content = case
       when party.nil?
         puts "CREATE_RULE FAILED: cannot accept nil party: #{set}, #{task}"
         return false
       when String===party; party
-      when Card=== party;
+      when Card=== party
+        role_card = party
         role = party.extension
         if role.nil?
           puts "CREATE_RULE FAILED: cannot find extension for #{party.name}: #{set}, #{task}"
@@ -174,6 +153,7 @@ class PermissionsIntoSettings < ActiveRecord::Migration
         end
         "[[#{role.cardname}]]"
       else
+        role_card = party.card
          "[[#{party.cardname}]]"
       end
       
@@ -184,7 +164,6 @@ class PermissionsIntoSettings < ActiveRecord::Migration
       :content=>content
     )
     return c if String===party
-    role_card = party.card
     WikiReference.create(
       :card_id=>c.id, 
       :referenced_name=>role_card.key,

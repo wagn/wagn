@@ -5,7 +5,9 @@ class PermissionsIntoSettings < ActiveRecord::Migration
     Wagn::Cache.reset_global
     ENV['BOOTSTRAP_LOAD'] = 'true'
     
+    #some data cleanup for integrity issues that were causing problems here and there.
     execute "update cards set extension_type=null where extension_type in('SoftTemplate','HardTemplate')"
+    execute "update cards set typecode='Basic' where not exists (select * from cardtypes where class_name = typecode)"
     
     ['all plus', 'star', 'rstar'].each do |set|
       Card.create :name=>"*#{set}", :type=>'Set'
@@ -80,7 +82,7 @@ class PermissionsIntoSettings < ActiveRecord::Migration
           if could && could != can
             new_rule = create_rule "#{base_name}+*right", task, Card.fetch(could.first, :skip_after_fetch=>true)
             execute "update cards set read_rule_id=#{new_rule.id}, read_rule_class='*right' " + 
-              " where trash is false and tag_id=#{card.id}" if task == :read
+              " where trash is false and tag_id=#{Card[base_name].id}" if task == :read
           end
         rescue
           puts "FAILURE creating #{card.name}+*right"
@@ -171,5 +173,20 @@ class PermissionsIntoSettings < ActiveRecord::Migration
       :link_type => 'L' 
     )
     c
+  end
+end
+
+class Permission < ActiveRecord::Base
+  belongs_to :party, :polymorphic=>true
+  belongs_to :card
+end
+
+
+class Card
+  has_many :permissions, :foreign_key=>'card_id' 
+  
+  def who_could(operation)
+    perm = permissions.reject { |perm| perm.task != operation.to_s }.first   
+    perm && [perm.party.card.key] 
   end
 end

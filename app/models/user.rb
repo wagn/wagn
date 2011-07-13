@@ -129,8 +129,6 @@ class User < ActiveRecord::Base
     end
   end
   
-  ## INSTANCE METHODS
-
   def save_with_card(card)
     #fail "save with card #{card.inspect}"
     User.transaction do
@@ -143,7 +141,8 @@ class User < ActiveRecord::Base
       end
       raise ActiveRecord::RecordInvalid.new(self) if !self.errors.empty?
     end
-  rescue  
+  rescue
+    Rails.logger.info "save with card failed.  #{card.inspect}"
   end
       
   def accept(email_args)

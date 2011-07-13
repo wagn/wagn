@@ -1,4 +1,16 @@
 module Wagn::Model::References
+  
+  def name_referencers(rname = key)
+    Card.find_by_sql(
+      "SELECT DISTINCT c.* FROM cards c JOIN wiki_references r ON c.id = r.card_id "+
+      "WHERE (r.referenced_name = #{ActiveRecord::Base.connection.quote(rname.to_key)})"
+    )
+  end
+  
+  def extended_referencers
+    (dependents + [self]).plot(:referencers).flatten.uniq
+  end
+  
   protected   
   
   def update_references_on_create
@@ -72,11 +84,5 @@ module Wagn::Model::References
       after_save :expire_cache
     end
     
-    def name_referencers(rname = key)
-      Card.find_by_sql(
-        "SELECT DISTINCT c.* FROM cards c JOIN wiki_references r ON c.id = r.card_id "+
-        "WHERE (r.referenced_name = #{ActiveRecord::Base.connection.quote(rname.to_key)})"
-      )
-    end
   end
 end

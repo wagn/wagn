@@ -1,6 +1,10 @@
 module Notification   
   module CardMethods
     def send_notifications
+      return false if Card.record_userstamps==false
+      # userstamps and timestamps are turned off in cases like updating read_rules that are automated and 
+      # generally not of enough interest to warrant notification
+      
       action = case  
         when trash;  'deleted'
         when updated_at.to_s==created_at.to_s; 'added'

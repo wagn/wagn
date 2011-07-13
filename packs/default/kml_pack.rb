@@ -13,7 +13,6 @@ module Wagn
           # needs deeper redesign
           if card.typecode=='Search'
             card.item_cards( :return=>:name, :limit=>1000, :_keyword=>params[:_keyword] )
-            card.results
           else
             [card.name]
           end

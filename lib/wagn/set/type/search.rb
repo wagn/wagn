@@ -1,18 +1,16 @@
-
 module Wagn::Set::Type::Search
-  def self.included(base)
-    super
-    Rails.logger.debug "included(#{base}) #{self}"
-    base.class_eval { attr_accessor :results }
-    base.send :before_save, :escape_content
+  def before_save
+    escape_content
   end
 
   def collection?() true end
 
   def item_cards(params={})
     s = spec(params)
-    raise("OH NO.. no limit") unless s[:limit] #can be 0 or less to force no limit
-    self.results = Card.search( s )
+    raise("OH NO.. no limit") unless s[:limit]
+    # forces explicit limiting
+    # can be 0 or less to force no limit
+    Card.search( s )
   end
 
   def item_names(params={})

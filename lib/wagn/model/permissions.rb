@@ -97,11 +97,7 @@ module Wagn::Model::Permissions
     rule_card(operation).first.item_names.map &:to_key
   end 
   
-  
-  def who_could(operation)
-    perm = permissions.reject { |perm| perm.task != operation.to_s }.first   
-    perm && [perm.party.card.key] 
-  end
+
   
   def rule_card(operation)
     opcard = setting_card(operation.to_s)
@@ -172,7 +168,7 @@ module Wagn::Model::Permissions
   
   def approve_typecode
     case
-    when !cardtype_name
+    when !typename
       deny_because("No such type")
     when !new_card? && !lets_user(:create)
       deny_because you_cant("change to this type (need create permission)"  )

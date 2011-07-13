@@ -9,10 +9,8 @@ module Wagn::Model::Collection
     end             
 
     def count_by_wql(spec)       
-      #.gsub(/^\s*\(/,'').gsub(/\)\s*$/,'')
       spec.delete(:offset)
-      result = connection.select_one( Wql::CardSpec.build(spec).merge(:return=>'count').to_sql )
-      (result['count'] || result['count(*)']).to_i
+      search spec.merge(:return=>'count')
     end
 
     def find_by_name( name, opts={} ) 

@@ -32,6 +32,7 @@ class Wql
   }
       
   DEFAULT_ORDER_DIRS =  {
+    "id" => "asc",
     "update" => "desc",
     "create" => "asc",
     "alpha" => "asc", # DEPRECATED
@@ -495,6 +496,7 @@ Rails.logger.debug "count iter(#{relation.inspect} #{subspec.inspect})"
         dir = @mods[:dir].blank? ? (DEFAULT_ORDER_DIRS[order_key]||'desc') : @mods[:dir]
         sql.order = "ORDER BY "
         sql.order << case order_key
+          when "id";              "#{table_alias}.id #{dir}"
           when "update";          "#{table_alias}.updated_at #{dir}"
           when "create";          "#{table_alias}.created_at #{dir}"
           when "count" ;          "count(*) #{dir}, #{table_alias}.name asc"

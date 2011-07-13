@@ -13,7 +13,6 @@ class Wagn::Renderer::Rss
 
           cards = if card.typecode == 'Search'
             card.item_cards( :limit => 25, :_keyword=>params[:_keyword] )
-            card.results
           else
             [card]
           end

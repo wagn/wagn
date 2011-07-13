@@ -147,9 +147,9 @@ raise "no card" unless card
       def key()                        '*type'                            end
       def opt_keys()                   [:type]                            end
       def pattern_applies?(card)       true                               end
-      def set_name(card)              "#{card.cardtype_name}+#{key}"      end
+      def set_name(card)              "#{card.typename}+#{key}"           end
       def label(name)                 "All #{name.trunk_name} cards"      end
-      def method_key(card) method_key_from_opts :type=>card.cardtype_name end
+      def method_key(card)      method_key_from_opts :type=>card.typename end
       def method_key_from_opts(opts)  opts[:type].to_s.css_name+'_type'   end
       def rule_module(card)           "Wagn::Set::Type::#{card.typecode}" end
     end
@@ -220,11 +220,11 @@ raise "no card" unless card
       def pattern_applies?(card) card.junction? && !!(left(card)); end
       def left(card)             card.loaded_trunk || card.left;   end
       def set_name(card)
-        "#{left(card).cardtype_name}+#{card.name.tag_name}+*type plus right"
+        "#{left(card).typename}+#{card.name.tag_name}+*type plus right"
       end
       def css_name(card) 'TYPE_PLUS_RIGHT-' + set_name(card).trunk_name.css_name; end
       def method_key(card)
-        method_key_from_opts :ltype=>left(card).cardtype_name, :right=>card.name.tag_name
+        method_key_from_opts :ltype=>left(card).typename, :right=>card.name.tag_name
       end
       def method_key_from_opts(opts)
         %{#{opts[:ltype].to_s.css_name}_#{opts[:right].to_s.css_name}_typeplusright}

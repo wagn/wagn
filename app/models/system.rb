@@ -1,14 +1,4 @@
-class System < ActiveRecord::Base
-  #Why is this an ActiveRecord?
-  set_table_name 'system'
-  
-  def self.reset_cache
-    @@cache={
-      :always => {},
-      :ok_hash => {}
-    }
-  end
-  reset_cache
+class System
   
   cattr_writer :attachment_storage    # storage option passed to attachment_fu   
   cattr_accessor :role_tasks, :request,                          
@@ -110,8 +100,14 @@ class System < ActiveRecord::Base
       else
         c
       end
-    end    
-  end 
+    end
+    
+    def reset_cache
+      @@cache={ :always => {}, :ok_hash => {} }
+    end
+  end
+  
+  reset_cache
 
   @@role_tasks = %w{ administrate_users create_accounts assign_user_roles }
 end        

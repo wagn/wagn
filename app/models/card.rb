@@ -17,7 +17,7 @@ class Card < ActiveRecord::Base
     
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
     :from_trash, :update_referencers, :allow_typecode_change, :virtual,
-    :broken_type, :loaded_trunk, :blank_revision, 
+    :broken_type, :loaded_trunk
     :attachment_id #should build flexible handling for this kind of set-specific attr
 
   cache_attributes('name', 'typecode', 'trash')    
@@ -405,6 +405,8 @@ class Card < ActiveRecord::Base
 
 
 
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # INCLUDED MODULES
 
 
 
@@ -417,6 +419,7 @@ class Card < ActiveRecord::Base
   tracks :name, :typecode, :content, :comment
 
 
+  #this method piggybacks on the name tracking method and must therefore be defined after the #tracks call
   def name_with_key_sync=(name)
     name ||= ""
     self.key = name.to_key

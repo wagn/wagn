@@ -30,7 +30,7 @@ module Wagn::Model::Fetch
       card = Card.cache.read( key )
       cacheable = true if card.nil?
       card ||= find_by_key( key )
-              
+      
       if !opts[:skip_virtual] && (!card || card.missing? || card.trash)
         card = fetch_virtual( cardname, card )
       end
@@ -43,15 +43,20 @@ module Wagn::Model::Fetch
       card
     end
 
-    def fetch_or_new cardname, fetch_opts = {}, card_opts = {}
-      card_opts[:name] = cardname
-      fetch( cardname, fetch_opts ) || Card.new( card_opts )
+    def fetch_or_new cardname, opts={}
+      fetch( cardname, opts ) || new( extract_new_opts(cardname, opts) )
     end
     
-    def fetch_or_create cardname, fetch_opts = {}, card_opts = {}
-      card_opts[:name] = cardname
-      fetch_opts[:skip_virtual] ||= true
-      fetch( cardname, fetch_opts ) || Card.create( card_opts )
+    def fetch_or_create cardname, opts={}
+      opts[:skip_virtual] ||= true
+      fetch( cardname, opts ) || create( extract_new_opts(cardname, opts) )
+    end
+    
+    def extract_new_opts cardname, opts
+      opts = opts.clone
+      opts[:name] = cardname
+      [:skip_virtual, :skip_after_fetch].each {|key| opts.delete(key)}
+      opts
     end
     
     def fetch_virtual(name, cached_card=nil)
@@ -102,8 +107,9 @@ module Wagn::Model::Fetch
     #Rails.logger.info "included(#{base}) S:#{self}"
     base.extend Wagn::Model::Fetch::ClassMethods
     base.class_eval {
-      attr_accessor :missing
+      attr_accessor :missing, :virtual
       alias :missing? :missing
+      alias :virtual? :virtual
     }
   end
 end

@@ -97,8 +97,6 @@ module Wagn::Model::Permissions
     rule_card(operation).first.item_names.map &:to_key
   end 
   
-
-  
   def rule_card(operation)
     opcard = setting_card(operation.to_s)
     
@@ -110,7 +108,8 @@ module Wagn::Model::Permissions
     rcard = begin
       User.as :wagbot do
         if opcard.raw_content == '_left' && self.junction?
-          Card.fetch_or_new(name.trunk_name, :skip_virtual=>true, :skip_defaults=>true).rule_card(operation).first
+          lcard = loaded_trunk || Card.fetch_or_new(name.trunk_name, :skip_virtual=>true, :skip_defaults=>true) 
+          lcard.rule_card(operation).first
         else
           opcard
         end

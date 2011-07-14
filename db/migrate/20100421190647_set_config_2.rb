@@ -1,7 +1,7 @@
 class SetConfig2 < ActiveRecord::Migration
   def self.up 
     User.as(:wagbot) do
-      card = Card.find_or_create :name=>"Config", :type=>"Basic"
+      card = Card.fetch_or_create "Config", :type=>"Basic"
         card.content =<<CONTENT
 <h1>Basics <em></em></h1>
 <blockquote>

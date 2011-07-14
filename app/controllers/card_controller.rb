@@ -328,14 +328,14 @@ class CardController < ApplicationController
 
   #-------- ( MISFIT METHODS )
   def watch
-    watchers = Card.fetch_or_new( @card.name + "+*watchers", {:skip_virtual=>true}, :type => 'Pointer' )
+    watchers = Card.fetch_or_new( @card.name + "+*watchers", :skip_virtual=>true, :type => 'Pointer' )
     watchers.add_item User.current_user.card.name
     #flash[:notice] = "You are now watching #{@card.name}"
     request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
   def unwatch
-    watchers = Card.fetch_or_new( @card.name + "+*watchers", {:skip_virtual=>true} )
+    watchers = Card.fetch_or_new( @card.name + "+*watchers", :skip_virtual=>true )
     watchers.drop_item User.current_user.card.name
     #flash[:notice] = "You are no longer watching #{@card.name}"
     request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
@@ -364,7 +364,7 @@ class CardController < ApplicationController
 
     options_card =
       (!params[:id].blank? and
-       (pointer_card = Card.fetch_or_new(params[:id], {}, :skip_defaults=>true)) and
+       (pointer_card = Card.fetch_or_new(params[:id], :skip_defaults=>true)) and
        pointer_card.options_card)
 
     search_args = {  :complete=>complete, :limit=>8, :sort=>'name' }

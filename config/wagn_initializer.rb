@@ -28,7 +28,7 @@ module Wagn::Configuration
     end
 
     def wagn_load_config
-      Rails.logger.debug << "Load config ...\n"
+      Rails.logger.debug "Load config ...\n"
       config_dir = "#{RAILS_ROOT}/config/"
       ['sample_wagn.rb','wagn.rb'].each do |filename|
         require_dependency config_dir+filename if File.exists? config_dir+filename

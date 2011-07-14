@@ -1,7 +1,7 @@
 class SetNumberPlusDescription < ActiveRecord::Migration
   def self.up 
     User.as(:wagbot) do
-      card = Card.find_or_new :name=>"Number+description", :type=>"Basic"
+      card = Card.fetch_or_new "Number+description", :type=>"Basic"
       if card.revisions.empty? || card.revisions.map(&:author).map(&:login).uniq == ["wagbot"]
         card.content =<<CONTENT
 <div>Number cards can contain only numerical values.</div>

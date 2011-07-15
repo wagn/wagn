@@ -1,11 +1,20 @@
 --- 
+revisions_470: 
+  created_at: 2011-02-16 02:14:32.800827
+  card_id: "362"
+  updated_at: 2011-02-16 02:14:32.800827
+  created_by: "4"
+  id: "4917"
+  content: |-
+    {"not":{"or":{"type":["in","Set","Setting"], "left":{"type":"Set"}, "right": "description", "referred_to_by":"*ignore"}},
+     "sort": "name", "limit": "200"}
 revisions_423: 
-  created_at: 2011-03-19 15:28:42.233277
-  card_id: "437"
-  updated_at: 2011-03-19 15:28:42.233277
-  created_by: "3"
-  id: "5420"
-  content: "{{_left|when_created}}{{## \"when_created\" view is deprecated.  please do not use elsewhere}}"
+  created_at: 2011-07-08 21:22:21.211543
+  card_id: "480"
+  updated_at: 2011-07-08 21:22:21.211543
+  created_by: "1"
+  id: "5719"
+  content: ""
 revisions_280: 
   created_at: 2010-04-20 08:38:31.656851
   card_id: "366"
@@ -34,13 +43,24 @@ revisions_043:
   created_by: "1"
   id: "62"
   content: ""
+revisions_471: 
+  created_at: 2011-02-16 02:15:44.414174
+  card_id: "360"
+  updated_at: 2011-02-16 02:15:44.414174
+  created_by: "4"
+  id: "4919"
+  content: |-
+    {"left":{"type":"Set"}, "right":{"type":"Setting"},
+     "limit": "200",
+     "sort": "name"
+    }
 revisions_424: 
-  created_at: 2011-03-19 15:29:07.544013
-  card_id: "440"
-  updated_at: 2011-03-19 15:29:07.544013
-  created_by: "3"
-  id: "5421"
-  content: "{{_left|when_last_edited}}{{## \"when_last_edited\" view is deprecated.  please do not use elsewhere}}"
+  created_at: 2011-07-08 21:22:21.263546
+  card_id: "481"
+  updated_at: 2011-07-08 21:22:21.263546
+  created_by: "1"
+  id: "5720"
+  content: ""
 revisions_281: 
   created_at: 2010-04-20 08:38:31.912866
   card_id: "367"
@@ -73,15 +93,42 @@ revisions_044:
   created_by: "1"
   id: "33"
   content: ""
-revisions_425: 
-  created_at: 2011-02-16 02:14:32.800827
-  card_id: "362"
-  updated_at: 2011-02-16 02:14:32.800827
+revisions_472: 
+  created_at: 2011-02-16 03:45:02.043412
+  card_id: "53"
+  updated_at: 2011-02-16 03:45:02.043412
   created_by: "4"
-  id: "4917"
-  content: |-
-    {"not":{"or":{"type":["in","Set","Setting"], "left":{"type":"Set"}, "right": "description", "referred_to_by":"*ignore"}},
-     "sort": "name", "limit": "200"}
+  id: "4928"
+  content: |
+    width: '100%',
+    auto_resize : true,
+    relative_urls: false,
+    theme : "advanced",
+    theme_advanced_buttons1 : "formatselect,bold,italic,separator,"
+    + "blockquote,bullist,numlist,hr,separator,"
+    + "code",                         
+    theme_advanced_buttons2 : "",                         
+    theme_advanced_buttons3 : "",                         
+    theme_advanced_path : false,                         
+    theme_advanced_toolbar_location : "top",  
+    theme_advanced_toolbar_align : "left", 
+    theme_advanced_resizing : true,
+    theme_advanced_resize_horizontal : false,                      
+    theme_advanced_statusbar_location : "bottom",
+    theme_advanced_blockformats : "p,h1,h2",
+    content_css : '/stylesheets/defaults.css,/*css.css',
+    extended_valid_elements : "a[name|href|target|title|onclick],"
+    + "img[class|src|border=0|alt|title|hspace|vspace|width|height|"
+    + "align|onmouseover|onmouseout|name],hr[class|width|size|noshade],"
+    + "font[face|size|color|style],span[class|align|style]"          
+
+revisions_425: 
+  created_at: 2011-07-08 21:22:21.315549
+  card_id: "482"
+  updated_at: 2011-07-08 21:22:21.315549
+  created_by: "1"
+  id: "5721"
+  content: ""
 revisions_282: 
   created_at: 2011-03-21 08:37:52.739656
   card_id: "56"
@@ -133,120 +180,7 @@ revisions_045:
   created_by: "1"
   id: "66"
   content: ""
-revisions_426: 
-  created_at: 2011-02-16 02:15:44.414174
-  card_id: "360"
-  updated_at: 2011-02-16 02:15:44.414174
-  created_by: "4"
-  id: "4919"
-  content: |-
-    {"left":{"type":"Set"}, "right":{"type":"Setting"},
-     "limit": "200",
-     "sort": "name"
-    }
-revisions_283: 
-  created_at: 2011-03-21 08:42:54.583476
-  card_id: "63"
-  updated_at: 2011-03-21 08:42:54.583476
-  created_by: "3"
-  id: "5566"
-  content: |-
-    <p>People can <strong>request an account</strong> via a "Sign Up" link if you allow "Anyone" to [[/card/options/Account_Request|create account requests]].</p>
-    <p>&nbsp;</p>
-    <p>Unless [[*signup|approved automatically]], the <strong>request will be emailed to</strong>:</p>
-    <blockquote>
-    <p>{{+*to|closed;type:Phrase}}</p>
-    </blockquote>
-    <p>and the<strong> requester will be redirected here:</strong></p>
-    <blockquote>
-    <div>HTTP:// <em>(YOUR WAGN'S DOMAIN) </em>{{+*thanks}}</div>
-    </blockquote>
-    <div>You can <strong>approve/deny account requests [[Account Request|here]]</strong>.</div>
-revisions_093: 
-  created_at: 2010-04-15 18:42:59.872334
-  card_id: "331"
-  updated_at: 2010-04-15 18:42:59.872334
-  created_by: "1"
-  id: "3218"
-  content: ""
-revisions_236: 
-  created_at: 2011-03-19 22:03:39.460349
-  card_id: "452"
-  updated_at: 2011-03-19 22:03:39.460349
-  created_by: "4"
-  id: "5510"
-  content: ""
-revisions_046: 
-  created_at: 2009-04-06 14:11:12.948281
-  card_id: "129"
-  updated_at: 2009-04-06 14:11:12.948281
-  created_by: "1"
-  id: "1408"
-  content: ""
-revisions_427: 
-  created_at: 2011-02-16 03:45:02.043412
-  card_id: "53"
-  updated_at: 2011-02-16 03:45:02.043412
-  created_by: "4"
-  id: "4928"
-  content: |
-    width: '100%',
-    auto_resize : true,
-    relative_urls: false,
-    theme : "advanced",
-    theme_advanced_buttons1 : "formatselect,bold,italic,separator,"
-    + "blockquote,bullist,numlist,hr,separator,"
-    + "code",                         
-    theme_advanced_buttons2 : "",                         
-    theme_advanced_buttons3 : "",                         
-    theme_advanced_path : false,                         
-    theme_advanced_toolbar_location : "top",  
-    theme_advanced_toolbar_align : "left", 
-    theme_advanced_resizing : true,
-    theme_advanced_resize_horizontal : false,                      
-    theme_advanced_statusbar_location : "bottom",
-    theme_advanced_blockformats : "p,h1,h2",
-    content_css : '/stylesheets/defaults.css,/*css.css',
-    extended_valid_elements : "a[name|href|target|title|onclick],"
-    + "img[class|src|border=0|alt|title|hspace|vspace|width|height|"
-    + "align|onmouseover|onmouseout|name],hr[class|width|size|noshade],"
-    + "font[face|size|color|style],span[class|align|style]"          
-
-revisions_284: 
-  created_at: 2011-02-25 22:11:34.014309
-  card_id: "430"
-  updated_at: 2011-02-25 22:11:34.014309
-  created_by: "4"
-  id: "5290"
-  content: "{\"creator_of\": \"_self\"}"
-revisions_094: 
-  created_at: 2010-04-15 18:43:00.576374
-  card_id: "332"
-  updated_at: 2010-04-15 18:43:00.576374
-  created_by: "1"
-  id: "3219"
-  content: ""
-revisions_237: 
-  created_at: 2011-03-19 22:03:39.572356
-  card_id: "453"
-  updated_at: 2011-03-19 22:03:39.572356
-  created_by: "4"
-  id: "5511"
-  content: |-
-    <p>{{+description}}</p>
-    <p>&nbsp;</p>
-    <h2>{{_self|name}} Cards</h2>
-    <blockquote>
-    <p>{{+*type+by name}}</p>
-    </blockquote>
-revisions_047: 
-  created_at: 2009-04-24 09:57:11.417349
-  card_id: "168"
-  updated_at: 2009-04-24 09:57:11.417349
-  created_by: "4"
-  id: "1988"
-  content: ""
-revisions_428: 
+revisions_473: 
   created_at: 2011-02-16 09:30:51.621316
   card_id: "411"
   updated_at: 2011-02-16 09:30:51.621316
@@ -400,6 +334,117 @@ revisions_428:
     <li>[[*search]] &mdash; similar to a [[form]], used for [[Search bar]] results</li>
     <li>[[*broken_link]] &mdash; cards that have links to cards that don't yet exist</li>
     </ul>
+revisions_426: 
+  created_at: 2011-07-08 21:22:21.427555
+  card_id: "483"
+  updated_at: 2011-07-08 21:22:21.427555
+  created_by: "1"
+  id: "5722"
+  content: "[[Administrator]]"
+revisions_283: 
+  created_at: 2011-03-21 08:42:54.583476
+  card_id: "63"
+  updated_at: 2011-03-21 08:42:54.583476
+  created_by: "3"
+  id: "5566"
+  content: |-
+    <p>People can <strong>request an account</strong> via a "Sign Up" link if you allow "Anyone" to [[/card/options/Account_Request|create account requests]].</p>
+    <p>&nbsp;</p>
+    <p>Unless [[*signup|approved automatically]], the <strong>request will be emailed to</strong>:</p>
+    <blockquote>
+    <p>{{+*to|closed;type:Phrase}}</p>
+    </blockquote>
+    <p>and the<strong> requester will be redirected here:</strong></p>
+    <blockquote>
+    <div>HTTP:// <em>(YOUR WAGN'S DOMAIN) </em>{{+*thanks}}</div>
+    </blockquote>
+    <div>You can <strong>approve/deny account requests [[Account Request|here]]</strong>.</div>
+revisions_093: 
+  created_at: 2010-04-15 18:42:59.872334
+  card_id: "331"
+  updated_at: 2010-04-15 18:42:59.872334
+  created_by: "1"
+  id: "3218"
+  content: ""
+revisions_236: 
+  created_at: 2011-03-19 22:03:39.460349
+  card_id: "452"
+  updated_at: 2011-03-19 22:03:39.460349
+  created_by: "4"
+  id: "5510"
+  content: ""
+revisions_046: 
+  created_at: 2009-04-06 14:11:12.948281
+  card_id: "129"
+  updated_at: 2009-04-06 14:11:12.948281
+  created_by: "1"
+  id: "1408"
+  content: ""
+revisions_474: 
+  created_at: 2011-02-16 09:32:16.748753
+  card_id: "412"
+  updated_at: 2011-02-16 09:32:16.748753
+  created_by: "4"
+  id: "4934"
+  content: |-
+    {"not": {"or": {"referred_to_by": "default cards",
+                          "linked_to_by": "star cards",
+                          "type": "Setting",
+                          "found_by": "Settings defaults and help",
+                          "right": "description",
+                          "part": "*right"}
+               },
+     "limit": "200",
+     "sort": "name"
+    }
+revisions_427: 
+  created_at: 2011-07-08 21:22:21.875581
+  card_id: "484"
+  updated_at: 2011-07-08 21:22:21.875581
+  created_by: "1"
+  id: "5723"
+  content: "[[Administrator]]"
+revisions_284: 
+  created_at: 2011-02-25 22:11:34.014309
+  card_id: "430"
+  updated_at: 2011-02-25 22:11:34.014309
+  created_by: "4"
+  id: "5290"
+  content: "{\"creator_of\": \"_self\"}"
+revisions_094: 
+  created_at: 2010-04-15 18:43:00.576374
+  card_id: "332"
+  updated_at: 2010-04-15 18:43:00.576374
+  created_by: "1"
+  id: "3219"
+  content: ""
+revisions_237: 
+  created_at: 2011-03-19 22:03:39.572356
+  card_id: "453"
+  updated_at: 2011-03-19 22:03:39.572356
+  created_by: "4"
+  id: "5511"
+  content: |-
+    <p>{{+description}}</p>
+    <p>&nbsp;</p>
+    <h2>{{_self|name}} Cards</h2>
+    <blockquote>
+    <p>{{+*type+by name}}</p>
+    </blockquote>
+revisions_047: 
+  created_at: 2009-04-24 09:57:11.417349
+  card_id: "168"
+  updated_at: 2009-04-24 09:57:11.417349
+  created_by: "4"
+  id: "1988"
+  content: ""
+revisions_428: 
+  created_at: 2011-07-08 21:22:21.943585
+  card_id: "485"
+  updated_at: 2011-07-08 21:22:21.943585
+  created_by: "1"
+  id: "5724"
+  content: "[[Administrator]]"
 revisions_285: 
   created_at: 2011-02-25 22:15:41.285528
   card_id: "427"
@@ -453,22 +498,12 @@ revisions_048:
     </blockquote>
     <p>&nbsp;</p>
 revisions_429: 
-  created_at: 2011-02-16 09:32:16.748753
-  card_id: "412"
-  updated_at: 2011-02-16 09:32:16.748753
-  created_by: "4"
-  id: "4934"
-  content: |-
-    {"not": {"or": {"referred_to_by": "default cards",
-                          "linked_to_by": "star cards",
-                          "type": "Setting",
-                          "found_by": "Settings defaults and help",
-                          "right": "description",
-                          "part": "*right"}
-               },
-     "limit": "200",
-     "sort": "name"
-    }
+  created_at: 2011-07-08 21:22:22.063591
+  card_id: "486"
+  updated_at: 2011-07-08 21:22:22.063591
+  created_by: "1"
+  id: "5725"
+  content: "{\"left\":{\"type\":\"_left\"}, \"right\":\"_right\"}"
 revisions_286: 
   created_at: 2011-02-25 22:17:35.074689
   card_id: "433"
@@ -666,34 +701,6 @@ revisions_105:
   id: "3230"
   content: ""
 revisions_390: 
-  created_at: 2011-02-28 10:52:49.248018
-  card_id: "449"
-  updated_at: 2011-02-28 10:52:49.248018
-  created_by: "4"
-  id: "5396"
-  content: ""
-revisions_343: 
-  created_at: 2009-12-22 08:05:08.413671
-  card_id: "315"
-  updated_at: 2009-12-22 08:05:08.413671
-  created_by: "4"
-  id: "3177"
-  content: "{\"name\":\"_self\"}"
-revisions_153: 
-  created_at: 2010-04-20 17:59:10.056481
-  card_id: "386"
-  updated_at: 2010-04-20 17:59:10.056481
-  created_by: "3"
-  id: "3623"
-  content: ""
-revisions_106: 
-  created_at: 2010-04-15 18:43:13.930175
-  card_id: "341"
-  updated_at: 2010-04-15 18:43:13.930175
-  created_by: "1"
-  id: "3232"
-  content: ""
-revisions_391: 
   created_at: 2011-04-05 20:22:23.501351
   card_id: "404"
   updated_at: 2011-04-05 20:22:23.501351
@@ -819,6 +826,34 @@ revisions_391:
     <p>{{*input+*right+*option|closed}}</p>
     </blockquote>
     <p>&nbsp;</p>
+revisions_343: 
+  created_at: 2009-12-22 08:05:08.413671
+  card_id: "315"
+  updated_at: 2009-12-22 08:05:08.413671
+  created_by: "4"
+  id: "3177"
+  content: "{\"name\":\"_self\"}"
+revisions_153: 
+  created_at: 2010-04-20 17:59:10.056481
+  card_id: "386"
+  updated_at: 2010-04-20 17:59:10.056481
+  created_by: "3"
+  id: "3623"
+  content: ""
+revisions_106: 
+  created_at: 2010-04-15 18:43:13.930175
+  card_id: "341"
+  updated_at: 2010-04-15 18:43:13.930175
+  created_by: "1"
+  id: "3232"
+  content: ""
+revisions_391: 
+  created_at: 2011-02-15 21:39:42.252894
+  card_id: "406"
+  updated_at: 2011-02-15 21:39:42.252894
+  created_by: "4"
+  id: "4841"
+  content: <p>Number cards can contain only numerical values.</p>
 revisions_344: 
   created_at: 2009-12-22 08:27:16.540474
   card_id: "316"
@@ -841,12 +876,12 @@ revisions_107:
   id: "3233"
   content: ""
 revisions_392: 
-  created_at: 2011-02-15 21:39:42.252894
-  card_id: "406"
-  updated_at: 2011-02-15 21:39:42.252894
+  created_at: 2011-02-15 21:44:09.666648
+  card_id: "409"
+  updated_at: 2011-02-15 21:44:09.666648
   created_by: "4"
-  id: "4841"
-  content: <p>Number cards can contain only numerical values.</p>
+  id: "4846"
+  content: <p>Date cards contain a date.</p>
 revisions_345: 
   created_at: 2011-01-20 01:38:16.880912
   card_id: "398"
@@ -869,12 +904,12 @@ revisions_108:
   id: "3235"
   content: ""
 revisions_393: 
-  created_at: 2011-02-15 21:44:09.666648
-  card_id: "409"
-  updated_at: 2011-02-15 21:44:09.666648
-  created_by: "4"
-  id: "4846"
-  content: <p>Date cards contain a date.</p>
+  created_at: 2011-02-15 22:52:34.240879
+  card_id: "407"
+  updated_at: 2011-02-15 22:52:34.240879
+  created_by: "3"
+  id: "4869"
+  content: <p>PlainText cards are for unstyled text.</p>
 revisions_346: 
   created_at: 2011-01-20 01:38:17.068922
   card_id: "399"
@@ -897,12 +932,12 @@ revisions_109:
   id: "3237"
   content: ""
 revisions_394: 
-  created_at: 2011-02-15 22:52:34.240879
-  card_id: "407"
-  updated_at: 2011-02-15 22:52:34.240879
+  created_at: 2011-02-15 22:54:15.993246
+  card_id: "215"
+  updated_at: 2011-02-15 22:54:15.993246
   created_by: "3"
-  id: "4869"
-  content: <p>PlainText cards are for unstyled text.</p>
+  id: "4871"
+  content: <p>File cards are for uploading and downloading files. [[http://wagn.org/wagn/File|Learn more about File cards]].</p>
 revisions_347: 
   created_at: 2011-01-20 01:38:32.901825
   card_id: "401"
@@ -918,12 +953,12 @@ revisions_157:
   id: "3628"
   content: ""
 revisions_395: 
-  created_at: 2011-02-15 22:54:15.993246
-  card_id: "215"
-  updated_at: 2011-02-15 22:54:15.993246
+  created_at: 2011-02-15 22:54:42.334747
+  card_id: "408"
+  updated_at: 2011-02-15 22:54:42.334747
   created_by: "3"
-  id: "4871"
-  content: <p>File cards are for uploading and downloading files. [[http://wagn.org/wagn/File|Learn more about File cards]].</p>
+  id: "4872"
+  content: <p>Phrase cards are for short unstyled text.</p>
 revisions_348: 
   created_at: 2011-02-25 23:01:12.908915
   card_id: "198"
@@ -994,12 +1029,12 @@ revisions_158:
   id: "3629"
   content: ""
 revisions_396: 
-  created_at: 2011-02-15 22:54:42.334747
-  card_id: "408"
-  updated_at: 2011-02-15 22:54:42.334747
-  created_by: "3"
-  id: "4872"
-  content: <p>Phrase cards are for short unstyled text.</p>
+  created_at: 2011-03-08 00:14:22.412598
+  card_id: "439"
+  updated_at: 2011-03-08 00:14:22.412598
+  created_by: "4"
+  id: "5403"
+  content: ""
 revisions_349: 
   created_at: 2011-01-28 23:09:57.899676
   card_id: "196"
@@ -1024,11 +1059,11 @@ revisions_159:
      "sort": "name"
     }
 revisions_397: 
-  created_at: 2011-03-08 00:14:22.412598
-  card_id: "439"
-  updated_at: 2011-03-08 00:14:22.412598
+  created_at: 2011-03-08 00:14:22.4566
+  card_id: "438"
+  updated_at: 2011-03-08 00:14:22.4566
   created_by: "4"
-  id: "5403"
+  id: "5404"
   content: ""
 revisions_210: 
   created_at: 2011-03-19 16:37:17.790799
@@ -1053,19 +1088,19 @@ revisions_020:
   id: "1711"
   content: ""
 revisions_398: 
-  created_at: 2011-03-08 00:14:22.4566
-  card_id: "438"
-  updated_at: 2011-03-08 00:14:22.4566
-  created_by: "4"
-  id: "5404"
-  content: ""
-revisions_400: 
-  created_at: 2011-04-27 10:28:06.745325
-  card_id: "466"
-  updated_at: 2011-04-27 10:28:06.745325
+  created_at: 2011-04-27 10:28:06.341302
+  card_id: "465"
+  updated_at: 2011-04-27 10:28:06.341302
   created_by: "1"
-  id: "5641"
-  content: "{\"match\":\"_keyword\", \"sort\":\"relevance\"}"
+  id: "5640"
+  content: "{\"sort\":\"update\", \"dir\":\"desc\", \"view\":\"change\"}"
+revisions_400: 
+  created_at: 2011-04-27 10:28:06.993339
+  card_id: "467"
+  updated_at: 2011-04-27 10:28:06.993339
+  created_by: "1"
+  id: "5642"
+  content: "{\"link_to\":\"_none\"}"
 revisions_211: 
   created_at: 2011-03-19 16:37:32.37163
   card_id: "52"
@@ -1089,19 +1124,19 @@ revisions_021:
   id: "1550"
   content: ""
 revisions_399: 
-  created_at: 2011-04-27 10:28:06.341302
-  card_id: "465"
-  updated_at: 2011-04-27 10:28:06.341302
+  created_at: 2011-04-27 10:28:06.745325
+  card_id: "466"
+  updated_at: 2011-04-27 10:28:06.745325
   created_by: "1"
-  id: "5640"
-  content: "{\"sort\":\"update\", \"dir\":\"desc\", \"view\":\"change\"}"
+  id: "5641"
+  content: "{\"match\":\"_keyword\", \"sort\":\"relevance\"}"
 revisions_401: 
-  created_at: 2011-04-27 10:28:06.993339
-  card_id: "467"
-  updated_at: 2011-04-27 10:28:06.993339
+  created_at: 2011-04-27 10:28:07.097345
+  card_id: "468"
+  updated_at: 2011-04-27 10:28:07.097345
   created_by: "1"
-  id: "5642"
-  content: "{\"link_to\":\"_none\"}"
+  id: "5643"
+  content: ""
 revisions_022: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "113"
@@ -1110,11 +1145,11 @@ revisions_022:
   id: "1242"
   content: ""
 revisions_402: 
-  created_at: 2011-04-27 10:28:07.097345
-  card_id: "468"
-  updated_at: 2011-04-27 10:28:07.097345
+  created_at: 2011-04-27 10:28:08.313415
+  card_id: "469"
+  updated_at: 2011-04-27 10:28:08.313415
   created_by: "1"
-  id: "5643"
+  id: "5644"
   content: ""
 revisions_212: 
   created_at: 2011-03-19 16:37:52.688788
@@ -1131,12 +1166,19 @@ revisions_212:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-revisions_403: 
-  created_at: 2011-04-27 10:28:08.313415
-  card_id: "469"
-  updated_at: 2011-04-27 10:28:08.313415
+revisions_450: 
+  created_at: 2011-07-08 21:22:24.011702
+  card_id: "507"
+  updated_at: 2011-07-08 21:22:24.011702
   created_by: "1"
-  id: "5644"
+  id: "5746"
+  content: _left
+revisions_403: 
+  created_at: 2011-04-27 10:28:08.733439
+  card_id: "470"
+  updated_at: 2011-04-27 10:28:08.733439
+  created_by: "1"
+  id: "5645"
   content: ""
 revisions_023: 
   created_at: 2009-04-06 14:11:12.948281
@@ -1174,12 +1216,19 @@ revisions_213:
     <blockquote>
     <p>{{+*type+by name}}</p>
     </blockquote>
-revisions_404: 
-  created_at: 2011-04-27 10:28:08.733439
-  card_id: "470"
-  updated_at: 2011-04-27 10:28:08.733439
+revisions_451: 
+  created_at: 2011-07-08 21:22:25.955813
+  card_id: "508"
+  updated_at: 2011-07-08 21:22:25.955813
   created_by: "1"
-  id: "5645"
+  id: "5747"
+  content: "[[Anyone]]"
+revisions_404: 
+  created_at: 2011-04-27 10:28:09.009454
+  card_id: "471"
+  updated_at: 2011-04-27 10:28:09.009454
+  created_by: "1"
+  id: "5646"
   content: ""
 revisions_261: 
   created_at: 2011-02-25 16:53:25.735048
@@ -1229,12 +1278,19 @@ revisions_024:
   created_by: "1"
   id: "1225"
   content: ""
-revisions_405: 
-  created_at: 2011-04-27 10:28:09.009454
-  card_id: "471"
-  updated_at: 2011-04-27 10:28:09.009454
+revisions_452: 
+  created_at: 2011-07-08 21:22:27.779917
+  card_id: "509"
+  updated_at: 2011-07-08 21:22:27.779917
   created_by: "1"
-  id: "5646"
+  id: "5748"
+  content: "{\"name\":\"_self\"}"
+revisions_405: 
+  created_at: 2011-04-27 10:28:09.421478
+  card_id: "472"
+  updated_at: 2011-04-27 10:28:09.421478
+  created_by: "1"
+  id: "5647"
   content: ""
 revisions_262: 
   created_at: 2011-02-25 16:53:26.13507
@@ -1272,12 +1328,19 @@ revisions_025:
   created_by: "1"
   id: "13"
   content: ""
-revisions_406: 
-  created_at: 2011-04-27 10:28:09.421478
-  card_id: "472"
-  updated_at: 2011-04-27 10:28:09.421478
+revisions_453: 
+  created_at: 2011-07-08 21:22:27.82392
+  card_id: "510"
+  updated_at: 2011-07-08 21:22:27.82392
   created_by: "1"
-  id: "5647"
+  id: "5749"
+  content: "[[Anyone Signed In]]"
+revisions_406: 
+  created_at: 2011-04-27 10:28:09.681493
+  card_id: "473"
+  updated_at: 2011-04-27 10:28:09.681493
+  created_by: "1"
+  id: "5648"
   content: ""
 revisions_263: 
   created_at: 2011-02-25 16:58:50.447966
@@ -1315,12 +1378,19 @@ revisions_026:
   created_by: "1"
   id: "45"
   content: ""
-revisions_407: 
-  created_at: 2011-04-27 10:28:09.681493
-  card_id: "473"
-  updated_at: 2011-04-27 10:28:09.681493
+revisions_454: 
+  created_at: 2011-07-08 21:22:27.947927
+  card_id: "511"
+  updated_at: 2011-07-08 21:22:27.947927
   created_by: "1"
-  id: "5648"
+  id: "5750"
+  content: "[[Administrator]]"
+revisions_407: 
+  created_at: 2011-04-27 10:28:09.953508
+  card_id: "474"
+  updated_at: 2011-04-27 10:28:09.953508
+  created_by: "1"
+  id: "5649"
   content: ""
 revisions_264: 
   created_at: 2011-03-20 22:38:48.23575
@@ -1358,13 +1428,24 @@ revisions_027:
   created_by: "1"
   id: "1253"
   content: ""
-revisions_408: 
-  created_at: 2011-04-27 10:28:09.953508
-  card_id: "474"
-  updated_at: 2011-04-27 10:28:09.953508
+revisions_455: 
+  created_at: 2011-07-08 21:22:28.00793
+  card_id: "512"
+  updated_at: 2011-07-08 21:22:28.00793
   created_by: "1"
-  id: "5649"
-  content: ""
+  id: "5751"
+  content: "[[Administrator]]"
+revisions_408: 
+  created_at: 2011-02-15 23:01:06.261753
+  card_id: "413"
+  updated_at: 2011-02-15 23:01:06.261753
+  created_by: "4"
+  id: "4878"
+  content: |-
+    {"left": {"left": {"type": "Setting"}, "right": "*right"},
+     "limit": "50",
+     "sort": "name"
+    }
 revisions_265: 
   created_at: 2010-04-19 17:32:19.067324
   card_id: "249"
@@ -1396,17 +1477,22 @@ revisions_028:
     <p>Adding a +*options Search card to a Pointer limits the auto-completion to the cards returned by the Search. And if it's a simple search for a cardtype, then cards created through the pointer will automatically be set to that type.</p>
     <p>&nbsp;</p>
     <p>{{_left+*options}}</p>
+revisions_456: 
+  created_at: 2011-07-08 21:22:28.307947
+  card_id: "513"
+  updated_at: 2011-07-08 21:22:28.307947
+  created_by: "1"
+  id: "5752"
+  content: "{\"name\":\"_self\"}"
 revisions_409: 
-  created_at: 2011-02-15 23:01:06.261753
-  card_id: "413"
-  updated_at: 2011-02-15 23:01:06.261753
-  created_by: "4"
-  id: "4878"
+  created_at: 2011-06-06 13:11:10.574468
+  card_id: "221"
+  updated_at: 2011-06-06 13:11:10.574468
+  created_by: "3"
+  id: "5713"
   content: |-
-    {"left": {"left": {"type": "Setting"}, "right": "*right"},
-     "limit": "50",
-     "sort": "name"
-    }
+    {"extension_type": "User"}
+    /* note -- this syntax is not yet deprecated but will be before Wagn 2.0 */
 revisions_266: 
   created_at: 2010-04-19 17:34:25.567832
   card_id: "359"
@@ -1435,6 +1521,13 @@ revisions_029:
   created_by: "1"
   id: "353"
   content: ""
+revisions_457: 
+  created_at: 2011-07-08 21:22:28.35195
+  card_id: "514"
+  updated_at: 2011-07-08 21:22:28.35195
+  created_by: "1"
+  id: "5753"
+  content: "[[Anyone Signed In]]"
 revisions_267: 
   created_at: 2010-04-19 17:35:22.303725
   card_id: "357"
@@ -1449,6 +1542,13 @@ revisions_077:
   created_by: "4"
   id: "2200"
   content: "{\"type\": \"Cardtype\", \"sort\": \"name\", \"append\": \"*edit\"}"
+revisions_458: 
+  created_at: 2011-07-08 21:22:28.451955
+  card_id: "515"
+  updated_at: 2011-07-08 21:22:28.451955
+  created_by: "1"
+  id: "5754"
+  content: "[[Administrator]]"
 revisions_268: 
   created_at: 2010-04-19 17:38:24.540162
   card_id: "281"
@@ -1474,6 +1574,13 @@ revisions_078:
     <blockquote>
     <p>{{_left+*plus parts}}</p>
     </blockquote>
+revisions_459: 
+  created_at: 2011-07-08 21:22:28.519959
+  card_id: "516"
+  updated_at: 2011-07-08 21:22:28.519959
+  created_by: "1"
+  id: "5755"
+  content: "[[Administrator]]"
 revisions_269: 
   created_at: 2010-04-19 17:39:59.522219
   card_id: "90"
@@ -1644,31 +1751,15 @@ revisions_133:
     </blockquote>
     <p>&nbsp;</p>
 revisions_371: 
-  created_at: 2011-04-03 16:55:57.507678
-  card_id: "154"
-  updated_at: 2011-04-03 16:55:57.507678
+  created_at: 2011-04-03 16:57:53.000876
+  card_id: "38"
+  updated_at: 2011-04-03 16:57:53.000876
   created_by: "4"
-  id: "5602"
+  id: "5603"
   content: |-
-    [[Ethan McCutchen]]
-    [[John Abbe]]
-    [[Lewis Hoffman]]
-    [[*ignore]]
-    [[cards to copy to new Wagns]]
-    [[new]]
-    [[all non-star cards]]
-    [[cards by type]]
-    [[Cardtype descriptions]]
-    [[Basic+*watchers]]
-    [[related subtabs - universal]]
-    [[Settings values]]
-    [[not set or setting]]
-    [[translatable cards]]
-    [[default cards]]
-    [[star cards]]
-    [[not listed yet]]
-    [[Settings defaults and help]]
-    [[Advanced Search]]
+    {"include":"_self",
+     "sort": "name"
+    }
 revisions_181: 
   created_at: 2009-06-09 18:24:29.182159
   card_id: "210"
@@ -1691,13 +1782,13 @@ revisions_134:
   id: "3266"
   content: <p>[[http://www.wagn.org/wagn/custom_help_text|Help text]] people will see when editing cards in the [[set]].</p>
 revisions_372: 
-  created_at: 2011-04-03 16:57:53.000876
-  card_id: "38"
-  updated_at: 2011-04-03 16:57:53.000876
+  created_at: 2011-04-03 16:58:03.510779
+  card_id: "42"
+  updated_at: 2011-04-03 16:58:03.510779
   created_by: "4"
-  id: "5603"
+  id: "5604"
   content: |-
-    {"include":"_self",
+    {"included_by":"_self",
      "sort": "name"
     }
 revisions_182: 
@@ -1722,13 +1813,13 @@ revisions_135:
   id: "3606"
   content: "[[_left+email config]]"
 revisions_373: 
-  created_at: 2011-04-03 16:58:03.510779
-  card_id: "42"
-  updated_at: 2011-04-03 16:58:03.510779
+  created_at: 2011-04-03 16:58:54.913708
+  card_id: "44"
+  updated_at: 2011-04-03 16:58:54.913708
   created_by: "4"
-  id: "5604"
+  id: "5605"
   content: |-
-    {"included_by":"_self",
+    {"linked_to_by":"_self",
      "sort": "name"
     }
 revisions_183: 
@@ -1753,13 +1844,13 @@ revisions_136:
   id: "3607"
   content: "[[_left+email config]]"
 revisions_374: 
-  created_at: 2011-04-03 16:58:54.913708
-  card_id: "44"
-  updated_at: 2011-04-03 16:58:54.913708
+  created_at: 2011-04-03 16:58:57.709867
+  card_id: "40"
+  updated_at: 2011-04-03 16:58:57.709867
   created_by: "4"
-  id: "5605"
+  id: "5606"
   content: |-
-    {"linked_to_by":"_self",
+    {"link_to":"_self",
      "sort": "name"
     }
 revisions_184: 
@@ -1784,13 +1875,13 @@ revisions_137:
   id: "3608"
   content: ""
 revisions_375: 
-  created_at: 2011-04-03 16:58:57.709867
-  card_id: "40"
-  updated_at: 2011-04-03 16:58:57.709867
+  created_at: 2011-04-03 17:00:20.601196
+  card_id: "34"
+  updated_at: 2011-04-03 17:00:20.601196
   created_by: "4"
-  id: "5606"
+  id: "5607"
   content: |-
-    {"link_to":"_self",
+    {"part":"_self",
      "sort": "name"
     }
 revisions_185: 
@@ -1815,13 +1906,13 @@ revisions_138:
   id: "3609"
   content: ""
 revisions_376: 
-  created_at: 2011-04-03 17:00:20.601196
-  card_id: "34"
-  updated_at: 2011-04-03 17:00:20.601196
+  created_at: 2011-04-03 17:00:28.689657
+  card_id: "36"
+  updated_at: 2011-04-03 17:00:28.689657
   created_by: "4"
-  id: "5607"
+  id: "5608"
   content: |-
-    {"part":"_self",
+    {"plus":"_self",
      "sort": "name"
     }
 revisions_186: 
@@ -1853,13 +1944,13 @@ revisions_139:
     <p>{{+*message}}</p>
     <p>{{+*attach}}</p>
 revisions_377: 
-  created_at: 2011-04-03 17:00:28.689657
-  card_id: "36"
-  updated_at: 2011-04-03 17:00:28.689657
+  created_at: 2011-04-03 17:01:16.229667
+  card_id: "447"
+  updated_at: 2011-04-03 17:01:16.229667
   created_by: "4"
-  id: "5608"
+  id: "5611"
   content: |-
-    {"plus":"_self",
+    {"referred_to_by":"_self",
      "sort": "name"
     }
 revisions_187: 
@@ -1870,13 +1961,13 @@ revisions_187:
   id: "5199"
   content: ""
 revisions_378: 
-  created_at: 2011-04-03 17:01:16.229667
-  card_id: "447"
-  updated_at: 2011-04-03 17:01:16.229667
+  created_at: 2011-04-03 17:01:21.325957
+  card_id: "450"
+  updated_at: 2011-04-03 17:01:21.325957
   created_by: "4"
-  id: "5611"
+  id: "5612"
   content: |-
-    {"referred_to_by":"_self",
+    {"refer_to":"_self",
      "sort": "name"
     }
 revisions_188: 
@@ -1894,13 +1985,13 @@ revisions_001:
   id: "311"
   content: ""
 revisions_379: 
-  created_at: 2011-04-03 17:01:21.325957
-  card_id: "450"
-  updated_at: 2011-04-03 17:01:21.325957
+  created_at: 2011-04-03 17:01:59.176114
+  card_id: "97"
+  updated_at: 2011-04-03 17:01:59.176114
   created_by: "4"
-  id: "5612"
+  id: "5613"
   content: |-
-    {"refer_to":"_self",
+    {"member": "_self",
      "sort": "name"
     }
 revisions_189: 
@@ -1920,6 +2011,13 @@ revisions_002:
   created_by: "1"
   id: "43"
   content: ""
+revisions_430: 
+  created_at: 2011-07-08 21:22:22.135596
+  card_id: "487"
+  updated_at: 2011-07-08 21:22:22.135596
+  created_by: "1"
+  id: "5726"
+  content: "[[Administrator]]"
 revisions_003: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "10"
@@ -1953,6 +2051,13 @@ revisions_050:
     <p>{{_left+*type cards}}</p>
     </blockquote>
     <p>&nbsp;</p>
+revisions_431: 
+  created_at: 2011-07-08 21:22:22.335607
+  card_id: "488"
+  updated_at: 2011-07-08 21:22:22.335607
+  created_by: "1"
+  id: "5727"
+  content: "[[Administrator]]"
 revisions_004: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "1"
@@ -1974,6 +2079,13 @@ revisions_051:
   created_by: "3"
   id: "1870"
   content: "{\"type\":\"_self\", \"sort\":\"name\"}"
+revisions_432: 
+  created_at: 2011-07-08 21:22:22.39561
+  card_id: "489"
+  updated_at: 2011-07-08 21:22:22.39561
+  created_by: "1"
+  id: "5728"
+  content: "[[Administrator]]"
 revisions_005: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "128"
@@ -1995,6 +2107,13 @@ revisions_052:
   created_by: "3"
   id: "1871"
   content: "[[*account]]"
+revisions_433: 
+  created_at: 2011-07-08 21:22:22.451614
+  card_id: "490"
+  updated_at: 2011-07-08 21:22:22.451614
+  created_by: "1"
+  id: "5729"
+  content: "[[Administrator]]"
 revisions_006: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "130"
@@ -2023,6 +2142,13 @@ revisions_053:
   created_by: "3"
   id: "1881"
   content: "{\"member_of\": \"_self\", \"sort\":\"name\"}"
+revisions_434: 
+  created_at: 2011-07-08 21:22:22.499616
+  card_id: "491"
+  updated_at: 2011-07-08 21:22:22.499616
+  created_by: "1"
+  id: "5730"
+  content: "[[Administrator]]"
 revisions_007: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "35"
@@ -2077,6 +2203,13 @@ revisions_054:
   content: |
     {"found_by": "_self", "sort": "name"}
 
+revisions_435: 
+  created_at: 2011-07-08 21:22:22.583621
+  card_id: "492"
+  updated_at: 2011-07-08 21:22:22.583621
+  created_by: "1"
+  id: "5731"
+  content: "[[Administrator]]"
 revisions_008: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "131"
@@ -2108,6 +2241,13 @@ revisions_055:
   created_by: "2"
   id: "2275"
   content: ""
+revisions_436: 
+  created_at: 2011-07-08 21:22:22.643624
+  card_id: "493"
+  updated_at: 2011-07-08 21:22:22.643624
+  created_by: "1"
+  id: "5732"
+  content: "[[Administrator]]"
 revisions_009: 
   created_at: 2009-04-06 14:11:12.948281
   card_id: "37"
@@ -2136,6 +2276,13 @@ revisions_056:
   created_by: "4"
   id: "1993"
   content: ""
+revisions_437: 
+  created_at: 2011-07-08 21:22:22.695627
+  card_id: "494"
+  updated_at: 2011-07-08 21:22:22.695627
+  created_by: "1"
+  id: "5733"
+  content: "[[Administrator]]"
 revisions_294: 
   created_at: 2009-12-02 16:02:47.328155
   card_id: "260"
@@ -2159,6 +2306,13 @@ revisions_057:
   created_by: "1"
   id: "3196"
   content: ""
+revisions_438: 
+  created_at: 2011-07-08 21:22:22.871637
+  card_id: "495"
+  updated_at: 2011-07-08 21:22:22.871637
+  created_by: "1"
+  id: "5734"
+  content: "[[Administrator]]"
 revisions_295: 
   created_at: 2009-12-02 16:02:47.448162
   card_id: "261"
@@ -2218,6 +2372,13 @@ revisions_058:
      "sort": "update",
      "limit": 200
     }
+revisions_439: 
+  created_at: 2011-07-08 21:22:22.943642
+  card_id: "496"
+  updated_at: 2011-07-08 21:22:22.943642
+  created_by: "1"
+  id: "5735"
+  content: "[[Anyone Signed In]]"
 revisions_296: 
   created_at: 2009-12-02 16:02:47.704176
   card_id: "262"
@@ -2680,14 +2841,12 @@ revisions_169:
     <p>{{_left+*type cards|closed}}</p>
     <hr>
 revisions_410: 
-  created_at: 2011-06-06 13:11:10.574468
-  card_id: "221"
-  updated_at: 2011-06-06 13:11:10.574468
-  created_by: "3"
-  id: "5713"
-  content: |-
-    {"extension_type": "User"}
-    /* note -- this syntax is not yet deprecated but will be before Wagn 2.0 */
+  created_at: 2011-02-15 23:59:39.797265
+  card_id: "388"
+  updated_at: 2011-02-15 23:59:39.797265
+  created_by: "4"
+  id: "4888"
+  content: ""
 revisions_220: 
   created_at: 2009-09-24 13:16:05.044844
   card_id: "253"
@@ -2703,12 +2862,12 @@ revisions_030:
   id: "48"
   content: ""
 revisions_411: 
-  created_at: 2011-02-15 23:59:39.797265
-  card_id: "388"
-  updated_at: 2011-02-15 23:59:39.797265
+  created_at: 2011-02-15 23:59:40.073281
+  card_id: "414"
+  updated_at: 2011-02-15 23:59:40.073281
   created_by: "4"
-  id: "4888"
-  content: ""
+  id: "4889"
+  content: "4"
 revisions_221: 
   created_at: 2011-03-19 21:34:07.597613
   card_id: "87"
@@ -2724,12 +2883,12 @@ revisions_031:
   id: "1270"
   content: ""
 revisions_412: 
-  created_at: 2011-02-15 23:59:40.073281
-  card_id: "414"
-  updated_at: 2011-02-15 23:59:40.073281
+  created_at: 2011-03-08 14:31:49.436486
+  card_id: "392"
+  updated_at: 2011-03-08 14:31:49.436486
   created_by: "4"
-  id: "4889"
-  content: "4"
+  id: "5411"
+  content: <p>Configures an email to be sent using [[http://wagn.org/flexible_email|flexible email]]. Note that [[http://www.wagn.org/wagn/contextual_names|contextual names]] here such as "_self" will refer to the card triggering the email.</p>
 revisions_222: 
   created_at: 2011-03-19 22:02:13.138134
   card_id: "162"
@@ -2744,13 +2903,20 @@ revisions_032:
   created_by: "1"
   id: "49"
   content: ""
+revisions_460: 
+  created_at: 2011-07-08 21:22:28.819976
+  card_id: "517"
+  updated_at: 2011-07-08 21:22:28.819976
+  created_by: "1"
+  id: "5756"
+  content: "{\"name\":\"_self\"}"
 revisions_413: 
-  created_at: 2011-03-08 14:31:49.436486
-  card_id: "392"
-  updated_at: 2011-03-08 14:31:49.436486
+  created_at: 2011-02-16 00:03:03.546113
+  card_id: "382"
+  updated_at: 2011-02-16 00:03:03.546113
   created_by: "4"
-  id: "5411"
-  content: <p>Configures an email to be sent using [[http://wagn.org/flexible_email|flexible email]]. Note that [[http://www.wagn.org/wagn/contextual_names|contextual names]] here such as "_self" will refer to the card triggering the email.</p>
+  id: "4892"
+  content: ""
 revisions_223: 
   created_at: 2011-03-19 22:09:27.836096
   card_id: "455"
@@ -2779,13 +2945,20 @@ revisions_080:
   created_by: "2"
   id: "2276"
   content: ""
+revisions_461: 
+  created_at: 2011-07-08 21:22:28.863979
+  card_id: "518"
+  updated_at: 2011-07-08 21:22:28.863979
+  created_by: "1"
+  id: "5757"
+  content: "[[Administrator]]"
 revisions_414: 
-  created_at: 2011-02-16 00:03:03.546113
-  card_id: "382"
-  updated_at: 2011-02-16 00:03:03.546113
+  created_at: 2011-02-16 00:03:03.794127
+  card_id: "415"
+  updated_at: 2011-02-16 00:03:03.794127
   created_by: "4"
-  id: "4892"
-  content: ""
+  id: "4893"
+  content: "4"
 revisions_224: 
   created_at: 2011-03-19 22:09:27.9081
   card_id: "456"
@@ -2840,13 +3013,20 @@ revisions_081:
   created_by: "4"
   id: "2430"
   content: ""
+revisions_462: 
+  created_at: 2011-07-08 21:22:28.947984
+  card_id: "519"
+  updated_at: 2011-07-08 21:22:28.947984
+  created_by: "1"
+  id: "5758"
+  content: "[[Administrator]]"
 revisions_415: 
-  created_at: 2011-02-16 00:03:03.794127
-  card_id: "415"
-  updated_at: 2011-02-16 00:03:03.794127
+  created_at: 2011-02-16 00:03:49.348723
+  card_id: "379"
+  updated_at: 2011-02-16 00:03:49.348723
   created_by: "4"
-  id: "4893"
-  content: "4"
+  id: "4894"
+  content: ""
 revisions_225: 
   created_at: 2011-03-19 22:15:26.016243
   card_id: "213"
@@ -2875,13 +3055,41 @@ revisions_082:
   created_by: "1"
   id: "3201"
   content: ""
+revisions_463: 
+  created_at: 2011-07-15 11:30:10.802988
+  card_id: "154"
+  updated_at: 2011-07-15 11:30:10.802988
+  created_by: "3"
+  id: "5760"
+  content: |-
+    [[Ethan McCutchen]]
+    [[John Abbe]]
+    [[Lewis Hoffman]]
+    [[*ignore]]
+    [[cards to copy to new Wagns]]
+    [[new]]
+    [[all non-star cards]]
+    [[cards by type]]
+    [[Cardtype descriptions]]
+    [[Basic+*watchers]]
+    [[related subtabs - universal]]
+    [[Settings values]]
+    [[not set or setting]]
+    [[translatable cards]]
+    [[default cards]]
+    [[star cards]]
+    [[not listed yet]]
+    [[Settings defaults and help]]
+    [[Advanced Search]]
+    [[new+*self]]
+    [[new+*self+*comment]]
 revisions_416: 
-  created_at: 2011-02-16 00:03:49.348723
-  card_id: "379"
-  updated_at: 2011-02-16 00:03:49.348723
+  created_at: 2011-02-16 00:03:49.508732
+  card_id: "416"
+  updated_at: 2011-02-16 00:03:49.508732
   created_by: "4"
-  id: "4894"
-  content: ""
+  id: "4895"
+  content: "4"
 revisions_226: 
   created_at: 2011-03-20 04:49:45.383588
   card_id: "451"
@@ -2916,13 +3124,20 @@ revisions_083:
     <blockquote>
     <p>{{+*members}}</p>
     </blockquote>
-revisions_417: 
-  created_at: 2011-02-16 00:03:49.508732
-  card_id: "416"
-  updated_at: 2011-02-16 00:03:49.508732
+revisions_464: 
+  created_at: 2011-02-16 02:11:13.241543
+  card_id: "376"
+  updated_at: 2011-02-16 02:11:13.241543
   created_by: "4"
-  id: "4895"
-  content: "4"
+  id: "4913"
+  content: ""
+revisions_417: 
+  created_at: 2011-07-08 21:22:20.4675
+  card_id: "475"
+  updated_at: 2011-07-08 21:22:20.4675
+  created_by: "1"
+  id: "5714"
+  content: ""
 revisions_227: 
   created_at: 2009-07-27 17:13:01.430509
   card_id: "226"
@@ -2953,6 +3168,13 @@ revisions_084:
   created_by: "1"
   id: "3204"
   content: ""
+revisions_465: 
+  created_at: 2011-02-16 02:11:13.349549
+  card_id: "417"
+  updated_at: 2011-02-16 02:11:13.349549
+  created_by: "4"
+  id: "4914"
+  content: "4"
 revisions_418: 
   created_at: 2011-03-09 09:00:58.120427
   card_id: "149"
@@ -2988,12 +3210,19 @@ revisions_085:
   created_by: "1"
   id: "3206"
   content: ""
-revisions_419: 
-  created_at: 2011-02-16 02:11:13.241543
-  card_id: "376"
-  updated_at: 2011-02-16 02:11:13.241543
+revisions_466: 
+  created_at: 2011-02-16 02:12:11.482118
+  card_id: "374"
+  updated_at: 2011-02-16 02:12:11.482118
   created_by: "4"
-  id: "4913"
+  id: "4915"
+  content: ""
+revisions_419: 
+  created_at: 2011-07-08 21:22:20.879524
+  card_id: "476"
+  updated_at: 2011-07-08 21:22:20.879524
+  created_by: "1"
+  id: "5715"
   content: ""
 revisions_229: 
   created_at: 2009-07-27 17:16:06.886527
@@ -3026,6 +3255,13 @@ revisions_086:
   created_by: "1"
   id: "3207"
   content: ""
+revisions_467: 
+  created_at: 2011-02-16 02:12:11.578124
+  card_id: "418"
+  updated_at: 2011-02-16 02:12:11.578124
+  created_by: "4"
+  id: "4916"
+  content: "4"
 revisions_277: 
   created_at: 2009-11-11 23:17:19.087118
   card_id: "258"
@@ -3040,6 +3276,13 @@ revisions_087:
   created_by: "1"
   id: "3208"
   content: ""
+revisions_468: 
+  created_at: 2011-03-19 15:28:42.233277
+  card_id: "437"
+  updated_at: 2011-03-19 15:28:42.233277
+  created_by: "3"
+  id: "5420"
+  content: "{{_left|when_created}}{{## \"when_created\" view is deprecated.  please do not use elsewhere}}"
 revisions_278: 
   created_at: 2011-01-09 14:09:53.907959
   card_id: "365"
@@ -3054,6 +3297,13 @@ revisions_088:
   created_by: "1"
   id: "3209"
   content: ""
+revisions_469: 
+  created_at: 2011-03-19 15:29:07.544013
+  card_id: "440"
+  updated_at: 2011-03-19 15:29:07.544013
+  created_by: "3"
+  id: "5421"
+  content: "{{_left|when_last_edited}}{{## \"when_last_edited\" view is deprecated.  please do not use elsewhere}}"
 revisions_279: 
   created_at: 2011-01-09 14:56:52.401292
   card_id: "167"
@@ -3145,14 +3395,14 @@ revisions_143:
   id: "3614"
   content: ""
 revisions_380: 
-  created_at: 2011-04-03 17:01:59.176114
-  card_id: "97"
-  updated_at: 2011-04-03 17:01:59.176114
+  created_at: 2011-04-03 17:05:47.426475
+  card_id: "395"
+  updated_at: 2011-04-03 17:05:47.426475
   created_by: "4"
-  id: "5613"
+  id: "5619"
   content: |-
-    {"member": "_self",
-     "sort": "name"
+    {"type": "File",
+     "sort": "update"
     }
 revisions_190: 
   created_at: 2009-09-16 14:34:58.131998
@@ -3176,14 +3426,21 @@ revisions_144:
   id: "3615"
   content: ""
 revisions_381: 
-  created_at: 2011-04-03 17:05:47.426475
-  card_id: "395"
-  updated_at: 2011-04-03 17:05:47.426475
+  created_at: 2011-04-03 17:07:11.661911
+  card_id: "223"
+  updated_at: 2011-04-03 17:07:11.661911
   created_by: "4"
-  id: "5619"
+  id: "5621"
   content: |-
-    {"type": "File",
-     "sort": "update"
+    /* fixit - once "type" accepts card defs:
+    {"or": 
+     {"and": {"plus": ["*watcher", {"refer_to": "_self"} ], "not": {"type": "Cardtype"} } },
+     {"type": {"plus": ["*watcher", {"refer_to": "_self"} ], "type": "Cardtype"} }
+    }
+    */
+    
+    {"plus": ["*watcher", {"refer_to": "_self"} ],
+     "sort": "name"
     }
 revisions_191: 
   created_at: 2009-09-16 14:34:59.904099
@@ -3207,20 +3464,14 @@ revisions_145:
   id: "3617"
   content: ""
 revisions_382: 
-  created_at: 2011-04-03 17:07:11.661911
-  card_id: "223"
-  updated_at: 2011-04-03 17:07:11.661911
+  created_at: 2011-04-03 17:08:35.628006
+  card_id: "161"
+  updated_at: 2011-04-03 17:08:35.628006
   created_by: "4"
-  id: "5621"
+  id: "5624"
   content: |-
-    /* fixit - once "type" accepts card defs:
-    {"or": 
-     {"and": {"plus": ["*watcher", {"refer_to": "_self"} ], "not": {"type": "Cardtype"} } },
-     {"type": {"plus": ["*watcher", {"refer_to": "_self"} ], "type": "Cardtype"} }
-    }
-    */
-    
-    {"plus": ["*watcher", {"refer_to": "_self"} ],
+    {"type": "Cardtype",
+     "append": "*type",
      "sort": "name"
     }
 revisions_192: 
@@ -3245,16 +3496,12 @@ revisions_146:
   id: "3618"
   content: ""
 revisions_383: 
-  created_at: 2011-04-03 17:08:35.628006
-  card_id: "161"
-  updated_at: 2011-04-03 17:08:35.628006
+  created_at: 2011-04-04 16:52:20.35286
+  card_id: "463"
+  updated_at: 2011-04-04 16:52:20.35286
   created_by: "4"
-  id: "5624"
-  content: |-
-    {"type": "Cardtype",
-     "append": "*type",
-     "sort": "name"
-    }
+  id: "5625"
+  content: ""
 revisions_193: 
   created_at: 2009-06-16 08:59:45.444765
   card_id: "218"
@@ -3277,11 +3524,11 @@ revisions_147:
   id: "2402"
   content: <p>Thanks for submitting this form!</p>
 revisions_384: 
-  created_at: 2011-04-04 16:52:20.35286
-  card_id: "463"
-  updated_at: 2011-04-04 16:52:20.35286
+  created_at: 2011-04-04 16:53:27.17798
+  card_id: "464"
+  updated_at: 2011-04-04 16:53:27.17798
   created_by: "4"
-  id: "5625"
+  id: "5626"
   content: ""
 revisions_194: 
   created_at: 2009-06-18 10:56:07.714013
@@ -3305,12 +3552,12 @@ revisions_148:
   id: "2403"
   content: ""
 revisions_385: 
-  created_at: 2011-04-04 16:53:27.17798
-  card_id: "464"
-  updated_at: 2011-04-04 16:53:27.17798
+  created_at: 2011-04-04 16:54:22.13443
+  card_id: "299"
+  updated_at: 2011-04-04 16:54:22.13443
   created_by: "4"
-  id: "5626"
-  content: ""
+  id: "5627"
+  content: <p>The type of editor for a set of [[Pointer]] cards.</p>
 revisions_195: 
   created_at: 2010-04-25 14:01:12.362523
   card_id: "393"
@@ -3335,12 +3582,12 @@ revisions_149:
   id: "3620"
   content: ""
 revisions_386: 
-  created_at: 2011-04-04 16:54:22.13443
-  card_id: "299"
-  updated_at: 2011-04-04 16:54:22.13443
+  created_at: 2011-02-28 10:51:53.731587
+  card_id: "445"
+  updated_at: 2011-02-28 10:51:53.731587
   created_by: "4"
-  id: "5627"
-  content: <p>The type of editor for a set of [[Pointer]] cards.</p>
+  id: "5392"
+  content: ""
 revisions_196: 
   created_at: 2011-03-19 16:28:08.627597
   card_id: "259"
@@ -3355,11 +3602,11 @@ revisions_196:
     <p>{{+*type+by name}}</p>
     </blockquote>
 revisions_387: 
-  created_at: 2011-02-28 10:51:53.731587
-  card_id: "445"
-  updated_at: 2011-02-28 10:51:53.731587
+  created_at: 2011-02-28 10:51:54.163612
+  card_id: "446"
+  updated_at: 2011-02-28 10:51:54.163612
   created_by: "4"
-  id: "5392"
+  id: "5393"
   content: ""
 revisions_197: 
   created_at: 2009-06-26 00:00:49.010402
@@ -3398,11 +3645,11 @@ revisions_010:
   id: "237"
   content: ""
 revisions_388: 
-  created_at: 2011-02-28 10:51:54.163612
-  card_id: "446"
-  updated_at: 2011-02-28 10:51:54.163612
+  created_at: 2011-02-28 10:52:49.032006
+  card_id: "448"
+  updated_at: 2011-02-28 10:52:49.032006
   created_by: "4"
-  id: "5393"
+  id: "5395"
   content: ""
 revisions_198: 
   created_at: 2009-06-26 00:05:59.673278
@@ -3434,11 +3681,11 @@ revisions_011:
   id: "39"
   content: ""
 revisions_389: 
-  created_at: 2011-02-28 10:52:49.032006
-  card_id: "448"
-  updated_at: 2011-02-28 10:52:49.032006
+  created_at: 2011-02-28 10:52:49.248018
+  card_id: "449"
+  updated_at: 2011-02-28 10:52:49.248018
   created_by: "4"
-  id: "5395"
+  id: "5396"
   content: ""
 revisions_199: 
   created_at: 2009-07-03 11:43:20.536424
@@ -3515,6 +3762,13 @@ revisions_012:
     <p>{{*logo|float:right}}{{DeleteMe|open}}</p>
     <p>&nbsp;</p>
     <p>{{*logo|float:left}}{{DeleteMe|closed}}</p>
+revisions_440: 
+  created_at: 2011-07-08 21:22:23.011645
+  card_id: "497"
+  updated_at: 2011-07-08 21:22:23.011645
+  created_by: "1"
+  id: "5736"
+  content: "[[Anyone Signed In]]"
 revisions_250: 
   created_at: 2010-04-19 15:30:17.016148
   card_id: "157"
@@ -3556,6 +3810,13 @@ revisions_013:
   created_by: "1"
   id: "41"
   content: ""
+revisions_441: 
+  created_at: 2011-07-08 21:22:23.223658
+  card_id: "498"
+  updated_at: 2011-07-08 21:22:23.223658
+  created_by: "1"
+  id: "5737"
+  content: "[[Anyone Signed In]]"
 revisions_251: 
   created_at: 2010-04-19 15:46:16.137186
   card_id: "158"
@@ -3588,6 +3849,13 @@ revisions_014:
   created_by: "1"
   id: "8"
   content: ""
+revisions_442: 
+  created_at: 2011-07-08 21:22:23.279661
+  card_id: "499"
+  updated_at: 2011-07-08 21:22:23.279661
+  created_by: "1"
+  id: "5738"
+  content: _left
 revisions_252: 
   created_at: 2011-02-21 23:12:19.301587
   card_id: "152"
@@ -3692,6 +3960,13 @@ revisions_015:
   created_by: "4"
   id: "1748"
   content: ""
+revisions_443: 
+  created_at: 2011-07-08 21:22:23.523675
+  card_id: "500"
+  updated_at: 2011-07-08 21:22:23.523675
+  created_by: "1"
+  id: "5739"
+  content: "[[Anyone]]"
 revisions_253: 
   created_at: 2011-02-25 16:46:44.211059
   card_id: "422"
@@ -3728,6 +4003,13 @@ revisions_016:
   created_by: "1"
   id: "266"
   content: ""
+revisions_444: 
+  created_at: 2011-07-08 21:22:23.583678
+  card_id: "501"
+  updated_at: 2011-07-08 21:22:23.583678
+  created_by: "1"
+  id: "5740"
+  content: _left
 revisions_254: 
   created_at: 2011-02-25 16:46:44.9351
   card_id: "423"
@@ -3760,6 +4042,13 @@ revisions_017:
   created_by: "1"
   id: "1455"
   content: <p>{{DeleteMe|open}}</p>
+revisions_445: 
+  created_at: 2011-07-08 21:22:23.631681
+  card_id: "502"
+  updated_at: 2011-07-08 21:22:23.631681
+  created_by: "1"
+  id: "5741"
+  content: "[[Anyone Signed In]]"
 revisions_255: 
   created_at: 2010-04-19 16:46:20.363822
   card_id: "361"
@@ -3796,6 +4085,13 @@ revisions_018:
   created_by: "1"
   id: "9"
   content: ""
+revisions_446: 
+  created_at: 2011-07-08 21:22:23.687684
+  card_id: "503"
+  updated_at: 2011-07-08 21:22:23.687684
+  created_by: "1"
+  id: "5742"
+  content: _left
 revisions_256: 
   created_at: 2011-02-25 16:47:49.940094
   card_id: "425"
@@ -3832,6 +4128,13 @@ revisions_019:
   created_by: "1"
   id: "1521"
   content: ""
+revisions_447: 
+  created_at: 2011-07-08 21:22:23.739687
+  card_id: "504"
+  updated_at: 2011-07-08 21:22:23.739687
+  created_by: "1"
+  id: "5743"
+  content: "[[Anyone Signed In]]"
 revisions_257: 
   created_at: 2011-02-25 16:47:50.280113
   card_id: "426"
@@ -3846,6 +4149,13 @@ revisions_067:
   created_by: "4"
   id: "1966"
   content: "{\"member_of\": \"_self\", \"sort\":\"name\"}"
+revisions_448: 
+  created_at: 2011-07-08 21:22:23.78769
+  card_id: "505"
+  updated_at: 2011-07-08 21:22:23.78769
+  created_by: "1"
+  id: "5744"
+  content: _left
 revisions_258: 
   created_at: 2010-04-19 17:19:01.18405
   card_id: "363"
@@ -3860,6 +4170,13 @@ revisions_068:
   created_by: "4"
   id: "2022"
   content: "{\"right_plus\":[\"tags\", {\"refer_to\":\"_self\"}]}"
+revisions_449: 
+  created_at: 2011-07-08 21:22:23.855694
+  card_id: "506"
+  updated_at: 2011-07-08 21:22:23.855694
+  created_by: "1"
+  id: "5745"
+  content: ""
 revisions_259: 
   created_at: 2011-02-25 16:51:35.50219
   card_id: "428"
@@ -4352,12 +4669,12 @@ revisions_179:
     <p>&nbsp;</p>
     <p><em>Double-click here (or in any card) to edit.</em></p>
 revisions_420: 
-  created_at: 2011-02-16 02:11:13.349549
-  card_id: "417"
-  updated_at: 2011-02-16 02:11:13.349549
-  created_by: "4"
-  id: "4914"
-  content: "4"
+  created_at: 2011-07-08 21:22:20.939527
+  card_id: "477"
+  updated_at: 2011-07-08 21:22:20.939527
+  created_by: "1"
+  id: "5716"
+  content: ""
 revisions_230: 
   created_at: 2009-07-27 17:19:41.983755
   card_id: "229"
@@ -4373,11 +4690,11 @@ revisions_040:
   id: "1755"
   content: My Wagn
 revisions_421: 
-  created_at: 2011-02-16 02:12:11.482118
-  card_id: "374"
-  updated_at: 2011-02-16 02:12:11.482118
-  created_by: "4"
-  id: "4915"
+  created_at: 2011-07-08 21:22:21.103537
+  card_id: "478"
+  updated_at: 2011-07-08 21:22:21.103537
+  created_by: "1"
+  id: "5717"
   content: ""
 revisions_231: 
   created_at: 2009-07-27 17:19:53.188393
@@ -4394,12 +4711,12 @@ revisions_041:
   id: "1747"
   content: ""
 revisions_422: 
-  created_at: 2011-02-16 02:12:11.578124
-  card_id: "418"
-  updated_at: 2011-02-16 02:12:11.578124
-  created_by: "4"
-  id: "4916"
-  content: "4"
+  created_at: 2011-07-08 21:22:21.15954
+  card_id: "479"
+  updated_at: 2011-07-08 21:22:21.15954
+  created_by: "1"
+  id: "5718"
+  content: ""
 revisions_232: 
   created_at: 2009-07-27 17:20:14.989975
   card_id: "231"

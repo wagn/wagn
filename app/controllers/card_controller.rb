@@ -364,7 +364,7 @@ class CardController < ApplicationController
 
     options_card =
       (!params[:id].blank? and
-       (pointer_card = Card.fetch_or_new(params[:id], :skip_defaults=>true)) and
+       (pointer_card = Card.fetch_or_new(params[:id], :skip_defaults=>true, :type=>'Pointer')) and
        pointer_card.options_card)
 
     search_args = {  :complete=>complete, :limit=>8, :sort=>'name' }

@@ -156,6 +156,7 @@ describe CardController do
     end
    
     it "redirects to thanks if present" do
+      login_as :wagbot
       Card.create :name=>"*all+*thanks", :content=>"/thank_you"
       post :create, "card" => { "name" => "Wombly" }
       assert_template "ajax_redirect"
@@ -163,6 +164,7 @@ describe CardController do
     end
 
     it "redirects to card if thanks is blank" do
+      login_as :wagbot
       Card.create! :name=>"*all+*thanks", :content=>"/thank_you"
       Card.create! :name=>"boop+*right+*thanks", :content=>""
       post :create, "card" => { "name" => "Joe+boop" }

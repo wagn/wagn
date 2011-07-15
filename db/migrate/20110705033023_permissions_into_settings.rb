@@ -3,7 +3,7 @@ class PermissionsIntoSettings < ActiveRecord::Migration
     User.as :wagbot
     Card.reset_column_information
     Wagn::Cache.reset_global
-    ENV['BOOTSTRAP_LOAD'] = 'true'
+    ENV['MIGRATE_PERMISSIONS'] = 'true'
     
     #some data cleanup for integrity issues that were causing problems here and there.
     execute "update cards set extension_type=null where extension_type in('SoftTemplate','HardTemplate')"
@@ -115,7 +115,7 @@ class PermissionsIntoSettings < ActiveRecord::Migration
         end
       end
     end
-    ENV['BOOTSTRAP_LOAD'] = 'false'
+    ENV['MIGRATE_PERMISSIONS'] = 'false'
   end
 
   def self.down

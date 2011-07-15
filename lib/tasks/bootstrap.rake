@@ -41,7 +41,6 @@ namespace :wagn do
   
     desc "load bootstrap fixtures into db"
     task :load => :environment do
-      ENV['BOOTSTRAP_LOAD'] = 'true'
       require 'active_record/fixtures'                         
       #ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
       Dir.glob(File.join(RAILS_ROOT, 'db', 'bootstrap', '*.{yml,csv}')).each do |fixture_file|
@@ -63,62 +62,6 @@ namespace :wagn do
         " (referenced_card_id is not null and not exists (select * from cards where cards.id = wiki_references.referenced_card_id)) or " +
         " (           card_id is not null and not exists (select * from cards where cards.id = wiki_references.card_id));"
       )
-
-      #config_cards = %w{ *context *to *title account_request+*type+*content account_request+*type+*default *invite+*thank *signup+*thank *from }
-      
-    
-      role_ids = {}
-      Role.find(:all).each do |role|
-        role_ids[role.codename.to_sym] = role.id
-      end
-
-      Wagn::Cache.initialize_on_startup
-      Card.cache.reset if Card.cache  #necessary?
-      User.current_user = :wagbot
-
-    #  perm_rules = {
-    #    '*all' => { :create=>:auth, :read=>:anon, :update => :auth, :delete => :auth, :comment=>nil },
-    #    '*all plus' => { :create=>:left, :read=>:left, :update => :left, :delete => :left },
-    #    '*star'                 => { :create=>:admin, :update => :admin, :delete => :admin },
-    #    '*rstar'                => { :create=>:admin, :update => :admin, :delete => :admin },
-    #    '*watcher+*right'       => { :create=>:auth,  :update => :auth  },
-    #    'Role+*type'            => { :create=>:admin },
-    #    'Html+*type'            => { :create=>:admin },
-    #    'Account Request+*type' => { :create=>:anon  },
-    #    'discussion+*right'     => { :comment=>:anon },
-    #    'Administrator links+*self'=> { :read=>:admin },
-    #  }
-    #
-    #  puts 'creating permission cards'
-    #  perm_rules.each_key do |set|
-    #    perm_rules[set].each_key do |setting|
-    #      val = perm_rules[set][setting]
-    #      role_card = nil
-    #      content = case val
-    #        when :left  ;  '_left'
-    #        when nil    ;  ''
-    #        else
-    #          role_card = Role[val].card if val
-    #          "[[#{role_card.name}]]"
-    #        end
-    #      c = Card.create! :name=> "#{set}+*#{setting}", :typecode=> 'Pointer', :content=>content
-    #      if role_card
-    #        WikiReference.create(
-    #          :card_id=>c.id, 
-    #          :referenced_name=>role_card.key,
-    #          :referenced_card_id=>role_card.id,
-    #          :link_type => 'L' 
-    #        )
-    #      end
-    #    end
-    #  end
-    #  Card.cache.reset if Card.cache
-    #  
-    #  puts 'updating read_rule fields'
-    #  Card.find(:all).each do |card|
-    #    card.update_read_rule
-    #  end
-      ENV['BOOTSTRAP_LOAD'] = 'false'
     end
   end
 end

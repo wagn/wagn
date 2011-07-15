@@ -33,7 +33,7 @@ class PermissionsIntoSettings < ActiveRecord::Migration
       where += " and party_id is not null " if task == :create
       all_role[task] = most_common_party(task, where)
       all_rule = create_rule('*all',task, all_role[task])
-      all_plus_rule = create_rule('*all plus', task, '_left')
+      all_plus_rule = create_rule('*all plus', task, '_left') unless task==:comment
       if task == :read
         execute "update cards set read_rule_id=#{all_rule.id}, read_rule_class='*all' where trash is false and tag_id is null"
         execute "update cards set read_rule_id=#{all_rule.id}, read_rule_class='*all plus' where trash is false and tag_id is not null"

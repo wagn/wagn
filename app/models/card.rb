@@ -441,8 +441,6 @@ class Card < ActiveRecord::Base
       # validate uniqueness of name
       condition_sql = "cards.key = ? and trash=?"
       condition_params = [ value.to_key, false ]
-      
-       
       unless rec.new_record?
         condition_sql << " AND cards.id <> ?" 
         condition_params << rec.id

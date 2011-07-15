@@ -384,7 +384,7 @@ module Wagn
       sub.type = options[:type] if options[:type]
       sub.showname = options[:showname] || tcard.name
   
-      new_card = tcard.new_record? && !tcard.virtual?
+      new_card = tcard.new_card? && !tcard.virtual?
   
       vmode = options[:home_view] = (options[:view] || :content).to_sym
       sub.requested_view = vmode

@@ -1,7 +1,7 @@
 class SetSettingPlusDescription2 < ActiveRecord::Migration
   def self.up 
     User.as(:wagbot) do
-      card = Card.find_or_new :name=>"Setting+description", :type=>"Basic"
+      card = Card.fetch_or_new "Setting+description", :type=>"Basic"
       if card.revisions.empty? || card.revisions.map(&:author).map(&:login).uniq == ["wagbot"]
         card.content =<<CONTENT
 <div>Settings affect how cards look and behave. Each card's Options tab has a "settings" subtab.</div>

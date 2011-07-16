@@ -240,8 +240,9 @@ module Wagn
   end
 
   def options_submenu(on)
+    return '' if card && card.extension_type != 'User'
     div(:class=>'submenu') do
-      [:permissions, :settings].map do |key|
+      [:account, :settings].map do |key|
         link_to_remote( key,
           { :url=>url_for("card/options", {}, key), :update => id },
           :class=>(key==on ? 'on' : '')

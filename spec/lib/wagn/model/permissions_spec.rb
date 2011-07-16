@@ -75,7 +75,7 @@ describe "reader rules" do
   
   it "should work with relative settings" do
     @perm_card.save!
-    all_plus = Card.fetch_or_create('*all plus+*read', {}, :content=>'_left')
+    all_plus = Card.fetch_or_create('*all plus+*read', :content=>'_left')
     c = Card.new(:name=>'Home+Heart')
     c.who_can(:read).should == ['anyone_signed_in']
     c.rule_card(:read).first.id.should == @perm_card.id
@@ -84,7 +84,7 @@ describe "reader rules" do
   end
   
   it "should get updated when relative settings change" do
-    all_plus = Card.fetch_or_create('*all plus+*read', {}, :content=>'_left')
+    all_plus = Card.fetch_or_create('*all plus+*read', :content=>'_left')
     c = Card.new(:name=>'Home+Heart')
     c.who_can(:read).should == ['anyone']
     c.rule_card(:read).first.id.should == Card.fetch('*all+*read').id
@@ -101,7 +101,7 @@ describe "reader rules" do
   end
   
   it "should insure that class overrides work with relative settings" do
-    all_plus = Card.fetch_or_create('*all plus+*read', {}, :content=>'_left')
+    all_plus = Card.fetch_or_create('*all plus+*read', :content=>'_left')
     @perm_card.save
     c = Card.create(:name=>'Home+Heart')
     c.read_rule_id.should == @perm_card.id

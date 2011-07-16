@@ -71,22 +71,16 @@ module Wagn
               else
                 view_key.to_s.sub(/_#{view}$/, "_#{aview}").to_sym
               end
-  #Rails.logger.info("alias_view #{aview_key}, #{view} > #{aview}")
           when Hash
             aview_key = get_pattern(aview[:view]||view, aview)
           else raise "Bad view #{aview.inspect}"
           end
-  
-  #Rails.logger.debug "defining aliased view #{view} #{aview.inspect} > #{aview_key}"
           class_eval do
             define_method( "_final_#{aview_key}".to_sym ) do
               Rails.logger.debug "ALIAS call: #{aview_key} called, calling #{view_key}"
               send("_final_#{view_key}")
             end
           end
-  
-          #register_view(view_key, aview_key)
-  #Rails.logger.debug "reg_alias(#{view_key}, #{view}) > #{aview.inspect} :: #{aview_key}"
         end
       end
   
@@ -95,21 +89,14 @@ module Wagn
         view_key = get_pattern(view, opts)
         class_eval do
           define_method( "_final_#{view_key}", &final )
-          #register_view(view_key, view_key)
-  #Rails.logger.debug "reg_view(_final_#{view_key}, #{view.inspect})"
-  
           if view_key == view
-  #Rails.logger.debug "define base view: _render_#{view}, render_#{view}"
             define_method( "_render_#{view}" ) do |*a| a = [{}] if a.empty?
               final_meth = view_method( view )
-  #Rails.logger.debug " in #{caller(0).first}[#{card}] #{view}, #{final_meth}"
-  raise "??? #{view.inspect}" unless final_meth
               send(final_meth, *a) { yield }
             end
   
             define_method( "render_#{view}" ) do |*a|
-              if refusal=render_check(view, *a); return refusal end
-  raise "no method #{method_id}, #{view}: #{@@set_views.inspect}" unless view_method( view )
+              denial=deny_render(view, *a) and return denial
               send( "_render_#{view}", *a) { yield }
             end
           end
@@ -153,12 +140,6 @@ module Wagn
       def view_aliases() VIEW_ALIASES end
     end
   
-  
-    # Fragment left over from controller, I think this is all handled ?
-    #   for :xhr, render_show => :naked, :html render_show => :layout
-    #   all other formats should be mapped (?? what about :kml => :show ?)
-    #format == :xhr ? render(:action=>'show') : render(:text=>'', :layout=>true)
-  
     def initialize(card, opts=nil)
       Renderer.current_slot ||= self unless(opts[:not_current])
       @card = card
@@ -173,7 +154,6 @@ module Wagn
       @action ||= 'view'
       @format ||= :html
       
-      #not sure these are necessary now that we're handling controller.  would prefer not to have to pass them in...    
       @params ||= {}
       @flash ||= {}
       
@@ -233,28 +213,20 @@ module Wagn
     alias expand_inclusions process_content
   
   
-    def render_check(action, args={})
+    def deny_render(action, args={})
+      return false if UNDENIABLE_VIEWS.member?(action)
       ch_action = case
         when too_deep?      ; :too_deep
         when !card          ; false
-        when card.new_card? ; false # causes errors to check in current system.  
-          #should remove this and add create check after we settingize permissions
         when [:edit, :edit_in_form, :multi_edit].member?(action)
-          !card.ok?(:update) and :deny_view #should be deny_edit
+          allowed = card.ok?(card.new_card? ? :create : :update)
+          !allowed && :deny_view #should be deny_create or deny_update...
         else
-          !card.ok?(:read) and :deny_view
-        end
-        ch_action and render(ch_action, args)
-    end
-  
-    def render_deny(action, args={})
-      case
-      when UNDENIABLE_VIEWS.member?(action); return
-      when card && card.new_record?;         return # need create check...
-      else render_check action, args
+          !card.ok?(:read) and :deny_view #should be deny_read
       end
+      ch_action and render(ch_action, args)
     end
-  
+    
     def canonicalize_view( view )
       (view and v=VIEW_ALIASES[view.to_sym]) ? v : view
     end
@@ -262,11 +234,9 @@ module Wagn
   
   
     def render(action=:view, args={})
-  raise "???" if Hash===action
       args[:home_view] ||= action
       self.render_args = args.clone
-      denial = render_deny(action, args)
-      return denial if denial
+      denial = deny_render(action, args) and return denial
   
       action = canonicalize_view(action)
       @state ||= case action
@@ -275,10 +245,8 @@ module Wagn
         else :view
       end
   
-  #Rails.logger.debug "calling view method(#{action}) #{card.inspect}"
       result = 
         if render_meth = view_method(action)
-  #Rails.logger.debug "render(#{action}) #{render_meth}"
           send(render_meth, args) { yield }
         else
           "<strong>#{card.name} - unknown card view: '#{action}' M:#{render_meth.inspect}</strong>"
@@ -294,12 +262,9 @@ module Wagn
   
     def view_method(view)
       return "_final_#{view}" unless card
-  #Rails.logger.debug "method keys for #{card.name}: #{Wagn::Pattern.method_keys(card).inspect}"
-      
       Wagn::Pattern.method_keys(card).each do |method_key|
         
         meth = "_final_"+(method_key.blank? ? "#{view}" : "#{method_key}_#{view}")
-  #Rails.logger.debug "view_method( #{method_key} )  #{meth}"
         return meth if respond_to?(meth.to_sym)
       end
       return @@fallback[view]
@@ -381,7 +346,7 @@ module Wagn
   
       tcard ||= begin
         case
-        when state ==:edit   ;  Card.fetch_or_new(fullname, {}, new_inclusion_card_args(tname, options))
+        when state ==:edit   ;  Card.fetch_or_new(fullname, new_inclusion_card_args(tname, options))
         when base.respond_to?(:name);   base
         else                 ;  Card.fetch_or_new(fullname, :skip_defaults=>true)
         end
@@ -419,7 +384,7 @@ module Wagn
       sub.type = options[:type] if options[:type]
       sub.showname = options[:showname] || tcard.name
   
-      new_card = tcard.new_record? && !tcard.virtual?
+      new_card = tcard.new_card? && !tcard.virtual?
   
       vmode = options[:home_view] = (options[:view] || :content).to_sym
       sub.requested_view = vmode

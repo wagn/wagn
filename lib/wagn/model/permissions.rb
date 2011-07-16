@@ -97,12 +97,10 @@ module Wagn::Model::Permissions
     rule_card(operation).first.item_names.map &:to_key
   end 
   
-
-  
   def rule_card(operation)
     opcard = setting_card(operation.to_s)
     
-    if !opcard && (!System.always_ok? || ENV['BOOTSTRAP_LOAD'] == 'true')
+    if !opcard && (!System.always_ok? || ENV['MIGRATE_PERMISSIONS'] == 'true')
       errors.add :permission_denied, "No #{operation} setting card for #{name}"      
       raise Card::PermissionDenied.new(self) 
     end
@@ -110,7 +108,8 @@ module Wagn::Model::Permissions
     rcard = begin
       User.as :wagbot do
         if opcard.raw_content == '_left' && self.junction?
-          Card.fetch_or_new(name.trunk_name, :skip_virtual=>true, :skip_defaults=>true).rule_card(operation).first
+          lcard = loaded_trunk || Card.fetch_or_new(name.trunk_name, :skip_virtual=>true, :skip_defaults=>true) 
+          lcard.rule_card(operation).first
         else
           opcard
         end
@@ -192,7 +191,7 @@ module Wagn::Model::Permissions
   public
 
   def set_read_rule
-    return if ENV['BOOTSTRAP_LOAD'] == 'true'
+    return if ENV['MIGRATE_PERMISSIONS'] == 'true'
     # avoid doing this on simple content saves?
     rcard, rclass = rule_card(:read)
     self.read_rule_id = rcard.id
@@ -218,7 +217,7 @@ module Wagn::Model::Permissions
       :read_rule_class => rclass
     )
     
-    unless ENV['BOOTSTRAP_LOAD'] == 'true' 
+    unless ENV['MIGRATE_PERMISSIONS'] == 'true' 
     # currently doing a brute force search for every card that may be impacted.  may want to optimize(?)
       User.as :wagbot do
         Card.search(:left=>self.name).each do |plus_card|
@@ -235,7 +234,7 @@ module Wagn::Model::Permissions
   end
 
   def update_ruled_cards
-    return if ENV['BOOTSTRAP_LOAD'] == 'true'
+    return if ENV['MIGRATE_PERMISSIONS'] == 'true'
     if name.junction? && name.tag_name=='*read' && @name_or_content_changed
       Wagn::Cache.expire_card self.key #probably shouldn't be necessary, 
       # but was sometimes getting cached version when card should be in the trash.

@@ -19,7 +19,7 @@ end
 Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
   webrat.simulate do
     User.as(:wagbot) do
-      card = Card.find_or_create! :name=>cardname
+      card = Card.fetch_or_create cardname
       card.content = content
       card.save!
     end

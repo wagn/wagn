@@ -1,7 +1,7 @@
 class GenerateReadRules < ActiveRecord::Migration
   def self.up
     User.as :wagbot
-    ENV['BOOTSTRAP_LOAD'] = 'true'
+    ENV['MIGRATE_PERMISSIONS'] = 'true'
     
     puts 'updating read_rule fields'
     failed_read_rules = []
@@ -28,7 +28,7 @@ class GenerateReadRules < ActiveRecord::Migration
     puts "successfully updated read rules for #{success_count} cards"
     puts "FAILED - read rule updates failed on the following cards:\n#{failed_read_rules.inspect}" if !failed_read_rules.empty?
 
-    ENV['BOOTSTRAP_LOAD'] = 'false'
+    ENV['MIGRATE_PERMISSIONS'] = 'false'
   end
 
   def self.down

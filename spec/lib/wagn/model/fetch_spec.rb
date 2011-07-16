@@ -141,7 +141,7 @@ describe Card do
     end
 
     it "takes a second hash of options as new card options" do
-      new_card = Card.fetch_or_new("Never Before", {}, :type => "Image")
+      new_card = Card.fetch_or_new("Never Before", :type => "Image")
       new_card.should be_instance_of(Card)
       new_card.typecode.should == 'Image'
       new_card.new_record?.should be_true

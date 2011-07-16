@@ -1,13 +1,13 @@
 class ContentSettings < ActiveRecord::Migration
   def self.up
     User.as :wagbot
-    c = Card.find_or_create! :name=>"*content", :type=>"Setting"
+    c = Card.fetch_or_create "*content", :type=>"Setting"
     if c and c.type!="Setting"
       c.type = "Setting"
       c.save!
     end
     
-    c = Card.find_or_create! :name=>"*default", :type=>"Setting"
+    c = Card.fetch_or_create "*default", :type=>"Setting"
     if c and c.type!="Setting"
       c.type = "Setting"
       c.save!

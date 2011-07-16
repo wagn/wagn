@@ -459,7 +459,6 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
       content_card = Card.create!(:name=>"Phrase+*type+*content", :content=>"Content Foo" )
       default_card = Card.create!(:name=>"templated+*right+*default", :content=>"Default Bar" )
       @card = Card.new( :name=>"test+templated", :type=>'Phrase' )
-      @card.should_receive(:setting_card).with("content", "default").and_return(default_card)
       Wagn::Renderer.new(@card).render(:raw).should == "Default Bar"
     end
 

@@ -21,7 +21,7 @@ describe Wagn::Pattern do
 
     it "returns set names for simple star cards" do
       Wagn::Pattern.set_names(Card.fetch("*update")).should == [ 
-        "*update+*self","*star","Basic+*type","*all"
+        "*update+*self","*star","Setting+*type","*all"
       ]
     end
 

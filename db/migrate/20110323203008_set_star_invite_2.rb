@@ -1,7 +1,7 @@
 class SetStarInvite2 < ActiveRecord::Migration
   def self.up 
     User.as(:wagbot) do
-      card = Card.find_or_new :name=>"*invite", :type=>"Basic"
+      card = Card.fetch_or_new "*invite", :type=>"Basic"
       if card.revisions.empty? || card.revisions.map(&:author).map(&:login).uniq == ["wagbot"]
         card.content =<<CONTENT
 <p>People can <strong>invite new users via email</strong> if they have the [[/admin/tasks|global permission]] to "create accounts".</p>

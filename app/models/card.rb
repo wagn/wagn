@@ -13,11 +13,9 @@ class Card < ActiveRecord::Base
 
   belongs_to :extension, :polymorphic=>true
   before_destroy :destroy_extension
-
     
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
-    :from_trash, :update_referencers, :allow_typecode_change, :virtual,
-    :broken_type, :loaded_trunk, :blank_revision, 
+    :from_trash, :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,
     :attachment_id #should build flexible handling for this kind of set-specific attr
 
   cache_attributes('name', 'typecode', 'trash')    
@@ -45,7 +43,6 @@ class Card < ActiveRecord::Base
 
   def new_card?()  new_record? || from_trash  end
   def known?()    !(new_card? && !virtual?)   end
-  def virtual?()   @virtual                   end
 
   private
   def get_attributes
@@ -97,22 +94,6 @@ class Card < ActiveRecord::Base
       return unless typecode
       raise "Bad typecode #{typecode}" if typecode.to_s =~ /\W/
       suppress(NameError) { include eval "Wagn::Set::Type::#{typecode}" }
-    end
-    
-    def find_or_create!(args={})  # DEPRECATED
-      find_or_create(args) || raise(ActiveRecord::RecordNotSaved)
-    end
-    
-    def find_or_create(args={})  # DEPRECATED
-      Rails.logger.info "DEPRECATED: Card#find_or_create; please use Card#fetch_or_create"
-      raise "find or create must have name" unless args[:name]
-      Card.fetch_or_create(args[:name], {}, args)
-    end
-    
-    def find_or_new(args={}) #DEPRECATED
-      Rails.logger.info "DEPRECATED: Card#find_or_new; please use Card#fetch_or_new"
-      raise "find_or_new must have name" unless args[:name]
-      Card.fetch_or_new(args[:name], {}, args)
     end
   end
 
@@ -382,11 +363,11 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # METHODS FOR OVERRIDE
 
-  def update_attachment() end # the module definition overrides this for card_attachements
-  def post_render( content )  content  end
-  def clean_html?()  true   end
-  def collection?()  false  end
-  def on_type_change() end
+  def update_attachment()                 end
+  def post_render( content )     content  end
+  def clean_html?()                 true  end
+  def collection?()                false  end
+  def on_type_change()                    end
   def validate_type_change()        true  end
   def validate_content( content )         end
 
@@ -405,6 +386,8 @@ class Card < ActiveRecord::Base
 
 
 
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # INCLUDED MODULES
 
 
 
@@ -417,6 +400,7 @@ class Card < ActiveRecord::Base
   tracks :name, :typecode, :content, :comment
 
 
+  #this method piggybacks on the name tracking method and must therefore be defined after the #tracks call
   def name_with_key_sync=(name)
     name ||= ""
     self.key = name.to_key
@@ -457,8 +441,6 @@ class Card < ActiveRecord::Base
       # validate uniqueness of name
       condition_sql = "cards.key = ? and trash=?"
       condition_params = [ value.to_key, false ]
-      
-       
       unless rec.new_record?
         condition_sql << " AND cards.id <> ?" 
         condition_params << rec.id
@@ -505,7 +487,7 @@ class Card < ActiveRecord::Base
       end
       # invalid to change type when type is hard_templated
       if (rt = rec.right_template and rt.hard_template? and 
-        value!=rt.typecode and !rec.allow_typecode_change)
+        value!=rt.typecode and !rec.allow_type_change)
         rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rt.typename}"
       end        
     end

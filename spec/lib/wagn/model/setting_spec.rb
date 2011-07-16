@@ -31,6 +31,7 @@ describe Card do
     end
   end
   
+  
   context "cascading settings" do
     before do
       Card.create :name => "*all+*edit help", :content => "edit any kind of card"
@@ -52,6 +53,13 @@ describe Card do
     end
   end
 
+  describe "#setting_names" do
+    it "returns universal setting names for normal card" do
+      snbg = Card.fetch('A').setting_names_by_group
+      snbg[:viewing].should == ['*read','*content','*layout','*table of contents']
+    end
+  end
+  
   describe "#item_names" do
     it "returns item for each line of basic content" do
       Card.new( :name=>"foo", :content => "X\nY" ).item_names.should == ["X","Y"]
@@ -67,10 +75,6 @@ describe Card do
       c = Card.new :name=>"foo", :type=>"Search", :content => %[{"referred_to_by":"_self"}]
       c.item_names( :context=>'A' ).should == ["Z"]
     end
-  end
-
-  describe "#list_cards" do
-    # FIXME: missing tests here.
   end
   
   describe "#extended_list" do

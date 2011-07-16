@@ -1,7 +1,7 @@
 class SetConfigPlusStarSelfPlusStarTableOfContent < ActiveRecord::Migration
   def self.up 
     User.as(:wagbot) do
-      card = Card.find_or_new :name=>"Config+*self+*table of contents", :type=>"Number"
+      card = Card.fetch_or_new "Config+*self+*table of contents", :type=>"Number"
       if card.revisions.empty? || card.revisions.map(&:author).map(&:login).uniq == ["wagbot"]
         card.content =<<CONTENT
 4

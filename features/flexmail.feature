@@ -4,7 +4,7 @@ Feature: Flexmail
   So that we can create emailing forms
   
   Background:
-    Given I log in as Joe User
+    Given I log in as Joe Admin
     And I create Cardtype card "Testimony"    
     And I create Pointer card "Testimony+*type+*send" with content "[[Testemailconfig]]"
     And I create card "Testimony+*type+*content" with content
@@ -13,19 +13,19 @@ Feature: Flexmail
       """
     And I create Search card "search test+*right+*content" with content "{"type":"User"}"
     And I create Basic card "Testemailconfig"
-      And I create Search card "Testemailconfig+*to" with content
-        """
-        {"referred_to_by":{"left":"_self","right":"recipients"}}
-        """
-      And I create Search card "Testemailconfig+*from" with content "{"left":"_self","right":"email"}"
-      And I create Phrase card "Testemailconfig+*subject" with content "Subjectimus"
-      And I create Phrase card "Testemailconfig+*bcc"
-      And I create Basic card "Testemailconfig+*message" with content 
-        """
-        Pleistocles, {{_self+name|naked}} says: {{_self+Testimony|naked}} {{_self+search test|naked;item:name}}
-        buena,
-        Thaddeus
-        """
+    And I create Search card "Testemailconfig+*to" with content
+      """
+      {"referred_to_by":{"left":"_self","right":"recipients"}}
+      """
+    And I create Search card "Testemailconfig+*from" with content "{"left":"_self","right":"email"}"
+    And I create Phrase card "Testemailconfig+*subject" with content "Subjectimus"
+    And I create Phrase card "Testemailconfig+*bcc"
+    And I create Basic card "Testemailconfig+*message" with content 
+      """
+      Pleistocles, {{_self+name|naked}} says: {{_self+Testimony|naked}} {{_self+search test|naked;item:name}}
+      buena,
+      Thaddeus
+      """
 
     And I create Phrase card "A+email" with content "argumus@test.com"
     And I create Phrase card "B+email" with content "tacitus@test.com"
@@ -38,6 +38,7 @@ Feature: Flexmail
       [[A+email]]
       [[B+email]]
       """
+    And I log in as Joe User
     
   Scenario: Submitting a new Testimony
     Given I go to new Testimony

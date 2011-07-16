@@ -1,7 +1,7 @@
 class SetStarSignup < ActiveRecord::Migration
   def self.up 
     User.as(:wagbot) do
-      card = Card.find_or_new :name=>"*signup", :type=>"Basic"
+      card = Card.fetch_or_new "*signup", :type=>"Basic"
       if card.revisions.empty? || card.revisions.map(&:author).map(&:login).uniq == ["wagbot"]
         card.content =<<CONTENT
 <p>People can <strong>sign up with no approval process</strong>&nbsp;if you allow "Anyone" to [[/card/options/Account_Request|create account requests]], and give "Anyone" the [[/admin/tasks |global permission]] to create accounts.</p>

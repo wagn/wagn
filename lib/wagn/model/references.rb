@@ -14,7 +14,7 @@ module Wagn::Model::References
   protected   
   
   def update_references_on_create
-    return if ENV['BOOTSTRAP_LOAD'] == 'true'
+    return if ENV['MIGRATE_PERMISSIONS'] == 'true'
     ::WikiReference.update_on_create(self)  
 
     # FIXME: bogus blank default content is set on hard_templated cards...
@@ -25,7 +25,7 @@ module Wagn::Model::References
   end
   
   def update_references_on_update
-    return if ENV['BOOTSTRAP_LOAD'] == 'true'
+    return if ENV['MIGRATE_PERMISSIONS'] == 'true'
     Wagn::Renderer.new(self, :not_current=>true).update_references 
     expire_templatee_references
   end
@@ -37,7 +37,7 @@ module Wagn::Model::References
 
   def expire_cache
     expire(self)
-    return if ENV['BOOTSTRAP_LOAD'] == 'true'
+    return if ENV['MIGRATE_PERMISSIONS'] == 'true'
     self.hard_templatees.each {|c| expire(c) }
     self.dependents.each {|c| expire(c) }
     self.referencers.each {|c| expire(c) }

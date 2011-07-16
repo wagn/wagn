@@ -1,7 +1,7 @@
 class SetStarOptionPlusStarRightPlusStarDefault < ActiveRecord::Migration
   def self.up 
     User.as(:wagbot) do
-      card = Card.find_or_new :name=>"*options+*right+*default", :type=>"Pointer"
+      card = Card.fetch_or_new "*options+*right+*default", :type=>"Pointer"
       if card.revisions.empty? || card.revisions.map(&:author).map(&:login).uniq == ["wagbot"]
         card.content = ''
         card.permit('edit',Role[:admin])

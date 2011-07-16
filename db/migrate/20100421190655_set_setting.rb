@@ -1,7 +1,7 @@
 class SetSetting < ActiveRecord::Migration
   def self.up 
     User.as(:wagbot) do
-      card = Card.find_or_create :name=>"Setting", :type=>"Cardtype"
+      card = Card.fetch_or_create "Setting", :type=>"Cardtype"
       content =<<CONTENT
 <p>{{+description}}</p>
 <p>&nbsp;</p>

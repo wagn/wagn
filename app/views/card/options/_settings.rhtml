@@ -5,14 +5,26 @@
     <span class="setting-header value">Value</span>
   </div>
 
+<%- 
+  setting_groups = slot.card.setting_names_by_group
+  [:viewing, :editing, :creating].map do |group|
+    div(:class=>"setting-group #{group}-setting-group") do
+%>      
+      <h3><%= group.to_s.capitalize %></h3>
+<%-   setting_groups[group].map do |setting_name| %>
+        <div class="setting-row">
+          <% wrap_slot(slot.subrenderer(card)) do |ss| %>
+            <%= ss.render_partial 'card/options/closed_setting', :setting_name=>setting_name %>
+          <% end %>
+        </div>
+<%-   end
+    end
+  end 
+%>
+
   <% Card.search(:type=>'setting', :sort=>'name').each do |setting| %>
     <% next if ['*autoname','*thanks','*add help'].member?(setting.name) %>
     <% next if (card.typecode!='Pointer' and ['*input','*options','*option label'].member?(setting.name))%>
-    <div class="setting-row">
-      <% wrap_slot(slot.subrenderer(card)) do |ss| %>
-        <%= ss.render_partial 'card/options/closed_setting', :setting=>setting %>
-      <% end %>
-    </div>
   <% end %>
 
   <% if card.typecode=='Cardtype' %>

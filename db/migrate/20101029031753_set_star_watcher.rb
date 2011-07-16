@@ -1,7 +1,7 @@
 class SetStarWatcher < ActiveRecord::Migration
   def self.up 
     User.as(:wagbot) do
-      card = Card.find_or_create :name=>"*watchers", :type=>"Basic"
+      card = Card.fetch_or_create "*watchers", :type=>"Basic"
       if card.revisions.empty? || card.revisions.map(&:author).map(&:login).uniq == ["wagbot"]
         card.content =<<CONTENT
 <p>These cards show who is getting email about changes to these cards or card types. ([[http://www.wagn.org/wagn/Notification|Learn more about notification.]]):</p>

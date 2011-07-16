@@ -121,7 +121,7 @@ class ApplicationController < ActionController::Base
     return (@card=Card.find(id); @card.after_fetch; @card) if id =~ /^\d+$/
     name = Wagn::Cardname.unescape(id)
     card_params = params[:card] ? params[:card].clone : {}
-    @card = Card.fetch_or_new(name, {}, card_params)
+    @card = Card.fetch_or_new(name, card_params)
   end
 
   def load_card_and_revision

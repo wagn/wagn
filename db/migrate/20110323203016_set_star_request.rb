@@ -1,7 +1,7 @@
 class SetStarRequest < ActiveRecord::Migration
   def self.up 
     User.as(:wagbot) do
-      card = Card.find_or_new :name=>"*request", :type=>"Basic"
+      card = Card.fetch_or_new "*request", :type=>"Basic"
       if card.revisions.empty? || card.revisions.map(&:author).map(&:login).uniq == ["wagbot"]
         card.content =<<CONTENT
 <p>People can <strong>request an account</strong> via a "Sign Up" link if you allow "Anyone" to [[/card/options/Account_Request|create account requests]].</p>

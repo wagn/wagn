@@ -1,4 +1,5 @@
 Wagn.send :include, Wagn::Exceptions
+Wagn::Set::Self::Settings
 
 module Wagn::Model
   include Wagn::Pack

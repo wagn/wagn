@@ -22,13 +22,15 @@ module Wagn::Configuration
     def wagn_run
       wagn_load_config
       wagn_setup_multihost
-      wagn_load_modules
-      Wagn::Cache.initialize_on_startup
+      if ActiveRecord::Base.connection.table_exists? 'cards' #false on some important rake tasks, like db:schema:load
+        wagn_load_modules
+        Wagn::Cache.initialize_on_startup
+      end
       Rails.logger.info << "----------- Wagn Rolling -----------\n\n\n"
     end
 
     def wagn_load_config
-      Rails.logger.debug << "Load config ...\n"
+      Rails.logger.debug "Load config ...\n"
       config_dir = "#{RAILS_ROOT}/config/"
       ['sample_wagn.rb','wagn.rb'].each do |filename|
         require_dependency config_dir+filename if File.exists? config_dir+filename

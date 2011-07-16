@@ -85,13 +85,6 @@ describe AccountController, "with captcha enabled" do
     User.as(:wagbot) do
       Card["*all+*captcha"].update_attributes! :content=>"1"
       #FIXME it would be nice if there were a simpler idiom for this     
-#      c = Card['Basic']
-#      c.permit(:create,Role[:anon])
-#      c.save!       
-#      a = Card['A']
-#      a.permit(:delete,Role[:anon])
-#      a.permit(:edit, Role[:anon])
-#      a.save!
     end
   end
 

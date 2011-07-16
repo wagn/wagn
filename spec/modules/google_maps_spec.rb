@@ -14,7 +14,9 @@ describe GoogleMapsAddon do
   
   context "given a *geocode configuration" do   
     before(:each) do
-      Card.create! :name=>"*geocode", :content => "[[street address]]\n[[zip]]", :type=>'Pointer' 
+      User.as :wagbot do
+        Card.create! :name=>"*geocode", :content => "[[street address]]\n[[zip]]", :type=>'Pointer'
+      end 
     end
     
     it "should save geocoding to +*geocode when configured cards card are present" do              

@@ -1,7 +1,7 @@
 class SetStarCreatorPlusStarRightPlusStarContent < ActiveRecord::Migration
   def self.up 
     User.as(:wagbot) do
-      card = Card.find_or_new :name=>"*creator+*right+*content", :type=>"Search"
+      card = Card.fetch_or_new "*creator+*right+*content", :type=>"Search"
       if card.revisions.empty? || card.revisions.map(&:author).map(&:login).uniq == ["wagbot"]
         card.content =<<CONTENT
 {"creator_of": "_self"}

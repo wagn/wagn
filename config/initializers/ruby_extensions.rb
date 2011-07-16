@@ -204,6 +204,10 @@ class String
     end
   end
   
+  def module_name
+    self.gsub(/^\*/,'X_').gsub(/[\b\s]+/,'_').camelcase
+  end
+  
   def css_name
     self.to_key.gsub('*','X').gsub('+','-')
   end

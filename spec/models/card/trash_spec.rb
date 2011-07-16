@@ -17,10 +17,10 @@ describe Card, "deleted card" do
 end 
 
 describe Card, "in trash" do
-  it "should be retrieved by find_or_create" do
+  it "should be retrieved by fetch_or_create" do
     User.as :joe_user do
       Card.create(:name=>"Betty").destroy
-      Card.find_or_create(:name=>"Betty")
+      Card.fetch_or_create "Betty"
       Card["Betty"].should be_instance_of(Card)
     end
   end

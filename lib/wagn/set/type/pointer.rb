@@ -6,7 +6,7 @@ module Wagn::Set::Type::Pointer
     if args[:complete]
       Wql.new({:referred_to_by=>name}.merge(args)).run
     else
-      item_names(args).map {|name| Card.fetch_or_new(name,{},:skip_defaults=>true) }.compact
+      item_names(args).map {|name| Card.fetch_or_new(name, :skip_defaults=>true) }.compact
     end
   end
 

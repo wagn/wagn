@@ -70,7 +70,7 @@ module Wagn::Model::TrackedAttributes
     if !templatees.empty?
       #warn "going through hard templatees"  
       templatees.each do |tee|
-        tee.allow_typecode_change = true  #FIXME? this is a hacky way around the standard validation
+        tee.allow_type_change = true  #FIXME? this is a hacky way around the standard validation
         tee.typecode = new_typecode
         tee.save!
       end

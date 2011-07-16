@@ -1,7 +1,7 @@
 class SetAdministratorLink < ActiveRecord::Migration
   def self.up 
     User.as(:wagbot) do
-      card = Card.find_or_new :name=>"Administrator links", :type=>"Basic"
+      card = Card.fetch_or_new "Administrator links", :type=>"Basic"
       if card.revisions.empty? || card.revisions.map(&:author).map(&:login).uniq == ["wagbot"]
         card.content =<<CONTENT
 <div>[[Config|Configure your Wagn]]</div>

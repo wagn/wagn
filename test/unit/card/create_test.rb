@@ -5,10 +5,10 @@ class Card::CreateTest < ActiveSupport::TestCase
     super
     setup_default_user
   end
-  def test_find_or_create_when_present
+  def test_fetch_or_create_when_present
     Card.create!(:name=>"Carrots")
     assert_no_difference Card, :count do 
-      assert_instance_of Card, Card.find_or_create(:name=>"Carrots")
+      assert_instance_of Card, Card.fetch_or_create("Carrots")
     end
   end  
   
@@ -20,9 +20,9 @@ class Card::CreateTest < ActiveSupport::TestCase
   end
   
   
-  def test_find_or_create_when_not_present
+  def test_fetch_or_create_when_not_present
     assert_difference Card, :count do 
-      assert_instance_of Card, Card.find_or_create(:name=>"Tomatoes")
+      assert_instance_of Card, Card.fetch_or_create("Tomatoes")
     end
   end
   

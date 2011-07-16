@@ -23,10 +23,8 @@ class Card
       if self.junction? && conf.item_names.include?( self.name.tag_name )
         address = conf.item_names.map{|p| (c=Card.fetch_or_new(self.name.trunk_name+"+#{p}")) && c.content}.select(&:present?).join(', ')
         if (geocode = GoogleMapsAddon.geocode(address))
-          Card.find_or_create(
-              :name=>"#{self.name.trunk_name}+*geocode", 
-              :type=>'Phrase'
-          ).update_attributes( :content => geocode )
+          c = Card.fetch_or_create("#{self.name.trunk_name}+*geocode", :type=>'Phrase')
+          c.update_attributes( :content => geocode )
         end
       end
     end

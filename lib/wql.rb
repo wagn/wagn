@@ -72,7 +72,7 @@ class Wql
         card=
           if query[:prepend] || query[:append]
             cardname = [query[:prepend], row['name'], query[:append]].compact.join('+')
-            Card.fetch_or_new cardname, {}, :skip_defaults=>true
+            Card.fetch_or_new cardname, :skip_defaults=>true
           else
             Card.fetch row['name'], :skip_virtual=>true
           end
@@ -84,21 +84,8 @@ class Wql
       rows.map { |row| row[query[:return].to_s] }
     end
   end  
-    
-    #if query[:return] == "name_content"
-    #  ActiveRecord::Base.connection.select_all( sql ).inject({}) do |h,x|
-    #    h[x["name"]] = x["content"]; h
-    #  end
-    #else
-    #  results = Card.find_by_sql( sql )
-    #  if query[:prepend] || query[:append]
-    #    results = results.map do |card|
-    #      cardname = [query[:prepend], card.name, query[:append]].compact.join('+')
-    #      Card.fetch_or_new cardname, {}, :skip_defaults=>true
-    #    end
-    #  end
-    #  results
-    #end
+  
+  
   
   class Spec 
     attr_accessor :spec

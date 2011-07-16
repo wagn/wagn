@@ -1,7 +1,7 @@
 class SetStarSendPlusStarRightPlusStarDefault < ActiveRecord::Migration
   def self.up 
     User.as(:wagbot) do
-      card = Card.find_or_create :name=>"*send+*right+*default", :type=>"Pointer"
+      card = Card.fetch_or_create "*send+*right+*default", :type=>"Pointer"
       if card.revisions.empty? || card.revisions.map(&:author).map(&:login).uniq == ["wagbot"]
         card.content =<<CONTENT
 [[_left+email config]]

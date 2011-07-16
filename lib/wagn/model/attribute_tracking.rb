@@ -7,15 +7,6 @@ module Wagn::Model::AttributeTracking
     end
     
     def add(attribute, new_value) 
-      #warn "ADD #{attribute} #{new_value}" 
-      attribute=attribute.to_s
-      if attribute=="content" && new_value=="balogna"
-        if @woop==1
-          raise("WOAH THERE CPWBODY")
-        else 
-          @woop ||= 1
-        end
-      end
       @updates[attribute.to_s] = new_value
     end
                  
@@ -31,16 +22,11 @@ module Wagn::Model::AttributeTracking
       if attr_names.empty?
         @updates = {}
       else
-        attr_names.each do |attr|    
-          #warn "DELETNG: #{attr}"
-          @updates.delete(attr.to_s)
-          #warn "ATTRS AFTER DEL: #{self.for(:typecode)}"
-        end
+        attr_names.each { |attr|  @updates.delete(attr.to_s) }
       end
     end
 
     def for?(attr)
-      #puts "ATTRS AT CHECK #{attr}: #{@updates.inspect}"
       @updates.has_key?(attr.to_s)
     end
      

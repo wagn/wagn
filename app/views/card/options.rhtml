@@ -1,5 +1,9 @@
-<%- subtab = params[:attribute] || 'permissions' %>
-<% wrap_slot do |slot| %>
+<%-  
+  wrap_slot do |slot|
+    has_account = slot.card.extension_type=='User'
+    subtab = params[:attribute] || (has_account ? 'account' : 'settings')
+%>
+
   <%= slot.header %>
   <div class="options-body">
     <%= slot.render_partial "card/options/#{subtab}" %>

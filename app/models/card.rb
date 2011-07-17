@@ -109,7 +109,6 @@ class Card < ActiveRecord::Base
   def include_set_modules
     Wagn::Pattern.rule_modules(self) {|m| singleton_class.send :include, m }
   end
-  alias after_fetch  include_set_modules
   
   def set_defaults args
     if args["name"].blank? and autoname_card = setting_card('autoname')

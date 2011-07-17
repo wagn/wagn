@@ -1,37 +1,26 @@
 class Wagn::Renderer
   define_view(:naked , :type=>'set') do
+
+    headings = ['Type','Content']
+    headings.unshift 'Set' if card.name.tag_name=='*self'
     
     setting_groups = card.setting_names_by_group
     div( :class=>'instruction' ) do
       Wagn::Pattern.label card.name
     end +
-    '<br />' + #YUCK!
-
-
-    content_tag(:h2, 'Settings') + # ENGLISH
-    [:viewing, :editing, :creating].map do |group|
-      div(:class=>"setting-group #{group}-setting-group") do
-        content_tag(:h3, group.to_s.capitalize) +
-         setting_groups[group].map do |setting_name| 
-          rule_card = Card.fetch_or_new "#{card.name}+#{setting_name}", :skip_defaults=>true, :skip_virtual=>true
-          div(:class=>'rule-item') { process_inclusion(rule_card, :view=>:closed) }
-        end.join
-      end
-    end.join() +
     
-
-#    subrenderer(Card.new(
-#      :type=>'Search',
-#      :skip_defaults=>true,
-#      :content=>%{{"prepend":"#{card.name}", "type":"Setting", "sort":"name", "limit":"100"}} 
-#    )).render(:content) +
-    '<br />' + #YUCK!
-
-    content_tag(:h2, 'Cards in Set') +  # ENGLISH
-    begin
-      s2 = subrenderer(Card.fetch_or_new("#{card.name}+by update"))
-      s2.item_view = :link
-      s2.render(:content)
+    div(:class=>'set-rules') do
+      [:viewing, :editing, :creating].map do |group|
+        div(:class=>"rule-group") do 
+          (["#{group.to_s.capitalize} Setting"]+headings).map do |heading|
+            div(:class=>'rule-heading') { heading }
+          end
+        end +
+        setting_groups[group].map do |setting_name| 
+          rule_card = Card.fetch_or_new "#{card.name}+#{setting_name}", :skip_defaults=>true, :skip_virtual=>true
+          process_inclusion(rule_card, :view=>:rule)
+        end.join
+      end.join
     end
   end
 

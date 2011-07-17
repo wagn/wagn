@@ -20,9 +20,6 @@ module Wagn::Model::Settings
     return nil
   end
 
-  def setting_names_by_group
-    self.class.universal_setting_names_by_group
-  end
 
   module ClassMethods
     def default_setting setting_name, fallback=nil

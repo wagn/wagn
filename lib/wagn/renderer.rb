@@ -390,7 +390,7 @@ module Wagn
       sub.requested_view = vmode
       subview = case
   
-        when [:name, :link, :linkname, :rule].member?(vmode)  ; vmode
+        when [:name, :link, :linkname, :rule, :edit_rule].member?(vmode)  ; vmode
         when :edit == state
          tcard.virtual? ? :edit_auto : :edit_in_form
         when new_card

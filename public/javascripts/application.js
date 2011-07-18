@@ -259,7 +259,7 @@ getSlotFromContext=function(context){
     // FIXME: this probably a better way to get 
     candidate_elements = $A(Element.select(element, '.card-slot'  ).concat(
                             Element.select(element, '.transcluded').concat(
-                            Element.select(element, '.nude-slot'  ).concat( 
+                            Element.select(element, '.rule-slot'  ).concat( 
                             Element.select(element, '.createOnClick')))));
     element = candidate_elements.find(function(x){
       ss = getSlotSpan(x.parentNode);

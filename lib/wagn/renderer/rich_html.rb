@@ -157,12 +157,16 @@ module Wagn
     attributes = {
       :class    => css_class,
       :cardId   => (card && card.id),
-      :position => UUID.new.generate.gsub(/^(\w+)0-(\w+)-(\w+)-(\w+)-(\w+)/,'\1')
+      :position => generate_position
     }
     [:style, :home_view, :item, :base].each { |key| attributes[key] = args[key] }
     
     
     div( attributes ) { yield }
+  end
+  
+  def generate_position
+    UUID.new.generate.gsub(/^(\w+)0-(\w+)-(\w+)-(\w+)-(\w+)/,'\1')
   end
 
   def skip_outer_wrap_for_ajax?

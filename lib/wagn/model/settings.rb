@@ -35,7 +35,7 @@ module Wagn::Model::Settings
     def universal_setting_names_by_group
       @@universal_setting_names_by_group ||= begin
         setting_names = Card.search(:type=>'Setting', :return=>'name', :limit=>'0') 
-        grouped = {:viewing=>[], :editing=>[], :creating=>[]}
+        grouped = {:view=>[], :edit=>[], :add=>[]}
         setting_names.each do |name|
           next unless group = Card.setting_attrib(name, :setting_group)
           grouped[group] << name

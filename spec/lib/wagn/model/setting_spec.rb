@@ -59,19 +59,19 @@ describe Card do
     end
     it "returns universal setting names for non-pointer set" do
       snbg = Card.fetch('*star').setting_names_by_group
-      snbg[:viewing].should  == ['*read','*content','*layout','*table of contents']
-      snbg[:editing].should  == ['*update','*comment','*delete','*captcha','*edit help','*accountable']
-      snbg[:creating].should == ['*create','*default','*add help','*autoname','*thanks','*send']
+      snbg[:view].should  == ['*read','*content','*layout','*table of contents']
+      snbg[:edit].should  == ['*update','*comment','*delete','*captcha','*edit help','*accountable']
+      snbg[:add].should == ['*create','*default','*add help','*autoname','*thanks','*send']
     end
     
     it "returns pointer-specific setting names for pointer card (*type)" do
       snbg = Card.fetch('Pointer+*type').setting_names_by_group
-      snbg[:editing].should == @pointer_settings
+      snbg[:edit].should == @pointer_settings
     end
 
     it "returns pointer-specific setting names for pointer card (*self)" do
       snbg = Card.fetch('*account+*related+*self').setting_names_by_group
-      snbg[:editing].should == @pointer_settings
+      snbg[:edit].should == @pointer_settings
     end
 
   end

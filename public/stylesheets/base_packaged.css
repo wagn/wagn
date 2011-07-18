@@ -128,7 +128,6 @@ span:hover.open-missing {color: #069; background: #ffc}
 .new-type .cardtype {font-size: 14px; float:right}
 .edit-area p {padding: 2px}
 .edit-area input[type=submit], .edit-area input[type=button] {margin: 2px 2px; font-size: 11px; background: #ddd; color: #444; border: 1px solid #bbb; border-right: 1px solid #666; border-bottom: 1px solid #666}
-.edit-area .richtext {background: #fff}
 ul.pointer {margin: 0px; padding: 0px}
 .edit-area .label not(.fieldset) {display: block; margin: 2px; font-size: 12px}
 .edit-area .field not(.fieldset) {display: block; margin: 4px}
@@ -208,15 +207,21 @@ div.pointer-list .pointer-item, div.search-result-list .search-result-item {marg
  .comment-box textarea {margin-bottom:5px}
 .comment-box input {padding: 0px; font-size: 12px}
 .comment-box {background: #cce; padding: 8px; margin: 0px}
-  .set-setting {border: 0px; margin-bottom: 20px; padding: 5px 15px}
-.set-setting .setting-row {clear: both; border-bottom: 1px solid #999; padding: 0px}
-.setting-row .set, .setting-row .setting, .setting-row .value {padding: 4px}
-.set-setting .open-set-setting {padding: 0px; margin: 0px}
-.set-setting .open-set-setting .setting-row {border: 0px; background: #fff }
-.setting-header-row {background: white; font-weight: bold; border-bottom: 1px solid #999}
-.edit-link {float: right}
-.setting-description, .value {width: 67%; float:right; margin-left: 10px}
- .setting a{ font-weight: bold}
- .set {font-style: italic; text-align: right}
-.set-setting .card-slot {border-bottom: 0px !important }
-.settings-for-set, .values-for-setting {margin: 20px 5px 5px 5px}
+  .settings-tab {border: 0px; margin-bottom: 20px; padding: 5px 15px}
+.set-rules {width: 100%}
+.set-rules th {background: #aaa; color: #eee; padding: 5px 0}
+.set-rules th, .set-rules td {text-align: left; display: table-cell; border-bottom: 1px solid #eee; padding: 2px 5px}
+.rule-setting {font-weight: bold}
+.rule-type {color: #666}
+.rule-set {font-style: italic; color: #999}
+.rule-content {width: 200px}
+.rule-content div {padding: 0}
+.rule-content-container {width: 200px; overflow: hidden; text-overflow: ellipsis }
+.rule-action {width: 20px}
+td.missing-rule {background-color: #eee; border-bottom: 1px solid #fff}
+.edit-rule .rule-action {float:right}
+.edit-rule-content {width: 500px; float: right}
+.edit-rule-header {padding: 10px 0; margin-left: -15px}
+.edit-rule-header-title {font-weight: bold; font-size: 13px; margin-right: 10px}
+.edit-rule-header-intro {color: #666; font-style: italic}
+.edit-rule-section {padding-bottom: 15px}

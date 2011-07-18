@@ -2,11 +2,7 @@ class Wagn::Renderer
   define_view(:naked , :type=>'set') do
     
     setting_groups = card.setting_names_by_group
-    div( :class=>'instruction' ) do
-      Wagn::Pattern.label card.name
-    end +
-    '<br />' + #YUCK!
-
+    div( :class=>'instruction' ) { label card.name } + '<br />' + #YUCK!
 
     content_tag(:h2, 'Settings') + # ENGLISH
     [:viewing, :editing, :creating].map do |group|

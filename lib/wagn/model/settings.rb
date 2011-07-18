@@ -6,8 +6,9 @@ module Wagn::Model::Settings
   
   def setting_card setting_name, fallback=nil
     fetch_args = {:skip_virtual=>true, :skip_after_fetch=>true}
-    Wagn::Pattern.set_names( self ).each do |name|
-      next unless Card.fetch(name, fetch_args) 
+  
+    real_set_names.each do |name|
+      #next unless Card.fetch(name, fetch_args)  'real_set_names doesn't return them'
       # optimization for cases where there are lots of settings lookups for many sets though few exist. 
       # May cause problems if we wind up with Set in trash, since trunks aren't always getting pulled out when we
       # create plus cards (like setting values)

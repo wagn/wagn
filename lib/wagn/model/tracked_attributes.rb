@@ -31,7 +31,11 @@ module Wagn::Model::TrackedAttributes
     @old_name = self.name_without_tracking
     self.name_without_tracking = newname 
     return if @old_name==newname
-    Wagn::Cache.expire_card(newname.to_key) if newname
+    Rails.logger.debug "reset_patterns #{@old_name}, #{newname}"
+    reset_patterns
+    if newname
+      Wagn::Cache.expire_card(newname.to_key)
+    end
     
     if newname.junction?
       if !new_card? && newname.to_key != @old_name.to_key
@@ -80,6 +84,7 @@ module Wagn::Model::TrackedAttributes
     singleton_class.include_type_module(typecode)
     self.before_validation_on_create
     ::Cardtype.reset_cache
+    reset_patterns
     true
   end
   

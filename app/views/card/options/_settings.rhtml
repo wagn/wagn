@@ -28,7 +28,7 @@
   <% end %>
 
   <% if card.typecode=='Cardtype' %>
-    <h2 class="settings-for-set">Settings for <%= Wagn::Pattern.label("#{card.name}+*type")%></h2> <%#ENGLISH%>
+    <h2 class="settings-for-set">Settings for <%= Wagn::Model::Pattern.label("#{card.name}+*type")%></h2> <%#ENGLISH%>
     <%= slot.subrenderer(
       Card.new(
         :type=>'Search',

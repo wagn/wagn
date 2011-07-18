@@ -11,7 +11,7 @@ module Wagn::Set::Type::Set
       else; false
       end
       
-    groups[:editing] += ['*options','*options label','*input'] if pointer_test=='Pointer'
+    groups[:edit] += ['*options','*options label','*input'] if pointer_test=='Pointer'
     groups
   end
   

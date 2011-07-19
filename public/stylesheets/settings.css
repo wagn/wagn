@@ -1,68 +1,79 @@
-
-.set-setting {
+.settings-tab {
   border: 0px;
   margin-bottom: 20px;
   padding: 5px 15px;
 }
-.set-setting .setting-row {
-  clear: both;
-  border-bottom: 1px solid #999;
-  padding: 0px;
+.set-rules {
+  width: 100%;
 }
-.setting-row .set, 
-.setting-row .setting, 
-.setting-row .value {
-  padding: 4px;
+.set-rules th {
+  background: #aaa;
+  color: #eee;
+  padding: 5px 0;
 }
-.set-setting .open-set-setting {
-  padding: 0px;
-  margin: 0px;
+.set-rules th,
+.set-rules td {
+  text-align: left;
+  display: table-cell;
+  border-bottom: 1px solid #eee;
+  padding: 2px 5px;  
 }
-.set-setting .open-set-setting .setting-row {
-  border: 0px;
-  background: #fff
-}
-.setting-header-row {
-  background: white;
-  font-weight: bold;    
-  border-bottom: 1px solid #999;  
-}
-.edit-link {
-  float: right; 
-}
-.setting-description,
-.value {
-  width: 67%;
-  float:right;
-  margin-left: 10px;
-}
-/*
-.not-set .value,
-.overridden .value{
-  background: #ddd
-}
-*/
-.setting a{ 
+.rule-setting { 
   font-weight: bold;
 }
-/*
-.setting-description {
-  background: #eec;
-  color: #440;
-  font-style: italic;
-  padding: 4px;
-  text-align: center;
-  display: block;
+.rule-type {
+  color: #666;
 }
-*/
-.set { 
+.rule-set {
   font-style: italic;
-  text-align: right;
-}                      
-.set-setting .card-slot { 
-  border-bottom: 0px !important 
+  color: #999;
 }
-.settings-for-set,
-.values-for-setting {
-  margin: 20px 5px 5px 5px;
+.rule-content {
+  width: 200px;  
+}
+.rule-content div {
+  padding: 0;
+}
+.rule-content-container {
+  width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis ;
+}
+.rule-content-container .line {
+  line-height:inherit;
+}
+.rule-action {
+  width: 20px;
+}
+td.missing-rule {
+  background-color: #eee;
+  border-bottom: 1px solid #fff;
+}
+.edit-rule,
+.edit-rule-action {
+  background-color: #ffe
+}
+.edit-rule-content {
+  width: 500px;
+  float: right;
+}
+.edit-rule-header {
+  padding: 10px 0;
+  margin-left: -15px;
+}
+.edit-rule-header-title {
+  font-weight: bold;
+  font-size: 13px;
+  margin-right: 10px;
+}
+.edit-rule-header-intro {
+  color: #666;
+  font-style: italic;
+}
+.edit-rule-section {
+  padding-bottom: 15px;
+}
+.edit-rule ul {
+  margin: 0px;
+  padding-left: 15px;
 }

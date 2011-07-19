@@ -290,9 +290,6 @@ span:hover.open-missing {
   border-right: 1px solid #666;
   border-bottom: 1px solid #666;
 }
-.edit-area .richtext {
-  background: #fff;
-}
 ul.pointer {
   margin: 0px;
   padding: 0px;

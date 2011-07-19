@@ -23,7 +23,7 @@ module Wagn
     }
     
     UNDENIABLE_VIEWS = [ 
-      :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :setting_missing, :name, :link, :url
+      :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :name, :link, :url
     ]
   
     RENDERERS = {
@@ -389,13 +389,12 @@ module Wagn
       sub.requested_view = vmode
       subview = case
   
-        when [:name, :link, :linkname].member?(vmode)  ; vmode
+        when [:name, :link, :linkname, :rule, :edit_rule].member?(vmode)  ; vmode
         when :edit == state
          tcard.virtual? ? :edit_auto : :edit_in_form
         when new_card
           case
             when vmode==:raw    ; :blank
-            when vmode==:setting; :setting_missing
             when state==:line   ; :closed_missing
             else                ; :open_missing
           end

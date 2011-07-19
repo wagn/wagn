@@ -1,33 +1,28 @@
 class Wagn::Renderer
   define_view(:naked , :type=>'set') do
+    is_self = card.name.tag_name=='*self'
+    headings = ['Type','Content','Action']
+    headings.unshift 'Set' if is_self
     
     setting_groups = card.setting_names_by_group
-    div( :class=>'instruction' ) { card.label card.name } + '<br />' + #YUCK!
-
-    content_tag(:h2, 'Settings') + # ENGLISH
-    [:viewing, :editing, :creating].map do |group|
-      div(:class=>"setting-group #{group}-setting-group") do
-        content_tag(:h3, group.to_s.capitalize) +
-         setting_groups[group].map do |setting_name| 
-          rule_card = Card.fetch_or_new "#{card.name}+#{setting_name}", :skip_defaults=>true, :skip_virtual=>true
-          div(:class=>'rule-item') { process_inclusion(rule_card, :view=>:closed) }
-        end.join
-      end
-    end.join() +
+    div( :class=>'instruction' ) do
+      "Rules for: #{link_to_page card.label(card.name), is_self ? card.name.trunk_name :   "#{card.name}+by_update"}"
+    end +
     
-
-#    subrenderer(Card.new(
-#      :type=>'Search',
-#      :skip_defaults=>true,
-#      :content=>%{{"prepend":"#{card.name}", "type":"Setting", "sort":"name", "limit":"100"}} 
-#    )).render(:content) +
-    '<br />' + #YUCK!
-
-    content_tag(:h2, 'Cards in Set') +  # ENGLISH
-    begin
-      s2 = subrenderer(Card.fetch_or_new("#{card.name}+by update"))
-      s2.item_view = :link
-      s2.render(:content)
+    content_tag('table', :class=>'set-rules') do
+      [:view, :edit, :add].map do |group|
+        content_tag(:tr, :class=>"rule-group") do 
+          (["#{group.to_s.capitalize} Settings"]+headings).map do |heading|
+            content_tag(:th, :class=>'rule-heading') { heading }
+          end
+        end +
+        setting_groups[group].map do |setting_name| 
+          rule_card = Card.fetch_or_new "#{card.name}+#{setting_name}", :skip_defaults=>true, :skip_virtual=>true
+          content_tag(:tr, :class=>'rule-slot', :position=>generate_position) do
+            process_inclusion(rule_card, :view=>:rule)
+          end
+        end.join
+      end.join
     end
   end
 

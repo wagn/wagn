@@ -107,7 +107,7 @@ class Card < ActiveRecord::Base
   end
 
   def include_set_modules
-    Wagn::Pattern.rule_modules(self) {|m| singleton_class.send :include, m }
+    self.rule_modules {|m| singleton_class.send :include, m }
   end
   
   def set_defaults args

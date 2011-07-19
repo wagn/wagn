@@ -1,37 +1,11 @@
-module Wagn
-  class Pattern
+module Wagn::Model
+  module Pattern
+
     @@subclasses = []
-    cattr_accessor :key
 
     class << self
-      def cache
-        @@cache ||= {}
-        @@cache[System.wagn_name] ||= {}
-      end
-
-      def reset_cache
-        @@cache ||= {}
-        @@cache[System.wagn_name] = {}
-      end
-
-      def register_class klass
-        @@subclasses.unshift klass
-      end
-
-      def subclasses
-        @@subclasses
-      end
-
-      def rule_modules(card)
-        @@subclasses.reverse.each do |subclass|
-          if subclass.pattern_applies?(card)     and
-                mod = subclass.rule_module(card) and
-                mod =~ /::\w+$/                  and
-              const = suppress(NameError) { eval( mod ) }
-            yield const
-          end
-        end
-      end
+      def register_class(klass) @@subclasses.unshift klass end
+      def subclasses() @@subclasses end
 
       def method_key(opts)
         @@subclasses.each do |pclass|
@@ -40,231 +14,236 @@ module Wagn
           end
         end
       end
+    end
 
-      def generate_cache_key card
-        name = card.name
-        left = (name && name.junction?) ? (card.loaded_trunk || card.left) : nil
-        left_key = left ? left.typecode : ''
-        cache_key = "#{name}-#{card.typecode}-#{left_key}-#{card.new_card?}"
+    def patterns()
+if @patterns
+  na = @patterns.detect { |p| !p.pattern_applies? }
+  raise "All patterns should apply #{name} #{na.inspect}" if na
+  Rails.logger.debug "patterns set #{@patterns.inspect}"
+end
+      @patterns ||= @@subclasses.map { |sub|
+      x=(n=sub.new(self)).pattern_applies? ? n : nil
+      Rails.logger.info "subc[#{n&&n.card&&n.card.name}] #{x.inspect}"; x
+      }.compact
+      Rails.logger.info "patterns[#{name}] #{@patterns.inspect}"; @patterns
+    end
+
+    def set_names()      @set_names ||= patterns.map(&:set_name)                    end
+    def reset_patterns()
+      Rails.logger.info "reset_patterns[#{name}]"
+      @patterns = @set_names = nil                             end
+    #def real_set_names() patterns.reject(&:set_missing?).compact.map(&:set_name)    end
+    def real_set_names()
+      rsn1 = patterns.reject(&:set_missing?)
+      Rails.logger.info "RSN1 #{rsn1.inspect}"
+      rsn = rsn1.map(&:set_name)
+      #patterns.reject(:set_missing?).map(&:set_name)
+      Rails.logger.info "RSN #{rsn1.inspect} #{rsn.inspect}"; rsn
+    end
+    def method_keys()    @method_keys ||= patterns.map(&:method_key)                end
+    def css_names()      patterns.map(&:css_name).reverse*" "                       end
+
+    def label(name)
+      patterns.map do |pat|
+        return pat.label(name) if name.tag_name==pat.class.key
       end
+      return nil
+    end
 
-      def set_names card
-        cache_key = "SETNAMES-#{generate_cache_key card}"
-        self.cache[cache_key] ||= generate_set_names(card)
-      end
-
-      def generate_set_names card
-raise "no card" unless card
-        @@subclasses.map do |pclass|
-          pclass.pattern_applies?(card) and
-          pclass.set_name(card) or nil
-        end.compact
-      end
-
-      def method_keys card
-        cache_key = "METHODKEYS-#{generate_cache_key card}"
-        self.cache[cache_key] ||= generate_method_keys(card)
-      end
-
-      def generate_method_keys card
-        @@subclasses.map do |pclass| 
-          pclass.pattern_applies?(card) ? pclass.method_key(card) : nil
-        end.compact
-      end
-
-
-      def css_names card
-        @@subclasses.map do |pclass|
-          pclass.pattern_applies?(card) and pclass.css_name(card) or nil
-        end.compact.reverse.join(" ")
-      end
-
-      def label name
-        @@subclasses.map do |pclass|
-          return pclass.label(name) if pclass.match(name)
+    def rule_modules
+      @rule_modules ||= patterns.reverse.each do |subclass|
+        if subclass.pattern_applies?     and
+              mod = subclass.rule_module and
+              mod =~ /::\w+$/            and
+            const = suppress(NameError) { eval( mod ) }
+          yield const
         end
-        return nil
-      end
-
-      def match name
-        name.tag_name==self.key
-      end
-
-      def css_name card
-        sn = set_name card
-        sn.tag_name.gsub(' ','_').gsub('*','').upcase + '-' + sn.trunk_name.css_name
-      end
-      
-      def trunkless?
-        false
       end
     end
-    
-    
-    attr_reader :spec
-
-    def initialize spec
-      @spec = spec
-    end
-
   end
 
-  class AllPattern < Pattern
+
+  class SetBase
+    attr_accessor :card
+
     class << self
-      def key()                       '*all'             end
-      def opt_keys()                   []                end
-      def pattern_applies?(card)       true              end
-      def set_name(card)               key               end
-      def method_key(card)             ''                end
-      def method_key_from_opts(opts)   ''                end
-      def css_name(card)               "ALL"             end
-      def label(name)                  'All Cards'       end
-      def trunkless?()                 true              end
-      # maybe this one isn't necessary, because we already include lots in base class?
-      def rule_module(card)            "Wagn::Set::All"  end
+      def key()                      nil   end
+      def opt_keys()                 []    end
+      def method_key_from_opts(opts) ''    end
+      def label(name)                ''    end
+      def trunkless?()               false end
     end
-    register_class self
+
+    def initialize(card) @card = card                          end
+    def set_missing?()   !(pattern_applies? && Card[set_name]) end
+
+    def css_name()
+      sn = set_name
+      sn.tag_name.gsub(' ','_').gsub('*','').upcase + '-' + sn.trunk_name.css_name
+    end
+  end
+
+
+  class AllPattern < SetBase
+    class << self
+      def key()                        '*all'       end
+      def opt_keys()                   []           end
+      def label(name)                  'All Cards'  end
+      def method_key_from_opts(opts)   ''           end
+      def trunkless?()                 true         end
+    end
+    def css_name()                     "ALL"        end
+    def pattern_applies?()             true         end
+    def set_name()                   self.class.key end
+    def method_key()                   ''           end
+    def rule_module()             "Wagn::Set::All"  end
+
+    Wagn::Model::Pattern.register_class self
   end
   
-  class AllPlusPattern < Pattern
+  class AllPlusPattern < SetBase
     class << self
-      def key()                        '*all plus'                   end
-      def opt_keys()                   [:all_plus]                   end
-      def pattern_applies?(card)       card.junction?                end
-      def set_name(card)               key                           end
-      def method_key(card)             'all_plus'                    end
-      def method_key_from_opts(opts)   'all_plus'                    end
-      def css_name(card)               "ALL_PLUS"                    end
-      def label(name)                  'All Plus Cards'              end
-      def trunkless?()                 true                          end
-      def rule_module(card)            "Wagn::Set::AllPlus"          end
+      def key()                        '*all plus'      end
+      def opt_keys()                   [:all_plus]      end
+      def method_key_from_opts(opts)   'all_plus'       end
+      def label(name)                  'All Plus Cards' end
+      def trunkless?()                 true             end
     end
-    register_class self
+    def css_name()                     "ALL_PLUS"       end
+    def pattern_applies?()             card.junction?   end
+    def set_name()                     self.class.key   end
+    def method_key()                   'all_plus'       end
+    def rule_module()            "Wagn::Set::AllPlus"   end
+
+    Wagn::Model::Pattern.register_class self
   end
 
-  class TypePattern < Pattern
+  class TypePattern < SetBase
     class << self
       def key()                        '*type'                            end
       def opt_keys()                   [:type]                            end
-      def pattern_applies?(card)       true                               end
-      def set_name(card)              "#{card.typename}+#{key}"           end
       def label(name)                 "All #{name.trunk_name} cards"      end
-      def method_key(card)      method_key_from_opts :type=>card.typename end
-      def method_key_from_opts(opts)  opts[:type].to_s.css_name+'_type'   end
-      def rule_module(card)           "Wagn::Set::Type::#{card.typecode}" end
+      def method_key_from_opts(opts) opts[:type].to_s.css_name+'_type'    end
     end
-    register_class self
+    def pattern_applies?()           true                                 end
+    def set_name()                  "#{card.typename}+#{self.class.key}"  end
+    def method_key() self.class.method_key_from_opts :type=>card.typename end
+    def rule_module()               "Wagn::Set::Type::#{card.typecode}"   end
+
+    Wagn::Model::Pattern.register_class self
   end
 
-  class StarPattern < Pattern
+  class StarPattern < SetBase
     class << self
       def key()                        '*star'                 end
       def opt_keys()                   [:star]                 end
-      def pattern_applies?(card)       card.star?              end
-      def set_name(card)               key                     end
-      def method_key(card)             'star'                  end
       def method_key_from_opts(opts)   'star'                  end
-      def css_name(card)               "STAR"                  end
       def label(name)                  'Star Cards'            end
       def trunkless?()                 true                    end
-      def rule_module(card)            "Wagn::Set::Star"       end
     end
-    register_class self
+    def css_name()                     "STAR"                  end
+    def pattern_applies?()             card.star?              end
+    def set_name()                     self.class.key          end
+    def method_key()                   'star'                  end
+    def rule_module()                  "Wagn::Set::Star"       end
+
+    Wagn::Model::Pattern.register_class self
   end
 
-  class RstarPattern < Pattern
+  class RstarPattern < SetBase
     class << self
-      def key()                        '*rstar'                                end
-      def opt_keys()                   [:rstar]                                end
-      def method_key(card)             'star'                                  end
-      def method_key_from_opts(opts)   'star'                                  end
-      def set_name(card)               "#{card.name.tag_name}+#{key}"          end
-      def trunkless?()                 true                                    end
-      def pattern_applies?(card) card.junction? && card.name.tag_name.star?    end
-      def label(name)                  "Cards ending in +(Star Card)"          end
-      # I think this should strip the *, but the * should be in codename, right?
-      def rule_module(card)
-        return unless tagcard = Card.fetch(card.name.tag_name) and
-                       tagkey = tagcard.key.gsub(/^\*/,'X')
-        #Rails.logger.debug "rule_module RStar #{tagkey.camelcase}"
-        "Wagn::Set::Rstar::#{tagkey.camelcase}" end
+      def key()                        '*rstar'                         end
+      def opt_keys()                   [:rstar]                         end
+      def method_key_from_opts(opts)   'star'                           end
+      def trunkless?()                 true                             end
+      def label(name)                  "Cards ending in +(Star Card)"   end
     end
-    register_class self
+    def pattern_applies?()   card.junction? && card.name.tag_name.star? end
+    def set_name()          "#{card.name.tag_name}+#{self.class.key}"   end
+    def method_key()                   'star'                           end
+    def rule_module()
+      return unless tagcard = Card.fetch(card.name.tag_name) and
+                     tagkey = tagcard.key.gsub(/^\*/,'X')
+      #Rails.logger.debug "rule_module RStar #{tagkey.camelcase}"
+      "Wagn::Set::Rstar::#{tagkey.camelcase}"
+    end
+
+    Wagn::Model::Pattern.register_class self
   end
 
 
-  class RightNamePattern < Pattern
+  class RightNamePattern < SetBase
     class << self
-      def key()                          '*right';                          end
-      def opt_keys()                     [:right];                          end
-      def pattern_applies?(card)         card.junction?;                    end
-      def set_name(card)                 "#{card.name.tag_name}+#{key}";    end
-      def method_key(card) method_key_from_opts :right=>card.name.tag_name; end
-      def method_key_from_opts(opts)   opts[:right].to_s.css_name+'_right'; end
-      def label(name)                "Cards ending in +#{name.trunk_name}"; end
-      def rule_module(card)
-        # this should be codename based
-        return unless tagcard = Card.fetch(card.name.tag_name) and
-                       tagkey = tagcard.key.gsub(/^\*/,'X')
-        #Rails.logger.debug "rule_module Rname #{tagkey.camelcase}"
-        "Wagn::Set::Right::#{tagkey.camelcase}"
-      end
+      def key()                          '*right'                        end
+      def opt_keys()                     [:right]                        end
+      def method_key_from_opts(opts) opts[:right].to_s.css_name+'_right' end
+      def label(name)              "Cards ending in +#{name.trunk_name}" end
     end
-    register_class self
+    def pattern_applies?()               card.junction?                  end
+    def set_name()            "#{card.name.tag_name}+#{self.class.key}"  end
+    def method_key() self.class.method_key_from_opts :right=>card.name.tag_name end
+    def rule_module()
+      # this should be codename based
+      return unless tagcard = Card.fetch(card.name.tag_name) and
+                     tagkey = tagcard.key.gsub(/^\*/,'X')
+      #Rails.logger.debug "rule_module Rname #{tagkey.camelcase}"
+      "Wagn::Set::Right::#{tagkey.camelcase}"
+    end
+
+    Wagn::Model::Pattern.register_class self
   end
 
-  class LeftTypeRightNamePattern < Pattern
+  class LeftTypeRightNamePattern < SetBase
     class << self
-      def key()                  '*type plus right';               end
-      def opt_keys()             [:ltype, :right];                 end
-      def pattern_applies?(card) card.junction? && !!(left(card)); end
-      def left(card)             card.loaded_trunk || card.left;   end
-      def set_name(card)
-        "#{left(card).typename}+#{card.name.tag_name}+*type plus right"
-      end
-      def css_name(card) 'TYPE_PLUS_RIGHT-' + set_name(card).trunk_name.css_name; end
-      def method_key(card)
-        method_key_from_opts :ltype=>left(card).typename, :right=>card.name.tag_name
-      end
+      def key()              '*type plus right'                              end
+      def opt_keys()         [:ltype, :right]                                end
       def method_key_from_opts(opts)
         %{#{opts[:ltype].to_s.css_name}_#{opts[:right].to_s.css_name}_typeplusright}
       end
       def label(name)
         "Any #{name.trunk_name.trunk_name} card plus #{name.trunk_name.tag_name}"
       end
-      def rule_module(card)
-        return unless tagcard = Card.fetch(card.name.tag_name) and
-                       tagkey = tagcard.key.gsub(/^\*/,'X')
-
-        #Rails.logger.debug "rule_module LtypeRname #{left(card).typecode} #{tagkey.camelcase}"
-        "Wagn::Set::LTypeRight::#{left(card).typecode.camelcase+
-                                  tagkey.camelcase}"
-      end
     end
-    register_class self
+    def css_name()         'TYPE_PLUS_RIGHT-' + set_name.trunk_name.css_name end
+    def left()             card.loaded_trunk || card.left                    end
+    def pattern_applies?() card.junction? && !!(left)                        end
+    def set_name()
+      raise "no left #{card&&card.name}" unless left
+      "#{left.typename}+#{card.name.tag_name}+*type plus right" end
+    def method_key()
+      self.class.method_key_from_opts :ltype=>left.typename, :right=>card.name.tag_name
+    end
+    def rule_module()
+      return unless tagcard = Card.fetch(card.name.tag_name) and
+                     tagkey = tagcard.key.gsub(/^\*/,'X')
+
+      #Rails.logger.debug "rule_module LtypeRname #{left.typecode} #{tagkey.camelcase}"
+      "Wagn::Set::LTypeRight::#{left.typecode.camelcase+tagkey.camelcase}"
+    end
+
+    Wagn::Model::Pattern.register_class self
   end
 
-  class SoloPattern < Pattern
+  class SoloPattern < SetBase
     class << self
-      def key() '*self'; end
-
-      def pattern_applies? card
-        #FIXME!!! we do not want these to stay commented out, but they need to be there so that patterns on builtins can be recognized for now. 
-        # soon those cards should actually exist.
-        card.name and !card.virtual? and !card.new_card?
-      end
-      
-      def opt_keys() [:name]; end
-      def set_name(card) "#{card.name}+#{key}"; end
-      def method_key(card) method_key_from_opts :name=>card.name; end
-      def method_key_from_opts(opts) opts[:name].to_s.css_name+'_self'; end
-      def label(name) "Just \"#{name.trunk_name}\""; end
-      def rule_module(card)
-        return unless card.simple?
-        "Wagn::Set::Self::#{(card.codename||card.name).camelize}"; end
+      def key()                       '*self'                                end
+      def opt_keys()                  [:name]                                end
+      def method_key_from_opts(opts)  opts[:name].to_s.css_name+'_self'      end
+      def label(name)                 %{Just "#{name.trunk_name}"}           end
     end
-    register_class self
-  end
+    #FIXME!!! we do not want these to stay commented out, but they need to be
+    #there so that patterns on builtins can be recognized for now. 
+    # soon those cards should actually exist.  Is this now fixed????
+    def pattern_applies?() card.name and !card.virtual? and !card.new_card?  end
+    def set_name()         "#{card.name}+#{self.class.key}"                  end
+    def method_key()      self.class.method_key_from_opts(:name=>card.name)  end
+    def rule_module()
+      return unless card.simple? #FIXME: we need to represent plus card classnames
+      "Wagn::Set::Self::#{(card.codename||card.name).camelize}";
+    end
 
+    Wagn::Model::Pattern.register_class self
+  end
 end
 

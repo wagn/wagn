@@ -17,23 +17,30 @@ module Wagn::Model
     end
 
     def patterns()
+=begin
 if @patterns
   na = @patterns.detect { |p| !p.pattern_applies? }
   raise "All patterns should apply #{name} #{na.inspect}" if na
   Rails.logger.debug "patterns set #{@patterns.inspect}"
 end
+Rails.logger.info "subc[#{n&&n.card&&n.card.name}] #{x.inspect}"; x
+Rails.logger.info "patterns[#{name}] #{@patterns.inspect}"; @patterns
+=end
       @patterns ||= @@subclasses.map { |sub|
-      x=(n=sub.new(self)).pattern_applies? ? n : nil
-      Rails.logger.info "subc[#{n&&n.card&&n.card.name}] #{x.inspect}"; x
+        (n=sub.new(self)).pattern_applies? ? n : nil
       }.compact
-      Rails.logger.info "patterns[#{name}] #{@patterns.inspect}"; @patterns
     end
 
+    def real_set_names() patterns.reject(&:set_missing?).compact.map(&:set_name)    end
+    def method_keys()    @method_keys ||= patterns.map(&:method_key)                end
+    def css_names()      patterns.map(&:css_name).reverse*" "                       end
     def set_names()      @set_names ||= patterns.map(&:set_name)                    end
     def reset_patterns()
       Rails.logger.info "reset_patterns[#{name}]"
-      @patterns = @set_names = nil                             end
-    #def real_set_names() patterns.reject(&:set_missing?).compact.map(&:set_name)    end
+      @patterns = @set_names = nil
+      reset_setting_cache
+    end
+=begin
     def real_set_names()
       rsn1 = patterns.reject(&:set_missing?)
       Rails.logger.info "RSN1 #{rsn1.inspect}"
@@ -41,8 +48,7 @@ end
       #patterns.reject(:set_missing?).map(&:set_name)
       Rails.logger.info "RSN #{rsn1.inspect} #{rsn.inspect}"; rsn
     end
-    def method_keys()    @method_keys ||= patterns.map(&:method_key)                end
-    def css_names()      patterns.map(&:css_name).reverse*" "                       end
+=end
 
     def label(name)
       patterns.map do |pat|

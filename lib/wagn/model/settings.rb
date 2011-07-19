@@ -4,21 +4,24 @@ module Wagn::Model::Settings
     card && card.content
   end
   
+  def setting_cache() @setting_cache ||= {} end
+  def reset_setting_cache() @setting_cache = {} end
+
   def setting_card setting_name, fallback=nil
     fetch_args = {:skip_virtual=>true, :skip_after_fetch=>true}
   
-    real_set_names.each do |name|
-      #next unless Card.fetch(name, fetch_args)  'real_set_names doesn't return them'
-      # optimization for cases where there are lots of settings lookups for many sets though few exist. 
-      # May cause problems if we wind up with Set in trash, since trunks aren't always getting pulled out when we
-      # create plus cards (like setting values)
-      if value = Card.fetch( "#{name}+#{setting_name.to_s.to_star}", fetch_args)
-        return value
-      elsif fallback and value2 = Card.fetch("#{name}+#{fallback.to_s.to_star}", fetch_args)
-        return value2              
+    value = setting_cache[setting_name] and return value
+    #rule_name = nil #if pattern =
+    if real_set_names.detect do |name|
+        value = Card.fetch("#{name}+#{setting_name.to_s.to_star}", fetch_args) or
+            fallback and Card.fetch("#{name}+#{fallback.to_s.to_star}", fetch_args)
+          #Card.fetch((rule_name="#{name}+#{setting_name.to_s.to_star}"), fetch_args) or
+          #  fallback and
+          #  Card.fetch((rule_name="#{name}+#{fallback.to_s.to_star}"), fetch_args)
       end
+      #setting_cache[setting_name+"-rule-name"] = rule_name
     end
-    return nil
+    setting_cache[setting_name] = value
   end
 
   def related_sets

@@ -5,7 +5,7 @@ module Wagn::Model::Collection
     end
 
     def [](name) 
-       Card.fetch(name, :skip_virtual => true)
+       Card.fetch(name, :skip_virtual=>true)
     end             
 
     def count_by_wql(spec)       

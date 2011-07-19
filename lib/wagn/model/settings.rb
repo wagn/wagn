@@ -20,8 +20,16 @@ module Wagn::Model::Settings
     return nil
   end
 
-  def setting_names_by_group
-    self.class.universal_setting_names_by_group
+  def related_sets
+    sets = []
+    sets<< "#{name}+*type" if typecode=='Cardtype'
+    if name.simple?
+      sets<< "#{name}+*right"
+      Card.search(:type=>'Set',:left=>{:right=>name},:right=>'*type plus right',:return=>'name').each do |set_name|
+        sets<< set_name
+      end
+    end
+    sets
   end
 
   module ClassMethods
@@ -38,7 +46,7 @@ module Wagn::Model::Settings
     def universal_setting_names_by_group
       @@universal_setting_names_by_group ||= begin
         setting_names = Card.search(:type=>'Setting', :return=>'name', :limit=>'0') 
-        grouped = {:viewing=>[], :editing=>[], :creating=>[]}
+        grouped = {:view=>[], :edit=>[], :add=>[]}
         setting_names.each do |name|
           next unless group = Card.setting_attrib(name, :setting_group)
           grouped[group] << name

@@ -28,10 +28,6 @@ module Wagn::Set::Type::Cardtype
     self.extension = ::Cardtype.create!( :class_name => codename )
   end
   
-  def me_type
-    self.extension && Card.const_get( self.extension.class_name )
-  end
-  
   def queries
     super.unshift 'cardtype_cards'
   end
@@ -61,6 +57,10 @@ module Wagn::Set::Type::Cardtype
     validate_destroy
   end
 
+  def cards_of_type_exist?
+    Card.find_by_typecode_and_trash( extension.codename, false )
+  end
+   
   private
   
   # def ensure_not_in_use
@@ -71,7 +71,7 @@ module Wagn::Set::Type::Cardtype
   # end
     
   def validate_destroy
-    if extension and Card.find_by_typecode_and_trash( extension.codename, false ) 
+    if extension and cards_of_type_exist?
       errors.add :cardtype, "can't be altered because #{name} is a Cardtype and cards of this type still exist"
       false
     else

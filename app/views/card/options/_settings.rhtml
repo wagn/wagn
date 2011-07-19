@@ -1,7 +1,18 @@
 <%= slot.options_submenu(:settings) %>
 <div class="settings-tab">
+  <%- 
+  related_sets = slot.card.related_sets
+  if !related_sets.empty?
+  %>
+    <%- related_sets.each do |set_name| %>
+      <h2><%= Wagn::Pattern.label(set_name) %></h2>
+      <blockquote>
+        <%= slot.process_inclusion Card.fetch(set_name), :view=>:closed %>
+      </blockquote>
+    <% end %>
+  <h2>Just This Card</h2>
+  <%- end %>
   <%= slot.subrenderer(Card.fetch "#{slot.card.name}+*self").render :content %>
 </div>
 
-<%#= javascript_tag("setupLinksAndDoubleClicks();")  %>
 

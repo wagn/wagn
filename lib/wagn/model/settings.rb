@@ -20,6 +20,17 @@ module Wagn::Model::Settings
     return nil
   end
 
+  def related_sets
+    sets = []
+    sets<< "#{name}+*type" if typecode=='Cardtype'
+    if name.simple?
+      sets<< "#{name}+*right"
+      Card.search(:type=>'Set',:left=>{:right=>name},:right=>'*type plus right',:return=>'name').each do |set_name|
+        sets<< set_name
+      end
+    end
+    sets
+  end
 
   module ClassMethods
     def default_setting setting_name, fallback=nil

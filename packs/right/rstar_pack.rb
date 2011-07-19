@@ -72,9 +72,9 @@ class Wagn::Renderer::RichHtml
           sections << if !sifter[:override].empty?
             div(:class=>'edit-rule-section edit-rule-override') do
               if current_rule || params[:new_rule_set]
-                edit_rule_header('Override', 'add more specific rule that impacts:')
+                edit_rule_header('Override', 'add more specific rule for:')
               else
-                edit_rule_header('Create', 'add new rule that impacts:')
+                edit_rule_header('Create', 'add new rule for:')
               end +
               content_tag(:ul) do
                 sifter[:override].map do |set_name|
@@ -88,14 +88,14 @@ class Wagn::Renderer::RichHtml
           
           sections << if set_name = params[:new_rule_set]
             div(:class=>'edit-rule-section edit-rule-new') do
-              edit_rule_header('Create', "add new rule that impacts #{Wagn::Pattern.label(set_name)}") +
+              edit_rule_header('Create', "add new rule for #{Wagn::Pattern.label(set_name)}:") +
               process_inclusion(Card.new(:name=>"#{set_name}+#{setting_name}"), :view=>:open)
             end
           end
           
           sections << if current_rule
             div(:class=>'edit-rule-section edit-rule-current') do
-              edit_rule_header('Edit', 'change current rule') +
+              edit_rule_header('Edit', "change current rule for #{Wagn::Pattern.label(current_rule_set)}:") +
               process_inclusion(current_rule, :view=>:open)
             end
           end
@@ -103,23 +103,19 @@ class Wagn::Renderer::RichHtml
           deferrable_rules = sifter[:defer].map{ |set_name| Card["#{set_name}+#{setting_name}"] }.compact
           sections << if !deferrable_rules.empty?
             div(:class=>'edit-rule-section edit-rule-defer') do
-              edit_rule_header('Defer','delete current rule, fall back on more general') +
+              edit_rule_header('Defer','delete current rule (above) in favor of more general rule:') +
               deferrable_rules.map do |rule_card|
                 process_inclusion rule_card, :view=>:closed
               end.join
             end
           end
-#          sifter[:defer].inspect
-            
           sections.compact.join "\n"
-          
-#          "card name = #{card.name}, set_name = #{main_set_name}; setting_name = #{setting_name}, ruled card name = #{ruled_card.name}"
         else
           process_inclusion(card, :view=>:open)
         end
       end
     end +
-    content_tag(:td, :class => 'rule-action') do
+    content_tag(:td, :class =>'edit-rule-action rule-action') do
       div() { link_to_remote 'close', :url=>"/card/view/#{card.name.to_url_key}?view=rule", :update=>id } +
       div() { link_to_remote 'refresh', :url=>"/card/view/#{card.name.to_url_key}?view=edit_rule", :update=>id }
     end 

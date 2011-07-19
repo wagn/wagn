@@ -39,6 +39,9 @@
   overflow: hidden;
   text-overflow: ellipsis ;
 }
+.rule-content-container .line {
+  line-height:inherit;
+}
 .rule-action {
   width: 20px;
 }
@@ -46,8 +49,9 @@ td.missing-rule {
   background-color: #eee;
   border-bottom: 1px solid #fff;
 }
-.edit-rule .rule-action {
-  float:right;
+.edit-rule,
+.edit-rule-action {
+  background-color: #ffe
 }
 .edit-rule-content {
   width: 500px;
@@ -68,4 +72,8 @@ td.missing-rule {
 }
 .edit-rule-section {
   padding-bottom: 15px;
+}
+.edit-rule ul {
+  margin: 0px;
+  padding-left: 15px;
 }

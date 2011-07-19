@@ -26,10 +26,15 @@ end
 describe Wagn::Cardname, "changing from plus card to simple" do
   before do
     User.as :joe_user
+    Rails.logger.debug "failing 1"
     @c = Card.create! :name=>'four+five'
+    Rails.logger.debug "failing 2"
     @c.name = 'nine'
+    Rails.logger.debug "failing 3"
     @c.confirm_rename = true
+    Rails.logger.debug "failing 4"
     @c.save
+    Rails.logger.debug "failing 5"
   end
     
     

@@ -61,11 +61,6 @@ class Wagn::Renderer::RichHtml
     open_close_js(:to_closed)
   end
 
-  define_view(:setting) do |args|
-    self.requested_view = args[:action] = 'content'
-    wrap( args) { render_partial('views/setting') }
-  end
-
   define_view(:edit) do |args|
     @state=:edit
 #    warn "card #{card.name} at view(:edit) = #{card.inspect}\ncard.content_template = #{card.content_template.inspect}"

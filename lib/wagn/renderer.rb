@@ -23,7 +23,7 @@ module Wagn
     }
     
     UNDENIABLE_VIEWS = [ 
-      :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :setting_missing, :name, :link, :url
+      :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :name, :link, :url
     ]
   
     RENDERERS = {
@@ -108,7 +108,7 @@ module Wagn
 
     class <<self
       def get_pattern(view,opts)
-        unless pkey =  Wagn::Pattern.method_key(opts) #and opts.empty?
+        unless pkey =  Wagn::Model::Pattern.method_key(opts) #and opts.empty?
           raise "Bad Pattern opts: #{pkey.inspect} #{opts.inspect}"
         end
         return (pkey.blank? ? view : "#{pkey}_#{view}").to_sym
@@ -262,8 +262,7 @@ module Wagn
   
     def view_method(view)
       return "_final_#{view}" unless card
-      Wagn::Pattern.method_keys(card).each do |method_key|
-        
+      card.method_keys.each do |method_key|
         meth = "_final_"+(method_key.blank? ? "#{view}" : "#{method_key}_#{view}")
         return meth if respond_to?(meth.to_sym)
       end
@@ -390,13 +389,12 @@ module Wagn
       sub.requested_view = vmode
       subview = case
   
-        when [:name, :link, :linkname].member?(vmode)  ; vmode
+        when [:name, :link, :linkname, :rule, :edit_rule].member?(vmode)  ; vmode
         when :edit == state
          tcard.virtual? ? :edit_auto : :edit_in_form
         when new_card
           case
             when vmode==:raw    ; :blank
-            when vmode==:setting; :setting_missing
             when state==:line   ; :closed_missing
             else                ; :open_missing
           end

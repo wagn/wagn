@@ -6,8 +6,9 @@ module Wagn::Model::Settings
   
   def setting_card setting_name, fallback=nil
     fetch_args = {:skip_virtual=>true, :skip_after_fetch=>true}
-    Wagn::Pattern.set_names( self ).each do |name|
-      next unless Card.fetch(name, fetch_args) 
+  
+    real_set_names.each do |name|
+      #next unless Card.fetch(name, fetch_args)  'real_set_names doesn't return them'
       # optimization for cases where there are lots of settings lookups for many sets though few exist. 
       # May cause problems if we wind up with Set in trash, since trunks aren't always getting pulled out when we
       # create plus cards (like setting values)
@@ -20,8 +21,16 @@ module Wagn::Model::Settings
     return nil
   end
 
-  def setting_names_by_group
-    self.class.universal_setting_names_by_group
+  def related_sets
+    sets = []
+    sets<< "#{name}+*type" if typecode=='Cardtype'
+    if name.simple?
+      sets<< "#{name}+*right"
+      Card.search(:type=>'Set',:left=>{:right=>name},:right=>'*type plus right',:return=>'name').each do |set_name|
+        sets<< set_name
+      end
+    end
+    sets
   end
 
   module ClassMethods
@@ -38,7 +47,7 @@ module Wagn::Model::Settings
     def universal_setting_names_by_group
       @@universal_setting_names_by_group ||= begin
         setting_names = Card.search(:type=>'Setting', :return=>'name', :limit=>'0') 
-        grouped = {:viewing=>[], :editing=>[], :creating=>[]}
+        grouped = {:view=>[], :edit=>[], :add=>[]}
         setting_names.each do |name|
           next unless group = Card.setting_attrib(name, :setting_group)
           grouped[group] << name

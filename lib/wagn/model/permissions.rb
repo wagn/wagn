@@ -53,8 +53,8 @@ module Wagn::Model::Permissions
         self.send(method)
       rescue Exception => e
         name.piece_names.each{|piece| Wagn::Cache.expire_card(piece.to_key)}
-        Rails.logger.info "#{method}:#{e.message} #{name} #{Kernel.caller.join("\n")}"
-        raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace}"
+        Rails.logger.info ">>#{method}:#{e.message} #{name} #{Kernel.caller.*"\n"}"
+        raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace*"\n"}"
       end
     else
       raise Card::PermissionDenied.new(self)
@@ -241,7 +241,7 @@ module Wagn::Model::Permissions
       # could be related to other bugs?
       in_set = {}
       if !(self.trash)
-        rule_classes = Wagn::Pattern.subclasses.map &:key
+        rule_classes = Wagn::Model::Pattern.subclasses.map &:key
         rule_class_index = rule_classes.index self.name.trunk_name.tag_name
         return 'not a proper rule card' unless rule_class_index
 

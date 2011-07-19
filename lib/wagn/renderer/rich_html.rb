@@ -152,17 +152,21 @@ module Wagn
       when 'closed'   ;  'card-slot line'
       else            ;  'card-slot paragraph'
     end 
-    css_class << " " + Wagn::Pattern.css_names( card ) if card
+    css_class << " " + card.css_names if card
     
     attributes = {
       :class    => css_class,
       :cardId   => (card && card.id),
-      :position => UUID.new.generate.gsub(/^(\w+)0-(\w+)-(\w+)-(\w+)-(\w+)/,'\1')
+      :position => generate_position
     }
     [:style, :home_view, :item, :base].each { |key| attributes[key] = args[key] }
     
     
     div( attributes ) { yield }
+  end
+  
+  def generate_position
+    UUID.new.generate.gsub(/^(\w+)0-(\w+)-(\w+)-(\w+)-(\w+)/,'\1')
   end
 
   def skip_outer_wrap_for_ajax?
@@ -226,8 +230,8 @@ module Wagn
     div(:class=>'submenu') do
       [[ :content,    true  ],
        [ :name,       true, ],
-       [ :type,       !(card.type_template? || (card.typecode=='Cardtype' and ct=card.me_type and !ct.find_all_by_trash(false).empty?))],
-       [ :codename,   (System.always_ok? && card.typecode=='Cardtype')],
+       [ :type,       !(card.type_template? || (card.typecode=='Cardtype' && card.cards_of_type_exist?))],
+       #[ :codename,   (System.always_ok? && card.typecode=='Cardtype')],
        [ :inclusions, !(card.out_transclusions.empty? || card.template? || card.hard_template),         {:inclusions=>true} ]
        ].map do |key,ok,args|
 

@@ -4,7 +4,7 @@ class Wagn::Renderer
       process_content "{{+*right+*edit help}}"
     end +
 
-    Wagn::Pattern.subclasses.reverse.map do |set_class|
+    card.patterns.reverse.map do |set_class|
       key = set_class.key
       content_tag(:h2, (set_class.trunkless? ? '' : '+') + key, :class=>'values-for-setting') +
       subrenderer(Card.new(

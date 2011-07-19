@@ -23,7 +23,7 @@ module Wagn
     }
     
     UNDENIABLE_VIEWS = [ 
-      :deny_view, :edit_auto, :too_slow, :too_deep, :name, :link, :url
+      :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :name, :link, :url
     ]
   
     RENDERERS = {

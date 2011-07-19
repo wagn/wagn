@@ -13,7 +13,7 @@ slot = get_slot
     <%= page_icon setting_name %>
   </div>
 
-  <% set_names.each do |set_name|%>
+  <% card.set_names.each do |set_name|%>
     <%- value_card = Card.fetch_or_new("#{set_name}+#{setting_name}") %>
 
     <div class="setting-row">
@@ -21,7 +21,7 @@ slot = get_slot
         <%= slot.subrenderer(value_card).render((value_card.new_record? ? :setting_missing : :setting), :home_view=>:setting ) %>
       </div>
       <div class="set">
-        <%= link_to_page pattern.label(set_name), set_name %>
+        <%= link_to_page card.label(set_name), set_name %>
       </div>
     </div>
 

@@ -59,7 +59,7 @@ module Wagn
       when 'closed'   ;  'card-slot line'
       else            ;  'card-slot paragraph'
     end 
-    css_class << " " + css_names if card
+    css_class << " " + card.css_names if card
     
     attributes = {
       :name => card.name.tag_name,

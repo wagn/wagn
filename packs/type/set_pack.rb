@@ -1,8 +1,9 @@
 class Wagn::Renderer
   define_view(:naked , :type=>'set') do
     is_self = card.name.tag_name=='*self'
-    headings = ['Type','Content','Action']
-    headings.unshift 'Set' if is_self
+    #headings = ['Type','Content','Action']
+    headings = ['Content','Type']
+    headings << 'Set' if is_self    
     
     setting_groups = card.setting_names_by_group
     div( :class=>'instruction' ) do

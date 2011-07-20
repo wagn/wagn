@@ -29,7 +29,7 @@
   color: #999;
 }
 .rule-content {
-  width: 200px;  
+  width: 200px;
 }
 .rule-content div {
   padding: 0;
@@ -42,19 +42,15 @@
 .rule-content-container .line {
   line-height:inherit;
 }
-.rule-action {
-  width: 20px;
-}
 td.missing-rule {
   background-color: #eee;
   border-bottom: 1px solid #fff;
 }
-.edit-rule,
-.edit-rule-action {
+.edit-rule {
   background-color: #ffe
 }
 .edit-rule-content {
-  width: 500px;
+  width: 550px;
   float: right;
 }
 .edit-rule-header {

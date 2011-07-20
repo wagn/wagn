@@ -98,7 +98,6 @@ class PermissionsIntoSettings < ActiveRecord::Migration
     Card.find(:all, :conditions=>'tag_id is null and trash is false').each do |card|
       next if card.star?
       next if wagn_dot_org && wdo_reserved_list.member?( card.typecode )
-      tag_name = card.name.tag_name 
       [:read, :edit, :delete, :comment].each do |task|
         begin
           could = card.who_could(task)

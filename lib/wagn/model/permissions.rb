@@ -164,7 +164,6 @@ module Wagn::Model::Permissions
     deny_because("No comments allowed on hard templated cards") if hard_template
   end
   
-  
   def approve_typecode
     case
     when !typename

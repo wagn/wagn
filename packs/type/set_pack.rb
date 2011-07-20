@@ -6,7 +6,12 @@ class Wagn::Renderer
     
     setting_groups = card.setting_names_by_group
     div( :class=>'instruction' ) do
-      "Rules for: #{link_to_page Wagn::Pattern.label(card.name), is_self ? card.name.trunk_name :   "#{card.name}+by_update"}"
+      "Rules for: "+ 
+      if is_self
+        link_to_page card.name.trunk_name
+      else
+        link_to_page Wagn::Pattern.label(card.name), "#{card.name}+by_update"
+      end
     end +
     
     content_tag('table', :class=>'set-rules') do

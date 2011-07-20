@@ -774,6 +774,19 @@ div.search-result-list .search-result-item {
   margin-right: 20px;
 }
 
+/*------- permissions ------------------*/
+
+table.permission-editor th {
+ text-align: left;
+ padding-left: 25px;
+}
+table.permission-editor td {
+  padding: 0 5px;
+}
+table.permission-editor .pointer-text {
+  width: 250px;
+}
+
 /*---------- comment-box -------------------------------------- */
 .comment-box textarea { 
     margin-bottom:5px;

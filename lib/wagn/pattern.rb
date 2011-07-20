@@ -85,9 +85,14 @@ raise "no card" unless card
         sn.tag_name.gsub(' ','_').gsub('*','').upcase + '-' + sn.trunk_name.css_name
       end
       
-      def trunkless?
-        false
+      def junction_only?(name=nil)
+        return false unless name
+        @@subclasses.map do |pclass|
+          return pclass.junction_only? if pclass.match(name)
+        end
       end
+      
+      def trunkless?()      false  end
     end
     
     
@@ -124,7 +129,8 @@ raise "no card" unless card
       def method_key_from_opts(opts)   'all_plus'                  end
       def css_name(card)               "ALL_PLUS"                  end
       def label(name)                  'All Plus Cards'            end
-      def trunkless?()                 true         end
+      def trunkless?()                 true                        end
+      def junction_only?()             true                        end
     end
     register_class self
   end
@@ -169,6 +175,7 @@ raise "no card" unless card
       def method_key_from_opts(opts)   'star'                          end
       def set_name(card)               "#{card.name.tag_name}+#{key}"  end
       def trunkless?()                 true                            end
+      def junction_only?()             true                            end
       def pattern_applies? card
         card.junction? && card.name.tag_name.star?
       end
@@ -186,6 +193,7 @@ raise "no card" unless card
       def opt_keys()                     [:right]                        end
       def pattern_applies?(card)         card.junction?                  end
       def set_name(card)                 "#{card.name.tag_name}+#{key}"  end
+      def junction_only?()               true                            end
       def method_key card
         method_key_from_opts :right=>card.name.tag_name
       end
@@ -201,38 +209,23 @@ raise "no card" unless card
 
   class LeftTypeRightNamePattern < Pattern
     class << self
-      def key
-        '*type plus right'
-      end
-
-      def opt_keys
-        [:ltype, :right]
-      end
-
-      def pattern_applies? card
-        card.junction? && !!(left(card))
-      end
-
-      def left card
-        card.loaded_trunk || card.left
-      end
-
+      def key()                    '*type plus right'                     end
+      def opt_keys()               [:ltype, :right]                       end
+      def pattern_applies?( card ) card.junction? && !!(left(card))       end
+      def left( card )             card.loaded_trunk || card.left         end
+      def junction_only?()         true                                   end
       def set_name card
         "#{left(card).typename}+#{card.name.tag_name}+*type plus right"
       end
-
       def css_name card
         'TYPE_PLUS_RIGHT-' + set_name(card).trunk_name.css_name
       end
-
       def method_key card
         method_key_from_opts :ltype=>left(card).typename, :right=>card.name.tag_name
       end
-
       def method_key_from_opts(opts)
         %{#{opts[:ltype].to_s.css_name}_#{opts[:right].to_s.css_name}_typeplusright}
       end
-
       def label name
         "Any #{name.trunk_name.trunk_name} card plus #{name.trunk_name.tag_name}"
       end
@@ -242,35 +235,13 @@ raise "no card" unless card
 
   class SoloPattern < Pattern
     class << self
-      def key
-        '*self'
-      end
-
-      def pattern_applies? card
-        #FIXME!!! we do not want these to stay commented out, but they need to be there so that patterns on builtins can be recognized for now. 
-        # soon those cards should actually exist.
-        card.name and !card.virtual? and !card.new_card?
-      end
-      
-      def opt_keys
-        [:name]
-      end
-
-      def set_name card
-        "#{card.name}+#{key}"
-      end
-      
-      def method_key card
-        method_key_from_opts :name=>card.name
-      end
-
-      def method_key_from_opts opts
-        opts[:name].to_s.css_name+'_self'
-      end
-
-      def label name
-        "Just \"#{name.trunk_name}\""
-      end
+      def key()                         '*self'                                end
+      def opt_keys()                    [:name]                                end
+      def set_name( card )              "#{card.name}+#{key}"                  end      
+      def method_key( card )            method_key_from_opts :name=>card.name  end
+      def method_key_from_opts( opts )  opts[:name].to_s.css_name+'_self'      end
+      def label( name )                 "Just \"#{name.trunk_name}\""          end
+      def pattern_applies?( card )      card.name and !card.new_card?          end
     end
     register_class self
   end

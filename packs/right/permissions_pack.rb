@@ -68,4 +68,19 @@ class Wagn::Renderer
   end
   alias_view(:editor, { :right=>'*create' }, { :right=>'*read' }, { :right=>'*update' }, { :right=>'*delete' }, { :right=>'*comment' } )
   
+  define_view(:naked, { :right=>'*create'}) do
+    card.content=='_left' ? core_inherit_content : _final_pointer_type_naked
+  end
+  alias_view(:naked, { :right=>'*create' }, { :right=>'*read' }, { :right=>'*update' }, { :right=>'*delete' }, { :right=>'*comment' } )
+  
+  define_view(:closed_content, { :right=>'*create'}) do
+    card.content=='_left' ? core_inherit_content : _final_pointer_type_closed_content
+  end
+  alias_view(:closed_content, { :right=>'*create' }, { :right=>'*read' }, { :right=>'*update' }, { :right=>'*delete' }, { :right=>'*comment' } )
+
+  private
+  
+  def core_inherit_content
+    div(:class=>'inherit-permission') { '(Inherit from left card)' }
+  end
 end

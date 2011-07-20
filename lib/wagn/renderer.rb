@@ -54,36 +54,16 @@ module Wagn
     #     render(:viewname, args)
     #
     #   Roughly equivalent to:
-    #     render(_setname)_viewname(args)
+    #     render_viewname(args)
     #
     #   The internal call that skips the checks:
-    #     _render(_setname)_viewname(args)
-    #  #
+    #     _render_viewname(args)
+    # 
+    #   Each of the above ultimately calls:
+    #     _final(_set_key)_viewname(args)
+    
+    
     module DefineView
-      def alias_view(view, opts={}, *aliases)
-        view_key = get_pattern(view, opts)
-        aliases.each do |aview|
-          case aview
-          when String
-          when Symbol
-            aview_key = if view_key == view
-                aview.to_sym
-              else
-                view_key.to_s.sub(/_#{view}$/, "_#{aview}").to_sym
-              end
-          when Hash
-            aview_key = get_pattern(aview[:view]||view, aview)
-          else raise "Bad view #{aview.inspect}"
-          end
-          class_eval do
-            define_method( "_final_#{aview_key}".to_sym ) do
-              Rails.logger.debug "ALIAS call: #{aview_key} called, calling #{view_key}"
-              send("_final_#{view_key}")
-            end
-          end
-        end
-      end
-  
       def define_view(view, opts={}, &final)
         fallback[view] = opts.delete(:fallback) if opts.has_key?(:fallback)
         view_key = get_pattern(view, opts)
@@ -102,6 +82,26 @@ module Wagn
           end
         end
       end
+
+      def alias_view(view, opts={}, *aliases)
+        view_key = get_pattern(view, opts)
+        aliases.each do |aview|
+          aview_key = case aview
+            when String; aview
+            when Symbol; (view_key==view ? aview.to_sym : view_key.to_s.sub(/_#{view}$/, "_#{aview}").to_sym)
+            when Hash;   get_pattern( aview[:view] || view, aview)
+            else; raise "Bad view #{aview.inspect}"
+            end
+#          raise "aview_key = #{aview_key}"
+          class_eval do
+            define_method( "_final_#{aview_key}".to_sym ) do
+              #Rails.logger.debug "ALIAS call: #{aview_key} called, calling #{view_key}"
+              send("_final_#{view_key}")
+            end
+          end
+        end
+      end
+  
     end
   
     extend DefineView
@@ -468,27 +468,6 @@ module Wagn
             :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
             :link_type=>reference_type
            )
-        end
-      end
-    end
-  
-    def paging_params
-      if ajax_call? && @depth > 0
-        {:default_limit=>20}  #important that paging calls not pass variables to included searches
-      else
-        @paging_params ||= begin
-          s = {}
-          if p = root.params
-            [:offset,:limit,:_keyword].each{|key| s[key] = p.delete(key)}
-          end
-          s[:offset] = s[:offset] ? s[:offset].to_i : 0
-          if s[:limit]
-            s[:limit] = s[:limit].to_i
-          else
-            s.delete(:limit)
-            s[:default_limit] = (main_card? ? 50 : 20) #can be overridden by card value
-          end
-          s
         end
       end
     end

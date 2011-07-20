@@ -9,9 +9,9 @@ class Wagn::Renderer
   end
 
   define_view(:closed_content, :type=>'pointer') do
-    %{<div class="pointer-list">} +
-    pointer_item(self, ('name'==item_view || params[:item] ? 'name' : 'link')) +
-    '</div>'
+    div( :class=>"pointer-list" ) do
+      pointer_item(self, ('name'==item_view || params[:item] ? 'name' : 'link'))
+    end
   end
 
   define_view(:editor, :type=>'pointer') do

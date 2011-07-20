@@ -34,13 +34,16 @@
 .rule-content div {
   padding: 0;
 }
-.rule-content-container {
+.rule-content-container.line {
   width: 200px;
   overflow: hidden;
-  text-overflow: ellipsis ;
+  text-overflow: ellipsis;
+  line-height: inherit;
 }
-.rule-content-container .line {
-  line-height:inherit;
+.rule-content-container.line .pointer-list,
+.rule-content-container.line .search-list,
+.rule-content-container.line .content {
+  margin: 0;
 }
 td.missing-rule {
   background-color: #eee;

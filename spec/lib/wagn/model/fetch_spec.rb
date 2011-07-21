@@ -97,8 +97,11 @@ describe Card do
       end
 
       it "should recognize pattern overrides" do
+        Rails.logger.debug "failing 0"
         Card.create!(:name => "y+*right+*content", :content => "Right Content")
+        Rails.logger.debug "failing 1"
         card = Card.fetch("a+y")
+        Rails.logger.debug "failing 2"
         card.virtual?.should be_true
         card.content.should == "Right Content"
         tpr = Card.create!(:name => "Basic+y+*type plus right+*content", :content => "Type Plus Right Content")

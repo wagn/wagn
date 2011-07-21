@@ -10,8 +10,14 @@ module Wagn::Model::Settings
   def setting_card setting_name, fallback=nil
     fetch_args = {:skip_virtual=>true, :skip_after_fetch=>true}
   
-    value = setting_cache[setting_name] and return value
+    setting_cache.has_key?(setting_name) and
+    #value = setting_cache[setting_name] and
+    begin
+      Rails.logger.info "cached setting[#{name}]( #{setting_name}, #{fallback}) => #{setting_cache[setting_name].inspect}"
+      return setting_cache[setting_name]
+    end
     #rule_name = nil #if pattern =
+    value=nil
     if real_set_names.detect do |name|
         value = Card.fetch("#{name}+#{setting_name.to_s.to_star}", fetch_args) or
             fallback and Card.fetch("#{name}+#{fallback.to_s.to_star}", fetch_args)
@@ -21,6 +27,7 @@ module Wagn::Model::Settings
       end
       #setting_cache[setting_name+"-rule-name"] = rule_name
     end
+    Rails.logger.info "caching setting[#{name}](#{setting_name}) => #{value.inspect}"
     setting_cache[setting_name] = value
   end
 

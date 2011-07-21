@@ -22,11 +22,20 @@ module Wagn::Configuration
     def wagn_run
       wagn_load_config
       wagn_setup_multihost
-      if ActiveRecord::Base.connection.table_exists? 'cards' #false on some important rake tasks, like db:schema:load
-        wagn_load_modules
-        Wagn::Cache.initialize_on_startup
+
+      begin
+        no_mod_msg = "----------Wagn Running without Modules----------"
+        unless ActiveRecord::Base.connection.table_exists?( 'cards' )
+          Rails.logger.info no_mod_msg + '(no cards table)'; return
+        end
+      rescue
+        Rails.logger.info no_mod_msg + '(not connected to database)'; return
       end
-      Rails.logger.info << "----------- Wagn Rolling -----------\n\n\n"
+
+      wagn_load_modules
+      Wagn::Cache.initialize_on_startup
+      
+      Rails.logger.info "----------- Wagn Rolling -----------\n\n\n"
     end
 
     def wagn_load_config

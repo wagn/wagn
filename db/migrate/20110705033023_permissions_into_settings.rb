@@ -153,17 +153,23 @@ class PermissionsIntoSettings < ActiveRecord::Migration
           return false
         end
         "[[#{role.cardname}]]"
+      when party == false
+        puts "Bad rule false: #{set} #{task}"
+        return false
       else
         role_card = party.card
          "[[#{party.cardname}]]"
       end
       
     puts "- create rule for #{set}, #{task.to_s.upcase}:  #{content}"
-    c = Card.create(
-      :name=>"#{set}+*#{task.to_s=='edit' ? 'update' : task}",
+    cname = "#{set}+*#{task.to_s=='edit' ? 'update' : task}"
+    Card.create(
+      :name=>cname,
       :type=>'Pointer',
       :content=>content
     )
+    c = Card[cname]
+    puts "- created rule for #{set}, #{task.to_s.upcase}:  #{c&&c.id.inspect}, #{c&&c.name}"
     return c if String===party
     WikiReference.create(
       :card_id=>c.id, 

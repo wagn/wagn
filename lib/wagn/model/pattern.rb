@@ -246,7 +246,9 @@ Rails.logger.info "patterns[#{name}] #{@patterns.inspect}"; @patterns
     def method_key()      self.class.method_key_from_opts(:name=>card.name)  end
     def rule_module()
       return unless card.simple? #FIXME: we need to represent plus card classnames
-      "Wagn::Set::Self::#{(card.codename||card.name).camelize}";
+      #Rails.logger.info "Solo rule_module #{card.codename}, #{card.name}"
+      #"Wagn::Set::Self::#{(card.codename||card.name).camelize}";
+      "Wagn::Set::Self::#{(card.name).camelize}";
     end
 
     Wagn::Model::Pattern.register_class self

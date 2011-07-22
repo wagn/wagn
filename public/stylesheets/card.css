@@ -774,6 +774,23 @@ div.search-result-list .search-result-item {
   margin-right: 20px;
 }
 
+/*------- permissions ------------------*/
+
+table.permission-editor th {
+  text-align: left;
+  padding-left: 20px;
+  background-color: inherit;
+  border: 0;
+  color: #666;
+}
+table.permission-editor td {
+  padding: 5px;
+  vertical-align: top;
+}
+table.permission-editor .pointer-text {
+  width: 200px;
+}
+
 /*---------- comment-box -------------------------------------- */
 .comment-box textarea { 
     margin-bottom:5px;

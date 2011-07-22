@@ -1,12 +1,18 @@
 class Wagn::Renderer
   define_view(:naked , :type=>'set') do
     is_self = card.name.tag_name=='*self'
-    headings = ['Type','Content','Action']
-    headings.unshift 'Set' if is_self
+    #headings = ['Type','Content','Action']
+    headings = ['Content','Type']
+    headings << 'Set' if is_self    
     
     setting_groups = card.setting_names_by_group
     div( :class=>'instruction' ) do
-      "Rules for: #{link_to_page card.label(card.name), is_self ? card.name.trunk_name :   "#{card.name}+by_update"}"
+      "Rules for: "+ 
+      if is_self
+        link_to_page card.name.trunk_name
+      else
+        link_to_page card.label(card.name), "#{card.name}+by_update"
+      end
     end +
     
     content_tag('table', :class=>'set-rules') do

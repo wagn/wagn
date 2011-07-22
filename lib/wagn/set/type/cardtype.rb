@@ -5,12 +5,11 @@ module Wagn::Set::Type::Cardtype
     reset_cardtype_cache
   end
                                      
-  # codename should not change, but let't remove this with the codename refactor
+  # codename should not change, but let's remove this with the codename refactor
   def codename
     extension ? extension.class_name : nil
   end
 
-  #def set_codename(codename)
   def codename=(codename)
     extension.class_name = codename
     extension.save
@@ -26,10 +25,6 @@ module Wagn::Set::Type::Cardtype
     codename = Card.generate_codename_for(name)
     Rails.logger.info "Cardtype extension #{name} #{codename}"
     self.extension = ::Cardtype.create!( :class_name => codename )
-  end
-  
-  def queries
-    super.unshift 'cardtype_cards'
   end
 
   # FIXME -- the current system of caching cardtypes is not "thread safe":
@@ -62,13 +57,6 @@ module Wagn::Set::Type::Cardtype
   end
    
   private
-  
-  # def ensure_not_in_use
-  #   if extension and Card.search(:type=>name).length > 0
-  #     errors.add :destroy, "Can't remove Cardtype #{name}: cards of this type still exist"
-  #     return false
-  #   end
-  # end
     
   def validate_destroy
     if extension and cards_of_type_exist?

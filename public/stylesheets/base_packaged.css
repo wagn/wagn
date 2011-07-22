@@ -204,6 +204,9 @@ div.pointer-list .pointer-item, div.search-result-list .search-result-item {marg
  .TYPE-toggle .content {font-style: italic}
  .invite-links {padding: 10px; margin-top: 10px; border: 1px solid #66b}
 .invite-links a {font-style: normal; font-weight: bold; margin-right: 20px}
+ table.permission-editor th {text-align: left; padding-left: 20px; background-color: inherit; border: 0; color: #666}
+table.permission-editor td {padding: 5px; vertical-align: top}
+table.permission-editor .pointer-text {width: 200px}
  .comment-box textarea {margin-bottom:5px}
 .comment-box input {padding: 0px; font-size: 12px}
 .comment-box {background: #cce; padding: 8px; margin: 0px}
@@ -216,12 +219,13 @@ div.pointer-list .pointer-item, div.search-result-list .search-result-item {marg
 .rule-set {font-style: italic; color: #999}
 .rule-content {width: 200px}
 .rule-content div {padding: 0}
-.rule-content-container {width: 200px; overflow: hidden; text-overflow: ellipsis }
-.rule-action {width: 20px}
+.rule-content-container.line {width: 200px; overflow: hidden; text-overflow: ellipsis; line-height: inherit}
+.rule-content-container.line .pointer-list, .rule-content-container.line .search-list, .rule-content-container.line .content {margin: 0}
 td.missing-rule {background-color: #eee; border-bottom: 1px solid #fff}
-.edit-rule .rule-action {float:right}
-.edit-rule-content {width: 500px; float: right}
+.edit-rule {background-color: #ffe }
+.edit-rule-content {width: 550px; float: right}
 .edit-rule-header {padding: 10px 0; margin-left: -15px}
 .edit-rule-header-title {font-weight: bold; font-size: 13px; margin-right: 10px}
 .edit-rule-header-intro {color: #666; font-style: italic}
 .edit-rule-section {padding-bottom: 15px}
+.edit-rule ul {margin: 0px; padding-left: 15px}

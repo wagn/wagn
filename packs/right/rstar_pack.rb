@@ -5,19 +5,23 @@ class Wagn::Renderer::RichHtml
     
     is_self = set_name.tag_name =='*self'
     rule_card = if is_self
-      c = Card[set_name.trunk_name].setting_card(setting_name)
-      c.after_fetch if c
-      c
+      c = Card.fetch(set_name.trunk_name)
+      return div(){"no such card #{set_name.trunk_name}"} unless c
+      sc = c.setting_card(setting_name)
+      sc.after_fetch if sc
+      sc
     else
       card.new_card? ? nil : card 
     end
       
     cells = [
-      ["rule-setting", link_to_page(setting_name) ],
-      ["rule-type", (rule_card ? rule_card.typename : '') ],
+#      ["rule-setting", link_to_page(setting_name) ],
+      ["rule-setting", link_to_remote( setting_name, :update=>id,
+        :url=>"/card/view/#{card.name.to_url_key}?view=edit_rule"
+      )],
       ["rule-content", begin
-        div(:class=>'rule-content-container') do
-          span(:class=>'line') do
+        div(:class=>'rule-content-container line') do
+          span(:class=>'content') do
             # these two extra layers are all about getting overflow:hidden to work right.
             # was unable to do it without inline inside block inside table-cell.  would be happy to simplify if possible
             case
@@ -29,12 +33,14 @@ class Wagn::Renderer::RichHtml
           end
         end
       end ],
-      ["rule-action", link_to_remote( rule_card ? 'edit' : 'add',
-        :url=>"/card/view/#{card.name.to_url_key}?view=edit_rule", :update=>id
-      )]
+      ["rule-type", (rule_card ? rule_card.typename : '') ],
+      
+#      ["rule-action", link_to_remote( rule_card ? 'edit' : 'add',
+#        :url=>"/card/view/#{card.name.to_url_key}?view=edit_rule", :update=>id
+#      )]
     ]
     if is_self
-      cells.insert 1, ['rule-set', rule_card ? rule_card.label(rule_card.name.trunk_name) : ''] 
+      cells << ['rule-set', rule_card ? rule_card.label(rule_card.name.trunk_name) : ''] 
     end
 
     extra_css_class = rule_card && !rule_card.new_card? ? 'known-rule' : 'missing-rule'
@@ -51,7 +57,12 @@ class Wagn::Renderer::RichHtml
     col_count = is_self ? 5 : 4
         
     content_tag(:td, :class=>'edit-rule', :colspan=>col_count-1) do
-      div(:class=>'rule-setting') { link_to_page setting_name } +
+#      div(:class=>'rule-setting') { link_to_page setting_name } +
+      div(:class=>'rule-setting') do
+         link_to_remote setting_name, :url=>"/card/view/#{card.name.to_url_key}?view=rule", :update=>id 
+      end +
+      
+      
       div(:class=>'edit-rule-content') do 
         if is_self
           ruled_card = Card[main_set_name.trunk_name]
@@ -114,11 +125,11 @@ class Wagn::Renderer::RichHtml
           process_inclusion(card, :view=>:open)
         end
       end
-    end +
-    content_tag(:td, :class =>'edit-rule-action rule-action') do
-      div() { link_to_remote 'close', :url=>"/card/view/#{card.name.to_url_key}?view=rule", :update=>id } +
-      div() { link_to_remote 'refresh', :url=>"/card/view/#{card.name.to_url_key}?view=edit_rule", :update=>id }
-    end 
+    end #+
+    #content_tag(:td, :class =>'edit-rule-action rule-action') do
+    #  div() { link_to_remote 'close', :url=>"/card/view/#{card.name.to_url_key}?view=rule", :update=>id } +
+    #  div() { link_to_remote 'refresh', :url=>"/card/view/#{card.name.to_url_key}?view=edit_rule", :update=>id }
+    #end 
     
   end
   

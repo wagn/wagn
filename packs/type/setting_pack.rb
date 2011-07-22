@@ -6,8 +6,7 @@ class Wagn::Renderer
 
     card.patterns.reverse.map do |set_class|
       key = set_class.key
-      content_tag(:h2, (set_class.trunkless? ? '' : '+') + key, :class=>'values-for-setting') +
-      subrenderer(Card.new(
+      search_card = Card.new(
         :type =>'Search',
         :skip_defaults=>true,
         :content=>%~
@@ -18,8 +17,11 @@ class Wagn::Renderer
             "right":"#{card.name}","sort":"name","limit":"100"
           }
         ~
-      )).render(:content)
-    end * "\n"
+      )
+      next if search_card.count == 0
+      content_tag(:h2, (set_class.trunkless? ? '' : '+') + key, :class=>'values-for-setting') +
+      subrenderer(search_card).render(:content)
+    end.compact * "\n"
   end
 
   define_view(:closed_content, :type=>'setting') do

@@ -12,8 +12,6 @@ Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence those specified here
 
   config.extend Wagn::Configuration
-  #Wagn::Initializer.set_default_rails_config config
-
   # Skip frameworks you're not going to use
 
   # Add additional load paths for your own custom dirs
@@ -21,7 +19,7 @@ Rails::Initializer.run do |config|
 
   # Force all environments to use the same logger level 
   # (by default production uses :info, the others :debug)
-  config.log_level = :debug
+  # config.log_level = :info
 
   # Use SQL instead of Active Record's schema dumper when creating the test database.
   # This is necessary if your schema can't be completely dumped by the schema dumper, 
@@ -32,8 +30,8 @@ Rails::Initializer.run do |config|
   
   # Make Active Record use UTC-base instead of local time
   # config.active_record.default_timezone = :utc
-  #config.gem 'localmemcache_store', :source => 'http://gemcutter.org'
-  #config.cache_store = :localmemcache_store, { :namespace => 'testapp', :size_mb => 256 }
+  # config.gem 'localmemcache_store', :source => 'http://gemcutter.org'
+  # config.cache_store = :localmemcache_store, { :namespace => 'testapp', :size_mb => 256 }
   
   # See Rails::Configuration for more options   
   # select a store for the rails/card cache

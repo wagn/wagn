@@ -61,15 +61,15 @@ class Cardtype < ActiveRecord::Base
     
     def createable_types  
       load_cache if self.cache.empty?
-      self.cache[:card_names].collect do |class_name,card_name|
-        next if ['InvitationRequest','Setting','Set'].include?(class_name)
-        next unless create_ok?(card_name)
-        { :codename=>class_name, :name=>card_name }
+      self.cache[:card_names].collect do |codename,card_name|
+        next if ['InvitationRequest','Setting','Set'].include?(codename)
+        next unless create_ok?(codename)
+        { :codename=>codename, :name=>card_name }
       end.compact.sort_by {|x| x[:name].downcase }
     end   
     
-    def create_ok?( card_name )
-      Card.new( :type=>card_name, :skip_defaults=> true).ok? :create
+    def create_ok?( codename )
+      Card.new( :typecode=>codename, :skip_defaults=> true).ok? :create
     end
   end        
   

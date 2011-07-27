@@ -28,7 +28,7 @@ end
       }.compact
       Rails.logger.info "patterns[#{name}] #{@patterns.inspect}"; @patterns
     end
-    def set_names()      @set_names ||= patterns.map(&:set_name)                    end
+    def set_names()      @set_names ||= patterns.map(&:set_name)   end
     def reset_patterns()
       Rails.logger.info "reset_patterns[#{name}]"
       @patterns = @set_names = nil                             end
@@ -40,14 +40,15 @@ end
       #patterns.reject(:set_missing?).map(&:set_name)
       Rails.logger.info "RSN #{rsn1.inspect} #{rsn.inspect}"; rsn
     end
-    def method_keys()    @method_keys ||= patterns.map(&:method_key)                end
-    def css_names()      patterns.map(&:css_name).reverse*" "                       end
+    def method_keys()    @method_keys ||= patterns.map(&:method_key) end
+    def css_names()      patterns.map(&:css_name).reverse*" "        end
 
     def label(name)
-      patterns.map do |pat|
-        return pat.label(name) if name.tag_name==pat.class.key
-      end
-      return nil
+      tag = name.tag_name
+      found = patterns.find { |pat|
+        Rails.logger.info "label search ... #{pat} #{name}: #{tag} :: #{pat.class.key}"
+        tag==pat.class.key
+      } and found.label(name)
     end
   end
 
@@ -144,6 +145,7 @@ end
       def label(name)                  "Cards ending in +(Star Card)"   end
     end
     def pattern_applies?()   card.junction? && card.name.tag_name.star? end
+    # is this right?  Tag shouldn't be involved as this is a "global" set
     def set_name()          "#{card.name.tag_name}+#{self.class.key}"   end
     def method_key()                   'star'                           end
 
@@ -190,11 +192,13 @@ end
   end
 
   class SoloPattern < SetBase
+      # Why is this in the class scope for all the others, but this one is broken that way?
+      def label(name)                 %{Just "#{name.trunk_name}"}           end
     class << self
+      #def label(name)                 %{Just "#{name.trunk_name}"}           end
       def key()                       '*self'                                end
       def opt_keys()                  [:name]                                end
       def method_key_from_opts(opts)  opts[:name].to_s.css_name+'_self'      end
-      def label(name)                 %{Just "#{name.trunk_name}"}           end
     end
     #FIXME!!! we do not want these to stay commented out, but they need to be
     #there so that patterns on builtins can be recognized for now. 

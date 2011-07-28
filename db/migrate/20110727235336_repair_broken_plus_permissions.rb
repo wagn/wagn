@@ -6,6 +6,7 @@ class RepairBrokenPlusPermissions < ActiveRecord::Migration
       ).each do |card|
         card.update_read_rule
       end
+      Wagn::Cache.reset_global
     end
   end
 

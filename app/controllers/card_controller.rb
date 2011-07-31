@@ -292,7 +292,7 @@ class CardController < ApplicationController
   end
 
   def related
-    sources = [@card.typecode.name,nil]
+    sources = [@card.typename,nil]
     sources.unshift '*account' if @card.extension_type=='User'
     @items = sources.map do |root|
       c = Card.fetch((root ? "#{root}+" : '') +'*related')

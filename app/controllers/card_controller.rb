@@ -20,7 +20,7 @@ class CardController < ApplicationController
     if User.no_logins?
       redirect_to '/admin/setup'
     else
-      params['id'] = (System.setting('*home') || 'Home').to_url_key
+      params['id'] = (System.setting('*home') || 'Home').to_cardname.to_url_key
       show
     end
   end
@@ -300,7 +300,7 @@ class CardController < ApplicationController
       c && c.item_names
     end.flatten.compact
 #    @items << 'config'
-    @current = params[:attribute] || @items.first.to_key
+    @current = params[:attribute] || @items.first.to_cardname.to_key
   end
 
   #------------------( views )

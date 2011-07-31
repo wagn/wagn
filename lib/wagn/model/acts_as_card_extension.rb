@@ -8,7 +8,7 @@ module Wagn::Model::ActsAsCardExtension
       end
       
       def cardname
-        (c = card) ? c.name : (
+        (c = card) ? c.cardname : (
           respond_to?(:codename) ? codename : "#{self.class} #{self.id}"
         )
       end

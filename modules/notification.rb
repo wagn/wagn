@@ -33,10 +33,10 @@ module Notification
     
     def trunk_watcher_watched_pairs
       # do the watchers lookup before the transcluder test since it's faster.
-      if name.junction?
+      if cardname.junction?
         #Rails.logger.debug "trunk_watcher_pairs #{name}, #{name.trunk_name.inspect}"
-        if trunk_card = Card.fetch(tname=name.trunk_name, :skip_virtual=>true) and
-          pairs = trunk_card.watcher_watched_pairs and
+        if tcard = Card.fetch(tname=cardname.trunk_name, :skip_virtual=>true) and
+          pairs = tcard.watcher_watched_pairs and
           transcluders.map(&:key).member?(tname.to_key)
           return pairs
         end
@@ -53,22 +53,33 @@ module Notification
     end
 
     def watcher_watched_pairs
-      author = User.current_user.card.name
-      (card_watchers.except(author).map {|watcher| [Card.fetch(watcher, :skip_virtual=>true).extension,self.name] }  +
-        type_watchers.except(author).map {|watcher| [Card.fetch(watcher, :skip_virtual=>true).extension,::Cardtype.name_for(self.typecode)]})
+      author = User.current_user.card.cardname
+      (card_watchers.except(author).map {|watcher| [Card.fetch(watcher, :skip_virtual=>true).extension,self.cardname] }  +
+        type_watchers.except(author).map {|watcher|
+        Rails.logger.info "watcher #{watcher.inspect}, #{::Cardtype.name_for(self.typecode)}"
+        [cd=Card.fetch(watcher, :skip_virtual=>true).extension,::Cardtype.name_for(self.typecode)]})
     end
     
     def card_watchers 
+      Rails.logger.debug "card_watchers #{name}"
       items_from("#{name}+*watchers")
     end
     
     def type_watchers
-      items_from(::Cardtype.name_for( self.typecode ) + "+*watchers" )
+      Rails.logger.debug "type_watchers #{::Cardtype.name_for(self.typecode)+"+*watchers"}"
+      items_from("#{::Cardtype.name_for(self.typecode).to_s}+*watchers" )
     end
     
-    def items_from( cardname )
+    def items_from( name )
+      Rails.logger.info "items_from (#{name.inspect})"
       User.as :wagbot do
-        (c = Card.fetch(cardname, :skip_virtual=>true)) ? c.item_names.reject{|x|x==''} : []
+        #(c = Card.fetch(name.to_cardname, :skip_virtual=>true)) ? c.item_names.reject{|x|x==''}.map(&:to_cardname) : []
+        (c = Card.fetch(name.to_cardname, :skip_virtual=>true)) ?
+          begin
+          r1=c.item_names; r2=r1.reject{|x|x==''}; r3=r2.map(&:to_cardname)
+          Rails.logger.info "items from 2 #{c.new_record?}, #{r1.inspect}, #{r2.inspect}, #{r3.inspect}"; r3
+          end :
+          []
       end
     end  
       
@@ -100,7 +111,7 @@ module Notification
     def watch_unwatch      
       type_link = (card.typecode == "Cardtype") ? " #{card.name} cards" : ""
       type_msg = (card.typecode == "Cardtype") ? " cards" : ""    
-      me = User.current_user.card.name   
+      me = User.current_user.card.cardname   
 
       if card.card_watchers.include?(me) or card.typecode != 'Cardtype' && card.watchers.include?(me)
         link_to_action( "unwatch#{type_link}", 'unwatch', {:update=>id("watch-link")},{

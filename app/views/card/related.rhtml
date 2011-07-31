@@ -3,7 +3,7 @@
 
   <% div(:class=>'submenu') do
      @items.each do |item|
-       key = item.to_key
+       key = item.to_cardname.to_key
        linktext = item.gsub('*','').gsub('subtab','').strip %>
        <%= link_to_remote( linktext,
           { :url=>slot.url_for("card/related", nil, key), :update => slot.id },

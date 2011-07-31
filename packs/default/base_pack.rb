@@ -8,7 +8,7 @@ class Wagn::Renderer
   define_view(:raw) do card ? card.raw_content : _render_blank end
   define_view(:refs) do card.respond_to?('references_expired') ? card.raw_content : '' end
   define_view(:naked) do #|args|
-    card.name.template_name? ? _render_raw : process_content(_render_raw)
+    card.cardname.template_name? ? _render_raw : process_content(_render_raw)
   end
   alias_view(:naked, {}, :show, :content)
   define_view(:titled) do
@@ -18,7 +18,7 @@ class Wagn::Renderer
 ###----------------( NAME) 
   define_view(:name)     { card.name             }
   define_view(:key)      { card.key              }
-  define_view(:linkname) { card.name.to_url_key  }
+  define_view(:linkname) { card.cardname.to_url_key  }
   define_view(:link)     { name=card.name; build_link(name, name) }
   define_view(:url)      { "#{System.base_url}/wagn/#{_render_linkname}"}
 

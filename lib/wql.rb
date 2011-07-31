@@ -190,7 +190,7 @@ class Wql
 #   end
     
     def absolute_name(name)
-      name = (root.selfname ? name.to_absolute(root.selfname) : name)
+      name = (root.selfname ? name.to_cardname.to_absolute(root.selfname) : name)
     end
     
     def clean(query)
@@ -224,7 +224,7 @@ class Wql
       
       spec = case spec
 #        when /^_(self|left|right)$/;  { :id => to_card(spec).id }                                   
-        when String;   { :key => spec.to_key }
+        when String;   { :key => spec.to_cardname.to_key }
         when Integer;  { :id  => spec }  
         when Hash;     spec
         else raise("Invalid cardspec args #{spec.inspect}")

@@ -217,7 +217,7 @@ module Wagn
   end
 
   def card_id
-    (card.new_record? && card.name)  ? Wagn::Cardname.escape(card.name) : card.id
+    (card.new_record? && card.cardname)  ? card.cardname.escape : card.id
   end
 
   def editor_id(area="")

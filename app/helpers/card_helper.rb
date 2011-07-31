@@ -1,7 +1,7 @@
 module CardHelper
 
   def party_name(party)
-    party ? party.card.name : 'Nobody'
+    party ? party.card.cardname : 'Nobody'
   end
 
   # navigation for revisions -

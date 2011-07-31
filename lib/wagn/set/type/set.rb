@@ -4,10 +4,10 @@ module Wagn::Set::Type::Set
   def setting_names_by_group
     groups = Card.universal_setting_names_by_group.clone
     # Generalize Me!
-    pointer_test = case name.tag_name
-      when '*type'; name.trunk_name
-      when /right/; tmpl=(Card["#{name}+*content"] || Card["#{name}+*default"]) and tmpl.typecode
-      when '*self'; tmpl=Card[name.trunk_name] and tmpl.typecode
+    pointer_test = case cardname.tag_name
+      when '*type'; cardname.trunk_name
+      when /right/; tmpl=(Card["#{name}+*content".to_cardname] || Card["#{name}+*default".to_cardname]) and tmpl.typecode
+      when '*self'; tmpl=Card[cardname.trunk_name] and tmpl.typecode
       else; false
       end
       

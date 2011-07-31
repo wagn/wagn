@@ -33,7 +33,7 @@ module LocationHelper
 
   def discard_locations_for(card)
     # quoting necessary because cards have things like "+*" in the names..
-    pattern = /#{Regexp.quote(card.id.to_s)}|#{Regexp.quote(card.key)}|#{Regexp.quote(card.name)}/
+    pattern = /#{Regexp.quote(card.id.to_s)}|#{Regexp.quote(card.key)}|#{Regexp.quote(card.cardname)}/
     while location_history.last =~ pattern
       location_history.pop
     end
@@ -55,7 +55,7 @@ module LocationHelper
     # shaved order of magnitude off footer rendering
     # vs. url_for( :action=> .. )
 #Rails.logger.debug "url_for_page( #{title}, #{format}, #{vars}"
-    "/wagn/#{title.to_url_key}#{format}#{vars}"
+    "/wagn/#{title.to_cardname.to_url_key}#{format}#{vars}"
   end
 
   def url_for_card( options={} )
@@ -63,7 +63,7 @@ module LocationHelper
   end
 
   def card_path( card )
-    "/wagn/#{card.name.to_url_key}"
+    "/wagn/#{card.cardname.to_url_key}"
   end
 
   def card_url( card )
@@ -94,7 +94,7 @@ module LocationHelper
   end
 
   def name_in_context(card, context_card)
-    context_card == card ? card.name : card.name.gsub(context_card.name, '')
+    context_card == card ? card.cardname : card.name.gsub(context_card.name, '')
   end
 
   def card_title_span( title )

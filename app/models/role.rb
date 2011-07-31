@@ -31,7 +31,7 @@ class Role < ActiveRecord::Base
   end
   
   def cardname
-    self.card.name
+    self.card.cardname
   end
   
   def anonymous?

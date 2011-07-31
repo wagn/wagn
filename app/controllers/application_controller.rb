@@ -194,7 +194,7 @@ class ApplicationController < ActionController::Base
     on_error_js = ""
 
     if captcha_required? && ENV['RECAPTCHA_PUBLIC_KEY']
-      key = card.new_record? ? "new" : card.name.to_key
+      key = card.new_record? ? "new" : card.cardname.to_key
       on_error_js << %{ document.getElementById('dynamic_recaptcha-#{key}').innerHTML='<span class="faint">loading captcha</span>'; }
       on_error_js << %{ Recaptcha.create('#{ENV['RECAPTCHA_PUBLIC_KEY']}', document.getElementById('dynamic_recaptcha-#{key}'),RecaptchaOptions); }
     end

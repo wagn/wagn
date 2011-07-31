@@ -275,7 +275,7 @@ module Wagn
       block = Proc.new {}
       builder = options[:builder] || ActionView::Base.default_form_builder
       card.name.gsub!(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_record?  ##FIXME -- need to match other relative inclusions.
-      fields_for = builder.new("cards[#{card.name.pre_cgi}]", card, template, options, block)
+      fields_for = builder.new("cards[#{card.cardname.pre_cgi}]", card, template, options, block)
     end
   
     def form
@@ -330,7 +330,7 @@ module Wagn
         return self.wrap_main(tcont) if tcont
         return "{{#{options[:unmask]}}}" || '{{_main}}' unless @depth == 0 and tcard
   
-        tname = tcard.name
+        tname = tcard.cardname
         [:item, :view, :size].each{ |key| val=symbolize_param(key) and options[key]=val }
         # main card uses these CGI options as inclusion args      
         options[:context] = 'main'
@@ -340,7 +340,9 @@ module Wagn
       #Rails.logger.info " expanding.  view is currently: #{options[:view]}"
   
       options[:home_view] = options[:view] ||= context == 'layout_0' ? :naked : :content
-      options[:fullname] = fullname = get_inclusion_fullname(tname,options)
+      tname = tname.to_cardname
+      Rails.logger.debug "fullname [#{tname.inspect}](#{card&&card.name||card.inspect}, #{base.inspect}, #{options.inspect}"
+      options[:fullname] = fullname = tname.fullname(card.cardname, base, options)
       options[:showname] = tname.to_show(fullname)
   
       tcard ||= begin
@@ -381,7 +383,7 @@ module Wagn
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
       sub.item_view = options[:item] if options[:item]
       sub.type = options[:type] if options[:type]
-      sub.showname = options[:showname] || tcard.name
+      sub.showname = options[:showname] || tcard.cardname
   
       new_card = tcard.new_card? && !tcard.virtual?
   
@@ -408,24 +410,6 @@ module Wagn
       Rails.logger.info "inclusion-error #{e.inspect}"
       Rails.logger.debug "Trace:\n#{e.backtrace*"\n"}"
       %{<span class="inclusion-error">error rendering #{link_to_page((tcard ? tcard.name : 'unknown card'), nil, :title=>CGI.escapeHTML(e.inspect))}</span>}
-    end
-  
-    def get_inclusion_fullname(name,options)
-      fullname = name+'' #weird.  have to do this or the tname gets busted in the options hash!!
-      context = case
-      when base; (base.respond_to?(:name) ? base.name : base)
-      when options[:base]=='parent'
-        card.name.left_name
-      else
-        card.name
-      end
-      fullname = fullname.to_absolute(context)
-      fullname = fullname.particle_names.map do |x|
-        if x =~ /^_/ and params and params[x]
-          CGI.escapeHTML( params[x] )
-        else x end
-      end.join("+")
-      fullname
     end
   
     def get_inclusion_content(cardname)
@@ -463,7 +447,7 @@ module Wagn
             end
   
           WikiReference.create!( :card_id=>card.id,
-            :referenced_name=>chunk.refcard_name.to_key,
+            :referenced_name=>chunk.refcard_name.to_cardname.to_key,
             :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
             :link_type=>reference_type
            )
@@ -482,8 +466,9 @@ module Wagn
           'internal-link'
         else
           known_card = !!Card.fetch(href)
-          text = text.to_show(href)
-          href = '/wagn/' + (known_card ? href.to_url_key : CGI.escape(Wagn::Cardname.escape(href)))
+          text = text.to_cardname.to_show(href) if text
+          href = href.to_cardname
+          href = '/wagn/' + (known_card ? href.to_url_key : CGI.escape(href.escape))
           #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
           href = full_uri(href)
           known_card ? 'known-card' : 'wanted-card'

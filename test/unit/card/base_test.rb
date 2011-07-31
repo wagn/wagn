@@ -38,9 +38,14 @@ class Card::BaseTest < ActiveSupport::TestCase
   #end
 
   def test_create
+    Rails.logger.info "failing basics"
     alpha = Card.new :name=>'alpha', :content=>'alpha'
+    Rails.logger.info "failing basics"
     assert_equal 'alpha', alpha.content
+    Rails.logger.info "failing basics"
     alpha.save
+    Rails.logger.info "failing basics"
+    assert alpha.name
     assert_stable(alpha)
   end
   
@@ -112,6 +117,7 @@ class Card::BaseTest < ActiveSupport::TestCase
   
   def assert_simple_card( card )
     assert !card.name.nil?, "name not null"
+    Rails.logger.info "failing empty? #{card.inspect}, #{card.name}, #{card.name.inspect}"
     assert !card.name.empty?, "name not empty"
     rev = card.current_revision
     assert_instance_of Revision, rev

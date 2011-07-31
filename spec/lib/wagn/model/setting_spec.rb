@@ -20,8 +20,11 @@ describe Card do
     
     it "retrieves default values" do
       Card.create :name => "all Basic cards", :type => "Set", :content => "{\"type\": \"Basic\"}"  #defaults should work when other Sets are present
-      Card.create :name => "*all+*add help", :content => "lobotomize"
+      Rails.logger.info "testing point 1"
+      assert c=Card.create(:name => "*all+*add help", :content => "lobotomize")
+      Rails.logger.info "testing point 2 #{c}, #{c.missing?}, #{c.inspect}"
       Card.default_setting('add help', 'edit help').should == "lobotomize"
+      Rails.logger.info "testing point 3"
       Card.new( :type => "Basic" ).setting('add help', 'edit help').should == "lobotomize"
     end                                                                 
     
@@ -65,13 +68,13 @@ describe Card do
     end
     
     it "returns pointer-specific setting names for pointer card (*type)" do
-      snbg = Card.fetch('Pointer+*type').setting_names_by_group
-      snbg[:edit].should == @pointer_settings
+      snbg = Card.fetch('Fruit+*type').setting_names_by_group
+      snbg[:edit].map(&:to_s).should == @pointer_settings
     end
 
     it "returns pointer-specific setting names for pointer card (*self)" do
-      snbg = Card.fetch('*account+*related+*self').setting_names_by_group
-      snbg[:edit].should == @pointer_settings
+      snbg = Card.fetch_or_new('*account+*related+*self').setting_names_by_group
+      snbg[:edit].map(&:to_s).should == @pointer_settings
     end
 
   end
@@ -113,7 +116,7 @@ describe Card do
     
     it "returns content even when context card is hard templated" do
       context_card = Card["A"] # refers to 'Z'
-      Card.create! :name => "A+*self+*content", :content => "Banana"
+      c1=Card.create! :name => "A+*self+*content", :content => "Banana"
       c = Card.new( :name => "foo", :content => "{{_self+B|naked}}" )
       c.contextual_content( context_card ).should == "AlphaBeta"
     end

@@ -1,10 +1,10 @@
 module Wagn::Model::Templating  
 
-  def template?()       name && name.template_name?        end
-  def hard_template?()  name && name =~ /\+\*content$/     end
-  def soft_template?()  name && name =~ /\*default$/       end
-  def type_template?()  template? && name =~ /\+\*type\+/  end
-  def right_template?() template? && name =~ /\+\*right\+/ end
+  def template?()       cardname && cardname.template_name?        end
+  def hard_template?()  cardname && cardname =~ /\+\*content$/     end
+  def soft_template?()  cardname && cardname =~ /\*default$/       end
+  def type_template?()  template? && cardname =~ /\+\*type\+/  end
+  def right_template?() template? && cardname =~ /\+\*right\+/ end
 
   def template(reset = false)
     @template = reset ? setting_card('content','default') : (@template || setting_card('content','default'))
@@ -42,7 +42,7 @@ module Wagn::Model::Templating
   private
   # FIXME: remove after adjusting expire_templatee_references to content_settings
   def hard_templatee_wql
-    if hard_template? and c=Card.fetch(name.trunk_name) and c.typecode == 'Set'
+    if hard_template? and c=Card.fetch(cardname.trunk_name) and c.typecode == 'Set'
       wql = c.get_spec
     end
   end

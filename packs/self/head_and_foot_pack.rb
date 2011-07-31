@@ -11,7 +11,7 @@ class Wagn::Renderer
     
     #Universal Edit Button
     if !rcard.new_record? && rcard.ok?(:update)
-      bits << %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="/card/edit/#{ rcard.name.to_url_key }"/>}
+      bits << %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="/card/edit/#{ rcard.cardname.to_url_key }"/>}
     end
     
     # RSS

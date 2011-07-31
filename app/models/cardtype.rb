@@ -27,7 +27,7 @@ class Cardtype < ActiveRecord::Base
         where c.trash is false
       }).each do |rec|
         self.cache[:card_keys][rec['key']] = rec['name']
-        self.cache[:card_names][rec['class_name']] = rec['name'];   
+        self.cache[:card_names][rec['class_name']] = rec['name'].to_cardname;
         self.cache[:class_names][rec['key']] = rec['class_name']
       end
     end
@@ -46,6 +46,7 @@ class Cardtype < ActiveRecord::Base
     
     # this is the only one that goes code (as camelized typecode) to name
     def name_for(classname)
+      classname = classname.to_s
       load_cache if self.cache.empty?
       self.cache[:card_names][classname] || begin
         Rails.logger.debug "name_for (#{classname.inspect}) #{self.cache[:card_names].inspect}"; nil
@@ -55,8 +56,8 @@ class Cardtype < ActiveRecord::Base
 
     def classname_for(card_name) 
       load_cache if self.cache.empty?
-      Rails.logger.debug "classname_for #{card_name} #{card_name.to_key}, #{self.cache[:class_names][card_name.to_key].inspect}"
-      self.cache[:class_names][card_name.to_key] || raise("No class name for cardtype name #{card_name}") 
+      Rails.logger.debug "classname_for #{card_name} #{card_name.to_cardname.to_key}, #{self.cache[:class_names][card_name.to_cardname.to_key].inspect}"
+      self.cache[:class_names][card_name.to_cardname.to_key] || raise("No class name for cardtype name #{card_name}") 
     end
     
     def createable_types  

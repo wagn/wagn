@@ -8,7 +8,7 @@ class Wagn::Renderer
     eid = context
     inheritable = Wagn::Pattern.junction_only?(set_name)
     inheritable ||= set_name.tag_name=='*self' && set_name.trunk_name.junction?
-    inheriting = card.content=='_left'
+    inheriting = inheritable && card.content=='_left'
 
     item_names = inheriting ? [] : card.item_names
     uncheck_inherit = inheritable ? "jQuery('input[name=#{eid}-inherit]').attr('checked',false)" : ''

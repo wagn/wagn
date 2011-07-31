@@ -41,9 +41,10 @@ module Wagn
         href = full_uri(href)
         'internal-link'
       else
+        href = href.to_cardname
         known_card = !!Card.fetch(href)
         text = text.to_show(href)
-        href = '/wagn/' + (known_card ? href.to_url_key : CGI.escape(Wagn::Cardname.escape(href)))
+        href = '/wagn/' + (known_card ? href.to_url_key : CGI.escape(href.escape))
         href = full_uri(href)
         return %{<cardlink class="#{
                     known_card ? 'known-card' : 'wanted-card'
@@ -62,7 +63,7 @@ module Wagn
     css_class << " " + card.css_names if card
     
     attributes = {
-      :name => card.name.tag_name,
+      :name => card.cardname.tag_name,
       :cardId   => (card && card.id),
       :type     => card.typecode,
       :class    => css_class,
@@ -224,8 +225,9 @@ module Wagn
     "getSlotFromContext('#{context}')";
   end
 
+  # FIXME this needs to be shared
   def card_id
-    (card.new_record? && card.name)  ? Cardname.escape(card.name) : card.id
+    (card.new_record? && card.cardname)  ? card.cardname.escape : card.id
   end
 
   def editor_id(area="")

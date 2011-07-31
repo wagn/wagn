@@ -11,7 +11,7 @@ module Chunk
     def initialize(match_data, content)
       super   
       #warn "FOUND TRANSCLUDE #{match_data} #{content}"
-      @card_name, @options, @configs = self.class.parse(match_data)
+      card_name, @options, @configs = self.class.parse(match_data)
       @base, @renderer, @inclusion_map =
          content.card, content.renderer, content.inclusion_map
     end

@@ -4,7 +4,7 @@
     <span class="footer-links">
       <span class="card-links">
         <span class="link-list">
-          <span>Cards:</span> <%= card.name.piece_names.map { |c| link_to_page c }.join(', ') %> 
+          <span>Cards:</span> <%= card.cardname.piece_names.map { |c| link_to_page c }.join(', ') %> 
         </span>
       	<% if !card.cached_revision.new_record? %>
           <span class="last-editor">

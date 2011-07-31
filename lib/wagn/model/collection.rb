@@ -14,20 +14,24 @@ module Wagn::Model::Collection
     end
 
     def find_by_name( name, opts={} ) 
-      self.find_by_key_and_trash( name.to_key, false, opts.merge( :include=>:current_revision ))
+      self.find_by_key_and_trash( name.to_cardname.to_key, false, opts.merge( :include=>:current_revision ))
     end
   end
 
   def item_names(args={})
+    Rails.logger.debug "item_names col[#{typecode}, #{cardname.inspect}](#{args.inspect})\n#{Kernel.caller*"\n"}"; r=
     self.raw_content.split /[,\n]/
+    Rails.logger.debug "item_names col(#{args.inspect}) r>#{r.inspect}"; r
   end
   
   def item_cards(args={})  ## FIXME this is inconsistent with item_names
+    Rails.logger.debug "item_cards col[#{cardname.inspect}](#{args.inspect})"; r=
     [self]
+    Rails.logger.debug "item_cards col(#{args.inspect}) r>#{r.inspect}"; r
   end
   
   def extended_list context = nil
-    context = (context ? context.name : self.name)
+    context = (context ? context.cardname : self.cardname)
     args={ :limit=>'' }
     self.item_cards(args.merge(:context=>context)).map do |x| 
       x.item_cards(args) 

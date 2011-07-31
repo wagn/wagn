@@ -97,7 +97,7 @@ class Wagn::Renderer::RichHtml
     form = form_for_multi
 #Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
     %{
-<div class="edit-area in-multi RIGHT-#{ card.name.tag_name.to_key.css_name }">
+<div class="edit-area in-multi RIGHT-#{ card.cardname.tag_name.to_key.css_name }">
   <div class="label-in-multi">
     <span class="title">
       #{ link_to_page(fancy_title(self.showname || card), (card.new_record? ? card.name.tag_name : card.name)) }

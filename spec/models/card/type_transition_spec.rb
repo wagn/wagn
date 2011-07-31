@@ -167,8 +167,11 @@ end
 
 def change_card_to_type(name, typecode)
   User.as :joe_user do
+    Rails.logger.info "testing point #{name}, #{typecode}"
     card = Card.fetch(name)
+    Rails.logger.info "testing point 2 #{card.name}, #{card.typecode}"
     card.typecode = typecode;
+    Rails.logger.info "testing point 3 #{card.name}, #{card.typecode}"
     card.save
     card
   end

@@ -6,6 +6,6 @@ module Wagn::Set::Type::File
   end
   
   def item_names(args={})
-    [self.name]
+    [self.cardname]
   end
 end

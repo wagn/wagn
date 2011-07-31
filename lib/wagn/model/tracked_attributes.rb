@@ -27,32 +27,40 @@ module Wagn::Model::TrackedAttributes
   
   protected 
   def set_name(newname)
-    #warn "set_name<#{self}>(#{newname})" # #{self.name_without_tracking}"
-    @old_name = self.name_without_tracking
-    self.name_without_tracking = newname 
-    return if @old_name==newname
-    Rails.logger.debug "reset_patterns #{@old_name}, #{newname}"
-    reset_patterns
-    if newname
-      Wagn::Cache.expire_card(newname.to_key)
-    end
     
-    if newname.junction?
-      if !new_card? && newname.to_key != @old_name.to_key
+    Rails.logger.info "set_newname(#{newname.inspect}) ON:#{self.name_without_tracking}"
+    warn "set_name<#{self}>(#{newname})" # #{self.name_without_tracking}"
+    if (@old_name = self.name_without_tracking) != newname.to_s
+      @cardname, name_without_tracking =
+         Wagn::Cardname===newname ? [newname, newname.to_s] :
+                                    [newname.to_cardname, newname]
+      write_attribute :key, k=cardname.to_key
+      write_attribute :name, name_without_tracking
+      Rails.logger.debug "set_newname changed #{self.name_without_tracking.inspect}, #{cardname.inspect}, #{k.inspect}"
+    else return end
+
+    raise "No name ???" if name.blank? # can we set a null name?
+    Wagn::Cache.expire_card(cardname.to_key)
+
+    Rails.logger.debug "create trunk? #{cardname.junction?}, #{cardname.s}"
+    if cardname.junction?
+      Rails.logger.debug "create trunk #{cardname.left_name.to_s} and tag #{cardname.tag_name.to_s}"
+      if !new_card? && cardname.to_key != @old_name.to_key
         # move the current card out of the way, in case the new name will require
         # re-creating a card with the current name, ie.  A -> A+B
-        Wagn::Cache.expire_card(@old_name.to_key)
+        Wagn::Cache.expire_card(@old_name.to_cardname.to_key)
         tmp_name = "tmp:" + UUID.new.generate      
         connection.update %{update cards set #{quoted_comma_pair_list(connection, {:name=>"'#{tmp_name}'",:key=>"'#{tmp_name}'"})} where id=#{id}}
       end
-      self.trunk = Card.fetch_or_create( newname.left_name)
-      self.tag   = Card.fetch_or_create( newname.tag_name )
+      tk=self.trunk = Card.fetch_or_create( cardname.left_name)
+      tg=self.tag   = Card.fetch_or_create( cardname.tag_name )
+      Rails.logger.debug "created trunk #{tk} and tag #{tg} (#{cardname.left_name.to_s}, #{cardname.tag_name.to_s})"
     else
       self.trunk = self.tag = nil
     end         
 
     return if new_card?
-    if existing_card = Card.find_by_key(newname.to_key) and existing_card != self
+    if existing_card = Card.find_by_key(cardname.to_key) and existing_card != self
       if existing_card.trash  
         existing_card.update_attributes! :name=>existing_card.name+"*trash", :confirm_rename=>true
       #else note -- else case happens when changing to a name variant.  any special handling needed?
@@ -115,7 +123,7 @@ module Wagn::Model::TrackedAttributes
     set_content updates[:content]
     updates.clear :content 
     # normally the save would happen after set_content. in this case, update manually:
-    Rails.logger.debug "set_initial_content #{current_revision_id} #{name}"
+    #Rails.logger.debug "set_initial_content #{current_revision_id} #{name}"
     connection.update(
       "update cards set current_revision_id=#{current_revision_id} where id=#{id}",
       "Card Update"
@@ -132,7 +140,7 @@ module Wagn::Model::TrackedAttributes
     deps.each do |dep|
       ActiveRecord::Base.logger.info("---------------------- DEP #{dep.name}  -------------------------------------")  
       cxn = ActiveRecord::Base.connection
-      depname = dep.name.replace_part @old_name, name
+      depname = dep.cardname.replace_part @old_name, name
       depkey = depname.to_key    
       # here we specifically want NOT to invoke recursive cascades on these cards, have to go this 
       # low level to avoid callbacks.                                                               

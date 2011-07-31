@@ -133,17 +133,17 @@ module WagnHelper
   end
 
   def formal_title(card)
-    card.name.split('+').join(formal_joint)
+    card.cardname.parts * formal_joint
   end
 
   def fancy_title(card)
-    name = (String===card ? card : card.name)
+    name = (String===card ? card : card.cardname)
     return name if name.simple?
     card_title_span(name.left_name) + %{<span class="joint">+</span>} + card_title_span(name.tag_name)
   end
 
   def title_tag_names(card)
-    card.name.split('+')
+    card.cardname.parts
   end
 
 

@@ -6,8 +6,8 @@
 module Wagn::Model::Fetch
   mattr_accessor :cache
   mattr_accessor :debug
-  self.debug = false #lambda {|x| false }
-  #self.debug = lambda {|name| name.to_key == 'a+y' }
+  #self.debug = false #lambda {|x| false }
+  self.debug = lambda {|name| name.to_key == '*all+*create' }
 
   module ClassMethods
 
@@ -23,7 +23,9 @@ module Wagn::Model::Fetch
     # missing? flag set to true
     # cards in the trash are added to the cache just as other cards are.  By default, missing? and trash?
     # cards are not returned
-    def fetch cardname, opts = {}
+    def fetch name, opts = {}
+      raise "??? no cardname #{name.inspect} #{opts.inspect}" unless name
+      cardname = name.to_cardname
       key = cardname.to_key
       cacheable = false
 
@@ -31,8 +33,10 @@ module Wagn::Model::Fetch
       cacheable = true if card.nil?
       card ||= find_by_key( key )
       
+      Rails.logger.debug "fetch(#{name.inspect}) #{card}, #{cacheable}, #{opts.inspect}"# if debug
       if !opts[:skip_virtual] && (!card || card.missing? || card.trash)
         card = fetch_virtual( cardname, card )
+        Rails.logger.info "fetch_virtual #{card}"
       end
       
       card ||= new_missing cardname
@@ -54,50 +58,59 @@ module Wagn::Model::Fetch
     
     def extract_new_opts cardname, opts
       opts = opts.clone
-      opts[:name] = cardname
+      opts[:cardname] = cardname
       [:skip_virtual, :skip_after_fetch].each {|key| opts.delete(key)}
       opts
     end
     
-    def fetch_virtual(name, cached_card=nil)
-      return nil unless name && name.junction?
+    def fetch_virtual(cardname, cached_card=nil)
+      #cardname = name.to_cardname
+      return nil unless cardname && cardname.junction?
       cached_card = nil if cached_card && cached_card.trash
-      test_card = cached_card || Card.new(:name=>name, :missing=>true, :typecode=>'Basic', :skip_defaults=>true)
+      test_card = cached_card || Card.new(:cardname=>cardname, :missing=>true, :typecode=>'Basic', :skip_defaults=>true)
+      Rails.logger.debug "fetch_virtual(#{cardname.to_s}) #{test_card.name} #{cardname.tag_name} ok:#{System.ok?(:administrate_users)}"
       if template=test_card.template(reset=true) and template.hard_template? 
-        args=[name, template.content, template.typecode]
+        args=[cardname, template.content, template.typecode]
+        Rails.logger.debug "fetch_virtual(#{cardname.to_s}) #{args.inspect}"
         if cached_card
-          cached_attrs = [:name, :content, :typecode].map{|attr| cached_card.send(attr)}
+          cached_attrs = [:cardname, :content, :typecode].map{|attr| cached_card.send(attr)}
+        Rails.logger.debug "fetch_virtual(#{cardname.to_s})cached: #{cached_attrs.inspect}"
           return cached_card if args==cached_attrs
         end
-        new_virtual name, template.content, template.typecode
-      elsif System.ok?(:administrate_users) and name.tag_name =~ /^\*(email)$/
-        attr_name = $~[1]
-        content = retrieve_extension_attribute( name.trunk_name, attr_name ) || ""
-        new_virtual name, content  
+        r=new_virtual cardname, template.content, template.typecode
+        Rails.logger.debug "fetch_virtual(#{cardname.to_s}) new_v#{r.inspect}"; r
+      elsif System.ok?(:administrate_users) and cardname.tag_name == '*email'
+        return nil if ( content =
+                retrieve_extension_attribute(cardname.trunk_name, 'email') ).blank?
+
+        r=new_virtual cardname, content  
+      Rails.logger.debug "fetch_virtual adm-email(#{cardname.to_s}) email, #{content.inspect}, #{r.inspect}"; r
       else
+        Rails.logger.debug "fetch_virtual(#{cardname.to_s}) nill"
         return nil
       end
     end
 
-    def retrieve_extension_attribute( cardname, attr_name )
-      c = fetch(cardname) and e=c.extension and e.send(attr_name)
+    def retrieve_extension_attribute( name, attr_name )
+      c = fetch(name.to_cardname) and e=c.extension and e.send(attr_name)
     end
 
-    def new_virtual(name, content, type='Basic')
-      new(:name=>name, :content=>content, :typecode=>type, :missing=>true, :virtual=>true, :skip_defaults=>true)
+    def new_virtual(cardname, content, type='Basic')
+      new(:cardname=>cardname, :content=>content, :typecode=>type, :missing=>true, :virtual=>true, :skip_defaults=>true)
     end
 
     def new_missing cardname
-      new(:name=>cardname, :typecode=>'Basic', :skip_defaults=>true, :missing=>true)
+      new(:cardname=>cardname, :typecode=>'Basic', :skip_defaults=>true, :missing=>true)
     end
 
-    def exists?(name)
-      fetch(name, :skip_virtual=>true).present?
+    def exists?(cardname)
+      fetch(cardname, :skip_virtual=>true).present?
     end
   end
 
 
   def after_fetch
+    Rails.logger.debug "after_fetch cardname: #{cardname.s}"
     include_set_modules
   end
 

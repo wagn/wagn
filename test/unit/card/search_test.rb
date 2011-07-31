@@ -7,25 +7,26 @@ class Card::BaseTest < ActiveSupport::TestCase
   end
          
   def test_autocard_should_not_respond_to_tform 
-    assert_nil Card.fetch_virtual("u1+*type+*content")
+    assert_nil Card.fetch_virtual("u1+*type+*content".to_cardname)
   end
   
   def test_autocard_should_respond_to_ampersand_email_attribute
-    c = Card.fetch_virtual("u1+*email")
+    c = Card.fetch_virtual("u1+*email".to_cardname)
     assert_equal 'u1@user.com', c.content
   end
   
   def test_autocard_should_not_respond_to_not_templated_or_ampersanded_card
-    assert_equal nil, Card.fetch_virtual("u1+email")
+    assert_equal nil, Card.fetch_virtual("u1+email".to_cardname)
   end           
 
   def test_should_not_show_card_to_joe_user
     ::User.as(:joe_user)
-    assert_equal nil, Card.fetch_virtual("u1+*email")
+    assert_equal nil, Card.fetch_virtual("u1+*email".to_cardname)
   end
                             
   def test_autocard_should_not_break_if_extension_missing
-    assert_equal "", Card.fetch_virtual("A+*email").content
+    assert_nil Card.fetch_virtual("A+*email".to_cardname)
+    #assert_equal "", Card.fetch_virtual("A+*email".to_cardname).content
   end
   
   def test_retrieve_extension_attribute

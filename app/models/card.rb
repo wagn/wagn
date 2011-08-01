@@ -122,8 +122,7 @@ Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
   end
 
   def include_set_modules
-    Rails.logger.info "include_set_modules[#{name}] #{typecode} called"  #{Kernel.caller[0..4]*"\n"}"
-    raise "name is blank" if name.blank?
+    #Rails.logger.info "include_set_modules[#{name}] #{typecode} called"  #{Kernel.caller[0..4]*"\n"}"
     singleton_class.include_type_module(typecode)  
   end
   
@@ -152,7 +151,7 @@ Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
   public
   class << self
     def include_type_module(typecode)
-      Rails.logger.info "include set #{typecode} called"  #{Kernel.caller[0..4]*"\n"}"
+      #Rails.logger.info "include set #{typecode} called"  #{Kernel.caller[0..4]*"\n"}"
       return unless typecode
       raise "Bad typecode #{typecode}" if typecode.to_s =~ /\W/
       suppress(NameError) { include eval "Wagn::Set::Type::#{typecode}" }
@@ -315,12 +314,7 @@ Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
     ct.card
   end
   
-  def typename()
-    #raise "No type: #{self.inspect}" unless self.typecode
-    typecode or return 'Basic'
-    r=::Cardtype.name_for( typecode )
-    Rails.logger.debug "typename[#{typecode.inspect}] #{r.inspect}" ; r
-  end
+  def typename() typecode and Cardtype.name_for( typecode ) or 'Basic' end
   
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

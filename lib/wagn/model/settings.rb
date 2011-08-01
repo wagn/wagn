@@ -14,7 +14,7 @@ module Wagn::Model::Settings
       # optimization for cases where there are lots of settings lookups for many sets though few exist.
       # May cause problems if we wind up with Set in trash, since trunks aren't always getting pulled out when we
       # create plus cards (like setting values)
-      Rails.logger.info "setting_card, search #{setting_name.inspect}, #{fallback.inspect} #{name.inspect}" # Tr:#{Kernel.caller[0..10]*"\n"}"
+      #Rails.logger.info "setting_card, search #{setting_name.inspect}, #{fallback.inspect} #{name.inspect}" # Tr:#{Kernel.caller[0..10]*"\n"}"
       if setting_cd = Card.fetch(cn="#{name}+#{setting_name.to_cardname.to_star}", fetch_args) ||
          fallback && Card.fetch(cn="#{name}+#{fallback.to_cardname.to_star}", fetch_args)
         Rails.logger.info "setting_card, found #{cn.inspect}, #{name.inspect}\nFound > #{setting_cd.inspect}"

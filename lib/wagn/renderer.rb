@@ -307,13 +307,16 @@ module Wagn
       wiki_content = WikiContent.new(card, card.content, self)
   
       wiki_content.find_chunks(Chunk::Link).each do |chunk|
-        link_bound = chunk.card_name == chunk.link_text
-        chunk.card_name.replace chunk.card_name.replace_part(old_name, new_name)
-        chunk.link_text = chunk.card_name if link_bound
+        if chunk.cardname
+          link_bound = chunk.cardname == chunk.link_text
+          chunk.cardname.replace chunk.cardname.replace_part(old_name, new_name)
+          chunk.link_text=chunk.cardname.to_s if link_bound
+        end
       end
   
       wiki_content.find_chunks(Chunk::Transclude).each do |chunk|
-        chunk.card_name.replace chunk.card_name.replace_part(old_name, new_name)
+        chunk.cardname.replace chunk.cardname.replace_part(
+          old_name, new_name ) if chunk.cardname
       end
   
       String.new wiki_content.unrender!
@@ -447,7 +450,7 @@ module Wagn
             end
   
           WikiReference.create!( :card_id=>card.id,
-            :referenced_name=>chunk.refcard_name.to_cardname.to_key,
+            :referenced_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
             :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
             :link_type=>reference_type
            )

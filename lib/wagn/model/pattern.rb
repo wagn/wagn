@@ -17,28 +17,24 @@ module Wagn::Model
     end
 
     def patterns()
+=begin
 if @patterns
   na = @patterns.detect { |p| !p.pattern_applies? }
   raise "All patterns should apply #{name} #{na.inspect}" if na
-end
-      @patterns ||= begin p=@@subclasses.map { |sub|
-  Rails.logger.debug "patterns set[#{to_s}] #{sub}"
-        #(n=sub.new(self)).pattern_applies? ? n : nil
-        n=sub.new(self)
-  Rails.logger.debug "pattern[#{name}] #{n}, #{n.pattern_applies?}"
-        n.pattern_applies? ? n : nil
+=end
+      @patterns ||= @@subclasses.map { |sub|
+        (n=sub.new(self)).pattern_applies? ? n : nil
       }.compact
-      Rails.logger.info "patterns[#{to_s}] >> #{p.map(&:set_name).inspect}"; p
-                    end
+      Rails.logger.info "patterns[#{to_s}] >> #{@patterns.map(&:set_name).inspect}"; @patterns
     end
     def set_names()      @set_names ||= patterns.map(&:set_name)   end
     def reset_patterns()
       Rails.logger.info "reset_patterns[#{name}]"
       @patterns = @set_names = nil                             end
-    #def real_set_names() patterns.reject(&:set_missing?).compact.map(&:set_name)    end
+    #def real_set_names() patterns.find_all(&:set_card).compact.map(&:set_name)    end
     def real_set_names()
-      rsn1 = patterns.reject{|x|!(x.set_missing?)}; r2=rsn1.map(&:set_name); r3=r2.compact
-      Rails.logger.info "Pats: #{set_names*" "} RSN #{rsn1.map(&:to_s).inspect}\n2:#{r2.size}\nr3:#{r3.inspect}"; r3
+      r = patterns.find_all(&:set_card).map(&:set_name).compact
+      Rails.logger.info "Pats: #{set_names*" "} RSN #{r.map(&:to_s)*' '}"; r
     end
     def method_keys()    @method_keys ||= patterns.map(&:method_key) end
     def css_names()      patterns.map(&:css_name).reverse*" "        end
@@ -74,11 +70,8 @@ end
       #Rails.logger.debug "card has no name" if card.name.blank?
       @card = card                          end
     #def set_missing?()   !(pattern_applies? && Card[set_name]) end
-    def set_missing?()    return true unless pattern_applies?
-      if set_name == 'testsearch+*right'
-      Rails.logger.info "set_missing #{set_name} #{Card[set_name+'+*content']}"
-      end
-     r=                     set_name && Card[set_name]
+    def set_card()    raise "doesn't apply" unless pattern_applies?
+      r=                   set_name && Card[set_name]
       Rails.logger.info "set_missing #{set_name} R:#{r.inspect}";r
     end
     def set_name()        self.class.key                        end

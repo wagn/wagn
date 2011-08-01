@@ -72,8 +72,11 @@ class Card::BaseTest < ActiveSupport::TestCase
   def test_update_should_create_subcards
     User.current_user = :joe_user
     User.as(:joe_user) do
+      Rails.logger.info "testing point 0"
       b = Card.create!( :name=>'Banana' )
+      Rails.logger.info "testing point 1"
       Card.update(b.id, :cards=>{ "+peel" => { :content => "yellow" }})
+      Rails.logger.info "testing point 2"
       assert_equal "yellow", Card["Banana+peel"].content   
       assert_equal User[:joe_user].id, Card["Banana+peel"].created_by
     end

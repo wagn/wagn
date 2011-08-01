@@ -29,7 +29,8 @@ module Wagn::Model::TrackedAttributes
   def set_name(newname)
     
     Rails.logger.info "set_newname(#{newname.inspect}) ON:#{self.name_without_tracking}"
-    warn "set_name<#{self}>(#{newname})" # #{self.name_without_tracking}"
+    #warn "set_name<#{self}>(#{newname})" # #{self.name_without_tracking}"
+    @old_cardname = cardname
     if (@old_name = self.name_without_tracking) != newname.to_s
       @cardname, name_without_tracking =
          Wagn::Cardname===newname ? [newname, newname.to_s] :
@@ -45,10 +46,10 @@ module Wagn::Model::TrackedAttributes
     Rails.logger.debug "create trunk? #{cardname.junction?}, #{cardname.s}"
     if cardname.junction?
       Rails.logger.debug "create trunk #{cardname.left_name.to_s} and tag #{cardname.tag_name.to_s}"
-      if !new_card? && cardname.to_key != @old_name.to_key
+      if !new_card? && cardname.to_key != @old_cardname.to_key
         # move the current card out of the way, in case the new name will require
         # re-creating a card with the current name, ie.  A -> A+B
-        Wagn::Cache.expire_card(@old_name.to_cardname.to_key)
+        Wagn::Cache.expire_card(@old_cardname.to_key)
         tmp_name = "tmp:" + UUID.new.generate      
         connection.update %{update cards set #{quoted_comma_pair_list(connection, {:name=>"'#{tmp_name}'",:key=>"'#{tmp_name}'"})} where id=#{id}}
       end
@@ -67,8 +68,8 @@ module Wagn::Model::TrackedAttributes
       end
     end
           
-    ::Cardtype.reset_cache if typecode=='Cardtype'
-    Wagn::Cache.expire_card(@old_name.to_key)
+    Cardtype.reset_cache if typecode=='Cardtype'
+    Wagn::Cache.expire_card(@old_cardname.to_key)
     @name_changed = true          
     @name_or_content_changed=true
   end
@@ -91,7 +92,7 @@ module Wagn::Model::TrackedAttributes
     # do we need to "undo" and loaded modules?  Maybe reload defaults?
     singleton_class.include_type_module(typecode)
     self.before_validation_on_create
-    ::Cardtype.reset_cache
+    Cardtype.reset_cache
     reset_patterns
     true
   end

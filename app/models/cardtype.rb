@@ -56,8 +56,9 @@ class Cardtype < ActiveRecord::Base
 
     def classname_for(card_name) 
       load_cache if self.cache.empty?
-      Rails.logger.debug "classname_for #{card_name} #{card_name.to_cardname.to_key}, #{self.cache[:class_names][card_name.to_cardname.to_key].inspect}"
-      self.cache[:class_names][card_name.to_cardname.to_key] || raise("No class name for cardtype name #{card_name}") 
+      card_name = card_name.to_cardname unless Wagn::Cardname===card_name
+      Rails.logger.debug "classname_for #{card_name} #{card_name.to_key}, #{self.cache[:class_names][card_name.to_key].inspect}"
+      self.cache[:class_names][card_name.to_key] || raise("No class name for cardtype name #{card_name.to_s}") 
     end
     
     def createable_types  

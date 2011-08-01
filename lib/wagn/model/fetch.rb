@@ -36,7 +36,7 @@ module Wagn::Model::Fetch
       Rails.logger.debug "fetch(#{name.inspect}) #{card}, #{cacheable}, #{opts.inspect}"# if debug
       if !opts[:skip_virtual] && (!card || card.missing? || card.trash)
         card = fetch_virtual( cardname, card )
-        Rails.logger.info "fetch_virtual #{card}"
+        Rails.logger.info "fetch_virtual #{card.inspect}"
       end
       
       card ||= new_missing cardname
@@ -68,8 +68,10 @@ module Wagn::Model::Fetch
       return nil unless cardname && cardname.junction?
       cached_card = nil if cached_card && cached_card.trash
       test_card = cached_card || Card.new(:cardname=>cardname, :missing=>true, :typecode=>'Basic', :skip_defaults=>true)
-      Rails.logger.debug "fetch_virtual(#{cardname.to_s}) #{test_card.name} #{cardname.tag_name} ok:#{System.ok?(:administrate_users)}"
-      if template=test_card.template(reset=true) and template.hard_template? 
+       template=test_card.template(reset=true) and ht=template.hard_template? 
+      Rails.logger.debug "fetch_virtual(#{cardname.to_s}) #{test_card.name}, #{cardname.tag_name} >#{template}, #{ht}"
+      if ht
+      #if template=test_card.template(reset=true) and template.hard_template? 
         args=[cardname, template.content, template.typecode]
         Rails.logger.debug "fetch_virtual(#{cardname.to_s}) #{args.inspect}"
         if cached_card

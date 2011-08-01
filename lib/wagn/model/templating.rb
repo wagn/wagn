@@ -1,10 +1,10 @@
 module Wagn::Model::Templating  
 
-  def template?()       cardname && cardname.template_name?        end
-  def hard_template?()  cardname && cardname =~ /\+\*content$/     end
-  def soft_template?()  cardname && cardname =~ /\*default$/       end
-  def type_template?()  template? && cardname =~ /\+\*type\+/  end
-  def right_template?() template? && cardname =~ /\+\*right\+/ end
+  def template?()       cardname.template_name?        end
+  def hard_template?()  name =~ /\+\*content$/     end
+  def soft_template?()  name =~ /\*default$/       end
+  def type_template?()  template? && name =~ /\+\*type\+/  end
+  def right_template?() template? && name =~ /\+\*right\+/ end
 
   def template(reset = false)
     @template = reset ? setting_card('content','default') : (@template || setting_card('content','default'))

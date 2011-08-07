@@ -234,7 +234,15 @@ module Wagn::Model::Permissions
 
   def update_ruled_cards
     return if ENV['MIGRATE_PERMISSIONS'] == 'true'
-    if name.junction? && name.tag_name=='*read' && @name_or_content_changed
+    if name.junction? && name.tag_name=='*read' && (@name_or_content_changed || @trash_changed)
+      
+      # These instance vars are messy.  should use tracked attributes' @changed variable 
+      # and get rid of @name_changed, @name_or_content_changed, and @trash_changed.
+      # Above should look like [:name, :content, :trash].member?( @changed.keys ).
+      # To implement that, we need to make sure @changed actually tracks trash 
+      # (though maybe not as a tracked_attribute for performance reasons?)
+      # AND need to make sure @changed gets wiped after save (probably last in the sequence)
+      
       User.reset_cache #
       Wagn::Cache.expire_card self.key #probably shouldn't be necessary, 
       # but was sometimes getting cached version when card should be in the trash.

@@ -120,7 +120,7 @@ class Card < ActiveRecord::Base
     #could optimize to use fetch if we add :include_trashed_cards or something.  
     #likely low ROI, but would be nice to have interface to retrieve cards from trash...
     self.id = trashed_card.id
-    self.from_trash = self.confirm_rename = true
+    self.from_trash = self.confirm_rename = @trash_changed = true
     @new_record = false
     self.before_validation_on_create
   end
@@ -182,12 +182,13 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # DESTROY
  
-   def destroy_with_trash(caller="")     
+   def destroy_with_trash(caller="")
     if callback(:before_destroy) == false
       errors.add(:destroy, "could not prepare card for destruction")
       return false 
     end  
     deps = self.dependents
+    @trash_changed = true
     self.update_attribute(:trash, true) 
     deps.each do |dep|
       next if dep.trash

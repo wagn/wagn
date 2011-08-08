@@ -6,6 +6,7 @@
     <% if System.ok? :assign_user_roles %>
       <%= hidden_field_tag :save_roles, true %>
       <% for role in roles %>
+        <%- next if !role.card || role.card.trash %>
         <div style="white-space: nowrap">
           <%= check_box_tag "user_roles[%s]" % role.id, 1,
                user_roles.member?(role) ? true : false %>

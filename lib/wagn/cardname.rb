@@ -1,7 +1,7 @@
 module Wagn
-  class Cardname < String
+  class Cardname < Object
 
-    CARD_KEYS = {}
+    CARDNAMES = {}
     require 'htmlentities'
 
     def self.decode_html(simple)
@@ -9,14 +9,9 @@ module Wagn
     end
 
     def self.simple_to_key(simple)
-      CARD_KEYS[simple] ||= begin
-      r=Wagn::Cardname.decode_html(simple).underscore.gsub(/[^\w\*]+/,'_').split(/_+/).
-         reject(&:blank?).map(&:singularize)*'_'
-      Rails.logger.debug "key[#{simple}] = #{r.inspect}"; r
-      #r1=Wagn::Cardname.decode_html(simple); r2=r1.underscore; r3=r2.gsub(/[^\w\*]+/,'_'); r4=r3.split(/_+/); r5=r4.
-         #reject(&:blank?); r6=r5.map(&:singularize)*'_'
-      #Rails.logger.debug "key[#{simple}] #{r1.inspect}, #{r2.inspect}, #{r3.inspect}, #{r4.inspect}, #{r5.inspect}, #{r6.inspect}"; r6
-                            end
+      Wagn::Cardname.decode_html(simple).underscore.gsub(/[^\w\*]+/,'_').
+        split(/_+/).reject(&:blank?).map(&:singularize)*'_'
+      #r=;Rails.logger.debug "simple_to_key[#{simple}] = #{r.inspect}"; r
     end
 
     JOINT = '+'
@@ -28,40 +23,56 @@ module Wagn
 
     attr_reader :s, :simple, :parts, :key
 
+    def self.new(obj)
+      return obj if Cardname===obj
+      raise "cardname? #{obj.inspect}" if obj.nil?
+      name = Array===obj ? obj*JOINT : obj.to_s
+      if CARDNAMES.has_key?(name)
+        #Rails.logger.info "cardname.cache(#{name}) #{CARDNAMES[name].inspect}"
+        CARDNAMES[name]
+      else
+        newobj= allocate.send(:initialize, name)
+        #Rails.logger.info "cardname.new(#{obj.class}) #{newobj.inspect}" # CDNS:#{CARDNAMES.keys.inspect}"
+        #newobj.send(:initialize, name)
+        # should we stop it from even creating bad names?
+        #raise "Bad name #{newobj.s}" if newobj.simple? and newobj.s.match(BANNED_RE)
+        CARDNAMES[name] = newobj
+      end
+    end
+
     def initialize(obj)
-      @simple = @key = @parts = @s = nil
+      #@simple = @key = @parts = @s = nil
+      raise "???" unless String===obj
       #Rails.logger.debug "newcdnm(#{obj.inspect})" #{Kernel.caller[0..4]*"\n"}"
-      case obj
-      when Cardname;
-        @simple, @s, @parts, @key = obj.simple, obj.s, obj.parts, obj.key
+      #case obj
+      #when Cardname;
+        #@simple, @s, @parts, @key = obj.simple, obj.s, obj.parts, obj.key
         #(has_s=obj.instance_variable_get(:@s)) ? @s=has_s : @parts=obj.parts
       #Rails.logger.info "newcdnm <cdnm>#{self.class} #{s}: #{self.simple?}, #{self.s.inspect}, #{self.parts.inspect}"
-        return self
-      when Symbol; @s=obj.to_s
-      #when obj.respond_to?(:to_s);        @s=obj.to_s.strip
-      when String;          
+        #return self
+      #when Symbol;
+      #  @s=obj.to_s
+      #when String;          
         @s=obj.strip
-        #Rails.logger.info "from str #{obj.strip}, #{s.inspect}, #{self}"
-        #raise "blank cardname #{obj.inspect}" if @s.blank?
-      when Enumerable;         @parts = obj.map(&:to_s)
-      else raise "Bad cardname #{obj.inspect} #{Kernel.caller[0..10]*"\n"}"
-      end
-      if s
+      #when Enumerable;                      @parts = obj.map(&:to_s).to_a
+      #else raise "Bad cardname #{obj.inspect} #{Kernel.caller[0..10]*"\n"}"
+      #end
+      #if s
         @parts=(@simple = !s.index(JOINT)) ? [s] : s.gsub(/\+$/,'+ ').split(JOINT)
         #Rails.logger.debug "by_s#{s.inspect} > #{simple.inspect}, #{parts.inspect}"
-      else
-        raise "Card parts? #{parts.inspect}" if Wagn::Cardname === parts[0]
-        @s    =(@simple = size == 1)      ?  parts[0] : parts * JOINT
+      #else
+      #  raise "Card parts? #{parts.inspect}" if Wagn::Cardname === parts[0]
+      #  @s    =(@simple = size == 1)      ?  parts[0] : parts * JOINT
         #Rails.logger.debug "by_parts#{parts.inspect} > #{simple.inspect}, #{s.inspect}"
-      end
+      #end
       #Rails.logger.info "newcdnm R>#{inspect}: S:#{self.s.inspect}, P:#{self.parts.inspect}"
+      #Rails.logger.info "newcdnm R> S:#{self.inspect}, K:#{self.key} P:#{self.parts.inspect}"
       self
     end
 
     def key()
-      #Rails.logger.debug "key #{inspect} #{simple? && Wagn::Cardname.simple_to_key(s)}"
       @key ||= simple? ? Wagn::Cardname.simple_to_key(s) :
-        parts.map{|pt| Wagn::Cardname.simple_to_key(pt)}.reject(&:blank?) * JOINT
+        parts.map(&:to_cardname).reject(&:blank?).map(&:key) * JOINT
     end
     alias to_key key
 
@@ -72,7 +83,8 @@ module Wagn
     alias to_s s
     alias simple? simple
     def ==(obj)
-      key == (obj.respond_to?(:to_key) ? obj.to_key :
+      obj.nil? ? false :
+        key == (obj.respond_to?(:to_key) ? obj.to_key :
                obj.respond_to?(:to_cardname) ? obj.to_cardname.key : obj.to_s)
     end
     def size() parts.size end
@@ -89,15 +101,18 @@ module Wagn
       oldpart = oldpart.to_cardname unless Cardname===oldpart
       newpart = newpart.to_cardname unless Cardname===newpart
       if oldpart.simple?
-        initialize(Array(parts.map{ |part|
-                                    oldpart==part ? newpart : part
-                                  })) if parts.find{|name| oldpart==name}
+        simple? ? (self == oldpart ? newpart : self) :
+                    parts.map{ |s| oldpart == s ? newpart : s }.to_cardname
+      elsif simple?
+        self
       else
-        match_parts = parts[0, oldpart.size]
-        rest        = parts[oldpart.size,]
-        initialize(newpart.parts+rest.to_a) if oldpart == match_parts
+        #Rails.logger.info "replace_part #{oldpart == parts[0, oldpart.size]} ? #{newpart.size == oldpart.size} ? #{newpart.inspect} : #{newpart.parts.inspect} #{parts[oldpart.size,].inspect}"
+        #Rails.logger.info "replace_part #{oldpart == parts[0, oldpart.size]} ? #{newpart.size == oldpart.size} ? #{newpart.inspect} : #{(newpart.parts+(parts[oldpart.size].to_a)).inspect}"; r=(
+        oldpart == parts[0, oldpart.size] ?
+          ((newpart.size == oldpart.size) ? newpart :
+                      (newpart.parts+parts[oldpart.size,].to_a).to_cardname) : self
+        #);Rails.logger.info "replace_part notsimp #{oldpart.inspect}, #{newpart.inspect} > #{r.inspect}"; r
       end
-      self
     end
 
 

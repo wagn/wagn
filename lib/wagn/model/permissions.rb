@@ -257,7 +257,8 @@ module Wagn::Model::Permissions
         User.as :wagbot do
           Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
             in_set[item_card.key] = true
-            next if rule_classes.index(item_card.read_rule_class) < rule_class_index
+            Rails.logger.debug "rule_classes[#{rule_class_index}] #{rule_classes.inspect} This:#{item_card.read_rule_class}"
+            next if rule_class_index > rule_classes.index(item_card.read_rule_class)
             item_card.update_read_rule
           end
         end

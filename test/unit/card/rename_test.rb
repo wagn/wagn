@@ -75,7 +75,9 @@ class Card::RenameTest < ActiveSupport::TestCase
 
   def test_flip
     with_debugging do
+      Rails.logger.info "testing point 0"
       assert_rename card("A+B"), "B+A"
+      Rails.logger.info "testing point 1"
     end
   end
 

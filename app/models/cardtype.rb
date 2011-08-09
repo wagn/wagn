@@ -67,7 +67,7 @@ class Cardtype < ActiveRecord::Base
         next if ['InvitationRequest','Setting','Set'].include?(class_name)
         next unless create_ok?(card_name)
         { :codename=>class_name, :name=>card_name }
-      end.compact.sort_by {|x| x[:name].downcase }
+      end.compact.sort_by {|x| x[:name].to_s.downcase }
     end   
     
     def create_ok?( card_name )

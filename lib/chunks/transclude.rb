@@ -10,8 +10,9 @@ module Chunk
   
     def initialize(match_data, content)
       super   
-      #warn "FOUND TRANSCLUDE #{match_data} #{content}"
-      cardname, @options, @configs = self.class.parse(match_data)
+      Rails.logger.warn "FOUND TRANSCLUDE #{match_data} #{content}"
+      self.cardname, @options, @configs = a = self.class.parse(match_data)
+      Rails.logger.info "Chunk::transclude #{a.inspect}"
       @base, @renderer, @inclusion_map =
          content.card, content.renderer, content.inclusion_map
     end

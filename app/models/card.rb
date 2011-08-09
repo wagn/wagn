@@ -255,6 +255,7 @@ Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
   def simple?()     cardname.simple?       end
   def junction?()   cardname.junction?     end
   def star?()       cardname.star?         end
+  def key()         cardname.key           end
 
   def left()
     Rails.logger.debug "left(#{name}), #{cardname.trunk_name}, #{cardname.trunk_name.to_s}"

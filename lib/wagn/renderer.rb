@@ -309,14 +309,15 @@ module Wagn
       wiki_content.find_chunks(Chunk::Link).each do |chunk|
         if chunk.cardname
           link_bound = chunk.cardname == chunk.link_text
-          chunk.cardname.replace chunk.cardname.replace_part(old_name, new_name)
+          chunk.cardname = chunk.cardname.replace_part(old_name, new_name)
           chunk.link_text=chunk.cardname.to_s if link_bound
+          Rails.logger.info "repl ref: #{chunk.cardname.to_s}, #{link_bound}, #{chunk.link_text}"
         end
       end
   
       wiki_content.find_chunks(Chunk::Transclude).each do |chunk|
-        chunk.cardname.replace chunk.cardname.replace_part(
-          old_name, new_name ) if chunk.cardname
+        chunk.cardname =
+          chunk.cardname.replace_part(old_name, new_name) if chunk.cardname
       end
   
       String.new wiki_content.unrender!
@@ -449,6 +450,8 @@ module Wagn
               else raise "Unknown chunk reference class #{chunk.class}"
             end
   
+         #ref_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
+          raise "No name to ref? #{card.name}, #{chunk.refcardname}" unless chunk.refcardname()
           WikiReference.create!( :card_id=>card.id,
             :referenced_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
             :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
@@ -461,11 +464,12 @@ module Wagn
     def main_card?() context=~/^main_\d$/ end
       
     def build_link(href, text)
+      Rails.logger.info "build_link(#{href.inspect}, #{text.inspect})"
       klass = case href
         when /^https?:/; 'external-link'
         when /^mailto:/; 'email-link'
         when /^\//
-          href = full_uri(href)      
+          href = full_uri(href.to_s)      
           'internal-link'
         else
           known_card = !!Card.fetch(href)
@@ -473,10 +477,11 @@ module Wagn
           href = href.to_cardname
           href = '/wagn/' + (known_card ? href.to_url_key : CGI.escape(href.escape))
           #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
-          href = full_uri(href)
+          href = full_uri(href.to_s)
           known_card ? 'known-card' : 'wanted-card'
       end
-      %{<a class="#{klass}" href="#{href}">#{text}</a>}      
+      Rails.logger.info "build_link(#{href.inspect}, #{text.inspect}) #{klass}"
+      %{<a class="#{klass}" href="#{href.to_s}">#{text.to_s}</a>}      
     end
     
     def full_uri(relative_uri)

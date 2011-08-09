@@ -35,7 +35,10 @@ module Wagn::Set::Type::Pointer
     Rails.logger.debug "add_item #{cardname.inspect}, #{item_names.inspect}"
     r=
     unless item_names.include? cardname
-      self.content = (item_names + [cardname]).reject{|x|x.blank?}.map{|x| "[[#{x}]]" }.join("\n")
+      self.content = (item_names + [cardname]).reject{|x|x.blank?}.map{|x|
+        xr="[[#{x}]]"
+        Rails.logger.info "add_item gen [#{cardname.to_s}] #{x}, #{xr.inspect}"; xr
+      }.join("\n")
       save!
     end
     Rails.logger.debug "add_item #{cardname.inspect}, #{item_names.inspect} > #{r.inspect}"; r

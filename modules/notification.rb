@@ -66,8 +66,8 @@ module Notification
     end
     
     def type_watchers
-      Rails.logger.debug "type_watchers #{::Cardtype.name_for(self.typecode)+"+*watchers"}"
-      items_from("#{::Cardtype.name_for(self.typecode).to_s}+*watchers" )
+      #Rails.logger.debug "type_watchers #{Cardtype.name_for(self.typecode).to_s+"+*watchers"}"
+      items_from("#{Cardtype.name_for(self.typecode).to_s}+*watchers" )
     end
     
     def items_from( name )

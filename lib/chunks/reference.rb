@@ -1,15 +1,21 @@
 module Chunk
   class Reference < Abstract
-    attr_reader :cardname
+    attr_accessor :cardname
     
     def base_card()
       card
     end
     
-    def cardname=(name) @cardname = name.to_cardname end
+    def cardname=(name)
+      return @cardname=nil unless name
+      r=@cardname = name.to_cardname
+      Rails.logger.info "cardname=(#{name.inspect}) #{r.inspect}"; r
+    end
 
     def refcardname()
-      cardname && cardname = cardname._to_absolute(base_card.cardname)
+      Rails.logger.info "refcardname() #{cardname.inspect}"
+      r=cardname && self.cardname = cardname._to_absolute(base_card.cardname).to_cardname
+      Rails.logger.info "refcardname() #{cardname} > #{r.inspect}"; r
     end
     
     def refcard()
@@ -21,7 +27,8 @@ module Chunk
     end
 
     def render_link()
-      @content.renderer.build_link(refcardname.to_s, link_text)
+      Rails.logger.debug "rl calls build_link(#{refcardname.inspect}, #{self.link_text.inspect})"
+      @content.renderer.build_link(refcardname, self.link_text)
     end
 
   end 

@@ -90,10 +90,11 @@ class Card < ActiveRecord::Base
   public
   class << self
     def include_type_module(typecode)
-      #Rails.logger.info "include set #{typecode} called  #{Kernel.caller[0..4]*"\n"}"
       return unless typecode
       raise "Bad typecode #{typecode}" if typecode.to_s =~ /\W/
       suppress(NameError) { include eval "Wagn::Set::Type::#{typecode}" }
+    rescue Exception => e
+      Rails.logger.info "failed to include #{typecode}: #{e.message}"
     end
   end
 

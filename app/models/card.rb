@@ -94,6 +94,7 @@ class Card < ActiveRecord::Base
       raise "Bad typecode #{typecode}" if typecode.to_s =~ /\W/
       suppress(NameError) { include eval "Wagn::Set::Type::#{typecode}" }
     rescue Exception => e
+      # eg, this was failing in 2.3.11 on typecode "Task"
       Rails.logger.info "failed to include #{typecode}: #{e.message}"
     end
   end

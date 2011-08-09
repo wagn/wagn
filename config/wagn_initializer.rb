@@ -19,26 +19,7 @@ module Wagn::Configuration
   end
 
   class << self
-    def wagn_run
-      wagn_load_config
-      wagn_setup_multihost
-
-      begin
-        no_mod_msg = "----------Wagn Running without Modules----------"
-        unless ActiveRecord::Base.connection.table_exists?( 'cards' )
-          Rails.logger.info no_mod_msg + '(no cards table)'; return
-        end
-      rescue
-        Rails.logger.info no_mod_msg + '(not connected to database)'; return
-      end
-
-      wagn_load_modules
-      Wagn::Cache.initialize_on_startup
-      
-      Rails.logger.info "----------- Wagn Rolling -----------\n\n\n"
-    end
-
-    def wagn_load_config
+    def wagn_load_config  #loads when System.rb loads
       Rails.logger.debug "Load config ...\n"
       config_dir = "#{RAILS_ROOT}/config/"
       ['sample_wagn.rb','wagn.rb'].each do |filename|
@@ -46,12 +27,29 @@ module Wagn::Configuration
       end
       System.base_url.gsub!(/\/$/,'')
     end
+
+    def wagn_run
+      #wagn_load_config
+      wagn_setup_multihost
+      return unless wagn_database_ready?
+      wagn_load_modules
+      Wagn::Cache.initialize_on_startup      
+      Rails.logger.info "----------- Wagn Rolling -----------\n\n\n"
+    end
+
+    def wagn_database_ready?
+      no_mod_msg = "----------Wagn Running without Modules----------"
+      if ActiveRecord::Base.connection.table_exists?( 'cards' )    ; true
+      else; Rails.logger.info no_mod_msg + '(no cards table)'      ; false
+      end
+    rescue
+      Rails.logger.info no_mod_msg + '(not connected to database)' ; false
+    end
     
     def wagn_setup_multihost
-      if System.multihost and wagn_name=ENV['WAGN']
-        Rails.logger.info("------- Multihost.  Wagn Name = #{ENV['WAGN']} -------")
-        MultihostMapping.map_from_name(wagn_name)
-      end
+      return unless System.multihost and wagn_name=ENV['WAGN']
+      Rails.logger.info("------- Multihost.  Wagn Name = #{wagn_name} -------")
+      MultihostMapping.map_from_name(wagn_name)
     end
 
     def wagn_load_modules

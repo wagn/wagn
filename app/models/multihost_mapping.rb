@@ -4,10 +4,10 @@ class MultihostMapping < ActiveRecord::Base
   class << self
     def map_from_name(wagn_name)
       System.wagn_name = wagn_name or fail "map_from_name called without name"
-      @@cache[:name][wagn_name] ||= begin
-        find_by_wagn_name(wagn_name) or fail "unknown wagn: #{wagn_name}"
-      end
-      set_base_url(@@cache[:name][wagn_name])
+      mapping = (@@cache[:name][wagn_name] ||= begin
+        find_by_wagn_name(wagn_name)
+      end)
+      set_base_url(mapping) if mapping
       set_connection(wagn_name)
     end
     

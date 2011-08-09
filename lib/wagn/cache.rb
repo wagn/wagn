@@ -72,16 +72,18 @@ module Wagn
       end
 
       def reset_global
-        User.reset_cache
-        Role.reset_cache
-        Cardtype.reset_cache
-        MultihostMapping.reset_cache
         Card.cache.reset
         reset_local
       end
 
       private
       def reset_local
+        User.reset_cache
+        Role.reset_cache
+        Wagn::Pattern.reset_cache
+        Cardtype.reset_cache
+        MultihostMapping.reset_cache
+        
         Card.cache.reset_local
         System.reset_cache
       end

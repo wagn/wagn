@@ -135,10 +135,12 @@ class Card < ActiveRecord::Base
   public
   class << self
     def include_type_module(typecode)
-      #Rails.logger.info "include set #{typecode} called  #{Kernel.caller[0..4]*"\n"}"
       return unless typecode
       raise "Bad typecode #{typecode}" if typecode.to_s =~ /\W/
       suppress(NameError) { include eval "Wagn::Set::Type::#{typecode}" }
+    rescue Exception => e
+      # eg, this was failing in 2.3.11 on typecode "Task"
+      Rails.logger.info "failed to include #{typecode}: #{e.message}"
     end
   end
 
@@ -165,7 +167,7 @@ class Card < ActiveRecord::Base
     #could optimize to use fetch if we add :include_trashed_cards or something.
     #likely low ROI, but would be nice to have interface to retrieve cards from trash...
     self.id = trashed_card.id
-    self.from_trash = self.confirm_rename = true
+    self.from_trash = self.confirm_rename = @trash_changed = true
     @new_record = false
     self.before_validation_on_create
   end
@@ -180,7 +182,8 @@ class Card < ActiveRecord::Base
       return false
     end
     deps = self.dependents
-    self.update_attribute(:trash, true)
+    @trash_changed = true
+    self.update_attribute(:trash, true) 
     deps.each do |dep|
       next if dep.trash
       dep.confirm_destroy = true
@@ -262,19 +265,24 @@ class Card < ActiveRecord::Base
       current_key = key
       return self if current_key==correct_key
       
-      if key_blocker = find_by_key_and_trash(correct_key, true)
+      if key_blocker = Card.find_by_key_and_trash(correct_key, true)
         key_blocker.name = key_blocker.name + "*trash#{rand(4)}"
         key_blocker.save
       end
 
-      saved =   ( self.key  = correct_key and self.save! )
-      saved ||= ( self.name = current_key and self.save! )
+      saved =   ( self.key  = correct_key and self.save )
+      saved ||= ( self.name = current_key and self.save )
 
-      saved ? self.dependents.each { |c| c.repair_key } : self.name = "BROKEN KEY: #{name}"
+      if saved
+        self.dependents.each { |c| c.repair_key }
+      else
+        Rails.logger.debug "FAILED TO REPAIR BROKEN KEY: #{key}"
+        self.name = "BROKEN KEY: #{name}"
+      end
       self
     end
   rescue
-    Rails.logger.debug "FAILED TO REPAIR BROKEN KEY: #{key}"
+    Rails.logger.debug "BROKE ATTEMPTING TO REPAIR BROKEN KEY: #{key}"
     self
   end
 

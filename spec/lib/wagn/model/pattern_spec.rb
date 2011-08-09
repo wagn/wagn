@@ -25,7 +25,6 @@ describe Wagn::Model::Pattern do
         "*update+*self","*star","Setting+*type","*all"
       ]
     end
-
     
     it "returns set names for junction cards" do
       Card.new( :name=>"Illiad+author" ).set_names.should == [

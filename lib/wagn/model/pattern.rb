@@ -31,17 +31,19 @@ end
     def set_names()      @set_names ||= patterns.map(&:set_name)   end
     def reset_patterns()
       Rails.logger.info "reset_patterns[#{name}]"
-      @patterns = @set_names = nil                             end
-    #def real_set_names() patterns.reject(&:set_missing?).compact.map(&:set_name)    end
+      @junction_only = @patterns = @set_names = nil end
     def real_set_names()
-      rsn1 = patterns.reject(&:set_missing?)
-      Rails.logger.info "RSN1 #{rsn1.inspect}"
-      rsn = rsn1.map(&:set_name)
-      #patterns.reject(:set_missing?).map(&:set_name)
-      Rails.logger.info "RSN #{rsn1.inspect} #{rsn.inspect}"; rsn
+      patterns.reject(&:set_missing?).map(&:set_name)
     end
-    def method_keys()    @method_keys ||= patterns.map(&:method_key) end
-    def css_names()      patterns.map(&:css_name).reverse*" "        end
+      #Rails.logger.info "RSN1 #{rsn1.inspect}"
+      #patterns.reject(:set_missing?).map(&:set_name)
+      #Rails.logger.info "RSN #{rsn1.inspect} #{rsn.inspect}"; rsn
+    def method_keys()    @method_keys ||= patterns.map(&:method_key)        end
+    def css_names()      patterns.map(&:css_name).reverse*" "               end
+    def junction_only?()
+      !@junction_only.nil? ? @junction_only :
+         @junction_only = patterns.map(&:class).find(&:junction_only?)
+    end
 
     def label(name)
       tag = name.tag_name
@@ -97,6 +99,7 @@ end
       def method_key_from_opts(opts)   'all_plus'       end
       def label(name)                  'All Plus Cards' end
       def trunkless?()                 true             end
+      def junction_only?()             true             end
     end
     def css_name()                     "ALL_PLUS"       end
     def pattern_applies?()             card.junction?   end
@@ -143,6 +146,7 @@ end
       def method_key_from_opts(opts)   'star'                           end
       def trunkless?()                 true                             end
       def label(name)                  "Cards ending in +(Star Card)"   end
+      def junction_only?()             true             end
     end
     def pattern_applies?()   card.junction? && card.name.tag_name.star? end
     # is this right?  Tag shouldn't be involved as this is a "global" set
@@ -159,6 +163,7 @@ end
       def opt_keys()                     [:right]                        end
       def method_key_from_opts(opts) opts[:right].to_s.css_name+'_right' end
       def label(name)              "Cards ending in +#{name.trunk_name}" end
+      def junction_only?()             true             end
     end
     def pattern_applies?()               card.junction?                  end
     def set_name()            "#{card.name.tag_name}+#{self.class.key}"  end
@@ -177,6 +182,7 @@ end
       def label(name)
         "Any #{name.trunk_name.trunk_name} card plus #{name.trunk_name.tag_name}"
       end
+      def junction_only?()             true             end
     end
     def css_name()         'TYPE_PLUS_RIGHT-' + set_name.trunk_name.css_name end
     def left()             card.loaded_trunk || card.left                    end

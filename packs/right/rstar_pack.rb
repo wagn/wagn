@@ -40,7 +40,7 @@ class Wagn::Renderer::RichHtml
 #      )]
     ]
     if is_self
-      cells << ['rule-set', rule_card ? Wagn::Pattern.label(rule_card.name.trunk_name) : ''] 
+      cells << ['rule-set', rule_card ? Wagn::Model::Pattern.label(rule_card.name.trunk_name) : ''] 
     end
 
     extra_css_class = rule_card && !rule_card.new_card? ? 'known-rule' : 'missing-rule'
@@ -71,7 +71,7 @@ class Wagn::Renderer::RichHtml
           current_rule_set = current_rule ? current_rule.name.trunk_name : nil
           
           mode, sifter = :override, {:override => [], :defer=>[]}
-          Wagn::Pattern.set_names(ruled_card).each do |set_name|
+          Wagn::Model::Pattern.set_names(ruled_card).each do |set_name|
             if [current_rule_set, params[:new_rule_set]].member? set_name
               mode = :defer
             else
@@ -89,7 +89,7 @@ class Wagn::Renderer::RichHtml
               end +
               content_tag(:ul) do
                 sifter[:override].map do |set_name|
-                  content_tag(:li) { link_to_remote Wagn::Pattern.label(set_name), :update=>id, 
+                  content_tag(:li) { link_to_remote Wagn::Model::Pattern.label(set_name), :update=>id, 
                     :url=>"/card/view/#{card.name.to_url_key}?view=edit_rule&new_rule_set=#{CGI.escape(set_name)}"
                   }
                 end.join
@@ -99,14 +99,14 @@ class Wagn::Renderer::RichHtml
           
           sections << if set_name = params[:new_rule_set]
             div(:class=>'edit-rule-section edit-rule-new') do
-              edit_rule_header('Create', "add new rule for #{Wagn::Pattern.label(set_name)}:") +
+              edit_rule_header('Create', "add new rule for #{Wagn::Model::Pattern.label(set_name)}:") +
               process_inclusion(Card.new(:name=>"#{set_name}+#{setting_name}"), :view=>:open)
             end
           end
           
           sections << if current_rule
             div(:class=>'edit-rule-section edit-rule-current') do
-              edit_rule_header('Edit', "change current rule for #{Wagn::Pattern.label(current_rule_set)}:") +
+              edit_rule_header('Edit', "change current rule for #{Wagn::Model::Pattern.label(current_rule_set)}:") +
               process_inclusion(current_rule, :view=>:open)
             end
           end

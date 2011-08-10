@@ -27,7 +27,7 @@ module WagnTestHelper
   end
   
   def given_cards( *definitions )   
-    User.as(:joe_user) do 
+    User.as(:wagbot) do 
       Card.create_these *definitions
     end
   end
@@ -98,6 +98,7 @@ Rails.logger.info "post invite #{action} #{options.inspect}"
   end     
   
   def assert_rjs_redirected_to(url)
+    warn "response body = #{@response.body}"
     assert @response.body.match(/window\.location\.href = \"([^\"]+)\";/)
     assert_equal $~[1], url
   end

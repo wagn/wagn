@@ -3,7 +3,7 @@ Feature: autonaming
   they should be able to skip naming cards in some cases
   
   Background:
-    Given I log in as Joe User
+    Given I log in as Joe Admin
     And I create Phrase card "Book+*type+*autoname" with content "Book 1"
   
   Scenario: Simple cardtype autoname       

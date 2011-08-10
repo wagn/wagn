@@ -30,14 +30,17 @@ if @patterns
     def set_names()      @set_names ||= patterns.map(&:set_name)   end
     def reset_patterns()
       Rails.logger.info "reset_patterns[#{name}]"
-      @patterns = @set_names = nil                             end
+      @junction_only = @patterns = @set_names = nil end
     #def real_set_names() patterns.find_all(&:set_card).compact.map(&:set_name)    end
     def real_set_names()
       r = patterns.find_all(&:set_card).map(&:set_name).compact
-      Rails.logger.info "Pats: #{set_names*" "} RSN #{r.map(&:to_s)*' '}"; r
+      Rails.logger.info "Pats: #{set_names*" "} RSN #{r.map(&:to_s)*' '}"; r end
+    def method_keys()    @method_keys ||= patterns.map(&:method_key)        end
+    def css_names()      patterns.map(&:css_name).reverse*" "               end
+    def junction_only?()
+      !@junction_only.nil? ? @junction_only :
+         @junction_only = patterns.map(&:class).find(&:junction_only?)
     end
-    def method_keys()    @method_keys ||= patterns.map(&:method_key) end
-    def css_names()      patterns.map(&:css_name).reverse*" "        end
 
     def label(name)
       tag = name.tag_name
@@ -100,6 +103,7 @@ if @patterns
       def method_key_from_opts(opts)   'all_plus'          end
       def label(name)                  'All Plus Cards'    end
       def trunkless?()                 true                end
+      def junction_only?()             true                end
     end
     def css_name()                     "ALL_PLUS"          end
     def pattern_applies?()             card.cardname.junction? end
@@ -147,6 +151,7 @@ if @patterns
       def method_key_from_opts(opts)   'rstar'                          end
       def trunkless?()                 true                             end
       def label(name)                  "Cards ending in +(Star Card)"   end
+      def junction_only?()             true             end
     end
     def pattern_applies?() card.cardname.junction? && card.cardname.tag_star? end
     def method_key()                   'rstar'                           end
@@ -165,9 +170,10 @@ if @patterns
       def key()                   Wagn::Codename.name_of_code('*right')  end
       def opt_keys()                     [:right]                        end
       def method_key_from_opts(opts) opts[:right].to_cardname.css_name+'_right' end
-      def label(name) r="Cards ending in +#{name.trunk_name.to_s}" end
+      def label(name) r="Cards ending in +#{name.trunk_name.to_s}"       end
+      def junction_only?()             true                              end
     end
-    def pattern_applies?()          card.cardname.junction?                  end
+    def pattern_applies?()          card.cardname.junction?              end
     def set_name()
       #Rails.logger.debug "right setname #{card.cardname.tag_name}, #{self.class.key}"
       "#{card.cardname.tag_name}+#{self.class.key}"  end
@@ -186,6 +192,7 @@ if @patterns
       def label(name)
         "Any #{name.nth_left(2)} card plus #{name.trunk_name.tag_name}"
       end
+      def junction_only?()             true             end
     end
     def css_name() 'TYPE_PLUS_RIGHT-' + set_name.to_cardname.trunk_name.css_name end
     def left()             card.loaded_trunk or card.left                    end

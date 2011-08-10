@@ -451,7 +451,7 @@ module Wagn
             end
   
          #ref_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
-          raise "No name to ref? #{card.name}, #{chunk.refcardname}" unless chunk.refcardname()
+          raise "No name to ref? #{card.name}, #{chunk.inspect}" unless chunk.refcardname()
           WikiReference.create!( :card_id=>card.id,
             :referenced_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
             :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,

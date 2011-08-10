@@ -576,7 +576,7 @@ Rails.logger.debug "count iter(#{relation.inspect} #{subspec.inspect})"
       case field
       when "name"
         field = "#{table}.key"
-        v = [v].flatten.map{ |val| val.to_key }
+        v = [v].flatten.map(&:to_cardname).map(&:to_key)
       when "content"
         field = 'r3.content'
         @cardspec.sql.joins << "join revisions r3 on r3.id=#{table}.current_revision_id"

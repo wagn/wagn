@@ -176,7 +176,9 @@ describe CardController do
       # Fruits (from shared_data) are anon creatable but not readable
       
       #remove me after regenerating test data
-      Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
+      User.as :wagbot do
+        Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
+      end
       
       
       login_as :anon
@@ -214,7 +216,9 @@ describe CardController do
     
     it "new should work for creatable nonviewable cardtype" do
       #remove me after regenerating test data
-      Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
+      User.as :wagbot do
+        Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
+      end
       
       login_as(:anon)     
       get :new, :type=>"Fruit"

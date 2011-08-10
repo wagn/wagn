@@ -33,9 +33,14 @@ describe Wagn::Pattern do
 
     it "returns set names for compound star cards" do
       Wagn::Pattern.set_names( Card.new( :name=>"Illiad+*to" )).should == [
-        "Book+*to+*type plus right","*to+*right","*to+*rstar","Phrase+*type","*all plus","*all"
+        "Book+*to+*type plus right","*to+*right","*rstar","Phrase+*type","*all plus","*all"
       ]
     end
+  end
+
+  describe :junction_only? do
+    cases = {"Book+*to+*type plus right" => true, "*to+*right" => true,"*rstar" => true, "Phrase+*type"=>false,"*all plus"=>false,"*all"=>false }
+    cases.keys.find do |k| Wagn::Pattern.junction_only?(k) end
   end
 
   describe :method_keys do

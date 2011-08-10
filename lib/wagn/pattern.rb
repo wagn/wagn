@@ -173,7 +173,7 @@ raise "no card" unless card
       def opt_keys()                   [:rstar]                        end
       def method_key(card)             'star'                          end
       def method_key_from_opts(opts)   'star'                          end
-      def set_name(card)               "#{card.name.tag_name}+#{key}"  end
+      def set_name(card)               key                             end
       def trunkless?()                 true                            end
       def junction_only?()             true                            end
       def pattern_applies? card

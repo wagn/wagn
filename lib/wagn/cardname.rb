@@ -127,7 +127,7 @@ module Wagn
     def module_name() s.gsub(/^\*/,'X_').gsub(/[\b\s]+/,'_').camelcase end
     def css_name() key.gsub('*','X').gsub('+','-')                     end
     def to_star()     star? ? s : '*'+s                                end
-    def star?()       !!(s=~/^\*/)                                     end
+    def star?()       simple? and !!(s=~/^\*/)                         end
     def tag_star?()   !!((simple? ? self : parts[-1])=~/^\*/)          end
     def empty?()      parts && parts.empty? or s && s.blank?           end
     alias blank?      empty?

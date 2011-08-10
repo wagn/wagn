@@ -8,7 +8,6 @@ module Wagn::Model
     base.extend Wagn::Model::ModuleMethods
     base.superclass.extend Wagn::Model::ActsAsCardExtension
     base.send :include, Wagn::Model::AttributeTracking
-    base.send :include, Wagn::Model::CardAttachment
     base.send :include, Wagn::Model::Collection
     base.send :include, Wagn::Model::Exceptions
     base.send :include, Wagn::Model::Fetch

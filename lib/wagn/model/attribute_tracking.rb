@@ -9,7 +9,11 @@ module Wagn::Model::AttributeTracking
     def add(attribute, new_value) 
       @updates[attribute.to_s] = new_value
     end
-                 
+    
+    def keys
+      @updates.keys
+    end
+         
     def each
       @updates.each { |attr| yield attr }        
     end

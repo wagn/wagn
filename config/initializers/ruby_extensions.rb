@@ -221,7 +221,7 @@ class String
   end
   
   def star?
-    !!(self=~/^\*/)
+    simple? && !!(self=~/^\*/)
   end
   
   def to_absolute(context_name)

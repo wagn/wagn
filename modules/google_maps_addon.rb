@@ -18,13 +18,15 @@ end
 class Card
   after_save :update_geocode
   
-  def update_geocode 
-    if conf = Card.fetch('*geocode', :skip_virtual => true)
-      if self.junction? && conf.item_names.include?( self.name.tag_name )
-        address = conf.item_names.map{|p| (c=Card.fetch_or_new(self.name.trunk_name+"+#{p}")) && c.content}.select(&:present?).join(', ')
-        if (geocode = GoogleMapsAddon.geocode(address))
-          c = Card.fetch_or_create("#{self.name.trunk_name}+*geocode", :type=>'Phrase')
-          c.update_attributes( :content => geocode )
+  def update_geocode
+    User.as :wagbot do
+      if conf = Card.fetch('*geocode', :skip_virtual => true)
+        if self.junction? && conf.item_names.include?( self.name.tag_name )
+          address = conf.item_names.map{|p| (c=Card.fetch_or_new(self.name.trunk_name+"+#{p}")) && c.content}.select(&:present?).join(', ')
+          if (geocode = GoogleMapsAddon.geocode(address))
+            c = Card.fetch_or_create("#{self.name.trunk_name}+*geocode", :type=>'Phrase')
+            c.update_attributes( :content => geocode )
+          end
         end
       end
     end

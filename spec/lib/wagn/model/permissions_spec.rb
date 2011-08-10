@@ -45,12 +45,10 @@ describe "reader rules" do
   it "should revert to more general rule when more specific (right) rule is deleted" do
     pc = Card.create(:name=>'B+*right+*read', :type=>'Pointer', :content=>'[[Anyone Signed In]]')
     card = Card.fetch('A+B')
-    warn "rri = #{card.read_rule_id}, rrc = #{card.read_rule_class}"
     card.read_rule_id.should == pc.id
     pc = Card.fetch(pc.name) #important to re-fetch to catch issues with detecting change in trash status.
     pc.destroy
     card = Card.fetch('A+B')
-    warn "rri = #{card.read_rule_id}, rrc = #{card.read_rule_class}"
     card.read_rule_id.should == Card.fetch('*all+*read').id
   end
 

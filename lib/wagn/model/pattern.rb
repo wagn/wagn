@@ -61,6 +61,7 @@ if @patterns
       def method_key_from_opts(opts) ''    end
       def label(name)                ''    end
       def trunkless?()               false end
+      def junction_only?()           false end
     end
 
     def css_name()

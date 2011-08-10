@@ -62,7 +62,7 @@ class Card < ActiveRecord::Base
   end
 
   def include_set_modules
-    singleton_class.include_type_module(typecode)  
+    singleton_class.include_type_module(typecode)
   end
   
   def set_defaults args

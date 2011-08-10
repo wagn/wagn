@@ -8,6 +8,7 @@ class System
     :enable_postgres_fulltext, :postgres_src_dir, :postgres_tsearch_dir, # Optimize PostgreSQL performance
     :multihost,:wagn_name
     
+  Wagn::Configuration.wagn_load_config
     
   class << self
     def base_url

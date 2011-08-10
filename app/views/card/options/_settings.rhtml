@@ -16,6 +16,14 @@
   <%- else %>
     <%= slot.subrenderer(Card.fetch self_set_name).render :content %>
   <%- end %>
+  
+  <% if !card.extension_type && System.toggle(card.setting('accountable')) && System.ok?(:create_accounts) && card.ok?(:update) %>
+    <div class="new-account-link">
+      <%= link_to_remote %{Add a sign-in account for "#{card.name}"},
+          {:url=>"/options/new_account/#{card.id}", :update=>slot.id('options-body')}
+      %>
+    </div>
+  <% end %>
 </div>
 
 

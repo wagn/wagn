@@ -10,7 +10,6 @@ class Wql
     :ignore => %w{ prepend append },
     :pass => %w{ cond }
   }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
-  # put into form: { :content=>:basic, :left=>:relational, etc.. }
 
   OPERATORS = %w{ != = =~ < > in ~ }.inject({}) {|h,v| h[v]=nil; h }.merge({
     'eq' => '=',
@@ -181,14 +180,6 @@ class Wql
       @selfname #|| raise(Wagn::WqlError, "_self referenced but no card is available")
     end
     
-#   def to_card(relative_name)
-#     case relative_name
-#     when "_self";  root.card                                   
-#     when "_left";  Card.fetch_or_new(root.card.name.left_name)
-#     when "_right"; Card.fetch_or_new(root.card.name.tag_name)
-#     end
-#   end
-    
     def absolute_name(name)
       name = (root.selfname ? name.to_absolute(root.selfname) : name)
     end
@@ -199,7 +190,7 @@ class Wql
       query.each do |key,val|
         case key.to_s
         when 'context'  ; @selfname         = query.delete(key)
-        when '_parent'  ; @parent           = query.delete(key)   ## HATE this parent business.  LEFT!
+        when '_parent'  ; @parent           = query.delete(key)   
         when /^_\w+$/   ; @params[key.to_s] = query.delete(key)
         end
       end
@@ -251,7 +242,7 @@ class Wql
         case ATTRIBUTES[key]
           when :basic; spec[key] = ValueSpec.new(val, self)
           when :system; spec[key] = val.is_a?(ValueSpec) ? val : subspec(val)
-          when :relational, :semi_relational, :plus, :special; self.send(key, spec.delete(key))    
+          when :relational, :semi_relational, :special; self.send(key, spec.delete(key))    
           when :referential;  self.refspec(key, spec.delete(key))
           when :ignore; spec.delete(key)
           when :pass; # for :cond  ie. raw sql condition to be ANDed
@@ -578,35 +569,33 @@ Rails.logger.debug "count iter(#{relation.inspect} #{subspec.inspect})"
     end
     
     def to_sql(field)
-      clause = nil
       op,v = @spec
-      v=@cardspec.card if v=='_self'
+      v=@cardspec.card.name if v=='_self'
+      table = @cardspec.table_alias
       
       case field
+      when "name"
+        field = "#{table}.key"
+        v = [v].flatten.map{ |val| val.to_key }
       when "content"
-        @cardspec.sql.joins << "join revisions r3 on r3.id=#{@cardspec.table_alias}.current_revision_id"
         field = 'r3.content'
+        @cardspec.sql.joins << "join revisions r3 on r3.id=#{table}.current_revision_id"
       when "type"
-        field = 'typecode'
-        v = [v].flatten.map do |val| 
-          Cardtype.classname_for(  val.is_a?(Card) ? val.name : val  )
-        end
-        v = v[0] if v.length==1
+        field = "#{table}.typecode"
+        v = [v].flatten.map{ |val| Cardtype.classname_for( val ) }
       when "cond"
-        clause = "(#{sqlize(v)})"
-      else   
-        field = "#{@cardspec.table_alias}.#{field}"
+        return "(#{sqlize(v)})"
+      else
+        field = "#{table}.#{field}"
       end
       
-      
-      clause ||=
-        if op=='~'
-          cxn, v = match_prep(v,@cardspec)
-          %{#{field} #{cxn.match(sqlize(v))}}
-        else
-          "#{field} #{op} #{sqlize(v)}"
-        end
-      
+      v = v[0] if Array===v && v.length==1
+      if op=='~'
+        cxn, v = match_prep(v,@cardspec)
+        %{#{field} #{cxn.match(sqlize(v))}}
+      else
+        "#{field} #{op} #{sqlize(v)}"
+      end
     end
   end         
 end

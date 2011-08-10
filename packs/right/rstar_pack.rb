@@ -72,7 +72,7 @@ class Wagn::Renderer::RichHtml
           
           mode, sifter = :override, {:override => [], :defer=>[]}
           Wagn::Pattern.set_names(ruled_card).each do |set_name|
-            if [current_rule_set, params[:new_rule_set]].member? set_name
+            if [current_rule_set.to_key, params[:new_rule_set]].member? set_name.to_key
               mode = :defer
             else
               sifter[mode] << set_name
@@ -90,7 +90,7 @@ class Wagn::Renderer::RichHtml
               content_tag(:ul) do
                 sifter[:override].map do |set_name|
                   content_tag(:li) { link_to_remote Wagn::Pattern.label(set_name), :update=>id, 
-                    :url=>"/card/view/#{card.name.to_url_key}?view=edit_rule&new_rule_set=#{CGI.escape(set_name)}"
+                    :url=>"/card/view/#{card.name.to_url_key}?view=edit_rule&new_rule_set=#{CGI.escape(set_name.to_key)}"
                   }
                 end.join
               end

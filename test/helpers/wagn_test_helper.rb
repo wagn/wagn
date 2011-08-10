@@ -97,7 +97,6 @@ module WagnTestHelper
   end     
   
   def assert_rjs_redirected_to(url)
-    warn "response body = #{@response.body}"
     assert @response.body.match(/window\.location\.href = \"([^\"]+)\";/)
     assert_equal $~[1], url
   end

@@ -155,11 +155,10 @@ describe Card do
     before { User.as :joe_user }
 
     it "should find cards with *right+*content specified" do
-      c1 = User.as :wagbot do
+      User.as :wagbot do
         Card.create! :name=>"testsearch+*right+*content", :content=>'{"plus":"_self"}', :type => 'Search'
       end
-      Rails.logger.info "testing point 4 #{c1}, #{Card["testsearch+*right+*content"].content.inspect}"
-      assert c = Card.fetch_virtual("A+testsearch".to_cardname)
+      c = Card.fetch_virtual("A+testsearch")
       c.typecode.should == 'Search'
       c.content.should ==  "{\"plus\":\"_self\"}"
     end

@@ -27,8 +27,10 @@ end
 
 describe Card, "with right content template" do
   before do
+    User.as :wagbot do
+      @bt = Card.create! :name=>"birthday+*right+*content", :type=>'Date', :content=>"Today!"
+    end
     User.as :joe_user
-    @bt = Card.create! :name=>"birthday+*right+*content", :type=>'Date', :content=>"Today!"
     @jb = Card.create! :name=>"Jim+birthday"
   end       
  
@@ -37,7 +39,9 @@ describe Card, "with right content template" do
   end        
   
   it "should change content with template" do
-    @bt.content = "Tomorrow"; @bt.save!
+    User.as :wagbot do
+      @bt.content = "Tomorrow"; @bt.save!
+    end
     Wagn::Renderer.new( Card['Jim+birthday']).render(:raw).should == 'Tomorrow'
   end 
 end
@@ -63,9 +67,11 @@ end
 
 describe Card, "templating" do
   before do
+    User.as :wagbot do
+      @dt = Card.create! :name=>"Date+*type+*content", :type=>'Basic', :content=>'Tomorrow'
+      @bt = Card.create! :name=>"birthday+*right+*content", :type=>'Date', :content=>"Today!"      
+    end
     User.as :joe_user
-    @dt = Card.create! :name=>"Date+*type+*content", :type=>'Basic', :content=>'Tomorrow'
-    @bt = Card.create! :name=>"birthday+*right+*content", :type=>'Date', :content=>"Today!"      
     @jb =  Card.new :name=>"Jim+birthday"
   end       
   
@@ -76,8 +82,9 @@ end
 
 describe Card, "with type content template" do
   before do
-    User.as :joe_user
-    @dt = Card.create! :name=>"Date+*type+*content", :type=>'Basic', :content=>'Tomorrow'
+    User.as :wagbot do
+      @dt = Card.create! :name=>"Date+*type+*content", :type=>'Basic', :content=>'Tomorrow'
+    end
   end       
   
   it "should return templated content even if content is passed in" do

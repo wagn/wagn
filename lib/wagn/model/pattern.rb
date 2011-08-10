@@ -151,15 +151,12 @@ if @patterns
       def method_key_from_opts(opts)   'rstar'                          end
       def trunkless?()                 true                             end
       def label(name)                  "Cards ending in +(Star Card)"   end
-      def junction_only?()             true             end
+      def junction_only?()             true                             end
     end
     def pattern_applies?() card.cardname.junction? && card.cardname.tag_star? end
     def method_key()                   'rstar'                           end
-
-    # is this right?  Tag shouldn't be involved as this is a "global" set
-    #def set_name()
-      #Rails.logger.debug "rstar setname #{card.cardname.tag_name}, #{self.class.key}"
-      #"#{card.cardname.tag_name}+#{self.class.key}"   end
+    def set_name()                     self.class.key                   end
+    def method_key()                   'star'                           end
 
     Wagn::Model::Pattern.register_class self
   end

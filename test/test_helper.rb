@@ -108,7 +108,7 @@ Rails.logger.info "test_def #{title} #{user} #{status} #{url} #{cardtype}"
               def test_render_#{title}_#{user}_#{status} 
                 #{login}
                 url = prepare_url('#{url}', '#{cardtype}')
-                #warn "GET \#\{url\}"
+                Rails.logger.warn "TR GET \#\{url\}"
                 get url
                 assert_response #{status}, "\#\{url\} as #{user} should have status #{status}"
               end

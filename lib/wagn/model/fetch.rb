@@ -33,7 +33,7 @@ module Wagn::Model::Fetch
       cacheable = true if card.nil?
       card ||= find_by_key( key )
       
-      Rails.logger.debug "fetch(#{name.inspect}) #{card}, #{cacheable}, #{opts.inspect}"# if debug
+      Rails.logger.debug "fetch(#{name.inspect}) #{card.inspect}, #{cacheable}, #{opts.inspect}"# if debug
       if !opts[:skip_virtual] && (!card || card.missing? || card.trash)
         card = fetch_virtual( cardname, card )
         Rails.logger.info "fetch_virtual #{card.inspect}"

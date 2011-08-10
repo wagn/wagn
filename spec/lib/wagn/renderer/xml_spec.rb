@@ -59,8 +59,10 @@ describe Wagn::Renderer::Xml, "" do
     end
 
     it "renders layout card without recursing" do
-      @layout_card.content="Mainly {{_main}}"
-      @layout_card.save
+      User.as :wagbot do
+        @layout_card.content="Mainly {{_main}}"
+        @layout_card.save
+      end
       Wagn::Renderer::Xml.new(@layout_card).render(:layout).should be_html_with do
         body do
          p do
@@ -263,9 +265,13 @@ describe Wagn::Renderer::Xml, "" do
     end
 
     it "skips *content if narrower *default is present" do  #this seems more like a settings test
-      content_card = Card.create!(:name=>"Phrase+*type+*content", :content=>"Content Foo" )
-      default_card = Card.create!(:name=>"templated+*right+*default", :content=>"Default Bar" )
+      content_card = default_card = nil
+      User.as :wagbot do
+        content_card = Card.create!(:name=>"Phrase+*type+*content", :content=>"Content Foo" )
+        default_card = Card.create!(:name=>"templated+*right+*default", :content=>"Default Bar" )
+      end
       @card = Card.new( :name=>"test+templated", :type=>'Phrase' )
+      @card.should_receive(:setting_card).with("read").and_return(default_card)
       @card.should_receive(:setting_card).with("content", "default").and_return(default_card)
       Wagn::Renderer::Xml.new(@card).render(:raw).should == "Default Bar"
     end

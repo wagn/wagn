@@ -92,7 +92,9 @@ describe Card, "rename to trashed name" do
   end
   
   it "should rename a to a*trash" do
-    @a.reload.name.should == 'A*trash'
+    (c = Card.find(@a.id)).cardname.to_s.should == 'A*trash'
+    c.name.should == 'A*trash'
+    c.key.should == 'a*trash'
   end
 end
 

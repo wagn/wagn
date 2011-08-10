@@ -451,7 +451,7 @@ module Wagn
             end
   
          #ref_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
-          raise "No name to ref? #{card.name}, #{chunk.inspect}" unless chunk.refcardname()
+          #raise "No name to ref? #{card.name}, #{chunk.inspect}" unless chunk.refcardname()
           WikiReference.create!( :card_id=>card.id,
             :referenced_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
             :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
@@ -473,7 +473,8 @@ module Wagn
           'internal-link'
         else
           known_card = !!Card.fetch(href)
-          text = text.to_cardname.to_show(href) if text
+          cardname = href.to_cardname
+          text = cardname.to_show(card.name) unless text
           href = href.to_cardname
           href = '/wagn/' + (known_card ? href.to_url_key : CGI.escape(href.escape))
           #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST

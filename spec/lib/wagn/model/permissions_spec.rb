@@ -111,12 +111,14 @@ describe "reader rules" do
   end
   
   it "should insure that class overrides work with relative settings" do
-    all_plus = Card.fetch_or_create('*all plus+*read', :content=>'_left')
-    @perm_card.save
-    c = Card.create(:name=>'Home+Heart')
-    c.read_rule_id.should == @perm_card.id
-    r = Card.create(:name=>'Heart+*right+*read', :type=>'Pointer', :content=>'[[Administrator]]')
-    Card.fetch('Home+Heart').read_rule_id.should == r.id
+    User.as :wagbot do
+      all_plus = Card.fetch_or_create('*all plus+*read', :content=>'_left')
+      @perm_card.save
+      c = Card.create(:name=>'Home+Heart')
+      c.read_rule_id.should == @perm_card.id
+      r = Card.create(:name=>'Heart+*right+*read', :type=>'Pointer', :content=>'[[Administrator]]')
+      Card.fetch('Home+Heart').read_rule_id.should == r.id
+    end
   end
   
   it "should work on virtual+virtual cards" do

@@ -27,7 +27,6 @@ module Wagn::Model::TrackedAttributes
   
   protected 
   def set_name(newname)
-    
     Rails.logger.info "set_newname(#{newname.inspect}) ON:#{self.name_without_tracking}"
     #warn "set_name<#{self}>(#{newname})" # #{self.name_without_tracking}"
     @old_cardname = cardname
@@ -63,7 +62,11 @@ module Wagn::Model::TrackedAttributes
     return if new_card?
     if existing_card = Card.find_by_key(cardname.to_key) and existing_card != self
       if existing_card.trash  
-        existing_card.update_attributes! :name=>existing_card.name+"*trash", :confirm_rename=>true
+        existing_card.name = tr_name = existing_card.name+'*trash'
+        existing_card.instance_variable_set :@cardname, tr_name.to_cardname
+        existing_card.set_tracked_attributes
+        Rails.logger.debug "trash renamed collision: #{tr_name}, #{existing_card.name}, #{existing_card.cardname.key}"
+        existing_card.update_attributes! :confirm_rename=>true
       #else note -- else case happens when changing to a name variant.  any special handling needed?
       end
     end

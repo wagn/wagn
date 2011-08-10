@@ -249,13 +249,15 @@ Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
   # NAME / RELATED NAMES
 
 
+  # FIXME: use delegations and include all cardname functions
   def simple?()     cardname.simple?       end
   def junction?()   cardname.junction?     end
   def star?()       cardname.star?         end
   def key()         cardname.key           end
+  def css_name()    cardname.css_name      end
 
   def left()
-    Rails.logger.debug "left(#{name}), #{cardname.trunk_name}, #{cardname.trunk_name.to_s}"
+    #Rails.logger.debug "left(#{name}), #{cardname.trunk_name}, #{cardname.trunk_name.to_s}"
     Card.fetch( cardname.trunk_name, :skip_virtual=> true, :skip_after_fetch=>true )  end
   def right()     Card.fetch cardname.tag_name,   :skip_virtual=> true         end
   def pieces()    simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq end
@@ -418,19 +420,15 @@ Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
   # this method piggybacks on the name tracking method and
   # must therefore be defined after the #tracks call
   def name_with_cardname()
-    #if @cardname
     #Rails.logger.info "name_with_cardname #{@cardname.to_s}"
-    #name_without_cardname
     without = name_without_cardname
     return without if without.blank?
-    (@cardname||=name_without_cardname.to_cardname).to_s 
+    @cardname ||= name_without_cardname.to_cardname
+    name_without_cardname
   end
-  #begin
-    #Rails.logger.debug "name_with_cardname #{@cardname.inspect}, #{not @cardname and name_without_cardname.inspect}"
-    #@cardname&&@cardname.to_s || name_without_cardname end
-  #Rails.logger.debug "name blank #{@cardname&&@cardname.key}" if @name.blank?
-  #end
   alias_method_chain :name, :cardname
+
+  def cardname() @cardname ||= name_without_cardname.to_cardname end
 
   alias cardname= name=
   def name_with_cardname=(newname)
@@ -438,16 +436,14 @@ Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
     oldname = name_without_cardname
     Rails.logger.debug "namex=(#{newname.inspect}) #{oldname.inspect}"
     if oldname != newname
-      reset_patterns
       @cardname = newname.to_cardname
       write_attribute :key, @key = @cardname.to_key
-      #write_attribute :name, name_without_cardname = newname
       updates.add :name, newname
+      reset_patterns
     else oldname end
   end
   alias_method_chain :name=, :cardname
   def cardname() @cardname ||= name.to_cardname end
-#begin raise "name nil" unless name; Rails.logger.debug "name cd #{@name.inspect}" end
   
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # VALIDATIONS

@@ -129,12 +129,12 @@ module Wagn
     def to_star()     star? ? s : '*'+s                                end
     def star?()       !!(s=~/^\*/)                                     end
     def tag_star?()   !!((simple? ? self : parts[-1])=~/^\*/)          end
-    def empty?()      parts && parts.empty? or s && s.blank?       end
+    def empty?()      parts && parts.empty? or s && s.blank?           end
     alias blank?      empty?
 
-    def pre_cgi()     parts * '~plus~'                                 end
-    def escape()      s.gsub(' ','_')                                  end
-    def unescape(uri) s.gsub(' ','+').gsub('_',' ')                    end
+    def pre_cgi()          parts * '~plus~'                            end
+    def escape()           s.gsub(' ','_')                             end
+    def self.unescape(uri) uri.gsub(' ','+').gsub('_',' ')             end
 
     def to_url_key()
       Wagn::Cardname.decode_html(s).gsub(/[^\*\w\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')
@@ -145,7 +145,8 @@ module Wagn
     end
 
     def to_show(absolute)
-      (self =~/\b_(left|right|whole|self|user|\d+|L*R?)\b/) ? absolute : self
+      (self =~/\b_(left|right|whole|self|user|\d+|L*R?)\b/) ?
+         _to_absolute(absolute) : self
     end
 
     def escapeHTML(args)
@@ -165,9 +166,9 @@ module Wagn
       #Rails.logger.info "fullname(#{inspect}, #{context}, esc:#{context.escapeHTML(args).inspect}, Args:#{args.inspect})\nR=#{r.inspect}"; r
     end
 
-    def to_absolute!(context=nil)
+    def to_absolute_cardname(context=nil)
       context = context ? self.class.new(context.gsub('~plus~','+')) : self
-      initialize(_to_absolute(context))
+      _to_absolute(context).to_cardname
     end
 
     def nth_left(n)
@@ -175,7 +176,7 @@ module Wagn
     end
 
     def to_absolute(context) _to_absolute(context).to_s end
-    def strip() s==s.strip ? s : initialize(s) end
+    #def strip() s==s.strip ? s : initialize(s) end
     def _to_absolute(context)
       context = context.to_cardname
       #Rails.logger.info "_to_absolute(#{context.inspect}) #{self}"

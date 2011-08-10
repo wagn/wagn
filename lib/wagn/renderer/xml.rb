@@ -43,7 +43,7 @@ module Wagn
       else
         href = href.to_cardname
         known_card = !!Card.fetch(href)
-        text = text.to_show(href)
+        text = href.to_show(href) unless text
         href = '/wagn/' + (known_card ? href.to_url_key : CGI.escape(href.escape))
         href = full_uri(href)
         return %{<cardlink class="#{

@@ -27,7 +27,7 @@ module WagnTestHelper
   end
   
   def given_cards( *definitions )   
-    User.as(:joe_user) do 
+    User.as(:wagbot) do 
       Card.create_these *definitions
     end
   end

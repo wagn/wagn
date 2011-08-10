@@ -456,15 +456,19 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
     end
 
     it "skips *content if narrower *default is present" do  #this seems more like a settings test
-      content_card = Card.create!(:name=>"Phrase+*type+*content", :content=>"Content Foo" )
-      default_card = Card.create!(:name=>"templated+*right+*default", :content=>"Default Bar" )
+      User.as :wagbot do
+        content_card = Card.create!(:name=>"Phrase+*type+*content", :content=>"Content Foo" )
+        default_card = Card.create!(:name=>"templated+*right+*default", :content=>"Default Bar" )
+      end
       @card = Card.new( :name=>"test+templated", :type=>'Phrase' )
       Wagn::Renderer.new(@card).render(:raw).should == "Default Bar"
     end
 
 
     it "should be used in edit forms" do
-      config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )
+      User.as :wagbot do
+        config_card = Card.create!(:name=>"templated+*self+*content", :content=>"{{+alpha}}" )
+      end
       @card = Card.fetch('templated')# :name=>"templated", :content => "Bar" )
       @card.content = 'Bar'
       result = Wagn::Renderer.new(@card).render(:edit)
@@ -476,7 +480,9 @@ Rails.logger.info "layout_card content #{@layout_card.content}"
     end
 
     it "work on type-plus-right sets edit calls" do
-      Card.create(:name=>'Book+author+*type plus right+*default', :type=>'Phrase', :content=>'Zamma Flamma')
+      User.as :wagbot do
+        Card.create(:name=>'Book+author+*type plus right+*default', :type=>'Phrase', :content=>'Zamma Flamma')
+      end
       c = Card.new :name => 'Yo Buddddy', :type => 'Book'
       result = Wagn::Renderer::RichHtml.new(c).render( :multi_edit )
       result.should be_html_with do

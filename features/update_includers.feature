@@ -3,7 +3,7 @@ Feature: Update Includer cards
   Users should be notified when transcluded plus cards of a card they are watching change.
 
   Background:
-    Given I log in as Joe User
+    Given I log in as Joe Admin
     And I create Book card "Ulysses"
     And Joe Camel is watching "Ulysses"
     And Joe Admin is watching "Book"

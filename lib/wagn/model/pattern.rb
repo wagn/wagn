@@ -146,11 +146,11 @@ end
       def method_key_from_opts(opts)   'star'                           end
       def trunkless?()                 true                             end
       def label(name)                  "Cards ending in +(Star Card)"   end
-      def junction_only?()             true             end
+      def junction_only?()             true                             end
     end
     def pattern_applies?()   card.junction? && card.name.tag_name.star? end
     # is this right?  Tag shouldn't be involved as this is a "global" set
-    def set_name()          "#{card.name.tag_name}+#{self.class.key}"   end
+    def set_name()                     self.class.key                   end
     def method_key()                   'star'                           end
 
     Wagn::Model::Pattern.register_class self

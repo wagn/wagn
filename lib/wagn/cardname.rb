@@ -41,10 +41,18 @@ module Wagn
       end
     end
 
-    # Delegate hash functions to the Collection
-    class << self < DelegateClass(Hash)
-      def initialize() super(CARDNAMES) end
+    args = %w{== clear default default_proc each each_key each_pair each_value
+      empty? eql? fetch has_key? has_value? hash include? index indexes indices
+      initialize_copy inspect invert key? keys length member? merge merge! new
+      rehash reject reject! replace select shift size sort store to_a to_hash
+      to_s update value? values values_at} + [{:to => CARDNAMES}]
+    Rails.logger.debug "delegation args: #{args.inspect}"
 
+    delegate *args
+
+    # Delegate hash functions to the Collection
+=begin
+    class << self
       def [](obj) CARDNAMES[obj.to_cardname.s] end
       def has_key?(obj) CARDNAMES.has_key?(obj.to_cardname.s) end
       alias include? has_key?
@@ -54,6 +62,7 @@ module Wagn
       alias []= store
       def values_at(*a) super(a.map(&:to_cardname)) end
     end   
+=end
 
     def self.unescape(uri) uri.gsub(' ','+').gsub('_',' ')             end
 

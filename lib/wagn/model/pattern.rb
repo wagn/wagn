@@ -17,15 +17,13 @@ module Wagn::Model
     end
 
     def patterns()
-      @patterns ||= @@subclasses.map { |sub|
+      cardname.cardinfo.patterns ||= @@subclasses.map { |sub|
         (n=sub.new(self)).pattern_applies? ? n : nil
       }.compact
-      #Rails.logger.info "patterns[#{to_s}] >> #{@patterns.map(&:set_name).inspect}"; @patterns
+      #Rails.logger.info "patterns[#{to_s}] >> #{cardname.cardinfo.patterns.map(&:set_name).inspect}"; cardname.cardinfo.patterns
     end
-    def set_names()      @set_names ||= patterns.map(&:set_name)   end
-    def reset_patterns()
-      Rails.logger.info "reset_patterns[#{name}]"
-      @junction_only = @patterns = @set_names = nil end
+    def set_names() cardname.cardinfo.set_names ||= patterns.map(&:set_name) end
+    def reset_patterns() cardname.cardinfo.reset_patterns end
     def real_set_names() patterns.find_all(&:set_card).compact.map(&:set_name)    end
     #def real_set_names()
     #  r = patterns.find_all(&:set_card).compact.map(&:set_name)
@@ -33,8 +31,8 @@ module Wagn::Model
     def method_keys()    @method_keys ||= patterns.map(&:method_key)        end
     def css_names()      patterns.map(&:css_name).reverse*" "               end
     def junction_only?()
-      !@junction_only.nil? ? @junction_only :
-         @junction_only = patterns.map(&:class).find(&:junction_only?)
+      !cardname.cardinfo.junction_only.nil? ? cardname.cardinfo.junction_only :
+         cardname.cardinfo.junction_only = patterns.map(&:class).find(&:junction_only?)
     end
 
     def label(nm='')

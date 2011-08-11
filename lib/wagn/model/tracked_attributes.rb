@@ -30,14 +30,15 @@ module Wagn::Model::TrackedAttributes
     Rails.logger.info "set_newname(#{newname.inspect}) ON:#{self.name_without_tracking}"
     #warn "set_name<#{self}>(#{newname})" # #{self.name_without_tracking}"
     @old_cardname = cardname
-    if (@old_name = self.name_without_tracking) != newname.to_s
-      @cardname, name_without_tracking =
-         Wagn::Cardname===newname ? [newname, newname.to_s] :
-                                    [newname.to_cardname, newname]
-      write_attribute :key, k=cardname.to_key
-      write_attribute :name, name_without_tracking
-      Rails.logger.debug "set_newname changed #{self.name_without_tracking.inspect}, #{cardname.inspect}, #{k.inspect}"
-    else return end
+    return unless (@old_name = self.name_without_tracking) != newname.to_s
+    @cardname = newname.to_cardname
+    name_without_tracking = newname.to_s
+    #@cardname, name_without_tracking =
+       #Wagn::Cardname===newname ? [newname, newname.to_s] :
+       #                           [newname.to_cardname, newname]
+    write_attribute :key, k=cardname.to_key
+    write_attribute :name, name_without_tracking
+    Rails.logger.debug "set_newname changed #{self.name_without_tracking.inspect}, #{cardname.inspect}, #{k.inspect}"
 
     raise "No name ???" if name.blank? # can we set a null name?
     Wagn::Cache.expire_card(cardname.to_key)
@@ -61,7 +62,7 @@ module Wagn::Model::TrackedAttributes
 
     return if new_card?
     if existing_card = Card.find_by_key(cardname.to_key) and existing_card != self
-      if existing_card.trash  
+      if existing_card.trash
         existing_card.name = tr_name = existing_card.name+'*trash'
         existing_card.instance_variable_set :@cardname, tr_name.to_cardname
         existing_card.set_tracked_attributes
@@ -80,6 +81,12 @@ module Wagn::Model::TrackedAttributes
   def set_typecode(new_typecode)
 #    Rails.logger.debug "set_typecde No type code for #{name}, #{typecode}" unless new_typecode
     self.typecode_without_tracking= new_typecode 
+    nametype = cardname.cardinfo.typename
+    newtypename = Cardtype.name_for(new_typecode)
+    if newtypename != nametype
+      cardname.cardinfo.typename = newtypename
+      cardname.cardinfo.patterns = nil
+    end
     return true if new_card?
     on_type_change # FIXME this should be a callback
     templatees = hard_templatees

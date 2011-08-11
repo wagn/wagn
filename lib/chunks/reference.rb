@@ -14,7 +14,7 @@ module Chunk
 
     def refcardname()
       Rails.logger.info "refcardname() #{cardname.inspect}"
-      r=cardname && self.cardname = cardname._to_absolute(base_card.cardname).to_cardname
+      r=cardname && cardname._to_absolute(base_card.cardname).to_cardname
       Rails.logger.info "refcardname() #{cardname} > #{r.inspect}"; r
     end
     

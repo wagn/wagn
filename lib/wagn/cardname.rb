@@ -24,47 +24,45 @@ module Wagn
     attr_reader :s, :simple, :parts, :key
     attr_accessor :cardinfo
 
-    #class << self < DelegateClass(Hash)
-    class << self
-      #def initialize() super(CARDNAMES) end
-
-      def new(obj)
-        return obj if Cardname===obj
-        raise "cardname? #{obj.inspect}" if obj.nil?
-        name = Array===obj ? obj*JOINT : obj.to_s
-        if CARDNAMES.has_key?(name)
-          #Rails.logger.info "cardname.cache(#{name}) #{CARDNAMES[name].inspect}"
-          CARDNAMES[name]
-        else
-          newobj= allocate.send(:initialize, name)
-          #Rails.logger.info "cardname.new(#{obj.class}) #{newobj.inspect}" # CDNS:#{CARDNAMES.keys.inspect}"
-          #newobj.send(:initialize, name)
-          # should we stop it from even creating bad names?
-          #raise "Bad name #{newobj.s}" if newobj.simple? and newobj.s.match(BANNED_RE)
-          CARDNAMES[name] = newobj
-        end
+    def self.new(obj)
+      return obj if Cardname===obj
+      raise "cardname? #{obj.inspect}" if obj.nil?
+      name = Array===obj ? obj*JOINT : obj.to_s
+      if CARDNAMES.has_key?(name)
+        #Rails.logger.info "cardname.cache(#{name}) #{CARDNAMES[name].inspect}"
+        CARDNAMES[name]
+      else
+        newobj= allocate.send(:initialize, name)
+        #Rails.logger.info "cardname.new(#{obj.class}) #{newobj.inspect}" # CDNS:#{CARDNAMES.keys.inspect}"
+        #newobj.send(:initialize, name)
+        # should we stop it from even creating bad names?
+        #raise "Bad name #{newobj.s}" if newobj.simple? and newobj.s.match(BANNED_RE)
+        CARDNAMES[name] = newobj
       end
+    end
 
-      # the Delegate hash functions to the Collection
-      #def each() CARDNAMES.each end  This is in the delegation now
-      #def [](obj) CARDNAMES[obj.to_cardname.s] end
-      #def has_key?(obj) CARDNAMES.has_key?(obj.to_cardname.s) end
-      #alias include? has_key?
-      #alias key? has_key?
-      #alias member? has_key?
-      #def store(obj) raise "CARDNAMES is not not writable" end
-      #alias []= store
-      #def values_at(*a) super(a.map(&:to_cardname)) end
+    # Delegate hash functions to the Collection
+    class << self < DelegateClass(Hash)
+      def initialize() super(CARDNAMES) end
 
-      def unescape(uri) uri.gsub(' ','+').gsub('_',' ')             end
+      def [](obj) CARDNAMES[obj.to_cardname.s] end
+      def has_key?(obj) CARDNAMES.has_key?(obj.to_cardname.s) end
+      alias include? has_key?
+      alias key? has_key?
+      alias member? has_key?
+      def store(obj) raise "CARDNAMES is not not writable" end
+      alias []= store
+      def values_at(*a) super(a.map(&:to_cardname)) end
+    end   
 
-      # This probably doesn't belong here, but I wouldn't put it in string either
-      def substitute!( str, hash )
-        hash.keys.each do |var|
-          str.gsub!(/\{(#{var})\}/) {|x| hash[var.to_sym]}
-        end
-        str
-      end   
+    def self.unescape(uri) uri.gsub(' ','+').gsub('_',' ')             end
+
+    # This probably doesn't belong here, but I wouldn't put it in string either
+    def self.substitute!( str, hash )
+      hash.keys.each do |var|
+        str.gsub!(/\{(#{var})\}/) {|x| hash[var.to_sym]}
+      end
+      str
     end   
 
     def initialize(obj)

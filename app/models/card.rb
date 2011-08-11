@@ -27,12 +27,12 @@ class Card < ActiveRecord::Base
       Wagn::Hook.call :before_multi_save, self, cards
       cards.each_pair do |name, opts|
         opts[:content] ||= ""
-        self.cardname.to_absolute!(name)
+        cardname = name.to_cardname.to_absolute_cardname(name)
         #logger.info "multi update working on #{name}: #{opts.inspect}"
-        if card = Card.fetch(name, :skip_virtual=>true)
+        if card = Card.fetch(cardname, :skip_virtual=>true)
           card.update_attributes(opts)
         elsif opts[:content].present? and opts[:content].strip.present?
-          opts[:name] = name
+          opts[:name] = cardname.s
           card = Card.create(opts)
         end
         if card and !card.errors.empty?

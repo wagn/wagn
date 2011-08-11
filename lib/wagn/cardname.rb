@@ -136,6 +136,14 @@ module Wagn
     def escape()           s.gsub(' ','_')                             end
     def self.unescape(uri) uri.gsub(' ','+').gsub('_',' ')             end
 
+    # This probably doesn't belong here, but I wouldn't put it in string either
+    def self.substitute!( str, hash )
+      hash.keys.each do |var|
+        str.gsub!(/\{(#{var})\}/) {|x| hash[var.to_sym]}
+      end
+      str
+    end   
+
     def to_url_key()
       Wagn::Cardname.decode_html(s).gsub(/[^\*\w\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')
     end

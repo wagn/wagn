@@ -253,20 +253,32 @@ describe Wql do
         ["nfirst","nsecond","nthird"]
     end  
 
-      it "should sort by name" do
-        Wql.new( :name=> %w{ in B Z A Y C X }, :sort=>"alpha", :dir=>"desc" ).run.map(&:name).should ==  %w{ Z Y X C B A }
-        Wql.new( :name=> %w{ in B Z A Y C X }, :sort=>"name", :dir=>"desc"  ).run.map(&:name).should ==  %w{ Z Y X C B A }
-        #Card.create! :name => 'the alphabet'
-        #Wql.new( :name=>["in", "B", "C", "the alphabet"], :sort=>"name").run.map(&:name).should ==  ["the alphabet", "B", "C"]
-      end
-
-      it "should sort by content" do
-        Wql.new( :name=> %w{ in Z T A }, :sort=>"content").run.plot(:name).should ==  %w{ A Z T }
-      end
-      it "should play nice with match" do
-        Wql.new( :match=>'Z', :type=>'Basic', :sort=>"content").run.plot(:name).should ==  %w{ A B Z }
-      end
-
+    it "should sort by name" do
+      Wql.new( :name=> %w{ in B Z A Y C X }, :sort=>"alpha", :dir=>"desc" ).run.map(&:name).should ==  %w{ Z Y X C B A }
+      Wql.new( :name=> %w{ in B Z A Y C X }, :sort=>"name", :dir=>"desc"  ).run.map(&:name).should ==  %w{ Z Y X C B A }
+      #Card.create! :name => 'the alphabet'
+      #Wql.new( :name=>["in", "B", "C", "the alphabet"], :sort=>"name").run.map(&:name).should ==  ["the alphabet", "B", "C"]
+    end
+    
+    it "should sort by content" do
+      Wql.new( :name=> %w{ in Z T A }, :sort=>"content").run.plot(:name).should ==  %w{ A Z T }
+    end
+    
+    it "should play nice with match" do
+      Wql.new( :match=>'Z', :type=>'Basic', :sort=>"content").run.plot(:name).should ==  %w{ A B Z }
+    end
+    
+    it "should sort by plus card content" do
+      User.as :wagbot do
+        c = Card.fetch('Setting+*self+*table of contents')
+        c.content = '1'
+        c.save
+      
+        w = Wql.new( :right_plus=>'*table of contents', :sort=>{ :left=>'_item', :right=>'*table_of_contents' } )
+        w.run.plot(:name).should == %w{ *all Setting+*type *account+*right Config+*self }
+      end      
+    end
+      
   #  it "should sort by update" do     
   #    # do this on a restricted set so it won't change every time we add a card..
   #    Wql.new( :match=>"two", :sort=>"update", :dir=>"desc").run.plot(:name).should == ["One+Two+Three", "One+Two","Two","Joe User"]
@@ -276,7 +288,7 @@ describe Wql do
   #
 
   
-    #it "should sort by plusses" do
+    #it "should sort by plus" do
     #  Wql.new(  :sort=>"plusses", :dir=>"desc", :limit=>6 ).run.plot(:name).should ==  ["*template", "A", "LewTest", "D", "C", "One"]
     #end
 

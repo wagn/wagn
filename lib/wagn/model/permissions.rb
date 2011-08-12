@@ -128,7 +128,7 @@ module Wagn::Model::Permissions
       end
     end
     Rails.logger.debug "rule_card #{rcard&&rcard.name}, #{opcard.name.inspect}, #{opcard}, #{opcard.cardname.inspect}"
-    return rcard, opcard.cardname.trunk_name.tag_name
+    return rcard, opcard.cardname.trunk_name.tag_name.to_s
   end
   
   protected

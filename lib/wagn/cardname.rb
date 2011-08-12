@@ -41,6 +41,7 @@ module Wagn
       end
     end
 
+=begin
     args = %w{== clear default default_proc each each_key each_pair each_value
       empty? eql? fetch has_key? has_value? hash include? index indexes indices
       initialize_copy inspect invert key? keys length member? merge merge! new
@@ -51,7 +52,6 @@ module Wagn
     delegate *args
 
     # Delegate hash functions to the Collection
-=begin
     class << self
       def [](obj) CARDNAMES[obj.to_cardname.s] end
       def has_key?(obj) CARDNAMES.has_key?(obj.to_cardname.s) end

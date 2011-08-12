@@ -128,7 +128,7 @@ module Wagn::Model::Permissions
       end
     end
     Rails.logger.debug "rule_card #{rcard&&rcard.name}, #{opcard.name.inspect}, #{opcard}, #{opcard.cardname.inspect}"
-    return rcard, opcard.cardname.trunk_name.tag_name
+    return rcard, opcard.cardname.trunk_name.tag_name.to_s
   end
   
   protected
@@ -263,7 +263,7 @@ module Wagn::Model::Permissions
       in_set = {}
       if !(self.trash)
         rule_classes = Wagn::Model::Pattern.subclasses.map &:key
-        rule_class_index = rule_classes.index self.cardname.trunk_name.tag_name
+        rule_class_index = rule_classes.index self.cardname.trunk_name.tag_name.to_s
         return 'not a proper rule card' unless rule_class_index
 
         #first update all cards in set that aren't governed by narrower rule

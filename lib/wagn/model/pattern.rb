@@ -17,12 +17,13 @@ module Wagn::Model
     end
 
     def patterns()
-if @patterns
-  na = @patterns.detect { |p| !p.pattern_applies? }
-  raise "All patterns should apply #{name} #{na.inspect}" if na
-  Rails.logger.debug "patterns set #{@patterns.inspect}"
-end
-      @patterns ||= @@subclasses.map { |sub|
+#if @patterns
+#  na = @patterns.detect { |p| !p.pattern_applies? }
+#  raise "All patterns should apply #{name} #{na.inspect}" if na
+#  Rails.logger.debug "patterns set #{@patterns.inspect}"
+#end
+      #@patterns ||= 
+      @patterns = @@subclasses.map { |sub|
       x=(n=sub.new(self)).pattern_applies? ? n : nil
       Rails.logger.info "subc[#{n&&n.card&&n.card.name}] #{x.inspect}"; x
       }.compact
@@ -200,13 +201,14 @@ end
 
   class SoloPattern < SetBase
       # Why is this in the class scope for all the others, but this one is broken that way?
-      def label(name)                 %{Just "#{name.trunk_name}"}           end
     class << self
       #def label(name)                 %{Just "#{name.trunk_name}"}           end
       def key()                       '*self'                                end
       def opt_keys()                  [:name]                                end
       def method_key_from_opts(opts)  opts[:name].to_s.css_name+'_self'      end
     end
+    
+    def label(name)                   %{Just "#{name.trunk_name}"}           end
     #FIXME!!! we do not want these to stay commented out, but they need to be
     #there so that patterns on builtins can be recognized for now. 
     # soon those cards should actually exist.  Is this now fixed????

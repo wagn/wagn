@@ -40,7 +40,7 @@ module Wagn::Set::Type::Cardtype
   end
   
   def reset_cardtype_cache
-    Cardtype.reset_cache
+    Cardtype.cache.reset
   end
 
   

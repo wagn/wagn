@@ -48,7 +48,7 @@ class Card < ActiveRecord::Base
     #Rails.logger.info "After save: #{self}, #{name} Cs:#{cards.inspect}"
     if self.typecode == 'Cardtype'
       #Rails.logger.debug "Cardtype after_save resetting"
-      ::Cardtype.reset_cache
+      Cardtype.cache.reset
     end
 #      Rails.logger.debug "Card#after_save end"
     update_attachment
@@ -171,7 +171,6 @@ class Card < ActiveRecord::Base
     @new_record = false
     self.before_validation_on_create
   end
-
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # DESTROY

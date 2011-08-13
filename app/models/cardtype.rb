@@ -17,15 +17,9 @@ class Cardtype < ActiveRecord::Base
         join cards c on c.extension_id=ct.id and c.extension_type='Cardtype'    
         where c.trash is false
       }).each do |rec|
-<<<<<<< HEAD
-        self.cache[:card_keys][rec['key']] = rec['name']
-        self.cache[:card_names][rec['class_name']] = rec['name'].to_cardname;
-        self.cache[:class_names][rec['key']] = rec['class_name']
-=======
         c[:card_keys][rec['key']] = rec['name']
-        c[:card_names][rec['class_name']] = rec['name'];   
+        c[:card_names][rec['class_name']] = rec['name'].to_cardname
         c[:class_names][rec['key']] = rec['class_name']
->>>>>>> xml_format
       end
       
       c.each { |key, value| self.cache.write key.to_s, value }

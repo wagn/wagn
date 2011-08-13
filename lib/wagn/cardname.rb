@@ -198,9 +198,9 @@ module Wagn
       #Rails.logger.info "fullname(#{inspect}, #{context}, esc:#{context.escapeHTML(args).inspect}, Args:#{args.inspect})\nR=#{r.inspect}"; r
     end
 
-    def to_absolute_cardname(context=nil)
-      context = context ? self.class.new(context.gsub('~plus~','+')) : self
-      _to_absolute(context).to_cardname
+    def to_absolute_cardname(rel_name=nil)
+      rel_name = (rel_name || self.s).to_cardname
+      rel_name._to_absolute(self).to_cardname
     end
 
     def nth_left(n)

@@ -75,7 +75,7 @@ describe Wagn::Model::Pattern do
   
   describe :label do
     it "returns label for name" do
-      Wagn::Model::RightNamePattern.label('address+*right'.to_cardname).should== "Cards ending in +address"
+      Card.new(:name=>'address+*right').label.should== "Cards ending in +address"
     end
   end
 end
@@ -86,7 +86,7 @@ describe Wagn::Model::RightNamePattern do
   
   describe :label do
     it "returns label for name" do
-      Wagn::Model::RightNamePattern.label('address+*right'.to_cardname).should== "Cards ending in +address"
+      Card.new(:name=>'address+*right').label.should== "Cards ending in +address"
     end
   end
 end

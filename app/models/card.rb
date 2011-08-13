@@ -23,12 +23,13 @@ class Card < ActiveRecord::Base
   # FIXME Should be in modules
   def after_save
     if cards
-      #Rails.logger.info "after_save Cards:#{cards.inspect}"
+      Rails.logger.info "after_save Cards:#{cards.inspect}"
       Wagn::Hook.call :before_multi_save, self, cards
       cards.each_pair do |sub_name, opts|
         opts[:content] ||= ""
-        sub_cardname = sub_name.to_cardname.to_absolute_cardname(name)
-        #Rails.logger.info "multi update working on:#{name} #{sub_name}: SN:#{sub_cardname.s}, #{opts.inspect}"
+        sub_name = sub_name.gsub('~plus~','+')
+        sub_cardname = cardname.to_absolute_cardname(sub_name)
+        Rails.logger.info "multi update working on:#{name} #{sub_name}: SN:#{sub_cardname.s}, #{opts.inspect}"
         if card = Card.fetch(sub_cardname, :skip_virtual=>true)
           card.update_attributes(opts)
         elsif opts[:content].present? and opts[:content].strip.present?

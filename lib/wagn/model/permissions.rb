@@ -256,7 +256,7 @@ module Wagn::Model::Permissions
       # (though maybe not as a tracked_attribute for performance reasons?)
       # AND need to make sure @changed gets wiped after save (probably last in the sequence)
       
-      User.reset_cache #
+      User.cache.reset #
       Wagn::Cache.expire_card self.key #probably shouldn't be necessary, 
       # but was sometimes getting cached version when card should be in the trash.
       # could be related to other bugs?

@@ -1,28 +1,19 @@
 class Role < ActiveRecord::Base
   acts_as_card_extension
   has_and_belongs_to_many :users
-  def self.anonymous_user
-    @@anonymous_user ||= User.new(:login=>'anonymous')  
-  end
-    
+  cattr_accessor :cache
+  
   class << self
-    def cache
-      @@cache ||= {}
-      @@cache[System.wagn_name] ||= {}
-    end
-    
-    def reset_cache
-      @@cache ||= {}
-      @@cache[System.wagn_name] = {}
-    end
-    
     def find_configurables
       @roles = Role.find :all, :conditions=>"codename <> 'admin'"
     end  
     
     def [](key)
-      Rails.logger.debug "looking up Role (#{key}) via []"  
-      self.cache[key.to_s] ||= (Integer===key ? find(key) : find_by_codename(key.to_s))
+      Rails.logger.info "looking up Role (#{key}) via []"
+      c = self.cache
+      role = (c.read(key.to_s) || c.write(key.to_s, (Integer===key ? find(key) : find_by_codename(key.to_s))))
+      Rails.logger.info "found: #{role.inspect}"
+      role
     end
   end
         
@@ -32,11 +23,6 @@ class Role < ActiveRecord::Base
   
   def cardname
     self.card.cardname
-  end
-  
-  def anonymous?
-    codename == 'anon'
-  end
-  
+  end  
 
 end

@@ -174,7 +174,7 @@ describe User, "Joe User" do
 
     User.as :joe_user
     @user = User[:joe_user]
-    Cardtype.reset_cache
+    Cardtype.cache.reset
     @typenames = Cardtype.createable_types.map{ |ct| ct[:name] }
   end
 

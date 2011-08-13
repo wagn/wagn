@@ -28,7 +28,7 @@ class AdminController < ApplicationController
   def tasks
     raise Wagn::PermissionDenied.new('Only Administrators can view tasks') unless System.always_ok?
     @tasks = System.role_tasks
-    Role.reset_cache
+    Role.cache.reset
     
     @roles = Role.find_configurables.sort{|a,b| a.card.name <=> b.card.name }
     @role_tasks = {}
@@ -43,7 +43,7 @@ class AdminController < ApplicationController
       role.tasks = tasks.keys.join(',')
       role.save
     end
-    Role.reset_cache
+    Role.cache.reset
 
     flash[:notice] = 'permissions saved'
     redirect_to :action=>'tasks'

@@ -71,7 +71,7 @@ module Wagn::Model::TrackedAttributes
       end
     end
           
-    Cardtype.reset_cache if typecode=='Cardtype'
+    Cardtype.cache.reset if typecode=='Cardtype'
     Wagn::Cache.expire_card(@old_cardname.to_key)
     @name_changed = true          
     @name_or_content_changed=true
@@ -95,7 +95,7 @@ module Wagn::Model::TrackedAttributes
     # do we need to "undo" and loaded modules?  Maybe reload defaults?
     singleton_class.include_type_module(typecode)
     self.before_validation_on_create
-    Cardtype.reset_cache
+    Cardtype.cache.reset
     reset_patterns
     true
   end

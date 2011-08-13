@@ -24,14 +24,15 @@ module Wagn
   class Cache
     
     class << self
+      def cache_classes
+        [Card, Cardtype, MultihostMapping, Role, System, User, Wagn::Pattern]        
+      end
+            
       def initialize_on_startup
-        if RAILS_ENV =~ /^cucumber|test$/
-          Card.cache = Wagn::Cache.new
-          preload_cache_for_tests
-        else
-          Card.cache = Wagn::Cache.new Rails.cache
+        cache_classes.each do |cc|
+          cc.cache = Wagn::Cache.new :class=>cc, :store=>(RAILS_ENV =~ /^cucumber|test$/ ? nil : Rails.cache)
         end
-        Card.cache.system_prefix = system_prefix
+        preload_cache_for_tests if preload_cache?
       end
       
       def preload_cache?
@@ -48,13 +49,13 @@ module Wagn
         @@frozen = Marshal.dump([Card.cache, Role.cache])
       end
       
-      def system_prefix
+      def system_prefix(klass)
         cache_env = (RAILS_ENV == 'cucumber') ? 'test' : RAILS_ENV
-        "#{System.host}/#{cache_env}"
+        "#{System.host}/#{cache_env}/#{klass}"
       end
 
       def re_initialize_for_new_request
-        Card.cache.system_prefix = system_prefix
+        Card.cache.system_prefix = system_prefix(Card)
         reset_local unless preload_cache?
       end
 
@@ -72,20 +73,12 @@ module Wagn
       end
 
       def reset_global
-        Card.cache.reset
-        reset_local
+        cache_classes.each{ |cc| cc.cache.reset }
       end
 
       private
       def reset_local
-        User.reset_cache
-        Role.reset_cache
-        Wagn::Pattern.reset_cache
-        Cardtype.reset_cache
-        MultihostMapping.reset_cache
-        
-        Card.cache.reset_local
-        System.reset_cache
+        cache_classes.each{ |cc| cc.cache.reset_local }
       end
 
     end
@@ -93,10 +86,10 @@ module Wagn
     attr_reader :prefix, :store
     attr_accessor :local
 
-    def initialize(store=nil, system_prefix=nil)
-      @store = store
+    def initialize(opts={})
+      @store = opts[:store]
       @local = Hash.new
-      self.system_prefix = system_prefix || Wagn::Cache.system_prefix
+      self.system_prefix = opts[:prefix] || Wagn::Cache.system_prefix(opts[:class])
     end
 
     def system_prefix=(system_prefix)
@@ -126,7 +119,7 @@ module Wagn
       @store.write(@prefix + key, value)  if @store
       value
     end
-
+    
     def write_local key, value
       @local[key] = value
     end

@@ -131,7 +131,7 @@ class Card < ActiveRecord::Base
   def after_save 
     if self.typecode == 'Cardtype'
       Rails.logger.debug "Cardtype after_save resetting"
-      ::Cardtype.reset_cache
+      Cardtype.cache.reset
     end
 #      Rails.logger.debug "Card#after_save end"
     update_attachment

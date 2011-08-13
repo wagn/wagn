@@ -136,7 +136,7 @@ describe Card, "types" do
     Card.fetch('FooRenamed').typecode.should == 'Cardtype'
     Card.fetch('FooRenamed').extension.class_name.should == 'AFoo'
    
-    ::Cardtype.reset_cache
+    Cardtype.cache.reset
     Card.create!(:type=>"FooRenamed",:name=>"testy").typecode.should == 'AFoo'
     Card.create!(:type=>"foo_renamed",:name=>"so testy").typecode.should == 'AFoo'
   end

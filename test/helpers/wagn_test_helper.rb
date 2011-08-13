@@ -6,7 +6,7 @@ module WagnTestHelper
   include CardBuilderMethods
  
   def setup_default_user
-    User.reset_cache
+    User.cache.reset
     
     # FIXME: should login as joe_user by default-- see what havoc it creates...
     @user = User.current_user = User.find_by_login('wagbot')
@@ -54,7 +54,7 @@ module WagnTestHelper
   
 
   def integration_login_as(user)
-    User.reset_cache
+    User.cache.reset
     
     case user.to_s 
       when 'anon'; #do nothing

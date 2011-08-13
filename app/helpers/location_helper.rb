@@ -33,7 +33,7 @@ module LocationHelper
 
   def discard_locations_for(card)
     # quoting necessary because cards have things like "+*" in the names..
-    pattern = /#{Regexp.quote(card.id.to_s)}|#{Regexp.quote(card.key)}|#{Regexp.quote(card.cardname)}/
+    pattern = /#{Regexp.quote(card.id.to_s)}|#{Regexp.quote(card.key)}|#{Regexp.quote(card.name)}/
     while location_history.last =~ pattern
       location_history.pop
     end
@@ -94,7 +94,7 @@ module LocationHelper
   end
 
   def name_in_context(card, context_card)
-    context_card == card ? card.cardname : card.name.gsub(context_card.name, '')
+    context_card == card ? card.name : card.name.gsub(context_card.name, '')
   end
 
   def card_title_span( title )
@@ -119,7 +119,7 @@ module LocationHelper
 
 
   def page_icon(cardname)
-    link_to_page '&nbsp;', cardname, {:class=>'page-icon', :title=>"Go to: #{cardname}"}
+    link_to_page '&nbsp;', cardname, {:class=>'page-icon', :title=>"Go to: #{cardname.to_s}"}
   end
 
   def flexlink( linktype, name, options )

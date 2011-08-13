@@ -140,10 +140,10 @@ module Wagn
         self
       else
         #Rails.logger.info "replace_part #{oldpart == parts[0, oldpart.size]} ? #{newpart.size == oldpart.size} ? #{newpart.inspect} : #{newpart.parts.inspect} #{parts[oldpart.size,].inspect}"
-        #Rails.logger.info "replace_part #{oldpart == parts[0, oldpart.size]} ? #{newpart.size == oldpart.size} ? #{newpart.inspect} : #{(newpart.parts+(parts[oldpart.size].to_a)).inspect}"; r=(
+        #Rails.logger.info "replace_part #{oldpart == parts[0, oldpart.size]} ? #{self.size == oldpart.size} ? #{newpart.inspect} : #{(newpart.parts+(parts[oldpart.size].to_a)).inspect}"; r=(
         oldpart == parts[0, oldpart.size] ?
-          ((newpart.size == oldpart.size) ? newpart :
-                      (newpart.parts+parts[oldpart.size,].to_a).to_cardname) : self
+          ((self.size == oldpart.size) ? newpart :
+                      (newpart.parts+(parts[oldpart.size,].to_a)).to_cardname) : self
         #);Rails.logger.info "replace_part notsimp #{oldpart.inspect}, #{newpart.inspect} > #{r.inspect}"; r
       end
     end

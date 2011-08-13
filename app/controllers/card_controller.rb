@@ -174,11 +174,15 @@ class CardController < ApplicationController
     @card_args = card_args
 
     case
-    when params[:multi_edit]; Card.update(@card.id, :cards=>params[:cards])
+    when params[:multi_edit];
+      Rails.logger.debug "update[#{@card.name}] #{card_args.inspect}"
+      Card.update(@card.id, :cards=>params[:cards])
     when card_args[:type]; @card.typecode=Cardtype.classname_for(card_args.delete(:type)); @card.save
       #can't do this via update attributes: " Can't mass-assign these protected attributes: type"
       #might be addressable via attr_accessors?
-    else;   @card.update_attributes(card_args)
+    else; 
+      Rails.logger.debug "update[#{@card.name}] #{card_args.inspect}"
+      @card.update_attributes(card_args)
     end
 
     if @card.errors.on(:confirmation_required) && @card.errors.map {|e,f| e}.uniq.length==1

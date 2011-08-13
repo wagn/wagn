@@ -12,7 +12,8 @@ module Chunk
     def initialize(match_data, content)
       super
       link_type = :show
-      if self.cardname = (cn=(n=match_data[1]).to_cardname)
+      if name=match_data[1]
+        self.cardname = name.to_cardname
         # matched the [[..(|..)?]]  case, 1=first slot, 3=sencond
         @link_text = match_data[  match_data[2] ? 3 : 1 ]
         Rails.logger.info "Chunk::Link cn:#{cardname.to_s}, #{link_type}, #{link_text}"

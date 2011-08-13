@@ -25,14 +25,14 @@ class Card < ActiveRecord::Base
     if cards
       #Rails.logger.info "after_save Cards:#{cards.inspect}"
       Wagn::Hook.call :before_multi_save, self, cards
-      cards.each_pair do |name, opts|
+      cards.each_pair do |sub_name, opts|
         opts[:content] ||= ""
-        cardname = name.to_cardname.to_absolute_cardname(name)
-        #logger.info "multi update working on #{name}: #{opts.inspect}"
-        if card = Card.fetch(cardname, :skip_virtual=>true)
+        sub_cardname = sub_name.to_cardname.to_absolute_cardname(name)
+        #Rails.logger.info "multi update working on:#{name} #{sub_name}: SN:#{sub_cardname.s}, #{opts.inspect}"
+        if card = Card.fetch(sub_cardname, :skip_virtual=>true)
           card.update_attributes(opts)
         elsif opts[:content].present? and opts[:content].strip.present?
-          opts[:name] = cardname.s
+          opts[:name] = sub_cardname.s
           card = Card.create(opts)
         end
         if card and !card.errors.empty?
@@ -269,9 +269,14 @@ Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
     args[:order] = 'id' unless args.has_key?(:order)
     # aparently find f***s up your args. if you don't clone them, the next find is busted.
     left_junctions.find(:all, args.clone) + right_junctions.find(:all, args.clone)
+    #l=left_junctions.find(:all, args.clone); r= right_junctions.find(:all, args.clone)
+    #Rails.logger.debug "junctions[#{name}] l=#{l.class}, r=#{l.class}; #{(l+r).class}"; l + r
+    #Rails.logger.debug "junctions[#{name}] l=#{l.map(&:name).inspect}, r=#{l.map(&:name).inspect}; #{(l+r).size}"; l + r
   end
 
   def dependents(*args)
+    Rails.logger.info "dependents[#{name}](#{args.inspect}): #{junctions(*args).inspect}"
+    raise "Includes self" if junctions(*args).map(&:name).include?(name)
     return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point.
     junctions(*args).map { |r| [r ] + r.dependents(*args) }.flatten
   end
@@ -380,7 +385,7 @@ Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # METHODS FOR OVERRIDE
 
-  def update_attachment()                 end
+    def update_attachment()                 end
   def post_render( content )     content  end
   def clean_html?()                 true  end
   def collection?()                false  end

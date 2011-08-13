@@ -9,7 +9,8 @@ describe Wagn::Set::Type::Pointer do
     Rails.logger.debug "testing point item"
     p = Card.new(:name=>'foo', :type=>'Pointer', :content=>"[[Busy]]\n[[Body]]")
     Rails.logger.debug "testing point item #{p.inspect}"
-    p.item_names.should == ['Busy', 'Body']
+    names = p.item_names
+    names.should == ['Busy', 'Body']
   end
   
   context "add_item" do

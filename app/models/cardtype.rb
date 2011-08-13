@@ -44,7 +44,7 @@ class Cardtype < ActiveRecord::Base
       classname = classname.to_s
       load_cache_if_empty
       self.cache.read('card_names')[classname] || begin
-        Rails.logger.debug "name_for (#{classname.inspect}) #{self.cache.read('card_names').inspect}"; nil
+        #Rails.logger.debug "name_for (#{classname.inspect}) #{self.cache.read('card_names'.inspect}"; nil
         raise("No card name for class #{classname}") 
       end
     end

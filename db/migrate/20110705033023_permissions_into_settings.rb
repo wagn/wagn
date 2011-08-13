@@ -73,7 +73,7 @@ class PermissionsIntoSettings < ActiveRecord::Migration
 
     puts "creating *right set perms"
     Card.find(:all, :conditions=>"(name like '%*right+*content' or name like '%right+*default') and trash is false").each do |card|
-      next if card.star?
+      next if card.cardname.star?
       base_name = card.name.gsub(/^(.*)\+\*right\+\*(content|default)$/, '\1')
       [:read, :edit, :delete, :comment].each do |task|
         begin
@@ -96,7 +96,7 @@ class PermissionsIntoSettings < ActiveRecord::Migration
       'Grant Application','Meeting','TechNote','ProjectStatus','Company']
     
     Card.find(:all, :conditions=>'tag_id is null and trash is false').each do |card|
-      next if card.star?
+      next if card.cardname.star?
       next if wagn_dot_org && wdo_reserved_list.member?( card.typecode )
       [:read, :edit, :delete, :comment].each do |task|
         begin

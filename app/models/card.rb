@@ -251,7 +251,6 @@ Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
   # FIXME: use delegations and include all cardname functions
   def simple?()     cardname.simple?       end
   def junction?()   cardname.junction?     end
-  def star?()       cardname.star?         end
   def key()         cardname.key           end
   def css_name()    cardname.css_name      end
 

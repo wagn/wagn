@@ -17,8 +17,9 @@ module Wagn::Model
     end
 
     def patterns()
-      @patterns ||= @@subclasses.map { |sub|
-        (n=sub.new(self)).pattern_applies? ? n : nil
+      @patterns = @@subclasses.map { |sub|
+        x=(n=sub.new(self)).pattern_applies? ? n : nil
+      Rails.logger.info "subc[#{n&&n.card&&n.card.name}] #{x.inspect}"; x
       }.compact
       #Rails.logger.info "patterns[#{to_s}] >> #{@patterns.map(&:set_name).inspect}"; @patterns
     end
@@ -200,13 +201,14 @@ raise "doesn't apply" unless pattern_applies?
 
   class SoloPattern < SetBase
       # Why is this in the class scope for all the others, but this one is broken that way?
-      #def label(name)                %{Just "#{cardname.trunk_name.to_s}"}  end
     class << self
       def key()                      '*self'                                end
       def opt_keys()                 [:name]                                end
       def method_key_from_opts(opts) opts[:name].to_cardname.css_name+'_self' end
       
     end
+    
+    def label(name)                   %{Just "#{name.trunk_name}"}           end
     #FIXME!!! we do not want these to stay commented out, but they need to be
     #there so that patterns on builtins can be recognized for now. 
     # soon those cards should actually exist.  Is this now fixed????

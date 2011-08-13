@@ -17,13 +17,16 @@ module Wagn::Model
     end
 
     def patterns()
-      cardname.cardinfo.patterns ||= @@subclasses.map { |sub|
-        (n=sub.new(self)).pattern_applies? ? n : nil
+      @patterns = @@subclasses.map { |sub|
+        x=(n=sub.new(self)).pattern_applies? ? n : nil
+      Rails.logger.info "subc[#{n&&n.card&&n.card.name}] #{x.inspect}"; x
       }.compact
-      #Rails.logger.info "patterns[#{to_s}] >> #{cardname.cardinfo.patterns.map(&:set_name).inspect}"; cardname.cardinfo.patterns
+      #Rails.logger.info "patterns[#{to_s}] >> #{@patterns.map(&:set_name).inspect}"; @patterns
     end
-    def set_names() cardname.cardinfo.set_names ||= patterns.map(&:set_name) end
-    def reset_patterns() cardname.cardinfo.reset_patterns end
+    def set_names()      @set_names ||= patterns.map(&:set_name)   end
+    def reset_patterns()
+      Rails.logger.info "reset_patterns[#{name}]"
+      @junction_only = @patterns = @set_names = nil end
     def real_set_names() patterns.find_all(&:set_card).compact.map(&:set_name)    end
     #def real_set_names()
     #  r = patterns.find_all(&:set_card).compact.map(&:set_name)
@@ -31,8 +34,8 @@ module Wagn::Model
     def method_keys()    @method_keys ||= patterns.map(&:method_key)        end
     def css_names()      patterns.map(&:css_name).reverse*" "               end
     def junction_only?()
-      !cardname.cardinfo.junction_only.nil? ? cardname.cardinfo.junction_only :
-         cardname.cardinfo.junction_only = patterns.map(&:class).find(&:junction_only?)
+      !@junction_only.nil? ? @junction_only :
+         @junction_only = patterns.map(&:class).find(&:junction_only?)
     end
 
     def label(nm='')
@@ -198,13 +201,14 @@ raise "doesn't apply" unless pattern_applies?
 
   class SoloPattern < SetBase
       # Why is this in the class scope for all the others, but this one is broken that way?
-      #def label(name)                %{Just "#{cardname.trunk_name.to_s}"}  end
     class << self
       def key()                      '*self'                                end
       def opt_keys()                 [:name]                                end
       def method_key_from_opts(opts) opts[:name].to_cardname.css_name+'_self' end
       
     end
+    
+    def label(name)                   %{Just "#{name.trunk_name}"}           end
     #FIXME!!! we do not want these to stay commented out, but they need to be
     #there so that patterns on builtins can be recognized for now. 
     # soon those cards should actually exist.  Is this now fixed????

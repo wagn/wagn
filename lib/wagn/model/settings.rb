@@ -22,7 +22,7 @@ module Wagn::Model::Settings
         return setting_cd
       end
     end
-    Rails.logger.info "setting_card, NF(#{setting_name}, #{fallback}) #{name.inspect}"
+    Rails.logger.info "setting_card, NF #{name.inspect}"
     return nil
   end
 

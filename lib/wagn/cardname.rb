@@ -22,7 +22,6 @@ module Wagn
     FORMAL_JOINT = " <span class=\"wiki-joint\">#{JOINT}</span> "
 
     attr_reader :s, :simple, :parts, :key
-    attr_accessor :cardinfo
 
     def self.new(obj)
       return obj if Cardname===obj
@@ -105,22 +104,10 @@ module Wagn
     end
 
     def key()
-      @key ||= begin
-          keyname = simple? ? Wagn::Cardname.simple_to_key(s) :
-            parts.map(&:to_cardname).reject(&:blank?).map(&:key) * JOINT
-
-          self.cardinfo = if loaded = CARDNAMES[keyname] and
-                        loaded.instance_variable_defined?(:@cardinfo)
-                       loaded.cardinfo()
-                       ( CARDNAMES[keyname] = self.s == keyname ?
-                                  self : keyname.to_cardname ).cardinfo()
-                     end
-          keyname
-        end
+      @key ||= simple? ? Wagn::Cardname.simple_to_key(s) :
+        parts.map(&:to_cardname).reject(&:blank?).map(&:key) * JOINT
     end
     alias to_key key
-
-    def cardinfo() @cardinfo ||= CardInfo.new(:name=>s) end
 
     def inspect()
       "S(#{simple.inspect})#{(simple or simple.nil?) ? s.inspect : parts.inspect}"
@@ -152,9 +139,12 @@ module Wagn
       elsif simple?
         self
       else
+        #Rails.logger.info "replace_part #{oldpart == parts[0, oldpart.size]} ? #{newpart.size == oldpart.size} ? #{newpart.inspect} : #{newpart.parts.inspect} #{parts[oldpart.size,].inspect}"
+        #Rails.logger.info "replace_part #{oldpart == parts[0, oldpart.size]} ? #{newpart.size == oldpart.size} ? #{newpart.inspect} : #{(newpart.parts+(parts[oldpart.size].to_a)).inspect}"; r=(
         oldpart == parts[0, oldpart.size] ?
           ((newpart.size == oldpart.size) ? newpart :
                       (newpart.parts+parts[oldpart.size,].to_a).to_cardname) : self
+        #);Rails.logger.info "replace_part notsimp #{oldpart.inspect}, #{newpart.inspect} > #{r.inspect}"; r
       end
     end
 
@@ -164,10 +154,11 @@ module Wagn
     def tripple?()    size > 2                                         end
     def left_name()   simple? ? nil  : self.class.new(parts[0..-2])    end
     def trunk_name()  simple? ? self : self.class.new(parts[0..-2])    end
+      #Rails.logger.info "trunk_name(#{to_str})[#{to_s}] #{r.to_s}"; r
     alias particle_names parts
 
     def module_name() s.gsub(/^\*/,'X_').gsub(/[\b\s]+/,'_').camelcase end
-    def css_name()    key.gsub('*','X').gsub('+','-')                  end
+    def css_name() key.gsub('*','X').gsub('+','-')                     end
     def to_star()     star? ? s : '*'+s                                end
     def star?()       simple? and !!(s=~/^\*/)                         end
     def tag_star?()   !!((simple? ? self : parts[-1])=~/^\*/)          end
@@ -220,11 +211,10 @@ module Wagn
     #def strip() s==s.strip ? s : initialize(s) end
     def _to_absolute(context)
       context = context.to_cardname
-      Rails.logger.info "_to_absolute(#{context.inspect}) #{self}"
+      #Rails.logger.info "_to_absolute(#{context.inspect}) #{self}"
       # Trailing + won't give a last part if it is empty.
       #pts = s =~ /\+$/ ? parts : (s+' ').to_cardname.parts
       #Rails.logger.info "_to_absolute(#{inspect}, #{context.inspect}) #{pts.inspect}"
-      r=
       parts.map do |part|
         #Rails.logger.info "to_abs part(#{part.s.inspect})"
         new_part = case part
@@ -249,44 +239,6 @@ module Wagn
         end.to_s.strip
         new_part.blank? ? context.to_s : new_part
       end * JOINT #.to_cardname
-      Rails.logger.info "absolute! #{r.inspect}"; r
-    end
-  end
-
-  class CardInfo
-    #
-    # Cardname makes sure there is at most one of these for any cardname key,
-    #   so this is where we can cache name and pattern related objects for
-    #   speed.
-    #
-    # Clearing pattern cache:
-    #     When you change a name, you have to make a "new" cardname, and it
-    #     will be found in CARDNAMES.  If it is first found under the card's
-    #     key, it will copy CARDNAMES[key].cardinfo to CARDNAMES[name].cardinfo,
-    #     and if neither exist, it creates a new CardInfo object.
-    #
-    #     The CardInfo object also holds the typename so that it can construct
-    #     type and name based set names, and so the pattern information can be
-    #     invalidated if the type changes.  The is accomplished in set_typecode
-    #     of attribute_tracking by calling CardInfo#reset_patterns.
-    #
-    #     No, if you create or delete a rule card, that is <Set Name>+<Setting>
-    #     you can generate the set of names that could be effected, and if they
-    #     exist in CARDNAMES, clear the patterns for that card.  Alternately,
-    #     we may store timestamps to tell us on pattern search when entries are
-    #     stale because of namespace changes.
-    #
-
-    attr_accessor :key, :card_id, :typename, :name, :patterns, :junction_only,
-      :set_names
-
-    def initialize(args)
-      args.keys do |k| instance_variable_set(k, args[k]) end
-    end
-
-    def reset_patterns()
-      Rails.logger.info "reset_patterns[#{name}]"
-      junction_only = patterns = set_names = nil
     end
   end
 end

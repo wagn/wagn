@@ -92,15 +92,18 @@ describe RestCardController do
     end
    
     it "redirects to thanks if present" do
-      Card.create :name=>"*all+*thanks", :content=>"/thank_you"
+      
+      User.as(:wagbot) { Card.create :name=>"*all+*thanks", :content=>"/thank_you" }
       post :create, "card" => { "name" => "Wombly" }
       assert_template "ajax_redirect"
       assigns["redirect_location"].should == "/thank_you"
     end
 
     it "redirects to card if thanks is blank" do
-      Card.create! :name=>"*all+*thanks", :content=>"/thank_you"
-      Card.create! :name=>"boop+*right+*thanks", :content=>""
+      User.as(:wagbot) do
+        Card.create! :name=>"*all+*thanks", :content=>"/thank_you"
+        Card.create! :name=>"boop+*right+*thanks", :content=>""
+      end
       post :create, "card" => { "name" => "Joe+boop" }
       assert_template "ajax_redirect"
       assigns["redirect_location"].should ==  "/wagn/Joe+boop"

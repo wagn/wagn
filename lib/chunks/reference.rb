@@ -8,14 +8,12 @@ module Chunk
     
     def cardname=(name)
       return @cardname=nil unless name
-      r=@cardname = name.to_cardname
-      Rails.logger.info "cardname=(#{name.inspect}) #{r.inspect}"; r
+      @cardname = name.to_cardname
     end
 
     def refcardname()
-      Rails.logger.info "refcardname() #{cardname.inspect}"
-      r=cardname && self.cardname = cardname._to_absolute(base_card.cardname).to_cardname
-      Rails.logger.info "refcardname() #{cardname} > #{r.inspect}"; r
+      #Rails.logger.info "refcardname() #{cardname.inspect}"
+      cardname && self.cardname = cardname.to_absolute(base_card.cardname).to_cardname
     end
     
     def refcard()

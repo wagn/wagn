@@ -178,7 +178,7 @@ module Wagn
 
     def to_show(absolute)
       (self =~/\b_(left|right|whole|self|user|\d+|L*R?)\b/) ?
-         _to_absolute(absolute) : self
+         to_absolute(absolute) : self
     end
 
     def escapeHTML(args)
@@ -186,41 +186,34 @@ module Wagn
     end
 
     def fullname(context, base, args)
-      #Rails.logger.info "fullname s(#{inspect}, #{context.inspect}, #{base.inspect}, #{args.inspect})"
       context = case
           when base; (base.respond_to?(:cardname) ? base.cardname :
                       base.respond_to?(:name) ? base.name : base)
           when args[:base]=='parent'; context.left_name
           else context
-          end
-      #r= context and context.to_cardname.to_absolute( (context||self).escapeHTML(args) )
-      r= to_absolute( context||self )    #.escapeHTML(args)
-      #Rails.logger.info "fullname(#{inspect}, #{context}, esc:#{context.escapeHTML(args).inspect}, Args:#{args.inspect})\nR=#{r.inspect}"; r
+          end.to_cardname
+      Rails.logger.info "fullname s(#{inspect}, #{context.inspect}, #{base.inspect}, #{args.inspect})"
+      to_absolute( context||self )
     end
 
-    def to_absolute_cardname(rel_name=nil)
-      rel_name = (rel_name || self.s).to_cardname
-      rel_name._to_absolute(self).to_cardname
+    def to_absolute_name(rel_name=nil)
+      (rel_name || self.s).to_cardname.to_absolute(self)
     end
 
     def nth_left(n)
       (n >= size ? parts[0] : parts[0..-n-1]).to_cardname
     end
 
-    def to_absolute(context) _to_absolute(context).to_s end
-    #def strip() s==s.strip ? s : initialize(s) end
-    def _to_absolute(context)
+    def to_absolute(context)
       context = context.to_cardname
-      #Rails.logger.info "_to_absolute(#{context.inspect}) #{self}"
-      # Trailing + won't give a last part if it is empty.
-      #pts = s =~ /\+$/ ? parts : (s+' ').to_cardname.parts
-      #Rails.logger.info "_to_absolute(#{inspect}, #{context.inspect}) #{pts.inspect}"
+      Rails.logger.info "to_absolute(#{inspect}, #{context.inspect}) T:#{Kernel.caller[0,8]*"\n"}"
       parts.map do |part|
-        #Rails.logger.info "to_abs part(#{part.s.inspect})"
+        Rails.logger.info "to_abs part(#{part})"
         new_part = case part
+when /^_card$/i; raise "_card should already be processed";
           when /^_user$/i;  (user=User.current_user) ? user.cardname : part
           when /^(_self|_whole|_)$/i; context
-        #Rails.logger.info "to_abs _self(#{context.inspect})"; context
+        Rails.logger.info "to_abs _self(#{context.inspect})"; context
           when /^_left$/i;            context.trunk_name
         #Rails.logger.info "to_abs _left(#{context.trunk_name.inspect})"; context.trunk_name
           when /^_right$/i;           context.tag_name
@@ -238,7 +231,7 @@ module Wagn
           else                     part
         end.to_s.strip
         new_part.blank? ? context.to_s : new_part
-      end * JOINT #.to_cardname
+      end * JOINT
     end
   end
 end

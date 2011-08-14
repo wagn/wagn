@@ -28,7 +28,7 @@ class Card < ActiveRecord::Base
       cards.each_pair do |sub_name, opts|
         opts[:content] ||= ""
         sub_name = sub_name.gsub('~plus~','+')
-        sub_cardname = cardname.to_absolute_cardname(sub_name)
+        sub_cardname = cardname.to_absolute_name(sub_name)
         Rails.logger.info "multi update working on:#{name} #{sub_name}: SN:#{sub_cardname.s}, #{opts.inspect}"
         if card = Card.fetch(sub_cardname, :skip_virtual=>true)
           card.update_attributes(opts)

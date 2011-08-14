@@ -346,9 +346,9 @@ module Wagn
   
       options[:home_view] = options[:view] ||= context == 'layout_0' ? :naked : :content
       tname = tname.to_cardname
-      Rails.logger.debug "fullname [#{tname.inspect}](#{card&&card.name||card.inspect}, #{base.inspect}, #{options.inspect}"
       options[:fullname] = fullname = tname.fullname(card.cardname, base, options)
       options[:showname] = tname.to_show(fullname)
+      Rails.logger.debug "fullname [#{tname.inspect}](#{card&&card.name||card.inspect}, #{base.inspect}, #{options.inspect}"
   
       tcard ||= begin
         case
@@ -418,7 +418,8 @@ module Wagn
     end
   
     def get_inclusion_content(cardname)
-      content = relative_content[cardname.gsub(/\+/,'_')]
+      Rails.logger.debug "get_inclusion_content(#{cardname.inspect})"
+      content = relative_content[cardname.to_s.gsub(/\+/,'_')]
   
       # CLEANME This is a hack to get it so plus cards re-populate on failed signups
       if relative_content['cards'] and card_params = relative_content['cards'][cardname.pre_cgi]
@@ -433,6 +434,7 @@ module Wagn
       if content=get_inclusion_content(options[:tname])
         args[:content]=content
       end
+      Rails.logger.debug "new_inclusion_card_args #{tname.inspect}, #{options.inspect}, #{args.inspect}"
       args
     end
   

@@ -68,7 +68,13 @@ describe Card do
     end
     
     it "returns pointer-specific setting names for pointer card (*type)" do
+      # was this test wrong before?  What made Fruit a pointer without this?
+      User.as :wagbot do
+        Card.create! :name=>'Fruit+*type+*default', :type=>'Pointer'
+      end
       snbg = Card.fetch('Fruit+*type').setting_names_by_group
+      snbg[:edit].map(&:to_s).should == @pointer_settings
+      snbg = Card.fetch('Pointer+*type').setting_names_by_group
       snbg[:edit].map(&:to_s).should == @pointer_settings
     end
 

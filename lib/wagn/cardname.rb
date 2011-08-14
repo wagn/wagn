@@ -185,15 +185,15 @@ module Wagn
       args ? parts.map { |p| p =~ /^_/ and args[p] ? args[p] : p }*JOINT : self
     end
 
-    def fullname(context, base, args)
+    def fullname(context, base, args, params)
       context = case
           when base; (base.respond_to?(:cardname) ? base.cardname :
                       base.respond_to?(:name) ? base.name : base)
           when args[:base]=='parent'; context.left_name
           else context
           end.to_cardname
-      Rails.logger.info "fullname s(#{inspect}, #{context.inspect}, #{base.inspect}, #{args.inspect})"
-      to_absolute( context||self )
+      #Rails.logger.info "fullname s(#{inspect}, #{context.inspect}, #{base.inspect}, #{args.inspect}) P:#{params.inspect}"
+      to_absolute( context||self, params )
     end
 
     def to_absolute_name(rel_name=nil)
@@ -204,16 +204,15 @@ module Wagn
       (n >= size ? parts[0] : parts[0..-n-1]).to_cardname
     end
 
-    def to_absolute(context)
+    def to_absolute(context, params=nil)
       context = context.to_cardname
-      Rails.logger.info "to_absolute(#{inspect}, #{context.inspect}) T:#{Kernel.caller[0,8]*"\n"}"
+      #Rails.logger.info "to_absolute(#{inspect}, #{context.inspect}, #{params.inspect}) T:#{Kernel.caller[0,8]*"\n"}"
       parts.map do |part|
-        Rails.logger.info "to_abs part(#{part})"
+        #Rails.logger.info "to_abs part(#{part}) #{!!(part =~ /^_/)}, #{params&&params[part]}"
         new_part = case part
-when /^_card$/i; raise "_card should already be processed";
           when /^_user$/i;  (user=User.current_user) ? user.cardname : part
           when /^(_self|_whole|_)$/i; context
-        Rails.logger.info "to_abs _self(#{context.inspect})"; context
+        #Rails.logger.info "to_abs _self(#{context.inspect})"; context
           when /^_left$/i;            context.trunk_name
         #Rails.logger.info "to_abs _left(#{context.trunk_name.inspect})"; context.trunk_name
           when /^_right$/i;           context.tag_name
@@ -228,6 +227,8 @@ when /^_card$/i; raise "_card should already be processed";
             trunk = context.nth_left(l_s)
             r= r_s ? trunk.to_s : trunk.tag_name
             #Rails.logger.debug "_LR(#{l_s}, #{r_s}) TR:#{trunk}, R:#{r}"; r
+          when /^_/
+            (params && ppart = params[part]) ? CGI.escapeHTML( ppart ) : part
           else                     part
         end.to_s.strip
         new_part.blank? ? context.to_s : new_part

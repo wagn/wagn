@@ -29,11 +29,11 @@ class Card < ActiveRecord::Base
         opts[:content] ||= ""
         sub_name = sub_name.gsub('~plus~','+')
         sub_cardname = cardname.to_absolute_name(sub_name)
-        Rails.logger.info "multi update working on:#{name} #{sub_name}: SN:#{sub_cardname.s}, #{opts.inspect}"
+        #Rails.logger.info "multi update working on:#{name} #{sub_name}: SN:#{sub_cardname}, #{opts.inspect}"
         if card = Card.fetch(sub_cardname, :skip_virtual=>true)
           card.update_attributes(opts)
         elsif opts[:content].present? and opts[:content].strip.present?
-          opts[:name] = sub_cardname.s
+          opts[:name] = sub_cardname
           card = Card.create(opts)
         end
         if card and !card.errors.empty?

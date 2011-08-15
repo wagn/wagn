@@ -33,8 +33,8 @@ class MultihostMapping < ActiveRecord::Base
     def set_connection(wagn_name)
       ActiveRecord::Base.connection.schema_search_path = wagn_name
     end
-    
-    reset_cache
   end
+    
+  reset_cache
 end
 

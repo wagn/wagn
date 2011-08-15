@@ -55,7 +55,9 @@ module Wagn
       end
 
       def re_initialize_for_new_request
-        Card.cache.system_prefix = system_prefix(Card)
+        cache_classes.each do |cc|
+          cc.cache.system_prefix = system_prefix(cc)
+        end
         reset_local unless preload_cache?
       end
 

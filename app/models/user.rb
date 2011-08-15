@@ -83,7 +83,15 @@ class User < ActiveRecord::Base
     end    
     
     def [](key)
-      self.cache.read(key.to_s) || self.cache.write(key.to_s, (Integer===key ? find(key) : find_by_login(key.to_s)))
+      #Rails.logger.info "Looking up USER[ #{key}]"
+      self.cache.read(key.to_s) || self.cache.write(key.to_s, begin
+        usr = Integer===key ? find(key) : find_by_login(key.to_s)
+        if usr #preload to be sure these get cached.
+          usr.card
+          usr.read_rule_ids
+        end
+        usr
+      end)
     end
 
     def no_logins?
@@ -112,6 +120,8 @@ class User < ActiveRecord::Base
   end
   
   def read_rule_ids
+    #Rails.logger.debug "Looking up #READ_RULE_IDS"
+    return [] if self.login=='wagbot'  # avoids infinite loop
     @read_rule_ids ||= begin
       party_keys = ['in'] + parties
       self.class.as(:wagbot) do

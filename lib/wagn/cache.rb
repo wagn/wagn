@@ -109,14 +109,16 @@ module Wagn
       return @local[key] unless @store
       fetch_local(key) do
         #        Marshal.load(@store.read(@prefix + key))
-        @store.read(@prefix + key)
+        res = @store.read(@prefix + key)
+#        Rails.logger.info "Looking up #{key} in #{@store}.   result = #{res.inspect}"
+#        res
       end
     end
 
     def write key, value
       self.write_local(key, value)
       #@store.write(@prefix + key, Marshal.dump(value))  if @store
-      @store.write(@prefix + key, value)  if @store
+      @store.write(@prefix + key, value) if @store
       value
     end
     

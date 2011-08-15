@@ -337,11 +337,9 @@ describe Wagn::Renderer::Xml, "" do
 
     context "Search" do
       it "should wrap search items with correct view class" do
-        Rails.logger.info "failing 0"
         Card.create :type=>'Search', :name=>'Asearch', :content=>%{{"type":"User"}}        
 
         c=render_content("{{Asearch|naked;item:name}}")
-        Rails.logger.info "failing #{c.inspect}"
         c.should match('search-result-item item-name')
         render_content("{{Asearch|naked;item:open}}").should match('search-result-item item-open')
         render_content("{{Asearch|naked}}").should match('search-result-item item-closed')

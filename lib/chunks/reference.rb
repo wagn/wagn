@@ -25,7 +25,6 @@ module Chunk
     end
 
     def render_link()
-      Rails.logger.debug "rl calls build_link(#{refcardname.inspect}, #{self.link_text.inspect})"
       @content.renderer.build_link(refcardname, self.link_text)
     end
 

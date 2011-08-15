@@ -38,13 +38,9 @@ class Card::BaseTest < ActiveSupport::TestCase
   #end
 
   def test_create
-    Rails.logger.info "failing basics"
     alpha = Card.new :name=>'alpha', :content=>'alpha'
-    Rails.logger.info "failing basics"
     assert_equal 'alpha', alpha.content
-    Rails.logger.info "failing basics"
     alpha.save
-    Rails.logger.info "failing basics"
     assert alpha.name
     assert_stable(alpha)
   end
@@ -72,11 +68,8 @@ class Card::BaseTest < ActiveSupport::TestCase
   def test_update_should_create_subcards
     User.current_user = :joe_user
     User.as(:joe_user) do
-      Rails.logger.info "testing point 0"
       b = Card.create!( :name=>'Banana' )
-      Rails.logger.info "testing point 1"
       Card.update(b.id, :cards=>{ "+peel" => { :content => "yellow" }})
-      Rails.logger.info "testing point 2"
       assert_equal "yellow", Card["Banana+peel"].content   
       assert_equal User[:joe_user].id, Card["Banana+peel"].created_by
     end
@@ -120,7 +113,6 @@ class Card::BaseTest < ActiveSupport::TestCase
   
   def assert_simple_card( card )
     assert !card.name.nil?, "name not null"
-    Rails.logger.info "failing empty? #{card.inspect}, #{card.name}, #{card.name.inspect}"
     assert !card.name.empty?, "name not empty"
     rev = card.current_revision
     assert_instance_of Revision, rev

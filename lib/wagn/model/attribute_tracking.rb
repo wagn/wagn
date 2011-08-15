@@ -70,10 +70,10 @@ module Wagn::Model::AttributeTracking
           #warn "define= #{code}"
         end
 
+             #Rails.logger.debug "#{field}= "+val.to_s
         class_eval (code = %{
           def #{field}_with_tracking=(val)
              return if (!self.new_record? && self.#{field} == val)
-             Rails.logger.debug "#{field}= "+val.to_s
              updates.add :#{field}, val
           end
           alias_method_chain :#{field}=, :tracking

@@ -111,9 +111,9 @@ class CardController < ApplicationController
   def create
     if card_params = params[:card]
       raise "why? #{Kernel.caller*"\n"}" if card_params[:cards]
-      Rails.logger.info "controller create1 #{card_params.inspect}"
+      #Rails.logger.info "controller create1 #{card_params.inspect}"
       params[:multi_edit] and card_params[:cards] = params[:cards]
-      Rails.logger.info "controller create #{card_params.inspect}"
+      #Rails.logger.info "controller create #{card_params.inspect}"
       @card = Card.create card_params
     else
       raise "No card parameters on create"
@@ -160,7 +160,7 @@ class CardController < ApplicationController
     #fail "card params required" unless params[:card] or params[:cards]
 
     # ~~~ REFACTOR! -- this conflict management handling is sloppy
-    Rails.logger.debug "update set current_revision #{@card.name}, #{@card.current_revision}"
+    #Rails.logger.debug "update set current_revision #{@card.name}, #{@card.current_revision}"
     @current_revision_id = @card.current_revision.id
     old_revision_id = card_args.delete(:current_revision_id) || @current_revision_id
     if old_revision_id.to_i != @current_revision_id.to_i
@@ -175,13 +175,13 @@ class CardController < ApplicationController
 
     case
     when params[:multi_edit];
-      Rails.logger.debug "update[#{@card.name}] #{card_args.inspect}"
+      #Rails.logger.debug "update[#{@card.name}] #{card_args.inspect}"
       Card.update(@card.id, :cards=>params[:cards])
     when card_args[:type]; @card.typecode=Cardtype.classname_for(card_args.delete(:type)); @card.save
       #can't do this via update attributes: " Can't mass-assign these protected attributes: type"
       #might be addressable via attr_accessors?
     else; 
-      Rails.logger.debug "update[#{@card.name}] #{card_args.inspect}"
+      #Rails.logger.debug "update[#{@card.name}] #{card_args.inspect}"
       @card.update_attributes(card_args)
     end
 

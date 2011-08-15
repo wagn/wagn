@@ -83,7 +83,6 @@ describe Card do
         card = Card.fetch("a+y")
         card.virtual?.should be_false
         card.content.should == "DB Content"
-        Rails.logger.info "testing point 1 #{card}"
         card.setting('content').should == "Formatted Content"
       end
 
@@ -93,7 +92,6 @@ describe Card do
         Card.fetch("a+y").destroy!
 
         card = Card.fetch("a+y")
-      Rails.logger.info "testing point 2 #{card}"
         card.virtual?.should be_true
         card.content.should == "Formatted Content"
       end
@@ -101,7 +99,6 @@ describe Card do
       it "should recognize pattern overrides" do
         Card.create!(:name => "y+*right+*content", :content => "Right Content")
         card = Card.fetch("a+y")
-      Rails.logger.info "testing point 3 #{card}"
         card.virtual?.should be_true
         card.content.should == "Right Content"
         tpr = Card.create!(:name => "Basic+y+*type plus right+*content", :content => "Type Plus Right Content")

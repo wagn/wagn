@@ -267,10 +267,8 @@ describe Wagn::Renderer, "" do
       end
 
       it "should default to naked view for non-main inclusions when context is layout_0" do
-Rails.logger.info "layout_card content"
         @layout_card.content = "Hi {{A}}"
         @layout_card.save
-Rails.logger.info "layout_card content #{@layout_card.content}"
         Wagn::Renderer.new(@main_card).render(:layout).should match('Hi Alpha')
       end
 

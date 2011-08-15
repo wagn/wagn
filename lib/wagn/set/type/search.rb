@@ -10,14 +10,14 @@ module Wagn::Set::Type::Search
     raise("OH NO.. no limit") unless s[:limit]
     # forces explicit limiting
     # can be 0 or less to force no limit
-    Rails.logger.debug "search item_cards #{params.inspect}"
+    #Rails.logger.debug "search item_cards #{params.inspect}"
     Card.search( s )
   end
 
   def item_names(params={})
     ## FIXME - this should just alter the spec to have it return name rather than instantiating all the cards!!  
     ## (but need to handle prepend/append)
-    Rails.logger.debug "search item_names #{params.inspect}"
+    #Rails.logger.debug "search item_names #{params.inspect}"
     Card.search(spec(params)).map{ |card| card.cardname}
   end
 

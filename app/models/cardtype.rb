@@ -5,7 +5,7 @@ class Cardtype < ActiveRecord::Base
   
   class << self
     def load_cache
-      Rails.logger.debug "load_cardtype_cache"
+      #Rails.logger.debug "load_cardtype_cache"
       c = {}
       c[:card_keys  ] = {}
       c[:card_names ] = {}

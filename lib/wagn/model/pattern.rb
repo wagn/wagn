@@ -25,12 +25,9 @@ module Wagn::Model
     end
     def set_names()      @set_names ||= patterns.map(&:set_name)   end
     def reset_patterns()
-      Rails.logger.info "reset_patterns[#{name}]"
+      Rails.logger.debug "reset_patterns[#{name}]"
       @junction_only = @patterns = @set_names = nil end
     def real_set_names() patterns.find_all(&:set_card).compact.map(&:set_name)    end
-    #def real_set_names()
-    #  r = patterns.find_all(&:set_card).compact.map(&:set_name)
-    #  Rails.logger.info "Pats: #{set_names*" "} RSN #{r.map(&:to_s)*' '}"; r end
     def method_keys()    @method_keys ||= patterns.map(&:method_key)        end
     def css_names()      patterns.map(&:css_name).reverse*" "               end
     def junction_only?()
@@ -40,12 +37,7 @@ module Wagn::Model
 
     def label(nm='')
       tag = cardname.tag_name.to_s
-      found = patterns.find { |pat|
-        Rails.logger.info "label search ... #{pat} #{name}: #{tag} :: #{pat.class.key}"
-        tag==pat.class.key
-      }
-      Rails.logger.info "found label(#{name.inspect}) #{found.inspect}"
-      Rails.logger.info "found label #{found and found.label(name)}"
+      found = patterns.find { |pat| tag==pat.class.key }
       found and found.label(name)
     end
   end

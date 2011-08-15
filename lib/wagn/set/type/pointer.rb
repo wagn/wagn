@@ -4,12 +4,9 @@ module Wagn::Set::Type::Pointer
 
   def item_cards( args={} )
     if args[:complete]
-    Rails.logger.debug "itemcards C #{name}"
       Wql.new({:referred_to_by=>name}.merge(args)).run
     else
-    Rails.logger.debug "itemcards #{name}"
       item_names(args).map {|name|
-    Rails.logger.debug "itemcards #{name.inspect}"
         Card.fetch_or_new(name, :skip_defaults=>true) }.compact
     end
   end
@@ -22,7 +19,7 @@ module Wagn::Set::Type::Pointer
       r=context==:raw ? link : link.to_cardname.to_absolute(context)
       #Rails.logger.debug "itemR Link#{name.inspect}, #{link.inspect} > #{r.inspect}"; r
     }
-      Rails.logger.debug "items Lines #{name.inspect}, #{links.inspect}"; links
+      #Rails.logger.debug "items Lines #{name.inspect}, #{links.inspect}"; links
   end
 
   def item_type
@@ -32,28 +29,19 @@ module Wagn::Set::Type::Pointer
   end
 
   def add_item( cardname )
-    Rails.logger.debug "add_item #{cardname.inspect}, #{item_names.inspect}"
-    r=
     unless item_names.include? cardname
       self.content = (item_names + [cardname]).reject{|x|x.blank?}.map{|x|
-        xr="[[#{x}]]"
-        Rails.logger.info "add_item gen [#{cardname.to_s}] #{x}, #{xr.inspect}"; xr
+        "[[#{x}]]"
       }.join("\n")
       save!
     end
-    Rails.logger.debug "add_item #{cardname.inspect}, #{item_names.inspect} > #{r.inspect}"; r
   end 
                                 
   def drop_item( cardname ) 
-    Rails.logger.debug "drop_item #{cardname.inspect}, #{item_names.inspect}"
     if item_names.include? cardname
       self.content = (item_names - [cardname]).map{|x| "[[#{x}]]"}*"\n"
-      #r1= (item_names - [cardname]); r2=r1.map{|x| "[[#{x}]]"}; r3=r2*"\n"
-      #Rails.logger.debug "drop_item #{r1.inspect}, #{r2.inspect} :: #{r3.inspect}"; self.content = r3
       save!
-      #Rails.logger.debug "drop_item #{r4.inspect}"
     end
-    Rails.logger.debug "drop_item #{cardname.inspect}, #{item_names.inspect} > #{self.content.inspect}"
   end
   
   def options_card

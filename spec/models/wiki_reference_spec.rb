@@ -12,8 +12,6 @@ describe "WikiReference" do
     it "on templatee creation" do
       Card.create! :name=>"JoeForm", :type=>'UserForm'
       Wagn::Renderer.new(Card["JoeForm"]).render(:naked)
-      Rails.logger.info "testing point #{(oref=Card["JoeForm"].out_references).inspect}"
-      Rails.logger.info ">>#{oref.plot(:referenced_name).inspect}"
       assert_equal ["joe_form+age", "joe_form+description", "joe_form+name"],
         Card["JoeForm"].out_references.plot(:referenced_name).sort
       Card["JoeForm"].references_expired.should_not == true

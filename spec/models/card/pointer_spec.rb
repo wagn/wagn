@@ -6,9 +6,7 @@ describe Wagn::Set::Type::Pointer do
   end
   
   context "item_names" do
-    Rails.logger.debug "testing point item"
     p = Card.new(:name=>'foo', :type=>'Pointer', :content=>"[[Busy]]\n[[Body]]")
-    Rails.logger.debug "testing point item #{p.inspect}"
     names = p.item_names
     names.should == ['Busy', 'Body']
   end
@@ -16,9 +14,7 @@ describe Wagn::Set::Type::Pointer do
   context "add_item" do
     it "add to empty ref list" do
       @pointer = Card.new :name=>"tp", :type=>"pointer", :content=>""
-      Rails.logger.debug "testing point add_item #{@pointer.inspect}"
       @pointer.add_item "John"
-      Rails.logger.debug "testing point add_item #{@pointer.content.inspect}"
       assert_equal "[[John]]", @pointer.content
     end
 

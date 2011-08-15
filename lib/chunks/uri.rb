@@ -104,7 +104,7 @@ class URIChunk < Chunk::Abstract
     @suspicious_preceding_character = match_data[1]
     @original_scheme, @user, @host, @port, @path, @query, @fragment = match_data[2..-1]
     treat_trailing_character
-    Rails.logger.debug "uri_link #{@link_text} U:#{self.uri}"
+    #Rails.logger.debug "uri_link #{@link_text} U:#{self.uri}"
     @unmask_text = "#{@content.renderer.build_link(self.uri,@link_text)}#{@trailing_punctuation}"
   end
 

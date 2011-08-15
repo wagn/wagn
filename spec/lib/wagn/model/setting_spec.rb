@@ -20,11 +20,8 @@ describe Card do
     
     it "retrieves default values" do
       Card.create :name => "all Basic cards", :type => "Set", :content => "{\"type\": \"Basic\"}"  #defaults should work when other Sets are present
-      Rails.logger.info "testing point 1"
       assert c=Card.create(:name => "*all+*add help", :content => "lobotomize")
-      Rails.logger.info "testing point 2 #{c}, #{c.missing?}, #{c.inspect}"
       Card.default_setting('add help', 'edit help').should == "lobotomize"
-      Rails.logger.info "testing point 3"
       Card.new( :type => "Basic" ).setting('add help', 'edit help').should == "lobotomize"
     end                                                                 
     

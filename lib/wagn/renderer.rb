@@ -274,7 +274,7 @@ module Wagn
       options = {} # do I need any? #args.last.is_a?(Hash) ? args.pop : {}
       block = Proc.new {}
       builder = options[:builder] || ActionView::Base.default_form_builder
-      Rails.logger.debug "form_for_multi #{card.name}, #{root.card.name}, #{root.card.new_record?}"
+      #Rails.logger.debug "form_for_multi #{card.name}, #{root.card.name}, #{root.card.new_record?}"
       card.name = card.name.gsub(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_record?  ##FIXME -- need to match other relative inclusions.
       fields_for = builder.new("cards[#{card.cardname.pre_cgi}]", card, template, options, block)
     end
@@ -312,7 +312,7 @@ module Wagn
           link_bound = chunk.cardname == chunk.link_text
           chunk.cardname = chunk.cardname.replace_part(old_name, new_name)
           chunk.link_text=chunk.cardname.to_s if link_bound
-          Rails.logger.info "repl ref: #{chunk.cardname.to_s}, #{link_bound}, #{chunk.link_text}"
+          #Rails.logger.info "repl ref: #{chunk.cardname.to_s}, #{link_bound}, #{chunk.link_text}"
         end
       end
   
@@ -348,7 +348,7 @@ module Wagn
       tname = tname.to_cardname
       options[:fullname] = fullname = tname.fullname(card.cardname, base, options, params)
       options[:showname] = tname.to_show(fullname)
-      Rails.logger.debug "fullname [#{tname.inspect}](#{card&&card.name||card.inspect}, #{base.inspect}, #{options.inspect}"
+      #Rails.logger.debug "fullname [#{tname.inspect}](#{card&&card.name||card.inspect}, #{base.inspect}, #{options.inspect}"
   
       tcard ||= begin
         case
@@ -418,7 +418,7 @@ module Wagn
     end
   
     def get_inclusion_content(cardname)
-      Rails.logger.debug "get_inclusion_content(#{cardname.inspect})"
+      #Rails.logger.debug "get_inclusion_content(#{cardname.inspect})"
       content = relative_content[cardname.to_s.gsub(/\+/,'_')]
   
       # CLEANME This is a hack to get it so plus cards re-populate on failed signups
@@ -434,7 +434,7 @@ module Wagn
       if content=get_inclusion_content(options[:tname])
         args[:content]=content
       end
-      Rails.logger.debug "new_inclusion_card_args #{tname.inspect}, #{options.inspect}, #{args.inspect}"
+      #Rails.logger.debug "new_inclusion_card_args #{tname.inspect}, #{options.inspect}, #{args.inspect}"
       args
     end
   
@@ -467,7 +467,7 @@ module Wagn
     def main_card?() context=~/^main_\d$/ end
       
     def build_link(href, text)
-      Rails.logger.info "build_link(#{href.inspect}, #{text.inspect})"
+      #Rails.logger.info "build_link(#{href.inspect}, #{text.inspect})"
       klass = case href
         when /^https?:/; 'external-link'
         when /^mailto:/; 'email-link'
@@ -484,7 +484,7 @@ module Wagn
           href = full_uri(href.to_s)
           known_card ? 'known-card' : 'wanted-card'
       end
-      Rails.logger.info "build_link(#{href.inspect}, #{text.inspect}) #{klass}"
+      #Rails.logger.info "build_link(#{href.inspect}, #{text.inspect}) #{klass}"
       %{<a class="#{klass}" href="#{href.to_s}">#{text.to_s}</a>}      
     end
     

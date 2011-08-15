@@ -53,7 +53,7 @@ module Wagn::Model::Permissions
         self.send(method)
       rescue Exception => e
         cardname.piece_names.each{|piece| Wagn::Cache.expire_card(piece.to_cardname.key)}
-        Rails.logger.info ">>#{method}:#{e.message} #{name} #{e.backtrace*"\n"}"
+        Rails.logger.debug "Exception #{method}:#{e.message} #{name} #{e.backtrace*"\n"}"
         raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace*"\n"}"
       end
     else
@@ -64,12 +64,12 @@ module Wagn::Model::Permissions
   def approved?
     self.operation_approved = true    
     self.permission_errors = []
-    Rails.logger.info "updates.keys = #{updates.keys.inspect}"
+    #Rails.logger.debug "updates.keys = #{updates.keys.inspect}"
     unless updates.keys == ['comment'] # if only updating comment, next section will handle
       new_card? ? ok?(:create) : ok?(:update)
     end
     updates.each_pair do |attr,value|
-      Rails.logger.info "approving: #{attr}"
+      #Rails.logger.info "approving: #{attr}"
       send("approve_#{attr}")
     end         
     permission_errors.each do |err|
@@ -98,13 +98,11 @@ module Wagn::Model::Permissions
   end
   
   def who_can(operation)
-    #rule_card(operation).first.item_names.map &:to_key
-    r1=rule_card(operation)
-    r2=r1.first
-    r22=r2.item_names
-    Rails.logger.info "who_can(#{operation}) r1:#{r1.inspect}, r2:#{r2.inspect}, r22:#{r22.inspect}"
-    r3=r22.map(&:to_cardname).map(&:to_key)
-    Rails.logger.info "who_can2(#{operation}) #{r1.inspect}, #{r2.inspect}, R3:#{r3.inspect}"; r3
+    rule_card(operation).first.item_names.map(&:to_cardname).map &:to_key
+    #r1=rule_card(operation); r2=r1.first; r22=r2.item_names
+    #Rails.logger.info "who_can(#{operation}) r1:#{r1.inspect}, r2:#{r2.inspect}, r22:#{r22.inspect}"
+    #r3=r22.map(&:to_cardname).map(&:to_key)
+    #Rails.logger.info "who_can2(#{operation}) #{r1.inspect}, #{r2.inspect}, R3:#{r3.inspect}"; r3
   end 
   
   def rule_card(operation)
@@ -117,8 +115,7 @@ module Wagn::Model::Permissions
     
     rcard = begin
       User.as :wagbot do
-    raise "no opcard: #{operation.inspect}" unless opcard
-        Rails.logger.info "in rule_card #{opcard&&opcard.name} #{operation}"
+        #Rails.logger.debug "in rule_card #{opcard&&opcard.name} #{operation}"
         if opcard.raw_content == '_left' && self.junction?
           lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true, :skip_defaults=>true) 
           lcard.rule_card(operation).first
@@ -127,7 +124,7 @@ module Wagn::Model::Permissions
         end
       end
     end
-    Rails.logger.debug "rule_card #{rcard&&rcard.name}, #{opcard.name.inspect}, #{opcard}, #{opcard.cardname.inspect}"
+    #Rails.logger.debug "rule_card #{rcard&&rcard.name}, #{opcard.name.inspect}, #{opcard}, #{opcard.cardname.inspect}"
     return rcard, opcard.cardname.trunk_name.tag_name.to_s
   end
   
@@ -270,7 +267,7 @@ module Wagn::Model::Permissions
         User.as :wagbot do
           Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
             in_set[item_card.key] = true
-            Rails.logger.debug "rule_classes[#{rule_class_index}] #{rule_classes.inspect} This:#{item_card.read_rule_class.inspect} idx:#{rule_classes.index(item_card.read_rule_class)}"
+            #Rails.logger.debug "rule_classes[#{rule_class_index}] #{rule_classes.inspect} This:#{item_card.read_rule_class.inspect} idx:#{rule_classes.index(item_card.read_rule_class)}"
             next if rule_classes.index(item_card.read_rule_class) < rule_class_index
             item_card.update_read_rule
           end

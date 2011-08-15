@@ -23,7 +23,7 @@ class Card < ActiveRecord::Base
   # FIXME Should be in modules
   def after_save
     if cards
-      Rails.logger.info "after_save Cards:#{cards.inspect}"
+      #Rails.logger.info "after_save Cards:#{cards.inspect}"
       Wagn::Hook.call :before_multi_save, self, cards
       cards.each_pair do |sub_name, opts|
         opts[:content] ||= ""
@@ -68,22 +68,22 @@ class Card < ActiveRecord::Base
   # INITIALIZATION METHODS
   
   def initialize(args={})
-    Rails.logger.warn "initializing with args: #{args.inspect}"
+    #Rails.logger.warn "initializing with args: #{args.inspect}"
     args = args && args.stringify_keys || {} # evidently different from args.stringify_keys!
     #args.delete 'id'(in list now) # replaces slow handling of protected fields
     typename, skip_defaults, cardname_arg =
       %w{type skip_defaults cardname id}.map{|k| args.delete k }
     args['name'] = (cardname_arg || args['name']).to_s
 
-    Rails.logger.warn "initializing args:>>#{args.inspect}"
+    #Rails.logger.warn "initializing args:>>#{args.inspect}"
     @attributes = get_attributes   
     @attributes_cache = {}
     @new_record = true
-    Rails.logger.info "card#initialize[#{typename}](#{args.inspect})"
-    Rails.logger.warn "initialize typecode0 #{self.typecode.inspect} NM:(#{@attributes.inspect}, #{name.inspect})"
+    #Rails.logger.info "card#initialize[#{typename}](#{args.inspect})"
+    #Rails.logger.warn "initialize typecode0 #{self.typecode.inspect} NM:(#{@attributes.inspect}, #{name.inspect})"
     self.send :attributes=, args, false
     self.typecode = get_typecode(args['name'], typename) unless args['typecode']
-    Rails.logger.warn "initialize typecode: #{self.typecode.inspect} NM:(#{@attributes.inspect}, #{name.inspect})"
+    #Rails.logger.warn "initialize typecode: #{self.typecode.inspect} NM:(#{@attributes.inspect}, #{name.inspect})"
 
     begin
     include_set_modules unless missing?
@@ -113,7 +113,7 @@ class Card < ActiveRecord::Base
   def get_typecode(name, typename)
     begin ; return Cardtype.classname_for(typename) if typename
     rescue Exception => e;
-Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
+#Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
       self.broken_type = typename
     end
     (name &&
@@ -275,7 +275,7 @@ Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
   end
 
   def dependents(*args)
-    Rails.logger.info "dependents[#{name}](#{args.inspect}): #{junctions(*args).inspect}"
+    #Rails.logger.info "dependents[#{name}](#{args.inspect}): #{junctions(*args).inspect}"
     raise "Includes self" if junctions(*args).map(&:name).include?(name)
     return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point.
     junctions(*args).map { |r| [r ] + r.dependents(*args) }.flatten
@@ -470,9 +470,9 @@ Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
 
 
   validates_each :name do |rec, attr, value|
-    Rails.logger.debug "valid each #{attr}: #{rec.inspect} New #{value.inspect}"
+    #Rails.logger.debug "valid each #{attr}: #{rec.inspect} New #{value.inspect}"
     if rec.updates.for?(:name)
-      Rails.logger.debug "valid name #{rec.name.inspect} New #{value.inspect}"
+      #Rails.logger.debug "valid name #{rec.name.inspect} New #{value.inspect}"
 
       cdname = value.to_cardname
       unless cdname.valid_cardname?

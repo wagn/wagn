@@ -19,15 +19,11 @@ module Wagn::Model::Collection
   end
 
   def item_names(args={})
-    Rails.logger.debug "item_names col[#{typecode}, #{cardname.inspect}](#{args.inspect})\n#{Kernel.caller*"\n"}"; r=
     self.raw_content.split /[,\n]/
-    Rails.logger.debug "item_names col(#{args.inspect}) r>#{r.inspect}"; r
   end
   
   def item_cards(args={})  ## FIXME this is inconsistent with item_names
-    Rails.logger.debug "item_cards col[#{cardname.inspect}](#{args.inspect})"; r=
     [self]
-    Rails.logger.debug "item_cards col(#{args.inspect}) r>#{r.inspect}"; r
   end
   
   def extended_list context = nil

@@ -33,10 +33,10 @@ module Wagn::Model::Fetch
       cacheable = true if card.nil?
       card ||= find_by_key( key )
       
-      Rails.logger.debug "fetch(#{name.inspect}) #{card.inspect}, #{cacheable}, #{opts.inspect}"# if debug
+      #Rails.logger.debug "fetch(#{name.inspect}) #{card.inspect}, #{cacheable}, #{opts.inspect}"# if debug
       if !opts[:skip_virtual] && (!card || card.missing? || card.trash)
         card = fetch_virtual( cardname, card )
-        Rails.logger.info "fetch_virtual #{card.inspect}"
+        #Rails.logger.info "fetch_virtual #{card.inspect}"
       end
       
       card ||= new_missing cardname
@@ -69,26 +69,26 @@ module Wagn::Model::Fetch
       cached_card = nil if cached_card && cached_card.trash
       test_card = cached_card || Card.new(:cardname=>cardname, :missing=>true, :typecode=>'Basic', :skip_defaults=>true)
        template=test_card.template(reset=true) and ht=template.hard_template? 
-      Rails.logger.debug "fetch_virtual(#{cardname.to_s}) #{test_card.name}, #{cardname.tag_name} >#{template}, #{ht}"
+      #Rails.logger.debug "fetch_virtual(#{cardname.to_s}) #{test_card.name}, #{cardname.tag_name} >#{template}, #{ht}"
       if ht
       #if template=test_card.template(reset=true) and template.hard_template? 
         args=[cardname, template.content, template.typecode]
-        Rails.logger.debug "fetch_virtual(#{cardname.to_s}) #{args.inspect}"
+        #Rails.logger.debug "fetch_virtual(#{cardname.to_s}) #{args.inspect}"
         if cached_card
           cached_attrs = [:cardname, :content, :typecode].map{|attr| cached_card.send(attr)}
-        Rails.logger.debug "fetch_virtual(#{cardname.to_s})cached: #{cached_attrs.inspect}"
+        #Rails.logger.debug "fetch_virtual(#{cardname.to_s})cached: #{cached_attrs.inspect}"
           return cached_card if args==cached_attrs
         end
         r=new_virtual cardname, template.content, template.typecode
-        Rails.logger.debug "fetch_virtual(#{cardname.to_s}) new_v#{r.inspect}"; r
+        #Rails.logger.debug "fetch_virtual(#{cardname.to_s}) new_v#{r.inspect}"; r
       elsif System.ok?(:administrate_users) and cardname.tag_name == '*email'
         return nil if ( content =
                 retrieve_extension_attribute(cardname.trunk_name, 'email') ).blank?
 
         r=new_virtual cardname, content  
-      Rails.logger.debug "fetch_virtual adm-email(#{cardname.to_s}) email, #{content.inspect}, #{r.inspect}"; r
+      #Rails.logger.debug "fetch_virtual adm-email(#{cardname.to_s}) email, #{content.inspect}, #{r.inspect}"; r
       else
-        Rails.logger.debug "fetch_virtual(#{cardname.to_s}) nill"
+        #Rails.logger.debug "fetch_virtual(#{cardname.to_s}) nill"
         return nil
       end
     end

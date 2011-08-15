@@ -413,11 +413,9 @@ class Wql
 
     
     def count(val)
-Rails.logger.debug "count(#{val.inspect})"
       raise(Wagn::WqlError, "count works only on outermost spec") if @parent
       join_spec = { :id=>SqlCond.new("#{table_alias}.id") } 
       val.each do |relation, subspec|
-Rails.logger.debug "count iter(#{relation.inspect} #{subspec.inspect})"
         subquery = CardSpec.build(:_parent=>self, :return=>:count, relation.to_sym=>join_spec).merge(subspec).to_sql
         sql.fields << "#{subquery} as #{relation}_count"
       end

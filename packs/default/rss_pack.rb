@@ -10,7 +10,6 @@ class Wagn::Renderer::Rss
         xml.description ""
         xml.link card_url(card)
         begin
-
           cards = if card.typecode == 'Search'
             card.item_cards( :default_limit => 25, :_keyword=>params[:_keyword] )
           else
@@ -18,10 +17,7 @@ class Wagn::Renderer::Rss
           end
           view_changes = (card.name=='*recent')
 
-#          Rails.logger.info "#{cards.size} cards = #{cards.inspect}"
-
           cards.each do |item|
-            Rails.logger.info "\n~~~~rendering card: #{card.name} ~~~~\n"
             xml.item do
               xml.title item.name
               xml.description process_inclusion(item, :view=>(view_changes ? :change : :open_content))

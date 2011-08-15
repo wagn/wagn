@@ -25,7 +25,7 @@ module Wagn
     
     class << self
       def cache_classes
-        [Card, Cardtype, MultihostMapping, Role, System, User, Wagn::Pattern]        
+        [Card, Cardtype, Role, System, User, Wagn::Pattern]        
       end
             
       def initialize_on_startup
@@ -76,6 +76,7 @@ module Wagn
 
       def reset_global
         cache_classes.each{ |cc| cc.cache.reset }
+        MultihostMapping.reset_cache
       end
 
       private

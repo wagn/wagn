@@ -99,6 +99,7 @@ class System
     
     def always_ok?
       return false unless usr = User.as_user
+      return true if usr.login == 'wagbot' #cannot disable
       aok_hash = self.cache.read('always') || self.cache.write('always', {})
       if (c = aok_hash[usr.id]).nil?
         aok_hash[usr] = usr.all_roles.detect { |r| r.codename == 'admin' } || false

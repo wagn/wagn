@@ -4,6 +4,6 @@ class AddReadRuleIdIndex < ActiveRecord::Migration
   end
 
   def self.down
-    drop_index :cards, :read_rule_id
+    remove_index :cards, :read_rule_id
   end
 end

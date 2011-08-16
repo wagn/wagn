@@ -316,12 +316,15 @@ class Card < ActiveRecord::Base
 
   def cached_revision
     #return current_revision || Revision.new
+#    Rails.logger.info "looking up cached revision for key: #{key}-content.  read from cache: #{self.class.cache.read("#{key}-content").inspect}  " 
+    
     case
     when (@cached_revision and @cached_revision.id==current_revision_id);
-    when (@cached_revision=Card.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
+    when (@cached_revision=self.class.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
     else
-      @cached_revision = current_revision_id ? Revision.find(current_revision_id) : Revision.new
-      Card.cache.write("#{key}-content", @cached_revision)
+      rev = current_revision_id ? Revision.find(current_revision_id) : Revision.new
+      @cached_revision = self.class.cache.write("#{key}-content", rev)
+#      Rails.logger.info "wrote cached revision for key: #{key}-content.  read from cache: #{self.class.cache.read("#{key}-content").inspect}  " 
     end
     @cached_revision
   end

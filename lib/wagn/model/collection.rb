@@ -46,7 +46,6 @@ module Wagn::Model::Collection
     )
   end
   
-  
   def update_search_index     
     return unless @name_or_content_changed && System.enable_postgres_fulltext
     
@@ -64,5 +63,4 @@ module Wagn::Model::Collection
     Card.extend(ClassMethods)
     base.after_save :update_search_index
   end
-
 end

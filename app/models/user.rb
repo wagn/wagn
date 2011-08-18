@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :name
-  cattr_accessor :current_user, :as_user
+  cattr_accessor :current_user, :as_user, :cache
   
   has_and_belongs_to_many :roles
   belongs_to :invite_sender, :class_name=>'User', :foreign_key=>'invite_sender_id'
@@ -30,16 +30,6 @@ class User < ActiveRecord::Base
   
   
   class << self
-    def cache
-      @@cache ||= {}
-      @@cache[System.wagn_name] ||= {}
-    end
-    
-    def reset_cache
-      @@cache ||= {}
-      @@cache[System.wagn_name] = {}
-    end
-    
     def current_user
       @@current_user ||= User[:anon]  
     end
@@ -93,19 +83,28 @@ class User < ActiveRecord::Base
     end    
     
     def [](key)
-      self.cache[key.to_s] ||= (Integer===key ? find(key) : find_by_login(key.to_s))
+      #Rails.logger.info "Looking up USER[ #{key}]"
+      self.cache.read(key.to_s) || self.cache.write(key.to_s, begin
+        usr = Integer===key ? find(key) : find_by_login(key.to_s)
+        if usr #preload to be sure these get cached.
+          usr.card
+          usr.read_rule_ids
+        end
+        usr
+      end)
     end
 
     def no_logins?
       c = self.cache
-      c.has_key?(:no_logins) ? c[:no_logins] : c[:no_logins] = (User.count < 3)
+      !c.read('no_logins').nil? ? c.read('no_logins') : c.write('no_logins', (User.count < 3))
     end
   end 
 
 #~~~~~~~ Instance
 
   def reset_instance_cache
-    User.cache[id.to_s] = User.cache[login] = nil
+    self.class.cache.write(id.to_s, nil)
+    self.class.cache.write(login, nil) if login
   end
 
   def among? test_parties
@@ -121,6 +120,8 @@ class User < ActiveRecord::Base
   end
   
   def read_rule_ids
+    #Rails.logger.debug "Looking up #READ_RULE_IDS"
+    return [] if self.login=='wagbot'  # avoids infinite loop
     @read_rule_ids ||= begin
       party_keys = ['in'] + parties
       self.class.as(:wagbot) do
@@ -130,7 +131,7 @@ class User < ActiveRecord::Base
   end
   
   def save_with_card(card)
-    #fail "save with card #{card.inspect}"
+    #Rails.logger.info "save with card #{card.inspect}, #{self.inspect}"
     User.transaction do
       save
       card.extension = self

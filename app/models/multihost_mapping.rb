@@ -1,4 +1,5 @@
 class MultihostMapping < ActiveRecord::Base
+  cattr_accessor :cache
   set_table_name 'public.multihost_mappings'
   
   class << self
@@ -10,7 +11,7 @@ class MultihostMapping < ActiveRecord::Base
       set_base_url(mapping) if mapping
       set_connection(wagn_name)
     end
-    
+
     def map_from_request(request)
       @@cache[:host][request.host] ||= find_by_requested_host(request.host)
       mapping=@@cache[:host][request.host] or return false
@@ -33,7 +34,7 @@ class MultihostMapping < ActiveRecord::Base
       ActiveRecord::Base.connection.schema_search_path = wagn_name
     end
   end
-  
+    
   reset_cache
 end
 

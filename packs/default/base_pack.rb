@@ -7,9 +7,7 @@ class Wagn::Renderer
   # (builtins, etc.)
   define_view(:raw) do card ? card.raw_content : _render_blank end
   define_view(:refs) do card.respond_to?('references_expired') ? card.raw_content : '' end
-  define_view(:naked) do #|args|
-    card.name.template_name? ? _render_raw : process_content(_render_raw)
-  end
+  define_view(:naked) do process_content(_render_raw) end
   alias_view(:naked, {}, :show, :content)
   define_view(:titled) do
     card.name + "\n\n" + _render_naked

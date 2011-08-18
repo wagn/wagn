@@ -10,21 +10,20 @@ class Wagn::Renderer::Rss
         xml.description ""
         xml.link card_url(card)
         begin
-
           cards = if card.typecode == 'Search'
-            card.item_cards( :limit => 25, :_keyword=>params[:_keyword] )
+            card.item_cards( :default_limit => 25, :_keyword=>params[:_keyword] )
           else
             [card]
           end
           view_changes = (card.name=='*recent')
 
-          cards.each do |card|
+          cards.each do |item|
             xml.item do
-              xml.title card.name
-              xml.description view_changes ? render_change : render_open_content
-              xml.pubDate card.revised_at.to_s(:rfc822)  #updated_at fails on virtual cards, because not all to_s's take args (just actual dates)
-              xml.link card_url(card)
-              xml.guid card_url(card)
+              xml.title item.name
+              xml.description process_inclusion(item, :view=>(view_changes ? :change : :open_content))
+              xml.pubDate item.revised_at.to_s(:rfc822)  #updated_at fails on virtual cards, because not all to_s's take args (just actual dates)
+              xml.link card_url(item)
+              xml.guid card_url(item)
             end
           end
         rescue Exception=>e

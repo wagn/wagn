@@ -80,7 +80,7 @@ end
 
 describe Card, "created without permission" do
   before do
-    User.current_user = :anonymous
+    User.current_user = :anon
   end
    
   # FIXME:  this one should pass.  unfortunately when I tried to fix it it started looking like the clean solution 
@@ -174,7 +174,7 @@ describe User, "Joe User" do
 
     User.as :joe_user
     @user = User[:joe_user]
-    Cardtype.reset_cache
+    Cardtype.cache.reset
     @typenames = Cardtype.createable_types.map{ |ct| ct[:name] }
   end
 

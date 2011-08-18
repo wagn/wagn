@@ -1,7 +1,7 @@
 class System
   
   cattr_writer :attachment_storage    # storage option passed to attachment_fu   
-  cattr_accessor :role_tasks, :request,                          
+  cattr_accessor :role_tasks, :request, :cache,                        
     # Configuration Options     
     :base_url, :max_render_time, :max_renders,   # Common; docs in sample_wagn.rb
     :enable_ruby_cards, :enable_server_cards,    # Uncommon; Check Security risks before enabling these cardtypes (wagn.org ref url?)
@@ -10,6 +10,8 @@ class System
     
   Wagn::Configuration.wagn_load_config
     
+  @@role_tasks = %w{ administrate_users create_accounts assign_user_roles }
+  
   class << self
     def base_url
       if (request and request.env['HTTP_HOST'] and !@@base_url)
@@ -78,9 +80,10 @@ class System
     # FIXME stick this in session? cache it somehow??
     def ok_hash
       usr = User.as_user
+      ok_hash = self.cache.read('ok_hash') || self.cache.write('ok_hash', {})
       #warn "user = #{usr.inspect}"
-      if (h = @@cache[:ok_hash][usr]).nil?
-        @@cache[:ok_hash][usr] = begin
+      if (h = ok_hash[usr.id]).nil?
+        ok_hash[usr.id] = begin
           ok = {}
           ok[:role_ids] = {}
           usr.all_roles.each do |role|
@@ -94,22 +97,17 @@ class System
       end
     end
     
-    def always_ok?   
+    def always_ok?
       return false unless usr = User.as_user
-      if (c = @@cache[:always][usr]).nil?
-        @@cache[:always][usr] = usr.all_roles.detect { |r| r.codename == 'admin' } || false
+      return true if usr.login == 'wagbot' #cannot disable
+      aok_hash = self.cache.read('always') || self.cache.write('always', {})
+      if (c = aok_hash[usr.id]).nil?
+        aok_hash[usr] = usr.all_roles.detect { |r| r.codename == 'admin' } || false
       else
         c
       end
     end
-    
-    def reset_cache
-      @@cache={ :always => {}, :ok_hash => {} }
-    end
   end
   
-  reset_cache
-
-  @@role_tasks = %w{ administrate_users create_accounts assign_user_roles }
 end        
 

@@ -104,7 +104,7 @@ class User < ActiveRecord::Base
 
   def reset_instance_cache
     self.class.cache.write(id.to_s, nil)
-    self.class.cache.write(login, nil)
+    self.class.cache.write(login, nil) if login
   end
 
   def among? test_parties
@@ -131,7 +131,7 @@ class User < ActiveRecord::Base
   end
   
   def save_with_card(card)
-    #fail "save with card #{card.inspect}"
+    #Rails.logger.info "save with card #{card.inspect}, #{self.inspect}"
     User.transaction do
       save
       card.extension = self

@@ -23,6 +23,7 @@ class Wql
   }.stringify_keys)
   
   MODIFIERS = {
+    :cast   => '',
     :sort   => "",
     :dir    => "",
     :limit  => "",
@@ -372,24 +373,16 @@ class Wql
     end
     
     def sort(val)
-      @mods[:sort] = ' sort_field '
+      @mods[:sort] = 'sort_field'
+      val[:return] ||= 'content'
       
-      sql.fields << " s.sort_field "
-      sort_field = val.delete(:return) || 'content'
-      
-      item = val.delete(:item) || raise( "must have item setting for special sorting" )
-
-      val[:return] = case item.to_s
-        when 'left'; val[:return] = ' trunk_id as sort_join_field '
-        end
-      
+      item = val.delete(:item) || 'left'
       cs = CardSpec.build(val)
-
-      if sort_field == 'content'
-        cs.sql.fields << " r6.#{sort_field} as sort_field "
-        cs.sql.joins << "join revisions r6 on r6.id=#{cs.table_alias}.current_revision_id" 
-      end
+      cs.sql.fields << case item
+        when 'left'; 'trunk_id'+ ' as sort_join_field'
+        end 
       
+      sql.fields << " s.#{val[:return]} as sort_field "
       sql.joins  << "left join (\n #{cs.to_sql} ) s on #{table_alias}.id = s.sort_join_field"
       
     end
@@ -425,8 +418,6 @@ class Wql
       sql.conditions << @spec.collect do |key, val|   
         val.to_sql(key.to_s.gsub(/\:\d+/,''))
       end.join(" #{@mods[:conj]} ")                 
-
-      # Default fields/return handling   
       return "(" + sql.conditions.last + ")" if @mods[:return]=='condition'
 
       # Permissions    
@@ -435,11 +426,7 @@ class Wql
       end
            
       sql.fields.unshift fields_to_sql
-      sql.joins << "join cardtypes as extension on extension.id=#{table_alias}.extension_id " if @mods[:return] == 'codename'
-      
       sql.order = sort_to_sql  # has side effects!
-                             
-      # Misc
       sql.tables = "cards #{table_alias}"
       sql.conditions << "#{table_alias}.trash is false"
       sql.limit = (@mods[:limit].to_i <= 0) ? "" : "LIMIT #{@mods[:limit].to_i}"
@@ -449,19 +436,24 @@ class Wql
     end
 
     def fields_to_sql
-      case @mods[:return].to_sym
-        #when :condition; 
+      fields = case @mods[:return].to_sym
         when :card; "#{table_alias}.name"
-        when :name; "#{table_alias}.name"
         when :count; "count(*) as count"
-  #        when :id;   "id"
-  #        when :first; "#{table_alias}.*"
-  #        when :codename; 'extension.class_name'
-        else;  @mods[:return].match /[^\w\*\(\)\s]/ ? raise( "WQL return contains disallowed characters" ) : @mods[:return]
+        when :content
+          sql.joins << "join revisions r6 on r6.id=#{table_alias}.current_revision_id" 
+          'r6.content'
+        else 
+          [:basic, :system].member?( ATTRIBUTES[@mods[:return].to_sym] ) ? 
+            "#{table_alias}.#{@mods[:return]}" :
+            sql_safe(@mods[:return])          
         end
+      !@mods[:cast].blank? ? "cast(#{fields} as #{sql_safe(@mods[:cast])})" : fields
     end
 
-    def sql_safe()
+    def sql_safe(txt)
+      txt = txt.to_s
+      raise( "WQL contains disallowed characters: #{txt}" ) if txt.match /[^\w\*\(\)\s\.]/
+      txt
     end
     
     def sort_to_sql

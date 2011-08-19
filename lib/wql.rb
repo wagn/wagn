@@ -1,12 +1,9 @@
 class Wql
-  
   ATTRIBUTES = {
-#    :simple     =>  %w{ sort dir limit offset return join },
     :basic      =>  %w{ name type content id key extension_type extension_id updated_by },
     :system     =>  %w{ trunk_id tag_id },
     :custom     =>  %w{ edited_by edited last_editor_of last_edited_by creator_of created_by } +
-                    %w{ member_of member role found_by } +
-                    %w{ part left right plus left_plus right_plus } + 
+                    %w{ member_of member role found_by part left right plus left_plus right_plus } + 
                     %w{ or match complete not count and sort },
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
     :ignore      => %w{ prepend append view },
@@ -23,14 +20,14 @@ class Wql
   }.stringify_keys)
   
   MODIFIERS = {
-    :cast   => '',
+    :cast   => "",
     :sort   => "",
+    :group  => "",
     :dir    => "",
     :limit  => "",
     :offset => "",
     :return => 'card',
-    :conj   => 'and',
-#    :view   => nil    # handled in interface-- ignore here
+    :conj   => 'and'
   }
       
   DEFAULT_ORDER_DIRS =  {
@@ -48,17 +45,9 @@ class Wql
     result
   end
     
-  def initialize query
-    @cs = CardSpec.build( query )
-  end
-  
-  def query
-    @cs.query
-  end
-  
-  def sql
-    @sql ||= @cs.to_sql
-  end
+  def initialize( query )  @cs = CardSpec.build( query )  end
+  def query()              @cs.query                      end
+  def sql()                @sql ||= @cs.to_sql            end
   
   def run
     #warn "query: #{query.inspect}\n\n sql: #{sql}"
@@ -75,10 +64,8 @@ class Wql
           end
         card.nil? ? Card.find_by_name_and_trash(row['name'],false).repair_key : card
       end
-    when :count
-      rows.first['count'].to_i
-    else
-      rows.map { |row| row[query[:return].to_s] }
+    when :count;    rows.first['count'].to_i
+    else;           rows.map { |row| row[query[:return].to_s] }
     end
   end  
   
@@ -96,16 +83,16 @@ class Wql
       end
     end
     
-    def walk_spec() walk(@spec, :walk_spec); end     
-    
-    def quote(v)
-      ActiveRecord::Base.connection.quote(v) 
+    def safe_sql(txt)
+      txt = txt.to_s
+      txt.match /[^\w\*\(\)\s\.]/ ? raise( "WQL contains disallowed characters: #{txt}" ) : txt
     end
+    
+    def quote(v)  ActiveRecord::Base.connection.quote(v)  end
     
     def match_prep(v,cardspec=self)
       cxn ||= ActiveRecord::Base.connection
       v=cardspec.root.params['_keyword'] if v=='_keyword' 
-#Rails.logger.debug "wql_match_prep _keyword (#{v.inspect}" v=='_keyword'
       v.strip!#FIXME - breaks if v is nil
       [cxn, v]
     end
@@ -113,28 +100,27 @@ class Wql
   
 
   class SqlCond < String
-    def to_sql(*args)
-      self
-    end
+    def to_sql(*args) self end
   end
   
   class SqlStatement
-    attr_accessor :fields, :joins, :conditions, :tables, :order, :limit, :offset,
-      :relevance_fields, :count_fields, :group
+    attr_accessor :fields, :relevance_fields, :tables, :joins,
+      :conditions, :group, :order, :limit, :offset
     
     def initialize
-      self.fields, self.joins, self.conditions, self.count_fields, self.relevance_fields = [],[],[],[],[]
-      self.tables, self.order, self.limit, self.group, self.offset = "","","","",""
+      self.fields, self.relevance_fields, self.joins, self.conditions = [],[],[],[]
+      self.tables, self.group, self.order, self.limit, self.offset = "","","","",""
     end
     
     def to_s
       "(select #{fields.reject(&:blank?).join(', ')} from #{tables} #{joins.join(' ')} " + 
         "where #{conditions.reject(&:blank?).join(' and ')} #{group} #{order} #{limit} #{offset})"
-    end 
+    end
   end
 
   class CardSpec < Spec 
     attr_reader :params, :sql, :query
+    attr_accessor :joins
     
     class << self
       def build(query)
@@ -147,13 +133,11 @@ class Wql
       # NOTE:  when creating new specs, make sure to specify _parent *before*
       #  any spec which could trigger another cardspec creation further down.
       @mods = MODIFIERS.clone
-      @params = {}   
+      @params = {}
+      @joins = {}   
       @selfname, @parent = nil, nil
-      #warn("<br>before clean #{(Hash===spec ? spec : spec.spec).keys}<br>")
       @query = clean(query.clone)
       @spec = @query.deep_clone
-      #warn("after clean #{@spec.inspect}")
-      
       @sql = SqlStatement.new
       self
     end
@@ -166,17 +150,9 @@ class Wql
       end
     end
     
-    def root
-      @parent ? @parent.root : self
-    end
-    
-    def root?
-      root == self
-    end
-    
-    def selfname   
-      @selfname #|| raise(Wagn::WqlError, "_self referenced but no card is available")
-    end
+    def root()      @parent ? @parent.root : self  end
+    def root?()     root == self                   end
+    def selfname()  @selfname                      end
     
     def absolute_name(name)
       name = (root.selfname ? name.to_absolute(root.selfname) : name)
@@ -242,7 +218,22 @@ class Wql
       
       @spec.merge! spec  
       self
-    end          
+    end
+    
+    def add_join(name, table, cardfield, otherfield, opts={})
+      join_alias = "#{table_alias}_#{name}"
+      @joins[join_alias] = "#{opts[:side]} JOIN #{table} AS #{join_alias} ON #{table_alias}.#{cardfield} = #{join_alias}.#{otherfield}"
+      join_alias
+    end
+    
+    def add_revision_join
+      add_join(:rev, :revisions, :current_revision_id, :id)
+    end
+    
+    def field(name)
+      @fields||={}; @fields[name]||=0; @fields[name]+=1
+      "#{name}:#{@fields[name]}"
+    end
     
     def found_by(val)
       cards = (String===val ? [Card.fetch_or_new(absolute_name(val))] : Wql.new(val).run)
@@ -264,9 +255,9 @@ class Wql
           sql.relevance_fields << "rank(indexed_content, to_tsquery(#{quote(v)}), 1) AS content_rank"
           "indexed_content @@ to_tsquery(#{quote(v)})" 
         else
-          sql.joins << "join revisions r on r.id=#{self.table_alias}.current_revision_id"
+          join_alias = add_revision_join
           # FIXME: OMFG this is ugly
-          '(' + ["replace(#{self.table_alias}.name,'+',' ')",'r.content'].collect do |f|
+          '(' + ["replace(#{self.table_alias}.name,'+',' ')","#{join_alias}.content"].collect do |f|
             v.split(/\s+/).map{ |x| %{#{f} #{cxn.match(quote("[[:<:]]#{x}[[:>:]]"))}} }.join(" AND ")
           end.join(" OR ") + ')'
         end
@@ -278,10 +269,6 @@ class Wql
       merge field(:cond) => SqlCond.new(" lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}")
     end
 
-    def field(name)
-      @fields||={}; @fields[name]||=0; @fields[name]+=1
-      "#{name}:#{@fields[name]}"
-    end
     
     def cond(val)                                                                 end #noop
     def and(val)   subcondition(val)                                              end
@@ -317,8 +304,7 @@ class Wql
     
     def edited_by(val)
       extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val).to_sql
-      sql.joins << "join (select distinct card_id from revisions r4 " +
-        "where r4.created_by in #{extension_select} ) ra on ra.card_id=#{table_alias}.id"
+      add_join :ed_by, "(select distinct card_id from revisions where created_by in #{extension_select} )", :id, :card_id
     end
     
     def created_by(val)
@@ -346,20 +332,23 @@ class Wql
     end
     
     def edited(val)
-      inner_spec = CardSpec.build(:return=>'ra2.created_by', :_parent=>self).merge(val)
-      inner_spec.sql.joins << "join (select distinct card_id, created_by from revisions r5  ) ra2 on ra2.card_id=#{inner_spec.table_alias}.id"
+      inner_spec = CardSpec.build(:_parent=>self).merge(val)
+      join_alias = inner_spec.add_join :ed, '(select distinct card_id, created_by from revisions)', :id, :card_id
+      inner_spec.merge :return=>"#{join_alias}.created_by"
       merge_extension('User', inner_spec )
     end
     
     def member_of(val)
-      inner_spec = CardSpec.build(:return=>'ru.user_id', :extension_type=>'Role', :_parent=>self).merge(val)
-      inner_spec.sql.joins << "join roles_users ru on ru.role_id = #{inner_spec.table_alias}.extension_id"
+      inner_spec = CardSpec.build(:extension_type=>'Role', :_parent=>self).merge(val)
+      join_alias = inner_spec.add_join :ru, :roles_users, :extension_id, :role_id
+      inner_spec.merge :return=>"#{join_alias}.user_id" 
       merge_extension('User',inner_spec )
     end
 
     def member(val)
       inner_spec = CardSpec.build(:return=>'ru2.role_id', :extension_type=>'User', :_parent=>self).merge(val)
-      inner_spec.sql.joins << "join roles_users ru2 on ru2.user_id = #{inner_spec.table_alias}.extension_id"
+      join_alias = inner_spec.add_join :ru2, :roles_users, :extension_id, :user_id
+      inner_spec.merge :return=>"#{join_alias}.role_id"
       merge_extension('Role', inner_spec )
     end
     
@@ -375,25 +364,37 @@ class Wql
     def sort(val)
       @mods[:sort] = 'sort_field'
       val[:return] ||= 'content'
-      
       item = val.delete(:item) || 'left'
-      cs = CardSpec.build(val)
-      cs.sql.fields << case item
-        when 'left'; 'trunk_id'+ ' as sort_join_field'
+      
+      if val[:return] == 'count'
+        cs_args = { :return=>'count', :group=>'sort_join_field' }
+        case item
+        when 'referred_to'
+          cs = CardSpec.build cs_args.merge( :cond=>SqlCond.new("card_id in #{CardSpec.build( val.merge(:return=>'id')).to_sql}") )
+          cs.add_join :wr, :wiki_references, :id, :referenced_card_id
+        else;  raise "count with item: #{item} not yet implemented"
         end 
+        join_field = 'id'
+        sql.fields << "coalesce(t_sort.#{val[:return]},0) as sort_field"
+      else
+        join_field = case item
+          when 'left'; 'trunk_id'
+          when 'right'; 'tag_id'
+          else;  raise "sort item: #{item} not yet implemented"
+        end 
+        cs = CardSpec.build(val)
+        sql.fields << "t_sort.#{val[:return]} as sort_field"
+      end
       
-      sql.fields << " s.#{val[:return]} as sort_field "
-      sql.joins  << "left join (\n #{cs.to_sql} ) s on #{table_alias}.id = s.sort_join_field"
-      
+      cs.sql.fields << "#{cs.table_alias}.#{join_field} as sort_join_field"      
+      add_join :sort, cs.to_sql, :id, :sort_join_field, :side=>'LEFT'
     end
-
-
     
     def subcondition(val, args={})
       args = { :return=>:condition, :_parent=>self }.merge(args)
       cardspec = CardSpec.build( args )
       merge field(:cond) => cardspec.merge(val)
-      self.sql.joins += cardspec.sql.joins 
+      self.joins.merge! cardspec.joins 
       self.sql.relevance_fields += cardspec.sql.relevance_fields
     end
 
@@ -412,12 +413,12 @@ class Wql
       ValueSpec.new([operator,CardSpec.build(additions).merge(spec)], self)
     end 
     
-    
     def to_sql(*args)      
       # Basic conditions
       sql.conditions << @spec.collect do |key, val|   
         val.to_sql(key.to_s.gsub(/\:\d+/,''))
-      end.join(" #{@mods[:conj]} ")                 
+      end.join(" #{@mods[:conj]} ")
+      
       return "(" + sql.conditions.last + ")" if @mods[:return]=='condition'
 
       # Permissions    
@@ -428,8 +429,11 @@ class Wql
       sql.fields.unshift fields_to_sql
       sql.order = sort_to_sql  # has side effects!
       sql.tables = "cards #{table_alias}"
+      sql.joins += @joins.values                 
+      
       sql.conditions << "#{table_alias}.trash is false"
       sql.limit = (@mods[:limit].to_i <= 0) ? "" : "LIMIT #{@mods[:limit].to_i}"
+      sql.group = @mods[:group].blank? ? '': "GROUP BY #{safe_sql(@mods[:group])}"
       sql.offset = @mods[:offset].blank? ? "" : "OFFSET #{@mods[:offset].to_i}"
       
       sql.to_s
@@ -438,49 +442,43 @@ class Wql
     def fields_to_sql
       fields = case @mods[:return].to_sym
         when :card; "#{table_alias}.name"
-        when :count; "count(*) as count"
+        when :count; "coalesce(count(*),0) as count"
         when :content
-          sql.joins << "join revisions r6 on r6.id=#{table_alias}.current_revision_id" 
-          'r6.content'
+          join_alias = add_revision_join
+          "#{join_alias}.content"
         else 
           [:basic, :system].member?( ATTRIBUTES[@mods[:return].to_sym] ) ? 
             "#{table_alias}.#{@mods[:return]}" :
-            sql_safe(@mods[:return])          
+            safe_sql(@mods[:return])          
         end
-      !@mods[:cast].blank? ? "cast(#{fields} as #{sql_safe(@mods[:cast])})" : fields
-    end
-
-    def sql_safe(txt)
-      txt = txt.to_s
-      raise( "WQL contains disallowed characters: #{txt}" ) if txt.match /[^\w\*\(\)\s\.]/
-      txt
+      !@mods[:cast].blank? ? "cast(#{fields} as #{safe_sql(@mods[:cast])})" : fields
     end
     
     def sort_to_sql
-      unless @parent or @mods[:return]=='count'
-        order_key ||= @mods[:sort].blank? ? "update" : @mods[:sort]
-        dir = @mods[:dir].blank? ? (DEFAULT_ORDER_DIRS[order_key]||'asc') : @mods[:dir]
+      return nil if @parent or @mods[:return]=='count'
+      order_key ||= @mods[:sort].blank? ? "update" : @mods[:sort]
+      dir = @mods[:dir].blank? ? (DEFAULT_ORDER_DIRS[order_key]||'asc') : safe_sql(@mods[:dir])
 
-        "ORDER BY " + case order_key
-          when "id";              "#{table_alias}.id #{dir}"
-          when "update";          "#{table_alias}.updated_at #{dir}"
-          when "create";          "#{table_alias}.created_at #{dir}"
-          when "count" ;          "count(*) #{dir}, #{table_alias}.name asc"
-          when /^(name|alpha)$/;  "LOWER( #{table_alias}.key ) #{dir}"
-          when 'content'
-            sql.joins << "join revisions r2 on r2.id=#{self.table_alias}.current_revision_id"
-            "lower(r2.content) #{dir}"
-          when "relevance" 
-            if !sql.relevance_fields.empty?
-              sql.fields << sql.relevance_fields
-              "name_rank desc, content_rank desc" 
-            else 
-              "#{table_alias}.updated_at desc"
-            end     
+      order_field = case order_key
+        when "id";              "#{table_alias}.id"
+        when "update";          "#{table_alias}.updated_at"
+        when "create";          "#{table_alias}.created_at"
+        when /^(name|alpha)$/;  "LOWER( #{table_alias}.key )"
+        when 'content'
+          join_alias = add_revision_join
+          "lower(#{join_alias}.content)"
+        when "relevance" 
+          if !sql.relevance_fields.empty?
+            sql.fields << sql.relevance_fields
+            "name_rank desc, content_rank" 
           else 
-            "#{order_key} #{dir}" 
-        end 
-      end
+            "#{table_alias}.updated_at"
+          end     
+        else 
+          safe_sql(order_key) 
+        end
+      "ORDER BY #{order_field} #{dir}"
+      
     end
   end
 
@@ -517,14 +515,13 @@ class Wql
         when Array;     spec
         when String;    ['=', spec]
         when Integer;   ['=', spec]
-  #      when nil;       ['is', 'null']
         else raise("Invalid Condition Spec #{spec.inspect}")
       end
-      @spec[0] = @spec[0].to_s
        
       # operator aliases
+      @spec[0] = @spec[0].to_s
       if target = OPERATORS[@spec[0]]
-        @spec[0] = target
+        @spec[0] = target 
       end
 
       # check valid operator
@@ -536,9 +533,7 @@ class Wql
       end
     end
     
-    def op
-      @spec[0]
-    end
+    def op() @spec[0] end
     
     def sqlize(v)
       case v
@@ -553,20 +548,13 @@ class Wql
       v=@cardspec.card.name if v=='_self'
       table = @cardspec.table_alias
       
-      case field
-      when "name"
-        field = "#{table}.key"
-        v = [v].flatten.map{ |val| val.to_key }
-      when "content"
-        field = 'r3.content'
-        @cardspec.sql.joins << "join revisions r3 on r3.id=#{table}.current_revision_id"
-      when "type"
-        field = "#{table}.typecode"
-        v = [v].flatten.map{ |val| Cardtype.classname_for( val ) }
-      when "cond"
-        return "(#{sqlize(v)})"
-      else
-        field = "#{table}.#{field}"
+      field, v = case field
+      when "cond";     return "(#{sqlize(v)})"
+      when "name";     ["#{table}.key",      [v].flatten.map{ |val| val.to_key }]
+      when "type";     ["#{table}.typecode", [v].flatten.map{ |val| Cardtype.classname_for( val ) }]
+      when "content";   join_alias = @cardspec.add_revision_join
+                       ["#{join_alias}.content", v]
+      else;            ["#{table}.#{safe_sql(field)}", v]
       end
       
       v = v[0] if Array===v && v.length==1

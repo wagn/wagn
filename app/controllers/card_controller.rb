@@ -302,27 +302,6 @@ class CardController < ApplicationController
     @current = params[:attribute] || @items.first.to_key
   end
 
-  #------------------( views )
-
-  #  I don't think these are used any more.  If they are, they shouldn't be!
-  #
-  #[:open_missing, :closed_missing].each do |method|
-  #  define_method( method ) do
-  #    load_card
-  #    params[:view] = method
-  #    if id = params[:replace]
-  #      render_update_slot do |page, target|
-  #        target.update render_to_string(:action=>'show')
-  #      end
-  #    else
-  #      render_show
-  #    end
-  #  end
-  #end
-
-
-
-
   #-------- ( MISFIT METHODS )
   def watch
     watchers = Card.fetch_or_new( @card.name + "+*watchers", :skip_virtual=>true, :type => 'Pointer' )

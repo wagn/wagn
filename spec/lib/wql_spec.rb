@@ -279,7 +279,14 @@ describe Wql do
         w.run.plot(:name).should == %w{ *all *account+*right Config+*self Setting+*self }
       end      
     end
-      
+    
+    it "should sort by count" do
+      User.as :wagbot do
+        w = Wql.new( :name=>[:in,'Sara','John','Joe User'], :sort=>{ :right=>'*watcher', :item=>'referred_to', :return=>'count' } )
+        w.run.plot(:name).should == ['Joe User','John','Sara']
+      end
+    end
+    
   #  it "should sort by update" do     
   #    # do this on a restricted set so it won't change every time we add a card..
   #    Wql.new( :match=>"two", :sort=>"update", :dir=>"desc").run.plot(:name).should == ["One+Two+Three", "One+Two","Two","Joe User"]
@@ -287,11 +294,6 @@ describe Wql do
   #    Wql.new( :match=>"two", :sort=>"update", :dir=>"desc").run.plot(:name).should == ["Two","One+Two+Three", "One+Two","Joe User"]
   #  end 
   #
-
-  
-    #it "should sort by plus" do
-    #  Wql.new(  :sort=>"plusses", :dir=>"desc", :limit=>6 ).run.plot(:name).should ==  ["*template", "A", "LewTest", "D", "C", "One"]
-    #end
 
   end
 

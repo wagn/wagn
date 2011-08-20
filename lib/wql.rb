@@ -1,7 +1,6 @@
 class Wql
   ATTRIBUTES = {
-    :basic      =>  %w{ name type content id key extension_type extension_id updated_by },
-    :system     =>  %w{ trunk_id tag_id },
+    :basic      =>  %w{ name type content id key extension_type extension_id updated_by trunk_id tag_id },
     :custom     =>  %w{ edited_by edited last_editor_of last_edited_by creator_of created_by } +
                     %w{ member_of member role found_by part left right plus left_plus right_plus } + 
                     %w{ or match complete not count and sort },
@@ -10,30 +9,14 @@ class Wql
     :pass        => %w{ cond }
   }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
 
+  MODIFIERS = {};  %w{ conj return cast sort group dir limit offset }.each{|key| MODIFIERS[key.to_sym] = nil }
+
   OPERATORS = %w{ != = =~ < > in ~ }.inject({}) {|h,v| h[v]=nil; h }.merge({
-    'eq' => '=',
-    'gt' => '>',
-    'lt' => '<',
-    'match' => '~',
-    'ne' => '!=',
-    'not in' => nil,
+    :eq    => '=',   :gt => '>',    :lt      => '<', 
+    :match => '~',   :ne => '!=',   'not in' => nil
   }.stringify_keys)
-  
-  MODIFIERS = {
-    :cast   => "",
-    :sort   => "",
-    :group  => "",
-    :dir    => "",
-    :limit  => "",
-    :offset => "",
-    :return => 'card',
-    :conj   => 'and'
-  }
-      
-  DEFAULT_ORDER_DIRS =  {
-    "update" => "desc",
-    "relevance" => "desc"
-  }
+
+  DEFAULT_ORDER_DIRS =  { :update => "desc", :relevance => "desc" }
 
   cattr_reader :root_perms_only
   @@root_perms_only = false
@@ -85,7 +68,7 @@ class Wql
     
     def safe_sql(txt)
       txt = txt.to_s
-      txt.match /[^\w\*\(\)\s\.]/ ? raise( "WQL contains disallowed characters: #{txt}" ) : txt
+      txt.match( /[^\w\*\(\)\s\.]/ ) ? raise( "WQL contains disallowed characters: #{txt}" ) : txt
     end
     
     def quote(v)  ActiveRecord::Base.connection.quote(v)  end
@@ -160,7 +143,6 @@ class Wql
     
     def clean(query)
       query = query.symbolize_keys
-      
       query.each do |key,val|
         case key.to_s
         when 'context'  ; @selfname         = query.delete(key)
@@ -203,11 +185,9 @@ class Wql
         end
       end
       
-      # process conditions
       spec.each do |key,val| 
         case ATTRIBUTES[key]
           when :basic; spec[key] = ValueSpec.new(val, self)
-          when :system; spec[key] = val.is_a?(ValueSpec) ? val : subspec(val)
           when :custom; self.send(key, spec.delete(key))    
           when :referential;  self.refspec(key, spec.delete(key))
           when :ignore; spec.delete(key)
@@ -268,7 +248,6 @@ class Wql
       no_plus_card = (val=~/\+/ ? '' : "and tag_id is null")  #FIXME -- this should really be more nuanced -- it breaks down after one plus
       merge field(:cond) => SqlCond.new(" lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}")
     end
-
     
     def cond(val)                                                                 end #noop
     def and(val)   subcondition(val)                                              end
@@ -278,26 +257,26 @@ class Wql
     def not(val)   merge field(:id) => subspec(val, {:return=>'id'}, negate=true) end
     
     def part(val) 
-      subval = { :tag_id => val.clone, :trunk_id => val }
+      subval = { :left => val, :right => val.clone }
       subcondition(subval, :conj=>:or)
     end  
+
+    def left_plus(val)
+      part_spec, connection_spec = val.is_a?(Array) ? val : [ val, {} ]
+      merge( field(:id) => subspec(connection_spec, :return=>'tag_id', :left =>part_spec))      
+    end    
     
     def right_plus(val) 
       part_spec, connection_spec = val.is_a?(Array) ? val : [ val, {} ]
-      merge( field(:id) => subspec(connection_spec, :return=>'trunk_id', :tag_id=> part_spec ))
+      merge( field(:id) => subspec(connection_spec, :return=>'trunk_id', :right=> part_spec ))
     end                                                                                                
     
-    def left_plus(val)
-      part_spec, connection_spec = val.is_a?(Array) ? val : [ val, {} ]
-      merge( field(:id) => subspec(connection_spec, :return=>'tag_id', :trunk_id=>part_spec))      
-    end    
-
     def plus(val)
       #warn "GOT PLUS: #{val}"
       part_spec, connection_spec = val.is_a?(Array) ? val : [ val, {} ]
       subval = {
-        field(:id) => subspec(connection_spec.deep_clone, :return=>'trunk_id', :tag_id=>part_spec.deep_clone),
-        field(:id) => subspec(connection_spec,            :return=>'tag_id', :trunk_id=>part_spec)
+        field(:id) => subspec(connection_spec.deep_clone, :return=>'trunk_id', :right=>part_spec.deep_clone),
+        field(:id) => subspec(connection_spec,            :return=>'tag_id',   :left=>part_spec)
       }
       subcondition(subval, :conj=>:or)
     end          
@@ -363,7 +342,7 @@ class Wql
     
     def sort(val)
       @mods[:sort] = 'sort_field'
-      val[:return] ||= 'content'
+      val[:return] = val[:return] ? safe_sql(val[:return]) : 'content'
       item = val.delete(:item) || 'left'
       
       if val[:return] == 'count'
@@ -417,7 +396,7 @@ class Wql
       # Basic conditions
       sql.conditions << @spec.collect do |key, val|   
         val.to_sql(key.to_s.gsub(/\:\d+/,''))
-      end.join(" #{@mods[:conj]} ")
+      end.join(" #{@mods[:conj].blank? ? :and : @mods[:conj]} ")
       
       return "(" + sql.conditions.last + ")" if @mods[:return]=='condition'
 
@@ -440,16 +419,15 @@ class Wql
     end
 
     def fields_to_sql
-      fields = case @mods[:return].to_sym
+      ret_field = @mods[:return].blank? ? :card : @mods[:return].to_sym
+      fields = case ret_field
         when :card; "#{table_alias}.name"
         when :count; "coalesce(count(*),0) as count"
         when :content
           join_alias = add_revision_join
           "#{join_alias}.content"
         else 
-          [:basic, :system].member?( ATTRIBUTES[@mods[:return].to_sym] ) ? 
-            "#{table_alias}.#{@mods[:return]}" :
-            safe_sql(@mods[:return])          
+          ATTRIBUTES[ret_field]==:basic ? "#{table_alias}.#{@mods[:return]}" : safe_sql(ret_field)          
         end
       !@mods[:cast].blank? ? "cast(#{fields} as #{safe_sql(@mods[:cast])})" : fields
     end
@@ -457,7 +435,7 @@ class Wql
     def sort_to_sql
       return nil if @parent or @mods[:return]=='count'
       order_key ||= @mods[:sort].blank? ? "update" : @mods[:sort]
-      dir = @mods[:dir].blank? ? (DEFAULT_ORDER_DIRS[order_key]||'asc') : safe_sql(@mods[:dir])
+      dir = @mods[:dir].blank? ? (DEFAULT_ORDER_DIRS[order_key.to_sym]||'asc') : safe_sql(@mods[:dir])
 
       order_field = case order_key
         when "id";              "#{table_alias}.id"

@@ -51,7 +51,6 @@
   end  
   
   
-  
   class Spec 
     attr_accessor :spec
     
@@ -77,12 +76,18 @@
       v.strip!#FIXME - breaks if v is nil
       [cxn, v]
     end
+    
+    def cast_type(type)
+      cxn ||= ActiveRecord::Base.connection
+      (val = cxn.cast_types[type.to_sym]) ? val[:name] : safe_sql(type)
+    end
   end
   
-
+  
   class SqlCond < String
     def to_sql(*args) self end
   end
+  
   
   class SqlStatement
     attr_accessor :fields, :relevance_fields, :tables, :joins,
@@ -417,7 +422,7 @@
         else 
           ATTRIBUTES[ret_field]==:basic ? "#{table_alias}.#{@mods[:return]}" : safe_sql(ret_field)          
         end
-      !@mods[:cast].blank? ? "cast(#{fields} as #{safe_sql(@mods[:cast])})" : fields
+      !@mods[:cast].blank? ? "cast(#{fields} as #{cast_type(@mods[:cast])})" : fields
     end
     
     def sort_to_sql
@@ -532,4 +537,20 @@
       end
     end
   end         
+end
+
+
+class ActiveRecord::ConnectionAdapters::AbstractAdapter
+  def cast_types()  native_database_types.merge custom_cast_types  end
+  def custom_cast_types() {}                                       end
+end
+
+class ActiveRecord::ConnectionAdapters::MysqlAdapter
+  def custom_cast_types
+    { :string  => { :name=>'char'    },
+      :integer => { :name=>'signed'  },
+      :text    => { :name=>'char'    },
+      :float   => { :name=>'decimal' },
+      :binary  => { :name=>'binary'  }  }
+  end
 end

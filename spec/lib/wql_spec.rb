@@ -274,7 +274,7 @@ describe Wql do
         c.content = '10'
         c.save
       
-        w = Wql.new( :right_plus=>'*table of contents', :sort=>{ :right=>'*table_of_contents', :cast=>'integer' } )
+        w = Wql.new( :right_plus=>'*table of contents', :sort=>{ :right=>'*table_of_contents'}, :sort_as=>'integer'  )
         #warn "sql from new wql = #{w.sql}"
         w.run.plot(:name).should == %w{ *all *account+*right Config+*self Setting+*self }
       end      

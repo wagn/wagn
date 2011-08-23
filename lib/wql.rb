@@ -8,7 +8,7 @@
     :ignore      => %w{ prepend append view }
   }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
 
-  MODIFIERS = {};  %w{ conj return cast sort group dir limit offset }.each{|key| MODIFIERS[key.to_sym] = nil }
+  MODIFIERS = {};  %w{ conj return sort sort_as group dir limit offset }.each{|key| MODIFIERS[key.to_sym] = nil }
 
   OPERATORS = %w{ != = =~ < > in ~ }.inject({}) {|h,v| h[v]=nil; h }.merge({
     :eq    => '=',   :gt => '>',    :lt      => '<', 
@@ -65,7 +65,7 @@
     
     def safe_sql(txt)
       txt = txt.to_s
-      txt.match( /[^\w\*\(\)\s\.]/ ) ? raise( "WQL contains disallowed characters: #{txt}" ) : txt
+      txt.match( /[^\w\*\(\)\s\.\,]/ ) ? raise( "WQL contains disallowed characters: #{txt}" ) : txt
     end
     
     def quote(v)  ActiveRecord::Base.connection.quote(v)  end
@@ -334,28 +334,27 @@
     
     def sort(val)
       return nil if @parent
-      @mods[:sort] = 'sort_field'
       val[:return] = val[:return] ? safe_sql(val[:return]) : 'content'
+      @mods[:sort] =  "t_sort.#{val[:return]}"
       item = val.delete(:item) || 'left'
       
       if val[:return] == 'count'
         cs_args = { :return=>'count', :group=>'sort_join_field' }
+        @mods[:sort] = "coalesce(#{@mods[:sort]},0)"
         case item
         when 'referred_to'
+          join_field = 'id'
           cs = CardSpec.build cs_args.merge( field(:cond)=>SqlCond.new("card_id in #{CardSpec.build( val.merge(:return=>'id')).to_sql}") )
           cs.add_join :wr, :wiki_references, :id, :referenced_card_id
         else;  raise "count with item: #{item} not yet implemented"
         end 
-        join_field = 'id'
-        sql.fields << "coalesce(t_sort.#{val[:return]},0) as sort_field"
       else
         join_field = case item
-          when 'left'; 'trunk_id'
-          when 'right'; 'tag_id'
-          else;  raise "sort item: #{item} not yet implemented"
+          when 'left'  ; 'trunk_id'
+          when 'right' ; 'tag_id'
+          else         ;  raise "sort item: #{item} not yet implemented"
         end 
         cs = CardSpec.build(val)
-        sql.fields << "t_sort.#{val[:return]} as sort_field"
       end
       
       cs.sql.fields << "#{cs.table_alias}.#{join_field} as sort_join_field"      
@@ -412,17 +411,16 @@
     end
 
     def fields_to_sql
-      ret_field = @mods[:return].blank? ? :card : @mods[:return].to_sym
-      fields = case ret_field
-        when :card; "#{table_alias}.name"
-        when :count; "coalesce(count(*),0) as count"
-        when :content
-          join_alias = add_revision_join
-          "#{join_alias}.content"
-        else 
-          ATTRIBUTES[ret_field]==:basic ? "#{table_alias}.#{@mods[:return]}" : safe_sql(ret_field)          
-        end
-      !@mods[:cast].blank? ? "cast(#{fields} as #{cast_type(@mods[:cast])})" : fields
+      field = @mods[:return]
+      case (field.blank? ? :card : field.to_sym)
+      when :card; "#{table_alias}.name"
+      when :count; "coalesce(count(*),0) as count"
+      when :content
+        join_alias = add_revision_join
+        "#{join_alias}.content"
+      else 
+        ATTRIBUTES[field.to_sym]==:basic ? "#{table_alias}.#{field}" : safe_sql(field)          
+      end
     end
     
     def sort_to_sql
@@ -448,6 +446,7 @@
         else 
           safe_sql(order_key) 
         end
+      order_field = "CAST(#{order_field} AS #{cast_type(@mods[:sort_as])})" if @mods[:sort_as]
       "ORDER BY #{order_field} #{dir}"
       
     end

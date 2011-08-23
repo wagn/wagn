@@ -1,29 +1,5 @@
-=begin
-
-# this one sucks:
-select type, name, 
-(
-  select count(*) from cards    
-  WHERE cards.trash='f' AND cards.id in (
-    select trunk_id from cards    
-    WHERE cards.trash='f' AND cards.tag_id in (
-      select id from cards WHERE cards.trash='f' AND cards.id=t0.id
-    )   
-  ) 
-) as count 
-from cards t0 order by count desc limit 10;
-
+class Wql
   
-# this one works:
-  
- select id, trunk_id, created_at, value, updated_at, current_revision_id, name, type, extension_id, extension_type, sealed, created_by, updated_by, priority, plus_sidebar, reader_id, writer_id, reader_type, writer_type, old_tag_id, tag_id, key, trash, appender_type, appender_id, indexed_content, indexed_name, count(*) 
- from cards join cards c2 on c2.tag_id=cards.id 
- group by cards.*
- order by count(*) desc limit 10;  
-  
-=end
-
-class Wql    
   ATTRIBUTES = {
     :basic=> %w{ name type content id key extension_type extension_id updated_by },
     :system => %w{ trunk_id tag_id },
@@ -34,7 +10,6 @@ class Wql
     :ignore => %w{ prepend append },
     :pass => %w{ cond }
   }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
-  # put into form: { :content=>:basic, :left=>:relational, etc.. }
 
   OPERATORS = %w{ != = =~ < > in ~ }.inject({}) {|h,v| h[v]=nil; h }.merge({
     'eq' => '=',
@@ -56,6 +31,7 @@ class Wql
   }
       
   DEFAULT_ORDER_DIRS =  {
+    "id" => "asc",
     "update" => "desc",
     "create" => "asc",
     "alpha" => "asc", # DEPRECATED
@@ -95,33 +71,20 @@ class Wql
         card=
           if query[:prepend] || query[:append]
             cardname = [query[:prepend], row['name'], query[:append]].compact.join('+')
-            Card.fetch_or_new cardname, {}, :skip_defaults=>true
+            Card.fetch_or_new cardname, :skip_defaults=>true
           else
             Card.fetch row['name'], :skip_virtual=>true
           end
         card.nil? ? Card.find_by_name_and_trash(row['name'],false).repair_key : card
       end
     when :count
-      rows.first['count']
+      rows.first['count'].to_i
     else
       rows.map { |row| row[query[:return].to_s] }
     end
   end  
-    
-    #if query[:return] == "name_content"
-    #  ActiveRecord::Base.connection.select_all( sql ).inject({}) do |h,x|
-    #    h[x["name"]] = x["content"]; h
-    #  end
-    #else
-    #  results = Card.find_by_sql( sql )
-    #  if query[:prepend] || query[:append]
-    #    results = results.map do |card|
-    #      cardname = [query[:prepend], card.name, query[:append]].compact.join('+')
-    #      Card.fetch_or_new cardname, {}, :skip_defaults=>true
-    #    end
-    #  end
-    #  results
-    #end
+  
+  
   
   class Spec 
     attr_accessor :spec
@@ -217,14 +180,6 @@ class Wql
       @selfname #|| raise(Wagn::WqlError, "_self referenced but no card is available")
     end
     
-#   def to_card(relative_name)
-#     case relative_name
-#     when "_self";  root.card                                   
-#     when "_left";  Card.fetch_or_new(root.card.name.left_name)
-#     when "_right"; Card.fetch_or_new(root.card.name.tag_name)
-#     end
-#   end
-    
     def absolute_name(name)
       name = (root.selfname ? name.to_absolute(root.selfname) : name)
     end
@@ -235,7 +190,7 @@ class Wql
       query.each do |key,val|
         case key.to_s
         when 'context'  ; @selfname         = query.delete(key)
-        when '_parent'  ; @parent           = query.delete(key)   ## HATE this parent business.  LEFT!
+        when '_parent'  ; @parent           = query.delete(key)   
         when /^_\w+$/   ; @params[key.to_s] = query.delete(key)
         end
       end
@@ -287,7 +242,7 @@ class Wql
         case ATTRIBUTES[key]
           when :basic; spec[key] = ValueSpec.new(val, self)
           when :system; spec[key] = val.is_a?(ValueSpec) ? val : subspec(val)
-          when :relational, :semi_relational, :plus, :special; self.send(key, spec.delete(key))    
+          when :relational, :semi_relational, :special; self.send(key, spec.delete(key))    
           when :referential;  self.refspec(key, spec.delete(key))
           when :ignore; spec.delete(key)
           when :pass; # for :cond  ie. raw sql condition to be ANDed
@@ -302,7 +257,7 @@ class Wql
     def found_by(val)
       cards = (String===val ? [Card.fetch_or_new(absolute_name(val))] : Wql.new(val).run)
       cards.each do |c|
-        raise %{"found_by" value needs to be valid Search card #{c.inspect}} unless c && ['Search','Set'].include?(c.type)
+        raise %{"found_by" value needs to be valid Search card #{c.inspect}} unless c && ['Search','Set'].include?(c.typecode)
         found_by_spec = CardSpec.new(c.get_spec).spec
         merge(field(:id) => subspec(found_by_spec))
       end
@@ -509,14 +464,8 @@ Rails.logger.debug "count iter(#{relation.inspect} #{subspec.inspect})"
       
       # Permissions       
       t = table_alias
-      unless System.always_ok? or (Wql.root_perms_only && !root?)
-        user_roles = [Role[:anon].id]
-        unless User.as_user.login.to_s=='anon'
-          user_roles += [Role[:auth].id] + User.as_user.roles.map(&:id)
-        end                                                                
-        user_roles = user_roles.map(&:to_s).join(',')
-        # type!=User is about 6x faster than type='Role'...
-        sql.conditions << %{ (#{t}.reader_type!='User' and #{t}.reader_id IN (#{user_roles})) }
+      unless System.always_ok? or (Wql.root_perms_only && !root?) #or ENV['BOOTSTRAP_DUMP'] == 'true'
+        sql.conditions << %{ (#{t}.read_rule_id IN (#{::User.as_user.read_rule_ids.join ','})) }
       end
             
       # Order 
@@ -525,6 +474,7 @@ Rails.logger.debug "count iter(#{relation.inspect} #{subspec.inspect})"
         dir = @mods[:dir].blank? ? (DEFAULT_ORDER_DIRS[order_key]||'desc') : @mods[:dir]
         sql.order = "ORDER BY "
         sql.order << case order_key
+          when "id";              "#{table_alias}.id #{dir}"
           when "update";          "#{table_alias}.updated_at #{dir}"
           when "create";          "#{table_alias}.created_at #{dir}"
           when "count" ;          "count(*) #{dir}, #{table_alias}.name asc"
@@ -619,34 +569,33 @@ Rails.logger.debug "count iter(#{relation.inspect} #{subspec.inspect})"
     end
     
     def to_sql(field)
-      clause = nil
       op,v = @spec
-      v=@cardspec.card if v=='_self'
+      v=@cardspec.card.name if v=='_self'
+      table = @cardspec.table_alias
       
       case field
+      when "name"
+        field = "#{table}.key"
+        v = [v].flatten.map{ |val| val.to_key }
       when "content"
-        @cardspec.sql.joins << "join revisions r3 on r3.id=#{@cardspec.table_alias}.current_revision_id"
         field = 'r3.content'
+        @cardspec.sql.joins << "join revisions r3 on r3.id=#{table}.current_revision_id"
       when "type"
-        v = [v].flatten.map do |val| 
-          Cardtype.classname_for(  val.is_a?(Card::Base) ? val.name : val  )
-        end
-        v = v[0] if v.length==1
+        field = "#{table}.typecode"
+        v = [v].flatten.map{ |val| Cardtype.classname_for( val ) }
       when "cond"
-        clause = "(#{sqlize(v)})"
-      else   
-        field = "#{@cardspec.table_alias}.#{field}"
+        return "(#{sqlize(v)})"
+      else
+        field = "#{table}.#{field}"
       end
       
-      
-      clause ||=
-        if op=='~'
-          cxn, v = match_prep(v,@cardspec)
-          %{#{field} #{cxn.match(sqlize(v))}}
-        else
-          "#{field} #{op} #{sqlize(v)}"
-        end
-      
+      v = v[0] if Array===v && v.length==1
+      if op=='~'
+        cxn, v = match_prep(v,@cardspec)
+        %{#{field} #{cxn.match(sqlize(v))}}
+      else
+        "#{field} #{op} #{sqlize(v)}"
+      end
     end
   end         
 end

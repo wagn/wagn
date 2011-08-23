@@ -6,8 +6,10 @@ module AuthenticatedSystem
 
   # Accesses the current user from the session.
   def current_user
-    #session[:user]    
-    @current_user ||= session[:user] ? User.find_by_id(session[:user]) : nil
+    @current_user ||= session[:user] ? User[session[:user]] : nil
+  rescue
+    session[:user] = nil
+    raise
   end
 
   # Store the given user in the session.
@@ -114,6 +116,7 @@ module AuthenticatedSystem
   # Inclusion hook to make #current_user and #logged_in?
   # available as ActionView helper methods.
   def self.included(base)
+    super
     base.send :helper_method, :current_user, :logged_in?
   end
 end

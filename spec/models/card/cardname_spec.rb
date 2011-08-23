@@ -14,7 +14,7 @@ describe Card, "Case Variant" do
 end
 
 
-describe Cardname, "Underscores" do
+describe Wagn::Cardname, "Underscores" do
   it "should be treated like spaces when making keys" do
     'weird_ combo'.to_key.should == 'weird  combo'.to_key
   end
@@ -23,7 +23,7 @@ describe Cardname, "Underscores" do
   end
 end
 =end
-describe Cardname, "changing from plus card to simple" do
+describe Wagn::Cardname, "changing from plus card to simple" do
   before do
     User.as :joe_user
     @c = Card.create! :name=>'four+five'

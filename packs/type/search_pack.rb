@@ -1,20 +1,19 @@
-
-class Renderer
+class Wagn::Renderer
   define_view(:naked, :type=>'search') do
-    begin
+    error=nil
+    results = begin
       card.item_cards( paging_params )
     rescue Exception=>e
-      Rails.logger.info "Search Error (:naked) #{e.inspect} #{e.backtrace*"\n"}"
-      error = e
+      error = e; nil
     end
 
     case
-    when card.results.nil?
-      %{#{error.class.to_s}: #{error.message}<br/>#{card.content}}
+    when results.nil?
+      %{No results? #{error.class.to_s}: #{error&&error.message}<br/>#{card.content}}
     when card.spec[:return] =='count'
-      card.results
+      results.to_s
     else
-      render('card_list')
+      render('card_list', :results=>results)
     end
   end
   
@@ -24,25 +23,22 @@ class Renderer
 
   define_view(:closed_content, :type=>'search') do
     return "..." if depth > 2
-    begin
+    results= begin
       card.item_cards( paging_params )
-      total = card.count
     rescue Exception=>e
-      Rails.logger.info "Search Error (:closed_content) #{e.inspect} #{e.backtrace*"\n"}"
-      error = e
-      card.results = nil
+      error = e; nil
     end
 
-    if card.results.nil?
+    if results.nil?
       %{"#{error.class.to_s}: #{error.message}"<br/>#{card.content}}
     elsif card.spec[:return] =='count'
-      card.results
-    elsif card.results.length==0
+      results.to_s
+    elsif results.length==0
       '<span class="faint">(0)</span>'
     else
-      %{<span class="faint">(#{ total })</span>
+      %{<span class="faint">(#{ card.count })</span>
       <div class="search-result-list">
-        #{card.results.map do |c|
+        #{results.map do |c|
           %{<div class="search-result-item">#{'name' == item_view || params[:item] ? c.name : link_to_page( c.name ) }</div>}
         end*"\n"}
       </div>}
@@ -50,8 +46,8 @@ class Renderer
   end
 
 
-  define_view(:card_list, :type=>'search') do
-    cards = card.results
+  define_view(:card_list, :type=>'search') do |args|
+    cards = args[:results]
     @item_view ||= (card.spec[:view]) || :closed
 
     instruction, title = nil,nil
@@ -60,7 +56,7 @@ class Renderer
       title = 'Search Results' #ENGLISH
     end
 
-    paging = render(:paging)
+    paging = render(:paging, :results=>cards)
 
     # now the result string ...
     if title
@@ -86,8 +82,8 @@ class Renderer
 
 
 
-  define_view(:card_list, :name=>'*recent') do
-    cards = card.results
+  define_view(:card_list, :name=>'*recent') do |args|
+    cards = args[:results]
     @item_view ||= (card.spec[:view]) || :change
 
     cards_by_day = Hash.new { |h, day| h[day] = [] }
@@ -102,7 +98,7 @@ class Renderer
       cards_by_day[day] << card
     end
 
-    paging = render(:paging)
+    paging = render(:paging, :results=>cards)
 %{<h1 class="page-header">Recent Changes</h1>
 <div class="card-slot recent-changes">
   <div class="open-content">
@@ -127,10 +123,11 @@ class Renderer
 
 
 
-  define_view(:paging, :type=>'search') do
+  define_view(:paging, :type=>'search') do |args|
+    results = args[:results]
     s = card.spec(paging_params)
     offset, limit = s[:offset].to_i, s[:limit].to_i
-    first,last = offset+1,offset+card.results.length 
+    first,last = offset+1,offset+results.length 
     total = card.count(paging_params)
  
     args = params.clone
@@ -157,6 +154,28 @@ class Renderer
   </span>}
       end}
 <!-- /paging -->}
+  end
+
+
+  def paging_params
+    if ajax_call? && @depth > 0
+      {:default_limit=>20}  #important that paging calls not pass variables to included searches
+    else
+      @paging_params ||= begin
+        s = {}
+        if p = root.params
+          [:offset,:limit,:_keyword].each{|key| s[key] = p.delete(key)}
+        end
+        s[:offset] = s[:offset] ? s[:offset].to_i : 0
+        if s[:limit]
+          s[:limit] = s[:limit].to_i
+        else
+          s.delete(:limit)
+          s[:default_limit] = (main_card? ? 50 : 20) #can be overridden by card value
+        end
+        s
+      end
+    end
   end
 
 

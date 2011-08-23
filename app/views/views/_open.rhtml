@@ -1,14 +1,11 @@
-<% if slot.action!='nude' %><%# FIXME: variable from slot.rb?  %>
-  <%= slot.header %>  
-<% end %>
-
-  <%= slot.wrap_content( slot._render_open_content ) %>
+<%= slot.header %>  
+<%= slot.wrap_content( slot._render_open_content ) %>
 
 <%= slot.notice %>  
-<% if card.ok?(:comment) %> <%#and !card.hard_template %>
-   <div class="comment-box">
-   <% form_for_card :url=>slot.url_for('card/comment') do |f| %>
-     <%= f.text_area :comment, :rows=>3 %><br/>
+<% if card.ok?(:comment) %>
+  <div class="comment-box">
+  <% form_for_card :url=>slot.url_for('card/comment') do |f| %>
+    <%= f.text_area :comment, :rows=>3 %><br/>
     <% if User.current_user.login == "anon" %>
       <% card.comment_author= (slot.session[:comment_author] || params[:comment_author] || "Anonymous") %> <%#ENGLISH%>
       <%= slot.captcha_tags %>
@@ -17,6 +14,7 @@
     <% end %>
     <input type="submit" value="Comment"/>
   <% end %>
-   </div>
- <% end %>
-<%= slot.action=='nude' ? "" : slot.footer %>
+  </div>
+<% end %>
+
+<%= slot.footer %>

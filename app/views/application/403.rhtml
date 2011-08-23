@@ -4,7 +4,7 @@
   <% if User.current_user.login=='anon' %>
     <p>
       <%= link_to 'Sign in', '/account/signin' %>
-      <% if Card::InvitationRequest.create_ok? %>
+      <% if Card.new(:typecode=>'InvitationRequest').ok?(:create) %>
         or <%= link_to 'Sign up', '/account/signup'%>
       <% end %>
     </p>

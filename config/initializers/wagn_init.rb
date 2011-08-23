@@ -1,1 +1,0 @@
-Wagn::Initializer.run

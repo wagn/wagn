@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :name
-  cattr_accessor :current_user, :as_user
+  cattr_accessor :current_user, :as_user, :cache
   
   has_and_belongs_to_many :roles
   belongs_to :invite_sender, :class_name=>'User', :foreign_key=>'invite_sender_id'
@@ -26,24 +26,22 @@ class User < ActiveRecord::Base
   
   before_validation :downcase_email!
   before_save :encrypt_password
+  after_save :reset_instance_cache
   
-  cattr_accessor :cache  
-  self.cache = {}
   
   class << self
-    # CURRENT USER
     def current_user
-      @@current_user ||= find_by_login('anon')  
+      @@current_user ||= User[:anon]  
     end
-    
+
     def current_user=(user)
       @@as_user = nil
-      @@current_user = user.class==User ? user : User[user]
+      @@current_user = user.class==User ? User[user.id] : User[user]
     end
    
     def as(given_user)
       tmp_user = @@as_user
-      @@as_user = given_user.class==User ? given_user : User[given_user]
+      @@as_user = given_user.class==User ? User[given_user.id] : User[given_user]
       self.current_user = @@as_user if @@current_user.nil?
       
       #warn "\nas called: @@as_user = #{@@as_user.inspect}\n"
@@ -73,10 +71,6 @@ class User < ActiveRecord::Base
       [@user, @card]
     end
 
-    def active_users
-      self.find(:all, :conditions=>"status='active'")
-    end 
-    
     # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
     def authenticate(email, password)
       u = self.find_by_email(email.strip.downcase)
@@ -88,29 +82,56 @@ class User < ActiveRecord::Base
       Digest::SHA1.hexdigest("#{salt}--#{password}--")
     end    
     
-    def [](login)
-      login=login.to_s
-      login.blank? ? nil : (self.cache[login] ||= User.find_by_login(login)) 
+    def [](key)
+      #Rails.logger.info "Looking up USER[ #{key}]"
+      self.cache.read(key.to_s) || self.cache.write(key.to_s, begin
+        usr = Integer===key ? find(key) : find_by_login(key.to_s)
+        if usr #preload to be sure these get cached.
+          usr.card
+          usr.read_rule_ids
+        end
+        usr
+      end)
     end
 
     def no_logins?
-      self.cache[:no_logins] ||= User.count < 3
+      c = self.cache
+      !c.read('no_logins').nil? ? c.read('no_logins') : c.write('no_logins', (User.count < 3))
     end
-    
-    def clear_cache
-      self.cache = {}
-    end
-
-    # OPENID - on hold
-    #def find_or_create_by_identity_url(url)
-    #  self.find_by_identity_url(url) || User.create_with_card(:identity_url=>url)
-    #end
   end 
 
-  ## INSTANCE METHODS
+#~~~~~~~ Instance
 
+  def reset_instance_cache
+    self.class.cache.write(id.to_s, nil)
+    self.class.cache.write(login, nil) if login
+  end
+
+  def among? test_parties
+    #Rails.logger.info "among called.  user = #{self.login}, parties = #{parties.inspect}, test_parties = #{test_parties.inspect}"
+    parties.each do |party|
+      return true if test_parties.member? party
+    end
+    false
+  end
+
+  def parties
+    @parties ||= [self,all_roles].flatten.map{|p| p.card.key }
+  end
+  
+  def read_rule_ids
+    #Rails.logger.debug "Looking up #READ_RULE_IDS"
+    return [] if self.login=='wagbot'  # avoids infinite loop
+    @read_rule_ids ||= begin
+      party_keys = ['in'] + parties
+      self.class.as(:wagbot) do
+        Card.search(:right=>'*read', :refer_to=>{:key=>party_keys}).map &:id
+      end
+    end
+  end
+  
   def save_with_card(card)
-    #fail "save with card #{card.inspect}"
+    #Rails.logger.info "save with card #{card.inspect}, #{self.inspect}"
     User.transaction do
       save
       card.extension = self
@@ -121,17 +142,13 @@ class User < ActiveRecord::Base
       end
       raise ActiveRecord::RecordInvalid.new(self) if !self.errors.empty?
     end
-  rescue  
+  rescue
+    Rails.logger.info "save with card failed.  #{card.inspect}"
   end
       
-  def cardname
-    @cardname ||= card.name
-  end
-
   def accept(email_args)
     User.as :wagbot  do #what permissions does approver lack?  Should we check for them?
-      card.type = 'User'  # change from Invite Request -> User
-      card.permit :edit, Card.new(:type=>'User').who_can(:edit) #give default user permissions
+      card.typecode = 'User'  # change from Invite Request -> User
       self.status='active'
       self.invite_sender = ::User.current_user
       generate_password
@@ -152,9 +169,10 @@ class User < ActiveRecord::Base
   end  
 
   def all_roles
-    @cached_roles ||= (login=='anon' ? [Role[:anon]] : 
-      roles + [Role[:anon], Role[:auth]])
+    @all_roles ||= (login=='anon' ? [Role[:anon]] : 
+      roles(force_reload=true) + [Role[:anon], Role[:auth]])
   end  
+  
 
   def active?
     status=='active'

@@ -32,11 +32,9 @@ class CardActionTest < ActionController::IntegrationTest
 
   def test_comment      
     User.as(:wagbot)  do
-      @a = Card.find_by_name("A")  
-      @a.permit('comment', Role[:anon])
-      @a.save!
+      Card.create :name=>'A+*self+*comment', :type=>'Pointer', :content=>'[[Anyone]]'
     end
-    post "card/comment/#{@a.id}", :card => { :comment=>"how come" }
+    post "card/comment/A", :card => { :comment=>"how come" }
     assert_response :success
   end
 
@@ -44,14 +42,15 @@ class CardActionTest < ActionController::IntegrationTest
     integration_login_as :admin
     post( 'card/create', :card=>{:content=>"test", :type=>'Role', :name=>"Editor"})
     assert_response 418
-    assert_instance_of Card::Role, Card.find_by_name('Editor')
+
+    assert Card.find_by_name('Editor').typecode == 'Role'
     assert_instance_of Role, Role.find_by_codename('Editor')
   end
 
   def test_create_cardtype_card
     post( 'card/create','card'=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor2"} )
     assert_response 418
-    assert_instance_of Card::Cardtype, Card.find_by_name('Editor2')
+    assert Card.find_by_name('Editor2').typecode == 'Cardtype'
     assert_instance_of Cardtype, Cardtype.find_by_class_name('Editor2')
   end
 
@@ -72,9 +71,7 @@ class CardActionTest < ActionController::IntegrationTest
       {"YFoo+*type+*edit help"  => "instruct-me"}
     )
     get 'card/new', :card => {:type=>'YFoo'}
-Rails.logger.info "failing 3"
     assert_tag :tag=>'div', :attributes=>{ :class=>"instruction" },  :content=>/instruct-me/ 
-Rails.logger.info "failing 4"
   end
 
   def test_newcard_works_with_fuzzy_renamed_cardtype
@@ -90,9 +87,7 @@ Rails.logger.info "failing 4"
   def test_newcard_gives_reasonable_error_for_invalid_cardtype
     get 'card/new', :card => { :type=>'bananamorph' }       
     assert_response :success
-Rails.logger.info "failing 1"
     assert_tag :tag=>'div', :attributes=>{:class=>'error', :id=>'no-cardtype-error'}
-Rails.logger.info "failing 2"
   end
 
   # FIXME: this should probably be files in the spot for a remove test
@@ -100,9 +95,9 @@ Rails.logger.info "failing 2"
     t1 = t2 = nil
     User.as(:wagbot) do 
       t1 = Card.create! :name => "Testable1", :content => "hello"
-      t2 = Card.create! :name => "Testable1+*banana", :content => "world"
+      t2 = Card.create! :name => "Testable1+bandana", :content => "world"
     end
-    
+
     get url_for_page( t1.name )
     get url_for_page( t2.name )
     

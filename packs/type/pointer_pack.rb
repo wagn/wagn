@@ -1,4 +1,60 @@
-class Renderer
+class Wagn::Renderer
+
+  define_view(:naked, :type=>'pointer') do
+    %{<div class="pointer-list"> #{
+      pointer_item(self, (item_view||'closed')) }
+</div> #{ 
+      link_to_function 'add/edit', %{editTransclusion(this)}, :class=>'add-edit-item'
+    }} #ENGLISH
+  end
+
+  define_view(:closed_content, :type=>'pointer') do
+    div( :class=>"pointer-list" ) do
+      pointer_item(self, ('name'==item_view || params[:item] ? 'name' : 'link'))
+    end
+  end
+
+  define_view(:editor, :type=>'pointer') do
+    part_view = (c = card.setting('input')) ? c.gsub(/[\[\]]/,'') : 'list'
+    form.hidden_field( :content, :id=>"#{context}-hidden-content") +
+    render(part_view)
+  end
+
+  define_view(:list, :type=>'pointer') do |args|
+    items = args[:items] || card.item_names(:context=>:raw)
+    items = [''] if items.empty?
+
+    result = %{<ul id="#{context}-ul" class="pointer"> }
+    items.each_with_index do |link, index| 
+      result += render(:field, :link=>link, :index=>index )
+    end
+    result += render(:add_item, :index=>items.length ) +
+    '</ul>'+
+
+    ( args[:skip_editor_hooks] ? '' : editor_hooks( :save=>%{
+      items = Element.select( $('#{context}-ul'), ".pointer-text").map(function(x){ return x.value; });
+      setPointerContent('#{context}', items);
+      return true;
+    } )
+    )
+  end
+
+
+  define_view(:field, :type=>'pointer') do |args|
+    value = (args[:link]== :add ? '' : args[:link] )
+    index = args[:index]
+    
+    result = %{<li id="#{ context }-pointer-li-#{ index }" class="pointer-li">}+
+    text_field_tag("pointer[#{index}]", value, :id=>"#{context}_pointer_text_#{index}", :class=>'pointer-text') +
+    cardname_auto_complete("#{context}_pointer_text_#{index}", (card && card.key))
+    result += link_to_function 'X', "$('#{context}-pointer-li-#{index}').remove()", :class=>'delete'
+    if args[:link]== :add
+      result += render(:add_item)
+    end
+    result
+  end
+  
+  
   define_view(:add_item, :type=>'pointer') do
     #ENGLISH
 #    if !card #or !card.limit or card.limit.to_i > (index.to_i+1)
@@ -10,6 +66,7 @@ class Renderer
       )
 #    else '' end
   end
+
 
   define_view(:checkbox, :type=>'pointer') do
     eid = context
@@ -29,58 +86,6 @@ class Renderer
   setPointerContent('#{eid}', vals );  
   return true;
 })
-  end
-
-  define_view(:naked, :type=>'pointer') do
-    %{<div class="pointer-list"> #{
-      pointer_item(slot, (item_view||'closed')) }
-</div> #{ 
-      link_to_function 'add/edit', %{editTransclusion(this)}, :class=>'add-edit-item'
-    }} #ENGLISH
-  end
-
-  define_view(:editor, :type=>'pointer') do
-    part_view = (c = card.setting('input')) ? c.gsub(/[\[\]]/,'') : 'list'
-    form.hidden_field( :content, :id=>"#{context}-hidden-content") +
-    render(part_view)
-  end
-
-  define_view(:field, :type=>'pointer') do |args|
-    value = (args[:link]== :add ? '' : args[:link] )
-    index = args[:index]
-    
-    result = %{<li id="#{ context }-pointer-li-#{ index }" class="pointer-li">}+
-    text_field_tag("pointer[#{index}]", value, :id=>"#{context}_pointer_text_#{index}", :class=>'pointer-text') +
-    cardname_auto_complete("#{context}_pointer_text_#{index}", (card && card.key))
-    result += link_to_function 'X', "$('#{context}-pointer-li-#{index}').remove()", :class=>'delete'
-    if args[:link]== :add
-      result += render(:add_item)
-    end
-    result
-  end
-
-  define_view(:closed_content, :type=>'pointer') do
-    %{<div class="pointer-list">} +
-    pointer_item(self, ('name'==item_view || params[:item] ? 'name' : 'link')) +
-    '</div>'
-  end
-
-  define_view(:list, :type=>'pointer') do
-    items = card.item_names(:context=>:raw)
-    items = [''] if items.empty?
-
-    result = %{<ul id="#{context}-ul" class="pointer"> }
-    items.each_with_index do |link, index| 
-      result += render(:field, :link=>link, :index=>index )
-    end
-    result += render(:add_item, :index=>items.length ) +
-    '</ul>'+
-
-    editor_hooks( :save=>%{
-      items = Element.select( $('#{context}-ul'), ".pointer-text").map(function(x){ return x.value; });
-      setPointerContent('#{context}', items);
-      return true;
-    } )
   end
 
   define_view(:multiselect, :type=>'pointer') do

@@ -5,10 +5,10 @@ Feature: Layouts
 
   Background:
     Given I log in as Joe Admin
-    And I create Html card "simple layout" with content "Simple Header {{_main}} Simple Footer"
+    And I create HTML card "simple layout" with content "Simple Header {{_main}} Simple Footer"
     And I edit "*all+*layout" setting content to "[[simple layout]]"
     And I create Pointer card "User+*type+*layout" with content "[[user layout]]"
-    And I create Html card "user layout" with content "User Header {{_main}}"
+    And I create HTML card "user layout" with content "User Header {{_main}}"
 
   Scenario: I visit a Basic card with the simple layout
     When I go to card "*account links"

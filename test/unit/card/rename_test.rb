@@ -142,10 +142,10 @@ class Card::RenameTest < ActiveSupport::TestCase
   private
   
   def with_debugging
-    Card::Base.debug = true             
+    Card.debug = true             
     yield
   ensure
-    Card::Base.debug = nil
+    Card.debug = nil
   end
   
   def name_invariant_attributes( card )
@@ -194,7 +194,7 @@ class Card::RenameTest < ActiveSupport::TestCase
     Card.create! :name => "Joe Card", :content => "Whattup"
     User.as(:joe_admin) { 
       c = Card.create! :name => "Admin Card", :content => "[[Joe Card]]" 
-      c.permit :edit, Role[:admin]
+#      c.permit :edit, Role[:admin]
       c.save!
     }
     c = Card["Joe Card"]

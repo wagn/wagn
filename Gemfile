@@ -7,7 +7,7 @@ source 'http://rubygems.org'
 
 # must have all of these
 
-gem 'rails', '~>2.3.9'
+gem 'rails', '2.3.11'
 gem 'rack', '>=1.1.0'
 gem 'rake', '>=0.8.7'
 
@@ -15,7 +15,7 @@ gem 'htmlentities', '~>4.2.1'
 gem 'macaddr', '~>1.0.0'
 gem 'uuid', '~>2.2.0'
 gem 'json', '~>1.4.6'
-gem 'userstamp', '~>2.0.1'
+#gem 'userstamp', '~>2.0.1'
 
 #gem 'ruby-openid', '2.1.8'
 
@@ -58,13 +58,17 @@ end
 # TESTING #
 # ~~~~~~~ #
 
+group :debug do
+  gem 'rdoc'
+  gem 'ruby-debug'
+end
 
 group :test do
   gem 'win32console', '1.3.0', :platforms => ['mingw', 'mswin']
   gem 'win32-process', '0.6.5', :platforms => ['mingw', 'mswin']
   
   gem 'term-ansicolor', '1.0.5'
-  gem 'nokogiri', '>=1.4.1'
+  gem 'nokogiri', '1.4.1'
   gem 'timecop', '>=0.2.1'
   gem 'spork', '>=0.5.7'
   gem 'assert2', '0.5.5'

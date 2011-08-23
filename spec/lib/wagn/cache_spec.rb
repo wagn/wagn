@@ -4,7 +4,7 @@ describe Wagn::Cache do
   describe "with nil store" do
     before do
       Wagn::Cache.should_receive("generate_cache_id").twice.and_return("cache_id")
-      @cache = Wagn::Cache.new nil, "prefix"
+      @cache = Wagn::Cache.new :prefix=>"prefix"
     end
 
     describe "#basic operations" do
@@ -22,7 +22,7 @@ describe Wagn::Cache do
     before :each do
       @store = ActiveSupport::Cache::MemoryStore.new
       Wagn::Cache.should_receive("generate_cache_id").and_return("cache_id")
-      @cache = Wagn::Cache.new @store, "prefix"
+      @cache = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
     end
 
     it "#read" do
@@ -58,7 +58,7 @@ describe Wagn::Cache do
   it "#reset" do
     Wagn::Cache.should_receive("generate_cache_id").and_return("cache_id1")
     @store = ActiveSupport::Cache::MemoryStore.new
-    @cache = Wagn::Cache.new @store, "prefix"
+    @cache = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
     @cache.prefix.should == "prefix/cache_id1/"
     @cache.write("foo","bar")
     @cache.read("foo").should == "bar"
@@ -70,7 +70,7 @@ describe Wagn::Cache do
     @cache.store.read("prefix/cache_id").should == "cache_id2"
     @cache.read("foo").should be_nil
 
-    cache2 = Wagn::Cache.new @store, "prefix"
+    cache2 = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
     cache2.prefix.should == "prefix/cache_id2/"
   end
 
@@ -89,13 +89,13 @@ describe Wagn::Cache do
       FileUtils.rm_r(files_to_remove)
       
       Wagn::Cache.should_receive("generate_cache_id").twice.and_return("cache_id1")
-      @cache = Wagn::Cache.new @store, "prefix"
+      @cache = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
     end
 
     describe "#basic operations with special symbols" do
       it "should work" do
         @cache.write('%\\/*:?"<>|', "foo")
-        cache2 = Wagn::Cache.new @store, "prefix"
+        cache2 = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
         cache2.read('%\\/*:?"<>|').should == "foo"
         @cache.reset
       end
@@ -105,7 +105,7 @@ describe Wagn::Cache do
       it "should work" do
         @cache.write('(汉语漢語 Hànyǔ; 华语華語 Huáyǔ; 中文 Zhōngwén', "foo")
         @cache.write('русский', "foo")
-        cache3 = Wagn::Cache.new @store, "prefix"
+        cache3 = Wagn::Cache.new :store=>@store, :prefix=>"prefix"
         cache3.read('(汉语漢語 Hànyǔ; 华语華語 Huáyǔ; 中文 Zhōngwén').should == "foo"
         cache3.read('русский').should == "foo"
         @cache.reset

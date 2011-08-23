@@ -40,21 +40,17 @@ class AccountCreationTest < ActionController::TestCase
 =end
 
   def test_should_create_account_from_invitation_request             
-    assert_difference Card::InvitationRequest, :count, -1 do
-      assert_difference Card::User, :count, 1 do
-        post_invite :card=>{ :key=>"ron_request"}, :action=>:accept
-      end
-    end
+    assert_equal 'InvitationRequest', Card.fetch('Ron Request').typecode
+    post_invite :card=>{ :key=>"ron_request"}, :action=>:accept
+    assert_equal 'User', Card.fetch('Ron Request').typecode
     assert_equal "active", User.find_by_email("ron@request.com").status
   end
   
   def test_should_create_account_from_invitation_request_when_user_hard_templated
-    Card.create :name=>'User+*type+*content', :content=>"like this"
-    assert_difference Card::InvitationRequest, :count, -1 do
-      assert_difference Card::User, :count, 1 do
-        post_invite :card=>{ :key=>"ron_request"}, :action=>:accept
-      end
-    end
+    User.as(:wagbot) { Card.create :name=>'User+*type+*content', :content=>"like this" }
+    assert_equal 'InvitationRequest', Card.fetch('Ron Request').typecode
+    post_invite :card=>{ :key=>"ron_request"}, :action=>:accept
+    assert_equal 'User', Card.fetch('Ron Request').typecode
     assert_equal "active", User.find_by_email("ron@request.com").status
   end
 
@@ -85,7 +81,7 @@ class AccountCreationTest < ActionController::TestCase
   end
 
   def test_should_create_account_when_user_cards_are_templated   ##FIXME -- I don't think this actually catches the bug I saw.
-    Card.create! :name=> 'User+*type+*content'
+    User.as(:wagbot) { Card.create! :name=> 'User+*type+*content'}
     assert_new_account do 
       post_invite
       assert_response 302

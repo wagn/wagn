@@ -10,8 +10,8 @@ end
 
 class WikiReference < ActiveRecord::Base
   include ReferenceTypes
-  belongs_to :referencer, :class_name=>'Card::Base', :foreign_key=>'card_id'
-  belongs_to :referencee, :class_name=>'Card::Base', :foreign_key=>"referenced_card_id"
+  belongs_to :referencer, :class_name=>'Card', :foreign_key=>'card_id'
+  belongs_to :referencee, :class_name=>'Card', :foreign_key=>"referenced_card_id"
   
   validates_inclusion_of :link_type, :in => [  LINK, WANTED_LINK, TRANSCLUSION, WANTED_TRANSCLUSION ]
 

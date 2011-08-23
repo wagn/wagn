@@ -7,14 +7,14 @@ class SaneDataTest < ActiveSupport::TestCase
     assert ::Cardtype.count >= 3 
     
     Cardtype.find(:all).each do |ct|
-      assert_instance_of Card::Cardtype, ct.card, "#{ct.class_name} has card"
+      assert ct.card.class.include?(Wagn::Set::Type::Cardtype), "#{ct.class_name} has card"
     end
     Card.find(:all).each do |c|
-      assert_instance_of Card::Cardtype, c.cardtype, "#{c.type} #{c.name} has cardtype card"
-      assert_instance_of Cardtype, c.cardtype.extension, "#{c.type} #{c.name} cardtype card has extension"
+      assert ct.cardtype.class.include?(Wagn::Set::Type::Cardtype), "#{c.cardtype} #{c.name} has cardtype card"
+      assert_instance_of Cardtype, c.cardtype.extension, "#{c.cardtype} #{c.name} cardtype card has extension"
     end
     Role.find(:all).each do |r|
-      assert_instance_of Card::Role, r.card, "Role #{r.codename} has extension"
+      assert r.card.cardtype.class.include?(Wagn::Set::Type::Role), "Role #{r.codename} has extension"
     end
   end
   

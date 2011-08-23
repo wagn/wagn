@@ -1,4 +1,4 @@
-class Renderer
+class Wagn::Renderer
   define_view(:naked, :type=>'setting') do
     div( :class=>'instruction') do
       process_content "{{+*right+*edit help}}"
@@ -6,19 +6,22 @@ class Renderer
 
     Wagn::Pattern.subclasses.reverse.map do |set_class|
       key = set_class.key
-      content_tag(:h2, (key=='*all' ? '*all' : "+#{key}"), :class=>'values-for-setting') +
-      subrenderer(Card::Search.new(
-        :name=>UUID.new.generate,
+      search_card = Card.new(
+        :type =>'Search',
+        :skip_defaults=>true,
         :content=>%~
           { "left":{
               "type":"Set",
-              "#{key=='*all' ? 'name' : 'right'}":"#{key}"
+              "#{set_class.trunkless? ? 'name' : 'right'}":"#{key}"
             },
             "right":"#{card.name}","sort":"name","limit":"100"
           }
         ~
-      )).render(:content)
-    end * "\n"
+      )
+      next if search_card.count == 0
+      content_tag(:h2, (set_class.trunkless? ? '' : '+') + key, :class=>'values-for-setting') +
+      subrenderer(search_card).render(:content)
+    end.compact * "\n"
   end
 
   define_view(:closed_content, :type=>'setting') do

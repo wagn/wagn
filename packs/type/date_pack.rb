@@ -1,4 +1,4 @@
-class Renderer
+class Wagn::Renderer
   
   define_view(:editor, :type=>'date') do
     date_id = "#{self.context}+date"

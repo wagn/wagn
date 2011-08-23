@@ -290,9 +290,6 @@ span:hover.open-missing {
   border-right: 1px solid #666;
   border-bottom: 1px solid #666;
 }
-.edit-area .richtext {
-  background: #fff;
-}
 ul.pointer {
   margin: 0px;
   padding: 0px;
@@ -403,6 +400,19 @@ del.diffmod,
 }
 
 /*-------options tab ------*/
+
+/*--settings (new) --*/
+
+.options-set-label {
+  font-size: 1.1em;
+  color: #000;
+  padding: 5px 0;
+}
+.options-set-content {
+  padding: 0 0 30px 10px;
+}
+
+/*--permissions (old) --*/
 
 .small {  /* this is a crappy class name */
   font-size: 10px;
@@ -775,6 +785,23 @@ div.search-result-list .search-result-item {
   font-style: normal;
   font-weight: bold;
   margin-right: 20px;
+}
+
+/*------- permissions ------------------*/
+
+table.permission-editor th {
+  text-align: left;
+  padding-left: 20px;
+  background-color: inherit;
+  border: 0;
+  color: #666;
+}
+table.permission-editor td {
+  padding: 5px;
+  vertical-align: top;
+}
+table.permission-editor .pointer-text {
+  width: 200px;
 }
 
 /*---------- comment-box -------------------------------------- */

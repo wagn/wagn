@@ -1,4 +1,4 @@
-class TextRenderer
+class Wagn::Renderer::Text
   define_view :show do
     self.render(params[:view] || :naked)
   end

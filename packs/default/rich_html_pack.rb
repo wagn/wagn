@@ -1,4 +1,4 @@
-class RichHtmlRenderer
+class Wagn::Renderer::RichHtml
   define_view(:show) do
     if ajax_call?
       home_view = params[:home_view]=='closed' ? :open : params[:home_view]
@@ -11,7 +11,7 @@ class RichHtmlRenderer
   
   define_view(:layout) do |args|
     if @main_content = args.delete(:main_content)
-      @card = Card.fetch_or_new('*placeholder',{},:skip_defaults=>true)
+      @card = Card.fetch_or_new('*placeholder',:skip_defaults=>true)
     else
       @main_card = card
     end  
@@ -61,13 +61,9 @@ class RichHtmlRenderer
     open_close_js(:to_closed)
   end
 
-  define_view(:setting) do |args|
-    self.requested_view = args[:action] = 'content'
-    wrap( args) { render_partial('views/setting') }
-  end
-
   define_view(:edit) do |args|
     @state=:edit
+#    warn "card #{card.name} at view(:edit) = #{card.inspect}\ncard.content_template = #{card.content_template.inspect}"
     card.content_template ?  _render_multi_edit(args) : content_field(form)
   end
 
@@ -110,7 +106,7 @@ class RichHtmlRenderer
   
   <div class="field-in-multi">
     #{ self.content_field( form, :nested=>true ) }
-    #{ card.new_record? ? form.hidden_field(:type) : '' }
+    #{ card.new_record? ? form.hidden_field(:typecode) : '' }
   </div>
   #{if inst = card.setting_card('edit help')
     ss = self.subrenderer(inst); ss.state= :view

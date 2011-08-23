@@ -14,6 +14,7 @@ namespace :wagn do
     desc "dump db to bootstrap fixtures"
     #note: users, roles, and role_users have been manually edited
     task :dump => :environment do
+      #ENV['BOOTSTRAP_DUMP'] = 'true'
       %w{ cards revisions wiki_references cardtypes }.each do |table|
         i = "000"
         File.open("#{RAILS_ROOT}/db/bootstrap/#{table}.yml", 'w') do |file|
@@ -39,8 +40,7 @@ namespace :wagn do
   
   
     desc "load bootstrap fixtures into db"
-    task :load => :environment do     
-      
+    task :load => :environment do
       require 'active_record/fixtures'                         
       #ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
       Dir.glob(File.join(RAILS_ROOT, 'db', 'bootstrap', '*.{yml,csv}')).each do |fixture_file|
@@ -62,87 +62,8 @@ namespace :wagn do
         " (referenced_card_id is not null and not exists (select * from cards where cards.id = wiki_references.referenced_card_id)) or " +
         " (           card_id is not null and not exists (select * from cards where cards.id = wiki_references.card_id));"
       )
-
-      #config_cards = %w{ *context *to *title account_request+*type+*content account_request+*type+*default *invite+*thank *signup+*thank *from }
-      permset = (ENV['PERMISSIONS'] || :standard).to_sym
-      
-      permission = {
-        :standard=>{
-         :default=> {:read=>:anon, :edit=>:auth, :delete=>:auth, :create=>:auth, :comment=>nil},
-         :star=> {:edit=>:admin, :delete=>:admin},
-         '*all+*default' => {:edit=>:auth, :delete=>:auth},
-         'role'=> {:create=>:admin},
-         'html'=> {:create=>:admin},
-         'account_request' => {:create=>:anon},
-#         'account_request+*tform' {:read=>:admin},
-         'administrator_link'=> {:read=>:admin},
-         'discussion+*right+*default'=> {:comment=>:anon},
-         '*watcher' => {:edit=>:auth},
-         '*watcher+*right+*default' => {:edit=>:auth}
-        },
-        :openedit=>{
-         :default=> {:read=>:anon, :edit=>:anon, :delete=>:auth, :create=>:anon, :comment=>nil},
-         :star=> {:edit=>:admin, :delete=>:admin},
-         'role'=> {:create=>:admin},
-         'html'=> {:create=>:admin},
-         'html+*type+*default'=> {:edit=>:admin},
-         'administrator_link'=> {:read=>:admin},
-         'discussion+*right+*default'=> {:comment=>:anon},
-         '*watcher' => {:edit=>:auth},
-         '*watcher+*right+*default' => {:edit=>:auth}
-        }
-      } 
-      
-    
-      role_ids = {}
-      Role.find(:all).each do |role|
-        role_ids[role.codename.to_sym] = role.id
-      end
-
-      perms = permission[permset]
-      default = perms[:default]
-    
-      ActiveRecord::Base.connection.delete( 'delete from permissions')
-      ActiveRecord::Base.connection.select_all( 'select * from cards' ).each do |card|
-        key = card['key']
-        cardset = perms[key] || {}
-        starset = (key =~ /^\*/ ? perms[:star] : {})
-          
-        default.keys.each do |ttask|
-          next if ttask== :create and card['type'] != 'Cardtype'
-          codename = cardset[ttask] || starset[ttask] || default[ttask]
-          next unless codename
-          party_id = role_ids[codename]
-          
-          ActiveRecord::Base.connection.update(
-            "INSERT into permissions (card_id, task, party_type, party_id) "+
-            "VALUES (#{card['id']}, '#{ttask}', 'Role', #{party_id} )"
-          )
-          if ttask== :read
-            ActiveRecord::Base.connection.update(
-              "UPDATE cards set reader_type='Role', reader_id=#{party_id} where id=#{card['id']}"
-            )
-          end
-        end
-      end
-
     end
-    
   end
 end
-         
-           
-=begin    #
-    # special cases:  
-  
-    discussion+*rform (comment)
-    Account Request (create - anon?)
-    HTML (create - anon) ??
-    *to / *from (delete)
-    *context, *to, *title, Account Request+*type+*content, *invite+*thanks, *signup+*thanks, *from (edit by admin)      
-    Administrator links        
-    # 
-
-=end    
 
 

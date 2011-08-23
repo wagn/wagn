@@ -8,7 +8,7 @@ fi
 PG_DUMP=`which pg_dump`
 PG_ARGS="$1 $2 $3 $4 $5"
 
-TABLES="cards cardtypes permissions revisions roles roles_users"
+TABLES="cards cardtypes revisions roles roles_users"
 TABLES="$TABLES schema_migrations settings system users wiki_references"
 
 for T in $TABLES; do

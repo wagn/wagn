@@ -1,4 +1,4 @@
-class Renderer
+class Wagn::Renderer
   define_view(:raw, :name=>'*now') do
     Time.now.strftime('%A, %B %d, %Y %I:%M %p %Z')
   end

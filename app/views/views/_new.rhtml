@@ -1,4 +1,4 @@
-<%
+<%-
    args={}
    slot ||= get_slot(card)
    [:add_slot, :home_view].each {|x| args[x] = params[x] if params[x]}
@@ -18,12 +18,12 @@
           :html=>{:class=>'form', :onsubmit=>s.save_function}) do |form| %>
 
       <div class="card-header">
-        <% if (request and !request.xhr?) && @args[:type] && !card.broken_type %>
+        <% if (request and !request.xhr?) && @args[:type] #&& !card.broken_type %>
           <%= hidden_field_tag 'card[type]', @args[:type] %>
         <% else %>
           <span class="new-type">
             <span class="label"> type:</span>
-            <%= s.cardtype_field form, :onchange=>s.update_cardtype_function(
+            <%= s.typecode_field form, :onchange=>s.update_typecode_function(
                   :url=>s.url_for('card/new'), :update=>s.id,
                   :with=>"Form.serialize(getSlotElement(this,'form'))"
             ) %>

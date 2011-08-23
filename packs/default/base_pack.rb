@@ -1,4 +1,4 @@
-class Renderer
+class Wagn::Renderer
   ### ---- Core renders --- Keep these on top for dependencies
 
   # update_references based on _render_refs, which is the same as 
@@ -7,9 +7,7 @@ class Renderer
   # (builtins, etc.)
   define_view(:raw) do card ? card.raw_content : _render_blank end
   define_view(:refs) do card.respond_to?('references_expired') ? card.raw_content : '' end
-  define_view(:naked) do #|args|
-    card.name.template_name? ? _render_raw : process_content(_render_raw)
-  end
+  define_view(:naked) do process_content(_render_raw) end
   alias_view(:naked, {}, :show, :content)
   define_view(:titled) do
     card.name + "\n\n" + _render_naked
@@ -45,7 +43,7 @@ class Renderer
 
   define_view(:blank) do "" end
 
-  [ :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :setting_missing ].each do |view|
+  [ :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing ].each do |view|
     define_view(view) do |args|
       render_view_action view, args
     end

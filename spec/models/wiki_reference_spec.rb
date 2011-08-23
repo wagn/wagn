@@ -1,6 +1,8 @@
 require File.dirname(__FILE__) + '/../spec_helper' 
 
+
 describe "WikiReference" do
+  
   before do
     #setup_default_user  
     User.as :wagbot
@@ -8,33 +10,33 @@ describe "WikiReference" do
 
   describe "references on hard templated cards should get updated" do
     it "on templatee creation" do
-      Card::UserForm.create! :name=>"JoeForm"
-      Renderer.new(Card["JoeForm"]).render(:naked)
+      Card.create! :name=>"JoeForm", :type=>'UserForm'
+      Wagn::Renderer.new(Card["JoeForm"]).render(:naked)
       assert_equal ["joe_form+age", "joe_form+name", "joe_form+description"].sort,
         Card["JoeForm"].out_references.plot(:referenced_name).sort     
       Card["JoeForm"].references_expired.should_not == true
     end         
 
     it "on template creation" do
-      Card::Cardtype.create! :name=>"SpecialForm"
-      Card::SpecialForm.create! :name=>"Form1", :content=>"foo"
+      Card.create! :name=>"SpecialForm", :type=>'Cardtype'
+      Card.create! :name=>"Form1", :type=>'SpecialForm', :content=>"foo"
       c = Card.find_by_name("Form1")
       c.references_expired.should be_nil
       Card.create! :name=>"SpecialForm+*type+*content", :content=>"{{+bar}}"
       Card["Form1"].references_expired.should be_true
-      Renderer.new(Card["Form1"]).render(:naked)
+      Wagn::Renderer.new(Card["Form1"]).render(:naked)
       c = Card.find_by_name("Form1")
       c.references_expired.should be_nil
       Card["Form1"].out_references.plot(:referenced_name).should == ["form1+bar"]
     end
 
     it "on template update" do
-      Card::UserForm.create! :name=>"JoeForm"
+      Card.create! :name=>"JoeForm", :type=>'UserForm'
       tmpl = Card["UserForm+*type+*content"]
       tmpl.content = "{{+monkey}} {{+banana}} {{+fruit}}"; 
       tmpl.save!
       Card["JoeForm"].references_expired.should be_true
-      Renderer.new(Card["JoeForm"]).render(:naked)
+      Wagn::Renderer.new(Card["JoeForm"]).render(:naked)
       assert_equal ["joe_form+monkey", "joe_form+banana", "joe_form+fruit"].sort,
         Card["JoeForm"].out_references.plot(:referenced_name).sort     
       Card["JoeForm"].references_expired.should_not == true
@@ -48,19 +50,18 @@ describe "WikiReference" do
     newcard("Yellow")
     Card["Yellow"].referencers.plot(:name).sort.should == %w{ Banana Submarine Sun }
     y=Card["Yellow"];  
-    y.type="UserForm"; 
+    y.typecode="UserForm"; 
     y.save!
     Card["Yellow"].referencers.plot(:name).sort.should == %w{ Banana Submarine Sun }
   end
 
   
   it "container transclusion" do
-    bob_city = Card.create :name=>'bob+city' 
-    Card.create :name=>'address+*right+*default',:content=>"{{#{JOINT}city|base:parent}}"
-    bob_address = Card.create :name=>'bob+address'
-    
-    bob_address.transcludees.plot(:name).should == ["bob#{JOINT}city"]
-    bob_city.transcluders.plot(:name).should == ["bob#{JOINT}address"]
+    Card.create :name=>'bob+city' 
+    Card.create :name=>'address+*right+*default',:content=>"{{_L+city}}"
+    Card.create :name=>'bob+address'
+    Card.fetch('bob+address').transcludees.plot(:name).should == ["bob+city"]
+    Card.fetch('bob+city').transcluders.plot(:name).should == ["bob+address"]
   end
 
 
@@ -76,27 +77,27 @@ describe "WikiReference" do
   it "should update references on rename when requested" do
     watermelon = newcard('watermelon', 'mmmm')
     watermelon_seeds = newcard('watermelon+seeds', 'black')
-    lew = newcard('Lew', "likes [[watermelon]] and [[watermelon#{JOINT}seeds|seeds]]")
+    lew = newcard('Lew', "likes [[watermelon]] and [[watermelon+seeds|seeds]]")
 
     watermelon = Card['watermelon']
     watermelon.update_referencers = true
     watermelon.confirm_rename = true
     watermelon.name="grapefruit"
     watermelon.save!
-    lew.reload.content.should == "likes [[grapefruit]] and [[grapefruit#{JOINT}seeds|seeds]]"
+    lew.reload.content.should == "likes [[grapefruit]] and [[grapefruit+seeds|seeds]]"
   end
   
   it "should not update references when not requested" do
     watermelon = newcard('watermelon', 'mmmm')
     watermelon_seeds = newcard('watermelon+seeds', 'black')
-    lew = newcard('Lew', "likes [[watermelon]] and [[watermelon#{JOINT}seeds|seeds]]")
+    lew = newcard('Lew', "likes [[watermelon]] and [[watermelon+seeds|seeds]]")
 
     watermelon = Card['watermelon']
     watermelon.update_referencers = false
     watermelon.confirm_rename = true
     watermelon.name="grapefruit"
     watermelon.save!
-    lew.reload.content.should == "likes [[watermelon]] and [[watermelon#{JOINT}seeds|seeds]]"
+    lew.reload.content.should == "likes [[watermelon]] and [[watermelon+seeds|seeds]]"
     w = ReferenceTypes::WANTED_LINK
     assert_equal [w,w], lew.out_references.plot(:link_type), "links should be Wanted"
   end
@@ -117,13 +118,13 @@ describe "WikiReference" do
   end
     
   it "template transclusion" do
-    cardtype = Card::Cardtype.create! :name=>"ColorType", :content=>""
-    Card.create! :name=>"ColorType+*type+*content", :content=>"{{#{JOINT}rgb}}"
-    green = Card::ColorType.create! :name=>"green"
+    cardtype = Card.create! :name=>"ColorType", :type=>'Cardtype', :content=>""
+    Card.create! :name=>"ColorType+*type+*content", :content=>"{{+rgb}}"
+    green = Card.create! :name=>"green", :type=>'ColorType'
     rgb = newcard 'rgb'
     green_rgb = Card.create! :name => "green+rgb", :content=>"#00ff00"
     
-    green.reload.transcludees.plot(:name).should == ["green#{JOINT}rgb"]
+    green.reload.transcludees.plot(:name).should == ["green+rgb"]
     green_rgb.reload.transcluders.plot(:name).should == ['green']
   end
 
@@ -183,7 +184,7 @@ describe "WikiReference" do
 
   # This test doesn't make much sense to me... LWH
   it "revise changes references from wanted to linked for new cards" do
-    new_card = Card::Basic.create(:name=>'NewCard')
+    new_card = Card.create(:name=>'NewCard')
     new_card.revise('Reference to [[WantedCard]], and to [[WantedCard2]]', Time.now, User.find_by_login('quentin'), 
         get_renderer)
     
@@ -194,7 +195,7 @@ describe "WikiReference" do
     references[1].referenced_name.should == 'WantedCard2'
     references[1].link_type.should == WikiReference::WANTED_PAGE
 
-    wanted_card = Card::Basic.create(:name=>'WantedCard')
+    wanted_card = Card.create(:name=>'WantedCard')
     wanted_card.revise('And here it is!', Time.now, User.find_by_login('quentin'), get_renderer)
 
     # link type stored for NewCard -> WantedCard reference should change from WANTED to LINKED
@@ -209,7 +210,7 @@ describe "WikiReference" do
 =end
   private
   def newcard(name, content="")
-    ::Card::Basic.create! :name=>name, :content=>content
+    Card.create! :name=>name, :content=>content
   end
 
 end

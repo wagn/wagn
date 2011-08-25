@@ -13,7 +13,7 @@ class AdminController < ApplicationController
       if @user.errors.empty?
         @user.roles = [Role[:admin]]
         self.current_user = @user
-        User.cache.delete :no_logins
+        User.cache.delete 'no_logins'
         flash[:notice] = "You're good to go!"
         redirect_to '/'
       else

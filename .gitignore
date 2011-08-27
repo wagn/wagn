@@ -16,6 +16,7 @@ public/image
 public/javascripts/inline-console.js
 public_scripts
 public/stylesheets/local.css
+script/local
 script/performance/*.session
 test/unit/tmp_test.rb
 tmp/*

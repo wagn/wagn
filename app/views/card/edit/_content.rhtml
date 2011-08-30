@@ -1,6 +1,6 @@
 <%= get_slot.edit_submenu(params[:inclusions] ? :inclusions : :content) %>
 
-<% if params[:view] != 'setting' && inst = card.setting_card('edit help') %>
+<% if inst = card.setting_card('edit help') %>
   <div class="instruction"><%= slot.subrenderer(inst).render :naked %></div>
 <% end %>
 

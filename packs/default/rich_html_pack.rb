@@ -106,9 +106,9 @@ class Wagn::Renderer::RichHtml
   
   <div class="field-in-multi">
     #{ self.content_field( form, :nested=>true ) }
-    #{ card.new_record? ? form.hidden_field(:typecode) : '' }
+    #{ card.new_card? ? form.hidden_field(:typecode) : '' }
   </div>
-  #{if inst = card.setting_card('edit help')
+  #{if inst = (card.new_card? ? card.setting_card('add help', 'edit help') : card.setting_card('edit help'))
     ss = self.subrenderer(inst); ss.state= :view
     %{<div class="instruction">#{ ss.render :naked }</div>}
   end}
@@ -116,6 +116,4 @@ class Wagn::Renderer::RichHtml
 </div>
     }
   end
-
-
 end

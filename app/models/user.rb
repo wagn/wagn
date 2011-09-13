@@ -93,6 +93,10 @@ class User < ActiveRecord::Base
         usr
       end)
     end
+    
+    def logged_in?
+      !(current_user.nil? || current_user.login=='anon')
+    end
 
     def no_logins?
       c = self.cache

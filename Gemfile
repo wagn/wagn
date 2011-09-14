@@ -27,9 +27,8 @@ gem 'json', '~>1.4.6'
 # need at least one of the following
 
 #gem 'sqlite3-ruby', :require => 'sqlite3', :group=>'sqlite'
-gem 'postgres', '~>0.7.9.2008.01.28',        :group=>'postgres'
-gem 'mysql', '~>2.8.1',                      :group=>'mysql'
-
+gem 'pg', '~>0.7',        :group=>'postgres'
+gem 'mysql', '~>2.8.1',                :group=>'mysql'
 
 # ~~~~~~~~~~~~~~ #
 # IMAGE HANDLING #
@@ -60,7 +59,7 @@ end
 
 group :debug do
   gem 'rdoc'
-  gem 'ruby-debug'
+  gem 'ruby-debug19'
 end
 
 group :test do

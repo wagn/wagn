@@ -1,5 +1,5 @@
 class Wagn::Renderer
-  define_view(:naked , :type=>'set') do
+  define_view(:naked , :type=>'set') do |args|
     is_self = card.name.tag_name=='*self'
     #headings = ['Type','Content','Action']
     headings = ['Content','Type']
@@ -38,7 +38,7 @@ class Wagn::Renderer
   end
 
 
-  define_view(:editor, :type=>'set') do 
+  define_view(:editor, :type=>'set') do |args|
     'Cannot currently edit Sets' #ENGLISH
   end
 

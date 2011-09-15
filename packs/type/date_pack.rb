@@ -1,6 +1,6 @@
 class Wagn::Renderer
   
-  define_view(:editor, :type=>'date') do
+  define_view(:editor, :type=>'date') do |args|
     date_id = "#{self.context}+date"
     link_text = card.content.blank? ? (t=Time.now(); [t.year , t.mon, t.day].join('-')) : card.content
     

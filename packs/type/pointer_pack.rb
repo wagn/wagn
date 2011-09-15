@@ -1,6 +1,6 @@
 class Wagn::Renderer
 
-  define_view(:naked, :type=>'pointer') do
+  define_view(:naked, :type=>'pointer') do |args|
     %{<div class="pointer-list"> #{
       pointer_item(self, (item_view||'closed')) }
 </div> #{ 
@@ -8,13 +8,13 @@ class Wagn::Renderer
     }} #ENGLISH
   end
 
-  define_view(:closed_content, :type=>'pointer') do
+  define_view(:closed_content, :type=>'pointer') do |args|
     div( :class=>"pointer-list" ) do
       pointer_item(self, ('name'==item_view || params[:item] ? 'name' : 'link'))
     end
   end
 
-  define_view(:editor, :type=>'pointer') do
+  define_view(:editor, :type=>'pointer') do |args|
     part_view = (c = card.setting('input')) ? c.gsub(/[\[\]]/,'') : 'list'
     form.hidden_field( :content, :id=>"#{context}-hidden-content") +
     render(part_view)
@@ -55,7 +55,7 @@ class Wagn::Renderer
   end
   
   
-  define_view(:add_item, :type=>'pointer') do
+  define_view(:add_item, :type=>'pointer') do |args|
     #ENGLISH
 #    if !card #or !card.limit or card.limit.to_i > (index.to_i+1)
       %{<li id="#{context}-add">} +
@@ -68,7 +68,7 @@ class Wagn::Renderer
   end
 
 
-  define_view(:checkbox, :type=>'pointer') do
+  define_view(:checkbox, :type=>'pointer') do |args|
     eid = context
     card.options.map do |option|
       %{<div class="pointer-checkbox"> #{
@@ -88,7 +88,7 @@ class Wagn::Renderer
 })
   end
 
-  define_view(:multiselect, :type=>'pointer') do
+  define_view(:multiselect, :type=>'pointer') do |args|
     options = options_from_collection_for_select(card.options,:name,:name,card.item_names)
 
     select_tag("#{context}-multiselect", options, :multiple=>true, :id=>"#{context}-multiselect", :class=>'pointer-multiselect') +
@@ -97,7 +97,7 @@ class Wagn::Renderer
   setPointerContent('#{context}', jQuery('##{context}-multiselect').val() );  return true;})
   end
 
-  define_view(:radio, :type=>'pointer') do
+  define_view(:radio, :type=>'pointer') do |args|
     eid = context
     %{
 <div class="pointer-radio-list"> #{
@@ -121,7 +121,7 @@ class Wagn::Renderer
     }}
   end
 
-  define_view(:select, :type=>'pointer') do
+  define_view(:select, :type=>'pointer') do |args|
     eid = context
     options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]} 
     select_tag("#{eid}-select", options_for_select(options, card.item_names.first), :id=>"#{eid}-select", :class=>'pointer-select') +

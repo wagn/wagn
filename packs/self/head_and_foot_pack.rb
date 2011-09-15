@@ -1,5 +1,5 @@
 class Wagn::Renderer
-  define_view(:raw, :name=>'*head') do
+  define_view(:raw, :name=>'*head') do |args|
     rcard = root.card  # should probably be more explicit that this is really the *main* card.
     title = rcard.name
     title = params[:action] if title.nil? || title == '*placeholder'
@@ -36,7 +36,7 @@ class Wagn::Renderer
   
   
   
-  define_view(:raw, :name=>'*foot') do
+  define_view(:raw, :name=>'*foot') do |args|
     User.as(:wagbot) do
       javascript_include_tag("/tinymce/jscripts/tiny_mce/tiny_mce.js") +
       if ga_key = System.setting("*google analytics key")

@@ -5,20 +5,20 @@ class Wagn::Renderer
   # _render_raw, except that you don't need to alias :refs as often
   # speeding up the process when there can't be any reference changes
   # (builtins, etc.)
-  define_view(:raw) do card ? card.raw_content : _render_blank end
-  define_view(:refs) do card.respond_to?('references_expired') ? card.raw_content : '' end
-  define_view(:naked) do process_content(_render_raw) end
+  define_view(:raw) do |args| card ? card.raw_content : _render_blank end
+  define_view(:refs) do |args| card.respond_to?('references_expired') ? card.raw_content : '' end
+  define_view(:naked) do |args| process_content(_render_raw) end
   alias_view(:naked, {}, :show, :content)
-  define_view(:titled) do
+  define_view(:titled) do |args|
     card.name + "\n\n" + _render_naked
   end
 
 ###----------------( NAME) 
-  define_view(:name)     { card.name             }
-  define_view(:key)      { card.key              }
-  define_view(:linkname) { card.name.to_url_key  }
-  define_view(:link)     { name=card.name; build_link(name, name) }
-  define_view(:url)      { "#{System.base_url}/wagn/#{_render_linkname}"}
+  define_view(:name)     { |args| card.name             }
+  define_view(:key)      { |args| card.key              }
+  define_view(:linkname) { |args| card.name.to_url_key  }
+  define_view(:link)     { |args| name=card.name; build_link(name, name) }
+  define_view(:url)      { |args| "#{System.base_url}/wagn/#{_render_linkname}"}
 
 
   define_view(:open_content) do |args|
@@ -41,7 +41,7 @@ class Wagn::Renderer
     end.inspect
   end
 
-  define_view(:blank) do "" end
+  define_view(:blank) do |args| "" end
 
   [ :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing ].each do |view|
     define_view(view) do |args|
@@ -51,6 +51,6 @@ class Wagn::Renderer
 
   ## DEPRECATED
   # this is a quick fix, will soon be replaced by view override
-  define_view(:when_created)     { card.new_card? ? '' : card.created_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
-  define_view(:when_last_edited) { card.new_card? ? '' : card.updated_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
+  define_view(:when_created)     { |args| card.new_card? ? '' : card.created_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
+  define_view(:when_last_edited) { |args| card.new_card? ? '' : card.updated_at.strftime('%A, %B %d, %Y %I:%M %p %Z') }
 end

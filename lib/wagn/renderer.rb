@@ -94,9 +94,9 @@ module Wagn
             end
 #          raise "aview_key = #{aview_key}"
           class_eval do
-            define_method( "_final_#{aview_key}".to_sym ) do
+            define_method( "_final_#{aview_key}".to_sym ) do |*a|
               #Rails.logger.debug "ALIAS call: #{aview_key} called, calling #{view_key}"
-              send("_final_#{view_key}")
+              send("_final_#{view_key}", *a)
             end
           end
         end

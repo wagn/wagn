@@ -1,5 +1,5 @@
 class Wagn::Renderer
-  define_view(:editor, :right=>'*create') do
+  define_view(:editor, :right=>'*create') do |args|
     set_name = card.name.trunk_name
     set_card = Card.fetch(card.name.trunk_name)
     return "#{set_name} is not a Set" unless set_card and set_card.typecode=='Set'
@@ -68,12 +68,12 @@ class Wagn::Renderer
   end
   alias_view(:editor, { :right=>'*create' }, { :right=>'*read' }, { :right=>'*update' }, { :right=>'*delete' }, { :right=>'*comment' } )
   
-  define_view(:naked, { :right=>'*create'}) do
+  define_view(:naked, { :right=>'*create'}) do |args|
     card.content=='_left' ? core_inherit_content : _final_pointer_type_naked
   end
   alias_view(:naked, { :right=>'*create' }, { :right=>'*read' }, { :right=>'*update' }, { :right=>'*delete' }, { :right=>'*comment' } )
   
-  define_view(:closed_content, { :right=>'*create'}) do
+  define_view(:closed_content, { :right=>'*create'}) do |args|
     card.content=='_left' ? core_inherit_content : _final_pointer_type_closed_content
   end
   alias_view(:closed_content, { :right=>'*create' }, { :right=>'*read' }, { :right=>'*update' }, { :right=>'*delete' }, { :right=>'*comment' } )

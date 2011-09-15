@@ -1,5 +1,5 @@
 class Wagn::Renderer
-  define_view(:raw, :name=>'*navbox') do
+  define_view(:raw, :name=>'*navbox') do |args|
 #Rails.logger.debug("Builtin *navbox")
     #ENGLISH
     %{

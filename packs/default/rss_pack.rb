@@ -1,5 +1,5 @@
 class Wagn::Renderer::Rss
-  define_view(:show) do
+  define_view(:show) do |args|
     
     xml = Builder::XmlMarkup.new
     xml.instruct! :xml, :version => "1.0"
@@ -41,7 +41,7 @@ class Wagn::Renderer::Rss
   alias_view(:open_content,{}, :content)
   alias_view(:link,        {}, :closed)
 
-  define_view(:change) do
+  define_view(:change) do |args|
     self.requested_view = 'content'
     render_view_action('change')
   end

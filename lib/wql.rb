@@ -178,17 +178,19 @@ class Wql
         else raise("Invalid cardspec args #{spec.inspect}")
       end
 
+      content = nil
       spec.each do |key,val| 
         if key == :_parent
           @parent = spec.delete(key) 
         elsif OPERATORS.has_key?(key.to_s) && !ATTRIBUTES[key]
           spec.delete(key)
-          spec[:content] = [key,val]
+          content = [key,val]
         elsif MODIFIERS.has_key?(key)
           next if spec[key].is_a? Hash
           @mods[key] = spec.delete(key).to_s
         end
       end
+      spec[:content] = content if content
       
       spec.each do |key,val| 
         case ATTRIBUTES[key]
@@ -223,7 +225,7 @@ class Wql
       cards = (String===val ? [Card.fetch_or_new(absolute_name(val))] : Wql.new(val).run)
       cards.each do |c|
         raise %{"found_by" value needs to be valid Search card #{c.inspect}} unless c && ['Search','Set'].include?(c.typecode)
-        found_by_spec = CardSpec.new(c.get_spec).spec
+        found_by_spec = CardSpec.new(c.get_spec).rawspec
         merge(field(:id) => subspec(found_by_spec))
       end
     end

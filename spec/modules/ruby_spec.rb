@@ -3,6 +3,7 @@ require_relative '../spec_helper'
 describe "Ruby Cardtype" do
   before do
     User.as(:wagbot)
+    raise "ruby cards getting into infinite loop on save??"
     c = Card.create :type => "Cardtype", :name => "Ruby"
     c.codename = "Ruby"
     c.save!

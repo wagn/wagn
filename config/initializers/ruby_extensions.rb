@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Hash
   def pull(key)
     has_key?(key) && !(v = delete(key)).to_s.empty? ? v : false
@@ -190,7 +191,7 @@ class String
   end
   
   def to_key
-    split(JOINT).map do |name|  
+    split(JOINT).map do |name|
       CARD_KEYS[name] ||= name.decode_html.underscore.gsub(/[^\w\*]+/,'_').split(/_+/).plot(:singularize).reject {|x| x==""}.join("_")
     end.join(JOINT)
   end

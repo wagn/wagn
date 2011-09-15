@@ -76,7 +76,6 @@ describe CardController, "with captcha enabled requires captcha on" do
   require_captcha_on :create, :card=>{:name=>"TestA", :content=>"TestC"} 
   require_captcha_on :remove, :id => "A"        
   require_captcha_on :update, :id=>"A", :card=>{:name=>"Booker"}
-  require_captcha_on :quick_update, :id=>"A", :card=>{:type=>"Image"}
   require_captcha_on :comment, :id=>"A", :card=>{:content=>"Yeah"}
 end
 

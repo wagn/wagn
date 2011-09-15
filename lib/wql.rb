@@ -105,13 +105,13 @@ class Wql
   end
 
   class CardSpec < Spec 
-    attr_reader :params, :sql, :query
+    attr_reader :params, :sql, :query, :rawspec
     attr_accessor :joins
     
     class << self
       def build(query)
         cardspec = self.new(query)
-        cardspec.merge(cardspec.spec)         
+        cardspec.merge(cardspec.rawspec)         
       end
     end 
      
@@ -123,7 +123,8 @@ class Wql
       @joins = {}   
       @selfname, @parent = nil, nil
       @query = clean(query.clone)
-      @spec = @query.deep_clone
+      @rawspec = @query.deep_clone
+      @spec = {}
       @sql = SqlStatement.new
       self
     end
@@ -169,10 +170,10 @@ class Wql
     end
     
     def merge(spec)
-      spec = spec.clone
+#      spec = spec.clone
       spec = case spec
         when String;   { :key => spec.to_key }
-        when Integer;  { :id  => spec }  
+        when Integer;  { :id  => spec        }  
         when Hash;     spec
         else raise("Invalid cardspec args #{spec.inspect}")
       end
@@ -199,7 +200,7 @@ class Wql
         end                      
       end
       
-      @spec.merge! spec  
+      @spec.merge! spec
       self
     end
     
@@ -386,11 +387,10 @@ class Wql
     end 
     
     def to_sql(*args)
-      warn "spec = #{@spe.inspect}"
       # Basic conditions
-      sql.conditions << @spec.collect do |key, val|   
+      sql.conditions << (@spec.collect do |key, val|
         val.to_sql(key.to_s.gsub(/\:\d+/,''))
-      end.join(" #{@mods[:conj].blank? ? :and : @mods[:conj]} ")
+      end.join(" #{@mods[:conj].blank? ? :and : @mods[:conj]} "))
       
       return "(" + sql.conditions.last + ")" if @mods[:return]=='condition'
 

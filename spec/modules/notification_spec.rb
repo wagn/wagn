@@ -1,5 +1,5 @@
 require_relative '../spec_helper'
-require File.dirname(__FILE__) + '/../../test/fixtures/shared_data'   
+require_relative '../../test/fixtures/shared_data'   
 FUTURE = SharedData::FUTURE
 
 

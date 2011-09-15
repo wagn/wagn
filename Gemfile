@@ -38,8 +38,8 @@ gem 'mysql', '~>2.8.1',                :group=>'mysql'
 # the attachment_fu plug
 
 group :image_science do
-  gem 'image_science', '~>1.2.1'
-  gem 'RubyInline', '~>3.8.4'
+#  gem 'image_science', '~>1.2.1'
+#  gem 'RubyInline', '~>3.8.4'
 end
 #gem 'rmagick', '>=2.13.1',    :group=>'rmagick'
 
@@ -66,6 +66,7 @@ group :test do
   gem 'win32console', '1.3.0', :platforms => ['mingw', 'mswin']
   gem 'win32-process', '0.6.5', :platforms => ['mingw', 'mswin']
   
+  gem 'test-unit', '1.2.3'
   gem 'term-ansicolor', '1.0.5'
   gem 'nokogiri', '1.4.1'
   gem 'timecop', '>=0.2.1'

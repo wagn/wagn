@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
+require_relative '../test_helper'
 require 'diff'
 
 class DiffTest < ActiveSupport::TestCase

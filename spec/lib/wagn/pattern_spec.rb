@@ -1,5 +1,5 @@
-  require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
-require File.expand_path(File.dirname(__FILE__) + '/../../pattern_spec_helper')
+  require_relative '../../spec_helper'
+require_relative '../../pattern_spec_helper'
 
 describe Wagn::Pattern do
   it "module exists and autoloads" do

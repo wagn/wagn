@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require_relative '../test_helper'
 
 # Re-raise errors caught by the controller.
 class XmlrestController

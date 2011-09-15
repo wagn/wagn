@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
+require_relative '../../spec_helper'
 
 describe Card, "deleted card" do
   before do User.as(:wagbot)

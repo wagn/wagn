@@ -1,5 +1,5 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
-require File.dirname(__FILE__) + '/../pack_spec_helper'
+require_relative '../../spec_helper'
+require_relative '../pack_spec_helper'
 
 describe Wagn::Renderer::EmailHtml do
   it "should render full urls" do

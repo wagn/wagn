@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require_relative '../spec_helper'
 
 describe Mailer do
   FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'

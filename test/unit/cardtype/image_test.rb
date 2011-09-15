@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../test_helper'
+require_relative '../../test_helper'
 class Wagn::Set::Type::ImageTest < ActiveSupport::TestCase       
   # required to use ActionController::TestUploadedFile 
   require 'action_controller'

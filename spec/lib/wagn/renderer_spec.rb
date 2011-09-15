@@ -1,5 +1,5 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
-require File.dirname(__FILE__) + '/../../packs/pack_spec_helper'
+require_relative '../../spec_helper'
+require_relative '../../packs/pack_spec_helper'
 
 describe Wagn::Renderer, "" do
   before do

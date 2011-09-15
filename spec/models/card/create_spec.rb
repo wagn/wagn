@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
+require_relative '../../spec_helper'
 
 # FIXME this shouldn't be here
 describe Wagn::Set::Type::Cardtype, ".create with :codename" do

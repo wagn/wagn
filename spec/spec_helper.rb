@@ -1,4 +1,4 @@
-require File.expand_path('../../config/preinitializer',__FILE__)
+require_relative "../config/preinitializer.rb"
 #require 'rubygems'
 require 'spork'
 ENV["RAILS_ENV"] = "test"

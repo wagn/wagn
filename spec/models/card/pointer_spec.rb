@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
+require_relative '../../spec_helper'
 
 describe Wagn::Set::Type::Pointer do
   before do

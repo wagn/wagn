@@ -1,4 +1,4 @@
-require 'test_helper'
+require_relative 'test_helper'
 require 'performance_test_help'
 
 class CardCreateTest < ActionController::PerformanceTest

@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../profile_test_helper'
+require_relative '../profile_test_helper'
 
 describe "Homepage", ActionController::IntegrationTest do    
   include RubyProf::Test

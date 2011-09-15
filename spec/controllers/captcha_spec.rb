@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+require_relative "../spec_helper"
 
 module CaptchaExampleGroupMethods
   def require_captcha_on(action, params)

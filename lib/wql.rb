@@ -1,4 +1,4 @@
-  class Wql
+class Wql
   ATTRIBUTES = {
     :basic      =>  %w{ name type content id key extension_type extension_id updated_by trunk_id tag_id },
     :custom     =>  %w{ edited_by editor_of edited last_editor_of last_edited_by creator_of created_by } +
@@ -169,6 +169,7 @@
     end
     
     def merge(spec)
+      spec = spec.clone
       spec = case spec
         when String;   { :key => spec.to_key }
         when Integer;  { :id  => spec }  
@@ -384,7 +385,8 @@
       ValueSpec.new([operator,CardSpec.build(additions).merge(spec)], self)
     end 
     
-    def to_sql(*args)      
+    def to_sql(*args)
+      warn "spec = #{@spe.inspect}"
       # Basic conditions
       sql.conditions << @spec.collect do |key, val|   
         val.to_sql(key.to_s.gsub(/\:\d+/,''))

@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
+require_relative '../../spec_helper'
 
 class Card
   cattr_accessor :count

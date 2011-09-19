@@ -80,11 +80,7 @@ class ApplicationController < ActionController::Base
 
   # ------------------( permission filters ) -------
   def view_ok
-    if (@card.new_record? && !@card.virtual?) || @card.ok?(:read)
-      true
-    else
-      render_denied('view')
-    end
+    @card.ok?(:read) || render_denied('view')
   end
 
   def update_ok
@@ -108,15 +104,27 @@ class ApplicationController < ActionController::Base
   # --------------( card loading filters ) ----------
   def load_card!
     load_card
-    return @card if @card && @card.known?
-    raise Wagn::NotFound, "We looked everywhere but found no such card (#{params[:id]})."
+    case
+    when !@card || @card.name.nil? || @card.name.empty?  #no card or no name -- bogus request, deserves error
+      raise Wagn::NotFound, "We don't know what card you're looking for."
+    when @card.known? # default case
+      @card
+      
+    ##  I think what SHOULD happen here is that we render the missing view and let the Renderer decide what happens.    
+      
+    when requesting_ajax? || ![nil, :html].member?(params[:format])  #missing card, nonstandard request
+      raise Wagn::NotFound, "We can't find a card named #{@card.name}"  
+    when @card.ok?(:create)  # missing card, user can create
+      params[:card]={:name=>@card.name, :type=>params[:type]}
+      self.new
+      false
+    else
+      render :action=>'missing' 
+      false     
+    end
   end
 
-  def load_card_with_cache
-    return load_card(cache=true)
-  end
-
-  def load_card(cache=false)
+  def load_card
     return @card=nil unless id = params[:id]
     return (@card=Card.find(id); @card.after_fetch; @card) if id =~ /^\d+$/
     name = Wagn::Cardname.unescape(id)

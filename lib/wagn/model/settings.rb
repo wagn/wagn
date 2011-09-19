@@ -50,16 +50,17 @@ module Wagn::Model::Settings
 
     def universal_setting_names_by_group
       @@universal_setting_names_by_group ||= begin
-        setting_names = Card.search(:type=>'Setting', :return=>'name', :limit=>'0')
-        grouped = {:view=>[], :edit=>[], :add=>[]}
-        setting_names.map(&:to_cardname).each do |cardname|
-          next unless group = Card.setting_attrib(cardname, :setting_group)
-          grouped[group] << cardname
+        User.as(:wagbot) do
+          setting_names = Card.search(:type=>'Setting', :return=>'name', :limit=>'0')
+          grouped = {:view=>[], :edit=>[], :add=>[]}
+          setting_names.map(&:to_cardname).each do |cardname|
+            next unless group = Card.setting_attrib(cardname, :setting_group)
+            grouped[group] << cardname
+          end
+          grouped.each_value do |name_list|
+            name_list.sort!{ |x,y| Card.setting_attrib(x, :setting_seq) <=> Card.setting_attrib(y, :setting_seq)}
+          end
         end
-        grouped.each_value do |name_list|
-          name_list.sort!{ |x,y| Card.setting_attrib(x, :setting_seq) <=> Card.setting_attrib(y, :setting_seq)}
-        end
-        grouped
       end
     end
 

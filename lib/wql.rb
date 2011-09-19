@@ -1,44 +1,21 @@
-class Wql
-  
+  class Wql
   ATTRIBUTES = {
-    :basic=> %w{ name type content id key extension_type extension_id updated_by },
-    :system => %w{ trunk_id tag_id },
-    :semi_relational=> %w{ edited_by edited last_editor_of last_edited_by creator_of created_by member_of member role found_by },
-    :relational => %w{ part left right plus left_plus right_plus },  
+    :basic      =>  %w{ name type content id key extension_type extension_id updated_by trunk_id tag_id },
+    :custom     =>  %w{ edited_by editor_of edited last_editor_of last_edited_by creator_of created_by } +
+                    %w{ member_of member role found_by part left right plus left_plus right_plus } + 
+                    %w{ or match complete not and sort },
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
-    :special => %w{ or match complete not count and },
-    :ignore => %w{ prepend append },
-    :pass => %w{ cond }
+    :ignore      => %w{ prepend append view }
   }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
 
+  MODIFIERS = {};  %w{ conj return sort sort_as group dir limit offset }.each{|key| MODIFIERS[key.to_sym] = nil }
+
   OPERATORS = %w{ != = =~ < > in ~ }.inject({}) {|h,v| h[v]=nil; h }.merge({
-    'eq' => '=',
-    'gt' => '>',
-    'lt' => '<',
-    'match' => '~',
-    'ne' => '!=',
-    'not in' => nil,
+    :eq    => '=',   :gt => '>',    :lt      => '<', 
+    :match => '~',   :ne => '!=',   'not in' => nil
   }.stringify_keys)
-  
-  MODIFIERS = {
-    :sort   => "",
-    :dir    => "",
-    :limit  => "",
-    :offset => "",
-    :return => :card,
-    :join   => :and,
-    :view   => nil    # handled in interface-- ignore here
-  }
-      
-  DEFAULT_ORDER_DIRS =  {
-    "id" => "asc",
-    "update" => "desc",
-    "create" => "asc",
-    "alpha" => "asc", # DEPRECATED
-    "name" => "asc",
-    "content" => "asc",
-    "relevance" => "desc"
-  }
+
+  DEFAULT_ORDER_DIRS =  { :update => "desc", :relevance => "desc" }
 
   cattr_reader :root_perms_only
   @@root_perms_only = false
@@ -50,20 +27,11 @@ class Wql
     result
   end
     
-  def initialize query
-    @cs = CardSpec.build( query )
-  end
-  
-  def query
-    @cs.query
-  end
-  
-  def sql
-    @sql ||= @cs.to_sql
-  end
+  def initialize( query )  @cs = CardSpec.build( query )  end
+  def query()              @cs.query                      end
+  def sql()                @sql ||= @cs.to_sql            end
   
   def run
-    #warn "query: #{query.inspect}\n\n sql: #{sql}"
     rows = ActiveRecord::Base.connection.select_all( sql )
     case (query[:return] || :card).to_sym
     when :card
@@ -77,13 +45,10 @@ class Wql
           end
         card.nil? ? Card.find_by_name_and_trash(row['name'],false).repair_key : card
       end
-    when :count
-      rows.first['count'].to_i
-    else
-      rows.map { |row| row[query[:return].to_s] }
+    when :count;    rows.first['count'].to_i
+    else;           rows.map { |row| row[query[:return].to_s] }
     end
   end  
-  
   
   
   class Spec 
@@ -98,45 +63,50 @@ class Wql
       end
     end
     
-    def walk_spec() walk(@spec, :walk_spec); end     
-    
-    def quote(v)
-      ActiveRecord::Base.connection.quote(v) 
+    def safe_sql(txt)
+      txt = txt.to_s
+      txt.match( /[^\w\*\(\)\s\.\,]/ ) ? raise( "WQL contains disallowed characters: #{txt}" ) : txt
     end
+    
+    def quote(v)  ActiveRecord::Base.connection.quote(v)  end
     
     def match_prep(v,cardspec=self)
       cxn ||= ActiveRecord::Base.connection
       v=cardspec.root.params['_keyword'] if v=='_keyword' 
-#Rails.logger.debug "wql_match_prep _keyword (#{v.inspect}" v=='_keyword'
       v.strip!#FIXME - breaks if v is nil
       [cxn, v]
     end
-  end
-  
-
-  class SqlCond < String
-    def to_sql(*args)
-      self
+    
+    def cast_type(type)
+      cxn ||= ActiveRecord::Base.connection
+      (val = cxn.cast_types[type.to_sym]) ? val[:name] : safe_sql(type)
     end
   end
   
+  
+  class SqlCond < String
+    def to_sql(*args) self end
+  end
+  
+  
   class SqlStatement
-    attr_accessor :fields, :joins, :conditions, :tables, :order, :limit, :offset,
-      :relevance_fields, :count_fields, :group
+    attr_accessor :fields, :relevance_fields, :tables, :joins,
+      :conditions, :group, :order, :limit, :offset
     
     def initialize
-      self.fields, self.joins, self.conditions, self.count_fields, self.relevance_fields = [],[],[],[],[]
-      self.tables, self.order, self.limit, self.group, self.offset = "","","","",""
+      @fields, @relevance_fields, @joins, @conditions = [],[],[],[]
+      @tables, @group, @order, @limit, @offset = "","","","",""
     end
     
     def to_s
       "(select #{fields.reject(&:blank?).join(', ')} from #{tables} #{joins.join(' ')} " + 
         "where #{conditions.reject(&:blank?).join(' and ')} #{group} #{order} #{limit} #{offset})"
-    end 
+    end
   end
 
   class CardSpec < Spec 
     attr_reader :params, :sql, :query
+    attr_accessor :joins
     
     class << self
       def build(query)
@@ -149,36 +119,26 @@ class Wql
       # NOTE:  when creating new specs, make sure to specify _parent *before*
       #  any spec which could trigger another cardspec creation further down.
       @mods = MODIFIERS.clone
-      @params = {}   
+      @params = {}
+      @joins = {}   
       @selfname, @parent = nil, nil
-      #warn("<br>before clean #{(Hash===spec ? spec : spec.spec).keys}<br>")
       @query = clean(query.clone)
       @spec = @query.deep_clone
-      #warn("after clean #{@spec.inspect}")
-      
       @sql = SqlStatement.new
       self
     end
     
     def table_alias 
       case
-        when @mods[:return]==:condition;   @parent ? @parent.table_alias : "t"
+        when @mods[:return]=='condition';   @parent ? @parent.table_alias : "t"
         when @parent; @parent.table_alias + "x" 
         else "t"  
       end
     end
     
-    def root
-      @parent ? @parent.root : self
-    end
-    
-    def root?
-      root == self
-    end
-    
-    def selfname   
-      @selfname #|| raise(Wagn::WqlError, "_self referenced but no card is available")
-    end
+    def root()      @parent ? @parent.root : self  end
+    def root?()     root == self                   end
+    def selfname()  @selfname                      end
     
     def absolute_name(name)
       name = (root.selfname ? name.to_cardname.to_absolute(root.selfname) : name)
@@ -186,7 +146,6 @@ class Wql
     
     def clean(query)
       query = query.symbolize_keys
-
       query.each do |key,val|
         case key.to_s
         when 'context'  ; @selfname         = query.delete(key)
@@ -194,10 +153,10 @@ class Wql
         when /^_\w+$/   ; @params[key.to_s] = query.delete(key)
         end
       end
-      
       query.each{ |key,val| clean_val(val, query, key) } #must be separate loop to make sure card values are set
       query
     end
+    
     
     def clean_val(val, query, key)
       query[key] =
@@ -210,11 +169,7 @@ class Wql
     end
     
     def merge(spec)
-      # string or number shortcut    
-      #warn "#{self}.merge(#{spec.inspect})"
-      
       spec = case spec
-#        when /^_(self|left|right)$/;  { :id => to_card(spec).id }                                   
         when String;   { :key => spec.to_cardname.to_key }
         when Integer;  { :id  => spec }  
         when Hash;     spec
@@ -228,31 +183,39 @@ class Wql
           spec.delete(key)
           spec[:content] = [key,val]
         elsif MODIFIERS.has_key?(key)
-          # match datatype to default
-          case @mods[key]
-            when String;  @mods[key] = spec.delete(key).to_s
-            when Symbol;  @mods[key] = spec.delete(key).to_sym
-            else @mods[key] = spec.delete(key)
-          end
+          next if spec[key].is_a? Hash
+          @mods[key] = spec.delete(key).to_s
         end
       end
       
-      # process conditions
       spec.each do |key,val| 
         case ATTRIBUTES[key]
           when :basic; spec[key] = ValueSpec.new(val, self)
-          when :system; spec[key] = val.is_a?(ValueSpec) ? val : subspec(val)
-          when :relational, :semi_relational, :special; self.send(key, spec.delete(key))    
+          when :custom; self.send(key, spec.delete(key))    
           when :referential;  self.refspec(key, spec.delete(key))
           when :ignore; spec.delete(key)
-          when :pass; # for :cond  ie. raw sql condition to be ANDed
-          else raise("Invalid attribute #{key}") unless key.to_s.match(/(type|id|cond)\:\d+/)
+          else raise("Invalid attribute #{key}") unless key.to_s.match(/(type|id|by|cond)\:\d+/)
         end                      
       end
       
       @spec.merge! spec  
       self
-    end          
+    end
+    
+    def add_join(name, table, cardfield, otherfield, opts={})
+      join_alias = "#{table_alias}_#{name}"
+      @joins[join_alias] = "#{opts[:side]} JOIN #{table} AS #{join_alias} ON #{table_alias}.#{cardfield} = #{join_alias}.#{otherfield}"
+      join_alias
+    end
+    
+    def add_revision_join
+      add_join(:rev, :revisions, :current_revision_id, :id)
+    end
+    
+    def field(name)
+      @fields||={}; @fields[name]||=0; @fields[name]+=1
+      "#{name}:#{@fields[name]}"
+    end
     
     def found_by(val)
       cards = (String===val ? [Card.fetch_or_new(absolute_name(val))] : Wql.new(val).run)
@@ -274,9 +237,9 @@ class Wql
           sql.relevance_fields << "rank(indexed_content, to_tsquery(#{quote(v)}), 1) AS content_rank"
           "indexed_content @@ to_tsquery(#{quote(v)})" 
         else
-          sql.joins << "join revisions r on r.id=#{self.table_alias}.current_revision_id"
+          join_alias = add_revision_join
           # FIXME: OMFG this is ugly
-          '(' + ["replace(#{self.table_alias}.name,'+',' ')",'r.content'].collect do |f|
+          '(' + ["replace(#{self.table_alias}.name,'+',' ')","#{join_alias}.content"].collect do |f|
             v.split(/\s+/).map{ |x| %{#{f} #{cxn.match(quote("[[:<:]]#{x}[[:>:]]"))}} }.join(" AND ")
           end.join(" OR ") + ')'
         end
@@ -287,138 +250,123 @@ class Wql
       no_plus_card = (val=~/\+/ ? '' : "and tag_id is null")  #FIXME -- this should really be more nuanced -- it breaks down after one plus
       merge field(:cond) => SqlCond.new(" lower(name) LIKE lower(#{quote(val.to_s+'%')}) #{no_plus_card}")
     end
+    
+    def cond(val)                                                                 end #noop
+    def and(val)   subcondition(val)                                              end
+    def or(val)    subcondition(val, :conj=>:or)                                  end
+    def left(val)  merge field(:trunk_id) => subspec(val)                         end
+    def right(val) merge field(:tag_id  ) => subspec(val)                         end
+    def not(val)   merge field(:id) => subspec(val, {:return=>'id'}, negate=true) end
+    
+    def part(val) 
+      subcondition({ :left => val, :right => val.clone }, :conj=>:or)
+    end  
 
-    def field(name)
-      @fields||={}; @fields[name]||=0; @fields[name]+=1
-      "#{name}:#{@fields[name]}"
+    def left_plus(val)
+      part_spec, junc_spec = val.is_a?(Array) ? val : [ val, {} ]
+      merge( field(:id) => subspec(junc_spec, :return=>'tag_id', :left =>part_spec))      
+    end    
+    
+    def right_plus(val) 
+      part_spec, junc_spec = val.is_a?(Array) ? val : [ val, {} ]
+      merge( field(:id) => subspec(junc_spec, :return=>'trunk_id', :right=> part_spec ))
+    end                                                                                                
+    
+    def plus(val)
+      part_spec, junc_spec = val.is_a?(Array) ? val : [ val, {} ]
+      subcondition({ 
+        field(:id) => subspec(junc_spec.deep_clone, :return=>'trunk_id', :right=>part_spec.deep_clone),
+        field(:id) => subspec(junc_spec,            :return=>'tag_id',   :left=>part_spec)
+      }, :conj=>:or)
+    end          
+    
+    def edited_by(val)
+      extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val).to_sql
+      add_join :ed_by, "(select distinct card_id from revisions where created_by in #{extension_select} )", :id, :card_id
     end
     
-    def cond(val); #noop      
+    def created_by(val)
+      extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val)
+      merge field(:created_by) => ValueSpec.new( [:in, extension_select], self )
     end
     
-    def and(val)
-      subcondition(val)
+    def last_edited_by(val)
+      extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val)
+      merge field(:updated_by) => ValueSpec.new( [:in, extension_select], self ) 
+    end
+
+    def merge_extension( ext_type, ext_id_spec)
+      merge(
+        field(:extension_type)=>ValueSpec.new(ext_type,self), 
+        field(:extension_id  )=>ValueSpec.new(['in',ext_id_spec], self)
+      )
     end
     
-    def or(val)
-      subcondition(val, :join=>:or)
+    def creator_of(val)
+      merge_extension('User', CardSpec.build(:return=>'created_by', :_parent=>self).merge(val))
+    end
+    
+    def last_editor_of(val)
+      merge_extension('User', CardSpec.build(:return=>'updated_by', :_parent=>self).merge(val) )
+    end
+    
+    def editor_of(val)
+      inner_spec = CardSpec.build(:_parent=>self).merge(val)
+      join_alias = inner_spec.add_join :ed, '(select distinct card_id, created_by from revisions)', :id, :card_id
+      inner_spec.merge :return=>"#{join_alias}.created_by"
+      merge_extension('User', inner_spec )
+    end
+    alias :edited :editor_of
+    
+    def member_of(val)
+      inner_spec = CardSpec.build(:extension_type=>'Role', :_parent=>self).merge(val)
+      join_alias = inner_spec.add_join :ru, :roles_users, :extension_id, :role_id
+      inner_spec.merge :return=>"#{join_alias}.user_id" 
+      merge_extension('User',inner_spec )
+    end
+
+    def member(val)
+      inner_spec = CardSpec.build(:return=>'ru2.role_id', :extension_type=>'User', :_parent=>self).merge(val)
+      join_alias = inner_spec.add_join :ru2, :roles_users, :extension_id, :user_id
+      inner_spec.merge :return=>"#{join_alias}.role_id"
+      merge_extension('Role', inner_spec )
+    end
+    
+    def sort(val)
+      return nil if @parent
+      val[:return] = val[:return] ? safe_sql(val[:return]) : 'content'
+      @mods[:sort] =  "t_sort.#{val[:return]}"
+      item = val.delete(:item) || 'left'
+      
+      if val[:return] == 'count'
+        cs_args = { :return=>'count', :group=>'sort_join_field' }
+        @mods[:sort] = "coalesce(#{@mods[:sort]},0)"
+        case item
+        when 'referred_to'
+          join_field = 'id'
+          cs = CardSpec.build cs_args.merge( field(:cond)=>SqlCond.new("card_id in #{CardSpec.build( val.merge(:return=>'id')).to_sql}") )
+          cs.add_join :wr, :wiki_references, :id, :referenced_card_id
+        else;  raise "count with item: #{item} not yet implemented"
+        end 
+      else
+        join_field = case item
+          when 'left'  ; 'trunk_id'
+          when 'right' ; 'tag_id'
+          else         ;  raise "sort item: #{item} not yet implemented"
+        end 
+        cs = CardSpec.build(val)
+      end
+      
+      cs.sql.fields << "#{cs.table_alias}.#{join_field} as sort_join_field"      
+      add_join :sort, cs.to_sql, :id, :sort_join_field, :side=>'LEFT'
     end
     
     def subcondition(val, args={})
       args = { :return=>:condition, :_parent=>self }.merge(args)
       cardspec = CardSpec.build( args )
       merge field(:cond) => cardspec.merge(val)
-      self.sql.joins += cardspec.sql.joins 
+      self.joins.merge! cardspec.joins 
       self.sql.relevance_fields += cardspec.sql.relevance_fields
-    end
-    
-    def not(val)
-      merge field(:id) => subspec(val, { :return=>'id' }, negate=true)
-    end
-
-    def left(val)
-      merge field(:trunk_id) => subspec(val)
-    end
-
-    def right(val)
-      merge field(:tag_id) => subspec(val)
-    end
-    
-    def part(val) 
-      subval = { :tag_id => val.clone, :trunk_id => val }
-      subcondition(subval, :join=>:or)
-    end  
-    
-    def right_plus(val) 
-      part_spec, connection_spec = val.is_a?(Array) ? val : [ val, {} ]
-      merge( field(:id) => subspec(connection_spec, :return=>'trunk_id', :tag_id=> part_spec ))
-    end                                                                                                
-    
-    def left_plus(val)
-      part_spec, connection_spec = val.is_a?(Array) ? val : [ val, {} ]
-      merge( field(:id) => subspec(connection_spec, :return=>'tag_id', :trunk_id=>part_spec))      
-    end    
-
-    def plus(val)
-      #warn "GOT PLUS: #{val}"
-      part_spec, connection_spec = val.is_a?(Array) ? val : [ val, {} ]
-      subval = {
-        field(:id) => subspec(connection_spec.deep_clone, :return=>'trunk_id', :tag_id=>part_spec.deep_clone),
-        field(:id) => subspec(connection_spec,            :return=>'tag_id', :trunk_id=>part_spec)
-      }
-      subcondition(subval, :join=>:or)
-    end          
-    
-    def edited_by(val)
-      extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val).to_sql
-      sql.joins << "join (select distinct card_id from revisions r4 " +
-        "where r4.created_by in #{extension_select} ) ra on ra.card_id=#{table_alias}.id"
-    end
-    
-    def created_by(val)
-      extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val)
-      @spec[:created_by] = ValueSpec.new( [:in, extension_select], self )
-      # explicitly set @spec val here because created_by is both name of relationship and name of field.  probably should handle differently
-    end
-    
-    def creator_of(val)
-      inner_spec = CardSpec.build(:return=>'created_by', :_parent=>self).merge(val)      
-      merge({
-        :extension_id => ValueSpec.new(['in',inner_spec],self),
-        :extension_type => 'User'
-      })
-    end
-
-    def last_edited_by(val)
-      extension_select = CardSpec.build(:return=>'extension_id', :extension_type=>'User', :_parent=>self).merge(val)
-      merge(:updated_by => ValueSpec.new( [:in, extension_select], self ) )
-      # explicitly set @spec val here because created_by is both name of relationship and name of field.  probably should handle differently
-    end
-    
-    def last_editor_of(val)
-      inner_spec = CardSpec.build(:return=>'updated_by', :_parent=>self).merge(val)      
-      merge({
-        :extension_id => ValueSpec.new(['in',inner_spec],self),
-        :extension_type => 'User'
-      })
-    end
-    
-    def edited(val)
-      inner_spec = CardSpec.build(:return=>'ra2.created_by', :_parent=>self).merge(val)
-      inner_spec.sql.joins << "join (select distinct card_id, created_by from revisions r5  ) ra2 on ra2.card_id=#{inner_spec.table_alias}.id"
-      
-      merge({
-        :extension_id => ValueSpec.new(['in',inner_spec],self),
-        :extension_type => 'User'
-      })
-    end
-    
-    def member_of(val)
-      inner_spec = CardSpec.build(:return=>'ru.user_id', :extension_type=>'Role', :_parent=>self).merge(val)
-      inner_spec.sql.joins << "join roles_users ru on ru.role_id = #{inner_spec.table_alias}.extension_id"
-      merge({
-        :extension_id => ValueSpec.new(['in',inner_spec],self),
-        :extension_type => 'User'
-      })
-    end
-
-    def member(val)
-      inner_spec = CardSpec.build(:return=>'ru2.role_id', :extension_type=>'User', :_parent=>self).merge(val)
-      inner_spec.sql.joins << "join roles_users ru2 on ru2.user_id = #{inner_spec.table_alias}.extension_id"
-      merge({
-        :extension_id => ValueSpec.new(['in',inner_spec],self),
-        :extension_type => 'Role'
-      })
-    end
-
-    
-    def count(val)
-      raise(Wagn::WqlError, "count works only on outermost spec") if @parent
-      join_spec = { :id=>SqlCond.new("#{table_alias}.id") } 
-      val.each do |relation, subspec|
-        subquery = CardSpec.build(:_parent=>self, :return=>:count, relation.to_sym=>join_spec).merge(subspec).to_sql
-        sql.fields << "#{subquery} as #{relation}_count"
-      end
     end
 
     def refspec(key, cardspec)
@@ -430,91 +378,93 @@ class Wql
       merge field(:id) => ValueSpec.new(['in',RefSpec.new([key,cardspec])], self)
     end
     
-    def subspec(spec, additions={ :return=>'id' }, negate=false)   
+    def subspec(spec, additions={ :return=>'id'}, negate=false)   
       additions = additions.merge(:_parent=>self)
-      join = negate ? 'not in' : 'in'
-      ValueSpec.new([join,CardSpec.build(additions).merge(spec)], self)
+      operator = negate ? 'not in' : 'in'
+      ValueSpec.new([operator,CardSpec.build(additions).merge(spec)], self)
     end 
     
-    def to_sql(*args)
+    def to_sql(*args)      
       # Basic conditions
       sql.conditions << @spec.collect do |key, val|   
-        key = key.to_s
-        key = key.gsub(/\:\d+/,'')  
-        val.to_sql(key)
-      end.join(" #{@mods[:join]} ")                 
-
-      # Default fields/return handling   
-      return "(" + sql.conditions.last + ")" if @mods[:return]==:condition     
-      sql.fields.unshift case @mods[:return]
-        #when :condition; 
-        when :card; "#{table_alias}.name"
-        when :name; "#{table_alias}.name"
-        when :list; "#{table_alias}.*"
-        when :count; "count(*) as count"
-        when :first; "#{table_alias}.*"
-        when :ids;   "id"
-        when :codename; 
-          sql.joins << "join cardtypes as extension on extension.id=#{table_alias}.extension_id "
-          'extension.class_name'
-        else @mods[:return]
-      end
+        val.to_sql(key.to_s.gsub(/\:\d+/,''))
+      end.join(" #{@mods[:conj].blank? ? :and : @mods[:conj]} ")
       
-      # Permissions       
-      t = table_alias
-      unless System.always_ok? or (Wql.root_perms_only && !root?) #or ENV['BOOTSTRAP_DUMP'] == 'true'
-        sql.conditions << %{ (#{t}.read_rule_id IN (#{::User.as_user.read_rule_ids.join ','})) }
+      return "(" + sql.conditions.last + ")" if @mods[:return]=='condition'
+
+      # Permissions    
+      unless System.always_ok? or (Wql.root_perms_only && !root?) 
+        sql.conditions << %{ (#{table_alias}.read_rule_id IN (#{::User.as_user.read_rule_ids.join ','})) }
       end
-            
-      # Order 
-      unless @parent or @mods[:return]==:count
-        order_key ||= @mods[:sort].blank? ? "update" : @mods[:sort]
-        dir = @mods[:dir].blank? ? (DEFAULT_ORDER_DIRS[order_key]||'desc') : @mods[:dir]
-        sql.order = "ORDER BY "
-        sql.order << case order_key
-          when "id";              "#{table_alias}.id #{dir}"
-          when "update";          "#{table_alias}.updated_at #{dir}"
-          when "create";          "#{table_alias}.created_at #{dir}"
-          when "count" ;          "count(*) #{dir}, #{table_alias}.name asc"
-          when /^(name|alpha)$/;  "LOWER( #{table_alias}.key ) #{dir}"
-          when 'content'
-            sql.joins << "join revisions r2 on r2.id=#{self.table_alias}.current_revision_id"
-            "lower(r2.content) #{dir}"
-          when "relevance" 
-            if !sql.relevance_fields.empty?
-              sql.fields << sql.relevance_fields
-              "name_rank desc, content_rank desc" 
-            else 
-              "#{table_alias}.updated_at desc"
-            end     
-          else 
-            sql.fields << sql.count_fields if sql.count_fields
-            "#{order_key} #{dir}" 
-        end 
-      end
-                             
-      # Misc
+           
+      sql.fields.unshift fields_to_sql
+      sql.order = sort_to_sql  # has side effects!
       sql.tables = "cards #{table_alias}"
+      sql.joins += @joins.values                 
+      
       sql.conditions << "#{table_alias}.trash is false"
       sql.limit = (@mods[:limit].to_i <= 0) ? "" : "LIMIT #{@mods[:limit].to_i}"
+      sql.group = @mods[:group].blank? ? '': "GROUP BY #{safe_sql(@mods[:group])}"
       sql.offset = @mods[:offset].blank? ? "" : "OFFSET #{@mods[:offset].to_i}"
       
       sql.to_s
     end
+
+    def fields_to_sql
+      field = @mods[:return]
+      case (field.blank? ? :card : field.to_sym)
+      when :card; "#{table_alias}.name"
+      when :count; "coalesce(count(*),0) as count"
+      when :content
+        join_alias = add_revision_join
+        "#{join_alias}.content"
+      else 
+        ATTRIBUTES[field.to_sym]==:basic ? "#{table_alias}.#{field}" : safe_sql(field)          
+      end
+    end
     
+    def sort_to_sql
+      return nil if @parent or @mods[:return]=='count'
+      order_key ||= @mods[:sort].blank? ? "update" : @mods[:sort]
+      dir = @mods[:dir].blank? ? (DEFAULT_ORDER_DIRS[order_key.to_sym]||'asc') : safe_sql(@mods[:dir])
+
+      order_field = case order_key
+        when "id";              "#{table_alias}.id"
+        when "update";          "#{table_alias}.updated_at"
+        when "create";          "#{table_alias}.created_at"
+        when /^(name|alpha)$/;  "LOWER( #{table_alias}.key )"
+        when 'content'
+          join_alias = add_revision_join
+          "lower(#{join_alias}.content)"
+        when "relevance" 
+          if !sql.relevance_fields.empty?
+            sql.fields << sql.relevance_fields
+            "name_rank desc, content_rank" 
+          else 
+            "#{table_alias}.updated_at"
+          end     
+        else 
+          safe_sql(order_key) 
+        end
+      order_field = "CAST(#{order_field} AS #{cast_type(@mods[:sort_as])})" if @mods[:sort_as]
+      "ORDER BY #{order_field} #{dir}"
+      
+    end
   end
+
+
     
   class RefSpec < Spec
     def initialize(spec)
       @spec = spec   
       @refspecs = {
-        :refer_to => ['card_id','referenced_card_id',''],
-        :link_to => ['card_id','referenced_card_id',"link_type='#{WikiReference::LINK}' AND"],
-        :link_to_missing => ['card_id', 'referenced_card_id', "link_type='#{WikiReference::WANTED_LINK}'"],
-        :include => ['card_id','referenced_card_id',"link_type='#{WikiReference::TRANSCLUSION}' AND"],
-        :referred_to_by=> ['referenced_card_id', 'card_id', ''],
-        :linked_to_by => ['referenced_card_id','card_id',"link_type='#{WikiReference::LINK}' AND"],
-        :included_by  => ['referenced_card_id','card_id',"link_type='#{WikiReference::TRANSCLUSION}' AND"]
+        :refer_to       => ['card_id','referenced_card_id',''],
+        :link_to        => ['card_id','referenced_card_id',"link_type='#{WikiReference::LINK}' AND"],
+        :include        => ['card_id','referenced_card_id',"link_type='#{WikiReference::TRANSCLUSION}' AND"],
+        :link_to_missing=> ['card_id','referenced_card_id',"link_type='#{WikiReference::WANTED_LINK}'"],
+        :referred_to_by => ['referenced_card_id','card_id',''],
+        :linked_to_by   => ['referenced_card_id','card_id',"link_type='#{WikiReference::LINK}' AND"],
+        :included_by    => ['referenced_card_id','card_id',"link_type='#{WikiReference::TRANSCLUSION}' AND"]
       }
     end
     
@@ -535,14 +485,13 @@ class Wql
         when Array;     spec
         when String;    ['=', spec]
         when Integer;   ['=', spec]
-  #      when nil;       ['is', 'null']
         else raise("Invalid Condition Spec #{spec.inspect}")
       end
-      @spec[0] = @spec[0].to_s
        
       # operator aliases
+      @spec[0] = @spec[0].to_s
       if target = OPERATORS[@spec[0]]
-        @spec[0] = target
+        @spec[0] = target 
       end
 
       # check valid operator
@@ -554,9 +503,7 @@ class Wql
       end
     end
     
-    def op
-      @spec[0]
-    end
+    def op() @spec[0] end
     
     def sqlize(v)
       case v
@@ -571,21 +518,15 @@ class Wql
       v=@cardspec.card.name if v=='_self'
       table = @cardspec.table_alias
       
-      case field
-      when "name"
-        field = "#{table}.key"
-        v = [v].flatten.map(&:to_cardname).map(&:to_key)
-      when "content"
-        field = 'r3.content'
-        @cardspec.sql.joins << "join revisions r3 on r3.id=#{table}.current_revision_id"
-      when "type"
-        field = "#{table}.typecode"
-        v = [v].flatten.map{ |val| Cardtype.classname_for( val ) }
-      when "cond"
-        return "(#{sqlize(v)})"
-      else
-        field = "#{table}.#{field}"
-      end
+      field, v = case field
+        when "cond";     return "(#{sqlize(v)})"
+        when "name";     ["#{table}.key",      [v].flatten.map(&:to_cardname).map(&:to_key)]
+        
+        when "type";     ["#{table}.typecode", [v].flatten.map{ |val| Cardtype.classname_for( val ) }]
+        when "content";   join_alias = @cardspec.add_revision_join
+                         ["#{join_alias}.content", v]
+        else;            ["#{table}.#{safe_sql(field)}", v]
+        end
       
       v = v[0] if Array===v && v.length==1
       if op=='~'
@@ -596,4 +537,20 @@ class Wql
       end
     end
   end         
+end
+
+
+class ActiveRecord::ConnectionAdapters::AbstractAdapter
+  def cast_types()  native_database_types.merge custom_cast_types  end
+  def custom_cast_types() {}                                       end
+end
+
+class ActiveRecord::ConnectionAdapters::MysqlAdapter
+  def custom_cast_types
+    { :string  => { :name=>'char'    },
+      :integer => { :name=>'signed'  },
+      :text    => { :name=>'char'    },
+      :float   => { :name=>'decimal' },
+      :binary  => { :name=>'binary'  }  }
+  end
 end

@@ -9,7 +9,7 @@ module Wagn
       end
   
       def logged_in?
-        !(User.current_user.nil? || User.current_user.login == 'anon')
+        User.logged_in?
       end
     end
   

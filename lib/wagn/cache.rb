@@ -111,10 +111,7 @@ module Wagn
     def read key
       return @local[key] unless @store
       fetch_local(key) do
-        #        Marshal.load(@store.read(@prefix + key))
-        res = @store.read(@prefix + key)
-#        Rails.logger.info "Looking up #{key} in #{@store}.   result = #{res.inspect}"
-#        res
+        @store.read(@prefix + key)
       end
     end
 

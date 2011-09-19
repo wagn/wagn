@@ -2,56 +2,37 @@ class CardController < ApplicationController
   helper :wagn, :card
 
   EDIT_ACTIONS =  [ :edit, :update, :rollback, :save_draft, :watch, :unwatch ]
-  LOAD_ACTIONS = EDIT_ACTIONS + [ :changes, :comment, :denied, :options, :quick_update, :update_codename, :related, :remove ]
+  LOAD_ACTIONS = EDIT_ACTIONS + [ :show, :index, :mine, :comment, :remove, :view, :changes, :options, :related ]
 
+  before_filter :index_preload, :only=> [ :index ]
+  before_filter :mine_preload,  :only=> [ :mine ]
+  
   before_filter :load_card!, :only=>LOAD_ACTIONS
-  before_filter :load_card_with_cache, :only => [:line, :view, :open ]
 
   before_filter :view_ok,   :only=> LOAD_ACTIONS
 #  before_filter :create_ok, :only=>[ :new, :create ]
   before_filter :update_ok,   :only=> EDIT_ACTIONS
   before_filter :remove_ok, :only=>[ :remove ]
 
-  before_filter :require_captcha, :only => [ :create, :update, :comment, :quick_update ]
+  before_filter :require_captcha, :only => [ :create, :update, :comment ]
 
   #----------( Special cards )
 
-  def index
-    if User.no_logins?
-      redirect_to '/admin/setup'
-    else
-      params['id'] = (System.setting('*home') || 'Home').to_cardname.to_url_key
-      show
-    end
+  def index_preload
+    User.no_logins? ? 
+      redirect_to( '/admin/setup' ) : 
+      params[:id] = (System.setting('*home') || 'Home').to_url_key
   end
 
-  def mine
-    redirect_to :controller=>'card',:action=>'show', :id=>Wagn::Cardname.escape(User.current_user.card.name)
-  end
+  def mine_preload()  params[:id] = User.current_user.card.name   end  
+  def index() show  end
+  def mine()  show  end
 
   #---------( VIEWING CARDS )
 
   def show
-    params[:_keyword] && params[:_keyword].gsub!('_',' ') ## this will be unnecessary soon.
-
-    @card_name = Wagn::Cardname.unescape(params['id'] || '')
-    @card_name = System.site_title if (@card_name.nil? or @card_name.empty?)
-    @card =   Card.fetch_or_new(@card_name)    
-      
-    if params[:format].nil? || params[:format].to_sym==:html
-      if @card.new_record? && !@card.virtual?  # why doesnt !known? work here?
-        params[:card]={:name=>@card_name, :type=>params[:type]}
-        return case
-          when @card.ok?(:create) ;  self.new
-          when logged_in?         ;  render :action=>'denied'
-          else                    ;  render :action=>'missing' 
-          end
-      else
-        save_location
-      end
-    end
-    
-    return if !view_ok # if view is not ok, it will render denied. return so we dont' render twice
+    params[:_keyword] && params[:_keyword].gsub!('_',' ') # should not be here!!
+    save_location if params[:format].nil? || params[:format].to_sym==:html
     render_show
   end
 
@@ -103,10 +84,6 @@ class CardController < ApplicationController
     end
   end
 
-  # no longer in use, righ?
-  #def denial
-  #  render :template=>'/card/denied', :status => 403
-  #end
 
   def create
     if card_params = params[:card]
@@ -149,7 +126,7 @@ class CardController < ApplicationController
   #--------------( editing )
 
   def edit
-    if ['name','type','codename'].member?(params[:attribute])
+    if ['name','type'].member?(params[:attribute])
       render :partial=>"card/edit/#{params[:attribute]}"
       #render_cardedit(:part=>params[:attribute])
     end
@@ -196,23 +173,6 @@ class CardController < ApplicationController
     handling_errors do
       @card = Card.fetch(@card.name)   # wtf?
       request.xhr? ? render_update_slot(render_show_text, "updated #{@card.name}") : render_show
-    end
-  end
-
-  def quick_update
-    @card.update_attributes! params[:card]
-    handling_errors do
-      render(:text=>'Success')
-    end
-  end
-
-  def update_codename
-    return unless System.always_ok?
-    old_codename = @card.extension.class_name
-    @card.extension.update_attribute :class_name, params[:codename]
-    Card.update_all( {:type=> params[:codename] }, ["type = ?", old_codename])
-    handling_errors do
-      render(:text => 'Success' )
     end
   end
 
@@ -281,11 +241,6 @@ class CardController < ApplicationController
     render_show
   end
 
-  def open
-    params[:view] = :open
-    render_show
-  end
-
   def options
     @extension = @card.extension
   end
@@ -306,27 +261,6 @@ class CardController < ApplicationController
 #    @items << 'config'
     @current = params[:attribute] || @items.first.to_cardname.to_key
   end
-
-  #------------------( views )
-
-  #  I don't think these are used any more.  If they are, they shouldn't be!
-  #
-  #[:open_missing, :closed_missing].each do |method|
-  #  define_method( method ) do
-  #    load_card
-  #    params[:view] = method
-  #    if id = params[:replace]
-  #      render_update_slot do |page, target|
-  #        target.update render_to_string(:action=>'show')
-  #      end
-  #    else
-  #      render_show
-  #    end
-  #  end
-  #end
-
-
-
 
   #-------- ( MISFIT METHODS )
   def watch

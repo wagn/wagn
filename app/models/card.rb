@@ -96,6 +96,7 @@ class Card < ActiveRecord::Base
 
   def new_card?()  new_record? || from_trash  end
   def known?()    !(new_card? && !virtual?)   end
+  def real?()     !new_card? && !virtual?     end
 
   private
   def get_attributes
@@ -122,7 +123,7 @@ class Card < ActiveRecord::Base
   end
 
   def include_set_modules
-    self.rule_modules {|m| singleton_class.send :include, m }
+    self.set_modules {|m| singleton_class.send :include, m }
   end
   
   def set_defaults args

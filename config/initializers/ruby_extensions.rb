@@ -33,6 +33,9 @@ module Enumerable
     end
   end
   
+  def first_value()
+    find {|o| v=yield(o); return v if v; }
+  end
 end
 
 class Class

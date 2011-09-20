@@ -3,34 +3,58 @@ module Wagn::Model::Settings
     card = setting_card setting_name, fallback
     card && card.content
   end
-  
-  def setting_cache() @setting_cache ||= {} end
-  def reset_setting_cache() @setting_cache = {} end
 
   def setting_card setting_name, fallback=nil
-    #Rails.logger.info "setting_card[#{name}](#{setting_name.inspect}, #{fallback.inspect})"
-    fetch_args = {:skip_virtual=>true, :skip_after_fetch=>true}
-  
-    setting_cache.has_key?(setting_name) and
-    #value = setting_cache[setting_name] and
-    begin
-      Rails.logger.info "cached setting[#{name}]( #{setting_name}, #{fallback}) => #{setting_cache[setting_name].inspect}"
-      return setting_cache[setting_name]
-    end
-    #rule_name = nil #if pattern =
-    value=nil
-    if real_set_names.detect do |name|
-        value = Card.fetch("#{name}+#{setting_name.to_cardname.to_star}", fetch_args) ||
-            fallback && Card.fetch("#{name}+#{fallback.to_cardname.to_star}", fetch_args)
-          #Card.fetch((rule_name="#{name}+#{setting_name.to_cardname.to_star}"), fetch_args) or
-          #  fallback and
-          #  Card.fetch((rule_name="#{name}+#{fallback.to_cardname.to_star}"), fetch_args)
+    #warn "setting_card[#{name}](#{setting_name.inspect}, #{fallback.inspect})" if name.to_s == 'Foo Bar'
+    
+    set_names = real_set_names or raise( "no real set names found for #{name}" )
+    
+    
+#    warn "set_names = #{set_names.inspect}" if name.to_s == 'A+*self'
+    r=
+    
+    
+    set_names.first_value do |set_name|
+#      warn "#setting_card, setname = #{set_name}; setting name =  #{setting_name.inspect}, #{fallback.inspect} #{name.inspect}" if name.to_s == 'A+*self'
+
+      if (rule_card=Card[[set_name, setting_name.to_cardname.to_star].to_cardname]) &&
+         rule_card.real? || (fallback &&
+         (rule_card=Card[[set_name, fallback.to_cardname.to_star].to_cardname]) &&
+         rule_card.real?)
+        Rails.logger.debug "setting_card, found[#{rule_card.name}]"
+        rule_card
       end
-      #setting_cache[setting_name+"-rule-name"] = rule_name
     end
-    Rails.logger.info "caching setting[#{name}](#{setting_name}) => #{value.inspect}"
-    setting_cache[setting_name] = value
+#    warn "setting_card result [#{name.inspect}, #{setting_name}] RRR>#{r}" if name.to_s == 'A+*self'; r
   end
+
+  #def settings() @settings ||= {} end
+
+=begin
+  def setting_card_with_cache setting_name, fallback=nil
+    #warn "setting_card wc[#{name.inspect}](#{setting_name.inspect}, #{fallback.inspect}) #{self.settings[setting_name].nil?} <<< #{self.settings.map{|k,v|"#{k} => #{v and v.cardname.inspect}"}*"\n"}>>>"
+    #Rails.logger.info "setting cardinfo[#{name}] #{self.settings.keys.map{|k|"#{k} => #{c=self.settings[k] and c.name}"}.inspect}"
+    rule_card = self.settings[setting_name]
+    #warn "setting cache fetch[#{set_name&&set_name.cardname.inspect}]";
+    if rule_card.nil?
+      rule_card = setting_card_without_cache(setting_name, fallback) 
+      self.settings[setting_name]= rule_card if rule_card
+#      Rails.logger.debug "setting cache store[#{rule_card.name}]"
+    else 
+#      Rails.logger.debug "setting cache ret[#{set_name && set_name.cardname.inspect}]"
+    end
+    #warn "returning rule name = #{rule_card.name}"
+    rule_card
+    #rr=(setng = self.settings[setting_name]).nil? ?
+    #  (cres=( self.settings[setting_name]= begin
+    #   r=setting_card_without_cache(setting_name, fallback)
+    #   raise "???" if r == '*'
+    #   Rails.logger.debug "setting cache fetch[#{(r!='*')? r.cardname.inspect : '*'}]"; r
+    #                                     end || false )) : setng
+    # Rails.logger.debug "setting cache store[#{(cres!='*')? cres.cardname.inspect : '*'}] #{(cres != rr && rr.cardname.inspect)}"; rr
+  end
+  alias_method_chain :setting_card, :cache
+=end
 
   def related_sets
     sets = []
@@ -51,8 +75,10 @@ module Wagn::Model::Settings
     end
 
     def default_setting_card setting_name, fallback=nil
-      setting_card = Card.fetch( "*all+#{setting_name.to_cardname.to_star}" , :skip_virtual => true) or
+      Rails.logger.info "default_setting card #{setting_name}, #{fallback}"
+      setting_card = Card[ "*all+#{setting_name.to_cardname.to_star}"] or
         (fallback ? default_setting_card(fallback) : nil)
+      Rails.logger.info "default_setting card #{setting_name}, #{setting_card.cardname.inspect}"; setting_card
     end
 
     def universal_setting_names_by_group
@@ -67,6 +93,7 @@ module Wagn::Model::Settings
           grouped.each_value do |name_list|
             name_list.sort!{ |x,y| Card.setting_attrib(x, :setting_seq) <=> Card.setting_attrib(y, :setting_seq)}
           end
+          grouped
         end
       end
     end
@@ -75,7 +102,7 @@ module Wagn::Model::Settings
       const = eval("Wagn::Set::Self::#{cardname.module_name}")
       const.send attrib
     rescue
-      Rails.logger.info "nothing found for #{name.to_cardname.module_name}, #{attrib}"
+      Rails.logger.info "nothing found for #{cardname.module_name}, #{attrib}"
       nil
     end
   end

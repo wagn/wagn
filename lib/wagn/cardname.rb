@@ -1,18 +1,8 @@
 module Wagn
   class Cardname < Object
-
-    CARDNAMES = {}
     require 'htmlentities'
 
-    def self.decode_html(simple)
-      simple.match(/\&/) ?  HTMLEntities.new.decode(simple) : simple
-    end
-
-    def self.simple_to_key(simple)
-      Wagn::Cardname.decode_html(simple).underscore.gsub(/[^\w\*]+/,'_').
-        split(/_+/).reject(&:blank?).map(&:singularize)*'_'
-      #r=;Rails.logger.debug "simple_to_key[#{simple}] = #{r.inspect}"; r
-    end
+    NAME2KEY = {}
 
     JOINT = '+'
     BANNED_ARRAY = [ '/', '~', '|']
@@ -21,47 +11,94 @@ module Wagn
 
     FORMAL_JOINT = " <span class=\"wiki-joint\">#{JOINT}</span> "
 
-    attr_reader :s, :simple, :parts, :key
 
-    def self.new(obj)
-      return obj if Cardname===obj
-      raise "cardname? #{obj.inspect}" if obj.nil?
-      name = Array===obj ? obj*JOINT : obj.to_s
-      if CARDNAMES.has_key?(name)
-        #Rails.logger.info "cardname.cache(#{name}) #{CARDNAMES[name].inspect}"
-        CARDNAMES[name]
-      else
-        newobj= allocate.send(:initialize, name)
-        #Rails.logger.info "cardname.new(#{obj.class}) #{newobj.inspect}" # CDNS:#{CARDNAMES.keys.inspect}"
-        #newobj.send(:initialize, name)
-        # should we stop it from even creating bad names?
-        #raise "Bad name #{newobj.s}" if newobj.simple? and newobj.s.match(BANNED_RE)
-        CARDNAMES[name] = newobj
+    class << self
+      def new(obj)
+        return obj if Cardname===obj
+        allocate.send :initialize, obj
       end
+
+      def each_key(&proc) NAME2KEY.values.uniq.each(&proc) end
     end
 
+
+    attr_reader :s, :simple, :key
+    alias to_key key
+
+
+    def initialize(obj)
+      @s = Array===obj ? obj*JOINT : obj.to_s
+      @key = (NAME2KEY[s] ||= generate_key)
+      NAME2KEY[@key] ||= @key
+      self
+    end
+    
+    def generate_key
+      simple? ? 
+        generate_simple_key : 
+        parts.map do |part|
+          partname = part.to_cardname
+          partname.key if !partname.blank?
+        end.compact * JOINT  
+    end
+    
+    def generate_simple_key
+      decode_html(s).underscore.gsub(/[^\w\*]+/,'_').split(/_+/).reject(&:blank?).map(&:singularize)*'_'
+    end
+
+    def decode_html(s)
+      s.match(/\&/) ?  HTMLEntities.new.decode(s) : s
+    end
+
+    
+    def simple?
+      @simple ||= !s.index(JOINT)
+    end
+    
+    def parts
+      @parts ||= (simple ? [s] : s.gsub(/\+$/,'+ ').split(JOINT))
+    end
+    
+    
 =begin
-    args = %w{== clear default default_proc each each_key each_pair each_value
-      empty? eql? fetch has_key? has_value? hash include? index indexes indices
-      initialize_copy inspect invert key? keys length member? merge merge! new
-      rehash reject reject! replace select shift size sort store to_a to_hash
-      to_s update value? values values_at} + [{:to => CARDNAMES}]
-    Rails.logger.debug "delegation args: #{args.inspect}"
+    def reset_rules() Wagn::CardInfo.reset_cache end
+    def reset_patterns() self.cardinfo.reset_patterns end
+    def destroy()
+      cardinfo.expire if real?
+      true
+    end
 
-    delegate *args
+    def cardinfo
+      CardInfo[@key] || CardInfo.new(self)
+    end
 
-    # Delegate hash functions to the Collection
-    class << self
-      def [](obj) CARDNAMES[obj.to_cardname.s] end
-      def has_key?(obj) CARDNAMES.has_key?(obj.to_cardname.s) end
-      alias include? has_key?
-      alias key? has_key?
-      alias member? has_key?
-      def store(obj) raise "CARDNAMES is not not writable" end
-      alias []= store
-      def values_at(*a) super(a.map(&:to_cardname)) end
-    end   
+
+    # FIXME: delegations
+    def typename() cardinfo.typename() end
+    def settings() cardinfo.settings() end
+    def settings=(h) cardinfo.settings=(h) end
+    def patterns() cardinfo.patterns() end
+    def patterns=(h) cardinfo.patterns=(h) end
+    def virtual?() cardinfo.virtual?() end
+    def missing?() cardinfo.missing?() end
+    def real?() cardinfo.real?() end
+    def set_modules() cardinfo.set_modules() end
+    def set_modules=(h) cardinfo.set_modules=(h) end
+    def card() cardinfo.card() end
+    def card_without_fetch() cardinfo.card_without_fetch() end
+    def set_cardinfo(card, saved_type=nil)
+      raise '???' if card == false
+      ci = CardInfo[self.key]
+      if saved_type
+        ci.typename = nil
+        ci.saved_type = saved_type
+      end
+      ci.state = :real unless ci.state
+      ci.card = card
+    end
 =end
+    def inspect() "<CardName key=#{key}[#{s}, #{size}]>" end
+
 
     def self.unescape(uri) uri.gsub(' ','+').gsub('_',' ')             end
 
@@ -73,48 +110,8 @@ module Wagn
       str
     end   
 
-    def initialize(obj)
-      #@simple = @key = @parts = @s = nil
-      raise "???" unless String===obj
-      #Rails.logger.debug "newcdnm(#{obj.inspect})" #{Kernel.caller[0..4]*"\n"}"
-      #case obj
-      #when Cardname;
-        #@simple, @s, @parts, @key = obj.simple, obj.s, obj.parts, obj.key
-        #(has_s=obj.instance_variable_get(:@s)) ? @s=has_s : @parts=obj.parts
-      #Rails.logger.info "newcdnm <cdnm>#{self.class} #{s}: #{self.simple?}, #{self.s.inspect}, #{self.parts.inspect}"
-        #return self
-      #when Symbol;
-      #  @s=obj.to_s
-      #when String;          
-        @s=obj.strip
-      #when Enumerable;                      @parts = obj.map(&:to_s).to_a
-      #else raise "Bad cardname #{obj.inspect} #{Kernel.caller[0..10]*"\n"}"
-      #end
-      #if s
-        @parts=(@simple = !s.index(JOINT)) ? [s] : s.gsub(/\+$/,'+ ').split(JOINT)
-        #Rails.logger.debug "by_s#{s.inspect} > #{simple.inspect}, #{parts.inspect}"
-      #else
-      #  raise "Card parts? #{parts.inspect}" if Wagn::Cardname === parts[0]
-      #  @s    =(@simple = size == 1)      ?  parts[0] : parts * JOINT
-        #Rails.logger.debug "by_parts#{parts.inspect} > #{simple.inspect}, #{s.inspect}"
-      #end
-      #Rails.logger.info "newcdnm R>#{inspect}: S:#{self.s.inspect}, P:#{self.parts.inspect}"
-      #Rails.logger.info "newcdnm R> S:#{self.inspect}, K:#{self.key} P:#{self.parts.inspect}"
-      self
-    end
-
-    def key()
-      @key ||= simple? ? Wagn::Cardname.simple_to_key(s) :
-        parts.map(&:to_cardname).reject(&:blank?).map(&:key) * JOINT
-    end
-    alias to_key key
-
-    def inspect()
-      "S(#{simple.inspect})#{(simple or simple.nil?) ? s.inspect : parts.inspect}"
-    end
     alias to_str s
     alias to_s s
-    alias simple? simple
     def ==(obj)
       obj.nil? ? false :
         key == (obj.respond_to?(:to_key) ? obj.to_key :
@@ -139,29 +136,29 @@ module Wagn
       elsif simple?
         self
       else
-        #Rails.logger.info "replace_part #{oldpart == parts[0, oldpart.size]} ? #{newpart.size == oldpart.size} ? #{newpart.inspect} : #{newpart.parts.inspect} #{parts[oldpart.size,].inspect}"
-        #Rails.logger.info "replace_part #{oldpart == parts[0, oldpart.size]} ? #{self.size == oldpart.size} ? #{newpart.inspect} : #{(newpart.parts+(parts[oldpart.size].to_a)).inspect}"; r=(
         oldpart == parts[0, oldpart.size] ?
           ((self.size == oldpart.size) ? newpart :
-                      (newpart.parts+(parts[oldpart.size,].to_a)).to_cardname) : self
-        #);Rails.logger.info "replace_part notsimp #{oldpart.inspect}, #{newpart.inspect} > #{r.inspect}"; r
+             (newpart.parts+(parts[oldpart.size,].to_a)).to_cardname) : self
       end
     end
 
 
     def tag_name()    simple? ? self : parts[-1]                       end
-    def junction?()   not simple?                                      end
-    def tripple?()    size > 2                                         end
     def left_name()   simple? ? nil  : self.class.new(parts[0..-2])    end
     def trunk_name()  simple? ? self : self.class.new(parts[0..-2])    end
+    def junction?()   not simple?                                      end
       #Rails.logger.info "trunk_name(#{to_str})[#{to_s}] #{r.to_s}"; r
     alias particle_names parts
 
     def module_name() s.gsub(/^\*/,'X_').gsub(/[\b\s]+/,'_').camelcase end
     def css_name() key.gsub('*','X').gsub('+','-')                     end
+
     def to_star()     star? ? s : '*'+s                                end
     def star?()       simple? and !!(s=~/^\*/)                         end
     def tag_star?()   !!((simple? ? self : parts[-1])=~/^\*/)          end
+    def star_rule(star)
+      [s, (star = star.to_s) =~ /^\*/ ? star : '*'+star].to_cardname end
+
     def empty?()      parts && parts.empty? or s && s.blank?           end
     alias blank?      empty?
 
@@ -169,7 +166,7 @@ module Wagn
     def escape()           s.gsub(' ','_')                             end
 
     def to_url_key()
-      Wagn::Cardname.decode_html(s).gsub(/[^\*\w\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')
+      decode_html(s).gsub(/[^\*\w\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')
     end
 
     def piece_names()

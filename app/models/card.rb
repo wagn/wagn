@@ -30,7 +30,7 @@ class Card < ActiveRecord::Base
         sub_name = sub_name.gsub('~plus~','+')
         absolute_name = cardname.to_absolute_name(sub_name)
         #Rails.logger.info "multi update working on:#{name} #{sub_name}: SN:#{absolute_name}, #{opts.inspect}"
-        if card = Card.fetch(absolute_name, :skip_virtual=>true)
+        if card = Card[absolute_name]
           card.update_attributes(opts)
         elsif opts[:content].present? and opts[:content].strip.present?
           opts[:name] = absolute_name
@@ -85,7 +85,7 @@ class Card < ActiveRecord::Base
     #Rails.logger.warn "initialize typecode: #{self.typecode.inspect} NM:(#{@attributes.inspect}, #{name.inspect})"
 
     begin
-    include_set_modules unless missing?
+    include_set_modules
     set_defaults( args ) unless skip_defaults
     callback(:after_initialize) if respond_to_without_attributes?(:after_initialize)
     self
@@ -111,6 +111,7 @@ class Card < ActiveRecord::Base
   end
 
   def get_typecode(name, typename)
+    #Rails.logger.info "get_typecode(#{name.inspect}, #{typename})"
     begin ; return Cardtype.classname_for(typename) if typename
     rescue Exception => e;
 #Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
@@ -243,7 +244,7 @@ class Card < ActiveRecord::Base
   def left()
     #Rails.logger.debug "left(#{name}), #{cardname.trunk_name}, #{cardname.trunk_name.to_s}"
     Card.fetch( cardname.trunk_name, :skip_virtual=> true, :skip_after_fetch=>true )  end
-  def right()     Card.fetch cardname.tag_name,   :skip_virtual=> true         end
+  def right()     Card[cardname.tag_name]         end
   def pieces()    simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq end
   def particles() cardname.particle_names.map{|name| Card.fetch name}          end
   def key()       cardname.key                                                 end

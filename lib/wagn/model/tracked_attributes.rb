@@ -42,9 +42,9 @@ module Wagn::Model::TrackedAttributes
     raise "No name ???" if name.blank? # can we set a null name?
     Wagn::Cache.expire_card(cardname.to_key)
 
-    #Rails.logger.debug "create trunk? #{@cardname.junction?}, #{@cardname.s}"
+    Rails.logger.debug "create trunk? #{@cardname.junction?}, #{@cardname.s}"
     if @cardname.junction?
-      #Rails.logger.debug "create trunk #{@cardname.left_name.to_s} and tag #{@cardname.tag_name.to_s}"
+      Rails.logger.debug "create trunk #{@cardname.left_name.to_s} and tag #{@cardname.tag_name.to_s}"
       if !new_card? && @cardname.to_key != @old_cardname.to_key
         # move the current card out of the way, in case the new name will require
         # re-creating a card with the current name, ie.  A -> A+B

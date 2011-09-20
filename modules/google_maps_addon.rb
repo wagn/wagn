@@ -20,7 +20,7 @@ class Card
   
   def update_geocode 
     User.as :wagbot do
-      if conf = Card.fetch('*geocode', :skip_virtual => true)
+      if conf = Card['*geocode']
         if self.junction? && conf.item_names.include?( self.cardname.tag_name )
           address = conf.item_names.map{|p| (c=Card.fetch_or_new(self.cardname.trunk_name.to_s+"+#{p}")) && c.content}.select(&:present?).join(', ')
           if (geocode = GoogleMapsAddon.geocode(address))

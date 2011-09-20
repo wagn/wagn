@@ -18,7 +18,7 @@ class Cardtype < ActiveRecord::Base
         where c.trash is false
       }).each do |rec|
         c[:card_keys][rec['key']] = rec['name']
-        c[:card_names][rec['class_name']] = rec['name'].to_cardname
+        c[:card_names][rec['class_name']] = rec['name'] #.to_cardname
         c[:class_names][rec['key']] = rec['class_name']
       end
       

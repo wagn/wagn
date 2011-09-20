@@ -28,6 +28,8 @@ class User < ActiveRecord::Base
   before_save :encrypt_password
   after_save :reset_instance_cache
   
+
+
   
   class << self
     def current_user
@@ -39,6 +41,8 @@ class User < ActiveRecord::Base
       @@current_user = user.class==User ? User[user.id] : User[user]
     end
    
+    def inspect() "#{@@current_user&&@@current_user.login}:#{as_user&&as_user.login}" end
+
     def as(given_user)
       tmp_user = @@as_user
       @@as_user = given_user.class==User ? User[given_user.id] : User[given_user]

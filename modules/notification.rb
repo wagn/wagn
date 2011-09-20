@@ -35,7 +35,7 @@ module Notification
       # do the watchers lookup before the transcluder test since it's faster.
       if cardname.junction?
         #Rails.logger.debug "trunk_watcher_pairs #{name}, #{name.trunk_name.inspect}"
-        if tcard = Card.fetch(tname=cardname.trunk_name, :skip_virtual=>true) and
+        if tcard = Card[tname=cardname.trunk_name] and
           pairs = tcard.watcher_watched_pairs and
           transcluders.map(&:key).member?(tname.to_key)
           return pairs
@@ -54,10 +54,10 @@ module Notification
 
     def watcher_watched_pairs
       author = User.current_user.card.cardname
-      (card_watchers.except(author).map {|watcher| [Card.fetch(watcher, :skip_virtual=>true).extension,self.cardname] }  +
+      (card_watchers.except(author).map {|watcher| [Card[watcher].extension,self.cardname] }  +
         type_watchers.except(author).map {|watcher|
         #Rails.logger.info "watcher #{watcher.inspect}, #{::Cardtype.name_for(self.typecode)}"
-        [cd=Card.fetch(watcher, :skip_virtual=>true).extension,::Cardtype.name_for(self.typecode)]})
+        [cd=Card[watcher].extension,::Cardtype.name_for(self.typecode)]})
     end
     
     def card_watchers 
@@ -73,8 +73,8 @@ module Notification
     def items_from( name )
       #Rails.logger.info "items_from (#{name.inspect})"
       User.as :wagbot do
-        (c = Card.fetch(name.to_cardname, :skip_virtual=>true)) ? c.item_names.reject{|x|x==''}.map(&:to_cardname) : []
-        #(c = Card.fetch(name.to_cardname, :skip_virtual=>true)) ?
+        (c = Card[name.to_cardname]) ? c.item_names.reject{|x|x==''}.map(&:to_cardname) : []
+        #(c = Card[name.to_cardname]) ?
         #  begin
         #  r1=c.item_names; r2=r1.reject{|x|x==''}; r3=r2.map(&:to_cardname)
         #  Rails.logger.info "items from 2 #{c.new_record?}, #{r1.inspect}, #{r2.inspect}, #{r3.inspect}"; r3

@@ -22,7 +22,7 @@ class Wagn::Renderer
     
     # CSS
     bits += [stylesheet_link_merged(:base), stylesheet_link_tag( 'print', :media=>'print') ]
-    if star_css_card = Card.fetch('*css', :skip_virtual => true)
+    if star_css_card = Card['*css']
       bits << %{<link href="/*css.css?#{ star_css_card.current_revision_id }" media="screen" type="text/css" rel="stylesheet" />}
     end
 

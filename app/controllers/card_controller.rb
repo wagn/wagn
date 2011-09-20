@@ -21,7 +21,7 @@ class CardController < ApplicationController
   def index_preload
     User.no_logins? ? 
       redirect_to( '/admin/setup' ) : 
-      params[:id] = (System.setting('*home') || 'Home').to_url_key
+      params[:id] = (System.setting('*home') || 'Home').to_cardname.to_url_key
   end
 
   def mine_preload()  params[:id] = User.current_user.card.name   end  

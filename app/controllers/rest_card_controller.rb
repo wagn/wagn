@@ -54,7 +54,7 @@ class RestCardController < CardController
     unless card_name.blank?
       this_update = {:name=>card_name} unless card_name.blank?
       this_card = Card.fetch_or_new(card_name)
-      this_update.delete(:type) unless this_type != this_card.cardtype_name
+      this_update.delete(:type) unless this_type != this_card.typename
     # no card and no new content, don't update
     #Rails.logger.info "uptest[#{root_card}} #{no_card || this_card.new_record? && card_content.blank?}"
       if !(no_card || this_card.new_record? &&

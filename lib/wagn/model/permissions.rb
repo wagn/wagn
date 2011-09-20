@@ -21,7 +21,7 @@ module Wagn::Model::Permissions
   end
 
   def ydhpt
-    "#{::User.current_user.cardname}, You don't have permission to"
+    "#{::User.current_user.name}, You don't have permission to"
   end
   
   def destroy_with_permissions
@@ -52,8 +52,8 @@ module Wagn::Model::Permissions
       begin
         self.send(method)
       rescue Exception => e
-        name.piece_names.each{|piece| Wagn::Cache.expire_card(piece.to_key)}
-        Rails.logger.info ">>#{method}:#{e.message} #{name} #{Kernel.caller.*"\n"}"
+        cardname.piece_names.each{|piece| Wagn::Cache.expire_card(piece.to_cardname.key)}
+        Rails.logger.debug "Exception #{method}:#{e.message} #{name} #{e.backtrace*"\n"}"
         raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace*"\n"}"
       end
     else
@@ -64,8 +64,12 @@ module Wagn::Model::Permissions
   def approved?
     self.operation_approved = true    
     self.permission_errors = []
-    new_card? ? ok?(:create) : ok?(:update)
+    #Rails.logger.debug "updates.keys = #{updates.keys.inspect}"
+    unless updates.keys == ['comment'] # if only updating comment, next section will handle
+      new_card? ? ok?(:create) : ok?(:update)
+    end
     updates.each_pair do |attr,value|
+      #Rails.logger.info "approving: #{attr}"
       send("approve_#{attr}")
     end         
     permission_errors.each do |err|
@@ -94,28 +98,34 @@ module Wagn::Model::Permissions
   end
   
   def who_can(operation)
-    rule_card(operation).first.item_names.map &:to_key
+    rule_card(operation).first.item_names.map(&:to_cardname).map &:to_key
+    #r1=rule_card(operation); r2=r1.first; r22=r2.item_names
+    #Rails.logger.info "who_can(#{operation}) r1:#{r1.inspect}, r2:#{r2.inspect}, r22:#{r22.inspect}"
+    #r3=r22.map(&:to_cardname).map(&:to_key)
+    #Rails.logger.info "who_can2(#{operation}) #{r1.inspect}, #{r2.inspect}, R3:#{r3.inspect}"; r3
   end 
   
   def rule_card(operation)
     opcard = setting_card(operation.to_s)
     
-    if !opcard && (!System.always_ok? || ENV['MIGRATE_PERMISSIONS'] == 'true')
+    unless opcard or ENV['MIGRATE_PERMISSIONS'] == 'true'
       errors.add :permission_denied, "No #{operation} setting card for #{name}"      
       raise Card::PermissionDenied.new(self) 
     end
     
     rcard = begin
       User.as :wagbot do
+        #Rails.logger.debug "in rule_card #{opcard&&opcard.name} #{operation}"
         if opcard.raw_content == '_left' && self.junction?
-          lcard = loaded_trunk || Card.fetch_or_new(name.trunk_name, :skip_virtual=>true, :skip_defaults=>true) 
+          lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true, :skip_defaults=>true) 
           lcard.rule_card(operation).first
         else
           opcard
         end
       end
     end
-    return rcard, opcard.name.trunk_name.tag_name
+    #Rails.logger.debug "rule_card #{rcard&&rcard.name}, #{opcard.name.inspect}, #{opcard}, #{opcard.cardname.inspect}"
+    return rcard, opcard.cardname.trunk_name.tag_name.to_s
   end
   
   protected
@@ -143,7 +153,7 @@ module Wagn::Model::Permissions
   end
 
   def approve_read
-    return true if System.always_ok?    
+    return true if System.always_ok?
     self.read_rule_id ||= rule_card(:read).first.id
     ok = User.as_user.read_rule_ids.member?(self.read_rule_id.to_i) 
     deny_because(you_cant "read this card") unless ok
@@ -234,20 +244,31 @@ module Wagn::Model::Permissions
 
   def update_ruled_cards
     return if ENV['MIGRATE_PERMISSIONS'] == 'true'
-    if name.junction? && name.tag_name=='*read' && @name_or_content_changed
+    if cardname.junction? && cardname.tag_name=='*read' && (@name_or_content_changed || @trash_changed)
+      
+      # These instance vars are messy.  should use tracked attributes' @changed variable 
+      # and get rid of @name_changed, @name_or_content_changed, and @trash_changed.
+      # Above should look like [:name, :content, :trash].member?( @changed.keys ).
+      # To implement that, we need to make sure @changed actually tracks trash 
+      # (though maybe not as a tracked_attribute for performance reasons?)
+      # AND need to make sure @changed gets wiped after save (probably last in the sequence)
+      
+      User.cache.reset
+      System.cache.reset
       Wagn::Cache.expire_card self.key #probably shouldn't be necessary, 
       # but was sometimes getting cached version when card should be in the trash.
       # could be related to other bugs?
       in_set = {}
       if !(self.trash)
         rule_classes = Wagn::Model::Pattern.subclasses.map &:key
-        rule_class_index = rule_classes.index self.name.trunk_name.tag_name
+        rule_class_index = rule_classes.index self.cardname.trunk_name.tag_name.to_s
         return 'not a proper rule card' unless rule_class_index
 
         #first update all cards in set that aren't governed by narrower rule
         User.as :wagbot do
-          Card.fetch(name.trunk_name).item_cards(:limit=>0).each do |item_card|
+          Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
             in_set[item_card.key] = true
+            #Rails.logger.debug "rule_classes[#{rule_class_index}] #{rule_classes.inspect} This:#{item_card.read_rule_class.inspect} idx:#{rule_classes.index(item_card.read_rule_class)}"
             next if rule_classes.index(item_card.read_rule_class) < rule_class_index
             item_card.update_read_rule
           end

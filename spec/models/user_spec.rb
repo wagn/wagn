@@ -9,8 +9,8 @@ describe "User" do
       end
     end
     
-    it "3 should apply to Wagn Bot" do
-      User.as(:wagbot) do
+    it "3 should apply to Joe Admin" do
+      User.as(:joe_admin) do
         User.as_user.read_rule_ids.length.should == 3
       end
     end

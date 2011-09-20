@@ -22,22 +22,16 @@ module PackSpecHelper
   end
 
   def render_card(view, card_args={}, args={})
-Rails.logger.info "render_card #{view} #{card_args.inspect}"
     card = begin
       if card_args[:name]
-c=
         Card.fetch(card_args[:name])
-Rails.logger.info "found it: #{(c&&c.name).inspect}"; c
       else
         card_args[:name] ||= "Tempo Rary"
         card_args[:skip_defaults]=true
         c = Card.new(card_args)
-Rails.logger.info "made it: (#{card_args.inspect}) #{(c&&c.name).inspect}"; c
       end
     end
-#r=
     Wagn::Renderer.new(card, args).render(view)
-#Rails.logger.info "render_card(#{card&&card.name}, #{view}, #{args.inspect}) => #{r}"; r
   end
 end
 

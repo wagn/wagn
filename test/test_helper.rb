@@ -92,7 +92,7 @@ unless defined? TEST_ROOT
         args[:cardtypes] ||= ['Basic']
         if args[:cardtypes]==:all 
           args[:cardtypes] = YAML.load_file('test/fixtures/cardtypes.yml').collect {|k,v| v['class_name']}                   
-Rails.logger.info "render_test all types: #{args[:cardtypes].inspect}"
+#Rails.logger.info "render_test all types: #{args[:cardtypes].inspect}"
         end
 
         args[:users].each_pair do |user,status|
@@ -103,12 +103,11 @@ Rails.logger.info "render_test all types: #{args[:cardtypes].inspect}"
 
             title = url.gsub(/:id/,'').gsub(/\//,'_') + "_#{cardtype}"
             login = (user=='anon' ? '' : "integration_login_as '#{user}'")
-Rails.logger.info "test_def #{title} #{user} #{status} #{url} #{cardtype}"
             test_def = %{
               def test_render_#{title}_#{user}_#{status} 
                 #{login}
                 url = prepare_url('#{url}', '#{cardtype}')
-                #warn "GET \#\{url\}"
+                Rails.logger.warn "TR GET \#\{url\}"
                 get url
                 assert_response #{status}, "\#\{url\} as #{user} should have status #{status}"
               end

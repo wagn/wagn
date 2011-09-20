@@ -6,9 +6,9 @@ class Wagn::Renderer
 
     group_options = User.as(:wagbot) { Card.search(:type=>'Role', :sort=>'name') }
     eid = context
-    inheritable = Wagn::Pattern.junction_only?(set_name)
+    inheritable = set_card.junction_only?
     inheritable ||= set_name.tag_name=='*self' && set_name.trunk_name.junction?
-    inheriting = card.content=='_left'
+    inheriting = inheritable && card.content=='_left'
 
     item_names = inheriting ? [] : card.item_names
     uncheck_inherit = inheritable ? "jQuery('input[name=#{eid}-inherit]').attr('checked',false)" : ''

@@ -19,18 +19,8 @@ module Wagn::Model::CardAttachment
     end
   end
 
-  module InstanceMethods
-    def attachment_model() Wagn::Model::CardAttachment.attachment_model end
-
-    def update_attachment
-      if attachment_id and !attachment_id.blank?
-        attachment_model.find( attachment_id ).update_attribute :revision_id, current_revision_id
-      end
-    end
-
-    def attachment
-      attachment_model.find_by_revision_id( current_revision_id )
-    end
+  def attachment
+    attachment_model.find_by_revision_id( current_revision_id )
   end
 end
 

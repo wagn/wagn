@@ -41,6 +41,7 @@ class Card::BaseTest < ActiveSupport::TestCase
     alpha = Card.new :name=>'alpha', :content=>'alpha'
     assert_equal 'alpha', alpha.content
     alpha.save
+    assert alpha.name
     assert_stable(alpha)
   end
   

@@ -9,7 +9,7 @@ module Wagn
       end
   
       def logged_in?
-        !(User.current_user.nil? || User.current_user.login == 'anon')
+        User.logged_in?
       end
     end
   
@@ -274,8 +274,9 @@ module Wagn
       options = {} # do I need any? #args.last.is_a?(Hash) ? args.pop : {}
       block = Proc.new {}
       builder = options[:builder] || ActionView::Base.default_form_builder
-      card.name.gsub!(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_record?  ##FIXME -- need to match other relative inclusions.
-      fields_for = builder.new("cards[#{card.name.pre_cgi}]", card, template, options, block)
+      #Rails.logger.debug "form_for_multi #{card.name}, #{root.card.name}, #{root.card.new_record?}"
+      card.name = card.name.gsub(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_record?  ##FIXME -- need to match other relative inclusions.
+      fields_for = builder.new("cards[#{card.cardname.pre_cgi}]", card, template, options, block)
     end
   
     def form
@@ -307,13 +308,17 @@ module Wagn
       wiki_content = WikiContent.new(card, card.content, self)
   
       wiki_content.find_chunks(Chunk::Link).each do |chunk|
-        link_bound = chunk.card_name == chunk.link_text
-        chunk.card_name.replace chunk.card_name.replace_part(old_name, new_name)
-        chunk.link_text = chunk.card_name if link_bound
+        if chunk.cardname
+          link_bound = chunk.cardname == chunk.link_text
+          chunk.cardname = chunk.cardname.replace_part(old_name, new_name)
+          chunk.link_text=chunk.cardname.to_s if link_bound
+          #Rails.logger.info "repl ref: #{chunk.cardname.to_s}, #{link_bound}, #{chunk.link_text}"
+        end
       end
   
       wiki_content.find_chunks(Chunk::Transclude).each do |chunk|
-        chunk.card_name.replace chunk.card_name.replace_part(old_name, new_name)
+        chunk.cardname =
+          chunk.cardname.replace_part(old_name, new_name) if chunk.cardname
       end
   
       String.new wiki_content.unrender!
@@ -330,7 +335,7 @@ module Wagn
         return self.wrap_main(tcont) if tcont
         return "{{#{options[:unmask]}}}" || '{{_main}}' unless @depth == 0 and tcard
   
-        tname = tcard.name
+        tname = tcard.cardname
         [:item, :view, :size].each{ |key| val=symbolize_param(key) and options[key]=val }
         # main card uses these CGI options as inclusion args      
         options[:context] = 'main'
@@ -340,8 +345,10 @@ module Wagn
       #Rails.logger.info " expanding.  view is currently: #{options[:view]}"
   
       options[:home_view] = options[:view] ||= context == 'layout_0' ? :naked : :content
-      options[:fullname] = fullname = get_inclusion_fullname(tname,options)
+      tname = tname.to_cardname
+      options[:fullname] = fullname = tname.fullname(card.cardname, base, options, params)
       options[:showname] = tname.to_show(fullname)
+      #Rails.logger.debug "fullname [#{tname.inspect}](#{card&&card.name||card.inspect}, #{base.inspect}, #{options.inspect}"
   
       tcard ||= begin
         case
@@ -381,7 +388,7 @@ module Wagn
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
       sub.item_view = options[:item] if options[:item]
       sub.type = options[:type] if options[:type]
-      sub.showname = options[:showname] || tcard.name
+      sub.showname = options[:showname] || tcard.cardname
   
       new_card = tcard.new_card? && !tcard.virtual?
   
@@ -410,26 +417,9 @@ module Wagn
       %{<span class="inclusion-error">error rendering #{link_to_page((tcard ? tcard.name : 'unknown card'), nil, :title=>CGI.escapeHTML(e.inspect))}</span>}
     end
   
-    def get_inclusion_fullname(name,options)
-      fullname = name+'' #weird.  have to do this or the tname gets busted in the options hash!!
-      context = case
-      when base; (base.respond_to?(:name) ? base.name : base)
-      when options[:base]=='parent'
-        card.name.left_name
-      else
-        card.name
-      end
-      fullname = fullname.to_absolute(context)
-      fullname = fullname.particle_names.map do |x|
-        if x =~ /^_/ and params and params[x]
-          CGI.escapeHTML( params[x] )
-        else x end
-      end.join("+")
-      fullname
-    end
-  
     def get_inclusion_content(cardname)
-      content = relative_content[cardname.gsub(/\+/,'_')]
+      #Rails.logger.debug "get_inclusion_content(#{cardname.inspect})"
+      content = relative_content[cardname.to_s.gsub(/\+/,'_')]
   
       # CLEANME This is a hack to get it so plus cards re-populate on failed signups
       if relative_content['cards'] and card_params = relative_content['cards'][cardname.pre_cgi]
@@ -444,6 +434,7 @@ module Wagn
       if content=get_inclusion_content(options[:tname])
         args[:content]=content
       end
+      #Rails.logger.debug "new_inclusion_card_args #{tname.inspect}, #{options.inspect}, #{args.inspect}"
       args
     end
   
@@ -462,8 +453,10 @@ module Wagn
               else raise "Unknown chunk reference class #{chunk.class}"
             end
   
+         #ref_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
+          #raise "No name to ref? #{card.name}, #{chunk.inspect}" unless chunk.refcardname()
           WikiReference.create!( :card_id=>card.id,
-            :referenced_name=>chunk.refcard_name.to_key,
+            :referenced_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
             :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
             :link_type=>reference_type
            )
@@ -474,21 +467,25 @@ module Wagn
     def main_card?() context=~/^main_\d$/ end
       
     def build_link(href, text)
+      #Rails.logger.info "build_link(#{href.inspect}, #{text.inspect})"
       klass = case href
         when /^https?:/; 'external-link'
         when /^mailto:/; 'email-link'
         when /^\//
-          href = full_uri(href)      
+          href = full_uri(href.to_s)      
           'internal-link'
         else
           known_card = !!Card.fetch(href)
-          text = text.to_show(href)
-          href = '/wagn/' + (known_card ? href.to_url_key : CGI.escape(Wagn::Cardname.escape(href)))
+          cardname = href.to_cardname
+          text = cardname.to_show(card.name) unless text
+          href = href.to_cardname
+          href = '/wagn/' + (known_card ? href.to_url_key : CGI.escape(href.escape))
           #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
-          href = full_uri(href)
+          href = full_uri(href.to_s)
           known_card ? 'known-card' : 'wanted-card'
       end
-      %{<a class="#{klass}" href="#{href}">#{text}</a>}      
+      #Rails.logger.info "build_link(#{href.inspect}, #{text.inspect}) #{klass}"
+      %{<a class="#{klass}" href="#{href.to_s}">#{text.to_s}</a>}      
     end
     
     def full_uri(relative_uri)

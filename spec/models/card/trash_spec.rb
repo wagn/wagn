@@ -66,7 +66,7 @@ describe Card, "dependent removal" do
     User.as :joe_user
     @a = Card['A']
     @a.destroy!
-    @c = Card.find_by_key "A+B+C".to_key
+    @c = Card.find_by_key "A+B+C".to_cardname.to_key
   end
 
   it "should be trash" do
@@ -92,7 +92,9 @@ describe Card, "rename to trashed name" do
   end
   
   it "should rename a to a*trash" do
-    @a.reload.name.should == 'A*trash'
+    (c = Card.find(@a.id)).cardname.to_s.should == 'A*trash'
+    c.name.should == 'A*trash'
+    c.key.should == 'a*trash'
   end
 end
 

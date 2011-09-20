@@ -55,7 +55,7 @@ module LocationHelper
     # shaved order of magnitude off footer rendering
     # vs. url_for( :action=> .. )
 #Rails.logger.debug "url_for_page( #{title}, #{format}, #{vars}"
-    "/wagn/#{title.to_url_key}#{format}#{vars}"
+    "/wagn/#{title.to_cardname.to_url_key}#{format}#{vars}"
   end
 
   def url_for_card( options={} )
@@ -63,7 +63,7 @@ module LocationHelper
   end
 
   def card_path( card )
-    "/wagn/#{card.name.to_url_key}"
+    "/wagn/#{card.cardname.to_url_key}"
   end
 
   def card_url( card )
@@ -98,7 +98,7 @@ module LocationHelper
   end
 
   def card_title_span( title )
-    %{<span class="namepart-#{title.css_name}">#{title}</span>}
+    %{<span class="namepart-#{title.to_cardname.css_name}">#{title}</span>}
   end
 
   def connector_function( name, *args )
@@ -119,7 +119,7 @@ module LocationHelper
 
 
   def page_icon(cardname)
-    link_to_page '&nbsp;', cardname, {:class=>'page-icon', :title=>"Go to: #{cardname}"}
+    link_to_page '&nbsp;', cardname, {:class=>'page-icon', :title=>"Go to: #{cardname.to_s}"}
   end
 
   def flexlink( linktype, name, options )

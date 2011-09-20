@@ -1,18 +1,29 @@
 <%= slot.options_submenu(:settings) %>
 <div class="settings-tab">
   <%- 
+  self_set_name = slot.card.name+'+*self'
   related_sets = slot.card.related_sets
-  if !related_sets.empty?
-  %>
-    <%- related_sets.each do |set_name| %>
-      <h2><%= card.label(set_name) %></h2>
-      <blockquote>
-        <%= slot.process_inclusion Card.fetch(set_name), :view=>:closed %>
-      </blockquote>
-    <% end %>
-  <h2>This Card</h2>
+  if !related_sets.empty? %>
+    <h2>Related Sets</h2>
+    <%- (related_sets<<self_set_name).each do |set_name| %>
+      <div class="options-set">
+        <div class="options-set-label"><%= card.label(set_name) %></div>
+        <div class="options-set-content">
+          <%= slot.process_inclusion Card.fetch(set_name), :view=>:closed %>
+        </div>
+      </div>
+    <%- end %>
+  <%- else %>
+    <%= slot.subrenderer(Card.fetch self_set_name).render :content %>
   <%- end %>
-  <%= slot.subrenderer(Card.fetch "#{slot.card.name}+*self").render :content %>
+  
+  <% if !card.extension_type && System.toggle(card.setting('accountable')) && System.ok?(:create_accounts) && card.ok?(:update) %>
+    <div class="new-account-link">
+      <%= link_to_remote %{Add a sign-in account for "#{card.name}"},
+          {:url=>"/options/new_account/#{card.id}", :update=>slot.id('options-body')}
+      %>
+    </div>
+  <% end %>
 </div>
 
 

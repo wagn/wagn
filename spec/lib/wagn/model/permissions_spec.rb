@@ -35,10 +35,20 @@ describe "reader rules" do
     end
   end
   
-  it "should revert to more general rule when more specific rule is deleted" do
+  it "should revert to more general rule when more specific (self) rule is deleted" do
     @perm_card.save!
     @perm_card.destroy!
     card = Card.fetch('Home')
+    card.read_rule_id.should == Card.fetch('*all+*read').id
+  end
+
+  it "should revert to more general rule when more specific (right) rule is deleted" do
+    pc = Card.create(:name=>'B+*right+*read', :type=>'Pointer', :content=>'[[Anyone Signed In]]')
+    card = Card.fetch('A+B')
+    card.read_rule_id.should == pc.id
+    pc = Card.fetch(pc.name) #important to re-fetch to catch issues with detecting change in trash status.
+    pc.destroy
+    card = Card.fetch('A+B')
     card.read_rule_id.should == Card.fetch('*all+*read').id
   end
 
@@ -101,12 +111,14 @@ describe "reader rules" do
   end
   
   it "should insure that class overrides work with relative settings" do
-    all_plus = Card.fetch_or_create('*all plus+*read', :content=>'_left')
-    @perm_card.save
-    c = Card.create(:name=>'Home+Heart')
-    c.read_rule_id.should == @perm_card.id
-    r = Card.create(:name=>'Heart+*right+*read', :type=>'Pointer', :content=>'[[Administrator]]')
-    Card.fetch('Home+Heart').read_rule_id.should == r.id
+    User.as :wagbot do
+      all_plus = Card.fetch_or_create('*all plus+*read', :content=>'_left')
+      @perm_card.save
+      c = Card.create(:name=>'Home+Heart')
+      c.read_rule_id.should == @perm_card.id
+      r = Card.create(:name=>'Heart+*right+*read', :type=>'Pointer', :content=>'[[Administrator]]')
+      Card.fetch('Home+Heart').read_rule_id.should == r.id
+    end
   end
   
   it "should work on virtual+virtual cards" do
@@ -121,8 +133,8 @@ end
 describe "Permission", ActiveSupport::TestCase do
   before do
     User.as( :wagbot )
-    User.reset_cache
-    Role.reset_cache
+    User.cache.reset
+    Role.cache.reset
     @u1, @u2, @u3 = %w( u1 u2 u3 ).map do |x| ::User[x] end
     @r1, @r2, @r3 = %w( r1 r2 r3 ).map do |x| ::Role[x] end
     @c1, @c2, @c3 = %w( c1 c2 c3 ).map do |x| Card.fetch(x) end

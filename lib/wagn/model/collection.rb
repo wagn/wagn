@@ -14,7 +14,7 @@ module Wagn::Model::Collection
     end
 
     def find_by_name( name, opts={} ) 
-      self.find_by_key_and_trash( name.to_key, false, opts.merge( :include=>:current_revision ))
+      self.find_by_key_and_trash( name.to_cardname.to_key, false, opts.merge( :include=>:current_revision ))
     end
   end
 
@@ -27,7 +27,7 @@ module Wagn::Model::Collection
   end
   
   def extended_list context = nil
-    context = (context ? context.name : self.name)
+    context = (context ? context.cardname : self.cardname)
     args={ :limit=>'' }
     self.item_cards(args.merge(:context=>context)).map do |x| 
       x.item_cards(args) 
@@ -46,7 +46,6 @@ module Wagn::Model::Collection
     )
   end
   
-  
   def update_search_index     
     return unless @name_or_content_changed && System.enable_postgres_fulltext
     
@@ -64,5 +63,4 @@ module Wagn::Model::Collection
     Card.extend(ClassMethods)
     base.after_save :update_search_index
   end
-
 end

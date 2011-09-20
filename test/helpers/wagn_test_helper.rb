@@ -6,7 +6,7 @@ module WagnTestHelper
   include CardBuilderMethods
  
   def setup_default_user
-    User.reset_cache
+    User.cache.reset
     
     # FIXME: should login as joe_user by default-- see what havoc it creates...
     @user = User.current_user = User.find_by_login('wagbot')
@@ -27,7 +27,7 @@ module WagnTestHelper
   end
   
   def given_cards( *definitions )   
-    User.as(:joe_user) do 
+    User.as(:wagbot) do 
       Card.create_these *definitions
     end
   end
@@ -54,7 +54,7 @@ module WagnTestHelper
   
 
   def integration_login_as(user)
-    User.reset_cache
+    User.cache.reset
     
     case user.to_s 
       when 'anon'; #do nothing
@@ -80,7 +80,6 @@ module WagnTestHelper
   
   def post_invite(options = {})
     action = options[:action] || :invite
-Rails.logger.info "post invite #{action} #{options.inspect}"
     post action, 
       :user => { :email => 'new@user.com' }.merge(options[:user]||{}),
       :card => { :name => "New User" }.merge(options[:card]||{}),

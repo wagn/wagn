@@ -6,16 +6,21 @@ class Wagn::Renderer
     headings << 'Set' if is_self    
     
     setting_groups = card.setting_names_by_group
-    div( :class=>'instruction' ) do
-      "Rules for: "+ 
-      if is_self
-        link_to_page card.name.trunk_name
-      else
-        link_to_page card.label(card.name), "#{card.name}+by_update"
-      end
-    end +
-    
     content_tag('table', :class=>'set-rules') do
+      content_tag(:tr, :class=>'set-header') do
+        content_tag(:th, :colspan=>(headings.size+1)) do
+          count = card.count
+          span(:class=>'set-label') { card.label(card.name) } +
+          span(:class=>'set-count') do
+            ' (' + (count == 1 ? link_to_page('1', card.item_names.first) : count.to_s) + ') '
+          end + "\n" +
+          (count<2 ? '' : span(:class=>'set-links') do
+            ' list by: ' + ([:name, :create, :update].map do |attrib|
+              link_to_page attrib.to_s, "#{card.name}+by_#{attrib}"
+            end.join "\n")
+          end)
+        end 
+      end +
       [:view, :edit, :add].map do |group|
         content_tag(:tr, :class=>"rule-group") do 
           (["#{group.to_s.capitalize} Settings"]+headings).map do |heading|

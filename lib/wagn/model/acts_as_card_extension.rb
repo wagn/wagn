@@ -4,11 +4,12 @@ module Wagn::Model::ActsAsCardExtension
     has_one :card_holder, :class_name=>'Card', :as=>:extension
     class_eval do
       def card
-        Card.fetch(card_holder.key, :skip_virtual=>true) || card_holder(force_reload=true)
+        return nil unless card_holder
+        Card[card_holder.key] || card_holder(force_reload=true)
       end
       
       def cardname
-        (c = card) ? c.name : (
+        (c = card) ? c.cardname : (
           respond_to?(:codename) ? codename : "#{self.class} #{self.id}"
         )
       end

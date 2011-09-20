@@ -17,15 +17,6 @@ module Wagn::Model
     end
 
     def patterns()
-=begin
-if @patterns
-  na = @patterns.detect { |p| !p.pattern_applies? }
-  raise "All patterns should apply #{name} #{na.inspect}" if na
-  Rails.logger.debug "patterns set #{@patterns.inspect}"
-end
-Rails.logger.info "subc[#{n&&n.card&&n.card.name}] #{x.inspect}"; x
-Rails.logger.info "patterns[#{name}] #{@patterns.inspect}"; @patterns
-=end
       @patterns ||= @@subclasses.map { |sub|
         (n=sub.new(self)).pattern_applies? ? n : nil
       }.compact
@@ -40,21 +31,11 @@ Rails.logger.info "patterns[#{name}] #{@patterns.inspect}"; @patterns
       @patterns = @set_names = nil
       reset_setting_cache
     end
-=begin
-    def real_set_names()
-      rsn1 = patterns.reject(&:set_missing?)
-      Rails.logger.info "RSN1 #{rsn1.inspect}"
-      rsn = rsn1.map(&:set_name)
-      #patterns.reject(:set_missing?).map(&:set_name)
-      Rails.logger.info "RSN #{rsn1.inspect} #{rsn.inspect}"; rsn
-    end
-=end
 
-    def label(name)
-      patterns.map do |pat|
-        return pat.label(name) if name.tag_name==pat.class.key
-      end
-      return nil
+    def label(nm='')
+      tag = cardname.tag_name.to_s
+      found = patterns.find { |pat| tag==pat.class.key }
+      found and found.label(name)
     end
 
     def rule_modules
@@ -77,27 +58,28 @@ Rails.logger.info "patterns[#{name}] #{@patterns.inspect}"; @patterns
       def key()                      nil   end
       def opt_keys()                 []    end
       def method_key_from_opts(opts) ''    end
-      def label(name)                ''    end
       def trunkless?()               false end
+      def junction_only?()           false end
     end
+    def label(name)                ''    end
 
     def initialize(card) @card = card                          end
     def set_missing?()   !(pattern_applies? && Card[set_name]) end
 
     def css_name()
-      sn = set_name
-      sn.tag_name.gsub(' ','_').gsub('*','').upcase + '-' + sn.trunk_name.css_name
+      sn = set_name.to_cardname
+      #Rails.logger.debug "css_name #{sn.tag_name}, #{sn.trunk_name.css_name}"
+      sn.tag_name.to_s.gsub(' ','_').gsub('*','').upcase + '-' + sn.trunk_name.css_name.to_s
     end
   end
 
 
   class AllPattern < SetBase
     class << self
-      def key()                        '*all'       end
-      def opt_keys()                   []           end
-      def label(name)                  'All Cards'  end
-      def method_key_from_opts(opts)   ''           end
-      def trunkless?()                 true         end
+      def key()  Wagn::Codename.name_of_code('*all')  end
+      def opt_keys()                   []             end
+      def method_key_from_opts(opts)   ''             end
+      def trunkless?()                 true           end
     end
     def css_name()                     "ALL"        end
     def pattern_applies?()             true         end
@@ -110,11 +92,11 @@ Rails.logger.info "patterns[#{name}] #{@patterns.inspect}"; @patterns
   
   class AllPlusPattern < SetBase
     class << self
-      def key()                        '*all plus'      end
-      def opt_keys()                   [:all_plus]      end
-      def method_key_from_opts(opts)   'all_plus'       end
-      def label(name)                  'All Plus Cards' end
-      def trunkless?()                 true             end
+      def key() Wagn::Codename.name_of_code('*all plus')       end
+      def opt_keys()                   [:all_plus]             end
+      def method_key_from_opts(opts)   'all_plus'              end
+      def trunkless?()                 true                    end
+      def junction_only?()             true                    end
     end
     def css_name()                     "ALL_PLUS"       end
     def pattern_applies?()             card.junction?   end
@@ -130,7 +112,7 @@ Rails.logger.info "patterns[#{name}] #{@patterns.inspect}"; @patterns
       def key()                        '*type'                            end
       def opt_keys()                   [:type]                            end
       def label(name)                 "All #{name.trunk_name} cards"      end
-      def method_key_from_opts(opts) opts[:type].to_s.css_name+'_type'    end
+      def method_key_from_opts(opts) opts[:type].to_cardname.css_name+'_type'    end
     end
     def pattern_applies?()           true                                 end
     def set_name()                  "#{card.typename}+#{self.class.key}"  end
@@ -142,15 +124,14 @@ Rails.logger.info "patterns[#{name}] #{@patterns.inspect}"; @patterns
 
   class StarPattern < SetBase
     class << self
-      def key()                        '*star'                 end
+      def key()          Wagn::Codename.name_of_code('*star')  end
       def opt_keys()                   [:star]                 end
       def method_key_from_opts(opts)   'star'                  end
-      def label(name)                  'Star Cards'            end
       def trunkless?()                 true                    end
     end
+    def label(name)                    'Star Cards'            end
     def css_name()                     "STAR"                  end
-    def pattern_applies?()             card.star?              end
-    def set_name()                     self.class.key          end
+    def pattern_applies?()             card.cardname.star?     end
     def method_key()                   'star'                  end
     def rule_module()                  "Wagn::Set::Star"       end
 
@@ -159,17 +140,19 @@ Rails.logger.info "patterns[#{name}] #{@patterns.inspect}"; @patterns
 
   class RstarPattern < SetBase
     class << self
-      def key()                        '*rstar'                         end
+      def key()                  Wagn::Codename.name_of_code('*rstar')  end
       def opt_keys()                   [:rstar]                         end
-      def method_key_from_opts(opts)   'star'                           end
+      def method_key_from_opts(opts)   'rstar'                          end
       def trunkless?()                 true                             end
-      def label(name)                  "Cards ending in +(Star Card)"   end
+      def junction_only?()             true                             end
     end
-    def pattern_applies?()   card.junction? && card.name.tag_name.star? end
-    def set_name()          "#{card.name.tag_name}+#{self.class.key}"   end
+    def label(name)                    "Cards ending in +(Star Card)"   end
+    def pattern_applies?() card.cardname.junction? && card.cardname.tag_star? end
+    def method_key()                   'rstar'                           end
+    def set_name()                     self.class.key                   end
     def method_key()                   'star'                           end
     def rule_module()
-      return unless tagcard = Card.fetch(card.name.tag_name) and
+      return unless tagcard = Card.fetch(card.cardname.tag_name) and
                      tagkey = tagcard.key.gsub(/^\*/,'X')
       #Rails.logger.debug "rule_module RStar #{tagkey.camelcase}"
       "Wagn::Set::Rstar::#{tagkey.camelcase}"
@@ -181,17 +164,17 @@ Rails.logger.info "patterns[#{name}] #{@patterns.inspect}"; @patterns
 
   class RightNamePattern < SetBase
     class << self
-      def key()                          '*right'                        end
+      def key()                   Wagn::Codename.name_of_code('*right')  end
       def opt_keys()                     [:right]                        end
-      def method_key_from_opts(opts) opts[:right].to_s.css_name+'_right' end
-      def label(name)              "Cards ending in +#{name.trunk_name}" end
+      def method_key_from_opts(opts) opts[:right].to_cardname.css_name+'_right' end
+      def junction_only?()             true                              end
     end
     def pattern_applies?()               card.junction?                  end
-    def set_name()            "#{card.name.tag_name}+#{self.class.key}"  end
-    def method_key() self.class.method_key_from_opts :right=>card.name.tag_name end
+    def set_name()            "#{card.cardname.tag_name}+#{self.class.key}"  end
+    def method_key() self.class.method_key_from_opts :right=>card.cardname.tag_name end
     def rule_module()
       # this should be codename based
-      return unless tagcard = Card.fetch(card.name.tag_name) and
+      return unless tagcard = Card.fetch(card.cardname.tag_name) and
                      tagkey = tagcard.key.gsub(/^\*/,'X')
       #Rails.logger.debug "rule_module Rname #{tagkey.camelcase}"
       "Wagn::Set::Right::#{tagkey.camelcase}"
@@ -205,23 +188,26 @@ Rails.logger.info "patterns[#{name}] #{@patterns.inspect}"; @patterns
       def key()              '*type plus right'                              end
       def opt_keys()         [:ltype, :right]                                end
       def method_key_from_opts(opts)
-        %{#{opts[:ltype].to_s.css_name}_#{opts[:right].to_s.css_name}_typeplusright}
+        %{#{opts[:ltype].to_cardname.css_name}_#{opts[:right].to_cardname.css_name}_typeplusright}
       end
-      def label(name)
-        "Any #{name.trunk_name.trunk_name} card plus #{name.trunk_name.tag_name}"
-      end
+      def junction_only?()             true             end
     end
-    def css_name()         'TYPE_PLUS_RIGHT-' + set_name.trunk_name.css_name end
-    def left()             card.loaded_trunk || card.left                    end
-    def pattern_applies?() card.junction? && !!(left)                        end
+    def label(name)
+      "Any #{card.cardname.nth_left(2).to_s} card plus #{
+             card.cardname.trunk_name.tag_name.to_s}"
+    end
+    def css_name() "TYPE_PLUS_RIGHT-#{set_name.to_cardname.trunk_name.css_name}" end
+    def left_name()        card.left.cardname or card.cardname.left_name end
+    def left_type()        (lft=self.left) ? left.typename : 'Basic'     end
+    def left()             card.loaded_trunk or card.left                end
+    def pattern_applies?() card.cardname.junction?                       end
     def set_name()
-      raise "no left #{card&&card.name}" unless left
-      "#{left.typename}+#{card.name.tag_name}+*type plus right" end
+      "#{left_type}+#{card.cardname.tag_name}+#{self.class.key}"         end
     def method_key()
-      self.class.method_key_from_opts :ltype=>left.typename, :right=>card.name.tag_name
+      self.class.method_key_from_opts :ltype=>left_type, :right=>card.cardname.tag_name
     end
     def rule_module()
-      return unless tagcard = Card.fetch(card.name.tag_name) and
+      return unless tagcard = Card.fetch(card.cardname.tag_name) and
                      tagkey = tagcard.key.gsub(/^\*/,'X')
 
       #Rails.logger.debug "rule_module LtypeRname #{left.typecode} #{tagkey.camelcase}"
@@ -232,12 +218,15 @@ Rails.logger.info "patterns[#{name}] #{@patterns.inspect}"; @patterns
   end
 
   class SoloPattern < SetBase
+      # Why is this in the class scope for all the others, but this one is broken that way?
     class << self
-      def key()                       '*self'                                end
-      def opt_keys()                  [:name]                                end
-      def method_key_from_opts(opts)  opts[:name].to_s.css_name+'_self'      end
-      def label(name)                 %{Just "#{name.trunk_name}"}           end
+      def key()                      '*self'                                end
+      def opt_keys()                 [:name]                                end
+      def method_key_from_opts(opts) opts[:name].to_cardname.css_name+'_self' end
+      
     end
+    
+    def label(name)                   %{Just "#{name.trunk_name}"}           end
     #FIXME!!! we do not want these to stay commented out, but they need to be
     #there so that patterns on builtins can be recognized for now. 
     # soon those cards should actually exist.  Is this now fixed????

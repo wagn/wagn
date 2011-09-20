@@ -3,8 +3,8 @@ require 'open-uri'
 class Mailer < ActionMailer::Base
   def account_info(user, subject, message)
     from_user = User.current_user || User[:wagbot]
-    from_name = from_user.card ? from_user.card.name : ''
-    url_key = user.card.name.to_url_key
+    from_name = from_user.card ? from_user.card.cardname : ''
+    url_key = user.card.cardname.to_url_key
 
     recipients "#{user.email}"
     from       (System.setting('*invite+*from') || "#{from_name} <#{from_user.email}>") #FIXME - might want different from settings for different emails?
@@ -30,7 +30,7 @@ class Mailer < ActionMailer::Base
           :email => invite_request.extension.email,
           :name => invite_request.name,
           :content => invite_request.content,
-          :url =>  url_for(:host=>System.host, :controller=>'card', :action=>'show', :id=>invite_request.name.to_url_key)
+          :url =>  url_for(:host=>System.host, :controller=>'card', :action=>'show', :id=>invite_request.cardname.to_url_key)
   end               
 
   
@@ -45,11 +45,11 @@ class Mailer < ActionMailer::Base
          :updater => updater.card.name,
          :action => action,
          :subedits => subedits,
-         :card_url => "#{System.base_url}/wagn/#{card.name.to_url_key}",
-         :change_url => "#{System.base_url}/card/changes/#{card.name.to_url_key}",
-         :unwatch_url => "#{System.base_url}/card/unwatch/#{watched.to_url_key}",
-         :udpater_url => "#{System.base_url}/wagn/#{card.updater.card.name.to_url_key}",
-         :watched => (watched == card.name ? "#{watched}" : "#{watched} cards")
+         :card_url => "#{System.base_url}/wagn/#{card.cardname.to_url_key}",
+         :change_url => "#{System.base_url}/card/changes/#{card.cardname.to_url_key}",
+         :unwatch_url => "#{System.base_url}/card/unwatch/#{watched.to_cardname.to_url_key}",
+         :udpater_url => "#{System.base_url}/wagn/#{card.updater.card.cardname.to_url_key}",
+         :watched => (watched == card.cardname ? "#{watched}" : "#{watched} cards")
   end
   
   def flexmail config

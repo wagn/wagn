@@ -13,7 +13,7 @@ class AdminController < ApplicationController
       if @user.errors.empty?
         @user.roles = [Role[:admin]]
         self.current_user = @user
-        User.cache.delete :no_logins
+        User.cache.delete 'no_logins'
         flash[:notice] = "You're good to go!"
         redirect_to '/'
       else
@@ -28,7 +28,7 @@ class AdminController < ApplicationController
   def tasks
     raise Wagn::PermissionDenied.new('Only Administrators can view tasks') unless System.always_ok?
     @tasks = System.role_tasks
-    Role.reset_cache
+    Role.cache.reset
     
     @roles = Role.find_configurables.sort{|a,b| a.card.name <=> b.card.name }
     @role_tasks = {}
@@ -43,14 +43,14 @@ class AdminController < ApplicationController
       role.tasks = tasks.keys.join(',')
       role.save
     end
-    Role.reset_cache
+    Role.cache.reset
 
     flash[:notice] = 'permissions saved'
     redirect_to :action=>'tasks'
   end
   
   def show_cache
-    key = params[:id].to_key
+    key = params[:id].to_cardname.to_key
     @cache_card = Card.fetch(key)
     @db_card = Card.find_by_key(key)
   end
@@ -58,7 +58,7 @@ class AdminController < ApplicationController
   def clear_cache
     response = 
       if System.always_ok?
-        Card.cache.reset
+        Wagn::Cache.reset_global
         'Cache cleared'
       else
         "You don't have permission to clear the cache"

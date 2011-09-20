@@ -31,18 +31,14 @@ describe Card, "comment addition" do
     Card.create :name => 'basicname+*self+*comment', :content=>'[[Anyone Signed In]]'
     @c = Card.fetch "basicname"
     @c.comment = " and more"
-    Rails.logger.info "failing 1"
     @c.save!
-    Rails.logger.info "failing 2"
   end
   
   it "should combine content immediately" do
-    Rails.logger.info "failing 3"
     @c.content.should == "basiccontent and more"
   end
   
   it "should combine content after save" do
-    Rails.logger.info "failing 4"
     Card.find_by_name("basicname").content.should == "basiccontent and more"
   end
 end

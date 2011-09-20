@@ -19,7 +19,7 @@ module Wagn
         end
 
         cardnames.each do |cardname|
-          geocard = Card.fetch("#{cardname}+*geocode", :skip_virtual => true)
+          geocard = Card["#{cardname}+*geocode"]
           if geocard && geocard.ok?(:read)
             xml.Placemark do
               xml.name cardname

@@ -1,4 +1,9 @@
-== 1.6.1 (June 6,2011)
+== 1.7.0 (August 8, 2011)
+* see http://www.wagn.org/wagn/Wagn_1.7
+* setting-ize permissions
+* fix cache wackiness
+
+== 1.6.1 (June 6, 2011)
 * see http://www.wagn.org/wagn/Wagn_1.6+1
 * fix `rake wagn:create` error
 * refactor paging handling

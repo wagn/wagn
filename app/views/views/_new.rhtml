@@ -1,4 +1,4 @@
-<%
+<%-
    args={}
    slot ||= get_slot(card)
    [:add_slot, :home_view].each {|x| args[x] = params[x] if params[x]}
@@ -32,7 +32,7 @@
 
         <span class="new-name">
           <span class="label">name:</span>
-          <% if card.name.blank? || Card.fetch(card.name)%>
+          <% if card.cardname.blank? || Card.fetch(card.cardname)%>
             <span class="name-area">
               <%= s.name_field(form) %>
             </span>

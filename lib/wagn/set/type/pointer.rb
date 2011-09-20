@@ -6,15 +6,20 @@ module Wagn::Set::Type::Pointer
     if args[:complete]
       Wql.new({:referred_to_by=>name}.merge(args)).run
     else
-      item_names(args).map {|name| Card.fetch_or_new(name, :skip_defaults=>true) }.compact
+      item_names(args).map {|name|
+        Card.fetch_or_new(name, :skip_defaults=>true) }.compact
     end
   end
 
   def item_names( args={} )
-    context = args[:context] || self.name
-    links = content.split(/\n+/).map{ |x| x.gsub(/\[\[|\]\]/,'')}.map{|x|
-      context==:raw ? x : x.to_absolute(context)
+    context = args[:context] || self.cardname
+    links = content.split(/\n+/).map{ |line|
+      #Rails.logger.debug "item Line #{name.inspect}, #{line.inspect}"
+      line.gsub(/\[\[|\]\]/,'')}.map{|link|
+      r=context==:raw ? link : link.to_cardname.to_absolute(context)
+      #Rails.logger.debug "itemR Link#{name.inspect}, #{link.inspect} > #{r.inspect}"; r
     }
+      #Rails.logger.debug "items Lines #{name.inspect}, #{links.inspect}"; links
   end
 
   def item_type
@@ -25,14 +30,16 @@ module Wagn::Set::Type::Pointer
 
   def add_item( cardname )
     unless item_names.include? cardname
-      self.content = (item_names + [cardname]).reject{|x|x.blank?}.map{|x| "[[#{x}]]" }.join("\n")
+      self.content = (item_names + [cardname]).reject{|x|x.blank?}.map{|x|
+        "[[#{x}]]"
+      }.join("\n")
       save!
     end
   end 
                                 
   def drop_item( cardname ) 
     if item_names.include? cardname
-      self.content = (item_names - [cardname]).map{|x| "[[#{x}]]"}.join("\n")
+      self.content = (item_names - [cardname]).map{|x| "[[#{x}]]"}*"\n"
       save!
     end
   end

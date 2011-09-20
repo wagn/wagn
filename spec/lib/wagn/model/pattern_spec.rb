@@ -25,7 +25,6 @@ describe Wagn::Model::Pattern do
         "*update+*self","*star","Setting+*type","*all"
       ]
     end
-
     
     it "returns set names for junction cards" do
       Card.new( :name=>"Illiad+author" ).set_names.should == [
@@ -35,9 +34,14 @@ describe Wagn::Model::Pattern do
 
     it "returns set names for compound star cards" do
       Card.new( :name=>"Illiad+*to" ).set_names.should == [
-        "Book+*to+*type plus right","*to+*right","*to+*rstar","Phrase+*type","*all plus","*all"
+        "Book+*to+*type plus right","*to+*right","*rstar","Phrase+*type","*all plus","*all"
       ]
     end
+  end
+
+  describe :junction_only? do
+    cases = {"Book+*to+*type plus right" => true, "*to+*right" => true,"*rstar" => true, "Phrase+*type"=>false,"*all plus"=>false,"*all"=>false }
+    cases.keys.find do |k| Card.new(:name=>k).junction_only?() end
   end
 
   describe :method_keys do
@@ -71,7 +75,7 @@ describe Wagn::Model::Pattern do
   
   describe :label do
     it "returns label for name" do
-      Wagn::Model::RightNamePattern.label('address+*right').should== "Cards ending in +address"
+      Card.new(:name=>'address+*right').label.should== "Cards ending in +address"
     end
   end
 end
@@ -82,7 +86,7 @@ describe Wagn::Model::RightNamePattern do
   
   describe :label do
     it "returns label for name" do
-      Wagn::Model::RightNamePattern.label('address+*right').should== "Cards ending in +address"
+      Card.new(:name=>'address+*right').label.should== "Cards ending in +address"
     end
   end
 end

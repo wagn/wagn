@@ -51,18 +51,18 @@ class Wagn::RendererTest < ActiveSupport::TestCase
     
   end
 
-  def test_slot_render_xml
-    card = newcard('Baines', '[[Nixon]]')
-    assert_equal %{<cardlink class="wanted-card" card="/wagn/Nixon">Nixon</cardlink>}, slot_link(card,:xml)
-
-    card2 = newcard('Johnson', '[Lyndon][Baines]')
-    lbj_link = %{<cardlink class=\"known-card\" card=\"/wagn/Baines\">Lyndon</cardlink>}
-    assert_equal(lbj_link, slot_link(card2,:xml))
-    
-    card2.content = '[[Baines|Lyndon]]'; card2.save
-    assert_equal(lbj_link, slot_link(card2,:xml))
-    
-  end
+#  def test_slot_render_xml
+#    card = newcard('Baines', '[[Nixon]]')
+#    assert_equal %{<cardlink class="wanted-card" card="/wagn/Nixon">Nixon</cardlink>}, slot_link(card,:xml)
+#
+#    card2 = newcard('Johnson', '[Lyndon][Baines]')
+#    lbj_link = %{<cardlink class=\"known-card\" card=\"/wagn/Baines\">Lyndon</cardlink>}
+#    assert_equal(lbj_link, slot_link(card2,:xml))
+#    
+#    card2.content = '[[Baines|Lyndon]]'; card2.save
+#    assert_equal(lbj_link, slot_link(card2,:xml))
+#    
+#  end
 
   def test_slot_relative_card
     cardA = newcard('Kennedy', '[[+Monroe]]')
@@ -72,13 +72,13 @@ class Wagn::RendererTest < ActiveSupport::TestCase
     assert_equal '<a class="wanted-card" href="/wagn/Lewinsky%2BClinton">Lewinsky+</a>', slot_link(cardB)
   end
 
-  def test_slot_relative_card_xml
-    cardA = newcard('Kennedy', '[[+Monroe]]')
-    assert_equal %{<cardlink class="wanted-card" card="/wagn/Kennedy%2BMonroe">+Monroe</cardlink>}, slot_link(cardA,:xml)
-
-    cardB = newcard('Clinton', '[[Lewinsky+]]')
-    assert_equal %{<cardlink class="wanted-card" card="/wagn/Lewinsky%2BClinton">Lewinsky+</cardlink>}, slot_link(cardB,:xml)
-  end
+#  def test_slot_relative_card_xml
+#    cardA = newcard('Kennedy', '[[+Monroe]]')
+#    assert_equal %{<cardlink class="wanted-card" card="/wagn/Kennedy%2BMonroe">+Monroe</cardlink>}, slot_link(cardA,:xml)
+#
+#    cardB = newcard('Clinton', '[[Lewinsky+]]')
+#    assert_equal %{<cardlink class="wanted-card" card="/wagn/Lewinsky%2BClinton">Lewinsky+</cardlink>}, slot_link(cardB,:xml)
+#  end
 
   def test_slot_relative_url
     card3 = newcard('recent changes', '[[/recent|Recent]]')
@@ -91,10 +91,10 @@ class Wagn::RendererTest < ActiveSupport::TestCase
     assert_equal '<a class="external-link" href="http://google.com">http://google.com</a>', slot_link(card4)
   end
   
-  def test_slot_external_xml
-    card4 = newcard('google link', '[[http://google.com]]')
-    assert_equal '<link class="external-link" href="http://google.com">http://google.com</link>', slot_link(card4,:xml)
-  end
+#  def test_slot_external_xml
+#    card4 = newcard('google link', '[[http://google.com]]')
+#    assert_equal '<link class="external-link" href="http://google.com">http://google.com</link>', slot_link(card4,:xml)
+#  end
   
   def internal_needs_escaping    
     card5 = newcard('userlink', '[Marie][Marie "Mad Dog" Deatherage]')

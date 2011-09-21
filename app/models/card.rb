@@ -417,28 +417,20 @@ class Card < ActiveRecord::Base
 
   # this method piggybacks on the name tracking method and
   # must therefore be defined after the #tracks call
-  def name_with_cardname()
-    #Rails.logger.info "name_with_cardname #{@cardname.to_s}"
-    without = name_without_cardname
-    return without if without.blank?
-    @cardname ||= name_without_cardname.to_cardname
-    name_without_cardname
-  end
-  alias_method_chain :name, :cardname
+
 
   def cardname() @cardname ||= name_without_cardname.to_cardname end
 
   alias cardname= name=
   def name_with_cardname=(newname)
     newname = newname.to_s
-    oldname = name_without_cardname
-    Rails.logger.debug "namex=(#{newname.inspect}) #{oldname.inspect}"
-    if oldname != newname
-      @cardname = newname.to_cardname
-      write_attribute :key, @key = @cardname.to_key
+    if name != newname
+      @cardname = nil
       updates.add :name, newname
       reset_patterns
-    else oldname end
+    else
+      name
+    end
   end
   alias_method_chain :name=, :cardname
   def cardname() @cardname ||= name.to_cardname end

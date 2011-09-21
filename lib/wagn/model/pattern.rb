@@ -72,7 +72,7 @@ raise "doesn't apply" unless pattern_applies?
 
   class AllPattern < SetBase
     class << self
-      def key()  Wagn::Codename.name_of_code('*all')  end
+      def key()                        '*all'         end
       def opt_keys()                   []             end
       def method_key_from_opts(opts)   ''             end
       def trunkless?()                 true           end
@@ -87,7 +87,7 @@ raise "doesn't apply" unless pattern_applies?
   
   class AllPlusPattern < SetBase
     class << self
-      def key() Wagn::Codename.name_of_code('*all plus')       end
+      def key()                        '*all plus'             end
       def opt_keys()                   [:all_plus]             end
       def method_key_from_opts(opts)   'all_plus'              end
       def trunkless?()                 true                    end
@@ -103,7 +103,7 @@ raise "doesn't apply" unless pattern_applies?
 
   class TypePattern < SetBase
     class << self
-      def key()                      Wagn::Codename.name_of_code('*type')      end
+      def key()                      '*type'                                   end
       def opt_keys()                 [:type]                                   end
       def method_key_from_opts(opts) opts[:type].to_cardname.css_name+'_type'  end
     end
@@ -117,7 +117,7 @@ raise "doesn't apply" unless pattern_applies?
 
   class StarPattern < SetBase
     class << self
-      def key()          Wagn::Codename.name_of_code('*star')  end
+      def key()                        '*star'                 end
       def opt_keys()                   [:star]                 end
       def method_key_from_opts(opts)   'star'                  end
       def trunkless?()                 true                    end
@@ -132,7 +132,7 @@ raise "doesn't apply" unless pattern_applies?
 
   class RstarPattern < SetBase
     class << self
-      def key()                  Wagn::Codename.name_of_code('*rstar')  end
+      def key()                        '*rstar'                         end
       def opt_keys()                   [:rstar]                         end
       def method_key_from_opts(opts)   'rstar'                          end
       def trunkless?()                 true                             end
@@ -150,7 +150,7 @@ raise "doesn't apply" unless pattern_applies?
 
   class RightNamePattern < SetBase
     class << self
-      def key()                   Wagn::Codename.name_of_code('*right')  end
+      def key()                          '*right'                        end
       def opt_keys()                     [:right]                        end
       def method_key_from_opts(opts) opts[:right].to_cardname.css_name+'_right' end
       def junction_only?()             true                              end

@@ -1,5 +1,4 @@
 require File.dirname(__FILE__) + '/../spec_helper'
-
 describe RestCardController do
   context "new" do    
     before do

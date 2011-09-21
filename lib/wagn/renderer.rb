@@ -345,10 +345,9 @@ module Wagn
       #Rails.logger.info " expanding.  view is currently: #{options[:view]}"
   
       options[:home_view] = options[:view] ||= context == 'layout_0' ? :naked : :content
-      tname = tname.to_cardname
-      options[:fullname] = fullname = tname.fullname(card.cardname, base, options, params)
-      options[:showname] = tname.to_show(fullname)
-      #Rails.logger.debug "fullname [#{tname.inspect}](#{card&&card.name||card.inspect}, #{base.inspect}, #{options.inspect}"
+      tcardname = tname.to_cardname
+      options[:fullname] = fullname = tcardname.fullname(card.cardname, base, options, params)
+      options[:showname] = tcardname.to_show(fullname)      #Rails.logger.debug "fullname [#{tname.inspect}](#{card&&card.name||card.inspect}, #{base.inspect}, #{options.inspect}"
   
       tcard ||= begin
         case

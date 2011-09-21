@@ -28,7 +28,12 @@ module Wagn::Model
       Rails.logger.debug "reset_patterns[#{name}]"
       @junction_only = @patterns = @set_names =nil
     end
-    def real_set_names() patterns.find_all(&:set_card).map(&:set_name)    end
+    def real_set_names()
+#      patterns.find_all(&:set_card).map(&:set_name)
+      set_names.find_all do |set_name|
+        Card.fetch(set_name, :skip_virtual=>true, :skip_after_fetch=>true)
+      end
+    end
     def method_keys()    @method_keys ||= patterns.map(&:method_key)        end
     def css_names()      patterns.map(&:css_name).reverse*" "               end
     def junction_only?()
@@ -63,10 +68,10 @@ module Wagn::Model
     end
 
     def initialize(card) @card = card                          end
-    def set_card()
+#    def set_card()
 #raise "doesn't apply" unless pattern_applies?
-      set_name && Card.fetch(set_name, :skip_virtual=>true, :skip_after_fetch=>true)
-    end
+#      set_name && 
+#    end
     def set_name()        self.class.key                        end
   end
 
@@ -205,7 +210,7 @@ module Wagn::Model
     #FIXME!!! we do not want these to stay commented out, but they need to be
     #there so that patterns on builtins can be recognized for now. 
     # soon those cards should actually exist.  Is this now fixed????
-    def pattern_applies?() card.name and !card.virtual? and !card.new_card?  end
+    def pattern_applies?()                                    !card.new_card?  end
     def label(name)                %{Just "#{card.cardname.trunk_name.to_s}"} end
     def set_name()
       #raise "name? #{card.cardname.to_s}, #{card.name.inspect}" if card.name.blank?

@@ -68,10 +68,12 @@ class Card < ActiveRecord::Base
 #Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
       self.broken_type = typename
     end
-    (name &&
-     tmpl=self.template) ?
-     tmpl.typecode :
-     'Basic'
+    t = (name &&
+      tmpl=self.template) ?
+        tmpl.typecode :
+        'Basic'
+    reset_patterns
+    t
   end
 
   def include_set_modules

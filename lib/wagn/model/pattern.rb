@@ -26,8 +26,9 @@ module Wagn::Model
     def set_names()      @set_names ||= patterns.map(&:set_name)   end
     def reset_patterns()
       Rails.logger.debug "reset_patterns[#{name}]"
-      @junction_only = @patterns = @set_names = nil end
-    def real_set_names() patterns.find_all(&:set_card).compact.map(&:set_name)    end
+      @junction_only = @patterns = @set_names =nil
+    end
+    def real_set_names() patterns.find_all(&:set_card).map(&:set_name)    end
     def method_keys()    @method_keys ||= patterns.map(&:method_key)        end
     def css_names()      patterns.map(&:css_name).reverse*" "               end
     def junction_only?()
@@ -63,8 +64,8 @@ module Wagn::Model
 
     def initialize(card) @card = card                          end
     def set_card()
-raise "doesn't apply" unless pattern_applies?
-      set_name && Card[set_name]
+#raise "doesn't apply" unless pattern_applies?
+      set_name && Card.fetch(set_name, :skip_virtual=>true, :skip_after_fetch=>true)
     end
     def set_name()        self.class.key                        end
   end

@@ -17,7 +17,7 @@ module Wagn::Model::Settings
       if setting_cd = Card.fetch(cn="#{name}+#{setting_name.to_cardname.to_star}", fetch_args) ||
          fallback && Card.fetch(cn="#{name}+#{fallback.to_cardname.to_star}", fetch_args)
         #Rails.logger.debug "setting_card, found #{cn.inspect}, #{name.inspect}\nFound > #{setting_cd.inspect}"
-        setting_cd.after_fetch
+#        setting_cd.after_fetch
         return setting_cd
       end
     end

@@ -20,47 +20,7 @@ class Card < ActiveRecord::Base
     :from_trash, :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,
     :attachment_id #should build flexible handling for this kind of set-specific attr
 
-  # FIXME Should be in modules
-  def after_save
-    if cards
-      #Rails.logger.info "after_save Cards:#{cards.inspect}"
-      Wagn::Hook.call :before_multi_save, self, cards
-      cards.each_pair do |sub_name, opts|
-        opts[:content] ||= ""
-        sub_name = sub_name.gsub('~plus~','+')
-        absolute_name = cardname.to_absolute_name(sub_name)
-        #Rails.logger.info "multi update working on:#{name} #{sub_name}: SN:#{absolute_name}, #{opts.inspect}"
-        if card = Card.fetch(absolute_name, :skip_virtual=>true)
-          card.update_attributes(opts)
-        elsif opts[:content].present? and opts[:content].strip.present?
-          opts[:name] = absolute_name
-          card = Card.create(opts)
-        end
-        if card and !card.errors.empty?
-          card.errors.each do |field, err|
-            self.errors.add card.name, err
-          end
-        end
-      end
-      #Rails.logger.info "Card#callback after_multi_save"
-      Wagn::Hook.call :after_multi_save, self, cards
-    end
-    #Rails.logger.info "after_initialize Cards: #{cards.inspect}" # if cards
-    #Rails.logger.info "After save: #{self}, #{name} Cs:#{cards.inspect}"
-    if self.typecode == 'Cardtype'
-      #Rails.logger.debug "Cardtype after_save resetting"
-      Cardtype.cache.reset
-    end
-#      Rails.logger.debug "Card#after_save end"
-    update_attachment
-    Wagn::Hook.call :after_save, self
-    true
-  end
 
-  def after_initialize
-    #Rails.logger.info "After init: #{self}, #{name}, Cs:#{cards.inspect}"
-  #  Rails.logger.info "after_initialize Cards: #{cards.inspect}" # if cards
-  end
 
   cache_attributes('name', 'typecode', 'trash')    
 
@@ -69,30 +29,22 @@ class Card < ActiveRecord::Base
   
   def initialize(args={})
     #Rails.logger.warn "initializing with args: #{args.inspect}"
-    args = args && args.stringify_keys || {} # evidently different from args.stringify_keys!
-    #args.delete 'id'(in list now) # replaces slow handling of protected fields
-    typename, skip_defaults, cardname_arg =
-      %w{type skip_defaults cardname id}.map{|k| args.delete k }
-    args['name'] = (cardname_arg || args['name']).to_s
+    args ||= {}
+    args = args.stringify_keys # evidently different from args.stringify_keys!
+    typename, skip_defaults = %w{type skip_defaults id}.map{|k| args.delete k }
+    args['name'] = args['name'].to_s
 
     #Rails.logger.warn "initializing args:>>#{args.inspect}"
     @attributes = get_attributes   
     @attributes_cache = {}
     @new_record = true
-    #Rails.logger.info "card#initialize[#{typename}](#{args.inspect})"
-    #Rails.logger.warn "initialize typecode0 #{self.typecode.inspect} NM:(#{@attributes.inspect}, #{name.inspect})"
     self.send :attributes=, args, false
     self.typecode = get_typecode(args['name'], typename) unless args['typecode']
-    #Rails.logger.warn "initialize typecode: #{self.typecode.inspect} NM:(#{@attributes.inspect}, #{name.inspect})"
 
-    begin
     include_set_modules unless missing?
     set_defaults( args ) unless skip_defaults
     callback(:after_initialize) if respond_to_without_attributes?(:after_initialize)
     self
-    rescue Exception=>e
-      Rails.logger.info "error #{e}, #{e.backtrace*"\n"}"
-    end
   end
 
   def new_card?()  new_record? || from_trash  end
@@ -165,6 +117,43 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # STANDARD SAVING
 
+
+  # FIXME Should be in modules
+  def after_save
+    if cards
+      #Rails.logger.info "after_save Cards:#{cards.inspect}"
+      Wagn::Hook.call :before_multi_save, self, cards
+      cards.each_pair do |sub_name, opts|
+        opts[:content] ||= ""
+        sub_name = sub_name.gsub('~plus~','+')
+        absolute_name = cardname.to_absolute_name(sub_name)
+        #Rails.logger.info "multi update working on:#{name} #{sub_name}: SN:#{absolute_name}, #{opts.inspect}"
+        if card = Card.fetch(absolute_name, :skip_virtual=>true)
+          card.update_attributes(opts)
+        elsif opts[:content].present? and opts[:content].strip.present?
+          opts[:name] = absolute_name
+          card = Card.create(opts)
+        end
+        if card and !card.errors.empty?
+          card.errors.each do |field, err|
+            self.errors.add card.name, err
+          end
+        end
+      end
+      #Rails.logger.info "Card#callback after_multi_save"
+      Wagn::Hook.call :after_multi_save, self, cards
+    end
+    #Rails.logger.info "after_initialize Cards: #{cards.inspect}" # if cards
+    #Rails.logger.info "After save: #{self}, #{name} Cs:#{cards.inspect}"
+    if self.typecode == 'Cardtype'
+      #Rails.logger.debug "Cardtype after_save resetting"
+      Cardtype.cache.reset
+    end
+#      Rails.logger.debug "Card#after_save end"
+    update_attachment
+    Wagn::Hook.call :after_save, self
+    true
+  end
 
   def save_with_trash!
     save || raise(errors.full_messages.join('. '))

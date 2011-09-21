@@ -58,7 +58,7 @@ module Wagn::Model::Fetch
     
     def extract_new_opts cardname, opts
       opts = opts.clone
-      opts[:cardname] = cardname
+      opts[:name] = cardname
       [:skip_virtual, :skip_after_fetch].each {|key| opts.delete(key)}
       opts
     end
@@ -67,7 +67,7 @@ module Wagn::Model::Fetch
       #cardname = name.to_cardname
       return nil unless cardname && cardname.junction?
       cached_card = nil if cached_card && cached_card.trash
-      test_card = cached_card || Card.new(:cardname=>cardname, :missing=>true, :typecode=>'Basic', :skip_defaults=>true)
+      test_card = cached_card || Card.new(:name=>cardname, :missing=>true, :typecode=>'Basic', :skip_defaults=>true)
        template=test_card.template(reset=true) and ht=template.hard_template? 
       #Rails.logger.debug "fetch_virtual(#{cardname.to_s}) #{test_card.name}, #{cardname.tag_name} >#{template}, #{ht}"
       if ht
@@ -98,11 +98,11 @@ module Wagn::Model::Fetch
     end
 
     def new_virtual(cardname, content, type='Basic')
-      new(:cardname=>cardname, :content=>content, :typecode=>type, :missing=>true, :virtual=>true, :skip_defaults=>true)
+      new(:name=>cardname, :content=>content, :typecode=>type, :missing=>true, :virtual=>true, :skip_defaults=>true)
     end
 
     def new_missing cardname
-      new(:cardname=>cardname, :typecode=>'Basic', :skip_defaults=>true, :missing=>true)
+      new(:name=>cardname, :typecode=>'Basic', :skip_defaults=>true, :missing=>true)
     end
 
     def exists?(cardname)

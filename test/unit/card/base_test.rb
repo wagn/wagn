@@ -76,12 +76,10 @@ class Card::BaseTest < ActiveSupport::TestCase
   end
   
   def test_update_should_create_subcards_as_wagbot_if_missing_subcard_permissions
-    # then repeat multiple update as above, as :anon
     Card.create(:name=>'peel')
     User.current_user = :anon
     assert_equal false, Card.fetch('Basic').ok?(:create)
-    b = Card.create!( :type=>"Fruit", :name=>'Banana' )
-    Card.update(b.id, :cards=>{ "+peel" => { :content => "yellow" }})
+    Card.create!( :type=>"Fruit", :name=>'Banana', :cards=>{ "+peel" => { :content => "yellow" }})
     assert_equal "yellow", Card["Banana+peel"].current_revision.content
     assert_equal User[:anon].id, Card["Banana+peel"].created_by
   end

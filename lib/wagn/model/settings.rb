@@ -4,6 +4,12 @@ module Wagn::Model::Settings
     card && card.content
   end
 
+  def rule?
+    return @rule unless @rule.nil?
+    @rule = junction? ?
+        card.left.typecode=='Set' && card.right.typecode=='Setting' : false 
+  end
+
   def setting_card setting_name, fallback=nil
     #warn "setting_card[#{name}](#{setting_name.inspect}, #{fallback.inspect})" if name.to_s == 'Foo Bar'
     
@@ -110,6 +116,7 @@ module Wagn::Model::Settings
   def self.included(base)
     super
     base.extend(ClassMethods)
+    base.class_eval { attr_accessor :rule }
   end
 
 end

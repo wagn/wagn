@@ -2,7 +2,7 @@ module Wagn::Model
   module Pattern
 
     @@subclasses = []
-    @@key_pattern = {}
+    #@@key_pattern = {}
 
     class << self
 =begin # caching support off for start
@@ -17,7 +17,7 @@ module Wagn::Model
       def register_class(klass, size=1)
         @@subclasses.unshift klass
         # FIXME codename
-        @@key_pattern[klass.key] = klass.key.to_cardname.key
+        #@@key_pattern[klass.key] = klass.key.to_cardname.key
       end
 
       def method_key(opts)

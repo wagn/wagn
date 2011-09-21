@@ -144,7 +144,9 @@ class Card < ActiveRecord::Base
     self.trash=false
   end
   
-  
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # CLASS METHODS
 
   public
 

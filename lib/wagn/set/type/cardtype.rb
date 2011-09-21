@@ -1,9 +1,9 @@
 module Wagn::Set::Type::Cardtype
   include Wagn::Set::Type::Basic
   
-  def self.included(base)
-    super
-    base.send :after_save, :reset_cardtype_cache
+  def after_save_cardtype
+    Rails.logger.info "after_save_cardtype[#{name}]"
+    reset_cardtype_cache
   end
                                      
   # codename should not change, but let's remove this with the codename refactor

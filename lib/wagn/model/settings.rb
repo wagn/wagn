@@ -4,10 +4,12 @@ module Wagn::Model::Settings
     card && card.content
   end
 
+  def reset_patterns() end
+  def reset_rules() end
   def rule?
     return @rule unless @rule.nil?
-    @rule = junction? ?
-        card.left.typecode=='Set' && card.right.typecode=='Setting' : false 
+    #Rails.logger.info "rule? #{name}, #{left&&"#{left.typename}:#{left.name}"}, #{right&&"#{right.typename}:#{right.name}"}" if junction?
+    @rule = junction? ? (left&&left.typecode=='Set'&&right.typecode=='Setting') : false 
   end
 
   def setting_card setting_name, fallback=nil

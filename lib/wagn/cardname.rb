@@ -59,7 +59,6 @@ module Wagn
       @parts ||= (simple ? [s] : s.gsub(/\+$/,'+ ').split(JOINT))
     end
     
-    
 =begin
     def reset_rules() Wagn::CardInfo.reset_cache end
     def reset_patterns() self.cardinfo.reset_patterns end

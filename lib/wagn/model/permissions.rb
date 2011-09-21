@@ -201,8 +201,13 @@ module Wagn::Model::Permissions
 
   def set_read_rule
     return if ENV['MIGRATE_PERMISSIONS'] == 'true'
+    if trash == true
+      self.read_rule_id = self.read_rule_class = nil
+      return
+    end  
     # avoid doing this on simple content saves?
     rcard, rclass = rule_card(:read)
+    #Rails.logger.debug "set_read_rule #{name}, #{rcard}, #{rclass}"
     self.read_rule_id = rcard.id
     self.read_rule_class = rclass
     
@@ -285,11 +290,12 @@ module Wagn::Model::Permissions
     end
   end
   
+  def before_save_read_rule() set_read_rule      end
+  def after_save_read_rule()  update_ruled_cards end
+
   def self.included(base)   
     super
     base.extend(ClassMethods)
-    base.before_save.unshift Proc.new{|rec| rec.set_read_rule }
-    base.after_save.unshift  Proc.new{|rec| rec.update_ruled_cards }
     base.alias_method_chain :save, :permissions
     base.alias_method_chain :save!, :permissions
     base.alias_method_chain :destroy, :permissions

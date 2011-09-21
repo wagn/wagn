@@ -15,13 +15,19 @@ class Card < ActiveRecord::Base
 
   belongs_to :extension, :polymorphic=>true
   before_destroy :destroy_extension
-    
+  after_save  :after_save_rule, :after_save_card,
+    :after_save_cardtype, :after_save_read_rule
+  before_save :before_save_read_rule, :before_save_rule, :before_save_search
+
+  def after_save_cardtype() end
+  def before_save_search() end
+
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :cards,
     :from_trash, :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,
     :attachment_id #should build flexible handling for this kind of set-specific attr
 
   # FIXME Should be in modules
-  def after_save
+  def after_save_card
     if cards
       #Rails.logger.info "after_save Cards:#{cards.inspect}"
       Wagn::Hook.call :before_multi_save, self, cards

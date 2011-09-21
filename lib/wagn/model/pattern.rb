@@ -30,11 +30,11 @@ module Wagn::Model
     end
 
     def before_save_rule()
-      (cn = cardname) && cn.rule? && cn.left_name.reset_patterns()
-      Rails.logger.debug "before_save_rule: #{cn.s}, #{cn.rule?}"
+      rule? && left.reset_patterns()
+      Rails.logger.debug "before_save_rule: #{name}, #{rule?}"
     end
-    def after_save_rule() (cn = cardname) && cn.rule? && cn.reset_rules()
-      Rails.logger.debug "after_save_rule: #{cn.s}, #{cn.rule?}"
+    def after_save_rule() rule? && reset_rules()
+      Rails.logger.debug "after_save_rule: #{name}, #{rule?}"
     end
     def reset_patterns()
       #@patterns = @set_names = @real_set_name = nil

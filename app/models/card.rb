@@ -17,7 +17,7 @@ class Card < ActiveRecord::Base
   before_destroy :destroy_extension
     
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :cards,
-    :from_trash, :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,
+    :from_trash, :update_referencers, :allow_type_change, :broken_type, :loaded_trunk, :nested_edit,
     :attachment_id #should build flexible handling for this kind of set-specific attr
 
 
@@ -120,13 +120,14 @@ class Card < ActiveRecord::Base
     update_attachment
     Wagn::Hook.call :after_create, self if @was_new_card
     Wagn::Hook.call :after_save, self
+    send_notifications
     true
   end
 
   def save_subcards
     return unless cards
-#    Wagn::Hook.call :before_multi_save, self, cards
     cards.each_pair do |sub_name, opts|
+      opts[:nested_edit] = self
       opts[:content] ||= ""
       sub_name = sub_name.gsub('~plus~','+')
       absolute_name = cardname.to_absolute_name(sub_name)
@@ -142,7 +143,6 @@ class Card < ActiveRecord::Base
         end
       end
     end
-#    Wagn::Hook.call :after_multi_save, self
   end
 
   def save_with_trash!

@@ -17,12 +17,12 @@ class Card < ActiveRecord::Base
   before_destroy :destroy_extension
     
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :cards,
-    :from_trash, :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,
+    :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,
     :attachment_id #should build flexible handling for this kind of set-specific attr
 
 
 
-  cache_attributes('name', 'typecode', 'trash')    
+  cache_attributes('name', 'typecode')    
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # INITIALIZATION METHODS
@@ -32,6 +32,7 @@ class Card < ActiveRecord::Base
     args ||= {}
     args = args.stringify_keys # evidently different from args.stringify_keys!
     typename, skip_defaults = %w{type skip_defaults id}.map{|k| args.delete k }
+#    @explicit_content = args['content']
     args['name'] = args['name'].to_s
 
     #Rails.logger.warn "initializing args:>>#{args.inspect}"
@@ -42,12 +43,10 @@ class Card < ActiveRecord::Base
     self.typecode = get_typecode(args['name'], typename) unless args['typecode']
 
     include_set_modules unless missing?
-    set_defaults( args ) unless skip_defaults
-    callback(:after_initialize) if respond_to_without_attributes?(:after_initialize)
     self
   end
 
-  def new_card?()  new_record? || from_trash  end
+  def new_card?()  new_record? || @from_trash  end
   def known?()    !(new_card? && !virtual?)   end
 
   private
@@ -58,7 +57,7 @@ class Card < ActiveRecord::Base
       "current_revision_id"=>nil, "trunk_id"=>nil,  "tag_id"=>nil,
       "indexed_content"=>nil,"indexed_name"=>nil, "references_expired"=>nil,
       "read_rule_class"=>nil, "read_rule_id"=>nil, "extension_type"=>nil,
-      "extension_id"=>nil, "created_at"=>nil, "created_by"=>nil, "updated_at"=>nil,"updated_by"=>nil, "trash"=>nil
+      "extension_id"=>nil, "created_at"=>nil, "created_by"=>nil, "updated_at"=>nil,"updated_by"=>nil, "trash"=>false
     }
   end
 
@@ -81,15 +80,6 @@ class Card < ActiveRecord::Base
     singleton_class.include_type_module(typecode)  
   end
   
-  def set_defaults args
-
-    if (self.content.nil? || self.content.blank?)
-      self.content = setting('content', 'default')
-    end
-
-    self.key = cardname.to_key if cardname
-    self.trash=false
-  end
   
   
   
@@ -115,6 +105,7 @@ class Card < ActiveRecord::Base
 
   # FIXME Should be in modules
   def after_save
+    @from_trash = false
     if cards
       #Rails.logger.info "after_save Cards:#{cards.inspect}"
       Wagn::Hook.call :before_multi_save, self, cards
@@ -169,7 +160,7 @@ class Card < ActiveRecord::Base
     #could optimize to use fetch if we add :include_trashed_cards or something.
     #likely low ROI, but would be nice to have interface to retrieve cards from trash...
     self.id = trashed_card.id
-    self.from_trash = self.confirm_rename = @trash_changed = true
+    @from_trash = self.confirm_rename = @trash_changed = true
     @new_record = false
     self.before_validation_on_create
   end
@@ -314,10 +305,13 @@ class Card < ActiveRecord::Base
   # CONTENT / REVISIONS
 
   def content
-    c = cached_revision
-    c.new_record? ? "" : c.content
+    if new_card?
+      setting('content','default')
+    else
+      cached_revision.content
+    end
   end
-
+  
   def raw_content
     templated_content || content
   end
@@ -387,11 +381,11 @@ class Card < ActiveRecord::Base
   def to_s()  "#<#{self.class.name}[#{self.typename.to_s}]#{self.attributes['name']}>" end
   def mocha_inspect()     to_s                                   end
 
-  def trash
+#  def trash
     # needs special handling because default rails cache lookup uses `@attributes_cache['trash'] ||=`, which fails on "false" every time
-    ac= @attributes_cache
-    ac['trash'].nil? ? (ac['trash'] = read_attribute('trash')) : ac['trash']
-  end
+#    ac= @attributes_cache
+#    ac['trash'].nil? ? (ac['trash'] = read_attribute('trash')) : ac['trash']
+#  end
 
 
 
@@ -449,7 +443,7 @@ class Card < ActiveRecord::Base
 
 
   validates_each :name do |rec, attr, value|
-    if rec.new_card? && (!rec.updates.for(:name) || rec.name.blank?)
+    if rec.new_card? && value.blank?
       if autoname_card = rec.setting_card('autoname')
         User.as(:wagbot) do
           value = rec.name = autoname_card.content
@@ -501,6 +495,9 @@ class Card < ActiveRecord::Base
   end
 
   validates_each :content do |rec, attr, value|
+    if rec.new_card? && !(value.blank? || value.nil?)
+      value = rec.content = rec.content
+    end
     if rec.updates.for?(:content)
       rec.send :validate_content, value
     end

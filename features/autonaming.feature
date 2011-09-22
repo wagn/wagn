@@ -8,8 +8,8 @@ Feature: autonaming
   
   Scenario: Simple cardtype autoname       
     When I go to new Book
-    Then I should see "Book 1"
     When I press "Submit"
-    And I go to new Book
-    Then I should see "Book 2"
+    Then I should see "Book 1"
+#    And I go to new Book
+#    Then I should see "Book 2"
     

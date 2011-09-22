@@ -1,6 +1,7 @@
 module Notification   
   module CardMethods
     def send_notifications
+#      warn "send notifications called for #{name}"
       return false if Card.record_userstamps==false
       # userstamps and timestamps are turned off in cases like updating read_rules that are automated and 
       # generally not of enough interest to warrant notification
@@ -131,7 +132,8 @@ module Notification
     card.nested_notifications = []
   end 
 
-  Wagn::Hook.add :after_multi_update, '*all' do |card|
+  Wagn::Hook.add :after_multi_save, '*all' do |card|
+    warn "after save called for #{card.name}"
     if card.nested_notifications.present?  
       card.watcher_watched_pairs.each do |watcher, watched|
         Mailer.deliver_change_notice( watcher, card, 'updated', watched, card.nested_notifications )

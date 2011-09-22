@@ -109,44 +109,40 @@ class Card < ActiveRecord::Base
   end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # STANDARD SAVING
+  # SAVING
 
 
-  # FIXME Should be in modules
   def after_save
-    if cards
-      #Rails.logger.info "after_save Cards:#{cards.inspect}"
-      Wagn::Hook.call :before_multi_save, self, cards
-      cards.each_pair do |sub_name, opts|
-        opts[:content] ||= ""
-        sub_name = sub_name.gsub('~plus~','+')
-        absolute_name = cardname.to_absolute_name(sub_name)
-        #Rails.logger.info "multi update working on:#{name} #{sub_name}: SN:#{absolute_name}, #{opts.inspect}"
-        if card = Card.fetch(absolute_name, :skip_virtual=>true)
-          card.update_attributes(opts)
-        elsif opts[:content].present? and opts[:content].strip.present?
-          opts[:name] = absolute_name
-          card = Card.create(opts)
-        end
-        if card and !card.errors.empty?
-          card.errors.each do |field, err|
-            self.errors.add card.name, err
-          end
-        end
-      end
-      #Rails.logger.info "Card#callback after_multi_save"
-      Wagn::Hook.call :after_multi_save, self, cards
-    end
-    #Rails.logger.info "after_initialize Cards: #{cards.inspect}" # if cards
-    #Rails.logger.info "After save: #{self}, #{name} Cs:#{cards.inspect}"
+    save_subcards
     if self.typecode == 'Cardtype'
-      #Rails.logger.debug "Cardtype after_save resetting"
       Cardtype.cache.reset
     end
-#      Rails.logger.debug "Card#after_save end"
     update_attachment
+    Wagn::Hook.call :after_create, self if @was_new_card
     Wagn::Hook.call :after_save, self
     true
+  end
+
+  def save_subcards
+    return unless cards
+#    Wagn::Hook.call :before_multi_save, self, cards
+    cards.each_pair do |sub_name, opts|
+      opts[:content] ||= ""
+      sub_name = sub_name.gsub('~plus~','+')
+      absolute_name = cardname.to_absolute_name(sub_name)
+      if card = Card.fetch(absolute_name, :skip_virtual=>true)
+        card.update_attributes(opts)
+      elsif opts[:content].present? and opts[:content].strip.present?
+        opts[:name] = absolute_name
+        card = Card.create(opts)
+      end
+      if card and !card.errors.empty?
+        card.errors.each do |field, err|
+          self.errors.add card.name, err
+        end
+      end
+    end
+#    Wagn::Hook.call :after_multi_save, self
   end
 
   def save_with_trash!

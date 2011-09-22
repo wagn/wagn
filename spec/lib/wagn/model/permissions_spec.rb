@@ -156,9 +156,13 @@ describe "Permission", ActiveSupport::TestCase do
 
   it "reader setting" do
     Card.find(:all).each do |c|
-      c.rule_card(:read).first.id.should == c.read_rule_id
+      Rails.logger.debug "reader setting #{c.name}"
+      assert rs = c.rule_card(:read).first.id
+      Rails.logger.debug "reader setting #{c.name}, #{rs} == #{c.read_rule_id}"
+      c.read_rule_id.should == rs
     end
   end
+
 
   it "write user permissions" do
     @u1.roles = [ @r1, @r2 ]

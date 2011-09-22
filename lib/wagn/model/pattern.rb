@@ -26,7 +26,7 @@ module Wagn::Model
     def set_names()      @set_names ||= patterns.map(&:set_name)   end
     def reset_patterns()
       Rails.logger.debug "reset_patterns[#{name}]"
-      @junction_only = @patterns = @set_names =nil
+#      @junction_only = @patterns = @set_names =nil
     end
     def real_set_names()
 #      patterns.find_all(&:set_card).map(&:set_name)

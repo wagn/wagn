@@ -43,7 +43,6 @@ class Card < ActiveRecord::Base
 
     include_set_modules unless missing?
     set_defaults( args ) unless skip_defaults
-    callback(:after_initialize) if respond_to_without_attributes?(:after_initialize)
     self
   end
 

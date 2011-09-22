@@ -474,7 +474,7 @@ module Wagn
           href = full_uri(href.to_s)      
           'internal-link'
         else
-          known_card = !!Card.fetch(href)
+          known_card = !!Card.fetch(href, :skip_after_fetch=>true)
           cardname = href.to_cardname
           text = cardname.to_show(card.name) unless text
           href = href.to_cardname

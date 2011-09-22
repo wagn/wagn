@@ -82,13 +82,6 @@ class Card < ActiveRecord::Base
   end
   
   def set_defaults args
-    if args["name"].blank? and autoname_card = setting_card('autoname')
-      User.as(:wagbot) do
-        self.name = autoname_card.content
-        autoname_card.content = autoname_card.content.next  #fixme, should give placeholder on new, do next and save on create
-        autoname_card.save!
-      end
-    end
 
     if (self.content.nil? || self.content.blank?)
       self.content = setting('content', 'default')
@@ -379,7 +372,7 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # METHODS FOR OVERRIDE
 
-    def update_attachment()                 end
+  def update_attachment()                 end
   def post_render( content )     content  end
   def clean_html?()                 true  end
   def collection?()                false  end
@@ -451,16 +444,28 @@ class Card < ActiveRecord::Base
 
   protected
 
-  validates_presence_of :name
+#  validates_presence_of :name
   validates_associated :extension #1/2 ans:  this one runs the user validations on user cards.
 
 
   validates_each :name do |rec, attr, value|
-    #Rails.logger.debug "valid each #{attr}: #{rec.inspect} New #{value.inspect}"
-    if rec.updates.for?(:name)
-      #Rails.logger.debug "valid name #{rec.name.inspect} New #{value.inspect}"
+    if rec.new_card? && (!rec.updates.for(:name) || rec.name.blank?)
+      if autoname_card = rec.setting_card('autoname')
+        User.as(:wagbot) do
+          value = rec.name = autoname_card.content
+          autoname_card.content = autoname_card.content.next  #fixme, should give placeholder on new, do next and save on create
+          autoname_card.save!
+        end
+      end
+    end
 
-      cdname = value.to_cardname
+    cdname = value.to_cardname
+    if cdname.blank?
+      rec.errors.add :name, "can't be blank"
+    elsif rec.updates.for?(:name)
+      #Rails.logger.debug "valid name #{rec.name.inspect} New #{value.inspect}"
+      
+      
       unless cdname.valid_cardname?
         rec.errors.add :name,
           "may not contain any of the following characters: #{

@@ -39,7 +39,8 @@ module Wagn::Model
       Rails.logger.debug "after_save_rule: #{name}, #{rule?}"
     end
     def reset_patterns()
-      #@patterns = @set_names = @real_set_name = nil
+      #Rails.logger.debug "reset_patterns[#{name}]"
+      @junction_only = @patterns = @set_names = @real_set_name = nil
     end
 
     def patterns()
@@ -86,38 +87,22 @@ module Wagn::Model
       Rails.logger.warn "START real_sets for #{cardname}, #{self.patterns}, #{@patterns}"
       rr= self.patterns.map do |pat|
         set_name = pat.set_name
-        set_card = Card[set_name]
+        set_card = Card.fetch(set_name, :skip_virtual=>true, :skip_after_fetch=>true)
 #        warn "real_sets [#{set_card.real?}] SN:#{set_card} CN:#{cardname.inspect}:"
         set_card && set_card.real? ? set_name : nil
       end.compact
 #      warn "setting real_sets for #{cardname.inspect} RR>#{rr.inspect}"; rr
     end
+
     def method_keys()
       #self.method_keys ||= patterns_without_new.map(&:method_key)
       patterns_without_new.map(&:method_key)
     end
-=begin hmmm 
-<<<<<<< HEAD
-=======
-    def set_names()      @set_names ||= patterns.map(&:set_name)   end
-    def reset_patterns()
-      Rails.logger.debug "reset_patterns[#{name}]"
-      @junction_only = @patterns = @set_names =nil
-    end
-    def real_set_names()
-#      patterns.find_all(&:set_card).map(&:set_name)
-      set_names.find_all do |set_name|
-        Card.fetch(set_name, :skip_virtual=>true, :skip_after_fetch=>true)
-      end
-    end
-    def method_keys()    @method_keys ||= patterns.map(&:method_key)        end
->>>>>>> xml_format
-=end
 
     def css_names()      patterns.map(&:css_name).reverse*" "               end
+
     def junction_only?()
-      !cardname.cardinfo.junction_only.nil? ? cardname.cardinfo.junction_only :
-         cardname.cardinfo.junction_only = patterns.map(&:class).find(&:junction_only?)
+         @junction_only ||= patterns.map(&:class).find(&:junction_only?)
     end
 
     def label(nm='')
@@ -153,7 +138,7 @@ module Wagn::Model
             const
         end
       end.compact
-      Rails.logger.debug "set_mods[#{name}] #{m.map(&:to_s)*", "}"; m
+      Rails.logger.debug "set_mods #{self}, #{self.object_id} [#{name}] #{m.map(&:to_s)*", "}"; m
     end
   end
   #alias_method_chain :set_modules, :cache

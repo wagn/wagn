@@ -13,7 +13,9 @@ module Wagn::Model
         }
       end
 =end
-
+    
+      def subclasses() @@subclasses end
+      
       def register_class(klass, size=1)
         @@subclasses.unshift klass
         # FIXME codename

@@ -83,7 +83,7 @@ class Card < ActiveRecord::Base
   end
 
   def include_set_modules
-    self.set_modules {|m| singleton_class.send :include, m }
+    self.set_modules.each {|m| singleton_class.send :include, m }
   end
   
   def set_defaults args

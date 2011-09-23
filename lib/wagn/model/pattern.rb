@@ -107,7 +107,7 @@ module Wagn::Model
 
     def label(nm='')
       tag = cardname.tag_name.to_s
-      found = patterns.first_value { |pat| pat.class.pattern_name(card) &&
+      found = patterns.first_value { |pat| pat.class.pattern_name(self) &&
         begin
         Rails.logger.debug "label #{cardname.left_name.to_s}, SN:#{pat.set_name}"; found
         pat.label

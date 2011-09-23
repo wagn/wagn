@@ -52,8 +52,8 @@ class Card < ActiveRecord::Base
   end
 
   def new_card?()  new_record? || from_trash  end
-  def known?()    !(new_card? && !virtual?)   end
-  def real?()     !new_card? && !virtual?     end
+  def known?()    real? || virtual?           end
+  def real?()     !new_card?                  end
 
   private
   def get_attributes

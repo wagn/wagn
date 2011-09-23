@@ -9,7 +9,11 @@ Feature: autonaming
   Scenario: Simple cardtype autoname       
     When I go to new Book
     When I press "Submit"
-    Then I should see "Book 1"
+    Then I should see "Book_1"
+    And I go to new Book
+    And I press "Submit"
+    Then I should see "Book_2"
+    
 #    And I go to new Book
 #    Then I should see "Book 2"
     

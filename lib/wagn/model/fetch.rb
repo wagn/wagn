@@ -112,7 +112,7 @@ module Wagn::Model::Fetch
 
 
   def after_fetch
-    Rails.logger.debug "after_fetch cardname: #{cardname.s}"
+#    warn "after_fetch cardname: #{cardname.s}"
     include_set_modules
   end
 

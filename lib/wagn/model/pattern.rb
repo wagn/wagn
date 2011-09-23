@@ -285,7 +285,7 @@ module Wagn::Model
       end
       def pattern_applies?(card) card.cardname.junction?                  end
     end
-    def method_key() self.class.method_key_from_opts :right=>pat_name.tag_name end
+    def method_key() self.class.method_key_from_opts :right=>pat_name.left_name end
     def set_module()
       # this should be codename based
       #return unless tk = tagkey

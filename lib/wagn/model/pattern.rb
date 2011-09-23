@@ -168,7 +168,7 @@ module Wagn::Model
     def set_name()           pat_name.to_s                                end
    #def set_card()           (sn=set_name) && sn.to_cardname.card         end
     def css_name()
-      sn = set_name.to_cardname
+      sn = pat_name
       #Rails.logger.debug "css_name #{sn.tag_name}, #{sn.trunk_name.css_name}"
       sn.tag_name.to_s.gsub(' ','_').gsub('*','').upcase + '-' + sn.trunk_name.css_name.to_s
     end
@@ -225,7 +225,7 @@ module Wagn::Model
       end
       pat_name.left_name.to_s
     end
-    def css_name()         "TYPE-#{left_name}"               end
+#    def css_name()         "TYPE-#{left_name}"               end
     def label()            "All #{left_name} cards"          end
     def method_key() self.class.method_key_from_opts :type=>left_name end
     def set_module()
@@ -327,7 +327,7 @@ module Wagn::Model
       "Any #{left_type} card plus #{
              pat_name.trunk_name.tag_name.to_s}"
     end
-    def css_name() "TYPE_PLUS_RIGHT-#{left_type}-#{pat_name.left_name.tag_name}"  end
+#    def css_name() "TYPE_PLUS_RIGHT-#{left_type}-#{pat_name.left_name.tag_name}"  end
     def method_key()
       self.class.method_key_from_opts :ltype=>left_type, :right=>pat_name.left_name.tag_name
     end

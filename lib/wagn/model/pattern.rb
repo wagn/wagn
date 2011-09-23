@@ -5,15 +5,13 @@ module Wagn::Model
     #@@key_pattern = {}
 
     class << self
-=begin # caching support off for start
       def included(base)
         super
         base.class_eval {
-          attr_accessor :set_names, :patterns, :real_set_name, :set_modules, :settings
+          attr_accessor :real_set_name, :settings
         }
       end
-=end
-    
+
       def subclasses() @@subclasses end
       
       def register_class(klass)
@@ -30,6 +28,7 @@ module Wagn::Model
     end
 
     def before_save_rule()
+      # do LTypeRightPattern need deeper checks?
       rule? && left.reset_patterns()
       Rails.logger.debug "before_save_rule: #{name}, #{rule?}"
     end
@@ -44,8 +43,7 @@ module Wagn::Model
     def patterns()
       #raise "??? #{cardname.inspect}" unless cardname.cardinfo
       Rails.logger.warn "START patterns #{cardname.inspect}" 
-      #ps= @patterns ||= @@subclasses.map { |sub|
-      ps= @@subclasses.map { |sub|
+      ps= @patterns ||= @@subclasses.map { |sub|
         #warn " looking up #{sub} pattern for #{cardname}"
         if new_pat = sub.new(self)
           r1=new_pat.pat_name
@@ -69,8 +67,7 @@ module Wagn::Model
     alias_method_chain :patterns, :new
 
     def set_names()
-      #set_names ||= patterns_without_new.map(&:set_name)
-      patterns_without_new.map(&:set_name)
+      set_names ||= patterns_without_new.map(&:set_name)
     end
     def set_names_with_new()
       if !real?
@@ -93,8 +90,7 @@ module Wagn::Model
     end
 
     def method_keys()
-      #self.method_keys ||= patterns_without_new.map(&:method_key)
-      patterns.map(&:method_key)
+      @method_keys ||= patterns_without_new.map(&:method_key)
     end
 
     def css_names()      patterns.map(&:css_name).reverse*" "               end
@@ -117,12 +113,10 @@ module Wagn::Model
 #      }
     end
 
-    #def set_modules_with_cache()
     def set_modules()
       #raise "no type #{cardname.inspect}" if cardname.typename.nil?
       Rails.logger.debug "set_mods[#{cardname.inspect}]"
-      #m=self.set_modules_without_cache = cardname.set_modules_without_cache || patterns_without_new.reverse.map do
-      m=patterns_without_new.reverse.map do
+      m=@set_modules = @set_modules || patterns_without_new.reverse.map do
         |subclass|
           if mod = subclass.set_module # and
             Rails.logger.debug "set_mod[#{name}] #{subclass}, #{mod}"
@@ -143,7 +137,6 @@ module Wagn::Model
       Rails.logger.debug "set_mods #{self}, #{self.object_id} [#{name}] #{m.map(&:to_s)*", "}"; m
     end
   end
-  #alias_method_chain :set_modules, :cache
 
 
   class SetBase

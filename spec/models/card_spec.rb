@@ -44,7 +44,10 @@ describe Card do
     end
     
     it "gets needed methods with explicit pointer setting" do
-      Card.new(@c_args.merge(:type=>'Pointer')).respond_to?(:add_item).should be_true
+      Rails.logger.info "testing point"
+      c=Card.new(@c_args.merge(:type=>'Pointer'))
+      Rails.logger.info "testing point #{c}, #{c.object_id} N:#{c.name}"
+      c.respond_to?(:add_item).should be_true
     end
     
     it "gets needed methods with implicit pointer setting (from template)" do

@@ -22,8 +22,9 @@ class Card < ActiveRecord::Base
   def after_save_cardtype() end
   def before_save_search() end
 
-  attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :cards,
-    :from_trash, :update_referencers, :allow_type_change, :broken_type, :loaded_trunk, :nested_edit,
+  attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
+    :cards, :attribute, :from_trash, :update_referencers, :allow_type_change,
+    :broken_type, :loaded_trunk, :nested_edit,
     :attachment_id #should build flexible handling for this kind of set-specific attr
 
 

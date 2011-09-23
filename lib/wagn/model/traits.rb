@@ -18,7 +18,12 @@ module Wagn::Model::Traits
   end
 
   def trait_card(trait_name)
-    trait_cards[trait_name.to_sym] ||= Card.fetch(name+String::JOINT+trait_name)
+    #trait_cards[trait_name.to_sym] ||= Card.fetch([name+trait_name].to_cardname)
+    if (x=trait_cards[trait_name.to_sym]).nil?
+      trait_cards[trait_name.to_sym] = f = Card.fetch([name, trait_name].to_cardname)
+      Rails.logger.debug "trait_card(#{trait_name}, #{name}) #{f}"; f
+    else x 
+    end
   end
 #r= Rails.logger.info("trait_card #{self}, #{trait_name} = #{r}"); r
   # A card has a 'trait' if card+trait_name exists

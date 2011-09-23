@@ -6,9 +6,11 @@ describe Wagn::Set::Type::Pointer do
   end
   
   context "item_names" do
-    p = Card.new(:name=>'foo', :type=>'Pointer', :content=>"[[Busy]]\n[[Body]]")
-    names = p.item_names
-    names.should == ['Busy', 'Body']
+    it "should parse correctly" do
+      p = Card.new(:name=>'foo', :type=>'Pointer', :content=>"[[Busy]]\n[[Body]]")
+      names = p.item_names
+      names.should == ['Busy', 'Body']
+    end
   end
   
   context "add_item" do

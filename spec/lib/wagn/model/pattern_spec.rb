@@ -39,10 +39,11 @@ describe Wagn::Model::Pattern do
     end
   end
 
-  describe :junction_only? do
-    cases = {"Book+*to+*type plus right" => true, "*to+*right" => true,"*rstar" => true, "Phrase+*type"=>false,"*all plus"=>false,"*all"=>false }
-    cases.keys.find do |k| Card.new(:name=>k).junction_only?() end
-  end
+# commented because there is no test.
+#  describe :junction_only? do
+#    cases = {"Book+*to+*type plus right" => true, "*to+*right" => true,"*rstar" => true, "Phrase+*type"=>false,"*all plus"=>false,"*all"=>false }
+#    cases.keys.find do |k| Card.new(:name=>k).junction_only?() end
+#  end
 
   describe :method_keys do
     it "returns correct set names for simple cards" do

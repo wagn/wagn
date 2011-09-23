@@ -29,7 +29,7 @@ module Wagn::Model::Collection
   def extended_list context = nil
     context = (context ? context.cardname : self.cardname)
     args={ :limit=>'' }
-    self.item_cards(args.merge(:context=>context)).map do |x| 
+    self.item_cards(args.merge(:context=>context)).map do |x|
       x.item_cards(args) 
     end.flatten.map do |x| 
       x.item_cards(args)

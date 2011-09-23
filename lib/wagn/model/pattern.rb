@@ -94,6 +94,24 @@ module Wagn::Model
       #self.method_keys ||= patterns_without_new.map(&:method_key)
       patterns_without_new.map(&:method_key)
     end
+=begin hmmm 
+<<<<<<< HEAD
+=======
+    def set_names()      @set_names ||= patterns.map(&:set_name)   end
+    def reset_patterns()
+      Rails.logger.debug "reset_patterns[#{name}]"
+      @junction_only = @patterns = @set_names =nil
+    end
+    def real_set_names()
+#      patterns.find_all(&:set_card).map(&:set_name)
+      set_names.find_all do |set_name|
+        Card.fetch(set_name, :skip_virtual=>true, :skip_after_fetch=>true)
+      end
+    end
+    def method_keys()    @method_keys ||= patterns.map(&:method_key)        end
+>>>>>>> xml_format
+=end
+
     def css_names()      patterns.map(&:css_name).reverse*" "               end
     def junction_only?()
       !cardname.cardinfo.junction_only.nil? ? cardname.cardinfo.junction_only :
@@ -167,6 +185,7 @@ module Wagn::Model
       #Rails.logger.debug "css_name #{sn.tag_name}, #{sn.trunk_name.css_name}"
       sn.tag_name.to_s.gsub(' ','_').gsub('*','').upcase + '-' + sn.trunk_name.css_name.to_s
     end
+
   end
 
 

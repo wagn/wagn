@@ -1,27 +1,34 @@
 module Notification   
   module CardMethods
+    def self.included(base)   
+      super                             
+      base.class_eval { attr_accessor :nested_notifications }
+    end
+    
     def send_notifications
+#      warn "send notifications called for #{name}. was new card = #{@was_new_card}"
       return false if Card.record_userstamps==false
       # userstamps and timestamps are turned off in cases like updating read_rules that are automated and 
       # generally not of enough interest to warrant notification
       
       action = case  
         when trash;  'deleted'
-        when updated_at.to_s==created_at.to_s; 'added'
+        when @was_new_card; 'added'
+        when nested_notifications; 'updated'
         when updated_at.to_s==current_revision.created_at.to_s;  'edited'  
         else; 'updated'
       end
       
       @trunk_watcher_watched_pairs = trunk_watcher_watched_pairs
-      @trunk_watchers = @trunk_watcher_watched_pairs.map(&:first)
+      @trunk_watchers = @trunk_watcher_watched_pairs.map(&:first)      
       
       watcher_watched_pairs.reject {|p| @trunk_watchers.include?(p.first) }.each do |watcher, watched|
         next unless watcher
-        Mailer.deliver_change_notice( watcher, self, action, watched )
+        Mailer.deliver_change_notice( watcher, self, action, watched, nested_notifications )
       end
-
       
       if nested_edit
+        nested_edit.nested_notifications ||= []
         nested_edit.nested_notifications << [ name, action ]
       else
         @trunk_watcher_watched_pairs.compact.each do |watcher, watched|
@@ -44,14 +51,6 @@ module Notification
       []
     end
     
-    def self.included(base)   
-      super                             
-      base.class_eval do                
-        attr_accessor :nested_edit, :nested_notifications
-        after_save :send_notifications
-      end
-    end
-
     def watcher_watched_pairs
       author = User.current_user.card.cardname
       (card_watchers.except(author).map {|watcher| [Card[watcher].extension,self.cardname] }  +
@@ -123,22 +122,6 @@ module Notification
     end
   end
 
-  #FIXME: multi_update/save are refactored out, so are these hooks
-  Wagn::Hook.add :before_multi_save, '*all' do |card, multi_card_params|
-    multi_card_params.each_pair do |name, opts|
-      opts[:nested_edit] = card
-    end  
-    card.nested_notifications = []
-  end 
-
-  Wagn::Hook.add :after_multi_update, '*all' do |card|
-    if card.nested_notifications.present?  
-      card.watcher_watched_pairs.each do |watcher, watched|
-        Mailer.deliver_change_notice( watcher, card, 'updated', watched, card.nested_notifications )
-      end
-    end
-  end
-  
   def self.init
     Card.send :include, CardMethods
     Wagn::Renderer.send :include, RendererHelperMethods

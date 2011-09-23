@@ -32,10 +32,12 @@
 
         <span class="new-name">
           <span class="label">name:</span>
-          <% if card.cardname.blank? || Card.fetch(card.cardname)%>
-            <span class="name-area">
-              <%= s.name_field(form) %>
-            </span>
+          <% if card.cardname.blank? || Card.fetch(card.cardname) %>
+            <% unless card.setting_card('autoname') %>
+              <span class="name-area">
+                <%= s.name_field(form) %>
+              </span>
+            <% end %>
           <% else %>
             <%= form.hidden_field :name %>
             <span class="title">

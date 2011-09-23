@@ -23,50 +23,9 @@ class Card < ActiveRecord::Base
   def before_save_search() end
 
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :cards,
-    :from_trash, :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,
+    :from_trash, :update_referencers, :allow_type_change, :broken_type, :loaded_trunk, :nested_edit,
     :attachment_id #should build flexible handling for this kind of set-specific attr
 
-  # FIXME Should be in modules
-  def after_save_card
-    if cards
-      #Rails.logger.info "after_save Cards:#{cards.inspect}"
-      Wagn::Hook.call :before_multi_save, self, cards
-      cards.each_pair do |sub_name, opts|
-        opts[:content] ||= ""
-        sub_name = sub_name.gsub('~plus~','+')
-        absolute_name = cardname.to_absolute_name(sub_name)
-        #Rails.logger.info "multi update working on:#{name} #{sub_name}: SN:#{absolute_name}, #{opts.inspect}"
-        if card = Card[absolute_name]
-          card.update_attributes(opts)
-        elsif opts[:content].present? and opts[:content].strip.present?
-          opts[:name] = absolute_name
-          card = Card.create(opts)
-        end
-        if card and !card.errors.empty?
-          card.errors.each do |field, err|
-            self.errors.add card.name, err
-          end
-        end
-      end
-      #Rails.logger.info "Card#callback after_multi_save"
-      Wagn::Hook.call :after_multi_save, self, cards
-    end
-    #Rails.logger.info "after_initialize Cards: #{cards.inspect}" # if cards
-    #Rails.logger.info "After save: #{self}, #{name} Cs:#{cards.inspect}"
-    if self.typecode == 'Cardtype'
-      #Rails.logger.debug "Cardtype after_save resetting"
-      Cardtype.cache.reset
-    end
-#      Rails.logger.debug "Card#after_save end"
-    update_attachment
-    Wagn::Hook.call :after_save, self
-    true
-  end
-
-  def after_initialize
-    #Rails.logger.info "After init: #{self}, #{name}, Cs:#{cards.inspect}"
-  #  Rails.logger.info "after_initialize Cards: #{cards.inspect}" # if cards
-  end
 
   cache_attributes('name', 'typecode', 'trash')    
 
@@ -76,7 +35,6 @@ class Card < ActiveRecord::Base
   def initialize(args={})
     #Rails.logger.warn "initializing with args: #{args.inspect}"
     args = args && args.stringify_keys || {} # evidently different from args.stringify_keys!
-    #args.delete 'id'(in list now) # replaces slow handling of protected fields
     typename, skip_defaults = %w{type skip_defaults id}.map{|k| args.delete k }
     args['name'] = args['name'].to_s
 
@@ -84,20 +42,13 @@ class Card < ActiveRecord::Base
     @attributes = get_attributes   
     @attributes_cache = {}
     @new_record = true
-    #Rails.logger.info "card#initialize[#{typename}](#{args.inspect})"
-    #Rails.logger.warn "initialize typecode0 #{self.typecode.inspect} NM:(#{@attributes.inspect}, #{name.inspect})"
     self.send :attributes=, args, false
     self.typecode = get_typecode(args['name'], typename) unless args['typecode']
-    #Rails.logger.warn "initialize typecode: #{self.typecode.inspect} NM:(#{@attributes.inspect}, #{name.inspect})"
 
-    begin
-    include_set_modules
+    include_set_modules unless missing? # not sure if we need/want the unless
+      # or maybe we have to put the card (lazy load) onto cardname first
     set_defaults( args ) unless skip_defaults
-    callback(:after_initialize) if respond_to_without_attributes?(:after_initialize)
     self
-    rescue Exception=>e
-      Rails.logger.info "error #{e}, #{e.backtrace*"\n"}"
-    end
   end
 
   def new_card?()  new_record? || from_trash  end
@@ -123,10 +74,12 @@ class Card < ActiveRecord::Base
 #Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
       self.broken_type = typename
     end
-    (name &&
-     tmpl=self.template) ?
-     tmpl.typecode :
-     'Basic'
+    t = (name &&
+      tmpl=self.template) ?
+        tmpl.typecode :
+        'Basic'
+    reset_patterns
+    t
   end
 
   def include_set_modules
@@ -134,13 +87,6 @@ class Card < ActiveRecord::Base
   end
   
   def set_defaults args
-    if args["name"].blank? and autoname_card = setting_card('autoname')
-      User.as(:wagbot) do
-        self.name = autoname_card.content
-        autoname_card.content = autoname_card.content.next  #fixme, should give placeholder on new, do next and save on create
-        autoname_card.save!
-      end
-    end
 
     if (self.content.nil? || self.content.blank?)
       self.content = setting('content', 'default')
@@ -157,8 +103,41 @@ class Card < ActiveRecord::Base
   public
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # STANDARD SAVING
+  # SAVING
 
+
+  def after_save_card
+    save_subcards
+    if self.typecode == 'Cardtype'
+      Cardtype.cache.reset
+    end
+    update_attachment
+    Wagn::Hook.call :after_create, self if @was_new_card
+    Wagn::Hook.call :after_save, self
+    send_notifications
+    true
+  end
+
+  def save_subcards
+    return unless cards
+    cards.each_pair do |sub_name, opts|
+      opts[:nested_edit] = self
+      opts[:content] ||= ""
+      sub_name = sub_name.gsub('~plus~','+')
+      absolute_name = cardname.to_absolute_name(sub_name)
+      if card = Card.fetch(absolute_name, :skip_virtual=>true)
+        card.update_attributes(opts)
+      elsif opts[:content].present? and opts[:content].strip.present?
+        opts[:name] = absolute_name
+        card = Card.create(opts)
+      end
+      if card and !card.errors.empty?
+        card.errors.each do |field, err|
+          self.errors.add card.name, err
+        end
+      end
+    end
+  end
 
   def save_with_trash!
     save || raise(errors.full_messages.join('. '))
@@ -382,7 +361,7 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # METHODS FOR OVERRIDE
 
-    def update_attachment()                 end
+  def update_attachment()                 end
   def post_render( content )     content  end
   def clean_html?()                 true  end
   def collection?()                false  end
@@ -420,28 +399,20 @@ class Card < ActiveRecord::Base
 
   # this method piggybacks on the name tracking method and
   # must therefore be defined after the #tracks call
-  def name_with_cardname()
-    #Rails.logger.info "name_with_cardname #{@cardname.to_s}"
-    without = name_without_cardname
-    return without if without.blank?
-    @cardname ||= name_without_cardname.to_cardname
-    name_without_cardname
-  end
-  alias_method_chain :name, :cardname
+
 
   def cardname() @cardname ||= name_without_cardname.to_cardname end
 
   alias cardname= name=
   def name_with_cardname=(newname)
     newname = newname.to_s
-    oldname = name_without_cardname
-    Rails.logger.debug "namex=(#{newname.inspect}) #{oldname.inspect}"
-    if oldname != newname
-      @cardname = newname.to_cardname
-      write_attribute :key, @key = @cardname.to_key
+    if name != newname
+      @cardname = nil
       updates.add :name, newname
       reset_patterns
-    else oldname end
+    else
+      name
+    end
   end
   alias_method_chain :name=, :cardname
   def cardname() @cardname ||= name.to_cardname end
@@ -462,16 +433,28 @@ class Card < ActiveRecord::Base
 
   protected
 
-  validates_presence_of :name
+#  validates_presence_of :name
   validates_associated :extension #1/2 ans:  this one runs the user validations on user cards.
 
 
   validates_each :name do |rec, attr, value|
-    #Rails.logger.debug "valid each #{attr}: #{rec.inspect} New #{value.inspect}"
-    if rec.updates.for?(:name)
-      #Rails.logger.debug "valid name #{rec.name.inspect} New #{value.inspect}"
+    if rec.new_card? && (!rec.updates.for(:name) || rec.name.blank?)
+      if autoname_card = rec.setting_card('autoname')
+        User.as(:wagbot) do
+          value = rec.name = autoname_card.content
+          autoname_card.content = autoname_card.content.next  #fixme, should give placeholder on new, do next and save on create
+          autoname_card.save!
+        end
+      end
+    end
 
-      cdname = value.to_cardname
+    cdname = value.to_cardname
+    if cdname.blank?
+      rec.errors.add :name, "can't be blank"
+    elsif rec.updates.for?(:name)
+      #Rails.logger.debug "valid name #{rec.name.inspect} New #{value.inspect}"
+      
+      
       unless cdname.valid_cardname?
         rec.errors.add :name,
           "may not contain any of the following characters: #{

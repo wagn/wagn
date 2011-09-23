@@ -12,14 +12,14 @@ Feature: Flexmail
       {{+name}} {{+email}} {{+Testimony}} {{+recipients}}
       """
     And I create Search card "search test+*right+*content" with content "{"type":"User"}"
-    And I create Basic card "Testemailconfig"
+#    And I create Basic card "Testemailconfig"
     And I create Search card "Testemailconfig+*to" with content
       """
       {"referred_to_by":{"left":"_self","right":"recipients"}}
       """
     And I create Search card "Testemailconfig+*from" with content "{"left":"_self","right":"email"}"
     And I create Phrase card "Testemailconfig+*subject" with content "Subjectimus"
-    And I create Phrase card "Testemailconfig+*bcc"
+#    And I create Phrase card "Testemailconfig+*bcc"
     And I create Basic card "Testemailconfig+*message" with content 
       """
       Pleistocles, {{_self+name|naked}} says: {{_self+Testimony|naked}} {{_self+search test|naked;item:name}}

@@ -107,7 +107,7 @@ end
   provide this function.
 =end
 
-module Wagn::Set::Rstar::Xsol
+module Wagn::Set::Right::Xsol
 
   def self.included(base)
     super

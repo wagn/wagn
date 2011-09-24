@@ -116,7 +116,7 @@ module Wagn::Model::Permissions
     rcard = begin
       User.as :wagbot do
         #Rails.logger.debug "in rule_card #{opcard&&opcard.name} #{operation}"
-        if opcard.raw_content == '_left' && self.junction?
+        if opcard.content == '_left' && self.junction?
           lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true, :skip_defaults=>true) 
           lcard.rule_card(operation).first
         else

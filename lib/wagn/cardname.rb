@@ -59,43 +59,6 @@ module Wagn
       @parts ||= (simple ? [s] : s.gsub(/\+$/,'+ ').split(JOINT))
     end
     
-=begin
-    def reset_rules() Wagn::CardInfo.reset_cache end
-    def reset_patterns() self.cardinfo.reset_patterns end
-    def destroy()
-      cardinfo.expire if real?
-      true
-    end
-
-    def cardinfo
-      CardInfo[@key] || CardInfo.new(self)
-    end
-
-
-    # FIXME: delegations
-    def typename() cardinfo.typename() end
-    def settings() cardinfo.settings() end
-    def settings=(h) cardinfo.settings=(h) end
-    def patterns() cardinfo.patterns() end
-    def patterns=(h) cardinfo.patterns=(h) end
-    def virtual?() cardinfo.virtual?() end
-    def missing?() cardinfo.missing?() end
-    def real?() cardinfo.real?() end
-    def set_modules() cardinfo.set_modules() end
-    def set_modules=(h) cardinfo.set_modules=(h) end
-    def card() cardinfo.card() end
-    def card_without_fetch() cardinfo.card_without_fetch() end
-    def set_cardinfo(card, saved_type=nil)
-      raise '???' if card == false
-      ci = CardInfo[self.key]
-      if saved_type
-        ci.typename = nil
-        ci.saved_type = saved_type
-      end
-      ci.state = :real unless ci.state
-      ci.card = card
-    end
-=end
     def inspect() "<CardName key=#{key}[#{s}, #{size}]>" end
 
     def self.unescape(uri) uri.gsub(' ','+').gsub('_',' ')             end

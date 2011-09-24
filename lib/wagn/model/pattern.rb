@@ -164,7 +164,7 @@ module Wagn::Model
     def inspect()            "<#{self.class} #{pat_name.inspect}>"        end
     def initialize(card)
       @pat_name = self.class.pattern_name(card).to_cardname
-      #warn "new#pattern #{self.class}#new(#{cardname}) #{@pat_name}"
+      Rails.logger.warn "new#pattern #{self.class}#new(#{card}) #{@pat_name}" if card.name =~ /^Yo /
       self
     end
     def set_name()           pat_name.to_s                                end
@@ -313,11 +313,13 @@ module Wagn::Model
          # return cardname
         #end
         raise "Applies? #{card.cardname.to_s}" unless pattern_applies?(card)
-        left=card.left
-        #Rails.logger.info "pattern_name[#{cardname.to_s}] #{left.inspect} + #{miss}"
+        #left_name=card.cardname.left_name
+        left = card.loaded_trunk || card.left
+        Rails.logger.info "pattern_name LTRN [#{card.cardname.to_s}] #{left}, #{left&&left.known?}, #{left&&left.typename}"
         typename = (left && left.known? && left.typename) || 'Basic'
-        "#{typename}+#{card.cardname.tag_name}+#{key}"
-        #Rails.logger.info "set_name ltrt #{card.cardname}: #{r}"; r
+        #typename = ((left=left_name.card) && left.known? && left.typename) || 'Basic'
+        r="#{typename}+#{card.cardname.tag_name}+#{key}"
+        Rails.logger.info "set_name LTRN #{card.cardname}: #{r}"; r
       end
     end
     def left_type()

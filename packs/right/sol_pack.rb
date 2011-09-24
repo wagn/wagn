@@ -5,7 +5,7 @@ class Wagn::Renderer::RichHtml
     @state=:edit
     %{#{div( :id=>slot.id('declar-area'),
              :class=>"declaror declar-area #{card.hard_template ? :templated : ''}" ) do
-      form_for_card :url=>"card/update/#{card.name.to_url_key}",
+      form_for_card :url=>"card/update/#{card.cardname.to_url_key}",
                     :slot=>slot, :html=>{ :class=>'form editor',
                     :onsubmit=>slot.save_function,
                     :id=>(slot.context + '-form') } do |form|
@@ -47,11 +47,12 @@ class Wagn::Renderer::RichHtml
     tcard = @card.trait_card('*sol')
     raise "No card" unless tcard
 
+    Rails.logger.info "declare (#{@card.name}) #{tcard.inspect}"
     wrap( args ) do
       %{#{#slot.header  I don't understand why this doesn't work here?
-      }<style>.SELF-#{tcard.key.css_name
+      }<style>.SELF-#{tcard.cardname.css_name
       } .declare-area .title-#{
-        tcard.name.css_name
+        tcard.cardname.css_name
       } { display: none; }</style>} +
 
       div( :id=>id('card-body'), :class=>'card-body') do
@@ -75,19 +76,19 @@ class Wagn::Renderer::RichHtml
   end
 
   def trait_forms(menu_name)
-    if formcard = card.setting_card(menu_name.to_star) and
+    if formcard = card.setting_card(menu_name.to_cardname.to_star) and
        (formtype = formcard.typecode) == 'Pointer'
       Rails.logger.debug "trait_forms(#{menu_name}) #{card&&card.name}, #{formcard&&formcard.name}"
       # is this names or cards? new api?
       if block_given?
-        formcard.item_names.map { |item| yield(item.tag_name, true, []) }
+        formcard.item_names.map { |item| yield(item.to_cardname.tag_name, true, []) }
       else
         formcard.item_names.map {|i| i.gsub!(/^\[\[|\]\]$/, '');}
       end
     else
       return if block_given?
       return %{#{formcard ? "Setting not a Pointer [#{formtype}]" : "Missing setting"
-                } for #{card&&card.name}, #{menu_name.to_star}}
+                } for #{card&&card.name}, #{menu_name.to_cardname.to_star}}
     end
   end
 
@@ -96,8 +97,8 @@ class Wagn::Renderer::RichHtml
     return forms if String === forms
     Rails.logger.info "trait_form(#{action.inspect}) #{forms.inspect}"
     if form = forms.find { |k|
-      Rails.logger.info "trait_search(#{action.inspect}) #{card.attribute.inspect}, #{k.tag_name.inspect} #{forms.inspect}"
-      k.tag_name == action } and form = Card.fetch(form)
+      Rails.logger.info "trait_search(#{action.inspect}) #{card.attribute.inspect}, #{k.to_cardname.tag_name.inspect} #{forms.inspect}"
+      k.to_cardname.tag_name == action } and form = Card.fetch(form)
       form.content
     else
       "No form card #{@state} #{card&&card.name}"

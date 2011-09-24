@@ -90,7 +90,7 @@ module Wagn::Model
     end
 
     def method_keys()
-      @method_keys ||= patterns_without_new.map(&:method_key)
+      @method_keys ||= patterns.map(&:method_key)
     end
 
     def css_names()      patterns.map(&:css_name).reverse*" "               end

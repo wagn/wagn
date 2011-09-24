@@ -27,10 +27,22 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # INITIALIZATION METHODS
   
-  def initialize(args={})
-    #Rails.logger.warn "initializing with args: #{args.inspect}"
+  def self.new(args={})
+    Rails.logger.warn "card#new with args: #{args.inspect}"
     args ||= {}
     args = args.stringify_keys # evidently different from args.stringify_keys!
+    if name = args['name']
+      cardname = name.to_cardname
+      if card = cardname.card_without_fetch ||
+           ( !args['missing'] && card = cardname.card(:skip_new=>true) )
+        return card
+      end
+    end
+    super.send :initialize, args
+  end
+
+  def initialize(args={})
+    Rails.logger.warn "card@initializing with args: #{args.inspect}"
     typename, skip_defaults = %w{type skip_defaults id}.map{|k| args.delete k }
     args['name'] = args['name'].to_s
 

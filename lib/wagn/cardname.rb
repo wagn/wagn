@@ -22,7 +22,7 @@ module Wagn
     end
 
 
-    attr_reader :s, :simple, :key
+    attr_reader :s, :simple, :key, :card
     alias to_key key
 
 
@@ -192,6 +192,22 @@ module Wagn
         new_part.blank? ? context.to_s : new_part
       end * JOINT
     end
+
+    #
+    # Fetch
+    #
+    def card=(card) @card = card end
+    def card_with_fetch(opts={})
+      if card_without_fetch.nil?
+        @card = if opts[:skip_new]
+            Card.fetch s, opts
+          else
+            Card.fetch_or_new s, opts
+          end
+      end
+      card_without_fetch
+    end
+    alias_method_chain :card, :fetch
   end
 end
 

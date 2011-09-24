@@ -23,9 +23,9 @@ module Wagn::Model::Fetch
     # missing? flag set to true
     # cards in the trash are added to the cache just as other cards are.  By default, missing? and trash?
     # cards are not returned
-    def fetch name, opts = {}
-      raise "??? no cardname #{name.inspect} #{opts.inspect}" unless name
-      cardname = name.to_cardname
+    def fetch cardname, opts = {}
+      raise "??? no cardname #{cardname.inspect} #{opts.inspect}" unless cardname
+      cardname = cardname.to_cardname unless Wagn::Cardname==cardname
       key = cardname.to_key
       cacheable = false
 
@@ -33,19 +33,27 @@ module Wagn::Model::Fetch
       cacheable = true if card.nil?
       card ||= find_by_key( key )
       
-      #Rails.logger.debug "fetch(#{name.inspect}) #{card.inspect}, #{cacheable}, #{opts.inspect}"# if debug
+      #Rails.logger.debug "fetch(#{cardname.inspect}) #{card.inspect}, #{cacheable}, #{opts.inspect}"# if debug
       if !opts[:skip_virtual] && (!card || card.missing? || card.trash)
         card = fetch_virtual( cardname, card )
         #Rails.logger.info "fetch_virtual #{card.inspect}"
       end
       
+      return nil if !card and opts[:skip_new]
       card ||= new_missing cardname
       Card.cache.write( key, card ) if cacheable
       return nil if (card.missing? && (!card.virtual? || opts[:skip_virtual])) || card.trash
 
+      cardname.card = card unless cardname.card_without_fetch
       card.after_fetch unless opts[:skip_after_fetch]
       card
     end
+    def fetch_with_cardname cardname, opts = {}
+      cardname = cardname.to_cardname unless Wagn::Cardname==cardname
+      return card if card = cardname.card_without_fetch
+      fetch_without_cardname cardname, opts
+    end
+    alias_method_chain :fetch, :cardname
 
     def fetch_or_new cardname, opts={}
       fetch( cardname, opts ) || new( extract_new_opts(cardname, opts) )

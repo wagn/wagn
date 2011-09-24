@@ -34,7 +34,7 @@ class Card < ActiveRecord::Base
     if name = args['name']
       cardname = name.to_cardname
       if card = cardname.card_without_fetch ||
-           ( !args['missing'] && card = cardname.card(:skip_new=>true) )
+           ( !args['missing'] && card = cardname.card )
         return card
       end
     end

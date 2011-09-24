@@ -39,8 +39,8 @@ module Wagn::Model::Fetch
         #Rails.logger.info "fetch_virtual #{card.inspect}"
       end
       
-      return nil if !card and opts[:skip_new]
-      card ||= new_missing cardname
+      return nil if !card
+      #card ||= new_missing cardname
       Card.cache.write( key, card ) if cacheable
       return nil if (card.missing? && (!card.virtual? || opts[:skip_virtual])) || card.trash
 

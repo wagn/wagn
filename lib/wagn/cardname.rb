@@ -199,11 +199,9 @@ module Wagn
     def card=(card) @card = card end
     def card_with_fetch(opts={})
       if card_without_fetch.nil?
-        @card = if opts[:skip_new]
+        @card = #if opts[:skip_new]
             Card.fetch s, opts
-          else
-            Card.fetch_or_new s, opts
-          end
+          #else Card.fetch_or_new s, opts end
       end
       card_without_fetch
     end

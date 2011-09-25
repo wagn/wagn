@@ -15,7 +15,7 @@ describe Card do
   describe "#settings" do
     it "retrieves Set based value" do
       Card.create :name => "Book+*type+*add help", :content => "authorize"
-      Card.new( :type => "Book" ).setting('add help', 'edit help').should == "authorize"
+      Card.new( :type => "Book" ).setting('add help', 'edit help'.should == "authorize")
     end                                          
     
     it "retrieves default values" do

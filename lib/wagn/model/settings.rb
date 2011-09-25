@@ -1,6 +1,7 @@
 module Wagn::Model::Settings
   def setting setting_name, fallback=nil
     card = setting_card setting_name, fallback
+    Rails.logger.debug "setting[#{name}, #{self}, #{setting_name}] #{card&&card.name}, #{card&&card.content}"
     card && card.content
   end
 

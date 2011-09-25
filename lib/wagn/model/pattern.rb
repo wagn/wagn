@@ -21,7 +21,7 @@ module Wagn::Model
         x=(n=sub.new(self)).pattern_applies? ? n : nil
       #Rails.logger.info "subc[#{n&&n.card&&n.card.name}] #{x.inspect}"; x
       }.compact
-      #Rails.logger.info "patterns[#{to_s}] >> #{@patterns.map(&:set_name).inspect}"; @patterns
+      Rails.logger.info "patterns[#{name}, #{cardname.card_without_fetch.inspect}, #{inspect}] >> #{@patterns.map(&:set_name).inspect}"; @patterns
     end
     def set_names()      @set_names ||= patterns.map(&:set_name)   end
     def reset_patterns()
@@ -30,9 +30,10 @@ module Wagn::Model
     end
     def real_set_names()
 #      patterns.find_all(&:set_card).map(&:set_name)
-      set_names.find_all do |set_name|
+      r=set_names.find_all do |set_name|
         Card.fetch(set_name, :skip_virtual=>true, :skip_after_fetch=>true)
       end
+      Rails.logger.debug "real_set_names[#{name}] #{r.inspect}"; r
     end
     def method_keys()    @method_keys ||= patterns.map(&:method_key)        end
     def css_names()      patterns.map(&:css_name).reverse*" "               end

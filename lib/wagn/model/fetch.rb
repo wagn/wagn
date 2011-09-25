@@ -23,9 +23,9 @@ module Wagn::Model::Fetch
     # missing? flag set to true
     # cards in the trash are added to the cache just as other cards are.  By default, missing? and trash?
     # cards are not returned
-    def fetch name, opts = {}
-      raise "??? no cardname #{name.inspect} #{opts.inspect}" unless name
-      cardname = name.to_cardname
+    def fetch cardname, opts = {}
+      raise "??? no cardname #{cardname.inspect} #{opts.inspect}" unless cardname
+      cardname = cardname.to_cardname unless Wagn::Cardname==cardname
       key = cardname.to_key
       cacheable = false
 
@@ -33,21 +33,30 @@ module Wagn::Model::Fetch
       cacheable = true if card.nil?
       card ||= find_by_key( key )
       
-      #Rails.logger.debug "fetch(#{name.inspect}) #{card.inspect}, #{cacheable}, #{opts.inspect}"# if debug
+      Rails.logger.debug "fetch(#{cardname.inspect}) #{card.inspect}, #{cacheable}, #{opts.inspect}"# if debug
       if !opts[:skip_virtual] && (!card || card.missing? || card.trash)
         card = fetch_virtual( cardname, card )
-        #Rails.logger.info "fetch_virtual #{card.inspect}"
+        Rails.logger.info "fetch_virtual #{card.inspect}"
       end
       
-      card ||= new_missing cardname
+      return nil if !card
+      #card ||= new_missing cardname
       Card.cache.write( key, card ) if cacheable
       return nil if (card.missing? && (!card.virtual? || opts[:skip_virtual])) || card.trash
 
+      cardname.card = card unless cardname.card_without_fetch
       card.after_fetch unless opts[:skip_after_fetch]
       card
     end
+    def fetch_with_cardname cardname, opts = {}
+      cardname = cardname.to_cardname unless Wagn::Cardname==cardname
+      cardname.card_without_fetch ||
+          fetch_without_cardname(cardname, opts)
+    end
+    alias_method_chain :fetch, :cardname
 
     def fetch_or_new cardname, opts={}
+      opts[:missing]=true
       fetch( cardname, opts ) || new( extract_new_opts(cardname, opts) )
     end
     
@@ -67,7 +76,7 @@ module Wagn::Model::Fetch
       #cardname = name.to_cardname
       return nil unless cardname && cardname.junction?
       cached_card = nil if cached_card && cached_card.trash
-      test_card = cached_card || Card.new(:name=>cardname, :missing=>true, :typecode=>'Basic', :skip_defaults=>true)
+      test_card = cached_card || Card.new(:name=>cardname, :missing=>true, :virtual=>true )
        template=test_card.template(reset=true) and ht=template.hard_template? 
       #Rails.logger.debug "fetch_virtual(#{cardname.to_s}) #{test_card.name}, #{cardname.tag_name} >#{template}, #{ht}"
       if ht

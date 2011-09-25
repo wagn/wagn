@@ -28,21 +28,23 @@ class Card < ActiveRecord::Base
   # INITIALIZATION METHODS
   
   def self.new(args={})
-    Rails.logger.warn "card#new with args: #{args.inspect}"
+    #Rails.logger.warn "card#new with args: #{args.inspect}"
     args ||= {}
     args = args.stringify_keys # evidently different from args.stringify_keys!
     if name = args['name']
       cardname = name.to_cardname
-      if card = cardname.card_without_fetch ||
-           ( !args['missing'] && card = cardname.card )
+      if (card = cardname.card_without_fetch) ||
+           ( !args['missing'] && card = cardname.card(:skip_virtual=>true) )
+        #Rails.logger.debug "card#new found #{card.inspect}"
         return card
       end
     end
-    super.send :initialize, args
+    super
   end
 
   def initialize(args={})
-    Rails.logger.warn "card@initializing with args: #{args.inspect}"
+    #Rails.logger.warn "card@initializing with args #{args.inspect}"
+    #Rails.logger.warn "card@initializing with args #{args.inspect} Trace: #{Kernel.caller*"\n"}" if args['name'] == 'a+y'
     typename, skip_defaults = %w{type skip_defaults id}.map{|k| args.delete k }
     args['name'] = args['name'].to_s
 
@@ -51,10 +53,13 @@ class Card < ActiveRecord::Base
     @attributes_cache = {}
     @new_record = true
     self.send :attributes=, args, false
+    #Rails.logger.debug "card#initialize[#{name}] 2 #{inspect}"
     self.typecode = get_typecode(args['name'], typename) unless args['typecode']
 
-    include_set_modules unless missing?
+    include_set_modules #unless missing?
+    #Rails.logger.debug "card#initialize[#{name}] 3 #{inspect}"
     set_defaults( args ) unless skip_defaults
+    #Rails.logger.debug "card#initialize[#{name}] 4 #{inspect}, #{cardname.card_without_fetch}"
     self.cardname.card = self
     self
   end
@@ -127,6 +132,8 @@ class Card < ActiveRecord::Base
 
   def after_save
     save_subcards
+    self.missing = self.virtual = false
+    cardname.card = self
     if self.typecode == 'Cardtype'
       Cardtype.cache.reset
     end
@@ -165,6 +172,7 @@ class Card < ActiveRecord::Base
 
   def save_with_trash(perform_checking=true)
     pull_from_trash if new_record?
+    self.trash = !!trash
     save_without_trash(perform_checking)
   end
   alias_method_chain :save, :trash
@@ -269,9 +277,6 @@ class Card < ActiveRecord::Base
   def dependents(*args)
     #raise "Includes self #{name}" if junctions(*args).map(&:name).include?(name)
     jcts = junctions(*args)
-    if jcts.include?(self)
-      jcts.delete(self)
-    end
     Rails.logger.info "dependents[#{name}](#{args.inspect}): #{jcts.inspect}"
     return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point.
     jcts.map { |r| [r ] + r.dependents(*args) }.flatten
@@ -397,7 +402,7 @@ class Card < ActiveRecord::Base
   # MISCELLANEOUS
   
   def to_s()  "#<#{self.class.name}[#{self.typename.to_s}]#{self.attributes['name']}>" end
-  def inspect()  "#<#{self.class.name}[#{self.typename.to_s}]#{self.attributes['name']}:#{object_id}>" end
+  def inspect()  "#<#{self.class.name}[#{self.typecode}]#{self.name}{m:#{missing}:v:#{virtual}:#{object_id}}>" end
   def mocha_inspect()     to_s                                   end
 
   def trash

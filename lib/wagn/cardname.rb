@@ -196,15 +196,14 @@ module Wagn
     #
     # Fetch
     #
-    def card=(card)
-      Rails.logger.info "cardname.card[#{s}]= #{card.inspect} was:#{@card.inspect}"
-      @card = card end
+    def card=(card) @card = card end
+      #Rails.logger.info "cardname.card[#{s}]= #{card.inspect} was:#{@card.inspect}"
+    def card_with_new(opts={})
+      self.card = Card.fetch_or_new(s, opts) if card_without_fetch.nil?
+      card_without_fetch
+    end
     def card_with_fetch(opts={})
-      if card_without_fetch.nil?
-        self.card = #if opts[:skip_new]
-            Card.fetch s, opts
-          #else Card.fetch_or_new s, opts end
-      end
+      self.card = Card.fetch(s, opts) if card_without_fetch.nil?
       card_without_fetch
     end
     alias_method_chain :card, :fetch

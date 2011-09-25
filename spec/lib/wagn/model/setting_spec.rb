@@ -14,8 +14,11 @@ describe Card do
 
   describe "#settings" do
     it "retrieves Set based value" do
-      Card.create :name => "Book+*type+*add help", :content => "authorize"
-      Card.new( :type => "Book" ).setting('add help', 'edit help').should == "authorize"
+      Rails.logger.info "testing point 0"
+      c1=Card.create :name => "Book+*type+*add help", :content => "authorize"
+      Rails.logger.info "testing point 1 #{c1}"
+      (c2=Card.new( :type => "Book" )).setting('add help', 'edit help').should == "authorize"
+      Rails.logger.info "testing point 2 #{c2}"
     end                                          
     
     it "retrieves default values" do

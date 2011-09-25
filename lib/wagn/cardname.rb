@@ -196,10 +196,12 @@ module Wagn
     #
     # Fetch
     #
-    def card=(card) @card = card end
+    def card=(card)
+      Rails.logger.info "cardname.card[#{s}]= #{card.inspect} was:#{@card.inspect}"
+      @card = card end
     def card_with_fetch(opts={})
       if card_without_fetch.nil?
-        @card = #if opts[:skip_new]
+        self.card = #if opts[:skip_new]
             Card.fetch s, opts
           #else Card.fetch_or_new s, opts end
       end

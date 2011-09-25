@@ -55,6 +55,7 @@ class Card < ActiveRecord::Base
 
     include_set_modules unless missing?
     set_defaults( args ) unless skip_defaults
+    self.cardname.card = self
     self
   end
 
@@ -266,10 +267,14 @@ class Card < ActiveRecord::Base
   end
 
   def dependents(*args)
-    #Rails.logger.info "dependents[#{name}](#{args.inspect}): #{junctions(*args).inspect}"
-    raise "Includes self" if junctions(*args).map(&:name).include?(name)
+    #raise "Includes self #{name}" if junctions(*args).map(&:name).include?(name)
+    jcts = junctions(*args)
+    if jcts.include?(self)
+      jcts.delete(self)
+    end
+    Rails.logger.info "dependents[#{name}](#{args.inspect}): #{jcts.inspect}"
     return [] if new_record? #because lookup is done by id, and the new_records don't have ids yet.  so no point.
-    junctions(*args).map { |r| [r ] + r.dependents(*args) }.flatten
+    jcts.map { |r| [r ] + r.dependents(*args) }.flatten
   end
 
   def codename
@@ -392,6 +397,7 @@ class Card < ActiveRecord::Base
   # MISCELLANEOUS
   
   def to_s()  "#<#{self.class.name}[#{self.typename.to_s}]#{self.attributes['name']}>" end
+  def inspect()  "#<#{self.class.name}[#{self.typename.to_s}]#{self.attributes['name']}:#{object_id}>" end
   def mocha_inspect()     to_s                                   end
 
   def trash

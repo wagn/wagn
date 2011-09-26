@@ -34,9 +34,9 @@ class Card < ActiveRecord::Base
     if name = args['name']
       cardname = name.to_cardname
       if (card = cardname.card_without_fetch) ||
-           ( !args['missing'] && card = cardname.card(:skip_virtual=>true) )
-        #Rails.logger.debug "card#new found #{card.inspect}"
-        return card
+         ( !args['missing'] && card = cardname.card(:skip_virtual=>true) )
+        Rails.logger.debug "card#new found #{card.inspect}, #{args.inspect}"
+        return card.send(:initialize, args)
       end
     end
     super
@@ -47,6 +47,7 @@ class Card < ActiveRecord::Base
     #Rails.logger.warn "card@initializing with args #{args.inspect} Trace: #{Kernel.caller*"\n"}" if args['name'] == 'a+y'
     typename, skip_defaults = %w{type skip_defaults id}.map{|k| args.delete k }
     args['name'] = args['name'].to_s
+    #@content = args['content']
 
     #Rails.logger.warn "initializing args:>>#{args.inspect}"
     @attributes = get_attributes   
@@ -59,8 +60,8 @@ class Card < ActiveRecord::Base
     include_set_modules #unless missing?
     #Rails.logger.debug "card#initialize[#{name}] 3 #{inspect}"
     set_defaults( args ) unless skip_defaults
-    #Rails.logger.debug "card#initialize[#{name}] 4 #{inspect}, #{cardname.card_without_fetch}"
     self.cardname.card = self
+    Rails.logger.debug "card#initialize[#{name}] 4 #{inspect}, #{cardname.card_without_fetch}"
     self
   end
 
@@ -133,7 +134,7 @@ class Card < ActiveRecord::Base
   def after_save
     save_subcards
     self.missing = self.virtual = false
-    cardname.card = self
+    #cardname.card = self
     if self.typecode == 'Cardtype'
       Cardtype.cache.reset
     end
@@ -333,6 +334,8 @@ class Card < ActiveRecord::Base
   # CONTENT / REVISIONS
 
   def content
+    #Rails.logger.info "content  #{inspect}, #{@content.inspect}"
+    #return @content if @content
     c = cached_revision
     c.new_record? ? "" : c.content
   end

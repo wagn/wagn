@@ -25,7 +25,8 @@ module Wagn::Model::Fetch
     # cards are not returned
     def fetch cardname, opts = {}
       raise "??? no cardname #{cardname.inspect} #{opts.inspect}" unless cardname
-      cardname = cardname.to_cardname unless Wagn::Cardname==cardname
+      cardname = cardname.to_cardname unless Wagn::Cardname===cardname
+      #warn "fetch #{cardname.inspect}"
       key = cardname.to_key
       cacheable = false
 
@@ -49,7 +50,7 @@ module Wagn::Model::Fetch
       card
     end
     def fetch_with_cardname cardname, opts = {}
-      cardname = cardname.to_cardname unless Wagn::Cardname==cardname
+      cardname = cardname.to_cardname unless Wagn::Cardname===cardname
       cardname.card_without_fetch ||
           fetch_without_cardname(cardname, opts)
     end

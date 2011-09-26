@@ -2,7 +2,7 @@ module Wagn
   class Cardname < Object
     require 'htmlentities'
 
-    NAME2KEY = {}
+    NAME2CARDNAME = {}
 
     JOINT = '+'
     BANNED_ARRAY = [ '/', '~', '|']
@@ -15,31 +15,31 @@ module Wagn
     class << self
       def new(obj)
         return obj if Cardname===obj
-        allocate.send :initialize, obj
+        cardname = Array===obj ? obj*JOINT : obj.to_s
+        return cardname if cardname = NAME2CARDNAME[cardname]
+        #allocate.send :initialize, obj
+        super
       end
 
-      def each_key(&proc) NAME2KEY.values.uniq.each(&proc) end
+      def each_cardname(&proc) NAME2CARDNAME.values.uniq.each(&proc) end
+      def each_key(&proc) each_cardname.map(&:key).each(&proc) end
     end
 
 
-    attr_reader :s, :simple, :key, :card
+    attr_reader :s, :simple, :key #, :card
     alias to_key key
 
 
     def initialize(obj)
       @s = Array===obj ? obj*JOINT : obj.to_s
-      @key = (NAME2KEY[s] ||= generate_key)
-      NAME2KEY[@key] ||= @key
-      self
-    end
-    
-    def generate_key
-      simple? ? 
-        generate_simple_key : 
-        parts.map do |part|
-          partname = part.to_cardname
-          partname.key if !partname.blank?
-        end * JOINT  
+      @key = simple? ? generate_simple_key : 
+                     parts.map do |part|
+                       partname = part.to_cardname
+                       partname.key if !partname.blank?
+                     end * JOINT  
+
+      NAME2CARDNAME[s] = self
+      NAME2CARDNAME[@key] ||= self
     end
     
     def generate_simple_key
@@ -196,15 +196,19 @@ module Wagn
     #
     # Fetch
     #
-    def card=(card) @card = card end
-      #Rails.logger.info "cardname.card[#{s}]= #{card.inspect} was:#{@card.inspect}"
+    def card=(card)
+      #Rails.logger.info "cardname.card[#{s}]= #{card.inspect}, #{self.card.inspect}"
+      Card.cache.write_local(@key, card)
+    end
+    def card()
+      r=Card.cache.read_local(@key)
+      Rails.logger.info "cardname.card[#{@key}]= #{r.inspect}"; r
+    end
     def card_with_new(opts={})
-      self.card = Card.fetch_or_new(s, opts) if card_without_fetch.nil?
-      card_without_fetch
+      (cd=card_without_fetch).nil? ? Card.fetch_or_new(s, opts) : cd
     end
     def card_with_fetch(opts={})
-      self.card = Card.fetch(s, opts) if card_without_fetch.nil?
-      card_without_fetch
+      (cd=card_without_fetch).nil? ?  Card.fetch(s, opts) : cd
     end
     alias_method_chain :card, :fetch
   end

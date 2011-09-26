@@ -122,9 +122,8 @@ module Wagn
       value
     end
     
-    def write_local key, value
-      @local[key] = value
-    end
+    def write_local(key, value) @local[key] = value end
+    def read_local(key)         @local[key]         end
 
     def fetch key, &block
       fetch_local(key) do

@@ -169,8 +169,8 @@ module Wagn::Model::Permissions
 
   def approve_comment
     approve_task(:comment, 'comment on')
-    deny_because("No comments allowed on template cards")       if template?  
-    deny_because("No comments allowed on hard templated cards") if hard_template
+    deny_because("No comments allowed on template cards")       if operation_approved && template?  
+    deny_because("No comments allowed on hard templated cards") if operation_approved && hard_template
   end
   
   def approve_typecode

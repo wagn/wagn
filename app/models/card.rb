@@ -18,7 +18,6 @@ class Card < ActiveRecord::Base
     
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :cards,
     :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit,
-    :from_trash, :update_referencers, :allow_type_change, :broken_type, :loaded_trunk, :nested_edit,
     :attachment_id #should build flexible handling for this kind of set-specific attr
 
 
@@ -58,7 +57,7 @@ class Card < ActiveRecord::Base
       "current_revision_id"=>nil, "trunk_id"=>nil,  "tag_id"=>nil,
       "indexed_content"=>nil,"indexed_name"=>nil, "references_expired"=>nil,
       "read_rule_class"=>nil, "read_rule_id"=>nil, "extension_type"=>nil,
-      "extension_id"=>nil, "created_at"=>nil, "created_by"=>nil, "updated_at"=>nil,"updated_by"=>nil, "trash"=>false
+      "extension_id"=>nil, "created_at"=>nil, "created_by"=>nil, "updated_at"=>nil,"updated_by"=>nil, "trash"=>nil
     }
   end
 
@@ -68,10 +67,7 @@ class Card < ActiveRecord::Base
 #Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
       self.broken_type = typename
     end
-    t = (name &&
-      tmpl=self.template) ?
-        tmpl.typecode :
-        'Basic'
+    t = (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
     reset_patterns
     t
   end
@@ -109,6 +105,7 @@ class Card < ActiveRecord::Base
     if self.typecode == 'Cardtype'
       Cardtype.cache.reset
     end
+    @from_trash = false
     update_attachment
     Wagn::Hook.call :after_create, self if @was_new_card
     Wagn::Hook.call :after_save, self
@@ -144,6 +141,7 @@ class Card < ActiveRecord::Base
 
   def save_with_trash(perform_checking=true)
     pull_from_trash if new_record?
+    self.trash = !!trash
     save_without_trash(perform_checking)
   end
   alias_method_chain :save, :trash
@@ -501,11 +499,11 @@ class Card < ActiveRecord::Base
 
   validates_each :typecode do |rec, attr, value|
     # validate on update
-    if rec.updates.for?(:typecode) and !rec.new_record?
+    if rec.updates.for?(:typecode) and !rec.new_card?
       if !rec.validate_type_change
         rec.errors.add :type, "of #{rec.name} can't be changed; errors changing from #{rec.typename}"        
       end
-      if c = Card.new(:name=>'*validation dummy', :typecode=>value) and !c.valid?
+      if c = Card.new(:name=>'*validation dummy', :typecode=>value, :content=>'') and !c.valid?
         rec.errors.add :type, "of #{rec.name } can't be changed; errors creating new #{value}: #{c.errors.full_messages.join(', ')}"
       end      
     end

@@ -79,7 +79,8 @@ module Wagn::Model::Permissions
   end
   
   # ok? and ok! are public facing methods to approve one operation at a time
-  def ok?(operation)  
+  def ok?(operation)
+    #warn "ok? #{operation}"
     self.operation_approved = true    
     self.permission_errors = []
     
@@ -98,16 +99,11 @@ module Wagn::Model::Permissions
   end
   
   def who_can(operation)
-    rule_card(operation).first.item_names.map(&:to_cardname).map &:to_key
-    #r1=rule_card(operation); r2=r1.first; r22=r2.item_names
-    #Rails.logger.info "who_can(#{operation}) r1:#{r1.inspect}, r2:#{r2.inspect}, r22:#{r22.inspect}"
-    #r3=r22.map(&:to_cardname).map(&:to_key)
-    #Rails.logger.info "who_can2(#{operation}) #{r1.inspect}, #{r2.inspect}, R3:#{r3.inspect}"; r3
+    rule_card(operation).first.content.split(/[,\n]/).map{|i| i.to_cardname.to_key}
   end 
   
   def rule_card(operation)
     opcard = setting_card(operation.to_s)
-    
     unless opcard or ENV['MIGRATE_PERMISSIONS'] == 'true'
       errors.add :permission_denied, "No #{operation} setting card for #{name}"      
       raise Card::PermissionDenied.new(self) 
@@ -170,8 +166,8 @@ module Wagn::Model::Permissions
 
   def approve_comment
     approve_task(:comment, 'comment on')
-    deny_because("No comments allowed on template cards")       if template?  
-    deny_because("No comments allowed on hard templated cards") if hard_template
+    deny_because("No comments allowed on template cards")       if operation_approved && template?  
+    deny_because("No comments allowed on hard templated cards") if operation_approved && hard_template
   end
   
   def approve_typecode
@@ -190,7 +186,7 @@ module Wagn::Model::Permissions
 
   def approve_content
     unless new_card?
-      if tmpl = hard_template 
+      if tmpl = hard_template
         deny_because you_cant("change the content of this card -- it is hard templated by #{tmpl.name}")
       end
     end

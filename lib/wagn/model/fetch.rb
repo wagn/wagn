@@ -32,10 +32,10 @@ module Wagn::Model::Fetch
 
       card = Card.cache.read( key )
       cacheable = true if card.nil?
-      card ||= find_by_key( key )
+      card ||= find_by_key_and_trash( key, false )
       
       Rails.logger.debug "fetch(#{cardname.inspect}) #{card.inspect}, #{cacheable}, #{opts.inspect}"# if debug
-      if !opts[:skip_virtual] && (!card || card.missing? || card.trash)
+      if !opts[:skip_virtual] && (!card || card.missing?)
         card = fetch_virtual( cardname, card )
         Rails.logger.info "fetch_virtual #{card.inspect}"
       end
@@ -43,7 +43,7 @@ module Wagn::Model::Fetch
       return nil if !card
       #card ||= new_missing cardname
       Card.cache.write( key, card ) if cacheable
-      return nil if (card.missing? && (!card.virtual? || opts[:skip_virtual])) || card.trash
+      return nil if (card.missing? && (!card.virtual? || opts[:skip_virtual]))
 
       cardname.card = card unless cardname.card_without_fetch
       card.after_fetch unless opts[:skip_after_fetch]

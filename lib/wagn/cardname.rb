@@ -39,7 +39,7 @@ module Wagn
         parts.map do |part|
           partname = part.to_cardname
           partname.key if !partname.blank?
-        end.compact * JOINT  
+        end * JOINT  
     end
     
     def generate_simple_key

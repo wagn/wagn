@@ -36,19 +36,14 @@ class Flexmail
     
     def deliver_mail_for card
       configs_for(card).each do |config|
-        ActiveRecord::Base.logger.warn "Sending mailconfig: #{config.inspect}"
         Mailer.deliver_flexmail config
       end
     end
     
     def strip_html string
-      string.gsub(/<\/?[^>]*>/,  "")
+      string.gsub(/<\/?[^>]*>/, "")
     end
   end  
-
-  Wagn::Hook.add :after_update, '*all' do |card|
-    Flexmail.deliver_mail_for card
-  end
 
   Wagn::Hook.add :after_create, '*all' do |card|
     Flexmail.deliver_mail_for card

@@ -32,8 +32,8 @@ class CardController < ApplicationController
   #---------( VIEWING CARDS )
 
   def show
-    params[:_keyword] && params[:_keyword].gsub!('_',' ') # should not be here!!
-    save_location if params[:format].nil? || params[:format].to_sym==:html
+#    params[:_keyword] && params[:_keyword].gsub!('_',' ') # should not be here!!
+    save_location if params[:format]==:html
     render_show
   end
 
@@ -42,7 +42,6 @@ class CardController < ApplicationController
   end
   
   def render_show_text
-    request.format = :html if !params[:format]
     
     known_formats = FORMATS.split('|')
     f_ext = request.parameters[:format]

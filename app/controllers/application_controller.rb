@@ -46,7 +46,12 @@ class ApplicationController < ActionController::Base
 
     @context = params[:context] || 'main_1'
     @action = params[:action]
-
+  
+    if [nil,'html'].member? params[:format]
+      request.format = 'html'
+      params[:format] = :html
+    end 
+  
     Wagn::Renderer.current_slot = nil
     System.request = request
     ActiveRecord::Base.logger.debug("WAGN: per request setup")
@@ -112,7 +117,8 @@ class ApplicationController < ActionController::Base
       
     ##  I think what SHOULD happen here is that we render the missing view and let the Renderer decide what happens.    
       
-    when requesting_ajax? || ![nil, :html].member?(params[:format])  #missing card, nonstandard request
+    when (requesting_ajax? || params[:format]!=:html)  #missing card, nonstandard request
+      warn "params[:format] = #{params[:format].inspect}"
       raise Wagn::NotFound, "We can't find a card named #{@card.name}"  
     when @card.ok?(:create)  # missing card, user can create
       params[:card]={:name=>@card.name, :type=>params[:type]}

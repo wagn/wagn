@@ -5,7 +5,7 @@
                     %w{ member_of member role found_by part left right plus left_plus right_plus } + 
                     %w{ or match complete not and sort },
     :referential => %w{ link_to linked_to_by refer_to referred_to_by include included_by },
-    :ignore      => %w{ prepend append view }
+    :ignore      => %w{ prepend append view params vars }
   }.inject({}) {|h,pair| pair[1].each {|v| h[v.to_sym]=pair[0] }; h }
 
   MODIFIERS = {};  %w{ conj return sort sort_as group dir limit offset }.each{|key| MODIFIERS[key.to_sym] = nil }
@@ -27,7 +27,9 @@
     result
   end
     
-  def initialize( query )  @cs = CardSpec.build( query )  end
+  def initialize( query )
+    @cs = CardSpec.build( query )
+  end
   def query()              @cs.query                      end
   def sql()                @sql ||= @cs.to_sql            end
   
@@ -72,8 +74,6 @@
     
     def match_prep(v,cardspec=self)
       cxn ||= ActiveRecord::Base.connection
-      v=cardspec.root.params['_keyword'] if v=='_keyword' 
-      v.strip!#FIXME - breaks if v is nil
       [cxn, v]
     end
     
@@ -105,7 +105,7 @@
   end
 
   class CardSpec < Spec 
-    attr_reader :params, :sql, :query
+    attr_reader :sql, :query
     attr_accessor :joins
     
     class << self
@@ -119,9 +119,12 @@
       # NOTE:  when creating new specs, make sure to specify _parent *before*
       #  any spec which could trigger another cardspec creation further down.
       @mods = MODIFIERS.clone
-      @params = {}
-      @joins = {}   
+      @joins = {}
+      @vars = query.delete(:vars) || {}
+      @vars.symbolize_keys!
+      
       @selfname, @parent = nil, nil
+      query.merge! query.delete(:params) if query[:params]
       @query = clean(query.clone)
       @spec = @query.deep_clone
       @sql = SqlStatement.new
@@ -141,7 +144,8 @@
     def selfname()  @selfname                      end
     
     def absolute_name(name)
-      name = (root.selfname ? name.to_absolute(root.selfname) : name)
+      return '' if name.empty?
+      root.selfname ? name.to_absolute(root.selfname) : name
     end
     
     def clean(query)
@@ -150,7 +154,6 @@
         case key.to_s
         when 'context'  ; @selfname         = query.delete(key)
         when '_parent'  ; @parent           = query.delete(key)   
-        when /^_\w+$/   ; @params[key.to_s] = query.delete(key)
         end
       end
       query.each{ |key,val| clean_val(val, query, key) } #must be separate loop to make sure card values are set
@@ -161,7 +164,11 @@
     def clean_val(val, query, key)
       query[key] =
         case val
-        when String ; val.empty? ? val : absolute_name(val)
+        when String
+          if val =~ /^\$(\w+)$/
+            val = @vars[$1.to_sym].to_s.strip
+          end
+          absolute_name(val)
         when Hash   ; clean(val)
         when Array  ; val.map{ |v| clean_val(v, query, key)}
         else        ; val

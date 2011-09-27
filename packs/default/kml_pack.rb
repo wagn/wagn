@@ -12,7 +12,7 @@ module Wagn
           # This is a workaround so that folks can have maps so long as their geocode cards are publicly viewable.
           # needs deeper redesign
           if card.typecode=='Search'
-            card.item_cards( :return=>:name, :limit=>1000, :_keyword=>params[:_keyword] )
+            card.item_cards( search_params.merge(:return=>:name, :limit=>1000) )
           else
             [card.name]
           end

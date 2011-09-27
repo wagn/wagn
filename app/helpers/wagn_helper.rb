@@ -210,23 +210,6 @@ module WagnHelper
 
   # ---------------( NAVBOX ) -----------------------------------
 
-=begin (moved to builtin def)
-  def navbox
-    content_tag( :form, :id=>"navbox_form", :action=>"/search", :onsubmit=>"return navboxOnSubmit(this)" ) do
-      content_tag( :span, :id=>"navbox_background" ) do
-        %{<a id="navbox_image" title="Search" onClick="navboxOnSubmit($('navbox_form'))">&nbsp;</a>}  + text_field_tag("navbox", params[:_keyword] || '', :id=>"navbox_field", :autocomplete=>"off") +
-        navbox_complete_field('navbox_field')
-      end
-    end
-  end
-
-  def navbox_complete_field(fieldname, card_id='')
-    content_tag("div", "", :id => "#{fieldname}_auto_complete", :class => "auto_complete") +
-    auto_complete_field(fieldname, { :url =>"/card/auto_complete_for_navbox/#{card_id.to_s}",
-      :after_update_element => "navboxAfterUpdate"
-     }.update({}))
-  end
-=end
 
   def navbox_result(entries, field, stub)
     return unless entries

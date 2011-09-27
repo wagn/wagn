@@ -28,12 +28,14 @@
   end
     
   def initialize( query )
+#    Rails.logger.info "\ninit query = #{query.inspect}\n"
     @cs = CardSpec.build( query )
   end
   def query()              @cs.query                      end
   def sql()                @sql ||= @cs.to_sql            end
   
   def run
+#    Rails.logger.info "\nrun query = #{query.inspect}\n"
     rows = ActiveRecord::Base.connection.select_all( sql )
     case (query[:return] || :card).to_sym
     when :card
@@ -120,13 +122,17 @@
       #  any spec which could trigger another cardspec creation further down.
       @mods = MODIFIERS.clone
       @joins = {}
-      @vars = query.delete(:vars) || {}
-      @vars.symbolize_keys!
       
       @selfname, @parent = nil, nil
-      query.merge! query.delete(:params) if query[:params]
-      @query = clean(query.clone)
+      @query = query.clone
+      
+      @query.merge! @query.delete(:params) if @query[:params]
+      @vars = @query.delete(:vars) || {}
+      @vars.symbolize_keys!
+      
+      @query = clean(@query)
       @spec = @query.deep_clone
+
       @sql = SqlStatement.new
       self
     end
@@ -235,6 +241,7 @@
     
     def match(val)
       cxn, v = match_prep(val)
+      return nil if v.empty?
       v.gsub!(/\W+/,' ')
       
       cond =

@@ -33,7 +33,7 @@ class CardController < ApplicationController
 
   def show
 #    params[:_keyword] && params[:_keyword].gsub!('_',' ') # should not be here!!
-    save_location if params[:format]==:html
+    save_location if params[:format]=='html'
     render_show
   end
 

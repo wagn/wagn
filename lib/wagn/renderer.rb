@@ -473,6 +473,23 @@ module Wagn
     end
   
     def main_card?() context=~/^main_\d$/ end
+
+    def search_params
+      return @search_params if @search_params
+      sparams = self.respond_to?(:paging_params) ? paging_params : {}
+      if main_card?
+        sparams[:vars] = {}
+        params.each do |key,val|
+          if key =~ /^\_(\w+)$/
+            sparams[:vars][$1] = val
+          end
+        end
+      end
+      if w = params[:wql] and explicit_vars = w[card.key]
+        sparams.merge! explicit_vars
+      end
+      @search_params = sparams
+    end
       
     def build_link(href, text)
       klass = case href

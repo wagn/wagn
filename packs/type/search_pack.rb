@@ -2,13 +2,14 @@ class Wagn::Renderer
   define_view(:naked, :type=>'search') do
     error=nil
     results = begin
-      card.item_cards( paging_params )
+      card.item_cards( search_params )
     rescue Exception=>e
       error = e; nil
     end
 
     case
     when results.nil?
+      Rails.logger.debug error.backtrace
       %{No results? #{error.class.to_s}: #{error&&error.message}<br/>#{card.content}}
     when card.spec[:return] =='count'
       results.to_s
@@ -24,7 +25,7 @@ class Wagn::Renderer
   define_view(:closed_content, :type=>'search') do
     return "..." if depth > 2
     results= begin
-      card.item_cards( paging_params )
+      card.item_cards( search_params )
     rescue Exception=>e
       error = e; nil
     end
@@ -51,8 +52,8 @@ class Wagn::Renderer
     @item_view ||= (card.spec[:view]) || :closed
 
     instruction, title = nil,nil
-    if card.name=='*search'
-      instruction = %{Cards matching keyword: <strong class="keyword">#{paging_params[:_keyword]}</strong>} #ENGLISH
+    if card.name=='*search' && keyword=search_params[:keyword]
+      instruction = %{Cards matching keyword: <strong class="keyword">#{keyword}</strong>} #ENGLISH
       title = 'Search Results' #ENGLISH
     end
 
@@ -125,10 +126,11 @@ class Wagn::Renderer
 
   define_view(:paging, :type=>'search') do |args|
     results = args[:results]
-    s = card.spec(paging_params)
+    s = card.spec(search_params)
     offset, limit = s[:offset].to_i, s[:limit].to_i
     first,last = offset+1,offset+results.length 
-    total = card.count(paging_params)
+    Rails.logger.info "counting with params: #{search_params.inspect}"
+    total = card.count(search_params)
  
     args = params.clone
     args[:limit] = limit

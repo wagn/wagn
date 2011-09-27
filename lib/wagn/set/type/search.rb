@@ -25,15 +25,18 @@ module Wagn::Set::Type::Search
   end
 
   def count(params={})
+    Rails.logger.info "spec(params) = #{spec(params).inspect}.........params = #{params.inspect}"
     Card.count_by_wql( spec(params) )
   end
 
   def spec(params={})
     @spec ||= {}
+    Rails.logger.info "~~~~~params.to_s = #{params.to_s}."#  specs = #{@spec[params.to_s].inspect}~~~~~~"
     @spec[params.to_s] ||= get_spec(params.clone)
   end
 
   def get_spec(params={})
+    Rails.logger.info "get_spec called with #{params.inspect}"
     spec = ::User.as(:wagbot) do ## why is this a wagbot thing?  can't deny search content??
       spec_content = raw_content
       raise("Error in card '#{self.name}':can't run search with empty content") if spec_content.empty?

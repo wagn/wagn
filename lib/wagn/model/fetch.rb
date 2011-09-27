@@ -25,6 +25,7 @@ module Wagn::Model::Fetch
     # cards are not returned
     def fetch cardname, opts = {}
       raise "??? no cardname #{cardname.inspect} #{opts.inspect}" unless cardname
+      raise "??? cn  #{cardname.inspect} #{opts.inspect}" if cardname.to_s=~/^\//
       cardname = cardname.to_cardname unless Wagn::Cardname===cardname
       #warn "fetch #{cardname.inspect}"
       key = cardname.to_key
@@ -52,7 +53,7 @@ module Wagn::Model::Fetch
       return nil if (card.missing? && (!card.virtual? || opts[:skip_virtual]))
 
       cardname.card = card unless cardname.card_without_fetch
-      card.after_fetch unless opts[:skip_after_fetch]
+      card.after_fetch unless opts[:skip_after_fetch] || (opts[:skip_virtual] && card.missing?)
       card
     end
     def fetch_with_cardname cardname, opts = {}
@@ -128,7 +129,7 @@ module Wagn::Model::Fetch
 
 
   def after_fetch
-#    warn "after_fetch cardname: #{cardname.s}"
+    Rails.logger.warn "after_fetch cardname: #{cardname.s}"
     include_set_modules
   end
 

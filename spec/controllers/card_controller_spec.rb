@@ -178,7 +178,11 @@ describe CardController do
       
       #remove me after regenerating test data
       User.as :wagbot do
-        Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
+        assert (c=Card['Fruit+*type+*create']).typecode == 'Pointer'
+        c.content='[[Anonymous]]'
+        c.save
+        assert c.content == '[[Anonymous]]'
+        #Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
       end
       
       
@@ -218,7 +222,11 @@ describe CardController do
     it "new should work for creatable nonviewable cardtype" do
       #remove me after regenerating test data
       User.as :wagbot do
-        Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
+        assert (c=Card['Fruit+*type+*create']).typecode == 'Pointer'
+        c.content='[[Anonymous]]'
+        c.save
+        assert c.content == '[[Anonymous]]'
+        #Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
       end
       
       login_as(:anon)     

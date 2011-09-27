@@ -484,7 +484,7 @@ class Card < ActiveRecord::Base
       unless cdname.valid_cardname?
         rec.errors.add :name,
           "may not contain any of the following characters: #{
-          Wagn::Cardname::CARDNAME_BANNED_CHARACTERS}"
+          Wagn::Cardname::CARDNAME_BANNED_CHARACTERS}[#{cdname}]"
       end
       # this is to protect against using a junction card as a tag-- although it is technically possible now.
       if (cdname.junction? and rec.simple? and rec.left_junctions.size>0)

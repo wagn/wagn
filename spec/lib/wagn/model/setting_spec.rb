@@ -15,7 +15,7 @@ describe Card do
   describe "#settings" do
     it "retrieves Set based value" do
       Card.create :name => "Book+*type+*add help", :content => "authorize"
-      Card.new( :type => "Book" ).setting('add help', 'edit help'.should == "authorize")
+      Card.new( :type => "Book" ).setting('add help', 'edit help').should == "authorize"
     end                                          
     
     it "retrieves default values" do
@@ -67,11 +67,17 @@ describe Card do
     it "returns pointer-specific setting names for pointer card (*type)" do
       # was this test wrong before?  What made Fruit a pointer without this?
       User.as :wagbot do
-        Card.create! :name=>'Fruit+*type+*default', :type=>'Pointer'
+        Rails.logger.info "testing point 0"
+        c1=Card.create! :name=>'Fruit+*type+*default', :type=>'Pointer'
+        Rails.logger.info "testing point 1 #{c1.inspect}"
       end
-      snbg = Card.fetch('Fruit+*type').setting_names_by_group
+      c2 = Card.fetch('Fruit+*type')
+      Rails.logger.info "testing point 2 #{c2.inspect}"
+      snbg = c2.setting_names_by_group
       snbg[:edit].map(&:to_s).should == @pointer_settings
-      snbg = Card.fetch('Pointer+*type').setting_names_by_group
+      c3 = Card.fetch('Pointer+*type')
+      Rails.logger.info "testing point 3 #{c3.inspect}"
+      snbg = c3.setting_names_by_group
       snbg[:edit].map(&:to_s).should == @pointer_settings
     end
 

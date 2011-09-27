@@ -113,7 +113,7 @@ module Wagn::Model::Permissions
       User.as :wagbot do
         #Rails.logger.debug "in rule_card #{opcard&&opcard.name} #{operation}"
         if opcard.content == '_left' && self.junction?
-          lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true, :skip_defaults=>true) 
+          lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true) 
           lcard.rule_card(operation).first
         else
           opcard

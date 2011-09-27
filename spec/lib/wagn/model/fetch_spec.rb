@@ -11,11 +11,7 @@ describe Card do
 
     it "returns nil and caches missing cards" do
       Card.fetch("Zork").should be_nil
-      cardname = "Zork".to_cardname
-      cardname.card.should be_nil
-      assert c=cardname.card_with_new
-      c.missing.should be_true
-      #Card.cache.read("zork").missing.should be_true
+      Card.cache.read("zork").missing.should be_true
       Card.fetch("Zork").should be_nil
     end
 
@@ -82,8 +78,8 @@ describe Card do
       end
 
       it "prefers db cards to pattern virtual cards" do
-        Card.create!(:name => "y+*right+*content", :content => "Formatted Content")
-        Card.create!(:name => "a+y", :content => "DB Content")
+        c1=Card.create!(:name => "y+*right+*content", :content => "Formatted Content")
+        c2=Card.create!(:name => "a+y", :content => "DB Content")
         card = Card.fetch("a+y")
         card.virtual?.should be_false
         card.setting('content').should == "Formatted Content"

@@ -66,7 +66,7 @@ class AccountController < ApplicationController
 
     @user, @card = request.post? ?
       User.create_with_card( params[:user], params[:card] ) :
-      [User.new, Card.new(:skip_defaults=>true)]
+      [User.new, Card.new()]
     if request.post? and @user.errors.empty?
       @user.send_account_info(params[:email])
       redirect_to (System.setting('*invite+*thanks') || '/')

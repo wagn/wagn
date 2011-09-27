@@ -300,7 +300,7 @@ class CardController < ApplicationController
 
     options_card =
       (!params[:id].blank? and
-       (pointer_card = Card.fetch_or_new(params[:id], :skip_defaults=>true, :type=>'Pointer')) and
+       (pointer_card = Card.fetch_or_new(params[:id], :type=>'Pointer')) and
        pointer_card.options_card)
 
     search_args = {  :complete=>complete, :limit=>8, :sort=>'name' }
@@ -314,7 +314,7 @@ class CardController < ApplicationController
   
   def add_field # for pointers only
     load_card if params[:id]
-    @card ||= Card.new(:type=>'Pointer', :skip_defaults=>true)
+    @card ||= Card.new(:type=>'Pointer')
     #render :partial=>'types/pointer/field', :locals=>params.merge({:link=>:add,:card=>@card})
     render(:text => Wagn::Renderer.new(@card, :context=>params[:eid]).render(:field, :link=>:add, :index=>params[:index]) )
   end

@@ -353,7 +353,7 @@ module Wagn
         case
         when state ==:edit   ;  Card.fetch_or_new(fullname, new_inclusion_card_args(tname, options))
         when base.respond_to?(:name);   base
-        else                 ;  Card.fetch_or_new(fullname, :skip_defaults=>true)
+        else                 ;  Card.fetch_or_new(fullname)
         end
       end
   

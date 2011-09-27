@@ -45,10 +45,10 @@ class Card < ActiveRecord::Base
   def initialize(args={})
     #Rails.logger.warn "card@initializing with args #{args.inspect}"
     #Rails.logger.warn "card@initializing with args #{args.inspect} Trace: #{Kernel.caller*"\n"}" if args['name'] == 'a+y'
-    typename, skip_defaults = %w{type skip_defaults id}.map{|k| args.delete k }
+    typename = args.delete('type')
+    args.delete('id')
 #    @explicit_content = args['content']
     args['name'] = args['name'].to_s
-    #@content = args['content']
 
     #Rails.logger.warn "initializing args:>>#{args.inspect}"
     @attributes = get_attributes   
@@ -60,7 +60,7 @@ class Card < ActiveRecord::Base
 
     include_set_modules #unless missing?
     #Rails.logger.debug "card#initialize[#{name}] 3 #{inspect}"
-    self.cardname.card = self
+    #self.cardname.card = self
     Rails.logger.debug "card#initialize[#{name}] 4 #{inspect}, #{cardname.card_without_fetch}"
     self
   end
@@ -92,7 +92,7 @@ class Card < ActiveRecord::Base
   end
 
   def include_set_modules
-    #Rails.logger.info "include_set_modules[#{name}] #{typecode} called"  #{Kernel.caller[0..4]*"\n"}"
+    Rails.logger.info "include_set_modules[#{name}] #{typecode} called"  #{Kernel.caller[0..4]*"\n"}"
     singleton_class.include_type_module(typecode)  
   end
   
@@ -247,7 +247,7 @@ class Card < ActiveRecord::Base
 
   def left()
     #Rails.logger.debug "left(#{name}), #{cardname.trunk_name}, #{cardname.trunk_name.to_s}"
-    Card.fetch( cardname.trunk_name, :skip_virtual=> true, :skip_after_fetch=>true )  end
+    Card.fetch( cardname.trunk_name, :skip_virtual=> true )  end
   def right()     Card.fetch cardname.tag_name,   :skip_virtual=> true         end
   def pieces()    simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq end
   def particles() cardname.particle_names.map{|name| Card.fetch name}          end
@@ -323,8 +323,6 @@ class Card < ActiveRecord::Base
   # CONTENT / REVISIONS
 
   def content
-    #Rails.logger.info "content  #{inspect}, #{@content.inspect}"
-    #return @content if @content
     if new_card?
       setting('content','default')
     else
@@ -333,8 +331,8 @@ class Card < ActiveRecord::Base
   end
   
   def raw_content
-    r = templated_content || content
-    raise "???" if r.nil?
+    r = (t=templated_content) || (c=content)
+    raise "???, #{name}, #{t}, #{c}" if r.nil? or r==false
     r
   end
 

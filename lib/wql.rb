@@ -39,7 +39,7 @@
         card=
           if query[:prepend] || query[:append]
             cardname = [query[:prepend], row['name'], query[:append]].compact.join('+')
-            Card.fetch_or_new cardname, :skip_defaults=>true
+            Card.fetch_or_new cardname
           else
             Card.fetch row['name'], :skip_virtual=>true
           end

@@ -11,7 +11,7 @@ class Wagn::Renderer::RichHtml
   
   define_view(:layout) do |args|
     if @main_content = args.delete(:main_content)
-      @card = Card.fetch_or_new('*placeholder',:skip_defaults=>true)
+      @card = Card.fetch_or_new('*placeholder')
     else
       @main_card = card
     end  

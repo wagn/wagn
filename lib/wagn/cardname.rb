@@ -197,12 +197,12 @@ module Wagn
     # Fetch
     #
     def card=(card)
-      #Rails.logger.info "cardname.card[#{s}]= #{card.inspect}, #{self.card.inspect}"
-      Card.cache.write_local(@key, card)
+      Rails.logger.info "cardname.card[#{s}]= #{card.inspect}, #{self.card.inspect}"
+      Card.cache.write_local(@key, card) if card
     end
     def card()
       r=Card.cache.read_local(@key)
-      Rails.logger.info "cardname.card[#{@key}]= #{r.inspect}"; r
+      Rails.logger.info "cardname.card[#{@key}] is #{r.inspect}"; r
     end
     def card_with_new(opts={})
       (cd=card_without_fetch).nil? ? Card.fetch_or_new(s, opts) : cd

@@ -21,7 +21,7 @@ module Wagn::Model
         x=(n=sub.new(self)).pattern_applies? ? n : nil
       #Rails.logger.info "subc[#{n&&n.card&&n.card.name}] #{x.inspect}"; x
       }.compact
-      Rails.logger.info "patterns[#{name}, #{cardname.card_without_fetch.inspect}, #{inspect}] >> #{@patterns.map(&:set_name).inspect}"; @patterns
+      Rails.logger.info "patterns[#{name}, #{inspect}] >> #{@patterns.map(&:set_name).inspect}"; @patterns
     end
     def set_names()      @set_names ||= patterns.map(&:set_name)   end
     def reset_patterns()

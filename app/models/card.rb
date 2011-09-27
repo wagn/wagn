@@ -16,7 +16,7 @@ class Card < ActiveRecord::Base
   belongs_to :extension, :polymorphic=>true
   before_destroy :destroy_extension
     
-  attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :cards,
+  attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :cards, :set_mods_loaded,
     :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit,
     :attachment_id #should build flexible handling for this kind of set-specific attr
 
@@ -33,8 +33,8 @@ class Card < ActiveRecord::Base
     args = args.stringify_keys # evidently different from args.stringify_keys!
     if name = args['name']
       cardname = name.to_cardname
-      if (card = cardname.card_without_fetch) ||
-         ( !args['missing'] && card = cardname.card(:skip_virtual=>true) )
+      if (card = Card.cache.read_local(cardname.key))
+         #( !args['missing'] && card = cardname.card(:skip_virtual=>true) )
         Rails.logger.debug "card#new found #{card.inspect}, #{args.inspect}"
         return card.send(:initialize, args)
       end
@@ -58,10 +58,8 @@ class Card < ActiveRecord::Base
     #Rails.logger.debug "card#initialize[#{name}] 2 #{inspect}"
     self.typecode = get_typecode(args['name'], typename) unless args['typecode']
 
-    include_set_modules #unless missing?
-    #Rails.logger.debug "card#initialize[#{name}] 3 #{inspect}"
-    #self.cardname.card = self
-    Rails.logger.debug "card#initialize[#{name}] 4 #{inspect}, #{cardname.card_without_fetch}"
+    include_set_modules unless missing? && !virtual?
+    Rails.logger.debug "card#initialize[#{name}] 4 #{inspect}"
     self
   end
 
@@ -93,7 +91,10 @@ class Card < ActiveRecord::Base
 
   def include_set_modules
     Rails.logger.info "include_set_modules[#{name}] #{typecode} called"  #{Kernel.caller[0..4]*"\n"}"
-    singleton_class.include_type_module(typecode)  
+    unless @set_mods_loaded
+      @set_mods_loaded=true
+      singleton_class.include_type_module(typecode)  
+    end
   end
   
   
@@ -399,7 +400,7 @@ class Card < ActiveRecord::Base
   # MISCELLANEOUS
   
   def to_s()  "#<#{self.class.name}[#{self.typename.to_s}]#{self.attributes['name']}>" end
-  def inspect()  "#<#{self.class.name}[#{self.typecode}]#{self.name}{m:#{missing}:v:#{virtual}:#{object_id}}>" end
+  def inspect()  "#<#{self.class.name}[#{self.typecode}]#{self.name}{m:#{missing}:v:#{virtual}:I:#{@set_mods_loaded}:#{object_id}}>" end
   def mocha_inspect()     to_s                                   end
 
 #  def trash

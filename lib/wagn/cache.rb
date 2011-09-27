@@ -164,6 +164,7 @@ module Wagn
         @local[key]
       else
         val = yield
+        val.set_mods_loaded = false if val.respond_to?(:set_mods_loaded)
         @local[key] = val
       end
     end

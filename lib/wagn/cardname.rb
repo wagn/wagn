@@ -16,6 +16,7 @@ module Wagn
       def new(obj)
         return obj if Cardname===obj
         cardname = Array===obj ? obj*JOINT : obj.to_s
+        raise "name error #{cardname}" if cardname[0] == '/'
         return cardname if cardname = NAME2CARDNAME[cardname]
         #allocate.send :initialize, obj
         super
@@ -26,7 +27,7 @@ module Wagn
     end
 
 
-    attr_reader :s, :simple, :key #, :card
+    attr_reader :s, :simple, :key
     alias to_key key
 
 
@@ -193,24 +194,6 @@ module Wagn
       end * JOINT
     end
 
-    #
-    # Fetch
-    #
-    def card=(card)
-      Rails.logger.info "cardname.card[#{s}]= #{card.inspect}, #{self.card.inspect}"
-      Card.cache.write_local(@key, card) if card
-    end
-    def card()
-      r=Card.cache.read_local(@key)
-      Rails.logger.info "cardname.card[#{@key}] is #{r.inspect}"; r
-    end
-    def card_with_new(opts={})
-      (cd=card_without_fetch).nil? ? Card.fetch_or_new(s, opts) : cd
-    end
-    def card_with_fetch(opts={})
-      (cd=card_without_fetch).nil? ?  Card.fetch(s, opts) : cd
-    end
-    alias_method_chain :card, :fetch
   end
 end
 

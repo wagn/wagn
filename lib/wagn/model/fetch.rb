@@ -25,8 +25,9 @@ module Wagn::Model::Fetch
     # cards are not returned
     def fetch cardname, opts = {}
       raise "??? no cardname #{cardname.inspect} #{opts.inspect}" unless cardname
-      raise "??? cn  #{cardname.inspect} #{opts.inspect}" if cardname.to_s=~/^\//
       cardname = cardname.to_cardname unless Wagn::Cardname===cardname
+      return nil unless cardname.valid_cardname?
+      raise "??? cn  #{cardname.inspect} #{opts.inspect}" if cardname.to_s=~/^\//
       #warn "fetch #{cardname.inspect}"
       key = cardname.to_key
       cacheable = false
@@ -44,24 +45,21 @@ module Wagn::Model::Fetch
       
       #return nil if !card
       card ||= new_missing cardname
+      Card.cache.write( key, card ) if cacheable
+=begin
       unless opts[:skip_virtual]
         if cacheable && !opts[:skip_virtual]
           Card.cache.write( key, card )
         else Card.cache.write_local( key, card ) end
       end
+=end
       Rails.logger.debug "fetch ret #{card.inspect} #{!card.virtual? || opts[:skip_virtual]}"
       return nil if (card.missing? && (!card.virtual? || opts[:skip_virtual]))
 
-      cardname.card = card unless cardname.card_without_fetch
-      card.after_fetch unless opts[:skip_after_fetch] || (opts[:skip_virtual] && card.missing?)
+      card.after_fetch unless opts[:skip_after_fetch]
+      #card.after_fetch unless opts[:skip_after_fetch] || (opts[:skip_virtual] && card.missing?)
       card
     end
-    def fetch_with_cardname cardname, opts = {}
-      #cardname = cardname.to_cardname unless Wagn::Cardname===cardname
-      #cardname.card_without_fetch ||
-          fetch_without_cardname(cardname, opts)
-    end
-    alias_method_chain :fetch, :cardname
 
     def fetch_or_new cardname, opts={}
       opts[:missing]=true

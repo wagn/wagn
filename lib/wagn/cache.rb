@@ -36,7 +36,12 @@ module Wagn
       end
       
       def preload_cache?
-        RAILS_ENV=='cucumber'
+        testing?
+        #RAILS_ENV=='cucumber'
+      end
+      
+      def testing?
+        ['test', 'cucumber'].member? RAILS_ENV
       end
       
       def preload_cache_for_tests
@@ -63,7 +68,7 @@ module Wagn
 
       def reset_for_tests
         reset_local
-        Card.cache, Role.cache = Marshal.load(@@frozen) if preload_cache?
+#        Card.cache, Role.cache = Marshal.load(@@frozen) if preload_cache?
       end
 
       def generate_cache_id
@@ -118,7 +123,7 @@ module Wagn
     def write key, value
       self.write_local(key, value)
       #@store.write(@prefix + key, Marshal.dump(value))  if @store
-      @store.write(@prefix + key, value) if @store
+      @store.write(@prefix + key, value) if @store && !self.class.testing?
       value
     end
     
@@ -138,7 +143,7 @@ module Wagn
 
     def delete key
       @local.delete key
-      @store.delete(@prefix + key)  if @store
+      @store.delete(@prefix + key)  if @store && !self.class.testing?
     end
 
     def dump

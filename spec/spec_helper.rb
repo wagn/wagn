@@ -44,7 +44,6 @@ Spork.prefork do
       # old cache stuff
       Wagn::Cache.reset_for_tests
     end
-
   end
 end
 

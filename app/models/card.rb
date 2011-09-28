@@ -326,11 +326,14 @@ private
   # CONTENT / REVISIONS
 
   def content
-    if new_card?
+    Rails.logger.info "card.content #{inspect}"
+    r=if new_card?
+      Rails.logger.info "card.content setting #{inspect}"
       setting('content','default')
     else
       cached_revision.content
     end
+    Rails.logger.info "card.content setting #{inspect} >#{r}"; r
   end
   
   def raw_content
@@ -402,7 +405,7 @@ private
   # MISCELLANEOUS
   
   def to_s()  "#<#{self.class.name}[#{self.typename.to_s}]#{self.attributes['name']}>" end
-  def inspect()  "#<#{self.class.name}[#{self.typecode}]#{self.name}{m:#{missing}:v:#{virtual}:I:#{@set_mods_loaded}:#{object_id}}>" end
+  def inspect()  "#<#{self.class.name}[#{self.typecode}]#{self.name}{m:#{missing}:v:#{virtual}:I:#{@set_mods_loaded}:#{object_id}}:#{@set_names.inspect}>" end
   def mocha_inspect()     to_s                                   end
 
 #  def trash

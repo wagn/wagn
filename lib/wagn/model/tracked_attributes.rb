@@ -45,7 +45,7 @@ module Wagn::Model::TrackedAttributes
 
     #Rails.logger.debug "create trunk? #{@cardname.junction?}, #{@cardname.s}"
     if @cardname.junction?
-      #Rails.logger.debug "create trunk #{@cardname.left_name.to_s} and tag #{@cardname.tag_name.to_s}"
+      Rails.logger.debug "create trunk #{@cardname.left_name.to_s} and tag #{@cardname.tag_name.to_s}"
       if !new_card? && @cardname.to_key != @old_cardname.to_key
         # move the current card out of the way, in case the new name will require
         # re-creating a card with the current name, ie.  A -> A+B
@@ -58,7 +58,7 @@ module Wagn::Model::TrackedAttributes
       # if T is renamed to T+G or G is renamed to T+G we could find T+G, for T or G
       tk=self.trunk = Card.new(:name=>@cardname.trunk_name) if self.id == self.trunk.id
       tg=Card.new(:name=>@cardname.tag_name) if self.id == self.tag.id
-      #Rails.logger.debug "created trunk #{tk.inspect} and tag #{tg.inspect} (#{@cardname.left_name.to_s}, #{@cardname.tag_name.to_s})"
+      Rails.logger.debug "created trunk #{inspect}:I:#{self.id} #{tk.inspect}:I:#{self.trunk.id} and tag #{tg.inspect}:I:#{self.tag.id} (#{@cardname.left_name.to_s}, #{@cardname.tag_name.to_s})"
       #Rails.logger.info "tag/trunk #{self.inspect}, #{tk.id}, #{tg.id} is self" if self.id == tk.id or self.id == tg.id
     else
       self.trunk = self.tag = nil

@@ -97,15 +97,24 @@ describe Card do
       end
 
       it "should recognize pattern overrides" do
-        Card.create!(:name => "y+*right+*content", :content => "Right Content")
+        tc=Card.create!(:name => "y+*right+*content", :content => "Right Content")
+        Rails.logger.info "testing point 0 #{tc.inspect}"
         card = Card.fetch("a+y")
         card.virtual?.should be_true
         card.content.should == "Right Content"
+        Rails.logger.info "testing point 1 #{card.inspect}"
         tpr = Card.create!(:name => "Basic+y+*type plus right+*content", :content => "Type Plus Right Content")
+        Rails.logger.info "testing point 1a #{tpr.inspect}"
+        card.reset_patterns
         card = Card.fetch("a+y")
+        card.reset_patterns
+        Rails.logger.info "testing point 2 #{card.inspect} #{card.content}"
         card.virtual?.should be_true
         card.content.should == "Type Plus Right Content"
         tpr.destroy!
+        Rails.logger.info "testing point 3 #{card.inspect}"
+        card.reset_patterns
+        Rails.logger.info "testing point 4 #{card.inspect}"
         card = Card.fetch("a+y")
         card.virtual?.should be_true
         card.content.should == "Right Content"

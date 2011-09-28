@@ -25,8 +25,8 @@ module Wagn::Model
     end
     def set_names()      @set_names ||= patterns.map(&:set_name)   end
     def reset_patterns()
-      Rails.logger.debug "reset_patterns[#{name}]"
       @set_mods_loaded = @junction_only = @patterns = @set_names =nil
+      Rails.logger.debug "reset_patterns[#{name}] #{inspect}"
     end
     def real_set_names()
 #      patterns.find_all(&:set_card).map(&:set_name)
@@ -34,7 +34,7 @@ module Wagn::Model
         rc=Card.fetch(set_name, :skip_type_lookup=>true, :skip_virtual=>true)
         #rc=Card[set_name]
       }
-      Rails.logger.debug "real_set_names[#{name}] #{r.inspect}"; r
+      Rails.logger.debug "real_set_names[#{inspect}] #{r.inspect}"; r
     end
     def method_keys()    @method_keys ||= patterns.map(&:method_key)        end
     def css_names()      patterns.map(&:css_name).reverse*" "               end

@@ -39,7 +39,7 @@ module Wagn::Model::Fetch
       card ||= find_by_key_and_trash( key, false )
       
       Rails.logger.debug "fetch(#{cardname.inspect}) #{card.inspect}, #{cacheable}, #{opts.inspect}"# if debug
-      Rails.logger.debug "fetch(#{cardname.inspect}) #{Kernel.caller*"\n"}" if cardname == 'A'
+      Rails.logger.debug "fetch(#{cardname.inspect}) #{Kernel.caller*"\n"}" if cardname == 'a+y'
       if !opts[:skip_virtual]
         if (!card || (card.missing? && card.virtual.nil?)) &&
               card = fetch_virtual(cardname, card)

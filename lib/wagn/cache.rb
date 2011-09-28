@@ -43,7 +43,7 @@ module Wagn
         return unless preload_cache?
         set_keys = ['*all','*all plus','basic+*type','html+*type','*cardtype+*type','*sidebar+*self']
         set_keys.map{|k| [k,"#{k}+*content", "#{k}+*default", "#{k}+*read", ]}.flatten.each do |key|        
-          Card.fetch key, :skip_virtual=>true, :skip_after_fetch=>true
+          Card[key]
         end
         Role[:auth]; Role[:anon]
         @@frozen = Marshal.dump([Card.cache, Role.cache])
@@ -164,7 +164,7 @@ module Wagn
         @local[key]
       else
         val = yield
-        val.set_mods_loaded = false if val.respond_to?(:set_mods_loaded)
+        val.reset_mods if val.respond_to?(:reset_mods)
         @local[key] = val
       end
     end

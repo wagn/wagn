@@ -45,28 +45,31 @@ class Card < ActiveRecord::Base
   def initialize(args={})
     #Rails.logger.warn "card@initializing with args #{args.inspect}"
     #Rails.logger.warn "card@initializing with args #{args.inspect} Trace: #{Kernel.caller*"\n"}" if args['name'] == 'a+y'
-    typename = args.delete('type')
-    args.delete('id')
+    typename, skip_type =
+      %w{type skip_type_lookup skip_virtual id}.map { |a| args.delete(a) }
 #    @explicit_content = args['content']
     args['name'] = args['name'].to_s
 
-    #Rails.logger.warn "initializing args:>>#{args.inspect}"
+    Rails.logger.warn "initializing args:>>#{args.inspect}"
     @attributes = get_attributes   
     @attributes_cache = {}
     @new_record = true
     self.send :attributes=, args, false
-    #Rails.logger.debug "card#initialize[#{name}] 2 #{inspect}"
-    self.typecode = get_typecode(args['name'], typename) unless args['typecode']
+    Rails.logger.debug "card#initialize[#{name}] 2 #{args.inspect}, #{skip_type}, #{inspect}"
+    self.typecode = get_typecode(args['name'], typename) unless args['typecode'] || skip_type
 
-    include_set_modules unless missing? && !virtual?
+    include_set_modules unless missing == true && virtual==false
     Rails.logger.debug "card#initialize[#{name}] 4 #{inspect}"
     self
   end
 
   def new_card?()  new_record? || @from_trash  end
   def known?()    !(new_card? && !virtual?)   end
+  
+  def reset_mods() @set_mods_loaded=false end
 
-  private
+private
+
   def get_attributes
     #was getting this from column defs.  very slow.
     #@attributes ||= {"name"=>@name, "cardname"=>@cardname, "key"=>"", "codename"=>nil, "typecode"=>nil,
@@ -90,10 +93,11 @@ class Card < ActiveRecord::Base
   end
 
   def include_set_modules
-    Rails.logger.info "include_set_modules[#{name}] #{typecode} called"  #{Kernel.caller[0..4]*"\n"}"
     unless @set_mods_loaded
+    Rails.logger.info "include_set_modules[#{name}] #{typecode} called" #{Kernel.caller[0..12]*"\n"}"
       @set_mods_loaded=true
       singleton_class.include_type_module(typecode)  
+    #else Rails.logger.info "include_set_modules[#{name}] #{typecode} loaded"
     end
   end
   
@@ -246,10 +250,8 @@ class Card < ActiveRecord::Base
   def key()         cardname.key           end
   def css_name()    cardname.css_name      end
 
-  def left()
-    #Rails.logger.debug "left(#{name}), #{cardname.trunk_name}, #{cardname.trunk_name.to_s}"
-    Card.fetch( cardname.trunk_name, :skip_virtual=> true )  end
-  def right()     Card.fetch cardname.tag_name,   :skip_virtual=> true         end
+  def left()      Card[cardname.left_name]  end
+  def right()     Card[cardname.tag_name]   end
   def pieces()    simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq end
   def particles() cardname.particle_names.map{|name| Card.fetch name}          end
   def key()       cardname.key                                                 end

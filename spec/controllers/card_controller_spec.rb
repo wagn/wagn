@@ -331,8 +331,12 @@ describe CardController do
 
     it "should watch" do
       login_as(:joe_user)
+      Rails.logger.info "testing point 0"
       post :watch, :id=>"Home"
-      Card["Home+*watchers"].content.should == "[[Joe User]]"
+      Rails.logger.info "testing point 1"
+      assert c=Card["Home+*watchers"]
+      Rails.logger.info "testing point 2 #{c.inspect}"
+      c.content.should == "[[Joe User]]"
     end
 
     it "rename without update references should work" do

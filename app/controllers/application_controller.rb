@@ -109,10 +109,12 @@ class ApplicationController < ActionController::Base
       raise Wagn::NotFound, "We don't know what card you're looking for."
     when @card.known? # default case
       @card
-      
-    ##  I think what SHOULD happen here is that we render the missing view and let the Renderer decide what happens.    
-      
+    when params[:view]=='edit_rule'
+      # FIXME this is a hack so that you can view load rules that don't exist.  need better approach 
+      # (but this is not tested; please don't delete without adding a test) 
+      @card
     when requesting_ajax? || ![nil, :html].member?(params[:format])  #missing card, nonstandard request
+      ##  I think what SHOULD happen here is that we render the missing view and let the Renderer decide what happens.
       raise Wagn::NotFound, "We can't find a card named #{@card.name}"  
     when @card.ok?(:create)  # missing card, user can create
       params[:card]={:name=>@card.name, :type=>params[:type]}

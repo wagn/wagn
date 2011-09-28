@@ -39,10 +39,14 @@ module Wagn::Model::Fetch
       card ||= find_by_key_and_trash( key, false )
       
       Rails.logger.debug "fetch(#{cardname.inspect}) #{card.inspect}, #{cacheable}, #{opts.inspect}"# if debug
-      Rails.logger.debug "fetch(#{cardname.inspect}) #{Kernel.caller*"\n"}" if cardname == 'Pointer+*type'
-      if !opts[:skip_virtual] && (!card || card.missing?)
-        card = fetch_virtual( cardname, card )
-        Rails.logger.info "fetch_virtual #{card.inspect}"
+      Rails.logger.debug "fetch(#{cardname.inspect}) #{Kernel.caller*"\n"}" if cardname == 'A'
+      if !opts[:skip_virtual]
+        if (!card || (card.missing? && card.virtual.nil?)) &&
+              card = fetch_virtual(cardname, card)
+          card.reset_mods
+          cacheable = true
+          Rails.logger.info "fetch_virtual #{card.inspect}"
+        end
       end
       
       #return nil if !card
@@ -51,17 +55,11 @@ module Wagn::Model::Fetch
         new_opts.merge!(:missing=>:unreal, :skip_type_lookup=>true) if opts[:skip_virtual] 
         card = new opts.merge(new_opts)
       end
+      Rails.logger.debug "fetch 2(#{cardname.to_s}) #{card.inspect}, #{opts.inspect}"# if debug
 
-      Card.cache.write( key, card ) #if cacheable
-=begin
-      unless opts[:skip_virtual]
-        if cacheable && !opts[:skip_virtual]
-          Card.cache.write( key, card )
-        else Card.cache.write_local( key, card ) end
-      end
-=end
+      Card.cache.write( key, card ) if cacheable
       Rails.logger.debug "fetch ret #{card.inspect} #{!card.virtual? || opts[:skip_virtual]}"
-      return nil if (card.missing? && (!card.virtual? || opts[:skip_virtual]))
+      return nil if card.missing? && !card.virtual?
 
       card.after_fetch #unless opts[:skip_after_fetch]
       #card.after_fetch unless opts[:skip_after_fetch] || (opts[:skip_virtual] && card.missing?)
@@ -93,14 +91,14 @@ module Wagn::Model::Fetch
       cached_card = nil if cached_card && cached_card.trash
       test_card = cached_card || Card.new(:name=>cardname, :missing=>true )
        template=test_card.template(reset=true) and ht=template.hard_template? 
-      #Rails.logger.debug "fetch_virtual(#{cardname.to_s}) #{test_card.name}, #{cardname.tag_name} >#{template}, #{ht}"
+      Rails.logger.debug "fetch_virtual(#{cardname.to_s}) #{test_card.name}, #{cardname.tag_name} >#{template}, #{ht}"
       if ht
       #if template=test_card.template(reset=true) and template.hard_template? 
         args=[cardname, template.content, template.typecode]
-        #Rails.logger.debug "fetch_virtual(#{cardname.to_s}) #{args.inspect}"
+        Rails.logger.debug "fetch_virtual 2(#{cardname.to_s}) #{args.inspect}"
         if cached_card
           cached_attrs = [:cardname, :content, :typecode].map{|attr| cached_card.send(attr)}
-        #Rails.logger.debug "fetch_virtual(#{cardname.to_s})cached: #{cached_attrs.inspect}"
+        Rails.logger.debug "fetch_virtual 3(#{cardname.to_s})cached: #{cached_attrs.inspect}"
           return cached_card if args==cached_attrs
         end
         r=new_virtual cardname, template.content, template.typecode
@@ -110,9 +108,9 @@ module Wagn::Model::Fetch
                 retrieve_extension_attribute(cardname.trunk_name, 'email') ).blank?
 
         r=new_virtual cardname, content  
-      #Rails.logger.debug "fetch_virtual adm-email(#{cardname.to_s}) email, #{content.inspect}, #{r.inspect}"; r
+      Rails.logger.debug "fetch_virtual adm-email(#{cardname.to_s}) email, #{content.inspect}, #{r.inspect}"; r
       else
-        #Rails.logger.debug "fetch_virtual(#{cardname.to_s}) nill"
+        Rails.logger.debug "fetch_virtual(#{cardname.to_s}) nil"
         return nil
       end
     end

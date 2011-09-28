@@ -55,20 +55,21 @@ class Card < ActiveRecord::Base
     @attributes_cache = {}
     @new_record = true
     self.send :attributes=, args, false
-    #Rails.logger.debug "card#initialize[#{name}] 2 #{inspect}"
-    unless args['typecode']
-      self.typecode = skip_type ? 'Basic' : get_typecode(args['name'], typename) 
-    end
+    Rails.logger.debug "card#initialize[#{name}] 2 #{args.inspect}, #{skip_type}, #{inspect}"
+    self.typecode = get_typecode(args['name'], typename) unless args['typecode'] || skip_type
 
-    include_set_modules unless missing == true && !(virtual==true)
+    include_set_modules unless missing == true && virtual==false
     Rails.logger.debug "card#initialize[#{name}] 4 #{inspect}"
     self
   end
 
   def new_card?()  new_record? || @from_trash  end
   def known?()    !(new_card? && !virtual?)   end
+  
+  def reset_mods() @set_mods_loaded=false end
 
-  private
+private
+
   def get_attributes
     #was getting this from column defs.  very slow.
     #@attributes ||= {"name"=>@name, "cardname"=>@cardname, "key"=>"", "codename"=>nil, "typecode"=>nil,

@@ -68,11 +68,11 @@ class Wagn::Renderer::RichHtml
           ruled_card = Card[main_set_name.trunk_name]
           current_rule = ruled_card.setting_card(setting_name)
           current_rule.after_fetch if current_rule
-          current_rule_set = current_rule ? current_rule.name.trunk_name : nil
+          current_rule_set = current_rule ? current_rule.name.trunk_name.to_key : nil
           
           mode, sifter = :override, {:override => [], :defer=>[]}
           Wagn::Pattern.set_names(ruled_card).each do |set_name|
-            if [current_rule_set.to_key, params[:new_rule_set]].member? set_name.to_key
+            if [current_rule_set, params[:new_rule_set]].member? set_name.to_key
               mode = :defer
             else
               sifter[mode] << set_name

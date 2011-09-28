@@ -30,7 +30,10 @@ module Wagn::Model
     end
     def real_set_names()
 #      patterns.find_all(&:set_card).map(&:set_name)
-      r=set_names.find_all { |set_name| Card[set_name] }
+      r=set_names.find_all { |set_name|
+        rc=Card.fetch(set_name, :skip_type_lookup=>true, :skip_virtual=>true)
+        #rc=Card[set_name]
+      }
       Rails.logger.debug "real_set_names[#{name}] #{r.inspect}"; r
     end
     def method_keys()    @method_keys ||= patterns.map(&:method_key)        end

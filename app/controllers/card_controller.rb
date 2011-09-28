@@ -255,7 +255,7 @@ class CardController < ApplicationController
     sources = [@card.typename,nil]
     sources.unshift '*account' if @card.extension_type=='User'
     @items = sources.map do |root|
-      c = Card.fetch((root ? "#{root}+" : '') +'*related')
+      c = Card.fetch(root ? root.to_cardname.star_rule(:related) : '*related')
       c && c.item_names
     end.flatten.compact
 #    @items << 'config'
@@ -264,14 +264,14 @@ class CardController < ApplicationController
 
   #-------- ( MISFIT METHODS )
   def watch
-    watchers = Card.fetch_or_new( @card.name + "+*watchers", :skip_virtual=>true, :type => 'Pointer' )
+    watchers = Card.fetch_or_new( @card.cardname.star_rule(:watchers ) )
     watchers.add_item User.current_user.card.name
     #flash[:notice] = "You are now watching #{@card.name}"
     request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
   def unwatch
-    watchers = Card.fetch_or_new( @card.name + "+*watchers", :skip_virtual=>true )
+    watchers = Card.fetch_or_new( @card.cardname.star_rule(:watchers ) )
     watchers.drop_item User.current_user.card.name
     #flash[:notice] = "You are no longer watching #{@card.name}"
     request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view

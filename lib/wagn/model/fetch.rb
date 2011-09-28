@@ -33,6 +33,8 @@ module Wagn::Model::Fetch
       cacheable = false
 
       card = Card.cache.read( key )
+      return nil if card && opts[:skip_virtual] && card.missing?
+
       cacheable = true if card.nil?
       card ||= find_by_key_and_trash( key, false )
       
@@ -44,8 +46,13 @@ module Wagn::Model::Fetch
       end
       
       #return nil if !card
-      card ||= new_missing cardname
-      Card.cache.write( key, card ) if cacheable
+      if card.nil?
+        new_opts = {:name=>cardname, :missing=>true}
+        new_opts.merge!(:missing=>:unreal, :skip_type_lookup=>true) if opts[:skip_virtual] 
+        card = new opts.merge(new_opts)
+      end
+
+      Card.cache.write( key, card ) #if cacheable
 =begin
       unless opts[:skip_virtual]
         if cacheable && !opts[:skip_virtual]
@@ -56,27 +63,29 @@ module Wagn::Model::Fetch
       Rails.logger.debug "fetch ret #{card.inspect} #{!card.virtual? || opts[:skip_virtual]}"
       return nil if (card.missing? && (!card.virtual? || opts[:skip_virtual]))
 
-      card.after_fetch unless opts[:skip_after_fetch]
+      card.after_fetch #unless opts[:skip_after_fetch]
       #card.after_fetch unless opts[:skip_after_fetch] || (opts[:skip_virtual] && card.missing?)
       card
     end
 
     def fetch_or_new cardname, opts={}
-      opts[:missing]=true
-      fetch( cardname, opts ) || new( extract_new_opts(cardname, opts) )
+      
+      fetch( cardname, opts ) || new( opts.merge(:name=>cardname, :missing=>true) )
     end
     
     def fetch_or_create cardname, opts={}
       opts[:skip_virtual] ||= true
-      fetch( cardname, opts ) || create( extract_new_opts(cardname, opts).merge(:missing=>true) )
+      fetch( cardname, opts ) || create( opts.merge(:name=>cardname, :missing=>true) )
     end
     
+=begin
     def extract_new_opts cardname, opts
       opts = opts.clone
       opts[:name] = cardname
       [:skip_virtual, :skip_after_fetch].each {|key| opts.delete(key)}
       opts
     end
+=end
     
     def fetch_virtual(cardname, cached_card=nil)
       #cardname = name.to_cardname
@@ -116,12 +125,8 @@ module Wagn::Model::Fetch
       new(:name=>cardname, :content=>content, :typecode=>type, :missing=>true, :virtual=>true)
     end
 
-    def new_missing cardname
-      new(:name=>cardname, :typecode => 'Basic', :missing=>true)
-    end
-
     def exists?(cardname)
-      fetch(cardname, :skip_virtual=>true, :skip_after_fetch=>true).present?
+      fetch(cardname, :skip_virtual=>true).present?
     end
   end
 

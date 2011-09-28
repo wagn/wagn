@@ -45,20 +45,22 @@ class Card < ActiveRecord::Base
   def initialize(args={})
     #Rails.logger.warn "card@initializing with args #{args.inspect}"
     #Rails.logger.warn "card@initializing with args #{args.inspect} Trace: #{Kernel.caller*"\n"}" if args['name'] == 'a+y'
-    typename = args.delete('type')
-    args.delete('id')
+    typename, skip_type =
+      %w{type skip_type_lookup skip_virtual id}.map { |a| args.delete(a) }
 #    @explicit_content = args['content']
     args['name'] = args['name'].to_s
 
-    #Rails.logger.warn "initializing args:>>#{args.inspect}"
+    Rails.logger.warn "initializing args:>>#{args.inspect}"
     @attributes = get_attributes   
     @attributes_cache = {}
     @new_record = true
     self.send :attributes=, args, false
     #Rails.logger.debug "card#initialize[#{name}] 2 #{inspect}"
-    self.typecode = get_typecode(args['name'], typename) unless args['typecode']
+    unless args['typecode']
+      self.typecode = skip_type ? 'Basic' : get_typecode(args['name'], typename) 
+    end
 
-    include_set_modules unless missing? && !virtual?
+    include_set_modules unless missing == true && !(virtual==true)
     Rails.logger.debug "card#initialize[#{name}] 4 #{inspect}"
     self
   end
@@ -90,10 +92,13 @@ class Card < ActiveRecord::Base
   end
 
   def include_set_modules
-    Rails.logger.info "include_set_modules[#{name}] #{typecode} called"  #{Kernel.caller[0..4]*"\n"}"
     unless @set_mods_loaded
+    Rails.logger.info "include_set_modules[#{name}] #{typecode} called #{Kernel.caller[0..12]*"\n"}"
       @set_mods_loaded=true
       singleton_class.include_type_module(typecode)  
+    else
+      raise "????" if name == 'Home+*watchers'
+    Rails.logger.info "include_set_modules[#{name}] #{typecode} loaded"
     end
   end
   
@@ -246,10 +251,8 @@ class Card < ActiveRecord::Base
   def key()         cardname.key           end
   def css_name()    cardname.css_name      end
 
-  def left()
-    #Rails.logger.debug "left(#{name}), #{cardname.trunk_name}, #{cardname.trunk_name.to_s}"
-    Card.fetch( cardname.trunk_name, :skip_virtual=> true )  end
-  def right()     Card.fetch cardname.tag_name,   :skip_virtual=> true         end
+  def left()      Card[cardname.left_name]  end
+  def right()     Card[cardname.tag_name]   end
   def pieces()    simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq end
   def particles() cardname.particle_names.map{|name| Card.fetch name}          end
   def key()       cardname.key                                                 end

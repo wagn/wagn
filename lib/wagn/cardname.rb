@@ -15,11 +15,10 @@ module Wagn
     class << self
       def new(obj)
         return obj if Cardname===obj
-        cardname = Array===obj ? obj*JOINT : obj.to_s
-        raise "name error #{cardname}" if cardname[0] == '/'
-        return cardname if cardname = NAME2CARDNAME[cardname]
-        #allocate.send :initialize, obj
-        super
+        str = Array===obj ? obj*JOINT : obj.to_s
+        raise "name error #{str}" if str[0] == '/'
+        return obj if obj = NAME2CARDNAME[str]
+        super str
       end
 
       def each_cardname(&proc) NAME2CARDNAME.values.uniq.each(&proc) end
@@ -27,20 +26,23 @@ module Wagn
     end
 
 
-    attr_reader :s, :simple, :key
+    attr_reader :s, :simple, :parts, :key
     alias to_key key
 
 
-    def initialize(obj)
-      @s = Array===obj ? obj*JOINT : obj.to_s
-      @key = simple? ? generate_simple_key : 
-                     parts.map do |part|
-                       partname = part.to_cardname
-                       partname.key if !partname.blank?
-                     end * JOINT  
-
-      NAME2CARDNAME[s] = self
+    def initialize(str)
+      @key = if (@s = str.to_s).index(JOINT)
+          @parts = @s.gsub(/\+$/,'+ ').split(JOINT)
+          @simple = false
+          @parts.map(&:to_cardname).map(&:key) * JOINT  
+        else
+          @parts = [@s]
+          @simple = true
+          @s.blank? ? '' : generate_simple_key
+        end
       NAME2CARDNAME[@key] ||= self
+      NAME2CARDNAME[@s] = self
+      Rails.logger.debug "new:#{self.inspect}"; self
     end
     
     def generate_simple_key
@@ -52,6 +54,8 @@ module Wagn
     end
 
     
+    alias simple? simple
+=begin
     def simple?
       @simple ||= !s.index(JOINT)
     end
@@ -59,6 +63,7 @@ module Wagn
     def parts
       @parts ||= (simple ? [s] : s.gsub(/\+$/,'+ ').split(JOINT))
     end
+=end
     
     def inspect() "<CardName key=#{key}[#{s}, #{size}]>" end
 
@@ -118,6 +123,7 @@ module Wagn
     def to_star()     star? ? s : '*'+s                                end
     def star?()       simple? and !!(s=~/^\*/)                         end
     def tag_star?()   !!((simple? ? self : parts[-1])=~/^\*/)          end
+    alias rstar? tag_star?
     def star_rule(star)
       [s, (star = star.to_s) =~ /^\*/ ? star : '*'+star].to_cardname end
 

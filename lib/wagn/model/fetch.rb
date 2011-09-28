@@ -43,8 +43,8 @@ module Wagn::Model::Fetch
       if !opts[:skip_virtual]
         if (!card || (card.missing? && card.virtual.nil?)) &&
               card = fetch_virtual(cardname, card)
-          card.reset_mods
           cacheable = true
+          card.reset_patterns
           Rails.logger.info "fetch_virtual #{card.inspect}"
         end
       end

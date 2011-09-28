@@ -334,7 +334,7 @@ describe CardController do
       Rails.logger.info "testing point 0"
       post :watch, :id=>"Home"
       Rails.logger.info "testing point 1"
-      assert Card["Home+*watchers"]
+      assert c=Card["Home+*watchers"]
       Rails.logger.info "testing point 2 #{c.inspect}"
       c.content.should == "[[Joe User]]"
     end

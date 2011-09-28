@@ -94,12 +94,10 @@ private
 
   def include_set_modules
     unless @set_mods_loaded
-    Rails.logger.info "include_set_modules[#{name}] #{typecode} called #{Kernel.caller[0..12]*"\n"}"
+    Rails.logger.info "include_set_modules[#{name}] #{typecode} called" #{Kernel.caller[0..12]*"\n"}"
       @set_mods_loaded=true
       singleton_class.include_type_module(typecode)  
-    else
-      raise "????" if name == 'Home+*watchers'
-    Rails.logger.info "include_set_modules[#{name}] #{typecode} loaded"
+    #else Rails.logger.info "include_set_modules[#{name}] #{typecode} loaded"
     end
   end
   

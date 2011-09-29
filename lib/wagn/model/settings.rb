@@ -4,7 +4,7 @@ module Wagn::Model::Settings
     card = setting_card setting_name, fallback
     #raise "???? #{name}" if name == card.name
     Rails.logger.debug "setting[#{inspect}, #{setting_name}] #{card&&card.inspect}"
-    card && !card.missing? && card.content || ''
+    card && !card.new_card? && card.content || ''
   end
 
   def setting_card setting_name, fallback=nil

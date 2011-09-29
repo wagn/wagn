@@ -17,22 +17,26 @@ module Wagn::Model
     end
 
     def patterns()
+#      warn "patterns called" if name == 'Illiad+*to'
+      
       @patterns ||= @@subclasses.map { |sub|
         x=(n=sub.new(self)).pattern_applies? ? n : nil
       #Rails.logger.info "subc[#{n&&n.card&&n.card.name}] #{x.inspect}"; x
       }.compact
       Rails.logger.info "patterns[#{name}, #{inspect}] >> #{@patterns.map(&:set_name).inspect}"; @patterns
     end
-    def set_names()      @set_names ||= patterns.map(&:set_name)   end
+    def set_names()
+#      warn "set names called" if name == 'Illiad+*to'
+      @set_names ||= patterns.map(&:set_name)   end
     def reset_patterns()
+#      warn "reset patterns called" if name == 'Illiad+*to'
       @set_mods_loaded = @junction_only = @patterns = @set_names =nil
       Rails.logger.debug "reset_patterns[#{name}] #{inspect}"
     end
     def real_set_names()
 #      patterns.find_all(&:set_card).map(&:set_name)
       r=set_names.find_all { |set_name|
-        rc=Card.fetch(set_name, :skip_type_lookup=>true, :skip_virtual=>true)
-        #rc=Card[set_name]
+        rc=Card.fetch(set_name, :skip_virtual=>true)
       }
       Rails.logger.debug "real_set_names[#{inspect}] #{r.inspect}"; r
     end
@@ -187,7 +191,7 @@ module Wagn::Model
     end
     def css_name() "TYPE_PLUS_RIGHT-#{set_name.to_cardname.trunk_name.css_name}" end
     def left_name()        card.left.cardname or card.cardname.left_name end
-    def left_type()        (lft=self.left) ? left.typename : 'Basic'     end
+    def left_type()        (lft=self.left) ? lft.typename : 'Basic'     end
     def left()             card.loaded_trunk or card.left                end
     def pattern_applies?() card.cardname.junction?                       end
     def set_name()

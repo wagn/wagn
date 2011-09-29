@@ -11,7 +11,7 @@ describe Card do
 
     it "returns nil and caches missing cards" do
       Card.fetch("Zork").should be_nil
-      Card.cache.read("zork").missing.should be_true
+      Card.cache.read("zork").new_card?.should be_true
       Card.fetch("Zork").should be_nil
     end
 

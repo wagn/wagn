@@ -19,45 +19,40 @@ module Wagn::Model::Fetch
     #   - virtual cards
     #
     # if a card is not in the cache and is found in the database, it is added to the cache
-    # if a card is not found in the database, a card of that name is created and added to cache with
-    # missing? flag set to true
-    # cards in the trash are added to the cache just as other cards are.  By default, missing? and trash?
-    # cards are not returned
+    # if a card is not found in the database, a card of that name is created and added to cache 
+
     def fetch cardname, opts = {}
-      raise "??? no cardname #{cardname.inspect} #{opts.inspect}" unless cardname
+      #warn "fetching #{cardname}"
       cardname = cardname.to_cardname unless Wagn::Cardname===cardname
       return nil unless cardname.valid_cardname?
-      raise "??? cn  #{cardname.inspect} #{opts.inspect}" if cardname.to_s=~/^\//
-      #warn "fetch #{cardname.inspect}"
       key = cardname.to_key
 
       card = Card.cache.read( key )
-      return nil if card && opts[:skip_virtual] && card.missing?
+      return nil if card && opts[:skip_virtual] && card.new_card?
 
       cacheable = card.nil?
       card ||= find_by_key_and_trash( key, false )
+      card ||= new :name=>cardname, :skip_type_lookup=>opts[:skip_virtual]  
       
-      Rails.logger.debug "fetch(#{cardname.inspect}) #{card.inspect}, #{cacheable}, #{opts.inspect}"# if debug
-      Rails.logger.debug "fetch(#{cardname.inspect}) #{Kernel.caller*"\n"}" if cardname == 'a+y'
+#      Rails.logger.debug "fetch(#{cardname.inspect}) #{card.inspect}, #{cacheable}, #{opts.inspect}"# if debug
+#      Rails.logger.debug "fetch(#{cardname.inspect}) #{Kernel.caller*"\n"}" if cardname == 'a+y'
 
-      card ||= new opts.merge(:name=>cardname, :missing=>true)
-      Rails.logger.debug "fetch 2(#{cardname.to_s}) #{card.inspect}, #{opts.inspect}"# if debug
 
       Card.cache.write( key, card ) if cacheable
-      Rails.logger.debug "fetch ret #{card.inspect}, #{opts.inspect}, #{card.missing? && (!card.virtual? || opts[:skip_virtual])}"
-      return nil if card.missing? && (opts[:skip_virtual] || !card.virtual?)
+#      Rails.logger.debug "fetch ret #{card.inspect}, #{opts.inspect}, #{card.new_card? && (!card.virtual? || opts[:skip_virtual])}"
+      return nil if card.new_card? && (opts[:skip_virtual] || !card.virtual?)
 
       card.after_fetch 
       card
     end
 
     def fetch_or_new cardname, opts={}      
-      fetch( cardname, opts ) || new( opts.merge(:name=>cardname, :missing=>true) )
+      fetch( cardname, opts ) || new( opts.merge(:name=>cardname) )
     end
     
     def fetch_or_create cardname, opts={}
       opts[:skip_virtual] ||= true
-      fetch( cardname, opts ) || create( opts.merge(:name=>cardname, :missing=>true) )
+      fetch( cardname, opts ) || create( opts.merge(:name=>cardname) )
     end
 
     def exists?(cardname)
@@ -77,8 +72,7 @@ module Wagn::Model::Fetch
     #Rails.logger.info "included(#{base}) S:#{self}"
     base.extend Wagn::Model::Fetch::ClassMethods
     base.class_eval {
-      attr_accessor :missing, :virtual
-      alias :missing? :missing
+      attr_accessor :virtual
       alias :virtual? :virtual
     }
   end

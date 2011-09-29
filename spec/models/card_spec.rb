@@ -187,7 +187,7 @@ describe Card do
 
   describe "created a virtual card when missing and has a template" do
     it "should be flagged as virtual" do
-      Card.new(:name=>'A+*last edited', :missing=>true).virtual?.should be_true
+      Card.new(:name=>'A+*last edited').virtual?.should be_true
     end
   end
 end

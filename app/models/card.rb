@@ -28,13 +28,12 @@ class Card < ActiveRecord::Base
   # INITIALIZATION METHODS
   
   def self.new(args={})
-    #Rails.logger.warn "card#new with args: #{args.inspect}"
+    #warn "card#new with args: #{args.inspect}"
     args ||= {}
     args = args.stringify_keys # evidently different from args.stringify_keys!
     if name = args['name']
       cardname = name.to_cardname
       if (card = Card.cache.read_local(cardname.key))
-         #( !args['missing'] && card = cardname.card(:skip_virtual=>true) )
         Rails.logger.debug "card#new found #{card.inspect}, #{args.inspect}"
         return card.send(:initialize, args)
       end
@@ -43,10 +42,10 @@ class Card < ActiveRecord::Base
   end
 
   def initialize(args={})
-    #Rails.logger.warn "card@initializing with args #{args.inspect}"
+#    warn "card@initializing with args #{args.inspect}" if args['name'] == 'Illiad+*to'
     #Rails.logger.warn "card@initializing with args #{args.inspect} Trace: #{Kernel.caller*"\n"}" if args['name'] == 'a+y'
-    typename, skip_type, skip_virtual =
-      %w{type skip_type_lookup skip_virtual id}.map { |a| args.delete(a) }
+    typename, skip_type_lookup, missing =
+      %w{type skip_type_lookup missing skip_virtual id}.map { |a| args.delete(a) }
 #    @explicit_content = args['content']
     args['name'] = args['name'].to_s
 
@@ -55,10 +54,10 @@ class Card < ActiveRecord::Base
     @attributes_cache = {}
     @new_record = true
     self.send :attributes=, args, false
-    Rails.logger.debug "card#initialize[#{name}] 2 #{args.inspect}, #{skip_type}, #{inspect}"
-    self.typecode = get_typecode(args['name'], typename, skip_virtual) unless args['typecode'] || skip_type
+#    Rails.logger.debug "card#initialize[#{name}] 2 #{args.inspect}, #{skip_type}, #{inspect}"
+    self.typecode = get_typecode(args['name'], typename, skip_type_lookup) unless args['typecode']
 
-    include_set_modules unless missing == true && virtual==false
+    include_set_modules unless skip_type_lookup
     Rails.logger.debug "card#initialize[#{name}] 4 #{inspect}"
     self
   end
@@ -81,18 +80,17 @@ private
     }
   end
 
-  def get_typecode(name, typename, skip_virtual)
-    begin ; return Cardtype.classname_for(typename) if typename
-    rescue Exception => e;
-#Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
-      self.broken_type = typename
+  def get_typecode(name, typename, skip_type_lookup)
+    if typename
+      begin ; return Cardtype.classname_for(typename)
+      rescue Exception => e; self.broken_type = typename end
     end
-    return 'Basic' if skip_virtual
+    return 'Basic' if skip_type_lookup
     t = if name && tmpl=self.template
-          self.virtual = tmpl.hard_template? && self.missing
+          self.virtual = tmpl.hard_template? && self.new_card?
           tmpl.typecode 
         else 'Basic' end
-    reset_patterns if self.typecode && self.typecode != t
+    reset_patterns if !self.typecode || self.typecode != t
     t
   end
 
@@ -130,7 +128,7 @@ private
 
   def after_save
     save_subcards
-    self.missing = self.virtual = false
+    self.virtual = false
     #cardname.card = self
     if self.typecode == 'Cardtype'
       Cardtype.cache.reset
@@ -254,7 +252,9 @@ private
   def key()         cardname.key           end
   def css_name()    cardname.css_name      end
 
-  def left()      Card[cardname.left_name]  end
+  def left()
+    Card[cardname.left_name]
+  end
   def right()     Card[cardname.tag_name]   end
   def pieces()    simple? ? [self] : ([self] + trunk.pieces + tag.pieces).uniq end
   def particles() cardname.particle_names.map{|name| Card.fetch name}          end
@@ -409,7 +409,7 @@ private
   # MISCELLANEOUS
   
   def to_s()  "#<#{self.class.name}[#{self.typename.to_s}]#{self.attributes['name']}>" end
-  def inspect()  "#<#{self.class.name}[#{self.typecode}]#{self.name}{m:#{missing}:v:#{virtual}:I:#{@set_mods_loaded}:#{object_id}}:#{@set_names.inspect}>" end
+  def inspect()  "#<#{self.class.name}[#{self.typecode}]#{self.name}{n:#{new_card?}v:#{virtual}:I:#{@set_mods_loaded}:#{object_id}}:#{@set_names.inspect}>" end
   def mocha_inspect()     to_s                                   end
 
 #  def trash

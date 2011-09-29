@@ -164,7 +164,8 @@ describe Card do
       User.as :wagbot do
         Card.create! :name=>"testsearch+*right+*content", :content=>'{"plus":"_self"}', :type => 'Search'
       end
-      c = Card.fetch_virtual("A+testsearch".to_cardname)
+      c = Card.fetch("A+testsearch".to_cardname)
+      assert c.virtual?
       c.typecode.should == 'Search'
       c.content.should ==  "{\"plus\":\"_self\"}"
     end

@@ -58,8 +58,8 @@ module Wagn::Model::Fetch
       Rails.logger.debug "fetch 2(#{cardname.to_s}) #{card.inspect}, #{opts.inspect}"# if debug
 
       Card.cache.write( key, card ) if cacheable
-      Rails.logger.debug "fetch ret #{card.inspect} #{!card.virtual? || opts[:skip_virtual]}"
-      return nil if card.missing? && opts[:skip_virtual] && !card.virtual?
+      Rails.logger.debug "fetch ret #{card.inspect}, #{opts.inspect}, #{card.missing? && (!card.virtual? || opts[:skip_virtual])}"
+      return nil if card.missing? && (opts[:skip_virtual] || !card.virtual?)
 
       card.after_fetch #unless opts[:skip_after_fetch]
       #card.after_fetch unless opts[:skip_after_fetch] || (opts[:skip_virtual] && card.missing?)

@@ -30,30 +30,16 @@ module Wagn::Model::Fetch
       raise "??? cn  #{cardname.inspect} #{opts.inspect}" if cardname.to_s=~/^\//
       #warn "fetch #{cardname.inspect}"
       key = cardname.to_key
-      cacheable = false
 
       card = Card.cache.read( key )
       return nil if card && opts[:skip_virtual] && card.missing?
 
-      cacheable = true if card.nil?
+      cacheable = card.nil?
       card ||= find_by_key_and_trash( key, false )
       
       Rails.logger.debug "fetch(#{cardname.inspect}) #{card.inspect}, #{cacheable}, #{opts.inspect}"# if debug
       Rails.logger.debug "fetch(#{cardname.inspect}) #{Kernel.caller*"\n"}" if cardname == 'a+y'
-=begin
-      if !opts[:skip_virtual]
-        if (!card || (card.missing? && card.virtual.nil?)) &&
-              card = fetch_virtual(cardname, card)
-          cacheable = true
-          card.reset_patterns
-          Rails.logger.info "fetch_virtual #{card.inspect}"
-        end
-      end
-=end
-      
-      #return nil if !card
-      #new_opts = {:name=>cardname, :missing=>true}
-      #new_opts.merge!(:missing=>:unreal, :skip_type_lookup=>true) if opts[:skip_virtual] 
+
       card ||= new opts.merge(:name=>cardname, :missing=>true)
       Rails.logger.debug "fetch 2(#{cardname.to_s}) #{card.inspect}, #{opts.inspect}"# if debug
 
@@ -61,13 +47,11 @@ module Wagn::Model::Fetch
       Rails.logger.debug "fetch ret #{card.inspect}, #{opts.inspect}, #{card.missing? && (!card.virtual? || opts[:skip_virtual])}"
       return nil if card.missing? && (opts[:skip_virtual] || !card.virtual?)
 
-      card.after_fetch #unless opts[:skip_after_fetch]
-      #card.after_fetch unless opts[:skip_after_fetch] || (opts[:skip_virtual] && card.missing?)
+      card.after_fetch 
       card
     end
 
-    def fetch_or_new cardname, opts={}
-      
+    def fetch_or_new cardname, opts={}      
       fetch( cardname, opts ) || new( opts.merge(:name=>cardname, :missing=>true) )
     end
     
@@ -75,53 +59,6 @@ module Wagn::Model::Fetch
       opts[:skip_virtual] ||= true
       fetch( cardname, opts ) || create( opts.merge(:name=>cardname, :missing=>true) )
     end
-    
-=begin
-    def extract_new_opts cardname, opts
-      opts = opts.clone
-      opts[:name] = cardname
-      [:skip_virtual, :skip_after_fetch].each {|key| opts.delete(key)}
-      opts
-    end
-    
-    def fetch_virtual(cardname, cached_card=nil)
-      #cardname = name.to_cardname
-      return nil unless cardname && cardname.junction?
-      cached_card = nil if cached_card && cached_card.trash
-      test_card = cached_card || Card.new(:name=>cardname, :missing=>true )
-       template=test_card.template(reset=true) and ht=template.hard_template? 
-      Rails.logger.debug "fetch_virtual(#{cardname.to_s}) #{test_card.name}, #{cardname.tag_name} >#{template}, #{ht}"
-      if ht
-      #if template=test_card.template(reset=true) and template.hard_template? 
-        args=[cardname, template.content, template.typecode]
-        Rails.logger.debug "fetch_virtual 2(#{cardname.to_s}) #{args.inspect}"
-        if cached_card
-          cached_attrs = [:cardname, :content, :typecode].map{|attr| cached_card.send(attr)}
-        Rails.logger.debug "fetch_virtual 3(#{cardname.to_s})cached: #{cached_attrs.inspect}"
-          return cached_card if args==cached_attrs
-        end
-        r=new_virtual cardname, template.content, template.typecode
-        #Rails.logger.debug "fetch_virtual(#{cardname.to_s}) new_v#{r.inspect}"; r
-      elsif System.ok?(:administrate_users) and cardname.tag_name == '*email'
-        return nil if ( content =
-                retrieve_extension_attribute(cardname.trunk_name, 'email') ).blank?
-
-        r=new_virtual cardname, content  
-      Rails.logger.debug "fetch_virtual adm-email(#{cardname.to_s}) email, #{content.inspect}, #{r.inspect}"; r
-      else
-        Rails.logger.debug "fetch_virtual(#{cardname.to_s}) nil"
-        return nil
-      end
-    end
-
-    def retrieve_extension_attribute( name, attr_name )
-      c = fetch(name.to_cardname) and e=c.extension and e.send(attr_name)
-    end
-
-    def new_virtual(cardname, content, type='Basic')
-      new(:name=>cardname, :virtual_content=>content, :typecode=>type, :missing=>true, :virtual=>true)
-    end
-=end
 
     def exists?(cardname)
       fetch(cardname, :skip_virtual=>true).present?

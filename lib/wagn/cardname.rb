@@ -34,13 +34,13 @@ module Wagn
       @key = if (@s = str.to_s).index(JOINT)
           @parts = @s.gsub(/\+$/,'+ ').split(JOINT)
           @simple = false
-          @parts.map(&:to_cardname).map(&:key) * JOINT  
+          @parts.map{|p| p.to_cardname.key } * JOINT  
         else
           @parts = [@s]
           @simple = true
           @s.blank? ? '' : generate_simple_key
         end
-      NAME2CARDNAME[@key] ||= self
+#      NAME2CARDNAME[@key] ||= self
       NAME2CARDNAME[@s] = self
       Rails.logger.debug "new:#{self.inspect}"; self
     end

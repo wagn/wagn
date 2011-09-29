@@ -45,7 +45,7 @@ class Card < ActiveRecord::Base
   def initialize(args={})
     #Rails.logger.warn "card@initializing with args #{args.inspect}"
     #Rails.logger.warn "card@initializing with args #{args.inspect} Trace: #{Kernel.caller*"\n"}" if args['name'] == 'a+y'
-    typename, skip_type =
+    typename, skip_type, skip_virtual =
       %w{type skip_type_lookup skip_virtual id}.map { |a| args.delete(a) }
 #    @explicit_content = args['content']
     args['name'] = args['name'].to_s
@@ -56,7 +56,7 @@ class Card < ActiveRecord::Base
     @new_record = true
     self.send :attributes=, args, false
     Rails.logger.debug "card#initialize[#{name}] 2 #{args.inspect}, #{skip_type}, #{inspect}"
-    self.typecode = get_typecode(args['name'], typename) unless args['typecode'] || skip_type
+    self.typecode = get_typecode(args['name'], typename, skip_virtual) unless args['typecode'] || skip_type
 
     include_set_modules unless missing == true && virtual==false
     Rails.logger.debug "card#initialize[#{name}] 4 #{inspect}"
@@ -81,14 +81,18 @@ private
     }
   end
 
-  def get_typecode(name, typename)
+  def get_typecode(name, typename, skip_virtual)
     begin ; return Cardtype.classname_for(typename) if typename
     rescue Exception => e;
 #Rails.logger.info "type initialize error #{e} Tr:#{e.backtrace*"\n"}"
       self.broken_type = typename
     end
-    t = (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
-    reset_patterns
+    return 'Basic' if skip_virtual
+    t = if name && tmpl=self.template
+          self.virtual = tmpl.hard_template? && self.missing
+          tmpl.typecode 
+        else 'Basic' end
+    reset_patterns if self.typecode && self.typecode != t
     t
   end
 
@@ -326,11 +330,14 @@ private
   # CONTENT / REVISIONS
 
   def content
-    if new_card?
+    Rails.logger.info "card.content #{inspect}"
+    r=if new_card? || virtual?
+      Rails.logger.info "card.content setting #{inspect}"
       setting('content','default')
     else
       cached_revision.content
     end
+    Rails.logger.info "card.content setting #{inspect} >#{r}"; r
   end
   
   def raw_content
@@ -402,7 +409,7 @@ private
   # MISCELLANEOUS
   
   def to_s()  "#<#{self.class.name}[#{self.typename.to_s}]#{self.attributes['name']}>" end
-  def inspect()  "#<#{self.class.name}[#{self.typecode}]#{self.name}{m:#{missing}:v:#{virtual}:I:#{@set_mods_loaded}:#{object_id}}>" end
+  def inspect()  "#<#{self.class.name}[#{self.typecode}]#{self.name}{m:#{missing}:v:#{virtual}:I:#{@set_mods_loaded}:#{object_id}}:#{@set_names.inspect}>" end
   def mocha_inspect()     to_s                                   end
 
 #  def trash

@@ -32,7 +32,7 @@ describe Flexmail do
     
     it "handles *email cards" do
       User.as(:wagbot) do
-        Card.create! :name => "mailconfig+*cc", :content => "[[Joe User+*email]]", :type=>'Pointer'
+        Card.create! :name => "mailconfig+*cc", :content => "{{Joe User+*email}}", :type=>'Pointer'
         Card.create! :name => "mailconfig+*bcc", :content => '{"name":"Joe Admin","append":"*email"}', :type=>'Search'
       end
       User.as(:joe_user) do
@@ -92,13 +92,14 @@ describe Flexmail do
       User.as :wagbot do
         System.base_url = 'http://a.com'
         c = Card.create(:name => "Banana Trigger", :content => "data content [[A]]", :type=>'Trigger')
-        #c = Card.create(:name => "Banana Trigger", :content => "data content [[A]]", :type=>'Trigger',
+        Rails.logger.info "testing point #{c.inspect}"
         assert c.id
         Card.update(c.id,
               :cards=> {'~plus~email'=>{:content=>'gary@gary.com'},
               '~plus~subject'=>{:type=>'Pointer', :content=>'[[default subject]]'},
               '~plus~attachment' => {:type=>'File', :content=>"notreally.txt" } })
         conf = Flexmail.configs_for(c).first
+        Rails.logger.info "testing point #{c.inspect}, #{conf.inspect}"
       
         conf[:to     ].should == "bob@bob.com"
         conf[:from   ].should == "gary@gary.com"

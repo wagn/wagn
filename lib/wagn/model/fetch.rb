@@ -5,9 +5,6 @@
 
 module Wagn::Model::Fetch
   mattr_accessor :cache
-  mattr_accessor :debug
-  #self.debug = false #lambda {|x| false }
-  self.debug = lambda {|name| name.to_key == '*all+*create' }
 
   module ClassMethods
 
@@ -28,18 +25,16 @@ module Wagn::Model::Fetch
       key = cardname.to_key
 
       card = Card.cache.read( key )
+      
       return nil if card && opts[:skip_virtual] && card.new_card?
 
       cacheable = card.nil?
       card ||= find_by_key_and_trash( key, false )
-      card ||= new :name=>cardname, :skip_type_lookup=>opts[:skip_virtual]  
-      
-#      Rails.logger.debug "fetch(#{cardname.inspect}) #{card.inspect}, #{cacheable}, #{opts.inspect}"# if debug
-#      Rails.logger.debug "fetch(#{cardname.inspect}) #{Kernel.caller*"\n"}" if cardname == 'a+y'
+      card ||= new :name=>cardname, :skip_type_lookup=>opts[:skip_virtual]
 
 
       Card.cache.write( key, card ) if cacheable
-#      Rails.logger.debug "fetch ret #{card.inspect}, #{opts.inspect}, #{card.new_card? && (!card.virtual? || opts[:skip_virtual])}"
+      #warn "fetch ret #{card.inspect}, #{opts.inspect}, #{card.new_card? && (!card.virtual? || opts[:skip_virtual])}" if key == 'pointer+*type'
       return nil if card.new_card? && (opts[:skip_virtual] || !card.virtual?)
 
       card.after_fetch 
@@ -60,9 +55,7 @@ module Wagn::Model::Fetch
     end
   end
 
-
   def after_fetch
-    Rails.logger.warn "after_fetch cardname: #{cardname.s}"
     include_set_modules
   end
 
@@ -73,7 +66,6 @@ module Wagn::Model::Fetch
     base.extend Wagn::Model::Fetch::ClassMethods
     base.class_eval {
       attr_accessor :virtual
-      alias :virtual? :virtual
     }
   end
 end

@@ -106,7 +106,7 @@ module Wagn::Model::TrackedAttributes
   end
   
   def set_content(new_content)  
-    return false unless self.id           
+    return false unless self.id 
     new_content ||= '' 
     new_content = WikiContent.clean_html!(new_content) if clean_html?
     clear_drafts if current_revision_id

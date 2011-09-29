@@ -28,7 +28,7 @@ class Card < ActiveRecord::Base
   # INITIALIZATION METHODS
   
   def self.new(args={})
-    #warn "card#new with args: #{args.inspect}"
+#    warn "card#new with args: #{args.inspect}" if args['name'] == 'Pointer+*type'
     args ||= {}
     args = args.stringify_keys # evidently different from args.stringify_keys!
     if name = args['name']
@@ -42,8 +42,7 @@ class Card < ActiveRecord::Base
   end
 
   def initialize(args={})
-#    warn "card@initializing with args #{args.inspect}" if args['name'] == 'Illiad+*to'
-    #Rails.logger.warn "card@initializing with args #{args.inspect} Trace: #{Kernel.caller*"\n"}" if args['name'] == 'a+y'
+      #Rails.logger.warn "card@initializing with args #{args.inspect} Trace: #{Kernel.caller*"\n"}" if args['name'] == 'a+y'
     typename, skip_type_lookup, missing =
       %w{type skip_type_lookup missing skip_virtual id}.map { |a| args.delete(a) }
 #    @explicit_content = args['content']
@@ -67,7 +66,7 @@ class Card < ActiveRecord::Base
   
   def reset_mods() @set_mods_loaded=false end
 
-private
+#private
 
   def get_attributes
     #was getting this from column defs.  very slow.
@@ -80,23 +79,30 @@ private
     }
   end
 
-  def get_typecode(name, typename, skip_type_lookup)
+  def get_typecode(name, typename=nil, skip_type_lookup=false)
+    @typecode_lookup_skipped=false
+    
     if typename
       begin ; return Cardtype.classname_for(typename)
       rescue Exception => e; self.broken_type = typename end
     end
-    return 'Basic' if skip_type_lookup
-    t = if name && tmpl=self.template
-          self.virtual = tmpl.hard_template? && self.new_card?
-          tmpl.typecode 
-        else 'Basic' end
-    reset_patterns if !self.typecode || self.typecode != t
+    
+    if skip_type_lookup
+      @typecode_lookup_skipped = true
+      return 'Basic' 
+    end
+
+    t = (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
+    reset_patterns #if !self.typecode || self.typecode != t
     t
   end
 
   def include_set_modules
+    if @typecode_lookup_skipped
+      self.typecode = get_typecode(name)
+    end
     unless @set_mods_loaded
-    Rails.logger.info "include_set_modules[#{name}] #{typecode} called" #{Kernel.caller[0..12]*"\n"}"
+      Rails.logger.info "include_set_modules[#{name}] #{typecode} called" #{Kernel.caller[0..12]*"\n"}"
       @set_mods_loaded=true
       singleton_class.include_type_module(typecode)  
     #else Rails.logger.info "include_set_modules[#{name}] #{typecode} loaded"
@@ -330,14 +336,7 @@ private
   # CONTENT / REVISIONS
 
   def content
-    Rails.logger.info "card.content #{inspect}"
-    r=if new_card? || virtual?
-      Rails.logger.info "card.content setting #{inspect}"
-      setting('content','default')
-    else
-      cached_revision.content
-    end
-    Rails.logger.info "card.content setting #{inspect} >#{r}"; r
+    new_card? ? template(reset=true).content : cached_revision.content
   end
   
   def raw_content

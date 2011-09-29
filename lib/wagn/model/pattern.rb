@@ -26,11 +26,9 @@ module Wagn::Model
       Rails.logger.info "patterns[#{name}, #{inspect}] >> #{@patterns.map(&:set_name).inspect}"; @patterns
     end
     def set_names()
-#      warn "set names called" if name == 'Illiad+*to'
       @set_names ||= patterns.map(&:set_name)   end
     def reset_patterns()
-#      warn "reset patterns called" if name == 'Illiad+*to'
-      @set_mods_loaded = @junction_only = @patterns = @set_names =nil
+      @set_mods_loaded = @junction_only = @patterns = @method_keys = @set_names =nil
       Rails.logger.debug "reset_patterns[#{name}] #{inspect}"
     end
     def real_set_names()

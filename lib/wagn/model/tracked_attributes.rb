@@ -28,38 +28,26 @@ module Wagn::Model::TrackedAttributes
   
   protected 
   def set_name(newname)
-    #Rails.logger.debug "set_newname(#{newname.inspect}) ON:#{self.name_without_tracking}"
-    #warn "set_name<#{self}>(#{newname})" # #{self.name_without_tracking}"
     @old_cardname = cardname
     if (@old_name = self.name_without_tracking) != newname.to_s
       @cardname, name_without_tracking =
          Wagn::Cardname===newname ? [newname, newname.to_s] :
                                     [newname.to_cardname, newname]
       write_attribute :key, k=cardname.to_key
-      write_attribute :name, name_without_tracking
-      #Rails.logger.debug "set_newname changed #{self.name_without_tracking.inspect}, #{cardname.inspect}, #{k.inspect}"
+      write_attribute :name, name_without_tracking # what does this do?
     else return end
 
-    raise "No name ???" if name.blank? # can we set a null name?
+    raise "No name ???" if name.blank? # this should not pass validation.
     Wagn::Cache.expire_card(cardname.to_key)
 
-    #Rails.logger.debug "create trunk? #{@cardname.junction?}, #{@cardname.s}"
     if @cardname.junction?
-      Rails.logger.debug "create trunk #{@cardname.left_name.to_s} and tag #{@cardname.tag_name.to_s}"
-      if !new_card? && @cardname.to_key != @old_cardname.to_key
-        # move the current card out of the way, in case the new name will require
-        # re-creating a card with the current name, ie.  A -> A+B
-        Wagn::Cache.expire_card(@old_cardname.to_key)
-        tmp_name = "tmp:" + UUID.new.generate      
-        connection.update %{update cards set #{quoted_comma_pair_list(connection, {:name=>"'#{tmp_name}'",:key=>"'#{tmp_name}'"})} where id=#{id}}
+      [:trunk, :tag].each do |side|
+        sidename = @cardname.send "#{side}_name"
+        sidecard = Card.fetch sidename, :skip_virtual=>true
+        old_name_in_way = (sidecard && sidecard.id==self.id) # eg, renaming A to A+B
+        suspend_name(sidename) if old_name_in_way
+        self.send "#{side}=", (!sidecard || old_name_in_way ? Card.new(:name=>sidename) : sidecard)
       end
-      tk=self.trunk = Card.fetch_or_create( @cardname.left_name)
-      tg=self.tag   = Card.fetch_or_create( @cardname.tag_name )
-      # if T is renamed to T+G or G is renamed to T+G we could find T+G, for T or G
-      tk=self.trunk = Card.new(:name=>@cardname.trunk_name) if self.id == self.trunk.id
-      tg=Card.new(:name=>@cardname.tag_name) if self.id == self.tag.id
-      Rails.logger.debug "created trunk #{inspect}:I:#{self.id} #{tk.inspect}:I:#{self.trunk.id} and tag #{tg.inspect}:I:#{self.tag.id} (#{@cardname.left_name.to_s}, #{@cardname.tag_name.to_s})"
-      #Rails.logger.info "tag/trunk #{self.inspect}, #{tk.id}, #{tg.id} is self" if self.id == tk.id or self.id == tg.id
     else
       self.trunk = self.tag = nil
     end         
@@ -80,6 +68,15 @@ module Wagn::Model::TrackedAttributes
     Wagn::Cache.expire_card(@old_cardname.to_key)
     @name_changed = true          
     @name_or_content_changed=true
+  end
+
+
+  def suspend_name(name)
+    # move the current card out of the way, in case the new name will require
+    # re-creating a card with the current name, ie.  A -> A+B
+    Wagn::Cache.expire_card(name.to_cardname.to_key)
+    tmp_name = "tmp:" + UUID.new.generate      
+    connection.update %{update cards set #{quoted_comma_pair_list(connection, {:name=>"'#{tmp_name}'",:key=>"'#{tmp_name}'"})} where id=#{self.id}}    
   end
 
   def set_typecode(new_typecode)

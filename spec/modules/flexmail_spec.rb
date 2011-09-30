@@ -32,7 +32,7 @@ describe Flexmail do
     
     it "handles *email cards" do
       User.as(:wagbot) do
-        Card.create! :name => "mailconfig+*cc", :content => "{{Joe User+*email}}", :type=>'Pointer'
+        Card.create! :name => "mailconfig+*cc", :content => "[[Joe User+*email]]", :type=>'Pointer'
         Card.create! :name => "mailconfig+*bcc", :content => '{"name":"Joe Admin","append":"*email"}', :type=>'Search'
       end
       User.as(:joe_user) do

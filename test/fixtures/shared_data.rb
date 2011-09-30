@@ -10,6 +10,7 @@ class SharedData
   
   def self.add_test_data
     ::User.current_user = :wagbot
+    Wagn::Cache.reset_global
 
     joe_user = ::User.create! :login=>"joe_user",:email=>'joe@user.com', :status => 'active', :password=>'joe_pass', :password_confirmation=>'joe_pass', :invite_sender=>User[:wagbot]
     Card.create! :typecode=>'User', :name=>"Joe User", :extension=>joe_user, :content => "I'm number two"    

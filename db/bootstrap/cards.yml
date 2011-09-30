@@ -247,10 +247,10 @@ cards_040:
   reader_type: 
   name: "*read+*right+*default"
   read_rule_class: "*all plus"
-  created_at: 2011-07-19 18:22:11.889917 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 318
   indexed_content: "'read':1A 'right':2A 'default':3A"
-  updated_at: 2011-07-20 10:08:40.252699 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'read':1 'right':2 'default':3"
   trash: false
   codename: 
@@ -259,7 +259,7 @@ cards_040:
   pattern_keys: 
   id: 536
   current_revision_id: 5781
-  created_by: 3
+  created_by: 1
   trunk_id: 530
   extension_type: 
   updated_by: 1
@@ -328,10 +328,10 @@ cards_203:
   reader_type: Role
   name: "*watchers"
   read_rule_class: "*all"
-  created_at: 2009-06-18 10:56:06.393938 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 
   indexed_content: "'get':7 'card':3,13,15 'name':25 'show':4 'type':16 'chang':10 'email':8 'notif':22 'right':23 'watcher':1A 'www.wagn.org':18 '/wagn/notification|learn':19 'www.wagn.org/wagn/notification':17"
-  updated_at: 2010-11-01 17:46:26.451549 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'watcher':1"
   trash: false
   codename: 
@@ -340,7 +340,7 @@ cards_203:
   pattern_keys: 
   id: 219
   current_revision_id: 3754
-  created_by: 5
+  created_by: 1
   trunk_id: 
   extension_type: 
   updated_by: 1
@@ -436,10 +436,10 @@ cards_311:
   reader_type: Role
   name: Role+*type+*content
   read_rule_class: "*all plus"
-  created_at: 2010-04-15 18:42:37.635067 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 317
   indexed_content: "'name':9 'role':1A,10 'self':8 'type':2A 'member':11 'account':5 'content':3A 'descript':4"
-  updated_at: 2010-04-15 18:42:37.635067 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'role':1 'type':2 'content':3"
   trash: false
   codename: 
@@ -598,10 +598,10 @@ cards_312:
   reader_type: Role
   name: HTML+*type+*default
   read_rule_class: "*all plus"
-  created_at: 2009-05-21 11:52:53.468876 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 318
   indexed_content: "'html':1A 'type':2A 'default':3A"
-  updated_at: 2010-04-15 18:42:30.770676 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'html':1 'type':2 'default':3"
   trash: false
   codename: 
@@ -610,7 +610,7 @@ cards_312:
   pattern_keys: 
   id: 201
   current_revision_id: 2403
-  created_by: 4
+  created_by: 1
   trunk_id: 319
   extension_type: 
   updated_by: 1
@@ -706,10 +706,10 @@ cards_043:
   reader_type: 
   name: "*create+*right+*default"
   read_rule_class: "*all plus"
-  created_at: 2011-07-19 18:08:56.479355 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 318
   indexed_content: "'creat':1A 'right':2A 'default':3A"
-  updated_at: 2011-07-20 10:08:39.544660 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'creat':1 'right':2 'default':3"
   trash: false
   codename: 
@@ -718,7 +718,7 @@ cards_043:
   pattern_keys: 
   id: 534
   current_revision_id: 5779
-  created_by: 3
+  created_by: 1
   trunk_id: 526
   extension_type: 
   updated_by: 1
@@ -922,10 +922,10 @@ cards_070:
   reader_type: 
   name: "*all+*create"
   read_rule_class: "*all plus"
-  created_at: 2011-07-08 21:22:23.215657 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 478
   indexed_content: "'sign':4 'anyon':3 'creat':2A"
-  updated_at: 2011-07-08 21:22:23.215657 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'creat':2"
   trash: false
   codename: 
@@ -1003,10 +1003,10 @@ cards_340:
   reader_type: Role
   name: "*type"
   read_rule_class: "*all"
-  created_at: 2009-12-02 16:02:48.740235 -07:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 
   indexed_content: "'type':1A"
-  updated_at: 2009-12-02 16:03:00.696917 -07:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'type':1"
   trash: false
   codename: 
@@ -1354,10 +1354,10 @@ cards_046:
   reader_type: 
   name: "*read+*right"
   read_rule_class: "*all plus"
-  created_at: 2011-07-19 11:50:19.455216 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 260
   indexed_content: "'read':1A 'self':4 'right':2A,3"
-  updated_at: 2011-07-19 11:50:19.455216 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'read':1 'right':2"
   trash: false
   codename: 
@@ -1366,10 +1366,10 @@ cards_046:
   pattern_keys: 
   id: 530
   current_revision_id: 5775
-  created_by: 3
+  created_by: 1
   trunk_id: 479
   extension_type: 
-  updated_by: 3
+  updated_by: 1
   settings: 
   key: "*read+*right"
   extension_id: 
@@ -1867,10 +1867,10 @@ cards_048:
   reader_type: 
   name: "*create+*right"
   read_rule_class: "*all plus"
-  created_at: 2011-07-19 11:49:18.834690 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 260
   indexed_content: "'self':4 'creat':1A 'right':2A,3"
-  updated_at: 2011-07-19 11:49:18.834690 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'creat':1 'right':2"
   trash: false
   codename: 
@@ -1879,10 +1879,10 @@ cards_048:
   pattern_keys: 
   id: 526
   current_revision_id: 5770
-  created_by: 3
+  created_by: 1
   trunk_id: 478
   extension_type: 
-  updated_by: 3
+  updated_by: 1
   settings: 
   key: "*create+*right"
   extension_id: 
@@ -2245,10 +2245,10 @@ cards_371:
   reader_type: Role
   name: "*title"
   read_rule_class: "*all"
-  created_at: 2009-04-06 14:11:12.920280 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 
   indexed_content: "'titl':1A 'wagn':3"
-  updated_at: 2009-04-08 10:23:29.112262 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'titl':1"
   trash: false
   codename: 
@@ -2260,7 +2260,7 @@ cards_371:
   created_by: 1
   trunk_id: 
   extension_type: 
-  updated_by: 3
+  updated_by: 1
   settings: 
   key: "*title"
   extension_id: 
@@ -2488,10 +2488,10 @@ cards_372:
   reader_type: Role
   name: Anyone Signed In
   read_rule_class: "*all"
-  created_at: 2009-04-06 14:11:12.920280 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 
   indexed_content: "'sign':2A 'anyon':1A"
-  updated_at: 2009-04-06 14:11:12.920280 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'sign':2 'anyon':1"
   trash: false
   codename: 
@@ -2758,10 +2758,10 @@ cards_292:
   reader_type: Role
   name: "*watchers+*right+*default"
   read_rule_class: "*all plus"
-  created_at: 2009-06-18 10:56:07.674011 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 318
   indexed_content: "'right':2A 'default':3A 'watcher':1A"
-  updated_at: 2010-04-15 18:42:59.576317 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'right':2 'default':3 'watcher':1"
   trash: false
   codename: 
@@ -2770,7 +2770,7 @@ cards_292:
   pattern_keys: 
   id: 220
   current_revision_id: 2609
-  created_by: 5
+  created_by: 1
   trunk_id: 269
   extension_type: 
   updated_by: 1
@@ -3298,10 +3298,10 @@ cards_377:
   reader_type: Role
   name: Administrator
   read_rule_class: "*all"
-  created_at: 2009-04-06 14:11:12.920280 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 
   indexed_content: "'administr':1A"
-  updated_at: 2009-04-06 14:11:12.920280 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'administr':1"
   trash: false
   codename: 
@@ -3379,10 +3379,10 @@ cards_378:
   reader_type: Role
   name: Anyone
   read_rule_class: "*all"
-  created_at: 2009-04-06 14:11:12.920280 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 
   indexed_content: "'anyon':1A"
-  updated_at: 2009-04-06 14:11:12.920280 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'anyon':1"
   trash: false
   codename: 
@@ -3487,10 +3487,10 @@ cards_001:
   reader_type: 
   name: "*email+*right+*read"
   read_rule_class: "*all plus"
-  created_at: 2011-09-30 10:57:12.165951 -06:00
+  created_at: 2011-09-30 12:11:35.600791 -06:00
   tag_id: 479
   indexed_content: 
-  updated_at: 2011-09-30 10:57:12.165951 -06:00
+  updated_at: 2011-09-30 12:11:35.600791 -06:00
   indexed_name: 
   trash: false
   codename: 
@@ -3541,10 +3541,10 @@ cards_002:
   reader_type: 
   name: "*email+*right+*content"
   read_rule_class: "*all plus"
-  created_at: 2011-09-30 10:57:12.063863 -06:00
+  created_at: 2011-09-30 12:11:35.466552 -06:00
   tag_id: 317
   indexed_content: 
-  updated_at: 2011-09-30 10:57:12.063863 -06:00
+  updated_at: 2011-09-30 12:11:35.466552 -06:00
   indexed_name: 
   trash: false
   codename: 
@@ -3568,10 +3568,10 @@ cards_003:
   reader_type: 
   name: "*email+*right"
   read_rule_class: "*all plus"
-  created_at: 2011-09-30 10:57:12.018312 -06:00
+  created_at: 2011-09-30 12:11:35.434235 -06:00
   tag_id: 260
   indexed_content: 
-  updated_at: 2011-09-30 10:57:12.018312 -06:00
+  updated_at: 2011-09-30 12:11:35.434235 -06:00
   indexed_name: 
   trash: false
   codename: 
@@ -3622,10 +3622,10 @@ cards_004:
   reader_type: 
   name: "*email"
   read_rule_class: "*all"
-  created_at: 2011-09-30 10:57:11.789071 -06:00
+  created_at: 2011-09-30 12:11:35.393857 -06:00
   tag_id: 
   indexed_content: 
-  updated_at: 2011-09-30 10:57:11.789071 -06:00
+  updated_at: 2011-09-30 12:11:35.393857 -06:00
   indexed_name: 
   trash: false
   codename: 
@@ -3946,10 +3946,10 @@ cards_302:
   reader_type: Role
   name: "*type+*right+*content"
   read_rule_class: "*all plus"
-  created_at: 2009-12-02 16:02:48.832241 -07:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 317
   indexed_content: "'self':5 'type':1A,4 'right':2A 'content':3A"
-  updated_at: 2010-04-15 18:42:45.235500 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'type':1 'right':2 'content':3"
   trash: false
   codename: 
@@ -4108,10 +4108,10 @@ cards_303:
   reader_type: Role
   name: "*type+*right"
   read_rule_class: "*all plus"
-  created_at: 2010-04-15 18:42:44.959484 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 260
   indexed_content: "'type':1A 'right':2A"
-  updated_at: 2010-04-15 18:42:44.959484 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'type':1 'right':2"
   trash: false
   codename: 
@@ -5026,10 +5026,10 @@ cards_252:
   reader_type: Role
   name: Wagn Bot
   read_rule_class: "*all"
-  created_at: 2009-04-06 14:11:12.920280 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 
   indexed_content: "'bot':2A 'etc':23 'card':12,22 'link':18 'make':8 'sign':16 'wagn':1A 'autom':10 'creat':13 'renam':21 'updat':11,19 'someon':15 'account':6"
-  updated_at: 2010-04-19 14:17:59.130526 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'bot':2 'wagn':1"
   trash: false
   codename: 
@@ -5041,7 +5041,7 @@ cards_252:
   created_by: 1
   trunk_id: 
   extension_type: User
-  updated_by: 3
+  updated_by: 1
   settings: 
   key: wagn_bot
   extension_id: 1
@@ -5107,10 +5107,10 @@ cards_090:
   reader_type: 
   name: "*create"
   read_rule_class: "*all"
-  created_at: 2011-07-08 21:22:21.095536 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 
   indexed_content: "'creat':1A"
-  updated_at: 2011-07-08 21:22:21.095536 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'creat':1"
   trash: false
   codename: 
@@ -5269,10 +5269,10 @@ cards_334:
   reader_type: Role
   name: User+*type
   read_rule_class: "*all plus"
-  created_at: 2009-12-10 14:35:53.348457 -07:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 266
   indexed_content: "'self':4 'type':2A,3 'user':1A"
-  updated_at: 2009-12-10 14:35:53.348457 -07:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'type':2 'user':1"
   trash: false
   codename: 
@@ -5281,10 +5281,10 @@ cards_334:
   pattern_keys: 
   id: 294
   current_revision_id: 3082
-  created_by: 4
+  created_by: 1
   trunk_id: 4
   extension_type: 
-  updated_by: 4
+  updated_by: 1
   settings: 
   key: user+*type
   extension_id: 
@@ -5593,10 +5593,10 @@ cards_254:
   reader_type: Role
   name: "*all+*default"
   read_rule_class: "*all plus"
-  created_at: 2009-04-06 14:11:12.920280 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 318
   indexed_content: "'default':2A"
-  updated_at: 2010-04-17 12:09:07.634862 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'default':2"
   trash: false
   codename: 
@@ -5863,10 +5863,10 @@ cards_255:
   reader_type: Role
   name: "*content+*right"
   read_rule_class: "*all plus"
-  created_at: 2010-04-16 21:15:06.887799 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 260
   indexed_content: "'right':2A 'content':1A"
-  updated_at: 2010-04-16 21:15:06.887799 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'right':2 'content':1"
   trash: false
   codename: 
@@ -5875,10 +5875,10 @@ cards_255:
   pattern_keys: 
   id: 358
   current_revision_id: 3260
-  created_by: 4
+  created_by: 1
   trunk_id: 317
   extension_type: 
-  updated_by: 4
+  updated_by: 1
   settings: 
   key: "*content+*right"
   extension_id: 
@@ -5998,10 +5998,10 @@ cards_067:
   reader_type: 
   name: "*all plus+*read"
   read_rule_class: "*all plus"
-  created_at: 2011-07-08 21:22:23.575678 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 479
   indexed_content: "'left':4 'plus':2A 'read':3A"
-  updated_at: 2011-07-08 21:22:23.575678 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'plus':2 'read':3"
   trash: false
   codename: 
@@ -6052,10 +6052,10 @@ cards_337:
   reader_type: Role
   name: "*watchers+*right"
   read_rule_class: "*all plus"
-  created_at: 2009-12-02 16:02:49.844298 -07:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 260
   indexed_content: "'self':5 'right':3A,4 'watcher':1A"
-  updated_at: 2009-12-08 12:25:14.419319 -07:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'right':3 'watcher':1"
   trash: false
   codename: 
@@ -6106,10 +6106,10 @@ cards_256:
   reader_type: Role
   name: "*default+*right"
   read_rule_class: "*all plus"
-  created_at: 2010-04-16 21:08:50.033326 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 260
   indexed_content: "'right':2A 'default':1A"
-  updated_at: 2010-04-16 21:08:50.033326 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'right':2 'default':1"
   trash: false
   codename: 
@@ -6118,10 +6118,10 @@ cards_256:
   pattern_keys: 
   id: 356
   current_revision_id: 3253
-  created_by: 4
+  created_by: 1
   trunk_id: 318
   extension_type: 
-  updated_by: 4
+  updated_by: 1
   settings: 
   key: "*default+*right"
   extension_id: 
@@ -6187,10 +6187,10 @@ cards_068:
   reader_type: 
   name: "*all+*read"
   read_rule_class: "*all plus"
-  created_at: 2011-07-08 21:22:23.395667 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 479
   indexed_content: "'read':2A 'anyon':3"
-  updated_at: 2011-07-08 21:22:23.395667 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'read':2"
   trash: false
   codename: 
@@ -6484,10 +6484,10 @@ cards_284:
   reader_type: Role
   name: by name+*right+*content
   read_rule_class: "*all plus"
-  created_at: 2009-04-25 12:29:02.628058 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 317
   indexed_content: "'name':2A,9 'self':7 'sort':8 'found':5 'right':3A 'content':4A"
-  updated_at: 2010-04-15 18:43:06.953778 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'name':2 'right':3 'content':4"
   trash: false
   codename: 
@@ -6496,7 +6496,7 @@ cards_284:
   pattern_keys: 
   id: 185
   current_revision_id: 2266
-  created_by: 4
+  created_by: 1
   trunk_id: 336
   extension_type: 
   updated_by: 1
@@ -6619,10 +6619,10 @@ cards_285:
   reader_type: Role
   name: by name+*right
   read_rule_class: "*all plus"
-  created_at: 2010-04-15 18:43:06.745766 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 260
   indexed_content: "'name':2A 'right':3A"
-  updated_at: 2010-04-15 18:43:06.745766 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'name':2 'right':3"
   trash: false
   codename: 
@@ -7078,10 +7078,10 @@ cards_021:
   reader_type: 
   name: "*rstar"
   read_rule_class: "*all"
-  created_at: 2011-07-08 21:22:20.935527 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 
   indexed_content: "'right':2 'rstar':1A 'complet':3"
-  updated_at: 2011-08-16 13:30:35.661931 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'rstar':1"
   trash: false
   codename: 
@@ -7132,10 +7132,10 @@ cards_022:
   reader_type: 
   name: "*all plus"
   read_rule_class: "*all"
-  created_at: 2011-07-08 21:22:20.339493 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 
   indexed_content: "'left':3 'plus':2A"
-  updated_at: 2011-08-16 13:30:35.129900 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'plus':2"
   trash: false
   codename: 
@@ -7402,10 +7402,10 @@ cards_131:
   reader_type: Role
   name: Cardtype+*type+*content
   read_rule_class: "*all plus"
-  created_at: 2009-04-06 14:11:12.920280 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 317
   indexed_content: "'add':8 '/new':5 'card':11,14 'name':10,13,17 'self':6,9,12 'type':2A,15 'cardtyp':1A 'content':3A 'linknam':7 'descript':4"
-  updated_at: 2011-03-19 22:06:30.277977 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'type':2 'cardtyp':1 'content':3"
   trash: false
   codename: 
@@ -7417,7 +7417,7 @@ cards_131:
   created_by: 1
   trunk_id: 320
   extension_type: 
-  updated_by: 4
+  updated_by: 1
   settings: 
   key: cardtype+*type+*content
   extension_id: 
@@ -7699,10 +7699,10 @@ cards_052:
   reader_type: Role
   name: Account Request+*type
   read_rule_class: "*all plus"
-  created_at: 2010-04-15 18:42:38.323106 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 266
   indexed_content: "'self':5 'type':3A,4 'account':1A 'request':2A"
-  updated_at: 2011-07-15 15:40:20.416434 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'type':3 'account':1 'request':2"
   trash: false
   codename: 
@@ -7714,7 +7714,7 @@ cards_052:
   created_by: 1
   trunk_id: 12
   extension_type: 
-  updated_by: 3
+  updated_by: 1
   settings: 
   key: account_request+*type
   extension_id: 
@@ -8023,10 +8023,10 @@ cards_323:
   reader_type: Role
   name: "*all"
   read_rule_class: "*all"
-  created_at: 2009-12-02 16:02:55.316610 -07:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 
   indexed_content: ""
-  updated_at: 2009-12-17 11:52:04.731074 -07:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: ""
   trash: false
   codename: 
@@ -8644,10 +8644,10 @@ cards_082:
   reader_type: 
   name: Cardtype+description+*type plus right
   read_rule_class: "*all plus"
-  created_at: 2011-07-08 21:22:22.055591 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 262
   indexed_content: "'left':6,8 'plus':4A 'type':3A,7 'right':5A,9,10 'cardtyp':1A 'descript':2A"
-  updated_at: 2011-07-08 21:22:22.055591 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'plus':4 'type':3 'right':5 'cardtyp':1 'descript':2"
   trash: false
   codename: 
@@ -9103,10 +9103,10 @@ cards_246:
   reader_type: Role
   name: HTML+*type
   read_rule_class: "*all plus"
-  created_at: 2010-04-15 18:42:29.262590 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 266
   indexed_content: "'html':1A 'type':2A"
-  updated_at: 2010-04-20 16:39:20.743702 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'html':1 'type':2"
   trash: false
   codename: 
@@ -9346,10 +9346,10 @@ cards_273:
   reader_type: Role
   name: "*members+*right+*content"
   read_rule_class: "*all plus"
-  created_at: 2009-04-06 14:11:12.920280 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 317
   indexed_content: "'name':8 'self':6 'sort':7 'right':2A 'member':1A,4 'content':3A"
-  updated_at: 2010-04-15 18:43:15.162246 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'right':2 'member':1 'content':3"
   trash: false
   codename: 
@@ -9373,10 +9373,10 @@ cards_247:
   reader_type: Role
   name: Cardtype+*type
   read_rule_class: "*all plus"
-  created_at: 2010-04-15 18:42:31.166698 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 266
   indexed_content: "'type':2A 'cardtyp':1A"
-  updated_at: 2010-04-20 16:39:20.555691 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'type':2 'cardtyp':1"
   trash: false
   codename: 
@@ -9589,10 +9589,10 @@ cards_274:
   reader_type: Role
   name: "*members+*right"
   read_rule_class: "*all plus"
-  created_at: 2010-04-15 18:43:14.758223 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 260
   indexed_content: "'right':2A 'member':1A"
-  updated_at: 2010-04-15 18:43:14.758223 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'right':2 'member':1"
   trash: false
   codename: 
@@ -9616,10 +9616,10 @@ cards_248:
   reader_type: Role
   name: Role+*type
   read_rule_class: "*all plus"
-  created_at: 2010-04-15 18:42:35.198928 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 266
   indexed_content: "'role':1A 'type':2A"
-  updated_at: 2010-04-20 16:39:20.175669 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'role':1 'type':2"
   trash: false
   codename: 
@@ -10021,10 +10021,10 @@ cards_195:
   reader_type: Role
   name: "*default"
   read_rule_class: "*all"
-  created_at: 2010-04-15 18:42:28.870567 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 
   indexed_content: "'default':1A"
-  updated_at: 2011-02-09 14:29:15.420275 -07:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'default':1"
   trash: false
   codename: 
@@ -10102,10 +10102,10 @@ cards_089:
   reader_type: 
   name: "*read"
   read_rule_class: "*all"
-  created_at: 2011-07-08 21:22:21.151539 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 
   indexed_content: "'read':1A"
-  updated_at: 2011-07-08 21:22:21.151539 -06:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'read':1"
   trash: false
   codename: 
@@ -10129,10 +10129,10 @@ cards_196:
   reader_type: Role
   name: "*content"
   read_rule_class: "*all"
-  created_at: 2010-04-15 18:42:28.310535 -06:00
+  created_at: 2011-09-30 11:59:58 -06:00
   tag_id: 
   indexed_content: "'content':1A"
-  updated_at: 2011-02-09 14:29:14.612229 -07:00
+  updated_at: 2011-09-30 11:59:58 -06:00
   indexed_name: "'content':1"
   trash: false
   codename: 

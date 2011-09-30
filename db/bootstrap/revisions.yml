@@ -2056,9 +2056,9 @@ revisions_379:
   id: "5581"
   content: "2"
 revisions_189: 
-  created_at: 2011-09-30 10:57:12.02228
+  created_at: 2011-09-30 12:11:35.438271
   card_id: "563"
-  updated_at: 2011-09-30 10:57:12.02228
+  updated_at: 2011-09-30 12:11:35.438271
   created_by: "1"
   id: "5968"
   content: "{\"right\":\"_self\"}"
@@ -2245,9 +2245,9 @@ revisions_243:
     <p>{{+*type+by name}}</p>
     </blockquote>
 revisions_053: 
-  created_at: 2011-09-30 10:57:11.798269
+  created_at: 2011-09-30 12:11:35.402523
   card_id: "562"
-  updated_at: 2011-09-30 10:57:11.798269
+  updated_at: 2011-09-30 12:11:35.402523
   created_by: "1"
   id: "5967"
   content: ""
@@ -4138,9 +4138,9 @@ revisions_060:
   id: "1993"
   content: ""
 revisions_203: 
-  created_at: 2011-09-30 10:57:12.067802
+  created_at: 2011-09-30 12:11:35.470213
   card_id: "564"
-  updated_at: 2011-09-30 10:57:12.067802
+  updated_at: 2011-09-30 12:11:35.470213
   created_by: "1"
   id: "5969"
   content: ""
@@ -4266,9 +4266,9 @@ revisions_063:
     [[*plusses]]
     [[*community]]
 revisions_206: 
-  created_at: 2011-09-30 10:57:12.169818
+  created_at: 2011-09-30 12:11:35.604655
   card_id: "565"
-  updated_at: 2011-09-30 10:57:12.169818
+  updated_at: 2011-09-30 12:11:35.604655
   created_by: "1"
   id: "5970"
   content: "[[Administrator]]"

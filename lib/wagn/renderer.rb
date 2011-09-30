@@ -228,7 +228,7 @@ module Wagn
     end
     
     def canonicalize_view( view )
-      (!view.blank? and v=VIEW_ALIASES[view.to_sym]) ? v : view
+      v=VIEW_ALIASES[view.to_sym] ? v : view
     end
   
   

@@ -28,7 +28,7 @@ class Wagn::Renderer
           end
         end +
         setting_groups[group].map do |setting_name| 
-          rule_card = Card.fetch_or_new "#{card.name}+#{setting_name}", :skip_defaults=>true, :skip_virtual=>true
+          rule_card = Card.fetch_or_new "#{card.name}+#{setting_name}", :skip_virtual=>true
           content_tag(:tr, :class=>'rule-slot', :position=>generate_position) do
             process_inclusion(rule_card, :view=>:rule)
           end

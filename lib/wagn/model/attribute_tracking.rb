@@ -71,6 +71,8 @@ module Wagn::Model::AttributeTracking
         end
 
              #Rails.logger.debug "#{field}= "+val.to_s
+          #def #{field}_before_type_cast() #{field} end
+          
         class_eval (code = %{
           def #{field}_with_tracking=(val)
              return if (!self.new_record? && self.#{field} == val)
@@ -78,10 +80,6 @@ module Wagn::Model::AttributeTracking
           end
           alias_method_chain :#{field}=, :tracking
 
-          def #{field}_before_type_cast
-            #{field}
-          end
-          
           def #{field}_with_tracking
             r=updates.for?(:#{field}) ? updates.for(:#{field}) : #{field}_without_tracking
           end

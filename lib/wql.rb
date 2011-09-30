@@ -1,4 +1,4 @@
-  class Wql
+class Wql
   ATTRIBUTES = {
     :basic      =>  %w{ name type content id key extension_type extension_id updated_by trunk_id tag_id },
     :custom     =>  %w{ edited_by editor_of edited last_editor_of last_edited_by creator_of created_by } +
@@ -32,14 +32,14 @@
   def sql()                @sql ||= @cs.to_sql            end
   
   def run
-    rows = ActiveRecord::Base.connection.select_all( sql )
+      rows = ActiveRecord::Base.connection.select_all( sql )
     case (query[:return] || :card).to_sym
     when :card
       rows.map do |row|
         card=
           if query[:prepend] || query[:append]
             cardname = [query[:prepend], row['name'], query[:append]].compact.join('+')
-            Card.fetch_or_new cardname, :skip_defaults=>true
+            Card.fetch_or_new cardname
           else
             Card.fetch row['name'], :skip_virtual=>true
           end

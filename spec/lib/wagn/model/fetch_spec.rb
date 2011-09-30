@@ -11,7 +11,7 @@ describe Card do
 
     it "returns nil and caches missing cards" do
       Card.fetch("Zork").should be_nil
-      Card.cache.read("zork").missing.should be_true
+      Card.cache.read("zork").new_card?.should be_true
       Card.fetch("Zork").should be_nil
     end
 
@@ -30,13 +30,17 @@ describe Card do
 
     it "returns virtual cards and caches them as missing" do
       User.as(:wagbot)
+      # FIXME: put this card in the wagn::create data
+      #Card.create!(:name=>'*email+*right+*content', :content=>'')
+
       card = Card.fetch("Joe User+*email")
       card.should be_instance_of(Card)
       card.name.should == "Joe User+*email"
-      card.content.should == 'joe@user.com'
-      cached_card = Card.cache.read("joe_user+*email")
-      cached_card.missing?.should be_true
-      cached_card.virtual?.should be_true
+      Wagn::Renderer.new(card).render_raw.should == 'joe@user.com'
+      #card.raw_content.should == 'joe@user.com'
+      #cached_card = Card.cache.read("joe_user+*email")
+      #cached_card.missing?.should be_true
+      #cached_card.virtual?.should be_true
     end
 
     it "does not recurse infinitely on template templates" do
@@ -78,12 +82,12 @@ describe Card do
       end
 
       it "prefers db cards to pattern virtual cards" do
-        Card.create!(:name => "y+*right+*content", :content => "Formatted Content")
-        Card.create!(:name => "a+y", :content => "DB Content")
+        c1=Card.create!(:name => "y+*right+*content", :content => "Formatted Content")
+        c2=Card.create!(:name => "a+y", :content => "DB Content")
         card = Card.fetch("a+y")
         card.virtual?.should be_false
-        card.content.should == "DB Content"
         card.setting('content').should == "Formatted Content"
+        card.content.should == "DB Content"
       end
 
       it "prefers a pattern virtual card to trash cards" do
@@ -97,18 +101,25 @@ describe Card do
       end
 
       it "should recognize pattern overrides" do
-        Rails.logger.debug "failing 0"
-        Card.create!(:name => "y+*right+*content", :content => "Right Content")
-        Rails.logger.debug "failing 1"
+        tc=Card.create!(:name => "y+*right+*content", :content => "Right Content")
+        Rails.logger.info "testing point 0 #{tc.inspect}"
         card = Card.fetch("a+y")
         Rails.logger.debug "failing 2"
         card.virtual?.should be_true
         card.content.should == "Right Content"
+        Rails.logger.info "testing point 1 #{card.inspect}"
         tpr = Card.create!(:name => "Basic+y+*type plus right+*content", :content => "Type Plus Right Content")
+        Rails.logger.info "testing point 1a #{tpr.inspect}"
+        card.reset_patterns
         card = Card.fetch("a+y")
+        card.reset_patterns
+        Rails.logger.info "testing point 2 #{card.inspect} #{card.content}"
         card.virtual?.should be_true
         card.content.should == "Type Plus Right Content"
         tpr.destroy!
+        Rails.logger.info "testing point 3 #{card.inspect}"
+        card.reset_patterns
+        Rails.logger.info "testing point 4 #{card.inspect}"
         card = Card.fetch("a+y")
         card.virtual?.should be_true
         card.content.should == "Right Content"
@@ -158,7 +169,8 @@ describe Card do
       User.as :wagbot do
         Card.create! :name=>"testsearch+*right+*content", :content=>'{"plus":"_self"}', :type => 'Search'
       end
-      c = Card.fetch_virtual("A+testsearch".to_cardname)
+      c = Card.fetch("A+testsearch".to_cardname)
+      assert c.virtual?
       c.typecode.should == 'Search'
       c.content.should ==  "{\"plus\":\"_self\"}"
     end

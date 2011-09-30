@@ -24,7 +24,7 @@ class CardController < ApplicationController
       params[:id] = (System.setting('*home') || 'Home').to_cardname.to_url_key
   end
 
-  def mine_preload()  params[:id] = User.current_user.card.cardname.to_url_key   end  
+  def mine_preload()  params[:id] = User.current_user.card.cardname.to_url_key   end
   def index() show  end
   def mine()  show  end
 
@@ -90,7 +90,7 @@ class CardController < ApplicationController
       raise "why? #{Kernel.caller*"\n"}" if card_params[:cards]
       #Rails.logger.info "controller create1 #{card_params.inspect}"
       params[:multi_edit] and card_params[:cards] = params[:cards]
-      #Rails.logger.info "controller create #{card_params.inspect}"
+      Rails.logger.info "controller create #{card_params.inspect}"
       @card = Card.create card_params
     else
       raise "No card parameters on create"
@@ -255,7 +255,7 @@ class CardController < ApplicationController
     sources = [@card.typename,nil]
     sources.unshift '*account' if @card.extension_type=='User'
     @items = sources.map do |root|
-      c = Card.fetch((root ? "#{root}+" : '') +'*related')
+      c = Card.fetch(root ? root.to_cardname.star_rule(:related) : '*related')
       c && c.item_names
     end.flatten.compact
 #    @items << 'config'
@@ -264,14 +264,14 @@ class CardController < ApplicationController
 
   #-------- ( MISFIT METHODS )
   def watch
-    watchers = Card.fetch_or_new( @card.name + "+*watchers", :skip_virtual=>true, :type => 'Pointer' )
+    watchers = Card.fetch_or_new( @card.cardname.star_rule(:watchers ) )
     watchers.add_item User.current_user.card.name
     #flash[:notice] = "You are now watching #{@card.name}"
     request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
   def unwatch
-    watchers = Card.fetch_or_new( @card.name + "+*watchers", :skip_virtual=>true )
+    watchers = Card.fetch_or_new( @card.cardname.star_rule(:watchers ) )
     watchers.drop_item User.current_user.card.name
     #flash[:notice] = "You are no longer watching #{@card.name}"
     request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
@@ -300,7 +300,7 @@ class CardController < ApplicationController
 
     options_card =
       (!params[:id].blank? and
-       (pointer_card = Card.fetch_or_new(params[:id], :skip_defaults=>true, :type=>'Pointer')) and
+       (pointer_card = Card.fetch_or_new(params[:id], :type=>'Pointer')) and
        pointer_card.options_card)
 
     search_args = {  :complete=>complete, :limit=>8, :sort=>'name' }
@@ -314,7 +314,7 @@ class CardController < ApplicationController
   
   def add_field # for pointers only
     load_card if params[:id]
-    @card ||= Card.new(:type=>'Pointer', :skip_defaults=>true)
+    @card ||= Card.new(:type=>'Pointer')
     #render :partial=>'types/pointer/field', :locals=>params.merge({:link=>:add,:card=>@card})
     render(:text => Wagn::Renderer.new(@card, :context=>params[:eid]).render(:field, :link=>:add, :index=>params[:index]) )
   end

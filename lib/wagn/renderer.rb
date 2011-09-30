@@ -228,7 +228,7 @@ module Wagn
     end
     
     def canonicalize_view( view )
-      (view and v=VIEW_ALIASES[view.to_sym]) ? v : view
+      (!view.blank? and v=VIEW_ALIASES[view.to_sym]) ? v : view
     end
   
   
@@ -270,13 +270,10 @@ module Wagn
     end
     
     def form_for_multi
-      #Rails.logger.debug "card = #{card.inspect}"
-      options = {} # do I need any? #args.last.is_a?(Hash) ? args.pop : {}
       block = Proc.new {}
-      builder = options[:builder] || ActionView::Base.default_form_builder
-      #Rails.logger.debug "form_for_multi #{card.name}, #{root.card.name}, #{root.card.new_record?}"
-      card.name = card.name.gsub(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_record?  ##FIXME -- need to match other relative inclusions.
-      fields_for = builder.new("cards[#{card.cardname.pre_cgi}]", card, template, options, block)
+      builder = ActionView::Base.default_form_builder
+      card.name = card.name.gsub(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_card?  ##FIXME -- need to match other relative inclusions.
+      builder.new("cards[#{card.cardname.pre_cgi}]", card, template, {}, block)
     end
   
     def form
@@ -353,7 +350,7 @@ module Wagn
         case
         when state ==:edit   ;  Card.fetch_or_new(fullname, new_inclusion_card_args(tname, options))
         when base.respond_to?(:name);   base
-        else                 ;  Card.fetch_or_new(fullname, :skip_defaults=>true)
+        else                 ;  Card.fetch_or_new(fullname)
         end
       end
   
@@ -474,7 +471,7 @@ module Wagn
           href = full_uri(href.to_s)      
           'internal-link'
         else
-          known_card = !!Card.fetch(href, :skip_after_fetch=>true)
+          known_card = !!Card.fetch(href)
           cardname = href.to_cardname
           text = cardname.to_show(card.name) unless text
           href = href.to_cardname

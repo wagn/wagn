@@ -2,7 +2,7 @@ module Wagn
   class Cardname < Object
     require 'htmlentities'
 
-    NAME2KEY = {}
+    NAME2CARDNAME = {}
 
     JOINT = '+'
     BANNED_ARRAY = [ '/', '~', '|']
@@ -15,31 +15,34 @@ module Wagn
     class << self
       def new(obj)
         return obj if Cardname===obj
-        allocate.send :initialize, obj
+        str = Array===obj ? obj*JOINT : obj.to_s
+        raise "name error #{str}" if str[0] == '/'
+        return obj if obj = NAME2CARDNAME[str]
+        super str
       end
 
-      def each_key(&proc) NAME2KEY.values.uniq.each(&proc) end
+      def each_cardname(&proc) NAME2CARDNAME.values.uniq.each(&proc) end
+      def each_key(&proc) each_cardname.map(&:key).each(&proc) end
     end
 
 
-    attr_reader :s, :simple, :key
+    attr_reader :s, :simple, :parts, :key
     alias to_key key
 
 
-    def initialize(obj)
-      @s = Array===obj ? obj*JOINT : obj.to_s
-      @key = (NAME2KEY[s] ||= generate_key)
-      NAME2KEY[@key] ||= @key
-      self
-    end
-    
-    def generate_key
-      simple? ? 
-        generate_simple_key : 
-        parts.map do |part|
-          partname = part.to_cardname
-          partname.key if !partname.blank?
-        end * JOINT  
+    def initialize(str)
+      @key = if (@s = str.to_s).index(JOINT)
+          @parts = @s.gsub(/\+$/,'+ ').split(JOINT)
+          @simple = false
+          @parts.map{|p| p.to_cardname.key } * JOINT  
+        else
+          @parts = [@s]
+          @simple = true
+          @s.blank? ? '' : generate_simple_key
+        end
+      #@key.to_cardname if @key != @s
+      NAME2CARDNAME[@s] = self
+      Rails.logger.debug "new:#{self.inspect}"; self
     end
     
     def generate_simple_key
@@ -51,6 +54,8 @@ module Wagn
     end
 
     
+    alias simple? simple
+=begin
     def simple?
       @simple ||= !s.index(JOINT)
     end
@@ -58,44 +63,8 @@ module Wagn
     def parts
       @parts ||= (simple ? [s] : s.gsub(/\+$/,'+ ').split(JOINT))
     end
-    
-=begin
-    def reset_rules() Wagn::CardInfo.reset_cache end
-    def reset_patterns() self.cardinfo.reset_patterns end
-    def destroy()
-      cardinfo.expire if real?
-      true
-    end
-
-    def cardinfo
-      CardInfo[@key] || CardInfo.new(self)
-    end
-
-
-    # FIXME: delegations
-    def typename() cardinfo.typename() end
-    def settings() cardinfo.settings() end
-    def settings=(h) cardinfo.settings=(h) end
-    def patterns() cardinfo.patterns() end
-    def patterns=(h) cardinfo.patterns=(h) end
-    def virtual?() cardinfo.virtual?() end
-    def missing?() cardinfo.missing?() end
-    def real?() cardinfo.real?() end
-    def set_modules() cardinfo.set_modules() end
-    def set_modules=(h) cardinfo.set_modules=(h) end
-    def card() cardinfo.card() end
-    def card_without_fetch() cardinfo.card_without_fetch() end
-    def set_cardinfo(card, saved_type=nil)
-      raise '???' if card == false
-      ci = CardInfo[self.key]
-      if saved_type
-        ci.typename = nil
-        ci.saved_type = saved_type
-      end
-      ci.state = :real unless ci.state
-      ci.card = card
-    end
 =end
+    
     def inspect() "<CardName key=#{key}[#{s}, #{size}]>" end
 
     def self.unescape(uri) uri.gsub(' ','+').gsub('_',' ')             end
@@ -154,6 +123,7 @@ module Wagn
     def to_star()     star? ? s : '*'+s                                end
     def star?()       simple? and !!(s=~/^\*/)                         end
     def tag_star?()   !!((simple? ? self : parts[-1])=~/^\*/)          end
+    alias rstar? tag_star?
     def star_rule(star)
       [s, (star = star.to_s) =~ /^\*/ ? star : '*'+star].to_cardname end
 
@@ -229,6 +199,7 @@ module Wagn
         new_part.blank? ? context.to_s : new_part
       end * JOINT
     end
+
   end
 end
 

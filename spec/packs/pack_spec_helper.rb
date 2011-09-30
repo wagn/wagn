@@ -7,7 +7,7 @@ module PackSpecHelper
   end
 
   def render_content(content, args={})
-    @card ||= Card.new(:name=>"Tempo Rary 2", :skip_defaults=>true)
+    @card ||= Card.new(:name=>"Tempo Rary 2")
     @card.content=content
     Wagn::Renderer.new(@card,args).render(:naked)
   end
@@ -27,7 +27,6 @@ module PackSpecHelper
         Card.fetch(card_args[:name])
       else
         card_args[:name] ||= "Tempo Rary"
-        card_args[:skip_defaults]=true
         c = Card.new(card_args)
       end
     end

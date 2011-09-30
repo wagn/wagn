@@ -273,14 +273,10 @@ module Wagn
       block = Proc.new {}
       builder = ActionView::Base.default_form_builder
       card.name = card.name.gsub(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_card?  ##FIXME -- need to match other relative inclusions.
-      val = card.cardname.pre_cgi
-      warn "FORM_for_multi #{card.cardname.inspect}, #{root.card.name}, #{card.typecode}"
-
-      builder.new("cards[#{val}]", card, template, {}, block)
+      builder.new("cards[#{card.cardname.pre_cgi}]", card, template, {}, block)
     end
   
     def form
-      warn "form called"
       @form ||= form_for_multi
     end
   

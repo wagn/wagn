@@ -483,7 +483,6 @@ describe Wagn::Renderer, "" do
         Card.create(:name=>'Book+author+*type plus right+*default', :type=>'Phrase', :content=>'Zamma Flamma')
       end
       c = Card.new :name=>'Yo Buddddy', :type=>'Book'
-      warn "c.typecode = #{c.typecode}; c.content = #{c.content}"
       result = Wagn::Renderer::RichHtml.new(c).render( :multi_edit )
       result.should be_html_with do
         div :class => "field-in-multi" do

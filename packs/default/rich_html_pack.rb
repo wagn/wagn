@@ -94,9 +94,7 @@ class Wagn::Renderer::RichHtml
 
 ###---(  EDIT VIEWS )
   define_view(:edit_in_form) do |args|
-    warn "rendering edit in form for card: #{card.inspect}.  typecode = #{card.typecode}"
     eform = form_for_multi
-#Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
     %{
 <div class="edit-area in-multi RIGHT-#{ card.cardname.tag_name.to_cardname.css_name }">
   <div class="label-in-multi">

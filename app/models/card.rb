@@ -53,7 +53,7 @@ class Card < ActiveRecord::Base
     @new_record = true
     self.send :attributes=, args, false
 
-    self.typecode = get_typecode(args['name'], typename, skip_type_lookup) unless args['typecode']
+    self.typecode_without_tracking = get_typecode(args['name'], typename, skip_type_lookup) unless args['typecode']
 
     include_set_modules unless skip_type_lookup
     Rails.logger.debug "card#initialize[#{name}] 4 #{inspect}"
@@ -99,7 +99,7 @@ class Card < ActiveRecord::Base
 
   def include_set_modules
     if @typecode_lookup_skipped
-      self.typecode = get_typecode(name)
+      self.typecode_without_tracking = get_typecode(name)
     end
     unless @set_mods_loaded
       Rails.logger.info "include_set_modules[#{name}] #{typecode} called" #{Kernel.caller[0..12]*"\n"}"

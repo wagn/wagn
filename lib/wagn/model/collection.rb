@@ -19,7 +19,7 @@ module Wagn::Model::Collection
   end
 
   def item_names(args={})
-    self.raw_content.split /[,\n]/
+    Wagn::Renderer.new(self)._render_raw.split /[,\n]/
   end
   
   def item_cards(args={})  ## FIXME this is inconsistent with item_names
@@ -36,7 +36,7 @@ module Wagn::Model::Collection
     end.flatten.map do |y|
       y.item_names(args)
     end.flatten
-    # this could go on and on..
+    # this could go on and on.  more elegant to recurse until you don't have a collection
   end
   
   def contextual_content(context_card=nil, renderer_args={})

@@ -11,17 +11,17 @@ module Wagn::Model::Settings
     Rails.logger.info "setting_card[#{name}](#{setting_name.inspect}, #{fallback.inspect})"
     fetch_args = {:skip_virtual=>true}
 
-    real_set_names.each do |name|
+    real_set_names.each do |set_name|
       #next unless Card.fetch(name, fetch_args)  'real_set_names doesn't return them'
       # optimization for cases where there are lots of settings lookups for many sets though few exist.
       # May cause problems if we wind up with Set in trash, since trunks aren't always getting pulled out when we
       # create plus cards (like setting values)
       #Rails.logger.info "setting_card, search #{setting_name.inspect}, #{fallback.inspect} #{name.inspect}" # Tr:#{Kernel.caller[0..10]*"\n"}"
-      if (setting_cd = Card.fetch(cn="#{name}+#{setting_name.to_cardname.to_star}", fetch_args)) ||
-         fallback && (setting_cd=Card.fetch(cn="#{name}+#{fallback.to_cardname.to_star}", fetch_args))
-        Rails.logger.debug "setting_card, found #{cn.inspect}, #{name.inspect}\nFound > #{setting_cd.inspect}"
+      if (rule_card = Card.fetch(cn="#{set_name}+#{setting_name.to_cardname.to_star}", fetch_args)) ||
+         fallback && (rule_card=Card.fetch(cn="#{set_name}+#{fallback.to_cardname.to_star}", fetch_args))
+         warn "#{setting_name.upcase} for #{name.upcase} setting_card, found #{cn.inspect}, #{set_name.inspect}\nFound > #{rule_card.inspect}" if name =~ /ddd.*uth/
 #        setting_cd.after_fetch
-        return setting_cd
+        return rule_card
       end
     end
     #Rails.logger.info "setting_card, NF #{name.inspect}"

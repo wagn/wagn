@@ -28,7 +28,7 @@ module Wagn::Model
     def set_names()
       @set_names ||= patterns.map(&:set_name)   end
     def reset_patterns()
-      @set_mods_loaded = @junction_only = @patterns = @method_keys = @set_names =nil
+      @set_mods_loaded = @junction_only = @patterns = @method_keys = @set_names = @template = nil
       Rails.logger.debug "reset_patterns[#{name}] #{inspect}"
     end
     def real_set_names()
@@ -189,7 +189,10 @@ module Wagn::Model
     end
     def css_name() "TYPE_PLUS_RIGHT-#{set_name.to_cardname.trunk_name.css_name}" end
     def left_name()        card.left.cardname or card.cardname.left_name end
-    def left_type()        (lft=self.left) ? lft.typename : 'Basic'     end
+    def left_type()
+#      warn "looking up left_type for #{card.name}.  left = #{left.inspect} left.type = #{left.typecode}" if left
+      (lft=self.left) ? lft.typename : 'Basic'     
+    end
     def left()             card.loaded_trunk or card.left                end
     def pattern_applies?() card.cardname.junction?                       end
     def set_name()

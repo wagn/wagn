@@ -270,16 +270,17 @@ module Wagn
     end
     
     def form_for_multi
-      #Rails.logger.debug "card = #{card.inspect}"
-      options = {} # do I need any? #args.last.is_a?(Hash) ? args.pop : {}
       block = Proc.new {}
-      builder = options[:builder] || ActionView::Base.default_form_builder
-      #Rails.logger.debug "form_for_multi #{card.name}, #{root.card.name}, #{root.card.new_record?}"
-      card.name = card.name.gsub(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_record?  ##FIXME -- need to match other relative inclusions.
-      fields_for = builder.new("cards[#{card.cardname.pre_cgi}]", card, template, options, block)
+      builder = ActionView::Base.default_form_builder
+      card.name = card.name.gsub(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_card?  ##FIXME -- need to match other relative inclusions.
+      val = card.cardname.pre_cgi
+      warn "FORM_for_multi #{card.cardname.inspect}, #{root.card.name}, #{card.typecode}"
+
+      builder.new("cards[#{val}]", card, template, {}, block)
     end
   
     def form
+      warn "form called"
       @form ||= form_for_multi
     end
   

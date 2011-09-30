@@ -1,6 +1,6 @@
 class Wagn::Renderer 
-  define_view( :naked, :right=>'*email' ) {
+  define_view( :raw, :right=>'*email' ) {
     ext=card.left.extension and ext.send('email') 
   } 
-  alias_view :naked, {:right=>'*email'}, :raw
+  alias_view :raw, {:right=>'*email'}, :naked
 end

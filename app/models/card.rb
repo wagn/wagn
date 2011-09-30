@@ -28,7 +28,6 @@ class Card < ActiveRecord::Base
   # INITIALIZATION METHODS
   
   def self.new(args={})
-#    warn "card#new with args: #{args.inspect}" if args['name'] == 'Pointer+*type'
     args ||= {}
     args = args.stringify_keys # evidently different from args.stringify_keys!
     if name = args['name']
@@ -53,7 +52,7 @@ class Card < ActiveRecord::Base
     @attributes_cache = {}
     @new_record = true
     self.send :attributes=, args, false
-#    Rails.logger.debug "card#initialize[#{name}] 2 #{args.inspect}, #{skip_type}, #{inspect}"
+
     self.typecode = get_typecode(args['name'], typename, skip_type_lookup) unless args['typecode']
 
     include_set_modules unless skip_type_lookup
@@ -93,6 +92,7 @@ class Card < ActiveRecord::Base
     end
 
     t = (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
+#    warn "looking up #{name} type #{t} from template: #{tmpl.inspect}" if name =~ /ddd.*uth/
     reset_patterns #if !self.typecode || self.typecode != t
     t
   end

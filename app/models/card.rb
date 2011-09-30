@@ -92,7 +92,6 @@ class Card < ActiveRecord::Base
     end
 
     t = (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
-#    warn "looking up #{name} type #{t} from template: #{tmpl.inspect}" if name =~ /ddd.*uth/
     reset_patterns #if !self.typecode || self.typecode != t
     t
   end

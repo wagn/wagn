@@ -24,7 +24,7 @@ class Card < ActiveRecord::Base
 
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
     :cards, :attribute, :set_mods_loaded, :update_referencers,
-    :allow_type_change, :broken_type, :loaded_trunk, :nested_edit, :from_trash,
+    :allow_type_change, :broken_type, :loaded_trunk, :nested_edit,
     :attachment_id #should build flexible handling for this kind of set-specific attr
 
   cache_attributes('name', 'typecode')
@@ -64,7 +64,7 @@ class Card < ActiveRecord::Base
     self
   end
 
-  def new_card?()  new_record? || from_trash  end
+  def new_card?()  new_record? || @from_trash  end
   def known?()    real? || virtual?           end
   def real?()     !new_card?                  end
 

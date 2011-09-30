@@ -37,8 +37,9 @@ module Wagn::Model
     end
     def reset_patterns()
       #Rails.logger.debug "reset_patterns[#{name}]"
+      @setting_cards={}
       @real_set_name = @set_mods_loaded = @junction_only = @patterns =
-        @method_keys = @set_names = @template = nil
+         @method_keys = @set_names = @template = nil
     end
 
     def patterns()
@@ -81,7 +82,8 @@ module Wagn::Model
 
     def real_set_names()
       Rails.logger.warn "START real_sets for #{cardname}, #{self.patterns}, #{@patterns}"
-      rr= self.patterns.map do |pat|
+      #rr=
+      @real_set_names ||= self.patterns.map do |pat|
         set_name = pat.set_name
         set_card = Card.fetch(set_name, :skip_virtual=>true)
 #        warn "real_sets [#{set_card.real?}] SN:#{set_card} CN:#{cardname.inspect}:"

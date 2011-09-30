@@ -52,6 +52,7 @@ class Card < ActiveRecord::Base
 #    @explicit_content = args['content']
     args['name'] = args['name'].to_s
 
+    reset_patterns
     Rails.logger.warn "initializing args:>>#{args.inspect}"
     @attributes = get_attributes
     @attributes_cache = {}

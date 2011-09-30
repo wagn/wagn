@@ -228,10 +228,8 @@ module Wagn
     end
     
     def canonicalize_view( view )
-      (!view.blank? and v=VIEW_ALIASES[view.to_sym]) ? v : view
+      (v=!view.blank? && VIEW_ALIASES[view.to_sym]) ? v : view
     end
-  
-  
   
     def render(action=:view, args={})
       args[:home_view] ||= action

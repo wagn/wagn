@@ -1,10 +1,7 @@
 module Wagn::Model::Settings
   def setting setting_name, fallback=nil
-    Rails.logger.debug "setting[#{inspect}, #{setting_name}, #{fallback.inspect}]"
     card = setting_card setting_name, fallback
-    #raise "???? #{name}" if name == card.name
-    Rails.logger.debug "setting[#{inspect}, #{setting_name}] #{card&&card.inspect}"
-    card && !card.new_card? && card.content || ''
+    card && card.content
   end
 
   def reset_patterns() end
@@ -16,58 +13,19 @@ module Wagn::Model::Settings
   end
 
   def setting_card setting_name, fallback=nil
-    #Rails.logger.info "setting_card[#{name}](#{setting_name.inspect}, #{fallback.inspect})"
-    #warn "setting_card[#{name}](#{setting_name.inspect}, #{fallback.inspect})" if name.to_s == 'Foo Bar'
-
-    set_names = real_set_names or raise( "no real set names found for #{name}" )
-
-
-#    warn "set_names = #{set_names.inspect}" if name.to_s == 'A+*self'
-    r=
-
-
-    set_names.first_value do |set_name|
-#      warn "#setting_card, setname = #{set_name}; setting name =  #{setting_name.inspect}, #{fallback.inspect} #{name.inspect}" if name.to_s == 'A+*self'
-
+    real_set_names.first_value do |set_name|
       set_name=set_name.to_cardname
-      if (rule_card=Card[set_name.star_rule( setting_name)]) && rule_card.real? ||
-        ( fallback &&
-         (rule_card=Card[set_name.star_rule( fallback)]) && rule_card.real? )
-        #Rails.logger.debug "setting_card, found[#{rule_card.name}]"
-        rule_card
-
-      end
+      Card[set_name.star_rule( setting_name )] ||
+        fallback && Card[set_name.star_rule( fallback )]
     end
-#    warn "setting_card result [#{name.inspect}, #{setting_name}] RRR>#{r}" if name.to_s == 'A+*self'; r
   end
-
-  #def settings() @settings ||= {} end
-
-=begin
   def setting_card_with_cache setting_name, fallback=nil
-    #warn "setting_card wc[#{name.inspect}](#{setting_name.inspect}, #{fallback.inspect}) #{self.settings[setting_name].nil?} <<< #{self.settings.map{|k,v|"#{k} => #{v and v.cardname.inspect}"}*"\n"}>>>"
-    #Rails.logger.info "setting cardinfo[#{name}] #{self.settings.keys.map{|k|"#{k} => #{c=self.settings[k] and c.name}"}.inspect}"
-    rule_card = self.settings[setting_name]
-    #warn "setting cache fetch[#{set_name&&set_name.cardname.inspect}]";
-    if rule_card.nil?
-      rule_card = setting_card_without_cache(setting_name, fallback)
-      self.settings[setting_name]= rule_card if rule_card
-#      Rails.logger.debug "setting cache store[#{rule_card.name}]"
-    else
-#      Rails.logger.debug "setting cache ret[#{set_name && set_name.cardname.inspect}]"
-    end
-    #warn "returning rule name = #{rule_card.name}"
-    rule_card
-    #rr=(setng = self.settings[setting_name]).nil? ?
-    #  (cres=( self.settings[setting_name]= begin
-    #   r=setting_card_without_cache(setting_name, fallback)
-    #   raise "???" if r == '*'
-    #   Rails.logger.debug "setting cache fetch[#{(r!='*')? r.cardname.inspect : '*'}]"; r
-    #                                     end || false )) : setng
-    # Rails.logger.debug "setting cache store[#{(cres!='*')? cres.cardname.inspect : '*'}] #{(cres != rr && rr.cardname.inspect)}"; rr
+    setting_name=setting_name.to_sym
+    @setting_cards ||= {}  # FIXME: initialize this when creating card
+    @setting_cards[setting_name] ||= 
+      setting_card_without_cache setting_name, fallback
   end
   alias_method_chain :setting_card, :cache
-=end
 
   def related_sets
     sets = []

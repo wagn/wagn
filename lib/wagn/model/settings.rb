@@ -19,7 +19,7 @@ module Wagn::Model::Settings
       #Rails.logger.info "setting_card, search #{setting_name.inspect}, #{fallback.inspect} #{name.inspect}" # Tr:#{Kernel.caller[0..10]*"\n"}"
       if (rule_card = Card.fetch(cn="#{set_name}+#{setting_name.to_cardname.to_star}", fetch_args)) ||
          fallback && (rule_card=Card.fetch(cn="#{set_name}+#{fallback.to_cardname.to_star}", fetch_args))
-         warn "#{setting_name.upcase} for #{name.upcase} setting_card, found #{cn.inspect}, #{set_name.inspect}\nFound > #{rule_card.inspect}" if name =~ /ddd.*uth/
+         #warn "#{setting_name.upcase} for #{name.upcase} setting_card, found #{cn.inspect}, #{set_name.inspect}\nFound > #{rule_card.inspect}" if name =~ /ddd.*uth/
 #        setting_cd.after_fetch
         return rule_card
       end

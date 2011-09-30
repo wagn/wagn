@@ -58,6 +58,8 @@ class Card < ActiveRecord::Base
     @new_record = true
     self.send :attributes=, args, false
 
+    self.typecode_without_tracking = get_typecode(args['name'], typename, skip_type_lookup) unless args['typecode']
+
     include_set_modules unless skip_type_lookup
     self
   end

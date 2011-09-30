@@ -22,12 +22,10 @@ class Card::BaseTest < ActiveSupport::TestCase
   def test_should_not_show_card_to_joe_user
     # FIXME: this needs some permission rules
     ::User.as(:joe_user)
-    assert_equal nil, Card.fetch("u1+*email")
+    assert_equal false, Card.fetch("u1+*email").ok?(:read)
   end
                             
   def test_autocard_should_not_break_if_extension_missing
-    assert_nil c=Card['A+*email']
-    assert_nil c=Card.fetch("A+*email")
-    #assert_equal "", Wagn::Renderer(c).render_raw
+    assert_equal '', Wagn::Renderer.new(Card.fetch("A+*email")).render_raw
   end
 end

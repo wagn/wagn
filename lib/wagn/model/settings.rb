@@ -1,7 +1,10 @@
 module Wagn::Model::Settings
   def setting setting_name, fallback=nil
+    Rails.logger.debug "setting[#{inspect}, #{setting_name}, #{fallback.inspect}]"
     card = setting_card setting_name, fallback
-    card && card.content
+    #raise "???? #{name}" if name == card.name
+    Rails.logger.debug "setting[#{inspect}, #{setting_name}] #{card&&card.inspect}"
+    card && !card.new_card? && card.content || ''
   end
 
   def reset_patterns() end
@@ -9,28 +12,30 @@ module Wagn::Model::Settings
   def rule?
     return @rule unless @rule.nil?
     #Rails.logger.info "rule? #{name}, #{left&&"#{left.typename}:#{left.name}"}, #{right&&"#{right.typename}:#{right.name}"}" if junction?
-    @rule = junction? ? (left&&left.typecode=='Set'&&right.typecode=='Setting') : false 
+    @rule = junction? ? (left&&left.typecode=='Set'&&right.typecode=='Setting') : false
   end
 
   def setting_card setting_name, fallback=nil
+    #Rails.logger.info "setting_card[#{name}](#{setting_name.inspect}, #{fallback.inspect})"
     #warn "setting_card[#{name}](#{setting_name.inspect}, #{fallback.inspect})" if name.to_s == 'Foo Bar'
-    
+
     set_names = real_set_names or raise( "no real set names found for #{name}" )
-    
-    
+
+
 #    warn "set_names = #{set_names.inspect}" if name.to_s == 'A+*self'
     r=
-    
-    
+
+
     set_names.first_value do |set_name|
 #      warn "#setting_card, setname = #{set_name}; setting name =  #{setting_name.inspect}, #{fallback.inspect} #{name.inspect}" if name.to_s == 'A+*self'
 
-      if (rule_card=Card[[set_name, setting_name.to_cardname.to_star].to_cardname]) &&
-         rule_card.real? || (fallback &&
-         (rule_card=Card[[set_name, fallback.to_cardname.to_star].to_cardname]) &&
-         rule_card.real?)
-        Rails.logger.debug "setting_card, found[#{rule_card.name}]"
+      set_name=set_name.to_cardname
+      if (rule_card=Card[set_name.star_rule( setting_name)]) && rule_card.real? ||
+        ( fallback &&
+         (rule_card=Card[set_name.star_rule( fallback)]) && rule_card.real? )
+        #Rails.logger.debug "setting_card, found[#{rule_card.name}]"
         rule_card
+
       end
     end
 #    warn "setting_card result [#{name.inspect}, #{setting_name}] RRR>#{r}" if name.to_s == 'A+*self'; r
@@ -45,10 +50,10 @@ module Wagn::Model::Settings
     rule_card = self.settings[setting_name]
     #warn "setting cache fetch[#{set_name&&set_name.cardname.inspect}]";
     if rule_card.nil?
-      rule_card = setting_card_without_cache(setting_name, fallback) 
+      rule_card = setting_card_without_cache(setting_name, fallback)
       self.settings[setting_name]= rule_card if rule_card
 #      Rails.logger.debug "setting cache store[#{rule_card.name}]"
-    else 
+    else
 #      Rails.logger.debug "setting cache ret[#{set_name && set_name.cardname.inspect}]"
     end
     #warn "returning rule name = #{rule_card.name}"

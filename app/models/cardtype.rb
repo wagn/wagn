@@ -66,7 +66,7 @@ class Cardtype < ActiveRecord::Base
     end   
     
     def create_ok?( codename )
-      Card.new( :typecode=>codename, :skip_defaults=> true).ok? :create
+      Card.new( :typecode=>codename).ok? :create
     end
   end        
   

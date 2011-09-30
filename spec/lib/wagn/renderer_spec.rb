@@ -305,7 +305,7 @@ describe Wagn::Renderer, "" do
     end
 
     it "raw content" do
-       @a = Card.new(:name=>'t', :content=>"{{A}}")
+      @a = Card.new(:name=>'t', :content=>"{{A}}")
       Wagn::Renderer.new(@a).render(:raw).should == "{{A}}"
     end
 
@@ -482,12 +482,12 @@ describe Wagn::Renderer, "" do
       User.as :wagbot do
         Card.create(:name=>'Book+author+*type plus right+*default', :type=>'Phrase', :content=>'Zamma Flamma')
       end
-      c = Card.new :name => 'Yo Buddddy', :type => 'Book'
+      c = Card.new :name=>'Yo Buddddy', :type=>'Book'
       result = Wagn::Renderer::RichHtml.new(c).render( :multi_edit )
       result.should be_html_with do
         div :class => "field-in-multi" do
-          [ input( :name=>"cards[~plus~author][content]", :type=>'text', :value=>'Zamma Flamma' ),
-            input( :name=>"cards[~plus~author][typecode]", :type => 'hidden', :value=>'Phrase') ]
+          [ input( :name=>"cards[~plus~author][content]",  :type=>'text',   :value=>'Zamma Flamma' ),
+            input( :name=>"cards[~plus~author][typecode]", :type=>'hidden', :value=>'Phrase'       )  ]
         end
       end
       result.should match('Zamma Flamma')

@@ -8,7 +8,6 @@ class Wagn::Renderer
       key = set_class.key
       search_card = Card.new(
         :type =>'Search',
-        :skip_defaults=>true,
         :content=>%~
           { "left":{
               "type":"Set",

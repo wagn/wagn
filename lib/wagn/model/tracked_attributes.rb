@@ -58,7 +58,7 @@ module Wagn::Model::TrackedAttributes
       # if T is renamed to T+G or G is renamed to T+G we could find T+G, for T or G
       tk=self.trunk = Card.new(:name=>@cardname.trunk_name) if self.id == self.trunk.id
       tg=Card.new(:name=>@cardname.tag_name) if self.id == self.tag.id
-      #Rails.logger.debug "created trunk #{tk.inspect} and tag #{tg.inspect} (#{@cardname.left_name.to_s}, #{@cardname.tag_name.to_s})"
+      #Rails.logger.debug "created trunk #{inspect}:I:#{self.id} #{tk.inspect}:I:#{self.trunk.id} and tag #{tg.inspect}:I:#{self.tag.id} (#{@cardname.left_name.to_s}, #{@cardname.tag_name.to_s})"
       #Rails.logger.info "tag/trunk #{self.inspect}, #{tk.id}, #{tg.id} is self" if self.id == tk.id or self.id == tg.id
     else
       self.trunk = self.tag = nil
@@ -106,14 +106,9 @@ module Wagn::Model::TrackedAttributes
   end
   
   def set_content(new_content)  
-    return false unless self.id           
+    return false unless self.id 
     new_content ||= '' 
-    
-    # FIXME?: this code written under influence. may require adjustment
-    # Uncommenting this breaks spec/helpers/slot_spec.rb w/float:<object>..
-    #   it strips wiki content even in transcludes
-    new_content =  WikiContent.clean_html!(new_content) if clean_html?
-    
+    new_content = WikiContent.clean_html!(new_content) if clean_html?
     clear_drafts if current_revision_id
     self.current_revision = Revision.create :card_id=>self.id, :content=>new_content
     @name_or_content_changed = true

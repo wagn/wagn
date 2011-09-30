@@ -38,8 +38,11 @@ class Card::BaseTest < ActiveSupport::TestCase
   #end
 
   def test_create
+    Rails.logger.info "testing point 0"
     alpha = Card.new :name=>'alpha', :content=>'alpha'
+    Rails.logger.info "testing point 1 #{alpha.inspect}"
     assert_equal 'alpha', alpha.content
+    Rails.logger.info "testing point 2"
     alpha.save
     assert alpha.name
     assert_stable(alpha)

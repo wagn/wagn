@@ -231,8 +231,6 @@ module Wagn
       (view and v=VIEW_ALIASES[view.to_sym]) ? v : view
     end
   
-  
-  
     def render(action=:view, args={})
       args[:home_view] ||= action
       self.render_args = args.clone

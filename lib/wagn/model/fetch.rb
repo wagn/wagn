@@ -54,6 +54,11 @@ module Wagn::Model::Fetch
       fetch(cardname, :skip_virtual=>true, :skip_module_loading=>true).present?
     end
   end
+  
+  def update_cache
+    raise "key??? #{key}" unless key
+    Card.cache.write(key, self)
+  end
 
   def self.included(base)
     super

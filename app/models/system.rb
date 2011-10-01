@@ -34,7 +34,7 @@ class System
 
     def setting(name)
       User.as :wagbot  do
-        card=Card[name] and !card.content.strip.empty? and card.content
+        card=Card.fetch(name, :skip_virtual=>true, :skip_module_loading=>true) and !card.content.strip.empty? and card.content
       end
     rescue
       nil

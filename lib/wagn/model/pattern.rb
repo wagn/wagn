@@ -40,20 +40,26 @@ module Wagn::Model
       @setting_cards={}
       @real_set_name = @set_mods_loaded = @junction_only = @patterns =
          @method_keys = @set_names = @template = nil
+      update_cache
+#      Rails.logger.debug "reset_patterns[#{name}] #{inspect}"
     end
 
     def patterns()
       #raise "??? #{cardname.inspect}" unless cardname.cardinfo
       Rails.logger.warn "START patterns #{cardname.inspect}" 
-      ps= @patterns ||= @@subclasses.map { |sub|
-        #warn " looking up #{sub} pattern for #{cardname}"
-        if new_pat = sub.new(self)
-          r1=new_pat.pat_name
-          #warn "looking up new pattern #{new_pat}, #{r1.inspect}"
-#          r2=r1.card if r1 # prefetch the card
-          new_pat
+      ps= @patterns || begin
+          @patterns = @@subclasses.map { |sub|
+              #warn " looking up #{sub} pattern for #{cardname}"
+              if new_pat = sub.new(self)
+                r1=new_pat.pat_name
+                #warn "looking up new pattern #{new_pat}, #{r1.inspect}"
+#             r2=r1.card if r1 # prefetch the card
+                new_pat
+              end
+            }.compact
+          update_cache
+          @patterns
         end
-      }.compact
       Rails.logger.warn "END patterns #{cardname.inspect}.  #{ps.inspect}"
       ps
     end
@@ -83,17 +89,25 @@ module Wagn::Model
     def real_set_names()
       Rails.logger.warn "START real_sets for #{cardname}, #{self.patterns}, #{@patterns}"
       #rr=
-      @real_set_names ||= self.patterns.map do |pat|
-        set_name = pat.set_name
-        set_card = Card.fetch(set_name, :skip_virtual=>true)
-#        warn "real_sets [#{set_card.real?}] SN:#{set_card} CN:#{cardname.inspect}:"
-        set_card && set_card.real? ? set_name : nil
-      end.compact
-#      warn "setting real_sets for #{cardname.inspect} RR>#{rr.inspect}"; rr
+      @real_set_names || begin
+          @real_set_names = self.patterns.map do |pat|
+              set_name = pat.set_name
+              set_card = Card.fetch(set_name, :skip_virtual=>true)
+#             warn "real_sets [#{set_card.real?}] SN:#{set_card} CN:#{cardname.inspect}:"
+              set_card && set_card.real? ? set_name : nil
+            end.compact
+          update_cache
+          @real_set_names
+#         warn "setting real_sets for #{cardname.inspect} RR>#{rr.inspect}"; rr
+        end 
     end
 
     def method_keys()
-      @method_keys ||= patterns.map(&:method_key)
+      @method_keys || begin
+        @method_keys = patterns.map(&:method_key)
+        update_cache
+        @method_keys
+      end
     end
 
     def css_names()      patterns.map(&:css_name).reverse*" "               end
@@ -364,6 +378,11 @@ module Wagn::Model
     end
 
     Wagn::Model::Pattern.register_class self
+  end
+  
+  def self.included(base)
+    super
+    base.class_eval { attr_accessor :patterns }
   end
 end
 

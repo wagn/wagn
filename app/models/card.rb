@@ -17,7 +17,7 @@ class Card < ActiveRecord::Base
   before_destroy :destroy_extension
     
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :cards, :set_mods_loaded,
-    :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual,
+    :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual, 
     :attachment_id #should build flexible handling for this kind of set-specific attr
 
   cache_attributes('name', 'typecode')    

@@ -4,19 +4,19 @@ module Wagn::Model::Settings
     card && card.content
   end
 
-  def reset_patterns() end
-  def reset_rules() end
   def rule?
     return @rule unless @rule.nil?
     #Rails.logger.info "rule? #{name}, #{left&&"#{left.typename}:#{left.name}"}, #{right&&"#{right.typename}:#{right.name}"}" if junction?
     @rule = junction? ? (left&&left.typecode=='Set'&&right.typecode=='Setting') : false
   end
 
+  SETTING_ARGS = { :skip_module_loading=>true, :skip_virtual=>true }
+
   def setting_card setting_name, fallback=nil
     real_set_names.first_value do |set_name|
       set_name=set_name.to_cardname
-      Card[set_name.star_rule( setting_name )] ||
-        fallback && Card[set_name.star_rule( fallback )]
+      Card.fetch(set_name.star_rule( setting_name ), SETTING_ARGS) ||
+        fallback && Card.fetch(set_name.star_rule( fallback ), SETTING_ARGS)
     end
   end
   def setting_card_with_cache setting_name, fallback=nil
@@ -46,10 +46,8 @@ module Wagn::Model::Settings
     end
 
     def default_setting_card setting_name, fallback=nil
-      Rails.logger.info "default_setting card #{setting_name}, #{fallback}"
-      setting_card = Card[ "*all+#{setting_name.to_cardname.to_star}"] or
-        (fallback ? default_setting_card(fallback) : nil)
-      Rails.logger.info "default_setting card #{setting_name}, #{setting_card.cardname.inspect}"; setting_card
+      Card["*all".to_cardname.star_rule(setting_name)] or
+        fallback ? default_setting_card(fallback) : nil
     end
 
     def universal_setting_names_by_group

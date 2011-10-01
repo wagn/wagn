@@ -43,7 +43,7 @@ module Wagn::Model::TrackedAttributes
     if @cardname.junction?
       [:trunk, :tag].each do |side|
         sidename = @cardname.send "#{side}_name"
-        sidecard = Card.fetch sidename, :skip_virtual=>true
+        sidecard = Card[sidename]
         old_name_in_way = (sidecard && sidecard.id==self.id) # eg, renaming A to A+B
         suspend_name(sidename) if old_name_in_way
         self.send "#{side}=", (!sidecard || old_name_in_way ? Card.new(:name=>sidename) : sidecard)

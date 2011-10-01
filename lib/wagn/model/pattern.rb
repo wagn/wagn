@@ -32,7 +32,7 @@ module Wagn::Model
       rule? && left.reset_patterns()
       Rails.logger.debug "before_save_rule: #{name}, #{rule?}"
     end
-    def after_save_rule() rule? && reset_rules()
+    def after_save_rule() rule? && reset_patterns()
       Rails.logger.debug "after_save_rule: #{name}, #{rule?}"
     end
     def reset_patterns()

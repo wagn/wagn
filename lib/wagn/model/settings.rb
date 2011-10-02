@@ -1,7 +1,7 @@
 module Wagn::Model::Settings
   def setting setting_name, fallback=nil
     Rails.logger.debug "setting(#{setting_name}, #{fallback})"
-    card = setting_card setting_name, fallback
+    card = setting_card setting_name, fallback, :skip_module_loading=>true
     r=(card && card.content)
     Rails.logger.debug "setting(#{setting_name}, #{fallback}) #{r}"; r
   end
@@ -12,20 +12,22 @@ module Wagn::Model::Settings
     @rule = junction? ? (left&&left.typecode=='Set'&&right.typecode=='Setting') : false
   end
 
-  def setting_card setting_name, fallback=nil
+  def setting_card setting_name, fallback=nil, extra_fetch_args={}
+    fetch_args = {:skip_virtual=>true}.merge extra_fetch_args
    r=
     real_set_names.first_value do |set_name|
       set_name=set_name.to_cardname
-      Card[set_name.star_rule( setting_name )] ||
-        fallback && Card[set_name.star_rule( fallback )]
+      Card.fetch(set_name.star_rule( setting_name ), fetch_args) ||
+        fallback && Card.fetch(set_name.star_rule( fallback ), fetch_args)
+
     end
     Rails.logger.debug "setting_card(#{setting_name}, #{fallback}) #{r.inspect}"; r
   end
-  def setting_card_with_cache setting_name, fallback=nil
+  def setting_card_with_cache setting_name, fallback=nil, extra_fetch_args={}
     setting_name=setting_name.to_sym
     @setting_cards ||= {}  # FIXME: initialize this when creating card
     @setting_cards[setting_name] ||= 
-      setting_card_without_cache setting_name, fallback
+      setting_card_without_cache setting_name, fallback, extra_fetch_args
   end
   alias_method_chain :setting_card, :cache
 

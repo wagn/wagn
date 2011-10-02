@@ -37,7 +37,7 @@ module Wagn::Model::Fetch
       #warn "fetch ret #{card.inspect}, #{opts.inspect}, #{card.new_card? && (!card.virtual? || opts[:skip_virtual])}" if key == 'pointer+*type'
       return nil if card.new_card? && (opts[:skip_virtual] || !card.virtual?)
 
-      card.include_set_modules
+      card.include_set_modules unless opts[:skip_module_loading]
       card
     end
 

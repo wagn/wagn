@@ -16,6 +16,7 @@ module Wagn::Model::Settings
     fetch_args = {:skip_virtual=>true}.merge extra_fetch_args
    r=
     real_set_names.first_value do |set_name|
+      Rails.logger.debug "setting_card search #{set_name.inspect}"
       set_name=set_name.to_cardname
       Card.fetch(set_name.star_rule( setting_name ), fetch_args) ||
         fallback && Card.fetch(set_name.star_rule( fallback ), fetch_args)

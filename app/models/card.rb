@@ -100,9 +100,11 @@ class Card < ActiveRecord::Base
   end
 
   def type_lookup
+    Rails.logger.debug "type_lookup S[#{@typecode_lookup_skipped}] #{inspect}" if name == 'Home+*watchers'
     if @typecode_lookup_skipped
       @typecode_lookup_skipped = false
       self.typecode_without_tracking = get_typecode(name)
+      Rails.logger.debug "type_lookup E #{inspect}" if name == 'Home+*watchers'
     end
   end
 

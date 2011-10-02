@@ -4,7 +4,11 @@ class Object
   end
 
   def if_card cardname
-    (card = Card[cardname] ) ? yield(card) : nil
+    if card = Card.fetch( cardname , :skip_virtual => true)
+      yield(card)
+    else
+      nil
+    end
   end
 end
 

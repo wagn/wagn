@@ -48,7 +48,7 @@ class Card < ActiveRecord::Base
   def initialize(args={})
       #Rails.logger.warn "card@initializing with args #{args.inspect} Trace: #{Kernel.caller*"\n"}" if args['name'] == 'a+y'
     typename, skip_type_lookup, missing =
-      %w{type skip_type_lookup missing skip_virtual skip_module_loading id}.map { |a| args.delete(a) }
+      %w{type skip_type_lookup missing skip_virtual id}.map { |a| args.delete(a) }
 #    @explicit_content = args['content']
     args['name'] = args['name'].to_s
 
@@ -146,7 +146,7 @@ class Card < ActiveRecord::Base
       opts[:content] ||= ""
       sub_name = sub_name.gsub('~plus~','+')
       absolute_name = cardname.to_absolute_name(sub_name)
-      if card = Card[absolute_name]
+      if card = Card.fetch(absolute_name, :skip_virtual=>true)
         card.update_attributes(opts)
       elsif opts[:content].present? and opts[:content].strip.present?
         opts[:name] = absolute_name

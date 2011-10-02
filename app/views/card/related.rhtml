@@ -3,7 +3,7 @@
 
   <% div(:class=>'submenu') do
      @items.each do |item|
-       key = item.to_key
+       key = item.to_cardname.to_key
        linktext = item.gsub('*','').gsub('subtab','').strip %>
        <%= link_to_remote( linktext,
           { :url=>slot.url_for("card/related", nil, key), :update => slot.id },
@@ -14,7 +14,7 @@
   <%= slot.notice %>
 
   <div class="open-content related">
-    <%= slot.subrenderer(Card.fetch_or_new("#{card.name}+#{@current}", :skip_defaults=>true)).render :content %>
+    <%= slot.subrenderer(Card.fetch_or_new("#{card.name}+#{@current}")).render :content %>
   </div>
 
   <%= javascript_tag("setupLinksAndDoubleClicks();") %>

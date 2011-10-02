@@ -33,9 +33,9 @@ class OptionsControllerTest < ActionController::TestCase
 
   def test_update_user_extension_blocked_status
     assert !User.find_by_login('joe_user').blocked?
-    post :update, :id=>"Joe User".to_key, :extension => { :blocked => '1' }
+    post :update, :id=>"Joe User".to_cardname.to_key, :extension => { :blocked => '1' }
     assert User.find_by_login('joe_user').blocked?
-    post :update, :id=>"Joe User".to_key, :extension => { :blocked => '0' }
+    post :update, :id=>"Joe User".to_cardname.to_key, :extension => { :blocked => '0' }
     assert !User.find_by_login('joe_user').blocked?
   end
 end

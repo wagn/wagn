@@ -7,9 +7,7 @@ class Wagn::Renderer::RichHtml
     rule_card = if is_self
       c = Card.fetch(set_name.trunk_name)
       return div(){"no such card #{set_name.trunk_name}"} unless c
-      sc = c.setting_card(setting_name)
-      sc.after_fetch if sc
-      sc
+      c.setting_card(setting_name)
     else
       card.new_card? ? nil : card 
     end
@@ -17,7 +15,7 @@ class Wagn::Renderer::RichHtml
     cells = [
 #      ["rule-setting", link_to_page(setting_name) ],
       ["rule-setting", link_to_remote( setting_name, :update=>id,
-        :url=>"/card/view/#{card.name.to_url_key}?view=edit_rule"
+        :url=>"/card/view/#{card.cardname.to_url_key}?view=edit_rule"
       )],
       ["rule-content", begin
         div(:class=>'rule-content-container line') do
@@ -36,11 +34,11 @@ class Wagn::Renderer::RichHtml
       ["rule-type", (rule_card ? rule_card.typename : '') ],
       
 #      ["rule-action", link_to_remote( rule_card ? 'edit' : 'add',
-#        :url=>"/card/view/#{card.name.to_url_key}?view=edit_rule", :update=>id
+#        :url=>"/card/view/#{card.cardname.to_url_key}?view=edit_rule", :update=>id
 #      )]
     ]
     if is_self
-      cells << ['rule-set', rule_card ? Wagn::Pattern.label(rule_card.name.trunk_name) : ''] 
+      cells << ['rule-set', rule_card ? rule_card.trunk.label(rule_card.name.trunk_name) : ''] 
     end
 
     extra_css_class = rule_card && !rule_card.new_card? ? 'known-rule' : 'missing-rule'
@@ -59,7 +57,7 @@ class Wagn::Renderer::RichHtml
     content_tag(:td, :class=>'edit-rule', :colspan=>col_count-1) do
 #      div(:class=>'rule-setting') { link_to_page setting_name } +
       div(:class=>'rule-setting') do
-         link_to_remote setting_name, :url=>"/card/view/#{card.name.to_url_key}?view=rule", :update=>id 
+         link_to_remote setting_name, :url=>"/card/view/#{card.cardname.to_url_key}?view=rule", :update=>id 
       end +
       
       
@@ -67,12 +65,11 @@ class Wagn::Renderer::RichHtml
         if is_self
           ruled_card = Card[main_set_name.trunk_name]
           current_rule = ruled_card.setting_card(setting_name)
-          current_rule.after_fetch if current_rule
-          current_rule_set = current_rule ? current_rule.name.trunk_name : nil
+          current_rule_set = current_rule ? current_rule.name.trunk_name.to_key : nil
           
           mode, sifter = :override, {:override => [], :defer=>[]}
-          Wagn::Pattern.set_names(ruled_card).each do |set_name|
-            if [current_rule_set.to_key, params[:new_rule_set]].member? set_name.to_key
+          ruled_card.set_names().each do |set_name|
+            if [current_rule_set, params[:new_rule_set]].member? set_name.to_key
               mode = :defer
             else
               sifter[mode] << set_name
@@ -89,7 +86,7 @@ class Wagn::Renderer::RichHtml
               end +
               content_tag(:ul) do
                 sifter[:override].map do |set_name|
-                  content_tag(:li) { link_to_remote Wagn::Pattern.label(set_name), :update=>id, 
+                  content_tag(:li) { link_to_remote ruled_card.label(set_name), :update=>id, 
                     :url=>"/card/view/#{card.name.to_url_key}?view=edit_rule&new_rule_set=#{CGI.escape(set_name.to_key)}"
                   }
                 end.join
@@ -99,14 +96,14 @@ class Wagn::Renderer::RichHtml
           
           sections << if set_name = params[:new_rule_set]
             div(:class=>'edit-rule-section edit-rule-new') do
-              edit_rule_header('Create', "add new rule for #{Wagn::Pattern.label(set_name)}:") +
+              edit_rule_header('Create', "add new rule for #{ruled_card.label(set_name)}:") +
               process_inclusion(Card.new(:name=>"#{set_name}+#{setting_name}"), :view=>:open)
             end
           end
           
           sections << if current_rule
             div(:class=>'edit-rule-section edit-rule-current') do
-              edit_rule_header('Edit', "change current rule for #{Wagn::Pattern.label(current_rule_set)}:") +
+              edit_rule_header('Edit', "change current rule for #{ruled_card.label(current_rule_set)}:") +
               process_inclusion(current_rule, :view=>:open)
             end
           end
@@ -127,8 +124,8 @@ class Wagn::Renderer::RichHtml
       end
     end #+
     #content_tag(:td, :class =>'edit-rule-action rule-action') do
-    #  div() { link_to_remote 'close', :url=>"/card/view/#{card.name.to_url_key}?view=rule", :update=>id } +
-    #  div() { link_to_remote 'refresh', :url=>"/card/view/#{card.name.to_url_key}?view=edit_rule", :update=>id }
+    #  div() { link_to_remote 'close', :url=>"/card/view/#{card.cardname.to_url_key}?view=rule", :update=>id } +
+    #  div() { link_to_remote 'refresh', :url=>"/card/view/#{card.cardname.to_url_key}?view=edit_rule", :update=>id }
     #end 
     
   end

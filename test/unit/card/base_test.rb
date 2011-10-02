@@ -41,6 +41,7 @@ class Card::BaseTest < ActiveSupport::TestCase
     alpha = Card.new :name=>'alpha', :content=>'alpha'
     assert_equal 'alpha', alpha.content
     alpha.save
+    assert alpha.name
     assert_stable(alpha)
   end
   
@@ -64,38 +65,33 @@ class Card::BaseTest < ActiveSupport::TestCase
   end
           
 
-  def test_multi_update_should_create_subcards
+  def test_update_should_create_subcards
     User.current_user = :joe_user
     User.as(:joe_user) do
-    Rails.logger.info "failing 1"
       b = Card.create!( :name=>'Banana' )
-    Rails.logger.info "failing 2"
-      b.multi_update({ "+peel" => { :content => "yellow" }})
-    Rails.logger.info "failing 3"
+      Card.update(b.id, :cards=>{ "+peel" => { :content => "yellow" }})
       assert_equal "yellow", Card["Banana+peel"].content   
       assert_equal User[:joe_user].id, Card["Banana+peel"].created_by
     end
   end
   
-  def test_multi_update_should_create_subcards_as_wagbot_if_missing_subcard_permissions
-    # then repeat multiple update as above, as :anon
+  def test_update_should_create_subcards_as_wagbot_if_missing_subcard_permissions
     Card.create(:name=>'peel')
     User.current_user = :anon
     assert_equal false, Card.fetch('Basic').ok?(:create)
-    b = Card.create!( :type=>"Fruit", :name=>'Banana' )
-    b.multi_update({ "+peel" => { :content => "yellow" }})
+    Card.create!( :type=>"Fruit", :name=>'Banana', :cards=>{ "+peel" => { :content => "yellow" }})
     assert_equal "yellow", Card["Banana+peel"].current_revision.content
     assert_equal User[:anon].id, Card["Banana+peel"].created_by
   end
 
-  def test_multi_update_should_not_create_cards_if_missing_main_card_permissions
+  def test_update_should_not_create_subcards_if_missing_main_card_permissions
     b = nil
     User.as(:joe_user) do
       b = Card.create!( :name=>'Banana' )
     end
     User.as(:anon) do
       assert_raises( Card::PermissionDenied ) do
-        b.multi_update({ "+peel" => { :content => "yellow" }})
+        Card.update(b.id, :cards=>{ "+peel" => { :content => "yellow" }})
       end
     end
   end

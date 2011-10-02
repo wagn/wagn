@@ -18,19 +18,19 @@ module NavigationHelpers
     #     user_profile_path(User.find_by_login($1))
 
     when /card (.*) with (.*) layout$/
-      "/wagn/#{$1.to_url_key}?layout=$2"
+      "/wagn/#{$1.to_cardname.to_url_key}?layout=$2"
 
     when /card (.*)$/
-      "/wagn/#{$1.to_url_key}"
+      "/wagn/#{$1.to_cardname.to_url_key}"
 
     when /new card named (.*)$/
       "/card/new?card[name]=#{CGI.escape($1)}"
 
     when /edit (.*)$/
-   "/card/edit/#{$1.to_url_key}"  
+   "/card/edit/#{$1.to_cardname.to_url_key}"  
 
     when /new (.*)$/
-"/new/#{$1.to_url_key}"
+"/new/#{$1.to_cardname.to_url_key}"
       
     when /url "(.*)"/
       "/#{$1}"

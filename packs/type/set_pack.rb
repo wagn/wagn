@@ -10,7 +10,7 @@ class Wagn::Renderer
       content_tag(:tr, :class=>'set-header') do
         content_tag(:th, :colspan=>(headings.size+1)) do
           count = card.count
-          span(:class=>'set-label') { Wagn::Pattern.label(card.name) } +
+          span(:class=>'set-label') { card.label(card.name) } +
           span(:class=>'set-count') do
             ' (' + (count == 1 ? link_to_page('1', card.item_names.first) : count.to_s) + ') '
           end + "\n" +
@@ -28,7 +28,7 @@ class Wagn::Renderer
           end
         end +
         setting_groups[group].map do |setting_name| 
-          rule_card = Card.fetch_or_new "#{card.name}+#{setting_name}", :skip_defaults=>true, :skip_virtual=>true
+          rule_card = Card.fetch_or_new "#{card.name}+#{setting_name}", :skip_virtual=>true
           content_tag(:tr, :class=>'rule-slot', :position=>generate_position) do
             process_inclusion(rule_card, :view=>:rule)
           end

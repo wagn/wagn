@@ -25,7 +25,7 @@ module Wagn
     
     class << self
       def cache_classes
-        [Card, Cardtype, Role, System, User, Wagn::Pattern]        
+        [Card, Cardtype, MultihostMapping, Role, System, User]
       end
             
       def initialize_on_startup
@@ -43,7 +43,7 @@ module Wagn
         return unless preload_cache?
         set_keys = ['*all','*all plus','basic+*type','html+*type','*cardtype+*type','*sidebar+*self']
         set_keys.map{|k| [k,"#{k}+*content", "#{k}+*default", "#{k}+*read", ]}.flatten.each do |key|        
-          Card.fetch key, :skip_virtual=>true, :skip_after_fetch=>true
+          Card[key]
         end
         Role[:auth]; Role[:anon]
         @@frozen = Marshal.dump([Card.cache, Role.cache])
@@ -122,9 +122,8 @@ module Wagn
       value
     end
     
-    def write_local key, value
-      @local[key] = value
-    end
+    def write_local(key, value) @local[key] = value end
+    def read_local(key)         @local[key]         end
 
     def fetch key, &block
       fetch_local(key) do
@@ -165,6 +164,7 @@ module Wagn
         @local[key]
       else
         val = yield
+        val.reset_mods if val.respond_to?(:reset_mods)
         @local[key] = val
       end
     end

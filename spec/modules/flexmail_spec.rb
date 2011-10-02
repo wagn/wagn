@@ -91,13 +91,15 @@ describe Flexmail do
     it "returns list with correct hash for card with configs" do
       User.as :wagbot do
         System.base_url = 'http://a.com'
-        c = Card.create :name => "Banana Trigger", :content => "data content [[A]]", :type=>'Trigger'
-        c.multi_create( 
-          '~plus~email'=>{:content=>'gary@gary.com'},
-          '~plus~subject'=>{:type=>'Pointer', :content=>'[[default subject]]'},
-          '~plus~attachment' => {:type=>'File', :content=>"notreally.txt" }
-        )
+        c = Card.create(:name => "Banana Trigger", :content => "data content [[A]]", :type=>'Trigger')
+        Rails.logger.info "testing point #{c.inspect}"
+        assert c.id
+        Card.update(c.id,
+              :cards=> {'~plus~email'=>{:content=>'gary@gary.com'},
+              '~plus~subject'=>{:type=>'Pointer', :content=>'[[default subject]]'},
+              '~plus~attachment' => {:type=>'File', :content=>"notreally.txt" } })
         conf = Flexmail.configs_for(c).first
+        Rails.logger.info "testing point #{c.inspect}, #{conf.inspect}"
       
         conf[:to     ].should == "bob@bob.com"
         conf[:from   ].should == "gary@gary.com"
@@ -120,7 +122,7 @@ describe Flexmail do
       end
     
       it "calls to mailer on Card#create" do
-        Mailer.should_receive(:deliver_flexmail).with(hash_including(:to=>"joe@user.com"))
+        Mailer.should_receive(:deliver_flexmail).at_least(:once).with(hash_including(:to=>"joe@user.com"))
         Card.create :name => "Banana+emailtest"
       end
       
@@ -149,10 +151,10 @@ describe Flexmail do
         Card.create :name => "Banana+emailtest"
       end
       
-      it "calls to mailer on Card#multi_create" do
-        Mailer.should_receive(:deliver_flexmail).with(hash_including(:to=>"joe@user.com"))
+      it "calls to mailer on Card#create" do
+        Mailer.should_receive(:deliver_flexmail).at_least(:once).with(hash_including(:to=>"joe@user.com"))
         c = Card.create :name => "Illiodity", :type=>"Book"
-        c.multi_create( {"~author" => {"name" => "Bukowski" }})
+        Card.update(c.id, :cards=> {"~author" => {"name" => "Bukowski"}})
       end
     end
   end

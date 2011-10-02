@@ -2,9 +2,9 @@
 email = params[:email] || {}
 subject = email[:subject] || System.setting('*invite+*subject') || ''
 message = email[:message] || System.setting('*invite+*message') || ''
-message.substitute!(
+Wagn::Cardname.substitute!( message, {
   :invitor => User.current_user.card.name + " (#{current_user.email})",
-  :invitee => card.name || ''
+  :invitee => card.name || ''}
 )
 
 div_id = "main-body"
@@ -29,7 +29,7 @@ context = 'invitation'
     <%= error_messages_for :user %>
 
     <table class="fieldset">
-      <% if card.name.blank? %>
+      <% if card.cardname.blank? %>
         <tr>
           <td class="label"><label for="name">Name</label></td>
           <td class="field">

@@ -21,8 +21,10 @@ class AccountController < ApplicationController
     @user, @card = User.create_with_card( user_args, card_args )
     return unless @user.errors.empty?
 
-    User.as :wagbot  do ## in case user doesn't have permission for included cardtypes.  For now letting signup proceed even if there are errors on multi-update
-      @card.multi_create(params[:cards]) if params[:multi_edit] and params[:cards]
+    if params[:multi_edit] and params[:cards]
+      User.as :wagbot  do ## in case user doesn't have permission for included cardtypes.  For now letting signup proceed even if there are errors on multi-update
+        Card.create(:card=>@card, :cards=>params[:cards])
+      end
     end
 
     if System.ok?(:create_accounts)       #complete the signup now
@@ -45,7 +47,7 @@ class AccountController < ApplicationController
 
   def accept
     raise(Wagn::Oops, "I don't understand whom to accept") unless params[:card]
-    @card = Card.fetch(params[:card][:key], :skip_virtual=>true) or raise(Wagn::NotFound, "Can't find this Account Request")  #ENGLISH
+    @card = Card[params[:card][:key]] or raise(Wagn::NotFound, "Can't find this Account Request")  #ENGLISH
     @user = @card.extension or raise(Wagn::Oops, "This card doesn't have an account to approve")  #ENGLISH
     System.ok?(:create_accounts) or raise(Wagn::PermissionDenied, "You need permission to create accounts")  #ENGLISH
 
@@ -64,7 +66,7 @@ class AccountController < ApplicationController
 
     @user, @card = request.post? ?
       User.create_with_card( params[:user], params[:card] ) :
-      [User.new, Card.new(:skip_defaults=>true)]
+      [User.new, Card.new()]
     if request.post? and @user.errors.empty?
       @user.send_account_info(params[:email])
       redirect_to (System.setting('*invite+*thanks') || '/')

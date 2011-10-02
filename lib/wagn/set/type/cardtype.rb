@@ -23,7 +23,7 @@ module Wagn::Set::Type::Cardtype
   def create_extension
     return unless typecode == 'Cardtype'  #hack
     codename = Card.generate_codename_for(name)
-    Rails.logger.info "Cardtype extension #{name} #{codename}"
+    #Rails.logger.debug "Cardtype extension #{name} #{codename}"
     self.extension = ::Cardtype.create!( :class_name => codename )
   end
 

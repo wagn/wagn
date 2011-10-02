@@ -6,7 +6,7 @@
         <%=
         case card.updated_at.to_s
           when card.created_at.to_s; 'added'
-          when rev.created_at.to_s;  link_to('edited', "/card/changes/#{card.name.to_key}", :class=>'last-edited')
+          when rev.created_at.to_s;  link_to('edited', "/card/changes/#{card.cardname.to_key}", :class=>'last-edited')
           else; 'updated'
         end
         %> 

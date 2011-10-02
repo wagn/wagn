@@ -21,7 +21,7 @@ module Wagn::Model::Permissions
   end
 
   def ydhpt
-    "#{::User.current_user.cardname}, You don't have permission to"
+    "#{::User.current_user.name}, You don't have permission to"
   end
   
   def destroy_with_permissions
@@ -52,9 +52,9 @@ module Wagn::Model::Permissions
       begin
         self.send(method)
       rescue Exception => e
-        name.piece_names.each{|piece| Wagn::Cache.expire_card(piece.to_key)}
-        Rails.logger.info "#{method}:#{e.message} #{name} #{Kernel.caller.join("\n")}"
-        raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace}"
+        cardname.piece_names.each{|piece| Wagn::Cache.expire_card(piece.to_cardname.key)}
+        Rails.logger.debug "Exception #{method}:#{e.message} #{name} #{e.backtrace*"\n"}"
+        raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace*"\n"}"
       end
     else
       raise Card::PermissionDenied.new(self)
@@ -64,12 +64,12 @@ module Wagn::Model::Permissions
   def approved?
     self.operation_approved = true    
     self.permission_errors = []
-    Rails.logger.info "updates.keys = #{updates.keys.inspect}"
+    #Rails.logger.debug "updates.keys = #{updates.keys.inspect}"
     unless updates.keys == ['comment'] # if only updating comment, next section will handle
       new_card? ? ok?(:create) : ok?(:update)
     end
     updates.each_pair do |attr,value|
-      Rails.logger.info "approving: #{attr}"
+      #Rails.logger.info "approving: #{attr}"
       send("approve_#{attr}")
     end         
     permission_errors.each do |err|
@@ -99,28 +99,29 @@ module Wagn::Model::Permissions
   end
   
   def who_can(operation)
-    rule_card(operation).first.content.split(/[,\n]/).map &:to_key
+    rule_card(operation).first.content.split(/[,\n]/).map{|i| i.to_cardname.to_key}
   end 
   
   def rule_card(operation)
     opcard = setting_card(operation.to_s)
-    if !opcard && (!System.always_ok? || ENV['MIGRATE_PERMISSIONS'] == 'true')
+    unless opcard or ENV['MIGRATE_PERMISSIONS'] == 'true'
       errors.add :permission_denied, "No #{operation} setting card for #{name}"      
       raise Card::PermissionDenied.new(self) 
     end
-
     
     rcard = begin
       User.as :wagbot do
+        #Rails.logger.debug "in rule_card #{opcard&&opcard.name} #{operation}"
         if opcard.content == '_left' && self.junction?
-          lcard = loaded_trunk || Card.fetch_or_new(name.trunk_name, :skip_virtual=>true, :skip_defaults=>true) 
+          lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true, :skip_module_loading=>true) 
           lcard.rule_card(operation).first
         else
           opcard
         end
       end
     end
-    return rcard, opcard.name.trunk_name.tag_name
+    #Rails.logger.debug "rule_card #{rcard&&rcard.name}, #{opcard.name.inspect}, #{opcard}, #{opcard.cardname.inspect}"
+    return rcard, opcard.cardname.trunk_name.tag_name.to_s
   end
   
   protected
@@ -148,7 +149,7 @@ module Wagn::Model::Permissions
   end
 
   def approve_read
-    return true if System.always_ok?    
+    return true if System.always_ok?
     self.read_rule_id ||= rule_card(:read).first.id
     ok = User.as_user.read_rule_ids.member?(self.read_rule_id.to_i) 
     deny_because(you_cant "read this card") unless ok
@@ -239,7 +240,7 @@ module Wagn::Model::Permissions
 
   def update_ruled_cards
     return if ENV['MIGRATE_PERMISSIONS'] == 'true'
-    if name.junction? && name.tag_name=='*read' && (@name_or_content_changed || @trash_changed)
+    if cardname.junction? && cardname.tag_name=='*read' && (@name_or_content_changed || @trash_changed)
       
       # These instance vars are messy.  should use tracked attributes' @changed variable 
       # and get rid of @name_changed, @name_or_content_changed, and @trash_changed.
@@ -255,14 +256,15 @@ module Wagn::Model::Permissions
       # could be related to other bugs?
       in_set = {}
       if !(self.trash)
-        rule_classes = Wagn::Pattern.subclasses.map &:key
-        rule_class_index = rule_classes.index self.name.trunk_name.tag_name
+        rule_classes = Wagn::Model::Pattern.subclasses.map &:key
+        rule_class_index = rule_classes.index self.cardname.trunk_name.tag_name.to_s
         return 'not a proper rule card' unless rule_class_index
 
         #first update all cards in set that aren't governed by narrower rule
         User.as :wagbot do
-          Card.fetch(name.trunk_name).item_cards(:limit=>0).each do |item_card|
+          Card.fetch(cardname.trunk_name).item_cards(:limit=>0).each do |item_card|
             in_set[item_card.key] = true
+            #Rails.logger.debug "rule_classes[#{rule_class_index}] #{rule_classes.inspect} This:#{item_card.read_rule_class.inspect} idx:#{rule_classes.index(item_card.read_rule_class)}"
             next if rule_classes.index(item_card.read_rule_class) < rule_class_index
             item_card.update_read_rule
           end

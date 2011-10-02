@@ -11,7 +11,7 @@ class Wagn::Renderer::RichHtml
   
   define_view(:layout) do |args|
     if @main_content = args.delete(:main_content)
-      @card = Card.fetch_or_new('*placeholder',:skip_defaults=>true)
+      @card = Card.fetch_or_new('*placeholder')
     else
       @main_card = card
     end  
@@ -94,19 +94,18 @@ class Wagn::Renderer::RichHtml
 
 ###---(  EDIT VIEWS )
   define_view(:edit_in_form) do |args|
-    form = form_for_multi
-#Rails.logger.info "_final_edit_in_form( #{args.inspect} )"
+    eform = form_for_multi
     %{
-<div class="edit-area in-multi RIGHT-#{ card.name.tag_name.to_key.css_name }">
+<div class="edit-area in-multi RIGHT-#{ card.cardname.tag_name.to_cardname.css_name }">
   <div class="label-in-multi">
     <span class="title">
-      #{ link_to_page(fancy_title(self.showname || card), (card.new_record? ? card.name.tag_name : card.name)) }
+      #{ link_to_page(fancy_title(self.showname || card), (card.new_card? ? card.cardname.tag_name : card.name)) }
     </span>
   </div>     
   
   <div class="field-in-multi">
-    #{ self.content_field( form, :nested=>true ) }
-    #{ card.new_card? ? form.hidden_field(:typecode) : '' }
+    #{ self.content_field( eform, :nested=>true ) }
+    #{ card.new_card? ? eform.hidden_field(:typecode) : '' }
   </div>
   #{if inst = (card.new_card? ? card.setting_card('add help', 'edit help') : card.setting_card('edit help'))
     ss = self.subrenderer(inst); ss.state= :view

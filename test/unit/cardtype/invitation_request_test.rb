@@ -12,6 +12,7 @@ class Wagn::Set::Type::InvitationRequestTest < ActiveSupport::TestCase
  
   def test_should_require_name
     @card = Card.create  :typecode=>'InvitationRequest' #, :account=>{ :email=>"bunny@hop.com" } currently no api for this
+    #Rails.logger.info "name errors: #{@card.errors.full_messages.inspect}"
     assert @card.errors.on(:name)
   end
   

@@ -32,16 +32,16 @@ class Wql
   def sql()                @sql ||= @cs.to_sql            end
   
   def run
-    rows = ActiveRecord::Base.connection.select_all( sql )
+      rows = ActiveRecord::Base.connection.select_all( sql )
     case (query[:return] || :card).to_sym
     when :card
       rows.map do |row|
         card=
           if query[:prepend] || query[:append]
             cardname = [query[:prepend], row['name'], query[:append]].compact.join('+')
-            Card.fetch_or_new cardname, :skip_defaults=>true
+            Card.fetch_or_new cardname
           else
-            Card.fetch row['name'], :skip_virtual=>true
+            Card[ row['name'] ]
           end
         card.nil? ? Card.find_by_name_and_trash(row['name'],false).repair_key : card
       end
@@ -142,7 +142,7 @@ class Wql
     def selfname()  @selfname                      end
     
     def absolute_name(name)
-      name = (root.selfname ? name.to_absolute(root.selfname) : name)
+      name = (root.selfname ? name.to_cardname.to_absolute(root.selfname) : name)
     end
     
     def clean(query)
@@ -172,8 +172,8 @@ class Wql
     def merge(spec)
 #      spec = spec.clone
       spec = case spec
-        when String;   { :key => spec.to_key }
-        when Integer;  { :id  => spec        }  
+        when String;   { :key => spec.to_cardname.to_key }
+        when Integer;  { :id  => spec                    }  
         when Hash;     spec
         else raise("Invalid cardspec args #{spec.inspect}")
       end
@@ -524,7 +524,8 @@ class Wql
       
       field, v = case field
         when "cond";     return "(#{sqlize(v)})"
-        when "name";     ["#{table}.key",      [v].flatten.map{ |val| val.to_key }]
+        when "name";     ["#{table}.key",      [v].flatten.map(&:to_cardname).map(&:to_key)]
+        
         when "type";     ["#{table}.typecode", [v].flatten.map{ |val| Cardtype.classname_for( val ) }]
         when "content";   join_alias = @cardspec.add_revision_join
                          ["#{join_alias}.content", v]

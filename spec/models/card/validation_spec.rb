@@ -27,11 +27,13 @@ describe Card, "validate name" do
     @c.errors.on(:name).should_not be_blank
   end
   
+  # maybe the @c.key= should just throw an error, but now it doesn't take anyway
   it "should not allow mismatched name and key" do
     @c = Card.new :name=>"Test"
     @c.key="foo"  
-    @c.valid?.should == false
-    @c.errors.on(:key).should_not be_blank
+    @c.key.should == 'test'
+    #@c.valid?.should == false
+    #@c.errors.on(:key).should_not be_blank
   end
 
 end

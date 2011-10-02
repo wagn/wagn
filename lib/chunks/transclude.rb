@@ -10,8 +10,9 @@ module Chunk
   
     def initialize(match_data, content)
       super   
-      #warn "FOUND TRANSCLUDE #{match_data} #{content}"
-      @card_name, @options, @configs = self.class.parse(match_data)
+      #Rails.logger.warn "FOUND TRANSCLUDE #{match_data} #{content}"
+      self.cardname, @options, @configs = a = self.class.parse(match_data)
+      #Rails.logger.info "Chunk::transclude #{a.inspect}"
       @base, @renderer, @inclusion_map =
          content.card, content.renderer, content.inclusion_map
     end
@@ -49,7 +50,7 @@ module Chunk
       return @unmask_text if @unmask_text
       comment = @options[:comment]
       return comment if comment
-      refcard_name
+      refcardname
       if view = @options[:view]
         view = view.to_sym
         if inclusion_map and inclusion_map.key?(view)
@@ -62,7 +63,7 @@ module Chunk
     def revert                             
       configs = @configs.to_semicolon_attr_list;  
       configs = "|#{configs}" unless configs.blank?
-      @text = "{{#{card_name}#{configs}}}"
+      @text = "{{#{cardname.to_s}#{configs}}}"
       super
     end
     

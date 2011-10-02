@@ -117,7 +117,8 @@ describe CardController do
          "content_to_replace"=>"",
          "context"=>"main_1", 
          "multi_edit"=>"true", "view"=>"open"
-        assigns['card'].errors["name"].should == "can't be blank"
+        assigns['card'].errors[:key].should == "cannot be blank"
+        assigns['card'].errors[:name].should == "can't be blank"
         assert_response 422
       end
 
@@ -127,7 +128,7 @@ describe CardController do
          "content_to_replace"=>"",
          "context"=>"main_1", 
          "multi_edit"=>"true", "view"=>"open"
-        assert_response 418    
+        assert_response 418
         Card.find_by_name("sss").should_not be_nil
         Card.find_by_name("sss+text").should_not be_nil
       end
@@ -177,7 +178,11 @@ describe CardController do
       
       #remove me after regenerating test data
       User.as :wagbot do
-        Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
+        assert (c=Card['Fruit+*type+*create']).typecode == 'Pointer'
+        c.content='[[Anonymous]]'
+        c.save
+        assert c.content == '[[Anonymous]]'
+        #Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
       end
       
       
@@ -217,7 +222,11 @@ describe CardController do
     it "new should work for creatable nonviewable cardtype" do
       #remove me after regenerating test data
       User.as :wagbot do
-        Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
+        assert (c=Card['Fruit+*type+*create']).typecode == 'Pointer'
+        c.content='[[Anonymous]]'
+        c.save
+        assert c.content == '[[Anonymous]]'
+        #Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
       end
       
       login_as(:anon)     
@@ -255,6 +264,7 @@ describe CardController do
     describe "#show" do
       it "works for basic request" do
         get :show, {:id=>'Sample_Basic'}
+        response.should have_tag('body')
         assert_response :success
         'Sample Basic'.should == assigns['card'].name
       end
@@ -266,11 +276,8 @@ describe CardController do
       end
 
       it "handles nonexistent card without create permissions" do
-        Rails.logger.debug "failing 0"
         login_as :anon
-        Rails.logger.debug "failing 1"
         get :show, {:id=>'Sample_Fako'}
-        Rails.logger.debug "failing 2"
         assert_response :success   
         assert_template 'missing'
       end
@@ -324,8 +331,12 @@ describe CardController do
 
     it "should watch" do
       login_as(:joe_user)
+      Rails.logger.info "testing point 0"
       post :watch, :id=>"Home"
-      Card["Home+*watchers"].content.should == "[[Joe User]]"
+      Rails.logger.info "testing point 1"
+      assert c=Card["Home+*watchers"]
+      Rails.logger.info "testing point 2 #{c.inspect}"
+      c.content.should == "[[Joe User]]"
     end
 
     it "rename without update references should work" do

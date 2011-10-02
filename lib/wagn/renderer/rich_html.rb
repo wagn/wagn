@@ -111,7 +111,7 @@ module Wagn
   def layout_from_name
     warn "getting layout from name"
     lname = (params[:layout] || args[:layout]).to_s
-    lcard = Card.fetch(lname, :skip_virtual=>true)
+    lcard = Card.fetch(lname, :skip_virtual=>true, :skip_module_loading=>true)
     case
       when lcard && lcard.ok?(:read)         ; lcard.content
       when hardcoded_layout = LAYOUTS[lname] ; hardcoded_layout
@@ -121,11 +121,10 @@ module Wagn
 
   def layout_from_card
     return unless setting_card = (card.setting_card('layout') or Card.default_setting_card('layout'))
-    setting_card.after_fetch #include modules
     return unless setting_card.is_a?(Wagn::Set::Type::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.typecode == 'Pointer'        and
       layout_name=setting_card.item_names.first     and
       !layout_name.nil?                             and
-      lo_card = Card.fetch(layout_name, :skip_virtual => true)    and
+      lo_card = Card.fetch(layout_name, :skip_virtual => true, :skip_module_loading=>true)    and
       lo_card.ok?(:read)
     lo_card.content
   end
@@ -152,7 +151,7 @@ module Wagn
       when 'closed'   ;  'card-slot line'
       else            ;  'card-slot paragraph'
     end 
-    css_class << " " + Wagn::Pattern.css_names( card ) if card
+    css_class << " " + card.css_names if card
     
     attributes = {
       :class    => css_class,
@@ -217,7 +216,7 @@ module Wagn
   end
 
   def card_id
-    (card.new_record? && card.name)  ? Wagn::Cardname.escape(card.name) : card.id
+    (card.new_record? && card.cardname)  ? card.cardname.escape : card.id
   end
 
   def editor_id(area="")

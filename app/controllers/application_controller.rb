@@ -109,10 +109,12 @@ class ApplicationController < ActionController::Base
       raise Wagn::NotFound, "We don't know what card you're looking for."
     when @card.known? # default case
       @card
-      
-    ##  I think what SHOULD happen here is that we render the missing view and let the Renderer decide what happens.    
-      
+    when params[:view]=='edit_rule'
+      # FIXME this is a hack so that you can view load rules that don't exist.  need better approach 
+      # (but this is not tested; please don't delete without adding a test) 
+      @card
     when requesting_ajax? || ![nil, :html].member?(params[:format])  #missing card, nonstandard request
+      ##  I think what SHOULD happen here is that we render the missing view and let the Renderer decide what happens.
       raise Wagn::NotFound, "We can't find a card named #{@card.name}"  
     when @card.ok?(:create)  # missing card, user can create
       params[:card]={:name=>@card.name, :type=>params[:type]}
@@ -126,7 +128,7 @@ class ApplicationController < ActionController::Base
 
   def load_card
     return @card=nil unless id = params[:id]
-    return (@card=Card.find(id); @card.after_fetch; @card) if id =~ /^\d+$/
+    return (@card=Card.find(id); @card.include_set_modules; @card) if id =~ /^\d+$/
     name = Wagn::Cardname.unescape(id)
     card_params = params[:card] ? params[:card].clone : {}
     @card = Card.fetch_or_new(name, card_params)
@@ -202,7 +204,7 @@ class ApplicationController < ActionController::Base
     on_error_js = ""
 
     if captcha_required? && ENV['RECAPTCHA_PUBLIC_KEY']
-      key = card.new_record? ? "new" : card.name.to_key
+      key = card.new_record? ? "new" : card.cardname.to_key
       on_error_js << %{ document.getElementById('dynamic_recaptcha-#{key}').innerHTML='<span class="faint">loading captcha</span>'; }
       on_error_js << %{ Recaptcha.create('#{ENV['RECAPTCHA_PUBLIC_KEY']}', document.getElementById('dynamic_recaptcha-#{key}'),RecaptchaOptions); }
     end

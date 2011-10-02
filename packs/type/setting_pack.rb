@@ -4,11 +4,10 @@ class Wagn::Renderer
       process_content "{{+*right+*edit help}}"
     end +
 
-    Wagn::Pattern.subclasses.reverse.map do |set_class|
+    card.patterns.reverse.map do |set_class|
       key = set_class.key
       search_card = Card.new(
         :type =>'Search',
-        :skip_defaults=>true,
         :content=>%~
           { "left":{
               "type":"Set",

@@ -17,7 +17,7 @@ gem 'uuid', '~>2.2.0'
 gem 'json', '~>1.4.6'
 #gem 'userstamp', '~>2.0.1'
 
-#gem 'ruby-openid', '2.1.8'
+gem 'ruby-openid', '~>2.1.8'
 
 
 # ~~~~~~~~~ #

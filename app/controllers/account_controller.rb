@@ -47,7 +47,7 @@ class AccountController < ApplicationController
 
   def accept
     raise(Wagn::Oops, "I don't understand whom to accept") unless params[:card]
-    @card = Card.fetch(params[:card][:key], :skip_virtual=>true) or raise(Wagn::NotFound, "Can't find this Account Request")  #ENGLISH
+    @card = Card[params[:card][:key]] or raise(Wagn::NotFound, "Can't find this Account Request")  #ENGLISH
     @user = @card.extension or raise(Wagn::Oops, "This card doesn't have an account to approve")  #ENGLISH
     System.ok?(:create_accounts) or raise(Wagn::PermissionDenied, "You need permission to create accounts")  #ENGLISH
 

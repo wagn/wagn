@@ -16,20 +16,30 @@ module Wagn::Model
       end
     end
 
-
     def patterns()
+#      warn "patterns called" if name == 'Illiad+*to'
+      
       @patterns ||= @@subclasses.map { |sub|
-        (n=sub.new(self)).pattern_applies? ? n : nil
+        x=(n=sub.new(self)).pattern_applies? ? n : nil
+      #Rails.logger.info "subc[#{n&&n.card&&n.card.name}] #{x.inspect}"; x
       }.compact
+      Rails.logger.info "patterns[#{name}, #{inspect}] >> #{@patterns.map(&:set_name).inspect}"; @patterns
     end
+    def set_names()
+      @set_names ||= patterns.map(&:set_name)   end
     def reset_patterns()
       @set_mods_loaded = @junction_only = @patterns = @method_keys = @set_names = @template = nil
-#      Rails.logger.debug "reset_patterns[#{name}] #{inspect}"
+      Rails.logger.debug "reset_patterns[#{name}] #{inspect}"
     end
-    def set_names()      @set_names ||= patterns.map(&:set_name)                  end
-    def real_set_names() set_names.find_all { |set_name| Card.exists? set_name }  end
-    def method_keys()    @method_keys ||= patterns.map(&:method_key)              end
-    def css_names()      patterns.map(&:css_name).reverse*" "                     end
+    def real_set_names()
+#      patterns.find_all(&:set_card).map(&:set_name)
+      r=set_names.find_all { |set_name|
+        rc=Card.fetch(set_name, :skip_virtual=>true)
+      }
+      Rails.logger.debug "real_set_names[#{inspect}] #{r.inspect}"; r
+    end
+    def method_keys()    @method_keys ||= patterns.map(&:method_key)        end
+    def css_names()      patterns.map(&:css_name).reverse*" "               end
     def junction_only?()
       !@junction_only.nil? ? @junction_only :
          @junction_only = patterns.map(&:class).find(&:junction_only?)

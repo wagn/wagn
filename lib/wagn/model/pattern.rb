@@ -16,7 +16,6 @@ module Wagn::Model
       end
     end
 
-<<<<<<< HEAD
     def before_save_rule()
       # do LTypeRightPattern need deeper checks?
       rule? && left.reset_patterns()
@@ -37,19 +36,7 @@ module Wagn::Model
     end
 
     def patterns()
-      #raise "??? #{cardname.inspect}" unless cardname.cardinfo
-      #Rails.logger.warn "START patterns #{cardname.inspect}" 
-      ps= @patterns ||= @@subclasses.map { |sub|
-          #warn " looking up #{sub} pattern for #{cardname}"
-          if new_pat = sub.new(self)
-            r1=new_pat.pat_name
-            #warn "looking up new pattern #{new_pat}, #{r1.inspect}"
-#           r2=r1.card if r1 # prefetch the card
-            new_pat
-          end
-        }.compact
-      #Rails.logger.warn "END patterns #{cardname.inspect}.  #{ps.inspect}"
-      ps
+      @patterns ||= @@subclasses.map { |sub| sub.new(self) }.compact
     end
 
     def patterns_with_new()
@@ -78,12 +65,9 @@ module Wagn::Model
       #Rails.logger.warn "START real_sets for #{cardname}, #{self.patterns}, #{@patterns}"
       #rr=
       #@real_set_names ||=
-        self.patterns.map do |pat|
-          set_name = pat.set_name
-          set_card = Card[set_name]
-#         warn "real_sets [#{set_card.real?}] SN:#{set_card} CN:#{cardname.inspect}:"
-          set_card && set_card.real? ? set_name : nil
-        end.compact
+        self.patterns.find_all {
+          |pat| Card.exists?(sname=pat.set_name) && sname
+        }.compact
 #       warn "setting real_sets for #{cardname.inspect} RR>#{rr.inspect}"; rr
     end
 
@@ -91,22 +75,6 @@ module Wagn::Model
 
     def css_names()      patterns.map(&:css_name).reverse*" "               end
 
-=======
-
-    def patterns()
-      @patterns ||= @@subclasses.map { |sub|
-        (n=sub.new(self)).pattern_applies? ? n : nil
-      }.compact
-    end
-    def reset_patterns()
-      @set_mods_loaded = @junction_only = @patterns = @method_keys = @set_names = @template = nil
-#      Rails.logger.debug "reset_patterns[#{name}] #{inspect}"
-    end
-    def set_names()      @set_names ||= patterns.map(&:set_name)                  end
-    def real_set_names() set_names.find_all { |set_name| Card.exists? set_name }  end
-    def method_keys()    @method_keys ||= patterns.map(&:method_key)              end
-    def css_names()      patterns.map(&:css_name).reverse*" "                     end
->>>>>>> cardname_card
     def junction_only?()
       @junction_only ||= patterns.map(&:class).find(&:junction_only?)
     end

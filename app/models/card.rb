@@ -57,7 +57,6 @@ class Card < ActiveRecord::Base
     @attributes_cache = {}
     @new_record = true
     self.send :attributes=, args, false
-    reset_patterns
 
     self.typecode_without_tracking = get_typecode(args['name'], typename, skip_type_lookup) unless args['typecode']
 
@@ -96,7 +95,7 @@ class Card < ActiveRecord::Base
       return 'Basic'
     end
 
-    #reset_patterns
+    reset_patterns 
     (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
   end
 

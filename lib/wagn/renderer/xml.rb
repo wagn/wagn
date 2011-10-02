@@ -95,6 +95,7 @@ module Wagn
 
   def layout_from_card
     return unless setting_card = (card.setting_card('layout') or Card.default_setting_card('layout'))
+    setting_card.include_set_modules
     return unless setting_card.typecode == 'Pointer'           and
       layout_name=setting_card.item_names.first                and
       !layout_name.nil?                                        and

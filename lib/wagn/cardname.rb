@@ -42,7 +42,7 @@ module Wagn
         end
       #@key.to_cardname if @key != @s
       NAME2CARDNAME[@s] = self
-      Rails.logger.debug "new:#{self.inspect}"; self
+      #Rails.logger.debug "new:#{self.inspect}"; self
     end
     
     def generate_simple_key

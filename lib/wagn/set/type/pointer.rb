@@ -46,6 +46,7 @@ module Wagn::Set::Type::Pointer
   
   def options_card
     card = self.setting_card('options')
+    card.include_set_modules if card
     (card && card.collection?) ? card : nil
   end
 

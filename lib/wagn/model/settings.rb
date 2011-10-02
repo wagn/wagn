@@ -1,7 +1,9 @@
 module Wagn::Model::Settings
   def setting setting_name, fallback=nil
+    Rails.logger.debug "setting(#{setting_name}, #{fallback})"
     card = setting_card setting_name, fallback
-    card && card.content
+    r=(card && card.content)
+    Rails.logger.debug "setting(#{setting_name}, #{fallback}) #{r}"; r
   end
 
   def rule?
@@ -11,11 +13,13 @@ module Wagn::Model::Settings
   end
 
   def setting_card setting_name, fallback=nil
+   r=
     real_set_names.first_value do |set_name|
       set_name=set_name.to_cardname
       Card[set_name.star_rule( setting_name )] ||
         fallback && Card[set_name.star_rule( fallback )]
     end
+    Rails.logger.debug "setting_card(#{setting_name}, #{fallback}) #{r.inspect}"; r
   end
   def setting_card_with_cache setting_name, fallback=nil
     setting_name=setting_name.to_sym
@@ -60,7 +64,6 @@ module Wagn::Model::Settings
           grouped.each_value do |name_list|
             name_list.sort!{ |x,y| Card.setting_attrib(x, :setting_seq) <=> Card.setting_attrib(y, :setting_seq)}
           end
-          grouped
         end
       end
     end

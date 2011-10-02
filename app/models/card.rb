@@ -16,7 +16,7 @@ class Card < ActiveRecord::Base
   belongs_to :extension, :polymorphic=>true
   before_destroy :destroy_extension
   after_save  :after_save_rule, :after_save_card,
-    :after_save_cardtype, :after_save_read_rule
+    :after_save_cardtype, :after_save_read_rule, :reset_patterns
   before_save :before_save_read_rule, :before_save_rule, :before_save_search
 
   def after_save_cardtype() end
@@ -57,6 +57,7 @@ class Card < ActiveRecord::Base
     @attributes_cache = {}
     @new_record = true
     self.send :attributes=, args, false
+    reset_patterns
 
     self.typecode_without_tracking = get_typecode(args['name'], typename, skip_type_lookup) unless args['typecode']
 
@@ -95,19 +96,25 @@ class Card < ActiveRecord::Base
       return 'Basic'
     end
 
-    reset_patterns
+    #reset_patterns
     (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
   end
 
-  def include_set_modules
+  def type_lookup
     if @typecode_lookup_skipped
+      @typecode_lookup_skipped = false
       self.typecode_without_tracking = get_typecode(name)
     end
+  end
+
+  def include_set_modules
+    type_lookup
     unless @set_mods_loaded
-      #Rails.logger.info "include_set_modules[#{name}] #{typecode} called" #{Kernel.caller[0..12]*"\n"}"
+      mods=set_modules
+      Rails.logger.info "include_set_modules[#{name}] #{typecode} called #{mods.inspect}" #{Kernel.caller[0..12]*"\n"}"
       @set_mods_loaded=true
-      self.set_modules.each {|m| singleton_class.send :include, m }
-    #else Rails.logger.info "include_set_modules[#{name}] #{typecode} loaded"
+      mods.each {|m| singleton_class.send :include, m }
+    else Rails.logger.info "include_set_modules[#{name}] #{typecode} loaded"
     end
     self
   end

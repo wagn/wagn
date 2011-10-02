@@ -47,11 +47,11 @@ module Wagn
     end
     
     def generate_simple_key
-      decode_html(s).underscore.gsub(/[^\w\*]+/,'_').split(/_+/).reject(&:blank?).map(&:singularize)*'_'
+      decode_html.underscore.gsub(/[^\p{Word}\*]+/,'_').split(/_+/).reject(&:blank?).map(&:singularize)*'_'
     end
 
-    def decode_html(s)
-      s.match(/\&/) ?  HTMLEntities.new.decode(s) : s
+    def decode_html
+      @decoded ||= (s.match(/\&/) ?  HTMLEntities.new.decode(s) : s)
     end
 
     
@@ -135,7 +135,7 @@ module Wagn
     def escape()           s.gsub(' ','_')                             end
 
     def to_url_key()
-      decode_html(s).gsub(/[^\*\w\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')
+      @url_key ||= decode_html.gsub(/[^\*\p{Word}\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')
     end
 
     def piece_names()

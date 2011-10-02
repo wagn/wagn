@@ -109,6 +109,7 @@ class Card < ActiveRecord::Base
       self.set_modules.each {|m| singleton_class.send :include, m }
     #else Rails.logger.info "include_set_modules[#{name}] #{typecode} loaded"
     end
+    self
   end
 
 

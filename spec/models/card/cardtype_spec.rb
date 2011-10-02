@@ -47,6 +47,7 @@ describe "Card (Cardtype)" do
     it "creates cardtype model and permission" do
       @card.typecode = 'Cardtype'
       @card.save!
+      Rails.logger.info "testing point #{@card.inspect}, #{@card.extension}"
       @card.extension.class_name.should == 'Cookie'
       Cardtype.name_for('Cookie').should == 'Cookie'
       @card=Card['Cookie']

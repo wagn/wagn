@@ -37,7 +37,6 @@ module Wagn::Model::Fetch
       #warn "fetch ret #{card.inspect}, #{opts.inspect}, #{card.new_card? && (!card.virtual? || opts[:skip_virtual])}" if key == 'pointer+*type'
       return nil if card.new_card? && (opts[:skip_virtual] || !card.virtual?)
 
-      card.after_fetch 
       card
     end
 
@@ -53,18 +52,10 @@ module Wagn::Model::Fetch
     def exists?(cardname) self[cardname].present?  end
   end
 
-  def after_fetch
-    include_set_modules
-  end
-
 
   def self.included(base)
     super
-    #Rails.logger.info "included(#{base}) S:#{self}"
     base.extend Wagn::Model::Fetch::ClassMethods
-    base.class_eval {
-      attr_accessor :virtual
-    }
   end
 end
 

@@ -51,7 +51,7 @@ module Wagn::Model::Fetch
     end
 
     def exists?(cardname)
-      fetch(cardname, :skip_virtual=>true).present?
+      fetch(cardname, :skip_virtual=>true, :skip_module_loading=>true).present?
     end
   end
 

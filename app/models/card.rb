@@ -52,7 +52,6 @@ class Card < ActiveRecord::Base
 #    @explicit_content = args['content']
     args['name'] = args['name'].to_s
 
-    #reset_patterns
     Rails.logger.warn "initializing args:>>#{args.inspect}"
     @attributes = get_attributes
     @attributes_cache = {}
@@ -96,9 +95,8 @@ class Card < ActiveRecord::Base
       return 'Basic'
     end
 
-    t = (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
-    reset_patterns #if !self.typecode || self.typecode != t
-    t
+    reset_patterns
+    (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
   end
 
   def include_set_modules
@@ -106,7 +104,7 @@ class Card < ActiveRecord::Base
       self.typecode_without_tracking = get_typecode(name)
     end
     unless @set_mods_loaded
-      Rails.logger.info "include_set_modules[#{name}] #{typecode} called" #{Kernel.caller[0..12]*"\n"}"
+      #Rails.logger.info "include_set_modules[#{name}] #{typecode} called" #{Kernel.caller[0..12]*"\n"}"
       @set_mods_loaded=true
       self.set_modules.each {|m| singleton_class.send :include, m }
     #else Rails.logger.info "include_set_modules[#{name}] #{typecode} loaded"

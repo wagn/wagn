@@ -198,6 +198,7 @@ module WagnHelper
 
   def pointer_item(slot,view)
     card = slot.card
+    card.include_set_modules
     content = card.content
     type = card.item_type
     typeparam = case

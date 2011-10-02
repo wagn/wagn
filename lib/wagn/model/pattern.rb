@@ -101,7 +101,7 @@ module Wagn::Model
     def css_names()      patterns.map(&:css_name).reverse*" "               end
 
     def junction_only?()
-         @junction_only ||= patterns.map(&:class).find(&:junction_only?)
+      @junction_only ||= patterns.map(&:class).find(&:junction_only?)
     end
 
     def label(nm='')

@@ -17,8 +17,10 @@ class Card < ActiveRecord::Base
   before_destroy :destroy_extension
     
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :cards, :set_mods_loaded,
-    :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual, 
+    :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit,
     :attachment_id #should build flexible handling for this kind of set-specific attr
+
+
 
   cache_attributes('name', 'typecode')    
 
@@ -41,7 +43,7 @@ class Card < ActiveRecord::Base
   def initialize(args={})
       #Rails.logger.warn "card@initializing with args #{args.inspect} Trace: #{Kernel.caller*"\n"}" if args['name'] == 'a+y'
     typename, skip_type_lookup, missing =
-      %w{type skip_type_lookup missing skip_virtual skip_module_loading id}.map { |a| args.delete(a) }
+      %w{type skip_type_lookup missing skip_virtual id}.map { |a| args.delete(a) }
 #    @explicit_content = args['content']
     args['name'] = args['name'].to_s
 
@@ -101,7 +103,8 @@ class Card < ActiveRecord::Base
     unless @set_mods_loaded
       Rails.logger.info "include_set_modules[#{name}] #{typecode} called" #{Kernel.caller[0..12]*"\n"}"
       @set_mods_loaded=true
-      singleton_class.include_type_module(typecode)
+      singleton_class.include_type_module(typecode)  
+    #else Rails.logger.info "include_set_modules[#{name}] #{typecode} loaded"
     end
   end
   
@@ -150,7 +153,7 @@ class Card < ActiveRecord::Base
       opts[:content] ||= ""
       sub_name = sub_name.gsub('~plus~','+')
       absolute_name = cardname.to_absolute_name(sub_name)
-      if card = Card[absolute_name]
+      if card = Card.fetch(absolute_name, :skip_virtual=>true)
         card.update_attributes(opts)
       elsif opts[:content].present? and opts[:content].strip.present?
         opts[:name] = absolute_name

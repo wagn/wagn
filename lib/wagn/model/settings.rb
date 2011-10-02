@@ -1,11 +1,11 @@
 module Wagn::Model::Settings
   def setting setting_name, fallback=nil
-    card = setting_card setting_name, fallback, :skip_module_loading=>true
+    card = setting_card setting_name, fallback
     card && card.content
   end
 
-  def setting_card setting_name, fallback=nil, extra_fetch_args={}
-    fetch_args = {:skip_virtual=>true}.merge extra_fetch_args
+  def setting_card setting_name, fallback=nil
+    fetch_args = {:skip_virtual=>true}
     real_set_names.each do |set_name|
       rule_card = Card.fetch "#{set_name}+#{setting_name.to_cardname.to_star}", fetch_args
       rule_card ||= fallback && Card.fetch("#{set_name}+#{fallback.to_cardname.to_star}", fetch_args)
@@ -33,7 +33,8 @@ module Wagn::Model::Settings
     end
 
     def default_setting_card setting_name, fallback=nil
-      Card["*all+#{setting_name.to_cardname.to_star}"] or (fallback ? default_setting_card(fallback) : nil)
+      setting_card = Card.fetch( "*all+#{setting_name.to_cardname.to_star}" , :skip_virtual => true) or
+        (fallback ? default_setting_card(fallback) : nil)
     end
 
     def universal_setting_names_by_group

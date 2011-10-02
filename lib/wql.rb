@@ -41,7 +41,7 @@ class Wql
             cardname = [query[:prepend], row['name'], query[:append]].compact.join('+')
             Card.fetch_or_new cardname
           else
-            Card[ row['name'] ]
+            Card.fetch row['name'], :skip_virtual=>true
           end
         card.nil? ? Card.find_by_name_and_trash(row['name'],false).repair_key : card
       end

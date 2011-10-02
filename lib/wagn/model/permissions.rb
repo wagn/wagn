@@ -103,7 +103,7 @@ module Wagn::Model::Permissions
   end 
   
   def rule_card(operation)
-    opcard = setting_card(operation.to_s, nil, :skip_module_loading=>true)
+    opcard = setting_card(operation.to_s)
     unless opcard or ENV['MIGRATE_PERMISSIONS'] == 'true'
       errors.add :permission_denied, "No #{operation} setting card for #{name}"      
       raise Card::PermissionDenied.new(self) 
@@ -113,7 +113,7 @@ module Wagn::Model::Permissions
       User.as :wagbot do
         #Rails.logger.debug "in rule_card #{opcard&&opcard.name} #{operation}"
         if opcard.content == '_left' && self.junction?
-          lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true, :skip_module_loading=>true) 
+          lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true) 
           lcard.rule_card(operation).first
         else
           opcard

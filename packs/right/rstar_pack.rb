@@ -7,7 +7,9 @@ class Wagn::Renderer::RichHtml
     rule_card = if is_self
       c = Card.fetch(set_name.trunk_name)
       return div(){"no such card #{set_name.trunk_name}"} unless c
-      c.setting_card(setting_name)
+      sc = c.setting_card(setting_name)
+      sc.after_fetch if sc
+      sc
     else
       card.new_card? ? nil : card 
     end
@@ -65,6 +67,7 @@ class Wagn::Renderer::RichHtml
         if is_self
           ruled_card = Card[main_set_name.trunk_name]
           current_rule = ruled_card.setting_card(setting_name)
+          current_rule.after_fetch if current_rule
           current_rule_set = current_rule ? current_rule.name.trunk_name.to_key : nil
           
           mode, sifter = :override, {:override => [], :defer=>[]}

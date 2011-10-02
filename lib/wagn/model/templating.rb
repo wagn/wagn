@@ -13,7 +13,6 @@ module Wagn::Model::Templating
   def get_template
     t = setting_card('content','default')
     @virtual = (new_card? && t && t.hard_template?)
-    update_cache
     t
   end
   

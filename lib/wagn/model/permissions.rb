@@ -103,7 +103,7 @@ module Wagn::Model::Permissions
   end 
   
   def rule_card(operation)
-    opcard = setting_card(operation.to_s, nil, :skip_module_loading=>true)
+    opcard = setting_card(operation.to_s)
     unless opcard or ENV['MIGRATE_PERMISSIONS'] == 'true'
       errors.add :permission_denied, "No #{operation} setting card for #{name}"      
       raise Card::PermissionDenied.new(self) 

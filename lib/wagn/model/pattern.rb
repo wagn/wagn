@@ -60,17 +60,18 @@ module Wagn::Model
     end
 
     def set_modules()
+#      warn "including set modules for #{name}"
       #raise "no type #{cardname.inspect}" if cardname.typename.nil?
       #Rails.logger.debug "set_mods[#{cardname.inspect}]"
       m=@set_modules = @set_modules || patterns_without_new.reverse.map do
-        |subclass|
-          if mod = subclass.set_module # and
+        |pattern|
+          if mod = pattern.set_module # and
             #Rails.logger.debug "set_mod[#{name}] #{subclass}, #{mod}"
             #const = suppress(NameError) do
             if mod =~ /^\w+(::\w+)+$/            and
             const = begin
-                      mm=eval( mod )
-                      r=(Module === mm) ? mm : nil
+                      find_module mod 
+  #                    r=(Module === mm) ? mm : nil
             #Rails.logger.debug "set_mod[#{cardname.inspect}]:#{mm}> #{subclass}, #{mod} R:#{r}"; r
                     rescue Exception => e
                       Rails.logger.info "include error is #{e.inspect}, #{e.backtrace*"\n"}" unless NameError === e
@@ -83,6 +84,14 @@ module Wagn::Model
       #Rails.logger.debug "set_mods #{self}, #{self.object_id} [#{name}] #{m.map(&:to_s)*", "}"; m
     end
 
+    def find_module(mod)
+      parts = mod.split '::'
+      mod1 = Wagn::Set.const_defined?(parts[0]) ? Wagn::Set.const_get(parts[0]) : nil
+      return nil  if !mod1
+      return mod1 if !parts[1]
+      mod1.const_defined?(parts[1]) ? mod1.const_get(parts[1]) : nil
+    end
+    
     def label
       found = @@subclasses.find { |sub| cardname.tag_name.to_s==sub.key }
       found and found.label(cardname.left_name)
@@ -129,7 +138,7 @@ module Wagn::Model
     end
     def css_name()                     "ALL"          end
     def method_key()                   ''             end
-    def set_module()                 "Wagn::Set::All" end
+    def set_module()                 "All" end
 
     Wagn::Model::Pattern.register_class self
   end
@@ -146,7 +155,7 @@ module Wagn::Model
     end
     def css_name()                     "ALL_PLUS"              end
     def method_key()                   'all_plus'              end
-    def set_module()                   "Wagn::Set::AllPlus"    end
+    def set_module()                   "AllPlus"    end
 
     Wagn::Model::Pattern.register_class self
   end
@@ -169,12 +178,12 @@ module Wagn::Model
 #        @pat_name=self.class.pattern_name(@pat_name).to_cardname :
 #        @pat_name || 'Basic+*type'.to_cardname
 #    end
-    def label()      "All #{left_name} cards"                         end
-    def left_name()  @pat_name.left_name.to_s                          end
-    def method_key() self.class.method_key_from_opts :type=>left_name end
+    def label()      "All #{left_name} cards"                                  end
+    def left_name()  @pat_name.left_name.to_s                                  end
+    def method_key() self.class.method_key_from_opts :type=>left_name          end
     def set_module()
 #      Rails.logger.debug "set_module (type) #{left_name.inspect}, #{@pat_name.inspect}"
-      "Wagn::Set::Type::#{Cardtype.classname_for(left_name)}"
+      "Type::#{Cardtype.classname_for(left_name)}"
     end
 
     Wagn::Model::Pattern.register_class self
@@ -191,7 +200,7 @@ module Wagn::Model
     end
     def css_name()                     "STAR"                  end
     def method_key()                   'star'                  end
-    def set_module()                   "Wagn::Set::Star"       end
+    def set_module()                   "Star"                  end
 
     Wagn::Model::Pattern.register_class self
   end
@@ -208,8 +217,8 @@ module Wagn::Model
       end
       def label(name)                  "Cards ending in +(Star Card)"   end
     end
-    def method_key()                   'rstar'                           end
-    def set_module()                   "Wagn::Set::Rstar"               end
+    def method_key()                   'rstar'                          end
+    def set_module()                   "Rstar"                          end
 
     Wagn::Model::Pattern.register_class self
   end
@@ -230,7 +239,7 @@ module Wagn::Model
     def method_key() self.class.method_key_from_opts :right=>@pat_name.left_name end
     def set_module()
       # this should be codename based
-      "Wagn::Set::Right::#{(@pat_name.left_name.key.gsub(/^\*/,'X')).camelcase}"
+      "Right::#{(@pat_name.left_name.key.gsub(/^\*/,'X')).camelcase}"
     end
 
     Wagn::Model::Pattern.register_class self
@@ -269,7 +278,7 @@ module Wagn::Model
       #Rails.logger.debug "set_module? #{pat_name.inspect}" unless  pat_name.left_name
       tk=((tn = @pat_name.left_name.tag_name) and tn.to_cardname.key.gsub(/^\*/,'X'))
       #Rails.logger.debug "set_module LtypeRname #{left_type.camelcase} #{tk.camelcase}"
-      "Wagn::Set::LTypeRight::#{left_type.camelcase+tk.camelcase}"
+      "LTypeRight::#{left_type.camelcase+tk.camelcase}"
     end
 
     Wagn::Model::Pattern.register_class self
@@ -298,7 +307,7 @@ module Wagn::Model
       #Rails.logger.info "Solo set_module #{pat_name.codename}, #{pat_name}"
       #"Wagn::Set::Self::#{(pat_name.codename||pat_name).camelize}";
       return unless @pat_name.size == 2 # simple? cards have two parts <c>+*self
-      "Wagn::Set::Self::#{@pat_name.left_name.to_s.camelize}";
+      "Self::#{@pat_name.left_name.to_s.camelize}";
     end
     
     Wagn::Model::Pattern.register_class self

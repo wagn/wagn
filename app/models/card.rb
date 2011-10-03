@@ -109,7 +109,8 @@ class Card < ActiveRecord::Base
       mods=set_modules
       Rails.logger.info "include_set_modules[#{name}] #{typecode} called #{mods.inspect}" if key == 'home+*watcher' #or name == 'Home+*watchers' #{Kernel.caller[0..12]*"\n"}"
       @set_mods_loaded=true
-      mods.each {|m| singleton_class.send :include, m }
+      #mods.each {|m| singleton_class.send :include, m }
+      singleton_class.include_type_module(typecode)
     elsif key == 'home+*watcher' #or name = 'Home+*watchers'
        Rails.logger.info "include_set_modules[#{name}] #{typecode} loaded"
     end
@@ -118,6 +119,17 @@ class Card < ActiveRecord::Base
 
 
   public
+  class << self
+    def include_type_module(typecode)
+      #Rails.logger.info "include set #{typecode} called"  #{Kernel.caller[0..4]*"\n"}"
+      return unless typecode
+      raise "Bad typecode #{typecode}" if typecode.to_s =~ /\W/
+      suppress(NameError) { include eval "Wagn::Set::Type::#{typecode}" }
+    rescue Exception => e
+      # eg, this was failing in 2.3.11 on typecode "Task"
+      Rails.logger.info "failed to include #{typecode}: #{e.message}"
+    end
+  end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # SAVING

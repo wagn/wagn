@@ -21,7 +21,7 @@ module Wagn::Model
       rule? && left.reset_patterns()
       Rails.logger.debug "before_save_rule: #{name}, #{rule?}"
     end
-    def after_save_rule() rule? && reset_patterns()
+    def reset_patterns_if_rule() rule? && reset_patterns()
       Rails.logger.debug "after_save_rule: #{name}, #{rule?}"
     end
 
@@ -30,7 +30,7 @@ module Wagn::Model
     def reset_patterns()
       Rails.logger.debug "reset_patterns[#{name}]"
       @setting_cards={}
-      @real_set_name = @set_mods_loaded = @junction_only = @patterns =
+      @real_set_names = @set_mods_loaded = @junction_only = @patterns =
          @method_keys = @set_names = @template = @skip_type_lookup = nil
 #      Rails.logger.debug "reset_patterns[#{name}] #{inspect}"
     end

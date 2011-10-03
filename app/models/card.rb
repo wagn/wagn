@@ -15,16 +15,23 @@ class Card < ActiveRecord::Base
 
   belongs_to :extension, :polymorphic=>true
   before_destroy :destroy_extension
-    
-  attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :cards, :set_mods_loaded,
-    :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual,
-    :attachment_id #should build flexible handling for this kind of set-specific attr
+  after_save  :after_save_rule, :after_save_card,
+    :after_save_cardtype, :after_save_read_rule #, :reset_patterns
+  before_save :before_save_read_rule, :before_save_rule, :before_save_search
 
-  cache_attributes('name', 'typecode')    
+  def after_save_cardtype() end
+  def before_save_search() end
+
+  attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
+    :cards, :set_mods_loaded, :update_referencers, :allow_type_change,
+    :broken_type, :loaded_trunk, :nested_edit, :virtual, :attachment_id
+    #should build flexible handling for set-specific attributes
+
+  cache_attributes('name', 'typecode')
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # INITIALIZATION METHODS
-  
+
   def self.new(args={})
     args ||= {}
     args = args.stringify_keys # evidently different from args.stringify_keys!
@@ -46,7 +53,7 @@ class Card < ActiveRecord::Base
     args['name'] = args['name'].to_s
 
     Rails.logger.warn "initializing args:>>#{args.inspect}"
-    @attributes = get_attributes   
+    @attributes = get_attributes
     @attributes_cache = {}
     @new_record = true
     self.send :attributes=, args, false
@@ -54,16 +61,15 @@ class Card < ActiveRecord::Base
     self.typecode_without_tracking = get_typecode(args['name'], typename, skip_type_lookup) unless args['typecode']
 
     include_set_modules unless skip_type_lookup
-    Rails.logger.debug "card#initialize[#{name}] 4 #{inspect}"
     self
   end
 
   def new_card?()  new_record? || @from_trash  end
-  def known?()    !(new_card? && !virtual?)   end
-  
+  def known?()    real? || virtual?           end
+  def real?()     !new_card?                  end
+
   def reset_mods() @set_mods_loaded=false end
 
-#private
 
   def get_attributes
     #was getting this from column defs.  very slow.
@@ -78,57 +84,56 @@ class Card < ActiveRecord::Base
 
   def get_typecode(name, typename=nil, skip_type_lookup=false)
     @typecode_lookup_skipped=false
-    
+
     if typename
-      begin ; return Cardtype.classname_for(typename)
+      begin ; return self.typecode_without_tracking =Cardtype.classname_for(typename)
       rescue Exception => e; self.broken_type = typename end
     end
-    
+
     if skip_type_lookup
       @typecode_lookup_skipped = true
-      return 'Basic' 
+      return 'Basic'
     end
 
-    t = (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
-    reset_patterns #if !self.typecode || self.typecode != t
-    t
+    reset_patterns 
+    self.typecode_without_tracking =
+      (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
+  end
+
+  def type_lookup
+    Rails.logger.debug "type_lookup S[#{@typecode_lookup_skipped}] #{inspect}" if name == 'Home+*watchers'
+    if @typecode_lookup_skipped
+      reset_patterns 
+      get_typecode(name)
+      Rails.logger.debug "type_lookup E #{inspect}" if name == 'Home+*watchers'
+    end
   end
 
   def include_set_modules
-    if @typecode_lookup_skipped
-      self.typecode_without_tracking = get_typecode(name)
-    end
-    unless @set_mods_loaded
-      Rails.logger.info "include_set_modules[#{name}] #{typecode} called" #{Kernel.caller[0..12]*"\n"}"
+    type_lookup
+    if !@set_mods_loaded
+      mods=set_modules
+      Rails.logger.info "include_set_modules[#{name}] #{typecode} called #{mods.inspect}" if key == 'home+*watcher' #or name == 'Home+*watchers' #{Kernel.caller[0..12]*"\n"}"
       @set_mods_loaded=true
-      singleton_class.include_type_module(typecode)
+      mods.each {|m| singleton_class.send :include, m }
+    elsif key == 'home+*watcher' #or name = 'Home+*watchers'
+       Rails.logger.info "include_set_modules[#{name}] #{typecode} loaded"
     end
+    self
   end
-  
-  
-  
-  
+
+
+
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # CLASS METHODS
 
   public
-  class << self
-    def include_type_module(typecode)
-      #Rails.logger.info "include set #{typecode} called"  #{Kernel.caller[0..4]*"\n"}"
-      return unless typecode
-      raise "Bad typecode #{typecode}" if typecode.to_s =~ /\W/
-      suppress(NameError) { include eval "Wagn::Set::Type::#{typecode}" }
-    rescue Exception => e
-      # eg, this was failing in 2.3.11 on typecode "Task"
-      Rails.logger.info "failed to include #{typecode}: #{e.message}"
-    end
-  end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # SAVING
 
 
-  def after_save
+  def after_save_card
     save_subcards
     self.virtual = false
     #cardname.card = self
@@ -191,15 +196,15 @@ class Card < ActiveRecord::Base
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # DESTROY
- 
-  def destroy_with_trash(caller="")     
+
+  def destroy_with_trash(caller="")
     if callback(:before_destroy) == false
       errors.add(:destroy, "could not prepare card for destruction")
       return false
     end
     deps = self.dependents
     @trash_changed = true
-    self.update_attribute(:trash, true) 
+    self.update_attribute(:trash, true)
     deps.each do |dep|
       next if dep.trash
       dep.confirm_destroy = true
@@ -255,6 +260,7 @@ class Card < ActiveRecord::Base
   def css_name()    cardname.css_name      end
 
   def left()
+    #Rails.logger.debug "left(#{name}), #{cardname.trunk_name}, #{cardname.trunk_name.to_s}"
     Card[cardname.left_name]
   end
   def right()     Card[cardname.tag_name]   end
@@ -293,7 +299,7 @@ class Card < ActiveRecord::Base
       correct_key = cardname.to_key
       current_key = key
       return self if current_key==correct_key
-      
+
       if key_blocker = Card.find_by_key_and_trash(correct_key, true)
         key_blocker.cardname = key_blocker.cardname + "*trash#{rand(4)}"
         key_blocker.save
@@ -324,9 +330,9 @@ class Card < ActiveRecord::Base
     raise("Error in #{self.name}: No cardtype for #{self.typecode}")  unless ct
     ct.card
   end
-  
+
   def typename() typecode and Cardtype.name_for( typecode ) or 'Basic' end
-  
+
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # CONTENT / REVISIONS
@@ -334,7 +340,7 @@ class Card < ActiveRecord::Base
   def content
     new_card? ? template(reset=true).content : cached_revision.content
   end
-  
+
   def raw_content
     r = (t=templated_content) || (c=content)
     raise "???, #{name}, #{t}, #{c}" if r.nil? or r==false
@@ -343,26 +349,26 @@ class Card < ActiveRecord::Base
 
   def cached_revision
     #return current_revision || Revision.new
-#    Rails.logger.info "looking up cached revision for key: #{key}-content.  read from cache: #{self.class.cache.read("#{key}-content").inspect}  " 
-    
+#    Rails.logger.info "looking up cached revision for key: #{key}-content.  read from cache: #{self.class.cache.read("#{key}-content").inspect}  "
+
     case
     when (@cached_revision and @cached_revision.id==current_revision_id);
     when (@cached_revision=self.class.cache.read("#{key}-content") and @cached_revision.id==current_revision_id);
     else
       rev = current_revision_id ? Revision.find(current_revision_id) : Revision.new
       @cached_revision = self.class.cache.write("#{key}-content", rev)
-#      Rails.logger.info "wrote cached revision for key: #{key}-content.  read from cache: #{self.class.cache.read("#{key}-content").inspect}  " 
+#      Rails.logger.info "wrote cached revision for key: #{key}-content.  read from cache: #{self.class.cache.read("#{key}-content").inspect}  "
     end
     @cached_revision
   end
 
   def previous_revision(revision)
-    rev_index = revisions.each_with_index do |rev, index| 
-      rev.id == revision.id ? (break index) : nil 
+    rev_index = revisions.each_with_index do |rev, index|
+      rev.id == revision.id ? (break index) : nil
     end
     (rev_index.nil? || rev_index==0) ? nil : revisions[rev_index - 1]
   end
-   
+
   def revised_at
     (cached_revision && cached_revision.updated_at) || Time.now
   end
@@ -374,7 +380,7 @@ class Card < ActiveRecord::Base
   def drafts
     revisions.find(:all, :conditions=>["id > ?", current_revision_id])
   end
-         
+
   def save_draft( content )
     clear_drafts
     revisions.create(:content=>content)
@@ -384,9 +390,9 @@ class Card < ActiveRecord::Base
   def clear_drafts
     connection.execute(%{delete from revisions where card_id=#{id} and id > #{current_revision_id} })
   end
-  
+
   public
-  
+
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # METHODS FOR OVERRIDE
@@ -402,9 +408,9 @@ class Card < ActiveRecord::Base
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # MISCELLANEOUS
-  
+
   def to_s()  "#<#{self.class.name}[#{self.typename.to_s}]#{self.attributes['name']}>" end
-  def inspect()  "#<#{self.class.name}[#{self.typecode}]#{self.name}{n:#{new_card?}v:#{virtual}:I:#{@set_mods_loaded}:#{object_id}}:#{@set_names.inspect}>" end
+  def inspect()  "#<#{self.class.name}[#{self.typecode}]#{self.name}{n:#{new_card?}:v:#{virtual}:t:#{@skip_type_lookup}:I:#{@set_mods_loaded}:#{object_id}}:#{@set_names.inspect}>" end
   def mocha_inspect()     to_s                                   end
 
 #  def trash
@@ -447,20 +453,20 @@ class Card < ActiveRecord::Base
   end
   alias_method_chain :name=, :cardname
   def cardname() @cardname ||= name.to_cardname end
-  
+
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # VALIDATIONS
 
-  def validate_destroy    
+  def validate_destroy
     if extension_type=='User' and extension and Revision.find_by_created_by( extension.id )
       errors.add :destroy, "Edits have been made with #{name}'s user account.<br>  Deleting this card would mess up our revision records."
       return false
-    end           
-    #should collect errors from dependent destroys here.  
+    end
+    #should collect errors from dependent destroys here.
     true
   end
-  
-  
+
+
 
   protected
 
@@ -484,8 +490,8 @@ class Card < ActiveRecord::Base
       rec.errors.add :name, "can't be blank"
     elsif rec.updates.for?(:name)
       #Rails.logger.debug "valid name #{rec.name.inspect} New #{value.inspect}"
-      
-      
+
+
       unless cdname.valid_cardname?
         rec.errors.add :name,
           "may not contain any of the following characters: #{
@@ -533,11 +539,11 @@ class Card < ActiveRecord::Base
     # validate on update
     if rec.updates.for?(:typecode) and !rec.new_card?
       if !rec.validate_type_change
-        rec.errors.add :type, "of #{rec.name} can't be changed; errors changing from #{rec.typename}"        
+        rec.errors.add :type, "of #{rec.name} can't be changed; errors changing from #{rec.typename}"
       end
       if c = Card.new(:name=>'*validation dummy', :typecode=>value, :content=>'') and !c.valid?
         rec.errors.add :type, "of #{rec.name } can't be changed; errors creating new #{value}: #{c.errors.full_messages.join(', ')}"
-      end      
+      end
     end
 
     # validate on update and create
@@ -547,10 +553,10 @@ class Card < ActiveRecord::Base
         rec.errors.add :type, "won't work.  There's no cardtype named '#{rec.broken_type}'"
       end
       # invalid to change type when type is hard_templated
-      if (rt = rec.right_template and rt.hard_template? and 
+      if (rt = rec.right_template and rt.hard_template? and
         value!=rt.typecode and !rec.allow_type_change)
         rec.errors.add :type, "can't be changed because #{rec.name} is hard tag templated to #{rt.typename}"
-      end        
+      end
     end
   end
 
@@ -561,6 +567,6 @@ class Card < ActiveRecord::Base
       rec.errors.add :key, "wrong key '#{value}' for name #{rec.name}"
     end
   end
-  
-end  
+
+end
 

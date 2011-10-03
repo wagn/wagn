@@ -38,7 +38,7 @@ class Wagn::Renderer::RichHtml
 #      )]
     ]
     if is_self
-      cells << ['rule-set', rule_card ? rule_card.trunk.label(rule_card.name.trunk_name) : ''] 
+      cells << ['rule-set', rule_card ? rule_card.trunk.label(rule_card.cardname.left_name.to_s) : ''] 
     end
 
     extra_css_class = rule_card && !rule_card.new_card? ? 'known-rule' : 'missing-rule'

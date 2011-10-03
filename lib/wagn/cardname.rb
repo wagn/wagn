@@ -14,6 +14,7 @@ module Wagn
 
     class << self
       def new(obj)
+        raise "??? #{obj.inspect}" if Card===obj
         return obj if Cardname===obj
         str = Array===obj ? obj*JOINT : obj.to_s
         raise "name error #{str}" if str[0] == '/'
@@ -42,7 +43,7 @@ module Wagn
         end
       #@key.to_cardname if @key != @s
       NAME2CARDNAME[@s] = self
-      Rails.logger.debug "new:#{self.inspect}"; self
+      #Rails.logger.debug "new:#{self.inspect}"; self
     end
     
     def generate_simple_key

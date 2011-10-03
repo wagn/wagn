@@ -1,18 +1,36 @@
 module Wagn::Model::Settings
   def setting setting_name, fallback=nil
+    Rails.logger.debug "setting(#{setting_name}, #{fallback})" if key == 'home+*watcher'
     card = setting_card setting_name, fallback, :skip_module_loading=>true
-    card && card.content
+    r=(card && card.content)
+    Rails.logger.debug "setting(#{setting_name}, #{fallback}) #{r}" if key == 'home+*watcher'; r
+  end
+
+  def rule?
+    return @rule unless @rule.nil?
+    #Rails.logger.info "rule? #{name}, #{left&&"#{left.typename}:#{left.name}"}, #{right&&"#{right.typename}:#{right.name}"}" if junction?
+    @rule = junction? ? (left&&left.typecode=='Set'&&right.typecode=='Setting') : false
   end
 
   def setting_card setting_name, fallback=nil, extra_fetch_args={}
     fetch_args = {:skip_virtual=>true}.merge extra_fetch_args
-    real_set_names.each do |set_name|
-      rule_card = Card.fetch "#{set_name}+#{setting_name.to_cardname.to_star}", fetch_args
-      rule_card ||= fallback && Card.fetch("#{set_name}+#{fallback.to_cardname.to_star}", fetch_args)
-      return rule_card if rule_card
+   r=
+    real_set_names.first_value do |set_name|
+      Rails.logger.debug "setting_card search #{set_name.inspect}"
+      set_name=set_name.to_cardname
+      Card.fetch(set_name.star_rule( setting_name ), fetch_args) ||
+        fallback && Card.fetch(set_name.star_rule( fallback ), fetch_args)
+
     end
-    return nil
+    Rails.logger.debug "setting_card(#{setting_name}, #{fallback}) #{r.inspect}"; r
   end
+  def setting_card_with_cache setting_name, fallback=nil, extra_fetch_args={}
+    setting_name=setting_name.to_sym
+    @setting_cards ||= {}  # FIXME: initialize this when creating card
+    @setting_cards[setting_name] ||= 
+      setting_card_without_cache setting_name, fallback, extra_fetch_args
+  end
+  alias_method_chain :setting_card, :cache
 
   def related_sets
     sets = []
@@ -33,7 +51,8 @@ module Wagn::Model::Settings
     end
 
     def default_setting_card setting_name, fallback=nil
-      Card["*all+#{setting_name.to_cardname.to_star}"] or (fallback ? default_setting_card(fallback) : nil)
+      Card["*all".to_cardname.star_rule(setting_name)] or
+        fallback ? default_setting_card(fallback) : nil
     end
 
     def universal_setting_names_by_group
@@ -56,7 +75,7 @@ module Wagn::Model::Settings
       const = eval("Wagn::Set::Self::#{cardname.module_name}")
       const.send attrib
     rescue
-      Rails.logger.info "nothing found for #{name.to_cardname.module_name}, #{attrib}"
+      Rails.logger.info "nothing found for #{cardname.module_name}, #{attrib}"
       nil
     end
   end
@@ -64,6 +83,7 @@ module Wagn::Model::Settings
   def self.included(base)
     super
     base.extend(ClassMethods)
+    base.class_eval { attr_accessor :rule }
   end
 
 end

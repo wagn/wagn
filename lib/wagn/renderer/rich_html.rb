@@ -121,6 +121,7 @@ module Wagn
 
   def layout_from_card
     return unless setting_card = (card.setting_card('layout') or Card.default_setting_card('layout'))
+    #setting_card.include_set_modules
     return unless setting_card.is_a?(Wagn::Set::Type::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.typecode == 'Pointer'        and
       layout_name=setting_card.item_names.first     and
       !layout_name.nil?                             and
@@ -274,11 +275,11 @@ module Wagn
     render_partial('card/footer')
   end
 
+  MENU_DEFAULT = [:view,:changes,:options,:related,:edit]
+
   def menu
-    if card.virtual?
-      return %{<span class="card-menu faint">Virtual</span>\n}
-    end
-    menu_options = [:view,:changes,:options,:related,:edit]
+    return %{<span class="card-menu faint">Virtual</span>\n} if card.virtual?
+    menu_options = card.menu_options(MENU_DEFAULT).clone
     top_option = menu_options.pop
     menu = %{<span class="card-menu">\n}
       menu << %{<span class="card-menu-left">\n}
@@ -336,12 +337,10 @@ module Wagn
   end
 
   def button_to_action( text, to_action, remote_opts={}, html_opts={})
-    if remote_opts.delete(:replace)
-      r_opts =  { :url=>url_for("card/#{to_action}", :replace=>id ) }.merge(remote_opts)
-    else
-      r_opts =  { :url=>url_for("card/#{to_action}" ), :update => id }.merge(remote_opts)
-    end
-    button_to_remote( text, r_opts, html_opts )
+    button_to_remote( text, 
+      { :url=>url_for("card/#{to_action}",
+        ((remote_opts.delete(:replace)) ? :replace : :update)=>id ) }.
+             merge(remote_opts), html_opts )
   end
 
   def name_field(form,options={})

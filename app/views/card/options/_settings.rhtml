@@ -7,7 +7,7 @@
     <h2>Related Sets</h2>
     <%- (related_sets<<self_set_name).each do |set_name| %>
       <div class="options-set">
-        <div class="options-set-label"><%= card.label(set_name) %></div>
+        <div class="options-set-label"><%= card.label() %></div>
         <div class="options-set-content">
           <%= slot.process_inclusion Card.fetch(set_name), :view=>:closed %>
         </div>

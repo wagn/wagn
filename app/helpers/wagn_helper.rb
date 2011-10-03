@@ -197,7 +197,7 @@ module WagnHelper
   def div(*args, &block)   content_tag(:div, *args, &block);  end
 
   def pointer_item(slot,view)
-    card = slot.card
+    card = slot.card #.include_set_modules
     content = card.content
     type = card.item_type
     typeparam = case

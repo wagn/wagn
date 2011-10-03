@@ -79,14 +79,6 @@ module Wagn::Model
       @junction_only ||= patterns.map(&:class).find(&:junction_only?)
     end
 
-    def label()
-      tag_key = cardname.tag_name.to_cardname.key
-      #FIXME: should be codenames, not keys here
-      patterns.first_value { |pat|
-        Rails.logger.debug "label #{pat.pat_name.inspect}, #{name}, #{tag_key}"
-        tag_key==pat.class.key && pat.label() }
-    end
-
     def set_modules()
       #raise "no type #{cardname.inspect}" if cardname.typename.nil?
       #Rails.logger.debug "set_mods[#{cardname.inspect}]"
@@ -109,6 +101,7 @@ module Wagn::Model
         end
       end.compact
       #Rails.logger.debug "set_mods #{self}, #{self.object_id} [#{name}] #{m.map(&:to_s)*", "}"; m
+    end
 
     def label
       found = @@subclasses.find { |sub| cardname.tag_name.to_s==sub.key }

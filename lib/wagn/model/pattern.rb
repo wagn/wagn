@@ -224,7 +224,7 @@ module Wagn::Model
       def trunkless?()                 true                             end
       def junction_only?()             true                             end
       def pattern_applies?(card)
-        card.cardname.junction? && card.cardname.tag_name.star?
+        card.cardname.junction? && card.cardname.tag_name.to_cardname.star?
       end
       def label(name)                  "Cards ending in +(Star Card)"   end
     end

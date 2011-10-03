@@ -15,8 +15,8 @@ class Card < ActiveRecord::Base
 
   belongs_to :extension, :polymorphic=>true
   before_destroy :destroy_extension
-  after_save :reset_patterns_if_rule, :after_save_card, :update_ruled_cards #, :reset_patterns
-  before_save :set_read_rule, :before_save_rule
+  after_save :after_save_card, :update_ruled_cards #, :reset_patterns
+  before_save :set_read_rule
 
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
     :cards, :set_mods_loaded, :update_referencers, :allow_type_change,
@@ -116,10 +116,6 @@ class Card < ActiveRecord::Base
     self
   end
 
-
-
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # CLASS METHODS
 
   public
 

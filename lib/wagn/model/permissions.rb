@@ -280,16 +280,12 @@ module Wagn::Model::Permissions
     end
   end
   
-#  def before_save_read_rule() nil end#set_read_rule      end
-#  def after_save_read_rule()  nil end#update_ruled_cards end
 
   def self.included(base)   
     super
     base.extend(ClassMethods)
     base.alias_method_chain :save, :permissions
     base.alias_method_chain :save!, :permissions
-#    base.before_save.unshift Proc.new{|rec| rec.set_read_rule }
-#    base.after_save.unshift  Proc.new{|rec| rec.update_ruled_cards }
     base.alias_method_chain :destroy, :permissions
     base.alias_method_chain :destroy!, :permissions
     

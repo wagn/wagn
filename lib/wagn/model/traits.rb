@@ -28,13 +28,13 @@ module Wagn::Model::Traits
 #r= Rails.logger.info("trait_card #{self}, #{trait_name} = #{r}"); r
   # A card has a 'trait' if card+trait_name exists
   def has_trait?(trait_name)
-    (tc=trait_card(trait_name)) ? (! tc.missing?) : false
+    (tc=trait_card(trait_name)) ? (tc.real?) : false
   end
   def trait_cards()    @trait_cards ||= {}; end
      
   def traits
     trait_options.keys.map do |trait_name|
-      if tc=trait_card(trait_name) and not tc.missing?
+      if tc=trait_card(trait_name) and tc.real?
         Rails.logger.info("tag_trait: #{name} + #{trait_name} #{tc.name}")
         block_given? ? yield(trait_name, tc) : trait_name
       end
@@ -49,7 +49,7 @@ module Wagn::Model::Traits
       Rails.logger.debug "menu_options(#{options.inspect}) #{topts.inspect}"
       topts.keys.each do |trait_name|
         if trait_opts = topts[trait_name] and
-           tc = trait_card(trait_name) and not tc.missing?
+           tc = trait_card(trait_name) and tc.real?
           Rails.logger.info("menu_options N[#{name}] #{trait_name} #{trait_opts}")
           if Hash===trait_opts
             trait_opts.each_pair do |where, what|

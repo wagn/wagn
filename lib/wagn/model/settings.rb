@@ -1,9 +1,9 @@
 module Wagn::Model::Settings
   def setting setting_name, fallback=nil
-    Rails.logger.debug "setting(#{setting_name}, #{fallback})"
+    Rails.logger.debug "setting(#{setting_name}, #{fallback})" if key == 'home+*watcher'
     card = setting_card setting_name, fallback, :skip_module_loading=>true
     r=(card && card.content)
-    Rails.logger.debug "setting(#{setting_name}, #{fallback}) #{r}"; r
+    Rails.logger.debug "setting(#{setting_name}, #{fallback}) #{r}" if key == 'home+*watcher'; r
   end
 
   def rule?

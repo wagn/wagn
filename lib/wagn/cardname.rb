@@ -14,6 +14,7 @@ module Wagn
 
     class << self
       def new(obj)
+        raise "??? #{obj.inspect}" if Card===obj
         return obj if Cardname===obj
         str = Array===obj ? obj*JOINT : obj.to_s
         raise "name error #{str}" if str[0] == '/'

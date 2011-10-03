@@ -16,7 +16,7 @@ class Card < ActiveRecord::Base
   belongs_to :extension, :polymorphic=>true
   before_destroy :destroy_extension
   after_save  :after_save_rule, :after_save_card,
-    :after_save_cardtype, :after_save_read_rule, :reset_patterns
+    :after_save_cardtype, :after_save_read_rule #, :reset_patterns
   before_save :before_save_read_rule, :before_save_rule, :before_save_search
 
   def after_save_cardtype() end
@@ -86,7 +86,7 @@ class Card < ActiveRecord::Base
     @typecode_lookup_skipped=false
 
     if typename
-      begin ; return Cardtype.classname_for(typename)
+      begin ; return self.typecode_without_tracking =Cardtype.classname_for(typename)
       rescue Exception => e; self.broken_type = typename end
     end
 
@@ -96,26 +96,28 @@ class Card < ActiveRecord::Base
     end
 
     reset_patterns 
-    (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
+    self.typecode_without_tracking =
+      (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
   end
 
   def type_lookup
     Rails.logger.debug "type_lookup S[#{@typecode_lookup_skipped}] #{inspect}" if name == 'Home+*watchers'
     if @typecode_lookup_skipped
-      @typecode_lookup_skipped = false
-      self.typecode_without_tracking = get_typecode(name)
+      reset_patterns 
+      get_typecode(name)
       Rails.logger.debug "type_lookup E #{inspect}" if name == 'Home+*watchers'
     end
   end
 
   def include_set_modules
     type_lookup
-    unless @set_mods_loaded
+    if !@set_mods_loaded
       mods=set_modules
-      #Rails.logger.info "include_set_modules[#{name}] #{typecode} called #{mods.inspect}" #{Kernel.caller[0..12]*"\n"}"
+      Rails.logger.info "include_set_modules[#{name}] #{typecode} called #{mods.inspect}" if key == 'home+*watcher' #or name == 'Home+*watchers' #{Kernel.caller[0..12]*"\n"}"
       @set_mods_loaded=true
       mods.each {|m| singleton_class.send :include, m }
-    #else Rails.logger.info "include_set_modules[#{name}] #{typecode} loaded"
+    elsif key == 'home+*watcher' #or name = 'Home+*watchers'
+       Rails.logger.info "include_set_modules[#{name}] #{typecode} loaded"
     end
     self
   end
@@ -408,7 +410,7 @@ class Card < ActiveRecord::Base
   # MISCELLANEOUS
 
   def to_s()  "#<#{self.class.name}[#{self.typename.to_s}]#{self.attributes['name']}>" end
-  def inspect()  "#<#{self.class.name}[#{self.typecode}]#{self.name}{n:#{new_card?}v:#{virtual}:I:#{@set_mods_loaded}:#{object_id}}:#{@set_names.inspect}>" end
+  def inspect()  "#<#{self.class.name}[#{self.typecode}]#{self.name}{n:#{new_card?}:v:#{virtual}:t:#{@skip_type_lookup}:I:#{@set_mods_loaded}:#{object_id}}:#{@set_names.inspect}>" end
   def mocha_inspect()     to_s                                   end
 
 #  def trash

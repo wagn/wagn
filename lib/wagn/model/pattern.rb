@@ -31,7 +31,7 @@ module Wagn::Model
       Rails.logger.debug "reset_patterns[#{name}]"
       @setting_cards={}
       @real_set_name = @set_mods_loaded = @junction_only = @patterns =
-         @method_keys = @set_names = @template = nil
+         @method_keys = @set_names = @template = @skip_type_lookup = nil
 #      Rails.logger.debug "reset_patterns[#{name}] #{inspect}"
     end
 
@@ -82,7 +82,9 @@ module Wagn::Model
     def label()
       tag_key = cardname.tag_name.to_cardname.key
       #FIXME: should be codenames, not keys here
-      @@subclasses.first_value { |sub| tag_key==sub.key && sub.label() }
+      patterns.first_value { |pat|
+        Rails.logger.debug "label #{pat.pat_name.inspect}, #{name}, #{tag_key}"
+        tag_key==pat.class.key && pat.label() }
     end
 
     def set_modules()
@@ -121,13 +123,13 @@ module Wagn::Model
       def junction_only?()           false end
       def pattern_applies?(c)        true  end
       def pattern_name(card)     key   end
-      def new(card) super if self.pattern_applies?(card) end
+      def new(card) super(card) if self.pattern_applies?(card) end
     end
 
     def inspect()            "<#{self.class} #{pat_name.inspect}>"        end
     def initialize(card)
-      @pat_name = self.class.pattern_name(card).to_cardname
-      #Rails.logger.warn "new#pattern #{self.class}#new(#{card}) #{@pat_name}" if card.name =~ /^Yo /
+      @pat_name = Card===(pn=self.class.pattern_name(card)) ? pn : pn.to_cardname
+      Rails.logger.warn "new#pattern #{self.class}#new(#{card}) #{@pat_name}"
       self
     end
     def set_name()           pat_name.to_s                                end
@@ -178,16 +180,21 @@ module Wagn::Model
       def method_key_from_opts(opts) opts[:type].to_cardname.css_name+'_type'  end
 
       def pattern_name(card)
-        card.type_lookup
-      Rails.logger.debug "pattern_name (type) #{card.inspect} #{card.typename}"
-        "#{card.typename}+#{key}"
+      Rails.logger.debug "pattern_name (type) #{card.inspect} #{card.typecode.inspect}"
+        card.typecode.nil? ? card : "#{card.typename}+#{key}"
       end
+    end
+    def pat_name()
+      Rails.logger.debug "pat_name( #{@pat_name.inspect} )"
+      Card===@pat_name && !@pat_name.typecode.nil? ?
+        @pat_name=self.class.pattern_name(@pat_name).to_cardname :
+        @pat_name || 'Basic+*type'.to_cardname
     end
     def label()      "All #{left_name} cards"                         end
     def left_name()  pat_name.left_name.to_s                          end
     def method_key() self.class.method_key_from_opts :type=>left_name end
     def set_module()
-      Rails.logger.debug "set_module (type) #{left_name}, #{pat_name.inspect}"
+      Rails.logger.debug "set_module (type) #{left_name.inspect}, #{@pat_name.inspect}"
       "Wagn::Set::Type::#{Cardtype.classname_for(left_name)}"
     end
 
@@ -236,11 +243,13 @@ module Wagn::Model
       def junction_only?()           true                                end
       def pattern_name(card)
         r="#{card.cardname.tag_name}+#{key}"
-        #Rails.logger.debug "pattern_name Right #{cardname}, #{r}"; r
+        Rails.logger.debug "pattern_name Right #{card.cardname}, #{r}"; r
       end
       def pattern_applies?(card) card.cardname.junction?                  end
     end
-    def label()      "Cards ending in +#{pat_name.left_name}" end
+    def label()    
+      Rails.logger.debug "label Right #{@pat_name.inspect}"
+      "Cards ending in +#{pat_name.left_name}" end
     def method_key() self.class.method_key_from_opts :right=>pat_name.left_name end
     def set_module()
       # this should be codename based

@@ -116,7 +116,7 @@ module Wagn::Model
 #      Rails.logger.warn "new#pattern #{self.class}#new(#{card}) #{@pat_name}"
       self
     end
-    x``()           @pat_name.to_s                                end
+    def set_name()           @pat_name.to_s                                end
     def css_name()
       sn = @pat_name
       sn.tag_name.to_s.gsub(' ','_').gsub('*','').upcase + '-' + sn.trunk_name.css_name.to_s

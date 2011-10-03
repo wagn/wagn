@@ -36,20 +36,14 @@ module Wagn::Model
     def patterns()
       @patterns ||= @@subclasses.map { |sub| sub.new(self) }.compact
     end
-
     def patterns_with_new()
-      #Rails.logger.debug "patterns_with_new() #{cardname.inspect}, Bk:#{name.blank?} NC:#{!new_card?}"
-      if !real?
-        patterns_without_new[1..-1]
-      else
-        patterns_without_new()
-      end
+      new_card? ? patterns_without_new[1..-1] : patterns_without_new()
     end
     alias_method_chain :patterns, :new
 
     def set_names() @set_names ||= patterns_without_new.map(&:set_name) end
     def set_names_with_new()
-      !real? ? set_names_without_new[1..-1] : set_names_without_new()
+      new_card? ? set_names_without_new[1..-1] : set_names_without_new()
     end
     alias_method_chain :set_names, :new
 
@@ -227,8 +221,8 @@ module Wagn::Model
       def opt_keys()                     [:right]                        end
       def method_key_from_opts(opts) opts[:right].to_cardname.css_name+'_right' end
       def pattern_name(card)
-        r="#{card.cardname.tag_name}+#{key}"
-        Rails.logger.debug "pattern_name Right #{card.cardname}, #{r}"; r
+        "#{card.cardname.tag_name}+#{key}"
+#        Rails.logger.debug "pattern_name Right #{card.cardname}, #{r}"; r
       end
       def pattern_applies?(card)        card.junction?                   end
       def label(name)                  "Cards ending in +#{name}"        end

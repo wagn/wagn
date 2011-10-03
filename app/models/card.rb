@@ -97,7 +97,7 @@ class Card < ActiveRecord::Base
   end
 
   def type_lookup
-    Rails.logger.debug "type_lookup S[#{@typecode_lookup_skipped}] #{inspect}" if name == 'Home+*watchers'
+  #  Rails.logger.debug "type_lookup S[#{@typecode_lookup_skipped}] #{inspect}" if name == 'Home+*watchers'
     if @typecode_lookup_skipped
 #      reset_patterns 
       self.typecode_without_tracking = get_typecode(name)
@@ -107,13 +107,9 @@ class Card < ActiveRecord::Base
   def include_set_modules
     type_lookup
     if !@set_mods_loaded
-      mods=set_modules
-      Rails.logger.info "include_set_modules[#{name}] #{typecode} called #{mods.inspect}" if key == 'home+*watcher' #or name == 'Home+*watchers' #{Kernel.caller[0..12]*"\n"}"
-      @set_mods_loaded=true
-      #mods.each {|m| singleton_class.send :include, m }
       singleton_class.include_type_module(typecode)
-    elsif key == 'home+*watcher' #or name = 'Home+*watchers'
-       Rails.logger.info "include_set_modules[#{name}] #{typecode} loaded"
+      #set_modules.each {|m| singleton_class.send :include, m }
+      @set_mods_loaded=true
     end
     self
   end

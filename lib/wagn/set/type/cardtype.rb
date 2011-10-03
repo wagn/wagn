@@ -1,7 +1,7 @@
 module Wagn::Set::Type::Cardtype
   include Wagn::Set::Type::Basic
   
-  def after_save_cardtype
+  def after_save
     Rails.logger.info "after_save_cardtype[#{name}]"
     reset_cardtype_cache
   end

@@ -15,17 +15,13 @@ class Card < ActiveRecord::Base
 
   belongs_to :extension, :polymorphic=>true
   before_destroy :destroy_extension
-  after_save  :after_save_rule, :after_save_card,
-    :after_save_cardtype, :after_save_read_rule #, :reset_patterns
-  before_save :before_save_read_rule, :before_save_rule, :before_save_search
-
-  def after_save_cardtype() end
-  def before_save_search() end
+  after_save :after_save_card, :update_ruled_cards #, :reset_patterns
+  before_save :set_read_rule
 
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
     :cards, :set_mods_loaded, :update_referencers, :allow_type_change,
-    :broken_type, :loaded_trunk, :nested_edit, :virtual, :attachment_id
-    #should build flexible handling for set-specific attributes
+    :broken_type, :loaded_trunk, :nested_edit, :virtual,
+    :attachment_id #should build flexible handling for set-specific attributes
 
   cache_attributes('name', 'typecode')
 
@@ -86,7 +82,7 @@ class Card < ActiveRecord::Base
     @typecode_lookup_skipped=false
 
     if typename
-      begin ; return self.typecode_without_tracking =Cardtype.classname_for(typename)
+      begin ; return Cardtype.classname_for(typename)
       rescue Exception => e; self.broken_type = typename end
     end
 
@@ -96,16 +92,14 @@ class Card < ActiveRecord::Base
     end
 
     reset_patterns 
-    self.typecode_without_tracking =
-      (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
+    (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
   end
 
   def type_lookup
     Rails.logger.debug "type_lookup S[#{@typecode_lookup_skipped}] #{inspect}" if name == 'Home+*watchers'
     if @typecode_lookup_skipped
-      reset_patterns 
-      get_typecode(name)
-      Rails.logger.debug "type_lookup E #{inspect}" if name == 'Home+*watchers'
+#      reset_patterns 
+      self.typecode_without_tracking = get_typecode(name)
     end
   end
 
@@ -122,10 +116,6 @@ class Card < ActiveRecord::Base
     self
   end
 
-
-
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # CLASS METHODS
 
   public
 
@@ -317,7 +307,7 @@ class Card < ActiveRecord::Base
       self
     end
   rescue
-    Rails.logger.debug "BROKE ATTEMPTING TO REPAIR BROKEN KEY: #{key}"
+    Rails.logger.info "BROKE ATTEMPTING TO REPAIR BROKEN KEY: #{key}"
     self
   end
 

@@ -16,14 +16,14 @@ module Wagn::Model
       end
     end
 
-    def before_save_rule()
-      # do LTypeRightPattern need deeper checks?
-      rule? && left.reset_patterns()
-      Rails.logger.debug "before_save_rule: #{name}, #{rule?}"
-    end
-    def after_save_rule() rule? && reset_patterns()
-      Rails.logger.debug "after_save_rule: #{name}, #{rule?}"
-    end
+#    def before_save_rule()
+#      # do LTypeRightPattern need deeper checks?
+#      rule? && left.reset_patterns()
+#      Rails.logger.debug "before_save_rule: #{name}, #{rule?}"
+#    end
+#    def reset_patterns_if_rule() rule? && reset_patterns()
+#      Rails.logger.debug "after_save_rule: #{name}, #{rule?}"
+#    end
 
     def set_names() @set_names ||= patterns.map(&:set_name)   end
 

@@ -1,5 +1,5 @@
 module Wagn::Set::Type::Search
-  def before_save_search
+  def before_save
     escape_content
   end
 

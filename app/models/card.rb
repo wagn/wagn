@@ -91,8 +91,9 @@ class Card < ActiveRecord::Base
       return 'Basic'
     end
 
-    reset_patterns 
-    (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
+    t = (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
+    reset_patterns
+    t 
   end
 
   def type_lookup

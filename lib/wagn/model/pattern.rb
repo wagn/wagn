@@ -37,13 +37,13 @@ module Wagn::Model
       @patterns ||= @@subclasses.map { |sub| sub.new(self) }.compact
     end
     def patterns_with_new()
-      new_card? : patterns_without_new[1..-1] : patterns_without_new()
+      new_card? ? patterns_without_new[1..-1] : patterns_without_new()
     end
     alias_method_chain :patterns, :new
 
     def set_names() @set_names ||= patterns_without_new.map(&:set_name) end
     def set_names_with_new()
-      !real? ? set_names_without_new[1..-1] : set_names_without_new()
+      new_card? ? set_names_without_new[1..-1] : set_names_without_new()
     end
     alias_method_chain :set_names, :new
 

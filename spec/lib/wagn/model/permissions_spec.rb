@@ -170,15 +170,20 @@ describe "Permission", ActiveSupport::TestCase do
     @u3.roles = [ @r1, @r2, @r3 ]
 
     ::User.as(:wagbot) {
-      [1,2,3].each do |num|
+      cards=[1,2,3].map do |num|
         Card.create(:name=>"c#{num}+*self+*update", :type=>'Pointer', :content=>"[[u#{num}]]")
       end 
+      Rails.logger.info "testing point 0 #{cards.inspect}"
     }
  
+    @c1 = Card['c1']
     assert_not_locked_from( @u1, @c1 )
+    Rails.logger.info "testing point 1 #{@u2.inspect}, #{@c1.inspect}"
     assert_locked_from( @u2, @c1 )    
     assert_locked_from( @u3, @c1 )    
     
+    @c2 = Card['c2']
+    Rails.logger.info "testing point 2 #{@u1.inspect}, #{@c2.inspect}"
     assert_locked_from( @u1, @c2 )
     assert_not_locked_from( @u2, @c2 )    
     assert_locked_from( @u3, @c2 )    

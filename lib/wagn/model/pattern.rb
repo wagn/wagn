@@ -64,7 +64,7 @@ module Wagn::Model
     def real_set_names()
       #Rails.logger.warn "START real_sets for #{cardname}, #{self.patterns}, #{@patterns}"
       rr=
-      #@real_set_names ||=
+      @real_set_names ||=
         self.patterns.map { |pat|
           Card.exists?(sname=pat.set_name) && sname
         }.compact

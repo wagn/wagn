@@ -35,10 +35,9 @@ module Wagn::Model
          @junction_only = patterns.map(&:class).find(&:junction_only?)
     end
 
-    def label(nm='')
-      tag = cardname.tag_name.to_s
-      found = patterns.find { |pat| tag==pat.class.key }
-      found and found.label(name)
+    def label
+      found = @@subclasses.find { |sub| cardname.tag_name.to_s==sub.key }
+      found and found.label(cardname.left_name)
     end
   end
 
@@ -52,8 +51,8 @@ module Wagn::Model
       def method_key_from_opts(opts) ''    end
       def trunkless?()               false end
       def junction_only?()           false end
+      def label(name)                ''    end
     end
-    def label(name)                ''    end
 
     def css_name()
       sn = set_name.to_cardname
@@ -76,8 +75,8 @@ module Wagn::Model
       def opt_keys()                   []             end
       def method_key_from_opts(opts)   ''             end
       def trunkless?()                 true           end
+      def label(name)                  'All Cards'    end
     end
-    def label(name)                    'All Cards'    end
     def css_name()                     "ALL"          end
     def pattern_applies?()             true           end
     def method_key()                   ''             end
@@ -92,8 +91,8 @@ module Wagn::Model
       def method_key_from_opts(opts)   'all_plus'              end
       def trunkless?()                 true                    end
       def junction_only?()             true                    end
+      def label(name)                  'All Plus Cards'        end
     end
-    def label(name)                    'All Plus Cards'        end
     def css_name()                     "ALL_PLUS"              end
     def pattern_applies?()             card.cardname.junction? end
     def method_key()                   'all_plus'              end
@@ -106,8 +105,8 @@ module Wagn::Model
       def key()                      '*type'                                   end
       def opt_keys()                 [:type]                                   end
       def method_key_from_opts(opts) opts[:type].to_cardname.css_name+'_type'  end
+      def label(name)                "All #{name} cards"                       end
     end
-    def label(name)        "All #{card.cardname.trunk_name.to_s} cards"        end
     def pattern_applies?() true                                                end
     def set_name()         "#{card.typename.to_s}+#{self.class.key}"           end
     def method_key()      self.class.method_key_from_opts :type=>card.typename end
@@ -121,8 +120,8 @@ module Wagn::Model
       def opt_keys()                   [:star]                 end
       def method_key_from_opts(opts)   'star'                  end
       def trunkless?()                 true                    end
+      def label(name)                  'Star Cards'            end
     end
-    def label(name)                    'Star Cards'            end
     def css_name()                     "STAR"                  end
     def pattern_applies?()             card.cardname.star?     end
     def method_key()                   'star'                  end
@@ -137,8 +136,8 @@ module Wagn::Model
       def method_key_from_opts(opts)   'rstar'                          end
       def trunkless?()                 true                             end
       def junction_only?()             true                             end
+      def label(name)                  "Cards ending in +(Star Card)"   end
     end
-    def label(name)                    "Cards ending in +(Star Card)"   end
     def pattern_applies?() card.cardname.junction? && card.cardname.tag_star? end
     def method_key()                   'rstar'                           end
     def set_name()                     self.class.key                   end
@@ -154,8 +153,8 @@ module Wagn::Model
       def opt_keys()                     [:right]                        end
       def method_key_from_opts(opts) opts[:right].to_cardname.css_name+'_right' end
       def junction_only?()             true                              end
+      def label(name)                  "Cards ending in +#{name}"        end
     end
-    def label(name) "Cards ending in +#{card.cardname.trunk_name.to_s}"  end
     def pattern_applies?()          card.cardname.junction?              end
     def set_name()
       "#{card.cardname.tag_name}+#{self.class.key}"  end
@@ -172,10 +171,7 @@ module Wagn::Model
         %{#{opts[:ltype].to_cardname.css_name}_#{opts[:right].to_cardname.css_name}_typeplusright}
       end
       def junction_only?()             true             end
-    end
-    def label(name)
-      "Any #{card.cardname.nth_left(2).to_s} card plus #{
-             card.cardname.trunk_name.tag_name.to_s}"
+      def label(name) "Any #{name.left_name} card plus #{name.right_name}"   end
     end
     def css_name() "TYPE_PLUS_RIGHT-#{set_name.to_cardname.trunk_name.css_name}" end
     def left_name()        card.left.cardname or card.cardname.left_name end
@@ -200,15 +196,13 @@ module Wagn::Model
       def key()                      '*self'                                end
       def opt_keys()                 [:name]                                end
       def method_key_from_opts(opts) opts[:name].to_cardname.css_name+'_self' end
-      
+      def label(name)                %{Just "#{name}"}                      end
     end
     
-    def label(name)                   %{Just "#{name.trunk_name}"}           end
     #FIXME!!! we do not want these to stay commented out, but they need to be
     #there so that patterns on builtins can be recognized for now. 
     # soon those cards should actually exist.  Is this now fixed????
     def pattern_applies?()                                    !card.new_card?  end
-    def label(name)                %{Just "#{card.cardname.trunk_name.to_s}"} end
     def set_name()
       #raise "name? #{card.cardname.to_s}, #{card.name.inspect}" if card.name.blank?
       "#{card.name}+#{self.class.key}"                  end

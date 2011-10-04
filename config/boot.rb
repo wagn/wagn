@@ -1,7 +1,16 @@
+require 'rubygems'
+
+# Set up gems listed in the Gemfile.
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../../Gemfile', __FILE__)
+
+require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
+
+
+
 # Don't change this file!
 # Configure your app in config/environment.rb and config/environments/*.rb
-
-RAILS_ROOT = "#{File.dirname(__FILE__)}/.." unless defined?(RAILS_ROOT)
+=begin
+ = "#{File.dirname(__FILE__)}/.." unless defined?()
 
 module Rails
   class << self
@@ -21,7 +30,7 @@ module Rails
     end
 
     def vendor_rails?
-      File.exist?("#{RAILS_ROOT}/vendor/rails")
+      File.exist?("#{}/vendor/rails")
     end
 
     def preinitialize
@@ -29,7 +38,7 @@ module Rails
     end
 
     def preinitializer_path
-      "#{RAILS_ROOT}/config/preinitializer.rb"
+      "#{}/config/preinitializer.rb"
     end
   end
 
@@ -49,7 +58,7 @@ module Rails
 
   class VendorBoot < Boot
     def load_initializer
-      require "#{RAILS_ROOT}/vendor/rails/railties/lib/initializer"
+      require "#{}/vendor/rails/railties/lib/initializer"
       Rails::Initializer.run(:install_gem_spec_stubs)
       Rails::GemDependency.add_frozen_gem_path
     end
@@ -107,7 +116,7 @@ module Rails
 
       private
         def read_environment_rb
-          File.read("#{RAILS_ROOT}/config/environment.rb")
+          File.read("#{}/config/environment.rb")
         end
     end
   end
@@ -118,3 +127,4 @@ end
 
 # All that for this:
 Rails.boot!
+=end

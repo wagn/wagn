@@ -309,7 +309,7 @@ module Wagn
     #render_partial( 'card/footer_links' )   # this is ugly reusing this cache code
     render_footer_links
   end
-#=end
+=end
 
   def option( *args, &proc)
     args = args[0]||{} #unless Hash===args
@@ -458,6 +458,5 @@ module Wagn
         %{loadScript("#{js_lib_uri}")}
     )
   end
-=end
  end
 end

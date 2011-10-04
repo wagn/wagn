@@ -221,7 +221,7 @@ module Wagn::Model::Permissions
   
   def update_read_rule
     Card.record_timestamps = Card.record_userstamps = false
-
+    reset_patterns
     rcard, rclass = rule_card(:read)
     update_attributes!(
       :read_rule_id => rcard.id,
@@ -247,7 +247,6 @@ module Wagn::Model::Permissions
   def update_ruled_cards
     return if ENV['MIGRATE_PERMISSIONS'] == 'true'
     if cardname.junction? && cardname.tag_name=='*read' && (@name_or_content_changed || @trash_changed)
-      
       # These instance vars are messy.  should use tracked attributes' @changed variable 
       # and get rid of @name_changed, @name_or_content_changed, and @trash_changed.
       # Above should look like [:name, :content, :trash].member?( @changed.keys ).
@@ -287,9 +286,6 @@ module Wagn::Model::Permissions
     end
   end
   
-  def before_save_read_rule() set_read_rule      end
-  def after_save_read_rule()  update_ruled_cards end
-
   def self.included(base)   
     super
     base.extend(ClassMethods)

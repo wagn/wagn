@@ -15,17 +15,14 @@ class Card < ActiveRecord::Base
 
   belongs_to :extension, :polymorphic=>true
   before_destroy :destroy_extension
-  after_save  :after_save_rule, :after_save_card,
-    :after_save_cardtype, :after_save_read_rule #, :reset_patterns
-  before_save :before_save_read_rule, :before_save_rule, :before_save_search
 
-  def after_save_cardtype() end
-  def before_save_search() end
+  after_save :after_save_card, :update_ruled_cards #, :reset_patterns
+  before_save :set_read_rule
 
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy,
-    :cards, :attribute, :set_mods_loaded, :update_referencers,
-    :allow_type_change, :broken_type, :loaded_trunk, :nested_edit, :virtual,
-    :attachment_id #should build flexible handling for this kind of set-specific attr
+    :cards, :set_mods_loaded, :update_referencers, :allow_type_change,
+    :broken_type, :loaded_trunk, :nested_edit, :virtual, :attribute,
+    :attachment_id #should build flexible handling for set-specific attributes
 
   cache_attributes('name', 'typecode')
 
@@ -95,37 +92,30 @@ class Card < ActiveRecord::Base
       return 'Basic'
     end
 
-    reset_patterns 
-    self.typecode_without_tracking =
-      (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
+    t = (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
+    reset_patterns
+    t 
   end
 
   def type_lookup
-    Rails.logger.debug "type_lookup S[#{@typecode_lookup_skipped}] #{inspect}" if name == 'Home+*watchers'
+  #  Rails.logger.debug "type_lookup S[#{@typecode_lookup_skipped}] #{inspect}" if name == 'Home+*watchers'
     if @typecode_lookup_skipped
-      reset_patterns 
-      get_typecode(name)
-      Rails.logger.debug "type_lookup E #{inspect}" if name == 'Home+*watchers'
+#      reset_patterns 
+      self.typecode_without_tracking = get_typecode(name)
     end
   end
 
   def include_set_modules
     type_lookup
     if !@set_mods_loaded
-      mods=set_modules
-      Rails.logger.info "include_set_modules[#{name}] #{typecode} called #{mods.inspect}" if key == 'home+*watcher' #or name == 'Home+*watchers' #{Kernel.caller[0..12]*"\n"}"
+      Rails.logger.info "including set modules for #{name}"
+      #singleton_class.include_type_module(typecode)
+      set_modules.each {|m| singleton_class.send :include, m }
       @set_mods_loaded=true
-      mods.each {|m| singleton_class.send :include, m }
-    elsif key == 'home+*watcher' #or name = 'Home+*watchers'
-       Rails.logger.info "include_set_modules[#{name}] #{typecode} loaded"
     end
     self
   end
 
-
-
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # CLASS METHODS
 
   public
 
@@ -317,7 +307,7 @@ class Card < ActiveRecord::Base
       self
     end
   rescue
-    Rails.logger.debug "BROKE ATTEMPTING TO REPAIR BROKEN KEY: #{key}"
+    Rails.logger.info "BROKE ATTEMPTING TO REPAIR BROKEN KEY: #{key}"
     self
   end
 
@@ -476,7 +466,7 @@ class Card < ActiveRecord::Base
 
   validates_each :name do |rec, attr, value|
     if rec.new_card? && value.blank?
-      if autoname_card = rec.setting_card('autoname')
+      if autoname_card = rec.setting_card('autoname', nil, :skip_module_loading=>true)
         User.as(:wagbot) do
           value = rec.name = autoname_card.content
           autoname_card.content = autoname_card.content.next  #fixme, should give placeholder on new, do next and save on create

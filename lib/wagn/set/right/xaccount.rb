@@ -1,5 +1,5 @@
 =begin
-  module Wagn::Set::Rstar::Xaccount -- Devise authentication in Wagn
+  module Wagn::Set::Right::Xaccount -- Devise authentication in Wagn
 
   This is a card "trait" module that will replace the current model 'User',
   so that the account will be represented by a "trait card", +*account.  When
@@ -13,7 +13,7 @@
 
 =end
 
-module Wagn::Set::Rstar::Xaccount
+module Wagn::Set::Right::Xaccount
 
   def self.included(base)
     super

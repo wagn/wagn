@@ -1,5 +1,5 @@
 =begin
-  module Wagn::Set::Rstar::Xsol -- Metacurrency flows for Wagn
+  module Wagn::Set::Right::Xsol -- Metacurrency flows for Wagn
 
   This can be generalized just a little and be suitable for adding to almost
   any content management system with user editable content.

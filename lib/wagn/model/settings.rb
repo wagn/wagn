@@ -6,11 +6,11 @@ module Wagn::Model::Settings
     Rails.logger.debug "setting(#{setting_name}, #{fallback}) #{r}" if key == 'home+*watcher'; r
   end
 
-  def rule?
-    return @rule unless @rule.nil?
-    #Rails.logger.info "rule? #{name}, #{left&&"#{left.typename}:#{left.name}"}, #{right&&"#{right.typename}:#{right.name}"}" if junction?
-    @rule = junction? ? (left&&left.typecode=='Set'&&right.typecode=='Setting') : false
-  end
+#  def rule?
+#    return @rule unless @rule.nil?
+#    #Rails.logger.info "rule? #{name}, #{left&&"#{left.typename}:#{left.name}"}, #{right&&"#{right.typename}:#{right.name}"}" if junction?
+#    @rule = junction? ? (left&&left.typecode=='Set'&&right.typecode=='Setting') : false
+#  end
 
   def setting_card setting_name, fallback=nil, extra_fetch_args={}
     fetch_args = {:skip_virtual=>true}.merge extra_fetch_args

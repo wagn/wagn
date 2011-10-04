@@ -107,8 +107,9 @@ class Card < ActiveRecord::Base
   def include_set_modules
     type_lookup
     if !@set_mods_loaded
-      singleton_class.include_type_module(typecode)
-      #set_modules.each {|m| singleton_class.send :include, m }
+      Rails.logger.info "including set modules for #{name}"
+      #singleton_class.include_type_module(typecode)
+      set_modules.each {|m| singleton_class.send :include, m }
       @set_mods_loaded=true
     end
     self
@@ -475,7 +476,7 @@ class Card < ActiveRecord::Base
 
   validates_each :name do |rec, attr, value|
     if rec.new_card? && value.blank?
-      if autoname_card = rec.setting_card('autoname')
+      if autoname_card = rec.setting_card('autoname', nil, :skip_module_loading=>true)
         User.as(:wagbot) do
           value = rec.name = autoname_card.content
           autoname_card.content = autoname_card.content.next  #fixme, should give placeholder on new, do next and save on create

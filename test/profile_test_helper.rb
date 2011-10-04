@@ -7,7 +7,7 @@ require 'test_help'
 
 # Now we can load test_helper since we've already loaded the
 # profile RAILS environment.
-require_relative 'test_helper')
+require File.expand_path('test_helper', File.dirname(__FILE__)))
 
 # Reset the current environment back to profile
 # since test_helper reset it to test

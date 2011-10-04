@@ -1,5 +1,5 @@
 # encoding: utf-8
-require_relative '../../spec_helper'
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe Wagn::Cache do
   describe "with nil store" do

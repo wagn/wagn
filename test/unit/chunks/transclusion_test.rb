@@ -1,4 +1,4 @@
-require_relative '../../test_helper'
+require File.expand_path('../../test_helper', File.dirname(__FILE__))
   
 #FIXME: None of these work now, since transclusion is handled at the slot/cache
 # level, but these cases should still be covered by tests

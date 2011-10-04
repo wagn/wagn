@@ -1,5 +1,5 @@
-require_relative '../../../spec_helper'
-require_relative '../../../pattern_spec_helper'
+require File.expand_path('../../../spec_helper', File.dirname(__FILE__))
+require File.expand_path('../../../pattern_spec_helper', File.dirname(__FILE__))
 
 describe Wagn::Model::Pattern do
   it "module exists and autoloads" do

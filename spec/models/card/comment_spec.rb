@@ -1,4 +1,4 @@
-require_relative '../../spec_helper'
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 
 # FIXME: this test is breaking; I can cut and paste the code into console and it works great. wtf?

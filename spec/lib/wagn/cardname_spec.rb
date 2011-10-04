@@ -1,5 +1,5 @@
 # encoding: utf-8
-require_relative '../../spec_helper'
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe Wagn::Cardname do
   
@@ -173,9 +173,11 @@ describe Wagn::Cardname do
   end
 
   describe "#replace_part" do
-    'a+b'.to_cardname.replace_part('a','x').to_s.should == 'x+b'
-    'a+b'.to_cardname.replace_part('b','x').to_s.should == 'a+x'
-    'a+b+c'.to_cardname.replace_part('a+b','x').to_s.should == 'x+c'
-    'a+b+c'.to_cardname.replace_part('b+c','x').to_s.should == 'a+b+c'    
+    it "replaces name parts" do
+      'a+b'.to_cardname.replace_part('a','x').to_s.should == 'x+b'
+      'a+b'.to_cardname.replace_part('b','x').to_s.should == 'a+x'
+      'a+b+c'.to_cardname.replace_part('a+b','x').to_s.should == 'x+c'
+      'a+b+c'.to_cardname.replace_part('b+c','x').to_s.should == 'a+b+c'
+    end
   end  
 end

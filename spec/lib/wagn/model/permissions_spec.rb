@@ -1,5 +1,5 @@
-require_relative '../../../spec_helper'
-require_relative '../../../permission_spec_helper'
+require File.expand_path('../../../spec_helper', File.dirname(__FILE__))
+require File.expand_path('../../../permission_spec_helper', File.dirname(__FILE__))
 
 describe "reader rules" do
   before do

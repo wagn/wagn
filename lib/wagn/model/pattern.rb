@@ -28,7 +28,7 @@ module Wagn::Model
     def reset_patterns()
 #      Rails.logger.debug "reset_patterns[#{name}]"
       @setting_cards={}
-      @real_set_names = @set_mods_loaded = @junction_only = @patterns =
+      @real_set_names = @set_mods_loaded = @junction_only = @patterns = @set_modules =
          @method_keys = @set_names = @template = @skip_type_lookup = nil
 #      Rails.logger.debug "reset_patterns[#{name}] #{inspect}"
     end
@@ -63,7 +63,7 @@ module Wagn::Model
 #      warn "including set modules for #{name}"
       #raise "no type #{cardname.inspect}" if cardname.typename.nil?
       #Rails.logger.debug "set_mods[#{cardname.inspect}]"
-      m=@set_modules = @set_modules || patterns_without_new.reverse.map do
+      @set_modules ||= patterns_without_new.reverse.map do
         |pattern|
           if mod = pattern.set_module # and
             #Rails.logger.debug "set_mod[#{name}] #{subclass}, #{mod}"

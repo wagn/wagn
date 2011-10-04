@@ -6,12 +6,12 @@ module Wagn::Model::Templating
   def type_template?()  template? && !!(name =~ /\+\*type\+/)  end
   def right_template?() template? && !!(name =~ /\+\*right\+/) end
 
-  def template(reset = false)
-    @template = reset ? get_template : (@template || get_template)
+  def template(reset=false,skip_mods=false)
+    @template = reset ? get_template(skip_mods) : (@template || get_template(skip_mods))
   end
   
-  def get_template
-    t = setting_card('content','default')
+  def get_template(skip_module_loading=false)
+    t = setting_card('content', 'default', :skip_module_loading=>skip_module_loading)
     @virtual = (new_card? && t && t.hard_template?)
     t
   end
@@ -27,7 +27,7 @@ module Wagn::Model::Templating
   
   def virtual?
     if @virtual.nil?
-      junction? ? get_template : (@virtual=false)
+      junction? ? get_template(skip_module_loading=true) : (@virtual=false)
     end
     @virtual
   end

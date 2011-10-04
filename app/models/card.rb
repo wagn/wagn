@@ -48,7 +48,6 @@ class Card < ActiveRecord::Base
 #    @explicit_content = args['content']
     args['name'] = args['name'].to_s
 
-    Rails.logger.warn "initializing args:>>#{args.inspect}"
     @attributes = get_attributes
     @attributes_cache = {}
     @new_record = true
@@ -91,8 +90,9 @@ class Card < ActiveRecord::Base
       return 'Basic'
     end
 
-    t = (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
-    reset_patterns
+    reset_patterns #eg for loaded_trunk on previously called card
+    t = (name && tmpl=self.template(reset=true, skip_mods=true)) ? tmpl.typecode : 'Basic'
+    reset_patterns #because almost always has Basic type
     t 
   end
 
@@ -105,6 +105,7 @@ class Card < ActiveRecord::Base
   end
 
   def include_set_modules
+    #warn "including set modules for #{name}"
     type_lookup
     if !@set_mods_loaded
       #singleton_class.include_type_module(typecode)

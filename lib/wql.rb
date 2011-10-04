@@ -398,7 +398,6 @@ class Wql
 
       # Permissions    
       unless System.always_ok? or (Wql.root_perms_only && !root?)
-        warn "looking up perms.  user.as_user = #{User.as_user.inspect}"
         sql.conditions << %{ (#{table_alias}.read_rule_id IN (#{::User.as_user.read_rule_ids.join ','})) }
       end
            

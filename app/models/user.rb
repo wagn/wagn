@@ -128,7 +128,6 @@ class User < ActiveRecord::Base
   end
   
   def read_rule_ids
-    #Rails.logger.debug "Looking up #READ_RULE_IDS"
     return [] if self.login=='wagbot'  # avoids infinite loop
     @read_rule_ids ||= begin
       party_keys = ['in'] + parties
@@ -136,6 +135,7 @@ class User < ActiveRecord::Base
         Card.search(:right=>'*read', :refer_to=>{:key=>party_keys}, :return=>:id).map &:to_i
       end
     end
+    @read_rule_ids
   end
   
   def save_with_card(card)

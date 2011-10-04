@@ -12,6 +12,7 @@ module Wagn
 
     FORMAL_JOINT = " <span class=\"wiki-joint\">#{JOINT}</span> "
 
+    WORD_RE = RUBY_VERSION =~ /^1\.9/ ? '\p{Word}/' : '/\w/'
 
     class << self
       def new(obj)
@@ -47,8 +48,9 @@ module Wagn
     end
     
     def generate_simple_key
-      decode_html.underscore.gsub(/[^\p{Word}\*]+/,'_').split(/_+/).reject(&:blank?).map(&:singularize)*'_'
+      decode_html.underscore.gsub(/[^#{WORD_RE}\*]+/,'_').split(/_+/).reject(&:blank?).map(&:singularize)*'_'
     end
+    
 
     def decode_html
       @decoded ||= (s.match(/\&/) ?  HTMLEntities.new.decode(s) : s)
@@ -135,7 +137,7 @@ module Wagn
     def escape()           s.gsub(' ','_')                             end
 
     def to_url_key()
-      @url_key ||= decode_html.gsub(/[^\*\p{Word}\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')
+      @url_key ||= decode_html.gsub(/[^\*#{WORD_RE}\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')
     end
 
     def piece_names()

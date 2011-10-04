@@ -445,7 +445,7 @@ describe Wagn::Renderer, "" do
       help_card    = Card.create!(:name=>"Cardtype E+*type+*add help", :content=>"Help me dude" )
       card = Card.new(:type=>'Cardtype E')
       card.should_receive(:setting_card).with("autoname").and_return(nil)
-      card.should_receive(:setting_card).with("content","default").and_return(content_card)
+      card.should_receive(:setting_card).with("content","default",:skip_module_loading=>false).and_return(content_card)
       card.should_receive(:setting_card).with("add help","edit help").and_return(help_card)
       Wagn::Renderer::RichHtml.new(card).render_new.should be_html_with do
         div(:class=>"field-in-multi") {

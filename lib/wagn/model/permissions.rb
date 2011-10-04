@@ -175,7 +175,7 @@ module Wagn::Model::Permissions
     case
     when !typename
       deny_because("No such type")
-    when !new_card? && !lets_user(:create)
+    when !new_card? && reset_patterns && !lets_user(:create)
       deny_because you_cant("change to this type (need create permission)"  )
     end
     #NOTE: we used to check for delete permissions on previous type, but this would really need to happen before the name gets changes 

@@ -30,6 +30,7 @@ module Wagn::Model
       @setting_cards={}
       @real_set_names = @set_mods_loaded = @junction_only = @patterns = @set_modules =
          @method_keys = @set_names = @template = @skip_type_lookup = nil
+      true
 #      Rails.logger.debug "reset_patterns[#{name}] #{inspect}"
     end
 

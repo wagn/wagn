@@ -107,7 +107,6 @@ class Card < ActiveRecord::Base
   def include_set_modules
     type_lookup
     if !@set_mods_loaded
-      Rails.logger.info "including set modules for #{name}"
       #singleton_class.include_type_module(typecode)
       set_modules.each {|m| singleton_class.send :include, m }
       @set_mods_loaded=true

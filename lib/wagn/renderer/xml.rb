@@ -104,6 +104,15 @@ module Wagn
     lo_card.content
   end
 
+  def id(area="")
+    area, id = area.to_s, ""
+    id << "javascript:#{get(area)}"
+  end
+
+  def get(area="")
+    area.empty? ? "getSlotSpan(this)" : "getSlotElement(this, '#{area}')"
+  end
+
 
 =begin
   # these initialize the content of missing builtin layouts
@@ -205,21 +214,12 @@ module Wagn
     %{<span class="notice"></span>}
   end
 
-  def id(area="")
-    area, id = area.to_s, ""
-    id << "javascript:#{get(area)}"
-  end
-
   def parent
     "javascript:getSlotSpan(getSlotSpan(this).parentNode)"
   end
 
   def nested_context?
     context.split('_').length > 2
-  end
-
-  def get(area="")
-    area.empty? ? "getSlotSpan(this)" : "getSlotElement(this, '#{area}')"
   end
 
   def selector(area="")

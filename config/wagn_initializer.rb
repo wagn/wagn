@@ -6,11 +6,15 @@ module Wagn end
 module Wagn::Configuration
   def wagn_load
     self.cache_store = :file_store, "#{Rails.root}/tmp/cache"
+    
+    self.after_initialize = Proc.new { Wagn::Configuration.wagn_run }
 #    self.frameworks -= [ :action_web_service ]
-    require 'yaml'
-    require 'erb'
-    database_configuration_file = "#{Rails.root}/config/database.yml"
-    db = YAML::load(ERB.new(IO.read(database_configuration_file)).result)
+    #require 'yaml'
+    #require 'erb'
+    #database_configuration_file = "#{Rails.root}/config/database.yml"
+    #db = YAML::load(ERB.new(IO.read(database_configuration_file)).result)
+    
+    
 #    self.action_controller.session = {
 #      :key    => db[Rails.env]['session_key'],
 #      :secret => db[Rails.env]['secret']

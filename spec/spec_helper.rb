@@ -1,7 +1,7 @@
 require File.expand_path('../config/preinitializer.rb', File.dirname(__FILE__))
 #require 'rubygems'
 require 'spork'
-ENV["Rails.env"] = "test"
+ENV['RAILS_ENV'] = "test"
 require 'assert2/xhtml'
 
 Spork.prefork do

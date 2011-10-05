@@ -7,7 +7,7 @@ module Wagn::Configuration
   def wagn_load
     self.cache_store = :file_store, "#{Rails.root}/tmp/cache"
     
-    self.after_initialize = Proc.new { Wagn::Configuration.wagn_run }
+    self.after_initialize do Wagn::Configuration.wagn_run end
 #    self.frameworks -= [ :action_web_service ]
     #require 'yaml'
     #require 'erb'
@@ -33,7 +33,7 @@ module Wagn::Configuration
     end
 
     def wagn_run
-      #wagn_load_config
+      wagn_load_config
       wagn_setup_multihost
       return unless wagn_database_ready?
       wagn_load_modules
@@ -62,6 +62,8 @@ module Wagn::Configuration
       require_dependency "wagn/pack.rb"
       %w{modules/*.rb packs/**/*_pack.rb}.each { |d| Wagn::Pack.dir(File.expand_path( "../../#{d}/",__FILE__)) }
       Wagn::Pack.load_all
+      
+      STDERR << "----------- Wagn MODULES Loaded -----------\n"
     end
   end
 end

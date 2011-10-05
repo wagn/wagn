@@ -11,10 +11,10 @@ module Wagn::Configuration
     require 'erb'
     database_configuration_file = "#{Rails.root}/config/database.yml"
     db = YAML::load(ERB.new(IO.read(database_configuration_file)).result)
-    self.action_controller.session = {
-      :key    => db[Rails.env]['session_key'],
-      :secret => db[Rails.env]['secret']
-    }
+#    self.action_controller.session = {
+#      :key    => db[Rails.env]['session_key'],
+#      :secret => db[Rails.env]['secret']
+#    }
     STDERR << "----------- Wagn Loaded -----------\n"
   end
 
@@ -53,7 +53,7 @@ module Wagn::Configuration
     end
 
     def wagn_load_modules
-      Card
+      #Card
       #STDERR << "load_modules Pack load #{Wagn.const_defined?(:Pack)}\n\n"
       require_dependency "wagn/pack.rb"
       %w{modules/*.rb packs/**/*_pack.rb}.each { |d| Wagn::Pack.dir(File.expand_path( "../../#{d}/",__FILE__)) }

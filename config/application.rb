@@ -52,8 +52,3 @@ module Wagn
 end
 
 
-ActionController::Dispatcher.to_prepare do
-  Wagn::Configuration.wagn_run
-end
-
-Wagn::Configuration.wagn_run

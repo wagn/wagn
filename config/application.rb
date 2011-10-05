@@ -48,6 +48,9 @@ module Wagn
     
     config.extend Wagn::Configuration
     config.wagn_load
+    
+    config.autoload_paths += Dir["#{config.root}/app/models/"]
+    config.autoload_paths += Dir["#{config.root}/lib/**/"]
   end
 end
 

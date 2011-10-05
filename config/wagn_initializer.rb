@@ -1,5 +1,5 @@
-require 'active_support'
-require 'active_record'
+#require 'active_support'
+#require 'active_record'
 
 module Wagn end
 
@@ -8,6 +8,7 @@ module Wagn::Configuration
     self.cache_store = :file_store, "#{Rails.root}/tmp/cache"
     
     self.after_initialize do Wagn::Configuration.wagn_run end
+
 #    self.frameworks -= [ :action_web_service ]
     #require 'yaml'
     #require 'erb'
@@ -27,6 +28,7 @@ module Wagn::Configuration
       Rails.logger.debug "Load config ...\n"
       config_dir = "#{Rails.root}/config/"
       ['sample_wagn.rb','wagn.rb'].each do |filename|
+#        STDERR << "#{filename} exists? #{File.exists? config_dir+filename}\n"
         require_dependency config_dir+filename if File.exists? config_dir+filename
       end
       System.base_url.gsub!(/\/$/,'')
@@ -57,13 +59,16 @@ module Wagn::Configuration
     end
 
     def wagn_load_modules
-      #Card
+      Card
+      Cardtype
       #STDERR << "load_modules Pack load #{Wagn.const_defined?(:Pack)}\n\n"
       require_dependency "wagn/pack.rb"
-      %w{modules/*.rb packs/**/*_pack.rb}.each { |d| Wagn::Pack.dir(File.expand_path( "../../#{d}/",__FILE__)) }
+      %w{modules/*.rb packs/*/*_pack.rb}.each { |d| Wagn::Pack.dir(File.expand_path( "../../#{d}/",__FILE__)) }
       Wagn::Pack.load_all
       
       STDERR << "----------- Wagn MODULES Loaded -----------\n"
     end
+    
+    
   end
 end

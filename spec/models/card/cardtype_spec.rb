@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 class Card # this is used by some type based modules on CardtypeE from type_transition
   cattr_accessor :count

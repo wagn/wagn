@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe Wagn::Set::Type::Pointer do
   before do
@@ -6,7 +6,7 @@ describe Wagn::Set::Type::Pointer do
   end
   
   context "item_names" do
-    it "should parse correctly" do
+    it "should return array of names of items referred to by a pointer" do
       p = Card.new(:name=>'foo', :type=>'Pointer', :content=>"[[Busy]]\n[[Body]]")
       names = p.item_names
       names.should == ['Busy', 'Body']

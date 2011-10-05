@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+require File.expand_path('../spec_helper', File.dirname(__FILE__))
 
 A_JOINEES = ["B", "C", "D", "E", "F"]
     
@@ -20,6 +20,7 @@ describe Wql do
     end
 
     it "should find virtual cards" do
+      warn "\n\n\n~~~~~~~~~looking for virtual cards"
       Wql.new(:name=>[:in, 'C', 'D'], :append=>'*plus cards' ).run.plot(:name).sort.should == ["C+*plus cards", "D+*plus cards"]
     end
   end

@@ -1,5 +1,5 @@
 class Wagn::Renderer
-  define_view(:naked, :type=>'search') do
+  define_view(:naked, :type=>'search') do |args|
     error=nil
     results = begin
       card.item_cards( paging_params )
@@ -17,11 +17,11 @@ class Wagn::Renderer
     end
   end
   
-  define_view(:editor, :type=>'search') do
+  define_view(:editor, :type=>'search') do |args|
     form.text_area :content, :rows=>10
   end
 
-  define_view(:closed_content, :type=>'search') do
+  define_view(:closed_content, :type=>'search') do |args|
     return "..." if depth > 2
     results= begin
       card.item_cards( paging_params )
@@ -180,7 +180,7 @@ class Wagn::Renderer
 
 
 
-#  define_view(:tag_cloud, :type=>'search') do
+#  define_view(:tag_cloud, :type=>'search') do |args|
 #    cards ||= []
 #    link_to ||= 'page'  # other options is 'connect'
 #    tag_cloud = {}

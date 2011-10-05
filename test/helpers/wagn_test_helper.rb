@@ -1,4 +1,4 @@
-require 'lib/util/card_builder.rb'
+require "#{RAILS_ROOT}/lib/util/card_builder.rb"
 #require 'renderer'
 
 module WagnTestHelper
@@ -86,15 +86,15 @@ module WagnTestHelper
       :email => { :subject => "mailit",  :message => "baby"  }
   end 
   
-  def test_render(url)
-    get url
-    assert_response :success, "#{url} should render successfully"
-  end 
+#  def test_render(url)
+#    get url
+#    assert_response :success, "#{url} should render successfully"
+#  end
   
-  def test_action(url, args={})
-    post url, *args
-    assert_response :success
-  end     
+#  def test_action(url, args={})
+#    post( url, *args )
+#    assert_response :success
+#  end
   
   def assert_rjs_redirected_to(url)
     assert @response.body.match(/window\.location\.href = \"([^\"]+)\";/)

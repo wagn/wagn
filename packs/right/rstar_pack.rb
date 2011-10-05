@@ -1,5 +1,5 @@
 class Wagn::Renderer::RichHtml
-  define_view(:rule) do
+  define_view(:rule) do |args|
     set_name = card.name.trunk_name
     setting_name = card.name.tag_name
     
@@ -47,7 +47,7 @@ class Wagn::Renderer::RichHtml
     end.join "\n"
   end
   
-  define_view(:edit_rule) do
+  define_view(:edit_rule) do |args|
     main_set_name = card.name.trunk_name
     set_class = main_set_name.tag_name
     setting_name = card.name.tag_name  

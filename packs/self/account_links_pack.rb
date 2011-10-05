@@ -1,5 +1,5 @@
 class Wagn::Renderer
-  define_view(:raw, :name=>'*account links') do
+  define_view(:raw, :name=>'*account links') do |args|
     #ENGLISH
     span(:id=>'logging') do
       if logged_in?

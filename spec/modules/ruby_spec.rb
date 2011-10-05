@@ -1,8 +1,9 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require File.expand_path('../spec_helper', File.dirname(__FILE__))
 
 describe "Ruby Cardtype" do
   before do
     User.as(:wagbot)
+    raise "ruby cards getting into infinite loop on save??"
     c = Card.create :type => "Cardtype", :name => "Ruby"
     c.codename = "Ruby"
     c.save!

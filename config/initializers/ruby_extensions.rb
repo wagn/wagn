@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Hash
   def pull(key)
     has_key?(key) && !(v = delete(key)).to_s.empty? ? v : false
@@ -71,7 +72,7 @@ end
 class Object
   def deep_clone
     case self
-    when Fixnum,Bignum,Float,NilClass,FalseClass,TrueClass,Continuation,Symbol
+    when Fixnum,Bignum,Float,NilClass,FalseClass,TrueClass,Symbol
       klone = self
     when Hash
       klone = self.clone

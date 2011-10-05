@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Wagn
   class Cardname < Object
     require 'htmlentities'
@@ -7,17 +8,18 @@ module Wagn
     JOINT = '+'
     BANNED_ARRAY = [ '/', '~', '|']
     BANNED_RE = /#{'[\\'+JOINT+'\\'+BANNED_ARRAY*"\\"+']'}/
-    CARDNAME_BANNED_CHARACTERS = BANNED_ARRAY * ' ' 
+    CARDNAME_BANNED_CHARACTERS = BANNED_ARRAY * ' '
 
     FORMAL_JOINT = " <span class=\"wiki-joint\">#{JOINT}</span> "
 
+    WORD_RE = RUBY_VERSION =~ /^1\.9/ ? '\p{Word}/' : '/\w/'
 
     class << self
       def new(obj)
         raise "??? #{obj.inspect}" if Card===obj
         return obj if Cardname===obj
         str = Array===obj ? obj*JOINT : obj.to_s
-        raise "name error #{str}" if str[0] == '/'
+#        raise "name error #{str}" if str[0] == '/'
         return obj if obj = NAME2CARDNAME[str]
         super str
       end
@@ -47,11 +49,12 @@ module Wagn
     end
     
     def generate_simple_key
-      decode_html(s).underscore.gsub(/[^\w\*]+/,'_').split(/_+/).reject(&:blank?).map(&:singularize)*'_'
+      decode_html.underscore.gsub(/[^#{WORD_RE}\*]+/,'_').split(/_+/).reject(&:blank?).map(&:singularize)*'_'
     end
+    
 
-    def decode_html(s)
-      s.match(/\&/) ?  HTMLEntities.new.decode(s) : s
+    def decode_html
+      @decoded ||= (s.match(/\&/) ?  HTMLEntities.new.decode(s) : s)
     end
 
     
@@ -106,7 +109,7 @@ module Wagn
       else
         oldpart == parts[0, oldpart.size] ?
           ((self.size == oldpart.size) ? newpart :
-             (newpart.parts+(parts[oldpart.size,].to_a)).to_cardname) : self
+             (newpart.parts+(parts[oldpart.size,].lines.to_a)).to_cardname) : self
       end
     end
 
@@ -135,7 +138,7 @@ module Wagn
     def escape()           s.gsub(' ','_')                             end
 
     def to_url_key()
-      decode_html(s).gsub(/[^\*\w\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')
+      @url_key ||= decode_html.gsub(/[^\*#{WORD_RE}\s\+]/,' ').strip.gsub(/[\s\_]+/,'_')
     end
 
     def piece_names()

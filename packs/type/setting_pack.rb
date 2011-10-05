@@ -1,5 +1,5 @@
 class Wagn::Renderer
-  define_view(:naked, :type=>'setting') do
+  define_view(:naked, :type=>'setting') do |args|
     div( :class=>'instruction') do
       process_content "{{+*right+*edit help}}"
     end +
@@ -23,7 +23,7 @@ class Wagn::Renderer
     end.compact * "\n"
   end
 
-  define_view(:closed_content, :type=>'setting') do
+  define_view(:closed_content, :type=>'setting') do |args|
     div( :class=>"instruction" ) do
       process_content "{{+*right+*edit help}}"
     end

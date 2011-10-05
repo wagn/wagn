@@ -28,9 +28,9 @@ gem 'warden', '~>0.10.1'
 # need at least one of the following
 
 #gem 'sqlite3-ruby', :require => 'sqlite3', :group=>'sqlite'
-gem 'postgres', '~>0.7.9.2008.01.28',        :group=>'postgres'
-gem 'mysql', '~>2.8.1',                      :group=>'mysql'
-
+#gem 'postgres', '~>0.7.9.2008.01.28',        :group=>'postgres'
+gem 'pg', '~>0.7',                           :group=>'postgres'
+gem 'mysql', '~>2.8.1',                :group=>'mysql'
 
 # ~~~~~~~~~~~~~~ #
 # IMAGE HANDLING #
@@ -40,8 +40,8 @@ gem 'mysql', '~>2.8.1',                      :group=>'mysql'
 # the attachment_fu plug
 
 group :image_science do
-  gem 'image_science', '~>1.2.1'
-  gem 'RubyInline', '~>3.8.4'
+#  gem 'image_science', '~>1.2.1'
+#  gem 'RubyInline', '~>3.8.4'
 end
 #gem 'rmagick', '>=2.13.1',    :group=>'rmagick'
 
@@ -61,13 +61,14 @@ end
 
 group :debug do
   gem 'rdoc'
-  gem 'ruby-debug'
+  gem 'ruby-debug19'
 end
 
 group :test do
   gem 'win32console', '1.3.0', :platforms => ['mingw', 'mswin']
   gem 'win32-process', '0.6.5', :platforms => ['mingw', 'mswin']
   
+  gem 'test-unit', '1.2.3'
   gem 'term-ansicolor', '1.0.5'
   gem 'nokogiri', '1.4.1'
   gem 'timecop', '>=0.2.1'

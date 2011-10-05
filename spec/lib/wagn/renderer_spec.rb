@@ -1,5 +1,5 @@
-require File.dirname(__FILE__) + '/../../spec_helper'
-require File.dirname(__FILE__) + '/../../packs/pack_spec_helper'
+require File.expand_path('../../spec_helper', File.dirname(__FILE__))
+require File.expand_path('../../packs/pack_spec_helper', File.dirname(__FILE__))
 
 describe Wagn::Renderer, "" do
   before do
@@ -212,8 +212,8 @@ describe Wagn::Renderer, "" do
       it "renders top menu" do
         @simple_page.should be_html_with do
           div(:id=>"menu") {
-            a(:class=>"internal-link", :href=>"/") { text('Home') }
-            a(:class=>"internal-link", :href=>"/recent") { text('Recent') }
+            a(:class=>"internal-link", :href=>"/") { 'Home' }
+            a(:class=>"internal-link", :href=>"/recent") { 'Recent' }
 
           #<div base=\"self\" class=\"transcluded ALL TYPE-basic\" position=\"545d0f2\" style=\"\" view=\"content\">
             form(:id=>"navbox_form", :action=>"/search") {
@@ -232,7 +232,7 @@ describe Wagn::Renderer, "" do
 
       it "renders card content" do
         @simple_page.should be_html_with do
-          span(:class=>"open-content content editOnDoubleClick") { text('AlphaBeta') }
+          span(:class=>"open-content content editOnDoubleClick") { 'AlphaBeta' }
         end
       end
 
@@ -246,7 +246,7 @@ describe Wagn::Renderer, "" do
         @simple_page.should be_html_with do
           div(:class=>"card-footer") {
             span(:class=>"watch-link") {
-              a(:title=>"get emails about changes to A+B") { text("watch") }
+              a(:title=>"get emails about changes to A+B") { "watch" }
             }
           }
         end
@@ -254,7 +254,7 @@ describe Wagn::Renderer, "" do
 
       it "renders card credit" do
         @simple_page.should be_html_with do
-          div(:id=>"credit") { [ text("Wheeled by"), a() { text('Wagn') } ] }
+          div(:id=>"credit") { [ "Wheeled by", a() { 'Wagn' } ] }
         end
       end
     end
@@ -405,7 +405,7 @@ describe Wagn::Renderer, "" do
           span(:name=>'head')    { }
           span(:name=>'now') {
             div(:home_view=>'content') {
-              span() { text(Time.now.strftime('%A, %B %d, %Y %I:%M %p %Z')) }
+              span() { Time.now.strftime('%A, %B %d, %Y %I:%M %p %Z') }
             }
           }
           span(:name=>'version') { "Version:#{Wagn::Version.full}" }

@@ -1,6 +1,6 @@
 module Wagn
  class Renderer::Kml
-  define_view(:show) do
+  define_view(:show) do |args|
     xml = Builder::XmlMarkup.new
     xml.instruct! :xml, :version => "1.0"
     

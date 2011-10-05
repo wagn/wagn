@@ -1,5 +1,5 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
-require File.dirname(__FILE__) + '/../../test/fixtures/shared_data'   
+require File.expand_path('../spec_helper', File.dirname(__FILE__))
+require File.expand_path('../../test/fixtures/shared_data', File.dirname(__FILE__))   
 FUTURE = SharedData::FUTURE
 
 

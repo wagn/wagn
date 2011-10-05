@@ -41,6 +41,6 @@ class CardMigrationGenerator < Rails::Generator::NamedBase
   end
   
   def migration_directory 
-    "#{RAILS_ROOT}/db/migrate"
+    "#{Rails.root}/db/migrate"
   end
 end

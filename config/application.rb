@@ -1,4 +1,5 @@
 require File.expand_path('../boot', __FILE__)
+require File.join(File.dirname(__FILE__), 'wagn_initializer')
 
 require 'rails/all'
 
@@ -9,7 +10,7 @@ if defined?(Bundler)
   # Bundler.require(:default, :assets, Rails.env)
 end
 
-module SampleRails
+module Wagn
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -44,5 +45,15 @@ module SampleRails
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
+    
+    config.extend Wagn::Configuration
+    config.wagn_load
   end
 end
+
+
+ActionController::Dispatcher.to_prepare do
+  Wagn::Configuration.wagn_run
+end
+
+Wagn::Configuration.wagn_run

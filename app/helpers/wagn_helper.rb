@@ -183,7 +183,7 @@ module WagnHelper
 
   def stylesheet_inline(name)
     out = %{<style type="text/css" media="screen">\n}
-    out << File.read("#{RAILS_ROOT}/public/stylesheets/#{name}.css")
+    out << File.read("#{Rails.root}/public/stylesheets/#{name}.css")
     out << "</style>\n"
   end
 

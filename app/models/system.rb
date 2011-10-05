@@ -60,7 +60,7 @@ class System
     end
     
     def logo
-      image_setting('*logo') || (File.exists?("#{RAILS_ROOT}/public/images/logo.gif") ? "/images/logo.gif" : nil)
+      image_setting('*logo') || (File.exists?("#{Rails.root}/public/images/logo.gif") ? "/images/logo.gif" : nil)
     end
 
     # PERMISSIONS

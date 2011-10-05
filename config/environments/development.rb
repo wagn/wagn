@@ -22,9 +22,9 @@ config.action_mailer.raise_delivery_errors = false
    
 config.log_level = :info
 
-if File.exists?(File.join(RAILS_ROOT,'tmp', 'debug.txt'))
+if File.exists?(File.join(Rails.root,'tmp', 'debug.txt'))
   require 'ruby-debug'
   Debugger.wait_connection = true
   Debugger.start_remote
-  File.delete(File.join(RAILS_ROOT,'tmp', 'debug.txt'))
+  File.delete(File.join(Rails.root,'tmp', 'debug.txt'))
 end

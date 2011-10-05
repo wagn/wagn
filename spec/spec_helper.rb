@@ -31,7 +31,7 @@ Spork.prefork do
     # in your config/boot.rb
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
-    config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
+    config.fixture_path = Rails.root + '/spec/fixtures/'
            
     config.include AuthenticatedTestHelper, :type=>:controllers      
     # == Notes

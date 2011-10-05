@@ -5,11 +5,11 @@ module Wagn end
 
 module Wagn::Configuration
   def wagn_load
-    self.cache_store = :file_store, "#{RAILS_ROOT}/tmp/cache"
+    self.cache_store = :file_store, "#{Rails.root}/tmp/cache"
     self.frameworks -= [ :action_web_service ]
     require 'yaml'
     require 'erb'
-    database_configuration_file = "#{RAILS_ROOT}/config/database.yml"
+    database_configuration_file = "#{Rails.root}/config/database.yml"
     db = YAML::load(ERB.new(IO.read(database_configuration_file)).result)
     self.action_controller.session = {
       :key    => db[RAILS_ENV]['session_key'],
@@ -21,7 +21,7 @@ module Wagn::Configuration
   class << self
     def wagn_load_config  #loads when System.rb loads
       Rails.logger.debug "Load config ...\n"
-      config_dir = "#{RAILS_ROOT}/config/"
+      config_dir = "#{Rails.root}/config/"
       ['sample_wagn.rb','wagn.rb'].each do |filename|
         require_dependency config_dir+filename if File.exists? config_dir+filename
       end

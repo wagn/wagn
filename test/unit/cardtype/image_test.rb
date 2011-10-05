@@ -12,7 +12,7 @@ class Wagn::Set::Type::ImageTest < ActiveSupport::TestCase
   end
   
   def test_image_creation
-    path = "#{RAILS_ROOT}/test/fixtures/mao2.jpg"
+    path = "#{Rails.root}/test/fixtures/mao2.jpg"
     mimetype = "image/jpeg"
       
     card_image = CardImage.create :uploaded_data => ActionController::TestUploadedFile.new(path, mimetype) 

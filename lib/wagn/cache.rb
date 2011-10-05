@@ -30,13 +30,13 @@ module Wagn
             
       def initialize_on_startup
         cache_classes.each do |cc|
-          cc.cache = Wagn::Cache.new :class=>cc, :store=>(RAILS_ENV =~ /^cucumber|test$/ ? nil : Rails.cache)
+          cc.cache = Wagn::Cache.new :class=>cc, :store=>(Rails.env =~ /^cucumber|test$/ ? nil : Rails.cache)
         end
         preload_cache_for_tests if preload_cache?
       end
       
       def preload_cache?
-        RAILS_ENV=='cucumber'
+        Rails.env=='cucumber'
       end
       
       def preload_cache_for_tests
@@ -50,7 +50,7 @@ module Wagn
       end
       
       def system_prefix(klass)
-        cache_env = (RAILS_ENV == 'cucumber') ? 'test' : RAILS_ENV
+        cache_env = (Rails.env == 'cucumber') ? 'test' : Rails.env
         "#{System.host}/#{cache_env}/#{klass}"
       end
 

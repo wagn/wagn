@@ -54,7 +54,7 @@ class ApplicationController < ActionController::Base
   end
   
   def canonicalize_domain
-    if RAILS_ENV=="production" and request.raw_host_with_port != System.host
+    if Rails.env=="production" and request.raw_host_with_port != System.host
       query_string = request.query_string.empty? ? '' : "?#{request.query_string}"
       return redirect_to("http://#{System.host}#{request.path}#{query_string}")
     end

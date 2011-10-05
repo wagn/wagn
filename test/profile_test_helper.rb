@@ -1,5 +1,5 @@
 # Load profile environment
-env = ENV["RAILS_ENV"] = "profile"
+env = ENV["Rails.env"] = "profile"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 
 # Load Rails testing infrastructure
@@ -11,7 +11,7 @@ require File.expand_path('test_helper', File.dirname(__FILE__)))
 
 # Reset the current environment back to profile
 # since test_helper reset it to test
-ENV["RAILS_ENV"] = env
+ENV["Rails.env"] = env
 
 # Now load ruby-prof and away we go
 require 'ruby-prof'

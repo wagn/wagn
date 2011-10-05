@@ -1,7 +1,7 @@
 require 'rubygems'
 
 unless defined? TEST_ROOT
-  ENV["RAILS_ENV"] = "test"
+  ENV["Rails.env"] = "test"
   require 'pathname'
   TEST_ROOT = Pathname.new(File.expand_path(File.dirname(__FILE__))).cleanpath(true).to_s
   require File.expand_path(File.dirname(__FILE__) + "/../config/environment")

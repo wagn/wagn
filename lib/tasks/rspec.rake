@@ -89,7 +89,7 @@ begin
         desc "Load fixtures (from spec/fixtures) into the current environment's database.  Load specific fixtures using FIXTURES=x,y"
         task :load => :environment do
           require 'active_record/fixtures'
-          ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
+          ActiveRecord::Base.establish_connection(Rails.env.to_sym)
           (ENV['FIXTURES'] ? ENV['FIXTURES'].split(/,/) : Dir.glob(File.join(Rails.root, 'spec', 'fixtures', '*.{yml,csv}'))).each do |fixture_file|
             Fixtures.create_fixtures('spec/fixtures', File.basename(fixture_file, '.*'))
           end
@@ -135,7 +135,7 @@ begin
     
 rescue LoadError
   task :spec_prereq do
-    puts "Required dependencies RSpec, RSpec-Rails or Cucumber are missing.\nRun 'rake gems:install RAILS_ENV=test'"
+    puts "Required dependencies RSpec, RSpec-Rails or Cucumber are missing.\nRun 'rake gems:install Rails.env=test'"
   end
   
   task :spec => :spec_prereq

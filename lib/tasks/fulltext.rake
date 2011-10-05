@@ -3,8 +3,8 @@ namespace :fulltext do
   task :prepare => :environment do
     cxn = ActiveRecord::Base.connection
     if System.enable_postgres_fulltext and is_postgresql?(cxn) 
-      db = ActiveRecord::Base.configurations[RAILS_ENV]["database"]
-      user = ActiveRecord::Base.configurations[RAILS_ENV]["username"]    
+      db = ActiveRecord::Base.configurations[Rails.env]["database"]
+      user = ActiveRecord::Base.configurations[Rails.env]["username"]    
         
       # FIXME get this from somewhere else?
       schema = ENV['WAGN'].blank? ? "public" : ENV['WAGN']

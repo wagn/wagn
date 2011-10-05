@@ -34,11 +34,11 @@ namespace :db do
     desc 'Prepare the test database and load the schema'
     Rake::Task.redefine_task( :prepare => :environment ) do        
       if ENV['RELOAD_TEST_DATA'] == 'true' || ENV['RUN_CODE_RUN']           
-        ENV['RAILS_ENV'] = 'development'
+        ENV['Rails.env'] = 'development'
         puts ">> loading db:test structure"    
         puts `rake db:test:clone`
         puts ">> loading test fixtures"
-        puts `rake db:fixtures:load RAILS_ENV=test --trace`
+        puts `rake db:fixtures:load Rails.env=test --trace`
       else
         puts "skipping loading test data.  to force, run  env RELOAD_TEST_DATA=true rake db:test:prepare"
       end

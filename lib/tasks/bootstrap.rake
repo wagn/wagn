@@ -42,7 +42,7 @@ namespace :wagn do
     desc "load bootstrap fixtures into db"
     task :load => :environment do
       require 'active_record/fixtures'                         
-      #ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
+      #ActiveRecord::Base.establish_connection(Rails.env.to_sym)
       Dir.glob(File.join(Rails.root, 'db', 'bootstrap', '*.{yml,csv}')).each do |fixture_file|
         Fixtures.create_fixtures('db/bootstrap', File.basename(fixture_file, '.*'))
       end 

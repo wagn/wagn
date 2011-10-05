@@ -1,3 +1,4 @@
+=begin
 module ActiveRecord
   module ConnectionAdapters
     class AbstractAdapter
@@ -41,3 +42,4 @@ module ActiveRecord
     end   
   end
 end
+=end

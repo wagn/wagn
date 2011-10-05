@@ -3,7 +3,7 @@ env = ENV["Rails.env"] = "profile"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 
 # Load Rails testing infrastructure
-require 'test_help'
+require 'rails/test_help'
 
 # Now we can load test_helper since we've already loaded the
 # profile RAILS environment.

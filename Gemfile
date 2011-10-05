@@ -66,6 +66,11 @@ group :debug do
   gem 'ruby-debug19'
 end
 
+
+group :test, :development do
+  gem 'rspec-rails'#, '~>1.3', :require=>'spec'
+end
+
 group :test do
   gem 'win32console', '1.3.0', :platforms => ['mingw', 'mswin']
   gem 'win32-process', '0.6.5', :platforms => ['mingw', 'mswin']
@@ -77,7 +82,6 @@ group :test do
   gem 'spork'#, '>=0.5.7'
   gem 'assert2'#, '0.5.5'
 #  gem 'webrat'#, '>=0.7.0'
-  gem 'rspec'#, '~>1.3', :require=>'spec'
 #  gem 'rspec-rails'#, '~>1.3'
   gem 'email_spec'#, '~>0.6.2'
   gem 'gherkin'#, '>=2.2.8'

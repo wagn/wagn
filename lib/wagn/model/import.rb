@@ -1,3 +1,4 @@
+=begin
 require 'csv'
 
 class Wagn::Model::Import
@@ -22,3 +23,4 @@ class Wagn::Model::Import
     end 
   end
 end
+=end

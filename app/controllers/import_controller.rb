@@ -1,3 +1,4 @@
+=begin
 class ImportController < ApplicationController
   def index
   end
@@ -9,3 +10,4 @@ class ImportController < ApplicationController
     end
   end
 end
+=end

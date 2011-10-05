@@ -27,8 +27,11 @@ gem 'ruby-openid', '~>2.1.8'
 # need at least one of the following
 
 #gem 'sqlite3-ruby', :require => 'sqlite3', :group=>'sqlite'
-#gem 'postgres', '~>0.7.9.2008.01.28',        :group=>'postgres'
-gem 'pg', '~>0.7',                           :group=>'postgres'
+group :postgres do
+  RUBY_VERSION =~ /^1\.9/ ?
+    gem('pg', '~>0.7') :
+    gem('postgres', '~>0.7.9.2008.01.28')
+end
 gem 'mysql', '~>2.8.1',                :group=>'mysql'
 
 # ~~~~~~~~~~~~~~ #

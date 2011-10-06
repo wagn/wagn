@@ -20,7 +20,7 @@ class Card < ActiveRecord::Base
     :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual,
     :attachment_id #should build flexible handling for this kind of set-specific attr
 
-  before_save :set_tracked_attributes
+  before_save :set_tracked_attributes, :set_extensions
   after_save :base_after_save
   cache_attributes('name', 'typecode')    
 
@@ -163,15 +163,19 @@ class Card < ActiveRecord::Base
     end
   end
 
+  def set_extensions
+    self.create_extension if respond_to? :create_extension
+  end
+
   def save_with_trash!
     save || raise(errors.full_messages.join('. '))
   end
   alias_method_chain :save!, :trash
 
-  def save_with_trash#(perform_checking=true)
+  def save_with_trash(*args)#(perform_checking=true)
     pull_from_trash if new_record?
     self.trash = !!trash
-    save_without_trash#(perform_checking)
+    save_without_trash(*args)#(perform_checking)
   end
   alias_method_chain :save, :trash
 
@@ -185,28 +189,27 @@ class Card < ActiveRecord::Base
     self.id = trashed_card.id
     @from_trash = self.confirm_rename = @trash_changed = true
     @new_record = false
-    self.before_validation_on_create
   end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # DESTROY
  
-  def destroy_with_trash(caller="")     
-    if callback(:before_destroy) == false
-      errors.add(:destroy, "could not prepare card for destruction")
-      return false
+  def destroy_with_trash(caller="")
+    run_callbacks :destroy do
+#    if self.respond_to? :before_destroy && self.before_destroy == false
+#      errors.add(:destroy, "could not prepare card for destruction")
+#      return false
+#    end
+      deps = self.dependents
+      @trash_changed = true
+      self.update_attribute(:trash, true) 
+      deps.each do |dep|
+        next if dep.trash
+        dep.confirm_destroy = true
+        dep.destroy_with_trash("#{caller} -> #{name}")
+      end
+      true
     end
-    deps = self.dependents
-    @trash_changed = true
-    self.update_attribute(:trash, true) 
-    deps.each do |dep|
-      next if dep.trash
-      dep.confirm_destroy = true
-      dep.destroy_with_trash("#{caller} -> #{name}")
-    end
-
-    callback(:after_destroy)
-    true
   end
   alias_method_chain :destroy, :trash
 
@@ -220,8 +223,8 @@ class Card < ActiveRecord::Base
 
     dependents.each do |dep|
       dep.send :validate_destroy
-      if dep.errors.on(:destroy)
-        errors.add(:destroy, "can't destroy dependent card #{dep.name}: #{dep.errors.on(:destroy)}")
+      if !dep.errors[:destroy].empty?
+        errors.add(:destroy, "can't destroy dependent card #{dep.name}: #{dep.errors[:destroy]}")
       end
     end
 

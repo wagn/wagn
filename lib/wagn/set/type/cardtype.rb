@@ -15,11 +15,6 @@ module Wagn::Set::Type::Cardtype
     extension.save
   end
 
-
-  def before_validation_on_create
-    create_extension
-  end
-
   def create_extension
     return unless typecode == 'Cardtype'  #hack
     codename = Card.generate_codename_for(name)

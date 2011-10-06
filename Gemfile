@@ -8,9 +8,7 @@ source 'http://rubygems.org'
 # must have all of these
 
 gem 'rails', '>=3'
-#gem 'rack', '>=1.1.0'
-#gem 'rake'#, '>=0.8.7'
-
+gem 'rack', '1.3.3' #set back from 1.3.4 to get rid of annoying warning.  remove this line once 1.3.5 is out?
 gem 'htmlentities'#, '~>4.2.1'
 gem 'macaddr'#, '~>1.0.0'
 gem 'uuid'#, '~>2.2.0'

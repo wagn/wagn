@@ -14,6 +14,8 @@ Spork.prefork do
 
   RSpec.configure do |config|
     
+    config.include RSpec::Rails::Matchers::RoutingMatchers, :example_group => { 
+      :file_path => /\bspec\/controllers\// }
     
     config.include AuthenticatedTestHelper, :type=>:controllers
     #config.include(EmailSpec::Helpers)

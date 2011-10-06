@@ -15,59 +15,59 @@ describe CardController do
   
   describe "- route generation" do
     it "gets name/id from /card/new/xxx" do
-      params_from(:post, "/card/new/xxx").should == {
+      {:post=> "/card/new/xxx"}.should route_to(
         :controller=>"card", :action=>'new', :id=>"xxx"
-      }
+      )
     end
     
     it "should recognize .rss on /recent" do
-      params_from(:get, "/recent.rss").should == {:controller=>"card", :view=>"content", :action=>"show", 
+      {:get => "/recent.rss"}.should route_to(:controller=>"card", :view=>"content", :action=>"show", 
         :id=>"*recent", :format=>"rss"
-      }
+      )
     end
     
     it "should search for simple keyword" do
-      params_from(:get, "/search/simple").should == {:controller=>"card", :view=>"content", :action=>"show", 
+      {:get => "/search/simple"}.should route_to(:controller=>"card", :view=>"content", :action=>"show", 
         :id=>"*search", :_keyword=>'simple'
-      }
+      )
     end
     
     it "should search for keyword with dot" do
-      params_from(:get, "/search/dot.com").should == {:controller=>"card", :view=>"content", :action=>"show", 
+      {:get => "/search/dot.com"}.should route_to(:controller=>"card", :view=>"content", :action=>"show", 
         :id=>"*search", :_keyword=>'dot.com'
-      }
+      )
     end
     it "should recognize formats on keyword search" do
-      params_from(:get, "/search/feedname.rss").should == {:controller=>"card", :view=>"content", :action=>"show", 
+      {:get => "/search/feedname.rss"}.should route_to(:controller=>"card", :view=>"content", :action=>"show", 
         :id=>"*search", :_keyword=>'feedname', :format=>'rss'
-      }
+      )
     end
 
 
     ["/wagn",""].each do |prefix|
       describe "routes prefixed with '#{prefix}'" do
         it "should recognize .rss format" do
-          params_from(:get, "#{prefix}/*recent.rss").should == {
+          {:get => "#{prefix}/*recent.rss"}.should route_to(
             :controller=>"card", :action=>"show", :id=>"*recent", :format=>"rss"
-          }
+          )
         end           
     
         it "should recognize .xml format" do
-          params_from(:get, "#{prefix}/*recent.xml").should == {
+          {:get => "#{prefix}/*recent.xml"}.should route_to(
             :controller=>"card", :action=>"show", :id=>"*recent", :format=>"xml"
-          }
+          )
         end           
 
         it "should accept cards with dot sections that don't match extensions" do
-          params_from(:get, "#{prefix}/random.card").should == {
+          {:get => "#{prefix}/random.card"}.should route_to(
             :controller=>"card",:action=>"show",:id=>"random.card"
-          }
+          )
         end
     
         it "should accept cards without dots" do
-          params_from(:get, "#{prefix}/random").should == {
+          {:get => "#{prefix}/random"}.should route_to(
             :controller=>"card",:action=>"show",:id=>"random"
-          }
+          )
         end    
       end
     end

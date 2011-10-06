@@ -33,7 +33,7 @@ class Card < ActiveRecord::Base
     if name = args['name']
       cardname = name.to_cardname
       if (card = Card.cache.read_local(cardname.key))
-        Rails.logger.debug "card#new found #{card.inspect}, #{args.inspect}"
+        #Rails.logger.debug "card#new found #{card.inspect}, #{args.inspect}"
         return card.send(:initialize, args)
       end
     end

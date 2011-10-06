@@ -4,6 +4,7 @@ require 'assert2/xhtml'
 
 Spork.prefork do
   require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
+  require File.expand_path(File.dirname(__FILE__) + "/../lib/authenticated_test_helper.rb")
   require 'rspec/rails' 
 
 

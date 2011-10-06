@@ -1,4 +1,5 @@
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
+include AuthenticatedTestHelper
 
 describe CardController do
   context "new" do    

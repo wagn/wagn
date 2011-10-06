@@ -85,12 +85,12 @@ class Card::RenameTest < ActiveSupport::TestCase
   def test_should_error_card_exists
     @t=card("T"); @t.name="A+B"; 
     assert !@t.save, "save should fail"
-    assert @t.errors.on(:name), "should have errors on key"
+    assert @t.errors[:name], "should have errors on key"
   end
 
   def test_used_as_tag  
     @b=card("B"); @b.name='A+D'; @b.save
-    assert @b.errors.on(:name)
+    assert @b.errors[:name]
   end
   
   def test_update_dependents
@@ -109,7 +109,7 @@ class Card::RenameTest < ActiveSupport::TestCase
 
   def test_should_error_invalid_name
     @t=card("T"); @t.name="YT_o~Yo"; @t.save
-    assert @t.errors.on(:name)
+    assert @t.errors[:name]
   end  
   
   def test_simple_to_simple

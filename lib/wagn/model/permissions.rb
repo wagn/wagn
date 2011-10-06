@@ -6,7 +6,7 @@ class Card::PermissionDenied < Wagn::PermissionDenied
   end    
   
   def build_message
-    "for card #{@card.name}: #{@card.errors.on(:permission_denied)}"
+    "for card #{@card.name}: #{@card.errors[:permission_denied]}"
   end
 end
        
@@ -37,15 +37,15 @@ module Wagn::Model::Permissions
     destroy_without_permissions!
   end
 
-#  def save_with_permissions  #checking is needed for update_attribute, evidently.  not sure I like it...
-#    Rails.logger.debug "Card#save_with_permissions!:"
-#    run_checked_save :save_without_permissions
-#  end
-#   
-#  def save_with_permissions!
-#    Rails.logger.debug "Card#save_with_permissions!"
-#    run_checked_save :save_without_permissions!
-#  end 
+  def save_with_permissions  #checking is needed for update_attribute, evidently.  not sure I like it...
+    Rails.logger.debug "Card#save_with_permissions!:"
+    run_checked_save :save_without_permissions
+  end
+   
+  def save_with_permissions!
+    Rails.logger.debug "Card#save_with_permissions!"
+    run_checked_save :save_without_permissions!
+  end 
   
   def run_checked_save(method)
     if approved?

@@ -115,7 +115,7 @@ describe Card, "type transition validate_destroy" do
   before do @c = change_card_to_type("type-c-card", 'Basic') end
   
   it "should have errors" do
-    @c.errors.on(:destroy_error).should == "card c is indestructible"
+    @c.errors[:destroy_error].should == "card c is indestructible"
   end
   
   it "should retain original type" do
@@ -127,7 +127,7 @@ describe Card, "type transition validate_create" do
   before do @c = change_card_to_type("basicname", "CardtypeD") end
   
   it "should have errors" do
-    @c.errors.on(:type).match(/card d always has errors/).should be_true
+    @c.errors[:type].match(/card d always has errors/).should be_true
   end
   
   it "should retain original type" do

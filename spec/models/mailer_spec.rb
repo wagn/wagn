@@ -3,7 +3,10 @@ require File.expand_path('../spec_helper', File.dirname(__FILE__))
 describe Mailer do
   FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
   CHARSET = "utf-8"
-
+  it "needs to have specs refactored" do
+    fail "for now all those specs are commented out"
+  end
+=begin
   include ActionMailer::Quoting
 
   before do
@@ -56,4 +59,6 @@ describe Mailer do
     def encode(subject)
       quoted_printable(subject, CHARSET)
     end
+=end
+
 end

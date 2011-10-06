@@ -2,6 +2,10 @@ require File.expand_path('../../../spec_helper', File.dirname(__FILE__))
 require File.expand_path('../../../pattern_spec_helper', File.dirname(__FILE__))
 
 describe Wagn::Model::Pattern do
+  it "needs to have #it_generates refactored" do
+    fail "for now all those specs are commented out"
+  end
+  
   it "module exists and autoloads" do
     Wagn::Model::Pattern.should be_true
   end    
@@ -79,6 +83,7 @@ describe Wagn::Model::Pattern do
   end
 end
 
+=begin
 describe Wagn::Model::RightNamePattern do
   it_generates :name => "author+*right", :from => Card.new( :name => "Illiad+author" )
   it_generates :name => "author+*right", :from => Card.new( :name => "+author" )
@@ -106,4 +111,4 @@ end
 describe Wagn::Model::LeftTypeRightNamePattern do
   it_generates :name => "Book+author+*type plus right", :from => Card.new( :name=>"Illiad+author" )
 end
-     
+=end

@@ -1,6 +1,8 @@
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 require File.expand_path('../../packs/pack_spec_helper', File.dirname(__FILE__))
 
+include PackSpecHelper
+
 describe Wagn::Renderer, "" do
   before do
     User.current_user = :joe_user

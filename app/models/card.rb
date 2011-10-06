@@ -27,7 +27,7 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # INITIALIZATION METHODS
   
-  def self.new(args={})
+  def self.new(args={}, options={})
     args ||= {}
     args = args.stringify_keys # evidently different from args.stringify_keys!
     if name = args['name']
@@ -37,7 +37,7 @@ class Card < ActiveRecord::Base
         return card.send(:initialize, args)
       end
     end
-    super
+    super args
   end
 
   def initialize(args={})
@@ -449,7 +449,7 @@ class Card < ActiveRecord::Base
   
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # VALIDATIONS
-=begin
+
   def validate_destroy    
     if extension_type=='User' and extension and Revision.find_by_created_by( extension.id )
       errors.add :destroy, "Edits have been made with #{name}'s user account.<br>  Deleting this card would mess up our revision records."
@@ -560,6 +560,6 @@ class Card < ActiveRecord::Base
       rec.errors.add :key, "wrong key '#{value}' for name #{rec.name}"
     end
   end
-=end  
+ 
 end  
 

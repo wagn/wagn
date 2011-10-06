@@ -162,7 +162,7 @@ class CardController < ApplicationController
       @card.update_attributes(card_args)
     end
 
-    if @card.errors.on(:confirmation_required) && @card.errors.map {|e,f| e}.uniq.length==1
+    if @card.errors[:confirmation_required] && @card.errors.map {|e,f| e}.uniq.length==1
       # If there is confirmation error and *only* that error
       @confirm = (@card.confirm_rename=true)
       @card.update_referencers = true
@@ -216,7 +216,7 @@ class CardController < ApplicationController
 
     @card.destroy
 
-    if @card.errors.on(:confirmation_required)
+    if @card.errors[:confirmation_required]
       return render_update_slot( render_to_string(:partial=>'confirm_remove'), "errors on confirmation")
     end
 

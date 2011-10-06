@@ -26,7 +26,7 @@ class TransclusionTest < ActiveSupport::TestCase
     adm = Card.find_by_name('Wagn Bot')
     adm.update_attributes :content => "{{Oak}}"
     #warn "circles: " + render(adm)
-    assert_match /Circular transclusion/, adm.errors.on(:content)
+    assert_match /Circular transclusion/, adm.errors[:content]
   end
 
   def test_missing_transclude

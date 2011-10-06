@@ -108,7 +108,7 @@ class AccountCreationTest < ActionController::TestCase
     assert_no_new_account do
 #      assert_raises(ActiveRecord::RecordInvalid) do 
         post_invite :user=>{ :email => nil }
-        #assert assigns(:user).errors.on(:email)
+        #assert assigns(:user).errors[:email]
         #assert_response :success
 #      end
     end

@@ -55,3 +55,6 @@ module Wagn
 end
 
 
+ActionDispatch::Callbacks.to_prepare do
+  Wagn::Configuration.wagn_run
+end

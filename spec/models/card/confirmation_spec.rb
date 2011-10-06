@@ -14,7 +14,7 @@ describe Card, "destroy with dependents" do
   
   it "should fail with errors if confirm_destroy not set" do
     @c.destroy.should_not be_true
-    @c.errors.on(:confirmation_required).should_not be_nil
+    @c.errors[:confirmation_required].should_not be_nil
   end
   
   it "should succeed if confirm_destroy is set" do
@@ -38,7 +38,7 @@ describe Card, "rename with dependants" do
   it "should fail with errors if confirm_rename is not set" do
     @c.name = "Brand New Name"
     @c.save.should_not be_true
-    @c.errors.on(:confirmation_required).should_not be_nil
+    @c.errors[:confirmation_required].should_not be_nil
   end
   
 end

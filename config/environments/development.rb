@@ -27,8 +27,7 @@ Wagn::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = true
-  
-#  if File.exists?(File.join(Rails.root,'tmp', 'debug.txt'))
+  #  if File.exists?(File.join(Rails.root,'tmp', 'debug.txt'))
 #    require 'ruby-debug'
 #    Debugger.wait_connection = true
 #    Debugger.start_remote

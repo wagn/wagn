@@ -102,6 +102,8 @@ end
 
 gem 'jquery-rails'
 
+gem 'therubyracer'
+
 # Use unicorn as the web server
 # gem 'unicorn'
 

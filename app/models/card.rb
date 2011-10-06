@@ -185,7 +185,7 @@ class Card < ActiveRecord::Base
     self.id = trashed_card.id
     @from_trash = self.confirm_rename = @trash_changed = true
     @new_record = false
-    self.before_validation_on_create
+    self.before_validation :on => :create
   end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

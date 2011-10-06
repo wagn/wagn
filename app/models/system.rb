@@ -101,6 +101,8 @@ class System
       return false unless usr = User.as_user
       return true if usr.login == 'wagbot' #cannot disable
       aok_hash = self.cache.read('always') || self.cache.write('always', {})
+      aok_hash = {} if aok_hash.frozen? #HACK!! FIXME SOON!
+#      Rails.logger.info "aok_hash = #{aok_hash.inspect}"
       if (c = aok_hash[usr.id]).nil?
         aok_hash[usr] = usr.all_roles.detect { |r| r.codename == 'admin' } || false
       else

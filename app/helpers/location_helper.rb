@@ -19,7 +19,7 @@ module LocationHelper
   end
 
   def save_location
-    location_history.push(request.request_uri)
+    location_history.push(request.fullpath)
     load_location
   end
 

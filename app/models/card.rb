@@ -98,7 +98,7 @@ class Card < ActiveRecord::Base
       self.typecode_without_tracking = get_typecode(name)
     end
     unless @set_mods_loaded
-      Rails.logger.info "include_set_modules[#{name}] #{typecode} called" #{Kernel.caller[0..12]*"\n"}"
+      #Rails.logger.debug "include_set_modules[#{name}] #{typecode} called" #{Kernel.caller[0..12]*"\n"}"
       @set_mods_loaded=true
       singleton_class.include_type_module(typecode)
     end

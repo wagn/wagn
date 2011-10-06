@@ -1,5 +1,11 @@
 require 'diff'
 
+class TemplateErrorSwallower
+  def method_missing(method_id, *args, &block)
+    Rails.logger.info "Renderer template is temporarily swallowing all methods including:  #{method_id}"
+  end
+end
+
 module Wagn
  class Renderer
     module NoControllerHelpers
@@ -163,13 +169,15 @@ module Wagn
     end
   
     def template
-      @template ||= begin
+      @template ||= TemplateErrorSwallower.new
+=begin        
         t = ActionView::Base.new( CardController.view_paths, {} )
         t.helpers.send :include, CardController.master_helper_module
         t.helpers.send :include, NoControllerHelpers
         t.controller = @controller
         t
       end
+=end
     end
     
     def session

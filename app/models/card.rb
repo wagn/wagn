@@ -20,6 +20,8 @@ class Card < ActiveRecord::Base
     :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual,
     :attachment_id #should build flexible handling for this kind of set-specific attr
 
+  before_save :set_tracked_attributes
+  after_save :base_after_save
   cache_attributes('name', 'typecode')    
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -44,17 +46,14 @@ class Card < ActiveRecord::Base
       %w{type skip_type_lookup missing skip_virtual skip_module_loading id}.map { |a| args.delete(a) }
 #    @explicit_content = args['content']
     args['name'] = args['name'].to_s
+    super args
 
-    Rails.logger.warn "initializing args:>>#{args.inspect}"
-    @attributes = get_attributes   
-    @attributes_cache = {}
-    @new_record = true
-    self.send :attributes=, args, false
+    #assign_attributes args  #may need to optimize this, but old way was giving tons of deprecation warnings
+#    self.send :attributes=, args, false
 
     self.typecode_without_tracking = get_typecode(args['name'], typename, skip_type_lookup) unless args['typecode']
 
     include_set_modules unless skip_type_lookup
-    Rails.logger.debug "card#initialize[#{name}] 4 #{inspect}"
     self
   end
 
@@ -128,7 +127,7 @@ class Card < ActiveRecord::Base
   # SAVING
 
 
-  def after_save
+  def base_after_save
     save_subcards
     self.virtual = false
     #cardname.card = self
@@ -169,10 +168,10 @@ class Card < ActiveRecord::Base
   end
   alias_method_chain :save!, :trash
 
-  def save_with_trash(perform_checking=true)
+  def save_with_trash#(perform_checking=true)
     pull_from_trash if new_record?
     self.trash = !!trash
-    save_without_trash(perform_checking)
+    save_without_trash#(perform_checking)
   end
   alias_method_chain :save, :trash
 
@@ -450,7 +449,7 @@ class Card < ActiveRecord::Base
   
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # VALIDATIONS
-
+=begin
   def validate_destroy    
     if extension_type=='User' and extension and Revision.find_by_created_by( extension.id )
       errors.add :destroy, "Edits have been made with #{name}'s user account.<br>  Deleting this card would mess up our revision records."
@@ -561,6 +560,6 @@ class Card < ActiveRecord::Base
       rec.errors.add :key, "wrong key '#{value}' for name #{rec.name}"
     end
   end
-  
+=end  
 end  
 

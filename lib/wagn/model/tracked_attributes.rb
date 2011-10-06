@@ -1,6 +1,6 @@
 module Wagn::Model::TrackedAttributes 
    
-  def set_tracked_attributes  
+  def set_tracked_attributes
     #Rails.logger.debug "Card(#{name})#set_tracked_attributes begin"
     @was_new_card = self.new_card?
     updates.each_pair do |attrib, value| 
@@ -182,7 +182,6 @@ module Wagn::Model::TrackedAttributes
   def self.included(base)
     super 
     base.after_create :set_initial_content 
-    base.before_save.unshift Proc.new{|rec| rec.set_tracked_attributes }
     base.after_save :cascade_name_changes
 #    base.after_create() do |card|
 #      Wagn::Hook.call :after_create, card

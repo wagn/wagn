@@ -3,7 +3,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "pat
 Given /^I log in as (.+)$/ do |user_card_name|
   # FIXME: define a faster simulate method?
   @current_user = Card[user_card_name].extension
-  visit "/account/signin"
+  get "/account/signin"
   fill_in("login", :with=> @current_user.email )
   fill_in("password", :with=> @current_user.login.split("_")[0]+"_pass")
   click_button("Sign me in")     
@@ -11,7 +11,7 @@ Given /^I log in as (.+)$/ do |user_card_name|
 end                                     
 
 Given /^I log out/ do
-  visit "/"
+  get "/"
   click_link("Sign out")
   response.should_not contain("My Card")
 end
@@ -38,13 +38,13 @@ end
 
 When /^(.*) edits? "([^\"]*)"$/ do |username, cardname|
   logged_in_as(username) do
-    visit "/card/edit/#{cardname.to_cardname.to_url_key}"
+    get "/card/edit/#{cardname.to_cardname.to_url_key}"
   end
 end
   
 When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
   logged_in_as(username) do
-    visit "/card/edit/#{cardname.to_cardname.to_url_key}"
+    get "/card/edit/#{cardname.to_cardname.to_url_key}"
     fill_in_hidden_or_not 'card[content]', :with=>content 
    click_button("Save")
     match_content = content.gsub(/\[\[|\]\]/,'')  #link markup won't show up in view.
@@ -54,7 +54,7 @@ end
                    
 When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
   logged_in_as(username) do  
-    visit "/card/edit/#{cardname.to_cardname.to_url_key}"       
+    get "/card/edit/#{cardname.to_cardname.to_url_key}"       
     plusses.hashes.first.each do |name, content|
       fill_in_hidden_or_not "cards[#{(cardname+'+'+name).to_cardname.pre_cgi}][content]", :with=>content
     end
@@ -89,7 +89,7 @@ end
    
 When /^(.*) deletes? "([^\"]*)"$/ do |username, cardname|
   logged_in_as(username) do
-    visit "/card/remove/#{cardname.to_cardname.to_url_key}?card[confirm_destroy]=true"
+    get "/card/remove/#{cardname.to_cardname.to_url_key}?card[confirm_destroy]=true"
   end
 end
 
@@ -113,7 +113,7 @@ end
 
 def create_card(username,cardtype,cardname,content="")
   logged_in_as(username) do
-    visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"   
+    get "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"   
     yield if block_given?
     click_button("Submit") 
     # Fixme - need better error handling here-- the following raise
@@ -144,7 +144,7 @@ When /^the page updates$/ do
   webrat.simulate do           
     # FIXME: this should find the current page we're on
     #  (which is likely *not* current_url if we just did an ajax call, but the previous url )
-    visit '/wagn/Home'
+    get '/wagn/Home'
   end
 end
                    
@@ -163,19 +163,19 @@ When /^In (.*) I click (.*)$/ do |section, control|
   # end
   
   webrat.simulate do                      
-    visit *params_for(control,section)
+    get *params_for(control,section)
   end                                             
 end   
      
 Then /the card (.*) should contain "([^\"]*)"$/ do |cardname, content|
-  visit path_to("card #{cardname}")
+  get path_to("card #{cardname}")
   within scope_of("the main card content") do |scope|
     scope.should contain(content)
   end
 end
 
 Then /the card (.*) should not contain "([^\"]*)"$/ do |cardname, content|
-  visit path_to("card #{cardname}")
+  get path_to("card #{cardname}")
   within scope_of("the main card content") do |scope|
     scope.should_not contain(content)
   end

@@ -203,6 +203,7 @@ PLATFORMS
 DEPENDENCIES
   assert2
   aws-s3 (>= 0.6.2)
+  capybara
   coffee-rails (~> 3.1.0)
   cucumber
   cucumber-rails

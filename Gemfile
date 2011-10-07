@@ -86,6 +86,7 @@ group :test do
   gem 'cucumber'#, '>=0.9.2'
   gem 'cucumber-rails'#, '0.3.2'
   gem 'database_cleaner'#, '0.5.0'
+  gem 'capybara'
   
 #  gem 'ZenTest', '4.4.0'
 #  gem 'autotest-rails', '<= 4.1.0'

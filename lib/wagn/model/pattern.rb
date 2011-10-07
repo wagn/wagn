@@ -23,7 +23,7 @@ module Wagn::Model
       }.compact
     end
     def reset_patterns()
-      @set_mods_loaded = @junction_only = @patterns = @method_keys = @set_names = @template = nil
+      @set_mods_loaded = @junction_only = @patterns = @method_keys = @set_names = @template = @virtual = nil
 #      Rails.logger.debug "reset_patterns[#{name}] #{inspect}"
     end
     def set_names()      @set_names ||= patterns.map(&:set_name)                  end

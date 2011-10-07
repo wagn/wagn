@@ -122,7 +122,7 @@ describe Flexmail do
       end
     
       it "calls to mailer on Card#create" do
-        Mailer.should_receive(:deliver_flexmail).at_least(:once).with(hash_including(:to=>"joe@user.com"))
+        Mailer.should_receive(:flexmail).at_least(:once).with(hash_including(:to=>"joe@user.com"))
         Card.create :name => "Banana+emailtest"
       end
       
@@ -132,7 +132,7 @@ describe Flexmail do
         Card.create! :name => "mailconfig+*message", :content => "this {{_self|naked}}"
         
         Rails.logger.level = ActiveSupport::BufferedLogger::Severity::DEBUG
-        Mailer.should_receive(:deliver_flexmail).with(hash_including(:message=>"this had betta work"))
+        Mailer.should_receive(:flexmail).with(hash_including(:message=>"this had betta work"))
         Card.create!(:name => "ToYou", :type => "Email", :content => "had betta work")
       end
       
@@ -147,12 +147,12 @@ describe Flexmail do
       end
     
       it "doesn't call to mailer on Card#create" do
-        Mailer.should_not_receive(:deliver_flexmail)
+        Mailer.should_not_receive(:flexmail)
         Card.create :name => "Banana+emailtest"
       end
       
       it "calls to mailer on Card#create" do
-        Mailer.should_receive(:deliver_flexmail).at_least(:once).with(hash_including(:to=>"joe@user.com"))
+        Mailer.should_receive(:flexmail).at_least(:once).with(hash_including(:to=>"joe@user.com"))
         c = Card.create :name => "Illiodity", :type=>"Book"
         Card.update(c.id, :cards=> {"~author" => {"name" => "Bukowski"}})
       end
@@ -168,11 +168,11 @@ describe Flexmail do
     # include ActionController::UrlWriter  
     
     before(:all) do 
-      @email = Mailer.deliver_flexmail({ 
+      @email = Mailer.flexmail({ 
         :to=>"joe@user.com", 
         :subject=>"boo-ya", 
         :message=>"Ipsum Daido Lorem" 
-      })   
+      }).deliver
     end
     
     it "respects to:" do

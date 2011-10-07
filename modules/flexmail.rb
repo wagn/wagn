@@ -35,7 +35,7 @@ class Flexmail
     
     def deliver_mail_for card
       configs_for(card).each do |config|
-        Mailer.deliver_flexmail config
+        Mailer.flexmail( config ).deliver
       end
     end
     

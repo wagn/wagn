@@ -1,6 +1,5 @@
 require 'spork'
 ENV["RAILS_ENV"] ||= 'test'
-require 'assert2/xhtml'
 
 Spork.prefork do
   require File.expand_path(File.dirname(__FILE__) + "/../config/environment")

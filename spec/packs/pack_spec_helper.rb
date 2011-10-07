@@ -1,5 +1,17 @@
 module PackSpecHelper
+
+include ActionDispatch::Assertions::SelectorAssertions
 #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
+
+  
+  def assert_select_view(view_html, *args)
+    node = HTML::Document.new(view_html).root
+    if block_given?
+      assert_select node, *args, &block
+    else
+      assert_select node, *args
+    end
+  end
 
   def render_editor(type)
     card = Card.create(:name=>"my favority #{type} + #{rand(4)}", :type=>type)
@@ -34,5 +46,5 @@ module PackSpecHelper
   end
 end
 
-ActiveSupport::TestCase.send :include, PackSpecHelper
+RSpec::Core::ExampleGroup.send :include, PackSpecHelper
 #ActiveSupport::TestCase.extend PackSpecHelper

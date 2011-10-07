@@ -169,15 +169,13 @@ module Wagn
     end
   
     def template
-      @template ||= TemplateErrorSwallower.new
-=begin        
+      @template ||= begin
         t = ActionView::Base.new( CardController.view_paths, {} )
-        t.helpers.send :include, CardController.master_helper_module
-        t.helpers.send :include, NoControllerHelpers
+#        t.helpers.send :include, CardController._helpers
+#        t.helpers.send :include, NoControllerHelpers
         t.controller = @controller
         t
       end
-=end
     end
     
     def session

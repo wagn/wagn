@@ -136,7 +136,6 @@ class Card < ActiveRecord::Base
     @from_trash = false
     update_attachment
     Wagn::Hook.call :after_create, self if @was_new_card
-    Wagn::Hook.call :after_save, self
     send_notifications
     true
   end
@@ -163,7 +162,7 @@ class Card < ActiveRecord::Base
   end
 
   def set_extensions
-    self.create_extension if respond_to? :create_extension
+    self.create_extension if !extension && respond_to?(:create_extension)
   end
 
   def save_with_trash!
@@ -177,6 +176,36 @@ class Card < ActiveRecord::Base
     save_without_trash(*args)#(perform_checking)
   end
   alias_method_chain :save, :trash
+
+#  def save_with_permissions(*args)  #checking is needed for update_attribute, evidently.  not sure I like it...
+#    Rails.logger.debug "Card#save_with_permissions!:"
+#    run_checked_save :save_without_permissions
+#  end
+#  alias_method_chain :save, :permissions
+#   
+#  def save_with_permissions!(*args)
+#    Rails.logger.debug "Card#save_with_permissions!"
+#    run_checked_save :save_without_permissions!
+#  end 
+#  alias_method_chain :save!, :permissions
+#  
+#  def run_checked_save(method)#, *args)
+#    if approved?
+#      begin
+#        self.send(method)
+#      rescue Exception => e
+#        cardname.piece_names.each{|piece| Wagn::Cache.expire_card(piece.to_cardname.key)}
+#        Rails.logger.debug "Exception #{method}:#{e.message} #{name} #{e.backtrace*"\n"}"
+#        raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace*"\n"}"
+#      end
+#    else
+#      raise Card::PermissionDenied.new(self)
+#    end
+#  end
+
+
+
+
 
   def reset_cardtype_cache() end
 

@@ -181,9 +181,6 @@ module Wagn::Model::TrackedAttributes
     super 
     base.after_create :set_initial_content 
     base.after_save :cascade_name_changes
-#    base.after_create() do |card|
-#      Wagn::Hook.call :after_create, card
-#    end
   end    
 
 end

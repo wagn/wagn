@@ -6,42 +6,51 @@ class Mailer < ActionMailer::Base
     from_name = from_user.card ? from_user.card.cardname : ''
     url_key = user.card.cardname.to_url_key
 
-    recipients "#{user.email}"
-    from       (System.setting('*invite+*from') || "#{from_name} <#{from_user.email}>") #FIXME - might want different from settings for different emails?
-    subject    subject
-    sent_on    Time.now
-    body  :email    => (user.email    or raise Wagn::Oops.new("Oops didn't have user email")),
+    mail( {
+      :recipients => "#{user.email}",
+      :from       => (System.setting('*invite+*from') || "#{from_name} <#{from_user.email}>"), #FIXME - might want different from settings for different emails?
+      :subject      => subject,
+      :sent_on      => Time.now,
+    :body => {  :email    => (user.email    or raise Wagn::Oops.new("Oops didn't have user email")),
           :password => (user.password or raise Wagn::Oops.new("Oops didn't have user password")),
           
           :card_url => "#{System.base_url}/wagn/#{url_key}",
           :pw_url   => "#{System.base_url}/card/options/#{url_key}",
           
           :login_url=> "#{System.base_url}/account/signin",
-          :message  => message.clone
+          :message  => message.clone }
+    } )
   end                 
   
   def signup_alert(invite_request)  
-    recipients  System.setting('*request+*to')
-    from        System.setting('*request+*from') || invite_request.extension.email
-    subject "#{invite_request.name} signed up for #{System.site_title}"
-    content_type 'text/html'
-    body  :site => System.site_title,
+    mail( {
+    :recipients => System.setting('*request+*to'),
+    :from        => System.setting('*request+*from') || invite_request.extension.email,
+    :subject => "#{invite_request.name} signed up for #{System.site_title}",
+    :content_type => 'text/html',
+    :body => { :site => System.site_title,
           :card => invite_request,
           :email => invite_request.extension.email,
           :name => invite_request.name,
           :content => invite_request.content,
           :url =>  url_for(:host=>System.host, :controller=>'card', :action=>'show', :id=>invite_request.cardname.to_url_key)
+      }
+    } )
   end               
 
   
   def change_notice( user, card, action, watched, subedits=[], updated_card=nil )       
+    #warn "change_notice( #{user}, #{card.inspect} ...)"
     updated_card ||= card
     updater = updated_card.updater
-    recipients "#{user.email}"
-    from       User.find_by_login('wagbot').email
-    subject    "[#{System.setting('*title')} notice] #{updater.card.name} #{action} \"#{card.name}\"" 
-    content_type 'text/html'
-    body :card => card,
+    mail( {
+    :to           => "#{user.email}",
+    :from         => User.find_by_login('wagbot').email,
+    :subject      => "[#{System.setting('*title')} notice] #{updater.card.name} #{action} \"#{card.name}\"" ,
+    :content_type => 'text/html',
+    :body => "Testing Testing"
+=begin
+       { :card => card,
          :updater => updater.card.name,
          :action => action,
          :subedits => subedits,
@@ -50,6 +59,9 @@ class Mailer < ActionMailer::Base
          :unwatch_url => "#{System.base_url}/card/unwatch/#{watched.to_cardname.to_url_key}",
          :udpater_url => "#{System.base_url}/wagn/#{card.updater.card.cardname.to_url_key}",
          :watched => (watched == card.cardname ? "#{watched}" : "#{watched} cards")
+      }
+=end
+    } )
   end
   
   def flexmail config

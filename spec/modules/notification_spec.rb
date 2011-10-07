@@ -38,23 +38,23 @@ describe "On Card Changes" do
   end
   
   it "sends notifications of edits" do
-    Mailer.should_receive(:deliver_change_notice).with( User.find_by_login('sara'), Card["Sara Watching"], "edited", "Sara Watching", nil )
+    Mailer.should_receive(:change_notice).with( User.find_by_login('sara'), Card["Sara Watching"], "edited", "Sara Watching", nil )
     Card["Sara Watching"].update_attributes :content => "A new change"
   end
                                   
   it "sends notifications of additions" do
     new_card = Card.new :name => "Microscope", :type => "Optic"
-    Mailer.should_receive(:deliver_change_notice).with( User.find_by_login('sara'), new_card,"added", "Optic", nil  )
+    Mailer.should_receive(:change_notice).with( User.find_by_login('sara'), new_card,"added", "Optic", nil  )
     new_card.save!
   end 
   
   it "sends notification of updates" do
-    Mailer.should_receive(:deliver_change_notice).with( User.find_by_login('sara'), Card["Sunglasses"], "updated", "Optic", nil)
+    Mailer.should_receive(:change_notice).with( User.find_by_login('sara'), Card["Sunglasses"], "updated", "Optic", nil)
     Card["Sunglasses"].update_attributes :type => "Basic"
   end
   
   it "does not send notification to author of change" do
-    Mailer.should_receive(:deliver_change_notice).with( User.find_by_login('sara'), Card["All Eyes On Me"],"edited", "All Eyes On Me", nil)
+    Mailer.should_receive(:change_notice).with( User.find_by_login('sara'), Card["All Eyes On Me"],"edited", "All Eyes On Me", nil)
     Card["All Eyes On Me"].update_attributes :content => "edit by John"
     # note no message to John
   end

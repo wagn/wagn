@@ -34,7 +34,7 @@ class AccountController < ApplicationController
       redirect_to (System.setting('*signup+*thanks') || '/')
     else
       User.as :wagbot do
-        Mailer.deliver_signup_alert(@card) if System.setting('*request+*to')
+        Mailer.signup_alert(@card) if System.setting('*request+*to').deliver
       end
       redirect_to (System.setting('*request+*thanks') || '/')
     end
@@ -105,7 +105,7 @@ class AccountController < ApplicationController
       subject = "Password Reset"  #ENGLISH
       message = "You have been given a new temporary password.  " +  #ENGLISH
          "Please update your password once you've logged in. "
-      Mailer.deliver_account_info(@user, subject, message)
+      Mailer.account_info(@user, subject, message).deliver
       flash[:notice] = "A new temporary password has been set on your account and sent to your email address"  #ENGLISH
       redirect_to previous_location
     end

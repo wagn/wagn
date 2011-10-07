@@ -46,11 +46,11 @@ module Wagn::Model::TrackedAttributes
         sidecard = Card[sidename]
         old_name_in_way = (sidecard && sidecard.id==self.id) # eg, renaming A to A+B
         suspend_name(sidename) if old_name_in_way
-        self.send "#{side}=", (!sidecard || old_name_in_way ? Card.new(:name=>sidename) : sidecard)
+        self.send "#{side}=", (!sidecard || old_name_in_way ? Card.create!(:name=>sidename) : sidecard)
       end
     else
       self.trunk = self.tag = nil
-    end         
+    end   
 
     return if new_card?
     if existing_card = Card.find_by_key(@cardname.to_key) and existing_card != self

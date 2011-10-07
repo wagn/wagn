@@ -41,7 +41,6 @@ class Card < ActiveRecord::Base
   end
 
   def initialize(args={})
-      #Rails.logger.warn "card@initializing with args #{args.inspect} Trace: #{Kernel.caller*"\n"}" if args['name'] == 'a+y'
     typename, skip_type_lookup, missing =
       %w{type skip_type_lookup missing skip_virtual skip_module_loading id}.map { |a| args.delete(a) }
 #    @explicit_content = args['content']

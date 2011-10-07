@@ -32,9 +32,7 @@ module Wagn::Model::Fetch
       card ||= find_by_key_and_trash( key, false )
       card ||= new :name=>cardname, :skip_type_lookup=>opts[:skip_virtual]
 
-
       Card.cache.write( key, card ) if cacheable
-      #warn "fetch ret #{card.inspect}, #{opts.inspect}, #{card.new_card? && (!card.virtual? || opts[:skip_virtual])}" if key == 'pointer+*type'
       return nil if card.new_card? && (opts[:skip_virtual] || !card.virtual?)
 
       card.include_set_modules unless opts[:skip_module_loading]

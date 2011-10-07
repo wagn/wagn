@@ -3,19 +3,14 @@ require File.expand_path('../spec_helper', File.dirname(__FILE__))
 describe Mailer do
   FIXTURES_PATH = File.dirname(__FILE__) + '/../fixtures'
   CHARSET = "utf-8"
-  it "needs to have specs refactored" do
-    fail "for now all those specs are commented out"
-  end
-=begin
-  include ActionMailer::Quoting
+  #include ActionMailer::Quoting
 
   before do
     ActionMailer::Base.delivery_method = :test
     ActionMailer::Base.perform_deliveries = true
     ActionMailer::Base.deliveries = []
 
-    @expected = TMail::Mail.new
-    @expected.set_content_type "text", "plain", { "charset" => CHARSET }
+    @expected = Mail.new ( { :charset => CHARSET } )
   end  
 
   #
@@ -27,7 +22,7 @@ describe Mailer do
       user =  ::User.find_by_login('sara')
       card =  Card["Sunglasses"]
       action = "edited"  
-      Mailer.deliver_change_notice( user, card, action, card.name )
+      Mailer.change_notice( user, card, action, card.name ).deliver
     end
 
     it "deliver a message" do
@@ -59,6 +54,5 @@ describe Mailer do
     def encode(subject)
       quoted_printable(subject, CHARSET)
     end
-=end
 
 end

@@ -33,9 +33,11 @@ class Flexmail
       User.as(:wagbot){ event_card.item_names }
     end
     
-    def deliver_mail_for card
+    def mail_for card #, &block # not sure if we need this options
+      #block = &:deliver unless block_given?
       configs_for(card).each do |config|
-        Mailer.deliver_flexmail config
+        #yield Mailer.flexmail(config)
+        Mailer.flexmail(config).deliver
       end
     end
     
@@ -45,7 +47,7 @@ class Flexmail
   end  
 
   Wagn::Hook.add :after_create, '*all' do |card|
-    Flexmail.deliver_mail_for card
+    Flexmail.mail_for(card)
   end
 
   # The Mailer method and mail template are defined in the standard rails locations

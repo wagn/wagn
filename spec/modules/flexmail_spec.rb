@@ -172,19 +172,19 @@ describe Flexmail do
         :to=>"joe@user.com",
         :subject=>"boo-ya",
         :message=>"Ipsum Daido Lorem"
-      }).deliver
+      })
     end
 
     it "respects to:" do
-      @email.should deliver_to("joe@user.com")
+      @email.to.first.should == "joe@user.com"
     end
 
     it "respects subject:" do
-      @email.should have_subject(/boo-ya/)
+      @email.subject.should match /boo-ya/
     end
 
     it "respects content:" do
-      @email.should have_text(/Ipsum Daido Lorem/)
+      @email.body.should match /Ipsum Daido Lorem/
     end
   end
 end

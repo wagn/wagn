@@ -18,6 +18,7 @@ require 'webrat/core/matchers'
 
 require 'email_spec'
 require 'email_spec/cucumber'
+require "capybara/rails"
 
 Webrat.configure do |config|
   config.mode = :rack

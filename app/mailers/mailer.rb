@@ -65,22 +65,9 @@ class Mailer < ActionMailer::Base
   end
   
   def flexmail config
-    recipients  config[:to]
-    from        config[:from]
-    cc          config[:cc]
-    bcc         config[:bcc]
-    subject     config[:subject]
     
-    if !config[:attach] or config[:attach].empty?
-      content_type 'text/html'
-      body :content => config[:message]
-    else
-      content_type 'multipart/alternative'
+    if config[:attach] and !config[:attach].empty?
       
-      part 'text/html' do |p|
-        p.body = config[:message]
-      end
-
       config[:attach].each do |cardname|
         if c = Card[ cardname ] and c.respond_to?(:attachment) and cardfile = c.attachment
           attachment cardfile.content_type do |a|
@@ -92,6 +79,8 @@ class Mailer < ActionMailer::Base
         end
       end
     end
+    config[:body] = config.delete(:message)
+    mail(config)
   end
   
 end

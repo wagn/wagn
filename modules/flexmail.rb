@@ -35,10 +35,10 @@ class Flexmail
     
     def mail_for card #, &block # not sure if we need this options
       #block = &:deliver unless block_given?
-      configs_for(card).each do |config|
+      configs_for(card).map do |config|
         #yield Mailer.flexmail(config)
-        Mailer.flexmail(config).deliver
-      end
+        Mailer.flexmail(config)
+      end.compact.each(&:deliver)
     end
     
     def strip_html string

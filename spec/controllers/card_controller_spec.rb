@@ -118,8 +118,8 @@ describe CardController do
          "content_to_replace"=>"",
          "context"=>"main_1", 
          "multi_edit"=>"true", "view"=>"open"
-        assigns['card'].errors[:key].should == "cannot be blank"
-        assigns['card'].errors[:name].should == "can't be blank"
+        assigns['card'].errors[:key].first.should == "cannot be blank"
+        assigns['card'].errors[:name].first.should == "can't be blank"
         assert_response 422
       end
 

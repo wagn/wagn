@@ -193,17 +193,6 @@ describe CardController do
       assigns["redirect_location"].should ==  "/"
     end
 
-    #hook
-    it "redirects to location specified by :after_create_location hook if it is present" do
-      Wagn::Hook.ephemerally do
-        Wagn::Hook.add :redirect_after_create, '*all' do
-          "/test"
-        end
-        post :create, "card" => { "name" => "Wombly" }
-      end
-      assert_template "ajax_redirect"
-      assigns["redirect_location"].should ==  "/test"
-    end
       
     it "should redirect to card on create main card" do
       post :create, :context=>"main_1", :card => {

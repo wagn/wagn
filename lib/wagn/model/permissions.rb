@@ -37,29 +37,7 @@ module Wagn::Model::Permissions
     destroy_without_permissions!
   end
 
-  def save_with_permissions  #checking is needed for update_attribute, evidently.  not sure I like it...
-    Rails.logger.debug "Card#save_with_permissions!:"
-    run_checked_save :save_without_permissions
-  end
-   
-  def save_with_permissions!
-    Rails.logger.debug "Card#save_with_permissions!"
-    run_checked_save :save_without_permissions!
-  end 
-  
-  def run_checked_save(method)
-    if approved?
-      begin
-        self.send(method)
-      rescue Exception => e
-        cardname.piece_names.each{|piece| Wagn::Cache.expire_card(piece.to_cardname.key)}
-        Rails.logger.debug "Exception #{method}:#{e.message} #{name} #{e.backtrace*"\n"}"
-        raise Wagn::Oops, "error saving #{self.name}: #{e.message}, #{e.backtrace*"\n"}"
-      end
-    else
-      raise Card::PermissionDenied.new(self)
-    end
-  end
+
   
   def approved?
     self.operation_approved = true    

@@ -105,8 +105,7 @@ class CardController < ApplicationController
     # we've chosen to render with the (418) 'teapot' failure status:
     # http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
     handling_errors do
-      @thanks = Wagn::Hook.call( :redirect_after_create, @card ).first ||
-        @card.setting('thanks')
+      @thanks = @card.setting('thanks')
       case
         when @thanks.present?;               ajax_redirect_to @thanks
         when @card.ok?(:read) && main_card?; ajax_redirect_to url_for_page( @card.name )

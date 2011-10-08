@@ -68,6 +68,7 @@ end
 
 group :test, :development do
   gem 'rspec-rails', "~> 2.6"
+  gem 'ruby-prof'
   end
 
 group :test do

@@ -21,7 +21,7 @@ class CardController < ApplicationController
 
   def index_preload
     User.no_logins? ? 
-      redirect_to( System.root_path + '/admin/setup' ) : 
+      redirect_to( path_setting '/admin/setup' ) : 
       params[:id] = (System.setting('*home') || 'Home').to_url_key
   end
 
@@ -108,10 +108,10 @@ class CardController < ApplicationController
       @thanks = Wagn::Hook.call( :redirect_after_create, @card ).first ||
         @card.setting('thanks')
       case
-        when @thanks.present?;               ajax_redirect_to @thanks
+        when @thanks.present?;               ajax_redirect_to page_setting( @thanks )
         when @card.ok?(:read) && main_card?; ajax_redirect_to url_for_page( @card.name )
         when @card.ok?(:read);               render_show
-        else                                 ajax_redirect_to "/"
+        else                                 ajax_redirect_to page_setting( "/" )
       end
     end
   end

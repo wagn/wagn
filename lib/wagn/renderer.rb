@@ -479,7 +479,7 @@ module Wagn
         when /^https?:/; 'external-link'
         when /^mailto:/; 'email-link'
         when /^\//
-          href = full_uri(href)      
+          href = System.root_path + full_uri(href)      
           'internal-link'
         else
           known_card = !!Card.fetch(href)

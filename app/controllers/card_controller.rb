@@ -21,7 +21,7 @@ class CardController < ApplicationController
 
   def index_preload
     User.no_logins? ? 
-      redirect_to( '/admin/setup' ) : 
+      redirect_to( System.root_path + '/admin/setup' ) : 
       params[:id] = (System.setting('*home') || 'Home').to_url_key
   end
 

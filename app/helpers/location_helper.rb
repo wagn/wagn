@@ -52,18 +52,11 @@ module LocationHelper
       opts.each_pair{|k,v| pairs<< "#{k}=#{v}"}
       vars = '?' + pairs.join('&')
     end
-    # shaved order of magnitude off footer rendering
-    # vs. url_for( :action=> .. )
-#Rails.logger.debug "url_for_page( #{title}, #{format}, #{vars}"
-    "/wagn/#{title.to_url_key}#{format}#{vars}"
-  end
-
-  def url_for_card( options={} )
-    url_for options_for_card( options )
+    System.root_path + "/wagn/#{title.to_url_key}#{format}#{vars}"
   end
 
   def card_path( card )
-    "/wagn/#{card.name.to_url_key}"
+    System.root_path + "/wagn/#{card.name.to_url_key}"
   end
 
   def card_url( card )
@@ -117,24 +110,7 @@ module LocationHelper
     image_tag "/images/#{prefix}connected_icon.png", :title=>"cards connected to \"#{card.name}\""
   end
 
-
   def page_icon(cardname)
     link_to_page '&nbsp;', cardname, {:class=>'page-icon', :title=>"Go to: #{cardname}"}
   end
-
-  def flexlink( linktype, name, options )
-    case linktype
-      when 'connect'
-        link_to_function( name,
-           "var form = window.document.forms['connect'];\n" +
-           "form.elements['name'].value='#{name}';\n" +
-           "form.onsubmit();",
-           options)
-      when 'page'
-        link_to_page name, name, options
-      else
-        raise "no linktype specified"
-    end
-  end
-
 end

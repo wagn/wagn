@@ -255,16 +255,23 @@ module Wagn
     end
   end
 
-  def url_for(url, args=nil, attribute=nil)
+  def url_for(path, args=nil, attribute=nil)
     # recently changed URI.escape to CGI.escape to address question mark issue, but I'm still concerned neither is perfect
     # so long as we keep doing the weird Cardname.escape thing.
-    url = "javascript:'/#{url}"
+    url = "javascript:'#{System.root_path}/#{path}"
     url << "/#{escape_javascript(CGI.escape(card_id.to_s))}" if (card and card_id)
     url << "/#{attribute}" if attribute
     url << "?context='+getSlotContext(this)"
     url << "+'&' + getSlotOptions(this)"
     url << ("+'"+ args.map{|k,v| "&#{k}=#{escape_javascript(CGI.escape(v.to_s))}"}.join('') + "'") if args
     url
+  end
+
+  def link_to(*args)
+    if String === args[1] && args[1] =~ /^\//
+      args[1] = System.root_path + args[1]
+    end
+    @template.link_to *args
   end
 
   def header

@@ -14,11 +14,15 @@ class System
   
   class << self
     def base_url
-      if (request and request.env['HTTP_HOST'] and !@@base_url)
+      if !@@base_url and request and request.env['HTTP_HOST']
         'http://' + request.env['HTTP_HOST']
       else
         @@base_url
       end
+    end
+    
+    def root_path
+      @@root_path ||= (ENV['RAILS_RELATIVE_URL_ROOT'] || '')
     end
    
     def host

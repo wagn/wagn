@@ -484,7 +484,7 @@ module Wagn
         else
           known_card = !!Card.fetch(href)
           text = text.to_show(href)
-          href = '/wagn/' + (known_card ? href.to_url_key : CGI.escape(Wagn::Cardname.escape(href)))
+          href = System.root_path + '/wagn/' + (known_card ? href.to_url_key : CGI.escape(Wagn::Cardname.escape(href)))
           #href+= "?type=#{type.to_url_key}" if type && card && card.new_card?  WANT THIS; NEED TEST
           href = full_uri(href)
           known_card ? 'known-card' : 'wanted-card'

@@ -14,10 +14,17 @@ class System
   
   class << self
     def base_url
-      if (request and request.env['HTTP_HOST'] and !@@base_url)
+      if !@@base_url and request and request.env['HTTP_HOST']
         'http://' + request.env['HTTP_HOST']
       else
         @@base_url
+      end
+    end
+    
+    def root_path
+      @@root_path ||= begin
+        epath = ENV['RAILS_RELATIVE_URL_ROOT'] 
+        epath && epath != '/' ? epath : ''
       end
     end
    
@@ -44,6 +51,12 @@ class System
       val == '1'
     end
     
+    def path_setting(name)
+      name ||= '/'
+      return name if name =~ /^(http|mailto)/
+      System.root_path + name      
+    end
+    
     def image_setting(name)
       if content = setting(name) and content.match(/src=\"([^\"]+)/)
         $~[1]
@@ -56,11 +69,11 @@ class System
     
     def favicon
       # bit of a kludge. 
-      image_setting('*favicon') || image_setting('*logo') || '/images/favicon.ico'
+      image_setting('*favicon') || image_setting('*logo') || "#{root_path}/images/favicon.ico"
     end
     
     def logo
-      image_setting('*logo') || (File.exists?("#{RAILS_ROOT}/public/images/logo.gif") ? "/images/logo.gif" : nil)
+      image_setting('*logo') || (File.exists?("#{RAILS_ROOT}/public/images/logo.gif") ? "#{root_path}/images/logo.gif" : nil)
     end
 
     # PERMISSIONS

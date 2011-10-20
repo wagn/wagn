@@ -7,8 +7,8 @@
 #my-card-link {font-weight: bold}
 #navbox_background {margin: 0 8px; margin-bottom: 2px; background: #ffc;  border: 1px solid #aaa; border-top: 2px solid #666; border-left: 2px solid #666}
 html>body #navbox_background {padding: 2px 0px}
- #navbox_background #navbox_image {padding: 2px 8px; background: url(/images/search.gif) no-repeat right}
-html>body #navbox_background #navbox_image {background-image: url(/images/search.png)}
+ #navbox_background #navbox_image {padding: 2px 8px; background: url(http://s3.amazonaws.com/wagn-shared/images/search.gif) no-repeat right}
+html>body #navbox_background #navbox_image {background-image: url(http://s3.amazonaws.com/wagn-shared/images/search.png)}
 #navbox_field, #navbox_field:focus {padding: 0px 3px; margin: 0px; height: 18px; width: 30%; position: relative; z-index: 1; font-size: 13px; border: 0px; background: #ffc}
 #navbox_field_auto_complete {background: #eee width: auto}
 #navbox_field_auto_complete .informal {color: #777; font-size: 10px}
@@ -41,7 +41,7 @@ div.auto_complete ul strong.highlight {color: #444; margin:0; padding:0}
 .role {text-align: center; padding: 2px 8px}
 .task {padding: 2px}
 body {color: #444; font-style: normal; margin: 0px}
-body#wagn {background: url(/images/body-bg.bmp) repeat-x #cdb}
+body#wagn {background: url(http://s3.amazonaws.com/wagn-shared/images/body-bg.bmp) repeat-x #cdb}
 body, p, ol, ul, td, th, input, textarea {font-family: verdana, arial, helvetica, sans-serif; font-size: 12px; font-weight: normal}
 body, p, ol, ul {line-height: 21px}
  h1 {font-size: 15px}
@@ -75,18 +75,18 @@ html>body .card-slot {width: auto;  }
  .card-header {background: #005800; padding: 5px; margin: 0px; -moz-border-radius: 6px 6px 0 0; border-radius: 6px 6px 0 0; text-align: left}
 .title-menu {line-height: 18px}
 .title {margin: 0px 2px; font-weight: bold; font-size: 13px; padding: 2px 0px 2px 25px; white-space: nowrap}
-.right-arrow {background: url(/images/arrow_right.gif) no-repeat left}
-html>body .right-arrow {background-image: url(/images/arrow_right.png)}
-.down-arrow {background: url(/images/arrow_down.gif) no-repeat left}
-html>body .down-arrow {background-image: url(/images/arrow_down.png)}
-.page-icon {padding: 2px 7px; background: url(/images/page.gif) no-repeat right}
-html>body .page-icon {background-image: url(/images/page.png)}
-.card-icon {background: url(/images/card.gif) no-repeat right}
-.plus-icon {background: url(/images/plus.gif) no-repeat right}
-.search-icon {background: url(/images/search.gif) no-repeat right}
- html>body .card-icon{ background-image: url(/images/card.png)}
-html>body .plus-icon{ background-image: url(/images/plus.png)}
-html>body .search-icon{ background-image: url(/images/search.png)}
+.right-arrow {background: url(http://s3.amazonaws.com/wagn-shared/images/arrow_right.gif) no-repeat left}
+html>body .right-arrow {background-image: url(http://s3.amazonaws.com/wagn-shared/images/arrow_right.png)}
+.down-arrow {background: url(http://s3.amazonaws.com/wagn-shared/images/arrow_down.gif) no-repeat left}
+html>body .down-arrow {background-image: url(http://s3.amazonaws.com/wagn-shared/images/arrow_down.png)}
+.page-icon {padding: 2px 7px; background: url(http://s3.amazonaws.com/wagn-shared/images/page.gif) no-repeat right}
+html>body .page-icon {background-image: url(http://s3.amazonaws.com/wagn-shared/images/page.png)}
+.card-icon {background: url(http://s3.amazonaws.com/wagn-shared/images/card.gif) no-repeat right}
+.plus-icon {background: url(http://s3.amazonaws.com/wagn-shared/images/plus.gif) no-repeat right}
+.search-icon {background: url(http://s3.amazonaws.com/wagn-shared/images/search.gif) no-repeat right}
+ html>body .card-icon{ background-image: url(http://s3.amazonaws.com/wagn-shared/images/card.png)}
+html>body .plus-icon{ background-image: url(http://s3.amazonaws.com/wagn-shared/images/plus.png)}
+html>body .search-icon{ background-image: url(http://s3.amazonaws.com/wagn-shared/images/search.png)}
 .cardtype {font-style: italic; font-size: 10px}
 .card-header, .card-header a {color: #fff }
 html>body .card-menu-left, html>body .page-icon {display: none}
@@ -110,7 +110,7 @@ div:hover.card-footer .footer-content {display: inline}
    .faint {color: #bbc}
 .joint {color: #960}
 a.wanted-card {color: #900 }
-a.external-link, .line .content a.external-link {color: #979; background: url(/images/external_link.png) center right no-repeat; padding-right: 13px !important}
+a.external-link, .line .content a.external-link {color: #979; background: url(http://s3.amazonaws.com/wagn-shared/images/external_link.png) center right no-repeat; padding-right: 13px !important}
 a.email-link {color: #979 }
 .open-missing {color: #99b; font-variant: small-caps}
 span:hover.open-missing {color: #069; background: #ffc}
@@ -152,6 +152,8 @@ ul.pointer {margin: 0px; padding: 0px}
 .revision-navigation span {margin: 0px 10px }
 ins.diffmod, .diffins {background: #aea}
 del.diffmod, .diffdel {background: #eaa}
+  .options-set-label {font-size: 1.1em; color: #000; padding: 5px 0}
+.options-set-content {padding: 0 0 30px 10px}
  .small { font-size: 10px; display: block; margin: 2px; line-height: 13px }
 .template, .option-header h2 {padding: 6px ; text-align: center}
 .template {background: #bdd }
@@ -212,6 +214,9 @@ table.permission-editor .pointer-text {width: 200px}
 .comment-box {background: #cce; padding: 8px; margin: 0px}
   .settings-tab {border: 0px; margin-bottom: 20px; padding: 5px 15px}
 .set-rules {width: 100%}
+.set-rules .set-header th {background: #ddd; font-style: normal; color: #666; border: 0}
+.set-rules .set-header .set-label {font-weight: bold}
+.set-rules .set-header .set-links {white-space: nowrap; float:right}
 .set-rules th {background: #aaa; color: #eee; padding: 5px 0}
 .set-rules th, .set-rules td {text-align: left; display: table-cell; border-bottom: 1px solid #eee; padding: 2px 5px}
 .rule-setting {font-weight: bold}

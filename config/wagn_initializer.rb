@@ -9,8 +9,13 @@ module Wagn::Configuration
     self.frameworks -= [ :action_web_service ]
     require 'yaml'
     require 'erb'
-    database_configuration_file = "#{RAILS_ROOT}/config/database.yml"
-    db = YAML::load(ERB.new(IO.read(database_configuration_file)).result)
+    if ENV['MULTIDBCONFIG']
+      db_config_file = "#{RAILS_ROOT}/config/databases/#{RAILS_ENV}.yml" 
+      self.database_configuration_file = File.join(db_config_file)
+    else       
+      db_config_file = "#{RAILS_ROOT}/config/database.yml"
+    end
+    db = YAML::load(ERB.new(IO.read(db_config_file)).result)
     self.action_controller.session = {
       :key    => db[RAILS_ENV]['session_key'],
       :secret => db[RAILS_ENV]['secret']

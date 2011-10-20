@@ -11,19 +11,19 @@ class Wagn::Renderer
     
     #Universal Edit Button
     if !rcard.new_record? && rcard.ok?(:update)
-      bits << %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="/card/edit/#{ rcard.name.to_url_key }"/>}
+      bits << %{<link rel="alternate" type="application/x-wiki" title="Edit this page!" href="#{System.root_path}/card/edit/#{ rcard.name.to_url_key }"/>}
     end
     
     # RSS
     if rcard.typecode == 'Search'
-      rss_href = rcard.name=='*search' ? "/search/#{ params[:_keyword] }.rss" : template.url_for_page( rcard.name, :format=>:rss )
+      rss_href = rcard.name=='*search' ? "#{System.root_path}/search/#{ params[:_keyword] }.rss" : template.url_for_page( rcard.name, :format=>:rss )
       bits << %{<link rel="alternate" type="application/rss+xml" title="RSS" href=#{rss_href} />}
     end
     
     # CSS
     bits += [stylesheet_link_merged(:base), stylesheet_link_tag( 'print', :media=>'print') ]
     if star_css_card = Card.fetch('*css', :skip_virtual => true)
-      bits << %{<link href="/*css.css?#{ star_css_card.current_revision_id }" media="screen" type="text/css" rel="stylesheet" />}
+      bits << %{<link href="#{System.root_path}/*css.css?#{ star_css_card.current_revision_id }" media="screen" type="text/css" rel="stylesheet" />}
     end
 
     #Javscript
@@ -38,7 +38,7 @@ class Wagn::Renderer
   
   define_view(:raw, :name=>'*foot') do
     User.as(:wagbot) do
-      javascript_include_tag("/tinymce/jscripts/tiny_mce/tiny_mce.js") +
+      javascript_include_tag("#{System.root_path}/tinymce/jscripts/tiny_mce/tiny_mce.js") +
       if ga_key = System.setting("*google analytics key")
         %{
           <script type="text/javascript">

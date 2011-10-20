@@ -2632,7 +2632,7 @@ revisions_484:
     
     /* page - background image and color */
     body#wagn {
-      background: url(/images/body-bg.png) repeat-x #CCCCCC;
+      background: url(http://s3.amazonaws.com/wagn-shared/images/body-bg.png) repeat-x #CCCCCC;
     }
     
     /* main card and sidebar widths */
@@ -4330,7 +4330,7 @@ revisions_192:
     
     /* page - background image and color */
     body#wagn {
-        background: url(/images/body-bg.png) repeat-x #CCCCCC;
+        background: url(http://s3.amazonaws.com/wagn-shared/images/body-bg.png) repeat-x #CCCCCC;
     }
     
     /* main card and sidebar widths */

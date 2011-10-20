@@ -15,7 +15,7 @@ class AdminController < ApplicationController
         self.current_user = @user
         User.cache.delete 'no_logins'
         flash[:notice] = "You're good to go!"
-        redirect_to '/'
+        redirect_to System.path_setting('/')
       else
         flash[:notice] = "Durn, setup went awry..."
       end

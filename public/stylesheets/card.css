@@ -40,41 +40,41 @@ html>body .card-slot {
   white-space: nowrap;
 }
 .right-arrow {
-  background: url(/images/arrow_right.gif) no-repeat left;
+  background: url(http://s3.amazonaws.com/wagn-shared/images/arrow_right.gif) no-repeat left;
 }
 html>body .right-arrow {
-  background-image: url(/images/arrow_right.png);
+  background-image: url(http://s3.amazonaws.com/wagn-shared/images/arrow_right.png);
 }
 .down-arrow {
-  background: url(/images/arrow_down.gif) no-repeat left;
+  background: url(http://s3.amazonaws.com/wagn-shared/images/arrow_down.gif) no-repeat left;
 }
 html>body .down-arrow {
-  background-image: url(/images/arrow_down.png);
+  background-image: url(http://s3.amazonaws.com/wagn-shared/images/arrow_down.png);
 }
 .page-icon {
   padding: 2px 7px;
-  background: url(/images/page.gif) no-repeat right;
+  background: url(http://s3.amazonaws.com/wagn-shared/images/page.gif) no-repeat right;
 }
 html>body .page-icon {
-  background-image: url(/images/page.png);
+  background-image: url(http://s3.amazonaws.com/wagn-shared/images/page.png);
 }
 
 .card-icon {
-  background: url(/images/card.gif) no-repeat right;
+  background: url(http://s3.amazonaws.com/wagn-shared/images/card.gif) no-repeat right;
 }
 
 .plus-icon {
-  background: url(/images/plus.gif) no-repeat right;
+  background: url(http://s3.amazonaws.com/wagn-shared/images/plus.gif) no-repeat right;
 }
 
 .search-icon {
-  background: url(/images/search.gif) no-repeat right;
+  background: url(http://s3.amazonaws.com/wagn-shared/images/search.gif) no-repeat right;
 }
                                           
 /* FIXE: these need the IE gifs as well */
-html>body .card-icon{ background-image: url(/images/card.png); }
-html>body .plus-icon{ background-image: url(/images/plus.png); }
-html>body .search-icon{ background-image: url(/images/search.png); }
+html>body .card-icon{ background-image: url(http://s3.amazonaws.com/wagn-shared/images/card.png); }
+html>body .plus-icon{ background-image: url(http://s3.amazonaws.com/wagn-shared/images/plus.png); }
+html>body .search-icon{ background-image: url(http://s3.amazonaws.com/wagn-shared/images/search.png); }
 
 
 .cardtype { 
@@ -197,7 +197,7 @@ a.wanted-card {
 a.external-link, 
 .line .content a.external-link { 
   color: #979; 
-  background: url(/images/external_link.png) center right no-repeat;
+  background: url(http://s3.amazonaws.com/wagn-shared/images/external_link.png) center right no-repeat;
   padding-right: 13px !important;
 }
 a.email-link { 

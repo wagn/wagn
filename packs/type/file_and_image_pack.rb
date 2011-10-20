@@ -11,7 +11,7 @@ class Wagn::Renderer
     div do
       %{
         <iframe id="upload-iframe-#{ attachment_uuid }" class="upload-iframe" name="upload-iframe" height="50" width="480" 
-          frameborder="0" src="/#{attachment_model_name.pluralize}/new?#{attachment_model_name}[attachment_uuid]=#{attachment_uuid}" scrolling="no">
+          frameborder="0" src="#{System.root_path}/#{attachment_model_name.pluralize}/new?#{attachment_model_name}[attachment_uuid]=#{attachment_uuid}" scrolling="no">
         </iframe>
       }
     end + 

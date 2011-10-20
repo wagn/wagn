@@ -4,7 +4,7 @@ body {
   margin: 0px;
 }
 body#wagn {
-  background: url(/images/body-bg.bmp) repeat-x #cdb;
+  background: url(http://s3.amazonaws.com/wagn-shared/images/body-bg.bmp) repeat-x #cdb;
 }
 body, p, ol, ul, td, th, input, textarea {
   font-family: verdana, arial, helvetica, sans-serif;

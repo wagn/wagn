@@ -143,13 +143,17 @@ class Wagn::Renderer
         %{
 <span class="paging">#{
         if first > 1
-          link_to_remote image_tag('prev-page.png'), :update=>id,
-            :url=>url_for('card/view', args.merge(:offset=>[offset-limit,0].max)) 
+          link_to image_tag('prev-page.png'), 
+            { :update => id, 
+              :url => url_for('card/view', args.merge(:offset=>[offset-limit,0].max)) 
+            }, :remote => true
         end}
   <span class="paging-range">#{ first } to #{ last } of #{ total }</span>#{
         if last < total
-          link_to_remote image_tag('next-page.png'), :update=>id,
-             :url=>url_for('card/view', args.merge(:offset=>last))
+          link_to image_tag('next-page.png'), 
+            { :update => id, 
+              :url => url_for('card/view', args.merge(:offset=>last))
+            }, :remote => true
         end}
   </span>}
       end}

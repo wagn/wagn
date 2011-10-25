@@ -14,8 +14,9 @@ class Wagn::Renderer::RichHtml
       
     cells = [
 #      ["rule-setting", link_to_page(setting_name) ],
-      ["rule-setting", link_to_remote( setting_name, :update=>id,
-        :url=>"/card/view/#{card.cardname.to_url_key}?view=edit_rule"
+      ["rule-setting", link_to( setting_name, 
+        {:update=>id, :url=>"/card/view/#{card.cardname.to_url_key}?view=edit_rule" },
+        :remote => true
       )],
       ["rule-content", begin
         div(:class=>'rule-content-container line') do
@@ -32,10 +33,6 @@ class Wagn::Renderer::RichHtml
         end
       end ],
       ["rule-type", (rule_card ? rule_card.typename : '') ],
-      
-#      ["rule-action", link_to_remote( rule_card ? 'edit' : 'add',
-#        :url=>"/card/view/#{card.cardname.to_url_key}?view=edit_rule", :update=>id
-#      )]
     ]
     if is_self
       cells << ['rule-set', rule_card ? rule_card.trunk.label(rule_card.name.trunk_name) : ''] 
@@ -57,7 +54,7 @@ class Wagn::Renderer::RichHtml
     content_tag(:td, :class=>'edit-rule', :colspan=>col_count-1) do
 #      div(:class=>'rule-setting') { link_to_page setting_name } +
       div(:class=>'rule-setting') do
-         link_to_remote setting_name, :url=>"/card/view/#{card.cardname.to_url_key}?view=rule", :update=>id 
+         link_to setting_name, {:url=>"/card/view/#{card.cardname.to_url_key}?view=rule", :update=>id }, :remote=>true 
       end +
       
       
@@ -86,8 +83,9 @@ class Wagn::Renderer::RichHtml
               end +
               content_tag(:ul) do
                 sifter[:override].map do |set_name|
-                  content_tag(:li) { link_to_remote ruled_card.label(set_name), :update=>id, 
-                    :url=>"/card/view/#{card.name.to_url_key}?view=edit_rule&new_rule_set=#{CGI.escape(set_name.to_key)}"
+                  content_tag(:li) { link_to ruled_card.label(set_name), 
+                    { :update=>id, :url=>"/card/view/#{card.name.to_url_key}?view=edit_rule&new_rule_set=#{CGI.escape(set_name.to_key)}" },
+                    :remote=>true
                   }
                 end.join
               end
@@ -122,12 +120,7 @@ class Wagn::Renderer::RichHtml
           process_inclusion(card, :view=>:open)
         end
       end
-    end #+
-    #content_tag(:td, :class =>'edit-rule-action rule-action') do
-    #  div() { link_to_remote 'close', :url=>"/card/view/#{card.cardname.to_url_key}?view=rule", :update=>id } +
-    #  div() { link_to_remote 'refresh', :url=>"/card/view/#{card.cardname.to_url_key}?view=edit_rule", :update=>id }
-    #end 
-    
+    end
   end
   
   def edit_rule_header(title, intro)

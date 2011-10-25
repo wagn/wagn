@@ -31,7 +31,7 @@ class Wagn::Renderer::RichHtml
     self.requested_view = args[:action] = 'content'
     c = _render_naked(args)
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
-    wrap(args) {  wrap_content(c) }
+    wrap(args) { raw wrap_content(c) }
   end
 
   define_view(:titled) do |args|

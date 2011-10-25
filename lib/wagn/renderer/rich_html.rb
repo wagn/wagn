@@ -137,10 +137,6 @@ module Wagn
     @js ||= SlotJavascript.new(self)
   end
 
-  # FIXME: passing a block seems to only work in the templates and not from
-  # internal slot calls, so I added the option passing internal content which
-  # makes all the ugly block_given? ifs..
-
   def wrap(args = {})
     render_wrap = ( args.key?(:add_slot) ? args.delete(:add_slot) : !skip_outer_wrap_for_ajax? )
     return yield if !render_wrap
@@ -234,9 +230,9 @@ module Wagn
        [ :inclusions, !(card.out_transclusions.empty? || card.template? || card.hard_template),         {:inclusions=>true} ]
        ].map do |key,ok,args|
 
-        link_to_remote( key,
+        link_to( key,
           { :url=>url_for("card/edit", args, key), :update => ([:name,:type,:codename].member?(key) ? id('card-body') : id) },
-          :class=>(key==on ? 'on' : '')
+          :class=>(key==on ? 'on' : ''), :remote=>true
         ) if ok
       end.compact.join
      end
@@ -246,9 +242,9 @@ module Wagn
     return '' if card && card.extension_type != 'User'
     div(:class=>'submenu') do
       [:account, :settings].map do |key|
-        link_to_remote( key,
+        link_to( key,
           { :url=>url_for("card/options", {}, key), :update => id },
-          :class=>(key==on ? 'on' : '')
+          :class=>(key==on ? 'on' : ''), :remote=>true
         )
       end.join
     end
@@ -329,7 +325,8 @@ module Wagn
   end
 
   def link_to_action( text, to_action, remote_opts={}, html_opts={})
-    link_to_remote text, {
+    html_opts[:remote] = true
+    link_to text, {
       :url=>url_for("card/#{to_action}", remote_opts),
       :update => id
     }.merge(remote_opts), html_opts

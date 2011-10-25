@@ -57,14 +57,13 @@ class Wagn::Renderer
   
   define_view(:add_item, :type=>'pointer') do |args|
     #ENGLISH
-#    if !card #or !card.limit or card.limit.to_i > (index.to_i+1)
-      %{<li id="#{context}-add">} +
-      link_to_remote( 'Add another',
-        :url=>%{javascript:urlForAddField('#{card ? card.key : ''}','#{context}')},
+    %{<li id="#{context}-add">} +
+    link_to( 'Add another',
+      { :url=>%{javascript:urlForAddField('#{card ? card.key : ''}','#{context}')},
         :update=>%{#{context}-ul},
         :position=>:bottom
-      )
-#    else '' end
+      }, :remote=>true
+    )
   end
 
 

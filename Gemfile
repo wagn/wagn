@@ -38,7 +38,6 @@ gem 'mysql', '~>2.8.1',                :group=>'mysql'
 # ~~~~~~~~~~~~~~ #
 
 # This is important for image re-sizing, which is vital to Image cards.
-# the attachment_fu plug
 
 group :image_science do
 #  gem 'image_science', '~>1.2.1'
@@ -56,10 +55,6 @@ group :hosting do
   gem 'newrelic_rpm', '>=2.14.1'
 end
 
-# ~~~~~~~ #
-# TESTING #
-# ~~~~~~~ #
-
 group :debug do
   gem 'rdoc'
   gem 'ruby-debug19'
@@ -69,7 +64,7 @@ end
 group :test, :development do
   gem 'rspec-rails', "~> 2.6"
   gem 'ruby-prof'
-  end
+end
 
 group :test do
   gem 'win32console', '1.3.0', :platforms => ['mingw', 'mswin']
@@ -88,6 +83,10 @@ group :test do
   gem 'cucumber-rails'#, '0.3.2'
   gem 'database_cleaner'#, '0.5.0'
   gem 'capybara'
+
+  # Pretty printed test output
+  gem 'turn', :require => false
+
   
 #  gem 'ZenTest', '4.4.0'
 #  gem 'autotest-rails', '<= 4.1.0'
@@ -114,11 +113,5 @@ gem 'therubyracer'
 
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'
-
-group :test do
-  # Pretty printed test output
-  gem 'turn', :require => false
-end
-
 
 # original list http://groups.google.com/group/wagn-dev/browse_thread/thread/79ff17d0bd1145e0/d822516dc749db89#d822516dc749db89

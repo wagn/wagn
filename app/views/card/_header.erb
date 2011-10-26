@@ -1,16 +1,16 @@
 <div class="card-header">
-  <%= slot.menu %>
+  <%= raw slot.menu %>
 
   <div class="title-menu">
-      <%= slot.link_to_action fancy_title(card), 'view', {:view=>'closed'}, :class=>"line-link title down-arrow", :title=>"close #{card.name}" %>
+      <%= raw slot.link_to_action fancy_title(card), 'view', {:view=>'closed'}, :class=>"line-link title down-arrow", :title=>"close #{card.name}" %>
 
     <% unless card.typecode=='Basic' %>
       <span class="cardtype">
-        <%= link_to_page( Cardtype.name_for(card.typecode) ) %>
+        <%= raw link_to_page( Cardtype.name_for(card.typecode) ) %>
       </span>
     <% end %>
 
-    <%= page_icon(card.name) %>&nbsp;
+    <%= raw page_icon(card.name) %>&nbsp;
   </div>
 
   <style type="text/css"><%= ".SELF-#{card.cardname.css_name} .content .namepart-#{card.cardname.css_name} { display: none; }" %></style>

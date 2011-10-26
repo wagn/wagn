@@ -24,7 +24,7 @@
         <%= hidden_field_tag 'element', "#{div_id}"  %>
         <%= f.hidden_field 'type'  %>
         <%- slot.form = f %>
-        <%= error_messages_for :user %> 
+        <%= error_messages_for @user %> 
         <table class="fieldset">
           <%= slot.option_header 'Account Details' %><%#ENGLISH%>
           <%- new_name_field = capture do %><%= f.text_field :name, {:class=>'new-card-name', :id=>"new-card-name-field"} %><% end %>

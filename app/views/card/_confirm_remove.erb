@@ -11,7 +11,7 @@
           <% end. join ', ' %>
         </ul>
       <% end %>
-      <%= error_messages_for :card %>
+      <%= error_messages_for @card %>
       <%= slot.captcha_tags :full=>true %>
       <%= hidden_field_tag 'card[confirm_destroy]', 'true' %>
       <%= submit_tag 'Yes, get rid of it' %>

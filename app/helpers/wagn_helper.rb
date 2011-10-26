@@ -27,17 +27,15 @@ module WagnHelper
 
   # FIXME: I think all this slot initialization should happen in controllers
   def get_slot(card=nil, context=nil, action=nil, opts={})
-#Rails.logger.info "get_slot called.  context = #{context}, @context = #{@context}"
     nil_given = card.nil?
     card ||= @card; context||=@context; action||=@action
     opts[:relative_content] = opts[:params] = (controller and params) or {}
     slot = case
       when Wagn::Renderer.current_slot
-#Rails.logger.info "current slot already exists.  nil_given = #{nil_given}"
         nil_given ? Wagn::Renderer.current_slot : Wagn::Renderer.current_slot.subrenderer(card)
       else
         Wagn::Renderer.current_slot = Wagn::Renderer.new( card,
-            opts.merge(:context=>context, :action=>action, :template=>self, :controller=>@controller) )
+            opts.merge(:context=>context, :action=>action, :template=>self, :controller=>self.controller) )
     end
     controller and controller.renderer = slot or slot
   end
@@ -54,7 +52,8 @@ module WagnHelper
   # This is a slight modification of the stock rails method to accomodate
   # bare javascript
   def remote_function(options)
-    javascript_options = options_for_ajax(options)
+#    javascript_options = options_for_ajax(options)
+    javascript_options = options
 
     update = ''
     if options[:update] =~ /^javascript\:/
@@ -209,6 +208,12 @@ module WagnHelper
   end
 
 
+  def error_messages_for(object)
+    if object && object.errors.any?
+      "<ul> #{object.errors.full_messages.map{ |msg| "<li>#{msg}</li>"}}</ul>"
+    end
+  end
+
   # ---------------( NAVBOX ) -----------------------------------
 
 =begin (moved to builtin def)
@@ -250,8 +255,8 @@ module WagnHelper
   end
 
   def form_for_card(options={}, &proc)    
-    concat(form_remote_tag(options))
-    fields_for(:card, options, &proc)
+    concat( form_tag(options, :remote => true) )
+    fields_for(:card, nil, options, &proc)
     if options[:update]
       concat hidden_field_tag('_update','true')
     end

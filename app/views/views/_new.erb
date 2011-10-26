@@ -9,7 +9,7 @@
 
 <% wrap_slot(slot, args) do |s| %>
     <% @title = "New Card" %>
-    <%= error_messages_for :card %>
+    <%= error_messages_for @card %>
     <div class=cardnotice></div>
 
     <% form_for_card(:url=>"card/create",

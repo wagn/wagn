@@ -64,7 +64,6 @@ class CardActionTest < ActionController::IntegrationTest
     assert_equal "testcontent2", Card["Editor"].content
   end
 
-
   def test_newcard_shows_edit_instructions
     given_cards( 
       {"Cardtype:YFoo" => ""},

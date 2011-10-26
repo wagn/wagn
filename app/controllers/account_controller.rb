@@ -122,7 +122,7 @@ class AccountController < ApplicationController
         page.wagn.card.find("#{element_id}").continue_save()
       end
     else
-      error_message = render_to_string :inline=>'<%= error_messages_for :user %>'
+      error_message = render_to_string :inline=>'<%= error_messages_for @user %>'
       render :update do |page|
         page.wagn.messenger.note "Update user failed" + error_message  #ENGLISH
 

@@ -1,7 +1,7 @@
 <div id="sign-in" class="content">
   <h1 class="page-header">Sign In</h1><%#ENGLISH%>
   
-  <% form_tag :action=>'signin' do %>
+  <%= form_tag :action=>'signin' do %>
     <p><label for="login">Email</label></p>
     <p><%= text_field_tag 'login', params[:login], :id=>'login_field' %></p>
     <p><label for="password">Password</label></p>
@@ -11,8 +11,8 @@
   <p>&nbsp;</p>                          
   
   <h2 class="page-header">Forgot your password?</h2><%#ENGLISH%>
-  <%= error_messages_for 'user' %>
-  <% form_tag :action=>'forgot_password' do %>
+  <%= error_messages_for @user %>
+  <%= form_tag :action=>'forgot_password' do %>
     <p><label for="email">Email</label></p>
     <p><%= text_field_tag 'email', params[:email] %></p>
 

@@ -108,7 +108,7 @@ module Wagn
   
     extend DefineView
 
-    class <<self
+    class << self
       def get_pattern(view,opts)
         unless pkey =  Wagn::Model::Pattern.method_key(opts) #and opts.empty?
           raise "Bad Pattern opts: #{pkey.inspect} #{opts.inspect}"
@@ -166,11 +166,11 @@ module Wagn
   
     def template
       @template ||= begin
-        t = ActionView::Base.new( CardController.view_paths, {} )
+        t = ActionView::Base.new( CardController.view_paths)
         t.extend CardController._helpers
-#        tsend include, CardController._helpers
         t.extend NoControllerHelpers
         t.controller = @controller
+        t._routes = @controller._routes if @controller
         t
       end
     end
@@ -178,7 +178,7 @@ module Wagn
     
     
     def method_missing(method_id, *args, &proc)
-      #Rails.logger.debug "method missing: #{method_id}"
+      #warn "method missing: #{method_id}, #{args.inspect}"
       # silence Rails 2.2.2 warning about binding argument to concat.  tried detecting rails 2.2
       # and removing the argument but it broken lots of integration tests.
       ActiveSupport::Deprecation.silence { template.send(method_id, *args, &proc) }
@@ -302,7 +302,6 @@ module Wagn
     def render_view_action(action, locals={})
       render_partial "views/#{action}", locals
     end
-
   
     def replace_references( old_name, new_name )
       #warn "replacing references...card name: #{card.name}, old name: #{old_name}, new_name: #{new_name}"

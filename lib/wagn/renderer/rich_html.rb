@@ -284,6 +284,8 @@ module Wagn
       menu << "</span>"
       menu << link_to_menu_action(top_option.to_s)
     menu << "</span>"
+    menu.html_safe
+    menu
   end
 
 =begin

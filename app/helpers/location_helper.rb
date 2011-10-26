@@ -119,7 +119,7 @@ module LocationHelper
 
 
   def page_icon(cardname)
-    link_to_page '&nbsp;', cardname, {:class=>'page-icon', :title=>"Go to: #{cardname.to_s}"}
+    link_to_page '&nbsp;'.html_safe, cardname, {:class=>'page-icon', :title=>"Go to: #{cardname.to_s}"}
   end
 
   def flexlink( linktype, name, options )

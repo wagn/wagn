@@ -1,7 +1,7 @@
-<%= slot.header %>  
-<%= slot.wrap_content( slot._render_open_content ) %>
+<%= raw slot.header %>  
+<%= raw slot.wrap_content( slot._render_open_content ) %>
 
-<%= slot.notice %>  
+<%= raw slot.notice %>  
 <% if card.ok?(:comment) %>
   <div class="comment-box">
   <% form_for_card :url=>slot.url_for('card/comment') do |f| %>

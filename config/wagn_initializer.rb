@@ -35,7 +35,7 @@ module Wagn::Configuration
     end
 
     def wagn_run
-      wagn_load_config
+#      wagn_load_config
       wagn_setup_multihost
       return unless wagn_database_ready?
       wagn_load_modules

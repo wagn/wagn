@@ -8,7 +8,6 @@ class System
     :enable_postgres_fulltext, :postgres_src_dir, :postgres_tsearch_dir, # Optimize PostgreSQL performance
     :multihost,:wagn_name
     
-  Wagn::Configuration.wagn_load_config
     
   @@role_tasks = %w{ administrate_users create_accounts assign_user_roles }
   
@@ -110,6 +109,6 @@ class System
       end
     end
   end
-  
+  Wagn::Configuration.wagn_load_config  
 end        
 

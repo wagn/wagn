@@ -57,13 +57,13 @@ end
 
 group :debug do
   gem 'rdoc'
-  gem 'ruby-debug19'
+  gem 'ruby-debug19', :require => 'ruby-debug'
 end
-
 
 group :test, :development do
   gem 'rspec-rails', "~> 2.6"
   gem 'ruby-prof'
+  gem 'rails-dev-tweaks', '~> 0.5.1'
 end
 
 group :test do
@@ -111,7 +111,5 @@ gem 'therubyracer'
 # Deploy with Capistrano
 # gem 'capistrano'
 
-# To use debugger
-# gem 'ruby-debug19', :require => 'ruby-debug'
 
 # original list http://groups.google.com/group/wagn-dev/browse_thread/thread/79ff17d0bd1145e0/d822516dc749db89#d822516dc749db89

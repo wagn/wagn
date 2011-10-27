@@ -21,13 +21,13 @@ class Wagn::Renderer
     end
     
     # CSS
-    bits += [stylesheet_link_merged(:base), stylesheet_link_tag( 'print', :media=>'print') ]
+    bits += [ stylesheet_link_tag('application'), stylesheet_link_tag('print', :media=>'print') ]
     if star_css_card = Card['*css']
       bits << %{<link href="/*css.css?#{ star_css_card.current_revision_id }" media="screen" type="text/css" rel="stylesheet" />}
     end
 
     #Javscript
-    bits << javascript_include_merged(:base)
+    bits << javascript_include_tag('application')
     
     bits.join("\n")
   end

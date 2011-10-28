@@ -1,11 +1,6 @@
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
+include AuthenticatedTestHelper
 
-describe CardController, 'captcha specs' do
-  it "need to be refactored" do
-    fail "they're commented out now just to get specs to load"
-  end
-end
-=begin
 module CaptchaExampleGroupMethods
   def require_captcha_on(action, params)
     ENV['RECAPTCHA_PUBLIC_KEY'] = 'not nil'
@@ -23,6 +18,8 @@ module CaptchaExampleMethods
   end
 end
 
+RSpec::Core::ExampleGroup.extend CaptchaExampleGroupMethods
+RSpec::Core::ExampleGroup.send :include, CaptchaExampleMethods
 #Spec::Rails::Example::ControllerExampleGroup.extend CaptchaExampleGroupMethods
 #Spec::Rails::Example::ControllerExampleGroup.send(:include, CaptchaExampleMethods)
 
@@ -102,4 +99,3 @@ describe AccountController, "with captcha enabled" do
   end
 
 end
-=end

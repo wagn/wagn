@@ -8,5 +8,4 @@ module PatternExampleGroupMethods
   end
 end
 
-#ActiveSupport::TestCase.extend 
 RSpec::Core::ExampleGroup.extend PatternExampleGroupMethods

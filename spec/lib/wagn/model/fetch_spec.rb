@@ -30,8 +30,8 @@ describe Card do
 
     it "returns virtual cards and caches them as missing" do
       User.as(:wagbot)
-      # FIXME: put this card in the wagn::create data
-      #Card.create!(:name=>'*email+*right+*content', :content=>'')
+      # FIXME: get rid of this once this info is in the bootstrap data.
+      Card.create!(:name=>'*email+*right+*content', :content=>'')
 
       card = Card.fetch("Joe User+*email")
       card.should be_instance_of(Card)

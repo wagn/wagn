@@ -1,7 +1,7 @@
 class Wagn::Renderer::RichHtml
   define_view(:rule) do |args|
-    set_name = card.name.trunk_name
-    setting_name = card.name.tag_name
+    set_name = card.cardname.trunk_name
+    setting_name = card.cardname.tag_name
     
     is_self = set_name.tag_name =='*self'
     rule_card = if is_self
@@ -23,25 +23,32 @@ class Wagn::Renderer::RichHtml
           span(:class=>'content') do
             # these two extra layers are all about getting overflow:hidden to work right.
             # was unable to do it without inline inside block inside table-cell.  would be happy to simplify if possible
-            case
-            when !rule_card; ''
-            when is_self && card != rule_card
-              subrenderer(rule_card).render_closed_content
-            else; render_closed_content
-            end
+            raw(
+              case
+              when !rule_card; ''
+              when is_self && card != rule_card
+                subrenderer(rule_card).render_closed_content
+              else; render_closed_content
+              end
+            )
           end
         end
       end ],
       ["rule-type", (rule_card ? rule_card.typename : '') ],
     ]
     if is_self
-      cells << ['rule-set', rule_card ? rule_card.trunk.label(rule_card.name.trunk_name) : ''] 
+      cells << ['rule-set', rule_card ? rule_card.trunk.label(rule_card.cardname.trunk_name) : ''] 
     end
+
+    warn "cells = #{cells.inspect}"
 
     extra_css_class = rule_card && !rule_card.new_card? ? 'known-rule' : 'missing-rule'
     cells.map do |css_class, content|
-      content_tag('td', :class=>"#{css_class} #{extra_css_class}") { content }
+      raw( content_tag('td', :class=>"#{css_class} #{extra_css_class}") { raw content } )
     end.join "\n"
+    
+#    raw( cells.join "\n" )
+    
   end
   
   define_view(:edit_rule) do |args|

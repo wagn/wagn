@@ -20,7 +20,7 @@ class Card < ActiveRecord::Base
     :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual,
     :attachment_id #should build flexible handling for this kind of set-specific attr
 
-  before_save :set_tracked_attributes, :set_extensions, :set_read_rule
+  before_save  :set_read_rule, :set_tracked_attributes, :set_extensions
   after_save :base_after_save, :update_ruled_cards
   cache_attributes('name', 'typecode')    
 

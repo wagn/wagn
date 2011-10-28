@@ -1,5 +1,6 @@
 require File.expand_path('../../../spec_helper', File.dirname(__FILE__))
 require File.expand_path('../../../permission_spec_helper', File.dirname(__FILE__))
+require File.expand_path('../../../packs/pack_spec_helper', File.dirname(__FILE__))
 
 describe "reader rules" do
   before do
@@ -37,7 +38,7 @@ describe "reader rules" do
   
   it "should revert to more general rule when more specific (self) rule is deleted" do
     @perm_card.save!
-    @perm_card.destroy!
+    User.as( :wagbot ) { @perm_card.destroy! }
     card = Card.fetch('Home')
     card.read_rule_id.should == Card.fetch('*all+*read').id
   end
@@ -47,7 +48,7 @@ describe "reader rules" do
     card = Card.fetch('A+B')
     card.read_rule_id.should == pc.id
     pc = Card.fetch(pc.name) #important to re-fetch to catch issues with detecting change in trash status.
-    pc.destroy
+    User.as( :wagbot ) { pc.destroy }
     card = Card.fetch('A+B')
     card.read_rule_id.should == Card.fetch('*all+*read').id
   end
@@ -317,9 +318,7 @@ describe Card, "new permissions" do
 
   it "should let joe render content of new cards" do
     @c = Card.new
-    Wagn::Renderer.new(@c).render.should be_html_with do
-      span(:class=>"open-content content editOnDoubleClick") {}
-    end
+    assert_view_select Wagn::Renderer.new(@c).render, 'span[class="open-content content editOnDoubleClick"]'
   end
 
 end

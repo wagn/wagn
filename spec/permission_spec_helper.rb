@@ -33,7 +33,7 @@ module PermissionSpecHelper
   end
 end
 
-ActiveSupport::TestCase.send :include, PermissionSpecHelper
+RSpec::Core::ExampleGroup.send :include, PermissionSpecHelper
 
 
 class Card

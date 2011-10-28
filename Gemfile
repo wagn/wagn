@@ -16,6 +16,10 @@ gem 'json'#, '~>1.4.6'
 gem 'mail'
 #gem 'userstamp', '~>2.0.1'
 
+gem 'jquery-rails'
+
+gem 'therubyracer'
+
 gem 'ruby-openid'#, '~>2.1.8'
 
 
@@ -72,17 +76,17 @@ group :test do
   
   gem 'test-unit'#, '1.2.3'
   gem 'term-ansicolor'#, '1.0.5'
-  gem 'nokogiri'#, '1.4.1'
+#  gem 'nokogiri'#, '1.4.1'
   gem 'timecop'#, '>=0.2.1'
   gem 'spork'#, '>=0.5.7'
-  gem 'assert2'#, '0.5.5'
+#  gem 'assert2'#, '0.5.5'
   gem 'webrat'#, '>=0.7.0'
   gem 'email_spec'#, '~>0.6.2'
-  gem 'gherkin'#, '>=2.2.8'
-  gem 'cucumber'#, '>=0.9.2'
-  gem 'cucumber-rails'#, '0.3.2'
+#  gem 'gherkin'#, '>=2.2.8'
+#  gem 'cucumber'#, '>=0.9.2'
+  gem 'cucumber-rails'
   gem 'database_cleaner'#, '0.5.0'
-  gem 'capybara'
+#  gem 'capybara'
 
   # Pretty printed test output
   gem 'turn', :require => false
@@ -101,9 +105,7 @@ group :assets do
   gem 'uglifier'
 end
 
-gem 'jquery-rails'
 
-gem 'therubyracer'
 
 # Use unicorn as the web server
 # gem 'unicorn'

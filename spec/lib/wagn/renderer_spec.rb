@@ -40,18 +40,13 @@ describe Wagn::Renderer, "" do
 
     it "css in inclusion syntax in wrapper" do
       c = Card.new :name => 'Afloatright', :content => "{{A|float:right}}"
-      assert_select_view Wagn::Renderer.new(c).render( :naked ), 'div'
-      # do
-      #  div(:style => 'float:right;') {}
-      #end
+      assert_view_select Wagn::Renderer.new(c).render( :naked ), 'div[style="float:right"]'
     end
 
-    # I want this test to show the explicit escaped HTML, but be_html_with seems to escape it already :-/
-    it "HTML in inclusion systnax as escaped" do
+    it "HTML in inclusion syntax as escaped" do
       c =Card.new :name => 'Afloat', :type => 'Html', :content => '{{A|float:<object class="subject">}}'
-      Wagn::Renderer.new(c).render( :naked ).should be_html_with do
-        div(:style => 'float:<object class="subject">;') {}
-      end
+      result = Wagn::Renderer.new(c).render( :naked )
+      assert_view_select result, 'div[style="float:&amp;lt;object class=&amp;quot;subject&amp;quot;&amp;gt;;"]'
     end
 
     context "CGI variables" do
@@ -89,7 +84,7 @@ describe Wagn::Renderer, "" do
         Card.create(:name=>'Joe no see me+*self+*read', :type=>'Pointer', :content=>'[[Administrator]]')
       end
       User.as :joe_user do
-        Wagn::Renderer.new(Card.fetch('Joe no see me')).render(:naked).should be_html_with { span(:class=>'denied') }
+        assert_view_select Wagn::Renderer.new(Card.fetch('Joe no see me')).render(:naked), 'span[class="denied"]'
       end
     end
   end
@@ -111,45 +106,34 @@ describe Wagn::Renderer, "" do
       Wagn::Renderer.new(c).render( :naked ).should == %{<img src="http://wagn.org/image53_small.jpg">}
     end
 
-    describe "css classes" do
-      it "are correct for open view" do
-        c = Card.new :name => 'Aopen', :content => "{{A|open}}"
-        Wagn::Renderer.new(c).render(:naked).should be_html_with do
-          div( :class => "card-slot paragraph ALL TYPE-basic SELF-a") {}
-        end
-      end
-    end
-
     it "naked" do
       render_card(:naked, :name=>'A+B').should == "AlphaBeta"
     end
 
     it "content" do
-      render_card(:content, :name=>'A+B').should be_html_with {
-        div( :class=>'transcluded ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b', :home_view=>'content') {
-          span( :class=>'content-content content')
-        }
-      }
+      result = render_card(:content, :name=>'A+B')
+      assert_view_select result, 'div[class="transcluded ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"][home_view="content"]' do 
+        assert_select 'span[class~="content-content content"]'
+      end
     end
 
     describe "inclusions" do
       it "multi edit" do
         c = Card.new :name => 'ABook', :type => 'Book'
-        Wagn::Renderer.new(c).render( :multi_edit ).should be_html_with do
-          div :class => "field-in-multi" do
-            input :name=>"cards[~plus~illustrator][content]", :type => 'hidden'
-          end
+        assert_view_select Wagn::Renderer.new(c).render( :multi_edit ), 'div[class="field-in-multi"]' do
+          assert_select 'input[name="cards[~plus~illustrator][content]"][type="hidden"]'
         end
       end
     end
 
     it "titled" do
-      render_card(:titled, :name=>'A+B').should be_html_with do
-        div( :home_view=>'titled') {
-          [ h1 { [ span{'A'}, span{'+'}, span{'B'} ] },
-            span(:class=>'titled-content'){'AlphaBeta'}
-          ]
-        }
+      result = render_card(:titled, :name=>'A+B')
+      #warn "titled result = #{result}"
+      assert_view_select result, 'div[home_view="titled"]' do
+        assert_select 'h1' do
+          assert_select 'span', 3
+        end
+        assert_select 'span[class~="titled-content"]', 'AlphaBeta'
       end
     end
 
@@ -162,23 +146,20 @@ describe Wagn::Renderer, "" do
       end
 
       it "should have the appropriate attributes on open" do
-        @ocslot.render(:open).should be_html_with do
-          div( :position => 1, :home_view=>'open', :class => "card-slot paragraph ALL TYPE-basic SELF-a") {
-            [ div( :class => "card-header" ) { div( :class=>'title-menu')},
-              span( :class => "open-content content")  { }
-            ]
-          }
+        assert_view_select @ocslot.render(:open), 'div[position="1"][home_view="open"][class="card-slot paragraph ALL TYPE-basic SELF-a"]' do
+          assert select 'div[class="card-header"]' do
+            assert_select 'div[class="title-menu"]'
+          end
+          assert_select 'span[class~="open-content content"]'
         end
       end
 
       it "should have the appropriate attributes on closed" do
-        Rails.logger.debug "\nBEFORE TEST~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-        @ocslot.render(:closed).should be_html_with do
-          div( :position => 1, :home_view=>'closed', :class => "card-slot line ALL TYPE-basic SELF-a") {
-            [ div( :class => "card-header" ) { div( :class=>'title-menu')},
-              span( :class => "closed-content content")  { }
-            ]
-          }
+        assert_view_select @ocslot.render(:closed), 'div[position="1"][home_view="closed"][class="card-slot line ALL TYPE-basic SELF-a"]' do
+          assert select 'div[class="card-header"]' do
+            assert_select 'div[class="title-menu"]'
+          end
+          assert_select 'span[class~="closed-content content"]'
         end
       end
 
@@ -214,51 +195,40 @@ describe Wagn::Renderer, "" do
 #      end
 
       it "renders top menu" do
-        @simple_page.should be_html_with do
-          div(:id=>"menu") {
-            a(:class=>"internal-link", :href=>"/") { 'Home' }
-            a(:class=>"internal-link", :href=>"/recent") { 'Recent' }
-
-          #<div base=\"self\" class=\"transcluded ALL TYPE-basic\" position=\"545d0f2\" style=\"\" view=\"content\">
-            form(:id=>"navbox_form", :action=>"/search") {
-              a(:id=>"navbox_image", :title=>"Search") {}
-              input(:name=>"navbox") {}
-            }
-          }
+        assert_view_select @simple_page, 'div[id="menu"]' do
+          assert_select 'a[class="internal-link"][href="/"]', 'Home'
+          assert_select 'a[class="internal-link"][href="/recent"]', 'Recent'
+          assert_select 'form[id="navbox_form"][action="/search"]' do
+            assert_select 'a[id="navbox_image"][title="Search"]'
+            assert_select 'input[name="navbox"]'
+          end
         end
       end
 
       it "renders card header" do
-        @simple_page.should be_html_with do
-          a(:href=>"/wagn/A+B", :class=>"page-icon", :title=>"Go to: A+B") {}
-        end
+        assert_view_select @simple_page, 'a[href="/wagn/A+B"][class="page-icon"][title="Go to: A+B"]'
       end
 
       it "renders card content" do
-        @simple_page.should be_html_with do
-          span(:class=>"open-content content editOnDoubleClick") { 'AlphaBeta' }
-        end
+        #warn "simple page = #{@simple_page}"
+        assert_view_select @simple_page, 'span[class="open-content content editOnDoubleClick"]', 'AlphaBeta'
       end
 
       it "renders notice info" do
-        @simple_page.should be_html_with do
-          span(:class=>"notice") {}
-        end
+        assert_view_select @simple_page, 'span[class="notice"]'
       end
 
       it "renders card footer" do
-        @simple_page.should be_html_with do
-          div(:class=>"card-footer") {
-            span(:class=>"watch-link") {
-              a(:title=>"get emails about changes to A+B") { "watch" }
-            }
-          }
+        assert_view_select @simple_page, 'div[class="card-footer"]' do
+          assert_select 'span[class="watch-link"]' do
+            assert_select 'a[title="get emails about changes to A+B"]', "watch"
+          end
         end
       end
 
       it "renders card credit" do
-        @simple_page.should be_html_with do
-          div(:id=>"credit") { [ "Wheeled by", a() { 'Wagn' } ] }
+        assert_view_select @simple_page, 'div[id="credit"]', /Wheeled by/ do
+          assert_select 'a', 'Wagn'
         end
       end
     end
@@ -368,57 +338,6 @@ describe Wagn::Renderer, "" do
 =end
   end
 
-  context "builtin card" do
-=begin
-    it "should use inclusion view overrides" do
-      # FIXME love to have these in a scenario so they don't load every time.
-      t = Card.create! :name=>'t1', :content=>"{{t2|card}}"
-      Card.create! :name => "t2", :content => "{{t3|view}}"
-      Card.create! :name => "t3", :content => "boo"
-
-      # a little weird that we need :open_content  to get the version without
-      # slot divs wrapped around it.
-      s = Wagn::Renderer.new(t, :inclusion_view_overrides=>{ :open => :name } )
-      s.render( :naked ).should == "t2"
-
-      # similar to above, but use link
-      s = Wagn::Renderer.new(t, :inclusion_view_overrides=>{ :open => :link } )
-      s.render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/t2\">t2</a>"
-      s = Wagn::Renderer.new(t, :inclusion_view_overrides=>{ :open => :naked } )
-      s.render( :naked ).should == "boo"
-    end
-=end
-
-    it "should render internal builtins" do
-      render_card( :naked, :content=>%{
-<div>
-  <span name="head">
-    Head:{{*head|naked}}
-  </span>
-  <span name="now">
-    Now:{{*now}}
-  </span>
-  <span name="version">
-    Version:{{*version|naked}}
-  </span>
-  <span name="foot">
-    Foot:{{*foot|naked}}
-  </span>
-</div>} ).should be_html_with   do
-        div {
-          span(:name=>'head')    { }
-          span(:name=>'now') {
-            div(:home_view=>'content') {
-              span() { Time.now.strftime('%A, %B %d, %Y %I:%M %p %Z') }
-            }
-          }
-          span(:name=>'version') { "Version:#{Wagn::Version.full}" }
-          span(:name=>"foot")    { script(:type=>"text/javascript") {} }
-        }
-      end
-    end
-  end
-
 #~~~~~~~~~~~~~  content views
 # includes some *right stuff
 
@@ -438,9 +357,7 @@ describe Wagn::Renderer, "" do
       Wagn::Renderer.new(@card).render_raw.should == "Yoruba"
       @card.should_receive(:setting_card).with("content","default").and_return(config_card)
       @card.should_receive(:setting_card).with("add help","edit help")
-      Wagn::Renderer.new(@card).render_new.should be_html_with do
-        html { div(:class=>"unknown-class-name") {}}
-      end
+      assert_view_select Wagn::Renderer.new(@card).render_new, 'div[class="unknown-class-name"]'
     end
 
     it "are used in new card forms" do
@@ -451,10 +368,8 @@ describe Wagn::Renderer, "" do
       card.should_receive(:setting_card).with("autoname").and_return(nil)
       card.should_receive(:setting_card).with("content","default").and_return(content_card)
       card.should_receive(:setting_card).with("add help","edit help").and_return(help_card)
-      Wagn::Renderer::RichHtml.new(card).render_new.should be_html_with do
-        div(:class=>"field-in-multi") {
-          input :name=>"cards[~plus~Yoruba][content]", :type => 'hidden'
-        }
+      assert_view_select Wagn::Renderer::RichHtml.new(card).render_new, 'div[class="field-in-multi"]' do
+        assert select 'input[name="cards[~plus~Yoruba][content]"][type="hidden"]'
       end
     end
 
@@ -475,10 +390,8 @@ describe Wagn::Renderer, "" do
       @card = Card.fetch('templated')# :name=>"templated", :content => "Bar" )
       @card.content = 'Bar'
       result = Wagn::Renderer.new(@card).render(:edit)
-      result.should be_html_with do
-        div :class => "field-in-multi" do
-          input :name=>"cards[templated~plus~alpha][content]", :type => 'hidden'
-        end
+      assert_view_select result, 'div[class="field-in-multi"]' do
+        assert_select 'input[name="cards[templated~plus~alpha][content]"][type="hidden"]'
       end
     end
 
@@ -488,15 +401,11 @@ describe Wagn::Renderer, "" do
       end
       c = Card.new :name=>'Yo Buddddy', :type=>'Book'
       result = Wagn::Renderer::RichHtml.new(c).render( :multi_edit )
-      result.should be_html_with do
-        div :class => "field-in-multi" do
-          [ input( :name=>"cards[~plus~author][content]",  :type=>'text',   :value=>'Zamma Flamma' ),
-            input( :name=>"cards[~plus~author][typecode]", :type=>'hidden', :value=>'Phrase'       )  ]
-        end
+      assert_view_select result, 'div[class="field-in-multi"]' do
+        assert_select 'input[name="cards[~plus~author][content]"][type="text"][value="Zamma Flamma"]'
+        assert_select 'input[name="cards[~plus~author][typecode]"][type="hidden"][value="Phrase"]'
       end
-      result.should match('Zamma Flamma')
     end
-
   end
 
 #~~~~~~~~~~~~~~~ Cardtype Views ~~~~~~~~~~~~~~~~~#
@@ -505,7 +414,7 @@ describe Wagn::Renderer, "" do
   context "cards of type" do
     context "Date" do
       it "should have special editor" do
-        render_editor('Date').should be_html_with { a :class=>'date-editor-link'}
+        assert_view_select render_editor('Date'), 'a[class="date-editor-link"]'
       end
     end
 
@@ -513,12 +422,10 @@ describe Wagn::Renderer, "" do
       #image calls the file partial, so in a way this tests both
       it "should have special editor" do
       pending  #This test works fine alone but fails when run with others
-
-        render_editor('Image').should be_html_with do
-          body do  ## this is weird -- why does it have a body?
-            [div(:class=>'attachment-preview'),
-              div { iframe :class=>'upload-iframe'}
-            ]
+        assert_view_select render_editor('Image'), 'body' do
+          assert_select 'div[class="attachment-preview"]'
+          assert_select 'div' do
+            assert_select 'iframe[class="upload-iframe"]'
           end
         end
       end
@@ -538,7 +445,7 @@ describe Wagn::Renderer, "" do
       end
 
       it "should have special editor" do
-        render_editor('Html').should be_html_with { textarea :rows=>'30' }
+        assert_view_select render_editor('Html'), 'textarea[rows="30"]'
       end
 
       it "should not render any content in closed view" do
@@ -551,25 +458,25 @@ describe Wagn::Renderer, "" do
         pending
         #I can't get this working.  I keep getting this url_for error -- from a line that doesn't call url_for
         card = Card.create!(:name=>'Big Bad Wolf', :type=>'Account Request')
-        Wagn::Renderer.new(card).render(:naked).should be_html_with { div :class=>'invite-links' }
+        assert_view_select Wagn::Renderer.new(card).render(:naked), 'div[class="invite-links"]'
       end
     end
 
     context "Number" do
       it "should have special editor" do
-        render_editor('Number').should be_html_with { input :type=>'text' }
+        assert_view_select render_editor('Number'), 'input[type="text"]'
       end
     end
 
     context "Phrase" do
       it "should have special editor" do
-        render_editor('Phrase').should be_html_with { input :type=>'text', :class=>'phrasebox'}
+        assert_view_select render_editor('Phrase'), 'input[type="text"][class="phrasebox"]'
       end
     end
 
     context "Plain Text" do
       it "should have special editor" do
-        assert_select_view render_editor('Plain Text'), 'textarea'# :rows=>'3' }
+        assert_view_select render_editor('Plain Text'), 'textarea[rows="3"]'
       end
 
       it "should have special content that converts newlines to <br>'s" do
@@ -598,7 +505,7 @@ describe Wagn::Renderer, "" do
 
     context "Toggle" do
       it "should have special editor" do
-        render_editor('Toggle').should be_html_with { input :type=>'checkbox' }
+        assert_view_select render_editor('Toggle'), 'input[type="checkbox"]'
       end
 
       it "should have yes/no as processed content" do
@@ -628,20 +535,19 @@ describe Wagn::Renderer, "" do
 
     context "*head" do
       it "should have a javascript tag" do
-        assert_select_view render_card(:raw, :name=>'*head'), 'script'# :type=>'text/javascript' }
+        assert_view_select render_card(:raw, :name=>'*head'), 'script[type="text/javascript"]'
       end
     end
 
     context "*foot" do
       it "should have a javascript tag" do
-        render_card(:raw, :name=>'*foot').should be_html_with { script :type=>'text/javascript' }
+        assert_view_select render_card(:raw, :name=>'*foot'), 'script[type="text/javascript"]'
       end
     end
 
     context "*navbox" do
       it "should have a form" do
-        render_card(:raw, :name=>'*navbox').should be_html_with { form :id=>'navbox_form' }
-        #render_card(:raw, :name=>'*navbox').should == 'foobar'
+        assert_view_select render_card(:raw, :name=>'*navbox'), 'form[id="navbox_form"]'
       end
     end
 
@@ -649,10 +555,9 @@ describe Wagn::Renderer, "" do
       it "should have a 'my card' link" do
         pending
         User.as :joe_user do
-          render_card(:raw, :name=>'*account links').should be_html_with { span( :id=>'logging' ) {
-              a( :id=>'my-card-link') { 'My Card: Joe User' }
-            }
-          }
+          assert_view_select render_card(:raw, :name=>'*account links'), 'span[id="logging"]' do
+            assert_select 'a[id="my-card-link"]', 'My Card: Joe User'
+          end
         end
       end
     end

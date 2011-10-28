@@ -38,8 +38,8 @@ class Wagn::Renderer::RichHtml
     self.requested_view = 'titled'
     args[:action] = 'content'
     wrap(args) do
-      content_tag( :h1, fancy_title(card.name) ) + 
-      wrap_content(_render_naked(args))
+      content_tag( :h1, raw(fancy_title(card.name))) + 
+      raw( wrap_content(_render_naked(args)))
     end
   end
 

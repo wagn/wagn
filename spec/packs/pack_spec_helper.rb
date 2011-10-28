@@ -4,7 +4,7 @@ include ActionDispatch::Assertions::SelectorAssertions
 #~~~~~~~~~  HELPER METHODS ~~~~~~~~~~~~~~~#
 
   
-  def assert_select_view(view_html, *args)
+  def assert_view_select(view_html, *args, &block)
     node = HTML::Document.new(view_html).root
     if block_given?
       assert_select node, *args, &block

@@ -40,7 +40,7 @@ describe Wagn::Renderer, "" do
 
     it "css in inclusion syntax in wrapper" do
       c = Card.new :name => 'Afloatright', :content => "{{A|float:right}}"
-      assert_view_select Wagn::Renderer.new(c).render( :naked ), 'div[style="float:right"]'
+      assert_view_select Wagn::Renderer.new(c).render( :naked ), 'div[style="float:right;"]'
     end
 
     it "HTML in inclusion syntax as escaped" do
@@ -121,7 +121,7 @@ describe Wagn::Renderer, "" do
       it "multi edit" do
         c = Card.new :name => 'ABook', :type => 'Book'
         assert_view_select Wagn::Renderer.new(c).render( :multi_edit ), 'div[class="field-in-multi"]' do
-          assert_select 'input[name="cards[~plus~illustrator][content]"][type="hidden"]'
+          assert_select 'input[name=?][type="hidden"]', 'cards[~plus~illustrator][content]'
         end
       end
     end
@@ -147,7 +147,7 @@ describe Wagn::Renderer, "" do
 
       it "should have the appropriate attributes on open" do
         assert_view_select @ocslot.render(:open), 'div[position="1"][home_view="open"][class="card-slot paragraph ALL TYPE-basic SELF-a"]' do
-          assert select 'div[class="card-header"]' do
+          assert_select 'div[class="card-header"]' do
             assert_select 'div[class="title-menu"]'
           end
           assert_select 'span[class~="open-content content"]'
@@ -155,8 +155,9 @@ describe Wagn::Renderer, "" do
       end
 
       it "should have the appropriate attributes on closed" do
-        assert_view_select @ocslot.render(:closed), 'div[position="1"][home_view="closed"][class="card-slot line ALL TYPE-basic SELF-a"]' do
-          assert select 'div[class="card-header"]' do
+        v = @ocslot.render(:closed)
+        assert_view_select v, 'div[position="1"][home_view="closed"][class="card-slot line ALL TYPE-basic SELF-a"]' do
+          assert_select 'div[class="card-header"]' do
             assert_select 'div[class="title-menu"]'
           end
           assert_select 'span[class~="closed-content content"]'
@@ -391,7 +392,7 @@ describe Wagn::Renderer, "" do
       @card.content = 'Bar'
       result = Wagn::Renderer.new(@card).render(:edit)
       assert_view_select result, 'div[class="field-in-multi"]' do
-        assert_select 'input[name="cards[templated~plus~alpha][content]"][type="hidden"]'
+        assert_select 'input[type="hidden"][name=?]', 'cards[templated~plus~alpha][content]'
       end
     end
 
@@ -401,9 +402,10 @@ describe Wagn::Renderer, "" do
       end
       c = Card.new :name=>'Yo Buddddy', :type=>'Book'
       result = Wagn::Renderer::RichHtml.new(c).render( :multi_edit )
+      #warn "tpr result = #{result}"
       assert_view_select result, 'div[class="field-in-multi"]' do
-        assert_select 'input[name="cards[~plus~author][content]"][type="text"][value="Zamma Flamma"]'
-        assert_select 'input[name="cards[~plus~author][typecode]"][type="hidden"][value="Phrase"]'
+        assert_select 'input[name=?][type="text"][value="Zamma Flamma"]', 'cards[~plus~author][content]'
+        assert_select 'input[name=?][type="hidden"][value="Phrase"]',     'cards[~plus~author][typecode]'
       end
     end
   end

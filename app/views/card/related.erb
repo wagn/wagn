@@ -5,13 +5,8 @@
      @items.each do |item|
        key = item.to_cardname.to_key
        linktext = item.gsub('*','').gsub('subtab','').strip %>
-       <%= link_to( linktext,
-          { :url=>slot.url_for("card/related", nil, key), 
-            :update => slot.id 
-          },
-          { :class=>(key==@current ? 'on' : ''),
-            :remote=>true
-          }
+       <%= link_to( linktext, slot.url_for("card/related", nil, key), 
+          :class=>(key==@current ? 'on' : ''), :remote=>true
         ) %>
     <% end %>
   <% end %>

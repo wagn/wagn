@@ -1,15 +1,15 @@
 require 'diff'
 
 
+class StubCardController < CardController
+  def url_options
+    default_url_options
+  end
+end
 
 module Wagn
  class Renderer
     module NoControllerHelpers
-      def protect_against_forgery?
-        # FIXME
-        false
-      end
-  
       def logged_in?
         User.logged_in?
       end
@@ -74,12 +74,12 @@ module Wagn
           if view_key == view
             define_method( "_render_#{view}" ) do |*a| a = [{}] if a.empty?
               final_meth = view_method( view )
-              send(final_meth, *a) { yield }
+              send(final_meth, *a) { raw(yield) }
             end
   
             define_method( "render_#{view}" ) do |*a|
               denial=deny_render(view, *a) and return denial
-              send( "_render_#{view}", *a) { yield }
+              send( "_render_#{view}", *a) { raw(yield) }
             end
           end
         end
@@ -165,12 +165,21 @@ module Wagn
     end
   
     def template
+      
+      @controller ||= StubCardController.new
       @template ||= begin
         t = ActionView::Base.new( CardController.view_paths)
         t.extend CardController._helpers
         t.extend NoControllerHelpers
         t.controller = @controller
-        t._routes = @controller._routes if @controller
+#        if @controller
+        t._routes = @controller._routes 
+#        else
+        #if !@controller.request
+        #  warn "no request!"
+        #  t.default_url_options = {}
+        #end   
+#        end
         t
       end
     end
@@ -265,7 +274,7 @@ module Wagn
       result << javascript_tag("setupLinksAndDoubleClicks();") if args[:add_javascript]
       result.strip
     rescue Exception=>e
-      Rails.logger.debug "Error #{e.inspect} #{e.backtrace*"\n"}"
+      Rails.logger.debug "Error #{e.message} #{e.backtrace*"\n"}"
       raise e unless Card::PermissionDenied===e
       return "Permission error: #{e.message}"
     end
@@ -296,7 +305,7 @@ module Wagn
     end
   
     def render_partial( partial, locals={} )
-      template.render(:partial=>partial, :locals=>{ :card=>card, :slot=>self }.merge(locals))
+      raw template.render(:partial=>partial, :locals=>{ :card=>card, :slot=>self }.merge(locals))
     end
   
     def render_view_action(action, locals={})
@@ -411,9 +420,9 @@ module Wagn
       Renderer.current_slot = oldrenderer
       result
     rescue Exception=>e
-      Rails.logger.info "inclusion-error #{e.inspect}"
+      Rails.logger.info "inclusion-error #{e.message}"
       Rails.logger.debug "Trace:\n#{e.backtrace*"\n"}"
-      %{<span class="inclusion-error">error rendering #{link_to_page((tcard ? tcard.name : 'unknown card'), nil, :title=>CGI.escapeHTML(e.inspect))}</span>}
+      %{<span class="inclusion-error">error rendering #{link_to_page((tcard ? tcard.name : 'unknown card'), nil, :title=>CGI.escapeHTML(e.message))}</span>}
     end
   
     def get_inclusion_content(cardname)

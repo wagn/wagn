@@ -84,7 +84,7 @@ class Wagn::Renderer::RichHtml
     @state=:edit
     args[:add_javascript]=true #necessary?
     @form = form_for_multi
-    hidden_field_tag(:multi_edit, true) + _render_naked(args)
+    hidden_field_tag(:multi_edit, true) + raw(_render_naked(args))
   end
 
   define_view(:change) do |args|
@@ -99,7 +99,7 @@ class Wagn::Renderer::RichHtml
 <div class="edit-area in-multi RIGHT-#{ card.cardname.tag_name.to_cardname.css_name }">
   <div class="label-in-multi">
     <span class="title">
-      #{ link_to_page(fancy_title(self.showname || card), (card.new_card? ? card.cardname.tag_name : card.name)) }
+      #{ link_to_page raw(fancy_title(self.showname || card)), (card.new_card? ? card.cardname.tag_name : card.name) }
     </span>
   </div>     
   

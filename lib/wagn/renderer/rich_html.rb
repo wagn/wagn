@@ -230,8 +230,7 @@ module Wagn
        [ :inclusions, !(card.out_transclusions.empty? || card.template? || card.hard_template),         {:inclusions=>true} ]
        ].map do |key,ok,args|
 
-        link_to( key,
-          { :url=>url_for("card/edit", args, key), :update => ([:name,:type,:codename].member?(key) ? id('card-body') : id) },
+        link_to( key,"card/edit",# args, key), :update => ([:name,:type,:codename].member?(key) ? id('card-body') : id) },
           :class=>(key==on ? 'on' : ''), :remote=>true
         ) if ok
       end.compact.join
@@ -242,8 +241,7 @@ module Wagn
     return '' if card && card.extension_type != 'User'
     div(:class=>'submenu') do
       [:account, :settings].map do |key|
-        link_to( key,
-          { :url=>url_for("card/options", {}, key), :update => id },
+        link_to( key, "card/options",# {}, key), :update => id },
           :class=>(key==on ? 'on' : ''), :remote=>true
         )
       end.join
@@ -328,10 +326,8 @@ module Wagn
 
   def link_to_action( text, to_action, remote_opts={}, html_opts={})
     html_opts[:remote] = true
-    link_to text, {
-      :url=>url_for("card/#{to_action}", remote_opts),
-      :update => id
-    }.merge(remote_opts), html_opts
+    link_to text, "card/#{to_action}", #{ :update => id }.merge(remote_opts), 
+      html_opts
   end
 
   def button_to_action( text, to_action, remote_opts={}, html_opts={})

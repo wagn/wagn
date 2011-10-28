@@ -15,7 +15,7 @@ class Wagn::Renderer::RichHtml
     cells = [
 #      ["rule-setting", link_to_page(setting_name) ],
       ["rule-setting", link_to( setting_name, 
-        {:update=>id, :url=>"/card/view/#{card.cardname.to_url_key}?view=edit_rule" },
+        "/card/view/#{card.cardname.to_url_key}?view=edit_rule",
         :remote => true
       )],
       ["rule-content", begin

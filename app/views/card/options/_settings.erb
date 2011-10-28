@@ -21,7 +21,7 @@
   <% if !card.extension_type && System.toggle(card.setting('accountable')) && System.ok?(:create_accounts) && card.ok?(:update) %>
     <div class="new-account-link">
       <%= link_to %{Add a sign-in account for "#{card.name}"},
-          {:url=>"/options/new_account/#{card.id}", :update=>slot.id('options-body')},
+          "/options/new_account/#{card.id}", 
           :remote=>true
       %>
     </div>

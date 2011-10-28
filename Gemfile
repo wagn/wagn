@@ -7,19 +7,11 @@ source 'http://rubygems.org'
 
 # must have all of these
 
-gem 'rails', '>=3'
-gem 'rack', '1.3.3' #set back from 1.3.4 to get rid of annoying warning.  remove this line once 1.3.5 is out?
+gem 'rails', '~>3.1'
 gem 'htmlentities'#, '~>4.2.1'
-gem 'macaddr'#, '~>1.0.0'
-gem 'uuid'#, '~>2.2.0'
-gem 'json'#, '~>1.4.6'
-gem 'mail'
-#gem 'userstamp', '~>2.0.1'
-
+gem 'uuid'
 gem 'jquery-rails'
-
 gem 'therubyracer'
-
 gem 'ruby-openid'#, '~>2.1.8'
 
 
@@ -71,26 +63,27 @@ group :test, :development do
 end
 
 group :test do
-  gem 'win32console', '1.3.0', :platforms => ['mingw', 'mswin']
-  gem 'win32-process', '0.6.5', :platforms => ['mingw', 'mswin']
-  
+  gem 'cucumber-rails', '~>1.1.1'
   gem 'test-unit'#, '1.2.3'
-  gem 'term-ansicolor'#, '1.0.5'
-#  gem 'nokogiri'#, '1.4.1'
   gem 'timecop'#, '>=0.2.1'
   gem 'spork'#, '>=0.5.7'
-#  gem 'assert2'#, '0.5.5'
   gem 'webrat'#, '>=0.7.0'
   gem 'email_spec'#, '~>0.6.2'
-#  gem 'gherkin'#, '>=2.2.8'
-#  gem 'cucumber'#, '>=0.9.2'
-  gem 'cucumber-rails'
   gem 'database_cleaner'#, '0.5.0'
-#  gem 'capybara'
 
   # Pretty printed test output
   gem 'turn', :require => false
 
+  gem 'win32console', '1.3.0', :platforms => ['mingw', 'mswin']
+  gem 'win32-process', '0.6.5', :platforms => ['mingw', 'mswin']
+
+  #  gem 'assert2'#, '0.5.5'
+  #  gem 'term-ansicolor'#, '1.0.5'
+
+  #  gem 'capybara'
+  #  gem 'gherkin'#, '>=2.2.8'
+  #  gem 'cucumber'#, '>=0.9.2'
+  #  gem 'nokogiri'#, '1.4.1'
   
 #  gem 'ZenTest', '4.4.0'
 #  gem 'autotest-rails', '<= 4.1.0'

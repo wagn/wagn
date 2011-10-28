@@ -7,18 +7,23 @@ module CardHelper
   # navigation for revisions -
   # --------------------------------------------------
   def revision_link( text, revision, name, accesskey='', mode=nil )
-    post = { 
-      :update=>'javascript:getSlotSpan(this)',
-      :url=>{ :action=>'changes', :id=>@card.id, :rev=>revision, :context=>@context, :mode=>(mode || params[:mode] || true) }
-    }
-    link_to text, post, :remote=>true 
+   link_to text, {
+      :action=>'changes', 
+      :id=>@card.id, 
+      :rev=>revision,
+      :context=>@context,
+      :mode=>(mode || params[:mode] || true)
+    }, :remote=>true 
   end
 
   def rollback
     if @card.ok?(:update) && !(@card.current_revision==@revision)
-      link_to 'Save as current',
-        { :url => { :action=>'rollback', :id=>@card.id, :rev=>@revision_number, :context=>@context } },
-        :remote=>true
+      link_to 'Save as current', { 
+        :action=>'rollback',
+        :id=>@card.id,
+        :rev=>@revision_number,
+        :context=>@context
+      }, :remote=>true
     end
   end
 

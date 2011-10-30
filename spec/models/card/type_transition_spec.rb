@@ -10,9 +10,6 @@ module Wagn::Set::Type::CardtypeA
   end
 end
 
-#  class CardtypeB < Basic                              
-    # create restricted in test_data
-#  end
   
 module Wagn::Set::Type::CardtypeC
   def validate_type_change
@@ -28,24 +25,15 @@ module Wagn::Set::Type::CardtypeD
 end
 
 module Wagn::Set::Type::CardtypeE
-  def self.included(base)
-    Card.count = 2
-  end
-
-  def on_type_change
-    decrement_count
-  end
-  def decrement_count() Card.count -= 1; end
+  def self.included(base) Card.count = 2   end
+  def on_type_change()    decrement_count  end
+  def decrement_count()   Card.count -= 1  end
 end
 
 module Wagn::Set::Type::CardtypeF
-  def self.included(base)
-    Card.count = 2
-  end
-  def create_extension
-    increment_count
-  end
-  def increment_count() Card.count += 1; end
+  def self.included(base) Card.count = 2   end
+  def create_extension()  increment_count  end
+  def increment_count()   Card.count += 1  end
 end
 
 

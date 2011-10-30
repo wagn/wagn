@@ -16,8 +16,7 @@ class Mailer < ActionMailer::Base
     mail( {
       :recipients => "#{user.email}",
       :from       => (System.setting('*invite+*from') || "#{from_name} <#{from_user.email}>"), #FIXME - might want different from settings for different emails?
-      :subject      => subject,
-      :sent_on      => Time.now,
+      :subject      => subject
     } )
   end                 
   

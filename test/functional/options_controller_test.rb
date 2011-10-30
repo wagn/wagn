@@ -24,7 +24,7 @@ class OptionsControllerTest < ActionController::TestCase
       post :create_account, :user=>{:email=>'foo@bar.com'}, :id=>'a'
       assert_response 200
     end
-    email = ActionMailer::Base.deliveries[-1]      
+    email = ActionMailer::Base.deliveries[-1]
     # emails should be 'from' inviting user
     #assert_equal User.current_user.email, email.from[0]  
     #assert_equal 'active', User.find_by_email('new@user.com').status

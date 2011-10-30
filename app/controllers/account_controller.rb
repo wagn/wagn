@@ -33,7 +33,7 @@ class AccountController < ApplicationController
       redirect_to (System.setting('*signup+*thanks') || '/')
     else
       User.as :wagbot do
-        Mailer.signup_alert(@card) if System.setting('*request+*to').deliver
+        Mailer.signup_alert(@card).deliver if System.setting('*request+*to')
       end
       redirect_to (System.setting('*request+*thanks') || '/')
     end

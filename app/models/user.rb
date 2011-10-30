@@ -172,7 +172,8 @@ class User < ActiveRecord::Base
     raise(Wagn::Oops, "message is required") unless (args[:message])
     begin
       Mailer.account_info(self, args[:subject], args[:message]).deliver
-    rescue; warn("ACCOUNT INFO DELIVERY FAILED: \n #{args.inspect}")
+    rescue Exception=>e
+      warn "ACCOUNT INFO DELIVERY FAILED: \n #{args.inspect}\n   #{e.message}, #{e.backtrace*"\n"}"
     end
   end  
 

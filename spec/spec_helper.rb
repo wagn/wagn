@@ -32,6 +32,9 @@ Spork.prefork do
     config.before(:each) do
       Wagn::Cache.reset_for_tests
     end
+    config.after(:each) do
+      Timecop.return
+    end
   end
 end
 

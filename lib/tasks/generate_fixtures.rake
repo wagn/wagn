@@ -25,7 +25,7 @@ namespace :db do
       require 'active_record/fixtures'
       ActiveRecord::Base.establish_connection(::Rails.env.to_sym)
       (ENV['FIXTURES'] ? ENV['FIXTURES'].split(/,/) : Dir.glob(File.join(Rails.root.to_s, 'test', 'fixtures', '*.{yml,csv}'))).each do |fixture_file|
-        Fixtures.create_fixtures('test/fixtures', File.basename(fixture_file, '.*'))
+        ActiveRecord::Fixtures.create_fixtures('test/fixtures', File.basename(fixture_file, '.*'))
       end  
       Rake::Task['fulltext:prepare'].invoke
     end
@@ -90,7 +90,7 @@ namespace :test do
     puts ">> preparing test database"
     puts `rake db:test:load`
     puts ">> loading test fixtures"
-    puts `rake db:fixtures:load Rails.env=test`
+    puts `rake db:fixtures:load RAILS_ENV=test`
     
     #Rake::Task['db:test:prepare'].invoke
   #=end

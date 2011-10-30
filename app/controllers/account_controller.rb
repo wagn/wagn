@@ -167,14 +167,12 @@ class AccountController < ApplicationController
 
 =begin
   def open_id_authentication
-    warn "FAILED TPO FIND USER W/ IDENTITY #{params[:openid_url]}"
     unless params[:openid_url] &&   user = User.find_by_identity_url(params[:openid_url])
       failed_login("Sorry, no user by that identity URL exists (#{params[:openid_url] })" +
         "You need to have an account on Wagn already and set the OpenId in your options")
       return
     end
 
-    warn "GOING TO SERVER"
     authenticate_with_open_id do |result, identity_url|
       if result.successful?
         self.current_user = user

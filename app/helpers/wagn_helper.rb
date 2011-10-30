@@ -255,12 +255,12 @@ module WagnHelper
   end
 
   def form_for_card(options={}, &proc)    
-    concat( form_tag(options, :remote => true) )
-    fields_for(:card, nil, options, &proc)
-    if options[:update]
-      concat hidden_field_tag('_update','true')
+    form_for(:card, options) do |form|
+      yield(form)
+      if options[:update]
+        out << hidden_field_tag('_update','true').html_safe
+      end
     end
-    concat('</form>')
   end
 
   def wrap_slot(renderer=nil, args={}, &block)

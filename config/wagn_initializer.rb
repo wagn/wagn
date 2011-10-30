@@ -15,7 +15,7 @@ module Wagn::Configuration
     #database_configuration_file = "#{Rails.root}/config/database.yml"
     #db = YAML::load(ERB.new(IO.read(database_configuration_file)).result)
     
-    
+#DISABLED    
 #    self.action_controller.session = {
 #      :key    => db[Rails.env]['session_key'],
 #      :secret => db[Rails.env]['secret']
@@ -35,7 +35,6 @@ module Wagn::Configuration
     end
 
     def wagn_run
-#      wagn_load_config
       wagn_setup_multihost
       return unless wagn_database_ready?
       wagn_load_modules

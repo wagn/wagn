@@ -49,7 +49,7 @@ class ApplicationController < ActionController::Base
 
     Wagn::Renderer.current_slot = nil
     System.request = request
-    ActiveRecord::Base.logger.debug("WAGN: per request setup")
+    #ActiveRecord::Base.logger.debug("WAGN: per request setup")
     load_location
   end
   

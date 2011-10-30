@@ -12,11 +12,11 @@
     <%= error_messages_for @card %>
     <div class=cardnotice></div>
 
-    <% form_for_card(:url=>"card/create",
+    <%#= form_for_card(:url="card/create",
           :slot => s,
           :update => {:success => s.id, :failure => s.id(:cardnotice)},
           :html=>{:class=>'form', :onsubmit=>s.save_function}) do |form| %>
-
+    <%= form_for :card, :remote=>true do |form| %>
       <div class="card-header">
         <% if (request and !request.xhr?) && @args[:type] #&& !card.broken_type %>
           <%= hidden_field_tag 'card[type]', @args[:type] %>
@@ -35,19 +35,19 @@
           <% if card.cardname.blank? || Card.fetch(card.cardname) %>
             <% unless card.setting_card('autoname') %>
               <span class="name-area">
-                <%= s.name_field(form) %>
+                <%= raw s.name_field(form) %>
               </span>
             <% end %>
           <% else %>
             <%= form.hidden_field :name %>
             <span class="title">
-              <%= fancy_title(card.name) %>
+              <%= raw fancy_title(card.name) %>
             </span>
           <% end %>
         </span>
       </div>
       <% if inst=card.setting_card('add help', 'edit help') and params[:view]!='setting' %>
-        <div class="instruction"><%= s.subrenderer(inst).render_naked %></div>
+        <div class="instruction"><%= raw s.subrenderer(inst).render_naked %></div>
       <% end %>
 
 
@@ -55,9 +55,9 @@
         <div class="editor">
           <% #FIXME CONTENT: the hard template test can go away when we phase out the old sytem %>
           <% if card.content_template %>
-            <%= s.render(:multi_edit) %>
+            <%= raw s.render(:multi_edit) %>
           <% else %>
-            <%= s.content_field(form) %>
+            <%= raw s.content_field(form) %>
           <% end %>
         </div>
 
@@ -76,6 +76,6 @@
       </div>
     <% end %>
 
-  <%= s.notice %>
+  <%= raw s.notice %>
 <% end %>
 

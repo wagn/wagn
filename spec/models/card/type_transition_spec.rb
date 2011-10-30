@@ -42,7 +42,7 @@ module Wagn::Set::Type::CardtypeF
   def self.included(base)
     Card.count = 2
   end
-  def before_validation_on_create
+  def create_extension
     increment_count
   end
   def increment_count() Card.count += 1; end
@@ -115,7 +115,7 @@ describe Card, "type transition validate_destroy" do
   before do @c = change_card_to_type("type-c-card", 'Basic') end
   
   it "should have errors" do
-    @c.errors[:destroy_error].should == "card c is indestructible"
+    @c.errors[:destroy_error].first.should == "card c is indestructible"
   end
   
   it "should retain original type" do
@@ -127,7 +127,7 @@ describe Card, "type transition validate_create" do
   before do @c = change_card_to_type("basicname", "CardtypeD") end
   
   it "should have errors" do
-    @c.errors[:type].match(/card d always has errors/).should be_true
+    @c.errors[:type].first.match(/card d always has errors/).should be_true
   end
   
   it "should retain original type" do

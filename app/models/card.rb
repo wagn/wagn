@@ -20,7 +20,7 @@ class Card < ActiveRecord::Base
     :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual,
     :attachment_id #should build flexible handling for this kind of set-specific attr
 
-  before_save  :set_read_rule, :set_tracked_attributes, :set_extensions
+  before_save :base_before_save, :set_read_rule, :set_tracked_attributes, :set_extensions
   after_save :base_after_save, :update_ruled_cards
   cache_attributes('name', 'typecode')    
 
@@ -125,6 +125,12 @@ class Card < ActiveRecord::Base
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # SAVING
 
+  def base_before_save
+    if self.respond_to?(:before_save) and self.before_save == false
+      errors.add(:save, "could not prepare card for destruction")
+      return false
+    end
+  end
 
   def base_after_save
     save_subcards
@@ -224,10 +230,10 @@ class Card < ActiveRecord::Base
  
   def destroy_with_trash(caller="")
     run_callbacks :destroy do
-#    if self.respond_to? :before_destroy && self.before_destroy == false
-#      errors.add(:destroy, "could not prepare card for destruction")
-#      return false
-#    end
+      if self.respond_to?(:before_destroy) and self.before_destroy == false
+        errors.add(:destroy, "could not prepare card for destruction")
+        return false
+      end
       deps = self.dependents
       @trash_changed = true
       self.update_attribute(:trash, true) 

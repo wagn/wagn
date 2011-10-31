@@ -64,6 +64,8 @@ end
 
 group :test do
   gem 'cucumber-rails', '~>1.1.1'
+  gem 'minitest'
+  gem 'launchy'
   gem 'test-unit'#, '1.2.3'
   gem 'timecop'#, '>=0.2.1'
   gem 'spork'#, '>=0.5.7'

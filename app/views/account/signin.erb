@@ -1,6 +1,6 @@
 <div id="sign-in" class="content">
   <h1 class="page-header">Sign In</h1><%#ENGLISH%>
-  
+    
   <%= form_tag :action=>'signin' do %>
     <p><label for="login">Email</label></p>
     <p><%= text_field_tag 'login', params[:login], :id=>'login_field' %></p>
@@ -26,6 +26,4 @@
   <% end %>
   
   <%= javascript_tag( "$('login_field').focus()" ) %>
-
-
 </div>

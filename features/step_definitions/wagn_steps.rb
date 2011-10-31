@@ -6,33 +6,33 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "pat
 Given /^I log in as (.+)$/ do |user_card_name|
   # FIXME: define a faster simulate method?
   @current_user = Card[user_card_name].extension
-  get "/account/signin"
+  visit "/account/signin"
   fill_in("login", :with=> @current_user.email )
   fill_in("password", :with=> @current_user.login.split("_")[0]+"_pass")
-  click_button("Sign me in")     
-  response.should contain("My Card: #{user_card_name}")
-end                                     
+  click_button("Sign me in")
+  page.should have_content("My Card: #{user_card_name}")
+end
 
 Given /^I log out/ do
-  get "/"
+  visit "/"
   click_link("Sign out")
-  response.should_not contain("My Card")
+  page.should_not have_content("My Card")
 end
 
 Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
-  webrat.simulate do
+  #webrat.simulate do
     User.as(:wagbot) do
       card = Card.fetch_or_create cardname
       card.content = content
       card.save!
     end
-  end
+  #end
 end
 
 Given /^the pointer (.*) contains "([^\"]*)"$/ do |cardname, content|
-  webrat.simulate do
+#  webrat.simulate do
     Given "the card #{cardname} contains \"#{content}\"" 
-  end
+#  end
 end
 
 Given /I harden "([^\"]*)"/ do |cardname|
@@ -41,23 +41,23 @@ end
 
 When /^(.*) edits? "([^\"]*)"$/ do |username, cardname|
   logged_in_as(username) do
-    get "/card/edit/#{cardname.to_cardname.to_url_key}"
+    visit "/card/edit/#{cardname.to_cardname.to_url_key}"
   end
 end
   
 When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
   logged_in_as(username) do
-    get "/card/edit/#{cardname.to_cardname.to_url_key}"
+    visit "/card/edit/#{cardname.to_cardname.to_url_key}"
     fill_in_hidden_or_not 'card[content]', :with=>content 
    click_button("Save")
     match_content = content.gsub(/\[\[|\]\]/,'')  #link markup won't show up in view.
-    response.should contain(match_content)
+    response.should have_content(match_content)
   end
 end    
                    
 When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
   logged_in_as(username) do  
-    get "/card/edit/#{cardname.to_cardname.to_url_key}"       
+    visit "/card/edit/#{cardname.to_cardname.to_url_key}"       
     plusses.hashes.first.each do |name, content|
       fill_in_hidden_or_not "cards[#{(cardname+'+'+name).to_cardname.pre_cgi}][content]", :with=>content
     end
@@ -92,7 +92,7 @@ end
    
 When /^(.*) deletes? "([^\"]*)"$/ do |username, cardname|
   logged_in_as(username) do
-    get "/card/remove/#{cardname.to_cardname.to_url_key}?card[confirm_destroy]=true"
+    visit "/card/remove/#{cardname.to_cardname.to_url_key}?card[confirm_destroy]=true"
   end
 end
 
@@ -116,7 +116,7 @@ end
 
 def create_card(username,cardtype,cardname,content="")
   logged_in_as(username) do
-    get "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"   
+    visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"   
     yield if block_given?
     click_button("Submit") 
     # Fixme - need better error handling here-- the following raise
@@ -141,15 +141,6 @@ def logged_in_as(username)
     end
   end
 end
-
-
-When /^the page updates$/ do
-  webrat.simulate do           
-    # FIXME: this should find the current page we're on
-    #  (which is likely *not* current_url if we just did an ajax call, but the previous url )
-    get '/wagn/Home'
-  end
-end
                    
 
 When /^In (.*) I follow "([^\"]*)"$/ do |section, link|
@@ -165,36 +156,36 @@ When /^In (.*) I click (.*)$/ do |section, control|
   #   end
   # end
   
-  webrat.simulate do                      
-    get *params_for(control,section)
-  end                                             
+#  webrat.simulate do                      
+    visit *params_for(control,section)
+#  end                                             
 end   
      
 Then /the card (.*) should contain "([^\"]*)"$/ do |cardname, content|
-  get path_to("card #{cardname}")
+  visit path_to("card #{cardname}")
   within scope_of("the main card content") do |scope|
-    scope.should contain(content)
+    scope.should have_content(content)
   end
 end
 
 Then /the card (.*) should not contain "([^\"]*)"$/ do |cardname, content|
-  get path_to("card #{cardname}")
+  visit path_to("card #{cardname}")
   within scope_of("the main card content") do |scope|
-    scope.should_not contain(content)
+    scope.should_not have_content(content)
   end
 end
 
 
 Then /^In (.*) I should see "([^\"]*)"$/ do |section, text|
   within scope_of(section) do |scope|
-    scope.should contain(text)
+    scope.should have_content(text)
   end
 end
 
 
 Then /^In (.*) I should not see "([^\"]*)"$/ do |section, text|
   within scope_of(section) do |scope|
-    scope.should_not contain(text)
+    scope.should_not have_content(text)
   end
 end
 
@@ -209,7 +200,7 @@ end
 
 ## variants of standard steps to handle """ style quoted args
 Then /^I should see$/ do |text|
-  response.should contain(text)
+  page.should have_content(text)
 end
 
 When /^I fill in "([^\"]*)" with$/ do |field, value|

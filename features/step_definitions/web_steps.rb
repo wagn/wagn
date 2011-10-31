@@ -13,11 +13,11 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "pat
 # http://github.com/brynary/webrat
 
 Given /^(?:|I )am on (.+)$/ do |page_name|
-  get path_to(page_name)
+  visit path_to(page_name)
 end
 
 When /^(?:|I )go to (.+)$/ do |page_name|
-  get path_to(page_name)
+  visit path_to(page_name)
 end
 
 When /^(?:|I )press "([^"]*)"$/ do |button|
@@ -141,8 +141,8 @@ When /^(?:|I )attach the file "([^"]*)" to "([^"]*)"$/ do |path, field|
 end
 
 Then /^(?:|I )should see "([^"]*)"$/ do |text|
-  if response.respond_to? :should
-    response.should has_content?(text)
+  if page.respond_to? :should
+    page.should have_content(text)
   else
     assert_contain text
   end
@@ -180,17 +180,17 @@ Then /^(?:|I )should see \/([^\/]*)\/ within "([^"]*)"$/ do |regexp, selector|
 end
 
 Then /^(?:|I )should not see "([^"]*)"$/ do |text|
-  if response.respond_to? :should_not
-    response.should_not !has_content?(text)
-  else
-    assert_not_contain(text)
-  end
+#  if page.respond_to? :should_not
+    page.should_not have_content(text)
+#  else
+#    assert_not_contain(text)
+#  end
 end
 
 Then /^(?:|I )should not see "([^"]*)" within "([^"]*)"$/ do |text, selector|
   within(selector) do |content|
     if content.respond_to? :should_not
-      content.should_not !has_content?(text)
+      content.should_not have_content(text)
     else
       hc = Webrat::Matchers::HasContent.new(text)
       assert !hc.matches?(content), hc.negative_failure_message

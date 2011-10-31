@@ -369,7 +369,7 @@ describe Wagn::Renderer, "" do
       card.should_receive(:setting_card).with("content","default").and_return(content_card)
       card.should_receive(:setting_card).with("add help","edit help").and_return(help_card)
       assert_view_select Wagn::Renderer::RichHtml.new(card).render_new, 'div[class="field-in-multi"]' do
-        assert select 'input[name="cards[~plus~Yoruba][content]"][type="hidden"]'
+        assert_select 'input[name=?][type="hidden"]', "cards[~plus~Yoruba][content]"
       end
     end
 

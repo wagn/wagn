@@ -18,7 +18,7 @@ module WagnHelper
   def slot() Wagn::Renderer.current_slot end
   def card() @card ||= slot.card end
   def params()
-    if controller 
+    if controller
       controller.params 
     else
       slot and slot.params

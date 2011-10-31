@@ -5,7 +5,11 @@ class StubCardController < CardController
   def url_options
     default_url_options
   end
+  
+  def params()  {} end
+  def session() {} end
 end
+
 
 module Wagn
  class Renderer
@@ -167,19 +171,14 @@ module Wagn
     def template
       
       @controller ||= StubCardController.new
+#      @controller ||=ActionView::TestCase::TestController.new
+      
       @template ||= begin
         t = ActionView::Base.new( CardController.view_paths)
         t.extend CardController._helpers
         t.extend NoControllerHelpers
         t.controller = @controller
-#        if @controller
         t._routes = @controller._routes 
-#        else
-        #if !@controller.request
-        #  warn "no request!"
-        #  t.default_url_options = {}
-        #end   
-#        end
         t
       end
     end
@@ -274,7 +273,7 @@ module Wagn
       result << javascript_tag("setupLinksAndDoubleClicks();") if args[:add_javascript]
       result.strip
     rescue Exception=>e
-      Rails.logger.debug "Error #{e.message} #{e.backtrace*"\n"}"
+      warn "Error #{e.message} #{e.backtrace*"\n"}"
       raise e unless Card::PermissionDenied===e
       return "Permission error: #{e.message}"
     end

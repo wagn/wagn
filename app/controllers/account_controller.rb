@@ -69,15 +69,11 @@ class AccountController < ApplicationController
     if request.post? and @user.errors.empty?
       @user.send_account_info(params[:email])
       redirect_to (System.setting('*invite+*thanks') || '/')
-      #p @user.errors.full_messages.join('. ')
     end
   end
 
 
   def signin
-    #if false and using_open_id?
-    #  open_id_authentication
-    #els
     if params[:login]
       password_authentication(params[:login], params[:password])
     end

@@ -351,8 +351,6 @@ module Wagn
         options[:view] ||= :open
       end
   
-      #Rails.logger.info " expanding.  view is currently: #{options[:view]}"
-  
       options[:home_view] = options[:view] ||= context == 'layout_0' ? :naked : :content
       tcardname = tname.to_cardname
       options[:fullname] = fullname = tcardname.fullname(card.cardname, base, options, params)
@@ -365,8 +363,6 @@ module Wagn
         else                 ;  Card.fetch_or_new(fullname)
         end
       end
-  
-      #Rails.logger.info " expanding card #{tcard.name}.  view is currently: #{options[:view]}"
   
       result = process_inclusion(tcard, options)
       result = resize_image_content(result, options[:size]) if options[:size]
@@ -442,7 +438,6 @@ module Wagn
       if content=get_inclusion_content(options[:tname])
         args[:content]=content
       end
-      #Rails.logger.debug "new_inclusion_card_args #{tname.inspect}, #{options.inspect}, #{args.inspect}"
       args
     end
   

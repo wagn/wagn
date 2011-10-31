@@ -401,7 +401,6 @@ describe Wagn::Renderer, "" do
       end
       c = Card.new :name=>'Yo Buddddy', :type=>'Book'
       result = Wagn::Renderer::RichHtml.new(c).render( :multi_edit )
-      #warn "tpr result = #{result}"
       assert_view_select result, 'div[class="field-in-multi"]' do
         assert_select 'input[name=?][type="text"][value="Zamma Flamma"]', 'cards[~plus~author][content]'
         assert_select 'input[name=?][type="hidden"][value="Phrase"]',     'cards[~plus~author][typecode]'

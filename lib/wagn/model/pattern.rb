@@ -176,7 +176,7 @@ module Wagn::Model
     def css_name() "TYPE_PLUS_RIGHT-#{set_name.to_cardname.trunk_name.css_name}" end
     def left_name()        card.left.cardname or card.cardname.left_name end
     def left_type()
-#      warn "looking up left_type for #{card.name}.  left = #{left.inspect} left.type = #{left.typecode}" if left
+      #warn "looking up left_type for #{card.name}.  left = #{left.inspect} left.type = #{left.typecode}" if left
       (lft=self.left) ? lft.typename : 'Basic'     
     end
     def left()             card.loaded_trunk or card.left                end

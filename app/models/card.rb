@@ -43,12 +43,9 @@ class Card < ActiveRecord::Base
   def initialize(args={})
     typename, skip_type_lookup, missing =
       %w{type skip_type_lookup missing skip_virtual skip_module_loading id}.map { |a| args.delete(a) }
-#    @explicit_content = args['content']
+    reset_patterns if @loaded_trunk = args['loaded_trunk']
     args['name'] = args['name'].to_s
     super args
-
-    #assign_attributes args  #may need to optimize this, but old way was giving tons of deprecation warnings
-#    self.send :attributes=, args, false
 
     self.typecode_without_tracking = get_typecode(args['name'], typename, skip_type_lookup) unless args['typecode']
 

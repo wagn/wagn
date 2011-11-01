@@ -363,7 +363,7 @@ module Wagn
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
     User.as :wagbot do
-      pre_content + clear_queues + self.render_editor + setup_autosave
+      pre_content + clear_queues + self.render_editor #+ setup_autosave
     end
   end
 

@@ -11,8 +11,7 @@ gem 'rails', '~>3.1'
 gem 'htmlentities'#, '~>4.2.1'
 gem 'uuid'
 gem 'jquery-rails'
-gem 'therubyracer'
-gem 'ruby-openid'#, '~>2.1.8'
+#gem 'ruby-openid'#, '~>2.1.8'
 
 
 # ~~~~~~~~~ #

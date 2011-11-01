@@ -8,9 +8,8 @@
 // #= require jquery_ujs
 // #= require_tree .
 
+//= require wagn
 //= require prototype
 //= require jquery-1.3.2.min
-//= require effects
-//= require controls
 //= require application
 //= require calendar

@@ -30,9 +30,7 @@ Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
 end
 
 Given /^the pointer (.*) contains "([^\"]*)"$/ do |cardname, content|
-#  webrat.simulate do
-    Given "the card #{cardname} contains \"#{content}\"" 
-#  end
+  step "the card #{cardname} contains \"#{content}\"" 
 end
 
 Given /I harden "([^\"]*)"/ do |cardname|
@@ -49,7 +47,7 @@ When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardnam
   logged_in_as(username) do
     visit "/card/edit/#{cardname.to_cardname.to_url_key}"
     fill_in_hidden_or_not 'card[content]', :with=>content 
-   click_button("Save")
+    click_button("Save")
     match_content = content.gsub(/\[\[|\]\]/,'')  #link markup won't show up in view.
     response.should have_content(match_content)
   end
@@ -116,40 +114,50 @@ end
 
 def create_card(username,cardtype,cardname,content="")
   logged_in_as(username) do
-    visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"   
+    visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"
+    #save_and_open_page
     yield if block_given?
-    click_button("Submit") 
+    click_button("Submit")
+    #save_and_open_page
     # Fixme - need better error handling here-- the following raise
     # at least keeps us from going on to the next step if the create bombs
     # but it doesn't report the reason for the failure.
-    raise "Creating #{cardname} failed (u=#{username}, t=#{cardtype}  )" unless Card[cardname]
+#    raise "Creating #{cardname} failed (u=#{username}, t=#{cardtype}  )" unless Card[cardname]
+    
   end
+  #    rescue Exception => e
+  #      raise %{ #{e.message}\n #{e.backtrace*"\n"} }
 end
 
 def logged_in_as(username)
   sameuser = (username == "I" or @current_user && @current_user.card.name == username)
   unless sameuser
     @saved_user = @current_user
-    Given "I log in as #{username}" 
+    step "I log in as #{username}"
   end
   yield
   unless sameuser
     if @saved_user
-      Given "I log in as #{@saved_user.card.name}"
+      step "I log in as #{@saved_user.card.name}"
     else
-      Given "I log out"
+      step "I log out"
     end
   end
 end
                    
 
 When /^In (.*) I follow "([^\"]*)"$/ do |section, link|
-  within scope_of(section) do |scope|
-    scope.click_link link
+  within scope_of(section) do
+    click_link link
   end
 end
 
-When /^In (.*) I click (.*)$/ do |section, control|
+When /^In (.*) I click (.*)$/ do |section, link|
+  within scope_of(section) do
+    click_link link
+  end
+  
+  
   # webrat.automate do
   #   within scope_of(section) do |scope|
   #     scope.click_link link
@@ -157,7 +165,7 @@ When /^In (.*) I click (.*)$/ do |section, control|
   # end
   
 #  webrat.simulate do                      
-    visit *params_for(control,section)
+#    visit *params_for(control,section)
 #  end                                             
 end   
      

@@ -9,8 +9,9 @@ Feature: Seeing a card
   Scenario: Logged in home page visit
     Given I log in as Joe User
     When I go to the homepage
-    Then I should see "My Card: Joe User" 
+    Then I should see "My Card: Joe User"
     
+  @javascript
   Scenario: Create a Card
     Given I log in as Joe User
     When I create Phrase card "Buffalo" with content "Me and Me"

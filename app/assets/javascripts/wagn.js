@@ -366,6 +366,8 @@ navboxAfterUpdate=function(text,li){
 
 Event.KEY_SHIFT = 16;
                                             
+
+
 // fixme better name?
 Ajax.Autocompleter.prototype.updateSelection = function() {
   this.element.value = '';
@@ -442,6 +444,7 @@ Ajax.Autocompleter.prototype.markPrevious = function() {
     else this.index = this.entryCount-1;
   this.getEntry(this.index).scrollIntoView(false);
 }
+
 
 
 var loadScript = function(name) {

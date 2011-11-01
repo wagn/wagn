@@ -74,9 +74,11 @@ class AccountController < ApplicationController
 
 
   def signin
+    Rails.logger.info "~~~~~~~~~~~~~signing in"
     if params[:login]
       password_authentication(params[:login], params[:password])
     end
+    Rails.logger.info  "signed in? #{session.inspect}"
   end
 
   def signout
@@ -149,6 +151,7 @@ class AccountController < ApplicationController
   protected
   def password_authentication(login, password)
     if self.current_user = User.authenticate(params[:login], params[:password])
+      Rails.logger.info "successful_login!!!"
       successful_login
     elsif u = User.find_by_email(params[:login].strip.downcase)
       if u.blocked?
@@ -159,6 +162,7 @@ class AccountController < ApplicationController
     else
       failed_login("We don't recognize that email")  #ENGLISH
     end
+    Rails.logger.info "finished pw auth"
   end
 
 =begin
@@ -196,6 +200,7 @@ class AccountController < ApplicationController
     end
 
     def failed_login(message)
+      raise message
       flash[:warning] = message
       render :action=>'signin', :status=>403
     end

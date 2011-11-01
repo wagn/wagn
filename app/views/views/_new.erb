@@ -16,7 +16,7 @@
           :slot => s,
           :update => {:success => s.id, :failure => s.id(:cardnotice)},
           :html=>{:class=>'form', :onsubmit=>s.save_function}) do |form| %>
-    <%= form_for :card, :url=>"card/create", :remote=>true do |form| %>
+    <%= form_for card, :url=>"/card/create", :html=>{ :class=>'form', :onsubmit=>'this.submit();' } do |form| %>
       <div class="card-header">
         <% if (request and !request.xhr?) && @args[:type] #&& !card.broken_type %>
           <%= hidden_field_tag 'card[type]', @args[:type] %>
@@ -29,7 +29,7 @@
             ) %>
           </span>
         <% end %>
-
+        
         <span class="new-name">
           <span class="label">name:</span>
           <% if card.cardname.blank? || Card.fetch(card.cardname) %>
@@ -39,7 +39,7 @@
               </span>
             <% end %>
           <% else %>
-            <%= form.hidden_field :name %>
+            <%= hidden_field_tag 'card[name]', card.name %>
             <span class="title">
               <%= raw fancy_title(card.name) %>
             </span>

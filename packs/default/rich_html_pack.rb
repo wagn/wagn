@@ -69,21 +69,19 @@ class Wagn::Renderer::RichHtml
 
 
   define_view(:editor) do |args|
-    eid, raw_id = context, context+'-raw-content'
-    form.hidden_field( :content, :id=>"#{eid}-hidden-content" ) +
-    text_area_tag( :content_to_replace, card.content, :rows=>3, :id=>"#{eid}-tinymce" ) +
+    eid = context
+    form.hidden_field( :content ) +
+    text_area_tag( :content_to_replace, card.content, :rows=>3, :id=>"#{eid}-tinymce", :class=>'tinymce-textarea' ) +
     editor_hooks( :setup=> %{setTimeout((function(){
   tinyMCE.init({mode: "exact",elements: "#{eid}-tinymce",#{System.setting('*tiny mce') || ''}})
   tinyMCE.execInstanceCommand( '#{eid}-tinymce', 'mceFocus' );
 }),50); 
-  }, 
-      :save=> %{t = tinyMCE.getInstanceById( '#{eid}-tinymce' ); $('#{eid}-hidden-content').value = t.getContent(); return true;})
+  })
   end
 
   define_view(:multi_edit) do |args|
     @state=:edit
     args[:add_javascript]=true #necessary?
-    @form = form_for_multi
     hidden_field_tag(:multi_edit, true) + raw(_render_naked(args))
   end
 

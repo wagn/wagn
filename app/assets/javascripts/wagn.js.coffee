@@ -7,9 +7,7 @@ wagnOnload = ->
 #  setupLinksAndDoubleClicks()
 
 
-window.wagnOnload = wagnOnload
-
-warn = -> console.log stuff if typeof console != 'undefined'
+warn = (stuff) -> console.log stuff if console?
 
 Wagn.Messenger = {  
   element: -> $('#alerts'),
@@ -33,14 +31,28 @@ Wagn.Messenger = {
 
 Wagn.runQueue = (queue) ->
   result = true
-  if typeof queue != 'undefined'
-    jQuery.each queue, (index, fn) ->
-      result=false if !fn.call()
+  if queue? then $.each queue, ->
+    result = false if !@call()
   result
 
 Wagn.onLoadQueue   = []
 Wagn.onSaveQueue   = {}
 Wagn.onCancelQueue = {}
 
+Wagn.EditorContent = {
+  '.tinymce-textarea': -> tinyMCE.getInstanceById( @id ).getContent()
+}
+
+$('.card-form').live 'submit.wagn', ->
+#  $.each Wagn.EditorContent, () ->
+  $.each $(this).find('.tinymce-textarea'), ->
+    $(this).closest('.editor').find('#card_content')[0].value = tinyMCE.getInstanceById( @id ).getContent()
+
+  
+
+#Wagn.runQueue(Wagn.onSaveQueue['#{context}']
+
+
+#t = tinyMCE.getInstanceById( '#{eid}-tinymce' ); $('#{eid}-hidden-content').value = t.getContent(); return true;}
 
 jQuery([document, window]).bind('load', wagnOnload)

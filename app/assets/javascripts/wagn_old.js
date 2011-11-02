@@ -36,6 +36,41 @@ Wagn.Messenger = {
   }
 };
 
+
+
+Wagn.runQueue = function(queue) {
+  result = true;
+  if (typeof(queue)!='undefined') {
+    queue.each(function(fn){
+      if (!fn.call()) { result=false }
+    });
+  }
+  return result;
+};
+Wagn.onLoadQueue   = [];
+Wagn.onSaveQueue   = {};
+Wagn.onCancelQueue = {};
+
+wagnOnload = function() {
+  Wagn.Messenger.flash();
+  Wagn.runQueue(Wagn.onLoadQueue);
+  setupLinksAndDoubleClicks();  
+}
+
+
+
+
+
+
+
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ABOVE COFFEED.  BELOW NOT
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
 Ajax.Responders.register({
   createMessage: function() { return 'connecting to server...'},
   onCreate: function(){
@@ -81,16 +116,6 @@ function getNewWindowLinks() {
 
 var DEBUGGING = false;
 
-function copy_with_classes(element) {
-  copy = document.createElement('span');
-  copy.innerHTML = element.innerHTML;
-  Element.classNames( element ).each(function(className) {
-    Element.addClassName( copy, className );  
-  });
-  copy.hide();
-  element.parentNode.insertBefore( copy, element );
-  return copy;  
-}
 
 Object.extend(Wagn, {
   messenger: function(){ return Wagn.Messenger },
@@ -159,24 +184,7 @@ Wagn.setupAutosave=function(card_id, slot_id) {
 
 /* ------------------ OnLoad --------------------*/
 
-Wagn.runQueue = function(queue) {
-  result = true;
-  if (typeof(queue)!='undefined') {
-    queue.each(function(fn){
-      if (!fn.call()) { result=false }
-    });
-  }
-  return result;
-};
-Wagn.onLoadQueue   = [];
-Wagn.onSaveQueue   = {};
-Wagn.onCancelQueue = {};
-
-wagnOnload = function() {
-  Wagn.Messenger.flash();
-  Wagn.runQueue(Wagn.onLoadQueue);
-  setupLinksAndDoubleClicks();  
-}                                                           
+                                                      
        
 
 handleGlobalShortcuts=function(event){
@@ -532,5 +540,21 @@ setPointerContent=function(eid, items) {
   //alert('value = ' + content_field.value);
 }
 
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// NOT USED
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+function copy_with_classes(element) {
+  copy = document.createElement('span');
+  copy.innerHTML = element.innerHTML;
+  Element.classNames( element ).each(function(className) {
+    Element.addClassName( copy, className );  
+  });
+  copy.hide();
+  element.parentNode.insertBefore( copy, element );
+  return copy;  
+}
 
 

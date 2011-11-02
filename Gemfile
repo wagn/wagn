@@ -56,40 +56,26 @@ group :debug do
 end
 
 group :test, :development do
-  gem 'rspec-rails', "~> 2.6"
-  gem 'ruby-prof'
-  gem 'rails-dev-tweaks', '~> 0.5.1'
+  gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
+  gem 'ruby-prof'                              # profiling
+  gem 'rails-dev-tweaks', '~> 0.5.1'           # dramatic speeds up asset loading, among other tweaks
 end
 
 group :test do
-  gem 'cucumber-rails', '~>1.1.1'
-  gem 'minitest'
-  gem 'launchy'
-  gem 'test-unit'#, '1.2.3'
-  gem 'timecop'#, '>=0.2.1'
-  gem 'spork'#, '>=0.5.7'
-  gem 'webrat'#, '>=0.7.0'
-  gem 'email_spec'#, '~>0.6.2'
-  gem 'database_cleaner'#, '0.5.0'
-
-  # Pretty printed test output
-  gem 'turn', :require => false
-
+  gem 'cucumber-rails', '~>1.1.1'              # feature-driven-development suite
+  gem 'minitest'                               # cucumber breaks without this.  m
+  gem 'launchy'                                # lets cucumber launch browser windows
+  gem 'timecop'                                # not clear on use/need.  referred to in shared_data.rb
+  gem 'spork'                                  #
+                                               
+  gem 'email_spec'                             # using?
+  gem 'database_cleaner'                       # using?
+  gem "jspec", "~> 4.3.3"                      # javascript testing
+  gem 'turn', "<0.8.3", :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
+  
+  #windows stuff
   gem 'win32console', '1.3.0', :platforms => ['mingw', 'mswin']
   gem 'win32-process', '0.6.5', :platforms => ['mingw', 'mswin']
-
-  #  gem 'assert2'#, '0.5.5'
-  #  gem 'term-ansicolor'#, '1.0.5'
-
-  #  gem 'capybara'
-  #  gem 'gherkin'#, '>=2.2.8'
-  #  gem 'cucumber'#, '>=0.9.2'
-  #  gem 'nokogiri'#, '1.4.1'
-  
-#  gem 'ZenTest', '4.4.0'
-#  gem 'autotest-rails', '<= 4.1.0'
-#  gem 'autotest-growl' , '0.2.6', :platforms => ['ruby']
-#  gem 'ruby-snarl', :platforms => ['mingw', 'mswin']
 end
 
 

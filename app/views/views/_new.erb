@@ -16,7 +16,7 @@
           :slot => s,
           :update => {:success => s.id, :failure => s.id(:cardnotice)},
           :html=>{:class=>'form', :onsubmit=>s.save_function}) do |form| %>
-    <%= form_for card, :url=>"/card/create", :html=>{ :class=>'form', :onsubmit=>'this.submit();' } do |form| %>
+    <%= form_for card, :url=>"/card/create", :html=>{ :class=>'card-form' } do |form| %>
       <div class="card-header">
         <% if (request and !request.xhr?) && @args[:type] #&& !card.broken_type %>
           <%= hidden_field_tag 'card[type]', @args[:type] %>
@@ -65,7 +65,7 @@
         <%= hidden_field_tag :home_view, params[:home_view] || :open %>
         <div class="edit-button-area">
 
-          <%= button_to_function 'Submit', "this.form.onsubmit()", :id=>'create-button'  %>
+          <%= submit_tag 'Submit', :id=>'create-button'  %>
 
           <% if s.ajax_call? %>
             <%= s.button_to_action 'Cancel', 'view', { :before=>s.cancel_function }  %>

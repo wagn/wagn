@@ -5,7 +5,6 @@ source 'http://rubygems.org'
 # DEFAULT #
 # ~~~~~~~ #
 
-# must have all of these
 
 gem 'rails', '~>3.1'
 gem 'htmlentities'#, '~>4.2.1'
@@ -59,18 +58,17 @@ group :test, :development do
   gem 'rspec-rails', "~> 2.6"                  # behavior-driven-development suite
   gem 'ruby-prof'                              # profiling
   gem 'rails-dev-tweaks', '~> 0.5.1'           # dramatic speeds up asset loading, among other tweaks
+  gem 'jasmine-rails'
 end
 
 group :test do
   gem 'cucumber-rails', '~>1.1.1'              # feature-driven-development suite
-  gem 'minitest'                               # cucumber breaks without this.  m
   gem 'launchy'                                # lets cucumber launch browser windows
   gem 'timecop'                                # not clear on use/need.  referred to in shared_data.rb
   gem 'spork'                                  #
                                                
   gem 'email_spec'                             # using?
   gem 'database_cleaner'                       # using?
-  gem "jspec", "~> 4.3.3"                      # javascript testing
   gem 'turn', "<0.8.3", :require => false      # Pretty printed test output.  (version constraint is to avoid minitest requirement)
   
   #windows stuff
@@ -86,12 +84,3 @@ group :assets do
 end
 
 
-
-# Use unicorn as the web server
-# gem 'unicorn'
-
-# Deploy with Capistrano
-# gem 'capistrano'
-
-
-# original list http://groups.google.com/group/wagn-dev/browse_thread/thread/79ff17d0bd1145e0/d822516dc749db89#d822516dc749db89

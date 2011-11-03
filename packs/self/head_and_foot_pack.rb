@@ -28,6 +28,7 @@ class Wagn::Renderer
 
     #Javscript
     bits << javascript_include_tag('application')
+    bits << javascript_include_tag("/tinymce/jscripts/tiny_mce/tiny_mce.js") 
     
     bits.join("\n")
   end
@@ -38,7 +39,6 @@ class Wagn::Renderer
   
   define_view(:raw, :name=>'*foot') do |args|
     User.as(:wagbot) do
-      javascript_include_tag("/tinymce/jscripts/tiny_mce/tiny_mce.js") +
       if ga_key = System.setting("*google analytics key")
         %{
           <script type="text/javascript">

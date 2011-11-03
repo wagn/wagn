@@ -6,8 +6,9 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= norequire tiny_mce
+//= require config
 //= require wagn
-//= require application
 //= require calendar
 
 // #= norequire_tree .

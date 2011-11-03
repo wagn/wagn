@@ -72,17 +72,11 @@ class Wagn::Renderer::RichHtml
     eid = context
     form.hidden_field( :content ) +
     text_area_tag( :content_to_replace, card.content, :rows=>3, :id=>"#{eid}-tinymce", :class=>'tinymce-textarea' )
-    # +
-#    editor_hooks( :setup=> %{setTimeout((function(){
-#  tinyMCE.init({mode: "exact",elements: "#{eid}-tinymce",#{System.setting('*tiny mce') || ''}})
-#  tinyMCE.execInstanceCommand( '#{eid}-tinymce', 'mceFocus' );
-#}),50); 
-#  })
   end
 
   define_view(:multi_edit) do |args|
     @state=:edit
-    args[:add_javascript]=true #necessary?
+#    args[:add_javascript]=true #necessary?
     hidden_field_tag(:multi_edit, true) + raw(_render_naked(args))
   end
 

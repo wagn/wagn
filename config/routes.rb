@@ -6,7 +6,7 @@ ID_REQS = { :id => /([^\.]*(\.(?!(#{FORMATS})))?)*/, :format=>FORMAT_PATTERN }
 
 
 Wagn::Application.routes.draw do
-  mount JasmineRails::Engine => "/specs" unless Rails.env.production?
+  #mount JasmineRails::Engine => "/specs" unless Rails.env.production?
   
   match 'rest/:id(.:format)' => 'rest_card#method', :constraints => { :id => /.*/ }, :via => [:get, :post, :put, :delete]
   # these file requests should only get here if the file isn't present.

@@ -219,9 +219,9 @@ class ApplicationController < ActionController::Base
           page << %{notice.update('#{escape_javascript(stuff)}');\n}
           page << on_error_js
         end
-      when requesting_ajax? && params['_update'];
+      when requesting_ajax?
         render :inline=>stuff_with_javascript, :layout=>nil, :status=>422
-      when !requesting_ajax?;
+      else
         render :inline=>stuff_with_javascript, :layout=>'application', :status=>422
     end
   end

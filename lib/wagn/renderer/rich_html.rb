@@ -373,10 +373,11 @@ module Wagn
     return '' if root.js_queue_initialized.has_key?(queue_context)
     root.js_queue_initialized[queue_context]=true
 
-    javascript_tag(
-      "Wagn.onSaveQueue['#{queue_context}']=[];\n"+
-      "Wagn.onCancelQueue['#{queue_context}']=[];"
-    )
+#    javascript_tag(
+#      "Wagn.onSaveQueue['#{queue_context}']=[];\n"+
+#      "Wagn.onCancelQueue['#{queue_context}']=[];"
+#    )
+    ''
   end
 
 

@@ -1,5 +1,5 @@
 class Wagn::Renderer
-  define_view(:naked , :type=>'set') do |args|
+  define_view(:core , :type=>'set') do |args|
     is_self = card.cardname.tag_name=='*self'
     #headings = ['Type','Content','Action']
     headings = ['Content','Type']

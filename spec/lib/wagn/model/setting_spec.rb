@@ -119,14 +119,14 @@ describe Card do
     
     it "processes inclusions relative to context card" do
       context_card = Card["A"] # refers to 'Z'
-      c = Card.new(:name=>"foo", :content => "{{_self+B|naked}}")
+      c = Card.new(:name=>"foo", :content => "{{_self+B|core}}")
       c.contextual_content( context_card ).should == "AlphaBeta"
     end
     
     it "returns content even when context card is hard templated" do
       context_card = Card["A"] # refers to 'Z'
       c1=Card.create! :name => "A+*self+*content", :content => "Banana"
-      c = Card.new( :name => "foo", :content => "{{_self+B|naked}}" )
+      c = Card.new( :name => "foo", :content => "{{_self+B|core}}" )
       c.contextual_content( context_card ).should == "AlphaBeta"
     end
   end

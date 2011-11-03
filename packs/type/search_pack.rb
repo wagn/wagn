@@ -1,5 +1,5 @@
 class Wagn::Renderer
-  define_view(:naked, :type=>'search') do |args|
+  define_view(:core, :type=>'search') do |args|
     error=nil
     results = begin
       card.item_cards( paging_params )

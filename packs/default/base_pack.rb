@@ -7,10 +7,10 @@ class Wagn::Renderer
   # (builtins, etc.)
   define_view(:raw) do |args| card ? card.raw_content : _render_blank end
   define_view(:refs) do |args| card.respond_to?('references_expired') ? card.raw_content : '' end
-  define_view(:naked) do |args| process_content(_render_raw) end
-  alias_view(:naked, {}, :show, :content)
+  define_view(:core) do |args| process_content(_render_raw) end
+  alias_view(:core, {}, :show, :content)
   define_view(:titled) do |args|
-    card.name + "\n\n" + _render_naked
+    card.name + "\n\n" + _render_core
   end
 
 ###----------------( NAME) 
@@ -22,24 +22,24 @@ class Wagn::Renderer
 
   define_view(:open_content) do |args|
     #x = card.post_render(
-    x = _render_naked(args) { (yield) }
+    x = _render_core(args) { (yield) }
     #fail "x = #{x}"
     x
   end
 
   define_view(:closed_content) do |args|
     @state = :line
-    truncatewords_with_closing_tags( _render_naked(args) { yield } )
+    truncatewords_with_closing_tags( _render_core(args) { yield } )
   end
 
 ###----------------( SPECIAL )
   define_view(:array) do |args|
     if card.collection?
       card.item_cards(:limit=>0).map do |item_card|
-        subrenderer(item_card)._render_naked
+        subrenderer(item_card)._render_core
       end
     else
-      [_render_naked(args) { yield }]
+      [_render_core(args) { yield }]
     end.inspect
   end
 

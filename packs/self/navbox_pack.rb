@@ -17,7 +17,7 @@ class Wagn::Renderer
 </form>
     }
   end
-  alias_view(:raw, {:name=>'*navbox'}, :naked)
+  alias_view(:raw, {:name=>'*navbox'}, :core)
 
 
   private

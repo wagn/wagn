@@ -32,7 +32,7 @@ class Wagn::Renderer
     
     bits.join("\n")
   end
-  alias_view(:raw, {:name=>'*head'}, :naked)
+  alias_view(:raw, {:name=>'*head'}, :core)
   
   
   
@@ -56,6 +56,6 @@ class Wagn::Renderer
       else; ''; end
     end
   end
-  alias_view(:raw, {:name=>'*foot'}, :naked)
+  alias_view(:raw, {:name=>'*foot'}, :core)
 
 end

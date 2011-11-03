@@ -10,7 +10,7 @@ class Shellbox
 end
 
 class Wagn::Renderer
-  define_view(:naked, :type=>'script') do |args|
+  define_view(:core, :type=>'script') do |args|
     command = process_content( card.content )
     begin
       if System.enable_server_cards
@@ -25,7 +25,7 @@ class Wagn::Renderer
   
   alias_view( :editor, {:type=>'plain_text'},  {:type=>'script'} )
 
-  define_view(:naked, :type=>'ruby') do |args|
+  define_view(:core, :type=>'ruby') do |args|
     ruby = process_content( card.content )
     begin
       if System.enable_ruby_cards

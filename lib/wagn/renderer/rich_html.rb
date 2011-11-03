@@ -35,23 +35,23 @@ module Wagn
   LAYOUTS = { 'default' => %{
 <!DOCTYPE HTML>
 <html>
-  <head> {{*head|naked}} </head>
+  <head> {{*head|core}} </head>
 
   <body id="wagn">
     <div id="menu">
-      [[/ | Home]]   [[/recent | Recent]]   {{*navbox|naked}} {{*account links|naked}}
+      [[/ | Home]]   [[/recent | Recent]]   {{*navbox|core}} {{*account links|core}}
     </div>
 
     <div id="primary"> {{_main}} </div>
 
     <div id="secondary">
       <div id="logo">[[/ | {{*logo}}]]</div>
-      {{*sidebar|naked}}
+      {{*sidebar|core}}
       <div id="credit"><a href="http://www.wagn.org" title="Wagn {{*version|bare}}">Wagn.</a> We're on it.</div>
-      {{*alerts|naked}}
+      {{*alerts|core}}
     </div>
 
-    {{*foot|naked}}
+    {{*foot|core}}
   </body>
 </html> },
 

@@ -22,10 +22,11 @@ module Wagn
     include ReferenceTypes
   
     VIEW_ALIASES = {
-      :view => :open,
-      :card => :open,
-      :line => :closed,
-      :bare => :naked,
+      :view  => :open,
+      :card  => :open,
+      :line  => :closed,
+      :bare  => :core,
+      :naked => :core
     }
     
     UNDENIABLE_VIEWS = [ 
@@ -350,7 +351,7 @@ module Wagn
         options[:view] ||= :open
       end
   
-      options[:home_view] = options[:view] ||= context == 'layout_0' ? :naked : :content
+      options[:home_view] = options[:view] ||= context == 'layout_0' ? :core : :content
       tcardname = tname.to_cardname
       options[:fullname] = fullname = tcardname.fullname(card.cardname, base, options, params)
       options[:showname] = tcardname.to_show(fullname)      #Rails.logger.debug "fullname [#{tname.inspect}](#{card&&card.name||card.inspect}, #{base.inspect}, #{options.inspect}"

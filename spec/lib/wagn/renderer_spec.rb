@@ -18,7 +18,7 @@ describe Wagn::Renderer, "" do
   context "special syntax handling should render" do
     before do
       User.as :wagbot do
-        @layout_card = Card.create(:name=>'tmp layout', :type=>'Html', :content=>"Mainly {{_main|naked}}")
+        @layout_card = Card.create(:name=>'tmp layout', :type=>'Html', :content=>"Mainly {{_main|core}}")
         @layout_card.save
         c = Card['*all+*layout'] and c.content = '[[tmp layout]]'
       end
@@ -39,25 +39,25 @@ describe Wagn::Renderer, "" do
 
     it "css in inclusion syntax in wrapper" do
       c = Card.new :name => 'Afloatright', :content => "{{A|float:right}}"
-      assert_view_select Wagn::Renderer.new(c).render( :naked ), 'div[style="float:right;"]'
+      assert_view_select Wagn::Renderer.new(c).render( :core ), 'div[style="float:right;"]'
     end
 
     it "HTML in inclusion syntax as escaped" do
       c =Card.new :name => 'Afloat', :type => 'Html', :content => '{{A|float:<object class="subject">}}'
-      result = Wagn::Renderer.new(c).render( :naked )
+      result = Wagn::Renderer.new(c).render( :core )
       assert_view_select result, 'div[style="float:&amp;lt;object class=&amp;quot;subject&amp;quot;&amp;gt;;"]'
     end
 
     context "CGI variables" do
       it "substituted when present" do
-        c = Card.new :name => 'cardNaked', :content => "{{_card+B|naked}}"
-        result = Wagn::Renderer.new(c, :params=>{'_card' => "A"}).render_naked
+        c = Card.new :name => 'cardcore', :content => "{{_card+B|core}}"
+        result = Wagn::Renderer.new(c, :params=>{'_card' => "A"}).render_core
         result.should == "AlphaBeta"
       end
     end
 
     it "renders layout card without recursing" do
-      Wagn::Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
+      Wagn::Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main" context="main">Mainly {{_main|core}}</div>}
     end
 
   end
@@ -69,12 +69,12 @@ describe Wagn::Renderer, "" do
     it "prevents infinite loops" do
       Card.create! :name => "n+a", :content=>"{{n+a|array}}"
       c = Card.new :name => 'naArray', :content => "{{n+a|array}}"
-      Wagn::Renderer.new(c).render( :naked ).should =~ /too deep/
+      Wagn::Renderer.new(c).render( :core ).should =~ /too deep/
     end
 
     it "missing relative inclusion is relative" do
       c = Card.new :name => 'bad_include', :content => "{{+bad name missing}}"
-      Wagn::Renderer.new(c).render(:naked).match(Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
+      Wagn::Renderer.new(c).render(:core).match(Regexp.escape(%{Add <strong>+bad name missing</strong>})).should_not be_nil
     end
 
     it "renders deny for unpermitted cards" do
@@ -83,7 +83,7 @@ describe Wagn::Renderer, "" do
         Card.create(:name=>'Joe no see me+*self+*read', :type=>'Pointer', :content=>'[[Administrator]]')
       end
       User.as :joe_user do
-        assert_view_select Wagn::Renderer.new(Card.fetch('Joe no see me')).render(:naked), 'span[class="denied"]'
+        assert_view_select Wagn::Renderer.new(Card.fetch('Joe no see me')).render(:core), 'span[class="denied"]'
       end
     end
   end
@@ -101,12 +101,12 @@ describe Wagn::Renderer, "" do
 
     it "image tags of different sizes" do
       Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}
-      c = Card.new :name => 'Image1', :content => "{{TestImage | naked; size:small }}"
-      Wagn::Renderer.new(c).render( :naked ).should == %{<img src="http://wagn.org/image53_small.jpg">}
+      c = Card.new :name => 'Image1', :content => "{{TestImage | core; size:small }}"
+      Wagn::Renderer.new(c).render( :core ).should == %{<img src="http://wagn.org/image53_small.jpg">}
     end
 
-    it "naked" do
-      render_card(:naked, :name=>'A+B').should == "AlphaBeta"
+    it "core" do
+      render_card(:core, :name=>'A+B').should == "AlphaBeta"
     end
 
     it "content" do
@@ -240,7 +240,7 @@ describe Wagn::Renderer, "" do
         @main_card = Card.fetch('Joe User')
       end
 
-      it "should default to naked view for non-main inclusions when context is layout_0" do
+      it "should default to core view for non-main inclusions when context is layout_0" do
         @layout_card.content = "Hi {{A}}"
         @layout_card.save
         Wagn::Renderer.new(@main_card).render(:layout).should match('Hi Alpha')
@@ -264,9 +264,9 @@ describe Wagn::Renderer, "" do
       end
 
       it "shouldn't recurse" do
-        @layout_card.content="Mainly {{_main|naked}}"
+        @layout_card.content="Mainly {{_main|core}}"
         @layout_card.save
-        Wagn::Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main" context="main">Mainly {{_main|naked}}</div>}
+        Wagn::Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main" context="main">Mainly {{_main|core}}</div>}
       end
 
       it "should handle non-card content" do
@@ -290,14 +290,14 @@ describe Wagn::Renderer, "" do
 
   describe "cgi params" do
     it "renders params in card inclusions" do
-      c = Card.new :name => 'cardNaked', :content => "{{_card+B|naked}}"
-      result = Wagn::Renderer.new(c, :params=>{'_card' => "A"}).render_naked
+      c = Card.new :name => 'cardcore', :content => "{{_card+B|core}}"
+      result = Wagn::Renderer.new(c, :params=>{'_card' => "A"}).render_core
       result.should == "AlphaBeta"
     end
 
     it "should not change name if variable isn't present" do
       c = Card.new :name => 'cardBname', :content => "{{_card+B|name}}"
-      Wagn::Renderer.new(c).render( :naked ).should == "_card+B"
+      Wagn::Renderer.new(c).render( :core ).should == "_card+B"
     end
 
     it "array (search card)" do
@@ -305,7 +305,7 @@ describe Wagn::Renderer, "" do
       Card.create! :name => "n+b", :type=>"Phrase", :content=>"say:\"what\""
       Card.create! :name => "n+c", :type=>"Number", :content=>"30"
       c = Card.new :name => 'nplusarray', :content => "{{n+*plus cards+by create|array}}"
-      Wagn::Renderer.new(c).render( :naked ).should == %{["10", "say:\\"what\\"", "30"]}
+      Wagn::Renderer.new(c).render( :core ).should == %{["10", "say:\\"what\\"", "30"]}
     end
 
     it "array (pointer card)" do
@@ -314,7 +314,7 @@ describe Wagn::Renderer, "" do
       Card.create! :name => "n+c", :type=>"Number", :content=>"30"
       Card.create! :name => "npoint", :type=>"Pointer", :content => "[[n+a]]\n[[n+b]]\n[[n+c]]"
       c = Card.new :name => 'npointArray', :content => "{{npoint|array}}"
-      Wagn::Renderer.new(c).render( :naked ).should == %q{["10", "20", "30"]}
+      Wagn::Renderer.new(c).render( :core ).should == %q{["10", "20", "30"]}
     end
 
 =begin
@@ -327,13 +327,13 @@ describe Wagn::Renderer, "" do
       # a little weird that we need :open_content  to get the version without
       # slot divs wrapped around it.
       s = Wagn::Renderer.new(t, :inclusion_view_overrides=>{ :open => :name } )
-      s.render( :naked ).should == "t2"
+      s.render( :core ).should == "t2"
 
       # similar to above, but use link
       s = Wagn::Renderer.new(t, :inclusion_view_overrides=>{ :open => :link } )
-      s.render( :naked ).should == "<a class=\"known-card\" href=\"/wagn/t2\">t2</a>"
-      s = Wagn::Renderer.new(t, :inclusion_view_overrides=>{ :open => :naked } )
-      s.render( :naked ).should == "boo"
+      s.render( :core ).should == "<a class=\"known-card\" href=\"/wagn/t2\">t2</a>"
+      s = Wagn::Renderer.new(t, :inclusion_view_overrides=>{ :open => :core } )
+      s.render( :core ).should == "boo"
     end
 =end
   end
@@ -345,7 +345,7 @@ describe Wagn::Renderer, "" do
   context "Content settings" do
     it "are rendered as raw" do
       template = Card.new(:name=>'A+*right+*content', :content=>'[[link]] {{inclusion}}')
-      Wagn::Renderer.new(template).render(:naked).should == '[[link]] {{inclusion}}'
+      Wagn::Renderer.new(template).render(:core).should == '[[link]] {{inclusion}}'
     end
 
 
@@ -434,8 +434,8 @@ describe Wagn::Renderer, "" do
     context "Image" do
       it "should handle size argument in inclusion syntax" do
         Card.create! :name => "TestImage", :type=>"Image", :content =>   %{<img src="http://wagn.org/image53_medium.jpg">}
-        c = Card.new :name => 'Image1', :content => "{{TestImage | naked; size:small }}"
-        Wagn::Renderer.new(c).render( :naked ).should == %{<img src="http://wagn.org/image53_small.jpg">}
+        c = Card.new :name => 'Image1', :content => "{{TestImage | core; size:small }}"
+        Wagn::Renderer.new(c).render( :core ).should == %{<img src="http://wagn.org/image53_small.jpg">}
       end
     end
 
@@ -458,7 +458,7 @@ describe Wagn::Renderer, "" do
         pending
         #I can't get this working.  I keep getting this url_for error -- from a line that doesn't call url_for
         card = Card.create!(:name=>'Big Bad Wolf', :type=>'Account Request')
-        assert_view_select Wagn::Renderer.new(card).render(:naked), 'div[class="invite-links"]'
+        assert_view_select Wagn::Renderer.new(card).render(:core), 'div[class="invite-links"]'
       end
     end
 
@@ -480,26 +480,26 @@ describe Wagn::Renderer, "" do
       end
 
       it "should have special content that converts newlines to <br>'s" do
-        render_card(:naked, :type=>'Plain Text', :content=>"a\nb").should == 'a<br/>b'
+        render_card(:core, :type=>'Plain Text', :content=>"a\nb").should == 'a<br/>b'
       end
 
       it "should have special content that escapes HTML" do
         pending
-        render_card(:naked, :type=>'Plain Text', :content=>"<b></b>").should == '&lt;b&gt;&lt;/b&gt;'
+        render_card(:core, :type=>'Plain Text', :content=>"<b></b>").should == '&lt;b&gt;&lt;/b&gt;'
       end
     end
 
     context "Search" do
       it "should wrap search items with correct view class" do
         Card.create :type=>'Search', :name=>'Asearch', :content=>%{{"type":"User"}}
-        c=render_content("{{Asearch|naked;item:name}}")
+        c=render_content("{{Asearch|core;item:name}}")
         c.should match('search-result-item item-name')
-        render_content("{{Asearch|naked;item:open}}").should match('search-result-item item-open')
-        render_content("{{Asearch|naked}}").should match('search-result-item item-closed')
+        render_content("{{Asearch|core;item:open}}").should match('search-result-item item-open')
+        render_content("{{Asearch|core}}").should match('search-result-item item-closed')
       end
 
       it "should handle returning 'count'" do
-        render_card(:naked, :type=>'Search', :content=>%{{ "type":"User", "return":"count"}}).should == '10'
+        render_card(:core, :type=>'Search', :content=>%{{ "type":"User", "return":"count"}}).should == '10'
       end
     end
 
@@ -509,7 +509,7 @@ describe Wagn::Renderer, "" do
       end
 
       it "should have yes/no as processed content" do
-        render_card(:naked, :type=>'Toggle', :content=>"0").should == 'no'
+        render_card(:core, :type=>'Toggle', :content=>"0").should == 'no'
         render_card(:closed_content, :type=>'Toggle', :content=>"1").should == 'yes'
       end
     end

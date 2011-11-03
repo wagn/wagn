@@ -1,5 +1,5 @@
 class Wagn::Renderer
-  define_view(:naked, :type=>'account_request') do |args|
+  define_view(:core, :type=>'account_request') do |args|
     links = []
     #ENGLISH
     if System.ok? :create_accounts

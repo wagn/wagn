@@ -44,7 +44,7 @@ describe Flexmail do
     end
 
     it "returns list with correct hash for card with configs" do
-      Card.create! :name => "mailconfig+*message", :content => "It's true that {{_left+story|naked}}"
+      Card.create! :name => "mailconfig+*message", :content => "It's true that {{_left+story|core}}"
       c = Card.create :name=>'Banana+story', :content=>"I was born a poor black seed"
       c = Card.create :name => "Banana+emailtest", :content => "data content"
       Flexmail.configs_for(c).should == [{
@@ -77,8 +77,8 @@ describe Flexmail do
       Card.create!  :name => "mailconfig+*to", :content => %{ {"key":"bob_addy"} }, :type=>'Search'
       Card.create!  :name => "mailconfig+*from", :content => %{ {"left":"_left", "right":"email"} }, :type=>'Search'
       Card.create!  :name => "subject search+*right+*content", :content => %{{"referred_to_by":"_self+subject"}}, :type=>'Search'
-      Card.create!  :name => "mailconfig+*subject", :content => "{{+subject search|naked;item:naked}}"
-      Card.create! :name => "mailconfig+*message", :content => "Triggered by {{_self|name}} and its wonderful content: {{_self|naked}}"
+      Card.create!  :name => "mailconfig+*subject", :content => "{{+subject search|core;item:core}}"
+      Card.create! :name => "mailconfig+*message", :content => "Triggered by {{_self|name}} and its wonderful content: {{_self|core}}"
       Card.create! :name => "mailconfig+*attach", :type=>"Pointer", :content => "[[_self+attachment]]"
       Card.create! :name=>'Trigger', :type=>'Cardtype'
       Card.create :name=>'Trigger+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
@@ -129,7 +129,7 @@ describe Flexmail do
       it "handles case of referring to self for content" do
         Card.create! :name => "Email", :type => "Cardtype"
         Card.create! :name => "Email+*type+*send", :type => "Pointer", :content => "[[mailconfig]]"
-        Card.create! :name => "mailconfig+*message", :content => "this {{_self|naked}}"
+        Card.create! :name => "mailconfig+*message", :content => "this {{_self|core}}"
 
         Rails.logger.level = ActiveSupport::BufferedLogger::Severity::DEBUG
         Mailer.should_receive(:flexmail).with(hash_including(:message=>"this had betta work"))

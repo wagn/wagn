@@ -1,6 +1,6 @@
 class Wagn::Renderer
 
-  define_view(:naked, :type=>'pointer') do |args|
+  define_view(:core, :type=>'pointer') do |args|
     %{<div class="pointer-list"> #{
       pointer_item(self, (item_view||'closed')) }
 </div> #{ 

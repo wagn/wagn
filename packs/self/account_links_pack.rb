@@ -12,5 +12,5 @@ class Wagn::Renderer
       end
     end
   end
-  alias_view(:raw, {:name=>'*account link'}, :naked)
+  alias_view(:raw, {:name=>'*account link'}, :core)
 end

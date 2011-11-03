@@ -9,7 +9,7 @@ describe Wagn::Renderer do
     c.who_can(:read).should == ['administrator']
     User.as(:anon) do
       c.ok?(:read).should == false
-      render_card(:naked, c).match('denied').should_not be_nil
+      render_card(:core, c).match('denied').should_not be_nil
 
     end
   end

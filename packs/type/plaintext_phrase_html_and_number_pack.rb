@@ -1,5 +1,5 @@
 class Wagn::Renderer
-  define_view(:naked, :type=>'plain_text') do |args|
+  define_view(:core, :type=>'plain_text') do |args|
     process_content(_render_raw).gsub(/\n/, '<br/>')
   end
   

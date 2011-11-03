@@ -29,7 +29,7 @@ class Wagn::Renderer::RichHtml
   define_view(:content) do |args|
     @state = :view
     self.requested_view = args[:action] = 'content'
-    c = _render_naked(args)
+    c = _render_core(args)
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
     wrap(args) { raw wrap_content(c) }
   end
@@ -39,7 +39,7 @@ class Wagn::Renderer::RichHtml
     args[:action] = 'content'
     wrap(args) do
       content_tag( :h1, raw(fancy_title(card.name))) + 
-      raw( wrap_content(_render_naked(args)))
+      raw( wrap_content(_render_core(args)))
     end
   end
 
@@ -77,7 +77,7 @@ class Wagn::Renderer::RichHtml
   define_view(:multi_edit) do |args|
     @state=:edit
 #    args[:add_javascript]=true #necessary?
-    hidden_field_tag(:multi_edit, true) + raw(_render_naked(args))
+    hidden_field_tag(:multi_edit, true) + raw(_render_core(args))
   end
 
   define_view(:change) do |args|
@@ -102,7 +102,7 @@ class Wagn::Renderer::RichHtml
   </div>
   #{if inst = (card.new_card? ? card.setting_card('add help', 'edit help') : card.setting_card('edit help'))
     ss = self.subrenderer(inst); ss.state= :view
-    %{<div class="instruction">#{ ss.render :naked }</div>}
+    %{<div class="instruction">#{ ss.render :core }</div>}
   end}
   <div style="clear:both"></div>
 </div>

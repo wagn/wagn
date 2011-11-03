@@ -24,7 +24,7 @@ module Wagn
             xml.Placemark do
               xml.name cardname
               if desc_card = Card.fetch("#{cardname}+*geodescription") and desc_card.ok? :read
-                xml.description Renderer.new(desc_card).render_naked
+                xml.description Renderer.new(desc_card).render_core
               end
               xml.Point do
                 # apparently the google API likes them in the opposite order for static maps.

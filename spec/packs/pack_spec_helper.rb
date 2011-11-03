@@ -21,7 +21,7 @@ include ActionDispatch::Assertions::SelectorAssertions
   def render_content(content, args={})
     @card ||= Card.new(:name=>"Tempo Rary 2")
     @card.content=content
-    Wagn::Renderer.new(@card,args).render(:naked)
+    Wagn::Renderer.new(@card,args).render(:core)
   end
 
   def xml_render_content(content, args={})

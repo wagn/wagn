@@ -82,6 +82,7 @@ class System
       ok_hash = self.cache.read('ok_hash') || self.cache.write('ok_hash', {})
       #warn "user = #{usr.inspect}"
       if (h = ok_hash[usr.id]).nil?
+        ok_hash = {} if ok_hash.frozen? #HACK!! FIXME SOON!
         ok_hash[usr.id] = begin
           ok = {}
           ok[:role_ids] = {}

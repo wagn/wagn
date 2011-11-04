@@ -34,7 +34,7 @@ class Wagn::Renderer
         end +
         
         content_tag(:td, :class=>'permissions-individual-options') do
-          render :list, :items=>item_names, :skip_editor_hooks=>true
+          render :list, :items=>item_names
         end +
         
         (!inheritable ? '' : content_tag(:td, :class=>'permissions-inherit') do
@@ -45,26 +45,26 @@ class Wagn::Renderer
           content_tag(:a, :title=>"use #{card.name.tag_name} rule for left card") { '?' }
         end)
       end
-    end +
+    end
 
-    javascript_tag( %{
-      indiv_boxes = jQuery('##{context}-ul input');
-      indiv_boxes.click( function() { #{uncheck_inherit};} ); 
-    } ) +
-  
-    editor_hooks(:save=>%{
-      if (jQuery('input[name=#{eid}-inherit]').attr('checked') == true) {
-        jQuery('##{eid}-hidden-content')[0].value = '_left';
-        return true;
-      }
-      boxes = jQuery('input[name=#{eid}-checkbox]:checked')
-      group_vals = boxes.map(function(i,n){ return jQuery(n).val(); }).get();
-      indiv_boxes = jQuery('##{context}-ul input');
-      indiv_vals = jQuery.map(indiv_boxes, function(x){ return x.value; });
-      vals = group_vals.concat(indiv_vals);
-      setPointerContent('#{eid}', vals );  
-      return true;
-    })
+#    javascript_tag( %{
+#      indiv_boxes = jQuery('##{context}-ul input');
+#      indiv_boxes.click( function() { #{uncheck_inherit};} ); 
+#    } ) +
+#  
+#    editor_hooks(:save=>%{
+#      if (jQuery('input[name=#{eid}-inherit]').attr('checked') == true) {
+#        jQuery('##{eid}-hidden-content')[0].value = '_left';
+#        return true;
+#      }
+#      boxes = jQuery('input[name=#{eid}-checkbox]:checked')
+#      group_vals = boxes.map(function(i,n){ return jQuery(n).val(); }).get();
+#      indiv_boxes = jQuery('##{context}-ul input');
+#      indiv_vals = jQuery.map(indiv_boxes, function(x){ return x.value; });
+#      vals = group_vals.concat(indiv_vals);
+#      setPointerContent('#{eid}', vals );  
+#      return true;
+#    })
   end
   alias_view(:editor, { :right=>'*create' }, { :right=>'*read' }, { :right=>'*update' }, { :right=>'*delete' }, { :right=>'*comment' } )
   

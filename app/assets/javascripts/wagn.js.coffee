@@ -1,7 +1,6 @@
 
 wagn = {
-      
-    
+  
   contentFieldFunctions: {
     '.tinymce-textarea' : -> tinyMCE.getInstanceById( @id ).getContent()
   }
@@ -20,15 +19,18 @@ wagn = {
 
 jQuery.fn.extend {
   slot: -> @closest '.card-slot'
+  
   setSlotContent: (val) -> @slot().html val
 
   setContentFieldsFromMap: (map) -> 
     this_form = $(this)
     $.each map, (selector, fn)-> 
       this_form.setContentFields(selector, fn)
+      
   setContentFields: (selector, fn) ->
     $.each this.find(selector), -> 
       $(this).setContentField(fn)
+      
   setContentField: (fn)->
     this.closest('.editor').find('#card_content')[0].value = fn.call this[0]
 }

@@ -48,7 +48,7 @@
 
       <%= slot.captcha_tags %>
        <%= submit_tag 'Rename' %>
-      <%= button_to_remote 'Cancel', :url=>slot.url_for('card/edit'), :update=>slot.id() %>
+      <%= button_to_remote 'Cancel', :url=>slot.url_for('/card/edit'), :update=>slot.id() %>
     <% end %>
   <% end %>
 <% end %>

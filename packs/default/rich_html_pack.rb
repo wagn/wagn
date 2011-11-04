@@ -3,7 +3,7 @@ class Wagn::Renderer::RichHtml
     if ajax_call?
       home_view = params[:home_view]=='closed' ? :open : params[:home_view]
       view = params[:view] || home_view || :open
-      self.render(view , :add_javascript=>true)
+      self.render(view)
     else
       self.render_layout
     end
@@ -50,15 +50,13 @@ class Wagn::Renderer::RichHtml
   define_view(:open) do |args|
     @state = :view
     self.requested_view = 'open'
-    wrap(args) { render_partial('views/open') } +
-    open_close_js(:to_open)
+    wrap(args) { render_partial('views/open') }
   end
 
   define_view(:closed) do |args|
     @state = :line
     self.requested_view = args[:action] = 'closed'
-    wrap(args) { render_partial('views/closed') } + 
-    open_close_js(:to_closed)
+    wrap(args) { render_partial('views/closed') }
   end
 
   define_view(:edit) do |args|
@@ -76,7 +74,6 @@ class Wagn::Renderer::RichHtml
 
   define_view(:multi_edit) do |args|
     @state=:edit
-#    args[:add_javascript]=true #necessary?
     hidden_field_tag(:multi_edit, true) + raw(_render_core(args))
   end
 

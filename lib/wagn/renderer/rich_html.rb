@@ -22,7 +22,6 @@ module Wagn
     @position = @context.split('_').last
     @state = :view
     @renders = {}
-    @js_queue_initialized = {}
 
     if card and card.collection? and item_param=params[:item]
       @item_view = item_param if !item_param.blank?
@@ -130,13 +129,6 @@ module Wagn
   end
 
 
-
-
-
-  def js
-    @js ||= SlotJavascript.new(self)
-  end
-
   def wrap(args = {})
     render_wrap = ( args.key?(:add_slot) ? args.delete(:add_slot) : !skip_outer_wrap_for_ajax? )
     return yield if !render_wrap
@@ -195,10 +187,6 @@ module Wagn
     id << "javascript:#{get(area)}"
   end
 
-  def parent
-    "javascript:getSlotSpan(getSlotSpan(this).parentNode)"
-  end
-
   def nested_context?
     context.split('_').length > 2
   end
@@ -221,18 +209,16 @@ module Wagn
     eid << (area.blank? ? '' : "-#{area}")
   end
 
-  def edit_submenu(on)
+  def edit_submenu(current)
     div(:class=>'submenu') do
       [[ :content,    true  ],
        [ :name,       true, ],
        [ :type,       !(card.type_template? || (card.typecode=='Cardtype' && card.cards_of_type_exist?))],
-       #[ :codename,   (System.always_ok? && card.typecode=='Cardtype')],
-       [ :inclusions, !(card.out_transclusions.empty? || card.template? || card.hard_template),         {:inclusions=>true} ]
-       ].map do |key,ok,args|
-
-        link_to( key,"card/edit",# args, key), :update => ([:name,:type,:codename].member?(key) ? id('card-body') : id) },
-          :class=>(key==on ? 'on' : ''), :remote=>true
-        ) if ok
+       ].map do |attrib,ok,args|
+        if ok
+          link_to attrib, "card/edit/#{card.id}/#{attrib}", :remote=>true,
+            :class=>"edit-#{attrib}-link" + (attrib==on ? ' current-submenu-item' : '')
+        end
       end.compact.join
      end
   end
@@ -299,7 +285,6 @@ module Wagn
 =end
 
 
-
   def option( content, args )
     args[:label] ||= args[:name]
     args[:editable]= true unless args.has_key?(:editable)
@@ -319,15 +304,16 @@ module Wagn
   end
 
   def link_to_menu_action( to_action)
+    klass = { 'edit' => 'edit-content-link'}
     menu_action = (%w{ show update }.member?(action) ? 'view' : action)
-    content_tag( :li, link_to_action( to_action.capitalize, to_action, {} ),
-      :class=> (menu_action==to_action ? 'current' : ''))
+    content_tag :li, link_to_action( to_action.capitalize, to_action,
+      :class=> "#{klass[to_action]} #{menu_action==to_action ? 'current' : ''}"
+    )
   end
 
-  def link_to_action( text, to_action, remote_opts={}, html_opts={})
+  def link_to_action( text, to_action, html_opts={})
     html_opts[:remote] = true
-    link_to text, "card/#{to_action}", #{ :update => id }.merge(remote_opts), 
-      html_opts
+    link_to text, "/card/#{to_action}/#{card.id}", html_opts
   end
 
   def button_to_action( text, to_action, remote_opts={}, html_opts={})
@@ -347,85 +333,14 @@ module Wagn
     template.select_tag('card[type]', typecode_options_for_select(Cardtype.name_for(card.typecode)), options)
   end
 
-  def update_typecode_function(options={})
-    fn = ['File','Image'].include?(card.typecode) ?
-            "Wagn.onSaveQueue['#{context}']=[];" :
-            "Wagn.runQueue(Wagn.onSaveQueue['#{context}']); "
-    fn << remote_function( options )
-  end
-
-  def js_content_element
-    @card.hard_template ? "" : ",getSlotElement(this,'form').elements['card[content]']"
-  end
-
   def content_field(form,options={})
     self.form = form
     @nested = options[:nested]
     pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
-    User.as :wagbot do
-      pre_content + clear_queues + self.render_editor #+ setup_autosave
+    User.as :wagbot do #why wagbot here??
+      pre_content + self.render_editor
     end
   end
-
-  def clear_queues
-    queue_context = get_queue_context
-
-    return '' if root.js_queue_initialized.has_key?(queue_context)
-    root.js_queue_initialized[queue_context]=true
-
-#    javascript_tag(
-#      "Wagn.onSaveQueue['#{queue_context}']=[];\n"+
-#      "Wagn.onCancelQueue['#{queue_context}']=[];"
-#    )
-    ''
-  end
-
-
-  def save_function
-    "if(ds=Wagn.draftSavers['#{context}']){ds.stop()}; if (Wagn.runQueue(Wagn.onSaveQueue['#{context}'])) { } else {return false}"
-  end
-
-  def cancel_function
-    "if(ds=Wagn.draftSavers['#{context}']){ds.stop()}; Wagn.runQueue(Wagn.onCancelQueue['#{context}']);"
-  end
-
-  def get_queue_context
-    #FIXME: this looks like it won't work for arbitraritly nested forms.  1-level only
-    @nested ? context.split('_')[0..-2].join('_') : context
-  end
-
-  def editor_hooks(hooks)
-    # it seems as though code executed inline on ajax requests works fine
-    # to initialize the editor, but when loading a full page it fails-- so
-    # we run it in an onLoad queue.  the rest of this code we always run
-    # inline-- at least until that causes problems.
-
-    queue_context = get_queue_context
-    code = ""
-    if hooks[:setup]
-      code << "Wagn.onLoadQueue.push(function(){\n" unless ajax_call?
-      code << hooks[:setup]
-      code << "});\n" unless ajax_call?
-    end
-    if hooks[:save]
-      code << "Wagn.onSaveQueue['#{queue_context}'].push(function(){\n #{hooks[:save]} \n });\n"
-    end
-    if hooks[:cancel]
-      code << "Wagn.onCancelQueue['#{queue_context}'].push(function(){\n #{hooks[:cancel]} \n });\n"
-    end
-    javascript_tag code
-  end
-
-  def open_close_js(js_method)
-    return '' if !ajax_call? || @depth!=0
-    javascript_tag %{Wagn.#{js_method}(getSlotFromContext('#{params[:context]}'))}
-  end
-
-  def setup_autosave
-    return '' if @nested or @skip_autosave
-    javascript_tag "Wagn.setupAutosave('#{card.id}', '#{context}');\n"
-  end
-
 
   def captcha_tags(opts={})
     return unless controller && controller.captcha_required?

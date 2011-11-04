@@ -120,7 +120,7 @@ describe Wagn::Renderer, "" do
       it "multi edit" do
         c = Card.new :name => 'ABook', :type => 'Book'
         assert_view_select Wagn::Renderer.new(c).render( :multi_edit ), 'div[class="field-in-multi"]' do
-          assert_select 'input[name=?][type="hidden"]', 'cards[~plus~illustrator][content]'
+          assert_select 'input[name=?][type="hidden"]', 'card[cards][~plus~illustrator][content]'
         end
       end
     end
@@ -161,10 +161,6 @@ describe Wagn::Renderer, "" do
           end
           assert_select 'span[class~="closed-content content"]'
         end
-      end
-
-      it "should add javascript when requested" do
-        @ocslot.render(:closed, :add_javascript=>true).should match('script type="text/javascript"')
       end
     end
 
@@ -369,7 +365,7 @@ describe Wagn::Renderer, "" do
       card.should_receive(:setting_card).with("content","default").and_return(content_card)
       card.should_receive(:setting_card).with("add help","edit help").and_return(help_card)
       assert_view_select Wagn::Renderer::RichHtml.new(card).render_new, 'div[class="field-in-multi"]' do
-        assert_select 'input[name=?][type="hidden"]', "cards[~plus~Yoruba][content]"
+        assert_select 'input[name=?][type="hidden"]', "card[cards][~plus~Yoruba][content]"
       end
     end
 
@@ -391,7 +387,7 @@ describe Wagn::Renderer, "" do
       @card.content = 'Bar'
       result = Wagn::Renderer.new(@card).render(:edit)
       assert_view_select result, 'div[class="field-in-multi"]' do
-        assert_select 'input[type="hidden"][name=?]', 'cards[templated~plus~alpha][content]'
+        assert_select 'input[type="hidden"][name=?]', 'card[cards][templated~plus~alpha][content]'
       end
     end
 
@@ -402,8 +398,8 @@ describe Wagn::Renderer, "" do
       c = Card.new :name=>'Yo Buddddy', :type=>'Book'
       result = Wagn::Renderer::RichHtml.new(c).render( :multi_edit )
       assert_view_select result, 'div[class="field-in-multi"]' do
-        assert_select 'input[name=?][type="text"][value="Zamma Flamma"]', 'cards[~plus~author][content]'
-        assert_select 'input[name=?][type="hidden"][value="Phrase"]',     'cards[~plus~author][typecode]'
+        assert_select 'input[name=?][type="text"][value="Zamma Flamma"]', 'card[cards][~plus~author][content]'
+        assert_select 'input[name=?][type="hidden"][value="Phrase"]',     'card[cards][~plus~author][typecode]'
       end
     end
   end
@@ -529,19 +525,13 @@ describe Wagn::Renderer, "" do
 
     context "*version" do
       it "should have an X.X.X version" do
-        render_card(:raw, :name=>'*version').match(/\d\.\d\.\d/ ).should_not be_nil
+        (render_card(:raw, :name=>'*version') =~ (/\d\.\d\.\d/ )).should be_true
       end
     end
 
     context "*head" do
       it "should have a javascript tag" do
         assert_view_select render_card(:raw, :name=>'*head'), 'script[type="text/javascript"]'
-      end
-    end
-
-    context "*foot" do
-      it "should have a javascript tag" do
-        assert_view_select render_card(:raw, :name=>'*foot'), 'script[type="text/javascript"]'
       end
     end
 

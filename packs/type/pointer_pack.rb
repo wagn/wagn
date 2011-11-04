@@ -29,14 +29,14 @@ class Wagn::Renderer
       result += render(:field, :link=>link, :index=>index )
     end
     result += render(:add_item, :index=>items.length ) +
-    '</ul>'+
-
-    ( args[:skip_editor_hooks] ? '' : editor_hooks( :save=>%{
-      items = Element.select( $('#{context}-ul'), ".pointer-text").map(function(x){ return x.value; });
-      setPointerContent('#{context}', items);
-      return true;
-    } )
-    )
+    '</ul>'
+#
+#    ( args[:skip_editor_hooks] ? '' : editor_hooks( :save=>%{
+#      items = Element.select( $('#{context}-ul'), ".pointer-text").map(function(x){ return x.value; });
+#      setPointerContent('#{context}', items);
+#      return true;
+#    } )
+#    )
   end
 
 
@@ -79,21 +79,23 @@ class Wagn::Renderer
       <div class="checkbox-option-description">#{ description }</div>} : '' }
   </span>
 </div>}
-    end * "\n" + editor_hooks(:save=>%{
-  boxes = jQuery('input[name=#{eid}-checkbox]:checked')
-  vals = boxes.map(function(i,n){ return jQuery(n).val(); }).get();
-  setPointerContent('#{eid}', vals );  
-  return true;
-})
+    end * "\n" 
+    
+#editor_hooks(:save=>%{
+#  boxes = jQuery('input[name=#{eid}-checkbox]:checked')
+#  vals = boxes.map(function(i,n){ return jQuery(n).val(); }).get();
+#  setPointerContent('#{eid}', vals );  
+#  return true;
+#})
   end
 
   define_view(:multiselect, :type=>'pointer') do |args|
     options = options_from_collection_for_select(card.options,:name,:name,card.item_names)
 
-    select_tag("#{context}-multiselect", options, :multiple=>true, :id=>"#{context}-multiselect", :class=>'pointer-multiselect') +
-
-    editor_hooks(:save=>%{
-  setPointerContent('#{context}', jQuery('##{context}-multiselect').val() );  return true;})
+    select_tag("#{context}-multiselect", options, :multiple=>true, :id=>"#{context}-multiselect", :class=>'pointer-multiselect')
+#
+#    editor_hooks(:save=>%{
+#  setPointerContent('#{context}', jQuery('##{context}-multiselect').val() );  return true;})
   end
 
   define_view(:radio, :type=>'pointer') do |args|
@@ -114,17 +116,17 @@ class Wagn::Renderer
   </div>
 }
       end * "\n"}
-</div>#{
-    editor_hooks :save=>%{
-  setPointerContent('#{eid}', jQuery('input[name=#{eid}-radio]:checked').val() ); return true; }
-    }}
+</div>}
+#    editor_hooks :save=>%{
+#  setPointerContent('#{eid}', jQuery('input[name=#{eid}-radio]:checked').val() ); return true; }
+#    }}
   end
 
   define_view(:select, :type=>'pointer') do |args|
     eid = context
     options = [["-- Select --",""]] + card.options.map{|x| [x.name,x.name]} 
-    select_tag("#{eid}-select", options_for_select(options, card.item_names.first), :id=>"#{eid}-select", :class=>'pointer-select') +
+    select_tag("#{eid}-select", options_for_select(options, card.item_names.first), :id=>"#{eid}-select", :class=>'pointer-select')
 
-    editor_hooks(:save=>%{ setPointerContent('#{eid}', $('#{eid}-select').value); return true; })
+#    editor_hooks(:save=>%{ setPointerContent('#{eid}', $('#{eid}-select').value); return true; })
   end
 end

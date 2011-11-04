@@ -88,9 +88,9 @@ class CardController < ApplicationController
   def create
     @card = Card.new(params[:card])
     if @card.save
-      if url = params[:redirect]
-        url = ( @card.ok?(:read) ? card_path(@card) : '/' ) if url == 'TO_CARD'
-        render :text => url, :status => 201
+      if @url = params[:redirect]
+        @url = ( @card.ok?(:read) ? card_path(@card) : '/' ) if @url == 'TO_CARD'
+        render :text => @url, :status => 201
       else
         render_show
       end
@@ -105,7 +105,6 @@ class CardController < ApplicationController
   def edit
     if ['name','type'].member?(params[:attribute])
       render :partial=>"card/edit/#{params[:attribute]}"
-      #render_cardedit(:part=>params[:attribute])
     end
   end
 

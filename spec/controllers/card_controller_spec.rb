@@ -88,16 +88,17 @@ describe CardController do
         :type=>"Basic",
         :content=>"Bananas"
       }
-      assert_response 418
+      assert_response 200
       c=Card.find_by_name("NewCardFoo")
       assert c.typecode == 'Basic'
       c.content.should == "Bananas"
     end
+
     
     it "creates cardtype cards" do
       post :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
       assigns['card'].should_not be_nil
-      assert_response 418
+      assert_response 200
       c=Card.find_by_name("Editor")
       assert c.typecode == 'Cardtype'
     end
@@ -106,7 +107,7 @@ describe CardController do
       @c = Card.create! :name=>"Problem", :content=>"boof"
       @c.destroy!
       post :create, :card=>{"name"=>"Problem","type"=>"Phrase","content"=>"noof"}
-      assert_response 418
+      assert_response 200
       c=Card.find_by_name("Problem")
       assert c.typecode == 'Phrase'
     end
@@ -124,12 +125,12 @@ describe CardController do
       end
 
       it "creates card and plus cards" do
-        post :create, "card"=>{"name"=>"sss", "type"=>"Fruit"},
-         "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
-         "content_to_replace"=>"",
-         "context"=>"main_1", 
-         "multi_edit"=>"true", "view"=>"open"
-        assert_response 418
+        post :create, :card=>{
+          :name=>"sss",
+          :type=>"Fruit",
+          :cards=>{"~plus~text"=>{:content=>"<p>abraid</p>"}}
+        }
+        assert_response 200
         Card.find_by_name("sss").should_not be_nil
         Card.find_by_name("sss+text").should_not be_nil
       end
@@ -145,7 +146,7 @@ describe CardController do
          "content_to_replace"=>"",
          "context"=>"main_1", 
          "multi_edit"=>"true", "view"=>"open"
-        assert_response 418    
+        assert_response 200    
         Card.find_by_name("sssHT").should_not be_nil
         Card.find_by_name("sssHT+kind").should_not be_nil
       end
@@ -154,54 +155,27 @@ describe CardController do
     it "renders errors if create fails" do
       post :create, "card"=>{"name"=>"Joe User"}
       assert_response 422
-      assert_template "application"  # this is a wee bit funky
     end
    
     it "redirects to thanks if present" do
       login_as :wagbot
-      Card.create :name=>"*all+*thanks", :content=>"/thank_you"
-      post :create, "card" => { "name" => "Wombly" }
-      assert_template "ajax_redirect"
-      assigns["redirect_location"].should == "/thank_you"
+      post :create, :redirect=>'/thank_you', :card => { "name" => "Wombly" }
+      assert_response 201
+      assigns["url"].should == "/thank_you"
     end
 
     it "redirects to card if thanks is blank" do
       login_as :wagbot
-      Card.create! :name=>"*all+*thanks", :content=>"/thank_you"
-      Card.create! :name=>"boop+*right+*thanks", :content=>""
-      post :create, "card" => { "name" => "Joe+boop" }
-      assert_template "ajax_redirect"
-      assigns["redirect_location"].should ==  "/wagn/Joe+boop"
+      post :create, :redirect=>'TO_CARD', "card" => { "name" => "Joe+boop" }
+      assigns["url"].should ==  "/wagn/Joe+boop"
     end
    
     it "redirects to home if not createable and thanks not specified" do
       # Fruits (from shared_data) are anon creatable but not readable
-      
-      #remove me after regenerating test data
-      User.as :wagbot do
-        assert (c=Card['Fruit+*type+*create']).typecode == 'Pointer'
-        c.content='[[Anonymous]]'
-        c.save
-        assert c.content == '[[Anonymous]]'
-        #Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
-      end
-      
-      
       login_as :anon
-      post :create, "card" => { "type"=>"Fruit", :name=>"papaya" }
-      assert_template "ajax_redirect"
-      assigns["redirect_location"].should ==  "/"
-    end
-
-      
-    it "should redirect to card on create main card" do
-      post :create, :context=>"main_1", :card => {
-        :name=>"Banana", :type=>"Basic", :content=>"mush"
-      }
-      assigns["redirect_location"].should == "/wagn/Banana"
-      assert_template "ajax_redirect"
-    end
-    
+      post :create, :redirect=>'TO_CARD', "card" => { "type"=>"Fruit", :name=>"papaya" }
+      assigns["url"].should ==  "/"
+    end    
   end
 
   describe "#new" do
@@ -210,15 +184,6 @@ describe CardController do
     end
     
     it "new should work for creatable nonviewable cardtype" do
-      #remove me after regenerating test data
-      User.as :wagbot do
-        assert (c=Card['Fruit+*type+*create']).typecode == 'Pointer'
-        c.content='[[Anonymous]]'
-        c.save
-        assert c.content == '[[Anonymous]]'
-        #Card.create :name=>'Fruit+*type+*create', :type=>'Pointer', :content=>'[[Anonymous]]'
-      end
-      
       login_as(:anon)     
       get :new, :type=>"Fruit"
       assert_response :success
@@ -355,7 +320,7 @@ describe CardController do
       post :update, {:id=>@simple_card.id, :card=>{ :type=>"Date",:content=>"<br/>" } }
       #assert_equal "boo", assigns['card'].content
       assert_response :success, "changed card type"   
-      assigns['card'].content  .should == ""
+      assigns['card'].content.should == ""
       Card['Sample Basic'].typecode.should == "Date"
     end
 

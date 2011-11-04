@@ -271,7 +271,6 @@ module Wagn
           "<strong>#{card.name} - unknown card view: '#{action}' M:#{render_meth.inspect}</strong>"
         end
   
-      result << javascript_tag("setupLinksAndDoubleClicks();") if args[:add_javascript]
       result.strip
     rescue Exception=>e
       warn "Error #{e.message} #{e.backtrace*"\n"}"

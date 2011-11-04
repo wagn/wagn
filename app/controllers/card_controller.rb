@@ -86,39 +86,17 @@ class CardController < ApplicationController
 
 
   def create
-    if card_params = params[:card]
-      raise "why? #{Kernel.caller*"\n"}" if card_params[:cards]
-      #Rails.logger.info "controller create1 #{card_params.inspect}"
-      params[:multi_edit] and card_params[:cards] = params[:cards]
-      Rails.logger.info "controller create #{card_params.inspect}"
-      @card = Card.create card_params
-    else
-      raise "No card parameters on create"
-    end
-
-    # according to rails / prototype docs:
-    # :success: [...] the HTTP status code is in the 2XX range.
-    # :failure: [...] the HTTP status code is not in the 2XX range.
-
-    # however on 302 ie6 does not update the :failure area, rather it sets the :success area to blank..
-    # for now, to get the redirect notice to go in the failure slot where we want it,
-    # we've chosen to render with the (418) 'teapot' failure status:
-    # http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-    handling_errors do
-      @thanks = @card.setting('thanks')
-      case
-        when @thanks.present?;               ajax_redirect_to @thanks
-        when @card.ok?(:read) && main_card?; ajax_redirect_to url_for_page( @card.name )
-        when @card.ok?(:read);               render_show
-        else                                 ajax_redirect_to "/"
+    @card = Card.new(params[:card])
+    if @card.save
+      if url = params[:redirect]
+        url = ( @card.ok?(:read) ? card_path(@card) : '/' ) if url == 'TO_CARD'
+        render :text => url, :status => 201
+      else
+        render_show
       end
+    else
+      render :text=>"FIXME WITH REAL ERROR HANDLING: #{@card.errors.full_messages.*"\n"}", :status=>422
     end
-  end
-
-  def ajax_redirect_to url
-    @redirect_location = url
-    @message = "Create Successful!"
-    render :action => "ajax_redirect", :status => 418
   end
 
 

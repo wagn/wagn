@@ -72,12 +72,6 @@ class ApplicationController < ActionController::Base
     layout
   end
 
-  # ----------- (helper) ----------
-  def main_card?
-    @context =~ /^main_([^\_]+)$/
-  end
-
-
   # ------------------( permission filters ) -------
   def view_ok
     @card.ok?(:read) || render_denied('view')

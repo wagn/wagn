@@ -1,5 +1,6 @@
 <%-
    args={}
+   redirect ||= false
    slot ||= get_slot(card)
    [:add_slot, :home_view].each {|x| args[x] = params[x] if params[x]}
    # when new is called from an "Add <Cardname>" inclusion, there is no existing slot,
@@ -10,44 +11,36 @@
 <% wrap_slot(slot, args) do |s| %>
     <% @title = "New Card" %>
     <%= error_messages_for @card %>
-    <div class=cardnotice></div>
 
-    <%#= form_for_card(:url="card/create",
-          :slot => s,
-          :update => {:success => s.id, :failure => s.id(:cardnotice)},
-          :html=>{:class=>'form', :onsubmit=>s.save_function}) do |form| %>
-    <%= form_for card, :url=>"/card/create", :html=>{ :class=>'card-form' } do |form| %>
+    <%= form_for card, :url=>"/card/create", :remote=>true, :html=>{ :class=>'card-form' } do |form| %>
+      <%= hidden_field_tag :home_view, params[:home_view] || :open %>
+      <% if redirect %><%= hidden_field_tag :redirect, redirect %><% end %>
+    
       <div class="card-header">
         <% if (request and !request.xhr?) && @args[:type] #&& !card.broken_type %>
           <%= hidden_field_tag 'card[type]', @args[:type] %>
         <% else %>
           <span class="new-type">
             <span class="label"> type:</span>
-            <%= s.typecode_field form, :onchange=>s.update_typecode_function(
-                  :url=>s.url_for('card/new'), :update=>s.id,
-                  :with=>"Form.serialize(getSlotElement(this,'form'))"
-            ) %>
+            <%= s.typecode_field form, :class=>'cardtype-field' %>
           </span>
         <% end %>
         
         <span class="new-name">
           <span class="label">name:</span>
-          <% if card.cardname.blank? || Card.fetch(card.cardname) %>
+          <% if card.cardname.blank? || Card.exists?(card.cardname) %>
             <% unless card.setting_card('autoname') %>
-              <span class="name-area">
-                <%= raw s.name_field(form) %>
-              </span>
+              <span class="name-area"><%= raw s.name_field(form) %></span>
             <% end %>
           <% else %>
             <%= hidden_field_tag 'card[name]', card.name %>
-            <span class="title">
-              <%= raw fancy_title(card.name) %>
-            </span>
+            <span class="title"><%= raw fancy_title(card.name) %></span>
           <% end %>
         </span>
       </div>
-      <% if inst=card.setting_card('add help', 'edit help') and params[:view]!='setting' %>
-        <div class="instruction"><%= raw s.subrenderer(inst).render_core %></div>
+
+      <% if instruction=card.setting_card('add help', 'edit help')  %>
+        <div class="instruction"><%= raw s.subrenderer(instruction).render_core %></div>
       <% end %>
 
 
@@ -62,16 +55,9 @@
         </div>
 
         <%= s.captcha_tags %>
-        <%= hidden_field_tag :home_view, params[:home_view] || :open %>
         <div class="edit-button-area">
-
-          <%= submit_tag 'Submit', :id=>'create-button'  %>
-
-          <% if s.ajax_call? %>
-            <%= s.button_to_action 'Cancel', 'view', { :before=>s.cancel_function }  %>
-          <% else %>
-            <%= button_to_function 'Cancel',"document.location.href='#{previous_location}'" %>
-        <% end %>
+          <%= submit_tag 'Submit', :class=>'create-submit-button' %>
+          <%= button_tag 'Cancel', :class=>'create-cancel-button', :type=>'button' %>
         </div>
       </div>
     <% end %>

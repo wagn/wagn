@@ -23,7 +23,7 @@
       </div>
     <% end %>
   <% end %>
-  <%= render :partial => 'views/new', :locals=>{ :card=>card, :rendered_instructions=>true } %>
+  <%= render :partial => 'views/new', :locals=>{ :card=>card, :redirect=>(card.setting('thanks') || 'TO_CARD') } %>
 </div>
 
 

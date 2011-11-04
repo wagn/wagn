@@ -1,8 +1,8 @@
 
 wagn = {
   setContentFields: (form, selector, fn) ->
-    $.each form.find(selector), ->
-      $(this).closest('.editor').find('#card_content')[0].value = fn.call()
+    $.each $(form).find(selector), ->
+      $(this).closest('.editor').find('#card_content')[0].value = fn.call this
       
   setContentFieldsFromMap: (form, array) ->
     $.each array, (selector, fn)-> wagn.setContentFields(form, selector, fn)
@@ -19,23 +19,33 @@ wagn = {
       conf = if tinyMCEConfig? then tinyMCEConfig else {}
       conf['mode'] = "specific_textareas"
       conf['editor_selector'] = "tinymce-textarea"
-      conf 
+      conf
+  
+  setSlotContent: (slot, val) -> $(slot).html(val)
+    
+  findSlot: (elem) -> $(elem).closest('.card-slot')
 }
 
+$('#new_card .cardtype-field').live 'change', ->
+  cardtypeField = $(this)
+  $.ajax '/card/new', {
+    data: cardtypeField.closest('form').serialize()
+    complete : (xhr, status) ->
+      wagn.setSlotContent wagn.findSlot(cardtypeField), xhr.responseText
+  }
 
-
-
-$('.card-form').live 'submit.wagn', ->
+$('.card-form').live 'submit', ->
   wagn.setContentFieldsFromMap( this, wagn.contentFieldFunctions )
+  true
 
 $(window).load -> setTimeout wagn.initializeTinyMCE(), 50
 
+$("#new_card").live "ajax:success", (event, data, status, xhr) ->
+  if xhr.status == 201
+    window.location=data
+  else
+    this.before 'need to put data in the right place' 
 
-
-#wagnOnload = ->
-#  Wagn.Messenger.flash()
-#  Wagn.runQueue(Wagn.onLoadQueue)
-#  setupLinksAndDoubleClicks()
 
 
 warn = (stuff) -> console.log stuff if console?

@@ -280,16 +280,6 @@ span:hover.open-missing {
 .edit-area p {
   padding: 2px;
 }
-.edit-area input[type=submit], 
-.edit-area input[type=button] {
-  margin: 2px 2px;
-  font-size: 11px;
-  background: #ddd;
-  color: #444;
-  border: 1px solid #bbb;
-  border-right: 1px solid #666;
-  border-bottom: 1px solid #666;
-}
 ul.pointer {
   margin: 0px;
   padding: 0px;

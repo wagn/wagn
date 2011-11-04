@@ -14,25 +14,18 @@ module Wagn::Model::Fetch
     #   - cache
     #   - database
     #   - virtual cards
-    #
-    # if a card is not in the cache and is found in the database, it is added to the cache
-    # if a card is not found in the database, a card of that name is created and added to cache 
 
     def fetch cardname, opts = {}
-      #warn "fetching #{cardname}"
       cardname = cardname.to_cardname unless Wagn::Cardname===cardname
-      return nil unless cardname.valid_cardname?
-      key = cardname.to_key
 
-      card = Card.cache.read( key )
-      
+      card = Card.cache.read( cardname.key )      
       return nil if card && opts[:skip_virtual] && card.new_card?
 
-      cacheable = card.nil?
-      card ||= find_by_key_and_trash( key, false )
+      needs_caching = card.nil?
+      card ||= find_by_key_and_trash( cardname.key, false )
       card ||= new :name=>cardname, :skip_type_lookup=>opts[:skip_virtual]
 
-      Card.cache.write( key, card ) if cacheable
+      Card.cache.write( cardname.key, card ) if needs_caching
       return nil if card.new_card? && (opts[:skip_virtual] || !card.virtual?)
 
       card.include_set_modules unless opts[:skip_module_loading]
@@ -51,6 +44,7 @@ module Wagn::Model::Fetch
     def exists?(cardname)
       fetch(cardname, :skip_virtual=>true, :skip_module_loading=>true).present?
     end
+    
   end
 
   def self.included(base)

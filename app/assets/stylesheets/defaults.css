@@ -82,17 +82,6 @@ select {
   color: #555;
   background: #ffc;
 }
-input[type=submit], 
-input[type=button] {
-  background: #99a;
-  color: #ffd;  
-  font-size: 11px;
-  border: 1px solid #bbb;
-  border-right: 1px solid #666;
-  border-bottom: 1px solid #666;
-  margin: 5px;
-  padding: 0px 6px;
-}
 input:focus,
 select:focus,
 textarea:focus,

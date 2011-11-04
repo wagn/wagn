@@ -2,7 +2,7 @@
   <%= raw slot.header %>
   <style><%= ".SELF-#{card.css_name} .edit-area .namepart-#{card.css_name} { display: none; }" %></style>
 
-  <% div( :id=>slot.id('card-body'), :class=>'card-body') do %>
+  <%= div( :id=>slot.id('card-body'), :class=>'card-body') do %>
     <%= raw slot.render_partial 'card/edit/content', :locals=>{:slot=>slot} %>
   <% end %>
 

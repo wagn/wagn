@@ -1,11 +1,10 @@
 
 wagn = {
-  
   contentFieldFunctions: {
     '.tinymce-textarea' : -> tinyMCE.getInstanceById( @id ).getContent()
   }
   
-  initializeTinyMCE: ->
+  initEditors: ->
     tinyMCE.init wagn.tinyMCEArgs()
 #    tinyMCE.execInstanceCommand( '#{eid}-tinymce', 'mceFocus' )
   
@@ -34,26 +33,45 @@ jQuery.fn.extend {
   setContentField: (fn)->
     this.closest('.editor').find('#card_content')[0].value = fn.call this[0]
 }
+###
+$.ajaxSetup { 
+  complete: -> 
+    $('.notice').html('WOOO')
+    alert('HOOOO')
+    wagn.initEditors() 
+}
+#####
+$(window).load -> wagn.initEditors()
 
-$('#new_card .cardtype-field').live 'change', ->
+
+
+$('.card-new-form .cardtype-field').live 'change', ->
   cardtypeField = $(this)
   $.ajax '/card/new', {
     data: cardtypeField.closest('form').serialize()
-    complete : (xhr, status) -> cardtypeField.setSlotContent xhr.responseText
+    complete: (xhr, status) ->
+      cardtypeField.setSlotContent xhr.responseText
+      wagn.initEditors()
+      
   }
 
 $('.card-form').live 'submit', ->
   $(this).setContentFieldsFromMap wagn.contentFieldFunctions
   true
 
-$(window).load -> setTimeout wagn.initializeTinyMCE(), 50
-
-$("#new_card").live "ajax:success", (event, data, status, xhr) ->
+$('.card-new-form').live "ajax:success", (event, data, status, xhr) ->
   if xhr.status == 201
     window.location=data
   else
-    this.before 'need to put data in the right place' 
+    $(this).setSlotContent data 
 
+$('.card-edit-form').live "ajax:success", (event, data) ->
+  $(this).setSlotContent data
+
+$('.edit-content-link').live 'ajax:success', (event, data) ->
+  $(this).setSlotContent data
+  wagn.initEditors()
+  
 
 
 warn = (stuff) -> console.log stuff if console?

@@ -3,7 +3,7 @@
 
 <% wrap_slot do |slot| %>
 
-  <%= slot.edit_submenu :name %>
+  <%= raw slot.edit_submenu :name %>
 
   <% div(:class=>'edit-area edit-name' ) do %>
      <h2>Change Name</h2>

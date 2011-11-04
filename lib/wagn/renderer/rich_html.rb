@@ -211,16 +211,18 @@ module Wagn
 
   def edit_submenu(current)
     div(:class=>'submenu') do
-      [[ :content,    true  ],
-       [ :name,       true, ],
-       [ :type,       !(card.type_template? || (card.typecode=='Cardtype' && card.cards_of_type_exist?))],
-       ].map do |attrib,ok,args|
-        if ok
-          link_to attrib, "card/edit/#{card.id}/#{attrib}", :remote=>true,
-            :class=>"edit-#{attrib}-link" + (attrib==on ? ' current-submenu-item' : '')
-        end
-      end.compact.join
-     end
+      raw(
+        [[ :content,    true  ],
+         [ :name,       true, ],
+         [ :type,       !(card.type_template? || (card.typecode=='Cardtype' && card.cards_of_type_exist?))],
+         ].map do |attrib,ok,args|
+          if ok
+            raw( link_to attrib, "/card/edit/#{card.id}/#{attrib}", :remote=>true,
+              :class=>"edit-#{attrib}-link" + (attrib==current ? ' current-submenu-item' : ''))
+          end
+        end.compact.join
+      )
+    end
   end
 
   def options_submenu(on)

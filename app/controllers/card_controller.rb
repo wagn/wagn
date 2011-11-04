@@ -109,47 +109,34 @@ class CardController < ApplicationController
   end
 
   def update
-    card_args=params[:card] || {}
+    @card = Card.find(@card.id) #refresh from database (cached card attributes often frozen)
+    
+    args=params[:card] || {}
+    args[:typecode] = Cardtype.classname_for(args.delete(:type)) if args[:type]
+    
     #fail "card params required" unless params[:card] or params[:cards]
 
-    # ~~~ REFACTOR! -- this conflict management handling is sloppy
-    #Rails.logger.debug "update set current_revision #{@card.name}, #{@card.current_revision}"
-    @current_revision_id = @card.current_revision.id
-    old_revision_id = card_args.delete(:current_revision_id) || @current_revision_id
-    if old_revision_id.to_i != @current_revision_id.to_i
-      changes  # FIXME -- this should probably be abstracted?
-      @no_changes_header = true
-      @changes = render_to_string :action=>'changes'
-      return render( :action=>:edit_conflict )
-    end
+#    # ~~~ REFACTOR! -- this conflict management handling is sloppy
+#    #Rails.logger.debug "update set current_revision #{@card.name}, #{@card.current_revision}"
+#    @current_revision_id = @card.current_revision.id
+#    old_revision_id = card_args.delete(:current_revision_id) || @current_revision_id
+#    if old_revision_id.to_i != @current_revision_id.to_i
+#      changes  # FIXME -- this should probably be abstracted?
+#      @no_changes_header = true
+#      @changes = render_to_string :action=>'changes'
+#      return render( :action=>:edit_conflict )
+#    end
     # ~~~~~~  /REFACTOR ~~~~~ #
 
-    @card_args = card_args
-
-    case
-    when params[:multi_edit];
-      #Rails.logger.debug "update[#{@card.name}] #{card_args.inspect}"
-      Card.update(@card.id, :cards=>params[:cards])
-    when card_args[:type]; @card.typecode=Cardtype.classname_for(card_args.delete(:type)); @card.save
-      #can't do this via update attributes: " Can't mass-assign these protected attributes: type"
-      #might be addressable via attr_accessors?
-    else; 
-      #Rails.logger.debug "update[#{@card.name}] #{card_args.inspect}"
-      @card.update_attributes(card_args)
-    end
+    @card.update_attributes(args)
 
     if @card.errors[:confirmation_required] && @card.errors.map {|e,f| e}.uniq.length==1
-      # If there is confirmation error and *only* that error
       @confirm = (@card.confirm_rename=true)
       @card.update_referencers = true
       return render(:partial=>'card/edit/name', :status=>200)
-      #return render_cardedit(:part=>:name, :status=>200)
     end
 
-    handling_errors do
-      @card = Card.fetch(@card.name)   # wtf?
-      request.xhr? ? render_update_slot(render_show_text, "updated #{@card.name}") : render_show
-    end
+    render_show
   end
 
   def save_draft

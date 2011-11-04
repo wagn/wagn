@@ -1,11 +1,6 @@
 
 wagn = {
-  setContentFields: (form, selector, fn) ->
-    $.each $(form).find(selector), ->
-      $(this).closest('.editor').find('#card_content')[0].value = fn.call this
       
-  setContentFieldsFromMap: (form, array) ->
-    $.each array, (selector, fn)-> wagn.setContentFields(form, selector, fn)
     
   contentFieldFunctions: {
     '.tinymce-textarea' : -> tinyMCE.getInstanceById( @id ).getContent()
@@ -20,22 +15,33 @@ wagn = {
       conf['mode'] = "specific_textareas"
       conf['editor_selector'] = "tinymce-textarea"
       conf
-  
-  setSlotContent: (slot, val) -> $(slot).html(val)
-    
-  findSlot: (elem) -> $(elem).closest('.card-slot')
+}
+
+
+jQuery.fn.extend {
+  slot: -> @closest '.card-slot'
+  setSlotContent: (val) -> @slot().html val
+
+  setContentFieldsFromMap: (map) -> 
+    this_form = $(this)
+    $.each map, (selector, fn)-> 
+      this_form.setContentFields(selector, fn)
+  setContentFields: (selector, fn) ->
+    $.each this.find(selector), -> 
+      $(this).setContentField(fn)
+  setContentField: (fn)->
+    this.closest('.editor').find('#card_content')[0].value = fn.call this[0]
 }
 
 $('#new_card .cardtype-field').live 'change', ->
   cardtypeField = $(this)
   $.ajax '/card/new', {
     data: cardtypeField.closest('form').serialize()
-    complete : (xhr, status) ->
-      wagn.setSlotContent wagn.findSlot(cardtypeField), xhr.responseText
+    complete : (xhr, status) -> cardtypeField.setSlotContent xhr.responseText
   }
 
 $('.card-form').live 'submit', ->
-  wagn.setContentFieldsFromMap( this, wagn.contentFieldFunctions )
+  $(this).setContentFieldsFromMap wagn.contentFieldFunctions
   true
 
 $(window).load -> setTimeout wagn.initializeTinyMCE(), 50

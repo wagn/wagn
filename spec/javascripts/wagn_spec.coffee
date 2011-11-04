@@ -10,11 +10,11 @@ describe "card-form", ->
     expect($('form')).toBeDefined
 
   it "should be able to populate the content field based on nearby selector", ->
-    wagn.setContentFields $('form'), '.tinymce-textarea', -> 1+2 
+    $('form').setContentFields '.tinymce-textarea', -> 1+2 
     expect($('#card_content')).toHaveValue '3'
 
   it "should be able to populate content fields from a map", ->
-    wagn.setContentFieldsFromMap $('form'), { '.tinymce-textarea': -> 3+2 }
+    $('form').setContentFieldsFromMap { '.tinymce-textarea': -> 3+2 }
     expect($('#card_content')).toHaveValue '5'
     
 ###

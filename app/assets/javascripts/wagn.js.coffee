@@ -1,27 +1,19 @@
-
 wagn = {
-  contentFieldFunctions: {
-    '.tinymce-textarea' : -> tinyMCE.getInstanceById( @id ).getContent()
-  }
-  
-  initEditors: ->
-    tinyMCE.init wagn.tinyMCEArgs()
-#    tinyMCE.execInstanceCommand( '#{eid}-tinymce', 'mceFocus' )
-  
-  tinyMCEArgs: ->
-      conf = if tinyMCEConfig? then tinyMCEConfig else {}
-      conf['mode'] = "specific_textareas"
-      conf['editor_selector'] = "tinymce-textarea"
-      conf
+  initializeEditors : (map) ->
+    map = wagnConf.editorInitFunctionMap unless map?
+    $.each map, (selector, fn) ->
+      $.each $.find(selector), ->
+        warn "calling " + fn + ' on ' + this + ' selector = ' + selector
+        fn.call this
 }
-
 
 jQuery.fn.extend {
   slot: -> @closest '.card-slot'
   
   setSlotContent: (val) -> @slot().html val
 
-  setContentFieldsFromMap: (map) -> 
+  setContentFieldsFromMap: (map) ->
+    map = wagnConf.editorContentFunctionMap unless map?
     this_form = $(this)
     $.each map, (selector, fn)-> 
       this_form.setContentFields(selector, fn)
@@ -34,15 +26,15 @@ jQuery.fn.extend {
     this.closest('.editor').find('#card_content')[0].value = fn.call this[0]
 }
 
-$(window).load -> wagn.initEditors()
+$(window).load -> wagn.initializeEditors()
 
-$('.card-new-form .cardtype-field').live 'change', ->
+$('.cardtype-field').live 'change', ->
   cardtypeField = $(this)
   $.ajax '/card/new', {
     data: cardtypeField.closest('form').serialize()
     complete: (xhr, status) ->
       cardtypeField.setSlotContent xhr.responseText
-      wagn.initEditors()   
+      wagn.initializeEditors()
   }
 
 $('.card-new-form').live "ajax:success", (event, data, status, xhr) ->
@@ -59,15 +51,17 @@ $('.card-edit-name-form').live "ajax:success", (event, data) ->
   
 $('.edit-name-link').live 'ajax:success', (event, data) ->
   $(this).setSlotContent data
+  
+$('.edit-type-link').live 'ajax:success', (event, data) ->
+  $(this).setSlotContent data
 
 $('.edit-content-link').live 'ajax:success', (event, data) ->
   $(this).setSlotContent data
-  wagn.initEditors()
-
+  wagn.initializeEditors()
 
 $('body').delegate '.card-form', 'submit', ->
-  $(this).setContentFieldsFromMap wagn.contentFieldFunctions
-  false
+  $(this).setContentFieldsFromMap()
+  true
 
 warn = (stuff) -> console.log stuff if console?
 
@@ -109,6 +103,4 @@ warn = (stuff) -> console.log stuff if console?
 
 
 #jQuery(window).bind('load', wagnOnload)
-
-
 window.wagn = wagn

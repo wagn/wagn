@@ -1,10 +1,9 @@
-<%- @card = slot.card %>
+<%- @card ||= slot.card %>
 <%= raw slot.edit_submenu :name %>
 
 <%= div(:class=>'edit-area edit-name' ) do %>
-   <h2>Change Name</h2>
-  <%= form_for :card, :url=>"/card/update/#{@card.id}", 
-    :html=>{ :class=>'card-edit-name-form', :remote=>true } do |f| %>
+  <h2>Change Name</h2>
+  <%= form_for :card, :url=>"/card/update/#{@card.id}", :html=>{ :class=>'card-edit-name-form', :remote=>true } do |f| %>
     <div>to <%= raw slot.name_field(f) %></div>
 
     <% if @card.confirm_rename==true %>

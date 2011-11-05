@@ -7,6 +7,6 @@
 //= require jquery
 //= require jquery_ujs
 //= require calendar
-//= require config
+//= require wagn_conf
 //= require wagn
 

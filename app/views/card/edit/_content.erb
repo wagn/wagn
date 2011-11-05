@@ -1,6 +1,6 @@
 <%= raw slot.edit_submenu(params[:inclusions] ? :inclusions : :content) %>
 <% if inst = card.setting_card('edit help') %>
-  <div class="instruction"><%= slot.subrenderer(inst).render :core %></div>
+  <div class="instruction"><%= raw( slot.subrenderer(inst).render :core ) %>></div>
 <% end %>
 
 <% if card.hard_template and card.hard_template.ok? :read %>
@@ -11,10 +11,10 @@
 
 <%= div( :id=>slot.id('edit-area'), :class=>"editor edit-area #{card.hard_template ? :templated : ''}" ) do %>
   <%= form_for :card, :url=>"/card/update/#{card.cardname.to_url_key}",
-      :html=>{ :class=>'card-form card-edit-form', :id=>(slot.context + '-form'), :remote=>true } do |form| %>
+      :html=>{ :class=>'card-form card-edit-form standard-slotter', :id=>(slot.context + '-form'), :remote=>true } do |form| %>
     <div>
       <% slot.form = form %>
-      <%= raw (params[:inclusions] ? slot.render_multi_edit : slot.render_edit) %>
+      <%= raw( params[:inclusions] ? slot.render_multi_edit : slot.render_edit) %>
     </div>
     <%= raw slot.captcha_tags %>
     <div class="edit-button-area">

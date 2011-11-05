@@ -1,4 +1,4 @@
-<%= slot.options_submenu(:settings) %>
+<%= raw( slot.options_submenu(:settings) ) %>>
 <div class="settings-tab">
   <%- 
   self_set_name = slot.card.name+'+*self'
@@ -10,12 +10,12 @@
       <div class="options-set">
         <div class="options-set-label"><%= set_card.label %></div>
         <div class="options-set-content">
-          <%= slot.process_inclusion set_card, :view=>:closed %>
+          <%= raw( slot.process_inclusion set_card, :view=>:closed ) %>>
         </div>
       </div>
     <%- end %>
   <%- else %>
-    <%= slot.subrenderer(Card.fetch self_set_name).render :content %>
+    <%= raw( slot.subrenderer(Card.fetch self_set_name).render :content ) %>>
   <%- end %>
   
   <% if !card.extension_type && System.toggle(card.setting('accountable')) && System.ok?(:create_accounts) && card.ok?(:update) %>

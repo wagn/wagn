@@ -27,8 +27,8 @@ class Wagn::Renderer
     end
 
     #Javscript
-    bits << javascript_include_tag("/tinymce/jscripts/tiny_mce/tiny_mce.js") 
     bits << javascript_include_tag('application')
+    bits << javascript_include_tag("/tinymce/jscripts/tiny_mce/tiny_mce.js") 
     
     bits.join("\n")
   end

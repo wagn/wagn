@@ -1,5 +1,5 @@
 <%  wrap_slot do |slot| %>
-  <%= slot.header %>
+  <%= raw( slot.header ) %>>
 
   <% div(:class=>'submenu') do
      @items.each do |item|
@@ -10,10 +10,10 @@
         ) %>
     <% end %>
   <% end %>
-  <%= slot.notice %>
+  <%= raw( slot.notice ) %>>
 
   <div class="open-content related">
-    <%= slot.subrenderer(Card.fetch_or_new("#{card.name}+#{@current}")).render :content %>
+    <%= raw( slot.subrenderer(Card.fetch_or_new("#{card.name}+#{@current}")).render :content ) %>>
   </div>
 
   <%= javascript_tag("setupLinksAndDoubleClicks();") %>

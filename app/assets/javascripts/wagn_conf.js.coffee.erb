@@ -11,12 +11,10 @@ wagnConf = {
     '.tinymce-textarea' : -> wagnConf.initTinyMCE()
   }
 
-
   initTinyMCE: ()->
-    console.log "initTinyMCE called " + this
     conf = if wagnConf.tinyMCEConfig? then wagnConf.tinyMCEConfig else {}
     conf['mode'] = "specific_textareas"
-    conf['editor_selector'] = this.id
+    conf['editor_selector'] = @id
     tinyMCE.init conf 
 }
 

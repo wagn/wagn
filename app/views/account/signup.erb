@@ -10,7 +10,7 @@
 
     <div class="instruction">
       <% if inst = card.setting_card('add help', 'edit help') %> 
-        <%= slot.subrenderer(inst).render :core %>
+        <%= raw( slot.subrenderer(inst).render :core ) %>>
       <% elsif !System.ok?(:create_accounts) %>
         <p><strong>All Account Requests are subject to review.</strong></p><%#ENGLISH%>
       <% else %>
@@ -26,7 +26,7 @@
         <%- slot.form = f %>
         <%= error_messages_for @user %> 
         <table class="fieldset">
-          <%= slot.option_header 'Account Details' %><%#ENGLISH%>
+          <%= raw( slot.option_header 'Account Details' ) %>><%#ENGLISH%>
           <%- new_name_field = capture do %><%= f.text_field :name, {:class=>'new-card-name', :id=>"new-card-name-field"} %><% end %>
           <%= slot.option( new_name_field,
               :name=>"name", 
@@ -34,18 +34,18 @@
               :label=>"Name") %>
 
           <%= render :partial=>'account/email' %>
-          <%= slot.option_header 'About You' %>
+          <%= raw( slot.option_header 'About You' ) %>>
         </table>    
   
         <div class="open-content">
-          <%= slot.render_edit %>
+          <%= raw( slot.render_edit ) %>>
         </div>
-        <%= slot.captcha_tags :full=>true %>
+        <%= raw( slot.captcha_tags :full=>true ) %>>
         <div class="submit-tag">
           <%= submit_tag 'Submit' %>
         </div>
 
-        <%= slot.notice %>
+        <%= raw( slot.notice ) %>>
   
   
       <% end %>

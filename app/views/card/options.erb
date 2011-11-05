@@ -4,9 +4,9 @@
     subtab = params[:attribute] || (has_account ? 'account' : 'settings')
 %>
 
-  <%= slot.header %>
+  <%= raw( slot.header ) %>>
   <div class="options-body">
-    <%= slot.render_partial "card/options/#{subtab}" %>
+    <%= raw( slot.render_partial "card/options/#{subtab}" ) %>>
   </div>
   <span class="notice"><%= flash[:notice] %></span>
 <% end %>

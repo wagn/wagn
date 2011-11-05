@@ -218,7 +218,7 @@ module Wagn
          ].map do |attrib,ok,args|
           if ok
             raw( link_to attrib, "/card/edit/#{card.id}/#{attrib}", :remote=>true,
-              :class=>"edit-#{attrib}-link" + (attrib==current ? ' current-submenu-item' : ''))
+              :class=>"standard-slotter edit-#{attrib}-link" + (attrib==current ? ' current-submenu-item' : ''))
           end
         end.compact.join
       )
@@ -309,7 +309,7 @@ module Wagn
     klass = { 'edit' => 'edit-content-link'}
     menu_action = (%w{ show update }.member?(action) ? 'view' : action)
     content_tag :li, link_to_action( to_action.capitalize, to_action,
-      :class=> "#{klass[to_action]} #{menu_action==to_action ? 'current' : ''}"
+      :class=> "standard-slotter #{klass[to_action]} #{menu_action==to_action ? 'current' : ''}"
     )
   end
 

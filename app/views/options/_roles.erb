@@ -1,7 +1,7 @@
 <%- roles = Role.find :all, :conditions=>"codename not in ('auth','anon')" %>
 <%- user_roles = extension.roles %>
 
-  <%= slot.option_header 'User Roles' %>
+  <%= raw( slot.option_header 'User Roles' ) %>>
   <%- option_content = capture do %>
     <% if System.ok? :assign_user_roles %>
       <%= hidden_field_tag :save_roles, true %>

@@ -6,7 +6,7 @@
 %>
 
 <% wrap_slot do |slot| %>
-  <%= slot.header unless @skip_slot_header %>
+  <%= raw( slot.header unless @skip_slot_header ) %>>
     <div id="denied" class="instruction open-content">
       <h1>Ooo.  Sorry, but...</h1>  <%#ENGLISH%>
 
@@ -25,7 +25,7 @@
       </p>
 
       <% unless @skip_slot_header or @deny=='view' %>
-        <p>(See the <%= slot.link_to_action('options', 'options') %> tab to learn more.)</p>
+        <p>(See the <%= raw( slot.link_to_action('options', 'options') ) %>> tab to learn more.)</p>
       <% end %>
 
       <% if User.current_user.anonymous? && Card.new(:typecode=>'InvitationRequest').ok?(:create) %>
@@ -36,7 +36,7 @@
     <% if @skip_slot_header && !@type %>
       <p><%= link_to_function 'Cancel', %{getSlotSpan(this).replace('')} %></p>
     <% end %>
-  <%= slot.footer unless @skip_slot_header %>
+  <%= raw( slot.footer unless @skip_slot_header ) %>>
 <% end %>
 
 <%# FIXME: this is duplicated effort in lots of cases %>

@@ -3,7 +3,6 @@ wagn = {
     map = wagnConf.editorInitFunctionMap unless map?
     $.each map, (selector, fn) ->
       $.each $.find(selector), ->
-        warn "calling " + fn + ' on ' + this + ' selector = ' + selector
         fn.call this
 }
 
@@ -28,7 +27,7 @@ jQuery.fn.extend {
 
 $(window).load -> wagn.initializeEditors()
 
-$('.cardtype-field').live 'change', ->
+$('#new.cardtype-field').live 'change', ->
   cardtypeField = $(this)
   $.ajax '/card/new', {
     data: cardtypeField.closest('form').serialize()
@@ -43,20 +42,11 @@ $('.card-new-form').live "ajax:success", (event, data, status, xhr) ->
   else
     $(this).setSlotContent data 
 
-$('.card-edit-form').live "ajax:success", (event, data) ->
+#$('.standard-slotter').live "ajax:success", (event, data) ->
+$('body').delegate '.standard-slotter', "ajax:success", (event, data) ->
   $(this).setSlotContent data
 
-$('.card-edit-name-form').live "ajax:success", (event, data) ->
-  $(this).setSlotContent data
-  
-$('.edit-name-link').live 'ajax:success', (event, data) ->
-  $(this).setSlotContent data
-  
-$('.edit-type-link').live 'ajax:success', (event, data) ->
-  $(this).setSlotContent data
-
-$('.edit-content-link').live 'ajax:success', (event, data) ->
-  $(this).setSlotContent data
+$('.edit-content-link').live 'ajax:complete', ()->
   wagn.initializeEditors()
 
 $('body').delegate '.card-form', 'submit', ->
@@ -85,22 +75,6 @@ warn = (stuff) -> console.log stuff if console?
 #      @alert(flash) if flash != ''
 #}
 #
-#Wagn.runQueue = (queue) ->
-#  result = true
-#  if queue? then $.each queue, ->
-#    result = false if !@call()
-#  result
-#
-#Wagn.onLoadQueue   = []
-#Wagn.onSaveQueue   = {}
-#Wagn.onCancelQueue = {}
-#
-#Wagn.EditorContent = {
-#  '.tinymce-textarea': -> tinyMCE.getInstanceById( @id ).getContent()
-#}
-
-  
 
 
-#jQuery(window).bind('load', wagnOnload)
 window.wagn = wagn

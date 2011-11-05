@@ -62,8 +62,6 @@ module ExceptionSystem
     @request_type!='html'
   end
   
-  def requesting_ajax?
-    request.xhr?
-  end
+
   
 end

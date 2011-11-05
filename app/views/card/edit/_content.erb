@@ -18,7 +18,7 @@
     </div>
     <%= raw slot.captcha_tags %>
     <div class="edit-button-area">
-      <%= button_to_remote "Delete", { :url=>slot.url_for("card/remove") }, :style=>'float:right'  %>
+      <%= button_tag "Delete", :class=>'edit-delete-button' %>
       <%= submit_tag 'Submit', :class=>'edit-submit-button' %>
       <%= button_tag 'Cancel', :class=>'edit-cancel-button', :type=>'button' %>
     </div>

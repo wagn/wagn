@@ -8,11 +8,7 @@ class ApplicationController < ActionController::Base
   include LocationHelper
   helper :all
 
-  helper_method :main_card?
-
-  attr_accessor :renderer
-
-  include ActionView::Helpers::TextHelper #FIXME: do we have to do this? its for strip_tags() in edit()
+#  include ActionView::Helpers::TextHelper #FIXME: do we have to do this? its for strip_tags() in edit()
   include ActionView::Helpers::SanitizeHelper
 
   before_filter :per_request_setup, :except=>[:render_fast_404]
@@ -21,14 +17,7 @@ class ApplicationController < ActionController::Base
   # can we turn sessions off for it and see if that helps?
   layout :wagn_layout, :except=>[:render_fast_404]
   
-  
- # def set_encoding
- #   respond_to do |format|
- #     format.text {  headers['Content-Type'] ||= 'text/css' }
- #     format.css {  headers['Content-Type'] ||= 'text/css' }
- #   end  
- # end
-  
+    
   BUILTIN_LAYOUTS = %w{ blank noside simple pre none }
 
 
@@ -81,6 +70,9 @@ class ApplicationController < ActionController::Base
     @card.ok?(:update) || render_denied('edit')
   end
 
+  def ajax?
+    request.xhr?
+  end
 
  #def create_ok
  #  @type = params[:type] || (params[:card] && params[:card][:type]) || 'Basic'
@@ -107,7 +99,7 @@ class ApplicationController < ActionController::Base
       # FIXME this is a hack so that you can view load rules that don't exist.  need better approach 
       # (but this is not tested; please don't delete without adding a test) 
       @card
-    when requesting_ajax? || ![nil, :html].member?(params[:format])  #missing card, nonstandard request
+    when ajax? || ![nil, :html].member?(params[:format])  #missing card, nonstandard request
       ##  I think what SHOULD happen here is that we render the missing view and let the Renderer decide what happens.
       raise Wagn::NotFound, "We can't find a card named #{@card.name}"  
     when @card.ok?(:create)  # missing card, user can create
@@ -203,13 +195,13 @@ class ApplicationController < ActionController::Base
     stuff_with_javascript = stuff + js_tag
 
     case
-      when requesting_ajax? && !params['_update'];
+      when ajax? && !params['_update'];
         render :update do |page|
           page << %{notice = getNextElement(#{get_slot.selector},'notice');\n}
           page << %{notice.update('#{escape_javascript(stuff)}');\n}
           page << on_error_js
         end
-      when requesting_ajax?
+      when ajax?
         render :inline=>stuff_with_javascript, :layout=>nil, :status=>422
       else
         render :inline=>stuff_with_javascript, :layout=>'application', :status=>422

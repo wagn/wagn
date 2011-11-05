@@ -1,9 +1,8 @@
 class CardController < ApplicationController
   helper :wagn, :card
 
-  EDIT_ACTIONS    = [ :edit, :update, :rollback, :save_draft, :watch, :unwatch ]
-  ACCOUNT_ACTIONS = [ :new_account, :create_account, :update_account ]
-  LOAD_ACTIONS = EDIT_ACTIONS + ACCOUNT_ACTIONS + [ :show, :index, :mine, :comment, :remove, :view, :changes, :options, :related ]
+  EDIT_ACTIONS = [ :edit, :update, :rollback, :save_draft, :watch, :unwatch, :new_account, :create_account, :update_account ]
+  LOAD_ACTIONS =  EDIT_ACTIONS + [ :show, :index, :mine, :comment, :remove, :view, :changes, :options, :related ]
 
   before_filter :index_preload, :only=> [ :index ]
   before_filter :mine_preload,  :only=> [ :mine ]
@@ -171,26 +170,17 @@ class CardController < ApplicationController
   def remove
     @card.confirm_destroy = params[:card][:confirm_destroy] if params[:card]
     captcha_ok = captcha_required? ? verify_captcha : true
-    return render_update_slot( render_to_string(:partial=>'confirm_remove'), "confirmation required") unless captcha_ok
-
+    
+    return render( :action =>'confirm_remove' ) unless captcha_ok
     @card.destroy
+    return render( :action =>'confirm_remove' ) if !@card.errors[:confirmation_required].empty?
 
-    if @card.errors[:confirmation_required]
-      return render_update_slot( render_to_string(:partial=>'confirm_remove'), "errors on confirmation")
-    end
-
-    handling_errors do
-      discard_locations_for(@card)
-      render_update_slot do |page,target|
-        if main_card?
-          flash[:notice] =  "#{@card.name} removed"
-          page.wagn.messenger.note "#{@card.name} removed."
-          page.redirect_to previous_location
-        else
-          target.replace %{<div class="faint">#{@card.name} was just removed</div>}
-          page.wagn.messenger.note( "#{@card.name} removed. ")
-        end
-      end
+    discard_locations_for(@card)
+    if params[:redirect]
+      page.wagn.messenger.note "#{@card.name} removed."
+      page.redirect_to previous_location
+    else
+      render :text => "#{@card.name} removed"
     end
   end
 
@@ -265,14 +255,14 @@ class CardController < ApplicationController
     watchers = Card.fetch_or_new( @card.cardname.star_rule(:watchers ) )
     watchers.add_item User.current_user.card.name
     #flash[:notice] = "You are now watching #{@card.name}"
-    request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
+    ajax? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
   def unwatch
     watchers = Card.fetch_or_new( @card.cardname.star_rule(:watchers ) )
     watchers.drop_item User.current_user.card.name
     #flash[:notice] = "You are no longer watching #{@card.name}"
-    request.xhr? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
+    ajax? ? render(:inline=>%{<%= get_slot.watch_link %>}) : view
   end
 
   def auto_complete_for_navbox

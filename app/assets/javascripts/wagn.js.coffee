@@ -25,16 +25,12 @@ jQuery.fn.extend {
     this.closest('.editor').find('#card_content')[0].value = fn.call this[0]
 }
 
+#~~~~~ ( EVENTS )
+
 $(window).load -> wagn.initializeEditors()
 
-$('#new.cardtype-field').live 'change', ->
-  cardtypeField = $(this)
-  $.ajax '/card/new', {
-    data: cardtypeField.closest('form').serialize()
-    complete: (xhr, status) ->
-      cardtypeField.setSlotContent xhr.responseText
-      wagn.initializeEditors()
-  }
+$('body').delegate '.standard-slotter', "ajax:success", (event, data) ->
+  $(this).setSlotContent data
 
 $('.card-new-form').live "ajax:success", (event, data, status, xhr) ->
   if xhr.status == 201
@@ -43,11 +39,21 @@ $('.card-new-form').live "ajax:success", (event, data, status, xhr) ->
     $(this).setSlotContent data 
 
 #$('.standard-slotter').live "ajax:success", (event, data) ->
-$('body').delegate '.standard-slotter', "ajax:success", (event, data) ->
-  $(this).setSlotContent data
 
 $('.edit-content-link').live 'ajax:complete', ()->
   wagn.initializeEditors()
+
+$('.new-cardtype-field').live 'change', ->
+  cardtypeField = $(this)
+  $.ajax '/card/new', {
+    data: cardtypeField.closest('form').serialize()
+    complete: (xhr, status) ->
+      cardtypeField.setSlotContent xhr.responseText
+      wagn.initializeEditors()
+  }
+
+$('.edit-cardtype-field').live 'change', ->
+  $(this).closest('form').submit()
 
 $('body').delegate '.card-form', 'submit', ->
   $(this).setContentFieldsFromMap()

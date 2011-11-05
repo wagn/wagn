@@ -35,9 +35,9 @@ module WagnHelper
         nil_given ? Wagn::Renderer.current_slot : Wagn::Renderer.current_slot.subrenderer(card)
       else
         Wagn::Renderer.current_slot = Wagn::Renderer.new( card,
-            opts.merge(:context=>context, :action=>action, :template=>self, :controller=>self.controller) )
+          opts.merge(:context=>context, :action=>action, :template=>self, :controller=>self.controller)
+        )
     end
-    controller and controller.renderer = slot or slot
   end
 
   module MyCrappyJavascriptHack

@@ -40,5 +40,4 @@ describe Card, "rename with dependants" do
     @c.save.should_not be_true
     @c.errors[:confirmation_required].should_not be_nil
   end
-  
 end

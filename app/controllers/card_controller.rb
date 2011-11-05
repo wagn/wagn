@@ -103,19 +103,14 @@ class CardController < ApplicationController
   #--------------( editing )
 
   def edit
-    if ['name','type'].member?(params[:attribute])
-      render :partial=>"card/edit/#{params[:attribute]}"
-    end
+    @attribute = params[:attribute] || 'content'
   end
 
   def update
-    @card = Card.find(@card.id) #refresh from database (cached card attributes often frozen)
-    
+    @card = Card.find(@card.id) #refresh from database (cached card attributes often frozen)    
     args=params[:card] || {}
     args[:typecode] = Cardtype.classname_for(args.delete(:type)) if args[:type]
     
-    #fail "card params required" unless params[:card] or params[:cards]
-
 #    # ~~~ REFACTOR! -- this conflict management handling is sloppy
 #    #Rails.logger.debug "update set current_revision #{@card.name}, #{@card.current_revision}"
 #    @current_revision_id = @card.current_revision.id
@@ -130,13 +125,13 @@ class CardController < ApplicationController
 
     @card.update_attributes(args)
 
-    if @card.errors[:confirmation_required] && @card.errors.map {|e,f| e}.uniq.length==1
-      @confirm = (@card.confirm_rename=true)
-      @card.update_referencers = true
-      return render(:partial=>'card/edit/name', :status=>200)
+    if !@card.errors[:confirmation_required].empty?
+      @confirm = @card.confirm_rename = @card.update_referencers = true
+      @attribute = 'name'
+      render :action=>'edit'
+    else
+      render_show
     end
-
-    render_show
   end
 
   def save_draft

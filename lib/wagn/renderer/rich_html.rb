@@ -327,8 +327,12 @@ module Wagn
     button_to_remote( text, r_opts, html_opts )
   end
 
-  def name_field(form,options={})
-    form.text_field( :name, { :class=>'field card-name-field', :autocomplete=>'off'}.merge(options))
+  def name_field(form, options={})
+    form.text_field( :name, { 
+      :class=>'field card-name-field',
+      :value=>card.name, #needed because otherwise gets wrong value if there are updates
+      :autocomplete=>'off'
+    }.merge(options))
   end
 
   def typecode_field(form,options={})

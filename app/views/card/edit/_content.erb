@@ -1,6 +1,4 @@
-<%= raw get_slot.edit_submenu(params[:inclusions] ? :inclusions : :content) %>
-
-
+<%= raw slot.edit_submenu(params[:inclusions] ? :inclusions : :content) %>
 <% if inst = card.setting_card('edit help') %>
   <div class="instruction"><%= slot.subrenderer(inst).render :core %></div>
 <% end %>
@@ -22,7 +20,7 @@
     <div class="edit-button-area">
       <%= button_to_remote "Delete", { :url=>slot.url_for("card/remove") }, :style=>'float:right'  %>
       <%= submit_tag 'Submit', :class=>'edit-submit-button' %>
-      <%= button_tag 'Cancel', :class=>'eidt-cancel-button', :type=>'button' %>
+      <%= button_tag 'Cancel', :class=>'edit-cancel-button', :type=>'button' %>
     </div>
 
   <% end %>

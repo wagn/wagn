@@ -54,16 +54,22 @@ $('.card-new-form').live "ajax:success", (event, data, status, xhr) ->
 $('.card-edit-form').live "ajax:success", (event, data) ->
   $(this).setSlotContent data
 
+$('.card-edit-name-form').live "ajax:success", (event, data) ->
+  $(this).setSlotContent data
+  
+$('.edit-name-link').live 'ajax:success', (event, data) ->
+  $(this).setSlotContent data
+
 $('.edit-content-link').live 'ajax:success', (event, data) ->
   $(this).setSlotContent data
   wagn.initEditors()
-  
+
 
 $('body').delegate '.card-form', 'submit', ->
   $(this).setContentFieldsFromMap wagn.contentFieldFunctions
   false
 
-#warn = (stuff) -> console.log stuff if console?
+warn = (stuff) -> console.log stuff if console?
 
 #Wagn.Messenger = {  
 #  element: -> $('#alerts'),

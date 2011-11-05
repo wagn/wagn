@@ -1,12 +1,7 @@
-<%-  
-  wrap_slot do |slot|
-    has_account = slot.card.extension_type=='User'
-    subtab = params[:attribute] || (has_account ? 'account' : 'settings')
-%>
-
-  <%= raw( slot.header ) %>
+<% wrap_slot do |slot| %>
+  <%= raw slot.header %>
   <div class="options-body">
-    <%= raw( slot.render_partial "card/options/#{subtab}" ) %>
+    <%= raw slot.render_partial( "card/options/#{@subtab}", :locals=> { :slot => slot } ) %>
   </div>
   <span class="notice"><%= flash[:notice] %></span>
 <% end %>

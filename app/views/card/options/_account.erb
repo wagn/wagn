@@ -1,14 +1,15 @@
+<%- locals = {:slot=>slot, :card=>slot.card, :extension=>card.extension } %>
 <%= raw( slot.options_submenu(:account) ) %>
 
-<%- locals = {:card=>card, :slot=>slot, :extension=>card.extension } %>
-<% form_for :card, :url=>slot.url_for('options/update') do |form| %>
+<%= form_for :card, :url=>"/card/update_account/#{card.id}", :remote=>true,
+  :html=>{ :class=>'standard-slotter' } do |form| %>
 
   <table class="fieldset">
     <%- if edit_user_context(card)=='user' or System.ok?(:administrate_users) %>
-      <%= raw( slot.option_header 'Account Details' ) %>
+      <%= raw slot.option_header( 'Account Details' ) %>
       <%= render :partial=>'account/edit',  :locals=>locals %>
     <%- end %>
-    <%= render :partial=>'options/roles', :locals=>locals %>
+    <%= render :partial=>'card/options/roles', :locals=>locals %>
 
     <% if slot.options_need_save %>
       <tr><td colspan="3"><%= submit_tag 'Save Changes' %></td></tr>

@@ -1,8 +1,9 @@
 class CardController < ApplicationController
   helper :wagn, :card
 
-  EDIT_ACTIONS =  [ :edit, :update, :rollback, :save_draft, :watch, :unwatch ]
-  LOAD_ACTIONS = EDIT_ACTIONS + [ :show, :index, :mine, :comment, :remove, :view, :changes, :options, :related ]
+  EDIT_ACTIONS    = [ :edit, :update, :rollback, :save_draft, :watch, :unwatch ]
+  ACCOUNT_ACTIONS = [ :new_account, :create_account, :update_account ]
+  LOAD_ACTIONS = EDIT_ACTIONS + ACCOUNT_ACTIONS + [ :show, :index, :mine, :comment, :remove, :view, :changes, :options, :related ]
 
   before_filter :index_preload, :only=> [ :index ]
   before_filter :mine_preload,  :only=> [ :mine ]
@@ -200,7 +201,8 @@ class CardController < ApplicationController
   end
 
   def options
-    @extension = @card.extension
+    @subtab = params[:attribute]
+    @subtab ||= (@card.extension_type=='User' ? 'account' : 'settings')
   end
 
   def changes
@@ -219,6 +221,44 @@ class CardController < ApplicationController
 #    @items << 'config'
     @current = params[:attribute] || @items.first.to_cardname.to_key
   end
+
+
+  #-------- ( ACCOUNT METHODS )
+  
+  def update_account
+    @extension = @card.extension 
+    
+    if params[:save_roles]
+      System.ok! :assign_user_roles
+      role_hash = params[:user_roles] || {}
+      @extension.roles = Role.find role_hash.keys
+    end
+
+    if @extension && params[:extension]
+      @extension.update_attributes!(params[:extension])
+    end
+    
+    flash[:notice] ||= "Got it!  Your changes have been saved."  #ENGLISH
+    @subtab = :account
+    render :action=>'options'
+  end
+
+  def new_account
+    System.ok!(:create_accounts) && @card.ok?(:update)
+  end
+
+  def create_account
+    System.ok!(:create_accounts) && @card.ok?(:update)
+    email_args = { :subject => "Your new #{System.site_title} account.",   #ENGLISH
+                   :message => "Welcome!  You now have an account on #{System.site_title}." } #ENGLISH
+    @user, @card = User.create_with_card(params[:user],@card, email_args)
+    raise ActiveRecord::RecordInvalid.new(@user) if !@user.errors.empty?
+    @extension = User.new(:email=>@user.email)
+    flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
+    render_update_slot render_to_string(:template=>'card/options')
+  end
+
+
 
   #-------- ( MISFIT METHODS )
   def watch
@@ -276,6 +316,8 @@ class CardController < ApplicationController
     #render :partial=>'types/pointer/field', :locals=>params.merge({:link=>:add,:card=>@card})
     render(:text => Wagn::Renderer.new(@card, :context=>params[:eid]).render(:field, :link=>:add, :index=>params[:index]) )
   end
+
+
 
 end
 

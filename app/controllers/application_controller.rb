@@ -189,10 +189,6 @@ class ApplicationController < ActionController::Base
         end.join(",<br> ") +
         '</p></div>'
 
-    # Create used this scroll
-    #<%= javascript_tag 'scroll(0,0)'
-
-    #errors.each{|attr,msg| puts "#{attr} - #{msg}" }
     # getNextElement() will crawl up nested slots until it finds one with a notice div
 
     on_error_js = ""

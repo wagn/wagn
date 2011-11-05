@@ -182,21 +182,8 @@ module Wagn
     %{<span class="notice"></span>}
   end
 
-  def id(area="")
-    area, id = area.to_s, ""
-    id << "javascript:#{get(area)}"
-  end
-
   def nested_context?
     context.split('_').length > 2
-  end
-
-  def get(area="")
-    area.empty? ? "getSlotSpan(this)" : "getSlotElement(this, '#{area}')"
-  end
-
-  def selector(area="")
-    "getSlotFromContext('#{context}')";
   end
 
   def card_id
@@ -218,34 +205,24 @@ module Wagn
          ].map do |attrib,ok,args|
           if ok
             raw( link_to attrib, "/card/edit/#{card.id}/#{attrib}", :remote=>true,
-              :class=>"standard-slotter edit-#{attrib}-link" + (attrib==current ? ' current-submenu-item' : ''))
+              :class=>"standard-slotter edit-#{attrib}-link" + (attrib==current ? ' current-subtab' : ''))
           end
         end.compact.join
       )
     end
   end
 
-  def options_submenu(on)
+  def options_submenu(current)
     return '' if card && card.extension_type != 'User'
     div(:class=>'submenu') do
-      [:account, :settings].map do |key|
-        link_to( key, "card/options",# {}, key), :update => id },
-          :class=>(key==on ? 'on' : ''), :remote=>true
-        )
-      end.join
+      raw(
+        [:account, :settings].map do |key|
+          link_to( key, "/card/options/#{card.id}/#{key}",
+            :class=>'standard-slotter' + (key==current ? ' current-subtab' : ''), :remote=>true
+          )
+        end.join
+      )
     end
-  end
-
-  def url_for(url, args=nil, attribute=nil)
-    # recently changed URI.escape to CGI.escape to address question mark issue, but I'm still concerned neither is perfect
-    # so long as we keep doing the weird Cardname.escape thing.
-    url = "javascript:'/#{url}"
-    url << "/#{escape_javascript(CGI.escape(card_id.to_s))}" if (card and card_id)
-    url << "/#{attribute}" if attribute
-    url << "?context='+getSlotContext(this)"
-    url << "+'&' + getSlotOptions(this)"
-    url << ("+'"+ args.map{|k,v| "&#{k}=#{escape_javascript(CGI.escape(v.to_s))}"}.join('') + "'") if args
-    url
   end
 
   def header
@@ -291,7 +268,7 @@ module Wagn
     args[:label] ||= args[:name]
     args[:editable]= true unless args.has_key?(:editable)
     self.options_need_save = true if args[:editable]
-    %{<tr>
+    raw %{<tr>
       <td class="inline label"><label for="#{args[:name]}">#{args[:label]}</label></td>
       <td class="inline field">
     } + content + %{

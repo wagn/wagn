@@ -1,5 +1,5 @@
 <% wrap_slot do |slot| %>
-  <%= raw( slot.header ) %>
+  <%= raw slot.header %>
   <% form_for :card, :url=>slot.url_for("card/remove") do |f| %>
     <div class="content open-content">
       <p>Really remove <%= link_to_page formal_title(card), card.name %>?</p> <%#ENGLISH%>
@@ -16,7 +16,7 @@
       <%= hidden_field_tag 'card[confirm_destroy]', 'true' %>
       <%= submit_tag 'Yes, get rid of it' %>
       <%= raw( slot.button_to_action "Cancel", 'view' ) %>
-      <%= raw( slot.notice ) %>
+      <%= raw slot.notice %>
     </div>
   <% end %>
 <% end %>

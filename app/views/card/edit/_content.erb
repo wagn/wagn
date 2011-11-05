@@ -9,7 +9,7 @@
   </div>
 <% end %>
 
-<%= div( :id=>slot.id('edit-area'), :class=>"editor edit-area #{card.hard_template ? :templated : ''}" ) do %>
+<%= div( :id=>"#{slot.context}-edit-area", :class=>"editor edit-area #{card.hard_template ? :templated : ''}" ) do %>
   <%= form_for :card, :url=>"/card/update/#{card.cardname.to_url_key}",
       :html=>{ :class=>'card-form card-edit-form standard-slotter', :id=>(slot.context + '-form'), :remote=>true } do |form| %>
     <div>

@@ -1,7 +1,7 @@
 <%= slot.options_submenu(:account) %>
 
 <%- locals = {:card=>card, :slot=>slot, :extension=>card.extension } %>
-<% form_for_card :url=>slot.url_for('options/update') do |form| %>
+<% form_for :card, :url=>slot.url_for('options/update') do |form| %>
 
   <table class="fieldset">
     <%- if edit_user_context(card)=='user' or System.ok?(:administrate_users) %>

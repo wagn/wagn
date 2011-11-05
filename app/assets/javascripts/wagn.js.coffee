@@ -33,17 +33,8 @@ jQuery.fn.extend {
   setContentField: (fn)->
     this.closest('.editor').find('#card_content')[0].value = fn.call this[0]
 }
-###
-$.ajaxSetup { 
-  complete: -> 
-    $('.notice').html('WOOO')
-    alert('HOOOO')
-    wagn.initEditors() 
-}
-#####
+
 $(window).load -> wagn.initEditors()
-
-
 
 $('.card-new-form .cardtype-field').live 'change', ->
   cardtypeField = $(this)
@@ -51,13 +42,8 @@ $('.card-new-form .cardtype-field').live 'change', ->
     data: cardtypeField.closest('form').serialize()
     complete: (xhr, status) ->
       cardtypeField.setSlotContent xhr.responseText
-      wagn.initEditors()
-      
+      wagn.initEditors()   
   }
-
-$('.card-form').live 'submit', ->
-  $(this).setContentFieldsFromMap wagn.contentFieldFunctions
-  true
 
 $('.card-new-form').live "ajax:success", (event, data, status, xhr) ->
   if xhr.status == 201
@@ -73,8 +59,11 @@ $('.edit-content-link').live 'ajax:success', (event, data) ->
   wagn.initEditors()
   
 
+$('body').delegate '.card-form', 'submit', ->
+  $(this).setContentFieldsFromMap wagn.contentFieldFunctions
+  false
 
-warn = (stuff) -> console.log stuff if console?
+#warn = (stuff) -> console.log stuff if console?
 
 #Wagn.Messenger = {  
 #  element: -> $('#alerts'),

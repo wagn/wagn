@@ -4,7 +4,7 @@
 <%= raw slot.notice %>  
 <% if card.ok?(:comment) %>
   <div class="comment-box">
-  <% form_for_card :url=>slot.url_for('card/comment') do |f| %>
+  <% form_for :card, :url=>slot.url_for('card/comment') do |f| %>
     <%= f.text_area :comment, :rows=>3 %><br/>
     <% if User.current_user.login == "anon" %>
       <% card.comment_author= (slot.session[:comment_author] || params[:comment_author] || "Anonymous") %> <%#ENGLISH%>

@@ -7,8 +7,7 @@
 
   <% div(:class=>'edit-area edit-name' ) do %>
      <h2>Change Name</h2>
-    <% form_for_card :url=>slot.url_for('card/update'),
-        :update=>{:success=>slot.id('card-body'), :failure=>"javascript:getNextElement(this,'notice')" }do |f| %>
+    <% form_for :card, "/card/update/#{card.id}" do |f| %>
       <div>to <%= slot.name_field(f) %></div>
 
       <% if @confirm==true %>

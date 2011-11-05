@@ -1,6 +1,6 @@
 <% wrap_slot do |slot| %>
   <%= slot.header %>
-  <% form_for_card :url=>slot.url_for("card/remove") do |f| %>
+  <% form_for :card, :url=>slot.url_for("card/remove") do |f| %>
     <div class="content open-content">
       <p>Really remove <%= link_to_page formal_title(card), card.name %>?</p> <%#ENGLISH%>
       <% if dependents = card.dependents and !dependents.empty? %>

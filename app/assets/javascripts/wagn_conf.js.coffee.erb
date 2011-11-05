@@ -1,0 +1,23 @@
+wagnConf = {
+  
+  tinyMCEConfig : `{ <%= System.setting('*tiny mce') %> }`
+  
+  #set editor content.  "this" in function is element(s) based on key as selector
+  editorContentFunctionMap : {
+    '.tinymce-textarea' : -> tinyMCE.getInstanceById( @id ).getContent()
+  }
+  
+  editorInitFunctionMap : {
+    '.tinymce-textarea' : -> wagnConf.initTinyMCE()
+  }
+
+
+  initTinyMCE: ()->
+    console.log "initTinyMCE called " + this
+    conf = if wagnConf.tinyMCEConfig? then wagnConf.tinyMCEConfig else {}
+    conf['mode'] = "specific_textareas"
+    conf['editor_selector'] = this.id
+    tinyMCE.init conf 
+}
+
+window.wagnConf = wagnConf

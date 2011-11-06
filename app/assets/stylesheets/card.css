@@ -351,7 +351,9 @@ div.transcluded {
 .edit-name .radio {
   padding-left: 20px;
 }
-
+.edit-area .delete-button {
+  float: right;
+}
 
 
 /* ---------- changes tab -------*/

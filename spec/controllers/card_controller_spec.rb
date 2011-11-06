@@ -88,7 +88,7 @@ describe CardController do
         :type=>"Basic",
         :content=>"Bananas"
       }
-      assert_response 200
+      assert_response 302
       c=Card.find_by_name("NewCardFoo")
       assert c.typecode == 'Basic'
       c.content.should == "Bananas"
@@ -96,7 +96,7 @@ describe CardController do
 
     
     it "creates cardtype cards" do
-      post :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
+      xhr :post, :create, :card=>{"content"=>"test", :type=>'Cardtype', :name=>"Editor"}
       assigns['card'].should_not be_nil
       assert_response 200
       c=Card.find_by_name("Editor")
@@ -107,7 +107,7 @@ describe CardController do
       @c = Card.create! :name=>"Problem", :content=>"boof"
       @c.destroy!
       post :create, :card=>{"name"=>"Problem","type"=>"Phrase","content"=>"noof"}
-      assert_response 200
+      assert_response 302
       c=Card.find_by_name("Problem")
       assert c.typecode == 'Phrase'
     end
@@ -124,31 +124,20 @@ describe CardController do
         assert_response 422
       end
 
-      it "creates card and plus cards" do
-        post :create, :card=>{
-          :name=>"sss",
-          :type=>"Fruit",
-          :cards=>{"~plus~text"=>{:content=>"<p>abraid</p>"}}
+      it "creates card with subcards" do
+        login_as :wagbot
+        xhr :post, :create, :redirect=>'/', :card=>{
+          :name  => "Gala", 
+          :type  => "Fruit",
+          :cards => {
+            "~plus~kind"  => { :content => "apple"} ,
+            "~plus~color" => { :type=>'Phrase', :content => "red"  }
+          }
         }
-        assert_response 200
-        Card.find_by_name("sss").should_not be_nil
-        Card.find_by_name("sss+text").should_not be_nil
-      end
-
-      it "creates card with hard template" do
-        pending
-        Card.create!(:name=>"Fruit+*type+*content", :content=>"{{+kind}} {{+color}} {{+is citrus}} {{+edible}}")
-        post :create, "card"=>{"name"=>"sssHT", "type"=>"Fruit"},
-         "cards"=>{"~plus~kind"=>{"content"=>"<p>apple</p>"}}, 
-         "cards"=>{"~plus~color"=>{"content"=>"<p>red</p>"}}, 
-         "cards"=>{"~plus~is citrus"=>{"content"=>"<p>false</p>"}}, 
-         "cards"=>{"~plus~edible"=>{"content"=>"<p>true</p>"}}, 
-         "content_to_replace"=>"",
-         "context"=>"main_1", 
-         "multi_edit"=>"true", "view"=>"open"
-        assert_response 200    
-        Card.find_by_name("sssHT").should_not be_nil
-        Card.find_by_name("sssHT+kind").should_not be_nil
+        assert_response 303    
+        Card["Gala"].should_not be_nil
+        Card["Gala+kind"].content.should == 'apple'
+        Card["Gala+color"].typename.should == 'Phrase'
       end
     end
    
@@ -159,8 +148,8 @@ describe CardController do
    
     it "redirects to thanks if present" do
       login_as :wagbot
-      post :create, :redirect=>'/thank_you', :card => { "name" => "Wombly" }
-      assert_response 201
+      xhr :post, :create, :redirect=>'/thank_you', :card => { "name" => "Wombly" }
+      assert_response 303
       assigns["url"].should == "/thank_you"
     end
 
@@ -280,17 +269,14 @@ describe CardController do
     it "remove" do
       c = Card.create( :name=>"Boo", :content=>"booya")
       post :remove, :id=>c.id.to_s
-      assert_response :success
+      assert_response :redirect
       Card.find_by_name("Boo").should == nil
     end
 
     it "should watch" do
       login_as(:joe_user)
-      Rails.logger.info "testing point 0"
       post :watch, :id=>"Home"
-      Rails.logger.info "testing point 1"
       assert c=Card["Home+*watchers"]
-      Rails.logger.info "testing point 2 #{c.inspect}"
       c.content.should == "[[Joe User]]"
     end
 
@@ -302,7 +288,6 @@ describe CardController do
         :name => "Newt",
         :update_referencers => "false",
       }                   
-      assert_equal ({ "name"=>"Newt", "update_referencers"=>'false', "confirm_rename"=>true }), assigns['card_args']
       assigns['card'].errors.empty?.should_not be_nil
       assert_response :success
       Card["Newt"].should_not be_nil
@@ -315,12 +300,10 @@ describe CardController do
       assert_template 'missing'
     end
 
-    it "update typecode with stripping" do
-      User.as :joe_user                                               
-      post :update, {:id=>@simple_card.id, :card=>{ :type=>"Date",:content=>"<br/>" } }
-      #assert_equal "boo", assigns['card'].content
-      assert_response :success, "changed card type"   
-      assigns['card'].content.should == ""
+    it "update typecode" do
+      User.as :joe_user   
+      post :update, :id=>@simple_card.id, :card=>{ :type=>"Date" }
+      assert_response :success, "changed card type"
       Card['Sample Basic'].typecode.should == "Date"
     end
 

@@ -161,13 +161,13 @@ class CardController < ApplicationController
     @comment=@comment.split(/\n/).map{|c| "<p>#{c.empty? ? '&nbsp;' : c}</p>"}.join("\n")
     @card.comment = "<hr>#{@comment}<p><em>&nbsp;&nbsp;--#{@author}.....#{Time.now}</em></p>"
     @card.save!
-    render_update_slot render_to_string(:text=>render_show_text), "comment saved"
+    render_show
   end
 
   def rollback
     load_card_and_revision
     @card.update_attributes! :content=>@revision.content
-    render_update_slot render_to_string(:text=>render_show_text), "content rolled back"
+    render_show
   end
 
   #------------( deleting )
@@ -253,7 +253,8 @@ class CardController < ApplicationController
     raise ActiveRecord::RecordInvalid.new(@user) if !@user.errors.empty?
     @extension = User.new(:email=>@user.email)
     flash[:notice] ||= "Done.  A password has been sent to that email." #ENGLISH
-    render_update_slot render_to_string(:template=>'card/options')
+    @subtab = :account
+    render :action=>'options'
   end
 
 

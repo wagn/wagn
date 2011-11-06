@@ -129,33 +129,6 @@ class ApplicationController < ActionController::Base
 
   # ----------( rendering methods ) -------------
 
-  # dormant code.
-  def render_jsonp(args)
-    str = render_to_string args
-    render :json=>(params[:callback] || "wadget") + '(' + str.to_json + ')'
-  end
-
-  def render_update_slot(stuff="", message=nil, &proc)
-    render_update_slot_element(name="", stuff, message, &proc)
-  end
-
-  # FIXME: this should be fixed to use a call to getSlotElement() instead of default
-  # selectors, so that we can reject elements inside nested slots.
-  def render_update_slot_element(name, stuff="", message=nil)
-    render :update do |page|
-      page.extend(WagnHelper::MyCrappyJavascriptHack)
-      elem_code = "getSlotFromContext('#{params[:context]}')"
-      unless name.empty?
-        elem_code = "getSlotElement(#{elem_code}, '#{name}')"
-      end
-      page.select_slot(elem_code).each() do |target, index|
-        target.update(stuff) unless stuff.empty?
-        yield(page, target) if block_given?
-      end
-      page.wagn.messenger.log(message) if message
-    end
-  end
-
   def render_denied(action = '')
     Rails.logger.debug "~~~~~~~~~~~~~~~~~in render_denied for #{action}"
     
@@ -164,13 +137,6 @@ class ApplicationController < ActionController::Base
     return false
   end
 
-  def handling_errors
-    if @card.errors.present?
-      render_card_errors(@card)
-    else
-      yield
-    end
-  end
 
   def render_card_errors(card=nil)
     card ||= @card

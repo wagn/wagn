@@ -88,11 +88,16 @@ class CardController < ApplicationController
   def create
     @card = Card.new(params[:card])
     if @card.save
-      if @url = params[:redirect]
-        @url = ( @card.ok?(:read) ? card_path(@card) : '/' ) if @url == 'TO_CARD'
-        render :text => @url, :status => 201
-      else
-        render_show
+      
+      @url = params[:redirect]
+      if @url == 'TO_CARD' or (!ajax? && @url.nil?)
+        @url = ( @card.ok?(:read) ? card_path(@card) : '/' )
+      end 
+      
+      case 
+        when !ajax? ; redirect_to @url
+        when @url   ; render :text => @url, :status => 303
+        else        ; render_show
       end
     else
       render :text=>"FIXME WITH REAL ERROR HANDLING: #{@card.errors.full_messages.*"\n"}", :status=>422
@@ -168,19 +173,22 @@ class CardController < ApplicationController
   #------------( deleting )
 
   def remove
-    @card.confirm_destroy = params[:card][:confirm_destroy] if params[:card]
-    captcha_ok = captcha_required? ? verify_captcha : true
+    return unless !captcha_required? || verify_captcha
     
-    return render( :action =>'confirm_remove' ) unless captcha_ok
+    @card.confirm_destroy = params[:confirm_destroy]
     @card.destroy
-    return render( :action =>'confirm_remove' ) if !@card.errors[:confirmation_required].empty?
+    
+    return if !@card.errors[:confirmation_required].empty?
 
     discard_locations_for(@card)
-    if params[:redirect]
-      page.wagn.messenger.note "#{@card.name} removed."
-      page.redirect_to previous_location
-    else
-      render :text => "#{@card.name} removed"
+    
+    @url = params[:redirect]
+    @url = previous_location if [nil, 'TO_PREVIOUS_CARD'].member? @url
+
+    case 
+    when !ajax?            ; redirect_to @url
+    when params[:redirect] ; render :text => @url, :status => 303
+    else                   ; render :text => "#{@card.name} removed"
     end
   end
 

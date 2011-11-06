@@ -16,9 +16,10 @@
       <% slot.form = form %>
       <%= raw( params[:inclusions] ? slot.render_multi_edit : slot.render_edit) %>
     </div>
+    
     <%= raw slot.captcha_tags %>
     <div class="edit-button-area">
-      <%= button_tag "Delete", :class=>'edit-delete-button' %>
+      <%= button_tag "Delete", :class=>'edit-delete-button delete-button', :url=>"/card/remove/#{card.id}", :type=>'button' %>
       <%= submit_tag 'Submit', :class=>'edit-submit-button' %>
       <%= button_tag 'Cancel', :class=>'edit-cancel-button', :type=>'button' %>
     </div>

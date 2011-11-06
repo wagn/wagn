@@ -4,7 +4,7 @@
 %>
 
 <% wrap_slot do |slot| %>
-  <%= raw( slot.header unless @skip_slot_header ) %>
+  <%= raw( slot.header ) unless @skip_slot_header  %>
     <div id="denied" class="instruction open-content">
       <h1>Ooo.  Sorry, but...</h1>  <%#ENGLISH%>
 
@@ -34,6 +34,6 @@
     <% if @skip_slot_header && !@type %>
       <p><%= link_to_function 'Cancel', %{getSlotSpan(this).replace('')} %></p>
     <% end %>
-  <%= raw( slot.footer unless @skip_slot_header ) %>
+  <%= raw( slot.footer ) unless @skip_slot_header  %>
 <% end %>
 

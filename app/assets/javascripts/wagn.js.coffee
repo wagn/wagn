@@ -32,23 +32,31 @@ $(window).load -> wagn.initializeEditors()
 $('body').delegate '.standard-slotter', "ajax:success", (event, data) ->
   $(this).setSlotContent data
 
-$('.card-new-form').live "ajax:success", (event, data, status, xhr) ->
-  if xhr.status == 201
-    window.location=data
+$('.redirectable').live "ajax:complete", (event, xhr, status) ->
+  if xhr.status == 303
+    window.location=xhr.responseText
   else
-    $(this).setSlotContent data 
+    $(this).setSlotContent xhr.responseText
 
 #$('.standard-slotter').live "ajax:success", (event, data) ->
 
-$('.edit-content-link').live 'ajax:complete', ()->
+$('.edit-delete-button').live 'click', ->
+  button = $(this)
+  url = button.attr('url')
+  $.ajax url, {
+    complete: (xhr, status) ->
+      button.setSlotContent xhr.responseText
+  }
+
+$('.edit-content-link').live 'ajax:complete', ->
   wagn.initializeEditors()
 
 $('.new-cardtype-field').live 'change', ->
-  cardtypeField = $(this)
+  field = $(this)
   $.ajax '/card/new', {
-    data: cardtypeField.closest('form').serialize()
+    data: field.closest('form').serialize()
     complete: (xhr, status) ->
-      cardtypeField.setSlotContent xhr.responseText
+      field.setSlotContent xhr.responseText
       wagn.initializeEditors()
   }
 

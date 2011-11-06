@@ -27,7 +27,7 @@ class AccountRequestTest < ActionController::TestCase
       :name=>"Word Third",
       :content=>"Let me in!"
     }  
-    assert_response 418
+    assert_response 302
     #assert_redirected_to @controller.url_for_page(::Setting.find_by_codename('invitation_request_landing').card.name)
   end
   

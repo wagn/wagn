@@ -1,6 +1,0 @@
-[submodule "vendor/plugins/attachment_fu"]
-	path = vendor/plugins/attachment_fu
-	url = git://github.com/technoweenie/attachment_fu.git
-[submodule "vendor/plugins/make_resourceful"]
-	path = vendor/plugins/make_resourceful
-	url = git://github.com/hcatlin/make_resourceful.git

@@ -1,4 +1,3 @@
-@javascript
 Feature: autonaming
   In order for users to have a more intuitive interface
   they should be able to skip naming cards in some cases
@@ -10,7 +9,7 @@ Feature: autonaming
   Scenario: Simple cardtype autoname       
     When I go to new Book
     When I press "Submit"
-    Then I should see "Book_1"
+    Then I should see "Book_1"  #FIXME - does this really test that page got submitted?
     And I go to new Book
     And I press "Submit"
     Then I should see "Book_2"

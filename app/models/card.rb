@@ -24,12 +24,15 @@ class Card < ActiveRecord::Base
   after_save :base_after_save, :update_ruled_cards
   cache_attributes('name', 'typecode')    
 
+  @@junk_args = %w{ skip_virtual skip_module_loading id }
+
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # INITIALIZATION METHODS
   
   def self.new(args={}, options={})
     args ||= {}
     args = args.stringify_keys # evidently different from args.stringify_keys!
+    @@junk_args.map { |a| args.delete(a) }
     if name = args['name']
       cardname = name.to_cardname
       if (card = Card.cache.read_local(cardname.key))
@@ -41,13 +44,17 @@ class Card < ActiveRecord::Base
   end
 
   def initialize(args={})
-    typename, missing =
-      %w{type missing skip_virtual skip_module_loading id}.map { |a| args.delete(a) }
-    reset_patterns if @loaded_trunk = args['loaded_trunk']
     args['name'] = args['name'].to_s
+    typename = args.delete 'type'
+    missing  = args.delete 'missing'
+    
     super args
 
-    self.typecode_without_tracking = get_typecode(args['name'], typename) if !args['typecode']
+    reset_patterns if @loaded_trunk
+
+    if !args['typecode']
+      self.typecode_without_tracking = get_typecode(typename) 
+    end
 
     include_set_modules
     self
@@ -71,15 +78,21 @@ class Card < ActiveRecord::Base
     }
   end
 
-  def get_typecode(name, typename=nil)
+  def get_typecode(typename=nil)
     if typename
-      begin ; return Cardtype.classname_for(typename)
-      rescue Exception => e; self.broken_type = typename end
+      begin
+        return Cardtype.classname_for(typename)
+      rescue
+        @broken_type = typename
+      end
     end
 
-    t = (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
-    reset_patterns #if !self.typecode || self.typecode != t
-    t
+    if name && t=template
+      reset_patterns
+      t.typecode
+    else
+      'Basic'
+    end
   end
 
   def include_set_modules

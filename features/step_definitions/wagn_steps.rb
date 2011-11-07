@@ -1,10 +1,9 @@
-
 require 'uri'
 require 'cgi'
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "paths")) 
 
 Given /^I log in as (.+)$/ do |user_card_name|
-  # FIXME: define a faster simulate method?
+  # FIXME: define a faster simulate method ("I am logged in as")
   @current_user = Card[user_card_name].extension
   visit "/account/signin"
   fill_in("login", :with=> @current_user.email )
@@ -29,24 +28,27 @@ Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
   #end
 end
 
-Given /^the pointer (.*) contains "([^\"]*)"$/ do |cardname, content|
-  step "the card #{cardname} contains \"#{content}\"" 
-end
-
-Given /I harden "([^\"]*)"/ do |cardname|
-  Card[cardname].update_attribute :extension_type, ""
-end
 
 When /^(.*) edits? "([^\"]*)"$/ do |username, cardname|
   logged_in_as(username) do
     visit "/card/edit/#{cardname.to_cardname.to_url_key}"
   end
 end
+
+When /^(.*) edits? "([^\"]*)" entering "([^\"]*)" into wysiwyg$/ do |username, cardname, content|
+  logged_in_as(username) do
+    visit "/card/edit/#{cardname.to_cardname.to_url_key}"
+    #page.execute_script "tinyMCE.activeEditor.setContent('#{content}')"
+    page.execute_script "$('#main #card_content').val('#{content}')"
+    click_button("Submit")    
+  end
+end
+
   
 When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
   logged_in_as(username) do
     visit "/card/edit/#{cardname.to_cardname.to_url_key}"
-    fill_in_hidden_or_not 'card[content]', :with=>content 
+    fill_in 'card[content]', :with=>content 
     click_button("Save")
     match_content = content.gsub(/\[\[|\]\]/,'')  #link markup won't show up in view.
     response.should have_content(match_content)
@@ -106,6 +108,8 @@ Then /debug/ do
   debugger
 end
 
+
+
 def fill_in_hidden_or_not(field_locator, options={})
   set_hidden_field(field_locator, :to=>options[:with])
 rescue Exception => e
@@ -137,11 +141,7 @@ def logged_in_as(username)
   end
   yield
   unless sameuser
-    if @saved_user
-      step "I log in as #{@saved_user.card.name}"
-    else
-      step "I log out"
-    end
+    step( @saved_user ? "I log in as #{@saved_user.card.name}" : "I log out" )
   end
 end
                    
@@ -185,15 +185,15 @@ end
 
 
 Then /^In (.*) I should see "([^\"]*)"$/ do |section, text|
-  within scope_of(section) do |scope|
-    scope.should have_content(text)
+  within scope_of(section) do 
+    page.should have_content(text)
   end
 end
 
 
 Then /^In (.*) I should not see "([^\"]*)"$/ do |section, text|
-  within scope_of(section) do |scope|
-    scope.should_not have_content(text)
+  within scope_of(section) do
+    page.should_not have_content(text)
   end
 end
 

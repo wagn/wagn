@@ -37,7 +37,7 @@ class Wagn::Renderer::RichHtml
       ["rule-type", (rule_card ? rule_card.typename : '') ],
     ]
     if is_self
-      cells << ['rule-set', rule_card ? rule_card.trunk.label(rule_card.cardname.trunk_name) : ''] 
+      cells << ['rule-set', rule_card ? rule_card.trunk.label : ''] 
     end
 
     warn "cells = #{cells.inspect}"

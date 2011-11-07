@@ -3,8 +3,6 @@ module ScopeHelpers
   #
   #   When /^I go to (.+)$/ do |page_name|
   #
-  # step definition in webrat_steps.rb
-  #
   def scope_of(section)
     case section
     

@@ -1,7 +1,7 @@
 module CardHelper
 
   def party_name(party)
-    party ? party.card.cardname : 'Nobody'.to_cardname #FIXME: codename
+    party ? party.card.cardname : 'Nobody'.to_cardname #CODENAME
   end
 
   # navigation for revisions -

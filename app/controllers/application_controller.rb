@@ -8,7 +8,6 @@ class ApplicationController < ActionController::Base
   include LocationHelper
   helper :all
 
-#  include ActionView::Helpers::TextHelper #FIXME: do we have to do this? its for strip_tags() in edit()
   include ActionView::Helpers::SanitizeHelper
 
   before_filter :per_request_setup, :except=>[:render_fast_404]

@@ -71,7 +71,7 @@ module ActiveRecord
       
       def rename_table( name, new_name) 
         execute "ALTER TABLE #{name} RENAME TO #{new_name}"
-        # FIXME: should check if it actually exists.  most of the time it will
+        # should check if it actually exists.  most of the time it will
         execute "ALTER TABLE #{name}_id_seq RENAME TO #{new_name}_id_seq"        
       end
     end

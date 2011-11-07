@@ -16,17 +16,21 @@ module Wagn::Model::Fetch
     #   - virtual cards
 
     def fetch cardname, opts = {}
-      cardname = cardname.to_cardname unless Wagn::Cardname===cardname
+      cardname = cardname.to_cardname
 
-      card = Card.cache.read( cardname.key )      
+      card = Card.cache.read( cardname.key )
       return nil if card && opts[:skip_virtual] && card.new_card?
 
       needs_caching = card.nil?
       card ||= find_by_key_and_trash( cardname.key, false )
-      card ||= new :name=>cardname, :skip_type_lookup=>opts[:skip_virtual]
+      
+      if card.nil?
+        return nil if opts[:skip_virtual]
+        card ||= new :name=>cardname
+      end
 
       Card.cache.write( cardname.key, card ) if needs_caching
-      return nil if card.new_card? && (opts[:skip_virtual] || !card.virtual?)
+      return nil if card.new_card? && !card.virtual?
 
       card.include_set_modules unless opts[:skip_module_loading]
       card

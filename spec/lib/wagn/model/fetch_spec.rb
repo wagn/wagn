@@ -39,6 +39,11 @@ describe Card do
       #cached_card.missing?.should be_true
       #cached_card.virtual?.should be_true
     end
+    
+    it "fetches virtual cards after skipping them" do
+      Card['A+*self'].should be_nil
+      Card.fetch( 'A+*self' ).should_not be_nil
+    end
 
     it "does not recurse infinitely on template templates" do
       Card.fetch("*content+*right+*content").should be_nil

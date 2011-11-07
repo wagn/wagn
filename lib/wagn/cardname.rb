@@ -89,7 +89,7 @@ module Wagn
     end
     def size() parts.size end
 
-
+    def to_cardname() self end
     def valid_cardname?() not parts.find {|pt| pt.match(BANNED_RE)} end
 
     #FIXME codename

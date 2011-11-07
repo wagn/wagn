@@ -41,15 +41,15 @@ class Card < ActiveRecord::Base
   end
 
   def initialize(args={})
-    typename, skip_type_lookup, missing =
-      %w{type skip_type_lookup missing skip_virtual skip_module_loading id}.map { |a| args.delete(a) }
+    typename, missing =
+      %w{type missing skip_virtual skip_module_loading id}.map { |a| args.delete(a) }
     reset_patterns if @loaded_trunk = args['loaded_trunk']
     args['name'] = args['name'].to_s
     super args
 
-    self.typecode_without_tracking = get_typecode(args['name'], typename, skip_type_lookup) unless args['typecode']
+    self.typecode_without_tracking = get_typecode(args['name'], typename) if !args['typecode']
 
-    include_set_modules unless skip_type_lookup
+    include_set_modules
     self
   end
 
@@ -71,17 +71,10 @@ class Card < ActiveRecord::Base
     }
   end
 
-  def get_typecode(name, typename=nil, skip_type_lookup=false)
-    @typecode_lookup_skipped=false
-    
+  def get_typecode(name, typename=nil)
     if typename
       begin ; return Cardtype.classname_for(typename)
       rescue Exception => e; self.broken_type = typename end
-    end
-    
-    if skip_type_lookup
-      @typecode_lookup_skipped = true
-      return 'Basic' 
     end
 
     t = (name && tmpl=self.template) ? tmpl.typecode : 'Basic'
@@ -90,9 +83,6 @@ class Card < ActiveRecord::Base
   end
 
   def include_set_modules
-    if @typecode_lookup_skipped
-      self.typecode_without_tracking = get_typecode(name)
-    end
     unless @set_mods_loaded
       #Rails.logger.debug "include_set_modules[#{name}] #{typecode} called" #{Kernel.caller[0..12]*"\n"}"
       @set_mods_loaded=true

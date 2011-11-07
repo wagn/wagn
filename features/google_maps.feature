@@ -20,7 +20,7 @@ Feature: Google maps
     And I log in as Joe User
 
   Scenario: I look at the KML for a search
-    When I go to url "/wagn/House+*type+by_name.kml"
+    When I go to kml source
     Then I should see "Welcome to Ft Collins!"
 
 

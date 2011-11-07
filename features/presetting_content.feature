@@ -1,12 +1,12 @@
-Feature: Specifiable relative content
+Feature: Presetting content
   In order to have an easy to use interface for creating cards
   As a Wagneer
   I want to be able to create links specifying content for plus cards of templated cards
 
   Scenario: User age
     Given I log in as Joe User
-    And I go to url "/new/Book?_author=shakespeare&card[name]=btest"
+    And I go to new Book presetting name to "Harry Potter" and author to "JK Rowling"
     And I press "Submit"
-    When I go to card btest+author
-    Then I should see "shakespeare"
+    When I go to card "Harry Potter+author"
+    Then I should see "JK Rowling"
   

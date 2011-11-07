@@ -51,7 +51,3 @@ end
 #     DatabaseCleaner.strategy = :transaction
 #   end
 #
-
-Before do
-  Wagn::Cache.reset_for_tests
-end

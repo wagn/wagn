@@ -85,7 +85,7 @@ end
 When /^(.*) creates?\s*([^\s]*) card "([^"]*)" with plusses:$/ do |username,cardtype,cardname,plusses|
   create_card(username,cardtype,cardname) do
     plusses.hashes.first.each do |name, content|
-      fill_in_hidden_or_not "cards[~plus~#{name}][content]", :with=>content
+      fill_in "cards[~plus~#{name}][content]", :with=>content
     end
   end
 end
@@ -117,20 +117,11 @@ rescue Exception => e
 end
 
 def create_card(username,cardtype,cardname,content="")
+  args = { :name=>cardname, :content=>content }
+  args[:type]=cardtype if !cardtype.blank? 
   logged_in_as(username) do
-    visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"
-    #save_and_open_page
-    yield if block_given?
-    click_button("Submit")
-    #save_and_open_page
-    # Fixme - need better error handling here-- the following raise
-    # at least keeps us from going on to the next step if the create bombs
-    # but it doesn't report the reason for the failure.
-#    raise "Creating #{cardname} failed (u=#{username}, t=#{cardtype}  )" unless Card[cardname]
-    
+    Card.create!(args)
   end
-  #    rescue Exception => e
-  #      raise %{ #{e.message}\n #{e.backtrace*"\n"} }
 end
 
 def logged_in_as(username)
@@ -205,6 +196,10 @@ Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field|
   field_labeled(field).element.search(".//option[@selected = 'selected']").inner_html.should =~ /#{value}/
 end
 
+
+When /^(?:|I )go straight to url (.+)$/ do |url|
+  visit url
+end
 
 ## variants of standard steps to handle """ style quoted args
 Then /^I should see$/ do |text|

@@ -9,7 +9,8 @@ Feature: autonaming
   Scenario: Simple cardtype autoname       
     When I go to new Book
     When I press "Submit"
-    Then I should see "Book_1"  #FIXME - does this really test that page got submitted?
+    Then I should see "Book_1"
+    #FIXME - does this really test that page got submitted?
     And I go to new Book
     And I press "Submit"
     Then I should see "Book_2"

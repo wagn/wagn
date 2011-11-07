@@ -6,9 +6,9 @@ ID_REQS = { :id => /([^\.]*(\.(?!(#{FORMATS})))?)*/, :format=>FORMAT_PATTERN }
 
 
 Wagn::Application.routes.draw do
-  #if !Rails.env.production? && Object.const_defined?( :JasmineRails )
-  #  mount Object.const_get(:JasmineRails).const_get(:Engine) => "/specs"
-  #end
+  if !Rails.env.production? && Object.const_defined?( :JasmineRails )
+    mount Object.const_get(:JasmineRails).const_get(:Engine) => "/specs"
+  end
   
   match 'rest/:id(.:format)' => 'rest_card#method', :constraints => { :id => /.*/ }, :via => [:get, :post, :put, :delete]
   # these file requests should only get here if the file isn't present.

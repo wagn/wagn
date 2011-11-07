@@ -10,10 +10,10 @@ Then /^(.*) should be notified that "(.*)"$/ do |username, subject|
   email = user.email
   begin
     step %{"#{email}" should receive 1 email}
-  rescue Spec::Expectations::ExpectationNotMetError=>e
-    raise Spec::Expectations::ExpectationNotMetError, "#{e.message}\n Found the following emails:\n\n #{all_emails.to_s}" 
+  rescue RSpec::Expectations::ExpectationNotMetError=>e
+    raise RSpec::Expectations::ExpectationNotMetError, "#{e.message}\n Found the following emails:\n\n #{all_emails.to_s}" 
   end
-  open_email(email, :with_subject => subject)
+  open_email(email, :with_subject => /#{subject}/)
 end
 
 Then /^No notification should be sent$/ do  

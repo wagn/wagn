@@ -23,6 +23,9 @@ module NavigationHelpers
     when /card (.*)$/
       "/wagn/#{$1.to_cardname.to_url_key}"
 
+    when /new (.*) presetting name to "(.*)" and author to "(.*)"/
+      url = "/new/#{$1}?card[name]=#{$2.to_cardname.to_url_key}&_author=#{CGI.escape($3)}"
+
     when /new card named (.*)$/
       "/card/new?card[name]=#{CGI.escape($1)}"
 
@@ -30,18 +33,21 @@ module NavigationHelpers
    "/card/edit/#{$1.to_cardname.to_url_key}"  
 
     when /new (.*)$/
-"/new/#{$1.to_cardname.to_url_key}"
+      "/new/#{$1.to_cardname.to_url_key}"
       
+    when /kml source/
+       "/wagn/House+*type+by_name.kml"
+
     when /url "(.*)"/
-      "/#{$1}"
+      "#{$1}"
       
     else
-   begin
-     page_name =~ /the (.*) page/
+      begin
+        page_name =~ /the (.*) page/
         path_components = $1.split(/\s+/)
         self.send(path_components.push('path').join('_').to_sym)
       rescue Object => e
-        raise "Can't find mapping from \"#{page_name}\" to a path.\n" +
+        raise "#{e.message} Can't find mapping from \"#{page_name}\" to a path.\n" +
           "Now, go and add a mapping in #{__FILE__}"
       end
     end

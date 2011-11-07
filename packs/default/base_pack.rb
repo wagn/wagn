@@ -21,10 +21,7 @@ class Wagn::Renderer
   define_view(:url)      { |args| "#{System.base_url}/wagn/#{_render_linkname}"}
 
   define_view(:open_content) do |args|
-    #x = card.post_render(
-    x = _render_core(args) { (yield) }
-    #fail "x = #{x}"
-    x
+    card.post_render(_render_core(args) { (yield) })
   end
 
   define_view(:closed_content) do |args|

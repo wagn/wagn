@@ -12,14 +12,14 @@ Feature: Watch interface
   
   Scenario: Watching a Card
     When I go to the homepage
-    And In the main card footer I click the watch link    
+    And In the main card footer I click "watch"    
     Then In the main card footer I should see "unwatch"
     And the card Home+*watchers should contain "Joe User"
 
   Scenario: Unwatching a Card
     Given Joe User is watching "Home"
     And I am on the homepage  
-    When In the main card footer I click the unwatch link
+    When In the main card footer I click "unwatch"
     Then In the main card footer I should not see "unwatch" 
     And the card Home+*watchers should not contain "Joe User"
            

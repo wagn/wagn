@@ -67,9 +67,7 @@ class Wagn::Renderer::RichHtml
 
 
   define_view(:editor) do |args|
-    eid = context
-    form.hidden_field( :content ) +
-    text_area_tag( :content_to_replace, card.content, :rows=>3, :id=>"#{eid}-tinymce", :class=>'tinymce-textarea' )
+    form.text_area( :content, :rows=>3, :id=>"#{context}-tinymce", :class=>'tinymce-textarea card-content' )
   end
 
   define_view(:multi_edit) do |args|

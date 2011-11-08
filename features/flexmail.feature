@@ -5,7 +5,7 @@ Feature: Flexmail
   
   Background:
     Given I log in as Joe Admin
-    And I create Cardtype card "Testimony"    
+    And I create Cardtype card "Testimony"
     And I create Pointer card "Testimony+*type+*send" with content "[[Testemailconfig]]"
     And I create card "Testimony+*type+*content" with content
       """

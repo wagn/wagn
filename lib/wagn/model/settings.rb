@@ -1,6 +1,6 @@
 module Wagn::Model::Settings
   def setting setting_name, fallback=nil
-    card = setting_card setting_name, fallback, :skip_module_loading=>true
+    card = setting_card setting_name, fallback, :skip_modules=>true
     card && card.content
   end
 

@@ -119,8 +119,9 @@ describe Wagn::Renderer, "" do
     describe "inclusions" do
       it "multi edit" do
         c = Card.new :name => 'ABook', :type => 'Book'
-        assert_view_select Wagn::Renderer.new(c).render( :multi_edit ), 'div[class="field-in-multi"]' do
-          assert_select 'input[name=?][type="hidden"]', 'card[cards][~plus~illustrator][content]'
+        multi_edit =  Wagn::Renderer.new(c).render( :multi_edit )
+        assert_view_select multi_edit, 'div[class="field-in-multi"]' do
+          assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[cards][~plus~illustrator][content]'
         end
       end
     end
@@ -365,7 +366,7 @@ describe Wagn::Renderer, "" do
       card.should_receive(:setting_card).with("content","default").and_return(content_card)
       card.should_receive(:setting_card).with("add help","edit help").and_return(help_card)
       assert_view_select Wagn::Renderer::RichHtml.new(card).render_new, 'div[class="field-in-multi"]' do
-        assert_select 'input[name=?][type="hidden"]', "card[cards][~plus~Yoruba][content]"
+        assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', "card[cards][~plus~Yoruba][content]"
       end
     end
 
@@ -387,7 +388,7 @@ describe Wagn::Renderer, "" do
       @card.content = 'Bar'
       result = Wagn::Renderer.new(@card).render(:edit)
       assert_view_select result, 'div[class="field-in-multi"]' do
-        assert_select 'input[type="hidden"][name=?]', 'card[cards][templated~plus~alpha][content]'
+        assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[cards][templated~plus~alpha][content]'
       end
     end
 
@@ -466,7 +467,7 @@ describe Wagn::Renderer, "" do
 
     context "Phrase" do
       it "should have special editor" do
-        assert_view_select render_editor('Phrase'), 'input[type="text"][class="phrasebox"]'
+        assert_view_select render_editor('Phrase'), 'input[type="text"][class="phrasebox card-content"]'
       end
     end
 

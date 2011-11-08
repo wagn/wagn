@@ -40,23 +40,6 @@ When /^(?:|I )fill in "([^"]*)" for "([^"]*)"$/ do |value, field|
   fill_in(field, :with => value)
 end
 
-# Use this to fill in an entire form with data from a table. Example:
-#
-#   When I fill in the following:
-#     | Account Number | 5002       |
-#     | Expiry date    | 2009-11-01 |
-#     | Note           | Nice guy   |
-#     | Wants Email?   |            |
-#
-# TODO: Add support for checkbox, select og option
-# based on naming conventions.
-#
-When /^(?:|I )fill in the following:$/ do |fields|
-  fields.rows_hash.each do |name, value|
-    When %{I fill in "#{name}" with "#{value}"}
-  end
-end
-
 When /^(?:|I )select "([^"]*)" from "([^"]*)"$/ do |value, field|
   select(value, :from => field)
 end
@@ -141,140 +124,13 @@ When /^(?:|I )attach the file "([^"]*)" to "([^"]*)"$/ do |path, field|
 end
 
 Then /^(?:|I )should see "([^"]*)"$/ do |text|
-  if page.respond_to? :should
-    page.should have_content(text)
-  else
-    assert_contain text
-  end
-end
-
-Then /^(?:|I )should see "([^"]*)" within "([^"]*)"$/ do |text, selector|
-  within(selector) do |content|
-    if content.respond_to? :should
-      content.should has_content?(text)
-    else
-      hc = Webrat::Matchers::HasContent.new(text)
-      assert hc.matches?(content), hc.failure_message
-    end
-  end
-end
-
-Then /^(?:|I )should see \/([^\/]*)\/$/ do |regexp|
-  regexp = Regexp.new(regexp)
-  if response.respond_to? :should
-    response.should has_content?(regexp)
-  else
-    assert_match(regexp, response_body)
-  end
-end
-
-Then /^(?:|I )should see \/([^\/]*)\/ within "([^"]*)"$/ do |regexp, selector|
-  within(selector) do |content|
-    regexp = Regexp.new(regexp)
-    if content.respond_to? :should
-      content.should has_content?(regexp)
-    else
-      assert_match(regexp, content)
-    end
-  end
+  page.should have_content(text)
 end
 
 Then /^(?:|I )should not see "([^"]*)"$/ do |text|
-#  if page.respond_to? :should_not
-    page.should_not have_content(text)
-#  else
-#    assert_not_contain(text)
-#  end
+  page.should_not have_content(text)
 end
 
-Then /^(?:|I )should not see "([^"]*)" within "([^"]*)"$/ do |text, selector|
-  within(selector) do |content|
-    if content.respond_to? :should_not
-      content.should_not have_content(text)
-    else
-      hc = Webrat::Matchers::HasContent.new(text)
-      assert !hc.matches?(content), hc.negative_failure_message
-    end
-  end
-end
-
-Then /^(?:|I )should not see \/([^\/]*)\/$/ do |regexp|
-  regexp = Regexp.new(regexp)
-  if response.respond_to? :should_not
-    response.should_not !has_content?(regexp)
-  else
-    assert_not_contain(regexp)
-  end
-end
-
-Then /^(?:|I )should not see \/([^\/]*)\/ within "([^"]*)"$/ do |regexp, selector|
-  within(selector) do |content|
-    regexp = Regexp.new(regexp)
-    if content.respond_to? :should_not
-      content.should_not !has_content?(regexp)
-    else
-      assert_no_match(regexp, content)
-    end
-  end
-end
-
-Then /^the "([^"]*)" field should contain "([^"]*)"$/ do |field, value|
-  field_value = field_labeled(field).value
-  if field_value.respond_to? :should
-    field_value.should =~ /#{value}/
-  else
-    assert_match(/#{value}/, field_value)
-  end
-end
-
-Then /^the "([^"]*)" field should not contain "([^"]*)"$/ do |field, value|
-  field_value = field_labeled(field).value
-  if field_value.respond_to? :should_not
-    field_value.should_not =~ /#{value}/
-  else
-    assert_no_match(/#{value}/, field_value)
-  end
-end
-
-Then /^the "([^"]*)" checkbox should be checked$/ do |label|
-  field = field_labeled(label)
-  if field.respond_to? :should
-    field.should be_checked
-  else
-    assert field.checked?
-  end
-end
-
-Then /^the "([^"]*)" checkbox should not be checked$/ do |label|
-  field = field_labeled(label)
-  if field.respond_to? :should_not
-    field.should_not be_checked
-  else
-    assert !field.checked?
-  end
-end
-
-Then /^(?:|I )should be on (.+)$/ do |page_name|
-  current_path = URI.parse(current_url).path
-  if current_path.respond_to? :should
-    current_path.should == path_to(page_name)
-  else
-    assert_equal path_to(page_name), current_path
-  end
-end
-
-Then /^(?:|I )should have the following query string:$/ do |expected_pairs|
-  query = URI.parse(current_url).query
-  actual_params = query ? CGI.parse(query) : {}
-  expected_params = {}
-  expected_pairs.rows_hash.each_pair{|k,v| expected_params[k] = v.split(',')} 
-
-  if actual_params.respond_to? :should
-    actual_params.should == expected_params
-  else
-    assert_equal expected_params, actual_params
-  end
-end
 
 Then /^show me the page$/ do
   save_and_open_page

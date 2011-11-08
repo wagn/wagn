@@ -9,7 +9,6 @@ class Cardtype < ActiveRecord::Base
     # multiple running ruby servers could get out of sync re: available cardtypes  
     
     def load_cache
-      #Rails.logger.debug "load_cardtype_cache"
       c = {}
       c[:card_keys  ] = {}
       c[:card_names ] = {}

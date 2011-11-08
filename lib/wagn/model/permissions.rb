@@ -91,7 +91,7 @@ module Wagn::Model::Permissions
       User.as :wagbot do
         #Rails.logger.debug "in rule_card #{opcard&&opcard.name} #{operation}"
         if opcard.content == '_left' && self.junction?
-          lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true, :skip_module_loading=>true) 
+          lcard = loaded_trunk || Card.fetch_or_new(cardname.trunk_name, :skip_virtual=>true, :skip_modules=>true) 
           lcard.rule_card(operation).first
         else
           opcard
@@ -119,7 +119,7 @@ module Wagn::Model::Permissions
 
   def approve_task(operation, verb=nil)           
     verb ||= operation.to_s
-    deny_because(you_cant "#{verb} this card") unless self.lets_user( operation ) 
+    deny_because you_cant("#{verb} this card") unless self.lets_user( operation ) 
   end
 
   def approve_create
@@ -130,7 +130,7 @@ module Wagn::Model::Permissions
     return true if System.always_ok?
     self.read_rule_id ||= rule_card(:read).first.id
     ok = User.as_user.read_rule_ids.member?(self.read_rule_id.to_i) 
-    deny_because(you_cant "read this card") unless ok
+    deny_because you_cant("read this card") unless ok
   end
   
   def approve_update
@@ -143,9 +143,11 @@ module Wagn::Model::Permissions
   end
 
   def approve_comment
-    approve_task(:comment, 'comment on')
-    deny_because("No comments allowed on template cards")       if operation_approved && template?  
-    deny_because("No comments allowed on hard templated cards") if operation_approved && hard_template
+    approve_task :comment, 'comment on'
+    if operation_approved
+      deny_because "No comments allowed on template cards" if template?
+      deny_because "No comments allowed on hard templated cards" if hard_template
+    end
   end
   
   def approve_typecode

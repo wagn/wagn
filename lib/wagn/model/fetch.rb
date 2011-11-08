@@ -26,13 +26,13 @@ module Wagn::Model::Fetch
       
       if card.nil?
         return nil if opts[:skip_virtual]
-        card ||= new :name=>cardname
+        card ||= new :name=>cardname, :skip_modules => true
       end
 
       Card.cache.write( cardname.key, card ) if needs_caching
       return nil if card.new_card? && !card.virtual?
 
-      card.include_set_modules unless opts[:skip_module_loading]
+      card.include_set_modules unless opts[:skip_modules]
       card
     end
 
@@ -46,7 +46,7 @@ module Wagn::Model::Fetch
     end
 
     def exists?(cardname)
-      fetch(cardname, :skip_virtual=>true, :skip_module_loading=>true).present?
+      fetch(cardname, :skip_virtual=>true, :skip_modules=>true).present?
     end
     
   end

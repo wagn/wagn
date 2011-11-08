@@ -22,7 +22,7 @@ jQuery.fn.extend {
       $(this).setContentField(fn)
       
   setContentField: (fn)->
-    this.closest('.editor').find('#card_content')[0].value = fn.call this[0]
+    this.closest('.editor').find('.card-content')[0].value = fn.call this[0]
 }
 
 #~~~~~ ( EVENTS )

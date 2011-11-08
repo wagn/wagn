@@ -17,46 +17,48 @@ class Card < ActiveRecord::Base
   before_destroy :destroy_extension
     
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :cards, :set_mods_loaded,
-    :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual,
+    :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual, :type_args,
     :attachment_id #should build flexible handling for this kind of set-specific attr
 
   before_save :base_before_save, :set_read_rule, :set_tracked_attributes, :set_extensions
   after_save :base_after_save, :update_ruled_cards
   cache_attributes('name', 'typecode')    
 
-  @@junk_args = %w{ skip_virtual skip_module_loading id }
+  @@junk_args = %w{ missing skip_virtual id }
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # INITIALIZATION METHODS
   
   def self.new(args={}, options={})
-    args ||= {}
-    args = args.stringify_keys # evidently different from args.stringify_keys!
+    args = (args || {}).stringify_keys
     @@junk_args.map { |a| args.delete(a) }
-    if name = args['name']
-      cardname = name.to_cardname
-      if (card = Card.cache.read_local(cardname.key))
-        #Rails.logger.debug "card#new found #{card.inspect}, #{args.inspect}"
-        return card.send(:initialize, args)
+
+    if name = args['name'] and !name.blank?
+      if cc= Card.cache.read_local(name.to_cardname.key)    and
+          cc.type_args                                      and
+          args['type']          == cc.type_args[:type]      and
+          args['typecode']      == cc.type_args[:typecode]  and
+          args['loaded_trunk']  == cc.loaded_trunk
+          
+        args['typecode'] = cc.typecode
+        return cc.send( :initialize, args )
       end
     end
     super args
   end
 
   def initialize(args={})
-    args['name'] = args['name'].to_s
-    typename = args.delete 'type'
-    missing  = args.delete 'missing'
+    args['name'] = args['name'].to_s  
+    @type_args = { :type=>args.delete('type'), :typecode=>args['typecode'] }
+    skip_modules = args.delete 'skip_modules'
     
     super args
 
-    reset_patterns if @loaded_trunk
-
     if !args['typecode']
-      self.typecode_without_tracking = get_typecode(typename) 
+      self.typecode_without_tracking = get_typecode(@type_args[:type]) 
     end
-
-    include_set_modules
+    
+    include_set_modules unless skip_modules    
     self
   end
 
@@ -66,17 +68,6 @@ class Card < ActiveRecord::Base
   def reset_mods() @set_mods_loaded=false end
 
 #private
-
-  def get_attributes
-    #was getting this from column defs.  very slow.
-    #@attributes ||= {"name"=>@name, "cardname"=>@cardname, "key"=>"", "codename"=>nil, "typecode"=>nil,
-    @attributes ||= {"key"=>"", "codename"=>nil, "typecode"=>nil,
-      "current_revision_id"=>nil, "trunk_id"=>nil,  "tag_id"=>nil,
-      "indexed_content"=>nil,"indexed_name"=>nil, "references_expired"=>nil,
-      "read_rule_class"=>nil, "read_rule_id"=>nil, "extension_type"=>nil,
-      "extension_id"=>nil, "created_at"=>nil, "created_by"=>nil, "updated_at"=>nil,"updated_by"=>nil, "trash"=>nil
-    }
-  end
 
   def get_typecode(typename=nil)
     if typename
@@ -97,7 +88,6 @@ class Card < ActiveRecord::Base
 
   def include_set_modules
     unless @set_mods_loaded
-      #Rails.logger.debug "include_set_modules[#{name}] #{typecode} called" #{Kernel.caller[0..12]*"\n"}"
       @set_mods_loaded=true
       singleton_class.include_type_module(typecode)
     end
@@ -136,13 +126,13 @@ class Card < ActiveRecord::Base
     save_subcards
     self.virtual = false
     #cardname.card = self
-    if self.typecode == 'Cardtype'
-      Cardtype.cache.reset
-    end
     @from_trash = false
     update_attachment
     Wagn::Hook.call :after_create, self if @was_new_card
     send_notifications
+    if self.typecode == 'Cardtype'
+      Cardtype.cache.reset
+    end
     true
   end
 

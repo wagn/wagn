@@ -116,7 +116,6 @@ describe CardController do
       it "catches missing name error" do
         post :create, "card"=>{"name"=>"", "type"=>"Fruit"},
          "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
-         "content_to_replace"=>"",
          "context"=>"main_1", 
          "multi_edit"=>"true", "view"=>"open"
         assigns['card'].errors[:key].first.should == "cannot be blank"

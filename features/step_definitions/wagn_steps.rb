@@ -19,15 +19,12 @@ Given /^I log out/ do
 end
 
 Given /^the card (.*) contains "([^\"]*)"$/ do |cardname, content|
-  #webrat.simulate do
-    User.as(:wagbot) do
-      card = Card.fetch_or_create cardname
-      card.content = content
-      card.save!
-    end
-  #end
+  User.as(:wagbot) do
+    card = Card.fetch_or_create cardname
+    card.content = content
+    card.save!
+  end
 end
-
 
 When /^(.*) edits? "([^\"]*)"$/ do |username, cardname|
   logged_in_as(username) do
@@ -38,20 +35,17 @@ end
 When /^(.*) edits? "([^\"]*)" entering "([^\"]*)" into wysiwyg$/ do |username, cardname, content|
   logged_in_as(username) do
     visit "/card/edit/#{cardname.to_cardname.to_url_key}"
-    #page.execute_script "tinyMCE.activeEditor.setContent('#{content}')"
-    page.execute_script "$('#main #card_content').val('#{content}')"
+    page.execute_script "$('#main .card-content').val('#{content}')"
     click_button("Submit")    
   end
 end
 
   
 When /^(.*) edits? "([^\"]*)" setting (.*) to "([^\"]*)"$/ do |username, cardname, field, content|
-  logged_in_as(username) do
+  logged_in_as(username) do 
     visit "/card/edit/#{cardname.to_cardname.to_url_key}"
     fill_in 'card[content]', :with=>content 
-    click_button("Save")
-    match_content = content.gsub(/\[\[|\]\]/,'')  #link markup won't show up in view.
-    response.should have_content(match_content)
+    click_button("Submit")
   end
 end    
                    
@@ -59,7 +53,7 @@ When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
   logged_in_as(username) do  
     visit "/card/edit/#{cardname.to_cardname.to_url_key}"       
     plusses.hashes.first.each do |name, content|
-      fill_in_hidden_or_not "cards[#{(cardname+'+'+name).to_cardname.pre_cgi}][content]", :with=>content
+      fill_in "cards[#{(cardname+'+'+name).to_cardname.pre_cgi}][content]", :with=>content
     end
     click_button("Save")
   end
@@ -68,13 +62,13 @@ end
 When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/ do |username, cardtype, cardname, content|
   create_card(username, cardtype, cardname, content) do  
     content.gsub!(/\\n/,"\n") 
-    fill_in_hidden_or_not("card[content]", :with=>content)
+    fill_in("card[content]", :with=>content)
   end
 end    
 
 When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content$/ do |username, cardtype, cardname, content|
   create_card(username, cardtype, cardname, content) do   
-    fill_in_hidden_or_not("card[content]", :with=>content)
+    fill_in("card[content]", :with=>content)
   end
 end    
 
@@ -85,7 +79,7 @@ end
 When /^(.*) creates?\s*([^\s]*) card "([^"]*)" with plusses:$/ do |username,cardtype,cardname,plusses|
   create_card(username,cardtype,cardname) do
     plusses.hashes.first.each do |name, content|
-      fill_in "cards[~plus~#{name}][content]", :with=>content
+      fill_in "card[cards][~plus~#{name}][content]", :with=>content
     end
   end
 end
@@ -109,18 +103,13 @@ Then /debug/ do
 end
 
 
-
-def fill_in_hidden_or_not(field_locator, options={})
-  set_hidden_field(field_locator, :to=>options[:with])
-rescue Exception => e
-  fill_in(field_locator, options)
-end
-
 def create_card(username,cardtype,cardname,content="")
-  args = { :name=>cardname, :content=>content }
-  args[:type]=cardtype if !cardtype.blank? 
-  logged_in_as(username) do
-    Card.create!(args)
+  if cardtype=='Pointer'
+    Card.create :name=>cardname, :type=>cardtype, :content=>content
+  else
+    visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"   
+      yield if block_given?
+    click_button("Submit")
   end
 end
 
@@ -143,44 +132,31 @@ When /^In (.*) I follow "([^\"]*)"$/ do |section, link|
   end
 end
 
-When /^In (.*) I click (.*)$/ do |section, link|
+When /^In (.*) I click "(.*)"$/ do |section, link|
   within scope_of(section) do
     click_link link
-  end
-  
-  
-  # webrat.automate do
-  #   within scope_of(section) do |scope|
-  #     scope.click_link link
-  #   end
-  # end
-  
-#  webrat.simulate do                      
-#    visit *params_for(control,section)
-#  end                                             
+  end                                           
 end   
      
 Then /the card (.*) should contain "([^\"]*)"$/ do |cardname, content|
   visit path_to("card #{cardname}")
-  within scope_of("the main card content") do |scope|
-    scope.should have_content(content)
+  within scope_of("the main card content") do
+    page.should have_content(content)
   end
 end
 
 Then /the card (.*) should not contain "([^\"]*)"$/ do |cardname, content|
   visit path_to("card #{cardname}")
-  within scope_of("the main card content") do |scope|
-    scope.should_not have_content(content)
+  within scope_of("the main card content") do
+    page.should_not have_content(content)
   end
 end
-
 
 Then /^In (.*) I should see "([^\"]*)"$/ do |section, text|
   within scope_of(section) do 
     page.should have_content(text)
   end
 end
-
 
 Then /^In (.*) I should not see "([^\"]*)"$/ do |section, text|
   within scope_of(section) do
@@ -194,11 +170,6 @@ end
 
 Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field|
   field_labeled(field).element.search(".//option[@selected = 'selected']").inner_html.should =~ /#{value}/
-end
-
-
-When /^(?:|I )go straight to url (.+)$/ do |url|
-  visit url
 end
 
 ## variants of standard steps to handle """ style quoted args

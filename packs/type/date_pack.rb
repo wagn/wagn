@@ -7,7 +7,7 @@ class Wagn::Renderer
     div { link_to_function( 
       link_text, "scwShow($('#{date_id}'), scwID('#{date_id}'));", :id=>date_id, :class=>'date-editor-link' )
     } +
-    form.hidden_field( :content, :id=>"#{editor_id}-content" ) 
+    form.hidden_field( :content, :id=>"#{editor_id}-content", :class=>'card-content' ) 
 #    editor_hooks( :save=>%{$('#{editor_id}-content').value = $('#{date_id}').innerHTML; return true;} )
   end
 

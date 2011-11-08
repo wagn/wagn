@@ -51,11 +51,11 @@ end
                    
 When /^(.*) edits? "([^\"]*)" with plusses:/ do |username, cardname, plusses|
   logged_in_as(username) do  
-    visit "/card/edit/#{cardname.to_cardname.to_url_key}"       
+    visit "/card/edit/#{cardname.to_cardname.to_url_key}"
     plusses.hashes.first.each do |name, content|
-      fill_in "cards[#{(cardname+'+'+name).to_cardname.pre_cgi}][content]", :with=>content
+      fill_in "card[cards][#{(cardname+'+'+name).to_cardname.pre_cgi}][content]", :with=>content
     end
-    click_button("Save")
+    click_button("Submit")
   end
 end
      

@@ -61,7 +61,6 @@ end
      
 When /^(.*) creates?\s*a?\s*([^\s]*) card "(.*)" with content "(.*)"$/ do |username, cardtype, cardname, content|
   create_card(username, cardtype, cardname, content) do  
-    content.gsub!(/\\n/,"\n") 
     fill_in("card[content]", :with=>content)
   end
 end    
@@ -86,7 +85,7 @@ end
    
 When /^(.*) deletes? "([^\"]*)"$/ do |username, cardname|
   logged_in_as(username) do
-    visit "/card/remove/#{cardname.to_cardname.to_url_key}?card[confirm_destroy]=true"
+    visit "/card/remove/#{cardname.to_cardname.to_url_key}?confirm_destroy=true"
   end
 end
 
@@ -104,12 +103,14 @@ end
 
 
 def create_card(username,cardtype,cardname,content="")
-  if cardtype=='Pointer'
-    Card.create :name=>cardname, :type=>cardtype, :content=>content
-  else
-    visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"   
-      yield if block_given?
-    click_button("Submit")
+  logged_in_as(username) do
+    if cardtype=='Pointer'
+      Card.create :name=>cardname, :type=>cardtype, :content=>content
+    else
+      visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"   
+        yield if block_given?
+      click_button("Submit")
+    end
   end
 end
 

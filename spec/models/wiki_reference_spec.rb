@@ -7,7 +7,7 @@ describe "WikiReference" do
     #setup_default_user  
     User.as :wagbot
   end
-
+  
   describe "references on hard templated cards should get updated" do
     it "on templatee creation" do
       Card.create! :name=>"JoeForm", :type=>'UserForm'
@@ -63,7 +63,6 @@ describe "WikiReference" do
     Card.fetch('bob+address').transcludees.plot(:name).should == ["bob+city"]
     Card.fetch('bob+city').transcluders.plot(:name).should == ["bob+address"]
   end
-
 
   it "pickup new links on rename" do
     @l = newcard("L", "[[Ethan]]")  # no Ethan card yet...
@@ -127,7 +126,7 @@ describe "WikiReference" do
     green.reload.transcludees.plot(:name).should == ["green+rgb"]
     green_rgb.reload.transcluders.plot(:name).should == ['green']
   end
-
+  
   it "simple link" do
     alpha = Card.create :name=>'alpha'
     beta = Card.create :name=>'beta', :content=>"I link to [[alpha]]"
@@ -165,20 +164,11 @@ describe "WikiReference" do
     @e.reload.referencers.plot(:name).include?("woof").should_not == nil
   end
   
-  
-#=begin   
-  # this test is about the time between when a card is first created and the time that
-  # references pointing to the cards name are updated and given an id;  
-  # these 'name_references' are used in the cache_sweeper, but i'm not sure i understand
-  # the scenario where they're needed. LWH
-  
   it "pickup new transclusions on create" do
     @l = Card.create! :name=>"woof", :content=>"{{Lewdog}}"  # no Lewdog card yet...
     @e = Card.new(:name=>"Lewdog", :content=>"grrr")              # now there is
-    warn @e.name_references.inspect
     @e.name_references.plot(:referencer).plot(:name).include?("woof").should_not == nil
   end
-#=end
 
 =begin  
 

@@ -61,7 +61,6 @@ class Wagn::Renderer::RichHtml
 
   define_view(:edit) do |args|
     @state=:edit
-#    warn "card #{card.name} at view(:edit) = #{card.inspect}\ncard.content_template = #{card.content_template.inspect}"
     card.content_template ?  _render_multi_edit(args) : content_field(form)
   end
 

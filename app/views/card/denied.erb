@@ -15,10 +15,12 @@
           You need permission
         <% end %>
         to
-        <%= case @deny
+        <%= raw(
+          case @deny
           when 'view', 'edit'  ; @deny+ " " + (card.name ? "<strong>#{fancy_title(card)}</strong>" : 'this card')
           when 'create'; "create #{@type} cards"
           end
+          )
         %>
       </p>
 

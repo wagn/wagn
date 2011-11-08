@@ -125,7 +125,6 @@ class Card < ActiveRecord::Base
   def base_after_save
     save_subcards
     self.virtual = false
-    #cardname.card = self
     @from_trash = false
     update_attachment
     Wagn::Hook.call :after_create, self if @was_new_card
@@ -219,13 +218,14 @@ class Card < ActiveRecord::Base
   # DESTROY
  
   def destroy_with_trash(caller="")
-    run_callbacks :destroy do
-      if self.respond_to?(:before_destroy) and self.before_destroy == false
-        errors.add(:destroy, "could not prepare card for destruction")
-        return false
-      end
+    run_callbacks( :destroy ) do
+#      if self.respond_to?(:before_destroy) and self.before_destroy == false
+#        errors.add(:destroy, "could not prepare card for destruction")
+#        return false
+#      end
       deps = self.dependents
       @trash_changed = true
+      
       self.update_attribute(:trash, true) 
       deps.each do |dep|
         next if dep.trash

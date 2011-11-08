@@ -1,3 +1,4 @@
+<%- @card ||= slot.card %>
 <%= raw slot.edit_submenu(params[:inclusions] ? :inclusions : :content) %>
 <% if inst = card.setting_card('edit help') %>
   <div class="instruction"><%= raw( slot.subrenderer(inst).render :core ) %></div>

@@ -251,18 +251,6 @@ module Wagn
     menu
   end
 
-=begin
-  def footer
-    #render_partial 'card/footer'
-    render_footer
-  end
-
-  def footer_links
-    #render_partial( 'card/footer_links' )   # this is ugly reusing this cache code
-    render_footer_links
-  end
-=end
-
 
   def option( content, args )
     args[:label] ||= args[:name]

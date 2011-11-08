@@ -13,6 +13,7 @@
     <%= error_messages_for @card %>
 
     <%= form_for card, :url=>"/card/create", :remote=>true, :html=>{ :class=>'card-form card-new-form redirectable' } do |form| %>
+      <%- s.form = form %>
       <%= hidden_field_tag :home_view, params[:home_view] || :open %>
       <% if redirect %><%= hidden_field_tag :redirect, redirect %><% end %>
     

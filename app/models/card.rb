@@ -14,7 +14,7 @@ class Card < ActiveRecord::Base
   has_many   :revisions, :order => 'id', :foreign_key=>'card_id'
 
   belongs_to :extension, :polymorphic=>true
-  before_destroy :destroy_extension
+  before_destroy :destroy_extension, :base_before_destroy
     
   attr_accessor :comment, :comment_author, :confirm_rename, :confirm_destroy, :cards, :set_mods_loaded,
     :update_referencers, :allow_type_change, :broken_type, :loaded_trunk,  :nested_edit, :virtual, :type_args,
@@ -219,10 +219,6 @@ class Card < ActiveRecord::Base
  
   def destroy_with_trash(caller="")
     run_callbacks( :destroy ) do
-#      if self.respond_to?(:before_destroy) and self.before_destroy == false
-#        errors.add(:destroy, "could not prepare card for destruction")
-#        return false
-#      end
       deps = self.dependents
       @trash_changed = true
       
@@ -267,6 +263,10 @@ class Card < ActiveRecord::Base
     extension.destroy if extension
     extension = nil
     true
+  end
+  
+  def base_before_destroy
+    self.before_destroy if respond_to? :before_destroy
   end
 
 

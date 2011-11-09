@@ -9,7 +9,7 @@ wagn = {
 jQuery.fn.extend {
   slot: -> @closest '.card-slot'
   
-  setSlotContent: (val) -> @slot().html val
+  setSlotContent: (val) -> @slot().replaceWith val
 
   setContentFieldsFromMap: (map) ->
     map = wagnConf.editorContentFunctionMap unless map?
@@ -32,11 +32,15 @@ $(window).load -> wagn.initializeEditors()
 $('body').delegate '.standard-slotter', "ajax:success", (event, data) ->
   $(this).setSlotContent data
 
-$('.redirectable').live "ajax:complete", (event, xhr, status) ->
+$('body').delegate '.standard-slotter', "ajax:error", (event, xhr) ->
+  $(this).setSlotContent xhr.responseText
+#  $(this).slot().find('.notice').html()
+
+
+
+$('.standard-slotter').live "ajax:complete", (event, xhr) ->
   if xhr.status == 303
     window.location=xhr.responseText
-  else
-    $(this).setSlotContent xhr.responseText
 
 #$('.standard-slotter').live "ajax:success", (event, data) ->
 

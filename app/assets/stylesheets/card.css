@@ -89,10 +89,10 @@ html>body .card-menu-left,
 html>body .page-icon {
   display: none;
 }
-.line .card-header {
+.closed-view .card-header {
   padding-right: 22px;
 }
-.line div:hover.card-header {
+.closed-view div:hover.card-header {
   padding-right: 0px;
 }
 
@@ -195,7 +195,7 @@ a.wanted-card {
   color: #900 
 }
 a.external-link, 
-.line .content a.external-link { 
+.closed-view .content a.external-link { 
   color: #979; 
   background: url(/images/external_link.png) center right no-repeat;
   padding-right: 13px !important;
@@ -453,7 +453,7 @@ del.diffmod,
   margin-top: 5px;
   color: #444;
 }
-.open-content, /* paragraph content */
+.open-content,
 .revision {
   display: block;
   padding: 5px 15px 10px 15px;
@@ -524,7 +524,7 @@ body#wagn .card-slot.recent-changes h2 {
 
 /*-----------  open cards -------*/
 
-.paragraph {
+.open-view {
   margin: 1px 0px;
   padding: 0px !important;
   -moz-border-radius: 8px;
@@ -540,14 +540,14 @@ body#wagn .card-slot.recent-changes h2 {
   display: inline;
   padding: 0;
 }
-.paragraph .down-arrow,
-.paragraph .close-link {
+.open-view .down-arrow,
+.open-view .close-link {
   margin: 0px 5px 0px 0px;
 }
 
 /*------------- closed cards -------*/
 
-.line {
+.closed-view {
   overflow: hidden;
   white-space: nowrap;
   border-bottom: 0px;
@@ -561,13 +561,13 @@ body#wagn .card-slot.recent-changes h2 {
   height: 25px;
 }
 
-.line .content, 
-.line .card-header {
+.closed-view .content, 
+.closed-view .card-header {
   display: inline;
   float: left;
   vertical-align: center;
 }
-.line .card-header {
+.closed-view .card-header {
   line-height: 15px;
   -moz-border-radius: 0px 6px 6px 0px;
   border-radius: 0px 6px 6px 0px;
@@ -576,26 +576,26 @@ body#wagn .card-slot.recent-changes h2 {
   margin-right: 4px;
 }
 
-.line tr, 
-.line td, 
-.line p,
-.line h1, 
-.line h2, 
-.line h3, 
-.line h4, 
-.line h5, 
-.line h6, 
-.line ul, 
-.line li,
-.line pre, 
-.line ol, 
-.line hr, 
-.line .content div, 
-.line .content span,
-.line .content,  
-.line .workspace,
-.line .content a,
-.line blockquote {
+.closed-view tr, 
+.closed-view td, 
+.closed-view p,
+.closed-view h1, 
+.closed-view h2, 
+.closed-view h3, 
+.closed-view h4, 
+.closed-view h5, 
+.closed-view h6, 
+.closed-view ul, 
+.closed-view li,
+.closed-view pre, 
+.closed-view ol, 
+.closed-view hr, 
+.closed-view .content div, 
+.closed-view .content span,
+.closed-view .content,  
+.closed-view .workspace,
+.closed-view .content a,
+.closed-view blockquote {
   display: inline; 
   margin: 0px 4px; 
   padding: 0px !important;
@@ -604,25 +604,25 @@ body#wagn .card-slot.recent-changes h2 {
   white-space: nowrap;      
   float: none !important;
 }
-.line .content a {
+.closed-view .content a {
   margin: 0px;
 }
-.line .content img {
+.closed-view .content img {
   height: 16px;
   width: auto;
   float: none;
   padding: 0px;
 }
-.line br,  
-.line hr,
-.line input,
-.line textarea,
-.line object,
-.line .comment-box,
-.line .table-of-contents,
-.line .card-menu,
-.line .card-footer,
-.line .close-link {
+.closed-view br,  
+.closed-view hr,
+.closed-view input,
+.closed-view textarea,
+.closed-view object,
+.closed-view .comment-box,
+.closed-view .table-of-contents,
+.closed-view .card-menu,
+.closed-view .card-footer,
+.closed-view .close-link {
   display: none !important;
 }
 /*----------- Change View ---------*/
@@ -649,7 +649,7 @@ body#wagn .card-slot.recent-changes h2 {
 
 /*----------- Nested ---------*/
 
-.card-slot .card-slot.line,
+.card-slot .card-slot.closed-view,
 .card-slot .card-slot {
   border: 1px solid white;
   border-bottom: 1px solid #ccc;
@@ -754,8 +754,8 @@ div.search-result-list .search-result-item {
 /*-----------( Image ) -----------*/
 
 
-/*.paragraph.type-Image, */
-.paragraph .TYPE-image .content {
+/*.open-view.type-Image, */
+.open-view .TYPE-image .content {
 /*  overflow: auto;  */
   padding: 5px;
 }
@@ -809,24 +809,5 @@ table.permission-editor .pointer-text {
     padding: 8px;
     margin: 0px;
 }
-
-/*------- tag cloud ------- (not currently in use)---------------------------*/
-
-/*
-.cloud a { 
-  white-space: nowrap; 
-  padding: 0px 3px !important;
-  background: #eef;
-  padding: 0px 4px;
-  -moz-border-radius: 8px;
-}
-.cloud-1 { font-size: 90% }
-.cloud-2 { font-size: 100% }
-.cloud-3 { font-size: 115% }
-.cloud-4 { font-size: 130% }
-.cloud-5 { font-size: 145% }
-*/
-
-
 
 

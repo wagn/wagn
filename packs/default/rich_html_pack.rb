@@ -28,35 +28,30 @@ class Wagn::Renderer::RichHtml
 
   define_view(:content) do |args|
     @state = :view
-    self.requested_view = args[:action] = 'content'
     c = _render_core(args)
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
-    wrap(args) { raw wrap_content(c) }
+    wrap(:content, args) { raw wrap_content(:content, c) }
   end
 
   define_view(:titled) do |args|
-    self.requested_view = 'titled'
-    args[:action] = 'content'
-    wrap(args) do
+    wrap(:titled, args) do
       content_tag( :h1, raw(fancy_title(card.name))) + 
-      raw( wrap_content(_render_core(args)))
+      raw( wrap_content(:titled, _render_core(args)))
     end
   end
 
   define_view(:new) do |args|
-    wrap(args) { render_partial('views/new') }
+    wrap(:new, args) { render_partial('views/new') }
   end
 
   define_view(:open) do |args|
     @state = :view
-    self.requested_view = 'open'
-    wrap(args) { render_partial('views/open') }
+    wrap(:open, args) { render_partial('views/open') }
   end
 
   define_view(:closed) do |args|
     @state = :line
-    self.requested_view = args[:action] = 'closed'
-    wrap(args) { render_partial('views/closed') }
+    wrap(:closed, args) { render_partial('views/closed') }
   end
 
   define_view(:edit) do |args|
@@ -64,19 +59,17 @@ class Wagn::Renderer::RichHtml
     card.content_template ?  _render_multi_edit(args) : content_field(form)
   end
 
-
   define_view(:editor) do |args|
     form.text_area( :content, :rows=>3, :id=>"#{context}-tinymce", :class=>'tinymce-textarea card-content' )
   end
 
   define_view(:multi_edit) do |args|
-    @state=:edit
+    @state = :edit
     hidden_field_tag(:multi_edit, true) + raw(_render_core(args))
   end
 
   define_view(:change) do |args|
-    self.requested_view = args[:action] = 'content'
-    wrap(args) { render_partial('views/change') }
+    wrap(:change, args) { render_partial('views/change') }
   end
 
 ###---(  EDIT VIEWS )

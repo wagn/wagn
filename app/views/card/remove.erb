@@ -1,7 +1,7 @@
 <% wrap_slot do |slot| %>
   <%= raw slot.header %>
   <%= form_for :card, :url=>"/card/remove/#{@card.id}",
-    :html => { :remote=>true, :class=>'redirectable' } do |f| %>
+    :html => { :remote=>true, :class=>'standard-slotter' } do |f| %>
     
     <%= hidden_field_tag 'confirm_destroy', 'true' %>
     <%= hidden_field_tag 'redirect', 'TO_REDIRECT' %>

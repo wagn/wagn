@@ -243,7 +243,7 @@ module WagnHelper
 
   def wrap_slot(renderer=nil, args={}, &block)
     renderer ||= (Wagn::Renderer.current_slot || get_slot)
-    concat( renderer.wrap(args) { capture{ yield(renderer) } } )
+    concat( renderer.wrap(:open, args) { capture{ yield(renderer) } } )
   end
   # ------------( helpers ) --------------
   def edit_user_context(card)

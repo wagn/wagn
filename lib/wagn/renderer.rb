@@ -48,7 +48,7 @@ module Wagn
         :template, :root, :format, :controller
     attr_accessor :card, :main_content, :main_card, :context, :char_count,
         :depth, :item_view, :form, :type, :base, :state, :sub_count,
-        :render_args, :requested_view, :layout, :flash, :showname
+        :render_args, :layout, :flash, :showname #, :requested_view
   
     # View definitions
     #
@@ -158,7 +158,6 @@ module Wagn
       inclusion_map( opts )
   
       @relative_content ||= {}
-      @action ||= 'view'
       @format ||= :html
       
       @params ||= {}
@@ -172,7 +171,6 @@ module Wagn
     def template
       
       @controller ||= StubCardController.new
-#      @controller ||=ActionView::TestCase::TestController.new
       
       @template ||= begin
         t = ActionView::Base.new( CardController.view_paths)
@@ -252,23 +250,23 @@ module Wagn
       (v=!view.blank? && VIEW_ALIASES[view.to_sym]) ? v : view
     end
   
-    def render(action=:view, args={})
-      args[:home_view] ||= action
+    def render(view=:view, args={})
+      args[:home_view] ||= view
       self.render_args = args.clone
-      denial = deny_render(action, args) and return denial
+      denial = deny_render(view, args) and return denial
   
-      action = canonicalize_view(action)
-      @state ||= case action
+      view = canonicalize_view(view)
+      @state ||= case view
         when :edit, :multi_edit; :edit
         when :closed; :line
         else :view
       end
   
       result = 
-        if render_meth = view_method(action)
+        if render_meth = view_method(view)
           send(render_meth, args) { yield }
         else
-          "<strong>#{card.name} - unknown card view: '#{action}' M:#{render_meth.inspect}</strong>"
+          "<strong>#{card.name} - unknown card view: '#{view}' M:#{render_meth.inspect}</strong>"
         end
   
       result.strip
@@ -396,7 +394,7 @@ module Wagn
       new_card = tcard.new_card? && !tcard.virtual?
   
       vmode = options[:home_view] = (options[:view] || :content).to_sym
-      sub.requested_view = vmode
+#      sub.requested_view = vmode
       subview = case
   
         when [:name, :link, :linkname, :rule, :edit_rule].member?(vmode)  ; vmode

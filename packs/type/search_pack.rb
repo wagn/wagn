@@ -133,7 +133,7 @@ class Wagn::Renderer
     args = params.clone
     args[:limit] = limit
 
-    args[:requested_view] = requested_view 
+#    args[:requested_view] = requested_view 
     args[:item] = item_view || args[:item]
     args[:_keyword] = s[:_keyword] if s[:_keyword]
 

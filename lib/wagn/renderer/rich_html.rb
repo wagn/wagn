@@ -4,8 +4,7 @@ module Wagn
   include Recaptcha::ClientHelper
 
   cattr_accessor :set_actions
-  attr_accessor  :options_need_save, :js_queue_initialized,
-    :position, :start_time, :skip_autosave
+  attr_accessor  :options_need_save, :js_queue_initialized, :start_time, :skip_autosave
 
   # This creates a separate class hash in the subclass
   class << self
@@ -19,7 +18,6 @@ module Wagn
   def initialize(card, opts=nil)
     super
     @context = "main_1" unless @context =~ /\_/
-    @position = @context.split('_').last
     @state = :view
     @renders = {}
 
@@ -123,48 +121,28 @@ module Wagn
     return unless setting_card.is_a?(Wagn::Set::Type::Pointer) and  # type check throwing lots of warnings under cucumber: setting_card.typecode == 'Pointer'        and
       layout_name=setting_card.item_names.first     and
       !layout_name.nil?                             and
-      lo_card = Card.fetch(layout_name, :skip_virtual => true, :skip_modules=>true)    and
+      lo_card = Card.fetch( layout_name, :skip_virtual => true, :skip_modules=>true )    and
       lo_card.ok?(:read)
     lo_card.content
   end
 
 
-  def wrap(args = {})
-    render_wrap = ( args.key?(:add_slot) ? args.delete(:add_slot) : !skip_outer_wrap_for_ajax? )
-    return yield if !render_wrap
+  def wrap(view, args = {})
+    classes = ['card-slot', "#{view}-view"]
+    classes << card.css_names if card
     
-    css_class = case args[:action].to_s
-      when 'content'  ;  'transcluded'
-      when 'exception';  'exception'
-      when 'closed'   ;  'card-slot line'
-      else            ;  'card-slot paragraph'
-    end 
-    css_class << " " + card.css_names if card
-    
-    attributes = {
-      :class    => css_class,
-      :cardId   => (card && card.id),
-      :position => generate_position
-    }
+    attributes = { :class => classes.join(' ') }
     [:style, :home_view, :item, :base].each { |key| attributes[key] = args[key] }
-    
     
     div( attributes ) { yield }
   end
-  
-  def generate_position
-    UUID.new.generate.gsub(/^(\w+)0-(\w+)-(\w+)-(\w+)-(\w+)/,'\1')
-  end
 
-  def skip_outer_wrap_for_ajax?
-    # we often skip the outermost slot in ajax calls because the slot is already there.
-    ajax_call? && outer_level?
-  end
-
-  def wrap_content( content="" )
-    %{<span class="#{canonicalize_view(requested_view)}-content content editOnDoubleClick">} +
-    content.to_s +
-    %{</span>} #<!--[if IE]>&nbsp;<![endif]-->}
+  def wrap_content( view, content="" )
+    %{
+      <span class="#{view}-content content editOnDoubleClick">
+        #{content.to_s}
+      </span>
+     }
   end
 
   def wrap_main(content)

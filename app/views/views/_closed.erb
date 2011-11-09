@@ -3,11 +3,11 @@
      <%= raw link_to raw(fancy_title(card)), 
            "card/view/#{card.id}?view=open",
            :title=>"open #{card.name}", 
-           :class=>'title right-arrow',
+           :class=>'title right-arrow standard-slotter',
            :remote=>true
     %>
     <%= raw page_icon(card.name) %>
     &nbsp;    
   </div>  
 </div>    
-<%= raw slot.wrap_content slot.render_closed_content %>
+<%= raw slot.wrap_content :closed, slot.render_closed_content %>

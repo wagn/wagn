@@ -1,10 +1,11 @@
 <%= raw slot.header %>  
-<%= raw slot.wrap_content( raw slot._render_open_content ) %>
+<%= raw slot.notice %>
+<%= raw slot.wrap_content( :open, raw(slot._render_open_content) ) %>
 
-<%= raw slot.notice %>  
+
 <% if card.ok?(:comment) %>
   <div class="comment-box">
-  <% form_for :card, :url=>slot.url_for('card/comment') do |f| %>
+  <% form_for :card, :url=>"/card/comment/#{card.id}/", :remote=>:true do |f| %>
     <%= f.text_area :comment, :rows=>3 %><br/>
     <% if User.current_user.login == "anon" %>
       <% card.comment_author= (slot.session[:comment_author] || params[:comment_author] || "Anonymous") %> <%#ENGLISH%>

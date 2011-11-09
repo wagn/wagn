@@ -111,7 +111,7 @@ describe Wagn::Renderer, "" do
 
     it "content" do
       result = render_card(:content, :name=>'A+B')
-      assert_view_select result, 'div[class="transcluded ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"][home_view="content"]' do 
+      assert_view_select result, 'div[class="card-slot content-view ALL ALL_PLUS TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b"][home_view="content"]' do 
         assert_select 'span[class~="content-content content"]'
       end
     end
@@ -139,14 +139,12 @@ describe Wagn::Renderer, "" do
 
     context "full wrapping" do
       before do
-        mu = mock(:mu)
-        mu.should_receive(:generate).and_return("1")
-        UUID.should_receive(:new).and_return(mu)
         @ocslot = Wagn::Renderer.new(Card['A'])
       end
 
       it "should have the appropriate attributes on open" do
-        assert_view_select @ocslot.render(:open), 'div[position="1"][home_view="open"][class="card-slot paragraph ALL TYPE-basic SELF-a"]' do
+        warn "open rendered = #{@ocslot.render(:open)}"
+        assert_view_select @ocslot.render(:open), 'div[home_view="open"][class="card-slot open-view ALL TYPE-basic SELF-a"]' do
           assert_select 'div[class="card-header"]' do
             assert_select 'div[class="title-menu"]'
           end
@@ -156,7 +154,7 @@ describe Wagn::Renderer, "" do
 
       it "should have the appropriate attributes on closed" do
         v = @ocslot.render(:closed)
-        assert_view_select v, 'div[position="1"][home_view="closed"][class="card-slot line ALL TYPE-basic SELF-a"]' do
+        assert_view_select v, 'div[home_view="closed"][class="card-slot closed-view ALL TYPE-basic SELF-a"]' do
           assert_select 'div[class="card-header"]' do
             assert_select 'div[class="title-menu"]'
           end

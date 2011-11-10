@@ -143,7 +143,6 @@ describe Wagn::Renderer, "" do
       end
 
       it "should have the appropriate attributes on open" do
-        warn "open rendered = #{@ocslot.render(:open)}"
         assert_view_select @ocslot.render(:open), 'div[home_view="open"][class="card-slot open-view ALL TYPE-basic SELF-a"]' do
           assert_select 'div[class="card-header"]' do
             assert_select 'div[class="title-menu"]'

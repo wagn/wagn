@@ -16,9 +16,10 @@
         <% end %>
         to
         <%= raw(
+          title = card.name ? "<strong>#{fancy_title(card)}</strong>" : 'this card'
           case @deny
-          when 'view', 'edit'  ; @deny+ " " + (card.name ? "<strong>#{fancy_title(card)}</strong>" : 'this card')
-          when 'create'; "create #{@type} cards"
+          when 'view', 'edit'  ; "#{@deny} #{title}" 
+          when 'create'; "create this #{@type} card: #{title}"
           end
           )
         %>

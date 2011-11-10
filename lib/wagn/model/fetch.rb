@@ -48,7 +48,12 @@ module Wagn::Model::Fetch
     def exists?(cardname)
       fetch(cardname, :skip_virtual=>true, :skip_modules=>true).present?
     end
-    
+  end
+
+  def refresh
+    fresh_card = self.class.find(self.id)
+    fresh_card.include_set_modules
+    fresh_card
   end
 
   def self.included(base)

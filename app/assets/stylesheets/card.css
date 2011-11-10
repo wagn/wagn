@@ -3,13 +3,10 @@
   margin: 0px;
   background: #fff;
   padding: 0px;
-  -moz-border-radius: 8px;
-  border-radius: 8px;
-  border: 1px solid #777;
-  border-bottom: 2px solid #888;
-  border-right: 2px solid #888;
   display: block;
 }
+
+
 html>body .card-slot {
   width: auto;  /* so non-ie browsers do better with image floats */
 }
@@ -529,6 +526,9 @@ body#wagn .card-slot.recent-changes h2 {
   padding: 0px !important;
   -moz-border-radius: 8px;
   border-radius: 8px;
+  border: 1px solid #777;
+  border-bottom: 2px solid #888;
+  border-right: 2px solid #888;
 }
 
 /* this was occasionally busting auto-completes on pointers:
@@ -650,7 +650,7 @@ body#wagn .card-slot.recent-changes h2 {
 /*----------- Nested ---------*/
 
 .card-slot .card-slot.closed-view,
-.card-slot .card-slot {
+.card-slot .card-slot.open-view {
   border: 1px solid white;
   border-bottom: 1px solid #ccc;
   -moz-border-radius: 0px;

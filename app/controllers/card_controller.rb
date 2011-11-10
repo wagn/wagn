@@ -112,7 +112,7 @@ class CardController < ApplicationController
   end
 
   def update
-    @card = Card.find(@card.id) #refresh from database (cached card attributes often frozen)    
+    @card = @card.refresh # (cached card attributes often frozen)    
     args=params[:card] || {}
     args[:typecode] = Cardtype.classname_for(args.delete(:type)) if args[:type]
     

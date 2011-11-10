@@ -33,16 +33,10 @@ $('body').delegate '.standard-slotter', "ajax:success", (event, data) ->
   $(this).setSlotContent data
 
 $('body').delegate '.standard-slotter', "ajax:error", (event, xhr) ->
-  $(this).setSlotContent xhr.responseText
-#  $(this).slot().find('.notice').html()
-
-
-
-$('.standard-slotter').live "ajax:complete", (event, xhr) ->
   if xhr.status == 303
     window.location=xhr.responseText
-
-#$('.standard-slotter').live "ajax:success", (event, data) ->
+  else
+    $(this).setSlotContent xhr.responseText
 
 $('.edit-delete-button').live 'click', ->
   button = $(this)
@@ -69,7 +63,7 @@ $('.edit-cardtype-field').live 'change', ->
 
 $('body').delegate '.card-form', 'submit', ->
   $(this).setContentFieldsFromMap()
-  true
+  true  
 
 warn = (stuff) -> console.log stuff if console?
 

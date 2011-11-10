@@ -6,10 +6,10 @@ source 'http://rubygems.org'
 # ~~~~~~~ #
 
 
-gem 'rails', '~>3.1'
+gem 'rails', '~> 3.1'
 gem 'htmlentities'#, '~>4.2.1'
 gem 'uuid'
-gem 'jquery-rails'
+gem 'jquery-rails', '~> 1.0.17'
 #gem 'ruby-openid'#, '~>2.1.8'
 
 
@@ -62,7 +62,7 @@ group :test, :development do
 end
 
 group :test do
-  gem 'cucumber-rails', '~>1.1.1'              # feature-driven-development suite
+  gem 'cucumber-rails', '~>1.2.0'              # feature-driven-development suite
   gem 'launchy'                                # lets cucumber launch browser windows
   gem 'timecop'                                # not clear on use/need.  referred to in shared_data.rb
   gem 'spork'                                  #

@@ -193,6 +193,7 @@ module WagnHelper
   def div(*args, &block)   content_tag(:div, *args, &block);  end
 
   def pointer_item(slot,view)
+    warn "inside pointer item.  warn include pointer set mod? = #{card.singleton_class.include? Wagn::Set::Type::Pointer}"
     card = slot.card
     content = card.content
     type = card.item_type

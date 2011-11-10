@@ -2,9 +2,12 @@ wagnConf = {
   
   tinyMCEConfig : `{ <%= System.setting('*tiny mce') %> }`
   
-  #set editor content.  "this" in function is element(s) based on key as selector
   editorContentFunctionMap : {
-    '.tinymce-textarea' : -> tinyMCE.getInstanceById( @id ).getContent()
+    '.tinymce-textarea'      : -> tinyMCE.getInstanceById(@id).getContent(),
+    '.pointer-select'        : -> pointerContent $(this).val(),
+    '.pointer-multiselect'   : -> pointerContent $(this).val(),
+    '.pointer-checkbox-list' : -> pointerContent $(this).find('input:checked').map( -> $(this).val() ),
+    '.pointer-radio-list'    : -> pointerContent $(this).find('input:checked').val()
   }
   
   editorInitFunctionMap : {
@@ -15,7 +18,22 @@ wagnConf = {
     conf = if wagnConf.tinyMCEConfig? then wagnConf.tinyMCEConfig else {}
     conf['mode'] = "specific_textareas"
     conf['editor_selector'] = @id
-    tinyMCE.init conf 
+    tinyMCE.init conf
+
 }
+
+
+pointerContent = (vals) ->
+  list = $.map $.makeArray(vals), (v)-> if v? then '[[' + v + ']]'
+  $.makeArray(list).join "\n"
+
+#editor_hooks(:save=>%{
+#  boxes = jQuery('input[name=#{eid}-checkbox]:checked')
+#  vals = boxes.map(function(i,n){ return jQuery(n).val(); }).get();
+#  setPointerContent('#{eid}', vals );  
+#  return true;
+#})
+
+
 
 window.wagnConf = wagnConf

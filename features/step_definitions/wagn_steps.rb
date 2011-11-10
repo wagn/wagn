@@ -107,8 +107,8 @@ def create_card(username,cardtype,cardname,content="")
     if cardtype=='Pointer'
       Card.create :name=>cardname, :type=>cardtype, :content=>content
     else
-      visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"   
-        yield if block_given?
+      visit "/card/new?card[name]=#{CGI.escape(cardname)}&type=#{cardtype}"
+      yield if block_given?
       click_button("Submit")
     end
   end

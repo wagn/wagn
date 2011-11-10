@@ -10,13 +10,12 @@ Feature: Seeing a card
   Scenario: Home page visit 
     When I go to the homepage
     Then I should see "Home"
-    Then what
     And I should see "My Card: Joe User"
-    And I should see "Wagn Configuration"
+    And In the main card header I should see "Edit"
     Then In the main card header I click "close Home"
-    And I should not see "Wagn Configuration"
+    And In the main card header I should not see "Edit"
     Then In the main card header I click "open Home"
-    And I should see "Wagn Configuration"
+    And In the main card header I should see "Edit"
     
   Scenario: Create a Card
     Given I log in as Joe User

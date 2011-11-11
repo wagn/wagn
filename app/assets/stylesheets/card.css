@@ -693,14 +693,14 @@ body#wagn .card-slot.recent-changes h2 {
 }
 
 /*-------------( Pointer )--------*/
-.pointer input {
+.pointer-list-ul input {
   float: left;
   width: 60%;
 }
-.pointer li {
+.pointer-list-ul li {
   list-style: none;
 }
-.pointer .delete {
+.pointer-list-ul .pointer-item-delete {
   margin-left: 4px;
   font-weight: bold;
   color: #933;
@@ -792,7 +792,7 @@ table.permission-editor td {
   padding: 5px;
   vertical-align: top;
 }
-table.permission-editor .pointer-text {
+table.permission-editor .pointer-item-text {
   width: 200px;
 }
 

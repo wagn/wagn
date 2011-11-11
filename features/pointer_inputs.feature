@@ -7,11 +7,19 @@ Feature: Pointer Inputs
     Given I log in as Joe Admin
     And I create Pointer card "friends+*right+*default"
     And I create Search card "friends+*right+*options" with content "{"type":"User"}"
-
+ 
+# can't get fill_in to work. don't know why -efm    
+#  Scenario: Creating a card with list input
+#    Given I go to card "Joe User+friends"
+#    Then I fill in "pointer_item" with "Joe Camel"
+#    And I press "Submit"
+#    When I go to card "Joe User"
+#    Then I should see "Joe Camel"
+#
   Scenario: Creating a card with select input
     Given I create Phrase card "friends+*right+*input" with content "select"
     When I go to card "Joe User+friends"
-    And I select "Joe Camel" from "main_1-select"
+    And I select "Joe Camel" from "pointer_select"
     And I press "Submit"
     And I go to card "Joe User+friends"
     Then I should see "Joe Camel"   
@@ -21,22 +29,15 @@ Feature: Pointer Inputs
     And I create Phrase card "friends+*right+*input" with content "select"
     When I go to new User
     And I fill in "card_name" with "Jill"
-    And I select "Joe Admin" from "main_1_1-select"
+    And I select "Joe Admin" from "pointer_select"
     And I press "Submit"
     And I go to card "Jill"
     Then I should see "Joe Admin"
-    
-    ## FIXME:  the following assertions don't find the select field-- 
-    #  apparently field_labelled(..) does a different search than
-    #  select X from X.  
-    # When I go to edit Joe User+friends
-    # Then the "main_1-select" field should contain "Joe Camel"
-    # And the "main_1-select" field should not contain "No Count"
 
   Scenario: Creating a card with multiselect input
     Given I create Phrase card "friends+*right+*input" with content "multiselect"
     When I go to card "Joe User+friends"
-    And I select "Joe Camel" from "main_1-multiselect"
+    And I select "Joe Camel" from "pointer_multiselect"
     And I press "Submit"
     And I go to card "Joe User+friends"
     Then I should see "Joe Camel" 
@@ -46,7 +47,7 @@ Feature: Pointer Inputs
     And I create Phrase card "friends+*right+*input" with content "multiselect"
     When I go to new User
     And I fill in "card_name" with "Jill"
-    And I select "Joe Admin" from "main_1_1-multiselect"
+    And I select "Joe Admin" from "pointer_multiselect"
     And I press "Submit"
     And I go to card "Jill"
     And I should see "Joe Admin"
@@ -54,7 +55,7 @@ Feature: Pointer Inputs
   Scenario: Creating a card with radio input
     Given I create Phrase card "friends+*right+*input" with content "radio"
     When I go to card "Joe User+friends"
-    And I choose "main_1-radio-joe_camel"
+    And I choose "Joe Camel"
     And I press "Submit"
     And I go to card "Joe User+friends"
     Then I should see "Joe Camel"
@@ -62,15 +63,15 @@ Feature: Pointer Inputs
   Scenario: Creating a card with checkbox input
     Given I create Phrase card "friends+*right+*input" with content "checkbox"
     #And I create a Phrase card "*all+*option label" with content "description"
-    And I create a Phrase card "Joe Camel+description" with content "boom yow yow"
+    And I create a Phrase card "Joe Admin+description" with content "boom yow yow"
     When I go to card "Joe User+friends"
     Then I should see "boom yow yow"
-    And I check "main_1-checkbox-joe_camel"
+    And I check "Joe Camel"
     And I press "Submit"
     And I go to card "Joe User+friends"
     Then I should see "Joe Camel"
     And I edit "Joe User+friends"
-    And I uncheck "main_1-checkbox-joe_camel"
+    And I uncheck "Joe Camel"
     And I press "Submit"
     And I go to card "Joe User+friends"
     Then I should not see "Joe Camel"

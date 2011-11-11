@@ -46,6 +46,8 @@ $('.edit-delete-button').live 'click', ->
       button.setSlotContent xhr.responseText
   }
 
+
+
 $('.edit-content-link').live 'ajax:complete', ->
   wagn.initializeEditors()
 

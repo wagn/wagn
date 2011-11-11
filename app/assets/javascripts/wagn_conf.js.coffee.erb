@@ -6,8 +6,9 @@ wagnConf = {
     '.tinymce-textarea'      : -> tinyMCE.getInstanceById(@id).getContent(),
     '.pointer-select'        : -> pointerContent $(this).val(),
     '.pointer-multiselect'   : -> pointerContent $(this).val(),
-    '.pointer-checkbox-list' : -> pointerContent $(this).find('input:checked').map( -> $(this).val() ),
-    '.pointer-radio-list'    : -> pointerContent $(this).find('input:checked').val()
+    '.pointer-radio-list'    : -> pointerContent $(this).find('input:checked').val(),
+    '.pointer-list-ul'       : -> pointerContent $(this).find('input'        ).map( -> $(this).val() ),
+    '.pointer-checkbox-list' : -> pointerContent $(this).find('input:checked').map( -> $(this).val() )
   }
   
   editorInitFunctionMap : {
@@ -23,8 +24,21 @@ wagnConf = {
 }
 
 
+$('.pointer-item-add').live 'click', ->
+  last_item = $(this).closest('ul').find '.pointer-li:last'
+  new_item = last_item.clone()
+  new_item.find('input').val ''
+  last_item.after new_item
+
+$('.pointer-item-delete').live 'click', ->
+  item = $(this).closest 'li'
+  if item.closest('ul').find('.pointer-li').length > 1
+    item.remove()
+  else
+    item.find('input').val ''
+
 pointerContent = (vals) ->
-  list = $.map $.makeArray(vals), (v)-> if v? then '[[' + v + ']]'
+  list = $.map $.makeArray(vals), (v)-> if v then '[[' + v + ']]'
   $.makeArray(list).join "\n"
 
 #editor_hooks(:save=>%{

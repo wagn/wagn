@@ -485,7 +485,7 @@ class Wql
       
       # bare value shortcut
       @spec = case spec   
-        when ValueSpec; spec.instance_variable_get('@spec')  # FIXME whatta fucking hack (what's this for?)
+        when ValueSpec; spec.instance_variable_get('@spec')  # FIXME what a hack (what's this for?)
         when Array;     spec
         when String;    ['=', spec]
         when Integer;   ['=', spec]

@@ -67,17 +67,15 @@ class CardController < ApplicationController
     @args[:name] ||= params[:id] # for ajax (?)
     @args[:type] ||= params[:type] # for /new/:type shortcut
     [:name, :type, :content].each {|key| @args.delete(key) unless a=@args[key] and !a.blank?} #filter blank args
-    @args.delete(:attachment_id) # was breaking changes to and away from image / file.  should refactor so this is unnecessary.
 
     if @args[:name] and Card.exists?(@args[:name]) #card exists
-      render :text => "<span>Oops, <strong>#{@args[:name]}</strong> was recently created! try reloading the page to edit it</span>" #ENGLISH
+      render :text => "<span>Oops, <strong>#{@args[:name]}</strong> was recently created! Try reloading the page to edit it</span>" #ENGLISH
     else
       @card = Card.new @args
       if @card.ok? :create
-        render (request.xhr? ?
+        render( ajax? ?
           {:partial=>'views/new', :locals=>{ :card=>@card }} : #ajax
-          {:action=> 'new'} #normal
-        )
+          {:action=> 'new'} ) #normal
       else
         render_denied('create')
       end
@@ -187,7 +185,7 @@ class CardController < ApplicationController
 
     case 
     when !ajax?            ; redirect_to @url
-    when params[:redirect] ; render :text => @url, :status => 303
+    when params[:redirect] ; render :text => @url, :status => 303  # this should only happen on the main card
     else                   ; render :text => "#{@card.name} removed"
     end
   end
@@ -241,9 +239,11 @@ class CardController < ApplicationController
     render :action=>'options'
   end
 
+
   def new_account
     System.ok!(:create_accounts) && @card.ok?(:update)
   end
+
 
   def create_account
     System.ok!(:create_accounts) && @card.ok?(:update)
@@ -305,18 +305,6 @@ class CardController < ApplicationController
 
     render :inline => "<%= auto_complete_result @items, 'name' %>"
   end
-
-
-  # this should all happen in javascript
-  
-  def add_field # for pointers only
-    load_card if params[:id]
-    @card ||= Card.new(:type=>'Pointer')
-    #render :partial=>'types/pointer/field', :locals=>params.merge({:link=>:add,:card=>@card})
-    render(:text => Wagn::Renderer.new(@card, :context=>params[:eid]).render(:field, :link=>:add, :index=>params[:index]) )
-  end
-
-
 
 end
 

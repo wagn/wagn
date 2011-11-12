@@ -14,9 +14,9 @@
         <% else %>
           You need permission
         <% end %>
-        to
+          to
+        <%- title = card.name ? "<strong>#{fancy_title(card)}</strong>" : 'this card' %>
         <%= raw(
-          title = card.name ? "<strong>#{fancy_title(card)}</strong>" : 'this card'
           case @deny
           when 'view', 'edit'  ; "#{@deny} #{title}" 
           when 'create'; "create this #{@type} card: #{title}"

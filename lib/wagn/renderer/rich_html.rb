@@ -176,17 +176,15 @@ module Wagn
 
   def edit_submenu(current)
     div(:class=>'submenu') do
-      raw(
-        [[ :content,    true  ],
-         [ :name,       true, ],
-         [ :type,       !(card.type_template? || (card.typecode=='Cardtype' && card.cards_of_type_exist?))],
-         ].map do |attrib,ok,args|
-          if ok
-            raw( link_to attrib, "/card/edit/#{card.id}/#{attrib}", :remote=>true,
-              :class=>"standard-slotter edit-#{attrib}-link" + (attrib==current ? ' current-subtab' : ''))
-          end
-        end.compact.join
-      )
+      [[ :content,    true  ],
+       [ :name,       true, ],
+       [ :type,       !(card.type_template? || (card.typecode=='Cardtype' && card.cards_of_type_exist?))],
+       ].map do |attrib,ok,args|
+        if ok
+          raw( link_to attrib, "/card/edit/#{card.id}/#{attrib}", :remote=>true,
+            :class=>"standard-slotter edit-#{attrib}-link" + (attrib==current ? ' current-subtab' : ''))
+        end
+      end.compact.join
     end
   end
 

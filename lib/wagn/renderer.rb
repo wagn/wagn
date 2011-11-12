@@ -185,7 +185,8 @@ module Wagn
     
     
     def method_missing(method_id, *args, &proc)
-      template.send(method_id, *args, &proc)
+      proc = proc { raw yield} if proc
+      template.send(method_id, *args, &proc) 
     end
     
     def session

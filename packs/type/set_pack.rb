@@ -37,19 +37,17 @@ class Wagn::Renderer
       
       next unless setting_groups[group]
       content_tag(:tr, :class=>"rule-group") do
-        raw(
-          (["#{@@setting_group_title[group.to_sym]} Settings"]+headings).map do |heading|
-            content_tag(:th, :class=>'rule-heading') { heading }
-          end.join("\n")
-        )
+        (["#{@@setting_group_title[group.to_sym]} Settings"]+headings).map do |heading|
+          content_tag(:th, :class=>'rule-heading') { heading }
+        end.join("\n")
       end +
       raw( setting_groups[group].map do |setting_name| 
         rule_card = Card.fetch_or_new "#{card.name}+#{setting_name}", :skip_virtual=>true
-        raw process_inclusion(rule_card, :view=>:rule)
+        process_inclusion(rule_card, :view=>:rule)
       end.join("\n"))
     end.compact.join
 
-    content_tag('table', :class=>'set-rules') { raw(body) }
+    content_tag('table', :class=>'set-rules') { body }
     
   end
 

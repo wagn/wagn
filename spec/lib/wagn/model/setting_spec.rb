@@ -55,13 +55,12 @@ describe Card do
 
   describe "#setting_names" do
     before do
-      @pointer_settings = ['*update','*comment','*delete','*captcha','*edit help','*accountable','*options','*options label','*input']
+      @pointer_settings = ['*options','*options label','*input']
     end
     it "returns universal setting names for non-pointer set" do
       snbg = Card.fetch('*star').setting_names_by_group
-      snbg[:view].should  == ['*read','*content','*layout','*table of contents']
-      snbg[:edit].should  == ['*update','*comment','*delete','*captcha','*edit help','*accountable']
-      snbg[:add].should == ['*create','*default','*add help','*autoname','*thanks','*send']
+      snbg.keys.length.should == 4
+      snbg.keys.member?( :pointer ).should_not be_true
     end
     
     it "returns pointer-specific setting names for pointer card (*type)" do
@@ -74,16 +73,16 @@ describe Card do
       c2 = Card.fetch('Fruit+*type')
       Rails.logger.info "testing point 2 #{c2.inspect}"
       snbg = c2.setting_names_by_group
-      snbg[:edit].map(&:to_s).should == @pointer_settings
+      snbg[:pointer].map(&:to_s).should == @pointer_settings
       c3 = Card.fetch('Pointer+*type')
       Rails.logger.info "testing point 3 #{c3.inspect}"
       snbg = c3.setting_names_by_group
-      snbg[:edit].map(&:to_s).should == @pointer_settings
+      snbg[:pointer].map(&:to_s).should == @pointer_settings
     end
 
     it "returns pointer-specific setting names for pointer card (*self)" do
       snbg = Card.fetch_or_new('*account+*related+*self').setting_names_by_group
-      snbg[:edit].map(&:to_s).should == @pointer_settings
+      snbg[:pointer].map(&:to_s).should == @pointer_settings
     end
 
   end

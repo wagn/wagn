@@ -119,8 +119,8 @@ describe Wagn::Renderer, "" do
     describe "inclusions" do
       it "multi edit" do
         c = Card.new :name => 'ABook', :type => 'Book'
-        multi_edit =  Wagn::Renderer.new(c).render( :multi_edit )
-        assert_view_select multi_edit, 'div[class="field-in-multi"]' do
+        rendered =  Wagn::Renderer.new(c).render( :edit )
+        assert_view_select rendered, 'div[class="field-in-multi"]' do
           assert_select 'textarea[name=?][class="tinymce-textarea card-content"]', 'card[cards][~plus~illustrator][content]'
         end
       end
@@ -394,7 +394,7 @@ describe Wagn::Renderer, "" do
         Card.create(:name=>'Book+author+*type plus right+*default', :type=>'Phrase', :content=>'Zamma Flamma')
       end
       c = Card.new :name=>'Yo Buddddy', :type=>'Book'
-      result = Wagn::Renderer::RichHtml.new(c).render( :multi_edit )
+      result = Wagn::Renderer::RichHtml.new(c).render( :edit )
       assert_view_select result, 'div[class="field-in-multi"]' do
         assert_select 'input[name=?][type="text"][value="Zamma Flamma"]', 'card[cards][~plus~author][content]'
         assert_select 'input[name=?][type="hidden"][value="Phrase"]',     'card[cards][~plus~author][typecode]'

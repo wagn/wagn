@@ -3,11 +3,10 @@
   margin: 0px;
   background: #fff;
   padding: 0px;
-  display: block;
 }
 
 
-html>body .card-slot {
+html>body .open-view {
   width: auto;  /* so non-ie browsers do better with image floats */
 }
 .card-slot,

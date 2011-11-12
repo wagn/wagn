@@ -94,7 +94,7 @@ class ApplicationController < ActionController::Base
       raise Wagn::NotFound, "We don't know what card you're looking for."
     when @card.known? # default case
       @card
-    when params[:view]=='edit_rule'
+    when params[:view] =~ /rule/
       # FIXME this is a hack so that you can view load rules that don't exist.  need better approach 
       # (but this is not tested; please don't delete without adding a test) 
       @card

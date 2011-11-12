@@ -30,7 +30,7 @@ module Wagn
     }
     
     UNDENIABLE_VIEWS = [ 
-      :deny_view, :edit_auto, :too_slow, :too_deep, :open_missing, :closed_missing, :name, :link, :url
+      :deny_view, :edit_virtual, :too_slow, :too_deep, :open_missing, :closed_missing, :name, :link, :url
     ]
   
     RENDERERS = {
@@ -185,10 +185,7 @@ module Wagn
     
     
     def method_missing(method_id, *args, &proc)
-      #warn "method missing: #{method_id}, #{args.inspect}"
-      # silence Rails 2.2.2 warning about binding argument to concat.  tried detecting rails 2.2
-      # and removing the argument but it broken lots of integration tests.
-      ActiveSupport::Deprecation.silence { template.send(method_id, *args, &proc) }
+      template.send(method_id, *args, &proc)
     end
     
     def session
@@ -399,7 +396,7 @@ module Wagn
   
         when [:name, :link, :linkname, :rule, :edit_rule].member?(vmode)  ; vmode
         when :edit == state
-         tcard.virtual? ? :edit_auto : :edit_in_form
+         tcard.virtual? ? :edit_virtual : :edit_in_form
         when new_card
           case
             when vmode==:raw    ; :blank
@@ -409,7 +406,7 @@ module Wagn
         when state==:line       ; :closed_content
         else                    ; vmode
         end
-      result = sub.render(subview, options)
+      result = raw( sub.render(subview, options) )
       Renderer.current_slot = oldrenderer
       result
     rescue Exception=>e

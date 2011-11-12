@@ -13,25 +13,18 @@ class Wagn::Renderer::RichHtml
     end
       
     cells = [
-#      ["rule-setting", link_to_page(setting_name) ],
-      ["rule-setting", link_to( setting_name, 
-        "/card/view/#{card.cardname.to_url_key}?view=edit_rule",
-        :remote => true
-      )],
+      ["rule-setting", 
+        link_to( setting_name, 
+          "/card/view/#{card.cardname.to_url_key}?view=edit_rule", 
+          :class => 'edit-rule-link standard-slotter', 
+          :remote => true
+        )
+      ],
       ["rule-content", begin
-        div(:class=>'rule-content-container line') do
-          span(:class=>'content') do
-            # these two extra layers are all about getting overflow:hidden to work right.
-            # was unable to do it without inline inside block inside table-cell.  would be happy to simplify if possible
-            raw(
-              case
-              when !rule_card; ''
-              when is_self && card != rule_card
-                subrenderer(rule_card).render_closed_content
-              else; render_closed_content
-              end
-            )
-          end
+        div(:class=>'rule-content-container closed-view') do
+          raw( %{ <span class="content">#{rule_card ? subrenderer(rule_card).render_closed_content : ''}</span> } )
+          # these two extra layers are all about getting overflow:hidden to work right.
+          # was unable to do it without inline inside block inside table-cell.  would be happy to simplify if possible
         end
       end ],
       ["rule-type", (rule_card ? rule_card.typename : '') ],
@@ -40,23 +33,43 @@ class Wagn::Renderer::RichHtml
       cells << ['rule-set', rule_card ? rule_card.trunk.label : ''] 
     end
 
-    warn "cells = #{cells.inspect}"
-
     extra_css_class = rule_card && !rule_card.new_card? ? 'known-rule' : 'missing-rule'
+    
+    %{<tr class="card-slot rule-slot">} +
     cells.map do |css_class, content|
-      raw( content_tag('td', :class=>"#{css_class} #{extra_css_class}") { raw content } )
-    end.join "\n"
-    
-#    raw( cells.join "\n" )
-    
+      %{<td class="#{css_class} #{extra_css_class}">#{content}</td>}
+    end.join("\n") +
+    '</tr>'
   end
   
   define_view(:edit_rule) do |args|
-    main_set_name = card.name.trunk_name
+    main_set_name = card.cardname.trunk_name
     set_class = main_set_name.tag_name
-    setting_name = card.name.tag_name  
+    setting_name = card.cardname.tag_name
+    
     is_self = set_class =='*self'
     col_count = is_self ? 5 : 4
+
+    
+    td_content = content_tag( :td, :class=>'edit-rule', :colspan=>col_count-1 ) do
+      raw(
+        div(:class=>'rule-setting') do
+          link_to( setting_name, 
+            "/card/view/#{card.cardname.to_url_key}?view=rule",
+            :class => 'close-rule-link standard-slotter', 
+            :remote => true
+          )
+        end
+      )
+    end
+    
+    %{<tr class="card-slot rule-slot">#{td_content}</tr>}
+    
+  end
+  
+  define_view(:old_edit_rule) do |args|
+    set_class = main_set_name.tag_name
+    setting_name = card.name.tag_name
         
     content_tag(:td, :class=>'edit-rule', :colspan=>col_count-1) do
 #      div(:class=>'rule-setting') { link_to_page setting_name } +

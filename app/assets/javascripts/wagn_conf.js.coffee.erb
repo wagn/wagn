@@ -23,6 +23,8 @@ wagnConf = {
 
 }
 
+$('.set_select').live 'change', ->
+  $(this).closest('form').submit()
 
 $('.pointer-item-add').live 'click', ->
   last_item = $(this).closest('ul').find '.pointer-li:last'

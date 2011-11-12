@@ -12,7 +12,7 @@ module Wagn::Set::Type::Set
                    end).to_s
     #Rails.logger.debug "setting_names_by_group #{cardname.to_s}, #{cardname.tag_name.to_s}, #{pointer_test}"
 
-    groups[:edit] += ['*options','*options label','*input'] if pointer_test=='Pointer'
+    groups[:pointer] = ['*options','*options label','*input'] if pointer_test=='Pointer'
     groups
   end
 

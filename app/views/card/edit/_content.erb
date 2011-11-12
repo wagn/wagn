@@ -15,7 +15,7 @@
       :html=>{ :class=>'card-form card-edit-form standard-slotter', :id=>(slot.context + '-form'), :remote=>true } do |form| %>
     <div>
       <% slot.form = form %>
-      <%= raw( params[:inclusions] ? slot.render_multi_edit : slot.render_edit) %>
+      <%= slot.render_edit %>
     </div>
     
     <%= raw slot.captcha_tags %>

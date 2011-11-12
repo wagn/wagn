@@ -1,4 +1,4 @@
-<% wrap_slot do |slot| %>
+<%= wrap_slot do |slot| %>
   <%= raw slot.header %>
   <%= form_for :card, :url=>"/card/remove/#{@card.id}",
     :html => { :remote=>true, :class=>'standard-slotter' } do |f| %>

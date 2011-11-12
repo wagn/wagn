@@ -6,7 +6,7 @@
   <h1 class="page-header">Sign Up</h1><%#ENGLISH%>
 
 
-  <% wrap_slot(get_slot(card)) do |slot| %>
+  <%= wrap_slot(get_slot(card)) do |slot| %>
 
     <div class="instruction">
       <% if inst = card.setting_card('add help', 'edit help') %> 

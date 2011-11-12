@@ -114,10 +114,11 @@ describe CardController do
 
     context "multi-create" do
       it "catches missing name error" do
-        post :create, "card"=>{"name"=>"", "type"=>"Fruit"},
-         "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}, 
-         "context"=>"main_1", 
-         "multi_edit"=>"true", "view"=>"open"
+        post :create, "card"=>{
+            "name"=>"", 
+            "type"=>"Fruit",
+            "cards"=>{"~plus~text"=>{"content"=>"<p>abraid</p>"}}
+          }, "view"=>"open"
         assigns['card'].errors[:key].first.should == "cannot be blank"
         assigns['card'].errors[:name].first.should == "can't be blank"
         assert_response 422

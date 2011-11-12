@@ -234,7 +234,7 @@ module Wagn
       ch_action = case
         when too_deep?      ; :too_deep
         when !card          ; false
-        when [:edit, :edit_in_form, :multi_edit].member?(action)
+        when [:edit, :edit_in_form].member?(action)
           allowed = card.ok?(card.new_card? ? :create : :update)
           !allowed && :deny_view #should be deny_create or deny_update...
         else
@@ -253,11 +253,11 @@ module Wagn
       denial = deny_render(view, args) and return denial
   
       view = canonicalize_view(view)
-      @state ||= case view
-        when :edit, :multi_edit; :edit
-        when :closed; :line
-        else :view
-      end
+#      @state ||= case view
+#        when :edit, :edit
+#        when :closed; :line
+#        else :view
+#      end
   
       result = 
         if render_meth = view_method(view)

@@ -5,7 +5,7 @@
    slot ||= get_slot(card)
 %>
 
-<% wrap_slot(slot, args) do |s| %>
+<%= wrap_slot(slot, args) do |s| %>
     <% @title = "New Card" %>
     <%= error_messages_for @card %>
 
@@ -19,13 +19,13 @@
           <%= hidden_field_tag 'card[type]', @args[:type] %>
         <% else %>
           <span class="new-type">
-            <span class="label"> type:</span>
+            <label>type:</label>
             <%= s.typecode_field form, :class=>'cardtype-field new-cardtype-field' %>
           </span>
         <% end %>
         
         <span class="new-name">
-          <span class="label">name:</span>
+          <label>name:</label>
           <% if card.cardname.blank? || Card.exists?(card.cardname) %>
             <% unless card.setting_card('autoname') %>
               <span class="name-area"><%= raw s.name_field(form) %></span>
@@ -44,15 +44,9 @@
 
       <div class="edit-area">
         <div class="editor">
-          <% #FIXME CONTENT: the hard template test can go away when we phase out the old sytem %>
-          <% if card.content_template %>
-            <%= raw s.render(:multi_edit) %>
-          <% else %>
-            <%= raw s.content_field(form) %>
-          <% end %>
+          <%= raw s.render(:edit) %>
         </div>
 
-        <%= s.captcha_tags %>
         <div class="edit-button-area">
           <%= submit_tag 'Submit', :class=>'create-submit-button' %>
           <%= button_tag 'Cancel', :class=>'create-cancel-button', :type=>'button' %>

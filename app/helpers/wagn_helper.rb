@@ -17,6 +17,7 @@ module WagnHelper
 #=begin
   def slot() Wagn::Renderer.current_slot end
   def card() @card ||= slot.card end
+    
   def params()
     if controller
       controller.params 
@@ -40,57 +41,6 @@ module WagnHelper
     end
   end
 
-  module MyCrappyJavascriptHack
-    def select_slot(pattern)
-      ActionView::Helpers::JavaScriptCollectionProxy.new(self, "$A([#{pattern}])")
-    end
-  end
-
-  # This is a slight modification of the stock rails method to accomodate
-  # bare javascript
-  def remote_function(options)
-#    javascript_options = options_for_ajax(options)
-    javascript_options = options
-
-    update = ''
-    if options[:update] =~ /^javascript\:/
-      update << options[:update].gsub(/^javascript\:/,'')
-    elsif options[:update] && options[:update].is_a?(Hash)
-      update  = []
-      if succ = options[:update][:success]
-        update << "success:" + (succ.gsub!(/^javascript:/,'') ? succ : "'#{succ}'")
-      end
-      if fail = options[:update][:failure]
-        update << "failure:" + (fail.gsub!(/^javascript:/,'') ? fail : "'#{succ}'")
-      end
-      update  = '{' + update.join(',') + '}'
-    elsif options[:update]
-      update << "'#{options[:update]}'"
-    end
-
-    function = update.empty? ?
-      "new Ajax.Request(" :
-      "new Ajax.Updater(#{update}, "
-
-    if options[:url] =~ /^javascript\:/
-      function << options[:url].gsub(/^javascript\:/,'')
-    elsif options[:slot]
-      function << Wagn::Renderer.current_slot.url_for(options[:url]).gsub(/^javascript\:/,'')
-    else
-      url_options = options[:url]
-      url_options = url_options.merge(:escape => false) if url_options.is_a?(Hash)
-      function << "'#{url_for(url_options)}'"
-    end
-
-    function << ", #{javascript_options})"
-
-    function = "#{options[:before]}; #{function}" if options[:before]
-    function = "#{function}; #{options[:after]}"  if options[:after]
-    function = "if (#{options[:condition]}) { #{function}; }" if options[:condition]
-    function = "if (confirm('#{escape_javascript(options[:confirm])}')) { #{function}; }" if options[:confirm]
-
-    return function
-  end
 
   def truncatewords_with_closing_tags(input, words = 25, truncate_string = "...")
     if input.nil? then return end
@@ -172,11 +122,6 @@ module WagnHelper
   end
 
 
-  def button_to_remote(name,options={},html_options={})
-    button_to_function(name, remote_function(options), html_options)
-  end
-
-
   def stylesheet_inline(name)
     out = %{<style type="text/css" media="screen">\n}
     out << File.read("#{Rails.root}/public/stylesheets/#{name}.css")
@@ -244,7 +189,8 @@ module WagnHelper
 
   def wrap_slot(renderer=nil, args={}, &block)
     renderer ||= (Wagn::Renderer.current_slot || get_slot)
-    concat( renderer.wrap(:open, args) { capture{ yield(renderer) } } )
+    content = with_output_buffer { yield(renderer) } 
+    renderer.wrap(:open, args) { content }
   end
   # ------------( helpers ) --------------
   def edit_user_context(card)

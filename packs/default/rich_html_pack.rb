@@ -56,16 +56,11 @@ class Wagn::Renderer::RichHtml
 
   define_view(:edit) do |args|
     @state=:edit
-    card.content_template ?  _render_multi_edit(args) : content_field(form)
+    card.content_template ? raw(_render_core(args)) : content_field(form)
   end
 
   define_view(:editor) do |args|
     form.text_area( :content, :rows=>3, :id=>"#{context}-tinymce", :class=>'tinymce-textarea card-content' )
-  end
-
-  define_view(:multi_edit) do |args|
-    @state = :edit
-    hidden_field_tag(:multi_edit, true) + raw(_render_core(args))
   end
 
   define_view(:change) do |args|

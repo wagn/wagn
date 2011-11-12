@@ -1,7 +1,6 @@
 <h1 class="page-header">Missing Card</h1>
 
-<%# wrap_slot(get_slot(Card.new)) do |slot| %>
-<% wrap_slot do |slot| %>
+<%= wrap_slot do |slot| %>
   <div class="content instruction">
     <p>There's no card named <strong><%= @card.name %></strong>.</p> <%#ENGLISH%>
     <%- if !User.logged_in? %>

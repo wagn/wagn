@@ -29,6 +29,7 @@ jQuery.fn.extend {
 
 $(window).load -> wagn.initializeEditors()
 
+
 $('body').delegate '.standard-slotter', "ajax:success", (event, data) ->
   $(this).setSlotContent data
 
@@ -37,6 +38,11 @@ $('body').delegate '.standard-slotter', "ajax:error", (event, xhr) ->
     window.location=xhr.responseText
   else
     $(this).setSlotContent xhr.responseText
+
+
+$('.edit-content-link').live 'ajax:success', ->
+  wagn.initializeEditors()
+
 
 $('.edit-delete-button').live 'click', ->
   button = $(this)
@@ -48,8 +54,6 @@ $('.edit-delete-button').live 'click', ->
 
 
 
-$('.edit-content-link').live 'ajax:complete', ->
-  wagn.initializeEditors()
 
 $('.new-cardtype-field').live 'change', ->
   field = $(this)

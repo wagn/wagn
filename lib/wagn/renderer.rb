@@ -185,7 +185,7 @@ module Wagn
     
     
     def method_missing(method_id, *args, &proc)
-      proc = proc { raw yield} if proc
+      proc = proc { raw yield } if proc
       template.send(method_id, *args, &proc) 
     end
     
@@ -254,11 +254,11 @@ module Wagn
       denial = deny_render(view, args) and return denial
   
       view = canonicalize_view(view)
-#      @state ||= case view
-#        when :edit, :edit
-#        when :closed; :line
-#        else :view
-#      end
+      @state ||= case view
+        when :edit, :edit
+        when :closed; :line
+        else :view
+      end
   
       result = 
         if render_meth = view_method(view)

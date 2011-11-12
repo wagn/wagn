@@ -250,7 +250,7 @@ module Wagn
     klass = { 'edit' => 'edit-content-link'}
     menu_action = (%w{ show update }.member?(action) ? 'view' : action)
     content_tag :li, link_to_action( to_action.capitalize, to_action,
-      :class=> "standard-slotter #{klass[to_action]} #{menu_action==to_action ? 'current' : ''}"
+      :class=> "standard-slotter #{klass[to_action]} #{menu_action==to_action ? ' current' : ''}"
     )
   end
 

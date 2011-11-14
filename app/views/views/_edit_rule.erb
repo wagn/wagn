@@ -1,0 +1,67 @@
+<%= form_for card, :url=>"/card/create_or_update", :remote=>true, :html=>{ :class=>'card-form card-rule-form standard-slotter' } do |form| %>
+  <div>
+    <div class="rule-column-1">
+      <div class="rule-setting">
+        <%= link_to( setting_name,
+          "/card/view/#{main_rule_card.cardname.to_url_key}?view=closed_rule",
+          :class => 'close-rule-link standard-slotter', :remote => true) %>
+      </div>
+    
+      <div class="instruction rule-instruction">
+        <%= raw slot.process_content "{{#{setting_name}+*right+*edit help}}" %>
+      </div>
+
+      <div class="set-editor">
+        <label>apply to:</label>
+        <%- current_set_name = card.new_card? ? nil : card.cardname.trunk_name.key
+            is_current = false
+        %>
+        <%- set_options.each do |set_name| %>
+          <%- set_label =Card.fetch(set_name).label %>
+          <div>
+            
+            <%= form.radio_button :name, set_name %>
+            <% if is_current = (set_name.to_cardname.key == current_set_name) %>
+              <span class="set-label current-set-label"><%= set_label%> <em>(current)</em></span>
+            <% else %>
+              <span class="set-label"><%= set_label%></span>
+            <% end %>
+          </div>
+          <%- break if is_current %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="rule-column-2">
+      <div class="type-editor">
+        <label>type:</label>
+        <%= raw slot.typecode_field( 
+          :class=>'cardtype-field rule-cardtype-field live-cardtype-field',
+          'data-url'=>"/card/view/#{main_rule_card.cardname.to_url_key}?view=open_rule" 
+          ) %>
+      </div>
+        
+      <div class="content-editor">
+        <%= raw slot.content_field(form) %>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="edit-button-area">
+    <div>
+      <%= submit_tag 'Submit', :class=>'rule-submit-button' %> <%#>, :type=>'button' %>
+      <%= button_tag 'Cancel', :class=>'rule-cancel-button', :type=>'button' %>
+    </div>
+    <% if !card.new_card? %>
+      <%= button_tag 'Delete', :class=>'rule-delete-button', :type=>'button' %>
+    <% end %>
+  </div>
+
+  <%= raw slot.notice %>
+
+
+    
+<% end %>
+
+

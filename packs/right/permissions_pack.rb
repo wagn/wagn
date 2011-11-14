@@ -1,7 +1,7 @@
 class Wagn::Renderer
   define_view(:editor, :right=>'*create') do |args|
-    set_name = card.name.trunk_name
-    set_card = Card.fetch(card.name.trunk_name)
+    set_name = card.cardname.trunk_name
+    set_card = Card.fetch(card.cardname.trunk_name)
     return "#{set_name} is not a Set" unless set_card and set_card.typecode=='Set'
 
     group_options = User.as(:wagbot) { Card.search(:type=>'Role', :sort=>'name') }

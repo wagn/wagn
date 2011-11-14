@@ -276,8 +276,9 @@ module Wagn
     }.merge(options))
   end
 
-  def typecode_field(form,options={})
-    template.select_tag('card[type]', typecode_options_for_select(Cardtype.name_for(card.typecode)), options)
+  def typecode_field(options={})
+    typename = card ? Cardtype.name_for(card.typecode) : ''
+    template.select_tag('card[type]', typecode_options_for_select( typename ), options)
   end
 
   def content_field(form,options={})

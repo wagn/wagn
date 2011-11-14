@@ -43,6 +43,9 @@ $('body').delegate '.standard-slotter', "ajax:error", (event, xhr) ->
 $('.edit-content-link').live 'ajax:success', ->
   wagn.initializeEditors()
 
+$('.edit-rule-link').live 'ajax:success', ->
+  wagn.initializeEditors()
+
 
 $('.edit-delete-button').live 'click', ->
   button = $(this)
@@ -52,12 +55,22 @@ $('.edit-delete-button').live 'click', ->
       button.setSlotContent xhr.responseText
   }
 
+$('body').delegate '.rule-submit-button', 'click', ->
+  f = $(this).closest('form')
+  if f.find('.set-editor input:checked').val()
+    true
+  else
+    f.find('.set-editor').addClass('attention')
+    f.find('.notice').text('Please select a set')
+    false
+
+$('body').delegate '.rule-cancel-button', 'click', ->
+  alert('cancel not implemented')
 
 
-
-$('.new-cardtype-field').live 'change', ->
+$('.live-cardtype-field').live 'change', ->
   field = $(this)
-  $.ajax '/card/new', {
+  $.ajax field.attr('data-url'), {
     data: field.closest('form').serialize()
     complete: (xhr, status) ->
       field.setSlotContent xhr.responseText

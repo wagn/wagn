@@ -10,7 +10,7 @@
       <label>Set:</label>
       <select name="current_set" class="set_select">
       <%- related_sets.each do |set_name| %>
-        <%- set_card = Card.fetch set_name, :skip_modules=>true %>
+        <%- set_card = Card.fetch set_name %>
         <option value="<%= set_card.key %>"<%= set_card.key==current_set ? ' selected="selected"' : ''%>><%= set_card.label %></option>
       <%- end %>
       </select>

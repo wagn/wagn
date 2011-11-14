@@ -1,14 +1,14 @@
 module Wagn::Model
   module Pattern
 
-    @@subclasses = []
+    @@pattern_subclasses = []
 
     class << self
-      def register_class(klass) @@subclasses.unshift klass end
-      def subclasses() @@subclasses end
+      def register_class(klass) @@pattern_subclasses.unshift klass end
+      def pattern_subclasses() @@pattern_subclasses end
 
       def method_key(opts)
-        @@subclasses.each do |pclass|
+        @@pattern_subclasses.each do |pclass|
           if !pclass.opt_keys.map{|key| opts.has_key?(key)}.member? false; 
             return pclass.method_key_from_opts(opts) 
           end
@@ -18,7 +18,7 @@ module Wagn::Model
 
 
     def patterns()
-      @patterns ||= @@subclasses.map { |sub|
+      @patterns ||= @@pattern_subclasses.map { |sub|
         (n=sub.new(self)).pattern_applies? ? n : nil
       }.compact
     end
@@ -35,10 +35,6 @@ module Wagn::Model
          @junction_only = patterns.map(&:class).find(&:junction_only?)
     end
 
-    def label
-      found = @@subclasses.find { |sub| cardname.tag_name.to_s==sub.key }
-      found and found.label(cardname.left_name)
-    end
   end
 
 
@@ -52,6 +48,7 @@ module Wagn::Model
       def trunkless?()               false end
       def junction_only?()           false end
       def label(name)                ''    end
+      def prototype_args()           {}    end
     end
 
     def css_name()
@@ -106,6 +103,7 @@ module Wagn::Model
       def opt_keys()                 [:type]                                   end
       def method_key_from_opts(opts) opts[:type].to_cardname.css_name+'_type'  end
       def label(name)                "All #{name} cards"                       end
+      def prototype_args(base)       {:type=>base}                             end
     end
     def pattern_applies?() true                                                end
     def set_name()         "#{card.typename.to_s}+#{self.class.key}"           end
@@ -121,6 +119,7 @@ module Wagn::Model
       def method_key_from_opts(opts)   'star'                  end
       def trunkless?()                 true                    end
       def label(name)                  'Star Cards'            end
+      def prototype_args(base)         {:name=>'*dummy'}       end
     end
     def css_name()                     "STAR"                  end
     def pattern_applies?()             card.cardname.star?     end
@@ -137,6 +136,7 @@ module Wagn::Model
       def trunkless?()                 true                             end
       def junction_only?()             true                             end
       def label(name)                  "Cards ending in +(Star Card)"   end
+      def prototype_args(base)         {:name=>'*dummy+*dummy'}         end
     end
     def pattern_applies?() card.cardname.junction? && card.cardname.tag_star? end
     def method_key()                   'rstar'                           end
@@ -154,6 +154,7 @@ module Wagn::Model
       def method_key_from_opts(opts) opts[:right].to_cardname.css_name+'_right' end
       def junction_only?()             true                              end
       def label(name)                  "Cards ending in +#{name}"        end
+      def prototype_args(base)         {:name=>"*dummy+#{base}"}         end
     end
     def pattern_applies?()          card.cardname.junction?              end
     def set_name()
@@ -167,11 +168,15 @@ module Wagn::Model
     class << self
       def key()              '*type plus right'                              end
       def opt_keys()         [:ltype, :right]                                end
+      def junction_only?()             true                                  end
+      def label(name) "Any #{name.left_name} card plus #{name.right_name}"   end
       def method_key_from_opts(opts)
         %{#{opts[:ltype].to_cardname.css_name}_#{opts[:right].to_cardname.css_name}_typeplusright}
       end
-      def junction_only?()             true             end
-      def label(name) "Any #{name.left_name} card plus #{name.right_name}"   end
+      def prototype_args(base)
+        { :name=>"*dummy+#{base.tag_name}",
+          :loaded_trunk=> Card.new( :name=>'*dummy', :type=>base.trunk_name ) }
+      end
     end
     def css_name() "TYPE_PLUS_RIGHT-#{set_name.to_cardname.trunk_name.css_name}" end
     def left_name()        card.left.cardname or card.cardname.left_name end
@@ -187,16 +192,18 @@ module Wagn::Model
       self.class.method_key_from_opts :ltype=>left_type, :right=>card.cardname.tag_name
     end
 
+
     Wagn::Model::Pattern.register_class self
   end
 
   class SoloPattern < SetBase
       # Why is this in the class scope for all the others, but this one is broken that way?
     class << self
-      def key()                      '*self'                                end
-      def opt_keys()                 [:name]                                end
+      def key()                      '*self'                                  end
+      def opt_keys()                 [:name]                                  end
       def method_key_from_opts(opts) opts[:name].to_cardname.css_name+'_self' end
-      def label(name)                %{Just "#{name}"}                      end
+      def label(name)                %{The card "#{name}"}                    end
+      def prototype_args(base)       { :name=>base }                          end
     end
     
     #FIXME!!! we do not want these to stay commented out, but they need to be

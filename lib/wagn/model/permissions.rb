@@ -128,8 +128,8 @@ module Wagn::Model::Permissions
 
   def approve_read
     return true if System.always_ok?
-    self.read_rule_id ||= rule_card(:read).first.id
-    ok = User.as_user.read_rule_ids.member?(self.read_rule_id.to_i) 
+    @read_rule_id ||= rule_card(:read).first.id
+    ok = User.as_user.read_rule_ids.member?(@read_rule_id.to_i) 
     deny_because you_cant("read this card") unless ok
   end
   
@@ -237,7 +237,7 @@ module Wagn::Model::Permissions
       # could be related to other bugs?
       in_set = {}
       if !(self.trash)
-        rule_classes = Wagn::Model::Pattern.subclasses.map &:key
+        rule_classes = Wagn::Model::Pattern.pattern_subclasses.map &:key
         rule_class_index = rule_classes.index self.cardname.trunk_name.tag_name.to_s
         return 'not a proper rule card' unless rule_class_index
 

@@ -26,18 +26,21 @@ wagnConf = {
 $('.set_select').live 'change', ->
   $(this).closest('form').submit()
 
-$('.pointer-item-add').live 'click', ->
+$('.pointer-item-add').live 'click', (event)->
   last_item = $(this).closest('ul').find '.pointer-li:last'
   new_item = last_item.clone()
   new_item.find('input').val ''
   last_item.after new_item
+  event.preventDefault(); # Prevent link from following its href
 
-$('.pointer-item-delete').live 'click', ->
+$('.pointer-item-delete').live 'click', (event)->
   item = $(this).closest 'li'
   if item.closest('ul').find('.pointer-li').length > 1
     item.remove()
   else
     item.find('input').val ''
+  event.preventDefault(); # Prevent link from following its href
+
 
 pointerContent = (vals) ->
   list = $.map $.makeArray(vals), (v)-> if v then '[[' + v + ']]'

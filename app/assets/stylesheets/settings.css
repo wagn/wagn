@@ -32,30 +32,27 @@
   padding: 2px 5px;  
 }
 .rule-setting { 
+  width: 30%;
   font-weight: bold;
 }
 .rule-type {
   color: #666;
 }
-.rule-set {
-  font-style: italic;
-  color: #999;
-}
 .rule-content {
-  width: 200px;
+  width: 350px;
 }
 .rule-content div {
   padding: 0;
 }
-.rule-content-container.line {
-  width: 200px;
+.rule-content-container.closed-view {
+  width: 350px;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: inherit;
 }
-.rule-content-container.line .pointer-list,
-.rule-content-container.line .search-list,
-.rule-content-container.line .content {
+.rule-content-container.closed-view .pointer-list,
+.rule-content-container.closed-view .search-list,
+.rule-content-container.closed-view .content {
   margin: 0;
 }
 td.missing-rule {
@@ -65,10 +62,11 @@ td.missing-rule {
 .edit-rule {
   background-color: #ffe
 }
-.edit-rule-content {
+/*.edit-rule-content {
   width: 550px;
   float: right;
 }
+*/
 .edit-rule-header {
   padding: 10px 0;
   margin-left: -15px;
@@ -88,4 +86,29 @@ td.missing-rule {
 .edit-rule ul {
   margin: 0px;
   padding-left: 15px;
+}
+.rule-column-1 {
+  float: left;
+  width: 30%;
+}
+.rule-column-2 { 
+  float: right;
+  width: 65%;
+}
+.open-rule .type-editor {
+  text-align: right;
+}
+.open-rule .edit-button-area {
+  clear:both;
+}
+.open-rule .instruction {
+  margin: 5px 0;
+}
+.open-rule .set-editor {
+  margin: 10px 0;
+  padding: 5px;
+  background: #eee;
+}
+.attention {
+  border: 3px solid red;
 }

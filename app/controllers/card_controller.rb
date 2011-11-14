@@ -66,19 +66,15 @@ class CardController < ApplicationController
     @args = (params[:card] ||= {})
     @args[:name] ||= params[:id] # for ajax (?)
     @args[:type] ||= params[:type] # for /new/:type shortcut
-    [:name, :type, :content].each {|key| @args.delete(key) unless a=@args[key] and !a.blank?} #filter blank args
+    [:name, :type, :content].each {|key| @args.delete(key) if a=@args[key] and a.blank?} #filter blank args
 
-    if @args[:name] and Card.exists?(@args[:name]) #card exists
-      render :text => "<span>Oops, <strong>#{@args[:name]}</strong> was recently created! Try reloading the page to edit it</span>" #ENGLISH
+    @card = Card.new @args
+    if @card.ok? :create
+      render( ajax? ?
+        {:partial=>'views/new', :locals=>{ :card=>@card }} : #ajax
+        {:action=> 'new'} ) #normal
     else
-      @card = Card.new @args
-      if @card.ok? :create
-        render( ajax? ?
-          {:partial=>'views/new', :locals=>{ :card=>@card }} : #ajax
-          {:action=> 'new'} ) #normal
-      else
-        render_denied('create')
-      end
+      render_denied('create')
     end
   end
 
@@ -86,7 +82,6 @@ class CardController < ApplicationController
   def create
     @card = Card.new(params[:card])
     if @card.save
-      
       @url = params[:redirect]
       if @url == 'TO_CARD' or (!ajax? && @url.nil?)
         @url = ( @card.ok?(:read) ? card_path(@card) : '/' )
@@ -97,8 +92,16 @@ class CardController < ApplicationController
         when @url   ; render :text => @url, :status => 303
         else        ; render_show
       end
-    else
+    else 
       render :text=>"FIXME WITH REAL ERROR HANDLING: #{@card.errors.full_messages.*"\n"}", :status=>422
+    end
+  end
+
+  def create_or_update
+    if @card = Card[ params[:card][:name] ]
+      update
+    else
+      create
     end
   end
 
@@ -110,7 +113,7 @@ class CardController < ApplicationController
   end
 
   def update
-    @card = @card.refresh # (cached card attributes often frozen)    
+    @card = @card.refresh # (cached card attributes often frozen)
     args=params[:card] || {}
     args[:typecode] = Cardtype.classname_for(args.delete(:type)) if args[:type]
     

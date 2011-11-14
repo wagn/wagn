@@ -384,30 +384,30 @@ module Wagn
   
     def process_inclusion(tcard, options)
       sub = subrenderer(tcard, options[:context])
-      oldrenderer, Renderer.current_slot = Renderer.current_slot, sub
+      oldrenderer, Renderer.current_slot = Renderer.current_slot, sub  #don't like depending on this global var switch
       sub.item_view = options[:item] if options[:item]
       sub.type = options[:type] if options[:type]
       sub.showname = options[:showname] || tcard.cardname
   
       new_card = tcard.new_card? && !tcard.virtual?
   
-      vmode = options[:home_view] = (options[:view] || :content).to_sym
-#      sub.requested_view = vmode
-      subview = case
-  
-        when [:name, :link, :linkname, :rule, :edit_rule].member?(vmode)  ; vmode
+      requested_view = options[:home_view] = (options[:view] || :content).to_sym
+#      sub.requested_view = requested_view
+      approved_view = case
+
+        when [:name, :link, :linkname, :closed_rule, :open_rule].member?(requested_view)  ; requested_view
         when :edit == state
          tcard.virtual? ? :edit_virtual : :edit_in_form
         when new_card
           case
-            when vmode==:raw    ; :blank
-            when state==:line   ; :closed_missing
-            else                ; :open_missing
+            when requested_view==:raw    ; :blank
+            when state==:line            ; :closed_missing
+            else                         ; :open_missing
           end
         when state==:line       ; :closed_content
-        else                    ; vmode
+        else                    ; requested_view
         end
-      result = raw( sub.render(subview, options) )
+      result = raw( sub.render(approved_view, options) )
       Renderer.current_slot = oldrenderer
       result
     rescue Exception=>e

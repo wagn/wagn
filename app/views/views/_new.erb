@@ -1,6 +1,6 @@
 <%-
    args={}
-   args[:home_view] if params[:home_view]
+   args[:home_view] = params[:home_view] if params[:home_view]
    redirect ||= false
    slot ||= get_slot(card)
 %>
@@ -20,7 +20,7 @@
         <% else %>
           <span class="new-type">
             <label>type:</label>
-            <%= s.typecode_field form, :class=>'cardtype-field new-cardtype-field' %>
+            <%= s.typecode_field :class=>'cardtype-field new-cardtype-field' %>
           </span>
         <% end %>
         

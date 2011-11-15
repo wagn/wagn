@@ -69,7 +69,7 @@ class Wagn::Renderer
   alias_view(:editor, { :right=>'*create' }, { :right=>'*read' }, { :right=>'*update' }, { :right=>'*delete' }, { :right=>'*comment' } )
   
   define_view(:core, { :right=>'*create'}) do |args|
-    card.content=='_left' ? core_inherit_content : _final_pointer_type_core
+    card.content=='_left' ? core_inherit_content : _final_pointer_type_core(args)
   end
   alias_view(:core, { :right=>'*create' }, { :right=>'*read' }, { :right=>'*update' }, { :right=>'*delete' }, { :right=>'*comment' } )
   

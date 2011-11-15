@@ -160,18 +160,20 @@ module Wagn
       @relative_content ||= {}
       @format ||= :html
       
-      @params ||= {}
-      @flash ||= {}
-      
       @sub_count = @char_count = 0
       @depth = 0
       @root = self
     end
   
-    def template
-      
+  
+    def params()  @params ||= controller.params  end
+    def flash()   @flash  ||= controller.flash   end
+  
+    def controller
       @controller ||= StubCardController.new
-      
+    end
+  
+    def template
       @template ||= begin
         t = ActionView::Base.new( CardController.view_paths)
         t.extend CardController._helpers

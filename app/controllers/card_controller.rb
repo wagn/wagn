@@ -50,9 +50,7 @@ class CardController < ApplicationController
     respond_to do |format|
       known_formats.each do |f|
         format.send f do
-          return Wagn::Renderer.new(@card, 
-            :format=>f, :flash=>flash, :params=>params, :controller=>self
-          ).render(:show)
+          return Wagn::Renderer.new(@card, :format=>f, :controller=>self).render(:show)
         end
       end
     end
@@ -80,20 +78,11 @@ class CardController < ApplicationController
 
 
   def create
-    @card = Card.new(params[:card])
+    @card = Card.new params[:card]
     if @card.save
-      @url = params[:redirect]
-      if @url == 'TO_CARD' or (!ajax? && @url.nil?)
-        @url = ( @card.ok?(:read) ? card_path(@card) : '/' )
-      end 
-      
-      case 
-        when !ajax? ; redirect_to @url
-        when @url   ; render :text => @url, :status => 303
-        else        ; render_show
-      end
-    else 
-      render :text=>"FIXME WITH REAL ERROR HANDLING: #{@card.errors.full_messages.*"\n"}", :status=>422
+      render_success
+    else
+      render_card_errors      
     end
   end
 
@@ -135,8 +124,10 @@ class CardController < ApplicationController
       @confirm = @card.confirm_rename = @card.update_referencers = true
       @attribute = 'name'
       render :action=>'edit'
+    elsif !@card.errors.empty?
+      render_card_errors
     else
-      render_show
+      render_success
     end
   end
 
@@ -179,16 +170,17 @@ class CardController < ApplicationController
     @card.confirm_destroy = params[:confirm_destroy]
     @card.destroy
     
-    return if !@card.errors[:confirmation_required].empty?
+    return if !@card.errors[:confirmation_required].empty?  ## renders remove.erb, which is essentially a confirmation box.  
 
     discard_locations_for(@card)
     
-    @url = params[:redirect]
+    @url = params[:redirect] || params[:success]
     @url = previous_location if [nil, 'TO_PREVIOUS_CARD'].member? @url
 
     case 
     when !ajax?            ; redirect_to @url
     when params[:redirect] ; render :text => @url, :status => 303  # this should only happen on the main card
+    when params[:success]  ; @card = Card.fetch_or_new(@url); render_show 
     else                   ; render :text => "#{@card.name} removed"
     end
   end
@@ -307,6 +299,25 @@ class CardController < ApplicationController
     @items = options_card ? options_card.item_cards(search_args) : Card.search(search_args)
 
     render :inline => "<%= auto_complete_result @items, 'name' %>"
+  end
+
+  protected
+  
+  def render_success
+    @url = params[:redirect] || params[:success]
+    
+    if @url == 'TO_CARD' or (!ajax? && @url.nil?)
+      @url = ( @card.ok?(:read) ? card_path(@card) : '/' )
+    end 
+    
+    if params[:redirect]
+      if ajax? ; render :text => @url, :status => 303
+      else     ; redirect_to @url
+      end
+    else
+      @card = Card.fetch_or_new(@url) if @url
+      render_show
+    end
   end
 
 end

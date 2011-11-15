@@ -31,13 +31,19 @@ $(window).load -> wagn.initializeEditors()
 
 
 $('body').delegate '.standard-slotter', "ajax:success", (event, data) ->
+  wagn.obj = this
   $(this).setSlotContent data
 
 $('body').delegate '.standard-slotter', "ajax:error", (event, xhr) ->
+  result = xhr.responseText
+  wagn.slot = slot = $(this).slot()
+  notice = slot.find('.notice')
   if xhr.status == 303
-    window.location=xhr.responseText
-  else
-    $(this).setSlotContent xhr.responseText
+    window.location=result
+  else if notice[0]
+    notice.html(result)
+  else  
+    slot.setSlotContent result
 
 
 $('.edit-content-link').live 'ajax:success', ->
@@ -45,6 +51,10 @@ $('.edit-content-link').live 'ajax:success', ->
 
 $('.edit-rule-link').live 'ajax:success', ->
   wagn.initializeEditors()
+
+$('body').delegate 'button.standard-slotter', 'click', ->
+  return false if !$.rails.allowAction $(this)
+  $.rails.handleRemote($(this))
 
 
 $('.edit-delete-button').live 'click', ->
@@ -61,16 +71,15 @@ $('body').delegate '.rule-submit-button', 'click', ->
     true
   else
     f.find('.set-editor').addClass('attention')
-    f.find('.notice').text('Please select a set')
+    f.find('.notice').text('To what Set of cards does this Rule apply?')
     false
 
 $('body').delegate '.rule-cancel-button', 'click', ->
-  alert('cancel not implemented')
-
+  $(this).closest('tr').find('.close-rule-link').click()
 
 $('.live-cardtype-field').live 'change', ->
   field = $(this)
-  $.ajax field.attr('data-url'), {
+  $.ajax field.attr('url'), {
     data: field.closest('form').serialize()
     complete: (xhr, status) ->
       field.setSlotContent xhr.responseText

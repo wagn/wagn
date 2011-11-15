@@ -188,6 +188,7 @@ module Wagn::Model::Permissions
     if !new_card? && updates.for(:typecode)
       User.as :wagbot do
         Card.search(:left=>self.name).each do |plus_card|
+          plus_card = plus_card.refresh if plus_card.frozen?
           plus_card.update_read_rule
         end
       end

@@ -128,6 +128,7 @@ class ApplicationController < ActionController::Base
 
   # ----------( rendering methods ) -------------
 
+
   def render_denied(action = '')
     Rails.logger.debug "~~~~~~~~~~~~~~~~~in render_denied for #{action}"
     
@@ -136,40 +137,18 @@ class ApplicationController < ActionController::Base
     return false
   end
 
-
   def render_card_errors(card=nil)
     card ||= @card
-    stuff = %{<div class="error-explanation">
-      <h2>Rats. Issue with #{card.name && card.name.upcase} card:</h2><p>} +
-        card.errors.map do |attr, msg|
-          "#{attr.to_s.gsub(/base/, 'captcha').upcase }: #{msg}"
-        end.join(",<br> ") +
-        '</p></div>'
+    body = %{<div class="error-explanation">
+      <h2>Rats. Issue with #{card.name && card.name.upcase} card:</h2>} +
+      card.errors.map do |attr, msg|
+        "<div>#{attr.to_s.gsub(/base/, 'captcha').upcase }: #{msg}</div>"
+      end.join + '</div>'
 
-    # getNextElement() will crawl up nested slots until it finds one with a notice div
-
-    on_error_js = ""
-
-    if captcha_required? && ENV['RECAPTCHA_PUBLIC_KEY']
-      key = card.new_record? ? "new" : card.cardname.to_key
-      on_error_js << %{ document.getElementById('dynamic_recaptcha-#{key}').innerHTML='<span class="faint">loading captcha</span>'; }
-      on_error_js << %{ Recaptcha.create('#{ENV['RECAPTCHA_PUBLIC_KEY']}', document.getElementById('dynamic_recaptcha-#{key}'),RecaptchaOptions); }
-    end
-
-    js_tag = %{<%= javascript_tag(%{#{on_error_js}}) %>}
-    stuff_with_javascript = stuff + js_tag
-
-    case
-      when ajax? && !params['_update'];
-        render :update do |page|
-          page << %{notice = getNextElement(#{get_slot.selector},'notice');\n}
-          page << %{notice.update('#{escape_javascript(stuff)}');\n}
-          page << on_error_js
-        end
-      when ajax?
-        render :inline=>stuff_with_javascript, :layout=>nil, :status=>422
-      else
-        render :inline=>stuff_with_javascript, :layout=>'application', :status=>422
+    if ajax?
+      render :text=>body, :status=>422
+    else
+      render :inline=>body, :layout=>'application', :status=>422
     end
   end
 

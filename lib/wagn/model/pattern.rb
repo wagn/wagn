@@ -89,6 +89,7 @@ module Wagn::Model
       def trunkless?()                 true                    end
       def junction_only?()             true                    end
       def label(name)                  'All Plus Cards'        end
+      def prototype_args(base)         {:name=>'+'}            end
     end
     def css_name()                     "ALL_PLUS"              end
     def pattern_applies?()             card.cardname.junction? end

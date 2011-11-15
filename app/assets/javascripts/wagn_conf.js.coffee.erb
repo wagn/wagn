@@ -9,17 +9,7 @@ wagnConf = {
     '.pointer-radio-list'    : -> pointerContent $(this).find('input:checked').val(),
     '.pointer-list-ul'       : -> pointerContent $(this).find('input'        ).map( -> $(this).val() ),
     '.pointer-checkbox-list' : -> pointerContent $(this).find('input:checked').map( -> $(this).val() ),
-    '.permission-editor'     : -> ''
-#      if (jQuery('input[name=#{eid}-inherit]').attr('checked') == true) {
-#        jQuery('##{eid}-hidden-content')[0].value = '_left';
-#        return true;
-#      }
-#      boxes = jQuery('input[name=#{eid}-checkbox]:checked')
-#      group_vals = boxes.map(function(i,n){ return jQuery(n).val(); }).get();
-#      indiv_boxes = jQuery('##{context}-ul input');
-#      indiv_vals = jQuery.map(indiv_boxes, function(x){ return x.value; });
-#      vals = group_vals.concat(indiv_vals);
-#      setPointerContent('#{eid}', vals );
+    '.perm-editor'           : -> permissionsContent $(this) # must happen after pointer-list-ul, I think
   }
   
   editorInitFunctionMap : {
@@ -44,7 +34,7 @@ $('.pointer-item-add').live 'click', (event)->
   last_item.after new_item
   event.preventDefault(); # Prevent link from following its href
 
-$('.pointer-item-delete').live 'click', (event)->
+$('.pointer-item-delete').live 'click', ->
   item = $(this).closest 'li'
   if item.closest('ul').find('.pointer-li').length > 1
     item.remove()
@@ -52,34 +42,25 @@ $('.pointer-item-delete').live 'click', (event)->
     item.find('input').val ''
   event.preventDefault(); # Prevent link from following its href
 
+$('.perm-vals input').live 'click', ->
+  $(this).slot().find('#inherit').attr('checked',false)
+  
+$('.perm-editor #inherit').live 'click', ->
+  slot = $(this).slot()
+  slot.find('.perm-group input:checked').attr('checked', false)
+  slot.find('.perm-indiv input').val('')
+
+permissionsContent = (ed) ->
+  return '_left' if ed.find('#inherit').attr('checked')
+  groups = ed.find('.perm-group input:checked').map( -> $(this).val() )
+  indivs = ed.find('.perm-indiv input'        ).map( -> $(this).val() )
+  pointerContent $.makeArray(groups).concat($.makeArray(indivs))
 
 pointerContent = (vals) ->
   list = $.map $.makeArray(vals), (v)-> if v then '[[' + v + ']]'
   $.makeArray(list).join "\n"
 
-  #    javascript_tag( %{
-  #      indiv_boxes = jQuery('##{context}-ul input');
-  #      indiv_boxes.click( function() { #{uncheck_inherit};} ); 
-  #    } ) +
-  #  
-  #    editor_hooks(:save=>%{
-  #      if (jQuery('input[name=#{eid}-inherit]').attr('checked') == true) {
-  #        jQuery('##{eid}-hidden-content')[0].value = '_left';
-  #        return true;
-  #      }
-  #      boxes = jQuery('input[name=#{eid}-checkbox]:checked')
-  #      group_vals = boxes.map(function(i,n){ return jQuery(n).val(); }).get();
-  #      indiv_boxes = jQuery('##{context}-ul input');
-  #      indiv_vals = jQuery.map(indiv_boxes, function(x){ return x.value; });
-  #      vals = group_vals.concat(indiv_vals);
-  #      setPointerContent('#{eid}', vals );  
-  #    })
-
-#  uncheck_inherit = inheritable ? "jQuery('input[name=#{eid}-inherit]').attr('checked',false)" : ''
 
 
-#  :onclick=>%{ 
-#    jQuery('input[name=#{eid}-checkbox]').attr('checked', false); 
-#    jQuery.each(jQuery('##{eid}-ul input'), function(i,x){ x.value=''; })
 
 window.wagnConf = wagnConf

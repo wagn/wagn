@@ -91,7 +91,7 @@ $('.edit-cardtype-field').live 'change', ->
 
 $('body').delegate '.card-form', 'submit', ->
   $(this).setContentFieldsFromMap()
-  true  
+  true
 
 warn = (stuff) -> console.log stuff if console?
 

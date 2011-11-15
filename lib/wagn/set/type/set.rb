@@ -2,7 +2,8 @@ module Wagn::Set::Type::Set
   include Wagn::Set::Type::Search
 
   def inheritable?
-    
+    return true if junction_only?
+    cardname.tag_name=='*self' && cardname.trunk_name.junction? 
   end
 
   def pattern_subclass

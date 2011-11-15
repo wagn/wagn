@@ -26,13 +26,13 @@ describe Wagn::Model::Pattern do
     end
     
     it "returns set names for junction cards" do
-      Card.new( :name=>"Illiad+author" ).set_names.should == [
+      Card.new( :name=>"Iliad+author" ).set_names.should == [
         "Book+author+*type plus right","author+*right","Basic+*type","*all plus","*all"
       ]
     end
 
     it "returns set names for compound star cards" do
-      Card.new( :name=>"Illiad+*to" ).set_names.should == [
+      Card.new( :name=>"Iliad+*to" ).set_names.should == [
         "Book+*to+*type plus right","*to+*right","*rstar","Phrase+*type","*all plus","*all"
       ]
     end
@@ -47,6 +47,19 @@ describe Wagn::Model::Pattern do
       Card.fetch("*all").junction_only?.should be_false
     end
   end
+
+  describe :inheritable? do
+    it "should identify sets that can inherit rules" do
+      Card.fetch("A+*self").inheritable?.should be_false
+      Card.fetch("A+B+*self").inheritable?.should be_true
+      Card.fetch("Book+*to+*type plus right").inheritable?.should be_true
+      Card.fetch("Book+*type").inheritable?.should be_false
+      Card.fetch("*to+*right").inheritable?.should be_true
+      Card.fetch("*all plus").inheritable?.should be_true
+      Card.fetch("*all").inheritable?.should be_false
+    end
+  end
+
 
   describe :method_keys do
     it "returns correct set names for simple cards" do
@@ -69,10 +82,10 @@ describe Wagn::Model::Pattern do
     end
 
     it "returns set names for junction cards" do
-      card=Card.new( :name=>"Illiad+author" )
+      card=Card.new( :name=>"Iliad+author" )
       card.css_names.should == "ALL ALL_PLUS TYPE-basic RIGHT-author TYPE_PLUS_RIGHT-book-author"
       card.save!
-      card = Card.fetch("Illiad+author")      
+      card = Card.fetch("Iliad+author")      
       card.css_names.should == "ALL ALL_PLUS TYPE-basic RIGHT-author TYPE_PLUS_RIGHT-book-author SELF-illiad-author"
     end
   end
@@ -85,7 +98,7 @@ describe Wagn::Model::Pattern do
 end
 
 describe Wagn::Model::RightNamePattern do
-  it_generates :name => "author+*right", :from => Card.new( :name => "Illiad+author" )
+  it_generates :name => "author+*right", :from => Card.new( :name => "Iliad+author" )
   it_generates :name => "author+*right", :from => Card.new( :name => "+author" )
   
   describe :label do
@@ -109,5 +122,5 @@ describe Wagn::Model::AllPattern do
 end
 
 describe Wagn::Model::LeftTypeRightNamePattern do
-  it_generates :name => "Book+author+*type plus right", :from => Card.new( :name=>"Illiad+author" )
+  it_generates :name => "Book+author+*type plus right", :from => Card.new( :name=>"Iliad+author" )
 end

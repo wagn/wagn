@@ -122,7 +122,7 @@ class SharedData
         
     Card.create! :type=>"Cardtype", :name=>"Book"
     Card.create! :name=>"Book+*type+*content", :content=>"by {{+author}}, design by {{+illustrator}}"
-    Card.create! :name => "Illiad", :type=>"Book"
+    Card.create! :name => "Iliad", :type=>"Book"
                                                                              
     
     ### -------- Notification data ------------

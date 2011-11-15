@@ -780,18 +780,18 @@ div.search-result-list .search-result-item {
 
 /*------- permissions ------------------*/
 
-table.permission-editor th {
+table.perm-editor th {
   text-align: left;
   padding-left: 20px;
   background-color: inherit;
   border: 0;
   color: #666;
 }
-table.permission-editor td {
+table.perm-editor td {
   padding: 5px;
   vertical-align: top;
 }
-table.permission-editor .pointer-item-text {
+table.perm-editor .pointer-item-text {
   width: 200px;
 }
 

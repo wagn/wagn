@@ -306,14 +306,17 @@ class CardController < ApplicationController
   def render_success
     @url = params[:redirect] || params[:success]
     
-    if @url == 'TO_CARD' or (!ajax? && @url.nil?)
-      @url = ( @card.ok?(:read) ? card_path(@card) : '/' )
+    if @url == 'TO_CARD' or ( !ajax? && @url.nil? )
+      @url = if @card.ok?(:read)
+        card_path @card
+      else
+        '/'
+      end
     end 
     
-    if params[:redirect]
-      if ajax? ; render :text => @url, :status => 303
-      else     ; redirect_to @url
-      end
+    case
+    when !ajax?             ; redirect_to @url
+    when params[:redirect]  ; render :text => @url, :status => 303
     else
       @card = Card.fetch_or_new(@url) if @url
       render_show

@@ -235,7 +235,7 @@ describe CardController do
     
     describe "#update" do
       it "works" do
-        post :update, { :id=>@simple_card.id, 
+        xhr :post, :update, { :id=>@simple_card.id, 
           :card=>{:current_revision_id=>@simple_card.current_revision.id, :content=>'brand new content' }} #, {:user=>@user.id} 
         assert_response :success, "edited card"
         assert_equal 'brand new content', Card['Sample Basic'].content, "content was updated"
@@ -283,7 +283,7 @@ describe CardController do
     it "rename without update references should work" do
       User.as :joe_user
       f = Card.create! :type=>"Cardtype", :name=>"Apple"
-      post :update, :id => f.id, :card => {
+      xhr :post, :update, :id => f.id, :card => {
         :confirm_rename => true,
         :name => "Newt",
         :update_referencers => "false",
@@ -302,7 +302,7 @@ describe CardController do
 
     it "update typecode" do
       User.as :joe_user   
-      post :update, :id=>@simple_card.id, :card=>{ :type=>"Date" }
+      xhr :post, :update, :id=>@simple_card.id, :card=>{ :type=>"Date" }
       assert_response :success, "changed card type"
       Card['Sample Basic'].typecode.should == "Date"
     end

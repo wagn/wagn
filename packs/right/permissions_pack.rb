@@ -1,18 +1,16 @@
 class Wagn::Renderer
   define_view(:editor, :right=>'*create') do |args|
     set_name = card.cardname.trunk_name
-    set_card = Card.fetch(card.cardname.trunk_name)
+    set_card = Card.fetch(set_name)
     return "#{set_name} is not a Set" unless set_card and set_card.typecode=='Set'
 
     group_options = User.as(:wagbot) { Card.search(:type=>'Role', :sort=>'name') }
-    eid = context
     inheritable = set_card.junction_only?
-    inheritable ||= set_name.tag_name=='*self' && set_name.trunk_name.junction?
+    inheritable ||= ( set_name.tag_name=='*self' && set_name.trunk_name.junction? )
     inheriting = inheritable && card.content=='_left'
 
     item_names = inheriting ? [] : card.item_names
-    uncheck_inherit = inheritable ? "jQuery('input[name=#{eid}-inherit]').attr('checked',false)" : ''
-    form.hidden_field( :content, :id=>"#{context}-hidden-content") +
+    form.text_field( :content, :class=>'card.content') +
 
     content_tag(:table, :class=>'permission-editor') do
       
@@ -26,8 +24,8 @@ class Wagn::Renderer
         content_tag(:td, :class=>'permissions-group-options') do
           group_options.map do |option|
             div(:class=>'group-option') do
-              check_box_tag( "#{eid}-checkbox", option.name, !!item_names.delete(option.name),
-                { :id=>"#{eid}-checkbox-#{option.key}", :class=>'permissions-checkbox-button', :onclick=>uncheck_inherit  } ) +
+              checked = !!item_names.delete(option.name)
+              check_box_tag( "#{option.key}-perm-checkbox", option.name, checked, :class=>'permissions-checkbox-button'  ) +
               span(:class=>"permission-checkbox-label") { link_to_page option.name }
             end
           end.join( "\n" )
@@ -37,34 +35,16 @@ class Wagn::Renderer
           render :list, :items=>item_names
         end +
         
-        (!inheritable ? '' : content_tag(:td, :class=>'permissions-inherit') do
-          check_box_tag( "#{eid}-inherit", 'inherit', inheriting, :onclick=>%{ 
-            jQuery('input[name=#{eid}-checkbox]').attr('checked', false); 
-            jQuery.each(jQuery('##{eid}-ul input'), function(i,x){ x.value=''; })
-          }) +
-          content_tag(:a, :title=>"use #{card.name.tag_name} rule for left card") { '?' }
-        end)
+        if inheritable
+          content_tag(:td, :class=>'permissions-inherit') do
+            check_box_tag( 'inherit', 'inherit', inheriting ) +
+            content_tag(:a, :title=>"use #{card.cardname.tag_name} rule for left card") { '?' }
+          end
+        else; ''; end
       end
     end
 
-#    javascript_tag( %{
-#      indiv_boxes = jQuery('##{context}-ul input');
-#      indiv_boxes.click( function() { #{uncheck_inherit};} ); 
-#    } ) +
-#  
-#    editor_hooks(:save=>%{
-#      if (jQuery('input[name=#{eid}-inherit]').attr('checked') == true) {
-#        jQuery('##{eid}-hidden-content')[0].value = '_left';
-#        return true;
-#      }
-#      boxes = jQuery('input[name=#{eid}-checkbox]:checked')
-#      group_vals = boxes.map(function(i,n){ return jQuery(n).val(); }).get();
-#      indiv_boxes = jQuery('##{context}-ul input');
-#      indiv_vals = jQuery.map(indiv_boxes, function(x){ return x.value; });
-#      vals = group_vals.concat(indiv_vals);
-#      setPointerContent('#{eid}', vals );  
-#      return true;
-#    })
+
   end
   alias_view(:editor, { :right=>'*create' }, { :right=>'*read' }, { :right=>'*update' }, { :right=>'*delete' }, { :right=>'*comment' } )
   

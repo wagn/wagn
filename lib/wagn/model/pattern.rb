@@ -18,23 +18,18 @@ module Wagn::Model
 
 
     def patterns()
-      @patterns ||= @@pattern_subclasses.map { |sub|
-        (n=sub.new(self)).pattern_applies? ? n : nil
-      }.compact
+      @patterns ||= @@pattern_subclasses.map do |sub|
+        instance = sub.new self
+        instance.pattern_applies? ? instance : nil
+      end.compact
     end
     def reset_patterns()
       @set_mods_loaded = @junction_only = @patterns = @method_keys = @set_names = @template = @virtual = nil
-#      Rails.logger.debug "reset_patterns[#{name}] #{inspect}"
     end
     def set_names()      @set_names ||= patterns.map(&:set_name)                  end
     def real_set_names() set_names.find_all { |set_name| Card.exists? set_name }  end
     def method_keys()    @method_keys ||= patterns.map(&:method_key)              end
     def css_names()      patterns.map(&:css_name).reverse*" "                     end
-    def junction_only?()
-      !@junction_only.nil? ? @junction_only :
-         @junction_only = patterns.map(&:class).find(&:junction_only?)
-    end
-
   end
 
 

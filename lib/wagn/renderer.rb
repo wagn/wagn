@@ -167,7 +167,7 @@ module Wagn
   
   
     def params()  @params ||= controller.params  end
-    def flash()   @flash  ||= controller.flash   end
+    def flash()   @flash  ||= controller.request ? controller.flash : {} end
   
     def controller
       @controller ||= StubCardController.new
@@ -178,8 +178,8 @@ module Wagn
         t = ActionView::Base.new( CardController.view_paths)
         t.extend CardController._helpers
         t.extend NoControllerHelpers
-        t.controller = @controller
-        t._routes = @controller._routes 
+        t.controller = controller
+        t._routes = controller._routes 
         t
       end
     end

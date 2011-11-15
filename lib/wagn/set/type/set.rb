@@ -1,11 +1,19 @@
 module Wagn::Set::Type::Set
   include Wagn::Set::Type::Search
 
+  def inheritable?
+    
+  end
 
   def pattern_subclass
     Wagn::Model::Pattern.pattern_subclasses.find do |sub|
       cardname.tag_name.to_s==sub.key
     end
+  end
+
+  def junction_only?()
+    !@junction_only.nil? ? @junction_only :
+       @junction_only = pattern_subclass.junction_only?
   end
 
   def label

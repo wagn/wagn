@@ -5,7 +5,6 @@
   padding: 0px;
 }
 
-
 html>body .open-view {
   width: auto;  /* so non-ie browsers do better with image floats */
 }
@@ -13,7 +12,6 @@ html>body .open-view {
 .card-slot .ALL {
   overflow: hidden;
 }
-
 
 /*----- header ---------*/
 
@@ -36,41 +34,41 @@ html>body .open-view {
   white-space: nowrap;
 }
 .right-arrow {
-  background: url(/assets/arrow_right.gif) no-repeat left;
+  background: url(arrow_right.gif) no-repeat left;
 }
 html>body .right-arrow {
-  background-image: url(/assets/arrow_right.png);
+  background-image: url(arrow_right.png);
 }
 .down-arrow {
-  background: url(/assets/arrow_down.gif) no-repeat left;
+  background: url(arrow_down.gif) no-repeat left;
 }
 html>body .down-arrow {
-  background-image: url(/assets/arrow_down.png);
+  background-image: url(arrow_down.png);
 }
 .page-icon {
   padding: 2px 7px;
-  background: url(/assets/page.gif) no-repeat right;
+  background: url(page.gif) no-repeat right;
 }
 html>body .page-icon {
-  background-image: url(/assets/page.png);
+  background-image: url(page.png);
 }
 
 .card-icon {
-  background: url(/assets/card.gif) no-repeat right;
+  background: url(card.gif) no-repeat right;
 }
 
 .plus-icon {
-  background: url(/assets/plus.gif) no-repeat right;
+  background: url(plus.gif) no-repeat right;
 }
 
 .search-icon {
-  background: url(/assets/search.gif) no-repeat right;
+  background: url(search.gif) no-repeat right;
 }
                                           
 /* FIXE: these need the IE gifs as well */
-html>body .card-icon{ background-image: url(/assets/card.png); }
-html>body .plus-icon{ background-image: url(/assets/plus.png); }
-html>body .search-icon{ background-image: url(/assets/search.png); }
+html>body .card-icon{ background-image: url(card.png); }
+html>body .plus-icon{ background-image: url(plus.png); }
+html>body .search-icon{ background-image: url(search.png); }
 
 
 .cardtype { 
@@ -193,7 +191,7 @@ a.wanted-card {
 a.external-link, 
 .closed-view .content a.external-link { 
   color: #979; 
-  background: url(/assets/external_link.png) center right no-repeat;
+  background: url(external_link.png) center right no-repeat;
   padding-right: 13px !important;
 }
 a.email-link { 

@@ -9,17 +9,10 @@ module Wagn::Configuration
     
     self.after_initialize do Wagn::Configuration.wagn_run end
 
-#    self.frameworks -= [ :action_web_service ]
-    #require 'yaml'
-    #require 'erb'
-    #database_configuration_file = "#{Rails.root}/config/database.yml"
-    #db = YAML::load(ERB.new(IO.read(database_configuration_file)).result)
-    
-#DISABLED    
-#    self.action_controller.session = {
-#      :key    => db[Rails.env]['session_key'],
-#      :secret => db[Rails.env]['secret']
-#    }
+    if ENV['MULTIDBCONFIG']
+      self.database_configuration_file = File.join("#{Rails.root}/config/databases/#{Rails.env}.yml" )
+    end
+
     STDERR << "----------- Wagn Loaded -----------\n"
   end
 

@@ -4,7 +4,7 @@
   <div class="content instruction">
     <p>There's no card named <strong><%= @card.name %></strong>.</p> <%#ENGLISH%>
     <%- if !User.logged_in? %>
-      <p><%= link_to "Sign In", '/account/signin' %> or <%= link_to 'Sign Up', '/account/signup' %> to create it.</p>
+      <p><%= link_to "Sign In", :controller=>'account', :action=>'signin' %> or <%= link_to 'Sign Up', :controller=>'account', :action=>'signup' %> to create it.</p>
     <% end %>
   </div>
 <% end %>

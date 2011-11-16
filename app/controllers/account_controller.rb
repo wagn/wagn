@@ -24,12 +24,12 @@ class AccountController < ApplicationController
       email_args = { :message => System.setting('*signup+*message') || "Thanks for signing up to #{System.site_title}!",  #ENGLISH
                      :subject => System.setting('*signup+*subject') || "Account info for #{System.site_title}!" }  #ENGLISH
       @user.accept(email_args)
-      redirect_to (System.setting('*signup+*thanks') || '/')
+      redirect_to System.path_setting(System.setting('*signup+*thanks'))
     else
       User.as :wagbot do
         Mailer.signup_alert(@card).deliver if System.setting('*request+*to')
       end
-      redirect_to (System.setting('*request+*thanks') || '/')
+      redirect_to System.path_setting(System.setting('*request+*thanks'))
     end
   end
 
@@ -47,7 +47,7 @@ class AccountController < ApplicationController
     if request.post?
       @user.accept(params[:email])
       if @user.errors.empty? #SUCCESS
-        redirect_to (System.setting('*invite+*thanks') || '/')
+        redirect_to System.path_setting(System.setting('*invite+*thanks'))
         return
       end
     end
@@ -62,7 +62,7 @@ class AccountController < ApplicationController
       [User.new, Card.new()]
     if request.post? and @user.errors.empty?
       @user.send_account_info(params[:email])
-      redirect_to (System.setting('*invite+*thanks') || '/')
+      redirect_to System.path_setting(System.setting('*invite+*thanks'))
     end
   end
 
@@ -78,7 +78,7 @@ class AccountController < ApplicationController
   def signout
     self.current_user = nil
     flash[:notice] = "You have been logged out." #ENGLISH
-    redirect_to '/'  # previous_location here can cause infinite loop.  ##  Really?  Shouldn't.  -efm
+    redirect_to System.path_setting('/')  # previous_location here can cause infinite loop.  ##  Really?  Shouldn't.  -efm
   end
 
   def forgot_password
@@ -127,7 +127,7 @@ class AccountController < ApplicationController
 #      Card::InvitationRequest.find_all_by_trash(false).each do |card|
 #        card.destroy
 #      end
-#      redirect_to '/wagn/Account_Request'
+#      redirect_to System.path_setting('/wagn/Account_Request')
 #    end
 #  end
 #
@@ -138,7 +138,7 @@ class AccountController < ApplicationController
 #        user.destroy                if (!card or card.trash)
 #        card.destroy_without_trash  if (card and card.trash)
 #      end
-#      redirect_to '/wagn/Account_Request'
+#      redirect_to System.path_setting('/wagn/Account_Request')
 #    end
 #  end
 

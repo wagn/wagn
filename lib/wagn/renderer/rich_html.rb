@@ -3,17 +3,8 @@ module Wagn
 
     include Recaptcha::ClientHelper
 
-    cattr_accessor :set_actions
-    attr_accessor  :options_need_save, :js_queue_initialized, :start_time, :skip_autosave
+    attr_accessor  :options_need_save, :start_time, :skip_autosave
 
-    # This creates a separate class hash in the subclass
-    class << self
-      def actions() @@set_actions||={} end
-    end
-
-    def set_action(key)
-      Renderer::RichHtml.actions[key] or super
-    end
 
     def initialize(card, opts=nil)
       super
@@ -136,11 +127,7 @@ module Wagn
     end
 
     def wrap_content( view, content="" )
-      %{
-        <span class="#{view}-content content editOnDoubleClick">
-          #{content.to_s}
-        </span>
-       }
+      %{<span class="#{view}-content content editOnDoubleClick">#{content}</span>}
     end
 
     def wrap_main(content)
@@ -191,13 +178,8 @@ module Wagn
       end
     end
 
-    def header
-      render_partial('card/header')
-    end
-  
-    def footer
-      render_partial('card/footer')
-    end
+    def header()  render_partial('card/header')  end  
+    def footer()  render_partial('card/footer')  end
 
     def menu
       if card.virtual?

@@ -48,18 +48,11 @@ module LocationHelper
       opts.each_pair{|k,v| pairs<< "#{k}=#{v}"}
       vars = '?' + pairs.join('&')
     end
-    # shaved order of magnitude off footer rendering
-    # vs. url_for( :action=> .. )
-#Rails.logger.debug "url_for_page( #{title}, #{format}, #{vars}"
-    "/wagn/#{title.to_cardname.to_url_key}#{format}#{vars}"
-  end
-
-  def url_for_card( options={} )
-    url_for options_for_card( options )
+    System.root_path + "/wagn/#{title.to_cardname.to_url_key}#{format}#{vars}"
   end
 
   def card_path( card )
-    "/wagn/#{card.cardname.to_url_key}"
+    System.root_path + "/wagn/#{card.cardname.to_url_key}"
   end
 
   def card_url( card )

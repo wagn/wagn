@@ -42,12 +42,12 @@ module Wagn::Model::Permissions
   def approved?
     self.operation_approved = true    
     self.permission_errors = []
-    #Rails.logger.debug "updates.keys = #{updates.keys.inspect}"
+
     unless updates.keys == ['comment'] # if only updating comment, next section will handle
       new_card? ? ok?(:create) : ok?(:update)
     end
     updates.each_pair do |attr,value|
-      #Rails.logger.info "approving: #{attr}"
+
       send("approve_#{attr}")
     end         
     permission_errors.each do |err|

@@ -10,7 +10,7 @@
 
       <p>
         <% if User.current_user.anonymous? %>
-          You have to <%= link_to "sign in", '/account/signin' %>
+          You have to <%= link_to "sign in", :controller=>'account', :action=>'signin' %>
         <% else %>
           You need permission
         <% end %>

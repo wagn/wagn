@@ -131,6 +131,7 @@ module WagnHelper
     end
   end
 
+
   def navbox_result(entries, field, stub)
     return unless entries
     items = []

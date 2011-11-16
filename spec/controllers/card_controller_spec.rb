@@ -14,10 +14,9 @@ describe CardController do
     it "should recognize type" do
       { :get => "/new/Phrase" }.should route_to( :controller => 'card', :action=>'new', :type=>'Phrase' )
     end
-
     
     it "should recognize .rss on /recent" do
-      {:get => "/recent.rss"}.should route_to(:controller=>"card", :view=>"content", :action=>"show", 
+      {:get => "/recent.rss"}.should route_to(:controller=>"card", :view=>"core", :action=>"show", 
         :id=>"*recent", :format=>"rss"
       )
     end

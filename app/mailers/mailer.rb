@@ -8,9 +8,9 @@ class Mailer < ActionMailer::Base
 
     @email    = (user.email    or raise Wagn::Oops.new("Oops didn't have user email"))
     @password = (user.password or raise Wagn::Oops.new("Oops didn't have user password"))
-    @card_url = "#{System.base_url}/wagn/#{url_key}"
-    @pw_url   = "#{System.base_url}/card/options/#{url_key}"
-    @login_url= "#{System.base_url}/account/signin"
+    @card_url = "#{System.base_url}#{System.root_path}/wagn/#{url_key}"
+    @pw_url   = "#{System.base_url}#{System.root_path}/card/options/#{url_key}"
+    @login_url= "#{System.base_url}#{System.root_path}/account/signin"
     @message  = message.clone
 
     mail( {

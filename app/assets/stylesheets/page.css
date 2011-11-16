@@ -51,10 +51,10 @@ html>body #navbox_background {
 /* use both ids otherwise #menu a  overrides */            
 #navbox_background #navbox_image {
   padding: 2px 8px;
-  background: url(/assets/search.gif) no-repeat right;
+  background: url(search.gif) no-repeat right;
 }
 html>body #navbox_background #navbox_image { 
-  background-image: url(/assets/search.png);
+  background-image: url(search.png);
 }
 #navbox_field,
 #navbox_field:focus {

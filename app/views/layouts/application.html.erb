@@ -1,1 +1,1 @@
-<%= raw Wagn::Renderer.new(nil, :params=>params, :flash=>flash, :controller=>self.controller)._render_layout(:main_content=>yield) %>
+<%= raw Wagn::Renderer.new(nil, :controller=>self.controller)._render_layout(:main_content=>yield) %>

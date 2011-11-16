@@ -39,7 +39,7 @@ class Wagn::Renderer
       %{<span class="faint">(#{ card.count })</span>
       <div class="search-result-list">
         #{results.map do |c|
-          %{<div class="search-result-item">#{'name' == item_view || params[:item] ? c.name : link_to_page( c.name ) }</div>}
+          %{<div class="search-result-item">#{'name' == @item_view || params[:item] ? c.name : link_to_page( c.name ) }</div>}
         end*"\n"}
       </div>}
     end
@@ -134,7 +134,7 @@ class Wagn::Renderer
     args[:limit] = limit
 
 #    args[:requested_view] = requested_view 
-    args[:item] = item_view || args[:item]
+    args[:item] = @item_view || args[:item]
     args[:_keyword] = s[:_keyword] if s[:_keyword]
 
     out = []

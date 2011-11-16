@@ -26,7 +26,6 @@ class Wagn::Renderer::RichHtml
   
 
   define_view(:content) do |args|
-    @state = :view
     c = _render_core(args)
     c = "<span class=\"faint\">--</span>" if c.size < 10 && strip_tags(c).blank?
     wrap(:content, args) { raw wrap_content(:content, c) }
@@ -44,17 +43,14 @@ class Wagn::Renderer::RichHtml
   end
 
   define_view(:open) do |args|
-    @state = :view
     wrap(:open, args) { render_partial('views/open') }
   end
 
   define_view(:closed) do |args|
-    @state = :line
     wrap(:closed, args) { render_partial('views/closed') }
   end
 
   define_view(:edit) do |args|
-    @state=:edit
     card.content_template ? raw(_render_core(args)) : content_field(form)
   end
 
@@ -67,7 +63,7 @@ class Wagn::Renderer::RichHtml
   end
 
   define_view(:missing) do |args|
-    wrap(:missing, args) { "Add <strong>#{ showname || card.name }</strong>" }
+    wrap(:missing, args) { "Add <strong>#{ @showname || card.name }</strong>" }
   end
   
 ###---(  EDIT VIEWS )

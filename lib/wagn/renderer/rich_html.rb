@@ -17,7 +17,7 @@ module Wagn
 
     def initialize(card, opts=nil)
       super
-      @state = :view
+      @mode = :view
       @renders = {}
 
       if card and card.collection? and item_param=params[:item]
@@ -130,7 +130,7 @@ module Wagn
       classes << card.css_names if card
     
       attributes = { :class => classes.join(' ') }
-      [:style, :home_view, :item, :base].each { |key| attributes[key] = args[key] }
+      [:style, :home_view, :item].each { |key| attributes[key] = args[key] }
     
       div( attributes ) { yield }
     end
@@ -263,7 +263,7 @@ module Wagn
     end
 
     def content_field(form,options={})
-      self.form = form
+      @form = form
       @nested = options[:nested]
       pre_content =  (card and !card.new_record?) ? form.hidden_field(:current_revision_id, :class=>'current_revision_id') : ''
       User.as :wagbot do #why wagbot here??

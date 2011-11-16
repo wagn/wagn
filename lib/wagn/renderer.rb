@@ -1,35 +1,22 @@
 module Wagn
- class Renderer  
+  class Renderer
     include ReferenceTypes
-  
-    VIEW_ALIASES = {  #ALL THESE VIEWS ARE DEPRECATED
-      :view  => :open,
-      :card  => :open,
-      :line  => :closed,
-      :bare  => :core,
-      :naked => :core
-    }
-    
-    UNDENIABLE_VIEWS = [ 
-      :deny_view, :edit_virtual, :too_slow, :too_deep, :missing, :closed_missing, :name, :link, :url
-    ]
+
+    DEPRECATED_VIEWS = { :view=>:open, :card=>:open, :line=>:closed, :bare=>:core, :naked=>:core }
+    UNDENIABLE_VIEWS = [ :deny_view, :edit_virtual, :too_slow, :too_deep, :missing, :closed_missing, :name, :link, :url ]
+    INCLUSION_MODES  = [ :main, :closed, :edit, :layout ]
   
     RENDERERS = {
       :html => :RichHtml,
       :css  => :Text,
       :txt  => :Text
     }
-  
-    cattr_accessor :max_char_count, :max_depth, :set_views,
-      :current_slot, :ajax_call, :fallback
-    self.max_char_count = 200
-    self.max_depth = 10
-  
-    attr_reader :params, :layout, :relative_content, :root, :format, :controller
-    attr_accessor :card, :main_content, :main_card, :char_count,
-        :depth, :item_view, :form, :type, :base, :state, :sub_count,
-        :layout, :flash, :showname #, :requested_view
-  
+    
+    cattr_accessor :current_slot, :ajax_call
+
+    @@max_char_count = 200
+    @@max_depth = 10
+    @@set_views = {}
 
     class << self
       def get_pattern(view,opts)
@@ -46,7 +33,6 @@ module Wagn
         @@set_views[nview_key.to_sym] = "_final_#{view_key}".to_sym
       end
   
-      @@set_views, @@fallback = {},{} unless @@set_views
   
       def new(card, opts={})
         if self==Renderer
@@ -84,14 +70,15 @@ module Wagn
 
 
       def define_view(view, opts={}, &final)
-        fallback[view] = opts.delete(:fallback) if opts.has_key?(:fallback)
         view_key = get_pattern(view, opts)
         define_method( "_final_#{view_key}", &final )
 
         if !method_defined? "render_#{view}"
           define_method( "_render_#{view}" ) do |*a| a = [{}] if a.empty?
             if final_method = view_method(view)
-              send(final_method, *a)
+              with_inclusion_mode(view) do
+                send(final_method, *a)
+              end
             else
               "<strong>#{card.name} - unknown card view: '#{view}' M:#{render_meth.inspect}</strong>"
             end
@@ -126,32 +113,29 @@ module Wagn
         end
       end
     end
-  
-  
 
-    def render(view=:view, args={})
-      args[:home_view] ||= view
-      send("render_#{canonicalize_view view}", args)
-    end
+    attr_reader :card, :root, :showname #should be able to factor out showname
+    attr_accessor :form, :main_content, :main_card
+
+
 
   
+
   
-    def initialize(card, opts=nil)
+  
+    def initialize(card, opts={})
       Renderer.current_slot ||= self unless(opts[:not_current])
       @card = card
-      if opts
-        [ :main_content, :main_card, :base,
-          :params, :relative_content, :format, :flash, :layout, :controller].
-            map {|s| instance_variable_set "@#{s}", opts[s]}
-      end
+      opts.each { |key, value| instance_variable_set "@#{key}", value }
   
       @relative_content ||= {}
       @format ||= :html
       
-      @sub_count = @char_count = 0
-      @depth = 0
+      @char_count = @depth = 0
       @root = self
     end
+
+
   
     def params()     @params     ||= controller.params                          end
     def flash()      @flash      ||= controller.request ? controller.flash : {} end
@@ -171,6 +155,10 @@ module Wagn
       end
     end
     
+    def render(view=:view, args={})
+      args[:home_view] ||= view
+      send("render_#{canonicalize_view view}", args)
+    end
     
     
     def method_missing(method_id, *args, &proc)
@@ -184,17 +172,20 @@ module Wagn
   
     def too_deep?() @depth >= max_depth end
   
-    def subrenderer(subcard, ctx_base=nil)
+    def subrenderer(subcard, opts={})
       subcard = Card.fetch_or_new(subcard) if String===subcard
-      self.sub_count += 1
       sub = self.clone
-      sub.depth = @depth+1
-      sub.item_view = sub.main_content = sub.main_card = sub.showname = nil
-      sub.sub_count = sub.char_count = 0
-      sub.card = subcard
-      sub
+      sub.initialize_subrenderer(subcard, opts)
     end
 
+    def initialize_subrenderer(subcard, opts)
+      @card = subcard
+      @char_count = 0
+      @depth += 1
+      @item_view = @main_content = @main_card = @showname = nil
+      opts.each { |key, value| instance_variable_set "@#{key}", value }
+      self
+    end
   
     def process_content(content=nil, opts={})
       return content unless card
@@ -227,10 +218,8 @@ module Wagn
     end
     
     def canonicalize_view( view )
-      (v=!view.blank? && VIEW_ALIASES[view.to_sym]) ? v : view
+      (v=!view.blank? && DEPRECATED_VIEWS[view.to_sym]) ? v : view
     end
-  
-
   
     def view_method(view)
       return "_final_#{view}" unless card
@@ -238,10 +227,8 @@ module Wagn
         meth = "_final_"+(method_key.blank? ? "#{view}" : "#{method_key}_#{view}")
         return meth if respond_to?(meth.to_sym)
       end
-      return @@fallback[view]
+      nil
     end
-    
-
   
     def resize_image_content(content, size)
       size = (size.to_s == "full" ? "" : "_#{size}")
@@ -276,45 +263,53 @@ module Wagn
   
       String.new wiki_content.unrender!
     end
+
+    def with_inclusion_mode(mode)
+      if switch = INCLUSION_MODES.member?( mode )
+        old_mode, @mode = @mode, mode
+      end
+      result = yield
+      @mode = old_mode if switch
+      result      
+    end
   
-    def expand_inclusion(options)
-      return options[:comment] if options.has_key?(:comment)
+    def expand_inclusion(opts)
+      return opts[:comment] if opts.has_key?(:comment)
       # Don't bother processing inclusion if we're already out of view
-      return '' if (state==:line && self.char_count > Renderer.max_char_count)
+      return '' if @mode == :closed && @char_count > @@max_char_count
   
-      options[:view] = canonicalize_view options[:view]
-  
-      tname=options[:tname]
-      if is_main = tname=='_main'
-        tcard, tcont = root.main_card, root.main_content
-        return self.wrap_main(tcont) if tcont
-        return "{{#{options[:unmask]}}}" || '{{_main}}' unless @depth == 0 and tcard
-  
-        tname = tcard.cardname
-        [:item, :view, :size].each{ |key| val=symbolize_param(key) and options[key]=val }
-        # main card uses these CGI options as inclusion args      
-        options[:view] ||= :open
-      end
-      #options[:home_view] = options[:view] ||= context == 'layout_0' ? :core : :content
-      options[:home_view] = options[:view] ||= :content
+      tname=opts[:tname]
+      return expand_main(opts) if tname=='_main'
+
+      opts[:view] = canonicalize_view opts[:view]
+      opts[:home_view] = opts[:view] ||= ( @mode == :layout ? :core : :content )
+      
       tcardname = tname.to_cardname
-      options[:fullname] = fullname = tcardname.fullname(card.cardname, base, options, params)
-      options[:showname] = tcardname.to_show(fullname)      #Rails.logger.debug "fullname [#{tname.inspect}](#{card&&card.name||card.inspect}, #{base.inspect}, #{options.inspect}"
+      opts[:fullname] = tcardname.to_absolute(card.cardname, params)
+      opts[:showname] = tcardname.to_show(opts[:fullname])
   
-      tcard ||= begin
-        case
-        when state ==:edit   ;  Card.fetch_or_new(fullname, new_inclusion_card_args(tname, options))
-        when base.respond_to?(:name);   base
-        else                 ;  Card.fetch_or_new(fullname)
-        end
-      end
+      new_args = @mode == :edit ? new_inclusion_card_args(tname, opts) : {}
+      tcard ||= Card.fetch_or_new(opts[:fullname], new_args)
   
-      result = process_inclusion(tcard, options)
-      result = resize_image_content(result, options[:size]) if options[:size]
-      @char_count += (result ? result.length : 0) #should we strip html here?
-      is_main ? self.wrap_main(result) : result
+      result = process_inclusion(tcard, opts)
+      result = resize_image_content(result, opts[:size]) if opts[:size]
+      @char_count += (result ? result.length : 0)
+      result
     rescue Card::PermissionDenied
       ''
+    end
+  
+    def expand_main(options)
+      tcard, tcont = @root.main_card, @root.main_content
+      case
+      when tcont      ; wrap_main tcont
+      when @depth > 0 ; "{{#{options[:unmask]}}}"
+      else
+        [:item, :view, :size].each{ |key| val=symbolize_param(key) and options[key]=val }
+        options[:tname] = tcard.cardname
+        options[:view] ||= :open
+        wrap_main expand_inclusion(options)
+      end      
     end
   
     def wrap_main(content)
@@ -331,13 +326,13 @@ module Wagn
       content.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
     end
   
-  
     def process_inclusion(tcard, options)
-      sub = subrenderer(tcard)
+      sub = subrenderer( tcard, 
+        :item_view =>options[:item], 
+        :type      =>options[:type], 
+        :showname  =>(options[:showname] || tcard.cardname)
+      )
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub  #don't like depending on this global var switch
-      sub.item_view = options[:item] if options[:item]
-      sub.type = options[:type] if options[:type]
-      sub.showname = options[:showname] || tcard.cardname
   
       new_card = tcard.new_card? && !tcard.virtual?
   
@@ -346,15 +341,15 @@ module Wagn
       approved_view = case
 
         when [:name, :link, :linkname, :closed_rule, :open_rule].member?(requested_view)  ; requested_view
-        when :edit == state
+        when @mode == :edit
          tcard.virtual? ? :edit_virtual : :edit_in_form
         when new_card
           case
             when requested_view==:raw    ; :blank
-            when state==:line            ; :closed_missing
+            when @mode==:closed          ; :closed_missing
             else                         ; :missing
           end
-        when state==:line       ; :closed_content
+        when @mode==:closed     ; :closed_content
         else                    ; requested_view
         end
       result = raw( sub.render(approved_view, options) )
@@ -368,10 +363,10 @@ module Wagn
   
     def get_inclusion_content(cardname)
       #Rails.logger.debug "get_inclusion_content(#{cardname.inspect})"
-      content = relative_content[cardname.to_s.gsub(/\+/,'_')]
+      content = @relative_content[cardname.to_s.gsub(/\+/,'_')]
   
       # CLEANME This is a hack to get it so plus cards re-populate on failed signups
-      if relative_content['cards'] and card_params = relative_content['cards'][cardname.pre_cgi]
+      if @relative_content['cards'] and card_params = @relative_content['cards'][cardname.pre_cgi]
         content = card_params['content']
       end
       content if content.present?  #not sure I get why this is necessary - efm

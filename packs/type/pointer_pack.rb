@@ -2,7 +2,7 @@ class Wagn::Renderer
   
   define_view(:core, :type=>'pointer') do |args|
     %{<div class="pointer-list"> } +
-      pointer_item(self, (item_view || 'closed')) +
+      pointer_item(self, (@item_view || 'closed')) +
     "</div>" + 
     link_to( 'add/edit', "/card/edit/#{card.id}",#ENGLISH 
       :class=>'standard-slotter add-edit-item',
@@ -12,7 +12,7 @@ class Wagn::Renderer
 
   define_view(:closed_content, :type=>'pointer') do |args|
     div( :class=>"pointer-list" ) do
-      pointer_item(self, ('name'==item_view || params[:item] ? 'name' : 'link'))
+      pointer_item(self, ('name'==@item_view || params[:item] ? 'name' : 'link'))
     end
   end
 

@@ -153,17 +153,6 @@ module Wagn
       args ? parts.map { |p| p =~ /^_/ and args[p] ? args[p] : p }*JOINT : self
     end
 
-    def fullname(context, base, args, params)
-      context = case
-          when base; (base.respond_to?(:cardname) ? base.cardname :
-                      base.respond_to?(:name) ? base.name : base)
-          when args[:base]=='parent'; context.left_name
-          else context
-          end.to_cardname
-      #Rails.logger.info "fullname s(#{inspect}, #{context.inspect}, #{base.inspect}, #{args.inspect}) P:#{params.inspect}"
-      to_absolute( context||self, params )
-    end
-
     def to_absolute_name(rel_name=nil)
       (rel_name || self.s).to_cardname.to_absolute(self)
     end

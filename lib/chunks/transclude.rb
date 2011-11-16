@@ -25,7 +25,6 @@ module Chunk
       end
       options = {
         :tname   =>name,
-        :base  => 'self',
         :view  => nil,
         :item  => nil,
         :type  => nil,

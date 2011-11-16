@@ -76,9 +76,7 @@ module Wagn
         if !method_defined? "render_#{view}"
           define_method( "_render_#{view}" ) do |*a| a = [{}] if a.empty?
             if final_method = view_method(view)
-              with_inclusion_mode(view) do
-                send(final_method, *a)
-              end
+              with_inclusion_mode(view) { send(final_method, *a) }
             else
               "<strong>#{card.name} - unknown card view: '#{view}' M:#{render_meth.inspect}</strong>"
             end
@@ -116,11 +114,6 @@ module Wagn
 
     attr_reader :card, :root, :showname #should be able to factor out showname
     attr_accessor :form, :main_content, :main_card
-
-
-
-  
-
   
   
     def initialize(card, opts={})
@@ -136,7 +129,6 @@ module Wagn
     end
 
 
-  
     def params()     @params     ||= controller.params                          end
     def flash()      @flash      ||= controller.request ? controller.flash : {} end
     def controller() @controller ||= StubCardController.new                     end
@@ -170,7 +162,7 @@ module Wagn
     def ajax_call?() @@ajax_call end
     def outer_level?() @depth == 0 end
   
-    def too_deep?() @depth >= max_depth end
+    def too_deep?() @depth >= @@max_depth end
   
     def subrenderer(subcard, opts={})
       subcard = Card.fetch_or_new(subcard) if String===subcard
@@ -243,27 +235,6 @@ module Wagn
       render_partial "views/#{action}", locals
     end
   
-    def replace_references( old_name, new_name )
-      #warn "replacing references...card name: #{card.name}, old name: #{old_name}, new_name: #{new_name}"
-      wiki_content = WikiContent.new(card, card.content, self)
-  
-      wiki_content.find_chunks(Chunk::Link).each do |chunk|
-        if chunk.cardname
-          link_bound = chunk.cardname == chunk.link_text
-          chunk.cardname = chunk.cardname.replace_part(old_name, new_name)
-          chunk.link_text=chunk.cardname.to_s if link_bound
-          #Rails.logger.info "repl ref: #{chunk.cardname.to_s}, #{link_bound}, #{chunk.link_text}"
-        end
-      end
-  
-      wiki_content.find_chunks(Chunk::Transclude).each do |chunk|
-        chunk.cardname =
-          chunk.cardname.replace_part(old_name, new_name) if chunk.cardname
-      end
-  
-      String.new wiki_content.unrender!
-    end
-
     def with_inclusion_mode(mode)
       if switch = INCLUSION_MODES.member?( mode )
         old_mode, @mode = @mode, mode
@@ -305,7 +276,11 @@ module Wagn
       when tcont      ; wrap_main tcont
       when @depth > 0 ; "{{#{options[:unmask]}}}"
       else
-        [:item, :view, :size].each{ |key| val=symbolize_param(key) and options[key]=val }
+        [:item, :view, :size].each do |key|
+          if val=params[key] and !val.to_s.empty?
+            options[key] = val.to_sym
+          end
+        end
         options[:tname] = tcard.cardname
         options[:view] ||= :open
         wrap_main expand_inclusion(options)
@@ -314,16 +289,6 @@ module Wagn
   
     def wrap_main(content)
       content  #no wrapping in base renderer
-    end
-  
-    def symbolize_param(param)
-      val = params[param]
-      (val && !val.to_s.empty?) ? val.to_sym : nil
-    end
-  
-    def resize_image_content(content, size)
-      size = (size.to_s == "full" ? "" : "_#{size}")
-      content.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
     end
   
     def process_inclusion(tcard, options)
@@ -380,32 +345,6 @@ module Wagn
       end
       args
     end
-  
-    def update_references(rendering_result=nil)
-      return unless card
-      WikiReference.delete_all ['card_id = ?', card.id]
-  
-      if card.id
-        card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
-        rendering_result ||= WikiContent.new(card, _render_refs, self)
-        rendering_result.find_chunks(Chunk::Reference).each do |chunk|
-          reference_type =
-            case chunk
-              when Chunk::Link;       chunk.refcard ? LINK : WANTED_LINK
-              when Chunk::Transclude; chunk.refcard ? TRANSCLUSION : WANTED_TRANSCLUSION
-              else raise "Unknown chunk reference class #{chunk.class}"
-            end
-  
-         #ref_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
-          #raise "No name to ref? #{card.name}, #{chunk.inspect}" unless chunk.refcardname()
-          WikiReference.create!( :card_id=>card.id,
-            :referenced_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
-            :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
-            :link_type=>reference_type
-           )
-        end
-      end
-    end
         
     def build_link(href, text)
       #Rails.logger.info "build_link(#{href.inspect}, #{text.inspect})"
@@ -431,6 +370,64 @@ module Wagn
     
     def full_uri(relative_uri)
       relative_uri
+    end
+  
+  
+  
+    ##FIXME -- shouldn't be anything about specific cardtypes here
+    def resize_image_content(content, size)
+      size = (size.to_s == "full" ? "" : "_#{size}")
+      content.gsub(/_medium(\.\w+\")/,"#{size}"+'\1')
+    end
+  
+
+     ### FIXME -- this should not be here!   probably in WikiReference model?
+    def replace_references( old_name, new_name )
+      #warn "replacing references...card name: #{card.name}, old name: #{old_name}, new_name: #{new_name}"
+      wiki_content = WikiContent.new(card, card.content, self)
+    
+      wiki_content.find_chunks(Chunk::Link).each do |chunk|
+        if chunk.cardname
+          link_bound = chunk.cardname == chunk.link_text
+          chunk.cardname = chunk.cardname.replace_part(old_name, new_name)
+          chunk.link_text=chunk.cardname.to_s if link_bound
+          #Rails.logger.info "repl ref: #{chunk.cardname.to_s}, #{link_bound}, #{chunk.link_text}"
+        end
+      end
+    
+      wiki_content.find_chunks(Chunk::Transclude).each do |chunk|
+        chunk.cardname =
+          chunk.cardname.replace_part(old_name, new_name) if chunk.cardname
+      end
+    
+      String.new wiki_content.unrender!
+    end
+
+    #FIXME -- should not be here.
+    def update_references(rendering_result=nil)
+      return unless card
+      WikiReference.delete_all ['card_id = ?', card.id]
+
+      if card.id
+        card.connection.execute("update cards set references_expired=NULL where id=#{card.id}")
+        rendering_result ||= WikiContent.new(card, _render_refs, self)
+        rendering_result.find_chunks(Chunk::Reference).each do |chunk|
+          reference_type =
+            case chunk
+              when Chunk::Link;       chunk.refcard ? LINK : WANTED_LINK
+              when Chunk::Transclude; chunk.refcard ? TRANSCLUSION : WANTED_TRANSCLUSION
+              else raise "Unknown chunk reference class #{chunk.class}"
+            end
+
+         #ref_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
+          #raise "No name to ref? #{card.name}, #{chunk.inspect}" unless chunk.refcardname()
+          WikiReference.create!( :card_id=>card.id,
+            :referenced_name=> (rc=chunk.refcardname()) && rc.to_key() || '',
+            :referenced_card_id=> chunk.refcard ? chunk.refcard.id : nil,
+            :link_type=>reference_type
+           )
+        end
+      end
     end
   
   end

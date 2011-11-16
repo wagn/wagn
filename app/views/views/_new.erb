@@ -51,7 +51,7 @@
         <div class="edit-button-area">
           <%= submit_tag 'Submit', :class=>'create-submit-button' %>
           <%= button_tag 'Cancel', :class=>"create-cancel-button standard-slotter", :type=>'button',
-            :href=>"/card/view/#{card.cardname.to_url_key}" %>
+            :href=>"/card/view/#{card.cardname.to_url_key}?view=missing" %>
         </div>
       </div>
     <% end %>

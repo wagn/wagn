@@ -63,7 +63,11 @@ class Wagn::Renderer::RichHtml
   end
 
   define_view(:missing) do |args|
-    wrap(:missing, args) { "Add <strong>#{ @showname || card.name }</strong>" }
+    wrap(:missing, args) do
+      link_to raw("Add <strong>#{ @showname || card.name }</strong>"),
+        "/card/new?card[name]=#{CGI.escape(card.name)}",
+        :class=>'standard-slotter init-editors', :remote=>true,
+    end
   end
   
 ###---(  EDIT VIEWS )

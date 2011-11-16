@@ -183,8 +183,6 @@ module Wagn
       return content unless card
       content = card.content if content.blank?
   
-  #Rails.logger.debug "process_content(#{content}, #{card&&card.content}),  #{card&&card.name}"
-  
       wiki_content = WikiContent.new(card, content, self)
       update_references(wiki_content) if card.references_expired
   
@@ -437,7 +435,7 @@ module Wagn
     def initialize card, opts
       super card,opts
     
-      if format=='css' && controller
+      if @format=='css' && controller
         controller.response.headers["Cache-Control"] = "public"
       end
     end

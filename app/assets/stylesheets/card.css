@@ -199,12 +199,12 @@ a.external-link,
 a.email-link { 
   color: #979 
 }
-.missing-view {
+.missing-view a {
   color: #99b;
   display: inline;
   font-variant: small-caps;
 }
-div:hover.missing-view {
+.missing-view a:hover {
   color: #069;
   background: #ffc;
 }

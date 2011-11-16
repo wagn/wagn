@@ -21,7 +21,7 @@ div_id = "main-body"
 
 
   <%# form_for params[:email], :action=>@action do |f| %>
-  <% form_for :email, :action=>@action do |f| %>
+  <%= form_for :email, :action=>@action do |f| %>
     
     <%= hidden_field_tag 'element', "#{div_id}"  %>
 

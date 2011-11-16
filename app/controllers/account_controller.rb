@@ -33,10 +33,7 @@ class AccountController < ApplicationController
     end
   end
 
-#  def thanks(card_name)
-#    thanks = System.setting(card_name)
-#    thanks
-#  end
+
 
   def accept
     raise(Wagn::Oops, "I don't understand whom to accept") unless params[:card]
@@ -102,8 +99,6 @@ class AccountController < ApplicationController
     end
   end
 
-
-
   def update
     load_card
     @user = @card.extension or raise("extension gotta be a user")    #ENGLISH
@@ -143,6 +138,7 @@ class AccountController < ApplicationController
 #  end
 
   protected
+  
   def password_authentication(login, password)
     if self.current_user = User.authenticate(params[:login], params[:password])
       Rails.logger.info "successful_login!!!"
@@ -159,32 +155,7 @@ class AccountController < ApplicationController
     Rails.logger.info "finished pw auth"
   end
 
-=begin
-  def open_id_authentication
-    unless params[:openid_url] &&   user = User.find_by_identity_url(params[:openid_url])
-      failed_login("Sorry, no user by that identity URL exists (#{params[:openid_url] })" +
-        "You need to have an account on Wagn already and set the OpenId in your options")
-      return
-    end
 
-    authenticate_with_open_id do |result, identity_url|
-      if result.successful?
-        self.current_user = user
-        successful_login
-      else
-        failed_login result.message
-      end
-    end
-  end
-
-  def authenticate_with_open_id(identity_url = params[:openid_url], options = {}, &block) #:doc:
-    if params[:open_id_complete].nil?
-      begin_open_id_authentication(normalize_url(identity_url), options, &block)
-    else
-      complete_open_id_authentication(&block)
-    end
-  end
-=end
 
   private
 

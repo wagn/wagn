@@ -78,26 +78,5 @@ $('body').delegate '.card-form', 'submit', ->
 
 warn = (stuff) -> console.log stuff if console?
 
-#Wagn.Messenger = {  
-#  element: -> $('#alerts'),
-#  alert: (message) ->
-#    return if !@element()
-#    @element().innerHTML = '<span style="color:red; font-weight: bold">' + message + '</span>';
-#    #new Effect.Highlight( this.element(), {startcolor:"#ffff00", endcolor:"#ffffaa", restorecolor:"#ffffaa", duration:1});
-#  note: (message) ->
-#    return if !@element()
-#    @element().innerHTML = message
-#    #new Effect.Highlight( this.element(), {startcolor:"#ffff00", endcolor:"#ffffaa", restorecolor:"#ffffaa", duration:1});
-#  log: (message) ->
-#    return if !@element()
-#    @element().innerHTML = message; 
-#    #new Effect.Highlight( this.element(), {startcolor:"#eeeebb", endcolor:"#ffffaa", restorecolor:"#ffffaa", duration:1});
-#  flash: ->
-#    if $('#notice') && $('#error')
-#      flash = $('#notice').innerHTML + $('#error').innerHTML
-#      @alert(flash) if flash != ''
-#}
-#
-
 
 window.wagn = wagn

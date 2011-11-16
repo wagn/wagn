@@ -20,9 +20,9 @@
 
     <div class="content">
     
-      <% form_for :card, :action=>'signup', :html=>{ :onsubmit=>"Wagn.runQueue(Wagn.onSaveQueue['main_1'])"} do |f| %>
+      <%= form_for :card, :action=>'signup', :html=>{ :onsubmit=>"$(this).setContentFieldsFromMap()"} do |f| %>
         <%= hidden_field_tag 'element', "#{div_id}"  %>
-        <%= f.hidden_field 'type'  %>
+        <%= f.hidden_field :typecode  %>
         <%- slot.form = f %>
         <%= error_messages_for @user %> 
         <table class="fieldset">

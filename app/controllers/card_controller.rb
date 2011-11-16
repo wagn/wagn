@@ -28,45 +28,16 @@ class CardController < ApplicationController
   def index() show  end
   def mine()  show  end
 
-  #---------( VIEWING CARDS )
-
   def show
-    params[:_keyword] && params[:_keyword].gsub!('_',' ') # should not be here!!
     save_location if params[:format].nil? || params[:format].to_sym==:html
     render_show
   end
 
-  def render_show
-    render(:text=>render_show_text)
-  end
-  
-  def render_show_text
-    request.format = :html if !params[:format]
-    
-    known_formats = FORMATS.split('|')
-    f_ext = request.parameters[:format]
-    return "unknown format: #{f_ext}" if !known_formats.member?( f_ext )
-    
-    respond_to do |format|
-      known_formats.each do |f|
-        format.send f do
-          return Wagn::Renderer.new(@card, :format=>f, :controller=>self).render(:show)
-        end
-      end
-    end
-  end
-  
-
-  #----------------( MODIFYING CARDS )
-
-  #----------------( creating)
   def new
-    @args = (params[:card] ||= {})
-    @args[:name] ||= params[:id] # for ajax (?)
-    @args[:type] ||= params[:type] # for /new/:type shortcut
-    [:name, :type, :content].each {|key| @args.delete(key) if a=@args[key] and a.blank?} #filter blank args
+    args = params[:card] || {}
+    @type = ( args[:type] ||= params[:type] ) # for /new/:type shortcut
 
-    @card = Card.new @args
+    @card = Card.new args
     if @card.ok? :create
       render( ajax? ?
         {:partial=>'views/new', :locals=>{ :card=>@card }} : #ajax
@@ -302,6 +273,22 @@ class CardController < ApplicationController
   end
 
   protected
+  
+  
+  def render_show
+    render(:text=>render_show_text)
+  end
+  
+  def render_show_text
+    extension = request.parameters[:format]
+    return "unknown format: #{extension}" if !FORMATS.split('|').member?( extension )
+    
+    respond_to do |format|
+      format.send extension do
+        Wagn::Renderer.new(@card, :format=>extension, :controller=>self).render(:show)
+      end
+    end
+  end
   
   def render_success
     @url = params[:redirect] || params[:success]

@@ -89,7 +89,7 @@ module Notification
 
   module RendererHelperMethods
     def watch_link 
-      return "" unless logged_in?   
+      return "" unless User.logged_in?   
       return "" if card.virtual? 
       me = User.current_user.card.name          
       if card.typecode == "Cardtype"

@@ -1,8 +1,10 @@
 <div id="new-card">
+  <% @title = "New Card" %>
+  
   <% if !request.post? %>
     <h1 class="page-header">New <%= card.typecode != 'Basic' ? card.typename : '' %> Card</h1>
 
-    <% @instruction = capture do %>
+    <% instruction = capture do %>
       <% if card.broken_type %>
         <div class="error" id="no-cardtype-error">
           Oops! There's no <strong>card type</strong> called "<strong><%= card.broken_type %></strong>".
@@ -17,13 +19,21 @@
       <% end %>
     <% end %>
 
-    <% unless @instruction.blank? %>
+    <% unless instruction.blank? %>
       <div class="instruction main-instruction">
-        <%= @instruction %>
+        <%= instruction %>
       </div>
     <% end %>
   <% end %>
-  <%= render :partial => 'views/new', :locals=>{ :card=>card, :redirect=>(card.setting('thanks') || 'TO_CARD') } %>
+  
+  <%= render :partial => 'views/new', 
+      :locals=>{ 
+        :card      => card,
+        :cancel    => previous_location,
+        :hide_type => (@type && !card.broken_type),
+        :redirect  => (card.setting('thanks') || 'TO_CARD') 
+        } 
+  %>
 </div>
 
 

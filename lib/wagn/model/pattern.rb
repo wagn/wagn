@@ -165,7 +165,7 @@ module Wagn::Model
       def key()              '*type plus right'                              end
       def opt_keys()         [:ltype, :right]                                end
       def junction_only?()             true                                  end
-      def label(name) "Any #{name.left_name} card plus #{name.right_name}"   end
+      def label(name) "Any #{name.left_name} card plus #{name.tag_name}"     end
       def method_key_from_opts(opts)
         %{#{opts[:ltype].to_cardname.css_name}_#{opts[:right].to_cardname.css_name}_typeplusright}
       end

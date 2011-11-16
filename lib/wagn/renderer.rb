@@ -1,27 +1,8 @@
-require 'diff'
-
-
-class StubCardController < CardController
-  def url_options
-    default_url_options
-  end
-  
-  def params()  {} end
-  def session() {} end
-end
-
-
 module Wagn
- class Renderer
-    module NoControllerHelpers
-      def logged_in?
-        User.logged_in?
-      end
-    end
-  
+ class Renderer  
     include ReferenceTypes
   
-    VIEW_ALIASES = {
+    VIEW_ALIASES = {  #ALL THESE VIEWS ARE DEPRECATED
       :view  => :open,
       :card  => :open,
       :line  => :closed,
@@ -30,7 +11,7 @@ module Wagn
     }
     
     UNDENIABLE_VIEWS = [ 
-      :deny_view, :edit_virtual, :too_slow, :too_deep, :open_missing, :closed_missing, :name, :link, :url
+      :deny_view, :edit_virtual, :too_slow, :too_deep, :missing, :closed_missing, :name, :link, :url
     ]
   
     RENDERERS = {
@@ -44,74 +25,11 @@ module Wagn
     self.max_char_count = 200
     self.max_depth = 10
   
-    attr_reader :action, :inclusion_map, :params, :layout, :relative_content,
-        :template, :root, :format, :controller
-    attr_accessor :card, :main_content, :main_card, :context, :char_count,
+    attr_reader :params, :layout, :relative_content, :root, :format, :controller
+    attr_accessor :card, :main_content, :main_card, :char_count,
         :depth, :item_view, :form, :type, :base, :state, :sub_count,
-        :render_args, :layout, :flash, :showname #, :requested_view
+        :layout, :flash, :showname #, :requested_view
   
-    # View definitions
-    #
-    #   When you declare:
-    #     define_view(:view_name, "<set>") do |args|
-    #
-    #   Methods are defined on the renderer
-    #
-    #   The external api with checks:
-    #     render(:viewname, args)
-    #
-    #   Roughly equivalent to:
-    #     render_viewname(args)
-    #
-    #   The internal call that skips the checks:
-    #     _render_viewname(args)
-    # 
-    #   Each of the above ultimately calls:
-    #     _final(_set_key)_viewname(args)
-    
-    
-    module DefineView
-      def define_view(view, opts={}, &final)
-        fallback[view] = opts.delete(:fallback) if opts.has_key?(:fallback)
-        view_key = get_pattern(view, opts)
-        class_eval do
-          define_method( "_final_#{view_key}", &final )
-          if view_key == view
-            define_method( "_render_#{view}" ) do |*a| a = [{}] if a.empty?
-              final_meth = view_method( view )
-              send(final_meth, *a) { raw(yield) }
-            end
-  
-            define_method( "render_#{view}" ) do |*a|
-              denial=deny_render(view, *a) and return denial
-              send( "_render_#{view}", *a) { raw(yield) }
-            end
-          end
-        end
-      end
-
-      def alias_view(view, opts={}, *aliases)
-        view_key = get_pattern(view, opts)
-        aliases.each do |aview|
-          aview_key = case aview
-            when String; aview
-            when Symbol; (view_key==view ? aview.to_sym : view_key.to_s.sub(/_#{view}$/, "_#{aview}").to_sym)
-            when Hash;   get_pattern( aview[:view] || view, aview)
-            else; raise "Bad view #{aview.inspect}"
-            end
-#          raise "aview_key = #{aview_key}"
-          class_eval do
-            define_method( "_final_#{aview_key}".to_sym ) do |*a|
-              #Rails.logger.debug "ALIAS call: #{aview_key} called, calling #{view_key}"
-              send("_final_#{view_key}", *a)
-            end
-          end
-        end
-      end
-  
-    end
-  
-    extend DefineView
 
     class << self
       def get_pattern(view,opts)
@@ -144,18 +62,88 @@ module Wagn
       end
   
       def set_view(key) @@set_views[key.to_sym] end
-      def view_aliases() VIEW_ALIASES end
+  
+    # View definitions
+    #
+    #   When you declare:
+    #     define_view(:view_name, "<set>") do |args|
+    #
+    #   Methods are defined on the renderer
+    #
+    #   The external api with checks:
+    #     render(:viewname, args)
+    #
+    #   Roughly equivalent to:
+    #     render_viewname(args)
+    #
+    #   The internal call that skips the checks:
+    #     _render_viewname(args)
+    # 
+    #   Each of the above ultimately calls:
+    #     _final(_set_key)_viewname(args)
+
+
+      def define_view(view, opts={}, &final)
+        fallback[view] = opts.delete(:fallback) if opts.has_key?(:fallback)
+        view_key = get_pattern(view, opts)
+        define_method( "_final_#{view_key}", &final )
+
+        if !method_defined? "render_#{view}"
+          define_method( "_render_#{view}" ) do |*a| a = [{}] if a.empty?
+            if final_method = view_method(view)
+              send(final_method, *a)
+            else
+              "<strong>#{card.name} - unknown card view: '#{view}' M:#{render_meth.inspect}</strong>"
+            end
+          end
+
+          define_method( "render_#{view}" ) do |*a|
+            begin
+              denial=deny_render(view, *a) and return denial
+              send( "_render_#{view}", *a)
+            rescue Exception=>e
+              Rails.logger.debug "Error #{e.message} #{e.backtrace*"\n"}"
+              raise e          
+            end
+          end
+        end
+        #end
+      end
+
+      def alias_view(view, opts={}, *aliases)
+        view_key = get_pattern(view, opts)
+        aliases.each do |aview|
+          aview_key = case aview
+            when String; aview
+            when Symbol; (view_key==view ? aview.to_sym : view_key.to_s.sub(/_#{view}$/, "_#{aview}").to_sym)
+            when Hash;   get_pattern( aview[:view] || view, aview)
+            else; raise "Bad view #{aview.inspect}"
+            end
+
+          define_method( "_final_#{aview_key}".to_sym ) do |*a|
+            send("_final_#{view_key}", *a)
+          end
+        end
+      end
     end
+  
+  
+
+    def render(view=:view, args={})
+      args[:home_view] ||= view
+      send("render_#{canonicalize_view view}", args)
+    end
+
+  
   
     def initialize(card, opts=nil)
       Renderer.current_slot ||= self unless(opts[:not_current])
       @card = card
       if opts
-        [ :main_content, :main_card, :base, :action, :context,
+        [ :main_content, :main_card, :base,
           :params, :relative_content, :format, :flash, :layout, :controller].
             map {|s| instance_variable_set "@#{s}", opts[s]}
       end
-      inclusion_map( opts )
   
       @relative_content ||= {}
       @format ||= :html
@@ -165,20 +153,19 @@ module Wagn
       @root = self
     end
   
-  
-    def params()  @params ||= controller.params  end
-    def flash()   @flash  ||= controller.request ? controller.flash : {} end
-  
-    def controller
-      @controller ||= StubCardController.new
+    def params()     @params     ||= controller.params                          end
+    def flash()      @flash      ||= controller.request ? controller.flash : {} end
+    def controller() @controller ||= StubCardController.new                     end
+
+    def session
+      CardController===controller ? controller.session : {}
     end
   
     def template
       @template ||= begin
-        t = ActionView::Base.new( CardController.view_paths)
-        t.extend CardController._helpers
-        t.extend NoControllerHelpers
+        t = ActionView::Base.new( CardController.view_paths )
         t.controller = controller
+        t.extend controller.class._helpers
         t._routes = controller._routes 
         t
       end
@@ -191,9 +178,6 @@ module Wagn
       template.send(method_id, *args, &proc) 
     end
     
-    def session
-      @controller ? @controller.session : {}
-    end
   
     def ajax_call?() @@ajax_call end
     def outer_level?() @depth == 0 end
@@ -207,14 +191,10 @@ module Wagn
       sub.depth = @depth+1
       sub.item_view = sub.main_content = sub.main_card = sub.showname = nil
       sub.sub_count = sub.char_count = 0
-      sub.context = "#{ctx_base||context}_#{sub_count}"
       sub.card = subcard
       sub
     end
-  
-    def inclusion_map(opts=nil)
-      VIEW_ALIASES
-    end
+
   
     def process_content(content=nil, opts={})
       return content unless card
@@ -222,7 +202,7 @@ module Wagn
   
   #Rails.logger.debug "process_content(#{content}, #{card&&card.content}),  #{card&&card.name}"
   
-      wiki_content = WikiContent.new(card, content, self, inclusion_map)
+      wiki_content = WikiContent.new(card, content, self)
       update_references(wiki_content) if card.references_expired
   
       wiki_content.render! do |opts|
@@ -250,31 +230,7 @@ module Wagn
       (v=!view.blank? && VIEW_ALIASES[view.to_sym]) ? v : view
     end
   
-    def render(view=:view, args={})
-      args[:home_view] ||= view
-      self.render_args = args.clone
-      denial = deny_render(view, args) and return denial
-  
-      view = canonicalize_view(view)
-      @state ||= case view
-        when :edit, :edit
-        when :closed; :line
-        else :view
-      end
-  
-      result = 
-        if render_meth = view_method(view)
-          send(render_meth, args) { yield }
-        else
-          "<strong>#{card.name} - unknown card view: '#{view}' M:#{render_meth.inspect}</strong>"
-        end
-  
-      result.strip
-    rescue Exception=>e
-      warn "Error #{e.message} #{e.backtrace*"\n"}"
-      raise e unless Card::PermissionDenied===e
-      return "Permission error: #{e.message}"
-    end
+
   
     def view_method(view)
       return "_final_#{view}" unless card
@@ -285,16 +241,7 @@ module Wagn
       return @@fallback[view]
     end
     
-    def form_for_multi
-      block = Proc.new {}
-      builder = ActionView::Base.default_form_builder
-      card.name = card.name.gsub(/^#{Regexp.escape(root.card.name)}\+/, '+') if root.card.new_card?  ##FIXME -- need to match other relative inclusions.
-      builder.new("card[cards][#{card.cardname.pre_cgi}]", card, template, {}, block)
-    end
-  
-    def form
-      @form ||= form_for_multi
-    end
+
   
     def resize_image_content(content, size)
       size = (size.to_s == "full" ? "" : "_#{size}")
@@ -335,6 +282,8 @@ module Wagn
       # Don't bother processing inclusion if we're already out of view
       return '' if (state==:line && self.char_count > Renderer.max_char_count)
   
+      options[:view] = canonicalize_view options[:view]
+  
       tname=options[:tname]
       if is_main = tname=='_main'
         tcard, tcont = root.main_card, root.main_content
@@ -344,11 +293,10 @@ module Wagn
         tname = tcard.cardname
         [:item, :view, :size].each{ |key| val=symbolize_param(key) and options[key]=val }
         # main card uses these CGI options as inclusion args      
-        options[:context] = 'main'
         options[:view] ||= :open
       end
-  
-      options[:home_view] = options[:view] ||= context == 'layout_0' ? :core : :content
+      #options[:home_view] = options[:view] ||= context == 'layout_0' ? :core : :content
+      options[:home_view] = options[:view] ||= :content
       tcardname = tname.to_cardname
       options[:fullname] = fullname = tcardname.fullname(card.cardname, base, options, params)
       options[:showname] = tcardname.to_show(fullname)      #Rails.logger.debug "fullname [#{tname.inspect}](#{card&&card.name||card.inspect}, #{base.inspect}, #{options.inspect}"
@@ -385,7 +333,7 @@ module Wagn
   
   
     def process_inclusion(tcard, options)
-      sub = subrenderer(tcard, options[:context])
+      sub = subrenderer(tcard)
       oldrenderer, Renderer.current_slot = Renderer.current_slot, sub  #don't like depending on this global var switch
       sub.item_view = options[:item] if options[:item]
       sub.type = options[:type] if options[:type]
@@ -404,7 +352,7 @@ module Wagn
           case
             when requested_view==:raw    ; :blank
             when state==:line            ; :closed_missing
-            else                         ; :open_missing
+            else                         ; :missing
           end
         when state==:line       ; :closed_content
         else                    ; requested_view
@@ -463,9 +411,7 @@ module Wagn
         end
       end
     end
-  
-    def main_card?() context=~/^main_\d$/ end
-      
+        
     def build_link(href, text)
       #Rails.logger.info "build_link(#{href.inspect}, #{text.inspect})"
       klass = case href

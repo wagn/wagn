@@ -8,7 +8,6 @@ Wagn::Cardname.substitute!( message, {
 )
 
 div_id = "main-body"
-context = 'invitation'
 -%>  
 
 <h1 class="page-header">Invite A Friend</h1> <%#ENGLISH%>
@@ -16,7 +15,6 @@ context = 'invitation'
 
 <%= wrap_slot do |slot| %>
 
-  <span style="display:none;" class="editor_context"><%= context %></span>
   <iframe id="iframe-<%= div_id %>" height="0" width="0" frameborder="0"></iframe>
 
   <style> .fieldset td.help { width: 30% ;} </style>

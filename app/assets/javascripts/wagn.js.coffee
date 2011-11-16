@@ -8,7 +8,6 @@ wagn = {
 
 jQuery.fn.extend {
   slot: -> @closest '.card-slot'
-  
   setSlotContent: (val) -> @slot().replaceWith val
 
   setContentFieldsFromMap: (map) ->
@@ -16,11 +15,9 @@ jQuery.fn.extend {
     this_form = $(this)
     $.each map, (selector, fn)-> 
       this_form.setContentFields(selector, fn)
-      
   setContentFields: (selector, fn) ->
     $.each this.find(selector), -> 
-      $(this).setContentField(fn)
-      
+      $(this).setContentField(fn)     
   setContentField: (fn)->
     this.closest('.editor').find('.card-content')[0].value = fn.call this[0]
 }
@@ -29,14 +26,13 @@ jQuery.fn.extend {
 
 $(window).load -> wagn.initializeEditors()
 
-
 $('body').delegate '.standard-slotter', "ajax:success", (event, data) ->
   wagn.obj = this
   $(this).setSlotContent data
 
 $('body').delegate '.standard-slotter', "ajax:error", (event, xhr) ->
   result = xhr.responseText
-  wagn.slot = slot = $(this).slot()
+  slot = $(this).slot()
   notice = slot.find('.notice')
   if xhr.status == 303
     window.location=result
@@ -45,25 +41,12 @@ $('body').delegate '.standard-slotter', "ajax:error", (event, xhr) ->
   else  
     slot.setSlotContent result
 
-
-$('.edit-content-link').live 'ajax:success', ->
-  wagn.initializeEditors()
-
-$('.edit-rule-link').live 'ajax:success', ->
+$('.init-editors').live 'ajax:success', ->
   wagn.initializeEditors()
 
 $('body').delegate 'button.standard-slotter', 'click', ->
   return false if !$.rails.allowAction $(this)
   $.rails.handleRemote($(this))
-
-
-$('.edit-delete-button').live 'click', ->
-  button = $(this)
-  url = button.attr('url')
-  $.ajax url, {
-    complete: (xhr, status) ->
-      button.setSlotContent xhr.responseText
-  }
 
 $('body').delegate '.rule-submit-button', 'click', ->
   f = $(this).closest('form')
@@ -79,7 +62,7 @@ $('body').delegate '.rule-cancel-button', 'click', ->
 
 $('.live-cardtype-field').live 'change', ->
   field = $(this)
-  $.ajax field.attr('url'), {
+  $.ajax field.attr('href'), {
     data: field.closest('form').serialize()
     complete: (xhr, status) ->
       field.setSlotContent xhr.responseText

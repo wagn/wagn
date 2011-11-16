@@ -199,30 +199,31 @@ a.external-link,
 a.email-link { 
   color: #979 
 }
-.open-missing {
+.missing-view {
   color: #99b;
+  display: inline;
   font-variant: small-caps;
 }
-span:hover.open-missing {
+div:hover.missing-view {
   color: #069;
   background: #ffc;
 }
 
-.transcluded p, 
-.transcluded span, 
-.transcluded a, 
-.transcluded ul, 
-.transcluded ol, 
-.transcluded h1, 
-.transcluded h2 {
+.content-view p, 
+.content-view span, 
+.content-view a, 
+.content-view ul, 
+.content-view ol, 
+.content-view h1, 
+.content-view h2 {
   background-color: inherit;
   -moz-border-radius: inherit;
   border-radius: inherit;
 }
 
 
-/* note:   ".card-slot .transcluded div not(.editor)" was not working properly and was breaking nested block elements.  
-   without it nested divs in transcluded areas probably won't highlight  */
+/* note:   ".card-slot .content-view div not(.editor)" was not working properly and was breaking nested block elements.  
+   without it nested divs in content-view areas probably won't highlight  */
 
 
 /* ---------- edit tab / new / inline editing--------*/
@@ -303,7 +304,7 @@ ul.pointer {
   vertical-align: middle;
 }
 .edit-area .title,
-.transcluded .edit-area .title {
+.content-view .edit-area .title {
   display: block;
   font-size: 11px;
 }
@@ -333,7 +334,7 @@ ul.pointer {
   padding: 0 3px;
 }
 /* for IE */
-div.transcluded {
+div.content-view {
   display: inline;
 }
 .edit-name input,
@@ -423,12 +424,6 @@ del.diffmod,
   text-align: center;
 }
 
-/*-----------related tab ----------*/
-
-.related.headroom h1,
-.related.headroom h2 {
-  margin-top: 10px;
-}
 
 
 /*------------- multiple tabs / misc -----*/
@@ -458,15 +453,6 @@ del.diffmod,
 .instruction {
   border-left: 0px;
   border-right: 0px;
-}
-
-/* we should be able to get rid of this stuff.  used once.  and it's poorly named */
-h1.headroom,
-h2.headroom,
-.headroom h1,
-.headroom h2 {
-  margin-top: 10px;
-  padding: 6px;
 }
 
 .denied {

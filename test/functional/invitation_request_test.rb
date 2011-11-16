@@ -19,8 +19,6 @@ class AccountRequestTest < ActionController::TestCase
     end
   end
   
- 
-
   def test_should_redirect_to_invitation_request_landing_card 
     post :create, :user=>{:email=>"jamaster@jay.net"}, :card=>{
       :type=>"Account Request",
@@ -30,7 +28,6 @@ class AccountRequestTest < ActionController::TestCase
     assert_response 302
     #assert_redirected_to @controller.url_for_page(::Setting.find_by_codename('invitation_request_landing').card.name)
   end
-  
   
   def test_should_create_invitation_request  
     post :create, :user=>{:email=>"jamaster@jay.net"}, :card=>{

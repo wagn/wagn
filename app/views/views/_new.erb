@@ -1,13 +1,14 @@
 <%-
-   args={}
-   args[:home_view] = params[:home_view] if params[:home_view]
-   redirect ||= false
-   slot ||= get_slot(card)
+   slot_args={}
+   slot_args[:home_view] = params[:home_view] if params[:home_view]
+   cancel    ||= nil
+   hide_type ||= nil
+   redirect  ||= nil
 %>
 
-<%= wrap_slot(slot, args) do |s| %>
-    <% @title = "New Card" %>
-    <%= error_messages_for @card %>
+
+<%= wrap_slot(slot, slot_args) do |s| %>
+    <%= error_messages_for card %>
 
     <%= form_for card, :url=>"/card/create", :remote=>true, :html=>{ :class=>'card-form card-new-form standard-slotter' } do |form| %>
       <%- s.form = form %>
@@ -15,12 +16,12 @@
       <% if redirect %><%= hidden_field_tag :redirect, redirect %><% end %>
     
       <div class="card-header">
-        <% if (request and !request.xhr?) && @args[:type] #&& !card.broken_type %>
-          <%= hidden_field_tag 'card[type]', @args[:type] %>
+        <% if hide_type %>
+          <%= form.hidden_field :typecode %>
         <% else %>
           <span class="new-type">
             <label>type:</label>
-            <%= s.typecode_field :class=>'cardtype-field new-cardtype-field live-cardtype-field', 'url' => '/card/new' %>
+            <%= s.typecode_field :class=>'cardtype-field new-cardtype-field live-cardtype-field', :href => '/card/new' %>
           </span>
         <% end %>
         
@@ -49,7 +50,8 @@
 
         <div class="edit-button-area">
           <%= submit_tag 'Submit', :class=>'create-submit-button' %>
-          <%= button_tag 'Cancel', :class=>'create-cancel-button', :type=>'button' %>
+          <%= button_tag 'Cancel', :class=>"create-cancel-button standard-slotter", :type=>'button',
+            :href=>"/card/view/#{card.cardname.to_url_key}" %>
         </div>
       </div>
     <% end %>

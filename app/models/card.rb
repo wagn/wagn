@@ -32,6 +32,7 @@ class Card < ActiveRecord::Base
   def self.new(args={}, options={})
     args = (args || {}).stringify_keys
     @@junk_args.map { |a| args.delete(a) }
+    %w{ type typecode }.each { |k| args.delete(k) if args[k].blank? }
 
     if name = args['name'] and !name.blank?
       if cc= Card.cache.read_local(name.to_cardname.key)    and

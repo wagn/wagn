@@ -48,7 +48,7 @@ class Wagn::Renderer
   end
 
 
-  define_view(:editor, :type=>'set') do |args|
+  define_view(:edit, :type=>'set') do |args|
     'Cannot currently edit Sets' #ENGLISH
   end
 

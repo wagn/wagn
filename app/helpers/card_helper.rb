@@ -11,7 +11,6 @@ module CardHelper
       :action=>'changes', 
       :id=>@card.id, 
       :rev=>revision,
-      :context=>@context,
       :mode=>(mode || params[:mode] || true)
     }, :remote=>true 
   end
@@ -22,7 +21,6 @@ module CardHelper
         :action=>'rollback',
         :id=>@card.id,
         :rev=>@revision_number,
-        :context=>@context
       }, :remote=>true
     end
   end

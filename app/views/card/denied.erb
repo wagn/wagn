@@ -34,9 +34,6 @@
       <% end %>
     </div>
 
-    <% if @skip_slot_header && !@type %>
-      <p><%= link_to_function 'Cancel', %{getSlotSpan(this).replace('')} %></p>
-    <% end %>
   <%= raw( slot.footer ) unless @skip_slot_header  %>
 <% end %>
 

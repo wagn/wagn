@@ -21,7 +21,7 @@ module CaptchaSystem
   end
 
   def captcha_required?
-    !logged_in? and System.toggle(@card ? @card.setting('captcha') : Card.default_setting('captcha'))
+    !User.logged_in? and System.toggle(@card ? @card.setting('captcha') : Card.default_setting('captcha'))
   end  
   
   def self.included(base)

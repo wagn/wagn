@@ -20,15 +20,11 @@ module LocationHelper
 
   def save_location
     location_history.push(request.fullpath)
-    load_location
-  end
-
-  def load_location
-    @previous_location = location_history.last
+    @previous_location = nil
   end
 
   def previous_location
-    @previous_location
+    @previous_location ||= location_history.last
   end
 
   def discard_locations_for(card)
@@ -37,7 +33,7 @@ module LocationHelper
     while location_history.last =~ pattern
       location_history.pop
     end
-    load_location
+    @previous_location = nil
   end
 
    # -----------( urls and redirects from application.rb) ----------------
@@ -82,59 +78,11 @@ module LocationHelper
     link_to text, url, options
   end
 
-  def link_to_connector_update( text, highlight_group, connector_method, value, *method_value_pairs )
-    #warn "method_value_pairs: #{method_value_pairs.inspect}"
-    extra_calls = method_value_pairs.size > 0 ? ".#{method_value_pairs[0]}('#{method_value_pairs[1]}')" : ''
-    link_to_function( text,
-      "Wagn.highlight('#{highlight_group}', '#{value}'); " +
-      "Wagn.lister().#{connector_method}('#{value}')#{extra_calls}.update()",
-      :class => highlight_group,
-      :id => "#{highlight_group}-#{value}"
-    )
-  end
-
-  def name_in_context(card, context_card)
-    context_card == card ? card.name : card.name.gsub(context_card.name, '')
-  end
-
   def card_title_span( title )
     %{<span class="namepart-#{title.to_cardname.css_name}">#{title}</span>}
   end
 
-  def connector_function( name, *args )
-    "Wagn.lister().#{name.to_s}(#{args.join(',')});"
-  end
-
-  def pieces_icon( card, prefix='' )
-    image_tag "/images/#{prefix}pieces_icon.png", :title=>"cards that comprise \"#{card.name}\""
-  end
-
-  def connect_icon( card, prefix='' )
-    image_tag "/images/#{prefix}connect_icon.png", :title=>"plus cards that include \"#{card.name}\""
-  end
-
-  def connected_icon( card, prefix='' )
-    image_tag "/images/#{prefix}connected_icon.png", :title=>"cards connected to \"#{card.name}\""
-  end
-
-
   def page_icon(cardname)
     link_to_page '&nbsp;'.html_safe, cardname, {:class=>'page-icon', :title=>"Go to: #{cardname.to_s}"}
   end
-
-  def flexlink( linktype, name, options )
-    case linktype
-      when 'connect'
-        link_to_function( name,
-           "var form = window.document.forms['connect'];\n" +
-           "form.elements['name'].value='#{name}';\n" +
-           "form.onsubmit();",
-           options)
-      when 'page'
-        link_to_page name, name, options
-      else
-        raise "no linktype specified"
-    end
-  end
-
 end

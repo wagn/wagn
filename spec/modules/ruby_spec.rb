@@ -22,7 +22,7 @@ describe "Ruby Cardtype" do
   it "should keep different ruby cards straight" do
     pending
     card = Card.create! :name => "final", :content => "{{a1test|core}}" 
-    Wagn::Renderer.new(card, :context=>"main_1" ).render(:core ).should == "7, 9"
+    Wagn::Renderer.new(card).render(:core).should == "7, 9"
   end
   
 end

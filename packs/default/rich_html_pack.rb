@@ -18,7 +18,6 @@ class Wagn::Renderer::RichHtml
 
     layout_content = get_layout_content(args)
     
-    args[:context] = self.context = "layout_0"
     args[:action]="view"  
     args[:relative_content] = args[:params] = params 
     
@@ -60,13 +59,17 @@ class Wagn::Renderer::RichHtml
   end
 
   define_view(:editor) do |args|
-    form.text_area( :content, :rows=>3, :id=>"#{context}-tinymce", :class=>'tinymce-textarea card-content' )
+    form.text_area( :content, :rows=>3, :class=>'tinymce-textarea card-content' )
   end
 
   define_view(:change) do |args|
     wrap(:change, args) { render_partial('views/change') }
   end
 
+  define_view(:missing) do |args|
+    wrap(:missing, args) { "Add <strong>#{ showname || card.name }</strong>" }
+  end
+  
 ###---(  EDIT VIEWS )
   define_view(:edit_in_form) do |args|
     eform = form_for_multi

@@ -2,23 +2,19 @@ require File.expand_path('../spec_helper', File.dirname(__FILE__))
 include AuthenticatedTestHelper
 
 describe CardController do
-  context "new" do    
-    before do
-      login_as :wagbot
-    end
-    
-    it "assigns @args[:name] from id" do
-      post :new, :id => "xxx"
-      assigns[:args][:name].should == "xxx"
-    end
-  end     
-  
+
   describe "- route generation" do
-    it "gets name/id from /card/new/xxx" do
-      {:post=> "/card/new/xxx"}.should route_to(
-        :controller=>"card", :action=>'new', :id=>"xxx"
-      )
+#  not sure we want this.    
+#    it "gets name/id from /card/new/xxx" do
+#      {:post=> "/card/new/xxx"}.should route_to(
+#        :controller=>"card", :action=>'new', :id=>"xxx"
+#      )
+#    end
+
+    it "should recognize type" do
+      { :get => "/new/Phrase" }.should route_to( :controller => 'card', :action=>'new', :type=>'Phrase' )
     end
+
     
     it "should recognize .rss on /recent" do
       {:get => "/recent.rss"}.should route_to(:controller=>"card", :view=>"content", :action=>"show", 
@@ -296,7 +292,7 @@ describe CardController do
   #=end
     it "unrecognized card renders missing unless can create basic" do
       login_as(:anon) 
-      post :show, :id=>'crazy unknown name'
+      get :show, :id=>'crazy unknown name'
       assert_template 'missing'
     end
 

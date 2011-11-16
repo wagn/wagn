@@ -10,10 +10,7 @@ module WagnHelper
   # whether it is a Slot or Renderer, and it will be from the parent class
   #   Now: Always a Renderer, and the subclass is selected by:
   #     :format => :html (default and only -> Wagn::Renderer::RichHtml (was Slot))
-#  def slot() raise "slot is now self #{self}" end
-#  def get_slot(card=nil, context=nil, action=nil, opts={})
-#    raise "get_slot? #{card}, #{context}, #{action}, #{opts.inspect}"
-#  end
+
 #=begin
   def slot() Wagn::Renderer.current_slot end
   def card() @card ||= slot.card end
@@ -27,18 +24,18 @@ module WagnHelper
   end
 
   # FIXME: I think all this slot initialization should happen in controllers
-  def get_slot(card=nil, context=nil, action=nil, opts={})
+  def get_slot(card=nil)
     nil_given = card.nil?
-    card ||= @card; context||=@context; action||=@action
-    opts[:relative_content] = opts[:params] = (controller and params) or {}
-    slot = case
-      when Wagn::Renderer.current_slot
-        nil_given ? Wagn::Renderer.current_slot : Wagn::Renderer.current_slot.subrenderer(card)
+    card ||= @card
+
+    slot = 
+      if current = Wagn::Renderer.current_slot
+        nil_given ? current : current.subrenderer(card)
       else
-        Wagn::Renderer.current_slot = Wagn::Renderer.new( card,
-          opts.merge(:context=>context, :action=>action, :template=>self, :controller=>self.controller)
-        )
-    end
+        opts = { :controller => self.controller }
+        opts[:relative_content] = opts[:params] = (controller and params) or {}        
+        Wagn::Renderer.current_slot = Wagn::Renderer.new( card, opts )
+      end
   end
 
 
@@ -69,10 +66,6 @@ module WagnHelper
     wordstring
   end
 
-  def symbolize_param(param)
-    val = params[param]
-    (val && !val.to_s.empty?) ? val.to_sym : nil
-  end
 
   def formal_joint
     " <span class=\"wiki-joint\">+</span> "
@@ -88,11 +81,6 @@ module WagnHelper
     card_title_span(cardname.left_name) + %{<span class="joint">+</span>} +
        card_title_span(cardname.tag_name)
   end
-
-  def title_tag_names(card)
-    card.cardname.parts
-  end
-
 
   # Other snippets -------------------------------------------------------------
 
@@ -122,18 +110,6 @@ module WagnHelper
   end
 
 
-  def stylesheet_inline(name)
-    out = %{<style type="text/css" media="screen">\n}
-    out << File.read("#{Rails.root}/public/stylesheets/#{name}.css")
-    out << "</style>\n"
-  end
-
-  def cardname_auto_complete(fieldname, card_id='')
-    content_tag("div", "", :id => "#{fieldname}_auto_complete", :class => "auto_complete") +
-    auto_complete_field(fieldname, { :url =>"/card/auto_complete_for_card_name/#{card_id.to_s}" }.update({}))
-  end
-
-
   def span(*args, &block)  content_tag(:span, *args, &block);  end
   def div(*args, &block)   content_tag(:div, *args, &block);  end
 
@@ -149,13 +125,11 @@ module WagnHelper
     slot.expand_inclusions content.gsub(/\[\[/,"<div class=\"pointer-item item-#{view}\">{{").gsub(/\]\]/,"|#{view}#{typeparam}}}</div>")
   end
 
-
   def error_messages_for(object)
     if object && object.errors.any?
       object.errors.full_messages.map{ |msg| %{<div class="wagn-error-message">#{msg}</div} }.join("\n")
     end
   end
-
 
   def navbox_result(entries, field, stub)
     return unless entries

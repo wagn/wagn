@@ -57,7 +57,7 @@ describe Wagn::Renderer, "" do
     end
 
     it "renders layout card without recursing" do
-      Wagn::Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main" context="main">Mainly {{_main|core}}</div>}
+      Wagn::Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main">Mainly {{_main|core}}</div>}
     end
 
   end
@@ -260,7 +260,7 @@ describe Wagn::Renderer, "" do
       it "shouldn't recurse" do
         @layout_card.content="Mainly {{_main|core}}"
         @layout_card.save
-        Wagn::Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main" context="main">Mainly {{_main|core}}</div>}
+        Wagn::Renderer.new(@layout_card).render(:layout).should == %{Mainly <div id="main">Mainly {{_main|core}}</div>}
       end
 
       it "should handle non-card content" do

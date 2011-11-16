@@ -87,18 +87,16 @@ class WikiContent < String
   end
   
   include ChunkManager
-  attr_reader :revision, :not_rendered, :pre_rendered, :renderer, :card,
-    :inclusion_map
-
-  def initialize(card, content, renderer, inclusion_map=nil)
+  attr_reader :revision, :not_rendered, :pre_rendered, :renderer, :card
+  
+  def initialize(card, content, renderer)
     @not_rendered = @pre_rendered = nil
     @renderer = renderer
-    @inclusion_map = inclusion_map
     @card = card or raise "No Card in Content!!"
     super(content)
     init_chunk_manager()
     ACTIVE_CHUNKS.each{|chunk_type| chunk_type.apply_to(self)}
-#Rails.logger.debug "wiki content init #{card.name}, #{inclusion_map.inspect} C:#{content}" #\nTrace #{Kernel.caller.slice(0,6).join("\n")}"
+#Rails.logger.debug "wiki content init #{card.name}, C:#{content}" #\nTrace #{Kernel.caller.slice(0,6).join("\n")}"
     @not_rendered = String.new(self)
   end
 

@@ -42,8 +42,7 @@
       <%= f.hidden_field 'confirm_rename' %>
     <% end %>
 
-    <%= raw slot.captcha_tags %>
     <%= submit_tag 'Rename', :class=>'edit-name-submit-button' %>
-    <%= button_tag 'Cancel', :class=>'edit-name-cancel-button', :type=>'button' %>
+    <%= button_tag 'Cancel', :class=>'edit-name-cancel-button standard-slotter init-editors', :type=>'button', :href=>"/card/edit/#{card.id}" %>
   <% end %>
 <% end %>

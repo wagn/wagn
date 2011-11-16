@@ -86,7 +86,7 @@ describe Wagn::Model::Pattern do
       card.css_names.should == "ALL ALL_PLUS TYPE-basic RIGHT-author TYPE_PLUS_RIGHT-book-author"
       card.save!
       card = Card.fetch("Iliad+author")      
-      card.css_names.should == "ALL ALL_PLUS TYPE-basic RIGHT-author TYPE_PLUS_RIGHT-book-author SELF-illiad-author"
+      card.css_names.should == "ALL ALL_PLUS TYPE-basic RIGHT-author TYPE_PLUS_RIGHT-book-author SELF-iliad-author"
     end
   end
   

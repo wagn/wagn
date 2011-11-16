@@ -5,7 +5,7 @@ class Wagn::Renderer
     if System.ok? :create_accounts
       links << link_to( "Invite #{card.name}", "/account/accept?card[key]=#{card.cardname.to_url_key}", :class=>'invitation-link')
     end
-    if logged_in? && card.ok?(:delete)
+    if User.logged_in? && card.ok?(:delete)
       links << link_to( "Deny #{card.name}", { :url=>url_for("card/remove") }, :remote=>true )
     end
     

@@ -22,7 +22,7 @@ cards_462:
   settings: 
   updated_by: "1"
   appender_type: 
-  key: illiad
+  key: iliad
   extension_id: 
   read_rule_id: "500"
   appender_id: 

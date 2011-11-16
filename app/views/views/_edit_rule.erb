@@ -39,8 +39,8 @@
         <% if edit_mode %>
           <label>type:</label>
           <%= raw slot.typecode_field( 
-            :class=>'cardtype-field rule-cardtype-field live-cardtype-field',
-            'url'=>"/card/view/#{open_rule.cardname.to_url_key}?view=open_rule&type_reload=true" 
+            :class =>'cardtype-field rule-cardtype-field live-cardtype-field',
+            :href  =>"/card/view/#{open_rule.cardname.to_url_key}?view=open_rule&type_reload=true" 
             ) %>
         <% elsif current_set_key %>
           <label>type:</label>

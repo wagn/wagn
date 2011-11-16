@@ -30,6 +30,6 @@ class LocationTest < ActionController::IntegrationTest
   
   def test_return_to_special_url_when_logging_in_after_visit
     get '/recent'
-    assert_equal "/recent", assigns['previous_location']
+    assert_equal "/recent",  assigns['previous_location']
   end
 end

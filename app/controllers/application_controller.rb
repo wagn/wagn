@@ -23,6 +23,8 @@ class ApplicationController < ActionController::Base
   protected
 
   def per_request_setup
+    request.format = :html if !params[:format]
+    
     Wagn::Renderer.ajax_call=request.xhr?
     if System.multihost
       MultihostMapping.map_from_request(request) or return render_fast_404(request.host)
@@ -32,13 +34,10 @@ class ApplicationController < ActionController::Base
     
     User.current_user = current_user || User[:anon]
 
-    @context = params[:context] || 'main_1'
     @action = params[:action]
 
     Wagn::Renderer.current_slot = nil
     System.request = request
-    #ActiveRecord::Base.logger.debug("WAGN: per request setup")
-    load_location
   end
   
   def canonicalize_domain
@@ -98,7 +97,7 @@ class ApplicationController < ActionController::Base
       # FIXME this is a hack so that you can view load rules that don't exist.  need better approach 
       # (but this is not tested; please don't delete without adding a test) 
       @card
-    when ajax? || ![nil, :html].member?(params[:format])  #missing card, nonstandard request
+    when ajax? || ![nil, 'html'].member?(params[:format])  #missing card, nonstandard request
       ##  I think what SHOULD happen here is that we render the missing view and let the Renderer decide what happens.
       raise Wagn::NotFound, "We can't find a card named #{@card.name}"  
     when @card.ok?(:create)  # missing card, user can create

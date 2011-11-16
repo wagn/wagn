@@ -100,7 +100,7 @@ class Wagn::Renderer
 
     paging = render(:paging, :results=>cards)
 %{<h1 class="page-header">Recent Changes</h1>
-<div class="card-slot recent-changes">
+<div class="card-slot open-view recent-changes">
   <div class="open-content">
     #{ paging }
   } +

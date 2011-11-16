@@ -55,11 +55,11 @@ class System
     
     def favicon
       # bit of a kludge. 
-      image_setting('*favicon') || image_setting('*logo') || '/images/favicon.ico'
+      image_setting('*favicon') || image_setting('*logo') || '/assets/favicon.ico'
     end
     
     def logo
-      image_setting('*logo') || (File.exists?("#{Rails.root}/public/images/logo.gif") ? "/images/logo.gif" : nil)
+      image_setting('*logo') || (File.exists?("#{Rails.root}/public/assets/logo.gif") ? "/assets/logo.gif" : nil)
     end
 
     # PERMISSIONS

@@ -8700,7 +8700,7 @@ cards_163:
   read_rule_class: "*self"
   created_at: 2009-05-19 22:18:56.476994 -06:00
   tag_id: 
-  indexed_content: "'x':19 '28':31 '67':28 'h1':47 'h2':48 'bar':33 'css':1A 'etc':59 'top':32 'url':15 'bodi':2,4,12 'card':22,57,61,66,69,80 'font':73 'imag':9 'main':21 'menu':38,41 'misc':78 'page':7 'text':3,36,46 'wagn':13 'color':5,11,35,37,43,49,55,76 'navig':84 'revis':83 'width':25,27,30 '222299':56 '333333':77 '335533':40 '444444':6 '664444':50 'c0d9c0':64 'cccccc':20 'credit':86 'dddddd':88 'eeeeee':44 'footer':81 'header':45,52,54,58,62,67,70 'normal':75 'repeat':18 'weight':74 'current':85 'h1.page':51 'h2.page':53 'primari':26 'sidebar':24 'repeat-x':17 'card-foot':79 'card-head':60,65,68 'secondari':29 'background':8,14,34,39,63,87 'font-weight':72 'revision-navig':82 '/images/body-bg.png':16"
+  indexed_content: "'x':19 '28':31 '67':28 'h1':47 'h2':48 'bar':33 'css':1A 'etc':59 'top':32 'url':15 'bodi':2,4,12 'card':22,57,61,66,69,80 'font':73 'imag':9 'main':21 'menu':38,41 'misc':78 'page':7 'text':3,36,46 'wagn':13 'color':5,11,35,37,43,49,55,76 'navig':84 'revis':83 'width':25,27,30 '222299':56 '333333':77 '335533':40 '444444':6 '664444':50 'c0d9c0':64 'cccccc':20 'credit':86 'dddddd':88 'eeeeee':44 'footer':81 'header':45,52,54,58,62,67,70 'normal':75 'repeat':18 'weight':74 'current':85 'h1.page':51 'h2.page':53 'primari':26 'sidebar':24 'repeat-x':17 'card-foot':79 'card-head':60,65,68 'secondari':29 'background':8,14,34,39,63,87 'font-weight':72 'revision-navig':82 '/assets/body-bg.png':16"
   updated_at: 2011-02-25 23:01:12.912915 -07:00
   indexed_name: "'css':1"
   trash: false

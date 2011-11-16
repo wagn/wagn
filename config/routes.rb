@@ -21,8 +21,7 @@ Wagn::Application.routes.draw do
   
   match 'wagn/:id(.:format)' => 'card#show', :constraints => ID_REQS
   
-  match 'recent' => 'card#show', :id => '*recent', :view => 'content'
-  match 'recent(.:format)' => 'card#show', :id => '*recent', :view => 'content', :format => FORMAT_PATTERN
+  match 'recent(.:format)' => 'card#show', :id => '*recent', :view => 'core', :format => FORMAT_PATTERN
   match 'search/:_keyword(.:format)' => 'card#show', :id => '*search', :view => 'content', 
     :constraints => { :_keyword => /([^\.]*(\.(?!(#{FORMATS})))?)*/, :format => FORMAT_PATTERN }
     

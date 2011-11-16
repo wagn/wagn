@@ -1780,7 +1780,7 @@ revisions_371:
     
     /* page - background image and color */
     body#wagn {
-        background: url(/images/body-bg.png) repeat-x #CCCCCC;
+        background: url(/assets/body-bg.png) repeat-x #CCCCCC;
     }
     
     /* main card and sidebar widths */
@@ -5704,7 +5704,7 @@ revisions_176:
     
     /* page - background image and color */
     body#wagn {
-      background: url(/images/body-bg.png) repeat-x #CCCCCC;
+      background: url(/assets/body-bg.png) repeat-x #CCCCCC;
     }
     
     /* main card and sidebar widths */
